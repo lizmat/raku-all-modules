@@ -1,0 +1,4 @@
+*.pir
+*.swp
+Makefile
+blib/
