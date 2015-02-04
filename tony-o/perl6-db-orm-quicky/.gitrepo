@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-db-orm-quicky.git
+	branch = master
+	commit = 9892034eaae05d78b7656fad120d57698eb41596
+	parent = 79726f19a1efb96dba7fdf9db32632aef40a7749
+	cmdver = 0.1.0

@@ -1,0 +1,13 @@
+{
+  "name" : "DB::ORM::Quicky",
+  "version" : "*",
+  "description" : "Easy Prototyping ORM for Perl 6",
+  "auth" : "github:tony-o",
+  "depends" : ["DBIish"],
+  "provides" : {
+    "DB::ORM::Quicky" : "lib/DB/ORM/Quicky.pm6",
+    "DB::ORM::Quicky::Model"  : "lib/DB/ORM/Quicky/Model.pm6",
+    "DB::ORM::Quicky::Search" : "lib/DB/ORM/Quicky/Search.pm6"
+  },
+  "source-url" : "git://github.com/tony-o/perl6-db-orm-quicky.git"
+}
