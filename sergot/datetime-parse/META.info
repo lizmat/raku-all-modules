@@ -1,0 +1,7 @@
+{
+    "name"      : "DateTime::Parse",
+    "version"   : "0.0.1",
+    "description"   : "DateTime parser",
+    "depends"   : [],
+    "source-url"    : "git://github.com/sergot/datetime-parse.git"
+}
