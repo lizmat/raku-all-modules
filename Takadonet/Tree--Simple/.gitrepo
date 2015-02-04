@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Takadonet/Tree--Simple.git
+	branch = master
+	commit = fa19e78deb10a68f9b28cf25e3e01c063fa709f8
+	parent = e7d243fc778f20dc7b5f783a0f15a55c875a762a
+	cmdver = 0.1.0
