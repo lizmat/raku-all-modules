@@ -1,0 +1,8 @@
+{
+  "name" : "Semantic::Versioning",
+  "version" : "*",
+  "description" : "Semantic versioning for objects",
+  "author" : "Sir Robert Burbridge",
+  "depends" : [],
+  "source-url" : "git://github.com/sirrobert/Semantic-Versioning.git"
+}

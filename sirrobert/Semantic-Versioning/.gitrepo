@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/sirrobert/Semantic-Versioning.git
+	branch = master
+	commit = e960aa386c353ef8ffae3de16bee9a0b0f4f83dc
+	parent = db2afa325d66cac10fbb4cff0020082130e19c45
+	cmdver = 0.1.0
