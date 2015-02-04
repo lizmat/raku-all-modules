@@ -1,0 +1,11 @@
+{
+    "name" : "Compress::Zlib::Raw",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "Low-level bindings to zlib",
+    "depends" : ["NativeCall", "Inline"],
+    "provides" : {
+        "Compress::Zlib::Raw" : "lib/Compress/Zlib/Raw.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-Compress-Zlib-Raw.git"
+}
