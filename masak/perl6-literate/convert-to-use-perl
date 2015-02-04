@@ -1,0 +1,20 @@
+#!/usr/bin/perl -n
+
+BEGIN { $/ = "\n\n"; };
+
+chomp; chomp;
+
+if (/^>/) {
+    print "<code>";
+    for (split("\n", $_)) {
+        s/ /&nbsp;/g;
+        s/</&lt;/g;
+        s/>/&gt;/g;
+        s/$/<br>\n/;
+        print;
+    }
+    print "</code>\n\n"
+}
+else {
+    print "<p>$_</p>\n\n"
+}
