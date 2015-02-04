@@ -1,7 +1,0 @@
-{
-    "name"        : "IO::Select",
-    "version"     : "*",
-    "description" : "Object-oriented interface to the select system call",
-    "depends"     : [],
-    "source-url"  : "git://github.com/tadzik/IO-Select.git"
-}

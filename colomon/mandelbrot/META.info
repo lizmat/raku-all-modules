@@ -1,8 +1,0 @@
-{
-    "name"        : "mandelbrot",
-    "version"     : "*",
-    "description" : "Simple Mandelbrot Set scripts",
-    "depends"     : [],
-    "source-type"   : "git",
-    "source-url"    : "git://github.com/colomon/mandelbrot.git"
-}
