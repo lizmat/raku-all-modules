@@ -1,0 +1,15 @@
+{
+    "name" : "Net::DNS",
+    "version" : "1.0.1",
+    "author" : "github:retupmoca",
+    "description" : "Simple DNS Resolver",
+    "depends" : [],
+    "provides" : {
+        "Net::DNS" : "lib/Net/DNS.pm6",
+        "Net::DNS::Message" : "lib/Net/DNS/Message.pm6",
+        "Net::DNS::Message::Header" : "lib/Net/DNS/Message/Header.pm6",
+        "Net::DNS::Message::Question" : "lib/Net/DNS/Message/Question.pm6",
+        "Net::DNS::Message::Resource" : "lib/Net/DNS/Message/Resource.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-Net-DNS.git"
+}
