@@ -1,0 +1,9 @@
+{
+    "name" : "Software::License",
+    "version" : "0.02",
+    "description" : "a Perl 6 module for creating free software license texts",
+    "author" : "David Farrell",
+    "depends" : [ ],
+    "source-url" : "git://github.com/sillymoose/Software-License.git"
+}
+

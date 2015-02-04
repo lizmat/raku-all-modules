@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/sillymoose/Software-License.git
+	branch = master
+	commit = 0286c868b0d4746ba2a49568e1050385daa945aa
+	parent = ea984c675f3cf62ccd7c2fe9278c2975ab1ad9ee
+	cmdver = 0.1.0

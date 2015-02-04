@@ -1,0 +1,49 @@
+=head1 Software::License
+
+Software::License - a Perl 6 module for creating free software license texts.
+
+=head2 SYNOPSIS
+
+    use Software::License;
+
+    my $license = Software::License.new;
+    my $freebsd_text_2014 = $license.full-text('FreeBSD', 'David Farrell'); # defaults to current year
+    my $mit_text_2009 = $license.full-text('FreeBSD', 'David Farrell', 2009); # can provide year as an arg
+
+=head2 DESCRIPTION
+
+Software::License is a Perl 6 module for minting free software license texts. The module recognizes the following licenses:
+
+=over 4
+
+=item *
+
+Apache2 - the Apache 2.0 license
+
+=item *
+
+Artistic2 - the Artistic 2.0 license
+
+=item *
+
+BSD - the BSD license
+
+=item *
+
+FreeBSD - the two clause BSD license
+
+=item *
+
+MIT - the MIT license
+
+=back
+
+=head2 AUTHOR
+
+David Farrell
+
+=head2 LICENSE
+
+FreeBSD - see LICENSE
+
+=cut
