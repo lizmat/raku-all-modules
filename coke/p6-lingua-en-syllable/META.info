@@ -1,0 +1,8 @@
+{
+    "name" : "Lingua::EN::Syllable",
+    "version" : "*",
+    "author" : "Will “Coke” Coleda",
+    "description" : "Guess the number of syllables in an English word",
+    "depends" : [],
+    "source-url" : "git://github.com/coke/p6-lingua-en-syllable.git"
+}

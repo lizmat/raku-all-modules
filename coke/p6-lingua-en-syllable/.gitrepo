@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/coke/p6-lingua-en-syllable.git
+	branch = master
+	commit = 78aa6a9f40e0025a406c3a4811506ea879efdd73
+	parent = 99a9c637d5fd88bd469ec32f585523fe2ed16ec0
+	cmdver = 0.1.0
