@@ -1,0 +1,11 @@
+{
+    "name" : "Digest::PSHA1",
+    "version" : "1.0.0",
+    "author" : "github:FROGGS",
+    "description" : "pseudorandom hashing algorithm as per rfc5246",
+    "depends" : [ "Digest", "Digest::HMAC" ],
+    "provides" : {
+        "Digest::PSHA1" : "lib/Digest/PSHA1.pm"
+    },
+    "source-url" : "git://github.com/FROGGS/p6-Digest-PSHA1.git"
+}
