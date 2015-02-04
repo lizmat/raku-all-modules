@@ -1,0 +1,23 @@
+Simple Perl 6 script for turning a benchmark output run into SVG graphs.
+
+To use:
+
+    perl6 bin/graph-bench.pl [result-file]
+    
+result-file is a comma-separated file where each line has a Rakudo version,
+a benchmark filename, and an average time.  (Extra values are ignored.)
+
+    latest-rakudo, trans-sprintf.pl, 5.1236996
+    rakudo-star-2010.07, iteration.p6, 1.709158
+    rakudo-star-2010.07, trans-sprintf.pl, 3.1849216
+    rakudo-star-2010.08, iteration.p6, 1.498886
+    
+small-results.txt is a sample results file included with this repository.
+
+Rakudo versions are sorted by string name, except for latest-rakudo, which is
+automagically the last one.  This will then result in SVG files for the graphs,
+at the moment, one for each benchmark:
+
+    iteration.p6.svg
+    trans-sprintf.pl.svg
+
