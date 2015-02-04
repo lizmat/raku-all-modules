@@ -1,0 +1,86 @@
+#!/usr/bin/env perl6
+{ # File::HomeDir bundled
+class File::HomeDir {
+    method my_home {
+        # Try HOME on every platform first, because even on Windows, some
+        # unix-style utilities rely on the ability to overload HOME.
+        return %*ENV<HOME> if %*ENV<HOME>;
+
+        given $*OS {
+            when 'MSWin32' {
+                return %*ENV<HOMEDRIVE> ~ %*ENV<HOMEPATH>
+            }
+            when 'linux' {
+                return %*ENV<HOME>
+            }
+        }
+    }
+}
+}
+
+
+sub mysay(*@args) {
+    say('==> ', |@args)
+}
+
+my $rakudover;
+my $currentver = $*PERL.compiler.version;
+my $brewdir = "{File::HomeDir.my_home}/.pandabrew";
+my $olddir = cwd;
+
+if $brewdir.IO.d {
+    $rakudover = slurp("$brewdir/rakudo_version").chomp;
+}
+
+#= initialize pandabrew
+multi MAIN('init') {
+    mysay "Initializing pandabrew";
+    mkdir $brewdir;
+    chdir $brewdir;
+    mysay "Fetching panda";
+    shell 'git clone git://github.com/tadzik/panda.git';
+    chdir 'panda';
+    shell 'perl6 bootstrap.pl';
+    mysay "Done";
+    chdir $brewdir;
+    given open('rakudo_version', :w) {
+        .say($currentver);
+        .close;
+    }
+    chdir $olddir;
+}
+
+#= rebootstrap panda
+multi MAIN('rebootstrap') {
+    chdir "$brewdir/panda";
+    shell 'perl6 rebootstrap.pl';
+    chdir $brewdir;
+    given open('rakudo_version', :w) {
+        .say($currentver);
+        .close;
+    }
+    chdir $olddir;
+}
+
+#= print useful env variables
+multi MAIN('env') {
+    say "alias panda='pandabrew panda'";
+    say "export PATH=%*CUSTOM_LIB<site>/bin:\$PATH";
+}
+
+#= run the brewed panda
+multi MAIN('panda', *@args) {
+    if $rakudover {
+        if $rakudover ne $currentver {
+            mysay "You seem to have updated Rakudo, and panda is still built for the old one.";
+            if prompt("Do you wish to rebootstrap panda now? [Y/n]") ne 'n' {
+                mysay "Rebootstraping panda";
+                MAIN('rebootstrap');
+                mysay "Panda rebootstraped, proceeding";
+            }
+        }
+    } else {
+        mysay "pandabrew doesn't seem to be properly initialized. Try 'pandabrew init' maybe?";
+    }
+    shell "%*CUSTOM_LIB<site>/bin/panda @args[]"
+}

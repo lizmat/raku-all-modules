@@ -1,0 +1,7 @@
+{
+    "name"        : "pandabrew",
+    "version"     : "*",
+    "description" : "Make it easier to work with panda across Rakudo updates",
+    "depends"     : [],
+    "source-url"  : "git://github.com/tadzik/pandabrew.git"
+}
