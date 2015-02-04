@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/supernovus/hinges.git
+	branch = master
+	commit = de24ba063b67816e60f63a39cf4ae2cd32f58048
+	parent = f57d0fc39d217ef336db9a140847ffe2f9510338
+	cmdver = 0.1.0
