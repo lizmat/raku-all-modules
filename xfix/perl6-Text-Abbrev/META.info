@@ -1,0 +1,8 @@
+{
+    "name"        : "Text::Abbrev",
+    "version"     : "0.1.0",
+    "description" : "Create an abbreviation table from a list",
+    "depends"     : [],
+    "provides"    : {"Text::Abbrev": "lib/Text/Abbrev.pm"},
+    "source-url"  : "git://github.com/xfix/perl6-Text-Abbrev.git"
+}
