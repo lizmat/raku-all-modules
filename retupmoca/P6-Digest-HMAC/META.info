@@ -1,0 +1,11 @@
+{
+    "name" : "Digest::HMAC",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "Generic HMAC implementation",
+    "depends" : [ "Digest" ],
+    "provides" : {
+        "Digest::HMAC" : "lib/Digest/HMAC.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-Digest-HMAC.git"
+}
