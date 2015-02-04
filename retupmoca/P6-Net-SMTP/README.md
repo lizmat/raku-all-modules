@@ -30,7 +30,7 @@ commands), and a simple mode (just send this email!).
 Note that all of these methods should return a true value on success or a Failure
 object if something goes wrong.
 
- -  `new(:$server!, :$port = 25, :$hostname, :$debug, :$socket)`
+ -  `new(:$server!, :$port = 25, :$hostname, :$debug, :$socket, :$ssl, :$starttls, :$plain)`
     
     Creates a new SMTP client and opens the connection to the server.
 
@@ -49,6 +49,11 @@ object if something goes wrong.
     `$socket` allows you to define a class other than IO::Socket::INET to
     be used for network communication. If you pass a defined object, Net::SMTP
     will assume it is a ready-to-use socket.
+    
+    By default, this module will use STARTTLS if the server reveals that it is supported,
+    otherwise it uses plain-text communication. To override this, you can pass one of
+    `$ssl` for an initial SSL connection, `$starttls` to force STARTTLS usage, or
+    `$plain` to disable transport encryption completely.
 
  -  `auth-methods()`
 
@@ -121,6 +126,8 @@ object if something goes wrong.
  -  `send($stuff)`
  -  `ehlo($hostname = gethostname())`
  -  `helo($hostname = gethostname())`
+ -  `starttls()`
+ -  `switch-to-ssl()`
  -  `auth-login($username, $password)`
  -  `auth-plain($username, $password)`
  -  `mail-from($address)`
