@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/supernovus/perl6-db-model-easy.git
+	branch = master
+	commit = e0faeb751f332b881f7a7d6da577ebfa8c100036
+	parent = 9b4cca0b7c67d9a33d24b3a6c9eb2c71a0aab0f2
+	cmdver = 0.1.0
