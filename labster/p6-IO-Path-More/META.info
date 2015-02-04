@@ -1,0 +1,11 @@
+{
+  "name"        : "IO::Path::More",
+  "version"     : "*",
+  "description" : "Extends IO::Path to make it more like p5's Path::Class",
+  "author"      : "labster",
+  "provides"    : { "IO::Path::More": "lib/IO/Path/More.pm" },
+  "depends"     : [ "File::Find", "Shell::Command" ],
+  "source-url"  : "git://github.com/labster/p6-IO-Path-More.git",
+  "support"     : { "source": "http://github.com/labster/p6-IO-Path-More/",
+                    "irc":    "labster" }
+}
