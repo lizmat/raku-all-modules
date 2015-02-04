@@ -1,0 +1,15 @@
+{
+  "name"        : "SCGI",
+  "version"     : "*",
+  "description" : "A SCGI library for Perl 6",
+  "depends"     : [ "HTTP::Status", "Netstring", "PSGI" ],
+  "provides"    : {
+    "SCGI"             : "lib/SCGI.pm6",
+    "SCGI::Connection" : "lib/SCGI/Connection.pm6",
+    "SCGI::Constants"  : "lib/SCGI/Constants.pm6",
+    "SCGI::Errors"     : "lib/SCGI/Errors.pm6",
+    "SCGI::Request"    : "lib/SCGI/Request.pm6",
+    "SCGI::Response"   : "lib/SCGI/Response.pm6"
+  },
+  "source-url"  : "git://github.com/supernovus/SCGI.git"
+}
