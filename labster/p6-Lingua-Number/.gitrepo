@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/labster/p6-Lingua-Number.git
+	branch = master
+	commit = 05b58d4f503582252ade3bdc0ca8f26c50a630d3
+	parent = b04b5c1f80adb2ee10d9d052ab0ae6171a2df833
+	cmdver = 0.1.0
