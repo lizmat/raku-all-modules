@@ -1,0 +1,17 @@
+{
+  "name"        : "FastCGI",
+  "version"     : "*",
+  "description" : "A FastCGI library for Perl 6",
+  "depends"     : [ "PSGI" ],
+  "provides"    : {
+    "FastCGI"                      : "lib/FastCGI.pm6",
+    "FastCGI::Connection"          : "lib/FastCGI/Connection.pm6",
+    "FastCGI::Constants"           : "lib/FastCGI/Constants.pm6",
+    "FastCGI::Errors"              : "lib/FastCGI/Errors.pm6",
+    "FastCGI::Logger"              : "lib/FastCGI/Logger.pm6",
+    "FastCGI::Request"             : "lib/FastCGI/Request.pm6",
+    "FastCGI::Protocol"            : "lib/FastCGI/Protocol.pm6",
+    "FastCGI::Protocol::Constants" : "lib/FastCGI/Protocol/Constants.pm6"
+  },
+  "source-url"  : "git://github.com/supernovus/perl6-fastcgi.git"
+}
