@@ -1,0 +1,44 @@
+=begin pod
+
+=TITLE role Baggy
+
+=SUBTITLE Common role for collections of distinct weighted objects
+
+    class Baggy does QuantHash { }
+
+A role for collections of weighted objects. See L<Bag>, L<BagHash>, and
+L<Mixy>.
+
+=head1 Methods
+
+=head2 method grab
+
+=head2 method grabpairs
+
+=head2 method pick
+
+=head2 method pickpairs
+
+=head2 method roll
+
+=head2 method classify-list
+
+=head2 method categorize-list
+
+=head2 method keys
+
+=head2 method values
+
+=head2 method kv
+
+=head2 method elems
+
+=head2 method total
+
+=head2 method ACCEPTS
+
+=head1 See Also
+
+L<Sets, Bags, and Mixes|/language/setbagmix>
+
+=end pod

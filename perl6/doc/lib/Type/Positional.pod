@@ -1,0 +1,22 @@
+=begin pod
+
+=TITLE role Positional
+
+=SUBTITLE Common role for types that support looking up values by index
+
+    role Positional { ... }
+
+Role for objects which support indexing them using C<postcircumfix:«[ ]»>
+(usually list-like objects).  Example types with Positional role
+include L<Parcel>, L<List>, L<Array>, L<Range>, and L<Buf>.
+
+=head1 Methods
+
+=head2 method of
+
+    method of()
+
+Returns the type constraint for elements of the positional container. Defaults
+to L<Mu>.
+
+=end pod

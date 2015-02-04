@@ -1,0 +1,163 @@
+=begin pod
+
+=TITLE class IO::Path
+
+=SUBTITLE File or directory path
+
+    class IO::Path is Cool does IO::FileTestable { }
+
+Built-in class for file and directory paths.
+
+Conceptually, an C<IO::Path> object consists of a volume (think C<C:> on
+windows), a directory, and a basename.
+
+C<IO::Path> supports both purely textual operations, and operations that
+access the file system.
+
+The current working directory is available as an IO::Path object in C<$*CWD>.
+
+The behavior of C<IO::Path> is dependent on the operating system it runs on;
+to get reproducible behavior across operating systems, you can use one of its
+subclasses instead: L<IO::Path::Unix>, L<IO::Path::Win32>,
+L<IO::Path::Cygwin>, L<IO::Path::QNX>.
+
+The rest of this document silently assumes Unix semantics in its examples,
+unless when stated otherwise.
+
+
+=head1 Methods
+
+=head2 method new
+
+    multi method new(Str:D $path)
+    multi method new(:$basename!, :$dirname = '.', :$volume = '')
+
+Creates a new IO::Path object from a path string (which is being parsed for
+volume, directory name and basename), or from volume, directory name and basename
+passed as named arguments.
+
+=head2 method abspath
+
+Retturns the absolute path as a string.
+
+=head2 method basename
+
+    method basename(IO::Path:D)
+
+Returns the basename part of the path object. That is, it returns the name of
+the file relative to to its directory.
+
+    say IO::Path.new("/etc/passwd").basename;   # passwd
+
+=head2 method dirname
+
+    method dirname(IO::Path:D)
+
+Returns the directory name portion of the path object. That is, it returns the path
+excluding the volume and the base name.
+
+    say IO::Path.new("/etc/passwd").dirname;    # /etc
+
+=head2 method volume
+
+    method volume(IO::Path:D)
+
+Returns the volume portion of the path object. On Unix system, this is always
+the empty string.
+
+    say IO::Path::Win32.new("C:\\Windows\\registry.ini").volume;    # C:
+
+=head2 method parts
+
+    method parts(IO::Path:D) returns Hash
+
+Returns a hash with the keys C<dirname>, C<path> and C<volume>, and as
+values the return values of the methods with the same names.
+
+    say IO::Path.new("/etc/passwd").parts.perl
+    # ("dirname" => "/etc", "volume" => "", "basename" => "passwd").hash
+
+=head2 method path
+
+    method path(IO::Path:D:)
+
+Returns the invocant.
+
+=head2 method Str
+
+    method Str(IO::Path:D:)
+
+Returns the full path as a string. If the path object was constructed from a
+single string, the method Str will return that string.
+
+=head2 method open
+
+    method open(IO::Path:D: *%opts)
+
+Opens the path as a file; the named options control the mode, and are the same
+as the L<open> function accepts.
+
+=head2 method watch
+
+    method watch(IO::Path:D: --> Supply)
+
+Watches the path for modifications. Only implemented in Rakudo with the MoarVM
+backend at the moment.
+
+=head2 method is-absolute
+
+    method is-absolute(IO::Path:D: --> Bool:D)
+
+Returns C<True> if the path is an absolute path, and C<False> otherwise.
+
+=head2 method is-relative
+
+    method is-relative(IO::Path:D: --> Bool:D)
+
+Returns C<True> if the path is a relative path, and C<False> otherwise.
+
+=head2 method absolute
+
+    method absolute (IO::Path:D: $base = ~$*CWD --> IO::Path:D)
+
+Returns a new C<IO::Path> object that is an absolute path, based on C<$base>.
+
+=head2 method relative
+
+    method relative (IO::Path:D: $base = ~$*CWD --> IO::Path:D)
+
+Returns a new C<IO::Path> object relative to the C<$base> path.
+
+=head2 method dir
+
+    method dir(IO::Path:D: Mu :$test = none('.', '..'))
+
+Tries to interpret the path as a directory, and returns a lazy list of
+C<IO::Path> objects that match the C<$test> smart-matcher.
+
+By default, the C<.> and C<..> entries (current directory, and parent
+directory) are filtered out. To get a list of all files and directories,
+simply pass a smart-matcher that always matches, like C<True>:
+C<$path.contents(:test(True))>, or shorter: C<$path.contents(:test)>.
+
+An example that lists all files and directories recursively:
+
+    sub MAIN($dir = '.') {
+        my @todo = $dir.IO;
+        while @todo {
+            for @todo.pop.dir -> $path {
+                say $path.Str;
+                @todo.push: $path if $path.d;
+            }
+        }
+    }
+
+=head2 method chmod
+
+    method chmod(IO::Path:D: Int:D $mode)
+
+Changes the POSIX permissions of a file to C<$mode>.
+
+    $*CWD.chmod(0o700);
+
+=end pod

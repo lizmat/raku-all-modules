@@ -1,0 +1,11 @@
+*.swp
+index.data
+*~
+html/*.html
+html/routine/
+html/type/
+html/op/
+html/language/
+html/syntax/
+html/images/type-graph*
+html/js/search.js

@@ -1,0 +1,151 @@
+=begin pod
+
+=TITLE class Mu
+
+=SUBTITLE The root of the Perl 6 type hierarchy.
+
+    class Mu { ... }
+
+The root of the Perl 6 type hierarchy. For the origin of the name, see
+L<http://en.wikipedia.org/wiki/Mu_%28negative%29>. One can also say that
+there are many undefined values in Perl 6, and C<Mu> is the I<most undefined>
+value.
+
+Note that most classes do not derive from C<Mu> directly, but rather from
+L<Any|/type/Any>.
+
+=head1 Methods
+
+=head2 routine defined
+
+    multi sub    defined(Mu) returns Bool:D
+    multi method defined()   returns Bool:D
+
+Returns C<False> on the type object, and C<True> otherwise.
+
+=head2 routine Bool
+
+    multi sub    Bool(Mu) returns Bool:D
+    multi method Bool()   returns Bool:D
+
+Returns C<False> on the type object, and C<True> otherwise.
+
+=head2 method Str
+
+    multi method Str()   returns Str
+
+Returns a string representation of the invocant, intended to be machine
+readable.
+
+=head2 routine gist
+
+    multi sub    gist(Mu) returns Str
+    multi method gist()   returns Str
+
+Returns a string representation of the invocant, optimized for
+fast recognition by humans.
+
+The default C<gist> method in C<Mu> re-dispatches to the C<perl> method,
+but many built-in classes override it to something more specific.
+
+=head2 routine perl
+
+    multi sub    perl(Mu) returns Str
+    multi method perl()   returns Str
+
+Returns a Perlish representation of the object (i.e., can usually
+be re-parsed to regenerate the object).
+
+=head2 method clone
+
+    method clone(*%twiddles)
+
+Creates a shallow clone of the invocant. If named arguments are passed
+to it, their values are used in every place where an attribute name matches
+the name of a named argument.
+
+=head2 method new
+
+    multi method new(*%attrinit)
+
+Default method for constructing (create + initialize) new objects
+of a class. This method expects only named arguments which are then
+used to initialize attributes with accessors of the same name.
+
+Classes may provide their own C<new> method to override this default.
+
+=head2 method bless
+
+    method bless(*%attrinit) returns Mu:D
+
+Lower-level object construction method than C<new>.
+
+Creates a new object of the same type as the invocant, uses
+the named arguments to initialize attributes, and returns the
+created object.
+
+You can use this method when writing custom constructors:
+
+    class Point {
+        has $.x;
+        has $.y;
+        multi method new($x, $y) {
+            self.bless(:$x, :$y);
+        }
+    }
+    my $p = Point.new(-1, 1);
+
+(Though each time you write a custom constructor, remember that it makes
+subclassing harder).
+
+=head2 method CREATE
+
+    method CREATE() returns Mu:D
+
+Allocates a new object of the same type as the invocant, without
+initializing any attributes.
+
+=head2 method print
+
+    multi method print() returns Bool:D
+
+Prints value to C<$*OUT> after stringification using C<.Str> method without
+newline at end.
+
+=head2 method say
+
+    multi method say() returns Bool:D
+
+Prints value to C<$*OUT> after stringification using C<.gist> method with
+newline at end.
+
+=head2 method ACCEPTS
+
+    multi method ACCEPTS(Mu:U: $other)
+
+Performs a type check. Returns C<True> if C<$other> conforms to the invocant
+(which is always a type object or failure).
+
+This is the method that is triggered on smart-matching against type objects,
+for example in C<if $var ~~ Int { ... }>.
+
+=head2 method WHICH
+
+    multi method WHICH() returns ObjAt:D
+
+Returns an object of type L<ObjAt> which uniquely identifies the object.
+Value types override this method which makes sure that two equivalent objects
+return the same return value from C<WHICH>.
+
+=head2 trait is export
+
+    multi sub trait_mod:<is>(Mu:U \type, :$export!)
+
+Marks a type as being exported, that is, available to external users.
+
+    my class SomeClass is export { }
+
+A user of a module or class automatically gets all the symbols imported that
+are marked as C<is export>.
+
+=end pod
