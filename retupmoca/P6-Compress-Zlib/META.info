@@ -1,0 +1,11 @@
+{
+    "name" : "Compress::Zlib",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "Nicer zlib interface",
+    "depends" : ["NativeCall", "Compress::Zlib::Raw"],
+    "provides" : {
+        "Compress::Zlib" : "lib/Compress/Zlib.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-Compress-Zlib.git"
+}
