@@ -1,0 +1,7 @@
+{
+    "name"        : "Text::CSV",
+    "version"     : "*",
+    "description" : "A parser for CSV (comma-separated values) files for Perl 6",
+    "depends"     : [ ],
+    "source-url"  : "git://github.com/masak/csv.git"
+}
