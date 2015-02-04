@@ -1,0 +1,87 @@
+#!/usr/bin/env perl6
+use v6;
+use File::Find;
+
+my $dbg = False;
+sub f($f,&b,*%h) {
+    given open $f, |%h {
+        .&b; .close 
+    } 
+};
+sub log($text) {
+    if $dbg { say $text; } 
+}
+sub analyze($ig, $pattern) {
+    f $ig, :r, { return any(.lines) eq $pattern ??
+                        True !! False;
+               };
+}
+sub form($src, $options) {
+    return (
+        $options[0] ?? $src.fmt('/%s') !! '',
+        $options[1] ?? $src.fmt('%s')  !! '' );
+}
+sub ignore($ifile, $pattern) {
+    my $res = find(:dir<.>, :name($ifile));
+    given $res.elems {
+        when 1 {
+            log $res[0].fmt('found single ignore file at %s');
+            if analyze( $res[0], $pattern ) {
+                log 'this file is already in ignore file';
+            } else {
+                log 'adding new node to ignore file';
+                f $res[0], :a, { .say( $pattern ); };
+            }
+        } 
+        when 0 {
+            log "no $ifile file found, creating one with adding ignore pattern"; 
+            f $ifile, :w, { .say( $pattern ); };
+        }
+        default {
+            log $res.elems.fmt('found %d ignore files'); 
+            say ('WARNING: working with multiply ignore files is not supported yet');
+            if find(:dir<.>, :name($ifile), :recursive(False)).elems == 1 {
+                if analyze( $ifile ) { log 'this file is already in root ignore file';
+                } else {
+                    say ('!!! writing to root ignore file !!!');
+                    f $res[0], :a, { .say( $pattern ); };
+                } 
+            }
+        }
+    } 
+}
+sub MAIN($source, Bool :$debug = False, Bool :$git = False, Bool :$hg = False, Bool :$all = False) {
+    my $ipattern;
+    $dbg = $debug;
+    log "source: $source\n";
+    my $options = [$git, $hg];
+    if $all { $options >>[=]>> True; }
+    if all($options[]) == False { $options[0] = True; }
+    if $source ~~ /\*|\(|\)/ { $ipattern = ($source, $source) }
+    else {
+        given $source.IO {
+            when :d {
+                given find(dir => $source, :recursive(False)).elems {
+                    when 0 {
+                        say 'there is no files';
+                        exit 0; 
+                    }
+                    default {
+                        log 'found directory';
+                        $ipattern = form($source, $options);
+                    }
+                } 
+            }
+            when :e {
+                log 'found';
+                $ipattern = form($source, $options);
+            }
+            default {
+                say 'there is no such file or directory';
+                exit 0; 
+            }
+        } 
+    }
+    if $options[0] { ignore(".gitignore", $ipattern[0]); }
+    if $options[1] { ignore(".hgignore", $ipattern[1]);  }
+}
