@@ -1,0 +1,10 @@
+_build
+*.o
+Build
+blib
+MYMETA.*
+*.tar.gz
+*~
+*.bak
+*Thumbs.db
+Build.bat
