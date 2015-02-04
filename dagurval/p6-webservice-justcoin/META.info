@@ -1,0 +1,11 @@
+{
+    "name"        : "WebService::Justcoin",
+    "version"     : "0.0.1",
+    "description" : "Access to Justcoin trading API (Norwegian Bitcoin marketplace)",
+    "author"      : "Dagur Valberg Johannsson",
+    "depends"     : ["JSON::Tiny"],
+    "source-url"  : "git://github.com/dagurval/p6-webservice-justcoin.git",
+    "provides" : {
+            "WebService::Justcoin" : "lib/WebService/Justcoin.pm6"
+    }
+}
