@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/timo/SDL2_Raw-p6.git
+	branch = master
+	commit = 401d1d6cbc95d75d4a31dce3e2d8354bfd771984
+	parent = 700a79a5b8705ed74214582e5bceca35ca2d7f9d
+	cmdver = 0.1.0
