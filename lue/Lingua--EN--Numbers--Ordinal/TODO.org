@@ -1,8 +1,0 @@
-(this file is formatted for emacs' org-mode.)
-* Important stuff
-** TODO Make groups of three delimiters work (thousands, millions, etc.)
-** TODO Make the tests run (what could it be?)
-** TODO add &ordinal-digit
-
-* Nice stuff
-** TODO Optimize!

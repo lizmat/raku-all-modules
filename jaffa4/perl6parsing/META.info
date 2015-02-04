@@ -1,7 +1,0 @@
-{
-    "name" : "Perl6::Parsing",
-    "version" : "1.0",
-    "description" : "parse Perl6",
-    "depends" : [ ],
-    "source-url" : "git://github.com/jaffa4/perl6parsing.git"
-}

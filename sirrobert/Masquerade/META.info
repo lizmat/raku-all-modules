@@ -1,8 +1,0 @@
-{
-  "name"        : "Masquerade",
-  "version"     : "*",
-  "description" : "Let Perl 6 constructs masquerade as other things.",
-  "author"      : "Sir Robert Burbridge",
-  "depends"     : ["JSON::Tiny"],
-  "source-url"  : "git://github.com/sirrobert/Masquerade.git" 
-}

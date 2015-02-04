@@ -1,7 +1,0 @@
-{
-    "name"        : "Threads",
-    "version"     : "*",
-    "description" : "Threads in Perl 6. Yeah, really",
-    "depends"     : [],
-    "source-url"  : "git://github.com/tadzik/Threads.git"
-}

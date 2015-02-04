@@ -1,7 +1,0 @@
-{
-    "name"        : "panda",
-    "version"     : "*",
-    "description" : "A module management solution",
-    "depends"     : [ "File::Find", "Shell::Command", "JSON::Tiny" ],
-    "source-url"  : "git://github.com/tadzik/panda.git"
-}

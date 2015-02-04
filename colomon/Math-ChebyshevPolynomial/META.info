@@ -1,8 +1,0 @@
-{
-    "name"        : "Math::ChebyshevPolynomial",
-    "version"     : "*",
-    "description" : "Simple Chebyshev polynomial class",
-    "depends"     : [],
-    "source-type"   : "git",
-    "source-url"    : "git://github.com/colomon/Math-ChebyshevPolynomial.git"
-}
