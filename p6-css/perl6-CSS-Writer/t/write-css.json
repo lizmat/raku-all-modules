@@ -1,0 +1,75 @@
+// See http://dev.w3.org/csswg/cssom/#serializing-css-values
+[ "id", "#foo" ]
+[ "class", ".bar" ]
+[ "simple-selector", "A.external:visited", { "out" : "a.external:visited" } ]
+[ "simple-selector", "A[ href ]", { "out" : "a[href]" } ]
+[ "simple-selector", "a[href~='foo']" ]
+[ "selector", "ol > li:first-child" ]
+[ "selectors", "A:link H1 ,  H2", { "out" : "a:link h1, h2" } ]
+// <angle>
+[ "angle", "45deg"]
+[ "angle", "3.140rad", { "out" : "3.14rad" } ]
+// <color>
+[ "color", "rgb(10,20,30)", { "out" : "rgb(10, 20, 30)" } ]
+[ "color", "rgb(10% ,20% ,30%)", { "out" : "rgb(26, 51, 77)" } ]
+[ "expr", "rgba(10,20,30)", { "out" : "rgba(10, 20, 30)" } ]
+[ "expr", "rgba(10,20,30,.5)", { "out" : "rgba(10, 20, 30, 0.5)" } ]
+[ "expr", "rgba(10%,20%,30%,.5)", { "out" : "rgba(10%, 20%, 30%, 0.5)" } ]
+[ "expr", "hsl(120,20%,30%)", { "out" : "hsl(120, 20%, 30%)" } ]
+[ "expr", "hsla(120,20%,30%,70%)", { "out" : "hsla(120, 20%, 30%, 70%)" } ]
+// <counter> <counters>
+[ "declaration" , "content: counter(section);" ]
+[ "declaration" , "content: counters(section);" ]
+[ "declaration" , "content: counters(toc, '.');" ]
+// <length>
+[ "length", "2.5px" ]
+[ "length", "4.0Em", { "out" : "4em" }  ]
+// <frequency>
+[ "frequency", "45hz" ]
+[ "frequency", ".1Khz", { "out" : "100hz" } ]
+// <identifier>
+//[ "identifier", "Hi\\021 th\\0065 re", { "skip" : "n/a to grammars" } ]
+// <percentage>
+[ "expr", "10%" ]
+[ "expr", "10.0%", { "out" : "10%" } ]
+[ "expr", "12.50%", { "out" : "12.5%" } ]
+// <resolution>
+// [ "expr", "45dPi", { "parse" : "", "out" : "" } ]
+// <string>
+[ "expr", "'yay\\021'", { "out" : "'yay!'" } ]
+[ "expr", "'yip\\'pee\\721yi'", { "out" : "'yip\\'pee\\721 yi'" } ]
+// <time>
+[ "time", "45s" ]
+// [ "time", "450ms", { "out" : ".45s" } ]
+// <uri>
+[ "expr", "url( 'dog.jpg' )", { "out" : "url('dog.jpg')" } ]
+[ "expr", "url(cat.gif)", { "out" : "url('cat.gif')" } ]
+// <unicode-range>
+[ "unicode-range", "U+FA" ]
+[ "unicode-range", "U+2??" ]
+[ "unicode-range", "U+A0-AE" ]
+[ "unicode-range", "U+A0-AF", { "out" : "U+A?" } ]
+[ "unicode-range", "U+00-FF", { "out" : "U+??" } ]
+// at-rules
+[ "stylesheet", "@import url('bluish.css') projection, tv;" ]
+// declarations - general
+// grammars don't grok named colors
+[ "declaration", " Color : red ;", { "out" : "color: red;" } ]
+[ "declaration", "font: normal small-caps 120%/120% fantasy;" ]
+[ "declaration", "word-spacing: normal !important;" ]
+[ "declaration", "word-spacing: inherit;" ]
+[ "declaration", "margin: 2px 1em", { "out" : "margin: 2px em;" } ]
+[ "declaration", "margin: 2px 1em", { "out" : "margin: 2px em;" } ]
+[ "declaration", "content: attr(foo);" ]
+// hmm, from http://www.w3.org/TR/2013/WD-css3-fonts-20130212/#font-family-casing
+// "User agents must match font names case insensitively, using the "Default Caseless Matching" algorithm
+// outlined in the Unicode specification". So both "grammar" and "module" serializations are legitimate
+[ "declaration", "font-family: MainText;", { "out" : "font-family: maintext;" } ]
+[ "declaration", "font-variant: discretionary-ligatures character-variant(leo-B, leo-M, leo-N, leo-T, leo-U);", { "out" : "font-variant: discretionary-ligatures character-variant(leo-b, leo-m, leo-n, leo-t, leo-u);" } ]
+[ "declarations", "{font-size:0px;z-index: -9;position:absolute;left:-999px}", { "out" : "{\n  font-size: 0px;\n  z-index: -9;\n  position: absolute;\n  left: -999px;\n}" } ]
+[ "selector", "#my-id ::first-line :lang(fr)" ]
+[ "ruleset", "H1 { font-weight: bold; }", { "out" : "h1 {\n  font-weight: bold;\n}" } ]
+[ "stylesheet", "H1 {font-weight: bold} H2 { font-style: italic ; }", { "out" : "h1 {\n  font-weight: bold;\n}\n\nh2 {\n  font-style: italic;\n}" } ]
+[ "stylesheet", "@media tv { body {\n  margin: 10px;\n}}" ]
+[ "stylesheet", "@import url('bluish.css') projection, tv;" ]
+[ "stylesheet", "@charset 'utf-8';\n\n@page {\n  size: 8.5in 11in;\n  margin: 10%;\n  @top-left {\n    content: 'Hamlet';\n  }\n}\n\nbody {\n  font-family: arial;\n}\n\nh1 {\n  border: 1px solid;\n}", { "terse" : "@charset 'utf-8';\n@page { size: 8.5in 11in; margin: 10%; @top-left { content: 'Hamlet'; } }\nbody { font-family: arial; }\nh1 { border: 1px solid; }" } ]
