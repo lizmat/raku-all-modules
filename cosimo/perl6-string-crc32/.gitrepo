@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/cosimo/perl6-string-crc32.git
+	branch = master
+	commit = 4a9165342b9ee266e93cd5e85f90e13304e48e89
+	parent = 45de1f26f981a8b2d6dfdcf788d388dc14c84b71
+	cmdver = 0.1.0

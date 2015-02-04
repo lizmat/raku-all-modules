@@ -1,0 +1,75 @@
+=begin pod
+
+=head1 NAME
+
+String::CRC32 - Calculate 32-bit CRC checksum of strings
+
+=head1 SYNOPSIS
+
+    use v6;
+    use String::CRC32;
+
+    # CRC of a string
+    my $string = 'Hello, world';
+    my $crc32 = String::CRC32::crc32($string);
+
+    # CRC of a filehandle
+    my $fh = open("myfile", :bin, :r);
+    $crc32 = String::CRC32::crc32($fh);
+    $fh.close();
+
+=head1 DESCRIPTION
+
+The CRC32 module calculates CRC sums of 32 bit lenghts.
+It generates the same CRC values as ZMODEM, PKZIP, PICCHECK and many others.
+
+=head1 METHODS
+
+=head2 C<crc32($string)>
+
+Calculates and returns a CRC32 checksum of a string.
+For an example, see the SYNOPSIS.
+
+Example:
+
+    use v6;
+    use String::CRC32;
+
+    my $string = 'Hello, world';
+    say String::CRC32::crc32($string);
+
+    # prints '3885672898'
+
+=head2 C<crc32($fh)>
+
+Reads the whole file and calculates the CRC of
+that file.
+
+Example:
+
+    use v6;
+    use String::CRC32;
+
+    my $fh = open("myfile.txt", :bin, :r);
+    say String::CRC32::crc32($fh);
+    $fh.close();
+
+=head1 AUTHOR
+
+Cosimo Streppone, E<lt>cosimo@cpan.orgE<gt>
+
+Most bits shamelessly stolen from L<String::CRC32>
+for Perl 5, version 1.4 by Sönke J. Peters.
+
+=head1 COPYRIGHT
+
+I hereby include the COPYRIGHT section for Perl5 L<String::CRC32>:
+
+  CRC algorithm code taken from CRC-32 by Craig Bruce.
+  The module stuff is inspired by a similar perl module called
+  String::CRC by David Sharnoff & Matthew Dillon.
+  Horst Fickenscher told me that it could be useful to supply
+  an init value to the crc checking function and so I included this possibility.
+
+=end pod
+
