@@ -1,0 +1,7 @@
+{
+    "name"        : "Pod::Parser",
+    "version"     : "*",
+    "description" : "Naive parser for Perl 6 style POD documents",
+    "depends"     : [],
+    "source-url"  : "git://github.com/szabgab/perl6-Pod-Parser.git"
+}
