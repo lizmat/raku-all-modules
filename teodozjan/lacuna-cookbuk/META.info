@@ -1,0 +1,11 @@
+{
+    "name"        : "LacunaCookbuk::Client",
+    "version"     : "*",
+    "author"	  : "github:teodozjan",
+    "description" : "Lacuna expanse lazy player helper",
+    "depends"     : [ "JSON::RPC", "Form", "Term::ANSIColor", "PerlStore"],
+    "provides"    : {
+	        "LacunaCookbuk::Client" : "lib/LacunaCookbuk/Client.pm6"
+	 },
+    "source-url"  : "git://github.com/teodozjan/lacuna-cookbuk.git"
+}

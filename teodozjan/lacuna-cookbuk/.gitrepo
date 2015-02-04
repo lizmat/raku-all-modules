@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/teodozjan/lacuna-cookbuk.git
+	branch = master
+	commit = 6dd49ec5caea5ad2ac0b057acf7e8af94f129b55
+	parent = a3ec91ff0d0866b50df18138dcb58227a2b59230
+	cmdver = 0.1.0

@@ -1,0 +1,3 @@
+role Id;
+
+has $.id;
