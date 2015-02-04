@@ -1,0 +1,20 @@
+{
+  "name"        : "Web::Template",
+  "version"     : "*",
+  "description" : "A template engine abstraction layer for web frameworks.",
+  "depends"     : 
+  [ 
+    "Template6", 
+    "Flower",
+    "Template::Mojo",
+    "HTML::Template"
+  ],
+  "provides" : {
+    "Web::Template"            : "lib/Web/Template.pm6",
+    "Web::Template::HTML"      : "lib/Web/Template/HTML.pm6",
+    "Web::Template::Mojo"      : "lib/Web/Template/Mojo.pm6",
+    "Web::Template::TAL"       : "lib/Web/Template/TAL.pm6",
+    "Web::Template::Template6" : "lib/Web/Template/Template6.pm6"
+  },
+  "source-url"    : "git://github.com/supernovus/perl6-web-template.git"
+}
