@@ -1,0 +1,8 @@
+{
+    "name"          : "App::Pray",
+    "version"       : "*",
+    "description"   : "Perl 6 Ray Tracing Engine",
+    "author"        : "raydiak",
+    "depends"       : [ "JSON::Tiny" ],
+    "source-url"    : "git://github.com/raydiak/pray.git"
+}

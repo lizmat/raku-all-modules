@@ -1,0 +1,31 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+my constant $root = $?FILE.IO.parent.parent;
+use lib $root.child('lib');
+use lib $root.child('blib').child('lib');
+
+use Pray;
+
+sub MAIN (
+    Str $scene = 'scene.json',
+    Str $image = $scene.IO.basename.subst(/ [ \. <-[ \. ]>* ]? $ /, '.ppm'),
+    Int :$width,
+    Int :$height,
+    Bool :$quiet = False,
+    Bool :$verbose = False,
+    Bool :$preview = !$quiet,
+) {
+    Pray::render(
+        $scene,
+        $image,
+        $width,
+        $height,
+        :$quiet,
+        :$verbose,
+        :$preview,
+    );
+}
+
+

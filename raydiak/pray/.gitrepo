@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/raydiak/pray.git
+	branch = master
+	commit = 266d092f8a91f1739a1abcdd4d630e26dfb73acc
+	parent = 18a766b072332b6886c1248c1dc3a0bd76431722
+	cmdver = 0.1.0

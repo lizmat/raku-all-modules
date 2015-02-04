@@ -1,0 +1,10 @@
+{
+    "lights": [ {
+        "position": { "x":30, "y":-60, "z":40 },
+        "intensity": 5000
+    } ],
+    "objects": [ {
+        "geometry": { "primitive": "cube" }
+    } ],
+    "sky": { "r":1, "g":1, "b":1 }
+}
