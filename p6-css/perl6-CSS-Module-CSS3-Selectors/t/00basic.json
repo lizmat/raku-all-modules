@@ -1,0 +1,39 @@
+[ "term", { "input" : "U+2??a", "ast" : { "unicode-range" : [ 8202, 12282 ] } } ]
+[ "pseudo", { "input" : "::my-elem", "ast" : { "pseudo-elem" : "my-elem" } } ]
+// thanks to: http://kilianvalkhof.com/2008/css-xhtml/the-css3-not-selector/
+[ "simple-selector", { "input" : ":not(p)", "ast" : { "simple-selector" : [ { "pseudo-func" : { "ident" : "not", "expr" : [ { "qname" : { "element-name" : "p" } } ] } } ] } } ]
+[ "simple-selector", { "input" : ":not(:not(p))", "warnings" : "illegal nested negation: :not(p)", "ast" : null } ]
+[ "simple-selector", { "input" : ":not(.home)", "ast" : { "simple-selector" : [ { "pseudo-func" : { "ident" : "not", "expr" : [ { "class" : "home" } ] } } ] } } ]
+[ "selector", { "input" : "div *:not(p)", "ast" : { "selector" : [ { "simple-selector" : [ { "qname" : { "element-name" : "div" } } ] }, { "simple-selector" : [ { "qname" : { "element-name" : "*" } }, { "pseudo-func" : { "ident" : "not", "expr" : [ { "qname" : { "element-name" : "p" } } ] } } ] } ] } } ]
+[ "simple-selector", { "input" : "input:not([type='file'])", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "input" } }, { "pseudo-func" : { "ident" : "not", "expr" : [ { "attrib" : [ { "ident" : "type" }, { "op" : "=" }, { "string" : "file" } ] } ] } } ] } } ]
+// :first-child is a pseudo-class, :first-line is a pseudo-element
+[ "selector", { "input" : "li:not(.pingback) .comment-content p:first-child:first-line", "ast" : { "selector" : [ { "simple-selector" : [ { "qname" : { "element-name" : "li" } }, { "pseudo-func" : { "ident" : "not", "expr" : [ { "class" : "pingback" } ] } } ] }, { "simple-selector" : [ { "class" : "comment-content" } ] }, { "simple-selector" : [ { "qname" : { "element-name" : "p" } }, { "pseudo-class" : "first-child" }, { "pseudo-elem" : "first-line" } ] } ] } } ]
+[ "selector", { "input" : "body:not(.home) h2 + p:first-letter", "ast" : { "selector" : [ { "simple-selector" : [ { "qname" : { "element-name" : "body" } }, { "pseudo-func" : { "ident" : "not", "expr" : [ { "class" : "home" } ] } } ] }, { "simple-selector" : [ { "qname" : { "element-name" : "h2" } } ] }, { "op" : "+" }, { "simple-selector" : [ { "qname" : { "element-name" : "p" } }, { "pseudo-elem" : "first-letter" } ] } ] } } ]
+[ "selector", { "input" : "h2:not(:first-of-type):not(:last-of-type)", "ast" : { "selector" : [ { "simple-selector" : [ { "qname" : { "element-name" : "h2" } }, { "pseudo-func" : { "ident" : "not", "expr" : [ { "pseudo-class" : "first-of-type" } ] } }, { "pseudo-func" : { "ident" : "not", "expr" : [ { "pseudo-class" : "last-of-type" } ] } } ] } ] } } ]
+// namespaces and element-names
+[ "simple-selector", { "input" : "*", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "*" } } ] } } ]
+[ "simple-selector", { "input" : "foo|h1", "ast" : { "simple-selector" : [ { "qname" : { "ns-prefix" : "foo", "element-name" : "h1" } } ] } } ]
+[ "simple-selector", { "input" : "foo|*", "ast" : { "simple-selector" : [ { "qname" : { "ns-prefix" : "foo", "element-name" : "*" } } ] } } ]
+[ "simple-selector", { "input" : "*|*", "ast" : { "simple-selector" : [ { "qname" : { "ns-prefix" : "*", "element-name" : "*" } } ] } } ]
+[ "simple-selector", { "input" : "|h1", "ast" : { "simple-selector" : [ { "qname" : { "ns-prefix" : "", "element-name" : "h1" } } ] } } ]
+[ "simple-selector", { "input" : "*|h1", "ast" : { "simple-selector" : [ { "qname" : { "ns-prefix" : "*", "element-name" : "h1" } } ] } } ]
+// attributes
+[ "simple-selector", { "input" : "span[hello='Cleveland'][goodbye='Columbus']", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "span" } }, { "attrib" : [ { "ident" : "hello" }, { "op" : "=" }, { "string" : "Cleveland" } ] }, { "attrib" : [ { "ident" : "goodbye" }, { "op" : "=" }, { "string" : "Columbus" } ] } ] } } ]
+[ "simple-selector", { "input" : "object[type^='image/']", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "object" } }, { "attrib" : [ { "ident" : "type" }, { "op" : "^=" }, { "string" : "image/" } ] } ] } } ]
+// regular pseudo-funcs
+[ "simple-selector", { "input" : "foo:lang(en)", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "foo" } }, { "pseudo-func" : { "ident" : "lang", "expr" : [ { "ident" : "en" } ] } } ] } } ]
+// nth-... selectors
+[ "simple-selector", { "input" : "bar:nth-child(3n+1)", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "bar" } }, { "pseudo-func" : { "ident" : "nth-child", "expr" : [ { "int:a" : 3 }, { "op" : "n" }, { "op" : "+" }, { "int:b" : 1 } ] } } ] } } ]
+[ "simple-selector", { "input" : "bar:nth-last-child(odd)", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "bar" } }, { "pseudo-func" : { "ident" : "nth-last-child", "expr" : [ { "keyw" : "odd" } ] } } ] } } ]
+[ "simple-selector", { "input" : "bar:nth-child(  even  )", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "bar" } }, { "pseudo-func" : { "ident" : "nth-child", "expr" : [ { "keyw" : "even" } ] } } ] } } ]
+[ "simple-selector", { "input" : "tr:nth-last-child(-n+2)", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "tr" } }, { "pseudo-func" : { "ident" : "nth-last-child", "expr" : [ { "op" : "-" }, { "op" : "n" }, { "op" : "+" }, { "int:b" : 2 } ] } } ] } } ]
+[ "simple-selector", { "input" : "td:nth-child(3)", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "td" } }, { "pseudo-func" : { "ident" : "nth-child", "expr" : [ { "int:b" : 3 } ] } } ] } } ]
+[ "simple-selector", { "input" : "tr:nth-last-child(2n)", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "tr" } }, { "pseudo-func" : { "ident" : "nth-last-child", "expr" : [ { "int:a" : 2 }, { "op" : "n" } ] } } ] } } ]
+//  white-space - valid
+[ "simple-selector", { "input" : "tr:nth-child( 3n + 1 )", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "tr" } }, { "pseudo-func" : { "ident" : "nth-child", "expr" : [ { "int:a" : 3 }, { "op" : "n" }, { "op" : "+" }, { "int:b" : 1 } ] } } ] } } ]
+[ "simple-selector", { "input" : "tr:nth-child( +3n - 2 )", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "tr" } }, { "pseudo-func" : { "ident" : "nth-child", "expr" : [ { "op" : "+" }, { "int:a" : 3 }, { "op" : "n" }, { "op" : "-" }, { "int:b" : 2 } ] } } ] } } ]
+[ "simple-selector", { "input" : "tr:nth-child( -n+ 6 )", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "tr" } }, { "pseudo-func" : { "ident" : "nth-child", "expr" : [ { "op" : "-" }, { "op" : "n" }, { "op" : "+" }, { "int:b" : 6 } ] } } ] } } ]
+[ "simple-selector", { "input" : "tr:nth-child( +6 )", "ast" : { "simple-selector" : [ { "qname" : { "element-name" : "tr" } }, { "pseudo-func" : { "ident" : "nth-child", "expr" : [ { "op" : "+" }, { "int:b" : 6 } ] } } ] } } ]
+//  white-space - invalid
+[ "selector", { "input" : "tr:nth-child(+ 2n)", "warnings" : "usage nth-child(an[+/-b]|odd|even) e.g. \"4\" \"3n+1\"", "ast" : null } ]
+[ "simple-selector", { "input" : ":eq(0)", "ast" : { "simple-selector" : [ { "pseudo-func" : { "ident" : "eq", "expr" : [ { "num" : 0 } ] } } ] } } ]

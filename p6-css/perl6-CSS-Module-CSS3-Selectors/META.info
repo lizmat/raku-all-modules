@@ -1,0 +1,13 @@
+{
+    "name"        : "CSS::Module::CSS3::Selectors",
+    "version"     : "*",
+    "description" : "CSS3 Module Level 3 Selectos",
+    "depends"     : [ "CSS::Grammar", "JSON::Tiny"  ],
+    "source-url"  : "git://github.com/p6-css/perl6-CSS-Module-CSS3-Selectors.git",
+    "provides"    : {
+        "CSS::Module::CSS3::Selectors" : "lib/CSS/Module/CSS3/Selectors.pm",
+        "CSS::Module::CSS3::Selectors::Actions" : "lib/CSS/Module/CSS3/Selectors/Actions.pm"
+     }
+}
+
+ 
