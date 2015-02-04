@@ -1,0 +1,7 @@
+{
+    "name"        : "CGI::Application",
+    "version"     : "*",
+    "description" : "incomplete Perl 6 port of the Perl 5 CGI::Application module",
+    "depends"     : [ ],
+    "source-url"    : "git://github.com/moritz/CGI-Application.git"
+}

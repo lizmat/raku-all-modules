@@ -1,0 +1,19 @@
+Port of the Perl 5 CGI::Application module to Perl 6.
+
+The Perl 6 port tries to actively use the features of the Perl 6 object model,
+so for example setter methods that work as $app->params($p) in the Perl 5
+module are realized as $app.param = $p in the Perl 6 port.
+
+Very much a work in progress. Contributes are very welcome.
+
+Status:
+    * basic dispatch works
+
+License:
+
+I've contacted the authors of Perl 5 CGI::Application to get
+permission to re-distribute some of their code under the terms of the Artistic
+License 2. If they grant it, this module will be AL2. If not, it will have the
+same license as the origianl module (ie AL1 + GPL).
+If you contribute to this module, you implicitly declare that either of the
+two licensing models is fine for you.
