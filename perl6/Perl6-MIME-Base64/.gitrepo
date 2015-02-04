@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/perl6/Perl6-MIME-Base64.git
+	branch = master
+	commit = 888938e1139967f132756acdc98af8b2a2bd0ee0
+	parent = 3ab54b43037ce8c95a6cf87a5b0e9cd70d4ee414
+	cmdver = 0.1.0
