@@ -1,0 +1,8 @@
+{
+    "name" : "Image::PNG::Portable",
+    "version" : "*",
+    "description" : "Portable PNG output for Perl 6",
+    "author" : "raydiak",
+    "depends" : [ "String::CRC32", "Compress::Zlib::Raw", "NativeCall" ],
+    "source-url" : "git://github.com/raydiak/Image-PNG-Portable.git"
+}
