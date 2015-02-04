@@ -1,0 +1,12 @@
+{
+    "name" : "Text::Emotion",
+    "version" : "0.0.5",
+    "description" : "Get an emotional score for a passage of text based on its word use.",
+    "author" : "Matt Oates",
+    "depends" : [ ],
+    "source-type" : "git",
+    "source-url" : "git://github.com/MattOates/Text--Emotion.git",
+    "provides" : {
+        "Text::Emotion::Scorer" : "lib/Text/Emotion/Scorer.pm"
+    }
+}

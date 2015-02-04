@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MattOates/Text--Emotion.git
+	branch = master
+	commit = 9ab791a0a07a987aaf49c4726a15fba83654572f
+	parent = 1e37abb450654faef7d2b3d6d4af1695a283c40e
+	cmdver = 0.1.0
