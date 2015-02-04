@@ -1,0 +1,7 @@
+{
+    "name" : "Text::T9",
+    "version" : "*",
+    "description" : "Guess words basing on a T9 key sequence",
+    "depends" : [],
+    "source-url" : "git://github.com/tadzik/Text-T9.git"
+}
