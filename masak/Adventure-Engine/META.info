@@ -1,0 +1,8 @@
+{
+    "name" : "Adventure::Engine",
+    "version" : "0.3.0",
+    "description" : "Helps build and run adventure games.",
+    "author" : "Carl Mäsak",
+    "depends" : [],
+    "source-url" : "git://github.com/masak/Adventure-Engine.git"
+}
