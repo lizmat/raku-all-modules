@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/krunen/term-termios.git
+	branch = master
+	commit = 3e964f1aaa815cf55f3382dae3b7d672066224a5
+	parent = f9013f0039d362ff9003fbfc5d3f9787109ef9f9
+	cmdver = 0.1.0
