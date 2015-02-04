@@ -1,0 +1,8 @@
+{
+    "name" : "Math::ThreeD",
+    "version" : "*",
+    "description" : "A simple 3D library for Perl 6.",
+    "author" : "raydiak",
+    "depends" : [ ],
+    "source-url" : "git://github.com/raydiak/Math--ThreeD.git"
+}
