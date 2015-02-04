@@ -1,0 +1,13 @@
+{
+    "name"        : "JSON5::Tiny",
+    "version"     : "*",
+    "description" : "A JSON::Tiny fork for JSON5",
+    "depends"     : [ ],
+    "provides"    : {
+        "JSON5::Tiny" : "lib/JSON5/Tiny.pm6",
+        "JSON5::Tiny::Grammar" : "lib/JSON5/Tiny/Grammar.pm6",
+        "JSON5::Tiny::Actions" : "lib/JSON5/Tiny/Actions.pm6"
+    },
+    "source-url"  : "git://github.com/Mouq/json5.git"
+}
+
