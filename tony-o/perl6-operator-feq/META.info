@@ -1,0 +1,11 @@
+{
+  "name" : "Operator::feq",
+  "version" : "0.1",
+  "description" : "Adds a fuzzy matching operator for clean and fuzzy string matching in 'if' statements",
+  "depends" : ["Text::Levenshtein::Damerau"],
+  "provides" : {
+    "Operator::feq" : "lib/Operator/feq.pm6",
+    "Operator::feq::Levenshtein" : "lib/Operator/feq/Levenshtein.pm6"
+  },
+  "source-url" : "git://github.com/tony-o/perl6-operator-feq.git"
+}
