@@ -1,0 +1,8 @@
+{
+	"name" : "Time::Duration",
+	"version" : "2.00",
+	"description" : "Runded or exact English expression of durations",
+	"author" : "",
+	"depends" : [ ],
+	"source-url" : "git://github.com/dagurval/p6-Time-Duration.git"
+}

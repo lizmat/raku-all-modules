@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/dagurval/p6-Time-Duration.git
+	branch = master
+	commit = d3b17a280c2bed165314fcdada56f78dc05c0e05
+	parent = 5dea87b40d239d52cf99fbff1ce78aae0dddda30
+	cmdver = 0.1.0
