@@ -1,0 +1,46 @@
+# Note that the current lib/Pod/To/Text.pm does not handle short rows,
+# so we pad each row to the final column for now.
+
+=table
+    Wikipedia       Perl5           Perl6           Boost           dwh             RAW
+    =============== =============== =============== =============== =============== ===============
+    # Accessors                                                                     .
+    a               $_->[0]         $.r             R_component_1   real            Real____________ part of a Q (as accessor)
+    b               $_->[1]         $.i             R_component_2   imag_i          First_ imaginary part of a Q (as accessor)
+    c               $_->[2]         $.j             R_component_3   imag_j          Second imaginary part of a Q (as accessor)
+    d               $_->[3]         $.k             R_component_4   imag_k          Third_ imaginary part of a Q (as accessor)
+                                    .coeffs                                         (r, i, j, k) # List, not arrayref nor vector
+                                    .v                                              (i, j, k)    # List, not arrayref nor vector
+                                                                                    .
+    # Reals                                                                         .
+                                                                    csgn            is_zero ? 0.0 : sign( r );
+    norm            norm                            abs             abs             sum_of_squares( r,i,j,k ).sqrt
+                    squarednorm                     norm            norm            sum_of_squares( r,i,j,k )
+                                                    abs(unreal)     abs_imag        sum_of_squares(   i,j,k ).sqrt
+                                                    norm(unreal)    norm_imag       sum_of_squares(   i,j,k )
+                                                                    arg             atan2( sum_of_squares(   i,j,k ).sqrt, r );
+    distance                                                                        .
+                                                                                    .
+    # Quaternion returned:                                                          .
+                                                    unreal          imag            self.( 0.0,  i,  j,  k );
+                                                                    conj            self.(   r, -i, -j, -k );
+                                                                    operator *      self.(   r, -i, -j, -k );
+                                                                    signum          absq = sum_of_squares( r,i,j,k ).sqrt; return ( absq == 0.0 ) ?? self !! self.new( r/absq, i/absq, j/absq, k/absq );
+                                                                    sqr             self.( r*r - i*i - j*j - k*k, 2*r*i, 2*r*j, 2*r*k );
+                                                                    inverse         self.new: (r,-i,-j,-k) / sum_of_squares( r,i,j,k )
+    versor                                                                          self / sum_of_squares( r,i,j,k ).sqrt
+                                                                                    .
+    # Bools                                                                         .
+                                                                    is_nan          r != r or i != i or j != j or k != k;
+                                                                    is_inf          any(r,i,j,k) == any(PosInf,NegInf)
+                                                                    is_neg_inf      all(_,i,j,k) == 0 and r == NEG_INF;
+                                                                    is_pos_inf      all(_,i,j,k) == 0 and r == POS_INF;
+                                                                    is_real_inf     all(_,i,j,k) == 0 and r == any(POS_INF,NEG_INF);
+                                    is_real                         is_real         all(_,i,j,k) == 0
+                                    is_zero                         is_zero         all(r,i,j,k) == 0
+                                    is_complex                                      all(_,_,j,k) == 0
+                                    is_imaginary                    is_imaginary    r == 0
+                                                                                    .
+    # Misc:                                                                         .
+                                                                    rotate          When |q| == 1
+                                                                    sqrt            .
