@@ -1,0 +1,8 @@
+{ "name" : "Math::Tau"
+, "version" : "0.1.0"
+, "description" : "τ = 2π"
+, "depends" : [ ]
+, "provides" : { "Math::Tau" : "lib/Math/Tau.pm" }
+, "source-url" : "git://github.com/xfix/Math-Tau.git"
+, "author" : "Konrad Borowski"
+}
