@@ -1,0 +1,11 @@
+{
+    "name"          : "Test::Corpus",
+    "version"       : "2.0.2",
+    "author"        : "github:flussence",
+    "description"   : "Run a test function against a directory of input and expected output files",
+    "depends"       : [],
+    "provides"      : {
+        "Test::Corpus": "lib/Test/Corpus.pm"
+    },
+    "source-url"    : "git://github.com/flussence/Test-Corpus.git"
+}
