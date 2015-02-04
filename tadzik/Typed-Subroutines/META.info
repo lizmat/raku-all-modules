@@ -1,0 +1,7 @@
+{
+    "name"        : "Typed::Subroutines",
+    "version"     : "*",
+    "description" : "Better type checking for first-class functions",
+    "depends"     : [],
+    "source-url"  : "git://github.com/tadzik/Typed-Subroutines.git"
+}
