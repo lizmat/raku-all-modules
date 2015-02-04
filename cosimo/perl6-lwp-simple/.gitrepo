@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/cosimo/perl6-lwp-simple.git
+	branch = master
+	commit = 0d2147e1febb7eb33949d8fc53b39747a45f838b
+	parent = e9b4bb0ff84749a629cee2ab391da47b6e8cd8d1
+	cmdver = 0.1.0
