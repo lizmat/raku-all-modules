@@ -1,0 +1,13 @@
+*.DS_Store
+*~
+.tmp
+*#
+.#*
+*(Autosaved)blib*
+*.tar.gz
+cover_db
+blib*
+*.bak
+MYMETA.yml
+*.moarvm
+*.pir
