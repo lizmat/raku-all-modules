@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/perlpilot/p6-Questhub.git
+	branch = master
+	commit = 44e791e0a6cf7e6e8b4168d736b5a08d319f65e7
+	parent = d288a00bdedb21e4a1ad96069c83045225aee187
+	cmdver = 0.1.0
