@@ -1,0 +1,9 @@
+{
+    "name" : "GeoIP::City",
+    "version" : "0.4",
+    "description" : "MaxMind GeoIP City library interface",
+    "author" : "Pawel Pabian",
+    "authority" : "bbkr",
+    "depends" : [ "NativeCall" ],
+    "source-url" : "git://github.com/bbkr/GeoIPerl6.git"
+}

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bbkr/GeoIPerl6.git
+	branch = master
+	commit = 47a154c4c1cf864de70ad4b59275d242ba494036
+	parent = c7a51cc66b89857e97a4ff4fa56fbc23a474ddf1
+	cmdver = 0.1.0
