@@ -1,0 +1,10 @@
+[
+    { "name" : "foo", "version" : "1", "source-type" : "git",
+      "source-url" : "git://github.com/tadzik/nosuchrepo.git",
+      "depends" : [ "some", "thing", "else" ]
+    },
+    { "name" : "bar", "version" : "2", "source-type" : "hg" },
+    { "name" : "baz", "version" : "3" },
+    { "name" : "Frob::Frob", "version" : "2", "source-type" : "hg" },
+    { "name" : "Adventure-Engine", "version" : "5" }
+]
