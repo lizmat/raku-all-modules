@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-csv-parser.git
+	branch = master
+	commit = 0ed97505428df73d9b9aea99bdbafe506cf3e61d
+	parent = b28bfde360ae6edf0bb7042f0391b52fe08dbdac
+	cmdver = 0.1.0
