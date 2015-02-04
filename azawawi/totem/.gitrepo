@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/totem.git
+	branch = master
+	commit = ec43570bf92e29258aef9413402a44e7dc530363
+	parent = f6d1e0c6f3df400cf6f21b9d002a8725280926c6
+	cmdver = 0.1.0
