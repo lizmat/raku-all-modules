@@ -1,0 +1,2 @@
+Non blocking IO in Rakudo, yay!
+Works on nom, with Parrot d5c38153e or newer.
