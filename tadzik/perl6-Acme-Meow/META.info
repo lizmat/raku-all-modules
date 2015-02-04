@@ -1,0 +1,7 @@
+{
+    "name"        : "Acme::Meow",
+    "version"     : "*",
+    "description" : "The kitty you always wanted, now in Perl 6",
+    "depends"     : [],
+    "source-url"  : "git://github.com/tadzik/perl6-Acme-Meow.git"
+}
