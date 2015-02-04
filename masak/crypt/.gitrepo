@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/masak/crypt.git
+	branch = master
+	commit = 83f74d9a43a58e4ef90a1341f20c74a24458cae2
+	parent = 5e806f0658488cb7b389dfd3b1f5c11ff0fae044
+	cmdver = 0.1.0
