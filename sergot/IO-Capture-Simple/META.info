@@ -1,0 +1,7 @@
+{
+	"name"		: "IO::Capture::Simple",
+	"version"	: "*",
+	"description"	: "IO can be captured",
+	"depends"	: [],
+	"source-url"	: "git://github.com/sergot/IO-Capture-Simple.git"
+}
