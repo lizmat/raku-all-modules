@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-slang-sql.git
+	branch = master
+	commit = d59666b8f29f4019eb610366b86f5bbf40e803e9
+	parent = 83516ff4cab04e289fc8884645f750aded6a22ff
+	cmdver = 0.1.0
