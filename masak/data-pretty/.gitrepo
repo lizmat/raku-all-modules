@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/masak/data-pretty.git
+	branch = master
+	commit = c5b3922c37e3b97c9f0910e2ad5e468e9463e894
+	parent = 2dd8dc667e2a95f3ee641220ec4c86bced64b2e0
+	cmdver = 0.1.0
