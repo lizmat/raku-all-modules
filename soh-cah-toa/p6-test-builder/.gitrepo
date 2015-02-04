@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/soh-cah-toa/p6-test-builder.git
+	branch = master
+	commit = 0cb02eaa3d0020315b0a60c5cdef8be5e38aa4a8
+	parent = 2aeadc36e7e3efa3a6a2f8d4a7f3ad2c3d1aed16
+	cmdver = 0.1.0

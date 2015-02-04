@@ -1,0 +1,11 @@
+{
+    "name"        : "Test::Builder",
+    "version"     : "0.0.1",
+    "description" : "Flexible framework for building TAP test libraries",
+    "author"      : "Kevin Polulak",
+    "authority"   : "soh-cah-toa",
+    "depends"     : [],
+    "source-type" : "git",
+    "source-url"  : "git://github.com/soh-cah-toa/p6-test-builder.git"
+}
+
