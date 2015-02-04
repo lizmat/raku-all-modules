@@ -1,0 +1,11 @@
+{
+    "name": "Algorithm::LCS",
+    "version": "0.1.0",
+    "description": "Implementation of the longest common subsequence algorithm",
+    "author": "Rob Hoelz",
+    "depends": [],
+    "provides" : {
+        "Algorithm::LCS" : "lib/Algorithm/LCS.pm"
+    },
+    "source-url": "git://github.com/hoelzro/p6-algorithm-lcs.git"
+}
