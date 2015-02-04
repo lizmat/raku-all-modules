@@ -1,0 +1,13 @@
+*.pir
+*.lib
+*.dll
+*.so
+*.o
+*.obj
+*.exp
+*.pdb
+*.bundle
+Makefile
+blib/
+*~
+.*.swp

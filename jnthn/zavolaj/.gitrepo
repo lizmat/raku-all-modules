@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jnthn/zavolaj.git
+	branch = master
+	commit = 27d9263e2c2b8222a6918ebecc93c5173e6bdb18
+	parent = 18903198336951a8365a652827e5c94031805044
+	cmdver = 0.1.0

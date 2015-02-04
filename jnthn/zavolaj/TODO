@@ -1,0 +1,5 @@
+Here's some of the things that remaing to be done
+* Awesome Documentation
+* Properly support sized types in structs
+* Properly support sized types in arrays
+* Support callbacks
