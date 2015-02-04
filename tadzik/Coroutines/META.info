@@ -1,0 +1,7 @@
+{
+    "name"        : "Coroutines",
+    "version"     : "*",
+    "description" : "The only fake threads in Perl 6",
+    "depends"     : [],
+    "source-url"  : "git://github.com/tadzik/Coroutines.git"
+}
