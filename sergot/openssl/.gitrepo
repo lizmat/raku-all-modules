@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/sergot/openssl.git
+	branch = master
+	commit = 458b7905a4daf2d0cc0812d995818b76c8b8ac99
+	parent = 03ffe0d69da82ae5e9fe6f9037818d4ca0a5b296
+	cmdver = 0.1.0
