@@ -1,0 +1,122 @@
+=begin pod
+
+=TITLE Pod::Walker
+
+=SYNOPSIS Walks a Pod tree, calling various converter functions on them.
+
+=head1 C<Walker::Callees>
+
+This is the class that holds all the functions that get called back during the
+walk.
+
+To turn on debugging information, pass the C<:debug> flag to the
+constructor. Alternately, you can toggle debugging via C<.debug-ON> and
+C<.debug-OFF>.
+
+For each of the following functions, you can either set them through the
+C<:func> adverb in the constructor, or at any time with the C<set-func>
+method. Calling these functions, if necessary, is with the C<func> method.
+
+    Walker::Callees(:para(&foo)); # call &foo on Pod::Block::Para
+    $wc.set-para(&foo);           # same
+
+All callbacks are set to a default function that simply passes through the first
+argument (itemized, even if the first argument is not an array). It is
+recommended to set a function on every possible callee, even those you wish to
+ignore.
+
+You should generally return one, scalar string as a result of these functions,
+though as long as you've set up your functions to handle other types of return
+values, it should still work.
+
+The signature definitions given below must be adhered to, as you might expect
+C<:)>.
+
+=head2 C<para>
+
+    para-func(@text) { ... }
+
+Turn the result of lower nodes (in C<@text>) into a paragraph.
+
+=head2 C<named>
+
+    named-func(@text, $name) { ... }
+
+Turn the result of lower nodes (in C<@text>) into a section of the document,
+based on the C<$name> of this named block.
+
+=head2 C<comment>
+
+    comment-func(@text) { ... }
+
+Converts the contents of a comment block (in C<@text>). Unless you're
+implementing some sort of debugging function or other mechanism requiring the
+display of comments, this is probably all that you need:
+
+    sub empty-func(|) { }
+
+=head2 C<code>
+
+    code-func(@text) { ... }
+
+Converts the contents of a code block (in C<@text>).
+
+=head2 C<declarator>
+
+    declarator-func(@text, $WHEREFORE) { ... }
+
+Converts the contents of a declarator block (in @text), with the snippet of code
+it was attached to (C<$WHEREFORE>).
+
+=head2 C<table>
+
+    table-func(@text, @headers, $caption) { ... }
+
+Converts a table. Cells are in C<@text>, headers (if any) are in C<@headers>,
+and a table caption (if any) is in C<$caption>.
+
+=head2 C<fcode>
+
+    fcode-func(@text, $type, @meta) { ... }
+
+Formats some C<@text> based on the C<$type> of formatting code. Relevant
+metadata is in C<@meta>.
+
+=head2 C<heading>
+
+    heading-func(@text, $level) { ... }
+
+Converts a heading (whose contents are in C<@text>) at a particular C<$level>.
+
+=head2 C<item>
+
+    item-func(@text, $level) { ... }
+
+Converts an item (whose contents are in C<@text>) at a particluar C<$level>.
+
+=head2 C<config>
+
+    config-func($type, %config) { ... }
+
+Handles configuration information of a particular C<$type> and with a particular
+C<%config>. As with the comment block, you may want to set this callback to an
+empty function, unless you need to output the configuration information given.
+
+=head2 C<plain>
+
+    plain-func($string) { ... }
+
+Converts plain text (for example, escaping certain characters for HTML
+output). All literal text in a Pod tree will pass through this at some point.
+
+=head1 C<pod-walk> — The Pod Tree Walker
+
+    pod-walk(Walker::Callees $wc, Pod::Block $top)
+
+Uses the given C<Walker::Callees> class while processing everything at and below
+the given C<Pod::Block>. C<$top> is the topmost node of your Pod tree.
+
+Yes, this means you can't use a C<Pod::Config> as a topmost node; it's not clear
+when this would be needed anyway.
+
+=end pod

@@ -1,0 +1,12 @@
+{
+    "name" : "Pod::Walker",
+    "version" : "0.1.0",
+    "description" : "Makes constructing converted Pod docs easier.",
+    "author" : "lue",
+    "depends" : [ ],
+    "source-type" : "git",
+    "source-url" : "git://github.com/lue/pod-walker.git",
+    "provides" : {
+        "Pod::Walker" : "lib/Pod/Walker.pm6"
+    }
+}

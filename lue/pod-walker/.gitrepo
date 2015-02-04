@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/lue/pod-walker.git
+	branch = master
+	commit = 0c20315a15d1876ff34d545b447bddec06766af4
+	parent = 7dcf9075a2db55ba42eaffd8a2ac5f8398dc6dc8
+	cmdver = 0.1.0
