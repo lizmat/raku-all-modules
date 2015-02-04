@@ -1,0 +1,12 @@
+{
+    "name" : "File::Temp",
+    "perl" : "v6.0.0",
+    "version" : "0.01",
+    "description" : "Create temporary files",
+    "depends" : [ ],
+    "provides" : [ "File::Temp" ],
+    "repo-type" : "git",
+    "source-url" : "git://github.com/perlpilot/p6-File-Temp.git",
+    "author" : "Jonathan Scott Duff"
+}
+
