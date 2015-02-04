@@ -1,0 +1,70 @@
+=head1 NAME
+
+Perl 6 interface to the IUP toolkit for building GUI's.
+
+=head1 DESCRIPTION
+
+Perl 6 interface to the IUP toolkit. IUP is a multi-platform toolkit for
+building graphical user interfaces. IUP's purpose is to allow a program
+source code to be compiled in different systems without any modification.
+Its main advantages are:
+
+* it offers a simple API.
+* high performance, due to the fact that it uses native interface elements.
+* fast learning by the user, due to the simplicity of its API.
+
+You will need the Linux libraries `libiup` and `libiupimglib` installed
+in order to use perl6-IUP (version 3).
+You can download the library binaries or sources for your platform from here
+L<http://sourceforge.net/projects/iup/files/3.7/>.
+
+=head1 SYNOPSIS
+
+	use IUP;
+
+	my $iup = IUP.new();
+
+	my @argv = ("Test");
+	$iup.open(@argv);
+
+	$iup.dialog($iup.label("Hello, world!")).show();
+
+	$iup.main_loop();
+	$iup.close();
+
+	exit();
+
+=head1 API REFRENCE
+
+The perl6 API
+
+=head1 AUTHOR
+
+Henrique Dias - L<mrhdias@mail.com>
+
+=head1 SEE ALSO
+
+=over 4
+
+=item *
+
+IUP - Portable User Interface L<http://www.tecgraf.puc-rio.br/iup/>
+
+=item *
+
+IUP Source Repository L<http://iup.cvs.sourceforge.net/viewvc/iup/iup/>
+
+=item *
+
+C examples from IUP source repository L<http://iup.cvs.sourceforge.net/viewvc/iup/iup/test/>
+
+=item *
+
+IUP Downloads L<http://sourceforge.net/projects/iup/files/3.7/>
+
+=back
+
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.

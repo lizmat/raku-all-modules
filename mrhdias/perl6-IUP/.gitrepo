@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/mrhdias/perl6-IUP.git
+	branch = master
+	commit = d92d710b9c6a94cb571688728caaba8d6967910f
+	parent = 791ac908ed5955ebd68d2e6133b746e008577693
+	cmdver = 0.1.0
