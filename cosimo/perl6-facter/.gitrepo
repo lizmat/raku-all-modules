@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/cosimo/perl6-facter.git
+	branch = master
+	commit = 974c2d933014788aa78ed85d707329e6610be140
+	parent = 58a1128275343a3de65d4fcf587767621f68b331
+	cmdver = 0.1.0
