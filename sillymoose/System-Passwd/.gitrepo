@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/sillymoose/System-Passwd.git
+	branch = master
+	commit = 6fee282844c7e5aa0e7fe3a71bea01afc1c4c85a
+	parent = d615fed66786a372e05881eadf8136a6515beca8
+	cmdver = 0.1.0
