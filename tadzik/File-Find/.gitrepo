@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tadzik/File-Find.git
+	branch = master
+	commit = 283045fc2f42a6302d8491b5ba1a580e896df02a
+	parent = d723437fd7b11cc10fb11b076effecca56f6c016
+	cmdver = 0.1.0
