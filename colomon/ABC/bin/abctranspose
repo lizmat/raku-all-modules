@@ -1,0 +1,63 @@
+#!/usr/bin/env perl6
+
+use v6;
+use ABC::Header;
+use ABC::Tune;
+use ABC::Grammar;
+use ABC::Actions;
+use ABC::Duration; #OK
+use ABC::Note;
+use ABC::LongRest;
+use ABC::Utils;
+use ABC::KeyInfo;
+
+sub print-header($out, $header) {
+    for $header.lines -> $header-line {
+        say $header-line.key ~ ":" ~ $header-line.value;
+    }
+}
+
+sub print-music($out, @music, &shifter) {
+    for @music -> $element {
+        given $element.key {
+            when 'endline' { say ""; }
+            when 'inline_field' { print "[{$element.value.key}:{$element.value.value}]"; }
+            print $element.value ~~ ABC::Pitched ?? ~$element.value.transpose(&shifter) !! $element.value;
+        }
+    }
+}
+
+sub Transpose($in, $out, $new-key-name, %old-key, %new-key, %shift, $shift) {
+    sub transpose($accidental, $basenote, $octave) {
+        my $ordinal = pitch-to-ordinal(%old-key, $accidental, $basenote, $octave);
+        ordinal-to-pitch(%new-key, %shift{$basenote.uc}, $ordinal + $shift);
+    }
+
+    my $actions = ABC::Actions.new;
+
+    my $match = ABC::Grammar.parse($in.slurp-rest, :rule<tune_file>, :$actions);
+    die "Did not match ABC grammar: last tune understood:\n { $actions.current-tune }" unless $match;
+
+    for @( $match.ast ) -> $tune {
+        $*ERR.say: "Working on { $tune.header.get-first-value("T") // $tune.header.get-first-value("X") }";
+        $tune.header.set-key($new-key-name);
+        print-header($out, $tune.header);
+        print-music($out, $tune.music, &transpose);
+    }
+}
+
+multi sub MAIN() {
+    Transpose($*IN, $*OUT, "D", {}, {"F" => "^", "C" => "^"}, ("A".."G" Z=> "B".."G", "A").hash, +2);
+}
+
+multi sub MAIN($original-key-name, $new-key-name, Int $shift) {
+    my @notes = "A".."G";
+    my $original-key = ABC::KeyInfo.new($original-key-name);
+    my $new-key = ABC::KeyInfo.new($new-key-name);
+    Transpose($*IN, $*OUT, $new-key-name, $original-key.key, $new-key.key, 
+              ($original-key.scale-names Z=> $new-key.scale-names).hash, $shift);
+}
+
+multi sub MAIN(Int $shift) {
+    Transpose($*IN, $*OUT, $shift);
+}

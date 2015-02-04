@@ -1,0 +1,137 @@
+#!/usr/bin/env perl6
+
+use v6;
+use ABC::Header;
+use ABC::Tune;
+use ABC::Grammar;
+use ABC::Actions;
+use ABC::Duration; #OK
+use ABC::Note;
+use ABC::LongRest;
+use ABC::Utils;
+use ABC::KeyInfo;
+
+my %note-to-pitch = (
+    "C" => 60,
+    "D" => 62,
+    "E" => 64,
+    "F" => 65,
+    "G" => 67,
+    "A" => 69,
+    "B" => 71,
+    "c" => 72,
+    "d" => 74,
+    "e" => 76,
+    "f" => 77,
+    "g" => 79,
+    "a" => 81,
+    "b" => 83
+);
+
+my %pitch-to-fingering = (
+    60 => (1,1,1,1,1,1), # hack, please remove before real use!!!!!
+    61 => (1,1,1,1,1,1), # hack, please remove before real use!!!!!
+    62 => (1,1,1,1,1,1),
+    63 => (1,1,1,1,1,2),
+    64 => (1,1,1,1,1,0),
+    65 => (1,1,1,1,2,0),
+    66 => (1,1,1,1,0,0),
+    67 => (1,1,1,0,0,0),
+    68 => (1,1,2,0,0,0),
+    69 => (1,1,0,0,0,0),
+    70 => (1,2,0,0,0,0),
+    71 => (1,0,0,0,0,0),
+    72 => (0,1,1,0,0,0),
+    73 => (0,0,0,0,0,0),
+    74 => (0,1,1,1,1,1),
+    75 => (1,1,1,1,1,2),
+    76 => (1,1,1,1,1,0),
+    77 => (1,1,1,1,2,0),
+    78 => (1,1,1,1,0,0),
+    79 => (1,1,1,0,0,0),
+    80 => (1,1,2,0,0,0),
+    81 => (1,1,0,0,0,0),
+    82 => (1,2,0,0,0,0),
+    83 => (1,0,0,0,0,0),
+    84 => (2,0,0,0,0,0),
+    85 => (0,0,0,0,0,0),
+);
+
+sub get-pitch-number(ABC::Note $abc-pitch) {
+    my $pitch-number = %note-to-pitch{$abc-pitch.basenote};
+    
+    given $abc-pitch.accidental {
+        when "^^" { $pitch-number += 2 }
+        when "^"  { $pitch-number += 1 }
+        when "_"  { $pitch-number -= 1 }
+        when "__" { $pitch-number -= 2 }
+    }
+    
+    my $octave = 0;
+    given $abc-pitch.octave {
+        when !*.defined { } # skip if no additional octave info
+        when /\,/ { $octave -= $abc-pitch.octave.chars }
+        when /\'/ { $octave += $abc-pitch.octave.chars }
+    }
+    
+    $pitch-number + $octave * 12;
+}
+
+sub ConvertStemPitch($stem, $out) {
+    my $pitch = get-pitch-number($stem);
+    $out.say: $pitch ~ "," ~ $stem.ticks ~ "," ~ %pitch-to-fingering{$pitch}.join(",");
+}
+
+# class TuneConvertor {
+#     has $.context;
+# 
+#     method new($key, $meter, $length) {
+#         self.bless(:context(Context.new($key, $meter, $length)));
+#     }
+# 
+# 
+#     method Convert(@elements, $out) {
+#         for @elements -> $element {
+#             given $element.key {
+#                 when "stem" {
+#                     given $element.value {
+#                         when ABC::Note {
+#                             $.context.ConvertStemPitch($element.value, $out);
+#                         }
+#                         die "Cannot handle stem type { $element.value.WHAT }";
+#                     }
+#                 }
+#             }
+#         
+#         }
+#     }
+# }
+
+sub TuneStreamToCSV($in, $out) {
+    my $actions = ABC::Actions.new;
+    my $match = ABC::Grammar.parse($in.slurp, :rule<tune_file>, :$actions);
+    die "Did not match ABC grammar: last tune understood:\n { $actions.current-tune }" unless $match;
+
+    for @( $match.ast ) -> $tune {
+        $*ERR.say: "Working on { $tune.header.get-first-value("T") // $tune.header.get-first-value("X") }";
+        
+        $out.say: "pitch,duration,T1,T2,T3,B1,B2,B3";
+        my @notes := stream-of-notes($tune);
+        for @notes -> $note {
+            given $note {
+                when ABC::Note { ConvertStemPitch($note, $out); }
+            }
+            say ~$note;
+        }
+    }
+}
+
+multi sub MAIN($input-abc-file, $output-csv-file) {
+    my $in = open $input-abc-file, :r or die "Unable to open $input-abc-file";
+    my $out = open $output-csv-file, :w or die "Unable to open $output-csv-file";
+    
+    TuneStreamToCSV($in, $out);
+
+    $out.close;
+    $in.close;
+}
