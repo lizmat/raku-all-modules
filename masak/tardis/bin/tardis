@@ -1,0 +1,81 @@
+#! /usr/bin/env perl6
+use v6;
+use Tardis;
+use Yapsi;
+
+my $program;
+if @*ARGS == 2 && @*ARGS[0] eq '-e' {
+    $program = @*ARGS[1];
+}
+elsif @*ARGS == 1 {
+    $program = slurp @*ARGS[0];
+}
+else {
+    die "Usage: `$*PROGRAM_NAME <file>` or `$*PROGRAM_NAME -e '<program>'`";
+}
+
+my Yapsi::Compiler $c .= new;
+my Tardis::Debugger $d .= new;
+
+try {
+    say "# Compiling...";
+    my @sic = $c.compile($program);
+    warn $_ for $c.warnings;
+
+    say "# Running...";
+    $d.run(@sic);
+}
+say $! if $!;
+
+my @ticks = $d.ticks;
+unless @ticks {
+    say "No ticks registered. Quitting.";
+    exit;
+}
+
+my $current-tick = 0;
+say "# Finished. Ticks: 0..", @ticks.end;
+
+while defined(my $cmd = prompt '> ') {
+    given $cmd {
+        when /^ \s* $/       { }
+        when 'look'          { look() }
+        when 'step'          { step() } 
+        when 'n'             { step() }
+        when /^go\s+(\d+)$/  { go(+$0) }
+        when 'quit'          { quit() }
+        when 'q'             { quit() }
+
+        default              { say  "Sorry, unrecognized command." }
+    }
+}
+
+# this just dresses up @ticks[$current-tick] and prints to STDOUT
+sub look() {
+    my $tick = @ticks[$current-tick];
+
+    say $tick.fmt("%s = %s", "\n");
+}
+
+sub step() {
+    if $current-tick == @ticks.end {
+        say 'Can not go beyond last tick.';
+        return;
+    }
+    ++$current-tick;
+    look();
+}
+
+# RAKUDO: Should really be typed 'Int'.
+multi sub go(Num $tick where { $tick > @ticks.end }) {
+    say 'Can not go beyond last tick.';
+}
+multi sub go(Num $tick) {
+    $current-tick = $tick;
+    look();
+}
+
+sub quit() {
+    exit;
+}
+
