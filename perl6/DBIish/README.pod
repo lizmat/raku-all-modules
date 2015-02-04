@@ -1,0 +1,163 @@
+=head1 NAME
+
+DBIish - a simple database interface for Rakudo Perl 6
+
+=head1 SYNOPSIS
+
+    use v6;
+    use DBIish;
+
+    my $dbh = DBIish.connect("SQLite", :database<example-db.sqlite3>, :RaiseError);
+
+    my $sth = $dbh.do(q:to/STATEMENT/);
+        DROP TABLE nom
+        STATEMENT
+
+    $sth = $dbh.do(q:to/STATEMENT/);
+        CREATE TABLE nom (
+            name        varchar(4),
+            description varchar(30),
+            quantity    int,
+            price       numeric(5,2)
+        )
+        STATEMENT
+
+    $sth = $dbh.do(q:to/STATEMENT/);
+        INSERT INTO nom (name, description, quantity, price)
+        VALUES ( 'BUBH', 'Hot beef burrito', 1, 4.95 )
+        STATEMENT
+
+    $sth = $dbh.prepare(q:to/STATEMENT/);
+        INSERT INTO nom (name, description, quantity, price)
+        VALUES ( ?, ?, ?, ? )
+        STATEMENT
+
+    $sth.execute('TAFM', 'Mild fish taco', 1, 4.85);
+    $sth.execute('BEOM', 'Medium size orange juice', 2, 1.20);
+
+    $sth = $dbh.prepare(q:to/STATEMENT/);
+        SELECT name, description, quantity, price, quantity*price AS amount
+        FROM nom
+        STATEMENT
+
+    $sth.execute();
+
+    my $arrayref = $sth.fetchall_arrayref();
+    say $arrayref.elems; # 3
+
+    $sth.finish;
+
+    $dbh.disconnect;
+
+=head1 DESCRIPTION
+
+The DBIish project provides a simple database interface for Perl 6.
+
+It's not a port of the Perl 5 DBI and does not intend to become one.
+It is, however, a simple and useful database interface for Perl 6 that works
+now. It looks like a DBI, and it talks like a DBI (although it only offers
+a subset of the functionality).
+
+It is based on Martin Berends' MiniDBI project, but unlike MiniDBI, DBDish
+aims to provide an interface that takes advantage of Perl 6 idioms
+
+=head1 INSTALLATION
+
+    $ panda install DBIish
+
+=head1 DBDish CLASSES
+
+Until there is a benefit in doing it otherwise, the DBDish drivers stay
+and install together with the main DBIish.pm6 in a single project. 
+
+Currently the following backends are supported
+
+=head2 Pg (Postgresql)
+
+Supports basic CRUD operations and prepared statements with placeholders
+
+    my $dbh = DBIish.connect('Pg', :host<db01.yourdomain.com>, :port(5432),
+            :database<blerg>, :user<myuser>, :$password);
+
+=head2 SQLite
+
+Supports basic CRUD operations and prepared statements with placeholders
+
+    my $dbh = DBIish.connect('SQLite', :database<thefile.sqlite3>);
+
+=head2 mysql
+
+Supports basic CRUD operations. Emulates prepared statements by escaping
+and interpolating strings.
+
+    my $dbh = DBIish.connect('mysql', :host<db02.yourdomain.com>, :port(3306),
+            :database<blerg>, :user<myuser>, :$password);
+
+=head1 TESTING
+
+The initial test script is merely a concatenation of all the scripts in
+the Perl 5 DBD::mysql test suite, translated to Perl 6.  It's not
+efficient but indispensable to assess coverage of the existing DBI
+feature set.  Only about 15% of the suite has been converted so far,
+with 86 tests passing, 0 todo and 0 skipped.
+
+The test suite will change to eliminate the current slowness and
+redundancy.  It will contain general tests as well as tests for
+particular databases.  The aim is to make the suite demonstrate portable
+and non portable operations.
+
+=head1 ROADMAP
+
+Add some more drivers. Improve robustness of all drivers. Improve the test suite.  Attract more contributors.
+
+Integrate with the DBDI project (L<http://github.com/timbunce/DBDI>)
+once it has sufficient functionality.
+
+
+=head1 SEE ALSO
+
+The Perl 6 Pod in the L<doc:DBIish> module.
+The Perl 5 L<doc:DBI> and L<doc:DBI::DBD>.
+
+This README and the documention of the DBIish and the DBDish modules
+are in the Pod6 format. It can be extracted by running
+
+    perl6 --doc <filename>
+
+Or, if L<Pod::To::HTML> is installed,
+
+    perl6 --doc=html <filename>
+
+=head1 COPYRIGHT
+
+Written by Moritz Lenz, based on the MiniDBI code by Martin Berends.
+
+See the F<CREDITS> file for a list of all contributors.
+
+=head1 LICENSE
+
+Copyright (C) 2009-2012, the DBIish contributors
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
+
+ * Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
+WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
