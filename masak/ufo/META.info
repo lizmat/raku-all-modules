@@ -1,0 +1,7 @@
+{
+    "name"        : "ufo",
+    "version"     : "*",
+    "description" : "Swoops down and creates your Perl 6 project Makefile for you",
+    "depends"     : [ ],
+    "source-url"  : "git://github.com/masak/ufo.git"
+}
