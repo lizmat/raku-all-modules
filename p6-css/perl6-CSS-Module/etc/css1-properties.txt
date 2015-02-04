@@ -1,0 +1,66 @@
+# source: http://www.w3.org/TR/2008/REC-CSS1-20080411/
+# edited for css21, css3 forwared compatibility
+'font-family'	[ <family-name> | <generic-family> ]#	UA specific	all elements	yes	N/A	5.2.2
+'font-style'	normal | italic | oblique	normal	all elements	yes	N/A	5.2.3
+'font-variant'	normal | small-caps	normal	all elements	yes	N/A	5.2.4
+'font-weight'	normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900	normal	all elements	yes	N/A	5.2.5
+'font-size'	<absolute-size> | <relative-size> | <length> | <percentage>	medium	all elements	yes	relative to parent element's font size	5.2.6
+'font'	[ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]? 'font-family'	not defined for shorthand properties	all elements	yes	allowed on <font-size> and <line-height>	5.2.7
+'color'	<color>	UA specific	all elements	yes	N/A	5.3.1
+'background-color'	<color> | transparent	transparent	all elements	no	N/A	5.3.2
+'background-image'	<uri> | none	none	all elements	no	N/A	5.3.3
+'background-repeat'	repeat | repeat-x | repeat-y | no-repeat	repeat	all elements	no	N/A	5.3.4
+'background-attachment'	scroll | fixed	scroll	all elements	no	N/A	5.3.5
+'background-position'	[<percentage> | <length>]{1,2} | [top | center | bottom] || [left | center | right]	0% 0%	block-level and replaced elements	no	refer to the size of the element itself	5.3.6
+'background'	'background-color' || 'background-image' || 'background-repeat' || 'background-attachment' || 'background-position'	not defined for shorthand properties	all elements	no	allowed on <background-position>	5.3.7
+'word-spacing'	normal | <length>	normal	all elements	yes	N/A	5.4.1
+'letter-spacing'	normal | <length>	normal	all elements	yes	N/A	5.4.2
+'text-decoration'	none | [ underline || overline || line-through || blink ]	none	all elements	no **	N/A	5.4.3
+'vertical-align'	baseline | sub | super | top | text-top | middle | bottom | text-bottom | <percentage>	baseline	inline elements	no	refer to the 'line-height' of the element itself	5.4.4
+'text-transform'	capitalize | uppercase | lowercase | none	none	all elements	yes	N/A	5.4.5
+'text-align'	left | right | center | justify	UA specific	block-level elements	yes	N/A	5.4.6
+'text-indent'	<length> | <percentage>	0	block-level elements	yes	refer to parent element's width	5.4.7
+'line-height'	normal | <number> | <length> | <percentage>	normal	all elements	yes	relative to the font size of the element itself	5.4.8
+'margin-top'	<length> | <percentage> | auto	0	all elements	no	refer to parent element's width	5.5.1
+'margin-right'	<length> | <percentage> | auto	0	all elements	no	refer to parent element's width	5.5.2
+'margin-bottom'	<length> | <percentage> | auto	0	all elements	no	refer to parent element's width	5.5.3
+'margin-left'	<length> | <percentage> | auto	0	all elements	no	refer to parent element's width	5.5.4
+'margin'	[ <length> | <percentage> | auto ]{1,4}	not defined for shorthand properties	all elements	no	refer to parent element's width	5.5.5
+'padding-top'	<length> | <percentage>	0	all elements	no	refer to parent element's width	5.5.6
+'padding-right'	<length> | <percentage>	0	all elements	no	refer to parent element's width	5.5.7
+'padding-bottom'	<length> | <percentage>	0	all elements	no	refer to parent element's width	5.5.8
+'padding-left'	<length> | <percentage>	0	all elements	no	refer to parent element's width	5.5.9
+'padding'	[ <length> | <percentage> ]{1,4}	0	all elements	no	refer to parent element's width	5.5.10
+'border-top-width'	thin | medium | thick | <length>	'medium'	all elements	no	N/A	5.5.11
+'border-right-width'	thin | medium | thick | <length>	'medium'	all elements	no	N/A	5.5.12
+'border-bottom-width'	thin | medium | thick | <length>	'medium'	all elements	no	N/A	5.5.13
+'border-left-width'	thin | medium | thick | <length>	'medium'	all elements	no	N/A	5.5.14
+'border-width'	[thin | medium | thick | <length>]{1,4}	not defined for shorthand properties	all elements	no	N/A	5.5.15
+'border-color'	<color>{1,4}	the value of the 'color' property	all elements	no	N/A	5.5.16
+'border-style'	[ none | dotted | dashed | solid | double | groove | ridge | inset | outset ]{1,4}	none	all elements	no	N/A	5.5.17
+'border-top'	'border-top-width' || 'border-style' || <color>	not defined for shorthand properties	all elements	no	N/A	5.5.18
+'border-right'	'border-right-width' || 'border-style' || <color>	not defined for shorthand properties	all elements	no	N/A	5.5.19
+'border-bottom'	'border-bottom-width' || 'border-style' || <color>	not defined for shorthand properties	all elements	no	N/A	5.5.20
+'border-left'	'border-left-width' || 'border-style' || <color>	not defined for shorthand properties	all elements	no	N/A	5.5.21
+'border'	'border-width' || 'border-style' || 'border-color'	not defined for shorthand properties	all elements	no	N/A	5.5.22
+'float'	left | right | none	none	all elements	no	N/A	5.5.25
+'clear'	none | left | right | both	none	all elements	no	N/A	5.5.26
+'display'	block | inline | list-item | none	block	all elements	no	N/A	5.6.1
+'white-space'	normal | pre | nowrap	normal	block-level elements	yes	N/A	5.6.2
+'list-style-type'	disc | circle | square | decimal | lower-roman | upper-roman | lower-alpha | upper-alpha | none	disc	elements with 'display' value 'list-item'	yes	N/A	5.6.3
+'list-style-image'	<uri> | none	none	elements with 'display' value 'list-item'	yes	N/A	5.6.4
+'list-style-position'	inside | outside	outside	elements with 'display' value 'list-item'	yes	N/A	5.6.5
+'list-style'	'list-style-type' || 'list-style-image' || 'list-style-position'	not defined for shorthand properties	elements with 'display' value 'list-item'	yes	N/A	5.6.6
+'position'	absolute | relative | static	static	all elements	no	N/A	WD-positioning
+'left'	<length> | <percentage> | auto	auto	elements with the 'position' property of type 'absolute' or 'relative'	no	refer to parent element's width. If parent's height is set to 'auto', percentage is undefined.	WD-positioning
+'top'	<length> | <percentage> | auto	auto	elements with the 'position' property of type 'absolute' or 'relative'	no	refer to parent element's height. If parent's height is set to 'auto', percentage is undefined.	WD-positioning
+'width' *	<length> | <percentage> | auto	auto	block-level and replaced elements, elements with 'position' property of type 'absolute'	no	refer to parent element's width.	WD-positioning
+'height' *	<length> | <percentage> | auto	auto	block-level and replaced elements, elements with 'position' property of type 'absolute'	no	refer to parent element's height. If parent's height is 'auto', percentage of height is undefined.	WD-positioning
+##clip	<shape> | auto	auto	elements with the 'position' property of type 'absolute'	no	N/A	WD-positioning
+'overflow'	none | clip | scroll	none	elements with the 'position' property of type 'absolute' or 'relative'	no	N/A	WD-positioning
+'z-index'	auto | <integer>	auto	elements with the 'position' property of type 'absolute' or 'relative'	no	N/A	WD-positioning
+'visibility'	inherit | visible | hidden	inherit	all elements	if value is 'inherit'	N/A	WD-positioning
+'page-break-before'	auto | allways | left | right	auto	block-level elements outside of tables	no	N/A	WD-print
+'page-break-after'	auto | allways | left | right	auto	block-level elements outside of tables	no	N/A	WD-print
+'size'	<length>{1,2} | auto | portrait | landscape	auto	page context	N/A	N/A	WD-print
+'marks'	crop || cross | none	none	page context	N/A	N/A	WD-print
