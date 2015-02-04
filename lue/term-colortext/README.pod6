@@ -1,0 +1,69 @@
+=comment Pod6, not POD
+
+=begin pod
+
+=TITLE Term::ColorText
+
+=AUTHOR Matthew N. (lue)
+
+Lets you print various colorful things.
+
+=head1 Commands
+
+All commands read arguments into a slurpy array. It is possible to use them as
+you would C<say> or C<print>, though they won't do the printing for you (they
+merely return a string.)
+
+Functions can be nested, so for example to print a value inside an info string,
+you could do
+
+    say INFO("There are ", VAL($kittens), " kittens.");
+
+=defn C<HEADER>
+Meant for marking major sections of output. Black-on-white text.
+
+=defn C<DOING>
+Text that indicates what the program is currently doing. Yellow text.
+
+=defn C<DONE>
+Text that indicates what the program has done. This will wipe out the entire
+current line of output before displaying when printed. Meant to be use in
+conjuction with a C<print>ed C<DOING> string. Green text.
+
+=defn C<CHK>
+Prints text that may come directly after a C<DOING> statement. Defaults to "✔"
+if nothing. Green text.
+
+=defn C<INFO>
+Meant to present information not pertaining to the current progress of the
+program. Cyan text.
+
+=defn C<VAL>
+Makes values stand out, works well within C<INFO> commands. Bold magenta text.
+
+=defn C<TODO>
+Notifies the user that some functionality is not implemented. Text is red on
+white, with a white-on-red "XXX" prefixed.
+
+=defn C<DEBUG>
+Prints statements for debugging purposes. Uses the C<say> command internally, so
+B<don't use any printing function with this; it will be printed for you.> Only
+does anything if the C<$*YES_DEBUG> variable is set to a true value. Bold white
+on yellow text.
+
+=defn C<FRAC>
+Takes two arguments only, a numerator and a denominator (e.g. C<FRAC(3, 4)>),
+and colorizes it based on the value of the numerator. Fraction slash is default
+color, denominator is green.
+
+The specific color of the numerator depends on a few conditions:
+
+=item Bold blue if greater than the denominator; or else
+=item Green if equal to the denominator; or else
+=item Red if zero; or else
+=item Yellow if less than the denominator; or else
+=item bold white on red (along with the rest of the fraction; this means an error)
+
+=COPYRIGHT Copyright © lue 2014, under the Artistic License 2.0.
+
+=end pod

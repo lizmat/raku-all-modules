@@ -1,0 +1,12 @@
+{
+    "name" : "Term::ColorText",
+    "version" : "0.1.0",
+    "description" : "Prints colorful text to your screen",
+    "author" : "lue",
+    "depends" : [ "Term::ANSIColor" ],
+    "source-type" : "git",
+    "source-url" : "git://github.com/lue/term-colortext.git",
+    "provides" : {
+        "Term::ColorText" : "lib/Term/ColorText.pm6"
+    }
+}
