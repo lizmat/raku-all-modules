@@ -1,0 +1,18 @@
+#! perl6
+
+use TAP::Harness;
+
+my $path-sep = $*DISTRO.path-sep;
+
+sub MAIN(Bool :l($lib), Bool :b($blib), Bool :$timer, Int :j($jobs) = 1, *@files) {
+	die "No files given to run" if not @files;
+
+	my @extra = (%*ENV<PERL6LIB> // '').split($path-sep);
+	@extra.unshift($*CWD ~ '/lib') if $lib;
+	@extra.unshift($*CWD ~ '/blib/lib') if $blib;
+	%*ENV<PERL6LIB> = @extra.join($path-sep) if @extra;
+
+	my $harness = TAP::Harness.new(:sources(@files)).run(:$jobs, :$timer);
+	my $int = signal(SIGINT).tap(-> { $harness.kill("Interrupted"); $int.close(); });
+	return min($harness.result.failed, 254);
+}

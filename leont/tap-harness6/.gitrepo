@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/leont/tap-harness6.git
+	branch = master
+	commit = 89f5f78c85a247ce9007b87569ae938ca0b528c5
+	parent = 5e40082af8ab4c85e7a2ac1d7f3a24716bc0eb69
+	cmdver = 0.1.0
