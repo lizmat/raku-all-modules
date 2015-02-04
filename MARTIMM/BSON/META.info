@@ -1,0 +1,12 @@
+{
+    "author": "Pawel Pabian (2011-2015), Marcel Timmerman (2015-present)",
+    "depends": [],
+    "description": "BSON encoding/decoding, used in MongoDB drivers",
+    "name": "BSON",
+    "provides": {
+        "BSON": "lib/BSON.pm",
+        "BSON::ObjectId": "lib/BSON/ObjectId.pm"
+    },
+    "source-url": "git://github.com/MARTIMM/BSON.git",
+    "version": "0.5.1"
+}
