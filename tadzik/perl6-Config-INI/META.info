@@ -1,0 +1,7 @@
+{
+    "name"        : "Config::INI",
+    "version"     : "*",
+    "description" : ".ini file parser and writer module for Perl 6",
+    "depends"     : [],
+    "source-url"  : "git://github.com/tadzik/perl6-Config-INI.git"
+}
