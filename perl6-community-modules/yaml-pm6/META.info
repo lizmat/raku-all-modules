@@ -1,0 +1,12 @@
+{
+    "name"        : "YAML",
+    "version"     : "*",
+    "author"      : "Ingy döt Net <ingy@cpan.org>",
+    "description" : "YAML Ain’t Markup Language",
+    "depends"     : [ "TestML" ],
+    "provides"    : {
+        "YAML"         : "lib/YAML.pm",
+        "YAML::Dumper" : "lib/YAML/Dumper.pm"
+    },
+    "source-url"  : "git://github.com/perl6-community-modules/yaml-pm6.git"
+}
