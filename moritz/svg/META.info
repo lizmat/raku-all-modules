@@ -1,0 +1,7 @@
+{
+    "name"        : "SVG",
+    "version"     : "*",
+    "description" : "A Perl 6 module to generate SVG (Scalable Vector Graphics)",
+    "depends"     : [ "XML::Writer" ],
+    "source-url"  : "git://github.com/moritz/svg.git"
+}

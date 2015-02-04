@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/moritz/svg.git
+	branch = master
+	commit = fb3dcff25535c922cea5b74c1d3bb03f15aa0eb8
+	parent = 44195a0504a17f86e9c0898ac674233d2caebbd4
+	cmdver = 0.1.0
