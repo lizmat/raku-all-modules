@@ -1,0 +1,7 @@
+{
+    "name"        : "GGE",
+    "version"     : "*",
+    "description" : "Glacial Grammar Engine -- a Perl 6 grammar engine written in Perl 6",
+    "depends"     : [ ],
+    "source-url"  : "git://github.com/masak/gge.git"
+}
