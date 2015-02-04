@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/thundergnat/Sort-Naturally.git
+	branch = master
+	commit = 31ac0526da73dc45a73f3beabad44a641299d25d
+	parent = c1c5ad2df1d3679128800cf76dac5dc79730dbad
+	cmdver = 0.1.0
