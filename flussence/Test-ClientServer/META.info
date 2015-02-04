@@ -1,0 +1,8 @@
+{
+    "name"          : "Test::ClientServer",
+    "version"       : "2.0.0-pre.4",
+    "author"        : "github:flussence",
+    "description"   : "Multithreading wrapper for testing network server/client code",
+    "depends"       : [],
+    "source-url"    : "git://github.com/flussence/Test-ClientServer.git"
+}
