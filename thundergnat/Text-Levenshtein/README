@@ -1,0 +1,46 @@
+=begin pod
+
+This is a direct port of the Perl 5 version and should be close to 100% similar
+other then some Perl 6 idioms. I didn't port the fastdistance routine since the
+logic was buggy and the code to fix it made it the same speed as the regular
+distance routine.
+
+
+=head1 NAME
+
+Text::Levenshtein - An implementation of the Levenshtein edit distance
+
+=head1 SYNOPSIS
+
+    use Text::Levenshtein qw(distance);
+
+    print distance("foo","four");
+    # prints "2"
+
+    my @words=("four","foo","bar");
+    my @distances=distance("foo",@words);
+
+    print "@distances";
+    # prints "2 0 3"
+ 
+
+=head1 DESCRIPTION
+
+This module implements the Levenshtein edit distance. The Levenshtein edit
+distance is a measure of the degree of proximity between two strings. This
+distance is the number of substitutions, deletions or insertions ("edits")
+needed to transform one string into the other one (and vice versa). When two
+strings have distance 0, they are the same. A good point to start is:
+L< http://www.merriampark.com/ld.htm >
+
+=head1 AUTHOR
+
+Copyright 2002 Dree Mistrut <F<dree@friul.it>>
+perl6 port: 2010 Steve Schulze aka thundergnat
+L< http://perlmonks.org/?node=thundergnat >
+
+This package is free software and is provided "as is" without express or implied
+warranty.  You can redistribute it and/or modify it under the same terms as Perl
+itself.
+
+=end pod

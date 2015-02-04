@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/thundergnat/Text-Levenshtein.git
+	branch = master
+	commit = bd832ce963d9971451c6799e6bb50f7c6287d312
+	parent = 165cc52121784d8d2bf0db9806118d69f44e1b98
+	cmdver = 0.1.0
