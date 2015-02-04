@@ -1,0 +1,11 @@
+{
+    "name" : "Net::SOCKS",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "SOCKS proxy connector",
+    "depends" : [],
+    "provides" : {
+        "Net::SOCKS" : "lib/Net/SOCKS.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-Net-SOCKS.git"
+}
