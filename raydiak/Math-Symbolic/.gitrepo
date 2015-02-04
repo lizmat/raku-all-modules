@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/raydiak/Math-Symbolic.git
+	branch = master
+	commit = a0889ff0d61cabe35cd9b12a9ca8a882b4d15421
+	parent = 818721861d524bf04d4cb6dcbed244b31c8cf327
+	cmdver = 0.1.0
