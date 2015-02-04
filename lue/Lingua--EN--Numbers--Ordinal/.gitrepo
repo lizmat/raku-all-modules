@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/lue/Lingua--EN--Numbers--Ordinal.git
+	branch = master
+	commit = a802a7fc6640ce65b1ca8a04bd405daf6723ee53
+	parent = 194aae7e0ccc9d004cd1daa5614282a4dba9f2dd
+	cmdver = 0.1.0
