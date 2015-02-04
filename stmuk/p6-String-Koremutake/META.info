@@ -1,0 +1,11 @@
+{
+    "name"        : "String::Koremutake",
+    "version"     : "0.1",
+    "description" : "Converts to and from Koremutake Memorable Random Strings. ",
+    "depends"     : [],
+    "provides"    : {
+            "String::Koremutake": "lib/String/Koremutake.pm"
+    },
+    "source-url"  : "git://github.com/stmuk/p6-String-Koremutake.git",
+    "author"      : "Steve Mynott <steve.mynott@gmail.com>"
+}
