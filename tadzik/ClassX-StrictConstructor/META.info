@@ -1,0 +1,7 @@
+{
+    "name"        : "ClassX::StrictConstructor",
+    "version"     : "0.1",
+    "description" : "Make your object constructors blow up on unknown attributes",
+    "depends"     : [],
+    "source-url"  : "git://github.com/tadzik/ClassX-StrictConstructor.git"
+}
