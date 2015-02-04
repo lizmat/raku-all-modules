@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jnthn/grammar-debugger.git
+	branch = master
+	commit = 01b3e7baab403ec12fbb5cac7793720c5f3cfd4e
+	parent = 9091627c8109bcdb242dfce232b1f8b08c349a50
+	cmdver = 0.1.0
