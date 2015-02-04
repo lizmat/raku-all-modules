@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/FROGGS/p6-Inline-C.git
+	branch = master
+	commit = bcd89067316177863c08ac272a415a7bbe43b5ad
+	parent = f2370d99f9931197b2d1e2a54b6078510d910537
+	cmdver = 0.1.0
