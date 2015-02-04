@@ -1,0 +1,7 @@
+all: %DESTDIR%/libauthpamsimple%SO%
+
+%DESTDIR%/libauthpamsimple%SO%: libauthpamsimple%O%
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDUSR%pam %LDOUT%%DESTDIR%/libauthpamsimple%SO% libauthpamsimple%O%
+
+libauthpamsimple%O%: libauthpamsimple.c
+	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT%libauthpamsimple%O% libauthpamsimple.c
