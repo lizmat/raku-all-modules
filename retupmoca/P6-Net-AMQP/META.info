@@ -1,0 +1,11 @@
+{
+    "name" : "Net::AMQP",
+    "version" : "0.1.0",
+    "author" : "github:retupmoca",
+    "description" : "AMQP (RabbitMQ) 0.9.1 client",
+    "depends" : [],
+    "provides" : {
+        "Net::AMQP" : "lib/Net/AMQP.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-Net-AMQP.git"
+}

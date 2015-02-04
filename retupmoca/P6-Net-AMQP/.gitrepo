@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/retupmoca/P6-Net-AMQP.git
+	branch = master
+	commit = 2798310ba61689ccb8ecc79c7981f0b341c4cb09
+	parent = 8acd7cc9dfbf0aa9629d4b0577559739f7b77cbc
+	cmdver = 0.1.0
