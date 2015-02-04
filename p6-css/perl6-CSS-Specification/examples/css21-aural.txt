@@ -1,0 +1,23 @@
+# css2.1 subset - aural properties only, see t/build.t, t/CSS/Aural/...
+'azimuth'	<angle> | [[ left-side | far-left | left | center-left | center | center-right | right | far-right | right-side ] || behind ] | leftwards | rightwards | inherit	center	 	yes	 	aural
+'cue-after'	<uri> | none | inherit	none	 	no	 	aural
+'cue-before'	<uri> | none | inherit	none	 	no	 	aural
+'cue'	[ 'cue-before' || 'cue-after' ] | inherit	see individual properties	 	no	 	aural
+'elevation'	<angle> | below | level | above | higher | lower | inherit	level	 	yes	 	aural
+'pause'	[ [<time> | <percentage>]{1,2} ] | inherit	see individual properties	 	no	see descriptions of 'pause-before' and 'pause-after'	aural
+'pause-after'	<time> | <percentage> | inherit	0	 	no	see prose	aural
+'pause-before'	<time> | <percentage> | inherit	0	 	no	see prose	aural
+'pitch-range'	<number> | inherit	50	 	yes	 	aural
+'pitch'	<frequency> | x-low | low | medium | high | x-high | inherit	medium	 	yes	 	aural
+'play-during'	<uri> [ mix || repeat ]? | auto | none | inherit	auto	 	no	 	aural
+'richness'	<number> | inherit	50	 	yes	 	aural
+'speak'	normal | none | spell-out | inherit	normal	 	yes	 	aural
+'speak-header'	once | always | inherit	once	elements that have table header information	yes	 	aural
+'speak-numeral'	digits | continuous | inherit	continuous	 	yes	 	aural
+'speak-punctuation'	code | none | inherit	none	 	yes	 	aural
+'speech-rate'	<number> | x-slow | slow | medium | fast | x-fast | faster | slower | inherit	medium	 	yes	 	aural
+'stress'	<number> | inherit	50	 	yes	 	aural
+'voice-family'	[<specific-voice> | <generic-voice> ]# | inherit	depends on user agent	 	yes	 	aural
+'volume'	<number> | <percentage> | silent | x-soft | soft | medium | loud | x-loud | inherit	medium	 	yes	refer to inherited value	aural
+# snick in a non-aural 'boxed' property
+'border-color' : [ <color> | transparent ]{1,4} | inherit

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/p6-css/perl6-CSS-Specification.git
+	branch = master
+	commit = 40de978727c91d28ea0b20c66257c96aa3e06585
+	parent = ecd4fea9ce56285c9efa2ed9e9dc26cda1bc7211
+	cmdver = 0.1.0
