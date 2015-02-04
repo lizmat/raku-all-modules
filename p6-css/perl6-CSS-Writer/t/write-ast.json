@@ -5,6 +5,7 @@
 // gray vs grey
 {  "ast" : { "expr" : [ { "ident" : "lightgray"}, { "ident" : "lightgrey" }, { "ident" : "grey" } ] }, "css" : "lightgray lightgrey grey", "color-values" : "rgb(211, 211, 211) rgb(211, 211, 211) rgb(128, 128, 128)" }
 { "ast" : { "property" : { "ident" : "line-height", "expr" : [ { "px" : 1.1 } ], "comment": "/* very */", "prio" : "important" } }, "css" : "line-height: 1.1px !important; /* very */" }
+{ "ast" : { "func" : { "ident" : "foo", "args" : [ { "ident" : "a" }, { "comment": "wtf"}, { "ident" : "b" } ] } }, "css" : "foo(a, b /* wtf */)" }
 { "ast" : { "qname" : { "element-name" : "div" } }, "css" : "div" }
 { "ast" : { "qname" : { "ns-prefix" : "foo", "element-name" : "h1" } }, "css" : "foo|h1" }
 { "ast" : { "qname" : { "ns-prefix" : "*", "element-name" : "h1" } }, "css" : "*|h1" }

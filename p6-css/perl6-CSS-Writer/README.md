@@ -48,8 +48,7 @@ AST writer/serializer module. Compatible with CSS:Module and CSS::Grammar.
 - **`:ast`** Provide a default ast. This enables stringification, e.g.
     ```
     my $css = CSS::Writer.new( :ast( :string('Hello World!' ) ) );
-    say ~$css;
-    # output: 'Hello World!'
+    say ~$css;  # output: 'Hello World!'
     ```
 
 - **`:color-masks`** Prefer hex mask notation for RGB values, .e.g. `#0085FF` instead of `rgb(0, 133, 255)`

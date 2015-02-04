@@ -88,7 +88,7 @@ class CSS::Writer
 
     #| 'foo', bar, 42 := $.write( :args[ :string<foo>, :ident<bar>, :num(42) ] )
     multi method write( List :$args! ) {
-        $args.map({ $.write($_) }).join: ', ';
+        $.write( $args, :sep(', ') );
     }
 
     #| [foo]   := $.write( :attrib[ :ident<foo> ] )
@@ -107,7 +107,10 @@ class CSS::Writer
         $.write-color( $color, $units );
     }
 
-    #| /* This is a comment * / */ := $.write( :comment("This is a comment */") )
+    #| /* These are */ /* comments * / */ := $.write( :comment["These are", "comments */"] )
+    multi method write( List :$comment! ) {
+        $comment.map({ $.write( :comment($_) ) }).join: $.nl;
+    }
     multi method write( Str :$comment! where /^ <CSS::Grammar::CSS3::comment> $/ ) {
         $comment;
     }
@@ -223,7 +226,7 @@ class CSS::Writer
 
     #| projection, tv := $.write( :media-list[ :ident<projection>, :ident<tv> ] )
     multi method write( List :$media-list! ) {
-        join(', ', $media-list.map({ $.write( $_ ) }) );
+        $.write( $media-list, :sep(', ') );
     }
 
     #| screen and (color) := $.write( :media-query[ { :ident<screen> }, { :keyw<and> }, { :property{ :ident<color> } } ] )
@@ -341,7 +344,7 @@ class CSS::Writer
 
     #| { h1 { margin: 5pt; } h2 { margin: 3pt; color: red; }} := $.write( :rule-list[ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<h1> } ] } ] ], :declarations[ { :ident<margin>, :expr[ :pt(5) ] } ] } }, { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<h2> } ] } ] ], :declarations[ { :ident<margin>, :expr[ :pt(3) ] }, { :ident<color>, :expr[ :ident<red> ] } ] } } ])
     multi method write( List :$rule-list! ) {
-        '{ ' ~ $rule-list.map( { $.write($_) } ).join($.nl) ~ '}';
+        '{ ' ~ $.write( $rule-list, :sep($.nl)) ~ '}';
     }
 
     #| a:hover { color: green; } := $.write( :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<a> }, { :pseudo-class<hover> } ] } ] ], :declarations[ { :ident<color>, :expr[ :ident<green> ] } ] } )
@@ -351,17 +354,17 @@ class CSS::Writer
 
     #| #container * := $.write( :selector[ { :id<container>}, { :element-name<*> } ] )
     multi method write( List :$selector! ) {
-        $selector.map({ $.write( $_ ) }).join(' ');
+        $.write( $selector );
     }
 
     #| h1, [lang=en] := $.write( :selectors[ :selector[ { :simple-selector[ { :element-name<h1> } ] } ], :selector[ :simple-selector[ { :attrib[ :ident<lang>, :op<=>, :ident<en> ] } ] ] ] )
     multi method write( List :$selectors! ) {
-        $selectors.map({ $.write( $_ ) }).join(', ');
+        $.write( $selectors, :sep(', ') );
     }
 
     #| .foo:bar#baz := $.write: :simple-selector[ :class<foo>, :pseudo-class<bar>, :id<baz> ]
     multi method write( List :$simple-selector! ) {
-        [~] $simple-selector.map({ $.write( $_ ) })
+        $.write( $simple-selector, :sep("") );
     }
 
     #| 'I\'d like some \BEE f!' := $.write( :string("I'd like some \x[bee]f!") )
@@ -372,7 +375,7 @@ class CSS::Writer
     #| h1 { color: blue; } := $.write( :stylesheet[ { :ruleset{ :selectors[ { :selector[ { :simple-selector[ { :qname{ :element-name<h1> } } ] } ] } ], :declarations[ { :ident<color>, :expr[ { :ident<blue> } ] } ] } } ] )
     multi method write( List :$stylesheet! ) {
         my $sep = $.terse ?? "\n" !! "\n\n";
-        join($sep, $stylesheet.map({ $.write( $_ ) }) );
+        $.write( $stylesheet, :$sep);
     }
 
     #| 20s := $.write( :time(20), :units<s> ) or $.write( :s(20) )
@@ -407,6 +410,16 @@ class CSS::Writer
     #| url('snoopy.jpg') := $.write( :url<snoopy.jpg> )
     multi method write( Str :$url! ) {
         sprintf "url(%s)", $.write-string( $url );
+    }
+
+    ## generic handling of Lists, Pairs, Hashs and Lists
+
+    multi method write(List $ast, :$sep=' ') {
+        my %sifted = classify { .can('exists_key') && .exists_key('comment') ?? 'comment' !! 'elem' }, $ast.list;
+        my $out = (%sifted<elem> // []).list.map({ $.write( $_ ) }).join: $sep;
+        $out ~= [~] %sifted<comment>.list.map({ ' ' ~ $.write($_) })
+            if %sifted<comment>:exists && ! $.terse;
+        $out;
     }
 
     multi method write(Pair $ast) {
