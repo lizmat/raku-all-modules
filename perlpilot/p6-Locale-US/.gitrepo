@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/perlpilot/p6-Locale-US.git
+	branch = master
+	commit = d9b4859e062d6512fee1ec3cef60cd2c24ded937
+	parent = 44de2af149ca63e76a89c1b99c15ea58dc3daa9f
+	cmdver = 0.1.0
