@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Nami-Doc/Sprockets.pl.git
+	branch = master
+	commit = cf4b9e3cbbc3cca84e206da133751a6f46f543b7
+	parent = 459ba045e80238ca91139b3acd48da449a53d164
+	cmdver = 0.1.0
