@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/colomon/mandelbrot.git
+	branch = master
+	commit = 18614379c40117e49e86ee2a39dbdbe2277165ec
+	parent = 3e1f9c08c7d9fd3ec0bb34613ff2f0be3cb3fe6c
+	cmdver = 0.1.0
