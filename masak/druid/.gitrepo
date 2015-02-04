@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/masak/druid.git
+	branch = master
+	commit = beebda8d3e7b1f5f36600a8442b09cbc71d241e4
+	parent = 7619ebce5265ed907eeb82a652c3554af1522171
+	cmdver = 0.1.0

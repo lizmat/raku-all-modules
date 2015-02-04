@@ -1,0 +1,75 @@
+#!/usr/bin/env perl6
+use v6;
+
+use Druid::Game;
+use Druid::View::Text;
+use Druid::Player::Human;
+use Druid::Player::Computer;
+
+sub MAIN(Int :$board-size = 8, Int :$computer) {
+    given $board-size {
+        when * < (my $MIN_SIZE = 3) {
+            say "The board size may not be smaller than $MIN_SIZE";
+            return 1;
+        }
+        when (my $MAX_SIZE = 26) ... * {
+            say "The board size may not be larger than $MAX_SIZE.";
+            return 1;
+        }
+    }
+
+    given $computer {
+        when Mu {
+            say "no computer players";
+        }
+        when (3..*) | (* < 1) {
+            say "computer must be 1 or 2";
+            return 1;
+        }
+    }
+
+    my Druid::Game $game .= new(:size($board-size));
+    my Druid::View $view = Druid::View::Text.new($game);
+
+    my Druid::Player ($player1, $player2);
+    $player1 = ($computer // 0) == 1
+        ?? Druid::Player::Computer.new(:$game, :color(1))
+        !! Druid::Player::Human.new(   :$game, :color(1));
+    $player2 = ($computer // 0) == 2
+        ?? Druid::Player::Computer.new(:$game, :color(2))
+        !! Druid::Player::Human.new(   :$game, :color(2));
+
+    my $pass = /^ 'pass' | 'p' $/;
+
+    my $passes-in-a-row = 0;
+    loop {
+        for $player1, $player2 -> $player {
+
+            $view.show();
+
+            my $move = $player.choose-move();
+
+            if $move ~~ $pass {
+                if ++$passes-in-a-row >= 2 {
+                    say "It's a draw.";
+                    exit(0);
+                }
+            }
+            elsif $move !~~ $pass {
+                $passes-in-a-row = 0;
+            }
+
+            $player.make-move($move);
+
+            if $game.finished() {
+                $view.show();
+                print "\n";
+
+                say "$player won.";
+                exit(0);
+            }
+        }
+    }
+}
+
+# vim: filetype=perl6

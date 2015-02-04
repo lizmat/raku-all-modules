@@ -1,0 +1,165 @@
+use v6;
+use Num :Trig;
+
+sub header {
+    '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns="http://www.w3.org/2000/svg"
+   width="500"
+   height="500">
+'
+}
+
+sub polygon($id, $color, @coords) {
+    qq[  <path
+     id="$id"
+     style="fill:$color;stroke:none"
+     d="] ~ pathspec(@coords) ~ '" />
+'
+}
+
+sub pathspec(@coords) {
+    die "Need an even number of coords, got {+@coords}"
+        if @coords % 2;
+    return [~]
+        'M ',
+        (join ' L ', map -> $x, $y { sprintf '%.3f,%.3f', $x, $y }, @coords),
+        ' z';
+}
+
+sub footer {
+    '</svg>
+'
+}
+
+sub project(@coords3d, $camera-distance) {
+    die "Number of coords must be multiple of 3, got {+@coords3d}"
+        if @coords3d % 3;
+    return map -> $x,$y,$z {
+        my $t = $camera-distance / ($camera-distance - $z);
+        $x*$t, $y*$t
+    }, @coords3d;
+}
+
+sub translate(@coords, $dx, $dy) {
+    return map -> $x,$y { $x+$dx, $y+$dy }, @coords;
+}
+
+sub scale(@coords, $fx, $fy = $fx) {
+    return map -> $x,$y { $x*$fx, $y*$fx }, @coords;
+}
+
+sub rot-x(@coords3d, $deg) {
+    my $rad = $deg * pi / 180;
+    return map -> $x,$y,$z {
+        $x, $y*cos($rad)-$z*sin($rad), $y*sin($rad)+$z*cos($rad)
+    }, @coords3d;
+}
+
+sub rot-z(@coords3d, $deg) {
+    my $rad = $deg * pi / 180;
+    return map -> $x,$y,$z {
+        $x*cos($rad)-$y*sin($rad), $x*sin($rad)+$y*cos($rad), $z
+    }, @coords3d;
+}
+
+sub translate3d(@coords3d, $dx, $dy, $dz) {
+    die "Number of coords must be multiple of 3, got {+@coords3d}"
+        if @coords3d % 3;
+    return map -> $x,$y,$z { $x+$dx, $y+$dy, $z+$dz }, @coords3d;
+}
+
+sub block($name, $color, @one-corner, @other-corner) {
+    my ($x1,$y1,$z1) = @one-corner;
+    my ($x2,$y2,$z2) = @other-corner;
+    my $c = $color.substr(1);
+    my $brighter-color = [~] '#', map { sprintf '%x', :16($_)+3 }, $c.comb;
+    my $darker-color   = [~] '#', map { sprintf '%x', :16($_)-3 }, $c.comb;
+    # RAKUDO: Multi-arg return
+    return [
+        $name~'-ns',  $darker-color,
+        [$x1,$y2,$z1, $x1,$y2,$z2, $x2,$y2,$z2, $x2,$y2,$z1],
+
+        $name~'-ew',  $color,
+        [$x1,$y1,$z1, $x1,$y1,$z2, $x1,$y2,$z2, $x1,$y2,$z1],
+
+        $name~'-top', $brighter-color,
+        [$x1,$y1,$z2, $x1,$y2,$z2, $x2,$y2,$z2, $x2,$y1,$z2],
+    ].list;
+}
+
+sub board {
+    return block('board', '#999999', [0,0,-.25], [8,8,0]);
+}
+
+sub piece($color, $row, $column, $height) {
+    state $n = 0;
+    return block("piece{++$n}",
+                 ($color eq 'black' ?? '#553333' !! '#aaaacc'),
+                 [$column-1,8-$row,$height-1],
+                 [$column,  9-$row,$height  ]);
+}
+
+sub rotate-widget {
+    '  <script type="text/ecmascript"> <![CDATA[
+    function rotate(evt) {
+      var arrow = evt.target;
+      document.getElementById("board-top").setAttribute("d", "M 83.647,217.186 L 171.448,412.607 L 439.538,308.781 L 304.701,153.729 z");
+    }
+  ]]> </script>
+  <path
+     d="M 365,406 L 365,441 C 365,448 393,454 427,454 C 461,454 489,448 489,441 L 489,406 C 486,414 460,420 427,420 C 393,420 365,414 365,406 z"
+     style="fill:none;stroke:#000000" />
+  <path
+     d="M 408,388 C 406,399 405,414 405,430 C 405,446 406,475 408,485 C 414,486 419,486 425,486 C 432,486 439,486 445,485 C 447,474 449,446 449,430 C 449,414 447,399 445,388 C 437,388 433,389 427,389 C 420,389 414,388 408,388 z"
+     style="fill:none;stroke:#000000" />
+  <path
+     onclick="rotate(evt)"
+     d="M 454,427 L 470,427 L 470,421 L 483,433 L 470,445 L 470,439 L 454,439 L 454,427 z"
+     style="fill:#ffffff;stroke:#000000;stroke-width:0.5px" />
+  <path
+     onclick="rotate(evt)"
+     d="M 399,428 L 383,428 L 383,422 L 370,434 L 383,446 L 383,440 L 399,440 L 399,428 z"
+     style="fill:#ffffff;stroke:#000000;stroke-width:0.5px" />
+  <path
+     onclick="rotate(evt)"
+     d="M 421,418 L 421,402 L 415,402 L 427,389 L 439,402 L 433,402 L 433,418 L 421,418 z"
+     style="fill:#ffffff;stroke:#000000;stroke-width:0.5px" />
+  <path
+     onclick="rotate(evt)"
+     d="M 422,455 L 422,471 L 416,471 L 428,485 L 439,471 L 433,471 L 433,455 L 422,455 z"
+     style="fill:#ffffff;stroke:#000000;stroke-width:0.5px" />
+'
+}
+
+my @heights = map { [ map { 0 }, ^8 ] }, ^8;
+my @pieces = map {
+    [
+        <black white>.pick()[0],
+        (my $row    = (1..8).pick()[0]),
+        (my $column = (1..8).pick()[0]),
+        ++@heights[$row-1][$column-1]
+    ]
+}, ^25;
+
+@pieces.=sort: -> $p1, $p2 {
+    my ($c1, $ro1, $co1, $h1, $c2, $ro2, $co2, $h2) = $p1.list, $p2.list;
+    my ($x1, $y1, $z1, $x2, $y2, $z2)
+        = $co1-.5, 8.5-$ro1, $h1-.5, $co2-.5, 8.5-$ro2, $h2-.5;
+    my @center-board = translate3d([$x1,$y1,$z1,$x2,$y2,$z2], -4, -4, 0);
+    my @rotated-coords3d = rot-x(rot-z(@center-board, -25), 45);
+    $h1 <=> $h2 || .[2] <=> .[5] given @rotated-coords3d;
+};
+
+print header;
+for board() -> $id, $color, @coords3d {
+    my @center-board      = translate3d(@coords3d, -4, -4, 0);
+    my @rotated-coords3d  = rot-x(rot-z(@center-board, -25), 45);
+    my @move-board-back   = translate3d(@rotated-coords3d, 0, 0, -20);
+    my @projected-coords  = project(@move-board-back, 1);
+    my @scaled-coords     = scale(@projected-coords, 700);
+    my @coords2d          = translate(@scaled-coords, 250, 250);
+    print polygon($id, $color, @coords2d);
+}
+print rotate-widget;
+print footer;
