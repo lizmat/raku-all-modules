@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bbkr/text_markov.git
+	branch = master
+	commit = 059fecbfdd77a5cb723d9f88ea5dc1a206e40961
+	parent = fa2a6e8c156ceeac4dbf9a4143ae70b344eb1e24
+	cmdver = 0.1.0
