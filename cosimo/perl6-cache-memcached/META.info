@@ -1,0 +1,10 @@
+{
+    "name"        : "Cache::Memcached",
+    "version"     : "0.04",
+    "description" : "Port of Cache::Memcached from Perl 5 to Perl 6",
+    "depends"     : [ "String::CRC32" ],
+    "author"      : "Cosimo Streppone",
+    "authority"   : "cosimo",
+    "source-url"  : "git://github.com/cosimo/perl6-cache-memcached.git"
+}
+

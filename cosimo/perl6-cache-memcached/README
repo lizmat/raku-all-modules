@@ -1,0 +1,13 @@
+Perl6 Cache::Memcached
+======================
+
+http://github.com/cosimo/perl6-cache-memcached/
+
+Simplified port of Cache::Memcached from Perl 5.
+Based on CPAN version 1.29
+
+Current status (2010/07/29)
+===========================
+
+Still broken.
+
