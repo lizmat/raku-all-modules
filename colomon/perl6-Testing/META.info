@@ -1,8 +1,0 @@
-{
-    "name"        : "Testing",
-    "version"     : "*",
-    "description" : "Damian Conway's Perl 6 testing module",
-    "depends"     : [],
-    "source-type"   : "git",
-    "source-url"    : "git://github.com/colomon/perl6-Testing.git"
-}

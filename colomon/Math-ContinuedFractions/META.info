@@ -1,8 +1,0 @@
-{
-    "name"        : "Math::ContinuedFractions",
-    "version"     : "*",
-    "description" : "Basic continued fraction arithmetic",
-    "depends"     : [],
-    "source-type"   : "git",
-    "source-url"    : "git://github.com/colomon/Math-ContinuedFractions.git"
-}

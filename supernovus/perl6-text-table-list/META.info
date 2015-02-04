@@ -1,7 +1,0 @@
-{
-  "name"        : "Text::Table::List",
-  "version"     : "*",
-  "description" : "Build simple text-based tables for field listings.",
-  "depends"     : [ ],
-  "source-url"  : "git://github.com/supernovus/perl6-text-table-list.git"
-}

@@ -1,7 +1,0 @@
-{
-    "name"        : "Benchmark",
-    "version"     : "*",
-    "description" : "Benchmark running times of Perl 6 code",
-    "depends"     : [],
-    "source-url"  : "git://github.com/perlpilot/benchmark.git"
-}
