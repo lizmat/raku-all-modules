@@ -1,8 +1,0 @@
-{
-  "name"        : "Pluggable",
-  "version"     : "0.1.0",
-  "description" : "Helper role to find plugins for your module",
-  "author"      : "Tony ODell",
-  "depends"     : [ ],
-  "source-url"  : "git://github.com/tony-o/perl6-pluggable.git"
-} 

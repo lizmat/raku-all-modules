@@ -1,9 +1,0 @@
-{
-    "name" : "HTML::Entity",
-    "version" : "*",
-    "description" : "Encode and decode HTML entities",
-    "author" : "Alexander Moquin",
-    "provides" : { "HTML::Entity" : "lib/HTML/Entity.pm6" },
-    "depends" : [ ],
-    "source-url" : "git://github.com/Mouq/HTML-Entity.git"
-}

@@ -1,3 +1,0 @@
-role Id;
-
-has $.id;

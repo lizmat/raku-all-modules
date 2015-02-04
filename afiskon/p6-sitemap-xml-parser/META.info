@@ -1,8 +1,0 @@
-{
-    "name"        : "Sitemap::XML::Parser",
-    "version"     : "*",
-    "description" : "Module for parsing sitemap.xml files",
-    "depends"     : [ "LWP::Simple", "URI", "XML::Parser::Tiny", "DateTime::Format::W3CDTF", "Test::Mock" ],
-    "source-type" : "git",
-    "source-url"  : "git://github.com/afiskon/p6-sitemap-xml-parser.git"
-}

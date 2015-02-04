@@ -1,8 +1,0 @@
-{
-    "name"        : "Coro::Simple",
-    "version"     : "*",
-    "description" : "Simple coroutines for Perl 6, inspired by the Lua coroutines.",
-    "author"      : "Marco Aurélio da Silva",
-    "depends"     : [ ],
-    "source-url"  : "git://github.com/marcoonroad/Coro-Simple.git"
-}

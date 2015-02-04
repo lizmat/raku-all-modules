@@ -1,7 +1,0 @@
-{
-  "name"        : "Template6",
-  "version"     : "*",
-  "description" : "A template engine inspired by TT.",
-  "depends"     : [ ],
-  "source-url"  : "git://github.com/supernovus/template6.git"
-}

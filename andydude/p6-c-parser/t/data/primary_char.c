@@ -1,1 +1,0 @@
-char newline = '\n';

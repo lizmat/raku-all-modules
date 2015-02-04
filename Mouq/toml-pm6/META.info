@@ -1,8 +1,0 @@
-{
-    "name"          : "TOML",
-    "version"       : "0.3.1alpha",
-    "description"   : "Perl 6 TOML Serializer",
-    "author"        : "Mouq",
-    "depends"       : ["JSON::Tiny"],
-    "source-url"    : "git://github.com/Mouq/toml-pm6.git"
-}

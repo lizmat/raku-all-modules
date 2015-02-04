@@ -1,8 +1,0 @@
-{
-    "name"        : "GD::Raw",
-    "version"     : "0.01",
-    "description" : "Low level language bindings to GD Graphics Library",
-    "author"      : "Dagur Valberg Johannsson",
-    "depends"     : "NativeCall",
-    "source-url"  : "git://github.com/dagurval/perl6-gd-raw.git"
-}

@@ -1,7 +1,0 @@
-{
-    "name"        : "URI",
-    "version"     : "*",
-    "description" : "A URI implementation using Perl 6 grammars to implement RFC 3986 BNF",
-    "depends"     : [ ],
-    "source-url"    : "git://github.com/perl6-community-modules/uri.git"
-}

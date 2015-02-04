@@ -1,4 +1,0 @@
-<common>
-<zool metal:define-macro="hello">Hello, World.</zool>
-<zarf metal:define-macro="slotty">It is known, <ba metal:define-slot="booya">Booya</ba> What do you think?</zarf>
-</common>

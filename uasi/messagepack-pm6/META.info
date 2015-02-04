@@ -1,8 +1,0 @@
-{
-    "name"        : "MessagePack",
-    "author"      : "github:uasi",
-    "version"     : "*",
-    "description" : "A MessagePack implementation",
-    "depends"     : [],
-    "source-url"  : "git://github.com/uasi/messagepack-pm6.git"
-}

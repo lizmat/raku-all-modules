@@ -1,7 +1,0 @@
-{
-    "name"        : "Algorithm::Soundex",
-    "version"     : "*",
-    "description" : "Soundex Algorithm in Perl 6",
-    "depends"     : [],
-    "source-url"  : "git://github.com/leto/perl6-Algorithm-Soundex.git"
-}

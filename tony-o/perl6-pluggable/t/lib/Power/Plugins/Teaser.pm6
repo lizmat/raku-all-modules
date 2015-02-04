@@ -1,1 +1,0 @@
-class Power::Plugins::Teaser { };
