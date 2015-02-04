@@ -1,0 +1,1126 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head profile="http://gmpg.org/xfn/11">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Perl 6 Advent Calendar | Something cool about Perl 6 every day</title>
+<link rel="pingback" href="http://perl6advent.wordpress.com/xmlrpc.php" />
+<meta name="google-site-verification" content="YPNxtMSK3Jj7JR2XCK-hDqmF9xDIeBEyvYm3aT1s71Y" />
+<link rel="alternate" type="application/rss+xml" title="Perl 6 Advent Calendar &raquo; Feed" href="http://perl6advent.wordpress.com/feed/" />
+<link rel="alternate" type="application/rss+xml" title="Perl 6 Advent Calendar &raquo; Comments Feed" href="http://perl6advent.wordpress.com/comments/feed/" />
+<script type="text/javascript">
+/* <![CDATA[ */
+function addLoadEvent(func){var oldonload=window.onload;if(typeof window.onload!='function'){window.onload=func;}else{window.onload=function(){oldonload();func();}}}
+/* ]]> */
+</script>
+<link rel='stylesheet' id='all-css-0' href='http://s0.wp.com/_static/??-eJx9jtEKwyAMRX9oLpStfRv7lmoza42N1Ij076eDsUJh5CUJ5yQXSlSGV8FVIGQVKVu3JiDnMcGCEkfj1We6mpQucMA1sf0JbC1OnEW9mIgLFDdZlJN0+GF4w7oPcZRGBJzciIShYv+0EIev1dq5Bjxnk7neSRCzBp/15oyHJDthA5/h0d27fqjV35Y3+WBfKA==' type='text/css' media='all' />
+<!--[if lte IE 8]>
+<link rel='stylesheet' id='kubrick-ie-css'  href='http://s0.wp.com/wp-content/themes/pub/kubrick/ie.css?m=1273203575g&#038;ver=4.1-alpha-30055' type='text/css' media='all' />
+<![endif]-->
+<link rel='stylesheet' id='all-css-2' href='http://s0.wp.com/_static/??-eJx9i0EKg0AMRS/kGEQRN6VnGYcYUzITcSJe33QjLYXyN+/B+8BQ1DhpqTe0qdYGzi24GBaDfIRNDmJvCDWIpmis5UvCIpH3f9cdZ1FyJPDqQ39OtmLGCusAJDpHeQfP/OgGXz9N4/i6AM2NQxk=' type='text/css' media='all' />
+<link rel='stylesheet' id='print-css-2' href='http://s0.wp.com/wp-content/mu-plugins/global-print/global-print.css?m=1387483371g' type='text/css' media='print' />
+<script type='text/javascript'>
+/* <![CDATA[ */
+var LoggedOutFollow = {"invalid_email":"Your subscription did not succeed, please try again with a valid email address."};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://s1.wp.com/_static/??-eJyFjd0KwjAMRl/IrttQ8EZ8lv1kJbVtapOu6NNbQUFR2FVCcr7v6BLVREEgiLasPY3oQGWGNJh6UxgWaizvdOUwTC7PwE/QXjOk22tsAsqjSYNA4zG84Q9rJBYPzFX55/utwrAilE3MgsRhuqgEjPef1tGRUdFlg4F13Q3MlEUt5BwVXXA2IDVz9qdu37aHY9e3vX0APQlvpA=='></script>
+<link rel='stylesheet' id='all-css-0' href='http://s2.wp.com/wp-content/mu-plugins/highlander-comments/style.css?m=1377793621g' type='text/css' media='all' />
+<!--[if lt IE 8]>
+<link rel='stylesheet' id='highlander-comments-ie7-css'  href='http://s2.wp.com/wp-content/mu-plugins/highlander-comments/style-ie7.css?m=1351637563g&#038;ver=20110606' type='text/css' media='all' />
+<![endif]-->
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://perl6advent.wordpress.com/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://s1.wp.com/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress.com" />
+<link rel='shortlink' href='http://wp.me/J3YZ' />
+
+<!-- Jetpack Open Graph Tags -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Perl 6 Advent Calendar" />
+<meta property="og:description" content="Something cool about Perl 6 every day" />
+<meta property="og:url" content="http://perl6advent.wordpress.com/" />
+<meta property="og:site_name" content="Perl 6 Advent Calendar" />
+<meta property="og:image" content="https://s0.wp.com/i/blank.jpg" />
+<meta name="twitter:site" content="@wordpressdotcom" />
+<meta property="fb:app_id" content="249643311490" />
+<link rel="shortcut icon" type="image/x-icon" href="http://s2.wp.com/i/favicon.ico?m=1405977958g" sizes="16x16 24x24 32x32 48x48" />
+<link rel="icon" type="image/x-icon" href="http://s2.wp.com/i/favicon.ico?m=1405977958g" sizes="16x16 24x24 32x32 48x48" />
+<link rel="apple-touch-icon-precomposed" href="http://s0.wp.com/i/webclip.png?m=1391188133g" />
+<link rel='openid.server' href='http://perl6advent.wordpress.com/?openidserver=1' />
+<link rel='openid.delegate' href='http://perl6advent.wordpress.com/' />
+<link rel="search" type="application/opensearchdescription+xml" href="http://perl6advent.wordpress.com/osd.xml" title="Perl 6 Advent Calendar" />
+<link rel="search" type="application/opensearchdescription+xml" href="http://wordpress.com/opensearch.xml" title="WordPress.com" />
+<style type='text/css'><!--
+body { background: url("http://s0.wp.com/wp-content/themes/pub/kubrick/images/kubrickbgcolor.gif?m=1273203575g"); }
+#page { background: url("http://s0.wp.com/wp-content/themes/pub/kubrick/images/kubrickbg.gif?m=1273203575g") repeat-y top; border: none; }
+#header { background: url("http://s0.wp.com/wp-content/themes/pub/kubrick/images/kubrickheader.gif?m=1273203575g") no-repeat bottom center; }
+#footer { background: url("http://s0.wp.com/wp-content/themes/pub/kubrick/images/kubrickfooter.gif?m=1273203575g") no-repeat bottom; border: none;}
+#header { margin: 0 !important; margin: 0 0 0 1px; padding: 1px; height: 198px; width: 758px; }
+#headerimg { margin: 7px 9px 0; height: 192px; width: 740px; }
+#headerimg h1 a, #headerimg h1 a:visited, #headerimg .description { color: #FFFFFF; }
+#headerimg h1 a, #headerimg .description { display:  }
+
+    --></style><meta name="application-name" content="Perl 6 Advent Calendar" /><meta name="msapplication-window" content="width=device-width;height=device-height" /><meta name="msapplication-tooltip" content="Something cool about Perl 6 every day" /><meta name="msapplication-task" content="name=Subscribe;action-uri=http://perl6advent.wordpress.com/feed/;icon-uri=http://s2.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=Sign up for a free blog;action-uri=http://wordpress.com/signup/;icon-uri=http://s2.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Support;action-uri=http://support.wordpress.com/;icon-uri=http://s2.wp.com/i/favicon.ico" /><meta name="msapplication-task" content="name=WordPress.com Forums;action-uri=http://forums.wordpress.com/;icon-uri=http://s2.wp.com/i/favicon.ico" /><meta name="title" content="Perl 6 Advent Calendar on WordPress.com" />
+<meta name="description" content="Something cool about Perl 6 every day" />
+<style type="text/css">
+#header     { margin: 0 !important; margin: 0 0 0 1px; padding: 1px; height: 198px; width: 758px; }
+#headerimg  { margin: 7px 9px 0; height: 192px; width: 740px; }
+#headerimg { background: url(http://perl6advent.files.wordpress.com/2009/12/perl6advent2.png) no-repeat top;}
+#header h1 a, #header h1 a:hover, #header .description {
+    color: #fff;
+}
+</style>
+<style type="text/css" id="syntaxhighlighteranchor"></style>
+</head>
+<body class="home blog mp6 highlander-enabled highlander-light">
+<div id="page">
+
+<div id="header">
+    <div id="headerimg" onclick=" location.href='http://perl6advent.wordpress.com';" style="cursor: pointer;">
+        <h1><a href="http://perl6advent.wordpress.com/">Perl 6 Advent Calendar</a></h1>
+        <div class="description">Something cool about Perl 6 every day</div>
+    </div>
+</div>
+<hr />
+
+    <div id="content" class="narrowcolumn">
+
+    
+        
+            <div class="post-2218 post type-post status-publish format-standard hentry category-2013" id="post-2218">
+                <h2><a href="http://perl6advent.wordpress.com/2013/12/24/advent-ventures/" rel="bookmark">Day 24 – Advent&nbsp;Ventures</a></h2>
+                <small>December 24, 2013 <span class="by-author"><span class="sep">by</span> <span class="author vcard"><a class="url fn n" href="http://perl6advent.wordpress.com/author/timtoady/" title="View all posts by timtoady" rel="author">timtoady</a></span> </span></small>
+
+                <div class="entry">
+                    <pre>
+Here at the end of megayears of human adventure,
+we schedule a silent night to stop time,
+once again awaiting the next advent
+of the answer to our questionable venture.
+
+    Are we there yet?
+
+After a gigayear or so of slogging from slime to silicon
+mercifully forgetting (most of) the unmerciful past,
+and the scars left by unnatural nature upon our pedigree,
+we now remember to remember the future once more.
+
+    Are we there yet?
+
+So in this month, 26 year-moments after the advent of Perl,
+(including 13 year-eternities of precocious brat sisterhood)
+our little family celebrates, 24 tales at a time,
+its victories in the struggle to find our way home.
+
+    Are we there yet, Daddy, are we there yet?
+
+We follow after all those who wander but are not lost:
+We follow Abraham, looking for a city because it isn't there yet;
+We follow Strider, guarding the hobbits who will redistribute the future;
+We follow Magi and wizard, scholar and explorer, saint and scientist.
+
+    I wonder as I wander out under the sky...whether I'm lost yet...
+
+But wise man or hobbit, we must all take that journey in the dark,
+groping ahead for the path to better air and a little hope,
+following the encapsulated starlight past monsters and chasms
+out to a land where the weary can rest, and be healed of grief.
+
+    "Wait, what do you mean, I can't go there?" —Gandalf
+
+We must all wander in this desert for forty years,
+burying the bones of naysayers and yaysayers alike,
+so that their children can someday cross the Jordan
+into a land flowing with milk and honey and fancy new phones!
+
+    "Wait, what do you mean, I can't go there?" —Moses
+
+We carry these old stories to the future,
+cadences to chant over the confusion of the road,
+backpacks full of epics, pockets stuffed with tales,
+leaving our own litter of anecdotal evidence behind us.
+
+    You haven't heard some of the good ones yet.
+
+So kids, along with the old stories, pack a few new tools,
+light but powerful tools that will help you and help you help us.
+The lightest tools, the most powerful tools, are ideas,
+so pack lots and lots of 'em. I'll wait here while you do.
+
+    I'm here yet. Which means I'm not there yet. Hurry up!
+
+Pick some good friends, and let some good friends pick you.
+Take turns waiting patiently, running impatiently,
+or walking hopefully, crawling hopelessly,
+standing up yet again defiantly. Or woozily, that works too.
+
+    Be the protagonist some of the time, yet not all of the time.
+
+Trust your journey to provide you with new companions;
+trust your new companions to provide you with your journey.
+Be prepared to say your eternal hellos and temporary goodbyes.
+(No one's ever ready for the temporary hellos and eternal goodbyes.)
+
+    And I'm not sure I want to be there quite yet.
+
+Enjoy the companions your journey gives today, for life is bittersweet.
+Enjoy the bittersweet songs and the bittersweet beer.
+Enjoy the bitter fights and sweet hugs.
+And, yes, enjoy the resulting bruises, but not too much.
+
+    Enjoy knowing that you're not there yet.
+
+Welcome, my friends, to the here, and to the not-there-yet.
+Welcome to the clan's quantum superposition of joy and grief and longing.
+Welcome to our ongoing effort to steal more of that Promethean fire
+that burns too fast yet never fast enough to fit the firepits of our lives.
+
+    Are we getting warmer yet?
+
+As they say, "Give a man a fire..." Hold that thought, some breaking news...
+This just in: Fire from heaven is now free and open-sourced?! Well, huh...
+Seems a blogger heard some angels singing popup advent adverts in the cloud?
+Hmm...better do some fact checking...hang in there...tum tiddly tum...
+
+    Darn flakey connection...almost there...
+
+Well, hey, whaddya know?! The physicists figured it out.
+The whole universe has just finished compiling without error...
+Now they're looking for someone to debug the silly thing;
+Hey, I know, I'll just use the Perl 6 test suite.
+
+    [...now you have thousands of problems...]
+
+Did you say something?
+
+    (louder) Does sanity test #1 pass yet? What's the output?
+
+The road goes ever on and on,
+Over the river and through the woods,
+You take the high road, and I'll take the low road,
+We're all bound for the Promised Land.
+
+[TimToady gets blessed and starts directing the choir of Perl Pilgrims.]
+We're marching to Zion,
+Beautiful, beautiful Zion,
+We're marching upward to Zion, that beautif—
+
+    You can't go there.
+
+Wait, what do you mean, I can't go there?
+
+    Bugfix #1: kill all the bad poets.
+
+Aw...crap...</pre>
+                </div>
+
+                <p class="postmetadata"> Posted in <a href="http://perl6advent.wordpress.com/category/2013/" rel="category tag">2013</a> |   <a href="http://perl6advent.wordpress.com/2013/12/24/advent-ventures/#comments" title="Comment on Day 24 – Advent&nbsp;Ventures">4 Comments &#187;</a></p>
+            </div>
+
+        
+            <div class="post-2212 post type-post status-publish format-standard hentry category-2013" id="post-2212">
+                <h2><a href="http://perl6advent.wordpress.com/2013/12/23/day-23-unary-sort/" rel="bookmark">Day 23 &#8211; Unary&nbsp;Sort</a></h2>
+                <small>December 23, 2013 <span class="by-author"><span class="sep">by</span> <span class="author vcard"><a class="url fn n" href="http://perl6advent.wordpress.com/author/foobar123/" title="View all posts by Moritz" rel="author">Moritz</a></span> </span></small>
+
+                <div class="entry">
+                    <p>Most languages or libraries that provide a generic sort routine allow you to specify a comparator, that is a callback that tells the sort routine how two given elements compare. Perl is no exception.</p>
+<p>For example in Perl 5, which defaults to lexicographic ordering, you can request numeric sorting like this:</p>
+<pre><code> use v5;
+ my @sorted = sort { $a &lt;=&gt; $b } @values;</code></pre>
+<p>Perl 6 offers a similar option:</p>
+<pre><code> use v6;
+ my @sorted = sort { $^a &lt;=&gt; $^b }, @values;</code></pre>
+<p>The main difference is that the arguments are not passed through the global variables <code>$a</code> and <code>$b</code>, but rather as arguments to the comparator. The comparator can be anything callable, that is a named or anonymous sub or a block. The <code>{ $^a &lt;=&gt; $^b}</code> syntax is not special to sort, I have just used <a href="http://perlcabal.org/syn/S06.html#Placeholder_variables">placeholder variables</a> to show the similarity with Perl 5. Other ways to write the same thing are:</p>
+<pre><code> my @sorted = sort -&gt; $a, $b { $a &lt;=&gt; $b }, @values;
+ my @sorted = sort * &lt;=&gt; *, @values;
+ my @sorted = sort &amp;infix:&laquo;&lt;=&gt;&raquo;, @values;</code></pre>
+<p>The first one is just another syntax for writing blocks, <code>* &lt;=&gt; *</code> use <a href="http://perlgeek.de/blog-en/perl-5-to-6/28-currying.html">* to automatically curry an argument</a>, and the final one directly refers to the routine that implements the <code>&lt;=&gt;</code> &quot;space ship&quot; operator (which does numeric comparison).</p>
+<p>But Perl strives not only to make hard things possible, but also to make simple things easy. Which is why Perl 6 offers more convenience. Looking at sorting code, one can often find that the comparator duplicates code. Here are two common examples:</p>
+<pre><code> # sort words by a sort order defined in a hash:
+ my %rank = a =&gt; 5, b =&gt; 2, c =&gt; 10, d =&gt; 3;
+ say sort { %rank{$^a} &lt;=&gt; %rank{$^b} }, &#039;a&#039;..&#039;d&#039;;
+ #          ^^^^^^^^^^     ^^^^^^^^^^  code duplication
+
+ # sort case-insensitively
+ say sort { $^a.lc cmp $^b.lc }, @words;
+ #          ^^^^^^     ^^^^^^  code duplication</code></pre>
+<p>Since we love convenience and hate code duplication, Perl 6 offers a shorter solution:</p>
+<pre><code> # sort words by a sort order defined in a hash:
+ say sort { %rank{$_} }, &#039;a&#039;..&#039;d&#039;;
+
+ # sort case-insensitively
+ say sort { .lc }, @words;</code></pre>
+<p><code>sort</code> is smart enough to recognize that the code object code now only takes a single argument, and now uses it to map each element of the input list to new values, which it then sorts with normal <code>cmp</code> sort semantics. But it returns the original list in the new order, not the transformed elements. This is similar to the <a href="https://en.wikipedia.org/wiki/Schwartzian_transform">Schwartzian Transform</a>, but very convenient since it&#039;s built in.</p>
+<p>So the code block now acts as a transformer, not a comparator.</p>
+<p>Note that in Perl 6, <code>cmp</code> is smart enough to compare strings with string semantics and numbers with number semantics, so producing numbers in the transformation code generally does what you want. This implies that if you want to sort numerically, you can do that by forcing the elements into numeric context:</p>
+<pre><code> my @sorted-numerically = sort +*, @list;</code></pre>
+<p>And if you want to sort in reverse numeric order, simply use <code>-*</code> instead.</p>
+<p>The unary sort is very convenient, so you might wonder why the Perl 5 folks haven&#039;t adopted it yet. The answer is that since the sort routine needs to find out whether the callback takes one or two arguments, it relies on subroutine (or block) signatures, something not (yet?) present in Perl 5. Moreover the &quot;smart&quot; <code>cmp</code> operator, which compares number numerically and strings lexicographically, requires a type system which Perl 5 doesn&#039;t have.</p>
+<p>I strongly encourage you to try it out. But be warned: Once you get used to it, you&#039;ll miss it whenever you work in a language or with a library that lacks this feature.</p>
+                </div>
+
+                <p class="postmetadata"> Posted in <a href="http://perl6advent.wordpress.com/category/2013/" rel="category tag">2013</a> |   <a href="http://perl6advent.wordpress.com/2013/12/23/day-23-unary-sort/#comments" title="Comment on Day 23 &#8211; Unary&nbsp;Sort">5 Comments &#187;</a></p>
+            </div>
+
+        
+            <div class="post-2204 post type-post status-publish format-standard hentry category-2013" id="post-2204">
+                <h2><a href="http://perl6advent.wordpress.com/2013/12/22/day-22-a-catalogue-of-operator-types/" rel="bookmark">Day 22 &#8211; A catalogue of operator&nbsp;types</a></h2>
+                <small>December 22, 2013 <span class="by-author"><span class="sep">by</span> <span class="author vcard"><a class="url fn n" href="http://perl6advent.wordpress.com/author/brushingupmyknuth/" title="View all posts by carl" rel="author">carl</a></span> </span></small>
+
+                <div class="entry">
+                    <p>Perl 6 has a very healthy relationship to operators. &quot;An operator is just a funnily-named subroutine&quot;, goes the slogan in the community.</p>
+<p>In practice, it means you can do this:</p>
+<pre>sub postfix:&lt;!&gt;($N) {
+    [*] 2..$N;
+}
+say 6!;    # 720</pre>
+<p>Yeah, that&#8217;s the prototypical factorial example. I promise I won&#8217;t do it any more in this post. I swear the only reason we don&#8217;t <em>have</em> factorial as a standard operator in the language, is so that we can impress people by defining it.</p>
+<p>Anyway, so a postfix operator <code>!</code> is really just a &quot;funnily-named&quot; subroutine <code>postfix:&lt;!&gt;</code>. Similarly, we have prefix and infix operators, like <code>prefix:&lt;-&gt;</code> and <code>infix:&lt;*&gt;</code>. They&#8217;re all just subroutines. I <a href="http://perl6advent.wordpress.com/2011/12/22/day-22-operator-overloading-revisited/">wrote about that before</a>, so I&#8217;m not going to hammer on that point.</p>
+<p>Operators have different precedence (like <code>infix:&lt;*&gt;</code> binds tighter than <code>infix:&lt;+&gt;</code>)&#8230;</p>
+<pre>$x + $y * $z   # compiler sees $x + ($y * $z)
+$x * $y + $z   # compiler sees ($x * $y) + $z</pre>
+<p>&#8230;and different associativity (like <code>infix:&lt;/&gt;</code> associates to the left but <code>infix:&lt;=&gt;</code> associates to the right).</p>
+<pre>$x / $y / $z   # compiler sees ($x / $y) / $z
+$x = $y = $z   # compiler sees $x = ($y = $z)</pre>
+<p>But I <a href="http://perl6advent.wordpress.com/2012/12/16/day-16-operator-precedence/">wrote about that before too</a>, at quite some length, so I&#8217;m not going to revisit that topic.</p>
+<p>No, today I just want to talk about the operator categories in general. I think Perl 6 does a nice job of describing the operator types themselves. I don&#8217;t see that in many other languages.</p>
+<p>Here are all the different types:</p>
+<pre> type            position           syntax
+======          ==========         ========
+
+prefix          before a term        !X
+infix           between two terms    X ! Y
+postfix         after a term         X!
+
+circumfix       around               [X]
+postcircumfix   after &amp; around       X[Y]</pre>
+<p>A lot of other languages give you the ability to define your own operators. Many of them provide approaches which are hackish afterthoughts, and only allow you to override existing operators. Some other languages do approach the problem head-on, but end up simplifying the language to decrease the complexity of defining new operators.</p>
+<p>Perl 6 approaches, and solves, the problem, head-on. You get all of the above operators, you can refine or override old ones, and you can talk <em>within the language</em> about things like precedence and associativity.</p>
+<p>All that is rather nice. But, as usual, Perl 6 goes one step further and starts classifying <em>metaoperators</em>, too.</p>
+<p>What&#8217;s a metaoperator? That&#8217;s our name for when you can extend an operator in a certain way. For example, many languages allow some kind of not-equal operator like <code>infix:&lt;!=&gt;</code>. Perl 6 has another one for string non-equality: <code>infix:&lt;ne&gt;</code>. And then maybe you want to do smart non-matching: <code>infix:&lt;!~~&gt;</code>. And so on — pretty soon you catch on to the pattern: you may, at one point or another, want to invert the result of <em>any</em> boolean matcher. So that&#8217;s what Perl 6 provides.</p>
+<p>Here are a few examples:</p>
+<pre>normal op     negated op
+=========     ==========
+eq            !eq     ( synonym of ne )
+~~            !~~
+&lt;             !&lt;      ( synonym of &gt;= )
+before        !before</pre>
+<p>Because this particular metaoperator attaches itself before an infix operator, it gets the name <code>infix_prefix_meta_operator:&lt;!&gt;</code>. I was going to say &quot;and yes, you can add your own user-defined metaoperators too&quot;, but currently no implementation supports that. Maybe sometime in the future.</p>
+<p>There are many other categories of metaoperators. For example the &quot;multiplication reducer&quot; <code>[*]</code> that we used in the factorial example at the top (which takes a list of numbers and multiplies them all together) is really an <code>infix:&lt;*&gt;</code> surrounded by the metaop <code>prefix_circumfix_meta_operator:sym&lt;[ ]&gt;</code>. (It&#8217;s &quot;prefix&quot; because it goes before the list of numbers.)</p>
+<p>Luckily, we don&#8217;t have meta-meta-ops. Already thinking about the metaops is quite a challenge sometimes. But what I like about Perl 6 and the approach it takes to grammar and operators is this: someone <em>did</em> think about it, long and hard. The resulting system has a pleasing simplicity to it.</p>
+<p>Perl 6 is very well-suited for building parsers for languages. As one of its neatest tricks, it takes this expressive power and directs it towards the task of defining itself. As a Perl 6 user, you&#8217;re given not just an excellent toolbox, but a well-organized workshop to adapt and extend to fit your needs.</p>
+                </div>
+
+                <p class="postmetadata"> Posted in <a href="http://perl6advent.wordpress.com/category/2013/" rel="category tag">2013</a> |   <a href="http://perl6advent.wordpress.com/2013/12/22/day-22-a-catalogue-of-operator-types/#comments" title="Comment on Day 22 &#8211; A catalogue of operator&nbsp;types">3 Comments &#187;</a></p>
+            </div>
+
+        
+            <div class="post-2191 post type-post status-publish format-standard hentry category-2013" id="post-2191">
+                <h2><a href="http://perl6advent.wordpress.com/2013/12/21/day-21-signatures/" rel="bookmark">Day 21 &#8211;&nbsp;Signatures</a></h2>
+                <small>December 21, 2013 <span class="by-author"><span class="sep">by</span> <span class="author vcard"><a class="url fn n" href="http://perl6advent.wordpress.com/author/wcoleda/" title="View all posts by coke" rel="author">coke</a></span> </span></small>
+
+                <div class="entry">
+                    <p>In today&#8217;s post, we&#8217;ll go through the basics of Perl 6&#8242;s subroutine signatures, which allow us to declare our parameters instead of coding them as we do in Perl 5.</p>
+<p>In Perl 5, arguments to a sub are accessible via the @_ array, so if you want to access an argument to a sub, you can either access the array directly (which is typically only done where speed is a concern)…</p>
+<pre><code>use v5;
+sub greet {
+    print "Hello, " . @_[0] . "\n";
+}
+</code></pre>
+<p>Or, more commonly, pull off any arguments as lexicals:</p>
+<pre><code>use v5;
+sub greet {
+    my $name = shift @_;
+    print "Hello, $name\n";
+}
+</code></pre>
+<h2>Positionals</h2>
+<p>Perl 6 lets you declare required positional arguments for your subs as part of the signature:</p>
+<pre><code>use v6;
+sub greet($name) {
+    print "Hello, $name\n";
+}
+</code></pre>
+<p>Inside the sub, <code>$name</code> is available as a readonly alias to the passed in variable.</p>
+<p>By default, parameters are required. If you try to call this function with no parameters as <code>greet</code>, you&#8217;ll get a compile time error:</p>
+<pre><code>===SORRY!===
+CHECK FAILED:
+Calling 'greet' requires arguments (line 1)
+Expected: :($name)
+</code></pre>
+<p>You can make the parameter optional by adding a <code>?</code> to the signature. Then you&#8217;ll have to examine the parameter to see if a defined value was passed in. Or, you can declare a default value to be used if none is passed in:</p>
+<pre><code>use v6;
+sub guess($who, $what?) {
+    # manually check to see if $what is defined
+}
+
+sub dance($who, $dance = "Salsa") {
+    ...
+}
+dance("Rachael")
+dance("Rachael", "Watusi")
+</code></pre>
+<p>Another way to handle optional arguments is to use multis. Multis are subs that can have multiple implementations that differ by their signature. When invoking a multi, the argument list used in the invocation is used to determine which version of the multi to dispatch to.</p>
+<pre><code>use v6;
+multi sub dance($who, $dance) {
+    say "$who is doing the $dance";
+}
+multi sub dance($who) {
+    dance($who, "Salsa");
+}
+</code></pre>
+<h2>Types</h2>
+<p>The parameters in the previous section allow any type of value to be passed in. You can declare that only certain types are valid:</p>
+<pre><code>sub greet(Str $name) {
+    say "hello $name";
+}
+</code></pre>
+<p>Now <code>hello("joe")</code> will work as it did before. But <code>hello(3)</code> will generate a compile time error:</p>
+<pre><code>===SORRY!===
+CHECK FAILED:
+Calling 'greet' will never work with argument types (int) (line 1)
+Expected: :(Str $name)
+</code></pre>
+<p>In addition to any of Perl 6 builtin types or user-built classes, you can also add programmatic checks inline in the signature with <code>where</code> clauses.</p>
+<pre><code>use v6;
+multi odd-or-even(Int $i where * %% 2) { say "even" };
+multi odd-or-even(Int $i) { say "odd"};
+</code></pre>
+<p>Note that we didn&#8217;t have to add a where clause to the second sub. The multi-dispatch algorithm will prefer the more detailed signature when it matches, but fallback to the less descriptive version when it doesn&#8217;t.</p>
+<p>You can even use literal values as arguments. This style allows you to move some of your logic to the multi dispatcher.</p>
+<pre><code>use v6;
+multi fib(1) { 1 }
+multi fib(2) { 1 }
+multi fib(Int $i) { fib($i-1) + fib($i-2) }
+
+say fib(10);
+</code></pre>
+<p>Note that this isn&#8217;t very efficient… yet. Once the <code>is cached</code> trait for subs is implemented, we can use that to provide a builtin analog to Perl 5&#8242;s <code>Memoize</code> module.</p>
+<h2>Named</h2>
+<p>Perl 6 provides for named parameters; if the positionals are analogous to an array of parameters, the named arguments are like a hash. You use a preceding colon in the argument declaration, and then pass in a pair for each parameter when invoking the sub.</p>
+<pre><code>use v6;
+sub doctor(:$number, :$prop) {
+    say "Doctor # $number liked to play with his $prop";
+}
+doctor(:prop("cricket bat"), :number&lt;5&gt;);
+doctor(:number&lt;4&gt;, :prop&lt;scarf&gt;);
+</code></pre>
+<p>Note that the order the parameters are passed in doesn&#8217;t matter for named parameters.</p>
+<p>If you have a variable of the same name in the calling scope, you can simplify the calling syntax to avoid creating an explicit pair.</p>
+<pre><code>use v6;
+my $prop = "fez";
+my $number = 11;
+doctor(:$prop, :$number)
+</code></pre>
+<p>You can also use different names internally (using the expanded pair syntax) for the named arguments. This allows you to use different (simplified or sanitized) versions for the caller.</p>
+<pre><code>use v6;
+sub doctor(:number($incarnation), :prop($accoutrement)) {
+    say "Doctor # $incarnation liked to play with his $accoutrement";
+}
+my $number = 2;
+my $prop = "recorder";
+doctor(:$number, :$prop)
+</code></pre>
+<h2>Slurpy</h2>
+<p>To support functions like <code>sprintf</code>, we need to be able to take a variable number of arguments. We call these args &#8220;slurpy&#8221;, since they &#8220;slurp&#8221; up the arguments.</p>
+<pre><code># from rakudo's src/core/Cool.pm
+sub sprintf(Cool $format, *@args) {
+    ...
+}
+</code></pre>
+<p>When invoking this sub, the first argument must be of type Cool (kind of a utility supertype), and all the remaining positional arguments are slurped up into the <code>@args</code> variable. The preceding <code>*</code> indicates the slurp.</p>
+<p>Symmetrically, we can also slurp up named arguments into a hash.</p>
+<pre><code># from rakudo's src/core/control.pm
+my &amp;callwith := -&gt; *@pos, *%named {
+    ...
+}
+</code></pre>
+<p>This snippet introduces to the pointy block syntax for anonymous subs. The <code>-&gt;</code> begins the declaration, followed by the signature (without parentheses), and finally the sub definition in the block. The signature here shows all the positionals ending up in <code>*@pos</code>, and all the named arguments in <code>%named</code>.</p>
+<p>This also shows that positionals and named arguments can be combined in the same sub.</p>
+<h2>Methods</h2>
+<p>Method and sub declarations are virtually identical. All the parameters mentioned so far are usable in methods.</p>
+<p>The main difference is that methods can be passed an invocant (the object associated with the method call), and when you define the sub, you have the opportunity to name it. It must be the first parameter if present, and is marked with a trailing <code>:</code>.</p>
+<pre><code>use v6;
+method explode ($self: $method) {...}
+</code></pre>
+<p>Note that there is no comma separating these the invocant and the first positional. In this context, the colon functions as a comma.</p>
+<h2>Parameter Traits</h2>
+<p>Each parameter can additionally specify a trait that changes the behavior of that parameter:</p>
+<ul>
+<li><code>is readonly</code> - this is the default behavior for a parameter; the sub cannot modify the passed in value.</li>
+<li><code>is rw</code> - the argument can be modified. Forces the argument to be required.</li>
+<li><code>is copy</code> - the sub gets a modifiable copy of the original value.</li>
+</ul>
+<h2>More Information</h2>
+<p>Check out <a href="http://perlcabal.org/syn/S06.html">Synopsis #6</a> for more information, and the <a href="https://github.com/perl6/roast">roast test suite</a> for more examples – any of the directories starting with <code>S06-</code>.</p>
+                </div>
+
+                <p class="postmetadata"> Posted in <a href="http://perl6advent.wordpress.com/category/2013/" rel="category tag">2013</a> |   <a href="http://perl6advent.wordpress.com/2013/12/21/day-21-signatures/#comments" title="Comment on Day 21 &#8211;&nbsp;Signatures">2 Comments &#187;</a></p>
+            </div>
+
+        
+            <div class="post-2181 post type-post status-publish format-standard hentry category-2013 tag-rakudo-perl-6" id="post-2181">
+                <h2><a href="http://perl6advent.wordpress.com/2013/12/20/day-20-how-to-mangle-the-initial-state/" rel="bookmark">Day 20 &#8211; How to mangle the initial&nbsp;state</a></h2>
+                <small>December 20, 2013 <span class="by-author"><span class="sep">by</span> <span class="author vcard"><a class="url fn n" href="http://perl6advent.wordpress.com/author/liztormato/" title="View all posts by liztormato" rel="author">liztormato</a></span> </span></small>
+
+                <div class="entry">
+                    <p>The past year saw the (at least partial) implementation of several variable traits.  But before we get into that, the past year <b>also</b> saw <i>Nil</i> getting implemented closer to spec in Rakudo. If you read <a href="http://perlcabal.org/syn/S02.html#Nil">the spec</a>, you will know that <b>Nil</b> indicates the <b>absence</b> of a value.  This is different from being undefined, as we saw <a href="http://perl6advent.wordpress.com/2013/12/02/day-02-the-humble-type-object/">in an earlier blogpost this year</a>.  So what does that mean?</p>
+<pre>$ perl6 -e 'my $a = 42; say $a; $a = Nil; say $a'
+42
+(Any)
+</pre>
+<p>So, assigning Nil will reset a scalar container to its default value, which (by default) is the type object of that container.  Which is <i>(Any)</i> if nothing is specifically specified.</p>
+<h2>Enter the “is default” variable trait</h2>
+<p>If you want to specify the default value of a variable, you can now use the “is default” variable trait:</p>
+<pre>$ perl6 -e 'my $a is default(42); say $a; say $a.defined’
+42
+True
+</pre>
+<p>So oddly enough, even though we haven’t assigned anything to the variable, it now has a defined value.  So let’s assign something else to it, and then assign <b>Nil</b>:</p>
+<pre>$ perl6 -e 'my $a is default(42) = 69; say $a; $a = Nil; say $a'
+69
+42
+</pre>
+<p>Of course, this is a contrived example.</p>
+<h2>&#8220;is default&#8221; on arrays and hashes</h2>
+<p>It gets more interesting with arrays and hashes. Suppose you want a Bool array where you can only switch “off” elements by assigning False?  That is now possible:</p>
+<pre>$ perl6 -e 'my Bool @b is default(True); say @b[1000]; @b[1000]=False; say @b[1000]'
+True
+False
+</pre>
+<p>Of course, type checks should be in place when specifying default values.</p>
+<pre>$ perl6 -e 'my Bool $a is default(42)'
+===SORRY!=== Error while compiling -e
+Type check failed in assignment to '$a'; expected 'Bool' but got 'Int’
+</pre>
+<p>Note that this type check is occurring at compile time.  Ideally, this should also happen with arrays and hashes, but that doesn’t happen just yet.  Patches welcome!</p>
+<p>Using <b>is default</b> on arrays and hashes interacts as expected with <b>:exists</b> (well, at least for some definition of expected :-):</p>
+<pre>$ perl6 -e 'my @a is default(42); say @a[0]; say @a[0].defined; say @a[0]:exists'
+42
+True
+False
+</pre>
+<p>Note that even though each element in the array appears to have a defined value, it does <b>not necessarily</b> exist.  Personally, I would be in favour of expanding that to scalar values as well, but for now <i>:exists</i> does not work on scalar values, just on slices.</p>
+<h2>It’s not the same as specifying the type</h2>
+<p>What’s wrong with using type objects as default values?  Well, for one it doesn’t set the <b>type</b> of the variable.  Underneath it is still an <i>(Any)</i> in this case:</p>
+<pre>$ perl6 -e 'my $a is default(Int) = "foo"; say $a'
+foo
+</pre>
+<p>So you don’t get any type checking, which is probably <b>not</b> what you want (otherwise you wouldn’t take all the trouble of specifying the default).  So don’t do that!  Compare this with:</p>
+<pre>$ perl6 -e 'my Int $a = "foo"'
+Type check failed in assignment to '$a'; expected 'Int' but got 'Str'
+</pre>
+<p>Which properly tells you that you’re doing something wrong.</p>
+<h2>Nil assigns the default value</h2>
+<p>Coming back to <i>Nil</i>: we already saw that assigning it will assign the default value.  If we actually specify a default value, this becomes more clear:</p>
+<pre>$ perl6 -e 'my $a is default(42) = 69; say $a; $a = Nil; say $a'
+69
+42
+</pre>
+<p>In the context of arrays and hashes, assigning <b>Nil</b> has a subtly different effect from using the <b>:delete</b> adverb.  After assigning Nil, the element <b>still</b> exists:</p>
+<pre>$ perl6 -e 'my @a is default(42) = 69; say @a[0]; @a[0] = Nil; say @a[0]:exists'
+69
+True
+</pre>
+<p>Compare this with using the <b>:delete</b> adverb:</p>
+<pre>$ perl6 -e 'my @a is default(42) = 69; @a[0]:delete; say @a[0]; say @a[0]:exists'
+42
+False
+</pre>
+<p>One could argue that assigning Nil (which assigns the default value, but which is <b>also</b> specced as indicating an absence of value) should be the same as deleting.  I would be in favour of that.</p>
+<h2>Argh, I want to pass on Nil</h2>
+<p>The result of a failed match, now also returns Nil (one of the other changes in the spec that were implemented in Rakudo in the past year).  However, saving the result of a failed match in a variable, will assign the default value, losing its Nilness, Nilility, Nililism (so much opportunity for creative wordsmithing :-).</p>
+<pre>$ perl6 -e 'my $a = Nil; say $a'
+(Any)
+</pre>
+<p>It turns out you can specify Nil as the default for a variable, and then It Just Works™</p>
+<pre>$ perl6 -e 'my $a is default(Nil) = 42; say $a; $a = Nil; say $a'
+42
+Nil
+</pre>
+<h2>Introspection</h2>
+<p>You can use the <b>VAR</b> macro to introspect variables to find out its default value, without having to do something as destructive as assigning Nil to it:</p>
+<pre>$ perl6 -e 'my @a is default(42); say @a.VAR.default'
+42
+</pre>
+<p>This also works on system variables like <b>$/</b>:</p>
+<pre>$ perl6 -e 'say $/.VAR.default'
+Nil
+</pre>
+<p>And can also be used to interrogate other properties:</p>
+<pre>$ perl6 -e 'say $/.VAR.dynamic’
+True
+</pre>
+<p>But this gets us into material for a blog post for another day!<br />
+<h2>Conclusion</h2>
+<p>The “<b>is default</b>” variable trait allows you to manipulate the default value of variables and elements in arrays and hashes.  Together with the new meaning of <b>Nil</b>, it is a powerful means of mangling initial values of variables to your satisfaction.</p>
+                </div>
+
+                <p class="postmetadata">Tags: <a href="http://perl6advent.wordpress.com/tag/rakudo-perl-6/" rel="tag">Rakudo Perl 6</a><br /> Posted in <a href="http://perl6advent.wordpress.com/category/2013/" rel="category tag">2013</a> |   <a href="http://perl6advent.wordpress.com/2013/12/20/day-20-how-to-mangle-the-initial-state/#comments" title="Comment on Day 20 &#8211; How to mangle the initial&nbsp;state">1 Comment &#187;</a></p>
+            </div>
+
+        
+            <div class="post-2171 post type-post status-publish format-standard hentry category-2013" id="post-2171">
+                <h2><a href="http://perl6advent.wordpress.com/2013/12/19/perl-6-supplies-reactive-programming/" rel="bookmark">Day 19 &#8211; Perl 6 Supplies Reactive&nbsp;Programming</a></h2>
+                <small>December 19, 2013 <span class="by-author"><span class="sep">by</span> <span class="author vcard"><a class="url fn n" href="http://perl6advent.wordpress.com/author/jnthnwrthngtn/" title="View all posts by jnthnwrthngtn" rel="author">jnthnwrthngtn</a></span> </span></small>
+
+                <div class="entry">
+                    <p>Several days back, we took a look at <a href="http://perl6advent.wordpress.com/2013/12/14/asynchronous-programming-promises-and-channels/">promises and channels</a>. Promises provided a synchronization mechanisms for asynchronous things that produced a single result, while channels were ideal for setting up producer/consumer style workflows, with producers and consumers able to work in parallel. Today we&#8217;ll take a look at a third mechanism aimed at introducing asynchrony and coping with concurrency: supplies!</p>
+<h3>Synchronous = Pull, Asynchronous = Push</h3>
+<p>One of the most important features of promises is the <strong>then</strong> method. It enables one or more things to be run whenever the asynchronous work the promise represents is completed. In a sense, it&#8217;s like a publish/subscribe mechanism: you call <strong>then</strong> to subscribe, and when the work is done then the notification is published. This happens asynchronously. You don&#8217;t sit around waiting for the promise to complete, but instead just say what to do when this takes place. Thinking about the way data flows, values are <em>pushed</em> along to the next step of the process.</p>
+<p>This is rather different to things like sub and method calls. There, we make the call, then we block until it has completed. Iterating over a lazy list is the same: you can&#8217;t progress with the iteration until the next value is available. Thus, iteration is really about <em>pulling</em> stuff from a source. So, if a promise can be thought of as something that can push a single values out as it becomes available, do we have something that can push a whole stream of values outwards, as they are produced over time?</p>
+<h3>Supplies! We do!</h3>
+<p>A while back, it was realized that the observer pattern is the mathematical dual of the iterator pattern. Why is this exciting? Quite simply, because it means that all the things you can sensibly do with something you can iterate (map, grep, zip, etc.), you can also sensibly do with something you can observe. Out of this was born reactive programming, and the Rx (Reactive Extensions) library, which has now been ported to many platforms. In Perl 6, we&#8217;re providing support for this in core.</p>
+<h3>The basics</h3>
+<p>Let&#8217;s start out simple. First, we create a new <strong>Supply</strong>:</p>
+<pre>my $measurements = Supply.new;</pre>
+<p>We can then <strong>tap</strong> the supply, passing a closure that should be called whenever a value is made available:</p>
+<pre>$measurements.tap(-&gt; $value {
+    say "Measured: $value";
+});</pre>
+<p>Finally, we produce some values:</p>
+<pre>$measurements.more(1.5);
+$measurements.more(2.3);
+$measurements.more(4.6);</pre>
+<p>On each of these calls, the closure we tapped the supply with is invoked. Just as we can call <strong>then</strong> many times, so we can <strong>tap</strong> many times too:</p>
+<pre>$measurements.tap(-&gt; $value {
+    say "Also measured: $value";
+});</pre>
+<p>Now, when we produce a value:</p>
+<pre>$measurements.more(2.8);</pre>
+<p>Both of the closures tapping the supply will be called. Note that <strong>tap</strong> returns an object which can be used to express you&#8217;re no longer interested in the supply, essentially turning that tap off.</p>
+<p>Note that we didn&#8217;t introduce any asynchrony so far. However, supplies are built for it. You can safely have multiple threads supplying values. By default, the supplying thread is used to execute the taps.</p>
+<h3>Enter the combinators!</h3>
+<p>Since supplies are essentially a thread-safe observer implementation, we can define many of the same things on them as we&#8217;re used to having on lists. For example, imagine we just wanted to tap high measurements. Well, we just re-use knowledge from how we&#8217;d filter a list: using <strong>grep</strong>!</p>
+<pre>$measurements.grep(* &gt; 4).tap(-&gt; $value {
+    say "HIGH: $value";
+});</pre>
+<p>Calling <strong>grep</strong> on a supply produces another supply, just as calling <strong>grep</strong> on a list gives another list. We could, if we wished, store it in a variable and <strong>tap</strong> this derived supply many times, <strong>grep</strong> it again, <strong>map</strong> it, etc.</p>
+<h3>Supply factories</h3>
+<p>There are ways to get supplies besides simply creating them directly. The <strong>Supply</strong> class has various factory methods that create various interesting kinds of supply, while introducing asynchrony. For example, <strong>interval</strong> gives a supply that, when tapped, will produce an ascending integer once per time interval.</p>
+<pre>my $secs = Supply.interval(1);
+$secs.tap(-&gt; $s { say "Started $s seconds ago" });
+sleep 10;</pre>
+<p>Factories can also help map between paradigms. The <strong>Supply.for</strong> method produces a supply that, when tapped, will iterate the specified (potentially lazy) list and push the values out to the tapper. It does the iteration asynchronously. While it&#8217;s not implemented yet, we&#8217;ll be able to define a similar mechanism for taking a <strong>Channel</strong> and tapping each value that is received.</p>
+<h3>Crossing the streams</h3>
+<p>Some of the most powerful &#8211; and tricky to implement &#8211; combinators are those that involve multiple supplies. For example, <strong>merge</strong> gives a single supply whose values are those of the two other supplies it tapped, and <strong>zip</strong> pairs together values from two different supplies. These are tricky to implement because it&#8217;s entirely possible that two different threads will be supplying values. Thankfully, though, we just need to manage this once inside of the supplies implementation, and save those using them from worrying about the problem! In a sense, combinators on lists factor out flow control, while combinators on supplies factor out both flow control and synchronization. Both let us program in a more declarative style, getting the imperative clutter out of our code.</p>
+<p>Let&#8217;s bring all of this together with an example from one of my recent presentations. We simulate a situation where we have two sets of readings coming in: first, measurements from a belt, arriving in batches of 100, which we need to calculate the mean of, and second another simpler value arriving once every 5 seconds. We want to label them, and get a single supply merging these two streams of readings together. Here&#8217;s how it can be done:</p>
+<pre>my $belt_raw = Supply.interval(1).map({ rand xx 100 });
+my $belt_avg = $belt_raw.map(sub (@values) {
+    ([+] @values) / @values
+});
+my $belt_labeled = $belt_avg.map({ "Belt: $_" });
+my $samples = Supply.interval(5).map({ rand });
+my $samples_labeled = $samples.map({ "Sample: $_" });
+my $merged = $belt_labeled.merge($samples_labeled);
+$merged.tap(&amp;say);
+sleep 20;</pre>
+<p>Notice how it&#8217;s not actually that much harder than code that maps and greps lists we already had &#8211; and yet we&#8217;re managing to deal with both time and concurrently arriving data.</p>
+<h3>The future</h3>
+<p>Supplies are one of the most recently implemented things in Rakudo, and what&#8217;s done so far works on Rakudo on the JVM. With time, we&#8217;ll flesh out the range of combinators and factories, keep growing our test coverage, and deliver this functionality on Rakudo on MoarVM too, for those who don&#8217;t want to use the JVM.</p>
+                </div>
+
+                <p class="postmetadata"> Posted in <a href="http://perl6advent.wordpress.com/category/2013/" rel="category tag">2013</a> |   <a href="http://perl6advent.wordpress.com/2013/12/19/perl-6-supplies-reactive-programming/#respond" title="Comment on Day 19 &#8211; Perl 6 Supplies Reactive&nbsp;Programming">Leave a Comment &#187;</a></p>
+            </div>
+
+        
+            <div class="post-2129 post type-post status-publish format-standard hentry category-2013 tag-grammar tag-regex" id="post-2129">
+                <h2><a href="http://perl6advent.wordpress.com/2013/12/18/day-18-a-grammar-with-duplicate-checking/" rel="bookmark">Day 18 &#8211; A Grammar with duplicate&nbsp;checking</a></h2>
+                <small>December 18, 2013 <span class="by-author"><span class="sep">by</span> <span class="author vcard"><a class="url fn n" href="http://perl6advent.wordpress.com/author/dwarring/" title="View all posts by dwarring" rel="author">dwarring</a></span> </span></small>
+
+                <div class="entry">
+                    <p>Today&#8217;s example constructs a grammar for tracking playing cards in a single deal. We&#8217;ll say it&#8217;s poker with one or more players and that each player is being dealt a hand that contains exactly five cards.</p>
+<p>There is, however, the need to detect duplicate cards. We&#8217;ll need some way of tracking cards both within each card-hand and between hands.</p>
+<p><strong>A simple Card Game Grammar</strong></p>
+<p>To start with, here&#8217;s the basic grammar (no duplicate checks yet):</p>
+<pre><code>grammar CardGame {
+
+    rule TOP { ^ &lt;deal&gt; $ }
+
+    rule deal {
+        &lt;hand&gt;+ % ';'
+    }
+
+    rule hand { [ &lt;card&gt; ]**5 }
+    token card {&lt;face&gt;&lt;suit&gt;}
+
+    proto token suit {*}
+    token suit:sym&lt;♥&gt;  {&lt;sym&gt;}
+    token suit:sym&lt;♦&gt;  {&lt;sym&gt;}
+    token suit:sym&lt;♣&gt;  {&lt;sym&gt;}
+    token suit:sym&lt;♠&gt;  {&lt;sym&gt;}
+
+    token face {:i &lt;[2..9]&gt; | 10 | j | q | k | a }
+}
+
+say CardGame.parse("2♥ 5♥ 7♦ 8♣ 9♠");
+say CardGame.parse("2♥ a♥ 7♦ 8♣ j♥");
+</code></pre>
+<p>The  top-level rule consists of a <code>deal</code>. The <code>deal</code> consists of one or more <code>hand</code>s separated by <code>';'</code>. Each <code>hand</code> consists of 5 playing <code>card</code>s.</p>
+<p>Each card is represented by a <code>face</code>, one of: <code>a</code> (ace), <code>j</code> (jack), <code>q</code> (queen) or <code>k</code> (king), or <code>2</code> - <code>10</code>. This is followed by a suite: ♥ (hearts) ♦ (diamonds) ♣ (clubs) or ♠ (spades).</p>
+<p>[We could have used the playing cards characters, newly introduced in Unicode 6.0, but these aren't widely supported yet].</p>
+<p>As expected, the first cut of the grammar cheerily parses any hand:</p>
+<pre><code>say CardGame.parse("a♥ a♥ 7♦ 8♣ j♥");
+# one hand, duplicate a♥
+say CardGame.parse("a♥ 7♥ 7♦ 8♣ j♥; 10♥ j♥ q♥ k♥ a♥");
+# two hands, duplicate j♥
+
+</code></pre>
+<p><strong>Detecting Duplicates</strong></p>
+<p>We start by adding a Perl 6 variable declaration to the grammar. This will be used to track cards:</p>
+<pre><code>rule deal {
+    :my %*PLAYED = ();
+    &lt;hand&gt;+ % ';'
+}</code></pre>
+<p>This declares <code>%*PLAYED</code> <a href="http://doc.perl6.org/language/variables">[1]</a>. The <code>'%*'</code> twigil  indicates that it&#8217;s a hash <code>'%'</code> and that&#8217;s dynamically scoped <code>'*'</code>.</p>
+<p>Dynamic scoping is not only for subroutine and method calls <a href="http://doc.perl6.org/language/variables">[1]</a>. It also works seamlessly with grammar rules, tokens and actions.</p>
+<p>Being dynamically scoped, <code>%*PLAYED</code> is available to callees of the <code>deal</code> rule; the <code>hand</code> token, and its callee, the <code>card</code> token.</p>
+<p>It&#8217;s also available to any actions, that then get called. So we can track and report on duplicates by creating an action class with a method for the <code>card</code> token:</p>
+<pre><code>class CardGame::Actions {
+    method card($/) {
+       my $card = $/.lc;
+       say "Hey, there's an extra $card"
+           if %*PLAYED{$card}++;
+   }
+}
+
+my $a = CardGame::Actions.new;
+say CardGame.parse("a♥ a♥ 7♦ 8♣ j♥", :actions($a));
+# "Hey there's an extra a♥"
+say CardGame.parse("a♥ 7♥ 7♦ 8♣ j♥; 10♥ j♥ q♥ k♥ a♦",
+                   :actions($a));
+# "Hey there's an extra j♥"
+</code></pre>
+<p>And that might be all that&#8217;s needed  for tracking and reporting on duplicates. There&#8217;s a pretty good separation between the declarative grammar and procedural actions, with just one dynamically scoped hash variable.</p>
+<p><strong>Disallowing Duplicates</strong></p>
+<p>But I had a situation where I wanted duplicate checking to be a parsing constraint. Parsing needed to fail when duplicates were encountered.</p>
+<p>I achieved this by moving the duplicate check grammar side:</p>
+<pre><code>token card {&lt;face&gt;&lt;suit&gt;
+    &lt;?{
+        # only allow each card to appear once
+        my $card = $/.lc;
+        say "Hey, there's an extra $card"
+            if %*PLAYED{$card};
+
+        ! %*PLAYED{$card}++;
+     }&gt;
+}
+</code></pre>
+<p>This has introduced a code assertion between the <code>&lt;?{</code> and <code>}&gt;</code>  <a href="http://perlcabal.org/syn/S05.html#line_1623">[2]</a>. The rule succeeds when the code evaluates to a True value. The <code>card</code> token thus fails when the same card is detected more than once in a single deal.</p>
+<pre><code>say CardGame.parse("2♥ 7♥ 2♦ 3♣ 3♦");
+# legitimate, parses
+
+say CardGame.parse("a♥ a♥ 7♦ 8♣ j♥");
+# fails with message: Hey, there's an extra a♥
+
+say CardGame.parse("a♥ 7♥ 7♦ 8♣ j♥; 10♥ j♥ q♥ k♥ a♦");
+# fails with message: Hey, there's an extra j♥
+</code></pre>
+<p><strong>Discussion/Conclusion</strong></p>
+<p>One thing to be careful of with this type of technique is back-tracking (trying of alternatives). If, for instance, the grammar was modified in such a way that the card token could be called more than once for single input card, then we might erroneously report a duplicate. It&#8217;s still possible to track, but becomes a bit more involved. The simplest answer is to keep the grammars as simple as possible and minimize back-tracking.</p>
+<p>If in any doubt,  please consider using one or more of the Grammar::Debugger, Grammar::Tracer <a href="https://github.com/jnthn/grammar-debugger/">[3]</a> or the debugger <a href="https://github.com/jnthn/rakudo-debugger/">[4]</a> modules <a href="http://modules.perl6.org/">[5]</a> to track what&#8217;s going on. You can also insert debugging code into tokens or rules as closures: <code>{ say "here" }</code> <a href="http://perlcabal.org/syn/S05.html#line_953">[6]</a>.</p>
+<p>That the exercise for today; a simple Perl 6 Grammar to parse playing-cards in a card-game, but with duplicate checks using either actions or code assertions.</p>
+                </div>
+
+                <p class="postmetadata">Tags: <a href="http://perl6advent.wordpress.com/tag/grammar/" rel="tag">grammar</a>, <a href="http://perl6advent.wordpress.com/tag/regex/" rel="tag">regex</a><br /> Posted in <a href="http://perl6advent.wordpress.com/category/2013/" rel="category tag">2013</a> |   <a href="http://perl6advent.wordpress.com/2013/12/18/day-18-a-grammar-with-duplicate-checking/#respond" title="Comment on Day 18 &#8211; A Grammar with duplicate&nbsp;checking">Leave a Comment &#187;</a></p>
+            </div>
+
+        
+            <div class="post-2112 post type-post status-publish format-standard hentry category-2013" id="post-2112">
+                <h2><a href="http://perl6advent.wordpress.com/2013/12/17/day-17-of-a-new-contributor/" rel="bookmark">Day 17 &#8211; Of a new&nbsp;contributor</a></h2>
+                <small>December 17, 2013 <span class="by-author"><span class="sep">by</span> <span class="author vcard"><a class="url fn n" href="http://perl6advent.wordpress.com/author/timojbo/" title="View all posts by timotimo" rel="author">timotimo</a></span> </span></small>
+
+                <div class="entry">
+                    <p>If you’re anything like me, you&#8217;ve read last year’s advent calendar posts with delight, squeeing a little bit at the neat things you could express so easily with Perl 6. You might have wondered – like I have – if all those sundry features are just shiny bells and whistles that were added on top of an okay language. And you might be wondering how to find out more, dig deeper, and maybe even contribute.</p>
+<p>As you can tell from the fact that I’m writing this article, I’ve decided to become a contributor to the Perl 6 effort. I’m going to tell you how I got interested and then involved (and inloved) with Perl 6.</p>
+<p>Before my involvement with Perl 6 I mostly used Python. However beautiful and flexible Python is, I worked on a project where it was a poor fit and writing proper test code was exceptionally uncomfortable. Thus, I often made mistakes – misused my data structures, passed values of incorrect types to methods – that I felt the language should be able to detect early without sacrificing flexibility. The “gradual typing” approach of Perl 6 sounded like a very good fit to me.</p>
+<p>Having a friend show me bits and pieces of Perl 6 quickly led to looking at the Advent Calendar last year. I also joined the IRC channel and asked a whole bunch of questions. Not having done any Perl 5 programming before made figuring out the nooks and crannies of Perl 6 syntax a bit harder than I would have liked, especially when using the Perl 6 book. Fortunately, the IRC channel was always active and eager to help.</p>
+<p>After having learnt a bit more about Perl 6, I quickly started helping out here and there. In part because I’ve already enjoyed doing that for PyPy – which is implemented in a subset of Python, much like Rakudo is implemented in NQP – but also because I kept hitting little problems and bugs.</p>
+<p>So, how do you actually get to contributing?</p>
+<p>Well, starting small is always good. Come to the IRC channel and ask for “low hanging fruit”. Check out <a href="http://rakudo.org/tickets/">bugs blocking on test coverage or easy tickets</a> from the Perl 6 bug tracker. Try porting or creating one of the <a href="https://github.com/perl6/perl6-most-wanted">most wanted modules</a>. Experiment with the language and look what bugs you hit. One thing that’s always good and often not very hard is fixing “LTA error messages”; those are error messages that are “less than awesome”.</p>
+<p>At some point you’ll find something you’d like to fix. For me, the first thing was making spectests for bugs that were already fixed, but didn’t have a test yet. After that, giving a more helpful error message when a programmer tries to concatenate strings with . instead of ~. Then came fixing the output of nested Pair objects to have proper parenthesis. And then I dug deep into the Grammar, Actions and World classes to implement a suggestion mechanism for typos in variables, classes and subs.</p>
+<p>The fact that most of your potential contributions will likely be done either in Perl 6 code or at least in NQP code makes it rather easy to get started, since even NQP is fairly high-level. And if you work through the <a href="http://6guts.wordpress.com/2013/09/17/material-from-the-rakudo-and-nqp-internals-course/">materials from the Rakudo and NQP Internals Workshop 2013</a>, you’ll get a decent head start in understanding how Rakudo and NQP work.</p>
+<p>Whenever you get stuck, the people in #perl6 – including me, of course – will be happy to help you out and give advice along the way.</p>
+<p>Let’s try to tackle a simple “testneeded” bug. <a href="https://rt.perl.org/Public/Bug/Display.html?id=76998">this bug about parsing :$&lt;a&gt; pair shorthand syntax</a> looks simple enough to write a test case for.</p>
+<p>Here’s the executive summary:</p>
+<p>The :$foo syntax has already been introduced a few days ago by the post on adverbly adverbs. The syntax here is a combination of the shorthand notation <code>$&lt;foo&gt;</code> to mean <code>$/&lt;foo&gt;</code>, which refers to the named match group “foo” from the regex we just matched.</p>
+<p>So <code>:$&lt;foo&gt;</code> is supposed to give the pair <code>"foo" =&gt; $&lt;foo&gt;</code>. It didn’t in the past, but someone came along and fixed it. Now all we need to do is create a simple test case to make sure Rakudo doesn’t regress and other implementations don’t make the same mistake.</p>
+<p>In the last comment of the discussion, jnthn already wrote a much shortened test case for this bug, hidden behind a “show quoted text” link:</p>
+<pre>'abc' ~~ /a $&lt;a&gt;=[\w+]/; say :$&lt;a&gt;.perl</pre>
+<p>Since sometimes it happens that such a test case causes a compilation error on one of the implementations, it&#8217;s useful to be able to “fudge” the whole thing in one go. That means writing something like <code>#?niecza skip</code> in front of a block. That&#8217;s why we wrap our whole little test in curly braces, like so:</p>
+<pre># RT #76998
+{
+   my $res = do { 'abc' ~~ /a $&lt;a&gt;=[\w+]/; :$&lt;a&gt; };
+   ok $res ~~ Pair, ':$&lt;a&gt; returns a pair';
+   ok $res.key eq 'a', 'its key is "a"';
+   ok $res.value ~~ Match:D, 'the pair's value is a defined match object';
+}</pre>
+<p>So what have we done here? We executed the code in a do block, so that we can grab the value of the last piece of the block. The next three lines inspect the return value of our code block: Is it a Pair object? Is its key &#8220;a&#8221;, like expected? Is its value a defined Match object instance? (See <a title="Day 2 - The humble type object" href="http://perl6advent.wordpress.com/2013/12/02/day-02-the-humble-type-object/" target="_blank">day 2&#8242;s post</a> about the :D smiley).</p>
+<p>Also, we wrapped the whole test in a big block and put a comment on top to mention the ticket ID from the bug tracker. That way, it&#8217;s easier to see why this test exists and we can reference the commit to the <a title="perl6/roast" href="https://github.com/perl6/roast/" target="_blank">perl6/roast</a> repository in the ticket discussion when we close it (or have someone close it for us).</p>
+<p>Next up, we have to &#8220;bump up the plan&#8221;, which means we go to the beginning of the test file and increase the line that calls &#8220;plan&#8221; with a number by 3 (which is exactly how many more ok/not ok outputs we expect our test case to generate).</p>
+<p>Then we can either fork <i>perl6/roast</i> on github and make a pull-request from our change or submit a git format-patch created patch via IRC, the bug tracker, or the mailing lists.</p>
+<p>Note that I didn&#8217;t commit anything I wrote here yet. If you&#8217;re faster than the other readers of this blog, you can feel free to go ahead and submit this. If you&#8217;re not, feel free to select a different ticket to improve upon.</p>
+<p>Finally, if you apply for a commit bit – meaning the right to directly commit to the repositories on github – make sure to mention I sent you to get 50% off of your first 10 commits; what an <em>incredible</em> deal!</p>
+                </div>
+
+                <p class="postmetadata"> Posted in <a href="http://perl6advent.wordpress.com/category/2013/" rel="category tag">2013</a> |   <a href="http://perl6advent.wordpress.com/2013/12/17/day-17-of-a-new-contributor/#comments" title="Comment on Day 17 &#8211; Of a new&nbsp;contributor">1 Comment &#187;</a></p>
+            </div>
+
+        
+            <div class="post-2101 post type-post status-publish format-standard hentry category-2013" id="post-2101">
+                <h2><a href="http://perl6advent.wordpress.com/2013/12/16/day-16-slangs/" rel="bookmark">Day 16 &#8211;&nbsp;Slangs</a></h2>
+                <small>December 16, 2013 <span class="by-author"><span class="sep">by</span> <span class="author vcard"><a class="url fn n" href="http://perl6advent.wordpress.com/author/tleich/" title="View all posts by tleich" rel="author">tleich</a></span> </span></small>
+
+                <div class="entry">
+                    <pre>use v6;
+my $thing = "123abc";
+say try $thing + 1; # this will fail
+
+{
+    use v5;
+    say $thing + 1 # will print 124
+}</pre>
+<p>Slangs are pretty interesting things in natural languages, so naturally they will be pretty awesome in computer languages as well. Without it the cross-language communication is like talking through a thin pipe, like it is when calling C functions. It <i>does</I> work, but calling functions is not the only nor the most comfortable thing out there.</p>
+<p>The example above shows that we create a variable in Perl 6 land and use it in a nested block, which derives from another language. (This does only work if the nested language is capable of handling the syntax, a dollar-sigilled variable in this case.)<br />
+We use this other language on purpose: it provides a feature that we need to solve our task.<br />
+I hope that slangs will pop up not just to provide functionality to solve a given problem, but also help in writing the code in a way that fits the nature of that said problem.</p>
+<p><strong>How does that even work?</strong></p>
+<p>The key is that the module that lets you switch to the slang provides a grammar and appropriate action methods. That is not different from how Perl 6 is implemented itself, or how JSON::Tiny works internally.<br />
+The grammar will parse all statements in our nested block, and the actions are there to translate the parsed source code (text) into something a compiler can handle better: usually abstracted operations in form of a tree, called <a href="http://en.wikipedia.org/wiki/Abstract_syntax_tree" title="AST - wikipedia" target="_blank">AST</a>.</p>
+<p>The v5 slang compiles to QAST, which is the name of the AST that Rakudo uses. The benefit of that approach is that this data structure is already known by the guts of the Rakudo compiler. So our slang would just need to care about translating the foreign source code text into something known. The compiler takes this AST then and maps it to something the underlying backend understands.<br />
+So it does not matter if we&#8217;re running on Parrot, on the JVM or something else, the slang&#8217;s job is done when it produced the AST.</p>
+<p><strong>A slang was born.</strong></p>
+<p>In March this year at the <a href="http://act.yapc.eu/gpw2013/" title="German Perl Workshop 2013" target="_blank">GPW2013</a>, I felt the need for something that glues both Perl 6 and Perl 5 together. There were many nice people that shared this urge, so I investigated how to do so.<br />
+Then I found a Perl 5 parser in the <a href="https://github.com/perl6/std/" title="std repository - github" target="_blank">std</a> repository. Larry Wall took the Perl 6 parser years ago and modified it to be Perl 5 conform. The Perl 6 parser it is based on is the very same that Rakudo is built upon. So the first step was to take this Perl 5 grammar, take the action methods from Rakudo, and try to build something that compiles.<br />
+(In theory this is all we needed: grammar + action = slang.)</p>
+<p>I can&#8217;t quite remember whether it took one week or two, but then there was a hacked Rakudo that could say &#8220;Hallo World&#8221;. And it already insisted on putting parens around conditions for example. Which might be the first eye catcher for everyone when looking at both languages.<br />
+Since then there was a lot of progress in merging in Perl 5&#8242;s test suite, and implementing and fixing things, and making it a <a href="https://github.com/rakudo-p5/v5" title="v5 module repository" target="_blank">module</a> rather than a hacked standalone Rakudo-ish thing.</p>
+<p>Today I can proudly say that it passes more than <a href="https://github.com/rakudo-p5/v5/blob/master/STATUS.md" title="test suite stats" target="_blank">4600 of roughly 45000 tests</a>. These 4600 passing tests are enough so you can play with it and feed it simple Perl 5 code. But the main work for the next weeks and months is to provide the core modules so that you can actually use a module from CPAN. Which, after all, was the main reason to create v5.</p>
+<p><strong>What is supported at the moment?</strong></p>
+<ul>
+<li>all control structures like loops and conditions</li>
+<li>functions like shift, pop, chop, ord, sleep, require, &#8230;</li>
+<li>mathematical operations</li>
+<li>subroutine signatures that affect parsing</li>
+<li>pragmas like vars, warnings, strict</li>
+<li>core modules like Config, Cwd and English</li>
+</ul>
+<p><strong>The main missing pieces that hurt are:</strong></p>
+<ul>
+<li>labels and goto</li>
+<li>barewords and pseudo filehandles</li>
+<li><a href="https://github.com/rakudo-p5/v5/blob/master/TODO_core_modules.md" title="TODO_core_modules.md" target="_blank">many many core modules</a></li>
+</ul>
+<p>Loop labels for <code>next LABEL</code>, <code>redo LABEL</code> and <code>last LABEL</code> will land soon in rakudo and v5. The other missing parts will take their time but will happen :o).</p>
+<p><strong>The set goals of v5:</strong></p>
+<ul>
+<li>write Perl 5 code directly in Perl 6 code, usually as a closure</li>
+<li>allow Perl 6 lexical blocks inside Perl 5 ones</li>
+<li>make it easy to use variables declared in an outer block (outer means the other language here)</li>
+<li>provide the behaviour of Perl 5 operators and built-ins for v5 blocks only, nested Perl 6 blocks should not be affected</li>
+<li>and of course: make subs, packages, regexes, etc available to the other language</li>
+</ul>
+<p>All of the statements above are already true today. If you do a numeric operation it will behave differently in a v5 block than a Perl 6 block like the example at the top shows. That is simply because in Perl 6 the <code>+</code> operator will dispatch to a subroutine called <code>&amp;infix:&lt;+&gt;</code>, but in a v5 block it translates to <code>&amp;infix:&lt;P5+&gt;</code>.</p>
+<p>Oversimplified it looks a bit like this:</p>
+<p>Perl 6/5 code:</p>
+<pre>
+1 + 2;
+{
+    use v5;
+    3 + 4
+}
+</pre>
+<p>Produced AST:</p>
+<pre>- QAST::CompUnit
+    - QAST::Block 1 + 2; { use v5; 3 + 4 }
+        - QAST::Stmts 1 + 2; { use v5; 3 + 4 }
+            - QAST::Stmt
+                - QAST::Op(call &amp;infix:&lt;+&gt;) +
+                    - QAST::IVal(1)
+                    - QAST::IVal(2)
+            - QAST::Block { use v5; 3 + 4 }
+                - QAST::Stmts  use v5; 3 + 4 
+                    - QAST::Stmt
+                        - QAST::Op(call &amp;infix:&lt;P5+&gt;)
+                            - QAST::IVal(3)
+                            - QAST::IVal(4)</pre>
+<p>The nice thing about this is that you can use foreign operators (of the used slang) in your Perl 6 code. Like <code>&amp;prefix:&lt;P5+&gt;("123hurz")</code> would be valid Perl 6 code that turn a string into a number even when there are trailing word characters.</p>
+<p>To get v5 you should follow its <a href="https://github.com/rakudo-p5/v5/blob/master/README.md" title="v5's README" target="_blank">README</a>, but be warned, at the moment this involves recompiling Rakudo.</p>
+<p><strong>Conclusion:</strong> When was the last time you&#8217;ve seen a language you could extend that easily? Right. I was merely astonished how easy it is to get started. Next on your TODO list: the COBOL slang. :o)</p>
+                </div>
+
+                <p class="postmetadata"> Posted in <a href="http://perl6advent.wordpress.com/category/2013/" rel="category tag">2013</a> |   <a href="http://perl6advent.wordpress.com/2013/12/16/day-16-slangs/#respond" title="Comment on Day 16 &#8211;&nbsp;Slangs">Leave a Comment &#187;</a></p>
+            </div>
+
+        
+            <div class="post-2096 post type-post status-publish format-standard hentry category-2013" id="post-2096">
+                <h2><a href="http://perl6advent.wordpress.com/2013/12/15/day-15-numbers-and-ways-of-writing-them/" rel="bookmark">Day 15 &#8211; Numbers and ways of writing&nbsp;them</a></h2>
+                <small>December 15, 2013 <span class="by-author"><span class="sep">by</span> <span class="author vcard"><a class="url fn n" href="http://perl6advent.wordpress.com/author/brushingupmyknuth/" title="View all posts by carl" rel="author">carl</a></span> </span></small>
+
+                <div class="entry">
+                    <p>Consider the humble integer.</p>
+<pre>my $number-of-dwarfs = 7;
+say $number-of-dwarfs.WHAT;   # (Int)</pre>
+<p>Integers are great. (Well, many of them are.) Computers basically run on integers. Also, God made the integers, and everything else is basically cheap counterfeit knock-offs, smuggled into the Platonic realm when no-one&#8217;s looking. If they&#8217;re so important, we&#8217;d expect to have lots of good ways of writing them in any respectable programming language.</p>
+<p>Do we have lots of ways of writing integers in Perl 6? We do. (Does that make Perl 6 respectable? No, because it&#8217;s a necessary but not sufficient condition. Duh.)</p>
+<p>One thing we might want to do, for example, is write our numbers in other number bases. The need for this crops up now and then, for example if you&#8217;re stranded on Binarium where everyone has a total of two fingers:</p>
+<pre>my $this-is-what-we-humans-call-ten = 0b1010;   # &#039;b&#039; for &#039;binary&#039;, baby
+my $and-your-ten-is-our-two = 0b10;</pre>
+<p>Or you may find yourself on the multi-faceted world of Hexa X, whose inhabitants (due to an evolutionary arms race involving the act of tickling) sport 16 fingers each:</p>
+<pre>my $open-your-mouth-and-say-ten = 0xA;    # &#039;x&#039; is for, um, &#039;heXadecimal&#039;
+my $really-sixteen = 0x10;</pre>
+<p>If you&#8217;re really unlucky, you will find yourself stuck in a file permissions factory, with no other means to signal the outer world than by using base 8:</p>
+<pre>my $halp-i&#039;m-stuck-in-this-weird-unix-factory = 0o644;</pre>
+<p>(Fans of other C-based languages may notice the deviation from tradition here: for your own sanity, we no longer write the above number as <code>0644</code> — doing so rewards you with a stern (turn-offable) warning. Maybe octal numbers were once important enough to merit a prefix of just <code>0</code>, but they ain&#8217;t no more.)</p>
+<p>Of course, just these bases are not enough. Sometimes you will need to count with a number of fingers that&#8217;s not any of 2, 8, or 16. For those special occasions, we have another nice syntax for you:</p>
+<pre>say :3&lt;120&gt;;       # 15 (== 1 * 3**2 + 2 * 3**1 + 0 * 3**0)
+say :28&lt;aaaargh&gt;;  # 4997394433
+say :5($n);        # let me parse that in base 5 for you</pre>
+<p>Yes, that&#8217;s the dear old pair syntax, here hijacked for base conversions <em>from</em> a certain base. You will recognize this special syntax by the fact that it uses colonpairs (<code>:3&lt;120&gt;</code>), not the &quot;fat arrow&quot; (<code>3 =&gt; 120</code>), and that the key is an integer. For the curious, the integer goes up to 36 (at which point we&#8217;ve reached &#8216;z&#8217; in the alphabet, and there&#8217;s no natural way to make up more symbols for &quot;digits&quot;).</p>
+<p>I once used <code>:4($_)</code> to <a href="http://strangelyconsistent.org/blog/the-genetic-code-oneliner-in-perl-6">translate DNA into proteins</a>. Perl 6 — fulfilling your bioinformatics dreams!</p>
+<p>Oh, and sometimes you want to convert <em>into</em> a certain base, essentially taking a good-old-integer and making it understandable for a being with a certain amount of fingers. We&#8217;ve got you covered there, too!</p>
+<pre>say 0xCAFEBABE;            # 3405691582
+say 3405691582.base(16);   # CAFEBABE</pre>
+<p>Moving on. Perl 6 also has rationals.</p>
+<pre>my $tenth = 1/10;
+say $tenth.WHAT;   # (Rat)</pre>
+<p>Usually computers (and programming languages) are pretty bad at representing numbers such as a tenth, because most of them are stranded on the planet Binarium. Not so Perl 6; it stores your rational numbers exactly, most of the time.</p>
+<pre>say (0, 1/10 ... 1);            # 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
+say (1/3 + 1/6) * 2;            # 1
+say 1/10 + 1/10 + 1/10 == 0.3;  # True (\o/)</pre>
+<p>The rule here is, if you give some number as a decimal (<code>0.5</code>) or as a ratio (<code>1/2</code>), it will be represented as a <code>Rat</code>. After that, Perl 6 does its darnedest to strike a balance between representing numbers without losing precision, and not losing too much performance in tight loops.</p>
+<p>But sometimes you do reach for those lossy, precision-dropping, efficient numbers:</p>
+<pre>my $pi = 3.14e0;
+my $earth-mass = 5.97e24;  # kg
+say $earth-mass.WHAT;      # (Num)</pre>
+<p>You get floating-point numbers by writing things in the scientific notation (<code>3.14e0</code>, where the <code>e0</code> means &quot;times ten to the power of 0&quot;). You can also get these numbers by doing some lossy calculation, such as exponentiation.</p>
+<p>Do keep in mind that these are <em>not</em> exact, and will get you into trouble if you treat them as exact:</p>
+<pre>say (0, 1e-1 ... 1);             # misses the 1, goes on forever
+say (0, 1e-1 ... * &gt;= 1);        # 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 1.1 (oops)
+say 1e0/10 + 1/10 + 1/10 == 0.3; # False (awww!)</pre>
+<p>So, don&#8217;t do that. Don&#8217;t treat them as exact, that is.</p>
+<p>You&#8217;re <em>supposed</em> to be able to write lists of numbers really neatly with the good old Perl 6 quote-words syntax:</p>
+<pre>my @numbers = &lt;1 2.0 3e0&gt;;
+say .WHAT for @numbers;          # (IntStr) (RatStr) (NumStr)</pre>
+<p>But this, unfortunately, is not implemented in Rakudo yet. (It is implemented in Niecza.)</p>
+<p>If you&#8217;re into Mandelbrot fractals or Electrical Engineering, Perl 6 has complex numbers for you, too:</p>
+<pre>say i * i == -1;            # True
+say e ** (i * pi) + 1;      # 0+1.22464679914735e-16i</pre>
+<p>That last one is <a href="https://en.wikipedia.org/wiki/Euler%27s_identity">really close to 0</a>, but the exponentiation throws us into the imprecise realm of floating-point numbers, and we lose a tiny bit of precision. (But what&#8217;s a tenth of a quadrillionth between friends?)</p>
+<pre>my $googol = EVAL( &quot;1&quot; ~ &quot;0&quot; x 100 );
+say $googol;                            # 1000…0 (exactly 100 zeros)
+say $googol.WHAT;                       # (Int)</pre>
+<p>Finally, if you have a taste for the infinite, Perl 6 allows handing, passing, and storage of <code>Inf</code> as a constant, and it compares predictably against numbers:</p>
+<pre>say Inf;              # Inf
+say Inf.WHAT;         # (Num)
+say Inf &gt; $googol;    # True
+my $max = -Inf;
+$max max= 5;          # (max= means &quot;store only if greater&quot;)
+say $max;             # 5</pre>
+<p>Perl 6 meets your future requirements by giving you alien number bases, integers and rationals with excellent precision, floating point and complex numbers, and infinities. This is what has been added — now go forth and multiply.</p>
+                </div>
+
+                <p class="postmetadata"> Posted in <a href="http://perl6advent.wordpress.com/category/2013/" rel="category tag">2013</a> |   <a href="http://perl6advent.wordpress.com/2013/12/15/day-15-numbers-and-ways-of-writing-them/#comments" title="Comment on Day 15 &#8211; Numbers and ways of writing&nbsp;them">6 Comments &#187;</a></p>
+            </div>
+
+        
+        <div class="navigation">
+            <div class="alignleft"><a href="http://perl6advent.wordpress.com/page/2/" >&laquo; Older Entries</a></div>
+            <div class="alignright"></div>
+        </div>
+
+    
+    </div>
+
+    <div id="sidebar">
+            <ul>
+                        <li>
+                
+    <div>
+    <form id="searchform" name="searchform" method="get" action="http://perl6advent.wordpress.com/">
+        <label style="display: none;" for="livesearch">Search:</label>
+         <input type="text" id="livesearch" name="s" value="search this site" onfocus="if( this.value == 'search this site') { this.value = '';}" onblur="if ( this.value == '') { this.value = 'search this site';}"/>
+        <input type="submit" id="searchsubmit" style="display: none;" value="Search" />
+    </form>
+    </div>          </li>
+
+            <!-- Author information is disabled per default. Uncomment and fill in your details if you want to use it.
+            <li><h2>Author</h2>
+            <p>A little something about you, the author. Nothing lengthy, just an overview.</p>
+            </li>
+            -->
+
+            
+            <li class="pagenav"><h2>Pages</h2><ul><li class="page_item page-item-2"><a href="http://perl6advent.wordpress.com/about/">About</a></li>
+</ul></li>
+            <li><h2>Archives</h2>
+                <ul>
+                    <li><a href='http://perl6advent.wordpress.com/2013/12/'>December 2013</a></li>
+    <li><a href='http://perl6advent.wordpress.com/2013/11/'>November 2013</a></li>
+    <li><a href='http://perl6advent.wordpress.com/2012/12/'>December 2012</a></li>
+    <li><a href='http://perl6advent.wordpress.com/2011/12/'>December 2011</a></li>
+    <li><a href='http://perl6advent.wordpress.com/2010/12/'>December 2010</a></li>
+    <li><a href='http://perl6advent.wordpress.com/2009/12/'>December 2009</a></li>
+                </ul>
+            </li>
+
+            <li class="categories"><h2>Categories</h2><ul>  <li class="cat-item cat-item-63415"><a href="http://perl6advent.wordpress.com/category/2009/" >2009</a> (26)
+</li>
+    <li class="cat-item cat-item-243274"><a href="http://perl6advent.wordpress.com/category/2010/" >2010</a> (25)
+</li>
+    <li class="cat-item cat-item-679366"><a href="http://perl6advent.wordpress.com/category/2011/" >2011</a> (25)
+</li>
+    <li class="cat-item cat-item-38494"><a href="http://perl6advent.wordpress.com/category/2012/" >2012</a> (25)
+</li>
+    <li class="cat-item cat-item-755991"><a href="http://perl6advent.wordpress.com/category/2013/" >2013</a> (25)
+</li>
+    <li class="cat-item cat-item-78442"><a href="http://perl6advent.wordpress.com/category/table-of-contents/" >table of contents</a> (5)
+</li>
+    <li class="cat-item cat-item-1"><a href="http://perl6advent.wordpress.com/category/uncategorized/" >Uncategorized</a> (1)
+</li>
+</ul></li>
+                            <li id="linkcat-1356" class="linkcat"><h2>Blogroll</h2>
+    <ul class='xoxo blogroll'>
+<li><a href="https://github.com/sorear/niecza/" title="Perl 6 Compiler based on the CLR (mono/.NET)">Niecza</a></li>
+<li><a href="http://planetsix.perl.org/" title="Aggregation of Perl 6 blogs" target="_top">Planet Perl 6</a></li>
+
+    </ul>
+</li>
+<li id="linkcat-2200" class="linkcat"><h2>Links</h2>
+    <ul class='xoxo blogroll'>
+<li><a href="http://perl6.org/" title="Links to everything that is Perl 6" target="_top">Perl 6 &#8211; official site</a></li>
+<li><a href="http://rakudo.org/" title="The most complete Perl 6 compiler" target="_top">Rakudo</a></li>
+
+    </ul>
+</li>
+
+                <li><h2>Meta</h2>
+                <ul>
+                    <li><a href="https://en.wordpress.com/signup/?ref=wplogin">Register</a></li>                    <li><a href="https://perl6advent.wordpress.com/wp-login.php">Log in</a></li>
+                    <li><a href="http://gmpg.org/xfn/"><abbr title="XHTML Friends Network">XFN</abbr></a></li>
+                    <li><a href="http://wordpress.com/" title="Powered by WordPress, state-of-the-art semantic personal publishing platform.">WordPress</a></li>
+                                    </ul>
+                </li>
+            
+                    </ul>
+    </div>
+
+
+
+<hr />
+<div id="footer">
+    <p>
+        <a href="https://wordpress.com/themes/kubrick/" title="Learn more about this theme">The Kubrick Theme</a>. <a href="https://wordpress.com/?ref=footer_website">Create a free website or blog at WordPress.com</a>.
+        <br /><a href="http://perl6advent.wordpress.com/feed/">Entries (RSS)</a> and <a href="http://perl6advent.wordpress.com/comments/feed/">Comments (RSS)</a>.  </p>
+</div>
+</div>
+
+<script type='text/javascript' src='//0.gravatar.com/js/gprofiles.js?ver=201446x'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var WPGroHo = {"my_hash":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://s2.wp.com/wp-content/mu-plugins/gravatar-hovercards/wpgroho.js?m=1380573781g'></script>
+
+    <script>
+        //initialize and attach hovercards to all gravatars
+        jQuery( document ).ready( function( $ ) {
+            if ( typeof Gravatar.init !== "function" ) {
+                return;
+            }           
+
+            Gravatar.profile_cb = function( hash, id ) {
+                WPGroHo.syncProfileData( hash, id );
+            };
+            Gravatar.my_hash = WPGroHo.my_hash;
+            Gravatar.init( 'body', '#wp-admin-bar-my-account' );
+        });
+    </script>
+
+        <div style="display:none">
+    </div>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var HighlanderComments = {"loggingInText":"Logging In\u2026","submittingText":"Posting Comment\u2026","postCommentText":"Post Comment","connectingToText":"Connecting to %s","commentingAsText":"%1$s: You are commenting using your %2$s account.","logoutText":"Log Out","loginText":"Log In","connectURL":"http:\/\/perl6advent.wordpress.com\/public.api\/connect\/?action=request","logoutURL":"https:\/\/perl6advent.wordpress.com\/wp-login.php?action=logout&_wpnonce=224ff49863","homeURL":"http:\/\/perl6advent.wordpress.com\/","postID":"2218","gravDefault":"identicon","enterACommentError":"Please enter a comment","enterEmailError":"Please enter your email address here","invalidEmailError":"Invalid email address","enterAuthorError":"Please enter your name here","gravatarFromEmail":"This picture will show whenever you leave a comment. Click to customize it.","logInToExternalAccount":"Log in to use details from one of these accounts.","change":"Change","changeAccount":"Change Account","comment_registration":"","userIsLoggedIn":"","isJetpack":"0"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='http://s0.wp.com/_static/??/wp-content/js/jquery/jquery.autoresize.js,/wp-content/mu-plugins/highlander-comments/script.js?m=1414003384j'></script>
+
+    <div id="bit" class="loggedout-follow-normal">
+        <a class="bsub" href="javascript:void(0)"><span id='bsub-text'>Follow</span></a>
+        <div id="bitsubscribe">
+
+                    <h3><label for="loggedout-follow-field">Follow &ldquo;Perl 6 Advent Calendar&rdquo;</label></h3>
+
+            <form action="https://subscribe.wordpress.com" method="post" accept-charset="utf-8" id="loggedout-follow">
+            <p>Get every new post delivered to your Inbox.</p>
+
+            <p id="loggedout-follow-error" style="display: none;"></p>
+
+                        <p class="bit-follow-count">Join 37 other followers</p>
+            <p><input type="email" name="email" value="Enter your email address" onfocus='this.value=(this.value=="Enter your email address") ? "" : this.value;' onblur='this.value=(this.value=="") ? "Enter your email address" : this.value;'  id="loggedout-follow-field"/></p>
+
+            <input type="hidden" name="action" value="subscribe"/>
+            <input type="hidden" name="blog_id" value="10740073"/>
+            <input type="hidden" name="source" value="http://perl6advent.wordpress.com/"/>
+            <input type="hidden" name="sub-type" value="loggedout-follow"/>
+
+            <input type="hidden" id="_wpnonce" name="_wpnonce" value="1d60f72e6d" /><input type="hidden" name="_wp_http_referer" value="/" />
+            <p id='bsub-subscribe-button'><input type="submit" value="Sign me up" /></p>
+            </form>
+                    <div id='bsub-credit'><a href="https://wordpress.com/?ref=lof">Build a website with WordPress.com</a></a></div>
+        </div><!-- #bitsubscribe -->
+    </div><!-- #bit -->
+<script type='text/javascript' src='http://s2.wp.com/wp-content/js/devicepx.js?m=1399919068g'></script>
+<script type="text/javascript">
+// <![CDATA[
+(function() {
+try{
+  if ( window.external &&'msIsSiteMode' in window.external) {
+    if (window.external.msIsSiteMode()) {
+      var jl = document.createElement('script');
+      jl.type='text/javascript';
+      jl.async=true;
+      jl.src='/wp-content/plugins/ie-sitemode/custom-jumplist.php';
+      var s = document.getElementsByTagName('script')[0];
+      s.parentNode.insertBefore(jl, s);
+    }
+  }
+}catch(e){}
+})();
+// ]]>
+</script>   <script type="text/javascript">
+    var skimlinks_pub_id = "725X584219"
+    var skimlinks_sitename = "perl6advent.wordpress.com";
+    </script>
+    <script type="text/javascript" src="http://s.skimresources.com/js/725X1342.skimlinks.js"></script><script src="//stats.wp.com/w.js?24" type="text/javascript"></script>
+<script type="text/javascript">
+if(typeof trackerModule == 'object' && 'storeIdentity' in trackerModule){trackerModule.storeIdentity({'current_blog_id':'10740073','current_blog_tz':'0','current_user_lang':'en','current_blog_lang':'en','current_user_id':'0'});}
+st_go({'blog':'10740073','v':'wpcom','tz':'0','user_id':'0','subd':'perl6advent'});
+ex_go({'crypt':'UE40eW5QN0p8M2Y/RE1LVmwrVi5vQS5fVFtfdHBbPyw1VXIrU3hWLHhmK2FURjVLLSxrUXxTRWFBSGJ8X1R+OVpIL0c0Rks9UzMrK2NdN2paYTlYR3NhRG1zSzZreHJTQzYvLHNCVi41QlJ2OHlnOFZIL3NVZmRnK3BdU054dkk9LGowTlV5Ni5JfjNCaEEzNVtld3klM0Y0UUh+bys/a35jaWhBV2VncFAuY2h0VkRQS2prSGtwTm56RD0lalh4LGpsJk9rTixVN1tiMHw1NXFwWzhIMTNoX0RrV09nYSU3am85aWlSNktFfm9ZWm5McX5LWGFLNFcxSnFxfHN3W1YtWnlNTHhlSjF0X1laPQ=='});
+addLoadEvent(function(){linktracker_init('10740073',0);});
+    </script>
+<noscript><img src="http://pixel.wp.com/b.gif?v=noscript" style="height:0px;width:0px;overflow:hidden" alt="" /></noscript>
+<script>
+if ( 'object' === typeof wpcom_mobile_user_agent_info ) {
+
+    wpcom_mobile_user_agent_info.init();
+    var mobileStatsQueryString = "";
+    
+    if( false !== wpcom_mobile_user_agent_info.matchedPlatformName )
+        mobileStatsQueryString += "&x_" + 'mobile_platforms' + '=' + wpcom_mobile_user_agent_info.matchedPlatformName;
+    
+    if( false !== wpcom_mobile_user_agent_info.matchedUserAgentName )
+        mobileStatsQueryString += "&x_" + 'mobile_devices' + '=' + wpcom_mobile_user_agent_info.matchedUserAgentName;
+    
+    if( wpcom_mobile_user_agent_info.isIPad() )
+        mobileStatsQueryString += "&x_" + 'ipad_views' + '=' + 'views';
+
+    if( "" != mobileStatsQueryString ) {
+        new Image().src = document.location.protocol + '//pixel.wp.com/g.gif?v=wpcom-no-pv' + mobileStatsQueryString + '&baba=' + Math.random();
+    }
+    
+}
+</script></body>
+</html>
