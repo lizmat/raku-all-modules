@@ -1,0 +1,8 @@
+{
+    "name"        : "Math::Vector",
+    "version"     : "*",
+    "description" : "Vector math class",
+    "depends"     : [],
+    "source-type"   : "git",
+    "source-url"    : "git://github.com/colomon/Math-Vector.git"
+}
