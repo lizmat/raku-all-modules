@@ -1,0 +1,13 @@
+{
+    "name" : "SP6",
+    "version" : "0.1.1",
+    "description" : "Simple templates for Perl 6",
+    "author" : "Michal Jurosz",
+    "source-type" : "git",
+    "source-url" : "git://github.com/mj41/SP6.git",
+    "depends" : [],
+    "provides" : {
+        "SP6" : "lib/SP6.pm6",
+        "SP6::ProcessMethods" : "lib/SP6/ProcessMethods.pm6"
+    }
+}

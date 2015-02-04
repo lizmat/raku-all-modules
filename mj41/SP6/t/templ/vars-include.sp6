@@ -1,0 +1,5 @@
+aa{
+	%v<varA> = 42;
+	%v<varB> = 'textB';
+	'';
+}bb< { include 'vars-include-inner.sp6' } >cc< { %v<varA> ~ '+' ~ %v<varB> } >dd
