@@ -1,0 +1,43 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Audio::Taglib::Simple;
+
+sub MAIN(*@files) {
+    my $track-number-template = '%0' ~ (+@files).chars ~ 'd-';
+
+    for @files -> $filename {
+        my $tags;
+        try {
+            $tags = Audio::Taglib::Simple.new($filename);
+            CATCH { say "Error reading $filename"; next; }
+        }
+        
+        my $title = $tags.title;
+        $title .= subst(/ \s | '?' | "'" | '(' | ')' | '"' | '#' | '[' | ']' /, "_", :global);
+
+        $title .= subst(/<[àáâäaãåā]>/, "a", :global);
+        $title .= subst(/<[èéêëēėę]>/, "e", :global);
+        $title .= subst(/<[îïíīįì]>/, "i", :global);
+        $title .= subst(/<[ôöòóøōõ]>/, "o", :global);
+        $title .= subst(/<[ûüùúū]>/, "u", :global);
+        $title .= subst(/<[ÀÁÂÄAÃÅĀ]>/, "A", :global);
+        $title .= subst(/<[ÈÉÊËĒĖĘ]>/, "E", :global);
+        $title .= subst(/<[ÎÏÍĪĮÌ]>/, "I", :global);
+        $title .= subst(/<[ÔÖÒÓØŌÕ]>/, "O", :global);
+        $title .= subst(/<[ÛÜÙÚŪ]>/, "U", :global);
+
+        $title .= subst(/"&"/, "and", :global);
+        $title .= subst(rx{'/'}, "-", :global);
+        $title .= subst(/ <:!ASCII> /, "_", :global);
+        $title .= subst(":", "-", :global);
+
+        my $new-filename = sprintf($track-number-template, $tags.track) ~ $title ~ ".mp3";
+
+        my $original-filename = $filename.perl;
+        $original-filename .= subst(/'\%'/, "%", :global);
+        $original-filename .= subst('\&', '&', :global);
+        
+        say "mv " ~ $original-filename ~ " "  ~ $new-filename;
+    }
+}

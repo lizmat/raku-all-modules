@@ -1,0 +1,17 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Audio::Taglib::Simple;
+
+sub MAIN(*@files) {
+    for @files -> $filename {
+        try {
+            my $tags = Audio::Taglib::Simple.new($filename);
+            unless $tags.artist ~~ m/\S/ && $tags.title ~~ m/\S/ {
+                say $filename;
+            }
+            CATCH { say "Error reading $filename" }
+        }
+    }
+}
+
