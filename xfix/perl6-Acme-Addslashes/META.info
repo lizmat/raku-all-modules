@@ -1,0 +1,7 @@
+{
+    "name"        : "Acme::Addslashes",
+    "version"     : "0.1.2",
+    "description" : "PHP security. Now in Perl 6.",
+    "depends"     : [],
+    "source-url"  : "git://github.com/xfix/perl6-Acme-Addslashes.git"
+}

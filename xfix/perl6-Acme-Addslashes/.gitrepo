@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/xfix/perl6-Acme-Addslashes.git
+	branch = master
+	commit = 6270b13a084d58aa206850a4eb21f948ca58a0e1
+	parent = 44907fb27a9b82c1469b54a6d68d5a264089de05
+	cmdver = 0.1.0
