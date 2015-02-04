@@ -1,0 +1,11 @@
+{
+    "name"	  : "MIME::QuotedPrint",
+    "version"	  : "1.0.0",
+    "author"      : "github:retupmoca",
+    "description" : "quoted-printable mime encode/decode",
+    "depends"	  : [],
+    "provides"    : {
+        "MIME::QuotedPrint" : "lib/MIME/QuotedPrint.pm6"
+    },
+    "source-url"  : "git://github.com/retupmoca/p6-MIME-QuotedPrint.git"
+}
