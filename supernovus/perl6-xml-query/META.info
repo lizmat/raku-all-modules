@@ -1,0 +1,12 @@
+{
+  "name"        : "XML::Query",
+  "version"     : "*",
+  "description" : "jQuery-like node selecting and traversing for XML.",
+  "depends"     : ["XML"],
+  "provides"    : {
+    "XML::Query"             : "lib/XML/Query.pm6",
+    "XML::Query::Results"    : "lib/XML/Query/Results.pm6",
+    "XML::Query::Statement"  : "lib/XML/Query/Statement.pm6"
+  },
+  "source-url"  : "git://github.com/supernovus/perl6-xml-query.git"
+}
