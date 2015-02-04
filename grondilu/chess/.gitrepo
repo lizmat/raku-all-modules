@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/grondilu/chess.git
+	branch = master
+	commit = 79fe8930a33e3eeb6c2d8ecb49d49a388f39dde7
+	parent = e4e1d4b83ba4e0c5a4c0e2951c0ce8bcb1508e8d
+	cmdver = 0.1.0
