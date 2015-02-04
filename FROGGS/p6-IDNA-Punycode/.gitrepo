@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/FROGGS/p6-IDNA-Punycode.git
+	branch = master
+	commit = 4efc35491bcbcad0b004644685c34c4398e90be4
+	parent = 05c6c366229ee23e35653ccc1c874443d18119c4
+	cmdver = 0.1.0

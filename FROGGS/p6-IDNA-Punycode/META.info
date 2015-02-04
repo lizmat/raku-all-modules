@@ -1,0 +1,11 @@
+{
+    "name" : "IDNA::Punycode",
+    "author" : "github:FROGGS",
+    "version" : "1.0.0",
+    "description" : "Punycode implementation according to RFC3492",
+    "depends" : [ ],
+    "provides" : {
+        "IDNA::Punycode" : "lib/IDNA/Punycode.pm"
+    },
+    "source-url" : "git://github.com/FROGGS/p6-IDNA-Punycode.git"
+}
