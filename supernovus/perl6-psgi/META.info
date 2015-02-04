@@ -1,0 +1,10 @@
+{
+  "name"        : "PSGI",
+  "version"     : "*",
+  "description" : "A PSGI helper library.",
+  "depends"     : ["HTTP::Status"],
+  "provides"    : {
+    "PSGI"      : "lib/PSGI.pm6"
+  },
+  "source-url"  : "git://github.com/supernovus/perl6-psgi.git"
+}
