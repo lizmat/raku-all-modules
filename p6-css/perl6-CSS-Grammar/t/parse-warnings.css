@@ -1,0 +1,69 @@
+/* adapted from: http://www.w3.org/Style/CSS/Test/CSS1/current/sec71.htm
+
+css1-warnings: dropping term: 70deg dropping declaration: rotation dropping: @zz {foo:bar} dropping: H1 + P.three {color: blue;} dropping: P.four + H1 {color: red;} dropping term: 50Hz dropping declaration: border-width dropping: @three-dee { @background-lighting { azimuth: 30deg; elevation: 190deg; } P.seven { color: red } } dropping: UL:lang(fr) {color: gray;} dropping: BLOCKQUOTE[href] {color: navy;} dropping: ACRONYM[href="foo"] {color: purple;} dropping: ADDRESS[href~="foo"] {color: purple;} dropping: SPAN[lang|="fr"] {color: #c37;} dropping: @media tty { H1 {color: red;} P.sixteen {color: red;} } dropping: @three-dee { P.seventeen {color: red } } dropping: EM, P.nineteena ! EM, STRONG {font-size: 200%; } dropping: // UL.nineteenb, P.nineteenb {color: red;} dropping term: @threedee {rotation-code: '}';} dropping declaration: type-display
+
+css21-warnings: dropping: @zz {foo:bar} dropping: @three-dee { @background-lighting { azimuth: 30deg; elevation: 190deg; } P.seven { color: red } } dropping: @three-dee { P.seventeen {color: red } } dropping: EM, P.nineteena ! EM, STRONG {font-size: 200%; } dropping: // UL.nineteenb, P.nineteenb {color: red;} dropping term: @threedee {rotation-code: '}';} dropping declaration: type-display
+
+css3-warnings: dropping: @zz {foo:bar} dropping: @three-dee { @background-lighting { azimuth: 30deg; elevation: 190deg; } P.seven { color: red } } dropping: @three-dee { P.seventeen {color: red } } dropping: EM, P.nineteena ! EM, STRONG {font-size: 200%; } dropping: // UL.nineteenb, P.nineteenb {color: red;} dropping term: @threedee {rotation-code: '}';} dropping declaration: type-display
+
+*/
+
+@Import 'foo.bar';
+P.one {color: green; rotation: 70deg;}
+P.oneb {color: green;}
+P.oneb {color: invalidValue;}
+P.two {background-color: inherit;}
+@zz {foo:bar}
+H1 + P.three {color: blue;}
+P.four + H1 {color: red;}
+P.five {background-color: "red";}
+P.sixa {border-width: medium; border-style: solid;}
+P.sixb {border-width: funny; border-style: solid;}
+P.sixc {border-width: 50Hz; border-style: solid;}
+P.sixd {border-width: px; border-style: solid;}
+
+@three-dee {
+    @background-lighting {
+         azimuth: 30deg;
+	 elevation: 190deg;
+    } 
+    P.seven { color: red }
+}
+
+P.eight {COLOR: GREEN;}
+OL:wait {color: maroon;}
+P.ten:first-child {color: maroon;}
+UL:lang(fr) {color: gray;}
+BLOCKQUOTE[href] {color: navy;}
+ACRONYM[href="foo"] {color: purple;}
+ADDRESS[href~="foo"] {color: purple;}
+SPAN[lang|="fr"] {color: #c37;}
+
+@media tty { 
+    H1 {color: red;} 
+    P.sixteen {color: red;}
+}
+
+@three-dee { P.seventeen {color: red } }
+P.eighteena {text-decoration: underline overline line-through diagonal;
+             font: bold highlighted 100% sans-serif;}
+P.eighteenb {text-decoration: underline overline line-through diagonal;
+             font: bold highlighted 100% serif;}
+EM, P.nineteena ! EM, STRONG {font-size: 200%; }
+
+// UL.nineteenb,
+P.nineteenb {color: red;}
+
+P.twentya {rotation-code: "}"; color: blue;} 
+P.twentyb {rotation-code: "\"}\""; color: green;}
+P.twentyonea {rotation-code: '}'; color: purple;} 
+P.twentyoneb {rotation-code: '\'}\''; color: green;}
+
+P.twentytwo {
+    type-display: @threedee {rotation-code: '}';};
+    color: green;
+}
+
+P.twentythree {text-indent: 0.5in;}
+
+P.twentyfour {color: red;}
