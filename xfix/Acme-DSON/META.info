@@ -1,0 +1,13 @@
+{
+    "name" : "Acme::DSON",
+    "version" : "0.2.1",
+    "author" : "Konrad Borowski <x.fix@o2.pl>",
+    "description" : "such \"foo\" is \"bar\" wow",
+    "depends" : [ "JSON::Tiny" ],
+    "provides" : {
+        "Acme::DSON" : "lib/Acme/DSON.pm",
+        "Acme::DSON::Actions" : "lib/Acme/DSON/Actions.pm",
+        "Acme::DSON::Grammar" : "lib/Acme/DSON/Grammar.pm"
+    },
+    "source-url" : "git://github.com/xfix/Acme-DSON.git"
+}
