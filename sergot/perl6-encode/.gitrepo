@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/sergot/perl6-encode.git
+	branch = master
+	commit = 3211c815a8e46a10d5c704a9e04ef6a78a79de5b
+	parent = 0ec3961a24f5dcc8b598cb8d24aa48e67c034f59
+	cmdver = 0.1.0
