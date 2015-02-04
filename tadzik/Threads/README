@@ -1,0 +1,9 @@
+Excited already? :) Don't expect too much, it's just me toying around.
+
+But yeah, that works.
+
+Needs fairly recent Parrot (65a44c0c877 at least), built with
+--without-threads. Yeah, really :) That'll build Parrot with no OS
+threads, which are currently broken in nqp, but green threads, which work
+fine. They have the same API, so this module will hopefully still work
+when OS threads are fixed.
