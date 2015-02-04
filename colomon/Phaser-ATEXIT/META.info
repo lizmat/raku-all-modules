@@ -1,0 +1,8 @@
+{
+    "name"        : "Phaser::ATEXIT",
+    "version"     : "*",
+    "description" : "Simple implementation of ATEXIT for Perl 6",
+    "depends"     : [],
+    "source-type"   : "git",
+    "source-url"    : "git://github.com/colomon/Phaser-ATEXIT.git"
+}
