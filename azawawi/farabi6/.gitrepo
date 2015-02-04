@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/farabi6.git
+	branch = master
+	commit = acac310b7ec73375f6e5b57b6c46313be21bed0b
+	parent = 9bebc990ad1ab86c4431c538b16d6bcda98e6d25
+	cmdver = 0.1.0

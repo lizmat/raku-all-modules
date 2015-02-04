@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Farabi6: The Perl 6 Editor</title>
+
+  <link rel="icon" href="assets/images/favicon.ico" />
+
+  <script src="assets/3rd-party/jquery-v2.1.1/jquery.min.js"></script>
+
+  <link rel="stylesheet" class="ui" href="assets/3rd-party/semantic-ui-v1.1.0/semantic.min.css"/>
+  <script src="assets/3rd-party/semantic-ui-v1.1.0/semantic.min.js"></script>
+
+  <link rel="stylesheet" href="assets/3rd-party/codemirror-v4.8/lib/codemirror.css" />
+  <link rel="stylesheet" href="assets/3rd-party/codemirror-v4.8/addon/display/fullscreen.css" />
+  <link rel="stylesheet" href="assets/3rd-party/codemirror-v4.8/addon/dialog/dialog.css" />
+  <link rel="stylesheet" href="assets/3rd-party/codemirror-v4.8/addon/lint/lint.css">
+
+  <script src="assets/3rd-party/codemirror-v4.8/lib/codemirror.js"></script>
+  <script src="assets/3rd-party/codemirror-v4.8/addon/selection/active-line.js"></script>
+  <script src="assets/3rd-party/codemirror-v4.8/addon/mode/loadmode.js"></script>
+  <script src="assets/3rd-party/codemirror-v4.8/addon/search/searchcursor.js"></script>
+  <script src="assets/3rd-party/codemirror-v4.8/addon/search/match-highlighter.js"></script>
+  <script src="assets/3rd-party/codemirror-v4.8/addon/search/search.js"></script>
+  <script src="assets/3rd-party/codemirror-v4.8/addon/dialog/dialog.js"></script>
+  <script src="assets/3rd-party/codemirror-v4.8/addon/display/fullscreen.js"></script>
+  <script src="assets/3rd-party/codemirror-v4.8/addon/display/placeholder.js"></script>
+  <script src="assets/3rd-party/codemirror-v4.8/addon/edit/trailingspace.js"></script>
+  <script src="assets/3rd-party/codemirror-v4.8/addon/lint/lint.js"></script>
+
+  <script src="assets/3rd-party/mousetrap-v1.4.6/mousetrap.min.js"></script>
+
+  <link rel="stylesheet" href="assets/farabi.css"/>
+  <script src="assets/farabi.js"></script>
+
+</head>
+
+<body>
+
+	<div class="ui large vertical inverted sidebar menu" id="actions_sidebar">
+		<div class="item">
+			<div class="ui small inverted header">File</div>
+			<div class="menu">
+				<a class="item new-file-button">New (Alt-N)</a>
+				<a class="item open_file_button">Open File (Alt-O)</a>
+				<a class="item save_file_button">Save File (Alt-S)</a>
+				<a class="item save_as_file_button">Save As File</a>
+				<a class="item open_url_button">Open URL</a>
+				<a class="item close_file_button">Close</a>
+			</div>
+		</div>
+		<div class="item">
+			<div class="ui small inverted header">Build</div>
+			<div class="menu">
+				<a class="item syntax_check_button">Syntax Check</a>
+				<a class="item run-button">Run (Alt-Enter)</a>
+				<a class="item run_tests_button">Run tests</a>
+				<a class="item profile_button">Profile</a>
+			</div>
+		</div>
+		<div class="item">
+			<div class="ui small inverted header">Debug</div>
+			<div class="menu">
+				<a class="item debug_step_in_button">Step in (F6)</a>
+				<a class="item debug_step_out_button">Step out</a>
+				<a class="item debug_resume">Resume</a>
+				<a class="item debug_stop_button">Stop</a>
+			</div>
+		</div>
+		<div class="item">
+			<div class="ui small inverted header">View</div>
+			<div class="menu">
+				<a class="item fullscreen-button">Toggle Fullscreen (Alt-F11)</a>
+			</div>
+		</div>
+		<div class="item">
+			<div class="ui small inverted header">Version Control</div>
+			<div class="menu">
+				<a class="item git_diff_button">Git diff</a>
+				<a class="item git_log_button">Git log</a>
+				<a class="item git_status_button">Git status</a>
+			</div>
+		</div>
+		<div class="item">
+			<div class="ui small inverted header">Tools</div>
+			<div class="menu">
+				<a class="item trim_trailing_whitespace_button">Trim Trailing Whitespace</a>
+				<a class="item module_search_button">Module Search (Alt-M)</a>
+				<a class="item repl_button">REPL (Alt-R)</a>
+				<a class="item show_pod_button">Show POD (F9)</a>
+				<a class="item options_button">Options</a>
+			</div>
+		</div>
+		<div class="item">
+			<div class="ui small inverted header">Help</div>
+			<div class="menu">
+				<a class="item help_search_button">Help Search (Alt-H)</a>
+				<a class="item help_button">Getting Started</a>
+				<a class="item" href="http://perl6.org" target="_blank">Official Perl 6 Language Website</a>
+				<a class="item" href="http://doc.perl6.org" target="_blank">Perl 6 Documentation</a>
+				<a class="item" href="http://modules.perl6.org" target="_blank">Perl 6 Modules</a>
+				<a class="item" href="http://perlcabal.org/syn/Differences.html" target="_blank">Perl5::Perl6::Differences</a>
+				<a class="item about_button">About Farabi</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="pusher">
+	<h3 class="header item">Farabi6: The Perl 6 Editor</h3>
+
+	<div class="ui black right attached tiny button" id="toggle_actions_sidebar">
+		<i class="icon list layout"></i>
+	</div>
+
+	<div class="ui large vertical styled very wide right sidebar" id="repl_sidebar">
+		<div class="ui header">Perl 6 REPL</div>
+		<div class="ui segment">
+			<div class="ui disabled inverted dimmer">
+				<div class="ui loader"></div>
+			</div>
+			<div class="ui form">
+				<div class="field">
+					<label>History:</label>
+					<textarea rows="24" col="80" id="repl_history" class="mousetrap"></textarea>
+				</div>
+				<div class="field">
+					<label>Expression:</label>
+					<input type="text" class="mousetrap" id="repl_expr" />
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="ui large vertical styled very wide right sidebar" id="module_search_sidebar">
+		<div class="ui header">Module Search</div>
+		<div class="ui segment">
+			<div class="ui form">
+				<div class="field">
+					<div class="ui icon input">
+						<input type="text" class="mousetrap" id="module_search_pattern" placeholder="Search..."/>
+						<i class="search icon"></i>
+					</div>
+				</div>
+				<div class="field">
+					<label>Matched Modules:</label>
+					<div class="ui segment">
+						<div class="ui disabled inverted dimmer">
+							<div class="ui loader"></div>
+						</div>
+						<div class="ui selection list" id="module_search_results">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="ui large vertical styled very wide right sidebar" id="help_search_sidebar">
+		<div class="ui header">Help Search</div>
+		<div class="ui segment">
+			<div class="ui form">
+				<div class="field">
+					<div class="ui icon input">
+						<input type="text" class="mousetrap" id="help_search_pattern" placeholder="Search..."/>
+						<i class="search icon"></i>
+					</div>
+				</div>
+				<div class="field">
+					<label>Matched Topics:</label>
+					<div class="ui segment">
+						<div class="ui disabled inverted dimmer">
+							<div class="ui loader"></div>
+						</div>
+						<div class="ui selection list" id="help_search_results">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+      <div class="ui one column grid" id="editors">
+      </div>
+      <div id="editor_stats" class="pull-right"></div>
+
+	<div class="ui small modal" id="about_dialog">
+	  <i class="close icon"></i>
+	  <div class="header">
+		About Farabi6
+	  </div>
+	  <div class="content">
+			Written with love and for fun by
+			<strong>Ahmad M. Zawawi</strong>, azawawi @ #perl6,
+			#padre<br/>
+			All rights reserved universe-wide.<br/>
+			<br/>
+
+		  <blockquote>
+			<p>An art, which has an aim to achieve the beauty, is
+			called a philosophy or in the absolute sense it is named
+			wisdom.</p><small><a target="_blank" href=
+			"http://en.wikipedia.org/wiki/Al-Farabi">Al-Farabi</a></small>
+		  </blockquote>
+
+		<table class="ui table segment">
+		  <tbody>
+			<tr>
+			  <td><a target="_blank" href=
+			  "http://jquery.com">jQuery</a></td>
+
+			  <td><span id="jquery-version"></span></td>
+			</tr>
+
+			<tr>
+			  <td><a target="_blank" href=
+			  "http://semantic-ui.com/">Semantic UI</a></td>
+
+			  <td><span id="semantic-ui-version">1.0 beta</span></td>
+			</tr>
+
+			<tr>
+			  <td><a target="_blank" href=
+			  "http://codemirror.net/">CodeMirror</a></td>
+
+			  <td><span id="codemirror-version"></span></td>
+			</tr>
+
+		  </tbody>
+		</table>
+	  </div>
+	  <div class="actions">
+		<div class="ui button">
+		  Close
+		</div>
+	  </div>
+	</div>
+
+	
+	</div>
+
+
+  <div class="ui modal" id="help_dialog">
+    <div class="header">
+      Getting Started
+    </div>
+
+    <div class="content">
+      <dl>
+        <dt>F1</dt>
+
+        <dd>Context-sensitive help</dd>
+
+        <dt>Run</dt>
+
+        <dd>Run via rakudo</dd>
+
+        <dt>Ctrl-F</dt>
+
+        <dd>Start searching</dd>
+
+        <dt>Ctrl-G</dt>
+
+        <dd>Find next</dd>
+
+        <dt>Shift-Ctrl-G</dt>
+
+        <dd>Find previous</dd>
+
+        <dt>Shift-Ctrl-F</dt>
+
+        <dd>Replace</dd>
+
+        <dt>Shift-Ctrl-R</dt>
+
+        <dd>Replace all</dd>
+      </dl>
+    </div>
+
+	  <div class="actions">
+		<div class="ui button">
+		  Close
+		</div>
+	  </div>
+  </div>
+
+  <div class="ui modal" id="open_file_dialog">
+    <div class="header">
+      Open File...
+    </div>
+
+    <div class="content">
+      <div class="ui form segment">
+        <div class="field">
+          <label for="file">File</label>
+            <input type="text" id="file" placeholder="File"/>
+        </div>
+
+        <div class="field">
+          <label for="search-results">Search
+          Results</label>
+            <select class="ui fluid input" id="search-results" size="5">
+              </select>
+        </div>
+      </div>
+    </div>
+	  <div class="actions">
+		<div class="ui button" id="ok-button">
+		  OK
+		</div>
+		<div class="ui button" id="cancel-button">
+		  Cancel
+		</div>
+	  </div>
+
+  </div>
+
+  <div class="ui modal" id="options_dialog">
+    <div class="header">
+      Options
+    </div>
+
+    <div class="content">
+      <table>
+        <tr>
+          <td><strong>Mode:</strong><br/>
+          <select id="mode_selector" class="input-medium">
+            <option value="clike">
+              C, C++, C#
+            </option>
+
+            <option value="css">
+              CSS
+            </option>
+
+            <option value="diff">
+              Diff
+            </option>
+
+            <option value="javascript">
+              JavaScript
+            </option>
+
+            <option value="markdown">
+              Github Markdown
+            </option>
+
+            <option value="perl">
+              Perl
+            </option>
+
+          <option value="perl6" selected>
+              Perl 6
+            </option>
+
+            <option value="plsql">
+              PL/SQL
+            </option>
+
+            <option value="properties">
+              Properties file
+            </option>
+
+            <option value="shell">
+              Shell
+            </option>
+
+            <option value="stex">
+              sTeX, LaTeX
+            </option>
+
+            <option value="xml">
+              XML/HTML
+            </option>
+
+            <option value="yaml">
+              YAML
+            </option>
+          </select></td>
+        </tr>
+
+        <tr>
+          <td><strong>Theme:</strong><br/>
+
+			<select id="theme_selector" class="input-medium">
+				<option selected>default</option>
+				<option>3024-day</option>
+				<option>3024-night</option>
+				<option>ambiance</option>
+				<option>base16-dark</option>
+				<option>base16-light</option>
+				<option>blackboard</option>
+				<option>cobalt</option>
+				<option>eclipse</option>
+				<option>elegant</option>
+				<option>erlang-dark</option>
+				<option>lesser-dark</option>
+				<option>mbo</option>
+				<option>mdn-like</option>
+				<option>midnight</option>
+				<option>monokai</option>
+				<option>neat</option>
+				<option>neo</option>
+				<option>night</option>
+				<option>paraiso-dark</option>
+				<option>paraiso-light</option>
+				<option>pastel-on-dark</option>
+				<option>rubyblue</option>
+				<option>solarized dark</option>
+				<option>solarized light</option>
+				<option>the-matrix</option>
+				<option>tomorrow-night-eighties</option>
+				<option>twilight</option>
+				<option>vibrant-ink</option>
+				<option>xq-dark</option>
+				<option>xq-light</option>
+			</select>
+          </td>
+        </tr>
+
+        <tr>
+          <td><label class="checkbox"><input id=
+          "line_numbers_checkbox" type="checkbox" value="" checked/>
+          <strong>Line Numbers?</strong></label></td>
+        </tr>
+
+        <tr>
+          <td>
+            <div class="control-group">
+              <label class="control-label" for=
+              "inputError"><strong>Tab Size:</strong></label>
+
+              <div class="controls">
+                <input class="input-mini" type="text" value="4" id=
+                "tab_size"/>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+	  <div class="actions">
+		<div class="ui button">
+		  Close
+		</div>
+	  </div>
+			
+  </div>
+
+  <div class="ui modal" id="pod_dialog">
+    <div class="header">
+      POD
+    </div>
+
+    <div class="content"></div>
+
+	  <div class="actions">
+		<div class="ui button">
+		  Close
+		</div>
+	  </div>
+  </div>
+
+</body>
+</html>
