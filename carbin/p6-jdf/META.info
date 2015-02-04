@@ -1,0 +1,11 @@
+{
+    "name" : "Printing::Jdf",
+    "version" : "0.1.0",
+    "author" : "github:carbin",
+    "description" : "Parse JDF files",
+    "depends" : [ "XML" ],
+    "provides" : {
+        "Printing::Jdf" : "lib/Printing/Jdf.pm6"
+    },
+    "source-url" : "git://github.com/carbin/p6-jdf.git"
+}
