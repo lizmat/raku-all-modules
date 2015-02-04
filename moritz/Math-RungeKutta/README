@@ -1,0 +1,48 @@
+Runge-Kutta integration for systems of ordinary, linear differential
+equations.
+
+WARNING: this module is not yet thoroughly tested. Use it at your own risk.
+Bug reports, tests and patches are welcome!
+
+Let's say you have a differential equation for the function f(t),
+with the equation
+
+df/dt = f(t)^2 + t
+and the initial value f(t=0) = 1;
+
+In the context of this module, we call df/dt the "derivative",
+t the "parameter"
+
+You'd solve that numerically with this Perl 6 code:
+
+# begin synopsis.pl
+
+    use Math::RungeKutta;
+    
+    # function that calculates the derivative
+    sub d($t, @values) { @values[0]**2 + $t}
+    
+    # that's a function that gets called with the
+    # current values after each integration step
+    sub callback($t, @values) { say "$t @values[0]" };
+    
+    my @initial = 1;
+    
+    adaptive-rk-integrate(
+        :from(0),
+        :to(0.5),
+        :@initial,
+        :derivative(&d),
+        :do(&callback)
+    );
+
+# end synopsis.pl
+
+And then look at the result:
+$ PERL6LIB=lib perl6 synopsis.pl | xmgrace -nxy -
+
+The interfaces is inspired by Perl 5 module Math::RungeKutta, to be found at
+<http://search.cpan.org/perldoc?Math::RungeKutta>.
+
+Math::RungeKutta has last been verified to work on contemporary rakudo on
+2011-02-13.
