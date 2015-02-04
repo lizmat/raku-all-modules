@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/perlpilot/benchmark.git
+	branch = master
+	commit = 02d9ceb749b01e3396fa88cc12bec29a200a87e0
+	parent = 585494a9eba73809e0b49e514b27e5303089b053
+	cmdver = 0.1.0
