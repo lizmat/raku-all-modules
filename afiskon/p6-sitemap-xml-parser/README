@@ -1,0 +1,43 @@
+NAME
+
+Sitemap::XML::Parser is a module for parsing sitemap.xml files.
+
+SYNOPSYS
+
+    use Sitemap::XML::Parser;
+    
+    my $parser = Sitemap::XML::Parser.new;
+    my $sitemap = $parser.parse-url('http://example.ru/sitemap.xml');
+    # $sitemap == [
+    #    {
+    #        loc => URI.new('http://example/'),
+    #        lastmod => DateTime.new('2012-09-06T03:22:42Z'),
+    #        changefreq => 'daily',
+    #        priority => 1.0
+    #    },
+    #    ....
+    # ];
+    
+    
+
+DESCRIPTION
+
+Module for parsing sitemap.xml files.
+
+METHODS
+
+  parse-url( Str $url )
+
+  parse-file( Str $fname )
+
+  parse( Str $data )
+
+AUTHOR
+
+Alexandr Alexeev, <eax at cpan.org> (http://eax.me/)
+
+COPYRIGHT
+
+Copyright 2012 Alexandr Alexeev
+
+This program is free software; you can redistribute it and/or modify it under the same terms as Rakudo Perl 6 itself.
