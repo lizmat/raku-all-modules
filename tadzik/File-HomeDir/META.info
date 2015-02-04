@@ -1,0 +1,7 @@
+{
+    "name"        : "File::HomeDir",
+    "version"     : "*",
+    "description" : "Find your home and other directories on any platform",
+    "depends"     : [],
+    "source-url"  : "git://github.com/tadzik/File-HomeDir.git"
+}
