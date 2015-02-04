@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/retupmoca/P6-Net-POP3.git
+	branch = master
+	commit = 7117b66ee3c682e4cc12781991576c1b2466c10b
+	parent = 57fc29361060f662455273fa60f0a112bd7535f8
+	cmdver = 0.1.0
