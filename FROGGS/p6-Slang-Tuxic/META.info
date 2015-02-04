@@ -1,0 +1,11 @@
+{
+    "name" : "Slang::Tuxic",
+    "author" : "github:FROGGS",
+    "version" : "0.0.1",
+    "description" : "allows to call subs as: foo (args)",
+    "depends" : [ ],
+    "provides" : {
+        "Slang::Tuxic" : "lib/Slang/Tuxic.pm"
+    },
+    "source-url" : "git://github.com/FROGGS/p6-Slang-Tuxic.git"
+}
