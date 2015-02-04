@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/mathw/form.git
+	branch = master
+	commit = 7194ad8ef40edb13148b13c2d908f3689b7aa0e2
+	parent = 5236fd3304029258e05e1f22d8f8ec35b3b96f2c
+	cmdver = 0.1.0
