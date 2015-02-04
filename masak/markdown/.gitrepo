@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/masak/markdown.git
+	branch = master
+	commit = eab671eb85d8caf4b0e0e476149b146d92c60e34
+	parent = 392adc2d22a31dc8300a2d5277488fc371cac575
+	cmdver = 0.1.0
