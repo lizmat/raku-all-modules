@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/soh-cah-toa/p6-digest-sha256.git
+	branch = master
+	commit = da07032d5020a2efe4fe1e63e559eeb9025cf707
+	parent = 07c67d07816fc58b974b7c9b9561eef8782b1ae4
+	cmdver = 0.1.0

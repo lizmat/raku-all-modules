@@ -1,0 +1,11 @@
+{
+    "name"        : "Digest::SHA256",
+    "version"     : "0.1",
+    "description" : "A Perl 6 port of the SHA256 module in Perl 5",
+    "author"      : "Kevin Polulak",
+    "authority"   : "soh-cah-toa",
+    "depends"     : [],
+    "source-type" : "git",
+    "source-url"  : "git://github.com/soh-cah-toa/p6-digest-sha256.git"
+}
+

@@ -1,0 +1,8 @@
+2011-06-05  Kevin Polulak  <kpolulak@gmail.com>
+	* Released 0.1 (alpha)
+	All tests pass
+	Provides sha256_hex() subroutine
+	sha256_sum() still in development
+	Documentation in pod format
+	README
+
