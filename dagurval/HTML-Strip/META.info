@@ -1,0 +1,11 @@
+{
+    "name"        : "HTML::Strip",
+    "version"     : "0.1.0",
+    "description" : "Strip HTML markup from text",
+    "author"      : "Dagur Valberg Johannsson",
+    "depends"     : [],
+    "source-url"  : "git://github.com/dagurval/HTML-Strip.git",
+    "provides": {
+        "HTML::Strip": "lib/HTML/Strip.pm6"
+    }
+}
