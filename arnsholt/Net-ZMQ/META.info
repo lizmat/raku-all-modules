@@ -1,8 +1,0 @@
-{
-    "name" : "Net::ZMQ",
-    "version" : "*",
-    "author" : "Arne Skjærholt",
-    "description" : "ZeroMQ bindings for Perl6",
-    "depends" : ["NativeCall"],
-    "source-url" : "git://github.com/arnsholt/Net-ZMQ.git"
-}

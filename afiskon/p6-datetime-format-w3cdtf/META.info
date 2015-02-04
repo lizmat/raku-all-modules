@@ -1,8 +1,0 @@
-{
-    "name"        : "DateTime::Format::W3CDTF",
-    "version"     : "*",
-    "description" : "A Perl 6 module to deal with W3CDTF dates",
-    "depends"     : [ ],
-    "source-type" : "git",
-    "source-url"  : "git://github.com/afiskon/p6-datetime-format-w3cdtf.git"
-}

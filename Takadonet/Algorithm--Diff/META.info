@@ -1,9 +1,0 @@
-{
-    "name" : "Algorithm::Diff",
-    "version" : "*",
-    "description" : "Contains several interfaces for which computing the differences between two lists.",
-    "depends" : [],
-    "source-type" : "git",
-    "source-url" : "git://github.com/Takadonet/Algorithm--Diff.git"
-}
-

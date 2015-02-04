@@ -1,9 +1,0 @@
-{
-    "name": "BreakDancer",
-    "version": "*",
-    "description": "Framework for generating static webpages.",
-    "depends": [
-        "Shell::Command"
-    ],
-    "source-url": "git://github.com/sergot/BreakDancer.git"
-}

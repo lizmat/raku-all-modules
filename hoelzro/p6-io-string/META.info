@@ -1,8 +1,0 @@
-{
-    "name": "IO::String",
-    "version": "0.1.0",
-    "description": "Emulate file interface for strings",
-    "author": "Rob Hoelz",
-    "depends": [],
-    "source-url": "git://github.com/hoelzro/p6-io-string.git"
-}

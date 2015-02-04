@@ -1,4 +1,0 @@
-* more POD
-* seperated module for stemap index parsing -- http://www.sitemaps.org/ru/protocol.html#index
-* gzip support
-* ssl support

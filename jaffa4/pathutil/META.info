@@ -1,7 +1,0 @@
-{
-    "name" : "Path::Util",
-    "version" : "*",
-    "description" : "decompose file path",
-    "depends" : [ ],
-    "source-url" : "git://github.com/jaffa4/pathutil.git"
-}
