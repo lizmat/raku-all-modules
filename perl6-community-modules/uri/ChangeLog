@@ -1,0 +1,23 @@
+New features for June 2011 upgrade include:
+
+1) Make "new" method a useful parsing constructor.
+
+2) Add "parse" method to replace "init".
+
+3) Formalize access to result parse tree created by grammar parsing.  URI
+    object has grammar attribute which in turn has a parse_result attribute,
+    with full parse tree, giving caller access to all URI components identified
+    in IETF RFC.
+
+4) Add query_form method providing access to hash based on "?var1=abc&var2=def"
+    query section for CGI type applications.
+
+5) Add 'validating' attribute that, when set to true, tells the URI module to
+    fail parsing unless the entire string it is asked to parse is a URI.
+    Default is to provide Perl 5 URI behavior and just try to parse URI from
+    passed parse string.  "is_validating"" attribute can be set as named param
+    to new.
+
+6) Pluggable grammar design with "grammar" attribute that identifies grammar
+    used to parse URI, provides access to result parse tree, and (theoretically
+    for now) allows for use of other grammars like IRI.
