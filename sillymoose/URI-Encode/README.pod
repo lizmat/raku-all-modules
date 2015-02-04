@@ -1,0 +1,20 @@
+=head1 URI::Encode
+
+A Perl 6 module for encoding / decoding URIs
+
+=head2 Synopsis
+
+    use URI::Encode;
+
+    my $encoded_uri = uri_encode('www.example.com/');
+    my $decoded_uri = uri_decode('www.example.com%2f/a%20new%20way');
+
+=head2 Author
+
+David Farrell
+
+=head2 License
+
+FreeBSD - see LICENSE
+
+=cut
