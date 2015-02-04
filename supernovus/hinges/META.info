@@ -1,7 +1,0 @@
-{
-  "name"        : "Hinges",
-  "version"     : "*",
-  "description" : "A Genshi-like template engine",
-  "depends"     : [],
-  "source-url"  : "git://github.com/supernovus/hinges.git"
-}

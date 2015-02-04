@@ -1,7 +1,0 @@
-{
-    "name"        : "Druid",
-    "version"     : "*",
-    "description" : "A connection-oriented board game written in Perl 6",
-    "depends" : [ ],
-    "source-url" : "git://github.com/masak/druid.git"
-}

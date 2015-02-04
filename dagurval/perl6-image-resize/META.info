@@ -1,8 +1,0 @@
-{
-    "name"        : "Image::Resize",
-    "version"     : "0.01",
-    "description" : "Resize images using GD",
-    "author"      : "Dagur Valberg Johannsson",
-    "depends"     : ["GD::Raw"],
-    "source-url"  : "git://github.com/dagurval/perl6-image-resize.git"
-}

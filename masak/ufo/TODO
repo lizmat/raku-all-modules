@@ -1,9 +1,0 @@
-For better robustness, the Makefile emitter should be rewritten.
-
-Depenencies between modules should be emitted (to be safe against
-parallel make, and to be safe when one .pm file changes).
-
-The reason is that rakudo only loads .pir files
-if the timestamp is larger or equal to that of the .pm/.pm6 file. And when a
-not-precompiled version of a module is loaded, precompilation of all
-subsequent .pm files can cause weird errors in Rakudo.

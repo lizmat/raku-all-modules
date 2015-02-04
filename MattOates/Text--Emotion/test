@@ -1,9 +1,0 @@
-#!/usr/bin/env perl6
-use v6;
-
-use Net::IRC::Bot;
-use Text::Emotion::Scorer;
-
-my $emotion = Text::Emotion::Scorer.new;
-
-say $emotion.dictionary.perl;

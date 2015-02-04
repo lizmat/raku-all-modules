@@ -1,8 +1,0 @@
-{
-    "name" : "Text::Diff",
-    "version" : "*",
-    "description" : "Perform diffs on files and record sets",
-    "depends" : ["Algorithm::Diff"],
-    "source-type" : "git",
-    "source-url" : "git://github.com/Takadonet/Text--Diff.git"
-}

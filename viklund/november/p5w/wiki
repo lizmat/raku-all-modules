@@ -1,7 +1,0 @@
-#!/usr/bin/perl -w
-use strict;
-
-use November;
-
-# start the server on port 8080
-November->new(8080)->run();

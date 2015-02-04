@@ -1,1 +1,0 @@
-size: <length>{1,2} | auto | [ <page-size> || [ portrait | landscape] ]

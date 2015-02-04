@@ -1,8 +1,0 @@
-{
-  "default" : {
-    "driver" : "SQLite",
-    "opts" : {
-      "database" : "./test/Test1/test.sqlite"
-    }
-  }
-}

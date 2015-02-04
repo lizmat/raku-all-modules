@@ -1,8 +1,0 @@
-{
-    "name" : "TAP::Harness",
-    "version" : "0.0.1",
-    "description" : "TAP harness for perl6",
-    "author" : "Leon Timmermans",
-    "depends" : [ ], 
-    "source-url" : "git://github.com/leont/tap-harness6.git"
-}

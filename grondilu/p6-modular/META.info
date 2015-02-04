@@ -1,8 +1,0 @@
-{
-     "name" : "Modular",
-     "version" : "0.1.2",
-     "description" : "Modular arithmetics in Perl6",
-     "author" : "Lucien Grondin",
-     "depends" : [ ],
-     "source-url" : "git://github.com/grondilu/p6-modular.git"
- }

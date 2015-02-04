@@ -1,7 +1,0 @@
-{
-    "name"        : "p6doc",
-    "version"     : "*",
-    "description" : "Perl 6 documentation (tools and docs)",
-    "depends"     : [ "URI" ],
-    "source-url"  : "git://github.com/perl6/doc.git"
-}

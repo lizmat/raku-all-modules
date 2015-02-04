@@ -1,8 +1,0 @@
-{
-    "name"        : "Math::Polynomial",
-    "version"     : "*",
-    "description" : "Simple polynomial class",
-    "depends"     : [],
-    "source-type"   : "git",
-    "source-url"    : "git://github.com/colomon/Math-Polynomial.git"
-}
