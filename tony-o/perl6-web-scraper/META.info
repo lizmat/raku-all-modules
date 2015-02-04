@@ -1,0 +1,11 @@
+{
+  "name"        : "Web::Scraper",
+  "version"     : "0.1.0",
+  "description" : "Similar to Web::Scraper for Perl5 with some other cool stuff, duh",
+  "author"      : "Tony ODell",
+  "depends"     : [ "LWP::Simple", "HTML::Parser::XML", "XML::Query"],
+  "provides"    : {
+    "Web::Scraper" : "lib/Web/Scraper.pm6"
+  },
+  "source-url"  : "git://github.com/tony-o/perl6-web-scraper.git"
+} 
