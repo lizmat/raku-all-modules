@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/colomon/Math-Odd-Functions.git
+	branch = master
+	commit = d0d87124f1ded0610f7badb653bd22cdbca7100d
+	parent = 8a817dae803eba5059ac391bd9febeee72cbbab9
+	cmdver = 0.1.0
