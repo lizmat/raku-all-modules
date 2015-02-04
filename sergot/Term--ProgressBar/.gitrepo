@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/sergot/Term--ProgressBar.git
+	branch = master
+	commit = 5b0a0b198fbac4572ea2fcc8b14c2d13a7da8638
+	parent = 296e1558169404b8f823741ea0ef952f800df489
+	cmdver = 0.1.0
