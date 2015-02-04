@@ -1,0 +1,7 @@
+use v6;
+use DateTime::TimeZone::Zone;
+class DateTime::TimeZone::Zone::America::Managua does DateTime::TimeZone::Zone;
+has %.rules = ( 
+ Nic => [{"time" => "0:00", "letter" => "D", "adjust" => "1:00", "month" => 3, "dow" => {"mindate" => "16", "dow" => 7}, "years" => 1979..1980}, {"time" => "0:00", "letter" => "S", "adjust" => "0", "month" => 6, "dow" => {"mindate" => "23", "dow" => 1}, "years" => 1979..1980}, {"time" => "0:00", "letter" => "D", "adjust" => "1:00", "month" => 4, "years" => 2005..2005, "date" => "10"}, {"time" => "0:00", "letter" => "S", "adjust" => "0", "month" => 10, "dow" => {"mindate" => "1", "dow" => 7}, "years" => 2005..2005}, {"time" => "2:00", "letter" => "D", "adjust" => "1:00", "month" => 4, "years" => 2006..2006, "date" => "30"}, {"time" => "1:00", "letter" => "S", "adjust" => "0", "month" => 10, "dow" => {"mindate" => "1", "dow" => 7}, "years" => 2006..2006}],
+);
+has @.zonedata = Array.new({"baseoffset" => "-5:45:08", "rules" => "", "until" => -2524521600}, {"baseoffset" => "-5:45:12", "rules" => "", "until" => -1121126400}, {"baseoffset" => "-6:00", "rules" => "", "until" => 94694400}, {"baseoffset" => "-5:00", "rules" => "", "until" => 161740800}, {"baseoffset" => "-6:00", "rules" => "Nic", "until" => 694238400}, {"baseoffset" => "-5:00", "rules" => "", "until" => 717292800}, {"baseoffset" => "-6:00", "rules" => "", "until" => 725846400}, {"baseoffset" => "-5:00", "rules" => "", "until" => 852076800}, {"baseoffset" => "-6:00", "rules" => "Nic", "until" => Inf});

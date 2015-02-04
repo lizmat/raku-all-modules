@@ -1,0 +1,7 @@
+use v6;
+use DateTime::TimeZone::Zone;
+class DateTime::TimeZone::Zone::America::Port_minus_au_minus_Prince does DateTime::TimeZone::Zone;
+has %.rules = ( 
+ Haiti => [{"time" => "0:00", "letter" => "D", "adjust" => "1:00", "month" => 5, "years" => 1983..1983, "date" => "8"}, {"time" => "0:00", "lastdow" => 7, "letter" => "D", "adjust" => "1:00", "month" => 4, "years" => 1984..1987}, {"time" => "0:00", "lastdow" => 7, "letter" => "S", "adjust" => "0", "month" => 10, "years" => 1983..1987}, {"time" => "1:00s", "letter" => "D", "adjust" => "1:00", "month" => 4, "dow" => {"mindate" => "1", "dow" => 7}, "years" => 1988..1997}, {"time" => "1:00s", "lastdow" => 7, "letter" => "S", "adjust" => "0", "month" => 10, "years" => 1988..1997}, {"time" => "0:00", "letter" => "D", "adjust" => "1:00", "month" => 4, "dow" => {"mindate" => "1", "dow" => 7}, "years" => 2005..2006}, {"time" => "0:00", "lastdow" => 7, "letter" => "S", "adjust" => "0", "month" => 10, "years" => 2005..2006}, {"time" => "2:00", "letter" => "D", "adjust" => "1:00", "month" => 3, "dow" => {"mindate" => "8", "dow" => 7}, "years" => 2012..Inf}, {"time" => "2:00", "letter" => "S", "adjust" => "0", "month" => 11, "dow" => {"mindate" => "1", "dow" => 7}, "years" => 2012..Inf}],
+);
+has @.zonedata = Array.new({"baseoffset" => "-4:49:20", "rules" => "", "until" => -2524521600}, {"baseoffset" => "-4:49", "rules" => "", "until" => -1670500800}, {"baseoffset" => "-5:00", "rules" => "Haiti", "until" => Inf});

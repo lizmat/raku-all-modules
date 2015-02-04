@@ -1,0 +1,7 @@
+use v6;
+use DateTime::TimeZone::Zone;
+class DateTime::TimeZone::Zone::Asia::Taipei does DateTime::TimeZone::Zone;
+has %.rules = ( 
+ Taiwan => [{"time" => "0:00", "letter" => "D", "adjust" => "1:00", "month" => 5, "years" => 1945..1951, "date" => "1"}, {"time" => "0:00", "letter" => "S", "adjust" => "0", "month" => 10, "years" => 1945..1951, "date" => "1"}, {"time" => "0:00", "letter" => "D", "adjust" => "1:00", "month" => 3, "years" => 1952..1952, "date" => "1"}, {"time" => "0:00", "letter" => "S", "adjust" => "0", "month" => 11, "years" => 1952..1954, "date" => "1"}, {"time" => "0:00", "letter" => "D", "adjust" => "1:00", "month" => 4, "years" => 1953..1959, "date" => "1"}, {"time" => "0:00", "letter" => "S", "adjust" => "0", "month" => 10, "years" => 1955..1961, "date" => "1"}, {"time" => "0:00", "letter" => "D", "adjust" => "1:00", "month" => 6, "years" => 1960..1961, "date" => "1"}, {"time" => "0:00", "letter" => "D", "adjust" => "1:00", "month" => 4, "years" => 1974..1975, "date" => "1"}, {"time" => "0:00", "letter" => "S", "adjust" => "0", "month" => 10, "years" => 1974..1975, "date" => "1"}, {"time" => "0:00", "letter" => "D", "adjust" => "1:00", "month" => 6, "years" => 1979..1979, "date" => "30"}, {"time" => "0:00", "letter" => "S", "adjust" => "0", "month" => 9, "years" => 1979..1979, "date" => "30"}],
+);
+has @.zonedata = Array.new({"baseoffset" => "8:06:00", "rules" => "", "until" => -2335219200}, {"baseoffset" => "8:00", "rules" => "Taiwan", "until" => Inf});

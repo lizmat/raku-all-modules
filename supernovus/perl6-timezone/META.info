@@ -1,0 +1,10 @@
+{
+  "name"        : "DateTime::TimeZone",
+  "version"     : "*",
+  "description" : "A library for working with Time Zones in Perl 6",
+  "depends"     : [ ],
+  "provides"    : {
+    "DateTime::TimeZone" : "lib/DateTime/TimeZone.pm6"
+  },
+  "source-url"    : "git://github.com/supernovus/perl6-timezone.git"
+}

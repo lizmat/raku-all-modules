@@ -1,0 +1,7 @@
+use v6;
+use DateTime::TimeZone::Zone;
+class DateTime::TimeZone::Zone::Pacific::Chatham does DateTime::TimeZone::Zone;
+has %.rules = ( 
+ Chatham => [{"time" => "2:45s", "letter" => "D", "adjust" => "1:00", "month" => 11, "dow" => {"mindate" => "1", "dow" => 7}, "years" => 1974..1974}, {"time" => "2:45s", "lastdow" => 7, "letter" => "S", "adjust" => "0", "month" => 2, "years" => 1975..1975}, {"time" => "2:45s", "lastdow" => 7, "letter" => "D", "adjust" => "1:00", "month" => 10, "years" => 1975..1988}, {"time" => "2:45s", "letter" => "S", "adjust" => "0", "month" => 3, "dow" => {"mindate" => "1", "dow" => 7}, "years" => 1976..1989}, {"time" => "2:45s", "letter" => "D", "adjust" => "1:00", "month" => 10, "dow" => {"mindate" => "8", "dow" => 7}, "years" => 1989..1989}, {"time" => "2:45s", "letter" => "D", "adjust" => "1:00", "month" => 10, "dow" => {"mindate" => "1", "dow" => 7}, "years" => 1990..2006}, {"time" => "2:45s", "letter" => "S", "adjust" => "0", "month" => 3, "dow" => {"mindate" => "15", "dow" => 7}, "years" => 1990..2007}, {"time" => "2:45s", "lastdow" => 7, "letter" => "D", "adjust" => "1:00", "month" => 9, "years" => 2007..Inf}, {"time" => "2:45s", "letter" => "S", "adjust" => "0", "month" => 4, "dow" => {"mindate" => "1", "dow" => 7}, "years" => 2008..Inf}],
+);
+has @.zonedata = Array.new({"baseoffset" => "12:13:48", "rules" => "", "until" => -410227200}, {"baseoffset" => "12:45", "rules" => "Chatham", "until" => Inf});
