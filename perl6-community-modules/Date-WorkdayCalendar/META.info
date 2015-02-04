@@ -1,0 +1,13 @@
+{
+	"name" : "Date::WorkdayCalendar",
+	"version" : "0.1.0",
+	"description" : "Calendar and Date objects to handle business days, holidays and weekends",
+	"author" : "github:shinobi",
+	"depends" : [],
+	"provides" : {
+	        "WorkdayCalendar" : "lib/Date/WorkdayCalendar.pm",
+	        "Workdate" : "lib/Date/WorkdayCalendar.pm"
+	},
+	"source-url" : "git://github.com/perl6-community-modules/Date-WorkdayCalendar.git"
+}
+
