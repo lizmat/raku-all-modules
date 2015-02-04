@@ -1,0 +1,22 @@
+{
+    "name" : "Sum",
+    "version" : "v0.0.4",
+    "description" : "Perl6 modules for computing hashes and checksums.",
+    "author" : "Brian S. Julin",
+    "depends" : [ ],
+    "source-url" : "git://github.com/skids/perl6sum.git",
+    "provides" : {
+        "Sum" : "lib/Sum.pm6",
+        "Sum::Adler" : "lib/Sum/Adler.pm6",
+        "Sum::CRC" : "lib/Sum/CRC.pm6",
+        "Sum::Digest::MD5" : "lib/Sum/Digest/MD5.pm6",
+        "Sum::MDPad" : "lib/Sum/MDPad.pm6",
+        "Sum::MD" : "lib/Sum/MD.pm6",
+        "Sum::SHA" : "lib/Sum/SHA.pm6",
+        "Sum::SipHash" : "lib/Sum/SipHash.pm6",
+        "Sum::Tiger" : "lib/Sum/Tiger.pm6"
+    },
+    "emulates" : {
+        "Sum::Digest::MD5" : "Digest::MD5:auth<skids>"
+    }
+}
