@@ -1,0 +1,15 @@
+lib/Text/Diff.pm
+lib/Text/Diff/Table.pm
+LICENSE
+MANIFEST			This list of files
+README
+t/97_meta.t
+t/98_pod.t
+t/99_pmv.t
+t/ext_format.t
+t/general.t
+t/inputs.t
+t/keygen.t
+t/outputs.t
+t/table.t
+META.yml                                 Module meta-data (added by MakeMaker)
