@@ -1,0 +1,11 @@
+{
+    "name" : "overload::constant",
+    "author" : "github:FROGGS",
+    "version" : "0.0.1",
+    "description" : "allows to intercept parsing of num/str literals",
+    "depends" : [ ],
+    "provides" : {
+        "overload::constant" : "lib/overload/constant.pm"
+    },
+    "source-url" : "git://github.com/FROGGS/p6-overload-constant.git"
+}
