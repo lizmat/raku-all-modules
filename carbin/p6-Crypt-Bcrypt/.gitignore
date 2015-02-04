@@ -1,0 +1,4 @@
+*.so
+*.o
+blib/
+ext/crypt_blowfish-1.2/Makefile
