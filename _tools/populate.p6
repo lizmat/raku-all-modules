@@ -15,12 +15,8 @@ for @projects {
     my $local = join '/', @chunks[*-2, *-1];
     $local ~~ s/ '.git' $ //;
     %local-seen{$local} = True;
-    unless $local.IO.d {
-        run 'git', 'subrepo', 'clone', $url, $local;
-    }
+    run 'git', 'subrepo', 'clone', '-f', $url, $local;
 }
-
-run 'git', 'subrepo', 'pull', '--all', '--reclone';
 
 # find all dirs of the form author/module and potentially remove them
 
