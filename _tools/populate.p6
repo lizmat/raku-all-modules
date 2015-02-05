@@ -1,4 +1,5 @@
 use v6;
+run 'wget', '-O', 'projects.json', 'http://ecosystem-api.p6c.org/projects.json';
 my $json = slurp 'projects.json';
 my @projects = from-json($json).list;
 my %local-seen;
