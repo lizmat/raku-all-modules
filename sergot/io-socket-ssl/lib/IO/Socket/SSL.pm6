@@ -112,6 +112,10 @@ method send(Str $s) {
     $!ssl.write($s);
 }
 
+method write(Blob $b) {
+    $!ssl.write($b);
+}
+
 method get() {
     my $buf = buf8.new;
     loop {
