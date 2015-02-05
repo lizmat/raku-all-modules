@@ -8,36 +8,21 @@ our sub compress(Blob $data, Int $level = 6 --> Buf) is export {
     if $level < -1 || $level > 9 {
         die "compression level must be between -1 and 9";
     }
-    my $indata = CArray[int8].new();
-    my $inlen = 0;
-    for $data.list {
-        $indata[$inlen++] = $_;
-    }
 
     my $outlen = CArray[int].new();
-    $outlen[0] = Compress::Zlib::Raw::compressBound($inlen);
-    my $outdata = CArray[int8].new();
+    $outlen[0] = Compress::Zlib::Raw::compressBound($data.bytes);
+    my $outdata = buf8.new;
     $outdata[$outlen[0] - 1] = 1;
 
-    Compress::Zlib::Raw::compress2($outdata, $outlen, $indata, $inlen, $level);
+    Compress::Zlib::Raw::compress2($outdata, $outlen, $data, $data.bytes, $level);
 
     my $len = $outlen[0];
-    my @out;
-    for 0..^$len {
-        @out[$_] = $outdata[$_];
-    }
-    return Buf.new(@out);
+    return $outdata.subbuf(0, $len);
 }
 
 our sub uncompress(Blob $data --> Buf) is export {
-    my $indata = CArray[int8].new();
-    my $inlen = 0;
-    for $data.list {
-        $indata[$inlen++] = $_;
-    }
-
-    my $bufsize = $inlen;
-    my $outdata = CArray[int8].new();
+    my $bufsize = $data.bytes;
+    my $outdata = buf8.new();
     my $outlen = CArray[int].new();
     my $ret = Compress::Zlib::Raw::Z_BUF_ERROR;
     while $ret == Compress::Zlib::Raw::Z_BUF_ERROR {
@@ -45,18 +30,14 @@ our sub uncompress(Blob $data --> Buf) is export {
         $outdata[$bufsize - 1] = 1;
         $outlen[0] = $bufsize;
 
-        $ret = Compress::Zlib::Raw::uncompress($outdata, $outlen, $indata, $inlen);
+        $ret = Compress::Zlib::Raw::uncompress($outdata, $outlen, $data, $data.bytes);
         if $ret == Compress::Zlib::Raw::Z_DATA_ERROR {
             die "uncompress data error";
         }
     }
 
     my $len = $outlen[0];
-    my @out;
-    for 0..^$len {
-        @out[$_] = $outdata[$_];
-    }
-    return Buf.new(@out);
+    return $outdata.subbuf(0, $len);
 }
 
 class Compress::Zlib::Stream {
@@ -89,18 +70,14 @@ class Compress::Zlib::Stream {
             $!z-stream = Compress::Zlib::Raw::z_stream.new;
         }
 
-        my $input-buf = CArray[int8].new;
-        for 0..^$data.elems {
-            $input-buf[$_] = $data[$_];
-        }
-        $!z-stream.set-input($input-buf, $data.elems);
+        $!z-stream.set-input($data);
 
-        my @out;
+        my $out = buf8.new;
 
         loop {
-            my $output-buf = CArray[int8].new;
+            my $output-buf = buf8.new;
             $output-buf[1023] = 1;
-            $!z-stream.set-output($output-buf, 1024);
+            $!z-stream.set-output($output-buf);
 
             unless $!inflate-init {
                 $!inflate-init = True;
@@ -113,16 +90,14 @@ class Compress::Zlib::Stream {
                 fail "...";
             }
 
-            for 0..^(1024 - $!z-stream.avail-out) {
-                @out.push($output-buf[$_]);
-            }
+            $out ~= $output-buf.subbuf(0, 1024 - $!z-stream.avail-out);
             
             if $ret == Compress::Zlib::Raw::Z_STREAM_END {
                 self.finish;
             }
 
             if $ret == Compress::Zlib::Raw::Z_STREAM_END || ($!z-stream.avail-out && !($!z-stream.avail-in)) {
-                return Buf.new(@out);
+                return $out;
             }
         }
     }
@@ -135,18 +110,14 @@ class Compress::Zlib::Stream {
             $!z-stream = Compress::Zlib::Raw::z_stream.new;
         }
 
-        my $input-buf = CArray[int8].new;
-        for 0..^$data.elems {
-            $input-buf[$_] = $data[$_];
-        }
-        $!z-stream.set-input($input-buf, $data.elems);
+        $!z-stream.set-input($data);
 
-        my @out;
+        my $out = buf8.new;
 
         loop {
-            my $output-buf = CArray[int8].new;
+            my $output-buf = buf8.new;
             $output-buf[1023] = 1;
-            $!z-stream.set-output($output-buf, 1024);
+            $!z-stream.set-output($output-buf);
 
             unless $!deflate-init {
                 $!deflate-init = True;
@@ -166,12 +137,10 @@ class Compress::Zlib::Stream {
                 fail "...";
             }
 
-            for 0..^(1024 - $!z-stream.avail-out) {
-                @out.push($output-buf[$_]);
-            }
+            $out ~= $output-buf.subbuf(0, 1024 - $!z-stream.avail-out);
 
             if $!z-stream.avail-out && !($!z-stream.avail-in) {
-                return Buf.new(@out);
+                return $out;
             }
         }
     }
@@ -181,11 +150,11 @@ class Compress::Zlib::Stream {
             return Buf.new();
         } elsif $!deflate-init {
             if $finish && !$!finished {
-                my @out;
+                my $out = buf8.new;
                 loop {
-                    my $output-buf = CArray[int8].new;
+                    my $output-buf = buf8.new;
                     $output-buf[1023] = 1;
-                    $!z-stream.set-output($output-buf, 1024);
+                    $!z-stream.set-output($output-buf);
 
                     my $ret = Compress::Zlib::Raw::deflate($!z-stream, Compress::Zlib::Raw::Z_FINISH);
 
@@ -193,16 +162,14 @@ class Compress::Zlib::Stream {
                         fail "...";
                     }
 
-                    for 0..^(1024 - $!z-stream.avail-out) {
-                        @out.push($output-buf[$_]);
-                    }
+                    $out ~= $output-buf.subbuf(0, 1024 - $!z-stream.avail-out);
 
                     if $ret == Compress::Zlib::Raw::Z_STREAM_END {
                         $!finished = True;
                     }
 
                     if $ret == Compress::Zlib::Raw::Z_STREAM_END || $!z-stream.avail-out {
-                        return Buf.new(@out);
+                        return $out;
                     }
                 }
             } else {
