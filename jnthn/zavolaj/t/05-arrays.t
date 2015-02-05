@@ -98,7 +98,7 @@ compile_test_lib('05-arrays');
     $buf[0] = 31;
     $buf[1] = 28;
     $buf[2] = 30;
-    TakeAByteArray($buf) if $*VM.name eq 'moar';
+    TakeAByteArray($buf);
 }
 
 {
