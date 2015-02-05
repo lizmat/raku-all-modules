@@ -435,8 +435,7 @@ class CSS::Writer
                           $.write( |( .subst(/':'.*/, '') => $ast{$_}) )
                          }).join($sep)  ~  $punc;
 
-        my $comments = $.write-any-comments( $ast, $sep ); 
-        $str ~= $comments if $comments;
+        $str ~= $.write-any-comments( $ast, ' ' );
 
         $str;
     }
