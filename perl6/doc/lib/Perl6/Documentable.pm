@@ -26,12 +26,6 @@ class Perl6::Documentable {
             !! english-list @.subkinds // $.kind;
     }
 
-    method filename() {
-        $.kind eq 'operator'
-            ?? "html/language/operators.html"
-            !! "html/$.kind/$.name.html"
-            ;
-    }
     method url() {
         $!url //= $.kind eq 'operator'
             ?? "/language/operators#" ~ uri_escape("@.subkinds[] $.name".subst(/\s+/, '_', :g))
