@@ -104,22 +104,23 @@ See [Build.pm](Build.pm).
 
 ## Actions Options
 
-- **`:pass-unknown`** Don't warn about, or discard, unknown properties or sub-rules. Pass back the property with a classification
+- **`:lax`** Don't warn about, or discard, unknown properties, sub-rules. Pass back the elements with a classification
 of unknown. E.g.
 ```
-    my $actions =  CSS::Module::CSS21::Actions.new( :pass-unknown );
-    say CSS::Module::CSS21.parse('{bad-prop: someval}', :$actions, :rule<declarations>).ast.tson;
-    # output {"property:unknown" => {:expr[{ :ident<someval> }], :ident<bad-prop>}}
+    my $actions =  CSS::Module::CSS21::Actions.new( :lax );
+    say CSS::Module::CSS21.parse('{bad-prop: 12mm}', :$actions, :rule<declarations>).ast.pretty;
+    # output {"property:unknown" => {:expr[{ :mm(12) }], :ident<bad-prop>}}
 
-    say CSS::Writer.new( :terse ).write( :declarations($/.ast) }
-    #output: { bad-prop: someval; }
-
-    say CSS::Module::CSS21.parse('{ @guff {color:red} }', :$actions, :rule<declarations>).ast.tson;
-    # output: { "margin-rule:unknown" =>  { :declarations[ { :ident<color>,
-                                                             :expr[ { :rgb[ { :num(255) }, { :num(0) }, { :num(0) } ] } ] } ],
-                                            :at-keyw<guff> } }
+    say CSS::Module::CSS21.parse('{ @guff {color:red} }', :$actions, :rule<declarations>).ast.pretty;
+    # output: {"margin-rule:unknown" =>  { :declarations[ { :ident<color>,
+                                                          :expr[ { :rgb[ { :num(255) }, { :num(0) }, { :num(0) } ] } ] } ],
+                                         :at-keyw<guff> } }
 ```
-
+`lax` mode likewise returns quantities with unknown dimensions:
+```
+    say CSS::Module::CSS21.parse('{margin: 12mm .1furlongs}', :$actions, :rule<declarations>).ast.pretty;
+    # output {"property" => {:expr[{ :mm(12) }, { :num(0.12), "units:unknown" => <furlongs>}], :ident<margin>}}
+```
 ## See Also
 
 - [CSS::Specification](https://github.com/p6-css/perl6-CSS-Specification) - property definition syntax

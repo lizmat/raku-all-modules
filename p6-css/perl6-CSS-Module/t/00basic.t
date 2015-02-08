@@ -27,7 +27,7 @@ for ('') {
 my $css1-actions  = CSS::Module::CSS1::Actions.new;
 my $css21-actions = CSS::Module::CSS21::Actions.new;
 my $css3-actions  = CSS::Module::CSS3::Actions.new;
-my $css3-actions_2  = CSS::Module::CSS3::Actions.new( :pass-unknown );
+my $css3-actions_2  = CSS::Module::CSS3::Actions.new( :lax );
 my $css-writer = CSS::Writer.new( :terse, :color-names );
 
 for 't/00basic.json'.IO.lines.map({ from-json($_).list }) {
@@ -39,7 +39,7 @@ for 't/00basic.json'.IO.lines.map({ from-json($_).list }) {
     for css1  => {class => CSS::Module::CSS1,  actions => $css1-actions, writer => $css-writer},
        	css21 => {class => CSS::Module::CSS21, actions => $css21-actions, writer => $css-writer},	
        	css3  => {class => CSS::Module::CSS3,  actions => $css3-actions, writer => $css-writer},
-       	pass-unknown  => {class => CSS::Module::CSS3,  actions => $css3-actions_2, writer => $css-writer} {
+       	lax   => {class => CSS::Module::CSS3,  actions => $css3-actions_2, writer => $css-writer} {
 
 	    my ($level, $opt) = .kv;
             my $class = $opt<class>;
