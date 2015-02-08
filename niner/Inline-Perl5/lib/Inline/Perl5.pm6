@@ -3,6 +3,7 @@ class Inline::Perl5;
 class Perl5Interpreter is repr('CPointer') { }
 
 has Perl5Interpreter $!p5;
+has Bool $!external_p5 = False;
 has &!call_method;
 has &!call_callable;
 
@@ -58,6 +59,9 @@ class ObjectKeeper {
 sub p5_init_perl()
     returns Perl5Interpreter { ... }
     native(&p5_init_perl);
+sub p5_inline_perl6_xs_init(Perl5Interpreter)
+    { ... }
+    native(&p5_inline_perl6_xs_init);
 sub p5_SvIOK(Perl5Interpreter, OpaquePointer)
     returns int32 { ... } # should be uint32 once that's supported
     native(&p5_SvIOK);
@@ -446,10 +450,17 @@ method execute(OpaquePointer $code_ref, *@args) {
     self!unpack_return_values($av);
 }
 
-class Perl6PackageCreator {
+class Perl6Callbacks {
+    has $.p5;
     method create($package, $code) {
         EVAL "class GLOBAL::$package \{\n$code\n\}";
         return;
+    }
+    method run($code) {
+        return EVAL $code;
+    }
+    method call(Str $name, @args) {
+        return &::($name)(|@args);
     }
 }
 
@@ -482,10 +493,24 @@ method init_callbacks {
         package v6;
 
         my $package;
-        my $creator;
+        my $p6;
 
         sub init {
-            ($creator) = @_;
+            ($p6) = @_;
+        }
+
+        sub uninit {
+            undef $p6;
+        }
+
+        sub run {
+            my ($code) = @_;
+            return $p6->run($code);
+        }
+
+        sub call {
+            my ($name, @args) = @_;
+            return $p6->call($name, \@args);
         }
 
         sub import {
@@ -493,7 +518,7 @@ method init_callbacks {
         }
 
         use Filter::Simple sub {
-            $creator->create($package, $_);
+            $p6->create($package, $_);
             $_ = '1;';
         };
 
@@ -502,7 +527,11 @@ method init_callbacks {
         1;
     ]);
 
-    self.call('v6::init', Perl6PackageCreator.new);
+    self.call('v6::init', Perl6Callbacks.new(:p5(self)));
+
+    if $!external_p5 {
+        p5_inline_perl6_xs_init($!p5);
+    }
 }
 
 method sv_refcnt_dec($obj) {
@@ -551,7 +580,7 @@ method use(Str $module, *@args) {
 }
 
 submethod DESTROY {
-    p5_destruct_perl($!p5) if $!p5;
+    p5_destruct_perl($!p5) if $!p5 and not $!external_p5;
     $!p5 = Perl5Interpreter;
 }
 
@@ -582,8 +611,9 @@ class Perl5Callable {
 }
 
 my $default_perl5;
-method BUILD {
-    $!p5 = p5_init_perl();
+method BUILD(:$p5) {
+    $!p5 = $p5 // p5_init_perl();
+    $!external_p5 = defined $p5;
 
     &!call_method = sub (Int $index, Str $name, OpaquePointer $args, OpaquePointer $err) returns OpaquePointer {
         my $p6obj = $objects.get($index);
@@ -652,6 +682,19 @@ class Perl5ModuleLoader {
 
 nqp::getcurhllsym('ModuleLoader').p6ml.register_language_module_loader('Perl5', Perl5ModuleLoader);
 
+my Bool $inline_perl6_in_use = False;
+sub init_inline_perl6_new_callback(&inline_perl5_new (Perl5Interpreter --> OpaquePointer)) { ... };
+
+our sub init_inline_perl6_callback(Str $path) {
+    $inline_perl6_in_use = True;
+    trait_mod:<is>(&init_inline_perl6_new_callback, :native($path));
+
+    init_inline_perl6_new_callback(sub (Perl5Interpreter $p5) {
+        my $self = Inline::Perl5.new(:p5($p5));
+        return $self.p6_to_p5($self);
+    });
+}
+
 END {
-    p5_terminate;
+    p5_terminate unless $inline_perl6_in_use;
 }
