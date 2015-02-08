@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Task-Star.git
 	branch = master
-	commit = 181c560bc6853ce9dad2bf6506cbd8eb7fd52935
-	parent = f37da9fa66fbfd51a02f56773edd12c09ea85889
-	cmdver = 0.1.0
+	commit = 867a8565efc9fe130b3523d48ef99ca2de722f65
+	parent = bc9afd8088b06f1a774cda050fe0e5cb1b861329
+	cmdver = 0.2.0
