@@ -108,6 +108,16 @@ method recv(Int $n = 1048576, Bool :$bin = False) {
     $!ssl.read($n, :$bin);
 }
 
+method read(Int $n) {
+    my $res = buf8.new;
+    my $buf;
+    repeat {
+        $buf = self.recv($n - $res.elems, :bin);
+        $res ~= $buf;
+    } while $res.elems < $n && $buf.elems;
+    $res;
+}
+
 method send(Str $s) {
     $!ssl.write($s);
 }
