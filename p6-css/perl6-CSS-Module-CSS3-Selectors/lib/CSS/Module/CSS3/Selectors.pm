@@ -25,35 +25,17 @@ grammar CSS::Module::CSS3::Selectors:ver<20110929.000>
 
     # use <qname> in preference to <type_selector>
     # - see http://www.w3.org/TR/2008/CR-css3-namespace-20080523/#css-qnames
-    rule qname      {<namespace-prefix>? <element-name>}
-    rule universal  {<namespace-prefix>? <element-name=.wildcard>}
+    rule qname     {<namespace-prefix>? <element-name>}
+    rule universal {<namespace-prefix>? <element-name=.wildcard>}
     rule simple-selector { [<qname><!before '|'>|<universal>][<id>|<class>|<attrib>|<pseudo>]*
-                               | [<id>|<class>|<attrib>|<pseudo>]+ }
+                         | [<id>|<class>|<attrib>|<pseudo>]+ }
 
-    rule attrib        {'[' <Ident> [ <op=.attribute-selector> [<Ident>|<string>] ]? ']'}
+    rule attrib    {'[' <Ident> [ <op=.attribute-selector> [<Ident>|<string>] ]? ']'}
 
-    rule term:sym<unicode-range> {:i<unicode-range>}
-
-    # inherited from base: = ~= |=
-    rule attribute-selector:sym<prefix>    {'^='}
-    rule attribute-selector:sym<suffix>    {'$='}
-    rule attribute-selector:sym<substring> {'*='}
-
-    # to compute a.n + b
-    proto rule structural-expr {*}
-    rule structural-expr:sym<keyw> {:i [ odd | even ] & <keyw=.Ident> }
-    token sign { <[ \+ \- ]> }
-    rule structural-expr:sym<expr> {
-        [:i <op=.sign>?$<int:a>=<.uint>?<op(rx:i/n/)> [<op=.sign> $<int:b>=<.uint>]?
-        ||  <op=.sign>?$<int:b>=<.uint>
-        ]
-    }
-
-    rule structural-selector {:i $<Ident>=[[nth|first|last|nth\-last]\-[child|of\-type]]'(' [ <expr=.structural-expr> || <any-args> ] ')'}
+    rule structural-selector {:i $<Ident>=[[nth|first|last|nth\-last]\-[child|of\-type]]'(' [ <expr=.AnB-expr> || <any-args> ] ')'}
     rule pseudo-function:sym<structural-selector> {<structural-selector>}
     rule negation-expr {[<qname> | <universal> | <id> | <class> | <attrib> | [$<nested>=<?before [:i':not(']> || <?>] <pseudo> | <any-arg> ]+}
     rule pseudo-function:sym<negation>  {:i'not(' [ <negation-expr> || <any-args> ] ')'}
-
 }
 
 class CSS::Module::CSS3::Selectors::Actions
@@ -69,11 +51,6 @@ class CSS::Module::CSS3::Selectors::Actions
     method qname($/)            { make $.token( $.node($/), :type(CSSValue::QnameComponent)) }
     method universal($/)        { make $.token( $.node($/), :type(CSSValue::QnameComponent)) }
 
-    method attribute-selector:sym<prefix>($/)    { make ~$/ }
-    method attribute-selector:sym<suffix>($/)    { make ~$/ }
-    method attribute-selector:sym<substring>($/) { make ~$/ }
-
-    method term:sym<unicode-range>($/) { make $.node($/, :type(CSSValue::UnicodeRangeComponent)) }
     method structural-selector($/)  {
         my $ident = $<Ident>.lc;
         return $.warning('usage '~$ident~'(an[+/-b]|odd|even) e.g. "4" "3n+1"')
@@ -85,11 +62,6 @@ class CSS::Module::CSS3::Selectors::Actions
         make $.token( %node, :type(CSS::Grammar::AST::CSSSelector::PseudoFunction));
     }
     method pseudo-function:sym<structural-selector>($/)  { make $<structural-selector>.ast }
-
-    method sign($/) {make ~$/ }
-    method structural-expr:sym<keyw>($/) { make [ $.token( $<keyw>.ast, :type(CSSValue::KeywordComponent)) ] }
-    method structural-expr:sym<expr>($/) { make $.list($/) }
-    method nth-functor($/)               { make $/.lc  }
 
     method negation-expr($/) {
         return $.warning('bad :not() argument', ~$<any-arg>)

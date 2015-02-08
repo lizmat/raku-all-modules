@@ -1,4 +1,3 @@
-[ "term", { "input" : "U+2??a", "ast" : { "unicode-range" : [ 8202, 12282 ] } } ]
 [ "pseudo", { "input" : "::my-elem", "ast" : { "pseudo-elem" : "my-elem" } } ]
 // thanks to: http://kilianvalkhof.com/2008/css-xhtml/the-css3-not-selector/
 [ "simple-selector", { "input" : ":not(p)", "ast" : { "simple-selector" : [ { "pseudo-func" : { "ident" : "not", "expr" : [ { "qname" : { "element-name" : "p" } } ] } } ] } } ]
