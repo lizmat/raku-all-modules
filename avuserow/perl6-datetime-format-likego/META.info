@@ -1,0 +1,11 @@
+{
+	"name" : "DateTime::Format::LikeGo",
+	"version" : "0.0.1",
+	"description" : "Format dates using Go's reference format",
+	"author" : "Adrian Kreher",
+	"provides" : {
+		"DateTime::Format::LikeGo" : "lib/DateTime/Format/LikeGo.pm"
+	},
+	"depends" : [ "DateTime::Format" ],
+	"source-url" : "git://github.com/avuserow/perl6-datetime-format-likego.git"
+}

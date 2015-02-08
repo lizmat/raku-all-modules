@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/avuserow/perl6-datetime-format-likego.git
+	branch = master
+	commit = d711c0c084da0450de3419246141705ba5af1fac
+	parent = 6fcf140dad7acf4cacffe452eccd2f5dc9baf354
+	cmdver = 0.2.0
