@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/4d47/perl6-tag-helper.git
 	branch = master
-	commit = 3331269a6f37a68d392beed475bca08166aeefdd
-	parent = 68c9fcfcefa4819ac84dba422d965aa3e0e6d3fa
-	cmdver = 0.1.0
+	commit = 1779a85aab2ef2b71c9700d8282ec62adf049f6b
+	parent = f9f537b64b815e5824f1db869b57e403ef4e17ef
+	cmdver = 0.2.0

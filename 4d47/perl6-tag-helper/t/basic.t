@@ -29,6 +29,7 @@ my $tag = Tag.new;
     is $tag.br, '<br>';
     is $tag.p, '<p></p>';
     is $tag.p('foo'), '<p>foo</p>';
+    is $tag.P('foo'), '<P>foo</P>';
     is $tag.p('foo', 'bar'), '<p>foo bar</p>';
     is $tag.p('1 > 2'), '<p>1 &gt; 2</p>';
     is $tag.p(1, '>', 2), '<p>1 &gt; 2</p>';
@@ -55,6 +56,7 @@ my $tag = Tag.new;
 {
     # methods starting with `begin_` output only opening tag
     is $tag.begin_form, '<form>';
+    is $tag.BEGIN_FORM, '<FORM>';
     is $tag.begin_form('should', 'ignore'), '<form>';
     is $tag.begin_form(:method<POST>), '<form method="POST">';
 }
@@ -62,6 +64,7 @@ my $tag = Tag.new;
 {
     # methods starting with `end_` output only closing tag
     is $tag.end_form, '</form>';
+    is $tag.end_FORM, '</FORM>';
     is $tag.end_form('should', 'ignore'), '</form>';
     is $tag.end_form(:class<foo>, 'foo'), '</form>';
 }
@@ -83,6 +86,7 @@ my $tag = Tag.new;
     is Tag.p, '<p></p>';
     Tag.void-elements.push('p');
     is Tag.p, '<p>';
+    is Tag.P, '<P>';
 }
 
 {
@@ -99,6 +103,7 @@ my $tag = Tag.new;
     temp Tag.boolean-attributes;
     temp Tag.self-closing-marker;
     is Tag.input(:disabled), '<input disabled>';
+    is Tag.input(:DISABLED), '<input DISABLED>';
     is Tag.input(:a), '<input a="True">';
     Tag.boolean-attributes.push('a');
     is Tag.input(:a), '<input a>';
