@@ -25,7 +25,7 @@ grammar CSS::Grammar:ver<20110607.001> {
     # "lexer"
     # taken from http://www.w3.org/TR/css3-syntax/ 11.2 Lexical Scanner
 
-    token unicode  { (<[ 0..9 a..f A..F ]>**1..6) <.wc>? }
+    token unicode  { (<xdigit>**1..6) <.wc>? }
     # w3c nonascii :== #x80-#xD7FF #xE000-#xFFFD #x10000-#x10FFFF
     token regascii { <[ \x20..\x7F ]> }
     token nonascii { <- [ \x0..\x7F ]> }
@@ -36,7 +36,7 @@ grammar CSS::Grammar:ver<20110607.001> {
     # don't redefine <ident>, it's a built-in
     token Ident    { $<pfx>='-'? <nmstrt> <nmchar>* }
     token name     { <nmchar>+ }
-    token num      { < + - >? (\d* \.)? \d+ }
+    token num      { < + - >? [\d* \.]? \d+ [:i'e' < + - >?\d+]? }
     token uint     {\d+}
     token op($chr) {$chr}
 
@@ -58,24 +58,24 @@ grammar CSS::Grammar:ver<20110607.001> {
     token element-name   { <Ident> }
 
     proto token length-units     {*}
-    token length-units:sym<abs>  {:i pt|mm|cm|pc|in|px }
-    token length-units:sym<font> { <rel-font-units> }
-    token rel-font-units         {:i em|ex}
+    token length-units:sym<abs>  {:i pt|mm|cm|pc|in|px|<rel-font-units> }
+    token rel-font-units         {:i [em|ex] }
+    token rel-font-length        {:i $<sign>=< + - >? <rel-font-units> }
 
     proto token length           {*}
     token length:sym<dim>        {:i <num><units=.length-units> }
     # As a special case, relative font lengths don't need a number.
     # E.g. -ex :== -1ex
-    token length:sym<rel-font-unit> { $<sign>=< + - >? <rel-font-units> }
+    token length:sym<rel-font-length> { <rel-font-length> }
 
     proto token dimension {*}
     token dimension:sym<length> { <length> }
 
     token url_delim_char { < ( ) ' " \\ > | <.wc> }
-    token bare-url-char  { <char=.escape> | <char=.nonascii> | <- url_delim_char>+ }
-    token bare-url       {<bare-url-char>*}
+    token url-unquoted-char  { <char=.escape> | <char=.nonascii> | <- url_delim_char>+ }
+    token url-unquoted       {<url-unquoted-char>*}
 
-    rule url             {:i'url(' [ <url=.url-string> | <url=.bare-url> ] ')' }
+    rule url             {:i'url(' [ <url=.url-string> | <url=.url-unquoted> ] ')' }
     token url-string     {<string>}
 
     token percentage     { <num>'%' }
@@ -108,12 +108,14 @@ grammar CSS::Grammar:ver<20110607.001> {
 
     proto rule term  {*}
     rule term:sym<num>        {<num><!before ['%'|\w]>}
-    rule term:sym<ident>      {<Ident><!before '('>}
-    rule term:sym<dimension>  {<dimension>}
+    rule term:sym<ident>      {[<rel-font-length>|<Ident>]<!before '('>}
+    rule term:sym<dimension>  {<dimension>||<any-dimension>}
     rule term:sym<percentage> {<percentage>}
     rule term:sym<string>     {<string>}
     rule term:sym<color>      {<color>}
     rule term:sym<url>        {<url>}
+
+    rule any-dimension        {<num>$<units:unknown>=<.Ident>}
 
     # Unicode ranges - used by selector modules + scan rules
     rule unicode-range         {:i 'U+' [ $<from>=[<.xdigit>**1..6] '-' $<to>=[<.xdigit>**1..6]

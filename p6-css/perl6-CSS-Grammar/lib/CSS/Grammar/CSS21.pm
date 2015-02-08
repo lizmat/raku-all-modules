@@ -48,7 +48,8 @@ rule declarations {
 #
 rule declaration-list { <declaration> * }
 rule declaration      { <any-declaration> }
-rule any-declaration  { <Ident=.property> <expr> <prio>? <end-decl> | '@'(<.Ident>) <declarations> || <dropped-decl> }
+rule at-keyw          { '@'<Ident> }
+rule any-declaration  { <Ident=.property> <expr> <prio>? <end-decl> | <at-keyw> <declarations> || <dropped-decl> }
 
 rule expr { <term> +% [ <term=.operator>? ] }
 token term:sym<function>   {<function=.any-function>}
@@ -82,7 +83,7 @@ token attribute-selector:sym<equals>   {'='}
 token attribute-selector:sym<includes> {'~='}
 token attribute-selector:sym<dash>     {'|='}
 
-rule pseudo:sym<:element>  {':'$<element>=[:i'first-'[line|letter]|before|after]<!before '('>}
+rule pseudo:sym<:element> {':'$<element>=[:i'first-'[line|letter]|before|after]<!before '('>}
 rule pseudo:sym<function> {':'[<pseudo-function>||<pseudo-function=.any-pseudo-func>]}
 # assume anything else is a class
 rule pseudo:sym<class>    {':' <class=.Ident><!before '('>}
@@ -92,8 +93,8 @@ rule any-function         {<Ident>'(' [ <expr>? || <any-args> ] ')'}
 proto rule pseudo-function {*}
 rule pseudo-function:sym<lang> {:i'lang(' [ <Ident> || <any-args> ] ')'}
 # pseudo function catch-all
-rule any-pseudo-func   {<any-function>}
+rule any-pseudo-func      {<any-function>}
 
 # 'lexer' css21 exceptions
 # non-ascii limited to single byte characters
-token nonascii             {<[\o240..\o377]>}
+token nonascii            {<[\o240..\o377]>}

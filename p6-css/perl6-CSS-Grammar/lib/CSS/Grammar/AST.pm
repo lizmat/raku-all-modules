@@ -47,6 +47,7 @@ class CSS::Grammar::AST {
         :ResolutionComponent<resolution>
         :TimeComponent<time>
         :QnameComponent<qname>
+        :OtherUnitComponent<units>
         :NamespacePrefixComponent<ns-prefix>
         :ElementNameComponent<element-name>
         :OperatorComponent<op>
@@ -314,7 +315,7 @@ BEGIN our %CSS3-Colors =
                     ($key, $value) = $value.kv;
                 }
                 elsif %known-type{$type}:!exists {
-                    warn "{$value.perl} has unknown type: $key";
+                    warn "{$value.perl} has unknown type: $type";
                 }
 
                 if %terms{$key}:exists {
@@ -356,7 +357,7 @@ BEGIN our %CSS3-Colors =
                     ($key, $value) = $value.kv;
                 }
                 elsif %known-type{$type}:!exists {
-                    warn "{$value.perl} has unknown type: $key";
+                    warn "{$value.perl} has unknown type: $type";
                 }
 
                 push( @terms, {$key => $value} );

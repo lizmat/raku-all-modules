@@ -13,7 +13,7 @@ has Int $.line-no is rw = 1;
 has Int $!nl-rachet = 0;
 # variable encoding - not yet supported
 has Str $.encoding is rw = 'UTF-8';
-has Bool $.verbose is rw = False;
+has Bool $.lax is rw = False;
 
 # accumulated warnings
 has @.warnings;
@@ -26,7 +26,7 @@ method reset {
 
 method at-rule($/, :$type!) {
     my %terms = %( $.node($/) );
-    %terms{ CSSValue::AtKeywordComponent } = $0.lc;
+    %terms{ CSSValue::AtKeywordComponent } //= $0.lc;
     return $.token( %terms, :$type);
 }
 
@@ -136,7 +136,11 @@ method Ident($/) {
 }
 
 method name($/)  { make $.token( ([~] $<nmchar>>>.ast), :type(CSSValue::NameComponent)) }
-method num($/)   { make $.token( $0 ?? $/.Rat !! $/.Int, :type(CSSValue::NumberComponent)) }
+method num($/)   { my $num = $/.Rat;
+                   make $.token( $num % 1
+                                 ?? $num
+                                 !! $num.Int, :type(CSSValue::NumberComponent))
+                 }
 method uint($/)  { make $/.Int }
 method op($/)    { make $/.lc  }
 
@@ -166,12 +170,12 @@ method id($/)    { make $.token( $<name>.ast, :type(CSSSelector::Id)) }
 
 method class($/) { make $.token( $<name>.ast, :type(CSSSelector::Class)) }
 
-method bare-url-char($/) {
+method url-unquoted-char($/) {
     make $<char> ?? $<char>.ast !! ~$/
 }
 
-method bare-url($/) {
-    make [~] $<bare-url-char>>>.ast;
+method url-unquoted($/) {
+    make [~] $<url-unquoted-char>>>.ast;
 }
 
 method url($/)   {
@@ -180,6 +184,12 @@ method url($/)   {
 
 # uri - synonym for url?
 method uri($/)   { make $<url>.ast }
+
+method any-dimension($/) {
+    return $.warning("unknown units: { $<units:unknown>.ast }")
+        unless $.lax;
+    make $.node( $/ )
+}
 
 method color-range($/) {
     my $range = $<num>.ast.value;
@@ -289,6 +299,7 @@ method selectors($/)          { make $.token( $.list($/), :type(CSSSelector::Sel
 method declarations($/)       { make $.token( $<declaration-list>.ast, :type(CSSValue::PropertyList) ) }
 method declaration-list($/)   { make [($<declaration>>>.ast).grep: {.defined}] }
 method declaration($/)        { make $<any-declaration>.ast }
+method at-keyw($/)            { make $<Ident>.ast }
 method any-declaration($/)    {
     return if $<dropped-decl>;
 
@@ -309,35 +320,41 @@ method term:sym<percentage>($/) { make $<percentage>.ast }
 proto method length {*}
 method length:sym<dim>($/) { make $.token($<num>.ast, :type($<units>.ast)); }
 method dimension:sym<length>($/) { make $<length>.ast }
-method length:sym<rel-font-unit>($/) {
+method length:sym<rel-font-length>($/) { make $<rel-font-length>.ast }
+method rel-font-length($/) {
     my $num = $<sign> && ~$<sign> eq '-' ?? -1 !! +1;
-    make $.token($num, :type( $<rel-font-units>.lc ))
+    make $.token($num, :type( $<rel-font-units>.lc ));
 }
 
 proto method angle {*}
 method angle-units($/)         { make $/.lc }
-method angle:sym<dim>($/)      { make $.token($<num>.ast, :type($<units>.ast)) }
+method angle:sym<dim>($/)      { make $.token( $<num>.ast, :type($<units>.ast)) }
 method dimension:sym<angle>($/){ make $<angle>.ast }
 
 proto method time {*}
 method time-units($/)          { make $/.lc }
-method time:sym<dim>($/)       { make $.token($<num>.ast, :type($<units>.ast)) }
+method time:sym<dim>($/)       { make $.token( $<num>.ast, :type($<units>.ast)) }
 method dimension:sym<time>($/) { make $<time>.ast }
 
 proto method frequency {*}
 method frequency-units($/)     { make $/.lc }
-method frequency:sym<dim>($/)  { make $.token($<num>.ast, :type($<units>.ast)) }
+method frequency:sym<dim>($/)  { make $.token( $<num>.ast, :type($<units>.ast)) }
 method dimension:sym<frequency>($/) { make $<frequency>.ast }
 
-method percentage($/)          { make $.token($<num>.ast, :type(CSSValue::PercentageComponent)) }
+method percentage($/)          { make $.token( $<num>.ast, :type(CSSValue::PercentageComponent)) }
 
 method term:sym<string>($/)    { make $.token( $<string>.ast, :type(CSSValue::StringComponent)) }
-method term:sym<url>($/)       { make $.token($<url>.ast, :type(CSSValue::URLComponent)) }
+method term:sym<url>($/)       { make $.token( $<url>.ast, :type(CSSValue::URLComponent)) }
 method term:sym<color>($/)     { make $<color>.ast }
 method term:sym<function>($/)  { make $.token( $<function>.ast, :type(CSSValue::FunctionComponent)) }
 
-method term:sym<num>($/)       { make $.token($<num>.ast, :type(CSSValue::NumberComponent)); }
-method term:sym<ident>($/)     { make $.token($<Ident>.ast, :type(CSSValue::IdentifierComponent)) }
+method term:sym<num>($/)       { make $.token( $<num>.ast, :type(CSSValue::NumberComponent)); }
+method term:sym<ident>($/)     { make $<Ident>
+                                     ?? $.token( $<Ident>.ast, :type(CSSValue::IdentifierComponent)) 
+                                     !! $<rel-font-length>.ast
+                               }
+
+method term:sym<unicode-range>($/) { make $.node($/, :type(CSSValue::UnicodeRangeComponent)) }
 
 method selector($/)            { make $.token( $.list($/), :type(CSSSelector::Selector)) }
 
@@ -365,9 +382,22 @@ method any-pseudo-func($/) {
     make $.token( $ast, :type(CSSSelector::PseudoFunction) );
 }
 
-method attribute-selector:sym<equals>($/)   { make ~$/ }
-method attribute-selector:sym<includes>($/) { make ~$/ }
-method attribute-selector:sym<dash>($/)     { make ~$/ }
+# css 2.1 attribute selectors
+method attribute-selector:sym<equals>($/)    { make ~$/ }
+method attribute-selector:sym<includes>($/)  { make ~$/ }
+method attribute-selector:sym<dash>($/)      { make ~$/ }
+# css 3 attribute selectors
+method attribute-selector:sym<prefix>($/)    { make ~$/ }
+method attribute-selector:sym<suffix>($/)    { make ~$/ }
+method attribute-selector:sym<substring>($/) { make ~$/ }
+method attribute-selector:sym<column>($/)    { make ~$/ }
+
+# An+B microsyntax
+method op-sign($/) { make ~$/ }
+method op-n($/)    { make 'n' }
+
+method AnB-expr:sym<keyw>($/) { make [ $.token( $<keyw>.ast, :type(CSSValue::KeywordComponent)) ] }
+method AnB-expr:sym<expr>($/) { make $.list($/) }
 
 method end-block($/) {
     $.warning("no closing '}'")
