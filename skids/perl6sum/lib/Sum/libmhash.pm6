@@ -211,6 +211,9 @@ class Instance is repr('CPointer') {
       }
 
       method finalize(:$bytes!) {
+          # TODO: see if we can use mhash_end_m with a callback that
+	  # makes a buf8 of the requested size.  Then the ca8_free
+	  # hinkery goes away.
           my $c := end(self);
 	  my $res := buf8.new($c[0..^$bytes].list);
 	  ca8_free($c);
