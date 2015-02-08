@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/mongo-perl6-driver.git
 	branch = master
-	commit = d0270407be25391c75903176629bc9c629e93af4
-	parent = c79cc7857b7ed7bd4234c886185a9d7a3abcb120
+	commit = a72aad2cace86ae68ad9eb4251d630781fcf5884
+	parent = 980c3ee5e6de49b0b121255e962ed8882e8bf99f
 	cmdver = 0.2.0
