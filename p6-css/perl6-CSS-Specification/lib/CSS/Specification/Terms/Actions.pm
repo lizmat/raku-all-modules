@@ -60,14 +60,12 @@ class CSS::Specification::Terms::Actions {
         make ~ $*USAGE;
     }
 
-        has Bool $.pass-unknown is rw;
-
     use CSS::Grammar::AST;
 
     # ---- CSS::Grammar overrides ---- #
 
     method any-function($/)             {
-        return callsame if $.pass-unknown;
+        return callsame if $.lax;
         $.warning('ignoring function', $<Ident>.ast.lc);
     }
 
@@ -77,7 +75,7 @@ class CSS::Specification::Terms::Actions {
             my $ast = $<any-declaration>.ast;
             if $ast.defined {
                 my ($key, $value) = $ast.kv;
-                if $.pass-unknown {
+                if $.lax {
                     make {($key ~ ':unknown') => $value}
                 }
                 else {
