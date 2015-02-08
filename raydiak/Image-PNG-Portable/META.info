@@ -3,6 +3,6 @@
     "version" : "*",
     "description" : "Portable PNG output for Perl 6",
     "author" : "raydiak",
-    "depends" : [ "String::CRC32", "Compress::Zlib::Raw", "NativeCall" ],
+    "depends" : [ "String::CRC32", "Compress::Zlib" ],
     "source-url" : "git://github.com/raydiak/Image-PNG-Portable.git"
 }
