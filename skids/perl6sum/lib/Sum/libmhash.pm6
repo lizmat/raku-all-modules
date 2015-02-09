@@ -15,6 +15,8 @@ module X::libmhash {
         "Error while talking to libmhash: $.code"
     }
   }
+
+  # TODO: X::Sum::Final used below when not adding, fix those.
 }
 
 module Sum::libmhash {
@@ -32,14 +34,12 @@ use Sum;
     say "Largest libmhash algo ID is $Sum::libmhash::count";
     say "ID\tNAME\tBLOCK SIZE\tRESULT SIZE";
     for %Sum::libmhash::Algos.pairs.sort -> $p ( :$key, :value($v) ) {
-        say "{$v.id}\t{$v.name}\t{$v.block_size}\t{$v.pblock_size}";
+        say "{$v.id}\t{$v.name}\t{$v.pblock_size}\t{$v.block_size}";
     }
 
     my $md5 := Sum::libmhash::Instance.new("MD5");
     $md5.add(buf8.new(0x30..0x39));
-    # Note you must remember the size of your result ($.block_size above),
-    # because the native libmhash instance does not carry introspection
-    :256[$md5.finalize(:bytes(16)).values].base(16).say;
+    :256[$md5.finalize().values].base(16).say;
 
     # Slightly less raw interface:
     my $sha1 = Sum::libmhash::Sum.new("SHA1");
@@ -79,6 +79,8 @@ use NativeCall;
 # Hackery alert: many of these "int"s are actually size_t in the mhash
 # API.  That probably won't work too well when sizeof(int) != sizeof(size_t).
 # TODO: fix these to use size_t when NativeCall gains support for it.
+# TODO: also ensure the size of hashid enum is properly determined and
+#       used where appropriate.
 
 our sub count() returns int is native('libmhash')
     is symbol('mhash_count') { * }
@@ -88,7 +90,6 @@ our $count = count();
 our sub name(int) returns str is native('libmhash')
     is symbol('mhash_get_hash_name_static') { * }
 
-# Fortunately, this tells us where the holes are by returning 0.
 our sub block_size(int) returns int is native('libmhash')
     is symbol('mhash_get_block_size') { * }
 
@@ -147,19 +148,13 @@ my $swab_4byte_digests = False;
 
     This class is a C<NativeCall CPointer> instance.  It has no
     state other than the raw C<libmhash> object representing
-    an ongoing summation.  As such, when using this class, one
-    must be able to keep track of which Sum::libmhash::Algo is
-    associated with the object.  This will be necessary to
-    provide the mandatory C<:bytes> parameter to the C<.finalize>
-    method, which returns a C<buf8> containing the resultant
-    digest.
+    an ongoing summation.
 
     The C<.add> method takes a single C<buf8> of any size.  Unlike
     the normal C<Sum::> role only C<.add> may be used to update
-    the sum, and C<.finalize> takes no optional data.  There is
-    no C<.push> method, and any object abandoned before it has
-    invoked its C<.finalize> method must be manually collected
-    via the C<.destroy> method or memory will leak.
+    the sum, C<.finalize> takes no optional data and will only
+    produce results the first time it is called.  There is no
+    C<.push> method.
 
     The C<.new> contructor may take either the C<.id> or the
     C<.name> of a C<Sum::libmhash::Algo> to choose the algorithm,
@@ -168,9 +163,19 @@ my $swab_4byte_digests = False;
     Note that the C<.clone> C<Mu> method is fully functional on
     this class via the C<libmhash> C<cp> API function.
 
+    A manual C<.free> method is not provided.  The resources
+    will be freed when C<.finalize> is called, or if the object
+    is abandoned, the class has some sentry hackery to ensure it
+    is freed during garbage collection.  Since crypto resources
+    may consume crypto hardware, it is recommended to always
+    finalize these objects even if you have no use for the
+    results.
+
 =end pod
 
 class Instance is repr('CPointer') {
+      my %allocated = ();
+
       my sub init(int) returns Instance
           is native('libmhash')
           is symbol('mhash_init') { * };
@@ -186,17 +191,21 @@ class Instance is repr('CPointer') {
       my sub cp(Instance) returns Instance
           is native('libmhash')
           is symbol('mhash_cp') { * };
+      my sub algo(Instance) returns int
+          is native('libmhash')
+          is symbol('mhash_get_mhash_algo') { * };
       my sub ca8_free(CArray[int8])
           is native
 	  is symbol('free') { * };
 
       multi method new (Int $id) {
           return Failure.new(X::libmhash::NotFound.new(
-	                     :feild<id> :name($id)))
+	                     :field<id> :name($id)))
               unless %Algos{$id};
           my $res = init(+$id);
 	  return Failure.new(X::libmhash::NativeError.new())
 	      unless $res.defined;
+	  %allocated{~$res.WHICH} = True;
 	  $res;
       }
       multi method new (Str $name) {
@@ -207,29 +216,36 @@ class Instance is repr('CPointer') {
 
       method add($data, $len = $data.elems)
       {
+          return Failure.new(X::Sum::Final.new())
+              unless %allocated{~self.WHICH}:exists;
+          # TODO check RC
           mhash(self, $data, +$len);
       }
 
-      method finalize(:$bytes!) {
-          # TODO: see if we can use mhash_end_m with a callback that
-	  # makes a buf8 of the requested size.  Then the ca8_free
-	  # hinkery goes away.
-          my $c := end(self);
-	  my $res := buf8.new($c[0..^$bytes].list);
+      method finalize() {
+          return Failure.new(X::Sum::Final.new())
+              unless %allocated{~self.WHICH}:delete;
+	  my $alg := %Algos{+algo(self)};
+          my $c := end(self); # This deallocs everything
+	  my $res := buf8.new($c[0..^$alg.block_size].list);
 	  ca8_free($c);
 	  $res := buf8.new($res.values.reverse)
-	      if $swab_4byte_digests and $bytes == 4;
+	      if $swab_4byte_digests and $alg.block_size == 4;
 	  $res;
       }
 
-      # not DESTROY: the user of this class must call this manually iff
-      # self.end has not been called.
-      method destroy() {
-          deinit(self, CArray[int8]); # Type object should result in C NULL
+      method DESTROY() {
+          if %allocated{~self.WHICH}:delete {
+              deinit(self, CArray[int8]); # Type object should result in C NULL
+          }
       }
 
       method clone() {
-          cp(self);
+          return Failure.new(X::Sum::Final.new())
+              unless %allocated{~self.WHICH}:exists;
+          my $res = cp(self);
+	  %allocated{~$res.WHICH} = True;
+	  $res;
       }
 }
 
@@ -240,7 +256,7 @@ fail("Runtime validation: could not make an Instance")
 
 my $message := Buf.new(0x30..0x37);
 $md5.add($message);
-my $digest := $md5.finalize(:bytes(16));
+my $digest := $md5.finalize();
 fail("mhash functional sanity test failed") unless
     $digest eqv buf8.new(0x2e,0x9e,0xc3,0x17,0xe1,0x97,0x81,0x93,
                          0x58,0xfb,0xc4,0x3a,0xfc,0xa7,0xd8,0x37);
@@ -249,7 +265,7 @@ fail("mhash functional sanity test failed") unless
 # (There are no other 2..8-byte digest sizes but problems could be there, too.)
 my $a32 := Instance.new("ADLER32");
 $a32.add($message);
-$digest := $a32.finalize(:bytes(4));
+$digest := $a32.finalize();
 # There is something strange going on with how Buf unpacks, finagle for eqv
 $swab_4byte_digests = $digest.values eqv Array.new(0x9d,0x01,0x1c,0x07);
 
@@ -269,7 +285,7 @@ $swab_4byte_digests = $digest.values eqv Array.new(0x9d,0x01,0x1c,0x07);
     On the bright side, you can pass any size C<buf8> without
     the need for a marshalling role.
 
-    The methods C<.pos>, C<.elems>, and C<.size> all work as
+    The methods C<.pos> and C<.elems> both work as
     described in the C<Sum::> base role.  The units of these
     mehod are bits, not bytes, even for algorithms that do not
     have bitwise resolution, because there is no way to figure
@@ -320,7 +336,7 @@ class Sum {
         }
     }
 
-    method size() { (0 + self.block_size) * 8 };
+    method size() { +self.block_size };
 
     method elems { self.pos };
 
@@ -342,7 +358,7 @@ class Sum {
 
     method Buf () {
         return $!res if $!res.defined or $!res.WHAT ~~ Failure;
-        $!res := self.inst.finalize(:bytes(self.algo.block_size));
+        $!res := self.inst.finalize();
         $!inst := Instance:U; # This has been freed by libmhash
         $!res
     }

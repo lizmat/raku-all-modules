@@ -5,7 +5,7 @@ use lib	'./lib';
 
 use Test;
 
-plan 31;
+plan 32;
 
 use Sum::libmhash;
 ok(1,'We use Sum and we are still alive');
@@ -36,9 +36,11 @@ lives_ok {$b := $a.clone;}, "mhash cp (clone) lives.";
 isa_ok $b, Sum::libmhash::Instance, "Cloned Instance object";
 ok $b.defined, "Cloned Instance is really instantiated";
 
-is $b.finalize(:bytes(4)), buf8.new(0x96,0x25,0x0a,0x8e), "Adler32 clone computes expected value";
+is $b.finalize, buf8.new(0x96,0x25,0x0a,0x8e), "Adler32 clone computes expected value";
 lives_ok {$a.add(buf8.new('.'.ord))}, "mhash update of original lives";
-is $a.finalize(:bytes(4)), buf8.new(0xa0,0xe1,0x0a,0xbc), "Original Adler32 computes expected value";
+is $a.finalize, buf8.new(0xa0,0xe1,0x0a,0xbc), "Original Adler32 computes expected value";
+
+lives_ok { for 0..10000 { my $a := Sum::libmhash::Instance.new("ADLER32"); $a.finalize if Bool.pick; } }, "Supposedly test GC sanity";
 
 lives_ok {$a := Sum::libmhash::Sum.new("MD5")}, "wrapper class contructor lives";
 isa_ok $a, Sum::libmhash::Sum, "wrapper class intantiates";

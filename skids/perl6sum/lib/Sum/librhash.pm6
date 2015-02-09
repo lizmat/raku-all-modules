@@ -358,7 +358,7 @@ class Instance is repr('CPointer') {
 
       method clone() {
           # Surprised core does not have this, so leaving as AdHoc.
-          Failure.new(X::AdHoc.new(:message("Cannot be cloned.")))
+          Failure.new(X::AdHoc.new(:payload("Cannot be cloned.")))
       }
 
 }
@@ -391,7 +391,7 @@ fail("rhash functional sanity test failed") unless
     On the bright side, you can pass any size C<buf8> without
     the need for a marshalling role.
 
-    The methods C<.pos>, C<.elems>, and C<.size> all work as
+    The methods C<.pos> and C<.elems> both all work as
     described in the C<Sum::> base role.  The units of these
     mehod are bits, not bytes, even for algorithms that do not
     have bitwise resolution, because there is no way to figure
@@ -437,7 +437,7 @@ class Sum {
 
     method clone() {
         # Surprised core does not have this, so leaving as AdHoc.
-        Failure.new(X::AdHoc.new(:message("Cannot be cloned.")))
+        Failure.new(X::AdHoc.new(:payload("Cannot be cloned.")))
     }
 
     submethod DESTROY() {
@@ -446,7 +446,7 @@ class Sum {
         }
     }
 
-    method size() { (0 + self.algo.digest_size) * 8 };
+    method size() { +self.algo.digest_size };
 
     method elems { self.pos };
 
