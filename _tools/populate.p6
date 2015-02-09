@@ -27,3 +27,5 @@ for dir().grep(*.d).grep(*.basename eq none('_tools', '.git')).map({ dir($_).gre
     }
 }
 
+say "Done updating, now doing a repack to save space";
+run 'git', 'repack', '-Ad';
