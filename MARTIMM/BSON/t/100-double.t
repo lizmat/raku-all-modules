@@ -3,7 +3,6 @@ use BSON;
 
 #-------------------------------------------------------------------------------
 # 
-#
 my $bson = BSON.new;
 
 # Wikipedia: http://en.wikipedia.org/wiki/Double-precision_floating-point_format#Endianness
@@ -15,22 +14,30 @@ my $bson = BSON.new;
 # Array filled as little endian.
 #
 my Buf $b = Buf.new( 0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0xD5, 0x3F);
-#say "Reversed for reading: ", $b.reverse.list.fmt('%02X');
+#say "B: ", $b;
+my Num $v = $bson._dec_double($b.list);
+is $v, 0.333333333333333, 'Result is 0.333333333333333';
+my Buf $br = $bson._enc_double($v);
+#say "BR: ", $br;
+is_deeply $br, $b, "encoded $v";
 
-# It comes back at a smaller precision but maybe alright
-# 0.333333333333333
-#
-my Num $v = Num.new($bson._double64($b.list));
-is $v.fmt('%6.4f'), '0.3333', 'Result is about 0.3333';
+
+$b = Buf.new( 0x34, 0x47, 0x5A, 0xAC, 0x34, 0x23, 0x34, 0xF2);
+#say "B: ", $b;
+$v = $bson._dec_double($b.list);
+#say " -> $v";
+$br = $bson._enc_double($v);
+#say "BR: ", $br;
+is_deeply $br, $b, "$v after encode";
 
 
-$b = $bson._double64($v);
-#say "Reversed for reading: ", $b.reverse.list.fmt('%02X');
-
-$b = $bson._double64(Num.new(0.333333333333333314829616256247390992939472198486328125));
-#say "Reversed for reading: ", $b.reverse.list.fmt('%02X');
-
-#say '-' x 80;
+$b = Buf.new( 0x00 xx 6, 0x44, 0x40);
+#say "B: ", $b;
+$v = $bson._dec_double($b.list);
+#say " -> $v";
+$br = $bson._enc_double($v);
+#say "BR: ", $br;
+is_deeply $br, $b, "$v after encode";
 
 #-------------------------------------------------------------------------------
 # Test special cases
@@ -41,43 +48,54 @@ $b = $bson._double64(Num.new(0.3333333333333333148296162562473909929394721984863
 # 0xFFF0 0000 0000 0000 = -Inf
 #
 $b = Buf.new( 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-#say "Reversed for reading: ", $b.reverse.list.fmt('%02X');
-
-$v = Num.new($bson._double64($b.list));
-is $v.fmt('%6.4f'), '0.0000', 'Result is about 0.0000';
-
-#say '-' x 80;
-
+$v = $bson._dec_double($b.list);
+is $v, 0, 'Result is 0';
+$br = $bson._enc_double($v);
+is_deeply $br, $b, "$v after encode";
 
 $b = Buf.new( 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-#say "Reversed for reading: ", $b.reverse.list.fmt('%02X');
-
-$v = Num.new($bson._double64($b.list));
-is $v.fmt('%6.4f'), '0.0000', 'Result is about 0.0000';
-
-#say '-' x 80;
+$v = $bson._dec_double($b.list);
+is $v, Num.new(-0), 'Result is -0';
+$br = $bson._enc_double($v);
+is_deeply $br, Buf.new(0 xx 8), "-0 not recognizable and becomes 0";
 
 
 $b = Buf.new( 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0x7F);
-#say "Reversed for reading: ", $b.reverse.list.fmt('%02X');
-
-$v = Num.new($bson._double64($b.list));
+$v = $bson._dec_double($b.list);
 is $v, Inf, 'Result is Infinite';
-
-#say '-' x 80;
-
+$br = $bson._enc_double($v);
+is_deeply $br, $b, "$v after encode";
 
 $b = Buf.new( 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF0, 0xFF);
-#say "Reversed for reading: ", $b.reverse.list.fmt('%02X');
+$v = $bson._dec_double($b.list);
+is $v, -Inf, 'Result is minus Infinite';
+$br = $bson._enc_double($v);
+is_deeply $br, $b, "$v after encode";
 
-$v = Num.new($bson._double64($b.list));
-is $v, Inf, 'Result is Infinite';
+#-------------------------------------------------------------------------------
+# Test complete document encoding
+#
+my %test = 
+    %( decoded => { b => Num.new(0.3333333333333333)},
+       encoded => [ 0x10, 0x00, 0x00, 0x00,             # Total size
+                    0x01,                               # Type
+                    0x62, 0x00,                         # 'b' + 0
+                    0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0xD5, 0x3F,
+                                                        # 8 byte double
+                    0x00                                # + 0
+                  ],
+       type => 'Num';
+     );
 
+is_deeply
+    $bson.encode(%test<decoded>).list,
+    %test<encoded>,
+    "encode type {%test<type>}";
 
-
-
-
-
+is_deeply
+    $bson.decode(Buf.new(%test<encoded>)),
+    %test<decoded>,
+    "decode type {%test<type>}";
 
 #-------------------------------------------------------------------------------
 # Cleanup

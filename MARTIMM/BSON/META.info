@@ -8,5 +8,5 @@
         "BSON::ObjectId": "lib/BSON/ObjectId.pm"
     },
     "source-url": "git://github.com/MARTIMM/BSON.git",
-    "version": "0.5.1"
+    "version": "0.5.5"
 }

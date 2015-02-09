@@ -1,16 +1,16 @@
-class BSON:ver<0.5.1>;
+class BSON:ver<0.5.5>;
 
 use BSON::ObjectId;
 
 
 method encode ( %h ) {
 
-    return self._document( %h );
+    return self._enc_document( %h );
 }
 
 method decode ( Buf $b ) {
 
-    return self._document( $b.list );
+    return self._dec_document( $b.list );
 }
 
 
@@ -19,23 +19,20 @@ method decode ( Buf $b ) {
 
 # The int32 is the total number of bytes comprising the document.
 
-multi method _document ( %h ) {
+method _enc_document ( %h ) {
     
-    my $l = self._e_list( %h.pairs );
+    my $l = self._enc_e_list( %h.pairs );
 
-    return self._int32( $l.elems + 5 ) ~ $l ~ Buf.new( 0x00 );
+    return self._enc_int32( $l.elems + 5 ) ~ $l ~ Buf.new( 0x00 );
 }
 
-multi method _document ( Array $a ) {
+method _dec_document ( Array $a ) {
 
     my $s = $a.elems;
-
-    my $i = self._int32( $a );
-
-    my %h = self._e_list( $a );
+    my $i = self._dec_int32($a);
+    my %h = self._dec_e_list($a);
 
     die 'Parse error' unless $a.shift ~~ 0x00;
-
     die 'Parse error' unless $s ~~ $a.elems + $i;
 
     return %h;
@@ -46,43 +43,50 @@ multi method _document ( Array $a ) {
 # e_list ::= element e_list
 # | ""
 
-multi method _e_list ( *@p ) {
+method _enc_e_list ( *@p ) {
 
     my Buf $b = Buf.new( );
 
     for @p -> $p {
-        $b = $b ~ self._element( $p );
+        $b = $b ~ self._enc_element( $p );
     }
 
     return $b;
 }
 
-multi method _e_list ( Array $a ) {
+method _dec_e_list ( Array $a ) {
 
     my @p;
-    while $a[ 0 ] !~~ 0x00 {
-        push @p, self._element( $a );
+    while $a[0] !~~ 0x00 {
+        push @p, self._dec_element($a);
     }
 
     return @p;
 }
 
-multi method _element ( Pair $p ) {
+method _enc_element ( Pair $p ) {
 
     given $p.value {
+
+        when Num {
+            # Double precision
+            # "\x01" e_name Num
+
+            return Buf.new( 0x01 ) ~ self._enc_e_name( $p.key ) ~ self._enc_double( $p.value );
+        }
 
         when Str {
             # UTF-8 string
             # "\x02" e_name string
 
-            return Buf.new( 0x02 ) ~ self._e_name( $p.key ) ~ self._string( $p.value );
+            return Buf.new( 0x02 ) ~ self._enc_e_name( $p.key ) ~ self._enc_string( $p.value );
         }
 
         when Hash {
             # Embedded document
             # "\x03" e_name document
 
-            return Buf.new( 0x03 ) ~  self._e_name( $p.key ) ~ self._document( $_ );
+            return Buf.new( 0x03 ) ~  self._enc_e_name( $p.key ) ~ self._enc_document( $_ );
         }
 
         when Array {
@@ -98,7 +102,7 @@ multi method _element ( Pair $p ) {
 
             my %h = .kv;
 
-            return Buf.new( 0x04 ) ~  self._e_name( $p.key ) ~ self._document( %h );
+            return Buf.new( 0x04 ) ~  self._enc_e_name( $p.key ) ~ self._enc_document( %h );
         }
 
         when Buf {
@@ -107,15 +111,15 @@ multi method _element ( Pair $p ) {
             # subtype is '\x00' for the moment (Generic binary subtype)
             #
             return [~] Buf.new( 0x05 ),
-                       self._e_name( $p.key ),
-                       self._binary( 0x00, $_);
+                       self._enc_e_name( $p.key ),
+                       self._enc_binary( 0x00, $_);
         }
 
         when BSON::ObjectId {
             # ObjectId
             # "\x07" e_name (byte*12)
 
-            return Buf.new( 0x07 ) ~ self._e_name( $p.key ) ~ .Buf;
+            return Buf.new( 0x07 ) ~ self._enc_e_name( $p.key ) ~ .Buf;
         }
 
         when Bool {
@@ -124,13 +128,13 @@ multi method _element ( Pair $p ) {
                 # Boolean "true"
                 # "\x08" e_name "\x01
 
-                return Buf.new( 0x08 ) ~ self._e_name( $p.key ) ~ Buf.new( 0x01 );
+                return Buf.new( 0x08 ) ~ self._enc_e_name( $p.key ) ~ Buf.new( 0x01 );
             }
             else {
                 # Boolean "false"
                 # "\x08" e_name "\x00
 
-                return Buf.new( 0x08 ) ~ self._e_name( $p.key ) ~ Buf.new( 0x00 );
+                return Buf.new( 0x08 ) ~ self._enc_e_name( $p.key ) ~ Buf.new( 0x00 );
             }
 
         }
@@ -139,14 +143,14 @@ multi method _element ( Pair $p ) {
             # Null value
             # "\x0A" e_name
 
-            return Buf.new( 0x0A ) ~ self._e_name( $p.key );
+            return Buf.new( 0x0A ) ~ self._enc_e_name( $p.key );
         }
 
         when Int {
             # 32-bit Integer
             # "\x10" e_name int32
 
-            return Buf.new( 0x10 ) ~ self._e_name( $p.key ) ~ self._int32( $p.value );
+            return Buf.new( 0x10 ) ~ self._enc_e_name( $p.key ) ~ self._enc_int32( $p.value );
         }
 
         default {
@@ -167,7 +171,7 @@ multi method _element ( Pair $p ) {
 # int64 	8 bytes (64-bit signed integer, two's complement)
 # double 	8 bytes (64-bit IEEE 754 floating point)
 #
-multi method _element ( Array $a ) {
+method _dec_element ( Array $a ) {
 
     # Type is given in first byte.
     #
@@ -175,24 +179,24 @@ multi method _element ( Array $a ) {
 
 
         when 0x01 {
-            # Double precision 
+            # Double precision
             # "\x01" e_name Num
 
-            return self._e_name( $a ) => self._double64( $a );
+            return self._dec_e_name( $a ) => self._dec_double( $a );
         }
 
         when 0x02 {
             # UTF-8 string
             # "\x02" e_name string
 
-            return self._e_name( $a ) => self._string( $a );
+            return self._dec_e_name( $a ) => self._dec_string( $a );
         }
 
         when 0x03 {
             # Embedded document
             # "\x03" e_name document
 
-            return self._e_name( $a )  => self._document( $a );
+            return self._dec_e_name( $a )  => self._dec_document( $a );
         }
 
         when 0x04 {
@@ -206,7 +210,7 @@ multi method _element ( Array $a ) {
             # would be encoded as the document {'0': 'red', '1': 'blue'}.
             # The keys must be in ascending numerical order.
 
-            return self._e_name( $a ) => [ self._document( $a ).values ];
+            return self._dec_e_name( $a ) => [ self._dec_document( $a ).values ];
         }
 
         when 0x05 {
@@ -214,7 +218,7 @@ multi method _element ( Array $a ) {
             # "\x05 e_name int32 subtype byte*
             # subtype = byte \x00 .. \x05, \x80
             
-            return self._e_name( $a ) => self._binary( $a );
+            return self._dec_e_name( $a ) => self._dec_binary( $a );
         }
 
         when 0x06 {
@@ -228,7 +232,7 @@ multi method _element ( Array $a ) {
             # ObjectId
             # "\x07" e_name (byte*12)
 
-            my $n = self._e_name( $a );
+            my $n = self._dec_e_name( $a );
 
             my @a;
             @a.push( $a.shift ) for ^ 12;
@@ -237,7 +241,7 @@ multi method _element ( Array $a ) {
         }
 
         when 0x08 {
-            my $n = self._e_name( $a );
+            my $n = self._dec_e_name( $a );
 
             given $a.shift {
 
@@ -259,23 +263,21 @@ multi method _element ( Array $a ) {
 
                     die 'Parse error';
                 }
-
             }
-
         }
 
         when 0x0A {
             # Null value
             # "\x0A" e_name
 
-            return self._e_name( $a ) => Any;
+            return self._dec_e_name( $a ) => Any;
         }
 
         when 0x10 {
             # 32-bit Integer
             # "\x10" e_name int32
 
-            return self._e_name( $a ) => self._int32( $a );
+            return self._dec_e_name( $a ) => self._dec_int32( $a );
         }
 
         default {
@@ -294,15 +296,15 @@ multi method _element ( Array $a ) {
 
 # Binary buffer
 #
-multi method _binary ( Int $sub_type, Buf $b ) {
+method _enc_binary ( Int $sub_type, Buf $b ) {
 
-     return [~] self._int32($b.elems), Buf.new( $sub_type, $b.list);
+     return [~] self._enc_int32($b.elems), Buf.new( $sub_type, $b.list);
 }
 
-multi method _binary ( Array $a ) {
+method _dec_binary ( Array $a ) {
 
     # Get length
-    my $lng = self._int32( $a );
+    my $lng = self._dec_int32( $a );
     
     # Get subtype
     my $sub_type = $a.shift;
@@ -352,81 +354,107 @@ multi method _binary ( Array $a ) {
 
 
 # 4 bytes (32-bit signed integer)
-multi method _int32 ( Int $i ) {
+method _enc_int32 ( Int $i ) {
     
     return Buf.new( $i % 0x100, $i +> 0x08 % 0x100, $i +> 0x10 % 0x100, $i +> 0x18 % 0x100 );
 }
 
-multi method _int32 ( Array $a ) {
+method _dec_int32 ( Array $a ) {
 
     return [+] $a.shift, $a.shift +< 0x08, $a.shift +< 0x10, $a.shift +< 0x18;
 }
 
 # 8 bytes (64-bit number)
-multi method _double64 ( Num $r ) {
-    
-    my $sign = $r.sign == -1 ?? True !! False;
-    
-    my $exponent = 1023;
-    my @bits = $r.base(2).split('');
-#say $r.base(2);
-    if @bits[0] eq 0 {
-        # Remove first two characters '0.'.
-        @bits.splice( 0, 2),
+method _enc_double ( Num $r is copy ) {
 
-        do for @bits -> $bit {
-            if $bit eq '0' {
-                $exponent--;
+    my Buf $a;
 
-                # remove the 0 character
-                @bits.shift;
-            }
+    # Test special cases
+    #
+    # 0x 0000 0000 0000 0000 = 0
+    # 0x 8000 0000 0000 0000 = -0       Not recognizable
+    # 0x 7ff0 0000 0000 0000 = Inf
+    # 0x fff0 0000 0000 0000 = -Inf
+    #
+    if $r == Num.new(0) {
+        $a = Buf.new(0 xx 8);
+    }
+    
+    elsif $r == Num.new(-Inf) {
+        $a = Buf.new( 0 xx 6, 0xF0, 0xFF);
+    }
+    
+    elsif $r == Num.new(Inf) {
+        $a = Buf.new( 0 xx 6, 0xF0, 0x7F);
+    }
+
+    else
+    {
+        my Int $sign = $r.sign == -1 ?? -1 !! 1;
+        $r *= $sign;
+
+        # Get proper precision from base(2) by first shifting 52 places which
+        # is the number of precision bits. Adjust the exponent bias for this.
+        #
+        my Int $exp-shift = 0;
+        my Int $exponent = 1023;
+        my Str $bit-string = $r.base(2);
+
+        # Smaller than zero
+        #
+        if $bit-string ~~ m/^0\./ {
             
-            else {
-                $exponent--;
+            # Normalize
+            #
+            my $first-one = $bit-string.index('1');
+            $exponent -= $first-one - 1;
 
-                # remove the 1 character
-                @bits.shift;
-                last;
+            # Multiply to get more bits in precision
+            #
+            while $bit-string ~~ m/^0\./ {      # Starts with 0.
+                $exp-shift += 52;               # modify precision
+                $r *= 2 ** $exp-shift;          # modify number
+                $bit-string = $r.base(2)        # Get bit string again
             }
         }
-    }
-    
-    else {
-        my $idx = 0;
-        do for @bits -> $bit {
-            if $bit eq '.' {
-                # Remove the dot
-                @bits.splice( $idx, 1);
-                $exponent++;
-                last;
-            }
-            
-            else {
-                $idx++;
-                $exponent++;
+        
+        # Bigger than zero
+        #
+        else {
+            # Normalize
+            #
+            my Int $dot-loc = $bit-string.index('.');
+            $exponent += $dot-loc - 1;
+
+            # If dot is in the string, not at the end, the precision might
+            # be not sufficient. Enlarge one time more
+            #
+            my Int $str-len = $bit-string.chars;
+            if $dot-loc < $str-len - 1 {
+                $r *= 2 ** 52;
+                $bit-string = $r.base(2)
             }
         }
 
-        # Remove the first 1
-        @bits.shift;
+        $bit-string ~~ s/<[0.]>*$//;            # Remove trailing zeros
+        $bit-string ~~ s/\.//;                  # Remove the dot
+        my @bits = $bit-string.split('');       # Create array of '1' and '0'
+        @bits.shift;                            # Remove the first 1.
+
+        my Int $i = $sign == -1 ?? 0x8000_0000_0000_0000 !! 0;
+        $i = $i +| ($exponent +< 52);
+        my Int $bit-pattern = 1 +< 51;
+        do for @bits -> $bit {
+            $i = $i +| $bit-pattern if $bit eq '1';
+
+            $bit-pattern = $bit-pattern +> 1;
+        
+            last unless $bit-pattern;
+        }
+
+        $a = self._enc_int64($i);
     }
 
-
-#say "E: $exponent, ", $exponent.fmt('%04X');;
-
-    my Int $i = $sign ?? 0x8000_0000_0000_0000 !! 0;
-    $i = $i +| ($exponent +< 52);
-    my $bit-pattern = 1 +< 51;
-    do for @bits -> $bit {
-        $i = $i +| $bit-pattern if $bit eq '1';
-
-        $bit-pattern = $bit-pattern +> 1;
-    }
-
-#say "I: ", $i.fmt('%16x');
-    my Buf $a = self._int64($i);
-    
     return $a;
 }
 
@@ -434,7 +462,7 @@ multi method _double64 ( Num $r ) {
 # http://en.wikipedia.org/wiki/Double-precision_floating-point_format#Endianness
 # until better times come.
 #
-multi method _double64 ( Array $a ) {
+method _dec_double ( Array $a ) {
 
     # Test special cases
     #
@@ -442,27 +470,65 @@ multi method _double64 ( Array $a ) {
     # 0x 8000 0000 0000 0000 = -0
     # 0x 7ff0 0000 0000 0000 = Inf
     # 0x fff0 0000 0000 0000 = -Inf
+    #
+    my Bool $six-byte-zeros = True;
+    for ^6 -> $i {
+        if $a[$i] {
+            $six-byte-zeros = False;
+            last;
+        }
+    }
+    
+    my Num $value;
+    if $six-byte-zeros and $a[6] == 0 {
+        if $a[7] == 0 {
+            $value .= new(0);
+        }
+        
+        elsif $a[7] == 0x80 {
+            $value .= new(-0);
+        }
+    }
+    
+    elsif $a[6] == 0xF0 {
+        if $a[7] == 0x7F {
+            $value .= new(Inf);
+        }
+        
+        elsif $a[7] == 0xFF {
+            $value .= new(-Inf);
+        }
+    }
 
-    my Int $i = self._int64( $a );
-    my Bool $sign = $i +& 63 ?? True !! False;
+    # If value is set by the special cases above, remove the 8 bytes from
+    # the array.
+    #
+    if $value.defined {
+        $a.splice( 0, 8);
+    }
+    
+    # If value is not set by the special cases above, calculate it here
+    #
+    else {
+      my Int $i = self._dec_int64( $a );
+      my Int $sign = $i +& 0x8000_0000_0000_0000 ?? -1 !! 1;
 
-    # Significand + implicit bit
-    my $significand =  0x10000000000000 +| ($i +& 0xFFFFFFFFFFFFF);
+      # Significand + implicit bit
+      #
+      my $significand = 0x10_0000_0000_0000 +| ($i +& 0xF_FFFF_FFFF_FFFF);
 
-    # Exponent - bias (1023) - the number of bits for precision
-    my $exponent = (($i +& 0x7FF0000000000000) +> 52) - 1023 - 52;
+      # Exponent - bias (1023) - the number of bits for precision
+      #
+      my $exponent = (($i +& 0x7FF0_0000_0000_0000) +> 52) - 1023 - 52;
 
-#say sprintf( "I: %016x -> %x, %x, %x", $i, $significand, $exponent, $sign);
-#say "E: {$exponent-52}";
-
-    my Num $value = Num.new((2 ** $exponent) * $significand);
-#say "V: $value: ", $value == Inf ?? Inf !! $value.base(2);
-
+      $value = Num.new((2 ** $exponent) * $significand * $sign);
+    }
+    
     return $value; #X::NYI.new(feature => "Type Double");
 }
 
 # 8 bytes (64-bit int)
-multi method _int64 ( Int $i ) {
+method _enc_int64 ( Int $i ) {
     
     return Buf.new( $i % 0x100, $i +> 0x08 % 0x100, $i +> 0x10 % 0x100
                   , $i +> 0x18 % 0x100, $i +> 0x20 % 0x100, $i +> 0x28 % 0x100
@@ -470,7 +536,7 @@ multi method _int64 ( Int $i ) {
                   );
 }
 
-multi method _int64 ( Array $a ) {
+method _dec_int64 ( Array $a ) {
 
     return [+] $a.shift, $a.shift +< 0x08, $a.shift +< 0x10, $a.shift +< 0x18
              , $a.shift +< 0x20, $a.shift +< 0x28, $a.shift +< 0x30
@@ -482,14 +548,14 @@ multi method _int64 ( Array $a ) {
 # Key name
 # e_name ::= cstring
 
-multi method _e_name ( Str $s ) {
+method _enc_e_name ( Str $s ) {
 
-    return self._cstring( $s );
+    return self._enc_cstring( $s );
 }
 
-multi method _e_name ( Array $a ) {
+method _dec_e_name ( Array $a ) {
 
-    return self._cstring( $a );
+    return self._dec_cstring( $a );
 }
 
 
@@ -499,15 +565,15 @@ multi method _e_name ( Array $a ) {
 # The int32 is the number bytes in the (byte*) + 1 (for the trailing '\x00').
 # The (byte*) is zero or more UTF-8 encoded characters.
 
-multi method _string ( Str $s ) {
+method _enc_string ( Str $s ) {
 
-    my $b = $s.encode( 'UTF-8' );
-    return self._int32( $b.bytes + 1 ) ~ $b ~ Buf.new( 0x00 );
+    my $b = $s.encode('UTF-8');
+    return self._enc_int32($b.bytes + 1) ~ $b ~ Buf.new(0x00);
 }
 
-multi method _string ( Array $a ) {
+method _dec_string ( Array $a ) {
 
-    my $i = self._int32( $a );
+    my $i = self._dec_int32( $a );
 
     my @a;
     @a.push( $a.shift ) for ^ ( $i - 1 );
@@ -524,14 +590,14 @@ multi method _string ( Array $a ) {
 # Zero or more modified UTF-8 encoded characters followed by '\x00'.
 # The (byte*) MUST NOT contain '\x00', hence it is not full UTF-8.
 
-multi method _cstring ( Str $s ) {
+method _enc_cstring ( Str $s ) {
 
     die "Forbidden 0x00 sequence in $s" if $s ~~ /\x00/;
 
-    return $s.encode( ) ~ Buf.new( 0x00 );
+    return $s.encode() ~ Buf.new(0x00);
 }
 
-multi method _cstring ( Array $a ) {
+method _dec_cstring ( Array $a ) {
 
     my @a;
     while $a[ 0 ] !~~ 0x00 {
@@ -539,6 +605,5 @@ multi method _cstring ( Array $a ) {
     }
 
     die 'Parse error' unless $a.shift ~~ 0x00;
-
-    return Buf.new( @a ).decode( );
+    return Buf.new( @a ).decode();
 }
