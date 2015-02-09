@@ -13,7 +13,7 @@ sub v6-split($uri) {
 
 has Str $.encoding = 'utf8';
 has Str $.host;
-has Int $.port = 80;
+has Int $.port = 443;
 has Str $.localhost;
 has Int $.localport;
 has Str $.certfile;
