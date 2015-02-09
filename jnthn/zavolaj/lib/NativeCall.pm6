@@ -188,7 +188,12 @@ my class OpaquePointer is export(:types, :DEFAULT) is repr('CPointer') {
 }
 
 # CArray class, used to represent C arrays.
-my class CArray is export(:types, :DEFAULT) is repr('CArray') is array_type(OpaquePointer) {
+my class CArray is export(:types, :DEFAULT) is repr('CArray') is array_type(OpaquePointer) { };
+
+# need to introduce the roles in there in an augment, because you can't 
+# inherit from types that haven't been properly composed.
+use MONKEY_TYPING;
+augment class CArray {
     method at_pos(CArray:D: $pos) { die "CArray cannot be used without a type" }
     
     my role IntTypedCArray[::TValue] does Positional[TValue] is CArray is repr('CArray') is array_type(TValue) {
