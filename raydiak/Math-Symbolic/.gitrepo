@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/raydiak/Math-Symbolic.git
 	branch = master
-	commit = a0889ff0d61cabe35cd9b12a9ca8a882b4d15421
-	parent = 818721861d524bf04d4cb6dcbed244b31c8cf327
-	cmdver = 0.1.0
+	commit = dfe7f74d6655307c777ab0283cfb0693202b9141
+	parent = 41634f720d2b1d91fbf1a96a8423ac6fa6e33767
+	cmdver = 0.2.0
