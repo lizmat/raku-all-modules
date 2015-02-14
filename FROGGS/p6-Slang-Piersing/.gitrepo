@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/FROGGS/p6-Slang-Piersing.git
+	branch = master
+	commit = 848ad72029047099d6a1292ad97917a374fbc195
+	parent = 1d534dd2b4968d4a3ea9a12c3d1ac552116b159c
+	cmdver = 0.2.0
