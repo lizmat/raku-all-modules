@@ -36,16 +36,27 @@ class PDF::Grammar::PDF::Actions
         make 'ind-obj' => [ $<obj-num>.ast.value, $<gen-num>.ast.value, $<object>.ast ];
     }
 
+    method ind-obj-nibble($/) {
+        my $object = $<object>.ast;
+        if $<stream-head> {
+            # locate the start of the stream data following the 'stream' token. The
+            # invokee can deterime the length using the /Length entry in the dictionary
+            $object = :stream( %( $object.kv,
+                                  :start( $<stream-head>.to ),
+                               ));
+        }
+        make 'ind-obj' => [ $<obj-num>.ast.value, $<gen-num>.ast.value, $object ];
+    }
+
     method object:sym<ind-ref>($/)  { make $<ind-ref>.ast }
 
     method object:sym<dict>($/) {
 
         if ($<stream>) {
             # <dict> is a just a header the following <stream>
-            my %stream;
-            %stream<dict> = $<dict>.ast.value;
+            my %stream = $<dict>.ast.kv;
             (%stream<start>, %stream<end>) = $<stream>.ast.flat;
-            make (stream => %stream)
+            make (:%stream)
         }
         else {
             # simple stand-alone <dict>
@@ -82,11 +93,14 @@ class PDF::Grammar::PDF::Actions
 
     method xref-entry($/) {
         make {
+            type   => $<obj-status>.ast,
             offset => $<byte-offset>.ast.value,
             gen    => $<gen-number>.ast.value,
-            status => $<obj-status>.lc,
             };
     }
+
+    method obj-status:sym<free>($/)  { make 0}
+    method obj-status:sym<inuse>($/) { make 1}
 
    # don't actually capture streams, which can be huge and represent
    # the majority of data in a typical PDF. Rather just return the byte
@@ -94,6 +108,6 @@ class PDF::Grammar::PDF::Actions
    # the caller to disseminate
 
     method stream($/) {
-        make [ $<stream-head>.to + 1, $<stream-tail>.from + 1 ];
+        make [ $<stream-head>.to, $<stream-tail>.from - 1 ];
     }
 }

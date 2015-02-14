@@ -13,7 +13,7 @@ grammar PDF::Grammar::PDF
 
     # [PDF 1.7] 7.5.2 File Header
     # ---------------
-    token header {'%PDF-'$<version>=(\d'.'\d)}
+    token header {'%PDF-'$<version>=[\d'.'\d]}
 
     # index section is optional - document could have a cross reference stream
     # quite likely if linearized [PDF 1.7] 7.5.8 & Annex F (Linearized PDF)
@@ -37,7 +37,7 @@ grammar PDF::Grammar::PDF
     rule  xref         { xref\n<xref-section>+ }
     rule  xref-section {<object-first-num=.int> <object-count=.int>\n<xref-entry>+}
     rule  xref-entry   {<byte-offset=.int> <gen-number=.int> <obj-status>' '?\n}
-    proto token obj-status      {<...>}
+    proto token obj-status      {*}
     token obj-status:sym<free>  {f}
     token obj-status:sym<inuse> {n}
 
@@ -53,7 +53,13 @@ grammar PDF::Grammar::PDF
         <byte-offset=.int>\n
     }
 
-    #== PDF::Core Support ==#
+    #== PDF Reader Support ==#
+
+    # reads an indirect object, stopping if the start of a stream is encountered
+    # typically used when the reader is locating objects via the index and doesn't
+    # need to fully scan the PDF. The reader can manually (and lazily) extract the
+    # stream using the dictionary /Length entry
+    rule ind-obj-nibble { <obj-num=.int> <gen-num=.int> obj [<object=.dict>[ endobj|<stream-head>] || <object> endobj] }
 
     # support for index loading
     # (1) read the last few bytes of a PDF, parse the 'startxref' directive

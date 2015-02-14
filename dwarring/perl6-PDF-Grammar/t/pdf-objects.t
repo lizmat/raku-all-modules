@@ -39,7 +39,7 @@ endobj
 ";
 my $ind-obj2-ast = :ind-obj[ 5, 0,
                              :stream{
-                                 :dict{Length => :int(68)}, :start(33), :end(101)
+                                 :dict{Length => :int(68)}, :start(32), :end(99)
                              }];
 
 my $body = $ind-obj1 ~
@@ -56,8 +56,8 @@ endobj';
 
 my $body-objects-ast = [$ind-obj1-ast,
                         :ind-obj[ 5, 0, :stream{ :dict{Length => :int(68)},
-                                                 :start(98),
-                                                 :end(166)}],
+                                                 :start(97),
+                                                 :end(164)}],
                         :ind-obj[ 3, 0, :dict{Type => :name<Outlines>, Count => :int(0) }],
                         :ind-obj[ 4, 2, :array[ :name<PDF>, :name<Text> ]]];
 
@@ -75,14 +75,14 @@ my $xref = "xref
 my $xref-ast = [
                 {:object-first-num(0),
                  :object-count(8),
-                 :entries[{:offset(0), :gen(65535),  :status<f>},
-                          {:offset(9), :gen(0), :status<n>},
-                          {:offset(74), :gen(0), :status<n>},
-                          {:offset(120), :gen(0), :status<n>},
-                          {:offset(179), :gen(0), :status<n>},
-                          {:offset(322), :gen(0), :status<n>},
-                          {:offset(415), :gen(0), :status<n>},
-                          {:offset(445), :gen(0), :status<n>}]
+                 :entries[{:offset(0), :gen(65535),  :type(0)},
+                          {:offset(9), :gen(0), :type(1)},
+                          {:offset(74), :gen(0), :type(1)},
+                          {:offset(120), :gen(0), :type(1)},
+                          {:offset(179), :gen(0), :type(1)},
+                          {:offset(322), :gen(0), :type(1)},
+                          {:offset(415), :gen(0), :type(1)},
+                          {:offset(445), :gen(0), :type(1)}]
                },
               ];
 
@@ -99,15 +99,15 @@ my $xref-multiple = "xref
 my $xref-multiple-ast = [
                 {:object-first-num(0),
                  :object-count(2),
-                 :entries[{:offset(0), :gen(65535),  :status<f>},
-                          {:offset(18), :gen(0), :status<n>},
+                 :entries[{:offset(0), :gen(65535),  :type(0)},
+                          {:offset(18), :gen(0), :type(1)},
                          ]
                },
 
                 {:object-first-num(2), :object-count(3),
-                 entries => [{:offset(77), :gen(0), :status<n>},
-                             {:offset(178), :gen(0), :status<n>},
-                             {:offset(457), :gen(0), :status<n>},
+                 entries => [{:offset(77), :gen(0), :type(1)},
+                             {:offset(178), :gen(0), :type(1)},
+                             {:offset(457), :gen(0), :type(1)},
                             ]
                },
               ];
