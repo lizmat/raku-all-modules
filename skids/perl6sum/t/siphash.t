@@ -8,7 +8,7 @@ plan 70 + ?($*VM.name ne "parrot");
 use Sum::SipHash;
 ok(1,'We use Sum::SipHash and we are still alive');
 
-class S does Sum::SipHash does Sum::Marshal::Method[:atype(Str) :method<ords>] { }
+class S does Sum::SipHash does Sum::Partial does Sum::Marshal::Method[:atype(Str) :method<ords>] { }
 my S $s .= new(:key(0x000102030405060708090a0b0c0d0e0f));
 is $s.size, 64, "SipHash.size works";
 my $h = $s.finalize("Please to checksum this text");

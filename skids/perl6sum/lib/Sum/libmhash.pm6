@@ -4,7 +4,7 @@ module X::libmhash {
     has $.field;
     has $.name;
     method message {
-        "No unique algorithm by $.field of $.name found in libmhash"
+      "No unique algorithm by $.field of $.name found in libmhash"
     }
   }
 
@@ -12,7 +12,7 @@ module X::libmhash {
   our class NativeError is Exception {
     has $.code = "undetermined";
     method message {
-        "Error while talking to libmhash: $.code"
+      "Error while talking to libmhash: $.code"
     }
   }
 
@@ -40,14 +40,17 @@ use Sum;
     my $md5 := Sum::libmhash::Instance.new("MD5");
     $md5.add(buf8.new(0x30..0x39));
     :256[$md5.finalize().values].base(16).say;
+    ### 781E5E245D69B566979B86E28D23F2C7
 
     # Slightly less raw interface:
     my $sha1 = Sum::libmhash::Sum.new("SHA1");
     $sha1.push(buf8.new(0x30..0x35));
-    $sha1.pos.say;
+    $sha1.pos.say; # 48
     $sha1.finalize(buf8.new(0x36..0x39)).base(16).say;
-    $sha1.size.say;
-    $sha1.Buf.say;
+    ### 87ACEC17CD9DCD20A716CC2CF67417B71C8A7016
+    $sha1.size.say; # 160
+    $sha1.Buf[].fmt("%x").say;
+    ### 87 ac ec 17 cd 9d cd 20 a7 16 cc 2c f6 74 17 b7 1c 8a 70 1
 
 =end code
 =end SYNOPSIS
@@ -85,7 +88,13 @@ use NativeCall;
 our sub count() returns int is native('libmhash')
     is symbol('mhash_count') { * }
 
-our $count = count();
+our $up = False;
+
+our $count = Failure.new(X::AdHoc.new(:payload("libmhash initialization")));
+try { $count = count() }
+
+$up = True if $count.defined;
+$count = 0 unless $count.defined;
 
 our sub name(int) returns str is native('libmhash')
     is symbol('mhash_get_hash_name_static') { * }
@@ -101,8 +110,8 @@ our sub pblock_size(int) returns int is native('libmhash')
 =head2 class Sum::libmhash::Algo
 
     This class presents the contents of the table of algorithms
-    presented by C<libmhash>.  The C<.id> attribute is the integer
-    ID used internally by the module to call C<libmhash> API
+    presented by C<libmhash>.  The C<.id> attribute is the "hashid"
+    used internally by the module to call C<libmhash> API
     functions.  The C<.name> attribute contains the name of the
     algorithm as presented by C<libmhash>.  The C<.block_size>
     contains the final digest's size in bytes.  The C<.pblock_size>
@@ -125,17 +134,19 @@ class Algo {
 
 our %Algos;
 
-for 0..$count -> $b {
-    if block_size($b) and name($b).defined {
-        %Algos{$b} = Algo.new(:id(0+$b), :block_size(block_size($b)),
-                              :name(name($b)), :pblock_size(pblock_size($b)))
+if ($up) {
+    for 0..$count -> $b {
+        if block_size($b) and name($b).defined {
+            %Algos{$b} = Algo.new(:id(0+$b) :name(name($b))
+                                  :block_size(block_size($b)),
+                                  :pblock_size(pblock_size($b)))
         }
+    }
 }
 
 my sub algo-by-name ($name) {
     my @ids = %Algos.keys.grep: { %Algos{$_}.name eq $name };
-    return Failure.new(X::libmhash::NotFound.new(
-                       :feild<name> :$name))
+    return Failure.new(X::libmhash::NotFound.new(:field<name> :$name))
         if @ids.elems != 1;
     +@ids[0];
 }
@@ -156,7 +167,7 @@ my $swab_4byte_digests = False;
     produce results the first time it is called.  There is no
     C<.push> method.
 
-    The C<.new> contructor may take either the C<.id> or the
+    The C<.new> constructor may take either the C<.id> or the
     C<.name> of a C<Sum::libmhash::Algo> to choose the algorithm,
     as a positional argument.
 
@@ -203,23 +214,35 @@ class Instance is repr('CPointer') {
 	                     :field<id> :name($id)))
               unless %Algos{$id};
           my $res = init(+$id);
-	  return Failure.new(X::libmhash::NativeError.new())
+	  return Failure.new(X::libmhash::NativeError.new(:code<NULL>))
 	      unless $res.defined;
 	  %allocated{~$res.WHICH} = True;
 	  $res;
       }
+
       multi method new (Str $name) {
           my $id = algo-by-name($name);
 	  return $id unless $id.defined;
 	  self.new($id);
       }
 
-      method add($data, $len = $data.elems)
+      method add(blob8 $data, Int $len = $data.elems)
       {
           return Failure.new(X::Sum::Final.new())
               unless %allocated{~self.WHICH}:exists;
-          # TODO check RC
-          mhash(self, $data, +$len);
+          unless -1 < $len <= $data.elems {
+              return Failure.new(X::OutOfRange.new(:what<index> :got($len)
+                                                   :range(0..$data.elems)));
+          }
+	  # In case .elems > max size_t (int actually, until that gets fixed)
+          my int $ilen = $len;
+	  return Failure.new(X::AdHoc.new(:payload(
+	      "Overflow assigning an Int to a size_t with managed memory")))
+	      unless $ilen == $len;
+	  my $code = mhash(self, $data, +$len);
+          return Failure.new(X::libmhash::NativeError.new(:$code))
+	      if $code;
+	  True;
       }
 
       method finalize() {
@@ -244,30 +267,35 @@ class Instance is repr('CPointer') {
           return Failure.new(X::Sum::Final.new())
               unless %allocated{~self.WHICH}:exists;
           my $res = cp(self);
+          return Failure.new(X::libmhash::NativeError.new(:code<NULL>))
+	      unless $res.defined;
 	  %allocated{~$res.WHICH} = True;
 	  $res;
       }
 }
 
 # Do some runtime validation in case libmhash has been changed since install
-my $md5 := Instance.new("MD5");
-fail("Runtime validation: could not make an Instance")
-    unless $md5 ~~ Instance;
+if ($up) {
+    my $md5 := Instance.new("MD5");
+    fail("Runtime validation: could not make an Instance")
+         unless $md5 ~~ Instance;
 
-my $message := Buf.new(0x30..0x37);
-$md5.add($message);
-my $digest := $md5.finalize();
-fail("mhash functional sanity test failed") unless
-    $digest eqv buf8.new(0x2e,0x9e,0xc3,0x17,0xe1,0x97,0x81,0x93,
-                         0x58,0xfb,0xc4,0x3a,0xfc,0xa7,0xd8,0x37);
+    my $message := Buf.new(0x30..0x37);
+    $md5.add($message);
+    my $digest := $md5.finalize();
+    fail("mhash functional sanity test failed")
+        unless $digest eqv buf8.new(0x2e,0x9e,0xc3,0x17,0xe1,0x97,0x81,0x93,
+                                    0x58,0xfb,0xc4,0x3a,0xfc,0xa7,0xd8,0x37);
 
-# It seems mhash has some endian problems with 4-byte digests.  Check for that.
-# (There are no other 2..8-byte digest sizes but problems could be there, too.)
-my $a32 := Instance.new("ADLER32");
-$a32.add($message);
-$digest := $a32.finalize();
-# There is something strange going on with how Buf unpacks, finagle for eqv
-$swab_4byte_digests = $digest.values eqv Array.new(0x9d,0x01,0x1c,0x07);
+    # It seems mhash has some endian problems with 4-byte digests.
+    # Check and compensate for that.
+    # (There are no other 2..8-byte digest sizes but those may be broken too.)
+    my $a32 := Instance.new("ADLER32");
+    $a32.add($message);
+    $digest := $a32.finalize();
+    # There is something strange going on with how Buf unpacks, finagle for eqv
+    $swab_4byte_digests = $digest.values eqv Array.new(0x9d,0x01,0x1c,0x07);
+}
 
 =begin pod
 
@@ -285,7 +313,7 @@ $swab_4byte_digests = $digest.values eqv Array.new(0x9d,0x01,0x1c,0x07);
     On the bright side, you can pass any size C<buf8> without
     the need for a marshalling role.
 
-    The methods C<.pos> and C<.elems> both work as
+    The methods C<.pos>, C<.size> and C<.elems> both work as
     described in the C<Sum::> base role.  The units of these
     mehod are bits, not bytes, even for algorithms that do not
     have bitwise resolution, because there is no way to figure
@@ -336,15 +364,20 @@ class Sum {
         }
     }
 
-    method size() { +self.block_size };
+    method size() { +self.block_size * 8 };
 
     method elems { self.pos };
 
-    multi method add (buf8 $addends) {
+    multi method add (blob8 $addends) {
         return Failure.new(X::Sum::Final.new()) unless defined $!inst;
 	return unless $addends.elems;
         self.inst.add($addends, $addends.elems);
 	$!pos += $addends.elems * 8;
+    }
+
+    # Take care to ensure the error message in this case.
+    multi method add (Bool $b) {
+       Failure.new(X::Sum::Marshal.new(:recourse<libmhash> :addend<Bool>));
     }
 
     method finalize(*@addends) {
@@ -356,12 +389,15 @@ class Sum {
 
     method Numeric () { self.finalize };
 
-    method Buf () {
+    method buf8 () {
         return $!res if $!res.defined or $!res.WHAT ~~ Failure;
         $!res := self.inst.finalize();
         $!inst := Instance:U; # This has been freed by libmhash
         $!res
     }
+    method Buf () { self.buf8 };
+    method blob8 () { self.buf8 };
+    method Blob () { self.buf8 };
 
     method push (*@addends --> Failure) {
         for (@addends) {
@@ -375,6 +411,8 @@ class Sum {
 
     multi method marshal (*@addends) { for @addends { $_ } };
 }
+
+$! = 0;
 
 } # module
 

@@ -27,8 +27,10 @@ class X::Sum::Spill is Exception {
 
 class X::Sum::Marshal is Exception {
     has $.addend;
+    has $.recourse = "";
     method message {
-        "Marshalling error.  Cannot handle addend of type $.addend."
+        my $recourse = " via recourse {$.recourse}";
+        "Marshalling error.  Cannot handle addend of type $.addend$recourse."
     }
 }
 
@@ -47,7 +49,7 @@ class X::Sum::Recourse is Exception {
     use Sum;
 
     # Define a very simple Sum class that just adds normally
-    class MySum does Sum::Partial
+    class MySum does Sum::Partial does Sum
                 does Sum::Marshal::Method[:atype(Str) :method<ords>] {
         has $.accum is rw = 0;
         method size { Inf }
@@ -113,7 +115,7 @@ class X::Sum::Recourse is Exception {
 
 =end pod
 
-role Sum:auth<skids>:ver<0.0.4> {
+role Sum:auth<skids>:ver<0.1.0> {
 
 =begin pod
 =head3 method finalize (*@addends)
@@ -292,18 +294,19 @@ role Sum:auth<skids>:ver<0.0.4> {
     method clear (|parms) {
         die(".clear called and we don't know what it does yet.")
     }
+
 }
 
 =begin pod
 
-=head2 role Sum::Partial does Sum
+=head2 role Sum::Partial
 
-    The C<Sum::Partial> role is used (instead of C<Sum>) to indicate
-    that a sum may produce partial results at any addend index.
+    The C<Sum::Partial> role is used to indicate that a sum may
+    produce partial results at any addend index.
 
 =end pod
 
-role Sum::Partial does Sum {
+role Sum::Partial {
 
 =begin pod
 

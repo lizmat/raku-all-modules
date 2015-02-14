@@ -69,7 +69,7 @@ use Sum;
 
     All these sums keep no positional state, so C<.pos> and C<.elems>
     are not provided by the base role.  They also retain all state
-    after finalization, and C<Sum::Partial> is premixed.
+    after finalization, and C<Sum::Partial> may be mixed.
 
 =end pod
 
@@ -82,7 +82,7 @@ class X::Sum::CheckVals is Exception {
 role Sum::Fletcher [ :$modulusA = Any, :$modulusB = Any,
                      :$inivA = 0, :$inivB = 0, :$finv = False,
                      :$columnsA = Any, :$columnsB = Any ]
-     does Sum::Partial {
+     does Sum {
 
 # rakudo-m has some problems with default values.  After Adler32
 # composes this role, subsequent classes that use it get cached values somehow.

@@ -87,7 +87,7 @@ $g.push();
 is $g.accum, 31, "push with no arguments works(Raw)";
 
 lives_ok {
-class Foo3 does Sum::Partial does Sum::Marshal::Cooked {
+class Foo3 does Sum::Partial does Sum does Sum::Marshal::Cooked {
         has $.accum is rw = 0;
         method size () { 64 };
         method finalize (*@addends) {
@@ -123,7 +123,7 @@ my @d;
 #is @d.join(""), "3942", "partials inserts values in a feed"
 is $h.partials(4,5,Failure.new(X::AdHoc.new()),6).map({.WHAT.gist}), '(Int) (Int) (Failure)', "partials stops iterating on Failure (Partial,Cooked).";
 
-class Foo3r does Sum::Partial does Sum::Marshal::Raw {
+class Foo3r does Sum::Partial does Sum does Sum::Marshal::Raw {
         has $.accum is rw = 0;
         method size () { 64 }
         method finalize (*@addends) {
@@ -141,7 +141,7 @@ my Foo3r $hr .= new();
 is $hr.partials(4,5,Failure.new(X::AdHoc.new()),6).map({.WHAT.gist}), '(Int) (Int) (Failure)', "partials stops iterating on Failure (Partial,Raw).";
 
 lives_ok {
-class Foo4 does Sum::Partial does Sum::Marshal::Method[:atype(Str) :method<ords>] {
+class Foo4 does Sum::Partial does Sum does Sum::Marshal::Method[:atype(Str) :method<ords>] {
         has $.accum is rw = 0;
         method size () { 64 }
         method finalize (*@addends) {

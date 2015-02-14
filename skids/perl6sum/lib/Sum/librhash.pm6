@@ -39,7 +39,7 @@ use Sum;
     say "Largest librhash algo ID is $Sum::librhash::count";
     say "ID\tNAME\tBLOCK SIZE\tRESULT SIZE";
     for %Sum::librhash::Algos.pairs.sort -> $p ( :$key, :value($v) ) {
-        say "{$v.id}\t{$v.name}\t{$v.block_size}\t{$v.pblock_size}";
+        say "{$v.id}\t{$v.name}\t{$v.digest_size}\t{$v.hash_length}";
     }
 
     my $md5 := Sum::librhash::Instance.new("MD5");
@@ -88,7 +88,14 @@ my sub rhash_library_init is native('librhash')
 
 # TODO: allow the user to explictly prevent all libssl interaction
 # by allowing a way to delay this call during 'use' directive.
-rhash_library_init();
+our $up = try { rhash_library_init(); }
+# I have no clue why this is working or if it will continue to work
+if $up.WHAT =:= Mu {
+    $up = True;
+}
+else {
+    $up = False;
+}
 
 # We offer this as a raw API but do not touch it ourselves, because as
 # long as we do not, we do not have to worry about syncing to header
@@ -108,7 +115,10 @@ our sub transmit (int $msg_id, OpaquePointer $dst,
 our sub count returns int is native('librhash')
     is symbol('rhash_count') { * }
 
-our $count = count();
+our $count;
+if ($up) {
+    $count = count();
+}
 
 # $id should be uint
 our sub digest_size (int $id) returns int is native('librhash')
@@ -170,19 +180,22 @@ class Algo {
 
 our %Algos;
 
-for 1,2,4,8 ...^ 1 +< $count -> $b {
-    if digest_size($b) and name($b).defined {
-        %Algos{$b} = Algo.new(:id(0+$b), :digest_size(+digest_size($b)),
-                              :name(~name($b)), :hash_length(+hash_length($b)),
-			      :is_base32(?is_base32($b)),
-			      :magnet_name(~magnet_name($b)))
+if ($up) {
+    for 1,2,4,8 ...^ 1 +< $count -> $b {
+        if digest_size($b) and name($b).defined {
+            %Algos{$b} = Algo.new(:id(0+$b) :digest_size(+digest_size($b))
+                                  :name(~name($b))
+                                  :hash_length(+hash_length($b))
+				  :is_base32(?is_base32($b))
+			          :magnet_name(~magnet_name($b)))
+        }
     }
 }
 
 my sub algo-by-name ($name) {
     my @ids = %Algos.keys.grep: { %Algos{$_}.name eq $name };
     return Failure.new(X::librhash::NotFound.new(
-                       :feild<name> :$name))
+                       :field<name> :$name))
         if @ids.elems != 1;
     +@ids[0];
 }
@@ -190,7 +203,7 @@ my sub algo-by-name ($name) {
 my sub algo-by-magnet-name ($name) {
     my @ids = %Algos.keys.grep: { %Algos{$_}.magnet-name eq $name };
     return Failure.new(X::librhash::NotFound.new(
-                       :feild<MAGNET> :$name))
+                       :field<MAGNET> :$name))
         if @ids.elems != 1;
     +@ids[0];
 }
@@ -364,16 +377,18 @@ class Instance is repr('CPointer') {
 }
 
 # Do some runtime validation in case librhash has been changed since install
-my $md5 := Instance.new("MD5");
-fail("Runtime validation: could not make an Instance")
-    unless $md5 ~~ Instance;
+if ($up) {
+    my $md5 := Instance.new("MD5");
+    fail("Runtime validation: could not make an Instance")
+        unless $md5 ~~ Instance;
 
-my $message := Buf.new(0x30..0x37);
-$md5.add($message);
-my $digest := $md5.finalize(:bytes(16));
-fail("rhash functional sanity test failed") unless
-    $digest eqv buf8.new(0x2e,0x9e,0xc3,0x17,0xe1,0x97,0x81,0x93,
-                         0x58,0xfb,0xc4,0x3a,0xfc,0xa7,0xd8,0x37);
+    my $message := Buf.new(0x30..0x37);
+    $md5.add($message);
+    my $digest := $md5.finalize(:bytes(16));
+    fail("rhash functional sanity test failed")
+        unless $digest eqv buf8.new(0x2e,0x9e,0xc3,0x17,0xe1,0x97,0x81,0x93,
+                                    0x58,0xfb,0xc4,0x3a,0xfc,0xa7,0xd8,0x37);
+}
 
 =begin pod
 
@@ -446,15 +461,20 @@ class Sum {
         }
     }
 
-    method size() { +self.algo.digest_size };
+    method size() { +self.algo.digest_size * 8 };
 
     method elems { self.pos };
 
-    multi method add (buf8 $addends) {
+    multi method add (blob8 $addends) {
         return Failure.new(X::Sum::Final.new()) unless defined $!inst;
 	return unless $addends.elems;
         self.inst.add($addends, $addends.elems);
 	$!pos += $addends.elems * 8;
+    }
+
+    # Take care to ensure the error message in this case.
+    multi method add (Bool $b) {
+       Failure.new(X::Sum::Marshal.new(:recourse<librhash> :addend<Bool>));
     }
 
     method finalize(*@addends) {
@@ -466,12 +486,15 @@ class Sum {
 
     method Numeric () { self.finalize };
 
-    method Buf () {
+    method buf8 () {
         return $!res if $!res.defined or $!res.WHAT ~~ Failure;
         $!res := self.inst.finalize(:bytes(self.algo.digest_size));
         $!inst := Instance; # This has been freed by librhash
         $!res
     }
+    method Buf () { self.buf8 };
+    method blob8 () { self.buf8 };
+    method Blob () { self.buf8 };
 
     method push (*@addends --> Failure) {
         for (@addends) {
@@ -485,6 +508,8 @@ class Sum {
 
     multi method marshal (*@addends) { for @addends { $_ } };
 }
+
+$! = 0;
 
 } # module
 

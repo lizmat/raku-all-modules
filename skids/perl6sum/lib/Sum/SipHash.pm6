@@ -55,7 +55,7 @@ $Sum::SipHash::Doc::synopsis = $=pod[1].contents[0].contents.Str;
 
 use Sum;
 
-role Sum::SipHash [ Int :$c = 2, Int :$d = 4, Int :$defkey = 0 ] does Sum::Partial {
+role Sum::SipHash [ Int :$c = 2, Int :$d = 4, Int :$defkey = 0 ] does Sum {
 
     my blob8 $keyfrob = "somepseudorandomlygeneratedbytes".encode("ascii");
 

@@ -1,11 +1,18 @@
-BEGIN { "1..1\nok 1 - foo".say; exit(0) }; # Deactivate this test file for now
 
 use v6;
 use lib	'./lib';
 
 use Test;
 
-plan 32;
+my $abort = False;
+
+if try { Sum::libmhash::count() } {
+   plan 32;
+}
+else {
+   plan 3;
+   $abort = True;
+}
 
 use Sum::libmhash;
 ok(1,'We use Sum and we are still alive');
@@ -14,6 +21,11 @@ lives_ok { X::libmhash::NotFound.new() },
 	 'X::libmhash::NotFound is available';
 lives_ok { X::libmhash::NativeError.new() },
 	 'X::libmhash::NativeError is available';
+
+if $abort {
+   diag "No libmash detected, or other very basic problem.  Skipping tests.";
+   exit;
+}
 
 my $c = Sum::libmhash::count();
 ok $c > 0, "Sum::libmhash::count() reports algorithms present";

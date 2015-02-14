@@ -13,11 +13,16 @@ provides:
   Sum::Adler: lib/Sum/Adler.pm6
   Sum::CRC: lib/Sum/CRC.pm6
   Sum::Digest::MD5: lib/Sum/Digest/MD5.pm6
+  Sum::GOST: lib/Sum/GOST.pm6
   Sum::MD: lib/Sum/MD.pm6
   Sum::MDPad: lib/Sum/MDPad.pm6
   Sum::SHA: lib/Sum/SHA.pm6
   Sum::SipHash: lib/Sum/SipHash.pm6
   Sum::Tiger: lib/Sum/Tiger.pm6
+  Sum::libmhash: lib/Sum/libmhash.pm6
+  Sum::librhash: lib/Sum/librhash.pm6
+  Sum::libcrypto: lib/Sum/libcrypto.pm6
+  Sum::Recourse: lib/Sum/Recourse.pm6
 support:
   source: git://github.com/skids/perl6sum.git
-version: v0.0.4
+version: v0.1.0

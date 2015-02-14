@@ -1,19 +1,32 @@
-BEGIN { "1..1\nok 1 - foo".say; exit(0) }; # Deactivate this test file for now
 
 use v6;
 use lib	'./lib';
 
 use Test;
 
-plan 31;
+
+my $abort = False;
+if ($Sum::libcrypto::up) {
+    plan 31;
+}
+else {
+    plan 3;
+    $abort = True;
+}
 
 use Sum::libcrypto;
+
 ok(1,'We use Sum::libcrypto and we are still alive');
 
 lives_ok { X::libcrypto::NotFound.new() },
 	 'X::libcrypto::NotFound is available';
 lives_ok { X::libcrypto::NativeError.new() },
 	 'X::libcrypto::NativeError is available';
+
+if $abort {
+   diag "No libcrypto detected, or other very basic problem.  Skipping tests.";
+   exit;
+}
 
 # Should at least have MD5
 my $md5 = %Sum::libcrypto::Algos<md5>;

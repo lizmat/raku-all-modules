@@ -22,7 +22,7 @@ use Sum;
 =head2 role Sum::CRC [ :@header?, :@footer?, :$residual = 0,
                        :$iniv = Bool::False, :$finv = Bool::False,
                        :$columns = 8, :$poly, :$reflect = Bool::False ]
-            does Sum::Partial
+            does Sum
 
     The C<Sum::CRC> parametric role is used to create a type of C<Sum>
     that calculates a particular kind of cyclic redundancy checksum
@@ -94,7 +94,7 @@ use Sum;
 role Sum::CRC [ :@header?, :@footer?, :$residual = 0,
                 :$iniv = Bool::False, :$finv = Bool::False,
                 :$columns = 8, :$poly, :$reflect = Bool::False ]
-     does Sum::Partial {
+     does Sum {
 
     my Int $mask = :2[1 xx $columns];
 

@@ -42,13 +42,14 @@
 
 use Sum;
 use Sum::MDPad;
+use Sum::Recourse;
 
 =begin pod
 
 =head1 ROLES
 
-=head2 role Sum::Tiger1 does Sum::MDPad
-       role Sum::Tiger2 does Sum::MDPad
+=head2 role Sum::Tiger1[:recourse = True] does Sum::MDPad
+       role Sum::Tiger2[:recourse = True] does Sum::MDPad
 
     The C<Sum::Tiger1> and C<Sum::Tiger2> parametric roles are used to create
     a type of C<Sum> that calculates a Tiger message digest.  The earlier,
@@ -58,12 +59,26 @@ use Sum::MDPad;
 
     New applications that want to use Tiger should use Tiger-2.
 
-    Classes using these roles behave as described in C<Sum::MDPad>,
+    When C<:!recourse> is used, pure Perl 6 code is used directly.
+    The resulting classes behave as described in C<Sum::MDPad>,
     which means they have rather restrictive rules as to the type
     and number of provided addends when used with C<Sum::Marshal::Raw>.
 
     Mixing a C<Sum::Marshal::Block> role is recommended except for
     implementations that wish to optimize performance.
+
+    When C<:recourse> is defined (the default), Tiger1 will try to
+    use C<librhash> and fall back to Perl6.  If C<Sum::Partial> is
+    mixed, Tiger1 will not use C<librhash>.  Currently no correct
+    C implementation of Tiger2 is available, so Tiger2 will use
+    pure Perl 6 code, but do so indirectly.  Even when using pure
+    Perl 6 code, the class will behave like a typical C implementation,
+    e.g. the class will not support messages that do not pack into
+    bytes evenly, and there is no need to mix C<Sum::Marshal::Block>.
+
+    The default precedence of C libraries may be adjusted from time
+    to time to prefer the best performing implementation.  To set your
+    own preferences, build your own class mixing C<Sum::Recourse>.
 
 =end pod
 
@@ -465,10 +480,27 @@ role Sum::Tiger {
     method Blob { self.blob8 }
 }
 
-role Sum::Tiger1 does Sum::Tiger
-     does Sum::MDPad[ :lengthtype<uint64_le> :justify ] { }
+role Sum::Tiger1[ :$recourse where { $_ == False } = True ] does Sum::Tiger does Sum::MDPad[ :lengthtype<uint64_le> :justify ] does Sum {
+    method recourse (--> Str) { "Perl6" }
+}
 
-role Sum::Tiger2 does Sum::Tiger does Sum::MDPad[:lengthtype<uint64_le>] { }
+my class PureTiger1 does Sum::Tiger1[:!recourse] does Sum::Marshal::Block { }
+
+# rhash's idea of "Tiger" is Tiger1.  mhash's is just plain broken AFAICT.
+
+role Sum::Tiger1[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse(:librhash<TIGER> :Perl6(PureTiger1))] { }
+
+# We have no working C drivers for Tiger2 yet but in case we have we get some
+# we go through the motions
+
+role Sum::Tiger2[ :$recourse where { $_ == False } = True ] does Sum::Tiger does Sum::MDPad[:lengthtype<uint64_le>] does Sum {
+    method recourse (--> Str) { "Perl6" }
+}
+
+# TODO: we need a lightweight Sum::Marshal::Block-like without bitwise support
+my class PureTiger2 does Sum::Tiger2[:!recourse] does Sum::Marshal::Block { }
+
+role Sum::Tiger2[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:Perl6(PureTiger2)]] { }
 
 =begin NOTES
 
