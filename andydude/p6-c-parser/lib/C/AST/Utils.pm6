@@ -46,7 +46,7 @@ our sub synthesize_declaration(
     our $ast = C::AST::Decl.new(
         type => $specifiers, 
         children => ($declarator,));
-    say $ast.perl;
+    #say $ast.perl;
     return $ast;
 }
 
@@ -63,7 +63,7 @@ our sub synthesize_init_declaration(
     our $ast = C::AST::Decl.new(
         type => $specifiers, 
         children => @inits);
-    say $ast.perl;
+    #say $ast.perl;
     return $ast;
 }
 
@@ -75,6 +75,6 @@ our sub synthesize_struct_declaration(
     our $ast = C::AST::Decl.new(
         type => $specifiers, 
         children => @fields);
-    say $ast.perl;
+    #say $ast.perl;
     return $ast;
 }

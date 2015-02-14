@@ -1046,8 +1046,7 @@ method jump-statement:sym<return>($/) {
 # SS 6.9
 
 method translation-unit($/) {
-    my @children = map {$_.ast}, @<external-declaration>;
-    @children = @children.grep({$_ !=== Nil});
+    my @children = map {$_.ast // ()}, @<external-declaration>;
     make C::AST::TransUnit.new(:@children);
 }
 
