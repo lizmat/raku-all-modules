@@ -1,0 +1,12 @@
+{
+    "name" : "SOAP::Client",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "Quick and dirty SOAP client",
+    "depends" : ["XML", "LWP::Simple"],
+    "provides" : {
+        "SOAP::Client::WSDL" : "lib/SOAP/Client/WSDL.pm6",
+        "SOAP::Client" : "lib/SOAP/Client.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-SOAP.git"
+}
