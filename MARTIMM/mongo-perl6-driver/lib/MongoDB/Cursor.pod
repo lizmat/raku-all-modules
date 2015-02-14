@@ -55,9 +55,26 @@ while $cursor.next( ) -> %document { %document.perl.say; }
 
 =head1 DESCRIPTION
 
-After calling find to query the collection for data a cursor is returned. With
-this cursor it is possible to modify the query or ask information from the
-server about the query.
+After calling find to query the collection for data a cursor object is
+returned. With this cursor it is possible to modify the query or ask
+information from the server about the query.
+
+=head1 CLASSES
+
+=for head2
+class MongoDB::Cursor does MongoDB::Protocol;
+
+This class has the following attributes.
+
+=for head3
+has $.collection;
+
+This is the MongoDB::Collection on which the fetch/next has been executed.
+
+=for head3
+has %.criteria;
+
+This is the current search criteria.
 
 =head1 METHODS
 
@@ -68,7 +85,22 @@ Get the document from the query. The method returns a document (Hash) or Nil
 when no (more) documents are found. Next() does the same as fetch but is added
 to mimic the API of the Mongo shell.
 
-=head2 kill ( --> Nil ) {...}
+=for head2
+method explain ( --> Hash ) {...}
+
+Return information on the query plan using the criteria already set in the
+cursor. There are many fields in the document. The fields returned also depend
+on the type of queries. Look for this information on the L<MongoDB
+site|http://docs.mongodb.org/manual/reference/method/cursor.explain>.
+
+=for head2
+method hint ( $index-spec, :$explain = False --> Hash ) {...}
+
+Get documents from the database using a hint on what index to use. When
+$explain is True, a document of how things are resolved is send instead. See
+also L<explain> above. 
+
+=head2 method kill ( --> Nil ) {...}
 
 Delete the cursor when it is no longer needed. By default the server will delete
 the cursor after a non-usage period of 10 minutes.

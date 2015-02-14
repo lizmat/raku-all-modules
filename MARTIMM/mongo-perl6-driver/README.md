@@ -17,8 +17,10 @@ Documentation about this driver can be found in doc/Original-README.md and the
 following pod files
 
 * lib/MongoDB.pod
-* lib/MongDB/Connection.pod
-* lib/MongDB/Colection.pod
+* lib/MongoDB/Collection.pod
+* lib/MongoDB/Connection.pod
+* lib/MongoDB/Cursor.pod
+* lib/MongoDB/Database.pod
 
 When you have *Pod::To::HTML* installed and the pdf generator *wkhtmltopdf* then
 you can execute the pod file with perl6 to generate a pdf from the pod document.
@@ -57,8 +59,9 @@ This is perl6 version 2015.01-77-gd320f00 built on MoarVM version 2015.01-21-g4e
 
 There are lists on the MongoDB site see references above. Items from the list
 below will be worked on. There are many items shown here, it might be impossible
-to implement it all. Using run_command(), much can be accomplished. A lot of the
-items are using that call to get the information for you.
+to implement it all. By using run_command(), much can be accomplished. A lot of the
+items are using that call to get the information for you. Also quite a few items
+are shown in in more than one place place. Removed all internal commands.
 
 ### Database Management
 
@@ -67,10 +70,7 @@ items are using that call to get the information for you.
 * [x] list_databases(). Returns database statistics.
 * [x] database_names(). Returns a list of database names.
 * [x] get_last_error(). Get error status from last operation
-
-* Database $cmd support and helpers. See [Issue Commands](http://docs.mongodb.org/manual/tutorial/use-database-commands/#issue-commands).
-  * [x] run_command()
-  * [ ] _adminCommand
+* [x] run_command(), Many helper methods are using this command.
 
 ### Role Management Commands
 
@@ -87,8 +87,6 @@ items are using that call to get the information for you.
 
 ### Replication Commands
 
-* [ ] applyOps. Internal command that applies oplog entries to the current data set.
-* [ ] getoptime. Internal command to support replication, returns the optime.
 * [ ] isMaster. Displays information about this member\u2019s role in the replica set, including whether it is the master.
 * [ ] replSetFreeze. Prevents the current member from seeking election as primary for a period of time.
 * [ ] replSetGetStatus. Returns a document that reports on the status of the replica set.
@@ -102,32 +100,23 @@ items are using that call to get the information for you.
 ### Sharding Commands
 
 * [ ] addShard. Adds a shard to a sharded cluster.
-* [ ] checkShardingIndex. Internal command that validates index on shard key.
 * [ ] cleanupOrphaned. Removes orphaned data with shard key values outside of the ranges of the chunks owned by a shard.
 * [ ] enableSharding. Enables sharding on a specific database.
 * [ ] flushRouterConfig. Forces an update to the cluster metadata cached by a mongos.
-* [ ] getShardMap. Internal command that reports on the state of a sharded cluster.
-* [ ] getShardVersion. Internal command that returns the config server version.
 * [ ] isdbgrid. Verifies that a process is a mongos.
 * [ ] listShards. Returns a list of configured shards.
-* [ ] medianKey. Deprecated internal command. See splitVector.
 * [ ] mergeChunks. Provides the ability to combine chunks on a single shard.
-* [ ] moveChunk. Internal command that migrates chunks between shards.
 * [ ] movePrimary. Reassigns the primary shard when removing a shard from a sharded cluster.
 * [ ] removeShard. Starts the process of removing a shard from a sharded cluster.
-* [ ] setShardVersion. Internal command to sets the config server version.
 * [ ] shardCollection. Enables the sharding functionality for a collection, allowing the collection to be sharded.
 * [ ] shardingState. Reports whether the mongod is a member of a sharded cluster.
-* [ ] splitChunk. Internal command to split chunk. Instead use the methods sh.splitFind() and sh.splitAt().
-* [ ] splitVector. Internal command that determines split points.
 * [ ] split. Creates a new chunk.
-* [ ] unsetSharding. Internal command that affects connections between instances in a MongoDB deployment.
 
 ### Collection Management
 
-* [ ] create
-* [ ] drop
-* [ ] collection list
+* [x] create_collection(). Create collection explicitly
+* [x] drop
+* [x] collection list
 * [ ] collection validation
 
 ### Query and Write Operation Commands
@@ -140,8 +129,8 @@ items are using that call to get the information for you.
 
   * Testing find ()
     * [x] exact matching, implicit AND.
-    * [ ] $lt, $lte, $gt, $gte, $ne
-    * [ ] $in, $nin, $or, $not
+    * [x] $lt, $lte, $gt, $gte, $ne
+    * [x] $in, $nin, $or, $not
     * [ ] null
     * [ ] regular expressions
     * [ ] arrays, $all, $size, $slice
@@ -180,7 +169,7 @@ items are using that call to get the information for you.
   * [ ] limit
   * [ ] sort
   * [ ] eval()
-  * [ ] explain()
+  * [x] explain()
   * [ ] hint() and $hint
 
 
@@ -207,8 +196,6 @@ items are using that call to get the information for you.
 
 * [ ] authSchemaUpgrade. Supports the upgrade process for user data between version 2.4 and 2.6.
 * [ ] authenticate. Starts an authenticated session using a username and password.
-* [ ] copydbgetnonce. This is an internal command to generate a one-time password for use with the copydb command.
-* [ ] getnonce. This is an internal command to generate a one-time password for authentication.
 * [ ] logout. Terminates the current authenticated session.
 
 ### User Management Commands
@@ -229,8 +216,8 @@ items are using that call to get the information for you.
 #### Aggregation Commands
 
 * [ ] aggregate. Performs aggregation tasks such as group using the aggregation framework.
-* [ ] count. Counts the number of documents in a collection.
-* [ ] distinct. Displays the distinct values found for a specified key in a collection.
+* [x] count. Counts the number of documents in a collection.
+* [x] distinct. Displays the distinct values found for a specified key in a collection.
 * [ ] group. Groups documents in a collection by the specified key and performs simple aggregation.
 * [ ] mapReduce. Performs map-reduce aggregation for large data sets.
 
@@ -238,7 +225,6 @@ items are using that call to get the information for you.
 
 * [ ] geoNear. Performs a geospatial query that returns the documents closest to a given point.
 * [ ] geoSearch. Performs a geospatial query that uses MongoDB\u2019s haystack index functionality.
-* [ ] geoWalk. An internal command to support geospatial queries.
 
 #### Query and Write Operation Commands
 
@@ -264,22 +250,19 @@ items are using that call to get the information for you.
 
 #### Administration Commands
 
-* [ ] clean. Internal namespace administration command.
 * [ ] cloneCollectionAsCapped. Copies a non-capped collection as a new capped collection.
 * [ ] cloneCollection. Copies a collection from a remote host to the current host.
 * [ ] clone. Copies a database from a remote host to the current host.
-* [ ] closeAllDatabases. Internal command that invalidates all cursors and closes open database files.
 * [ ] collMod. Add flags to collection to modify the behavior of MongoDB.
 * [ ] compact. Defragments a collection and rebuilds the indexes.
-* [ ] connPoolSync. Internal command to flush connection pool.
 * [ ] connectionStatus. Reports the authentication state for the current connection.
 * [ ] convertToCapped. Converts a non-capped collection to a capped collection.
 * [ ] copydb. Copies a database from a remote host to the current host.
-* [ ] createIndexes. Builds one or more indexes for a collection.
-* [ ] create. Creates a collection and sets collection parameters.
+* [x] createIndexes, see ensure_index(). Builds one or more indexes for a collection.
+* [x] create_collection(). Creates a collection and sets collection parameters.
 * [x] dropDatabase. Removes the current database.
-* [ ] dropIndexes. Removes indexes from a collection.
-* [ ] drop. Removes the specified collection from the database.
+* [x] dropIndexes. Removes indexes from a collection.
+* [x] drop. Removes the specified collection from the database.
 * [ ] filemd5. Returns the md5 hash for files stored using GridFS.
 * [ ] fsync. Flushes pending writes to the storage layer and locks the database to allow backups.
 * [ ] getParameter. Retrieves configuration options.
@@ -293,64 +276,22 @@ items are using that call to get the information for you.
 
 #### Diagnostic Commands
 
-* [ ] availableQueryOptions. Internal command that reports on the capabilities of the current MongoDB instance.
 * [ ] buildInfo. Displays statistics about the MongoDB build.
 * [ ] collStats. Reports storage utilization statics for a specified collection.
 * [ ] connPoolStats. Reports statistics on the outgoing connections from this MongoDB instance to other MongoDB instances in the deployment.
 * [ ] cursorInfo. Deprecated. Reports statistics on active cursors.
-* [ ] dataSize. Returns the data size for a range of data. For internal use.
-* [ ] dbHash. Internal command to support sharding.
 * [ ] dbStats. Reports storage utilization statistics for the specified database.
-* [ ] diagLogging. Provides a diagnostic logging. For internal use.
-* [ ] driverOIDTest. Internal command that converts an ObjectId to a string to support tests.
 * [ ] features. Reports on features available in the current MongoDB instance.
 * [ ] getCmdLineOpts. Returns a document with the run-time arguments to the MongoDB instance and their parsed options.
 * [ ] getLog. Returns recent log messages.
 * [ ] hostInfo. Returns data that reflects the underlying host system.
 * [ ] indexStats. Experimental command that collects and aggregates statistics on all indexes.
-* [ ] isSelf. Internal command to support testing.
 * [ ] listCommands. Lists all database commands provided by the current mongod instance.
 * [x] list_databases. Returns a document that lists all databases and returns basic database statistics.
-* [ ] netstat. Internal command that reports on intra-deployment connectivity. Only available for mongos instances.
-* [ ] ping. Internal command that tests intra-deployment connectivity.
 * [ ] profile. Interface for the database profiler.
 * [ ] serverStatus. Returns a collection metrics on instance-wide resource utilization and status.
 * [ ] shardConnPoolStats. Reports statistics on a mongos\u2018s connection pool for client operations against shards.
 * [ ] top. Returns raw usage statistics for each database in the mongod instance.
-* [ ] validate. Internal command that scans for a collection\u2019s data and indexes for correctness.
-* [ ] whatsmyuri. Internal command that returns information on the current client.
-
-#### Internal Commands
-
-* [ ] _migrateClone. Internal command that supports chunk migration. Do not call directly.
-* [ ] _recvChunkAbort. Internal command that supports chunk migrations in sharded clusters. Do not call directly.
-* [ ] _recvChunkCommit. Internal command that supports chunk migrations in sharded clusters. Do not call directly.
-* [ ] _recvChunkStart. Internal command that facilitates chunk migrations in sharded clusters.. Do not call directly.
-* [ ] _recvChunkStatus. Internal command that returns data to support chunk migrations in sharded clusters. Do not call directly.
-* [ ] _replSetFresh. Internal command that supports replica set election operations.
-* [ ] _transferMods. Internal command that supports chunk migrations. Do not call directly.
-* [ ] handshake. Internal command.
-* [ ] mapreduce.shardedfinish. Internal command that supports map-reduce in sharded cluster environments.
-* [ ] replSetElect. Internal command that supports replica set functionality.
-* [ ] replSetGetRBID. Internal command that supports replica set operations.
-* [ ] replSetHeartbeat. Internal command that supports replica set operations.
-* [ ] writeBacksQueued. Internal command that supports chunk migrations in sharded clusters.
-* [ ] writebacklisten. Internal command that supports chunk migrations in sharded clusters.
-
-#### Testing Commands
-
-* [ ] _hashBSONElement. Internal command. Computes the MD5 hash of a BSON element.
-* [ ] _journalLatencyTest. Tests the time required to write and perform a file system sync for a file in the journal directory.
-* [ ] captrunc. Internal command. Truncates capped collections.
-* [ ] configureFailPoint. Internal command for testing. Configures failure points.
-* [ ] emptycapped. Internal command. Removes all documents from a capped collection.
-* [ ] forceerror. Internal command for testing. Forces a user assertion exception.
-* [ ] godinsert. Internal command for testing.
-* [ ] replSetTest. Internal command for testing replica set functionality.
-* [ ] skewClockCommand. Internal command. Do not call this command directly.
-* [ ] sleep. Internal command for testing. Forces MongoDB to block all operations.
-* [ ] testDistLockWithSkew. Internal command. Do not call this directly.
-* [ ] testDistLockWithSyncCluster. Internal command. Do not call this directly.
 
 #### Auditing Commands
 
@@ -360,24 +301,23 @@ items are using that call to get the information for you.
 
 * [ ] db.collection.aggregate(). Provides access to the aggregation pipeline.
 * [ ] db.collection.copyTo(). Wraps eval to copy data between collections in a single MongoDB instance.
-* [ ] db.collection.count(). Wraps count to return a count of the number of documents in a collection or matching a query.
-* [ ] db.collection.createIndex(). Builds an index on a collection. Use db.collection.ensureIndex().
+* [x] db.collection.count(). Wraps count to return a count of the number of documents in a collection or matching a query.
+* [ ] db.collection.createIndex(). Builds an index on a collection. Use db.collection.ensureIndex(). Deprecated since 1.8 according to [message](http://stackoverflow.com/questions/25968592/difference-between-createindex-and-ensureindex-in-java-using-mongodb)
 * [ ] db.collection.dataSize(). Returns the size of the collection. Wraps the size field in the output of the collStats.
-* [ ] db.collection.distinct(). Returns an array of documents that have distinct values for the specified field.
-* [ ] db.collection.drop(). Removes the specified collection from the database.
-* [ ] db.collection.dropIndex(). Removes a specified index on a collection.
-* [ ] db.collection.dropIndexes(). Removes all indexes on a collection.
+* [x] db.collection.distinct(). Returns an array of documents that have distinct values for the specified field.
+* [x] db.collection.drop(). Removes the specified collection from the database.
+* [x] db.collection.dropIndex(). Removes a specified index on a collection.
+* [x] db.collection.dropIndexes(). Removes all indexes on a collection.
 * [x] db.collection.ensureIndex(). Creates an index if it does not currently exist. If the index exists ensureIndex() does nothing.
-* [ ] db.collection.find(). Performs a query on a collection and returns a cursor object.
+* [x] db.collection.find(). Performs a query on a collection and returns a cursor object.
 * [ ] db.collection.findAndModify(). Atomically modifies and returns a single document.
-* [ ] db.collection.findOne(). Performs a query and returns a single document.
+* [x] db.collection.findOne(). Performs a query and returns a single document.
 * [ ] db.collection.getIndexStats(). Renders a human-readable view of the data collected by indexStats which reflects B-tree utilization.
-* [ ] db.collection.getIndexes(). Returns an array of documents that describe the existing indexes on a collection.
+* [x] db.collection.getIndexes(). Returns an array of documents that describe the existing indexes on a collection.
 * [ ] db.collection.getShardDistribution(). For collections in sharded clusters, db.collection.getShardDistribution() reports data of chunk distribution.
-* [ ] db.collection.getShardVersion(). Internal diagnostic method for shard cluster.
 * [ ] db.collection.group(). Provides simple data aggregation function. Groups documents in a collection by a key, and processes the results. Use aggregate() for more complex data aggregation.
 * [ ] db.collection.indexStats(). Renders a human-readable view of the data collected by indexStats which reflects B-tree utilization.
-* [ ] db.collection.insert(). Creates a new document in a collection.
+* [x] db.collection.insert(). Creates a new document in a collection.
 * [ ] db.collection.isCapped(). Reports if a collection is a capped collection.
 * [ ] db.collection.mapReduce(). Performs map-reduce style data aggregation.
 * [ ] db.collection.reIndex(). Rebuilds all existing indexes on a collection.
@@ -388,15 +328,15 @@ items are using that call to get the information for you.
 * [ ] db.collection.storageSize(). Reports the total size used by the collection in bytes. Provides a wrapper around the storageSize field of the collStats output.
 * [ ] db.collection.totalIndexSize(). Reports the total size used by the indexes on a collection. Provides a wrapper around the totalIndexSize field of the collStats output.
 * [ ] db.collection.totalSize(). Reports the total size of a collection, including the size of all documents and all indexes on a collection.
-* [ ] db.collection.update(). Modifies a document in a collection.
+* [x] db.collection.update(). Modifies a document in a collection.
 * [ ] db.collection.validate(). Performs diagnostic operations on a collection.
 
 ### Cursor Methods
 
 * [ ] cursor.addOption(). Adds special wire protocol flags that modify the behavior of the query.\u2019
 * [ ] cursor.batchSize(). Controls the number of documents MongoDB will return to the client in a single network message.
-* [x] cursor.count(). Returns a count of the documents in a cursor.
-* [ ] cursor.explain(). Reports on the query execution plan, including index use, for a cursor.
+* [x] cursor.count(). Also on collection. Returns a count of the documents in a cursor.
+* [x] cursor.explain(). Done also in collection! Reports on the query execution plan, including index use, for a cursor.
 * [ ] cursor.forEach(). Applies a JavaScript function for every document in a cursor.
 * [ ] cursor.hasNext(). Returns true if the cursor has documents and can be iterated.
 * [ ] cursor.hint(). Forces MongoDB to use a specific index for a query.
@@ -423,9 +363,9 @@ are also items to be implemented in BSON. You need to look there for info
 
 * Speed, protocol correctness and clear code are priorities for now.
 * Cursor count() needs some more options such as hint.
-* Change die() statements in return with exception to notify caller and place
-  further responsability there.
+* Change die() statements to throw exception objects to notify caller.
 * Keys must be checked for illegal characters when inserting documents.
+* Tests for connection to non existing server. timeout setting.
 
 ## CHANGELOG
 
@@ -433,7 +373,29 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable.*
 
-* 0.14.0 - ensure_index in MongoDB::Collection
+* 0.20.0 - list_collections() and collection_names() in MongoDB::Database
+         - hint() on a cursor.
+* 0.19.0 - explain() in MongoDB::Collection and MongoDB::Cursor.
+* 0.18.0 - count() in MongoDB::Collection
+         - distinct() in MongoDB::Collection
+* 0.17.1 - Collectionnames are checked. In perl dashes are possible and are also
+           accepted by the server. In the mongo shell however it is not possible
+           to manipulate these names because it works in a javascript
+           environment which wil see it as a substraction operator. Perhaps
+           other things will go wrong too such as running javascript on the
+           server. It is now tested against m/^ <[\$ _ A..Z a..z]> <[.\w _]>+ $/.
+           Note the '$', It is accepted because the collection $cmd is sometimes
+           used to get information from. create_collection() will also check the
+           collection name but will not accept the '$'.
+* 0.17.0 - create_collection() to MongoDB::Database
+         - X::MongoDB::Database Exception
+* 0.16.1 - Cleanup databases at the end of tests. Documented tests what is tested
+* 0.16.0 - Name change X::MongoDB::LastError into X::MongoDB::Collection.
+         - Added drop_indexes() drop() get_indexes() to MongoDB::Collection.
+* 0.15.0 - Added drop_index() to MongoDB::Collection.
+* 0.14.1 - Bugfixes find_one(), ensure_index(). Added Class X::MongoDB::LastError
+           and used when ensure_index() fails.
+* 0.14.0 - ensure_index() in MongoDB::Collection
 * 0.13.7 - Changes depending on BSON
 * 0.13.6 - MongoDB::Cursor pod document
 * 0.13.0 - Added next() to MongoDB::Cursor.
