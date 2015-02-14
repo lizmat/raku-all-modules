@@ -41,9 +41,16 @@ method ore {
 
 #| Will vote YES to ALL propostions. Be careful if you care about politics
 method votes {
-   LacunaCookbuk::Logic::Secretary.clean(["Parliament"]);
    LacunaCookbuk::Logic::Ambassador.vote_all(True);
 }
+
+#| Inbox cleaning: Parliament that is voted by alliance anyway
+#|                 Wasting resources is to common to allow everyone
+method cleanbox {
+   LacunaCookbuk::Logic::Secretary.clean(["Parliament"]);
+   LacunaCookbuk::Logic::Secretary.clean_wastin_res;
+}
+
 
 #| Create Halls of Vrbansk and transport all glyphs and plans to home planet
 method ordinary {

@@ -45,6 +45,7 @@ Things that seem to work:
 	- Printing what plans can be made from current stock
 	- Showing where are the colonies (primitive text)
 	- Automatic repair (the evil implementation)
+	- Inbox cleaning
 
 ### Doesn't compile?
 
