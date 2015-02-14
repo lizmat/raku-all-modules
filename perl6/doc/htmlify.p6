@@ -2,6 +2,7 @@
 use v6;
 
 # This script isn't in bin/ because it's not meant to be installed.
+# for syntax hilighting, needs pygmentize version 2.0 or newer installed
 
 BEGIN say 'Initializing ...';
 
@@ -15,8 +16,9 @@ use Pod::Convenience;
 
 my $*DEBUG = False;
 
-my $tg;
+my $type-graph;
 my %methods-by-type;
+my %*POD2HTML-CALLBACKS;
 
 sub url-munge($_) {
     return $_ if m{^ <[a..z]>+ '://'};
@@ -115,6 +117,7 @@ sub MAIN(
     Int  :$sparse,
     Bool :$disambiguation = True,
     Bool :$search-file = True,
+    Bool :$no-highlight = False,
 ) {
     $*DEBUG = $debug;
 
@@ -126,12 +129,14 @@ sub MAIN(
     my $*DR = Perl6::Documentable::Registry.new;
 
     say 'Reading type graph ...';
-    $tg = Perl6::TypeGraph.new-from-file('type-graph.txt');
-    my %h = $tg.sorted.kv.flat.reverse;
+    $type-graph = Perl6::TypeGraph.new-from-file('type-graph.txt');
+    my %h = $type-graph.sorted.kv.flat.reverse;
     write-type-graph-images(:force($typegraph));
 
     process-pod-dir 'Language', :$sparse;
     process-pod-dir 'Type', :sorted-by{ %h{.key} // -1 }, :$sparse;
+
+    pygmentize-code-blocks unless $no-highlight;
 
     say 'Composing doc registry ...';
     $*DR.compose;
@@ -202,7 +207,7 @@ sub process-pod-source(:$kind, :$pod, :$filename, :$pod-is-complete) {
 
     my %type-info;
     if $kind eq "type" {
-        if $tg.types{$name} -> $type {
+        if $type-graph.types{$name} -> $type {
             %type-info = :subkinds($type.packagetype), :categories($type.categories);
         } else {
             %type-info = :subkinds<class>;
@@ -226,7 +231,7 @@ sub process-pod-source(:$kind, :$pod, :$filename, :$pod-is-complete) {
 multi write-type-source($doc) {
     my $pod     = $doc.pod;
     my $podname = $doc.name;
-    my $type    = $tg.types{$podname};
+    my $type    = $type-graph.types{$podname};
     my $what    = 'type';
 
     say "Writing $what document for $podname ...";
@@ -304,19 +309,19 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
     # If a heading is a definition, like "class FooBar", process
     # the class and give the rest of the pod to find-definitions,
     # which will return how far the definition of "class FooBar" extends.
-    my @c := $pod ~~ Positional ?? @$pod !! $pod.contents;
+    my @all-pod-elements := $pod ~~ Positional ?? @$pod !! $pod.contents;
     my int $i = 0;
-    my int $len = +@c;
+    my int $len = +@all-pod-elements;
     while $i < $len {
         NEXT {$i = $i + 1}
-        my $c := @c[$i];
-        next unless $c ~~ Pod::Heading;
-        return $i if $c.level <= $min-level;
+        my $pod-element := @all-pod-elements[$i];
+        next unless $pod-element ~~ Pod::Heading;
+        return $i if $pod-element.level <= $min-level;
 
         # Is this new header a definition?
         # If so, begin processing it.
         # If not, skip to the next heading.
-        my @header := $c.contents[0].contents;
+        my @header := $pod-element.contents[0].contents;
         my @definitions; # [subkind, name]
         my $unambiguous = False;
         given @header {
@@ -363,13 +368,13 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
                 }
                 when 'class'|'role'|'enum' {
                     my $summary = '';
-                    if @c[$i+1] ~~ {$_ ~~ Pod::Block::Named and .name eq "SUBTITLE"} {
-                        $summary = @c[$i+1].contents[0].contents[0];
+                    if @all-pod-elements[$i+1] ~~ {$_ ~~ Pod::Block::Named and .name eq "SUBTITLE"} {
+                        $summary = @all-pod-elements[$i+1].contents[0].contents[0];
                     } else {
                         note "$name does not have an =SUBTITLE";
                     }
                     %attr = :kind<type>,
-                            :categories($tg.types{$name}.?categories//''),
+                            :categories($type-graph.types{$name}.?categories//''),
                             :$summary,
                 }
                 when 'variable'|'sigil'|'twigil'|'declarator'|'quote' {
@@ -402,16 +407,18 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
             # And updating $i to be after the places we've already searched
             once {
                 $new-i = $i + find-definitions
-                    :pod(@c[$i+1..*]), :origin($created), :min-level(@c[$i].level);
+                    :pod(@all-pod-elements[$i+1..*]),
+                    :origin($created),
+                    :min-level(@all-pod-elements[$i].level);
             }
 
             my $new-head = Pod::Heading.new(
-                :level(@c[$i].level),
+                :level(@all-pod-elements[$i].level),
                 :contents[pod-link "$subkinds $name",
                     $created.url ~ "#$origin.human-kind() $origin.name()".subst(:g, /\s+/, '_')
                 ]
             );
-            my @orig-chunk = $new-head, @c[$i ^.. $new-i];
+            my @orig-chunk = $new-head, @all-pod-elements[$i ^.. $new-i];
             my $chunk = $created.pod.push: pod-lower-headings(@orig-chunk, :to(%attr<kind> eq 'type' ?? 0 !! 2));
 
             if $subkinds eq 'routine' {
@@ -452,7 +459,7 @@ sub write-type-graph-images(:$force) {
         }
     }
     say 'Writing type graph images to html/images/ ...';
-    for $tg.sorted -> $type {
+    for $type-graph.sorted -> $type {
         my $viz = Perl6::TypeGraph::Viz.new-for-type($type);
         $viz.to-file("html/images/type-graph-{$type}.svg", format => 'svg');
         $viz.to-file("html/images/type-graph-{$type}.png", format => 'png', size => '8,3');
@@ -461,9 +468,9 @@ sub write-type-graph-images(:$force) {
     say '';
 
     say 'Writing specialized visualizations to html/images/ ...';
-    my %by-group = $tg.sorted.classify(&viz-group);
-    %by-group<Exception>.push: $tg.types< Exception Any Mu >;
-    %by-group<Metamodel>.push: $tg.types< Any Mu >;
+    my %by-group = $type-graph.sorted.classify(&viz-group);
+    %by-group<Exception>.push: $type-graph.types< Exception Any Mu >;
+    %by-group<Metamodel>.push: $type-graph.types< Any Mu >;
 
     for %by-group.kv -> $group, @types {
         my $viz = Perl6::TypeGraph::Viz.new(:types(@types),
@@ -681,6 +688,35 @@ sub write-qualified-method-call(:$name!, :$pod!, :$type!) {
         @$pod,
     );
     spurt "html/routine/{$type}.{$name}.html", p2h($p, 'routine');
+}
+
+sub pygmentize-code-blocks {
+    my $pyg-version = try qx/pygmentize -V/;
+    if $pyg-version && $pyg-version ~~ /^'Pygments version ' (\d\S+)/ {
+        if Version.new(~$0) ~~ v2.0+ {
+            say "pygmentize $0 found; code blocks will be highlighted";
+        }
+        else {
+            say "pygmentize $0 is too old; need at least 2.0";
+            return;
+        }
+    }
+    else {
+        say "pygmentize not found; code blocks will not be highlighted";
+        return;
+    }
+    %*POD2HTML-CALLBACKS = code => sub (:$node, :&default) {
+        for @($node.contents) -> $c {
+            if $c !~~ Str {
+                # some nested formatting code => we can't hilight this
+                return default($node);
+            }
+        }
+        my $tmp_fname = "$*TMPDIR/pod_to_pyg.pod";
+        spurt $tmp_fname, $node.contents.join;
+        my $command = "pygmentize -l perl6 -f html < $tmp_fname";
+        return qqx{$command};
+    }
 }
 
 # vim: expandtab shiftwidth=4 ft=perl6
