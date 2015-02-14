@@ -463,6 +463,9 @@ class Perl6Callbacks {
     method call(Str $name, @args) {
         return &::($name)(|@args);
     }
+    method invoke(Str $package, Str $name, @args) {
+        return ::($package)."$name"(|@args);
+    }
 }
 
 method init_callbacks {
@@ -512,6 +515,11 @@ method init_callbacks {
         sub call {
             my ($name, @args) = @_;
             return $p6->call($name, \@args);
+        }
+
+        sub invoke {
+            my ($class, $name, @args) = @_;
+            return $p6->invoke($class, $name, \@args);
         }
 
         sub import {
@@ -613,8 +621,8 @@ class Perl5Callable {
 
 my $default_perl5;
 method BUILD(:$p5) {
-    $!p5 = $p5 // p5_init_perl();
-    $!external_p5 = defined $p5;
+    $!p5 = $p5 === Any ?? p5_init_perl() !! $p5;
+    $!external_p5 = $p5 !=== Any;
 
     &!call_method = sub (Int $index, Str $name, OpaquePointer $args, OpaquePointer $err) returns OpaquePointer {
         my $p6obj = $objects.get($index);
