@@ -48,12 +48,15 @@ dependency.
 $ panda install MongoDB
 ```
 
-## VERSION PERL AND MOARVM
+## VERSION PERL, MOARVM and MongoDB
 
 ```
 $ perl6 -v
 This is perl6 version 2015.01-77-gd320f00 built on MoarVM version 2015.01-21-g4ee4925
 ```
+
+The driver code is written with the highest version of MongoDB server in mind.
+
 
 ## FEATURE CHECKLIST FOR MONGODB DRIVERS
 
@@ -218,8 +221,8 @@ are shown in in more than one place place. Removed all internal commands.
 * [ ] aggregate. Performs aggregation tasks such as group using the aggregation framework.
 * [x] count. Counts the number of documents in a collection.
 * [x] distinct. Displays the distinct values found for a specified key in a collection.
-* [ ] group. Groups documents in a collection by the specified key and performs simple aggregation.
-* [ ] mapReduce. Performs map-reduce aggregation for large data sets.
+* [x] group. Groups documents in a collection by the specified key and performs simple aggregation.
+* [x] mapReduce. Performs map-reduce aggregation for large data sets.
 
 #### Geospatial Commands
 
@@ -315,11 +318,11 @@ are shown in in more than one place place. Removed all internal commands.
 * [ ] db.collection.getIndexStats(). Renders a human-readable view of the data collected by indexStats which reflects B-tree utilization.
 * [x] db.collection.getIndexes(). Returns an array of documents that describe the existing indexes on a collection.
 * [ ] db.collection.getShardDistribution(). For collections in sharded clusters, db.collection.getShardDistribution() reports data of chunk distribution.
-* [ ] db.collection.group(). Provides simple data aggregation function. Groups documents in a collection by a key, and processes the results. Use aggregate() for more complex data aggregation.
+* [x] db.collection.group(). Provides simple data aggregation function. Groups documents in a collection by a key, and processes the results. Use aggregate() for more complex data aggregation.
 * [ ] db.collection.indexStats(). Renders a human-readable view of the data collected by indexStats which reflects B-tree utilization.
 * [x] db.collection.insert(). Creates a new document in a collection.
 * [ ] db.collection.isCapped(). Reports if a collection is a capped collection.
-* [ ] db.collection.mapReduce(). Performs map-reduce style data aggregation.
+* [x] db.collection.mapReduce(). Performs map-reduce style data aggregation.
 * [ ] db.collection.reIndex(). Rebuilds all existing indexes on a collection.
 * [ ] db.collection.remove(). Deletes documents from a collection.
 * [ ] db.collection.renameCollection(). Changes the name of a collection.
@@ -362,10 +365,16 @@ which I have to make to remember to add items to programmed functions. There
 are also items to be implemented in BSON. You need to look there for info
 
 * Speed, protocol correctness and clear code are priorities for now.
+  * Speed can be influenced by specifying types on all variables
+  * Furthermore the speedup of the language perl6 itself would have more impact
+    than the programming of a one month student(me) can accomplish ;-)
 * Cursor count() needs some more options such as hint.
 * Change die() statements to throw exception objects to notify caller.
 * Keys must be checked for illegal characters when inserting documents.
 * Tests for connection to non existing server. timeout setting.
+* Test to compare documents
+* Test group aggregation keyf field and finalize
+* Test map reduce aggregation more thoroughly
 
 ## CHANGELOG
 
@@ -373,6 +382,8 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable.*
 
+* 0.22.0 - map_reduce() in MongoDB::Collection.
+* 0.21.0 - group() in MongoDB::Collection.
 * 0.20.0 - list_collections() and collection_names() in MongoDB::Database
          - hint() on a cursor.
 * 0.19.0 - explain() in MongoDB::Collection and MongoDB::Cursor.
