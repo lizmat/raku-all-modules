@@ -49,7 +49,7 @@ compile_test_lib('05-arrays');
 
 {
     class Struct is repr('CStruct') {
-        has int $.val;
+        has long $.val;
 
         method set($x) {
             $!val = $x;
@@ -58,9 +58,9 @@ compile_test_lib('05-arrays');
 
     sub ReturnAStructArray() returns CArray[Struct] is native("./05-arrays") { * }
     my @arr := ReturnAStructArray();
-    is @arr[0].val, 2, 'int in struct in element 0';
-    is @arr[1].val, 3, 'int in struct in element 1';
-    is @arr[2].val, 5, 'int in struct in element 2';
+    is @arr[0].val, 2, 'long in struct in element 0';
+    is @arr[1].val, 3, 'long in struct in element 1';
+    is @arr[2].val, 5, 'long in struct in element 2';
 
     sub TakeAStructArray(CArray[Struct] $obj) is native("./05-arrays") { * }
     @arr := CArray[Struct].new;

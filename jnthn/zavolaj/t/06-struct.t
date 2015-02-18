@@ -8,37 +8,37 @@ plan 19;
 compile_test_lib('06-struct');
 
 class MyStruct is repr('CStruct') {
-    has int    $.int;
+    has long   $.long;
     has num    $.num;
     has int8   $.byte;
     has num32  $.float;
     has CArray $.arr;
 
     method init() {
-        $!int = 42;
+        $!long = 42;
         $!byte = 7;
         $!num = -3.7e0;
         $!float = 3.14e0;
-        my $arr := CArray[int].new();
+        my $arr := CArray[long].new();
         $arr[0] = 1;
         $arr[1] = 2;
         $!arr := $arr;
     }
 }
 
-# Workaround a Rakudo-bug where $!arr := CArray[int].new() won't work if $.arr
-# is declared as type CArray[int].
+# Workaround a Rakudo-bug where $!arr := CArray[long].new() won't work if $.arr
+# is declared as type CArray[long].
 class MyStruct2 is repr('CStruct') {
-    has int         $.int;
-    has num         $.num;
-    has int8        $.byte;
-    has num32       $.float;
-    has CArray[int] $.arr;
+    has long         $.long;
+    has num          $.num;
+    has int8         $.byte;
+    has num32        $.float;
+    has CArray[long] $.arr;
 }
 
 class IntStruct is repr('CStruct') {
-    has int $.first;
-    has int $.second;
+    has long $.first;
+    has long $.second;
 
     # Work around struct members not being containerized yet.
     method init {
@@ -82,7 +82,7 @@ class StringStruct is repr('CStruct') {
 }
 
 class PointerThing is repr('CPointer') {
-    sub _deref(PointerThing $x) returns int is native('./06-struct') { * }
+    sub _deref(PointerThing $x) returns long is native('./06-struct') { * }
     method deref() { return _deref(self); }
 }
 
@@ -105,7 +105,7 @@ sub TakeAStringStruct(StringStruct $arg)       is native('./06-struct') { * }
 my MyStruct $obj .= new;
 $obj.init;
 
-is $obj.int,    42,     'getting int';
+is $obj.long,   42,     'getting long';
 is_approx $obj.num,   -3.7e0,  'getting num';
 is $obj.byte,   7,      'getting int8';
 is_approx $obj.float,  3.14e0, 'getting num32';
@@ -114,7 +114,7 @@ is $obj.arr[1], 2,      'getting CArray and element';
 # C-side tests:
 my $cobj = ReturnAStruct;
 
-is $cobj.int,    17,      'getting int from C-created struct';
+is $cobj.long,   17,      'getting long from C-created struct';
 is_approx $cobj.num,    4.2e0,   'getting num from C-created struct';
 is $cobj.byte,   13,      'getting int8 from C-created struct';
 is_approx $cobj.float,  -6.28e0, 'getting num32 from C-created struct';

@@ -8,8 +8,8 @@ plan(5);
 compile_test_lib('08-callbacks');
 
 class Struct is repr('CStruct') {
-    has Str $.str;
-    has int $.ival;
+    has Str  $.str;
+    has long $.ival;
 
     method init {
         $!str := 'Tweedledum, tweedledee';
@@ -18,7 +18,7 @@ class Struct is repr('CStruct') {
 }
 
 sub TakeACallback(&cb ()) is native('./08-callbacks') { * }
-sub TakeIntCallback(&cb (int)) is native('./08-callbacks') { * }
+sub TakeIntCallback(&cb (int32)) is native('./08-callbacks') { * }
 sub TakeStringCallback(&cb (Str)) is native('./08-callbacks') { * }
 sub TakeStructCallback(&cb (Struct)) is native('./08-callbacks') { * }
 
@@ -30,7 +30,7 @@ sub simple_callback() {
     pass 'simple callback';
 }
 
-sub int_callback(int $x) {
+sub int_callback(int32 $x) {
     is $x, 17, 'int callback argument'
 }
 

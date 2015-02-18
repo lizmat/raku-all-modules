@@ -33,8 +33,8 @@ SetString($str);
 PrintString();
 
 # Make sure wrapped subs work
-sub wrapped(int) is native('./02-simple-args') { * }
-sub wrapper(int $arg) { wrapped($arg) }
+sub wrapped(int32) is native('./02-simple-args') { * }
+sub wrapper(int32 $arg) { wrapped($arg) }
 
 wrapper(1);
 

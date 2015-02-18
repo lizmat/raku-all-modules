@@ -8,7 +8,7 @@ plan 7;
 compile_test_lib('07-writebarrier');
 
 class IntPtr is repr('CPointer') {
-    sub _deref(IntPtr $x) returns int is native('./07-writebarrier') { * }
+    sub _deref(IntPtr $x) returns long is native('./07-writebarrier') { * }
     method deref() { return _deref(self); }
 }
 

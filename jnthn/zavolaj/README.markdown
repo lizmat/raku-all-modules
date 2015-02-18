@@ -65,7 +65,7 @@ likely grow with time).
     int8     (char in C)
     int16    (short in C)
     int32    (int in C)
-    int      (32- or 64-bit, depends what long means locally)
+    long     (32- or 64-bit, depends what long means locally)
     Int      (always 64-bit, long long in C)
     num32    (float in C)
     num64    (double in C)
