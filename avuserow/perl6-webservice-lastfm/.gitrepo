@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/avuserow/perl6-webservice-lastfm.git
 	branch = master
-	commit = facd12e0f54b4065142e83c7df067d8495cc2572
-	parent = 2055c012d1f241a52dbaaf5625b8a439a0cf94ad
+	commit = 2fa87c9c6ce5a9e5d052377ee13fbad24c33ec74
+	parent = 734f955405e8200e9087f6db1b9fbc5fbbfade98
 	cmdver = 0.2.0
