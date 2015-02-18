@@ -134,6 +134,10 @@ role Sum::Fletcher [ :$modulusA = Any, :$modulusB = Any,
         $!A %= $mA;
         $!B %= $mB;
 
+        self
+    }
+    method Numeric () {
+        self.finalize;
 	my $res = ($!B +< $cA) +| $!A;
         if $finv {
             return $res +^ ((1 +< ($cA + $cB)) - 1)
@@ -142,24 +146,24 @@ role Sum::Fletcher [ :$modulusA = Any, :$modulusB = Any,
 	}
 	$res;
     }
-    method Numeric () { self.finalize };
+    method Int () { self.Numeric }
 
     method buf8 () {
-        my $f = self.finalize;
+        my $f = self.finalize.Int;
         my $bytes = ($cA + $cB + 7) div 8;
         buf8.new($f X+> (8 X* reverse(^$bytes)));
     }
     method buf1 () {
-        my $f = self.finalize;
+        my $f = self.finalize.Int;
         Buf.new( 1 X+& ($f X+> reverse(^($cA + $cB))) );
     }
     method blob8 () {
-        my $f = self.finalize;
+        my $f = self.finalize.Int;
         my $bytes = ($cA + $cB + 7) div 8;
         blob8.new($f X+> (8 X* reverse(^$bytes)));
     }
     method blob1 () {
-        my $f = self.finalize;
+        my $f = self.finalize.Int;
         Blob.new( 1 X+& ($f X+> reverse(^($cA + $cB))) );
     }
     # Although these algorithms can produce results not evenly packable,

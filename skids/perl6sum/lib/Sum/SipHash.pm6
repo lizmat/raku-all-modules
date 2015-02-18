@@ -6,7 +6,8 @@
 
     class SipHash_2_4 does Sum::SipHash does Sum::Marshal::Raw { }
     my SipHash_2_4 $a .= new(:key(0x000102030405060708090a0b0c0d0e0f));
-    $a.finalize(0..0xe).fmt('%x').say; # a129ca6149be45e5
+    $a.finalize(0..0xe).base(16).say; # A129CA6149BE45E5
+
 =end code
 =end SYNOPSIS
 
@@ -195,7 +196,11 @@ role Sum::SipHash [ Int :$c = 2, Int :$d = 4, Int :$defkey = 0 ] does Sum {
 
     method finalize(*@addends) {
         self.push(@addends);
+	self.Int;
+	self
+    }
 
+    method Numeric () {
         my ($v0, $v1, $v2, $v3) = $!v0, $!v1, $!v2, $!v3;
 
         compression($!left +| (($!b +& 255) +< 56),$v0,$v1,$v2,$v3);
@@ -204,13 +209,12 @@ role Sum::SipHash [ Int :$c = 2, Int :$d = 4, Int :$defkey = 0 ] does Sum {
 
         SipRound($v0, $v1, $v2, $v3) for ^$d;
 
-        [+^] $v0, $v1, $v2, $v3;
+        [+^] $v0, $v1, $v2, $v3
     }
-
-    method Numeric () { self.finalize };
+    method Int () { self.Numeric }
 
     # Should not need the $self: here.  RT#120919
-    method !dice ($self:) { $self.finalize X+> (56,48...0) }
+    method !dice ($self:) { $self.Int X+> (56,48...0) }
 
     method buf8 () { buf8.new(self!dice); }
     method Buf () { self.buf8 }

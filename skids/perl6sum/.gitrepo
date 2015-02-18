@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/skids/perl6sum.git
 	branch = master
-	commit = a6e4557d3b9f858b799951c532bbb0425584d603
-	parent = 3cde0279a82f0cd5b8ade6ea46aa0b34fb5466b7
+	commit = a51f5cade1b9a0931f546bbb9507d2b59eb2e0c1
+	parent = 02734837046cb97dc148ac91c54307160c89f266
 	cmdver = 0.2.0

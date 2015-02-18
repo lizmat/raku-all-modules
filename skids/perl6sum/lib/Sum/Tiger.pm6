@@ -6,13 +6,13 @@
 
     class mySum does Sum::Tiger2 does Sum::Marshal::Raw { }
     my mySum $a .= new();
-    $a.finalize("abc".encode('ascii')).base(16).say;
+    $a.finalize("abc".encode('ascii')).Int.base(16).say;
        # 2AAB1484E8C158F2BFB8C5FF41B57A525129131C957B5F93
 
     # use old Tiger-1 padding
     class mySum1 does Sum::Tiger1 does Sum::Marshal::Raw { }
     my mySum1 $b .= new();
-    $b.finalize("abc".encode('ascii')).base(16).say;
+    $b.finalize("abc".encode('ascii')).Int.base(16).say;
        # F68D7BC5AF4B43A06E048D7829560D4A9415658BB0B1F3BF
 =end code
 =end SYNOPSIS
@@ -442,6 +442,8 @@ role Sum::Tiger {
 
     multi method add (blob8 $block where { .elems == 64 }) {
 
+        return Failure.new(X::Sum::Final.new()) if $.final;
+
         # Update the length count and check for problems via Sum::MDPad
         given self.pos_block_inc {
             when Failure { return $_ };
@@ -462,11 +464,15 @@ role Sum::Tiger {
 
         self.add(blob8.new()) unless $.final;
 
-        # This does not work correctly yet under rakudo.
-        # :18446744073709551616[@!s[]];
-        :256[(255 X+& (@!s[] X+> (0,8...^64)))];
+        self
     }
-    method Numeric { self.finalize };
+    method Numeric {
+        self.finalize;
+        # This does not work correctly yet under rakudo.
+        # :18446744073709551616[@!s[]]
+        :256[(255 X+& (@!s[] X+> (0,8...^64)))]
+    }
+    method Int () { self.Numeric }
     method bytes_internal { @!s[] X+> (0,8...^64) };
     method buf8 {
         self.finalize;

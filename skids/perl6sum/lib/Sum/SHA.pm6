@@ -6,20 +6,20 @@
 
     class mySHA1 does Sum::SHA1 does Sum::Marshal::Raw { }
     my mySHA1 $a .= new();
-    $a.finalize("123456789".encode('ascii')).say;
+    $a.finalize("123456789".encode('ascii')).Int.say;
        # 1414485752856024225500297739715962456813268251713
 
     # SHA-224
     class mySHA2 does Sum::SHA2[:columns(224)] does Sum::Marshal::Raw { }
     my mySHA2 $b .= new();
-    $b.finalize("123456789".encode('ascii')).say;
+    $b.finalize("123456789".encode('ascii')).Int.say;
        # 16349067602210014067037177823623301242625642097093531536712287864097
 
     # When dealing with obselete systems that use SHA0
     class mySHA0 does Sum::SHA1[:insecure_sha0_obselete]
         does Sum::Marshal::Raw { }
     my mySHA0 $c .= new();
-    $c.finalize("123456789".encode('ascii')).say;
+    $c.finalize("123456789".encode('ascii')).Int.say;
        # 1371362676478658660830737973868471486175721482632
 =end code
 =end SYNOPSIS
@@ -33,6 +33,7 @@
 #$Sum::SHA::Doc::synopsis = $=pod[0].content[3..6]>>.content.Str;
 
 =begin DESCRIPTION
+
     Using C<Sum::SHA> defines roles for generating types of C<Sum> that
     implement the widely used SHA1 and SHA2 cryptographic hash function
     families.  It is also possible to calculate legacy SHA0 checksums,
@@ -46,32 +47,51 @@
     use only.  When audits will be performed will depend on the maturation
     of individual Perl6 implementations, and should be considered
     on an implementation-by-implementation basis.
+
 =end DESCRIPTION
 
 =begin pod
 
 =head1 ROLES
 
-=head2 role Sum::SHA1 [ :$insecure_sha0_old = False ] does Sum::MDPad
+=head2 role Sum::SHA1 [ :$insecure_sha0_obselete = False, :$recourse = True ] does Sum::MDPad
 
     The C<Sum::SHA1> parametric role is used to create a type of C<Sum>
     that calculates a SHA1 message digest.  A SHA0 may be calculated
-    instead if C<:insecure_sha0_old> is specified.
+    instead if C<:insecure_sha0_obselete> is specified.
 
-    Classes using these roles behave as described in C<Sum::MDPad>,
+    When C<:!recourse> is used, pure Perl 6 code is used directly.
+    The resulting classes behave as described in C<Sum::MDPad>,
     which means they have rather restrictive rules as to the type
     and number of provided addends when used with C<Sum::Marshal::Raw>.
-    The block size used is 64 bytes.
 
     Mixing a C<Sum::Marshal::Block> role is recommended except for
     implementations that wish to optimize performance.
 
+    When C<:recourse> is defined (the default), SHA1 with the
+    C<:insecure_sha0_obselete> flag will try to use C<libcrypto>
+    and fall back to Perl6.  Without that flag, SHA1 will try
+    each of C<libcrypto>, C<librhash>, C<libmhash> and eventually
+    if all those fail, pure Perl 6 code.  If C<Sum::Partial> is
+    mixed, SHA1 will not use C<librhash>.  Even when using pure
+    Perl 6 code, the class will behave like a typical C implementation,
+    e.g. the class will not support messages that do not pack into
+    bytes evenly, and there is no need to mix C<Sum::Marshal::Block>.
+
+    The default precedence of C libraries may be adjusted from time
+    to time to prefer the best performing implementation.  To set your
+    own preferences, build your own class mixing C<Sum::Recourse>.
+
+    The block size used is 64 bytes.
+
 =end pod
 
 use Sum;
+use Sum::Recourse;
 use Sum::MDPad;
 
-role Sum::SHA1 [ Bool :$insecure_sha0_obselete = False ]
+role Sum::SHA1 [ :$recourse where { not $_ }
+                                             = True, Bool :$insecure_sha0_obselete = False ]
      does Sum::MDPad[ :lengthtype<uint64_be> :!overflow ] {
 
     has @!w;     # "Parsed" message gets bound here.
@@ -105,6 +125,8 @@ role Sum::SHA1 [ Bool :$insecure_sha0_obselete = False ]
 
     multi method add (blob8 $block where { .elems == 64 }) {
 
+        return Failure.new(X::Sum::Final.new()) if $.final;
+
         # Update the length count and check for problems via Sum::MDPad
         given self.pos_block_inc {
             when Failure { return $_ };
@@ -123,7 +145,7 @@ role Sum::SHA1 [ Bool :$insecure_sha0_obselete = False ]
 
         @!w := @m;
         self.comp;
-    };
+    }
 
     method finalize(*@addends) {
         given self.push(@addends) {
@@ -134,11 +156,15 @@ role Sum::SHA1 [ Bool :$insecure_sha0_obselete = False ]
 
         self.add(blob8.new()) unless $.final;
 
-        # This does not work yet on 32-bit machines
-        # :4294967296[@!s[]];
-        [+|] (@!s[] Z+< (128,96...0));
+	self
     }
-    method Numeric { self.finalize };
+    method Numeric {
+        self.finalize;
+        # This does not work yet on 32-bit machines
+        # :4294967296[@!s[]]
+        [+|] (@!s[] Z+< (128,96...0))
+    }
+    method Int () { self.Numeric }
     method bytes_internal {
         @!s[] X+> (24,16,8,0);
     }
@@ -154,9 +180,19 @@ role Sum::SHA1 [ Bool :$insecure_sha0_obselete = False ]
     method Blob { self.blob8 }
 }
 
+my class PureSHA0 does Sum::SHA1[ :!recourse :insecure_sha0_obselete ] does Sum::Marshal::Block { }
+my class PureSHA1 does Sum::SHA1[ :!recourse ] does Sum::Marshal::Block { }
+
+role Sum::SHA1 [ :$recourse where { so $_ }
+                                           = True, :$insecure_sha0_obselete where { so $_ }
+              = False ] does Sum::Recourse[:recourse(:libcrypto<sha> :Perl6(PureSHA0))] { }
+
+role Sum::SHA1 [ :$recourse where { so $_ }
+                                            = True ] does Sum::Recourse[:recourse(:libcrypto<sha1> :librhash<SHA1> :libmhash<SHA1> :Perl6(PureSHA1))] { }
+
 =begin pod
 
-=head2 role Sum::SHA2 [ :$columns = 256 ] does Sum::MDPad
+=head2 role Sum::SHA2 [ :$columns = 256, :$recourse = True ] does Sum::MDPad
 
     The C<Sum::SHA2> parametric role is used to create a type of C<Sum>
     that calculates a SHA2 message digest.
@@ -165,18 +201,29 @@ role Sum::SHA1 [ Bool :$insecure_sha0_obselete = False ]
     be 224, 256, 384, or 512, yielding SHA-224, SHA-256, SHA-384, or
     SHA-512 respectively.
 
-    Classes using these roles behave as described in C<Sum::MDPad>,
+    When C<:!recourse> is used, pure Perl 6 code is used directly.
+    The resulting classes behave as described in C<Sum::MDPad>,
     which means they have rather restrictive rules as to the type
     and number of provided addends when used with C<Sum::Marshal::Raw>.
-    The block size used is 64 bytes, or 128 when C<$columns> is 384 or 512.
 
     Mixing a C<Sum::Marshal::Block> role is recommended except for
     implementations that wish to optimize performance.
 
-=end pod
+    When C<:recourse> is defined (the default), SHA2 will try to
+    use C<libcrypto>, C<librhash> and C<libmhash> and finally
+    if all those fail, fall back to pure Perl6 code.  If C<Sum::Partial>
+    is mixed, C<librhash> will be skipped.  Even when using pure
+    Perl 6 code, the class will behave like a typical C implementation,
+    e.g. the class will not support messages that do not pack into
+    bytes evenly, and there is no need to mix C<Sum::Marshal::Block>.
 
-use Sum;
-use Sum::MDPad;
+    The default precedence of C libraries may be adjusted from time
+    to time to prefer the best performing implementation.  To set your
+    own preferences, build your own class mixing C<Sum::Recourse>.
+
+    The block size used is 64 bytes, or 128 when C<$columns> is 384 or 512.
+
+=end pod
 
 my @Sum::SHA::k64 =
   0x428a2f98d728ae22,0x7137449123ef65cd,0xb5c0fbcfec4d3b2f,0xe9b5dba58189dbbc,
@@ -202,11 +249,38 @@ my @Sum::SHA::k64 =
 
 my @Sum::SHA::k32 = @Sum::SHA::k64.list X+> 32;
 
+our @k64 =
+  0x428a2f98d728ae22,0x7137449123ef65cd,0xb5c0fbcfec4d3b2f,0xe9b5dba58189dbbc,
+  0x3956c25bf348b538,0x59f111f1b605d019,0x923f82a4af194f9b,0xab1c5ed5da6d8118,
+  0xd807aa98a3030242,0x12835b0145706fbe,0x243185be4ee4b28c,0x550c7dc3d5ffb4e2,
+  0x72be5d74f27b896f,0x80deb1fe3b1696b1,0x9bdc06a725c71235,0xc19bf174cf692694,
+  0xe49b69c19ef14ad2,0xefbe4786384f25e3,0x0fc19dc68b8cd5b5,0x240ca1cc77ac9c65,
+  0x2de92c6f592b0275,0x4a7484aa6ea6e483,0x5cb0a9dcbd41fbd4,0x76f988da831153b5,
+  0x983e5152ee66dfab,0xa831c66d2db43210,0xb00327c898fb213f,0xbf597fc7beef0ee4,
+  0xc6e00bf33da88fc2,0xd5a79147930aa725,0x06ca6351e003826f,0x142929670a0e6e70,
+  0x27b70a8546d22ffc,0x2e1b21385c26c926,0x4d2c6dfc5ac42aed,0x53380d139d95b3df,
+  0x650a73548baf63de,0x766a0abb3c77b2a8,0x81c2c92e47edaee6,0x92722c851482353b,
+  0xa2bfe8a14cf10364,0xa81a664bbc423001,0xc24b8b70d0f89791,0xc76c51a30654be30,
+  0xd192e819d6ef5218,0xd69906245565a910,0xf40e35855771202a,0x106aa07032bbd1b8,
+  0x19a4c116b8d2d0c8,0x1e376c085141ab53,0x2748774cdf8eeb99,0x34b0bcb5e19b48a8,
+  0x391c0cb3c5c95a63,0x4ed8aa4ae3418acb,0x5b9cca4f7763e373,0x682e6ff3d6b2b8a3,
+  0x748f82ee5defb2fc,0x78a5636f43172f60,0x84c87814a1f0ab72,0x8cc702081a6439ec,
+  0x90befffa23631e28,0xa4506cebde82bde9,0xbef9a3f7b2c67915,0xc67178f2e372532b,
+  0xca273eceea26619c,0xd186b8c721c0c207,0xeada7dd6cde0eb1e,0xf57d4f7fee6ed178,
+  0x06f067aa72176fba,0x0a637dc5a2c898a6,0x113f9804bef90dae,0x1b710b35131c471b,
+  0x28db77f523047d84,0x32caab7b40c72493,0x3c9ebe0a15c9bebc,0x431d67c49c100d4c,
+  0x4cc5d4becb3e42b6,0x597f299cfc657e2a,0x5fcb6fab3ad6faec,0x6c44198c4a475817;
+
+my @k32 = @k64.list X+> 32;
+
 role Sum::SHA2common {
     has @.w is rw;                   # "Parsed" message gets bound here.
     has @.s is rw = self.init();     # Current hash state.  H in specification.
 
     multi method add (blob8 $block where { .elems == self.bsize/8 }) {
+
+        return Failure.new(X::Sum::Final.new()) if $.final;
+
         # Update the length count and check for problems via Sum::MDPad
         given self.pos_block_inc {
             when Failure { return $_ };
@@ -221,10 +295,12 @@ role Sum::SHA2common {
         }
         self.add(self.drain) if self.^can("drain");
         self.add(blob8.new()) unless $.final;
-        self.Int_internal;
+	self
     }
-    method Numeric { self.finalize };
-
+    method Numeric {
+        self.finalize;
+        self.Int_internal
+    }
     method buf8 {
         self.finalize;
         buf8.new(self.bytes_internal)
@@ -238,7 +314,8 @@ role Sum::SHA2common {
 }
 
 role Sum::SHAmix32 does Sum::SHA2common {
-    my @k := @Sum::SHA::k32;
+    # TODO: was just @k := @Sum::SHA::k32 but broke at some point
+    my @k = @Sum::SHA::k32.list;
 
     # A moment of silence for the pixies that die every time something
     # like this gets written in an HLL.
@@ -288,8 +365,10 @@ role Sum::SHAmix32 does Sum::SHA2common {
 	return; # This should not be needed per S06/Signatures
     }
 }
+
 role Sum::SHAmix64 does Sum::SHA2common {
-    my @k := @Sum::SHA::k64;
+    # TODO: was just @k := @Sum::SHA::k64 but broke at some point
+    my @k = @Sum::SHA::k64.list;
 
     # A moment of silence for the pixies that die every time something
     # like this gets written in an HLL.
@@ -341,7 +420,10 @@ role Sum::SHAmix64 does Sum::SHA2common {
     }
 }
 
-role Sum::SHA224 does Sum::SHAmix32 does Sum::MDPad {
+role Sum::SHA224[ :$recourse where { not $_ }
+                                              = True ]
+    does Sum::SHAmix32
+    does Sum::MDPad {
     my @s_init = 0xc1059ed8, 0x367cd507, 0x3070dd17, 0xf70e5939,
                  0xffc00b31, 0x68581511, 0x64f98fa7, 0xbefa4fa4;
     method init { @s_init }
@@ -355,7 +437,10 @@ role Sum::SHA224 does Sum::SHAmix32 does Sum::MDPad {
     }
     method size { 224 }
 }
-role Sum::SHA256 does Sum::SHAmix32 does Sum::MDPad {
+role Sum::SHA256[:$recourse where { not $_ }
+                                             = True]
+    does Sum::SHAmix32
+    does Sum::MDPad {
     my @s_init = 0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
                  0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19;
     method init { @s_init }
@@ -369,7 +454,8 @@ role Sum::SHA256 does Sum::SHAmix32 does Sum::MDPad {
     }
     method size { 256 }
 }
-role Sum::SHA384 does Sum::SHAmix64
+role Sum::SHA384[:$recourse where { not $_ }
+                                             = True] does Sum::SHAmix64
      does Sum::MDPad[:blocksize(1024) :lengthtype<uint128_be>] {
 
     my @s_init = 0xcbbb9d5dc1059ed8, 0x629a292a367cd507,
@@ -387,7 +473,8 @@ role Sum::SHA384 does Sum::SHAmix64
     }
     method size { 384 }
 }
-role Sum::SHA512 does Sum::SHAmix64
+role Sum::SHA512[:$recourse where { not $_ }
+                                             = True] does Sum::SHAmix64
      does Sum::MDPad[:blocksize(1024) :lengthtype<uint128_be>] {
 
     my @s_init = 0x6a09e667f3bcc908, 0xbb67ae8584caa73b,
@@ -406,10 +493,77 @@ role Sum::SHA512 does Sum::SHAmix64
     method size { 512 }
 }
 
-role Sum::SHA2[ :$columns where 224 ] does Sum::SHA224 { }
-role Sum::SHA2[ :$columns where 256 ] does Sum::SHA256 { }
-role Sum::SHA2[ :$columns where 384 ] does Sum::SHA384 { }
-role Sum::SHA2[ :$columns where 512 ] does Sum::SHA512 { }
+my class PureSHA224 does Sum::SHA224[:!recourse] does Sum::Marshal::Block { }
+my class PureSHA256 does Sum::SHA256[:!recourse] does Sum::Marshal::Block { }
+my class PureSHA384 does Sum::SHA384[:!recourse] does Sum::Marshal::Block { }
+my class PureSHA512 does Sum::SHA512[:!recourse] does Sum::Marshal::Block { }
+
+role Sum::SHA224[:$recourse where { so $_ }
+                                            = True] does Sum::Recourse[:recourse(:libcrypto<sha224> :librhash<SHA-224> :libmhash<SHA224> :Perl6(PureSHA224))] { }
+role Sum::SHA256[:$recourse where { so $_ }
+                                            = True] does Sum::Recourse[:recourse(:libcrypto<sha256> :librhash<SHA-256> :libmhash<SHA256> :Perl6(PureSHA256))] { }
+role Sum::SHA384[:$recourse where { so $_ }
+                                            = True] does Sum::Recourse[:recourse(:libcrypto<sha384> :librhash<SHA-384> :libmhash<SHA384> :Perl6(PureSHA384))] { }
+role Sum::SHA512[:$recourse where { so $_ }
+                                            = True] does Sum::Recourse[:recourse(:libcrypto<sha512> :librhash<SHA-512> :libmhash<SHA512> :Perl6(PureSHA512))] { }
+
+
+role Sum::SHA2[ :$recourse where {not $_}
+                                          = True, :$columns where 224 ] does Sum::SHA224[:!recourse] { }
+role Sum::SHA2[ :$recourse where {not $_}
+                                          = True, :$columns where 256 ] does Sum::SHA256[:!recourse] { }
+role Sum::SHA2[ :$recourse where {not $_}
+                                          = True, :$columns where 384 ] does Sum::SHA384[:!recourse] { }
+role Sum::SHA2[ :$recourse where {not $_}
+                                          = True, :$columns where 512 ] does Sum::SHA512[:!recourse] { }
+role Sum::SHA2[ :$recourse where {so $_}
+                                         = True, :$columns where 224 ] does Sum::SHA224 { }
+role Sum::SHA2[ :$recourse where {so $_}
+                                         = True, :$columns where 256 ] does Sum::SHA256 { }
+role Sum::SHA2[ :$recourse where {so $_}
+                                         = True, :$columns where 384 ] does Sum::SHA384 { }
+role Sum::SHA2[ :$recourse where {so $_}
+                                         = True, :$columns where 512 ] does Sum::SHA512 { }
+
+=begin pod
+
+=head2 role Sum::SHA3[:$columns = 256, :$recourse = True]
+
+    NOTE: SHA-3 code is currently disabled until NIST test vectors
+    are formally announced as final.
+
+    The C<Sum::SHA3> parametric roles are used to create a type of C<Sum>
+    that calculates a SHA3 message digest.  This digest is based on the
+    Keccack encryption algorithm.
+
+    The C<$columns> parameter selects the SHA3 hash variant, and may
+    be 224, 256, 384, or 512, yielding SHA3-224, SHA3-256, SHA3-384, or
+    SHA3-512 respectively.
+
+    There currently is no pure Perl 6 implementation for this hash
+    algorithm, so the only recourses are C library bindings.  As the
+    Keccack algorithm is more than a hash function, pure Perl6 support
+    will rely on an external module in the Crypto:: namespace, and
+    will not be used unless this module is installed.
+
+    When C<:recourse> is defined (the default, and currently, the only
+    choice), behavior is to use C<librhash>.
+
+    The default precedence of C libraries may be adjusted from time
+    to time to prefer the best performing implementation.  To set your
+    own preferences, build your own class mixing C<Sum::Recourse>.
+
+=end pod
+
+#role Sum::SHA3_224[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:librhash<SHA3-224>]] { }
+#role Sum::SHA3_256[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:librhash<SHA3-256>]] { }
+#role Sum::SHA3_384[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:librhash<SHA3-384>]] { }
+#role Sum::SHA3_512[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:librhash<SHA3-512>]] { }
+
+#role Sum::SHA3[ :$columns where 224, :$recourse where { $_ == True } = True ] does Sum::SHA3_224 { }
+#role Sum::SHA3[ :$columns where 256, :$recourse where { $_ == True } = True ] does Sum::SHA3_256 { }
+#role Sum::SHA3[ :$columns where 384, :$recourse where { $_ == True } = True ] does Sum::SHA3_384 { }
+#role Sum::SHA3[ :$columns where 512, :$recourse where { $_ == True } = True ] does Sum::SHA3_512 { }
 
 =AUTHOR Brian S. Julin
 

@@ -48,11 +48,11 @@ class Digest::MD5:auth<skids>:ver<0.05> {
   my class StrMD5 does Sum::MD5 does Sum::Digest::Marshal { }
 
   multi method md5_hex (Str $str) {
-    StrMD5.new.finalize($str).base(16).lc;
+    StrMD5.new.finalize($str).Int.base(16).lc;
   }
 
   multi method md5_hex (@str) {
-    StrMD5.new.finalize(@str).base(16).lc;
+    StrMD5.new.finalize(@str).Int.base(16).lc;
   }
 
 }

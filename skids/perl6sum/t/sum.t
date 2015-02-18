@@ -3,7 +3,7 @@ use lib	'./lib';
 
 use Test;
 
-plan 76;
+plan 79;
 
 use Sum;
 ok(1,'We use Sum and we are still alive');
@@ -27,12 +27,18 @@ lives_ok { EVAL 'class fooC1 does Sum does Sum::Marshal::Method[:atype(Str) :met
 lives_ok {
 class Foo does Sum does Sum::Marshal::Cooked {
         has $.accum is rw = 0;
-        method size () { 64 };
+        method size () { 24 };
         method finalize (*@addends) {
             self.push(@addends);
-            $.accum;
+            self
         }
-        method Numeric () { self.finalize };
+        method Numeric () {
+            self.finalize;
+            $.accum
+        }
+	method buf8 () {
+	    buf8.new(self.Numeric X+> (16, 8, 0))
+	}
         method add (*@addends) {
             $.accum += [+] @addends;
         };
@@ -50,11 +56,15 @@ my @a;
 @a <== $f <== (4,5);
 is @a.join(""), "45", "is seen as feed tap (passes through values)";
 is $f.accum, 15, "tapped a list of addends from a feed(Cooked)";
-is $f.finalize, 15, "finalize with no arguments works (Cooked)";
-is $f.finalize(5), 20, "finalize with one argument works (Cooked)";
-is $f.finalize(5,6), 31, "finalize with multiple arguments works (Cooked)";
+is +$f.finalize, 15, "finalize with no arguments works (Cooked)";
+is +$f.finalize(5), 20, "finalize with one argument works (Cooked)";
+is +$f.finalize(5,6), 31, "finalize with multiple arguments works (Cooked)";
 $f.push();
 is $f.accum, 31, "push with no arguments works(Cooked)";
+
+is $f.base(2), "000000000000000000011111", ".base(2) works";
+is $f.base(16), "00001F", ".base(16) works";
+is $f.fmt, "00001f", ".fmt works";
 
 lives_ok {
 class Foo2 does Sum does Sum::Marshal::Raw {
@@ -62,9 +72,12 @@ class Foo2 does Sum does Sum::Marshal::Raw {
         method size () { 64 };
         method finalize (*@addends) {
             self.push(@addends);
+	    self
+        }
+        method Numeric () {
+            self.finalize;
             $.accum;
         }
-        method Numeric () { self.finalize };
         method add (*@addends) {
             $.accum += [+] @addends;
         };
@@ -80,9 +93,9 @@ my @b;
 @b <== $g <== (4,5);
 is @b.join(""), "45", "is seen as feed tap (passes through values) (Raw)";
 is $g.accum, 15, "tapped a list of addends from a feed (Raw)";
-is $g.finalize, 15, "finalize with no arguments works (Raw)";
-is $g.finalize(5), 20, "finalize with one argument works (Raw)";
-is $g.finalize(5,6), 31, "finalize with multiple arguments works (Raw)";
+is +$g.finalize, 15, "finalize with no arguments works (Raw)";
+is +$g.finalize(5), 20, "finalize with one argument works (Raw)";
+is +$g.finalize(5,6), 31, "finalize with multiple arguments works (Raw)";
 $g.push();
 is $g.accum, 31, "push with no arguments works(Raw)";
 
@@ -92,9 +105,12 @@ class Foo3 does Sum::Partial does Sum does Sum::Marshal::Cooked {
         method size () { 64 };
         method finalize (*@addends) {
             self.push(@addends);
-            $.accum;
+            self
         }
-        method Numeric () { self.finalize };
+        method Numeric () {
+            self.finalize;
+            $.accum
+        }
         method add (*@addends) {
             $.accum += [+] @addends;
         };
@@ -110,27 +126,30 @@ my @c;
 @c <== $h <== (4,5);
 is @c.join(""), "45", "is seen as feed tap (passes through values) (Partial)";
 is $h.accum, 15, "tapped a list of addends from a feed (Partial)";
-is $h.finalize, 15, "finalize with no arguments works (Partial)";
-is $h.finalize(5), 20, "finalize with one argument works (Partial)";
-is $h.finalize(5,6), 31, "finalize with multiple arguments works (Partial)";
+is +$h.finalize, 15, "finalize with no arguments works (Partial)";
+is +$h.finalize(5), 20, "finalize with one argument works (Partial)";
+is +$h.finalize(5,6), 31, "finalize with multiple arguments works (Partial)";
 $h.push();
 is $h.accum, 31, "push with no arguments works(Partial)";
-is $h.partials(3,2,1).join(''), "343637", "partials method works";
+is $h.partials(3,2,1)».Numeric.join(''), "343637", "partials method works";
 is $h.partials(), Nil, "partials with no arguments gives empty list";
 my @d;
 #? rakudo skip 'feed through a slurpy arity function'
 #@d <== $h.partials <== (2,3);
 #is @d.join(""), "3942", "partials inserts values in a feed"
-is $h.partials(4,5,Failure.new(X::AdHoc.new()),6).map({.WHAT.gist}), '(Int) (Int) (Failure)', "partials stops iterating on Failure (Partial,Cooked).";
+is $h.partials(4,5,Failure.new(X::AdHoc.new()),6).map({.WHAT.gist}), '(Foo3) (Foo3) (Failure)', "partials stops iterating on Failure (Partial,Cooked).";
 
 class Foo3r does Sum::Partial does Sum does Sum::Marshal::Raw {
         has $.accum is rw = 0;
         method size () { 64 }
         method finalize (*@addends) {
             self.push(@addends);
-            $.accum;
+            self
         }
-        method Numeric () { self.finalize };
+        method Numeric () {
+            self.finalize;
+            $.accum
+        }
         method add (*@addends) {
             $.accum += [+] @addends;
         };
@@ -138,7 +157,7 @@ class Foo3r does Sum::Partial does Sum does Sum::Marshal::Raw {
 my Foo3r $hr .= new();
 
 # XXX do some tests of laziness of partials method
-is $hr.partials(4,5,Failure.new(X::AdHoc.new()),6).map({.WHAT.gist}), '(Int) (Int) (Failure)', "partials stops iterating on Failure (Partial,Raw).";
+is $hr.partials(4,5,Failure.new(X::AdHoc.new()),6).map({.WHAT.gist}), '(Foo3r) (Foo3r) (Failure)', "partials stops iterating on Failure (Partial,Raw).";
 
 lives_ok {
 class Foo4 does Sum::Partial does Sum does Sum::Marshal::Method[:atype(Str) :method<ords>] {
@@ -146,9 +165,12 @@ class Foo4 does Sum::Partial does Sum does Sum::Marshal::Method[:atype(Str) :met
         method size () { 64 }
         method finalize (*@addends) {
             self.push(@addends);
-            $.accum;
+            self
         }
-        method Numeric () { self.finalize };
+        method Numeric () {
+            self.finalize;
+            $.accum
+        }
         method add (*@addends) {
             $.accum += [+] @addends;
         };
@@ -157,13 +179,13 @@ class Foo4 does Sum::Partial does Sum does Sum::Marshal::Method[:atype(Str) :met
 my Foo4 $o1;
 lives_ok { $o1 .= new(); }, "can instantiate a basic Cooked subclass";
 $o1.push("ABC");
-is $o1.finalize, 65 + 66 + 67, "Cooked subclass explodes an addend";
+is +$o1.finalize, 65 + 66 + 67, "Cooked subclass explodes an addend";
 $o1 .= new();
 $o1.push(1,"ABC");
-is $o1.finalize, 65 + 66 + 67 + 1, "mix addend before exploding addend";
+is +$o1.finalize, 65 + 66 + 67 + 1, "mix addend before exploding addend";
 $o1 .= new();
 $o1.push(1,"ABC",2);
-is $o1.finalize, 65 + 66 + 67 + 3, "mix addends around exploding addend";
+is +$o1.finalize, 65 + 66 + 67 + 3, "mix addends around exploding addend";
 
 lives_ok {
 class Foo5
@@ -176,9 +198,12 @@ class Foo5
         method finalize (*@addends) {
             self.push(@addends);
             return Failure.new(X::Sum::Missing.new()) unless self.whole;
+	    self
+        }
+        method Numeric () {
+            self.finalize;
             $.accum;
         }
-        method Numeric () { self.finalize };
         method add (*@addends) {
             $.accum += [+] @addends;
         };
@@ -187,36 +212,36 @@ class Foo5
 my Foo5 $o2;
 lives_ok { $o2 .= new(); }, "can instantiate Pack subclasses";
 $o2.push(True,False,False,False,True,False,True,False);
-is $o2.finalize, 138, "can combine 8 bits";
+is +$o2.finalize, 138, "can combine 8 bits";
 $o2 .= new();
 $o2.push(True,False,False,False,True,False,True,False,8);
-is $o2.finalize, 146, "can combine 8 bits then add an Int";
+is +$o2.finalize, 146, "can combine 8 bits then add an Int";
 $o2 .= new();
 $o2.push(8,True,False,False,False,True,False,True,False);
-is $o2.finalize, 146, "can add 8 combined bits after an Int";
+is +$o2.finalize, 146, "can add 8 combined bits after an Int";
 $o2 .= new();
 $o2.push(True,False,False,False,True,False,True);
-ok $o2.finalize ~~ Failure, "Trying to finalize 7 bits fails";
+throws_like { +$o2.finalize }, X::Sum::Missing, "Trying to finalize 7 bits fails";
 $o2 .= new();
 ok $o2.push(True,False,False,False,True,False,True,8) ~~ Failure, "Normal addend after 7 bits fails";
 $o2 .= new();
 ok $o2.push(True,False,False,False,True,False,True,8,False) ~~ Failure, "Normal addend amid 8 bits fails";
 $o2 .= new();
 $o2.push("8","4");
-is $o2.finalize, 0x84, "Bitfield addend works";
+is +$o2.finalize, 0x84, "Bitfield addend works";
 $o2 .= new();
 $o2.push(True,False,False,False,"4");
-is $o2.finalize, 0x84, "Mixed bit and bitfields works";
+is +$o2.finalize, 0x84, "Mixed bit and bitfields works";
 $o2 .= new();
 ok $o2.push("4") ~~ Failure, "Short bitfield finalize fails";
 $o2 .= new();
 ok $o2.push("4",8,"4").WHAT ~~ Failure, "Normal addend amid bitfields fails";
 $o2 .= new();
 $o2.push(8,"4","3");
-is $o2.finalize, 8 + 0x43, "Normal addend after bitfields works";
+is +$o2.finalize, 8 + 0x43, "Normal addend after bitfields works";
 $o2 .= new();
 $o2.push("4","3",8);
-is $o2.finalize, 0x43 + 8, "Normal addend before bitfields works";
+is +$o2.finalize, 0x43 + 8, "Normal addend before bitfields works";
 
 lives_ok {
 class Foo6

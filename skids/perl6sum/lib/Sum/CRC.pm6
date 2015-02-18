@@ -85,9 +85,9 @@ use Sum;
     that includes an embedded precaculated CRC, such that the
     sum of the original data and the CRC should produce a constant.
 
-    This method simply calls C<.finalize> and, if that succeeds,
-    returns C<True> if the resulting value is the same as the value
-    provided to the role in the C<$residual> role parameter.
+    This method simply returns C<True> if the current CRC accumulator
+    value is the same as the value provided to the role in the
+    C<$residual> role parameter.
 
 =end pod
 
@@ -114,6 +114,10 @@ role Sum::CRC [ :@header?, :@footer?, :$residual = 0,
 
     method finalize(*@addends) {
         self.push(@addends);
+	self;
+    }
+
+    method Numeric () {
         my $rev = $.rem;
         if +@footer {
             my $c = self.clone();
@@ -132,24 +136,23 @@ role Sum::CRC [ :@header?, :@footer?, :$residual = 0,
            return $rev +^ $mask if $finv.WHAT === Bool;
            return $rev +^ +$finv;
         }
-        return $rev;
+        $rev
     }
-
-    method Numeric () { self.finalize };
+    method Int () { self.Numeric }
 
     method buf8 () {
         my $bytes = ($columns + 7) div 8;
-        buf8.new(self.finalize X+> ($bytes*8-8,{$_-8}...0));
+        buf8.new(self.Int X+> ($bytes*8-8,{$_-8}...0));
     }
     method buf1 () {
-        Buf.new( 1 X+& (self.finalize X+> ($columns-1...0)) );
+        Buf.new( 1 X+& (self.Int X+> ($columns-1...0)) );
     }
     method Buf () { self.buf1; }
 
     method check(*@addends) {
         given self.finalize(@addends) {
 	    when Failure { return $_ };
-	    default { return so $_ == $residual };
+	    default { return so $_.Int == $residual };
 	}
     }
 }

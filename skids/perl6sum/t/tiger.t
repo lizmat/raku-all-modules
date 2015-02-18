@@ -39,11 +39,11 @@ class T1p does Sum::Tiger1 does Sum::Marshal::Raw does Sum::Partial { };
 my T1p $sp .= new();
 is $sp.recourse, "Perl6", "Sum::Partial mixin chases away librhash";
 
-my $recstr = "(:recourse<{$sp.recourse}>)";
+my $recstr = "(:recourse<{$sr.recourse}>)";
 
 given T1.new() {
 is .size, 192, "Tiger1.size is correct (!:recourse)";
-is .finalize(Buf.new()),
+is +.finalize(Buf.new()),
    0x3293ac630c13f0245f92bbb1766e16167a4e58492dde73f3,
    "Tiger1 Set 1 vector #0 (empty buffer) (!:recourse)";
 is .Buf.values, (0x32, 0x93, 0xac, 0x63, 0x0c, 0x13, 0xf0, 0x24, 0x5f, 0x92, 0xbb, 0xb1, 0x76, 0x6e, 0x16, 0x16, 0x7a, 0x4e, 0x58, 0x49, 0x2d, 0xde, 0x73, 0xf3), "Tiger1 Buf method works (!:recourse)";
@@ -51,7 +51,7 @@ is .Buf.values, (0x32, 0x93, 0xac, 0x63, 0x0c, 0x13, 0xf0, 0x24, 0x5f, 0x92, 0xb
 
 given T1r.new() {
 is .size, 192, "Tiger1.size is correct $recstr";
-is .finalize(Buf.new()),
+is +.finalize(Buf.new()),
    0x3293ac630c13f0245f92bbb1766e16167a4e58492dde73f3,
    "Tiger1 Set 1 vector #0 (empty buffer) $recstr";
 is .Buf.values, (0x32, 0x93, 0xac, 0x63, 0x0c, 0x13, 0xf0, 0x24, 0x5f, 0x92, 0xbb, 0xb1, 0x76, 0x6e, 0x16, 0x16, 0x7a, 0x4e, 0x58, 0x49, 0x2d, 0xde, 0x73, 0xf3), "Tiger1 Buf method works $recstr";
@@ -78,10 +78,10 @@ my @t1set1 = (
 for @t1set1.kv -> $vnum, $test {
     my T1 $t1 .= new();
     $t1.push(.encode('ascii')) for $test.key.list;
-    is $t1.finalize, $test.value, "Tiger1 Set 1 vector #{$vnum + 1} (:!recourse)";
+    is +$t1.finalize, $test.value, "Tiger1 Set 1 vector #{$vnum + 1} (:!recourse)";
     my T1r $t1r .= new();
     $t1r.push(.encode('ascii')) for $test.key.list;
-    is $t1.finalize, $test.value, "Tiger1 Set 1 vector #{$vnum + 1} $recstr";
+    is +$t1.finalize, $test.value, "Tiger1 Set 1 vector #{$vnum + 1} $recstr";
 }
 
 my @t1set2 = «
@@ -1112,12 +1112,12 @@ F350816A79C72F1D8477CC8FE60D81C139606EF73D32DF4E
 »;
 
 for sort((0^..^($testvecs),440..449).unique) {
-    is T1.new.finalize(Buf.new(0 xx $_ div 8), False xx $_ % 8), ("0x" ~ @t1set2[$_]).Int, "Tiger1 Set 2 vector #$_";
+    is +T1.new.finalize(Buf.new(0 xx $_ div 8), False xx $_ % 8), ("0x" ~ @t1set2[$_]).Int, "Tiger1 Set 2 vector #$_";
 }
 for 512..^(512 + $testvecs) {
     my T1 $t1 .= new();
     $t1.push(Buf.new(0 xx 64));
-    is $t1.finalize(Buf.new(0 xx ($_ - 512) div 8),
+    is +$t1.finalize(Buf.new(0 xx ($_ - 512) div 8),
               False xx $_ % 8), ("0x" ~ @t1set2[$_]).Int,
               "Tiger1 Set 2 vector #$_";
 }
@@ -1642,8 +1642,8 @@ my $msg = 1 +< 511;
 my $vnum = 0;
 while ($msg) {
     next if $vnum > $testvecs - 1 and not 439 < $vnum < 450;
-    is T1.new.finalize(Buf.new(255 X+& ($msg X+> (504,496...0)))), ("0x" ~ @t1set3[$vnum]).Int, "Tiger1 Set 3, vector #$vnum (:!recourse)";
-    is T1r.new.finalize(Buf.new(255 X+& ($msg X+> (504,496...0)))), ("0x" ~ @t1set3[$vnum]).Int, "Tiger1 Set 3, vector #$vnum $recstr";
+    is +T1.new.finalize(Buf.new(255 X+& ($msg X+> (504,496...0)))), ("0x" ~ @t1set3[$vnum]).Int, "Tiger1 Set 3, vector #$vnum (:!recourse)";
+    is +T1r.new.finalize(Buf.new(255 X+& ($msg X+> (504,496...0)))), ("0x" ~ @t1set3[$vnum]).Int, "Tiger1 Set 3, vector #$vnum $recstr";
     NEXT {
         $vnum++;
         $msg +>= 1;
@@ -1671,7 +1671,7 @@ is $s2u.recourse, "Perl6", "Tiger2 defaults to indirect Perl6 recourse";
 
 given (T2.new()) {
 is .size, 192, "Tiger2.size is correct";
-is .finalize(blob8.new()),
+is +.finalize(blob8.new()),
    0x4441be75f6018773c206c22745374b924aa8313fef919f41,
    "Tiger2 Set 1 vector #0 (empty buffer)";
 is .Buf.values, (0x44, 0x41, 0xbe, 0x75, 0xf6, 0x01, 0x87, 0x73, 0xc2, 0x06, 0xc2, 0x27, 0x45, 0x37, 0x4b, 0x92, 0x4a, 0xa8, 0x31, 0x3f, 0xef, 0x91, 0x9f, 0x41), "Tiger2 Buf method works";
@@ -1697,10 +1697,10 @@ my @t2set1 = (
 for @t2set1.kv -> $vnum, $test {
     my T2 $t2 .= new();
     { $t2.push($_) } for $test.key».encode('ascii');
-    is $t2.finalize, $test.value, "Tiger2 Set 1 vector #{$vnum + 1}";
+    is +$t2.finalize, $test.value, "Tiger2 Set 1 vector #{$vnum + 1}";
     my T2u $t2u .= new();
     { $t2u.push($_) } for $test.key».encode('ascii');
-    is $t2u.finalize, $test.value, "Tiger2 Set 1 vector #{$vnum + 1} (indirect)";
+    is +$t2u.finalize, $test.value, "Tiger2 Set 1 vector #{$vnum + 1} (indirect)";
 }
 
 # Now grab the code in the synopsis from the POD and make sure it runs.
@@ -2742,12 +2742,12 @@ CC8DC5FC400914E75F1461F007B4EFE0561D9C2D8CD17C2F
 »;
 
 for sort((0^..^($testvecs),440..449).unique) {
-    is T2.new.finalize(Buf.new(0 xx $_ div 8), False xx $_ % 8), ("0x" ~ @t2set2[$_]).Int, "Tiger2 Set 2 vector #$_";
+    is +T2.new.finalize(Buf.new(0 xx $_ div 8), False xx $_ % 8), ("0x" ~ @t2set2[$_]).Int, "Tiger2 Set 2 vector #$_";
 }
 for 512..^(512 + $testvecs) {
     my T2 $t2 .= new();
     $t2.push(Buf.new(0 xx 64));
-    is $t2.finalize(Buf.new(0 xx ($_ - 512) div 8), False xx $_ % 8),
+    is +$t2.finalize(Buf.new(0 xx ($_ - 512) div 8), False xx $_ % 8),
        ("0x" ~ @t2set2[$_]).Int, "Tiger2 Set 2 vector #$_";
 }
 
@@ -3271,8 +3271,8 @@ my $msg = 1 +< 511;
 my $vnum = 0;
 while ($msg) {
     next if $vnum > $testvecs - 1 and not 439 < $vnum < 450;
-    is T2.new.finalize(Buf.new(255 X+& ($msg X+> (504,496...0)))), ("0x" ~ @t2set3[$vnum]).Int, "Tiger2 Set 3, vector #$vnum";
-    is T2u.new.finalize(Buf.new(255 X+& ($msg X+> (504,496...0)))), ("0x" ~ @t2set3[$vnum]).Int, "Tiger2 Set 3, vector #$vnum (indirect)";
+    is +T2.new.finalize(Buf.new(255 X+& ($msg X+> (504,496...0)))), ("0x" ~ @t2set3[$vnum]).Int, "Tiger2 Set 3, vector #$vnum";
+    is +T2u.new.finalize(Buf.new(255 X+& ($msg X+> (504,496...0)))), ("0x" ~ @t2set3[$vnum]).Int, "Tiger2 Set 3, vector #$vnum (indirect)";
     NEXT {
         $vnum++;
         $msg +>= 1;

@@ -14,6 +14,7 @@ class M1 does Sum::MDPad does Sum::Marshal::Raw {
     method finalize { $.total }
     method size { Inf }
     multi method add (Buf $block where { .elems == 64 }) {
+        return Failure.new(X::Sum::Final.new()) if $.final;
         given self.pos_block_inc {
             when Failure { return $_ };
         }

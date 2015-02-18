@@ -55,9 +55,9 @@ class X::Sum::Recourse is Exception {
         method size { Inf }
         method finalize (*@addends) {
             self.push(@addends);
-            $.accum;
+            self;
         }
-        method Numeric () { self.finalize };
+        method Numeric () { self.finalize; $.accum; };
         method add (*@addends) {
             $.accum += [+] @addends;
         };
@@ -66,22 +66,23 @@ class X::Sum::Recourse is Exception {
 
     $s.push(3);
     $s.push(4);
-    say $s.finalize;                     # 7
+    say +$s.finalize;                    # 7
     $s.push(5);
-    say $s.finalize;                     # 12
+    say +$s.finalize;                    # 12
 
     # It can be used to tap a feed
     my @a <== $s <== (1,2);
     say @a;                              # 1 2
-    say $s.finalize;                     # 15
+    say +$s.finalize;                    # 15
 
     # Since it does Sum::Partial, one can generate partials as a List
-    $s.partials(1,1,2,1).say;            # 16 17 19 20
+    $s.partials(1,1,2,1)».Int.say;       # 16 17 19 20
 
     # Since it does Sum::Marshal::Method[:atype(Str) :method<ords>]
     # Str addends are exploded into multiple character ordinals.
     'abc'.ords.say;                      # 97 98 99
-    $s.partials(1,'abc',1).say;          # 21 118 216 315 316
+    $s.partials(1,'abc',1)».Int.say;     # 21 118 216 315 316
+
 =end code
 =end SYNOPSIS
 
@@ -135,26 +136,56 @@ role Sum:auth<skids>:ver<0.1.0> {
 
         C<$checksum = MySum.new.finalize(1,3,5,7,9);>
 
+    The C<.finalize> method actually just returns the Sum object, however,
     A C<Sum> will generally provide coercion methods, such as C<.Numeric>,
-    which is often simply an alias for C<.finalize()>.  Which coercion
-    methods are available may vary across different types of C<Sum>.  In
-    particular, sums will provide a C<.buf8> coercion method if their
-    results are conventionally expressed in bytes, and a C<.buf1> coercion
-    method if their results may contain a number of bits that does not
-    pack evenly into bytes.  For convenience the latter may also provide
-    a C<.buf8> method.  The C<.Buf> coercion method will eventually return
-    one of the above results as natural to the type of C<Sum>, but given
-    that C<buf1> is not implemented in the language core yet, some such
-    methods return a C<Buf> at this time.  As such, explicit use
-    of the C<.buf8> and C<.buf1> methods is advised in the interim.
+    so it can be treated as though it were a base type:
 
-    A C<.Str> coercion method will also usually be made available, and
-    will finalize the sum and express the result as a string in a format
-    conventional to the particular type of sum.
+        C<MySum.new.finalize(1,3,5,7,9).Int.base(16).say;>
+
+    Which coercion methods are available may vary across different types
+    of C<Sum>.  In particular, sums will provide a C<.buf8> coercion
+    method if their results are conventionally expressed in bytes, and
+    a C<.buf1> coercion method if their results may contain a number of
+    bits that does not pack evenly into bytes.  For convenience the latter
+    may also provide a C<.buf8> method which should be LSB-justified.
+
+    The C<.Buf> coercion method will eventually return one of the above
+    results as natural to the type of C<Sum>, but given that C<buf1> is
+    not implemented in the language core yet, some such methods return
+    a C<Buf> at this time.  As such, explicit use of the C<.buf8> and
+    C<.buf1> methods is advised in the interim.
+
+    A C<.base(2)> multimethod will finalize the sum and print a text
+    representation of the result.  Likewise, A C<.base(16)> multimethod
+    will print an uppercase hex representation of the result.  A C<.fmt>
+    method will also usually be made available, which is shorthand
+    for C<.buf8.values.fmt($format,$separator)> with default values for
+    a lowercase hex representation.  All three of these methods are
+    special in that they will emit leading zeros.
+
+    Note that a C<.Str> coercion method is currently not provided, until
+    it can be established that nothing in the setting accidentally finalizes
+    the sum by calling it.
 
 =end pod
 
     method finalize (*@addends) { ... }  # Provided by class or role
+
+    # Some methods to elide the need to convert to Int.  The individual
+    # sums decide on how to do Numeric, but probably have no good
+    # reason not to fool with these, so we can do some DRY control here.
+    # We only cover common use cases.
+
+    multi method base(2) {
+        self.Numeric.fmt("%" ~ self.size ~ "." ~ self.size  ~ "b")
+    }
+    multi method base(16) {
+        my $digits = (self.size + 3) div 4;
+        self.Numeric.fmt("%" ~ $digits ~ "." ~ $digits ~ "X")
+    }
+    multi method fmt($format = "%2.2x", $sep = "") {
+        self.buf8.values.fmt($format, $sep)
+    }
 
 =begin pod
 
@@ -345,7 +376,7 @@ role Sum::Partial {
 #            given self.add($addend) {
 #                when Failure { last($_) };
 #            }
-#            self.finalize;
+#            self.clone.finalize;
 #        }
 	# ...so this is just slapped together until then.
 	eager self.marshal(|@addends).map: {
@@ -357,7 +388,7 @@ role Sum::Partial {
                 } else {
 		    given self.add($addend) {
 		        when Failure { $addend := $_; $done = 1;};
-                        default { $addend := self.finalize; };
+                        default { $addend := self.clone.finalize; };
                     }
 		}
                 $addend;

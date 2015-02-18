@@ -36,15 +36,15 @@ use Sum;
     }
 
     my $md5 := Sum::libcrypto::Instance.new("md5");
-    $md5.add(buf8.new(0x30..0x39));
+    $md5.add(blob8.new(0x30..0x39));
     :256[$md5.finalize().values].base(16).say;
     ### 781E5E245D69B566979B86E28D23F2C7
 
     # Slightly less raw interface:
     my $sha1 = Sum::libcrypto::Sum.new("sha1");
-    $sha1.push(buf8.new(0x30..0x35));
+    $sha1.push(blob8.new(0x30..0x35));
     $sha1.pos.say;  # 48
-    $sha1.finalize(buf8.new(0x36..0x39)).base(16).say;
+    $sha1.finalize(blob8.new(0x36..0x39)).Int.base(16).say;
     ### 87ACEC17CD9DCD20A716CC2CF67417B71C8A7016
     $sha1.size.say; # 384
     $sha1.Buf.say;  # 20
@@ -162,8 +162,9 @@ if ($up) {
 
     The C<.add> method takes a single C<blob8> or C<buf8> of any
     size.  Unlike the normal C<Sum::> role only C<.add> may be
-    used to update the sum, C<.finalize> takes no optional data
-    and will only produce results the first time it is called.
+    used to update the sum, C<.finalize> takes no optional data,
+    will only produce results the first time it is called, and
+    produces a C<buf8> rather than returning the original object.
     There is no C<.push> method.
 
     The C<.new> contructor takes the C<.name> of a
@@ -357,7 +358,7 @@ class Sum {
 
     method size { +self.algo.size * 8 }
 
-    multi method add (buf8 $addends) {
+    multi method add (blob8 $addends) {
         return Failure.new(X::Sum::Final.new())
             unless defined $!inst;
         return unless $addends.elems;
@@ -372,12 +373,16 @@ class Sum {
 
     method finalize(*@addends) {
         self.push(@addends) if @addends.elems;
-        return :256[$!res.values] if $!res.defined;
-        return $!res if $!res.WHAT ~~ Failure;
-        :256[self.Buf.values];
+	self.Buf;
+	self
     }
 
-    method Numeric () { self.finalize };
+    method Numeric () {
+        return :256[$!res.values] if $!res.defined;
+        return $!res if $!res.WHAT ~~ Failure;
+        :256[self.Buf.values]
+    }
+    method Int () { self.Numeric }
 
     method buf8 () {
         return $!res if $!res.defined or $!res.WHAT ~~ Failure;
@@ -385,8 +390,8 @@ class Sum {
         $!inst := Instance; # This has been freed
         $!res
     }
+    method blob8 () { self.buf8 }
     method Buf () { self.buf8 };
-    method blob8 () { self.buf8 };
     method Blob () { self.buf8 };
 
     method push (*@addends --> Failure) {

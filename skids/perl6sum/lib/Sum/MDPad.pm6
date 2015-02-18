@@ -178,8 +178,8 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
     has Bool $!ignore_block_inc = False;
     has Bool $.final is rw = False;
     method pos_block_inc () {
-        fail(X::Sum::Final.new()) if $.final;
         return if $!ignore_block_inc;
+        fail(X::Sum::Final.new()) if $.final;
         unless ($overflow) {
             fail(X::Sum::Spill.new())
                 if $!o >= (1 +< ($lenshifts.elems * 8)) - $blocksize;
@@ -221,8 +221,10 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
     multi method add (blob8 $block where { -1 < .elems < $bbytes },
                       Bool $b7?, Bool $b6?, Bool $b5?, Bool $b4?,
                       Bool $b3?, Bool $b2?, Bool $b1?) {
-
-        fail(X::Sum::Final.new()) if $.final;
+	if $.final {
+            fail(X::Sum::Final.new()) if ($block.elems or $b7.defined);
+            return;
+	}
         my @bcat = ();
         @bcat.push($_) if .defined for ($b7,$b6,$b5,$b4,$b3,$b2,$b1);
         my int $bits = @bcat.elems;

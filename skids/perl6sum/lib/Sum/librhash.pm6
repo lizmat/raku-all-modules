@@ -52,7 +52,7 @@ use Sum;
     my $sha1 = Sum::librhash::Sum.new("SHA1");
     $sha1.push(buf8.new(0x30..0x35));
     $sha1.pos.say;
-    $sha1.finalize(buf8.new(0x36..0x39)).base(16).say;
+    $sha1.finalize(buf8.new(0x36..0x39)).Int.base(16).say;
     $sha1.size.say;
     $sha1.Buf.say;
 
@@ -479,12 +479,16 @@ class Sum {
 
     method finalize(*@addends) {
         self.push(@addends) if @addends.elems;
-        return :256[$!res.values] if $!res.defined;
-        return $!res if $!res.WHAT ~~ Failure;
-        :256[self.Buf.values];
+	self.Buf;
+        self;
     }
 
-    method Numeric () { self.finalize };
+    method Numeric () {
+        return :256[$!res.values] if $!res.defined;
+        return $!res if $!res.WHAT ~~ Failure;
+        :256[self.Buf.values]
+    }
+    method Int () { self.Numeric }
 
     method buf8 () {
         return $!res if $!res.defined or $!res.WHAT ~~ Failure;
