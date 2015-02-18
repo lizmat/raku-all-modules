@@ -191,13 +191,14 @@ sub process-pod-dir($dir, :&sorted-by = &[cmp], :$sparse) {
 sub process-pod-source(:$kind, :$pod, :$filename, :$pod-is-complete) {
     my $summary = '';
     my $name = $filename;
-    if $kind eq "language" {
-        if $pod.contents[0] ~~ {$_ ~~ Pod::Block::Named and .name eq "TITLE"} {
-            $name = $pod.contents[0].contents[0].contents[0]
+    my $first = $pod.contents[0];
+    if $first ~~ Pod::Block::Named && $first.name eq "TITLE" {
+        $name = $pod.contents[0].contents[0].contents[0];
+        if $kind eq "type" {
+            $name = $name.split(/\s+/)[*-1];
         }
-        else {
-            note "$filename does not have an =TITLE";
-        }
+    } else {
+        note "$filename does not have an =TITLE";
     }
     if $pod.contents[1] ~~ {$_ ~~ Pod::Block::Named and .name eq "SUBTITLE"} {
         $summary = $pod.contents[1].contents[0].contents[0];
@@ -304,17 +305,19 @@ multi write-type-source($doc) {
     spurt "html/$what/$podname.html", p2h($pod, $what);
 }
 
+#| A one-pass-parser for pod headers that define something documentable.
 sub find-definitions (:$pod, :$origin, :$min-level = -1) {
-    # Run through the pod content, and look for headings.
-    # If a heading is a definition, like "class FooBar", process
-    # the class and give the rest of the pod to find-definitions,
+    # Runs through the pod content, and looks for headings.
+    # If a heading is a definition, like "class FooBar", processes
+    # the class and gives the rest of the pod to find-definitions,
     # which will return how far the definition of "class FooBar" extends.
-    my @all-pod-elements := $pod ~~ Positional ?? @$pod !! $pod.contents;
+    # We then continue parsing from after that point.
+    my @pod-section := $pod ~~ Positional ?? @$pod !! $pod.contents;
     my int $i = 0;
-    my int $len = +@all-pod-elements;
+    my int $len = +@pod-section;
     while $i < $len {
         NEXT {$i = $i + 1}
-        my $pod-element := @all-pod-elements[$i];
+        my $pod-element := @pod-section[$i];
         next unless $pod-element ~~ Pod::Heading;
         return $i if $pod-element.level <= $min-level;
 
@@ -368,8 +371,8 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
                 }
                 when 'class'|'role'|'enum' {
                     my $summary = '';
-                    if @all-pod-elements[$i+1] ~~ {$_ ~~ Pod::Block::Named and .name eq "SUBTITLE"} {
-                        $summary = @all-pod-elements[$i+1].contents[0].contents[0];
+                    if @pod-section[$i+1] ~~ {$_ ~~ Pod::Block::Named and .name eq "SUBTITLE"} {
+                        $summary = @pod-section[$i+1].contents[0].contents[0];
                     } else {
                         note "$name does not have an =SUBTITLE";
                     }
@@ -407,18 +410,18 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
             # And updating $i to be after the places we've already searched
             once {
                 $new-i = $i + find-definitions
-                    :pod(@all-pod-elements[$i+1..*]),
+                    :pod(@pod-section[$i+1..*]),
                     :origin($created),
-                    :min-level(@all-pod-elements[$i].level);
+                    :min-level(@pod-section[$i].level);
             }
 
             my $new-head = Pod::Heading.new(
-                :level(@all-pod-elements[$i].level),
+                :level(@pod-section[$i].level),
                 :contents[pod-link "$subkinds $name",
                     $created.url ~ "#$origin.human-kind() $origin.name()".subst(:g, /\s+/, '_')
                 ]
             );
-            my @orig-chunk = $new-head, @all-pod-elements[$i ^.. $new-i];
+            my @orig-chunk = $new-head, @pod-section[$i ^.. $new-i];
             my $chunk = $created.pod.push: pod-lower-headings(@orig-chunk, :to(%attr<kind> eq 'type' ?? 0 !! 2));
 
             if $subkinds eq 'routine' {
@@ -712,8 +715,10 @@ sub pygmentize-code-blocks {
                 return default($node);
             }
         }
-        my $tmp_fname = "$*TMPDIR/pod_to_pyg.pod";
+        my $basename = join '-', %*ENV<USER> // 'u', (^100_000).pick, 'pod_to_pyg.pod';
+        my $tmp_fname = "$*TMPDIR/$basename";
         spurt $tmp_fname, $node.contents.join;
+        LEAVE try unlink $tmp_fname;
         my $command = "pygmentize -l perl6 -f html < $tmp_fname";
         return qqx{$command};
     }

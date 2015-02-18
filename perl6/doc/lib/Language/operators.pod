@@ -90,8 +90,8 @@ Operators can occur in several positions relative to a term:
 
 =end table
 
-Each operator is also available as a routine; postcircumfix operators as
-methods, all others as subroutines. The name of the routine is formed of
+Each operator is also available as a subroutine.
+The name of the routine is formed of
 the operator category, then a colon, and a list quote construct with the
 symbol(s) that make up the operator:
 
@@ -103,8 +103,9 @@ term or as a prefix. Subroutine calls are the most common listops. Other
 cases include meta-reduced infix operators (C<[+]| 1, 2, 3>) and the
 L<#prefix ...> etc. stub operators.
 
-(Niecza currently turns postcircumfix operators in a subroutine call,
-while Rakudo interprets them as methods).
+
+Defining custom operators is covered in
+L</language/functions#Defining Operators>.
 
 =head1 Z<>Term Precedence
 
@@ -1041,6 +1042,11 @@ Short-circuits as soon as two true arguments are found.
 
     say 0 ^^ 42;                # 42
     say 0 ^^ 42 ^^ 1 ^^ die 8;  # (empty line)
+
+Note that the semantics of this operator may not be what you assume: infix C«^^»
+flips to first true value it finds, and then flips to Nil I<forever> after the
+second, no matter how many more true values there are. (In other words, it has
+"find the one true value" semantics, not "boolean parity" semantics.)
 
 =head2 infix C«//»
 

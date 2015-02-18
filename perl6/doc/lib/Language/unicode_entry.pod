@@ -1,8 +1,8 @@
 =begin pod
 
-=TITLE Input Methods for Unicode Characters
+=TITLE Entering Unicode Characters
 
-=SUBTITLE Entering unicode characters into editors and the shell
+=SUBTITLE Input methods for unicode characters in editors and the shell
 
 Perl 6 allows the use of unicode characters as variable names.  Many
 operators are defined with unicode symbols (in particular the L<set/bag
@@ -81,7 +81,7 @@ Thus constructs such as these are now possible:
     say (1, 2) »+« (3, 4);     # 4 6 ; element-wise add
     @array »+=» 42;            # add 42 to each element of @array
     say «moo»;                 # moo
-    my $baa = 123; say «baa»;  # 123
+    my $baa = 123; say «$baa»; # 123
 
 =head2 Set/bag operators
 
