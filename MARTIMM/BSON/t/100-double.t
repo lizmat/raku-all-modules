@@ -73,31 +73,6 @@ $br = $bson._enc_double($v);
 is_deeply $br, $b, "$v after encode";
 
 #-------------------------------------------------------------------------------
-# Test complete document encoding
-#
-my %test = 
-    %( decoded => { b => Num.new(0.3333333333333333)},
-       encoded => [ 0x10, 0x00, 0x00, 0x00,             # Total size
-                    0x01,                               # Type
-                    0x62, 0x00,                         # 'b' + 0
-                    0x55, 0x55, 0x55, 0x55, 0x55, 0x55, 0xD5, 0x3F,
-                                                        # 8 byte double
-                    0x00                                # + 0
-                  ],
-       type => 'Num';
-     );
-
-is_deeply
-    $bson.encode(%test<decoded>).list,
-    %test<encoded>,
-    "encode type {%test<type>}";
-
-is_deeply
-    $bson.decode(Buf.new(%test<encoded>)),
-    %test<decoded>,
-    "decode type {%test<type>}";
-
-#-------------------------------------------------------------------------------
 # Cleanup
 #
 done();

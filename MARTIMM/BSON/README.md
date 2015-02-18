@@ -58,6 +58,7 @@ This is perl6 version 2015.01-77-gd320f00 built on MoarVM version 2015.01-21-g4e
     [ ] int64
     [ ] UUID
     [ ] MD5
+    [x] DateTime        <=> int64 UTC datetime, seconds since January 1st 1970
 
         And quite a few more perl6 types. Now binary types are possible it
         might be an idea to put the perl6 specific types into binary. There
@@ -84,7 +85,8 @@ Method ```.perl``` is available for easy debug.
   class while the standard type Int can be coded as a binary array.
 * Num is implemented but kind off emulated which makes it slower. However it was
   necessary to implement it because much information from the MongoDB server is
-  send back as a double like count() and list_databases().
+  send back as a double like count() and list_databases(). Num needs test for
+  NaN.
 * Lack of other Perl 6 types support, this is directly related to not yet
   specified pack/unpack in Perl6.
 * Change die() statements in return with exception to notify caller and place
@@ -98,6 +100,7 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.6.0 - Added DateTime type.
 * 0.5.5 - Big problems. Bugs fixed.
 * 0.5.4 - Double numbers better precision calculations
 * 0.5.3 - Double numbers -Inf and -0 are not processed correctly.
