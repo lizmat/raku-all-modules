@@ -1,5 +1,5 @@
 A simple Perl 6 module for serializing and deserializing JSON.
-This is atually a fork of JSON::Tiny [1], with the difference that produced
+This is actually a fork of JSON::Tiny [1], with the difference that produced
 JSON is indented. Its goal is to be readable especially for debugging
 purposes. This module exposes the same API as JSON::Tiny, so all you have
 to do to switch between both is to change your "use" statement.
