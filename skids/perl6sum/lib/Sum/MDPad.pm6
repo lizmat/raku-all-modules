@@ -189,6 +189,8 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
         return;
     }
 
+    method blocksize { $blocksize }
+
 =begin pod
 
 =head2 multi method add

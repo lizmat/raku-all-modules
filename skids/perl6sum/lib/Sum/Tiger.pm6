@@ -456,7 +456,7 @@ role Sum::Tiger {
     };
 
     method finalize(*@addends) {
-        given self.push(@addends) {
+        given self.push(|@addends) {
             return $_ unless $_.exception.WHAT ~~ X::Sum::Push::Usage;
         }
 
@@ -490,7 +490,7 @@ role Sum::Tiger1[ :$recourse where { $_ == False } = True ] does Sum::Tiger does
     method recourse (--> Str) { "Perl6" }
 }
 
-my class PureTiger1 does Sum::Tiger1[:!recourse] does Sum::Marshal::Block { }
+my class PureTiger1 does Sum::Tiger1[:!recourse] does Sum::Recourse::Marshal { }
 
 # rhash's idea of "Tiger" is Tiger1.  mhash's is just plain broken AFAICT.
 
@@ -503,8 +503,7 @@ role Sum::Tiger2[ :$recourse where { $_ == False } = True ] does Sum::Tiger does
     method recourse (--> Str) { "Perl6" }
 }
 
-# TODO: we need a lightweight Sum::Marshal::Block-like without bitwise support
-my class PureTiger2 does Sum::Tiger2[:!recourse] does Sum::Marshal::Block { }
+my class PureTiger2 does Sum::Tiger2[:!recourse] does Sum::Recourse::Marshal { }
 
 role Sum::Tiger2[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:Perl6(PureTiger2)]] { }
 

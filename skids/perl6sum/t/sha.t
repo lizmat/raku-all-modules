@@ -4,6 +4,7 @@ use lib	'./lib';
 use Test;
 
 use Sum::SHA;
+use Sum::Recourse;
 use Sum::libcrypto;
 use Sum::librhash;
 use Sum::libmhash;
@@ -12,6 +13,7 @@ use Sum::libmhash;
 my $c_or_r_or_m_or_p = "libcrypto";
 my $r_or_m_or_p = "librhash";
 my $c_or_p = "libcrypto";
+my $m_or_p = "libmhash";
 unless $Sum::libcrypto::up {
     $c_or_r_or_m_or_p := $r_or_m_or_p;
     $c_or_p = "Perl6";
@@ -22,15 +24,24 @@ unless $Sum::librhash::up {
         $r_or_m_or_p = "Perl6";
     }
 }
-
-plan 91;
+unless $Sum::libmhash::up {
+    $m_or_p = "Perl6";
+}
+plan 123;
 
 ok 1,'We use Sum::SHA and we are still alive';
 
-class SHA1t does Sum::SHA1 does Sum::Marshal::Raw { };
-class SHA1tp does Sum::SHA1[:!recourse] does Sum::Marshal::Raw { };
+class SHA1t does Sum::SHA1 does Sum::Marshal::Raw { }
+class SHA1tp does Sum::SHA1[:!recourse] does Sum::Marshal::Raw { }
+class PureSHA1 does Sum::SHA1[ :!recourse ] does Sum::Recourse::Marshal { }
+class SHA1tr does Sum::Recourse[:recourse(:librhash<SHA1> :libmhash<SHA1> :Perl6(PureSHA1))] does Sum::Marshal::Raw { }
+class SHA1tm does Sum::Recourse[:recourse(:libmhash<SHA1> :Perl6(PureSHA1))] does Sum::Marshal::Raw { }
+class SHA1tp2 does Sum::Recourse[:recourse[:Perl6(PureSHA1)]] does Sum::Marshal::Raw { }
 
 for (:recourse($c_or_r_or_m_or_p), SHA1t.new,
+     :recourse($r_or_m_or_p), SHA1tr.new,
+     :recourse($m_or_p), SHA1tm.new,
+     :recourse<Perl6>, SHA1tp2.new,
      :!recourse, SHA1tp.new) -> $r is copy, $s is copy {
 
   ok $s.defined, "We create a SHA1 class and object ({$r.gist})";
@@ -54,6 +65,18 @@ for (:recourse($c_or_r_or_m_or_p), SHA1t.new,
   is +$s.new.finalize(Buf.new(97 xx 64)),
      0x0098ba824b5c16427bd7a1122a5a442a25ec644d,
      "SHA1 of a 64-byte buffer is correct. ({$r.gist})";
+  if ($r.value) {
+     is +$s.new.finalize(Buf.new(97 xx 65)),
+        0x11655326c708d70319be2610e8a57d9a5b959d3b,
+        "SHA1 of a 65-byte buffer is correct. ({$r.gist})";
+     $s .= new;
+     $s.push(Buf.new(97));
+     $s.push(Buf.new(97 xx 63));
+     $s.push(Buf.new(97));
+     is +$s.finalize,
+        0x11655326c708d70319be2610e8a57d9a5b959d3b,
+        "SHA1 of a 65-byte buffer piecemeal is correct. ({$r.gist})";
+  }
   next if $r.value;
   is +$s.new.finalize(Buf.new(),True),
      0x59c4526aa2cc59f9a5f56b5579ba7108e7ccb61a,
@@ -229,7 +252,6 @@ for (:recourse($c_or_r_or_m_or_p), SHA384t.new,
      "SHA-384 expected result is correct. ({$r.gist})";
   is $s.Buf.values.fmt("%x"), "3c 37 95 50 51 cb 5c 30 26 f9 4d 55 1d 5b 5e 2a c3 8d 57 2a e4 e0 71 72 8 5f ed 81 f8 46 6b 8f 90 dc 23 a8 ff cd ea b 8d 8e 58 e8 fd ac c8 a", "SHA384 Buf method works ({$r.gist})";
 }
-
 
 # Now grab the code in the synopsis from the POD and make sure it runs.
 # This is currently complete hackery but might improve when pod support does.

@@ -17,7 +17,7 @@ use Sum;
 
 =begin pod
 
-=head2 role Sum::Recourse[ :recourse(:libmhash($x) :librhash($x) :libcrypto($x.lc) :Perl6($class))]
+=head2 role Sum::Recourse[ :recourse(:libmhash($x) :librhash($x) :libcrypto($x.lc) :Perl6($class)) ]
 
 The Sum::Recourse role may be mixed in to allow runtime loading of native
 C implementations, fallback between native C implementations, and fallback
@@ -59,15 +59,18 @@ in algorithm-specific modules if this functionality is needed.
 
 =end pod
 
+role Sum::Recourse::Marshal { ... }
+
 role Sum::Recourse[:@recourse!] {
 
     # Should just be:
-    # has $!recourse_imp handles <add finalize Buf Numeric elems pos size>;
+    # has $!recourse_imp handles <Int Buf Numeric elems pos size>;
     # but handles will not satisfy role protocols
     has $.recourse_imp;
     has $.recourse_key;
+    has Bool $.final = False;
 
-    method add (|c)      { $!recourse_imp.add(|c) };
+    method Int (|c)      { $!recourse_imp.Int(|c) };
     method Buf (|c)      { $!recourse_imp.Buf(|c) };
     method Blob (|c)     { $!recourse_imp.Blob(|c) };
     method buf8 (|c)     { $!recourse_imp.buf8(|c) };
@@ -75,6 +78,10 @@ role Sum::Recourse[:@recourse!] {
     method Numeric (|c)  { $!recourse_imp.Numeric(|c) };
     method elems (|c)    { $!recourse_imp.elems(|c) };
     method pos (|c)      { $!recourse_imp.pos(|c) };
+
+    method add (|c) {
+        $!recourse_imp.push(|c)
+    };
 
     my sub findalg {
         my $imp;
@@ -119,8 +126,24 @@ role Sum::Recourse[:@recourse!] {
     }
 
     method finalize (|c) {
-        self.push(|c);
-        $!recourse_imp.finalize
+        # In the Sum::Recourse::Marshal case this should detect $.final
+        # In the case of a native implementation, there is an internal sentry.
+	given self.push(|c) {
+            return $_ unless $_.exception.WHAT ~~ X::Sum::Push::Usage;
+        }
+# This should work:
+#	if ($!recourse_imp ~~ Sum::Recourse::Marshal) {
+# ...workaround:
+        if ($!recourse_imp.^can("drain")) {
+	    given $!recourse_imp.add($!recourse_imp.drain) {
+                return $_ unless $_.defined;
+            }
+	}
+	$!final = True;
+        given $!recourse_imp.finalize {
+	    return $_ unless .defined;
+	}
+	self
     };
 
     method new (|c) {
@@ -161,6 +184,95 @@ key associated with the eventually chosen implementation.
 
     method recourse(--> Str) {
         $!recourse_key;
+    }
+
+}
+
+=begin pod
+
+=head2 role Sum::Recourse::Marshal
+
+Most native implementations do not allow messages that do not pack
+evenly into bytes.  For example, you cannot take the SHA1 of the 7-bit
+message C<0101001> using libcrypto, librhash, or libmhash.  In contrast
+the pure Perl 6 implementations do have this ability.
+
+By default, we load native implementations, but if no C implementations
+are available on a system, a fallback to pure Perl 6 code is performed.
+When this happens it is important that the behavior of the class remains
+the same, so we cannot just directly use the Perl 6 implementation,
+as it handles addends differently.
+
+The Sum::Recourse::Marshal role may be mixed in to most pure Perl 6
+implementations to make it behave exactly like most native implementations
+(minus, of course, the speed.)  When it is mixed in, one may directly
+C<.push> a single C<blob8> no matter how many elements it has, pushing
+a 0-element C<blob8> is a no-op, even if the object is finalized,
+and processing for bitwise parameters and raw integers is not provided.
+
+Note that you will not see C<Sum::Recourse::Marshal> listed as a mixed
+in role for a class that C<does Sum::Recourse>.  This is because those
+classes are wrappers that just drive other class objects underneath.
+This allows a lot of extra C<Sum::Marshal::> classes to be mixed into
+the wrapper class and still work no matter which back-end is loaded
+at runtime.
+
+=end pod
+
+role Sum::Recourse::Marshal {
+    has Int $!bsize = self.blocksize div 8;
+    has $!left = buf8.new();
+
+    method drain {
+        my $res = $!left;
+	$!left = buf8.new();
+	$res;
+    }
+
+    multi method push () {
+	# No-op.  No need to check $.final
+        my $res = Failure.new(X::Sum::Push::Usage.new());
+        $res.defined;
+        $res;
+    }
+
+    # Special error message for attempting bits.
+    multi method push (Bool $b, *@) {
+       Failure.new(X::Sum::Marshal.new(:recourse<Perl6> :addend<Bool>));
+    }
+
+    multi method push (blob8 $addend) {
+        # This should be re-implemented when subbuf gets efficient
+        # (That is to say, when subbuf(subbuf(*)) collapses properly.)
+        my Int $b = 0;
+        if $addend.elems {
+	    return Failure.new(X::Sum::Final.new) if $.final;
+            if $!left.elems {
+                if $!left.elems + $addend.elems < $!bsize {
+                    $!left = buf8.new($!left[],$addend[]);
+		    $b = $addend.elems;
+                }
+                else {
+		    $b = $!left.elems;
+                    $!left = buf8.new($!left[], $addend[0 ..^ $!bsize - $b]);
+		    self.add($!left);
+                    $b = $!bsize - $b;
+                }
+            }
+            while $addend.elems - $b >= $!bsize {
+		self.add($addend.subbuf($b, $!bsize));
+	        $b += $!bsize;
+            }
+            if $b < $addend.elems {
+		$!left = buf8.new($addend[ $b ..^ * ]);
+            }
+            else {
+		$!left = buf8.new()
+            }
+        }
+        my $res = Failure.new(X::Sum::Push::Usage.new());
+        $res.defined;
+        $res;
     }
 
 }
