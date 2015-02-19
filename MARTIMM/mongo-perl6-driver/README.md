@@ -135,7 +135,7 @@ are shown in in more than one place place. Removed all internal commands.
     * [x] $lt, $lte, $gt, $gte, $ne
     * [x] $in, $nin, $or, $not
     * [ ] null
-    * [ ] regular expressions
+    * [x] regular expressions
     * [ ] arrays, $all, $size, $slice
     * [ ] embedded docs, $elemMatch
     * [ ] $where
@@ -382,6 +382,7 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable.*
 
+* 0.22.1 - Add use of BSON::Javascript in group() and map_reduce().
 * 0.22.0 - map_reduce() in MongoDB::Collection.
 * 0.21.0 - group() in MongoDB::Collection.
 * 0.20.0 - list_collections() and collection_names() in MongoDB::Database
