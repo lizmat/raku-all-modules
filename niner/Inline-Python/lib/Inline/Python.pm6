@@ -481,12 +481,12 @@ class PythonObject {
 
     method sink() { self }
 
-    method postcircumfix:<( )>(\args) {
-        $.python.invoke($.ptr, '__call__', args.list);
+    method postcircumfix:<( )>(*@args) {
+        $.python.invoke($.ptr, '__call__', |@args);
     }
 
-    method invoke(\args) {
-        $.python.invoke($.ptr, '__call__', args.list);
+    method invoke(*@args) {
+        $.python.invoke($.ptr, '__call__', |@args);
     }
 
     method DESTROY {
@@ -507,15 +507,6 @@ role PythonParent[$package, $class] {
         }
         $default_python.upgrade_parent_object($parent, self) if $parent;
         $!parent = $parent // $default_python.create_parent_object('__main__', ::?CLASS.^name, self);
-    }
-
-    method __getattr__($attr) {
-        my $candidates = self.^can($attr);
-        return (
-            $candidates.elems
-                ?? -> |args { $candidates[0](self, |args.list) }
-                !! Any;
-        );
     }
 
     ::?CLASS.HOW.add_fallback(::?CLASS, -> $, $ { True },
