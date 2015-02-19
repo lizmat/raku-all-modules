@@ -8,7 +8,9 @@ use BSON;
 # Test cases borrowed from
 # https://github.com/mongodb/mongo-python-driver/blob/master/test/test_bson.py
 
-my $b = BSON.new( );
+my BSON $b .= new();
+my Str $script = 'function(x){return x;}';
+my Hash $scope = { n => 10 };
 
 my Hash $samples = {
 
@@ -77,23 +79,9 @@ my Hash $samples = {
                      ],
     },
 
-#`{{
-    '0x06 Undefined - deprecated' => {
-        decoded => { b => Mu.new(0x00) },
-        encoded => [ 0x09, 0x00, 0x00, 0x00,            # Total size
-                     0x06,                              # Undefined
-                     0x62, 0x00,                        # 'b' + 0
-                     0x00,                              # undef
-                     0x00                               # + 0
-                   ]
-    },
-}}
+# '0x06 Undefined - deprecated' => { },
 
-#`{{
-    '0x07 ObjectId' => {
-        # Tested in t/600-extended.t
-    }
-}}
+#`'0x07 ObjectId' => { Tested in t/600-extended.t },
 
     '0x08 Boolean "true"' => {
         'decoded' => { "true" => True },
@@ -116,8 +104,7 @@ my Hash $samples = {
                      ],
     },
 
-#`{{}}
-    '0x09 Date time' => {
+    '0x09 Datetime' => {
         decoded => { t => DateTime.new('2015-02-18T11:08:00+0100') },
         encoded => [ 0x10, 0x00, 0x00, 0x00,            # 16 bytes
                      0x09,                              # datetime
@@ -128,6 +115,68 @@ my Hash $samples = {
                    ]
     },
 
+    '0x0A Null value' => {
+        'decoded' => { "test" => Any },
+        'encoded' => [ 0x0B, 0x00, 0x00, 0x00,          # 11 bytes
+                       0x0A,                            # null value
+                       0x74, 0x65, 0x73, 0x74, 0x00,    # 'test' + 0
+                       0x00                             # + 0
+                     ],
+    },
+
+    '0x0B Regex' => {
+        'decoded' => { "t" => BSON::Regex.new( :regex('abc'), :options('i')) },
+        'encoded' => [ 0x0E, 0x00, 0x00, 0x00,          # 11 bytes
+                       0x0B,                            # regex
+                       0x74, 0x00,                      # 't' + 0
+                       0x61, 0x62, 0x63, 0x00,          # /abc/
+                       0x69, 0x00,                      # i
+                       0x00                             # + 0
+                     ],
+    },
+
+# '0x0C DBPointer - deprecated' => { },
+
+    '0x0D Javascript' => {
+        'decoded' => { "t" => BSON::Javascript.new( :javascript($script)) },
+        'encoded' => [ 0x23, 0x00, 0x00, 0x00,          # 35 bytes
+                       0x0D,                            # javascript
+                       0x74, 0x00,                      # 't' + 0
+                       0x17, 0x00, 0x00, 0x00,          # 23 bytes js code + 1
+                       0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x28,
+                       0x78, 0x29, 0x7b, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e,
+                       0x20, 0x78, 0x3b, 0x7d, 0x00,    # UTF8 encoded Javascript
+                       0x00                             # + 0
+                     ],
+    },
+
+# '0x0E ? - deprecated' => { },
+
+    '0x0F Javascript with scope' => {
+        'decoded' => { "t" => BSON::Javascript.new( :javascript($script)
+                                                    :scope($scope)
+                                                  )
+                     },
+        'encoded' => [ 0x33, 0x00, 0x00, 0x00,          # 51 bytes
+                       0x0F,                            # javascript
+                       0x74, 0x00,                      # 't' + 0
+                       
+                       0x27, 0x00, 0x00, 0x00,          # 39 bytes size js + doc
+                       
+                       0x17, 0x00, 0x00, 0x00,          # 23 bytes js code + 1
+                       0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x28,
+                       0x78, 0x29, 0x7b, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e,
+                       0x20, 0x78, 0x3b, 0x7d, 0x00,    # UTF8 encoded Javascript
+                       
+                       0x0C, 0x00, 0x00, 0x00,          # 12 bytes embedded
+                       0x10,                            # int32
+                       0x6e, 0x00,                      # 'n' + 0
+                       0x0A, 0x00, 0x00, 0x00,          # 10
+                       0x00,                            # end emedded doc
+                       
+                       0x00                             # + 0
+                     ],
+    },
 
     '0x10 32-bit Integer' => {
         'decoded' => { "mike" => 100 },
@@ -138,49 +187,81 @@ my Hash $samples = {
                        0x00                             # + 0
                      ],
     },
-
-    '0xA0 Null value' => {
-        'decoded' => { "test" => Any },
-        'encoded' => [ 0x0B, 0x00, 0x00, 0x00,          # 11 bytes
-                       0x0A,                            # null value
-                       0x74, 0x65, 0x73, 0x74, 0x00,    # 'test' + 0
-                       0x00                             # + 0
-                     ],
-    },
 };
 
 for $samples.keys -> $key {
     my $value = $samples{$key};
+    my @enc = $b.encode( $value<decoded> ).list;
+    is_deeply @enc, $value<encoded>, 'encode ' ~ $key;
 
-    if $key eq '0x09 Date time' {
-      my @enc = $b.encode( $value<decoded> ).list;
-      my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
-
-      is_deeply @enc, $value<encoded>, 'encode ' ~ $key;
-      my @dec_kv = $dec.kv;
-      my @enc_kv = $value<decoded>.kv;
-      is @dec_kv[0], @enc_kv[0], 'Keys equal';
-
-      # Must compare seconds because the dates will not compare right
-      #
-      # Failed test 'Values equal'
-      # at t/500-native.t line 163
-      # expected: '2015-02-18T11:08:00+0100'
-      #      got: '2015-02-18T10:08:00Z'
-      #
-      is @dec_kv[1].posix, @enc_kv[1].posix, 'Values equal';
-    }
+    given $key {
     
-    else {
-      is_deeply
-          $b.encode( $value<decoded> ).list,
-          $value<encoded>,
-          'encode ' ~ $key;
+        when '0x09 Datetime' {
+            my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
 
-      is_deeply
-          $b.decode( Buf.new( $value<encoded>.list ) ),
-          $value<decoded>,
-          'decode ' ~ $key;
+            my @dec_kv = $dec.kv;
+            my @enc_kv = $value<decoded>.kv;
+            is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
+
+            # Must compare seconds because the dates will not compare right
+            #
+            # Failed test 'Values equal'
+            # at t/500-native.t line 163
+            # expected: '2015-02-18T11:08:00+0100'
+            #      got: '2015-02-18T10:08:00Z'
+            #
+            is @dec_kv[1].posix, @enc_kv[1].posix, [~] 'decode ', $key, ' Values equal';
+        }
+    
+        when '0x0B Regex' {
+            my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
+
+            my @dec_kv = $dec.kv;
+            my @enc_kv = $value<decoded>.kv;
+            is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
+
+            # Must compare content because addresses are not same
+            #
+            # Failed test 'decode 0x0B Regex'
+            # at t/500-native.t line 188
+            # expected: {"t" => BSON::Regex.new(regex => "abc", options => "i")}
+            #      got: {"t" => BSON::Regex.new(regex => "abc", options => "i")}
+            #
+            is @dec_kv[1].regex, @enc_kv[1].regex, [~] 'decode ', $key, ' Regex equal';
+            is @dec_kv[1].options, @enc_kv[1].options, [~] 'decode ', $key, ' Options equal';
+        }
+
+        when '0x0D Javascript' {
+            my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
+
+            my @dec_kv = $dec.kv;
+            my @enc_kv = $value<decoded>.kv;
+            is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
+
+            # Must compare content because addresses are not same
+            #
+            is @dec_kv[1].javascript, @enc_kv[1].javascript, [~] 'decode ', $key, ' Javascript equal';
+        }
+
+        when '0x0F Javascript with scope' {
+            my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
+
+            my @dec_kv = $dec.kv;
+            my @enc_kv = $value<decoded>.kv;
+            is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
+
+            # Must compare content because addresses are not same
+            #
+            is @dec_kv[1].javascript, @enc_kv[1].javascript, [~] 'decode ', $key, ' Javascript equal';
+            is_deeply @dec_kv[1].scope, @enc_kv[1].scope, [~] 'decode ', $key, ' scope equal';
+        }
+
+        default {
+            is_deeply
+                $b.decode( Buf.new( $value<encoded>.list ) ),
+                $value<decoded>,
+                'decode ' ~ $key;
+        }
     }
 }
 

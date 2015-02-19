@@ -6,8 +6,10 @@
     "name": "BSON",
     "provides": {
         "BSON": "lib/BSON.pm",
-        "BSON::ObjectId": "lib/BSON/ObjectId.pm"
+        "BSON::ObjectId": "lib/BSON/ObjectId.pm",
+        "BSON::Regex": "lib/BSON/Regex.pm",
+        "BSON::Javascript": "lib/BSON/Javascript.pm"
     },
     "source-url": "git://github.com/MARTIMM/BSON.git",
-    "version": "0.6.0"
+    "version": "0.8.0"
 }

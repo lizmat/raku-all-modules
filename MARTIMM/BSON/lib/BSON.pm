@@ -1,19 +1,31 @@
 use v6;
 use BSON::ObjectId;
+use BSON::Regex;
+use BSON::Javascript;
 
-class X::BSON:Deprecated is Exception {
+class X::BSON::Deprecated is Exception {
   has $.operation;                      # Operation encode, decode
   has $.type;                           # Type to encode/decode
 
-  method message() {
+  method message () {
       return [~] "\n$!operation\() error:\n",
                  "  Type $!type is deprecated by BSON specification\n"
                  ;
   }
 }
 
+class X::BSON::ImProperUse is Exception {
+  has $.operation;                      # Operation encode, decode
+  has $.type;                           # Type to encode/decode
+  has $.emsg;                           # Extra message
 
-class BSON:ver<0.6.0> {
+  method message () {
+      return "\n$!operation\() on $!type error: $!emsg";
+  }
+}
+
+
+class BSON:ver<0.8.0> {
 
   method encode ( %h ) {
 
@@ -128,7 +140,7 @@ class BSON:ver<0.6.0> {
           }
 
 #`{{
-          when Buf {
+          when ... {
               # Undefined deprecated 
               # "\x06" e_name
               
@@ -144,7 +156,9 @@ class BSON:ver<0.6.0> {
           }
 
           when Bool {
-
+              # Bool
+              # \0x08 e_name (\0x00 or \0x01)
+              #
               if .Bool {
                   # Boolean "true"
                   # "\x08" e_name "\x01
@@ -157,7 +171,6 @@ class BSON:ver<0.6.0> {
 
                   return Buf.new( 0x08 ) ~ self._enc_e_name( $p.key ) ~ Buf.new( 0x00 );
               }
-
           }
 
           when DateTime {
@@ -176,6 +189,66 @@ class BSON:ver<0.6.0> {
               #
               return Buf.new( 0x0A ) ~ self._enc_e_name( $p.key );
           }
+
+          when BSON::Regex {
+              # Regular expression
+              # "\x0B" e_name cstring cstring
+              #
+              return [~] Buf.new( 0x0B ),
+                         self._enc_e_name( $p.key ),
+                         self._enc_cstring( $p.value.regex ),
+                         self._enc_cstring( $p.value.options )
+                         ;
+          }
+
+#`{{
+          when ... {
+              # DBPointer - deprecated
+              # "\x0C" e_name string (byte*12)
+          }
+}}
+          
+          # This entry does 2 codes. 0x0D for javascript only and 0x0F when
+          # there is a scope document defined in the object
+          #
+          when BSON::Javascript {
+              # Javascript code
+              # "\x0D" e_name string
+              # "\x0F" e_name string document
+              #
+              if $p.value.scope.defined {
+              
+                  my Buf $js = self._enc_string($p.value.javascript);
+                  my Buf $doc = self._enc_document($p.value.scope);
+
+                  return [~] Buf.new( 0x0F ),
+                             self._enc_e_name($p.key),
+                             self._enc_int32($js.elems + $doc.elems),
+                             $js, $doc
+                             ;
+              }
+
+              else {
+                  return [~] Buf.new( 0x0D ),
+                             self._enc_e_name( $p.key ),
+                             self._enc_string( $p.value.javascript )
+                             ;
+              }
+          }
+
+#`{{
+          when ... {
+              # ? - deprecated
+              # "\x0E" e_name string (byte*12)
+          }
+}}
+
+#`{{
+          when ... {
+              # Javascript code. Handled above.
+              # "\x0F" e_name string document
+          }
+}}
 
           when Int {
               # 32-bit Integer
@@ -254,11 +327,14 @@ class BSON:ver<0.6.0> {
 
           when 0x06 {
               # Undefined and deprecated
-              # parse error
+              # "\x06" e_name
               #
-              die X::BSON:Deprecated.new( :operation('decode'),
-                                          :type('Undefined(0x06)')
-                                        );
+              # Must drop some bytes from array.
+              #
+              self._dec_e_name( $a );
+              die X::BSON::Deprecated.new( :operation('decode'),
+                                           :type('Undefined(0x06)')
+                                         );
           }
 
           when 0x07 {
@@ -311,6 +387,63 @@ class BSON:ver<0.6.0> {
               # "\x0A" e_name
               #
               return self._dec_e_name( $a ) => Any;
+          }
+
+          when 0x0B {
+              # Regular expression
+              # "\x0B" e_name cstring cstring
+              #
+              return self._dec_e_name($a) =>
+                  BSON::Regex.new( :regex(self._dec_cstring($a)),
+                                   :options(self._dec_cstring($a))
+                                 );
+          }
+
+          when 0x0C {
+              # DPPointer and deprecated
+              # \0x0C e_name string (byte*12)
+              #
+              # Must drop some bytes from array.
+              #
+              self._dec_e_name($a);
+              self._dec_string($a);
+              $a.splice( 0, 12);
+              die X::BSON::Deprecated.new( :operation('decode'),
+                                           :type('Undefined(0x06)')
+                                         );
+          }
+
+          when 0x0D {
+              # Javascript code
+              # "\x0D" e_name string
+              #
+              return self._dec_e_name($a) =>
+                  BSON::Javascript.new( :javascript(self._dec_string($a)));
+          }
+
+          when 0x0E {
+              # ? deprecated
+              # "\x0E" e_name string
+              #
+              # Must drop some bytes from array.
+              #
+              self._dec_e_name($a);
+              self._dec_string($a);
+              die X::BSON::Deprecated.new( :operation('decode'),
+                                           :type('(0x0E)')
+                                         );
+          }
+
+          when 0x0F {
+              # Javascript code with scope
+              # "\x0F" e_name string document
+              #
+              my $name = self._dec_e_name($a);
+              my $js_scope_size = self._dec_int32($a);
+              return $name =>
+                  BSON::Javascript.new( :javascript(self._dec_string($a)),
+                                        :scope(self._dec_document($a))
+                                      );
           }
 
           when 0x10 {
