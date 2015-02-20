@@ -1,8 +1,8 @@
 {
 	"name" : "Compress::Snappy",
-	"version" : "0.0.1",
+	"version" : "0.0.2",
 	"description" : "(de)compress data in Google's Snappy compression format",
 	"author" : "Adrian Kreher",
-	"depends" : [ "NativeCall" ],
+	"depends" : [],
 	"source-url" : "git://github.com/avuserow/perl6-compress-snappy.git"
 }

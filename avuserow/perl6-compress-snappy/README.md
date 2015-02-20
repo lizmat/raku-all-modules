@@ -14,7 +14,8 @@ See also examples/test.p6
 
 # DESCRIPTION
 
-This module uses NativeCall to provide bindings to the C API for libsnappy, a .
+This module uses NativeCall to provide bindings to the C API for libsnappy, a
+compression library with an emphasis on speed over compression.
 
 # FUNCTIONS
 
@@ -36,4 +37,6 @@ Returns if the compressed data is valid, without fully decompressing it.
 
 # SEE ALSO
 
-[Snappy](https://github.com/google/snappy)
+[Snappy on Google Code](https://code.google.com/p/snappy/)
+
+[Snappy on GitHub](https://github.com/google/snappy)
