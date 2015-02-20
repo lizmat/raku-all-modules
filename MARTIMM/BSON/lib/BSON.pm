@@ -25,7 +25,7 @@ class X::BSON::ImProperUse is Exception {
 }
 
 
-class BSON:ver<0.8.0> {
+class BSON:ver<0.8.1> {
 
   method encode ( %h ) {
 
@@ -216,7 +216,7 @@ class BSON:ver<0.8.0> {
               # "\x0D" e_name string
               # "\x0F" e_name string document
               #
-              if $p.value.scope.defined {
+              if $p.value.has_scope {
               
                   my Buf $js = self._enc_string($p.value.javascript);
                   my Buf $doc = self._enc_document($p.value.scope);
@@ -230,8 +230,8 @@ class BSON:ver<0.8.0> {
 
               else {
                   return [~] Buf.new( 0x0D ),
-                             self._enc_e_name( $p.key ),
-                             self._enc_string( $p.value.javascript )
+                             self._enc_e_name($p.key),
+                             self._enc_string($p.value.javascript)
                              ;
               }
           }
@@ -450,7 +450,7 @@ class BSON:ver<0.8.0> {
               # 32-bit Integer
               # "\x10" e_name int32
 
-              return self._dec_e_name( $a ) => self._dec_int32( $a );
+              return self._dec_e_name($a) => self._dec_int32($a);
           }
 
           default {
