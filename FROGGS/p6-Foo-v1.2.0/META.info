@@ -1,0 +1,11 @@
+{
+    "name" : "Foo",
+    "version" : "1.2.0",
+    "author" : "github:FROGGS",
+    "description" : "Test for installation same named dists simultaneously",
+    "depends" : [],
+    "provides" : {
+        "Foo" : "lib/Foo.pm"
+    },
+    "source-url" : "git://github.com/FROGGS/p6-Foo-v1.2.0.git"
+}
