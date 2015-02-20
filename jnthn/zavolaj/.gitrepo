@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/zavolaj.git
 	branch = master
-	commit = 6dc894eceef1d8c2eff778b25d89f42ebba6b3fc
-	parent = 05146f9be121141ecf1efe98e6c02dc20a4a06e3
+	commit = 4a29f3b37f761d8b47c9014bdfa26a83a3bb1970
+	parent = 546260c550cbfadcd5eca200c055106cfaaacdb2
 	cmdver = 0.2.0

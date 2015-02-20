@@ -11,6 +11,9 @@ complement Blizkost, a Rakudo-to-Perl-5 integration project.
 Thanks to NQP's underlying use of the dyncall library, Zavolaj can now
 support arbitrary signatures.
 
+Starting from 2015.02, the NativeCall module ships with the Rakudo Perl 6
+compiler, so there is no need to install it separately.
+
 ## Getting Started
 The simplest imaginable use of Zavolaj would look something like this:
 
