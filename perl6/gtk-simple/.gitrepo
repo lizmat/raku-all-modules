@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6/gtk-simple.git
 	branch = master
-	commit = bcb43553eaf954919e6df3151c09b4eeeb43bc37
-	parent = d4ccd607ab741f4b3d17cf06f7c3a33ed58c3685
-	cmdver = 0.1.0
+	commit = 55f2965a13761c2eef738f4237d38164cfbdaae5
+	parent = 6be0585230aac2f44cfa3ea66d1abbf62942007a
+	cmdver = 0.2.0
