@@ -3,6 +3,45 @@ use Test;
 use lib 'lib';
 use Pod::Convenience;
 
+plan 10;
+
+subtest {
+    plan 4;
+    eval_dies_ok('use Pod::Convenience; first-code-block();', "pod argument required");
+    eval_dies_ok('use Pod::Convenience; first-code-block("moo");', "array argument required");
+
+    is(first-code-block(["text"]), '', "non-code POD returns empty string");
+
+    my @code-blocks;
+    @code-blocks.push(Pod::Block::Code.new(contents => ['my $first-block']));
+    @code-blocks.push(Pod::Block::Code.new(contents => ['my @second-block']));
+
+    # XXX: why does this return the *second* block??
+    is(first-code-block(@code-blocks), 'my @second-block', "first code block returned");
+}, "first-code-block";
+
+subtest {
+    plan 7;
+    eval_dies_ok('use Pod::Convenience; pod-with-title();', "title argument required");
+    my $pod = pod-with-title("title text");
+    isa_ok($pod, Pod::Block::Named);
+    is($pod.name, "pod", "block name correct");
+    # XXX: why do we have to dig so far to get to the title here?
+    is($pod.contents[0].contents[0].contents[0], "title text", "title matches input");
+    # XXX: what to do when $got is Nil in Test.pm?
+    # XXX: this next line gives a warning, however should probably handle
+    #      situation more robustly
+    is($pod.contents[1], Nil, "empty blocks argument gives Nil content");
+
+    $pod = pod-with-title("title text", "block text");
+    is($pod.contents[1], "block text", "simple block text matches input");
+
+    my @block_text = [ "a block of text", "another block of text" ];
+    $pod = pod-with-title("title text", @block_text);
+    is($pod.contents[1], "a block of text another block of text",
+        "array block text matches input");
+}, "pod-with-title";
+
 subtest {
     plan 6;
     my $title = "Pod document title";
@@ -145,7 +184,5 @@ subtest {
     }
     done;
 }, "pod-lower-headings";
-
-done;
 
 # vim: expandtab shiftwidth=4 ft=perl6

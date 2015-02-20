@@ -2,7 +2,7 @@
 use v6;
 
 # This script isn't in bin/ because it's not meant to be installed.
-# for syntax hilighting, needs pygmentize version 2.0 or newer installed
+# For syntax highlighting, needs pygmentize version 2.0 or newer installed
 
 BEGIN say 'Initializing ...';
 
@@ -13,23 +13,13 @@ use Perl6::TypeGraph;
 use Perl6::TypeGraph::Viz;
 use Perl6::Documentable::Registry;
 use Pod::Convenience;
+use Pod::Htmlify;
 
 my $*DEBUG = False;
 
 my $type-graph;
 my %methods-by-type;
 my %*POD2HTML-CALLBACKS;
-
-sub url-munge($_) {
-    return $_ if m{^ <[a..z]>+ '://'};
-    return "/type/{uri_escape $_}" if m/^<[A..Z]>/;
-    return "/routine/{uri_escape $_}" if m/^<[a..z]>|^<-alpha>*$/;
-    # poor man's <identifier>
-    if m/ ^ '&'( \w <[[\w'-]>* ) $/ {
-        return "/routine/{uri_escape $0}";
-    }
-    return $_;
-}
 
 # TODO: Generate menulist automatically
 my @menu =
@@ -71,11 +61,6 @@ sub header-html ($current-selection = 'nothing selected') is cached {
 
     state $menu-pos = ($header ~~ /MENU/).from;
     $header.subst('MENU', :p($menu-pos), $menu-items ~ $sub-menu-items);
-}
-
-sub footer-html() {
-    my $footer = slurp 'template/footer.html';
-    $footer.subst('DATETIME', ~DateTime.now);
 }
 
 sub p2h($pod, $selection = 'nothing selected') {
@@ -136,7 +121,7 @@ sub MAIN(
     process-pod-dir 'Language', :$sparse;
     process-pod-dir 'Type', :sorted-by{ %h{.key} // -1 }, :$sparse;
 
-    pygmentize-code-blocks unless $no-highlight;
+    highlight-code-blocks unless $no-highlight;
 
     say 'Composing doc registry ...';
     $*DR.compose;
@@ -693,7 +678,7 @@ sub write-qualified-method-call(:$name!, :$pod!, :$type!) {
     spurt "html/routine/{$type}.{$name}.html", p2h($p, 'routine');
 }
 
-sub pygmentize-code-blocks {
+sub highlight-code-blocks {
     my $pyg-version = try qx/pygmentize -V/;
     if $pyg-version && $pyg-version ~~ /^'Pygments version ' (\d\S+)/ {
         if Version.new(~$0) ~~ v2.0+ {
@@ -708,6 +693,25 @@ sub pygmentize-code-blocks {
         say "pygmentize not found; code blocks will not be highlighted";
         return;
     }
+
+    my $py = try {
+        require Inline::Python;
+        my $py = ::('Inline::Python').new();
+        $py.run(q{
+import pygments.lexers
+import pygments.formatters
+p6lexer = pygments.lexers.get_lexer_by_name("perl6")
+htmlformatter = pygments.formatters.get_formatter_by_name("html")
+
+def p6format(code):
+    return pygments.highlight(code, p6lexer, htmlformatter)
+});
+        $py;
+    }
+    if defined $py {
+        say "Using syntax hilight using Inline::Python";
+    }
+
     %*POD2HTML-CALLBACKS = code => sub (:$node, :&default) {
         for @($node.contents) -> $c {
             if $c !~~ Str {
@@ -715,12 +719,18 @@ sub pygmentize-code-blocks {
                 return default($node);
             }
         }
-        my $basename = join '-', %*ENV<USER> // 'u', (^100_000).pick, 'pod_to_pyg.pod';
-        my $tmp_fname = "$*TMPDIR/$basename";
-        spurt $tmp_fname, $node.contents.join;
-        LEAVE try unlink $tmp_fname;
-        my $command = "pygmentize -l perl6 -f html < $tmp_fname";
-        return qqx{$command};
+        if defined $py {
+            return $py.call('__main__', 'p6format', $node.contents.join);
+        }
+        else {
+            my $basename = join '-', %*ENV<USER> // 'u', (^100_000).pick, 'pod_to_pyg.pod';
+            my $tmp_fname = "$*TMPDIR/$basename";
+            spurt $tmp_fname, $node.contents.join;
+            LEAVE try unlink $tmp_fname;
+            my $command = "pygmentize -l perl6 -f html < $tmp_fname";
+            return qqx{$command};
+
+        }
     }
 }
 
