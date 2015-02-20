@@ -34,8 +34,6 @@ iTunes-style MP4 and WMA. See their website for an exhaustive list.
 TagLib is nice and fast. The example script runs on a directory of 501 files
 (499 are MP3, 2 are non-audio) in around 4 seconds.
 
-All of the API methods are read only. Modifying a file is not yet supported.
-
 # METHODS
 
 ## new(Str|IO $file)
@@ -135,7 +133,7 @@ The specific error text.
 # REQUIREMENTS
 
 - Rakudo Perl 6 2014.11 or above. Tested primarily on MoarVM.
-- NativeCall
+- NativeCall (included in Rakudo 2015.02 and above)
 
 # TODO
 
