@@ -3,7 +3,7 @@
 	"version" : "0.0.1",
 	"description" : "Perl 6 interface to the Gd graphics library.",
 	"author" : "Henrique Dias",
-	"depends" : [ "NativeCall", "Inline" ],
+	"depends" : [ "Inline" ],
 	"source-type" : "git",
 	"source-url" : "git://github.com/perl6-community-modules/perl6-GD.git"
 }
