@@ -2,7 +2,7 @@
     "name" : "Slang::Piersing",
     "author" : "github:FROGGS",
     "version" : "0.0.1",
-    "description" : "allows identifier names like #foo?' and 'foo!'",
+    "description" : "allows identifier names like 'foo?' and 'foo!'",
     "depends" : [ ],
     "provides" : {
         "Slang::Piersing" : "lib/Slang/Piersing.pm"
