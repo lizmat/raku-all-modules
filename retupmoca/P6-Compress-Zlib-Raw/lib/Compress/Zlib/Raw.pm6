@@ -9,6 +9,8 @@ BEGIN {
     if $*VM.config<dll> ~~ /dll/ {
         # we're on windows, different library name
         $lib = 'zlib1';
+    } elsif $*VM.config<dll> ~~ /so$/ {
+        $lib = 'libz.so.1';
     } else {
         $lib = 'libz';
     }
@@ -26,11 +28,11 @@ DLLEXPORT int z_stream_sizeof() {
 our class z_stream is repr('CStruct') is export {
     has CArray $.next-in;
     has int32 $.avail-in;
-    has int $.total-in;
+    has long $.total-in;
 
     has CArray $.next-out;
     has int32 $.avail-out;
-    has int $.total-out;
+    has long $.total-out;
 
     has Str $.msg;
     has OpaquePointer $.state;
@@ -40,8 +42,8 @@ our class z_stream is repr('CStruct') is export {
     has OpaquePointer $.opaque;
 
     has int32 $.data-type;
-    has int $.adler;
-    has int $.reserved;
+    has long $.adler;
+    has long $.reserved;
 
     method set-input(Blob $stuff){
         set_input_buf(self, $stuff);
@@ -75,7 +77,7 @@ DLLEXPORT void set_output_buf(void* z, void* b) {
 
 our class gz_header is repr('CStruct') is export {
     has int32 $.text;
-    has int $.time;
+    has long $.time;
     has int32 $.xflags;
     has int32 $.os;
     has OpaquePointer $.extra;
@@ -166,7 +168,7 @@ our sub deflateCopy(z_stream, z_stream) returns int32 is native($lib) is export 
 our sub deflateReset(z_stream) returns int32 is native($lib) is export { * }
 our sub deflateParams(z_stream, int32, int32) returns int32 is native($lib) is export { * }
 our sub deflateTune(z_stream, int32, int32, int32, int32) returns int32 is native($lib) is export { * }
-our sub deflateBound(z_stream, int) returns int is native($lib) is export { * }
+our sub deflateBound(z_stream, int) returns long is native($lib) is export { * }
 # arguments are actually (z_stream, unsigned*, int*)
 our sub deflatePending(z_stream, CArray[int32], CArray[int32]) returns int32 is native($lib) is export { * }
 our sub deflatePrime(z_stream, int32, int32) returns int32 is native($lib) is export { * }
@@ -183,20 +185,20 @@ our sub inflateCopy(z_stream, z_stream) returns int32 is native($lib) is export 
 our sub inflateReset(z_stream) returns int32 is native($lib) is export { * }
 our sub inflateReset2(z_stream, int32) returns int32 is native($lib) is export { * }
 our sub inflatePrime(z_stream, int32, int32) returns int32 is native($lib) is export { * }
-our sub inflateMark(z_stream) returns int is native($lib) is export { * }
+our sub inflateMark(z_stream) returns long is native($lib) is export { * }
 our sub inflateGetHeader(z_stream, gz_header) returns int32 is native($lib) is export { * }
 our sub inflateBackInit(z_stream, int32, CArray[int8]) returns int32 is native($lib) is export { * }
 our sub inflateBack(z_stream, Callable, OpaquePointer, Callable, OpaquePointer) returns int32 is native($lib) is export { * }
 our sub inflateBackEnd(z_stream) returns int32 is native($lib) is export { * }
 
-our sub zlibCompileFlags() returns int is native($lib) is export { * }
+our sub zlibCompileFlags() returns long is native($lib) is export { * }
 
 # utility functions
 
 #second argument is actually long*, but I don't know how to do a pointer to a long
 our sub compress(Blob, CArray[int], Blob, int) returns int32 is native($lib) is export { * }
 our sub compress2(Blob, CArray[int], Blob, int, int32) returns int32 is native($lib) is export { * }
-our sub compressBound(int) returns int is native($lib) is export { * }
+our sub compressBound(int) returns long is native($lib) is export { * }
 
 #second argument: see note above
 our sub uncompress(Blob, CArray[int], Blob, int) returns int32 is native($lib) is export { * }
@@ -232,10 +234,10 @@ our sub gzclearerr(gzFile) is native($lib) is export { * }
 
 # checksum functions
 #
-our sub adler32(int, CArray[int8], int32) returns int is native($lib) is export { * }
-our sub adler32_combine(int, int, int32) returns int is native($lib) is export { * }
-our sub crc32(int, CArray[int8], int32) returns int is native($lib) is export { * }
-our sub crc32_combine(int, int, int32) returns int is native($lib) is export { * }
+our sub adler32(int, CArray[int8], int32) returns long is native($lib) is export { * }
+our sub adler32_combine(int, int, int32) returns long is native($lib) is export { * }
+our sub crc32(int, CArray[int8], int32) returns long is native($lib) is export { * }
+our sub crc32_combine(int, int, int32) returns long is native($lib) is export { * }
 
 # undocumented functions
 #
