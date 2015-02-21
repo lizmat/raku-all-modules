@@ -4,16 +4,17 @@
 =begin code
     use Sum::GOST;
 
-    class mySum does Sum::GOST[:sbox(CryptoPro)] does Sum::Marshal::Raw { }
+    class mySum does Sum::GOST[:sbox<CryptoPro>] does Sum::Marshal::Raw { }
     my mySum $a .= new();
-    $a.finalize("abc".encode('ascii')).base(16).say;
-       #
+    $a.finalize("abc".encode('ascii')).fmt.say;
+       # b285056dbf18d7392d7677369524dd14747459ed8143997e163b2986f92fd42c
 
     # use default "test parameters" S-box
     class mySum1 does Sum::GOST does Sum::Marshal::Raw { }
     my mySum1 $b .= new();
-    $b.finalize("abc".encode('ascii')).base(16).say;
-       #
+    $b.finalize("message digest".encode('ascii')).fmt.say;
+       # ad4434ecb18f2c99b60cbe59ec3d2469582b65273f48de72db2fde16a4889a4d
+
 =end code
 =end SYNOPSIS
 
@@ -22,8 +23,7 @@
 # will become more maintainable.  In the meantime, if you edit anything
 # above, take care to adjust the sections here.
 
-# Disabling this for now until compunits properly serialize pod
-#$Sum::GOST::Doc::synopsis = $=pod[0].content[3..6]>>.content.Str;
+$Sum::GOST::Doc::synopsis = $=pod[1].contents[0].contents.Str;
 
 =begin DESCRIPTION
     Using C<Sum::GOST> defines roles for generating types of C<Sum> that
@@ -74,12 +74,12 @@ use Sum::Recourse;
 role Sum::GOST[ :$sbox where { $_ eq "test parameters" }
                   = "test parameters",
                 :$recourse where { $_ == True }
-                  = True ] does Sum::Recourse[:recourse[:librhash<GOST>]] { }  # add libmhash<GOST>, with tests, if it ever starts working.
+                  = True ] does Sum does Sum::Recourse[:recourse[:librhash<GOST>]] { }  # add libmhash<GOST>, with tests, if it ever starts working.
 
 role Sum::GOST[ :$sbox where { $_ eq "CryptoPro" }
                   = "test parameters",
                 :$recourse where { $_ == True }
-                  = True ] does Sum::Recourse[:recourse[:librhash<GOST-CRYPTOPRO>]] { }
+                  = True ] does Sum does Sum::Recourse[:recourse[:librhash<GOST-CRYPTOPRO>]] { }
 
 =AUTHOR Brian S. Julin
 

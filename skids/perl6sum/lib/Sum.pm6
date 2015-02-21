@@ -58,6 +58,7 @@ class X::Sum::Recourse is Exception {
             self;
         }
         method Numeric () { self.finalize; $.accum; };
+        method Int () { self.Numeric };
         method add (*@addends) {
             $.accum += [+] @addends;
         };
@@ -90,9 +91,7 @@ class X::Sum::Recourse is Exception {
 # run the code in the synopsis.  When pod is more functional maybe this
 # will become more maintainable.  In the meantime, if you edit anything
 # above, take care to adjust the sections here.
-
-# Disabling this for now until .pir files properly serialize pod
-#$Sum::Doc::synopsis = $=pod[0].content[4..8]>>.content.Str;
+$Sum::Doc::synopsis = $=pod[1].contents[0].contents.Str;
 
 =begin DESCRIPTION
     This set of modules defines roles and classes for calculating checksums,

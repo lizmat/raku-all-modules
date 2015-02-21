@@ -8,7 +8,7 @@ use Sum::librhash;
 
 my $abort;
 if ($Sum::librhash::up) {
-   plan 26;
+   plan 27;
 }
 else {
    plan 3;
@@ -64,3 +64,14 @@ lives_ok { $res  = $b.finalize(buf8.new(97 xx 56)) }, "finalize also pushes";
 is +$res, 0x63642b027ee89938c922722650f2eb9b, "MD5 is correct (test vector 2).";
 is (+Sum::librhash::Sum.new("MD5").finalize()), 0xd41d8cd98f00b204e9800998ecf8427e, "wrapper class works with no addend ever pushed";
 is (+Sum::librhash::Sum.new("MD5").finalize(buf8.new())), 0xd41d8cd98f00b204e9800998ecf8427e, "wrapper class works with just empty buffer finalized";
+
+class sayer {
+    has $.accum is rw = "";
+    method print (*@s) { $.accum ~= [~] @s }
+}
+my sayer $p .= new();
+# Rakudo-p currently does not serialize $=pod in PIR compunits so skip this.
+if ($*VM.name ne 'parrot') {
+{ temp $*OUT = $p; EVAL $Sum::librhash::Doc::synopsis; }
+is $p.accum, $Sum::librhash::Doc::synopsis.comb(/<.after \x23\s> (<.ws> <.xdigit>+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';
+}

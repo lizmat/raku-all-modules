@@ -18,8 +18,7 @@ use Sum;
 # will become more maintainable.  In the meantime, if you edit anything
 # above, take care to adjust the sections here.
 
-# Disabling this for now until .pir files properly serialize pod
-#$Sum::Adler::Doc::synopsis = $=pod[0].content[4].content.Str;
+$Sum::Adler::Doc::synopsis = $=pod[1].contents[0].contents.Str;
 
 =begin DESCRIPTION
     Using C<Sum::Adler> defines roles for generating types of C<Sum>

@@ -3,6 +3,75 @@ perl6sum
 
 Sum:: Perl 6 modules implementing checksums, hashes, etc.
 
+## Purpose
+
+This suite of modules intends to become a thorough, idiomatic Perl 6
+interface to checksum and digest algorithms, for both academic use
+and for production applications.  It supports both efficient
+external libraries, and pure Perl 6 implementations of algorithms.
+
+Currently, for production use, it is recommended only to use
+the modules with external libraries implementing desired algorithms.
+At this time, the libraries supported are libcrypto, librhash,
+and libmhash.  These libraries are not strictly dependencies,
+as runtime fallback code will use pure Perl 6 implementations when the
+libraries are not present.  So, projects using these modules
+in production should take care to add dependencies appropriate
+to the use case.  The default behavior will always be to use
+the fastest available option and fall back in the order of
+decreasing performance, to the extent that there has been time to
+compare the options.
+
+The pure Perl 6 implementations are currently, intentionally,
+not optimized.  Some implementations are written in a way that
+makes them easy to audit from the formal specification of the
+algorithm.  Others have been written to intentionally use,
+and sometimes over-use, certain features of Perl 6 or certain
+programming styles.  They are kept this way as fodder for
+optimization work on the Perl 6 core, until such a time as
+having fast pure Perl 6 implementations is both possible and
+needed by someone.
+
+For example, the MD5 implementation currently runs 10 times
+slower than the more basic, less fully featured, implementation
+in the official ecosystem's "Digest::MD5" perl5-workalike module,
+even though that module itself has probably not been very extensively
+tweaked to avoid rakudo's current slow paths.
+
+The pure Perl 6 implementations also try to implement features
+useful for academic/cryptanalysis purposes, by supporting messages
+that do not pack into bits, supporting variations of algorithms
+that are obselete or have never seen real-world applications,
+and supporting tuning of internal parameters or easy modification
+of the code through subclassing.
+
+## Idioms
+
+A few useful idioms should be pointed out.  The first is that,
+although prefabricated classes will eventually be provided, all
+the functionality is available in role form, and as such may
+be mixed into classes that might want to provide automatic
+checksums:
+
+    class myStream does Sum::SHA1 does Sum::Marshal::Raw {
+        ...
+        method rx {
+            my $received_data;
+            ...
+            self.push($received_data);
+        }
+    }
+
+Another is that the objects may be used as a "tap" on a feed,
+creating a checksum of all the values passed through that
+feed without interfering with the feed result:
+
+    @pbytes <== $mySHA1 <== $myMD5 <== generate_packet();
+    ...
+    $packet = blob8.new[@pbytes,
+                        $mySHA1.finalize.Buf.values,
+                        net_endian(+@pbytes)]
+
 ## 5to6
 
 There are a few key differences between the way one uses
@@ -18,7 +87,7 @@ objects from Sum:: versus the Perl 5 Digest:: interface.
    more addends cannot be pushed to the digest.  This also
    brings Perl 6 in line with the prevalent vernacular.
 
-3) While it is possible to build a Sum class that will
+3) While it is possible (and easy) to build a Sum class that will
    take strings as arguments to .push, it is more advisable
    to keep decisions about encoding visible at the point
    of use.  Consider this behavior of Perl 5 Digest:: when
@@ -32,13 +101,13 @@ objects from Sum:: versus the Perl 5 Digest:: interface.
       say sha1_base64(            'here is a french brace »')";
       # 5hoNlI0QihTToOzKPc8pdMwEhWM
 
-   However, you MUST use encode_utf8 if you handle any characters
-   with ordinals above 255.  There is too much opportunity for
-   problems where parts of a message are pushed at different
-   locations in the code.
+   However, in Perl 5 you MUST use encode_utf8 if you handle any
+   characters with ordinals above 255.  There is too much opportunity
+   for mixed encoding problems to happen when parts of a message are
+   pushed at different locations in the code.
 
    By not accepting plain strings, users must consciously
-   choose an encoding and helps them avoid accidentally mixing
+   choose an encoding and that helps them avoid accidentally mixing
    encodings.
 
    Fortunately, encoding is a built-in capability of Perl 6:
@@ -70,7 +139,12 @@ objects from Sum:: versus the Perl 5 Digest:: interface.
       # assuming $md has a Sum in it, or was constrained when defined.
       $md .= new;
 
-6) There is .clone in Perl 6 on just about everything,
+   If you are concerned about tying up crypto resources, the
+   only thing to worry about is to ensure you finalize the object
+   before discarding it.  The backends should be smart enough to
+   free up resources promptly upon finalization.
+
+6) Just about everything in perl 6 has a .clone method,
    including Sum objects.  However, not all back-ends
    can clone their instances.  Using a class that does
    Sum::Partial is one way to guarantee that only backends

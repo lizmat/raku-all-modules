@@ -6,21 +6,19 @@
 
     class mySHA1 does Sum::SHA1 does Sum::Marshal::Raw { }
     my mySHA1 $a .= new();
-    $a.finalize("123456789".encode('ascii')).Int.say;
-       # 1414485752856024225500297739715962456813268251713
+    $a.finalize("0123456789".encode('ascii')).fmt.say;
+       # 87acec17cd9dcd20a716cc2cf67417b71c8a7016
 
     # SHA-224
     class mySHA2 does Sum::SHA2[:columns(224)] does Sum::Marshal::Raw { }
     my mySHA2 $b .= new();
-    $b.finalize("123456789".encode('ascii')).Int.say;
-       # 16349067602210014067037177823623301242625642097093531536712287864097
+    $b.finalize("0123456789".encode('ascii')).fmt.say;
+       # f28ad8ecd48ba6f914c114821685ad08f0d6103649ff156599a90426
 
     # When dealing with obselete systems that use SHA0
     class mySHA0 does Sum::SHA1[:insecure_sha0_obselete]
         does Sum::Marshal::Raw { }
-    my mySHA0 $c .= new();
-    $c.finalize("123456789".encode('ascii')).Int.say;
-       # 1371362676478658660830737973868471486175721482632
+
 =end code
 =end SYNOPSIS
 
@@ -29,8 +27,7 @@
 # will become more maintainable.  In the meantime, if you edit anything
 # above, take care to adjust the sections here.
 
-# Disabling this for now until .pir files properly serialize pod
-#$Sum::SHA::Doc::synopsis = $=pod[0].content[3..6]>>.content.Str;
+$Sum::SHA::Doc::synopsis = $=pod[1].contents[0].contents.Str;
 
 =begin DESCRIPTION
 
@@ -185,10 +182,10 @@ my class PureSHA1 does Sum::SHA1[ :!recourse ] does Sum::Recourse::Marshal { }
 
 role Sum::SHA1 [ :$recourse where { so $_ }
                                            = True, :$insecure_sha0_obselete where { so $_ }
-              = False ] does Sum::Recourse[:recourse(:libcrypto<sha> :Perl6(PureSHA0))] { }
+              = False ] does Sum does Sum::Recourse[:recourse(:libcrypto<sha> :Perl6(PureSHA0))] { }
 
 role Sum::SHA1 [ :$recourse where { so $_ }
-                                            = True ] does Sum::Recourse[:recourse(:libcrypto<sha1> :librhash<SHA1> :libmhash<SHA1> :Perl6(PureSHA1))] { }
+                                            = True ] does Sum does Sum::Recourse[:recourse(:libcrypto<sha1> :librhash<SHA1> :libmhash<SHA1> :Perl6(PureSHA1))] { }
 
 =begin pod
 
@@ -513,13 +510,13 @@ my class PureSHA384 does Sum::SHA384[:!recourse] does Sum::Recourse::Marshal { }
 my class PureSHA512 does Sum::SHA512[:!recourse] does Sum::Recourse::Marshal { }
 
 role Sum::SHA224[:$recourse where { so $_ }
-                                            = True] does Sum::Recourse[:recourse(:libcrypto<sha224> :librhash<SHA-224> :libmhash<SHA224> :Perl6(PureSHA224))] { }
+                                            = True] does Sum does Sum::Recourse[:recourse(:libcrypto<sha224> :librhash<SHA-224> :libmhash<SHA224> :Perl6(PureSHA224))] { }
 role Sum::SHA256[:$recourse where { so $_ }
-                                            = True] does Sum::Recourse[:recourse(:libcrypto<sha256> :librhash<SHA-256> :libmhash<SHA256> :Perl6(PureSHA256))] { }
+                                            = True] does Sum does Sum::Recourse[:recourse(:libcrypto<sha256> :librhash<SHA-256> :libmhash<SHA256> :Perl6(PureSHA256))] { }
 role Sum::SHA384[:$recourse where { so $_ }
-                                            = True] does Sum::Recourse[:recourse(:libcrypto<sha384> :librhash<SHA-384> :libmhash<SHA384> :Perl6(PureSHA384))] { }
+                                            = True] does Sum does Sum::Recourse[:recourse(:libcrypto<sha384> :librhash<SHA-384> :libmhash<SHA384> :Perl6(PureSHA384))] { }
 role Sum::SHA512[:$recourse where { so $_ }
-                                            = True] does Sum::Recourse[:recourse(:libcrypto<sha512> :librhash<SHA-512> :libmhash<SHA512> :Perl6(PureSHA512))] { }
+                                            = True] does Sum does Sum::Recourse[:recourse(:libcrypto<sha512> :librhash<SHA-512> :libmhash<SHA512> :Perl6(PureSHA512))] { }
 
 
 role Sum::SHA2[ :$recourse where {not $_}
@@ -569,10 +566,10 @@ role Sum::SHA2[ :$recourse where {so $_}
 
 =end pod
 
-#role Sum::SHA3_224[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:librhash<SHA3-224>]] { }
-#role Sum::SHA3_256[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:librhash<SHA3-256>]] { }
-#role Sum::SHA3_384[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:librhash<SHA3-384>]] { }
-#role Sum::SHA3_512[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:librhash<SHA3-512>]] { }
+#role Sum::SHA3_224[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse[:librhash<SHA3-224>]] { }
+#role Sum::SHA3_256[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse[:librhash<SHA3-256>]] { }
+#role Sum::SHA3_384[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse[:librhash<SHA3-384>]] { }
+#role Sum::SHA3_512[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse[:librhash<SHA3-512>]] { }
 
 #role Sum::SHA3[ :$columns where 224, :$recourse where { $_ == True } = True ] does Sum::SHA3_224 { }
 #role Sum::SHA3[ :$columns where 256, :$recourse where { $_ == True } = True ] does Sum::SHA3_256 { }

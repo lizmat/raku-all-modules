@@ -3,7 +3,7 @@ use lib	'./lib';
 
 use Test;
 
-plan 74;
+plan 75;
 
 use Sum;
 use Sum::libcrypto;
@@ -284,6 +284,6 @@ class sayer {
     method print (*@s) { $.accum ~= [~] @s }
 }
 my sayer $p .= new();
-#{ temp $*OUT = $p; EVAL $Sum::MD::Doc::synopsis; }
-#is $p.accum, $Sum::MD::Doc::synopsis.comb(/<.after \#\s> (<.ws> <.xdigit>+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';
+{ temp $*OUT = $p; EVAL $Sum::MD::Doc::synopsis; }
+is $p.accum, $Sum::MD::Doc::synopsis.comb(/<.after \x23\s> (<.ws> <.xdigit>+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';
 

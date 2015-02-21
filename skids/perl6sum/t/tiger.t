@@ -9,7 +9,7 @@ use Test;
 
 my $testvecs = 16; # useful values are 1..512
 
-my $ntests = 88 + $testvecs * 9;
+my $ntests = 89 + $testvecs * 9;
 $ntests -= max(40, ($testvecs - 439) * 4) if $testvecs > 439;
 plan $ntests;
 
@@ -1711,8 +1711,8 @@ class sayer {
     method print (*@s) { $.accum ~= [~] @s }
 }
 my sayer $p .= new();
-#{ temp $*OUT = $p; eval $Sum::MD::Doc::synopsis; }
-#is $p.accum, $Sum::MD::Doc::synopsis.comb(/<.after \#\s> (<.ws> <.xdigit>+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';
+{ temp $*OUT = $p; EVAL $Sum::Tiger::Doc::synopsis; }
+is $p.accum, $Sum::Tiger::Doc::synopsis.comb(/<.after \x23\s> (<.ws> <.xdigit>+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';
 
 my @t2set2 = «
 4441BE75F6018773C206C22745374B924AA8313FEF919F41

@@ -19,10 +19,6 @@ module X::libmhash {
   # TODO: X::Sum::Final used below when not adding, fix those.
 }
 
-module Sum::libmhash {
-
-use Sum;
-
 =NAME Sum::libmhash - Raw Perl 6 bindings to libmhash
 
 =begin SYNOPSIS
@@ -31,29 +27,38 @@ use Sum;
     use Sum::libmhash;
 
     # Rawest interface, works directly with NativeCall objects:
-    say "Largest libmhash algo ID is $Sum::libmhash::count";
-    say "ID\tNAME\tBLOCK SIZE\tRESULT SIZE";
+    note "Algorithms supported by libmhash on this machine:";
+    note <ID NAME PBLOCK-SIZE BLOCK-SIZE(result)>.fmt("%18.18s"," ");
     for %Sum::libmhash::Algos.pairs.sort -> $p ( :$key, :value($v) ) {
-        say "{$v.id}\t{$v.name}\t{$v.pblock_size}\t{$v.block_size}";
+        note ($v.id,$v.name,$v.pblock_size,$v.block_size).fmt("%18.18s"," ");
     }
 
     my $md5 := Sum::libmhash::Instance.new("MD5");
     $md5.add(buf8.new(0x30..0x39));
     :256[$md5.finalize().values].base(16).say;
-    ### 781E5E245D69B566979B86E28D23F2C7
+    # 781E5E245D69B566979B86E28D23F2C7
 
     # Slightly less raw interface:
     my $sha1 = Sum::libmhash::Sum.new("SHA1");
     $sha1.push(buf8.new(0x30..0x35));
     $sha1.pos.say; # 48
     $sha1.finalize(buf8.new(0x36..0x39)).Int.base(16).say;
-    ### 87ACEC17CD9DCD20A716CC2CF67417B71C8A7016
+    # 87ACEC17CD9DCD20A716CC2CF67417B71C8A7016
     $sha1.size.say; # 160
     $sha1.Buf[].fmt("%x").say;
-    ### 87 ac ec 17 cd 9d cd 20 a7 16 cc 2c f6 74 17 b7 1c 8a 70 1
+    # 87 ac ec 17 cd 9d cd 20 a7 16 cc 2c f6 74 17 b7 1c 8a 70 16
 
 =end code
 =end SYNOPSIS
+
+# TODO: figure out how to attach this to a WHY which is accessible
+# (or figure out how to get to another module's $=pod)
+
+$Sum::libmhash::Doc::synopsis = $=pod[1].contents[0].contents.Str;
+
+module Sum::libmhash {
+
+use Sum;
 
 =begin DESCRIPTION
 

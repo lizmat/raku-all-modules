@@ -6,8 +6,8 @@
 
     class myMD5 does Sum::MD5 does Sum::Marshal::Raw { }
     my myMD5 $a .= new();
-    $a.finalize("123456789".encode('ascii')).Int.say;
-        # 50479014739749459024317001064922631435
+    $a.finalize("0123456789".encode('ascii')).fmt.say;
+        # 781e5e245d69b566979b86e28d23f2c7
 
     # Usage is basically the same for MD4, MD4ext, RIPEMD128,
     # RIPEMD160, RIPEMD256 and RIPEMD320.
@@ -19,8 +19,7 @@
 # will become more maintainable.  In the meantime, if you edit anything
 # above, take care to adjust the sections here.
 
-# Disabling this for now until .pir files properly serialize pod
-#$Sum::MD::Doc::synopsis = $=pod[0].content[3..4]>>.content.Str;
+$Sum::MD::Doc::synopsis = $=pod[1].contents[0].contents.Str;
 
 =begin DESCRIPTION
     Using C<Sum::MD> defines roles for generating types of C<Sum> that
@@ -490,13 +489,13 @@ role Sum::MD4ext[ :$recourse where { $_ == False } = True ] does Sum::MD4_5[ :al
     method recourse (--> Str) { "Perl6" }
 }
 my class PureMD4ext does Sum::MD4ext[:!recourse] does Sum::Recourse::Marshal { }
-role Sum::MD4ext[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:Perl6(PureMD4ext)]] { }
+role Sum::MD4ext[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse[:Perl6(PureMD4ext)]] { }
 
 role Sum::MD5[ :$recourse where { $_ == False } = True ] does Sum::MD4_5[ :alg<MD5> ] {
     method recourse (--> Str) { "Perl6" }
 }
 my class PureMD5 does Sum::MD5[:!recourse] does Sum::Recourse::Marshal { }
-role Sum::MD5[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse(:libcrypto<md5> :librhash<MD5> :libmhash<MD5> :Perl6(PureMD5))] { }
+role Sum::MD5[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse(:libcrypto<md5> :librhash<MD5> :libmhash<MD5> :Perl6(PureMD5))] { }
 
 role Sum::RIPEMD128[ :$recourse where { $_ == False } = True ] does Sum::MD4_5[ :alg<RIPEMD-128> ] {
     method recourse (--> Str) { "Perl6" }
@@ -504,25 +503,25 @@ role Sum::RIPEMD128[ :$recourse where { $_ == False } = True ] does Sum::MD4_5[ 
 my class PureRIPEMD128 does Sum::RIPEMD128[:!recourse] does Sum::Recourse::Marshal { }
 # TODO: This might just be a truncation; have to look and see if we can make
 # a fixup role/parameter to allow recourses.
-role Sum::RIPEMD128[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:Perl6(PureRIPEMD128)]] { }
+role Sum::RIPEMD128[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse[:Perl6(PureRIPEMD128)]] { }
 
 role Sum::RIPEMD160[ :$recourse where { $_ == False } = True ] does Sum::MD4_5[ :alg<RIPEMD-160> ] {
     method recourse (--> Str) { "Perl6" }
 }
 my class PureRIPEMD160 does Sum::RIPEMD160[:!recourse] does Sum::Recourse::Marshal { }
-role Sum::RIPEMD160[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse(:libcrypto<ripemd160> :librhash<RIPEMD-160> :libmhash<RIPEMD160> :Perl6(PureRIPEMD160))] { }
+role Sum::RIPEMD160[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse(:libcrypto<ripemd160> :librhash<RIPEMD-160> :libmhash<RIPEMD160> :Perl6(PureRIPEMD160))] { }
 
 role Sum::RIPEMD256[ :$recourse where { $_ == False } = True ] does Sum::MD4_5[ :alg<RIPEMD-256> ] {
     method recourse (--> Str) { "Perl6" }
 }
 my class PureRIPEMD256 does Sum::RIPEMD256[:!recourse] does Sum::Recourse::Marshal { }
-role Sum::RIPEMD256[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:Perl6(PureRIPEMD256)]] { }
+role Sum::RIPEMD256[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse[:Perl6(PureRIPEMD256)]] { }
 
 role Sum::RIPEMD320[ :$recourse where { $_ == False } = True ] does Sum::MD4_5[ :alg<RIPEMD-320> ] {
     method recourse (--> Str) { "Perl6" }
 }
 my class PureRIPEMD320 does Sum::RIPEMD320[:!recourse] does Sum::Recourse::Marshal { }
-role Sum::RIPEMD320[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:Perl6(PureRIPEMD320)]] { }
+role Sum::RIPEMD320[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse[:Perl6(PureRIPEMD320)]] { }
 
 =begin pod
 

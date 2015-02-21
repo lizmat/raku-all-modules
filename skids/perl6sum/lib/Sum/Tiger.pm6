@@ -6,14 +6,15 @@
 
     class mySum does Sum::Tiger2 does Sum::Marshal::Raw { }
     my mySum $a .= new();
-    $a.finalize("abc".encode('ascii')).Int.base(16).say;
-       # 2AAB1484E8C158F2BFB8C5FF41B57A525129131C957B5F93
+    $a.finalize("abc".encode('ascii')).base(16).say;
+       # F68D7BC5AF4B43A06E048D7829560D4A9415658BB0B1F3BF
 
     # use old Tiger-1 padding
     class mySum1 does Sum::Tiger1 does Sum::Marshal::Raw { }
     my mySum1 $b .= new();
-    $b.finalize("abc".encode('ascii')).Int.base(16).say;
-       # F68D7BC5AF4B43A06E048D7829560D4A9415658BB0B1F3BF
+    $b.finalize("abc".encode('ascii')).base(16).say;
+       # 2AAB1484E8C158F2BFB8C5FF41B57A525129131C957B5F93
+
 =end code
 =end SYNOPSIS
 
@@ -22,8 +23,7 @@
 # will become more maintainable.  In the meantime, if you edit anything
 # above, take care to adjust the sections here.
 
-# Disabling this for now until compunits properly serialize pod
-#$Sum::SHA::Doc::synopsis = $=pod[0].content[3..6]>>.content.Str;
+$Sum::Tiger::Doc::synopsis = $=pod[1].contents[0].contents.Str;
 
 =begin DESCRIPTION
     Using C<Sum::Tiger> defines roles for generating types of C<Sum> that
@@ -494,7 +494,7 @@ my class PureTiger1 does Sum::Tiger1[:!recourse] does Sum::Recourse::Marshal { }
 
 # rhash's idea of "Tiger" is Tiger1.  mhash's is just plain broken AFAICT.
 
-role Sum::Tiger1[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse(:librhash<TIGER> :Perl6(PureTiger1))] { }
+role Sum::Tiger1[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse(:librhash<TIGER> :Perl6(PureTiger1))] { }
 
 # We have no working C drivers for Tiger2 yet but in case we have we get some
 # we go through the motions
@@ -505,7 +505,7 @@ role Sum::Tiger2[ :$recourse where { $_ == False } = True ] does Sum::Tiger does
 
 my class PureTiger2 does Sum::Tiger2[:!recourse] does Sum::Recourse::Marshal { }
 
-role Sum::Tiger2[ :$recourse where { $_ == True } = True ] does Sum::Recourse[:recourse[:Perl6(PureTiger2)]] { }
+role Sum::Tiger2[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse[:Perl6(PureTiger2)]] { }
 
 =begin NOTES
 

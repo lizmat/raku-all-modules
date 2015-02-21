@@ -18,10 +18,6 @@ module X::libcrypto {
   # TODO: X::Sum::Final used below when not adding, fix those.
 }
 
-module Sum::libcrypto {
-
-use Sum;
-
 =NAME Sum::libcrypto - Raw Perl 6 bindings to OpenSSL libcrypto digest API
 
 =begin SYNOPSIS
@@ -30,27 +26,38 @@ use Sum;
     use Sum::libcrypto;
 
     # Rawest interface, works directly with NativeCall objects:
-    say "NAME\tNID\tBLOCK SIZE\tRESULT SIZE";
+    note "Algorithms supported by libcrypto on this system:";
+    note <NAME NID BLOCK-SIZE SIZE>.fmt("%18.18s"," ");
     for %Sum::libcrypto::Algos.pairs.sort -> $p ( :$key, :value($v) ) {
-        say "{$v.name}\t{$v.nid}\t{$v.block_size}\t{$v.size}";
+        note ($v.name,$v.nid,$v.block_size,$v.size).fmt("%18.18s"," ");
     }
 
     my $md5 := Sum::libcrypto::Instance.new("md5");
     $md5.add(blob8.new(0x30..0x39));
     :256[$md5.finalize().values].base(16).say;
-    ### 781E5E245D69B566979B86E28D23F2C7
+    # 781E5E245D69B566979B86E28D23F2C7
 
     # Slightly less raw interface:
     my $sha1 = Sum::libcrypto::Sum.new("sha1");
     $sha1.push(blob8.new(0x30..0x35));
     $sha1.pos.say;  # 48
     $sha1.finalize(blob8.new(0x36..0x39)).Int.base(16).say;
-    ### 87ACEC17CD9DCD20A716CC2CF67417B71C8A7016
-    $sha1.size.say; # 384
-    $sha1.Buf.say;  # 20
+    # 87ACEC17CD9DCD20A716CC2CF67417B71C8A7016
+    $sha1.size.say; # 160
+    $sha1.Buf[].fmt("%x").say;
+    # 87 ac ec 17 cd 9d cd 20 a7 16 cc 2c f6 74 17 b7 1c 8a 70 16
 
 =end code
 =end SYNOPSIS
+
+# TODO: figure out how to attach this to a WHY which is accessible
+# (or figure out how to get to another module's $=pod)
+
+$Sum::libcrypto::Doc::synopsis = $=pod[1].contents[0].contents.Str;
+
+module Sum::libcrypto {
+
+use Sum;
 
 =begin DESCRIPTION
 

@@ -3,7 +3,7 @@ use lib	'./lib';
 
 use Test;
 
-plan 79;
+plan 80;
 
 use Sum;
 ok(1,'We use Sum and we are still alive');
@@ -292,5 +292,5 @@ class sayer {
     method print (*@s) { $.accum ~= [~] @s }
 }
 my sayer $s .= new();
-#{ temp $*OUT = $s; EVAL $Sum::Doc::synopsis; }
-#is $s.accum, $Sum::Doc::synopsis.comb(/<.after \#\s> (<.ws> \d+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';
+{ temp $*OUT = $s; EVAL $Sum::Doc::synopsis; }
+is $s.accum, $Sum::Doc::synopsis.comb(/<.after \x23\s> (<.ws> \d+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';

@@ -27,7 +27,7 @@ unless $Sum::librhash::up {
 unless $Sum::libmhash::up {
     $m_or_p = "Perl6";
 }
-plan 123;
+plan 124;
 
 ok 1,'We use Sum::SHA and we are still alive';
 
@@ -261,5 +261,5 @@ class sayer {
     method print (*@s) { $.accum ~= [~] @s }
 }
 my sayer $p .= new();
-#{ temp $*OUT = $p; EVAL $Sum::SHA::Doc::synopsis; }
-#is $p.accum, $Sum::SHA::Doc::synopsis.comb(/<.after \#\s> (<.ws> <.xdigit>+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';
+{ temp $*OUT = $p; EVAL $Sum::SHA::Doc::synopsis; }
+is $p.accum, $Sum::SHA::Doc::synopsis.comb(/<.after \x23\s> (<.ws> <.xdigit>+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';

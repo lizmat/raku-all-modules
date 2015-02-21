@@ -10,7 +10,7 @@ use Sum::libmhash;
 use Sum::librhash;
 
 if $Sum::librhash::up {
-   plan 26;
+   plan 27;
 }
 # mhash GOST implementation is broken.  Kept for if it is ever fixed.
 #elsif $Sum::libmhash::up {
@@ -19,7 +19,6 @@ if $Sum::librhash::up {
 #}
 else {
    plan 2;
-   diag "No libmhash or librhash working, skipping most tests.";
 }
 
 ok 1,'We use Sum::GOST and we are still alive';
@@ -27,7 +26,10 @@ ok 1,'We use Sum::GOST and we are still alive';
 # With no pure Perl6 implementation, this should die
 eval_dies_ok "class G1p does Sum::GOST[:!recourse] does Sum::Marshal::Raw { }", "Attempt to use nonexistant pure-Perl6 code dies.";
 
-exit unless $Sum::librhash::up; # or $Sum::libmhash::up;
+unless $Sum::librhash::up {  # or $Sum::libmhash::up;
+   diag "No libmhash or librhash working, skipping most tests.";
+   exit
+}
 
 my $recourse = "librhash";
 #$recourse = "libmhash" unless $Sum::librhash::up;
@@ -66,3 +68,16 @@ is G2.new.finalize(("a" x 1000000).encode("ascii")).Int.base(16).lc, "8693287aa6
 is G2.new.finalize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".encode("ascii")).Int.base(16).lc, "73b70a39497de53a6e08c67b6d4db853540f03e9389299d9b0156ef7e85d0f61", "GOST with CryptoPro sbox, wikipedia test vector #11";
 is G2.new.finalize(("12345678901234567890123456789012345678901234567890123456789012345678901234567890").encode("ascii")).Int.base(16).lc, "6bc7b38989b28cf93ae8842bf9d752905910a7528a61e5bce0782de43e610c90", "GOST with CryptoPro sbox, wikipedia test vector #12";
 
+# Now grab the code in the synopsis from the POD and make sure it runs.
+# This is currently complete hackery but might improve when pod support does.
+# And also an outputs_ok Test.pm function that redirects $*OUT might be nice.
+class sayer {
+    has $.accum is rw = "";
+    method print (*@s) { $.accum ~= [~] @s }
+}
+my sayer $p .= new();
+# Rakudo-p currently does not serialize $=pod in PIR compunits so skip this.
+if ($*VM.name ne 'parrot') {
+{ temp $*OUT = $p; EVAL $Sum::GOST::Doc::synopsis; }
+is $p.accum, $Sum::GOST::Doc::synopsis.comb(/<.after \x23\s> (<.ws> <.xdigit>+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';
+}
