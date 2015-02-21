@@ -2,7 +2,7 @@
     "name" : "Foo",
     "version" : "1.0.0",
     "author" : "github:FROGGS",
-    "description" : "Test for installation same named dists simultaneously",
+    "description" : "Test for installation of same named dists",
     "depends" : [],
     "provides" : {
         "Foo" : "lib/Foo.pm"
