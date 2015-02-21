@@ -3,7 +3,7 @@
     "version" : "1.0.0",
     "author" : "github:retupmoca",
     "description" : "Nicer zlib interface",
-    "depends" : ["NativeCall", "Compress::Zlib::Raw"],
+    "depends" : ["Compress::Zlib::Raw"],
     "provides" : {
         "Compress::Zlib" : "lib/Compress/Zlib.pm6"
     },
