@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FROGGS/p6-Foo-v1.2.0.git
 	branch = master
-	commit = 07a2b74759018f0015b6706e0fb4eeef1ce38e91
-	parent = 5acbe7508c0ee5753017c42b8ae1e074646dec05
+	commit = 920e022b7fdeace0b8c8b64d79742c2119b6d912
+	parent = 40cfc789f3359a3a9243550d0012f125f1b39499
 	cmdver = 0.2.0
