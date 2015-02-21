@@ -3,6 +3,6 @@
     "version" : "*",
     "author" : "Arne Skjærholt",
     "description" : "ZeroMQ bindings for Perl6",
-    "depends" : ["NativeCall"],
+    "depends" : [],
     "source-url" : "git://github.com/arnsholt/Net-ZMQ.git"
 }
