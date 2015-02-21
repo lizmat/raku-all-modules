@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/Math-Odd-Functions.git
 	branch = master
-	commit = d0d87124f1ded0610f7badb653bd22cdbca7100d
-	parent = 8a817dae803eba5059ac391bd9febeee72cbbab9
-	cmdver = 0.1.0
+	commit = f40ea7d5a4e6735e7cb5167a21699cc2dc3d04da
+	parent = ab1854ed31ba94c768ed9ea75c902b9f9193f418
+	cmdver = 0.2.0

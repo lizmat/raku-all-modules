@@ -2,7 +2,7 @@
     "name"        : "Math::OddFunctions",
     "version"     : "*",
     "description" : "Standard math function odds and ends",
-    "depends"     : ["NativeCall"],
+    "depends"     : [],
     "source-type"   : "git",
     "source-url"    : "git://github.com/colomon/Math-Odd-Functions.git"
 }
