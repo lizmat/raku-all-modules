@@ -161,7 +161,7 @@ my Hash $samples = {
                        0x0F,                            # javascript
                        0x74, 0x00,                      # 't' + 0
                        
-                       0x27, 0x00, 0x00, 0x00,          # 39 bytes size js + doc
+                       0x2B, 0x00, 0x00, 0x00,          # 39 bytes size js + doc + 4
                        
                        0x17, 0x00, 0x00, 0x00,          # 23 bytes js code + 1
                        0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x28,

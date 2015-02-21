@@ -102,6 +102,8 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.8.3 - Bugfix test on empty javascript objects
+* 0.8.2 - Bugfix Javascript type wrong size for javascript and scope 
 * 0.8.1 - Bugfix Javascripting
 * 0.8.0 - Added BSON::Javascript with or without scope
 * 0.7.0 - Added BSON::Regex type
