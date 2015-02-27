@@ -6,7 +6,7 @@ Just copy the .travis.yml file from this repo to yours and turn on testing for t
 
 ### DESCRIPTION
 
-Runs travis-ci tests using all 3 backends using the most current Rakudo built from source. Rakudo Star is not used for continuous testing purposes as Rakudo changes far too often, and you would end up testing against month old changes. It will also submit test reports for your module to testers.perl6.org, and failures from modules that show up Rakudo commits can help the Rakudo developers see what new changes may have broke.
+Runs travis-ci tests using both supported backends using the most current Rakudo built from source. Rakudo Star is not used for continuous testing purposes as Rakudo changes far too often, and you would end up testing against month old changes. It will also submit test reports for your module to testers.perl6.org, and failures from modules that show up Rakudo commits can help the Rakudo developers see what new changes may have broke.
 
 ### TODO
 
@@ -16,4 +16,4 @@ Runs travis-ci tests using all 3 backends using the most current Rakudo built fr
 
 ######Combined test run
 
-* Option to use rakudobrew to test multiple `$ENV{BACKEND}` in one job. Current build times for JVM and Parrot make this impossible for the time being.
+* Option to use rakudobrew to test multiple `$ENV{BACKEND}` in one job. Current build times for JVM make this not always possible.
