@@ -15,6 +15,7 @@ use CSS::Module::CSS3::Namespaces;
 use CSS::Module::CSS3::PagedMedia;
 use CSS::Module::CSS3::Selectors;
 use CSS::Specification::Terms::CSS3;
+use CSS::Specification::Terms::CSS3::Actions;
 use CSS::Grammar::CSS3;
 use CSS::Grammar::Actions;
 

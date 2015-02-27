@@ -3,15 +3,9 @@ use v6;
 # CSS3 Color Module Extensions
 # specification: http://www.w3.org/TR/2011/REC-css3-color-20110607/
 
-use CSS::Specification::Terms::CSS3;
-use CSS::Specification::Terms::CSS3::Actions;
 use CSS::Grammar::AST :CSSValue;
-use CSS::Grammar::CSS3;
-use CSS::Grammar::Actions;
 
-grammar CSS::Module::CSS3::Colors:ver<20110607.000>
-    is CSS::Specification::Terms::CSS3
-    is CSS::Grammar::CSS3 {
+grammar CSS::Module::CSS3::Colors:ver<20110607.000> {
 
 # extensions for CSS3 Color Module
 
@@ -85,9 +79,7 @@ grammar CSS::Module::CSS3::Colors:ver<20110607.000>
 
 }
 
-class CSS::Module::CSS3::Colors::Actions 
-    is CSS::Specification::Terms::CSS3::Actions
-    is CSS::Grammar::Actions {
+class CSS::Module::CSS3::Colors::Actions {
 
     use CSS::Grammar::AST;
 

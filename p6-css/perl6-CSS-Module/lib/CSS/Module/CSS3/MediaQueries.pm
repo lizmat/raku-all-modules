@@ -10,11 +10,9 @@ use v6;
 #    to load the Paged Media extension module in your class structure.
 class CSS::Module::CSS3::MediaQueries::Actions {...}
 
-use CSS::Grammar::CSS3;
-use CSS::Grammar::Actions;
+class CSS::Module::CSS3::MediaQueries:ver<20120619.000> {
 
-grammar CSS::Module::CSS3::MediaQueries:ver<20120619.000>
-    is CSS::Grammar::CSS3 {
+    use CSS::Grammar;
 
     rule at-rule:sym<media> {'@'(:i'media') [<media-list>||<media-list=.unknown-media-list>] <rule-list> }
 
@@ -72,8 +70,7 @@ grammar CSS::Module::CSS3::MediaQueries:ver<20120619.000>
 
 }
 
-class CSS::Module::CSS3::MediaQueries::Actions
-    is CSS::Grammar::Actions {
+class CSS::Module::CSS3::MediaQueries::Actions {
 
         use CSS::Grammar::AST :CSSValue;
 

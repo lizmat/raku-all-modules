@@ -2,11 +2,11 @@
 
 use Test;
 
-use CSS::Module::CSS3::Namespaces;
+use CSS::Module::CSS3;
 use CSS::Grammar::Test;
 use CSS::Writer;
 
-my $actions = CSS::Module::CSS3::Namespaces::Actions.new;
+my $actions = CSS::Module::CSS3::Actions.new;
 my $writer = CSS::Writer.new;
 
 for (
@@ -30,7 +30,7 @@ for (
     my $expected = .value;
     my $input = $expected<input>;
 
-    CSS::Grammar::Test::parse-tests(CSS::Module::CSS3::Namespaces, $input,
+    CSS::Grammar::Test::parse-tests(CSS::Module::CSS3, $input,
 				    :$rule,
 				    :$actions,
 				    :suite<css3-namespaces>,
