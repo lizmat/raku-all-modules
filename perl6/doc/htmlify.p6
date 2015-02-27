@@ -141,9 +141,10 @@ sub MAIN(
     say 'Composing doc registry ...';
     $*DR.compose;
 
-    for $*DR.lookup("language", :by<kind>).list {
-        say "Writing language document for {.name} ...";
-        spurt "html{.url}.html", p2h(.pod, 'language');
+    for $*DR.lookup("language", :by<kind>).list -> $doc {
+        $doc.pod.contents.push: doc-source-reference($doc);
+        say "Writing language document for {$doc.name} ...";
+        spurt "html{$doc.url}.html", p2h($doc.pod, 'language');
     }
     for $*DR.lookup("type", :by<kind>).list {
         write-type-source $_;
@@ -197,20 +198,23 @@ sub process-pod-source(:$kind, :$pod, :$filename, :$pod-is-complete) {
         if $kind eq "type" {
             $name = $name.split(/\s+/)[*-1];
         }
-    } else {
-        note "$filename does not have an =TITLE";
+    }
+    else {
+        note "$filename does not have a =TITLE";
     }
     if $pod.contents[1] ~~ {$_ ~~ Pod::Block::Named and .name eq "SUBTITLE"} {
         $summary = $pod.contents[1].contents[0].contents[0];
-    } else {
-        note "$filename does not have an =SUBTITLE";
+    }
+    else {
+        note "$filename does not have a =SUBTITLE";
     }
 
     my %type-info;
     if $kind eq "type" {
         if $type-graph.types{$name} -> $type {
             %type-info = :subkinds($type.packagetype), :categories($type.categories);
-        } else {
+        }
+        else {
             %type-info = :subkinds<class>;
         }
     }
@@ -258,51 +262,54 @@ multi write-type-source($doc) {
 
         my @roles-todo = $type.roles;
         my %roles-seen;
-        while @roles-todo.shift -> $r {
-            next unless %methods-by-type{$r};
-            next if %roles-seen{$r}++;
-            @roles-todo.push: $r.roles;
+        while @roles-todo.shift -> $role {
+            next unless %methods-by-type{$role};
+            next if %roles-seen{$role}++;
+            @roles-todo.push: $role.roles;
             $pod.contents.push:
-                pod-heading("Methods supplied by role $r"),
+                pod-heading("Methods supplied by role $role"),
                 pod-block(
                     "$podname does role ",
-                    pod-link($r.name, "/type/{uri_escape ~$r}"),
+                    pod-link($role.name, "/type/{uri_escape ~$role}"),
                     ", which provides the following methods:",
                 ),
-                %methods-by-type{$r}.list,
+                %methods-by-type{$role}.list,
                 ;
         }
-        for @mro -> $c {
-            next unless %methods-by-type{$c};
+        for @mro -> $class {
+            next unless %methods-by-type{$class};
             $pod.contents.push:
-                pod-heading("Methods supplied by class $c"),
+                pod-heading("Methods supplied by class $class"),
                 pod-block(
                     "$podname inherits from class ",
-                    pod-link($c.name, "/type/{uri_escape ~$c}"),
+                    pod-link($class.name, "/type/{uri_escape ~$class}"),
                     ", which provides the following methods:",
                 ),
-                %methods-by-type{$c}.list,
+                %methods-by-type{$class}.list,
                 ;
-            for $c.roles -> $r {
-                next unless %methods-by-type{$r};
+            for $class.roles -> $role {
+                next unless %methods-by-type{$role};
                 $pod.contents.push:
-                    pod-heading("Methods supplied by role $r"),
+                    pod-heading("Methods supplied by role $role"),
                     pod-block(
                         "$podname inherits from class ",
-                        pod-link($c.name, "/type/{uri_escape ~$c}"),
+                        pod-link($class.name, "/type/{uri_escape ~$class}"),
                         ", which does role ",
-                        pod-link($r.name, "/type/{uri_escape ~$r}"),
+                        pod-link($role.name, "/type/{uri_escape ~$role}"),
                         ", which provides the following methods:",
                     ),
-                    %methods-by-type{$r}.list,
+                    %methods-by-type{$role}.list,
                     ;
             }
         }
-    } else {
+        $pod.contents.push: doc-source-reference($doc);
+    }
+    else {
         note "Type $podname not found in type-graph data";
     }
 
-    spurt "html/$what/$podname.html", p2h($pod, $what);
+    my $html-filename = "html" ~ $doc.url ~ ".html";
+    spurt $html-filename, p2h($pod, $what);
 }
 
 #| A one-pass-parser for pod headers that define something documentable.
@@ -373,7 +380,8 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
                     my $summary = '';
                     if @pod-section[$i+1] ~~ {$_ ~~ Pod::Block::Named and .name eq "SUBTITLE"} {
                         $summary = @pod-section[$i+1].contents[0].contents[0];
-                    } else {
+                    }
+                    else {
                         note "$name does not have an =SUBTITLE";
                     }
                     %attr = :kind<type>,
@@ -724,13 +732,13 @@ def p6format(code):
         $py;
     }
     if $py {
-        say "Using syntax hilight using Inline::Python";
+        say "Using syntax highlighting via Inline::Python";
     }
 
     %*POD2HTML-CALLBACKS = code => sub (:$node, :&default) {
         for @($node.contents) -> $c {
             if $c !~~ Str {
-                # some nested formatting code => we can't hilight this
+                # some nested formatting code => we can't highlight this
                 return default($node);
             }
         }
@@ -747,6 +755,21 @@ def p6format(code):
 
         }
     }
+}
+
+#| Append a section to the pod document referencing the source on GitHub
+#| Note that we link to the raw source since GitHub isn't always able to
+#| render Pod6 properly.
+sub doc-source-reference($doc) {
+    # XXX: it would be nice to have a filename attribute for pod documents
+    my $pod-filename = $doc.url.split(/\//)[*-1] ~ '.pod';
+    my $kind = $doc.kind.tclc;
+    my @doc-source-ref-pod =
+        pod-block("This documentation was generated from ",
+            pod-link("$pod-filename","https://github.com/perl6/doc/raw/master/lib/$kind/$pod-filename"),
+            ".");
+
+    return @doc-source-ref-pod;
 }
 
 # vim: expandtab shiftwidth=4 ft=perl6

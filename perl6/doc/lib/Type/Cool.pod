@@ -414,6 +414,178 @@ leading and trailing whitespace stripped.
     my $stripped = '  abc '.trim-trailing;
     say "<$stripped>";          # <  abc>
 
+=head2 method lc
+
+    method lc()
+
+Coerces the invocant to L<Str|/type/Str>, and returns it case-folded to lower
+case.
+
+    say "ABC".lc;       # abc
+
+=head2 method uc
+
+    method uc()
+
+Coerces the invocant to L<Str|/type/Str>, and returns it case-folded to upper
+case (capital letters).
+
+    say "Abc".uc;       # ABC
+
+=head2 method tc
+
+    method tc()
+
+Coerces the invocant to L<Str|/type/Str>, and returns it with the first letter
+case-folded to title case (or where not available, upper case).
+
+    say "abC".tc;       # AbC
+
+=head2 method tclc
+
+    method tclc()
+
+Coerces the invocant to L<Str|/type/Str>, and returns it with the first letter
+case-folded to title case (or where not available, upper case), and the rest
+of the string case-folded to lower case..
+
+    say 'abC'.tclc;     # Abc
+
+=head2 method wordcase
+
+    method wordcase(:&filter = &tclc, Mu :$where = True)
+
+Coerces the invocant to L<Str|/type/Str>, and filters each word that
+smart-matches against C<$where> through the C<&filter>. With the default
+filter (first character to upper case, rest to lower) and matcher (which
+accepts everything), this title-cases each word:
+
+    say "perl 6 programming".wordcase;      # Perl 6 Programming
+
+With a mather:
+
+    say "have fun working on perl".wordcase(:where({ .chars > 3 }));
+                                            # Have fun Working on Perl
+
+With a customer filter too:
+
+    say "have fun working on perl".wordcase(:filter(&uc), :where({ .chars > 3 }));
+                                            # HAVE fun WORKING on PERL
+
+=head2 method chop
+
+    method chop()
+
+Coerces the invocant to L<Str|/type/Str>, and returns it with the last
+character removed.
+
+    say 'perl'.chop;                        # per
+
+=head2 method chomp
+
+    method chomp()
+
+Coerces the invocant to L<Str|/type/Str>, and returns it with the last
+character removed, if it is a logical newline.
+
+    say 'ab'.chomp.chars;                   # 2
+    say "a\n".chomp.chars;                  # 1
+
+=head2 routine substr
+
+    method substr($from, $chars?)
+    sub substr(Str(Cool) $str, $from, $chars?)
+
+Coerces the invocant (or in the sub form, the first argument) to
+L<Str|/type/Str>, and returns the string starting from offset C<$from>. If
+C<$chars> is supplied, at most C<$chars> characters are returned.
+
+    say 'zenith'.substr(2);         # nith
+    say 'zenith'.substr(0, 3);      # zen
+
+    # works on non-strings too:
+    say 20151224.substr(6);         # 24
+
+    # sub form:
+    say substr "zenith", 0, 3;      # zen
+
+If the C<$from> parameter is a L<Callable|/type/Callable>, it is called with
+the number of chars in the string as argument. This allows easy indexing
+relative to the end:
+
+    say 20151224.substr(*-2);       # 24
+
+=head2 routine ords
+
+    method ords()
+    sub ords(Str(Cool) $str)
+
+Coerces the invocant (or in the sub form, the first argument) to
+L<Str|/type/Str>, and returns a list of Unicode codepoints for each character.
+
+    say "Perl 6".ords;              # 80 101 114 108 32 54
+    say ords 10;                    # 49 48
+
+This is the list-returning version of L<ord>. The inverse operation in
+L<chrs>.
+
+=head2 routine chrs
+
+    method chrs()
+    sub chrs(*@codepoints) return Str:D
+
+Coerces the invocant (or in the sub form, the argument list) to a list of
+integers, and returns the string created by interpreting each integer as a
+Unicode codepoint, and joining the characters.
+
+    say <80 101 114 108 32 54>.chrs;    # Perl 6
+
+This is the list-input version of L<chr>. The inverse operation is L<ords>.
+
+=head2 routine split
+
+    multi method split(  Str:D $delimiter, $limit = Inf, :$all)
+    multi method split(Regex:D $delimiter, $limit = Inf, :$all)
+    multi sub    split(  Str:D $delimiter, Str(Cool) $input, $limit = Inf, :$all)
+    multi sub    split(Regex:D $delimiter, Str(Cool) $input, $limit = Inf, :$all)
+
+Coerces the invocant (or in the sub form, the second argument) to
+L<Str|/type/Str>, and splits it into pieces based on delimiters found in the
+string.
+
+If C<$delimiter> is a string, it is searched for literally and not treated
+as a regex.
+
+If the named parameter C<:all> is passed, the matches from C<$delimiter>
+are included in the result list.
+
+Note that unlike in Perl 5, empty chunks are not removed from the result list.
+If you want that behavior, consider using L<comb> instead.
+
+    say split(';', "a;b;c").perl;          # ("a", "b", "c").list
+    say split(';', "a;b;c", :all).perl;    # ("a", ";", "b", ";", "c").list
+    say split(';', "a;b;c", 2).perl;       # ("a", "b;c").list
+    say split(';', "a;b;c", 2, :all).perl; #("a", ";", "b;c").list
+
+    say split(';', "a;b;c,d").perl;        # ("a", "b", "c,d").list
+    say split(/\;/, "a;b;c,d").perl;       # ("a", "b", "c,d").list
+    say split(/<[;,]>/, "a;b;c,d").perl;   # ("a", "b", "c", "d").list
+
+=head2 method words
+
+    method words(Int() $limit)
+
+Coerces the invocan to L<Str|/type/Str>, and returns a list of words that make
+up the string (and if C<$limit> is supplied, only the first C<$limit> words).
+
+    say 'The quick brown fox'.words.join('|');      # The|quick|brown|fox
+    say 'The quick brown fox'.words(2).join('|');   # The|quick
+
+Only whitespace counts as word boundaries
+
+    say "isn't, can't".words.join('|');             # isn't,|can't
+
+
 =head2 method IO
 
     method IO() returns IO::Path:D
@@ -425,10 +597,12 @@ Coerces the invocant to L<IO::Path>.
 =begin comment
 
 TODO: sech, asech, cosech, acosech, cotanh, acotanh, cis, roots, log10,
-unpolar, truncate, fmt, substr, substr-rw, uc, lc, tc,
-tclc, wordcase, chomp, chop, chrs, trans, index, rindex, ords,
-split, match, comb, lines, words, subst, sprintf, printf, samecase,
+unpolar, truncate, fmt, substr-rw,
+trans, index, rindex,
+match, comb, lines, subst, sprintf, printf, samecase,
 EVAL
+
+TODO: subroutine forms (where they exist)
 
 =end comment
 

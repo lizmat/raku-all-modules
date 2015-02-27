@@ -113,9 +113,10 @@ Returns the string typed in without the trailing newline.
 
 =head2 sub open
 
-    my $fh = open($path as IO, *%opts);
+    my $fh = open(IO::Path() $path, :$r, :$w, :$a, :$rw,
+                  :$bin, :$enc, :$nl, :$chomp)
 
-Opens the C<$path> as an C<IO> object (by default in text mode) with the
+Opens the C<$path> (by default in text mode) with the
 given options, returning an L<IO::Handle> object.
 
 =head3 File mode options
@@ -291,8 +292,8 @@ directory.
 
 Writes the indicated contents (2nd positional parameter, C<$what>) to the
 location indicated by the first positional parameter, C<$where> (which can
-either be a string, an C<IO::Path> object, or an already opened
-C<IO::Handle> object).
+either be a string or an C<IO::Path> object).  To write to an C<IO::Handle>,
+use the L<print> method.
 
 If a file needs to be opened for writing, it will also be C<close>d.  Returns
 True on success, or the appropriate C<Failure> if something went wrong.
@@ -320,11 +321,6 @@ C<False>.
 
     # write directly to a file
     spurt "path/to/file", "default text, directly written";
-
-    # write to an IO::Handle
-    my $fh = "path/to/file", :w;
-    spurt $fh, "default text, written via IO::Handle";
-    $fh.close;
 
     # write directly with a non-Unicode encoding
     spurt "path/to/latin1_file", "latin1 text: äöüß", enc => "latin1";
@@ -363,7 +359,7 @@ The return value is of L<type Proc::Status|/type/Proc::Status>.
     run 'systemctl', 'restart', 'apache2'
 
 Arguments are not subject to shell expansions, shell variable interpolation or
-other shenanigans. See L<#sub shell> if you want that.
+other shenanigans. See L<shell|/type/IO#sub_shell> if you want that.
 
 =head2 sub shell
 
@@ -371,7 +367,7 @@ other shenanigans. See L<#sub shell> if you want that.
 
 Runs a command through the system shell. All shell meta characters are
 interpreted by the shell, inluding pipes, redirects, environment variable
-substitutions and so on. See L<#sub run> if you don't want that.
+substitutions and so on. See L<run|/type/IO#sub_run> if you don't want that.
 
 The return value is of L<type Proc::Status|/type/Proc::Status>.
 
