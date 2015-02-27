@@ -1,0 +1,8 @@
+{
+    "name" : "Inline::Lua",
+    "version" : "*",
+    "description" : "Embedded Lua for Perl 6",
+    "author" : "raydiak",
+    "depends" : [ ],
+    "source-url" : "git://github.com/raydiak/Inline-Lua.git"
+}
