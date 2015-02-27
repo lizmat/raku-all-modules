@@ -3,7 +3,7 @@ class BSON::ObjectId;
 # Represents ObjectId BSON type described in
 # http://dochub.mongodb.org/core/objectids
 
-has Buf $.oid is rw;
+has Buf $.oid;
 
 multi method new( Buf $b ) {
 

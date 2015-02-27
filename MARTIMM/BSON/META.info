@@ -11,5 +11,5 @@
         "BSON::Javascript": "lib/BSON/Javascript.pm"
     },
     "source-url": "git://github.com/MARTIMM/BSON.git",
-    "version": "0.8.3"
+    "version": "0.9.0"
 }

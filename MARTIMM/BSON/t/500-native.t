@@ -67,8 +67,25 @@ my Hash $samples = {
                      ],
     },
 
-    '0x05 Binary' => {
+    '0x05 Binary, Buf' => {
         'decoded' => { b => Buf.new(0..4) },
+#        'encoded' => [ 0x12, 0x00, 0x00, 0x00,          # Total size
+#                       0x05,                            # Binary
+#                       0x62, 0x00,                      # 'b' + 0
+#                       0x05, 0x00, 0x00, 0x00,          # Size of buf
+#                       0x00,                            # Generic binary type
+#                       0x00, 0x01, 0x02, 0x03, 0x04,    # Binary data
+#                       0x00                             # + 0
+#                     ],
+    },
+
+    '0x?? Rat' => {
+        'decoded' => { b => 0.4 },
+    },
+
+    '0x05 Binary' => {
+#        'decoded' => { b => Buf.new(0..4) },
+        'decoded' => { b => BSON::Binary.new().raw(Buf.new(0..4)) },
         'encoded' => [ 0x12, 0x00, 0x00, 0x00,          # Total size
                        0x05,                            # Binary
                        0x62, 0x00,                      # 'b' + 0
@@ -79,7 +96,14 @@ my Hash $samples = {
                      ],
     },
 
-# '0x06 Undefined - deprecated' => { },
+    '0x06 Undefined - deprecated' => {
+#        decoded => { u => '?'}
+        encoded => [ 0x08, 0x00, 0x00, 0x00,            # 8 bytes
+                     0x06,                              # Undefined
+                     0x75, 0x00,                        # 'u' + 0
+                     0x00                               # + 0
+                   ],
+    },
 
 #`'0x07 ObjectId' => { Tested in t/600-extended.t },
 
@@ -135,7 +159,17 @@ my Hash $samples = {
                      ],
     },
 
-# '0x0C DBPointer - deprecated' => { },
+    '0x0C DBPointer - deprecated' => {
+#        decoded => { u => '?'}
+        encoded => [ 0x0D, 0x00, 0x00, 0x00,            # 14 bytes
+                     0x0C,                              # DBPointer
+                     0x75, 0x00,                        # 'u' + 0
+                     0x02, 0x00 xx 3,                   # length of string + 1
+                     0x74, 0x00,                        # 't' + 0
+                     0x00                               # + 0
+                   ],
+    },
+
 
     '0x0D Javascript' => {
         'decoded' => { "t" => BSON::Javascript.new( :javascript($script)) },
@@ -160,107 +194,175 @@ my Hash $samples = {
         'encoded' => [ 0x33, 0x00, 0x00, 0x00,          # 51 bytes
                        0x0F,                            # javascript
                        0x74, 0x00,                      # 't' + 0
-                       
+
                        0x2B, 0x00, 0x00, 0x00,          # 39 bytes size js + doc + 4
-                       
+
                        0x17, 0x00, 0x00, 0x00,          # 23 bytes js code + 1
                        0x66, 0x75, 0x6e, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x28,
                        0x78, 0x29, 0x7b, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e,
                        0x20, 0x78, 0x3b, 0x7d, 0x00,    # UTF8 encoded Javascript
-                       
+
                        0x0C, 0x00, 0x00, 0x00,          # 12 bytes embedded
                        0x10,                            # int32
                        0x6e, 0x00,                      # 'n' + 0
                        0x0A, 0x00, 0x00, 0x00,          # 10
                        0x00,                            # end emedded doc
-                       
+
                        0x00                             # + 0
                      ],
     },
 
     '0x10 32-bit Integer' => {
         'decoded' => { "mike" => 100 },
-        'encoded' => [ 0x0F, 0x00, 0x00, 0x00,          # 16 bytes
+        'encoded' => [ 0x0F, 0x00, 0x00, 0x00,          # 15 bytes
                        0x10,                            # 32 bits integer
                        0x6D, 0x69, 0x6B, 0x65, 0x00,    # 'mike' + 0
                        0x64, 0x00, 0x00, 0x00,          # 100
                        0x00                             # + 0
                      ],
     },
+
+    '0x12 64-bit Integer' => {
+        'decoded' => { "mike" => -72057594037927935 },
+        'encoded' => [ 0x13, 0x00, 0x00, 0x00,          # 19 bytes
+                       0x12,                            # 64 bits integer
+                       0x6D, 0x69, 0x6B, 0x65, 0x00,    # 'mike' + 0
+                       0x01, 0x00 xx 6, 0xff,           # -72057594037927935
+                       0x00                             # + 0
+                     ],
+    },
+
+    '0x12 64-bit Integer, too small' => {
+        'decoded' => { "mike" => -72057594037927935 * 2**8 },
+        'encoded' => [ 0x13, 0x00, 0x00, 0x00,          # 19 bytes
+                       0x12,                            # 64 bits integer
+                       0x6D, 0x69, 0x6B, 0x65, 0x00,    # 'mike' + 0
+                       0x00, 0x01, 0x00 xx 6,           # ?
+                       0x00                             # + 0
+                     ],
+    },
+
+    '0x12 64-bit Integer, too large' => {
+        'decoded' => { "mike" => 0x7fffffff_ffffffff + 1 },
+        'encoded' => [ 0x13, 0x00, 0x00, 0x00,          # 19 bytes
+                       0x12,                            # 64 bits integer
+                       0x6D, 0x69, 0x6B, 0x65, 0x00,    # 'mike' + 0
+                       0x00 xx 7, 0x80,                 # ?
+                       0x00                             # + 0
+                     ],
+    },
 };
 
 for $samples.keys -> $key {
+#say "Do $key";
+
     my $value = $samples{$key};
-    my @enc = $b.encode( $value<decoded> ).list;
-    is_deeply @enc, $value<encoded>, 'encode ' ~ $key;
+    if $value<decoded>:exists {
+        my @enc = $b.encode( $value<decoded> ).list;
+        is_deeply @enc, $value<encoded>, 'encode ' ~ $key;
+    }
 
-    given $key {
-    
-        when '0x09 Datetime' {
-            my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
+    if $value<encoded>:exists {
+        given $key {
+            when '0x05 Binary' {
+                is_deeply
+                   $b.decode(Buf.new($value<encoded>))<b>.Buf,
+                   $value<decoded><b>.Buf,
+                   "decode $key";
+            }
 
-            my @dec_kv = $dec.kv;
-            my @enc_kv = $value<decoded>.kv;
-            is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
+            when '0x09 Datetime' {
+                my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
 
-            # Must compare seconds because the dates will not compare right
-            #
-            # Failed test 'Values equal'
-            # at t/500-native.t line 163
-            # expected: '2015-02-18T11:08:00+0100'
-            #      got: '2015-02-18T10:08:00Z'
-            #
-            is @dec_kv[1].posix, @enc_kv[1].posix, [~] 'decode ', $key, ' Values equal';
+                my @dec_kv = $dec.kv;
+                my @enc_kv = $value<decoded>.kv;
+                is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
+
+                # Must compare seconds because the dates will not compare right
+                #
+                # Failed test 'Values equal'
+                # at t/500-native.t line 163
+                # expected: '2015-02-18T11:08:00+0100'
+                #      got: '2015-02-18T10:08:00Z'
+                #
+                is @dec_kv[1].posix, @enc_kv[1].posix, [~] 'decode ', $key, ' Values equal';
+            }
+
+            when '0x0B Regex' {
+                my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
+
+                my @dec_kv = $dec.kv;
+                my @enc_kv = $value<decoded>.kv;
+                is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
+
+                # Must compare content because addresses are not same
+                #
+                # Failed test 'decode 0x0B Regex'
+                # at t/500-native.t line 188
+                # expected: {"t" => BSON::Regex.new(regex => "abc", options => "i")}
+                #      got: {"t" => BSON::Regex.new(regex => "abc", options => "i")}
+                #
+                is @dec_kv[1].regex, @enc_kv[1].regex, [~] 'decode ', $key, ' Regex equal';
+                is @dec_kv[1].options, @enc_kv[1].options, [~] 'decode ', $key, ' Options equal';
+            }
+
+            when '0x0D Javascript' {
+                my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
+
+                my @dec_kv = $dec.kv;
+                my @enc_kv = $value<decoded>.kv;
+                is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
+
+                # Must compare content because addresses are not same
+                #
+                is @dec_kv[1].javascript, @enc_kv[1].javascript, [~] 'decode ', $key, ' Javascript equal';
+            }
+
+            when '0x0F Javascript with scope' {
+                my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
+
+                my @dec_kv = $dec.kv;
+                my @enc_kv = $value<decoded>.kv;
+                is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
+
+                # Must compare content because addresses are not same
+                #
+                is @dec_kv[1].javascript, @enc_kv[1].javascript, [~] 'decode ', $key, ' Javascript equal';
+                is_deeply @dec_kv[1].scope, @enc_kv[1].scope, [~] 'decode ', $key, ' scope equal';
+            }
+
+            default {
+                is_deeply
+                    $b.decode( Buf.new( $value<encoded>.list ) ),
+                    $value<decoded>,
+                    'decode ' ~ $key;
+            }
         }
-    
-        when '0x0B Regex' {
-            my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
+    }
 
-            my @dec_kv = $dec.kv;
-            my @enc_kv = $value<decoded>.kv;
-            is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
+    CATCH {
+        my $msg = $_.message;
+        my $type = $_.type;
+        $msg ~~ s:g/\n//;
+#say "M: $msg";
 
-            # Must compare content because addresses are not same
-            #
-            # Failed test 'decode 0x0B Regex'
-            # at t/500-native.t line 188
-            # expected: {"t" => BSON::Regex.new(regex => "abc", options => "i")}
-            #      got: {"t" => BSON::Regex.new(regex => "abc", options => "i")}
-            #
-            is @dec_kv[1].regex, @enc_kv[1].regex, [~] 'decode ', $key, ' Regex equal';
-            is @dec_kv[1].options, @enc_kv[1].options, [~] 'decode ', $key, ' Options equal';
+        when X::BSON::Deprecated {
+            ok $_.type ~~ m/Undefined \(0x06\)
+                            || DPPointer \(0x0C\)
+                            /,
+               $msg;
         }
 
-        when '0x0D Javascript' {
-            my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
-
-            my @dec_kv = $dec.kv;
-            my @enc_kv = $value<decoded>.kv;
-            is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
-
-            # Must compare content because addresses are not same
-            #
-            is @dec_kv[1].javascript, @enc_kv[1].javascript, [~] 'decode ', $key, ' Javascript equal';
+        when X::BSON::ImProperUse {
+            ok $_.type ~~ m/integer \s* 0x10\/0x12
+                            || Binary \s* Buf
+                           /,
+               $msg;
         }
 
-        when '0x0F Javascript with scope' {
-            my Hash $dec = $b.decode( Buf.new( $value<encoded> ));
-
-            my @dec_kv = $dec.kv;
-            my @enc_kv = $value<decoded>.kv;
-            is @dec_kv[0], @enc_kv[0], [~] 'decode ', $key, ' Keys equal';
-
-            # Must compare content because addresses are not same
-            #
-            is @dec_kv[1].javascript, @enc_kv[1].javascript, [~] 'decode ', $key, ' Javascript equal';
-            is_deeply @dec_kv[1].scope, @enc_kv[1].scope, [~] 'decode ', $key, ' scope equal';
-        }
-
-        default {
-            is_deeply
-                $b.decode( Buf.new( $value<encoded>.list ) ),
-                $value<decoded>,
-                'decode ' ~ $key;
+        when X::BSON::NYS {
+            ok $_.type ~~ m/unknown/,
+               $msg;
         }
     }
 }

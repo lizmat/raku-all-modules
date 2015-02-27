@@ -2,15 +2,23 @@ use v6;
 use BSON::ObjectId;
 use BSON::Regex;
 use BSON::Javascript;
+use BSON::Binary;
 
 class X::BSON::Deprecated is Exception {
   has $.operation;                      # Operation encode, decode
   has $.type;                           # Type to encode/decode
 
   method message () {
-      return [~] "\n$!operation\() error:\n",
-                 "  Type $!type is deprecated by BSON specification\n"
-                 ;
+      return "\n$!operation\() error: BSON type $!type is deprecated\n";
+  }
+}
+
+class X::BSON::NYS is Exception {
+  has $.operation;                      # Operation encode, decode
+  has $.type;                           # Type to encode/decode
+
+  method message () {
+      return "\n$!operation\() error: BSON type '$!type' is not (yet) supported\n";
   }
 }
 
@@ -24,8 +32,7 @@ class X::BSON::ImProperUse is Exception {
   }
 }
 
-
-class BSON:ver<0.8.3> {
+class BSON:ver<0.9.0> {
 
   method encode ( %h ) {
 
@@ -129,14 +136,14 @@ class BSON:ver<0.8.3> {
               return Buf.new( 0x04 ) ~  self._enc_e_name( $p.key ) ~ self._enc_document( %h );
           }
 
-          when Buf {
+          when BSON::Binary {
               # Binary data
               # "\x05" e_name int32 subtype byte*
               # subtype is '\x00' for the moment (Generic binary subtype)
               #
               return [~] Buf.new( 0x05 ),
-                         self._enc_e_name( $p.key ),
-                         self._enc_binary( 0x00, $_);
+                         self._enc_e_name($p.key),
+                         ._enc_binary(self);
           }
 
 #`{{
@@ -230,10 +237,9 @@ class BSON:ver<0.8.3> {
                   }
 
                   else {
-                      my Buf $js = self._enc_string($p.value.javascript);
                       return [~] Buf.new( 0x0D ),
                                  self._enc_e_name($p.key),
-                                 $js
+                                 self._enc_string($p.value.javascript)
                                  ;
                   }
               }
@@ -261,19 +267,57 @@ class BSON:ver<0.8.3> {
 }}
 
           when Int {
-              # 32-bit Integer
+              # Integer
               # "\x10" e_name int32
+              # '\x12' e_name int64
 
-              return Buf.new( 0x10 ) ~ self._enc_e_name( $p.key ) ~ self._enc_int32( $p.value );
+              if -0xffffffff < $p.value < 0xffffffff {
+                  return [~] Buf.new( 0x10 ),
+                             self._enc_e_name($p.key),
+                             self._enc_int32($p.value)
+                             ;
+              }
+              
+              elsif -0x7fffffff_ffffffff < $p.value < 0x7fffffff_ffffffff {
+                  return [~] Buf.new( 0x12 ),
+                             self._enc_e_name($p.key),
+                             self._enc_int64($p.value)
+                             ;
+              }
+              
+              else {
+                  my $reason = 'small' if $p.value < -0x7fffffff_ffffffff;
+                  $reason = 'large' if $p.value > 0x7fffffff_ffffffff;
+                  die X::BSON::ImProperUse.new( :operation('encode'),
+                                                :type('integer 0x10/0x12'),
+                                                :emsg("cannot encode too $reason number")
+                                              );
+              }
+          }
+
+#`{{
+          when ... {
+              # Timestamp. 
+              # "\x11" e_name int64
+              # Special internal type used by MongoDB replication and
+              # sharding. First 4 bytes are an increment, second 4 are a
+              # timestamp.
+          }
+}}
+
+          when Buf {
+              die X::BSON::ImProperUse.new(
+                  :operation('encode'),
+                  :type('Binary Buf'),
+                  :emsg('Buf not supported, please use BSON::Binary')
+              );
           }
 
           default {
-
-              die 'Sorry, not yet supported type: ' ~ .WHAT;
+                die X::BSON::NYS.new( :operation('encode'), :type('unknown'));
+#              die "Sorry, not yet supported type: $_"; # ~ .WHAT;
           }
-
       }
-
   }
 
   # Test elements see http://bsonspec.org/spec.html
@@ -295,35 +339,35 @@ class BSON:ver<0.8.3> {
           when 0x01 {
               # Double precision
               # "\x01" e_name Num
-
+              #
               return self._dec_e_name( $a ) => self._dec_double( $a );
           }
 
           when 0x02 {
               # UTF-8 string
               # "\x02" e_name string
-
+              #
               return self._dec_e_name( $a ) => self._dec_string( $a );
           }
 
           when 0x03 {
               # Embedded document
               # "\x03" e_name document
-
+              #
               return self._dec_e_name( $a )  => self._dec_document( $a );
           }
 
           when 0x04 {
               # Array
               # "\x04" e_name document
-
+              #
               # The document for an array is a normal BSON document
               # with integer values for the keys,
               # starting with 0 and continuing sequentially.
               # For example, the array ['red', 'blue']
               # would be encoded as the document {'0': 'red', '1': 'blue'}.
               # The keys must be in ascending numerical order.
-
+              #
               return self._dec_e_name( $a ) => [ self._dec_document( $a ).values ];
           }
 
@@ -331,8 +375,11 @@ class BSON:ver<0.8.3> {
               # Binary
               # "\x05 e_name int32 subtype byte*
               # subtype = byte \x00 .. \x05, \x80
-
-              return self._dec_e_name( $a ) => self._dec_binary( $a );
+              #
+              my $name = self._dec_e_name($a);
+              my BSON::Binary $bin_obj .= new;
+              $bin_obj._dec_binary( self, $a);
+              return $name => $bin_obj;
           }
 
           when 0x06 {
@@ -341,7 +388,7 @@ class BSON:ver<0.8.3> {
               #
               # Must drop some bytes from array.
               #
-              self._dec_e_name( $a );
+              self._dec_e_name($a);
               die X::BSON::Deprecated.new( :operation('decode'),
                                            :type('Undefined(0x06)')
                                          );
@@ -350,12 +397,10 @@ class BSON:ver<0.8.3> {
           when 0x07 {
               # ObjectId
               # "\x07" e_name (byte*12)
-
+              #
               my $n = self._dec_e_name( $a );
-
-              my @a;
-              @a.push( $a.shift ) for ^ 12;
-
+              my @a = $a.splice( 0, 12);
+              
               return $n => BSON::ObjectId.new( Buf.new( @a ) );
           }
 
@@ -367,14 +412,14 @@ class BSON:ver<0.8.3> {
                   when 0x01 {
                       # Boolean "true"
                       # "\x08" e_name "\x01
-
+                      #
                       return $n => Bool::True;
                   }
 
                   when 0x00 {
                       # Boolean "false"
                       # "\x08" e_name "\x00
-
+                      #
                       return $n => Bool::False;
                   }
 
@@ -419,7 +464,7 @@ class BSON:ver<0.8.3> {
               self._dec_string($a);
               $a.splice( 0, 12);
               die X::BSON::Deprecated.new( :operation('decode'),
-                                           :type('Undefined(0x06)')
+                                           :type('DPPointer(0x0C)')
                                          );
           }
 
@@ -459,24 +504,56 @@ class BSON:ver<0.8.3> {
           when 0x10 {
               # 32-bit Integer
               # "\x10" e_name int32
-
+              #
               return self._dec_e_name($a) => self._dec_int32($a);
           }
+#`{{
+          when 0x11 {
+              # Timestamp. 
+              # "\x11" e_name int64
+              # Special internal type used by MongoDB replication and
+              # sharding. First 4 bytes are an increment, second 4 are a
+              # timestamp.
+          }
+}}
+
+          when 0x12 {
+              # 64-bit Integer
+              # "\x12" e_name int64
+              #
+              return self._dec_e_name($a) => self._dec_int64($a);
+          }
+#`{{
+          when 0x7F {
+              # Max key.
+              # "\x7F" e_name
+          }
+}}
+
+#`{{
+          when 0xFF {
+              # Min key.
+              # "\xFF" e_name
+          }
+}}
 
           default {
 
               # Number of bytes must be taken from $a otherwise a parse
               # error will occur later on.
               #
-              return X::NYI.new(feature => "Type $_")
-  #            die 'Sorry, not yet supported type: ' ~ $_;
+
+              die X::BSON::NYS.new( :operation('encode'),
+                                    :type('code ' ~ $_.fmt('%02x'))
+                                  );
+#              return X::NYI.new(feature => "Type $_");
+#              die 'Sorry, not yet supported type: ' ~ $_;
           }
-
       }
-
   }
 
-
+#`{{
+  #-----------------------------------------------------------------------------
   # Binary buffer
   #
   method _enc_binary ( Int $sub_type, Buf $b ) {
@@ -533,21 +610,11 @@ class BSON:ver<0.8.3> {
       # Just return part of the array.
       return Buf.new( $a.splice( 0, $lng));
   }
+}}
 
 
-
-  # 4 bytes (32-bit signed integer)
-  method _enc_int32 ( Int $i ) {
-
-      return Buf.new( $i % 0x100, $i +> 0x08 % 0x100, $i +> 0x10 % 0x100, $i +> 0x18 % 0x100 );
-  }
-
-  method _dec_int32 ( Array $a ) {
-
-      return [+] $a.shift, $a.shift +< 0x08, $a.shift +< 0x10, $a.shift +< 0x18;
-  }
-
-  # 8 bytes (64-bit number)
+  #-----------------------------------------------------------------------------
+  # 8 bytes double (64-bit floating point number)
   method _enc_double ( Num $r is copy ) {
 
       my Buf $a;
@@ -710,28 +777,85 @@ class BSON:ver<0.8.3> {
       return $value; #X::NYI.new(feature => "Type Double");
   }
 
+  #-----------------------------------------------------------------------------
+  # 4 bytes (32-bit signed integer)
+  #
+  method _enc_int32 ( Int $i #`{{is copy}} ) {
+      my int $ni = $i;      
+      return Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
+                      ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF
+                    );
+# Original method goes wrong on negative numbers. Also modulo operations are
+# slower than the bit operations.
+# return Buf.new( $i % 0x100, $i +> 0x08 % 0x100, $i +> 0x10 % 0x100, $i +> 0x18 % 0x100 );
+  }
+
+  method _dec_int32 ( Array $a --> Int ) {
+      my int $ni = $a.shift +| $a.shift +< 0x08 +|
+                   $a.shift +< 0x10 +| $a.shift +< 0x18
+                   ;
+
+      # Test if most significant bit is set. If so, calculate two's complement
+      # negative number.
+      # Prefix +^: Coerces the argument to Int and does a bitwise negation on
+      # the result, assuming two's complement. (See
+      # http://doc.perl6.org/language/operators^)
+      # Infix +^ :Coerces both arguments to Int and does a bitwise XOR
+      # (exclusive OR) operation.
+      #
+      $ni = (0xffffffff +& (0xffffffff+^$ni) +1) * -1  if $ni +& 0x80000000;
+
+      return $ni;
+
+# Original method goes wrong on negative numbers. Also adding might be slower
+# than the bit operations. 
+# return [+] $a.shift, $a.shift +< 0x08, $a.shift +< 0x10, $a.shift +< 0x18;
+  }
+
+  #-----------------------------------------------------------------------------
   # 8 bytes (64-bit int)
   method _enc_int64 ( Int $i ) {
-
-      return Buf.new( $i % 0x100, $i +> 0x08 % 0x100, $i +> 0x10 % 0x100,
-                      $i +> 0x18 % 0x100, $i +> 0x20 % 0x100,
-                      $i +> 0x28 % 0x100, $i +> 0x30 % 0x100,
-                      $i +> 0x38 % 0x100
+      # No tests for too large/small numbers because it is called from
+      # _enc_element normally where it is checked
+      #
+      my int $ni = $i;
+      return Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
+                      ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF,
+                      ($ni +> 0x20) +& 0xFF, ($ni +> 0x28) +& 0xFF,
+                      ($ni +> 0x30) +& 0xFF, ($ni +> 0x38) +& 0xFF
                     );
+
+# Original method goes wrong on negative numbers. Also modulo operations are
+# slower than the bit operations.
+#
+#return Buf.new( $i % 0x100, $i +> 0x08 % 0x100, $i +> 0x10 % 0x100,
+#                $i +> 0x18 % 0x100, $i +> 0x20 % 0x100,
+#                $i +> 0x28 % 0x100, $i +> 0x30 % 0x100,
+#                $i +> 0x38 % 0x100
+#              );
   }
 
   method _dec_int64 ( Array $a ) {
+      my int $ni = $a.shift +| $a.shift +< 0x08 +|
+                   $a.shift +< 0x10 +| $a.shift +< 0x18 +|
+                   $a.shift +< 0x20 +| $a.shift +< 0x28 +|
+                   $a.shift +< 0x30 +| $a.shift +< 0x38
+                   ;
+      return $ni;
 
-      return [+] $a.shift, $a.shift +< 0x08, $a.shift +< 0x10, $a.shift +< 0x18
-               , $a.shift +< 0x20, $a.shift +< 0x28, $a.shift +< 0x30
-               , $a.shift +< 0x38
-               ;
+# Original method goes wrong on negative numbers. Also adding might be slower
+# than the bit operations. 
+#return [+] $a.shift, $a.shift +< 0x08, $a.shift +< 0x10, $a.shift +< 0x18
+#         , $a.shift +< 0x20, $a.shift +< 0x28, $a.shift +< 0x30
+#         , $a.shift +< 0x38
+#         ;
   }
 
 
+  #-----------------------------------------------------------------------------
   # Key name
   # e_name ::= cstring
-
+  #
   method _enc_e_name ( Str $s ) {
 
       return self._enc_cstring( $s );
@@ -743,12 +867,13 @@ class BSON:ver<0.8.3> {
   }
 
 
+  #-----------------------------------------------------------------------------
   # String
   # string ::= int32 (byte*) "\x00"
-
+  #
   # The int32 is the number bytes in the (byte*) + 1 (for the trailing '\x00').
   # The (byte*) is zero or more UTF-8 encoded characters.
-
+  #
   method _enc_string ( Str $s ) {
 #say "CF: ", callframe(1).file, ', ', callframe(1).line;
       my $b = $s.encode('UTF-8');
@@ -768,12 +893,13 @@ class BSON:ver<0.8.3> {
   }
 
 
+  #-----------------------------------------------------------------------------
   # CString
   # cstring ::= (byte*) "\x00"
-
+  #
   # Zero or more modified UTF-8 encoded characters followed by '\x00'.
   # The (byte*) MUST NOT contain '\x00', hence it is not full UTF-8.
-
+  #
   method _enc_cstring ( Str $s ) {
 
       die "Forbidden 0x00 sequence in $s" if $s ~~ /\x00/;
