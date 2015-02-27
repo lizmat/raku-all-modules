@@ -1,7 +1,7 @@
 {
     "name" : "Inline",
     "author" : "github:FROGGS",
-    "version" : "1.0.0",
+    "version" : "1.0.1",
     "description" : "use C-code from within Perl",
     "depends" : [ ],
     "provides" : {

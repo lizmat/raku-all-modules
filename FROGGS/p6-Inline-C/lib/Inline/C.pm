@@ -10,33 +10,49 @@ has $!code = "#ifdef WIN32
 #define DLLEXPORT extern
 #endif
 $code";
-has $!libname;
-has $!dll;
+has Str $!dll;
 
 my @to-delete;
 
 method postcircumfix:<( )>(|args) {
     unless $!setup {
         $!setup      = 1;
+        my $c_line;
+        my $l_line;
         my $basename = $*SPEC.catfile( $*TMPDIR, 'inline' );
+        my $name     = $basename ~ "_" ~ $r.name;
         my $cfg      = $*VM.config;
-        my $o        = $cfg<obj> // $cfg<o>;
-        $!libname    = $basename ~ "_" ~ $r.name;
-        $!libname    = $basename ~ 1000.rand.Int while $!libname.IO.e || "$!libname$o".IO.e || "$!libname.c".IO.e;
-        $!dll        = $cfg<dll> ?? $!libname.IO.dirname ~ '/' ~ $!libname.IO.basename.fmt($cfg<dll>) !! $!libname ~ $cfg<load_ext>;
-        my $ccout    = $cfg<ccout> // $cfg<cc_o_out>;
-        my $ccshared = $cfg<ccshared> // $cfg<cc_shared>;
-        my $cflags   = $cfg<cflags> // $cfg<ccflags>;
-        my $ldshared = $cfg<ldshared> // $cfg<ld_load_flags>;
-        my $ldlibs   = $cfg<ldlibs> // $cfg<libs>;
-        my $ldout    = $cfg<ldout> // $cfg<ld_out>;
+        my $o        = $cfg<nativecall.o> // $cfg<o> // $cfg<obj>;
+        $name        = $basename ~ 1000.rand.Int while $name.IO.e || "$name$o".IO.e || "$name.c".IO.e;
 
-        @to-delete.push: $!libname, "$!libname$o", "$!libname.c", $!dll;
+        "$name.c".IO.spurt: $!code;
 
-        "$!libname.c".IO.spurt: $!code;
+        if $*VM.name eq 'parrot' {
+            my $so  = $cfg<load_ext>;
+            $c_line = "$cfg<cc> -c $cfg<cc_shared> $cfg<cc_o_out>$name$o $cfg<ccflags> $name.c";
+            $l_line = "$cfg<ld> $cfg<ld_load_flags> $cfg<ldflags> $cfg<libs> $cfg<ld_out>$name$so $name$o";
+            $!dll   = "$name$so";
+        }
+        elsif $*VM.name eq 'moar' {
+            my $so  = $cfg<dll>;
+            $so ~~ s/^.*\%s//;
+            $c_line = "$cfg<cc> -c $cfg<ccshared> $cfg<ccout>$name$o $cfg<cflags> $name.c";
+            $l_line = "$cfg<ld> $cfg<ldshared> $cfg<ldflags> $cfg<ldlibs> $cfg<ldout>$name$so $name$o";
+            $!dll   = "$name$so";
+        }
+        elsif $*VM.name eq 'jvm' {
+            $c_line = "$cfg<nativecall.cc> -c $cfg<nativecall.ccdlflags> -o$name$o $cfg<nativecall.ccflags> $name.c";
+            $l_line = "$cfg<nativecall.ld> $cfg<nativecall.perllibs> $cfg<nativecall.lddlflags> $cfg<nativecall.ldflags> $cfg<nativecall.ldout>$name.$cfg<nativecall.so> $name$o";
+            $!dll   = "$name.$cfg<nativecall.so>";
+        }
+        else {
+            die "Unhandling backend $*VM.name() in Inline::C"
+        }
 
-        shell "$cfg<cc> -c $ccshared $ccout$!libname$o $cflags -xc $!libname.c";
-        shell "$cfg<ld> $ldshared $cfg<ldflags> $ldlibs $ldout$!dll $!libname$o";
+        @to-delete.push: $name, "$name$o", "$name.c", $!dll;
+
+        shell $c_line;
+        shell $l_line;
     }
 
     CATCH {
