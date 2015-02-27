@@ -16,14 +16,6 @@ BEGIN {
     }
 }
 
-my sub z_stream_sizeof() is inline('C') returns Int {
-'
-DLLEXPORT int z_stream_sizeof() {
-    return sizeof(struct {void* a;int b;long c;void* d;int e;long f;void* g;void* h;void* i;void* j;void* k;int l;long m;long n;});
-}
-'
-}
-
 # structs
 our class z_stream is repr('CStruct') is export {
     has CArray $.next-in;
@@ -55,6 +47,10 @@ our class z_stream is repr('CStruct') is export {
         $!avail-out = $stuff.bytes;
     }
 };
+
+my sub z_stream_sizeof {
+    nativesizeof(z_stream);
+}
 
 # XXX Hack since we can't put a Blob into a CStruct
 my sub set_input_buf(z_stream $z, Blob $b) is inline('C') {
