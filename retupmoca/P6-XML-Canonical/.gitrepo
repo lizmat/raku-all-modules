@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/retupmoca/P6-XML-Canonical.git
+	branch = master
+	commit = 43d66a6ad8171c803e6700be5ce7f620319cf177
+	parent = 527f3cd5f5f3ec3817dd4c05a632322b87217164
+	cmdver = 0.2.0

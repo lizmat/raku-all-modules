@@ -1,0 +1,11 @@
+{
+    "name" : "XML::Canonical",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "XML Canonicalization",
+    "depends" : [ "XML" ],
+    "provides" : {
+        "XML::Canonical" : "lib/XML/Canonical.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-XML-Canonical.git"
+}
