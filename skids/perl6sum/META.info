@@ -16,6 +16,7 @@
         "Sum::Recourse" : "lib/Sum/Recourse.pm6",
         "Sum::SHA" : "lib/Sum/SHA.pm6",
         "Sum::SipHash" : "lib/Sum/SipHash.pm6",
+        "Sum::SM3" : "lib/Sum/SM3.pm6",
         "Sum::Tiger" : "lib/Sum/Tiger.pm6",
         "Sum::libcrypto" : "lib/Sum/libcrypto.pm6",
         "Sum::libmhash" : "lib/Sum/libmhash.pm6",

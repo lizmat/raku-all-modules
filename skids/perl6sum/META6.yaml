@@ -18,6 +18,7 @@ provides:
   Sum::MDPad: lib/Sum/MDPad.pm6
   Sum::SHA: lib/Sum/SHA.pm6
   Sum::SipHash: lib/Sum/SipHash.pm6
+  Sum::SM3: lib/Sum/SM3.pm6
   Sum::Tiger: lib/Sum/Tiger.pm6
   Sum::libmhash: lib/Sum/libmhash.pm6
   Sum::librhash: lib/Sum/librhash.pm6
