@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FROGGS/p6-Inline-C.git
 	branch = master
-	commit = 2542f9c0975691394b5d06c1d9a6d53a4c68ef3d
-	parent = 22897f1a95c1110f3588f345363e79f115fdf180
+	commit = 677fc33dd943687e553106538deb5961d1e1fdc2
+	parent = 3d2d6e9d8d866a6e4c4b83064faf197cf2319eec
 	cmdver = 0.2.0
