@@ -5,7 +5,6 @@
     "depends"     : [ 
         "Debugger::UI::CommandLine",
         "ufo",
-        "NativeCall",
         "XML::Writer",
         "SVG",
         "SVG::Plot",
