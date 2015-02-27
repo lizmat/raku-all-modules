@@ -1,6 +1,6 @@
 ## Slang::Piersing
 
-This slang allows identifier names like #foo?' and 'foo!':
+This slang allows identifier names like 'foo?' and 'foo!':
 
 ```perl6
 sub foo?($a, $b) { $a * $b };
