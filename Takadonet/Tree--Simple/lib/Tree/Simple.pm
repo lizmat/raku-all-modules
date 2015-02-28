@@ -479,10 +479,9 @@ method clone() {
 # this allows cloning of single nodes while 
 # retaining connections to a tree, this is sloppy
 method cloneShallow() {
-     my $cloned_tree = self;
-#     bless($cloned_tree, ref($self));    
+     my $cloned_tree = self.new(cloneNode(self.getNodeValue()));
+     $cloned_tree.addChildren(self.getAllChildren);
 #     # just clone the node (if you can)
-     $cloned_tree.setNodeValue(cloneNode(self.getNodeValue()));
      return $cloned_tree;    
 }
 
@@ -533,7 +532,7 @@ multi sub cloneNode($node,%seen? = {}) {
     # if it is not a reference, then lets just return it
 #    return $node unless $node ~~ Tree::Simple;
     # if it is in the cache, then return that
-    return %seen{$node} if %seen.exists($node);    
+    return %seen{$node} if %seen{$node}:exists;
     # if it is an object, then ...
     if $node ~~ Tree::Simple {
         # see if we can clone it

@@ -53,7 +53,7 @@ method getNodeFilter() {
 }
 
 method clearNodeFilter() {
-    self.filter_fcn = Mu;     
+    self.filter_fcn = Nil;
 }
 
 method setNodeFilter(Code $filter_fcn) {

@@ -51,7 +51,7 @@ for ($clone.getAllChildren()) -> $child {
     is($child.getParent(), $clone, '... the clones childrens parent should be our clone');
 }
 
-isnt($clone.WHERE, $tree.WHERE, '... these should be refs');
+isnt($clone.WHICH, $tree.WHICH, '... these should be refs');
 
 is($clone.getChild(0).getNodeValue(), $tree.getChild(0).getNodeValue(), '... these should be the same value');
 
@@ -137,7 +137,7 @@ is($clone.getChild(8).getNodeValue().[0].[0], $tree.getChild(8).getNodeValue().[
 
 my $shallow_clone = $tree.cloneShallow();
 
-isnt($shallow_clone, $tree, '... these should be refs');
+isnt($shallow_clone.WHICH, $tree.WHICH, '... these should be refs');
 
 is_deeply(
  		 $shallow_clone.getAllChildren() ,
