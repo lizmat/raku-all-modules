@@ -4,15 +4,11 @@ use Sum;
 =NAME Sum::CRC - Cyclic Redundancy Checksum roles for Sum::
 
 =begin DESCRIPTION
+
     The C<Sum::CRC> module provides roles for generating types of C<Sum>
     that calculate a cyclic redundancy checksum.  Many subroles are provided
     for convenient access to well-standardized CRC parameter sets.
 
-    The base C<Sum::CRC> role variant is a bitwise implementation which
-    focuses on versatility.  Based on the parameters used, alternate optimized
-    implementations may be composed instead (when they are eventually
-    implemented.)  In some cases, forcing the use of optimizations may
-    require providing additional parameters.
 =end DESCRIPTION
 
 =begin pod
@@ -21,7 +17,8 @@ use Sum;
 
 =head2 role Sum::CRC [ :@header?, :@footer?, :$residual = 0,
                        :$iniv = Bool::False, :$finv = Bool::False,
-                       :$columns = 8, :$poly, :$reflect = Bool::False ]
+                       :$columns = 8, :$poly, :$reflect = Bool::False,
+                       :%lut = { :size(8) :!reflect } ]
             does Sum
 
     The C<Sum::CRC> parametric role is used to create a type of C<Sum>
@@ -44,7 +41,8 @@ use Sum;
 
     When C<:reflect> is specified, the remainder is swabbed bitwise
     to produce final results.  To swab input addends, mix in
-    appropriate C<Sum::Marshal> role(s) such as a C<Sum::Marshal::Bits>.
+    appropriate C<Sum::Marshal> role(s) such as a C<Sum::Marshal::Bits>,
+    or add a C<:lut> (see below).
 
     When C<:finv> is specified, the final result is bitwise inverted.
     When a non-boolean value is specified for C<$finv>, the remainder
@@ -77,7 +75,34 @@ use Sum;
     The C<$residual> parameter is used in the C<.check> method, described
     below.
 
+    The C<:lut> parameter builds a lookup table which is used when
+    processing whole bytes.  Currently this is the default.  It
+    may be turned off by setting the number of entries in the
+    lut to zero, via C<:lut{:size(0)}>.  Currently only 8-entry
+    luts are supported.  In addition, via C<:lut{:size(8), :reflect}>
+    the input data will be processed as though each byte was
+    fed in least-significant-bit first.  Note that a C<:size(8)> lut
+    does not affect the order in which bytes are processed, just
+    the bits within them.
+
 =head2 METHODS
+
+=head3 method add(*@addends)
+
+    The C<add> method is not normally used directly and the
+    addends accepted by it vary between different types of
+    C<Sum>.  Normally a C<Sum::Marshal> role is mixed in to
+    provide a use-case-specific C<push> method which is used
+    instead.
+
+    At their core CRCs work on bits and are often used to process
+    bitwise wire encodings, which do not use bytes.  As such all
+    CRC sums will take Bools as addends to C<add>.  Since this
+    is very inefficient for checksumming large amounts of data,
+    CRC sums also take C<buf8> addends directly, processing each
+    element of the buffer as 8 bits.  The order in which these
+    8 bits are processed may be tuned with the C<:lut> role
+    parameter.
 
 =head3 method check(*@addends)
 
@@ -93,21 +118,98 @@ use Sum;
 
 role Sum::CRC [ :@header?, :@footer?, :$residual = 0,
                 :$iniv = Bool::False, :$finv = Bool::False,
-                :$columns = 8, :$poly, :$reflect = Bool::False ]
+                :$columns = 8, :$poly, :$reflect = Bool::False,
+                :%lut where { $_<size> == 8 or $_<size> == 0 }
+                                        = { :size(8), :!reflect } ]
      does Sum {
 
     my Int $mask = :2[1 xx $columns];
+    my Int $lutsize = %lut<size>;
+    my Bool $lutreflect = so %lut<reflect>;
 
     has Int $.rem is rw = ($iniv.WHAT === Bool) ?? (-$iniv +& $mask) !! +$iniv;
 
     method size ( --> int) { +$columns }
 
-    method add (*@addends) {
-        for (@addends) -> $a {
-            my $b = $.rem +& (1 +< ($columns - 1));
-            $.rem +<= 1;
-	    $.rem +&= $mask;
-            $.rem +^= $poly if $a xor $b;
+    my sub onebit($rem is rw, $bit) {
+        my $msb = $rem +& (1 +< ($columns - 1));
+	$rem +<= 1;
+	$rem +&= $mask;
+        $rem +^= $poly if $bit xor $msb;
+    }
+
+    my sub reflect ($i, $n) {
+        my $res = $i +& 0; # keeps type
+	my $fbit = $res;
+        $fbit +|= 1 +< ($n - 1);
+	my $tbit = $res;
+        $tbit +|= 1;
+        for (0..^$n) {
+	    $res +|= $tbit if $i +& $fbit;
+	    $fbit +>= 1;
+	    $tbit +<= 1;
+	}
+	$res;
+    }
+
+    # Build a lookup table.
+    my sub lut($nbits) {
+        my @res = ();
+	for 0..^(2 ** $nbits) -> $a {
+	    my $rem = 0;
+            for 1..$nbits {
+                state $aa = $lutreflect ?? reflect($a, $nbits) !! $a;
+                onebit($rem, $aa +& (1 +< ($nbits - $_)));
+            }
+	    $rem = reflect($rem, $columns) if $lutreflect;
+	    @res.push(+$rem);
+	}
+	@res;
+    }
+
+    my @lut = lut($lutsize);
+
+    proto method add (*@addends) { * };
+
+    multi method add (blob8 $b) {
+        given $lutsize {
+            when 0 {
+                for $b.values -> $v {
+                    self.add((1..8).map: so $v +& (1 +< (8 - *)));
+	        }
+            }
+	    when 8 {
+                 my $rrem = $.rem;
+                 if $lutreflect {
+                     $rrem = reflect($rrem, $columns);
+                     for $b.values -> $v {
+                         $rrem = ($rrem +> $lutsize) +^
+                         @lut[$v +^ ($rrem +& ((1 +< $lutsize) - 1))];
+                     }
+	             $rrem = reflect($rrem, $columns);
+                 }
+		 else {
+                     for $b.values -> $v {
+		         # XXX shift by negative value not explicitly specced
+                         $rrem = ($rrem +< $lutsize) +^
+                         @lut[$v +^ ($rrem +> ($columns - $lutsize))];
+                         $rrem +&= $mask;
+                     }
+                 }
+	         $.rem = $rrem;
+	    }
+	    default { die "lut size of $lutsize NYI (this should not happen)" }
+	}
+    }
+
+    multi method add (*@addends) {
+        for (@addends) {
+            if ($_ ~~ blob8) {
+	        self.add($_)
+	    }
+            else {
+                onebit($.rem, $_)
+            }
         }
         return;
     };
@@ -125,12 +227,7 @@ role Sum::CRC [ :@header?, :@footer?, :$residual = 0,
 	    $rev = $c.rem;
         }
         if $reflect {
-            my $rev2 = $rev +& 0; # Think types.
-	    for (1 X+< ^$columns) {
-                $rev2 +<= 1;
-	        $rev2 +|= 1 if $rev +& $_;
-	    }
-            $rev = $rev2;
+            $rev = reflect($rev, $columns);
         }
         if $finv {
            return $rev +^ $mask if $finv.WHAT === Bool;

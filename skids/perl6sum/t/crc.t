@@ -3,7 +3,7 @@ use lib	'./lib';
 
 use Test;
 
-plan 133;
+plan 138;
 
 use Sum::CRC;
 ok(1,'We use Sum::CRC and we are still alive');
@@ -14,6 +14,7 @@ class ROHC does Sum::CRC_3_ROHC does Sum::Marshal::Bits[:reflect] { }
 my ROHC $rohc .= new();
 is ROHC.size, 3, "CRC .size method works.  And is a class method";
 is +$rohc.finalize(0x31..0x39), 0x6, "CRC_3_ROHC gives expected results";
+
 ok $rohc.check(False,True,True), "CRC_3_ROHC self-verifies (0)";
 is +ROHC.new.finalize(3,1,4,1,5,9,2,6,4), 7, "CRC_3_ROHC additional vector 1";
 is +ROHC.new.finalize(1,6,1,8,0,3,3,9,8,8), 2, "CRC_3_ROHC additional vector 2";
@@ -21,7 +22,7 @@ is ROHC.new.finalize(3,1,4,1,5,9,2,6,4).base(16), "7", ".base(16) on a 3-bit res
 is ROHC.new.finalize(3,1,4,1,5,9,2,6,4).fmt, "07", ".fmt on a 3-bit result";
 is ROHC.new.finalize(1,6,1,8,0,3,3,9,8,8).base(2), "010", ".base(2) on a 3-bit result";
 
-class CRC4ITU does Sum::CRC_4_ITU does Sum::Marshal::Bits { :reflect }
+class CRC4ITU does Sum::CRC_4_ITU does Sum::Marshal::Bits[ :reflect ] { }
 my CRC4ITU $itu4 .= new();
 is +$itu4.finalize(0x31..0x39), 0x7, "CRC_4_ITU gives expected results";
 ok $itu4.check(True,True,True,False,False), "CRC_4_ITU self-verifies (0)";
@@ -32,10 +33,25 @@ my CRC5EPC $s5e .= new();
 is +$s5e.finalize(?<<(1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0)), 0x13, "CRC_5_EPC gives expected results";
 is +$s5e.finalize(?<<(1,0,0,1,1)), 0, "CRC_5_EPC self-verifies (0)";
 
-class CRC5ITU does Sum::CRC_5_ITU does Sum::Marshal::Bits { :reflect }
+sub sweep_compare($c1, $c2, @pre, $prebuf, $postbuf, @post) {
+    for 0..255 -> $x {
+        return False if
+	+$c1.new.finalize(|@pre, buf8.new($prebuf, $x, $postbuf), |@post) !=
+	+$c2.new.finalize(|@pre, buf8.new($prebuf, $x, $postbuf), |@post);
+    }
+    True;
+}
+
+class CRC5ITU does Sum::CRC_5_ITU does Sum::Marshal::Bits[ :reflect ] does Sum::Marshal::Method[ :atype(buf8) :method<values> :remarshal ] { }
 my CRC5ITU $itu5 .= new();
 is +$itu5.finalize(0x31..0x39), 0x7, "CRC_5_ITU gives expected results";
 ok $itu5.check(True,True,True,False,False), "CRC_5_ITU self-verifies (0)";
+
+class CRC5ITUrlut
+    does Sum::CRC[ :reflect :columns(5) :poly(0x15) :lut{:size(8) :reflect} ]
+    does Sum::Marshal::Raw { }
+
+ok sweep_compare(CRC5ITU, CRC5ITUrlut, [True,False,False],0x32,0x57,[False,True,False]), "reflected 5-bit CRC same via lut and via marshalling";
 
 # Test sum and value from "CYCLIC REDUNDANCY CHECKS IN USB" crcdes.pdf usb.org
 class USBToken does Sum::CRC_5_USB does Sum::Marshal::Bits[ :bits(5) ] { }
@@ -80,10 +96,17 @@ my CRC8DARC $d8 .= new();
 is +$d8.finalize(0x31..0x39), 0x15, "CRC_8_DARC gives expected results";
 ok $d8.check(0x15), "CRC_8_DARC self-verifies (0)";
 
-class CRC8EBU does Sum::CRC_8_EBU does Sum::Marshal::Bits[ :reflect ] { }
+class CRC8EBU does Sum::CRC_8_EBU does Sum::Marshal::Bits[ :reflect ] does Sum::Marshal::Method[ :atype(buf8) :method<values> :remarshal ] { }
 my CRC8EBU $e8 .= new();
 is +$e8.finalize(0x31..0x39), 0x97, "CRC_8_EBU gives expected results";
 ok $e8.check(0x97), "CRC_8_EBU self-verifies (0)";
+
+class CRC8EBUrlut
+    does Sum::CRC[ :reflect :iniv :columns(8) :poly(0x1d)
+                   :lut{:size(8) :reflect} ]
+    does Sum::Marshal::Raw { }
+
+ok sweep_compare(CRC8EBU, CRC8EBUrlut, [True,False,False],0x32,0x57,[False,True,False]), "reflected 8-bit CRC same via lut and via marshalling";
 
 class CRC8ICODE does Sum::CRC_8_I_CODE does Sum::Marshal::Bits { }
 my CRC8ICODE $ic8 .= new();
@@ -148,11 +171,18 @@ given D12.new {
   ok .check(True xx 4,0x5b), "CRC_12_DECT self-verifies (0)";
 }
 
-class D14 does Sum::CRC_14_DARC does Sum::Marshal::Bits[ :reflect ] { }
+class D14 does Sum::CRC_14_DARC does Sum::Marshal::Bits[ :reflect ] does Sum::Marshal::Method[ :atype(buf8) :method<values> :remarshal ] { }
 given D14.new {
   is +.finalize(0x31..0x39),0x082d, "CRC_14_DARC gives expected value";
   ok .check(0x2d,?<<comb(/./,"000100")), "CRC_14_DARC self-verifies (0)";
 }
+
+class D14rlut
+    does Sum::CRC[ :reflect :columns(14) :poly(0x805)
+                   :lut{:size(8) :reflect} ]
+    does Sum::Marshal::Raw { }
+
+ok sweep_compare(D14, D14rlut, [True,False,False],0x32,0x57,[False,True,False]), "reflected 14-bit CRC same via lut and via marshalling";
 
 class C15 does Sum::CRC_15_CAN does Sum::Marshal::Bits[ ] { }
 given C15.new {
@@ -199,11 +229,18 @@ given OW16.new {
   ok .check(0x44,0xc2), "CRC_16_1_Wire self-verifies (residual)";
 }
 
-class MB16 does Sum::CRC_16_Modbus does Sum::Marshal::Bits[ :reflect ] { }
+class MB16 does Sum::CRC_16_Modbus does Sum::Marshal::Bits[ :reflect ] does Sum::Marshal::Method[ :atype(buf8) :method<values> :remarshal ] { }
 given MB16.new {
   is +.finalize(0x31..0x39), 0x4b37, "CRC_16_Modbus gives expected result.";
   ok .check(0x37,0x4b), "CRC_16_Modbus self-verifies (0)";
 }
+
+class MB16rlut
+    does Sum::CRC[ :iniv :reflect :columns(16) :poly(0x8005)
+                   :lut{:size(8) :reflect} ]
+    does Sum::Marshal::Raw { }
+
+ok sweep_compare(MB16, MB16rlut, [True,False,False],0x32,0x57,[False,True,False]), "reflected 16-bit CRC same via lut and via marshalling";
 
 class DD16 does Sum::CRC_16_DDS_110 does Sum::Marshal::Bits[ ] { }
 given DD16.new {
@@ -317,10 +354,17 @@ is +$c32.finalize(0x31..0x39), 0xe3069283, "CRC_32C gives expected value";
 is $c32.buf8.gist, buf8.new(0xe3,6,0x92,0x83).gist, "buf8 works on 32 column CRC";
 ok $c32.check(0x83,0x92,0x06,0xe3), "CRC_32C self-verifies (residual)";
 
-class D32 does Sum::CRC_32D does Sum::Marshal::Bits[ :reflect ] { }
+class D32 does Sum::CRC_32D does Sum::Marshal::Bits[ :reflect ] does Sum::Marshal::Method[ :atype(buf8) :method<values> :remarshal ] { }
 my D32 $d32 .= new();
 is +$d32.finalize(0x31..0x39), 0x87315576, "CRC_32D gives expected value";
 ok $d32.check(0x76,0x55,0x31,0x87), "CRC_32D self-verifies (residual)";
+
+class D32rlut
+    does Sum::CRC[ :reflect :iniv :finv :columns(32) :poly(0xa833982b)
+                   :residual(0xbad8faae) :lut{:size(8) :reflect} ]
+    does Sum::Marshal::Raw { }
+
+ok sweep_compare(D32, D32rlut, [True,False,False],0x32,0x57,[False,True,False]), "reflected 32-bit CRC same via lut and via marshalling";
 
 class MP2 does Sum::CRC_32_MPEG2 does Sum::Marshal::Bits[ ] { }
 my MP2 $mp2 .= new();

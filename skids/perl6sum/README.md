@@ -77,75 +77,78 @@ feed without interfering with the feed result:
 There are a few key differences between the way one uses
 objects from Sum:: versus the Perl 5 Digest:: interface.
 
-1) Use .push, not ->add to add elements to the Sum.
-   There is an .add method but its exact behavior changes
-   with the algorithm and the backend.  Only use .add
-   directly when optimizing for site-specific use cases.
+1.  Use .push, not ->add to add elements to the Sum.
+    There is an .add method but its exact behavior changes
+    with the algorithm and the backend.  Only use .add
+    directly when optimizing for site-specific use cases.
 
-2) Use .finalize, not ->digest.  This change makes it clearer
-   that the calculation is complete and (in most algorithms)
-   more addends cannot be pushed to the digest.  This also
-   brings Perl 6 in line with the prevalent vernacular.
+2.  Use .finalize, not ->digest.  This change makes it clearer
+    that the calculation is complete and (in most algorithms)
+    more addends cannot be pushed to the digest.  This also
+    brings Perl 6 in line with the prevalent vernacular.
 
-3) While it is possible (and easy) to build a Sum class that will
-   take strings as arguments to .push, it is more advisable
-   to keep decisions about encoding visible at the point
-   of use.  Consider this behavior of Perl 5 Digest:: when
-   you encounter characters with ordinal values between
-   129 and 255:
+3.  While it is possible (and easy) to build a Sum class that will
+    take strings as arguments to .push, it is more advisable
+    to keep decisions about encoding visible at the point
+    of use.  Consider this behavior of Perl 5 Digest:: when
+    you encounter characters with ordinal values between
+    129 and 255:
 
-      use Digest::SHA sha1_base64;
-      use Encode qw(encode_utf8);
-      say sha1_base64(encode_utf8('here is a french brace »'));
-      # S+YAQNtj1tluLgYewYgoWvdrSgQ
-      say sha1_base64(            'here is a french brace »')";
-      # 5hoNlI0QihTToOzKPc8pdMwEhWM
+        use Digest::SHA sha1_base64;
+        use Encode qw(encode_utf8);
+        say sha1_base64(encode_utf8('here is a french brace »'));
+        # S+YAQNtj1tluLgYewYgoWvdrSgQ
+        say sha1_base64(            'here is a french brace »')";
+        # 5hoNlI0QihTToOzKPc8pdMwEhWM
 
-   However, in Perl 5 you MUST use encode_utf8 if you handle any
-   characters with ordinals above 255.  There is too much opportunity
-   for mixed encoding problems to happen when parts of a message are
-   pushed at different locations in the code.
+    However, in Perl 5 you MUST use encode_utf8 if you handle any
+    characters with ordinals above 255.  There is too much opportunity
+    for mixed encoding problems to happen when parts of a message are
+    pushed at different locations in the code.
 
-   By not accepting plain strings, users must consciously
-   choose an encoding and that helps them avoid accidentally mixing
-   encodings.
+    By not accepting plain strings, users must consciously
+    choose an encoding and that helps them avoid accidentally mixing
+    encodings.
 
-   Fortunately, encoding is a built-in capability of Perl 6:
+    Fortunately, encoding is a built-in capability of Perl 6:
 
-      $sha.push('here is a french brace »'.encode('utf8'));
+        $sha.push('here is a french brace »'.encode('utf8'));
 
-4) Note that the return value of .finalize is the finalized
-   Sum object.  This can be coerced to common types you might
-   want using and formatted using many built-in Perl 6
-   methods.  Also, .finalize takes arguments, which are just
-   passed to .push.  Together this gives the following idiom
-   for one-shot purposes:
+4.  Note that the return value of .finalize is the finalized
+    Sum object.  This can be coerced to common types you might
+    want and formatted by using many built-in Perl 6
+    methods.  Also, .finalize takes arguments, which are just
+    passed to .push.  Together this gives the following idiom
+    for one-shot purposes:
 
-       say mysha.new.finalize($buffer).Int.fmt("%20x");
+        say mysha.new.finalize($buffer).Int.fmt("%20x");
 
-   There are some shortcuts built in, which also have the
-   benefit of including leading zeros.
+    There are some shortcuts built in, which also have the
+    benefit of including leading zeros.
 
-       say mysha.new.finalize($buffer).fmt(); # lowercase hex (e.g. sha1_hex)
-       say mysha.new.finalize($buffer).fmt("%2.2x",":"); # colon octets
-       say mysha.new.finalize($buffer).base(16); # uppercase hex
-       say mysha.new.finalize($buffer).base(2);  # binary text
+        say mysha.new.finalize($buffer).fmt(); # lowercase hex (e.g. sha1_hex)
+        say mysha.new.finalize($buffer).fmt("%2.2x",":"); # colon octets
+        say mysha.new.finalize($buffer).base(16); # uppercase hex
+        say mysha.new.finalize($buffer).base(2);  # binary text
 
-5) There is no ->reset method, and .new does not re-use
-   the Perl 6 object when called on an instance, it just
-   creates a new Perl 6 object.  Sum objects are meant
-   to be thrown away after use.  Replacing them is easy:
+    Base32 and Base64 is not yet implemented pending a review of
+    which variations of these encodings are used in modern applications.
 
-      # assuming $md has a Sum in it, or was constrained when defined.
-      $md .= new;
+5.  There is no ->reset method, and .new does not re-use
+    the Perl 6 object when called on an instance, it just
+    creates a new Perl 6 object.  Sum objects are meant
+    to be thrown away after use.  Replacing them is easy:
 
-   If you are concerned about tying up crypto resources, the
-   only thing to worry about is to ensure you finalize the object
-   before discarding it.  The backends should be smart enough to
-   free up resources promptly upon finalization.
+        # assuming $md has a Sum in it, or was constrained when defined.
+        $md .= new;
 
-6) Just about everything in perl 6 has a .clone method,
-   including Sum objects.  However, not all back-ends
-   can clone their instances.  Using a class that does
-   Sum::Partial is one way to guarantee that only backends
-   that support cloning contexts are used.
+    If you are concerned about tying up crypto resources, the
+    only thing to worry about is to ensure you finalize the object
+    before discarding it.  The backends should be smart enough to
+    free up resources promptly upon finalization.
+
+6.  Just about everything in perl 6 has a .clone method,
+    including Sum objects.  However, not all back-ends
+    can clone their instances.  Using a class that does
+    Sum::Partial is one way to guarantee that only backends
+    that support cloning contexts are used.

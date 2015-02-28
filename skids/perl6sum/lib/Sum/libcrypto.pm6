@@ -44,7 +44,7 @@ module X::libcrypto {
     $sha1.finalize(blob8.new(0x36..0x39)).Int.base(16).say;
     # 87ACEC17CD9DCD20A716CC2CF67417B71C8A7016
     $sha1.size.say; # 160
-    $sha1.Buf[].fmt("%x").say;
+    $sha1.Buf.values.fmt("%x").say;
     # 87 ac ec 17 cd 9d cd 20 a7 16 cc 2c f6 74 17 b7 1c 8a 70 16
 
 =end code

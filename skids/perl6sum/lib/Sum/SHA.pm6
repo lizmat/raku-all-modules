@@ -98,7 +98,7 @@ role Sum::SHA1 [ :$recourse where { not $_ }
     method size ( --> int) { 160 }
 
     method comp ( --> Nil) {
-        my ($a, $b, $c, $d, $e) = @!s[];
+        my ($a, $b, $c, $d, $e) = @!s.values;
 
         for ((0x5A827999,{ $b +& $c +| +^$b +& $d }).item xx 20,
              (0x6ED9EBA1,{ $b +^ $c +^ $d }).item xx 20,
@@ -109,7 +109,7 @@ role Sum::SHA1 [ :$recourse where { not $_ }
                 ($a, rol($b,30), $c, $d,
                  0xffffffff +& (rol($a,5) + $f() + $e + $k + @!w[$i]));
         }
-        @!s[] = 0xffffffff X+& (@!s[] Z+ (0xffffffff X+& ($a,$b,$c,$d,$e)));
+        @!s = 0xffffffff X+& (@!s.values Z+ (0xffffffff X+& ($a,$b,$c,$d,$e)));
 	return; # This should not be needed per S06/Signatures
     }
     # A moment of silence for the pixies that die every time something
@@ -158,12 +158,12 @@ role Sum::SHA1 [ :$recourse where { not $_ }
     method Numeric {
         self.finalize;
         # This does not work yet on 32-bit machines
-        # :4294967296[@!s[]]
-        [+|] (@!s[] Z+< (128,96...0))
+        # :4294967296[@!s.values]
+        [+|] (@!s.values Z+< (128,96...0))
     }
     method Int () { self.Numeric }
     method bytes_internal {
-        @!s[] X+> (24,16,8,0);
+        @!s.values X+> (24,16,8,0);
     }
     method buf8 {
         self.finalize;
@@ -336,7 +336,7 @@ role Sum::SHAmix32 does Sum::SHA2common {
     }
 
     method comp (--> Nil) {
-        my ($a,$b,$c,$d,$e,$f,$g,$h) = @.s[];
+        my ($a,$b,$c,$d,$e,$f,$g,$h) = @.s.values;
         for ^64 -> $i {
             # We'll mask this below
             my $t1 = [+] $h, @k[$i], @.w[$i],
@@ -351,9 +351,9 @@ role Sum::SHAmix32 does Sum::SHA2common {
                 0xffffffff +& ($d + $t1), $e, $f, $g;
         }
         # merge the new state
-        @.s[] = 0xffffffff
+        @.s = 0xffffffff
                 X+&
-                (@.s[] Z+ (0xffffffff X+& ($a,$b,$c,$d,$e,$f,$g,$h)));
+                (@.s.values Z+ (0xffffffff X+& ($a,$b,$c,$d,$e,$f,$g,$h)));
 	return; # This should not be needed per S06/Signatures
     }
 }
@@ -409,7 +409,7 @@ role Sum::SHAmix64 does Sum::SHA2common {
     }
 
     method comp (--> Nil) {
-        my ($a,$b,$c,$d,$e,$f,$g,$h) = @.s[];
+        my ($a,$b,$c,$d,$e,$f,$g,$h) = @.s.values;
         for ^80 -> $i {
             # We'll mask this below
             my $t1 = [+] $h, @k[$i], @.w[$i],
@@ -424,9 +424,9 @@ role Sum::SHAmix64 does Sum::SHA2common {
                 0xffffffffffffffff +& ($d + $t1), $e, $f, $g;
         }
         # merge the new state
-        @.s[] = 0xffffffffffffffff
+        @.s = 0xffffffffffffffff
                 X+&
-                (@.s[] Z+ (0xffffffffffffffff X+& ($a,$b,$c,$d,$e,$f,$g,$h)));
+                (@.s.values Z+ (0xffffffffffffffff X+& ($a,$b,$c,$d,$e,$f,$g,$h)));
 	return; # This should not be needed per S06/Signatures
     }
 }
@@ -456,12 +456,12 @@ role Sum::SHA256[:$recourse where { not $_ }
                  0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19;
     method init { @s_init }
     method bytes_internal {
-        @.s[] X+> (24,16...0)
+        @.s.values X+> (24,16...0)
     }
     method Int_internal {
         # Doesn't work yet:
-        # :4294967296[@.s[]]
-        [+|] (@.s[] Z+< (224,192...0))
+        # :4294967296[@.s.values]
+        [+|] (@.s.values Z+< (224,192...0))
     }
     method size { 256 }
 }
@@ -494,12 +494,12 @@ role Sum::SHA512[:$recourse where { not $_ }
                  0x1f83d9abfb41bd6b, 0x5be0cd19137e2179;
     method init { @s_init }
     method bytes_internal {
-        @.s[] X+> (56,48...0)
+        @.s.values X+> (56,48...0)
     }
     method Int_internal {
         # Doesn't work yet:
-        # :18446744073709551616[@.s[]]
-        [+|] (@.s[] Z+< (448,384...0))
+        # :18446744073709551616[@.s.values]
+        [+|] (@.s.values Z+< (448,384...0))
     }
     method size { 512 }
 }

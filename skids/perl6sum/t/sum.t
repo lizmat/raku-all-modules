@@ -132,7 +132,7 @@ is +$h.finalize(5,6), 31, "finalize with multiple arguments works (Partial)";
 $h.push();
 is $h.accum, 31, "push with no arguments works(Partial)";
 is $h.partials(3,2,1)».Numeric.join(''), "343637", "partials method works";
-is $h.partials(), Nil, "partials with no arguments gives empty list";
+is $h.partials(), (), "partials with no arguments gives empty list";
 my @d;
 #? rakudo skip 'feed through a slurpy arity function'
 #@d <== $h.partials <== (2,3);

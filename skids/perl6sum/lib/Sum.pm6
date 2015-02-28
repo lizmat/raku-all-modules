@@ -449,14 +449,14 @@ role Sum::Marshal::Cooked {
 
     # Subclasses may elect to handle finite numbers of addends in one
     # method call.  Where they do not, handle each one individually.
-    multi method marshal (*@addends) {
-        @addends.map: { self.marshal($_) }
+    multi method marshal ($self: :$diamond? where {True}, *@addends) {
+        @addends.flat.map: { self.marshal(|$_.flat) }
     }
 
     # Last resort if no subclass has a handler for this specific type of
     # addend.  Pass the addend through, unless we are also one of the
     # marshalling types that has restrictions.
-    multi method marshal ($addend) {
+    multi method marshal ($self: $addend, :$diamond? where {True}) {
         # See if we are also a Sum::Marshal::Pack
         if self.^can('whole') and self.^can('violation') {
 
@@ -469,7 +469,7 @@ role Sum::Marshal::Cooked {
                 return Failure.new(X::Sum::Missing.new());
             }
         }
-        $addend;
+	return(|$addend);
     }
 
     # multi/constrained candidate to temporarily workaround diamond problem
@@ -509,8 +509,8 @@ role Sum::Marshal::Method [ ::T :$atype, Str :$method, Bool :$remarshal = False 
     does Sum::Marshal::Cooked {
     multi method marshal (T $addend) {
         given $addend."$method"() {
-            return flat $_ unless $remarshal;
-            self.marshal(flat $_);
+            return $_.flat unless $remarshal;
+            self.marshal(|$_).flat;
         }
     }
 }

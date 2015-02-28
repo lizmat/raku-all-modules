@@ -249,12 +249,12 @@ role Sum::Recourse::Marshal {
 	    return Failure.new(X::Sum::Final.new) if $.final;
             if $!left.elems {
                 if $!left.elems + $addend.elems < $!bsize {
-                    $!left = buf8.new($!left[],$addend[]);
+                    $!left = buf8.new($!left.values,$addend.values);
 		    $b = $addend.elems;
                 }
                 else {
 		    $b = $!left.elems;
-                    $!left = buf8.new($!left[], $addend[0 ..^ $!bsize - $b]);
+                    $!left = buf8.new($!left.values, $addend[0 ..^ $!bsize - $b]);
 		    self.add($!left);
                     $b = $!bsize - $b;
                 }

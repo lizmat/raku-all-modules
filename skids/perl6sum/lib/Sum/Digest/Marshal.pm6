@@ -36,7 +36,7 @@ role Sum::Digest::Marshal [ :$blocksize = 64 ] {
       while ($a.chars > $pos) {
         my $take = min($blocksize - $accum.bytes, $a.chars - $pos);
 	my $took = $a.substr($pos, $take);
-        $accum = blob8.new($accum[ ], $took.ords);
+        $accum = blob8.new($accum.values, $took.ords);
 	last unless $accum.bytes == $blocksize;
 	self.add($accum);
 	$accum = blob8.new();
@@ -61,7 +61,7 @@ role Sum::Digest::Marshal [ :$encoding where "utf8", :$blocksize = 64 ] {
         my $take = min($blocksize - $accum.bytes, $utf.bytes - $pos);
 	my $took = $utf.subbuf($pos, $take);
         if ($accum.bytes) {
-          $accum = blob8.new($accum[ ], $took[ ]);
+          $accum = blob8.new($accum.values, $took.values);
         }
         else {
 	  $accum = $took;

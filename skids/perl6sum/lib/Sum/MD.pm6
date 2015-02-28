@@ -236,7 +236,7 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
     }
 
     method md4_comp (--> Nil) {
-        my @s = @!s[];
+        my @s = @!s.values;
         for (^16) Z (3,7,11,19) xx 4 {
             self.md4_round1_step(@!w[$^idx],$^shift);
 	    self.md4_ext_round1_step(@!w[$^idx],$^shift)
@@ -259,7 +259,7 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
     }
 
     method md5_comp (--> Nil) {
-        my @s = @!s[];
+        my @s = @!s.values;
         for (^16) Z (^16) Z (7,12,17,22) xx 4 {
             self.md5_round1_step(@!w[$^didx], $^idx, $^shift);
         }
@@ -281,8 +281,8 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
     }
 
     # RIPEMD constants
-    my @lperms = [^16], { [ (7,4,13,1,10,6,15,3,12,0,9,5,2,14,11,8)[$_[]] ] } ... *[0]  == 4;
-    my @rperms = [(9 * $_ + 5) % 16 for ^16], { [ @lperms[1][$_[]] ] } ... *[0]  == 12;
+    my @lperms = [^16], { [ (7,4,13,1,10,6,15,3,12,0,9,5,2,14,11,8)[$_.values] ] } ... *[0]  == 4;
+    my @rperms = [(9 * $_ + 5) % 16 for ^16], { [ @lperms[1][$_.values] ] } ... *[0]  == 12;
     my @kl = 0,0x5a827999,0x6ed9eba1,0x8f1bbcdc,0xa953fd4e;
     my @kr = 0x50a28be6,0x5c4dd124,0x6d703ef3,0x7a6d76e9,0;
 
@@ -312,41 +312,41 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
 
     method ripe5_comp (--> Nil) {
 
-        my @s = @!s[];
+        my @s = @!s.values;
         @!s.push(@s) if $alg eqv "RIPEMD-160";
 
-        for @lperms[0][] Z @lshifts[0][] {
+        for @lperms[0].values Z @lshifts[0].values {
             self.ripe_f1_5(0,@!w[$^didx],@kl[0],$^shift);
         }
-        for @rperms[0][] Z @rshifts[0][] {
+        for @rperms[0].values Z @rshifts[0].values {
             self.ripe_f5_5(5,@!w[$^didx],@kr[0],$^shift);
         }
         @!s[1,6] = @!s[6,1] if $alg eqv "RIPEMD-320";
-        for @lperms[1][] Z @lshifts[1][] {
+        for @lperms[1].values Z @lshifts[1].values {
             self.ripe_f2_5(0,@!w[$^didx],@kl[1],$^shift);
         }
-        for @rperms[1][] Z @rshifts[1][] {
+        for @rperms[1].values Z @rshifts[1].values {
             self.ripe_f4_5(5,@!w[$^didx],@kr[1],$^shift);
         }
         @!s[3,8] = @!s[8,3] if $alg eqv "RIPEMD-320";
-        for @lperms[2][] Z @lshifts[2][] {
+        for @lperms[2].values Z @lshifts[2].values {
             self.ripe_f3_5(0,@!w[$^didx],@kl[2],$^shift);
         }
-        for @rperms[2][] Z @rshifts[2][] {
+        for @rperms[2].values Z @rshifts[2].values {
             self.ripe_f3_5(5,@!w[$^didx],@kr[2],$^shift);
         }
         @!s[0,5] = @!s[5,0] if $alg eqv "RIPEMD-320";
-        for @lperms[3][] Z @lshifts[3][] {
+        for @lperms[3].values Z @lshifts[3].values {
             self.ripe_f4_5(0,@!w[$^didx],@kl[3],$^shift);
         }
-        for @rperms[3][] Z @rshifts[3][] {
+        for @rperms[3].values Z @rshifts[3].values {
             self.ripe_f2_5(5,@!w[$^didx],@kr[3],$^shift);
         }
         @!s[2,7] = @!s[7,2] if $alg eqv "RIPEMD-320";
-        for @lperms[4][] Z @lshifts[4][] {
+        for @lperms[4].values Z @lshifts[4].values {
             self.ripe_f5_5(0,@!w[$^didx],@kl[4],$^shift);
         }
-        for @rperms[4][] Z @rshifts[4][] {
+        for @rperms[4].values Z @rshifts[4].values {
             self.ripe_f1_5(5,@!w[$^didx],@kr[4],$^shift);
         }
         @!s[4,9] = @!s[9,4] if $alg eqv "RIPEMD-320";
@@ -362,34 +362,34 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
 
     method ripe4_comp (--> Nil) {
 
-        my @s = @!s[];
+        my @s = @!s.values;
         @!s.push(@s) if $alg eqv "RIPEMD-128";
 
-        for @lperms[0][] Z @lshifts[0][] {
+        for @lperms[0].values Z @lshifts[0].values {
             self.ripe_f1_4(0,@!w[$^didx],@kl[0],$^shift);
         }
-        for @rperms[0][] Z @rshifts[0][] {
+        for @rperms[0].values Z @rshifts[0].values {
             self.ripe_f4_4(4,@!w[$^didx],@kr[0],$^shift);
         }
         @!s[0,4] = @!s[4,0] if $alg eqv "RIPEMD-256";
-        for @lperms[1][] Z @lshifts[1][] {
+        for @lperms[1].values Z @lshifts[1].values {
             self.ripe_f2_4(0,@!w[$^didx],@kl[1],$^shift);
         }
-        for @rperms[1][] Z @rshifts[1][] {
+        for @rperms[1].values Z @rshifts[1].values {
             self.ripe_f3_4(4,@!w[$^didx],@kr[1],$^shift);
         }
         @!s[1,5] = @!s[5,1] if $alg eqv "RIPEMD-256";
-        for @lperms[2][] Z @lshifts[2][] {
+        for @lperms[2].values Z @lshifts[2].values {
             self.ripe_f3_4(0,@!w[$^didx],@kl[2],$^shift);
         }
-        for @rperms[2][] Z @rshifts[2][] {
+        for @rperms[2].values Z @rshifts[2].values {
             self.ripe_f2_4(4,@!w[$^didx],@kr[2],$^shift);
         }
         @!s[2,6] = @!s[6,2] if $alg eqv "RIPEMD-256";
-        for @lperms[3][] Z @lshifts[3][] {
+        for @lperms[3].values Z @lshifts[3].values {
             self.ripe_f4_4(0,@!w[$^didx],@kl[3],$^shift);
         }
-        for @rperms[3][] Z @rshifts[3][] {
+        for @rperms[3].values Z @rshifts[3].values {
             self.ripe_f1_4(4,@!w[$^didx],@kr[4],$^shift);
         }
         @!s[3,7] = @!s[7,3] if $alg eqv "RIPEMD-256";
@@ -442,10 +442,10 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
     }
     method Numeric {
         self.finalize;
-        :256[ 255 X+& (@!s[] X+> (0,8,16,24)) ]
+        :256[ 255 X+& (@!s.values X+> (0,8,16,24)) ]
     }
     method Int () { self.Numeric }
-    method bytes_internal { @!s[] X+> (0,8,16,24) };
+    method bytes_internal { @!s.values X+> (0,8,16,24) };
     method buf8 {
         self.finalize;
         buf8.new(self.bytes_internal);
@@ -584,7 +584,7 @@ role Sum::MD2 does Sum {
         my int $empty = 16 - $block.elems;
         $!final = True;
         self.add(Buf.new($block.values, $empty xx $empty));
-        self.add(Buf.new(@!C[]));
+        self.add(Buf.new(@!C.values));
     }
     multi method add (blob8 $block where { .elems == 16 }) {
         @!X[16..^32] = $block.values;
