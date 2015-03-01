@@ -71,10 +71,20 @@ our sub verify(XML::Element $signature) is export {
         fail "Unable to understand canonicalization method: $canonicalization-method";
     }
 
+    my $signature-method = $signed-info.elements(:TAG($prefix ~ 'SignatureMethod'), :SINGLE).attribs<Algorithm>;
+
     my $good = False;
     for @certs {
         my $rsa = OpenSSL::RSAKey.new(:x509-pem($_));
-        $good = True if $rsa.verify($canon.encode, $sign-data);
+        if $signature-method eq 'http://www.w3.org/2000/09/xmldsig#rsa-sha1' {
+            $good = True if $rsa.verify($canon.encode, $sign-data);
+        }
+        elsif $signature-method eq 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256' {
+            $good = True if $rsa.verify($canon.encode, $sign-data, :sha256);
+        }
+        else {
+            fail "Unable to understand signature method: " ~ $signature-method;
+        }
     }
     fail "Bad signature" unless $good;
     True;
@@ -109,7 +119,10 @@ sub check_reference(XML::Element $reference) {
             # remove ourselves from the data
 
             # make a copy - we don't want to mess up the original document
-            $data = $data.ownerDocument.Str.&from-xml.getElementById($uri.substr(1));
+            my $idattr = $data.ownerDocument.root.idattr;
+            $data = $data.ownerDocument.Str.&from-xml;
+            $data.idattr = $idattr;
+            $data = $data.root.getElementById($uri.substr(1));
             $data.elements(:TAG($prefix ~ 'Signature'))>>.remove;
         }
         elsif    $_.attrs<Algorithm> eq 'http://www.w3.org/2001/10/xml-exc-c14n#'
@@ -146,7 +159,18 @@ sub check_reference(XML::Element $reference) {
         }
     }
 
-    my $digest = sha1($data.Str.encode);
+    my $digest-method = $reference.elements(:TAG($prefix ~ 'DigestMethod'), :SINGLE).attribs<Algorithm>;
+
+    my $digest;
+    if $digest-method eq 'http://www.w3.org/2000/09/xmldsig#sha1' {
+        $digest = sha1($data.Str.encode);
+    }
+    elsif $digest-method eq 'http://www.w3.org/2001/04/xmlenc#sha256' {
+        $digest = sha256($data.Str.encode);
+    }
+    else {
+        fail "Unable to understand digest method: " ~ $digest-method;
+    }
     $digest = MIME::Base64.encode($digest);
 
     if $digest eq $reference.elements(:TAG($prefix ~ 'DigestValue'), :SINGLE).contents {

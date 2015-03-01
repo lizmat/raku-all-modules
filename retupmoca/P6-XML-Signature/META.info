@@ -10,7 +10,7 @@
                   "OpenSSL"
                 ],
     "provides" : {
-        "XML::Canonical" : "lib/XML/Signature.pm6"
+        "XML::Signature" : "lib/XML/Signature.pm6"
     },
     "source-url" : "git://github.com/retupmoca/P6-XML-Signature.git"
 }
