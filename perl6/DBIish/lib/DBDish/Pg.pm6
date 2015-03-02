@@ -1,6 +1,6 @@
 # DBDish::Pg.pm6
 
-use NativeCall;  # from project 'zavolaj'
+use NativeCall;
 use DBDish;     # roles for drivers
 
 my constant lib = 'libpq';
@@ -9,87 +9,92 @@ my constant lib = 'libpq';
 
 #------------ Pg library functions in alphabetical order ------------
 
-sub PQexec (OpaquePointer $conn, Str $statement)
+sub PQexec (OpaquePointer $conn, str $statement)
     returns OpaquePointer
     is native(lib)
     { ... }
 
-sub PQprepare (OpaquePointer $conn, Str $statement_name, Str $query, Int $n_params, OpaquePointer $paramTypes)
+sub PQprepare (OpaquePointer $conn, str $statement_name, str $query, int32 $n_params, OpaquePointer $paramTypes)
     returns OpaquePointer
     is native(lib)
     { ... }
 
 sub PQexecPrepared(
         OpaquePointer $conn,
-        Str $statement_name,
-        Int $n_params,
+        str $statement_name,
+        int32 $n_params,
         CArray[Str] $param_values,
-        CArray[int] $param_length,
-        CArray[int] $param_formats,
-        Int $resultFormat
+        CArray[int32] $param_length,
+        CArray[int32] $param_formats,
+        int32 $resultFormat
     )
     returns OpaquePointer
     is native(lib)
     { ... }
 
 sub PQnparams (OpaquePointer)
-    returns Int
+    returns int32
     is native(lib)
     { ... }
 
-sub PQdescribePrepared (OpaquePointer, Str)
+sub PQdescribePrepared (OpaquePointer, str)
     returns OpaquePointer
     is native(lib)
     { ... }
 
 
 sub PQresultStatus (OpaquePointer $result)
-    returns Int
+    returns int32
     is native(lib)
     { ... }
 
 sub PQerrorMessage (OpaquePointer $conn)
-    returns Str
+    returns str
     is native(lib)
     { ... }
 
 sub PQresultErrorMessage (OpaquePointer $result)
-    returns Str
+    returns str
     is native(lib)
     { ... }
 
-sub PQconnectdb (Str $conninfo)
+sub PQconnectdb (str $conninfo)
     returns OpaquePointer
     is native(lib)
     { ... }
 
 sub PQstatus (OpaquePointer $conn)
-    returns Int
+    returns int32
     is native(lib)
     { ... }
 
 sub PQnfields (OpaquePointer $result)
-    returns Int
+    returns int32
     is native(lib)
     { ... }
 
 sub PQntuples (OpaquePointer $result)
-    returns Int
+    returns int32
     is native(lib)
     { ... }
 
 sub PQcmdTuples (OpaquePointer $result)
-    returns Str
+    returns str
     is native(lib)
     { ... }
 
-sub PQgetvalue (OpaquePointer $result, Int $row, Int $col)
-    returns Str
+sub PQgetvalue (OpaquePointer $result, int32 $row, int32 $col)
+    returns str
     is native(lib)
     { ... }
 
-sub PQfname (OpaquePointer $result, Int $col)
-    returns Str
+sub PQgetisnull (OpaquePointer $result, int32 $row, int32 $col)
+    returns int32
+    is native(lib)
+    { ... }
+
+sub PQfname (OpaquePointer $result, int32 $col)
+    returns str
     is native(lib)
     { ... }
 
@@ -101,9 +106,9 @@ sub PQfinish(OpaquePointer)
     is native(lib)
     { ... }
 
-sub PQftype(OpaquePointer, Int)
+sub PQftype(OpaquePointer, int32)
     is native(lib)
-    returns Int
+    returns int32
     { ... }
 
 # from pg_type.h
@@ -274,7 +279,11 @@ class DBDish::Pg::StatementHandle does DBDish::StatementHandle {
             self!reset_errstr;
 
             for ^$!field_count {
-                @row_array.push(PQgetvalue($!result, $!current_row, $_));
+                my $res := PQgetvalue($!result, $!current_row, $_);
+                if $res eq '' {
+                    $res := Str if PQgetisnull($!result, $!current_row, $_)
+                }
+                @row_array.push($res)
             }
             $!current_row++;
             self!handle-errors;
