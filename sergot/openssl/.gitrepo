@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sergot/openssl.git
 	branch = master
-	commit = 5d236165367efbdacf452ce44dcdcdcad90a6afd
-	parent = 19059b969298e5959042fd1cfedd409ce447bb7d
+	commit = 8b9acee8e639e33afc6aa20c636b78ae116b3d15
+	parent = 12d1f1a54fc5c42ca0da902d2a9dea86a30210ca
 	cmdver = 0.2.0
