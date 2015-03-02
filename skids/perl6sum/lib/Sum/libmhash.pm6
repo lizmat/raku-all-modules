@@ -199,7 +199,7 @@ class Instance is repr('CPointer') {
       my sub deinit(Instance, CArray[int8])
           is native('libmhash')
           is symbol('mhash_deinit') { * };
-      my sub mhash(Instance, buf8 $data, int $len) returns int
+      my sub mhash(Instance, blob8 $data, int $len) returns int
           is native('libmhash')
           is symbol('mhash') { * };
       my sub end(Instance) returns CArray[int8]
@@ -245,7 +245,7 @@ class Instance is repr('CPointer') {
 	  return Failure.new(X::AdHoc.new(:payload(
 	      "Overflow assigning an Int to a size_t with managed memory")))
 	      unless $ilen == $len;
-	  my $code = mhash(self, $data, +$len);
+	  my int $code = mhash(self, $data, $ilen);
           return Failure.new(X::libmhash::NativeError.new(:$code))
 	      if $code;
 	  True;
