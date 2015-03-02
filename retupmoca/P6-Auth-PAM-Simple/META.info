@@ -3,7 +3,7 @@
     "version" : "1.0.0",
     "author" : "github:retupmoca",
     "description" : "Simple PAM authentication",
-    "depends" : ["NativeCall", "LibraryMake"],
+    "depends" : ["LibraryMake"],
     "provides" : {
         "Auth::PAM::Simple" : "lib/Auth/PAM/Simple.pm6"
     },
