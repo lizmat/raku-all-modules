@@ -1,5 +1,6 @@
-BEGIN { @*INC.unshift( 'lib' ) }
+#BEGIN { @*INC.unshift( 'lib' ) }
 
+use v6;
 use Test;
 use BSON;
 use BSON::ObjectId;

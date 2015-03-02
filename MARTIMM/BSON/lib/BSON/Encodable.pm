@@ -26,8 +26,17 @@ role BSON::Encodable is BSON {
   has Str $.key_name;
   has Any $.key_data;
 
-  submethod BUILD ( :$key_name, :$key_data ) {
+  submethod BUILD ( :$bson_code, :$key_name, :$key_data ) {
+      my $code = $bson_code // '-';
+      if !?$bson_code or $bson_code < 0x00 or $bson_code > 0xFF {
+          die X::BSON::Encodable.new(
+              :operation('bson_code'),
+              :type(self.^name),
+              :emsg("Code $code out of bounds, must be positive 8 bit int")
+          )
+      }
 
+      $!bson_code = $bson_code if ?$bson_code;
       $!key_name = $key_name if ?$key_name;
       $!key_data = $key_data if ?$key_data;
   }
@@ -43,15 +52,6 @@ role BSON::Encodable is BSON {
 
 
   method _encode_code ( --> Buf ) {
-  
-      if !?$!bson_code or $!bson_code < 0x00 or $!bson_code > 0xFF {
-          my $code = $!bson_code // '-';
-          die X::BSON::Encodable.new(
-              :operation('bson_code'),
-              :type(self.^name),
-              :emsg("Code $code out of bounds, must be positive 8 bit int")
-          )
-      }
 
       return Buf.new($!bson_code);
   }

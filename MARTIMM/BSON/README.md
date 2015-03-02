@@ -105,6 +105,7 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.1 Testing with decode/encode classes and roles
 * 0.9.0
   * Created BSON::Binary and removed the Buf type. In this way the
     Class can be used for all kinds of binary type such as images, UUID,

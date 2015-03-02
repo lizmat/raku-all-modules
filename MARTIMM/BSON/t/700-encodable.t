@@ -1,19 +1,68 @@
+use v6;
 use Test;
-#use BSON;
 use BSON::Encodable;
 
 #-------------------------------------------------------------------------------
-# 
-#my BSON $bson .= new;
+# Forgotten code test
+#
+if 1 {
+  class MyThing0 does BSON::Encodable {
+
+    method encode( --> Buf ) { }
+    method decode( List $b ) { }
+  }
+
+  my MyThing0 $m0 .= new( :key_name('t'), :key_data(10));
+  say "m0: {$m0.^name}";
+
+  CATCH {
+    when X::BSON::Encodable {
+      my $emsg = $_.emsg;
+      $emsg ~~ s:g/\n+//;
+
+      ok $_.type ~~ m/MyThing0/, 'Thrown object';
+      is $emsg, "Code - out of bounds, must be positive 8 bit int", $emsg;
+    }
+  }
+}
+
+#-------------------------------------------------------------------------------
+# Code too large test
+#
+if 1 {
+  class MyThing1 does BSON::Encodable {
+
+    multi method new( :$key_name, :$key_data --> MyThing1 ) {
+        return self.bless( :bson_code(0x01FF), :$key_name, :$key_data);
+    }
+
+    method encode( --> Buf ) { }
+    method decode( List $b ) { }
+  }
+
+  my MyThing1 $m0 .= new( :key_name('t'), :key_data(10));
+  say "m0: {$m0.^name}";
+
+  CATCH {
+    when X::BSON::Encodable {
+      my $emsg = $_.emsg;
+      $emsg ~~ s:g/\n+//;
+
+      ok $_.type ~~ m/MyThing1/, 'Thrown object';
+      is $emsg, "Code 511 out of bounds, must be positive 8 bit int", $emsg;
+    }
+  }
+}
 
 #-------------------------------------------------------------------------------
 # Role to encode to and/or decode from a BSON representation from a Thing.
 # 
-class MyThing1 does BSON::Encodable {
+class MyThing2 does BSON::Encodable {
 
-#  $bson_code = 0x01;
-#say "MT1: $bson_code";
-  $BSON::Encodable::bson_code = 0x01;
+  multi method new( :$key_name, :$key_data --> MyThing2 ) {
+
+      return self.bless( :bson_code(0x01), :$key_name, :$key_data);
+  }
 
   method encode( --> Buf ) {
       return [~] self._encode_code,
@@ -30,31 +79,13 @@ class MyThing1 does BSON::Encodable {
   }
 }
 
-if 1 {
-  class MyThing2 does BSON::Encodable {
-    $BSON::Encodable::bson_code = 0x01FF;
-    method encode( --> Buf ) { }
-    method decode( List $b ) { }
-  }
 
-  my MyThing1 $m0 .= new( :key_name('t'), :key_data(10));
-  CATCH {
-    when X::BSON::Encodable {
-      my $emsg = $_.emsg;
-      $emsg ~~ s:g/\n+//;
+my MyThing2 $m .= new( :bson_code(0x01), :key_name('test'), :key_data(10));
 
-      ok $_.type ~~ m/MyThing1/, 'Thrown object';
-      is $emsg, "Code 511 out of bounds, must be positive 8 bit int", $emsg;
-    }
-  }
-}
-
-my MyThing1 $m .= new( :bson_code(0x01), :key_name('test'), :key_data(10));
-
-isa_ok $m, 'MyThing1', 'Is a thing';
+isa_ok $m, 'MyThing2', 'Is a thing';
 #ok $m.^does(BSON::Encodable), 'Does BSON::Encodable role';
 
-#`{{
+#`{{}}
 my Buf $bdata = $m.encode();
 is_deeply $bdata,
           Buf.new( 0x01,                                # BSON code
@@ -63,10 +94,10 @@ is_deeply $bdata,
                  ),
           'encoding 10';
 
-my MyThing1 $m2 .= new;
+my MyThing2 $m2 .= new;
 $m2.decode($bdata.list);
 is $m2.key_data, $m.key_data, 'Compare item after encode decode';
-}}
+
 
 #-------------------------------------------------------------------------------
 # Cleanup
