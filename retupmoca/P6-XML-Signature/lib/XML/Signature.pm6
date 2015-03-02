@@ -98,8 +98,13 @@ sub check_reference(XML::Element $reference) {
     my $uri = $reference.attribs<URI>;
 
     my $data;
-    if $uri ~~ /^\#/ {
-        $data = $reference.ownerDocument.root.getElementById($uri.substr(1));
+    if $uri ~~ /^\#/  || !$uri {
+        if !$uri || (($reference.ownerDocument.root.attribs{$reference.ownerDocument.root.idattr} || '') eq $uri.substr(1)) {
+            $data = $reference.ownerDocument.root;
+        }
+        else {
+            $data = $reference.ownerDocument.root.getElementById($uri.substr(1));
+        }
         fail "Unable to get data" unless $data;
     }
     else {
@@ -114,23 +119,28 @@ sub check_reference(XML::Element $reference) {
 
     my $canonical = 1;
     for @transforms {
-        if $_.attrs<Algorithm> eq 'http://www.w3.org/2000/09/xmldsig#enveloped-signature' {
+        if $_.attribs<Algorithm> eq 'http://www.w3.org/2000/09/xmldsig#enveloped-signature' {
             # enveloped signature
             # remove ourselves from the data
 
             # make a copy - we don't want to mess up the original document
             my $idattr = $data.ownerDocument.root.idattr;
-            $data = $data.ownerDocument.Str.&from-xml;
-            $data.idattr = $idattr;
-            $data = $data.root.getElementById($uri.substr(1));
+            $data = $data.ownerDocument.&canonical.&from-xml;
+            $data.root.idattr = $idattr;
+            if !$uri || (($data.root.attribs{$idattr} || '') eq $uri.substr(1)) {
+                $data = $data.root;
+            }
+            else {
+                $data = $data.root.getElementById($uri.substr(1));
+            }
             $data.elements(:TAG($prefix ~ 'Signature'))>>.remove;
         }
-        elsif    $_.attrs<Algorithm> eq 'http://www.w3.org/2001/10/xml-exc-c14n#'
-              || $_.attrs<Algorithm> eq 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315' {
-            $canonical = $_.attrs<Algorithm>;
+        elsif    $_.attribs<Algorithm> eq 'http://www.w3.org/2001/10/xml-exc-c14n#'
+              || $_.attribs<Algorithm> eq 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315' {
+            $canonical = $_.attribs<Algorithm>;
         }
         else {
-            fail "Unable to understand transform algorithm: " ~ $_.attrs<Algorithm>;
+            fail "Unable to understand transform algorithm: " ~ $_.attribs<Algorithm>;
         }
     }
 
@@ -149,9 +159,8 @@ sub check_reference(XML::Element $reference) {
             # no subset - we're canonicalizing the whole document
             $data = canonical($data.ownerDocument);
         }
-
-        if $canonical ~~ /exc/ {
-            my @namespaces = $_.elements(:TAG('InclusiveNamespaces'), :SINGLE).attrs<PrefixList>.split(' ');
+        elsif $canonical ~~ /exc/ {
+            my @namespaces = $_.elements(:TAG('InclusiveNamespaces'), :SINGLE).attribs<PrefixList>.split(' ');
             $data = canonical($data.ownerDocument, :exclusive, :subset(@path.join('/')), :namespaces(@namespaces));
         }
         else {
@@ -173,7 +182,7 @@ sub check_reference(XML::Element $reference) {
     }
     $digest = MIME::Base64.encode($digest);
 
-    if $digest eq $reference.elements(:TAG($prefix ~ 'DigestValue'), :SINGLE).contents {
+    if $digest eq $reference.elements(:TAG($prefix ~ 'DigestValue'), :SINGLE).contents.join {
         True;
     }
     else {

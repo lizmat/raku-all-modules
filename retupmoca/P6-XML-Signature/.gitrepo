@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-XML-Signature.git
 	branch = master
-	commit = 8981afa2d1a28b8b01bb1563dc971216fc2c58ab
-	parent = d3dbb1c733b734116a3f4bad9b98d4b2520d9bd8
+	commit = 79febe86ddb5a13ba3aed3ecd624b767d87229c6
+	parent = b9f0d2aa10485b428d9c8a2b210245624f289108
 	cmdver = 0.2.0
