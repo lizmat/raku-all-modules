@@ -3,12 +3,29 @@ class Inline::Lua;
 use Lua::Raw;
 use Inline::Lua::Object;
 
-has Str:D $.lua = '5.1';
-has $.raw = Lua::Raw.new: :$!lua;
+our $.default-lua = Any;
+
+has $.raw = die 'raw is required';
 has $.state = self.new-state;
 has $.index = self.new-index;
 has %.refcount;
 has %.ptrref;
+
+method new (Bool :$auto, Str :$lua, Str :$lib, :$raw is copy, |args) {
+    my $new;
+    if !$raw && $auto !eqv False && !defined any $lib, $lua {
+        $new = try { self.new: :lua<JIT>, |args };
+        $new //= self.new: :!auto, |args;
+    } else {
+        when !$raw {
+            my %raw-args = (:$lua, :$lib).grep: *.value.defined;
+            $raw = Lua::Raw.new: |%raw-args;
+            $new = self.new: :$raw, |args;
+        }
+        $new = callsame;
+    }
+    Inline::Lua.default-lua = $new;
+}
 
 method new-state () {
     my $L = $!raw.luaL_newstate;
@@ -49,7 +66,7 @@ method unref ($ref) {
     }
 }
 
-method get-global (Str:D $name, :$func is copy) {
+method get-global (Str:D $name) {
     self!get-global: $name;
     self.value-from-lua;
 }
@@ -76,7 +93,7 @@ method run (Str:D $code, *@args) {
 }
 
 method call (Str:D $name, *@args) {
-    self!get-global: $name, :func;
+    self!get-global: $name;
     self!call: @args;
 }
 
@@ -128,7 +145,7 @@ method values-to-lua (*@vals) {
 
 method value-to-lua ($_) {
     when !.defined { $!raw.lua_pushnil: $!state }
-    when Bool { $!raw.lua_pushboolean: $!state, $_.Num }
+    when Bool { $!raw.lua_pushboolean: $!state, Int($_) }
     when Inline::Lua::TableObj { $_.inline-lua-table.get }
     when Inline::Lua::Object { $_.get }
     when Positional | Associative {
@@ -157,9 +174,25 @@ method value-to-lua ($_) {
 
 method ensure ($code, :$e is copy) {
     if $code {
-        my $msg = "Error $code $!raw.LUA_STATUS(){$code}}";
+        my $msg = "Error $code $!raw.LUA_STATUS(){$code}";
         fail $e ?? "$e\n$msg" !! $msg;
     }
 }
+
+role LuaParent[Str:D $parent] is export {
+    method sink () { self }
+    method FALLBACK (|args) {
+        Inline::Lua.default-lua.get-global($parent).invoke: |args;
+    }
+}
+
+#`[[[ has problems, one being that $parent is needed at compose time
+role LuaParent[Inline::Lua::Table:D $parent] {
+    method sink () { self }
+    method FALLBACK (|args) {
+        $parent.invoke: |args;
+    }
+}
+#]]]
 
 

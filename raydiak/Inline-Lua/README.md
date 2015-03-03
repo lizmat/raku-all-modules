@@ -5,7 +5,6 @@ This is a Perl 6 module which allows execution of Lua code from Perl 6 code.
 ## Synopsis
 
     use Inline::Lua;
-    # or use Inline::Lua::JIT;
 
     my $L = Inline::Lua.new;
 
@@ -23,16 +22,10 @@ This is a Perl 6 module which allows execution of Lua code from Perl 6 code.
     my $sum;
 
     $sum = $L.run: $code, $arg;
-
     # OR
-
-    my $func = "function sum (...)\n $code\n end";
-    $L.run: $func;
-
+    $L.run: "function sum (...)\n $code\n end";
     $sum = $L.call: 'sum', $arg;
-
     # OR
-
     my &sum = $L.get-global: 'sum';
     $sum = sum $arg;
 
@@ -42,31 +35,40 @@ This is a Perl 6 module which allows execution of Lua code from Perl 6 code.
 
 Both Lua 5.1 and LuaJIT are supported. Evaluating Lua code works. A LuaJIT demo
 game split across several files with OpenGL and SDL FFI bindings was even
-successfully tested.
+successfully tested. LuaJIT can be explicitly enabled or disabled, but by
+default will be auto-detected (which adds a little to loading time, regardless
+of precompilation).
 
 Any number of values can be passed to and returned from Lua. Simple values
-(boolean, nil, number, string) all work. Tables work with some conversion
-caveats. See Values further down.
+(boolean, nil, number, string) all work. Tables work as arrays, hashes,
+objects, and roles. Functions work as values, subs, and methods. See Values
+further down.
 
 Reading and writing global variables can be done from Perl directly without
-calling Lua code, and global functions can be called or wrapped in a Perl
-routine for later (re)use.
+calling Lua code. Named global tables and be used as roles.
 
 ## To Do
 
 The API is incomplete, and error reporting is crude. The "Inline::" part is
 arguably NYI, as the present interface is object-oriented.
 
-There is no auto-detection of available Lua versions, and switching between
-them isn't composable; see Requirements below.
+Composing roles from Lua objects doesn't work well when multiple Inline::Lua
+instances are in use. This is because it would be difficult for the user to
+provide the Lua table to mix in at composition time, so the table is specified
+as a name to look up as a global variable. When using multiple instances, the
+named global is always looked up in the most recently created instance.
 
-Translation between Lua and Perl has no concept of references yet.
-Particularly, this makes it mostly impossible to use tables as objects or
-classes from Perl; see Values further down.
+Translation between Lua and Perl does not yet allow for writing new values to
+tables from Perl, and does not implement binary userdata. Also, metatables are
+mostly absent as a concept in the API and entirely untested, though they are
+likely to behave as expected in most situations.
 
 No provisions are made for growing Lua's stack beyond its initial size (which
 defaults to 20). Therefore, passing deeply-nested data structures to Lua may
 result in an overflow.
+
+There is not yet any way to expose Perl constructs to inlined Lua code, other
+than simple copy conversion when passing them in.
 
 ## Requirements
 
@@ -76,55 +78,82 @@ testing has only been done under MoarVM on x86-64 Linux.
 Compatible with Lua 5.1 and LuaJIT. Support for other versions of Lua is
 planned.
 
-To use LuaJIT, you can load Inline::Lua with
-
-    use Inline::Lua::JIT;
-
-or
-
-    use Lua::Raw <JIT>;
-    use Inline::Lua;
-
-The version is determined the first time Inline::Lua (or Lua::Raw) is loaded;
-subsequent "use" calls will have no effect on it. As such, it is currently not
-possible to use different Lua versions from different modules, scopes, etc.
+Lua version is switched per Inline::Lua instance. To use LuaJIT explicitly
+instead of auto-detecting it, pass :lua<JIT> to Inline::Lua.new(). To disable
+the auto-detection without using LuaJIT, either pass another version (currently
+only 5.1), or pass :!auto to use the default version without auto-detection.
 
 ## Values
 
 Inline::Lua currently allows passing and returning any number of boolean,
-number, string, table, and nil values, according to the following table.
+number, string, table, function, and nil values, according to the following
+table.
 
-    Lua     from Perl               to Perl
-    nil     * where {!.defined}     Any
-    boolean Bool                    Bool
-    number  Numeric                 Num
-    string  Stringy                 Str
-    table   Positional|Associative  Hash[Any, Any]
-
-Functions, userdata, and any other types are not implemented, though a Perl
-wrapper can be returned for a global function; see the get-global method below.
+    Lua         from Perl               to Perl
+    nil         * where {!.defined}     Any
+    boolean     Bool                    Bool
+    number      Numeric                 Num
+    string      Stringy                 Str
+    table or    any( Positional,        Inline::Lua::Object; either:
+      function  Associative,                Inline::Lua::Table
+                Inline::Lua::Object )       Inline::Lua::Function
 
 In Lua, there is no difference between Positional and Associative containers;
 both are a table. Lua tables use 1-based indexing when acting as an array, so
 Positional objects passed in from Perl will have Integer indices increased by
 one in the resulting table.
 
-Tables returned from Lua are directly mapped to object hashes; there is no
-attempt at array detection or index adjustment, since hashes and arrays coming
-from Lua can't be reliably distinguished. The object hash is keyed by the same
-conversions as everything else which means, of particular note, numeric keys
-are Perl Nums instead of Ints. In the future a table will be represented as an
-object which implements both Positional and Associative interfaces, similar to
-a Perl 6 Capture.
+Tables returned from Lua are exposed as Inline::Lua::Table instances, which can
+be accessed directly with hash or array subscripts (including slicing),
+converted to a .hash or .list, or used as an object (or role via LuaParent).
+Positional access will apply the appropriate index adjustment. Passing any
+Numeric value to either subscripting operation will coerce it to some variety
+of Num in the process, as Lua values are double-precision floats by default.
 
-In contrast to tables, multiple Lua return values (not packed in a table) will
-result in an ordinary Perl list instead of an object hash.
+In contrast to tables, multiple return values (not packed in a table) from Lua
+back to Perl will result in an ordinary Perl list instead of an
+Inline::Lua::Table.
+
+The Inline::Lua::Table object is actually an interface to the instance of the
+table in Lua, so all access to it calls into Lua immediately. Calling .list or
+.hash returns a Perl copy of the current state of the table, which is no longer
+tied to the underlying Lua object.
+
+Calling any method on the object which isn't found from Perl will attempt to
+call the method in the table, since tables also serve as objects and classes in
+Lua. You can also call .obj to get an Inline::Lua::TableObj, which has no
+methods other than the ones inherited from Mu and Any, to minimize conflicts.
+The exception is ::TableObj.inline-lua-table which returns the original
+::Table.
+
+To use a table as a role, assign the table to a global variable (e.g. with
+.set-global), and use it with the LuaParent role.
+
+    role MyRole does LuaParent['global-table'] { ... }
+
+To use a table as a class, LuaParent can be instantiated via .new(). To inherit
+from a table, inherit from a class which composes the role, as inheriting from
+a parameterized role doesn't seem to work. Note that using LuaParent with
+multiple instances of Inline::Lua is unlikely to work correctly at this time.
+
+Function object are also supported as Inline::Lua::Functions, and can be called
+like normal perl routines. There is currently no checking of declared function
+parameters on either the Perl or Lua sides, it simply assumes varargs
+everywhere. This usually isn't a visible issue, other than arity-checking not
+yet working as might be expected.
 
 A new Perl object is created for each Lua value being returned, making it
-useless for identity comparison (e.g. === on the same Lua table returned from
-separate calls will be False).
+useless for identity comparison on the Perl side (e.g. === on the same Lua
+table returned from separate calls will be False).
+
+Inline::Lua::Objects can of course be passed back in to Lua, and represent the
+same referenced Lua table or function which they were originally attached to.
 
 ## Usage
+
+*Note* everything here is accurate, but much is missing, mostly the API of the
+::Object types (which is somewhat outlined above in Values). In the mean time,
+also see the tests.
 
 ### method new ()
 
@@ -144,12 +173,6 @@ to the .run method, then use .call to execute it.
 ### method get-global (Str:D $name)
 
 Returns the value stored in the named global Lua variable.
-
-If the value is a function, it returns a Perl wrapper routine which calls the
-function as if .call had been used. Note this means the function is looked up
-by name for each call; if the variable changes, any of its wrappers will
-attempt to call the new value (even if it isn't a function). As with other
-values, a separate wrapper object is returned for every call to this method.
 
 ### method set-global (Str:D $name, $value)
 

@@ -2,28 +2,16 @@
 
 constant $root = $?FILE.IO.parent;
 use lib $root.child('lib');
-use lib $root.child('blib').child('lib');
+use lib $root.child('blib').child: 'lib';
 
-my $lua-ver;
-BEGIN {
-    if
-        @*ARGS &&
-        defined my $i = (^@*ARGS).first: {
-            my $v = @*ARGS[$_];
-            $v ~~ /^ [ '-j' | '--jit' ] $/ &&
-            (!$_ || @*ARGS[^$_].none eq '--')
-        }
-    {
-        @*ARGS.splice: $i, 1;
-        $lua-ver = 'JIT';
-    }
-}
-
-use Lua::Raw $lua-ver;
 use Inline::Lua;
 
-sub MAIN (Str $file is copy, *@args, Bool :$e) {
-    my $L = Inline::Lua.new;
+sub MAIN (Str $file is copy, *@args, Bool :$jit, Bool :$e) {
+    my $L = do given $jit { # JIT selection
+        when !*.defined { Inline::Lua.new } # detect
+        when !* { Inline::Lua.new: :!auto } # no
+        default { Inline::Lua.new: :lua<JIT> } # yes
+    }
 
     $file = $file.IO.slurp unless $e;
 
