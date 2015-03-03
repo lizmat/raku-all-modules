@@ -43,7 +43,7 @@ is canonical("<a xmlns=\"foo\"><b></b></a>", :subset('/a/b')),
              "<b xmlns=\"foo\"></b>",
              'pull subset; fold parent xmlns in';
 
-is canonical("<a xmlns=\"foo\"><b></b></a>", :exclusive, :subset('/a/b')),
+is canonical("<z:a xmlns:z=\"x\" xmlns=\"foo\"><b></b></z:a>", :exclusive, :subset('/z:a/b')),
              "<b></b>",
              'pull subset; exclusive (do not pull parent xmlns)';
 

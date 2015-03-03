@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-XML-Canonical.git
 	branch = master
-	commit = 43d66a6ad8171c803e6700be5ce7f620319cf177
-	parent = 527f3cd5f5f3ec3817dd4c05a632322b87217164
+	commit = 4cbd3284b26397b0208bd804f36c325ae2f65e54
+	parent = 75525c56349b797be1523c125a378198b1159d5e
 	cmdver = 0.2.0

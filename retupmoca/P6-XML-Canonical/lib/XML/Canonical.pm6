@@ -52,16 +52,48 @@ multi sub canonical(XML::CDATA $xml) {
     return $text;
 }
 
-multi sub canonical(XML::Element $xml, :$subset is copy, :$exclusive, :@namespaces) {
+multi sub canonical(XML::Element $xml, :$subset is copy, :$exclusive, :@namespaces is copy) {
     my %extra-attribs;
     if $subset {
         my @parts = $subset.split(/\//).grep({$_});
         die "Invalid subset" if @parts[0] ne $xml.name;
         @parts.shift;
+        if $exclusive {
+            # XXX: this bit is in need of cleanup.
+
+            my @p = @parts;
+            my $tmp = $xml;
+            while @p.elems > 1 {
+                $tmp = $tmp.elements(:TAG(@p[0]), :SINGLE);
+                @p.shift;
+            }
+
+            my @name = $tmp.name.split(/\:/);
+            my $tmp_ns;
+            if @name[1] {
+                $tmp_ns = @name[0];
+            }
+            else {
+                $tmp_ns = '';
+            }
+
+            $tmp = $tmp.elements(:TAG(@p[0]), :SINGLE);
+            @name = $tmp.name.split(/\:/);
+            if @name[1] {
+                if $tmp_ns eq @name[0] {
+                    @namespaces.push: $tmp_ns;
+                }
+            }
+            else {
+                if $tmp_ns eq '' {
+                    @namespaces.push: '#default';
+                }
+            }
+        }
         while @parts {
             for $xml.attribs.kv -> $k, $v {
                 if $k ~~ /^xmlns(.*)?/ {
-                    my $part = $1.Str;
+                    my $part = $0.Str;
                     $part ~~ s/\:// if $part;
                     if !$exclusive || @namespaces.grep({ $part ?? $_ eq $part !! $_ eq '#default' }) {
                         %extra-attribs{$k} = $v;
