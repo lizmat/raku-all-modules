@@ -7,7 +7,7 @@ use MIME::Base64;
 
 module XML::Signature;
 
-our sub sign(XML::Element $signature, OpenSSL::RSAKey $private, Str $cert-pem) is export {
+our sub sign(XML::Element $document, :$private-pem, :$x509-pem, :$enveloping, :$enveloped, :$detached) is export {
     die "Signing NYI";
 }
 
@@ -26,7 +26,9 @@ our sub verify(XML::Element $signature) is export {
     }
 
     my $sign-data = MIME::Base64.decode($signature.elements(:TAG($prefix ~ 'SignatureValue'), :SINGLE).contents.join);
-    my @certs = $signature.elements(:TAG($prefix ~ 'KeyInfo'), :SINGLE)\
+
+                 # this is a bit of a hack
+    my @certs = ($signature.elements(:TAG($prefix ~ 'KeyInfo'), :SINGLE) || $signature.elements(:TAG('KeyInfo'), :SINGLE))\
                           .elements(:TAG($prefix ~ 'X509Data'), :SINGLE)\
                           .elements(:TAG($prefix ~ 'X509Certificate'));
     @certs .= map({ $_.contents.join });
