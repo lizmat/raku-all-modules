@@ -32,7 +32,7 @@ class X::BSON::ImProperUse is Exception {
   }
 }
 
-class BSON:ver<0.9.1> {
+class BSON:ver<0.9.2> {
 
   method encode ( %h ) {
 
@@ -649,6 +649,7 @@ class BSON:ver<0.9.1> {
           my Int $exp-shift = 0;
           my Int $exponent = 1023;
           my Str $bit-string = $r.base(2);
+          $bit-string ~= '.' unless $bit-string ~~ m/\./;
 
           # Smaller than zero
           #

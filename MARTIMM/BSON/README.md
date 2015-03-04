@@ -18,8 +18,7 @@ $ panda install MongoDB
 
 ```
 $ perl6 -v
-This is perl6 version 2015.01-77-gd320f00 built on MoarVM version 2015.01-21-g4ee4925
-```
+This is perl6 version 2015.02-188-ga99a572 built on MoarVM version 2015.02-25-g3d0404a```
 
 ## SYNOPSIS
 
@@ -105,6 +104,7 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.2 Upgraded Rakudo * ===> Bugfix in BSON
 * 0.9.1 Testing with decode/encode classes and roles
 * 0.9.0
   * Created BSON::Binary and removed the Buf type. In this way the
@@ -158,7 +158,7 @@ change at any time. The public API should not be considered stable*.
 * 0.2 .. 0.3 Something happened no doubt ;-).
 * 0.1 basic Proof-of-concept working on Rakudo 2011.07.
 
-##LICENSE
+## LICENSE
 
 Released under [Artistic License 2.0](http://www.perlfoundation.org/artistic_license_2_0).
 

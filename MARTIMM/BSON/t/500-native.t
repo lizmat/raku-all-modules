@@ -348,16 +348,16 @@ for $samples.keys -> $key {
 #say "M: $msg";
 
         when X::BSON::Deprecated {
-            ok $_.type ~~ m/Undefined \(0x06\)
-                            || DPPointer \(0x0C\)
+            ok $_.type ~~ ms/Undefined \(0x06\)
+                             || DPPointer \(0x0C\)
                             /,
                $msg;
         }
 
         when X::BSON::ImProperUse {
-            ok $_.type ~~ m/integer \s* 0x10\/0x12
-                            || Binary \s* Buf
-                           /,
+            ok $_.type ~~ ms/integer 0x10\/0x12
+                             || Binary Buf
+                            /,
                $msg;
         }
 

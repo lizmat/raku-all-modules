@@ -22,7 +22,7 @@ if 1 {
 
     when X::BSON::Decoding {
       ok $type ~~ m/ Unknown \( 0xA2 \) /, $type;
-      ok $msg ~~ m/ Not \s+ \(yet\) \s+ implemented/, $msg;
+      ok $msg ~~ ms/ Not \(yet\) implemented/, $msg;
     }
   }
 }
