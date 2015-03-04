@@ -11,7 +11,7 @@ has $.index = self.new-index;
 has %.refcount;
 has %.ptrref;
 
-method new (Bool :$auto, Str :$lua, Str :$lib, :$raw is copy, |args) {
+method new (Bool :$auto, Str :$lua, Str :$lib, :$raw, |args) {
     my $new;
     if !$raw && $auto !eqv False && !defined any $lib, $lua {
         $new = try { self.new: :lua<JIT>, |args };
@@ -19,8 +19,7 @@ method new (Bool :$auto, Str :$lua, Str :$lib, :$raw is copy, |args) {
     } else {
         when !$raw {
             my %raw-args = (:$lua, :$lib).grep: *.value.defined;
-            $raw = Lua::Raw.new: |%raw-args;
-            $new = self.new: :$raw, |args;
+            $new = self.new: :raw(Lua::Raw.new: |%raw-args), |args;
         }
         $new = callsame;
     }
