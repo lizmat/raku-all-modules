@@ -115,7 +115,7 @@ sub ld ( Str $source is copy, Str $target is copy, Int $max?) is export {
                 @previousRow[$j    ] + 1,
                 @previousRow[$j - 1] + ($targetCh eq $sourceCh ?? 0 !! 1);
 
-            return Nil if( @currentRow[0] == $j 
+            return Nil if ( @currentRow[0] == $j
                 && $maxd < (($diff => @currentRow[@currentRow[0]])
                     ?? ($diff - @currentRow[@currentRow[0]]) 
                     !! (@currentRow[@currentRow[0]] + $diff))

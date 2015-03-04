@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ugexe/Perl6-Text--Levenshtein--Damerau.git
 	branch = master
-	commit = 58690b59f74995ca0f7d2113885a90a8491241d2
-	parent = 48b0bf48a9038bebdf861d3a1148f85c327f7928
+	commit = b249d10ff1b8a6368bf3242f7ea5c9c8b162055d
+	parent = 9f31a6ad93e680bec401b44bd9f5b986388f0496
 	cmdver = 0.2.0
