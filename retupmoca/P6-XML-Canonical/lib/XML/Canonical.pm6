@@ -151,7 +151,7 @@ sub _needed_attribute($xml, $key) {
         my @keyparts = $key.split(/\:/);
         @keyparts[1] ||= '';
 
-        return False if($xml.parent.nsURI(@keyparts[1]) eq $value);
+        return False if ($xml.parent.nsURI(@keyparts[1]) eq $value);
         return True;
     }
 }
