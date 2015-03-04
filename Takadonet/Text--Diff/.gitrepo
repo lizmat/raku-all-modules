@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Takadonet/Text--Diff.git
 	branch = master
-	commit = 7987931519fa0ba7b60df134c0286a689a7dd0a9
-	parent = 04de5f275bc523c0a373cb2214d6a883e195d669
-	cmdver = 0.1.0
+	commit = 933dd0090ec83ff1f3429e1ee507d25669bf49c6
+	parent = c55b09ef3a22d90cf5bf3854004691b6890804c0
+	cmdver = 0.2.0

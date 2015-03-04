@@ -82,7 +82,7 @@ multi sub text_diff(Inputs $a,Inputs $b,%options? = {'KEYGEN' => sub (*@a) {} })
 
 	my $style  = %options{'STYLE'};
 	$style = "Unified" unless defined %options{'STYLE'};
-	$style = "Text::Diff::$style" if %internal_styles.exists($style);
+	$style = "Text::Diff::$style" if %internal_styles{$style}:exists;
 
 	#todo do not think the if statement below is working correctly
 	# if  ! $style.can( "hunk" )  {
