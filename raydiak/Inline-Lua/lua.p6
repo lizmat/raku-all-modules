@@ -8,10 +8,10 @@ use Inline::Lua;
 
 sub MAIN (Str $file is copy, *@args, Bool :$jit, Bool :$e) {
     my $L = do given $jit { # JIT selection
-        when !*.defined { Inline::Lua.new } # detect
-        when !* { Inline::Lua.new: :!auto } # no
-        default { Inline::Lua.new: :lua<JIT> } # yes
-    }
+        when True { Inline::Lua.new: :lua<JIT> } # yes
+        when False { Inline::Lua.new: :!auto } # no
+        Inline::Lua.new # detect
+    };
 
     $file = $file.IO.slurp unless $e;
 

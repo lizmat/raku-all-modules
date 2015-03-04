@@ -92,22 +92,6 @@ class Inline::Lua::Table {
     ### positional stuff
 
     method elems (|args) {Int( max 0, self.keys(|args).grep: Numeric )}
-    #`[[[
-    This was probably much faster. Unfortunately, sparse arrays require special
-    consideration in Lua. The Perl idea of array length includes all holes,
-    ending after the *last* defined element. Lua's concept of the end of an
-    array is, far more ambiguously, any defined element which comes before an
-    undefined one: no specific promise is made as to which "edge" will be
-    considered the "end". To find the deterministic (and dare I say, for more
-    far more sensible) value that we would expect for .elems in Perl, you must
-    iterate over the keys in a more hash-ish way, as we do above.
-    method elems (:$stack, :$leave = $stack) {
-        self.get unless $stack;
-        my $len = self.lua.raw.lua_objlen: self.lua.state, -1;
-        self.lua.raw.lua_settop: self.lua.state, -2 unless $leave;
-        $len;
-    }
-    ]]]
 
     method end (|args) { self.elems(|args) - 1 }
 
