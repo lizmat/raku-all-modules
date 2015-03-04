@@ -11,7 +11,7 @@ sub library {
     my $so = get-vars('')<SO>;
     my @dirs = @*INC;
     for @dirs {
-        if ($_~'/Auth/PAM/libauthpamsimple'~$so).path.r {
+        if ($_~'/Auth/PAM/libauthpamsimple'~$so).IO.r {
             return $_~'/Auth/PAM/libauthpamsimple'~$so;
         }
     }
@@ -21,4 +21,3 @@ sub library {
 sub auth(Str is encoded('ascii'), Str is encoded('ascii'), Str is encoded('ascii')) returns int32 { * };
 # we set the libname here because we need it to happen at runtime, not compiletime
 trait_mod:<is>(&auth, :native(library));
-
