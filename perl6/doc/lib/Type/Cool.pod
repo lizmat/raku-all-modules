@@ -152,11 +152,12 @@ between zero and the number.
 
     say 1e5.rand;           # 33128.495184283
 
-=head2 method sin
+=head2 routine sin
 
     method sin()
+    sub sin(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, interprets it as radians,
+Coerces the invocant (or in the sub firm, the argument) to L<Numeric|/type/Numeric>, interprets it as radians,
 returns its L<sine|https://en.wikipedia.org/wiki/Sine>.
 
     say sin(0);             # 0
@@ -167,201 +168,259 @@ Note that Perl 6 is no computer algebra system, so C<sin(pi)> typically does
 not produce an exact 0, but rather a very small L<floating-point
 number|/type/Num>.
 
-=head2 method asin
+=head2 routine asin
 
+    sub asin(Numeric(Cool))
     method asin()
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in the sub firm, the argument) to L<Numeric|/type/Numeric>, and returns its
 L<arc-sine|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
-=head2 method cos
+    say 0.1.asin;               # 0.10016742116156
+
+=head2 routine cos
 
     method cos()
+    sub cos(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, interprets it as radians,
+Coerces the invocant (or in sub form, the argument) to L<Numeric|/type/Numeric>, interprets it as radians,
 returns its L<sine|https://en.wikipedia.org/wiki/Cosine>.
 
-=head2 method acos
+    say 0.cos;                  # 1
+    say pi.cos;                 # -1
+    say cos(pi/2);              # 6.12323399573677e-17
+
+=head2 routine acos
 
     method acos()
+    sub acos(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in sub form, the argument) to L<Numeric|/type/Numeric>, and returns its
 L<arc-cosine|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
-=head2 method tan
+=head2 routine tan
 
-Coerces the invocant to L<Numeric|/type/Numeric>, interprets it as radians,
+    method tan()
+    sub acos(Numeric(Cool))
+
+Coerces the invocant (or in sub form, the argument) to L<Numeric|/type/Numeric>, interprets it as radians,
 returns its L<tangens|https://en.wikipedia.org/wiki/Tangent>.
 
-=head2 method atan
+=head2 routine atan
 
     method atan()
+    sub atan(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in sub form, the argument) to L<Numeric|/type/Numeric>, and returns its
 L<arc-tangens|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
-=head2 method atan2
+=head2 routine atan2
 
     method atan2($y = 1e0)
+    sub atan2(Numeric() $x, Numeric() $y = 1e0)
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and together with its
-argument, returns its two-argument
+Coerces the arguments (including the invocant in the method form) to L<Numeric|/type/Numeric>,
+and returns their two-argument
 L<arc-tangens|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
 =head2 method sec
 
     method sec()
+    sub sec(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, interprets it as radians,
+Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, interprets it as radians,
 returns its L<secans|https://en.wikipedia.org/wiki/Trigonometric_functions#Reciprocal_functions>,
 that is, the reciprocal of its cosine.
 
-=head2 method asec
+=head2 routine asec
 
     method asec()
+    sub asec(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns its
 L<arc-secans|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
-=head2 method cosec
+=head2 routine cosec
 
     method cosec()
+    sub cosec(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, interprets it as radians,
+Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, interprets it as radians,
 returns its L<cosecans|https://en.wikipedia.org/wiki/Trigonometric_functions#Reciprocal_functions>,
 that is, the reciprocal of its sine.
 
-=head2 method acosec
+=head2 routine acosec
 
     method acosec()
+    sub acosec(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns its
 L<arc-cosecans|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
-=head2 method cotan
+=head2 routine cotan
 
     method cotan()
+    sub cotangens(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, interprets it as radians,
+Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, interprets it as radians,
 returns its L<cotangens|https://en.wikipedia.org/wiki/Trigonometric_functions#Reciprocal_functions>,
 that is, the reciprocal of its tangens.
 
-=head2 method acotan
+=head2 routine acotan
 
     method acotan()
+    sub acotan(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in method form, its argument) to L<Numeric|/type/Numeric>, and returns its
 L<arc-cotangens|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
-=head2 method sinh
+=head2 routine sinh
 
     method sinh()
+    sub sinh(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in method form, its argument) to L<Numeric|/type/Numeric>, and returns its
 L<Sine hyperbolicus|https://en.wikipedia.org/wiki/Hyperbolic_function>.
 
-=head2 method asinh
+=head2 routine asinh
 
     method asinh()
+    sub asinh(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in method form, its argument) to L<Numeric|/type/Numeric>, and returns its
 L<Inverse Sine hyperbolicus|https://en.wikipedia.org/wiki/Inverse_hyperbolic_function>.
 
-=head2 method cosh
+=head2 routine cosh
 
     method cosh()
+    sub cosh(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in method form, its argument) to L<Numeric|/type/Numeric>, and returns its
 L<Cosine hyperbolicus|https://en.wikipedia.org/wiki/Hyperbolic_function>.
 
-=head2 method acosh
+=head2 routine acosh
 
     method acosh()
+    sub acosh(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in method form, its argument) to L<Numeric|/type/Numeric>, and returns its
 L<Inverse Cosine hyperbolicus|https://en.wikipedia.org/wiki/Inverse_hyperbolic_function>.
 
-=head2 method tanh
+=head2 routine tanh
 
     method tanh()
+    sub tanh(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in method form, its argument) to L<Numeric|/type/Numeric>, and returns its
 L<Tangens hyperbolicus|https://en.wikipedia.org/wiki/Hyperbolic_function>.
 
-=head2 method atanh
+=head2 routine atanh
 
     method atanh()
+    sub atanh(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the invocant (or in method form, its argument) to L<Numeric|/type/Numeric>, and returns its
 L<Inverse tangens hyperbolicus|https://en.wikipedia.org/wiki/Inverse_hyperbolic_function>.
 
-=head2 method log
+=head2 routine log
 
     multi method log(Cool:D: Cool:D $base?)
+    multi sub log(Numeric(Cool) $number, Numeric(Cool) $base?)
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns its
+Coerces the arguments (including the invocant in the method form) to
+L<Numeric|/type/Numeric>, and returns its
 L<Logarithm|https://en.wikipedia.org/wiki/Logarithm> to base C<$base>, or to
 base C<e> (Euler's Number) if no base was supplied
 (L<Natural logarithm|https://en.wikipedia.org/wiki/Natural_logarithm>.
 
+    say (e*e).log;                      # 2
+
+=head2 routine log10
+
+    multi method log10()
+    multi sub log10(Cool(Numeric))
+
+Coerces the invocant (or in the sub form, the invocant) to
+L<Numeric|/type/Numeric>, and returns its
+L<Logarithm|https://en.wikipedia.org/wiki/Logarithm> to base 10, that is, a
+number that approximatly produces the original number when raised to the power
+of 10.
+
+    say log10(1001);                    # 3.00043407747932
+
 =head2 method exp
 
     multi method exp(Cool:D: Cool:D $base?)
+    multi sub exp(Cool:D $pow, Cool:D $base?)
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and returns C<$base>
-raised to the power of this number. If no C<$base> is supplied, C<e> (Euler's
+Coerces the arguments (including the invocant in the method from) to L<Numeric|/type/Numeric>, and returns C<$base>
+raised to the power of the first number. If no C<$base> is supplied, C<e> (Euler's
 Number) is used.
 
     say 0.exp;      # 1
     say 1.exp;      # 2.71828182845905
     say 10.exp;     # 22026.4657948067
 
-=head2 method round
+=head2 routine round
 
     multi method round(Cool:D: $unit = 1)
+    multi sub round(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and rounds it to the unit of
+Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and rounds it to the unit of
 C<$unit>. If C<$unit> is 1, rounds to the nearest integer.
 
     say 1.7.round;          # 2
     say 1.07.round(0.1);    # 1.1
     say 21.round(10);       # 20
 
-=head2 method floor
+=head2 routine floor
 
     multi method floor
+    multi sub floor(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and rounds it downwards to
+Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and rounds it downwards to
 the nearest integer.
 
     say "1.99".floor;       # 1
     say "-1.9".floor;       # -2
     say 0.floor;            # 0
 
-=head2 method ceiling
+=head2 routine ceiling
 
     multi method ceiling
+    multi sub ceiling(Numeric(Cool))
 
-Coerces the invocant to L<Numeric|/type/Numeric>, and rounds it upwards to
+Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and rounds it upwards to
 the nearest integer.
 
     say "1".ceiling;        # 1
     say "-0.9".ceiling;     # 0
     say "42.1".ceiling;     # 43
 
+=head2 routine truncate
 
-=head2 method ord
+    multi method truncate()
+    multi sub truncate(Numeric(Cool))
+
+Coerces the invocant (or in sub form, its argument) to
+L<Numeric|/type/Numeric>, and rounds it towards zero.
+
+    say 1.2.truncate        # 1
+    say truncate -1.2;      # -1
+
+=head2 routine ord
 
     method ord()
+    sub ord(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns the
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns the
 L<Unicode code point|https://en.wikipedia.org/wiki/Code_point>,
 number of the code point.
 
@@ -369,11 +428,14 @@ number of the code point.
 
 The inverse operation is L<chr|#method chr>.
 
-=head2 method chr
+Mnemonic: returns an ordinal number
+
+=head2 routine chr
 
     method chr()
+    sub chr(Int(Cool))
 
-Coerces the invocant to L<Int|/type/Int>, interprets it as a
+Coerces the invocant (or in sub form, its argument) to L<Int|/type/Int>, interprets it as a
 L<Unicode code points|https://en.wikipedia.org/wiki/Code_point>,
 and returns a L<string|/type/Str> made of that code point.
 
@@ -383,105 +445,116 @@ The inverse operation is L<ord|#method ord>.
 
 Mnemonic: turns an integer into a I<char>acter.
 
-=head2 method chars
+=head2 routine chars
 
     method chars()
+    sub chars(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns the number of
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns the number of
 characters in the string. Characters should actually be grapheme clusters,
 though current implementation errornously count codepoints instead.
 
     say 'møp'.chars;    # 3
 
-=head2 method codes
+=head2 routine codes
 
     method codes()
+    sub codes(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns the number of
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns the number of
 L<Unicode code points|https://en.wikipedia.org/wiki/Code_point>.
 
     say 'møp'.codes;    # 3
 
-=head2 method flip
+=head2 routine flip
 
     method flip()
+    sub flip(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns a reversed version.
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns a reversed version.
 
     say 421.flip;       # 124
 
-=head2 method trim
+=head2 routine trim
 
     method trim()
+    sub trim(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns the string with both
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns the string with both
 leading and trailing whitespace stripped.
 
     my $stripped = '  abc '.trim;
     say "<$stripped>";          # <abc>
 
-=head2 method trim-leading
+=head2 routine trim-leading
 
-    method trim(-leading)
+    method trim-leading()
+    sub trim-leading(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns the string with
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns the string with
 leading whitespace stripped.
 
     my $stripped = '  abc '.trim-leading;
     say "<$stripped>";          # <abc >
 
-=head2 method trim-trailing
+=head2 routine trim-trailing
 
     method trim-trailing()
+    sub trim-trailing(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns the string with both
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns the string with both
 leading and trailing whitespace stripped.
 
     my $stripped = '  abc '.trim-trailing;
     say "<$stripped>";          # <  abc>
 
-=head2 method lc
+=head2 routine lc
 
     method lc()
+    sub lc(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns it case-folded to lower
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns it case-folded to lower
 case.
 
     say "ABC".lc;       # abc
 
-=head2 method uc
+=head2 routine uc
 
     method uc()
+    sub uc(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns it case-folded to upper
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns it case-folded to upper
 case (capital letters).
 
     say "Abc".uc;       # ABC
 
-=head2 method tc
+=head2 routine tc
 
     method tc()
+    sub tc(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns it with the first letter
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns it with the first letter
 case-folded to title case (or where not available, upper case).
 
     say "abC".tc;       # AbC
 
-=head2 method tclc
+=head2 routine tclc
 
     method tclc()
+    sub tclc(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns it with the first letter
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns it with the first letter
 case-folded to title case (or where not available, upper case), and the rest
 of the string case-folded to lower case..
 
     say 'abC'.tclc;     # Abc
 
-=head2 method wordcase
+=head2 routine wordcase
 
     method wordcase(:&filter = &tclc, Mu :$where = True)
+    sub wordcase(Str(Cool) $input, :&filter = &tclc, Mu :$where = True)
 
-Coerces the invocant to L<Str|/type/Str>, and filters each word that
+Coerces the invocant (or in sub form, the first argument) to L<Str|/type/Str>, and filters each word that
 smart-matches against C<$where> through the C<&filter>. With the default
 filter (first character to upper case, rest to lower) and matcher (which
 accepts everything), this title-cases each word:
@@ -498,20 +571,22 @@ With a customer filter too:
     say "have fun working on perl".wordcase(:filter(&uc), :where({ .chars > 3 }));
                                             # HAVE fun WORKING on PERL
 
-=head2 method chop
+=head2 routine chop
 
     method chop()
+    sub chop(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns it with the last
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns it with the last
 character removed.
 
     say 'perl'.chop;                        # per
 
-=head2 method chomp
+=head2 routine chomp
 
     method chomp()
+    sub chomp(Str(Cool))
 
-Coerces the invocant to L<Str|/type/Str>, and returns it with the last
+Coerces the invocant (or in sub form, its argument) to L<Str|/type/Str>, and returns it with the last
 character removed, if it is a logical newline.
 
     say 'ab'.chomp.chars;                   # 2
@@ -597,11 +672,24 @@ If you want that behavior, consider using L<comb> instead.
     say split(/\;/, "a;b;c,d").perl;       # ("a", "b", "c,d").list
     say split(/<[;,]>/, "a;b;c,d").perl;   # ("a", "b", "c", "d").list
 
+
+=head2 routine lines
+
+    method lines()
+    sub lines(Str(Cool))
+
+Coerces the invocant (and in sub form, the argument) to L<Str|/type/Str>,
+decomposes it into lines (with the newline characters stripped), and returns
+the list of lines.
+
+    say lines("a\nb\n").join('|');          # a|b
+    say "some\nmore\nlines".lines.elems;    # 3
+
 =head2 method words
 
     method words(Int() $limit)
 
-Coerces the invocan to L<Str|/type/Str>, and returns a list of words that make
+Coerces the invocant to L<Str|/type/Str>, and returns a list of words that make
 up the string (and if C<$limit> is supplied, only the first C<$limit> words).
 
     say 'The quick brown fox'.words.join('|');      # The|quick|brown|fox
@@ -611,6 +699,48 @@ Only whitespace counts as word boundaries
 
     say "isn't, can't".words.join('|');             # isn't,|can't
 
+=head2 routine comb
+
+    multi method comb(Regex $matcher, $limit = *) returns List:D
+    multi sub comb(Regex $matcher, Str(Cool) $input, $limit = *) returns List:D
+
+Returns all (or if supplied, at most C<$limit>) matches of the invocant
+(method form) or the second argument (sub form) against the
+L<Regex|/type/Regex> as a list of strings.
+
+    say "6 or 12".comb(/\d+/).join(", ");           # 6, 12
+
+=head2 routine roots
+
+    multi method roots(Int(Cool) $n)
+    multi sub roots(Numeric(Cool) $x, Int(Cool) $n)
+
+Coerces the first argument (and in method form, the invocant) to
+L<Numeric|/type/Numeric> and the second (C<$n>) to L<Int|/type/Int>, and produces a
+list of C<$n> L<Complex|/type/Complex> C<$n>-roots, which means numbers that,
+raised to the C<$n>th power, approximately produce the original number.
+
+For example
+
+=begin code
+my $original = 16;
+my @roots = $original.roots(4);
+say @roots;
+
+for @roots -> $r {
+    say abs($r ** 4 - $original);
+}
+=end code
+
+produces this output:
+
+=begin code
+2+0i 1.22464679914735e-16+2i -2+2.44929359829471e-16i -3.67394039744206e-16-2i
+1.77635683940025e-15
+4.30267170434156e-15
+8.03651692704705e-15
+1.04441561648202e-14
+=end code
 
 =head2 method IO
 
@@ -622,13 +752,11 @@ Coerces the invocant to L<IO::Path>.
 
 =begin comment
 
-TODO: sech, asech, cosech, acosech, cotanh, acotanh, cis, roots, log10,
-unpolar, truncate, fmt, substr-rw,
+TODO: sech, asech, cosech, acosech, cotanh, acotanh, cis,
+unpolar, fmt, substr-rw,
 trans, index, rindex,
-match, comb, lines, subst, sprintf, printf, samecase,
+match, subst, sprintf, printf, samecase,
 EVAL
-
-TODO: subroutine forms (where they exist)
 
 =end comment
 
