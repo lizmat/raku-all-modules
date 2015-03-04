@@ -2,6 +2,6 @@
     "name"        : "MPD",
     "version"     : "*",
     "description" : "Interface to libmpdclient C library",
-    "depends"     : [ "NativeCall" ],
+    "depends"     : [ ],
     "source-url"  : "git://github.com/tadzik/perl6-MPD.git"
 }
