@@ -150,7 +150,7 @@ Lua libraries loaded.
 
 Lua version is switched per Inline::Lua instance automatically, by trying JIT
 first and falling back to standard Lua 5.1. To skip autodetection and use
-LuaJIT explicitly, pass :lua<JIT>. To disable the auto-detection without using
+LuaJIT explicitly, pass :lua\<JIT>. To disable the auto-detection without using
 LuaJIT, either pass another version (currently only 5.1), or pass :!auto to use
 the non-JIT default.
 
@@ -166,16 +166,13 @@ Compiles $code, runs it with @args, and returns any resulting value(s).
 
 Calls the named global function with @args, and returns any resulting value(s).
 
-To compile Lua code for subsequent use, pass it as a global function definition
-to the .run method, then use .call to execute it.
-
 #### method get-global (Str:D $name)
 
-Returns the value stored in the named global Lua variable.
+Returns the value stored in the named global variable.
 
 #### method set-global (Str:D $name, $value)
 
-Sets the value of the named global Lua variable.
+Sets the value of the named global variable.
 
 ### Inline::Lua::Object
 
