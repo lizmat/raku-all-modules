@@ -20,7 +20,7 @@ sub MAIN(*@files, :$title?, :$artist?, :$album?, :$track?) {
         say "    Track Number: { $tags.track }";
         say "    Title: { $tags.title }";
 
-        $tags.save if $title || $artist || $album;
+        $tags.save if $title || $artist || $album || $track;
         
         CATCH { say "Error working with $file" }
     }
