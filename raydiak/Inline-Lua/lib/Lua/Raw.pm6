@@ -148,6 +148,11 @@ our sub lua_gettable (
     int32 $ )
 {...}
 
+our sub lua_settable (
+    OpaquePointer $,
+    int32 $ )
+{...}
+
 our %.LUA_STATUS =
     1 => 'YIELD',
     2 => 'ERRRUN',

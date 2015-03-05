@@ -1,17 +1,10 @@
 role Inline::Lua::Object {
-    has $.lua = die "lua is a required attribute";
-    has $.ref;
+    has $.lua = die "lua is required";
+    has $.ref = die "ref is required";
 
-    method from-stack (:$keep, |args) {
-        self.new(|args).ref-from-stack: :$keep;
-    }
-
-    method ref-from-stack (:$keep) {
-        my $ref = $!lua.ref-from-stack: :$keep;
-        self.unref;
-        $!ref = $ref;
-
-        self;
+    multi method new (:$stack, :$lua!, :$keep, |args) {
+        nextwith :ref($lua.ref-from-stack: :$keep), :$lua, |args if :$stack;
+        nextsame;
     }
 
     method get () {
@@ -74,7 +67,7 @@ class Inline::Lua::TableObj {
     }
 
     method sink () { self }
-    method FALLBACK (|args) {
+    method FALLBACK (|args) is rw {
         $!inline-lua-table.invoke: |args;
     }
 }
@@ -85,7 +78,26 @@ class Inline::Lua::Table {
     also does Inline::Lua::Object;
     also does Positional;
     also does Associative;
-    method of () { Mu } # resolve conflict
+    method of () { Mu } # resolve conflict between the two above
+
+    multi method new (:$stack, :$lua!, |args) {
+        nextsame if $stack;
+        $lua.raw.lua_createtable: $lua.state, 0, 0;
+        nextwith :stack, :$lua, |args;
+    }
+
+    method STORE (\vals) {
+        self.get;
+        self.assign_key: $_, Any, :stack for self.keys: :stack;
+        my @vals = vals.flat;
+        my $i = 0;
+        for @vals {
+            when Pair { self.assign_key: .key, .value, :stack }
+            self.assign_pos: $i++, $_, :stack;
+        }
+        self.lua.raw.lua_settop: self.lua.state, -2;
+        self;
+    }
 
 
 
@@ -95,21 +107,18 @@ class Inline::Lua::Table {
 
     method end (|args) { self.elems(|args) - 1 }
 
-    method exists_pos ($i) { $i %% 1 && 0 < $i < self.elems }
+    method exists_pos ($pos, |args) { self.exists_key: $pos + 1, |args }
 
-    method at_pos ($i, :$stack, :$leave = $stack) {
-        self.get unless $stack;
-        self.lua.value-to-lua: $i + 1;
-        self.lua.raw.lua_gettable: self.lua.state, -2;
-        my \val = self.lua.value-from-lua;
-        self.lua.raw.lua_settop: self.lua.state, -2 unless $leave;
-        val;
-    }
+    method at_pos ($pos, |args) is rw { self.at_key: $pos + 1, |args }
+
+    method assign_pos ($pos, |args) is rw { self.assign_key: $pos + 1, |args }
+
+    method delete_pos ($pos, |args) { self.delete_key: $pos + 1, |args }
 
     method list (:$stack, :$leave = $stack) {
         self.get unless $stack;
         my @vals;
-        @vals[$_] = self.at_pos($_, :stack) for ^self.elems(:stack);
+        @vals[$_] = self.at_pos($_, :stack) for ^self.elems: :stack;
         self.lua.raw.lua_settop: self.lua.state, -2 unless $leave;
         @vals;
     }
@@ -118,22 +127,44 @@ class Inline::Lua::Table {
 
     ### associative stuff
 
-    method at_key ($k, :$stack, :$leave = $stack) {
+    method exists_key ($key, :$stack, :$leave = $stack) {
         self.get unless $stack;
-        self.lua.value-to-lua: $k;
-        self.lua.raw.lua_gettable: self.lua.state, -2;
-        my \val = self.lua.value-from-lua;
-        self.lua.raw.lua_settop: self.lua.state, -2 unless $leave;
-        val;
-    }
-
-    method exists_key ($k, :$stack, :$leave = $stack) {
-        self.get unless $stack;
-        self.lua.value-to-lua: $k;
+        self.lua.value-to-lua: $key;
         self.lua.raw.lua_gettable: self.lua.state, -2;
         my $ret = self.lua.raw.lua_isnil: self.lua.state, -1;
         self.lua.raw.lua_settop: self.lua.state, $leave ?? -2 !! -3;
         ?$ret;
+    }
+
+    method at_key ($self: $key, :$stack, :$leave = $stack) is rw {
+        my $lua = self.lua; my ($raw, $state) = $lua.raw, $lua.state;
+        Proxy.new: FETCH => method () {
+            $self.get unless $stack;
+            $lua.value-to-lua: $key;
+            $raw.lua_gettable: $state, -2;
+            my $val = $lua.value-from-lua;
+            $raw.lua_settop: $state, -2 unless $leave;
+            $val;
+        },
+        STORE => method ($val) { $self.assign_key($key, $val, :$stack, :$leave) };
+    }
+
+    method assign_key ($key, $val, :$stack, :$leave = $stack) is rw {
+        my $lua = self.lua; my ($raw, $state) = $lua.raw, $lua.state;
+        self.get unless $stack;
+        $lua.value-to-lua: $key;
+        $lua.value-to-lua: $val;
+        $raw.lua_settable: $state, -3;
+        $raw.lua_settop: $state, -2 unless $leave;
+        self.at_key: $key, :$stack, :$leave;
+    }
+
+    method delete_key ($key, :$stack, :$leave = $stack) {
+        self.get unless $stack;
+        my $val = my $elem := self.at_key($key, :stack);
+        $elem = Any;
+        self.lua.raw.lua_settop: self.lua.state, -2 unless $leave;
+        $val;
     }
 
     method keys (:$stack, :$leave = $stack) {
@@ -176,9 +207,9 @@ class Inline::Lua::Table {
 
     ### object stuff
 
-    method invoke ($method, :$call, |args) {
+    method invoke ($method, :$call, |args) is rw {
         my $val = $method;
-        $val = self.at_key($val) unless $val ~~ Callable;
+        $val := self.at_key($val) unless $val ~~ Callable;
 
         $call !eqv False && $val ~~ Callable ??
             $val(self, |args) !! $val;

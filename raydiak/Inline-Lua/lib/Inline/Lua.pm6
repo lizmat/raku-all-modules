@@ -13,7 +13,7 @@ has %.ptrref;
 
 method new (Bool :$auto, Str :$lua, Str :$lib, :$raw, |args) {
     my $new;
-    if !$raw && $auto !eqv False && !defined any $lib, $lua {
+    if !$raw && $auto !eqv False && ($lib, $lua)».defined.none {
         $new = try { self.new: :lua<JIT>, |args };
         $new //= self.new: :!auto, |args;
     } else {
@@ -120,8 +120,8 @@ method values-from-lua (Int:D $count, |args) {
 method value-from-lua (:$keep) {
     $_ = $!raw.lua_typename: $!state, $!raw.lua_type: $!state, -1;
 
-    when 'table' { Inline::Lua::Table.from-stack: :lua(self), :$keep }
-    when 'function' { Inline::Lua::Function.from-stack: :lua(self), :$keep }
+    when 'table' { Inline::Lua::Table.new: :lua(self), :stack, :$keep }
+    when 'function' { Inline::Lua::Function.new: :lua(self), :stack, :$keep }
 
     my $val = do {
         when 'boolean' { ?$!raw.lua_toboolean: $!state, -1 }

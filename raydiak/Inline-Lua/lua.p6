@@ -8,8 +8,8 @@ use Inline::Lua;
 
 sub MAIN (Str $file is copy, *@args, Bool :$jit, Bool :$e) {
     my $L = do given $jit { # JIT selection
-        when True { Inline::Lua.new: :lua<JIT> } # yes
-        when False { Inline::Lua.new: :!auto } # no
+        when $_ eqv True { Inline::Lua.new: :lua<JIT> } # yes
+        when $_ eqv False { Inline::Lua.new: :!auto } # no
         Inline::Lua.new # detect
     };
 
