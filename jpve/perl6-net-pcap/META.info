@@ -3,7 +3,7 @@
   "version"     : "v0.0.1",
   "description" : "libpcap bindings",
   "author"      : "Jorn van Engelen",
-  "depends"     : [ "NativeCall" ],
+  "depends"     : [ ],
   "provides"    : {
     "Net::Pcap"            : "lib/Net/Pcap.pm6",
     "Net::Pcap::C_Buf"     : "lib/Net/Pcap/C_Buf.pm6",
