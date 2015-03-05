@@ -4,11 +4,51 @@ use OpenSSL;
 use OpenSSL::RSATools;
 use Digest::SHA;
 use MIME::Base64;
+use UUID;
 
 module XML::Signature;
 
-our sub sign(XML::Element $document, :$private-pem, :$x509-pem, :$enveloping, :$enveloped, :$detached) is export {
-    die "Signing NYI";
+our sub sign(XML::Element $document is rw, :$private-pem!, :$x509-pem! is copy, :$enveloping, :$enveloped, :$detached) is export {
+    $x509-pem ~~ s:g/\s+//;
+    $x509-pem ~~ s/\-\-\-\-\-BEGINCERTIFICATE\-\-\-\-\-//;
+    $x509-pem ~~ s/\-\-\-\-\-ENDCERTIFICATE\-\-\-\-\-//;
+    # only does enveloped for now
+
+    my $id;
+    if $document.attribs<ID> {
+        $id = $document.attribs<ID>;
+    }
+    else {
+        $id = UUID.new.Str;
+        $document.attribs<ID> = $id;
+    }
+
+    my $digest = MIME::Base64.encode(sha256(canonical($document)));
+    my $signed-info = make-xml('ds:SignedInfo',
+                               make-xml('ds:CanonicalizationMethod', :Algorithm('http://www.w3.org/2001/10/xml-exc-c14n#')),
+                               make-xml('ds:SignatureMethod', :Algorithm('http://www.w3.org/2001/04/xmldsig-more#rsa-sha256')),
+                               make-xml('ds:Reference', :URI('#'~$id),
+                                        make-xml('ds:Transforms',
+                                                 make-xml('ds:Transform', :Algorithm('http://www.w3.org/2000/09/xmldsig#enveloped-signature')),
+                                                 make-xml('ds:Transform', :Algorithm('http://www.w3.org/2001/10/xml-exc-c14n#'))),
+                                        make-xml('ds:DigestMethod', :Algorithm('http://www.w3.org/2001/04/xmlenc#sha256')),
+                                        make-xml('ds:DigestValue', $digest)));
+    my $signature = make-xml('ds:Signature', $signed-info);
+    $signature.setNamespace('http://www.w3.org/2000/09/xmldsig#', 'ds');
+    $document.append($signature);
+    my $signed-info-canon = canonical($document, :exclusive, :subset($document.name~'/ds:Signature/ds:SignedInfo'));
+
+    my $rsa = OpenSSL::RSAKey.new(:$private-pem);
+    my $signed = MIME::Base64.encode($rsa.sign($signed-info-canon.encode, :sha256));
+    $signed ~~ s:g/\n//;
+
+    my $key-info = make-xml('ds:KeyInfo',
+                            make-xml('ds:X509Data',
+                                     make-xml('ds:X509Certificate', $x509-pem)));
+    $signature.append($key-info);
+    $signature.append(make-xml('ds:SignatureValue', $signed));
+
+    $document;
 }
 
 our sub verify(XML::Element $signature) is export {

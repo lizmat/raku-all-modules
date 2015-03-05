@@ -7,7 +7,8 @@
                   "XML::Canonical",
                   "Digest",
                   "MIME::Base64",
-                  "OpenSSL"
+                  "OpenSSL",
+                  "UUID"
                 ],
     "provides" : {
         "XML::Signature" : "lib/XML/Signature.pm6"
