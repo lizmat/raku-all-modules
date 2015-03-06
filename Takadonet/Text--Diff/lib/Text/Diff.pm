@@ -86,11 +86,11 @@ multi sub text_diff(Inputs $a,Inputs $b,%options? = {'KEYGEN' => sub (*@a) {} })
 
 	#todo do not think the if statement below is working correctly
 	# if  ! $style.can( "hunk" )  {
-	# 	#eval "require $style; 1" or die $@;
+	# 	#EVAL "require $style; 1" or die $@;
         #     require ::($style) or die "Cannot import hunk";
 
 	# }
-	$style = $style.eval.new();
+	$style = $style.EVAL.new();
 #	if ! ref $style && $style.can( "new" );
 	my $ctx_lines = %options.{'CONTEXT'};
 	$ctx_lines = 3 unless defined $ctx_lines;
