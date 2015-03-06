@@ -210,9 +210,10 @@ class Inline::Lua::Table {
     method invoke ($method, :$call, |args) is rw {
         my $val = $method;
         $val := self.at_key($val) unless $val ~~ Callable;
+        my $cur-val = $val;
 
-        $call !eqv False && $val ~~ Callable ??
-            $val(self, |args) !! $val;
+        $call !eqv False && $cur-val ~~ Callable ??
+            $cur-val(self, |args) !! $val;
     }
 
     method sink () { self }
