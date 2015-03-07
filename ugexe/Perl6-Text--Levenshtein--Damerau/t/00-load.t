@@ -1,10 +1,7 @@
 use v6;
 use Test;
 plan 1;
-use Text::Levenshtein::Damerau;
 
-
-ok 1, 'Module loaded.';
-
+lives_ok { use Text::Levenshtein::Damerau }
 
 done;

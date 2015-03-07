@@ -24,14 +24,14 @@ is( ld("sebastian","sebastien"),            1,  "sebastian sebastien");
 is( ld("more","cowbell"),                   5,  "more cowbell");
 
 # test max distance
-is( ld("foo","four",1),                   Nil,  "(max distance) foo four");
+is( ld("foo","four",1),                   Int,  "(max distance) foo four (explicit return value)");
 is( ld("foo","foo",1),                      0,  "(max distance) foo foo");
 is( ld("cow","cat",2),                      2,  "(max distance) cow cat");
 is( ld("cat","moocow",5),                   5,  "(max distance) cat moocow");
-is( ld("cat","cowmoo",4),                 Nil,  "(max distance) cat cowmoo");
+nok( ld("cat","cowmoo",4),                      "(max distance) cat cowmoo");
 is( ld("sebastian","sebastien",4),          1,  "(max distance) sebastian sebastien");
-is( ld("more","cowbell",0),               Nil,  "(max distance) more cowbell");
-is( ld("a","xxxxxxxx",5),                 Nil,  "(max distance) length difference shortcut");
+nok( ld("more","cowbell",0),                    "(max distance) more cowbell");
+nok( ld("a","xxxxxxxx",5),                      "(max distance) length difference shortcut");
 
 # some extra maxDistance tests
 is( ld("xxx","xxxx",1),                     1,  'misc 1');
@@ -40,9 +40,9 @@ is( ld("xxx","xxxx",3),                     1,  'misc 3');
 is( ld("xxxx","xxx",1),                     1,  'misc 4');
 is( ld("xxxx","xxx",2),                     1,  'misc 5');
 is( ld("xxxx","xxx",3),                     1,  'misc 6');
-is( ld("xxxxxx","xxx",2),                 Nil,  'misc 7');
+nok( ld("xxxxxx","xxx",2),                      'misc 7');
 is( ld("xxxxxx","xxx",3),                   3,  'misc 8');
-is( ld("a","xxxxxxxx",5),                 Nil,  'misc 9 (length shortcut)');
+nok( ld("a","xxxxxxxx",5),                      'misc 9 (length shortcut)');
 
 # Test some utf8
 is( ld('ⓕⓞⓤⓡ','ⓕⓞⓤⓡ'),                      0,  'matching (utf8)');
@@ -53,5 +53,5 @@ is( ld('ⓕⓞⓤⓡ','ⓕⓧⓧⓡ'),                      2,  'substitution (u
 
 # test larger strings
 is( ld('four' x 20, 'fuor' x 20),          40,  'lengths of 100');
-is( ld('four' x 20, 'fuor' x 20, 39),     Nil,  'lengths of 100 exceeding max value');
+nok( ld('four' x 20, 'fuor' x 20, 39),          'lengths of 100 exceeding max value');
 is( ld('four' x 20, 'fuor' x 20, 41),      40,  'lengths of 100 under max value');

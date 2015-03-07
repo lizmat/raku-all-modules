@@ -15,6 +15,6 @@ use Text::Levenshtein::Damerau;
 
     is( $dl.best_target, 'John',                    'test $dl.best_target manually');
     is( $dl.best_distance, 1,                       'test $dl.best_distance');
-    is( %results<John><distance>, 1,                'test .results distance');
-    is( %results<Jose><distance>, 2,                'test .results distance again');
+    is( %results<Jonh><John>, 1,                    'test .results distance');
+    is( %results<Jonh><Jose>, 2,                    'test .results distance again');
 }

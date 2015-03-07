@@ -2,8 +2,8 @@ language: perl
 perl:
     - '5.20'
 env:
-    - BACKEND=moar PANDA_SUBMIT_TESTREPORTS=yes
-    - BACKEND=jvm PANDA_SUBMIT_TESTREPORTS=yes
+    - BACKEND=moar
+    - BACKEND=jvm
 matrix:
     allow_failures:
         - env: BACKEND=jvm
@@ -16,17 +16,14 @@ before_install:
     - git clone https://github.com/tadzik/rakudobrew ~/.rakudobrew
     - export PATH=~/.rakudobrew/bin:$PATH
     - rakudobrew build $BACKEND
-    - perl6 -v
     - rakudobrew build-panda
 install:
-    - panda-fetch .
-    - panda-build
+    - perl6 -v
 before_script:
     - panda list --installed --verbose # modules installed before panda-install
 script:
     - prove -v -s -j$(test-jobs) -e "perl6 --ll-exception -Ilib" $(test-files)
-    - panda-test
-    - panda install . # 'panda install' required to send test reports
+    - PANDA_SUBMIT_TESTREPORTS=1 panda install . # 'panda install' required to send test reports
 after_success:
     - panda list --installed --verbose # modules installed after panda-install
 #   do coveralls.io testing?

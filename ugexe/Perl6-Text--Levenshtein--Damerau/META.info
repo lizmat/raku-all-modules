@@ -1,6 +1,6 @@
 {
     "name"        : "Text::Levenshtein::Damerau",
-    "version"     : "0.1.6",
+    "version"     : "0.1.7",
     "description" : "Calculate Levenshtein or Damerau Levenshtein edit distances for strings.",
     "auth"        : "github:ugexe",
     "depends"     : [],

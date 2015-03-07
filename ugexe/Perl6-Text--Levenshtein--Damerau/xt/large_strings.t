@@ -9,13 +9,13 @@ use Text::Levenshtein::Damerau;
 # dld
 {
     is( dld('four' x 100, 'fuor' x 100),      100,  'dld lengths of 400');
-    is( dld('four' x 100, 'fuor' x 100, 99),  Nil,  'dld lengths of 400 exceeding max value');
+    is( dld('four' x 100, 'fuor' x 100, 99),  Int,  'dld lengths of 400 exceeding max value');
     is( dld('four' x 100, 'fuor' x 100, 101), 100,  'dld lengths of 400 under max value');
 }
 
 # ld
 {
     is( ld('four' x 100, 'fuor' x 100),       200,  'ld lengths of 400');
-    is( ld('four' x 100, 'fuor' x 100, 199),  Nil,  'ld lengths of 400 exceeding max value');
+    is( ld('four' x 100, 'fuor' x 100, 199),  Int,  'ld lengths of 400 exceeding max value');
     is( ld('four' x 100, 'fuor' x 100, 201),  200,  'ld lengths of 400 under max value');
 }

@@ -3,25 +3,37 @@ class Text::Levenshtein::Damerau;
 
 has Str  @.targets        is rw;
 has Str  @.sources        is rw;
-has Int  $.max            is rw;  # Nil/-1 = no max distance
+has Int  $.max            is rw;  # Int/-1 = no max distance
 has Int  $.results_limit  is rw;  # Only return X closest results
 has Hash %.results        is rw;
-has Any  $.best_distance  is rw;
+has Int  $.best_distance  is rw;
 has Str  $.best_target    is rw;
+has Str  $.best_source    is rw;
 
+method get_results {
+    my %results;
+    my @working;
 
-method get_results {    
     for @.sources -> $source {
         for @.targets -> $target {
-            my $distance       = dld( $source, $target, $.max );
-            %.results{$target} = { distance => $distance };
+            @working.push(start { %results{$source}{$target} = dld($source, $target) });
+            await Promise.anyof(@working);
+        }
+    }
+    await Promise.allof(@working);
 
-            if !$.best_distance.defined || $.best_distance > $distance {
-                $.best_distance = $distance;
+    for %results.kv -> $source, $targets {
+        for $targets.kv -> $target, $distance {
+            if !$.best_distance || $.best_distance > $distance {
                 $.best_target   = $target;
+                $.best_distance = $distance;
+                $.best_source   = $source if @.sources.elems > 1;
             }
         }
     }
+
+    %.results = %results;
+    return %.results;
 }
 
 
@@ -38,10 +50,10 @@ sub dld (Str $source is copy, Str $target is copy, Int $max?) is export {
     }
 
     return ((!$max.defined || $maxd <= $targetLength)
-        ?? $targetLength !! Nil) if 0 ~~ any($sourceLength|$targetLength);
+        ?? $targetLength !! Int) if 0 ~~ any($sourceLength|$targetLength);
 
     my Int $diff = $targetLength - $sourceLength;
-    return Nil if $max.defined && $diff > $maxd;
+    return Int if $max.defined && $diff > $maxd;
     
     @previousRow[$_] = $_ for 0..$sourceLength+1;
 
@@ -78,7 +90,7 @@ sub dld (Str $source is copy, Str $target is copy, Int $max?) is export {
         @currentRow       = @tempRow;
     }
 
-    return (!$max.defined || @previousRow[$sourceLength] <= $maxd) ?? @previousRow[$sourceLength] !! Nil;
+    return (!$max.defined || @previousRow[$sourceLength] <= $maxd) ?? @previousRow[$sourceLength] !! Int;
 }
 
 
@@ -95,10 +107,10 @@ sub ld ( Str $source is copy, Str $target is copy, Int $max?) is export {
     }
 
     return ((!$max.defined || $maxd <= $targetLength)
-        ?? $targetLength !! Nil) if 0 ~~ any($sourceLength|$targetLength);
+        ?? $targetLength !! Int) if 0 ~~ any($sourceLength|$targetLength);
 
     my Int $diff = $targetLength - $sourceLength;
-    return Nil if $max.defined && $diff > $maxd;
+    return Int if $max.defined && $diff > $maxd;
 
     @previousRow[$_] = $_ for 0..$sourceLength+1;
 
@@ -115,7 +127,7 @@ sub ld ( Str $source is copy, Str $target is copy, Int $max?) is export {
                 @previousRow[$j    ] + 1,
                 @previousRow[$j - 1] + ($targetCh eq $sourceCh ?? 0 !! 1);
 
-            return Nil if ( @currentRow[0] == $j
+            return Int if ( @currentRow[0] == $j
                 && $maxd < (($diff => @currentRow[@currentRow[0]])
                     ?? ($diff - @currentRow[@currentRow[0]]) 
                     !! (@currentRow[@currentRow[0]] + $diff))
@@ -125,6 +137,6 @@ sub ld ( Str $source is copy, Str $target is copy, Int $max?) is export {
         @previousRow[$_] = @currentRow[$_] for 0..@currentRow.end;
     }
 
-    return (!$max.defined || @currentRow[*-1] <= $maxd) ?? @currentRow[*-1] !! Nil;
+    return (!$max.defined || @currentRow[*-1] <= $maxd) ?? @currentRow[*-1] !! Int;
 }
 
