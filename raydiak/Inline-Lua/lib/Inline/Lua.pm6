@@ -132,6 +132,8 @@ method value-from-lua (:$keep) {
 
     when 'table' { Inline::Lua::Table.new: :lua(self), :stack, :$keep }
     when 'function' { Inline::Lua::Function.new: :lua(self), :stack, :$keep }
+    when 'userdata' { Inline::Lua::Userdata.new: :lua(self), :stack, :$keep }
+    when 'cdata' { Inline::Lua::Cdata.new: :lua(self), :stack, :$keep }
 
     my $val = do {
         when 'boolean' { ?$!raw.lua_toboolean: $!state, -1 }
@@ -191,7 +193,7 @@ method ensure ($code, :$e is copy) {
 role LuaParent[Str:D $parent] is export {
     method sink () { self }
     method FALLBACK (|args) {
-        Inline::Lua.default-lua.get-global($parent).invoke: |args;
+        Inline::Lua.default-lua.get-global($parent).dispatch: |args;
     }
 }
 
@@ -199,7 +201,7 @@ role LuaParent[Str:D $parent] is export {
 role LuaParent[Inline::Lua::Table:D $parent] {
     method sink () { self }
     method FALLBACK (|args) {
-        $parent.invoke: |args;
+        $parent.dispatch: |args;
     }
 }
 #]]]

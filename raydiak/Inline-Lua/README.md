@@ -215,7 +215,7 @@ attempted as a method call or attribute access on the table by the usual Lua OO
 conventions, allowing a table to be seemlessly used as an object from Perl
 code, as long as required method and attribute names don't overlap with any
 existing methods in Inline::Lua::Table's inheritance tree. For ways around this
-limitation, see .invoke(), .obj() and LuaParent, below.
+limitation, see .dispatch(), .obj() and LuaParent, below.
 
 #### method hash ()
 #### method keys ()
@@ -249,7 +249,7 @@ find the highest defined whole number key, instead of Lua's length operation.
 This is also done when the end needs to be found for other operations like
 .list or slicing/indexing with Whatever ([\*]) and WhateverCode ([\*-1]).
 
-#### method invoke ($method, Bool:D :$call = True, \*@args)
+#### method dispatch ($method, Bool:D :$call = True, \*@args)
 
 Calls the named method using the table as the invocant, and passes it @args,
 returning the result. Notably, this is currently the only 100% guaranteed way
@@ -260,12 +260,12 @@ Besides a method name string, $method can also be an Inline::Lua::Function (or
 even any other callable perl object) which will be called directly instead of
 retrieving the method by name from the table. Passing a Callable directly is
 mainly intended to allow a method to be looked up before hand to skip the table
-key lookup, value return, and associated marshalling overhead of .invoke
+key lookup, value return, and associated marshalling overhead of .dispatch
 without rearranging the calling code by allowing method names and method
 objects to be used interchangably.
 
 Since it is ubiquitous in Perl 6 to expose attributes via accessors, calling
-.invoke on the name of something which contains a non-function value will
+.dispatch with the name of something which contains a non-function value will
 return the value attached to that table key, effectively acting as an implicit
 accessor. When acting as an accessor, @args is ignored. If it is intended to
 retrieve the function as an Inline::Lua::Function rather than calling it,

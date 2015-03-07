@@ -1,3 +1,5 @@
+class Inline::Lua::Function { ... }
+
 role Inline::Lua::Object {
     has $.lua = die "lua is required";
     has $.ref = die "ref is required";
@@ -30,14 +32,10 @@ role Inline::Lua::Object {
 
 
 
-class Inline::Lua::Function {
-    also does Inline::Lua::Object;
-    also is Block;
-    has $.arity = 0;
-    has $.count = Inf;
-    has $.signature = :(*@);
-
-    method postcircumfix:<( )> (|args) { self.call: |args }
+role Inline::Lua::Object::Callable {
+    #also does Inline::Lua::Object;
+    also is Callable; # why not 'does'? https://rt.perl.org/Public/Bug/Display.html?id=124006
+    has $.signature handles <arity count> = :(|);
 
     method call (*@args, :$stack) {
         self.get unless $stack;
@@ -52,6 +50,8 @@ class Inline::Lua::Function {
 
         self.lua.values-from-lua: self.lua.raw.lua_gettop(self.lua.state) - $top;
     }
+
+    method invoke (|args) { self.call: |args }
 }
 
 
@@ -68,44 +68,21 @@ class Inline::Lua::TableObj {
 
     method sink () { self }
     method FALLBACK (|args) is rw {
-        $!inline-lua-table.invoke: |args;
+        $!inline-lua-table.dispatch: |args;
     }
 }
 
 
 
-class Inline::Lua::Table {
-    also does Inline::Lua::Object;
+role Inline::Lua::Object::Indexable {
+    #also does Inline::Lua::Object;
     also does Positional;
     also does Associative;
     method of () { Mu } # resolve conflict between the two above
 
-    multi method new (:$stack, :$lua!, |args) {
-        nextsame if $stack;
-        $lua.raw.lua_createtable: $lua.state, 0, 0;
-        nextwith :stack, :$lua, |args;
-    }
-
-    method STORE (\vals) {
-        self.get;
-        self.assign_key: $_, Any, :stack for self.keys: :stack;
-        my @vals = vals.flat;
-        my $i = 0;
-        for @vals {
-            when Pair { self.assign_key: .key, .value, :stack }
-            self.assign_pos: $i++, $_, :stack;
-        }
-        self.lua.raw.lua_settop: self.lua.state, -2;
-        self;
-    }
-
 
 
     ### positional stuff
-
-    method elems (|args) {Int( max 0, self.keys(|args).grep: Numeric )}
-
-    method end (|args) { self.elems(|args) - 1 }
 
     method exists_pos ($pos, |args) { self.exists_key: $pos + 1, |args }
 
@@ -114,14 +91,6 @@ class Inline::Lua::Table {
     method assign_pos ($pos, |args) is rw { self.assign_key: $pos + 1, |args }
 
     method delete_pos ($pos, |args) { self.delete_key: $pos + 1, |args }
-
-    method list (:$stack, :$leave = $stack) {
-        self.get unless $stack;
-        my @vals;
-        @vals[$_] = self.at_pos($_, :stack) for ^self.elems: :stack;
-        self.lua.raw.lua_settop: self.lua.state, -2 unless $leave;
-        @vals;
-    }
 
 
 
@@ -167,6 +136,53 @@ class Inline::Lua::Table {
         $val;
     }
 
+
+
+    ### object stuff
+
+    method dispatch ($method, :$call, |args) is rw {
+        my $val = $method;
+        $val := self.at_key($val) unless $val ~~ Callable;
+        my $cur-val = $val;
+
+        $call !eqv False && $cur-val ~~ Inline::Lua::Function ??
+            $cur-val(self, |args) !! $val;
+    }
+
+    has $.obj handles ** = Inline::Lua::TableObj.new: table => self;
+    method sink () { self } # required for above
+}
+
+
+
+role Inline::Lua::Object::Iterable {
+    #also does Inline::Lua::Object::Indexable;
+
+    method STORE (\vals) {
+        self.get;
+        self.assign_key: $_, Any, :stack for self.keys: :stack;
+        my @vals = vals.flat;
+        my $i = 0;
+        for @vals {
+            when Pair { self.assign_key: .key, .value, :stack }
+            self.assign_pos: $i++, $_, :stack;
+        }
+        self.lua.raw.lua_settop: self.lua.state, -2;
+        self;
+    }
+
+    method elems (|args) {Int( max 0, self.keys(|args).grep: Numeric )}
+
+    method end (|args) { self.elems(|args) - 1 }
+
+    method list (:$stack, :$leave = $stack) {
+        self.get unless $stack;
+        my @vals;
+        @vals[$_] = self.at_pos($_, :stack) for ^self.elems: :stack;
+        self.lua.raw.lua_settop: self.lua.state, -2 unless $leave;
+        @vals;
+    }
+
     method keys (:$stack, :$leave = $stack) {
         self.get unless $stack;
         my @ret;
@@ -190,7 +206,10 @@ class Inline::Lua::Table {
         @ret;
     }
 
-    method hash (:$stack, :$leave = $stack) handles <kv pairs> {
+    # why not 'handles'? https://rt.perl.org/Public/Bug/Display.html?id=124007
+    method kv (|args) { self.hash(|args).kv }
+    method pairs (|args) { self.hash(|args).pairs }
+    method hash (:$stack, :$leave = $stack) {
         self.get unless $stack;
         my %ret{Any};
         self.lua.raw.lua_pushnil: self.lua.state;
@@ -202,22 +221,45 @@ class Inline::Lua::Table {
         self.lua.raw.lua_settop: self.lua.state, -2 unless $leave;
         %ret;
     }
+}
 
 
 
-    ### object stuff
+class Inline::Lua::Table {
+    also does Inline::Lua::Object;
+    also does Inline::Lua::Object::Indexable;
+    also does Inline::Lua::Object::Iterable;
+    also does Inline::Lua::Object::Callable;
 
-    method invoke ($method, :$call, |args) is rw {
-        my $val = $method;
-        $val := self.at_key($val) unless $val ~~ Callable;
-        my $cur-val = $val;
-
-        $call !eqv False && $cur-val ~~ Callable ??
-            $cur-val(self, |args) !! $val;
+    multi method new (:$stack, :$lua!, |args) {
+        nextsame if $stack;
+        $lua.raw.lua_createtable: $lua.state, 0, 0;
+        nextwith :stack, :$lua, |args;
     }
+}
 
-    method sink () { self }
-    has $.obj handles ** = Inline::Lua::TableObj.new: table => self;
+
+
+class Inline::Lua::Function {
+    also does Inline::Lua::Object;
+    also does Inline::Lua::Object::Callable;
+    also does Inline::Lua::Object::Indexable;
+}
+
+
+
+class Inline::Lua::Userdata {
+    also does Inline::Lua::Object;
+    also does Inline::Lua::Object::Indexable;
+    also does Inline::Lua::Object::Callable;
+}
+
+
+
+class Inline::Lua::Cdata {
+    also does Inline::Lua::Object;
+    also does Inline::Lua::Object::Indexable;
+    also does Inline::Lua::Object::Callable;
 }
 
 
