@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6/doc.git
 	branch = master
-	commit = 394fc0b900e618e83e63ebf4d648cd2f1d9b760d
-	parent = 84e7f3cf3151ace6b9ebdb434b061d1f5b57f41b
+	commit = 28d7b8fd177d996d35554352b406edb931410e9e
+	parent = 3a6791b3caba0b67fa748a40f01b427ba44d1ff0
 	cmdver = 0.2.0
