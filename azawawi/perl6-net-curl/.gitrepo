@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-net-curl.git
 	branch = master
-	commit = 4f0d19d32589c7382bfc8243551cc0bf95f0606b
-	parent = fb8d23ab38ed1527cfcd07c99d6c51c32c44f0d4
-	cmdver = 0.1.0
+	commit = e92f74d3bd00ae0ca7af5ef763620389d6854546
+	parent = c115ee4c2175ecd6b3cb422db1a16453c3aeb0be
+	cmdver = 0.2.0
