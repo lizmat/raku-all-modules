@@ -1,5 +1,8 @@
 #!/usr/bin/env perl6
 
+# This script acts roughly like lua <file> or lua -e <code> and probably
+# isn't very useful outside of testing during development
+
 constant $root = $?FILE.IO.parent;
 use lib $root.child('lib');
 use lib $root.child('blib').child: 'lib';
