@@ -5,7 +5,6 @@ sub EXPORT(|) {
     my role Tuxic {
         token term:sym<identifier> {
             :my $pos;
-            <!before [sub|if|elsif|while|until|for] \s* '('>
             <identifier> <!{ $*W.is_type([atkeyish($/, 'identifier').Str]) }> <?before <.unsp>|\s*'('> \s* <![:]>
             { $pos := $/.CURSOR.pos }
             <args>

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FROGGS/p6-Slang-Tuxic.git
 	branch = master
-	commit = a4b160294d8de8c104a633fc2ade7a39b5f7e1dc
-	parent = a7adbc07984b9520c9256f6a737cbcae96c37d5c
+	commit = f72e4cba1cdc024238d6e6b223f46150fce489ac
+	parent = bb33626bc258f39c002a189e4ff74d35891517d4
 	cmdver = 0.2.0
