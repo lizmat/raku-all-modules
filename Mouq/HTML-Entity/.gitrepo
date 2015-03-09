@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Mouq/HTML-Entity.git
 	branch = master
-	commit = 4a52cabb337150a697202ee4bfd62f56a8e71e23
-	parent = de63969a2cbb7716805e4d1334262790332a611e
-	cmdver = 0.1.0
+	commit = d31c6022db47da8c5c0a79c34b34fc79d2184334
+	parent = b403f77bbb2b81c60cb894f4b13c1f7984293266
+	cmdver = 0.2.0

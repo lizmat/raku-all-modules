@@ -6,7 +6,7 @@ sub lazy-load-entities {
 }
 
 #| Facilitate, e.g., HTML::Entity<&zdot;>
-method at_key ($k) { lazy-load-entities{$k.substr(0,3)}{$k} }
+method AT-KEY ($k) { lazy-load-entities{$k.substr(0,3)}{$k} }
 
 #| Convert HTML entities in a string to the characters they represent
 our sub decode ($str is copy) is export(:ALL) {
