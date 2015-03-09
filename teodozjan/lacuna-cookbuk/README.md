@@ -18,8 +18,6 @@ Precompiling is the most changing part of perl6 backends so it may be used as fa
 
 Script helps https://us1.lacunaexpanse.com players doing boring tasks like moving glyphs to one place that can make plans from them or searching where excess fighters can be put. The intention was putting perl6 into life. 
 
-All planets must have Trade Ministry, Intelligence Ministry and Archaeology Ministry. All space stations must have Parliament.
-
 Compilation:
 
     $ panda install LacunaCookbuk
@@ -46,7 +44,3 @@ Things that seem to work:
 	- Showing where are the colonies (primitive text)
 	- Automatic repair (the evil implementation)
 	- Inbox cleaning
-
-### Doesn't compile?
-
-The unofficial [continuous integration](http://host07.perl6.com:8080/report/teodozjan) for my projects will tell whether this project compiles with newest [rakudo](https://en.wikipedia.org/wiki/Rakudo_Perl_6).
