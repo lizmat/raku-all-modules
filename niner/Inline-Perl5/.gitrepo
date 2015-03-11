@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/niner/Inline-Perl5.git
 	branch = master
-	commit = a7a5d6696db94720295bbb46e52abdfb85bf3435
-	parent = 7dc0921e3da9a167b43f2a47d4c998ee639e8c7b
+	commit = c840b8d1bd1e50ab8335d1b6ace363d55af71f32
+	parent = 0c8d8b6dd7d25f79d20269d55cc1c6e9b4ccdd12
 	cmdver = 0.2.0
