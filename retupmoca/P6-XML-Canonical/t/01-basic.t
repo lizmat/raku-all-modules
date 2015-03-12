@@ -52,6 +52,6 @@ is canonical("<a xmlns=\"foo\"><b></b></a>", :exclusive, :subset('/a/b'), :names
              'pull subset; fold parent xmlns in (exclusive)';
 
 todo 'NYI', 1;
-is canonical("<na:a xmlns:na='foo' xmlns:nb='bar'><nb:b>test</nb:b></na:a>"),
+is canonical("<na:a xmlns:na='foo' xmlns:nb='bar'><nb:b>test</nb:b></na:a>", :exclusive),
              "<na:a xmlns:na=\"foo\"><nb:b xmlns:nb=\"bar\">test</nb:b></na:a>",
-             'Drop namespaces down a level';
+             'Drop namespaces down a level when exclusive';
