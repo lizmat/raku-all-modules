@@ -71,12 +71,12 @@ ok $L.get-global('foo') eq 'bar', '.set-global() and .get-global() work';
         ["Y"] = 42,
         ["plus-Y"] = function (self, X) return(X + self.Y) end
     })').obj;
-    ok $o ~~ Inline::Lua::TableObj, 'Objects work';
+    ok $o ~~ Inline::Lua::WrapperObj, 'Objects work';
     ok $o.Y == 42, 'Attributes work';
     ok $o.plus-Y(8) == 50, 'Method calls work';
     ok $o.plus-Y(:!call) ~~ Inline::Lua::Function, 'Method retrieval works';
-    my $t = $o.inline-lua-table;
-    ok $t ~~ Inline::Lua::Table, 'Inline::Lua::TableObj.inline-lua-table works';
+    my $t = $o.inline-lua-object;
+    ok $t ~~ Inline::Lua::Table, 'Inline::Lua::WrapperObj.inline-lua-object works';
 
     $L.set-global('o', $t);
     ok $L.get-global('o') ~~ Inline::Lua::Table, '.set/get-global work with objects';

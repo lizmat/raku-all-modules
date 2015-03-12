@@ -214,6 +214,10 @@ used as a Perl hash, array, object, role, or routine, and include the
 Positional, Associative, and Callable roles, even if it is not an object type
 which directly supports such features.
 
+To keep this documentation understandable, the expected features are documented
+under e.g. ::Function and ::Table, even when such features also work on any
+object via metatables.
+
 ### Inline::Lua::Function
 
 A Lua function which can be called directly from Perl. It can be invoked like
@@ -247,6 +251,15 @@ conventions, allowing a table to be seemlessly used as an object from Perl
 code, as long as required method and attribute names don't overlap with any
 existing methods in Inline::Lua::Table's inheritance tree. For ways around this
 limitation, see .dispatch(), .obj(), and LuaParent, below.
+
+Unlike objects behaving as tables via metatable-backed indexing, an actual
+::Table can be iterated over and its full set of keys and values can be known.
+This means that tables can accept list assignments in Perl (though they
+intentionally do not themselves flatten in list context), and they also are
+able to provide the .list, .hash and related methods. While these
+iteration-backed features only work on ::Table itself, table-like array and
+hash subscripting is supported for all ::Objects with suitable metamethods, as
+well as the OO features described later in this class like .dispatch and .obj.
 
 #### method new (Inline::Lua:D :$lua!)
 
@@ -315,20 +328,20 @@ same object, which always returns the value, function or otherwise.
 
 #### method obj ()
 
-Returns an Inline::Lua::TableObj instance for the table; see directly below.
+Returns an Inline::Lua::WrapperObj instance for the object; see directly below.
 
-### Inline::Lua::TableObj
+### Inline::Lua::WrapperObj
 
-To ease method name conflicts, this class exposes a table as a Perl object, but
-it does not inherit or compose anything besides Any and Mu. Fallback-based
-dispatch works as previously described, just with fewer attributes and methods
-to get in the way. A ::TableObj can be passed back to Lua just as if the
-associated ::Table object had been passed.
+To ease method name conflicts, this class exposes a Lua object as a Perl
+object, but it does not inherit or compose anything besides Any and Mu.
+Fallback-based dispatch works as previously described, just with fewer
+attributes and methods to get in the way. A ::WrapperObj can be passed back to
+Lua just as if the associated ::Object had been passed.
 
-#### has $.inline-lua-table
+#### has $.inline-lua-object
 
-The actual ::Table object for this ::TableObj instance, and the only
-non-default name to conflict with Lua table keys (thus the slightly-awkward
+The actual ::Object for this ::WrapperObj instance, and the only non-default
+name to conflict with Lua attributes and methods (thus the slightly-awkward
 identifier).
 
 ### Inline::Lua::Userdata

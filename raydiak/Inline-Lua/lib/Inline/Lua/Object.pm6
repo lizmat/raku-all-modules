@@ -1,39 +1,4 @@
-class Inline::Lua::Function { ... }
-
-role Inline::Lua::Object {
-    has $.lua = die "lua is required";
-    has $.ref = die "ref is required";
-
-    multi method new (:$stack, :$lua!, :$keep, |args) {
-        nextwith :ref($lua.ref-from-stack: :$keep), :$lua, |args if :$stack;
-        nextsame;
-    }
-
-    method get () {
-        $!lua.ref-to-stack: $!ref;
-
-        self;
-    }
-
-    method unref () {
-        if defined $!ref {
-            $!lua.unref: $!ref;
-            $!ref = Any;
-        }
-
-        self;
-    }
-
-    multi submethod DESTROY (|) {
-        self.unref;
-        nextsame;
-    }
-}
-
-
-
 role Inline::Lua::Object::Callable {
-    #also does Inline::Lua::Object;
     also is Callable; # why not 'does'? https://rt.perl.org/Public/Bug/Display.html?id=124006
     has $.signature handles <arity count> = :(|);
 
@@ -56,26 +21,25 @@ role Inline::Lua::Object::Callable {
 
 
 
-class Inline::Lua::TableObj {
+class Inline::Lua::WrapperObj {
     # making this private with an explicit public accessor breaks the circular
     # ref loop for e.g. .perl()
-    has $!inline-lua-table;
-    method inline-lua-table () { $!inline-lua-table }
+    has $!inline-lua-object;
+    method inline-lua-object () { $!inline-lua-object }
 
-    multi submethod BUILD (:table($!inline-lua-table), |) {
+    multi submethod BUILD (:object($!inline-lua-object), |) {
         nextsame;
     }
 
     method sink () { self }
     method FALLBACK (|args) is rw {
-        $!inline-lua-table.dispatch: |args;
+        $!inline-lua-object.dispatch: |args;
     }
 }
 
 
 
 role Inline::Lua::Object::Indexable {
-    #also does Inline::Lua::Object;
     also does Positional;
     also does Associative;
     method of () { Mu } # resolve conflict between the two above
@@ -145,19 +109,17 @@ role Inline::Lua::Object::Indexable {
         $val := self.at_key($val) unless $val ~~ Callable;
         my $cur-val = $val;
 
-        $call !eqv False && $cur-val ~~ Inline::Lua::Function ??
+        $call !eqv False && $cur-val ~~ (class Inline::Lua::Function {...}) ??
             $cur-val(self, |args) !! $val;
     }
 
-    has $.obj handles ** = Inline::Lua::TableObj.new: table => self;
+    has $.obj handles ** = Inline::Lua::WrapperObj.new: object => self;
     method sink () { self } # required for above
 }
 
 
 
 role Inline::Lua::Object::Iterable {
-    #also does Inline::Lua::Object::Indexable;
-
     method STORE (\vals) {
         self.get;
         self.assign_key: $_, Any, :stack for self.keys: :stack;
@@ -225,11 +187,43 @@ role Inline::Lua::Object::Iterable {
 
 
 
-class Inline::Lua::Table {
-    also does Inline::Lua::Object;
+role Inline::Lua::Object {
     also does Inline::Lua::Object::Indexable;
-    also does Inline::Lua::Object::Iterable;
     also does Inline::Lua::Object::Callable;
+
+    has $.lua = die "lua is required";
+    has $.ref = die "ref is required";
+
+    multi method new (:$stack, :$lua!, :$keep, |args) {
+        nextwith :ref($lua.ref-from-stack: :$keep), :$lua, |args if :$stack;
+        nextsame;
+    }
+
+    method get () {
+        $!lua.ref-to-stack: $!ref;
+
+        self;
+    }
+
+    method unref () {
+        if defined $!ref {
+            $!lua.unref: $!ref;
+            $!ref = Any;
+        }
+
+        self;
+    }
+
+    multi submethod DESTROY (|) {
+        self.unref;
+        nextsame;
+    }
+}
+
+
+
+class Inline::Lua::Table does Inline::Lua::Object {
+    also does Inline::Lua::Object::Iterable;
 
     multi method new (:$stack, :$lua!, |args) {
         nextsame if $stack;
@@ -240,27 +234,9 @@ class Inline::Lua::Table {
 
 
 
-class Inline::Lua::Function {
-    also does Inline::Lua::Object;
-    also does Inline::Lua::Object::Callable;
-    also does Inline::Lua::Object::Indexable;
-}
-
-
-
-class Inline::Lua::Userdata {
-    also does Inline::Lua::Object;
-    also does Inline::Lua::Object::Indexable;
-    also does Inline::Lua::Object::Callable;
-}
-
-
-
-class Inline::Lua::Cdata {
-    also does Inline::Lua::Object;
-    also does Inline::Lua::Object::Indexable;
-    also does Inline::Lua::Object::Callable;
-}
+class Inline::Lua::Function does Inline::Lua::Object { }
+class Inline::Lua::Userdata does Inline::Lua::Object { }
+class Inline::Lua::Cdata does Inline::Lua::Object { }
 
 
 
