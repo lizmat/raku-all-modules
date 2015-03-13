@@ -23,7 +23,7 @@ our sub sign(XML::Element $document is rw, :$private-pem!, :$x509-pem! is copy, 
         $document.attribs<ID> = $id;
     }
 
-    my $digest = MIME::Base64.encode(sha256(canonical($document)));
+    my $digest = MIME::Base64.encode(sha256(canonical($document, :exclusive)));
     my $signed-info = make-xml('ds:SignedInfo',
                                make-xml('ds:CanonicalizationMethod', :Algorithm('http://www.w3.org/2001/10/xml-exc-c14n#')),
                                make-xml('ds:SignatureMethod', :Algorithm('http://www.w3.org/2001/04/xmldsig-more#rsa-sha256')),
@@ -108,14 +108,21 @@ our sub verify(XML::Element $signature) is export {
     }
 
     my $canon;
-    if @path.elems <= 1 {
-        $canon = canonical($signature.ownerDocument);
-    }
-    elsif $canonicalization-method eq 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315' {
-        $canon = canonical($signature.ownerDocument, :subset(@path.join('/')));
+    if $canonicalization-method eq 'http://www.w3.org/TR/2001/REC-xml-c14n-20010315' {
+        if @path.elems <= 1 {
+            $canon = canonical($signature.ownerDocument);
+        }
+        else {
+            $canon = canonical($signature.ownerDocument, :subset(@path.join('/')));
+        }
     }
     elsif $canonicalization-method eq 'http://www.w3.org/2001/10/xml-exc-c14n#' {
-        $canon = canonical($signature.ownerDocument, :exclusive, :subset(@path.join('/')));
+        if @path.elems <= 1 {
+            $canon = canonical($signature.ownerDocument, :exclusive);
+        }
+        else {
+            $canon = canonical($signature.ownerDocument, :exclusive, :subset(@path.join('/')));
+        }
     }
     else {
         fail "Unable to understand canonicalization method: $canonicalization-method";
@@ -205,16 +212,24 @@ sub check_reference(XML::Element $reference) {
             @path.unshift($tmp.name);
         }
 
-        if @path.elems <= 1 {
-            # no subset - we're canonicalizing the whole document
-            $data = canonical($data.ownerDocument);
-        }
-        elsif $canonical ~~ /exc/ {
-            my @namespaces = $_.elements(:TAG('InclusiveNamespaces'), :SINGLE).attribs<PrefixList>.split(' ');
-            $data = canonical($data.ownerDocument, :exclusive, :subset(@path.join('/')), :namespaces(@namespaces));
+        if $canonical ~~ /exc/ {
+            if @path.elems <= 1 {
+                # no subset - we're canonicalizing the whole document
+                $data = canonical($data.ownerDocument, :exclusive);
+            }
+            else {
+                my @namespaces = $_.elements(:TAG('InclusiveNamespaces'), :SINGLE).attribs<PrefixList>.split(' ');
+                $data = canonical($data.ownerDocument, :exclusive, :subset(@path.join('/')), :namespaces(@namespaces));
+            }
         }
         else {
-            $data = canonical($data.ownerDocument, :subset(@path.join('/')));
+            if @path.elems <= 1 {
+                # no subset - we're canonicalizing the whole document
+                $data = canonical($data.ownerDocument);
+            }
+            else {
+                $data = canonical($data.ownerDocument, :subset(@path.join('/')));
+            }
         }
     }
 
