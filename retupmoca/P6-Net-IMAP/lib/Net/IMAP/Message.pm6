@@ -40,8 +40,8 @@ method data {
         fail "Bad fetch" unless $resp ~~ /\w+\hOK\N+$/;
 
         my @lines = $resp.split("\r\n");
-        my $bytes;
-        my $seenbytes;
+        my $bytes = 0;
+        my $seenbytes = 0;
         my $data;
         for @lines {
             if /^\* \s+ \d+ \s+ FETCH .+ BODY\[\] \s+ \{(\d+)\}/ {
