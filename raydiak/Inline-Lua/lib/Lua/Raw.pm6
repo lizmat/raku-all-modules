@@ -3,21 +3,21 @@ class Lua::Raw;
 use NativeCall;
 
 our sub luaL_newstate ()
-    returns OpaquePointer
+    returns Pointer[void]
 {...}
 
 our sub luaL_openlibs (
-    OpaquePointer $ )
+    Pointer[void] $ )
 {...}
 
 our sub luaL_loadstring (
-    OpaquePointer $,
+    Pointer[void] $,
     Str $ )
     returns int32
 {...}
 
 our sub lua_pcall (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $,
     int32 $,
     int32 $ )
@@ -25,131 +25,131 @@ our sub lua_pcall (
 {...}
 
 our sub lua_type (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
     returns int32
 {...}
 
 our sub lua_typename (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
     returns Str
 {...}
 
 our sub lua_toboolean (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
     returns int32
 {...}
 
 our sub lua_tonumber (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
     returns num64
 {...}
 
 our sub lua_tolstring (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $,
-    OpaquePointer $ = OpaquePointer )
+    Pointer[void] $ = Pointer[void] )
     returns Str
 {...}
 
 our sub lua_gettop (
-    OpaquePointer $ )
+    Pointer[void] $ )
     returns int32
 {...}
 
 our sub lua_settop (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
 {...}
 
 our sub lua_next (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
     returns int32
 {...}
 
 our sub lua_pushnil (
-    OpaquePointer $ )
+    Pointer[void] $ )
 {...}
 
 our sub lua_pushnumber (
-    OpaquePointer $,
+    Pointer[void] $,
     num64 $ )
 {...}
 
 our sub lua_pushstring (
-    OpaquePointer $,
+    Pointer[void] $,
     Str $ )
 {...}
 
 our sub lua_pushboolean (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
 {...}
 
 our sub lua_createtable (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ = 0,
     int32 $ = 0 )
 {...}
 
 our sub lua_rawgeti (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $,
     int32 $ )
 {...}
 
 our sub lua_rawset (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
 {...}
 
 our sub lua_getfield (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $,
     Str $ )
 {...}
 
 our sub lua_setfield (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $,
     Str $ )
 {...}
 
 our sub luaL_ref (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
     returns int32
 {...}
 
 our sub luaL_unref (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $,
     int32 $ )
 {...}
 
 our sub lua_topointer (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
-    returns OpaquePointer
+    returns Pointer[void]
 {...}
 
 our sub lua_objlen (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
     returns int32
 {...}
 
 our sub lua_gettable (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
 {...}
 
 our sub lua_settable (
-    OpaquePointer $,
+    Pointer[void] $,
     int32 $ )
 {...}
 
