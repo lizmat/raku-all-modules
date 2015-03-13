@@ -12,7 +12,7 @@ multi sub canonical(XML::Document $xml, :$subset, :$exclusive, :@namespaces) {
     return canonical($xml.root, :$subset, :$exclusive, :@namespaces);
 }
 
-multi sub canonical(XML::Text $xml) {
+multi sub canonical(XML::Text $xml, *%) {
     my $text = $xml.text;
 
     # normalize line endings
@@ -41,7 +41,7 @@ multi sub canonical(XML::Text $xml) {
     return $text;
 }
 
-multi sub canonical(XML::CDATA $xml) {
+multi sub canonical(XML::CDATA $xml, *%) {
     my $text = $xml.data;
 
     # escape < > &
@@ -52,44 +52,14 @@ multi sub canonical(XML::CDATA $xml) {
     return $text;
 }
 
-multi sub canonical(XML::Element $xml, :$subset is copy, :$exclusive, :@namespaces is copy) {
+multi sub canonical(XML::Element $xml, :$subset is copy, :$exclusive, :@namespaces is copy, :%exc-rendered-ns is copy) {
+    %exc-rendered-ns{'#default'} = '' unless %exc-rendered-ns;
+
     my %extra-attribs;
     if $subset {
         my @parts = $subset.split(/\//).grep({$_});
         die "Invalid subset" if @parts[0] ne $xml.name;
         @parts.shift;
-        if $exclusive {
-            # XXX: this bit is in need of cleanup.
-
-            my @p = @parts;
-            my $tmp = $xml;
-            while @p.elems > 1 {
-                $tmp = $tmp.elements(:TAG(@p[0]), :SINGLE);
-                @p.shift;
-            }
-
-            my @name = $tmp.name.split(/\:/);
-            my $tmp_ns;
-            if @name[1] {
-                $tmp_ns = @name[0];
-            }
-            else {
-                $tmp_ns = '';
-            }
-
-            $tmp = $tmp.elements(:TAG(@p[0]), :SINGLE);
-            @name = $tmp.name.split(/\:/);
-            if @name[1] {
-                if $tmp_ns eq @name[0] {
-                    @namespaces.push: $tmp_ns;
-                }
-            }
-            else {
-                if $tmp_ns eq '' {
-                    @namespaces.push: '#default';
-                }
-            }
-        }
         while @parts {
             for $xml.attribs.kv -> $k, $v {
                 if $k ~~ /^xmlns(.*)?/ {
@@ -97,6 +67,7 @@ multi sub canonical(XML::Element $xml, :$subset is copy, :$exclusive, :@namespac
                     $part ~~ s/\:// if $part;
                     if !$exclusive || @namespaces.grep({ $part ?? $_ eq $part !! $_ eq '#default' }) {
                         %extra-attribs{$k} = $v;
+                        %exc-rendered-ns{$k} = $v;
                     }
                 }
             }
@@ -111,6 +82,40 @@ multi sub canonical(XML::Element $xml, :$subset is copy, :$exclusive, :@namespac
     my @keys = $xml.attribs.keys;
 
     @keys .= grep(&_needed_attribute.assuming($xml));
+
+    if $exclusive {
+        # special namespace rules, so strip out all xmlns attributes
+        # (inclusivenamespaces rule handled with extra-attribs below)
+        @keys .= grep({ !( $_ ~~ /^xmlns/ ) });
+
+        my %used_ns;
+        for @keys {
+            my @s = .split(/\:/);
+            if @s.elems > 1 {
+                %used_ns{@s[0]}++;
+            }
+        }
+        my @s = $xml.name.split(/\:/);
+        if @s.elems > 1 {
+            %used_ns{@s[0]}++;
+        }
+        else {
+            %used_ns{'#default'}++;
+        }
+
+        for %used_ns.keys {
+            if !(%exc-rendered-ns{$_}:exists) || %exc-rendered-ns{$_} ne ($_ eq '#default' ?? $xml.nsURI('') !! $xml.nsURI($_)) {
+                if $_ eq '#default' {
+                    %extra-attribs{'xmlns'} = $xml.nsURI('');
+                    %exc-rendered-ns{'#default'} = $xml.nsURI('');
+                }
+                else {
+                    %extra-attribs{'xmlns:' ~ $_} = $xml.nsURI($_);
+                    %exc-rendered-ns{$_} = $xml.nsURI($_);
+                }
+            }
+        }
+    }
 
     @keys.push(%extra-attribs.keys);
 
@@ -131,7 +136,7 @@ multi sub canonical(XML::Element $xml, :$subset is copy, :$exclusive, :@namespac
     $element ~= '>';
 
     for $xml.nodes {
-        $element ~= canonical($_);
+        $element ~= canonical($_, :$exclusive, :@namespaces, :%exc-rendered-ns);
     }
 
     $element ~= '</' ~ $xml.name ~ '>';
