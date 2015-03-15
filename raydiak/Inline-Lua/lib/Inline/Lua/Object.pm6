@@ -48,19 +48,19 @@ role Inline::Lua::Object::Indexable {
 
     ### positional stuff
 
-    method exists_pos ($pos, |args) { self.exists_key: $pos + 1, |args }
+    method EXISTS-POS ($pos, |args) { self.EXISTS-KEY: $pos + 1, |args }
 
-    method at_pos ($pos, |args) is rw { self.at_key: $pos + 1, |args }
+    method AT-POS ($pos, |args) is rw { self.AT-KEY: $pos + 1, |args }
 
-    method assign_pos ($pos, |args) is rw { self.assign_key: $pos + 1, |args }
+    method ASSIGN-POS ($pos, |args) is rw { self.ASSIGN-KEY: $pos + 1, |args }
 
-    method delete_pos ($pos, |args) { self.delete_key: $pos + 1, |args }
+    method DELETE-POS ($pos, |args) { self.DELETE-KEY: $pos + 1, |args }
 
 
 
     ### associative stuff
 
-    method exists_key ($key, :$stack, :$leave = $stack) {
+    method EXISTS-KEY ($key, :$stack, :$leave = $stack) {
         self.get unless $stack;
         self.lua.value-to-lua: $key;
         self.lua.raw.lua_gettable: self.lua.state, -2;
@@ -69,7 +69,7 @@ role Inline::Lua::Object::Indexable {
         ?$ret;
     }
 
-    method at_key ($self: $key, :$stack, :$leave = $stack) is rw {
+    method AT-KEY ($self: $key, :$stack, :$leave = $stack) is rw {
         my $lua = self.lua; my ($raw, $state) = $lua.raw, $lua.state;
         Proxy.new: FETCH => method () {
             $self.get unless $stack;
@@ -79,22 +79,22 @@ role Inline::Lua::Object::Indexable {
             $raw.lua_settop: $state, -2 unless $leave;
             $val;
         },
-        STORE => method ($val) { $self.assign_key($key, $val, :$stack, :$leave) };
+        STORE => method ($val) { $self.ASSIGN-KEY($key, $val, :$stack, :$leave) };
     }
 
-    method assign_key ($key, $val, :$stack, :$leave = $stack) is rw {
+    method ASSIGN-KEY ($key, $val, :$stack, :$leave = $stack) is rw {
         my $lua = self.lua; my ($raw, $state) = $lua.raw, $lua.state;
         self.get unless $stack;
         $lua.value-to-lua: $key;
         $lua.value-to-lua: $val;
         $raw.lua_settable: $state, -3;
         $raw.lua_settop: $state, -2 unless $leave;
-        self.at_key: $key, :$stack, :$leave;
+        self.AT-KEY: $key, :$stack, :$leave;
     }
 
-    method delete_key ($key, :$stack, :$leave = $stack) {
+    method DELETE-KEY ($key, :$stack, :$leave = $stack) {
         self.get unless $stack;
-        my $val = my $elem := self.at_key($key, :stack);
+        my $val = my $elem := self.AT-KEY($key, :stack);
         $elem = Any;
         self.lua.raw.lua_settop: self.lua.state, -2 unless $leave;
         $val;
@@ -106,7 +106,7 @@ role Inline::Lua::Object::Indexable {
 
     method dispatch ($method, :$call, |args) is rw {
         my $val = $method;
-        $val := self.at_key($val) unless $val ~~ Callable;
+        $val := self.AT-KEY($val) unless $val ~~ Callable;
         my $cur-val = $val;
 
         $call !eqv False && $cur-val ~~ (class Inline::Lua::Function {...}) ??
@@ -122,12 +122,12 @@ role Inline::Lua::Object::Indexable {
 role Inline::Lua::Object::Iterable {
     method STORE (\vals) {
         self.get;
-        self.assign_key: $_, Any, :stack for self.keys: :stack;
+        self.ASSIGN-KEY: $_, Any, :stack for self.keys: :stack;
         my @vals = vals.flat;
         my $i = 0;
         for @vals {
-            when Pair { self.assign_key: .key, .value, :stack }
-            self.assign_pos: $i++, $_, :stack;
+            when Pair { self.ASSIGN-KEY: .key, .value, :stack }
+            self.ASSIGN-POS: $i++, $_, :stack;
         }
         self.lua.raw.lua_settop: self.lua.state, -2;
         self;
@@ -140,7 +140,7 @@ role Inline::Lua::Object::Iterable {
     method list (:$stack, :$leave = $stack) {
         self.get unless $stack;
         my @vals;
-        @vals[$_] = self.at_pos($_, :stack) for ^self.elems: :stack;
+        @vals[$_] = self.AT-POS($_, :stack) for ^self.elems: :stack;
         self.lua.raw.lua_settop: self.lua.state, -2 unless $leave;
         @vals;
     }
@@ -193,9 +193,13 @@ role Inline::Lua::Object {
 
     has $.lua = die "lua is required";
     has $.ref = die "ref is required";
+    has $.ptr = die "ptr is required";
 
     multi method new (:$stack, :$lua!, :$keep, |args) {
-        nextwith :ref($lua.ref-from-stack: :$keep), :$lua, |args if :$stack;
+        if :$stack {
+            my $ptr = $lua.raw.lua_topointer: $lua.state, -1;
+            nextwith :ref($lua.ref-from-stack: :$keep, :$ptr), :$ptr, :$lua, |args;
+        }
         nextsame;
     }
 

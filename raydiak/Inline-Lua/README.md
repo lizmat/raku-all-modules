@@ -55,11 +55,13 @@ default will be auto-detected (which adds a little to loading time, regardless
 of precompilation).
 
 Any number of values can be passed to and returned from Lua. Simple values of
-boolean, nil, number, and string all work. Tables can be accessed as arrays,
-hashes, objects, and roles. Functions work as values, subs, and methods. Any
-Lua object may be called or indexed which supports it, even via metatable
-behaviors. Full userdata as well as LuaJIT cdata also works for metatable
-access or passing back in to another Lua call. See Values further down.
+boolean, nil, number, string, and light userdata all work. Most common object
+types work as well: table, function, full userdata, and cdata. Tables can be
+accessed as arrays, hashes, objects, and roles. Functions work as values, subs,
+and methods. Any Lua object may be called or indexed which supports it, even
+via metatable behaviors. Full userdata as well as LuaJIT cdata also works for
+metatable access or passing back in to another Lua call. See Values further
+down.
 
 Accessing referenced objects, table fields, and global variables can be done
 from Perl without calling Lua code. Named global tables can be used as roles.
@@ -76,10 +78,9 @@ Perl code from Lua is not implemented.
 Metatables are respected for calling and indexing semantics, however they
 cannot yet be accessed directly nor are Lua operator overloads exposed in Perl.
 
-Userdata returned from Lua can be passed back in to Lua or called and indexed
-via metatable, but is not exposed to Perl as a meaningful type (e.g. Pointer),
-nor are Perl binary types like Buf and Blob able to be passed in to Lua. Light
-userdata is not supported.
+Both light and full userdata are supported for passing and returning, but the
+only way to create one from Perl is to pass in a Pointer. In particular, direct
+support for Perl-native binary types like Buf/Blob does not exist.
 
 Composing roles from Lua objects doesn't work well when multiple Inline::Lua
 instances are in use. This is because it would be extremely difficult for the
@@ -96,19 +97,20 @@ result in an overflow.
 ## Values
 
 Inline::Lua currently allows passing and returning any number of boolean,
-number, string, nil, table, function, full userdata, and cdata values according
-to the following table.
+number, string, nil, table, function, light or full userdata, and cdata values
+according to the following table.
 
-    Lua         from Perl               to Perl
-    nil         * where {!.defined}     Any
-    boolean     Bool                    Bool
-    number      Numeric                 Num
-    string      Stringy                 Str
-    table       any( Positional,        Inline::Lua::Object; any of:
-    or function Associative,                Inline::Lua::Table
-    or userdata Inline::Lua::Object )       Inline::Lua::Function
-    or cdata                                Inline::Lua::Userdata
-                                            Inline::Lua::Cdata
+    Lua             from Perl               to Perl
+    nil             * where {!.defined}     Any
+    boolean         Bool                    Bool
+    number          Numeric                 Num
+    string          Stringy                 Str
+    light userdata  Pointer                 Pointer[void]
+    table/          any( Positional,        Inline::Lua::Object; any of:
+    function/       Associative,                Inline::Lua::Table
+    full userdata/  Inline::Lua::Object )       Inline::Lua::Function
+    cdata                                       Inline::Lua::Userdata
+                                                Inline::Lua::Cdata
 
 Not counting floating-point values like NaN, nil is the only "undefined" value
 in Lua. All undefined Perl values will be translated as nil, and when it is
@@ -133,15 +135,14 @@ objects, which can be called like any other anonymous routine in Perl,
 including assigning it to an &-sigiled variable to be able to call it with
 ordinary-looking sub call syntax.
 
-Userdata and cdata types are exposed as ::Userdata and ::Cdata. Passing
-Perl-native binary into Lua or accessing the actual pointer or binary data in
-Perl is not supported at this time, nor is light userdata values (Lua's version
-of an opaque void pointer).
+Full userdata and LuaJIT cdata types are exposed as Inline::Lua::Userdata and
+Inline::Lua::Cdata. Light userdata is a simple pointer value (not an object),
+and is passed to and from Perl as a NativeCall Pointer.
 
 Metatables in Lua allow any object type to define behaviors for calling,
 indexing, comparing, and calculating operators, even when the type in question
 does not usually support such operations. This is allowed for by the object
-types, meaning e.g. a ::Table also does the Callable role and can be called
+types, meaning e.g. a ::Table also does the Callable role and can be invoked
 (though the attempt will fail if there isn't a corresponding metatable
 handler).
 
@@ -165,7 +166,7 @@ Multiple Inline::Lua instances may be used, though passing ::Objects between
 different instances is not supported, and using LuaParent does not work well
 with multiple instances (both of which are described further down).
 
-#### method new ()
+#### method new (:$lua, :$auto, :$lib)
 
 Creates, initializes, and returns a new Inline::Lua instance with the standard
 Lua libraries loaded.
@@ -216,7 +217,12 @@ which directly supports such features.
 
 To keep this documentation understandable, the expected features are documented
 under e.g. ::Function and ::Table, even when such features also work on any
-object via metatables.
+object via metatables. Some methods, however, are truly generic to all object
+types regardless of metatable, and so are documented directly below.
+
+#### method ptr ()
+
+Returns a NativeCall Pointer[void] to the object.
 
 ### Inline::Lua::Function
 
@@ -245,12 +251,12 @@ always. Lua tables use 1-based indexing when treated as an array, while Perl
 uses zero-based indexing. When accessed as an array, the index is offset
 accordingly. In other words, $table[0] is the same element as $table{1}.
 
-An attempted method call which cannot be resolved by the ::Table object is
-attempted as a method call or attribute access on the table by the usual Lua OO
-conventions, allowing a table to be seemlessly used as an object from Perl
-code, as long as required method and attribute names don't overlap with any
-existing methods in Inline::Lua::Table's inheritance tree. For ways around this
-limitation, see .dispatch(), .obj(), and LuaParent, below.
+A method call which cannot be resolved by the ::Table object is attempted as a
+method call or attribute access on the table by the usual Lua OO conventions,
+allowing a table to be seemlessly used as an object from Perl code, as long as
+required method and attribute names don't overlap with any existing methods in
+Inline::Lua::Table's inheritance tree. For ways around this limitation, see
+.dispatch(), .obj(), and LuaParent, below.
 
 Unlike objects behaving as tables via metatable-backed indexing, an actual
 ::Table can be iterated over and its full set of keys and values can be known.
@@ -335,8 +341,9 @@ Returns an Inline::Lua::WrapperObj instance for the object; see directly below.
 To ease method name conflicts, this class exposes a Lua object as a Perl
 object, but it does not inherit or compose anything besides Any and Mu.
 Fallback-based dispatch works as previously described, just with fewer
-attributes and methods to get in the way. A ::WrapperObj can be passed back to
-Lua just as if the associated ::Object had been passed.
+attributes and methods to get in the way (meaning it lacks all other features
+and methods in this document). A ::WrapperObj can be passed back to Lua just as
+if the associated ::Object had been passed.
 
 #### has $.inline-lua-object
 
@@ -347,13 +354,13 @@ identifier).
 ### Inline::Lua::Userdata
 
 Full userdata is supported for passing and returning. This class doesn't do
-much else yet (besides the same metatable support which exists on all objects),
-but will eventually provide some native data structures to Perl, e.g.
-Pointer[void].
+much else directly but supports metatable behaviors like any
+Inline::Lua::Object, or might be used for passing it's .ptr() to other Perl
+NativeCall code.
 
 ### Inline::Lua::Cdata
 
-LuaJIT cdata is supported to the same extent as ::Userdata, directly above.
+LuaJIT cdata is supported in the same way as ::Userdata, directly above.
 
 ### LuaParent
 

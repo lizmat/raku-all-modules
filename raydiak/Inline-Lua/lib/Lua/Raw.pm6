@@ -90,6 +90,11 @@ our sub lua_pushboolean (
     int32 $ )
 {...}
 
+our sub lua_pushlightuserdata (
+    Pointer[void] $,
+    Pointer $ )
+{...}
+
 our sub lua_createtable (
     Pointer[void] $,
     int32 $ = 0,

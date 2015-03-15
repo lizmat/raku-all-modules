@@ -1,5 +1,6 @@
 class Inline::Lua;
 
+use NativeCall;
 use Lua::Raw;
 use Inline::Lua::Object;
 
@@ -42,8 +43,8 @@ method ref-to-stack ($ref) {
     $!raw.lua_rawgeti: $!state, $!index, $ref;
 }
 
-method ref-from-stack (:$keep, :$weak) {
-    my $ptr = $!raw.lua_topointer: $!state, -1;
+method ref-from-stack (:$keep, :$weak, :$ptr is copy) {
+    $ptr //= $!raw.lua_topointer: $!state, -1;
     my $ref := %!ptrref{+$ptr};
 
     if !defined $ref {
@@ -128,17 +129,20 @@ method values-from-lua (Int:D $count, |args) {
 }
 
 method value-from-lua (:$keep) {
-    $_ = $!raw.lua_typename: $!state, $!raw.lua_type: $!state, -1;
+    my $type = $!raw.lua_type: $!state, -1;
+    $_ = $!raw.lua_typename: $!state, $type;
 
     when 'table' { Inline::Lua::Table.new: :lua(self), :stack, :$keep }
     when 'function' { Inline::Lua::Function.new: :lua(self), :stack, :$keep }
-    when 'userdata' { Inline::Lua::Userdata.new: :lua(self), :stack, :$keep }
+    when $_ ~~ 'userdata' && $type != 2 { # light userdata is not an object
+        Inline::Lua::Userdata.new: :lua(self), :stack, :$keep }
     when 'cdata' { Inline::Lua::Cdata.new: :lua(self), :stack, :$keep }
 
     my $val = do {
         when 'boolean' { ?$!raw.lua_toboolean: $!state, -1 }
         when 'number'  { +$!raw.lua_tonumber:  $!state, -1 }
         when 'string'  { ~$!raw.lua_tolstring:  $!state, -1 }
+        when 'userdata' { $!raw.lua_topointer: $!state, -1 }
         when 'nil'     { Any }
         Failure;
     };
@@ -177,6 +181,7 @@ method value-to-lua ($_) {
             }
         }
     }
+    when Pointer { $!raw.lua_pushlightuserdata: $!state, $_ }
     when Numeric { $!raw.lua_pushnumber: $!state, Num($_) }
     when Stringy { $!raw.lua_pushstring: $!state, ~$_ }
 
