@@ -1,0 +1,11 @@
+{
+    "name" : "Data::ICal",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : ".ics file handling",
+    "depends" : [ ],
+    "provides" : {
+        "Data::ICal" : "lib/Data/ICal.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-iCal.git"
+}
