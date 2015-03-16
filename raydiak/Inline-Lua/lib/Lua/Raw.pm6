@@ -7,17 +7,17 @@ our sub luaL_newstate ()
 {...}
 
 our sub luaL_openlibs (
-    Pointer[void] $ )
+    Pointer $ )
 {...}
 
 our sub luaL_loadstring (
-    Pointer[void] $,
+    Pointer $,
     Str $ )
     returns int32
 {...}
 
 our sub lua_pcall (
-    Pointer[void] $,
+    Pointer $,
     int32 $,
     int32 $,
     int32 $ )
@@ -25,136 +25,136 @@ our sub lua_pcall (
 {...}
 
 our sub lua_type (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
     returns int32
 {...}
 
 our sub lua_typename (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
     returns Str
 {...}
 
 our sub lua_toboolean (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
     returns int32
 {...}
 
 our sub lua_tonumber (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
     returns num64
 {...}
 
 our sub lua_tolstring (
-    Pointer[void] $,
+    Pointer $,
     int32 $,
-    Pointer[void] $ = Pointer[void] )
+    Pointer $ = Pointer[void] )
     returns Str
 {...}
 
 our sub lua_gettop (
-    Pointer[void] $ )
+    Pointer $ )
     returns int32
 {...}
 
 our sub lua_settop (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
 {...}
 
 our sub lua_next (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
     returns int32
 {...}
 
 our sub lua_pushnil (
-    Pointer[void] $ )
+    Pointer $ )
 {...}
 
 our sub lua_pushnumber (
-    Pointer[void] $,
+    Pointer $,
     num64 $ )
 {...}
 
 our sub lua_pushstring (
-    Pointer[void] $,
+    Pointer $,
     Str $ )
 {...}
 
 our sub lua_pushboolean (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
 {...}
 
 our sub lua_pushlightuserdata (
-    Pointer[void] $,
+    Pointer $,
     Pointer $ )
 {...}
 
 our sub lua_createtable (
-    Pointer[void] $,
+    Pointer $,
     int32 $ = 0,
     int32 $ = 0 )
 {...}
 
 our sub lua_rawgeti (
-    Pointer[void] $,
+    Pointer $,
     int32 $,
     int32 $ )
 {...}
 
 our sub lua_rawset (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
 {...}
 
 our sub lua_getfield (
-    Pointer[void] $,
+    Pointer $,
     int32 $,
     Str $ )
 {...}
 
 our sub lua_setfield (
-    Pointer[void] $,
+    Pointer $,
     int32 $,
     Str $ )
 {...}
 
 our sub luaL_ref (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
     returns int32
 {...}
 
 our sub luaL_unref (
-    Pointer[void] $,
+    Pointer $,
     int32 $,
     int32 $ )
 {...}
 
 our sub lua_topointer (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
     returns Pointer[void]
 {...}
 
 our sub lua_objlen (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
     returns int32
 {...}
 
 our sub lua_gettable (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
 {...}
 
 our sub lua_settable (
-    Pointer[void] $,
+    Pointer $,
     int32 $ )
 {...}
 

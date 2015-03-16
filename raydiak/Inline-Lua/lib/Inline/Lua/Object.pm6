@@ -16,7 +16,7 @@ role Inline::Lua::Object::Callable {
         self.lua.values-from-lua: self.lua.raw.lua_gettop(self.lua.state) - $top;
     }
 
-    method invoke (|args) { self.call: |args }
+    method CALL-ME (|args) { self.call: |args }
 }
 
 
@@ -33,7 +33,7 @@ class Inline::Lua::WrapperObj {
 
     method sink () { self }
     method FALLBACK (|args) is rw {
-        $!inline-lua-object.dispatch: |args;
+        $!inline-lua-object.invoke: |args;
     }
 }
 
@@ -104,7 +104,7 @@ role Inline::Lua::Object::Indexable {
 
     ### object stuff
 
-    method dispatch ($method, :$call, |args) is rw {
+    method invoke ($method, :$call, |args) is rw {
         my $val = $method;
         $val := self.AT-KEY($val) unless $val ~~ Callable;
         my $cur-val = $val;
@@ -221,6 +221,14 @@ role Inline::Lua::Object {
     multi submethod DESTROY (|) {
         self.unref;
         nextsame;
+    }
+
+    method length () {
+        self.get;
+        my $len = $!lua.raw.lua_objlen: $!lua.state, -1;
+        $!lua.raw.lua_settop: $!lua.state, -2;
+
+        $len;
     }
 }
 

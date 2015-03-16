@@ -198,7 +198,7 @@ method ensure ($code, :$e is copy) {
 role LuaParent[Str:D $parent] is export {
     method sink () { self }
     method FALLBACK (|args) {
-        Inline::Lua.default-lua.get-global($parent).dispatch: |args;
+        Inline::Lua.default-lua.get-global($parent).invoke: |args;
     }
 }
 
@@ -206,7 +206,7 @@ role LuaParent[Str:D $parent] is export {
 role LuaParent[Inline::Lua::Table:D $parent] {
     method sink () { self }
     method FALLBACK (|args) {
-        $parent.dispatch: |args;
+        $parent.invoke: |args;
     }
 }
 #]]]

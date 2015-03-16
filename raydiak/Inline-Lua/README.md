@@ -142,9 +142,8 @@ and is passed to and from Perl as a NativeCall Pointer.
 Metatables in Lua allow any object type to define behaviors for calling,
 indexing, comparing, and calculating operators, even when the type in question
 does not usually support such operations. This is allowed for by the object
-types, meaning e.g. a ::Table also does the Callable role and can be invoked
-(though the attempt will fail if there isn't a corresponding metatable
-handler).
+types, meaning e.g. a ::Table may also function as a Perl Callable (though the
+call will fail if there isn't a corresponding metatable handler).
 
 A new Perl object is created for each Lua value being returned, making the
 ::Object types useless for identity comparison on the Perl side (e.g. === on
@@ -220,13 +219,20 @@ under e.g. ::Function and ::Table, even when such features also work on any
 object via metatables. Some methods, however, are truly generic to all object
 types regardless of metatable, and so are documented directly below.
 
+#### method length ()
+
+Returns Lua's idea of the "length" of the object. Without a metatable, this
+will return 0 for objects other than table, full userdata, or cdata. Note that
+this is not precisely the same as Perl's idea of length, as documented under
+Inline::Lua::Table.elems() .
+
 #### method ptr ()
 
 Returns a NativeCall Pointer[void] to the object.
 
 ### Inline::Lua::Function
 
-A Lua function which can be called directly from Perl. It can be invoked like
+A Lua function which can be used directly from Perl. It can be executed like
 any other Routine, and is often stored in an &-sigiled variable to call like a
 named Perl sub. Parameters are exposed in Perl as slurpy positionals with no
 current regard for the actual parameter list of the Lua function.
@@ -256,7 +262,7 @@ method call or attribute access on the table by the usual Lua OO conventions,
 allowing a table to be seemlessly used as an object from Perl code, as long as
 required method and attribute names don't overlap with any existing methods in
 Inline::Lua::Table's inheritance tree. For ways around this limitation, see
-.dispatch(), .obj(), and LuaParent, below.
+.invoke(), .obj(), and LuaParent, below.
 
 Unlike objects behaving as tables via metatable-backed indexing, an actual
 ::Table can be iterated over and its full set of keys and values can be known.
@@ -265,7 +271,7 @@ intentionally do not themselves flatten in list context), and they also are
 able to provide the .list, .hash and related methods. While these
 iteration-backed features only work on ::Table itself, table-like array and
 hash subscripting is supported for all ::Objects with suitable metamethods, as
-well as the OO features described later in this class like .dispatch and .obj.
+well as the OO features described later in this class like .invoke and .obj.
 
 #### method new (Inline::Lua:D :$lua!)
 
@@ -303,7 +309,7 @@ find the highest defined whole number key, instead of Lua's length operation.
 This is also done when the end needs to be found for other operations like
 .list or slicing/indexing with Whatever ([\*]) and WhateverCode ([\*-1]).
 
-#### method dispatch ($method, Bool:D :$call = True, \*@args)
+#### method invoke ($method, Bool:D :$call = True, \*@args)
 
 Calls the named method using the table as the invocant, also passing @args, and
 returns the result. Notably, this is currently the only 100% guaranteed way to
@@ -311,24 +317,24 @@ call a Lua method on a ::Table object which might be masked out by a Perl
 method.
 
 Besides a method name string, $method can also be an Inline::Lua::Function (or
-even any other callable perl object) which will be called directly instead of
+even any other Perl Callable object) which will be called directly instead of
 retrieving the method by name from the table. Passing a Callable directly is
 mainly intended to allow a method to be looked up before hand to skip the table
-key lookup, value return, and associated marshalling overhead of .dispatch
+key lookup, value return, and associated marshalling overhead of .invoke
 without rearranging the calling code by allowing method names and method
 objects to be used interchangably.
 
 Since it is ubiquitous in Perl 6 to expose attributes via accessors, calling
-.dispatch with the name of something which contains a non-function value will
+.invoke with the name of something which contains a non-function value will
 return the value attached to that table key, effectively acting as an implicit
 accessor. When acting as an accessor, @args is ignored.
 
 If it is intended to retrieve an Inline::Lua::Function object rather than
 calling it, :!call can be passed. This also applies to ordinary-looking
 "$table.attr" method calls. This is also necessary to call non-method functions
-in a table, since .dispatch will pass the table itself as the first argument
+in a table, since .invoke will pass the table itself as the first argument
 whether the function is actually a method or not, because there is no reliable
-way to tell the difference in Lua.  To ensure a function is not called, you can
+way to tell the difference in Lua. To ensure a function is not called, you can
 also access the function via a hash subscript instead of a method call on the
 same object, which always returns the value, function or otherwise.
 
@@ -340,10 +346,10 @@ Returns an Inline::Lua::WrapperObj instance for the object; see directly below.
 
 To ease method name conflicts, this class exposes a Lua object as a Perl
 object, but it does not inherit or compose anything besides Any and Mu.
-Fallback-based dispatch works as previously described, just with fewer
-attributes and methods to get in the way (meaning it lacks all other features
-and methods in this document). A ::WrapperObj can be passed back to Lua just as
-if the associated ::Object had been passed.
+Invocation works as previously described under ::Table, attempting Perl methods
+before Lua, just with fewer attributes and methods to get in the way (meaning
+it lacks all other features and methods in this document). A ::WrapperObj can
+be passed back to Lua just as if the associated ::Object had been passed.
 
 #### has $.inline-lua-object
 
