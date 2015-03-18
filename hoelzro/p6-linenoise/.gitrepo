@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/hoelzro/p6-linenoise.git
+	branch = master
+	commit = e9c16faad422204b2d1f3e09c6535837fa2c9190
+	parent = 0cbd7e3cfee70adbe84f6fbd39ec395e3af974cc
+	cmdver = 0.2.0
