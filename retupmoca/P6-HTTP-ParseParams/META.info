@@ -1,0 +1,11 @@
+{
+    "name" : "HTTP::ParseParams",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "cookie/query/post data parsing",
+    "depends" : [ "URI::Encode" ],
+    "provides" : {
+        "HTTP::ParseParams" : "lib/HTTP/ParseParams.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-HTTP-ParseParams.git"
+}
