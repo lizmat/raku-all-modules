@@ -1,0 +1,11 @@
+{
+    "name"        : "Mortage",
+    "version"     : "*",
+    "author"	  : "github:teodozjan",
+    "description" : "Mortage calculation library",
+    "depends"     : [ ],
+    "provides"    : {
+	        "Mortage" : "lib/Mortage.pm6"
+	 },
+    "source-url"  : "git://github.com/teodozjan/mortage6.git"
+}
