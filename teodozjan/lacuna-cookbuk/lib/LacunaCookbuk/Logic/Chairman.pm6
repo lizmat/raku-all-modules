@@ -150,7 +150,7 @@ sub storage(LacunaCookbuk::Logic::Chairman::Resource $resource --> LacunaCookbuk
 	when water {return waterstorage}
 	when waste {return wastesequestration}
 	when energy {return energyreserve}
-	default{die $resource}
+	default {die $resource}
     }
 }
 
@@ -173,7 +173,7 @@ sub production(LacunaCookbuk::Logic::Chairman::Resource $resource --> LacunaCook
 	when water {return atmosphericevaporator}
 #	when waste {return wastesequestration}
 	when energy {return singularity}
-	default{die $resource}
+	default {die $resource}
     }
 }
 
@@ -194,7 +194,7 @@ sub value_of(Str $str --> LacunaCookbuk::Logic::Chairman::Resource){
 	when 'energy' {return energy;}
 	when 'waste' {return waste;}
 	when 'happiness' {return happiness;}
-	default{die $str}
+	default {die $str}
     }
 }
 
