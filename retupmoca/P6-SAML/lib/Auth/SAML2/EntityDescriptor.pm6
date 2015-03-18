@@ -15,6 +15,24 @@ has %.single-sign-on-service;
 
 has %.assertion-consumer-service;
 
+multi method new(Str $xml) {
+    my $s = self.bless();
+    $s.parse-xml(from-xml($xml).root);
+    return $s;
+}
+
+multi method new(XML::Document $xml) {
+    my $s = self.bless();
+    $s.parse-xml($xml.root);
+    return $s;
+}
+
+multi method new(XML::Element $xml) {
+    my $s = self.bless();
+    $s.parse-xml($xml);
+    return $s;
+}
+
 method parse-xml($xml) {
     my $prefix = $xml.nsPrefix('urn:oasis:names:tc:SAML:2.0:metadata');
     $prefix ~= ':' if $prefix;

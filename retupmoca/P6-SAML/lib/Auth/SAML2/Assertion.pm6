@@ -14,6 +14,24 @@ has $.signature-valid = False;
 has $.signature-cert;
 has $.signature-key;
 
+multi method new(Str $xml) {
+    my $s = self.bless();
+    $s.parse-xml(from-xml($xml).root);
+    return $s;
+}
+
+multi method new(XML::Document $xml) {
+    my $s = self.bless();
+    $s.parse-xml($xml.root);
+    return $s;
+}
+
+multi method new(XML::Element $xml) {
+    my $s = self.bless();
+    $s.parse-xml($xml);
+    return $s;
+}
+
 method parse-xml(XML::Element $xml) {
     $xml.ownerDocument.root.idattr = 'ID';
 
