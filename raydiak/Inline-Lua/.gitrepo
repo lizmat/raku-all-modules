@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/raydiak/Inline-Lua.git
 	branch = master
-	commit = 0605b438906a198479655e79abb69e471949cdec
-	parent = 0a0050cd2d188f1c975f38f3f51e652cd3405668
+	commit = e325552f21078217b6c45bd264b1583fe3a94656
+	parent = a3da0a84cc88434a23bbe08d8277d99edcda81ea
 	cmdver = 0.2.0

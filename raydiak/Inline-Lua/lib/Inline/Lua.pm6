@@ -12,17 +12,17 @@ has $.index = self.new-index;
 has %.refcount;
 has %.ptrref;
 
-method new (Bool :$auto, Str :$lua, Str :$lib, :$raw, |args) {
+method new (Bool :$auto, Str :$lua, Str :$lib, :$raw is copy, |args) {
     my $new;
     if !$raw && $auto !eqv False && ($lib, $lua)».defined.none {
         $new = try { self.new: :lua<JIT>, |args };
         $new //= self.new: :!auto, |args;
     } else {
-        when !$raw {
+        if !$raw {
             my %raw-args = (:$lua, :$lib).grep: *.value.defined;
-            $new = self.new: :raw(Lua::Raw.new: |%raw-args), |args;
+            $raw = Lua::Raw.new: |%raw-args;
         }
-        $new = callsame;
+        $new = Inline::Lua.bless: :$raw, |args;
     }
     Inline::Lua.default-lua = $new;
 }

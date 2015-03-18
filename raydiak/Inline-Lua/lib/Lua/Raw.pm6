@@ -97,8 +97,8 @@ our sub lua_pushlightuserdata (
 
 our sub lua_createtable (
     Pointer $,
-    int32 $ = 0,
-    int32 $ = 0 )
+    int32 $,
+    int32 $ )
 {...}
 
 our sub lua_rawgeti (
