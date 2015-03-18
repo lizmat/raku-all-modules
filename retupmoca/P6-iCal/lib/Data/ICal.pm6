@@ -10,6 +10,23 @@ has $.prodid;
 has @.events;
 has %.timezones;
 
+method Str {
+    my $ret;
+
+    $ret ~= "BEGIN:VCALENDAR\n";
+    $ret ~= "VERSION:2.0\n";
+    $ret ~= "PRODID:" ~ $.prodid ~ "\n" if $.prodid;
+    for %.timezones.kv -> $k, $v {
+        $ret ~= ~$v;
+    }
+    for @.events {
+        $ret ~= ~$_;
+    }
+    $ret ~= "END:VCALENDAR\n";
+
+    $ret;
+}
+
 multi method new($text, :$raw) {
     if $raw {
         my $tree = Data::ICal::Grammar.parse($text, :rule('section'), :actions(Data::ICal::Actions)).made;

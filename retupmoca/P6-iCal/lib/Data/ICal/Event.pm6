@@ -13,6 +13,27 @@ has $.description;
 
 has $.root;
 
+method Str {
+    my $ret;
+
+    $ret ~= "BEGIN:VEVENT\n";
+    $ret ~= "UID:" ~ $.uid ~ "\n" if $.uid;
+    $ret ~= "DTSTAMP:" ~ $.dtstamp ~ "\n" if $.dtstamp;
+    if $.organizer {
+        $ret ~= "ORGANIZER";
+        $ret ~= ";CN=" ~ $.organizer<name> if $.organizer<name>;
+        $ret ~= ":MAILTO:" ~ $.organizer<email> ~ "\n";
+    }
+    $ret ~= "DTSTART:" ~ $.dtstart-raw<value> ~ "\n" if $.dtstart-raw<value>;
+    $ret ~= "DTEND:" ~ $.dtend-raw<value> ~ "\n" if $.dtend-raw<value>;
+    $ret ~= "SUMMARY:" ~ $.summary ~ "\n" if $.summary;
+    $ret ~= "STATUS:" ~ $.status ~ "\n" if $.status;
+    $ret ~= "METHOD:" ~ $.method ~ "\n" if $.method;
+    $ret ~= "SEQUENCE:" ~ $.sequence ~ "\n" if $.sequence;
+    $ret ~= "DESCRIPTION:" ~ $.description ~ "\n" if $.description;
+    $ret ~= "END:VEVENT\n";
+}
+
 method dtstart {
     my $dts = $.dtstart-raw<value>;
     $dts.substr-rw(13, 0) = ':';
