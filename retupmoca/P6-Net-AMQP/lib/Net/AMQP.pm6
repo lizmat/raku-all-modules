@@ -152,7 +152,7 @@ method connect(){
 
                     my $frame = Net::AMQP::Frame.new($framebuf);
 
-                    $!frame-supply.more($frame);
+                    $!frame-supply.emit($frame);
                 } else {
                     $continue = False;
                 }

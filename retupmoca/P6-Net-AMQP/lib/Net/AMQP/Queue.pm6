@@ -227,7 +227,7 @@ method message-supply {
                     %headers<app-id> = $header-payload.app-id;
 
                     start {
-                    $s.more(Net::AMQP::Message.new(consumer-tag => $method.arguments[0],
+                    $s.emit(Net::AMQP::Message.new(consumer-tag => $method.arguments[0],
                                                    delivery-tag => $method.arguments[1],
                                                    redelivered => $method.arguments[2],
                                                    exchange-name => $method.arguments[3],
