@@ -1,14 +1,12 @@
-module Text::Wrap:auth<github:flussence>:ver<0.2.1>;
+module Text::Wrap:auth<github:flussence>:ver<0.2.2>;
 use Text::Tabs;
-
-subset Nat of Int where * >= 0;
 
 sub wrap(Str $lead-indent,
          Str $body-indent,
-         Nat :$tabstop          = $?TABSTOP,
-         Nat :$columns          = 76,
-         Str :$separator        = "\n",
-         Str :$separator2       = Str,
+         UInt :$tabstop         = $?TABSTOP,
+         UInt :$columns         = 76,
+         Str  :$separator       = "\n",
+         Str  :$separator2      = Str,
          Bool :$unexpand        = True,
          Bool :$may-overflow    = False,
          Bool :$strict-break    = False,
@@ -21,10 +19,10 @@ sub wrap(Str $lead-indent,
     my Str $remainder = ''; # Buffer to catch trailing text
 
     # Precompute a few things before the main loop
-    my (Nat $intrinsic-width, Nat $lead-width, Nat $body-width) =
+    my (UInt $intrinsic-width, UInt $lead-width, UInt $body-width) =
         compute-sizes($lead-indent, $body-indent, $tabstop, $columns);
 
-    my Nat $current-width   = $lead-width; # Target width of current line (minus indent)
+    my UInt $current-width  = $lead-width; # Target width of current line (minus indent)
     my Str $current-indent  = $lead-indent; # String to prefix current line with
 
     # These depend on the two vars above, which change at runtime.
@@ -115,23 +113,23 @@ sub trailing-space-join(*@texts) {
     return @texts.map({ /\s+$/ ?? $_ !! $_ ~ q{ } }).join ~ $tail;
 }
 
-sub compute-sizes(Str $lead-indent, Str $body-indent, Nat $tabstop, Nat $columns) is pure {
+sub compute-sizes(Str $lead-indent, Str $body-indent, UInt $tabstop, UInt $columns) is pure {
     # The first line is allowed to have zero characters if the indent consumes all available space,
     # in which case text starts on the next line instead.
-    my Nat %min-widths = ( lead => 0, body => 1 );
-    my Nat %margins = (
+    my UInt %min-widths = ( lead => 0, body => 1 );
+    my UInt %margins = (
         lead => expand(:$tabstop, $lead-indent).chars,
         body => expand(:$tabstop, $body-indent).chars,
     );
 
     # If either margin is larger than $columns, emit a warning and use the largest number
-    my Nat $intrinsic-width = [max] $columns, %margins.values.max;
+    my UInt $intrinsic-width = [max] $columns, %margins.values.max;
     if $columns < $intrinsic-width {
         warn "Increasing columns from $columns to $intrinsic-width to contain requested indent";
     }
 
     # Compute available space left for text content
-    my Nat %widths =
+    my UInt %widths =
         ($_ => ([max] %min-widths{$_}, $intrinsic-width - %margins{$_})
             for <lead body>);
 

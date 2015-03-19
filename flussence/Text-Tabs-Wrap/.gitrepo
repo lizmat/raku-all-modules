@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/flussence/Text-Tabs-Wrap.git
+	remote = https://github.com/flussence/Text-Tabs-Wrap.git
 	branch = master
-	commit = aa6ebe94f431f1627361bdad89cf66873bd32858
-	parent = 859565ad9e48789418d8d6e527e0870a54338246
-	cmdver = 0.1.0
+	commit = 4c7ea06bf63e5f3941ea46953ee7ba05e0050629
+	parent = 534f6d39cb9473a6349757c106c284dc2798f16a
+	cmdver = 0.2.0

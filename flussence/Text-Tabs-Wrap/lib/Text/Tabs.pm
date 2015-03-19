@@ -1,12 +1,10 @@
-module Text::Tabs:auth<github:flussence>:ver<0.2.1>;
+module Text::Tabs:auth<github:flussence>:ver<0.2.2>;
 
-subset Nat of Int where * >= 0;
-
-sub expand($text, Nat :$tabstop = $?TABSTOP) returns Str is export {
+sub expand($text, UInt :$tabstop = $?TABSTOP) returns Str is export {
     return $text.split("\n").map({
         # Split the line up into non-\t and \t, go through and replace \t with their *visual*
         # space equivalent - the end of the tab should be rounded down to the nearest tabstop
-        my Int $pos = 0;
+        my UInt $pos = 0;
         $^line.split(/\t/, :all).map({
             my $out = $^in ~~ Match ?? ' ' x $tabstop - ($pos mod $tabstop)
                                     !! $^in;
@@ -17,7 +15,7 @@ sub expand($text, Nat :$tabstop = $?TABSTOP) returns Str is export {
 }
 
 # Expand all tabs in text, then collapse it
-sub unexpand($text, Nat :$tabstop = $?TABSTOP) returns Str is export {
+sub unexpand($text, UInt :$tabstop = $?TABSTOP) returns Str is export {
     # .lines will eat a trailing \n, so don't use it here
     return $text.split("\n").map({
         # Break the text into tabstop-sized chunks, and collapse trailing whitespace on those
