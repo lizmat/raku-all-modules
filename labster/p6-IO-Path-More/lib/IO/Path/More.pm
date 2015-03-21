@@ -16,7 +16,7 @@ augment class IO::Path {
 
 method append (*@nextpaths) {
     my $lastpath = @nextpaths.pop // '';
-    self.new($.SPEC.join($.volume, $.SPEC.catdir($.directory, $.basename, @nextpaths), $lastpath));
+    self.new($.SPEC.join($.volume, $.SPEC.catdir($.dirname, $.basename, @nextpaths), $lastpath));
 }
 
 
@@ -59,7 +59,7 @@ method device() {
 }
 
 method next {
-    my @dir := self.parent.contents;
+    my @dir := self.parent.dir;
     if self.e {
         while (@dir.shift ne self.basename) { ; }
         @dir[0];
@@ -70,9 +70,9 @@ method next {
 }
 
 method previous {
-    my @dir := self.parent.contents;
+    my @dir := self.parent.dir;
     if self.e {
-        my $previtem = Nil;
+        my $previtem := Nil;
         for @dir -> $curritem {
             last if $curritem eq $.basename;
             $previtem := $curritem;
