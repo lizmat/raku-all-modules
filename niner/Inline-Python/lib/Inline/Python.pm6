@@ -117,7 +117,7 @@ sub py_string_to_buf(OpaquePointer, CArray[CArray[int8]])
 sub py_str_to_py(Int, Str)
     returns OpaquePointer { ... }
     native(&py_str_to_py);
-sub py_buf_to_py(Int, CArray[uint8])
+sub py_buf_to_py(Int, Blob)
     returns OpaquePointer { ... }
     native(&py_buf_to_py);
 sub py_tuple_new(Int)
@@ -168,7 +168,7 @@ sub py_inc_ref(OpaquePointer)
 sub py_getattr(OpaquePointer, Str)
     returns OpaquePointer { ... }
     native(&py_getattr);
-sub py_fetch_error(CArray[OpaquePointer], CArray[OpaquePointer], CArray[OpaquePointer], CArray[OpaquePointer])
+sub py_fetch_error(CArray[OpaquePointer])
     { ... }
     native(&py_fetch_error);
 
@@ -271,11 +271,7 @@ multi method p6_to_py(Str:D $value) returns OpaquePointer {
 }
 
 multi method p6_to_py(blob8:D $value) returns OpaquePointer {
-    my $array = CArray[uint8].new();
-    for ^$value.elems {
-        $array[$_] = $value[$_];
-    }
-    py_buf_to_py($value.elems, $array);
+    py_buf_to_py($value.elems, $value);
 }
 
 multi method p6_to_py(Positional:D $value) returns OpaquePointer {
@@ -321,7 +317,7 @@ method !setup_arguments(@args) {
     return $tuple;
 }
 
-method handle_python_exception() is hidden_from_backtrace {
+method handle_python_exception() is hidden-from-backtrace {
     my @exception := CArray[OpaquePointer].new();
     @exception[$_] = OpaquePointer for ^4;
     py_fetch_error(@exception);
@@ -491,7 +487,7 @@ class PythonObject {
         $.python.invoke($.ptr, '__call__', |@args);
     }
 
-    method invoke(*@args) {
+    method CALL-ME(*@args) {
         $.python.invoke($.ptr, '__call__', |@args);
     }
 
