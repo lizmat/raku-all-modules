@@ -279,6 +279,30 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
 
         $.final = True;
     }
+
+=begin pod
+
+=head2 multi method finalize
+
+    A default C<.finalize> method is provided, since it is usually
+    the same for all algorithms.  Roles may override it if needed.
+
+=end pod
+
+    method finalize(*@addends) {
+        given self.push(|@addends) {
+            return $_ unless $_.exception.WHAT ~~ X::Sum::Push::Usage;
+        }
+
+        unless $.final {
+            self.add(|self.drain) if self.^can("drain");
+            # If there was nothing to drain it is still unfinalized.
+            # (Though current marshalling code should not let that happen)
+            self.add(blob8.new()) unless $.final;
+        }
+
+        self;
+    }
 }
 
 =AUTHOR Brian S. Julin

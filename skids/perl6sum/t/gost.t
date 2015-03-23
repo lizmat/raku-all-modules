@@ -10,7 +10,7 @@ use Sum::libmhash;
 use Sum::librhash;
 
 if $Sum::librhash::up {
-   plan 27;
+   plan 28;
 }
 # mhash GOST implementation is broken.  Kept for if it is ever fixed.
 #elsif $Sum::libmhash::up {
@@ -38,7 +38,8 @@ my G1 $s .= new();
 is $s.recourse, $recourse, "Correct recourse for GOST with default sbox";
 ok $s.WHAT === G1, 'We create a Sum::GOST class and object';
 
-is G1.new.finalize("The quick brown fox jumps over the lazy dog".encode("ascii")).Int.base(16).lc, "77b7fa410c9ac58a25f49bca7d0468c9296529315eaca76bd1a10f376d1f4294", "GOST with test sbox, wikipedia test vector #1";
+is $s.finalize("The quick brown fox jumps over the lazy dog".encode("ascii")).Int.base(16).lc, "77b7fa410c9ac58a25f49bca7d0468c9296529315eaca76bd1a10f376d1f4294", "GOST with test sbox, wikipedia test vector #1";
+is $s.fmt,"77b7fa410c9ac58a25f49bca7d0468c9296529315eaca76bd1a10f376d1f4294", "GOST fmt method works";
 is G1.new.finalize("The quick brown fox jumps over the lazy cog".encode("ascii")).Int.base(16).lc, "a3ebc4daaab78b0be131dab5737a7f67e602670d543521319150d2e14eeec445", "GOST with test sbox, wikipedia test vector #2";
 is G1.new.finalize("This is message, length=32 bytes".encode("ascii")).Int.base(16).lc, "b1c466d37519b82e8319819ff32595e047a28cb6f83eff1c6916a815a637fffa", "GOST with test sbox, wikipedia test vector #3";
 is G1.new.finalize("Suppose the original message has length = 50 bytes".encode("ascii")).Int.base(16).lc, "471aba57a60a770d3a76130635c1fbea4ef14de51f78b4ae57dd893b62f55208", "GOST with test sbox, wikipedia test vector #5";

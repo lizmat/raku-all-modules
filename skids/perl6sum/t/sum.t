@@ -263,7 +263,7 @@ class Foo6
 my Foo6 $b16;
 lives_ok { $b16 .= new(); }, "Can instantiate custom Sum::Marshal::Block subclass";
 $b16.push(1, 2, buf16.new(3), False xx 17, 4, blob16.new(5));
-is $b16.finalize, [ blob16.new(1,2), blob16.new(3,0), blob16.new(2,2), True ].gist , "Sum::Marshal::Block can correctly produce blob16s";
+is $b16.finalize, [ blob16.new(1,2), blob16.new(3,0), blob16.new(2,2), blob16.new(), True ].gist , "Sum::Marshal::Block can correctly produce blob16s";
 
 class Foo7 does Sum::Marshal::IO does Sum::Marshal::Cooked
 {

@@ -455,17 +455,6 @@ role Sum::Tiger {
         self.comp;
     };
 
-    method finalize(*@addends) {
-        given self.push(|@addends) {
-            return $_ unless $_.exception.WHAT ~~ X::Sum::Push::Usage;
-        }
-
-        self.add(|self.drain) if self.^can("drain");
-
-        self.add(blob8.new()) unless $.final;
-
-        self
-    }
     method Numeric {
         self.finalize;
         # This does not work correctly yet under rakudo.

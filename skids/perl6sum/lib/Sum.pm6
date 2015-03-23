@@ -839,7 +839,12 @@ role Sum::Marshal::Block [::B :$BufT = blob8, :$elems = 64, ::b :$BitT = Bool]
     # use multi/constrained method to workaround diamond problem
     multi method drain ($self: :$diamond? where {True}) {
         $.drained = True;
-        flat +@.accum ?? B.new(@.accum) !! (), ?«@.bits
+	# Workaround for pre-GLR flattenning weirdness
+        unless @.bits.elems {
+	    return [B.new(@.accum)] if +@.accum;
+	    return;
+	}
+        B.new(@.accum), ?«@.bits
     }
 }
 

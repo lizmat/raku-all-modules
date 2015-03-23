@@ -135,7 +135,7 @@ role Sum::Recourse[:@recourse!] {
 #	if ($!recourse_imp ~~ Sum::Recourse::Marshal) {
 # ...workaround:
         if ($!recourse_imp.^can("drain")) {
-	    given $!recourse_imp.add($!recourse_imp.drain) {
+	    given $!recourse_imp.add(|$!recourse_imp.drain) {
                 return $_ unless $_.defined;
             }
 	}
@@ -226,7 +226,8 @@ role Sum::Recourse::Marshal {
     method drain {
         my $res = $!left;
 	$!left = buf8.new();
-	$res;
+	# Workaround for pre-GLR flattening problem
+	[$res];
     }
 
     multi method push () {

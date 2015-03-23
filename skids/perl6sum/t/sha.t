@@ -27,7 +27,7 @@ unless $Sum::librhash::up {
 unless $Sum::libmhash::up {
     $m_or_p = "Perl6";
 }
-plan 124;
+plan 140;
 
 ok 1,'We use Sum::SHA and we are still alive';
 
@@ -65,6 +65,10 @@ for (:recourse($c_or_r_or_m_or_p), SHA1t.new,
   is +$s.new.finalize(Buf.new(97 xx 64)),
      0x0098ba824b5c16427bd7a1122a5a442a25ec644d,
      "SHA1 of a 64-byte buffer is correct. ({$r.gist})";
+  $s .= new;
+  $s.push(Buf.new(97 xx 64));
+  is $s.Buf.values.fmt("%x"), "0 98 ba 82 4b 5c 16 42 7b d7 a1 12 2a 5a 44 2a 25 ec 64 4d", "SHA1 Buf method works (and finalizes) ({$r.gist})";
+  is +$s,0x0098ba824b5c16427bd7a1122a5a442a25ec644d,"SHA1 retains results after finalization ({$r.gist})";
   if ($r.value) {
      is +$s.new.finalize(Buf.new(97 xx 65)),
         0x11655326c708d70319be2610e8a57d9a5b959d3b,
@@ -96,9 +100,6 @@ for (:recourse($c_or_r_or_m_or_p), SHA1t.new,
   is +$s.new.finalize(Buf.new(97 xx 63),True,False,True,False,True,False,False),
      0xa1c70b7a97d935e841a9e6280a608fca953c0c91,
      "SHA1 of a 511-bit buffer is correct. ({$r.gist})";
-  $s .= new;
-  $s.push(Buf.new(97 xx 56),True);
-  is $s.Buf.values.fmt("%x"), "a7 28 aa 56 bf eb 9 75 2e e3 9b ae ec 23 e1 c5 e3 71 8d e5", "SHA1 Buf method works (and finalizes) ({$r.gist})";
 }
 
 class SHA0t does Sum::SHA1[:insecure_sha0_obselete] does Sum::Marshal::Raw { };
@@ -144,6 +145,10 @@ for (:recourse($c_or_r_or_m_or_p), SHA256t.new,
   is +$s.new.finalize(Buf.new(97 xx 64)),
      0xffe054fe7ae0cb6dc65c3af9b61d5209f439851db43d0ba5997337df154668eb,
      "SHA-256 of a 64-byte buffer is correct. ({$r.gist})";
+  $s .= new;
+  $s.push(Buf.new(97 xx 64));
+  is $s.Buf.values.fmt("%x"), "ff e0 54 fe 7a e0 cb 6d c6 5c 3a f9 b6 1d 52 9 f4 39 85 1d b4 3d b a5 99 73 37 df 15 46 68 eb", "SHA256 Buf method works (and finalizes) ({$r.gist})";
+  is +$s, 0xffe054fe7ae0cb6dc65c3af9b61d5209f439851db43d0ba5997337df154668eb, "SHA256 retains results after finalization ({$r.gist})";
   next if $r.value;
   is +$s.new.finalize(Buf.new(),True),
      0xb9debf7d52f36e6468a54817c1fa071166c3a63d384850e1575b42f702dc5aa1,
@@ -163,9 +168,6 @@ for (:recourse($c_or_r_or_m_or_p), SHA256t.new,
   is +$s.new.finalize(Buf.new(97 xx 63),True,False,True,False,True,False,False),
      0x5ffdf348fdad74aca3196af07b43730adfe366c394913e8ebc4f987d4d757a36,
      "SHA-256 of a 511-bit buffer is correct. ({$r.gist})";
-  $s .= new;
-  $s.push(Buf.new(97 xx 56),True);
-  is $s.Buf.values.fmt("%x"), "55 42 22 6c 1c 37 4f 9c 41 50 7b c3 27 30 2 84 a4 2a bd 72 6d 4a e6 a2 5b 35 77 77 90 3f b8 bb", "SHA256 Buf method works (and finalizes) ({$r.gist})";
 }
 
 # Use the short role name this time for test variety
@@ -214,6 +216,10 @@ for (:recourse($c_or_r_or_m_or_p), SHA512t.new,
   is +$s.new.finalize(Buf.new(97 xx 128)),
      0xb73d1929aa615934e61a871596b3f3b33359f42b8175602e89f7e06e5f658a243667807ed300314b95cacdd579f3e33abdfbe351909519a846d465c59582f321,
      "SHA-512 of a 128-byte buffer is correct. ({$r.gist})";
+  $s .= new;
+  $s.push(Buf.new(97 xx 128));
+  is $s.Buf.values.fmt("%x"), "b7 3d 19 29 aa 61 59 34 e6 1a 87 15 96 b3 f3 b3 33 59 f4 2b 81 75 60 2e 89 f7 e0 6e 5f 65 8a 24 36 67 80 7e d3 0 31 4b 95 ca cd d5 79 f3 e3 3a bd fb e3 51 90 95 19 a8 46 d4 65 c5 95 82 f3 21", "SHA512 Buf method works (and finalizes) ({$r.gist})";
+  is +$s, 0xb73d1929aa615934e61a871596b3f3b33359f42b8175602e89f7e06e5f658a243667807ed300314b95cacdd579f3e33abdfbe351909519a846d465c59582f321, "SHA1 retains results after finalization ({$r.gist})";
   next if $r.value;
   is +$s.new.finalize(Buf.new(),True),
      0x5f72ee8494a425ba13fc8c48ac0a05cbaae7e932e471e948cb524333745aa432c1851c0c43682b0e67d64626f8f45cf165f6b538a94c63be98224e969e75d7ed,

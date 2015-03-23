@@ -428,18 +428,6 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
 	}
     };
 
-    method finalize(*@addends) {
-        given self.push(|@addends) {
-            return $_ unless $_.exception.WHAT ~~ X::Sum::Push::Usage;
-        }
-
-        unless $.final {
-            self.add(|self.drain) if self.^can("drain");
-        }
-        self.add(blob8.new()) unless $.final;
-
-        self;
-    }
     method Numeric {
         self.finalize;
         :256[ 255 X+& (@!s.values X+> (0,8,16,24)) ]
@@ -570,7 +558,7 @@ role Sum::MD2 does Sum {
 
     has @!C = 0 xx 16;   # The checksum, computed in parallel
     has @!X = 0 xx 48;   # The digest state
-    has Bool $!final = False; # whether pad/checksum is in state already
+    has Bool $.final is rw = False; # whether pad/checksum is in state already
 
     proto method add (|cap) {*}
     multi method add (*@addends) {
@@ -582,7 +570,7 @@ role Sum::MD2 does Sum {
     }
     multi method add (blob8 $block where { -1 < .elems < 16 }) {
         my int $empty = 16 - $block.elems;
-        $!final = True;
+        $.final = True;
         self.add(Buf.new($block.values, $empty xx $empty));
         self.add(Buf.new(@!C.values));
     }
@@ -601,19 +589,23 @@ role Sum::MD2 does Sum {
         return;
     }
     method size ( --> int) { 128 };
+    method blocksize ( --> int) { 128 };
+
     method finalize(*@addends) {
         given self.push(|@addends) {
             return $_ unless $_.exception.WHAT ~~ X::Sum::Push::Usage;
         }
 
-	if self.^can("drain") {
-            self.add(|self.drain) unless $!final;
-	}
+        unless $.final {
+            self.add(|self.drain) if self.^can("drain");
+            # If there was nothing to drain it is still unfinalized.
+            # (Though current marshalling code should not let that happen)
+            self.add(blob8.new()) unless $.final;
+        }
 
-        self.add(blob8.new()) unless $!final;
-
-	self
+        self
     }
+
     method Numeric {
         self.finalize;
         :256[ @!X[^16] ]
