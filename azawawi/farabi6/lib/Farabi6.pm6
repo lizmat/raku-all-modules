@@ -18,15 +18,41 @@ then it listens on all interfaces
 =end pod
 method run(Str $host, Int $port, Bool $verbose) is export {
 
+	if $verbose {
+		EVAL q:to/END/;
+			# Ctrl-C handler only works on moar-based perl6
+			say "Enabling Ctrl-C handler. This may cause high CPU usage";
+			signal(SIGINT).tap({
+				"Ctrl-C detected".say;
+				die
+			});
+		END
+
+		CATCH {
+			when X::Comp { say "Ctrl-C handler only works on moar-based perl6" }
+		}
+	}
+
 	# Development or panda-installed farabi6?
 	my $files-dir = 'lib/Farabi6/files';
 	unless "$files-dir/assets/farabi.js".IO ~~ :e {
 		say "Switching to panda-installed farabi6";
-		my @dirs = $*SPEC.splitdir($*EXECUTABLE);
-		$files-dir = $*SPEC.catdir(
-			@dirs[0..*-3], 
-			'languages', 'perl6', 'site', 'lib', 'Farabi6', 'files'
-		);
+
+		# Find farabi.js in @*INC
+		for @*INC -> $f {
+			my $root-dir = $*SPEC.catdir($f, 'Farabi6', 'files');
+			if $*SPEC.catdir( $root-dir, 'assets', 'farabi.js' ).IO ~~ :e {
+				$files-dir = $root-dir;
+				last;
+			}
+		}
+
+		# Workaround to 'C:rakudo' catdir bug under win32
+		if $*OS eq 'mswin32' {
+			$files-dir = $files-dir.subst(/ :i (<[a..z]> ':') <![\\]>/, {$0 ~ '\\'});
+		}
+
+		say "Found Farabi6 root dir @ $files-dir after looping on @*INC";
 	}
 
 	# Make sure files contains farabi.js
@@ -163,7 +189,7 @@ method run(Str $host, Int $port, Bool $verbose) is export {
 		my $contents;
 		if ($filename.IO ~~ :e) {
 			$status = 200;
-			$contents = $filename.IO.slurp(:enc('ASCII'));
+			$contents = $filename.IO.slurp(:bin);
 		} 
 
 		unless ($contents) {
