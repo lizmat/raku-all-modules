@@ -4,16 +4,31 @@ module Compress::Zlib::Raw;
 use Inline;
 use NativeCall;
 
-my Str $lib;
-BEGIN {
-    if $*VM.config<dll> ~~ /dll/ {
-        # we're on windows, different library name
-        $lib = 'zlib1';
-    } elsif $*VM.config<dll> ~~ /so$/ {
-        $lib = 'libz.so.1';
-    } else {
-        $lib = 'libz';
+sub find-lib {
+    state $lib;
+    unless $lib {
+        if $*VM.config<dll> ~~ /dll/ {
+            # we're on windows, different library name
+            $lib = find-bundled('zlib1.dll');
+        } elsif $*VM.config<dll> ~~ /so$/ {
+            $lib = 'libz.so.1';
+        } else {
+            $lib = 'libz';
+        }
     }
+    $lib
+}
+
+sub find-bundled($lib is copy) {
+    # if we can't find one, assume there's a system install
+    for @*INC {
+        if ($_ ~ '/Compress/Zlib/' ~ $lib).IO.f {
+            $lib = $_ ~ '/Compress/Zlib/' ~ $lib;
+            last;
+        }
+    }
+
+    $lib;
 }
 
 # structs
@@ -137,103 +152,103 @@ constant Z_UNKNOWN = 2;
 constant Z_DEFLATED = 8;
 
 # basic functions
-our sub zlibVersion() returns Str is encoded('ascii') is native($lib) is export { * }
+our sub zlibVersion() returns Str is encoded('ascii') is native(&find-lib) is export { * }
 
-our sub deflateInit_(z_stream, int32, Str is encoded('ascii'), int32) returns int32 is native($lib) { * }
+our sub deflateInit_(z_stream, int32, Str is encoded('ascii'), int32) returns int32 is native(&find-lib) { * }
 our sub deflateInit(z_stream $stream, int32 $level) is export {
     return deflateInit_($stream, $level, ZLIB_VERSION, z_stream_sizeof); # 112 == sizeof z_stream (64 bit linux)
 }
-our sub deflate(z_stream, int32) returns int32 is native($lib) is export { * }
-our sub deflateEnd(z_stream) returns int32 is native($lib) is export { * }
+our sub deflate(z_stream, int32) returns int32 is native(&find-lib) is export { * }
+our sub deflateEnd(z_stream) returns int32 is native(&find-lib) is export { * }
 
-our sub inflateInit_(z_stream, Str is encoded('ascii'), int32) returns int32 is native($lib) { * }
+our sub inflateInit_(z_stream, Str is encoded('ascii'), int32) returns int32 is native(&find-lib) { * }
 our sub inflateInit(z_stream $stream) is export {
     return inflateInit_($stream, ZLIB_VERSION, z_stream_sizeof);
 }
-our sub inflate(z_stream, int32) returns int32 is native($lib) is export { * }
-our sub inflateEnd(z_stream) returns int32 is native($lib) is export { * }
+our sub inflate(z_stream, int32) returns int32 is native(&find-lib) is export { * }
+our sub inflateEnd(z_stream) returns int32 is native(&find-lib) is export { * }
 
 # advanced functions
 
-our sub deflateInit2_(z_stream, int32, int32, int32, int32, int32, Str is encoded('ascii'), int32) returns int32 is native($lib) { * }
+our sub deflateInit2_(z_stream, int32, int32, int32, int32, int32, Str is encoded('ascii'), int32) returns int32 is native(&find-lib) { * }
 our sub deflateInit2(z_stream $strm, int32 $level, int32 $method, int32 $windowbits, int32 $memlevel, int32 $strategy) is export {
     return deflateInit2_($strm, $level, $method, $windowbits, $memlevel, $strategy, ZLIB_VERSION, z_stream_sizeof);
 }
-our sub deflateSetDictionary(z_stream, CArray[int8], int32) returns int32 is native($lib) is export { * }
-our sub deflateCopy(z_stream, z_stream) returns int32 is native($lib) is export { * }
-our sub deflateReset(z_stream) returns int32 is native($lib) is export { * }
-our sub deflateParams(z_stream, int32, int32) returns int32 is native($lib) is export { * }
-our sub deflateTune(z_stream, int32, int32, int32, int32) returns int32 is native($lib) is export { * }
-our sub deflateBound(z_stream, int) returns long is native($lib) is export { * }
+our sub deflateSetDictionary(z_stream, CArray[int8], int32) returns int32 is native(&find-lib) is export { * }
+our sub deflateCopy(z_stream, z_stream) returns int32 is native(&find-lib) is export { * }
+our sub deflateReset(z_stream) returns int32 is native(&find-lib) is export { * }
+our sub deflateParams(z_stream, int32, int32) returns int32 is native(&find-lib) is export { * }
+our sub deflateTune(z_stream, int32, int32, int32, int32) returns int32 is native(&find-lib) is export { * }
+our sub deflateBound(z_stream, int) returns long is native(&find-lib) is export { * }
 # arguments are actually (z_stream, unsigned*, int*)
-our sub deflatePending(z_stream, CArray[int32], CArray[int32]) returns int32 is native($lib) is export { * }
-our sub deflatePrime(z_stream, int32, int32) returns int32 is native($lib) is export { * }
-our sub deflateSetHeader(z_stream, gz_header) returns int32 is native($lib) is export { * }
+our sub deflatePending(z_stream, CArray[int32], CArray[int32]) returns int32 is native(&find-lib) is export { * }
+our sub deflatePrime(z_stream, int32, int32) returns int32 is native(&find-lib) is export { * }
+our sub deflateSetHeader(z_stream, gz_header) returns int32 is native(&find-lib) is export { * }
 
-our sub inflateInit2_(z_stream, int32, Str is encoded('ascii'), int32) returns int32 is native($lib) { * }
+our sub inflateInit2_(z_stream, int32, Str is encoded('ascii'), int32) returns int32 is native(&find-lib) { * }
 our sub inflateInit2(z_stream $strm, int32 $windowbits) is export {
     return inflateInit2_($strm, $windowbits, ZLIB_VERSION, z_stream_sizeof);
 }
-our sub inflateSetDictionary(z_stream, CArray[int8], int32) returns int32 is native($lib) is export { * }
-our sub inflateGetDictionary(z_stream, CArray[int8], CArray[int32]) returns int32 is native($lib) is export { * }
-our sub inflateSync(z_stream) returns int32 is native($lib) is export { * }
-our sub inflateCopy(z_stream, z_stream) returns int32 is native($lib) is export { * }
-our sub inflateReset(z_stream) returns int32 is native($lib) is export { * }
-our sub inflateReset2(z_stream, int32) returns int32 is native($lib) is export { * }
-our sub inflatePrime(z_stream, int32, int32) returns int32 is native($lib) is export { * }
-our sub inflateMark(z_stream) returns long is native($lib) is export { * }
-our sub inflateGetHeader(z_stream, gz_header) returns int32 is native($lib) is export { * }
-our sub inflateBackInit(z_stream, int32, CArray[int8]) returns int32 is native($lib) is export { * }
-our sub inflateBack(z_stream, Callable, OpaquePointer, Callable, OpaquePointer) returns int32 is native($lib) is export { * }
-our sub inflateBackEnd(z_stream) returns int32 is native($lib) is export { * }
+our sub inflateSetDictionary(z_stream, CArray[int8], int32) returns int32 is native(&find-lib) is export { * }
+our sub inflateGetDictionary(z_stream, CArray[int8], CArray[int32]) returns int32 is native(&find-lib) is export { * }
+our sub inflateSync(z_stream) returns int32 is native(&find-lib) is export { * }
+our sub inflateCopy(z_stream, z_stream) returns int32 is native(&find-lib) is export { * }
+our sub inflateReset(z_stream) returns int32 is native(&find-lib) is export { * }
+our sub inflateReset2(z_stream, int32) returns int32 is native(&find-lib) is export { * }
+our sub inflatePrime(z_stream, int32, int32) returns int32 is native(&find-lib) is export { * }
+our sub inflateMark(z_stream) returns long is native(&find-lib) is export { * }
+our sub inflateGetHeader(z_stream, gz_header) returns int32 is native(&find-lib) is export { * }
+our sub inflateBackInit(z_stream, int32, CArray[int8]) returns int32 is native(&find-lib) is export { * }
+our sub inflateBack(z_stream, Callable, OpaquePointer, Callable, OpaquePointer) returns int32 is native(&find-lib) is export { * }
+our sub inflateBackEnd(z_stream) returns int32 is native(&find-lib) is export { * }
 
-our sub zlibCompileFlags() returns long is native($lib) is export { * }
+our sub zlibCompileFlags() returns long is native(&find-lib) is export { * }
 
 # utility functions
 
 #second argument is actually long*, but I don't know how to do a pointer to a long
-our sub compress(Blob, CArray[int], Blob, int) returns int32 is native($lib) is export { * }
-our sub compress2(Blob, CArray[int], Blob, int, int32) returns int32 is native($lib) is export { * }
-our sub compressBound(int) returns long is native($lib) is export { * }
+our sub compress(Blob, CArray[int], Blob, int) returns int32 is native(&find-lib) is export { * }
+our sub compress2(Blob, CArray[int], Blob, int, int32) returns int32 is native(&find-lib) is export { * }
+our sub compressBound(int) returns long is native(&find-lib) is export { * }
 
 #second argument: see note above
-our sub uncompress(Blob, CArray[int], Blob, int) returns int32 is native($lib) is export { * }
+our sub uncompress(Blob, CArray[int], Blob, int) returns int32 is native(&find-lib) is export { * }
 
 # gzip file access functions
 
 class gzFile is repr('CPointer') { }
 
-our sub gzopen(Str is encoded('ascii'), Str is encoded('ascii')) returns gzFile is native($lib) is export { * }
-our sub gzdopen(int32, Str is encoded('ascii')) returns gzFile is native($lib) is export { * }
-our sub gzbuffer(gzFile, int32) returns int32 is native($lib) is export { * }
-our sub gzsetparams(gzFile, int32, int32) returns int32 is native($lib) is export { * }
-our sub gzread(gzFile, CArray[int8], int32) returns int32 is native($lib) is export { * }
-our sub gzwrite(gzFile, CArray[int8], int32) returns int32 is native($lib) is export { * }
+our sub gzopen(Str is encoded('ascii'), Str is encoded('ascii')) returns gzFile is native(&find-lib) is export { * }
+our sub gzdopen(int32, Str is encoded('ascii')) returns gzFile is native(&find-lib) is export { * }
+our sub gzbuffer(gzFile, int32) returns int32 is native(&find-lib) is export { * }
+our sub gzsetparams(gzFile, int32, int32) returns int32 is native(&find-lib) is export { * }
+our sub gzread(gzFile, CArray[int8], int32) returns int32 is native(&find-lib) is export { * }
+our sub gzwrite(gzFile, CArray[int8], int32) returns int32 is native(&find-lib) is export { * }
 # gzprintf # I have no idea how to do variable number of args
-our sub gzputs(gzFile, Str is encoded('ascii')) returns int32 is native($lib) is export { * }
-our sub gzgets(gzFile, CArray[int8], int32) returns Str is encoded('ascii') is native($lib) is export { * }
-our sub gzputc(gzFile, int32) returns int32 is native($lib) is export { * }
-our sub gzgetc(gzFile) returns int32 is native($lib) is export { * }
-our sub gzungetc(int32, gzFile) returns int32 is native($lib) is export { * }
-our sub gzflush(gzFile, int32) returns int32 is native($lib) is export { * }
-our sub gzseek(gzFile, int32, int32) returns int32 is native($lib) is export { * }
-our sub gzrewind(gzFile) returns int32 is native($lib) is export { * }
-our sub gztell(gzFile) returns int32 is native($lib) is export { * }
-our sub gzoffset(gzFile) returns int32 is native($lib) is export { * }
-our sub gzeof(gzFile) returns int32 is native($lib) is export { * }
-our sub gzdirect(gzFile) returns int32 is native($lib) is export { * }
-our sub gzclose(gzFile) returns int32 is native($lib) is export { * }
-our sub gzclose_r(gzFile) returns int32 is native($lib) is export { * }
-our sub gzclose_w(gzFile) returns int32 is native($lib) is export { * }
-our sub gzerror(gzFile, CArray[int32]) returns Str is encoded('ascii') is native($lib) is export { * }
-our sub gzclearerr(gzFile) is native($lib) is export { * }
+our sub gzputs(gzFile, Str is encoded('ascii')) returns int32 is native(&find-lib) is export { * }
+our sub gzgets(gzFile, CArray[int8], int32) returns Str is encoded('ascii') is native(&find-lib) is export { * }
+our sub gzputc(gzFile, int32) returns int32 is native(&find-lib) is export { * }
+our sub gzgetc(gzFile) returns int32 is native(&find-lib) is export { * }
+our sub gzungetc(int32, gzFile) returns int32 is native(&find-lib) is export { * }
+our sub gzflush(gzFile, int32) returns int32 is native(&find-lib) is export { * }
+our sub gzseek(gzFile, int32, int32) returns int32 is native(&find-lib) is export { * }
+our sub gzrewind(gzFile) returns int32 is native(&find-lib) is export { * }
+our sub gztell(gzFile) returns int32 is native(&find-lib) is export { * }
+our sub gzoffset(gzFile) returns int32 is native(&find-lib) is export { * }
+our sub gzeof(gzFile) returns int32 is native(&find-lib) is export { * }
+our sub gzdirect(gzFile) returns int32 is native(&find-lib) is export { * }
+our sub gzclose(gzFile) returns int32 is native(&find-lib) is export { * }
+our sub gzclose_r(gzFile) returns int32 is native(&find-lib) is export { * }
+our sub gzclose_w(gzFile) returns int32 is native(&find-lib) is export { * }
+our sub gzerror(gzFile, CArray[int32]) returns Str is encoded('ascii') is native(&find-lib) is export { * }
+our sub gzclearerr(gzFile) is native(&find-lib) is export { * }
 
 # checksum functions
 #
-our sub adler32(int, CArray[int8], int32) returns long is native($lib) is export { * }
-our sub adler32_combine(int, int, int32) returns long is native($lib) is export { * }
-our sub crc32(int, CArray[int8], int32) returns long is native($lib) is export { * }
-our sub crc32_combine(int, int, int32) returns long is native($lib) is export { * }
+our sub adler32(int, CArray[int8], int32) returns long is native(&find-lib) is export { * }
+our sub adler32_combine(int, int, int32) returns long is native(&find-lib) is export { * }
+our sub crc32(int, CArray[int8], int32) returns long is native(&find-lib) is export { * }
+our sub crc32_combine(int, int, int32) returns long is native(&find-lib) is export { * }
 
 # undocumented functions
 #
