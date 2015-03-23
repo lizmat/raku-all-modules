@@ -3,7 +3,7 @@
     "version" : "0.5.0",
     "author" : "github:carbin",
     "description" : "An implementation of bcrypt using NativeCall",
-    "depends" : [ "NativeCall", "LibraryMake" ],
+    "depends" : [ "LibraryMake" ],
     "provides" : {
         "Crypt::Bcrypt" : "lib/Crypt/Bcrypt.pm6"
     },
