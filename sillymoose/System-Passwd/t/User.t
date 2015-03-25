@@ -1,7 +1,7 @@
 use v6;
 use Test;
 use lib 'lib';
-use System::Passwd::User::Linux;
+use System::Passwd::User;
 
 plan 24;
 my @lines =
@@ -12,7 +12,7 @@ my @lines =
 
 for @lines -> @line
 {
-    ok my $user = System::Passwd::User::Linux.new(@line[0]), "Constructing {@line[0]}";
+    ok my $user = System::Passwd::User.new(@line[0]), "Constructing {@line[0]}";
     is $user.username,      @line[1], "username is {@line[1]}";
     is $user.password,      @line[2], "password is {@line[2]}";
     is $user.uid,           @line[3], "uid is {@line[3]}";

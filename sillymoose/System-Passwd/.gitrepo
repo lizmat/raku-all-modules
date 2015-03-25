@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sillymoose/System-Passwd.git
 	branch = master
-	commit = 6fee282844c7e5aa0e7fe3a71bea01afc1c4c85a
-	parent = d615fed66786a372e05881eadf8136a6515beca8
-	cmdver = 0.1.0
+	commit = f5f99da89984bba4afc5c4b7b6eeff32ba4ee59f
+	parent = 5ceb22ff3a230ee755a9c01f6fecd375f6df2fba
+	cmdver = 0.2.0

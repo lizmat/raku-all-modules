@@ -1,17 +1,16 @@
-use System::Passwd::User::MacOSX;
-use System::Passwd::User::Linux;
+use System::Passwd::User;
 
 module System::Passwd
 {
     my $user_class;
 
-    given $*DISTRO.Str
+    given [$*DISTRO.Str|$*KERNEL.Str]
     {
-        when m:i/linux/   { $user_class = System::Passwd::User::Linux  }
-        when m:i/openbsd/ { $user_class = System::Passwd::User::Linux  }
-        when m:i/netbsd/  { $user_class = System::Passwd::User::Linux  }
-        when m:i/freebsd/ { $user_class = System::Passwd::User::Linux  }
-        when m:i/macosx/  { $user_class = System::Passwd::User::MacOSX }
+        when m:i/linux/   { $user_class = System::Passwd::User }
+        when m:i/openbsd/ { $user_class = System::Passwd::User }
+        when m:i/netbsd/  { $user_class = System::Passwd::User }
+        when m:i/freebsd/ { $user_class = System::Passwd::User }
+        when m:i/macosx/  { $user_class = System::Passwd::User }
         default { die "This module is not compatible with the operating system {$*DISTRO.Str}" }
     }
 
@@ -46,11 +45,11 @@ module System::Passwd
 
 =head1 NAME
 
-System::Passwd - easily search for Linux system users
+System::Passwd - easily search for system users on Unix based systems
 
 =head2 DESCRIPTION
 
-L<System::Passwd> is a Perl 6 distribution for searching the C</etc/passwd> file. It provides subroutines to search for a System::Passwd::User user by uid, username or full name.
+L<System::Passwd> is a Perl 6 distribution for searching the C</etc/passwd> file. It provides subroutines to search for a System::Passwd::User user by uid, username or full name. System::Passwd should work on Linux, Unix, FreeBSD, NetBSD, OpenBSD and OSX (although not all OSX users are stored in C</etc/passwd>).
 
 =head2 SYNOPSIS
 
