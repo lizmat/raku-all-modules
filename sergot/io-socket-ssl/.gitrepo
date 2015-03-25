@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sergot/io-socket-ssl.git
 	branch = master
-	commit = 2ff656c1eacd60f746f78515400f9f9f6d535a6c
-	parent = 31407bcd5909310393238bcb57ad1e2b7008dd04
+	commit = 2c1953448d4bf04ea47764a4e27f820a1c43f863
+	parent = 3c1f81057cd6f287416e09d5d742b26e57c16937
 	cmdver = 0.2.0

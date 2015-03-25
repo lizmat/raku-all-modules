@@ -53,7 +53,7 @@ method new(*%args is copy) {
         }
     }
 
-    %args<listen>.=Bool if %args.exists_key('listen');
+    %args<listen>.=Bool if %args.EXISTS-KEY('listen');
 
     self.bless(|%args)!initialize;
 }
