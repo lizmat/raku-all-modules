@@ -87,7 +87,7 @@ class Compress::Zlib::Stream {
             my $ret = Compress::Zlib::Raw::inflate($!z-stream, Compress::Zlib::Raw::Z_SYNC_FLUSH);
             
             unless $ret == Compress::Zlib::Raw::Z_OK|Compress::Zlib::Raw::Z_STREAM_END {
-                fail "...";
+                fail "Cannot inflate stream: $!z-stream.msg()";
             }
 
             $out ~= $output-buf.subbuf(0, 1024 - $!z-stream.avail-out);
@@ -134,7 +134,7 @@ class Compress::Zlib::Stream {
             my $ret = Compress::Zlib::Raw::deflate($!z-stream, Compress::Zlib::Raw::Z_SYNC_FLUSH);
 
             unless $ret == Compress::Zlib::Raw::Z_OK {
-                fail "...";
+                fail "Cannot deflate stream: $!z-stream.msg()";
             }
 
             $out ~= $output-buf.subbuf(0, 1024 - $!z-stream.avail-out);
@@ -159,7 +159,7 @@ class Compress::Zlib::Stream {
                     my $ret = Compress::Zlib::Raw::deflate($!z-stream, Compress::Zlib::Raw::Z_FINISH);
 
                     unless $ret == Compress::Zlib::Raw::Z_OK|Compress::Zlib::Raw::Z_STREAM_END {
-                        fail "...";
+                        fail "Cannot deflate stream: $!z-stream.msg()";
                     }
 
                     $out ~= $output-buf.subbuf(0, 1024 - $!z-stream.avail-out);
@@ -218,7 +218,7 @@ class Compress::Zlib::Wrap {
         my $chunksize = 128;
 
         my $nl = "\n";
-        $nl = $.handle.input-line-separator if $.handle.can('input-line-separator');
+        $nl = $.handle.nl if $.handle.can('nl');
         loop {
             my $bufstr;
 
