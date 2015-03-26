@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/farabi6.git
 	branch = master
-	commit = 235ad3aa43c0e582a1757397916de27e976aa7f9
-	parent = 06cc974d4a5825cb29b857b3db92cd50e10ec621
+	commit = 8c48e0c71cde4601ba8f1390fb324b9fa8bd8af1
+	parent = 71783e1c9a4fd29694a1a1ed53fde5f4dc525bc0
 	cmdver = 0.2.0
