@@ -1,0 +1,12 @@
+{
+    "name" : "Linux::Fuser",
+    "version" : "0.0.1",
+    "author" : "github:jonathanstowe",
+    "description" : "Discover which process has a file open, in pure Perl 6",
+    "depends" : ["IO::Path::More", "System::Passwd"],
+    "provides" : {
+        "Linux::Fuser" : "lib/Linux/Fuser.pm6"
+    },
+    "source-url" : "https://github.com/jonathanstowe/p6-Linux-Fuser.git"
+}
+
