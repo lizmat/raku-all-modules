@@ -49,6 +49,7 @@ class Compress::Zlib::Stream {
     has $!inflate-init = False;
 
     has $.finished = False;
+    has $.bytes-left = 0;
 
     has $!window-bits;
 
@@ -85,14 +86,15 @@ class Compress::Zlib::Stream {
             }
 
             my $ret = Compress::Zlib::Raw::inflate($!z-stream, Compress::Zlib::Raw::Z_SYNC_FLUSH);
-            
+
             unless $ret == Compress::Zlib::Raw::Z_OK|Compress::Zlib::Raw::Z_STREAM_END {
                 fail "Cannot inflate stream: $!z-stream.msg()";
             }
 
             $out ~= $output-buf.subbuf(0, 1024 - $!z-stream.avail-out);
-            
+
             if $ret == Compress::Zlib::Raw::Z_STREAM_END {
+                $!bytes-left = $!z-stream.avail-in;
                 self.finish;
             }
 
@@ -367,7 +369,7 @@ class Compress::Zlib::Wrap {
         self.send($contents);
         self.close;
     }
-    
+
     multi method spurt(Blob $contents) {
         self.write($contents);
         self.close;
