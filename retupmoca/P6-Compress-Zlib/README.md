@@ -22,7 +22,7 @@ Compresses and uncompresses data using zlib.
     gzslurp("file.gz"); # reads in a gzipped file
     gzspurt("file.gz", "stuff"); # spits out a gzipped file
 
-    
+
     my $compressor = Compress::Zlib::Stream.new;
     loop {
         $socket.write($compressor.deflate($data-chunk));
@@ -65,6 +65,13 @@ open an issue and I will move it to the top of my priority list.
 
     Returns true if the end of the data stream has been reached. In this case,
     you can do nothing more that's useful with this object.
+
+ -  `bytes-left( --> Int)`
+
+    After an `.inflate` object is `.finished`, this will return the number of bytes in the last
+    input buffer that were "past the end" of the compressed data stream.
+
+    Usually used when you're interested in any data that comes after the compressed stream.
 
  -  `inflate(Buf $data --> Buf)`
 
