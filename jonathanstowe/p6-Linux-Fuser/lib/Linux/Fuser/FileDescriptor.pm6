@@ -54,8 +54,6 @@ class Linux::Fuser::FileDescriptor {
       $!pos = %info<pos>.Int;
       $!mnt_id = %info<mnt_id>.Int;
       my $str_fl = %info<flags>;
-      # This seems like a really crap way of doing it
-      $str_fl ~~ s/^0/0o/;
-      $!flags = $str_fl.Int;
+      $!flags = :8($str_fl);
    }
 }
