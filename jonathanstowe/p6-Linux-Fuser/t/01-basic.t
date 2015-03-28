@@ -37,7 +37,7 @@ sub do_tests(Any $file, Str $description)
    todo("not sure how to test this yet",1);
    is($proc.cmd[0], $*EXECUTABLE, "and got something like we expected");
 
-   is($proc.user, my_username(), "got the right user ($description)");
+   is($proc.user, $*USER, "got the right user ($description)");
 
    ok(my $filedes = $proc.filedes, "get the filedescriptor info ($description)");
    isa_ok($filedes,Linux::Fuser::FileDescriptor, "and it's the right sort of object ($description)");
@@ -55,16 +55,6 @@ is(@procs.elems,0, "and there aren't any processes");
 
 lives_ok { @procs = $obj.fuser('ThiSdoesNotExIst') }, "fuser() no-existent file";
 is(@procs.elems,0, "and there aren't any processes");
-
-# because I can't work out how to do this otherwise
-use NativeCall;
-use System::Passwd;
-sub getuid() returns Int is native { ... }
-
-sub my_username() returns Str {
-   return get_user_by_uid(getuid()).username;
-}
-
 
 
 $filename.IO.remove;
