@@ -403,6 +403,9 @@ new-location; # -> "outside"
 To make C<new-location()> print C<nowhere>, make C<$location> a dynamic
 variable using L<the * twigil|#The_*_Twigil>.
 
+C<my> is the default scope for subroutines, so C<my sub x() {}> and
+C<sub x() {}> do exactly the same thing.
+
 =head2 The C<our> Declarator
 
 C<our> variables work just like C<my> variables, except that they also
@@ -417,13 +420,54 @@ introduce an alias into the symbol table.
 
 =head2 The C<has> Declarator
 
+C<has> scopes attributes to instances of a class or role, and methods to
+classes or roles. C<has> is implied for methods, so C<has method x() {}>
+and C<method x() {}> do the same thing.
+
+See L<object orientation|/language/objects> for more documentation and some
+examples.
+
 =head2 The C<anon> Declarator
+
+The C<anon> declarator prevents a symbol from getting installed in the lexical
+scope, the method table and everywhere else.
+
+For example you can use it to declare subroutines which know their own name,
+but still aren't installed in a scope:
+
+    my %operations =
+        half   => anon sub half($x) { $x / 2 },
+        square => anon sub square($x) { $x * $x },
+        ;
+    say %operations<square>.name;       # square
+    say %operations<square>(8);         # 64
 
 =head2 The C<state> Declarator
 
+=comment TODO
+
 =head2 The C<augment> Declarator
 
+With C<augment>, you can add attributes and methods to existing classes and
+grammars, provided you activated the C<MONKEY-TYPING> pragma first.
+
+Since classes are usually C<our> scoped, and thus global, this means modifying
+global state, which is strongly discouraged. For almost all situations, there
+are better soluations.
+
+    # don't do this
+    use MONKEY-TYPING;
+    augment class Int {
+        method is-answer { self == 42 }
+    }
+    say 42.is-answer;       # True
+
+(In this case, the better solution would be to use a
+L<function|/language/functions>).
+
 =head2 The C<supersede> Declarator
+
+=comment TODO
 
 =head2 The C<temp> Prefix
 
