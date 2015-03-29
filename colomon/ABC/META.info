@@ -3,6 +3,25 @@
     "version"     : "*",
     "description" : "Toolkit for dealing with ABC music notation",
     "depends"     : [],
+    "provides" : {
+        "ABC::Duration" : "lib/ABC/Stem.pm",
+        "ABC::Pitched" : "lib/ABC/Stem.pm",
+        "ABC::Header" : "lib/ABC/Actions.pm",
+        "ABC::Grammar" : "lib/ABC/Utils.pm",
+        "ABC::Note" : "lib/ABC/Utils.pm",
+        "ABC::Stem" : "lib/ABC/Stem.pm",
+        "ABC::KeyInfo" : "lib/ABC/Utils.pm",
+        "ABC::Utils" : "lib/ABC/Utils.pm",
+        "ABC::Tune" : "lib/ABC/Actions.pm",
+        "ABC::Rest" : "lib/ABC/Actions.pm",
+        "ABC::Tuplet" : "lib/ABC/Actions.pm",
+        "ABC::BrokenRhythm" : "lib/ABC/Actions.pm",
+        "ABC::Chord" : "lib/ABC/Actions.pm",
+        "ABC::LongRest" : "lib/ABC/Actions.pm",
+        "ABC::GraceNotes" : "lib/ABC/Actions.pm",
+        "ABC::Context" : "lib/ABC/Utils.pm",
+        "ABC::Actions" : "lib/ABC/Actions.pm"
+    },
     "source-type"   : "git",
     "source-url"    : "git://github.com/colomon/ABC.git"
 }
