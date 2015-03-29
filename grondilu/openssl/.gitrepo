@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/grondilu/openssl.git
 	branch = master
-	commit = 13a3d7c3e91324f917518c39f8a4eba3d5cecc5f
-	parent = 7fb28061b03d77c0791c9274438623212c712b03
+	commit = 3db26acd21afc6f38f2a2cc472eaa8359229856c
+	parent = ad09eca3fd443f806dadb5e2594287c62d50f211
 	cmdver = 0.2.0

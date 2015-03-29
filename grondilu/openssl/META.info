@@ -1,8 +1,17 @@
 {
     "name" : "SSL",
-	"version" : "0.2.0",
-	"description" : "Perl6 interface to OpenSSL",
-	"author" : "Lucien Grondin <grondilu@yahoo.fr>",
-	"depends" : [ ],
-	"source-url" : "git://github.com/grondilu/openssl.git"
+    "version" : "0.2.0",
+    "description" : "Perl6 interface to OpenSSL",
+    "author" : "Lucien Grondin <grondilu@yahoo.fr>",
+    "build-depends" : [
+        "NativeCall"
+    ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [ ],
+    "provides" : {
+        "SSL::Digest" : "lib/SSL/Digest.pm"
+    },
+    "source-url" : "git://github.com/grondilu/openssl.git"
 }
