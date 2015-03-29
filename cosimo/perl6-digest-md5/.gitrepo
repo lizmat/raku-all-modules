@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cosimo/perl6-digest-md5.git
 	branch = master
-	commit = 0905db3bce76f0920cbaeb3d9311ca470d0254cd
-	parent = ab51d7acd99b33268220c781fa585105cd698722
-	cmdver = 0.1.0
+	commit = 14d5d7bf1cfb47dc6140e8b9cec3d00620cb1633
+	parent = 615a68f7545b727af75b836f5cb68963208d3517
+	cmdver = 0.2.0
