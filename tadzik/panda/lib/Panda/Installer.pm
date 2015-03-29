@@ -1,5 +1,6 @@
 class Panda::Installer;
 use Panda::Common;
+use Panda::Project;
 use File::Find;
 use Shell::Command;
 
@@ -29,31 +30,51 @@ sub copy($src, $dest) {
     $src.copy($dest);
 }
 
-method install($from, $to? is copy) {
+method install($from, $to? is copy, Panda::Project :$bone) {
     unless $to {
         $to = $.destdir
     }
     indir $from, {
-        if 'blib'.IO ~~ :d {
-            my @lib = find(dir => 'blib', type => 'file').list;
-            for self.sort-lib-contents(@lib) -> $i {
-                next if $i.basename.substr(0, 1) eq '.';
-                # .substr(5) to skip 'blib/'
-                mkpath "$to/{$i.dirname.substr(5)}";
-                copy($i, "$to/{$i.substr(5)}");
+        # check if $.destdir is under control of a CompUnitRepo
+        if $to.can('install') {
+            my @files;
+            if 'blib'.IO ~~ :d {
+                @files.push: find(dir => 'blib', type => 'file').list.grep( -> $lib {
+                    next if $lib.basename.substr(0, 1) eq '.';
+                    $lib
+                } )
             }
+            if 'bin'.IO ~~ :d {
+                @files.push: find(dir => 'bin', type => 'file').list.grep( -> $bin {
+                    next if $bin.basename.substr(0, 1) eq '.';
+                    next if !$*DISTRO.is-win and $bin.basename ~~ /\.bat$/;
+                    $bin
+                } )
+            }
+            $to.install(:dist($bone), @files);
         }
-        if 'bin'.IO ~~ :d {
-            for find(dir => 'bin', type => 'file').list -> $bin {
-                next if $bin.basename.substr(0, 1) eq '.';
-                next if !$*DISTRO.is-win and $bin.basename ~~ /\.bat$/;
-                mkpath "$to/{$bin.dirname}";
-                copy($bin, "$to/$bin");
-                "$to/$bin".IO.chmod(0o755) unless $*DISTRO.is-win;
+        else {
+            if 'blib'.IO ~~ :d {
+                my @lib = find(dir => 'blib', type => 'file').list;
+                for self.sort-lib-contents(@lib) -> $i {
+                    next if $i.basename.substr(0, 1) eq '.';
+                    # .substr(5) to skip 'blib/'
+                    mkpath "$to/{$i.dirname.substr(5)}";
+                    copy($i, "$to/{$i.substr(5)}");
+                }
+            }
+            if 'bin'.IO ~~ :d {
+                for find(dir => 'bin', type => 'file').list -> $bin {
+                    next if $bin.basename.substr(0, 1) eq '.';
+                    next if !$*DISTRO.is-win and $bin.basename ~~ /\.bat$/;
+                    mkpath "$to/{$bin.dirname}";
+                    copy($bin, "$to/$bin");
+                    "$to/$bin".IO.chmod(0o755) unless $*DISTRO.is-win;
+                }
             }
         }
         1;
-    };
+    }
 }
 
 # vim: ft=perl6
