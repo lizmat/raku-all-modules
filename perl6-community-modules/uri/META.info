@@ -3,5 +3,13 @@
     "version"     : "v0.1.0",
     "description" : "A URI implementation using Perl 6 grammars to implement RFC 3986 BNF",
     "depends"     : [ ],
+    "provides" : {
+        "IETF::RFC_Grammar"       : "lib/IETF/RFC_Grammar.pm",
+        "IETF::RFC_Grammar::IPv6" : "lib/IETF/RFC_Grammar/IPv6.pm",
+        "IETF::RFC_Grammar::URI"  : "lib/IETF/RFC_Grammar/URI.pm",
+        "URI"                     : "lib/URI.pm",
+        "URI::Escape"             : "lib/URI/Escape.pm",
+        "URI::DefaultPort"        : "lib/URI/DefaultPort.pm"
+    },
     "source-url"    : "git://github.com/perl6-community-modules/uri.git"
 }
