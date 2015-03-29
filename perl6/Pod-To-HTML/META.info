@@ -3,5 +3,8 @@
     "version"     : "*",
     "description" : "Convert Perl 6 Pod to HTML",
     "depends"     : ["URI"],
+    "provides"    : {
+        "Pod::To::HTML" : "lib/Pod/To/HTML.pm"
+    },
     "source-url"  : "git://github.com/perl6/Pod-To-HTML.git"
 }
