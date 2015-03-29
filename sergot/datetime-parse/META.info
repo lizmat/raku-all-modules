@@ -2,6 +2,13 @@
     "name"      : "DateTime::Parse",
     "version"   : "0.0.1",
     "description"   : "DateTime parser",
-    "depends"   : [],
+    "build-depends" : [ ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [ ],
+    "provides" : {
+        "DateTime::Parse" : "lib/DateTime/Parse.pm6"
+    },
     "source-url"    : "git://github.com/sergot/datetime-parse.git"
 }
