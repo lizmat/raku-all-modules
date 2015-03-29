@@ -3,5 +3,8 @@
     "version"     : "*",
     "description" : "A Perl 6 module to generate XML",
     "depends"     : [ ],
+    "provides"    : {
+        "XML::Writer" : "lib/XML/Writer.pm"
+    },
     "source-url"  : "git://github.com/masak/xml-writer.git"
 }
