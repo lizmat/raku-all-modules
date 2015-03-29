@@ -3,6 +3,14 @@
     "version" : "0.1.1",
     "description" : "Chess-related stuff in Perl 6.",
     "author" : "L. Grondin",
+    "build-depends" : [ ],
+    "test-depends" : [
+        "Test"
+    ],
     "depends" : [ ],
+    "provides" : {
+        "Chess::FEN" : "lib/Chess/FEN.pm6",
+        "Chess::PGN" : "lib/Chess/PGN.pm6"
+    },
     "source-url" : "git://github.com/grondilu/chess.git"
 }
