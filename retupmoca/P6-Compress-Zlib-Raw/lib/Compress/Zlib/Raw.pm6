@@ -21,9 +21,11 @@ sub find-lib {
 
 sub find-bundled($lib is copy) {
     # if we can't find one, assume there's a system install
+    my $base = "lib/Compress/Zlib/$lib";
     for @*INC {
-        if ($_ ~ '/Compress/Zlib/' ~ $lib).IO.f {
-            $lib = $_ ~ '/Compress/Zlib/' ~ $lib;
+        if my @files = ($_.files($base) || $_.files("blib/$base")) {
+            my $files = @files[0]<files>;
+            $lib = $files{$base} || $files{"blib/$base"};
             last;
         }
     }
