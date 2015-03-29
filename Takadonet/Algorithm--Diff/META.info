@@ -2,7 +2,14 @@
     "name" : "Algorithm::Diff",
     "version" : "*",
     "description" : "Contains several interfaces for which computing the differences between two lists.",
-    "depends" : [],
+    "build-depends" : [ ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [ ],
+    "provides" : {
+        "Algorithm::Diff" : "lib/Algorithm/Diff.pm"
+    },
     "source-type" : "git",
     "source-url" : "git://github.com/Takadonet/Algorithm--Diff.git"
 }
