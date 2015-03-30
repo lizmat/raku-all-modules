@@ -4,5 +4,6 @@
     "author"    : "github:sergot",
     "description"   : "IO::Socket::SSL for Perl 6 using OpenSSL",
     "depends"   : ["OpenSSL"],
+    "provides" : { "IO::Socket::SSL" : "lib/IO/Socket/SSL.pm6" },
     "source-url"    : "git://github.com/sergot/io-socket-ssl.git"
 }
