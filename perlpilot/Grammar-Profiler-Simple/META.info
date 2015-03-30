@@ -2,7 +2,14 @@
     "name"          : "Grammar::Profiler::Simple",
     "version"       : "0.01",
     "description"   : "Simple rule profiling for Perl 6 grammars",
-    "depends"       : [ ],
+    "build-depends" : [ ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [ ],
+    "provides" : {
+        "Grammar::Profiler::Simple" : "lib/Grammar/Profiler/Simple.pm"
+    },
     "source-url"    : "git://github.com/perlpilot/Grammar-Profiler-Simple.git",
     "author"        : "Jonathan Scott Duff"
 }
