@@ -5,7 +5,9 @@
     "description" : "Simple SMTP Client",
     "depends" : [ "Email::Simple", "MIME::Base64", "Digest::HMAC", "Digest", "IO::Socket::SSL" ],
     "provides" : {
-        "Net::SMTP" : "lib/Net/SMTP.pm6"
+        "Net::SMTP" : "lib/Net/SMTP.pm6",
+        "Net::SMTP::Raw" : "lib/Net/SMTP/Raw.pm6",
+        "Net::SMTP::Simple" : "lib/Net/SMTP/Simple.pm6"
     },
     "source-url" : "git://github.com/retupmoca/P6-Net-SMTP.git"
 }
