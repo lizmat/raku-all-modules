@@ -5,7 +5,14 @@
     "description" : ".ics file handling",
     "depends" : [ ],
     "provides" : {
-        "Data::ICal" : "lib/Data/ICal.pm6"
+        "Data::ICal"           : "lib/Data/ICal.pm6",
+        "Data::ICal::Alarm"    : "lib/Data/ICal/Alarm.pm6",
+        "Data::ICal::Event"    : "lib/Data/ICal/Event.pm6",
+        "Data::ICal::FreeBusy" : "lib/Data/ICal/FreeBusy.pm6",
+        "Data::ICal::Grammar"  : "lib/Data/ICal/Grammar.pm6",
+        "Data::ICal::Journal"  : "lib/Data/ICal/Journal.pm6",
+        "Data::ICal::TimeZone" : "lib/Data/ICal/TimeZone.pm6",
+        "Data::ICal::Todo"     : "lib/Data/ICal/Todo.pm6"
     },
     "source-url" : "git://github.com/retupmoca/P6-iCal.git"
 }
