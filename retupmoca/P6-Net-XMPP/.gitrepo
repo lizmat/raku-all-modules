@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Net-XMPP.git
 	branch = master
-	commit = 7bb4d6934c9f6abfab1f2bf789fa6de81c87e7d8
-	parent = c77947bd60d23f78e84072213a3d9d9b480e3695
-	cmdver = 0.1.0
+	commit = 5e051266a815ddab6bac3c09d7653bf33362df02
+	parent = 7a515923e70a356a52a8d94d7b341f5e3a2aa592
+	cmdver = 0.2.0
