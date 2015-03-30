@@ -3,6 +3,13 @@
     "version" : "0.01",
     "description" : "Create temporary files",
     "depends" : [ ],
+    "build-depends" : [ ],
+    "test-depends" : [
+        "Test"
+    ],
+    "provides" :  {
+        "File::Temp" : "lib/File/Temp.pm"
+    },
     "repo-type" : "git",
     "source-url" : "git://github.com/perlpilot/p6-File-Temp.git",
     "author" : "Jonathan Scott Duff"
