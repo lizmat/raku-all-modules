@@ -25,7 +25,12 @@ sub find-bundled($lib is copy) {
     for @*INC {
         if my @files = ($_.files($base) || $_.files("blib/$base")) {
             my $files = @files[0]<files>;
-            $lib = $files{$base} || $files{"blib/$base"};
+            my $tmp = $files{$base} || $files{"blib/$base"};
+
+            # copy to a temp dir
+            $tmp.IO.copy($*SPEC.tmpdir ~ '\\' ~ $lib);
+            $lib = $*SPEC.tmpdir ~ '\\' ~ $lib;
+
             last;
         }
     }
