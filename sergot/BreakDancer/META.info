@@ -2,8 +2,17 @@
     "name": "BreakDancer",
     "version": "*",
     "description": "Framework for generating static webpages.",
-    "depends": [
+    "build-depends" : [
         "Shell::Command"
     ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [
+        "Shell::Command"
+    ],
+    "provides" : {
+        "BreakDancer" : "lib/BreakDancer.pm"
+    },
     "source-url": "git://github.com/sergot/BreakDancer.git"
 }
