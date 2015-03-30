@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/leto/perl6-Algorithm-Soundex.git
 	branch = master
-	commit = 42bfe62b18868a0be91332029e4989671f751b8b
-	parent = b519b0dbe053b6598849ef9bc3bf5b2442fffb0c
-	cmdver = 0.1.0
+	commit = e9feaa8380b638ba3977d696952dc62ce78ca68c
+	parent = 146a6a58972c519c68078883750958f5643d6e23
+	cmdver = 0.2.0
