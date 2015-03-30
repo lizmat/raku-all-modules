@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/Benchmark-Plot.git
 	branch = master
-	commit = 9d797fd12cbcf59e03426b87ab7ed85bc0ed0818
-	parent = 9131547e6591f2db06a907a4599e045eafd900c4
-	cmdver = 0.1.0
+	commit = 112422667a2f5a45676ba9e1af016c81476d1787
+	parent = 61a6f94568509ed63a3c8ca0381deb070e9c32f6
+	cmdver = 0.2.0
