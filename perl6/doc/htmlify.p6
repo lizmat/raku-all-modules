@@ -45,7 +45,6 @@ my @menu =
 ;
 
 my $head   = slurp 'template/head.html';
-my $footer = footer-html;
 sub header-html ($current-selection = 'nothing selected') is cached {
     state $header = slurp 'template/header.html';
 
@@ -77,12 +76,12 @@ sub header-html ($current-selection = 'nothing selected') is cached {
     $header.subst('MENU', :p($menu-pos), $menu-items ~ $sub-menu-items);
 }
 
-sub p2h($pod, $selection = 'nothing selected') {
+sub p2h($pod, $selection = 'nothing selected', :$pod-path = 'unknown') {
     pod2html $pod,
         :url(&url-munge),
         :$head,
         :header(header-html $selection),
-        :$footer,
+        :footer(footer-html($pod-path)),
         :default-title("Perl 6 Documentation"),
 }
 
@@ -142,9 +141,10 @@ sub MAIN(
     $*DR.compose;
 
     for $*DR.lookup("language", :by<kind>).list -> $doc {
-        $doc.pod.contents.push: doc-source-reference($doc);
         say "Writing language document for {$doc.name} ...";
-        spurt "html{$doc.url}.html", p2h($doc.pod, 'language');
+        my $pod-path = pod-path-from-url($doc.url);
+        spurt "html{$doc.url}.html",
+            p2h($doc.pod, 'language', pod-path => $pod-path);
     }
     for $*DR.lookup("type", :by<kind>).list {
         write-type-source $_;
@@ -302,14 +302,14 @@ multi write-type-source($doc) {
                     ;
             }
         }
-        $pod.contents.push: doc-source-reference($doc);
     }
     else {
         note "Type $podname not found in type-graph data";
     }
 
     my $html-filename = "html" ~ $doc.url ~ ".html";
-    spurt $html-filename, p2h($pod, $what);
+    my $pod-path = pod-path-from-url($doc.url);
+    spurt $html-filename, p2h($pod, $what, pod-path => $pod-path);
 }
 
 #| A one-pass-parser for pod headers that define something documentable.
@@ -594,7 +594,9 @@ sub write-disambiguation-files () {
 
 sub write-index-files () {
     say 'Writing html/index.html ...';
-    spurt 'html/index.html', p2h EVAL slurp('lib/HomePage.pod') ~ "\n\$=pod";
+    spurt 'html/index.html',
+        p2h(EVAL(slurp('lib/HomePage.pod') ~ "\n\$=pod"),
+            pod-path => 'HomePage.pod');
 
     say 'Writing html/language.html ...';
     spurt 'html/language.html', p2h(pod-with-title(
@@ -758,19 +760,13 @@ def p6format(code):
     }
 }
 
-#| Append a section to the pod document referencing the source on GitHub
-#| Note that we link to the raw source since GitHub isn't always able to
-#| render Pod6 properly.
-sub doc-source-reference($doc) {
-    # XXX: it would be nice to have a filename attribute for pod documents
-    my $pod-filename = $doc.url.split(/\//)[*-1].subst('::', '/', :g) ~ '.pod';
-    my $kind = $doc.kind.tclc;
-    my @doc-source-ref-pod =
-        pod-block("This documentation was generated from ",
-            pod-link("$pod-filename","https://github.com/perl6/doc/raw/master/lib/$kind/$pod-filename"),
-            ".");
+#| Determine path to source POD from the POD object's url attribute
+sub pod-path-from-url($url) {
+    my $pod-path = $url.subst('::', '/', :g) ~ '.pod';
+    $pod-path.subst-mutate(/^\//, '');  # trim leading slash from path
+    $pod-path = $pod-path.tc;
 
-    return @doc-source-ref-pod;
+    return $pod-path;
 }
 
 # vim: expandtab shiftwidth=4 ft=perl6
