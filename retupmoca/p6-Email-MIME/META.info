@@ -5,7 +5,11 @@
     "description" : "Simple MIME email parsing module",
     "depends"	  : ["Email::Simple", "MIME::QuotedPrint", "MIME::Base64"],
     "provides"    : {
-        "Email::MIME" : "lib/Email/MIME.pm6"
+        "Email::MIME"                   : "lib/Email/MIME.pm6",
+        "Email::MIME::Exceptions"       : "lib/Email/MIME/Exceptions.pm6",
+        "Email::MIME::Header"           : "lib/Email/MIME/Header.pm6",
+        "Email::MIME::ParseContentType" : "lib/Email/MIME/ParseContentType.pm6",
+        "Email::MIME::Encoder::Base64"  : "lib/Email/MIME/Encoder/Base64.pm6"
     },
     "source-url"  : "git://github.com/retupmoca/p6-Email-MIME.git"
 }
