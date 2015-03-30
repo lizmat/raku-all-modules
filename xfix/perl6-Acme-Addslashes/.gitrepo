@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/xfix/perl6-Acme-Addslashes.git
 	branch = master
-	commit = 6270b13a084d58aa206850a4eb21f948ca58a0e1
-	parent = 44907fb27a9b82c1469b54a6d68d5a264089de05
-	cmdver = 0.1.0
+	commit = 910d3b78a2f8ce692805b505dfbb1547744e5c09
+	parent = 4efd1f61829c4ce67e303b768e59f8d0c5469ec8
+	cmdver = 0.2.0
