@@ -1,0 +1,10 @@
+{
+	"name"        : "Browser::Open",
+	"version"     : "*",
+	"description" : "Open a given URL in a browser",
+	"depends"     : [ ],
+	"provides"    : {
+		"Browser::Open"         : "lib/Browser/Open.pm6"
+	},
+	"source-url"  : "git://github.com/azawawi/perl6-browser-open.git"
+}
