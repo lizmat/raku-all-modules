@@ -3,5 +3,8 @@
     "version"     : "*",
     "description" : "A Perl 6 module to generate SVG (Scalable Vector Graphics)",
     "depends"     : [ "XML::Writer" ],
+    "provides"    : {
+        "SVG"     : "lib/SVG.pm"
+    },
     "source-url"  : "git://github.com/moritz/svg.git"
 }
