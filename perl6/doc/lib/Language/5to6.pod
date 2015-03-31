@@ -398,8 +398,8 @@ Note that in both Perl 5 and Perl 6, the surrounding braces or parens can
 often be omitted, though the omission can reduce readability.
 
 In Perl 5, the arrow operator, C«->» , is used for single access to a
-composite's reference, or to call a sub through it's reference. In Perl 6,
-we now use the dot operator C<.> for those task.
+composite's reference or to call a sub through its reference. In Perl 6,
+we now use the dot operator C<.> for those tasks.
 
     # Perl 5
         say $arrayref->[7];
@@ -711,7 +711,7 @@ read-write is needed.
     for @cars  -> $car   {...} # Perl 6; read-only
     for @cars <-> $car   {...} # Perl 6; read-write
 
-If no the default topic C<$_> is being used, but needs to be read-write,
+If the default topic C<$_> is being used, but needs to be read-write,
 then just use C«<->» and explicitly specify C«$_».
 
     for (@cars)      {...} # Perl 5; default topic
@@ -766,7 +766,7 @@ and L<C<[]> array subscripting|#[]_Array_indexing/slicing> operators.
 
     my $deleted_value = delete $hash{$key};  # Perl 5
     my $deleted_value = %hash{$key}:delete;  # Perl 6 - use :delete adverb
-    
+
     my $deleted_value = delete $array[$i];  # Perl 5
     my $deleted_value = @array[$i]:delete;  # Perl 6 - use :delete adverb
 
@@ -778,7 +778,7 @@ and L<C<[]> array subscripting|#[]_Array_indexing/slicing> operators.
 
     say "element exists" if exists $hash{$key};  # Perl 5
     say "element exists" if %hash{$key}:exists;  # Perl 6 - use :exists adverb
-    
+
     say "element exists" if exists $array[$i];  # Perl 5
     say "element exists" if @array[$i]:exists;  # Perl 6 - use :exists adverb
 
@@ -1053,6 +1053,31 @@ e.g.:
     # read the file
     my @lines = "test-file".IO.slurp.split(/\n/);
     say @lines.elems;    #-> 4
+
+=head2 Environment variables
+
+=head3 Perl module library path
+
+In Perl5 one of the environment variables to specify extra search paths for
+Perl modules is C<PERL5LIB>.
+
+    $ PERL5LIB="/some/module/lib" perl program.pl
+
+In Perl6 this is similar, one merely needs to change a number!  As you
+probably guessed, you just need to use C<PERL6LIB>:
+
+    $ PERL6LIB="/some/module/lib" perl6 program.p6
+
+As with Perl5, if you don't specify C<PERL6LIB>, you need to specify the
+library path within the program via the C<use lib> pragma:
+
+    use lib '/some/module/lib'
+
+Note that C<PERL6LIB> is more of a developer convenience in Perl6 (as
+opposed to the equivalent usage of C<PERL5LIB> in Perl5) and shouldn't be
+used by module consumers as it could be removed in the future.  This is
+because Perl6's module loading isn't directly compatible with operating
+system paths.
 
 =head2 Misc.
 
