@@ -9,5 +9,39 @@
         "Digest",
         "File::Find"
     ],
+    "provides" : {
+        "Git::PurePerl" :
+            "lib/Git/PurePerl.pm",
+        "Git::PurePerl::Actor" :
+            "lib/Git/PurePerl/Actor.pm",
+        "Git::PurePerl::DirectoryEntry" :
+            "lib/Git/PurePerl/DirectoryEntry.pm",
+        "Git::PurePerl::NewDirectoryEntry" :
+            "lib/Git/PurePerl/NewDirectoryEntry.pm",
+        "Git::PurePerl::Object" :
+            "lib/Git/PurePerl/Object.pm",
+        "Git::PurePerl::Object::Blob" :
+            "lib/Git/PurePerl/Object/Blob.pm",
+        "Git::PurePerl::Object::Commit" :
+            "lib/Git/PurePerl/Object/Commit.pm",
+        "Git::PurePerl::Object::Tag" :
+            "lib/Git/PurePerl/Object/Tag.pm",
+        "Git::PurePerl::Object::Tree" :
+            "lib/Git/PurePerl/Object/Tree.pm",
+        "Git::PurePerl::Pack" :
+            "lib/Git/PurePerl/Pack.pm",
+        "Git::PurePerl::Pack::WithIndex" :
+            "lib/Git/PurePerl/Pack/WithIndex.pm",
+        "Git::PurePerl::Pack::WithoutIndex" :
+            "lib/Git/PurePerl/Pack/WithoutIndex.pm",
+        "Git::PurePerl::PackIndex" :
+            "lib/Git/PurePerl/PackIndex.pm",
+        "Git::PurePerl::PackIndex::Version1" :
+            "lib/Git/PurePerl/PackIndex/Version1.pm",
+        "Git::PurePerl::PackIndex::Version2" :
+            "lib/Git/PurePerl/PackIndex/Version2.pm",
+        "Git::PurePerl::Protocol" :
+            "lib/Git/PurePerl/Protocol.pm"
+    },
     "source-url" : "git://github.com/raydiak/Git-PurePerl.git"
 }
