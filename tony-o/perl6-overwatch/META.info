@@ -1,0 +1,9 @@
+{
+  "name"        : "Overwatch",
+  "version"     : "0.1.0",
+  "description" : "Utility to help keep a processes running and restart them if they stop.",
+  "auth"        : "github:tony-o",
+  "authors"     : [ "Tony O" ],
+  "provides"    : { },
+  "source-url"  : "git://github.com/tony-o/perl6-overwatch.git"
+} 

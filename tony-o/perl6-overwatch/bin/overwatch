@@ -1,0 +1,128 @@
+#!/usr/bin/env perl6
+
+use Shell::Command;
+
+sub MAIN (
+  *@args, 
+  Str :e(:$execute) = 'perl6', 
+  Bool :k(:$keep-alive) = True, 
+  Bool :x(:$exit-on-error) = False, 
+  Bool :q(:$quiet) = False,
+  Str :f(:$filter) = '',
+  :w(:@watch) = [],
+) {
+  my ($prom, $proc, $killer, @filters);
+
+  USAGE if @args.elems == 0;
+  exit 0 if @args.elems == 0;
+
+  @filters = $filter.split(',').map({ .trim });
+
+  if !$quiet {
+    '[INFO] Starting overseer with options:'.say;
+    "[INFO]    --execute: $execute".say;
+    "[INFO]    --restart: $execute".say;
+    "[INFO]    --filters: {@filters.join(', ')}".say;
+    "[INFO]      --watch: {@watch.join(', ')}".say;
+    "[INFO]       script: {@args.map({ "'$_'" }).join(' ')}".say;
+  }
+
+  for @watch -> $dir {
+    die "Unable to find directory: $dir" if $dir.IO !~~ :e;
+    $dir.IO.watch.tap: -> $f {
+      my $restart = False;
+      for @filters -> $e { 
+        $restart = True, last if $f.path.chars > $e.chars &&  $e eq $f.path.substr(*- $e.chars); 
+      }
+      if @filters.elems == 0 || (@filters.elems > 0 && $restart) {
+        try {
+          $proc.kill(SIGQUIT);
+          CATCH { 
+            default { 
+              "[ERROR] Killing process: {.message}".say if !$quiet; 
+            } 
+          }
+        }
+        try {
+          $killer.keep(True);
+        }
+        "[INFO] Restart process, file changed: {"$dir/{$f.path}".IO.path}".say if !$quiet;
+      }
+    }
+  }
+
+  signal(SIGTERM,SIGINT,SIGHUP,SIGQUIT).tap({
+    "[INFO] Killing process with $_".say if !$quiet;
+    await $proc.kill($_);
+    exit 0;
+  });
+
+  while Any ~~ $proc || $keep-alive {
+    $proc = Proc::Async.new($execute, @args);
+    $proc.stdout.act(&print);
+    $proc.stderr.act(-> $r { $*ERR.print($r); });
+    $prom = $proc.start;
+    $killer = Promise.new;
+    await Promise.anyof($prom, $killer);
+    $killer.break if $killer.status !~~ Kept;
+    if $killer.status !~~ Kept && $prom.result:exists && $prom.result.exit != 0 && $exit-on-error {
+      "[INFO] Exit code ({$prom.result.exit}) from process caught, exiting".say if !$quiet;
+      exit 0;
+    }
+    "[INFO] Restarting $execute {@args.map({ "'$_'" }).join(' ')}".say if !$quiet;
+  }
+}
+
+sub USAGE {
+  my $space = ' ' x 4;
+  say [[qq|
+Perl6 Overwatch can be used to restart programs when they crash or 
+when files are modified.  
+
+Usage: 
+{$space}overwatch [options] <program> [<program arguments>]
+    
+Required:
+{$space}<program>
+{$space x 2}A program/script name is required.
+
+Options:
+{$space}-e=<executable> \| --execute=<executable>
+{$space x 2}Default: 'perl6'
+{$space x 2}The executable that runs the specified <program>.
+
+{$space}-k \| --keep-alive
+{$space x 2}Default: True
+{$space x 2}Automatically rerun the program.
+ 
+{$space}-x \| --exit-on-error
+{$space x 2}Default: False
+{$space x 2}Stop overwatch if the <program> exited with a
+{$space x 2}non-zero code.
+
+{$space}-q \| --quiet
+{$space x 2}Default: False
+{$space x 2}Prevents overwatch from printing informative
+{$space x 2}messages to stdout. 
+
+{$space}-w \| --watch
+{$space x 2}Default: []
+{$space x 2}Directories/files to watch for changes, when a
+{$space x 2}file is changed the <program> is restarted.
+
+{$space}-f \| --filter
+{$space x 2}Default: ''
+{$space x 2}Comma separated list of file extensions to watch
+{$space x 2}for changes.  List applies to all --watch dirs.
+
+Notes:
+{$space}Multiple -w switches may be specified
+{$space}To negate a [True\|False} value you can use -/q (same as -q=False)
+
+Examples:
+{$space}overwatch app.pl6
+{$space}overwatch -w=models mvc.pl6
+{$space}overwatch -w=/tmp/ -e=/bin/sh shellscript.sh --shellarg=go
+
+|]]
+}
