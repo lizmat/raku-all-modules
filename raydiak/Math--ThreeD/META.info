@@ -4,5 +4,9 @@
     "description" : "A simple 3D library for Perl 6.",
     "author" : "raydiak",
     "depends" : [ ],
+    "provides" : {
+        "Math::ThreeD::Mat44"   : "lib/Math/ThreeD/Mat44.pm",
+        "Math::ThreeD::Vec3"    : "lib/Math/ThreeD/Vec3.pm"
+    },
     "source-url" : "git://github.com/raydiak/Math--ThreeD.git"
 }
