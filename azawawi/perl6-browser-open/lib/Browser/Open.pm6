@@ -1,11 +1,11 @@
 module Browser::Open;
 
+use NativeCall;
+
 my @known_commands =
 (
 	['', %*ENV<BROWSER>],
 	['darwin',  '/usr/bin/open', 1],
-	['cygwin',  'start'],
-	['win32',   'start', Nil, 1],
 	['solaris', 'xdg-open'],
 	['solaris', 'firefox'],
 	['linux',   'sensible-browser'],
@@ -42,27 +42,52 @@ my @known_commands =
 	['freebsd', 'w3m'],
 	['freebsd', 'lynx'],
 	['',        'open'],
-	['',        'start'],
 );
 
 sub open_browser(Str $url, Bool $all = False) is export
 {
-	my $cmd = $all ?? (open_browser_cmd_all) !! (open_browser_cmd);
-	return unless $cmd;
+	if $*KERNEL.name eq 'win32'
+	{
+		# HINSTANCE ShellExecute(
+		#  _In_opt_  HWND hwnd,
+		#  _In_opt_  LPCTSTR lpOperation,
+		#  _In_      LPCTSTR lpFile,
+		#  _In_opt_  LPCTSTR lpParameters,
+		#  _In_opt_  LPCTSTR lpDirectory,
+		#  _In_      INT nShowCmd
+		# );
+		#
+		sub ShellExecuteA(
+			int32 $hwnd,
+			Str $operation,
+			Str $file,
+			Str $parameters,
+			Str $directory,
+			int32 $show_cmd
+		) returns int32 is native('shell32') { * }
 
-	return shell("$cmd $url");
+		ShellExecuteA(0, "open", $url, "", "", 1);
+	} else {
+		my $cmd = $all ?? (open_browser_cmd_all) !! (open_browser_cmd);
+		return unless $cmd;
+
+		my $proc = Proc::Async.new($cmd, $url);
+		$proc.start;
+	}
+
+	return;
 }
  
-sub open_browser_cmd is export
+sub open_browser_cmd is export returns Str
 {
 	return _check_all_cmds($*KERNEL.name);
 }
  
-sub open_browser_cmd_all is export {
+sub open_browser_cmd_all is export returns Str {
 	return _check_all_cmds('');
 }
  
-sub _check_all_cmds(Str $filter)
+sub _check_all_cmds(Str $filter) returns Str
 {
 	for @known_commands -> $spec
 	{
@@ -80,12 +105,16 @@ sub _check_all_cmds(Str $filter)
 	return;
 }
  
-sub _search_in_path(Str $cmd)
+sub _search_in_path(Str $cmd) returns Str
 {
-	for %*ENV<PATH>.split(':') -> $path
+	# TODO use File::Which once it is ported
+	my @paths = $*KERNEL.name eq 'win32'
+		?? %*ENV<Path>.split(';')
+		!! %*ENV<PATH>.split(':');
+	for @paths -> $path
 	{
 		next unless $path;
-		my $file = $*SPEC.catdir($path, $cmd);
+		my Str $file = $*SPEC.catdir($path, $cmd);
 		return $file if $file.IO ~~ :x;
 	}
 
