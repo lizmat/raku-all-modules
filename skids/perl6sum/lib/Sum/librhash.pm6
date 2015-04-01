@@ -203,7 +203,7 @@ if ($up) {
     }
 }
 
-my sub algo-by-name ($name) {
+my sub algo-by-name (Str:D $name) {
     my @ids = %Algos.keys.grep: { %Algos{$_}.name eq $name };
     return Failure.new(X::librhash::NotFound.new(
                        :field<name> :$name))
@@ -211,8 +211,8 @@ my sub algo-by-name ($name) {
     +@ids[0];
 }
 
-my sub algo-by-magnet-name ($name) {
-    my @ids = %Algos.keys.grep: { %Algos{$_}.magnet-name eq $name };
+my sub algo-by-magnet-name (Str:D $name) {
+    my @ids = %Algos.keys.grep: { %Algos{$_}.magnet_name eq $name };
     return Failure.new(X::librhash::NotFound.new(
                        :field<MAGNET> :$name))
         if @ids.elems != 1;
