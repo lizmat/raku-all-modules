@@ -38,6 +38,17 @@ method set (
     True;
 }
 
+method get (
+    Int $x where * < $!width,
+    Int $y where * < $!height
+) {
+    my $buffer = $!data;
+    # + 1 skips aforementioned filter byte
+    my $index = $!line-bytes * $y + 3 * $x + 1;
+
+    @( $buffer[$index++], $buffer[$index++], $buffer[$index] );
+}
+
 method write (Str $file) {
     my $fh = $file.IO.open(:w, :bin);
 

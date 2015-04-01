@@ -4,5 +4,8 @@
     "description" : "Portable PNG output for Perl 6",
     "author" : "raydiak",
     "depends" : [ "String::CRC32", "Compress::Zlib" ],
+    "provides" : {
+        "Image::PNG::Portable" : "lib/Image/PNG/Portable.pm6"
+    },
     "source-url" : "git://github.com/raydiak/Image-PNG-Portable.git"
 }

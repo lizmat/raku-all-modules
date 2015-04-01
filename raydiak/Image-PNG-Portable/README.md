@@ -1,6 +1,6 @@
 # Image::PNG::Portable
 
-This is an almost-pure Perl 6 PNG module, requiring only zlib.
+This is an almost-pure Perl 6 PNG module.
 
 ## Status
 
@@ -8,9 +8,6 @@ This module is currently useful for outputting opaque 24-bit truecolor images.
 Reading, precompression filters, alpha, palettes, grayscale, non-8-bit
 channels, and ancillary features like gamma correction, color profiles, and
 textual metadata are all NYI.
-
-An installed zlib DLL is temporarily required on Windows, which makes it not
-entirely ::Portable yet.
 
 Range checks (UInt, UInt8, and PInt, mentioned below) are disabled pending a
 Rakudo bugfix. Violate them at your peril.
@@ -39,13 +36,16 @@ Creates a new Image::PNG object, initialized to black.
 
 Sets the color of a pixel in the image.
 
+### .get(UInt $x, UInt $y)
+
+Gets the color of a pixel in the image as a 3-element array of channel values.
+
 ### .write($file)
 
 Writes the contents of the image to the specified file.
 
 ## BUGS
 
-None known. Please report any other bugs at
+None known. Please report bugs at
 https://github.com/raydiak/Image-PNG-Portable/issues or to
 raydiak@cyberuniverses.com .
-
