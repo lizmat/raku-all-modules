@@ -10,7 +10,7 @@ use Pray;
 
 sub MAIN (
     Str $scene = 'scene.json',
-    Str $image = $scene.IO.basename.subst(/ [ \. <-[ \. ]>* ]? $ /, '.ppm'),
+    Str $image = $scene.IO.basename.subst(/ [ \. <-[ \. ]>* ]? $ /, '.png'),
     Int :$width,
     Int :$height,
     Bool :$quiet = False,

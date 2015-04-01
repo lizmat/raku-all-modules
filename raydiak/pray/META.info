@@ -5,7 +5,7 @@
     "author"        : "raydiak",
     "build-depends" : [ "JSON::Tiny" ],
     "test-depends"  : [ "Test" ],
-    "depends"       : [ "JSON::Tiny" ],
+    "depends"       : [ "Image::PNG::Portable", "JSON::Tiny" ],
     "provides"      : {
         "Pray"                      : "lib/Pray.pm6",
         "Pray::Geometry::Cone"      : "lib/Pray/Geometry/Cone.pm6",

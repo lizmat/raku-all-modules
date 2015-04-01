@@ -1,8 +1,8 @@
 ABOUT
 
 This is Pray, a Perl 6 ray tracer. It is tested to work with recent builds of
-Rakudo on the MoarVM backend, though it is likely to work on any modern
-Rakudo. JSON::Tiny is required.
+Rakudo on the MoarVM backend, though it is likely to work on any modern Rakudo.
+Image::PNG::Portable and JSON::Tiny are required.
 
 
 
@@ -11,25 +11,23 @@ INSTALLATION
 The recommended way to install Pray is via panda, by running "panda install
 App::Pray". Pray will also run just fine by simply cloning/extracting it
 anywhere you like, though startup time will be increased if not precompiled
-(e.g. by panda-build), and you will also have to ensure that the JSON::Tiny
-module is installed.
+(e.g. by panda-build), and you will also have to ensure that the
+Image::PNG::Portable and JSON::Tiny modules are installed.
 
 
 
 USAGE
 
-Input is a JSON scene file, described later. Output is a PPM image file, one of
-the NetPBM formats, readable by many popular image viewers and editors (GIMP
-was used in the course of development).
+Input is a JSON scene file, described later. Output is a 24-bit PNG image file.
 
 Pray is normally invoked as the "pray" script in the bin directory of the
 module, which may also be copied/linked elsewhere like in your path if you
 installed via panda. Two positional arguments are accepted. The first is the
 name of the scene file to read, which defaults to "scene.json". The second is
-the file name of the PPM image to write, and defaults to the file name of the
+the file name of the PNG image to write, and defaults to the file name of the
 scene file (ignoring any directory prefix), with everything after the last
-period replaced by "ppm". If the scene file name is "examples/scene-01.json"
-for instance, then the image file name defaults to "scene-01.ppm" in the
+period replaced by "png". If the scene file name is "examples/scene-01.json"
+for instance, then the image file name defaults to "scene-01.png" in the
 current working directory.
 
 --width
@@ -221,23 +219,23 @@ LIMITATIONS/BUGS/TODO
 
 In no particular order: There is currently no internal reflection, subsurface
 scattering, volumetric lighting, global illumination, caustics, depth of field,
-anti-aliasing, concurrency, or PNG output. Primitive choices are few (missing 4
-of 5 platonic solids, among other things), and only the most basic
-transformations exist, and they are applied as a whole in only one fixed order.
-There is no support for non-solid objects such as planes, polygons, or hollow
-surfaces, nor meshes whether open or closed. No procedural surfaces, textures
-of any kind, bump maps, or things which might be considered "effects" like
-motion blur or particle systems. There's no support for fractals in any way
-shape or form, which is sad. Scene files feel crufty and fragile, and there is
-no way to re-use data in multiple places, forcing the same color to be applied
-for each material lighting type, for instance. Scene files have to be created
-by hand in a text editor. The API is not yet suitable for external use. Various
-naming and calling conventions all over the place are questionable. Performance
-is almost certainly much less than it could be, even given the present state of
-Rakudo. Repeating from above, all sorts of input validation and error checking
-is missing. Documentation is lacking. The web page and whole site are
-uninspiring and a bit internally neglected, considering I advertise myself as a
-web developer.
+anti-aliasing, or concurrency. Primitive choices are few (missing 4 of 5
+platonic solids, among other things), and only the most basic transformations
+exist, and they are applied as a whole in only one fixed order.  There is no
+support for non-solid objects such as planes, polygons, or hollow surfaces, nor
+meshes whether open or closed. No procedural surfaces, textures of any kind,
+bump maps, or things which might be considered "effects" like motion blur or
+particle systems. There's no support for fractals in any way shape or form,
+which is sad. Scene files feel crufty and fragile, and there is no way to
+re-use data in multiple places, forcing the same color to be applied for each
+material lighting type, for instance. Scene files have to be created by hand in
+a text editor. The API is not yet suitable for external use. Various naming and
+calling conventions all over the place are questionable. Performance is almost
+certainly much less than it could be, even given the present state of Rakudo.
+Repeating from above, all sorts of input validation and error checking is
+missing. Documentation is lacking. The web page and whole site are uninspiring
+and a bit internally neglected, considering I advertise myself as a web
+developer.
 
 
 

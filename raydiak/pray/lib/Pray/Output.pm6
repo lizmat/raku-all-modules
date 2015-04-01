@@ -1,5 +1,7 @@
 class Pray::Output;
 
+use Image::PNG::Portable;
+
 #`[[[
 https://rt.perl.org/Public/Bug/Display.html?id=123700
 subset PInt of Int where * > 0;
@@ -19,7 +21,7 @@ sub preview_scale ($v, $reduction) {
     ($v div $reduction) + !($v %% $reduction);
 }
 
-has $!buffer = Buf[uint8].new();
+has $!image = Image::PNG::Portable.new: :$!width, :$!height;
 has Int $!preview-scale-w = preview_scale($!width, $!preview-width - 2);
 has Int $!preview-scale-h = $!preview-scale-w * 2;
 has $.preview-every = $!width * $!preview-scale-h;
@@ -108,17 +110,7 @@ method finish () {
 method write () {
     self.finish;
 
-    my $fh = $!file.IO.open: :w;
-    $fh.print: "P3\n$!width $!height\n255\n";
-    my $len = $!width * 3;
-    for ^$!height -> $row {
-        my $i = $row * $len;
-        my $line = '';
-        $line ~= "\n" if $row;
-        $line ~= $!buffer[$_] ~ ' ' for $i .. $i + $len - 1;
-        $fh.print: $line;
-    }
-    $fh.close;
+    $!image.write: $!file;
 }
 
 method set (Int $x, Int $y, $r, $g, $b) {
@@ -147,15 +139,16 @@ method !set ($x, $y, $r is copy, $g is copy, $b is copy) {
     $g = process $g;
     $b = process $b;
 
-    my $v =
-        ($r - $!buffer[$i]) +
-        ($g - $!buffer[$i+1]) +
-        ($b - $!buffer[$i+2])
-        if $!preview;
+    my $v;
+    if $!preview {
+        my @c := $!image.get($x, $y);
+        $v =
+            ($r - @c[0]) +
+            ($g - @c[1]) +
+            ($b - @c[2]);
+    }
 
-    $!buffer[$i] = $r;
-    $!buffer[$i+1] = $g;
-    $!buffer[$i+2] = $b;
+    $!image.set: $x, $y, $r, $g, $b;
 
     $!count++;
 
@@ -172,8 +165,7 @@ method !set ($x, $y, $r is copy, $g is copy, $b is copy) {
 }
 
 method !get ($x, $y) {
-    my $i = self.coord_index($x, $y);
-    $!buffer[$i], $!buffer[$i+1], $!buffer[$i+2];
+    $!image.get($x, $y);
 }
 
 method get ($x, $y) {
