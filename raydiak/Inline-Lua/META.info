@@ -4,5 +4,10 @@
     "description" : "Embedded Lua for Perl 6",
     "author" : "raydiak",
     "depends" : [ ],
+    "provides" : {
+        "Inline::Lua"           : "lib/Inline/Lua.pm6",
+        "Inline::Lua::Object"   : "lib/Inline/Lua/Object.pm6",
+        "Lua::Raw"              : "lib/Lua/Raw.pm6"
+    },
     "source-url" : "git://github.com/raydiak/Inline-Lua.git"
 }
