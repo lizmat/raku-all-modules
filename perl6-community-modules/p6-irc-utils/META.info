@@ -2,6 +2,9 @@
     "name"        : "IRC::Utils",
     "version"     : "0.2.0",
     "description" : "A Perl 6 port of the IRC::Utils module",
+    "provides"    : {
+        "IRC::Utils": "lib/IRC/Utils.pm"
+    },
     "author"      : "Kevin Polulak",
     "authority"   : "soh-cah-toa",
     "depends"     : [],
