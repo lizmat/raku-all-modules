@@ -2,6 +2,9 @@
     "name" : "Redis",
     "version" : "0.1.0",
     "description" : "A Perl6 binding for Redis",
+    "provides" : {
+        "Redis" : "lib/Redis.pm"
+    },
     "author" : "Yecheng Fu",
     "depends" : [],
     "source-type": "git",
