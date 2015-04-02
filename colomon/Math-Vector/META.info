@@ -2,6 +2,9 @@
     "name"        : "Math::Vector",
     "version"     : "*",
     "description" : "Vector math class",
+    "provides"    : {
+        "Math::Vector": "lib/Math/Vector.pm"
+    },
     "depends"     : [],
     "source-type"   : "git",
     "source-url"    : "git://github.com/colomon/Math-Vector.git"
