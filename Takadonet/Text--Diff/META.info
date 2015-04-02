@@ -2,6 +2,12 @@
     "name" : "Text::Diff",
     "version" : "*",
     "description" : "Perform diffs on files and record sets",
+    "provides" : {
+        "Text::Diff"            : "lib/Text/Diff.pm",
+        "Text::Diff::Table"     : "lib/Text/Diff/Table.pm",
+        "Text::Diff::OldStyle"  : "lib/Text/Diff/OldStyle.pm",
+        "Text::Diff::Unified"   : "lib/Text/Diff/Unified.pm"
+    },
     "depends" : ["Algorithm::Diff"],
     "source-type" : "git",
     "source-url" : "git://github.com/Takadonet/Text--Diff.git"
