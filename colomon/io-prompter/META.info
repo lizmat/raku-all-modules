@@ -2,6 +2,9 @@
     "name"        : "IO::Prompter",
     "version"     : "*",
     "description" : "Damian Conway's IO::Prompter",
+    "provides"    : {
+        "IO::Prompter" : "lib/IO/Prompter.pm"
+    },
     "depends"     : ["Testing"],
     "source-type" : "git",
     "source-url"  : "git://github.com/colomon/io-prompter.git",
