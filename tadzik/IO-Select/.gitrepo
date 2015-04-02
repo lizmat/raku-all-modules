@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/IO-Select.git
 	branch = master
-	commit = 4e7e5c8650cfd6332f39419e06739836323113db
-	parent = 5a82f2003a5b2277a9671428b6096423d963b6bb
-	cmdver = 0.1.0
+	commit = 26afc35349d21224007da29ad673a900ee9a5ffb
+	parent = ee48f6ec8f6bf2e943f71aa9d278277f2738a54b
+	cmdver = 0.2.0
