@@ -2,6 +2,9 @@
     "name"        : "Math::Polynomial",
     "version"     : "*",
     "description" : "Simple polynomial class",
+    "provides"    : {
+        "Math::Polynomial": "lib/Math/Polynomial.pm"
+    },
     "depends"     : [],
     "source-type"   : "git",
     "source-url"    : "git://github.com/colomon/Math-Polynomial.git"
