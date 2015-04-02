@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moritz/Math-Model.git
 	branch = master
-	commit = aacc103f76d6cdee856d457523a87c1eea9b0ac2
-	parent = c301d21886a14598ff171b35072964cea481a76c
-	cmdver = 0.1.0
+	commit = c27299eceaedc6a739deb48a0c354ec138cedf80
+	parent = 3c150974a6714ac68e23e96172057929d133e87c
+	cmdver = 0.2.0
