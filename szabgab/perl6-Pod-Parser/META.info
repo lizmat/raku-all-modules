@@ -2,6 +2,10 @@
     "name"        : "Pod::Parser",
     "version"     : "*",
     "description" : "Naive parser for Perl 6 style POD documents",
+    "provides"    : {
+        "Pod::Parser" : "lib/Pod/Parser.pm",
+        "Pod::Parser::Common6" : "lib/Pod/Parser/Common.pm6"
+    },
     "depends"     : [],
     "source-url"  : "git://github.com/szabgab/perl6-Pod-Parser.git"
 }
