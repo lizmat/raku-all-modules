@@ -2,6 +2,7 @@
     "name"        : "mandelbrot",
     "version"     : "*",
     "description" : "Simple Mandelbrot Set scripts",
+    "provides"    : {},
     "depends"     : [],
     "source-type"   : "git",
     "source-url"    : "git://github.com/colomon/mandelbrot.git"

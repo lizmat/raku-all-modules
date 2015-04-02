@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/mandelbrot.git
 	branch = master
-	commit = 18614379c40117e49e86ee2a39dbdbe2277165ec
-	parent = 3e1f9c08c7d9fd3ec0bb34613ff2f0be3cb3fe6c
-	cmdver = 0.1.0
+	commit = bd6d4819f74d989a0d06a092bc43c8cc35c2283e
+	parent = d8973fe5020c610bd3cef39ed9698ade09bac8d3
+	cmdver = 0.2.0
