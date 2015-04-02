@@ -2,6 +2,9 @@
     "name"        : "Text::Fortune",
     "version"     : "*",
     "description" : "Implements most of fortune(6)",
+    "provides" : {
+        "Text::Fortune" : "lib/Text/Fortune.pm6"
+    },
     "depends"     : [ "File::Find" ],
     "source-url"  : "git://github.com/zengargoyle/Text-Fortune.git"
 }
