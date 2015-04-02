@@ -2,6 +2,9 @@
     "name" : "Lingua::EN::Numbers::Ordinal",
     "version" : "*",
     "description" : "A module that generates ordinal numbers from cardinal numbers",
+    "provides" : {
+        "Lingua::EN::Numbers::Ordinal" : "lib/Lingua/EN/Numbers/Ordinal.pm6"
+    },
     "depends" : [],
     "source-url" : "git://github.com/lue/Lingua--EN--Numbers--Ordinal.git"
 }
