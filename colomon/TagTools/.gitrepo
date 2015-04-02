@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/TagTools.git
 	branch = master
-	commit = 7021354b6cbaa5bd128bd44749d34d52c6f9d6c5
-	parent = b7833e5ba4c7cfc803f066918e7dc3653f8ff5fe
+	commit = c9d61b17e2e5e2a179e92fcb3ae06e677f5fbd27
+	parent = bfdaa7c23866e7c4b7efa11b4f6632e48e651d33
 	cmdver = 0.2.0
