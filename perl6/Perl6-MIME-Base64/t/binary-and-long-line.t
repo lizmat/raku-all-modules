@@ -25,13 +25,12 @@ ok $mime.decode('/w==') eq Blob.new(255), 'decode test on byte value 255';
 my $fancy-unicode-chars = "\c[ LEFT CORNER BRACKET ]\c[ SNOWMAN ]\c[
 NEITHER LESS-THAN NOR EQUIVALENT TO ]\c[ GREEK CAPITAL LETTER SIGMA ]";
 
-my  Str $long-enc = q:to"FIN";
-DDADJnQiowMMMAMmdCKjAwwwAyZ0IqMDDDADJnQiowMMMAMmdCKjAwwwAyZ0IqMDDDADJnQiowM=
-FIN
+my  Str $long-enc = "DDADJnQiowMMMAMmdCKjAwwwAyZ0IqMDDDADJnQi"
+                        ~ "owMMMAMmdCKjAwwwAyZ0IqMDDDADJnQiowM=\n";
 
 my blob16 $fancy-utf16-chars = $fancy-unicode-chars.encode('UTF-16');
 # pack 'S*' doesn't work yet so work around by repeating
-my blob8 $fancy-utf16-chars-bytes = 
+my blob8 $fancy-utf16-chars-bytes =
     pack 'S' x $fancy-utf16-chars.elems, $fancy-utf16-chars.list;
 is $mime.encode($fancy-utf16-chars-bytes), 'DDADJnQiowM=',
     'encode some binary utf16 data';
@@ -41,7 +40,7 @@ is $mime.decode('DDADJnQiowM=').decode('UTF-16'), $fancy-unicode-chars,
 $fancy-unicode-chars x= 7;
 $fancy-utf16-chars = $fancy-unicode-chars.encode('UTF-16');
 # pack 'S*' doesn't work yet so work around by repeating
-$fancy-utf16-chars-bytes = 
+$fancy-utf16-chars-bytes =
     pack 'S' x $fancy-utf16-chars.elems, $fancy-utf16-chars.list;
 is $mime.encode($fancy-utf16-chars-bytes), $long-enc,
     'encode enough binary utf16 data for more than one line of result';
