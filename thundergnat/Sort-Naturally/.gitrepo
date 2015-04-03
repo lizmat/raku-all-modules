@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/thundergnat/Sort-Naturally.git
 	branch = master
-	commit = 31ac0526da73dc45a73f3beabad44a641299d25d
-	parent = c1c5ad2df1d3679128800cf76dac5dc79730dbad
-	cmdver = 0.1.0
+	commit = d8b16042f9234d9be91bbfff523b57649751feed
+	parent = 0c0c6eb25b0a549e30b723bff4fc0dc295d8237f
+	cmdver = 0.2.0
