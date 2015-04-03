@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/PSpec.git
 	branch = master
-	commit = eace2dd5bd65ec08df4234865d5c9ea96faf55c7
-	parent = 47fc61e691e1e569dd1ba8620bd1323a8596350d
-	cmdver = 0.1.0
+	commit = 7984289a61e6be05650cab17dbb8f58cdd6d71ba
+	parent = 7d151659945a565ed895cbd3da70b7963c31dddf
+	cmdver = 0.2.0
