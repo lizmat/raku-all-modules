@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sillymoose/URI-Encode.git
 	branch = master
-	commit = e4159956b8024edbbc7c218c4845b342c760cb92
-	parent = 17731fe96d7fd4d0563b0121322ca52f62dd1fe4
-	cmdver = 0.1.0
+	commit = 9adc97d649f41e741a51abf0c2be635aa985e90a
+	parent = 71df2269d2b2bc1ee31d2c5aa094667eef0a62f0
+	cmdver = 0.2.0
