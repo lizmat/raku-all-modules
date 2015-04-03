@@ -3,7 +3,7 @@
     "version" : "1.0.0",
     "author" : "github:retupmoca",
     "description" : "Low-level bindings to zlib",
-    "depends" : ["Inline"],
+    "depends" : [],
     "provides" : {
         "Compress::Zlib::Raw" : "lib/Compress/Zlib/Raw.pm6"
     },

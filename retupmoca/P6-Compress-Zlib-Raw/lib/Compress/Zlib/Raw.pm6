@@ -1,7 +1,6 @@
 use v6;
 module Compress::Zlib::Raw;
 
-use Inline;
 use NativeCall;
 
 sub find-lib {
@@ -60,12 +59,12 @@ our class z_stream is repr('CStruct') is export {
     has long $.reserved;
 
     method set-input(Blob $stuff){
-        set_input_buf(self, $stuff);
+        $!next-in := nativecast CArray[uint8], $stuff;
         $!avail-in = $stuff.bytes;
     }
 
     method set-output(Blob $stuff){
-        set_output_buf(self, $stuff);
+        $!next-out := nativecast CArray[uint8], $stuff;
         $!avail-out = $stuff.bytes;
     }
 };
@@ -73,25 +72,6 @@ our class z_stream is repr('CStruct') is export {
 my sub z_stream_sizeof {
     nativesizeof(z_stream);
 }
-
-# XXX Hack since we can't put a Blob into a CStruct
-my sub set_input_buf(z_stream $z, Blob $b) is inline('C') {
-'
-DLLEXPORT void set_input_buf(void* z, void* b) {
-    typedef struct {void* a;int b;long c;void* d;int e;long f;void* g;void* h;void* i;void* j;void* k;int l;long m;long n;} zs;
-    ((zs*)z)->a = b;
-}
-'
-}
-my sub set_output_buf(z_stream $z, Blob $b) is inline('C') {
-'
-DLLEXPORT void set_output_buf(void* z, void* b) {
-    typedef struct {void* a;int b;long c;void* d;int e;long f;void* g;void* h;void* i;void* j;void* k;int l;long m;long n;} zs;
-    ((zs*)z)->d = b;
-}
-'
-}
-# XXX End hack
 
 our class gz_header is repr('CStruct') is export {
     has int32 $.text;
