@@ -2,6 +2,10 @@
 	"name"		: "IO::Capture::Simple",
 	"version"	: "*",
 	"description"	: "IO can be captured",
+	"provides"	: {
+		"Test::IO::Capture"	: "lib/Test/IO/Capture.pm",
+		"IO::Capture::Simple"	: "lib/IO/Capture/Simple.pm"
+	},
 	"depends"	: [],
 	"source-url"	: "git://github.com/sergot/IO-Capture-Simple.git"
 }
