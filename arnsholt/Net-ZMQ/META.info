@@ -3,6 +3,16 @@
     "version" : "*",
     "author" : "Arne Skjærholt",
     "description" : "ZeroMQ bindings for Perl6",
+    "provides" : {
+        "Net::ZMQ"            : "lib/Net/ZMQ.pm",
+        "Net::ZMQ::Pollitem"  : "lib/Net/ZMQ/Pollitem.pm",
+        "Net::ZMQ::Context"   : "lib/Net/ZMQ/Context.pm",
+        "Net::ZMQ::Constants" : "lib/Net/ZMQ/Constants.pm",
+        "Net::ZMQ::Socket"    : "lib/Net/ZMQ/Socket.pm",
+        "Net::ZMQ::Util"      : "lib/Net/ZMQ/Util.pm",
+        "Net::ZMQ::Poll"      : "lib/Net/ZMQ/Poll.pm",
+        "Net::ZMQ::Message"   : "lib/Net/ZMQ/Message.pm"
+    },
     "depends" : [],
     "source-url" : "git://github.com/arnsholt/Net-ZMQ.git"
 }
