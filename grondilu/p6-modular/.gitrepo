@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/grondilu/p6-modular.git
 	branch = master
-	commit = b442c7714fd19dff995ebdbbe8a676bfdcd013d9
-	parent = 8a39df4922eb20353fbfa80f935712aca9aa8133
-	cmdver = 0.1.0
+	commit = 51d1d3fc5293a4a82070c11d77c2594f959f0e1b
+	parent = b95af15dd08768fa92819d9583d89481831b090a
+	cmdver = 0.2.0

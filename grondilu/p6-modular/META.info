@@ -2,6 +2,9 @@
      "name" : "Modular",
      "version" : "0.1.2",
      "description" : "Modular arithmetics in Perl6",
+     "provides" : {
+          "Modular": "lib/Modular.pm"
+     },
      "author" : "Lucien Grondin",
      "depends" : [ ],
      "source-url" : "git://github.com/grondilu/p6-modular.git"
