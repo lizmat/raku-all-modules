@@ -2,6 +2,19 @@
   "name"        : "Hinges",
   "version"     : "*",
   "description" : "A Genshi-like template engine",
+  "provides"    : {
+    "Hinges"                  : "lib/Hinges.pm",
+    "Hinges::Interpolation"   : "lib/Hinges/Interpolation.pm",
+    "Hinges::StringIO"        : "lib/Hinges/StringIO.pm",
+    "Hinges::Input"           : "lib/Hinges/Input.pm",
+    "Hinges::XMLParser"       : "lib/Hinges/XMLParser.pm",
+    "Hinges::HTMLParser"      : "lib/Hinges/HTMLParser.pm",
+    "Hinges::StreamEventKind" : "lib/Hinges/StreamEventKind.pm",
+    "Hinges::Stream"          : "lib/Hinges/Stream.pm",
+    "Hinges::Markup"          : "lib/Hinges/Markup.pm",
+    "Hinges::Attrs"           : "lib/Hinges/Attrs.pm",
+    "Hinges::Output"          : "lib/Hinges/Output.pm"
+  },
   "depends"     : [],
   "source-url"  : "git://github.com/supernovus/hinges.git"
 }
