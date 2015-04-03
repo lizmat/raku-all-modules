@@ -2,8 +2,9 @@
   "name"        : "DateTime::Utils",
   "version"     : "*",
   "description" : "A meta project for DateTime related libraries.",
-  "depends"     : [ 
-    "DateTime::Format", 
+  "provides"    : {},
+  "depends"     : [
+    "DateTime::Format",
     "DateTime::Math",
     "DateTime::TimeZone"
   ],
