@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/markdown.git
 	branch = master
-	commit = eab671eb85d8caf4b0e0e476149b146d92c60e34
-	parent = 392adc2d22a31dc8300a2d5277488fc371cac575
-	cmdver = 0.1.0
+	commit = a539e697af8b5ea1a564d78a55b6e0f7386f1dad
+	parent = 04392d0546c9191807cd8585140327df037a74ba
+	cmdver = 0.2.0
