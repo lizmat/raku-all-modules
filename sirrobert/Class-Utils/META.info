@@ -2,6 +2,9 @@
   "name"        : "Class::Utils",
   "version"     : "0.1.0",
   "description" : "Small utilities to help with defining classes",
+  "provides"    : {
+    "Class::Utils": "lib/Class/Utils.pm6"
+  },
   "author"      : "Sir Robert Burbridge",
   "depends"     : [ ],
   "source-url"  : "git://github.com/sirrobert/Class-Utils.git"
