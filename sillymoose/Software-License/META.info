@@ -2,6 +2,17 @@
     "name" : "Software::License",
     "version" : "0.02",
     "description" : "a Perl 6 module for creating free software license texts",
+    "provides" : {
+        "Software::License"         : "lib/Software/License.pm6",
+        "Software::License::GPL3"   : "lib/Software/License/GPL3.pm6",
+        "Software::License::Artistic_2_0":
+            "lib/Software/License/Artistic_2_0.pm6",
+        "Software::License::MIT"    : "lib/Software/License/MIT.pm6",
+        "Software::License::BSD"    : "lib/Software/License/BSD.pm6",
+        "Software::License::FreeBSD": "lib/Software/License/FreeBSD.pm6",
+        "Software::License::Apache_2_0":
+            "lib/Software/License/Apache_2_0.pm6"
+    },
     "author" : "David Farrell",
     "depends" : [ ],
     "source-url" : "git://github.com/sillymoose/Software-License.git"
