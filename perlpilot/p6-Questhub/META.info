@@ -2,6 +2,11 @@
     "name" : "Questhub",
     "version"  : "0.0.1",
     "description" : "Implementation of http://questhub.io API + CLI",
+    "provides" : {
+        "Questhub"               : "lib/Questhub.pm6",
+        "Questhub::Quest"        : "lib/Questhub/Quest.pm6",
+        "Questhub::Quest::State" : "lib/Questhub/Quest/State.pm6"
+    },
     "author" : "Jonathan Scott Duff <duff@pobox.com>",
     "depends" : [ "JSON::Tiny", "HTTP::UserAgent", "Term::ANSIColor", "IO::Socket::SSL" ],
     "source-url" : "git://github.com/perlpilot/p6-Questhub.git"
