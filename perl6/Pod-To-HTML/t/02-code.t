@@ -13,8 +13,8 @@ This ordinary paragraph introduces a code block:
 $r = node2html $=pod[0];
 ok $r ~~ ms[[
     '<p>' 'This ordinary paragraph introduces a code block:' '</p>'
-    '<pre>$this = 1 * code(&#39;block&#39;);
-$which.is_specified(:by&lt;indenting&gt;);</pre>']];
+    '<pre>$this = 1 * code(&#39;block&#39;);'
+'$which.is_specified(:by&lt;indenting&gt;);</pre>']];
 
 =begin pod
 This is an ordinary paragraph
@@ -33,10 +33,10 @@ But this is just a text. Again
 
 $r = node2html $=pod[1];
 ok $r ~~ ms[['<p>' 'This is an ordinary paragraph' '</p>'
-'<pre>While this is not
-This is a code block</pre>'
+'<pre>While this is not'
+'This is a code block</pre>'
 '<h1 id="Mumble_mumble">' '<a class="u" href="#___top" title="go to top of document">'
-    Mumble mumble
+    'Mumble mumble'
 '</a>' '</h1>'
 '<p>' 'Suprisingly, this is not a code block (with fancy indentation too)' '</p>'
 '<p>' 'But this is just a text. Again' '</p>']];
