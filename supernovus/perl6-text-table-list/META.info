@@ -2,6 +2,10 @@
   "name"        : "Text::Table::List",
   "version"     : "*",
   "description" : "Build simple text-based tables for field listings.",
+  "provides": {
+    "Text::Table::List": "lib/Text/Table/List.pm6",
+    "Text::Table::List::ASCII": "lib/Text/Table/List/ASCII.pm6"
+  },
   "depends"     : [ ],
   "source-url"  : "git://github.com/supernovus/perl6-text-table-list.git"
 }

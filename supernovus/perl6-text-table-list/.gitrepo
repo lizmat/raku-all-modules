@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-text-table-list.git
 	branch = master
-	commit = 6cbb88f4bb4ff5dbc2def6c41a4ac64738349e64
-	parent = f6b0b9dbdc3cdf6f7b79ef8b7ccfa0583e8efaf6
+	commit = 18ab9df971c547f089101cee5dc4f5452dcbfcd5
+	parent = 2f56b570c1aec3903711a6c89615ed99bf83517e
 	cmdver = 0.2.0
