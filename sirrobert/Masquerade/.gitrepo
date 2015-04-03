@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sirrobert/Masquerade.git
 	branch = master
-	commit = 7238ee81df4b1931aaf4fbe4d91742e9bd33ac1e
-	parent = fdd471bd485f120351aa94d8f94083bec308f166
-	cmdver = 0.1.0
+	commit = b2ea60c9dfe70fbe7fdd715a5cfab0980e81d363
+	parent = 887511848a14d3826b6612d220ec67ca8d237c00
+	cmdver = 0.2.0

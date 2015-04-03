@@ -2,7 +2,13 @@
   "name"        : "Masquerade",
   "version"     : "*",
   "description" : "Let Perl 6 constructs masquerade as other things.",
+  "provides"    : {
+    "Masquerade"             : "lib/Masquerade.pm6",
+    "Masquerade::AsIf::YAML"  : "lib/Masquerade/AsIf/YAML.pm",
+    "Masquerade::AsIf::JSON" : "lib/Masquerade/AsIf/JSON.pm6",
+    "Masquerade::AsIf::Perl" : "lib/Masquerade/AsIf/Perl.pm6"
+  },
   "author"      : "Sir Robert Burbridge",
   "depends"     : ["JSON::Tiny"],
-  "source-url"  : "git://github.com/sirrobert/Masquerade.git" 
+  "source-url"  : "git://github.com/sirrobert/Masquerade.git"
 }
