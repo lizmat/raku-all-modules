@@ -3,6 +3,10 @@
     "author"      : "github:uasi",
     "version"     : "*",
     "description" : "A MessagePack implementation",
+    "provides"    : {
+        "MessagePack"           : "lib/MessagePack.pm6",
+        "MessagePack::Unpacker" : "lib/MessagePack/Unpacker.pm6"
+    },
     "depends"     : [],
     "source-url"  : "git://github.com/uasi/messagepack-pm6.git"
 }
