@@ -2,6 +2,9 @@
     "name" : "Path::Util",
     "version" : "*",
     "description" : "decompose file path",
+    "provides" : {
+        "Path::Util" : "lib/Path/Util.pm"
+    },
     "depends" : [ ],
     "source-url" : "git://github.com/jaffa4/pathutil.git"
 }
