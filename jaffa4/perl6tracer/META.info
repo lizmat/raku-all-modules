@@ -2,6 +2,9 @@
     "name" : "Perl6::Tracer",
     "version" : "0.1",
     "description" : "trace Perl6",
+    "provides" : {
+        "Perl6::Tracer" : "lib/Perl6/Tracer.pm"
+    },
     "depends" : ["Perl6::Parsing"],
     "source-url" : "git://github.com/jaffa4/perl6tracer.git"
 }
