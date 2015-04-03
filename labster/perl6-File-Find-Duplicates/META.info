@@ -2,6 +2,9 @@
   "name"        : "File::Find::Duplicates",
   "version"     : "*",
   "description" : "Get a list of duplicate files in directories",
+  "provides"    : {
+    "File::Find::Duplicates": "lib/File/Find/Duplicates.pm6"
+  },
   "author"      : "Brent Laabs",
   "depends"     : [ "File::Find", "Digest", "File::Compare" ],
   "source-url"  : "git://github.com/labster/perl6-File-Find-Duplicates.git"
