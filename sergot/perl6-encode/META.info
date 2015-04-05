@@ -1,6 +1,6 @@
 {
     "name" : "Encode",
-    "version" : "0.0.1",
+    "version" : "0.0.2",
     "author" : "github:sergot",
     "description" : "Character encodings in Perl 6",
     "depends" : [],
