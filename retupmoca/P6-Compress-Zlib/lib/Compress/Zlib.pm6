@@ -9,7 +9,7 @@ our sub compress(Blob $data, Int $level = 6 --> Buf) is export {
         die "compression level must be between -1 and 9";
     }
 
-    my $outlen = CArray[int].new();
+    my $outlen = CArray[long].new();
     $outlen[0] = Compress::Zlib::Raw::compressBound($data.bytes);
     my $outdata = buf8.new;
     $outdata[$outlen[0] - 1] = 1;
@@ -23,7 +23,7 @@ our sub compress(Blob $data, Int $level = 6 --> Buf) is export {
 our sub uncompress(Blob $data --> Buf) is export {
     my $bufsize = $data.bytes;
     my $outdata = buf8.new();
-    my $outlen = CArray[int].new();
+    my $outlen = CArray[long].new();
     my $ret = Compress::Zlib::Raw::Z_BUF_ERROR;
     while $ret == Compress::Zlib::Raw::Z_BUF_ERROR {
         $bufsize = $bufsize * 2;
