@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/timo/SDL2_Raw-p6.git
 	branch = master
-	commit = 65e0c2c3bcfc71d5ec0d999300de162c38c7686b
-	parent = e15ba74f3e6229a3653fe94309c17322a752fb08
+	commit = 6e90e48463eeb9f026b2b71c5e593f4dbd37c7bc
+	parent = 59c6762ddeaee6124739e90cc7ed950247f17d50
 	cmdver = 0.2.0
