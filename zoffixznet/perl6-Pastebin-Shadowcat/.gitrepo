@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-Pastebin-Shadowcat.git
+	branch = master
+	commit = 71466212fdd7e02bf2ff1c6b1c3b92f5ce086bca
+	parent = 4568dda4838703166ead348f1266fb532660c5dc
+	cmdver = 0.2.0

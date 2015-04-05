@@ -1,0 +1,12 @@
+{
+    "name"        : "Pastebin::Shadowcat",
+    "version"     : "1.001001",
+    "description" : "Use http://fpaste.scsys.co.uk/ pastebin from Perl 6",
+    "depends"     : [ "LWP::Simple", "URI::Encode", "HTML::Entity" ],
+    "provides"    : {
+        "Pastebin::Shadowcat" : "lib/Pastebin/Shadowcat.pm6"
+    },
+    "author"      : "Zoffix Znet",
+    "authority"   : "zoffixznet",
+    "source-url"  : "git://github.com/zoffixznet/perl6-Pastebin-Shadowcat.git"
+}
