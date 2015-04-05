@@ -12,7 +12,7 @@ ok (($version = zlibVersion) ~~ /^1/), 'Got zlib version ('~$version~')';
 
 my $to-compress = "test".encode;
 
-my $return-buf-len = CArray[int].new;
+my $return-buf-len = CArray[long].new;
 $return-buf-len[0] = 128;
 
 my $return-buf = buf8.new;
@@ -25,7 +25,7 @@ ok ($to-compress[0] != $return-buf[0]), 'Compressed data is different than input
 my $orig-buf = buf8.new;
 $orig-buf[127] = 1;
 
-my $orig-size = CArray[int].new;
+my $orig-size = CArray[long].new;
 $orig-size[0] = 128;
 
 is uncompress($orig-buf, $orig-size, $return-buf, $return-buf-len[0]), Compress::Zlib::Raw::Z_OK, 'Uncompressed data';
