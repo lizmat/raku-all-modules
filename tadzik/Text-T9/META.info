@@ -2,6 +2,9 @@
     "name" : "Text::T9",
     "version" : "*",
     "description" : "Guess words basing on a T9 key sequence",
+    "provides" : {
+        "Text::T9" : "lib/Text/T9.pm"
+    },
     "depends" : [],
     "source-url" : "git://github.com/tadzik/Text-T9.git"
 }

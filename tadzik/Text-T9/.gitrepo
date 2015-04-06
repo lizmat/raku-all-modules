@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Text-T9.git
 	branch = master
-	commit = afc4561c61a7f0cc64211e6313d94d76e9ad3f1e
-	parent = be717898800b2cb96454f74bf3a875fe7fccbb1c
-	cmdver = 0.1.0
+	commit = 53387061af7e049f0878396e980eaff294f0b32b
+	parent = 9e5a084d07249ba75a322eda9b1f657416e1ec31
+	cmdver = 0.2.0
