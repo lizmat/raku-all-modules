@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Template-Mojo.git
 	branch = master
-	commit = 81eb29da3b6ce341643c413362a3046653c2904f
-	parent = 49927eba7b8c443e68cd50b4c5e89093617c2b78
+	commit = b0ca0e4108d275049cd5f98f0c2c5057aa71c847
+	parent = 31ab031feca6e78f552c04c8668a7343bfd703c6
 	cmdver = 0.2.0
