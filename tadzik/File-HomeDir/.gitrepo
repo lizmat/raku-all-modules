@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/File-HomeDir.git
 	branch = master
-	commit = 483488a0dda9b2fc814fb6444d9fd587e45a1671
-	parent = eeba932128efda311041dc413ed206cbd2035626
-	cmdver = 0.1.0
+	commit = 04cdacaa24124670766b55b716cfec0995ddd515
+	parent = 56bc95774ac358b1b2ed91b5a3892b7cc7f32e8b
+	cmdver = 0.2.0
