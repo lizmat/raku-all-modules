@@ -2,6 +2,10 @@
     "name"        : "Config::INI",
     "version"     : "*",
     "description" : ".ini file parser and writer module for Perl 6",
+    "provides": {
+        "Config::INI"         : "lib/Config/INI.pm",
+        "Config::INI::Writer" : "lib/Config/INI/Writer.pm"
+    },
     "depends"     : [],
     "source-url"  : "git://github.com/tadzik/perl6-Config-INI.git"
 }
