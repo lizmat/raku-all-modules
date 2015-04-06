@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Threads.git
 	branch = master
-	commit = f8a417fe95c047403a0fc3b4f56e5de511350965
-	parent = 7df77a9f339c9b2ece386c6f34406180bd0d2f22
-	cmdver = 0.1.0
+	commit = a961c58f39f0939a32ed2f53651662e8cb3d756e
+	parent = 72dde8b8bf9cbdf1c191072efc565924ae49a9bd
+	cmdver = 0.2.0

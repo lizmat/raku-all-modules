@@ -2,6 +2,10 @@
     "name"        : "Threads",
     "version"     : "*",
     "description" : "Threads in Perl 6. Yeah, really",
+    "provides"    : {
+        "Semaphore" : "lib/Semaphore.pm",
+        "Threads"   : "lib/Threads.pm"
+    },
     "depends"     : [],
     "source-url"  : "git://github.com/tadzik/Threads.git"
 }
