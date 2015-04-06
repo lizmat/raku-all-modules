@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/ClassX-StrictConstructor.git
 	branch = master
-	commit = 1e54d28a34a607e2d528e3604082409e350a1961
-	parent = 306b6fdf13556917d94692afb3f8536d37bb0458
-	cmdver = 0.1.0
+	commit = 587cf74b4517782b136b73826e4ae6ec753ac1af
+	parent = fa2144eee6eb7fb014f1ca051bb78597ecafb50b
+	cmdver = 0.2.0
