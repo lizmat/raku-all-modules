@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/MuEvent.git
 	branch = master
-	commit = f96b2f93cba97924ec46a3050974dbc315c442e7
-	parent = e870ac30953a15744790a7eea06b0abd3f981253
-	cmdver = 0.1.0
+	commit = 082e82939f9716593820a398a83c9d1b7a442e08
+	parent = 82cc21c6b8ac1486f55ab8925a948dbe8e7660e8
+	cmdver = 0.2.0
