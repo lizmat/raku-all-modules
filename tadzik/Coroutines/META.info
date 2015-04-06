@@ -2,6 +2,9 @@
     "name"        : "Coroutines",
     "version"     : "*",
     "description" : "The only fake threads in Perl 6",
+    "provides": {
+        "Coroutines": "lib/Coroutines.pm"
+    },
     "depends"     : [],
     "source-url"  : "git://github.com/tadzik/Coroutines.git"
 }
