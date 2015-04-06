@@ -2,6 +2,9 @@
     "name"        : "MPD",
     "version"     : "*",
     "description" : "Interface to libmpdclient C library",
+    "provides"    : {
+        "MPD" : "lib/MPD.pm"
+    },
     "depends"     : [ ],
     "source-url"  : "git://github.com/tadzik/perl6-MPD.git"
 }
