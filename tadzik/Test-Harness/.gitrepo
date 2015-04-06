@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Test-Harness.git
 	branch = master
-	commit = 9208c1f152fc6cae08087d928afb8c710131b4d1
-	parent = e9e860da7b1151acf2d5200b07e2e7c7cb9164ed
-	cmdver = 0.1.0
+	commit = e9a68c45f6505a0902ff6fc804b53d55b1881ba6
+	parent = b0e50a2e475da3db59d285bdb1f353315deba1b7
+	cmdver = 0.2.0

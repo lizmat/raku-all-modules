@@ -2,6 +2,9 @@
     "name"        : "Test::Harness",
     "version"     : "*",
     "description" : "Read TAP output",
+    "provides"    : {
+        "Test::Harness" : "lib/Test/Harness.pm"
+    },
     "depends"     : [],
     "source-url"  : "git://github.com/tadzik/Test-Harness.git"
 }
