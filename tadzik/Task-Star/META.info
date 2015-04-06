@@ -30,6 +30,7 @@
         "Shell::Command",
         "File::Find"
     ],
+    "provides" : { },
     "source-url"  : "git://github.com/tadzik/Task-Star.git"
 }
 
