@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/Math-Polynomial.git
 	branch = master
-	commit = 4c50fbb6c615d9f1463b82f30c66fa8e4aa6d861
-	parent = 77b0dcd4c0482ec776e04b5f3fca18857689cc25
+	commit = ce433a7c208dff42c96bf1e7844706e19c158c06
+	parent = a5e149bd919a14e34731785e048e9d5a23029a32
 	cmdver = 0.2.0

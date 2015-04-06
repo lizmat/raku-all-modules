@@ -113,8 +113,12 @@ class Math::Polynomial {
     }
 
     multi sub infix:<**>(Math::Polynomial $a, Int $b where $b >= 0) is export(:DEFAULT) {
-        $b == 0 ?? Math::Polynomial.new(1)
-                !! ($a xx $b).reduce(* * *);
+        given $b {
+            when 0 { Math::Polynomial.new(1) }
+            when 1 { Math::Polynomial.new($a.coefficients) }
+            when 2 { $a * $a }
+            default { ($a xx $b).reduce(* * *) }
+        }
     }
 
     method divmod(Math::Polynomial $that) {
