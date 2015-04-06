@@ -2,6 +2,9 @@
     "name"        : "JSON::Unmarshal",
     "version"     : "0.01",
     "description" : "Turn JSON into objects",
+    "provides"    : {
+        "JSON::Unmarshal" : "lib/JSON/Unmarshal.pm"
+    },
     "depends"     : ["JSON::Tiny"],
     "source-url"  : "git://github.com/tadzik/JSON-Unmarshal.git"
 }
