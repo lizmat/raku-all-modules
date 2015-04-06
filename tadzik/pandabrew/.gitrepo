@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/pandabrew.git
 	branch = master
-	commit = 039d498ce430ec83024df3ac086a25c64f60cc73
-	parent = 0b61cbb0e1790102568c09de3bfa6c54d4ad37d4
-	cmdver = 0.1.0
+	commit = 599e289ddf33b5ceae43023ce3b3ed6c569e2757
+	parent = b4851b1f4ada80b471a06db24a1ee7096e3b84b6
+	cmdver = 0.2.0
