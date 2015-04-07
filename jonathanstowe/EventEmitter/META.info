@@ -1,0 +1,20 @@
+{
+  "perl" : "v6",
+  "name" : "EventEmitter",
+  "author" : "github:jonathanstowe",
+  "description" : "Roles to give objects 'events'",
+  "version" : "v0.0.1",
+  "build-depends" : [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "depends" : [ ],
+  "provides" : {
+    "EventEmitter::Node" : "lib/EventEmitter/Node.pm6",
+    "EventEmitter::Typed" : "lib/EventEmitter/Typed.pm6"
+  },
+  "support" : {
+    "source" : "git://github.com/jonathanstowe/EventEmitter.git"
+  },
+  "source-url" : "https://github.com/jonathanstowe/EventEmitter.git"
+}
