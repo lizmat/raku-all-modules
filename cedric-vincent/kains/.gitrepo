@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/cedric-vincent/kains.git
+	branch = master
+	commit = d9d223645eea124ea654ed932ceef0e2dd43b774
+	parent = 4a4ac9edca924143fe220a2ea1665e250f4d2f68
+	cmdver = 0.2.0
