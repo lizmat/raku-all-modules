@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-css/perl6-CSS-Writer.git
 	branch = master
-	commit = f4446f3936f5f091b411be39d3ba224420d94b44
-	parent = fe9d1731db02d158419ca7f79f843dac1d93652a
+	commit = 97b8390f49d43b15d12f93848281ff789ca38bfe
+	parent = 9471686e0ec9354e10454f33097fec1378be6340
 	cmdver = 0.2.0
