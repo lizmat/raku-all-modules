@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6/Perl6-MIME-Base64.git
 	branch = master
-	commit = 120d1d256fce97f5de860670fc824c5127c719a6
-	parent = 8ede6c0b047a711f1d4aecd90d9ad475287b3038
+	commit = 70da02d785222e68015f73b6db43959587324d1f
+	parent = 9d8d97f2588a634ece7d728974e21439d2f2c459
 	cmdver = 0.2.0

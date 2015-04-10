@@ -30,25 +30,6 @@ or
 
 ## Methods ##
 
-### `new($backend?)`
-
-Creates a new MIME::Base64 object that will use a specific backend, or the
-current default backend if not specified.
-
-Note that all of the below methods can be called on MIME::Base64 directly. `.new`
-is only required if you want to encode using two different backends at the same
-time.
-
-### `set-backend($backend)`
-
-When called on an object, sets the backend for that object only. Otherwise, sets
-the default backend.
-
-### `get-backend()`
-
-When called on an object, returns the currently used backend. Otherwise, returns
-the default backend.
-
 ### `encode(Blob $data, :$oneline --> Str)`
 
 Encodeѕ binary data `$data` in base64 format.
@@ -82,17 +63,9 @@ Calls `.encode-str($string)`
 
 Calls `.decode-str($encoded)`
 
-## Backends ##
-
-### `MIME::Base64::PIR`
-
-Calls out to parrot's base64 library to encode/decode. Selected by default when
-running rakudo on top of parrot.
-
 ### `MIME::Base64::Perl`
 
-Pure Perl 6 implementation of base64 encoding. Selected by default when no other
-backends can be used.
+Pure Perl 6 implementation of base64 encoding.
 
 ## Known Issues ##
 

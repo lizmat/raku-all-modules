@@ -11,8 +11,7 @@ plan 11;
 # The tests are a bit hacky at this point but recommended as needed
 # because the point of base64 in MIME/email is to encode binary data.
 
-# PIR doesn't do binary so for now we force Pure Perl solution
-my MIME::Base64 $mime .= new(MIME::Base64::Perl);
+my MIME::Base64 $mime .= new;
 
 is $mime.encode(Blob.new(0)), 'AA==', 'encode test on NULL/0 byte';
 is $mime.encode(Blob.new(1, 0)), 'AQA=', 'test NULL byte in second slot';

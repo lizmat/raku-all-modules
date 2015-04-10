@@ -1,6 +1,6 @@
 {
     "name"        : "MIME::Base64",
-    "version"     : "1.1",
+    "version"     : "1.2",
     "author"      : "github:retupmoca",
     "description" : "Encoding and decoding Base64 ASCII strings",
     "depends"     : [],
