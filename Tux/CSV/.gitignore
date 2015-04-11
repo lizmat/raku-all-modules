@@ -1,0 +1,22 @@
+CSV_XS*
+xx*
+test-x.pl
+tmp/
+sandbox/cover_db*
+sandbox/i-ttt*
+sandbox/parse-*.png
+sandbox/print-*.png
+sandbox/rfc7111.odt
+sandbox/test.*
+profile*.html
+
+# And for CSV6
+t-old/*
+xt/??_*
+?.pl
+?.csv
+
+# Re-enable parts later
+sandbox/
+examples/
+files/
