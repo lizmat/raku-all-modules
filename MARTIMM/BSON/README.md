@@ -6,19 +6,19 @@ Implements [BSON specification](http://bsonspec.org/).
 
 ## INSTALLING BSON
 
-Use panda to install the package like so. When installing MongoDB, BSON will be
-installed automatically as a dependency.
-
-
+Use panda to install the package like so.
 ```
-$ panda install MongoDB
+$ panda install BSON
 ```
+
+When installing MongoDB, BSON will be installed automatically as a dependency.
+
 
 ## VERSION PERL AND MOARVM
 
 ```
 $ perl6 -v
-This is perl6 version 2015.02-188-ga99a572 built on MoarVM version 2015.02-25-g3d0404a```
+This is perl6 version 2015.04-5-g59f57a8 built on MoarVM version 2015.04-3-gbb50941
 
 ## SYNOPSIS
 
@@ -104,6 +104,16 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.3
+  * Bugfix encoding very small double precision floating point numbers.
+  * Working to encapsulate the encoding/decoding work. When also the method used
+    to walk through the byte array using shift() when decoding and instead use
+    an index in the string, it might well be possible to parallelize the
+    encoding as well as decoding process. Also keeping an index is also faster
+    than shifting because the array doesn't have to be changed all the time.
+  * Changed role/class idea of test files Double.pm6 and Encodable.pm6. These
+    are now D.pm6, EDC.pm6 and EDC-Tools.pm6. The Double is there a role while
+    the Encodable is a class.
 * 0.9.2 Upgraded Rakudo * ===> Bugfix in BSON
 * 0.9.1 Testing with decode/encode classes and roles
 * 0.9.0
