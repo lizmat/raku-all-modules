@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/timo/json_fast.git
+	branch = master
+	commit = c1931f4b7752b80b06791e510a36c1adff029b15
+	parent = 9a031297ba42d03ec25b7daee37adc529cf9e320
+	cmdver = 0.2.1
