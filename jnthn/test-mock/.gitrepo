@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/test-mock.git
 	branch = master
-	commit = 3e9f613db5caec21817dad56a76d2977aae73f97
-	parent = 7da61904930ae184e3d08f9a4bf3844b4b02490b
-	cmdver = 0.1.0
+	commit = 53e851259864464189500146a948ee6ce31c6892
+	parent = 7439684a2bf63cecaf58fb5e83c5243eb59910dc
+	cmdver = 0.2.1
