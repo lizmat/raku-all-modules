@@ -52,7 +52,9 @@ Since you have to put a C<:> after the method if you want to pass arguments
 without parentheses, a method call without a colon or parens is
 unambiguously a method call without an argument list:
 
-    $computation-result.say;
+    say 4.log:   ; # 1.38629436111989 ( natural logarithm of 4 )
+    say 4.log: +2; # 2                ( base-2 logarithm of 4 )
+    say 4.log  +2; # 3.38629436111989 ( natural logarithm of 4, plus 2 )
 
 Many operations that don't look like method calls (for example, smart
 matching, or interpolating an object into a string) result in method calls
@@ -100,7 +102,7 @@ sub f(Int $x) {
 Although, in most cases, the L<C<.isa>|isa> method will suffice:
 
 =for code :allow<B L>
-sub f(Int $x) {
+sub f($x) {
     if $xB<.L<isa>>(Int) {
         ...
     }
@@ -193,7 +195,7 @@ somewhat functional.
     =end code
 
 Note that the default constructor will only set attributes that have an
-accessor method.
+accessor method, but it can initialize read-only attributes.
 
 =head2 Methods
 
@@ -224,8 +226,7 @@ Methods are declared with the C<method> keyword inside a class body.
 A method can have a signature, just like a subroutine. Attributes can be
 used in methods and can always be used with the C<!> twigil, even if they
 are declared with the C<.> twigil. This is because really, the C<.> twigil
-declares an attribute with the C<!> twigil in its place and then
-additionally generates an accessor method.
+declares a C<!> twigil and then additionally generates an accessor method.
 
 There is a subtle but important difference between using, say, C<$!origin>
 and C<$.origin> in the method C<describe>. The first is always a simple
@@ -469,6 +470,48 @@ class MyClass {
 =end code
 
 =comment TODO: better example for BUILDALL overriding
+
+=head2 Object Cloning
+
+The C<Mu> parent class, from which all classes inherit, supplies a
+method named L<clone> which is somewhat magical, in that it can copy
+values from an instance's private attributes to create a new instance.
+This cloning is shallow, in that it only binds attributes to
+the same values they contained in the original instance; it does
+not make copies of those contained values.
+
+As with C<new>, one may provide initial values for public attributes.
+These override values received from the original instance.  (See
+the documentation for Mu's L<clone> for an example.)
+
+Note that since C<clone> is not a C<submethod>, a class which provides
+its own C<clone> method will replace the C<Mu> method.  There is no
+automatic mechanism like C<BUILDALL> for cloning.  For example, if one
+wished to make clone deeper for a particular class, one would will
+probably want to use C<callwith> or C<nextwith> to push the deeper
+copies to superclasses:
+
+    class A {
+        has $.a;
+        #...
+        method clone {
+            nextwith(:a($.a.clone))
+        }
+    }
+
+This works well for simple classes, but in some cases one might need
+to follow C<BUILDALL>'s lead and work in reverse method resolution
+order:
+
+    class B is A {
+        has $.b;
+        #...
+        method clone {
+            my $obj = callsame;
+            $obj.b = $!b.clone(:seed($obj.a.generate_seed));
+            $obj
+        }
+    }
 
 =head1 X<Roles|declarator,role>
 

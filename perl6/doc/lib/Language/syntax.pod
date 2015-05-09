@@ -24,7 +24,7 @@ input encoding.
 
 It is free-form, in the sense that you are mostly free to
 chose the amount of whitespace you chose, though in some cases, the presence
-or absensce of whitespace carries meaning.
+or absence of whitespace carries meaning.
 
 So you can write
 
@@ -99,7 +99,7 @@ if $age > 250 {     # catch obvious outliers
 
 =head3 Embedded comments
 
-Embedded comments start with a hash character, followed by a backticket, and
+Embedded comments start with a hash character, followed by a backtick, and
 then some opening bracketing character, and end with the matching closing
 bracketing character.
 
@@ -128,7 +128,28 @@ of comment
 say 'code again';
 =end code
 
-=comment TODO: identifiers
+=head2 Identifiers
+
+Identifiers are a grammatical building block that occur in several places. An
+identifier is a primitive name, and must start with an alphabetic character
+(or an underscore), followed by zero or more word characters (alphabetic,
+underscore or letter). You can also join two or more identifiers by a dash
+C<-> or a single quote C<'>, and the result is also considered to be an
+identifier.
+
+    # valid identifiers:
+    x
+    something-longer
+    with-numbers1234
+    don't
+
+    # not valid identifiers:
+    with-nubmers1234-5
+    42
+
+Names of constants, types and routines are identifiers, and they also appear
+in variable names (optionally proceeded by a sigil; see
+L</language/variables|variables> for more details.)
 
 =head1 Statements and Expressions
 
@@ -176,8 +197,8 @@ See the L<documentation on variables|/language/variables> for more details.
 =head2 Barewords (Constants, Type Names)
 
 Pre-declared identifiers can be terms on their own. Those are typically type
-names or constants, but also the term C<self> which refers to an objectt that
-a method was called on (see L<objects|/language/objects>), and sigilles
+names or constants, but also the term C<self> which refers to an object that
+a method was called on (see L<objects|/language/objects>), and sigiless
 variables:
 
     say Int;                # (Int)
@@ -226,7 +247,7 @@ Number literals are generally specified in base ten, unless a prefix like
 C<0x> (heB<x>ademcimal, base 16), C<0o> (B<o>ctal, base 8) or C<0b>
 (B<b>inary, base 2) or an explicit base in adverbial notation like
 C<< :16<A0> >> specifies it otherwise. Unlike other programming languages,
-leading zeros do I<not> indicate base 8; instea a compile-time warning is
+leading zeros do I<not> indicate base 8; instead a compile-time warning is
 issued
 
 In all literal formats, you can use underscores to group digits;
@@ -234,7 +255,7 @@ they don't carry any semantic; the following literals all evaluate to the same
 number:
 
     1000000
-    1_000_000  
+    1_000_000
     10_0000
     10_00_00
 
@@ -307,11 +328,26 @@ Long forms with explicit values:
     :thing['some', 'values']    # same as  thing => ['some', 'values']
     :thing{a => 'b'}            # same as  thing => { a => 'b' }
 
-=begin comment
-
 =head3 Array literals
 
-TODO
+A pair of square brackets can surround an expression to for an
+itmized L<Array|/type/Array> literal; typically there is a comma-delimited list
+inside:
+
+    say ['a', 'b', 42].join(' ');   # a b 42
+    #   ^^^^^^^^^^^^^^ Array constructor
+
+The array constructor flattens non-itemized arrays and lists, but not itemized
+arrays themselves:
+
+    my @a = 1, 2;
+    # flattens:
+    say [@a, 3, 4].elems;       # 4
+
+    # does not flatten:
+    say [[@a], [3, 4]].elems;   # 2
+
+=begin comment
 
 =head3 Hash literals
 
@@ -333,7 +369,7 @@ TODO
 
 TODO: link to language/operators
 
-=head1 
+=head1
 
 =end comment
 
