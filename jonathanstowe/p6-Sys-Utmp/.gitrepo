@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/p6-Sys-Utmp.git
+	branch = master
+	commit = b4a905df26170f582647d7762a57117e9a4d0de0
+	parent = 2bbe22dcbbd1f33becc1eeb2e9ed84b6294b2abb
+	cmdver = 0.2.1

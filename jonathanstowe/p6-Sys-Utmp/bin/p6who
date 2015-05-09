@@ -1,0 +1,11 @@
+#!perl6
+
+use v6;
+
+use Sys::Utmp;
+
+my $u = Sys::Utmp.new;
+
+for $u.list.grep(UserProcess) -> $ent {
+      say $ent;
+}
