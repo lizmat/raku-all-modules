@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/paultcochrane/Perl6Mongers-Hannover.git
 	branch = master
-	commit = 5574bc1eafb4ea03f02fad230da4dd435795d4d1
-	parent = fc0c91ab152537658f78a2f3e689e5680a82cec4
-	cmdver = 0.2.0
+	commit = 6a7c512a64acf88b74da9a607c429f3002b09868
+	parent = 70ad78e5b0b0df5a89914d67c276bc1079aae56e
+	cmdver = 0.2.1

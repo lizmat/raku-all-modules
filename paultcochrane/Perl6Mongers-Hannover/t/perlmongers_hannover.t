@@ -1,5 +1,7 @@
-use Test;
 use v6;
+
+use Test;
+use lib 'lib';
 use IO::Capture::Simple;
 
 plan 1;

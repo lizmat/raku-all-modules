@@ -15,7 +15,7 @@ PerlMongers::Hannover - Hannover Perl Mongers
 
 =head1 VERSION
 
-Version 0.7.6
+Version 0.8.6
 
 =head1 SYNOPSIS
 
@@ -41,7 +41,7 @@ L<mailto:hannover-pm@pm.org>
 
 =head2 Meetups
 
-Every odd calendar week Tuesday at 6pm; date and location details announced
+Every second and fourth Thursday at 6pm; date and location details announced
 via Twitter, email and via the web site:
 
 http://hannover.pm/treffen
@@ -85,11 +85,11 @@ modeled after C<PerlMongers::Bangalore>.
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Hannover Perl Mongers.
+This software is copyright (c) 2015 by Hannover Perl Mongers.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =end pod
 
-# vim: ft=perl6
+# vim: expandtab shiftwidth=4 ft=perl6
