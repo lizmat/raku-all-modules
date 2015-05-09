@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sillymoose/Software-License.git
 	branch = master
-	commit = fa38bdd6ab92011520d5ecc2b3213b0affddc51a
-	parent = e8b9689825a3c36e29763239eae634d1d28fd664
-	cmdver = 0.2.0
+	commit = 1b47d2974e1ed30d5074b89ef0571ef70f02bccc
+	parent = a42e62b91cd236c049ce3178475e186d782cc38b
+	cmdver = 0.2.1

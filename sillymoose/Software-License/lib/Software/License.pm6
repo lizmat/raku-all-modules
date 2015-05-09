@@ -5,7 +5,7 @@ use Software::License::FreeBSD;
 use Software::License::GPL3;
 use Software::License::MIT;
 
-class Software::License:ver<0.02>
+class Software::License:ver<0.03>
 {
     method full-text (Str:D $license_name, Str:D $holder, Int:D $year=DateTime.new(time).year)
     {

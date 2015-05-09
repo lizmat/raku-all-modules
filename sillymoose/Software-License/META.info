@@ -1,6 +1,6 @@
 {
     "name" : "Software::License",
-    "version" : "0.02",
+    "version" : "0.03",
     "description" : "a Perl 6 module for creating free software license texts",
     "provides" : {
         "Software::License"         : "lib/Software/License.pm6",
