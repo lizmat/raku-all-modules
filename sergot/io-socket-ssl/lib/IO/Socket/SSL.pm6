@@ -72,7 +72,7 @@ method !initialize {
             my $e = OpenSSL::Err::ERR_get_error();
             repeat {
                 say "err code: $e";
-                say OpenSSL::Err::ERR_error_string($e);
+                say OpenSSL::Err::ERR_error_string($e, Str);
                $e = OpenSSL::Err::ERR_get_error();
             } while $e != 0 && $e != 4294967296;
         }
