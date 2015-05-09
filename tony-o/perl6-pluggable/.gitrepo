@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-pluggable.git
 	branch = master
-	commit = 9ebb8f517975142020df18e0e067d0b55578e69b
-	parent = 538aab3fd3fd4d102b585e5acc4b40e212f8c31e
-	cmdver = 0.2.0
+	commit = 77064f556a0058a887633e5a9e6b6bd0a8e538da
+	parent = 9b6db64b58572e5d2b2e04a8463634db16b8b2a6
+	cmdver = 0.2.1

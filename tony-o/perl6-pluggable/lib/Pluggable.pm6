@@ -6,12 +6,14 @@ role Pluggable {
     my $class = "{$module:defined ?? $module !! ::?CLASS.^name}";
     $class   ~~ s:g/'::'/\//;
     for (@*INC) -> $dir, {
+      my ($type, $path) = $dir.split('#', 2);
       try {
-        my Str $start = "{$dir.Str.IO.path}/$class/$plugin".IO.absolute;
+        my Str $start = "{$path.Str.IO.path}/$class/$plugin".IO.absolute;
         for self!search($start, base => $start.chars + 1, baseclass => "{$class}::{$plugin}::", pattern => $pattern) -> $t {
           try {
             my $m = $t;
             $m ~~ s:g/\//::/;
+            $m.say;
             require ::("$m");
             @list.push($m);
           };
