@@ -1,0 +1,23 @@
+{
+    "perl"        : "v6.0.0",
+    "name"        : "Event::Emitter",
+    "version"     : "1.0.0",
+    "description" : "Awesome event emitter.  Threaded, or not.",
+    "depends"     : [ ],
+    "provides"    : {
+      "Event::Emitter": "lib/Event/Emitter.pm6",
+      "Event::Emitter::Role::Handler": "lib/Event/Emitter/Role/Handler.pm6",
+      "Event::Emitter::Role::Node" : "lib/Event/Emitter/Role/Node.pm6",
+      "Event::Emitter::Role::Typed" : "lib/Event/Emitter/Role/Typed.pm6",
+      "Event::Emitter::Supply": "lib/Event/Emitter/Supply.pm6",
+      "Event::Emitter::Channel": "lib/Event/Emitter/Channel.pm6"
+    },
+    "authors" : [
+        "Tony O'Dell"       
+    ],
+    "support" : {
+        "source"  : "git://github.com/tony-o/perl6-event-emitter.git",
+        "bugtracker"  : "https://github.com/tony-o/perl6-event-emitter/issues"
+    },
+    "source-url"  : "git://github.com/tony-o/perl6-event-emitter.git"
+}
