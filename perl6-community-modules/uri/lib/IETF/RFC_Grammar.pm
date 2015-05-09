@@ -6,7 +6,7 @@ class IETF::RFC_Grammar;
 
 # below should be constant when implemented ...
 my %rfc_grammar_build = (
-     'rfc3896' => 'IETF::RFC_Grammar::URI'
+     'rfc3986' => 'IETF::RFC_Grammar::URI'
 );
 my %rfc_grammar;
 

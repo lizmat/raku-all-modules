@@ -114,7 +114,7 @@ method init ($str) {
 
 # new can pass alternate grammars some day ...
 submethod BUILD(:$!is_validating) {
-    $!grammar = IETF::RFC_Grammar.new('rfc3896');
+    $!grammar = IETF::RFC_Grammar.new('rfc3986');
 }
 
 method new(Str $uri_pos1?, Str :$uri, :$is_validating) {
