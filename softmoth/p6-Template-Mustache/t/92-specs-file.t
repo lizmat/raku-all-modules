@@ -12,7 +12,7 @@ sub cleanup(:$rmdir = False) {
 END { cleanup(:rmdir); }
 
 mkdir $views;
-my $m = Template::Mustache.new: :from($views.path.basename);
+my $m = Template::Mustache.new: :from($views.IO.basename);
 for load-specs '../mustache-spec/specs' {
     cleanup;
     ("$views/specs-file-main" ~ $m.extension).IO.spurt: $_<template>;
@@ -36,17 +36,18 @@ sub load-specs (Str $specs-dir) {
     #$start = 124; #$file = '~lambdas';
 
     diag "Reading spec files from '$specs-dir'";
-    my @files;
-    try {
-        # Skip optional (~*) tests, NYI
-        @files = dir($specs-dir, :test(rx{ '.json' $ })).sort;
-        @files = () unless @files[0]; # handle failure of dir()
-        @files .= grep: { .basename eq "$file.json" } if $file;
-        CATCH { @files = () }
+    my @files = do given dir($specs-dir, :test(rx{ '.json' $ })) {
+        when Failure {
+            ();  # Probably no specs dir
+        }
+        default {
+            .sort;
+        }
     }
+    @files .= grep: { .basename eq "$file.json" } if $file;
 
     my @specs = gather for @files {
-        my %data = from-json slurp $_;
+        my %data = %(from-json slurp $_);
         diag "- $_: {+%data<tests>}";
         for %data<tests>.list -> $t {
             if $t<data><lambda> -> $l {
@@ -62,10 +63,12 @@ sub load-specs (Str $specs-dir) {
     }
 
     plan @specs + 1;
-    todo "You must clone github.com/mustache/spec into '{$specs-dir.path.dirname}'"
-        if @specs == 0;
-
-    ok @specs > 0 && @specs[0]<template>, "Specs files located";
+    if @specs == 0 {
+        skip "You must clone git@github.com:softmoth/mustache-spec.git into '{$specs-dir.IO.dirname}'";
+    }
+    else {
+        ok @specs[0]<template>, "Valid specs files located";
+    }
 
     if $start > 1 {
         $start -= 2;
