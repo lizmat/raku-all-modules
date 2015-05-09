@@ -24,7 +24,7 @@ ok $foo.defined, 'elem() returned a defined value.';
 is $foo.WHAT.perl, 'XML::Element', 'elem() returned correct object type.';
 
 is $foo<id>, 'two', 'id query element matches.';
-is $foo.nodes.elems, 4, 'id query child element count is correct.';
+is $foo.nodes.elems, 9, 'id query child element count is correct.';
 
 my $odd = $xq('.odd');
 ok $odd.defined, 'class query returned a defined result.';
@@ -68,8 +68,8 @@ is_deeply @find-two-odd, @two-odd, 'find results are correct.';
 my $too-odd = $xq(<.flagged .odd>);
 is $too-odd.WHAT.perl, 'XML::Query::Results', 'quoted word returns.';
 my @too-odd = $too-odd.elems;
-is @too-odd.elems, 2, 'quoted word returned correct number of elems.';
+is @too-odd.elems, 6, 'quoted word returned correct number of elems.';
 
-my @too-ids = $xq('#one', '#three').elems;
+my @too-ids = $xq(('#one', '#three')).elems;
 is @two-ids.elems, 2, 'queries using chained statements works.';
 

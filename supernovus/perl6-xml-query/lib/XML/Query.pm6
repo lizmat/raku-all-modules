@@ -28,7 +28,7 @@ method apply ($statement)
   self.compile($statement).apply($!xml);
 }
 
-method at_key ($statement)
+method AT_KEY ($statement)
 {
   self.apply($statement.join(' '));
 }

@@ -30,7 +30,7 @@ method last
   self!spawn(@!results[@!results.end]);
 }
 
-method at_pos ($offset)
+method AT-POS ($offset) 
 {
   self!spawn(@!results[$offset]);
 }
