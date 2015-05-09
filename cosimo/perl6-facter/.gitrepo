@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cosimo/perl6-facter.git
 	branch = master
-	commit = 974c2d933014788aa78ed85d707329e6610be140
-	parent = 58a1128275343a3de65d4fcf587767621f68b331
-	cmdver = 0.1.0
+	commit = 508c961a156a13fa7721cec359e5793f420d98af
+	parent = 3a9fba29589c76bea94bbc53ee3be6b07ae2d71e
+	cmdver = 0.2.1
