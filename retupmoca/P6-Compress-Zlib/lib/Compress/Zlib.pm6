@@ -3,6 +3,7 @@ module Compress::Zlib;
 
 need Compress::Zlib::Raw;
 use NativeCall;
+use nqp;
 
 our sub compress(Blob $data, Int $level = 6 --> Buf) is export {
     if $level < -1 || $level > 9 {
