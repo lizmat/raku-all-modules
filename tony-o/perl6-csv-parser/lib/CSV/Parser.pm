@@ -12,8 +12,9 @@ class CSV::Parser {
   has Int        $!fpos                = 0;
   has Int        $!bpos                = 0;
   has Int        $!bopn                = 0;
-  has Any        %!headers             = Nil;
   has Any        $!lbuff               = '';
+
+  has Any        %!headers;
 
   method reset () {
     my $p = $.file_handle.path;
@@ -74,7 +75,7 @@ class CSV::Parser {
            ( ( $.binary == False && $localbuff ne   $.escape_operator ) || 
              ( $.binary == True && $localbuff !eqv $.escape_operator ) ) &&
            $bopn == 0 ) {
-        $key = %header.exists_key(~$fcnt) ?? %header{~$fcnt} !! $fcnt;
+        $key = %header{(~$fcnt)}:exists ?? %header{~$fcnt} !! $fcnt;
         if ($.binary == True) {
           %values{ $key } = $buffer.subbuf(0, $buffpos);
           %values{ $key } = %values{ $key }.subbuf($.field_operator.bytes, %values{ $key }.bytes - ( $.field_operator.bytes * 2 )) if %values{ $key }.subbuf(0, $.field_operator.bytes) eqv $.field_operator;
@@ -93,12 +94,12 @@ class CSV::Parser {
       $localbuff = ($localbuff.bytes >= $.escape_operator.bytes ?? $localbuff.subbuf(1) !! $localbuff) ~ $buffer.subbuf($buffpos, 1) if $.binary == True; 
       $buffpos++;
     }
-    $key = %header.exists_key(~$fcnt) ?? %header{~$fcnt} !! $fcnt;
+    $key = %header{~$fcnt}:exists ?? %header{~$fcnt} !! $fcnt;
     %values{ $key } = $buffer;
     %values{ $key } = %values{ $key }.substr($.field_operator.chars, %values{ $key }.chars - ( $.field_operator.chars * 2 )) if $.binary == False && %values{ $key }.substr(0, $.field_operator.chars) eq  $.field_operator;
     %values{ $key } = %values{ $key }.subbuf($.field_operator.bytes, %values{ $key }.bytes - ( $.field_operator.bytes * 2 )) if $.binary == True && %values{ $key }.subbuf(0, $.field_operator.bytes) eqv $.field_operator;
 
-    while %header.exists_key(~(++$fcnt)) {
+    while %header{~(++$fcnt)}:exists {
       %values{%header{~$fcnt}} = Nil;
     }
 
