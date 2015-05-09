@@ -1,3 +1,5 @@
+use nqp;
+
 sub EXPORT(|) {
     sub atkeyish(Mu \h, \k) {
         nqp::atkey(nqp::findmethod(h, 'hash')(h), k)
