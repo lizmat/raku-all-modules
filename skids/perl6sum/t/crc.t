@@ -174,7 +174,7 @@ given D12.new {
 class D14 does Sum::CRC_14_DARC does Sum::Marshal::Bits[ :reflect ] does Sum::Marshal::Method[ :atype(buf8) :method<values> :remarshal ] { }
 given D14.new {
   is +.finalize(0x31..0x39),0x082d, "CRC_14_DARC gives expected value";
-  ok .check(0x2d,?<<comb(/./,"000100")), "CRC_14_DARC self-verifies (0)";
+  ok .check(0x2d,?<<+<<comb(/./,"000100")), "CRC_14_DARC self-verifies (0)";
 }
 
 class D14rlut
@@ -194,7 +194,7 @@ given C15.new {
 class M15 does Sum::CRC_15_MPT1327 does Sum::Marshal::Bits[ ] { }
 given M15.new {
   is +.finalize(0x31..0x39),0x2566, "CRC_15_MPT1327 gives expected value";
-  ok .check(?<<comb(/./,"0100101"),0x66), "CRC_15_MPT1327 self-verifies (residual)";
+  ok .check(?<<+<<comb(/./,"0100101"),0x66), "CRC_15_MPT1327 self-verifies (residual)";
 }
 
 class A16 does Sum::CRC_16_ANSI does Sum::Marshal::Bits[ ] { }

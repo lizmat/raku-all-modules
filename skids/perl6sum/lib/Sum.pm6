@@ -29,7 +29,7 @@ class X::Sum::Marshal is Exception {
     has $.addend;
     has $.recourse = "";
     method message {
-        my $recourse = " via recourse {$.recourse}";
+        my $recourse = " via recourse {$.recourse}" if $.recourse;
         "Marshalling error.  Cannot handle addend of type $.addend$recourse."
     }
 }
@@ -450,7 +450,7 @@ role Sum::Marshal::Cooked {
     # Subclasses may elect to handle finite numbers of addends in one
     # method call.  Where they do not, handle each one individually.
     multi method marshal ($self: :$diamond? where {True}, *@addends) {
-        @addends.flat.map: { self.marshal(|$_.flat) }
+        flat @addends.flat.map: { self.marshal(|$_.flat) }
     }
 
     # Last resort if no subclass has a handler for this specific type of
@@ -540,8 +540,8 @@ role Sum::Marshal::Bits [ ::AT :$accept = (Int), ::CT :$coerce = (Int),
      does Sum::Marshal::Cooked {
 
     multi method marshal (AT $addend) {
-        ?«($reflect ?? (1 X+& (CT($addend) X+> (^$bits)))
-                    !! (1 X+& (CT($addend) X+> ($bits-1...0))));
+        flat ?«($reflect ?? (1 X+& (CT($addend) X+> (^$bits)))
+                         !! (1 X+& (CT($addend) X+> ($bits-1...0))));
     }
 
 }
@@ -653,7 +653,7 @@ role Sum::Marshal::Pack::Bits[::AT :$accept = (Bool), ::CT :$coerce = (Bool)]
             $.bitpos = $.width;
             return $packed;
         }
-        return;
+        return ();
     }
 }
 
@@ -704,7 +704,7 @@ role Sum::Marshal::Pack::Bits[:$width!, ::AT :$accept, ::CT :$coerce = (Int)]
                 return $packed;
             }
         }
-        return;
+        return ();
     }
 }
 
@@ -772,7 +772,7 @@ role Sum::Marshal::Block [::B :$BufT = blob8, :$elems = 64, ::b :$BitT = Bool]
     my Int $bw = B.of.^nativesize;
     $bw ||= X::AdHoc::new(message => "dont know nativesize of " ~ B.of.gist );
 
-    multi method marshal () { }
+    multi method marshal () { () }
 
     # use multi/constrained method to workaround diamond problem
     multi method emit ($self: :$diamond? where {True}, *@addends) {
@@ -789,7 +789,7 @@ role Sum::Marshal::Block [::B :$BufT = blob8, :$elems = 64, ::b :$BitT = Bool]
         return fail(X::Sum::Final.new()) if $.drained;
 
         @.bits.push($addend);
-        return unless +@.bits == $bw;
+        return () unless +@.bits == $bw;
         self.emit([+|] (+«@.bits.splice(0, $bw)) Z+< (reverse ^$bw));
     }
 
@@ -842,9 +842,9 @@ role Sum::Marshal::Block [::B :$BufT = blob8, :$elems = 64, ::b :$BitT = Bool]
 	# Workaround for pre-GLR flattenning weirdness
         unless @.bits.elems {
 	    return [B.new(@.accum)] if +@.accum;
-	    return;
+	    return ();
 	}
-        B.new(@.accum), ?«@.bits
+        (B.new(@.accum), ?«@.bits);
     }
 }
 

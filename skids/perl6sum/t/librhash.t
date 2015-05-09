@@ -33,12 +33,12 @@ is $Sum::librhash::count, $c, "\$Sum::librhash::count contains cached value";
 
 # Should at least have MD5
 my $md5 = %Sum::librhash::Algos.pairs.grep(*.value.name eq "MD5")[0].value;
-isa_ok $md5, Sum::librhash::Algo, "Found an Algo named MD5";
+isa-ok $md5, Sum::librhash::Algo, "Found an Algo named MD5";
 is $md5.digest_size, 16, "MD5 has expected digest size";
 
 my $a;
 lives_ok {$a := Sum::librhash::Instance.new("CRC32")}, "rhash init lives.";
-isa_ok $a, Sum::librhash::Instance, "Created Instance object";
+isa-ok $a, Sum::librhash::Instance, "Created Instance object";
 ok $a.defined, "Created Instance is really instantiated";
 lives_ok {$a.add("Please to checksum this text.".encode('ascii'))}, "rhash update lives";
 is $a.finalize(:bytes(4)), buf8.new(0x32,0xd2,1,0xf6), "CRC32 alg computes expected value";
@@ -50,7 +50,7 @@ $a.finalize(:bytes(4));
 throws_like { $a.finalize(:bytes(4)) }, X::librhash::Final, "Double finalize gets caught for raw Instance";
 
 lives_ok {$a := Sum::librhash::Sum.new("MD5")}, "wrapper class contructor lives";
-isa_ok $a, Sum::librhash::Sum, "wrapper class intantiates";
+isa-ok $a, Sum::librhash::Sum, "wrapper class intantiates";
 ok $a.defined, "wrapper class intantiates for reelz";
 lives_ok {$a.push(buf8.new(97 xx 64))}, "wrapper class can push";
 is +$a.finalize, 0x014842d480b571495a4a0363793f7367, "MD5 is correct (test vector 1).";

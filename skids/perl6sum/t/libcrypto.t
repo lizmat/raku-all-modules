@@ -30,17 +30,17 @@ if $abort {
 
 # Should at least have MD5
 my $md5 = %Sum::libcrypto::Algos<md5>;
-isa_ok $md5, Sum::libcrypto::Algo, "Found an Algo named md5";
+isa-ok $md5, Sum::libcrypto::Algo, "Found an Algo named md5";
 is $md5.size, 16, "MD5 has expected digest size";
 
 my $a;
 lives_ok {$a := Sum::libcrypto::Instance.new("sha1")}, "crypto init lives.";
-isa_ok $a, Sum::libcrypto::Instance, "Created Instance object";
+isa-ok $a, Sum::libcrypto::Instance, "Created Instance object";
 ok $a.defined, "Created Instance is really instantiated";
 lives_ok {$a.add("Please to checksum this text".encode('ascii'))}, "crypto update lives";
 my $b;
 lives_ok {$b := $a.clone;}, "libcrypto copy_ex (clone) lives.";
-isa_ok $b, Sum::libcrypto::Instance, "Clone is Instance object";
+isa-ok $b, Sum::libcrypto::Instance, "Clone is Instance object";
 ok $b.defined, "Cloned Instance is really instantiated";
 is $b.finalize, buf8.new(0x20,0x27,0x60,0x55,0x24,0x6b,0x17,0xa6,0xb9,0x3a,0x12,0xf0,0x4c,0x24,0xf9,0x36,0x28,0xda,0x4e,0xe4), "SHA1 clone computes expected value";
 lives_ok {$a.add(buf8.new('.'.ord))}, "mhash update of original lives";
@@ -49,11 +49,11 @@ throws_like { $a.finalize() }, X::Sum::Final, "Double finalize gets caught for r
 lives_ok { for 0..10000 { my $a := Sum::libcrypto::Instance.new("sha1"); $a.finalize() if Bool.pick; } }, "Supposedly test GC sanity";
 
 lives_ok {$a := Sum::libcrypto::Sum.new("md5")}, "wrapper class contructor lives";
-isa_ok $a, Sum::libcrypto::Sum, "wrapper class intantiates";
+isa-ok $a, Sum::libcrypto::Sum, "wrapper class intantiates";
 ok $a.defined, "wrapper class intantiates for reelz";
 lives_ok {$a.push(buf8.new(97 xx 64))}, "wrapper class can push";
 lives_ok {$b := $a.clone}, "wrapper class clone lives";
-isa_ok $b, Sum::libcrypto::Sum, "wrapper clone typecheck";
+isa-ok $b, Sum::libcrypto::Sum, "wrapper clone typecheck";
 ok $b.defined, "wrapper clone definedness";
 is +$a.finalize, 0x014842d480b571495a4a0363793f7367, "MD5 is correct (test vector 1).";
 is +$a.finalize, 0x014842d480b571495a4a0363793f7367, "Wrapper class caches result";

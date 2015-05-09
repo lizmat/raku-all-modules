@@ -136,39 +136,39 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
 
     method md5_round1_step (uint32 $data, $idx, $shift --> Nil) {
     	my ($a is rw, $b is rw, $c is rw, $d is rw) := @!s[0,1,2,3];
-        ($a,$d,$c,$b) = ($d, $c, $b, 0xffffffff +& (
+        ($a,$d,$c,$b) = ($d, $c, $b,
              $b + rol(($a + @t[$idx] + $data +
-                      (($b +& $c) +| (+^$b +& $d))), $shift)));
+                      (($b +& $c) +| (+^$b +& $d))), $shift));
 	return; # This should not be needed per S06/Signatures
     }
 
     method md5_round2_step (uint32 $data, int $idx, int $shift --> Nil) {
     	my ($a is rw, $b is rw, $c is rw, $d is rw) := @!s[0,1,2,3];
-        ($a,$d,$c,$b) = ($d, $c, $b, 0xffffffff +& (
+        ($a,$d,$c,$b) = ($d, $c, $b,
              $b + rol(($a + @t[$idx] + $data +
-                      (($b +& $d) +| (+^$d +& $c))), $shift)));
+                      (($b +& $d) +| (+^$d +& $c))), $shift));
 	return; # This should not be needed per S06/Signatures
     }
 
     method md5_round3_step (uint32 $data, int $idx, int $shift --> Nil) {
     	my ($a is rw, $b is rw, $c is rw, $d is rw) := @!s[0,1,2,3];
-        ($a,$d,$c,$b) = ($d, $c, $b, 0xffffffff +& (
-             $b + rol(($a + $data + @t[$idx] + ([+^] $b, $c, $d)), $shift)));
+        ($a,$d,$c,$b) = ($d, $c, $b,
+             $b + rol(($a + $data + @t[$idx] + ([+^] $b, $c, $d)), $shift));
 	return; # This should not be needed per S06/Signatures
     }
 
     method md5_round4_step (uint32 $data, int $idx, int $shift --> Nil) {
     	my ($a is rw, $b is rw, $c is rw, $d is rw) := @!s[0,1,2,3];
-        ($a,$d,$c,$b) = ($d, $c, $b, 0xffffffff +& (
-             $b + rol(($a + $data + @t[$idx] + ($c +^ (+^$d +| $b))), $shift)));
+        ($a,$d,$c,$b) = ($d, $c, $b,
+             $b + rol(($a + $data + @t[$idx] + ($c +^ (+^$d +| $b))), $shift));
 	return; # This should not be needed per S06/Signatures
     }
 
     method ripe_f1_5 (int $lr, uint32 $data, uint32 $k, int $shift --> Nil) {
     	my ($a is rw, $b is rw, $c is rw, $d is rw, $e is rw) :=
 	    @!s[$lr X+ ^5];
-        ($a,$e,$d,$c,$b) = ($e, $d, rol($c,10), $b, 0xffffffff +&
-             ($e + rol($a + $k + $data + ([+^] $b, $c, $d), $shift)));
+        ($a,$e,$d,$c,$b) = ($e, $d, rol($c,10), $b,
+             $e + rol($a + $k + $data + ([+^] $b, $c, $d), $shift));
 	return; # This should not be needed per S06/Signatures
     }
 
@@ -182,9 +182,8 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
     method ripe_f2_5 (int $lr, uint32 $data, uint32 $k, int $shift --> Nil) {
     	my ($a is rw, $b is rw, $c is rw, $d is rw, $e is rw) :=
 	    @!s[$lr X+ ^5];
-        ($a,$e,$d,$c,$b) = ($e, $d, rol($c,10), $b, 0xffffffff +&
-             ($e + rol($a + $k + $data + (($b +& $c) +| (+^$b +& $d)),
-                       $shift)));
+        ($a,$e,$d,$c,$b) = ($e, $d, rol($c,10), $b,
+             $e + rol($a + $k + $data + (($b +& $c) +| (+^$b +& $d)), $shift));
 	return; # This should not be needed per S06/Signatures
     }
 
@@ -198,8 +197,8 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
     method ripe_f3_5 (int $lr, uint32 $data, uint32 $k, int $shift --> Nil) {
     	my ($a is rw, $b is rw, $c is rw, $d is rw, $e is rw) :=
 	    @!s[$lr X+ ^5];
-        ($a,$e,$d,$c,$b) = ($e, $d, rol($c,10), $b, 0xffffffff +&
-             ($e + rol($a + $k + $data + ((+^$c +| $b) +^ $d), $shift)));
+        ($a,$e,$d,$c,$b) = ($e, $d, rol($c,10), $b,
+             $e + rol($a + $k + $data + ((+^$c +| $b) +^ $d), $shift));
 	return; # This should not be needed per S06/Signatures
     }
 
@@ -213,9 +212,8 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
     method ripe_f4_5 (int $lr, uint32 $data, uint32 $k, int $shift --> Nil) {
     	my ($a is rw, $b is rw, $c is rw, $d is rw, $e is rw) :=
 	    @!s[$lr X+ ^5];
-        ($a,$e,$d,$c,$b) = ($e, $d, rol($c,10), $b, 0xffffffff +&
-             ($e + rol($a + $k + $data + (($b +& $d) +| (+^$d +& $c)),
-                       $shift)));
+        ($a,$e,$d,$c,$b) = ($e, $d, rol($c,10), $b,
+             $e + rol($a + $k + $data + (($b +& $d) +| (+^$d +& $c)), $shift));
 	return; # This should not be needed per S06/Signatures
     }
 
@@ -229,24 +227,24 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
     method ripe_f5_5 (int $lr, uint32 $data, uint32 $k, int $shift --> Nil) {
     	my ($a is rw, $b is rw, $c is rw, $d is rw, $e is rw) :=
 	    @!s[$lr X+ ^5];
-        ($a,$e,$d,$c,$b) = ($e, $d, rol($c,10), $b, 0xffffffff +&
-             ($e + rol($a + $k + $data + ($b +^ (+^$d +| $c)), $shift)));
+        ($a,$e,$d,$c,$b) = ($e, $d, rol($c,10), $b,
+             $e + rol($a + $k + $data + ($b +^ (+^$d +| $c)), $shift));
 	return; # This should not be needed per S06/Signatures
     }
 
     method md4_comp (--> Nil) {
         my uint32 @s = @!s;
-        for (^16) Z (3,7,11,19) xx 4 {
+        for flat (^16) Z (3,7,11,19) xx 4 {
             self.md4_round1_step(@!w[$^idx],$^shift);
 	    self.md4_ext_round1_step(@!w[$^idx],$^shift)
                 if $alg eqv "MD4ext";
         }
-        for (0,4,8,12,1,5,9,13,2,6,10,14,3,7,11,15) Z (3,5,9,13) xx 4 {
+        for flat (0,4,8,12,1,5,9,13,2,6,10,14,3,7,11,15) Z (3,5,9,13) xx 4 {
             self.md4_round2_step(@!w[$^idx],$^shift);
             self.md4_ext_round2_step(@!w[$^idx],$^shift)
                 if $alg eqv "MD4ext";
         }
-        for (0,8,4,12,2,10,6,14,1,9,5,13,3,11,7,15) Z (3,9,11,15) xx 4 {
+        for flat (0,8,4,12,2,10,6,14,1,9,5,13,3,11,7,15) Z (3,9,11,15) xx 4 {
             self.md4_round3_step(@!w[$^idx],$^shift);
             self.md4_ext_round3_step(@!w[$^idx],$^shift)
                 if $alg eqv "MD4ext";
@@ -258,36 +256,45 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
 
     method md5_comp (--> Nil) {
         my uint32 @s = @!s;
-        for (^16) Z (^16) Z (7,12,17,22) xx 4 {
+        for flat (^16) Z (^16) Z (7,12,17,22) xx 4 {
             self.md5_round1_step(@!w[$^didx], $^idx, $^shift);
         }
-        for (1,6,11,0,5,10,15,4,9,14,3,8,13,2,7,12)
+        for flat (1,6,11,0,5,10,15,4,9,14,3,8,13,2,7,12)
             Z (16..^32) Z (5,9,14,20) xx 4 {
             self.md5_round2_step(@!w[$^didx], $^idx, $^shift);
         }
-        for (5,8,11,14,1,4,7,10,13,0,3,6,9,12,15,2)
+        for flat (5,8,11,14,1,4,7,10,13,0,3,6,9,12,15,2)
             Z (32..^48) Z (4,11,16,23) xx 4 {
             self.md5_round3_step(@!w[$^didx], $^idx, $^shift);
         }
-        for (0,7,14,5,12,3,10,1,8,15,6,13,4,11,2,9)
+        for flat (0,7,14,5,12,3,10,1,8,15,6,13,4,11,2,9)
             Z (48..^64) Z (6,10,15,21) xx 4 {
             self.md5_round4_step(@!w[$^didx], $^idx, $^shift);
         }
         @!s »+=« @s;
-        @!s »+&=» 0xffffffff; # Should go away with sized types
 	return; # This should not be needed per S06/Signatures
     }
 
     # RIPEMD constants
+# workaround for a bug
+    my $count = 0;
     my @lperms =
-        $(array[uint32].new(^16)),
+        array[uint32].new(^16).item,
         {
-            $(array[uint32].new(
-                 (7,4,13,1,10,6,15,3,12,0,9,5,2,14,11,8)[$_.values]))
-        } ... *[0]  == 4;
+            array[uint32].new(
+                 (7,4,13,1,10,6,15,3,12,0,9,5,2,14,11,8)[$_.values]).item
+#        } ... *[0]  == 4;
+# workaround for a bug
+        } ... { ++$count == 13 };
+    $count = 0;
+
     my @rperms =
-        $(array[uint32].new(((9 * $_ + 5) % 16 for ^16))),
-        { $(array[uint32].new( @lperms[1][$_.values] )) } ... *[0]  == 12;
+        array[uint32].new(((9 * $_ + 5) % 16 for ^16)).item,
+        { array[uint32].new( @lperms[1][$_.values] ).item } ...
+# workaround for a bug
+# *[0]  == 12;
+    { ++$count == 14 };
+
     my uint32 @kl = 0,0x5a827999,0x6ed9eba1,0x8f1bbcdc,0xa953fd4e;
     my uint32 @kr = 0x50a28be6,0x5c4dd124,0x6d703ef3,0x7a6d76e9,0;
 
@@ -303,65 +310,65 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
     #     [15,12,13,13,9,5,8,6,14,11,12,11,8,6,5,5];
 
     my @lshifts =
-        $(array[uint32].new(
-            11, 14, 15, 12, 5, 8, 7, 9, 11, 13, 14, 15, 6, 7, 9, 8 )),
-        $(array[uint32].new(
-            7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 11, 7, 13, 12 )),
-        $(array[uint32].new(
-            11, 13, 6, 7, 14, 9, 13, 15, 14, 8, 13, 6, 5, 12, 7, 5 )),
-        $(array[uint32].new(
-            11, 12, 14, 15, 14, 15, 9, 8, 9, 14, 5, 6, 8, 6, 5, 12 )),
-        $(array[uint32].new(
-            9, 15, 5, 11, 6, 8, 13, 12, 5, 12, 13, 14, 11, 8, 5, 6 ));
+        array[uint32].new(
+            11, 14, 15, 12, 5, 8, 7, 9, 11, 13, 14, 15, 6, 7, 9, 8 ).item,
+        array[uint32].new(
+            7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 11, 7, 13, 12 ).item,
+        array[uint32].new(
+            11, 13, 6, 7, 14, 9, 13, 15, 14, 8, 13, 6, 5, 12, 7, 5 ).item,
+        array[uint32].new(
+            11, 12, 14, 15, 14, 15, 9, 8, 9, 14, 5, 6, 8, 6, 5, 12 ).item,
+        array[uint32].new(
+            9, 15, 5, 11, 6, 8, 13, 12, 5, 12, 13, 14, 11, 8, 5, 6 ).item;
     my @rshifts =
-        $(array[uint32].new(
-            8, 9, 9, 11, 13, 15, 15, 5, 7, 7, 8, 11, 14, 14, 12, 6 )),
-        $(array[uint32].new(
-            9, 13, 15, 7, 12, 8, 9, 11, 7, 7, 12, 7, 6, 15, 13, 11 )),
-        $(array[uint32].new(
-            9, 7, 15, 11, 8, 6, 6, 14, 12, 13, 5, 14, 13, 13, 7, 5 )),
-        $(array[uint32].new(
-            15, 5, 8, 11, 14, 14, 6, 14, 6, 9, 12, 9, 12, 5, 15, 8 )),
-        $(array[uint32].new(
-            8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11 ));
+        array[uint32].new(
+            8, 9, 9, 11, 13, 15, 15, 5, 7, 7, 8, 11, 14, 14, 12, 6 ).item,
+        array[uint32].new(
+            9, 13, 15, 7, 12, 8, 9, 11, 7, 7, 12, 7, 6, 15, 13, 11 ).item,
+        array[uint32].new(
+            9, 7, 15, 11, 8, 6, 6, 14, 12, 13, 5, 14, 13, 13, 7, 5 ).item,
+        array[uint32].new(
+            15, 5, 8, 11, 14, 14, 6, 14, 6, 9, 12, 9, 12, 5, 15, 8 ).item,
+        array[uint32].new(
+            8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11 ).item;
 
     method ripe5_comp (--> Nil) {
 
         my uint32 @s = @!s;
         @!s.push(@s) if $alg eqv "RIPEMD-160";
 
-        for @lperms[0].values Z @lshifts[0].values {
+        for flat @lperms[0].values Z @lshifts[0].values {
             self.ripe_f1_5(0,@!w[$^didx],@kl[0],$^shift);
         }
-        for @rperms[0].values Z @rshifts[0].values {
+        for flat @rperms[0].values Z @rshifts[0].values {
             self.ripe_f5_5(5,@!w[$^didx],@kr[0],$^shift);
         }
         @!s[1,6] = @!s[6,1] if $alg eqv "RIPEMD-320";
-        for @lperms[1].values Z @lshifts[1].values {
+        for flat @lperms[1].values Z @lshifts[1].values {
             self.ripe_f2_5(0,@!w[$^didx],@kl[1],$^shift);
         }
-        for @rperms[1].values Z @rshifts[1].values {
+        for flat @rperms[1].values Z @rshifts[1].values {
             self.ripe_f4_5(5,@!w[$^didx],@kr[1],$^shift);
         }
         @!s[3,8] = @!s[8,3] if $alg eqv "RIPEMD-320";
-        for @lperms[2].values Z @lshifts[2].values {
+        for flat @lperms[2].values Z @lshifts[2].values {
             self.ripe_f3_5(0,@!w[$^didx],@kl[2],$^shift);
         }
-        for @rperms[2].values Z @rshifts[2].values {
+        for flat @rperms[2].values Z @rshifts[2].values {
             self.ripe_f3_5(5,@!w[$^didx],@kr[2],$^shift);
         }
         @!s[0,5] = @!s[5,0] if $alg eqv "RIPEMD-320";
-        for @lperms[3].values Z @lshifts[3].values {
+        for flat @lperms[3].values Z @lshifts[3].values {
             self.ripe_f4_5(0,@!w[$^didx],@kl[3],$^shift);
         }
-        for @rperms[3].values Z @rshifts[3].values {
+        for flat @rperms[3].values Z @rshifts[3].values {
             self.ripe_f2_5(5,@!w[$^didx],@kr[3],$^shift);
         }
         @!s[2,7] = @!s[7,2] if $alg eqv "RIPEMD-320";
-        for @lperms[4].values Z @lshifts[4].values {
+        for flat @lperms[4].values Z @lshifts[4].values {
             self.ripe_f5_5(0,@!w[$^didx],@kl[4],$^shift);
         }
-        for @rperms[4].values Z @rshifts[4].values {
+        for flat @rperms[4].values Z @rshifts[4].values {
             self.ripe_f1_5(5,@!w[$^didx],@kr[4],$^shift);
         }
         @!s[4,9] = @!s[9,4] if $alg eqv "RIPEMD-320";
@@ -371,7 +378,6 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
         else {
             @!s = @!s Z+ @s;
         }
-        @!s = 0xffffffff X+& @!s;
 	return; # This should not be needed per S06/Signatures
     }
 
@@ -380,31 +386,31 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
         my uint32 @s = @!s;
         @!s.push(@s) if $alg eqv "RIPEMD-128";
 
-        for @lperms[0].values Z @lshifts[0].values {
+        for flat @lperms[0].values Z @lshifts[0].values {
             self.ripe_f1_4(0,@!w[$^didx],@kl[0],$^shift);
         }
-        for @rperms[0].values Z @rshifts[0].values {
+        for flat @rperms[0].values Z @rshifts[0].values {
             self.ripe_f4_4(4,@!w[$^didx],@kr[0],$^shift);
         }
         @!s[0,4] = @!s[4,0] if $alg eqv "RIPEMD-256";
-        for @lperms[1].values Z @lshifts[1].values {
+        for flat @lperms[1].values Z @lshifts[1].values {
             self.ripe_f2_4(0,@!w[$^didx],@kl[1],$^shift);
         }
-        for @rperms[1].values Z @rshifts[1].values {
+        for flat @rperms[1].values Z @rshifts[1].values {
             self.ripe_f3_4(4,@!w[$^didx],@kr[1],$^shift);
         }
         @!s[1,5] = @!s[5,1] if $alg eqv "RIPEMD-256";
-        for @lperms[2].values Z @lshifts[2].values {
+        for flat @lperms[2].values Z @lshifts[2].values {
             self.ripe_f3_4(0,@!w[$^didx],@kl[2],$^shift);
         }
-        for @rperms[2].values Z @rshifts[2].values {
+        for flat @rperms[2].values Z @rshifts[2].values {
             self.ripe_f2_4(4,@!w[$^didx],@kr[2],$^shift);
         }
         @!s[2,6] = @!s[6,2] if $alg eqv "RIPEMD-256";
-        for @lperms[3].values Z @lshifts[3].values {
+        for flat @lperms[3].values Z @lshifts[3].values {
             self.ripe_f4_4(0,@!w[$^didx],@kl[3],$^shift);
         }
-        for @rperms[3].values Z @rshifts[3].values {
+        for flat @rperms[3].values Z @rshifts[3].values {
             self.ripe_f1_4(4,@!w[$^didx],@kr[4],$^shift);
         }
         @!s[3,7] = @!s[7,3] if $alg eqv "RIPEMD-256";
@@ -414,7 +420,6 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
         else {
             @!s = @!s Z+ @s;
         }
-        @!s = 0xffffffff X+& @!s;
 	return; # This should not be needed per S06/Signatures
     }
 
@@ -577,7 +582,7 @@ role Sum::MD2 does Sum {
 
     proto method add (|cap) {*}
     multi method add (*@addends) {
-        sink for @addends { self.add($_) }
+        sink for flat @addends { self.add($_) }
     }
     multi method add ($addend) {
         # TODO: Typed failure here?
@@ -592,7 +597,7 @@ role Sum::MD2 does Sum {
     multi method add (blob8 $block where { .elems == 16 }) {
         @!X[16..^32] = $block.values;
         @!X[32..^48] = @!X[^16] Z+^ @!X[16..^32];
-        for 15,^15 Z ^16 -> $last, $x {
+        for flat 15,^15 Z ^16 -> $last, $x {
             @!C[$x] +^= @S[$block[$x] +^ @!C[$last]]
         }
         my $t = 0;
