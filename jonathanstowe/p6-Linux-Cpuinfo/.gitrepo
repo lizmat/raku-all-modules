@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jonathanstowe/p6-Linux-Cpuinfo.git
 	branch = master
-	commit = 2c51d8bc7327267c194e2f5b43ab693b2ab66967
-	parent = 2cdc4ec07f7a56bcfb863c6589a7f2cec50b2ced
-	cmdver = 0.2.0
+	commit = bbab2a909e540062df1f17e7ecfaa2486b8a3e91
+	parent = 1a2c0eb9f17aa3743e8f740984f796da957c82e0
+	cmdver = 0.2.1
