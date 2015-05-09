@@ -2,6 +2,7 @@
     "name"        : "Cache::Memcached",
     "version"     : "0.04",
     "description" : "Port of Cache::Memcached from Perl 5 to Perl 6",
+    "provides"    : { "Cache::Memcached": "lib/Cache/Memcached.pm" },
     "depends"     : [ "String::CRC32" ],
     "author"      : "Cosimo Streppone",
     "authority"   : "cosimo",
