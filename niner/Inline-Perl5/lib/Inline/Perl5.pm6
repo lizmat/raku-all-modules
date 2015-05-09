@@ -7,6 +7,7 @@ has Bool $!external_p5 = False;
 has &!call_method;
 has &!call_callable;
 
+use nqp;
 use NativeCall;
 
 sub native(Sub $sub) {
@@ -16,7 +17,8 @@ sub native(Sub $sub) {
     state Str $path;
     unless $path {
         for @*INC {
-            if my @files = ($_.files($base) || $_.files("blib/$base")) {
+            my $cur = $_ ~~ Str ?? CompUnitRepo.new($_) !! $_;
+            if my @files = ($cur.files($base) || $cur.files("blib/$base")) {
                 my $files = @files[0]<files>;
                 my $tmp = $files{$base} || $files{"blib/$base"};
 
@@ -25,8 +27,18 @@ sub native(Sub $sub) {
                 # This is required because CompUnitRepo::Local::Installation stores the file
                 # with a different filename (a number with no extension) that NativeCall doesn't
                 # know how to load. We do this copy to fix the filename.
-                $tmp.IO.copy($*SPEC.tmpdir ~ '/' ~ $so);
-                $path = $*SPEC.tmpdir ~ '/' ~ $so;
+                $path = $*SPEC.tmpdir ~ '/' ~ $*PID ~ '-' ~ $so;
+
+                $tmp.IO.copy($path);
+            }
+        }
+    }
+    unless $path {    # TEMPORARY !!!!
+        for @*INC.grep(Str) {
+            my $file = "$_.substr(5)/Inline/$so";
+            if $file.IO.e {
+                $path = $file;
+                last;
             }
         }
     }
@@ -94,7 +106,7 @@ sub p5_is_undef(Perl5Interpreter, OpaquePointer)
     returns int { ... }
     native(&p5_is_undef);
 sub p5_sv_to_buf(Perl5Interpreter, OpaquePointer, CArray[CArray[int8]])
-    returns Int { ... }
+    returns long { ... }
     native(&p5_sv_to_buf);
 sub p5_sv_to_char_star(Perl5Interpreter, OpaquePointer)
     returns Str { ... }
@@ -114,16 +126,16 @@ sub p5_sv_2mortal(Perl5Interpreter, OpaquePointer)
 sub p5_sv_refcnt_inc(Perl5Interpreter, OpaquePointer)
     { ... }
     native(&p5_sv_refcnt_inc);
-sub p5_int_to_sv(Perl5Interpreter, Int)
+sub p5_int_to_sv(Perl5Interpreter, long)
     returns OpaquePointer { ... }
     native(&p5_int_to_sv);
 sub p5_float_to_sv(Perl5Interpreter, num64)
     returns OpaquePointer { ... }
     native(&p5_float_to_sv);
-sub p5_str_to_sv(Perl5Interpreter, Str)
+sub p5_str_to_sv(Perl5Interpreter, long, Blob)
     returns OpaquePointer { ... }
     native(&p5_str_to_sv);
-sub p5_buf_to_sv(Perl5Interpreter, Int, Blob)
+sub p5_buf_to_sv(Perl5Interpreter, long, Blob)
     returns OpaquePointer { ... }
     native(&p5_buf_to_sv);
 sub p5_av_top_index(Perl5Interpreter, OpaquePointer)
@@ -184,7 +196,7 @@ sub p5_destruct_perl(Perl5Interpreter)
     { ... }
     native(&p5_destruct_perl);
 sub p5_sv_iv(Perl5Interpreter, OpaquePointer)
-    returns Int { ... }
+    returns long { ... }
     native(&p5_sv_iv);
 sub p5_sv_nv(Perl5Interpreter, OpaquePointer)
     returns num64 { ... }
@@ -201,20 +213,20 @@ sub p5_eval_pv(Perl5Interpreter, Str, int32)
 sub p5_err_sv(Perl5Interpreter)
     returns OpaquePointer { ... }
     native(&p5_err_sv);
-sub p5_wrap_p6_object(Perl5Interpreter, Int, OpaquePointer, &call_method (Int, Str, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (Int))
+sub p5_wrap_p6_object(Perl5Interpreter, long, OpaquePointer, &call_method (long, Str, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (long))
     returns OpaquePointer { ... }
     native(&p5_wrap_p6_object);
-sub p5_wrap_p6_callable(Perl5Interpreter, Int, OpaquePointer, &call (Int, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (Int))
+sub p5_wrap_p6_callable(Perl5Interpreter, long, OpaquePointer, &call (long, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (long))
     returns OpaquePointer { ... }
     native(&p5_wrap_p6_callable);
-sub p5_wrap_p6_handle(Perl5Interpreter, Int, OpaquePointer, &call_method (Int, Str, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (Int))
+sub p5_wrap_p6_handle(Perl5Interpreter, long, OpaquePointer, &call_method (long, Str, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (long))
     returns OpaquePointer { ... }
     native(&p5_wrap_p6_handle);
 sub p5_is_wrapped_p6_object(Perl5Interpreter, OpaquePointer)
     returns int { ... }
     native(&p5_is_wrapped_p6_object);
 sub p5_unwrap_p6_object(Perl5Interpreter, OpaquePointer)
-    returns Int { ... }
+    returns long { ... }
     native(&p5_unwrap_p6_object);
 sub p5_use(Perl5Interpreter, OpaquePointer)
     { ... }
@@ -233,7 +245,8 @@ multi method p6_to_p5(Rat:D $value) returns OpaquePointer {
     p5_float_to_sv($!p5, $value.Num);
 }
 multi method p6_to_p5(Str:D $value) returns OpaquePointer {
-    p5_str_to_sv($!p5, $value);
+    my $buf = $value.encode('UTF-8');
+    p5_str_to_sv($!p5, $buf.elems, $buf);
 }
 multi method p6_to_p5(blob8:D $value) returns OpaquePointer {
     p5_buf_to_sv($!p5, $value.elems, $value);
@@ -318,10 +331,10 @@ method p5_sv_reftype(OpaquePointer $sv) {
 
 method p5_array_to_p6_array(OpaquePointer $sv) {
     my $av = p5_sv_to_av($!p5, $sv);
-    my $av_len = p5_av_top_index($!p5, $av);
+    my int32 $av_len = p5_av_top_index($!p5, $av);
 
     my $arr = [];
-    loop (my int $i = 0; $i <= $av_len; $i = $i + 1) {
+    loop (my int32 $i = 0; $i <= $av_len; $i = $i + 1) {
         $arr.push(self.p5_to_p6(p5_av_fetch($!p5, $av, $i)));
     }
     $arr;
@@ -422,7 +435,7 @@ method !setup_arguments(@args) {
 }
 
 method !unpack_return_values($av) {
-    my $av_len = p5_av_top_index($!p5, $av);
+    my int32 $av_len = p5_av_top_index($!p5, $av);
 
     if $av_len == -1 {
         p5_sv_refcnt_dec($!p5, $av);
@@ -663,12 +676,12 @@ class Perl5Object {
     }
 }
 
-class Perl5Callable {
+class Perl5Callable does Callable {
     has OpaquePointer $.ptr;
     has Inline::Perl5 $.perl5;
 
-    method postcircumfix:<( )>(\args) {
-        $.perl5.execute($.ptr, |args);
+    method postcircumfix:<( )>(*@args) {
+        $.perl5.execute($.ptr, @args);
     }
 
     method DESTROY {
@@ -678,6 +691,11 @@ class Perl5Callable {
 }
 
 my $default_perl5;
+
+method default_perl5 {
+    return $default_perl5 //= self.new();
+}
+
 method BUILD(*%args) {
     $!external_p5 = %args<p5>:exists;
     $!p5 = $!external_p5 ?? %args<p5> !! p5_init_perl();
@@ -736,6 +754,15 @@ BEGIN {
             }
         }
     );
+    for Any.^methods>>.name -> $name {
+        Perl5Object.^add_method(
+            $name,
+            method (|args) {
+                $.perl5.invoke($.ptr, $name, self, args.list, args.hash);
+            }
+        );
+    }
+    Perl5Object.^compose;
 }
 
 class Perl5ModuleLoader {
@@ -747,7 +774,7 @@ class Perl5ModuleLoader {
     }
 }
 
-nqp::getcurhllsym('ModuleLoader').p6ml.register_language_module_loader('Perl5', Perl5ModuleLoader);
+nqp::getcurhllsym('ModuleLoader').p6ml.register_language_module_loader('Perl5', Perl5ModuleLoader, :force(True));
 
 my Bool $inline_perl6_in_use = False;
 sub init_inline_perl6_new_callback(&inline_perl5_new (Perl5Interpreter --> OpaquePointer)) { ... };

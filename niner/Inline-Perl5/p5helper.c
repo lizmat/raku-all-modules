@@ -143,15 +143,12 @@ SV *p5_float_to_sv(PerlInterpreter *my_perl, double value) {
     return newSVnv((NV)value);
 }
 
-SV *p5_str_to_sv(PerlInterpreter *my_perl, char* value) {
-    SV * const sv = newSVpv(value, 0);
-    SvUTF8_on(sv);
-    return sv;
+SV *p5_str_to_sv(PerlInterpreter *my_perl, STRLEN len, char* value) {
+    return newSVpvn_flags(value, len, SVf_UTF8);
 }
 
 SV *p5_buf_to_sv(PerlInterpreter *my_perl, STRLEN len, char* value) {
-    SV * const sv = newSVpv(value, len);
-    return sv;
+    return newSVpvn_flags(value, len, 0);
 }
 
 I32 p5_av_top_index(PerlInterpreter *my_perl, AV *av) {
