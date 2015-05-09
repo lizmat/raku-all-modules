@@ -18,7 +18,7 @@ class CSS::Specification::Terms::Actions {
 
             if $val<usage> {
                 my $synopsis := $val<usage>;
-                $.warning( ('usage ' ~ $synopsis, @proforma).join: ' | ');
+                $.warning( ('usage ' ~ $synopsis, @proforma).flat.join: ' | ');
                 return Any;
             }
             elsif ! $val<expr> {
