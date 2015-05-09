@@ -9,12 +9,12 @@ sub find_duplicates (:@dirs!, :$ignore_empty = False, :$recursive = False, :$met
     my (@files, @duplicates);
     if $recursive {
         use File::Find;
-        @files = map -> $d {find( dir => $d )».Str}, @dirs.flat
+        @files = map -> $d {find( dir => $d ).flat}, @dirs.flat
     }
-    else { @files = map -> $d {dir($d)».path}, @dirs.flat }
+    else { @files = @dirs».IO».dir.flat }
 
     my %filesizes;
-    for @files.uniq».path -> $f { $f.f and push %filesizes, $f.s=>$f }
+    for @files.unique -> $f { $f.f and push %filesizes, $f.s=>$f }
     my $emptyfiles = %filesizes{'0'} :delete // Nil;
       # since empty files are obviously equivalent
 
@@ -38,7 +38,7 @@ sub find_duplicates (:@dirs!, :$ignore_empty = False, :$recursive = False, :$met
     return @duplicates;
 }
 
-use MONKEY_TYPING;
+use MONKEY-TYPING;
 augment class IO::Path {
     method duplicates ( :$ignore_empty = False, :$recursive = False ) is export {
         find_duplicates( :$ignore_empty, :$recursive, dirs=>[self.path] )
