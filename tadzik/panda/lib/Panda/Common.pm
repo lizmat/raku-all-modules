@@ -21,7 +21,7 @@ sub withp6lib(&what) is export {
             %*ENV<PERL6LIB>:delete;
         }
     }
-    my $sep = $*DISTRO.is-win ?? ';' !! ':';
+    my $sep = $*DISTRO.?cur-sep // $*DISTRO.path-sep;
     %*ENV<PERL6LIB> = join $sep,
         $*CWD ~ '/blib/lib',
         $*CWD ~ '/lib',
@@ -32,6 +32,27 @@ sub withp6lib(&what) is export {
 sub compsuffix is export { state $ = $*VM.precomp-ext }
 
 sub comptarget is export { state $ = $*VM.precomp-target }
+
+sub topo-sort(@modules, %dependencies) is export {
+    my @order;
+    my %color_of = @modules X=> 'not yet visited';
+    sub dfs-visit($module) {
+        %color_of{$module} = 'visited';
+        for %dependencies{$module}.list -> $used {
+            if (%color_of{$used} // '') eq 'not yet visited' {
+                dfs-visit($used);
+            }
+        }
+        push @order, $module;
+    }
+
+    for @modules -> $module {
+        if %color_of{$module} eq 'not yet visited' {
+            dfs-visit($module);
+        }
+    }
+    @order;
+}
 
 class X::Panda is Exception {
     has $.module is rw;

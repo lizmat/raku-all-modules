@@ -52,6 +52,12 @@ class Panda {
 
     method project-from-local($proj as Str) {
         if $proj.IO ~~ :d and "$proj/META.info".IO ~~ :f {
+            if $proj !~~ rx{'/'|'.'|'\\'} {
+                die X::Panda.new($proj, 'resolve',
+                        "Possibly ambiguous module name requested." 
+                        ~ " Please specify at least one slash if you really mean to install"
+                        ~ " from local directory (e.g. ./$proj)")
+            }
             my $mod = from-json slurp "$proj/META.info";
             $mod<source-url>  = $proj;
             return Panda::Project.new(
@@ -93,7 +99,7 @@ class Panda {
 
         my $shell = %*ENV<SHELL>;
         $shell ||= %*ENV<COMSPEC>
-            if $*DISTRO.name eq 'mswin32';
+            if $*DISTRO.is-win;
 
         if $shell {
 
@@ -106,7 +112,7 @@ class Panda {
     }
 
     method install(Panda::Project $bone, $nodeps,
-                   $notests, $isdep as Bool) {
+                   $notests, $isdep as Bool, :$rebuild) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
         my $reports-file = ($.ecosystem.statefile.IO.dirname ~ '/reports.' ~ $*PERL.compiler.version).IO;
@@ -131,7 +137,17 @@ class Panda {
         $.installer.install(:$bone, $dir);
         my $s = $isdep ?? Panda::Project::State::installed-dep
                        !! Panda::Project::State::installed;
-        $.ecosystem.project-set-state($bone, $s);
+        # Check if there's any reverse dependencies to rebuild
+        unless $rebuild {
+            my @revdeps = $.ecosystem.revdeps($bone, :installed);
+            if $.ecosystem.is-installed($bone) and @revdeps {
+                self.announce("Rebuilding reverse dependencies: " ~ @revdeps.join(" "));
+                for @revdeps -> $revdep {
+                    self.install($revdep, False, False, False, :rebuild)
+                }
+            }
+            $.ecosystem.project-set-state($bone, $s)
+        }
         self.announce('success', $bone);
         Panda::Reporter.new( :$bone, :$reports-file ).submit;
 

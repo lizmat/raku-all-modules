@@ -5,7 +5,7 @@ method test($where, :$bone, :$prove-command = 'prove') {
     indir $where, {
         my Bool $run-default = True;
         if "Build.pm".IO.f {
-            @*INC.push('.');
+            @*INC.push('file#.');   # TEMPORARY !!!
             GLOBAL::<Build>:delete;
             require 'Build.pm';
             if ::('Build').isa(Panda::Tester) {
@@ -17,7 +17,8 @@ method test($where, :$bone, :$prove-command = 'prove') {
 
         if $run-default && 't'.IO ~~ :d {
             withp6lib {
-                my $cmd    = "$prove-command -e \"$*EXECUTABLE\" -r t/";
+                my $cmd    = "$prove-command -e \"$*EXECUTABLE -Ilib\" -r t/";
+
                 my $handle = pipe("$cmd 2>&1", :r);
                 my $output = '';
                 for $handle.lines {

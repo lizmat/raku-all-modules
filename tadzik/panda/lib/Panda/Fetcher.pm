@@ -2,18 +2,20 @@ class Panda::Fetcher;
 use File::Find;
 use Shell::Command;
 
-method fetch($from, $to) {
+method fetch($from is copy, $to) {
     given $from {
+        my $commit;
+        $from.=subst(/ '@' (<[ . / ]+alpha+digit>+) $/, { $commit = $0; "" });
         when /\.git$/ {
-            return git-fetch $from, $to;
+            return git-fetch $from, $to, $commit;
         }
         when /^ $<schema>=[<alnum><[+.-]+alnum>*] '://' / {
             when $<schema> {
                 when /^'git://'/ {
-                    return git-fetch $from, $to;
+                    return git-fetch $from, $to, $commit;
                 }
                 when /^[http|https]'+git://'/ {
-                    return git-fetch $from.subst(/'+git'/, ''), $to;
+                    return git-fetch $from.subst(/'+git'/, ''), $to, $commit;
                 }
                 when /^'file://'/ {
                     return local-fetch $from.subst(/^'file://'/, ''), $to;
@@ -34,9 +36,13 @@ method fetch($from, $to) {
     return True;
 }
 
-sub git-fetch($from, $to) {
+sub git-fetch($from, $to, $commit?) {
     shell "git clone -q $from \"$to\""
         or fail "Failed cloning git repository '$from'";
+    if $commit {
+        temp $*CWD = chdir($to);
+        shell "git checkout $commit";
+    }
     return True;
 }
 
@@ -45,7 +51,7 @@ sub local-fetch($from, $to) {
     # copy files to a subdirectory of $from
     my $cleanup       = $from.IO.cleanup;
     my $cleanup_chars = $cleanup.chars;
-    for eager find(dir => $from).list {
+    for eager find(dir => $from, exclude => "$from/.git").list {
         my $io = .IO;
         my $d  = $*SPEC.catpath($io.volume, $io.dirname, '');
         # We need to cleanup the path, because the returned elems are too.
@@ -53,7 +59,6 @@ sub local-fetch($from, $to) {
             $d = $d.substr($cleanup_chars)
         }
 
-        next if $d ~~ /^ '/'? '.git'/; # skip VCS files
         my $where = "$to/$d";
         mkpath $where;
         next if $io ~~ :d;
