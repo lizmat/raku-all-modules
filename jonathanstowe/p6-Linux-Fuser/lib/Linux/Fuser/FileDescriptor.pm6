@@ -35,8 +35,8 @@ class Linux::Fuser::FileDescriptor {
    has Int $.fd;
    #| The position in the file the opening process has the file pointer
    has Int $.pos;
-   #| mnt_id
-   has Int $.mnt_id;
+   #| mnt_id (this may be 0 in some virtualised environments)
+   has Int $.mnt_id ;
    #| The flags with which the file was opened
    has Int $.flags;
 
@@ -51,9 +51,9 @@ class Linux::Fuser::FileDescriptor {
       $!fd = $!fd_file.basename.Int;
       $!fd_info = $!proc_file.append('fdinfo', $!fd);
       my %info = open($!fd_info.Str, :bin).read(255).decode.lines.map( { $_.split(/\:\t/) }).hash;
-      $!pos = %info<pos>.Int;
-      $!mnt_id = %info<mnt_id>.Int;
+      $!pos =  %info<pos>.Int if %info<pos>.defined;
+      $!mnt_id = %info<mnt_id>.defined ?? %info<mnt_id>.Int !! 0;
       my $str_fl = %info<flags>;
-      $!flags = :8($str_fl);
+      $!flags = :8($str_fl) if $str_fl.defined;
    }
 }

@@ -1,3 +1,4 @@
+use nqp;
 use Linux::Fuser::FileDescriptor;
 # For the time being
 use System::Passwd;
