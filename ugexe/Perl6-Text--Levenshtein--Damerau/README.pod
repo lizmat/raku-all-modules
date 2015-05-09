@@ -60,7 +60,7 @@ Damerau Levenshtein Distance (Levenshtein Distance including transpositions)
 
 Arguments: $source, $target, $max?
 
-I<$max distance. Int/-1 = unlimited. Default = Int>
+I<$max distance. 0 = unlimited. Default = 0>
 
 Returns: int that represents the edit distance between the two argument. Stops calculations and returns Int if max distance is set and reached if possible.
 
@@ -79,7 +79,7 @@ Levenshtein Distance (no transpositions)
 
 Arguments: $source, $target, $max?
 
-I<$max distance. Int/-1 = unlimited. Default = Int>
+I<$max distance. 0 = unlimited. Default = 0>
 
 Returns: Int that represents edit distance between the two argument. Stops calculations and returns Int if max distance is set and reached if possible.
 
@@ -104,7 +104,7 @@ Damerau Levenshtein Distance (Levenshtein Distance including transpositions)
 
 Arguments: \@sources, \@targets, $max?
 
-I<$max distance. Int/-1 = unlimited. Default = Int>
+I<$max distance. 0 = unlimited. Default = 0>
 
 Create a new object. For now, this is so you may call C<get_results> on it.
 

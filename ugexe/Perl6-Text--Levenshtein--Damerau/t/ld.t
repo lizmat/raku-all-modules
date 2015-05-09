@@ -30,7 +30,7 @@ is( ld("cow","cat",2),                      2,  "(max distance) cow cat");
 is( ld("cat","moocow",5),                   5,  "(max distance) cat moocow");
 nok( ld("cat","cowmoo",4),                      "(max distance) cat cowmoo");
 is( ld("sebastian","sebastien",4),          1,  "(max distance) sebastian sebastien");
-nok( ld("more","cowbell",0),                    "(max distance) more cowbell");
+is( ld("more","cowbell",0),                 5,  "(max distance) 0 = no max distance");
 nok( ld("a","xxxxxxxx",5),                      "(max distance) length difference shortcut");
 
 # some extra maxDistance tests

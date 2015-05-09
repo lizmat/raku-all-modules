@@ -20,7 +20,7 @@ nok( dld('abab','baba',1),                      '> max distance setting (bypass 
 is( dld('xxx','xx',1),                      1,  '<= max distance setting');
 
 # some extra maxDistance tests
-nok( dld("xxx","xxxx",0),                       'misc 1');
+is( dld("xxx","xxxx",0),                    1,  '0 = no max distance');
 is( dld("xxx","xxxx",1),                    1,  'misc 1');
 is( dld("xxx","xxxx",2),                    1,  'misc 2');
 is( dld("xxx","xxxx",3),                    1,  'misc 3');
@@ -29,7 +29,7 @@ is( dld("xxxx","xxx",2),                    1,  'misc 5');
 is( dld("xxxx","xxx",3),                    1,  'misc 6');
 nok( dld("xxxxxx","xxx",2),                     'misc 7');
 is( dld("xxxxxx","xxx",3),                  3,  'misc 8');
-nok( dld("a","xxxxxxxx",5),                      'misc 9 (length shortcut)');
+nok( dld("a","xxxxxxxx",5),                     'misc 9 (length shortcut)');
 
 # Test some utf8
 is( dld('ⓕⓞⓤⓡ','ⓕⓞⓤⓡ'),                     0,  'matching (utf8)');
