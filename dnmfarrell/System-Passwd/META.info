@@ -4,6 +4,9 @@
     "description" : "easily search for system users in Unix-based systems",
     "author" : "David Farrell",
     "depends" : [ ],
+    "provides" : {
+        "System::Passwd" : "lib/System/Passwd.pm6",
+        "System::Passwd::User" : "lib/System/Passwd/User.pm6"
+    },
     "source-url" : "git://github.com/dnmfarrell/System-Passwd.git"
 }
-
