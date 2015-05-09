@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ugexe/zef.git
+	branch = master
+	commit = f6a6747bd54796d6e01c3dee85cefe254121b1b4
+	parent = d1b6822094d844dd87b73a0b1cddb75a2874f61d
+	cmdver = 0.2.1
