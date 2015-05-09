@@ -2,6 +2,9 @@ use MONKEY_TYPING;
 use File::Find;
 use Shell::Command;
 
+# needed to prevent warning now;
+use nqp;
+
 ##### Functions for Export: path() variants ######
 # because Str.path is already taken by IO::Path
 multi sub path (Str:D $path) is export {
