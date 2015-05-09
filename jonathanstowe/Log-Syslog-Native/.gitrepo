@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Log-Syslog-Native.git
+	branch = master
+	commit = c8f7293eec6176f12e132d01daf9a360b48dc4c5
+	parent = c2f152358d06b2959296289727ab948196b48be5
+	cmdver = 0.2.1
