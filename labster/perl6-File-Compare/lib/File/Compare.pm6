@@ -6,8 +6,8 @@ my $MAX = 8*1024*1024;    # Default maximum bytes for .read
 sub files_are_equal (Str $left_filename, Str $right_filename, Int :$chunk_size = $MAX) is export {
 	unless $chunk_size > 0 { die "Argument \$chunk_size must be a positive number" } 
 
-	my $left_path  = $left_filename\.path;
-	my $right_path = $right_filename.path;
+	my $left_path  = $left_filename\.IO;
+	my $right_path = $right_filename.IO;
 
 	fail "Cannot read file: '$right_filename'" unless $right_path.r;
 	fail "Cannot read file: '$left_filename'"  unless $left_path\.r;
@@ -40,7 +40,7 @@ sub compare_multiple_files (@file_list, Int :$chunk_size = $MAX) is export {
 	die "File list must contain only Str or IO::Path objects."
 		unless $_ ~~ any(Str, IO::Path) for @file_list;
 
-	my @file_paths = @file_list.map({$_ !~~ IO::Path ?? .path !! $_}).grep: { .r };
+	my @file_paths = @file_list.».IO.grep: { .r };
 
 	fail "Cannot read any files in @file_list." unless @file_paths.elems > 0;
 	if @file_paths.elems == 1 {return Array.new};
@@ -121,9 +121,9 @@ This code returns boolean values and Failure objects instead of 1, 0, -1 for dif
 =head2 Comparing Text
 
 This Perl 6 version drops the C<compare_text> function that was included in Perl 5.  Since most text files are of managable size, consider this code, which uses Perl's native newline handling:
-	C<"file1".path.open.lines eq "file2".path.open.lines>
+	C<"file1".IO.open.lines eq "file2".IO.open.lines>
 Functions can be evaluated on this as well:
-	C<foo( "old/script.p6".path.open.lines ) eq foo( "new/script.p6".path.open.lines )>
+	C<foo( "old/script.p6".IO.open.lines ) eq foo( "new/script.p6".IO.open.lines )>
 Though, you may be better off looking at a module like L<Text::Diff> instead.
 
 =head1 TODO
