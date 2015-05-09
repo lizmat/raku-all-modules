@@ -1,0 +1,9 @@
+{
+    "name" : "TinyCC",
+    "version" : "*",
+    "description" : "The Tiny C Compiler",
+    "author" : "cygx <cygx@cpan.org>",
+    "provides" : { "TinyCC" : "TinyCC.pm6" },
+    "depends" : [ ],
+    "source-url" : "git://github.com/cygx/p6-tinycc.git"
+}

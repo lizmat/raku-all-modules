@@ -1,0 +1,56 @@
+# Name
+
+TinyCC - The Tiny C Compiler
+
+# Synopsis
+
+```
+    use TinyCC;
+
+    # tells TinyCC where libtcc1.a can be found
+    tcc.set(:L<.>);
+
+    tcc.define(NAME => '"cygx"');
+    tcc.compile(q:to/__END__/);
+        int puts(const char *);
+        int main(void) {
+            puts("Hello, " NAME "!");
+            return 0;
+        }
+        __END__
+
+    tcc.run;
+    tcc.delete;
+```
+
+# Description
+
+Tries to load TinyCC from the shared library specified in `%*ENV<LIBTCC>`,
+falling back to plain `'libtcc'`.
+
+Alternatively, a list of candidates can be passed to the use statement:
+
+    use TinyCC <path/1/libtcc.so path/2/libtcc.so>;
+
+The current development version of TinyCC itself can be found at
+[repo.or.cz/w/tinycc.git](http://repo.or.cz/w/tinycc.git); the embedding API
+is documented in [libtcc.h](http://repo.or.cz/w/tinycc.git/blob/HEAD:/libtcc.h).
+
+The `TCC` class provides the following methods:
+
+__API__
+
+
+# Bugs and Development
+
+Development happens at [GitHub](https://github.com/cygx/p6-tinycc). If you
+found a bug or have a feature request, use the
+[issue tracker](https://github.com/cygx/p6-tinycc/issues) over there.
+
+
+# Copyright and License
+
+Copyright (C) 2015 by <cygx@cpan.org>
+
+Distributed under the
+[Boost Software License, Version 1.0](http://www.boost.org/LICENSE_1_0.txt)
