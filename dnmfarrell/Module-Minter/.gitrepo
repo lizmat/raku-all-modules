@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/dnmfarrell/Module-Minter.git
+	branch = master
+	commit = e82b25aec5967456d0c79106d093d2bcc765db55
+	parent = 58bb86b1667c69cec0b17c1ce5ed75d20a917243
+	cmdver = 0.2.1

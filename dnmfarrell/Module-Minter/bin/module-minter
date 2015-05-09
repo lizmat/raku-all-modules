@@ -1,0 +1,7 @@
+#!/usr/bin/env perl6
+use Module::Minter;
+
+sub MAIN (Str:D :$module, Str:D :$author, Str:D :$license='Artistic2')
+{
+    mint-new-module($module, $author, $license);
+}

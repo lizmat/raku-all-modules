@@ -1,0 +1,27 @@
+=head1 Module-Minter
+
+A Perl 6 app for minting new Perl 6 distributions.
+
+=head2 SYNOPSIS
+
+Create a new module in the current directory:
+
+    $ module-minter --module="My::New::Module" --author="David Farrell"
+
+Or use a different directory and the FreeBSD license:
+
+    $ module-minter --module="perl6/modules/My::New::Module" --author="David Farrell" --license="FreeBSD"
+
+=head2 AUTHOR
+
+David Farrell L<PerlTricks.com|http://perltricks.com>
+
+=head2 LICENSE
+
+FreeBSD, see LICENSE
+
+=head2 THANKS
+
+Inspired by the Perl 5 library, Module::Starter by Andy Lester
+
+=cut
