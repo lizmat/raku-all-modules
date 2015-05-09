@@ -5,7 +5,8 @@
 
 test:
 	@perl bugs.pl -s
-	prove -e 'perl6 -I. -Ilib' t
+	podchecker Text-CSV.pod 2>&1 | grep -v WARNING:
+	prove -j4 -e 'perl6 -I. -Ilib' t
 
 test-verbose:	Text/CSV.pm
 	perl6 -Ilib t/10_base.t

@@ -44,8 +44,8 @@ is ($csv.empty-is-undef,        False, "empty-is-undef");
 is ($csv.keep_meta,             False, "keep_meta");
 is ($csv.keep-meta,             False, "keep-meta");
 is ($csv.meta,                  False, "meta");
-is ($csv.auto_diag,             0,     "auto_diag");
-is ($csv.auto-diag,             0,     "auto-diag");
+is ($csv.auto_diag,             False, "auto_diag");
+is ($csv.auto-diag,             False, "auto-diag");
 is ($csv.diag_verbose,          0,     "diag_verbose");
 is ($csv.diag-verbose,          0,     "diag-verbose");
 is ($csv.verbose_diag,          0,     "verbose_diag");
@@ -108,13 +108,11 @@ is ($csv.empty_is_undef (False),       False, "empty_is_undef (True)");
 is ($csv.empty_is_undef (0),           False, "empty_is_undef (1)");
 is ($csv.keep_meta (True),             True,  "keep_meta (True)");
 is ($csv.keep-meta (1),                True,  "keep-meta (1)");
-is ($csv.auto_diag (1),                1,     "auto_diag (1)");
-is ($csv.auto_diag (2),                2,     "auto_diag (2)");
-is ($csv.auto_diag (9),                9,     "auto_diag (9)");
-is ($csv.auto_diag (True),             1,     "auto_diag (True)");
-is ($csv.auto_diag (False),            0,     "auto_diag (False)");
-is ($csv.auto_diag (Str),              0,     "auto_diag (Str)");
-is ($csv.auto_diag (""),               0,     "auto_diag (\"\")");
+is ($csv.auto_diag (1),                True,  "auto_diag (1)");
+is ($csv.auto_diag (True),             True,  "auto_diag (True)");
+is ($csv.auto_diag (False),            False, "auto_diag (False)");
+is ($csv.auto_diag (Str),              False, "auto_diag (Str)");
+is ($csv.auto_diag (""),               False, "auto_diag (\"\")");
 is ($csv.diag_verbose (1),             1,     "diag_verbose (1)");
 is ($csv.diag_verbose (2),             2,     "diag_verbose (2)");
 is ($csv.diag_verbose (9),             9,     "diag_verbose (9)");
@@ -193,12 +191,12 @@ for (" ", "\t") -> $ws {
         CATCH { default { $e = .error; }}
         }
     is ($e, 1002, "Sanity check"); $e = 0;
-    ok ($csv = Text::CSV.new (allow_whitespace => True), "New ws True");
+    ok ($csv = Text::CSV.new (:allow_whitespace), "New ws True");
     {   $csv.escape_char ($ws);
         CATCH { default { $e = .error; }}
         }
     is ($e, 1002, "Sanity check"); $e = 0;
-    ok ($csv = Text::CSV.new (allow_whitespace => True), "New ws True");
+    ok ($csv = Text::CSV.new (:allow_whitespace), "New ws True");
     {   $csv.quote_char  ($ws);
         CATCH { default { $e = .error; }}
         }
@@ -207,7 +205,7 @@ for (" ", "\t") -> $ws {
 
 # Test 1002 in constructor
 {   my Int $e = 0;
-    {   $csv = Text::CSV.new (esc => "\t", quo => " ", allow-whitespace => True);
+    {   $csv = Text::CSV.new (esc => "\t", quo => " ", :allow-whitespace);
         CATCH { default { $e = .error; }}
         }
     is ($e, 1002, "no whitespace in descriptor");

@@ -238,3 +238,16 @@ EOP
     test (qr{OH NOES},
           q{class C is Exception { method message { "OH NOES" } }; for ^208 { { die C.new; CATCH { default {} } }; print "" }});
     }
+
+{   title "Precomp", "Precompilations causes segfault", "RT#124298";
+    qx{mkdir -p blib/lib/Text};
+    qx{perl6 --target=mbc --output=blib/lib/Text/CSV.pm.moarvm lib/Text/CSV.pm};
+    test (qr{Segmentation fault},
+          q{use lib "blib/lib";use Text::CSV; my $c = Text::CSV.new});
+    qx{rm -rf blib};
+    }
+
+{   title "MoarVM", "Read bytes too often", "RT#124394";
+    test (qr{\+\+},
+          q{my$fh=open "t.csv",:w;$fh.print("+");$fh.close;$fh=open "t.csv",:r;$fh.get.perl.say;});
+    }

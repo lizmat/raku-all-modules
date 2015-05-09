@@ -6,7 +6,7 @@ use Slang::Tuxic;
 use Test;
 use Text::CSV;
 
-my $csv = Text::CSV.new (binary => False, eol => "\n", :meta);
+my $csv = Text::CSV.new (:!binary, eol => "\n", :meta);
 
 my $tf20 = "_20test.csv";
 
@@ -92,16 +92,19 @@ ok (!$csv.getline ($fh),                "Fetch record 6");
 is ($csv.eof, True,                     "EOF");
 
 # Edge cases
-$csv = Text::CSV.new (escape => "+", binary => False, eol => "\n");
-sub esc_test (int $tst, int $err, Str $str) {
+$csv = Text::CSV.new (escape => "+", :!binary, eol => "\n");
+sub esc_test (int $tst, int $err is copy, Str $str) {
     $fh = open $tf20, :w or die "$tf20: $!";
     $fh.print ($str);
     $fh.close;
     $fh = open $tf20, :r or die "$tf20: $!";
     my @row = $csv.getline ($fh);
     $fh.close;
-#   is ($csv.status, !?$err, "$tst - getline ESC +, " ~ $str.perl);
-    is ($csv.error_diag.error, $err, "$tst - expected error $err");
+    is (+$csv.error_diag, $err, "$tst - expected error $err (IO)");
+
+    $err == 2012 and $err = 2027;
+    @row = $csv.getline ($str);
+    is (+$csv.error_diag, $err, "$tst - expected error $err (Str)");
     }
 
  esc_test ( 1,    0, "\n");

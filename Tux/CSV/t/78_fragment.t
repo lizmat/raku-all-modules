@@ -29,6 +29,8 @@ $csv.colrange ("2;5-7;9-*");
 is ([$csv.getline ($str).map (~*)], @exp[1,4..6,8..Inf], "fragment '2;5-7;9-*'");
 $csv.colrange ("2;5-7;5-6;2-2;7-7;9-*;12-*");
 is ([$csv.getline ($str).map (~*)], @exp[1,4..6,8..Inf], "fragment '2;5-7;9-*' with overlaps");
+$csv.colrange ("12-24;14-*");
+is ([$csv.getline ($str).map (~*)], [[]], "out of bound fragment");
 
 # Tests on a matrix
 my @expect =
@@ -51,7 +53,7 @@ sub to-int (@str) { [ @str.map ({[ $_.map (*.Int) ]}) ]; }
 $csv = Text::CSV.new;
 
 $fh = open $tfn, :r;
-my @matrix = $csv.getline_all ($fh, meta => False);
+my @matrix = $csv.getline_all ($fh, :!meta);
 is_deeply (to-int (@matrix), @expect, "Whole matrix");
 $fh.close;
 
@@ -69,6 +71,7 @@ my @test =
 			[ 71,72,73,74,75,76,77,78,79 ],
 			[ 81,82,83,84,85,86,87,88,89 ],
 			[ 91,92,93,94,95,96,97,98,99 ]],
+    "row=24"        => [],
 
     "col=1"         => [[11],[21],[31],[41],[51],[61],[71],[81],[91]],
     "col=2-3"       => [[12,13],[22,23],[32,33],[42,43],[52,53],
@@ -80,6 +83,7 @@ my @test =
 			[51,52,54,56,57,58,59], [61,62,64,66,67,68,69],
 			[71,72,74,76,77,78,79], [81,82,84,86,87,88,89],
 			[91,92,94,96,97,98,99]],
+    "col=24"        => [[],[],[],[],[],[],[],[],[]],
 
     #cell=R,C
     "cell=7,7"      => [[ 77 ]],
@@ -115,7 +119,7 @@ for @test -> $t {
     my $expt = $t.value;
 
     $fh = open $tfn, :r;
-    is_deeply (to-int ($csv.fragment ($fh, $spec, meta => False)), $expt, "spec: $spec");
+    is_deeply (to-int ($csv.fragment ($fh, $spec, :!meta)), $expt, "spec: $spec");
     $fh.close;
     }
 

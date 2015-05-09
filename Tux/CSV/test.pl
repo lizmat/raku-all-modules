@@ -36,7 +36,7 @@ class CSV::Field {
     method set_quoted () {
         $!is_quoted = True;
         $!undefined = False;
-        .add("");
+        self.add("");
         }
 
     } # CSV::Field
@@ -98,7 +98,7 @@ class Text::CSV {
         my     $regex := $!regex;
         my $f = CSV::Field.new;
 
-        @!fields = Nil;
+        @!fields = ();
 
         sub keep {
             # Set is_binary
@@ -107,7 +107,7 @@ class Text::CSV {
             $f = CSV::Field.new;
             } # add
 
-        my @ch = $buffer.split($regex,:all).map: {
+        my @ch = $buffer.split($regex,:all).flat.map: {
             if $_ ~~ Str {
                 $_ if .chars;
                 }
@@ -205,7 +205,7 @@ class Text::CSV {
                 }
 
             $chunk ne "" and $f.add($chunk);
-            $pos += .chars;
+            $pos += $chunk.chars;
             }
 
         keep;
