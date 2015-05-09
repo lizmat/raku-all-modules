@@ -39,7 +39,7 @@ for (@tests) -> $line {
     my @fields = $line.split(/\s+/);
     my $d1 = Date.new(shift @fields);
     my $d2 = Date.new(shift @fields);
-    my (Int $NW1, Int $NW2, Int $wt1, Int $wt2, Int $nw1, Int $nw2) = @fields;
+    my (Int $NW1, Int $NW2, Int $wt1, Int $wt2, Int $nw1, Int $nw2) = @fields.map({ .Int });
     diag "Test $t";
     $t++;
     is(
