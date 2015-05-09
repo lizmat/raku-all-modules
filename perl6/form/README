@@ -1,0 +1,33 @@
+An implementation of Perl 6's Form module, as described by Exegesis 7 and Damian Conway's Perl6::Form module.
+
+This is a WORK IN PROGRESS and most likely doesn't work at any given time.
+
+2012-03-09 Current status: runs and passes all tests with Rakudo nom
+
+TODO
+====
+
+* DOCUMENTATION
+* Data specified as lists
+* Numeric fields with decimal separator and justification
+* Numeric fields with thousands separators and justification
+* Currencies
+* Rendering of Complex numbers (currently restricted to Real)
+* Everything else
+
+
+BUILDING AND RUNNING
+====================
+
+You will need ufo in order to build Form. Install it using panda, or see http://github.com/masak/ufo. You will also need a suitable Perl 6 implementation, which at the time of writing is probably Rakudo Perl.
+
+Once you have ufo installed, just run:
+
+$ ufo
+$ make
+$ make test
+
+Since Form is a library, 'running' is something that should not really have ever been mentioned.
+
+
+Licensed under the Artistic Licence 2.0
