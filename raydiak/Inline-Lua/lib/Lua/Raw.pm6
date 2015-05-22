@@ -1,4 +1,4 @@
-class Lua::Raw;
+unit class Lua::Raw;
 
 use NativeCall;
 
