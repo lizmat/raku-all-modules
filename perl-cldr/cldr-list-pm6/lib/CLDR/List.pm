@@ -1,4 +1,4 @@
-class CLDR::List is rw;
+unit class CLDR::List is rw;
 
 constant @placeholders = <{0} {1}>;
 constant %patterns = { # TODO: update with full CLDR data

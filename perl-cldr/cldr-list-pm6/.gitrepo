@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl-cldr/cldr-list-pm6.git
 	branch = master
-	commit = 5c7bb9e4fc5d53e3bf0e0f4eb27207c3714a38d8
-	parent = 0175284c86c086006db7478ebec56ecdfa40ec91
-	cmdver = 0.1.0
+	commit = c3298d2602165e38f1b5b22d5a35580770422683
+	parent = ff275947007e99381ae80f63e4aa70eff22bcbba
+	cmdver = 0.2.1
