@@ -99,13 +99,13 @@ for @vectors -> $v
 #dot product tests
 is_approx($v7 dot $v8, 0, "Perpendicular Math::Vectors have 0 dot product");
 
-for ($v1, $v2, $v3) X ($v1, $v2, $v3) -> $x, $y
+for flat ($v1, $v2, $v3) X ($v1, $v2, $v3) -> $x, $y
 {
     is_approx($x ⋅ $y, $y ⋅ $x, "x ⋅ y = y ⋅ x");
     is_approx($x ⋅ ($y + $v3), ($x ⋅ $y) + ($x ⋅ $v3), "x ⋅ (y + v3) = x ⋅ y + x ⋅ v3");
 }
 
-for ($v5, $v6) X ($v5, $v6) -> $x, $y
+for flat ($v5, $v6) X ($v5, $v6) -> $x, $y
 {
     is_approx($x ⋅ $y, $y ⋅ $x, "x ⋅ y = y ⋅ x");
     is_approx($x ⋅ ($y + $v6), ($x ⋅ $y) + ($x ⋅ $v6), "x ⋅ (y + v6) = x ⋅ y + x ⋅ v3");
@@ -128,7 +128,7 @@ dies_ok( { $v7 dot $v5 }, "You can't do dot products of different dimensions");
 #cross product tests
 is(~($v1 × $v2), "(-12, 9, -2)", "Basic cross product works");
 
-for ($v1, $v2, $v3) X ($v1, $v2, $v3) -> $x, $y
+for flat ($v1, $v2, $v3) X ($v1, $v2, $v3) -> $x, $y
 {
     my $cross = $x × $y;
     is_approx($cross ⋅ $x, 0, "(x × y) ⋅ x = 0");
@@ -138,7 +138,7 @@ for ($v1, $v2, $v3) X ($v1, $v2, $v3) -> $x, $y
               "|x × y|^2 = |x|^2 * |y|^2 - (x ⋅ y)^2");
 }
 
-for ($v7, $v8, $v9, $v10) X ($v7, $v8, $v9, $v10) -> $x, $y
+for flat ($v7, $v8, $v9, $v10) X ($v7, $v8, $v9, $v10) -> $x, $y
 {
     my $cross = $x × $y;
     is_approx($cross ⋅ $x, 0, "(x × y) ⋅ x = 0");
