@@ -1,5 +1,5 @@
 
-module Text::Fortune:ver<0.01>;
+unit module Text::Fortune:ver<0.02>;
 
 my class X::Index::NotFound is Exception {
   method message() {
