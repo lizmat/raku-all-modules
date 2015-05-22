@@ -1,4 +1,4 @@
-module BreakDancer;
+unit module BreakDancer;
 use Shell::Command;
 
 our $basedir = 'www';
