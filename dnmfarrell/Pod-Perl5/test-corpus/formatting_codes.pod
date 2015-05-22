@@ -1,0 +1,14 @@
+=pod
+
+I<this text is an example of inline italicised/emphasised>
+
+I<this text is italicised/emphasised 
+across 
+newlines>
+
+This paragraph has I<italicised words> in it
+
+This paragraph has inline I<italicised
+words> breaking across a newline
+
+I<bolded B<words> within italics!>

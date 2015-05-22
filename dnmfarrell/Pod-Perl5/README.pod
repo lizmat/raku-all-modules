@@ -1,0 +1,62 @@
+=encoding utf8
+
+=head1 NAME
+
+Pod::Perl5
+
+=head1 VERSION
+
+0.09
+
+=head1 DESCRIPTION
+
+This is a Perl 6 module for parsing Perl 5 pod. The grammar for this module lives at C<Pod::Perl5::Grammar>.
+The parser can parse inline pod and standalone F<*.pod> files and supports all pod syntax. It also comes with
+a pod-to-html action class for the grammar C<Pod::Perl5::ToHTML>.
+
+=head1 SYNOPSIS
+
+  use Pod::Perl5;
+
+  my $match_from_string = Pod::Perl5::parse-string($pod);
+  my $match_from_file   = Pod::Perl5::parse-file('/some.pod');
+
+  my $html_from_string = Pod::Perl5::string-to-html($pod);
+  my $html_from_file   = Pod::Perl5::file-to-html('/some.pod');
+
+=head2 INSTALL
+
+Requires panda and Perl 6:
+
+  $ panda install Pod::Perl5
+
+=head1 TESTING
+
+The parser has a decent test suite. You'll need Perl 5 and Perl 6 installed to run it with C<prove>
+
+  $ prove --exec perl6 -r
+
+Or run individual test files with C<perl6>:
+
+  $ perl6 t/01_basic.t
+
+=head1 AUTHOR
+
+David Farrell (C) 2015
+
+=head1 LICENSE
+
+FreeBSD, see LICENSE file
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * perlpod L<documentation|http://perldoc.perl.org/perlpod.html>
+
+=item * PerlTricks L<article|http://perltricks.com/article/170/2015/4/30/Parsing-Perl-5-pod-with-Perl-6> on this module
+
+=item * L<Pegex|https://metacpan.org/pod/Pegex> - a Perl 5 module that uses grammars and action classes like Perl 6
+
+=back
+

@@ -1,0 +1,14 @@
+{
+    "name" : "Pod::Perl5",
+    "version" : "0.09",
+    "description" : "Parser and grammar for Perl 5 pod, with an HTML converter",
+    "author" : "David Farrell",
+    "depends" : [],
+    "provides" : {
+      "Pod::Perl5" : "lib/Pod/Perl5.pm",
+      "Pod::Perl5::Grammar" : "lib/Pod/Perl5/Grammar.pm",
+      "Pod::Perl5::ToHTML"  : "lib/Pod/Perl5/ToHTML.pm"
+    },
+    "source-type" : "git",
+    "source-url" : "git://github.com/dnmfarrell/Pod-Perl5.git"
+}

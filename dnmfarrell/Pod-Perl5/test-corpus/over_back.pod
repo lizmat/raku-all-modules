@@ -1,0 +1,81 @@
+
+
+=over
+
+=item 1 bullet point one
+ 
+
+  
+=item * bullet point two
+  
+=item some_code() bullet point three
+
+
+=item NoPara
+
+=item NoParaTrailingWhitespace  
+
+=item ParaNextLine
+
+This is the para for the bullet point
+
+=item ParaNextLineTrailWhitespace 
+
+This is the para for the bullet point after trailing whitespace
+
+=pod
+
+=encoding utf8
+
+paragraph one
+
+	verbatim paragraph one
+	verbatim paragraph one
+	verbatim paragraph one
+
+
+paragraph two
+paragraph two
+paragraph two
+paragraph two
+
+
+	verbatim paragraph two
+	verbatim paragraph two
+	verbatim paragraph two
+
+=back
+
+=over 4
+
+=item 1
+
+=item 2
+
+=item 3
+
+=back
+
+  
+=over 4
+
+=item outer list bullet one
+
+
+=item outer list bullet two
+
+
+=over 8
+
+=item inner list bullet one
+
+
+=item inner list bullet two
+
+=back
+
+=item outer list bullet three
+
+
+=back
+

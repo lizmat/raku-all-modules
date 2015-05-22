@@ -1,0 +1,66 @@
+=pod
+
+I<This is a B<realistic> document for testing parsing on>
+
+=encoding utf8
+
+=head1 NAME
+
+Pod::Perl5 - a Perl 6 parser for Perl 5 pod
+
+=head1 VERSION
+
+0.01
+
+=head1 DESCRIPTION
+
+This is a Perl6 module for parsing B<Perl 5> pod. The grammar for this module lives at C<Pod::Perl5::Grammar>.
+
+=head1 SYNOPSIS
+
+  use Pod::Perl5;
+
+  my $match = Pod::Perl5.parse_file('/some.pod');
+
+  # or:
+
+  my $match = Pod::Perl5::parse_string($pod);
+
+=head1 AUTHOR
+
+David Farrell (C) 2015
+
+=head1 LICENSE
+
+FreeBSD, see LICENSE file
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<perlpod documentation|http://perldoc.perl.org/perlpod.html> is the reference spec for this grammar
+
+=item * L<perlvar/DESCRIPTION> should convert into a perldoc link to perlvar with a section
+
+=over 4
+
+=item 1 L<This is a link for the Time::Piece module|Time::Piece/USAGE> should convert into a perldoc link to Time::Piece
+
+=item 2 L<Time::Piece> should convert into a perldoc link to Time::Piece
+
+=item 3 L<https://github.com> should just be a pure url (text and href equal)
+
+=back
+
+=item * L<perlpod> I<should> convert into a link to perlpod
+
+=back
+
+=begin HTML
+
+<p>This code lives on <a href="https://github.com/dnmfarrell/Pod-Perl5">GitHub</a></p>
+
+=end HTML
+
+=for markdown This code lives on [GitHub](https://github.com/dnmfarrell/Pod-Perl5)
+

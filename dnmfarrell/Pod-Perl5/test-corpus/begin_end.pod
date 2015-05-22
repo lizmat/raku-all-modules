@@ -1,0 +1,12 @@
+=begin HTML
+
+<a href="">Some link</a>
+
+=end HTML
+
+=begin some_text
+
+This is just some text
+
+=end some_text
+
