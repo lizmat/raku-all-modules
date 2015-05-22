@@ -1,0 +1,11 @@
+{
+    "name"        : "Text::VimColour",
+    "version"     : "0.1",
+    "description" : "Converts scripts into colour syntax HTML using vim. ",
+    "depends"     : [],
+    "provides"    : {
+            "Text::VimColour": "lib/Text/VimColour"
+    },
+    "source-url"  : "git://github.com/stmuk/p6-Text-VimColour.git",
+    "author"      : "Steve Mynott <steve.mynott@gmail.com>"
+}
