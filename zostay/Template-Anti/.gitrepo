@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/Template-Anti.git
+	branch = master
+	commit = dccee9d0045e69d7bf3ba524f239ccdc01f9918e
+	parent = 3bd2c7a0a2e91b1fb7002749b46116d3f63cc942
+	cmdver = 0.2.1
