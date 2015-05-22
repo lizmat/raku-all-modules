@@ -770,7 +770,7 @@ sub name_to_numeric(Str $name) returns Int is export {
 }
 
 sub uc_irc(Str $value is copy, Str $type = 'rfc1459') returns Str is export {
-    given $type.lc {
+    given ($type // '').lc {
         when 'ascii' {
             $value.=trans('a..z' => 'A..Z');
         }
@@ -817,7 +817,7 @@ sub parse_mode_line(@mode is copy) returns Hash is export {
     @mode = @mode.list;
     my @chan_modes = <beI k l imnpstaqr>;
     my $stat_modes = 'ohv';
-    my %hash       = Nil;
+    my %hash;
     my $count      = 0;
 
     while my $arg = @mode.shift {
@@ -951,13 +951,13 @@ sub is_valid_nick_name(Str $nick) returns Bool is export {
 sub is_valid_chan_name(Str $chan, $types = ['#', '&']) returns Bool is export {
     return Bool::False if $types.chars == 0;
     return Bool::False if $chan.chars  >  200;
-    return Bool::False if $types ~~ /^ <-['#' '&']> $/;
+    return Bool::False if $types ~~ /^ <-[ # & ]> $/;
 
     for $types -> $t {
         my $c = $t ~ $chan;
 
         # Channels can't contain whitespace, commas, colons, null, or newlines
-        return Bool::False if $c !~~ /^ $t <-[<.ws> \07 \0 \012 \015 , :]>+ $/;
+        return Bool::False if $c !~~ /^ $t <-[ \s \c07 \c0 \c012 \c015 , :]>+ $/;
     }
 
     return Bool::True;
@@ -1015,7 +1015,7 @@ sub strip_color(Str $string is copy) returns Str is export {
 }
 
 sub strip_formatting(Str $string is copy) returns Str is export {
-    $string ~~ s:g/<[\017 \02 \037 \026 \035 \021 \06]>//;
+    $string ~~ s:g/<[\c017 \c02 \c037 \c026 \c035 \c021 \c06]>//;
     #$string ~~ s:g/<[\x0f \x02 \x1f \x16 \x1d \x11 \x06]>//;
 
     # Strip terminating \x0f only if there aren't any color codes
