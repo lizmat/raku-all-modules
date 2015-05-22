@@ -1,4 +1,4 @@
-class CGI::Application;
+unit class CGI::Application;
 
 # XXX: should be dump-html
 has %.run-modes   is rw = (start => 'dump');
