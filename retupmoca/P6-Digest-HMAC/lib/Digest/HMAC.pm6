@@ -1,4 +1,4 @@
-module Digest::HMAC;
+unit module Digest::HMAC;
 
 our sub hmac($key is copy, $message is copy, &hash, $blocksize = 64) is export {
     $key = $key.encode('ascii') unless $key ~~ Blob;
