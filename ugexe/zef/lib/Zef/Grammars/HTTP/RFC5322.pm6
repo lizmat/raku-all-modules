@@ -1,20 +1,10 @@
 use v6;
 # Internet Message Format
-# +RFC6854 Update to Internet Message Format to Allow Group Syntax in the "From:" and "Sender:" Header Fields
 
-use Zef::Grammars::HTTP::RFC4234;
+use Zef::Grammars::HTTP::RFC6854;
 
 
-role Zef::Grammars::HTTP::RFC6854 does Zef::Grammars::HTTP::RFC4234::Core {
-    token from     { "From:" [<mailbox-list> || <address-list>] <.CRLF> }
-    token sender   { "Sender:" [<mailbox> || <address>] <.CRLF>         }
-    token reply-to { "Reply-To:" <address-list> <.CRLF>                 }
-
-    token resent-from   { "Resent-From:" [<mailbox-list> || <address-list>] <.CRLF> }
-    token resent-sender { "Resent-Sender:" [<mailbox> || <address>] <.CRLF>         }
-}
-
-role Zef::Grammars::HTTP::RFC5322::Core does Zef::Grammars::HTTP::RFC6854 {
+role Zef::Grammars::HTTP::RFC5322::Core does Zef::Grammars::HTTP::RFC6854::Core {
 
     token quoted-pair { [\\ [<.VCHAR> || <.WSP>]] || <.obs-qp> }
 
@@ -28,12 +18,9 @@ role Zef::Grammars::HTTP::RFC5322::Core does Zef::Grammars::HTTP::RFC6854 {
     token CFWS { [[<.FWS>? <.comment>]+ <.FWS>?] || <.FWS> }
 
     token atext { 
-        || <.ALPHA>  || <.DIGIT>
-        || '!' || '#' || '$' || '%' 
-        || '&' || \'  || '*' || '+'
-        || '-' || '|' || '=' || '?'
-        || '^' || '_' || '`' || '{'
-        || '|' || '}' || '~'
+        || <.ALPHA>  
+        || <.DIGIT>
+        || < ! # $ %  & ' * + - | = ? ^ _ ` { | } ~ >
     }
 
     token atom { <.CFWS>? <.atext>+ <.CFWS>? }
@@ -99,9 +86,9 @@ role Zef::Grammars::HTTP::RFC5322::Core does Zef::Grammars::HTTP::RFC6854 {
 
     token display-name { <.phrase> }
 
-    token mailbox-list { [<mailbox> [',' <mailbox>]*] || <obs-mbox-list> }
+    token mailbox-list { [<mailbox> *%% ','] || <obs-mbox-list> }
 
-    token address-list { [<address> [',' <address>]*] || <obs-addr-list> }
+    token address-list { [<address> *%% ','] || <obs-addr-list> }
 
     token group-list { <mailbox-list> || <.CFWS> || <obs-group-list> }
 
@@ -184,7 +171,7 @@ role Zef::Grammars::HTTP::RFC5322::Core does Zef::Grammars::HTTP::RFC6854 {
 
     token comments { "Comments:" (<.unstructured>) <.CRLF> }
 
-    token keywords { "Keywords:" <.phrase> [',' <.phrase>]* <.CRLF> }
+    token keywords { "Keywords:" [<phrase> *%% ','] <.CRLF> }
 
     token resent-date { "Resent-Date:" <.date-time> <.CRLF> }
 
@@ -277,7 +264,7 @@ role Zef::Grammars::HTTP::RFC5322::Core does Zef::Grammars::HTTP::RFC6854 {
 
     token obs-local-part { <.word> ['.' <.word>]* }
 
-    token obs-domain { <.atom> [',' <.atom>]* }
+    token obs-domain { <.atom> ['.' <.atom>]* }
 
     token obs-dtext { <.obs-NO-WS-CTL> || <.quoted-pair> }
 

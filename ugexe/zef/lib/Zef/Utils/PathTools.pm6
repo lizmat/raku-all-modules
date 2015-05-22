@@ -5,11 +5,10 @@ augment class IO::Path {
     # :f Include files
     # :a Include .files and .folders
     method ls(IO::Path:D: Bool :$f = True, Bool :$d = True, Bool :$r, Bool :$a = False, |c) {
-        my @results := eager gather {
+        my @results = eager gather {
             my @paths = $.path.IO.d ?? $.path.IO.dir(|c) !! $.path;
             while @paths.pop -> $p {
                 next if !$a && $p.IO.basename.starts-with('.');
-
                 given $p.IO {
                     when :d {
                         take $p if $d;
@@ -32,8 +31,8 @@ augment class IO::Path {
 
     method rm(IO::Path:D: Bool :$f = True, Bool :$d = False, Bool :$r = False, |c) {
         my @paths = self.ls(:$f, :$d, :$r, |c);
-        my @files = @paths.grep(*.IO.f)>>.resolve;
-        my @dirs  = @paths.grep(*.IO.d)>>.resolve;
+        my @files = @paths.grep(*.IO.f); # >>.resolve; On windows this returns C:\C:\path
+        my @dirs  = @paths.grep(*.IO.d); # >>.resolve; # until .IO.resolve returns IO::Path, not str
 
         my @deleted; 
         for @files -> $file { @deleted.push($file) if $file.IO.unlink }
@@ -45,7 +44,7 @@ augment class IO::Path {
 
     method mkdirs(IO::Path:D: :$mode = 0o777) { 
         my $path-copy = $.path;
-        my @mkdirs := gather { # not the pretty way, but works on jvm
+        my @mkdirs = eager gather { # not the pretty way, but works on jvm
             loop {
                 last if ($path-copy.IO.e && $path-copy.IO.d);
                 take $path-copy;
@@ -54,7 +53,7 @@ augment class IO::Path {
         }
 
         # recusively make directories, but only return last successful created directory
-        return try ~@mkdirs.reverse.map({ mkdir($_, $mode) }).[*-1];
+        return @mkdirs ?? try { ~@mkdirs.reverse.map({ mkdir($_, $mode) }).[*-1] } !! Empty;
     }
 }
 

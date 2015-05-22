@@ -1,7 +1,4 @@
-use Perl6::Grammar:from<NQP>;
-use Perl6::Actions:from<NQP>;
-
-class Zef::Utils::Depends;
+unit class Zef::Utils::Depends;
 
 has @!metas;
 
@@ -12,11 +9,11 @@ grammar Grammar::Dependency::Parser {
         [.*? <load-statement>]+ .*? $
     }
 
-    token load-statement { <load-type> \s+ <short-name> }
+    token load-statement { <load-type> \s+ <short-name>               }
     token short-name     { <name-piece> [<.colon-pair> <name-piece>]* }
     token name-piece     { <.name-token>+       }
     token name-token     { <+[\S] -restricted>  }
-    token restricted     { <[:;{}\[\]\(\)./\\]>     }
+    token restricted     { < : ; { } [ ] ( ) . , = + / \ ] $ @ % ! ^ & * ~ # ` | ? > || '<' || '>' }
     token colon-pair     { '::' }
 
     proto token load-type {*}
@@ -25,18 +22,19 @@ grammar Grammar::Dependency::Parser {
     token load-type:sym<require> { <sym> }
 }
 
-method build-dep-tree(@metas = @!metas) {
-    my @tree;
-
-    sub visit(%meta is rw) {
-        unless %meta<marked>++ {
-            &?ROUTINE($_.hash) for @metas.grep({ $_.<name> ~~ any(%meta<dependencies>.list) });
-            @tree.push({ %meta });
+method build-dep-tree(@metas is copy = @!metas, :$target) {
+    my @depends = $target // @metas;
+    my @tree = eager gather while @depends.shift -> %meta {
+        state %marked;
+        unless %marked.{%meta.<name>} {
+            my @required = @metas.grep(-> %_ { %_.<name> ~~ any(%meta.<depends>.list) });
+            my @needed   = @required.grep(-> %_ { not %marked.{%_.<name>} });
+            @needed.map(-> %_ { @depends.unshift({ %_ }) });
+            @depends.push({ %meta });
+            next if @needed;
         }
+        take { %meta } unless %marked.{%meta.<name>}++;
     }
-
-    visit($_.hash) for @metas;
-
     return @tree;
 }
 
@@ -63,13 +61,13 @@ method extract-deps(*@paths) {
     my @modules = @paths.grep(*.IO.f).grep({ $_.IO.basename ~~ / \.pm6? $/ });
     my $slash = / [ \/ | '\\' ]  /;
 
-    my @minimeta := gather for @modules -> $f is copy {
+    my @minimeta = eager gather for @modules -> $f is copy {
         my $t = $f.IO.slurp;
         while $t ~~ /^^ \s* '=begin' \s+ <ident> .* '=end' \s+ <ident> / {
             $t = $t.substr(0,$/.from) ~ $t.substr($/.to);
         }
 
-        my $not-deps   = any(<v6 MONKEY_TYPING strict fatal nqp NativeCall cur lib>);
+        my $not-deps   = any(<v6 MONKEY-TYPING strict fatal nqp NativeCall cur lib>);
         my $dep-parser = Grammar::Dependency::Parser.parse($t);
 
         my @depends = gather for $dep-parser.<load-statement>.list -> $dep {
@@ -84,8 +82,8 @@ method extract-deps(*@paths) {
 
         take {
             name         => $module-name,
-            file         => $f.IO.path,
-            dependencies => @depends, 
+            path         => $f.IO.path,
+            depends      => @depends, 
         }
     }
 
@@ -93,11 +91,14 @@ method extract-deps(*@paths) {
 }
 
 method runtime-extract-deps(*@paths is copy) {
+    #use Perl6::Grammar:from<NQP>; # prevents compile on jvm
+    #use Perl6::Actions:from<NQP>;
+
     @paths //= @!metas.grep({ $_.<file> });
     my @pm6-files := @paths.grep(*.IO.f).grep({ $_.IO.basename ~~ / \.pm6? $/ });
 
     # Try to parse exceptions for missing dependencies
-    my @missing := gather for @pm6-files -> $source {
+    my @missing = eager gather for @pm6-files -> $source {
         try {
             my $*LINEPOSCACHE;            
             Perl6::Grammar.parse($source.IO.slurp, :actions(Perl6::Actions.new()));
@@ -127,6 +128,6 @@ sub extract-deps(*@paths) is export {
     Zef::Utils::Depends.new.extract-deps(@paths);
 }
 
-sub build-dep-tree(*@metas) is export {
-    Zef::Utils::Depends.new(:@metas).build-dep-tree;    
+sub build-dep-tree(*@metas, :$target) is export {
+    Zef::Utils::Depends.new(:@metas).build-dep-tree(:$target);    
 }

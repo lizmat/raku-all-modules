@@ -4,19 +4,21 @@ use v6;
 use Zef::Grammars::HTTP::RFC4234;
 
 role Zef::Grammars::HTTP::RFC3986::Core does Zef::Grammars::HTTP::RFC4234::Core {
-    token URI-reference { <URI> || <relative-ref> }
-    token URI { <scheme> ':' <heir-part> ['?' <query>]? ['#' <fragment>]?   }
-    token absolute-URI  { <scheme> : <heir-part> ['?' <query>]?            }
-    token relative-ref  { <relative-part> ['?' <query>]? ['#' <fragment>]? }
-    token heir-part     { '//' <authority> <path-abempty> 
-                        || <path-absolute> 
-                        || <path-noscheme> 
-                        || <path-empty> 
+    token URI-reference { <URI> || <relative-ref>                                   }
+    token URI           { <scheme> ':' <heir-part> ['?' <query>]? ['#' <fragment>]? }
+    token absolute-URI  { <scheme> : <heir-part> ['?' <query>]?                     }
+    token relative-ref  { <relative-part> ['?' <query>]? ['#' <fragment>]?          }
+    token heir-part     { 
+        || '//' <authority> <path-abempty> 
+        || <path-absolute> 
+        || <path-noscheme> 
+        || <path-empty> 
     }
-    token relative-part { '//' <authority> <path-abempty> 
-                        || <path-absolute> 
-                        || <path-noscheme> 
-                        || <path-empty> 
+    token relative-part { 
+        || '//' <authority> <path-abempty> 
+        || <path-absolute> 
+        || <path-noscheme> 
+        || <path-empty> 
     }
 
     token scheme { 
@@ -31,7 +33,7 @@ role Zef::Grammars::HTTP::RFC3986::Core does Zef::Grammars::HTTP::RFC4234::Core 
     }
 
     token authority   { [<userinfo> '@']? <host> [':' <port>]? }
-    token userinfo    { [<.unreserved> || <.pct-encoded> || <.sub-delims> || ':']*   }
+    token userinfo    { [<.unreserved> || <.pct-encoded> || <.sub-delims> || ':']*  }
     token host        { <.IP-literal> || <.IPv4address> || <.reg-name>              }
     token IP-literal  { '[' [<.IPv6address> || <.IPv6addrz> || <.IPvFuture>] ']'    }
     token IPv6addz    { <.IPv6address> '%25' <.ZoneID>    }
@@ -75,15 +77,16 @@ role Zef::Grammars::HTTP::RFC3986::Core does Zef::Grammars::HTTP::RFC4234::Core 
     token path-empty    { <.pchar> ** 0                          }
     token segment       { <.pchar>* }
     token segment-nz    { <.pchar>+ }
-    token segment-nz-nc { [<.unreserved> || <.pct-encoded> || <.sub-delims>]+  }
+    token segment-nz-nc { [<.unreserved> || <.pct-encoded> || <.sub-delims>]+    }
     token pchar { <.unreserved> || <.pct-encoded> || <.sub-delims> || ':' || '@' }
-    token query       {    [<.pchar> || '/' || '?']* }
-    token fragment    { [<.pchar> || '/' || '?']*    }
-    token pct-encoded { '%' <.HEXDIG> <.HEXDIG>    }
-    token unreserved  { <.ALPHA> || <.DIGIT> || '-' || '.' || '_' || '~' }
-    token reserved    { <.gen-delims> || <.sub-delims> }
-    token gen-delims  { ':' || '/' || '?' || '#' || '[' || ']' || '@'     }
-    token sub-delims  { '!' || '$' || '&' || \' || '(' || ')' || '*' || '+' || ',' || ';' || '=' }
+    token query       { [<.pchar> || '/' || '?']*           }
+    token fragment    { [<.pchar> || '/' || '?']*           }
+    token pct-encoded { '%' <.HEXDIG> <.HEXDIG>             }
+    token unreserved  { <.ALPHA> || <.DIGIT> || < - . _ ~ > }
+    token reserved    { <.gen-delims> || <.sub-delims>      }
+
+    token gen-delims  { < : / ? # [ ] @ >         }
+    token sub-delims  { < ! $ & ' ( ) * + , ; = > }
 }
 
 grammar Zef::Grammars::HTTP::RFC3986 does Zef::Grammars::HTTP::RFC3986::Core {

@@ -122,17 +122,23 @@ Basic http client: Grammar based parser; uses IO::Socket::SSL if available for h
 
     use Zef::Utils::HTTPClient;
     
+    my $client = Zef::Utils::HTTPClient.new;
+
     my $payload  = to-json({ term => "zef" });
-    my $response = Zef::Utils::HTTPClient.new.post("http://zef.pm/api/search", $payload);
-    my $json     = from-json($response.<body>);    
+    my $response = $client.post("http://zef.pm/api/search", $payload);
+    my $json     = from-json($response.<body>);
+
+    my $response = $client.get("https://www.google.com");
+    say $reponse.content; # apply encoding/chunked/etc to $.body
 
 =head2 Zef::Utils::Base64
 
 Base64 encoding/decoding
 
     use Zef::Utils::Base64;
+
     my $b64 = Zef::Utils::Base64.new;
-    
+
     say $b64.b64encode("Perl");
     # UGVybA==
     
@@ -203,12 +209,12 @@ Attempt to extract dependencies via source parsing.
 
     use Zef::Utils::Depends;
     
-    say extract-deps("lib/Zef.pm6).perl
+    say extract-deps("lib/Zef.pm6").perl
     # ({:dependencies(["Zef::Authority", "Zef::Builder", "Zef::Config", "Zef::Exception", "Zef::Getter", "Zef::Installer", "Zef::Reporter", "Zef::Tester", "Zef::Uninstaller", "Zef::Utils::Base64", "Zef::Utils::Depends", "Zef::Utils::PathTools"]), :file("lib/Zef.pm6"), :name("Zef")},)
 
-=head4 build-dep-tree(*@meta-files)
+=head4 build-dep-tree(*@meta-files, :$target)
 
-Build dependency order/tree from a list of dependency meta files.
+Build dependency order/tree from a list of dependency meta files. If :$target is passed then the tree will built with :$target as the base node.
 
 =head1 NOTES
 
@@ -219,6 +225,6 @@ Build dependency order/tree from a list of dependency meta files.
  * ✓ Plugin stuff
  * Use perl6 github ecosystem as an additional authority
  * Finish up social junk
- * ✓ Small http client to ditch last 2 dependencies
+ * ✓ Small http client
 
 =cut

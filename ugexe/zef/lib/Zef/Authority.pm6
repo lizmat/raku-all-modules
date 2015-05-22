@@ -4,11 +4,16 @@ use nqp;
 
 class Zef::Authority {
     has $.session-key is rw;
+    has $!ua;
+
+    submethod BUILD(:$!ua) {
+        $!ua //= Zef::Utils::HTTPClient.new(auto-check => True);
+    }
 
     method login(:$username, :$password) {
         my $payload  = to-json({ username => $username, password => $password }) // fail "Bad JSON";
-        my $response = Zef::Utils::HTTPClient.new.post("https://zef.pm/api/login", $payload);
-        my %result   = try %(from-json($response.<body>));
+        my $response = $!ua.post("https://zef.pm/api/login", :$payload);
+        my %result   = try %(from-json($response.body));
 
         if %result<success> {
             $.session-key = %result<newkey> // fail "Session-key problem";
@@ -24,8 +29,8 @@ class Zef::Authority {
 
     method register(:$username, :$password) {
         my $payload  = to-json({ username => $username, password => $password });
-        my $response = Zef::Utils::HTTPClient.new.post("https://zef.pm/api/register", $payload);
-        my %result   = try %(from-json($response.<body>));
+        my $response = $!ua.post("https://zef.pm/api/register", :$payload);
+        my %result   = try %(from-json($response.body));
         
         if %result<success> {
             $.session-key = %result<newkey> // fail "Session-key problem";            
@@ -42,9 +47,9 @@ class Zef::Authority {
     method search(*@terms) {
         my @results := eager gather for @terms -> $term {
             my $payload  = to-json({ query => $term });
-            my $response = Zef::Utils::HTTPClient.new.post("http://zef.pm/api/search", $payload);
+            my $response = Zef::Utils::HTTPClient.new.post("http://zef.pm/api/search", :$payload);
 
-            my $json = from-json($response.<body>);
+            my $json = try from-json($response.body);
             take $json unless $json ~~ [];
         }
 
@@ -68,7 +73,7 @@ class Zef::Authority {
 
             for @files -> $path {
                 my $buff = try { 
-                        Zef::Utils::Base64.new.b64encode($path.IO.slurp);
+                        b64encode($path.IO.slurp);
                     } // try {
                         my $b = Buf.new;
                         my $f = open $path, :r;
@@ -76,7 +81,7 @@ class Zef::Authority {
                             $b ~= $f.read(1024); 
                         }
                         $f.close;
-                        Zef::Utils::Base64.new.b64encode($b);
+                        b64encode($b);
                     } // fail "Failed to encode data: { $path }";
 
                 if $buff !~~ Str {
@@ -95,8 +100,8 @@ class Zef::Authority {
                 // try {'META6.json'.IO.slurp}    \ 
                 // fail "Couldn't find META6.json or META.info";
             my $json     = to-json({ key => $session-key, data => $payload, meta => %(from-json($metf)) });
-            my $response = Zef::Utils::HTTPClient.new.post("https://zef.pm/api/push", $payload);
-            my %result   = try %(from-json($response.<body>));
+            my $response = $!ua.post("https://zef.pm/api/push", :$payload);
+            my %result   = try %(from-json($response.body));
             
             if %result<error> {
                 $*ERR = "Error pushing module to server: {%result<error>}";
