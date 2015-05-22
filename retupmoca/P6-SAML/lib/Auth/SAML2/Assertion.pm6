@@ -1,7 +1,7 @@
 use XML;
 use XML::Signature;
 
-class Auth::SAML2::Assertion;
+unit class Auth::SAML2::Assertion;
 
 has $.issuer;
 has $.subject;

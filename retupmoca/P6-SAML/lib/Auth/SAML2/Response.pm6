@@ -4,7 +4,7 @@ use UUID;
 
 use Auth::SAML2::Assertion;
 
-class Auth::SAML2::Response;
+unit class Auth::SAML2::Response;
 
 has $.issuer;
 has $.status;

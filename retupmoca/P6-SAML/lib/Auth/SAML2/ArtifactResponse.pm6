@@ -1,1 +1,1 @@
-class Auth::SAML2::ArtifactResponse;
+unit class Auth::SAML2::ArtifactResponse;

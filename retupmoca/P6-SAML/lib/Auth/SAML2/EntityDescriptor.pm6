@@ -1,6 +1,6 @@
 use XML;
 
-class Auth::SAML2::EntityDescriptor;
+unit class Auth::SAML2::EntityDescriptor;
 
 has $.entity-id;
 

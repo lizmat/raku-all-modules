@@ -2,7 +2,7 @@ use XML;
 use UUID;
 use XML::Signature;
 
-class Auth::SAML2::AuthnRequest;
+unit class Auth::SAML2::AuthnRequest;
 
 has $.issuer;
 
