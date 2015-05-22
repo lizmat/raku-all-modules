@@ -1,4 +1,4 @@
-module Browser::Open;
+unit module Browser::Open;
 
 use NativeCall;
 
