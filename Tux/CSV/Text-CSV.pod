@@ -479,11 +479,26 @@ X<always-quote>
  my $f = $csv.always_quote;
 
 By default the generated fields are quoted only if they I<need> to be. For
-example, if they contain the separator character. If you set this attribute
+example, if they contain the separator sequence. If you set this attribute
 to C<1> then I<all> defined fields will be quoted. (undefined (C<Str>)
 fields are not quoted, see L</blank_is_undef>). This makes it quite often
 easier to handle exported data in external applications. (Poor creatures
 who are better to use Text::CSV. :)
+
+=item quote_empty
+X<quote_empty>
+
+=item quote-empty
+X<quote-empty>
+
+ my $csv = Text::CSV.new(:quote_empty);
+           $csv.quote_empty(False);
+ my $q-s = $csv.quote_empty;
+
+By default the generated fields are quoted only if they I<need> to be. An
+empty defined field does not need quotation. If you set this attribute to
+C<True> then empty defined fields will be quoted. See also
+L<C<always_quote>|/always_quote>.
 
 =item quote_space
 X<quote_space>
@@ -564,7 +579,7 @@ See the L</Callbacks> section below.
 
 To sum it up,
 
- $csv = Text::CSV.new();
+ $csv = Text::CSV.new;
 
 is equivalent to
 
@@ -674,7 +689,7 @@ argument. (WIP)
 =head2 string
 X<string>
 
- $line = $csv.string();
+ $line = $csv.string;
 
 This method returns the input to L</parse> or the resultant C<CSV> string
 of L</combine>, whichever was called more recently. If L<C<eol>|/eol> is
@@ -790,7 +805,20 @@ cell-based combined selection might return rows with different number of
 columns making the use of hashes unpredictable.
 
  $csv.column_names(< Name Age >);
- my @rows = $csv.fragment($io, "col=3;8");
+ my @rows = $csv.fragment($io, "row=3;8");
+
+Note that for C<col="..">, the column names are the names for I<before> the
+selection is taken to make it more consistent with reading possible headers
+from the first line of the CSV datastream.
+
+ $csv,column_names(< foo bar >);  # WRONG
+ $csv.fragment($io, "col=3");
+
+would set the column names for the first two columns that are then skipped
+in the fragment. To skip the unwanted columns, use placeholders.
+
+ $csv.column_names(< x x Name >);
+ $csv.fragment($io, "col=3");
 
 WIP: If the L</after_parse> callback is active, it is also called on every
 line parsed and skipped before the fragment.
@@ -940,7 +968,7 @@ current bindings or C<Array> if no binds are active.
 =head2 eof
 X<eof>
 
- $eof = $csv.eof();
+ $eof = $csv.eof;
 
 If L</parse> or L</getline> was used with an IO stream, this method will
 return C<True> if the last call hit end of file, otherwise it will return
@@ -968,10 +996,17 @@ You can unset column types by doing a
 
  $csv.types(Array);
 
+=head2 row
+X<row>
+
+ CSV::Row $row = $csv.row;
+
+Returns the last row parsed. See L<C<CSV::Row>|/CSV::Row>
+
 =head2 fields
 X<fields>
 
- CSV::Field @fields = $csv.fields();
+ CSV::Field @fields = $csv.fields;
 
 This method returns the input to L</combine> or the resultant decomposed
 fields of a successful L</parse> or L</getline>, whichever was called more
@@ -981,7 +1016,7 @@ thus feature attributes.
 =head2 list
 X<list>
 
- @fields = $csv.list();
+ @fields = $csv.list;
 
 This method returns the input to L</combine> or the resultant decomposed
 fields of a successful L</parse> or L</getline>, whichever was called more
@@ -1065,7 +1100,7 @@ check the flags.
 =head2 status
 X<status>
 
- $status = $csv.status();
+ $status = $csv.status;
 
 This method returns success (or failure) of the last invoked L</combine> or
 L</parse> call.
@@ -1076,7 +1111,7 @@ X<error_input>
 =head2 error-input
 X<error-input>
 
- $bad_argument = $csv.error_input();
+ $bad_argument = $csv.error_input;
 
 This method returns the erroneous argument (if it exists) of L</combine>,
 L</parse>, or L</getline>, whichever was called most recent. If the last
@@ -1192,10 +1227,10 @@ X<error_diag>
 =head2 error-diag
 X<error-diag>
 
- $csv.error_diag();
- $error_code = +$csv.error_diag();
- $error_str  = ~$csv.error_diag();
- ($cde, $str, $pos, $rec, $fld) = $csv.error_diag();
+ $csv.error_diag;
+ $error_code = +$csv.error_diag;
+ $error_str  = ~$csv.error_diag;
+ ($cde, $str, $pos, $rec, $fld) = $csv.error_diag;
 
 This function returns the diagnostics of the most recent error.
 
@@ -1226,7 +1261,7 @@ it will return the error message.
 =head2 record_number
 X<record_number>
 
- $recno = $csv.record_number();
+ $recno = $csv.record_number;
 
 Returns the records parsed by this csv instance. This value should be more
 accurate than C<$.> when embedded newlines come in play. Records written by
@@ -1350,10 +1385,14 @@ Returns C<True> if the field is missing.
 =head1 CSV::Row
 X<CSV::Row>
 
-This class is a wrapper over the current row of fiields just to add
+This class is a wrapper over the current row of fields just to add
 convenience methods.
 
-This is only arguments to callbacks.
+This is the only argument to callbacks.
+
+The fields in C<CSV::Row> are always of class L<C<CSV::Field>|/CSV::Field>
+and thus contain all meta-information, even if the C<Text::CSV> attribute
+L<C<meta_info>|/meta_info> is C<False>.
 
 =head2 methods
 
@@ -1367,7 +1406,6 @@ This is only arguments to callbacks.
 =item csv
 
 The current Text::CSV object related to this row.
-
 
 =item fields
 
@@ -1384,6 +1422,28 @@ The fields (CSV::Field items) this row consist of.
 
  my CSV::Field $f = $row.pop;
 
+=item Str
+
+ my $str = $row.Str;
+ $io.say(~$row);
+
+The stringification of the CSV::Row object is like invoking the
+L<C<string>|/string> method. This only works if there is a Text::CSV
+object known to the CSV::Row instance.
+
+=item hash
+
+ my %h = $row.hash;
+
+Returns the hash with C<.csv>'s L<C<column_names>|/column_names> as keys
+and the C<.text> of each matching C<fields> entry as values.
+
+=item list
+
+ my @l = $row.list;
+
+Returns the C<.text> part of each entry in C<.fields>.
+
 =back
 
 The row allow direct indexing and iteration as well as hash addressing when
@@ -1392,7 +1452,9 @@ L</column_names> are set.
  my $field = $row[1];
  my $field = $row<foo>;
 
-WIP
+The last parsed row of a L<Text::CSV>|/Text::CSV> can be acquired using
+
+ my CSV::Row $row = $csv.row;
 
 ################################################################################
 
@@ -1454,7 +1516,7 @@ X<out>
 
 In output mode, the default CSV options when producing CSV are
 
- eol       => "\r\n"
+ eol    => "\r\n"
 
 The L</fragment> attribute is ignored in output mode.
 
@@ -1462,14 +1524,14 @@ C<out> can be a file name (e.g. C<"file.csv">), which will be opened for
 writing and closed when finished, a file handle (e.g. C<$fh> or C<FH>), a
 reference to a glob (e.g. C<\*STDOUT>), or the glob itself (e.g. C<*STDOUT>).
 
- csv(in => sub { $sth->fetch },            out => "dump.csv");
- csv(in => sub { $sth->fetchrow_hashref }, out => "dump.csv",
-      headers => $sth->{NAME_lc});
+ csv(in => sub { $sth.fetch },            out => "dump.csv");
+ csv(in => sub { $sth.fetchrow_hashref }, out => "dump.csv",
+      headers => $sth.{NAME_lc});
 
-When a code-ref is used, the output is generated per invocation, so no
-buffering is involved. This implies that there is no size restriction on
-the number of records. The function ends when the coderef returns a false
-value.
+When a code-ref is used for C<in>, the output is generated per invocation,
+so no buffering is involved. This implies that there is no size restriction
+on the number of records. The C<csv> function ends when the coderef returns
+C<False>.
 
 =head3 encoding
 X<encoding>
@@ -1547,14 +1609,14 @@ is ignored when I<generating> C<CSV>. See L</out>.
 Combining all of them could give something like
 
  use Text::CSV qw( csv );
- my $aoh = csv(
+ my @aoh = csv(
      in       => "test.txt",
      encoding => "utf-8",
      headers  => "auto",
      sep_char => "|",
      fragment => "row=3;6-9;15-*",
      );
- say $aoh->[15]{Foo};
+ say @aoh[15]{Foo};
 
 =head3 strict
 X<strict>
@@ -1606,8 +1668,8 @@ X<after_parse>
 
  sub add-new (CSV::Row $r) { $r.fields.push: "NEW"; }
  $csv.callbacks(after_parse => &add-new);
- while (my $row = $csv.getline($fh)) {
-     $row->[-1] eq "NEW";
+ while (my @row = $csv.getline($fh)) {
+     @row[-1] eq "NEW";
      }
 
 This callback is invoked after parsing with L</getline> only if no error
@@ -1617,8 +1679,8 @@ parser object and an array reference to the fields parsed.
 The return code of the callback is ignored.
 
  sub add_from_db (CSV::Row $r) {
-     $sth->execute($r[4]);
-     push $r.fields: $sth->fetchrow_array;
+     $sth.execute($r[4]);
+     push $r.fields: $sth.fetchrow_array;
      } # add_from_db
 
  my $aoa = csv(in => "file.csv", callbacks => {
@@ -1650,7 +1712,7 @@ This callback is not active for L</combine>.
 
 =back
 
-=head3 Callbacks for csv ()
+=head3 Callbacks for csv
 
 The L</csv> allows for some callbacks that do not integrate in XS internals
 but only feature the L</csv> function.
@@ -1744,9 +1806,9 @@ with L</csv>, you could do
          }
      }
  else {
-     print STDERR "parse () failed on argument: ",
+     print STDERR "parse failed on argument: ",
          $csv.error_input, "\n";
-     $csv.error_diag();
+     $csv.error_diag;
      }
 
 =head2 Printing CSV data
@@ -1777,7 +1839,7 @@ or using the slower L</combine> and L</string> methods:
      print $csv_fh $csv.string, "\n";
      }
  else {
-     print "combine () failed on argument: ",
+     print "combine failed on argument: ",
          $csv.error_input, "\n";
      }
  close $csv_fh or die "hello.csv: $!";
@@ -1793,25 +1855,52 @@ Rewrite C<CSV> files with C<;> as separator character to well-formed C<CSV>:
 
 Dumping a database table can be simple as this (TIMTOWTDI):
 
- my $dbh = DBI->connect(...);
+ my $dbh = DBI.connect(...);
  my $sql = "select * from foo";
 
  # using your own loop
  open my $fh, ">", "foo.csv" or die "foo.csv: $!\n";
  my $csv = Text::CSV.new(eol => "\r\n");
- my $sth = $dbh->prepare($sql); $sth->execute;
- $csv.print($fh, $sth->{NAME_lc});
- while (my $row = $sth->fetch) {
+ my $sth = $dbh.prepare($sql); $sth.execute;
+ $csv.print($fh, $sth.{NAME_lc});
+ while (my $row = $sth.fetch) {
      $csv.print($fh, $row);
      }
 
  # using the csv function, all in memory
- csv(out => "foo.csv", in => $dbh->selectall_arrayref($sql));
+ csv(out => "foo.csv", in => $dbh.selectall_arrayref($sql));
 
  # using the csv function, streaming with callbacks
- my $sth = $dbh->prepare($sql); $sth->execute;
- csv(out => "foo.csv", in => sub { $sth->fetch            });
- csv(out => "foo.csv", in => sub { $sth->fetchrow_hashref });
+ my $sth = $dbh.prepare($sql); $sth.execute;
+ csv(out => "foo.csv", in => sub { $sth.fetch            });
+ csv(out => "foo.csv", in => sub { $sth.fetchrow_hashref });
+
+Note that this does not discriminate between "empty" values and NULL-values
+from the database, as both will be the same empty field in CSV. To enable
+distinction between the two, use L<C<quote_empty>|/quote_empty>.
+
+ csv(out => "foo.csv", in => sub { $sth.fetch }, :quote_empty);
+
+If the database import utility supports special sequences to insert C<NULL>
+values into the database, like MySQL/MariaDB supports C<\N>, use a filter
+or a map
+
+ csv(out => "foo.csv", in => sub { $sth.fetch },
+                    on_in => sub { $_ //= "\\N" for @$_[1] }); # WIP
+
+ while (my @row = $sth.fetch) {
+     $csv.print($fh, @row.map({ * // "\\N" }));
+     }
+
+these special sequences are not recognized by Text::CSV_XS on parsing the
+CSV generated like this, but map and filter are your friends again
+
+ while (my @row = $csv.getline($io)) {
+     $sth.execute(@row.map({ $_ eq "\\N" ?? Nil !! $_ }));
+     }
+
+ csv(in => "foo.csv", filter => { 1 => sub {
+     $sth.execute(@{$_[1]}.map({ $_ eq "\\N" ?? Nil !! $_ }); False; }});
 
 =head2 The examples folder
 
@@ -1862,11 +1951,13 @@ ANSI escape codes or HTML.
 
 =back
 
+################################################################################
+
 =head1 CAVEATS
 
 Text::CSV is I<not> designed to detect the characters used to quote and
 separate fields. The parsing is done using predefined (default) settings.
-In the examples sub-directory, you can find scripts that demonstrate how
+In the examples sub-directory you can find scripts that demonstrate how
 you could try to detect these characters yourself.
 
 =head2 Microsoft Excel
@@ -1916,19 +2007,22 @@ Requirements|http://w3c.github.io/csvw/use-cases-and-requirements/index.html>
 
 Still under construction ...
 
-If an error occurs, C<< $csv.error_diag >> can be used to get information
-on the cause of the failure. Note that for speed reasons the internal value
-is never cleared on success, so using the value returned by L</error_diag>
-in normal cases - when no error occurred - may cause unexpected results.
+This section describes the error codes that are used in perl5's module
+L<Text::CSV_XS>, and several of these errors are either not applicable in
+perl6 or changed slightly. Once all of the API is finished, this section
+will be cleaned up. The intention of the error coded however remains.
 
-If the constructor failed, the cause can be found using L</error_diag> as a
-class method, like C<< Text::CSV.error_diag >>.
+If an error occurs, L<C<< $csv.error_diag >>|/error_diag> can be used to
+get information on the cause of the failure. Note that for speed reasons
+the internal value is never cleared on success, so using the value returned
+by L</error_diag> in normal cases - when no error occurred - may cause
+unexpected results.
+
+If the constructor failed, the cause will be thrown as an Exception that
+represents L</error_diag>.
 
 The C<< $csv.error_diag >> method is automatically invoked upon error when
-the contractor was called with L<C<auto_diag>|/auto_diag> set to C<1> or
-C<2>, or when L<autodie> is in effect. When set to C<1>, this will cause a
-C<warn> with the error message, when set to C<2>, it will C<die>. C<2012 -
-EOF> is excluded from L<C<auto_diag>|/auto_diag> reports.
+the contractor was called with L<C<auto_diag>|/auto_diag> set to C<True>.
 
 Errors can be (individually) caught using the L</error> callback.
 
@@ -1971,7 +2065,17 @@ Combine error.
 =item *
 EHR
 
-HashRef parse related error.
+Hash parse related error.
+
+=item *
+EHK
+
+Errors related to hooks/callbacks.
+
+=item *
+CSV
+
+Errors related to the csv function.
 
 =back
 
@@ -1980,11 +2084,11 @@ And below should be the complete list of error codes that can be returned:
 =over 2
 
 =item *
-1001 "INI - sep_char is equal to quote_char or escape_char"
+1001 "INI - separator is equal to quote- or escape sequence"
 X<1001>
 
-The L<separation character|/sep_char> cannot be equal to L<the quotation
-character|/quote_char> or to L<the escape character|/escape_char>, as this
+The L<separation sequence|/sep_char> cannot be equal to L<the quotation
+sequence|/quote_char> or to L<the escape sequence|/escape_char>, as this
 would invalidate all parsing rules.
 
 =item *
@@ -1999,9 +2103,9 @@ C<SPACE> or C<TAB> is too ambiguous to allow.
 1003 "INI - \r or \n in main attr not allowed"
 X<1003>
 
-Using default L<C<eol>|/eol> characters in either L<C<sep_char>|/sep_char>,
-L<C<quote_char>|/quote_char>, or L<C<escape_char>|/escape_char> is not
-allowed.
+Using default L<C<eol>|/eol> sequences in either
+L<separation sequence|/sep_char>, L<quotation sequence|/quote_char>, or
+L<escape sequence|/escape_char> is not allowed.
 
 =item *
 1004 "INI - callbacks should be undefined or a hashref"
@@ -2025,7 +2129,7 @@ X<2011>
 
 Sequences like C<1,foo,"bar"baz,22,1> are not allowed. C<"bar"> is a quoted
 field and after the closing double-quote, there should be either a new-line
-sequence or a separation character.
+sequence or a separation sequence.
 
 =item *
 2012 "EOF - End of data in parsing input stream"
@@ -2056,7 +2160,7 @@ Sequences like C<1,"foo\rbar",22,1> are allowed only when the binary option
 has been selected with the constructor.
 
 =item *
-2023 "EIQ - QUO character not allowed"
+2023 "EIQ - QUO sequence not allowed"
 X<2023>
 
 Sequences like C<"foo "bar" baz",qu> and C<2023,",2008-04-05,"Foo, Bar",\n>
@@ -2066,13 +2170,13 @@ will cause this error.
 2024 "EIQ - EOF cannot be escaped, not even inside quotes"
 X<2024>
 
-The escape character is not allowed as last character in an input stream.
+The escape sequence is not allowed as last item in an input stream.
 
 =item *
 2025 "EIQ - Loose unescaped escape"
 X<2025>
 
-An escape character should escape only characters that need escaping.
+An escape sequence should escape only characters that need escaping.
 
 Allowing the escape for other characters is possible with the attribute
 L</allow_loose_escapes>.
@@ -2089,8 +2193,8 @@ valid UTF-8. Set L<C<binary>|/binary> to C<1> to accept binary data.
 2027 "EIQ - Quoted field not terminated"
 X<2027>
 
-When parsing a field that started with a quotation character, the field is
-expected to be closed with a quotation character. When the parsed line is
+When parsing a field that started with a quotation sequence, the field is
+expected to be closed with a quotation sequence. When the parsed line is
 exhausted before the quote is found, that field is not terminated.
 
 =item *
@@ -2130,23 +2234,23 @@ X<2110>
 X<2200>
 
 =item *
-3001 "EHR - Unsupported syntax for column_names ()"
+3001 "EHR - Unsupported syntax for column_names"
 X<3001>
 
 =item *
-3002 "EHR - getline_hr () called before column_names ()"
+3002 "EHR - getline_hr called before column_names"
 X<3002>
 
 =item *
-3003 "EHR - bind_columns () and column_names () fields count mismatch"
+3003 "EHR - bind_columns and column_names fields count mismatch"
 X<3003>
 
 =item *
-3004 "EHR - bind_columns () only accepts refs to scalars"
+3004 "EHR - bind_columns only accepts refs to scalars"
 X<3004>
 
 =item *
-3006 "EHR - bind_columns () did not pass enough refs for parsed fields"
+3006 "EHR - bind_columns did not pass enough refs for parsed fields"
 X<3006>
 
 =item *
@@ -2158,12 +2262,24 @@ X<3007>
 X<3008>
 
 =item *
-3009 "EHR - print_hr () called before column_names ()"
+3009 "EHR - print_hr called before column_names"
 X<3009>
 
 =item *
-3010 "EHR - print_hr () called with invalid arguments"
+3010 "EHR - print_hr called with invalid arguments"
 X<3010>
+
+=item *
+3100 "EHK - Unsupported callback"
+X<3100>
+
+=item *
+5000 "CSV - Unsupported type for in"
+X<5000>
+
+=item *
+5001 "CSV - Unsupported type for out"
+X<5001>
 
 =back
 

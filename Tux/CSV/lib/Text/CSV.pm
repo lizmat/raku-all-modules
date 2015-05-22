@@ -14,8 +14,8 @@ my %errors =
 
     # Generic errors
     1000 => "INI - constructor failed",
-    1001 => "INI - sep_char is equal to quote_char or escape_char",
-    1002 => "INI - allow_whitespace with escape_char or quote_char SP or TAB",
+    1001 => "INI - separator is equal to quote- or escape sequence",
+    1002 => "INI - allow_whitespace with escape or quoter SP or TAB",
     1003 => "INI - \r or \n in main attr not allowed",
     1004 => "INI - callbacks should be Hash or undefined",
 
@@ -28,7 +28,7 @@ my %errors =
     #  EIQ - Error Inside Quotes
     2021 => "EIQ - NL or EOL inside quotes, binary off",
     2022 => "EIQ - CR char inside quotes, binary off",
-    2023 => "EIQ - QUO character not allowed",
+    2023 => "EIQ - QUO sequence not allowed",
     2024 => "EIQ - EOF cannot be escaped, not even inside quotes",
     2025 => "EIQ - Loose unescaped escape",
     2026 => "EIQ - Binary character inside quoted field, binary off",
@@ -59,7 +59,7 @@ my %errors =
     3009 => "EHR - print (Hash) called before column_names ()",
     3010 => "EHR - print (Hash) called with invalid arguments",
 
-    3100 => "ECB - Unsupported callback",
+    3100 => "EHK - Unsupported callback",
 
     # csv CI
     5000 => "CSV - Unsupported type for in",
@@ -282,14 +282,13 @@ class CSV::Row is Iterable does Positional {
     has Text::CSV  $.csv;
     has CSV::Field @.fields is rw;
 
-    multi method new (@f) {
-        @!fields = @f.map ({ CSV::Field.new (*) });
-        }
+    multi method new (@f)  { @!fields = @f.map ({ CSV::Field.new (*) }); }
 
     method Str             { $!csv ?? $!csv.string (@!fields) !! Str; }
     method iterator        { [ @.fields ].iterator; }
-    method hash            { hash $!csv.column_names Z @!fields; }
+    method hash            { hash $!csv.column_names Z @!fields».Str; }
     method AT-KEY (Str $k) { %($!csv.column_names Z @!fields){$k}; }
+    method list ()         { @!fields».Str; }
     method AT-POS (int $i) { @!fields[$i]; }
 
     multi method push (CSV::Field $f) { @!fields.push: $f; }
@@ -389,7 +388,7 @@ class Text::CSV {
             !! $i == 3 ?? $!field
             !! $i == 4 ?? $!record
             !! $i == 5 ?? $!buffer
-            !! Nil;
+            !! Any;
             }
         }
 
@@ -729,7 +728,7 @@ class Text::CSV {
             return self!accept-field ($f);
             }
 
-        if ($f.text eq "") {
+        if ($f.Str eq "") {
             $!empty_is_undef and $f.text = Str;
             return self!accept-field ($f);
             }
@@ -737,14 +736,14 @@ class Text::CSV {
         # Postpone all other field attributes like is_binary and is_utf8
         # till it is actually asked for unless it is required right now
         # to fail
-        if (!$!binary and $f.text ~~ m{ <[ \x00..\x08 \x0A..\x1F ]> }) {
+        if (!$!binary and $f.Str ~~ m{ <[ \x00..\x08 \x0A..\x1F ]> }) {
             $!error_pos     = $/.from + 1 + $f.is_quoted;
             $!errno         = $f.is_quoted ??
-                 $f.text ~~ m{<[ \r ]>} ?? 2022 !!
-                 $f.text ~~ m{<[ \n ]>} ?? 2021 !!  2026 !! 2037;
+                 $f.Str ~~ m{<[ \r ]>} ?? 2022 !!
+                 $f.Str ~~ m{<[ \n ]>} ?? 2021 !!  2026 !! 2037;
             $!error_field   = $!csv-row.fields.elems + 1;
             $!error_message = %errors{$!errno};
-            $!error_input   = $f.text;
+            $!error_input   = $f.Str;
             $!auto_diag and self.error_diag;
             return False;
             }
@@ -757,7 +756,7 @@ class Text::CSV {
         }
 
     method list () {
-        self.fields».text;
+        self.fields».Str;
         }
 
     multi method string () returns Str {
@@ -767,8 +766,8 @@ class Text::CSV {
 
     multi method string (CSV::Field:D @fld) returns Str {
 
-        %!callbacks{"before_print"}.defined and
-            %!callbacks{"before_print"}.($!csv-row);
+        %!callbacks<before_print>.defined and
+            %!callbacks<before_print>.($!csv-row);
 
         @fld or return Str;
         my Str $s = $!sep;
@@ -780,7 +779,7 @@ class Text::CSV {
                 @f.push: "";
                 next;
                 }
-            my Str $t = $f.text ~ "";
+            my Str $t = $f.Str ~ "";
             if ($t eq "") {
                 @f.push: $!always_quote || $!quote_empty ?? "$!quo$!quo" !! "";
                 next;
@@ -886,8 +885,8 @@ class Text::CSV {
 
         my sub parse_done () {
             self!ready (1, $f) or return False;
-            %!callbacks{"after_parse"}.defined and
-                %!callbacks{"after_parse"}.($!csv-row);
+            %!callbacks<after_parse>.defined and
+                %!callbacks<after_parse>.($!csv-row);
             True;
             }
 
@@ -1131,7 +1130,7 @@ class Text::CSV {
 
                     # sep=;
                     if ($!record_number == 1 && $!io.defined && $!csv-row.fields.elems == 0 &&
-                            !$f.undefined && $f.text ~~ /^ "sep=" (.*) /) {
+                            !$f.undefined && $f.Str ~~ /^ "sep=" (.*) /) {
                         $!sep = $0.Str;
                         $!record_number = 0;
                         return self.parse ($!io.get);
@@ -1181,6 +1180,8 @@ class Text::CSV {
 
         parse_done ();
         } # parse
+
+    method row returns CSV::Row { $!csv-row; }
 
     method !row_hr (@row) {
         my @cn  = (@!crange ?? @!cnames[@!crange] !! @!cnames);
@@ -1255,8 +1256,8 @@ class Text::CSV {
                 $offset--  > 0 and next;
                 $length-- == 0 and last;
 
-                !%!callbacks{"filter"}.defined ||
-                    %!callbacks{"filter"}.($!csv-row) or next;
+                !%!callbacks<filter>.defined ||
+                    %!callbacks<filter>.($!csv-row) or next;
 
                 @lines.push: self!row ($meta, $hr);
                 }
@@ -1264,8 +1265,8 @@ class Text::CSV {
         else {
             $offset = -$offset;
             while (self.parse ($io.get)) {
-                !%!callbacks{"filter"}.defined ||
-                    %!callbacks{"filter"}.($!csv-row) or next;
+                !%!callbacks<filter>.defined ||
+                    %!callbacks<filter>.($!csv-row) or next;
 
                 @lines.elems == $offset and @lines.shift;
                 @lines.push: self!row ($meta, $hr);
@@ -1288,12 +1289,14 @@ class Text::CSV {
 
         if ($spec ~~ s:i{^ "row=" } = "") {
             self.rowrange ($spec);
-            return self.getline_all ($io, :$meta);
+            return @!cnames.elems ?? self.getline_hr_all ($io, :$meta)
+                                  !! self.getline_all    ($io, :$meta);
             }
 
         if ($spec ~~ s:i{^ "col=" } = "") {
             self.colrange ($spec);
-            return self.getline_all ($io, :$meta);
+            return @!cnames.elems ?? self.getline_hr_all ($io, :$meta)
+                                  !! self.getline_all    ($io, :$meta);
             }
 
         $spec ~~ s:i{^ "cell=" } = "" or self!fail (2013);
@@ -1330,10 +1333,16 @@ class Text::CSV {
                 (^($!csv-row.fields.elems)).grep ({
                     $cs.in ($!record_number, $_) })] or next;
 
-            !%!callbacks{"filter"}.defined ||
-                %!callbacks{"filter"}.(CSV::Row.new (csv => self, @f)) or next;
+            !%!callbacks<filter>.defined ||
+                %!callbacks<filter>.(CSV::Row.new (csv => self, @f)) or next;
 
-            @lines.push: [ $meta ?? @f !! @f.map (*.text) ];
+            my @row = $meta ?? @f !! @f.map (*.Str);
+            if (@!cnames.elems) {
+                my %h = @!cnames Z @row;
+                @lines.push: { %h };
+                next;
+                }
+            @lines.push: [ @row ];
             }
 
         $!io =  IO;
@@ -1397,11 +1406,11 @@ class Text::CSV {
         # Aliasses
         #   frag   fragment
         #   enc    encoding
-        %args{"frag"}.defined and $fragment ||= %args{"frag"} :delete;
-        %args{"enc" }.defined and $encoding ||= %args{"enc"}  :delete;
+        %args<frag>.defined and $fragment ||= %args<frag> :delete;
+        %args<enc >.defined and $encoding ||= %args<enc>  :delete;
         $fragment //= "";
 
-        my $skip = %args{"skip"} :delete || 0 and
+        my $skip = %args<skip> :delete || 0 and
             self.rowrange (++$skip ~ "-*");
 
         # Check csv-only args
@@ -1425,27 +1434,27 @@ class Text::CSV {
             }
         for (%args.keys) -> $k {
             if ($k.lc ~~ m{^ "on"     <[-_]>   "in"             $}) {
-                $on-in                 = %args{$k} :delete;
+                $on-in               = %args{$k} :delete;
                 next;
                 }
             if ($k.lc ~~ m{^ "before" <[-_]>   "out"            $}) {
-                $before-out            = %args{$k} :delete;
+                $before-out          = %args{$k} :delete;
                 next;
                 }
             if ($k.lc ~~ m{^ "after"  <[-_]> ( "parse" | "in" ) $}) {
-                %hooks{"after_parse"}  = %args{$k} :delete;
+                %hooks<after_parse>  = %args{$k} :delete;
                 next;
                 }
             if ($k.lc ~~ m{^ "before" <[-_]>   "print"          $}) {
-                %hooks{"before_print"} = %args{$k} :delete;
+                %hooks<before_print> = %args{$k} :delete;
                 next;
                 }
             if ($k.lc eq "filter") {
-                %hooks{"filter"}       = %args{$k} :delete;
+                %hooks<filter>       = %args{$k} :delete;
                 next;
                 }
             if ($k.lc eq "error") {
-                %hooks{"error"}        = %args{$k} :delete;
+                %hooks<error>        = %args{$k} :delete;
                 next;
                 }
             }
@@ -1590,7 +1599,7 @@ class Text::CSV {
     }
 
 sub csv (*%args) is export {
-    %args{"meta"} //= False;
+    %args<meta> //= False;
     Text::CSV.csv (|%args);
     }
 
