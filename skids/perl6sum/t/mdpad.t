@@ -44,7 +44,7 @@ is $s1.pos, 0, "pos is still zero after specifying elems";
 ok $s1.push(Buf.new(0 xx 64)).exception ~~ X::Sum::Push::Usage, "can push a whole block with explicit elems";
 is $s1.elems, 513, "elems immune to increment when explicit";
 is $s1.pos, 512, "pos incremented with explicit elems";
-nok ($s1.elems = 1024) == 1024, "elems unassignable after push";
+throws-like { $s1.elems = 1024 }, X::Sum::Started, "elems unassignable after push";
 ok $s1.push(Buf.new(0 xx 64)).exception ~~ X::Sum::Spill, "attempting to push full block past explicit elems causes X::Sum::Spill";
 ok $s1.push(Buf.new(1)).exception ~~ X::Sum::Spill, "attempting to push frag past explicit elems causes X::Sum::Spill";
 ok $s1.push(Buf.new(),True).exception ~~ X::Sum::Push::Usage, "can push a single bit up to explicit elems";

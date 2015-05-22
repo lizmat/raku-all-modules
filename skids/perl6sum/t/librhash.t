@@ -45,9 +45,9 @@ is $a.finalize(:bytes(4)), buf8.new(0x32,0xd2,1,0xf6), "CRC32 alg computes expec
 lives_ok { for 0..10000 { my $a := Sum::librhash::Instance.new("CRC32"); $a.finalize(:bytes(4)) if Bool.pick; } }, "Supposedly test GC sanity";
 
 $a := Sum::librhash::Instance.new("CRC32");
-throws_like { my $c = $a.clone; +$c; }, X::AdHoc, "Attempt to clone Instance throws exception";
+throws-like { my $c = $a.clone; +$c; }, X::AdHoc, "Attempt to clone Instance throws exception";
 $a.finalize(:bytes(4));
-throws_like { $a.finalize(:bytes(4)) }, X::librhash::Final, "Double finalize gets caught for raw Instance";
+throws-like { $a.finalize(:bytes(4)) }, X::librhash::Final, "Double finalize gets caught for raw Instance";
 
 lives_ok {$a := Sum::librhash::Sum.new("MD5")}, "wrapper class contructor lives";
 isa-ok $a, Sum::librhash::Sum, "wrapper class intantiates";
@@ -57,7 +57,7 @@ is +$a.finalize, 0x014842d480b571495a4a0363793f7367, "MD5 is correct (test vecto
 is +$a.finalize, 0x014842d480b571495a4a0363793f7367, "Wrapper class caches result";
 my $res;
 my $b := Sum::librhash::Sum.new("MD5");
-throws_like { my $c = $b.clone; +$c; }, X::AdHoc, "Attempt to clone wrapper class throws exception";
+throws-like { my $c = $b.clone; +$c; }, X::AdHoc, "Attempt to clone wrapper class throws exception";
 $b.push(buf8.new(97 xx 64));
 $b.push(buf8.new(97 xx 64));
 lives_ok { $res  = $b.finalize(buf8.new(97 xx 56)) }, "finalize also pushes";

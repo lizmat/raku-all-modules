@@ -19,6 +19,13 @@ class X::Sum::Missing is Exception {
     }
 }
 
+class X::Sum::Started is Exception {
+    has $.dothis = "do that";
+    method message {
+        "Cannot $.dothis after providing addends."
+    }
+}
+
 class X::Sum::Spill is Exception {
     method message {
         "Maximum number of addends exceeded."

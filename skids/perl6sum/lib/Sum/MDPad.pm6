@@ -136,7 +136,7 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
             FETCH => { $!expect ?? $!expect !! $!o },
             STORE => -> $self, $v {
                 if $!o {
-                    Failure.new(X::AdHoc.new(:payload("Cannot presage length after providing addends.")))
+                    X::Sum::Started.new(:dothis<presage length>).throw;
                 }
                 else {
                     $!expect = $v

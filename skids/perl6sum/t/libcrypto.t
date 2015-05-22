@@ -45,7 +45,7 @@ ok $b.defined, "Cloned Instance is really instantiated";
 is $b.finalize, buf8.new(0x20,0x27,0x60,0x55,0x24,0x6b,0x17,0xa6,0xb9,0x3a,0x12,0xf0,0x4c,0x24,0xf9,0x36,0x28,0xda,0x4e,0xe4), "SHA1 clone computes expected value";
 lives_ok {$a.add(buf8.new('.'.ord))}, "mhash update of original lives";
 is $a.finalize(), buf8.new(0x72,0xb,0xfb,0x85,0xdd,0x7a,5,0xb,0x66,0x7d,0xc1,0x58,0x9a,0xa3,0x69,2,0xee,0xd3,0x65,0x21), "OriginalSHA1 alg computes expected value";
-throws_like { $a.finalize() }, X::Sum::Final, "Double finalize gets caught for raw Instance";
+throws-like { $a.finalize() }, X::Sum::Final, "Double finalize gets caught for raw Instance";
 lives_ok { for 0..10000 { my $a := Sum::libcrypto::Instance.new("sha1"); $a.finalize() if Bool.pick; } }, "Supposedly test GC sanity";
 
 lives_ok {$a := Sum::libcrypto::Sum.new("md5")}, "wrapper class contructor lives";

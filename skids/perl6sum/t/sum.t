@@ -221,7 +221,7 @@ $o2.push(8,True,False,False,False,True,False,True,False);
 is +$o2.finalize, 146, "can add 8 combined bits after an Int";
 $o2 .= new();
 $o2.push(True,False,False,False,True,False,True);
-throws_like { +$o2.finalize }, X::Sum::Missing, "Trying to finalize 7 bits fails";
+throws-like { +$o2.finalize }, X::Sum::Missing, "Trying to finalize 7 bits fails";
 $o2 .= new();
 ok $o2.push(True,False,False,False,True,False,True,8) ~~ Failure, "Normal addend after 7 bits fails";
 $o2 .= new();

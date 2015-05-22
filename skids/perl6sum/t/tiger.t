@@ -33,7 +33,7 @@ ok $sr.WHAT === T1r, 'We create a $recourse backed Sum::Tiger1 class and object'
 unless $Sum::librhash::up {
     todo "This will come with byte-only marshalling", 1;
 }
-throws_like {$sr.push(False)}, X::Sum::Marshal, message => "Marshalling error.  Cannot handle addend of type Bool via recourse $recourse.";
+throws-like {$sr.push(False)}, X::Sum::Marshal, message => "Marshalling error.  Cannot handle addend of type Bool via recourse $recourse.";
 
 class T1p does Sum::Tiger1 does Sum::Marshal::Raw does Sum::Partial { };
 my T1p $sp .= new();
