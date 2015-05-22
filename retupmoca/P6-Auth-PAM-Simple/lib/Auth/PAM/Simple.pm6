@@ -1,4 +1,4 @@
-module Auth::PAM::Simple;
+unit module Auth::PAM::Simple;
 
 our sub authenticate($service, Str $user, Str $pass --> Bool) is export {
     return !auth($service, $user, $pass);
