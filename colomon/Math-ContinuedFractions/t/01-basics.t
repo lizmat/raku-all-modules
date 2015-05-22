@@ -8,7 +8,7 @@ my @rationals = 3 => [3],
                 3.245 => [3, 4, 12, 4],
                 -4.2 => [-5, 1, 4];
                 
-for @rationals>>.kv -> $rational, $cf-form {
+for flat @rationals>>.kv -> $rational, $cf-form {
     my $cf = Math::ContinuedFraction.new($rational);
     isa_ok $cf, Math::ContinuedFraction, "We made a Math::ContinuedFraction object for $rational";
     is $cf.a, $cf-form, "With the correct value";
@@ -68,7 +68,7 @@ my @values = # cf => [name, .sign, .truncate, floor, ceiling, round]
              Math::ContinuedFraction.new(-34) => ["-34", -1, -34, -34, -34, -34],
              Math::ContinuedFraction.new(-403.1) => ["-403.1", -1, -403, -404, -403, -403];
 
-for @values>>.kv -> $cf, [$name, $sign, $truncate, $floor, $ceiling, $round] {
+for flat @values>>.kv -> $cf, [$name, $sign, $truncate, $floor, $ceiling, $round] {
     isa_ok $cf, Math::ContinuedFraction, "$name is a ContinuedFraction";
     is $cf.sign, $sign, "$name .sign is $sign";
     isa_ok $cf.sign, Int, "$name .sign is Int";
