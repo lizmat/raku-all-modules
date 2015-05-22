@@ -2,41 +2,51 @@ use System::Passwd::User;
 
 module System::Passwd
 {
-    my $user_class;
-
-    given [$*DISTRO.Str|$*KERNEL.Str]
-    {
-        when m:i/linux/   { $user_class = System::Passwd::User }
-        when m:i/openbsd/ { $user_class = System::Passwd::User }
-        when m:i/netbsd/  { $user_class = System::Passwd::User }
-        when m:i/freebsd/ { $user_class = System::Passwd::User }
-        when m:i/macosx/  { $user_class = System::Passwd::User }
-        default { die "This module is not compatible with the operating system {$*DISTRO.Str}" }
-    }
-
-    # build users array
-    my $password_file = open '/etc/passwd', :r;
     my @users = ();
 
-    for $password_file.lines
-    {
-        next if .substr(0, 1) ~~ '#'; # skip comments
-        my $user = $user_class.new($_);
-        @users.push($user);
+    my Bool $loaded_users = False;
+
+    my sub populate_users() {
+        if !$loaded_users {
+            my $user_class;
+            given [$*DISTRO.Str|$*KERNEL.Str]
+            {
+                when m:i/linux/   { $user_class = System::Passwd::User }
+                when m:i/openbsd/ { $user_class = System::Passwd::User }
+                when m:i/netbsd/  { $user_class = System::Passwd::User }
+                when m:i/freebsd/ { $user_class = System::Passwd::User }
+                when m:i/macosx/  { $user_class = System::Passwd::User }
+                default { die "This module is not compatible with the operating system {$*DISTRO.Str}" }
+            }
+
+            # build users array
+            my $password_file = open '/etc/passwd', :r;
+
+            for $password_file.lines
+            {
+                next if .substr(0, 1) ~~ '#'; # skip comments
+                my $user = $user_class.new($_);
+                @users.push($user);
+            }
+            $loaded_users = True;
+        }
     }
 
     our sub get_user_by_username (Str:D $username) is export
     {
+        populate_users();
         return first { .username ~~ $username }, @users;
     }
 
     our sub get_user_by_uid (Int:D $uid) is export
     {
+        populate_users();
         return first { .uid == $uid }, @users;
     }
 
     our sub get_user_by_fullname (Str:D $fullname) is export
     {
+        populate_users();
         return first { .fullname ~~ $fullname }, @users;
     }
 }
