@@ -2,7 +2,7 @@
 
 use v6;
 
-class DateTime::Format::W3CDTF;
+unit class DateTime::Format::W3CDTF;
 
 method parse (Str $str) of DateTime {
     my Str $date-str = $str;
