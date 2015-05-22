@@ -27,7 +27,8 @@ sub lol2table (@header_rows,@body_rows?,@footer_rows?,%options = %defaults) is e
 
 sub _build_table (@header_rows,@body_rows?,@footer_rows?,%options = %defaults) is export {
     my @widths = _get_column_widths(@header_rows,@body_rows);  
-    return _build_header(@widths,@header_rows), _build_body(@widths,@body_rows), _build_footer(@widths);
+    my @rows   = _build_header(@widths,@header_rows), _build_body(@widths,@body_rows), _build_footer(@widths);
+    return @rows.grep(* ~~ Str)
 }
 
 sub _build_header (@widths, @columns, %options = %defaults) is export {
@@ -37,8 +38,8 @@ sub _build_header (@widths, @columns, %options = %defaults) is export {
     @processed.push( %options<headers><corner_marker>  
                     ~ %options<headers><top_border>
                     ~ @widths.map({ %options<headers><top_border> x $_ }).join(%options<headers><top_border>
-                                ~ %options<headers><corner_marker>
-                                ~ %options<headers><top_border>
+                        ~ %options<headers><corner_marker>
+                        ~ %options<headers><top_border>
                         ) 
                     ~ %options<headers><top_border> 
                     ~ %options<headers><corner_marker> 
@@ -51,8 +52,8 @@ sub _build_header (@widths, @columns, %options = %defaults) is export {
     @processed.push( %options<headers><corner_marker>  
                     ~ %options<headers><bottom_border>
                     ~ @widths.map({ %options<headers><bottom_border> x $_ }).join(%options<headers><bottom_border>
-                                ~ %options<headers><corner_marker>
-                                ~ %options<headers><bottom_border>
+                        ~ %options<headers><corner_marker>
+                        ~ %options<headers><bottom_border>
                         ) 
                     ~ %options<headers><bottom_border> 
                     ~ %options<headers><corner_marker> 
@@ -72,8 +73,8 @@ sub _build_body (@widths, @rows, %options = %defaults) is export {
     @processed.push( %options<rows><corner_marker>  
                     ~ %options<rows><bottom_border>
                     ~ @widths.map({ %options<rows><bottom_border> x $_ }).join(%options<rows><bottom_border>
-                                ~ %options<rows><corner_marker>
-                                ~ %options<rows><bottom_border>
+                        ~ %options<rows><corner_marker>
+                        ~ %options<rows><bottom_border>
                         ) 
                     ~ %options<rows><bottom_border> 
                     ~ %options<rows><corner_marker> 
@@ -93,8 +94,8 @@ sub _build_footer (@widths, @rows?, %options = %defaults) is export {
     @processed.push( %options<footers><corner_marker>  
                     ~ %options<footers><bottom_border>
                     ~ @widths.map({ %options<footers><bottom_border> x $_ }).join(%options<footers><bottom_border>
-                                ~ %options<footers><corner_marker>
-                                ~ %options<footers><bottom_border>
+                        ~ %options<footers><corner_marker>
+                        ~ %options<footers><bottom_border>
                         ) 
                     ~ %options<footers><bottom_border> 
                     ~ %options<footers><corner_marker> 
