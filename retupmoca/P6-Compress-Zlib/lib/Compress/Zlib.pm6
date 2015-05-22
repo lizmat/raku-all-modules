@@ -1,5 +1,5 @@
 use v6;
-module Compress::Zlib;
+unit module Compress::Zlib;
 
 need Compress::Zlib::Raw;
 use NativeCall;
