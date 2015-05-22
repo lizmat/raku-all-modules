@@ -1,4 +1,4 @@
-class Git::PurePerl::PackIndex;
+unit class Git::PurePerl::PackIndex;
 
 has IO::Path $.filename = die "filename is required";
 has IO::Handle $.fh is rw;

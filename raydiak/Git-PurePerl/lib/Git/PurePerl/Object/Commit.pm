@@ -1,5 +1,5 @@
 use Git::PurePerl::Object;
-class Git::PurePerl::Object::Commit is Git::PurePerl::Object;
+unit class Git::PurePerl::Object::Commit is Git::PurePerl::Object;
 use Git::PurePerl::Actor;
 use DateTime::TimeZone;
 

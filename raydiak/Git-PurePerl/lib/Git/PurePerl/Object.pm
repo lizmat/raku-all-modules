@@ -1,4 +1,4 @@
-class Git::PurePerl::Object;
+unit class Git::PurePerl::Object;
 
 my Str enum ObjectKind is export (:commit<commit>, :tree<tree>, :blob<blob>, :tag<tag>);
 

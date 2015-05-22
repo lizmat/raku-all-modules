@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/raydiak/Git-PurePerl.git
 	branch = master
-	commit = e551947eacc6054a9a63a37b42c960e1e5841194
-	parent = 06520dc44966ffa5f15ce9bbe29a610e044415c3
-	cmdver = 0.2.0
+	commit = 41b5d587f843fbf9e16a47984e58b909d469bf8e
+	parent = cf025972ef19642d71bb637c64ebb4349b2d041e
+	cmdver = 0.2.1

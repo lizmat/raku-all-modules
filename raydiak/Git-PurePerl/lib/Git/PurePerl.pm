@@ -1,4 +1,4 @@
-class Git::PurePerl;
+unit class Git::PurePerl;
 use Git::PurePerl::Protocol;
 use Git::PurePerl::Pack::WithoutIndex;
 use Git::PurePerl::Pack::WithIndex;

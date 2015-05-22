@@ -1,6 +1,6 @@
 use Git::PurePerl::Pack;
 use Digest::SHA;
-class Git::PurePerl::Pack::WithoutIndex is Git::PurePerl::Pack;
+unit class Git::PurePerl::Pack::WithoutIndex is Git::PurePerl::Pack;
 
 has %.offsets is rw;
 

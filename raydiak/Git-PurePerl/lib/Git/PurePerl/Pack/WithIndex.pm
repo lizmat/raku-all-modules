@@ -1,5 +1,5 @@
 use Git::PurePerl::Pack;
-class Git::PurePerl::Pack::WithIndex is Git::PurePerl::Pack;
+unit class Git::PurePerl::Pack::WithIndex is Git::PurePerl::Pack;
 use Git::PurePerl::PackIndex;
 use Git::PurePerl::PackIndex::Version1;
 use Git::PurePerl::PackIndex::Version2;

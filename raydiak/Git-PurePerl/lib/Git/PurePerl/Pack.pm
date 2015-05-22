@@ -1,4 +1,4 @@
-class Git::PurePerl::Pack;
+unit class Git::PurePerl::Pack;
 use Compress::Zlib;
 
 has IO::Path $.filename;

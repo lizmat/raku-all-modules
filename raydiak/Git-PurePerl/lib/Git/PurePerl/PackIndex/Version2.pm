@@ -1,5 +1,5 @@
 use Git::PurePerl::PackIndex;
-class Git::PurePerl::PackIndex::Version2 is Git::PurePerl::PackIndex;
+unit class Git::PurePerl::PackIndex::Version2 is Git::PurePerl::PackIndex;
 
 my $FanOutCount   = 256;
 my $SHA1Size      = 20;

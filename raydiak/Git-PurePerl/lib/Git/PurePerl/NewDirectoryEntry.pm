@@ -1,4 +1,4 @@
-class Git::PurePerl::NewDirectoryEntry;
+unit class Git::PurePerl::NewDirectoryEntry;
 
 has Str $.mode = die 'mode is required';
 has Str $.filename = die 'filename is required';
