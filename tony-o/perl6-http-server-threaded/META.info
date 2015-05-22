@@ -1,0 +1,12 @@
+{
+  "name"        : "HTTP::Server::Threaded",
+  "version"     : "0.1.0",
+  "description" : "Threaded Base HTTP Server",
+  "auth"        : "github:tony-o",
+  "provides" : {
+    "HTTP::Server::Threaded" : "lib/HTTP/Server/Threaded.pm6",  
+    "HTTP::Server::Threaded::Request"  : "/lib/HTTP/Server/Threaded/Request.pm6",
+    "HTTP::Server::Threaded::Response" : "/lib/HTTP/Server/Threaded/Response.pm6"
+  },
+  "source-url"  : "git://github.com/tony-o/perl6-http-server-threaded.git"
+} 

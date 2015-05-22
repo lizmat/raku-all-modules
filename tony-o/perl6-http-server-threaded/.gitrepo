@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-http-server-threaded.git
+	branch = master
+	commit = dee8f2cc87a7377d1f79df53aee7043a70cf6e8f
+	parent = 5c5dc27fba30fc0c7f47669c3dfdbca72a4b983c
+	cmdver = 0.2.1
