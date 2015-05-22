@@ -59,7 +59,7 @@ multi sub crc32 (Str $s) {
 }
 
 multi sub crc32 (IO $fh) {
-    my Str $s = $fh.slurp();
+    my Str $s = $fh.slurp-rest();
     return crc32($s);
 }
 
