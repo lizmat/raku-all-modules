@@ -224,7 +224,7 @@ class Math::ThreeD::Library {
     has @.use;
 
     method build () {
-        my $build = "class $.name is Array;\n\n";
+        my $build = "unit class $.name is Array;\n\n";
 
         if @.use {
             $build ~= "use $_;\n" for @.use;
@@ -252,11 +252,11 @@ class Math::ThreeD::Library {
             $build ~= ") };\n\n";
             
             my $columns = @.dims[1];
-            $build ~= 'method at_pos ($i) is rw {' ~ "\n";
+            $build ~= 'method AT-POS ($i) is rw {' ~ "\n";
             my @expressions;
             for ^$columns {
                 my $offset = $_ ?? "+$_" !! "  ";
-                @expressions.push: "self.Array::at_pos(\$_$offset)";
+                @expressions.push: "self.Array::AT-POS(\$_$offset)";
             }
             $build ~= @expressions.join(",\n").indent(4) ~ "\n";
             $build ~= "given \$i*$columns;".indent(8);
