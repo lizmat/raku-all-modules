@@ -3,7 +3,7 @@ use v6;
 #use Grammar::Tracer;
 use C::Parser::Lexer;
 use C::Parser::Utils;
-grammar C::Parser::Grammar is C::Parser::Lexer;
+unit grammar C::Parser::Grammar is C::Parser::Lexer;
 
 rule TOP {
 	^ <.ws> <translation-unit>
@@ -613,6 +613,9 @@ proto rule declarator {*}
 rule declarator:sym<direct> {
     <pointer>* <direct-declarator>
 }
+rule declarator:sym<pointer> {
+    <pointer>+
+}
 
 rule direct-declarator {
     <direct-declarator-first>
@@ -726,7 +729,7 @@ rule type-name { <specifier-qualifier-list> <abstract-declarator>? }
 proto rule abstract-declarator {*}
 rule abstract-declarator:sym<pointer> { <pointer> }
 rule abstract-declarator:sym<direct-abstract> {
-    <pointer>? <direct-abstract-declarator>
+    <pointer>* <direct-abstract-declarator>
 }
 
 rule direct-abstract-declarator {

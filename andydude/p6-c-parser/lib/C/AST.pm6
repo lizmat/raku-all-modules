@@ -1,6 +1,6 @@
 use v6;
 use C::AST::Ops;
-module C::AST;
+unit module C::AST;
 
 # Compound represents constants, expressions, and statements.
 role Compound {}

@@ -1,5 +1,5 @@
 use v6;
-module C::AST::Ops;
+unit module C::AST::Ops;
 
 enum OpKind is export <
     postinc

@@ -1,5 +1,5 @@
 use v6;
-module C::Parser::Utils;
+unit module C::Parser::Utils;
 
 our sub fake_indent (Str $input --> Str) {
     my regex three_liner {

@@ -1,6 +1,6 @@
 use v6;
 use C::AST;
-module C::AST::Utils;
+unit module C::AST::Utils;
 
 our sub binop_from_lassoc(@operators, @operands) {
     my $ast = (shift @operands).ast;

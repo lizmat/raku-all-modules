@@ -1,7 +1,7 @@
 use v6;
 use C::Parser::Actions;
 use C::Parser::Grammar;
-class C::Parser;
+unit class C::Parser;
 
 method parse($line) {
     my $actions = C::Parser::Actions.new();

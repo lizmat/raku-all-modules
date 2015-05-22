@@ -1,7 +1,7 @@
 # References ISO/IEC 9899:1990 "Information technology - Programming Language C" (C89 for short)
 use v6;
 #use Grammar::Tracer;
-grammar C::Parser::Lexer;
+unit grammar C::Parser::Lexer;
 
 token TOP {^ <.ws> <c-tokens> [$ || {die("expected eof")}] }
 
