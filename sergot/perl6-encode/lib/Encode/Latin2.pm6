@@ -1,4 +1,4 @@
-module Encode::Latin2;
+unit module Encode::Latin2;
 
 our %map =
     0xA0 => 0x0a0,

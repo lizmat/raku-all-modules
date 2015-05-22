@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sergot/perl6-encode.git
 	branch = master
-	commit = 123e01530f1b9234548142fb113fadefbe944069
-	parent = ef5d750b8ab9d153cdfc9bc55420efee71bbd435
-	cmdver = 0.2.0
+	commit = 99dc8a2fe251a3dd7d3d639165c0596afa236618
+	parent = a846e3269494fb35802904247b8a5da661765320
+	cmdver = 0.2.1

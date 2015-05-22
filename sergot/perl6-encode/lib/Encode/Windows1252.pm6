@@ -1,4 +1,4 @@
-module Encode::Windows1252;
+unit module Encode::Windows1252;
 
 our %map =
     0x80 => 0x20ac,

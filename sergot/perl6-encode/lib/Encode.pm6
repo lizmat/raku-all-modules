@@ -1,4 +1,4 @@
-module Encode;
+unit module Encode;
 
 use Encode::Latin2;
 use Encode::Windows1252;
