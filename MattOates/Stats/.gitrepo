@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MattOates/Stats.git
 	branch = master
-	commit = 443363f56d1477fa6863c6d1a9654bbd08dd9bdf
-	parent = fdb63e483b5aa87a3a72bf1cf33242bfa24599f9
-	cmdver = 0.1.0
+	commit = e1dc8469427b96f309af21ef1c73e1b82706a874
+	parent = f4566135b80af04b1e410689c6d74fa5972092ea
+	cmdver = 0.2.1
