@@ -1,5 +1,5 @@
 use Event::Emitter::Role::Handler;
-role Event::Emitter::Supply does Event::Emitter::Role::Handler;
+unit role Event::Emitter::Supply does Event::Emitter::Role::Handler;
 
 has @!events;
 has Supply $!supply;
