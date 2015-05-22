@@ -1,6 +1,6 @@
 use v6;
 
-module Config::INI::Writer;
+unit module Config::INI::Writer;
 
 our sub dump (%what) {
     my $ret;

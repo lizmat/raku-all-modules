@@ -1,6 +1,6 @@
 use v6;
 
-module Config::INI;
+unit module Config::INI;
 
 grammar INI {
     token TOP      { 
