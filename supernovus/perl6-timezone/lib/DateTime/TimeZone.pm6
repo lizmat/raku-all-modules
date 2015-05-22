@@ -1,4 +1,4 @@
-module DateTime::TimeZone;
+unit module DateTime::TimeZone;
 
 ## An app-facing set of friendly subroutines for working with timezones.
 
