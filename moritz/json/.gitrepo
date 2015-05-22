@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moritz/json.git
 	branch = master
-	commit = 354b936c575b9e230e166c3c3e6e984f50dc81f1
-	parent = 8431c27bcba5b003ed4e40952aa3d6e4f6bd2e4a
+	commit = 42df6e029d778dc88cbb64236e17ff092d996169
+	parent = 00fa53b54df38562412dde2c003f8709a8ebacd7
 	cmdver = 0.2.1
