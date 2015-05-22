@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Nami-Doc/Sprockets.pl.git
 	branch = master
-	commit = cf4b9e3cbbc3cca84e206da133751a6f46f543b7
-	parent = 459ba045e80238ca91139b3acd48da449a53d164
-	cmdver = 0.1.0
+	commit = 743373f27bacb74d02296a67fe12e824764a6fc3
+	parent = 1450609ffef0c45507abf40f845e0bd4d2f55000
+	cmdver = 0.2.1
