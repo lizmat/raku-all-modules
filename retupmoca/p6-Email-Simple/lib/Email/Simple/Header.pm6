@@ -1,4 +1,4 @@
-class Email::Simple::Header;
+unit class Email::Simple::Header;
 
 has $!crlf;
 has @!headers;

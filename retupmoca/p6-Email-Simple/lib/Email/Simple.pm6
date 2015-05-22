@@ -1,4 +1,4 @@
-class Email::Simple;
+unit class Email::Simple;
 
 use Email::Simple::Header;
 use DateTime::Format::RFC2822;
