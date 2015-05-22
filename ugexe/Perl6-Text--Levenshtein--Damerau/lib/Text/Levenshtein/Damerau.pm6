@@ -1,5 +1,5 @@
 use v6;
-class Text::Levenshtein::Damerau;
+unit class Text::Levenshtein::Damerau;
 
 has Str  @.targets        is rw;
 has Str  @.sources        is rw;
