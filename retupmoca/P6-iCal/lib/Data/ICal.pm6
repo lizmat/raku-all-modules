@@ -1,4 +1,4 @@
-class Data::ICal;
+unit class Data::ICal;
 
 use Data::ICal::Grammar;
 use Data::ICal::Event;

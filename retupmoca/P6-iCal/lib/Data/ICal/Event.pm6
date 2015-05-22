@@ -1,4 +1,4 @@
-class Data::ICal::Event;
+unit class Data::ICal::Event;
 
 has $.uid;
 has $.dtstamp;

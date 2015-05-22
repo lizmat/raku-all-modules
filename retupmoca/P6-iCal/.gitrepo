@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-iCal.git
 	branch = master
-	commit = 69c98a8cc9c6b909e810d1a2d571327cc5e94616
-	parent = c5e045abf6056a731bc5bde0d78ee5c20262a9fd
-	cmdver = 0.2.0
+	commit = 1d6738e62ae09276f56806c9dd2233ec3696eb66
+	parent = caa17873aa06717e64b52edbb88e9136126f02b3
+	cmdver = 0.2.1

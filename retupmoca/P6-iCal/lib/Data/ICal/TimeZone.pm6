@@ -1,4 +1,4 @@
-class Data::ICal::TimeZone;
+unit class Data::ICal::TimeZone;
 
 has $.tzid;
 has $.std-offset;
