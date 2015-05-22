@@ -1,4 +1,4 @@
-class Pray::Geometry::Object;
+unit class Pray::Geometry::Object;
 
 # some of this is messy
     # "primitive" props up loading from scene files

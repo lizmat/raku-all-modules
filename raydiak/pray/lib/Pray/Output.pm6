@@ -1,4 +1,4 @@
-class Pray::Output;
+unit class Pray::Output;
 
 use Image::PNG::Portable;
 

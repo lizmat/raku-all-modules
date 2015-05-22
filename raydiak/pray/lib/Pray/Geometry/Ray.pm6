@@ -1,4 +1,4 @@
-class Pray::Geometry::Ray;
+unit class Pray::Geometry::Ray;
 
 use Pray::Geometry::Vector3D;
 

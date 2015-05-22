@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/raydiak/pray.git
 	branch = master
-	commit = 26abc760f709d6d43f3ca519babbefc2aa2ec496
-	parent = c15db333f374ed708aa4461b3d8aa459c580bd48
-	cmdver = 0.2.0
+	commit = 33c36f95b1bd2fab25d1bd9d5489c011962ecd1a
+	parent = 23aebdd8be6c621d8c674f2050dfd594d27b73ed
+	cmdver = 0.2.1

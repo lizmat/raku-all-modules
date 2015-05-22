@@ -1,4 +1,4 @@
-class Pray::Scene::Intersection;
+unit class Pray::Scene::Intersection;
 
 use Pray::Geometry::Ray;
 use Pray::Scene::Object;

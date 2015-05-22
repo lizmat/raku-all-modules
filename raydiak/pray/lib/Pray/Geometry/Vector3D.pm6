@@ -1,4 +1,4 @@
-class Pray::Geometry::Vector3D;
+unit class Pray::Geometry::Vector3D;
 
 # TODO add some in-place options to reduce creation overhead and gc thrash
 

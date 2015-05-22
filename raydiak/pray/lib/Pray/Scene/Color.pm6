@@ -1,4 +1,4 @@
-class Pray::Scene::Color;
+unit class Pray::Scene::Color;
 
 has Real $.r = 0;
 has Real $.g = 0;

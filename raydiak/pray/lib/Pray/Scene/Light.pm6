@@ -2,7 +2,7 @@ use v6;
 
 use Pray::Scene::Lighting;
 
-class Pray::Scene::Light is Pray::Scene::Lighting;
+unit class Pray::Scene::Light is Pray::Scene::Lighting;
 
 use Pray::Geometry::Vector3D;
 use Pray::Geometry::Ray;

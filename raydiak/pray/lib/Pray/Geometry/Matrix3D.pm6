@@ -1,4 +1,4 @@
-class Pray::Geometry::Matrix3D;
+unit class Pray::Geometry::Matrix3D;
 
 has $.values is rw;
 

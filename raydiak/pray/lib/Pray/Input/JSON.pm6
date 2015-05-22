@@ -1,4 +1,4 @@
-module Pray::Input::JSON;
+unit module Pray::Input::JSON;
 # forked from https://github.com/tadzik/JSON-Unmarshal
 # will either be heavily customized for scene files, or replaced
 

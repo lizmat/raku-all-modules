@@ -1,4 +1,4 @@
-class Pray::Scene::Object;
+unit class Pray::Scene::Object;
 
 use Pray::Geometry::Object;
 use Pray::Scene::Lighting;

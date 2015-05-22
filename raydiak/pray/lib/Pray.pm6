@@ -1,4 +1,4 @@
-module Pray;
+unit module Pray;
 
 use Pray::Scene;
 use Pray::Output;

@@ -1,4 +1,4 @@
-class Pray::Scene;
+unit class Pray::Scene;
 
 use Pray::Input::JSON;
 

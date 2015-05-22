@@ -1,6 +1,6 @@
 use v6;
 use Pray::Geometry::Object;
-class Pray::Geometry::Cone is Pray::Geometry::Object;
+unit class Pray::Geometry::Cone is Pray::Geometry::Object;
 
 use Pray::Geometry::Vector3D;
 use Pray::Geometry::Ray;

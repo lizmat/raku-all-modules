@@ -1,4 +1,4 @@
-class Pray::Scene::Material;
+unit class Pray::Scene::Material;
 
 use Pray::Scene::Color;
 use Pray::Scene::Lighting;
