@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/cygx/p6-debug.git
+	branch = master
+	commit = e7667b622c57e479193e88c36988d2659684c231
+	parent = f0d0a6c5d123359c9c58ab552d6dcae7c1131249
+	cmdver = 0.2.1

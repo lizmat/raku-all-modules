@@ -1,0 +1,15 @@
+{
+    "name" : "DEBUG",
+    "version" : "*",
+    "description" : "Experimental debugging macros",
+    "author" : "cygx <cygx@cpan.org>",
+    "provides" : {
+        "DEBUG"  : "DEBUG.pm6",
+        "NDEBUG" : "NDEBUG.pm6",
+        "assert" : "assert.pm6",
+        "dbg"    : "dbg.pm6",
+        "logger" : "logger.pm6"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/cygx/p6-debug.git"
+}
