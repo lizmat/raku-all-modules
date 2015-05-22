@@ -1,7 +1,7 @@
 use v6;
 use String::CRC32;
 
-class Cache::Memcached:auth<cosimo>:ver<0.04>;
+unit class Cache::Memcached:auth<cosimo>:ver<0.04>;
 
 =begin pod
 use Storable ();
@@ -23,27 +23,27 @@ use fields qw{
 };
 =end pod
 
-has Int   $!debug is rw;
-has Bool  $!no_rehash is rw;
-has       %!stats is rw;
+has Int   $!debug;
+has Bool  $!no_rehash;
+has       %!stats;
 has Int   $.compress_threshold is rw;
 has Bool  $.compress_enable is rw;
 has Bool  $.readonly is rw;
 has       &.stat_callback is rw;
 has       $.select_timeout is rw;
-has Str   $!namespace is rw = "";
-has Int   $!namespace_len is rw = 0;
-has       @!servers is rw = ();
-has       $!active  is rw;
+has Str   $!namespace = "";
+has Int   $!namespace_len = 0;
+has       @!servers = ();
+has       $!active;
 has       @.buckets is rw;
-has Str   $!pref_ip is rw;
-has Int   $!bucketcount is rw = 0;
-has       $!_single_sock is rw = False;
+has Str   $!pref_ip;
+has Int   $!bucketcount = 0;
+has       $!_single_sock = False;
 has       $!_stime;
-has Int   $!connect_timeout is rw;
-has       &.cb_connect_fail is rw;
+has Int   $!connect_timeout;
+has       &.cb_connect_fail;
 #as Str   $.parser_class is rw = 'Cache::Memcached::GetParser';
-has       @!buck2sock is rw;
+has       @!buck2sock;
 
 submethod BUILD {
 
