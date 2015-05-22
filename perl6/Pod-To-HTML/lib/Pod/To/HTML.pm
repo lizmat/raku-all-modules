@@ -46,11 +46,17 @@ sub escape_id ($id) {
     $id.subst(/\s+/, '_', :g);
 }
 
-sub visit($root, :&pre, :&post, :&assemble = -> *% { Nil }) {
+multi visit(Nil, |a) { 
+    Debug { note colored("visit called for Nil", "bold") }
+} 
+multi visit($root, :&pre, :&post, :&assemble = -> *% { Nil }) {
+    Debug { note colored("visit called for ", "bold") ~ $root.perl }
     my ($pre, $post);
     $pre = pre($root) if defined &pre;
+    
     my @content = $root.?contents.map: {visit $_, :&pre, :&post, :&assemble};
     $post = post($root, :@content) if defined &post;
+    
     return assemble(:$pre, :$post, :@content, :node($root));
 }
 
@@ -86,7 +92,8 @@ sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$foote
     #| Keep count of how many footnotes we've output.
     my Int $*done-notes = 0;
     &OUTER::url = &url;
-    @body.push: node2html($pod.map: {visit $_, :assemble(&assemble-list-items)});
+    
+    @body.push: node2html($pod.map: { visit $_, :assemble(&assemble-list-items) });
 
     my $title_html = $title // $default-title // '';
 
