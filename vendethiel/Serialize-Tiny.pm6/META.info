@@ -1,0 +1,11 @@
+{
+  "name": "Serialize::Tiny",
+  "version": "1",
+  "description": "A very simple `serialize` sub to get public attribute values",
+  "depends": [],
+  "source-url": "git://github.com/vendethiel/Serialize-Tiny.pm6.git",
+  "author": "vendethiel",
+  "provides": {
+    "Serialize::Tiny": "lib/Serialize/Tiny.pm"
+  }
+}
