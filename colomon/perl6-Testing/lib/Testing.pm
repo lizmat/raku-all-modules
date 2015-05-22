@@ -32,7 +32,7 @@ multi sub OK ($have is copy,
     }
     else {
         printf $TEMPLATE, "not ok $test_count";
-        my $caller = callframe(2);
+        my $caller = callframe(1);
         $diagnostics ~= sprintf($TEMPLATE, '#') ~ "  at $caller.file() line $caller.line()\n"
                       ~ "#   have: $have.perl()\n";
         $diagnostics ~= "#   want: $want.perl()\n" if $want.defined;

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/perl6-Testing.git
 	branch = master
-	commit = a7968e43412adc74680e58f7d27415bc49f33895
-	parent = bb2c9247172faede52e162df5a5f54939d1b699a
-	cmdver = 0.2.0
+	commit = bdc35c6b25a2995a85dba54d4f11667b0a53bfa2
+	parent = dbbd1e27a1226156c33bf861dee04f4253d70154
+	cmdver = 0.2.1
