@@ -1,4 +1,4 @@
-class Image::PNG::Portable;
+unit class Image::PNG::Portable;
 
 use String::CRC32;
 use Compress::Zlib;
