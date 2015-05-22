@@ -1,4 +1,4 @@
-module Digest::PSHA1;
+unit module Digest::PSHA1;
 
 use Digest::SHA;
 use Digest::HMAC;
