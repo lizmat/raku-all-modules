@@ -1,5 +1,5 @@
 use v6;
-class Email::MIME::Encoder::Base64;
+unit class Email::MIME::Encoder::Base64;
 
 use MIME::Base64;
 

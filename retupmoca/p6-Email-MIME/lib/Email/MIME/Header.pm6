@@ -4,7 +4,7 @@ use Email::Simple::Header;
 use Email::MIME::Encoder::Base64;
 use MIME::QuotedPrint;
 
-class Email::MIME::Header is Email::Simple::Header;
+unit class Email::MIME::Header is Email::Simple::Header;
 
 grammar EncodedHeader {
     regex TOP {

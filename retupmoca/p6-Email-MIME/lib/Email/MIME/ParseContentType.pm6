@@ -1,4 +1,4 @@
-role Email::MIME::ParseContentType;
+unit role Email::MIME::ParseContentType;
 
 grammar ContentTypeHeader {
     token TOP {

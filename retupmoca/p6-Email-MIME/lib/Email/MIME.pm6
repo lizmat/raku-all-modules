@@ -7,7 +7,7 @@ use Email::MIME::Exceptions;
 use MIME::QuotedPrint;
 use Email::MIME::Encoder::Base64;
 
-class Email::MIME is Email::Simple does Email::MIME::ParseContentType;
+unit class Email::MIME is Email::Simple does Email::MIME::ParseContentType;
 
 has $!ct;
 has @!parts;
