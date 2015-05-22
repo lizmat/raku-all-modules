@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/p6-Sys-Lastlog.git
+	branch = master
+	commit = 57fdaf932948f30d1d931b33cd60993dceb176dd
+	parent = 0106559719388acb2928d14afff7c5ea3d77d9bd
+	cmdver = 0.2.1
