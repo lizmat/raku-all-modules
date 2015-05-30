@@ -33,7 +33,7 @@ grammar TZData {
     token gmtoff { \S+ }
     token rules { \S+ }
     token format { \S+ }
-    token until { <-['#'\n]>+ }
+    token until { <-[#\n]>+ }
     token new-tz { \S+ }
     token old-tz { \S+ }
 }
@@ -72,9 +72,9 @@ sub MAIN($tzdata-file, $output-dir) {
     if $parsed {
         say "parsed";
         my %ruledata;
-        my @rules = $parsed<rule>;
-        my @zones = $parsed<zone>;
-        my @links = $parsed<link>;
+        my @rules := $parsed<rule>;
+        my @zones := $parsed<zone>;
+        my @links := $parsed<link>;
         my $x = 0;
         say +@rules ~ " rules";
         say +@zones ~ " zones";
@@ -108,7 +108,7 @@ sub MAIN($tzdata-file, $output-dir) {
             my $name = ~$zone<name>;
             $name ~~ s:g/\+/_plus_/;
             $name ~~ s:g/\-/_minus_/;
-            my $dir = ($output-dir ~ $name ~ ".pm6").path.directory;
+            my $dir = ($output-dir ~ $name ~ ".pm6").IO.dirname;
             while !($dir.IO ~~ :d) {
                 @dirs_to_make.unshift($dir);
                 $dir = $dir.path.parent;
@@ -122,10 +122,10 @@ sub MAIN($tzdata-file, $output-dir) {
             $classname ~~ s:g/\//::/;
             $fh.say("use v6;");
             $fh.say("use DateTime::TimeZone::Zone;");
-            $fh.say("class DateTime::TimeZone::Zone::" ~ $classname ~ " does DateTime::TimeZone::Zone;");
+            $fh.say("unit class DateTime::TimeZone::Zone::" ~ $classname ~ " does DateTime::TimeZone::Zone;");
 
             my @rules;
-            my @zoneentries = $zone<zonedata>;
+            my @zoneentries := $zone<zonedata>;
             my @zonedata;
             for @zoneentries -> $zoneentry {
                 my $rule = "";
@@ -182,7 +182,7 @@ sub MAIN($tzdata-file, $output-dir) {
                 }
                 @zonedata.push($data);
             }
-            @rules = uniq sort @rules;
+            @rules = unique sort @rules;
             $fh.say('has %.rules = ( ');
             for @rules -> $rule {
                 $fh.say(" $rule => " ~ %ruledata{$rule}.perl ~ ",");
@@ -201,7 +201,7 @@ sub MAIN($tzdata-file, $output-dir) {
             $new-tz ~~ s:g/\-/_minus_/;
 
             my @dirs_to_make;
-            my $dir = ($output-dir ~ $old-tz ~ ".pm6").path.directory;
+            my $dir = ($output-dir ~ $old-tz ~ ".pm6").IO.dirname;
             while !($dir.IO ~~ :d) {
                 @dirs_to_make.unshift($dir);
                 $dir = $dir.path.parent;
@@ -216,7 +216,7 @@ sub MAIN($tzdata-file, $output-dir) {
 
             $fh.say("use v6;");
             $fh.say("use DateTime::TimeZone::Zone::$new-tz;");
-            $fh.say("class DateTime::TimeZone::Zone::$old-tz is DateTime::TimeZone::Zone::$new-tz;");
+            $fh.say("unit class DateTime::TimeZone::Zone::$old-tz is DateTime::TimeZone::Zone::$new-tz;");
             $fh.close();
         }
 

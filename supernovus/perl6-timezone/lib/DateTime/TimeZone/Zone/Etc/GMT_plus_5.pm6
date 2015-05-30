@@ -1,6 +1,6 @@
 use v6;
 use DateTime::TimeZone::Zone;
-class DateTime::TimeZone::Zone::Etc::GMT_plus_5 does DateTime::TimeZone::Zone;
+unit class DateTime::TimeZone::Zone::Etc::GMT_plus_5 does DateTime::TimeZone::Zone;
 has %.rules = ( 
 );
-has @.zonedata = Array.new({"baseoffset" => "-5", "rules" => "", "until" => Inf});
+has @.zonedata = [{:baseoffset("-5"), :rules(""), :until(Inf)}]<>;
