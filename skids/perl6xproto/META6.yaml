@@ -1,0 +1,14 @@
+---
+authors:
+  - Brian S. Julin
+depends: []
+description: Perl6 modules for handling protocol status as Exceptions
+license: http://www.perlfoundation.org/artistic_license_2_0
+name: X::Protocol
+perl: v6.0.0
+provides:
+  X::Protocol: lib/X/Protocol.pm6
+  X::Protocol::HTTP: lib/X/Protocol/HTTP.pm6
+support:
+  source: git://github.com/skids/perl6xproto.git
+version: v0.0.1

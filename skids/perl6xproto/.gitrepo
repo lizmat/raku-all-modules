@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/skids/perl6xproto.git
+	branch = master
+	commit = 9e5b795679830a0150d33cd4f40a475582257a58
+	parent = 728ad16ca78e5aa1323aceec3c648c886bd48778
+	cmdver = 0.2.1
