@@ -5,7 +5,7 @@
 # 
 # This library is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
 
-module HTML::Strip::Decode;
+unit module HTML::Strip::Decode;
 
 my %entity2char = (
  # Some normal chars that have special meaning in SGML context

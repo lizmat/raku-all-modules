@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dagurval/HTML-Strip.git
 	branch = master
-	commit = 0bddb9140f534507e72a7c5712de02fe3a94ae87
-	parent = 0b9cedc7456853246819f36d6df085be73605731
-	cmdver = 0.1.0
+	commit = 77011270586a080b6d3405eae2560bd6c9b24b35
+	parent = 83c23ae382d5896148fd4ad14162ad78be8838d6
+	cmdver = 0.2.1

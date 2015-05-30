@@ -1,6 +1,6 @@
 use v6;
 
-module HTML::Strip;
+unit module HTML::Strip;
 use HTML::Strip::Decode;
 
 grammar HTML::Strip::Grammar {
