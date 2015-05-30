@@ -1,4 +1,4 @@
-module Form;
+unit module Form;
 
 use Form::TextFormatting;
 use Form::Grammar;

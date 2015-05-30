@@ -1,4 +1,4 @@
-module Form::Field;
+unit module Form::Field;
 
 use Form::TextFormatting;
 use Form::NumberFormatting;

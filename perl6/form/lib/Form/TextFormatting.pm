@@ -1,4 +1,4 @@
-module Form::TextFormatting;
+unit module Form::TextFormatting;
 
 =begin pod
 
