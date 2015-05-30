@@ -16,7 +16,9 @@ is $user_2.username, 'root', 'root user returned';
 is $user_2.uid, 0, 'uid is zero';
 is $user_2.gid, 0, 'gid is zero';
 
-ok my $user_3 = get_user_by_fullname('root'), 'get root user by fullname';
+my $fullname = $user_2.fullname;
+
+ok my $user_3 = get_user_by_fullname($fullname), 'get root user by fullname';
 is $user_3.username, 'root', 'root user returned';
 is $user_3.uid, 0, 'uid is zero';
 is $user_3.gid, 0, 'gid is zero';

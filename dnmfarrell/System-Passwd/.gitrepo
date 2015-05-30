@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dnmfarrell/System-Passwd.git
 	branch = master
-	commit = ff17ed580229749b6192ab2cfa474568f8c08f1a
-	parent = 7f661972949bba400984bb04cb985fcbe919ab0d
+	commit = ee047c5a73eadbd926fc166506e7d13a2740db49
+	parent = b26204ae3c54b6e86a5967306d614c244cf4f9fa
 	cmdver = 0.2.1
