@@ -1,0 +1,18 @@
+{
+    "perl"        : "v6.0.0",
+    "name"        : "Template::Protone",
+    "version"     : "0.1.0",
+    "description" : "Perl6 embedded templates",
+    "depends"     : [ ],
+    "provides"    : {
+        "Template::Protone" : "lib/Template/Protone.pm6"
+    },
+    "auth"    : "github:tony-o",
+    "authors" : [
+        "Tony O'Dell"       
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/tony-o/perl6-template-protone/issues"
+    },
+    "source-url"  : "git://github.com/tony-o/perl6-template-protone.git"
+}
