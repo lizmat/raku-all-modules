@@ -4,7 +4,7 @@ my $json = slurp 'projects.json';
 my @projects = from-json($json).list;
 my %local-seen;
 for @projects {
-    my $url = .<source-url> // .<repo-url>;
+    my $url = try { .<source-url> // .<repo-url> // .<support><source> };
 
     unless defined $url {
         warn "No source-url for $_.perl()";
