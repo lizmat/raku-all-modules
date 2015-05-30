@@ -1,4 +1,4 @@
-role Net::SMTP::Raw;
+unit role Net::SMTP::Raw;
 
 use MIME::Base64;
 use Digest;

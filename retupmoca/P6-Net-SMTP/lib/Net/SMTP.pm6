@@ -1,4 +1,4 @@
-class Net::SMTP;
+unit class Net::SMTP;
 
 use Net::SMTP::Raw;
 use Net::SMTP::Simple;

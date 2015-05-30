@@ -1,4 +1,4 @@
-role Net::SMTP::Simple;
+unit role Net::SMTP::Simple;
 
 use Email::Simple;
 
