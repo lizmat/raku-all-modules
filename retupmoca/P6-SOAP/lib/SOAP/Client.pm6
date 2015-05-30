@@ -1,4 +1,4 @@
-class SOAP::Client;
+unit class SOAP::Client;
 
 use SOAP::Client::WSDL;
 use LWP::Simple;
