@@ -15,8 +15,10 @@
   "test-depends" : [
     "Test"
   ],
+  "tags" : [ "crypt", "password" ],
   "description" : "Simple binding to crypt(3) from unix-like systems",
-  "version" : "v0.0.1",
-  "auth" : "github.com:jonathanstowe",
-  "author" : [ "Jonathan Stowe <jns+gh@gellyfish.co.uk>" ]
+  "version" : "v0.0.2",
+  "auth" : "github:jonathanstowe",
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ]
 }
