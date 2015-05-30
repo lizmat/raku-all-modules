@@ -1,6 +1,8 @@
 use HTTP::Server::Threaded::Request;
 use HTTP::Server::Threaded::Response;
-class HTTP::Server::Threaded {
+use HTTP::Server;
+
+class HTTP::Server::Threaded does HTTP::Server {
 
   has Int              $.port         = 8091;
   has Str              $.ip           = '0.0.0.0';
@@ -9,6 +11,7 @@ class HTTP::Server::Threaded {
 
   has @.mws;
   has @.hws;
+  has @.pws;
 
   method middleware(Callable $sub) {
     @.mws.push($sub);
@@ -16,6 +19,10 @@ class HTTP::Server::Threaded {
 
   method handler(Callable $sub) {
     @.hws.push($sub);
+  }
+
+  method after(Callable $sub) {
+    @.pws.push($sub);
   }
 
   method !eor($req, $data is rw) returns Bool {
@@ -71,7 +78,7 @@ class HTTP::Server::Threaded {
                   %headers{@parse[0].trim} = @parse[1].trim // Any;
                 });
                 $data .=subbuf($x + 4);
-                $req = HTTP::Server::Threaded::Request.new(:$method, :$resource, :$version, :%headers);
+                $req = HTTP::Server::Threaded::Request.new(:$method, uri => $resource, :$version, :%headers);
                 $res = HTTP::Server::Threaded::Response.new(:connection($conn));
                 for @.mws -> $middle {
                   try { 
@@ -103,6 +110,9 @@ class HTTP::Server::Threaded {
               }
             }
             try $conn.close;
+            for @.pws -> $p {
+              $p($req, $res);
+            }
             $done = 1;
           }
           last if $done;

@@ -3,6 +3,7 @@
   "version"     : "0.1.0",
   "description" : "Threaded Base HTTP Server",
   "auth"        : "github:tony-o",
+  "depends"     : ["HTTP::Server"],
   "provides" : {
     "HTTP::Server::Threaded" : "lib/HTTP/Server/Threaded.pm6",  
     "HTTP::Server::Threaded::Request"  : "/lib/HTTP/Server/Threaded/Request.pm6",

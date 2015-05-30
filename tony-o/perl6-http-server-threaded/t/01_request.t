@@ -7,7 +7,7 @@ use Test;
 plan 12;
 
 my $s = srv;
-isa_ok $s, HTTP::Server::Threaded;
+isa-ok $s, HTTP::Server::Threaded;
 is $s.mws.elems, 0, 'Response stack contains no elements yet';
 is $s.hws.elems, 0, 'Response stack contains no elements yet';
 
@@ -25,12 +25,12 @@ $s.handler(sub ($request, $response) {
   $response.close("Hello world!");
 });
 ok $s.hws.elems, 'Response stack contains elements';
-isa_ok $s.hws[0], Sub;
+isa-ok $s.hws[0], Sub;
 
 start { 
   sleep 1;
   my $client = req;
-  isa_ok $client, IO::Socket::INET;
+  isa-ok $client, IO::Socket::INET;
   is $client.host, host, 'IO::Socket::INET correct host';
   is $client.port, port, 'IO::Socket::INET correct port';
 
