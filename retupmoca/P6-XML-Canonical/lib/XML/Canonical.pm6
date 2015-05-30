@@ -1,6 +1,6 @@
 use XML;
 
-module XML::Canonical;
+unit module XML::Canonical;
 
 our proto canonical(|) is export { * };
 
