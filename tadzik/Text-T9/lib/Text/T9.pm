@@ -1,5 +1,5 @@
 #= Guess words basing on a T9 key sequence
-module Text::T9;
+unit module Text::T9;
 
 =begin pod
 =head1 SYNOPSIS
