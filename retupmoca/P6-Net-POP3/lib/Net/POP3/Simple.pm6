@@ -1,4 +1,4 @@
-role Net::POP3::Simple;
+unit role Net::POP3::Simple;
 
 use Net::POP3::Message;
 

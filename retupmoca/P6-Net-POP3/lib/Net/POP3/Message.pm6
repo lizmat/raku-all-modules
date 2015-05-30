@@ -1,4 +1,4 @@
-class Net::POP3::Message;
+unit class Net::POP3::Message;
 
 has $.pop;
 has $.sid;

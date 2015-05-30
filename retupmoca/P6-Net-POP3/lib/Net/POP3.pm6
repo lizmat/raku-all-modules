@@ -1,4 +1,4 @@
-class Net::POP3;
+unit class Net::POP3;
 
 use Net::POP3::Raw;
 use Net::POP3::Simple;

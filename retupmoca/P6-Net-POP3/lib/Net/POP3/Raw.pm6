@@ -1,4 +1,4 @@
-role Net::POP3::Raw;
+unit role Net::POP3::Raw;
 
 use Digest;
 
