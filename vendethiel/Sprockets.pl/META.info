@@ -1,0 +1,10 @@
+{
+  "name": "Sprockets",
+  "version": "*",
+  "author": "github:vendethiel",
+  "description": "Ruby Sprockets-like",
+  "provides": {
+    "Sprockets": "lib/Sprockets.pm"
+  },
+  "source-url": "git://github.com/vendethiel/Sprockets.pl.git"
+}

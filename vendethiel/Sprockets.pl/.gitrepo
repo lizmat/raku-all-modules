@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/vendethiel/Sprockets.pl.git
+	branch = master
+	commit = 6149e7eacc889f37e7b4ba3c5226f0ace627a903
+	parent = 1278d19723716c449a0297fe11a424a2a58a4f3e
+	cmdver = 0.2.1
