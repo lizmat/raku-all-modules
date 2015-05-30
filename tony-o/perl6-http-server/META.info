@@ -1,0 +1,12 @@
+{
+  "name" : "HTTP::Server",
+  "version" : "0.1",
+  "description" : "role for HTTP::Server so we can have start building out some servers with interchangeable backends",
+  "depends" : [],
+  "provides" : {
+      "HTTP::Server": "lib/HTTP/Server.pm6",
+      "HTTP::Response": "lib/HTTP/Response.pm6",
+      "HTTP::Request": "lib/HTTP/Request.pm6"
+  },
+  "source-url" : "git://github.com/tony-o/perl6-http-server.git"
+}
