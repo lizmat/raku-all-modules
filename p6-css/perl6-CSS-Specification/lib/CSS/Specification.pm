@@ -4,13 +4,23 @@
 #  http://dev.w3.org/csswg/css-values/#value-defs
 #  https://developer.mozilla.org/en-US/docs/Web/CSS/Value_definition_syntax
 
+use CSS::Grammar::CSS3;
+
 grammar CSS::Specification:ver<000.04> {
     rule TOP { <property-spec> * }
 
-    rule property-spec { <prop-names>[ \t | \: ] <spec> }
+    rule property-spec { <prop-names>
+                         \t <spec>
+                         \t [:i 'n/a' | ua specific | <-[ \t ]>*? properties || $<default>=<-[ \t ]>* ]
+                         [ \t <-[ \t ]>*? # applies to
+                           \t [<inherit=.yes>|<inherit=.no>]? ]?
+    }
     rule spec          { :my $*CHOICE; <terms> }
     # possibly tab delimited. Assume one spec per line.
     token ws {<!ww>' '*}
+
+    rule yes         {:i yes }
+    rule no          {:i no}
 
     token prop-sep   {<[\x20 \, \*]>+}
     token prop-names { [ <id=.id-quoted> | <id> ] +%% <.prop-sep> }

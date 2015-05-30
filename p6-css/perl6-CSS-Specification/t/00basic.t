@@ -32,13 +32,16 @@ for (
     'spec' => {input => 'bold || thin && <length>',
                ast => ':my @*SEEN; [ bold & <keyw> <!seen(2)> | [ thin & <keyw> <!seen(0)> | <length> <!seen(1)> ]**2 <!seen(3)> ]+',
     },
-    'property-spec' => {input => "'content'\tnormal | none | [ <string> | <uri> | <counter> | attr(<identifier>) | open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit",
-                        ast => {props => ['content'],
-                                perl6 => '[ [ normal | none ] & <keyw> | [ [ <string> | <uri> | <counter> | <attr> | [ open\\-quote | close\\-quote | no\\-open\\-quote | no\\-close\\-quote ] & <keyw> ] ]+ | inherit & <keyw> ]',
-                                synopsis => 'normal | none | [ <string> | <uri> | <counter> | attr(<identifier>) | open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit'},
+    'property-spec' => {input => "'content'\tnormal | none | [ <string> | <uri> | <counter> | attr(<identifier>) | open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit	normal	:before and :after pseudo-elements	no",
+                        ast => {:props['content'],
+                                :default<normal>,
+                                :perl6('[ [ normal | none ] & <keyw> | [ [ <string> | <uri> | <counter> | <attr> | [ open\\-quote | close\\-quote | no\\-open\\-quote | no\\-close\\-quote ] & <keyw> ] ]+ | inherit & <keyw> ]'),
+                                :synopsis('normal | none | [ <string> | <uri> | <counter> | attr(<identifier>) | open-quote | close-quote | no-open-quote | no-close-quote ]+ | inherit'),
+                                :inherit(False),
+                        },
     },
     # css1 spec with property name and '*' junk
-    property-spec => {input => "'width' *\t<length> | <percentage> | auto",
+    property-spec => {input => "'width' *\t<length> | <percentage> | auto	auto	all elements but non-replaced inline elements, table rows, and row groups	no",
                       ast => Mu,
     },
     ) {
@@ -52,14 +55,13 @@ for (
                                      :actions($actions),
                                      :suite<spec>,
                                      :expected($test) );
-
     my $rule-body := $/.ast;
     $rule-body := $rule-body<perl6>
         if $rule-body.isa('Hash');
 
     if $rule-body.defined {
         my $anon-rule := "rule \{ $rule-body \}";
-        lives_ok {EVAL $anon-rule}, "$rule compiles"
+        lives-ok {EVAL $anon-rule}, "$rule compiles"
             or diag "invalid rule: $rule-body";
     }
 }

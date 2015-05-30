@@ -23,8 +23,17 @@ class CSS::Specification::Actions {
             perl6    => $spec,
             );
 
+        %prop-def<inherit> = $<inherit>.ast
+            if $<inherit>;
+
+        %prop-def<default> = ~$<default>
+            if $<default>;
+
         make %prop-def;
     }
+
+    method yes($/) { make True }
+    method no($/)  { make False }
 
     method spec($/) {
         my $spec = $<terms>.ast;

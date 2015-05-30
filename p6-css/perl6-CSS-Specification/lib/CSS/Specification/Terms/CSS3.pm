@@ -2,7 +2,7 @@ use v6;
 
 use CSS::Specification::Terms;
 
-class CSS::Specification::Terms::CSS3
+grammar CSS::Specification::Terms::CSS3
     is CSS::Specification::Terms {
 
     # http://www.w3.org/TR/2013/CR-css3-values-20130404/ 3.1.1
