@@ -92,7 +92,7 @@ For further information, please see LICENSE or visit
 =end pod
 
 #= Handles output operations for Test::Builder objects
-class Test::Builder::Output;
+class Test::Builder::Output {
     has $!stdout;    #= Filehandle used by write()
     has $!stderr;    #= Filehandle used by diag()
 
@@ -116,6 +116,7 @@ class Test::Builder::Output;
 
         $!stderr.say($msg);
     }
+}
 
 # vim: ft=perl6
 
