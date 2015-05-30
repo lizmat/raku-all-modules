@@ -1,12 +1,15 @@
 {
     "name" : "Linux::Fuser",
-    "version" : "0.0.1",
-    "author" : "github:jonathanstowe",
+    "version" : "v0.0.3",
+    "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk" ],
+    "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk",
+    "auth" : "github:jonathanstowe",
     "description" : "Discover which process has a file open, in pure Perl 6",
+    "tags" : [ "linux", "system", "utils" ],
     "depends" : ["IO::Path::More", "System::Passwd"],
     "provides" : {
         "Linux::Fuser" : "lib/Linux/Fuser.pm6",
-		  "Linux::Fuser::Procinfo"	:	"lib/Linux/Fuser/Procinfo.pm6",
+        "Linux::Fuser::Procinfo" : "lib/Linux/Fuser/Procinfo.pm6",
         "Linux::Fuser::FileDescriptor" : "lib/Linux/Fuser/FileDescriptor.pm6"
     },
     "source-url" : "https://github.com/jonathanstowe/p6-Linux-Fuser.git"

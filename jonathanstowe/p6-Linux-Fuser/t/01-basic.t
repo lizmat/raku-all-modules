@@ -11,9 +11,9 @@ my $obj;
 
 ok(Linux::Fuser.^can('fuser'), "Linux::Fuser can 'fuser()'");
 
-lives_ok { $obj = Linux::Fuser.new() }, "create a new Linux::Fuser";
+lives-ok { $obj = Linux::Fuser.new() }, "create a new Linux::Fuser";
 
-isa_ok($obj,Linux::Fuser, "and it's the right kind of object");
+isa-ok($obj,Linux::Fuser, "and it's the right kind of object");
 
 my $filename = $*PID ~ '.tmp';
 
@@ -26,12 +26,12 @@ sub do_tests(Any $file, Str $description)
 {
    my @procs;
 
-   lives_ok { @procs = $obj.fuser($file) }, "fuser() doesn't die ($description)";
+   lives-ok { @procs = $obj.fuser($file) }, "fuser() doesn't die ($description)";
 
    ok(@procs.elems, "got some processes ($description)");
    ok(my $proc = @procs[0], "get the first ($description)");
 
-   isa_ok($proc,Linux::Fuser::Procinfo, "And it's the right kind of object ($description)");
+   isa-ok($proc,Linux::Fuser::Procinfo, "And it's the right kind of object ($description)");
    is($proc.pid, $*PID, "got the expected PID ($description)");
    ok($proc.cmd.elems, "got some command line ($description)");
    todo("not sure how to test this yet",1);
@@ -40,7 +40,7 @@ sub do_tests(Any $file, Str $description)
    is($proc.user, $*USER, "got the right user ($description)");
 
    ok(my $filedes = $proc.filedes, "get the filedescriptor info ($description)");
-   isa_ok($filedes,Linux::Fuser::FileDescriptor, "and it's the right sort of object ($description)");
+   isa-ok($filedes,Linux::Fuser::FileDescriptor, "and it's the right sort of object ($description)");
    is($filedes.pos, 0, "pos is 0 ( $description )");
    ok($filedes.flags > 0, "flags is greater than 0 ($description)");
    ok($filedes.mnt_id.defined, "mnt_id is defined ( $description)");
@@ -50,10 +50,10 @@ $fh.close;
 
 my @procs;
 
-lives_ok { @procs = $obj.fuser($filename) }, "fuser() closed file";
+lives-ok { @procs = $obj.fuser($filename) }, "fuser() closed file";
 is(@procs.elems,0, "and there aren't any processes");
 
-lives_ok { @procs = $obj.fuser('ThiSdoesNotExIst') }, "fuser() no-existent file";
+lives-ok { @procs = $obj.fuser('ThiSdoesNotExIst') }, "fuser() no-existent file";
 is(@procs.elems,0, "and there aren't any processes");
 
 

@@ -15,6 +15,7 @@ Linux::Fuser - Determine which processes have a file open
 =begin SYNOPSIS
 
 =begin code
+
   use Linux::Fuser;
 
   my $fuser = Linux::Fuser->new();
@@ -25,6 +26,7 @@ Linux::Fuser - Determine which processes have a file open
   {
     say $proc->pid(),"\t", $proc->user(),"\n",$proc->cmd();
   }
+
 =end code
 
 =end SYNOPSIS
@@ -54,41 +56,37 @@ The class has one method, with two signatures, that does most of the work:
 
 class Linux::Fuser {
 
-   #| Given the path to a file as a String returns a list of L<doc:Linux::Fuser::Procinfo>
-   #| objects describing any processes that have the file open
-   multi method fuser (Str $file ) returns Array {
-      self.fuser(IO::Path.new($file));
-   }
+    #| Given the path to a file as a String returns a list of L<doc:Linux::Fuser::Procinfo>
+    #| objects describing any processes that have the file open
+    multi method fuser (Str $file ) returns Array {
+        self.fuser(IO::Path.new($file));
+    }
 
-   #| Given the L<doc:IO::Path> that describes the filereturns a list of L<doc:Linux::Fuser::Procinfo>
-   #| objects describing any processes that have the file open
-   multi method fuser (IO::Path $file ) returns Array {
-      my @procinfo;
+    #| Given the L<doc:IO::Path> that describes the filereturns a list of L<doc:Linux::Fuser::Procinfo>
+    #| objects describing any processes that have the file open
+    multi method fuser (IO::Path $file ) returns Array {
+        my @procinfo;
+        my $device = $file.device;
+        my $inode  = $file.inode;
 
-      my $device = $file.device;
-      my $inode  = $file.inode;
-
-      for dir('/proc', test => /^\d+$/) -> $proc {
-         try {
-            for $proc.append('fd').dir(test => /^\d+$/) -> $fd {
-               if ( self!same_file($file, $fd ) ) {
-                  @procinfo.push(Linux::Fuser::Procinfo.new(proc_file => $proc, fd_file => $fd));
-                  CATCH {
-                     note $_;
-                  }
-               }
+        for dir('/proc', test => /^\d+$/) -> $proc {
+            my $fd_dir = $proc.append('fd');
+            if $fd_dir.r {
+                try for $fd_dir.dir(test => /^\d+$/) -> $fd {
+                    if ( self!same_file($file, $fd ) ) {
+                        @procinfo.push(Linux::Fuser::Procinfo.new(proc_file => $proc, fd_file => $fd));
+                    }
+                }
             }
-         }
-      }
-      return @procinfo;
-   }
+        }
+        return @procinfo;
+    }
 
-   method !same_file(IO::Path $left, IO::Path $right) {
-      my Bool $rc = False;
-      if ( ( $left.inode == $right.inode ) && ( $left.device == $right.device )) {
-         $rc = True;
-      }
-      return $rc;
-   }
-
+    method !same_file(IO::Path $left, IO::Path $right) {
+        my Bool $rc = False;
+        if ( ( $left.inode == $right.inode ) && ( $left.device == $right.device )) {
+            $rc = True;
+        }
+        return $rc;
+    }
 }
