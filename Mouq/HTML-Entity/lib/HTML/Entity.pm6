@@ -1,4 +1,4 @@
-class HTML::Entity;
+unit class HTML::Entity;
 
 sub lazy-load-entities {
     require HTML::Entities;
