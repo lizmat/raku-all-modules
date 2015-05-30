@@ -1,4 +1,4 @@
-module SP6::ProcessMethods;
+unit module SP6::ProcessMethods;
 
 multi sub esc(*@argv) is export {
 	# todo

@@ -1,4 +1,4 @@
-class SP6;
+unit class SP6;
 
 has $.templ_dir;
 has $.debug;
