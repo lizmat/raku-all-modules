@@ -16,7 +16,7 @@ else {
 ok 1,'We use Sum::HAS and we are still alive';
 
 # With no pure Perl6 implementation, this should die
-eval_dies_ok 'class H1p does Sum::HAS[:!recourse] does Sum::Marshal::Raw { }', "Attempt to use nonexistant pure-Perl6 code dies.";
+eval-dies-ok 'class H1p does Sum::HAS[:!recourse] does Sum::Marshal::Raw { }', "Attempt to use nonexistant pure-Perl6 code dies.";
 
 unless $Sum::librhash::up {
    diag "No librhash working, skipping most tests.";

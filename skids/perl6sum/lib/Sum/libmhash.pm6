@@ -96,7 +96,7 @@ our sub count() returns int is native('libmhash')
 our $up = False;
 
 our $count = Failure.new(X::AdHoc.new(:payload("libmhash initialization")));
-try { $count = count() }
+try { $count.defined; $count = count(); }
 
 $up = True if $count.defined;
 $count = 0 unless $count.defined;
