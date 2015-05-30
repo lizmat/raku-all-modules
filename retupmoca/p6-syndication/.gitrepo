@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/retupmoca/p6-syndication.git
+	branch = master
+	commit = 4a634623cdfc9c65b1adc6c3770696142b12e986
+	parent = ccdaa045f998120a1c1462adc994a53d46f0efac
+	cmdver = 0.2.1

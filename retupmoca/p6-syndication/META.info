@@ -1,0 +1,11 @@
+{
+    "name" : "Syndication",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "Syndication feed parser/generator (RSS / Atom)",
+    "depends" : ["XML"],
+    "provides" : {
+        "Syndication" : "lib/Syndication.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/p6-syndication.git"
+}
