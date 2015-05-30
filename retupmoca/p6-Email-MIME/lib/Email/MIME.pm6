@@ -294,6 +294,7 @@ method content-type(){
 
 method content-type-set($ct) {
     my $ct-hash = self.parse-content-type($ct);
+    $ct-hash<attributes> = $!ct<attributes> if $!ct && $!ct<attributes> && !$ct-hash<attributes>;
     self!compose-content-type($ct-hash);
     self!reset-cids;
     return $ct;
@@ -348,7 +349,7 @@ method as-string {
 
 method !compose-content-type($ct-hash) {
     my $ct = $ct-hash<type> ~ '/' ~ $ct-hash<subtype>;
-    for keys $ct-hash<attributes> -> $attr {
+    for $ct-hash<attributes>.keys -> $attr {
         $ct ~= "; " ~ $attr ~ '="' ~ $ct-hash<attributes>{$attr} ~ '"';
     }
     self.header-set('Content-Type', $ct);
@@ -405,7 +406,7 @@ method body($callsame_only?) {
     if $callsame_only {
         return $body;
     }
-    my $cte = ~self.header('Content-Transfer-Encoding') // '';
+    my $cte = ~(self.header('Content-Transfer-Encoding') // '');
     $cte ~~ s/\;.*$//;
     $cte ~~ s:g/\s//;
 
@@ -420,7 +421,7 @@ method body-set($body, $super?) {
     if $super {
         nextwith($body);
     }
-    my $cte = ~self.header('Content-Transfer-Encoding') // '';
+    my $cte = ~(self.header('Content-Transfer-Encoding') // '');
     $cte ~~ s/\;.*$//;
     $cte ~~ s:g/\s//;
 
