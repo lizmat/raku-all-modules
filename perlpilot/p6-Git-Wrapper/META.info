@@ -1,8 +1,16 @@
 {
-    "name"          : "Git::Wrapper",
-    "version"       : "0.0.1",
-    "description"   : "simple, hacky way to use git from Perl 6",
-    "author"        : "Jonathan Scott Duff",
-    "depends"       : [],
-    "source-url"    : "git://github.com/perlpilot/p6-Git-Wrapper.git"
+  "perl" : "v6",
+  "name" : "Git::Wrapper",
+  "description" : "simple, hacky way to use git from Perl 6",
+  "version" : "v0.0.1",
+  "build-depends" : [ ],
+  "test-depends" : [ ],
+  "depends" : [ ],
+  "provides" : {
+    "Git::Wrapper" : "lib/Git/Wrapper.pm",
+    "Git::Wrapper::Log" : "lib/Git/Log/Parser.pm"
+  },
+  "support" : {
+    "source" : "git://github.com/perlpilot/p6-Git-Wrapper.git"
+  }
 }
