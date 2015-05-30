@@ -1,4 +1,4 @@
-class IO::Socket::SSL;
+unit class IO::Socket::SSL;
 
 use OpenSSL;
 use OpenSSL::Err;
