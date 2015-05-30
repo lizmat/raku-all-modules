@@ -1,4 +1,4 @@
-module Math::RungeKutta;
+unit module Math::RungeKutta;
 
 # the actual integation loop
 sub rk-integrate (
