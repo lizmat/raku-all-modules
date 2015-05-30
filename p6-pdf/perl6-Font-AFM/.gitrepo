@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/p6-pdf/perl6-Font-AFM.git
+	branch = master
+	commit = 5a10e1624fe201695fe143feb85d94724f6fc821
+	parent = c454f32f070570e7bb81160fb7f3534c3f1f445f
+	cmdver = 0.2.1

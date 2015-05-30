@@ -1,0 +1,28 @@
+2015-05-01
+
+   Release 1.22
+   BBox - now fully parsed to an array of integers
+   Kerning now supported
+   - $afm.Kern - returns kerning table as a two dimensional hash array
+   - $afm.stringwidth("RVX", :kern) - computes stringwith after kerning
+   - $afm.kern("RVX") - new kerning method
+
+2015-04-30
+
+   Release 1.21
+
+   Perl 6 port of Perl 5 version 1.20. See https://metacpan.org/pod/Font::AFM for previous
+   change-log and other details.
+
+   Build
+   - included full set of AFM data in etc/Core14_Fonts
+   - font metrics are computed at panda build time
+
+   Font::AFM
+   - stringwidth now works on all codepoints, not just latin-1 subset. Perl 6 strings are
+     fully unicode aware, Yay!
+   - factored out @ISOLatin1Encoding table. Replace with dependency on Font::Encoding
+
+   Font::Metrics
+   - classess are now lowercase, e.g. Font::Mertics::times-bold. Plays better with upstream
+     case insensitive handling, e.g. in PDF::Compose

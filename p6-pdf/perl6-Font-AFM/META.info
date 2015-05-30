@@ -1,0 +1,27 @@
+{
+    "name"        : "Font::AFM",
+    "version"     : "1.22",
+    "description" : "Interface to Adobe Font Metrics files",
+    "depends"     : [ ],
+    "source-url"  : "git://github.com/p6-pdf/perl6-Font-AFM.git",
+    "provides"    : {
+        "Font::AFM" : "lib/Font/AFM.pm",
+
+        "Font::Metrics::courier" : "Font/Metrics/courier.pm",
+        "Font::Metrics::courier-bold" : "Font/Metrics/courier-bold.pm",
+        "Font::Metrics::courier-oblique" : "Font/Metrics/courier-oblique.pm",
+        "Font::Metrics::courier-boldoblique" : "Font/Metrics/courier-boldoblique.pm",
+
+        "Font::Metrics::helvetica" : "Font/Metrics/helvetica.pm",
+        "Font::Metrics::helvetica-bold" : "Font/Metrics/helvetica-bold.pm",
+        "Font::Metrics::helvetica-oblique" : "Font/Metrics/helvetica-oblique.pm",
+        "Font::Metrics::helvetica-boldoblique" : "Font/Metrics/helvetica-boldoblique.pm",
+
+        "Font::Metrics::times-roman" : "Font/Metrics/times-roman.pm",
+        "Font::Metrics::times-bold" : "Font/Metrics/times-bold.pm",
+        "Font::Metrics::times-italic" : "Font/Metrics/times-italic.pm",
+        "Font::Metrics::times-bolditalic" : "Font/Metrics/times-bolditalic.pm"
+     }
+}
+
+ 
