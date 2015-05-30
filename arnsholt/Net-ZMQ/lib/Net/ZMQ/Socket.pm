@@ -1,5 +1,5 @@
 use NativeCall;
-class Net::ZMQ::Socket is repr('CPointer');
+unit class Net::ZMQ::Socket is repr('CPointer');
 
 use Net::ZMQ::Constants;
 use Net::ZMQ::Context;

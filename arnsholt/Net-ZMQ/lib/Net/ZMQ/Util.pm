@@ -1,4 +1,4 @@
-module Net::ZMQ::Util;
+unit module Net::ZMQ::Util;
 
 use NativeCall;
 

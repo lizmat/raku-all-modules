@@ -2,7 +2,7 @@ use Net::ZMQ::Pollitem;
 
 use NativeCall;
 
-module Net::ZMQ::Poll;
+unit module Net::ZMQ::Poll;
 
 # ZMQ_EXPORT int zmq_poll (zmq_pollitem_t *items, int nitems, long timeout);
 my sub zmq_poll(CArray[Net::ZMQ::Pollitem], int, Int --> int) is native('libzmq') { * }

@@ -1,5 +1,5 @@
 use NativeCall;
-class Net::ZMQ::Message is repr('CStruct');
+unit class Net::ZMQ::Message is repr('CStruct');
 
 use Net::ZMQ::Util;
 

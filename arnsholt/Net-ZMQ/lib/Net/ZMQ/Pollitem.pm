@@ -1,5 +1,5 @@
 use NativeCall;
-class Net::ZMQ::Pollitem is repr('CStruct');
+unit class Net::ZMQ::Pollitem is repr('CStruct');
 
 use Net::ZMQ::Constants;
 use Net::ZMQ::Socket;

@@ -1,4 +1,4 @@
-module Net::ZMQ;
+unit module Net::ZMQ;
 
 use Net::ZMQ::Constants;
 use Net::ZMQ::Context;

@@ -1,5 +1,5 @@
 # All the various constants that are #defined in zmq.h
-module Net::ZMQ::Constants;
+unit module Net::ZMQ::Constants;
 
 # Message constants:
 our constant ZMQ_MSG_MORE   is export(:DEFAULT, :message) = 1;
