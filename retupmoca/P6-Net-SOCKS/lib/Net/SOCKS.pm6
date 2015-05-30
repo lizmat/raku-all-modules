@@ -1,4 +1,4 @@
-class Net::SOCKS;
+unit class Net::SOCKS;
 
 method connect(:$host!, :$port!, :$proxy-server, :$proxy-port = 1080, :$socket = IO::Socket::INET) {
     my $request = Buf.new(0x05, # version 5
