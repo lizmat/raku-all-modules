@@ -1,6 +1,6 @@
 use NativeCall;
 
-class GeoIP::City is repr('CPointer');
+unit class GeoIP::City is repr('CPointer');
 
 class GeoIPRecord is repr('CStruct') {
     has Str $.country_code;
@@ -25,7 +25,7 @@ class GeoIPRecord is repr('CStruct') {
 # point NativeCall to correct library
 # (may become obsolete in the future)
 sub LIB  {
-    given $*VM{'config'}{'load_ext'} {
+    given $*VM.config{'load_ext'} {
         when '.so'      { return 'libGeoIP.so.1' }   # Linux
         when '.bundle'  { return 'libGeoIP.dylib' }  # Mac OS
         default         { return 'libGeoIP' }
