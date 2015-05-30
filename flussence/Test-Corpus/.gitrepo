@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/flussence/Test-Corpus.git
+	remote = https://github.com/flussence/Test-Corpus.git
 	branch = master
-	commit = 50fe30ef617756243c117f1762eae6983f72941f
-	parent = 4472daf700457d4bd6abc506847a52d58eef2caf
-	cmdver = 0.1.0
+	commit = 06fc86ccfe0a1a076431f97f95af916bd2f43492
+	parent = 43f9483457492034d9c27211521d6106608c8b69
+	cmdver = 0.2.1

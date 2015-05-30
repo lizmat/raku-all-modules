@@ -1,4 +1,4 @@
-module Test::Corpus:auth<github:flussence>:ver<2.0.1>;
+unit module Test::Corpus:auth<github:flussence>:ver<2.0.3>;
 
 use Test;
 
