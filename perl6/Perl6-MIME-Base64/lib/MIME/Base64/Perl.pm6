@@ -1,5 +1,5 @@
 use v6;
-class MIME::Base64::Perl;
+unit class MIME::Base64::Perl;
 
 # 6 bit encoding - 64 characters needed
 # note: range operator removed due to current jvm failures
