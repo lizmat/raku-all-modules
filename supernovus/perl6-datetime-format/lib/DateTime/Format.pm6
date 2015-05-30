@@ -1,6 +1,6 @@
 use v6;
 
-module DateTime::Format;
+unit module DateTime::Format;
 
 ## Default list of Month names.
 ## Add more by loading DateTime::Format::Lang::* modules.

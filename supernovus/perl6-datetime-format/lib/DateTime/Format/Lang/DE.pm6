@@ -1,4 +1,4 @@
-module DateTime::Format::Lang::DE;
+unit module DateTime::Format::Lang::DE;
 
 use DateTime::Format :ALL;
 
