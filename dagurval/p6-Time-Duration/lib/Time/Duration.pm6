@@ -1,5 +1,5 @@
 use v6;
-module Time::Duration;
+unit module Time::Duration;
 # POD is at the end.
 
 constant $DEBUG = False;

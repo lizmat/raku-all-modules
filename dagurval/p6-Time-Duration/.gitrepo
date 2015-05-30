@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dagurval/p6-Time-Duration.git
 	branch = master
-	commit = d3b17a280c2bed165314fcdada56f78dc05c0e05
-	parent = 5dea87b40d239d52cf99fbff1ce78aae0dddda30
-	cmdver = 0.1.0
+	commit = 96da84fd01fb8e1410dfeceee26b91fcbcdf92bf
+	parent = 49f47c46738744ded5732df912edba62729873c4
+	cmdver = 0.2.1
