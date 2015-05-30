@@ -1,7 +1,7 @@
 # Copyright 2015 cygx <cygx@cpan.org>
 # Distributed under the Boost Software License, Version 1.0
 
-module Uni63;
+unit module Uni63;
 
 my constant ENC = @('0'..'9', 'a'..'z', 'A'..'Z');
 my constant DEC = %(ENC.pairs.invert);
