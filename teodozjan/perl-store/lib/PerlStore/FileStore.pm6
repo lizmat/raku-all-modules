@@ -1,6 +1,6 @@
 use v6;
 
-role FileStore;
+unit role FileStore;
 
 sub serialize($what) returns Str {
     $what.perl
