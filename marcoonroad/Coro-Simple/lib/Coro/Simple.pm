@@ -2,7 +2,7 @@
 
 use v6;
 
-module Coro::Simple;
+unit module Coro::Simple;
 
 # receives a simple block / pointy block
 sub coro (&block) is export {
