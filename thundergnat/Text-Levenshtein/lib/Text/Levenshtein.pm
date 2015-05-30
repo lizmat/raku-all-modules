@@ -1,4 +1,4 @@
-module Text::Levenshtein;
+unit module Text::Levenshtein;
 
 sub _min 
 {
