@@ -1,4 +1,4 @@
-class Geo::Region;
+unit class Geo::Region;
 
 has @!includes;
 has @!excludes;

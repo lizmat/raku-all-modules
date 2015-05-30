@@ -1,4 +1,4 @@
-module Geo::Region::Enum;
+unit module Geo::Region::Enum;
 
 enum Region is export (
     Africa            => '002',
