@@ -17,22 +17,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301 USA.
 
-module App::Kains;
+module App::Kains::X;
 
-use App::Kains::Parameters;
-use App::Kains::Core;
+class X::Kains is Exception is export {
+	has Str $.message;
+	has Bool $.works-with-proot = False;
 
-our sub start(*@arguments --> Int) {
-	CATCH {
-		when X::Command-line {
-			die X::Kains.new(message => qq:to<END>
-				{ .message }
-				Please, have a look at the --help option.
-				END
-			);
+	method message {
+		my $message = "$!message";
+		if $!works-with-proot {
+			$message ~= "\nAlthough, this should work with PRoot (http://proot.me)."
 		}
+		$message;
 	}
-
-	my $config = new-config-from-arguments(@arguments);
-	launch($config).exitcode;
-}
+};

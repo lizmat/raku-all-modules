@@ -19,8 +19,10 @@
 
 module App::Kains::Core;
 
+use App::Kains::Core::Chrooted;
 use App::Kains::Native;
 use App::Kains::Config;
+use App::Kains::X;
 
 sub set-uid-mapping(int :$old-uid, int :$new-uid) {
 	CATCH {	default { note "Warning: can't map user identity: { .message }" } }
@@ -37,7 +39,7 @@ sub set-gid-mapping(int :$old-gid, int :$new-gid) {
 }
 
 sub mount-actual-rootfs(Config $config --> Str) {
-	return '/' but False if $config.rootfs === '/';
+	return '' if $config.rootfs === '/';
 
 	my Str $actual-rootfs = '/.kains-' ~ getpid;
 
@@ -45,62 +47,6 @@ sub mount-actual-rootfs(Config $config --> Str) {
 	mount '/', $config.rootfs ~ $actual-rootfs, '', MS_PRIVATE +| MS_BIND +| MS_REC, '';
 
 	$actual-rootfs;
-}
-
-class X::Kains is Exception is export {
-	has Str $.message;
-	has Bool $.works-with-proot = False;
-
-	method message {
-		my $message = "$!message";
-		if $!works-with-proot {
-			$message ~= "\nAlthough, this should work with PRoot (http://proot.me)."
-		}
-		$message;
-	}
-};
-
-multi sub create-placeholder(IO::Path $source, IO::Path $destination
-	where {    $destination.f and $source.f
-		or $destination.d and $source.d }) {
-}
-
-multi sub create-placeholder(IO::Path $source, IO::Path $destination
-	where {    $destination.f and ! $source.f
-		or $destination.d and ! $source.d }) {
-	die X::Kains.new: :works-with-proot, message =>
-qq[[Error: can't mount/bind "$destination", its type in the virtual rootfs
-doesn't match its type in the actual rootfs.]];
-}
-
-multi sub create-placeholder(IO::Path $source, IO::Path $destination)
-{
-	CATCH {
-		die X::Kains.new: :works-with-proot, message =>
-			"Error when creating placeholder '$source -> $destination': { .message }"
-	}
-
-	multi sub paths(IO() $path where * cmp '/' === Same) { $path }
-	multi sub paths(IO() $path) { paths($path.parent), $path }
-
-	.mkdir if ! .e for paths $destination.parent;
-
-	given $source {
-		when .f { close open ~$destination, :a }
-		when .d { mkdir ~$destination }
-		default { die X::NYI.new: feature => 'mounting/binding special file' }
-	}
-}
-
-sub mount-bindings(Str $actual-rootfs, Config $config) {
-	for $config.bindings {
-		my IO::Path $source	 .= new: $actual-rootfs ~ .key;
-		my IO::Path $destination .= new: .value;
-
-		create-placeholder $source, $destination;
-
-		mount $source, $destination, '', MS_PRIVATE +| MS_BIND +| MS_REC, '';
-	}
 }
 
 our sub launch(Config $config --> Proc::Status) is export {
