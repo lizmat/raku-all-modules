@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/html-template.git
 	branch = master
-	commit = 855fc6b62edd478c94c65062771c4f270373b65a
-	parent = aea2c72762da25238d854904e60d2a62bbb25d89
-	cmdver = 0.2.0
+	commit = 0a85ef67fc956a7a2bf6ac86c2bfb527d1b868cf
+	parent = ff02e5c98ec5bee8b65f0114a0fc504c602e750c
+	cmdver = 0.2.1
