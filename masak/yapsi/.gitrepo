@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/yapsi.git
 	branch = master
-	commit = dd0891278708b11ddcdf5ada5493028cb5e21864
-	parent = b2bcc6722a700cb6c790b24ece67fb4ecba26620
-	cmdver = 0.2.0
+	commit = cfdf7e38bde394a1851f9551b688a5adabc94acd
+	parent = 78b4aa239432cb0710ea62cc80e118f443d1ff55
+	cmdver = 0.2.1

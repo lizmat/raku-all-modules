@@ -26,7 +26,7 @@ grammar Yapsi::Perl6::Grammar {
                          FUTURE::Block.new( :name(unique-block()) ) }
                   <.ws> <statementlist> <.ws> '}' }
     regex statementlist { <statement>+ % <eat_terminator> }
-    token statement { <statement_control> || <expression> || '' }
+    token statement { <.ws> [<statement_control> || <expression> || ''] }
     regex eat_terminator { <?after '}'> \n || <.ws> ';' }
     token statement_control { <statement_control_if>
                               || <statement_control_unless>
@@ -38,8 +38,8 @@ grammar Yapsi::Perl6::Grammar {
     rule  statement_control_while { 'while' <expression> <block> }
     rule  statement_control_until { 'until' <expression> <block> }
 
-    token expression { <assignment> || <binding> || <variable> || <literal>
-                       || <declaration> || <invocation> || <block> || <phaser>
+    token expression { <assignment> || <binding> || <invocation> || <variable> || <literal>
+                       || <declaration> || <block> || <phaser>
                        || <saycall> || <subcall> || <increment> || <decrement>
                      }
     rule phaser { 'ENTER' <block> }
