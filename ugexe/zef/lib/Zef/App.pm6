@@ -1,13 +1,11 @@
 unit class Zef::App;
 
 #core modes 
-use Zef::Authority;
+use Zef::Authority::P6C;
 use Zef::Builder;
 use Zef::Config;
-use Zef::Getter;
 use Zef::Installer;
-use Zef::Reporter;
-use Zef::Tester;
+use Zef::Test;
 use Zef::Uninstaller;
 use Zef::Utils::PathTools;
 
@@ -19,47 +17,76 @@ has @!plugins;
 
 # override config file plugins if invoked as a class
 # *and* :@plugins was passed to initializer 
-submethod BUILD(:@!plugins) { 
-    @plugins := @!plugins if @!plugins.defined;
-}
+#submethod BUILD(:@!plugins) { 
+#    @plugins := @!plugins if @!plugins.defined;
+#}
 
 
-
-#| Test modules in cwd
-multi MAIN('test') is export { &MAIN('test', |('test/', 'tests/', 't/', 'xt/')) }
 #| Test modules in the specified directories
-multi MAIN('test', *@paths) is export {
-    my $tester  = Zef::Tester.new(:@plugins);
-    my @results = $tester.test(@paths);
-    my $failures = @results.grep({ !$_.<ok>  }).elems;
+multi MAIN('test', *@paths, Bool :$v) is export {
+    @paths = $*CWD unless @paths;
+
+    my @testers      = @paths.map: -> $path { Zef::Test.new(:$path) }
+    my @test-results = @testers.list>>.test;
+    await Promise.allof: @test-results.list.map({ $_.list.map({ $_.promise }) });
+    my @t = @test-results>>.list;
+    my $failures = @t.grep({ !$_.ok }).elems;
+    @t.map({ say $_.stdout }) if $v;
+
     say "-" x 42;
-    say "Total  test files: {@results.elems}";
-    say "Passed test files: {@results.elems - $failures}";
+    say "Total  test files: {@t.elems}";
+    say "Passed test files: {@t.elems - $failures}";
     say "Failed test files: $failures";
     say "-" x 42;
     exit $failures;
 }
 
 #| Install with business logic
-multi MAIN('install', *@modules, Bool :$doinstall = True) is export {
-    "Fetching: {@modules.join(', ')}".say;
-    my @failures;
-    my $save-to = $*SPEC.catdir($*CWD, time).IO;
-    mkdirs($save-to);
+multi MAIN('install', *@modules, Bool :$report, Bool :$v) is export {
+    my $auth = Zef::Authority::P6C.new;
 
-    for @modules -> $module {
-        my @repo      = &MAIN('get', :$save-to, $module);
-        my $meta-file = @repo.grep({ $_.<path>.IO.basename ~~ any(<META.info META6.json>) }).[0] or next;
-        my %meta      = %(from-json($meta-file.<path>.IO.slurp));
-        my @depends   = %meta.<depends>.list;
-
-        for @depends -> $dep {
-            &MAIN('install', $dep, :doinstall(False));
-        }
-
-        &MAIN('build', $module);
+    # will be replaced soon
+    sub verbose($phase, @_) {
+        return unless @_;
+        my %r = @_.classify({ $_.hash.<ok> ?? 'ok' !! 'nok' });
+        say "!!!! $phase failed for: {%r<nok>.list.map({ $_.hash.<module> })}" if %r<nok>;
+        say "===> $phase OK for: {%r<ok>.list.map({ $_.hash.<module> })}" if %r<ok>;
     }
 
+    # todo: Parallelization. Will mostly 'just work' if we tweak build-dep-tree
+    # to return the actual tree instead of flattening it into an array
+    my @g = $auth.get: @modules;
+    verbose('Fetching', @g);
+
+    my @m = @g.grep({ $_<ok> }).map({ $_<ok> = ?$*SPEC.catpath('', $_.<path>, "META.info").IO.e; $_ });
+    verbose('META.info availability', @m);
+
+    my @repos = @m.grep({ $_<ok> }).map({ $_.<path> });
+
+    my @b = Zef::Builder.new.pre-compile: @repos;
+    verbose('Build', @b);
+
+    # first crack at supplies/parallelization
+    my @testers      = @repos.map: -> $path { Zef::Test.new(:$path) }
+    my @test-results = @testers.list>>.test;
+    await Promise.allof: @test-results.list.map({ $_.list.map({ $_.promise }) });
+    my @t = @test-results>>.list;
+    @t.map({ say $_.stdout }) if $v;
+    verbose('Testing', @t.map({ ok => $_.ok, module => $_.file.IO.basename })); # 'module' is a lie
+
+    my @metas-to-install = @m.grep({ $_<ok> }).map({ $*SPEC.catpath('', $_.<path>, "META.info").IO.path });
+
+    my @r = $auth.report(
+        @metas-to-install,
+        test-results  => @t, 
+        build-results => @b,
+    ) and verbose('Reporting', @r) if ?$report;
+
+    my @i = Zef::Installer.new.install: @metas-to-install;
+    verbose('Install', @i.grep({ !$_.<skipped>}));
+    verbose('Skip (already installed!)', @i.grep({ ?$_.<skipped> }));
+
+    exit @modules.elems - @i.grep({ !$_<ok> }).elems;
 }
 
 
@@ -72,11 +99,7 @@ multi MAIN('local-install', *@modules) is export {
 
 #| Get the freshness
 multi MAIN('get', :$save-to = "$*CWD/{time}", *@modules) is export {
-    # {time} can be removed when we fetch actual versioned archives
-    # so we dont accidently overwrite files in $*CWD
-    my $getter = Zef::Getter.new(:@plugins);
-    my @results = $getter.get(:$save-to, |@modules);
-    return @results;
+    say "NYI";
 }
 
 
@@ -88,42 +111,7 @@ multi MAIN('build', $path, :$save-to) {
     $builder.pre-compile($path, :$save-to);
 }
 
-multi MAIN('login', Str $username, Str $password? is copy) {
-    $password //= prompt 'Password: ';
-    say "Password required" && exit(1) unless $password;
-    my $auth = Zef::Authority.new;
-    $auth.login(:$username, :$password) or { $*ERR.say; exit(2) }();
-    %config<session-key> = $auth.session-key // exit(3);
-    save-config;
-}
-
-multi MAIN('register', Str $username, Str $password? is copy) {
-    $password //= prompt 'Password: ';
-    say "Password required" && exit(1) unless $password;
-    my $auth = Zef::Authority.new;
-    $auth.register(:$username, :$password) or { $*ERR.say; exit(5) }();
-    %config<session-key> = $auth.session-key or exit(6);
-    save-config;
-}
 
 multi MAIN('search', *@terms) {
-    my $auth = Zef::Authority.new;
-    my %results = $auth.search(@terms) or exit(4);
-    for %results.kv -> $term, @term-results {
-        say "No results for $term" and next unless @term-results;
-        try say @term-results.hash.<reason> and next if @term-results.hash.<failure>;
-        say "Results for $term";
-        say "Package\tAuthor\tVersion";
-        for @term-results -> %result {
-            say "{%result<name>}\t{%result<owner>}\t{%result<version>}";
-        }
-    }
-
-    exit(7) if [] ~~ all(%results.values);
-}
-
-multi MAIN('push', *@targets, Str :$session-key = %config<session-key>, :@exclude? = (/'.git'/,/'.gitignore'/), Bool :$force?) {
-    @targets.push($*CWD.IO.path) unless @targets.elems;
-    my $auth = Zef::Authority.new;
-    $auth.push(@targets, :$session-key, :@exclude, :$force) or { $*ERR.say; exit(7); }();
+    say "NYI";
 }
