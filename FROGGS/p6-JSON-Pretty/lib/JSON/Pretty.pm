@@ -13,7 +13,7 @@
 # 
 # =end Pod
 
-module JSON::Pretty;
+unit module JSON::Pretty;
 
 proto to-json($, :$indent = 0, :$first = 0) is export {*}
 
