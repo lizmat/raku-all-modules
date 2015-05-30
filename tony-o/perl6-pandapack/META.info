@@ -4,7 +4,7 @@
   "description" : "Utility for automating bundling up your package",
   "author"      : "Tony ODell",
   "provides"    : {
-    "Pandapack6" : "lib/Pandapack.pm6"
+    "Pandapack" : "lib/Pandapack.pm6"
   },
   "depends"     : [
     "Pluggable"

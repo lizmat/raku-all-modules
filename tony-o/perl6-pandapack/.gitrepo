@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-pandapack.git
 	branch = master
-	commit = 895a29b7269d14b3cbd66bd7dd045cee5028a0fc
-	parent = 681b701a87f675757210572a0167aba69bacf169
-	cmdver = 0.2.0
+	commit = 0664a8bd310c1a6e323c6ec5727dee9cbd287c34
+	parent = bfaf12555f2e0d95c9bbca18f94ca27850d107f1
+	cmdver = 0.2.1
