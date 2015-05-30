@@ -5,7 +5,7 @@ use Test;
 plan 2;
 
 # Simulate a server taking too long to start
-throws_like {
+throws-like {
     .run given Test::ClientServer.new(
         :timeout(3),
         server => sub (&callback) { sleep(10); &callback(); },
