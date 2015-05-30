@@ -1,5 +1,5 @@
 
-role Inline::C[Routine $r, Str $language, Str $code];
+unit role Inline::C[Routine $r, Str $language, Str $code];
 
 use NativeCall;
 

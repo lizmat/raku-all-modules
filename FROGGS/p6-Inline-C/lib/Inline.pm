@@ -1,5 +1,5 @@
 
-module Inline;
+unit module Inline;
 
 use Inline::C;
 
