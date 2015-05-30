@@ -1,5 +1,5 @@
 
-class Path::Util;
+unit class Path::Util;
 
 has $.filename;
 has $.basename;
