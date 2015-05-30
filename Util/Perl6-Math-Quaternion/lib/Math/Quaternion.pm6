@@ -1,6 +1,6 @@
 use v6;
 
-class Math::Quaternion does Numeric;
+unit class Math::Quaternion does Numeric;
 
 # One real part (r), and three imaginary parts (i,j,k).
 has Numeric ( $.r, $.i, $.j, $.k );
