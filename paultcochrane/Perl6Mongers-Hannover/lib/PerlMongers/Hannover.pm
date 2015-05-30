@@ -1,4 +1,4 @@
-module PerlMongers::Hannover;
+unit module PerlMongers::Hannover;
 
 sub info is export {
     my $path = "$*CWD";
