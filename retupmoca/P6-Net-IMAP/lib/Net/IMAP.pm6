@@ -1,4 +1,4 @@
-class Net::IMAP;
+unit class Net::IMAP;
 
 use Net::IMAP::Raw;
 use Net::IMAP::Simple;

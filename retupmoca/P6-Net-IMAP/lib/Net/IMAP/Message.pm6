@@ -1,4 +1,4 @@
-class Net::IMAP::Message;
+unit class Net::IMAP::Message;
 
 use Email::MIME;
 

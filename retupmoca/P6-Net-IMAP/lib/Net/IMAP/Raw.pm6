@@ -1,4 +1,4 @@
-class Net::IMAP::Raw;
+unit class Net::IMAP::Raw;
 
 has $.conn is rw;
 has $.reqcode is rw = 'aaaa';

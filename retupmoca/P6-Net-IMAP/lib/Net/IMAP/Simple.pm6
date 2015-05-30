@@ -1,4 +1,4 @@
-class Net::IMAP::Simple;
+unit class Net::IMAP::Simple;
 
 use Net::IMAP::Message;
 
