@@ -59,7 +59,7 @@ Want to make your own receiver/emitter?  Here's a template
 ```perl6
 use Event::Emitter::Role::Handler;
 
-class My::Own::Emitter does Event::Emitter::Role::Handler;
+unit class My::Own::Emitter does Event::Emitter::Role::Handler;
 
 method on($event, $data) {
   qw<do your thing>;
