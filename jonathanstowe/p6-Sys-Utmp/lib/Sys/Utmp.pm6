@@ -182,7 +182,8 @@ class Sys::Utmp {
             if $v ~~ Str {
                 $v ~~ s/^.*\#//;
                 if ($v ~ '/' ~ $libname).IO.r {
-                    return $v ~ '/' ~ $libname;
+                    my $l =  $v ~ '/' ~ $libname;
+                    return $l;
                 }
             }
             else {
