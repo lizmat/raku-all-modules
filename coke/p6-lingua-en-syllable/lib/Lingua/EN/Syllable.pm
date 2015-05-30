@@ -11,7 +11,7 @@
 
 =end comment
 
-module Lingua::EN::Syllable;
+unit module Lingua::EN::Syllable;
 
 my @SubSyl =
     / 'cial' /,
