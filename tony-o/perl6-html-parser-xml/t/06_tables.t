@@ -17,11 +17,13 @@ my $html = q:to/END_HTML/;
 </html>
 END_HTML
 
+
 sub traverse($doc) {
     sub helper($node) {
         take $node;
 
         for $node.?nodes -> $child {
+            next if $child ~~ Nil;
             helper($child);
         }
     }
