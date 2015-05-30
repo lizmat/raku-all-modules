@@ -6,7 +6,7 @@ use NativeCall; # For libc declarations
 # sub cb_linehandler ( Str ); # forward definition
 
 my Int $running;
-my Str $prompt = 'rltest$ ';
+my Str $prompt = "cb prompt here ('exit' to exit>)> ";
 
 # Callback function called for each line when accept-line executed, EOF
 # seen, or EOF character read.  This sets a flag and returns; it could

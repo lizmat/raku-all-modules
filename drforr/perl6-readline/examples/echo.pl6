@@ -6,7 +6,7 @@ my $readline = Readline.new;
 my %history;
 while my $response = $readline.readline( "prompt here (<cr> to exit)> " ) {
   if $response ~~ /ding/ {
-    $readline.rl-ding;
+    $readline.ding;
   }
   elsif $response ~~ /clear/ {
     $readline.clear-history;
