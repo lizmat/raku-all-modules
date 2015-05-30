@@ -1,4 +1,4 @@
-module Typed::Subroutines;
+unit module Typed::Subroutines;
 
 sub typed_sub(*@types) is export {
     return sub ($s) {
