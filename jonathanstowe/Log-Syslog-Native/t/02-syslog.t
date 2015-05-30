@@ -8,7 +8,7 @@ use Log::Syslog::Native;
 
 ok my $obj = Log::Syslog::Native.new, "create new Log::Syslog::Native";
 
-isa_ok($obj, Log::Syslog::Native, "the object is the right type");
+isa-ok($obj, Log::Syslog::Native, "the object is the right type");
 is $obj.option, Log::Syslog::Native::Pid +| Log::Syslog::Native::ODelay, "option has the right default";
 is $obj.facility, Log::Syslog::Native::Local0, "facility has the right default";
 
@@ -23,11 +23,11 @@ Log::Syslog::Native::Debug
 );
 
 for @levs -> $lev {
-   lives_ok { $obj.log($lev, "[TEST] with " ~ $lev.key) }, "log() with " ~ $lev.key;
+   lives-ok { $obj.log($lev, "[TEST] with " ~ $lev.key) }, "log() with " ~ $lev.key;
    my $meth = $lev.key.lc;
 
    ok $obj.can($meth), " can do $meth";
-   lives_ok { $obj."$meth"("[TEST] - test $meth method") }, "$meth method";
+   lives-ok { $obj."$meth"("[TEST] - test $meth method") }, "$meth method";
 }
 
 done();
