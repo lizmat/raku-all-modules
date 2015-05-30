@@ -4,5 +4,10 @@
     "description"   : "Perl 6 TOML Serializer",
     "author"        : "Mouq",
     "depends"       : ["JSON::Tiny"],
+    "provides"      : {
+        "ForeignGrammar"   : "lib/ForeignGrammar.pm",
+        "TOML"             : "lib/TOML.pm",
+        "TOML::Grammar"    : "lib/TOML/Grammar.pm"
+    },
     "source-url"    : "git://github.com/Mouq/toml-pm6.git"
 }

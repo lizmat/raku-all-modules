@@ -1,13 +1,13 @@
 use ForeignGrammar;
-grammar TOML::Grammar;
+unit grammar TOML::Grammar;
 grammar Value {...}
 
 token ws { [<[\ \t]>|'#'\N*]* }
 
 class AoH is Array {
-    method at_key    ($key)          is rw { self[*-1]{$key} }
-    method assign_key($key, \assign) is rw { self[*-1]{$key} = assign }
-    method bind_key  ($key, \bind)   is rw { self[*-1]{$key} := bind }
+    method AT-KEY    ($key)          is rw { self[*-1]{$key} }
+    method ASSIGN-KEY($key, \assign) is rw { self[*-1]{$key} = assign }
+    method BIND-KEY  ($key, \bind)   is rw { self[*-1]{$key} := bind }
 }
 
 rule TOP {
@@ -31,7 +31,7 @@ rule TOP {
         die "Name {.key.join('.')} already in use." if %used_names{~.key}++;
         # Implicit declarations mean that %top{.key} might already be defined,
         # so we include that in the new hash
-        %top{.key} := $%(%top{.key}.map({.pairs}), .value.pairs);
+        %top{.key} := $%(%top{.key}.flatmap({.pairs}), .value.pairs);
         # All of the new sub-keys are considered used in addition to .key
         for .value.keys { %used_names{.key~" $^subkey"}++ };
       } }

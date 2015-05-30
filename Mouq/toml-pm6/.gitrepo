@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Mouq/toml-pm6.git
 	branch = master
-	commit = c8071731357d66b74aa548faa5250231ef91bd9c
-	parent = a802a4205d86cc047e52a3ce31e5221d3d520dcd
-	cmdver = 0.1.0
+	commit = 287feac8aaa8055853a9de74e3b5b14c3055465f
+	parent = 202eddb5c0ee00781ecce77e0e76c908c33563d6
+	cmdver = 0.2.1

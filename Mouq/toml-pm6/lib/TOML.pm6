@@ -1,4 +1,4 @@
-module TOML;
+unit module TOML;
 use TOML::Grammar;
 
 sub from-toml($text) is export {
