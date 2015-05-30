@@ -39,7 +39,8 @@ my $tag = Tag.new;
 {
     # named parameters means tag attributes
     is $tag.hr(:class<foo>), '<hr class="foo">';
-    is $tag.img(:src<a.jpg>, :alt('1 > 2')), '<img src="a.jpg" alt="1 &gt; 2">';
+    ok $tag.img(:src<a.jpg>, :alt('1 > 2'))
+        ~~ / '<img src="a.jpg" alt="1 &gt; 2">' || '<img alt="1 &gt; 2" src="a.jpg">' /;
 }
 
 {
@@ -77,7 +78,8 @@ my $tag = Tag.new;
 {
     # methods can be called statically
     is Tag.b('hello'), '<b>hello</b>';
-    is Tag.begin_form(:action<.>, :method<POST>), '<form action="." method="POST">';
+    ok Tag.begin_form(:action<.>, :method<POST>)
+        ~~ / '<form action="." method="POST">' || '<form method="POST" action=".">' /;
 }
 
 {
