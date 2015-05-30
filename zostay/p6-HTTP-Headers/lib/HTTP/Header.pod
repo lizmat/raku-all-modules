@@ -1,0 +1,285 @@
+=TITLE HTTP::Header
+
+=SUBTITLE Object representing an individual HTTP header
+
+=begin SYNOPSIS
+
+    use HTTP::Headers;
+
+    my $headers = HTTP::Headers.new;
+    my $ct = $headers.Content-Type;
+
+    $ct.value = 'text/html';
+    $ct.charset = 'UTF-8';
+
+    $headers.Allow = 'GET', 'POST';
+    $headers.Allow.push: 'PUT', 'DELETE';
+    
+    $headers.Content-Length.init(42);
+
+=end SYNOPSIS
+
+=begin DESCRIPTION
+
+This class provides additional tools for working with and manipulating a header and the values associated with it.
+
+=end DESCRIPTION
+
+=begin pod
+
+=head1 Methods
+
+=head2 method name
+
+    has $.name
+
+This is the name of the header being manipulated. It is immutable. The name may be provided in one of two forms. It may be set to a member of the C<HTTP::Header::Standard::Name> enumeration or to a regular C<Str>. Either one will stringify to the canonical header name, i.e., the name given in an RFC or the header name with all words in Title-Case.
+
+=head2 method key
+
+    method key returns Str
+
+This is a stringified, lowercase version of the header name.
+
+=head2 method values
+
+    has @.values is rw
+
+At the core of a header is simply the list of values stored. Most headers only store a single value. According to RFC, only headers that can be set to comma-separated values are allowed to have multiple values. As such, when a single value is requested (e.g., see the C<method value>), these values will be joined together using a comma. 
+
+    $headers.Allow = "GET", "POST";
+    say $headers.Allow.value;
+    # GET, POST
+
+Normally, however, these values will generate one header line each using the same header name.
+
+    say $headers.Allow.as-string;
+    # Allow: GET
+    # Allow: POST
+
+=head2 method value
+
+    method value is rw
+
+Forces the header to operate as a single value. It can be used safely for reading and writing.
+
+    $headers.Allow = "GET", "POST";
+    say $headers.Allow.value;
+    # GET, POST
+
+    $headers.Allow.value = "PUT, DELETE";
+    say $headers.as-string;
+    # Allow: PUT, DELETE
+
+=head2 method push
+
+    method push(*@values)
+
+This method may be used to push additional values onto the end of the list of values already added to the header.
+
+    $headers.Allow = "GET";
+    $headers.Allow.push: "POST";
+    say ~$headers.Allow;
+    # GET, POST
+
+=head2 method unshift
+
+    method unshift(*@values)
+
+This method may be used to shift additional values onto the start of the list of values.
+
+    $headers.Allow = "GET";
+    $headers.Allow.unshift: "POST";
+    say ~$headers.Allow;
+    # POST, GET
+
+=head2 method shift
+
+    method shift
+
+Removes the first element from the values associated with this header and returns it.
+
+    $headers.Allow = "GET", "POST";
+    say $headers.Allow.shift;
+    # GET
+
+=head2 method pop
+
+    method pop
+
+Removes the last element from the values associated with this header and returns it.
+
+    $headers.Allow = "GET", "POST";
+    say $headers.Allow.pop;
+    # POST
+
+=head2 method init
+
+    method init(*@values)
+
+Sets the values list for this header to the given values if and only if no values have been set yet.
+
+    $headers.Allow.init("GET", "POST");
+    $headers.Content-Type = "text/html";
+    $headers.Content-Type.init("text/xml");
+    say $headers.as-string;
+    # Allow: GET
+    # Allow: POST
+    # Content-Type: text/html
+
+=head2 method as-string
+
+    method as-string(Str :$eol = "\n")
+
+Returns the header as a string. If there are multiple values, this will output those values separated by C<$eol> with the header name.
+
+    $headers.Allow = "GET", "POST";
+    say $headers.Allow.as-string;
+    # Allow: GET
+    # Allow: POST
+    say $headers.Allow.as-string(:eol("; "));
+    # Allow: GET; Allow: POST
+
+This method is called by the C<as-string> method of L<HTTP::Headers> to output each header.
+
+=head2 method Bool
+
+    method Bool
+
+Returns C<True> if there are values set or C<False> otherwise.
+
+=head2 method Str
+
+This is the same as calling L</method value> to read the value. Note that this is B<not> the same as L</as-string>. The reason for this is just because it makes more sense to have the header stringify to the values in most cases:
+
+    $headers.Content-Type = "text/html";
+    say ~$headers.Content-Type;
+    # text/html
+
+The parallel between those two statements is more obvious than the alternative.
+
+=head2 method list
+
+    method list
+
+This is a synonym for L</prepared-values>. It returns a finalized version of the values.
+
+=head2 method postcircumfix:<[ ]>
+
+    method postcircumfix:<[ ]>($index)
+
+You may use the [] operator to lookup values on the header. Basically, these are synonymous:
+
+    $header.values[*] === $header[*]
+
+This is B<experimental> and might be removed or changed in the future.
+
+=head2 method prepared-values
+
+    method prepared-values
+
+Some headers may be set to values that are more easily dealt with as other kinds of values. For example, a C<Date> header might be most conveniently set from a L<DateTime> or L<Instant> object. Similarly, a C<Retry-After> column could be set to those or to a L<Duration>. Any header can be set to one of these values. When the value is output via L</value> or L</list> or L</as-string>, etc., the value will be converted to an appropriate string.
+
+Currently only these types are supported:
+
+=item * L<DateTime> is formatted as ddd, mmm dd yyyy HH:MM:ss GMT
+
+=item * L<Instant> is converted to L<DateTime> and is formatted thes ame.
+
+=item * L<Duration> is formatted as the number of seconds stored in it.
+
+B<NOTE:> See the L</Caveats> for details on possible interactions between this method and others.
+
+=head1 Primary/Parameter Convenience Methods
+
+B<NOTE:> See the L</Caveats> for details on possible interactions between these methods and others.
+
+=head2 method primary
+
+    method primary is rw
+
+Returns the primary value of the header. Certain headers, such as C<Content-Type> allow for a main value followed by parameters. This grabs the main value only.
+
+    $headers.Content-Type = "text/html; charset=UTF-8";
+    say $headers.Content-Type.primary;
+    # text/html
+    
+    $headers.Content-Type.primary = "text/xml";
+    say ~$headers.Content-Type;
+    # text/xml; charset=UTF-8
+
+=head2 method params
+
+    method params
+
+Returns all the parameter-like bits in the header as a hash.
+
+    $headers.Content-Type = "text/html; charset=UTF-8";
+    say $headers.Content-Type.params.perl;
+    # ("charset" => "UTF-8").hash
+
+=head2 method param
+
+    method param($name) is rw
+
+Provides a convenient way to write the parameters of a header.
+
+    $headers.Content-Type = "text/html";
+    $headers.Content-Type.param("charset") = "UTF-8";
+    say $headers.as-string;
+    # Content-Type: text/html; charset=UTF-8
+
+    $headers.Content-Type.param("charset") = "ISO-8859-1";
+    say $headers.as-string;
+    # Content-Type: text/html; charset=ISO-8859-1
+    
+Setting the value to an undefined value will delete the parameter.
+
+    $headers.Content-Type.param("charset") = Nil;
+    say $headers.as-string;
+    # Content-Type: text/html
+
+=head1 Content-Type Convenience Methods
+
+When the header's name is C<Content-Type>, some additional methods have been provided for your convenience.
+
+=head2 method charset
+
+    method charset is rw
+
+This is a convenient shortcut to the "charset" parameter.
+
+    $headers.Content-Type = "text/html";
+    $headers.Content-Type.charset = "UTF-8";
+    say $headers.as-string;
+    # Content-Type: text/html; charset=UTF-8
+
+=head2 method is-text
+
+    method is-text returns Bool
+
+Returns a true value if the C<Content-Type> is set to a text MIME type.
+
+=head2 method is-html
+
+    method is-html returns Bool
+
+Returns a true value if the C<Content-Type> is set to an HTML MIME type.
+
+=head2 method is-xhtml
+
+    method is-xhtml returns Bool
+
+Returns a true value if the C<Content-Type> is set to an XHTML MIME type.
+
+=head1 Caveats
+
+It should be noted that different kinds of headers require different sorts of interactions. These tools will allow certain interactions that will not behave well. This section is intended to highlight this issue.
+
+It is generally assumed that the use of L</method primary>, L</method params>, and L</method param> and similar methods will be used on single-valued headers. These methods will work less well when multiple values are present.
+
+Similarly, values that are prepared using L</method prepared-values>, may interact in unexpectd ways with L</method primary>, L</method params>, and L</method param> methods as well.
+
+These interactions do not limit what you are able to do with this object, as these methods are only provided for convenience and making typical code look nicer. If you get bad interactions with these or other convenience methods, do not use them.
+
+=end pod

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/p6-HTTP-Headers.git
+	branch = master
+	commit = df7c61aa0c4ebb12e92719533767dae3d613b057
+	parent = 32fc544df96422b59056415f47c852a382d4fac7
+	cmdver = 0.2.1

@@ -1,0 +1,15 @@
+{
+    "name" : "HTTP::Headers",
+    "version" : "0.1",
+    "description" : "Tools for working with HTTP message headers",
+    "author" : "Andrew Sterling Hanenkamp",
+    "provides" : {
+        "HTTP::Header": "lib/HTTP/Headers.pm",
+        "HTTP::Header::Standard": "lib/HTTP/Headers.pm",
+        "HTTP::Header::Standard::Content-Type": "lib/HTTP/Headers.pm",
+        "HTTP::Header::Custom": "lib/HTTP/Headers.pm",
+        "HTTP::Headers": "lib/HTTP/Headers.pm"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/zostay/p6-HTTP-Headers.git"
+}
