@@ -1,5 +1,5 @@
 #!/usr/bin/env perl6-j
-module starter;
+unit module starter;
 
 use lib 'lib';
 use HTTP::Server::Async;
