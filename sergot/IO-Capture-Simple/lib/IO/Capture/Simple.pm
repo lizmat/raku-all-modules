@@ -1,4 +1,4 @@
-module IO::Capture::Simple;
+unit module IO::Capture::Simple;
 
 my $stdout = $*OUT;
 my $stderr = $*ERR;

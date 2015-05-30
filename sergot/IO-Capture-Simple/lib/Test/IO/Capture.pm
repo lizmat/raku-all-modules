@@ -1,7 +1,7 @@
 use Test;
 use IO::Capture::Simple;
 
-module Test::IO::Capture;
+unit module Test::IO::Capture;
 
 sub prints-stdout-ok (Callable $code, $expected as Str, $reason = '')
 is export {
