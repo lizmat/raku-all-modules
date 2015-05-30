@@ -1,6 +1,6 @@
 # Copyright (C) 2011, Kevin Polulak <kpolulak@gmail.com>.
 
-module IRC::Utils:<soh_cah_toa 0.2.0>;
+unit module IRC::Utils:<soh_cah_toa 0.2.0>;
 
 =begin pod
 
