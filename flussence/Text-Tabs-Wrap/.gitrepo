@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/flussence/Text-Tabs-Wrap.git
 	branch = master
-	commit = 4c7ea06bf63e5f3941ea46953ee7ba05e0050629
-	parent = 534f6d39cb9473a6349757c106c284dc2798f16a
-	cmdver = 0.2.0
+	commit = 6425b389937f3be53dbb16c51bfdfcb8e6ff5efc
+	parent = fbcdd5cd9bd35d21673fac344344f1a40be3d3d9
+	cmdver = 0.2.1

@@ -1,6 +1,6 @@
 {
     "name"          : "Text-Tabs-Wrap",
-    "version"       : "0.2.2",
+    "version"       : "0.2.3",
     "author"        : "github:flussence",
     "description"   : "Simple line-wrapping and tab [un]expansion tools",
     "depends"       : ["Test::Corpus"],

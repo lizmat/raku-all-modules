@@ -1,4 +1,4 @@
-module Text::Wrap:auth<github:flussence>:ver<0.2.2>;
+unit module Text::Wrap:auth<github:flussence>:ver<0.2.3>;
 use Text::Tabs;
 
 sub wrap(Str $lead-indent,

@@ -5,4 +5,4 @@ use Text::Wrap;
 
 plan 1;
 
-lives_ok { wrap('', '', '', :columns(1)) }, 'Edge case runs without dying';
+lives-ok { wrap('', '', '', :columns(1)) }, 'Edge case runs without dying';

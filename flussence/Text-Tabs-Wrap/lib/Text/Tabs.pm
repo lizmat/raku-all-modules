@@ -1,4 +1,4 @@
-module Text::Tabs:auth<github:flussence>:ver<0.2.2>;
+unit module Text::Tabs:auth<github:flussence>:ver<0.2.3>;
 
 sub expand($text, UInt :$tabstop = $?TABSTOP) returns Str is export {
     return $text.split("\n").map({

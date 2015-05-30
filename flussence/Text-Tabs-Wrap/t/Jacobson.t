@@ -13,7 +13,7 @@ plan +@input;
 my $word-break = rx{<?after <[,.]>>};
 
 for @input.kv -> $num, $str {
-    lives_ok {
+    lives-ok {
         wrap('', '', $str, :may-overflow, :columns(9), :$word-break)
     }, "Test {1+$num} ran"
 }

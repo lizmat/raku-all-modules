@@ -13,10 +13,11 @@ Text::Wrap gives you `wrap` and `fill` functions. `wrap` will break up long
 lines; it doesn't join short lines together. `fill` reformats entire blocks of
 text, similar to vi's `gq` command.
 
-## Current status (2014-08-02)
+## Current status (2015-05-26)
 
-Has been tested on a recent Rakudo (`2014.07-91-gf5d1870277b9`) running on
-MoarVM, with a few known test failures marked as TODO.
+Requires Rakudo >= `2014.05`. There are a few known test failures marked
+TODO, and as of this writing a whole bunch of internal p6 regex errors have
+appeared everywhere. I'm not sure what causes those, sorry. You're on your own.
 
 This code is in maintenance mode and not fun to hack on, so if you think you can
 do better it might be a good idea to start fresh.
