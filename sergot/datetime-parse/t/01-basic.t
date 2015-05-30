@@ -16,4 +16,4 @@ is DateTime::Parse.new($rfc1123),
    DateTime.new(:year(1994), :month(11), :day(6), :hour(8), :minute(49), :second(37)),
    'parse string gives correct DateTime object';
 ok DateTime::Parse::Grammar.parse($rfc1123)<rfc1123-date>, "'Sun, 06 Nov 1994 08:49:37 GMT' is recognized as rfc1123-date";
-throws_like qq[ DateTime::Parse.new('$bad') ], X::DateTime::CannotParse, invalid-str => $bad;
+throws-like qq[ DateTime::Parse.new('$bad') ], X::DateTime::CannotParse, invalid-str => $bad;
