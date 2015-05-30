@@ -1,6 +1,6 @@
 use v6;
 
-class FastCGI::Connection;
+unit class FastCGI::Connection;
 
 use PSGI;
 use FastCGI::Request;

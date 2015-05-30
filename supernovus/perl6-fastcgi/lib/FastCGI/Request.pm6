@@ -1,6 +1,6 @@
 use v6;
 
-class FastCGI::Request;
+unit class FastCGI::Request;
 
 use FastCGI::Constants;
 use FastCGI::Protocol;

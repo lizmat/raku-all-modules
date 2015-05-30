@@ -1,6 +1,6 @@
 use v6;
 
-class FastCGI::Errors;
+unit class FastCGI::Errors;
 
 has @.messages;
 

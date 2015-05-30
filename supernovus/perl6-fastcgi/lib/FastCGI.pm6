@@ -1,6 +1,6 @@
 use v6;
 
-class FastCGI;
+unit class FastCGI;
 
 use FastCGI::Connection;
 use FastCGI::Logger;

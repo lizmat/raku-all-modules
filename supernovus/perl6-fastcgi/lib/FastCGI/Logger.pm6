@@ -1,6 +1,6 @@
 use v6;
 
-class FastCGI::Logger;
+unit class FastCGI::Logger;
 
 ## TODO: pull this out of FastCGI and make it its own library.
 
