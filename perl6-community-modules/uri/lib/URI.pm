@@ -1,4 +1,4 @@
-class URI;
+unit class URI;
 
 use IETF::RFC_Grammar;
 use IETF::RFC_Grammar::URI;

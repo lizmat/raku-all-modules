@@ -1,4 +1,4 @@
-class IETF::RFC_Grammar;
+unit class IETF::RFC_Grammar;
 
 # Thanks in part to Aaron Sherman
 # and his article http://essays.ajs.com/2010/05/writing-perl-6-uri-module.html
