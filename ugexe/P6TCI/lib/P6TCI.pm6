@@ -1,7 +1,7 @@
 use v6;
 
 
-module P6TCI;
+unit module P6TCI;
 
 
 
