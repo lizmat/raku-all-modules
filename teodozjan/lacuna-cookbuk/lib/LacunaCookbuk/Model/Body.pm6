@@ -4,7 +4,7 @@ use v6;
 use LacunaCookbuk::Model::LacunaBuilding;
 use LacunaCookbuk::Model::Empire;
 
-role Body does Id;
+unit role Body does Id;
 
 constant $URL = '/body';
 has LacunaBuilding @.buildings;

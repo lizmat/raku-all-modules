@@ -2,7 +2,7 @@ use v6;
 
 use LacunaCookbuk::Id;
 
-class Ship does Id;
+unit class Ship does Id;
 has %.attr;
 
 multi method gist {

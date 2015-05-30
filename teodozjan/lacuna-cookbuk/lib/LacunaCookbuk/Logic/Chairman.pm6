@@ -9,7 +9,7 @@ use LacunaCookbuk::Logic::Chairman::BuildingEnum;
 use Term::ANSIColor;
 
 #| Chairman is the class that does all the magic.
-class LacunaCookbuk::Logic::Chairman;
+unit class LacunaCookbuk::Logic::Chairman;
 
 #| Basic resources that regulate any planet int the empire
 enum LacunaCookbuk::Logic::Chairman::Resource <food ore water energy waste happiness>;

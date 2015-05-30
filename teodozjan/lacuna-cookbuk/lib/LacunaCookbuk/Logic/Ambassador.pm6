@@ -6,7 +6,7 @@ use LacunaCookbuk::Model::Structure::Parliament;
 use LacunaCookbuk::Logic::BodyBuilder;
 use LacunaCookbuk::Model::Empire;
 
-class LacunaCookbuk::Logic::Ambassador;
+unit class LacunaCookbuk::Logic::Ambassador;
 
 constant $ALLIANCE = "/alliance"; 
 

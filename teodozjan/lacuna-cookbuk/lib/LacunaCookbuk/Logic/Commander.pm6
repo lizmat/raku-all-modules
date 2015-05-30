@@ -6,7 +6,7 @@ use Term::ANSIColor;
 
 use LacunaCookbuk::Logic::BodyBuilder;
 
-class LacunaCookbuk::Logic::Commander;
+unit class LacunaCookbuk::Logic::Commander;
 my Str $form =
     color('default') ~ '{<<<<<<<<<<<<<<<<<<} '
     ~ color('red') ~ '{||||||}'

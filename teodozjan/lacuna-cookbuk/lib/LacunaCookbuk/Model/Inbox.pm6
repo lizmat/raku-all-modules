@@ -3,7 +3,7 @@ use v6;
 use LacunaCookbuk::Model::Empire;
 
 
-class Inbox;
+unit class Inbox;
 
 constant $URL = '/inbox';
 

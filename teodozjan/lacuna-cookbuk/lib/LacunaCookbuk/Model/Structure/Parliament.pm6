@@ -3,7 +3,7 @@ use v6;
 use LacunaCookbuk::Model::Empire;
 use LacunaCookbuk::Model::LacunaBuilding;
 
-class Parliament is LacunaBuilding;
+unit class Parliament is LacunaBuilding;
 
 constant $URL = '/parliament';
 

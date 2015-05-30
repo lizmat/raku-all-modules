@@ -11,7 +11,7 @@ use LacunaCookbuk::Model::Structure::Development;
 use LacunaCookbuk::Model::Structure::Shipyard;
 
 
-class Planet is Body;
+unit class Planet is Body;
 
 submethod find_archaeology_ministry(--> Archaeology) {
     for self.buildings -> LacunaBuilding $building {

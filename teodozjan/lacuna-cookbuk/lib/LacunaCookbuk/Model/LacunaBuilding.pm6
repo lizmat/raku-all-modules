@@ -6,7 +6,7 @@ use LacunaCookbuk::Model::Empire;
 
 use Term::ANSIColor;
 
-role LacunaBuilding;
+unit role LacunaBuilding;
 
 has $.url; 
 has $.id;

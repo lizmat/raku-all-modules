@@ -8,7 +8,7 @@ use LacunaCookbuk::Model::Empire;
 use Term::ANSIColor;
 
 #| Class is responsible for reading bodies and storing them
-class LacunaCookbuk::Logic::BodyBuilder;
+unit class LacunaCookbuk::Logic::BodyBuilder;
 
 my Planet @planets;
 my SpaceStation @stations;

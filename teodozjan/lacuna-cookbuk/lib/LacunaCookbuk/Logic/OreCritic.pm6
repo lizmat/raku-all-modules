@@ -5,7 +5,7 @@ use LacunaCookbuk::Logic::BodyBuilder;
 use Form;
 use Term::ANSIColor;
 
-class LacunaCookbuk::Logic::OreCritic;
+unit class LacunaCookbuk::Logic::OreCritic;
 
 constant $ore_format_str = '{<<<<<<<<<<<<<<<<<<<<} ' ~ '{||} ' x 20;
 

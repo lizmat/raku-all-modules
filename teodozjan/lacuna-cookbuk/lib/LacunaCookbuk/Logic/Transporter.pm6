@@ -6,7 +6,7 @@ use LacunaCookbuk::Model::Empire;
 use LacunaCookbuk::Model::Structure::Trade;
 
 
-class LacunaCookbuk::Logic::Transporter;
+unit class LacunaCookbuk::Logic::Transporter;
 
 my role Cargo{
     method gather(Trade $Trade --> List) { ... }   

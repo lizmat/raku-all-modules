@@ -6,7 +6,7 @@ use Form;
 use Term::ANSIColor;
 
 #= This class has evil design. REFACTOR me
-class LacunaCookbuk::Logic::IntelCritic;
+unit class LacunaCookbuk::Logic::IntelCritic;
 
 constant $TERM_SIZE = 128;
 constant @summary_header = <planet num limit details>;

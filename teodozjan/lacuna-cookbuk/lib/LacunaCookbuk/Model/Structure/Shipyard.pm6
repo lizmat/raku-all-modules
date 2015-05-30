@@ -3,7 +3,7 @@ use v6;
 use LacunaCookbuk::Model::Empire;
 use LacunaCookbuk::Model::LacunaBuilding;
 
-class Shipyard is LacunaBuilding;
+unit class Shipyard is LacunaBuilding;
 
 constant $URL = '/shipyard';
 

@@ -6,7 +6,7 @@ use LacunaCookbuk::Model::Body::Planet;
 use LacunaCookbuk::Model::Empire;
 use LacunaCookbuk::Logic::BodyBuilder;
 
-class LacunaCookbuk::Logic::ShipCritic;
+unit class LacunaCookbuk::Logic::ShipCritic;
 
 constant $limited_format= '{<<<<<<<<<<<<<<<<<<<<<<<<<} {>>>>}/{<<<<} {>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>}';
 constant $ruler = '-' x 128;
