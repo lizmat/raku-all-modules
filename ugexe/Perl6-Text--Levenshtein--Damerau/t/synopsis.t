@@ -2,7 +2,7 @@ use v6;
 use Test;
 plan 1;
 
-lives_ok {
+lives-ok {
     use Text::Levenshtein::Damerau;
 
     my @names = 'John','Jonathan','Jose','Juan','Jimmy';

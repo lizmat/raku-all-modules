@@ -19,10 +19,8 @@ before_install:
     - rakudobrew build-panda
 install:
     - perl6 -v
-before_script:
-    - panda list --installed --verbose # modules installed before panda-install
 script:
-    - prove -v -s -j$(test-jobs) -e "perl6 --ll-exception -Ilib" $(test-files)
+    - prove -v -s -j$(test-jobs) -e "perl6 -Ilib" $(test-files)
     - PANDA_SUBMIT_TESTREPORTS=1 panda install . # 'panda install' required to send test reports
 after_success:
     - panda list --installed --verbose # modules installed after panda-install
