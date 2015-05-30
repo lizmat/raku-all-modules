@@ -40,7 +40,7 @@ my %headers = (
 
 for %headers.keys.sort -> $file {
     my $m;
-   lives_ok {$m = Email::Simple.new(slurp "t/test-mails/$file") }, "Could parse $file";;
+   lives-ok {$m = Email::Simple.new(slurp "t/test-mails/$file") }, "Could parse $file";;
    my %h := %headers{$file};
    my $header-str = $m.header-obj.Str;
    for %h.sort -> $p {

@@ -28,7 +28,7 @@ multi method new (Str $text, :$header-class = Email::Simple::Header) {
     my $parsed = Message.parse($text);
     unless $parsed {
         # no header separator found, so it must be a header-only email
-        my $crlf = ~($text ~~ /\xa\xd|\xd\xa|\xa\xd/) || "\n",;
+        my $crlf = ~($text ~~ /\xa\xd|\xd\xa|\xa\xd/ || "\n");
         return self.bless(
                 body   => '',
                 header => Email::Simple::Header.new($text, :$crlf),
