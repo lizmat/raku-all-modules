@@ -11,7 +11,7 @@ for '0/1', '1/0' -> $path {
     $router.add-route($path);
     my $match = $router.match($path);
     ok($match);
-    is_deeply($match.route.components, Array[Str].new($path.comb(/ <-[ \/ ]>+ /)));
+    is-deeply($match.route.components, Array[Str].new($path.comb(/ <-[ \/ ]>+ /)));
 }
 
 done;

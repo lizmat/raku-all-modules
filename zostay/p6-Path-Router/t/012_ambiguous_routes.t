@@ -42,7 +42,7 @@ use Path::Router;
         defaults => { a => 'b', c => 'd', g => 'h' }
     );
 
-    throws_like(
+    throws-like(
         { $router.uri-for(a => 'b', c => 'd') },
         X::Path::Router::AmbiguousMatch::ReverseMatch,
         "error when it's actually ambiguous",
@@ -77,7 +77,7 @@ use Path::Router;
     $router.add-route('/foo/:bar' => (defaults => { id => 1 }));
     $router.add-route('/:foo/bar' => (defaults => { id => 2 }));
 
-    throws_like(
+    throws-like(
         { $router.match('/foo/bar') },
         X::Path::Router::AmbiguousMatch::PathMatch,
         "error when it's actually ambiguous",

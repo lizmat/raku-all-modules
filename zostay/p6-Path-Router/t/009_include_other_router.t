@@ -8,7 +8,7 @@ use Test::Path::Router;
 use Path::Router;
 
 my $poll-router = Path::Router.new();
-isa_ok($poll-router, 'Path::Router');
+isa-ok($poll-router, 'Path::Router');
 
 # create some routes
 
@@ -67,7 +67,7 @@ routes-ok($poll-router, {
 # root router
 
 my $router = Path::Router.new();
-isa_ok($router, 'Path::Router');
+isa-ok($router, 'Path::Router');
 
 # create some routes
 
@@ -125,7 +125,7 @@ routes-ok($router, {
 # hmm, will this work
 
 my $test-router = Path::Router.new();
-isa_ok($test-router, 'Path::Router');
+isa-ok($test-router, 'Path::Router');
 
 # create some routes
 
@@ -196,19 +196,19 @@ routes-ok($router, {
 
 # test a few errors
 
-throws_like(
+throws-like(
     { $router.include-router('foo' => $test-router) },
     X::Path::Router::BadInclusion,
     "... this dies correctly"
 );
 
-throws_like(
+throws-like(
     { $router.include-router('/foo' => $test-router) },
     X::Path::Router::BadInclusion,
     "... this dies correctly"
 );
 
-throws_like(
+throws-like(
     { $router.include-router('/foo/1' => $test-router) },
     X::Path::Router::BadInclusion,
     "... this dies correctly"

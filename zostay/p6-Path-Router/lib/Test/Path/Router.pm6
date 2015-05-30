@@ -43,7 +43,7 @@ sub routes-ok(Path::Router $router, %routes, Str $message = '') is export {
             # the path supplied produces the
             # same match as the hash supplied
 
-            is_deeply(%generated-mapping, %mapping, 'comparing mapping to expectation');
+            is-deeply(%generated-mapping, %mapping, 'comparing mapping to expectation');
         }
     }, $message;
 }
@@ -73,7 +73,7 @@ sub path-is(Path::Router $router, Str $path, %expected, Str $message = '') is ex
     # the path supplied produces the
     # same match as the hash supplied
 
-    is_deeply(%generated-mapping, %expected, $message);
+    is-deeply(%generated-mapping, %expected, $message);
 }
 
 sub mapping-ok(Path::Router $router, %mapping, Str $message = '') is export {

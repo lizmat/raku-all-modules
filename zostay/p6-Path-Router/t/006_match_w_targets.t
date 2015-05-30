@@ -16,7 +16,7 @@ my $SHOW_DATE = Blog::ShowDate.new;
 my $GENERAL   = Blog::Controller.new;
 
 my $router = Path::Router.new;
-isa_ok($router, 'Path::Router');
+isa-ok($router, 'Path::Router');
 
 # create some routes
 
@@ -54,10 +54,10 @@ $router.add-route('blog/:action/:id' => {
 
 {
     my $match = $router.match('/blog/');
-    isa_ok($match, 'Path::Router::Route::Match');
+    isa-ok($match, 'Path::Router::Route::Match');
 
     is($match.route.target, $INDEX, '... got the right target');
-    is_deeply(
+    is-deeply(
         $match.mapping,
         {
             controller => 'blog',
@@ -68,10 +68,10 @@ $router.add-route('blog/:action/:id' => {
 }
 {
     my $match = $router.match('/blog/2006/12/1');
-    isa_ok($match, 'Path::Router::Route::Match');
+    isa-ok($match, 'Path::Router::Route::Match');
 
     is($match.route.target, $SHOW_DATE, '... got the right target');
-    is_deeply(
+    is-deeply(
         $match.mapping,
         {
             controller => 'blog',
@@ -85,10 +85,10 @@ $router.add-route('blog/:action/:id' => {
 }
 {
     my $match = $router.match('/blog/show/5');
-    isa_ok($match, 'Path::Router::Route::Match');
+    isa-ok($match, 'Path::Router::Route::Match');
 
     is($match.route.target, $GENERAL, '... got the right target');
-    is_deeply(
+    is-deeply(
         $match.mapping,
         {
             controller => 'blog',
@@ -100,10 +100,10 @@ $router.add-route('blog/:action/:id' => {
 }
 {
     my $match = $router.match('/blog/show/0');
-    isa_ok($match, 'Path::Router::Route::Match');
+    isa-ok($match, 'Path::Router::Route::Match');
 
     is($match.route.target, $GENERAL, '... got the right target');
-    is_deeply(
+    is-deeply(
         $match.mapping,
         {
             controller => 'blog',

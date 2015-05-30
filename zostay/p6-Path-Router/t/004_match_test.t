@@ -8,7 +8,7 @@ use Test::Path::Router;
 use Path::Router;
 
 my $router = Path::Router.new;
-isa_ok($router, 'Path::Router');
+isa-ok($router, 'Path::Router');
 
 # create some routes
 

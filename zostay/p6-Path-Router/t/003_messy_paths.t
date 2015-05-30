@@ -11,7 +11,7 @@ use Path::Router;
 This test how the router fairs with messy URIs
 
 my $router = Path::Router.new;
-isa_ok($router, 'Path::Router');
+isa-ok($router, 'Path::Router');
 
 # create some routes
 

@@ -8,7 +8,7 @@ use Path::Router;
 
 my $router = Path::Router.new;
 
-throws_like(
+throws-like(
     {
         $router.add-route(
             '/foo/:bar' => (

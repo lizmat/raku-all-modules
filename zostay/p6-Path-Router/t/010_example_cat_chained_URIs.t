@@ -64,7 +64,7 @@ Loaded Path Part actions:
 =end pod
 
 my $router = Path::Router.new;
-isa_ok($router, 'Path::Router');
+isa-ok($router, 'Path::Router');
 
 $router.add-route(':controller');
 

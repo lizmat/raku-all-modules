@@ -10,7 +10,7 @@ use Path::Router;
 subset NumericMonth of Int where * <= 12;
 
 my $router = Path::Router.new;
-isa_ok($router, 'Path::Router');
+isa-ok($router, 'Path::Router');
 
 ok($router.^can('add-route'));
 ok($router.^can('match'));
