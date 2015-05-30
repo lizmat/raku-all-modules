@@ -1,9 +1,9 @@
 use v6;
 
-#use Perl6::Parsing;
+use Perl6::Parsing;
 use Test;
-plan 0;
-=begin comment
+plan 4;
+
 ok Perl6::Parsing.new() ~~ Perl6::Parsing,
    'contructor';
 
@@ -26,7 +26,3 @@ $p.parse("my \$p=3;
 
 ok $p.dumptokens().chars>0,"dumptokens basic test";
 ok $p.dumpranges().chars>0,"dumpranges basic test";
-
-#done;
-
-=end comment

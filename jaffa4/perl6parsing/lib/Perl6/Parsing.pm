@@ -3,7 +3,7 @@ use Perl6::Actions:from<NQP>;
 
 use QRegex:from<NQP>; 
 
-class Perl6::Parsing;
+unit class Perl6::Parsing;
 
 
 has Mu $.parser;
