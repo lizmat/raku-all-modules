@@ -1,6 +1,5 @@
-
 use v6;
-module IDNA::Punycode;
+unit module IDNA::Punycode;
 
 our $DEBUG = 0;
 
