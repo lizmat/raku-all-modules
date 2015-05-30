@@ -1,4 +1,4 @@
-class MIME::QuotedPrint;
+unit class MIME::QuotedPrint;
 
 method encode(Blob $stuff, :$mime-header --> Str) {
     my $encoded = '';
