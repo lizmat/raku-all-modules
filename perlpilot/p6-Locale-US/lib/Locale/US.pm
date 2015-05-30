@@ -1,4 +1,4 @@
-module Locale::US;
+unit module Locale::US;
 
 my $data = "AL:ALABAMA
 AK:ALASKA
