@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-http-server-logger.git
+	branch = master
+	commit = fe03617acaca7ff151af733dd244a0fb5b4f1ce1
+	parent = c8fc71d45c7b28327f7178fdf07e725f8ffd8097
+	cmdver = 0.2.1
