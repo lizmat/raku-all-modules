@@ -1,6 +1,6 @@
 use DateTime::Format;
 
-module DateTime::Format::LikeGo;
+unit module DateTime::Format::LikeGo;
 
 # Change whitespace to _, per go's time spec
 my $reference-date = DateTime.new('2006-01-02T15:04:05-0700');
