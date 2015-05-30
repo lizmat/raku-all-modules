@@ -1,6 +1,6 @@
 use v6;
 
-module HTTP::Status;
+unit module HTTP::Status;
 
 ## Exports a function get_http_status_msg($code)
 ## Returns the plain text message that belongs to that code.
