@@ -1,4 +1,4 @@
-module DateTime::Math;
+unit module DateTime::Math;
 
 my subset DurationUnits of Str where -> $unit { $unit ~~ /^<[smhdwMy]>$/ }
 
