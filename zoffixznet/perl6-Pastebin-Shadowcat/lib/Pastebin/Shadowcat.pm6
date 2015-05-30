@@ -1,5 +1,4 @@
-module Pastebin::Shadowcat;
-{
+module Pastebin::Shadowcat {
     use LWP::Simple;
     use URI::Encode;
     use HTML::Entity;
