@@ -7,9 +7,9 @@ use Test::Most 'bail';
 my $time                   = Time::HiRes::time;
 $ENV{'BUBBLEBREAKER_TEST'} = 1;
 
-ok( -e 'bin/bubble-breaker.pl',             'bin/bubble-breaker.pl exists' );
+ok( -e 'bin/bubble-breaker.p6',             'bin/bubble-breaker.p6 exists' );
 is( system("$^X -e 1"),                  0, "we can execute perl as $^X" );
-my ($stdout, $stderr) = Capture::Tiny::capture { system("$^X bin/bubble-breaker.pl") };
+my ($stdout, $stderr) = Capture::Tiny::capture { system("$^X bin/bubble-breaker.p6") };
 ok( !$stderr, 'bubble-breaker ran ' . (Time::HiRes::time - $time) . ' seconds' );
 
 $stdout ||= '';
