@@ -13,7 +13,7 @@ sub EXPORT(|) {
         }
     }
     my Mu $MAIN-grammar := nqp::atkey(%*LANG, 'MAIN');
-    nqp::bindkey(%*LANG, 'MAIN', $MAIN-grammar.HOW.mixin($MAIN-grammar, Tuxic));
+    nqp::bindkey(%*LANG, 'MAIN', $MAIN-grammar.HOW.mixin($MAIN-grammar, Piersing));
 
     {}
 }
