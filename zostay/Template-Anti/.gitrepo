@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/Template-Anti.git
 	branch = master
-	commit = dccee9d0045e69d7bf3ba524f239ccdc01f9918e
-	parent = 3bd2c7a0a2e91b1fb7002749b46116d3f63cc942
+	commit = 53cc182525acb80980ec00a313b1f808d6d2ef73
+	parent = 8b6c0ad4c15cb5670616acea1ec18b488abe78e2
 	cmdver = 0.2.1
