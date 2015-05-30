@@ -1,1 +1,1 @@
-class Net::AMQP::Payload::Body;
+unit class Net::AMQP::Payload::Body;

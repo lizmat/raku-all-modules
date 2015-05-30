@@ -1,6 +1,6 @@
 use Net::AMQP::Payload::ArgumentSerialization;
 
-class Net::AMQP::Payload::Header does Net::AMQP::Payload::ArgumentSerialization;
+unit class Net::AMQP::Payload::Header does Net::AMQP::Payload::ArgumentSerialization;
 
 has $.class-id;
 has $.weight = 0;

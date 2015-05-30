@@ -10,7 +10,7 @@ my $n = Net::AMQP.new;
 
 my $initial-promise = $n.connect;
 my $timeout = Promise.in(5);
-await Promise.anyof($initial-promise, $timeout);
+try await Promise.anyof($initial-promise, $timeout);
 unless $initial-promise.status == Kept {
     skip "Unable to connect. Please run RabbitMQ on localhost with default credentials.", 3;
     exit;

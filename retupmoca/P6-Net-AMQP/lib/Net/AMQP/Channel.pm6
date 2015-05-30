@@ -1,4 +1,4 @@
-class Net::AMQP::Channel;
+unit class Net::AMQP::Channel;
 
 use Net::AMQP::Exchange;
 use Net::AMQP::Queue;

@@ -1,4 +1,4 @@
-class Net::AMQP::Queue;
+unit class Net::AMQP::Queue;
 
 use Net::AMQP::Payload::Method;
 use Net::AMQP::Frame;

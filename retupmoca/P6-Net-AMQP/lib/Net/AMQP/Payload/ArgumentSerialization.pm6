@@ -1,4 +1,4 @@
-role Net::AMQP::Payload::ArgumentSerialization;
+unit role Net::AMQP::Payload::ArgumentSerialization;
 
 method serialize-arg($type, $value, $buf? is copy, $bitsused? = 0) {
     given $type {
