@@ -1,4 +1,4 @@
-module Serialize::Tiny;
+unit module Serialize::Tiny;
 
 sub serialize(Mu:D \obj) is export {
   my \type = obj.WHAT;
