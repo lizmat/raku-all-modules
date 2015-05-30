@@ -14,7 +14,7 @@ my @rows   = (
 # Determine max column width
 {
     my @widths = _get_column_widths(@columns,@rows);
-    is_deeply @widths, [2,8,23], 'Max column widths';
+    is-deeply @widths, [2,8,23], 'Max column widths';
 }
 
 
@@ -30,7 +30,7 @@ my @rows   = (
     my @widths = _get_column_widths(@columns);
     my @output = _build_header(@widths, @columns);
 
-    is_deeply @output, @expected, 'Create a header'
+    is-deeply @output, @expected, 'Create a header'
 }
 
 
@@ -50,7 +50,7 @@ my @rows   = (
         my @widths = _get_column_widths(@columns,@columns2);
         my @output = _build_header( @widths, (@columns, @columns2) );
 
-        is_deeply @output, @expected, 'Multi row header with first header row cells as the longest';
+        is-deeply @output, @expected, 'Multi row header with first header row cells as the longest';
     }
 
     # Test when last row labels are shorter than others
@@ -60,7 +60,7 @@ my @rows   = (
         (@new_expected[1], @new_expected[2]) = (@new_expected[2], @new_expected[1]);
         my @output = _build_header( @widths, (@columns2, @columns) );
 
-        is_deeply @output, @expected, 'Multi row header with last header row cells as the longest';
+        is-deeply @output, @expected, 'Multi row header with last header row cells as the longest';
     }
 }
 
@@ -80,7 +80,7 @@ my @rows   = (
     my @output = _build_table(@columns, @rows);
 
     is _build_table(@columns,@rows), lol2table(@columns,@rows), 'Public api matches private api';
-    is_deeply @output, @expected, 'Create a table (header + body)'
+    is-deeply @output, @expected, 'Create a table (header + body)'
 }
 
 

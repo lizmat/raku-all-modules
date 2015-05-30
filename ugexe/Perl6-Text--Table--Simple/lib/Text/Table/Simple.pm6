@@ -1,5 +1,5 @@
 use v6;
-class Text::Table::Simple;
+unit class Text::Table::Simple;
 
 constant %defaults = {
   rows => {
