@@ -13,14 +13,14 @@ plan 7;
         gdImageDestroy($img);
 }
 
-my $tmp-path = IO::Path.new(IO::Spec.tmpdir).child("gd-raw-tmpimg");
+my $tmp-path = $*TMPDIR.child("gd-raw-tmpimg");
 
 # Create and load a png
 {
         my $img = gdImageCreateTrueColor(64, 64);
         my $fh = fopen($tmp-path.Str, "wb");
         ok $fh, "Open image for writing";
-        lives_ok { gdImagePng($img, $fh) }, "Wrote png";
+        lives-ok { gdImagePng($img, $fh) }, "Wrote png";
         fclose($fh);
         gdImageDestroy($img);
 
