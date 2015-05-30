@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/xfix/Acme-DSON.git
 	branch = master
-	commit = 15235f7b4b4f40f276d56c64ddfe8b367d1e69ef
-	parent = 89c137fbde48b62f6f1df847cdd567e65dfff7ce
-	cmdver = 0.1.0
+	commit = ebcd915e3c415825db4a07d52dbdbe4b3a6fc8d1
+	parent = d72657a4a1f88180d767c9f9cea21d56f2becfc9
+	cmdver = 0.2.1

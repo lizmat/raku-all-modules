@@ -1,6 +1,6 @@
 use v6;
 use JSON::Tiny::Actions;
-class Acme::DSON::Actions is JSON::Tiny::Actions;
+unit class Acme::DSON::Actions is JSON::Tiny::Actions;
 
 method value:sym<number>($/) {
     my $result = :8(~$/);

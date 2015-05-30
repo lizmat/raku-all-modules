@@ -1,6 +1,6 @@
 use v6;
 
-module Acme::DSON;
+unit module Acme::DSON;
 
 use Acme::DSON::Actions;
 use Acme::DSON::Grammar;
