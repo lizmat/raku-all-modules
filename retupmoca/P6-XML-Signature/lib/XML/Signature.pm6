@@ -6,7 +6,7 @@ use Digest::SHA;
 use MIME::Base64;
 use UUID;
 
-module XML::Signature;
+unit module XML::Signature;
 
 our sub sign(XML::Element $document is rw, :$private-pem!, :$x509-pem! is copy, :$enveloping, :$enveloped, :$detached) is export {
     $x509-pem ~~ s:g/\s+//;
