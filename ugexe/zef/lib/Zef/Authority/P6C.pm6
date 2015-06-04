@@ -3,6 +3,8 @@ use Zef::Net::HTTP::Client;
 use Zef::Utils::Depends;
 use Zef::Utils::Git;
 
+
+# perl6 community ecosystem + test reporting
 class Zef::Authority::P6C does Zef::Authority::Net {
     has $!ua      = Zef::Net::HTTP::Client.new;
     has $!git     = Zef::Utils::Git.new;
@@ -14,8 +16,10 @@ class Zef::Authority::P6C does Zef::Authority::Net {
         @!projects = @(from-json($response.content));
     }
 
+    # Use the p6c hosted projects.json to get a list of name => git-repo that 
+    # can then be fetched with Utils::Git
     method get(Zef::Authority::P6C:D: *@wants, :$save-to is copy = $*TMPDIR) {
-        ENTER self.update-projects;
+        once self.update-projects;
         my @wants-metas = @!projects.grep({ $_.<name> ~~ any(@wants) }); # unused now?
         my @tree        = build-dep-tree( @!projects, target => $_ ) for @wants-metas;
         my @results     = eager gather for @tree -> %node {
@@ -36,11 +40,11 @@ class Zef::Authority::P6C does Zef::Authority::Net {
             my $repo-path = $meta-path.IO.dirname;
             KEEP take { %meta }
 
-            my %test  = @test-results.first({ $_<path> eq $repo-path }).hash;
+            my $test  = @test-results.list>>.results.grep({ $_.list>>.file.IO.absolute ~~ /^$repo-path/ });
             my %build = @build-results.first({ $_<path> eq $repo-path }).hash;
 
             my $build-output = %build.<curlfs>.map(-> $cu { $cu.build-output }).join("\n");
-            my $test-output  = %test.<tests>.map({ $_<test-output> }).join("\n");
+            my $test-output  = $test>>.list.map({ $_.list>>.output }).join("\n");
 
             # See Panda::Reporter
             %meta<report> = to-json {
@@ -51,7 +55,7 @@ class Zef::Authority::P6C does Zef::Authority::Net {
                 :build-output($build-output),
                 :build-passed(?%build<ok>),
                 :test-output($test-output),
-                :test-passed(?%test<ok>),
+                :test-passed(?all(?$test>>.list>>.ok)),
                 :distro({
                     :name($*DISTRO.name),
                     :version($*DISTRO.version.Str),
@@ -93,12 +97,10 @@ class Zef::Authority::P6C does Zef::Authority::Net {
             }
         }
 
-        my @submissions = gather for @meta-reports -> $meta {
-            KEEP take { ok => 1, module => $meta<name>, report => $meta<report> }
-            UNDO take { ok => 0, module => $meta<name>, report => $meta<report> }
-            my $response  = $!ua.post("http://testers.perl6.org/report", payload => $meta<report>);
-            my $report-id = $response.body;
-            say "===> Report location: http://testers.perl6.org/reports/$report-id.html";
+        my @submissions = gather for @meta-reports -> $m {
+            my $response  = $!ua.post("http://testers.perl6.org/report", payload => $m<report>);
+            my $body = $response.body;
+            take { ok => ?$body.match(/^\d+$/), module => $m<name>, report => $m<report> }
         }
     }
 }

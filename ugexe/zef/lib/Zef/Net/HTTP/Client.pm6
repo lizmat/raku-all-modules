@@ -4,6 +4,8 @@ use Zef::Net::URI;
 
 try require IO::Socket::SSL;
 
+
+# A http client using the grammar based Net::HTTP::Request, Net::HTTP::Response, and Net::URI
 class Zef::Net::HTTP::Client {
     has $.can-ssl = !::("IO::Socket::SSL").isa(Failure);
     has $.auto-check is rw;
@@ -38,10 +40,6 @@ class Zef::Net::HTTP::Client {
         my $request    = Zef::Net::HTTP::Request.new( :$action, :$url, :$payload, :$.user, :$.pass );
         my $connection = self.connect($request.uri);
         $connection.send(~$request);
-
-        # todo:
-        # Change EOL to \r\n\r\n, use readline to read in the header using :enc(ascii)
-        # Read in the rest as the message-body using the appropriate encoding
 
         my $response   = Zef::Net::HTTP::Response.new(message => do { 
             my $d; while my $r = $connection.recv { $d ~= $r }; $d;

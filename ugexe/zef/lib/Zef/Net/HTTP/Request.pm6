@@ -1,12 +1,15 @@
 use Zef::Net::URI;
 use Zef::Utils::Base64;
 
+# todo: generate class from grammar via actions
+
+# A http request object that attempts to handle proxy and basic auth
 class Zef::Net::HTTP::Request {
     has $.grammar;
     has $.action;
     has $.url;
     has $.uri;
-    has $!payload;
+    has $.payload;
     has $.proxy-url;
     has $.proxy-uri;
     has $!auth;
@@ -26,7 +29,6 @@ class Zef::Net::HTTP::Request {
             ~ (("\r\n" ~ "Authorization: Basic {$!auth}") if ?$!auth)
             ~   "\r\n" ~ "Connection: close\r\n\r\n"                        # last header field
             ~ ($!payload if $!payload);
-
         return $req;
     }
 }
