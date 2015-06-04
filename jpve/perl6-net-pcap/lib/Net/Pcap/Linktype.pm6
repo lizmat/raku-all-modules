@@ -22,7 +22,7 @@ Net::Pcap::Linktype
 Enumerator for libpcaps link-layer type.
 =end pod
 
-module Net::Pcap::Linktype;
+unit module Net::Pcap::Linktype;
 
 enum Net::Pcap::Linktype (
     Null => 0,

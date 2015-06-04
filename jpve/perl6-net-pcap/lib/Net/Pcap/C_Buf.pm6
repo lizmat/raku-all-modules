@@ -1,4 +1,5 @@
 use NativeCall;
+use nqp; # TODO: Get this code performant without using nqp! nqp is not portable.
 
 =NAME
 Net::Pcap::C_Buf;
@@ -102,7 +103,7 @@ my sub C_free(OpaquePointer $ptr) is export(:util)
 does Positional
 =end code
 
-class Net::Pcap::C_Buf does Positional;
+unit class Net::Pcap::C_Buf does Positional;
     
 my constant C_Buf is export(:short) ::= Net::Pcap::C_Buf;
 
@@ -338,7 +339,7 @@ method decode($encoding = 'utf-8') returns Str {
   called with brackets like so $buf[1].
 =end code
     
-method at_pos(Int $pos) returns Int {
+method AT-POS(Int $pos) returns Int {
     die("C_Buf: cannot retrieve position outside of array") if (($pos >= $.elems) || $pos < 0);
     my Int $i = nqp::atpos_i(nqp::decont($.carray), nqp::unbox_i($pos));
     if $i < 0 {
@@ -355,7 +356,7 @@ method at_pos(Int $pos) returns Int {
   if the buffer is called with brackets to assign, like so: $buf[1] = 0;
 =end code
 
-method assign_pos(Int $pos, $assignee) {
+method ASSIGN-POS(Int $pos, $assignee) {
     die("C_Buf: cannot assign position outside of array") if (($pos >= $.elems) || $pos < 0);
     $.carray[$pos] = $assignee;
 }

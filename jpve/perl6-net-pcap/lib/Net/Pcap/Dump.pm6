@@ -31,7 +31,7 @@ Net::Pcap::Dump - Write packets to file.
 Implements `pcap_dump_t`.
 =end code
 
-class Net::Pcap::Dump;
+unit class Net::Pcap::Dump;
 
 my constant Dump is export(:short) ::= Net::Pcap::Dump;
 

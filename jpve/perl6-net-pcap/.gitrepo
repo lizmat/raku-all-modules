@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jpve/perl6-net-pcap.git
 	branch = master
-	commit = 9babf9edec4e6e0fccf5674c6d541230a0de9b15
-	parent = 810eb4b5edd54a3275894ac3c441ea2cc1030c4b
-	cmdver = 0.2.0
+	commit = ac627e37f40e8238beae15b187f594e7a91e2826
+	parent = b8a90928e44e6fd04c78a55fbbcb043919fd2c74
+	cmdver = 0.2.1

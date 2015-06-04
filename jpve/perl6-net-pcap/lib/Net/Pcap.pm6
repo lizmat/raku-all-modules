@@ -54,7 +54,7 @@ is repr('CStruct')
 Implements `pcap_pkthdr_t`.
 =end code
 
-class Net::Pcap is repr('CPointer');
+unit class Net::Pcap is repr('CPointer');
 
 my constant Pcap is export(:short) ::= Net::Pcap;
 
