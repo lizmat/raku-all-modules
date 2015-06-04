@@ -1,6 +1,6 @@
 use v6;
 
-module t::Bridge;
+unit module t::Bridge;
 
 use YAML;
 

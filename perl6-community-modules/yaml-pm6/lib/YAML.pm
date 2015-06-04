@@ -1,6 +1,6 @@
 use v6;
 
-module YAML;
+unit module YAML;
 
 use YAML::Dumper;
 

@@ -1,5 +1,5 @@
 use v6;
-class YAML::Dumper;
+unit class YAML::Dumper;
 
 has $.out is rw = [];
 has $.seen is rw = {};
