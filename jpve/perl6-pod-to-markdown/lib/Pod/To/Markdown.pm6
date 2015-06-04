@@ -27,7 +27,7 @@ say pod2markdown($=pod);
 
 =DESCRIPTION
 
-class Pod::To::Markdown;
+unit class Pod::To::Markdown;
 
 #| Render Pod as Markdown
 sub pod2markdown($pod, Str :$positional-separator? = "\n\n") is export {
@@ -161,7 +161,7 @@ sub declarator2markdown($pod) {
 	    $ret ~= head2markdown($lvl+1, "sub $name") ~ "\n\n";
 	    $ret ~= "```\nsub $name" ~ signature2markdown(@params) ~ "$returns\n```";
         }
-        when nqp::p6bool(nqp::istype($_.HOW, Metamodel::ClassHOW)) {
+        when .HOW ~~ Metamodel::ClassHOW {
 	    if ($_.WHAT.perl eq 'Attribute') {
 		my $name = $_.gist.subst('!', '.');
 		$ret ~= head2markdown($lvl+1, "has $name");
@@ -171,11 +171,11 @@ sub declarator2markdown($pod) {
 		$ret ~= head2markdown($lvl, "class $name");
 	    }
         }
-        when nqp::p6bool(nqp::istype($_.HOW, Metamodel::ModuleHOW)) {
+        when .HOW ~~ Metamodel::ModuleHOW {
 	    my $name = $_.perl;
 	    $ret ~= head2markdown($lvl, "module $name");
         }
-        when nqp::p6bool(nqp::istype($_.HOW, Metamodel::PackageHOW)) {
+        when .HOW ~~ Metamodel::PackageHOW {
 	    my $name = $_.perl;
 	    $ret ~= head2markdown($lvl, "package $name");
         }
@@ -211,19 +211,19 @@ my %HTMLformats =
 
 
 sub formatting2markdown($pod) {
-    return if $pod.type eq 'Z';
+    return '' if $pod.type eq 'Z';
     my $text = $pod.contents>>.&pod2markdown.join;
     $text = '[' ~ $text ~ '](' ~ $text ~ ')'
 	if $pod.type eq 'L';
-    
+
     $text = %Mformats{$pod.type} ~ $text ~ %Mformats{$pod.type}
-        if %Mformats.exists_key: $pod.type;
+        if %Mformats.EXISTS-KEY: $pod.type;
 
     $text = sprintf '<%s>%s</%s>',
         %HTMLformats{$pod.type},
         $text,
  	%HTMLformats{$pod.type}
-	if %HTMLformats.exists_key: $pod.type;
+	if %HTMLformats.EXISTS-KEY: $pod.type;
 
     $text;
 }
