@@ -43,7 +43,7 @@ class XML::Writer {
     }
 
     method element_attrs(@attrs) {
-        [~] @attrs.for({ sprintf ' %s="%s"', .key, $.escape(.value) });
+        [~] @attrs.flatmap({ sprintf ' %s="%s"', .key, $.escape(.value) });
     }
 
     method escape($str) {
