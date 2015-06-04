@@ -1,0 +1,11 @@
+{
+    "name" : "Hash::MultiValue",
+    "version" : "0.1",
+    "description" : "Store multiple values per key, but act like a regular hash",
+    "author" : "Andrew Sterling Hanenkamp",
+    "provides" : {
+        "Hash::MultiValue": "lib/Hash/MultiValue.pm6"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/zostay/p6-Hash-MultiValue.git"
+}
