@@ -70,8 +70,8 @@ DESCRIPTION
        were placed with their origins coincident, and then painted.
 
     $afm.KernData
-       A two dimensional hash of from and two glyphs and kerning
-       amount.
+       A two dimensional hash containing from and to glyphs and kerning
+       widths.
 
     $afm.UnderlinePosition
        Recommended distance from the baseline for positioning
@@ -115,10 +115,6 @@ DESCRIPTION
        Returns a hash table that maps from glyph names to bounding
        box information. The bounding box consist of 4 numbers: llx,
        lly, urx, ury.
-
-    $afm.dump
-       Dumps the content of the Font::AFM object to STDOUT. Might
-       sometimes be useful for debugging.
 
     The AFM specification can be found at:
 

@@ -91,7 +91,7 @@ origins coincident, and then painted.
 
 =item $afm.KernData
 
-A two dimenionsal hash of from and two glyphs and kerning amount.
+A two dimensional hash containing from and to glyphs and kerning widths.
 
 =item $afm.UnderlinePosition
 
