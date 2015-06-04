@@ -50,6 +50,18 @@ Default: ```False```
 
 Stop overwatch if the <program> exited with a non-zero code.
 
+###Git
+
+```
+-g | --git
+```
+
+Default: ```0```
+
+Checks default upstream git repository and pulls if local is behind.
+
+A value of zero or less disables this option.
+
 ###Quiet
 
 ```

@@ -7,6 +7,7 @@ sub MAIN (
   Str :e(:$execute) = 'perl6', 
   Bool :k(:$keep-alive) = True, 
   Bool :x(:$exit-on-error) = False, 
+  Int  :g(:$git) = -1,
   Bool :q(:$quiet) = False,
   Str :f(:$filter) = '',
   :w(:@watch) = [],
@@ -18,13 +19,17 @@ sub MAIN (
 
   @filters = $filter.split(',').map({ .trim });
 
+  my $interval = $git;
+  $interval = 5 if $interval ~~ Bool && $interval:so;
+
   if !$quiet {
     '[INFO] Starting overseer with options:'.say;
-    "[INFO]    --execute: $execute".say;
-    "[INFO]    --restart: $execute".say;
-    "[INFO]    --filters: {@filters.join(', ')}".say;
-    "[INFO]      --watch: {@watch.join(', ')}".say;
-    "[INFO]       script: {@args.map({ "'$_'" }).join(' ')}".say;
+    "[INFO]   --execute: $execute".say;
+    "[INFO]   --restart: $execute".say;
+    "[INFO]   --filters: {@filters.join(', ')}".say;
+    "[INFO]     --watch: {@watch.join(', ')}".say;
+    "[INFO]       --git: {$interval <= 0 ?? 'disabled' !! "{$interval}m"}".say;
+    "[INFO]      script: {@args.map({ "'$_'" }).join(' ')}".say;
   }
 
   for @watch -> $dir {
@@ -50,6 +55,25 @@ sub MAIN (
       }
     }
   }
+  
+  my $s;
+  if $interval >= 0 {
+    start { 
+      $s = Supply.interval($interval * 60);
+      my Promise $p .= new;
+      $s.tap({
+        qx<git remote update>; 
+        my $local  = qx<git rev-parse @{0}>.chomp; 
+        my $remote = qx<git rev-parse @{u}>.chomp; 
+        my $base   = qx<git merge-base @{0} @{u}>.chomp;
+        if $local ne $remote && $local eq $base {
+          '[INFO] Pulling from remote repository'.say;
+          qx<git pull>;
+        }
+      }, quit => { $p.keep; });
+      await $p;
+    };
+  }
 
   signal(SIGTERM,SIGINT,SIGHUP,SIGQUIT).tap({
     "[INFO] Killing process with $_".say if !$quiet;
@@ -71,6 +95,7 @@ sub MAIN (
     }
     "[INFO] Restarting $execute {@args.map({ "'$_'" }).join(' ')}".say if !$quiet;
   }
+  try $s.quit;
 }
 
 sub USAGE {
@@ -99,6 +124,12 @@ Options:
 {$space x 2}Default: False
 {$space x 2}Stop overwatch if the <program> exited with a
 {$space x 2}non-zero code.
+
+{$space}-g \| --git
+{$space x 2}Default: 0
+{$space x 2}Checks default upstream git repository and pulls
+{$space x 2}if local is behind. 
+{$space x 2}A value of zero or less disables this option.
 
 {$space}-q \| --quiet
 {$space x 2}Default: False
