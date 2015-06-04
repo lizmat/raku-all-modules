@@ -8,28 +8,17 @@ enum HTTP::Header::Standard::Name is export
         Upgrade Via Warning
 
         Accept Accept-Charset Accept-Encoding Accept-Language
-        Authorization Expect From Host If-Match If-Modified-Since
+        Authorization Cookie Expect From Host If-Match If-Modified-Since
         If-None-Match If-Range If-Unmodified-Since Max-Forwards
         Proxy-Authorization Range Referer TE User-Agent
 
         Accept-Ranges Age ETag Location Proxy-Authenticate Retry-After
-        Server Vary WWW-Authenticate
+        Server Set-Cookie Vary WWW-Authenticate
 
         Allow Content-Encoding Content-Language Content-Length
         Content-Location Content-MD5 Content-Range Content-Type
         Expires Last-Modified
     >;
-
-#| Performs a reverse lookup of headers by header name
-sub standard-header-by-name($name) returns HTTP::Header::Standard::Name is export {
-    my $v = HTTP::Header::Standard::Name.enums{$name};
-    if $v.defined {
-        HTTP::Header::Standard::Name($v);
-    }
-    else {
-        HTTP::Header::Standard::Name;
-    }
-}
 
 class HTTP::Headers { ... }
 
@@ -78,7 +67,14 @@ role HTTP::Header {
         my $self = self;
         Proxy.new(
             FETCH => method () {
-                try { $self.prepared-values[0].comb(/ <-[ ; ]>+ /)[0].trim }
+                try { 
+                    if $self.values.elems > 0 {
+                        $self.prepared-values[0].comb(/ <-[ ; ]>+ /)[0].trim 
+                    }
+                    else {
+                        Str
+                    }
+                }
             },
             STORE => method ($new) {
                 my $value = @($self.prepared-values)[0];
@@ -173,6 +169,7 @@ role HTTP::Header {
 
     method Bool { ?@!values } #= True if this header has values
     method Str  { self.value } #= Same as calling .value
+    method Int  { self.value.Int } #= Treat the whole value as an Int
     method list { self.prepared-values } #= Same as calling .prepared-values
 }
 
@@ -212,11 +209,6 @@ role HTTP::Header::Standard::Content-Type {
 class HTTP::Header::Custom does HTTP::Header {
     has Str $.name;
 
-    submethod BUILD(:$!name, :$values) {
-        $!name = $!name.trans('_' => ' ', '-' => ' ').wordcase.trans(' ' => '-');
-        @!values = $values.list;
-    }
-
     method clone {
         my HTTP::Header::Custom $obj .= new(:$!name);
         $obj.values = @.values;
@@ -226,12 +218,76 @@ class HTTP::Header::Custom does HTTP::Header {
 
 #! A group of headers
 class HTTP::Headers {
-    has HTTP::Header %.headers; #= Internal header storage... no touchy
+    has HTTP::Header %!headers; #= Internal header storage... no touchy
     has Bool $.quiet = False; #= Silence all warnings
+
+    method internal-headers() { %!headers }
+
+    #| Initialze headers with a list of pairs
+    multi method new(@headers, Bool :$quiet = False) {
+        my $self = self.bless(:$quiet);
+        $self.headers(@headers) if @headers;
+        $self;
+    }
+
+    #| Initialize headers with an array
+    multi method new(%headers, Bool :$quiet = False) {
+        my $self = self.bless(:$quiet);
+        $self.headers(%headers) if %headers;
+        $self;
+    }
+
+    #| Initialize headers empty or with a slurpy list of pairs or a slurpy hash
+    multi method new(Bool :$quiet = False, *@headers, *%headers) {
+        my $self = self.bless(:$quiet);
+        $self.headers(%headers) if %headers;
+        $self.headers(@headers) if @headers;
+        $self;
+    }
+
+    #| Set multiple headers from a list of pairs
+    multi method headers(@headers) {
+        my $seen = SetHash.new;
+        for flat @headers».kv -> $k, $v {
+            if $seen ∋ $k {
+                self.header($k).push: $v;
+            }
+            else {
+                self.header($k) = $v;
+                $seen{$k}++;
+            }
+        }
+    }
+
+    #| Set multiple headers from a hash
+    multi method headers(%headers) {
+        for flat %headers.kv -> $k, $v {
+            self.header($k) = $v;
+        }
+    }
+
+    #| Set multiple headers from a slurpy list of pairs or slurpy hash
+    multi method headers(*@headers, *%headers) {
+        my $seen = SetHash.new;
+        for flat @headers».kv, %headers.kv -> $k, $v {
+            if $seen ∋ $k {
+                self.header($k).push: $v;
+            }
+            else {
+                self.header($k) = $v;
+                $seen{$k}++;
+            }
+        }
+    }
 
     #| Helper for building header objects
     method build-header($name, *@values) returns HTTP::Header { 
-        if my $std = standard-header-by-name($name) {
+        my $std-name = $name;
+        if $name ~~ Str {
+            $std-name = $name.trans('_' => ' ', '-' => ' ').wordcase.trans(' ' => '-');
+        }
+
+        if my $std = ::($std-name) {
             my $h = HTTP::Header::Standard.new(:name($std), :@values);
             if $std ~~ HTTP::Header::Standard::Name::Content-Type {
                 $h but HTTP::Header::Standard::Content-Type;
@@ -241,7 +297,7 @@ class HTTP::Headers {
             }
         }
         else {
-            HTTP::Header::Custom.new(:$name, :@values);
+            HTTP::Header::Custom.new(:name($std-name), :@values);
         }
     }
 
@@ -260,7 +316,7 @@ class HTTP::Headers {
     method clone {
         my HTTP::Headers $obj .= new;
         for %!headers.kv -> $k, $v {
-            $obj.headers{$k} = $v.clone;
+            $obj.internal-headers{$k} = $v.clone;
         }
         $obj;
     }
@@ -283,19 +339,24 @@ class HTTP::Headers {
     #| Read or write a custom header
     multi method header(Str $name, :$quiet = False) is rw returns HTTP::Header {
         warn qq{Calling .header($name) is preferred to .header("$name") for standard HTTP headers.}
-            if !$!quiet && !$quiet && standard-header-by-name($name).defined;
+            if !$!quiet && !$quiet && ::($name).defined;
 
         self.header-proxy($name);
     }
 
     #| Remove a header
-    method remove-header($name) {
+    multi method remove-header($name) {
         my $tmp = self.build-header($name);
         %!headers{$tmp.key} :delete;
     }
+    
+    method remove-headers(*@names) {
+        DEPRECATED('remove-header',|<0.2 1.0>);
+        self.remove-header(|@names);
+    }
 
     #| Remove more than one header
-    method remove-headers(*@names) {
+    multi method remove-header(*@names) {
         do for @names -> $name {
             my $tmp = self.build-header($name);
             %!headers{$tmp.key} :delete;
@@ -304,7 +365,7 @@ class HTTP::Headers {
 
     #| Remove all the entity and Content-* headers
     method remove-content-headers {
-        self.remove-headers( %!headers.keys.grep(/^ content "-"/), <
+        self.remove-header( %!headers.keys.grep(/^ content "-"/), <
             Allow Content-Encoding Content-Language Content-Length
             Content-Location Content-MD5 Content-Range Content-Type
             Expires Last-Modified
@@ -343,16 +404,21 @@ class HTTP::Headers {
         }
     }
 
-    #| Iterate over the headers in sorted order
     method for(&code) {
+        # DEPRECATED WITHIN RAKUDO!!!
         self.sorted-headers.for: &code;
+    }
+
+    #| Iterate over the headers in sorted order
+    method flatmap(&code) {
+        self.sorted-headers.flatmap: &code;
     }
 
     #| Output the headers as a string in sorted order
     method as-string(Str :$eol = "\n") {
         self.vacuum;
 
-        my $string = join $eol, self.for: -> $header {
+        my $string = join $eol, self.flatmap: -> $header {
             $header.as-string(:$eol);
         };
 
@@ -365,7 +431,7 @@ class HTTP::Headers {
 
     #| Return the headers as a list of Pairs for use with PSGI
     method for-PSGI {
-        self.for: -> $h { 
+        self.flatmap: -> $h { 
             do for $h.prepared-values -> $v {
                 ~$h.name => ~$v
             }
@@ -387,6 +453,7 @@ class HTTP::Headers {
     method Accept-Encoding     is rw { self.header(HTTP::Header::Standard::Name::Accept-Encoding) }
     method Accept-Langauge     is rw { self.header(HTTP::Header::Standard::Name::Accept-Language) }
     method Authorization       is rw { self.header(HTTP::Header::Standard::Name::Authorization) }
+    method Cookie              is rw { self.header(HTTP::Header::Standard::Name::Cookie) }
     method Expect              is rw { self.header(HTTP::Header::Standard::Name::Expect) }
     method From                is rw { self.header(HTTP::Header::Standard::Name::From) }
     method Host                is rw { self.header(HTTP::Header::Standard::Name::Host) }
@@ -409,6 +476,7 @@ class HTTP::Headers {
     method Proxy-Authenticate  is rw { self.header(HTTP::Header::Standard::Name::Proxy-Authenticate) }
     method Retry-After         is rw { self.header(HTTP::Header::Standard::Name::Retry-After) }
     method Server              is rw { self.header(HTTP::Header::Standard::Name::Server) }
+    method Set-Cookie          is rw { self.header(HTTP::Header::Standard::Name::Set-Cookie) }
     method Vary                is rw { self.header(HTTP::Header::Standard::Name::Vary) }
     method WWW-Authenticate    is rw { self.header(HTTP::Header::Standard::Name::WWW-Authenticate) }
 

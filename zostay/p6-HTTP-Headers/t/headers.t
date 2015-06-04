@@ -9,7 +9,7 @@ my (HTTP::Headers $h, HTTP::Headers $h2);
 
 $h = HTTP::Headers.new;
 ok($h);
-isa_ok($h, "HTTP::Headers");
+isa-ok($h, "HTTP::Headers");
 is($h.as-string, "");
 
 $h .= new;
@@ -37,7 +37,7 @@ is($h.header("Not-There").list, []);
 
 $h.header("Foo") = [ 1, 1 ];
 is(~$h.header("Foo"), "1, 1");
-is_deeply($h.header("Foo").list, (1, 1).list.item);
+is-deeply($h.header("Foo").list, (1, 1).list.item);
 $h.header('foo') = 11;
 $h.header('Foo').push: 12; 
 $h.header('bar') = 22;
@@ -71,7 +71,7 @@ is($h.as-string, $h.clone.as-string);
 is($h.clone.remove-header("Foo"), '1');
 is($h.clone.remove-header("Bar"), '2');
 is($h.clone.remove-header("Baz"), '2, 3');
-is($h.clone.remove-headers(<Foo Bar Baz Not-There>).elems, 4);
+is($h.clone.remove-header(|<Foo Bar Baz Not-There>).elems, 4);
 is($h.clone.remove-header("Not-There"), HTTP::Header);
 
 $h .= new;
@@ -102,13 +102,13 @@ Content-Foo: bar
 Zoo: foo
 EOT
 
-is_deeply([ $h.list».name ], [
+is-deeply([ $h.list».name ], [
     Date, User-Agent, ETag, Allow, Content-Encoding, Content-MD5,
     Content-Type, Expires, Last-Modified, "Content", "Content-Foo",
     "Zoo",
 ]);
 
-is_deeply([ $h.for-PSGI ], [
+is-deeply([ $h.for-PSGI ], [
     'Date' => 'today',
     'User-Agent' => 'libwww-perl',
     'ETag' => 'abc',
@@ -126,7 +126,7 @@ is_deeply([ $h.for-PSGI ], [
 $h2 = $h.clone;
 is($h.as-string, $h2.as-string);
 isnt($h.WHICH, $h2.WHICH);
-isnt($h.headers.WHICH, $h2.headers.WHICH);
+isnt($h.internal-headers.WHICH, $h2.internal-headers.WHICH);
  
 $h.remove-content-headers;
 is($h.as-string, q:to/EOT/);

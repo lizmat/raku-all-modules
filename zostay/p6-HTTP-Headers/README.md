@@ -96,16 +96,10 @@ See [HTTP::Header](HTTP::Header) for details.
 method remove-header
 --------------------
 
-    method remove-header($name) returns HTTP::Header
+    multi method remove-header($name) returns HTTP::Header
+    multi method remove-headers(*@names) returns List
 
-This method will remove a header from the list. The removed [HTTP::Header](HTTP::Header) object is returned.
-
-method remove-headers
----------------------
-
-    method remove-headers(*@names) returns List
-
-This method remove multiple headers. The removed header objects are returned in a list.
+These methods will remove headers from the list. The removed [HTTP::Header](HTTP::Header) object is returned.
 
 method remove-content-headers
 -----------------------------
