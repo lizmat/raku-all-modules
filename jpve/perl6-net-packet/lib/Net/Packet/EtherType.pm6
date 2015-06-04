@@ -18,7 +18,7 @@ Net::Packet::EtherType - Enumerator to describe EtherType.
 
 =head2 enum Net::Packet::EtherType
 
-module Net::Packet::EtherType;
+unit module Net::Packet::EtherType;
 
 enum Net::Packet::EtherType (
     IPv4             => 0x0800,

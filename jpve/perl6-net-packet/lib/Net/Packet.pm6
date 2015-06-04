@@ -57,7 +57,7 @@ exports:
 
 =head2 module Net::Packet
 
-module Net::Packet;
+unit module Net::Packet;
 
 =head3 Subroutines
 

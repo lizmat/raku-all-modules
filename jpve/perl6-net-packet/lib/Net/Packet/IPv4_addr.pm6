@@ -25,7 +25,7 @@ Net::Packet::IPv4_addr
 
 =head2 class Net::Packet::IPv4_addr
 
-class Net::Packet::IPv4_addr;
+unit class Net::Packet::IPv4_addr;
 
 my constant IPv4_addr is export(:short) ::= Net::Packet::IPv4_addr;
 

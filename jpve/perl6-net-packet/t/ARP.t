@@ -38,12 +38,12 @@ subtestdiag 'ARP.decode: Decode ARP packet', {
     use Net::Packet::Ethernet :short;
     
     my $arp = ARP.decode($arp_pkt);
-    isa_ok $arp.hw_type, ARP::HardwareType,
+    isa-ok $arp.hw_type, ARP::HardwareType,
 	'.hw_type: Decodes hardware type to ARP::HardwareType';
     is $arp.hw_type.value, $hw_type_Int,
 	'.hw_type: Decodes hardware type';
 
-    isa_ok $arp.proto_type, EtherType,
+    isa-ok $arp.proto_type, EtherType,
         '.proto_type: Decodes protocol type to EtherType';
     is $arp.proto_type.value, $proto_type_Int,
 	'.proto_type: Decodes protocol type';
@@ -53,25 +53,25 @@ subtestdiag 'ARP.decode: Decode ARP packet', {
     is $arp.proto_len, $proto_len_Int,
 	'.proto_len: Decodes protocol address length';
 
-    isa_ok $arp.operation, ARP::Operation,
+    isa-ok $arp.operation, ARP::Operation,
         '.operation: Decodes operation to ARP::Operation';
     is $arp.operation.value, $oper_Int,
 	'.operation: Decodes operation code';
 
-    isa_ok $arp.src_hw_addr, MAC_addr,
+    isa-ok $arp.src_hw_addr, MAC_addr,
 	'.src_hw_addr: Decodes source hardware address to MAC address';
     is $arp.src_hw_addr.Int, $mac_src_Int,
 	'.src_hw_addr: Decodes source hardware address';
-    isa_ok $arp.src_proto_addr, IPv4_addr,
+    isa-ok $arp.src_proto_addr, IPv4_addr,
 	'.src_proto_addr: Decodes source protocol address to IPv4 address';
     is $arp.src_proto_addr.Int, $ip_src_Int,
 	'.src_proto_addr: Decodes source ip address';
 
-    isa_ok $arp.dst_hw_addr, MAC_addr,
+    isa-ok $arp.dst_hw_addr, MAC_addr,
 	'.dst_hw_addr: Decodes source hardware address to MAC address';
     is $arp.dst_hw_addr.Int, $mac_dst_Int,
 	'.dst_hw_addr: Decodes source hardware address';
-    isa_ok $arp.dst_proto_addr, IPv4_addr,
+    isa-ok $arp.dst_proto_addr, IPv4_addr,
 	'.dst_proto_addr: Decodes source protocol address to IPv4 address';
     is $arp.dst_proto_addr.Int, $ip_dst_Int,
 	'.dst_proto_addr: Decodes source ip address';

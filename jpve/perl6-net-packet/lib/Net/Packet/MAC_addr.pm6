@@ -26,7 +26,7 @@ Net::Packet::MAC_addr - Decode and format MAC addresses.
 
 =head2 class Net::Packet::MAC_addr
 
-class Net::Packet::MAC_addr;
+unit class Net::Packet::MAC_addr;
 
 my constant MAC_addr is export(:short) ::= Net::Packet::MAC_addr;
 

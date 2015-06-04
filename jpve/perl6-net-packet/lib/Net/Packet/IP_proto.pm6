@@ -26,7 +26,7 @@ Net::Packet::IP_proto
 
 =head2 enum Net::Packet::IP_proto
 
-module Net::Packet::IP_proto;
+unit module Net::Packet::IP_proto;
 
 enum Net::Packet::IP_proto (
     ICMP => 0x01,

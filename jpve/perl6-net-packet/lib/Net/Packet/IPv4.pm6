@@ -38,7 +38,7 @@ The byte buffer can be of the builtin Buf type or the C_Buf type of Net::Pcap.
 is Net::Packet::Base
 =end code
     
-class Net::Packet::IPv4 is Net::Packet::Base;
+unit class Net::Packet::IPv4 is Net::Packet::Base;
     
 my constant IPv4 is export(:short) ::= Net::Packet::IPv4;
 my constant IPv4_addr is export(:short) ::= Net::Packet::IPv4_addr;

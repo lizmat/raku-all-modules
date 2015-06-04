@@ -39,17 +39,17 @@ subtestdiag 'Ethernet.decode: Decode Ethernet header', {
     use Net::Packet::Ethernet :short;
     
     my $eth = Ethernet.decode($ethernet_hdr);
-    isa_ok $eth.src, MAC_addr,
+    isa-ok $eth.src, MAC_addr,
 	'.src: Decodes source address to a MAC_addr object';
     is $eth.src.Int, $mac_src_Int,
 	'.src: Decodes source address correctly';
 
-    isa_ok $eth.dst, MAC_addr,
+    isa-ok $eth.dst, MAC_addr,
         '.dst: Decodes destination address to a MAC_addr object';
     is $eth.dst.Int, $mac_dst_Int,
         '.dst: Decodes destination address correctly';
 
-    isa_ok $eth.type, EtherType,
+    isa-ok $eth.type, EtherType,
 	'.type: Decodes type to EtherType';
     is $eth.type.Int, $ethertype_Int,
 	'.type: Decodes EthernetType';

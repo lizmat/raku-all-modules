@@ -73,7 +73,7 @@ subtestdiag 'IPv4.decode: Decode IPv4 header', {
     is $ip.ttl, $ttl_Int,
         '.ttl: Decodes ttl field';
 
-    isa_ok $ip.proto, IP_proto,
+    isa-ok $ip.proto, IP_proto,
         '.proto: Decodes proto field to IP_proto type';
     is $ip.proto.value, $proto_Int,
 	'.proto: Decodes proto field';
@@ -81,12 +81,12 @@ subtestdiag 'IPv4.decode: Decode IPv4 header', {
     is $ip.hdr_chksum, $hdr_chksum_Int,
 	'.hdr_chksum: Decodes header checksum field';
 
-    isa_ok $ip.src, IPv4_addr,
+    isa-ok $ip.src, IPv4_addr,
     	'.src: Decodes source address to a IPv4_addr object';
     is $ip.src.Int, $ip_src_Int,
     	'.src: Decodes source address correctly';
 
-    isa_ok $ip.dst, IPv4_addr,
+    isa-ok $ip.dst, IPv4_addr,
         '.dst: Decodes destination address to a IPv4_addr object';
     is $ip.dst.Int, $ip_dst_Int,
         '.dst: Decodes destination address correctly';

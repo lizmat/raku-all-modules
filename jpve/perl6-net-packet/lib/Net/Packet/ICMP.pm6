@@ -31,7 +31,7 @@ Net::Packet::ICMP
 is Net::Packet::Base
 =end code
 
-class Net::Packet::ICMP is Base;
+unit class Net::Packet::ICMP is Base;
 
 my constant ICMP is export(:short) ::= Net::Packet::ICMP;
 

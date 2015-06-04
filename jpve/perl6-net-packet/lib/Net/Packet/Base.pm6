@@ -1,4 +1,4 @@
-class Net::Packet::Base;
+unit class Net::Packet::Base;
 
 my constant Base is export(:short) ::= Net::Packet::Base;
 
