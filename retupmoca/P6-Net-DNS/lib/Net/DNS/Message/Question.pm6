@@ -1,6 +1,6 @@
 use Net::DNS::Message::DomainName;
 
-class Net::DNS::Message::Question does Net::DNS::Message::DomainName;
+unit class Net::DNS::Message::Question does Net::DNS::Message::DomainName;
 
 has Str @.qname is rw;
 has Int $.qtype is rw = 0;

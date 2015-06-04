@@ -1,4 +1,4 @@
-class Net::DNS;
+unit class Net::DNS;
 
 use Net::DNS::Message;
 

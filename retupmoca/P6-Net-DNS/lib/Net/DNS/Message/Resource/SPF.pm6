@@ -1,4 +1,4 @@
-role Net::DNS::Message::Resource::SPF;
+unit role Net::DNS::Message::Resource::SPF;
 
 class Net::DNS::SPF {
     has @.owner-name;

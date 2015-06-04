@@ -1,4 +1,4 @@
-class Net::DNS::Message::Header;
+unit class Net::DNS::Message::Header;
 
 has Int $.id is rw = 0;
 has Int $.qr is rw = 0;

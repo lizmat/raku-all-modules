@@ -1,4 +1,4 @@
-class Net::DNS::Message;
+unit class Net::DNS::Message;
 
 use Net::DNS::Message::Header;
 use Net::DNS::Message::Question;

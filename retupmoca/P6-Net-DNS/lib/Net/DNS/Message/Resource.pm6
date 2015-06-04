@@ -11,7 +11,7 @@ use Net::DNS::Message::Resource::SRV;
 use Net::DNS::Message::Resource::TXT;
 use Net::DNS::Message::Resource::SOA;
 
-class Net::DNS::Message::Resource does Net::DNS::Message::DomainName;
+unit class Net::DNS::Message::Resource does Net::DNS::Message::DomainName;
 
 has Str @.name is rw;
 has Int $.type is rw = 0;

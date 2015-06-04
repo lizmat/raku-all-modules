@@ -1,4 +1,4 @@
-role Net::DNS::Message::Resource::MX;
+unit role Net::DNS::Message::Resource::MX;
 
 class Net::DNS::MX {
     has @.owner-name;

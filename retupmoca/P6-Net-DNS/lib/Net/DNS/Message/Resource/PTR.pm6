@@ -1,4 +1,4 @@
-role Net::DNS::Message::Resource::PTR;
+unit role Net::DNS::Message::Resource::PTR;
 
 class Net::DNS::PTR {
     has @.owner-name;

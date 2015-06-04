@@ -1,4 +1,4 @@
-role Net::DNS::Message::DomainName;
+unit role Net::DNS::Message::DomainName;
 
 method parse-domain-name($data is copy, %name-offsets is rw, $start-offset) {
     my @offset-list = (0);

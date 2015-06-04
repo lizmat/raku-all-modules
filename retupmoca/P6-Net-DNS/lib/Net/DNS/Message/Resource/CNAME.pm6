@@ -1,4 +1,4 @@
-role Net::DNS::Message::Resource::CNAME;
+unit role Net::DNS::Message::Resource::CNAME;
 
 class Net::DNS::CNAME {
     has @.owner-name;
