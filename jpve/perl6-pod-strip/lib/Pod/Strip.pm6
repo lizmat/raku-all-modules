@@ -16,7 +16,7 @@ Pod::Strip
 
 =head2 module Pod::Strip;
 
-module Pod::Strip;
+unit module Pod::Strip;
 
 =head3 Subroutines
 

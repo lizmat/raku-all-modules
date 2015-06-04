@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jpve/perl6-pod-strip.git
 	branch = master
-	commit = f4aa9287f7700d0c5d3d666bb12f786fbaf6882c
-	parent = 3f9a37fd58bd196169a13bedc3c2fffde54a2e09
-	cmdver = 0.1.0
+	commit = 2bb9b9dc3d593cbddc53092dcc3519b2a666afeb
+	parent = 6ceb4719ebfb5ac10064dd484044fc8c48f4ffb2
+	cmdver = 0.2.1
