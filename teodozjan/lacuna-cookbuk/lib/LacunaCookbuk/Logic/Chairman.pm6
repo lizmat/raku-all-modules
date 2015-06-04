@@ -23,7 +23,7 @@ class BuildGoal {
 
 has LacunaCookbuk::Logic::Chairman::BuildGoal @.build_goals;
 
-
+#| this is not true! whe need to check right buildings by level of capitol
 has $!max_resource_building_level = 15; #=  capital ? 15 : stockpile.level
 
 constant $UNSUSTAINABLE = 1012;
@@ -81,7 +81,7 @@ method upgrade(Body $body, $goal, $infinite_recursion_protect is copy --> Bool) 
                 #=       we try to do it with another mine (maybe it has lower level)
 		when $UNSUSTAINABLE {
 		    unless $view.upgrade<reason>[2] {
-			say colored(truncate($view.upgrade<reason>[1]), 'red');
+			say colored(truncate($view.upgrade<reason>[1]), 'yellow');
 			next
 		    }
 
@@ -210,16 +210,22 @@ submethod repair_one($planet) {
     my @buildings = $planet.get_buildings;
     say "{$planet.name}:";
     for @buildings -> $b {        
-        #TODO check efficency because glyph buildings have reapir cost 0
+        #TODO check efficency because glyph buildings have repair cost 0
         $b.repair;
     }
+    CATCH {
+        default {
+            warn "Could not handle $planet"
+        }
+    }
+
 }
 
 sub truncate(Str $s) {
-    if $s.chars >128 {
+    if $s.chars >127 {
         # this can be done so many ways that it smells like great
         # stackoverflow question
-        return $s.chop($s.chars-125) ~ "..."
+        return $s.chop($s.chars-124) ~ "..."
     } else {
         return $s;
     }

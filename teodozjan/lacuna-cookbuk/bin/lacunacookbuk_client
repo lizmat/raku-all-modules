@@ -8,13 +8,14 @@ use LacunaCookbuk::Logic::BodyBuilder;
 use Term::ANSIColor;
 use LacunaCookbuk::Logic::Ambassador;
 
-sub USAGE() {
-say 'Usage:
-$*USAGE
-
-Tasks should be separated by comma'; 
-
-}
+# Seems to not work
+#sub USAGE() {
+#say 'Usage:
+#$*USAGE
+#
+#Tasks should be separated by comma'; 
+#
+#}
 
 multi sub MAIN(Str :$alliance){
 #  my LacunaCookbuk::Client $client .= new;
@@ -27,7 +28,7 @@ multi sub MAIN(Str :$alliance){
 }
 
 multi sub MAIN(Bool :$help!){
-    USAGE();
+    #USAGE();
     say "\nAvailable tasks" ~ (LacunaCookbuk::Client.^methods.map:{"\n\t" ~ colored(.gist, "bold") ~ ":\n\t\t " ~ .WHY ~ "\n"})
 }
 
@@ -58,6 +59,15 @@ multi sub MAIN(Str :$repair!){
   create_session;
   LacunaCookbuk::Logic::BodyBuilder.read;
   LacunaCookbuk::Logic::Chairman.repair_one(find_planet($repair));
+
+  close_session;  
+}
+
+multi sub MAIN(Bool :$repairall!){
+
+  create_session;
+  LacunaCookbuk::Logic::BodyBuilder.read;
+  LacunaCookbuk::Logic::Chairman.repair_all;
 
   close_session;  
 }

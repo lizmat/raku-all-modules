@@ -6,4 +6,4 @@ plan 1;
 
 use LacunaCookbuk::Client;
 
-lives_ok {LacunaCookbuk::Client.new}; 
+lives-ok {LacunaCookbuk::Client.new}; 

@@ -16,13 +16,6 @@ constant $ruler = '-' x $TERM_SIZE;
 constant @spy_header = <name level politics mayhem theft intel defense offense mission_off mission_def assignment>; 
 constant $spy_format = '{<<<<<<<<<<<<<<<<<<<<} {|||} {|||||} {|||||} {|||||} {|||||} {>>>>>}/{<<<<<} {>>>>}/{<<<<<} {<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<}';
 
-BEGIN {
-    my $f1 = form($limited_format, @summary_header).chars;
-    die "$f1 summary" unless $f1 == $TERM_SIZE;
-    my $f2 = form($spy_format, @spy_header).chars;
-    die "$f2 spy format" unless $f2 == $TERM_SIZE;
-}
-
 sub elaborate_intelligence(Planet $planet) {
     my Intelligence $imini = $planet.find_intelligence_ministry;
     my Str $numspies = ~$imini.current;

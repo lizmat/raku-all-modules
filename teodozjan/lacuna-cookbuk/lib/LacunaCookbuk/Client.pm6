@@ -16,7 +16,7 @@ use LacunaCookbuk::Model::Empire;
 
 
 #| LacunaCookbuk main client
-class LacunaCookbuk::Client;
+unit class LacunaCookbuk::Client;
 
 #| Login
 sub create_session is export {

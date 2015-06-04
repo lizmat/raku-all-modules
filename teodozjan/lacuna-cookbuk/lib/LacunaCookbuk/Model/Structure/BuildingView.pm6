@@ -1,6 +1,6 @@
 use v6;
 
-unit class BuildingView;
+unit class LacunaCookbuk::Model::Structure::BuildingView;
 
 has Str $.level;
 has Any $.pending_build;

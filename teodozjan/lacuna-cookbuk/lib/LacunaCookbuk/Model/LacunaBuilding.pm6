@@ -1,10 +1,10 @@
 use v6;
 
-use LacunaCookbuk::Model::Structure::BuildingView;
-use LacunaCookbuk::Id;
-use LacunaCookbuk::Model::Empire;
 
 use Term::ANSIColor;
+use LacunaCookbuk::Id;
+use LacunaCookbuk::Model::Empire;
+use LacunaCookbuk::Model::Structure::BuildingView;
 
 unit role LacunaBuilding;
 
@@ -16,8 +16,8 @@ method upgrade {
     rpc($!url).upgrade(session_id, $!id);    
 }
 
-method view returns BuildingView {    
-    BuildingView.new(|%(rpc($!url).view(session_id, $!id)<building>));    
+method view returns LacunaCookbuk::Model::Structure::BuildingView {    
+    LacunaCookbuk::Model::Structure::BuildingView.new(|%(rpc($!url).view(session_id, $!id)<building>));    
 }
 
 method repair {
