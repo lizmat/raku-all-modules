@@ -142,7 +142,7 @@ my $eight = Q {
 my %ei = Config::INI::parse($eight);
 
 pass 'eight config parsed';
-is_deeply %ei, { 'empty section' => {} };
+is-deeply %ei, { 'empty section' => {} };
 
 my $ninth = Q {
 [Hello... world]
@@ -151,4 +151,4 @@ my $ninth = Q {
 my %ni = Config::INI::parse($ninth);
 
 pass 'ninth config parsed';
-is_deeply %ni, { 'Hello... world' => {} };
+is-deeply %ni, { 'Hello... world' => {} };

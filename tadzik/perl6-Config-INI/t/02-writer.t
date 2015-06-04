@@ -44,7 +44,8 @@ ok 1, 'Modules loaded';
 
     ok 1, 'String parsed';
 
-    ok %new.keys ~~ <section onemore>;
+    # order dependent
+    ok %new.keys.sort ~~ <onemore section>;
 
     is %new<section><one>, 'two', 'content ok, 1/3';
     is %new<section><three>, '4', 'content ok, 2/3';

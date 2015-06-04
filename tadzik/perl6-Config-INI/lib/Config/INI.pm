@@ -31,7 +31,7 @@ class INI::Actions {
     method sections ($/) { make $<header><text>.Str => $<keyval>».ast.hash }
     # TODO: The .trim is useless, <!after \h> should be added to key regex,
     # once Rakudo implements it
-    method keyval ($/) { make $<key>.Str.trim => $<value>.Str.trim }
+    method keyval ($/) { make $<key>.Str.trim => $<value>.defined ?? $<value>.Str.trim !! '' }
 }
 
 our sub parse (Str $string) {
