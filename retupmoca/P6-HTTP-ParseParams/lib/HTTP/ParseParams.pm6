@@ -1,7 +1,7 @@
 use URI::Encode;
 
 #| Parses cookies, query parameters, and post data from HTTP requests.
-module HTTP::ParseParams;
+unit module HTTP::ParseParams;
 
 #| Pass in some data and a type, and get back a hash containing the passed parameters
 our sub parse(Str $data, Bool :$cookie, Bool :$urlencoded is copy, Bool :$formdata is copy, Str :$content-type --> Hash) {
