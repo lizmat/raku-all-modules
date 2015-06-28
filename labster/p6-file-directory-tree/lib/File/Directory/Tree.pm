@@ -1,4 +1,4 @@
-module File::Directory::Tree;
+unit module File::Directory::Tree;
 
 multi sub mktree (Cool:D $path is copy, Int :$mask = 0o777 ) is export {
 	return True if $path.IO ~~ :d;
