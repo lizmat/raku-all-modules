@@ -1,6 +1,6 @@
 use Web::App::Dispatch;
 
-module Web::App::Ballet;
+unit module Web::App::Ballet;
 
 my $app-transport;
 my $app-object;
