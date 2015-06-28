@@ -9,7 +9,7 @@ plan 12;
         :api-key("neat-key"),
         :url-post(sub ($, %) { create-withdraw-response() }));
 
-    my %resp = $j.create-withdraw-btc(
+    my %resp := $j.create-withdraw-btc(
             address => "1Q9nM6xrPdTk59JwWhWfuygWRxa1bXJW8g",
             amount => 0.01);
 

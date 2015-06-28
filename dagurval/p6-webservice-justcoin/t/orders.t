@@ -5,7 +5,7 @@ use WebService::Justcoin;
 plan 17;
 
 my $j := WebService::Justcoin.new(:url-get(sub ($) { }));
-dies_ok { $j.orders() }, "method requires API key";
+dies-ok { $j.orders() }, "method requires API key";
 
 # no orders in book
 {
@@ -48,7 +48,7 @@ dies_ok { $j.orders() }, "method requires API key";
     my $res = $j.create-order(:market("BTCNOK"), :type("bid"), :price(10.0), :amount(0.01));
     ok $res{'id'}:exists, "got id back";
 
-    dies_ok { $j.create-order(:market("BTCNOK", :type("invalid"), :price(10000), :amount(1.0))) }, "invalid type";
+    dies-ok { $j.create-order(:market("BTCNOK", :type("invalid"), :price(10000), :amount(1.0))) }, "invalid type";
 
     # market price
     $res = $j.create-order(:market("BTCNOK"), :type("ask"), :amount(0.1));
@@ -60,7 +60,7 @@ dies_ok { $j.orders() }, "method requires API key";
     $j := WebService::Justcoin.new(
         :api-key("some-nice-key"),
         :url-delete(sub ($) { }));
-    lives_ok { $j.cancel-order(1234); }, "lives running cancel-order";
+    lives-ok { $j.cancel-order(1234); }, "lives running cancel-order";
 }
 
 sub no-orders-response { "[ ]" }

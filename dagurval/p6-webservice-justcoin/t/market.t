@@ -29,7 +29,7 @@ plan 20;
     my $j := WebService::Justcoin.new(
             :url-get(sub ($url) { response_markets() }));
 
-    my %market = $j.markets(:id("BTCNOK"));
+    my %market := $j.markets(:id("BTCNOK"));
     is %market{"id"}, "BTCNOK", "Fetched BTCNOK market";
 
     %market = $j.markets(:id("Does not exist"));
@@ -40,7 +40,7 @@ plan 20;
 {
     my $j := WebService::Justcoin.new(
             :url-get(sub ($url) { response-depth() }));
-    my %depth = $j.market-depth("BTCNOK");
+    my %depth := $j.market-depth("BTCNOK");
     ok %depth{'bids'}:exists, "has bids in response";
     ok %depth{'asks'}:exists, "has asks in response";
 
@@ -50,7 +50,7 @@ plan 20;
     # empty order book
     $j := WebService::Justcoin.new(
             :url-get(sub ($url) { response-no-depth() }));
-    %depth = $j.market-depth("NON-EXISTING-MARKET");
+    %depth := $j.market-depth("NON-EXISTING-MARKET");
     ok %depth{'bids'}:exists, "has bids in response";
     ok %depth{'asks'}:exists, "has asks in response";
 

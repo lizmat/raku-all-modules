@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dagurval/p6-webservice-justcoin.git
 	branch = master
-	commit = 7ad7cd4e1992555d00bc16c38e47dc6e558100dc
-	parent = 64af70f0045212ecaaf665c3fdc7b3a17ef7c400
-	cmdver = 0.1.0
+	commit = 98be2f1b54ce93fd127dd7a7f3ac96063549bcba
+	parent = bb2142b47decc201536ac6b629ca2d68e3bb7538
+	cmdver = 0.2.1
