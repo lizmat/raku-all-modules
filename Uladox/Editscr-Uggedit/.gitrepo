@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Uladox/Editscr-Uggedit.git
+	branch = master
+	commit = bc713a295881618daf7a7cb5bc99f0a6681b1be0
+	parent = e0411085ef4060554c9657e3d13598e1a06eb3e4
+	cmdver = 0.2.1

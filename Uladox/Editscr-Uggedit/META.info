@@ -1,0 +1,11 @@
+{
+    "name"        : "Editsrc::Uggedit",
+    "version"     : "*",
+    "author"      : "Uladox <uladoxiental@gmail.com>",
+    "description" : "Uggh I need to edit a text file in some copy paste way...wait, perl modules!",
+    "depends"     : [ "File::Temp" ],
+    "source-url"  : "git://github.com/Uladox/Editscr-Uggedit.git",
+    "provides"    : {
+        "Editsrc::Uggedit" : "lib/Editsrc/Uggedit.pm"
+     }
+}

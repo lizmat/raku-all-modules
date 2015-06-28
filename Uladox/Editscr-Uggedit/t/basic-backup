@@ -1,0 +1,11 @@
+#//@uggedit src_k {
+Some text is to be
+put on in this field
+//@uggedit src_k }
+//@uggedit src_k/edit code perl6 {
+$field ~= "Look: \"This text won't be added the first time\"\n";
+#! # Also for languages without multiline comments
+#! # A line stating with any character, then a '!'
+#! # followed by whitespace will still be read
+#! print  "just without those things read\n";
+//@uggedit src_k/edit }
