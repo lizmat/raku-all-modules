@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Coroutines.git
 	branch = master
-	commit = 86ad288b8ae4bef59606af928806b3f6b610ce8b
-	parent = b8ef5a3794818d86cc81a3c2a2bd80a19c21d335
-	cmdver = 0.2.0
+	commit = dab3dd027f33b9694ce7b86615ed8090579eb980
+	parent = 0fb454c1ed6de28db65e9418dbf4156ba4072efe
+	cmdver = 0.2.1

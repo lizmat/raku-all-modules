@@ -1,4 +1,4 @@
-module Coroutines;
+unit module Coroutines;
 
 my @coroutines;
 
