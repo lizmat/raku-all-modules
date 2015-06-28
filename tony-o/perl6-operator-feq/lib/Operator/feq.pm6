@@ -1,4 +1,4 @@
-module Operator::feq;
+unit module Operator::feq;
 
 role Operator::feq {
   method compare($a, $b) returns Int { ... }
