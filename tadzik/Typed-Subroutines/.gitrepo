@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Typed-Subroutines.git
 	branch = master
-	commit = dc269208eb4826ede327a3075ac264506e406ea5
-	parent = 1ca078647b8cc203554905691bff8eec4781d0a9
+	commit = 94c9a3ceffa4db9eaa716f67d9bd8db5ddc858fd
+	parent = 69f05f33a498945dfd541bd21542f01589179be3
 	cmdver = 0.2.1
