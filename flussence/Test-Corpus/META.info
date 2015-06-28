@@ -1,11 +1,17 @@
 {
-    "name"          : "Test::Corpus",
-    "version"       : "2.0.3",
-    "author"        : "github:flussence",
-    "description"   : "Run a test function against a directory of input and expected output files",
-    "depends"       : [],
-    "provides"      : {
-        "Test::Corpus": "lib/Test/Corpus.pm"
-    },
-    "source-url"    : "https://github.com/flussence/Test-Corpus.git"
+  "name" : "Test::Corpus",
+  "support" : {
+    "source" : "https://github.com/flussence/Test-Corpus.git"
+  },
+  "perl" : "v6",
+  "build-depends" : [
+    "Test"
+  ],
+  "provides" : null,
+  "depends" : [
+    "Test"
+  ],
+  "test-depends" : [ ],
+  "description" : "Run a test function against a directory of input and expected output files",
+  "version" : "2.0.5"
 }

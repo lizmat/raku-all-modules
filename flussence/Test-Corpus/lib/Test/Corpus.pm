@@ -1,22 +1,20 @@
-unit module Test::Corpus:auth<github:flussence>:ver<2.0.3>;
+unit module Test::Corpus:auth<github:flussence>:ver<2.0.5>;
 
 use Test;
 
 #| Convenience sub for testing filter functions of arity 1
-sub simple-test(&func) is export {
-    # ^^ This wants to be "&func:(Str --> Str)"
-
+sub simple-test(&func:(Str --> Str)) is export {
     return sub (IO::Path $in, IO::Path $out, Str $testcase) {
         is &func($in.slurp), $out.slurp, $testcase;
     }
 }
 
 #| Runs tests on a callback. The callback gets passed input/output filehandles,
-#  and the basename of the test file being run. Tests are run in no particular
-#  order.
+#| and the basename of the test file being run. Tests are run in no particular
+#| order.
 sub run-tests(
     &test,
-    Str :$basename = $*PROGRAM_NAME.IO.basename,
+    Str :$basename = $*PROGRAM-NAME.IO.basename,
 ) is export {
     my @files = dir('t_files/' ~ $basename ~ '.input');
 
@@ -31,7 +29,8 @@ sub run-tests(
         );
     }
 
-    @files».&test-closure».();
+    #@files».&test-closure».();
+    await @files».&test-closure».&start;
 }
 
 =begin pod
