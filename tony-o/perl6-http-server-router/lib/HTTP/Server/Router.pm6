@@ -26,7 +26,7 @@ class HTTP::Server::Router {
       for @.routes -> $r {
         given $r<type> {
           when 0 {
-            next unless $r<path> ~~ $req.uri;
+            next unless $req.uri ~~ $r<path>;
           }
           when 1 {
             my @p = $req.uri.split('/');
@@ -52,13 +52,15 @@ class HTTP::Server::Router {
           }
         }
 
-        my $p = try { $r<method>($req, $res); } // False;
+        my $p = try { $r<method>($req, $res); CATCH { default { .say; } } } // False;
         if $p ~~ Promise {
           await $p;
           $p = $p.result;
         }
         return False unless $p;
       }
+      try $req.close('no route found');
+      CATCH { default { .say; } }
     });
   }
 }
