@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/benchmark.git
 	branch = master
-	commit = 2f33b8c977979c99c8d8de8fe2d91547aa502027
-	parent = d8b1a580205b51f0e009059750f3920f54d2ea33
-	cmdver = 0.2.0
+	commit = 175c2835defdb17067de06d8e383798568c43622
+	parent = eb76443c116e56926125d9f01a25f4c69f5e13d0
+	cmdver = 0.2.1
