@@ -54,7 +54,8 @@ sub pages {
             printf("%02d: ", $page<Page>);
             print $page<Scaling><X> ~ 'x' ~ $page<Scaling><Y> ~ "\t";
             print $page<Offsets><X> ~ '/' ~ $page<Offsets><Y> ~ "\t";
-            print "CENTERED" if $page<Centered>;
+            print "CENTERED\t" if $page<Centered>;
+	    print "BLANK\t" if $page<IsBlank>;
             blank();
         }
     }

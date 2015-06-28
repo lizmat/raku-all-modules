@@ -71,7 +71,15 @@ class Printing::Jdf::ResourcePool is Printing::Jdf::Pool {
         for @runlists -> $root {
             my XML::Element $layout = Printing::Jdf::get($root, <LayoutElement>);
             my XML::Element $pagecell = Printing::Jdf::get($root, <SSi:PageCell>);
-            my XML::Element $filespec = Printing::Jdf::get($layout, <FileSpec>);
+           my XML::Element $filespec;
+           if not $layout<IsBlank> {
+               $filespec = Printing::Jdf::get($layout, <FileSpec>);
+            }
+            else {
+                $filespec = XML::Element.new(name => 'FileSpec', 
+                    attribs => { URL => 'Blank Page' });
+            }
+
             @files.push: {
                 Run => $root<Run>,
                 Page => $root<Run> + 1,
@@ -80,7 +88,8 @@ class Printing::Jdf::ResourcePool is Printing::Jdf::Pool {
                 Centered =>
                     $pagecell<SSi:RunListCentered> == 0 ?? False !! True,
                 Offsets => parseOffset($pagecell<SSi:RunListOffsets>),
-                Scaling => parseScaling($pagecell<SSi:RunListScaling>)
+                Scaling => parseScaling($pagecell<SSi:RunListScaling>),
+                IsBlank => $layout.attribs<IsBlank>:exists
             };
         }
         @!runlist = @files;

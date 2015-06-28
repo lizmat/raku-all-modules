@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<JDF xmlns="http://www.CIP4.org/JDFSchema_1_1" ID="A6accc9d4-cf54-497d-bc63-b48c50a40460" JobID="BlankPageTest" JobPartID="BlankPageTest.job-0-1" xmlns:SSi="http://www.creo.com/SSI/JDFExtensions.xsd" SSi:PrepsGenerated="1" Status="Ready" Type="ProcessGroup" Version="1.2">
+
+  <JDF ID="A6accc9d4-cf54-497d-bc63-b48c50a40460" JobPartID="BlankPageTest.job-0-2" Status="Waiting" Type="Imposition">
+    <ResourceLinkPool>
+      <LayoutLink Usage="Input" rRef="A1b090efd-29da-46e5-9950-0de36efbc5e6"/>
+      <RunListLink ProcessUsage="Document" Usage="Input" rRef="A1b090efd-29da-46e5-9950-0de36efbc5e6"/>
+      <RunListLink ProcessUsage="Marks" Usage="Input" rRef="A1b090efd-29da-46e5-9950-0de36efbc5e6"/>
+      <RunListLink Usage="Output" rRef="A1b090efd-29da-46e5-9950-0de36efbc5e6"/>
+    </ResourceLinkPool>
+  </JDF>
+
+  <JDF ID="6accc9d4-cf54-497d-bc63-b48c50a40460" JobPartID="BlankPageTest.job-0-3" Status="Waiting" Type="Combined" Types="Interpreting Separation Screening Rendering">
+    <ResourceLinkPool>
+      <RunListLink CombinedProcessIndex="0" Usage="Input" rRef="Aa55291af-d3a8-4cce-91e3-6edbbb04cd7a"/>
+      <InterpretingParamsLink CombinedProcessIndex="0" Usage="Input" rRef="A865ddb6d-a3fc-4bc5-b9d0-d559382c0e9e"/>
+      <SeparationControlParamsLink CombinedProcessIndex="1" Usage="Input" rRef="Ae5f641e7-e798-43cb-a753-fa495f1d1da9"/>
+      <ColorantControlLink CombinedProcessIndex="1" Usage="Input" rRef="Ab0f29f1d-1b26-4ef7-a799-a11793887381"/>
+      <ScreeningParamsLink CombinedProcessIndex="2" Usage="Input" rRef="Ab7896894-3806-42e5-9645-e3886cdced54"/>
+      <RenderingParamsLink CombinedProcessIndex="3" Usage="Input" rRef="Aee6ffd9f-544b-4d34-b510-ba07f3f1a98b"/>
+      <RunListLink CombinedProcessIndex="3" Usage="Output" rRef="A8b4be650-1374-44a6-9fb4-9902ff6e34eb"/>
+    </ResourceLinkPool>
+  </JDF>
+
+  <AuditPool>
+    <Created AgentName="Kodak Preps" AgentVersion="5.3.3  (595)" ID="A9b6685d0-a7e4-4d2e-93dd-eb8c45fd4392" TimeStamp="2015-06-18T01:27:33+12:00"/>
+  </AuditPool>
+
+  <ResourcePool>
+    <SeparationControlParams Class="Parameter" ID="Ae5f641e7-e798-43cb-a753-fa495f1d1da9" Status="Available"/>
+    <RenderingParams Class="Parameter" ID="Aee6ffd9f-544b-4d34-b510-ba07f3f1a98b" Status="Available"/>
+    <ColorPool Class="Parameter" ID="A210c348d-1412-459a-85fb-ddb44f2d8731" Status="Available">
+      <Color MappingSelection="UsePDLValues" Name="Cyan" SSi:ForceKnockout="0" SSi:ForceOverprint="0" SSi:UserAddedColor="0"/>
+      <Color MappingSelection="UsePDLValues" Name="Magenta" SSi:ForceKnockout="0" SSi:ForceOverprint="0" SSi:UserAddedColor="0"/>
+      <Color MappingSelection="UsePDLValues" Name="Yellow" SSi:ForceKnockout="0" SSi:ForceOverprint="0" SSi:UserAddedColor="0"/>
+      <Color MappingSelection="UsePDLValues" Name="Black" SSi:ForceKnockout="0" SSi:ForceOverprint="0" SSi:UserAddedColor="0"/>
+    </ColorPool>
+    <ColorantControl Class="Parameter" ID="Ab0f29f1d-1b26-4ef7-a799-a11793887381" ProcessColorModel="DeviceCMYK" Status="Available">
+      <ColorPoolRef rRef="A210c348d-1412-459a-85fb-ddb44f2d8731"/>
+      <ColorantParams/>
+      <ColorantOrder>
+        <SeparationSpec Name="Cyan"/>
+        <SeparationSpec Name="Magenta"/>
+        <SeparationSpec Name="Yellow"/>
+        <SeparationSpec Name="Black"/>
+      </ColorantOrder>
+    </ColorantControl>
+    <ScreeningParams Class="Parameter" ID="Ab7896894-3806-42e5-9645-e3886cdced54" Status="Available">
+      <ScreenSelector Angle="105" Frequency="150" SSi:MFGAngle="105" SSi:MFGFrequency="150" Separation="Cyan"/>
+      <ScreenSelector Angle="75" Frequency="150" SSi:MFGAngle="75" SSi:MFGFrequency="150" Separation="Magenta"/>
+      <ScreenSelector Angle="90" Frequency="150" SSi:MFGAngle="90" SSi:MFGFrequency="150" Separation="Yellow"/>
+      <ScreenSelector Angle="45" Frequency="150" SSi:MFGAngle="45" SSi:MFGFrequency="150" Separation="Black"/>
+    </ScreeningParams>
+    <Layout Class="Parameter" ID="A3ba30f66-eb66-4205-9494-efbd18680368" SSi:JobDefaultBleedMargin="8.503937" SSi:JobPageAdjustments="0 0 0 0" SSi:JobPlateScaling="1 1" SSi:JobShingling="0 0" Status="Available">
+      <Signature Name="1" SSi:PressRunNo="1">
+        <SSi:ExternalImpositionTemplate SSi:BindingStyle="2" SSi:Signature="Full Signature" SSi:Type="0">
+          <FileSpec MimeType="application/x-preps-imposition-template" URL="file://192.168.42.7/PrepsTemplates/Templates/tabloid/04%20tabloid.tpl"/>
+          <SSi:ExternalImpositionTemplateDelivery SSi:BinderySigNo="1" SSi:PageStatus="1" SSi:SigStatus="1" SSi:StartPage="1"/>
+        </SSi:ExternalImpositionTemplate>
+        <Sheet Name="Sheet-1" SSi:WorkStyle="SW" SurfaceContentsBox="0 0 2520 1714.96063">
+          <Surface SSi:Dimension="2520 1714.96063" SSi:MediaOrigin="0 0" Side="Front" SurfaceContentsBox="0 0 2520 1714.96063">
+            <MarkObject CTM="1 0 0 1 0 0" ClipBox="0 0 2520 1714.96063" Ord="0"/>
+            <ContentObject CTM="0. 1 -1 0. 2365.51181 871.65354" ClipBox="1279.842523 863.149603 2374.015747 1631.338577" Ord="0" SSi:TrimBox="0 0 751.1811 1077.16535" SSi:TrimBox1="1288.34646 871.65354 2365.51181 1622.83464" TrimCTM="0. 1 -1 0. 2365.51181 871.65354" TrimSize="751.1811 1077.16535"/>
+            <MarkObject CTM="1 0 0 1 0 0" ClipBox="0 0 2520 1714.96063" Ord="1"/>
+          </Surface>
+          <Surface SSi:Dimension="2520 1714.96063" SSi:MediaOrigin="0 0" Side="Back" SurfaceContentsBox="0 0 2520 1714.96063">
+            <MarkObject CTM="1 0 0 1 0 0" ClipBox="0 0 2520 1714.96063" Ord="2"/>
+            <ContentObject CTM="0. -1 1 0. 154.48819 1622.83464" ClipBox="145.984253 863.149603 1240.157477 1631.338577" Ord="1" SSi:TrimBox="0 0 751.1811 1077.16535" SSi:TrimBox1="154.48819 871.65354 1231.65354 1622.83464" TrimCTM="0. -1 1 0. 154.48819 1622.83464" TrimSize="751.1811 1077.16535"/>
+            <MarkObject CTM="1 0 0 1 0 0" ClipBox="0 0 2520 1714.96063" Ord="3"/>
+          </Surface>
+        </Sheet>
+      </Signature>
+    </Layout>
+    <InterpretingParams Class="Parameter" ID="A865ddb6d-a3fc-4bc5-b9d0-d559382c0e9e" Scaling="1.0000 1.0000" ScalingOrigin="36.0000 0.0000" Status="Available"/>
+    <RunList Class="Parameter" ID="A2fe1f6ef-b33d-48ae-be31-078e46028ff9" PartIDKeys="Run" Status="Available">
+      <RunList Pages="0 ~ 0" Run="0">
+        <LayoutElement IsBlank="true"/>
+        <SSi:PageCell SSi:RunListCenterOffset="0" SSi:RunListCentered="0" SSi:RunListOffsets="0 0" SSi:RunListOrientation="3" SSi:RunListScaleToFit="0" SSi:RunListScaling="1 1"/>
+      </RunList>
+      <RunList Pages="0 ~ 0" Run="1">
+        <LayoutElement IsBlank="true"/>
+        <SSi:PageCell SSi:RunListCenterOffset="0" SSi:RunListCentered="0" SSi:RunListOffsets="0 0" SSi:RunListOrientation="3" SSi:RunListScaleToFit="0" SSi:RunListScaling="1 1"/>
+      </RunList>
+    </RunList>
+    <RunList Class="Parameter" ID="Af60f1c95-5a76-4c37-a4ea-dc69922ee787" PartIDKeys="Run" Status="Available">
+      <RunList Pages="2 ~ 5" Run="0">
+        <LayoutElement>
+          <FileSpec MimeType="application/pdf" URL="file://192.168.42.7/jobfiles/BlankPageTest/JDFMarksFlats/BlankPageTest.pdf"/>
+          <SeparationSpec Name="Cyan"/>
+          <SeparationSpec Name="Magenta"/>
+          <SeparationSpec Name="Yellow"/>
+          <SeparationSpec Name="Black"/>
+        </LayoutElement>
+      </RunList>
+    </RunList>
+    <RunList Class="Parameter" ID="Aa55291af-d3a8-4cce-91e3-6edbbb04cd7a" Status="Unavailable">
+      <LayoutElement>
+        <FileSpec URL="file:///ImpositionOutputFile"/>
+      </LayoutElement>
+    </RunList>
+    <RunList Class="Parameter" ID="A8b4be650-1374-44a6-9fb4-9902ff6e34eb" Status="Unavailable">
+      <LayoutElement>
+        <FileSpec URL="file:///RenderingOutputFile"/>
+      </LayoutElement>
+    </RunList>
+  </ResourcePool>
+
+</JDF>
+

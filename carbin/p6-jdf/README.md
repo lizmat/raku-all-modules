@@ -70,9 +70,12 @@ Returns an Array of Hashes representing each page in the runlist
     <Int> Page => the page number
     <IO::Path> Url => a IO::Path object for the file
     <Bool> Centered => a Bool that is True if the page is centered
+    CenterOffset => a Hash of the page offsets of a centered page
+        see Layout<PageAdjustments>
     Offsets => a Hash of the page offsets in millimetres
         see Layout<PageAdjustments>
     Scaling => a Hash with the keys <X> and <Y> representing the scaling percentage of the page
+    <Bool> IsBlank => a Bool that is True if the page is blank
 
 ## License ##
 
