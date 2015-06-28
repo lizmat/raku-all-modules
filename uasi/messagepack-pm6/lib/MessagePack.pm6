@@ -1,6 +1,6 @@
 use v6;
 
-module MessagePack;
+unit module MessagePack;
 
 use MessagePack::Unpacker;
 
