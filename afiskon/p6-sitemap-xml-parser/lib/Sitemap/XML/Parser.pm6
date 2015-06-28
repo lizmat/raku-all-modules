@@ -4,7 +4,7 @@ use DateTime::Format::W3CDTF;
 use LWP::Simple;
 use URI;
 
-class Sitemap::XML::Parser;
+unit class Sitemap::XML::Parser;
 
 has $!parser = XML::Parser::Tiny.new;
 has $!w3cdtf = DateTime::Format::W3CDTF.new;
