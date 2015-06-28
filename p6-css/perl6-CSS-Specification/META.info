@@ -9,9 +9,7 @@
         "CSS::Specification::Build" : "lib/CSS/Specification/Build.pm",
         "CSS::Specification::Actions" : "lib/CSS/Specification/Actions.pm",
         "CSS::Specification::Terms" : "lib/CSS/Specification/Terms.pm",
-        "CSS::Specification::Terms::Actions" : "lib/CSS/Specification/Terms/Actions.pm",
-        "CSS::Specification::Terms::CSS3" : "lib/CSS/Specification/Terms/CSS3.pm",
-        "CSS::Specification::Terms::CSS3::Actions" : "lib/CSS/Specification/Terms/CSS3/Actions.pm"
+        "CSS::Specification::Terms::Actions" : "lib/CSS/Specification/Terms/Actions.pm"
      }
 }
 
