@@ -6,10 +6,22 @@ use lib 'lib';
 
 use Test;
 
+plan 16;
+
 use Sys::Lastlog;
 
-my $uid = $*USER.Numeric;
-my $logname = $*USER.Str;
+my $uid;
+my $logname;
+
+if $*USER.defined {
+   $uid = $*USER.Numeric;
+   $logname = $*USER.Str;
+}
+else {
+   $uid = 0;
+   $logname = 'root';
+   todo('$*USER is not defined for some reason', 16);
+}
 
 ok my $obj = Sys::Lastlog.new, "create a Sys::Lastlog object";
 
@@ -28,6 +40,7 @@ lives-ok { $ret = $obj.getllnam($logname) }, "getllnam()";
 ok $ret.defined, "it's defined";
 
 isa-ok $ret, Sys::Lastlog::Entry, "and that returns the right thing";
+
 
 isa-ok $ret.timestamp(), DateTime, "timestamp is a DateTime";
 
