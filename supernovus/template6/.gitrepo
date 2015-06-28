@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/template6.git
 	branch = master
-	commit = 5d1d65cdfe201366ceb659dc79e5b6a7a9d755a6
-	parent = 65bcc657feb4d42c9c39899304e834f6cff8c4a2
-	cmdver = 0.2.0
+	commit = 45059df8a7ce98dab01fdf229ea6563338361a90
+	parent = a224cfd7da9efb02874071cb6d4684f4ef8bc2b9
+	cmdver = 0.2.1
