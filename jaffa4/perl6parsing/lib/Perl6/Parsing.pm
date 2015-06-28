@@ -62,7 +62,7 @@ multi method walksubtree($isprint,Mu $tree, $level,$key1?)
 
 method printree()
 {
-  self.walktree(False,0,"root");
+  self.walktree(True,0,"root");
 }
 
 method walk($isprint,Mu $tree, $level,$key1?)
