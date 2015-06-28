@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/perlpilot/p6-Math-Trig.git
+	branch = master
+	commit = 294bea33f6d244506f58bec201db66a78013c307
+	parent = 2adfcaafa02213ef76d96c6d41bc100223f650ab
+	cmdver = 0.2.1

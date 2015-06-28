@@ -1,0 +1,11 @@
+{
+    "name" : "Math::Trig",
+    "version" : "0.01",
+    "description" : "Useful trigonometric routines",
+    "author" : "Jonathan Scott Duff",
+    "source-url" : "git://github.com/perlpilot/p6-Math-Trig.git",
+    "depends" : [ ],
+    "provides" : {
+      "Math::Trig" : "Math-Trig/lib/Math/Trig.pm"
+    }
+}
