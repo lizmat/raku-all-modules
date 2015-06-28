@@ -475,7 +475,8 @@ role Sum::Tiger {
     method Blob { self.blob8 }
 }
 
-role Sum::Tiger1[ :$recourse where { $_ == False } = True ] does Sum::Tiger does Sum::MDPad[ :lengthtype<uint64_le> :justify ] does Sum {
+role Sum::Tiger1[ :$recourse where { $_ == False }
+                                                   = True ] does Sum::Tiger does Sum::MDPad[ :lengthtype<uint64_le> :justify ] does Sum {
     method recourse (--> Str) { "Perl6" }
 }
 
@@ -483,18 +484,21 @@ my class PureTiger1 does Sum::Tiger1[:!recourse] does Sum::Recourse::Marshal { }
 
 # rhash's idea of "Tiger" is Tiger1.  mhash's is just plain broken AFAICT.
 
-role Sum::Tiger1[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse(:librhash<TIGER> :Perl6(PureTiger1))] { }
+role Sum::Tiger1[ :$recourse where { $_ == True } 
+                                                  = True ] does Sum does Sum::Recourse[:recourse(:librhash<TIGER> :Perl6(PureTiger1))] { }
 
 # We have no working C drivers for Tiger2 yet but in case we have we get some
 # we go through the motions
 
-role Sum::Tiger2[ :$recourse where { $_ == False } = True ] does Sum::Tiger does Sum::MDPad[:lengthtype<uint64_le>] does Sum {
+role Sum::Tiger2[ :$recourse where { $_ == False }
+                                                   = True ] does Sum::Tiger does Sum::MDPad[:lengthtype<uint64_le>] does Sum {
     method recourse (--> Str) { "Perl6" }
 }
 
 my class PureTiger2 does Sum::Tiger2[:!recourse] does Sum::Recourse::Marshal { }
 
-role Sum::Tiger2[ :$recourse where { $_ == True } = True ] does Sum does Sum::Recourse[:recourse[:Perl6(PureTiger2)]] { }
+role Sum::Tiger2[ :$recourse where { $_ == True } 
+                                                   = True ] does Sum does Sum::Recourse[:recourse[:Perl6(PureTiger2)]] { }
 
 =begin NOTES
 
