@@ -8,6 +8,5 @@
     "depends"     : ["Testing"],
     "source-type" : "git",
     "source-url"  : "git://github.com/colomon/io-prompter.git",
-    "repo-type"   : "git",
-    "repo-url"    : "git://github.com/colomon/io-prompter.git"
+    "repo-type"   : "git"
 }
