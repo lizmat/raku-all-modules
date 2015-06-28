@@ -1,4 +1,4 @@
-module SSL::Digest;
+unit module SSL::Digest;
 use NativeCall;
 
 constant little-endian = True;
