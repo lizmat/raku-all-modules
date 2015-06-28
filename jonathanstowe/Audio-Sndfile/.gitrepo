@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Audio-Sndfile.git
+	branch = master
+	commit = 7f1d5ff860572094c6b5b0c007d6f092dbd244d3
+	parent = 9b32ac49236cbff8bf17b846bfcf40556620ef48
+	cmdver = 0.2.1

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+
+for TYPE in wav aifc aif aiff au caf w64
+do
+	for SR in 22050 44100 48000
+	do
+		sndfile-generate-chirp -from 220 -to 1760 $SR 1 "t/data/1sec-chirp-$SR.$TYPE"
+	done
+done

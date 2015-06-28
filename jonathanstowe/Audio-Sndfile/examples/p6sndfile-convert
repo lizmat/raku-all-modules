@@ -1,0 +1,49 @@
+#!/usr/bin/env perl6
+
+use v6;
+use Audio::Sndfile;
+
+
+multi sub MAIN(Str :$infile!, Str :$outfile!, Str :$format!, Str :$sub-format!) {
+    my $format_e = Audio::Sndfile::Info::Format.enums.grep(*.key.lc eq $format);
+    if not $format_e.elems {
+        die "$format is not a valid format (see --list-formats )";
+    }
+    else {
+        $format_e = $format_e[0];
+    }
+    my $sub-format_e = Audio::Sndfile::Info::Subformat.enums.grep(*.key.lc eq $sub-format);
+
+    if not $sub-format_e.elems {
+        die " { $sub-format } is not a valid sub-format (see --list-formats )";
+    }
+    else {
+        $sub-format_e = $sub-format_e[0];
+    }
+
+    my Audio::Sndfile $in-obj = Audio::Sndfile.new(filename => $infile, :r);
+
+    my Int $out-format = $format_e.value +| $sub-format_e.value;
+    my Audio::Sndfile::Info $out-info = Audio::Sndfile::Info.new(channels => $in-obj.channels,
+                                                                 sections => $in-obj.sections,
+                                                                 format   => $out-format,
+                                                                 samplerate => $in-obj.samplerate);
+
+    my $out-obj = Audio::Sndfile.new(filename => $outfile, info => $out-info, :w);
+
+    loop {
+        my @in-frames = $in-obj.read-float(1024);
+        my $out-frames = $out-obj.write-float(@in-frames);
+        last if ( @in-frames.elems < 1024 * $in-obj.channels );
+    }
+
+    $in-obj.close;
+    $out-obj.close;
+}
+
+multi sub MAIN(Bool :$list-formats!) {
+    say "Available formats:";
+	say "    ", Audio::Sndfile::Info::Format.enums.keys.map( { lc $_ });
+    say "Available sub-formats:";
+	say "    ", Audio::Sndfile::Info::Subformat.enums.keys.map( { lc $_ });
+}
