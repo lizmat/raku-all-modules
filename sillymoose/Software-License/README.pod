@@ -1,6 +1,10 @@
-=head1 Software::License
+=pod
 
-Software::License - a Perl 6 module for creating free software license texts.
+=encoding utf8
+
+=head1 NAME
+
+Software::License - a Perl 6 module for creating free software licenses.
 
 =head2 SYNOPSIS
 
@@ -16,25 +20,23 @@ Software::License is a Perl 6 module for minting free software license texts. Th
 
 =over 4
 
-=item *
+=item * Apache2 - the Apache 2.0 license
 
-Apache2 - the Apache 2.0 license
+=item * Artistic2 - the Artistic 2.0 license
 
-=item *
+=item * BSD - the BSD license
 
-Artistic2 - the Artistic 2.0 license
+=item * CC0 - Creative Commons Zero v1.0 Universal
 
-=item *
+=item * FreeBSD - the two clause BSD license
 
-BSD - the BSD license
+=item * GPL3 - GPL 3 license 2007
 
-=item *
+=item * LGPL3 - GNU Lesser General Public License v3.0
 
-FreeBSD - the two clause BSD license
+=item * MIT - the MIT license
 
-=item *
-
-MIT - the MIT license
+=item * MPL - the Mozilla Public License v2.0
 
 =back
 
@@ -45,5 +47,3 @@ David Farrell
 =head2 LICENSE
 
 FreeBSD - see LICENSE
-
-=cut

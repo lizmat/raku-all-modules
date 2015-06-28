@@ -1,0 +1,17 @@
+#!/usr/bin/env perl6
+
+use Software::License;
+
+sub MAIN (Str:D $license_shortname, Str:D $owner_name, $year?)
+{
+  my $license = Software::License.new, 'Constructor';
+
+  if $year
+  {
+    say $license.full-text($license_shortname, $owner_name, $year);
+  }
+  else
+  {
+    say $license.full-text($license_shortname, $owner_name);
+  }
+}

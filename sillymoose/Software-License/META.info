@@ -1,14 +1,18 @@
 {
     "name" : "Software::License",
-    "version" : "0.03",
+    "version" : "0.04",
     "description" : "a Perl 6 module for creating free software license texts",
     "provides" : {
+        "license"         :           "bin/license",
         "Software::License"         : "lib/Software/License.pm6",
         "Software::License::GPL3"   : "lib/Software/License/GPL3.pm6",
         "Software::License::Artistic_2_0":
             "lib/Software/License/Artistic_2_0.pm6",
         "Software::License::MIT"    : "lib/Software/License/MIT.pm6",
         "Software::License::BSD"    : "lib/Software/License/BSD.pm6",
+        "Software::License::CC0"    : "lib/Software/License/CC0.pm6",
+        "Software::License::MPL2"   : "lib/Software/License/MPL2.pm6",
+        "Software::License::LGPL3"  : "lib/Software/License/LGPL3.pm6",
         "Software::License::FreeBSD": "lib/Software/License/FreeBSD.pm6",
         "Software::License::Apache_2_0":
             "lib/Software/License/Apache_2_0.pm6"
