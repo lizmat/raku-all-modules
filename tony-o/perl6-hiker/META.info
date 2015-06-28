@@ -1,0 +1,13 @@
+{
+  "name" : "Hiker",
+  "version" : "0.1",
+  "description" : "MVC Framework built on HTTP::Server HTTP::Server::Router",
+  "depends" : ["HTTP::Server::Threaded", "HTTP::Server::Router", "Template::Protone"],
+  "provides" : {
+      "Hiker": "lib/Hiker.pm6",
+      "Hiker::Route": "lib/Hiker/Route.pm6",
+      "Hiker::Render": "lib/Hiker/Render.pm6",
+      "Hiker::Model": "lib/Hiker/Model.pm6"
+  },
+  "source-url" : "git://github.com/tony-o/perl6-hiker.git"
+}

@@ -1,0 +1,9 @@
+Hello <% print "WORLD!"; %>
+
+Oh, did you want variables too?  I can do <% print $data<what>; %> too.
+
+Model says <% print $data<model-says> ~ "\n\n"; %> 
+
+<% for ^3 { %>
+<% print $_ ~ ($_ == 2 ?? '' !! ', '); %>
+<% } %>

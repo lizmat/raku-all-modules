@@ -1,0 +1,59 @@
+#!/usr/bin/env perl6
+
+use Shell::Command;
+
+sub MAIN ('init',
+  Str :r(:$routes)    = 'controllers',
+  Str :m(:$models)    = 'models',
+  Str :t(:$templates) = 'templates',
+) {
+  for @($routes, $models, $templates) {
+    "==> Creating directory $_".say;
+    $*SPEC.catpath('', '.', $_).IO.mkdir; 
+  }
+  "==> Creating route MyApp::Route1: {$*SPEC.catpath('', $routes, 'Route1.pm6')}".say;
+  $*SPEC.catpath('', $routes, 'Route1.pm6').IO.spurt("
+use Hiker::Route; 
+
+class MyApp::Route1 does Hiker::Route \{
+  has \$.path     = '/';
+  has \$.template = 'Route1.pt';
+  has \$.model    = 'MyApp::Model1';
+
+  method handler(\$req, \$res) \{
+    True;
+  \}
+\}  
+  ");
+
+  "==> Creating route MyApp::Model1: {$*SPEC.catpath('', $models, 'Model1.pm6')}".say;
+  $*SPEC.catpath('', $models, 'Model1.pm6').IO.spurt("
+use Hiker::Model; 
+
+class MyApp::Model1 does Hiker::Model \{
+  method bind(\$req, \$res) \{
+    \$res.data<who> = 'world!';
+  \}
+\}  
+  ");
+
+  "==> Creating template {$*SPEC.catpath('', $templates, 'Route1.pt')}".say;
+  $*SPEC.catpath('', $templates, 'Route1.pt').IO.spurt("
+Hello <% print \$data<who> %>
+  ");
+
+  '==> Creating app.pl6'.say;
+  'app.pl6'.IO.spurt("
+use Hiker;
+
+my \$app = Hiker.new(
+  hikes     => ['$routes', '$models'],
+  templates => '$templates',
+);
+
+\$app.listen;
+  ");
+
+}
+
+# vi:syntax=perl6
