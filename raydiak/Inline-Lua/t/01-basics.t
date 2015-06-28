@@ -14,9 +14,9 @@ ok 1, 'Module loads successfully';
 
 my $L;
 
-isa_ok $L = Inline::Lua.new, Inline::Lua, '.new() works';
+isa-ok $L = Inline::Lua.new, Inline::Lua, '.new() works';
 
-lives_ok { $L.run('return') }, '.run() works';
+lives-ok { $L.run('return') }, '.run() works';
 
 {
     my $code = q:to/END/;
