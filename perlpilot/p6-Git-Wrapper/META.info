@@ -12,5 +12,6 @@
   },
   "support" : {
     "source" : "git://github.com/perlpilot/p6-Git-Wrapper.git"
-  }
+  },
+  "source-url": "git://github.com/perlpilot/p6-Git-Wrapper.git"
 }

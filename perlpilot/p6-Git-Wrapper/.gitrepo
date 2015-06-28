@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/p6-Git-Wrapper.git
 	branch = master
-	commit = 7a9a1cc4b50b83bd52662e3b2b1786cafd2e5e28
-	parent = e8f4d0b00c06e4c46453168f73e3252a704ee0ab
+	commit = cc20b817b743b8f693dbb94dbff892b7af3198fa
+	parent = cace4754729597baba713d15822e68c575c0a394
 	cmdver = 0.2.1
