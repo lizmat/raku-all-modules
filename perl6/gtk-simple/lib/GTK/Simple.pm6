@@ -283,6 +283,11 @@ class GTK::Simple::App does GTK::Simple::Widget
         returns GtkWidget
         {*}
 
+    sub gtk_window_set_title(GtkWidget $w, Str $title)
+        is native(&gtk-lib)
+        returns GtkWidget
+        {*}
+
     sub gtk_main()
         is native(&gtk-lib)
         {*}
@@ -291,9 +296,9 @@ class GTK::Simple::App does GTK::Simple::Widget
         is native(&gtk-lib)
         {*}
 
-    submethod BUILD(:$title = 'Application', Bool :$exit_on_close = True) {
+    submethod BUILD(:$title, Bool :$exit_on_close = True) {
         my $arg_arr = CArray[Str].new;
-        $arg_arr[0] = $title.Str;
+        $arg_arr[0] = $*PROGRAM.Str;
         my $argc = CArray[int32].new;
         $argc[0] = 1;
         my $argv = CArray[CArray[Str]].new;
@@ -301,6 +306,7 @@ class GTK::Simple::App does GTK::Simple::Widget
         gtk_init($argc, $argv);
 
         $!gtk_widget = gtk_window_new(0);
+        gtk_window_set_title($!gtk_widget, $title.Str) if defined $title;
 
         if $exit_on_close {
             g_signal_connect_wd($!gtk_widget, "delete-event",
@@ -355,6 +361,15 @@ role GTK::Simple::Box {
         is native(&gtk-lib)
         {*}
 
+    sub gtk_box_get_spacing(GtkWidget $box)
+        returns int
+        is native(&gtk-lib)
+        {*}
+
+    sub gtk_box_set_spacing(GtkWidget $box, int $spacing)
+        is native(&gtk-lib)
+        {*}
+
     multi method new(*@packees) {
         my $box = self.bless();
         $box.pack_start($_) for @packees;
@@ -364,6 +379,12 @@ role GTK::Simple::Box {
     method pack_start($widget) {
         gtk_box_pack_start(self.WIDGET, $widget.WIDGET, 1, 1, 0);
         gtk_widget_show($widget.WIDGET);
+    }
+
+    method spacing {
+        Proxy.new:
+            FETCH => { gtk_box_get_spacing(self.WIDGET) },
+            STORE => -> \c, Cool $s { gtk_box_set_spacing(self.WIDGET, $s.Int) }
     }
 }
 
@@ -457,8 +478,9 @@ class GTK::Simple::Entry does GTK::Simple::Widget {
         is native(&gtk-lib)
         {*}
 
-    submethod BUILD() {
+    submethod BUILD(:$text) {
         $!gtk_widget = gtk_entry_new();
+        gtk_entry_set_text(self.WIDGET, $text.Str) if defined $text;
     }
 
     method text() {
