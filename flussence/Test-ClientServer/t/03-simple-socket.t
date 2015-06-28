@@ -4,11 +4,6 @@ use Test;
 
 plan 1;
 
-unless %*ENV<🐟>.defined {
-    skip 'Has been causing random deadlocks (2014-08-29)';
-    exit 0;
-}
-
 # This isn't listed in /etc/services so it should be safe.
 my $port = 44444;
 

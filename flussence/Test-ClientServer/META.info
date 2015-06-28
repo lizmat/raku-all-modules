@@ -1,8 +1,17 @@
 {
-    "name"          : "Test::ClientServer",
-    "version"       : "2.0.0-pre.5",
-    "author"        : "github:flussence",
-    "description"   : "Multithreading wrapper for testing network server/client code",
-    "depends"       : [],
-    "source-url"    : "https://github.com/flussence/Test-ClientServer.git"
+  "name" : "Test::ClientServer",
+  "support" : {
+    "source" : "https://github.com/flussence/Test-ClientServer.git"
+  },
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "Test::ClientServer" : "lib/Test/ClientServer.pm"
+  },
+  "depends" : [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "description" : "Multithreading wrapper for testing network server/client code",
+  "version" : "2.0.0"
 }
