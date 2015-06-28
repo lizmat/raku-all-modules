@@ -1,4 +1,4 @@
-module Clifford;
+unit module Clifford;
 
 # Metric signature
 our @signature = 1 xx *;
@@ -143,7 +143,7 @@ multi infix:<+>( Zero, $B ) is export { $B }
 #
 multi infix:<+>(MultiVector $A, MultiVector $B) returns MultiVector is export {
     MultiVector.new: canonical =>
-    gather for uniq $A.keys, $B.keys {
+    gather for unique $A.keys, $B.keys {
 	my $sum = ($A.canonical{$_}//0) + ($B.canonical{$_}//0);
 	take $_ => $sum if $sum != 0;
     }
