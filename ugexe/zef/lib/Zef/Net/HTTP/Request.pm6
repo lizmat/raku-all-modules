@@ -1,35 +1,118 @@
+use Zef::Net::HTTP;
 use Zef::Net::URI;
 use Zef::Utils::Base64;
 
-# todo: generate class from grammar via actions
-
-# A http request object that attempts to handle proxy and basic auth
-class Zef::Net::HTTP::Request {
-    has $.grammar;
-    has $.action;
+class Zef::Net::HTTP::Request does HTTP::Request {
+    # start line
+    has $.method;
     has $.url;
     has $.uri;
-    has $.payload;
-    has $.proxy-url;
-    has $.proxy-uri;
-    has $!auth;
+    has $!proto       = 'HTTP';
+    has $!proto-major = 1;
+    has $!proto-minor = 1;
 
-    submethod BUILD(:$!action!, :$!url!, :$!payload, :$!proxy-url, :$user, :$pass) {
-        $!uri       = Zef::Net::URI.new(url => $!url);
-        $!proxy-uri = Zef::Net::URI.new(url => $!proxy-url) if ?$!proxy-url;
-        $!auth      = b64encode($user ?? "$user:{$pass // ''}" !! $!uri.user-info) if $user || $!uri.user-info;
+    # the raw data for each of these sections
+    has $.header;
+    has $.body;
+    has $.trailer;
+
+    # the raw data in structured form
+    has %.headers;
+    has %.trailers;
+
+    has $.header-grammar;
+    has $.trailer-grammar;
+
+    # easy access to common options. temporary?
+    has $.chunked;
+    has $.encoding;
+
+    # todo: move proxy stuff into its own interface/class
+    has $.proxy;
+
+    submethod BUILD(
+        :$!method = 'GET',
+        :$!url!,
+        :$!body,
+        :$!proxy where Bool|Str|Nil
+    ) {
+        $!uri = Zef::Net::URI.new(:$!url);
+
+        if ?$!proxy {
+            if ?$!proxy.isa(Str) {
+                $!proxy = Zef::Net::URI.new(url => $!proxy);
+            }
+            else {
+                if my $p = %*ENV.{$!uri.scheme ~ '_proxy'} {
+                    $!proxy = Zef::Net::URI.new(url => $p)
+                }
+                else {
+                    fail ":\$proxy set to true, but \%*ENV<{$!uri.scheme}_proxy> not found";
+                }
+            }
+
+            if ?$!proxy.uri.user-info {
+                %!headers<Proxy-Authorization> = "Basic " ~ b64encode($!proxy.uri.user-info);
+            }
+        }
+
+        if $!uri.?user-info {
+            %!headers<Authorization> = "Basic " ~ b64encode($!uri.user-info);
+        }
+
+        %!headers<Connection> = 'Close';
+    }
+
+    # TEMPORARY
+    method content-length {
+        do given $!body {
+            when Buf { $_.bytes        }
+            when Str { $_.encode.bytes }
+            default { 0 }
+        }
+    }
+    method start-line     { $.DUMP(:start-line) }
+
+    method DUMP(Bool :$start-line, Bool :$headers, Bool :$body, Bool :$trailers --> Str) {
+        # Default to dumping everything, otherwise we dump what was specified
+        my $all = ?(!$start-line && !$headers && !$body && !$trailers);
+
+        my $req;
+
+        # start-line
+        if $all || $start-line {
+            $req ~= $!method ~ ' '
+                  ~  (?$!proxy ?? ($!uri.Str || $!url) !! ($!uri.path || '/'))
+                  ~ (('?'~$!uri.query) if ?$!uri.query) ~ ' '
+                  ~ "HTTP/1.1\r\n"; 
+        }
+
+        # headers
+        $req ~= "Host: {$!uri.host}\r\n"
+                ~ "Content-Length: {$.content-length}\r\n"
+                ~ %!headers.kv.map(->$key, $value { "{$key}: {$value}" }).join("\r\n")
+                ~ "\r\n\r\n" if %!headers && ($all || $headers);
+
+        # TEMPORARY
+        $req ~= $.DUMP-BODY 
+            if $!body && ($all || $body);
+
+        $req ~= %!trailers.kv.map(->$key, $value { "{$key}: {$value}" }).join("\r\n") 
+            if %!trailers && ($all || $trailers);
+
+        return $req // '';
+    }
+
+    # TEMPORARY
+    submethod DUMP-BODY {
+        given $!body {
+            return $_.perl  when Buf;
+            return $_       when Str;
+            return $_.bytes when .bytes;
+        }
     }
 
     method Str {
-        my $encoder = Zef::Utils::Base64.new;        
-        my $req =        "$!action $!url HTTP/1.1"                          # request
-            ~   "\r\n" ~ "Host: {$!uri.host}"                               # mandatory headers
-            ~ (("\r\n" ~ "Content-Length: {$!payload.chars}") if $!payload) # optional header fields
-            ~ (("\r\n" ~ "Proxy-Authorization: Basic {$encoder.b64encode($!proxy-uri.user-info)}") if ?$!proxy-uri && ?$!proxy-uri.user-info)
-            ~ (("\r\n" ~ "Authorization: Basic {$!auth}") if ?$!auth)
-            ~   "\r\n" ~ "Connection: close\r\n\r\n"                        # last header field
-            ~ ($!payload if $!payload);
-        return $req;
+        self.DUMP(:start-line, :headers);
     }
 }
-

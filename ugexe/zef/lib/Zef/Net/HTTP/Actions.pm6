@@ -126,11 +126,42 @@ role Zef::Net::HTTP::Actions::Header::Connection {
     }
 }
 
+role Zef::Net::HTTP::Actions::Header::Content-Type {
+    method Content-Type($/) {
+        make $<media-type>.made.flat;
+    }
+
+    method media-type($/) {
+        if $/<parameter> {
+            make [type => $/<type>.Str, subtype => $/<subtype>.Str, parameters => [$/<parameter>>>.made.flat]];
+        }
+        else {
+            make [type => $/<type>.Str, subtype => $/<subtype>.Str];            
+        }
+    }
+}
+
+role Zef::Net::HTTP::Actions::Header::Transfer-Encoding {
+    method Transfer-Encoding($/) {
+        make $<transfer-encoding-value>>>.made;
+    }
+
+    method transfer-encoding-value($/) {
+        make $/<transfer-coding>.made;
+    }
+
+    method transfer-coding($/) {
+        make $/.Str;
+    }
+}
+
+
 
 
 class Zef::Net::HTTP::Actions::Response {
     also does Zef::Net::HTTP::Actions::Header::Allow;
-
+    also does Zef::Net::HTTP::Actions::Header::Content-Type;
+    also does Zef::Net::HTTP::Actions::Header::Transfer-Encoding;
 }
 
 class Zef::Net::HTTP::Actions::Request {

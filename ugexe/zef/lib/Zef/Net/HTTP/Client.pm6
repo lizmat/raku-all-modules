@@ -1,59 +1,50 @@
+use Zef::Net::HTTP;
+use Zef::Net::URI;
 use Zef::Net::HTTP::Request;
 use Zef::Net::HTTP::Response;
-use Zef::Net::URI;
-
-try require IO::Socket::SSL;
+use Zef::Net::HTTP::Transport;
 
 
 # A http client using the grammar based Net::HTTP::Request, Net::HTTP::Response, and Net::URI
 class Zef::Net::HTTP::Client {
-    has $.can-ssl = !::("IO::Socket::SSL").isa(Failure);
     has $.auto-check is rw;
     has @.history;
-    has $.proxy-url is rw;
-    has $.user is rw;
-    has $.pass is rw;
 
-    my class RoundTrip {
-        has $.request;
-        has $.response;
+    has HTTP::RoundTrip $.transporter;
+    has HTTP::Response  $.responder;
+    has HTTP::Request   $.requestor;
+
+    submethod BUILD(
+        HTTP::RoundTrip :$!transporter, 
+        HTTP::Request   :$!requestor,
+        HTTP::Response  :$!responder,
+        Bool :$!auto-check,
+    ) {
+        $!responder   := Zef::Net::HTTP::Response                    unless $!responder;
+        $!requestor   := Zef::Net::HTTP::Request                     unless $!requestor;
+        $!transporter  = Zef::Net::HTTP::Transport.new(:$!responder) unless $!transporter;
     }
 
-    submethod connect(Zef::Net::URI $uri) {
-        my $proxy-uri = Zef::Net::URI.new(url => $!proxy-url) if $!proxy-url;
-        my $scheme = (?$proxy-uri && ?$proxy-uri.scheme ?? $proxy-uri.scheme !! $uri.scheme) // 'http';
-        my $host   = ?$proxy-uri  && ?$proxy-uri.host   ?? $proxy-uri.host   !! $uri.host;
-        my $port   = (?$proxy-uri && ?$proxy-uri.port   ?? $proxy-uri.port   !! $uri.port) // ($scheme eq 'https' ?? 443 !! 80);
+    method method($method, $url, :$body) {
+        my $request  = $!requestor.new(:$method, :$url, :$body);
+        my $response = $!transporter.round-trip($request);
 
-        if $scheme eq 'https' && !$!can-ssl {
-            die "Please install IO::Socket::SSL for SSL support";
-        }
+        @!history.push: $response;
 
-        return !$!can-ssl
-            ??  IO::Socket::INET.new( host => $host, port => $port )
-            !! $scheme ~~ /^https/ 
-                    ?? ::('IO::Socket::SSL').new( host => $host, port => $port )
-                    !! IO::Socket::INET.new( host => $host, port => $port );
-    }
+        if $!auto-check {
+            fail "Response not understood" unless $response && $response.status-code;
 
-    method send(Str $action, Str $url, :$payload) {
-        my $request    = Zef::Net::HTTP::Request.new( :$action, :$url, :$payload, :$.user, :$.pass );
-        my $connection = self.connect($request.uri);
-        $connection.send(~$request);
-
-        my $response   = Zef::Net::HTTP::Response.new(message => do { 
-            my $d; while my $r = $connection.recv { $d ~= $r }; $d;
-        });
-
-        @.history.push: RoundTrip.new(:$request, :$response);
-
-        if $.auto-check {
-            return Zef::Net::HTTP::Request.new unless $response && $response.status-code;
-            
             given $response.status-code {
-                when /^2\d+$/ { }
-                when /^301/     {
-                    $response = self.send($action, ~$response.header.<Location>, :$payload);
+                when /^2\d\d$/ { }
+                when /^3\d\d$/ {
+                    my $location   = Zef::Net::URI.new(url => ~$response.headers.<Location>);
+                    my $forward-to = $location.is-relative 
+                        ?? $location.rel2abs("{$request.uri.scheme}://{$request.uri.host}")
+                        !! $location;
+
+                    # We put the original response in the history already. We set $response now 
+                    # so after all forwarding is done we can return the final response.
+                    $response = $.method($request.method, $forward-to.url, body => $request.body);
                 }
                 default {
                     die "[NYI] http-code: '$_'";
@@ -65,12 +56,10 @@ class Zef::Net::HTTP::Client {
     }
 
     method get(Str $url) {
-        my $response = self.send('GET', $url);
-        return $response;
+        return $.method('GET', $url);
     }
 
-    method post(Str $url, :$payload) {
-        my $response = self.send('POST', $url, :$payload);
-        return $response;
+    method post(Str $url, :$body) {
+        return $.method('POST', $url, :$body);
     }
 }

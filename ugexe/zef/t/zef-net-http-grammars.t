@@ -6,7 +6,7 @@ use Zef::Net::HTTP::Grammar;
 
 
 subtest {
-    my $request = q{GET /http.html HTTP/1.1}
+    my $request =  q{GET /http.html HTTP/1.1}
         ~ "\r\n" ~ q{Host: www.http.header.free.fr}
         ~ "\r\n" ~ q{Accept: image/gif; q=0.1, image/x-xbitmap, image/jpeg, image/pjpeg,}
         ~ "\r\n" ~ q{Accept-Language: da, en-gb;q=0.9}
@@ -60,6 +60,8 @@ subtest {
 subtest {
     my $response = q{HTTP/1.1 200 OK}
         ~ "\r\n" ~ q{Allow: GET, HEAD, PUT}
+        ~ "\r\n" ~ q{Content-Type: text/html; charset=utf-8}
+        ~ "\r\n" ~ q{Transfer-Encoding: chunked, gzip}
         ~ "\r\n\r\n";
 
     my $http = Zef::Net::HTTP::Grammar.parse($response);
@@ -70,7 +72,20 @@ subtest {
     is $http.<HTTP-message>.<header-field>.[0].<value>.<allow-value>.[0].<method>, 'GET';
     is $http.<HTTP-message>.<header-field>.[0].<value>.<allow-value>.[1].<method>, 'HEAD';
     is $http.<HTTP-message>.<header-field>.[0].<value>.<allow-value>.[2].<method>, 'PUT';
-}, 'Basic Response';
+
+    is $http.<HTTP-message>.<header-field>.[1], 'Content-Type: text/html; charset=utf-8';
+    is $http.<HTTP-message>.<header-field>.[1].<name>, 'Content-Type';
+    is $http.<HTTP-message>.<header-field>.[1].<value>.<media-type>, 'text/html; charset=utf-8';
+    is $http.<HTTP-message>.<header-field>.[1].<value>.<media-type>.<type>, 'text';
+    is $http.<HTTP-message>.<header-field>.[1].<value>.<media-type>.<subtype>, 'html';
+    is $http.<HTTP-message>.<header-field>.[1].<value>.<media-type>.<parameter>.[0].<name>, 'charset';
+    is $http.<HTTP-message>.<header-field>.[1].<value>.<media-type>.<parameter>.[0].<value>, 'utf-8';
+
+    is $http.<HTTP-message>.<header-field>.[2], 'Transfer-Encoding: chunked, gzip';
+    is $http.<HTTP-message>.<header-field>.[2].<name>, 'Transfer-Encoding';
+    is $http.<HTTP-message>.<header-field>.[2].<value>.<transfer-encoding-value>.[0].<transfer-coding>, 'chunked';
+    is $http.<HTTP-message>.<header-field>.[2].<value>.<transfer-encoding-value>.[1].<transfer-coding>, 'gzip';
+}, 'HTTP-message: Basic Response';
 
 
 subtest {
@@ -89,7 +104,7 @@ subtest {
     is $http.<HTTP-message>.<start-line>.<status-line>.<status-code>, 200, 'Status code matches';
     is $http.<HTTP-message>.<start-line>.<status-line>.<reason-phrase>, 'OK', 'Status message matches';
     is $http.<HTTP-message>.<message-body>, 'message body', "Got body";
-}, 'Zef.pm basic';
+}, 'HTTP-message: Zef.pm basic';
 
 
 
@@ -110,7 +125,7 @@ subtest {
 
     is $content-length, 5, 'Content-Length correct value';
     is $http.<HTTP-message>.<message-body>, 48092, "Report Number parsed from body";
-}, 'P6C mock test report response';
+}, 'HTTP-message: P6C mock test report response';
 
 
 

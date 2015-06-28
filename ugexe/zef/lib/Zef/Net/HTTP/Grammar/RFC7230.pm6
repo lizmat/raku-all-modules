@@ -2,7 +2,9 @@
 
 role Zef::Net::HTTP::Grammar::RFC7230 {
     token HTTP-message { <start-line> [<header-field> <.CRLF>]* <.CRLF> <message-body>? }
-    token HTTP-header  { <start-line> [<header-field> <.CRLF>]*                         }
+    token HTTP-headers { <start-line> [<header-field> <.CRLF>]* <.CRLF>                 }
+    token HTTP-header  { <header-field> <.CRLF>                                         }
+    token HTTP-start   { <start-line> <.CRLF>                                           }
 
     token OWS   { [<.SP> || <.HTAB>]* }
     token RWS   { [<.SP> || <.HTAB>]+ }
@@ -17,7 +19,10 @@ role Zef::Net::HTTP::Grammar::RFC7230 {
     token Host              { <host> [':' <.port>]? } # `host` from 3986
     token TE                { [[<.OWS> <t-codings>]*]       *%% ','                           }
     token Trailer           { [[<.OWS> <field-name>]*]      *%% ','                           }
-    token Transfer-Encoding { [[<.OWS> <transfer-coding>]*] *%% ','                           }
+
+    token Transfer-Encoding { <transfer-encoding-value> +%% ','                               }
+    token transfer-encoding-value { [<.OWS> <transfer-coding>]                                }
+
     token Upgrade { [[<.OWS> <protocol>]*]                  *%% ','                           }
     token Via { [[<received-protocol> <.RWS> <received-by> [<.RWS> <comment>]?]*] *%% ','     }
 
@@ -79,7 +84,7 @@ role Zef::Net::HTTP::Grammar::RFC7230 {
     token known-header:sym<User-Agent>        { <.sym> }
     token known-header:sym<Vary>              { <.sym> }
     # 7232
-    token known-header:sym<Etag>              { <.sym> }
+    token known-header:sym<ETag>              { <.sym> }
     token known-header:sym<Last-Modified>     { <.sym> }
     # 7233
     token known-header:sym<Accept-Ranges>     { <.sym> }
@@ -97,7 +102,7 @@ role Zef::Net::HTTP::Grammar::RFC7230 {
         || $<name>=<.field-name>   ':' <.OWS> $<value>=[<.field-value>] <.OWS>
     }
 
-    token field-name    { <.token> } # the general rule
+    token field-name    { <.token> }
     token field-value   { [<.field-content> || <.obs-fold>]*                     }
     token field-content { <.field-vchar> [[<.SP> || <.HTAB> || <.field-vchar>]* <.field-vchar>]? }
     token field-vchar   { <.VCHAR> || <.obs-text>  }
