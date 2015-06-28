@@ -7,6 +7,14 @@
    - $afm.stringwidth("RVX", :kern) - computes stringwith after kerning
    - $afm.encode("RVX", :kern) - encode and kern characters.
 
+  Release 1.23
+   Making things less ISO-Latin1 centric
+  - inverted @ISOLatin1Encoding => %ISOLatin1Encoding
+  - removed method .wx-table('latin-1')
+  - renamed method .encode => .kern
+  - added :%chars option to .stringwidth, .kern
+  - compute metrics for Symbol, ZapfDingbats
+
 2015-04-30
 
    Release 1.21

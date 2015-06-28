@@ -25,16 +25,20 @@ DESCRIPTION
        Object constructor. Takes the name of the font as argument.
        It will croak if the font can not be found.
 
-    $afm.wx-table('latin-1')
-       Returns a 256 element array, where each element contains the
-       width of the corresponding character in the iso-8859-1
-       character set.
-
-    $afm.stringwidth($string, [$fontsize], :kern)
+    $afm.stringwidth($string, $fontsize, :kern, :%glyphs)
        Returns the width of the string passed as argument. The
        string is assumed to be encoded in the iso-8859-1 character
        set. A second argument can be used to scale the width
        according to the font size.
+
+       :kern    - make kerning adjustments
+       :%glyphs - is an optional mapping of characters to glyph-names.
+                  characters not in the glyph-map are ignored.
+
+    $afm.kern($string, $fontsize, :%glyphs)
+       Returns an array of kerning pairs for the string.
+
+       %glyphs is an optional mapping of characters to glyph-names.
 
     $afm.FontName
        The name of the font as presented to the PostScript language
@@ -118,7 +122,7 @@ DESCRIPTION
 
     The AFM specification can be found at:
 
-       ftp://ftp.adobe.com/pub/adobe/DeveloperSupport/TechNotes/PSfiles/5004.AFM_Spec.ps
+       http://partners.adobe.com/asn/developer/pdfs/tn/5004.AFM_Spec.pdf
 
 ENVIRONMENT
     METRICS   Contains the path to seach for AFM-files. Format is as for

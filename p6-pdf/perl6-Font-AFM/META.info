@@ -1,6 +1,6 @@
 {
     "name"        : "Font::AFM",
-    "version"     : "1.22",
+    "version"     : "1.23",
     "description" : "Interface to Adobe Font Metrics files",
     "depends"     : [ ],
     "source-url"  : "git://github.com/p6-pdf/perl6-Font-AFM.git",
@@ -20,7 +20,10 @@
         "Font::Metrics::times-roman" : "Font/Metrics/times-roman.pm",
         "Font::Metrics::times-bold" : "Font/Metrics/times-bold.pm",
         "Font::Metrics::times-italic" : "Font/Metrics/times-italic.pm",
-        "Font::Metrics::times-bolditalic" : "Font/Metrics/times-bolditalic.pm"
+        "Font::Metrics::times-bolditalic" : "Font/Metrics/times-bolditalic.pm",
+
+        "Font::Metrics::symbol" : "Font/Metrics/symbol.pm",
+        "Font::Metrics::zapfdingbats" : "Font/Metrics/zapfdingbats.pm"
      }
 }
 

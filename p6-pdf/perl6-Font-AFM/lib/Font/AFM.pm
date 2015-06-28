@@ -38,16 +38,16 @@ The following methods are available:
 Object constructor. Takes the name of the font as argument.
 Croaks if the font can not be found.
 
-=item $afm.wx-table('latin1')
+=item $afm.stringwidth($string, $fontsize, :kern, :%glyphs)
 
-Returns a 256-element array, where each element contains the width
-of the corresponding character in the latin1 character set.
+Returns the width of the string passed as argument. The
+string is assumed to be encoded in the iso-8859-1 character
+set. A second argument can be used to scale the width
+according to the font size.
 
-=item $afm.stringwidth($string, [$fontsize], :kern)
+=item $afm.kern($string, $fontsize, :%glyphs)
 
-Returns the width of the argument string. A second
-argument can be used to scale the width according to the font size.
-
+Returns an array of kerning pairs for the string.
 
 =item $afm.FontName
 
@@ -185,13 +185,18 @@ it under the same terms as Perl itself.
     #-------perl 6 resumes here--------------------------------------------
 
     method class-name($font-name) {
-        [~] "Font::Metrics::", $font-name.subst( /[:i'.afm'$]/, '').lc;
+        [~] "Font::Metrics::", $font-name.lc.subst( /['.afm'$]/, '');
+    }
+
+    method metrics-class($font-name) {
+        my $class-name = $.class-name($font-name);
+        require ::($class-name);
+        ::($class-name);
     }
 
     method core-font($font-name) {
-        my $class-name = self.class-name($font-name);
-        require ::($class-name);
-        ::($class-name).new;
+        my $class = self.metrics-class($font-name);
+        $class.new;
     }
 
     # Creates a new Font::AFM object from an AFM file.  Pass it the name of the
@@ -284,54 +289,67 @@ it under the same terms as Perl itself.
     multi method new(Str $name)  { self.bless( :$name ) }
     multi method new(Hash $metrics) { self.bless( :$metrics ) }
 
-    BEGIN our @ISOLatin1Encoding = <
-     .notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
-     .notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
-     .notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
-     .notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef space
-     exclam quotedbl numbersign dollar percent ampersand quoteright
-     parenleft parenright asterisk plus comma minus period slash zero one
-     two three four five six seven eight nine colon semicolon less equal
-     greater question at A B C D E F G H I J K L M N O P Q R S
-     T U V W X Y Z bracketleft backslash bracketright asciicircum
-     underscore quoteleft a b c d e f g h i j k l m n o p q r s
-     t u v w x y z braceleft bar braceright asciitilde .notdef .notdef
-     .notdef .notdef .notdef .notdef .notdef .notdef .notdef .notdef
-     .notdef .notdef .notdef .notdef .notdef .notdef .notdef dotlessi grave
-     acute circumflex tilde macron breve dotaccent dieresis .notdef ring
-     cedilla .notdef hungarumlaut ogonek caron space exclamdown cent
-     sterling currency yen brokenbar section dieresis copyright ordfeminine
-     guillemotleft logicalnot hyphen registered macron degree plusminus
-     twosuperior threesuperior acute mu paragraph periodcentered cedilla
-     onesuperior ordmasculine guillemotright onequarter onehalf threequarters
-     questiondown Agrave Aacute Acircumflex Atilde Adieresis Aring AE
-     Ccedilla Egrave Eacute Ecircumflex Edieresis Igrave Iacute Icircumflex
-     Idieresis Eth Ntilde Ograve Oacute Ocircumflex Otilde Odieresis
-     multiply Oslash Ugrave Uacute Ucircumflex Udieresis Yacute Thorn
-     germandbls agrave aacute acircumflex atilde adieresis aring ae
-     ccedilla egrave eacute ecircumflex edieresis igrave iacute icircumflex
-     idieresis eth ntilde ograve oacute ocircumflex otilde odieresis divide
-     oslash ugrave uacute ucircumflex udieresis yacute thorn ydieresis
-    >;
+    BEGIN our  %ISOLatin1Encoding = "  " => "space", "!"  => "exclam",
+    "\"" => "quotedbl", "#" => "numbersign", "\$" => "dollar", "\%" =>
+    "percent",  "\&"  =>  "ampersand",  "'" =>  "quoteright",  "("  =>
+    "parenleft",  ")"  =>  "parenright",  "*" =>  "asterisk",  "+"  =>
+    "plus", ","  => "comma", "-" =>  "minus", "." =>  "period", "/" =>
+    "slash",  "0"  => "zero",  "1"  => "one",  "2"  =>  "two", "3"  =>
+    "three",  "4" =>  "four",  "5" =>  "five",  "6" =>  "six", "7"  =>
+    "seven", "8"  => "eight",  "9" => "nine",  ":" => "colon",  ";" =>
+    "semicolon", "<" => "less", "="  => "equal", ">" => "greater", "?"
+    => "question",  "\@" => "at", :A("A"),  :B("B"), :C("C"), :D("D"),
+    :E("E"),  :F("F"), :G("G"),  :H("H"),  :I("I"), :J("J"),  :K("K"),
+    :L("L"),  :M("M"), :N("N"),  :O("O"),  :P("P"), :Q("Q"),  :R("R"),
+    :S("S"),  :T("T"), :U("U"),  :V("V"),  :W("W"), :X("X"),  :Y("Y"),
+    :Z("Z"),  "["  =>  "bracketleft",  "\\"  =>  "backslash",  "]"  =>
+    "bracketright",  "^" =>  "asciicircum",  :_("underscore"), "`"  =>
+    "quoteleft", :a("a"), :b("b"), :c("c"), :d("d"), :e("e"), :f("f"),
+    :g("g"),  :h("h"), :i("i"),  :j("j"),  :k("k"), :l("l"),  :m("m"),
+    :n("n"),  :o("o"), :p("p"),  :q("q"),  :r("r"), :s("s"),  :t("t"),
+    :u("u"),  :v("v"),  :w("w"), :x("x"),  :y("y"),  :z("z"), "\{"  =>
+    "braceleft",   "|"  =>   "bar",  "}"   =>  "braceright",   "~"  =>
+    "asciitilde", "" =>  "dotlessi", "" => "grave", ""  => "acute", ""
+    => "circumflex", "" => "tilde",  "" => "macron", "" => "breve", ""
+    => "dotaccent", ""  => "dieresis", "" => "ring",  "" => "cedilla",
+    ""  => "hungarumlaut",  ""  => "ogonek",  ""  => "caron",  " "  =>
+    "space", "¡"  => "exclamdown", "¢"  => "cent", "£"  => "sterling",
+    "¤"  => "currency",  "¥"  =>  "yen", "¦"  =>  "brokenbar", "§"  =>
+    "section",    "¨"    =>    "dieresis",   "©"    =>    "copyright",
+    :ª("ordfeminine"),  "«" =>  "guillemotleft", "¬"  => "logicalnot",
+    "­"  => "hyphen",  "®" =>  "registered", "¯"  => "macron",  "°" =>
+    "degree",  "±"  =>  "plusminus",  "²"  =>  "twosuperior",  "³"  =>
+    "threesuperior", "´" => "acute", :µ("mu"), "¶" => "paragraph", "·"
+    =>  "periodcentered",  "¸"  =>  "cedilla", "¹"  =>  "onesuperior",
+    :º("ordmasculine"), "»" =>  "guillemotright", "¼" => "onequarter",
+    "½" =>  "onehalf", "¾" => "threequarters",  "¿" => "questiondown",
+    :À("Agrave"),   :Á("Aacute"),   :Â("Acircumflex"),   :Ã("Atilde"),
+    :Ä("Adieresis"),     :Å("Aring"),     :Æ("AE"),    :Ç("Ccedilla"),
+    :È("Egrave"),  :É("Eacute"),  :Ê("Ecircumflex"),  :Ë("Edieresis"),
+    :Ì("Igrave"),  :Í("Iacute"),  :Î("Icircumflex"),  :Ï("Idieresis"),
+    :Ð("Eth"),      :Ñ("Ntilde"),      :Ò("Ograve"),     :Ó("Oacute"),
+    :Ô("Ocircumflex"),    :Õ("Otilde"),   :Ö("Odieresis"),    "×"   =>
+    "multiply",      :Ø("Oslash"),     :Ù("Ugrave"),     :Ú("Uacute"),
+    :Û("Ucircumflex"),   :Ü("Udieresis"),  :Ý("Yacute"),  :Þ("Thorn"),
+    :ß("germandbls"),  :à("agrave"),  :á("aacute"), :â("acircumflex"),
+    :ã("atilde"),      :ä("adieresis"),     :å("aring"),     :æ("ae"),
+    :ç("ccedilla"),   :è("egrave"),  :é("eacute"),  :ê("ecircumflex"),
+    :ë("edieresis"),  :ì("igrave"),  :í("iacute"),  :î("icircumflex"),
+    :ï("idieresis"),     :ð("eth"),     :ñ("ntilde"),    :ò("ograve"),
+    :ó("oacute"),  :ô("ocircumflex"),  :õ("otilde"),  :ö("odieresis"),
+    "÷"   =>  "divide",   :ø("oslash"),   :ù("ugrave"),  :ú("uacute"),
+    :û("ucircumflex"),   :ü("udieresis"),  :ý("yacute"),  :þ("thorn"),
+    :ÿ("ydieresis");
 
-    # Returns an 256 element latin1 subset that maps from characters to width
-    multi method wx-table($enc = 'latin1') {
-        self<_wx_table>{$enc} //= [
-            @ISOLatin1Encoding.map( -> $glyph-name {
-                self<Wx>{$glyph-name} // self<Wx><.notdef>;
-            } )
-        ];
-    }
-
-    method stringwidth( Str $string, Numeric $pointsize?, Bool :$kern ) {
+    method stringwidth( Str $string, Numeric $pointsize?, Bool :$kern, Hash :$glyphs = %ISOLatin1Encoding) {
         my $width = 0.0;
         my $prev-glyph;
         my $kern-data = self.KernData if $kern;
-        my $wx = self.wx-table('latin-1');
+        my $wx = self.Wx; 
 
-        for $string.ords {
-            $width += $wx[$_] // 0;
-            my $glyph-name = @ISOLatin1Encoding[$_] // '.notdef';
+        for $string.comb {
+            my $glyph-name = $glyphs{$_} // next;
+            $width += $wx{$glyph-name} // next;
 
             $width += $kern-data{$prev-glyph}{$glyph-name}
                if $kern && $prev-glyph && ($kern-data{$prev-glyph}{$glyph-name}:exists);
@@ -344,60 +362,39 @@ it under the same terms as Perl itself.
         $width;
     }
 
-    #| kern a string. decompose into an array of: (['string', $width, $kern] , ... )
-    proto method encode( Str $, Numeric $? ) {*}
-    multi method encode( Str $string, Numeric $pointsize?, Bool :$kern! where $_ ) {
-        my $width = 0.0;
+    #| kern a string. decompose into an array of: ('string1', $kern , ..., 'stringn' )
+    method kern( Str $string, Numeric $pointsize?, Hash :$glyphs = %ISOLatin1Encoding) {
         my $prev-glyph;
         my $str = '';
         my @chunks;
         my $kern-data = self.KernData;
-        my $wx = self.wx-table('latin-1');
+        my $wx = self.Wx;
 
-        for $string.ords {
-            my $glyph-name = @ISOLatin1Encoding[$_] // next;
+        for $string.comb {
+            my $glyph-name = $glyphs{$_} // next;
+            my $glyph-width = $wx{$glyph-name} // next;
 
             if $prev-glyph && ($kern-data{$prev-glyph}{$glyph-name}:exists) {
                 my $kerning = $kern-data{$prev-glyph}{$glyph-name};
                 if ($pointsize) {
-                    $width *= $pointsize / 1000;
                     $kerning *= $pointsize / 1000;
                 }
-                @chunks.push: [ $str, $width, $kerning ];
+                @chunks.push: ( $str, $kerning );
                 $str = '';
-                $width = 0.0;
             }
 
-            $width += $wx[$_] // 0;
-            $str ~= .chr;
+            $str ~= $_;
             $prev-glyph = $glyph-name;
         }
 
-        if $str.chars {
-            if ($pointsize) {
-                $width *= $pointsize / 1000;
-            }
-            @chunks.push: [ $str, $width, 0]
-        }
+        @chunks.push: $str
+            if $str.chars;
 
         @chunks;
     }
 
-    multi method encode( Str $string, Numeric $pointsize?) is default {
-        my $width = 0.0;
-        my $str = '';
-        my $wx = self.wx-table('latin-1');
-
-        for $string.ords {
-            my $glyph-name = @ISOLatin1Encoding[$_] // next;
-            $width += $wx[$_] // 0;
-            $str ~= .chr;
-        }
-
-        $width *= $pointsize / 1000
-            if $pointsize;
-
-        [[ $str, $width, 0]].flat;
+    method FontBBox {
+        self<FontBBox>.comb(/< + - >?\d+/).map({ .Int });
     }
 
     method !is-prop($prop-name) {
