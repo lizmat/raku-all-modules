@@ -32,7 +32,7 @@ for (
 
     my $d = Algorithm::Diff.new( @a, @b );
     ok $d.defined, "It's defined...";
-    isa_ok $d, Algorithm::Diff, "... and it's an Algorithm::Diff";
+    isa-ok $d, Algorithm::Diff, "... and it's an Algorithm::Diff";
 
 #    ('-' x 79).say;
 #    say "Sequence A: ",$a;
@@ -46,24 +46,24 @@ for (
     is( $d.Base($undef), 1, 'call Base with undef' );
     is( $d.Base(0),      1, 'call Base with 0' );
 
-    dies_ok( { $d.Diff     }, "dies properly on invalid Diff");
-    dies_ok( { $d.Same     }, "dies properly on invalid Same" );
-    dies_ok( { $d.Items    }, "dies properly on invalid Items" );
-    dies_ok( { $d.Range(2) }, "dies properly on invalid Range" );
-    dies_ok( { $d.Min(1)   }, "dies properly on invalid Min" );
-    dies_ok( { $d.Max(2)   }, "dies properly on invalid Max" );
+    dies-ok( { $d.Diff     }, "dies properly on invalid Diff");
+    dies-ok( { $d.Same     }, "dies properly on invalid Same" );
+    dies-ok( { $d.Items    }, "dies properly on invalid Items" );
+    dies-ok( { $d.Range(2) }, "dies properly on invalid Range" );
+    dies-ok( { $d.Min(1)   }, "dies properly on invalid Min" );
+    dies-ok( { $d.Max(2)   }, "dies properly on invalid Max" );
 
     is( $d.Next(0),      0, 'call Next with 0' );
-    dies_ok( { $d.Same },   'dies properly on invalid Same' );
+    dies-ok( { $d.Same },   'dies properly on invalid Same' );
     is( $d.Next,         1, 'call Next with 0' )      if  0 < $hunks;
     is( $d.Next($undef), 2, 'call Next with undef' )  if  1 < $hunks;
     is( $d.Next(1),      3, 'call Next with 1' )      if  2 < $hunks;
     is( $d.Next(-1),     2, 'call Next with -1' )     if  1 < $hunks;
     is( $d.Next(-2),     0, 'call Next with -2' );
-    dies_ok( { $d.Same }, "dies properly on invalid Same" );
+    dies-ok( { $d.Same }, "dies properly on invalid Same" );
 
     is( $d.Prev(0),       0, 'Prev with 0' );
-    dies_ok( { $d.Same },    'dies properly on invalid Same' );
+    dies-ok( { $d.Same },    'dies properly on invalid Same' );
     is( $d.Prev,         -1, 'call Prev with nothing' )   if  0 < $hunks;
     is( $d.Prev($undef), -2, 'call Prev with undef' )     if  1 < $hunks;
     is( $d.Prev(1),      -3, 'call Prev with 1' )         if  2 < $hunks;
@@ -92,7 +92,7 @@ for (
         'chained Reset(0)->Next(-1) returns number of hunks' );
 
     my $c = $d.Copy;
-    isa_ok $c, Algorithm::Diff, 'Copy makes a new object of the correct type.';
+    isa-ok $c, Algorithm::Diff, 'Copy makes a new object of the correct type.';
     is( $c.Base, $d.Base, 'with the correct Base' );
     is( $c.Next(0), $d.Next(0), 'both iterate correctly' );
     is( $d.Copy(-4).Next(0), $d.Copy().Reset(-4).Next(0),
@@ -140,14 +140,14 @@ for (
     next unless $hunks;
 
     is($d.Next, 1, 'next ok if hunks left' );
-    dies_ok( { $d.Items    }, 'need to call Items with a parameter' ); 
-    dies_ok( { $d.Items(0) }, 'need to call Items with a valid parameter' );
-    dies_ok( { $d.Range    }, 'need to call Range with a parameter' );
-    dies_ok( { $d.Range(3) }, 'need to call Range with a valid parameter' );
-    dies_ok( { $d.Min      }, 'need to call Min with a parameter' );
-    dies_ok( { $d.Min(-1)  }, 'need to call Min with a valid parameter' );
-    dies_ok( { $d.Max      }, 'need to call Max with a parameter' );
-    dies_ok( { $d.Max(9)   }, 'need to call Max with a valid parameter' );
+    dies-ok( { $d.Items    }, 'need to call Items with a parameter' ); 
+    dies-ok( { $d.Items(0) }, 'need to call Items with a valid parameter' );
+    dies-ok( { $d.Range    }, 'need to call Range with a parameter' );
+    dies-ok( { $d.Range(3) }, 'need to call Range with a valid parameter' );
+    dies-ok( { $d.Min      }, 'need to call Min with a parameter' );
+    dies-ok( { $d.Min(-1)  }, 'need to call Min with a valid parameter' );
+    dies-ok( { $d.Max      }, 'need to call Max with a parameter' );
+    dies-ok( { $d.Max(9)   }, 'need to call Max with a valid parameter' );
 
     $d.Reset(-1);
     $c = $d.Copy( $undef, 1 );
