@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/flussence/BufUtils.git
+	branch = master
+	commit = 15314ce612d760b5f484d599580d4fa2efd2181d
+	parent = 16cbc405fe4577a4450b1290bdeaab7d24d2116d
+	cmdver = 0.2.1

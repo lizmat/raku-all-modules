@@ -1,0 +1,17 @@
+{
+  "name" : "BufUtils",
+  "support" : {
+    "source" : "https://github.com/flussence/BufUtils.git"
+  },
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "BufUtils" : "lib/BufUtils.pm"
+  },
+  "depends" : [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "description" : "Makes Blobs/Bufs a little more Stringy",
+  "version" : "0.0.1"
+}
