@@ -1,6 +1,6 @@
 use Method::Modifiers;
 
-role Method::Modifiers::Role;
+unit role Method::Modifiers::Role;
 
 method before ($method-name, &closure)
 {

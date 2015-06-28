@@ -1,4 +1,4 @@
-module Method::Modifiers;
+unit module Method::Modifiers;
 
 sub around ($class, $method-name, &closure) is export
 {
