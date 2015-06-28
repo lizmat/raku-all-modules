@@ -73,7 +73,7 @@ class Net::Pcap::C_Buf
     $.carray          is uint8p
       Pointer to the C buffer
       $.carray contains this pointer cast to uint8p
-      
+
     $.elems           is Int
       Number of elements (bytes) in the buffer.
 

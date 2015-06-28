@@ -93,9 +93,9 @@ class Net::Pcap
 
     .next() returns Parcel
       Get next frame.
-      
+
       *Usage of .next_ex() is preferred due to better error messages!*
-      
+
       Returns a parcel with two elements:
       - Net::Pcap::pcap_pkthdr_t structure
       - Net::Pcap::C_Buf containing the frame.
@@ -103,7 +103,7 @@ class Net::Pcap
 
     .next_ex() returns Parcel
       Get next frame.
-      
+
       Returns a parcel with two elements:
       - Net::Pcap::pcap_pkthdr_t structure
       - Net::Pcap::C_Buf containing the frame.
