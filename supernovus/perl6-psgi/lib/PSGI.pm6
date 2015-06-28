@@ -1,5 +1,5 @@
 ## Some helpers for PSGI frameworks.
-module PSGI;
+unit module PSGI;
 
 use HTTP::Status;
 
