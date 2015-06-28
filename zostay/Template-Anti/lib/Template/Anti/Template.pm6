@@ -189,7 +189,7 @@ class Template::Anti::Template {
     }
 
     #| Apply the given selection criteria to the template.
-    method postcircumfix:<( )>(Str $selector) {
+    method CALL-ME(Str $selector) {
         return self.find($selector);
     }
 
@@ -213,6 +213,9 @@ class Template::Anti::Template {
 
     #| Render the template as HTML.
     method render {
+        # From the HTML 5.1 spec
+        my $void-elements = set <area base br col embed hr img input keygen link menuitem meta param source track wbr>;
+
         multi sub render-walk($print, XML::Document $doc) {
             $print('<!DOCTYPE ' ~ $doc.doctype<type> ~ $doc.doctype<value> ~ '>')
                 if $doc.doctype;
@@ -227,13 +230,16 @@ class Template::Anti::Template {
                 render-walk($print, $el.nodes);
                 $print('</' ~ $el.name ~ '>');
             }
+            elsif $el.name ∈ $void-elements {
+                $print('>');
+            }
             else {
-                $print('/>');
+                $print('></' ~ $el.name ~ '>');
             }
         }
 
         multi sub render-walk($print, XML::Text $text) {
-            $print($text.Str);
+            $print($text.Str.trans([ '<', '>', '&' ] => [ '&lt;', '&gt;', '&amp;' ]));
         }
         
         multi sub render-walk($print, XML::Comment $comment) {
@@ -244,12 +250,12 @@ class Template::Anti::Template {
         
         multi sub render-walk($print, XML::CDATA $c) {
             my $cdata = $c.data;
-            $cdata.=trans('<' => '&lt;', '>' => '&gtl;', '&' => '&amp;');
+            $cdata.=trans([ '<', '>', '&' ] => [ '&lt;', '&gtl;', '&amp;' ]);
             $print($cdata);
         }
 
         multi sub render-walk($print, %attribs) {
-            for %attribs.kv -> $k, $v {
+            %attribs.sort».kv.flatmap: -> $k, $v {
                 $print(qq[ $k="{$v.trans('"' => '&quot;')}"]);
             }
         }
@@ -264,5 +270,9 @@ class Template::Anti::Template {
         my $print = -> $str { $output ~= $str };
         render-walk($print, $!template);
         $output;
+    }
+
+    multi method perl() {
+        return 'Template::Anti::Template.new(template => from-xml("' ~ $!template.Str.trans([ '"' ] => [ "\"" ]) ~ '"))';
     }
 }

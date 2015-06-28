@@ -374,7 +374,7 @@ class Template::Anti::Selector::Actions {
 class Template::Anti::Selector {
     has XML::Node $.source;
 
-    method postcircumfix:<( )>(Str $selector) {
+    method CALL-ME(Str $selector) {
         self.query($selector);
     }
 
@@ -394,6 +394,10 @@ class Template::Anti::Selector {
         $match.made.($iter, $set);
 
         return $set.to-list;
+    }
+
+    multi method perl() {
+        return 'Template::Anti::Selector.new(source => from-xml("' ~ $!source.Str.trans([ '"' ] => [ "\"" ]) ~ '"))';
     }
 }
 

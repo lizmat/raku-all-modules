@@ -25,7 +25,7 @@ my @expected = <
 for @expected -> $expected {
     my $node = $helper.next-node;
     flunk("did not get something when $expected") unless $node;
-    isa_ok $node, XML::Element;
+    isa-ok $node, XML::Element;
     is $node.name, $expected, "expecting $expected";
 }
 

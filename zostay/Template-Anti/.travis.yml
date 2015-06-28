@@ -20,6 +20,8 @@ install:
     # must do *something* in the install phase
     - rakudobrew build-panda
 script:
+    # wget the project.json because panda has trouble doing this itself
+    - wget http://ecosystem-api.p6c.org/projects.json -O ~/.rakudobrew/moar-nom/install/share/perl6/site/panda/projects.json
     # Pull in the dependencies before running tests
     - panda installdeps .
     # tests that module passes tests *before* compile
