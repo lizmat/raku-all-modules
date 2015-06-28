@@ -15,7 +15,7 @@ sub get-png-size($path) is export {
 
 my @to-delete;
 sub tmp-file($ext) is export {
-    my $path = IO::Path.new(IO::Spec.tmpdir);
+    my $path = $*TMPDIR;
     $path = $path.child( ('a'..'z', 'A'..'Z').pick(10).join ~ ".$ext" );
 
     push @to-delete, $path;

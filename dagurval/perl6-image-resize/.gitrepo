@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dagurval/perl6-image-resize.git
 	branch = master
-	commit = 1e45a56806b838fbadeac4a1c11bbdd8ab22be61
-	parent = c218748a9a2ae1ff14b46ea6adc38a9830cf7958
-	cmdver = 0.1.0
+	commit = a70c58c02083ab70d462fe3f6c476c8236631551
+	parent = 74e1e9ead9afd0b1e19df83865841a33a510c94d
+	cmdver = 0.2.1

@@ -21,7 +21,7 @@ my $height = 366;
     my $double = tmp-file("png");
     resize-image($camelia, $half, 0.5);
     resize-image($camelia, $double, 2.0);
-    
+
 
     my ($x, $y) = get-png-size($half);
     is $x, $width / 2, "Reduced image x to 0.5";
