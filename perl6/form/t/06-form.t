@@ -16,7 +16,7 @@ ok(form(
     '|{<<}|', 'aa',
     '+----+'
 ) eq "+----+\n|aa  |\n+----+\n", "Two literals, one field");
-dies_ok(-> { form('{<<}{>>}', 'a') }, "Insufficient arguments");
+dies-ok(-> { form('{<<}{>>}', 'a') }, "Insufficient arguments");
 ok(form('{<<<<<}', "The quick brown fox jumps over the lazy dog") eq "The    \n", "Line field overflow");
 # TODO: reformat these as here-documents for neatness - when Rakudo supports them
 ok(form('{[[[[[}', "The quick brown fox jumps over the lazy dog") eq "The    \nquick  \nbrown  \nfox    \njumps  \nover   \nthe    \nlazy   \ndog    \n", "Block field overflow");
@@ -31,7 +31,7 @@ ok(
 );
 ok(form('{""}', "Boo\nYah") eq "Boo \nYah \n", "Literal block field");
 
-dies_ok({form('{<<<<}')}, 'Too few arguments');
+dies-ok({form('{<<<<}')}, 'Too few arguments');
 
 # time for some numbers
 

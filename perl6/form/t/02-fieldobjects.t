@@ -6,7 +6,7 @@ plan 6;
 use Form::Field;
 
 my $textfield;
-lives_ok(
+lives-ok(
 	{
 		$textfield = Form::Field::Text.new;
 	},
@@ -17,7 +17,7 @@ ok($textfield, "TextField constructor returned an object");
 
 {
     my $numeric-field;
-    lives_ok( { $numeric-field = Form::Field::Numeric.new; },
+    lives-ok( { $numeric-field = Form::Field::Numeric.new; },
               'NumericField constructs with no parameters'
     );
     ok($numeric-field.defined, 'NumericField constructor returned an object');
@@ -25,7 +25,7 @@ ok($textfield, "TextField constructor returned an object");
 
 {
 	my $verbatim-field;
-	lives_ok( { $verbatim-field = Form::Field::Verbatim.new; },
+	lives-ok( { $verbatim-field = Form::Field::Verbatim.new; },
 			'VerbatimField constructs with no parameters'
 	);
 	ok($verbatim-field.defined, 'VerbatimField constructor returns an onbject');

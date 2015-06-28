@@ -56,7 +56,7 @@ ok($mixed-results.ast ~~ Array, "Mixed field parse returned an array");
 ok($mixed-results.ast.elems == 5, "Mixed field parse had the correct number of elements");
 
 my $c = 1;
-for $mixed-results.ast Z (Str, Form::Field::Text, Str, Form::Field::Text, Form::Field::Text) -> $r, $e {
+for $mixed-results.ast Z (Str, Form::Field::Text, Str, Form::Field::Text, Form::Field::Text) -> ($r, $e) {
 	ok($r ~~ $e, "Mixed field section {$c++} has type {$e.^name} ({$r.^name})");
 }
 

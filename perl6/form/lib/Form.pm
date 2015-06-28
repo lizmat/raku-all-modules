@@ -39,7 +39,7 @@ sub form(*@args --> Str) is export {
 		my $most-lines = ([max] @formatted.map: *.elems);
 		# RAKUDO: used to use $flines is rw and just overwrite in place that way
 		# But it doesn't seem to work at the moment
-		for @($f.ast) Z (0..*) -> $field, $index {
+		for (@($f.ast) Z (0..*)) -> ($field, $index) {
 			if @formatted[$index].elems < $most-lines {
 				if $field ~~ Form::Field::Field {
 					@formatted[$index] = $field.align(@formatted[$index], $most-lines);
