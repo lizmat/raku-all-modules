@@ -1,55 +1,136 @@
 use v6;
-use MongoDB::Protocol;
+
+BEGIN {
+  @*INC.unshift('/home/marcel/Languages/Perl6/Projects/BSON/lib');
+}
+
 use MongoDB::Database;
+use BSON::EDC-Tools;
 
-class MongoDB::Connection does MongoDB::Protocol;
+package MongoDB {
+  #-----------------------------------------------------------------------------
+  #
+  class X::MongoDB::Connection is Exception {
+    has $.error-text;                     # Error text
+    has $.error-code;                     # Error code if from server
+    has $.oper-name;                      # Operation name
+    has $.oper-data;                      # Operation data
+    has $.database-name;                  # Database name
 
-has IO::Socket::INET $!sock;
+    method message () {
+      return [~] "\n$!oper-name\() error:\n",
+                 "  $!error-text",
+                 $.error-code.defined ?? "\($!error-code)" !! '',
+                 $!oper-data.defined ?? "\n  Data $!oper-data" !! '',
+                 "\n  Database '$!database-name'\n"
+                 ;
+    }
+  }
 
-submethod BUILD ( Str :$host = 'localhost', Int :$port = 27017 ) {
+  #-----------------------------------------------------------------------------
+  #
+  class MongoDB::Connection {
 
-    $!sock = IO::Socket::INET.new( host => $host, port => $port );
-#    $!sock = IO::Socket::INET.new( host => "$host/?connectTimeoutMS=3000", port => $port );
-}
+    has IO::Socket::INET $!sock;
 
-method _send ( Buf $b, Bool $has_response --> Any ) {
+    submethod BUILD ( Str :$host = 'localhost', Int :$port = 27017 ) {
+      $!sock = IO::Socket::INET.new( host => $host, port => $port );
+    #  $!sock = IO::Socket::INET.new( host => "$host/?connectTimeoutMS=3000", port => $port );
+    }
 
-    $!sock.write( $b );
+    method _send ( Buf $b, Bool $has_response --> Any ) {
+      $!sock.write($b);
 
-    # some calls do not expect response
-    return unless $has_response;
+      # some calls do not expect response
+      #
+      return unless $has_response;
 
-    # check response size
-    my Buf $l = $!sock.read(4);
-    my Int $w = self.wire._dec_int32($l.list) - 4;
+      # check response size
+      #
+      my $index = 0;
+      my Buf $l = $!sock.read(4);
+      my Int $w = decode_int32( $l.list, $index) - 4;
 
-    # receive remaining response bytes from socket
-    return $l ~ $!sock.read($w);
-}
+      # receive remaining response bytes from socket
+      #
+      return $l ~ $!sock.read($w);
+    }
 
-method database ( Str $name --> MongoDB::Database ) {
-
-    return MongoDB::Database.new(
+    method database ( Str $name --> MongoDB::Database ) {
+      return MongoDB::Database.new(
         connection  => self,
         name        => $name,
-    );
+      );
+    }
+
+    # List databases using MongoDB db.runCommand({listDatabases: 1});
+    #
+    method list_databases ( --> Array ) {
+      my $database = self.database('admin');
+      my Pair @req = listDatabases => 1;
+      my Hash $doc = $database.run_command(@req);
+
+      if $doc<ok>.Bool == False {
+        die X::MongoDB::Connection.new(
+          error-text => $doc<errmsg>,
+          oper-name => 'list_databases',
+          oper-data => @req.perl,
+          database-name => 'admin.$cmd'
+        );
+      }
+
+      return @($doc<databases>);
+    }
+
+    # Get database names.
+    #
+    method database_names ( --> Array ) {
+      my @db_docs = self.list_databases();
+      my @names = map {$_<name>}, @db_docs; # Need to do it like this otherwise
+                                            # returns List instead of Array.
+      return @names;
+    }
+
+    # Get this drivers version.
+    #
+#    method driver_version ( --> Str ) {
+#say "P: {@*META.perl}";
+#      my $version = '0.0.0';
+#      return $version;
+#    }
+
+    # Get mongodb version.
+    #
+    method version ( --> Hash ) {
+      my Hash $doc = self.build_info;
+      my Hash $version = hash( <release1 release2 revision>
+                               Z=> (for $doc<version>.split('.') {Int($_)})
+                             );
+      $version<release-type> = $version<release2> %% 2
+                               ?? 'production'
+                               !! 'development'
+                               ;
+      return $version;
+    }
+
+    # Get mongodb server info.
+    #
+    method build_info ( --> Hash ) {
+      my $database = self.database('admin');
+      my Pair @req = buildinfo => 1;
+      my Hash $doc = $database.run_command(@req);
+
+      if $doc<ok>.Bool == False {
+        die X::MongoDB::Connection.new(
+          error-text => $doc<errmsg>,
+          oper-name => 'build_info',
+          oper-data => @req.perl,
+          collection-name => 'admin.$cmd'
+        );
+      }
+
+      return $doc;
+    }
+  }
 }
 
-# List databases using MongoDB db.runCommand({listDatabases: 1});
-#
-method list_databases ( --> Array ) {
-
-    my $database = self.database('admin');
-    my %docs = %($database.run_command(%(listDatabases => 1)));
-    return @(%docs<databases>);
-}
-
-# Get database names.
-#
-method database_names ( --> Array ) {
-
-    my @db_docs = self.list_databases();
-    my @names = map {$_<name>}, @db_docs; # Need to do it like this otherwise
-                                          # returns List instead of Array.
-    return @names;
-}

@@ -181,62 +181,31 @@ $cursor.fetch( ).perl.say;
 method find_one ( %criteria = { }, %projection = { } --> Hash ) {...}
 
 Same as for find() except it will only return one document.
-
 =for head2
-method explain ( %criteria = { } --> Hash ) {...}
+method find_and_modify ( Hash $criteria = { }, %projection = { },
+                         :$remove = False, :%update = { }, :%sort = { },
+                         :$new = False, :$upsert = False
+                         --> Hash ) {...}
 
-Return information on the query plan using the criteria. There are many fields
-in the document. The fields returned also depend on the type of queries. Look
-for this information on the L<MongoDB site|http://docs.mongodb.org/manual/reference/method/cursor.explain>.
+Search record by the given criteria and sort order.
+=begin nested
+=begin code
+my @places = <amsterdam NY LA haarlem utrecht parijs oradour poitiers vienna>;
+my %d1 = code => 'd1 ';
 
-=for head2
-method count ( %criteria = { }, --> Int ) {...}
+for ^5,(5...1) -> $code-postfix {               # Insert a number of documents
+  %d1<code> ~= $code-postfix;
+  %d1<city> = @places.roll;
+  $collection.insert(%d1);
+}
 
-Count documents using search criteria without using find and a cursor..
-
-=for head2
-method distinct ( $field-name!, %criteria = { }, --> Array ) {...}
-
-Find distinct values of a field depending on criteria.
-
-=for head2
-multi method group ( Str $js_reduce_func, Str :$key = '',
-                    :%initial = {}, Str :$key_js_func = '',
-                    :%condition = {}, Str :$finalize = ''
-                    --> Hash ) {...}
-
-=for head2
-multi method group ( BSON::Javascript $reduce_js_func, Str :$key = '',
-                     :%initial = {}, BSON::Javascript :$key_js_func = '',
-                     :%condition = {}, Str :$finalize = ''
-                     --> Hash ) {...}
-
-Groups documents in a collection by the specified keys and performs simple
-aggregation functions. See also L<this
-page|http://docs.mongodb.org/manual/reference/method/db.collection.group/>.
-
-First method will call second with the javascript texts converted to
-BSON::Javascript.
-
-=for head2
-multi method map_reduce ( Str $map_js_func, Str $reduce_js_func, Hash :$out,
-                          Str :$finalize, Hash :$criteria, Hash :$sort,
-                          Hash :$scope, Int :$limit, Bool :$jsMode = False
-                          --> Hash ) {...}
-=for head2
-multi method map_reduce ( BSON::Javascript $map_js_func,
-                          BSON::Javascript $reduce_js_func,
-                          BSON::Javascript :$finalize,
-                          Hash :$out, Hash :$criteria, Hash :$sort,
-                          Hash :$scope, Int :$limit, Bool :$jsMode = False
-                          --> Hash ) {...}
-
-The mapReduce command allows you to run map-reduce aggregation operations over
-a collection. See also L<this
-page|http://docs.mongodb.org/manual/reference/command/mapReduce/>.
-
-First method will call second with the javascript texts converted to
-BSON::Javascript.
+$doc = $collection.find_and_modify(
+  {code => 'd1 01234543'},                      # Find this code
+  update => { '$set' => {code => 'd1 012'}},    # Change into 'd1 012'
+  :new                                          # Return modified doc
+);
+=end code
+=end nested
 
 =begin head2 
 method update ( %selector, %update,
@@ -286,7 +255,73 @@ $collection.remove();
 =end nested
 
 =for head2
-method ensure_index ( %key-spec, %options = {} --> Nil ) {...}
+method drop ( --> Hash ) {...}
+
+Drop the current collection from the database.
+
+This method will throw a X::MongoDB::Collection exception on failures.
+
+=for head2
+method explain ( %criteria = { } --> Hash ) {...}
+
+Return information on the query plan using the criteria. There are many fields
+in the document. The fields returned also depend on the type of queries. Look
+for this information on the L<MongoDB site|http://docs.mongodb.org/manual/reference/method/cursor.explain>.
+
+=for head2
+method count ( %criteria = { }, --> Int ) {...}
+
+Count documents using search criteria without using find and a cursor..
+
+=for head2
+method distinct ( $field-name!, %criteria = { }, --> Array ) {...}
+
+Find distinct values of a field depending on criteria.
+
+=for head2
+multi method group ( Str $js_reduce_func, Str :$key = '',
+                    :%initial = {}, Str :$key_js_func = '',
+                    :%condition = {}, Str :$finalize = ''
+                    --> Hash ) {...}
+
+=for head2
+multi method group ( BSON::Javascript $reduce_js_func, Str :$key = '',
+                     :%initial = {}, BSON::Javascript :$key_js_func = '',
+                     :%condition = {}, Str :$finalize = ''
+                     --> Hash ) {...}
+
+Groups documents in a collection by the specified keys and performs simple
+aggregation functions. See also L<this
+page|http://docs.mongodb.org/manual/reference/method/db.collection.group/>.
+
+First method will call second with the javascript texts converted to
+BSON::Javascript.
+
+The group() method does not work with sharded clusters. Use the
+aggregation framework or map-reduce in sharded environments.
+
+=for head2
+multi method map_reduce ( Str $map_js_func, Str $reduce_js_func, Hash :$out,
+                          Str :$finalize, Hash :$criteria, Hash :$sort,
+                          Hash :$scope, Int :$limit, Bool :$jsMode = False
+                          --> Hash ) {...}
+=for head2
+multi method map_reduce ( BSON::Javascript $map_js_func,
+                          BSON::Javascript $reduce_js_func,
+                          BSON::Javascript :$finalize,
+                          Hash :$out, Hash :$criteria, Hash :$sort,
+                          Hash :$scope, Int :$limit, Bool :$jsMode = False
+                          --> Hash ) {...}
+
+The mapReduce command allows you to run map-reduce aggregation operations over
+a collection. See also L<this
+page|http://docs.mongodb.org/manual/reference/command/mapReduce/>.
+
+First method will call second with the javascript texts converted to
+BSON::Javascript.
+
+=for head2
+method ensure_index ( %key-spec!, %options = {} --> Nil ) {...}
 
 Create a new index on the current collection. The %key-spec document specify
 which indexes must be created and how. The %options is a document on how to
@@ -301,7 +336,7 @@ indexes.
 This method will throw a X::MongoDB::Collection exception on failures.
 
 =for head2
-method drop_index ( $key-spec --> Hash ) {...}
+method drop_index ( $key-spec! --> Hash ) {...}
 
 Drop an index. The %key-spec specifies the keys to be dropped. It has the
 same format as in ensure_index. When the %options<name> key is used when setting
@@ -326,18 +361,27 @@ method drop_indexes ( --> Hash ) {...}
 Drop all indexes for the collection except _id.
 
 =for head2
-method drop ( --> Hash ) {...}
-
-Drop the current collection from the database.
-
-This method will throw a X::MongoDB::Collection exception on failures.
-
-=for head2
 method get_indexes ( --> MongoDB::Cursor ) {...}
 
 Get a cursor with which to retrieve documents with index information in
 the current collection. There is always one document of the _id_ index.
 
+=for head2
+method stats ( Int :$scale = 1, Bool :$indexDetails = False,
+               Hash :$indexDetailsField,
+               Str :$indexDetailsName
+               --> Hash ) {...}
+
+Get some statistics about indexes and other things.
+
+=for head2
+method data_size ( --> Int ) {...}
+
+Return size field of statistics. This is the total size of all records in a
+collection. This value does not include the record header, which is 16 bytes per
+record, but does include the record\u2019s padding. Additionally size does not
+include the size of any indexes associated with the collection, which the
+totalIndexSize field reports.
 
 =end pod
 

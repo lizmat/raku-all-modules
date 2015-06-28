@@ -10,31 +10,31 @@
 
 use v6;
 use Test;
-use MongoDB;
+use MongoDB::Connection;
 
 my MongoDB::Connection $connection .= new();
 
 # Drop database first then create new databases
 #
 $connection.database('test').drop;
+
 my MongoDB::Database $database = $connection.database('test');
-isa_ok $database, 'MongoDB::Database';
+isa-ok $database, 'MongoDB::Database';
 is $database.name, 'test', 'Check database name';
 
 # Create a collection explicitly. Try for a second time
 #
 $database.create_collection('cl1');
+
 if 1 {
   $database.create_collection('cl1');
   CATCH {
     when X::MongoDB::Database {
-        ok $_.message ~~ ms/collection already exists/,
-           'Collection cl1 already exists'
-           ;
+      ok .message ~~ ms/collection already exists/, 'Collection cl1 exists';
     }
 
     default {
-        say $_.perl;
+      say .perl;
     }
   }
 }
@@ -53,7 +53,8 @@ $database.reset_error;
 # Use run_command foolishly
 #
 $database = $connection.database('test');
-my $docs = $database.run_command(%(listDatabases => 1));
+my Pair @req = listDatabases => 1;
+my $docs = $database.run_command(@req);
 ok !$docs<ok>.Bool, 'Run command ran not ok';
 is $docs<errmsg>, 'access denied; use admin db', 'access denied; use admin db';
 
@@ -61,14 +62,15 @@ is $docs<errmsg>, 'access denied; use admin db', 'access denied; use admin db';
 # Use run_command to get database statistics
 #
 $database = $connection.database('admin');
-$docs = $database.run_command(%(listDatabases => 1));
+$docs = $database.run_command(@req);
 ok $docs<ok>.Bool, 'Run command ran ok';
 ok $docs<totalSize> > 1, 'Total size at least bigger than one byte ;-)';
 
 my %db-names;
-my @db-docs = @($docs<databases>);
-for (@db-docs) Z ^+@db-docs -> %doc, $idx {
-    %db-names{%doc<name>} = $idx;
+my Array $db-docs = $docs<databases>;
+my $idx = 0;
+for $db-docs[*] -> $doc {
+  %db-names{$doc<name>} = $idx++;
 }
 
 ok %db-names<test>:exists, 'test found';
@@ -84,12 +86,13 @@ ok %r<ok>.Bool, 'Drop command went well';
 is %r<dropped>, 'test', 'Dropped database name checks ok';
 
 $database = $connection.database('admin');
-$docs = $database.run_command(%(listDatabases => 1));
+$docs = $database.run_command(@req);
 
 %db-names = %();
-@db-docs = @($docs<databases>);
-for (@db-docs) Z ^+@db-docs -> %doc, $idx {
-    %db-names{%doc<name>} = $idx;
+$idx = 0;
+$db-docs = $docs<databases>;
+for $db-docs[*] -> $doc {
+  %db-names{$doc<name>} = $idx++;
 }
 
 ok %db-names<test>:!exists, 'test not found';

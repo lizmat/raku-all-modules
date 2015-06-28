@@ -8,6 +8,9 @@
     cursor.fetch()                      Fetch a document
     
     X::MongoDB::Collection              Catch exceptions
+
+    collection.stats()                  Collection statistics
+    collection.data_size()              $stats<size>
 }}
 
 BEGIN { @*INC.unshift( './t' ) }
@@ -15,7 +18,7 @@ use Test-support;
 
 use v6;
 use Test;
-use MongoDB;
+use MongoDB::Collection;
 
 my MongoDB::Collection $collection = get-test-collection( 'test', 'testf');
 
@@ -98,6 +101,36 @@ $collection.ensure_index( %( code1 => 1),
 $doc = $collection.drop_index('testindex');
 is $doc<ok>.Bool, True, 'Drop index ok';
 
+#-------------------------------------------------------------------------------
+# Create index again and get some statistics for it
+#
+$collection.ensure_index( %( code1 => 1),
+                          %( name => 'testindex',
+                             background => True
+                           )
+                        );
+my $stats = $collection.stats(:scale(1));
+ok $stats<indexSizes><_id_>:exists, 'Found index stats info on _id_';
+ok $stats<indexSizes><testindex>:exists, 'Found index stats info on testindex';
+
+$collection.ensure_index( %( code1 => 1),
+                          %( name => 'testindex',
+                             background => True
+                           )
+                        );
+
+#-------------------------------------------------------------------------------
+# Get statistics and read size
+#
+$stats = $collection.stats( :scale(1), :indexDetails,
+                            :indexDetailsFields({_id_ => 0})
+                          );
+#say $stats.perl;
+
+my $size = $collection.data_size();
+is( $size, $stats<size>, "Size $size");
+
+#-------------------------------------------------------------------------------
 # Drop all indexes
 #
 $doc = $collection.drop_indexes;
