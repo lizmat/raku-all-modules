@@ -6,32 +6,34 @@ use Test;
 
 plan 7;
 
-my $s = srv;
+start { 
+  my $s = srv;
 
-$s.handler(sub ($req,$res) {
-  start {
-    $res.write('buffered');
-    sleep 2;
-  };
-});
+  $s.handler(sub ($req,$res) {
+    start {
+      $res.write('buffered');
+      sleep 2;
+    };
+  });
 
-$s.handler(sub ($request, $response) {
-  $response.headers<Content-Type> = 'text/plain';
-  $response.headers<Connection>   = 'close';
-  $response.status = 200;
-  $response.unbuffer;
-  start {
-    sleep 2;
-    $response.close("Hello world!");
-  };
-});
+  $s.handler(sub ($request, $response) {
+    $response.headers<Content-Type> = 'text/plain';
+    $response.headers<Connection>   = 'close';
+    $response.status = 200;
+    $response.unbuffer;
+    start {
+      sleep 2;
+      $response.close("Hello world!");
+    };
+  });
 
+  $s.listen;
+}
 
-start {
   sleep 1;
  
   my $client = req;
-  isa_ok $client, IO::Socket::INET;
+  isa-ok $client, IO::Socket::INET;
   is $client.host, host, 'IO::Socket::INET correct host';
   is $client.port, port, 'IO::Socket::INET correct port';
 
@@ -54,7 +56,5 @@ start {
   ok $recv == 2, "Time between flush and write ~2";
 
   exit 0;
-}
 
-$s.listen;
 # vi:syntax=perl6

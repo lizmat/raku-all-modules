@@ -28,24 +28,26 @@ ok $s.hws.elems, 'Response stack contains elements';
 isa-ok $s.hws[0], Sub;
 
 start { 
-  sleep 1;
-  my $client = req;
-  isa-ok $client, IO::Socket::INET;
-  is $client.host, host, 'IO::Socket::INET correct host';
-  is $client.port, port, 'IO::Socket::INET correct port';
-
-  $client.send("GET / HTTP/1.0\r\n\r\n");
-  my $ret = '';
-  while (my $str = $client.recv) {
-    $ret ~= $str;
-  }
-  $client.close;
-  ok $ret.match(/ ^^ 'HTTP/1.1 200 OK' $$ /), 'HTTP Status Code: 200';
-  ok $ret.match(/ ^^ 'Content-Type: text/plain' $$ /), 'Content-Type';
-  ok $ret.match(/ ^^ 'Content-Length: 12' $$ /), 'Content-Length';
-  ok $ret.match(/ ^^ 'Hello world!' $$ /), "Content: Hello World!";
-  exit 0;
+  $s.listen; 
 };
 
-$s.listen; 
+sleep 1;
+
+
+my $client = req;
+isa-ok $client, IO::Socket::INET;
+is $client.host, host, 'IO::Socket::INET correct host';
+is $client.port, port, 'IO::Socket::INET correct port';
+
+$client.send("GET / HTTP/1.0\r\n\r\n");
+my $ret = '';
+while (my $str = $client.recv) {
+  $ret ~= $str;
+}
+$client.close;
+ok $ret.match(/ ^^ 'HTTP/1.1 200 OK' $$ /), 'HTTP Status Code: 200';
+ok $ret.match(/ ^^ 'Content-Type: text/plain' $$ /), 'Content-Type';
+ok $ret.match(/ ^^ 'Content-Length: 12' $$ /), 'Content-Length';
+ok $ret.match(/ ^^ 'Hello world!' $$ /), "Content: Hello World!";
+exit 0;
 # vi:syntax=perl6
