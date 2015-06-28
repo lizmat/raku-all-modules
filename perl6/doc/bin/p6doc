@@ -8,10 +8,11 @@ my class X::P6doc is Exception {
     }
 }
 
-constant DEBUG = %*ENV<P6DOC_DEBUG>;
+constant DEBUG      = %*ENV<P6DOC_DEBUG>;
+constant INTERACT   = %*ENV<P6DOC_INTERACT>;
 
 sub findbin() returns Str {
-    $*PROGRAM_NAME.subst(rx{<-[/\\]>+$}, '');
+    $*PROGRAM-NAME.subst(rx{<-[/\\]>+$}, '');
 }
 
 constant INDEX = findbin() ~ 'index.data';
@@ -47,7 +48,9 @@ sub locate-module(Str $modulename) {
 }
 
 sub show-docs(Str $path, :$section) {
-    my $pager = %*ENV<PAGER> // ($*OS eq 'mswin32' ?? 'more' !! 'less');
+    my $pager = %*ENV<PAGER> // ($*DISTRO.name eq 'mswin32' ?? 'more' !! 'less');
+    my $which-fmt = qq:x{which fmt}.chomp;
+    my $fmt-string = $which-fmt.IO.e ?? "| $which-fmt -w 80 " !! "";
     if not open($path).lines.grep( /^'=' | '#|' | '#='/ )  {
         say "No Pod found in $path";
         return;
@@ -55,21 +58,23 @@ sub show-docs(Str $path, :$section) {
     if $section.defined {
         %*ENV<PERL6_POD_HEADING> = $section;
         my $i = findbin() ~ '../lib';
-        say "launching '$*EXECUTABLE_NAME -I$i --doc=SectionFilter $path | $pager'" if DEBUG;
-        shell "$*EXECUTABLE_NAME -I$i --doc=SectionFilter $path | $pager";
+        say "launching '$*EXECUTABLE-NAME -I$i --doc=SectionFilter $path $fmt-string | $pager'" if DEBUG;
+        shell "$*EXECUTABLE-NAME -I$i --doc=SectionFilter $path $fmt-string | $pager";
     }
     else {
-        shell "$*EXECUTABLE_NAME --doc $path | $pager";
+        shell "$*EXECUTABLE-NAME --doc $path $fmt-string | $pager";
     }
-
 }
 
 multi sub MAIN() {
-    my $me = $*PROGRAM_NAME.IO.basename;
+    my $me = $*PROGRAM-NAME.IO.basename;
 
     say 'What documentation do you want to read?';
     say "Examples: $me Type::Str";
     say "          $me Type::Str.split";
+
+    say "\nYou can also look up specific method/routine defintions:";
+    say "          $me -f push";
 }
 
 multi sub MAIN($docee) {
@@ -86,25 +91,103 @@ multi sub MAIN($docee) {
 
 multi sub MAIN($docee, Bool :$f!) {
     my ($package, $method) = $docee.split('.');
-    unless $method {
+    if ! $method {
+        my %hits;
         if INDEX.IO ~~ :e {
             my %data = EVAL slurp INDEX;
-            for <routine method> -> $pref {
-                my $ndocee = $pref ~ " " ~ $docee;
-                if %data{$ndocee} {
-                    my $newdoc = %data{$ndocee}[0][0] ~ "." ~ $docee;
-                    return MAIN($newdoc, :f);
-                }
-            }
-            show-docs(locate-module($docee));
+
+            my $final-docee = disambiguate-f-search( $docee, %data );
+            ($package, $method) = $final-docee.split('.');
+
+            my $m = locate-module($package);
+            show-docs($m, :section($method));
+        } else {
+            say 'In order to use unqualified sub and method names like "p6doc -f say"';
+            say 'you will need to run "p6doc-index build" to build index.data.';
+            say 'Otherwise use "p6doc -f Str.split" instead of "p6doc -f split" for now.';
+            exit 2;
         }
-        say 'In order to use unqualified sub and method names like "p6doc -f say"';
-        say 'you will need to run "p6doc-index build" to build index.data.';
-        say 'Otherwise use "p6doc -f Str.split" instead of "p6doc -f split" for now.';
-        exit 2;
+    } else {
+        my $m = locate-module($package);
+        show-docs($m, :section($method));
     }
-    my $m = locate-module($package);
-    show-docs($m, :section($method));
+}
+
+sub disambiguate-f-search( $docee, %data ) {
+    my %found;
+
+    for <routine method> -> $pref {
+        my $ndocee = $pref ~ " " ~ $docee;
+
+        if %data{$ndocee} {
+            my @types = %data{$ndocee}.values>>.grep({ $^v ~~ /^ 'Type' / and not $^v ~~ / 'Cool' $ / });
+            %found{$ndocee}.push: @types X~ "." ~ $docee;
+        }
+    }
+
+    my $final-docee;
+    my $total-found = [+] %found.values.map( *.elems );
+    if ! $total-found {
+        say "No documentation found for a routine named '$docee'";
+        exit 2;
+    } elsif $total-found == 1 {
+        $final-docee = %found.values[0];
+    } else {
+        say "We have multiple matches for '$docee'\n";
+
+        my %options;
+        for %found.keys -> $key {
+            %options{$key}.push: %found{$key}>>.subst(/^'Type::'/, '');
+        }
+
+        # 's' => Type::Supply.grep, ... | and we specifically want the %found values,
+        #                               | not the presentation-versions in %options
+        if INTERACT {
+            my $idx = 0;
+            my $total-elems = [+] %found.values.map({ +@^o });
+            if +%found.keys < $total-elems {
+                my @prefixes = (1..$total-elems) X~ ") ";
+                say "\t" ~ ( @prefixes Z~ %options.values.map({ @($^a) }) ).join("\n\t") ~ "\n";
+            } else {
+                say "\t" ~ %options.values.map({ @($^a) }).join("\n\t") ~ "\n";
+            }
+            $final-docee = prompt-with-options( %options, %found );
+        } else {
+            say "\t" ~ %options.values.map({ @($^a) }).join("\n\t") ~ "\n";
+            exit 1;
+        }
+    }
+    return $final-docee;
+}
+
+sub prompt-with-options( %options, %found ) {
+    my $final-docee;
+
+    my %prefixes = do for %options.kv -> $k,@o { @o.map(*.comb[0].lc) X=> %found{$k} };
+
+    if %prefixes.values.grep( -> @o { +@o > 1 }) {
+        my (%indexes,$base-idx);
+        $base-idx = 0;
+        for %options.kv -> $k,@o {
+            %indexes.push: @o>>.map({ ++$base-idx}) Z=> @(%found{$k});
+        }
+        %prefixes = %indexes;
+    }
+
+    my $prompt-text = "Narrow your choice? ({ %prefixes.keys.sort.join(', ') }, or !{'/' ~ 'q' if !%prefixes<q>} to quit): ";
+
+    while prompt( $prompt-text ).words -> $word {
+        if $word  ~~ '!' or ($word ~~ 'q' and !%prefixes<q>)  {
+            exit 1;
+        } elsif $word ~~ /:i $<choice> = [ @(%prefixes.keys) ] / {
+            $final-docee = %prefixes{ $<choice>.lc };
+            last;
+        } else {
+            say "$word doesn't seem to apply here.\n";
+            next;
+        }
+    }
+    return $final-docee;
 }
 
 # vim: expandtab shiftwidth=4 ft=perl6

@@ -113,6 +113,22 @@ I<No space allowed before the opening parenthesis of an argument list.>
 =end item
 
 =begin item
+I<Space is B<required> immediately after keywords>
+
+    my($alpha, $beta);          # Perl 5, tries to call my() sub in Perl 6
+    my ($alpha, $beta);         # Perl 6
+
+    if($a < 0) { ... }          # Perl 5, dies in Perl 6
+    if ($a < 0) { ... }         # Perl 6
+    if $a < 0 { ... }           # Perl 6, more idiomatic
+
+    while($x-- > 5) { ... }     # Perl 5, dies in Perl 6
+    while ($x-- > 5) { ... }    # Perl 6
+    while $x-- > 5 { ... }      # Perl 6, more idiomatic
+
+=end item
+
+=begin item
 I<No space allowed after a prefix operator, or before a
 postfix/postcircumfix operator (including array/hash subscripts).>
 
@@ -411,18 +427,21 @@ we now use the dot operator C<.> for those tasks.
         say $hashref.{'fire bad'};
         say $subref.($foo, $bar);
 
-In recent versions of Perl 5, a new feature allows the use of the arrow op
-to for entire references. See
+In recent versions of Perl 5 (5.20 and later), a new feature allows the use of the arrow op
+for dereferencing. See
 L<http://search.cpan.org/~shay/perl-5.20.1/pod/perl5200delta.pod#Experimental_Postfix_Dereferencing>
 That new feature corresponds Perl 6 C<.list> and C<.hash> methods:
 
     # Perl 5.20
-        my @a = $arrayref->@;
-        my %h = $hashref->%;
+        use experimental qw< postderef >;
+        my @a = $arrayref->@*;
+        my %h = $hashref->%*;
+        my @slice = $arrayref->@[3..7];
 
     # Perl 6
-        my @a = $arrayref.list;
-        my %h = $hashref.hash;
+        my @a = $arrayref.list;         # or @($arrayref)
+        my %h = $hashref.hash;          # or %($hashref)
+        my @slice = $arrayref[3..7];
 
 The "Zen" slice does the same thing:
 

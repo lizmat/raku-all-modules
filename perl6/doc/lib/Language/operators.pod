@@ -178,6 +178,9 @@ Thus you can write
     say %h<a>;          # 1
     say %h<b a>;        # 2, 1
 
+This is not a real operator, just a syntactic desugaring to the C<{ }>
+postcircumfix operator
+
 =head2 postcircumfix C«( )»
 
 The call operator. Treats the invocant as a L<Callable> and invokes it,
@@ -212,6 +215,10 @@ This lets you write
 to index lists and arrays from the end.
 
 Non-L<Positional> invocants are interpreted as a one-list element of the object.
+
+See L<Positional|/type/Positional> for a more detailed description, and a list
+of low-level methods that this operator calls, and which types that want to
+offer an API similar to the built-in types can implement.
 
 =head2 postfix C«.»
 
@@ -1338,7 +1345,9 @@ otherwise the last operand. Short-circuits.
 =head2 infix C«andthen»
 
 Returns the first undefined argument, otherwise the last argument.
-Short-circuits.
+Short-circuits.  The result of the left side is bound to $_ for the
+right side, or passed as arguments if the right side is a block or
+pointy block.
 
 =head1 Loose OR Precedence
 

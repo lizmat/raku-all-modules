@@ -14,11 +14,9 @@ Tutorials:
     * Pod6
     * Exceptions
 
-Synatax features:
+Syntax features:
     * Hyper Operators (prefix, infix, postfix and method call)
+    * $*ARGFILES, lines()   (Issue #96)
 
 API docs:
     * KeyReducer
-
-Builtins:
-    * Str.substr-eq

@@ -24,6 +24,11 @@ L<IO::Path::Cygwin>, L<IO::Path::QNX>.
 The rest of this document silently assumes Unix semantics in its examples,
 unless when stated otherwise.
 
+=comment TODO: Investigate if the $SPEC = $*SPEC, :$CWD = $*CWD params that
+         a bunch of these routines have in their signature in Rakudo, are
+         "official" Perl 6 API, and if so, document them here in a central
+         place so all the routine documentations can link to it without
+         having to repeat it.
 
 =head1 Methods
 
@@ -42,7 +47,7 @@ Returns the absolute path as a string.
 
 =head2 method basename
 
-    method basename(IO::Path:D)
+    method basename(IO::Path:D:)
 
 Returns the basename part of the path object. That is, it returns the name of
 the file relative to its directory.
@@ -51,7 +56,7 @@ the file relative to its directory.
 
 =head2 method dirname
 
-    method dirname(IO::Path:D)
+    method dirname(IO::Path:D:)
 
 Returns the directory name portion of the path object. That is, it returns the path
 excluding the volume and the base name.
@@ -60,7 +65,7 @@ excluding the volume and the base name.
 
 =head2 method volume
 
-    method volume(IO::Path:D)
+    method volume(IO::Path:D:)
 
 Returns the volume portion of the path object. On Unix system, this is always
 the empty string.
@@ -69,7 +74,7 @@ the empty string.
 
 =head2 method parts
 
-    method parts(IO::Path:D) returns Hash
+    method parts(IO::Path:D:) returns Hash
 
 Returns a hash with the keys C<dirname>, C<path> and C<volume>, and as
 values the return values of the methods with the same names.
@@ -128,19 +133,33 @@ Returns a new C<IO::Path> object that is an absolute path, based on C<$base>.
 
 Returns a new C<IO::Path> object relative to the C<$base> path.
 
-=head2 method dir
+=head2 routine dir
 
+    sub    dir(Cool $path = '.', Mu :$test = none('.', '..'))
     method dir(IO::Path:D: Mu :$test = none('.', '..'))
 
-Tries to interpret the path as a directory, and returns a lazy list of
-C<IO::Path> objects that match the C<$test> smart-matcher.
+Returns the contents of a directory as a lazy list of C<IO::Path> objects representing relative paths, filtered by L<smart-matching|
+/language/operators#infix_~~> their names against the C<:test> parameter.
 
-By default, the C<.> and C<..> entries (current directory, and parent
-directory) are filtered out. To get a list of all files and directories,
-simply pass a smart-matcher that always matches, like C<True>:
-C<$path.contents(:test(True))>, or shorter: C<$path.contents(:test)>.
+Examples:
 
-An example that lists all files and directories recursively:
+    # To iterate over the contents of the current directory:
+    for dir() -> $file {
+        say $file;
+    }
+
+    # As before, but include even '.' and '..' which are filtered out by
+    # the default :test matcher:
+    for dir(test => *) -> $file {
+        say $file;
+    }
+
+    # To get the names of all .jpg and .jpeg files in ~/Downloads:
+    my @jpegs = "%*ENV<HOME>/Downloads".IO.dir(test => /:i '.' jpe?g $/)».Str;
+
+=comment TODO: Turn the following into a FAQ entry, and link to it from here.
+
+An example program that lists all files and directories recursively:
 
     sub MAIN($dir = '.') {
         my @todo = $dir.IO;
@@ -152,13 +171,130 @@ An example that lists all files and directories recursively:
         }
     }
 
-=head2 method chmod
+=head2 routine chdir
 
-    method chmod(IO::Path:D: Int:D $mode)
+    sub chdir(Str() $path, :$test = 'r' --> IO::Path);
+    multi method chdir(IO::Path:U: $path, :$test = 'r' --> IO::Path);
+    multi method chdir(IO::Path:D: Str() $path is copy, :$test = 'r' --> IO::Path);
 
-Changes the POSIX permissions of a file to C<$mode>.
+Alter the processes notion of the current working directory (as found in C<$*CWD>.) 
 
-    $*CWD.chmod(0o700);
+The subroutine and class method forms both change the directory relative to C<$*CWD> if the supplied C<$path> is not absolute.
+The object method form changes the directory relative to the path of the invocant if C<$path> is not absolute.
+The optional named parameter C<test> can specify a file test that should be applied to the target path if the operation is successful. 
+The default C<test> is that the directory is readable.
+
+If the directory change is successful then the L<IO::Path|/lib/Type/IO/Path> representing the target directory is returned, otherwise it
+will L<fail|/routine/fail> with L<X::IO::Chdir>.
+
+=head2 routine mkdir
+
+    multi sub mkdir(Int:D $mode, *@dirnames --> @success-dirnames);
+    multi sub mkdir($path, $mode = 0o777 --> Bool);
+    method    mkdir(IO::Path:D: $mode 0o777 --> Bool)
+
+Creates one or more directories with the L<permissions|
+http://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation>
+specified as an integer (thought still subject to L<umask|
+http://en.wikipedia.org/wiki/Umask>).
+
+Throws an exception of type L<X::IO::Mkdir|/type/X::IO::Mkdir> if the
+directory cannot be created, except for the C<*@dirnames> form which
+returns the names of the directories that were successfully created.
+
+=head2 routine rmdir
+
+    sub    rmdir($dir as IO --> Bool)
+    method rmdir(IO::Path:D: --> Bool)
+
+Remove the given directory if it is empty.
+
+Returns C<True> on success.  Throws an exception of type
+L<X::IO::Rmdir|/type/X::IO::Rmdir> if the directory cannot be removed (e.g.
+the directory is not empty, or the path is not a directory).
+
+=head2 routine chmod
+
+    sub    chmod($mode, *@filenames --> @success-filenames)
+    method chmod(IO::Path:D: $mode --> Bool)
+
+Changes the POSIX permissions of a file (or in the subroutine form, any number
+of files) to C<$mode>.
+
+The subroutine form returns the names of the files for which setting the new
+mode was successful. The method form returns True on success, and otherwise L<fails|/routine/fail> with L<X::IO::Chmod>.
+
+The mode is expected as an integer following the L<standard numeric notation|
+http://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation>, and is
+best written as an octal number:
+
+    chmod 0o755, "myfile1", "myfile2"; # make two files executable by the owner
+    "myfile".IO.chmod(0o444);          # make a file read-only
+    $*CWD.chmod(0o544);                # make the working directory read-only
+
+Make sure you I<don't> accidentally pass the intended octal digits as a decimal
+number (or string containing a decimal number):
+
+    chmod '0444', 'myfile';            # BAD!!! (interpreted as mode 0o674)
+
+=head2 routine rename
+
+    method rename(IO::Path:D: $to, :$createonly --> Bool);
+    sub    rename($from, $to, :$createonly --> Bool);
+
+Renames a file. Both C<$from> (the file to be renamed) and C<$to> (the
+destination) can take arbitrary paths. If C<:createonly> is set to C<True>, the
+rename fails if a file already exists in the destination.  Returns C<True> upon
+success, or L<fails|/routine/fail> with L<X::IO::Rename> if the operation could
+not be completed.
+
+Please use L<move|/routine/move> if a file could not be moved by renaming (usually
+because the destination is on a different physical storage device).
+
+=head2 routine move
+
+    method move(IO::Path:D: $to, :$createonly)
+    sub    move($from, $to, :$createonly);
+
+Moves a file. Both C<$from> (the file to be moved) and C<$to> (the destination)
+can take arbitrary paths. If C<:createonly> is set to C<True>, the move fails
+if a file already exists in the destination.  Returns C<True> upon success, or
+L<fails|/routine/fail> with L<X::IO::Move> if the operation could not be
+completed.
+
+Please use L<rename|/routine/rename> if a file can be moved by renaming (which is
+usually possible if the destination is on the same different physical storage
+device).
+
+B<NOTE>: This function has not yet been implemented in Rakudo.
+
+=head2 routine symlink
+
+    method symlink(IO::Path:D: Str $name --> Bool);
+    sub    symlink(Str $target, Str $name --> Bool);
+
+Create a new symbolic link named as $target (or the name of the invocant in the method form,) to the existing file named C<$name>.  
+
+Both forms will return C<True> on success or L<fail|/routine/fail> with L<X::IO::Symlink> if the symbolic link could not be created.
+
+=head2 routine link
+
+    method link(IO::Path:D: Str $name --> Bool);
+    sub    link(Str $target, Str $name --> Bool);
+
+Create a new link named as $target (or the name of the invocant in the method form,) to the existing file named C<$name>.  
+
+Both forms will return C<True> on success or L<fail|/routine/fail> with L<X::IO::Link> if the link operation could not be performed.
+
+=head2 routine unlink
+
+    method unlink(IO::Path:D: --> Bool);
+    sub    unlink(*@filenames --> @success-filenames);
+
+Delete all specified ordinary files, links, or symbolic links.
+
+The subroutine form returns the names of the files that were successfully
+deleted. The method form returns C<True> on success, or L<fails|/routine/fail> with L<X::IO::Unlink> if the operation could not be completed.
 
 =head1 Related roles and classes
 
