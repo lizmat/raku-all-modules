@@ -228,9 +228,6 @@ sub p5_is_wrapped_p6_object(Perl5Interpreter, OpaquePointer)
 sub p5_unwrap_p6_object(Perl5Interpreter, OpaquePointer)
     returns long { ... }
     native(&p5_unwrap_p6_object);
-sub p5_use(Perl5Interpreter, OpaquePointer)
-    { ... }
-    native(&p5_use);
 sub p5_terminate()
     { ... }
     native(&p5_terminate);
@@ -437,9 +434,10 @@ method !setup_arguments(@args) {
 method !unpack_return_values($av) {
     my int32 $av_len = p5_av_top_index($!p5, $av);
 
+    my @retvals;
     if $av_len == -1 {
         p5_sv_refcnt_dec($!p5, $av);
-        return;
+        return @retvals; # avoid returning Nil when there are no return values
     }
 
     if $av_len == 0 {
@@ -448,7 +446,6 @@ method !unpack_return_values($av) {
         return $retval;
     }
 
-    my @retvals;
     loop (my int32 $i = 0; $i <= $av_len; $i = $i + 1) {
         @retvals.push(self.p5_to_p6(p5_av_fetch($!p5, $av, $i)));
     }
@@ -469,7 +466,7 @@ multi method invoke(Str $package, Str $function, *@args, *%args) {
 }
 
 multi method invoke(OpaquePointer $obj, Str $function, *@args) {
-    self.invoke(Str, $obj, $function, @args.list);
+    self.invoke(Str, $obj, $function, |@args);
 }
 
 multi method invoke(Str $package, OpaquePointer $obj, Str $function, *@args) {
@@ -515,8 +512,14 @@ class Perl6Callbacks {
 }
 
 method init_callbacks {
-    self.run(q[
+    self.run(q:to/PERL5/);
         package Perl6::Object;
+
+        use overload '""' => sub {
+            my ($self) = @_;
+
+            return $self->Str;
+        };
 
         our $AUTOLOAD;
         sub AUTOLOAD {
@@ -578,6 +581,11 @@ method init_callbacks {
             undef $p6;
         }
 
+        # wrapper for the load_module perlapi call to allow catching exceptions
+        sub load_module {
+            v6::load_module_impl(@_);
+        }
+
         sub run {
             my ($code) = @_;
             return $p6->run($code);
@@ -605,7 +613,7 @@ method init_callbacks {
         $INC{'v6.pm'} = undef;
 
         1;
-    ]);
+        PERL5
 
     self.call('v6::init', Perl6Callbacks.new(:p5(self)));
 
@@ -622,22 +630,55 @@ method rebless(Perl5Object $obj) {
     p5_rebless_object($!p5, $obj.ptr);
 }
 
-my %perl5_for_imported_packages;
-class Perl5Package {
-    method new(*@args) {
-        return %perl5_for_imported_packages{self.perl.Str}.invoke(self.perl.Str, 'new', @args.list);
+role Perl5Package[Inline::Perl5 $p5, Str $module] {
+    has $!parent;
+
+    method new(*@args, *%args) {
+        if (self.perl.Str ne $module) { # subclass
+            %args<parent> = $p5.invoke($module, 'new', |@args, |%args.kv);
+            my $self = self.bless();
+            $self.BUILDALL(@args, %args);
+            return $self;
+        }
+        else {
+            return $p5.invoke($module, 'new', @args.list);
+        }
     }
 
-    method FALLBACK($name, *@args) {
-        %perl5_for_imported_packages{self.perl.Str}.invoke(self.perl.Str, $name, @args.list);
+    submethod BUILD(:$parent) {
+        $!parent = $parent;
+        $p5.rebless($parent) if $parent;
+    }
+
+    multi method FALLBACK($name, *@args) {
+        return self.defined
+            ?? $p5.invoke($module, $!parent.ptr, $name, self, |@args)
+            !! $p5.invoke($module, $name, |@args);
+    }
+
+    for Any.^methods>>.name.list, <say> -> $name {
+        $?CLASS.^add_method(
+            $name,
+            method (|args) {
+                return self.defined
+                    ?? $p5.invoke($module, $!parent.ptr, $name, self, args.list, args.hash)
+                    !! $p5.invoke($module, $name, args.list, args.hash);
+            }
+        );
     }
 }
 
-method require(Str $module) {
-    my $module_sv = self.p6_to_p5($module);
-    p5_use($!p5, $module_sv);
+method require(Str $module, Num $version?) {
+    # wrap the load_module call so exceptions can be translated to Perl 6
+    if $version {
+        self.call('v6::load_module', $module, $version);
+    }
+    else {
+        self.call('v6::load_module', $module);
+    }
 
-    EVAL "class GLOBAL::$module is Perl5Package \{ \}";
+    my $p5 = self;
+    EVAL "class GLOBAL::$module does Perl5Package[\$p5, \$module] \{ \}";
 
     ::($module).WHO<EXPORT> := Metamodel::PackageHOW.new();
     ::($module).WHO<&EXPORT> := sub EXPORT(*@args) {
@@ -650,8 +691,6 @@ method require(Str $module) {
             self.call("{$module}::$name", @args.list);
         }
     }
-
-    %perl5_for_imported_packages{$module} = self;
 }
 
 method use(Str $module, *@args) {
@@ -669,6 +708,11 @@ class Perl5Object {
     has Inline::Perl5 $.perl5;
 
     method sink() { self }
+
+    method Str() {
+        my $stringify = $!perl5.call('overload::Method', self, '""');
+        return $stringify ?? $stringify(self) !! callsame;
+    }
 
     method DESTROY {
         $!perl5.sv_refcnt_dec($!ptr) if $!ptr;
@@ -768,7 +812,7 @@ BEGIN {
 class Perl5ModuleLoader {
     method load_module($module_name, %opts, *@GLOBALish, :$line, :$file) {
         $default_perl5 //= Inline::Perl5.new();
-        $default_perl5.require($module_name);
+        $default_perl5.require($module_name, %opts<ver> ?? %opts<ver>.Num !! Num);
 
         return ::($module_name).WHO;
     }
