@@ -5,7 +5,6 @@ use Test;
 for CSS::Writer.^methods.map({.candidates}).map({.WHY}).grep({.defined}).map({.Str}) -> $doc {
 
     my $writer = CSS::Writer.new( :terse );
-    warn :$doc.perl;
 
     if $doc ~~ /:s $<output>=[.*?] ':=' $<synopsis>=[.*?] $/ {
         my $expected = ~$<output>;

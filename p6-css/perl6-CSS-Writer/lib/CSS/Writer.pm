@@ -152,7 +152,7 @@ class CSS::Writer
 
             $sep = '' if $term<op> && $term<op>;
 
-            if %.color-values && ($term<ident>:exists) && my $rgb = %.color-values{ $term<ident>.lc } {
+            if %.color-values && $term<ident> && my $rgb = %.color-values{ $term<ident>.lc } {
                 # substitute a named color with it's rgb value
                 $term = {rgb => $rgb.map({ num => $_})};
             }
@@ -415,8 +415,7 @@ class CSS::Writer
     ## generic handling of Lists, Pairs, Hashs and Lists
 
     multi method write(List $ast, :$sep=' ') {
-        my %sifted = classify { .isa(EnumMap) && (.<comment>:exists) ?? 'comment' !! 'elem' }, $ast.list
-            if $ast.elems;
+        my %sifted = classify { .isa(EnumMap) && (.<comment>:exists) ?? 'comment' !! 'elem' }, $ast.list;
         my $out = (%sifted<elem> // []).list.map({ $.write( $_ ) }).join: $sep;
         $out ~= [~] %sifted<comment>.list.map({ ' ' ~ $.write($_) })
             if %sifted<comment>:exists && ! $.terse;
