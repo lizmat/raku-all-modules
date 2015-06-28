@@ -1,0 +1,11 @@
+{
+    "name" : "KnottyPair",
+    "version" : "0.1",
+    "description" : "A sub-class of Pair with binding on values",
+    "author" : "Andrew Sterling Hanenkamp",
+    "provides" : {
+        "KnottyPair": "lib/KnottyPair.pm6"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/zostay/perl6-KnottyPair.git"
+}

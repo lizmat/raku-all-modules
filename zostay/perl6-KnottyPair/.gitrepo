@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/perl6-KnottyPair.git
+	branch = master
+	commit = d8e3c44bdd7a7ffd9617e06b53dc9eafcf9cad6e
+	parent = 6e0732228af320c87e0a37de6b42536ee4e802a1
+	cmdver = 0.2.1
