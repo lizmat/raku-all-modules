@@ -1,0 +1,18 @@
+#!/usr/bin/env perl6
+
+
+use JSON::Tiny::Grammar;
+
+sub MAIN (Str:D $filepath)
+{
+		JSON::Tiny::Grammar.parsefile($filepath);
+
+		CATCH {
+						say "Error parsing JSON: $_";
+						return 1
+		}
+
+		say "JSON is valid!"
+
+}
+

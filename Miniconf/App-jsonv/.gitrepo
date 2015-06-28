@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Miniconf/App-jsonv.git
+	branch = master
+	commit = b82fbcf51fa84d02fb3cd7355a85e474832da358
+	parent = 0928744dd96b4512020a71fec8804c684ad34975
+	cmdver = 0.2.1
