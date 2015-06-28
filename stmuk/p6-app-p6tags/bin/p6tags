@@ -1,0 +1,81 @@
+#!/usr/bin/env perl6
+# originally based on an old perl5 script "ptags" by tchrist@perl.com
+# heavily tweaked and ported to perl6 by steve.mynott@gmail.com
+
+use v6;
+use File::Find;
+
+my (@tags, %seen);
+
+# package
+my $ptagfield = ';"	p';
+
+# subroutine
+my $stagfield = ';"	s';
+
+my @files := find( :dir("."), :type('file'), :name( rx/(.p(m|l|6)|pm6 )$/) );
+
+for @files.sort -> $io {
+
+    my $file = $io.relative;
+    my $lines = slurp $file;
+    my @lines = $lines.split(/\n/);
+
+    my $fullpack;
+
+    for @lines -> $line {
+        $line.chomp;
+
+        if $line ~~ /^\s* (role|unit\s+class|unit\s+module|module|package|class)\s+ ((\w|'::')+) / {
+            $fullpack = $1.Str; 
+
+            my $rest = $<>;
+            $rest ~~ s:g/\-/\\-/;
+
+            if $fullpack {
+                @tags.push("{$fullpack}\t$file\t/$rest/$ptagfield");
+            }
+        }
+
+        if $line ~~ /^\s* (multi\s+sub|submethod|sub|multi\s+method|method) \s+ ( \w+ '::')* (\!*(\w|\-)+) /  {
+            my $func = $2.Str;
+
+            my $rest = $<>;
+            $rest ~~ s:g/\-/\\-/;
+            @tags.push("$func\t$file\t/^$rest/$stagfield");
+    
+            if $fullpack {
+                @tags.push( "{$fullpack}::$func\t$file\t/^$rest/$stagfield");
+            }
+
+        }
+
+        if $line ~~ /^\s* (\w+)':' / {
+            my $func = $0,Str;
+            my $rest = $<>;
+            @tags.push( "$func\t$file\t/^$rest/$stagfield");
+        }
+
+        if $line ~~ /^\s* ('$'|'%'|'@') (<[A..Z\-]>\w*) \s* '=' \s* / {
+            my $func = $0.Str;
+
+            next if %seen{$func}++;
+
+            my $rest    = $<>;
+            $rest ~~ s:g/\$/\\$<>/;
+            $rest ~~ s:g/\-/\\-/;
+
+            @tags.push("$func\t$file\t/^$rest/$ptagfield");
+
+            if $fullpack {
+                @tags.push( "{$fullpack}::$func\t$file\t/^$rest/$ptagfield");
+            }
+
+        }
+
+    }  
+}
+
+@tags = @tags.unique.sort;
+
+spurt("tags", @tags.join("\n"));

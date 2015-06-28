@@ -1,0 +1,4 @@
+--langdef=perl6
+--langmap=perl6:.pm6,.p6,.pm,.pl
+--regex-perl6=/^[ \t]*(role|unit[ \t]+class|unit[ \t]+module|module|package|class)[ \t]*([a-zA-Z0-9_\-]+)/\2/p,package/
+--regex-perl6=/^[ \t]*(multi[ \t]+sub|multi method|submethod|sub|method)[ \t]+([a-zA-Z0-9_\-]+)/\2/s,subroutine/

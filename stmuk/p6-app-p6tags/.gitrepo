@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/stmuk/p6-app-p6tags.git
+	branch = master
+	commit = 850ce0b95ab898be5d1c4d7d009a8059dfb0b9f3
+	parent = 9ca6bb7495d5f5c2e50065abf3f0bbeeb0758d06
+	cmdver = 0.2.1

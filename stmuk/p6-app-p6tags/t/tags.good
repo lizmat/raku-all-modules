@@ -1,0 +1,5 @@
+Simple	t/Simple.pm	/class Simple/;"	p
+Simple::doit	t/Simple.pm	/^    method doit/;"	s
+Simple::dothat	t/Simple.pm	/^    method dothat/;"	s
+doit	t/Simple.pm	/^    method doit/;"	s
+dothat	t/Simple.pm	/^    method dothat/;"	s
