@@ -13,7 +13,7 @@ for @tests.sort -> $test {
  my @new_sentences = $text.sentences;
  my Str $diff="\n";
  my Str $expected_diff="\n";
- for @sentences Z @new_sentences -> $s1, $s2 {
+ for @sentences Z @new_sentences -> ($s1, $s2) {
      if ($s1 ne $s2) {
        $diff ~= "Expected: $s1\nGot: $s2\n"; 
      }
