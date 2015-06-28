@@ -1,5 +1,5 @@
 use v6;
-module Lingua::Number;
+unit module Lingua::Number;
 
 use XML;
 use JSON::Tiny;
