@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/wentam/P6-Graffiks.git
+	branch = master
+	commit = c03688aef67071133396bba0fea11fe1953c2475
+	parent = 625be6ae019fb979a0751df97db92fd3a8a451de
+	cmdver = 0.2.1
