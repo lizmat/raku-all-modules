@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-data-dump.git
+	branch = master
+	commit = ef552abe55c0b7436aef83c56ce104013ead646c
+	parent = 319bc913d51c581d2a1d6b3b9764b9b338af6167
+	cmdver = 0.2.1
