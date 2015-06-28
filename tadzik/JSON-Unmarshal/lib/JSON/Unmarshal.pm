@@ -1,4 +1,4 @@
-module JSON::Unmarshal;
+unit module JSON::Unmarshal;
 use JSON::Tiny;
 
 sub panic($json, $type) {
