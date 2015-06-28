@@ -13,4 +13,4 @@ plan 1;
 # bug: multi-bytes chars and \r\n in data
 my $str = "中文 string contains newlines\r\n";
 $r.set("key", $str);
-is_deeply $r.get("key"), $str;
+is-deeply $r.get("key"), $str;

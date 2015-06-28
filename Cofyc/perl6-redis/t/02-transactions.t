@@ -11,13 +11,13 @@ $r.flushall;
 plan 5;
 
 # multi->...->exec
-is_deeply $r.multi(), True;
+is-deeply $r.multi(), True;
 $r.set("key", "value");
 $r.set("key2", "value2");
-is_deeply $r.exec(), ["OK", "OK"];
+is-deeply $r.exec(), ["OK", "OK"];
 
 # multi->...->discard
-is_deeply $r.multi(), True;
+is-deeply $r.multi(), True;
 $r.set("key2", "value3");
-is_deeply $r.discard(), True;
-is_deeply $r.get("key2"), "value2";
+is-deeply $r.discard(), True;
+is-deeply $r.get("key2"), "value2";

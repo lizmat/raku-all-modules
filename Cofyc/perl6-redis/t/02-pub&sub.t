@@ -11,4 +11,4 @@ $r.flushall;
 plan 1;
 
 # TODO 
-is_deeply $r.publish("queue", "data"), 0;
+is-deeply $r.publish("queue", "data"), 0;

@@ -16,7 +16,7 @@ First, please get 'ufo' from <http://github.com/masak/ufo> , then run:
 
     $ ufo
     $ make
-    $ make test     # run `redis-erver t/redis.conf` in another terminal first
+    $ make test     # run `redis-server t/redis.conf` in another terminal first
     $ make install
 
 Install with Panda

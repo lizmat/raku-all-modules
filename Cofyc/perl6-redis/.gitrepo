@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Cofyc/perl6-redis.git
 	branch = master
-	commit = eb4e07ab4fa1226be236f4d84e9cc4f5e4f7adee
-	parent = 8422be3dc6f75ab4445453446a4da7df837f4f2c
-	cmdver = 0.2.0
+	commit = e3ac82bc6e37c939df99d328677f069f739d2b85
+	parent = 0c717e4d6bddb9fcc49f05d1275f9585c8eb8d31
+	cmdver = 0.2.1

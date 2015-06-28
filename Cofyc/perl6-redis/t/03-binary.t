@@ -12,5 +12,5 @@ plan 2;
 
 # arbitary binary string 
 my Buf $binary = Buf.new(1,2,3,129);
-is_deeply $r.set("key", $binary), True;
-is_deeply $r.get("key"), $binary;
+is-deeply $r.set("key", $binary), True;
+is-deeply $r.get("key"), $binary;
