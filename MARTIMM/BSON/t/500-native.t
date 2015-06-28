@@ -9,7 +9,7 @@ use BSON;
 # Test cases borrowed from
 # https://github.com/mongodb/mongo-python-driver/blob/master/test/test_bson.py
 
-my BSON $b .= new();
+my BSON::Bson $b .= new();
 my Str $script = 'function(x){return x;}';
 my Hash $scope = { n => 10 };
 
@@ -39,8 +39,9 @@ my Hash $samples = {
                        0x02,                            # string
                        0x74, 0x65, 0x73, 0x74, 0x00,    # 'test' + 0
                        0x0C, 0x00, 0x00, 0x00,
-                       0x68, 0x65, 0x6C, 0x6C, 0x6F, 0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64, 0x00,
-                                                        # 'hello world' + 0  
+                       0x68, 0x65, 0x6C, 0x6C, 0x6F,
+                       0x20, 0x77, 0x6F, 0x72, 0x6C, 0x64,
+                       0x00,                            # 'hello world' + 0  
                        0x00                             # + 0
                      ],
     },
@@ -68,6 +69,73 @@ my Hash $samples = {
                      ],
     },
 
+    '0x04 Array with elements' => {
+      'decoded' => { "not-empty" => [ <a non empty array>] },
+      'encoded' => [
+         0x43, 0x00, 0x00, 0x00,                        # 73 bytes
+         0x04,                                          # Array
+         0x6e, 0x6f, 0x74, 0x2d, 0x65,
+         0x6d, 0x70, 0x74, 0x79, 0x00,                  # 'not-empty' + 0
+
+         0x33, 0x00, 0x00, 0x00,                        # array size + 1
+
+         0x02,                                          # string
+         0x30, 0x00,                                    # '0' + 0
+         0x02, 0x00, 0x00, 0x00,                        # string size
+         0x61, 0x00,                                    # string 'a'
+
+         0x02,                                          # string
+         0x31, 0x00,                                    # '1' + 0
+         0x04, 0x00, 0x00, 0x00,                        # string size
+         0x6e, 0x6f, 0x6e, 0x00,                        # string 'non'
+
+         0x02,                                          # string
+         0x32, 0x00,                                    # '2' + 0
+         0x06, 0x00, 0x00, 0x00,                        # string size
+         0x65, 0x6d, 0x70, 0x74,
+         0x79, 0x00,                                    # string 'empty'
+
+         0x02,                                          # string
+         0x33, 0x00,                                    # '3' + 0
+         0x06, 0x00, 0x00, 0x00,                        # string size
+         0x61, 0x72, 0x72, 0x61,
+         0x79, 0x00,                                    # string 'array'
+
+         0x00,                                          # end of array
+
+         0x00                                           # end of doc
+       ],
+    },
+
+    '0x04 Array with mixed array and hash elements' => {
+      'decoded' => { "ahh" => [ { }, { "not" => "empty" } ] },
+      'encoded' => [
+         0x2e, 0x00, 0x00, 0x00,                        # Total
+         0x04,                                          # Array
+         0x61, 0x68, 0x68, 0x00,                        # 'ahh' + 0
+
+           0x24, 0x00, 0x00, 0x00,                      # array size + 1
+
+             0x03,                                      # document
+             0x30, 0x00,                                # '0' + 0
+             0x05, 0x00, 0x00, 0x00,                    # {}
+             0x00,                                      # end document
+
+             0x03,                                      # document
+             0x31, 0x00,                                # '1' + 0
+             0x15, 0x00, 0x00, 0x00,
+             0x02,                                      # string
+             0x6e, 0x6f, 0x74, 0x00,                    # 'not' + 0
+             0x06, 0x00, 0x00, 0x00,                    # string size + 1
+             0x65, 0x6d, 0x70, 0x74, 0x79, 0x00,        # 'empty' + 0
+             0x00,                                      # end document
+
+           0x00,                                        # end array
+
+         0x00                                           # end document
+       ],
+    },
+
     '0x05 Binary, Buf' => {
         'decoded' => { b => Buf.new(0..4) },
 #        'encoded' => [ 0x12, 0x00, 0x00, 0x00,          # Total size
@@ -80,9 +148,11 @@ my Hash $samples = {
 #                     ],
     },
 
+#`{{
     '0x?? Rat' => {
         'decoded' => { b => 0.4 },
     },
+}}
 
     '0x05 Binary' => {
 #        'decoded' => { b => Buf.new(0..4) },
@@ -130,7 +200,7 @@ my Hash $samples = {
     },
 
     '0x09 Datetime' => {
-        decoded => { t => DateTime.new('2015-02-18T11:08:00+0100') },
+        decoded => { t => DateTime.new('2015-02-18T11:08:00+01:00') },
         encoded => [ 0x10, 0x00, 0x00, 0x00,            # 16 bytes
                      0x09,                              # datetime
                      0x74, 0x00,                        # 't' + 0
@@ -255,18 +325,30 @@ my Hash $samples = {
 };
 
 for $samples.keys -> $key {
-#say "Do $key";
+#   say "Testing $key";
 
     my $value = $samples{$key};
     if $value<decoded>:exists {
-        my @enc = $b.encode( $value<decoded> ).list;
-        is_deeply @enc, $value<encoded>, 'encode ' ~ $key;
+      given $key {
+        when / '0x04' \s 'Array' / {
+          # Only test length because hashes might get an other order when
+          # the array gets encoded.
+          #
+          my Buf $enc = $b.encode( $value<decoded> );
+          is $enc.elems, $value<encoded>.elems, 'encode ' ~ $key;
+        }
+
+        default {
+          my @enc = $b.encode( $value<decoded> ).list;
+          is-deeply @enc, $value<encoded>, 'encode ' ~ $key;
+        }
+      }
     }
 
     if $value<encoded>:exists {
         given $key {
             when '0x05 Binary' {
-                is_deeply
+                is-deeply
                    $b.decode(Buf.new($value<encoded>))<b>.Buf,
                    $value<decoded><b>.Buf,
                    "decode $key";
@@ -329,11 +411,11 @@ for $samples.keys -> $key {
                 # Must compare content because addresses are not same
                 #
                 is @dec_kv[1].javascript, @enc_kv[1].javascript, [~] 'decode ', $key, ' Javascript equal';
-                is_deeply @dec_kv[1].scope, @enc_kv[1].scope, [~] 'decode ', $key, ' scope equal';
+                is-deeply @dec_kv[1].scope, @enc_kv[1].scope, [~] 'decode ', $key, ' scope equal';
             }
 
             default {
-                is_deeply
+                is-deeply
                     $b.decode( Buf.new( $value<encoded>.list ) ),
                     $value<decoded>,
                     'decode ' ~ $key;
@@ -342,45 +424,81 @@ for $samples.keys -> $key {
     }
 
     CATCH {
-        my $msg = $_.message;
-        my $type = $_.type;
+        my $msg = .message;
+        my $type = .can('type') ?? .type !! 'no type()';
         $msg ~~ s:g/\n//;
 #say "M: $msg";
 
         when X::BSON::Deprecated {
-            ok $_.type ~~ ms/Undefined \(0x06\)
-                             || DPPointer \(0x0C\)
-                            /,
+            ok .type ~~ m/'Undefined(0x06)' || 'DPPointer(0x0C)'/,
                $msg;
         }
 
         when X::BSON::ImProperUse {
-            ok $_.type ~~ ms/integer 0x10\/0x12
-                             || Binary Buf
-                            /,
+            ok .type ~~ m/'integer 0x10/0x12' || 'Binary Buf'/,
                $msg;
         }
 
         when X::BSON::NYS {
-            ok $_.type ~~ m/unknown/,
+            ok .type ~~ m/unknown/,
                $msg;
         }
     }
 }
 
+done();
+exit(0);
+
 
 # check flattening aspects of Perl6
 
-my %flattening = (
-	'Array of Embedded documents' => { "ahh" => [ { }, { "not" => "empty" } ] },
-	'Array of Arrays' => { "aaa" => [ [ ], [ "not", "empty" ] ] },
-);
+my Hash $flattening = {
+  'Array of Embedded documents' => { "ahh" => [ { }, { "not" => "empty" } ] },
+  'Array of Arrays' => { "aaa" => [ [ ], [ "not", "empty" ] ] },
+};
 
-for %flattening {
-    is_deeply
-		$b.decode( $b.encode( .value ) ),
-		.value,
-		.key;
+my Array $enc-flattening = [
+  # "ahh" => [ { }, { "not" => "empty" } ]
+  Buf.new( 0x2e, 0x00, 0x00, 0x00,                      # Total
+           0x04,                                        # Array
+           0x61, 0x68, 0x68, 0x00,                      # 'ahh' + 0
+
+             0x24, 0x00, 0x00, 0x00,                    # array size + 1
+             
+               0x03,                                    # document
+               0x30, 0x00,                              # '0' + 0
+               0x05, 0x00, 0x00, 0x00,                  # {}
+               0x00,                                    # end document
+
+
+               0x03,                                    # document
+               0x31, 0x00,                              # '1' + 0
+               0x15, 0x00, 0x00, 0x00,
+               0x02,                                    # string
+               0x6e, 0x6f, 0x74, 0x00,                  # 'not' + 0
+               0x06, 0x00, 0x00, 0x00,                  # string size + 1
+               0x65, 0x6d, 0x70, 0x74, 0x79, 0x00,      # 'empty' + 0
+               0x00,                                    # end document
+             
+             0x00,                                      # end array
+
+           0x00                                         # end document
+         ),
+
+  # "aaa" => [ [ ], [ "not", "empty" ] ]
+  Buf.new(
+         ),
+  ];
+
+for $flattening.kv -> $key, $value {
+  my $e = $enc-flattening.shift;
+#say "kv: $key, ", $value.perl;
+say "E:", $e, ', ', $e.perl;
+
+  my Buf $enc = $b.encode($value);
+#  is $enc.list, $e.list, "Compare {$value.tree} in buf";
+  is $enc.elems, $e.elems, "Compare buf length";
+  is-deeply $b.decode($enc), $value, $key;
 }
 
 

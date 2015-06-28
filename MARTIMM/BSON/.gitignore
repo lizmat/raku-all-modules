@@ -2,4 +2,7 @@
 *.pdf
 */*.pdf
 *.html
-double*
+benchmarks/*
+Old/*
+*.mbc
+*/*.mbc

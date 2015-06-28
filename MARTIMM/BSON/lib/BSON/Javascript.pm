@@ -1,15 +1,17 @@
 use v6;
 
-class BSON::Javascript {
+package BSON {
 
-  has Str $.javascript;
-  has Hash $.scope;
-  
-  has Bool $.has_javascript = False;
-  has Bool $.has_scope = False;
-  
-  submethod BUILD ( Str :$javascript, Hash :$scope) {
-  
+  class Javascript {
+
+    has Str $.javascript;
+    has Hash $.scope;
+
+    has Bool $.has_javascript = False;
+    has Bool $.has_scope = False;
+
+
+    submethod BUILD ( Str :$javascript, Hash :$scope) {
       # Store the attribute values. ? sets True if defined and filled.
       #
       $!javascript = $javascript;
@@ -17,5 +19,7 @@ class BSON::Javascript {
 
       $!has_javascript = ?$!javascript;
       $!has_scope = ?$!scope;
+    }
   }
 }
+

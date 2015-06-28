@@ -45,10 +45,15 @@ This is perl6 version 2015.04-5-g59f57a8 built on MoarVM version 2015.04-3-gbb50
     [x] Int              => 32-bit Integer if -2147483646 < n < 2147483647
                          => 64-bit Integer if -9,22337203685e+18 < n < 9,22337203685e+18
                             Fails if larger/smaller with X::BSON::ImProperUse
-        Int             <=  32/64 bit integers.
+    [x] Int             <=  32/64 bit integers.
     [x] Bool            <=> Boolean "true" / "false"
-    [x] BSON::Binary    <=> All kind of binary
-                            0x00 Generic type.
+    [x] BSON::Binary    <=> All kinds of binary data
+    [x]                     0x00 Generic type
+    [ ]                     0x01 Function
+    [ ]                     0x02 Binary old, deprecated
+    [ ]                     0x03 UUID old, deprecated
+    [ ]                     0x04 UUID
+    [ ]                     0x05 MD5
     [x] Array           <=> Array
     [x] Hash            <=> Embedded document
     [x] BSON::ObjectId  <=> ObjectId
@@ -58,10 +63,8 @@ This is perl6 version 2015.04-5-g59f57a8 built on MoarVM version 2015.04-3-gbb50
                             be implemented differently later.
     [ ] FatRat
     [ ] Rat
-    [ ] UUID
-    [ ] MD5
     [x] DateTime        <=> int64 UTC datetime, seconds since January 1st 1970
-    [x] BSON::Regex     <=> Regular expression serverside searches
+    [x] BSON::Regex     <=> Regular expression for serverside searches
     [x] BSON::Javascript<=> Javascript code transport with or whithout scope
 
         And quite a few more perl6 types. Now binary types are possible it
@@ -91,12 +94,10 @@ Method ```.perl``` is available for easy debug.
   specified pack/unpack in Perl6.
 * Change die() statements in return with exception to notify caller and place
   further responsability there.
-* Tests needs to be extended to test larger documents. The failure in version
-  0.5.4 could then be prevented.
 * Perl 6 Int variables are integral numbers of arbitrary size. This means that
   any integer can be stored as large or small as you like. Int can be coded as
   described in version 0.8.4 and when larger or smaller then maybe it is
-  possible the Int can be coded as a binary array with some type.
+  possible the Int can be coded as a binary array of some type.
 
 ## CHANGELOG
 
@@ -104,6 +105,17 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.6
+  * Factoring out methods from BSON into EDC-Tools.
+  * Methods in EDC-Tools converted into exported subs.
+* 0.9.5
+  * Changed caused by rakudo update.
+  * Hashes work like hashes... mongodb run_command needs command on first key
+    value pair. Because of this a few multi methods are added to process Pair
+    arrays instead of hashes.
+* 0.9.4
+  * Tests from 0.9.3 has shown that using an index in arrays is faster than
+    shifting the bytes out one by one. This is now modified in BSON.pm6.
 * 0.9.3
   * Bugfix encoding very small double precision floating point numbers.
   * Working to encapsulate the encoding/decoding work. When also the method used
@@ -114,6 +126,16 @@ change at any time. The public API should not be considered stable*.
   * Changed role/class idea of test files Double.pm6 and Encodable.pm6. These
     are now D.pm6, EDC.pm6 and EDC-Tools.pm6. The Double is there a role while
     the Encodable is a class.
+  * Tests needs to be extended to test larger documents. The failure in version
+    0.5.4 could then be prevented. Test 703-encodable.t to test encoding objects
+    has a document with subdocuments and several doubles.
+  * EDC.pm6, D.pm6 and EDC-Tools.pm6 has replaced array shifts with array
+    indexing when decoding which is slightly faster.
+  * EDC.pm6 has first preparations to introduce concurrency using cas() when
+    decoding to update document result atomically.
+  * Tests have shown that scheduled code is too short to run parallel compared
+    to the bookkeeping around it. So keep the original code but replace the
+    array shifts with indexing when decoding.
 * 0.9.2 Upgraded Rakudo * ===> Bugfix in BSON
 * 0.9.1 Testing with decode/encode classes and roles
 * 0.9.0
