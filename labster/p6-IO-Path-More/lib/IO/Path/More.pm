@@ -1,4 +1,4 @@
-use MONKEY_TYPING;
+use MONKEY-TYPING;
 use File::Find;
 use Shell::Command;
 
@@ -52,7 +52,7 @@ method find (:$name, :$type, Bool :$recursive = True) {
 
 # Some methods added in the absence of a proper IO.stat call
 method inode() {
-    $*OS ne any(<MSWin32 os2 dos NetWare symbian>)   #this could use a better way of asking "am I posixy?
+    $*DISTRO.name ne any(<MSWin32 os2 dos NetWare symbian>)   #this could use a better way of asking "am I posixy?
     && self.e
     && nqp::p6box_i(nqp::stat(nqp::unbox_s(self.Str), nqp::const::STAT_PLATFORM_INODE))
 }

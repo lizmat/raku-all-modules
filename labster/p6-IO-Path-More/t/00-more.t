@@ -41,7 +41,7 @@ else {
 }
 
 
-if $*OS ne any( <MSWin32 dos VMS MacOS> ) {
+if $*DISTRO.name ne any( <MSWin32 dos VMS MacOS> ) {
 	ok path(~$*CWD).inode,		"inode works";
 	ok path(~$*CWD).device,		"device works";
 }
