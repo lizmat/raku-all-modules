@@ -1,4 +1,4 @@
-grammar Chess::FEN;
+unit grammar Chess::FEN;
 
 rule TOP { <board> <active-color> <castling> <en-passant> <half-move-clock> <full-move-number> }
 

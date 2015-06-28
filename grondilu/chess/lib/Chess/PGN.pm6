@@ -1,4 +1,4 @@
-grammar Chess::PGN;
+unit grammar Chess::PGN;
 
 rule TOP { ^ <game>+? $ }
 
