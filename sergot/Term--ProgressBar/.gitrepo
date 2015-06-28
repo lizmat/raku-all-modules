@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sergot/Term--ProgressBar.git
 	branch = master
-	commit = a7f4cfb11eb4d6b2140ae899df1d7e89c94a9278
-	parent = f7d762c05822f71a8fb168b705a67761afdf7ad6
-	cmdver = 0.2.0
+	commit = d91c993a50aac97993ae5906390a65a88191bebc
+	parent = 73f375f080d27bc0e6a1a9dfa40fbf70762aaf53
+	cmdver = 0.2.1

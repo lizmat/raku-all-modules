@@ -1,5 +1,5 @@
 use v6;
-class Term::ProgressBar;
+unit class Term::ProgressBar;
 
 has Int $.count = 100;
 has Str $.name = " ";
