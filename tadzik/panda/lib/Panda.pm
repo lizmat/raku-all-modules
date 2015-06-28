@@ -98,7 +98,7 @@ class Panda {
         }
 
         my $shell = %*ENV<SHELL>;
-        $shell ||= %*ENV<COMSPEC>
+        $shell ||= %*ENV<ComSpec>
             if $*DISTRO.is-win;
 
         if $shell {
@@ -143,7 +143,7 @@ class Panda {
             if $.ecosystem.is-installed($bone) and @revdeps {
                 self.announce("Rebuilding reverse dependencies: " ~ @revdeps.join(" "));
                 for @revdeps -> $revdep {
-                    self.install($revdep, False, False, False, :rebuild)
+                    self.install($revdep, False, $notests, False, :rebuild)
                 }
             }
             $.ecosystem.project-set-state($bone, $s)
@@ -163,7 +163,7 @@ class Panda {
 
     method get-deps(Panda::Project $bone) {
         my @bonedeps = $bone.dependencies.grep(*.defined).map({
-            next if $_ eq 'Test' | 'NativeCall' | 'nqp'; # XXX Handle dists properly that are shipped by a compiler.
+            next if $_ eq 'Test' | 'NativeCall' | 'nqp' | 'lib' | 'MONKEY-TYPING'; # XXX Handle dists properly that are shipped by a compiler.
             $.ecosystem.get-project($_)
                 or die X::Panda.new($bone.name, 'resolve',
                                     "Dependency $_ is not present in the module ecosystem")
