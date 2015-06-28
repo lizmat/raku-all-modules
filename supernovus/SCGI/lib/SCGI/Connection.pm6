@@ -1,4 +1,4 @@
-class SCGI::Connection;
+unit class SCGI::Connection;
 
 use SCGI::Request;
 use SCGI::Response;

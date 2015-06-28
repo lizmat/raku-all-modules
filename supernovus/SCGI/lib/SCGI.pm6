@@ -1,4 +1,4 @@
-class SCGI;
+unit class SCGI;
 
 use SCGI::Connection;
 

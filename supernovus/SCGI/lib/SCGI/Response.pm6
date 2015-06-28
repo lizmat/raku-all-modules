@@ -1,4 +1,4 @@
-class SCGI::Response;
+unit class SCGI::Response;
 
 use HTTP::Status;
 use SCGI::Constants;

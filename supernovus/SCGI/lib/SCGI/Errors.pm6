@@ -1,4 +1,4 @@
-class SCGI::Errors;
+unit class SCGI::Errors;
 
 use SCGI::Constants;
 

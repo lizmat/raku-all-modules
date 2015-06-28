@@ -1,6 +1,6 @@
 use v6;
 
-module SCGI::Constants;
+unit module SCGI::Constants;
 
 constant CRLF is export = "\x0D\x0A";
 constant SEP  is export = "\0";

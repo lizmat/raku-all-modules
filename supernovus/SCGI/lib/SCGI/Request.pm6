@@ -1,4 +1,4 @@
-class SCGI::Request;
+unit class SCGI::Request;
 
 use Netstring;
 use SCGI::Constants;
