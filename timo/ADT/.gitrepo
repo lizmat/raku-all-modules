@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/timo/ADT.git
 	branch = master
-	commit = abbfa66e74c1095ffae884abea3a18bd4dd294c1
-	parent = 08ae859a3178eaffdde44c63477e2df3369b24b5
-	cmdver = 0.1.0
+	commit = 0ab3fbdd97650e6aee5fe42625d6a49a9d36f0fd
+	parent = 57362f3096fdc43e1ddf08349950b154c74c4fd3
+	cmdver = 0.2.1
