@@ -219,7 +219,7 @@ method query_form {
 
 URI — Uniform Resource Identifiers (absolute and relative)
 
-=head SYNOPSYS
+=head SYNOPSIS
 
     use URI;
     my $u = URI.new('http://her.com/foo/bar?tag=woow#bla');
