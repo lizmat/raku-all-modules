@@ -38,13 +38,12 @@ my $t2 = Text::Table::List::ASCII.new(:length(40)).start;
 
 $t2.label("Small test");
 $t2.line;
-my %staff = {
+my @staff =
   "Susan Smith"    => "CEO",
   "Kevin Michaels" => "COO",
   "Richard Frank"  => "Janitor",
-  "Lisa Dawkins"   => "Designer",
-};
-$t2.field(|%staff);
+  "Lisa Dawkins"   => "Designer";
+$t2.field(|@staff);
 
 $wanted = "#======================================#
 | Small test                           |

@@ -1,4 +1,4 @@
-class Text::Table::List;
+unit class Text::Table::List;
 
 has @!lines;
 has $!text;
@@ -82,8 +82,9 @@ multi method field ($name, $value) {
   @!lines.push: $line;
 }
 
-multi method field (*%fields) {
-  for %fields.kv -> $name, $value {
+multi method field (*@fields) {
+  for @fields -> $field {
+    my ($name, $value) = $field.kv;
     self.field($name, $value);
   }
 }

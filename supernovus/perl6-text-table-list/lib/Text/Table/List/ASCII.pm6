@@ -1,6 +1,6 @@
 use Text::Table::List;
 
-class Text::Table::List::ASCII is Text::Table::List;
+unit class Text::Table::List::ASCII is Text::Table::List;
 
 ### Default drawing characters.
 has $.top-left     = "#";
