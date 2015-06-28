@@ -1,4 +1,4 @@
-class Net::XMPP::Presence;
+unit class Net::XMPP::Presence;
 
 has $.from = '';
 has $.to = '';

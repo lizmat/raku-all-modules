@@ -1,4 +1,4 @@
-class Net::XMPP;
+unit class Net::XMPP;
 
 use Net::XMPP::IQ;
 use Net::XMPP::Presence;

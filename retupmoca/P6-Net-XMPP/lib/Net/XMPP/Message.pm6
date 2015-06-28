@@ -1,4 +1,4 @@
-class Net::XMPP::Message;
+unit class Net::XMPP::Message;
 
 has $.from = '';
 has $.to = '';
