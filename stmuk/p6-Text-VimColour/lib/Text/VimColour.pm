@@ -1,13 +1,19 @@
 #!/usr/bin/env perl6
 use v6;
 use File::Temp;
-class Text::VimColour:ver<0.1> {
+
+class Text::VimColour:ver<0.3> {
     subset File of Str where -> $x { so $x && $x.IO.e };
     subset Path of Str where -> $x { so $x && $x.IO.dirname.IO.e } 
-    has Path  $!out;
-    has File  $!in;
-    has Str   $!lang;
+    # BUG https://rt.perl.org/Public/Bug/Display.html?id=125245
+    # has Path  $!out;
+    # has File  $!in;
+    # has Str   $!lang;
+    has $!out;
+    has $!in;
+    has $!lang;
     
+    my $html;
     proto method BUILD(|z) {
 	ENTER {
 	    my $version = .shift given split /','/, q:x/ex --version/;
@@ -17,10 +23,13 @@ class Text::VimColour:ver<0.1> {
 	{*}
 	LEAVE {
 	    $!lang //= 'c';
+            my $vim-let = $*VIM-LET || "";
+        
+        %*ENV<EXRC>="set directory=/tmp";
 	    my $cmd = qq«
-		vim -c 'set bg=light|set ft=$!lang|TOhtml|wq! $!out|quit' $!in 2>/dev/null >/dev/null 
+		vim -E -T builtin_dumb -c 'syntax on|set noswapfile|set bg=light|set ft=$!lang|{$vim-let}|TOhtml|wq! $!out|quit' $!in 2>/dev/null >/dev/null
             »;
-	    my $proc = shell $cmd;
+            my $proc = shell $cmd;
 	    fail "failed to run '$cmd', exit code {$proc.exitcode}" unless $proc.exitcode == 0;
 	}
     }
@@ -33,22 +42,22 @@ class Text::VimColour:ver<0.1> {
     }
     multi method BUILD(Str  :$!lang, Str :$code where $code.chars > 0) {
 	$!in  = tempfile[0];
-	$!in.IO.spurt: $code;
-	$!out = tempfile[0];
+        $!in.IO.spurt: $code;
+        $!out = tempfile[0];
 
     }
-    
-    method html-full-page returns Str{
-	$!out.IO.slurp;
+    method html-full-page returns Str  {
+        $!out.IO.slurp;
     }
-    method html  {
-	my $html = $!out.IO.slurp;
-	$html ~~  m/  '<body>'  (.*) '</body>' / && ~$0;
+    method html returns Str  {
+        self.html-full-page ~~  m/  '<body' .*? '>'  (.*) '</body>' / ;
+        return ~$0;
     }
 
-    method css   {
-	my $html = $!out.IO.slurp;
-	$html ~~  m/  '<style type="text/css">'  (.*?) '</style>' / && ~$0;
+    method css  returns Str {
+        self.html-full-page ~~  m/  '<style type="text/css">'  (.*?) '</style>' / && ~$0;
     }
-    
 }
+
+
+
