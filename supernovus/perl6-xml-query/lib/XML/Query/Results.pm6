@@ -1,6 +1,6 @@
 use XML;
 
-class XML::Query::Results;
+unit class XML::Query::Results;
 
 has @.results;        ## The matching elements.
 has $.parent;         ## The Statement that generated these results.

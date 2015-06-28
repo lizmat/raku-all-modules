@@ -1,6 +1,6 @@
 use XML::Query::Results;
 
-class XML::Query::Statement;
+unit class XML::Query::Statement;
 
 has $.statement;   ## The statement we represent.
 has $.parent;      ## The top-level XML::Query object.

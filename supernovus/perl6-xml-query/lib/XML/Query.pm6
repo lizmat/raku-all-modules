@@ -1,6 +1,6 @@
 use XML;
 
-class XML::Query;
+unit class XML::Query;
 
 use XML::Query::Statement;
 
