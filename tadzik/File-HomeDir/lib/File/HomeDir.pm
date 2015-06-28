@@ -1,4 +1,4 @@
-class File::HomeDir;
+unit class File::HomeDir;
 
 method my_home {
     # Try HOME on every platform first, because even on Windows, some
