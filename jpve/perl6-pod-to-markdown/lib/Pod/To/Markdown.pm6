@@ -30,28 +30,7 @@ say pod2markdown($=pod);
 unit class Pod::To::Markdown;
 
 #| Render Pod as Markdown
-sub pod2markdown($pod, Str :$positional-separator? = "\n\n") is export {
-    given $pod {
-	when Pod::Heading           { heading2markdown($pod) }
-	when Pod::Block::Code       { code2markdown($pod) }
-	when Pod::Block::Named      { named2markdown($pod) }
-	when Pod::Block::Para       { $pod.contents>>.&pod2markdown.join }
-	when Pod::Block::Table      { table2markdown($pod) }
-	when Pod::Block::Declarator { declarator2markdown($pod) }
-	when Pod::Block::Comment    { }
-	when Pod::Item              { item2markdown($pod).indent(2) }
-	when Pod::FormattingCode    { formatting2markdown($pod) }
-	when Positional             { $pod>>.&pod2markdown.join($positional-separator) }
-	when Pod::Config            { }
-	default                     { $pod.Str }
-    }
-}
-
-method render($pod) {
-    pod2markdown($pod);
-}
-
-sub heading2markdown($pod) {
+multi sub pod2markdown(Pod::Heading $pod) is export {
     my Str $head = pod2markdown(
 	$pod.contents,
 	:positional-separator(' ') # Collapse contents without newlines,
@@ -59,39 +38,27 @@ sub heading2markdown($pod) {
     head2markdown($pod.level, $head);
 }
 
-sub head2markdown(Int $lvl, Str $head) {
-    my $level = ($lvl < 6) ?? $lvl !! 6;
-    given $level {
-	when 1  { $head ~ "\n" ~ ('=' x $head.chars) }
-	when 2  { $head ~ "\n" ~ ('-' x $head.chars) }
-	default { '#' x $level ~ ' ' ~ $head }
-    }
-}
-
-sub code2markdown($pod) {
+multi sub pod2markdown(Pod::Block::Code $pod) is export {
     $pod.contents.join.trim-trailing.indent(4);
 }
 
-sub item2markdown($pod) {
-    my $markdown = '* ' ~ pod2markdown($pod.contents[0]);
-    $markdown ~= "\n\n" ~ pod2markdown($pod.contents[1..Inf]).indent(2)
-	if $pod.contents.elems > 1;
-    $markdown;
-}
-
-sub named2markdown($pod) {
+multi sub pod2markdown(Pod::Block::Named $pod) is export {
     given $pod.name {
 	when 'pod'    { pod2markdown($pod.contents) }
-	when 'para'   { $pod.contents>>.&pod2markdown.join(' ') }
+        when 'para'   { $pod.contents>>.&pod2markdown.join(' ') }
 	when 'defn'   { pod2markdown($pod.contents) }
 	when 'config' { }
 	when 'nested' { }
 	default       { head2markdown(1, $pod.name) ~ "\n\n" ~ pod2markdown($pod.contents); }
     }
+}
+
+multi sub pod2markdown(Pod::Block::Para $pod) is export {
+    $pod.contents>>.&pod2markdown.join
 
 }
 
-sub table2markdown($pod) {
+multi sub pod2markdown(Pod::Block::Table $pod) is export {
     my Str $table = '';
     $table ~= "<table>\n";
     if $pod.headers {
@@ -115,29 +82,7 @@ sub table2markdown($pod) {
     $table;
 }
 
-# sub table2markdown($pod) {
-#     my @rows = $pod.contents;
-#     my @maxes;
-#     for @rows, $pod.headers.item -> @row {
-# 	for 0..^@row -> $i {
-# 	    @maxes[$i] = max @maxes[$i], @row[$i].chars;
-# 	}
-#     }
-#     my $fmt = Arr@maxes>>.sprintf('%%-%ds)
-#     @rows.map({
-# 	my @cols = @_;
-# 	my @ret;
-# 	for 0..@_ -> $i {
-# 	    @ret.push: sprintf('%-'~$i~'s', 
-    
-#     if $pod.headers {
-# 	@rows.unshift([$pod.headers.item>>.chars.map({'-' x $_})]);
-# 	@rows.unshift($pod.headers.item);
-#     }
-#     @rows>>.join(' | ') ==> join("\n");
-# }
-
-sub declarator2markdown($pod) {
+multi sub pod2markdown(Pod::Block::Declarator $pod) {
     my $lvl = 2;
     next unless $pod.WHEREFORE.WHY;
     my $ret = '';
@@ -186,10 +131,13 @@ sub declarator2markdown($pod) {
     "$what\n\n{$pod.WHEREFORE.WHY.contents}";
 }
 
-sub signature2markdown($params) {
-      $params.elems ??
-      "(\n    " ~ $params.map({ $_.perl }).join(", \n    ") ~ "\n)" 
-      !! "()";
+multi sub pod2markdown(Pod::Block::Comment $pod) is export { }
+
+multi sub pod2markdown(Pod::Item $pod) is export {
+    my $markdown = '* ' ~ pod2markdown($pod.contents[0]);
+    $markdown ~= "\n\n" ~ pod2markdown($pod.contents[1..Inf]).indent(2)
+	if $pod.contents.elems > 1;
+    $markdown.indent(2);
 }
 
 my %formats =
@@ -198,7 +146,6 @@ my %formats =
   D => "underline",
   R => "inverse"
 ;
-
 
 my %Mformats =
     U => '_',
@@ -209,8 +156,7 @@ my %Mformats =
 my %HTMLformats =
     R => 'var';
 
-
-sub formatting2markdown($pod) {
+multi sub pod2markdown(Pod::FormattingCode $pod) is export {
     return '' if $pod.type eq 'Z';
     my $text = $pod.contents>>.&pod2markdown.join;
     $text = '[' ~ $text ~ '](' ~ $text ~ ')'
@@ -228,3 +174,55 @@ sub formatting2markdown($pod) {
     $text;
 }
 
+multi sub pod2markdown(Positional $pod, Str :$positional-separator = "\n\n") is export {
+    $pod>>.&pod2markdown.join($positional-separator)
+}
+
+multi sub pod2markdown(Pod::Config $pod) is export { }
+
+multi sub pod2markdown($pod, Str :$positional-separator? = "\n\n") is export {
+    $pod.Str
+}
+
+method render($pod) {
+    pod2markdown($pod);
+}
+
+sub head2markdown(Int $lvl, Str $head) {
+    my $level = ($lvl < 6) ?? $lvl !! 6;
+    given $level {
+	when 1  { $head ~ "\n" ~ ('=' x $head.chars) }
+	when 2  { $head ~ "\n" ~ ('-' x $head.chars) }
+	default { '#' x $level ~ ' ' ~ $head }
+    }
+}
+
+# sub table2markdown($pod) {
+#     my @rows = $pod.contents;
+#     my @maxes;
+#     for @rows, $pod.headers.item -> @row {
+# 	for 0..^@row -> $i {
+# 	    @maxes[$i] = max @maxes[$i], @row[$i].chars;
+# 	}
+#     }
+#     my $fmt = Arr@maxes>>.sprintf('%%-%ds)
+#     @rows.map({
+# 	my @cols = @_;
+# 	my @ret;
+# 	for 0..@_ -> $i {
+# 	    @ret.push: sprintf('%-'~$i~'s', 
+    
+#     if $pod.headers {
+# 	@rows.unshift([$pod.headers.item>>.chars.map({'-' x $_})]);
+# 	@rows.unshift($pod.headers.item);
+#     }
+#     @rows>>.join(' | ') ==> join("\n");
+# }
+
+sub signature2markdown($params) {
+      $params.elems ??
+      "(\n    " ~ $params.map({ $_.perl }).join(", \n    ") ~ "\n)" 
+      !! "()";
+}
+
+# vim: ts=8

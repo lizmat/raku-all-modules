@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jpve/perl6-pod-to-markdown.git
 	branch = master
-	commit = 1dde7420ee15202383226a05e0528b286472534d
-	parent = 34429d056788b22d6bf1edbc687b2442c7ae0199
+	commit = ffc10a87f15242156805ff119fa736313b4f5100
+	parent = 5a65971085f511b79b1a7f4689ef4104ce37c50a
 	cmdver = 0.2.1
