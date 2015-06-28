@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/TiMBuS/Net--IRC.git
 	branch = master
-	commit = fb2cb3fb30b0630a8a280031a60691be09a75ede
-	parent = 03955be5a84eb07d339491d21a40fff085689750
-	cmdver = 0.1.0
+	commit = 9a00b53659b85f24e919fedaed987999533df540
+	parent = 225d6d7314f8ce63b726369e781715ceabcee153
+	cmdver = 0.2.1
