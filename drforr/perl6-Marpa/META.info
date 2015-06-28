@@ -1,0 +1,10 @@
+{
+	"name"        : "Marpa",
+	"version"     : "*",
+	"description" : "A Perl6 binding to libmarpa, the parser module",
+	"depends"     : [ ],
+	"provides"    : {
+		"Marpa"	: "lib/Marpa.pm"
+	},
+	"source-url"  : "git://github.com/drforr/perl6-Marpa.git"
+}
