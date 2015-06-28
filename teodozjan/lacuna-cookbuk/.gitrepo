@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/teodozjan/lacuna-cookbuk.git
 	branch = master
-	commit = f949c894bfb48bd385453a38641bf47544259164
-	parent = eb4a5559d3a228205753e7c580856f7a99cb7686
+	commit = 8fd4311e26d78a66fb44c967257f4e478bfe0307
+	parent = 238d781be72eab08d626f904e012a74dc0d4ef4d
 	cmdver = 0.2.1

@@ -160,7 +160,7 @@ method repair {
     LacunaCookbuk::Logic::Chairman.repair_all;
 }
 
-#| Refill Space Station Module plan pocekt
+#| Refill Space Station Module plan 
 method make_space {
   LacunaCookbuk::Logic::PlanMaker.space_plans;
 }
