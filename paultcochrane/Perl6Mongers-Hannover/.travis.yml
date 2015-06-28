@@ -13,4 +13,4 @@ install:
     - panda install IO::Capture::Simple
 
 script:
-    - make test
+    - panda-test
