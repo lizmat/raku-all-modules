@@ -2,7 +2,7 @@ use v6;
 use Test;
 use ABC::Header;
 
-isa_ok ABC::Header.new, ABC::Header, "Can create ABC::Header object";
+isa-ok ABC::Header.new, ABC::Header, "Can create ABC::Header object";
 
 {
     my $a = ABC::Header.new;

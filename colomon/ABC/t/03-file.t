@@ -7,7 +7,7 @@ use ABC::Grammar;
     ok $match, 'samples.abc is a valid tune file';
     is @( $match<tune> ).elems, 3, "Three tunes were found";
 
-    my @titles = @( $match<tune> ).for({ @( .<header><header_field> ).grep({ .<header_field_name> eq "T" })[0] }).for({ .<header_field_data> });
+    my @titles = @( $match<tune> ).flatmap({ @( .<header><header_field> ).grep({ .<header_field_name> eq "T" })[0] }).flatmap({ .<header_field_data> });
     
     is +@titles, 3, "Three titles were found";
     is @titles[0], "Cuckold Come Out o' the Amrey", "First is Cuckold";

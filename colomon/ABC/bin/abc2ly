@@ -94,7 +94,7 @@ class LilypondContext {
     }
     
     method key-to-string() {
-        my $sf = $.context.key-info.key.for({ "{.key}{.value}" }).sort.Str.lc;
+        my $sf = $.context.key-info.key.flatmap({ "{.key}{.value}" }).sort.Str.lc;
         my $major-key-name;
         given $sf {
             when ""                     { $major-key-name = "c"; }
@@ -407,7 +407,7 @@ class TuneConvertor {
 
 sub TuneStreamToLilypondStream($in, $out, $filter = *) {
     my $actions = ABC::Actions.new;
-    my $match = ABC::Grammar.parse($in.slurp, :rule<tune_file>, :$actions);
+    my $match = ABC::Grammar.parse($in.slurp-rest, :rule<tune_file>, :$actions);
     die "Did not match ABC grammar: last tune understood:\n { $actions.current-tune }" unless $match;
 
     $out.say: '\\version "2.12.3"';
