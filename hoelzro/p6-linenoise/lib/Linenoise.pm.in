@@ -6,11 +6,10 @@ use NativeCall;
 #| (L<https://github.com/antirez/linenoise>) for Perl 6
 #| via NativeCall.
 module Linenoise {
-    # XXX these belong in separate modules, and are probably Linux-specific
     my constant STDIN_FILENO = 0;
-    my constant F_GETFL      = 0x03;
-    my constant F_SETFL      = 0x04;
-    my constant O_NONBLOCK   = 0x800;
+    my constant F_GETFL      = #`(FILL-ME-IN);
+    my constant F_SETFL      = #`(FILL-ME-IN);
+    my constant O_NONBLOCK   = #`(FILL-ME-IN);
 
     my sub fcntl(Int $fd, Int $cmd, Int $arg) returns Int is native(Str) { * }
     my sub free(Pointer $p) is native { * }
@@ -64,9 +63,17 @@ module Linenoise {
     our sub linenoise(Str $prompt) returns Str is export {
         my $flags = fcntl(STDIN_FILENO, F_GETFL, 0);
 
-        LEAVE fcntl(STDIN_FILENO, F_SETFL, $flags);
+        if $flags == -1 {
+            fail "fcntl(\$*IN, F_GETFL, 0) failed";
+        }
 
-        fcntl(STDIN_FILENO, F_SETFL, $flags +& +^O_NONBLOCK);
+        KEEP fcntl(STDIN_FILENO, F_SETFL, $flags);
+
+        my $status = fcntl(STDIN_FILENO, F_SETFL, $flags +& +^O_NONBLOCK);
+
+        if $status == -1 {
+            fail "fcntl(\$*IN, F_SETFL, ~O_NONBLOCK) failed";
+        }
 
         my $p = linenoise_raw($prompt);
 
