@@ -1,4 +1,4 @@
-class File::Spec::Case;
+unit class File::Spec::Case;
 
 method default-case-tolerant ($OS = $*OS) {
     so $OS eq any <MacOS Mac VMS darwin Win32 MSWin32 os2 dos NetWare symbian cygwin Cygwin epoc>;
