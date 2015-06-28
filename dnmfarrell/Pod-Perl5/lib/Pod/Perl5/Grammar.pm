@@ -21,6 +21,9 @@ grammar Pod::Perl5::Grammar
     ]
   }
 
+  #######################
+  # Text
+  #######################
   token verbatim_paragraph
   {
     <verbatim_text> <blank_line>
@@ -37,31 +40,40 @@ grammar Pod::Perl5::Grammar
   }
 
   # verbatim text is text that begins on a newline with horizontal whitespace
+  # is terminated by a blank line
   token verbatim_text
   {
     ^^\h+? \S [ <?!before <blank_line>> . ]*
   }
 
+  # a complete blank line, can contain horizontal whitesapce
   token blank_line
   {
     ^^ \h*? \n
   }
 
-  # tokens for matching streams of text in formatting codes
-  # none of them can contain ">" as it's the closing char of
-  # a formatting sequence
+  # name matches text with no whitespace and not containing >, /, |
   token name
   {
     <-[\s\>\/\|]>+
   }
 
+  # matches any text except vertical whitespace
   token singleline_text
   {
     \V+
   }
 
-  # can't include formatting code chars >, /, or |
+  # same as <name> except can contain horizontal whitespace
   token singleline_format_text
+  {
+    <-[\v\>\/\|]>+
+  }
+
+  # section has the same definition as <singleline_format_text>, but we have a different token
+  # in order to be able to distinguish between text and section when they're
+  # both present in a link tag eg. "L<This is text|Module::Name/ThisIsTheSection>"
+  token section
   {
     <-[\v\>\/\|]>+
   }
@@ -72,15 +84,10 @@ grammar Pod::Perl5::Grammar
     [ <format-code> | <?!before [ <blank_line> | \> ]> . ]+
   }
 
-  # section has the same definition as singleline text, but we have a different token
-  # in order to be able to distinguish between text and section when they're
-  # both present in a link tag eg. "L<This is text|Module::Name/ThisIsTheSection>"
-  token section
-  {
-    <-[\v\>\/\|]>+
-  }
 
+  ########################
   # command blocks
+  ########################
   proto token command-block { * }
 
   multi token command-block:pod      { ^^\=pod \h* \n }
@@ -102,7 +109,7 @@ grammar Pod::Perl5::Grammar
   token over      { ^^\=over [\h+ <[0..9]>+ ]? \n }
   token _item     { ^^\=item \h+ <name>
                     [
-                        [ \h+ <paragraph>  ]
+                      [ \h+ <paragraph>  ]
                       | [ \h* \n <blank_line> <paragraph>? ]
                     ]
                   }
@@ -131,7 +138,9 @@ grammar Pod::Perl5::Grammar
   multi token command-block:head3     { ^^\=head3 \h+ <singleline_text> \n }
   multi token command-block:head4     { ^^\=head4 \h+ <singleline_text> \n }
 
-  # basic formatting codes
+  ##########################
+  # formatting codes
+  ##########################
   proto token format-code  { * }
   multi token format-code:italic        { I\< <multiline_text>  \>  }
   multi token format-code:bold          { B\< <multiline_text>  \>  }
@@ -155,4 +164,10 @@ grammar Pod::Perl5::Grammar
                         \>
                       }
   token url           { [ https? | ftp ] '://' <-[\v\>\|]>+ }
+
+
+  ########################
+  # Diagnostics
+  ########################
+
 }
