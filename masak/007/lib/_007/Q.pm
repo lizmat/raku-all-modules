@@ -83,7 +83,7 @@ role Q::Prefix::Minus does Q::Prefix {
     method type { "[-]" }
     method eval($runtime) {
         my $expr = $.expr.eval($runtime);
-        die X::TypeCheck.new(:operation<->, :got($expr.^name), :expected<Int>)
+        die X::TypeCheck.new(:operation<->, :got($expr), :expected(Val::Int))
             unless $expr ~~ Val::Int;
         return Val::Int.new(:value(-$expr.value));
     }
@@ -118,10 +118,10 @@ role Q::Infix::Concat does Q::Infix {
     method type { "[~]" }
     method eval($runtime) {
         my $lhs = $.lhs.eval($runtime);
-        die X::TypeCheck.new(:operation<~>, :got($lhs.^name), :expected<Str>)
+        die X::TypeCheck.new(:operation<~>, :got($lhs), :expected(Val::Str))
             unless $lhs ~~ Val::Str;
         my $rhs = $.rhs.eval($runtime);
-        die X::TypeCheck.new(:operation<~>, :got($lhs.^name), :expected<Str>)
+        die X::TypeCheck.new(:operation<~>, :got($rhs), :expected(Val::Str))
             unless $rhs ~~ Val::Str;
         return Val::Str.new(:value(
             $lhs.value ~ $rhs.value
@@ -149,7 +149,7 @@ role Q::Infix::Eq does Q::Infix {
         multi equal-value(Val::Str $r, Val::Str $l) { $r.value eq $l.value }
         multi equal-value(Val::Array $r, Val::Array $l) {
             return False unless $r.elements == $l.elements;
-            for $r.elements.list Z $l.elements.list -> $re, $le {
+            for $r.elements.list Z $l.elements.list -> ($re, $le) {
                 return False unless equal-value($re, $le);
             }
             return True;
@@ -171,7 +171,7 @@ role Q::Postfix::Index does Q {
 
     method eval($runtime) {
         my $array = $runtime.get-var($.array.name);
-        die X::TypeCheck.new(:operation<indexing>, :got($array.^name), :expected<Array>)
+        die X::TypeCheck.new(:operation<indexing>, :got($array), :expected(Val::Array))
             unless $array ~~ Val::Array;
         my $index = $.index.eval($runtime);
         # XXX: also check index is integer
@@ -263,7 +263,7 @@ role Q::Statement::If does Q {
             $runtime.enter($c);
             die "Too many parameters in if statements"  # XXX: needs a test and a real exception
                 if $c.parameters.parameters > 1;
-            for $c.parameters.parameters Z $expr -> $param, $arg {
+            for $c.parameters.parameters Z $expr -> ($param, $arg) {
                 $runtime.declare-var($param.name);
                 $runtime.put-var($param.name, $arg);
             }
@@ -343,7 +343,7 @@ role Q::Statement::For does Q {
         else {
             for split_elements(elements($.expr), $count) -> $arg {
                 $runtime.enter($c);
-                for $c.parameters.parameters Z $arg.list -> $param, $real_arg {
+                for $c.parameters.parameters Z $arg.list -> ($param, $real_arg) {
                     $runtime.declare-var($param.name);
                     $runtime.put-var($param.name, $real_arg);
                 }
