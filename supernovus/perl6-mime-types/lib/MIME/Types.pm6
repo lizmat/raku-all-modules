@@ -1,6 +1,6 @@
 use v6;
 
-class MIME::Types;
+unit class MIME::Types;
 
 has %.exts;
 has %.types;
