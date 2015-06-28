@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 use v6;
-module File::Find::Duplicates:auth<labster>;
+unit module File::Find::Duplicates:auth<labster>;
 
 use Digest;
 use File::Compare;

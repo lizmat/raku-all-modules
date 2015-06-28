@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/labster/perl6-File-Find-Duplicates.git
 	branch = master
-	commit = 3379a4c78c10fe48786e890aa26ba1ed2e2d0aa2
-	parent = f5a20f26a815c50b8c1f46a83702aa7a56929f35
+	commit = 86474a5c25d05ac66cf6afb9f7238d27696d5f06
+	parent = b69dc37e0a320060eecf2912b86c6378f360f6ae
 	cmdver = 0.2.1
