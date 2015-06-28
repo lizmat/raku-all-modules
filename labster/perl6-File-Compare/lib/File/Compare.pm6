@@ -1,4 +1,4 @@
-module File::Compare:auth<labster>;
+unit module File::Compare:auth<labster>;
 use v6;
 
 my $MAX = 8*1024*1024;    # Default maximum bytes for .read
