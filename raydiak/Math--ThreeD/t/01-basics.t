@@ -12,7 +12,7 @@ multi sub is-approx(Vec3 $v1, Vec3 $v2, $desc?) {
     }
 }
 
-isa_ok Vec3.new(1.0, 0.0, 0.0), Vec3, "Can make a Vec3 with new";
+isa-ok Vec3.new(1.0, 0.0, 0.0), Vec3, "Can make a Vec3 with new";
 ok (length(Vec3.new(1.0, 2.0, 3.0)) - 14.sqrt) < 1e-10, "length works";
 ok (length(Vec3.new(5.0, 4.0, 2.0)) - 45.sqrt) < 1e-10, "length works";
 is-approx Vec3.new(1.0, 0.0, 0.0), Vec3.new(1.0, 0.0, 0.0), "is-approx works";
