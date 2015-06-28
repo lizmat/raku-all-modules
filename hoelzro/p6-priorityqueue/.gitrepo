@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/hoelzro/p6-priorityqueue.git
+	branch = master
+	commit = f4615279ac0a65ae6782f0a012a8a76996e873ac
+	parent = 416d04338625cd085bd4c569f1f63b635e855107
+	cmdver = 0.2.1

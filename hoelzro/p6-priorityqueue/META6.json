@@ -1,0 +1,20 @@
+{
+    "perl": "v6.0.0",
+    "name": "PriorityQueue",
+    "version": "v0.01",
+    "description": "Priority queue implementation for Perl 6",
+    "author": "Rob Hoelz",
+    "source-url": "git://github.com/hoelzro/p6-priorityqueue.git",
+    "test-depends": [],
+    "provides": {
+        "PriorityQueue": "lib/PriorityQueue.pm"
+    },
+    "support": {
+        "email": "rob AT-SIGN hoelz.ro",
+        "bugtracker": "https://github.com/hoelzro/p6-priorityqueue/issues"
+    },
+    "license": "http://opensource.org/licenses/MIT",
+    "tags": [
+        "data structure"
+    ]
+}
