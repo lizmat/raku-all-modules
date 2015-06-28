@@ -11,7 +11,7 @@ pass("Loaded Algorithm::Soundex");
 
 my Algorithm::Soundex $s .= new();
 
-isa_ok($s, Algorithm::Soundex);
+isa-ok($s, Algorithm::Soundex);
 
 my $soundex = $s.soundex("Robert");
 is($soundex, 'R163', 'soundex of Robert');
