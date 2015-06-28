@@ -4,7 +4,7 @@ use Test;
 use Math::Model;
 
 my $m;
-lives_ok {
+lives-ok {
     $m = Math::Model.new(
         derivatives => {
             a   => 'b',
@@ -20,7 +20,7 @@ lives_ok {
 }, 'can initialize a Math::Model';
 
 my %res;
-lives_ok { %res = $m.integrate(:from(0), :to(3)) }, 'can integrate the model';
+lives-ok { %res = $m.integrate(:from(0), :to(3)) }, 'can integrate the model';
 diag "result: %res.perl()";
 
 is %res<time>[0],   0, 'time starts at 0';

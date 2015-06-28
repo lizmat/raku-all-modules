@@ -1,6 +1,6 @@
 use v6;
 
-class Math::Model;
+unit class Math::Model;
 
 use Math::RungeKutta;
 # TODO: only load when needed
