@@ -66,7 +66,7 @@ C<Log::Syslog::Native::> from user code.
     method new(Str :$ident, Int :$option, Facility :$facility)
 
 The constructor for the object.  C<ident> will set the identity field
-for the log messages and default to C<$*PROGRAM_NAME>.  C<option> is the
+for the log messages and default to C<$*PROGRAM-NAME>.  C<option> is the
 OR of log option enum values as described below, it defaults to C<Pid +|
 ODelay> which for most purposes should not need changing.  C<facility>
 is a value of the C<Facility> enum as described below, it defaults to
@@ -75,7 +75,7 @@ your system, alter how and where the messages are logged to.
 
 =end pod
 
-class Log::Syslog::Native {
+class Log::Syslog::Native:ver<v0.0.3>:auth<github:jonathanstowe> {
 
 =begin pod
 
@@ -276,7 +276,7 @@ Log to stderr as well
                         :NoWait(0x10),
                         :Perror(0x20));
 
-    has Str $.ident    = $*PROGRAM_NAME;
+    has Str $.ident    = $*PROGRAM-NAME;
     has Int $.option   = Pid +| ODelay;
     has Int $.facility = Local0;
 
@@ -284,7 +284,7 @@ Log to stderr as well
     sub _openlog(Str, Int, Int) is native is symbol('openlog') { ... }
     sub _closelog() is native is symbol('closelog') { ... }
 
-    submethod BUILD(:$!ident = $*PROGRAM_NAME, :$option?, :$facility) {
+    submethod BUILD(:$!ident = $*PROGRAM-NAME, :$option?, :$facility) {
         $!option = $option // Pid +| ODelay;
         $!facility = $facility // Local0;
         my $i = $!ident;
@@ -346,3 +346,4 @@ Log to stderr as well
     }
     
 }
+# vim: expandtab shiftwidth=4 ft=perl6
