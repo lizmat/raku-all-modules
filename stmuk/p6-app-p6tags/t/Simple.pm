@@ -1,11 +1,11 @@
 class Simple {
 
-    method doit {
+    method do-it {
         say "we doit";
 
     }
 
-    method dothat {
+    method do-that {
         say "we dothat";
 
     }

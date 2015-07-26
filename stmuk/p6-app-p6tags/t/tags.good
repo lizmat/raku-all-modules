@@ -1,5 +1,5 @@
 Simple	t/Simple.pm	/class Simple/;"	p
-Simple::doit	t/Simple.pm	/^    method doit/;"	s
-Simple::dothat	t/Simple.pm	/^    method dothat/;"	s
-doit	t/Simple.pm	/^    method doit/;"	s
-dothat	t/Simple.pm	/^    method dothat/;"	s
+Simple::do-it	t/Simple.pm	/^    method do\-it/;"	s
+Simple::do-that	t/Simple.pm	/^    method do\-that/;"	s
+do-it	t/Simple.pm	/^    method do\-it/;"	s
+do-that	t/Simple.pm	/^    method do\-that/;"	s

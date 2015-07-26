@@ -1,6 +1,6 @@
 {
     "name"        : "App::p6tags",
-    "version"     : "0.1",
+    "version"     : "0.2",
     "description" : "Generate editor tags for perl6. ",
     "depends"     : [],
     "provides"    : {
