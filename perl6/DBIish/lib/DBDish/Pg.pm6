@@ -145,7 +145,7 @@ constant PGRES_TUPLES_OK   = 2;
 constant PGRES_COPY_OUT    = 3;
 constant PGRES_COPY_IN     = 4;
 
-sub status-is-ok($status) { $status ~~ 0..4 }
+sub status-is-ok($status) { $status ~~ (0..4) }
 
 #-----------------------------------------------------------------------
 
@@ -161,7 +161,7 @@ my grammar PgTokenizer {
         \"
     }
     token single_quote_normal { <-['\\]>+ }
-    token single_quote_escape { [ \'\' || \\ . ]+ }
+    token single_quote_escape { [ \'\' | \\ . ]+ }
     token single_quote {
         \'
         [
@@ -269,7 +269,7 @@ class DBDish::Pg::StatementHandle does DBDish::StatementHandle {
 
     method fetchrow() {
         my @row_array;
-        return if $!current_row >= $!row_count;
+        return () if $!current_row >= $!row_count;
 
         unless defined $!field_count {
             $!field_count = PQnfields($!result);
@@ -317,7 +317,7 @@ class DBDish::Pg::StatementHandle does DBDish::StatementHandle {
     method fetchall_hashref(Str $key) {
         my %results;
 
-        return if $!current_row >= $!row_count;
+        return () if $!current_row >= $!row_count;
 
         while my $row = self.fetchrow_hashref {
             %results{$row{$key}} = $row;
