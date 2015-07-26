@@ -1,0 +1,23 @@
+#!/usr/bin/env perl6
+
+use Audio::Encode::LameMP3;
+use Audio::Sndfile;
+
+my $test-file = 't/data/cw_glitch_noise15.wav';
+
+my $sndfile = Audio::Sndfile.new(filename => $test-file, :r);
+my $encoder = Audio::Encode::LameMP3.new(bitrate => 128, quality => 3, in-samplerate => $sndfile.samplerate);
+
+my $out-file = 'encoded.mp3'.IO.open(:w, :bin);
+
+loop {
+    my @in-frames = $sndfile.read-short(4192);
+    my $buf = $encoder.encode-short(@in-frames);
+    $out-file.write($buf);
+    last if ( @in-frames / $sndfile.channels ) != 4192;
+}
+
+$sndfile.close();
+my  $buf = $encoder.encode-flush();
+$out-file.write($buf);
+$out-file.close;

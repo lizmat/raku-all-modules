@@ -1,0 +1,41 @@
+#!/usr/bin/env perl6
+
+use Audio::Encode::LameMP3;
+use Audio::Sndfile:ver<v0.0.2>;
+
+multi sub MAIN(Str :$in-file!, Str :$out-file!, Int :$bufsize = 512, Int :$bitrate = 128, Int :$quality = 5, Str :$title, Str :$artist, Str :$album) {
+    if $in-file.IO.e {
+        my $sndfile = Audio::Sndfile.new(filename => $in-file, :r);
+        my $mode = do given $sndfile.channels {
+            when 2 {
+                Audio::Encode::LameMP3::JointStereo;
+            }
+            when 1 {
+                Audio::Encode::LameMP3::Mono;
+            }
+            default {
+                die "$in-file has $_ channels - I only support 2 at most";
+            }
+        }
+        my $out-fh = $out-file.IO.open(:w, :bin);
+        my %tags = (:$title, :$album, :$artist).grep({ .value.defined } );
+        my $encoder = Audio::Encode::LameMP3.new(:$mode, :$bitrate, :$quality, |%tags);
+
+        loop {
+            my ($in-frames, $num-frames) = $sndfile.read-short($bufsize, :raw).list;
+            my $buf = $encoder.encode-short($in-frames, $num-frames);
+            $out-fh.write($buf);
+            last if $num-frames != $bufsize;
+        }
+        $sndfile.close();
+        my $buf = $encoder.encode-flush();
+        $out-fh.write($buf);
+        $out-fh.close();
+    }
+    else {
+        die "$in-file does not exist!";
+    }
+
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
