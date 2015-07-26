@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/perl6-ArrayHash.git
+	branch = master
+	commit = 72dc5944ce06b0c772765e1ce7beeec19a037a8f
+	parent = 156b1728d94e094f5b96a88d36112e008fff438d
+	cmdver = 0.2.2

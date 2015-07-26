@@ -1,0 +1,11 @@
+{
+    "name" : "ArrayHash",
+    "version" : "0.1",
+    "description" : "An array in a hash in an array... like a turducken",
+    "author" : "Andrew Sterling Hanenkamp",
+    "provides" : {
+        "ArrayHash": "lib/ArrayHash.pm6"
+    },
+    "depends" : [ "KnottyPair" ],
+    "source-url" : "git://github.com/zostay/perl6-ArrayHash.git"
+}
