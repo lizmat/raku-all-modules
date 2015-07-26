@@ -1,0 +1,22 @@
+{
+  "name" : "CheckSocket",
+  "tags" : [ "audio", "utils" ],
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth" : "github:jonathanstowe",
+  "support" : {
+    "source" : "git://github.com/jonathanstowe/CheckSocket.git"
+  },
+  "source-url" : "git://github.com/jonathanstowe/CheckSocket.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "CheckSocket" : "lib/CheckSocket.pm"
+  },
+  "depends" : [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "description" : "very simple Perl 6 function to test if a TCP socket is listening on a given address",
+  "version" : "v0.0.1"
+}

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/CheckSocket.git
+	branch = master
+	commit = 4e9ee6a042520a999f8740fbd127577ccc70cf4b
+	parent = 4663ecd6b4fe8c5f0722fc72dc4ea60734fb7060
+	cmdver = 0.2.2
