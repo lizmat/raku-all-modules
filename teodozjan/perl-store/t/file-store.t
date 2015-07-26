@@ -24,7 +24,7 @@ nok Foo.from_file('sernox'), 'Reading non existent object';
     my $hash2 = from_file('tt.pl');
     unlink('tt.pl');
     my $eq = True;
-    is_deeply $hash2, $hash, 'Store and restore hashes'  
+    is-deeply $hash2, $hash, 'Store and restore hashes'  
 }
 
 
