@@ -1,0 +1,10 @@
+{
+    "name" : "String::Stream",
+    "version" : "0.8",
+    "description" : "Stream into a string and from a string",
+    "provides" : {
+        "String::Stream" : "lib/String/Stream.pm6"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/jaffa4/string-stream.git"
+}
