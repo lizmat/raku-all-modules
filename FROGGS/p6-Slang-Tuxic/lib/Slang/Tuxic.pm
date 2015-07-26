@@ -1,13 +1,23 @@
 use nqp;
+use NQPHLL:from<NQP>;
 
 sub EXPORT(|) {
     sub atkeyish(Mu \h, \k) {
         nqp::atkey(nqp::findmethod(h, 'hash')(h), k)
     }
     my role Tuxic {
+        token routine_declarator:sym<sub> {
+            :my $*LINE_NO := HLL::Compiler.lineof(self.orig(), self.from(), :cache(1));
+            <sym> <.end_keyword>? <routine_def('sub')>
+        }
         token term:sym<identifier> {
             :my $pos;
-            <identifier> <!{ $*W.is_type([atkeyish($/, 'identifier').Str]) }> <?before <.unsp>|\s*'('> \s* <![:]>
+            <identifier>
+            <!{
+                my $ident = atkeyish($/, 'identifier').Str;
+                $ident eq 'sub'|'if'|'elsif'|'while'|'until'|'for' || $*W.is_type([$ident])
+            }>
+            <?before <.unsp>|\s*'('> \s* <![:]>
             { $pos := $/.CURSOR.pos }
             <args>
             { self.add_mystery(atkeyish($/, 'identifier'), atkeyish($/, 'args').from, nqp::substr(atkeyish($/, 'args').Str, 0, 1)) }
