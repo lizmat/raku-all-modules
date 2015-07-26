@@ -8,7 +8,7 @@ subtest {
     my $r = Geo::Region.new;
 
     nok       $r.is-within(1),       'not within world';
-    is_deeply $r.countries, ().list, 'no countries';
+    is-deeply $r.countries, ().list, 'no countries';
 }, 'default empty region';
 
 subtest {
@@ -16,7 +16,7 @@ subtest {
     my $r = Geo::Region.new(include => []);
 
     nok       $r.is-within(1),       'not within world';
-    is_deeply $r.countries, ().list, 'no countries';
+    is-deeply $r.countries, ().list, 'no countries';
 }, 'explicit empty region';
 
 subtest {
@@ -34,8 +34,8 @@ subtest {
     ok $r.contains(any <1 ZZ>),      'region contains junctive any';
 
     is        $r.countries.elems, 256,              'expected # of countries';
-    cmp_ok    $r.countries.join, '~~', /^<:Lu>+$/,  'countries are uppercase';
-    is_deeply $r.countries, $r.countries.sort.list, 'countries are sorted';
+    cmp-ok    $r.countries.join, '~~', /^<:Lu>+$/,  'countries are uppercase';
+    is-deeply $r.countries, $r.countries.sort.list, 'countries are sorted';
 
     # these codes are: 1. deprecated; 2. grouping; and 3. aliases
     for <
@@ -63,7 +63,7 @@ subtest {
     ok $r.is-within(419),  'within Latin America (419) grouping';
     ok $r.is-within(all <1 3 13 19 419 MX>), 'within junctive all';
     ok $r.is-within(any <MX US>),            'within junctive any';
-    is_deeply $r.countries, <MX>.list, 'only one country in a country';
+    is-deeply $r.countries, <MX>.list, 'only one country in a country';
 }, 'Mexico (MX) country';
 
 subtest {
@@ -77,7 +77,7 @@ subtest {
     nok $r.is-within(143),  'not within either included region';
     nok $r.is-within('RU'), 'not within either included region';
 
-    is_deeply(
+    is-deeply(
         $r.countries,
         <KG KZ RU TJ TM UZ>.list,
         'return all countries within any included'
@@ -93,7 +93,7 @@ subtest {
     nok $r.contains('EU'), '!contains excluded region';
     nok $r.contains('FR'), '!contains countries within excluded region';
 
-    is_deeply $r.countries, <
+    is-deeply $r.countries, <
         AD AL AX BA BY CH FO GG GI IM IS JE LI
         MC MD ME MK NO RS RU SJ SM UA VA XK
     >.list, 'return all countries within included except excluded';
@@ -119,5 +119,5 @@ subtest {
     ok $r.is-within('UK'), 'within deprecated country';
     ok $r.contains('GB'),  'contains official country';
     ok $r.contains('UK'),  'contains deprecated country';
-    is_deeply $r.countries, <GB>.list, 'only official countries';
+    is-deeply $r.countries, <GB>.list, 'only official countries';
 }, 'deprecated alias UK for GB';

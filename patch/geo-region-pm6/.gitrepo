@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/patch/geo-region-pm6.git
 	branch = master
-	commit = f90829aef85305ba52c7f77c2943f95dd17f9fb5
-	parent = 5d9659897b543fc41095f82240b7eacc0af43ea5
-	cmdver = 0.2.1
+	commit = 02336952a76f1ffd3d5360663ae7470a3f1696b4
+	parent = 4c843486985a4b838a66987e5e5d8baa1553b715
+	cmdver = 0.2.2
