@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bbkr/text_markov.git
 	branch = master
-	commit = 4ebc26e9972dc71d60d3aa8489985c3401c7f55b
-	parent = 884063ef15a1bb0a110f8585d22dde752467cfed
-	cmdver = 0.2.1
+	commit = 0dbc1a21be216a2bf4f54b57ac3f620a84453397
+	parent = 4534baa293cdd8874227ca5e025e2463b61ba011
+	cmdver = 0.2.2
