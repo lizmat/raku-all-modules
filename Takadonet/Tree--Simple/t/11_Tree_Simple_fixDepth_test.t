@@ -51,7 +51,7 @@ for $tree.getAllChildren() -> $sub_tree {
  	is($sub_tree.getDepth(), 0, '... our depth should be 0');
  	# and their siblings should match 
  	# the children of their parent
- 	is_deeply(
+ 	is-deeply(
          [ $tree.getAllChildren() ], 
          [ $sub_tree.getAllSiblings() ], 
          '... our siblings are the same');
@@ -95,7 +95,7 @@ for $parent_tree.getAllChildren() -> $sub_tree {
  	is($sub_tree.getDepth(), 0, '... our depth should be 0');
  	# and that all their siblinds match
  	# the children of their parent
- 	is_deeply(
+ 	is-deeply(
          [ $parent_tree.getAllChildren() ], 
          [ $sub_tree.getAllSiblings() ],
          '... the siblings are the same as the children');

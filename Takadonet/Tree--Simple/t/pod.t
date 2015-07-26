@@ -8,7 +8,7 @@ BEGIN
 }
 
 
-skip_rest('Do not have Test::Pod module');
+skip-rest('Do not have Test::Pod module');
 # eval "use Test::Pod 1.14";
 # plan skip_all => "Test::Pod 1.14 required for testing POD" if $@;
 

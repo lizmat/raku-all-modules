@@ -9,7 +9,7 @@ BEGIN
 
 
 
-eval_lives_ok 'use Tree::Simple', 'Can use Tree::Simple';
+eval-lives-ok 'use Tree::Simple', 'Can use Tree::Simple';
 
 use Tree::Simple;
 #since do not have Test::Memory::Cycle module, so just testing the destroy function

@@ -8,7 +8,7 @@ BEGIN
 }
 
 
-skip_rest('Do not have Test::Pod::Coverage module');
+skip-rest('Do not have Test::Pod::Coverage module');
 
 
 #todo do not have this testing module to check for documentation coverage

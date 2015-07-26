@@ -12,11 +12,11 @@ use Tree::Simple;
 { # test height (with pictures)
     
     my $tree = Tree::Simple.new();
-    isa_ok($tree, Tree::Simple);
+    isa-ok($tree, Tree::Simple);
 
     
     my $D = Tree::Simple.new('D');
-    isa_ok($D, Tree::Simple);    
+    isa-ok($D, Tree::Simple);    
 
     
     $tree.addChild($D);
@@ -27,7 +27,7 @@ use Tree::Simple;
     is($D.getWidth(), 1, '... D has a width of 1');
     
     my $E = Tree::Simple.new('E');
-    isa_ok($E, Tree::Simple);
+    isa-ok($E, Tree::Simple);
     
     $D.addChild($E);
     
@@ -40,7 +40,7 @@ use Tree::Simple;
     is($E.getWidth(), 1, '... E has a width of 1');
     
     my $F = Tree::Simple.new('F');
-    isa_ok($F, Tree::Simple);
+    isa-ok($F, Tree::Simple);
     
     $E.addChild($F);
     
@@ -56,7 +56,7 @@ use Tree::Simple;
     is($F.getWidth(), 1, '... F has a width of 1');
     
     my $C = Tree::Simple.new('C');
-    isa_ok($C, Tree::Simple);
+    isa-ok($C, Tree::Simple);
     
     $D.addChild($C);
     
@@ -73,7 +73,7 @@ use Tree::Simple;
     is($C.getWidth(), 1, '... C has a width of 1');
     
     my $B = Tree::Simple.new('B');
-    isa_ok($B, Tree::Simple);
+    isa-ok($B, Tree::Simple);
     
     $D.addChild($B);
     
@@ -93,7 +93,7 @@ use Tree::Simple;
         
     
     my $A = Tree::Simple.new('A');
-    isa_ok($A, Tree::Simple);
+    isa-ok($A, Tree::Simple);
     
     $E.addChild($A);
     
@@ -112,7 +112,7 @@ use Tree::Simple;
     is($A.getWidth(), 1, '... A has a width of 1');
     
     my $G = Tree::Simple.new('G');
-    isa_ok($G, Tree::Simple);
+    isa-ok($G, Tree::Simple);
     #TODO need to make alias for 'insertChild' that direct to insertChildAt 
     $E.insertChildAt(1, $G);
     
@@ -132,7 +132,7 @@ use Tree::Simple;
     is($A.getWidth(), 1, '... A has a width of 1');
     
     my $H = Tree::Simple.new('H');
-    isa_ok($H, Tree::Simple);
+    isa-ok($H, Tree::Simple);
     
     $G.addChild($H);
     
@@ -155,7 +155,7 @@ use Tree::Simple;
     is($A.getWidth(), 1, '... A has a width of 1');
     
     my $I = Tree::Simple.new('I');
-    isa_ok($I, Tree::Simple);
+    isa-ok($I, Tree::Simple);
     
     $G.addChild($I);
     

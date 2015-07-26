@@ -34,7 +34,7 @@ $tree.accept($visitor);
 
 ok $visitor.can('getResults'),"Can do getResults";
 
-is_deeply([ $visitor.getResults() ], [ <1 1.1 1.2 1.2.1 1.3 2 3>],
+is-deeply([ $visitor.getResults() ], [ <1 1.1 1.2 1.2.1 1.3 2 3>],
          '... got what we expected');
 
 ok($visitor.can('setNodeFilter'));
@@ -48,15 +48,15 @@ is($visitor.getNodeFilter(), "$node_filter", '... got back what we put in');
 # visit the tree again to get new results now
 $tree.accept($visitor);
 
-is_deeply($visitor.getResults(),[ <_1 _1.1 _1.2 _1.2.1 _1.3 _2 _3>],
+is-deeply($visitor.getResults(),[ <_1 _1.1 _1.2 _1.2.1 _1.3 _2 _3>],
          '... got what we expected');
         
 # test some exceptions
-dies_ok ({
+dies-ok ({
      $visitor.setNodeFilter();        
 });
 
-dies_ok ({
+dies-ok ({
      $visitor.setNodeFilter([]);        
 });
 
@@ -87,23 +87,23 @@ ok($visitor3 ~~ Tree::Simple::Visitor);
 # -----------------------------------------------
 
 # we pass a bad depth (string)
-dies_ok ({
+dies-ok ({
     my $test = Tree::Simple::Visitor.new($SIMPLE_SUB, "Fail")
 });
    
 # we pass a bad depth (numeric)
-dies_ok ({
+dies-ok ({
 my $test = Tree::Simple::Visitor.new($SIMPLE_SUB, 100);
 });
 
 # we pass a non-ref func argument
-dies_ok ({
+dies-ok ({
  	my $test = Tree::Simple::Visitor.new("Fail");
 });
 
 
 # # we pass a non-code-ref func arguement   
-dies_ok ({
+dies-ok ({
  	my $test = Tree::Simple::Visitor.new([]);
 });
 
@@ -117,21 +117,21 @@ dies_ok ({
 ok($visitor1.can('visit'));
 
 # test no arg
-dies_ok ( {
+dies-ok ( {
  	$visitor1.visit();
 });
 
 #    '... we are expecting this error'; 
    
 # test non-ref arg
-dies_ok ( {
+dies-ok ( {
  	$visitor1.visit("Fail");
 });
 
 #    '... we are expecting this error'; 	 
    
 # test non-object ref arg
-dies_ok ( {
+dies-ok ( {
  	$visitor1.visit([]);
  });
 
@@ -140,7 +140,7 @@ class BAD {};
 my $BAD_OBJECT = BAD.new();   
    
 # test non-Tree::Simple object arg
-dies_ok ( {
+dies-ok ( {
  	$visitor1.visit($BAD_OBJECT);
 });
 
@@ -166,17 +166,17 @@ ok($tree1 ~~ Tree::Simple);
 is($tree1.getChildCount(), 3, '... there are 3 children here');
 
 #and pass the visitor1 to accept
-lives_ok( {
+lives-ok( {
  	$tree1.accept($visitor1);
 }, '.. this passes fine');
 
 # and pass the visitor2 to accept
-lives_ok( {
+lives-ok( {
  	$tree1.accept($visitor2);
 }, '.. this passes fine');
 
 # and pass the visitor3 to accept
-lives_ok( {
+lives-ok( {
 	$tree1.accept($visitor3);
 }, '.. this passes fine');
 

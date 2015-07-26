@@ -72,7 +72,7 @@ is($tree.getChild(2).getNodeValue().WHAT, Array, '... these should be array refs
 isnt($clone.getChild(2).getNodeValue().WHERE, $tree.getChild(2).getNodeValue().WHERE, 
  	'... these should be different array refs');	
 # with the same value	
-is_deeply(
+is-deeply(
     $clone.getChild(2).getNodeValue(), 
     $tree.getChild(2).getNodeValue(), 
 	'... these should have the same contents');
@@ -84,7 +84,7 @@ is($tree.getChild(3).getNodeValue().WHAT, Hash, '... these should be hash refs')
 isnt($clone.getChild(3).getNodeValue().WHERE, $tree.getChild(3).getNodeValue().WHERE, 
  	'... these should be different hash refs');	
 # with the same value	
-is_deeply(
+is-deeply(
      $clone.getChild(3).getNodeValue(), 
      $tree.getChild(3).getNodeValue(), 
 	'... these should have the same contents');	
@@ -139,7 +139,7 @@ my $shallow_clone = $tree.cloneShallow();
 
 isnt($shallow_clone.WHICH, $tree.WHICH, '... these should be refs');
 
-is_deeply(
+is-deeply(
  		 $shallow_clone.getAllChildren() ,
  		 $tree.getAllChildren() ,
 		'... the children are the same');

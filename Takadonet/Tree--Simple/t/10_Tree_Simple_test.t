@@ -9,7 +9,7 @@ BEGIN
 
 
 
-eval_lives_ok 'use Tree::Simple', 'Can use Tree::Simple';
+eval-lives-ok 'use Tree::Simple', 'Can use Tree::Simple';
 
 use Tree::Simple;
 
@@ -286,26 +286,26 @@ is($tree, $sub_tree_3.getParent(), '... make sure our sub_tree_3 parent is tree'
 # check that our arrays are equal
 my $children = $tree.getAllChildren();
 
-is_deeply($children, [ $sub_tree, $sub_tree_2, $sub_tree_3, $sub_tree_4]);
+is-deeply($children, [ $sub_tree, $sub_tree_2, $sub_tree_3, $sub_tree_4]);
 
 # get it in array context and
 # check that our arrays are equal
 my @children = $tree.getAllChildren();
-is_deeply(@children, [ $sub_tree, $sub_tree_2, $sub_tree_3, $sub_tree_4 ]);
+is-deeply(@children, [ $sub_tree, $sub_tree_2, $sub_tree_3, $sub_tree_4 ]);
 
 # check that the values from both
 # contexts are equal to one another
-is_deeply($children, @children);
+is-deeply($children, @children);
 
 # now check that the siblings of all the 
 # sub_trees are the same as the children
 for @children ->  $_sub_tree {
 	# test siblings in scalar context
 	my $siblings = $sub_tree.getAllSiblings();
-	is_deeply($children, $siblings);
+	is-deeply($children, $siblings);
 	# and now in array context
 	my @siblings = $sub_tree.getAllSiblings();
-	is_deeply($children, @siblings);
+	is-deeply($children, @siblings);
 }
 
 ## ----------------------------------------------------------------------------
@@ -345,7 +345,7 @@ is($sub_tree.getChildCount(), 3, '... we should have 3 children now');
 
 # now check that sub_tree's children 
 # are the same as our list
-is_deeply([ $sub_tree.getAllChildren() ], @sub_children);
+is-deeply([ $sub_tree.getAllChildren() ], @sub_children);
 
 # now go through the children again
 # and test them
@@ -366,7 +366,7 @@ for @sub_children -> $sub_child {
 	
  	# now check that its siblings are the same 
  	# as the children of its parent			
- 	is_deeply([ $sub_tree.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
+ 	is-deeply([ $sub_tree.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
 }
 
 ## ----------------------------------------------------------------------------
@@ -403,7 +403,7 @@ is($sub_tree.getChildCount(), 6, '... we should have 6 children now');
 
 # now check that sub_tree's children 
 # are the same as our list
-is_deeply([ $sub_tree.getAllChildren() ], [ @sub_children[0], @more_sub_children, @sub_children[1 .. @sub_children.end()] ]);
+is-deeply([ $sub_tree.getAllChildren() ], [ @sub_children[0], @more_sub_children, @sub_children[1 .. @sub_children.end()] ]);
 
 # now go through the children again
 # and test them
@@ -424,7 +424,7 @@ for @more_sub_children -> $sub_child {
 	
  	# now check that its siblings are the same 
  	# as the children of its parent
- 	is_deeply([ $sub_tree.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
+ 	is-deeply([ $sub_tree.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
 }
 
 ## ----------------------------------------------------------------------------
@@ -482,7 +482,7 @@ for @more_children -> $sub_child {
 	
  	# now check that its siblings are the same 
  	# as the children of its parent			
- 	is_deeply([ $tree.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
+ 	is-deeply([ $tree.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
 }
 
 ## ----------------------------------------------------------------------------
@@ -533,7 +533,7 @@ is($new_sibling.getDepth(), 0, '... depth should be 0');
 	
 # now check that its siblings are the same 
 # as the children of its parent			
-is_deeply([ $tree.getAllChildren() ], [ $new_sibling.getAllSiblings() ]);
+is-deeply([ $tree.getAllChildren() ], [ $new_sibling.getAllSiblings() ]);
 
 ## ----------------------------------------------------------------------------
 ## test inserting Siblings
@@ -593,7 +593,7 @@ for @even_more_children ->  $sub_child {
 	
  	# now check that its siblings are the same 
  	# as the children of its parent			
- 	is_deeply([ $tree.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
+ 	is-deeply([ $tree.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
 }
 
 ## ----------------------------------------------------------------------------
@@ -652,7 +652,7 @@ for $self_ref_tree_test.getAllChildren() -> $sub_child {
 	
  	# now check that its siblings are the same 
  	# as the children of its parent			
- 	is_deeply([ $self_ref_tree_test.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
+ 	is-deeply([ $self_ref_tree_test.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
 }
 
 ## ----------------------------------------------------------------------------	
@@ -700,7 +700,7 @@ is($sub_child.getDepth(), 2, '... depth should be 0');
 
 # now check that its siblings are the same 
 # as the children of its parent		
-is_deeply([ $self_ref_tree_test_2.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
+is-deeply([ $self_ref_tree_test_2.getAllChildren() ], [ $sub_child.getAllSiblings() ]);
 
 ## ----------------------------------------------------------------------------
 ## test removeChildAt
@@ -905,7 +905,7 @@ $tree.traverse(sub ($_tree) {
  	});
 
 # and compare the two
-is_deeply(@_all_node_values, @all_node_values, '... our nodes match our control nodes');
+is-deeply(@_all_node_values, @all_node_values, '... our nodes match our control nodes');
 
 # test traverse with both pre- and post- methods
 # make a control set of 
@@ -965,7 +965,7 @@ $tree.traverse(sub ($_tree) {
 );
 
 # and compare the two
-is_deeply(@_all_node_values_post_traverse, @all_node_values_post_traverse,
+is-deeply(@_all_node_values_post_traverse, @all_node_values_post_traverse,
    '... our nodes match our control nodes for post traverse method');
 
 
@@ -1000,9 +1000,9 @@ $tree_clone.traverse(sub ($_tree){
 	});
 
 # make sure that our cloned values equal to our control
-is_deeply(@_all_node_values, @all_cloned_node_values);
+is-deeply(@_all_node_values, @all_cloned_node_values);
 # and make sure they also match the original tree
-is_deeply(@all_node_values, @all_cloned_node_values);
+is-deeply(@all_node_values, @all_cloned_node_values);
 
 # now change all the node values
 $tree_clone.traverse(sub ($_tree){
@@ -1021,7 +1021,7 @@ $tree_clone.traverse(sub ($_tree) {
 my @_all_node_values_changed = map { ". $_" }, @_all_node_values;	
 
 # now both our changed values should be correct
-is_deeply(@_all_node_values_changed, @all_cloned_node_values_changed);
+is-deeply(@_all_node_values_changed, @all_cloned_node_values_changed);
 
 my @all_node_values_check;
 # now traverse the original tree again and make sure
@@ -1032,7 +1032,7 @@ $tree.traverse(sub ($_tree){
 
 # this can be accomplished by checking them 
 # against our control again
-is_deeply(@_all_node_values, @all_node_values_check);	
+is-deeply(@_all_node_values, @all_node_values_check);	
 	
 ## ----------------------------------------------------------------------------
 ## end test for Tree::Simple

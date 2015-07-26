@@ -9,7 +9,7 @@ BEGIN
 
 
 
-eval_lives_ok 'use Tree::Simple', 'Can use Tree::Simple';
+eval-lives-ok 'use Tree::Simple', 'Can use Tree::Simple';
 
 use Tree::Simple;
 #todo not sure if we want/need weak reference just yet. Hence will leave it for now
