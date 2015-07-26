@@ -63,7 +63,7 @@ is $two.WHAT.perl, 'XML::Query::Results', 'result offset works.';
 my $find-two-odd = $two.find('.odd');
 is $find-two-odd.WHAT.perl, 'XML::Query::Results', 'find returned results.';
 my @find-two-odd = $find-two-odd.elems;
-is_deeply @find-two-odd, @two-odd, 'find results are correct.';
+is-deeply @find-two-odd, @two-odd, 'find results are correct.';
 
 my $too-odd = $xq(<.flagged .odd>);
 is $too-odd.WHAT.perl, 'XML::Query::Results', 'quoted word returns.';
