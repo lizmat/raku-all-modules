@@ -74,6 +74,9 @@ is not in the "main" namespace.
     $p5.call('Test::More::plan', 1);
 ```
 
+Please note that since Perl 6 does not have the same concept of "context",
+Perl 5 functions are always called in list context.
+
 ## Create a Perl 5 object / call a Perl 5 package method
 
 Creating Perl 5 objects works just the same as in Perl 5: invoke their
@@ -94,6 +97,9 @@ Or using the low level methods:
     my $dumper = $p5.invoke('Data::Dumper', 'new');
 ```
 
+Please note that since Perl 6 does not have the same concept of "context",
+Perl 5 methods are always called in list context.
+
 ## Invoke a method on a Perl 5 object
 
 Once you have a Perl 5 object in a variable it will behave just like a Perl 6
@@ -107,13 +113,16 @@ object.  You can call methods on it like on any other object.
     $bzip2.close;
 ```
 
+Please note that since Perl 6 does not have the same concept of "context",
+Perl 5 methods are always called in list context.
+
 ## Run arbitrary Perl 5 code
 
 Perl6's EVAL function supports multiple languages, just like the "use"
 statement. It allows for execution of arbitrary Perl 5 code given as string:
 
 ```
-    EVAL "print 'Hello from Perl 5';", :lang<perl5>;
+    EVAL "print 'Hello from Perl 5';", :lang<Perl5>;
 ```
 
 The low level interface to this functionality is Inline::Perl5's run($str)
@@ -251,14 +260,14 @@ object as named parameter to your classes constructor when creating objects.
 ## Catch exceptions thrown by Perl 5 code
 
 Perl 5's exceptions (die) are translated to X::AdHoc exceptions in Perl 6 and
-can be cought like any other Perl 6 exceptions:
+can be caught like any other Perl 6 exceptions:
 
 ```
     {
-        EVAL "die 'a Perl 5 exception!';", :lang<perl5>;
+        EVAL "die 'a Perl 5 exception!';", :lang<Perl5>;
         CATCH {
             when X::AdHoc {
-                say "Cought a Perl 5 exception: $_";
+                say "Caught a Perl 5 exception: $_";
             }
         }
     }
@@ -267,10 +276,10 @@ can be cought like any other Perl 6 exceptions:
 ## Catch exceptions thrown by Perl 6 code in Perl 5
 
 Perl 6's exceptions (die) are translated to Perl 5 exceptions and
-can be cought like any other Perl 5 exceptions:
+can be caught like any other Perl 5 exceptions:
 
 ```
-    EVAL q:to:PERL5, :lang<perl5>;
+    EVAL q:to:PERL5, :lang<Perl5>;
         use 5.10.0;
         eval {
             v6::run('die("test");');

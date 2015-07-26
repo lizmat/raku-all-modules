@@ -23,9 +23,12 @@ void p5_inline_perl6_xs_init(PerlInterpreter *my_perl) {
     char *file = __FILE__;
     newXS("Perl6::Object::call_method", p5_call_p6_method, file);
     newXS("Perl6::Callable::call", p5_call_p6_callable, file);
+    newXS("v6::load_module_impl", p5_load_module, file);
 }
 
 static int inited = 0;
+static int interpreters = 0;
+static int terminate = 0;
 
 PerlInterpreter *p5_init_perl() {
     char *embedding[] = { "", "-e", "0" };
@@ -33,6 +36,9 @@ PerlInterpreter *p5_init_perl() {
     char **argv;
     if (!inited++)
         PERL_SYS_INIT(&argc, &argv);
+
+    interpreters++;
+
     PerlInterpreter *my_perl = perl_alloc();
     PERL_SET_CONTEXT(my_perl);
     PL_perl_destruct_level = 1;
@@ -40,6 +46,7 @@ PerlInterpreter *p5_init_perl() {
     perl_parse(my_perl, xs_init, 3, embedding, NULL);
     PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
     perl_run(my_perl);
+
     return my_perl;
 }
 
@@ -47,11 +54,13 @@ void p5_destruct_perl(PerlInterpreter *my_perl) {
     PL_perl_destruct_level = 1;
     perl_destruct(my_perl);
     perl_free(my_perl);
+
+    if (--interpreters == 0 && terminate)
+        PERL_SYS_TERM();
 }
 
 void p5_terminate() {
-    if (inited)
-        PERL_SYS_TERM();
+    terminate = 1;
 }
 
 U32 p5_SvIOK(PerlInterpreter *my_perl, SV* sv) {
@@ -89,6 +98,10 @@ double p5_sv_nv(PerlInterpreter *my_perl, SV* sv) {
     return (double)SvNV(sv);
 }
 
+SV *p5_sv_rv(PerlInterpreter *my_perl, SV* sv) {
+    return SvRV(sv);
+}
+
 int p5_is_object(PerlInterpreter *my_perl, SV* sv) {
     return sv_isobject(sv);
 }
@@ -103,6 +116,10 @@ int p5_is_array(PerlInterpreter *my_perl, SV* sv) {
 
 int p5_is_hash(PerlInterpreter *my_perl, SV* sv) {
     return (SvROK(sv) && SvTYPE(SvRV(sv)) == SVt_PVHV);
+}
+
+int p5_is_scalar_ref(PerlInterpreter *my_perl, SV* sv) {
+    return (SvROK(sv) && SvTYPE(SvRV(sv)) < SVt_PVAV);
 }
 
 int p5_is_undef(PerlInterpreter *my_perl, SV* sv) {
@@ -127,6 +144,10 @@ STRLEN p5_sv_to_buf(PerlInterpreter *my_perl, SV *sv, char **buf) {
     STRLEN len;
     *buf  = SvPV(sv, len);
     return len;
+}
+
+SV *p5_sv_to_ref(PerlInterpreter *my_perl, SV *sv) {
+    return newRV_noinc(sv);
 }
 
 void p5_sv_refcnt_dec(PerlInterpreter *my_perl, SV *sv) {
@@ -214,7 +235,7 @@ SV *p5_eval_pv(PerlInterpreter *my_perl, const char* p, I32 croak_on_error) {
 }
 
 SV *p5_err_sv(PerlInterpreter *my_perl) {
-    return ERRSV;
+    return sv_mortalcopy(ERRSV);
 }
 
 AV *p5_call_package_method(PerlInterpreter *my_perl, char *package, char *name, int len, SV *args[]) {

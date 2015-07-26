@@ -7,6 +7,8 @@ has Bool $!external_p5 = False;
 has &!call_method;
 has &!call_callable;
 
+my $default_perl5;
+
 use nqp;
 use NativeCall;
 
@@ -20,16 +22,7 @@ sub native(Sub $sub) {
             my $cur = $_ ~~ Str ?? CompUnitRepo.new($_) !! $_;
             if my @files = ($cur.files($base) || $cur.files("blib/$base")) {
                 my $files = @files[0]<files>;
-                my $tmp = $files{$base} || $files{"blib/$base"};
-
-                # copy to a temp dir
-                #
-                # This is required because CompUnitRepo::Local::Installation stores the file
-                # with a different filename (a number with no extension) that NativeCall doesn't
-                # know how to load. We do this copy to fix the filename.
-                $path = $*SPEC.tmpdir ~ '/' ~ $*PID ~ '-' ~ $so;
-
-                $tmp.IO.copy($path);
+                $path = $files{$base} || $files{"blib/$base"};
             }
         }
     }
@@ -102,6 +95,9 @@ sub p5_is_array(Perl5Interpreter, OpaquePointer)
 sub p5_is_hash(Perl5Interpreter, OpaquePointer)
     returns int { ... }
     native(&p5_is_hash);
+sub p5_is_scalar_ref(Perl5Interpreter, OpaquePointer)
+    returns int { ... }
+    native(&p5_is_scalar_ref);
 sub p5_is_undef(Perl5Interpreter, OpaquePointer)
     returns int { ... }
     native(&p5_is_undef);
@@ -138,6 +134,9 @@ sub p5_str_to_sv(Perl5Interpreter, long, Blob)
 sub p5_buf_to_sv(Perl5Interpreter, long, Blob)
     returns OpaquePointer { ... }
     native(&p5_buf_to_sv);
+sub p5_sv_to_ref(Perl5Interpreter, OpaquePointer)
+    returns OpaquePointer { ... }
+    native(&p5_sv_to_ref);
 sub p5_av_top_index(Perl5Interpreter, OpaquePointer)
     returns int32 { ... }
     native(&p5_av_top_index);
@@ -201,6 +200,9 @@ sub p5_sv_iv(Perl5Interpreter, OpaquePointer)
 sub p5_sv_nv(Perl5Interpreter, OpaquePointer)
     returns num64 { ... }
     native(&p5_sv_nv);
+sub p5_sv_rv(Perl5Interpreter, OpaquePointer)
+    returns OpaquePointer { ... }
+    native(&p5_sv_rv);
 sub p5_is_object(Perl5Interpreter, OpaquePointer)
     returns int { ... }
     native(&p5_is_object);
@@ -247,6 +249,9 @@ multi method p6_to_p5(Str:D $value) returns OpaquePointer {
 }
 multi method p6_to_p5(blob8:D $value) returns OpaquePointer {
     p5_buf_to_sv($!p5, $value.elems, $value);
+}
+multi method p6_to_p5(Capture:D $value where $value.elems == 1) returns OpaquePointer {
+    p5_sv_to_ref($!p5, self.p6_to_p5($value[0]));
 }
 multi method p6_to_p5(Perl5Object $value) returns OpaquePointer {
     p5_sv_refcnt_inc($!p5, $value.ptr);
@@ -355,6 +360,10 @@ method !p5_hash_to_p6_hash(OpaquePointer $sv) {
     $hash;
 }
 
+method !p5_scalar_ref_to_capture(OpaquePointer $sv) {
+    return \(self.p5_to_p6(p5_sv_rv($!p5, $sv)));
+}
+
 method p5_to_p6(OpaquePointer $value) {
     return Any unless defined $value;
     if p5_is_object($!p5, $value) {
@@ -399,6 +408,9 @@ method p5_to_p6(OpaquePointer $value) {
     }
     elsif p5_is_undef($!p5, $value) {
         return Any;
+    }
+    elsif p5_is_scalar_ref($!p5, $value) {
+        return self!p5_scalar_ref_to_capture($value);
     }
     die "Unsupported type $value in p5_to_p6";
 }
@@ -641,7 +653,7 @@ role Perl5Package[Inline::Perl5 $p5, Str $module] {
             return $self;
         }
         else {
-            return $p5.invoke($module, 'new', @args.list);
+            return $p5.invoke($module, 'new', @args.list, %args.hash);
         }
     }
 
@@ -668,6 +680,7 @@ role Perl5Package[Inline::Perl5 $p5, Str $module] {
     }
 }
 
+my $loaded_modules = SetHash.new;
 method require(Str $module, Num $version?) {
     # wrap the load_module call so exceptions can be translated to Perl 6
     if $version {
@@ -676,6 +689,10 @@ method require(Str $module, Num $version?) {
     else {
         self.call('v6::load_module', $module);
     }
+
+    return unless self eq $default_perl5; # Only create Perl 6 packages for the primary interpreter to avoid confusion
+    return if $loaded_modules{$module};
+    $loaded_modules{$module} = True;
 
     my $p5 = self;
     EVAL "class GLOBAL::$module does Perl5Package[\$p5, \$module] \{ \}";
@@ -733,8 +750,6 @@ class Perl5Callable does Callable {
         $!ptr = OpaquePointer;
     }
 }
-
-my $default_perl5;
 
 method default_perl5 {
     return $default_perl5 //= self.new();
@@ -834,5 +849,12 @@ our sub init_inline_perl6_callback(Str $path) {
 }
 
 END {
+    # Perl 6 does not guarantee that DESTROY methods are called at program exit.
+    # Make sure at least the first Perl 5 interpreter is correctly shut down and thus can e.g.
+    # flush its output buffers. This should at least fix the vast majority of use cases.
+    # People who really do use multiple Perl 5 interpreters are probably experienced enough
+    # to find proper workarounds for their cases.
+    $default_perl5.DESTROY if $default_perl5;
+
     p5_terminate unless $inline_perl6_in_use;
 }
