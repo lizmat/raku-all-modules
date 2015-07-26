@@ -18,7 +18,7 @@ sub record-last($t, @y) { $last = @y[0] };
 
 for 2, 4 -> $order {
     my $time = time;
-    lives_ok { rk-integrate(
+    lives-ok { rk-integrate(
         :from(0),
         :to(3),
         :initial[0],
@@ -29,12 +29,12 @@ for 2, 4 -> $order {
     ) }, "lives through a RK$order integration";
     diag("took { time - $time } seconds");
 
-    is_approx($last, 3**2, "and produced a good approximation of x**2 with x = 3");
+    is-approx($last, 3**2, "and produced a good approximation of x**2 with x = 3");
 }
 
 {
     my $time = time;
-    lives_ok { 
+    lives-ok { 
         adaptive-rk-integrate(
             :from(0),
             :to(3),
@@ -45,5 +45,5 @@ for 2, 4 -> $order {
     }, "lives through adaptive rk4 integration";
     diag("took { time - $time } seconds");
 
-    is_approx($last, 3**2, "and produced a good approximation of x**2 with x = 3");
+    is-approx($last, 3**2, "and produced a good approximation of x**2 with x = 3");
 }
