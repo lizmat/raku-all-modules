@@ -1,0 +1,11 @@
+{
+    "name" : "Log::D",
+    "version" : "0.8",
+    "description" : "Support for logging",
+    "provides" : {
+        "Log::D" : "lib/Log/D.pm",
+        "Log::Empty" : "lib/Log/Empty.pm"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/jaffa4/logd.git"
+}
