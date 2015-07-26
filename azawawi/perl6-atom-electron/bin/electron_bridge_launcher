@@ -1,0 +1,20 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+use lib 'lib';
+
+use Atom::Electron::App;
+use Atom::Electron::BrowserWindow;
+
+my $app = Atom::Electron::App.new;
+$app.bridge;
+
+my $win = Atom::Electron::BrowserWindow.new(:width(800), :height(600));
+$win.on('ready', sub {
+  "Window open!".say;
+});
+
+$win.on('closed', sub {
+  "Window closed!".say;
+});
