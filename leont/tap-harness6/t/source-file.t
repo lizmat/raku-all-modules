@@ -1,12 +1,13 @@
 use v6;
 use TAP::Parser;
+use TAP::Harness;
 
 use Test::More;
 
 plan 4;
 
-my $source = TAP::Parser::Source::File.new(:filename('t/source-file-test-data'));
-my $parser = TAP::Parser::Async.new(:$source);
+my $source = TAP::Runner::Source::File.new(:filename('t/source-file-test-data'));
+my $parser = TAP::Runner::Async.new(:$source);
 await $parser;
 my $result = $parser.result;
 

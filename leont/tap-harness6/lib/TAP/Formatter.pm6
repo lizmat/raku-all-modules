@@ -19,7 +19,7 @@ package TAP {
 		}
 		method format-name($name) {
 			my $periods = '.' x ( $!longest + 2 - $name.chars);
-			my @now = $!timer ?? ~DateTime.new(now, :formatter{ '[' ~ .hour ~ ':' ~ .minute ~ ':' ~ .second.Int ~ ']' }) !! Nil;
+			my @now = $!timer ?? ~DateTime.new(now, :formatter{ '[' ~ .hour ~ ':' ~ .minute ~ ':' ~ .second.Int ~ ']' }) !! ();
 			return (@now, $name, $periods).join(' ');
 		}
 		method summarize(TAP::Aggregator $aggregator, Bool $interrupted) {
@@ -52,12 +52,12 @@ package TAP {
 						if $result.todo-passed -> @todo-passed {
 							self.output('  TODO passed:  ' ~ @todo-passed.join(' ') ~ "\n");
 						}
-						if $result.exit-status.?exit { # XXX
-							if $result.exit-status.exit {
-								self.failure-output("Non-zero exit status: { $result.exit-status.exit }\n");
+						if $result.exit-status.defined { # XXX
+							if $result.exit {
+								self.failure-output("Non-zero exit status: { $result.exit }\n");
 							}
-							else {
-								self.failure-output("Non-zero wait status: { $result.exit-status.status }\n");
+							elsif $result.wait {
+								self.failure-output("Non-zero wait status: { $result.wait }\n");
 							}
 						}
 						if $result.errors -> @errors {

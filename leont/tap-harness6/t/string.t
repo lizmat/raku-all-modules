@@ -1,4 +1,5 @@
 use TAP::Parser;
+use TAP::Harness;
 use Test::More;
 
 my $content1 = q:heredoc/END/;
@@ -81,8 +82,8 @@ done-testing();
 
 my $i;
 sub parse-and-get($content, :$tests-planned, :$tests-run, :$passed, :$failed, :$todo-passed, :$skipped, :$unknowns, :@errors = Array, :$name = "Test-{ ++$i }") {
-	my $source = TAP::Parser::Source::String.new(:$name, :$content);
-	my $parser = TAP::Parser::Async.new(:$source);
+	my $source = TAP::Runner::Source::String.new(:$name, :$content);
+	my $parser = TAP::Runner::Async.new(:$source);
 
 	my $result = $parser.result;
 	is($result.tests-planned, $tests-planned, "Expected $tests-planned planned tests in $name") if $tests-planned.defined;
@@ -102,7 +103,7 @@ sub lex-and-get($content) {
 	my $output = Supply.new;
 	my @ret;
 	$output.act: -> $entry { @ret.push: $entry };
-	my $lexer = TAP::Lexer.new(:$output);
+	my $lexer = TAP::Parser.new(:$output);
 	$lexer.add-data($content);
 	$lexer.close-data();
 	return @ret;

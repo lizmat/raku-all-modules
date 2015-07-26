@@ -14,10 +14,10 @@ package TAP {
 		has Int @.skipped;
 		has Int $.unknowns;
 		has Bool $.skip-all;
-		has Proc::Status $.exit-status;
+		has Proc $.exit-status;
 		has Duration $.time;
 		method exit() {
-			$!exit-status.defined ?? $!exit-status.exit !! Int;
+			$!exit-status.defined ?? $!exit-status.exitcode !! Int;
 		}
 		method wait() {
 			$!exit-status.defined ?? $!exit-status.status !! Int;
@@ -30,7 +30,7 @@ package TAP {
 			return @!failed || @!errors || self.exit-failed;
 		}
 		method exit-failed() {
-			return $!exit-status && $!exit-status.exit > 0;
+			return $!exit-status && $!exit-status.exitcode > 0;
 		}
 	}
 
@@ -68,7 +68,7 @@ package TAP {
 			$!todo-passed += $result.todo-passed.elems;
 			$!skipped += $result.skipped.elems;
 			@!errors.push(@($result.errors));
-			$!exit-failed = True if $result.exit-status && $result.exit-status.exit > 0;
+			$!exit-failed = True if $result.exit-status && $result.exit-status.exitcode > 0;
 		}
 
 		method descriptions() {

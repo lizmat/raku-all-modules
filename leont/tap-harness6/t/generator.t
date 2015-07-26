@@ -1,9 +1,10 @@
-use TAP::Parser;
+#! perl6
+use TAP::Harness;
 use TAP::Entry;
 use TAP::Generator;
 
-my $source = TAP::Parser::Source::Through.new(:name<Self-Testing>);
-my $parser = TAP::Parser::Async.new(:$source);
+my $source = TAP::Runner::Source::Through.new(:name<Self-Testing>);
+my $parser = TAP::Runner::Async.new(:$source);
 my $elements = TAP::Collector.new();
 my $g = TAP::Generator.new(:output(TAP::Entry::Handler::Multi.new(:handlers($source, $elements))));
 
@@ -41,7 +42,7 @@ my @expected =
 	TAP::Test,
 ;
 
-for $elements.entries Z @expected -> $got, $expected {
+for $elements.entries Z @expected -> ($got, $expected) {
 	my $ok = $got ~~ $expected;
 	$h.test(:$ok, :description("Expected a " ~ $expected.WHAT.perl));
 	if !$ok {

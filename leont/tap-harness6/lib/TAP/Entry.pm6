@@ -13,7 +13,7 @@ package TAP {
 		}
 	}
 	class Plan does Entry {
-		has Int:D $.tests = !!! 'tests is required';
+		has Int:D $.tests is required;
 		has Bool $.skip-all;
 		has Str $.explanation;
 		method to-string() {
