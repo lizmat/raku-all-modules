@@ -4,9 +4,11 @@ use Test;
 
 plan 2;
 
-use-ok 'Perl6::Tracer';
+use-ok 'Rakudo::Perl6::Tracer';
 
-my $t = Perl6::Tracer.new();
+use Rakudo::Perl6::Tracer;
+
+my $t = Rakudo::Perl6::Tracer.new();
 
 ok $t, "got an obj";
 

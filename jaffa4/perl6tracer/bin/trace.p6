@@ -1,4 +1,4 @@
-use Perl6::Tracer;
+use Rakudo::Perl6::Tracer;
 
 sub getnextargument($index, $explanation)
 {
@@ -12,30 +12,44 @@ sub getnextargument($index, $explanation)
 
 my $i = 0;
 my %options;
-
+%options<showline> = False;
+%options<compiletime> = False;
 
 while ($i < @*ARGS)
 {
- if (@*ARGS[$i] eq "-h")
+ given (@*ARGS[$i]) {
+  when "-h"
  {
    note 
 "Perl6 tracer
 -h  help
+-sl show whole line when tracing
+=c  trace compilation
  standard input input file
  standard output output file
 ";
   exit 1;
  }
-else
+ when "-sl"
+{
+  %options<showline> = True;
+}
+ when "-c"
+{
+  %options<compiletime> = True;
+
+}
+default
 {
   note "unknown argument "~  @*ARGS[$i];
   exit 1;
 }
+ }
 $i++;
 }
 
-my $f = Perl6::Tracer.new();
+my $f = Rakudo::Perl6::Tracer.new();
 
-my $content = $*IN.slurp;
+my $content = $*IN.slurp-rest;
 
 print $f.trace(%options,$content);

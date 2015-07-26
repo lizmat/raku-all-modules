@@ -1,32 +1,76 @@
-use Perl6::Parsing;
-unit class Perl6::Tracer;
-constant $debug = 0;
+use Rakudo::Perl6::Parsing;
+unit class Rakudo::Perl6::Tracer;
+constant $debug = False;
 
 has @.tokens;
+has %options;
+has $lineno;
+has $text;
+
+
+
 method new() {
   self.bless(  );
 }
+
+method insertline($p)
+  {
+    my $rest = "";
+    if %options<showline>
+    {
+      my $line = "";
+      for @!tokens[$p..*] -> @token {
+       my $token =  $text.substr(@token[1],@token[2]-@token[1]);
+        if ($token ~~ /(.*?)\n/)
+        {
+           $line~= $0;
+           last;
+        }
+        else
+        {
+         $line~= $token;
+        }
+      
+      }
+      $rest =" $line";
+      $rest~~s:g/(<[{"$@%]>)/\\$0/;
+      
+    
+    }
+    if %options<compiletime> 
+    {
+      push @*token_out, "BEGIN \{note \"line  $lineno$rest\";};";
+    }
+    else
+    {
+      push @*token_out, "note \"line  $lineno$rest\";";
+    }
+  }
+  
 method trace(%options,$text)
 {
-  my $parser = Perl6::Parsing.new();
+  my $parser = Rakudo::Perl6::Parsing.new();
+  %!options = %options;
+  $!text = $text;
   $parser.parse( $text ); 
+  note "before tokenise" if $debug;
   @!tokens = $parser.tokenise();
+  note "after tokenise" if $debug;
   #say @!tokens.perl;
   if ( @!tokens == 0 ) {
     return;
   }
   my @*token_out;
-  my $lineno = 1;
+  $lineno = 1;
   
-  sub insertline()
-  {
-    push @*token_out, "note \"line  $lineno\";";
-  }
+  
   
   my $tracenext = False;
 
 
-  insertline();
+  self.insertline(0);
+  
+  note "before for" if $debug;
   
   for @!tokens.kv -> $i, @token
   {
@@ -44,17 +88,17 @@ method trace(%options,$text)
     my $trace = False;
    
     
-    if ( $token~~/\}$|^\}/ && (@!tokens.elems>$i+1 && (@!tokens[$i+1][0].exists_key("blockoid_end"))))
+    if ( $token~~/\}$|^\}/ && (@!tokens.elems>$i+1 && (@!tokens[$i+1][0].EXISTS-KEY("blockoid_end"))))
     {
-      insertline();
+      self.insertline($i);
       $tracenext = False;
     }
-     if ((@token[0][0].exists_key("routine_def_end")))
+     if ((@token[0][0].EXISTS-KEY("routine_def_end")))
       { 
         $tracenext = True;
       }
       
-      if ((@token[0][0].exists_key("routine_declarator")))
+      if ((@token[0][0].EXISTS-KEY("routine_declarator")))
       { 
         $tracenext = False;
       }
@@ -81,7 +125,7 @@ method trace(%options,$text)
       }
       if ($trace)
       {
-        insertline();
+        self.insertline($i);
         $trace = False;
         $tracenext = False;
       }
@@ -89,13 +133,13 @@ method trace(%options,$text)
     if ($trace)
     {
       push @*token_out, $token ;
-      insertline();
+      self.insertline($i);
     }
     else
     {
       push @*token_out, $token ;
     }
-    if ($token~~/^\{|\{$/ && (@token[0].exists_key("blockoid")))
+    if ($token~~/^\{|\{$/ && (@token[0].EXISTS-KEY("blockoid")))
     { 
       $tracenext = True;
     }

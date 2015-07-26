@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jaffa4/perl6tracer.git
 	branch = master
-	commit = 6ec38b558690a809e33d667a17c3284022236acd
-	parent = ff11997bf0e68bd14dc8946ab0a5a84ebfe35ed8
-	cmdver = 0.2.1
+	commit = a1d831853abd7f14502b77411d477116c2863d13
+	parent = 607a8ae19d712b32314af4641305a4271dd1dc0c
+	cmdver = 0.2.2
