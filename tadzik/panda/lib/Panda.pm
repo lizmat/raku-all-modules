@@ -112,7 +112,7 @@ class Panda {
     }
 
     method install(Panda::Project $bone, $nodeps,
-                   $notests, $isdep as Bool, :$rebuild) {
+                   $notests, $isdep as Bool, :$rebuild = True) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
         my $reports-file = ($.ecosystem.statefile.IO.dirname ~ '/reports.' ~ $*PERL.compiler.version).IO;
@@ -138,7 +138,7 @@ class Panda {
         my $s = $isdep ?? Panda::Project::State::installed-dep
                        !! Panda::Project::State::installed;
         # Check if there's any reverse dependencies to rebuild
-        unless $rebuild {
+        if $rebuild {
             my @revdeps = $.ecosystem.revdeps($bone, :installed);
             if $.ecosystem.is-installed($bone) and @revdeps {
                 self.announce("Rebuilding reverse dependencies: " ~ @revdeps.join(" "));
@@ -183,24 +183,28 @@ class Panda {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
         mkpath $tmpdir;
-        my $p = self.project-from-local($proj);
-        $p ||= self.project-from-git($proj, $tmpdir);
-        if $p {
-            if $.ecosystem.get-project($p.name) {
-                self.announce: "Installing {$p.name} "
-                               ~ "from a local directory '$proj'"
-                               if $action eq 'install';
-            }
-            $.ecosystem.add-project($p);
-            $proj = $p.name;
+
+        my $bone = self.project-from-local($proj);
+        # Warn users that it's from a local directory,
+        # may not be what they wanted
+        self.announce: "Installing {$bone.name} "
+                       ~ "from a local directory '$proj'"
+                       if $bone and $action eq 'install';
+        $bone ||= self.project-from-git($proj, $tmpdir);
+        if $bone {
+            $.ecosystem.add-project($bone);
+            $proj = $bone.name;
+        } else {
+            $bone = $.ecosystem.get-project($proj);
         }
-        my $bone = $.ecosystem.get-project($proj);
+
         if not $bone {
             sub die($m) { X::Panda.new($proj, 'resolve', $m).throw }
             my $suggestion = $.ecosystem.suggest-project($proj);
             die "Project $proj not found in the ecosystem. Maybe you meant $suggestion?" if $suggestion;
             die "Project $proj not found in the ecosystem";
         }
+
         unless $nodeps {
             my @deps = self.get-deps($bone).unique;
             @deps.=grep: {
