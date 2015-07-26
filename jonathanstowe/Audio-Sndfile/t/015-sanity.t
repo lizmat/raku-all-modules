@@ -5,6 +5,8 @@ use lib 'lib';
 use Test;
 use Shell::Command;
 
+use NativeCall;
+
 use Audio::Sndfile;
 
 my $test-output = "t/test-output".IO;
@@ -14,7 +16,6 @@ $test-output.mkdir unless $test-output.d;
 my $rc;
 
 my @shorts = [0, 0, 309, 309, 896, 896, 1666, 1666, 1847, 1847, 1229, 1229, 681, 681, 920, 920, 744, 744, -877, -877, -3842, -3842, -5170, -5170, -4448, -4448, -4761, -4761, -5750, -5750, -5910, -5910, -6393, -6393, -9136, -9136, -11962, -11962, -15651, -15651, -18509, -18509, -18499, -18499, -17179, -17179, -15175, -15175, -13946, -13946]<>;
-# Audio::Sndfile::Info.new(frames => 43910, samplerate => 44100, channels => 2, format => 65538, sections => 1, _seekable => 1)
 
 my $short-path = $test-output.child("short-noise-sanity.way");
 my $short-obj-out;
@@ -30,6 +31,28 @@ my @shorts-in;
 lives-ok { @shorts-in = $short-obj-in.read-short(25) }, "read 25 frames back";
 ok(@shorts-in ~~ @shorts, "and it is the same data");
 lives-ok { $short-obj-in.close }, "close that";
+
+my $shorts-carray = CArray[int16].new;
+
+$shorts-carray[$_] = @shorts[$_] for ^50;
+
+my $short-raw-path = $test-output.child("short-raw-noise-sanity.way");
+my $short-raw-obj-out;
+lives-ok { $short-raw-obj-out = Audio::Sndfile.new(filename => $short-raw-path,  samplerate => 44100, channels => 2, format => 65538, :w) }, "open shorts for writing";
+lives-ok { $rc = $short-raw-obj-out.write-short($shorts-carray, 25) }, "write-shorts";
+is($rc, 25, "managed to write 25");
+lives-ok { $short-raw-obj-out.close() }, "close that";
+my $short-raw-obj-in;
+lives-ok { $short-raw-obj-in =  Audio::Sndfile.new(filename => $short-raw-path, :r) }, "open that file for reading";
+is($short-raw-obj-in.frames, 25, "got the right number of frames");
+is($short-raw-obj-in.format, 65538, "got the right format");
+my ($shorts-raw-in,$shorts-raw-frames);
+lives-ok { ($shorts-raw-in, $shorts-raw-frames) = $short-raw-obj-in.read-short(25, :raw).list }, "read 25 frames back";
+isa-ok($shorts-raw-in, CArray[int16], "got back a CArray");
+is($shorts-raw-frames,25,"got the right number of frames back");
+#ok(@shorts-in ~~ @shorts, "and it is the same data");
+lives-ok { $short-raw-obj-in.close }, "close that";
+
 
 
 my @ints = [-839974912, -839974912, -732561408, -732561408, -667549696, -667549696, -591986688, -591986688, -712769536, -712769536, -649265152, -649265152, -646643712, -646643712, -688586752, -688586752, -685768704, -685768704, -764084224, -764084224, -668467200, -668467200, -403636224, -403636224, -22151168, -22151168, 93454336, 93454336, 383320064, 383254528, 911474688, 911409152, 1454112768, 1454112768, 1692598272, 1692598272, 1791557632, 1791557632, 1821114368, 1821114368, 2123235328, 2123235328, 2032140288, 2032140288, 1670840320, 1670840320, 1482883072, 1482883072, 1171324928, 1171324928]<>;
@@ -99,7 +122,6 @@ lives-ok { @doubles-in = $double-obj-in.read-double(25) }, "read 25 frames back"
 ok(@doubles-in ~~ @doubles, "and it is the same data");
 compare-arrays(@doubles-in, @doubles);
 lives-ok { $double-obj-in.close }, "close that";
-# Audio::Sndfile::Info.new(frames => 43910, samplerate => 44100, channels => 2, format => 65538, sections => 1, _seekable => 1)
 
 done;
 

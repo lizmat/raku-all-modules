@@ -24,7 +24,7 @@ may be useful or indicate how you might achieve a particular task.
 
 ## Installation
 
-You will need to have "libsnfile"  installed on your system in order to
+You will need to have "libsndfile"  installed on your system in order to
 be able to use this. Most Linux distributions offer it as a package, though
 it is such a common dependency for multimedia applications that you may well
 already have it installed.
