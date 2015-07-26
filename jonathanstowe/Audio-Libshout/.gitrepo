@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Audio-Libshout.git
+	branch = master
+	commit = a2b8dc66777457cb4b89a1f6e7dfce040323ba2c
+	parent = 8cc9d8707fc04567975bf7ef992243b2cdb974e9
+	cmdver = 0.2.2

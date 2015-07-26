@@ -1,0 +1,29 @@
+{
+  "name" : "Audio::Libshout",
+  "tags" : [ "audio", "streaming", "utils" ],
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth" : "github:jonathanstowe",
+  "support" : {
+    "source" : "git://github.com/jonathanstowe/Audio-Libshout.git"
+  },
+  "source-url" : "git://github.com/jonathanstowe/Audio-Libshout.git",
+  "perl" : "v6",
+  "build-depends" : [
+		"LibraryCheck"
+  ],
+  "provides" : {
+    "Audio::Libshout" : "lib/Audio/Libshout.pm"
+  },
+  "depends" : [
+       "AccessorFacade", "OO::Monitors"
+  ],
+  "test-depends" : [
+    "Test",
+    "File::Find",
+    "Shell::Command",
+    "CheckSocket"
+  ],
+  "description" : "Binding for libshout - source streaming client library for icecast",
+  "version" : "v0.0.2"
+}
