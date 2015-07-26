@@ -1,6 +1,6 @@
 {
     "name"        : "Text::VimColour",
-    "version"     : "0.3",
+    "version"     : "0.4",
     "description" : "Converts scripts into colour syntax HTML using vim. ",
     "depends"     : ["File::Temp"],
     "provides"    : {
