@@ -1,4 +1,4 @@
-Perl6::Format
+Rakudo::Perl6::Format
 ==============
 
 
@@ -10,10 +10,10 @@ Known limitations: if there is a BEGIN, there will not be any formatting. Also ,
 Usage:
 
 
-use Perl6::Format;
+use Rakudo::Perl6::Format;
 
 
-my $f=  Perl6::Format.new(); # create a new object
+my $f=  Rakudo::Perl6::Format.new(); # create a new object
 
 say $f.format({indentsize=>4},$content); # format using indentsize 4.
 

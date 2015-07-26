@@ -1,4 +1,4 @@
-use Perl6::Format;
+use Rakudo::Perl6::Format;
 
 sub getnextargument($index, $explanation)
 {
@@ -39,8 +39,8 @@ else
 $i++;
 }
 
-use Perl6::Format;
-my $f = Perl6::Format.new();
+
+my $f = Rakudo::Perl6::Format.new();
 
 my $content = $*IN.slurp;
 
