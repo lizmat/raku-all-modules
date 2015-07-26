@@ -17,6 +17,14 @@ class X::HTTP is Exception {
     has $.rc;
 }
 
+class X::HTTP::Internal is Exception {
+    has $.reason;
+
+    method message {
+        "Internal Error: '$.reason'";
+    }
+}
+
 class X::HTTP::Response is X::HTTP {
     method message {
         "Response error: '$.rc'";
@@ -27,6 +35,9 @@ class X::HTTP::Server is X::HTTP {
     method message {
         "Server error: '$.rc'";
     }
+}
+
+class X::HTTP::Header is X::HTTP::Server {
 }
 
 has Int $.timeout is rw = 180;
@@ -110,8 +121,11 @@ multi method request(HTTP::Request $request) {
         my @a;
         my @b = "\r\n\r\n".ords;
 
+        my Bool $got-response = False;
+
         # Header can be longer than one chunk
         while my $t = $conn.recv( :bin ) {
+            $got-response = True;
             $first-chunk = Blob[uint8].new($first-chunk.list, $t.list);
             @a           = $first-chunk.list;
 
@@ -120,6 +134,11 @@ multi method request(HTTP::Request $request) {
             $msg-body-pos = @a.first-index({ @a[(state $i = -1) .. $i++ + @b] ~~ @b });
             last if $msg-body-pos;
         }
+
+        if not $got-response {
+            X::HTTP::Internal.new(rc => 500, reason => "server returned no data").throw;
+        }
+
 
         # +2 because we need a trailing CRLF in the header.
         $msg-body-pos   += 2 if $msg-body-pos >= 0;
@@ -136,16 +155,36 @@ multi method request(HTTP::Request $request) {
         # We also need to handle 'Transfer-Encoding: chunked', which means
         # that we request more chunks and assemble the response body.
         if $response.is-chunked {
-            my sub recv-entire-chunk($content is rw) {
+            sub recv-entire-chunk(Buf $content is rw) {
                 if $content {
                     # The first line is our desired chunk size.
+                    # we didn't get enough
+                    if $content.bytes < 6 {
+                        $content ~= $conn.recv(6, :bin);
+                    }
                     (my $chunk-size, $content) = _split_buf("\r\n", $content, 2);
+
                     $chunk-size                = :16($chunk-size.decode);
+
                     $content = $conn.recv(4, :bin) unless $content;
                     if $chunk-size {
+                        if $content.bytes > $chunk-size {
+                            my $this-chunk = $content.subbuf(0, $chunk-size);
+                            
+                            if ($chunk-size + 2 ) > $content.bytes {
+                                $content ~= $conn.recv(6, :bin);
+                            }
+                            my $next-chunks = $content.subbuf($chunk-size + 2);
+                            $content = $this-chunk;
+                            if $next-chunks.bytes {
+                                recv-entire-chunk($next-chunks);
+                                $content ~= $next-chunks;
+                            }
+                        }
                         # Let the content grow until we have reached the desired size.
                         while $chunk-size > $content.bytes {
-                            $content ~= $conn.recv($chunk-size - $content.bytes, :bin);
+                            my $need-bytes = $chunk-size - $content.bytes;
+                            $content ~= $conn.recv($need-bytes, :bin);
                         }
                     }
                 }
@@ -168,13 +207,13 @@ multi method request(HTTP::Request $request) {
                     # Read more of this chunk, which includes the rest of a chunk-size field followed
                     # by <CRLF> and a single byte of the message content.
                     $chunk ~= $conn.recv(6, :bin);
-                    $chunk.=subbuf(2)
+                    $chunk.=subbuf(2) if $chunk.subbuf(0,2).list eqv [0x0d, 0x0a];
                 }
             }
         }
         elsif $response.header.field('Content-Length').values[0] -> $content-length is copy {
             X::HTTP::Header.new( :rc("Content-Length header value '$content-length' is not numeric") ).throw
-                unless $content-length = try +$content-length;
+                unless ($content-length = try +$content-length).defined;
             # Let the content grow until we have reached the desired size.
             while $content-length > $content.bytes {
                 $content ~= $conn.recv($content-length - $content.bytes, :bin);
