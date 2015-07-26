@@ -1,0 +1,10 @@
+{
+    "name" : "Dependency::Sort",
+    "version" : "1",
+    "description" : "perform topological sort",
+    "provides" : {
+        "Dependency::Sort" : "lib/Dependency/Sort.pm6"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/jaffa4/Dependency-Sort.git"
+}
