@@ -4,7 +4,7 @@
 
 =TITLE Term::ColorText
 
-=AUTHOR Matthew N. (lue)
+=AUTHOR Faye N. (ShimmerFairy)
 
 Lets you print various colorful things.
 

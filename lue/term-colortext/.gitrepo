@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/lue/term-colortext.git
 	branch = master
-	commit = 021323ccab520c3f6cd4ad58f6d98884b12ec75d
-	parent = 8fd17a2d033e4a08e71639d408d836e82cee1af1
-	cmdver = 0.1.0
+	commit = 99623ef189060aff59051461ce7703a3da4fb663
+	parent = f49d210ccbead21efcaa2fa30ad26dda9dbf38fe
+	cmdver = 0.2.2

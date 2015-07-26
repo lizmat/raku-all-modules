@@ -4,7 +4,7 @@ use v6;
 
 use Term::ANSIColor;
 
-module Term::ColorText;
+unit module Term::ColorText;
 
 sub cfmt($color, *@things) {
     my @ar = color($color) X @things;
