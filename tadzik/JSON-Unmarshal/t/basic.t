@@ -32,7 +32,7 @@ my $json = q/
 
 my $p = unmarshal($json, Person);
 
-isa_ok $p, Person;
+isa-ok $p, Person;
 is $p.name, "John Brown";
 is $p.age, 17;
 is $p.dogs.elems, 2;
