@@ -5,9 +5,10 @@ class CSS::Writer::BaseTypes {
     use CSS::Grammar::CSS3;
 
     # -- numbers -- #
+    proto method write-num($, $? --> Str) {*};
+
     multi method write-num( 1, 'em' ) { 'em' }
     multi method write-num( 1, 'ex' ) { 'ex' }
-
     multi method write-num( Numeric $num, Any $units? ) {
         my $int = $num.Int;
         return ($int == $num ?? $int !! $num) ~ ($units.defined ?? $units.lc !! '');
@@ -18,7 +19,7 @@ class CSS::Writer::BaseTypes {
     }
 
     # -- strings -- #
-    method write-string( Str $str) {
+    method write-string( Str $str --> Str) {
         [~] ("'",
              $str.comb.map({
                  when /<CSS::Grammar::CSS3::stringchar-regular>|\"/ {$_}
@@ -34,7 +35,7 @@ class CSS::Writer::BaseTypes {
     multi method coerce-color(Numeric :$percent!) {+sprintf "%d", $percent * 2.55}
     multi method coerce-color is default          {Any}
 
-    multi method color-channel($node) {
+    method color-channel($node) {
         my $num = $.coerce-color(|%$node)
             // return;
         $num = 0   if $num < 0 ;

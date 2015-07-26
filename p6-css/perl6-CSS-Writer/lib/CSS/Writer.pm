@@ -71,6 +71,8 @@ class CSS::Writer
         $.write( $.ast );
     }
 
+    proto method write(|c --> Str) {*}
+
     #| @top-left { margin: 5px; } :=   $.write( :at-keyw<top-left>, :declarations[ { :ident<margin>, :expr[ :px(5) ] } ] )
     multi method write( Str :$at-keyw!, List :$declarations! ) {
         ($.write( :$at-keyw ),  $.write( :$declarations)).join: ' ';
@@ -465,14 +467,14 @@ class CSS::Writer
     # -- helper methods --
 
     #| write comments, if applicable
-    method write-any-comments( $ast, $padding='' ) {
+    method write-any-comments( Hash $ast, $padding='' --> Str) {
         $ast<comment>:exists && ! $.terse
             ?? $padding ~ $.write($ast, :node<comment>)
             !! ''
     }
 
     #| handle indentation.
-    method write-indented( Any $ast, Int $indent!) {
+    method write-indented( Any $ast, Int $indent! --> Str) {
         my $sp = '';
         temp $.indent;
         $.indent ~= ' ' x $indent
