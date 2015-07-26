@@ -1,6 +1,8 @@
 Browser::Open
 =============
 
+[![Build Status](https://travis-ci.org/azawawi/perl6-browser-open.svg?branch=master)](https://travis-ci.org/azawawi/perl6-browser-open)
+
 This is a Perl 6 port of Browser::Open http://metacpan.org/module/Browser::Open. 
 
 ## Installation
