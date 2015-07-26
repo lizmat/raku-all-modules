@@ -3,7 +3,9 @@ use Perl6::Actions:from<NQP>;
 
 use QRegex:from<NQP>; 
 
-unit class Perl6::Parsing;
+use nqp;
+
+unit class Rakudo::Perl6::Parsing;
 
 
 has Mu $.parser;
@@ -55,8 +57,8 @@ multi method walktree($isprint, $level,$key1="root")
 
 multi method walksubtree($isprint,Mu $tree, $level,$key1?)
 {
-  %visited_objects= ();
-  %visited_matches = ();
+  %!visited_objects= ();
+  %!visited_matches = ();
   self.walk($isprint,$tree, $level,$key1);
 }
 
@@ -83,10 +85,14 @@ method walk($isprint,Mu $tree, $level,$key1?)
     print " "~$tree.HOW.name($tree);
     say " bool:"~$tree.Bool;
   }
-# if (%visited_objects.exists_key($tree))
-{
-#  return ;
+ 
+  my $id = nqp::objectid($tree);
+ if (%!visited_objects{$id}:exists)
+{  say "this subtree exists already, not expanding" if $isprint;
+  return ;
 }
+
+%!visited_objects{$id} = True;
   
   if ($type eq "Parcel")
   {

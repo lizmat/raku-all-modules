@@ -1,4 +1,4 @@
-Perl6::Parsing
+Rakudo::Perl6::Parsing
 ==============
 
 
@@ -9,10 +9,10 @@ Workaround: delete Parsing.pir.
 Usage:
 
 ```perl
-use Perl6::Parsing;
+use Rakudo::Perl6::Parsing;
 
 
-my $p=  Perl6::Parsing.new(); # create a new object
+my $p=  Rakudo::Perl6::Parsing.new(); # create a new object
 
 $p.parse("my \$p=3;");  # let us parse this text <br> 
 say $p.parser.dump; # dumps parse tree 
