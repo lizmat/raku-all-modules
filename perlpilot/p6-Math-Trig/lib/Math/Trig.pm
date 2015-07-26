@@ -128,7 +128,7 @@ sub great-circle-waypoint($theta0, $phi0, $theta1, $phi1, $point = 0.5) is expor
     return ($theta, $phi);
 }
 
-our &great-circle-midpoint is export(:great-circle) = &great-circle-waypoint.assuming(:point(0.5));
+our &great-circle-midpoint is export(:great-circle) = &great-circle-waypoint.assuming(*,*,*,*,0.5);
 
 sub great-circle-destination( $theta0, $phi0, $dir0, $dst ) is export(:great-circle)
 {
