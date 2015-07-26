@@ -1,5 +1,6 @@
 use v6;
 use Test;
+BEGIN { @*INC.unshift('lib') }
 use WebService::Justcoin;
 
 plan 20;
@@ -1004,7 +1005,7 @@ sub response-depth {
 EOR
 }
 
-sub response-no-depth { 
+sub response-no-depth {
 q:to/EOR/;
 {
 

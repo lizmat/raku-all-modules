@@ -1,5 +1,6 @@
 use v6;
 use Test;
+BEGIN { @*INC.unshift('lib') }
 use WebService::Justcoin;
 
 plan 17;
