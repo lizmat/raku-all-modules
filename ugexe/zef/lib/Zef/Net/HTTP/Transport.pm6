@@ -5,35 +5,20 @@ use Zef::Net::HTTP::Dialer;
 role ByteStream {
     my $buffer;
 
-    # Fill a Channel with bytes (the HTTP message body) so we 
-    # can process the header and possibly close the connection 
-    # before we would have finished receiving the body.
-    # Currently faked, as chunked encoding/keep alive and friends 
-    # break the socket inside a start {}.
-    #
-    # todo: add an additional stream in case there are 
-    # any trailing headers.
     method async-recv(|c, Bool :$bin) {
         $buffer = Channel.new;
 
-        my $promise = Promise.anyof(
-            $buffer.closed,
-            Promise.in(30),
-            do {
-                my $promise = Promise.new;
-                my $vow = $promise.vow;
+        my $promise = Promise.new;
+        my $vow = $promise.vow;
 #            start {
-                while $.recv(|c, :$bin) -> $b {
-                    $buffer.send($b);
-                }
+        while $.recv(|c, :$bin) -> $b {
+            $buffer.send($b);
+        }
 #            }.then({ 
-                $buffer.close;
-                $vow.keep($promise);
+        $buffer.close;
+        $.close;
+        $vow.keep($buffer);
 #            });
-            }
-        );
-
-        return $promise => $buffer;
     }
 }
 
@@ -52,9 +37,10 @@ class Zef::Net::HTTP::Transport does HTTP::RoundTrip {
     method round-trip(HTTP::Request $req --> HTTP::Response) {
         fail "HTTP Scheme not supported: {$req.uri.scheme}" 
             unless $req.uri.scheme ~~ any(<http https>);
-
+        my $t = $req.DUMP(:start-line);
+        $t ~= $req.DUMP(:headers);
         my $socket = $!dialer.dial($req.?proxy ?? $req.proxy.uri !! $req.uri);
-        $socket does ByteStream;
+        $socket does ByteStream;;
         $socket.send: $req.DUMP(:start-line);
         $socket.send: $req.DUMP(:headers);
 

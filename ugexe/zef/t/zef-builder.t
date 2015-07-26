@@ -1,5 +1,7 @@
 use v6;
-use Zef::Builder;
+use Zef::Distribution;
+use Zef::Roles::Precompiling;
+use Zef::Roles::Processing;
 use Zef::Utils::PathTools;
 use Test;
 plan 1;
@@ -8,33 +10,32 @@ plan 1;
 
 # Basic tests on default builder method
 subtest {
-    my $CWD     := $*CWD;
-    my $save-to := $*SPEC.catdir($CWD,"test-libs").IO;
+    my $path    := $?FILE.IO.dirname.IO.parent; # ehhh
+    my $save-to := $path.child("test-libs_{time}{100000.rand.Int}").IO;
+    my $precomp-path = $save-to.IO.child('lib');
 
-    my $lib-base  := $*SPEC.catdir($CWD, "lib").IO;
-    my $blib-base = $*SPEC.catdir($save-to,"blib").IO;
     LEAVE {       # Cleanup
         sleep 1;  # bug-fix for CompUnit related pipe file race
         try rm($save-to, :d, :f, :r);
     }
 
-    my @source-files  = ls($lib-base, :f, :r, d => False);
-    my @target-files := gather for @source-files.grep({ $_.IO.basename ~~ / \.pm6? $/ }) -> $file {
-        my $mod-path := $*SPEC.catdir($blib-base, "{$file.IO.dirname.IO.relative}").IO;
-        my $target   := $*SPEC.catpath('', $mod-path.IO.path, "{$file.IO.basename}.{$*VM.precomp-ext}").IO;
-        take $target.IO.path;
-    }
+    my $distribution = Zef::Distribution.new(:$path, :$precomp-path);
+    $distribution does Zef::Roles::Precompiling;
+    $distribution does Zef::Roles::Processing;
+    my @cmds = $distribution.precomp-cmds;
 
-    my $builder = Zef::Builder.new;
-    my @results = $builder.pre-compile($CWD, :$save-to);
+    my @source-files = $distribution.provides(:absolute).values;
+    my @target-files = $distribution.provides(:absolute, :precomp).values;
 
-    is @results.elems, 1, '1 repo';
-    is @results.[0].<curlfs>.list.grep({ $_ }).elems, 
-       @results.[0].<curlfs>.list.elems, 
-       "Default builder precompiled all modules";
-    my $result-expects = any(@results.[0].<curlfs>.list.map({ $_.precomp-path }));
+    $distribution.queue-processes( [$_.list] ) for @cmds;
+
+    await $distribution.start-processes;
+
+    is $distribution.passes.elems, @source-files.elems, "Found expected precompiled files";
+    is $distribution.failures.elems, 0, "No apparent precompilation failures";
+
     for @target-files -> $file {
-        is $result-expects, $file.IO.absolute, "Found: {$file.IO.path}";
+        ok $file.IO.e, "Found: {$file.IO.relative($path)}";
     }
 }, 'Zef::Builder';
 
