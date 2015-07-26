@@ -14,7 +14,7 @@ class CSS::Specification::Terms::Actions {
             if $0;
 
         if $<val> {
-            my $val = $<val>.ast;
+            my Hash $val = $<val>.ast;
 
             if $val<usage> {
                 my $synopsis := $val<usage>;
@@ -118,19 +118,18 @@ class CSS::Specification::Terms::Actions {
 
     has Hash $.colors = %CSS::Grammar::AST::CSS21-Colors;
 
-   method color:sym<named>($/) {
-        my $color-name = $<keyw>.ast.value;
+    method color:sym<named>($/) {
+        my Str $color-name = $<keyw>.ast.value;
         my @rgb = @( $.colors{$color-name} )
             or die "unknown color: " ~ $color-name;
 
-        my $num-type = CSSValue::NumberComponent;
-        my @color = @rgb.map: { $num-type.Str => $_ };
+        my @color = @rgb.map: { (CSSValue::NumberComponent) => $_ };
 
         make $.token(@color, :type<rgb>);
     }
 
     method integer($/)     {
-        my $val = $<uint>.ast;
+        my Int $val = $<uint>.ast;
         $val = -$val
             if $<sign> && $<sign> eq '-';
         make $.token($val, :type(CSSValue::IntegerComponent))
