@@ -220,6 +220,13 @@ class CSV::Field {
             !! Num;
         }
 
+    method Real {
+        $!text.defined
+            ?? $!text ~~ m{^ <[0..9]> } ?? +$!text
+            !!                              $!text.unival.Int
+            !! Real;
+        }
+
     method gist {
         $!text.defined or return "<undef>";
         $!analysed or self!analyse;
@@ -594,7 +601,7 @@ class Text::CSV {
     method callbacks (*@cb is copy) {
         if (@cb.elems == 1) {
             my $b = @cb[0];
-            if ($b ~~ Hash) {
+            if ($b ~~ Hash || $b ~~ Pair) {
                 @cb = $b.kv;
                 }
             else {
@@ -607,17 +614,16 @@ class Text::CSV {
                 }
             }
         if (@cb.elems % 2) {
-            @cb.perl.say;
-            @cb[0].WHAT.say;
             self!fail (1004);
             }
         if (@cb.elems) {
             my %hooks;
             for @cb -> $name, $hook {
-                $name.defined && $name ~~ Str     &&
-                $hook.defined && $hook ~~ Routine or
+                $name.defined &&  $name ~~ Str     &&
+                $hook.defined && ($hook ~~ Routine || $hook ~~ Callable) or
                     self!fail (1004);
 
+$hook.perl.say;
                 $name ~~ s{"-"} = "_";
                 $name ~~ /^ after_parse
                           | before_print
@@ -1458,7 +1464,7 @@ class Text::CSV {
                 next;
                 }
             }
-        %hooks.keys and self.callbacks (|%hooks);
+        %hooks.keys and self.callbacks (|%hooks.list);
 
         # Rest is for Text::CSV
         self!set-attributes (%args);
@@ -1474,7 +1480,8 @@ class Text::CSV {
         #   generate
         #     [["a","b"][1,2],[3,4]]     AoA   Array
         #     [{a=>1,b=>2},{a=>3,b=>4}]  AoH   Array
-        #     sub { ... }                      Sub
+        #     sub { ... }                      Routine
+        #     { ... }                          Callable
         #     Supply.new                       Supply
         given ($in.WHAT) {
             when Str {
@@ -1504,12 +1511,20 @@ class Text::CSV {
             when Supply {
                 $fragment ~~ s:i{^ "row=" } = "" and self.rowrange ($fragment);
                 my int $i = 0;
-                @in = gather while ($in.tap) -> $r { !$!rrange || $!rrange.in ($i++) and take $r };
+                $in.act (
+                    -> \row {
+                        !$!rrange || $!rrange.in ($i++) and @in.push:
+                          row ~~ Str ?? [ self.getline (row) ] !! row;
+                        },
+                    );
+                $in.wait;
+                @in;
                 }
             when Routine {
                 $fragment ~~ s:i{^ "row=" } = "" and self.rowrange ($fragment);
                 my int $i = 0;
-                @in = gather while  $in()    -> $r { !$!rrange || $!rrange.in ($i++) and take $r };
+                @in = gather while $in() -> $r {
+                    !$!rrange || $!rrange.in ($i++) and take $r };
                 }
             when Any {
                 $io-in = $*IN;
@@ -1548,17 +1563,32 @@ class Text::CSV {
 
         # Find the correct spots to invoke $on-in and $before-out
 
+        given ($headers) {
+            when Array {
+                self.column_names ($headers.list);
+                }
+            when "auto" {
+                if ($io-in ~~ IO and $io-in.defined) {
+                    self.column_names (self.getline ($io-in, :!meta));
+                    }
+                elsif (@in.elems) {
+                    # 1st line is headers, modify rest
+                    self.column_names (@in.shift);
+                    }
+                }
+            }
+
         if ($io-in ~~ IO and $io-in.defined) {
             @in = $fragment
                 ?? self.fragment    ($io-in, :$meta, $fragment)
                 !! self.getline_all ($io-in, :$meta);
             }
 
-        $headers ~~ Array and self.column_names ($headers.list);
-
         unless (?$out || ?$tmpfn) {
             if ($out ~~ Hash or $headers ~~ Array or $headers ~~ Str && $headers eq "auto") {
                 my @h = @!cnames.elems ?? @!cnames !! @in.shift.list or return [];
+                @in.elems && @in[0] ~~ Hash and
+                    return @in; # Headers already dealt with
                 return @in.map (-> @r { $%( @h Z=> @r ) });
                 }
             return @in;
