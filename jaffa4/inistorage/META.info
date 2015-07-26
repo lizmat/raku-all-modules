@@ -1,0 +1,10 @@
+{
+    "name" : "Ini::Storage",
+    "version" : "0.8",
+    "description" : "store data in ini files",
+    "provides" : {
+        "Ini::Storage" : "lib/Ini/Storage.pm"
+    },
+    "depends" : ["Path::Util"],
+    "source-url" : "git://github.com/jaffa4/inistorage.git"
+}

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jaffa4/inistorage.git
+	branch = master
+	commit = b70b176ec1cfd7a8fc55f35ad4ea6f8ed198e9ef
+	parent = 3d6e99e6956472c83a5c71cf7c513d68fcecfd89
+	cmdver = 0.2.2
