@@ -1,4 +1,4 @@
-#!/usr/bin/env perl6
+use v6;
 
 use Net::Curl;
 
@@ -31,10 +31,6 @@ class Net::Curl::Easy {
 		return $body.decode('latin1');
 	}
 }
-
-my $curl = Net::Curl::Easy.new(url => "http://www.google.com");
-my $response = $curl.download;
-say $response;
 
 # vim: ft=perl6
 

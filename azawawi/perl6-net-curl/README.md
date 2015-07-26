@@ -1,6 +1,8 @@
 Net::Curl
 =========
 
+[![Build Status](https://travis-ci.org/azawawi/perl6-net-curl.svg?branch=master)](https://travis-ci.org/azawawi/perl6-net-curl)
+
 Net::Curl provides a Perl 6 interface to libcurl.
 The plan is support the libcurl Easy interface first
 and run all the libcurl website examples
@@ -28,15 +30,6 @@ To install libcurl on Debian for example, please use the following command:
 
 ```
     panda install Net::Curl
-```
-
-* Using ufo (a project Makefile creation script bundled with Rakudo Star) and make:
-
-```
-    ufo                    
-    make
-    make test
-    make install
 ```
 
 ## Testing
