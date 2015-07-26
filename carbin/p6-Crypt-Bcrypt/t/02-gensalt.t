@@ -15,15 +15,15 @@ loop (my Int $round = 4; $round <= 31; $round++) {
 		'prefix for ' ~ $round ~ ' rounds';
 }
 
-dies_ok { $bc.gensalt(-20) }, 'dies with negative rounds';
-dies_ok { $bc.gensalt(-1) }, 'dies with negative rounds';
-dies_ok { $bc.gensalt(0) }, 'dies with 0 rounds';
-dies_ok { $bc.gensalt(1) }, 'dies with 1 round';
-dies_ok { $bc.gensalt(2) }, 'dies with 2 rounds';
-dies_ok { $bc.gensalt(3) }, 'dies with 3 rounds';
-lives_ok { $bc.gensalt(4) }, 'lives with 4 rounds';
-lives_ok { $bc.gensalt(31) }, 'lives with 31 rounds';
-dies_ok { $bc.gensalt(32) }, 'dies with 32 rounds';
+dies-ok { $bc.gensalt(-20) }, 'dies with negative rounds';
+dies-ok { $bc.gensalt(-1) }, 'dies with negative rounds';
+dies-ok { $bc.gensalt(0) }, 'dies with 0 rounds';
+dies-ok { $bc.gensalt(1) }, 'dies with 1 round';
+dies-ok { $bc.gensalt(2) }, 'dies with 2 rounds';
+dies-ok { $bc.gensalt(3) }, 'dies with 3 rounds';
+lives-ok { $bc.gensalt(4) }, 'lives with 4 rounds';
+lives-ok { $bc.gensalt(31) }, 'lives with 31 rounds';
+dies-ok { $bc.gensalt(32) }, 'dies with 32 rounds';
 
 done();
 

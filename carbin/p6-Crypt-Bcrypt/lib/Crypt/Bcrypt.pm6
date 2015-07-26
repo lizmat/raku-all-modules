@@ -13,8 +13,10 @@ file, you can obtain one at http://opensource.org/licenses/isc-license.txt
 sub library returns Str {
 	my $so = get-vars('')<SO>;
 	for @*INC {
-		if ($_~'/crypt_blowfish'~$so).IO ~~ :f {
-			return $_~'/crypt_blowfish'~$so;
+	    my $inc-path = $_.IO.path.subst(/ ['file#' || 'inst#'] /, '');
+	    my $crypt-blowfish-lib-path = $*SPEC.catfile($inc-path, "crypt_blowfish"~$so);
+		if $crypt-blowfish-lib-path.IO ~~ :f {
+			return $crypt-blowfish-lib-path;
 		}
 	}
 	die 'unable to find library crypt_blowfish';
