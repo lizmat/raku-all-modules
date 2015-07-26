@@ -10,7 +10,7 @@ sub wrap(Str $lead-indent,
          Bool :$unexpand        = True,
          Bool :$may-overflow    = False,
          Bool :$strict-break    = False,
-         Regex    :$word-break  = rx{\s},
+         Regex    :$word-break  = { rx{\s} }(),   # RT #125670
          *@texts) is export {
 
     my Str $text = expand(:$tabstop, trailing-space-join(@texts));
