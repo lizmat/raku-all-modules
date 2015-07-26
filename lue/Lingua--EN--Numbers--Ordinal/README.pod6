@@ -27,6 +27,6 @@ You will need Carl Mäsak's program C<ufo> to do this. See L<https://github.com/
 
 =head2 Copyright
 
-Copyright © 2011 Matthew N. (lue) under the GNU GPL v3. See LICENSE for more details.
+Copyright © 2015 Faye N. (ShimmerFairy) under the Artistic License 2.0.
 
 =end pod
