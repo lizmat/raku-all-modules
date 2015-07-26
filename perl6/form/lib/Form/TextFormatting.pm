@@ -109,9 +109,8 @@ our sub full-justify(Str $line, Int $width, Str $space = ' ') {
 	# for now, do something entirely unsatisfactory
 	if $line.chars < $width {
 		my Str @words = $line.words;
-		my $to-add = $width - $line.chars;
 		my $words = @words.elems;
-		my @spaces = $space xx ($words - 1);
+		my Str @spaces = $space xx ($words - 1);
 
 		my $words-width = [+] @words.map: *.chars;
 		my $spaces-width = [+] @spaces.map: *.chars;
@@ -119,16 +118,15 @@ our sub full-justify(Str $line, Int $width, Str $space = ' ') {
 		my $act-space = 0;
 		while $words-width + $spaces-width < $width
 		{
+
 			@spaces[$act-space++] ~= $space;
 
 			$spaces-width = [+] @spaces.map({ .chars });
-
-			$act-space >= @spaces.elems and $act-space = 0;
+			$act-space = 0 if $act-space == @spaces.elems;
 		}
-
-		@spaces.push('');
-
-		return (@words Z @spaces).join;
+               # We add empty elem to make zip operation work here
+               @spaces.push('');
+               return (@words Z~ @spaces).join;
 	}
 
 	return $line.substr(0, $width);

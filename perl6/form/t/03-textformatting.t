@@ -42,10 +42,10 @@ ok(Form::TextFormatting::right-justify($str, 6) eq "  ABCD", "right-justify corr
 ok(Form::TextFormatting::centre-justify($str, 6) eq " ABCD ", "centre-justify correct");
 ok(Form::TextFormatting::centre-justify($str, 7) eq " ABCD  ", "uneven centre-justify correct");
 
-ok(Form::TextFormatting::full-justify($str, 6) eq "ABCD  ", "fully justify with one word correct");
-ok(Form::TextFormatting::full-justify("A B", 6) eq "A    B", "fully justify with two words correct");
-ok(Form::TextFormatting::full-justify("A B C", 9) eq "A   B   C", "fully justify with three words correct");
-ok(Form::TextFormatting::full-justify("A B C", 10) eq "A    B   C", "fully justify with three words uneven correct");
+is(Form::TextFormatting::full-justify($str, 6), "ABCD  ", "fully justify with one word correct");
+is(Form::TextFormatting::full-justify("A B", 6),  "A    B", "fully justify with two words correct");
+is(Form::TextFormatting::full-justify("A B C", 9), "A   B   C", "fully justify with three words correct");
+is(Form::TextFormatting::full-justify("A B C", 10), "A    B   C", "fully justify with three words uneven correct");
 
 # vim: ft=perl6 sw=4 ts=4 noexpandtab
 
