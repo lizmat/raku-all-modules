@@ -1,0 +1,11 @@
+{
+    "name": "Algorithm::Elo",
+    "version": "0.1.0",
+    "description": "Implementation of the Elo chess rating system",
+    "author": "Rob Hoelz",
+    "depends": [],
+    "provides" : {
+        "Algorithm::Elo" : "lib/Algorithm/Elo.pm"
+    },
+    "source-url": "git://github.com/hoelzro/p6-algorithm-elo.git"
+}
