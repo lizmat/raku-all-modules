@@ -1,5 +1,5 @@
 use v6;
-use lib	'./lib';
+use lib	<blib/lib lib>;
 
 use Test;
 
@@ -137,7 +137,9 @@ my @d;
 #? rakudo skip 'feed through a slurpy arity function'
 #@d <== $h.partials <== (2,3);
 #is @d.join(""), "3942", "partials inserts values in a feed"
-is $h.partials(4,5,Failure.new(X::AdHoc.new()),6).map({.WHAT.gist}), '(Foo3) (Foo3) (Failure)', "partials stops iterating on Failure (Partial,Cooked).";
+my $fail = Failure.new(X::AdHoc.new(:payload<foo>));
+is $h.partials(4,5,$fail,6).map({.WHAT.gist}), '(Foo3) (Foo3) (Failure)', "partials stops iterating on Failure (Partial,Cooked).";
+$fail.defined;
 
 class Foo3r does Sum::Partial does Sum does Sum::Marshal::Raw {
         has $.accum is rw = 0;
@@ -157,7 +159,7 @@ class Foo3r does Sum::Partial does Sum does Sum::Marshal::Raw {
 my Foo3r $hr .= new();
 
 # XXX do some tests of laziness of partials method
-is $hr.partials(4,5,Failure.new(X::AdHoc.new()),6).map({.WHAT.gist}), '(Foo3r) (Foo3r) (Failure)', "partials stops iterating on Failure (Partial,Raw).";
+is $hr.partials(4,5,$fail,6).map({.WHAT.gist}), '(Foo3r) (Foo3r) (Failure)', "partials stops iterating on Failure (Partial,Raw).";
 
 lives-ok {
 class Foo4 does Sum::Partial does Sum does Sum::Marshal::Method[:atype(Str) :method<ords>] {
@@ -281,8 +283,8 @@ class Foo7 does Sum::Marshal::IO does Sum::Marshal::Cooked
 
 my Foo7 $tf;
 lives-ok { $tf .= new(); }, "Can instantiate custom Sum::Marshal::IO subclass";
-$tf.push(open("./t/testfile.txt"));
-is $tf.finalize, open("./t/testfile.txt").read(5000).values.join(','), "Sum::Marshal::IO works";
+$tf.push(open($?FILE.IO.parent.child('testfile.txt')));
+is $tf.finalize, open($?FILE.IO.parent.child('testfile.txt')).read(5000).values.join(','), "Sum::Marshal::IO works";
 
 # Now grab the code in the synopsis from the POD and make sure it runs.
 # This is currently complete hackery but might improve when pod support does.

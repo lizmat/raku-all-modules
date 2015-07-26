@@ -1,5 +1,5 @@
 use v6;
-use lib './lib';
+use lib <blib/lib lib>;
 
 #
 # Test compability with Perl5 Digest::MD5

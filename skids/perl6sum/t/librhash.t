@@ -1,6 +1,6 @@
 
 use v6;
-use lib	'./lib';
+use lib <blib/lib lib>;
 
 use Test;
 
