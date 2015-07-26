@@ -1,14 +1,10 @@
-language: perl
+language: perl6
 
-perl:
-    - "5.10"
-
-env:
-    PATH=~/.rakudobrew/bin:$PATH
+perl6:
+    - 2015.06
+    - 2015.05
 
 install:
-    - git clone https://github.com/tadzik/rakudobrew ~/.rakudobrew
-    - rakudobrew build moar
     - rakudobrew build-panda
     - panda install IO::Capture::Simple
 
