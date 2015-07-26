@@ -1,0 +1,9 @@
+language: perl6
+perl6:
+    - latest
+    - 2015.06
+    - 2015.05
+
+install:
+    - rakudobrew build-panda
+    - panda install File::Temp HTTP::Easy JSON::Tiny Pod::To::HTML URI p6doc Debugger::UI::CommandLine Browser::Open
