@@ -35,11 +35,11 @@ is sort-arrays(compare_multiple_files(@filelist.push('t/test-files/camelia.ico')
    ["t/test-files/foobar-2.txt", "t/test-files/foobar.txt"] ),
 	"non-matching files not returned";
 
-dies_ok {say compare_multiple_files( [] )}, "empty array fails";
+dies-ok {say compare_multiple_files( [] )}, "empty array fails";
 
-dies_ok {compare_multiple_files( [Mu, Any] )}, "wrong file data type passed fails";
+dies-ok {compare_multiple_files( [Mu, Any] )}, "wrong file data type passed fails";
 
-dies_ok {compare_multiple_files( @filelist, chunk_size => -23 #`{Skidoo!} )}, "bad chunk_size parameter fails";
+dies-ok {compare_multiple_files( @filelist, chunk_size => -23 #`{Skidoo!} )}, "bad chunk_size parameter fails";
 
 is sort-arrays(compare_multiple_files(@filelist».IO)),
   (["t/test-files/empty1", "t/test-files/empty2"],
