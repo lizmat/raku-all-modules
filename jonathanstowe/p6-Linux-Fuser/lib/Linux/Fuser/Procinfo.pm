@@ -1,3 +1,5 @@
+use v6;
+
 use nqp;
 use Linux::Fuser::FileDescriptor;
 # For the time being
@@ -33,7 +35,7 @@ There are no public methods only read-only attributes.
 
 =end pod
 
-class Linux::Fuser::Procinfo {
+class Linux::Fuser::Procinfo:ver<v0.0.4>:auth<github:jonathanstowe> {
    #| The process ID of the process that has the file open
    has Int $.pid;
    #| The username of the user who owns the process
@@ -74,3 +76,4 @@ class Linux::Fuser::Procinfo {
    }
 
 }
+# vim: expandtab shiftwidth=4 ft=perl6

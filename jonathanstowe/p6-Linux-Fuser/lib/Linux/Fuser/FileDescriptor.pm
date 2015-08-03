@@ -29,7 +29,7 @@ There are no public methods only attributes.
 
 =end pod
 
-class Linux::Fuser::FileDescriptor {
+class Linux::Fuser::FileDescriptor:ver<v0.0.4>:auth<github:jonathanstowe> {
 
    #| The file descriptor number in use by the process
    has Int $.fd;
@@ -57,3 +57,4 @@ class Linux::Fuser::FileDescriptor {
       $!flags = :8($str_fl) if $str_fl.defined;
    }
 }
+# vim: expandtab shiftwidth=4 ft=perl6
