@@ -10,6 +10,7 @@
   "source-url" : "git://github.com/jonathanstowe/Audio-Encode-LameMP3.git",
   "perl" : "v6",
   "build-depends" : [
+    "panda",
     "LibraryCheck",
     "AccessorFacade"
   ],
@@ -25,5 +26,5 @@
     "Audio::Sndfile"
   ],
   "description" : "Encode PCM Audio data to MP3 in Perl 6 using a binding to liblame",
-  "version" : "v0.0.2"
+  "version" : "v0.0.3"
 }
