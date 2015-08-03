@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/perl6-IO-Glob.git
+	branch = master
+	commit = f26245b6f52c721ad40da6b2e0401a9ee3ac679e
+	parent = 2350614612fd86dc7410befcf308c7869533475c
+	cmdver = 0.2.2

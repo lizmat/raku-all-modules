@@ -1,0 +1,41 @@
+#!perl6
+
+use v6;
+
+use Test;
+use IO::Glob;
+
+{
+    my @files = glob('t/fixtures/*.md').dir;
+    is @files.elems, 2;
+    is @files[0], 't/fixtures/bar.md'.IO;
+    is @files[1], 't/fixtures/foo.md'.IO;
+}
+
+{
+    my @files = glob('fixtures/foo.*').dir('t');
+    is @files.elems, 2;
+    is @files[0], "t/fixtures/foo.md".IO;
+    is @files[1], "t/fixtures/foo.txt".IO;
+}
+
+{
+    my @files = glob(*).dir("t/fixtures");
+    is @files.elems, 6;
+    is @files[0], "t/fixtures/.".IO;
+    is @files[1], "t/fixtures/..".IO;
+    is @files[2], "t/fixtures/bar.md".IO;
+    is @files[3], "t/fixtures/bar.txt".IO;
+    is @files[4], "t/fixtures/foo.md".IO;
+    is @files[5], "t/fixtures/foo.txt".IO;
+}
+
+{
+    todo 'expansion order should be respected', 3;
+    my @files = glob('t/fixtures/{foo,bar}.md').dir;
+    is @files.elems, 2;
+    is @files[0], 't/fixtures/foo.md'.IO;
+    is @files[1], 't/fixtures/bar.md'.IO;
+}
+
+done;
