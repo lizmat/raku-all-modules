@@ -148,14 +148,14 @@ package TAP::Runner {
 		has Supply $!input = Supply.new;
 		has Supply $!supply = Supply.new;
 		has Promise $.promise = $!input.Promise;
-		method staple(Supply $output) {
+		method staple(TAP::Entry::Handler @handlers) {
 			for @!entries -> $entry {
-				$output.emit($entry);
+				@handlers».handle-entry($entry);
 			}
 			$!input.act({
-				$output.emit($^entry);
+				@handlers».handle-entry($^entry);
 				@!entries.push($^entry);
-			}, :done({ $output.done() }));
+			}, :done({ @handlers».end-entries() }));
 		}
 		method handle-entry(TAP::Entry $entry) {
 			$!input.emit($entry);
@@ -175,30 +175,29 @@ package TAP::Runner {
 			$!done = Promise.allof($!state.done, $!run.done);
 		}
 
-		multi get_runner(Source::Proc $proc; Supply $output) {
+		multi get_runner(Source::Proc $proc; TAP::Entry::Handler @handlers) {
 			my $process = Proc::Async.new($proc.path, $proc.args);
-			my $lexer = TAP::Parser.new(:$output);
+			my $lexer = TAP::Parser.new(:@handlers);
 			$process.stdout().act({ $lexer.add-data($^data) }, :done({ $lexer.close-data() }));
 			my $done = $process.start();
 			my $start-time = now;
 			my $timer = $done.then({ now - $start-time });
 			return Run.new(:$done, :$process, :$timer);
 		}
-		multi get_runner(Source::Through $through; Supply $output) {
-			$through.staple($output);
+		multi get_runner(Source::Through $through; TAP::Entry::Handler @handlers) {
+			$through.staple(@handlers);
 			return Run.new(:done($through.promise));
 		}
-		multi get_runner(Source::File $file; Supply $output) {
-			my $lexer = TAP::Parser.new(:$output);
+		multi get_runner(Source::File $file; TAP::Entry::Handler @handlers) {
+			my $lexer = TAP::Parser.new(:@handlers);
 			return Run.new(:done(start {
 				$lexer.add-data($file.filename.IO.slurp);
 				$lexer.close-data();
 			}));
 		}
-		multi get_runner(Source::String $string; Supply $output) {
-			my $lexer = TAP::Parser.new(:$output);
+		multi get_runner(Source::String $string; TAP::Entry::Handler @handlers) {
+			my $lexer = TAP::Parser.new(:@handlers);
 			$lexer.add-data($string.content);
-			sleep 1;
 			$lexer.close-data();
 			my $done = Promise.new;
 			$done.keep;
@@ -206,12 +205,9 @@ package TAP::Runner {
 		}
 
 		method new(Source :$source, :@handlers, Promise :$bailout) {
-			my $entries = Supply.new;
 			my $state = State.new(:$bailout);
-			for $state, @handlers -> $handler {
-				$entries.act({ $handler.handle-entry($^entry) }, :done({ $handler.end-entries() }));
-			}
-			my $run = get_runner($source, $entries);
+			my TAP::Entry::Handler @all_handlers = $state, @handlers;
+			my $run = get_runner($source, @all_handlers);
 			return Async.bless(:name($source.name), :$state, :$run);
 		}
 
@@ -234,15 +230,12 @@ package TAP::Runner {
 		has Str $.name = $!source.name;
 
 		method run(Promise :$bailout) {
-			my $output = Supply.new;
 			my $state = State.new(:$bailout);
-			for $state, @!handlers -> $handler {
-				$output.act({ $handler.handle-entry($^entry) }, :done({ $handler.end-entries() }));
-			}
+			my TAP::Entry::Handler @handlers = $state, @!handlers;
 			my $start-time = now;
 			given $!source {
 				when Source::Proc {
-					my $parser = TAP::Parser.new(:$output);
+					my $parser = TAP::Parser.new(:@handlers);
 					my $proc = run($!source.path, $!source.args, :out, :!chomp);
 					for $proc.out.lines -> $line {
 						$parser.add-data($line);
@@ -251,18 +244,18 @@ package TAP::Runner {
 					return $state.finalize($!name, $proc, now - $start-time);
 				}
 				when Source::Through {
-					$!source.staple($output);
+					$!source.staple(@handlers);
 					$!source.promise.result;
 					return $state.finalize($!name, Proc, now - $start-time);
 				}
 				when Source::File {
-					my $parser = TAP::Parser.new(:$output);
+					my $parser = TAP::Parser.new(:@handlers);
 					$parser.add-data($!source.filename.IO.slurp);
 					$parser.close-data();
 					return $state.finalize($!name, Proc, now - $start-time);
 				}
 				when Source::String {
-					my $parser = TAP::Parser.new(:$output);
+					my $parser = TAP::Parser.new(:@handlers);
 					$parser.add-data($!source.content);
 					$parser.close-data();
 					return $state.finalize($!name, Proc, now - $start-time);

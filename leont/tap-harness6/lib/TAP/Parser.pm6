@@ -112,17 +112,16 @@ package TAP {
 
 	class Parser {
 		has Str $!buffer = '';
-		our subset Output of Any:D where *.can('emit');
-		has Output $!output;
+		has TAP::Entry::Handler @!handlers;
 		has Grammar $!grammar = Grammar.new;
 		has Action $!actions = Action.new;
-		submethod BUILD(Supply:D :$!output) { }
+		submethod BUILD(:@!handlers) { }
 		method add-data(Str $data) {
 			$!buffer ~= $data;
 			while ($!grammar.subparse($!buffer, :$!actions)) -> $match {
 				$!buffer.=substr($match.to);
 				for @($match.made) -> $result {
-					$!output.emit($result);
+					@!handlers».handle-entry($result);
 				}
 			}
 		}
@@ -130,7 +129,7 @@ package TAP {
 			if $!buffer.chars {
 				warn "Unparsed data left at end of stream: $!buffer";
 			}
-			$!output.done();
+			@!handlers».end-entries();
 		}
 	}
 }
