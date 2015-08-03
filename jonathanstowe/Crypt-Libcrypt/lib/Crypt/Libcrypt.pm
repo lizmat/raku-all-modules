@@ -1,6 +1,6 @@
 use v6;
 
-module Crypt::Libcrypt {
+module Crypt::Libcrypt:ver<v0.0.3>:auth<github:jonathanstowe> {
 
 =begin pod
 
@@ -103,3 +103,4 @@ SHA-512
 
     sub crypt(Str , Str  --> Str) is native('libcrypt') is export { * }
 }
+# vim: expandtab shiftwidth=4 ft=perl6
