@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/labster/p6-IO-Path-More.git
 	branch = master
-	commit = bc069bd186d5df39b4623789751e94a8b4450e79
-	parent = bb3779c8646678f99e01c015b42880947dfc291c
-	cmdver = 0.2.1
+	commit = 7fa8da1d5cbae269f2ebc3dcf93bc9e6dbfc6cc9
+	parent = c6ebdeda7a82b7ff10fb876e15936c1db789f267
+	cmdver = 0.2.2
