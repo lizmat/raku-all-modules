@@ -144,7 +144,7 @@ This returns a L<DateTime> that corresponds to C<tv>
 
 =end pod
 
-class Sys::Utmp {
+class Sys::Utmp:ver<v0.0.4>:auth<github:jonathanstowe> {
 
     enum UtmpType is export <EmptyRecord RunLevel BootTime NewTime OldTime InitProcess LoginProcess UserProcess DeadProcess Accounting>;
 
@@ -238,3 +238,4 @@ class Sys::Utmp {
         }
     }
 }
+# vim: expandtab shiftwidth=4 ft=perl6
