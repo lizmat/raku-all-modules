@@ -25,3 +25,4 @@ for $ci.cpus -> $cpu {
 is($ci.num_cpus, $count_cpus, "and we saw as many cpus as we expected");
 
 done();
+# vim: expandtab shiftwidth=4 ft=perl6

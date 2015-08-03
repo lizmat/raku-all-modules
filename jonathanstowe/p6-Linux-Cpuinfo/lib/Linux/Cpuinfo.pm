@@ -43,7 +43,7 @@ in Perl programs.
 
 =end pod
 
-class Linux::Cpuinfo:ver<v0.0.1>:auth<github:jonathanstowe> {
+class Linux::Cpuinfo:ver<v0.0.4>:auth<github:jonathanstowe> {
    has Str $.filename = '/proc/cpuinfo';
    has Linux::Cpuinfo::Cpu @.cpus;
    has Int $.num_cpus;
@@ -109,3 +109,4 @@ class Linux::Cpuinfo:ver<v0.0.1>:auth<github:jonathanstowe> {
       $!num_cpus;
    }
 }
+# vim: expandtab shiftwidth=4 ft=perl6

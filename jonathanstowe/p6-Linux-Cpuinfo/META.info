@@ -6,15 +6,17 @@
   "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
   "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
   "auth" : "github:jonathanstowe",
-  "version" : "v0.0.3",
-  "build-depends" : [ ],
+  "version" : "v0.0.4",
+  "build-depends" : [ 
+	   "panda"
+   ],
   "test-depends" : [
     "Test"
   ],
   "depends" : [ ],
   "provides" : {
-    "Linux::Cpuinfo::Cpu" : "lib/Linux/Cpuinfo/Cpu.pm6",
-    "Linux::Cpuinfo" : "lib/Linux/Cpuinfo.pm6"
+    "Linux::Cpuinfo::Cpu" : "lib/Linux/Cpuinfo/Cpu.pm",
+    "Linux::Cpuinfo" : "lib/Linux/Cpuinfo.pm"
   },
   "support" : {
     "source" : "git://github.com/jonathanstowe/p6-Linux-Cpuinfo.git"
