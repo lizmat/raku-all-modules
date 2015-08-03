@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jdv/p6-data-selector.git
 	branch = master
-	commit = cfdc84685c85087af3fdbb0ecdf7eac1a15d6176
-	parent = 5839654cf60f0480ee4609b03e124353ffb2858f
+	commit = e14530a04d5e7b6152c69bb5973d94e14a0bfcf1
+	parent = 1c356fd858b3fc0c18d146000668eb93151b425c
 	cmdver = 0.2.2

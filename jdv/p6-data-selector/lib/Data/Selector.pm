@@ -412,8 +412,8 @@ Required Args:  selector_tree, data_tree
             my $has_includes;
             for (@selector_tree_keys) {
                 $has_includes = 1
-                if !$has_includes && $_[0].index( '+', ) === 0;
-                if $_[0].index( '+-' ) === 0 || $_[0].index( '--' ) === 0 {
+                if !$has_includes && $_[0].starts-with( '+' );
+                if $_[0].starts-with( '+-' ) || $_[0].starts-with( '--' ) {
                     if $_[0] ~~ /^('+'|'-')('-'\d+)$/ {
                         $_[4] = $_[0];
                         if $1 < 0 && $1 >= -@($data_tree) {
@@ -426,7 +426,7 @@ Required Args:  selector_tree, data_tree
                     }
                 }
 
-                if $data_tree ~~ Array && $_[0].index( '..' ).defined {
+                if $data_tree ~~ Array && $_[0].index( '..' ) {
                     $_[0] ~~ /^['+'|'-']('-'?\d+)\.\.('-'?\d+)$/;
                     my @array_range = +$0, +$1;
                     $_[3]= @array_range.map: {
@@ -465,7 +465,7 @@ Required Args:  selector_tree, data_tree
             for keys %matching_selector_keys_by_data_key -> $data_tree_key {
                 my $matching_selector_keys =
                 %matching_selector_keys_by_data_key{$data_tree_key};
-                if ( index( $matching_selector_keys[*-1], '-', ) === 0 ) {
+                if ( $matching_selector_keys[*-1].starts-with( '-' ) ) {
                     if ( $data_tree ~~ Hash ) {
                         $data_tree{$data_tree_key}:delete;
                     }
