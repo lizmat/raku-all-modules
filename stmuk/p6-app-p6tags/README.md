@@ -34,7 +34,7 @@ files using it.
 
 note linux distros probably ship different versions of ctags(1)
 
-I plan to submit both changes upstream so hopefully these custom steps will go away.
+Note proper perl6 support for universal ctags is in progress by dtikhonov (github)
 
 -- steve.mynott@gmail.com 20150624
 # p6-app-p6tags
