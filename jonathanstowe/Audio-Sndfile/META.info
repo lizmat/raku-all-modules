@@ -10,6 +10,7 @@
   "source-url" : "git://github.com/jonathanstowe/Audio-Sndfile.git",
   "perl" : "v6",
   "build-depends" : [
+      "panda",
 		"LibraryCheck"
   ],
   "provides" : {
@@ -24,5 +25,5 @@
     "Shell::Command"
   ],
   "description" : "Binding for libsndfile - read/write multiple audio formats",
-  "version" : "v0.0.2"
+  "version" : "v0.0.3"
 }
