@@ -4,7 +4,7 @@ use v6;
 use Slang::Tuxic;
 use File::Temp;
 
-my $VERSION = "0.002";
+my $VERSION = "0.003";
 
 my constant $opt_v = %*ENV<PERL6_VERBOSE> // 1;
 
@@ -1483,7 +1483,7 @@ $hook.perl.say;
         #     sub { ... }                      Routine
         #     { ... }                          Callable
         #     Supply.new                       Supply
-        given ($in.WHAT) {
+        given $in {
             when Str {
                 $io-in = open $in, :r, :!chomp;
                 }
@@ -1492,16 +1492,17 @@ $hook.perl.say;
                 }
             when Array {
                 $in.list.elems or return;
-                given ($in.list[0].WHAT) {
-                    when Str {
+                given $in.list[0] {
+                    when Str {  # AoS
                         $io-in = IO::String.new ($in.list.join ($!eol // "\n"));
                         }
-                    default {
+                    default {   # AoA, AoH
                         $fragment ~~ s:i{^ "row=" } = "" and
                             self.rowrange ($fragment);
-                        @in = $!rrange
-                            ?? $in.list[$!rrange.list ($in.list.elems)]
+                        my @i = $in.list[0] ~~ Hash
+                            ?? ([ $in.list[0].keys ], $in.list.map ({[ $_.values ]}))
                             !! $in.list;
+                        @in = $!rrange ?? @i[$!rrange.list (@i.elems)] !! @i;
                         }
                     }
                 }
@@ -1520,11 +1521,24 @@ $hook.perl.say;
                 $in.wait;
                 @in;
                 }
-            when Routine {
+            when Callable { # Sub, Routine, Callable, Block, Code
                 $fragment ~~ s:i{^ "row=" } = "" and self.rowrange ($fragment);
                 my int $i = 0;
+                my @hdr;
                 @in = gather while $in() -> $r {
-                    !$!rrange || $!rrange.in ($i++) and take $r };
+                    if (!$!rrange || $!rrange.in ($i++)) {
+                        if ($r ~~ Hash) {
+                            unless (@hdr.elems) {
+                                @hdr = @!cnames.elems ?? @!cnames !! $r.keys;
+                                take [ @hdr ];
+                                }
+                            take [ $r{@hdr} ];
+                            }
+                        else {
+                            take $r;
+                            }
+                        }
+                    };
                 }
             when Any {
                 $io-in = $*IN;
@@ -1544,7 +1558,7 @@ $hook.perl.say;
         #   $fh         - write to $fh
         #   Supply:D    - emit to Supply
         #   Routine:D   - pass row(s) to Routine
-        given ($out.WHAT) {
+        given $out {
             when Str {
                 ($tmpfn, $io-out) = $out.defined
                     ?? (Str, open $out, :w, :!chomp)
@@ -1563,17 +1577,27 @@ $hook.perl.say;
 
         # Find the correct spots to invoke $on-in and $before-out
 
-        given ($headers) {
+        given $headers {
             when Array {
                 self.column_names ($headers.list);
                 }
             when "auto" {
                 if ($io-in ~~ IO and $io-in.defined) {
-                    self.column_names (self.getline ($io-in, :!meta));
+                    my $hdr = self.getline ($io-in, :!meta);
+                    self.column_names ($hdr.list);
                     }
                 elsif (@in.elems) {
-                    # 1st line is headers, modify rest
-                    self.column_names (@in.shift);
+                    my $hdr = @in.shift;
+                    self.column_names ($hdr.list);
+                    }
+                $io-out.defined and self.say ($io-out, @!cnames);
+                }
+            when "skip" {
+                if ($io-in ~~ IO and $io-in.defined) {
+                    self.getline ($io-in, :!meta);
+                    }
+                elsif (@in.elems) {
+                    @in.shift;
                     }
                 }
             }
@@ -1589,17 +1613,17 @@ $hook.perl.say;
                 my @h = @!cnames.elems ?? @!cnames !! @in.shift.list or return [];
                 @in.elems && @in[0] ~~ Hash and
                     return @in; # Headers already dealt with
-                return @in.map (-> @r { $%( @h Z=> @r ) });
+                return [ @in.map (-> @r { $%( @h Z=> @r ) }) ];
                 }
             return @in;
             }
 
         {   my $eol = self.eol;
             $eol.defined or self.eol ("\r\n");
-            for @in -> @row {
-                $!csv-row.fields = @row[0] ~~ CSV::Field
-                    ?? @row
-                    !! @row.map ({ CSV::Field.new.add ($_.Str); });
+            for @in -> $row {
+                $!csv-row.fields = $row[0] ~~ CSV::Field
+                    ?? $row
+                    !! $row.map ({ CSV::Field.new.add ($_.Str); });
                 $io-out.print (self.string);
                 }
             self.eol ($eol);
@@ -1614,8 +1638,8 @@ $hook.perl.say;
         True;
         }
 
-    method csv ( Any       :$in,
-                 Any       :$out,
+    method csv ( Any       :$in  is copy,
+                 Any       :$out is copy,
                  Any       :$headers,
                  Str       :$key,
                  Str       :$encoding,
@@ -1623,6 +1647,16 @@ $hook.perl.say;
                  Bool      :$meta = $!keep_meta,
                  Text::CSV :$csv  = self || Text::CSV.new,
                  *%args ) {
+
+        # file can be alias for in or for out
+        if (my $file = %args<file> :delete) {
+            if ($in.defined) {
+                $out //= $file;
+                }
+            else {
+                $in    = $file;
+                }
+            }
 
         $csv.CSV (:$in, :$out, :$headers, :$key, :$encoding, :$fragment, :$meta, |%args);
         }
@@ -1632,5 +1666,3 @@ sub csv (*%args) is export {
     %args<meta> //= False;
     Text::CSV.csv (|%args);
     }
-
-1;
