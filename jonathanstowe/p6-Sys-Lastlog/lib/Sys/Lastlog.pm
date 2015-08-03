@@ -147,7 +147,7 @@ record is for.
 
 =end pod
 
-class Sys::Lastlog:ver<v0.0.2>:auth<github:jonathanstowe> {
+class Sys::Lastlog:ver<v0.0.3>:auth<github:jonathanstowe> {
 
     use System::Passwd;
 
@@ -255,3 +255,4 @@ class Sys::Lastlog:ver<v0.0.2>:auth<github:jonathanstowe> {
         p_setllent();
     }
 }
+# vim: expandtab shiftwidth=4 ft=perl6
