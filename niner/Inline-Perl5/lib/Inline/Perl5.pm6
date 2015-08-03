@@ -6,6 +6,7 @@ has Perl5Interpreter $!p5;
 has Bool $!external_p5 = False;
 has &!call_method;
 has &!call_callable;
+has Bool $!scalar_context = False;
 
 my $default_perl5;
 
@@ -179,7 +180,7 @@ sub p5_hv_store(Perl5Interpreter, OpaquePointer, Str, OpaquePointer)
 sub p5_call_function(Perl5Interpreter, Str, int, CArray[OpaquePointer])
     returns OpaquePointer { ... }
     native(&p5_call_function);
-sub p5_call_method(Perl5Interpreter, Str, OpaquePointer, Str, int, CArray[OpaquePointer])
+sub p5_call_method(Perl5Interpreter, Str, OpaquePointer, int32, Str, int, CArray[OpaquePointer])
     returns OpaquePointer { ... }
     native(&p5_call_method);
 sub p5_call_package_method(Perl5Interpreter, Str, Str, int, CArray[OpaquePointer])
@@ -215,13 +216,13 @@ sub p5_eval_pv(Perl5Interpreter, Str, int32)
 sub p5_err_sv(Perl5Interpreter)
     returns OpaquePointer { ... }
     native(&p5_err_sv);
-sub p5_wrap_p6_object(Perl5Interpreter, long, OpaquePointer, &call_method (long, Str, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (long))
+sub p5_wrap_p6_object(Perl5Interpreter, long, OpaquePointer, &call_method (long, Str, int32, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (long))
     returns OpaquePointer { ... }
     native(&p5_wrap_p6_object);
 sub p5_wrap_p6_callable(Perl5Interpreter, long, OpaquePointer, &call (long, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (long))
     returns OpaquePointer { ... }
     native(&p5_wrap_p6_callable);
-sub p5_wrap_p6_handle(Perl5Interpreter, long, OpaquePointer, &call_method (long, Str, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (long))
+sub p5_wrap_p6_handle(Perl5Interpreter, long, OpaquePointer, &call_method (long, Str, int32, OpaquePointer, OpaquePointer --> OpaquePointer), &free_p6_object (long))
     returns OpaquePointer { ... }
     native(&p5_wrap_p6_handle);
 sub p5_is_wrapped_p6_object(Perl5Interpreter, OpaquePointer)
@@ -478,10 +479,10 @@ multi method invoke(Str $package, Str $function, *@args, *%args) {
 }
 
 multi method invoke(OpaquePointer $obj, Str $function, *@args) {
-    self.invoke(Str, $obj, $function, |@args);
+    self.invoke(Str, $obj, False, $function, |@args);
 }
 
-multi method invoke(Str $package, OpaquePointer $obj, Str $function, *@args) {
+multi method invoke(Str $package, OpaquePointer $obj, Bool $context, Str $function, *@args) {
     my $len = @args.elems;
     my @svs := CArray[OpaquePointer].new();
     my Int $j = 0;
@@ -495,7 +496,7 @@ multi method invoke(Str $package, OpaquePointer $obj, Str $function, *@args) {
             @svs[$j++] = self.p6_to_p5(@args[$i]);
         }
     }
-    my $av = p5_call_method($!p5, $package, $obj, $function, $j, @svs);
+    my $av = p5_call_method($!p5, $package, $obj, $context ?? 1 !! 0, $function, $j, @svs);
     self.handle_p5_exception();
     self!unpack_return_values($av);
 }
@@ -509,7 +510,8 @@ method execute(OpaquePointer $code_ref, *@args) {
 class Perl6Callbacks {
     has $.p5;
     method create($package, $code) {
-        EVAL "class GLOBAL::$package \{\n$code\n\}";
+        my $p5 = $.p5;
+        EVAL "class GLOBAL::$package does Perl5Parent['$package', \$p5] \{\n$code\n\}";
         return;
     }
     method run($code) {
@@ -519,7 +521,11 @@ class Perl6Callbacks {
         return &::($name)(|@args);
     }
     method invoke(Str $package, Str $name, @args) {
-        return ::($package)."$name"(|@args);
+        my %named = classify * ~~ Pair, @args;
+        return ::($package)."$name"(|%named<False>, |%(%named<True>));
+    }
+    method create_pair(Any $key, Mu $value) {
+        return $key => $value;
     }
 }
 
@@ -613,6 +619,29 @@ method init_callbacks {
             return $p6->invoke($class, $name, \@args);
         }
 
+        sub named(@) {
+            die "Only named arguments allowed after v6::named" if @_ % 2 != 0;
+            my @args;
+            while (@_) {
+                push @args, $p6->create_pair(shift @_, shift @_);
+            }
+            return @args;
+        }
+
+        sub extend {
+            my ($class, $self, $positional, $named) = @_;
+
+            $positional //= [];
+            $named //= {};
+            my $p6 = v6::invoke($class, 'new', @$positional, v6::named %$named, parent => $self);
+            bless $self, "Perl6::Object::$class"; # Explodes if we bless $p6 here!
+            {
+                no strict 'refs';
+                @{"Perl6::Object::${class}::ISA"} = ($class, @{"${class}::ISA"});
+            }
+            return $p6;
+        }
+
         sub import {
             $package = scalar caller;
         }
@@ -635,6 +664,7 @@ method init_callbacks {
 }
 
 method sv_refcnt_dec($obj) {
+    return unless $!p5; # Destructor may already have run. Destructors of individual P5 objects no longer work.
     p5_sv_refcnt_dec($!p5, $obj);
 }
 
@@ -664,20 +694,34 @@ role Perl5Package[Inline::Perl5 $p5, Str $module] {
 
     multi method FALLBACK($name, *@args) {
         return self.defined
-            ?? $p5.invoke($module, $!parent.ptr, $name, self, |@args)
+            ?? $p5.invoke($module, $!parent.ptr, False, $name, self, |@args)
             !! $p5.invoke($module, $name, |@args);
     }
 
     for Any.^methods>>.name.list, <say> -> $name {
+        next if $?CLASS.^declares_method($name);
+        my $method = method (|args) {
+            return self.defined
+                ?? $p5.invoke($module, $!parent.ptr, $name, self, args.list, args.hash)
+                !! $p5.invoke($module, $name, args.list, args.hash);
+        };
+        $method.set_name($name);
         $?CLASS.^add_method(
             $name,
-            method (|args) {
-                return self.defined
-                    ?? $p5.invoke($module, $!parent.ptr, $name, self, args.list, args.hash)
-                    !! $p5.invoke($module, $name, args.list, args.hash);
-            }
+            $method,
         );
     }
+}
+
+method subs_in_module(Str $module) {
+    return self.run('[ grep { *{"' ~ $module ~ '::$_"}{CODE} } keys %' ~ $module ~ ':: ]');
+}
+
+method import (Str $module, *@args) {
+    my $before = set self.subs_in_module('main').list;
+    self.invoke($module, 'import', @args.list);
+    my $after = set self.subs_in_module('main').list;
+    return ($after ∖ $before).list;
 }
 
 my $loaded_modules = SetHash.new;
@@ -694,25 +738,51 @@ method require(Str $module, Num $version?) {
     return if $loaded_modules{$module};
     $loaded_modules{$module} = True;
 
-    my $p5 = self;
-    EVAL "class GLOBAL::$module does Perl5Package[\$p5, \$module] \{ \}";
+    my $p5 := self;
 
-    ::($module).WHO<EXPORT> := Metamodel::PackageHOW.new();
-    ::($module).WHO<&EXPORT> := sub EXPORT(*@args) {
-        self.invoke($module, 'import', @args.list);
-        return EnumMap.new();
-    };
-    my $symbols = self.run('[ grep { *{"' ~ $module ~ '::$_"}{CODE} } keys %' ~ $module ~ ':: ]');
+    my $class := Metamodel::ClassHOW.new_type( name => $module );
+    $class.^add_role(Perl5Package[$p5, $module]);
+    my $symbols = self.subs_in_module($module);
+
+    # install methods
+    for @$symbols -> $name {
+        my $method = my method (*@args) {
+            self.FALLBACK($name, @args.list);
+        }
+        $method.set_name($name);
+        $class.^add_method($name, $method);
+    }
+
+    $class.^compose;
+
+    # register the new class by its name
+    my @parts = $module.split('::');
+    my $inner = @parts.pop;
+    my $ns = ::GLOBAL.WHO;
+    $ns = ($ns{$_} := Metamodel::PackageHOW.new_type(name => $_)).WHO for @parts;
+    $ns{$inner} := $class;
+
+    # install subs like Test::More::ok
     for @$symbols -> $name {
         ::($module).WHO{"&$name"} := sub (*@args) {
             self.call("{$module}::$name", @args.list);
         }
     }
+
+    ::($module).WHO<EXPORT> := Metamodel::PackageHOW.new();
+    ::($module).WHO<&EXPORT> := sub EXPORT(*@args) {
+        return EnumMap.new(self.import($module, @args.list).map({
+            my $name = $_;
+            '&' ~ $name => sub (*@args, *%args) {
+                self.call("{$module}::$name", @args.list, %args.list);
+            }
+        }));
+    };
 }
 
 method use(Str $module, *@args) {
     self.require($module);
-    self.invoke($module, 'import', @args.list);
+    self.import($module, @args.list);
 }
 
 submethod DESTROY {
@@ -755,12 +825,22 @@ method default_perl5 {
     return $default_perl5 //= self.new();
 }
 
+method retrieve_scalar_context() {
+    my $scalar_context = $!scalar_context;
+    $!scalar_context = False;
+    return $scalar_context;
+}
+
+role Perl5Caller {
+}
+
 method BUILD(*%args) {
     $!external_p5 = %args<p5>:exists;
     $!p5 = $!external_p5 ?? %args<p5> !! p5_init_perl();
 
-    &!call_method = sub (Int $index, Str $name, OpaquePointer $args, OpaquePointer $err) returns OpaquePointer {
+    &!call_method = sub (Int $index, Str $name, Int $context, OpaquePointer $args, OpaquePointer $err) returns OpaquePointer {
         my $p6obj = $objects.get($index);
+        $!scalar_context = ?$context;
         my @retvals = $p6obj."$name"(|self.p5_array_to_p6_array($args));
         return self.p6_to_p5(@retvals);
         CATCH {
@@ -770,6 +850,7 @@ method BUILD(*%args) {
             }
         }
     }
+    &!call_method does Perl5Caller;
 
     &!call_callable = sub (Int $index, OpaquePointer $args, OpaquePointer $err) returns OpaquePointer {
         my $callable = $objects.get($index);
@@ -788,18 +869,28 @@ method BUILD(*%args) {
     $default_perl5 //= self;
 }
 
-role Perl5Parent[$package] {
+role Perl5Parent[Str:D $package, Inline::Perl5:D $perl5] {
     has $.parent;
 
-    submethod BUILD(:$perl5, :$parent?, *@args, *%args) {
+    method new(:$parent?, *@args, *%args) {
+        self.CREATE.initialize-perl5-object($parent, @args, %args).BUILDALL(@args, %args);
+    }
+
+    method initialize-perl5-object($parent, @args, %args) {
         $!parent = $parent // $perl5.invoke($package, 'new', |@args, |%args.kv);
         $perl5.rebless($!parent);
+        return self;
     }
 
     ::?CLASS.HOW.add_fallback(::?CLASS, -> $, $ { True },
         method ($name) {
             -> \self, |args {
-                $.parent.perl5.invoke($package, $.parent.ptr, $name, self, args.list, args.hash);
+                my $scalar = (
+                    # nqp workaround for broken $?CALLER::ROUTINE
+                    nqp::getcodeobj(nqp::ctxcode(nqp::ctxcaller(nqp::ctx))) ~~ Perl5Caller
+                    and $.parent.perl5.retrieve_scalar_context
+                );
+                $.parent.perl5.invoke($package, $.parent.ptr, $scalar, $name, self, args.list, args.hash);
             }
         }
     );
