@@ -1,0 +1,10 @@
+{
+	"name"        : "File::Which",
+	"version"     : "*",
+	"description" : "Perl 6 implementation of the which utility as an API",
+	"depends"     : [],
+	"provides"    : {
+		"File::Which" : "lib/File/Which.pm6"
+	},
+	"source-url"  : "git://github.com/azawawi/perl6-file-which.git"
+}
