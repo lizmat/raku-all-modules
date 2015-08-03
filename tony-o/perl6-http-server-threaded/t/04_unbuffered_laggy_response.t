@@ -23,7 +23,7 @@ start {
   });
 
   my $client = req;
-  $client.send("GET / HTTP/1.0\r\n\r\n");
+  $client.print("GET / HTTP/1.0\r\n\r\n");
   my $flag = 0;
   while (my $str = $client.recv) {
     if $str.match(/ 'chunk 1' /) {

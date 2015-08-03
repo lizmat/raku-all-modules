@@ -18,9 +18,9 @@ $s.handler(sub ($request, $response) {
 start {
   sleep 1;
   my $client = req;
-  $client.send("GET / HTTP/1.0\r\n");
+  $client.print("GET / HTTP/1.0\r\n");
   sleep 10;
-  $client.send("\r\n");
+  $client.print("\r\n");
   my $data;
   while (my $str = $client.recv) {
     $data ~= $str;

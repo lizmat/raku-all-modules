@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-http-server-threaded.git
 	branch = master
-	commit = af2737761ec2b23eaed9fdd1a016196438350228
-	parent = 614d44a57c5aef156fe546e0cb7630b584b092a3
-	cmdver = 0.2.1
+	commit = 70ba3801688810bb45c1c849de059010fcdd74f8
+	parent = 37ef26b67a6072fc51440752abdab2cfb073cb8f
+	cmdver = 0.2.2

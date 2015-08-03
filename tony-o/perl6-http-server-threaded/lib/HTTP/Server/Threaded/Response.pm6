@@ -14,8 +14,8 @@ class HTTP::Server::Threaded::Response does HTTP::Response {
       my @pairs = %.headers.keys.map({ 
         "$_: {$.headers{$_}}"
       });
-      await $.connection.send("HTTP/1.1 $.status {%!statuscodes{$.status}}\r\n");
-      await $.connection.send(@pairs.join("\r\n") ~ "\r\n\r\n");
+      await $.connection.print("HTTP/1.1 $.status {%!statuscodes{$.status}}\r\n");
+      await $.connection.print(@pairs.join("\r\n") ~ "\r\n\r\n");
     };
   }
 
