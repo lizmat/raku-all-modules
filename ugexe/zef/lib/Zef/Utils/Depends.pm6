@@ -1,3 +1,4 @@
+# todo: refactor/move to Zef::Roles::
 class Zef::Utils::Depends {
     has @.projects;
 
@@ -20,16 +21,18 @@ class Zef::Utils::Depends {
 
     # Modified from:
     # http://rosettacode.org/wiki/Topological_sort/Extracted_top_item#Perl_6
-    method topological-sort ( *@wanted ) {
-        my @top  = @wanted.flatmap({ $_.<name> });
-
+    method topological-sort ( *@wanted, *%fields) {
+        %fields<depends> = True unless %fields.keys;
+        my @top = @wanted.flatmap({ $_.<name> });
         my %deps;
 
         # Handle where provides has 2+ package names mapped to the same path
         # todo: don't do the unique call on every iteration
         for @!projects -> $meta {
-            %deps{$meta.<name>} .= push($_) for $meta.<depends>.list;
-            %deps{$meta.<name>} = [%deps{$meta.<name>}.list.grep(*.so).unique];
+            for %fields.kv -> $k, $v {
+                %deps{$meta.<name>} .= push($_) for $meta.{$k}.list;
+                %deps{$meta.<name>} = [%deps{$meta.<name>}.list.grep(*.so).unique];
+            }
         }
 
         my %ba;
@@ -82,7 +85,7 @@ class Zef::Utils::Depends {
     # Creates a build order from a list of meta files
     method build-dep-tree(@xmetas = @!projects, :$target) {
         my @depends = $target // @xmetas // @!projects;
-        my @tree = eager gather while @depends.shift -> %meta {
+        my @tree = gather while @depends.shift -> %meta {
             state %marked;
             unless %marked.{%meta.<name>} {
                 my @required = @xmetas.grep({ $_.<name> ~~ any(%meta<depends>.list) });
@@ -120,8 +123,8 @@ class Zef::Utils::Depends {
         my $slash    = / [ \/ | '\\' ]  /;
         my $not-deps = any(<v6 MONKEY-TYPING MONKEY_TYPING strict fatal nqp NativeCall cur lib Test>);
 
-        my @minimeta = eager gather for @pm-files -> $f is copy {
-            my @depends = gather for $f.IO.slurp.lines -> $line is copy {
+        my @minimeta = gather for @pm-files -> $f is copy {
+            my @depends = $f.IO.slurp.lines.map(-> $line {
                 state Int $pod-block;
                 my $code-only = do given $line {
                     # remove pod
@@ -129,7 +132,6 @@ class Zef::Utils::Depends {
                     $pod-block++ and next when /^^ \s* '=' 'begin' [\s || $$]/;
                     next when /^^ \s* '=' \w/;
                     next if $pod-block;
-
 
                     # remove comments (broken; too naive)
                     # but keep non-commented part of line
@@ -142,20 +144,15 @@ class Zef::Utils::Depends {
 
                 # Only bother parsing if the line has enough chars for a `use *`
                 next unless $code-only.chars > 5;
-
                 my $dep-parser = Grammar::Dependency::Parser.parse($code-only);
-                for $dep-parser.<load-statement>.list -> $dep {
-                    next if $dep.<short-name>.Str ~~ any($not-deps);
-                    take $dep.<short-name>.Str;
-                }
-            }
-  
+                $dep-parser.<load-statement>.list\
+                    .grep({ $_.<short-name>.Str ~~ none($not-deps) })\
+                    .map({ $_.<short-name>.Str });
+            });
+
             my $file-path = $f.IO.path;
-            take {
-                path         => $file-path,
-                name         => $file-path,
-                depends      => @depends,
-            }
+
+            take { path => $file-path, name => $file-path, depends => @depends }
         }
 
         return @minimeta;
@@ -170,7 +167,7 @@ class Zef::Utils::Depends {
         my @pm6-files := @paths.grep(*.IO.f).grep({ $_.IO.basename ~~ / \.pm6? $/ });
 
         # Try to parse exceptions for missing dependencies
-        my @missing = eager gather for @pm6-files -> $source {
+        my @missing = gather for @pm6-files -> $source {
             try {
                 my $*LINEPOSCACHE;            
                 Perl6::Grammar.parse($source.IO.slurp, :actions(Perl6::Actions.new()));

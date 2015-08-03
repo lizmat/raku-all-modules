@@ -4,6 +4,7 @@ class Zef::Process {
     has $.command  is rw;
     has @.args     is rw;
     has $.cwd      is rw;
+    has %.env      is rw;
     has $.stdout;
     has $.stderr;
     has $.stdmerge;
@@ -17,12 +18,12 @@ class Zef::Process {
     has $.started;
     has $.finished;
 
-    submethod BUILD(:$!command, :@!args, :$!cwd, Bool :$!async, :$!id) {
+    submethod BUILD(:$!command = $*EXECUTABLE, :@!args, :$!cwd = $*CWD, :%!env = %*ENV.hash, Bool :$!async, :$!id) {
         $!can-async = !::("Proc::Async").isa(Failure);
         $!stdout = Supply.new;
         $!stderr = Supply.new;
-        $!type   = $!async && $!can-async ?? ::("Proc::Async") !! ::("Proc");
-        $!id     = $!id 
+        $!type   := $!async && $!can-async ?? ::("Proc::Async") !! ::("Proc");
+        $!id      = $!id 
             ?? $!id 
             !! @!args 
                 ?? @!args[*-1].item.IO.basename 
@@ -40,36 +41,28 @@ class Zef::Process {
             if $!async && !$!can-async;
 
         if $!async {
-            $!process = Proc::Async.new($*EXECUTABLE, @!args);
+            $!process := Proc::Async.new($!command, @!args);
             $!process.stdout.act: { $!stdout.emit($_); $!stdmerge ~= $_ }
             $!process.stderr.act: { $!stderr.emit($_); $!stdmerge ~= $_ }
+            $!process.stdout.emit("{$!command.IO.basename} {@!args.join(' ')}\n");
 
-            my $cmd = "{$*EXECUTABLE} {@!args.join(' ')}";
-            my $show-cmd = "{$*EXECUTABLE.basename} {@!args.join(' ')}";
-
-            $!process.stdout.emit($show-cmd);
-
+            $!promise  := $!process.start(:$!cwd, ENV => %!env);
             $!started  := $!process.started;
-            $!promise   = $!process.start(:$!cwd);
             $!finished := $!promise.Bool;
-
-            $!promise;
         }
         else {
-            my $cmd = "{$*EXECUTABLE} {@!args.join(' ')}";
-            my $show-cmd = "{$*EXECUTABLE.basename} {@!args.join(' ')}";
-
-            $!process = shell("$cmd 2>&1", :out, :$!cwd, :!chomp);
-
-            $!promise = Promise.new;
+            $!process := shell("{$!command} {@!args.join(' ')} 2>&1", :out, :$!cwd, :%!env, :!chomp);
+            $!promise := Promise.new;
             $!stdout.act: { $!stdmerge ~= $_ }
-            $!stdout.emit($show-cmd);
+            $!stderr.act: { $!stdmerge ~= $_ }
 
-            $!started = True;
-            $!stdout.emit($_) for $!process.out.lines;
-            $!finished = ?$!promise.keep($!process.status);
+            $!stdout.emit("{$!command.IO.basename} {@!args.join(' ')}\n");
 
-            $!stdout.close; $!stderr.close; $!process.out.close; 
+            $!started   = True;
+            $!stdout.emit($_) for $!process.out.lines(:!eager, :close);
+            $!stdout.done; $!stderr.done;
+            $!process.out.close; $!stderr.close;
+            $!finished := ?$!promise.keep($!process.status);
         }
 
         $!promise;
@@ -77,15 +70,22 @@ class Zef::Process {
 
     method status { $!process.status }
     method ok     { 
+        return False unless $!process.DEFINITE;
+        return $.exitcode == 0 ?? True !! False 
+    }
+
+    method exitcode { 
         return unless $!process.DEFINITE;
 
         if $!promise.^find_method('result').DEFINITE 
             && $!promise.result.^find_method('exitcode').DEFINITE {
-            return $!promise.result.exitcode == 0 ?? True !! False 
+            return $!promise.result.exitcode;
         }
         else {
-            return $!process.exitcode == 0 ?? True !! False 
+            return $!process.exitcode;
         }
     }
+
+
     method nok { ?$.ok() ?? False !! True }
 }

@@ -28,7 +28,7 @@ class Zef::Net::HTTP::Transport does HTTP::RoundTrip {
     has HTTP::Response $.responder;
 
     submethod BUILD(HTTP::Dialer :$!dialer, HTTP::Response :$!responder) {
-        $!dialer = Zef::Net::HTTP::Dialer.new unless $!dialer;
+        $!dialer := Zef::Net::HTTP::Dialer.new unless $!dialer;
     }
 
     # A HTTP::RoundTrip that returns an HTTP::Response once the header 
@@ -37,30 +37,32 @@ class Zef::Net::HTTP::Transport does HTTP::RoundTrip {
     method round-trip(HTTP::Request $req --> HTTP::Response) {
         fail "HTTP Scheme not supported: {$req.uri.scheme}" 
             unless $req.uri.scheme ~~ any(<http https>);
+
         my $t = $req.DUMP(:start-line);
-        $t ~= $req.DUMP(:headers);
-        my $socket = $!dialer.dial($req.?proxy ?? $req.proxy.uri !! $req.uri);
+        $t   ~= $req.DUMP(:headers);
+
+        my $socket := $!dialer.dial($req.?proxy ?? $req.proxy.uri !! $req.uri);
         $socket does ByteStream;;
-        $socket.send: $req.DUMP(:start-line);
-        $socket.send: $req.DUMP(:headers);
+        $socket.print: $req.DUMP(:start-line);
+        $socket.print: $req.DUMP(:headers);
 
         given $req.body {
             when *.not { #`<no body in request; skip this> }
 
             when Buf { $socket.write($_) }
-            when Str { $socket.send($_)  }
+            when Str { $socket.print($_)  }
 
             default {
                 die "{::?CLASS} doesn't know how to handle :\$body of this type: {$_.perl}";
             }
         }
 
-        $socket.send: $req.DUMP(:trailers);
+        $socket.print: $req.DUMP(:trailers);
 
         # ?: should we allow cancelation of the receiving socket (not including
         # timeout related canceling) before it has finished reading the header?
         my $header;
-        while my $h = $socket.recv(1, :bin) {
+        while my $h := $socket.recv(1, :bin) {
             $header ~= $h.decode('ascii');
             last if $header.substr(*-4) eq "\r\n\r\n";
         }
@@ -69,7 +71,7 @@ class Zef::Net::HTTP::Transport does HTTP::RoundTrip {
         # non-blocking fashion. This means we can return the HTTP::Request 
         # back to the user to process the headers and possibly close the connection
         # before all of $body has been received.
-        my $body = $socket.async-recv(:bin);
+        my $body := $socket.async-recv(:bin);
 
         # my $trailer = $socket.async-recv(:bin);
 

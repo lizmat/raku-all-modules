@@ -3,6 +3,7 @@ use Zef::Net::HTTP::Client;
 use Zef::Utils::Depends;
 use Zef::Utils::Git;
 
+our @skip = <Test MONKEY-TYPING MONKEY_TYPING nqp v6>;
 
 # perl6 community ecosystem + test reporting
 class Zef::Authority::P6C does Zef::Authority::Net {
@@ -11,9 +12,11 @@ class Zef::Authority::P6C does Zef::Authority::Net {
     has @!mirrors = <http://ecosystem-api.p6c.org/projects.json>;
 
     method update-projects {
-        my $response = $!ua.get: ~@!mirrors.pick(1);
-        my $content  = $response.content;
-        @!projects = @(from-json($content)).grep({ ?$_.<name> });
+        my $response := $!ua.get: ~@!mirrors.pick(1);
+        my $content  := $response.content or fail "!!!> Failed to update projects file";
+        my $json     := from-json($content);
+        @!projects    = try { $json.list }\
+            or fail "!!!> Missing or invalid projects json";
     }
 
     # Use the p6c hosted projects.json to get a list of name => git-repo that 
@@ -24,31 +27,39 @@ class Zef::Authority::P6C does Zef::Authority::Net {
         :@ignore,
         :$save-to is copy,
         Bool :$depends,
+        Bool :$test-depends,
+        Bool :$build-depends,
         Bool :$fetch = True,
     ) {
-        self.update-projects if :$fetch && !@!projects.elems;
-        my @wants-dists = @!projects\
-            .grep({ $_.<name> ~~ any(@wants) })\
-            .grep({ any($_.<depends>.list) ~~ none(@ignore) });
-        return () unless @wants-dists;
+        self.update-projects if $fetch && !@!projects.elems;
+        my @wants-dists := @!projects.grep({ $_.<name> ~~ any(@wants) });
+
+        my @wants-dists-filtered = !@ignore ?? @wants-dists !! @wants-dists.grep({
+               (!$depends       || any($_.<depends>.list)       ~~ none(@ignore))
+            && (!$test-depends  || any($_.<build-depends>.list) ~~ none(@ignore))
+            && (!$build-depends || any($_.<test-depends>.list)  ~~ none(@ignore))
+        });
+
+        return () unless @wants-dists-filtered;
 
         # Determine the distribution dependencies we want/need
-        my @levels = $depends
-            ?? Zef::Utils::Depends.new(:@!projects).topological-sort(@wants-dists)
-            !! @wants-dists.map({ $_.hash.<name> });
+        my @levels := $depends
+            ?? Zef::Utils::Depends.new(:@!projects).topological-sort( @wants-dists-filtered, 
+                :$depends, :$build-depends, :$test-depends)
+            !! @wants-dists-filtered.map({ $_.hash.<name> });
 
         # Try to fetch each distribution dependency
-        my @results = eager gather for @levels -> $level {
+        eager gather for @levels -> $level {
             for $level.list -> $package-name {
+                next if $package-name ~~ any(@skip);
                 # todo: filter projects by version/auth
-                my %dist = @!projects.first({ $_.<name> eq $package-name }).hash;
-                say "No source-url for $package-name (META info lost?)" and next unless ?%dist.<source-url>;
-                say "Getting: {%dist.<source-url>}";
+                my %dist := @!projects.first({ $_.<name> eq $package-name }).hash;
+                say "!!!> No source-url for $package-name (META info lost?)" and next unless ?%dist<source-url>;
 
                 # todo: implement the rest of however github.com transliterates paths
-                my $basename   = %dist.<name>.trans(':' => '-');
+                my $basename  := %dist<name>.trans(':' => '-');
                 temp $save-to  = $save-to.IO.child($basename);
-                my @git        = $!git.clone(:$save-to, %dist.<source-url>);
+                my @git       := $!git.clone(:$save-to, %dist<source-url>);
 
                 take {
                     module => %dist.<name>, 
@@ -57,19 +68,17 @@ class Zef::Authority::P6C does Zef::Authority::Net {
                 }
             }
         }
-
-        return @results;
     }
 
-
+    # todo: refactor into Zef::Roles::
     method report(*@metas, :@test-results, :@build-results) {
-        my @meta-reports = eager gather for @metas -> $meta-path {
-            my $meta-json = from-json($meta-path.IO.slurp);
-            my %meta      = %($meta-json);
-            my $repo-path = $meta-path.IO.parent;
+        eager gather for @metas -> $meta-path {
+            my $meta-json := from-json($meta-path.IO.slurp);
+            my %meta      := %($meta-json);
+            my $repo-path := $meta-path.IO.parent;
 
-            my $test  = @test-results.first({ $_.path.IO.ACCEPTS($repo-path.IO) });
-            my $build = @build-results.first({ $_.path.IO.ACCEPTS($repo-path.IO) });
+            my $test  := @test-results.first({ $_.path.IO.ACCEPTS($repo-path.IO) });
+            my $build := @build-results.first({ $_.path.IO.ACCEPTS($repo-path.IO) });
 
             my $build-output = $build.processes>>.list\
                 >>.grep(*.stdmerge.so)\
@@ -81,7 +90,7 @@ class Zef::Authority::P6C does Zef::Authority::Net {
                 >>.join("\n");
 
             # See Panda::Reporter
-            %meta<report> = to-json {
+            my $report := to-json {
                 :name(%meta<name>),
                 :version(%meta<ver> // %meta<version> // '*'),
                 :dependencies(%meta<depends>),
@@ -129,22 +138,18 @@ class Zef::Authority::P6C does Zef::Authority::Net {
                     :prefix($*VM.prefix.Str),
                 }),
             }
-            take { %meta }
 
-        }
-
-        my @submissions = eager gather for @meta-reports.grep({ $_.<report>.so }) -> $m {
             my $report-id = try {
                 CATCH { default { print "===> Error while POSTing: $_" }}
-                my $response  = $!ua.post("http://testers.perl6.org/report", body => $m<report>);
-                my $body      = $response.content;
+                my $response := $!ua.post("http://testers.perl6.org/report", body => $report);
+                my $body     := $response.content;
                 ?$body.match(/^\d+$/) ?? $body.match(/^\d+$/).Str !! 0;
             }
 
             take {
                 ok     => ?$report-id, 
-                module => $m.<name>, 
-                report => $m.<report>,
+                module => %meta<name>, 
+                report => $report,
                 id     => $report-id // '',
             }
         }

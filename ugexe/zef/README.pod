@@ -8,6 +8,17 @@ Zef - Perl6 Module Management
 
 =for HTML <a href="https://travis-ci.org/ugexe/zef"><img src="https://travis-ci.org/ugexe/zef.svg?branch=master"></a>
 
+=head1 INSTALLATION
+
+    git clone https://github.com/ugexe/zef.git
+    cd zef
+    perl6 -Ilib bin/zef -v install Zef
+
+Be sure your `PATH` includes the file path shown by the command below:
+
+    $ perl6 -e "say %*CUSTOM_LIB<site>.IO.child('bin').Str"
+    # example: /home/perl6/install/share/perl6/site/bin
+    
 =head1 USAGE
 
 =head1 The CLI
@@ -24,11 +35,23 @@ Zef - Perl6 Module Management
     # search for module names matching `CSV::Parser`
     zef -v search CSV::Parser
 
+    # META information about `CSV::Parser`
+    zef -v info CSV::Parser
+
     # build project in current directory
     zef -v build
 
     # test project in current directory    
     zef -v test
+
+    # fetch a specific module only
+    zef -v get CSV::Parser
+
+    # fetch a specific module, and shell into the directory it is saved to
+    zef -v look CSV::Parser
+
+    # build/test/install all modules in the ecosystem
+    zef -v smoke
 
 =head2 More CLI
 
@@ -45,11 +68,19 @@ Fetch, build, test, optional report, and install.
     # parallel testing and precompilation
     --async
 
+    # cut off lines that reach (our guess at) the term width in columns
+    --no-wrap
+
     # no status bar or other CLI eye candy
     --boring
 
     # do everything except the actually install
     --dry
+
+    # include library paths to the spawned processes
+    # zef -v -lib=lib-old --lib=blib-old/lib build
+    #  -> perl6 -Ilib-old -Iblib-old/lib <compiler/test commands>
+    --lib
 
     # run the tests in a random order instead of sorted
     --shuffle
@@ -62,7 +93,7 @@ Fetch, build, test, optional report, and install.
     
 B<Example>: (note parallelized output format will be improved)
     
-    $ perl6 -Ilib bin/zef -v install CSV::Parser P6TCI
+    $ zef -v install CSV::Parser P6TCI
     ===> Querying Authority [done]
     ===> Fetching [done]
     ===> Fetching OK for: CSV::Parser P6TCI
@@ -73,19 +104,19 @@ B<Example>: (note parallelized output format will be improved)
     P6TCI.pm6 # perl6 -I/tmp/P6TCI/blib/lib -I/tmp/P6TCI/lib -I/tmp/P6TCI/lib --target=mbc --output=/tmp/P6TCI/blib/lib/P6TCI.pm6.moarvm lib/P6TCI.pm6
     ===> Building [done]
     ===> Build OK for: lib/CSV/Parser.pm lib/P6TCI.pm6
-    01_multiline_csv.t  # perl6 --ll-exception -I/tmp/CSV--Parser/blib -I/tmp/CSV--Parser/lib -I/tmp/P6TCI/blib -I/tmp/P6TCI/lib t/01_multiline_csv.t
+    01_multiline_csv.t  # perl6 --ll-exception -Iblib/lib -Ilib t/01_multiline_csv.t
     01_multiline_csv.t  # 1..1
     01_multiline_csv.t  # ok 1 -
-    02_escaped_csv.t    # perl6 --ll-exception -I/tmp/CSV--Parser/blib -I/tmp/CSV--Parser/lib -I/tmp/P6TCI/blib -I/tmp/P6TCI/lib t/02_escaped_csv.t
+    02_escaped_csv.t    # perl6 --ll-exception -Iblib/lib  -Ilib t/02_escaped_csv.t
     02_escaped_csv.t    # 1..1
     02_escaped_csv.t    # ok 1 -
-    03_delimiters_csv.t # perl6 --ll-exception -I/tmp/CSV--Parser/blib -I/tmp/CSV--Parser/lib -I/tmp/P6TCI/blib -I/tmp/P6TCI/lib t/03_delimiters_csv.t
+    03_delimiters_csv.t # perl6 --ll-exception -Iblib/lib -Ilib t/03_delimiters_csv.t
     03_delimiters_csv.t # 1..1
     03_delimiters_csv.t # ok 1 -
-    04_binary_csv.t     # perl6 --ll-exception -I/tmp/CSV--Parser/blib -I/tmp/CSV--Parser/lib -I/tmp/P6TCI/blib -I/tmp/P6TCI/lib t/04_binary_csv.t
+    04_binary_csv.t     # perl6 --ll-exception -Iblib/lib -Ilib t/04_binary_csv.t
     04_binary_csv.t     # 1..1
     04_binary_csv.t     # ok 1 -
-    00-load.t           # perl6 --ll-exception -I/tmp/CSV--Parser/blib -I/tmp/CSV--Parser/lib -I/tmp/P6TCI/blib -I/tmp/P6TCI/lib t/00-load.t
+    00-load.t           # perl6 --ll-exception -Iblib/lib -Ilib t/00-load.t
     00-load.t           # ok 1 - Module loaded.
     00-load.t           # 1..1
     ===> Testing [done]
@@ -98,7 +129,7 @@ B<Example>: (note parallelized output format will be improved)
 
 Tests every module in the ecosystem, ignoring any modules with a name (or dependency name) matching argument C<*@ignores>
 
-    snoop@cali:~/ perl6 -Ilib bin/zef -v --report smoke
+    snoop@cali:~/ zef -v --report smoke
 
     # skip modules with matching names (or any modules depending on them)
     --ignore=Acme::Virus --ignore=Acme::TakesForever
@@ -137,7 +168,7 @@ Note: C<*> behaves slightly differently for C<--version>
 
 B<Example>:
 
-    $ perl6 -Ilib bin/zef -v search HTTP*
+    $ zef -v search HTTP*
     ===> Querying Server [done]
     ===> Filtering Results [done]
     ===> Found 13 results
@@ -173,7 +204,7 @@ Given C<*@modules> it will list a formatted version of each's C<META.info> data.
 
 B<Example>:
 
-    $ perl6 -Ilib bin/zef -v info HTTP::UserAgent
+    $ zef -v info HTTP::UserAgent
     ===> Querying Server [done]
     ===> Filtering Results [done]
     ===> Found 1 results
@@ -210,6 +241,92 @@ B<Example>:
     #   0.6) URI
     #   1.0) File::Temp
     #   2.0) HTTP::UserAgent
+
+=head1 DEVELOPMENT
+
+=head2 Zef::Distribution
+
+The base project class containing path and META information.
+
+    my $dist = Zef::Distribution.new(:path($*CWD));
+
+=head2 Zef::Roles::Hooking
+
+Methods to execute the hooks located in C<hooks/>. Hooks are chosen based on matching the phase and modifier.
+
+    # Phases available to hook: `enum Phase <BUILD TEST INSTALL>`
+
+    my $dist = Zef::Distribution.new(:path($*CWD));
+    $dist does Zef::Roles::Processing;
+    $dist does Zef::Roles::Precompiling;
+    $dist does Zef::Roles::Installing;
+    $dist does Zef::Roles::Hooking;
+
+    # build + hooks
+    $dist.queue-processes: [$dist.hook-cmds(BUILD, :before)];
+    $dist.queue-processes($_) for $dist.precomp-cmds;
+    $dist.queue-processes: [$dist.hook-cmds(BUILD, :after)];
+    await $dist.start-processes;
+
+    # install + hooks
+    $dist.queue-processes: [$dist.hook-cmds(INSTALL, :before)];
+    await $dist.start-processes;
+    $dist.install;
+    $dist.queue-processes: [$dist.hook-cmds(INSTALL, :after)];
+    await $dist.start-processes;
+
+The following filenames are suggested:
+C<before-test.pl6> C<after-test.pl6> C<before-build.pl6> C<after-build.pl6> C<before-install.pl6> C<after-install.pl6>
+
+However, we only match the beginning and end of the filename, so you may have multiple files for any phase/modifier:
+i.e.: C<before-1-test.pl6> C<before-2-test.pl6>
+
+=head2 Zef::Roles::Installing
+
+Allows a C<Zef::Distribution> to install
+
+    my $dist = Zef::Distribution.new(:path($*CWD));
+    $dist does Zef::Roles::Installing;
+    $dist.install;
+
+=head2 Zef::Roles::Precompiling
+
+Allows a C<Zef::Distribution> to generate the commands, in order, to precompile a distribution's C<provides>
+
+Combine with C<Zef::Roles::Processing> to execute these commands.
+
+    my $dist = Zef::Distribution.new(:path($*CWD));
+    $dist does Zef::Roles::Precompiling;    
+
+=head2 Zef::Roles::Testing
+
+Allows a C<Zef::Distribution> to generate the commands, in order, to test all files with a C<.t> extension in a distribution's C<t/> directory
+
+Combine with C<Zef::Roles::Processing> to execute these commands.
+
+    my $dist = Zef::Distribution.new(:path($*CWD));
+    $dist does Zef::Roles::Testing;    
+
+=head2 Zef::Roles::Processing
+
+    role Zef::Roles::Processing[Bool :$async]
+
+    method queue-processes(*@groups) # add a process or group of processes to be executed together
+    method start-processes           # execute each process (or group of processes) in order
+    method passes                    # helper function to show name of processes where exitcode == 0
+    method failures                  # helper function to show name of processes where exitcode > 0
+
+Allows executing commands, including grouped commands in parallel if C<:$async> is true (i.e. C<[[$proc1, $proc2],[$proc3]]> executes C<$proc1> and C<$proc2> at the same time, and then C<$proc3> after both previous processes finish)
+
+    my $dist = Zef::Distribution.new(:path($*CWD));
+    $dist does Zef::Roles::Precompiling;
+    $dist does Zef::Roles::Testing;
+    $dist does Zef::Roles::Installing;
+    $dist does Zef::Roles::Processing[:!async];
+
+    $dist.queue-processes( [$_.list] ) for [$dist.precomp-cmds, $dist.test-cmds];
+    await $dist.start-processes;
+    await $dist.install;
 
 =head1 INCLUDED TOOLS
 
