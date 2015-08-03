@@ -80,8 +80,8 @@ An unescaped dot C<.> in a regex matches any single character.
 
 So these all match:
 
-    'perl' ~~ / per . /;    # matches the whole string
-    'perl' ~~ /per./;       # the same; whitespace is ignored
+    'perl' ~~ /per./;       # matches the whole string
+    'perl' ~~ / per . /;    # the same; whitespace is ignored
     'perl' ~~ / pe.l /;     # the . matches the r
     'speller' ~~ / pe.l/;   # the . matches the first l
 
@@ -649,7 +649,9 @@ files:
     # ("passwords" => {"jack" => "password1", "joy" => "muchmoresecure123"},
     #    "quotas" => {"jack" => "123", "joy" => "42"}).hash
 
-Named regexes can and should be grouped in L<grammars|/language/grammars>.
+Named regexes can and should be grouped in L<grammars|/language/grammars>. A
+list of predefined subrules is listed in
+L<S05|http://design.perl6.org/S05.html#Predefined_Subrules>.
 
 =head1 Adverbs
 
@@ -956,12 +958,12 @@ However, if you want to search for a pattern which is B<not> immediately
 followed by some pattern, then you need to use a negative lookahead
 assertion, this has the form:
 
-    <?!before pattern>
+    <!before pattern>
 
 Hence all occurrences of C<foo> which I<is not> before C<bar> would
 be matched by
 
-    rx{ foo <?!before bar> }
+    rx{ foo <!before bar> }
 
 =head2 Lookbehind assertions
 
@@ -983,12 +985,12 @@ However, if you want to search for a pattern which is B<not> immediately
 preceded by some pattern, then you need to use a negative lookbehind
 assertion, this has the form:
 
-    <?!after pattern>
+    <!after pattern>
 
 Hence all occurrences of C<bar> which I<do not> have C<foo> before them
 would be matched by
 
-    rx{ <?!after foo> bar }
+    rx{ <!after foo> bar }
 
 =head1 Best practices and gotchas
 
