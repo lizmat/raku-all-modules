@@ -14,17 +14,18 @@ concept is called "subscripting" (or "indexing") in Perl 6.
 Perl 6 provides two universal subscripting interfaces:
 
 =begin table
-             elements are        interface      supported by
-             identified by       name           
-    =======  ==================  =============  ============================
-    [ ]      zero-based indices  Positional     Array, List, Buf, Match, ...
-    { } < >  unique keys         Associative    Hash, Bag, Mix, Match, ...
+         elements are           interface      supported by
+         identified by          name           
+    ===  ==================     =============  ============================
+    [ ]  zero-based indices     Positional     Array, List, Buf, Match, ...
+    { }  string or object keys  Associative    Hash, Bag, Mix, Match, ...
 =end table
 
 =begin item1
 B<Positional> subscripting (via L<C<postcircumfix [ ]>|
-/language/operators#postcircumfix_[_]>) addresses elements of an ordered collection by their
-position. Index 0 refers to the first element, index 1 to the second, and so on:
+/language/operators#postcircumfix_[_]>) addresses elements of an ordered
+collection by their position. Index 0 refers to the first element, index 1 to
+the second, and so on:
 
     my @chores = "buy groceries", "feed dog", "wash car";
     say @chores[0];  #-> buy groceries
@@ -34,64 +35,216 @@ position. Index 0 refers to the first element, index 1 to the second, and so on:
 
 =begin item1
 B<Associative> subscripting (via L<C<postcircumfix { }>|
-/language/operators#postcircumfix_{_}>), does not require the collection to keep its elements in any particular
-order - instead, it uses a unique key to address each value. The nature of the
-keys depends on the collection in question: For example a standard L<Hash> uses
-string keys, whereas a L<Mix> allows arbitrary objects as keys, etc.:
+/language/operators#postcircumfix_{_}>), does not require the collection to
+keep its elements in any particular order - instead, it uses a unique key to
+address each value. The nature of the keys depends on the collection in
+question: For example a standard L<Hash> uses string keys, whereas a L<Mix>
+allows arbitrary objects as keys, etc.:
 
-    my %grade = Lea => "C", Benicio => "B+"
-    say %grade{"Lea"};      #-> C
-    say %grade{"Benicio"};  #-> B+
-    say %grade<Lea>;        #-> C
-    say %grade<Benicio>;    #-> B+
+    my %grade = Zoe => "C", Ben => "B+";
+    say %grade{"Zoe"};  #-> C
+    say %grade{"Ben"};  #-> B+
     
-    my $stats = ( Date.new(2015,  4,  5) => 17.253 ,
-                  Date.new(2015, 12, 24) =>  4.18  ).Mix;
-    say $stats{ Date.new(2015, 4, 5) }; #-> 17.253
+    my $stats = ( Date.today => 4.18, Date.new(2015,  4,  5) => 17.253 ).Mix;
+    say $stats{ Date.new(2015, 4, 5) };  #-> 17.253
 
-L«C«postcircumfix < >»|/language/operators#postcircumfix_<_>» is merely
-syntactic sugar for passing single-word string keys to C<{ }>. That is,
-$foo<bar baz> is simply turned into C<$foo{ <bar baz> }> at compile time. (See
-L<word quoting| http://doc.perl6.org/language/quoting#Word_quoting%3A_qw>, and
-L<#Slicing>.)
+For passing single-word string keys to C<{ }>, you can also use the
+L<angle-bracketed word quoting constructs|/language/quoting#Word_quoting:_qw>
+as if they were postcircumfix operators:
+
+    say %grade<Zoe>;    #-> C
+    say %grade<Ben>;    #-> B+
+
+This is really just syntactic sugar that gets turned into the corresponding
+C<{ }> form at compile-time:
+
+    %hash<foo bar>;     # same as %hash{ <foo bar> }
+    %hash«foo $var»;    # same as %hash{ «foo $var» }
+    %hash<<foo $var>>;  # same as %hash{ <<foo $var>> }
+
 =end item1
 
 Subscripts can be applied to any expression that returns a subscriptable
 object, not just to variables:
 
-    say "foo_bar_baz".match(/ foo_(.*)_baz /)[0];   #-> ｢bar｣
-    say "foo_bar_baz".match(/ foo_(.*)_baz /).[0];  # same, in method notation
+    say "__Hello__".match(/__(.*)__/)[0];   #-> ｢Hello｣
+    say "__Hello__".match(/__(.*)__/).[0];  # same, in method notation
 
-If a subscript is applied to an object that does not support it, a run-time
-error is thrown. However, as a special convenience (provided by class L<Any>),
-applying a I<positional> subscript to a non-positional object treats it as a
-single-element list:
+Positional and associative subscripting are not mutually exclusive - for
+example, L<Match> objects support both (each accessing a different set of
+data). Also, to make list processing more convenient, class L<Any> provides a
+fallback implementation for positional subscripts which simply treats the
+invocant as a list of one element. (But there's no such fallback for
+associative subscripts, so they throw a run-time error when applied to an
+object that does not implement support for them.)
 
-    say 42<foo>;  # ERROR: postcircumfix:<{ }> not defined for type Int
     say 42[0];    #-> 42
+    say 42<foo>;  # ERROR: postcircumfix { } not defined for type Int
 
-What happens when a nonexistent element is addressed by a subscript, is up to
-the collection type in question. Standard L<Array> and L<Hash> collections
+=head1 Nonexistent elements
+
+What happens when a I<nonexistent> element is addressed by a subscript, is up
+to the collection type in question. Standard L<Array> and L<Hash> collections
 return the type object of their L<value type constraint|of> (which, by default,
-is C<Any>), but other collections may react differently:
+is L<Any>):
 
-    say {a => 1, b => 2}<c>;  #-> (Any)
-    say [0, 10, 20][3];       #-> (Any)
+    my @array1;     say @array1[10];  #-> (Any)
+    my Int @array2; say @array2[10];  #-> (Int)
+    
+    my %hash1;      say %hash1<foo>;  #-> (Any)
+    my Int %hash2;  say %hash2<foo>;  #-> (Int)
+
+However, other types of collections may react differently to subscripts that
+address nonexistent elements:
+
     say (0, 10, 20)[3];       #-> Nil
     say bag(<a a b b b>)<c>;  #-> 0
 
+To silently skip nonexistent elements in a subscripting operation, see
+L<#Truncating slices> and the L<#:v> adverb.
+
 =head1 From the end
 
-...
-=comment TODO: Explain the [*-1] syntax.
+Positional indices are counted from the start of the collection, but there's
+also a notation for addressing elements by their position relative to the end: 
+C<*-1> refers to the last element, C<*-2> to the second-to-last element, and so
+on.
 
+    my @alphabet = 'A' .. 'Z';
+    say @alphabet[*-1];  #-> Z
+    say @alphabet[*-2];  #-> Y
+    say @alphabet[*-3];  #-> X
 
-=head1 Slicing
+Note: The asterisk is important. Passing a bare negative integer (e.g.
+C<@alphabet[-1]>) like you would do in many other programming languages, throws
+an error in Perl 6.
 
-...
-=comment TODO: Explain slice subscripts. Don't forget to mention:
-    - that it happens based on the type rather than .elems of the subscript
-    - that range subscripts auto-truncate
+What actually happens here, is that an expression like C<*-1> declares a code
+object via L<Whatever>-currying - and the C<[ ]> subscript reacts to being
+given a code object as an index, by calling it with the length of the
+collection as argument and using the result value as the actual index. In other
+words, C<@alphabet[*-1]> becomes C<@alphabet[@alphabet.elems - 1]>.
+
+This means that you can use arbitrary expressions which depend on the size of
+the collection:
+
+    say @array[* div 2];  # select the middlemost element
+    say @array[$i % *];   # wrap around a given index ("modular arithmetic")
+    say @array[ -> $size { $i % $size } ];  # same as previous
+
+=head1 Slices
+
+When multiple elements of a collection need to be accessed, there's a shortcut
+to doing multiple separate subscripting operations: Simply specify a I<list> of
+indices/keys in the subscript, to get back a I<list> of elements - also called
+a "slice" - in the same order.
+
+For positional slices, you can mix normal indices with ones 
+L<from-the-end|#From the end> ones:
+
+    my @alphabet = 'a' .. 'z';
+    dd @alphabet[15, 4, *-9, 11];  #-> ("p", "e", "r", "l")
+
+For associative slices, the angle-brackets form often comes in handy:
+
+    my %color = kiwi => "green", banana => "yellow", cherry => "red";
+    dd %color{"cherry", "kiwi"};  #-> ("red", "green")
+    dd %color<cherry kiwi>;       #-> ("red", "green")
+    dd %color{*};                 #-> ("green", "red", "yellow")
+
+Be aware that slices are controlled by the I<type> of what is passed to
+(L<one dimension of|#Multiple dimensions>) the subscript, not its length:
+
+=begin table
+    subscript                        result
+    -------------------------------  -----------------------------------------
+    any Positional object not        normal slice
+    covered below
+    
+    a Range or infinite sequence     truncating slice (only for positional
+                                     subscripts)  
+    
+    * (Whatever-star)                full slice (as if all keys/indices were
+                                     specified)
+    
+    any other object                 single-element access rather than a slice
+    
+    empty                            Zen slice
+=end table
+
+=comment TODO: Revisit the above table after the GLR, when slicing will
+               probably be based on Iterable rather than Positional, and
+               truncating based on "known infiniteness".
+
+So even a one-element list returns a slice, whereas a bare scalar value doesn't:
+
+    dd @alphabet[2,];  #-> ("c",)
+    dd @alphabet[2];   #-> "c"
+
+(The angle-bracket form for associative subscripts works out because
+L<word quoting|/language/quoting#Word_quoting:_qw> conveniently returns a
+L<Str> in case of a single word, but a L<Parcel> in case of multiple words.)
+
+=comment TODO: Revisit the above paragraph after the GLR, when it will probably
+               be a List instead of a Parcel.
+
+For a normal slice, the content of (L<the current dimension of|#Multiple
+dimensions>) the subscript is I<flattened> before its members are interpreted
+as indices/keys:
+
+    dd @alphabet[0, (1..2, (3,)))];  #-> ("a", "b", "c", "d")
+
+=head2 Truncating slices
+
+Normally, referring to nonexistent elements in a slice subscript causes the
+output list to contain undefined values (or L<whatever else|
+#Nonexistent elements> the collection in question chooses to return for
+nonexistent elements). However if the outer object passed to
+(L<one dimension of|#Multiple dimensions>) of a positional subscript is a
+L<Range> or an infinite list constructed with the sequence operator, it will be
+automatically truncated to the actual size of the collection:
+
+    my @letters = <a b c d e f>;
+    dd @letters[3, 4, 5, 6, 7];  #-> ("d", "e", "f", Any, Any)
+    dd @letters[3 .. 7];         #-> ("d", "e", "f")
+
+L<From-the-end|#From the end> indices are allowed as range end-points, as are
+infinite ranges and sequences:
+
+    say @array[*-3 .. *];       # select the last three elements
+    say @array[0, 2, 4 ... *];  # select all elements with even indices
+
+=comment TODO: Revisit this whole section after the GLR, when truncating will
+               probably be restricted to "known infinite" objects rather that
+               to ranges/sequences
+
+If you I<don't> want to specify your slice as a range/sequence but still want
+to silently skip nonexistent elements, you can use the L<#:v> adverb.
+
+=head2 Zen slices
+
+If you write a subscript without specifying any indices/keys at all, it simply
+returns the subscripted object itself. Since it is empty but returns
+everything, it is known as a "Zen slice".
+
+It is different both from passing a Whatever-star (which, like a normal slice,
+always returns a Parcel of elements no matter the type of the original object)
+and from passing an empty list (which returns an empty slice):
+
+=comment TODO: Revisit the above paragraph after the GLR, when it will probably
+               be a List instead of a Parcel.
+
+    my %bag := ("orange" => 1, "apple" => 3).Bag;
+    dd %bag<>;    #-> ("orange"=>1,"apple"=>3).Bag
+    dd %bag{};    #-> ("orange"=>1,"apple"=>3).Bag
+    dd %bag{*};   #-> (1, 3)
+    dd %bag{()};  #-> ()
+
+It is usually used to L<interpolate|/language/quoting#Interpolation:_qq>
+entire arrays / hashes into strings:
+
+    my @words = "cruel", "world";
+    say "Hello, @words[]!"  #-> Hello, cruel world!
 
 =head1 Multiple dimensions
 
@@ -99,6 +252,7 @@ is C<Any>), but other collections may react differently:
 =comment TODO: Explain multi-dim subscripts. It's probably best to wait for
                jnthn's ongoing refactor to finish before writing this section.
 
+=head1 Modifying elements
 
 =head1 Autovivification
 
@@ -196,7 +350,7 @@ To check if I<all> elements of a slice exist, use an L<all> junction:
 
 C<:exists> can be combined with the L<#:delete> and L<#:p>/L<#:kv> adverbs -
 in which case the behavior is determined by those adverbs, except that any
-returned element I<value> is replaced with the corresponsing L<Bool> indicating
+returned element I<value> is replaced with the corresponding L<Bool> indicating
 element I<existence>.
 
 See L<#method EXISTS-POS> and L<#method EXISTS-KEY> for the underlying
@@ -384,7 +538,7 @@ insert anything invalid into it):
     }
 
 However, HTTP header field names are supposed to be case-insensitive (and
-preferred in camel-case). We can accomodate this by taking the C<*-KEY>
+preferred in camel-case). We can accommodate this by taking the C<*-KEY>
 and C<push> methods out of the C<handles> list, and implementing them
 separately like this:
 
@@ -635,7 +789,7 @@ C<AT-KEY>.
 =comment When modifying this section, please also adapt the BIND-POS
          section accordingly as they are very similar.
 
-    multi method BIND-POS (::?CLASS:D: $key, \new)
+    multi method BIND-KEY (::?CLASS:D: $key, \new)
 
 Expected to bind the value or container C<new> to the slot associated with
 C<$key>, replacing any container that would be naturally found there.
