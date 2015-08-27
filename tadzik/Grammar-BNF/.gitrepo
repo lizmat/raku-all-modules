@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Grammar-BNF.git
 	branch = master
-	commit = c4c48d82e157096ec3fcdf77e6fabbf5e0511f80
-	parent = 8f76f1e2e5c8e73a521700dd1644922a9cf206e6
-	cmdver = 0.2.1
+	commit = f9ece214f80f65333950e9d16238f6e4994820ef
+	parent = 4a05684e5b863af816697e38c4a5d21a73f1e45e
+	cmdver = 0.2.2

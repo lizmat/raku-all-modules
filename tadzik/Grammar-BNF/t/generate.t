@@ -3,6 +3,8 @@ use Test;
 use lib './lib';
 use Grammar::BNF;
 
+plan 4;
+
 my ($t, $p);
 
 $t = q[
@@ -33,4 +35,4 @@ ok Grammar::BNF.generate($t).new.parse('foobar');
 
 # TODO: Tests for other things in parse.t
 
-done;
+done-testing;
