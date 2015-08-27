@@ -1,6 +1,6 @@
 unit role Net::DNS::Message::Resource::TXT;
 
-class Net::DNS::TXT {
+my class Net::DNS::TXT {
     has @.owner-name;
     has $.text;
 

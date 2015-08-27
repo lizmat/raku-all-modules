@@ -1,6 +1,6 @@
 unit role Net::DNS::Message::Resource::SOA;
 
-class Net::DNS::SOA {
+my class Net::DNS::SOA {
     has @.owner-name;
     has @.mname;
     has @.rname;

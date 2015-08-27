@@ -1,6 +1,6 @@
 unit role Net::DNS::Message::Resource::A;
 
-class Net::DNS::A {
+my class Net::DNS::A {
     has @.owner-name;
     has @.octets;
 

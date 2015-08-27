@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Net-DNS.git
 	branch = master
-	commit = 61e3990d0d2138ba6ef8efcf811a27c2ef3a7db8
-	parent = 610cfc779970e0f9dd4bd3caad8fa6f86618f1cb
-	cmdver = 0.2.1
+	commit = b286447f519b09cd2dc53ce73b33283250011e4f
+	parent = f42cd5606091131950fc564d9e1324db9b0a221d
+	cmdver = 0.2.2

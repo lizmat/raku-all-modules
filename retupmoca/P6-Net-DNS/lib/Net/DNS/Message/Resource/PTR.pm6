@@ -1,6 +1,6 @@
 unit role Net::DNS::Message::Resource::PTR;
 
-class Net::DNS::PTR {
+my class Net::DNS::PTR {
     has @.owner-name;
     has @.name;
 

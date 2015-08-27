@@ -1,6 +1,6 @@
 unit role Net::DNS::Message::Resource::SRV;
 
-class Net::DNS::SRV {
+my class Net::DNS::SRV {
     has @.owner-name;
     has $.priority;
     has $.weight;

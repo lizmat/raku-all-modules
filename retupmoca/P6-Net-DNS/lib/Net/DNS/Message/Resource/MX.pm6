@@ -1,6 +1,6 @@
 unit role Net::DNS::Message::Resource::MX;
 
-class Net::DNS::MX {
+my class Net::DNS::MX {
     has @.owner-name;
     has $.priority;
     has @.name;

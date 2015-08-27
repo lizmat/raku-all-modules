@@ -1,6 +1,6 @@
 unit role Net::DNS::Message::Resource::SPF;
 
-class Net::DNS::SPF {
+my class Net::DNS::SPF {
     has @.owner-name;
     has $.text;
 
