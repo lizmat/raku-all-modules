@@ -12,7 +12,10 @@ use v6;
 use Test;
 use MongoDB::Connection;
 
-my MongoDB::Connection $connection .= new();
+BEGIN { @*INC.unshift( './t' ) }
+use Test-support;
+
+my MongoDB::Connection $connection = get-connection();
 
 # Drop database first then create new databases
 #
@@ -56,7 +59,9 @@ $database = $connection.database('test');
 my Pair @req = listDatabases => 1;
 my $docs = $database.run_command(@req);
 ok !$docs<ok>.Bool, 'Run command ran not ok';
-is $docs<errmsg>, 'access denied; use admin db', 'access denied; use admin db';
+is $docs<errmsg>,
+   'listDatabases may only be run against the admin database.',
+   'listDatabases may only be run against the admin database';
 
 #-------------------------------------------------------------------------------
 # Use run_command to get database statistics

@@ -1,8 +1,78 @@
 use v6;
 use MongoDB::Connection;
+use Test;
 
 package Test-support
 {
+  #-----------------------------------------------------------------------------
+  # Get selected port number. When file is not there the process fails.
+  #
+  sub get-port-number ( --> Int ) is export {
+    if 'Sandbox/port-number'.IO !~~ :e {
+      plan 1;
+      flunk('No port number found, Sandbox cleaned up?');
+      skip-rest('No port number found, Sandbox cleaned up?');
+      exit(0);
+    }
+
+    my $port-number = slurp('Sandbox/port-number').Int;
+    diag "MongoDB server ready on port $port-number";
+    return $port-number
+  }
+
+  #-----------------------------------------------------------------------------
+  # Get a connection and test version. When version is wrong the process fails.
+  #
+  sub get-connection ( --> MongoDB::Connection ) is export {
+    my Int $port-number = get-port-number();
+    my MongoDB::Connection $connection .= new(
+      :host('localhost'),
+      :port($port-number)
+      );
+
+    my $version = $connection.version;
+    diag "MongoDB version: $version<release1>.$version<release2>.$version<revision>";
+    if $version<release1> < 3 {
+      plan 1;
+      flunk('Version not ok to use this set of modules?');
+      skip-rest('Version not ok to use this set of modules?');
+      exit(0);
+    }
+
+    return $connection;
+  }
+
+  #-----------------------------------------------------------------------------
+  # Test communication after starting up db server
+  #
+  sub get-connection-try10 ( --> MongoDB::Connection ) is export {
+    my Int $port-number = get-port-number();
+    my MongoDB::Connection $connection;
+    for ^10 {
+      $connection .= new( :host('localhost'), :port($port-number));
+      isa-ok( $connection, 'MongoDB::Connection');
+      last;
+
+      CATCH {
+        default {
+          diag [~] "Error: ", .message, ". Wait a bit longer";
+          sleep 2;
+        }
+      }
+    }
+
+    my $version = $connection.version;
+    diag "MongoDB version: $version<release1>.$version<release2>.$version<revision>";
+    if $version<release1> < 3 {
+      plan 1;
+      flunk('Version not ok to use this set of modules?');
+      skip-rest('Version not ok to use this set of modules?');
+      exit(0);
+    }
+
+    return $connection;
+  }
+
   #-----------------------------------------------------------------------------
   # Get collection object
   #
@@ -11,7 +81,7 @@ package Test-support
                             --> MongoDB::Collection
                           ) is export {
                           
-    my MongoDB::Connection $connection .= new();
+    my MongoDB::Connection $connection = get-connection();
     my MongoDB::Database $database = $connection.database($db-name);
     return $database.collection($col-name);
   }
@@ -45,7 +115,6 @@ package Test-support
     say "";
   }
 }
-
 
 
 

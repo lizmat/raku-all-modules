@@ -21,16 +21,19 @@ package MongoDB {
     }
   }
 
-  #-------------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   #
   class MongoDB::Database {
 
     has $.connection;
     has Str $.name;
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     #
-    submethod BUILD ( :$connection, Str :$name ) {
+    submethod BUILD (
+      :$connection where $connection.isa('MongoDB::Connection'),
+      Str :$name
+    ) {
 
       $!connection = $connection;
 
@@ -38,7 +41,7 @@ package MongoDB {
       $!name = $name;
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Drop the database
     #
     method drop ( --> Hash ) {
@@ -57,7 +60,7 @@ package MongoDB {
       return $doc;
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Select a collection. When it is new it comes into existence only
     # after inserting data
     #
@@ -77,7 +80,7 @@ package MongoDB {
       );
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Create collection explicitly with control parameters
     #
     method create_collection ( Str $collection_name, Bool :$capped,
@@ -119,7 +122,7 @@ package MongoDB {
       );
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Return all information from system namespaces
     #
     method list_collections ( --> Array ) {
@@ -134,7 +137,7 @@ package MongoDB {
       return @docs;
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Return only the user collection names in the database
     #
     method collection_names ( --> Array ) {
@@ -152,7 +155,7 @@ package MongoDB {
       return @docs;
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Run command should ony be working on the admin database using the virtual
     # $cmd collection. Method is placed here because it works on a database be
     # it a special one.
@@ -163,16 +166,21 @@ package MongoDB {
     #
     multi method run_command ( Pair @command --> Hash ) {
 
+      # Create a local collection structure here
+      #
       my MongoDB::Collection $c .= new(
         database    => self,
         name        => '$cmd',
       );
+
+      # Use it to do a find on it, get the doc and return it.
+      #
       my MongoDB::Cursor $cursor = $c.find( @command, :number_to_return(1));
       my $doc = $cursor.fetch();
       return $doc.defined ?? $doc !! %();
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Get the last error. Returns one or more of the following keys: ok, err,
     # code, connectionId, lastOp, n, shards, singleShard, updatedExisting,
     # upserted, wnote, wtimeout, waited, wtime,
@@ -187,7 +195,7 @@ package MongoDB {
         $h<w> = $w;
         $h<wtimeout> = $wtimeout;
       }
-      
+
       my Pair @req = getLastError => 1, @$h;
       my Hash $doc = self.run_command(@req);
 
@@ -203,7 +211,7 @@ package MongoDB {
       return $doc;
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Get errors since last reset error command
     #
     method get_prev_error ( --> Hash ) {
@@ -223,7 +231,7 @@ package MongoDB {
       return $doc;
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     # Reset error command
     #
     method reset_error ( --> Hash ) {

@@ -13,7 +13,7 @@ use MongoDB::Connection;
 use BSON::Javascript;
 
 #-------------------------------------------------------------------------------
-my MongoDB::Connection $connection .= new();
+my MongoDB::Connection $connection = get-connection();
 my MongoDB::Database $database = $connection.database('test');
 
 #is 1, 1, '1';
@@ -66,7 +66,7 @@ my Hash $result = $collection.group( $js-r-scope,
                                      condition => %(name => %('$gt' => 'k0'))
 #                                     key_js_func => $js-kf,
                                    );
-say "\nR:  {$result.perl}\n";
+#say "\nR:  {$result.perl}\n";
 #exit(0);
 
 # Now do the same in perl by getting the docs and do the work of $reduce

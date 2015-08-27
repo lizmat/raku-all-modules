@@ -8,10 +8,17 @@ Plenty of documents can be found on the MongoDB site
 
 * [MongoDB Driver Requirements](http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-driver-requirements/)
 * [Feature Checklist for MongoDB Drivers](http://docs.mongodb.org/meta-driver/latest/legacy/feature-checklist-for-mongodb-drivers/)
+
 * [Database commands](http://docs.mongodb.org/manual/reference/command)
+* [Administration Commands](http://docs.mongodb.org/manual/reference/command/nav-administration/)
+
+* [Mongo shell methods](http://docs.mongodb.org/manual/reference/method)
 * [Collection methods](http://docs.mongodb.org/manual/reference/method/js-collection/)
 * [Cursor methods](http://docs.mongodb.org/manual/reference/method/js-cursor/)
-* [Administration Commands](http://docs.mongodb.org/manual/reference/command/nav-administration/)
+
+* [Authentication](http://docs.mongodb.org/manual/core/authentication/)
+* [Create a User Administrator](http://docs.mongodb.org/manual/tutorial/add-user-administrator/)
+
 
 Documentation about this driver can be found in doc/Original-README.md and the
 following pod files
@@ -48,14 +55,11 @@ dependency.
 $ panda install MongoDB
 ```
 
-## VERSION PERL, MOARVM and MongoDB
+## Versions of PERL, MOARVM and MongoDB
 
-```
-$ perl6 -v
-This is perl6 version 2015.02-188-ga99a572 built on MoarVM version 2015.02-25-g3d0404a```
-```
-
-The driver code is written with the highest version of MongoDB server in mind.
+Perl6 version ```2015.02-188-ga99a572```
+MoarVM version ```2015.02-25-g3d0404a```
+MongoDB version ```3.0.5```
 
 
 ## FEATURE CHECKLIST FOR MONGODB DRIVERS
@@ -72,6 +76,8 @@ Legend;
 * [-] Will not be implemented
 * [C] Implemented in MongoDB::Connection, Connection.pm
 * [D] Implemented in MongoDB::Database, Database.pm
+* [DU] Implemented in MongoDB::Database::Users, Database/Users.pm
+* [DA] Implemented in MongoDB::Database::Authentication, Database/Authentication.pm
 * [O] Implemented in MongoDB::Collection, Collection.pm
 * [U] Implemented in MongoDB::Cursor, Cursor.pm
 
@@ -161,14 +167,16 @@ Legend;
 
 ### User Management Commands
 
-* [ ] createUser. Creates a new user.
-* [ ] dropAllUsersFromDatabase. Deletes all users associated with a database.
-* [ ] dropUser. Removes a single user.
-* [ ] grantRolesToUser. Grants a role and its privileges to a user.
-* [ ] revokeRolesFromUser. Removes a role from a user.
-* [ ] updateUser. Updates a user\u2019s data.
-* [ ] usersInfo. Returns information about the specified users.
-
+* [DU] create_user. Creates a new user.
+* [DU] drop_all_users_from_database. Deletes all users associated with a
+       database.
+* [DU] drop_user. Removes a single user.
+* [DU] grant_roles_to_user. Grants a role and its privileges to a user.
+* [DU] revoke_roles_from_user. Removes a role from a user.
+* [DU] update_user. Updates a user's data.
+* [DU] users_info. Returns information about the specified users.
+* [DU] set_pw_security, Specify restrictions on username and password.
+* [DU] get_users, Get info about all users
 
 
 
@@ -354,7 +362,7 @@ Although the lists above represent one hell of a todo, below are a few notes
 which I have to make to remember to add items to programmed functions. There
 are also items to be implemented in BSON. You need to look there for info
 
-  
+* Following [priority recomendations](http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-driver-requirements/) from the mongodb site about writing drivers.
 * Speed, protocol correctness and clear code are priorities for now.
   * Speed can be influenced by specifying types on all variables
   * Furthermore the speedup of the language perl6 itself would have more impact
@@ -365,8 +373,16 @@ are also items to be implemented in BSON. You need to look there for info
 * Test to compare documents
 * Test group aggregation keyf field and finalize
 * Test map reduce aggregation more thoroughly.
-* map_reduce, look into scope. argument is not used.
-* explain changed after mongodb 3.0
+* Map_reduce, look into scope. argument is not used.
+* Explain changed after mongodb 3.0
+* Testing $mod in queries seems to have problems in version 3.0.5
+* Get info about multiple accounts instead of one at the time
+* Need a change in throwing exceptions. Not all errors are unrecoverable. Return
+  e.g. a failure instead of die with an exception.
+* Modify Mongo.pm. Remove use statements and add variables for use by modules.
+* While we can add users to the database we cannot authenticate due to the lack
+  of supported modules in perl 6. E.g. I'd like to have SCRAM-SHA1 to
+  authenticate with. 
 
 ## CHANGELOG
 
@@ -374,6 +390,42 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable.*
 
+* 0.25.1
+  * Installed a sandbox to start mongod in. Now no problems can occur with user
+    databases and collections when testing. The sandbox is made in
+    t/000-mk-sandbox.t and broken down in 999-rm-sandbox.t. This setup also
+    helps in testing replication and sharding.
+  * Changed top module ```MongoDB```. Originally there are use statements to
+    load other modules in. Modules are changed later in such a way that modules
+    needed to be loaded in other modules as well and then it will be some
+    overhead of loading the modules twice or more. So I want to clean these
+    statements from the module. Now the user can decide for himself what he
+    needs. Not all modules are always needed and some are loaded by others. E.g.
+    ```MongoDB::Document::Users``` is needed only to add or remove accounts.
+    Furthermore when a connection is made using ```MongoDB::Connection```,
+    ```MongoDB::Database``` will be available because it needs to create a
+    database for you. Because ```MongoDB::Database``` is then loaded,
+    ```MongoDB::Collection``` is then loaded too because a database must be able
+    to create a collection.
+  * get_users() to get info about all users.
+  * Use version 3.* type of config (in YAML) for sandbox setup.
+
+* 0.25.0
+  * Create user
+  * Drop user
+  * Drop all users
+  * Users info
+  * Grant roles
+  * Revoke roles
+  * Update users
+
+  * Refactored code from Database to Database::Users
+* 0.24.1
+  * Added document checks to inserts. No dollars on first char of keys and no
+    dots in keys. This is checked on all levels. On top level the key ```_id```
+    is checked if the value is unique in te collection.
+  * Changes in code caused by upgrading from MongoDB 2.4 to 3.0.5. Many of the
+    servers return messages were changed.
 * 0.24.0
   * Added version() and build_info() to MongoDB::Connection.
 * 0.23.2

@@ -69,17 +69,92 @@ package MongoDB {
         }
 
         else {
-          die "Error: Document type not handled by insert";
+          die X::MongoDB::Collection.new(
+            error-text => "Error: Document type not handled by insert",
+            oper-name => 'insert',
+            oper-data => @docs.perl,
+            full-collection-name => [~] $!database.name, '.', $!name
+          )
         }
       }
 
       else {
-        die "Error: Document type not handled by insert";
+            die X::MongoDB::Collection.new(
+              error-text => "Error: Document type not handled by insert",
+              oper-name => 'insert',
+              oper-data => @docs.perl,
+              full-collection-name => [~] $!database.name, '.', $!name
+            )
       }
 
+      self!check-doc-keys(@docs);
       self.wire.OP_INSERT( self, $flags, @docs);
 
       return;
+    }
+
+    #---------------------------------------------------------------------------
+    # Check keys in documents for insert operations
+    # See http://docs.mongodb.org/meta-driver/latest/legacy/bson/
+    #
+    method !check-doc-keys ( @docs ) {
+      for @docs -> $d {
+        for $d.keys -> $k {
+          if $k ~~ m/ (^ '$' | '.') / {
+            die X::MongoDB::Collection.new(
+              error-text => qq:to/EODIE/,
+                $k is not properly defined.
+                Please see 'http://docs.mongodb.org/meta-driver/latest/legacy/bson/'
+                point 1; Data storage
+                EODIE
+              oper-name => 'insert',
+              oper-data => @docs.perl,
+              full-collection-name => [~] $!database.name, '.', $!name
+            );
+          }
+
+          elsif $k ~~ m/ ^ '_id' $ / {
+            # Check if unique in the document
+            my $cursor = self.find( hash( _id => $d{$k}));
+
+            # If there are records(at most one!) this id is not unique
+            #
+            if $cursor.count {
+              die X::MongoDB::Collection.new(
+                error-text => "$k => $d{$k} value for id is not unique",
+                oper-name => 'insert',
+                oper-data => @docs.perl,
+                full-collection-name => [~] $!database.name, '.', $!name
+              );
+            }
+          }
+
+          elsif $d{$k} ~~ Hash {
+            self!cdk($d{$k});
+          }
+        }
+      }
+    }
+
+    method !cdk ($sub-doc) {
+      for $sub-doc.keys -> $k {
+        if $k ~~ m/ (^ '$' | '.') / {
+          die X::MongoDB::Collection.new(
+            error-text => qq:to/EODIE/,
+              $k is not properly defined.
+              Please see 'http://docs.mongodb.org/meta-driver/latest/legacy/bson/'
+              point 1; Data storage
+              EODIE
+            oper-name => 'insert',
+            oper-data => $sub-doc.perl,
+            full-collection-name => [~] $!database.name, '.', $!name
+          );
+        }
+
+        elsif $sub-doc{$k} ~~ Hash {
+          self!cdk($sub-doc{$k});
+        }
+      }
     }
 
     #---------------------------------------------------------------------------
@@ -250,7 +325,7 @@ package MongoDB {
     }
 
     #---------------------------------------------------------------------------
-    # 
+    #
     #---------------------------------------------------------------------------
     # Find distinct values of a field depending on criteria
     #
@@ -520,7 +595,7 @@ package MongoDB {
         if ?$indexDetailsField and !?$indexDetailsName; # One or the other
 
       my Pair @req = collstats => $!name, @$h;
-                       
+
       my $doc = $!database.run_command(@req);
 
       # Check error and throw X::MongoDB::Collection if there is one
@@ -536,7 +611,7 @@ package MongoDB {
 
       return $doc;
     }
-    
+
     #-----------------------------------------------------------------------------
     # Return size of collection in bytes
     #
