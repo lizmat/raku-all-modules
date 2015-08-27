@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/panda.git
 	branch = master
-	commit = 2a99b2536b9ffe1427f5164fe4c04a5b3ea348fe
-	parent = 724028ff0b36c85fbb44499f539bfe8412c04447
+	commit = a7864a850f2cf9f771efa42766006b335f61c8d0
+	parent = ad7027054b2fa0b1df10f1b3ff4fefcd03b74c48
 	cmdver = 0.2.2

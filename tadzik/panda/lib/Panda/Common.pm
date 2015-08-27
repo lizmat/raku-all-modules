@@ -1,6 +1,15 @@
 module Panda::Common {
 use Shell::Command;
 
+sub find-meta-file(Str $dirname) is export {
+    if "$dirname/META.info".IO ~~ :f {
+        return "$dirname/META.info";
+    }
+    if "$dirname/META6.json".IO ~~ :f {
+        return "$dirname/META6.json";
+    }
+}
+
 sub dirname ($mod as Str) is export {
     $mod.subst(':', '_', :g);
 }
@@ -71,6 +80,46 @@ class X::Panda is Exception {
         sprintf "%s stage failed for %s: %s",
                 $.stage, $.module, $.description
     }
+}
+
+my $has-proc-async = Proc::<Async>:exists;
+
+sub run-and-gather-output(*@command) is export {
+    my $output = '';
+    my $stdout = '';
+    my $stderr = '';
+    my $passed;
+
+    if $has-proc-async {
+        my $proc = Proc::Async.new(|@command);
+        $proc.stdout.tap(-> $chunk {
+            print $chunk;
+            $output ~= $chunk;
+            $stdout ~= $chunk;
+        });
+        $proc.stderr.tap(-> $chunk {
+            print $chunk;
+            $output ~= $chunk;
+            $stderr ~= $chunk;
+        });
+        my $p = $proc.start;
+        # workaround for OSX, see RT125758
+        $p.result;
+        $passed = $p.result.exitcode == 0;
+    }
+    else {
+        my $cmd = @command.map({ qq{"$_"} }).join(' ');
+        $output ~= "$cmd\n";
+        my $p = shell("$cmd 2>&1", :out);
+        for $p.out.lines {
+            .chars && .say;
+            $output ~= "$_\n";
+        }
+        $p.out.close;
+        $passed = $p.exitcode == 0;
+    }
+
+    :$output, :$stdout, :$stderr, :$passed
 }
 
 }
