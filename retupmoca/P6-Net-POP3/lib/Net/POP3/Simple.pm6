@@ -5,10 +5,10 @@ use Net::POP3::Message;
 has $.raw is rw;
 has $.authed = True;
 
-class X::Net::POP3::BadGreeting is Exception { };
-class X::Net::POP3::BadAuth is Exception { };
-class X::Net::POP3::NoMessageCount is Exception { };
-class X::Net::POP3::NoMessageList is Exception { };
+my class X::Net::POP3::BadGreeting is Exception { };
+my class X::Net::POP3::BadAuth is Exception { };
+my class X::Net::POP3::NoMessageCount is Exception { };
+my class X::Net::POP3::NoMessageList is Exception { };
 
 method start {
     $.raw = self.new(:server($.server), :port($.port), :raw, :debug($.debug), :socket($.socket));
