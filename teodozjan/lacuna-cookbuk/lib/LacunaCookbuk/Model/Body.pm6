@@ -3,10 +3,10 @@ use v6;
 
 use LacunaCookbuk::Model::LacunaBuilding;
 use LacunaCookbuk::Model::Empire;
+constant $URL = '/body';
 
 unit role Body does LacunaCookbuk::Id;
 
-constant $URL = '/body';
 has LacunaBuilding @.buildings;
 has %.ore; 
 has $.x;
