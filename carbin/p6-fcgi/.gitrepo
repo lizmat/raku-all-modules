@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/carbin/p6-fcgi.git
+	branch = master
+	commit = ce662a16dcd8b06138e460cc3d63ca698890b35e
+	parent = a906c2dbb9bf9d62e84a07c5d67c8ed3916b53d8
+	cmdver = 0.2.2

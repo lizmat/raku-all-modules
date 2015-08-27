@@ -1,0 +1,11 @@
+{
+    "name" : "FastCGI::NativeCall",
+    "version" : "0.0.1",
+    "author" : "github:carbin",
+    "description" : "An implementation of FastCGI using NativeCall",
+    "depends" : [ ],
+    "provides" : {
+        "FastCGI::NativeCall" : "lib/FastCGI/NativeCall.pm6"
+    },
+    "source-url" : "git://github.com/carbin/p6-fcgi.git"
+}
