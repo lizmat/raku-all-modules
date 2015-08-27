@@ -163,7 +163,7 @@ grammar Pod::Perl5::Grammar
                          ]
                         \>
                       }
-  token url           { [ https? | ftp ] '://' <-[\v\>\|]>+ }
+  token url           { [ https? | ftp | file ] '://' <-[\v\>\|]>+ }
 
 
   ########################
