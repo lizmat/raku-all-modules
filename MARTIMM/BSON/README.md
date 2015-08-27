@@ -98,6 +98,15 @@ Method ```.perl``` is available for easy debug.
   any integer can be stored as large or small as you like. Int can be coded as
   described in version 0.8.4 and when larger or smaller then maybe it is
   possible the Int can be coded as a binary array of some type.
+* Rakudobug fails me to test modules. 
+  Missing or wrong version of dependency 'Buf' (from 'lib/BSON.pm')
+  later it even was...
+  Missing or wrong version of dependency '019EB242D62F53CB7A394AD587E4741030B0AB71' (from 'lib/BSON.pm')
+  Found later that setting @*INC explicitly it vanished.
+  BEGIN {
+    @*INC.unshift('/home/marcel/Languages/Perl6/Projects/BSON/lib');
+  }
+
 
 ## CHANGELOG
 
@@ -105,6 +114,10 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.7
+  * Factoring out Exception classes from BSON and EDC-Tools into BSON/Exception.pm6
+  * Bugfix in META.info
+  * Parse errors throw exceptions.
 * 0.9.6
   * Factoring out methods from BSON into EDC-Tools.
   * Methods in EDC-Tools converted into exported subs.

@@ -1,7 +1,7 @@
 use v6;
+use BSON::EDCTools;
 
 package BSON {
-  use BSON::EDC-Tools;
 
   constant $GENERIC             = 0x00;
   constant $FUNCTION            = 0x01;

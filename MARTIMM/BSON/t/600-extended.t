@@ -5,45 +5,69 @@ use Test;
 use BSON;
 use BSON::ObjectId;
 
-plan( 7 );
-
 my %samples = (
+  'ObjectId minimum' => {
+    'str' => '000000000000000000000000',
+    'buf' => [ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ],
+  },
 
-    'ObjectId minimum' => {
-        'str' => '000000000000000000000000',
-        'buf' => [ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 ],
-    },
-
-    'ObjectId maximum' => {
-        'str' => 'ffffffffffffffffffffffff',
-        'buf' => [ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff ],
-    }
+  'ObjectId maximum' => {
+    'str' => 'ffffffffffffffffffffffff',
+    'buf' => [ 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff ],
+  }
 );
 
 for %samples {
     is-deeply
-        BSON::ObjectId.new( .value{ 'str' } ).perl,
-        BSON::ObjectId.new( Buf.new( .value{ 'buf' }.list ) ).perl,
+        BSON::ObjectId.encode(.value{'str'}).perl,
+        BSON::ObjectId.decode(Buf.new(.value{'buf'}.list)).perl,
         .key;
 }
 
-dies-ok
-    { BSON::ObjectId.new( 'ZZZZZZZZZZZZZZZZZZZZZZZZ' )},
-    'ObjectId die on not hex values';
+# Buffer encode to oid, string not hexadecimal ('g's are not right)
+#
+if 1 {
+  BSON::ObjectId.encode('adeffg0326ffg033aade263a');
+  CATCH {
+    my $msg = .message;
+    $msg ~~ s:g/\n//;
+    when X::BSON::Parse {
+      ok .message ~~ m:s/'String is not a hexadecimal number'/, $msg;
+    }
+  }
+}
 
-dies-ok
-    { BSON::ObjectId.new( '00' )},
-    'ObjectId die on too short hex values';
+# Buffer encode to oid, string too short
+#
+if 1 {
+  BSON::ObjectId.encode('00');
+  CATCH {
+    my $msg = .message;
+    $msg ~~ s:g/\n//;
+    when X::BSON::Parse {
+      ok .message ~~ m/'String must have 24 hexadecimal characters'/, $msg;
+    }
+  }
+}
 
-dies-ok
-    { BSON::ObjectId.new( Buf.new( 0x00 ) ) },
-    'ObjectId die on too short buf';
+# Buffer decode to oid, buffer too short
+#
+if 1 {
+  BSON::ObjectId.decode(Buf.new(0x00));
+  CATCH {
+    my $msg = .message;
+    $msg ~~ s:g/\n//;
+    when X::BSON::Parse {
+      ok .message ~~ m:s/'Buffer doesn\'t have 12 bytes'/, $msg;
+    }
+  }
+}
 
 
 # Test cases borrowed from
 # https://github.com/mongodb/mongo-python-driver/blob/master/test/test_bson.py
 
-my $oid = BSON::ObjectId.new(
+my $oid = BSON::ObjectId.decode(
     Buf.new( 0x00, 0x01, 0x02, 0x03, 0x04, 0x05,
              0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
            )
@@ -76,3 +100,17 @@ is-deeply
       0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
     ],
     'decode ObjectId';
+
+# Encode without hex string.
+#
+#my $time = time;
+#$oid = BSON::ObjectId.encode;
+#say "T: $time, ", $oid.get-seconds;
+#say "M: ", $oid.get-machine-id, ', ', $oid.value-of;
+#ok $oid.get-seconds >= $time, 'time of object is equal or later';
+
+#-------------------------------------------------------------------------------
+# Cleanup
+#
+done();
+exit(0);

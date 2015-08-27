@@ -1,0 +1,85 @@
+#!/usr/bin/env perl6
+#
+use v6;
+
+# Running the pod file will create a pdf using wkhtmltopdf
+#
+my Str $pod = "$*PROGRAM";
+my Str $pdf = $pod;
+$pdf ~~ s/\. <-[.]>+ $/.pdf/;
+shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
+
+#-------------------------------------------------------------------------------
+
+=begin pod
+
+=head1 NAME BSON::Bson - Encoding and decoding of Hash documents to or from byte buffer
+
+=head1 SYNOPSIS
+
+=begin nested
+=begin code
+
+use BSON;
+
+my BSON::Bson $b .= new;
+my Buf $encoded = $b.encode(hash( mike => 100));
+my Hash $decoded = $b.decode(
+  Buf.new(
+    0x0F, 0x00, 0x00, 0x00,                     # 15 bytes
+    0x10,                                       # 3BSon code: 2 bits integer
+    0x6D, 0x69, 0x6B, 0x65, 0x00,               # 'mike' + 0
+    0x64, 0x00, 0x00, 0x00,                     # Integer number 100
+    0x00                                        # + 0
+  )
+);
+
+=end code
+=end nested
+
+=head1 DESCRIPTION
+
+This class is used to encode documents into a format called BSON which is a
+binary form of JSON. This BSON encoded data is stored in a Buf. The opposite
+can be done by decoding the BSON data back to a document. Here a document is a
+hash of key value pairs. The encoded document is sent to a MongoDB server after
+which it may respond with a BSON buffer. This must be decoded to get the usable
+data.
+
+See L<http://bsonspec.org|BSON spec> for details.
+
+=head1 METHODS
+
+Below are the most interesting methods for users of this class.
+
+=for head2
+method encode ( Hash $h --> Buf ) {...}
+
+Encode document to BSON.
+
+=for head2
+multi method encode_document ( Hash $h --> Buf ) {...}
+multi method encode_document ( Pair @p --> Buf ) {...}
+
+Encode as above. The second method is used to keep order in the keys.
+
+=for head2
+method _init_index ( ) {...}
+
+To decode the BSON buffer an index is kept as the current location in the array.
+This is added to have parallel processing possebility of the buffer when the
+length of the first item is known. This will reset the index to 0.
+
+=for head2
+method decode ( Buf $b --> Hash ) {...}
+
+Decode BSON buffer.
+
+=for head2
+multi method decode_document ( Array $a --> Hash ) {...}
+multi method decode_document ( Array $a, Int $index is rw --> Hash ) {...}
+
+Same as above but the first method takes an array and the second needs an
+external index. Index will be modified to point past the end of the document.
+
+=end pod
