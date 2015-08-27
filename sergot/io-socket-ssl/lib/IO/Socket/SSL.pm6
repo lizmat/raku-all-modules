@@ -122,6 +122,10 @@ method send(Str $s) {
     $!ssl.write($s);
 }
 
+method print(Str $s) {
+    $!ssl.write($s);
+}
+
 method write(Blob $b) {
     $!ssl.write($b);
 }
@@ -162,7 +166,7 @@ IO::Socket::SSL - interface for SSL connection
 
     use IO::Socket::SSL;
     my $ssl = IO::Socket::SSL.new(:host<example.com>, :port(443));
-    if $ssl.send("GET / HTTP/1.1\r\n\r\n") {
+    if $ssl.print("GET / HTTP/1.1\r\n\r\n") {
         say $ssl.recv;
     }
 
@@ -201,7 +205,13 @@ Reads $n bytes from the other side (server/client).
 
 Bool :$bin if we want it to return Buf instead of Str.
 
+=head2 method print
+
+    method print(IO::Socket::SSL:, Str $s)
+
 =head2 method send
+
+    DEPRECATED. Use `.print` instead
 
     method send(IO::Socket::SSL:, Str $s)
 
@@ -230,7 +240,7 @@ To download sourcecode of e.g. github.com:
     use IO::Socket::SSL;
     my $ssl = IO::Socket::SSL.new(:host<github.com>, :port(443));
     my $content = Buf.new;
-    $ssl.send("GET /\r\n\r\n");
+    $ssl.print("GET /\r\n\r\n");
     while my $read = $ssl.recv {
         $content ~= $read;
     }
