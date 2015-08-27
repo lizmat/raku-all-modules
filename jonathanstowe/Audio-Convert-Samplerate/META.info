@@ -1,0 +1,29 @@
+{
+  "name" : "Audio::Convert::Samplerate",
+  "tags" : [ "audio", "utils", "comvert" ],
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth" : "github:jonathanstowe",
+  "support" : {
+    "source" : "git://github.com/jonathanstowe/Audio-Convert-Samplerate.git"
+  },
+  "source-url" : "git://github.com/jonathanstowe/Audio-Convert-Samplerate.git",
+  "perl" : "v6",
+  "build-depends" : [
+    "LibraryCheck",
+    "NativeHelpers::Array",
+    "panda"
+  ],
+  "provides" : {
+    "Audio::Convert::Samplerate":  "lib/Audio/Convert/Samplerate.pm"
+  },
+  "depends" : [
+    "NativeHelpers::Array"
+  ],
+  "test-depends" : [
+    "Audio::Sndfile",
+    "Test"
+  ],
+  "description" : "Convert the samplerate of PCM audio data using libsamplerate",
+  "version" : "v0.0.1"
+}
