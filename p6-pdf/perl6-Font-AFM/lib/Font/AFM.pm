@@ -1,6 +1,6 @@
 # This -*- perl6 -*-  module is a simple parser for Adobe Font Metrics files.
 
-class Font::AFM:vers<1.20>
+class Font::AFM:vers<1.23>
     is Hash {
 
 =begin pod
@@ -184,27 +184,29 @@ it under the same terms as Perl itself.
 
     #-------perl 6 resumes here--------------------------------------------
 
-    method class-name($font-name) {
-        [~] "Font::Metrics::", $font-name.lc.subst( /['.afm'$]/, '');
-    }
-
-    method metrics-class($font-name) {
-        my $class-name = $.class-name($font-name);
-        require ::($class-name);
-        ::($class-name);
-    }
-
-    method core-font($font-name) {
-        my $class = self.metrics-class($font-name);
-        $class.new;
-    }
-
     # Creates a new Font::AFM object from an AFM file.  Pass it the name of the
     # font as parameter.
     # Synopisis:
     #
     #    $h = Font::AFM.new("Helvetica");
     #
+
+    method class-name(Str $font-name --> Str) {
+        [~] "Font::Metrics::", $font-name.lc.subst( /['.afm'$]/, '');
+    }
+
+    #| autoloads the appropriate delegate for the named font. A subclass of Font::AFM
+    method metrics-class(Str $font-name --> Font::AFM:U) {
+        my $class-name = $.class-name($font-name);
+        require ::($class-name);
+        ::($class-name);
+    }
+
+    #| creates a delegate object for the named font.
+    method core-font(Str $font-name --> Font::AFM:D) {
+        my $class = self.metrics-class($font-name);
+        $class.new;
+    }
 
     multi submethod BUILD( Str :$name! is copy) {
 
@@ -250,11 +252,11 @@ it under the same terms as Perl itself.
            if /^StartCharMetrics/    ff /^EndCharMetrics/ {
                # only lines that start with "C" or "CH" are parsed
                next unless /^ CH? ' ' /;
-               my $name  = ~ m:s/ <|w> N  <('.'?\w+)> ';' /;
-               my $wx    = + m:s/ <|w> WX <(\d+)>     ';' /;
+               my Str $name  = ~ m:s/ <|w> N  <('.'?\w+)> ';' /;
+               my Numeric $wx    = + m:s/ <|w> WX <(\d+)>     ';' /;
                warn "no bbox: $_"
                    unless m:s/ <|w> B [ (< + - >?\d+) ]+ ';' /;
-               my $bbox = [ @0.map: { .Int } ];
+               my Array $bbox = [ @0.map: { .Int } ];
                # Should also parse lingature data (format: L successor lignature)
                $metrics<Wx>{$name} = $wx;
                $metrics<BBox>{$name} = $bbox;
@@ -264,8 +266,8 @@ it under the same terms as Perl itself.
            last if /^EndFontMetrics/;
 
            if /(^\w+)' '+(.*)/ {
-               my $key = ~ $0;
-               my $val = ~ $1;
+               my Str $key = ~ $0;
+               my Str $val = ~ $1;
                $metrics{$key} = $val;
            } else {
                die "Can't parse: $_";
@@ -341,14 +343,19 @@ it under the same terms as Perl itself.
     :û("ucircumflex"),   :ü("udieresis"),  :ý("yacute"),  :þ("thorn"),
     :ÿ("ydieresis");
 
-    method stringwidth( Str $string, Numeric $pointsize?, Bool :$kern, Hash :$glyphs = %ISOLatin1Encoding) {
-        my $width = 0.0;
-        my $prev-glyph;
-        my $kern-data = self.KernData if $kern;
-        my $wx = self.Wx; 
+    #| compute the expected string-width at the given point size for this glyph set
+    method stringwidth( Str $string,
+                        Numeric $pointsize?,
+                        Bool :$kern,                        #| including kerning adjustments
+                        Hash :$glyphs = %ISOLatin1Encoding,
+        --> Numeric ) {
+        my Numeric $width = 0.0;
+        my Str $prev-glyph;
+        my Hash $kern-data = self.KernData if $kern;
+        my Hash $wx = self.Wx; 
 
         for $string.comb {
-            my $glyph-name = $glyphs{$_} // next;
+            my Str $glyph-name = $glyphs{$_} // next;
             $width += $wx{$glyph-name} // next;
 
             $width += $kern-data{$prev-glyph}{$glyph-name}
@@ -363,19 +370,20 @@ it under the same terms as Perl itself.
     }
 
     #| kern a string. decompose into an array of: ('string1', $kern , ..., 'stringn' )
-    method kern( Str $string, Numeric $pointsize?, Hash :$glyphs = %ISOLatin1Encoding) {
-        my $prev-glyph;
-        my $str = '';
+    method kern( Str $string, Numeric $pointsize?, Hash :$glyphs = %ISOLatin1Encoding
+        --> Array ) {
+        my Str $prev-glyph;
+        my Str $str = '';
         my @chunks;
-        my $kern-data = self.KernData;
-        my $wx = self.Wx;
+        my Hash $kern-data = self.KernData;
+        my Hash $wx = self.Wx;
 
         for $string.comb {
-            my $glyph-name = $glyphs{$_} // next;
-            my $glyph-width = $wx{$glyph-name} // next;
+            my Str $glyph-name = $glyphs{$_} // next;
+            my Numeric $glyph-width = $wx{$glyph-name} // next;
 
             if $prev-glyph && ($kern-data{$prev-glyph}{$glyph-name}:exists) {
-                my $kerning = $kern-data{$prev-glyph}{$glyph-name};
+                my Numeric $kerning = $kern-data{$prev-glyph}{$glyph-name};
                 if ($pointsize) {
                     $kerning *= $pointsize / 1000;
                 }
@@ -393,11 +401,11 @@ it under the same terms as Perl itself.
         @chunks;
     }
 
-    method FontBBox {
+    method FontBBox returns List {
         self<FontBBox>.comb(/< + - >?\d+/).map({ .Int });
     }
 
-    method !is-prop($prop-name) {
+    method !is-prop(Str $prop-name --> Bool) {
         BEGIN constant KnownProps = set < FontName FullName FamilyName Weight
         ItalicAngle IsFixedPitch FontBBox UnderlinePosition
         UnderlineThickness Version Notice Comment EncodingScheme

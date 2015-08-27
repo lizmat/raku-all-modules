@@ -1,4 +1,11 @@
-2015-05-01
+   Release 1.23
+   Making things less ISO-Latin1 centric
+   - inverted @ISOLatin1Encoding => %ISOLatin1Encoding
+   - removed method .wx-table('latin-1')
+   - renamed method .encode => .kern
+   - added :%chars option to .stringwidth, .kern
+   - compute metrics for Symbol, ZapfDingbats
+   - added types to declarations
 
    Release 1.22
    BBox - now fully parsed to an array of integers
@@ -6,14 +13,6 @@
    - $afm.Kern - returns kerning table as a two dimensional hash array
    - $afm.stringwidth("RVX", :kern) - computes stringwith after kerning
    - $afm.encode("RVX", :kern) - encode and kern characters.
-
-  Release 1.23
-   Making things less ISO-Latin1 centric
-  - inverted @ISOLatin1Encoding => %ISOLatin1Encoding
-  - removed method .wx-table('latin-1')
-  - renamed method .encode => .kern
-  - added :%chars option to .stringwidth, .kern
-  - compute metrics for Symbol, ZapfDingbats
 
 2015-04-30
 

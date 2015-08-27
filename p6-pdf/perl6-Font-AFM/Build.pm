@@ -26,9 +26,9 @@ class Build is Panda::Builder {
         >;
 
         for @CoreFonts -> $font-name {
-            my $class-name = Font::AFM.class-name( $font-name );
-            my @parts = $class-name.split('::');
-            my $mod-name = @parts.pop;
+            my Str $class-name = Font::AFM.class-name( $font-name );
+            my Str @parts = $class-name.split('::');
+            my Str $mod-name = @parts.pop;
             my $lib-dir = $*SPEC.catdir('lib', @parts);
             mkdir( $lib-dir, 0o755)
                 unless $lib-dir.IO ~~ :e;
@@ -40,7 +40,7 @@ class Build is Panda::Builder {
                 my $gen-path = $*SPEC.catfile($lib-dir, "$mod-name.pm");
                 my $*OUT = open( $gen-path, :w);
 
-                my $metrics = %( $afm ).item;
+                my Hash $metrics = %( $afm ).item;
 
                 print q:s:c:to"--CODE-GEN--";
                 use v6;
