@@ -44,7 +44,7 @@ sub mv(*@args) is export {
     ???
 }
 
-sub cp($from as Str, $to as Str, :$r) is export {
+sub cp($from as Str, $to as Str is copy, :$r) is export {
     if ($from.IO ~~ :d and $r) {
         mkdir("$to") if $to.IO !~~ :d;
         for dir($from)».basename -> $item {
@@ -52,6 +52,9 @@ sub cp($from as Str, $to as Str, :$r) is export {
             cp("$from/$item", "$to/$item", :r);
         }
     } else {
+        if $to.IO.d {
+            $to = "$to/" ~ $from.IO.basename;
+        }
         $from.IO.copy($to);
     }
 }
