@@ -1,0 +1,12 @@
+branches:
+  except:
+    - gh-pages
+language: perl6
+perl6:
+  - latest
+  - 2015.07
+sudo: false
+install:
+    - rakudobrew build-panda $(echo ${TRAVIS_PERL6_VERSION#latest} | sed s/2015.07/adaf6dd/)
+    - panda installdeps .
+    - git clone https://github.com/softmoth/mustache-spec.git ../mustache-spec
