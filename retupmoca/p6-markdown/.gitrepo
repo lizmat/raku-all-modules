@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/retupmoca/p6-markdown.git
+	branch = master
+	commit = 599c80ac374f689be7bb12ea5ed701ccc219c0ea
+	parent = 55622763dfd23baa4fef17f809bb935fc3b42af8
+	cmdver = 0.2.2
