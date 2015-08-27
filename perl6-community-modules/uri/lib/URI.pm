@@ -8,7 +8,7 @@ need URI::DefaultPort;
 has $.grammar;
 has $.is_validating is rw = False;
 has $!path;
-has $!is_absolute;
+has $!is_absolute;  # part of deprecated code scheduled for removal
 has $!scheme;
 has $!authority;
 has $!query;
@@ -57,7 +57,7 @@ method parse (Str $str) {
     $!authority = $comp_container<authority>;
     $!path =    $comp_container<path_abempty>       ||
                 $comp_container<path_absolute>      ;
-    $!is_absolute = ?($!path || $!scheme);
+    $!is_absolute = ?($!path || $!scheme); # part of deprecated code
 
     $!path ||=  $comp_container<path_noscheme>      ||
                 $comp_container<path_rootless>      ;
@@ -164,12 +164,24 @@ method path {
     return ~($!path || '');
 }
 
+my $warn-deprecate-abs-rel = q:to/WARN-END/;
+    The absolute and relative methods are artifacts carried over from an old
+    version of the p6 module.  The perl 5 module does not provide such
+    functionality.  The Ruby equivalent just checks for the presence or
+    absence of a scheme.  The URI rfc does identify absolute URIs and
+    absolute URI paths and these methods somewhat confused the two.  Their
+    functionality at the URI level is no longer seen as needed and is
+    being removed.
+WARN-END
+ 
 method absolute {
-    return $!is_absolute;
+    warn "deprecated -\n$warn-deprecate-abs-rel";
+    return Bool.new;
 }
 
 method relative {
-    return ! $.absolute;
+    warn "deprecated -\n$warn-deprecate-abs-rel";
+    return Bool.new;
 }
 
 method query {
@@ -187,14 +199,18 @@ method frag {
 
 method fragment { $.frag }
 
+method gist() {
+    my Str $s;
+    $s ~= $.scheme if $.scheme;
+    $s ~= '://' ~ $.authority if $.authority;
+    $s ~= $.path;
+    $s ~= '?' ~ $.query if $.query;
+    $s ~= '#' ~ $.frag if $.frag;
+    return $s;
+}
+
 method Str() {
-    my $str;
-    $str ~= $.scheme if $.scheme;
-    $str ~= '://' ~ $.authority if $.authority;
-    $str ~= $.path;
-    $str ~= '?' ~ $.query if $.query;
-    $str ~= '#' ~ $.frag if $.frag;
-    return $str;
+    return $.gist;
 }
 
 # chunks now strongly deprecated
@@ -232,9 +248,6 @@ URI — Uniform Resource Identifiers (absolute and relative)
     my $query = $u.query;
     my $frag = $u.frag; # or $u.fragment;
     my $tag = $u.query_form<tag>; # should be woow
-
-    my $is_absolute = $u.absolute;
-    my $is_relative = $u.relative;
 
     # something p5 URI without grammar could not easily do !
     my $host_in_grammar =
