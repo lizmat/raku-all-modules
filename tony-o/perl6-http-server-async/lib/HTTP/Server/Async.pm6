@@ -1,162 +1,189 @@
+use HTTP::Server;
 use HTTP::Server::Async::Request;
 use HTTP::Server::Async::Response;
 
-class HTTP::Server::Async {
-  has Str     $.host     = '127.0.0.1';
-  has Int     $.port     = 8080;
-  has Bool    $.buffered = True;
-  has Int     $.timeout  = 30;
+class HTTP::Server::Async does HTTP::Server {
+  has Int     $.port          = 1666;
+  has Str     $.ip            = '0.0.0.0';
+  has Channel $.requests     .= new;
+  has Int     $.timeout is rw = 8;
 
-  has Promise $!promise;
-  has Channel $!parser;
-  has Channel $!responder;
-  has Channel $!timeoutc;
-  
-  has @.responsestack;
-  has %!connections;
-  has @!middleware;
-  has $!server;
+  has Supply $.socket  is rw;
 
-  method middleware(Str $class) {
-    require($class);
-    @!middleware.push($class);
+  has @.handlers;
+  has @.afters;
+  has @.middlewares;
+  has @!connects;
+
+  method handler(Callable $sub) {
+    @.handlers.push($sub);
   }
 
-  method listen {
-    my $connid  = 0;
-    $!promise   = Promise.new;
-    $!server    = IO::Socket::Async.listen($.host, $.port) or 
-                     die "Couldn't listen on $.host:$.port";
-    $!parser    = Channel.new;
-    $!responder = Channel.new;
-    $!timeoutc  = Channel.new;
-
-    self!parse_worker;
-    self!respond_worker;
-    self!timeout_worker;
-    $!server.tap(-> $connection {
-      my $id      = $connid++;
-      my $tap     = $connection.chars-supply.tap(-> $data {
-        $!parser.send({ 
-          id         => $id, 
-          connection => $connection, 
-          data       => $data,
-          tap        => $tap,
-          now        => now,
-          canceller  => $*SCHEDULER.cue({
-            $!timeoutc.send($connection // Nil);
-          }, :in($.timeout)),
-        });
-      });
-    }, quit => {
-      $!promise.vow.keep(True); 
-    });
+  method after(Callable $sub) {
+    @.afters.push($sub);
   }
 
-  method register(Callable $sub){
-    @.responsestack.push($sub);
+  method middleware(Callable $sub) {
+    @.middlewares.push($sub);
   }
 
-  method block {
-    await $!promise;
-    $!parser.close;
-    $!responder.close;
-  };
-
-  method !timeout_worker {
+  method !timeout {
     start {
       loop {
-        my $conn = $!timeoutc.receive;
-        try {
-          $conn.close;
+        sleep 1;
+        CATCH { default { .say; } }
+        for @!connects.grep({ now - $_<last-active> >= $.timeout }) {
+          CATCH { default { .say; } }
+          try $_<connection>.close;
         }
-      }
+      };
     };
   }
 
-  method !parse_worker {
+  method !reset-time($conn) {
+    for @!connects.grep({ $_<connection> eqv $conn }) {
+      $_<last-active> = now;
+    }
+  }
+
+  method listen(Bool $block? = False) {
+    my Promise $prom .=new;
+    my Buf     $rn   .=new("\r\n\r\n".encode);
+
+    self!responder;
+    self!timeout;
+
+    $.socket = IO::Socket::Async.listen($.ip, $.port) or die "Failed to listen on $.ip:$.port";
+    $.socket.tap(-> $conn {
+      my Buf $data .=new;
+      my Int $index = 0;
+      my     $req   = Nil;
+      @!connects.push({
+        connection  => $conn,
+        last-active => now,
+      });
+      
+      $conn.bytes-supply.tap(-> $bytes {
+        $data ~= $bytes;
+        self!reset-time($conn);
+        while $index++ < $data.elems - 3 {
+          $index--, last if $data[$index]   == $rn[0] &&
+                            $data[$index+1] == $rn[1] &&
+                            $data[$index+2] == $rn[2] &&
+                            $data[$index+3] == $rn[3];
+        }
+
+        self!parse($data, $index, $req, $conn) if $index != $data.elems - 3 || $req.^can('complete');
+        CATCH { default { .say; } }
+      });
+      CATCH { default { .say; } }
+    }, quit => {
+      $prom.keep(True);
+    });
+
+    await $prom if $block;
+    return $prom;
+  }
+
+  method !responder {
     start {
       loop {
-        my $p = $!parser.receive;
-        try {
-          if !(%!connections{$p<id>}:exists) {
-            my $req = HTTP::Server::Async::Request.new;
-            %!connections{$p<id>} = { 
-              data       => '',
-              now        => $p<now>,
-              req        => $req,
-              res        => HTTP::Server::Async::Response.new(
-                              :connection($p<connection>), 
-                              :$.buffered,
-                              :request($req),
-                            ),
-              tap        => $p<tap>,
-              connection => $p<connection>,
-              processing => False,
-            };
-          } elsif %!connections{$p<id>}<req>.promise.status ~~ Kept {
-            %!connections{$p<id>}<data> = '';
-            %!connections{$p<id>}<req>  = HTTP::Server::Async::Request.new;
-            %!connections{$p<id>}<res>  = HTTP::Server::Async::Response.new(
-                                            :connection($p<connection>), 
-                                            :$.buffered,
-                                            :request(%!connections{$p<id>}<req>),
-                                          );
-            %!connections{$p<id>}<processing> = False;
-          }
-          %!connections{$p<id>}<data> ~= $p<data>;
-          my $rbool = %!connections{$p<id>}<req>.parse(%!connections{$p<id>}<data>); 
-          for @!middleware -> $class {
-            try {
-              my $rval = ::($class).new(
-                request    => %!connections{$p<id>}<req>,
-                response   => %!connections{$p<id>}<res>,
-                tap        => %!connections{$p<id>}<tap>,
-                connection => %!connections{$p<id>}<connection>,
-              );
-
-              if $rval.status {
-                %!connections{$p<id>}<tap>.close;
-                next;
+        CATCH { default { .say; } }
+        my $req = $.requests.receive;
+        my $res = $req.response;
+        for @.handlers -> $h {
+          try {
+            CATCH {
+              default {
+                .say;
               }
-              CATCH { .say; }
-            };
+            }
+            my $r = $h.($req, $res);
+            last if self!rc($r);
+          };
+        }
+
+        for @.afters -> $a {
+          try {
+            CATCH {
+              default {
+                .say;
+              }
+            }
+            $a.($req, $res);
           }
-          $!responder.send($p<id>) if $rbool; 
-          CATCH { .say; }
-        };
-      }
-    }
+        }
+      };
+    };
   }
 
-  method !respond_worker {
-    start {
-      loop {
-        my $r = $!responder.receive;
-        next if %!connections{$r}<processing>;
-        %!connections{$r}<processing> = True;
-        my $req = %!connections{$r}<req>;
-        my $res = %!connections{$r}<res>;
-        my $index = 0;
-        my $s = sub (Bool $next? = True) {
-          if !$next || $index >= @.responsestack.elems || $res.promise.status ~~ Kept {
-            try { %!connections{$r}<canceller>.cancel };
-            if !($res.headers<Connection> // '').match(/ 'keep-alive' /) {
-              %!connections{$r}<connection>.close; 
-              %!connections{$r}<tap>.close;
-              %!connections.delete_key($r);
-            } else {
-              %!connections{$r}<canceller> = $*SCHEDULER.cue({
-                $!timeoutc.send(%!connections{$r}<connection> // Nil);
-              }, :in($.timeout));
+  method !parse($data is rw, $index is rw, $req is rw, $connection) {
+    $req = Nil if $req !~~ Nil && $req.^can('complete') && $req.complete;
+    if $req ~~ Nil || !( $req.^can('headers') && $req.headers.keys.elems ) {
+      my @lines       = Buf.new($data[0..$index]).decode.lines;
+      my ($m, $u, $v) = @lines.shift.match(/^(.+?)\s(.+)\s(HTTP\/.+)$/).list.map({ .Str });
+      my %h           = @lines.map({ .split(':', 2).map({.trim}) });
+
+      $req    = HTTP::Server::Async::Request.new(
+                  :method($m), 
+                  :uri($u), 
+                  :version($v), 
+                  :headers(%h), 
+                  :connection($connection),
+                  :response(HTTP::Server::Async::Response.new(:$connection)));
+      $req.data .=new;
+      $index += 4;
+      $data   = Buf.new($data[$index+1..$data.elems]);
+      $index  = 0;
+      for @.middlewares -> $m {
+        try {
+          CATCH {
+            default {
+              .say;
             }
-            return;
           }
-          @.responsestack[$index++]($req, $res, $s);
+          my $r = $m.($req, $req.response);
+          return if self!rc($r);
         };
-        $s();
-        CATCH { .say; }
       }
     }
+    CATCH { default { .say; } }
+    if $req !~~ Nil && $req.header('Transfer-Encoding').lc.index('chunked') !~~ Nil {
+      my ($i, $bytes) = 0,;
+      my Buf $rn .=new("\r\n".encode);
+      while $i < $data.elems {
+        $i++ while $data[$i]   != $rn[0] &&
+                   $data[$i+1] != $rn[1] &&
+                   $i + 1 < $data.elems;
+        last if $i + 1 >= $data.elems;
+
+        $bytes = :16($data.subbuf(0,$i).decode);
+        last if $data.elems < $i + $bytes;
+        { $req.complete = True; last; } if $bytes == 0;
+        $i+=2;
+        $req.data ~= $data.subbuf($i, $i+$bytes-3);
+        try $data .=subbuf($i+$bytes+2);
+        $i = 0;
+      }
+    } else {
+      my $req-len = $req.header('Content-Length')[0] // ($data.elems - $index);
+      if $data.elems - $req-len >= 0 {
+        $req.data     = Buf.new($data[0..$req-len]); 
+        $req.complete = True;
+        $data = Buf.new($data[$req-len..$data.elems]);
+      }
+    }
+    $.requests.send($req) if $req.^can('complete') && $req.complete;
   }
-}
+
+  method !rc($r) {
+    if $r ~~ Promise {
+      try await $r;
+      return True unless $r.status ~~ Kept;
+    } else {
+      return True unless $r;
+    }
+    return False;
+  }
+};
+
