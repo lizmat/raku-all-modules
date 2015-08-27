@@ -9,7 +9,7 @@ PERL6  = $binary
 DESTDIR= 
 PREFIX = $prefix
 BLIB   = blib
-P6LIB  = $(PWD)/$(BLIB)/lib:$(PWD)/lib:$(PERL6LIB)
+P6LIB  = $(PWD)/$(BLIB)/lib,$(PWD)/lib,$(PERL6LIB)
 CP     = cp -p
 MKDIR  = mkdir -p
 
@@ -42,7 +42,7 @@ distclean purge: clean
 }
 
 sub MAIN($filename = 'Makefile', Bool :$alpha) {
-    my $binary = $alpha ?? 'alpha' !! $*EXECUTABLE_NAME;
+    my $binary = $alpha ?? 'alpha' !! $*EXECUTABLE-NAME;
     if $alpha {
         note "Using 'alpha' as the Perl 6 binary. Please upgrade your code.";
     }
@@ -131,11 +131,11 @@ sub get_modules() {
 
     my @module-files = find-file-by-ext(<lib lib6>, <pm pm6>);
     my @modules = @module-files.map: { Module.new(lib-pm => $_) };
-    my %modules-by-name = @modules>>.name Z @modules;
+    my %modules-by-name = @modules>>.name Z=> @modules;
     for @modules {
         # The grep is needed because 'find' prints a final newline, so there'll be an
         # empty-string element at the end of the list.
-        .dependencies.push: %modules-by-name{ dependencies(.lib-pm) }.grep: *.defined
+        .dependencies.push: %modules-by-name{ flat dependencies(.lib-pm) }.grep: *.defined
     }
     return @modules;
 }
