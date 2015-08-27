@@ -1,6 +1,6 @@
 use Test;
 
-plan 21;
+plan 22;
 
 use-ok 'Math::Trig';
 

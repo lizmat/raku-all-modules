@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/p6-Math-Trig.git
 	branch = master
-	commit = b2ab6d05e65c36d69f8eee79141dfdd20be16166
-	parent = b7f129c92a6b4d1e2a45cb1382ba3d036eff3a20
+	commit = 0d0ce3ec0bb7f34a6aa376548b0c50562728382f
+	parent = f9a5ea7eb48ebc1d12f9eb392ed47744767d411c
 	cmdver = 0.2.2
