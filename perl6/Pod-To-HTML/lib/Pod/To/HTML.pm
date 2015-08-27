@@ -63,26 +63,62 @@ multi visit($root, :&pre, :&post, :&assemble = -> *% { Nil }) {
 class Pod::List is Pod::Block { };
 
 sub assemble-list-items(:@content, :$node, *% ) {
-    my @current;
-    my @result;
-    my $found;
-    for @content -> $c {
-        if $c ~~ Pod::Item {
-            @current.push: $c;
-            $found = True;
-        }
-        elsif @current {
-            @result.push: Pod::List.new(contents => @current);
-            @current = ();
-            @result.push: $c;
-        }
-        else {
-            @result.push: $c;
+    my @newcont;
+    my $foundone = False;
+    my $everwarn = False;
+
+    my $atlevel = 0;
+    my @pushalias;
+
+    my sub oodwarn($got, $want) {
+        unless $everwarn {
+            warn "=item$got without preceding =item$want found!";
+            $everwarn = True;
         }
     }
-    @result.push: Pod::List.new(contents => @current) if @current;
-    @current = ();
-    return $found ?? $node.clone(contents => @result) !! $node;
+
+    for @content {
+        when Pod::Item {
+            $foundone = True;
+
+            # here we deal with @newcont being empty (first list), or with the
+            # last element not being a list (new list)
+            unless +@newcont && @newcont[*-1] ~~ Pod::List {
+                @newcont.push(Pod::List.new());
+                if $_.level > 1 {
+                    oodwarn($_.level, 1);
+                }
+            }
+
+            # only bother doing the binding business if we're at a different
+            # level than previous items
+            if $_.level != $atlevel {
+                # guaranteed to be bound to a Pod::List (see above 'unless')
+                @pushalias := @newcont[*-1].contents;
+
+                for 2..($_.level) -> $L {
+                    unless +@pushalias && @pushalias[*-1] ~~ Pod::List {
+                        @pushalias.push(Pod::List.new());
+                        if +@pushalias == 1 { # we had to push a sublist to a list with no =items
+                            oodwarn($OUTER::_.level, $L);
+                        }
+                    }
+                    @pushalias := @pushalias[*-1].contents;
+                }
+
+                $atlevel = $_.level;
+            }
+
+            @pushalias.push($_);
+        }
+
+        default {
+            @newcont.push($_);
+            $atlevel = 0;
+        }
+    }
+
+    return $foundone ?? $node.clone(contents => @newcont) !! $node;
 }
 
 

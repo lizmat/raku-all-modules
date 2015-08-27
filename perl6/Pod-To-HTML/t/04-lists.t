@@ -45,13 +45,17 @@ $r = pod2html $=pod[1];
 ok $r ~~ ms[[
     '<ul>'
         '<li>' '<p>' Animal '</p>' '</li>'
-        '<li>' '<p>' Vertebrate '</p>' '</li>'
-        '<li>' '<p>' Invertebrate '</p>' '</li>'
+        '<ul>'
+            '<li>' '<p>' Vertebrate '</p>' '</li>'
+            '<li>' '<p>' Invertebrate '</p>' '</li>'
+        '</ul>'
         '<li>' '<p>' Phase '</p>' '</li>'
-        '<li>' '<p>' Solid '</p>' '</li>'
-        '<li>' '<p>' Liquid '</p>' '</li>'
-        '<li>' '<p>' Gas '</p>' '</li>'
-        '<li>' '<p>' Chocolate '</p>' '</li>'
+        '<ul>'
+            '<li>' '<p>' Solid '</p>' '</li>'
+            '<li>' '<p>' Liquid '</p>' '</li>'
+            '<li>' '<p>' Gas '</p>' '</li>'
+            '<li>' '<p>' Chocolate '</p>' '</li>'
+        '</ul>'
     '</ul>'
 ]];
 
@@ -69,8 +73,10 @@ $r = pod2html $=pod[2];
 ok $r ~~ ms[[
     '<ul>'
         '<li>' '<p>' 'The choices are:' '</p>' '</li>'
-        '<li>' '<p>' Liberty '</p>' '</li>'
-        '<li>' '<p>' Death '</p>' '</li>'
-        '<li>' '<p>' Beer '</p>' '</li>'
+        '<ul>'
+            '<li>' '<p>' Liberty '</p>' '</li>'
+            '<li>' '<p>' Death '</p>' '</li>'
+            '<li>' '<p>' Beer '</p>' '</li>'
+        '</ul>'
     '</ul>'
 ]];
