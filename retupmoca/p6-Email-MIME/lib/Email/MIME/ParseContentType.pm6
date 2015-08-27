@@ -1,6 +1,6 @@
 unit role Email::MIME::ParseContentType;
 
-grammar ContentTypeHeader {
+my grammar ContentTypeHeader {
     token TOP {
         ^ <type> \/ <subtype> \s* <params>? $
     }
