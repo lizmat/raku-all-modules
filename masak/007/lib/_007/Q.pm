@@ -89,6 +89,16 @@ role Q::Prefix::Minus does Q::Prefix {
     }
 }
 
+role Q::Prefix::Custom[$type] does Q::Prefix {
+    method type { "[$type]" }
+
+    method eval($runtime) {
+        my $e = $.expr.eval($runtime);
+        my $c = $runtime.get-var("prefix:<$type>");
+        return $runtime.call($c, [$e]);
+    }
+}
+
 role Q::Infix does Q {
     has $.lhs;
     has $.rhs;
@@ -163,28 +173,46 @@ role Q::Infix::Eq does Q::Infix {
     }
 }
 
-role Q::Postfix::Index does Q {
-    has $.array;
-    has $.index;
-    method new($array, $index) { self.bless(:$array, :$index) }
-    method Str { "Index" ~ children($.array, $.index) }
+role Q::Infix::Custom[$type] does Q::Infix {
+    method type { "[$type]" }
 
     method eval($runtime) {
-        my $array = $runtime.get-var($.array.name);
-        die X::TypeCheck.new(:operation<indexing>, :got($array), :expected(Val::Array))
-            unless $array ~~ Val::Array;
-        my $index = $.index.eval($runtime);
-        # XXX: also check index is integer
-        die X::Subscript::TooLarge.new
-            if $index.value >= $array.elements;
-        die X::Subscript::Negative.new(:$index, :type([]))
-            if $index.value < 0;
-        return $array.elements[$index.value];
+        my $l = $.lhs.eval($runtime);
+        my $r = $.rhs.eval($runtime);
+        my $c = $runtime.get-var("infix:<$type>");
+        return $runtime.call($c, [$l, $r]);
     }
 }
 
-role Q::Postfix::Call does Q {
+role Q::Postfix does Q {
     has $.expr;
+    has $.type = "";
+    method new($expr) { self.bless(:$expr) }
+    method Str { "Postfix" ~ self.type ~ children($.expr) }
+
+    method eval($runtime) { ... }
+}
+
+role Q::Postfix::Index does Q::Postfix {
+    has $.index;
+    method new($expr, $index) { self.bless(:$expr, :$index) }
+    method Str { "Index" ~ children($.expr, $.index) }
+
+    method eval($runtime) {
+        my $expr = $runtime.get-var($.expr.name);
+        die X::TypeCheck.new(:operation<indexing>, :got($expr), :expected(Val::Array))
+            unless $expr ~~ Val::Array;
+        my $index = $.index.eval($runtime);
+        # XXX: also check index is integer
+        die X::Subscript::TooLarge.new
+            if $index.value >= $expr.elements;
+        die X::Subscript::Negative.new(:$index, :type([]))
+            if $index.value < 0;
+        return $expr.elements[$index.value];
+    }
+}
+
+role Q::Postfix::Call does Q::Postfix {
     has $.arguments;
     method new($expr, $arguments) { self.bless(:$expr, :$arguments) }
     method Str { "Call" ~ children($.expr, $.arguments) }
@@ -197,6 +225,16 @@ role Q::Postfix::Call does Q {
             unless $c ~~ Val::Block;
         my @args = $.arguments.arguments».eval($runtime);
         return $runtime.call($c, @args);
+    }
+}
+
+role Q::Postfix::Custom[$type] does Q::Postfix {
+    method type { "[$type]" }
+
+    method eval($runtime) {
+        my $e = $.expr.eval($runtime);
+        my $c = $runtime.get-var("postfix:<$type>");
+        return $runtime.call($c, [$e]);
     }
 }
 
@@ -471,4 +509,14 @@ role Q::Arguments does Q {
     has @.arguments;
     method new(*@arguments) { self.bless(:@arguments) }
     method Str { "Arguments" ~ children(@.arguments) }
+}
+
+role Q::Trait does Q {
+    has $.ident;
+    has $.expr;
+
+    method new($ident, $expr) {
+        self.bless(:$ident, :$expr);
+    }
+    method Str { "Trait[{$.ident.name}]" ~ children($.expr) }
 }

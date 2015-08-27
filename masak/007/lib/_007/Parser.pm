@@ -1,46 +1,197 @@
 use _007::Q;
 
 class X::String::Newline is Exception {
+    method message { "Found a newline inside a string literal" }
 }
 
 class X::PointyBlock::SinkContext is Exception {
+    method message { "Pointy blocks cannot occur on the statement level" }
 }
 
-my %ops =
-    prefix => {},
-    infix => {},
-;
-my @infixprec;
-my @prepostfixprec;
+class X::Trait::Conflict is Exception {
+    has Str $.t1;
+    has Str $.t2;
 
-sub add-prefix($op, $q) {
-    %ops<prefix>{$op} = $q;
-    @prepostfixprec.push($q);
+    method message { "Traits '$.t1' and '$.t2' cannot coexist on the same routine" }
 }
 
-sub add-infix($op, $q) {
-    %ops<infix>{$op} = $q;
-    @infixprec.push($q);
+class X::Op::Nonassociative is Exception {
+    has Str $.op1;
+    has Str $.op2;
+
+    method message {
+        my $name1 = $.op1.type.substr(1, *-1);
+        my $name2 = $.op2.type.substr(1, *-1);
+        "'$name1' and '$name2' do not associate -- please use parentheses"
+    }
 }
 
-add-prefix('-', Q::Prefix::Minus);
+class X::Trait::IllegalValue is Exception {
+    has Str $.trait;
+    has Str $.value;
 
-add-infix('=', Q::Infix::Assignment);
-add-infix('==', Q::Infix::Eq);
-add-infix('+', Q::Infix::Addition);
-add-infix('~', Q::Infix::Concat);     # XXX: should really have the same prec as +
+    method message { "The value '$.value' is not compatible with the trait '$.trait'" }
+}
+
+class X::Associativity::Conflict is Exception {
+    method message { "The operator already has a defined associativity" }
+}
+
+class X::Precedence::Incompatible is Exception {
+    method message { "Trying to relate a pre/postfix operator with an infix operator" }
+}
+
+class Prec {
+    has $.assoc = "left";
+    has %.ops;
+
+    method contains($op) {
+        %.ops{$op}:exists;
+    }
+
+    method clone {
+        self.new(:$.assoc, :%.ops);
+    }
+}
+
+class OpLevel {
+    has %.ops =
+        prefix => {},
+        infix => {},
+        postfix => {},
+    ;
+
+    has @.infixprec;
+    has @.prepostfixprec;
+    has $!prepostfix-boundary = 0;
+
+    method add-prefix($op, $q, :$assoc!) {
+        %!ops<prefix>{$op} = $q;
+        my $prec = Prec.new(:$assoc, :ops{ $op => $q });
+        @!prepostfixprec.splice($!prepostfix-boundary, 0, $prec);
+        $!prepostfix-boundary++;
+    }
+
+    method add-prefix-tighter($op, $q, $other-op, :$assoc!) {
+        %!ops<prefix>{$op} = $q;
+        my $pos = @!prepostfixprec.first-index(*.contains($other-op));
+        my $prec = Prec.new(:$assoc, :ops{ $op => $q });
+        @!prepostfixprec.splice($pos + 1, 0, $prec);
+        if $pos <= $!prepostfix-boundary {
+            $!prepostfix-boundary++;
+        }
+    }
+
+    method add-prefix-equal($op, $q, $other-op, :$assoc!) {
+        %!ops<prefix>{$op} = $q;
+        my $prec = @!prepostfixprec.first(*.contains($other-op));
+        die X::Associativity::Conflict.new
+            if defined($assoc) && $assoc ne $prec.assoc;
+        $prec.ops{$op} = $q;
+    }
+
+    method add-infix($op, $q, :$assoc!) {
+        %!ops<infix>{$op} = $q;
+        my $prec = Prec.new(:$assoc, :ops{ $op => $q });
+        @!infixprec.push($prec);
+    }
+
+    method add-infix-looser($op, $q, $other-op, :$assoc!) {
+        %!ops<infix>{$op} = $q;
+        my $pos = @!infixprec.first-index(*.contains($other-op));
+        my $prec = Prec.new(:$assoc, :ops{ $op => $q });
+        @!infixprec.splice($pos, 0, $prec);
+    }
+
+    method add-infix-tighter($op, $q, $other-op, :$assoc!) {
+        %!ops<infix>{$op} = $q;
+        my $pos = @!infixprec.first-index(*.contains($other-op));
+        my $prec = Prec.new(:$assoc, :ops{ $op => $q });
+        @!infixprec.splice($pos + 1, 0, $prec);
+    }
+
+    method add-infix-equal($op, $q, $other-op, :$assoc?) {
+        %!ops<infix>{$op} = $q;
+        my $prec = @!infixprec.first(*.contains($other-op));
+        die X::Associativity::Conflict.new
+            if defined($assoc) && $assoc ne $prec.assoc;
+        $prec.ops{$op} = $q;
+    }
+
+    method add-postfix($op, $q, :$assoc!) {
+        %!ops<postfix>{$op} = $q;
+        my $prec = Prec.new(:$assoc, :ops{ $op => $q });
+        @!prepostfixprec.push($prec);
+    }
+
+    method add-postfix-looser($op, $q, $other-op, :$assoc!) {
+        %!ops<postfix>{$op} = $q;
+        my $pos = @!prepostfixprec.first-index(*.contains($other-op));
+        my $prec = Prec.new(:$assoc, :ops{ $op => $q });
+        @!prepostfixprec.splice($pos, 0, $prec);
+        if $pos <= $!prepostfix-boundary {
+            $!prepostfix-boundary++;
+        }
+    }
+
+    method add-postfix-equal($op, $q, $other-op, :$assoc!) {
+        %!ops<postfix>{$op} = $q;
+        my $prec = @!prepostfixprec.first(*.contains($other-op));
+        die X::Associativity::Conflict.new
+            if defined($assoc) && $assoc ne $prec.assoc;
+        $prec.ops{$op} = $q;
+    }
+
+    method clone {
+        my $opl = OpLevel.new(
+            infixprec => @.infixprec.map(*.clone),
+            prepostfixprec => @.prepostfixprec.map(*.clone),
+            :$!prepostfix-boundary,
+        );
+        for <prefix infix postfix> -> $category {
+            for %.ops{$category}.kv -> $op, $q {
+                $opl.ops{$category}{$op} = $q;
+            }
+        }
+        return $opl;
+    }
+}
 
 class Parser {
+    has @!oplevels;
+
+    method oplevel { @!oplevels[*-1] }
+    method push-oplevel { @!oplevels.push: @!oplevels[*-1].clone }
+    method pop-oplevel { @!oplevels.pop }
+
+    submethod BUILD {
+        my $opl = OpLevel.new;
+        @!oplevels.push: $opl;
+
+        $opl.add-prefix('-', Q::Prefix::Minus, :assoc<left>);
+
+        $opl.add-infix('=', Q::Infix::Assignment, :assoc<right>);
+        $opl.add-infix('==', Q::Infix::Eq, :assoc<left>);
+        $opl.add-infix('+', Q::Infix::Addition, :assoc<left>);
+        $opl.add-infix-equal('~', Q::Infix::Concat, "+");
+    }
+
     grammar Syntax {
         token TOP {
             <.newpad>
             <statements>
+            <.finishpad>
         }
 
         token newpad { <?> {
+            $*parser.push-oplevel;
             my $block = Val::Block.new(
                 :outer-frame($*runtime.current-frame));
             $*runtime.enter($block)
+        } }
+
+        token finishpad { <?> {
+            $*parser.pop-oplevel;
         } }
 
         rule statements {
@@ -78,7 +229,7 @@ class Parser {
             <![{]>       # prevent mixup with statement:block
             <EXPR>
         }
-        token statement:block { <block> }
+        token statement:block { <pblock> }
         rule statement:sub {
             sub [<identifier> || <.panic("identifier")>]
             :my $*insub = True;
@@ -91,7 +242,9 @@ class Parser {
             }
             <.newpad>
             '(' ~ ')' <parameters>
+            <trait> *
             <blockoid>:!s
+            <.finishpad>
         }
         rule statement:macro {
             macro <identifier>
@@ -106,6 +259,7 @@ class Parser {
             <.newpad>
             '(' ~ ')' <parameters>
             <blockoid>:!s
+            <.finishpad>
         }
         token statement:return {
             return [\s+ <EXPR>]?
@@ -127,12 +281,17 @@ class Parser {
             BEGIN <.ws> <block>
         }
 
+        token trait {
+            'is' \s* <identifier> '(' <EXPR> ')'
+        }
+
         # requires a <.newpad> before invocation
+        # and a <.finishpad> after
         token blockoid {
             '{' ~ '}' <statements>
         }
         token block {
-            <?[{]> <.newpad> <blockoid>
+            <?[{]> <.newpad> <blockoid> <.finishpad>
         }
 
         # "pointy block"
@@ -140,6 +299,7 @@ class Parser {
             | <lambda> <.newpad> <.ws>
                 <parameters>
                 <blockoid>
+                <.finishpad>
             | <block>
         }
         token lambda { '->' }
@@ -165,7 +325,7 @@ class Parser {
             if / '->' /(self) {
                 return /<!>/(self);
             }
-            my @ops = %ops<prefix>.keys;
+            my @ops = $*parser.oplevel.ops<prefix>.keys;
             if /@ops/(self) -> $cur {
                 return $cur."!reduce"("prefix");
             }
@@ -185,24 +345,35 @@ class Parser {
                     unless $*runtime.declared($symbol);
             }
         }
-        token term:block { <pblock> }
         token term:quasi { quasi <.ws> '{' ~ '}' <statements> }
+        token term:parens { '(' ~ ')' <EXPR> }
 
         method infix {
-            my @ops = %ops<infix>.keys;
+            my @ops = $*parser.oplevel.ops<infix>.keys;
             if /@ops/(self) -> $cur {
                 return $cur."!reduce"("infix");
             }
             return /<!>/(self);
         }
 
-        token postfix {
-            | $<index>=[ \s* '[' ~ ']' [\s* <EXPR>] ]
-            | $<call>=[ \s* '(' ~ ')' [\s* <arguments>] ]
+        method postfix {
+            # XXX: should find a way not to special-case [] and ()
+            if /$<index>=[ \s* '[' ~ ']' [\s* <EXPR>] ]/(self) -> $cur {
+                return $cur."!reduce"("postfix");
+            }
+            elsif /$<call>=[ \s* '(' ~ ')' [\s* <arguments>] ]/(self) -> $cur {
+                return $cur."!reduce"("postfix");
+            }
+
+            my @ops = $*parser.oplevel.ops<postfix>.keys;
+            if /@ops/(self) -> $cur {
+                return $cur."!reduce"("postfix");
+            }
+            return /<!>/(self);
         }
 
         token identifier {
-            <!before \d> <[\w:]>+
+            <!before \d> <[\w:]>+ ['<' <-[>]>+ '>']?
         }
 
         rule arguments {
@@ -267,8 +438,6 @@ class Parser {
         }
 
         method statement:expr ($/) {
-            die X::PointyBlock::SinkContext.new
-                if $<EXPR>.ast ~~ Q::Literal::Block;
             if $<EXPR>.ast ~~ Q::Statement::Block {
                 my @statements = $<EXPR>.ast.block.statements.statements.list;
                 die "Can't handle this case with more than one statement yet" # XXX
@@ -281,16 +450,120 @@ class Parser {
         }
 
         method statement:block ($/) {
-            make Q::Statement::Block.new($<block>.ast);
+            die X::PointyBlock::SinkContext.new
+                if $<pblock><parameters>;
+            make Q::Statement::Block.new($<pblock>.ast);
         }
 
         method statement:sub ($/) {
+            my $identifier = $<identifier>.ast;
+            my $subname = ~$<identifier>;
+
             my $sub = Q::Statement::Sub.new(
-                $<identifier>.ast,
+                $identifier,
                 $<parameters>.ast,
                 $<blockoid>.ast);
             $sub.declare($*runtime);
             make $sub;
+
+            my %trait;
+            my @prec-traits = <equal looser tighter>;
+            my $assoc;
+            for @<trait> -> $trait {
+                my $name = $trait<identifier>.ast.name;
+                if $name eq any @prec-traits {
+                    my $identifier = $trait<EXPR>.ast;
+                    my $prep = $name eq "equal" ?? "to" !! "than";
+                    die "The thing your op is $name $prep must be an identifier"
+                        unless $identifier ~~ Q::Identifier;
+                    sub check-if-op($s) {
+                        die "Unknown thing in '$name' trait"
+                            unless $s ~~ /< pre in post > 'fix:<' (<-[>]>+) '>'/;
+                        %trait{$name} = ~$0;
+                        die X::Precedence::Incompatible.new
+                            if $subname ~~ /^ < pre post >/ && $s ~~ /^ in/
+                            || $subname ~~ /^ in/ && $s ~~ /^ < pre post >/;
+                    }($identifier.name);
+                }
+                elsif $name eq "assoc" {
+                    my $string = $trait<EXPR>.ast;
+                    die "The associativity must be a string"
+                        unless $string ~~ Q::Literal::Str;
+                    my $value = $string.value;
+                    die X::Trait::IllegalValue.new(:trait<assoc>, :$value)
+                        unless $value eq any "left", "non", "right";
+                    $assoc = $value;
+                }
+                else {
+                    die "Unknown trait '$name'";
+                }
+            }
+
+            if %trait.keys > 1 {    # this might change in the future, when we have other traits
+                my ($t1, $t2) = %trait.keys.sort;
+                die X::Trait::Conflict.new(:$t1, :$t2)
+                    if %trait{$t1} && %trait{$t2};
+            }
+
+            sub install-operator($s) {
+                if $s ~~ /'infix:<' (<-[>]>+) '>'/ {
+                    my $op = ~$0;
+                    if %trait<looser> {
+                        $assoc //= "left";
+                        $*parser.oplevel.add-infix-looser($op, Q::Infix::Custom["$op"], %trait<looser>, :$assoc);
+                    }
+                    elsif %trait<tighter> {
+                        $assoc //= "left";
+                        $*parser.oplevel.add-infix-tighter($op, Q::Infix::Custom["$op"], %trait<tighter>, :$assoc);
+                    }
+                    elsif %trait<equal> {
+                        # we leave the associativity unspecified
+                        $*parser.oplevel.add-infix-equal($op, Q::Infix::Custom["$op"], %trait<equal>, :$assoc);
+                    }
+                    else {
+                        $assoc //= "left";
+                        $*parser.oplevel.add-infix($op, Q::Infix::Custom["$op"], :$assoc);
+                    }
+                }
+                elsif $s ~~ /'prefix:<' (<-[>]>+) '>'/ {
+                    my $op = ~$0;
+                    if %trait<looser> {
+                        $assoc //= "left";
+                        $*parser.oplevel.add-prefix-looser($op, Q::Prefix::Custom["$op"], %trait<looser>, :$assoc);
+                    }
+                    elsif %trait<tighter> {
+                        $assoc //= "left";
+                        $*parser.oplevel.add-prefix-tighter($op, Q::Prefix::Custom["$op"], %trait<tighter>, :$assoc);
+                    }
+                    elsif %trait<equal> {
+                        # we leave the associativity unspecified
+                        $*parser.oplevel.add-prefix-equal($op, Q::Prefix::Custom["$op"], %trait<equal>, :$assoc);
+                    }
+                    else {
+                        $assoc //= "left";
+                        $*parser.oplevel.add-prefix($op, Q::Prefix::Custom["$op"], :$assoc);
+                    }
+                }
+                elsif $s ~~ /'postfix:<' (<-[>]>+) '>'/ {
+                    my $op = ~$0;
+                    if %trait<looser> {
+                        $assoc //= "left";
+                        $*parser.oplevel.add-postfix-looser($op, Q::Postfix::Custom["$op"], %trait<looser>, :$assoc);
+                    }
+                    elsif %trait<tighter> {
+                        $assoc //= "left";
+                        $*parser.oplevel.add-postfix-tighter($op, Q::Postfix::Custom["$op"], %trait<tighter>, :$assoc);
+                    }
+                    elsif %trait<equal> {
+                        # we leave the associativity unspecified
+                        $*parser.oplevel.add-postfix-equal($op, Q::Postfix::Custom["$op"], %trait<equal>, :$assoc);
+                    }
+                    else {
+                        $assoc //= "left";
+                        $*parser.oplevel.add-postfix($op, Q::Postfix::Custom["$op"], :$assoc);
+                    }
+                }
+            }($identifier.name);
         }
 
         method statement:macro ($/) {
@@ -330,8 +603,8 @@ class Parser {
             $*runtime.run($bl.statements);
         }
 
-        sub tighter-or-equal($op1, $op2) {
-            return @infixprec.first-index($op1) >= @infixprec.first-index($op2);
+        method trait($/) {
+            make Q::Trait.new($<identifier>.ast, $<EXPR>.ast);
         }
 
         method blockoid ($/) {
@@ -358,6 +631,30 @@ class Parser {
         }
 
         method EXPR($/) {
+            sub tighter($op1, $op2) {
+                my $name1 = $op1.type.substr(1, *-1);
+                my $name2 = $op2.type.substr(1, *-1);
+                return $*parser.oplevel.infixprec.first-index(*.contains($name1))
+                     > $*parser.oplevel.infixprec.first-index(*.contains($name2));
+            }
+
+            sub equal($op1, $op2) {
+                my $name1 = $op1.type.substr(1, *-1);
+                my $name2 = $op2.type.substr(1, *-1);
+                return $*parser.oplevel.infixprec.first-index(*.contains($name1))
+                    == $*parser.oplevel.infixprec.first-index(*.contains($name2));
+            }
+
+            sub left-associative($op) {
+                my $name = $op.type.substr(1, *-1);
+                return $*parser.oplevel.infixprec.first(*.contains($name)).assoc eq "left";
+            }
+
+            sub non-associative($op) {
+                my $name = $op.type.substr(1, *-1);
+                return $*parser.oplevel.infixprec.first(*.contains($name)).assoc eq "non";
+            }
+
             my @opstack;
             my @termstack = $<termish>[0].ast;
             sub REDUCE {
@@ -376,9 +673,12 @@ class Parser {
             }
 
             for $<infix>».ast Z $<termish>[1..*]».ast -> ($infix, $term) {
-                while @opstack && tighter-or-equal(@opstack[*-1], $infix) {
+                while @opstack && (tighter(@opstack[*-1], $infix)
+                    || equal(@opstack[*-1], $infix) && left-associative($infix)) {
                     REDUCE;
                 }
+                die X::Op::Nonassociative.new(:op1(@opstack[*-1]), :op2($infix))
+                    if @opstack && equal(@opstack[*-1], $infix) && non-associative($infix);
                 @opstack.push($infix);
                 @termstack.push($term);
             }
@@ -390,9 +690,42 @@ class Parser {
         }
 
         method termish($/) {
+            sub tighter($op1, $op2) {
+                my $name1 = $op1.type.substr(1, *-1);
+                my $name2 = $op2.type.substr(1, *-1);
+                return $*parser.oplevel.prepostfixprec.first-index(*.contains($name1))
+                     > $*parser.oplevel.prepostfixprec.first-index(*.contains($name2));
+            }
+
+            sub equal($op1, $op2) {
+                my $name1 = $op1.type.substr(1, *-1);
+                my $name2 = $op2.type.substr(1, *-1);
+                return $*parser.oplevel.prepostfixprec.first-index(*.contains($name1))
+                    == $*parser.oplevel.prepostfixprec.first-index(*.contains($name2));
+            }
+
+            sub left-associative($op) {
+                my $name = $op.type.substr(1, *-1);
+                return $*parser.oplevel.prepostfixprec.first(*.contains($name)).assoc eq "left";
+            }
+
+            sub non-associative($op) {
+                my $name = $op.type.substr(1, *-1);
+                return $*parser.oplevel.prepostfixprec.first(*.contains($name)).assoc eq "non";
+            }
+
             make $<term>.ast;
-            # XXX: need to think more about precedence here
-            for $<postfix>.list -> $postfix {
+
+            my @prefixes = @<prefix>.reverse;   # evaluated inside-out
+            my @postfixes = @<postfix>;
+
+            sub handle-prefix($/) {
+                my $prefix = shift @prefixes;
+                make $prefix.ast.new($/.ast);
+            }
+
+            sub handle-postfix($/) {
+                my $postfix = shift @postfixes;
                 # XXX: factor the logic that checks for macro call out into its own helper sub
                 my @p = $postfix.ast.list;
                 if @p[0] ~~ Q::Postfix::Call
@@ -402,17 +735,40 @@ class Parser {
                     my $qtree = $*runtime.call($macro, @args);
                     make $qtree;
                 }
-                else {
+                elsif @p >= 2 {
                     make @p[0].new($/.ast, @p[1]);
                 }
+                else {
+                    make $postfix.ast.new($/.ast);
+                }
             }
-            for $<prefix>.list -> $prefix {
-                make $prefix.ast.new($/.ast);
+
+            while @postfixes || @prefixes {
+                if @postfixes && !@prefixes {
+                    handle-postfix($/);
+                }
+                elsif @prefixes && !@postfixes {
+                    handle-prefix($/);
+                }
+                else {
+                    my $prefix = @prefixes[0].ast;
+                    my $postfix = @postfixes[0].ast;
+                    die X::Op::Nonassociative.new(:op1($prefix), :op2($postfix))
+                        if equal($prefix, $postfix) && non-associative($prefix);
+                    if tighter($prefix, $postfix)
+                        || equal($prefix, $postfix) && left-associative($prefix) {
+
+                        handle-prefix($/);
+                    }
+                    else {
+                        handle-postfix($/);
+                    }
+                }
             }
         }
 
         method prefix($/) {
-            make %ops<prefix>{~$/};
+            make $*parser.oplevel.ops<prefix>{~$/};
         }
 
         method term:int ($/) {
@@ -443,8 +799,12 @@ class Parser {
             make Q::Quasi.new($<statements>.ast);
         }
 
+        method term:parens ($/) {
+            make $<EXPR>.ast;
+        }
+
         method infix($/) {
-            make %ops<infix>{~$/};
+            make $*parser.oplevel.ops<infix>{~$/};
         }
 
         method postfix($/) {
@@ -453,8 +813,11 @@ class Parser {
             if $<index> {
                 make [Q::Postfix::Index, $<EXPR>.ast];
             }
-            else {
+            elsif $<call> {
                 make [Q::Postfix::Call, $<arguments>.ast];
+            }
+            else {
+                make $*parser.oplevel.ops<postfix>{~$/};
             }
         }
 
@@ -474,6 +837,7 @@ class Parser {
     method parse($program, :$*runtime = die "Must supply a runtime") {
         my %*assigned;
         my $*insub = False;
+        my $*parser = self;
         Syntax.parse($program, :actions(Actions))
             or die "Could not parse program";   # XXX: make this into X::
         return $/.ast;
