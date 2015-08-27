@@ -75,6 +75,7 @@ is(@entries2[1].description, 'a#b', 'Test has a description');
 like(@entries2[2], TAP::Sub-Test, 'Third entry is a subtest');
 is-deeply(@entries2[2].inconsistencies, [], 'Subtests has no errors');
 like(@entries2[2].entries[1], TAP::YAML, 'Got YAML') or diag(@entries2[2].perl);
+is-deeply(@entries2[2].entries[1].deserialized, [ <Foo Bar> ], 'Could deserialize YAML');
 
 diag("Extra tests for Test-5");
 

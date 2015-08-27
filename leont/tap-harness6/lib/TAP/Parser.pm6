@@ -1,5 +1,6 @@
 use TAP::Entry;
 use TAP::Result;
+use YAMLish;
 
 package TAP {
 	grammar Grammar {
@@ -96,8 +97,9 @@ package TAP {
 			make TAP::Comment.new(:raw(~$/), :comment(~$<comment>));
 		}
 		method yaml($/) {
-			my $content = $<yaml-line>.join('');
-			make TAP::YAML.new(:raw(~$/), :$content);
+			my $serialized = $<yaml-line>.join('');
+			my $deserialized = load-yaml($serialized);
+			make TAP::YAML.new(:raw(~$/), :$serialized, :$deserialized);
 		}
 		method sub-entry($/) {
 			make $/.values[0].made;

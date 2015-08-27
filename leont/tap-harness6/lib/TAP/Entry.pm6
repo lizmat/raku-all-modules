@@ -81,9 +81,10 @@ package TAP {
 		}
 	}
 	class YAML does Entry {
-		has Str:D $.content;
+		has Str:D $.serialized;
+		has Any $.deserialized;
 		method to-string {
-			return "  ---\n" ~ $!content.indent(2) ~~ '  ...'
+			return "  ---\n" ~ $!serialized.indent(2) ~~ '  ...'
 		}
 	}
 	class Unknown does Entry {

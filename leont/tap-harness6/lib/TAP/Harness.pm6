@@ -281,7 +281,7 @@ class TAP::Harness {
 
 	has SourceHandler @.handlers = SourceHandler::Perl6.new();
 	has Any @.sources;
-	has TAP::Formatter:T $.formatter-class = TAP::Formatter::Console;
+	has TAP::Reporter:T $.reporter-class = TAP::Reporter::Console;
 
 	class Run {
 		has Promise $.done handles <result>;
@@ -291,15 +291,16 @@ class TAP::Harness {
 		}
 	}
 
-	method run(Int :$jobs = 1, Bool :$timer = False, TAP::Formatter :$formatter = $!formatter-class.new(:parallel($jobs > 1), :names(@.sources), :$timer)) {
+	method run(Int :$jobs = 1, Bool :$timer = False) {
 		my @working;
 		my $kill = Promise.new;
 		my $aggregator = TAP::Aggregator.new();
+		my $reporter = $!reporter-class.new(:parallel($jobs > 1), :names(@.sources), :$timer, :$aggregator);
 		if $jobs > 1 {
 			my $done = start {
 				for @!sources -> $name {
 					last if $kill;
-					my $session = $formatter.open-test($name);
+					my $session = $reporter.open-test($name);
 					my $source = @!handlers.max(*.can-handle($name)).make-source($name);
 					my $parser = TAP::Runner::Async.new(:$source, :handlers[$session], :$kill);
 					@working.push({ :$parser, :$session, :done($parser.done) });
@@ -310,7 +311,7 @@ class TAP::Harness {
 				await Promise.anyof(Promise.allof(@working»<done>), $kill) if @working and not $kill;
 				reap-finished();
 				@working».kill if $kill;
-				$formatter.summarize($aggregator, ?$kill);
+				$reporter.summarize($aggregator, ?$kill);
 				$aggregator;
 			}
 			sub reap-finished() {
@@ -332,7 +333,7 @@ class TAP::Harness {
 			my $done = start {
 				for @!sources -> $name {
 					last if $kill;
-					my $session = $formatter.open-test($name);
+					my $session = $reporter.open-test($name);
 					my $source = @!handlers.max(*.can-handle($name)).make-source($name);
 					my $parser = TAP::Runner::Sync.new(:$source, :handlers[$session]);
 					my $result = $parser.run(:$kill);
@@ -340,7 +341,7 @@ class TAP::Harness {
 					$session.close-test($result);
 				}
 				@working».kill if $kill;
-				$formatter.summarize($aggregator, ?$kill);
+				$reporter.summarize($aggregator, ?$kill);
 				$aggregator;
 			}
 			return Run.new(:$done, :$kill);
