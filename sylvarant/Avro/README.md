@@ -7,9 +7,8 @@ Aims to implement the [Avro specification](https://avro.apache.org/docs/current/
 
 This is a work in progress.
 Still to implement:
-- [ ] : Deflate codec
-- [ ] : JSON encoding
 - [ ] : Reader schemas and resolution
+- [ ] : JSON output (OPTIONAL)
 
 ## Example
 

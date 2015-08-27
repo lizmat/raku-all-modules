@@ -4,7 +4,7 @@ use lib 'lib';
 use Avro; 
 use Avro::DataFile;
 
-plan 10;
+plan 13;
 
 #======================================
 # Test Setup
@@ -78,7 +78,7 @@ repeat {
   $count--;
 } until $reader.eof;
 is $count,0,"Eof work correctly";
-$fh.close;
+$reader.close;
 
 
 #======================================
@@ -96,7 +96,7 @@ $writer.close;
 $fh = $path.IO.open(:r);
 $reader = Avro::DataFileReader.new(:handle($fh)); 
 my @arr = $reader.slurp;
-$fh.close;
+$reader.close;
 is +@arr,$count, "Slurp works";
 
 
@@ -110,6 +110,24 @@ lives-ok {$reader = Avro::DataFileReader.new(:handle($fh)); }, "Read python crea
 lives-ok { %result = $reader.read(); }, "Data read from python file";
 %data = "name" => "Alyssa","favorite_number" => 256, "favorite_color" => Any;
 is-deeply %data, %result, "Correct data read from python data";
+
+
+#======================================
+# Test :: deflate
+#======================================
+
+$fh = $path.IO.open(:w);
+%data = "name" => "Aaron","number" => 1024 , list => [ "hello", "world" ];
+$writer = Avro::DataFileWriter.new(:handle($fh),:schema($schema),:codec(Avro::Codec::deflate));
+lives-ok { $writer.append(%data); }, "Deflated data";
+$writer.close;
+
+$fh = $path.IO.open(:r);
+$reader = Avro::DataFileReader.new(:handle($fh)); 
+lives-ok { %result = $reader.read(); }, "Deflated data read from file";
+is-deeply %data, %result, "Correct data read";
+$reader.close;
+
 
 # clean up
 unlink $path;

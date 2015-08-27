@@ -1,5 +1,8 @@
 use v6;
+
 use JSON::Tiny;
+use Compress::Zlib;
+
 use Avro::Auxiliary;
 use Avro::Encode;
 use Avro::Decode;
@@ -70,9 +73,17 @@ package Avro {
     has Codec $!codec;
     has Blob $!syncmark;
     has BlobStream $!buffer;
+    has $!compressor;
     has Int $!blocksize;
     has Int $!buffersize;
     has Int $!count;
+
+    submethod refresh_compressor(Codec $codec) {
+      given $codec {
+        when Codec::null { Any }
+        when Codec::deflate { Compress::Zlib::Stream.new() }
+      }
+    }
 
     multi method new(IO::Handle :$handle!, Avro::Schema :$schema!, Encoding :$encoding? = Encoding::Binary, 
       Associative :$metadata? = {}, Codec :$codec? = Codec::null, Int :$blocksize? = DefaultBlocksize) {
@@ -100,6 +111,8 @@ package Avro {
       $!handle = $handle;
       $!schema = $schema;
       $!blocksize = $blocksize;
+      $!codec = $codec;
+      $!compressor = self.refresh_compressor($!codec);
       $!encoder = $encoder;
       my %metahash = 'avro.schema' => $schema.to_json(), 'avro.codec' => ~$codec;
       %metahash.push( $metadata.kv ) if $metadata.kv.elems() != 0;
@@ -109,7 +122,8 @@ package Avro {
 
     method append(Mu $data){
       my Blob $blob = $!encoder.encode($!schema,$data);
-      my $size = $blob.elems();  
+      $blob = $!compressor.deflate($blob) if $!codec ~~ Codec::deflate;
+      my $size = $blob.elems(); 
       self!write_block if ($!buffersize + $size) > $!blocksize; 
       $!count++;
       $!buffersize += $size;
@@ -118,13 +132,25 @@ package Avro {
 
     method !write_block {
       return unless $!buffersize > 0;
+
+      # increase buffer size with Z_FINISH when deflating
+      if ($!codec ~~ Codec::deflate) {
+        my $z_finish = $!compressor.finish();
+        $!buffer.append($z_finish);
+        $!buffersize += $z_finish.elems(); 
+      }
+
+      # write the block 
       $!handle.write($!encoder.encode(Avro::Long.new(),$!count)); 
       $!handle.write($!encoder.encode(Avro::Long.new(),$!buffersize));
       $!handle.write($!buffer.blob);
       $!handle.write($!syncmark);
+      
+      # reset buffer
       $!buffersize = 0;
       $!count = 0;
       $!buffer = BlobStream.new();
+      $!compressor = self.refresh_compressor($!codec);
     }
 
     method close {
@@ -183,6 +209,11 @@ package Avro {
       my Int $count = $!decoder.decode($!handle,Avro::Long.new());
       my Int $size  = $!decoder.decode($!handle,Avro::Long.new());
       my Blob $blob = $!handle.read($size);
+      if $!codec ~~ Codec::deflate {
+        my $decompressor = Compress::Zlib::Stream.new;
+        $blob = $decompressor.inflate($blob);
+        #X::Avro::DataFileReader.new(:note("Not correctly deflated")).throw() unless $decompressor.finished;
+      }
       my Str $marker = $!decoder.decode($!handle.read(marker_size),$fixed_s);
       X::Avro::DataFileReader.new(:note("Incorrect sync marker: $marker")).throw() unless $marker ~~ $!syncmark;
       $!buffer = BlobStream.new(:blob($blob)); 

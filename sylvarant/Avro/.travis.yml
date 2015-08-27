@@ -5,4 +5,5 @@ perl6:
 install:
     - rakudobrew build-panda
     - panda install JSON::Tiny 
+    - panda install Compress::Zlib
 

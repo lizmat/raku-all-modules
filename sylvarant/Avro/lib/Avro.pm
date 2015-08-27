@@ -9,7 +9,7 @@ use JSON::Tiny;
 use Avro::Schema;
 use Avro::DataFile;
 
-module Avro:ver<0.1.0> {
+module Avro:ver<0.1.1> {
 
   #======================================
   # Schema parser interface

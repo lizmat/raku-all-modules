@@ -1,9 +1,9 @@
 {
     "name" : "Avro",
-    "version" : "0.1.0",
+    "version" : "0.1.1",
     "description" : "Perl6 Avro Data Serialization",
     "author" : "Adriaan Larmuseau",
-    "depends" : ["JSON::Tiny"],
+    "depends" : ["JSON::Tiny","Compress::Zlib"],
     "provides" : {
       "Avro":             "lib/Avro.pm",
       "Avro::Schema":     "lib/Avro/Schema.pm",
