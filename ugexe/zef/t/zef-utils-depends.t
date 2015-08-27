@@ -1,8 +1,11 @@
 use v6;
-use Zef::Utils::PathTools;
-use Zef::Utils::Depends;
 use Test;
 plan 1;
+skip-rest; # not used for now
+return 0;
+
+use Zef::Utils::PathTools;
+use Zef::Utils::Depends;
 
 
 # Test parsing out POD from modules
@@ -19,5 +22,3 @@ subtest {
     ok not @depends.[0].<depends>.grep('Peter::Allen'), 'Peter::Allen not depended - in pod';
     ok not @depends.[0].<depends>.grep('Dill::Pickle'), 'Dill::Pickle not depended - in pod';
 }, 'Basic - Single level, ignore pod';
-
-done;

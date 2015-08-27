@@ -2,14 +2,12 @@
 # 1) Allow creation of a Distribution with precompiled files only (no source).
 # 2) Allow passing in the META hash itself instead of requiring it as an existing file.
 # 3) ACCEPTS/cmp methods so we can easily compare Distribution objects.
-# 4) Create interface for Hooks/ implementation; a generic implementation such that 
-#       installing a module without a package manager still works  (i.e. no 
-#       `does SomePackageManager::Builder`, as this requires SomePackageManager to be installed)
-# 5) System 'logging' such that we can record the actions:
+# 4) System 'logging' such that we can record actions like:
 #   * IO actions like mkdir, cd, etc
 #   * Proc actions (shell/run)
 #   such that we could theoretically generate a perl6 script that would mimick the function of 
 #   a makefile (like ufo), allowing simple sans-package-manager installs.
+
 class Zef::Distribution {
     has $.name;
     has $.authority;
@@ -42,9 +40,9 @@ class Zef::Distribution {
     submethod BUILD(IO::Path :$!path!, IO::Path :$!meta-path, :@!perl6lib,
         IO::Path :$!source-path, IO::Path :$!precomp-path, :@!includes) {
         
-        $!meta-path = ($!path.child('META.info'), $!path.child('META6.json')).grep(*.IO.e).first(*.IO.f)
-            unless $!meta-path;
-        %!meta = %(from-json( $!path.IO.child('META.info').IO.slurp ))\
+        $!meta-path = ($!path.child('META.info'), $!path.child('META6.json'))\
+            .grep(*.IO.e).list.first(*.IO.f) unless $!meta-path;
+        %!meta = %(from-json( $!meta-path.IO.slurp.list ))\
             or die "Distributions require a META file, but one was not found.";
 
 
@@ -62,11 +60,15 @@ class Zef::Distribution {
             die unless %!meta<provides>;
             my @p = %!meta<provides>.values\
                 .map: { [$!path.IO.SPEC.splitdir($_.IO.parent).grep(*.so)] }
-            my $wanted-path-index = first { not all(@p[*; $_]:exists) && [eq] @p[*; $_] }, 0..*;
-            my $base = @p[0].[0..($wanted-path-index - 1)].first(*); 
-            # for first path that contains source use:     ^ .reduce({ $^a.IO.child($^b)  });
-            # which may be useful for detecting more complex lib paths
 
+            my @keep-parts = eager gather for 0..@p.list.map({ $_.list.end }).min -> $i {
+                my @check = @p.list.map({ $_.[$i]; }).list;
+                my $elems = @check.unique.elems;
+                last if @check.unique.elems !== 1;
+                take @check[0];
+            }
+            my $base = @keep-parts[0]; # $*SPEC.catdir(@keep-parts);
+            $base = '.' if $base.IO.f && !$base.IO.d;
             $!source-path = $!path.child($base);
         }
 
@@ -85,19 +87,34 @@ class Zef::Distribution {
         %!meta<version> := $!version;
     }
 
+    method content(*@keys) {
+        my $resource = @keys[*-1];
+        my $wanted   = @keys[0..*-2].reduce(-> $n1 is rw, $n2 {
+            once $n1 = %!meta{$n1};
+            $n1{$n2}
+        });
+        die "Can't find requested meta file key {@keys[*-1]}" unless $wanted eq $resource;
+
+        my $abspath = $resource.IO.is-absolute ?? ~$resource.IO !! ~$resource.IO.absolute($.path).IO;
+        my $io = IO::Path.new-from-absolute-path($abspath);
+
+        die "Can't find resource with path: {$io}" unless $io.IO.e && $io.IO.f;
+
+        $io.slurp;
+    }
 
     method provides(Bool :$absolute) {
-        my @p := gather for %.meta<provides>.pairs {
+        my $p := gather for %.meta<provides>.pairs {
             my $name    := $_.key;
             my $pm-file := $_.value;
             $absolute
                 ?? take $name => ($pm-file.IO.is-relative ?? $pm-file.IO.absolute($!path) !! $pm-file.IO.abspath)
                 !! take $name => ($pm-file.IO.is-relative ?? $pm-file.IO !! $pm-file.IO.relative($!path));
         }
-        @p.hash;
+        $p.hash;
     }
 
-
+    # todo: something similar that checks cver to know when to rebuild
     method is-installed(*@curlis is copy) {
         @curlis := @curlis ?? @curlis !! $.curlis;
         my $want-n := self.name or fail "A distribution must have a name";
@@ -122,4 +139,55 @@ class Zef::Distribution {
         @*INC.grep( { .starts-with("inst#") } )\
             .map: { CompUnitRepo::Local::Installation.new(PARSE-INCLUDE-SPEC($_).[*-1]) };
     }
+
+    method candidates(::CLASS:D:) { flat $.curlis.map: {.candidates($.name, :auth($.authority), :ver($.version)).grep(*)} }
+
+    method wanted(:$take-whatever = True) {
+        return True  if  $.version eq '*' && $take-whatever;
+        return False if $.candidates.first({ $.VCOMPARE($_.<ver>.Str) ~~ any(Order::Same, Order::Less) });
+        return True;
+    }
+
+    method VCOMPARE($other) { VCOMPARE($.version, $other) }
+}
+
+sub VCOMPARE($v1, $v2) is export {
+    # TEMPORARY - $version.ACCEPTS() needs work
+    sub CLEAN-VER($version is copy) {
+        # v1.0 -> 1.0
+        $version.subst-mutate(/^[v || V] '.'?/, '', :x(1));
+
+        # 0.100.1 -> 0.10.0.1
+        if $version ~~ /(0 ** 2..*)/ {
+            $version.subst-mutate(/(0 ** 2..*)/, $/[0].Str.comb.join('.'), :g);
+        }
+
+        # 0.02 -> 0.0.2
+        if $version ~~ /(0\d+)/ {
+            $version.subst-mutate(/(0\d+)/, $/[0].Str.comb.join('.'), :g);
+        }
+
+        return $version;
+    }
+
+    my $want-ver = Version.new: CLEAN-VER($v2);
+    my $ver      = Version.new: $v1.Str;
+
+    return Order::Same  if $ver eq $want-ver.Str;
+    return Order::Less if $ver eq '*';
+
+    # Version objects ACCEPTS do not seem to give a valid `cmp` result 
+    # so this chops up version string in such a way that it ACCEPTS 
+    # works as expected.
+    if $ver.Str.chars > ($want-ver.Str.chars - ($want-ver.plus ?? 1 !! 0)) {
+        my $leftovers = $ver.Str.substr($want-ver.Str.chars - 1).subst(/[\d || \w]/, '*', :g);
+        $want-ver = Version.new: CLEAN-VER($want-ver.Str.substr(0, ($want-ver.plus ?? ($want-ver.Str.chars - 1) !! $want-ver.Str.chars)) ~ $leftovers ~ ($want-ver.plus ?? '+' !! ''));
+        $want-ver = Version.new( CLEAN-VER($want-ver.Str.subst(/\.'*'/, '.0', :g)) ) unless $want-ver.plus;
+    }
+    elsif $ver.Str.chars < ($want-ver.Str.chars - ($want-ver.plus ?? 1 !! 0)) {
+        my $leftovers = $want-ver.Str.substr($ver.Str.chars - 1, *-1).subst(/[\d || \w]/, $want-ver.plus ?? '*' !! 0);
+        $ver = Version.new: CLEAN-VER($ver.Str ~ $leftovers);
+    }
+
+    return $ver cmp $want-ver;
 }

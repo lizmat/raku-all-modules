@@ -3,6 +3,7 @@ use Zef::Net::HTTP::Client;
 use Zef::Utils::Depends;
 use Zef::Utils::Git;
 
+
 our @skip = <Test MONKEY-TYPING MONKEY_TYPING nqp v6>;
 
 # perl6 community ecosystem + test reporting
@@ -13,7 +14,10 @@ class Zef::Authority::P6C does Zef::Authority::Net {
 
     method update-projects {
         my $response := $!ua.get: ~@!mirrors.pick(1);
-        my $content  := $response.content or fail "!!!> Failed to update projects file";
+        # XXX GLR hack
+        # my $content  := $response.content or fail "!!!> Failed to update projects file";
+        my $content    := $response.content;
+
         my $json     := from-json($content);
         @!projects    = try { $json.list }\
             or fail "!!!> Missing or invalid projects json";
@@ -32,7 +36,7 @@ class Zef::Authority::P6C does Zef::Authority::Net {
         Bool :$fetch = True,
     ) {
         self.update-projects if $fetch && !@!projects.elems;
-        my @wants-dists := @!projects.grep({ $_.<name> ~~ any(@wants) });
+        my @wants-dists := @!projects.grep({ $_.<name> ~~ any(@wants) }).list;
 
         my @wants-dists-filtered = !@ignore ?? @wants-dists !! @wants-dists.grep({
                (!$depends       || any($_.<depends>.list)       ~~ none(@ignore))
@@ -43,13 +47,13 @@ class Zef::Authority::P6C does Zef::Authority::Net {
         return () unless @wants-dists-filtered;
 
         # Determine the distribution dependencies we want/need
-        my @levels := $depends
+        my $levels := ?$depends
             ?? Zef::Utils::Depends.new(:@!projects).topological-sort( @wants-dists-filtered, 
                 :$depends, :$build-depends, :$test-depends)
             !! @wants-dists-filtered.map({ $_.hash.<name> });
 
         # Try to fetch each distribution dependency
-        eager gather for @levels -> $level {
+        eager gather for $levels -> $level {
             for $level.list -> $package-name {
                 next if $package-name ~~ any(@skip);
                 # todo: filter projects by version/auth
@@ -59,7 +63,7 @@ class Zef::Authority::P6C does Zef::Authority::Net {
                 # todo: implement the rest of however github.com transliterates paths
                 my $basename  := %dist<name>.trans(':' => '-');
                 temp $save-to  = $save-to.IO.child($basename);
-                my @git       := $!git.clone(:$save-to, %dist<source-url>);
+                my @git       := $!git.clone(:$save-to, %dist<source-url>).list;
 
                 take {
                     module => %dist.<name>, 
@@ -77,17 +81,31 @@ class Zef::Authority::P6C does Zef::Authority::Net {
             my %meta      := %($meta-json);
             my $repo-path := $meta-path.IO.parent;
 
-            my $test  := @test-results.first({ $_.path.IO.ACCEPTS($repo-path.IO) });
-            my $build := @build-results.first({ $_.path.IO.ACCEPTS($repo-path.IO) });
+            my $test  = @test-results.first: { $_.path.IO.ACCEPTS($repo-path.IO) }
+            my $build = @build-results.first: { $_.path.IO.ACCEPTS($repo-path.IO) }
 
-            my $build-output = $build.processes>>.list\
-                >>.grep(*.stdmerge.so)\
-                >>.map({ $_.stdmerge })\
-                >>.join("\n");
-            my $test-output  = $test.processes.list\
-                >>.grep(*.stdmerge.so)\
-                >>.map({ $_.stdmerge })\
-                >>.join("\n");
+            # the GLR transitions is making this this string concating
+            # look more complicated than it needs to be
+            my $build-output;
+            for $build.processes.list -> $group {
+                for $group.list -> $item {
+                    for $item.list -> $proc {
+                        with $proc.stdmerge -> $out {
+                            $build-output ~= "{$out}\n";
+                        }
+                    }
+                }
+            }
+            my $test-output;
+            for $test.processes.list -> $group {
+                for $group.list -> $item {
+                    for $item.list -> $proc {
+                        with $proc.stdmerge -> $out {
+                            $test-output ~= "{$out}\n";
+                        }
+                    }
+                }
+            }
 
             # See Panda::Reporter
             my $report := to-json {
@@ -97,8 +115,8 @@ class Zef::Authority::P6C does Zef::Authority::Net {
                 :metainfo($meta-json),
                 :build-output($build-output // ''),
                 :test-output($test-output   // ''),
-                :build-passed(?$build.processes.elems ?? ?all($build.processes>>.map({ $_.ok })) !! Nil),
-                :test-passed(?$test.processes.elems ?? ?all($test.processes>>.map({ $_.ok }))  !! Nil),
+                :build-passed(?$build.processes.elems ?? (?$build.passes.elems && !$build.failures.elems) !! Nil),
+                :test-passed(?$test.processes.elems   ?? (?$test.passes.elems  && !$test.failures.elems ) !! Nil),
                 :distro({
                     :name($*DISTRO.name),
                     :version($*DISTRO.version.Str),
@@ -142,7 +160,7 @@ class Zef::Authority::P6C does Zef::Authority::Net {
             my $report-id = try {
                 CATCH { default { print "===> Error while POSTing: $_" }}
                 my $response := $!ua.post("http://testers.perl6.org/report", body => $report);
-                my $body     := $response.content;
+                my $body     := $response.content(:bin).decode('utf-8');
                 ?$body.match(/^\d+$/) ?? $body.match(/^\d+$/).Str !! 0;
             }
 

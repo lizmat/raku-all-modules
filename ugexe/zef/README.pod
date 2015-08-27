@@ -4,7 +4,7 @@
 
 =head2 Name
 
-Zef - Perl6 Module Management
+Zef - Perl6 Module Management (GLR compatible)
 
 =for HTML <a href="https://travis-ci.org/ugexe/zef"><img src="https://travis-ci.org/ugexe/zef.svg?branch=master"></a>
 
@@ -19,6 +19,26 @@ Be sure your `PATH` includes the file path shown by the command below:
     $ perl6 -e "say %*CUSTOM_LIB<site>.IO.child('bin').Str"
     # example: /home/perl6/install/share/perl6/site/bin
     
+=head1 DESCRIPTION
+
+Zef is a package manager for Perl6. It works with MoarVM and JVM on Windows, Linux, OSX, and other BSD derivatives.
+
+=head3 Features
+
+=over 2
+
+=item * Optonal parallelization of precompilation and testing phases for quicker installs and CI results.
+
+=item * Complete HTTP grammar based on RFC7230-7235 (and others).
+
+=item * Zef::Net::HTTP::Client - a HTTP client based on included HTTP grammars.
+
+=item * CompUnitRepo based installs - uses rakudo's built in installer, letting the code focus on package management.
+
+=item * A `hooks` implementation as mentioned in L<S22|http://design.perl6.org/S22.html#hooks>, allowing module authors to even implement the entire build/test/install process without needing a package manager at all.
+
+=back
+
 =head1 USAGE
 
 =head1 The CLI
@@ -87,6 +107,13 @@ Fetch, build, test, optional report, and install.
 
     # skip modules with matching names (or any modules depending on them)
     --ignore=Acme::Virus --ignore=Acme::TakesForever
+
+    # sets Zef::Authority.projects based on supplied file instead of downloading
+    --projects-file=projects.json
+
+    # install the requested modules regardless of currently installed versions
+    # (does not affect dependencies)
+    --force
 
     # livin that multi thread life
     zef -v --report --async install HTTP::Server::Threaded
@@ -241,92 +268,15 @@ B<Example>:
     #   0.6) URI
     #   1.0) File::Temp
     #   2.0) HTTP::UserAgent
+    
+=head1 FAQ
 
-=head1 DEVELOPMENT
+=head3 Why does it test with --ll-exception??
 
-=head2 Zef::Distribution
+Due to a bug in L<Test.pm|https://github.com/rakudo/rakudo/blob/nom/lib/Test.pm> related to automatically setting the plan count and the END cleanup phaser the only way to get a proper exit code at the moment requires using the I<--ll-exception> flag.
 
-The base project class containing path and META information.
-
-    my $dist = Zef::Distribution.new(:path($*CWD));
-
-=head2 Zef::Roles::Hooking
-
-Methods to execute the hooks located in C<hooks/>. Hooks are chosen based on matching the phase and modifier.
-
-    # Phases available to hook: `enum Phase <BUILD TEST INSTALL>`
-
-    my $dist = Zef::Distribution.new(:path($*CWD));
-    $dist does Zef::Roles::Processing;
-    $dist does Zef::Roles::Precompiling;
-    $dist does Zef::Roles::Installing;
-    $dist does Zef::Roles::Hooking;
-
-    # build + hooks
-    $dist.queue-processes: [$dist.hook-cmds(BUILD, :before)];
-    $dist.queue-processes($_) for $dist.precomp-cmds;
-    $dist.queue-processes: [$dist.hook-cmds(BUILD, :after)];
-    await $dist.start-processes;
-
-    # install + hooks
-    $dist.queue-processes: [$dist.hook-cmds(INSTALL, :before)];
-    await $dist.start-processes;
-    $dist.install;
-    $dist.queue-processes: [$dist.hook-cmds(INSTALL, :after)];
-    await $dist.start-processes;
-
-The following filenames are suggested:
-C<before-test.pl6> C<after-test.pl6> C<before-build.pl6> C<after-build.pl6> C<before-install.pl6> C<after-install.pl6>
-
-However, we only match the beginning and end of the filename, so you may have multiple files for any phase/modifier:
-i.e.: C<before-1-test.pl6> C<before-2-test.pl6>
-
-=head2 Zef::Roles::Installing
-
-Allows a C<Zef::Distribution> to install
-
-    my $dist = Zef::Distribution.new(:path($*CWD));
-    $dist does Zef::Roles::Installing;
-    $dist.install;
-
-=head2 Zef::Roles::Precompiling
-
-Allows a C<Zef::Distribution> to generate the commands, in order, to precompile a distribution's C<provides>
-
-Combine with C<Zef::Roles::Processing> to execute these commands.
-
-    my $dist = Zef::Distribution.new(:path($*CWD));
-    $dist does Zef::Roles::Precompiling;    
-
-=head2 Zef::Roles::Testing
-
-Allows a C<Zef::Distribution> to generate the commands, in order, to test all files with a C<.t> extension in a distribution's C<t/> directory
-
-Combine with C<Zef::Roles::Processing> to execute these commands.
-
-    my $dist = Zef::Distribution.new(:path($*CWD));
-    $dist does Zef::Roles::Testing;    
-
-=head2 Zef::Roles::Processing
-
-    role Zef::Roles::Processing[Bool :$async]
-
-    method queue-processes(*@groups) # add a process or group of processes to be executed together
-    method start-processes           # execute each process (or group of processes) in order
-    method passes                    # helper function to show name of processes where exitcode == 0
-    method failures                  # helper function to show name of processes where exitcode > 0
-
-Allows executing commands, including grouped commands in parallel if C<:$async> is true (i.e. C<[[$proc1, $proc2],[$proc3]]> executes C<$proc1> and C<$proc2> at the same time, and then C<$proc3> after both previous processes finish)
-
-    my $dist = Zef::Distribution.new(:path($*CWD));
-    $dist does Zef::Roles::Precompiling;
-    $dist does Zef::Roles::Testing;
-    $dist does Zef::Roles::Installing;
-    $dist does Zef::Roles::Processing[:!async];
-
-    $dist.queue-processes( [$_.list] ) for [$dist.precomp-cmds, $dist.test-cmds];
-    await $dist.start-processes;
-    await $dist.install;
+    perl6 -e "use Test; use aeflkaje;" && echo "OK"
+    perl6 --ll-exception -e "use Test; use aeflkaje;" && echo "OK"
 
 =head1 INCLUDED TOOLS
 
@@ -355,7 +305,7 @@ or build your own client by satisfying the interface requirements during object 
     use Different::Requestor;
     use You::Get::The::Idea;
 
-    Zef::Net::HTTP::Client.new(              # Zef::Net::HTTP interface type
+    Zef::Net::HTTP::Client.new(
         responder   => Different::Responder, # HTTP::Response
         requestor   => Different::Requestor, # HTTP::Request
         transporter => You::Get::The::Idea   # HTTP::Transport
@@ -368,21 +318,5 @@ or build your own client by satisfying the interface requirements during object 
 L<Zef.pm|https://zef.pm/>
 
 L<http://modules.perl6.org/>
-
-=head2 Full Flex
-
- * ✓ No external dependencies
- * ✓ CompUnitRepo::Local based
- * ✓ Test reporting to P6C servers
- * Test reporting to Zef servers
- * Rotating OS smoke testing server integration
- * ✓ Use perl6 github ecosystem as an additional authority
- * ✓ HTTP library
- * HPACK/HTTP2 compatability
- * ✓ Parallelized testing
- * TAP Harness/Grammar
- * ✓ Parallelized building
- * ✓ Basic CLI overlay/hud
- * Pure Perl6 decompression/git-clone library
 
 =cut

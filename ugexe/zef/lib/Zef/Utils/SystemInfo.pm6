@@ -1,6 +1,12 @@
 unit module Zef::Utils::SystemInfo;
 
-# Ugly workarounds and other terrible things are located here
+our $MAX-TERM-COLS is export = GET-TERM-COLUMNS();
+our sub signal-ignore($) { Supply.new }
+our $signal-handler := &::("signal") ~~ Failure ?? &::("signal-ignore") !! &::("signal");
+our $sig-resize     := ::("Signal::SIGWINCH");
+try $signal-handler.($sig-resize).act: { $MAX-TERM-COLS = GET-TERM-COLUMNS() }
+
+
 
 # Get terminal width
 sub GET-TERM-COLUMNS is export {

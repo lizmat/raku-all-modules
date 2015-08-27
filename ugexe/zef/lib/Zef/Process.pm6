@@ -19,25 +19,25 @@ class Zef::Process {
     has $.finished;
 
     submethod BUILD(:$!command = $*EXECUTABLE, :@!args, :$!cwd = $*CWD, :%!env = %*ENV.hash, Bool :$!async, :$!id) {
-        $!can-async = !::("Proc::Async").isa(Failure);
-        $!stdout = Supply.new;
-        $!stderr = Supply.new;
+        $!can-async = $*DISTRO.name eq 'macosx' ?? False !! !::("Proc::Async").isa(Failure);
+        $!stdout := Supply.new;
+        $!stderr := Supply.new;
         $!type   := $!async && $!can-async ?? ::("Proc::Async") !! ::("Proc");
         $!id      = $!id 
             ?? $!id 
-            !! @!args 
-                ?? @!args[*-1].item.IO.basename 
+            !! @!args.elems
+                ?? @!args[*-1].IO.basename 
                 !! $!command 
                     ?? $!command.IO.basename 
                     !! ''; # shameful
 
-        die "Proc::Async not available, but option :\$!async explicitily requested it (JVM NYI)"
+        die "Proc::Async not available, but option :\$!async explicitily requested it (JVM and OSX NYI)"
             if $!async && !$!can-async;
     }
 
     method start {
         # error check is duplicated here because, dun dun dunnn, JVM won't die otherwise
-        die "Proc::Async not available, but option :\$!async explicitily requested it (JVM NYI)"
+        die "Proc::Async not available, but option :\$!async explicitily requested it (JVM and OSX NYI)"
             if $!async && !$!can-async;
 
         if $!async {
@@ -47,6 +47,7 @@ class Zef::Process {
             $!process.stdout.emit("{$!command.IO.basename} {@!args.join(' ')}\n");
 
             $!promise  := $!process.start(:$!cwd, ENV => %!env);
+
             $!started  := $!process.started;
             $!finished := $!promise.Bool;
         }
@@ -58,34 +59,21 @@ class Zef::Process {
 
             $!stdout.emit("{$!command.IO.basename} {@!args.join(' ')}\n");
 
-            $!started   = True;
+            $!started = True;
             $!stdout.emit($_) for $!process.out.lines(:!eager, :close);
             $!stdout.done; $!stderr.done;
             $!process.out.close; $!stderr.close;
-            $!finished := ?$!promise.keep($!process.status);
+            $!finished := ?$!promise.keep($!process);
         }
 
         $!promise;
     }
 
-    method status { $!process.status }
-    method ok     { 
-        return False unless $!process.DEFINITE;
-        return $.exitcode == 0 ?? True !! False 
-    }
-
+    method ok       { $!process.DEFINITE ?? $.exitcode == 0 ?? True !! False !! False }
+    method nok      { ?$.ok ?? False !! True    }
+    method status   { $!process.status          }
     method exitcode { 
-        return unless $!process.DEFINITE;
-
-        if $!promise.^find_method('result').DEFINITE 
-            && $!promise.result.^find_method('exitcode').DEFINITE {
-            return $!promise.result.exitcode;
-        }
-        else {
-            return $!process.exitcode;
-        }
+        $!promise.result; # osx bug RT125758
+        $!promise.result.exitcode;
     }
-
-
-    method nok { ?$.ok() ?? False !! True }
 }

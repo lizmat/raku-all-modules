@@ -10,31 +10,38 @@ role curli-copy-fix[$path] {
     }
 }
 
-role Zef::Roles::Installing[$curlis = %*CUSTOM_LIB<site>] {
+role Zef::Roles::Installing[$curli-paths = %*CUSTOM_LIB<site>] {
+    my $curlis = $curli-paths.list.map: -> $dir { CompUnitRepo::Local::Installation.new($dir) }
+
     method install(Bool :$force)  {
-        eager gather for $curlis.list -> $curli is copy {
-            mkdirs(PARSE-INCLUDE-SPEC($curli).[*-1]) unless $curli.IO.e;
-            $curli = CompUnitRepo::Local::Installation.new($curli);
+        my @installed;
+        for $curlis.list -> $curli is copy {
+            mkdirs(PARSE-INCLUDE-SPEC($curli.Str).[*-1]) unless $curli.IO.e;
             $curli does curli-copy-fix[$.path];
 
-            my %result = %(module => $.name, file => $.meta-path, $.metainfo.flat); 
-            %result<ok> = 0;
+            my %result      = %($.metainfo);
+            %result<module> = $.name;
+            %result<file>   = $.meta-path;
+            %result<ok>     = 0;
 
-            # we could let CURLI handle this, but .install only tells us true/false
-            my @installed-at := $.is-installed;
-            if @installed-at && !$force {
-                %result<skipped> = @installed-at;
+            if !$force && !$.wanted {
+                %result<skipped> = $.name;
                 %result<ok> = 1;
-                take { %result }
+                @installed.push: %result;
                 next;
             }
 
-            my @bins = $.path.child('bin').ls(:f, :r).grep(!*.starts-with('.'))>>.IO>>.relative($.path);
-            my @provides = $.provides.values;
-            my @precomps = self.?provides-precomp.values;
+            my @provides = $.provides.values.list;
+            my @precomps = self.?provides-precomp.values.list;
+            my @bins     = $.path.child('bin').ls(:f, :r)\
+                .grep(!*.starts-with('.'))\
+                .map: {.IO.relative($.path)}
 
-            %result<ok> = 1 if $curli.install(dist => self, @provides, @precomps, @bins);
-            take { %result }
+            my @files     = (@provides, @precomps, @bins).grep(*.so).flat.list;
+
+            %result<ok> = 1 if $curli.install(:dist(self), |@files);
+            @installed.push: %result;
         }
+        @installed;
     }
 }

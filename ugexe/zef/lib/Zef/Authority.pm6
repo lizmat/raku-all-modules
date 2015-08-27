@@ -6,6 +6,20 @@ role Zef::Authority::Net { ... }
 role Zef::Authority {
     has @.projects is rw;
 
+    submethod BUILD(:$projects-file) {
+        if ?$projects-file {
+            my $file = ~$projects-file;
+            if $projects-file.IO.e {
+                my $json     := from-json($projects-file.IO.slurp);
+                @!projects    = try { $json.list }\
+                    or fail "!!!> Invalid projects file.";
+            }
+            else {
+                fail "!!!> Project file does not exist: {$projects-file}";
+            }
+        }
+    }
+
     method update-projects { ... }
 
     method search(*@names, *%fields) {
