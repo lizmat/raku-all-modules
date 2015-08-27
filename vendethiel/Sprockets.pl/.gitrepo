@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/vendethiel/Sprockets.pl.git
 	branch = master
-	commit = 6149e7eacc889f37e7b4ba3c5226f0ace627a903
-	parent = 1278d19723716c449a0297fe11a424a2a58a4f3e
-	cmdver = 0.2.1
+	commit = efed0409a6efe746eaf727298ab18a2e57bc1dc6
+	parent = 937552c2b1d6f9cecf367fe8a8ede9282fc85781
+	cmdver = 0.2.2
