@@ -7,8 +7,8 @@ grammar ABC::Grammar
     regex comment_line { ^^ <comment> }
     
     token header_field_name { \w }
-    token header_field_data { \N* }
-    token header_field { ^^ <header_field_name> ':' \s* <header_field_data> $$ }
+    token header_field_data { <-[ % \v ]>* }
+    token header_field { ^^ <header_field_name> ':' \s* <header_field_data> <comment>? $$ }
     token header { [[<header_field> | <comment_line>] \v+]+ }
 
     token basenote { <[a..g]+[A..G]> }
@@ -82,9 +82,9 @@ grammar ABC::Grammar
         
     token line_of_music { <barline>? <bar>+ '\\'? <comment>? $$ }
     
-    token interior_header_field_name { < K M L > }
-    token interior_header_field_data { \N* }
-    token interior_header_field { ^^ <interior_header_field_name> ':' \h* <interior_header_field_data> $$ }
+    token interior_header_field_name { < K M L w > }
+    token interior_header_field_data { <-[ % \v ]>* }
+    token interior_header_field { ^^ <interior_header_field_name> ':' \h* <interior_header_field_data> <comment>? $$ }
 
     token music { [[<line_of_music> | <interior_header_field> | <comment_line> ] \s*]+ }
     
@@ -98,7 +98,7 @@ grammar ABC::Grammar
     token clef-line { <[1..5]> }
     token clef-middle { "middle=" <basenote> <octave> }
 
-    token key { [<key-def> [\h+ <clef>]?] | <clef> | "HP" | "Hp" }
+    token key { [ [<key-def> [\h+ <clef>]?] | <clef> | "HP" | "Hp" ] \h* }
     token key-def { <basenote> <chord_accidental>? <mode>? [\h+ <global-accidental>]* }
     token mode { <minor> | <major> | <lydian> | <ionian> | <mixolydian> | <dorian> | <aeolian> | <phrygian> | <locrian> }
     token minor { "m" ["in" ["o" ["r"]?]?]? } # m, min, mino, minor - all modes are case insensitive

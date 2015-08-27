@@ -131,9 +131,11 @@ sub HeaderToLilypond(ABC::Header $header, $out) {
     
     my $title = $header.get-first-value("T");
     $title .=subst('"', "'", :g);
-    $out.say: "    piece = \" $title \"";
+    $out.say: "    title = \" $title \"";
     my @composers = $header.get("C")>>.value;
     $out.say: "    composer = \"{ @composers[0] }\"" if ?@composers;
+    my @origins = $header.get("O")>>.value;
+    $out.say: "    dedication = \"{ @origins[0] }\"" if ?@origins && @origins[0] ~~ m:i/^for/;
     
     $out.say: "}";
 }
@@ -399,6 +401,10 @@ class TuneConvertor {
                 $out.say: '\\bar "|."';
             }
         }
+
+        if @elements.grep({ $_.key eq "barline" })[*-1].value eq '|]' {
+            $out.say: '\\bar "|."';
+        }
     
         $out.say: "\}";
     }
@@ -412,6 +418,7 @@ sub TuneStreamToLilypondStream($in, $out, $filter = *) {
 
     $out.say: '\\version "2.12.3"';
     $out.say: "#(set-default-paper-size \"{$paper-size}\")";
+    $out.say: "\\paper \{ print-all-headers = ##t \}";
     
     for @( $match.ast ).grep($filter) -> $tune {
         $*ERR.say: "Working on { $tune.header.get-first-value("T") // $tune.header.get-first-value("X") }";
