@@ -7,16 +7,16 @@ use Test;
 plan 1;
 
 my $s = srv;
+$s.handler(sub ($request, $response) {
+  $response.headers<Connection> = 'close';
+  $response.headers<Content-Type> = 'text/plain';
+  $response.status = 404;
+  $response.write("");
+  $response.close("Not found");
+});
+
 start {
   sleep 1;
-  $s.handler(sub ($request, $response) {
-    $response.headers<Connection> = 'close';
-    $response.headers<Content-Type> = 'text/plain';
-    $response.status = 404;
-    $response.write("");
-    $response.close("Not found");
-  });
-
   my $client = req;
   $client.print("GET / HTTP/1.0\r\n\r\n");
   my $ret;

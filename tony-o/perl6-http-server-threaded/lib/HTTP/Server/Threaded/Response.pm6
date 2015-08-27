@@ -66,7 +66,7 @@ class HTTP::Server::Threaded::Response does HTTP::Response {
     %.headers<Content-Length> = $cl;
     $.flush;
     try {
-      $.connection.close if %.headers<Connection>.index('keep-alive') > -1 || $force;
+      $.connection.close if (%.headers<Connection>.index('keep-alive') // 0) > -1 || $force;
     };
   }
 }

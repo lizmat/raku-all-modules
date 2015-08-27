@@ -6,28 +6,28 @@ use Test;
 
 plan 12;
 
-my $s = srv;
-isa-ok $s, HTTP::Server::Threaded;
-is $s.mws.elems, 0, 'Response stack contains no elements yet';
-is $s.hws.elems, 0, 'Response stack contains no elements yet';
-
-$s.handler(sub ($req,$res) {
-  start {
-    sleep 2;
-  };
-});
-
-$s.handler(sub ($request, $response) {
-  $response.headers<Content-Type> = 'text/plain';
-  $response.headers<Connection>   = 'close';
-  $response.status = 200;
-  $response.write("");
-  $response.close("Hello world!");
-});
-ok $s.hws.elems, 'Response stack contains elements';
-isa-ok $s.hws[0], Sub;
-
 start { 
+  my $s = srv;
+  isa-ok $s, HTTP::Server::Threaded;
+  is $s.mws.elems, 0, 'Response stack contains no elements yet';
+  is $s.hws.elems, 0, 'Response stack contains no elements yet';
+
+  $s.handler(sub ($req,$res) {
+    start {
+      sleep 2;
+    };
+  });
+
+  $s.handler(sub ($request, $response) {
+    $response.headers<Content-Type> = 'text/plain';
+    $response.headers<Connection>   = 'close';
+    $response.status = 200;
+    $response.write("");
+    $response.close("Hello world!");
+  });
+  ok $s.hws.elems, 'Response stack contains elements';
+  isa-ok $s.hws[0], Sub;
+
   $s.listen; 
 };
 
