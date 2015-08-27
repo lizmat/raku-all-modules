@@ -1,9 +1,9 @@
 use v6;
 use LibraryMake;
 
-my $dir = '../../lib';
+my $dir = 'lib/';
 my %vars = get-vars($dir);
-process-makefile('ext/crypt_blowfish-1.2', %vars);
-make("ext/crypt_blowfish-1.2", $dir);
+process-makefile('.', %vars);
+make('.', $dir);
 
 # vim: ft=perl6

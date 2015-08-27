@@ -1,0 +1,24 @@
+CC = %CC%
+AS = $(CC)
+CFLAGS = %CCSHARED% %CCFLAGS%
+LDSHARED = %LDSHARED%
+ASFLAGS = -c
+LDFLAGS = $(LDSHARED) -s
+DIR = ext/crypt_blowfish-1.2/
+
+STATIC_OBJ = \
+	%DESTDIR%/crypt_blowfish.so
+
+BUILD_OBJS = \
+	$(DIR)crypt_blowfish.o $(DIR)crypt_gensalt.o $(DIR)wrapper.o $(DIR)x86.o
+
+all: $(BUILD_OBJS) $(STATIC_OBJ)
+
+$(STATIC_OBJ):
+	$(CC) $(LDFLAGS) %LDOUT% $(STATIC_OBJ) $(BUILD_OBJS)
+
+.c.o:
+	$(CC) -c $(CFLAGS) -o $*.o $*.c
+
+.S.o:
+	$(AS) $(ASFLAGS) -o $*.o $*.S

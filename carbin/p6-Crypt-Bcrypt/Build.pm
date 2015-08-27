@@ -14,7 +14,7 @@ class Build is Panda::Builder {
 		rm_rf($blib);
 		mkdir($blib);
 		mkdir("$blib/lib");
-		make($ext, "$blib/lib");
+		make($dir, "$blib/lib");
 	}
 }
 
