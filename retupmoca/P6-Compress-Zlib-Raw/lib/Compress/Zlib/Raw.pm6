@@ -2,13 +2,14 @@ use v6;
 unit module Compress::Zlib::Raw;
 
 use NativeCall;
+use LibraryMake;
 
 sub find-lib {
     state $lib;
     unless $lib {
         if $*VM.config<dll> ~~ /dll/ {
             # we're on windows, different library name
-            $lib = find-bundled('zlib1.dll');
+            $lib = find-bundled('zlib1.dll', 'Compress/Zlib');
         } elsif $*VM.config<dll> ~~ /so$/ {
             $lib = 'libz.so.1';
         } else {
@@ -16,25 +17,6 @@ sub find-lib {
         }
     }
     $lib
-}
-
-sub find-bundled($lib is copy) {
-    # if we can't find one, assume there's a system install
-    my $base = "lib/Compress/Zlib/$lib";
-    for @*INC {
-        if my @files = ($_.files($base) || $_.files("blib/$base")) {
-            my $files = @files[0]<files>;
-            my $tmp = $files{$base} || $files{"blib/$base"};
-
-            # copy to a temp dir
-            $tmp.IO.copy($*SPEC.tmpdir ~ '\\' ~ $lib);
-            $lib = $*SPEC.tmpdir ~ '\\' ~ $lib;
-
-            last;
-        }
-    }
-
-    $lib;
 }
 
 # structs
