@@ -4,8 +4,11 @@ use Test;
 
 plan 1;
 
-# This isn't listed in /etc/services so it should be safe.
-my $port = 44444;
+#| Random IPv4 loopback address to bind to for testing. Perl 6 has no IPv6 yet.
+constant $ip = (127, (^254).pick xx 3).join('.');
+
+#| A port unlikely to be in use by anything listening on wildcard addresses
+constant $port = 44441;
 
 # do a simple network echo server, like S32-io/IO-Socket-INET.t does.
 .run given Test::ClientServer.new(
@@ -19,15 +22,12 @@ my $port = 44444;
 
         diag('Client connecting');
 
-        my $socket = IO::Socket::INET.new(
-            :host('127.0.0.1'),
-            :port($port),
-        );
+        my $socket = IO::Socket::INET.new(:host($ip), :$port);
 
         diag('Connection established');
 
         my Str $sent = 'The quick brown fox jumped over the lazy dog';
-        $socket.send($sent);
+        $socket.print($sent);
         my Str $received = $socket.recv();
 
         is($received, "Server says: $sent", 'echo test');
@@ -38,7 +38,7 @@ my $port = 44444;
     # that it's ready itself.
     server => sub (&server-ready-callback) {
         my $socket = IO::Socket::INET.new(
-            :localhost('127.0.0.1'),
+            :localhost($ip),
             :localport($port),
             :listen
         );
@@ -47,8 +47,8 @@ my $port = 44444;
         &server-ready-callback();
 
         my $client = $socket.accept();
-        my $buf = $client.recv();
-        $client.send("Server says: $buf");
+        my $received = $client.recv();
+        $client.print("Server says: $received");
         $client.close();
 
         return;
