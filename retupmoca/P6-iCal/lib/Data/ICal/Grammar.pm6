@@ -44,11 +44,11 @@ class Data::ICal::Actions {
         %ret<name> = ~$<name>;
 
         for @$<section> {
-            %ret<sections>.push: $_.made;
+            %ret<sections>.push: $_.made.item;
         }
 
         for @$<property> {
-            %ret<properties>.push: $_.made;
+            %ret<properties>.push: $_.made.item;
         }
 
         $/.make: %ret;
