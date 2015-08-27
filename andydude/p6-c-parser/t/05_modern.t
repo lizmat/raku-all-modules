@@ -16,5 +16,5 @@ our $source = q<<<
 
 {
     my $match = C::Parser.parse($source);
-    isa_ok($match, C::AST::TransUnit, 'gives a TransUnit');
+    isa-ok($match, C::AST::TransUnit, 'gives a TransUnit');
 }

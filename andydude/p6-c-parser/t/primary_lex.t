@@ -7,19 +7,19 @@ use C::Parser::Lexer;
 {
     my $source = q<<< char newline = '\n'; >>>;
     my $ast = C::Parser::Lexer.parse($source);
-    isa_ok $ast, Match, 'gives a Match';
+    isa-ok $ast, Match, 'gives a Match';
 }
 
 {
     my $source = q<<< char *name = "world"; >>>;
     my $ast = C::Parser::Lexer.parse($source);
-    isa_ok $ast, Match, 'gives a Match';
+    isa-ok $ast, Match, 'gives a Match';
 }
 
 {
     my $source = q<<< int number = 5; >>>;
     my $ast = C::Parser::Lexer.parse($source);
-    isa_ok $ast, Match, 'gives a Match';
+    isa-ok $ast, Match, 'gives a Match';
 
     #my @tokens = $ast{'c-tokens'}{'c-token'};
     #say @tokens.perl;
@@ -34,5 +34,5 @@ use C::Parser::Lexer;
 {
     my $source = q<<< double pi64 = 3.14; >>>;
     my $ast = C::Parser::Lexer.parse($source);
-    isa_ok $ast, Match, 'gives a Match';
+    isa-ok $ast, Match, 'gives a Match';
 }
