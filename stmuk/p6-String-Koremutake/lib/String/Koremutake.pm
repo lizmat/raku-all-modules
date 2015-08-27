@@ -42,7 +42,7 @@ class String::Koremutake:ver<0.1> {
       $phoneme = "";
     }
 
-    return \@numbers; 
+    return @numbers; 
 
   }
 

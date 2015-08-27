@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/stmuk/p6-String-Koremutake.git
 	branch = master
-	commit = 6f8bb8210a98209bf51d60e444f37c66a36446de
-	parent = 1ed4db778c0ded9b0962bc3a4ddeddddbd9ba6cd
-	cmdver = 0.1.0
+	commit = 7840719108db2761fda9ea1ca01251fee281a738
+	parent = e0bf0b11bccfc2061e0f391070e6643a101fd872
+	cmdver = 0.2.2
