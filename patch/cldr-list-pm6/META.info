@@ -1,0 +1,9 @@
+{
+    "name"        : "CLDR::List",
+    "version"     : "*",
+    "author"      : "Nova Patch",
+    "description" : "Localized list formatters using the Unicode CLDR",
+    "depends"     : [],
+    "provides"    : { "CLDR::List" : "lib/CLDR/List.pm" },
+    "source-url"  : "git://github.com/patch/cldr-list-pm6.git"
+}

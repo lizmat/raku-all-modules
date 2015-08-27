@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/patch/cldr-list-pm6.git
+	branch = master
+	commit = e165a22e4d1d6257347104dc6fe5b493a6a8854d
+	parent = 6f5d76d20974198f0357b93bd5a276ed118ef157
+	cmdver = 0.2.2
