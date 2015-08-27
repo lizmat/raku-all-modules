@@ -4,6 +4,7 @@
   "description" : "Router for HTTP::Server based servers",
   "auth"        : "github:tony-o",
   "depends"     : [ "HTTP::Server" ],
+  "test-depends": [ "HTTP::Server::Threaded" ],
   "provides" : {
     "HTTP::Server::Router"  : "lib/HTTP/Server/Router.pm6"
   },
