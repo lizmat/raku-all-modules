@@ -1,6 +1,7 @@
 unit module Typed::Subroutines;
 
 sub typed_sub(*@types) is export {
+    DEPRECATED('subset (...) of Sub where :($, Str, etc)');
     return sub ($s) {
         $s.signature.params == +@types
         and @types ~~ $s.signature.params.map(*.type).Array
