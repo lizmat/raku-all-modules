@@ -1,27 +1,3 @@
-language: perl
-perl:
-    - '5.20'
-env:
-    - BACKEND=moar
-    - BACKEND=jvm
-matrix:
-    allow_failures:
-        - env: BACKEND=jvm
-    fast_finish: true
-before_install:
-    - git config --global user.name "TravisCI"
-    - git config --global user.email $HOSTNAME":not-for-mail@travis-ci.org"
-    - git clone git://github.com/travis-perl/helpers ~/travis-perl-helpers
-    - source ~/travis-perl-helpers/init # helpers for parallel testing/testing dirs
-    - git clone https://github.com/tadzik/rakudobrew ~/.rakudobrew
-    - export PATH=~/.rakudobrew/bin:$PATH
-    - rakudobrew build $BACKEND
-    - rakudobrew build-panda
-install:
-    - perl6 -v
+language: perl6
 script:
-    - prove -v -s -j$(test-jobs) -e "perl6 -Ilib" $(test-files)
-    - PANDA_SUBMIT_TESTREPORTS=1 panda install . # 'panda install' required to send test reports
-after_success:
-    - panda list --installed --verbose # modules installed after panda-install
-#   do coveralls.io testing?
+    - prove -j4 -v -e "perl6 -Ilib" t/ xt/

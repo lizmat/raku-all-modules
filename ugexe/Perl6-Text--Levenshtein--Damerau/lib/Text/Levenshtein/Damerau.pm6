@@ -43,8 +43,15 @@ sub dld (Str $source is copy, Str $target is copy, Int $max? is copy) is export 
 
     # Swap source/target so that $sourceLength always contains the shorter String
     if ($sourceLength > $targetLength) {
-        ($source,$target)             .= reverse;
-        ($sourceLength,$targetLength) .= reverse;
+        my $temp;
+
+        $temp   = $source;
+        $source = $target;
+        $target = $temp;
+
+        $temp = $sourceLength;
+        $sourceLength = $targetLength;
+        $targetLength = $temp;
     }
 
     return ($max <= $targetLength ?? $targetLength !! Int) if 0 == any($sourceLength|$targetLength);
@@ -96,10 +103,17 @@ sub ld ( Str $source is copy, Str $target is copy, Int $max? is copy) is export 
     my Int (@currentRow, @previousRow);
     $max = $source.chars max $target.chars unless $max;
 
-    #Swap source/target so that $sourceLength always contains the shorter String
+    # Swap source/target so that $sourceLength always contains the shorter String
     if ($sourceLength > $targetLength) {
-        ($source,$target)             .= reverse;
-        ($sourceLength,$targetLength) .= reverse;
+        my $temp;
+
+        $temp   = $source;
+        $source = $target;
+        $target = $temp;
+
+        $temp = $sourceLength;
+        $sourceLength = $targetLength;
+        $targetLength = $temp;
     }
 
     return ($max <= $targetLength ?? $targetLength !! Int) if 0 ~~ any($sourceLength|$targetLength);
