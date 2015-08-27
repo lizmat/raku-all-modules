@@ -24,7 +24,7 @@ while ($i < @*ARGS)
 "Perl6 tracer
 -h  help
 -sl show whole line when tracing
-=c  trace compilation
+-c  trace compilation
  standard input input file
  standard output output file
 ";
