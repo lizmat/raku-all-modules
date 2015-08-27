@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/File-HomeDir.git
+	branch = master
+	commit = 73163dd1ee20fb449c23f25ec0efb388f967017a
+	parent = 9e403a7974abae9597ade444263ee75463826819
+	cmdver = 0.2.2
