@@ -1,0 +1,11 @@
+{
+    "name" : "FastCGI::NativeCall::PSGI",
+    "version" : "0.0.1",
+    "author" : "github:carbin",
+    "description" : "A PSGI interface for FastCGI::NativeCall",
+    "depends" : [ "PSGI", "FastCGI::NativeCall" ],
+    "provides" : {
+        "FastCGI::NativeCall::PSGI" : "lib/FastCGI/NativeCall/PSGI.pm6"
+    },
+    "source-url" : "git://github.com/carbin/p6-fcgi-psgi.git"
+}
