@@ -1,0 +1,22 @@
+{
+  "name" : "Staticish",
+  "tags" : [ "devel", "utils", "object" ],
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth" : "github:jonathanstowe",
+  "support" : {
+    "source" : "git://github.com/jonathanstowe/Staticish.git"
+  },
+  "source-url" : "git://github.com/jonathanstowe/Staticish.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+     "Staticish" : "lib/Staticish.pm"
+  },
+  "depends" : [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "description" : "Make a singleton class that wraps the methods so they appear like class methods",
+  "version" : "v0.0.3"
+}

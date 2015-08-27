@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Staticish.git
+	branch = master
+	commit = 6d0e26d5041ee5e07fcc5fc390654db750fe1af2
+	parent = 593d4498a965df83d757e6febd7bfae71d7e81db
+	cmdver = 0.2.2
