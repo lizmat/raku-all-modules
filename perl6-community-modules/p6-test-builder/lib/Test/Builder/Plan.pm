@@ -98,7 +98,7 @@ role Test::Builder::Plan::Generic {
 class Test::Builder::Plan does Test::Builder::Plan::Generic {
     has Int $.expected is rw;    #= Number of tests that "should" be run
 
-    submethod BUILD(:$.expected = 0) {
+    submethod BUILD(:$!expected = 0) {
         die 'Invalid or missing plan!' unless self.expected.defined;
     }
 
