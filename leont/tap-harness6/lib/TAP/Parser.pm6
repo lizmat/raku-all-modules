@@ -98,7 +98,7 @@ package TAP {
 		}
 		method yaml($/) {
 			my $serialized = $<yaml-line>.join('');
-			my $deserialized = load-yaml($serialized);
+			my $deserialized = load-yaml("---\n$serialized...");
 			make TAP::YAML.new(:raw(~$/), :$serialized, :$deserialized);
 		}
 		method sub-entry($/) {

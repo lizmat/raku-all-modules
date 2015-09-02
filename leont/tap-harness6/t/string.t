@@ -94,7 +94,7 @@ sub parse-and-get($content, :$tests-planned, :$tests-run, :$passed, :$failed, :$
 	is($result.todo-passed.elems, $todo-passed, "Expected $todo-passed todo-passed tests in $name") if $todo-passed.defined;
 	is($result.skipped.elems, $skipped, "Expected $skipped skipped tests in $name") if $skipped.defined;
 	is($result.unknowns, $unknowns, "Expected $unknowns unknown tests in $name") if $unknowns.defined;
-	is-deeply($result.errors, Array[Str].new(@errors), 'Got expected errors: ' ~ @errors.map({qq{"$_"}}).join(', ')) if @errors.defined;
+	is-deeply($result.errors, Array[Str].new(|@errors), 'Got expected errors: ' ~ @errors.map({qq{"$_"}}).join(', ')) if @errors.defined;
 
 	diag("Finished $name");
 	return $result;
