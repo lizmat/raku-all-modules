@@ -18,12 +18,12 @@ my Math::Vector $vcrazy = Math::Vector.new(Math::Vector.new(1, 2, 3), Math::Vect
 
 my @vectors = ($v1, $v2, $v3, $origin3d, $v5, $v6, $v7, $v8, $v9, $v10, $v11);
 
-isa_ok($v1, Math::Vector, "Variable is of type Math::Vector");
-isa_ok($v2, Math::Vector, "Variable is of type Math::Vector");
-isa_ok($v3, Math::Vector, "Variable is of type Math::Vector");
-isa_ok($v5, Math::Vector, "Variable is of type Math::Vector");
-isa_ok($v7, Math::Vector, "Variable is of type Math::Vector");
-isa_ok($vcrazy, Math::Vector, "Variable is of type Math::Vector");
+isa-ok($v1, Math::Vector, "Variable is of type Math::Vector");
+isa-ok($v2, Math::Vector, "Variable is of type Math::Vector");
+isa-ok($v3, Math::Vector, "Variable is of type Math::Vector");
+isa-ok($v5, Math::Vector, "Variable is of type Math::Vector");
+isa-ok($v7, Math::Vector, "Variable is of type Math::Vector");
+isa-ok($vcrazy, Math::Vector, "Variable is of type Math::Vector");
 
 is(~$v1, "(1, 2, 3)", "Stringify works");
 is(~$v3, "(-1, 0, 2)", "Stringify works");
@@ -111,8 +111,8 @@ for flat ($v5, $v6) X ($v5, $v6) -> $x, $y
     is_approx($x ⋅ ($y + $v6), ($x ⋅ $y) + ($x ⋅ $v6), "x ⋅ (y + v6) = x ⋅ y + x ⋅ v3");
 }
 
-dies_ok( { $v5 ⋅ $v7 }, "You can't do dot products of different dimensions");
-dies_ok( { $v7 dot $v5 }, "You can't do dot products of different dimensions");
+dies-ok( { $v5 ⋅ $v7 }, "You can't do dot products of different dimensions");
+dies-ok( { $v7 dot $v5 }, "You can't do dot products of different dimensions");
 
 {
     my $a = $v1;
@@ -122,7 +122,7 @@ dies_ok( { $v7 dot $v5 }, "You can't do dot products of different dimensions");
 
 {
     my Math::Vector $a = $v1;
-    dies_ok( { $a ⋅= $v2; }, "You can't do dot= on a Math::Vector variable");
+    dies-ok( { $a ⋅= $v2; }, "You can't do dot= on a Math::Vector variable");
 }
 
 #cross product tests
@@ -148,11 +148,11 @@ for flat ($v7, $v8, $v9, $v10) X ($v7, $v8, $v9, $v10) -> $x, $y
               "|x × y|^2 = |x|^2 * |y|^2 - (x ⋅ y)^2");
 }
 
-lives_ok { $v7 cross $v8, "7D cross product works writing out cross"}
-dies_ok( { $v1 × $v7 }, "You can't do cross products of different dimensions");
-dies_ok( { $v5 × $v6 }, "You can't do 5D cross products");
-dies_ok( { $v1 cross $v7 }, "You can't do cross products of different dimensions");
-dies_ok( { $v5 cross $v6 }, "You can't do 5D cross products");
+lives-ok { $v7 cross $v8, "7D cross product works writing out cross"}
+dies-ok( { $v1 × $v7 }, "You can't do cross products of different dimensions");
+dies-ok( { $v5 × $v6 }, "You can't do 5D cross products");
+dies-ok( { $v1 cross $v7 }, "You can't do cross products of different dimensions");
+dies-ok( { $v5 cross $v6 }, "You can't do 5D cross products");
 
 {
     my $a = $v1;
@@ -163,7 +163,7 @@ dies_ok( { $v5 cross $v6 }, "You can't do 5D cross products");
 # Math::UnitVector tests
 {
     my Math::UnitVector $a = Math::Vector.new(1, 0, 0);
-    isa_ok($a, Math::Vector, "Variable is of type Math::Vector");
+    isa-ok($a, Math::Vector, "Variable is of type Math::Vector");
 }
 
 {
@@ -175,12 +175,12 @@ dies_ok( { $v5 cross $v6 }, "You can't do 5D cross products");
 
 {
     my Math::UnitVector $a = Math::Vector.new(1, 0, 0);
-    dies_ok( { $a += $v2; }, "Catch if += violates the Math::UnitVector constraint");
+    dies-ok( { $a += $v2; }, "Catch if += violates the Math::UnitVector constraint");
 }
 
 # test prefix plus
-# isa_ok(+$v1, Math::Vector, "Prefix + works on the Math::Vector class");
-dies_ok( { $v1.Num; }, "Make sure .Num does not work on 3D Math::Vector");
+# isa-ok(+$v1, Math::Vector, "Prefix + works on the Math::Vector class");
+dies-ok( { $v1.Num; }, "Make sure .Num does not work on 3D Math::Vector");
 
 # test extensions
 # class Math::VectorWithLength is Math::Vector
@@ -204,8 +204,8 @@ dies_ok( { $v1.Num; }, "Make sure .Num does not work on 3D Math::Vector");
 # }
 # 
 # my Math::VectorWithLength $vl = Math::VectorWithLength.new($v7.coordinates);
-# isa_ok($vl, Math::VectorWithLength, "Variable is of type Math::VectorWithLength");
+# isa-ok($vl, Math::VectorWithLength, "Variable is of type Math::VectorWithLength");
 # my $vlc = EVAL($vl.perl);
-# isa_ok($vlc, Math::VectorWithLength, "EVAL'd perl'd variable is of type Math::VectorWithLength");
+# isa-ok($vlc, Math::VectorWithLength, "EVAL'd perl'd variable is of type Math::VectorWithLength");
 
-done;
+done-testing;
