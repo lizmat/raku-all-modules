@@ -2,6 +2,7 @@ unit class SCGI::Request;
 
 use Netstring;
 use SCGI::Constants;
+use PSGI;
 
 has $.connection;
 has $.success = False;
@@ -45,17 +46,12 @@ method parse ()
   }
 
   %.env<scgi.request> = self;
-  if $.connection.parent.PSGI
+  if $.connection.parent.PSGI || $.connection.parent.P6SGI
   {
-    %.env<psgi.version>      = [1,0];
-    %.env<psgi.url_scheme>   = 'http';  ## FIXME: detect this.
-    %.env<psgi.multithread>  = False;
-    %.env<psgi.multiprocess> = False;
-    %.env<psgi.input>        = $.input;
-    %.env<psgi.errors>       = $.connection.err;
-    %.env<psgi.run_once>     = False;
-    %.env<psgi.nonblocking>  = False;   ## Allow when NBIO.
-    %.env<psgi.streaming>    = False;   ## Eventually?
+    populate-psgi-env(%.env, :input($.input), :errors($.connection.err), 
+        :psgi-classic($.connection.parent.PSGI), 
+        :p6sgi($.connection.parent.P6SCGI)
+    );
   }
 
   $!success = True;

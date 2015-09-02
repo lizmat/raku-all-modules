@@ -8,8 +8,11 @@ has Int $.port = 8118;
 has Str $.addr = 'localhost';
 has $.socket;
 
-has $.PSGI = True;    ## Set to false to use raw HTTP responses.
 has $.NPH  = False;   ## Set to true to use NPH mode (not recommended.)
+
+has $.PSGI  = True;   ## Include PSGI Classic Headers.
+has $.P6SGI = True;   ## Include P6SGI Headers.
+                      ## If neither of those is used, assume raw HTTP headers.
 
 has $.debug  = False; ## Set to true to debug stuff.
 has $.strict = True;  ## If set to false, don't ensure proper SCGI.
