@@ -1,2 +1,4 @@
 #! /bin/sh
-perl6 --doc ./lib/Template/Mustache.pm | sed 's/  *$//' > README
+perl6 --doc=Markdown ./lib/Template/Mustache.pm \
+    | perl6 -pe 'say Qb{\n[![Build Status](https://travis-ci.org/softmoth/p6-Template-Mustache.svg?branch=master)](https://travis-ci.org/softmoth/p6-Template-Mustache)} if $*IN.ins == 2' \
+    > README.md
