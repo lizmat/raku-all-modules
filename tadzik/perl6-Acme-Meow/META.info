@@ -10,5 +10,16 @@
     "provides" : {
         "Acme::Meow" : "lib/Acme/Meow.pm"
     },
+    "authors" : [
+        "Tadeusz “tadzik” Sośnierz",
+        "Paul Cochrane",
+        "GlithMr",
+        "Ethan House",
+        "Tobias Leich"
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/tadzik/perl6-Acme-Meow/issues",
+        "source" : "git://github.com/tadzik/perl6-Acme-Meow.git"
+    },
     "source-url"  : "git://github.com/tadzik/perl6-Acme-Meow.git"
 }
