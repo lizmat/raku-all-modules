@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Shell-Command.git
 	branch = master
-	commit = 9bc0b2b32db9c196662d129d6a83370fe614b18a
-	parent = 7b1cea929f54084e7ab2aba63b63ecef34d112ac
+	commit = dd8da5e96c9d8f3b50b88c58f786b9412316c162
+	parent = 664ae5f248d73b579c70f86c78b871b25bb6530f
 	cmdver = 0.2.2
