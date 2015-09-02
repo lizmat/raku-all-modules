@@ -16,18 +16,28 @@ package BSON {
     has Bool $.has_binary_data = False;
     has Int $.binary_type;
 
-    method raw ( Buf $data --> BSON::Binary ) {
+    #-----------------------------------------------------------------------------
+    #
+    submethod BUILD ( Buf :$data, Int :$type = $GENERIC ) {
       $!binary_data = $data;
       $!has_binary_data = ?$!binary_data;
-      $!binary_type = $GENERIC;
-
-      return self;
+      $!binary_type = $type;
     }
 
+    #-----------------------------------------------------------------------------
+    #
+    method get_type ( --> Int ) {
+      return $!binary_type;
+    }
+
+    #-----------------------------------------------------------------------------
+    #
     method Buf ( --> Buf ) {
       return $!binary_data;
     }
 
+    #-----------------------------------------------------------------------------
+    #
     method enc_binary ( --> Buf ) {
       if $!has_binary_data {
         return [~] encode_int32($!binary_data.elems),
@@ -39,8 +49,11 @@ package BSON {
       }
     }
 
+    #-----------------------------------------------------------------------------
+    #
     method dec_binary ( Array $a, Int $index is rw ) {
-      # Get length
+
+      # Get length of binary data
       #
       my Int $lng = decode_int32( $a, $index);
 
@@ -79,7 +92,7 @@ package BSON {
 
         when $MD5 {
           # MD5. This is a 16 byte number (32 character hex string)
-          die 'UUID(0x04) Binary string parse error' unless $lng ~~ 16;
+          die 'MD5(0x05) Binary string parse error' unless $lng ~~ 16;
         }
 
         when 0x80 {
@@ -87,9 +100,9 @@ package BSON {
         }
       }
 
-      # Store part of the array.
+      # Store the data from the encoding in this object
       #
-      $!binary_data = Buf.new($a[$offset..($offset+$lng-1)]);
+      $!binary_data = Buf.new($a[$offset ..^ ($offset+$lng)]);
       $index += $lng + 1;
       $!binary_type = $sub_type;
       $!has_binary_data = ?$!binary_data;

@@ -18,11 +18,11 @@ When installing MongoDB, BSON will be installed automatically as a dependency.
 
 ```
 $ perl6 -v
-This is perl6 version 2015.04-5-g59f57a8 built on MoarVM version 2015.04-3-gbb50941
+This is perl6 version 2015.07.1-54-gd11c710 built on MoarVM version 2015.07-8-gb8fdeae
 
 ## SYNOPSIS
 
-    my $b = BSON.new;
+    my $b = BSON::Bson.new;
 
     my Buf $encoded = $b.encode( {
         "_id" => BSON::ObjectId.new( "4e4987edfed4c16f8a56ed1d" ),
@@ -40,7 +40,7 @@ This is perl6 version 2015.04-5-g59f57a8 built on MoarVM version 2015.04-3-gbb50
 ### SUPPORTED TYPES
 
         Perl6           <=> BSON
-    
+
     [x] Str             <=> UTF-8 string
     [x] Int              => 32-bit Integer if -2147483646 < n < 2147483647
                          => 64-bit Integer if -9,22337203685e+18 < n < 9,22337203685e+18
@@ -50,10 +50,10 @@ This is perl6 version 2015.04-5-g59f57a8 built on MoarVM version 2015.04-3-gbb50
     [x] BSON::Binary    <=> All kinds of binary data
     [x]                     0x00 Generic type
     [ ]                     0x01 Function
-    [ ]                     0x02 Binary old, deprecated
-    [ ]                     0x03 UUID old, deprecated
-    [ ]                     0x04 UUID
-    [ ]                     0x05 MD5
+    [-]                     0x02 Binary old, deprecated
+    [-]                     0x03 UUID old, deprecated
+    [x]                     0x04 UUID
+    [x]                     0x05 MD5
     [x] Array           <=> Array
     [x] Hash            <=> Embedded document
     [x] BSON::ObjectId  <=> ObjectId
@@ -98,14 +98,6 @@ Method ```.perl``` is available for easy debug.
   any integer can be stored as large or small as you like. Int can be coded as
   described in version 0.8.4 and when larger or smaller then maybe it is
   possible the Int can be coded as a binary array of some type.
-* Rakudobug fails me to test modules. 
-  Missing or wrong version of dependency 'Buf' (from 'lib/BSON.pm')
-  later it even was...
-  Missing or wrong version of dependency '019EB242D62F53CB7A394AD587E4741030B0AB71' (from 'lib/BSON.pm')
-  Found later that setting @*INC explicitly it vanished.
-  BEGIN {
-    @*INC.unshift('/home/marcel/Languages/Perl6/Projects/BSON/lib');
-  }
 
 
 ## CHANGELOG
@@ -114,6 +106,8 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.8
+  * Tests for binary data UUID and MD5
 * 0.9.7
   * Factoring out Exception classes from BSON and EDC-Tools into BSON/Exception.pm6
   * Bugfix in META.info

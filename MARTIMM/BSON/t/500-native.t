@@ -156,7 +156,7 @@ my Hash $samples = {
 
     '0x05 Binary' => {
 #        'decoded' => { b => Buf.new(0..4) },
-        'decoded' => { b => BSON::Binary.new().raw(Buf.new(0..4)) },
+        'decoded' => { b => BSON::Binary.new(data => Buf.new(0..4)) },
         'encoded' => [ 0x12, 0x00, 0x00, 0x00,          # Total size
                        0x05,                            # Binary
                        0x62, 0x00,                      # 'b' + 0
