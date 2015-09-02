@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ab5tract/Terminal-Print.git
+	branch = master
+	commit = b937b5c8adb93a6603e63e3ccdb868231d351074
+	parent = 18cd5ddb4627e9deaa2f36fd9f140c9d0b447735
+	cmdver = 0.2.2
