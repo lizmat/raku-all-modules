@@ -26,7 +26,7 @@ for @samples -> $sample {
     my @res1 = $sample[1].flat;
     my $p = Math::Polynomial.new(@arg);
     ok $p.defined, '$p is defined';
-    isa_ok $p, Math::Polynomial, '$p is a Math::Polynomial';
+    isa-ok $p, Math::Polynomial, '$p is a Math::Polynomial';
     is $p.coefficients, @res1, '$p has the proper coefficients';
 }
 
@@ -36,7 +36,7 @@ for @samples -> $sample {
     my @res1 = $sample[1].flat;
     my $p = $sp.new(@arg);
     ok $p.defined, '$p is defined';
-    isa_ok $p, Math::Polynomial, '$p is a Math::Polynomial';
+    isa-ok $p, Math::Polynomial, '$p is a Math::Polynomial';
     is $p.coefficients, @res1, '$p has the proper coefficients';
 }
  
@@ -56,7 +56,7 @@ for @samples -> $sample {
     my @res = $sample[1].flat;
     my $p = Math::Polynomial.monomial(|@arg);
     ok $p.defined, '$p is defined';
-    isa_ok $p, Math::Polynomial, '$p is a Math::Polynomial';
+    isa-ok $p, Math::Polynomial, '$p is a Math::Polynomial';
     is $p.coefficients, @res, '$p has the proper coefficients';
 }
 
@@ -65,7 +65,7 @@ for @samples -> $sample {
     my @res = $sample[1].flat;
     my $p = $sp.monomial(|@arg);
     ok $p.defined, '$p is defined';
-    isa_ok $p, Math::Polynomial, '$p is a Math::Polynomial';
+    isa-ok $p, Math::Polynomial, '$p is a Math::Polynomial';
     is $p.coefficients, @res, '$p has the proper coefficients';
 }
 

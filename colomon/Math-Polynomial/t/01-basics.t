@@ -10,16 +10,16 @@ my $p3 = Math::Polynomial.new();
 my $p4 = Math::Polynomial.new(1.0);
 my $p5 = Math::Polynomial.new(0, 0, 3, 5, 6, 0.0, 0);
 
-isa_ok($p, Math::Polynomial, "Variable is of type Math::Polynomial");
-isa_ok($p2, Math::Polynomial, "Variable is of type Math::Polynomial");
-isa_ok($p3, Math::Polynomial, "Variable is of type Math::Polynomial");
-isa_ok($p4, Math::Polynomial, "Variable is of type Math::Polynomial");
-isa_ok($p5, Math::Polynomial, "Variable is of type Math::Polynomial");
+isa-ok($p, Math::Polynomial, "Variable is of type Math::Polynomial");
+isa-ok($p2, Math::Polynomial, "Variable is of type Math::Polynomial");
+isa-ok($p3, Math::Polynomial, "Variable is of type Math::Polynomial");
+isa-ok($p4, Math::Polynomial, "Variable is of type Math::Polynomial");
+isa-ok($p5, Math::Polynomial, "Variable is of type Math::Polynomial");
 
 ok $p3.is-zero, "Empty Math::Polynomial.new generates zero polynomial";
 is(~$p, "3 x^2 + 2 x^1 + 1 x^0", "Math::Polynomial.Str works correctly");
 is(~EVAL($p.perl), ~$p, ".perl works, tested with Str");
-isa_ok(EVAL($p.perl), Math::Polynomial, ".perl works, tested with isa");
+isa-ok(EVAL($p.perl), Math::Polynomial, ".perl works, tested with isa");
 
 is($p5.coefficients.elems, 5, "Leading zero coefficients deleted");
 

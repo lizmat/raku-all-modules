@@ -46,8 +46,8 @@ class Math::Polynomial {
         my $max =   $a.coefficients.elems
                 max $b.coefficients.elems;
 
-        all((    $a.coefficients, 0 xx *
-             Z== $b.coefficients, 0 xx * )[^$max]);
+        all((    |$a.coefficients, |(0 xx *)
+             Z== |$b.coefficients, |(0 xx *) )[^$max]);
     }
     multi sub infix:<!=>(Math::Polynomial $a, Math::Polynomial $b) is export(:DEFAULT) {
         !($a == $b);
@@ -56,9 +56,8 @@ class Math::Polynomial {
     multi sub infix:<+>(Math::Polynomial $a, Math::Polynomial $b) is export(:DEFAULT) {
         my $max =   $a.coefficients.elems
                 max $b.coefficients.elems;
-
-        $a.new: (    $a.coefficients, 0 xx *
-                  Z+ $b.coefficients, 0 xx * )[^$max];
+        $a.new: (    |$a.coefficients, |(0 xx *)
+                  Z+ |$b.coefficients, |(0 xx *) )[^$max];
     }
 
     multi sub infix:<+>(Math::Polynomial $a, $b) is export(:DEFAULT) {

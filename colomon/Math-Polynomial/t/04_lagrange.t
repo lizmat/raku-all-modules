@@ -51,13 +51,13 @@ ok(has_coeff($z1));
 my $z2 = Math::Polynomial.interpolate([], []);
 ok(has_coeff($z2));
 
-dies_ok { $p.interpolate([1], [2, 3]) }, "Arrays must be equal length";
+dies-ok { $p.interpolate([1], [2, 3]) }, "Arrays must be equal length";
 # ok($@ =~ /usage/);
 
-dies_ok { $p.interpolate([1], 2) }, "Both arguments must be arrays";
+dies-ok { $p.interpolate([1], 2) }, "Both arguments must be arrays";
 # ok($@ =~ /usage/);
  
-dies_ok { $p.interpolate(1, [2]) }, "Both arguments must be arrays";
+dies-ok { $p.interpolate(1, [2]) }, "Both arguments must be arrays";
 # ok($@ =~ /usage/);
 
 # $r = EVAL { $p.interpolate([1, 1], [2, 2]) };

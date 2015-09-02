@@ -33,7 +33,7 @@ ok $p == $q;
 
 my $x = $p.monomial(1);
 my $y = $x - $p.coeff-one;
-isa_ok $y, Math::Polynomial, '$y is indeed a Math::Polynomial';
+isa-ok $y, Math::Polynomial, '$y is indeed a Math::Polynomial';
 ok 1 == $y.degree;
 ok $p.coeff-zero == $y.evaluate($x3);
 
