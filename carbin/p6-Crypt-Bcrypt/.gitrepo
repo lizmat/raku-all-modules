@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/carbin/p6-Crypt-Bcrypt.git
 	branch = master
-	commit = 282b298143e26e9fcd6be842008238341900cd80
-	parent = 586c5b0b1fb469f7ef328761db012185f3dab965
+	commit = 5196cd08b0bc6deb0fc04b2085a405ebcf450306
+	parent = 2a2c423c2085b8e64291ffa9fe792a17c312eb49
 	cmdver = 0.2.2

@@ -8,7 +8,7 @@ plan 26;
 
 my Crypt::Bcrypt $bc .= new();
 
-my @chars = @('a'..'z', 0..9);
+my @chars = @('a'..'z', 'A'..'Z', 0..9).flat;
 # shuffle the array, just because
 @chars .= pick(*);
 
