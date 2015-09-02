@@ -36,7 +36,7 @@ class Syndication::RSS does Syndication {
 
     method XML {
         my $xml = XML::Element.new(:name<rss>, :attribs({:version('2.0')}));
-        my $channel = XML::Element.new(:name<channel>, :nodes([$.link]));
+        my $channel = XML::Element.new(:name<channel>);
         $xml.append: $channel;
         $channel.append: XML::Element.new(:name<title>, :nodes([$.title]));
         $channel.append: XML::Element.new(:name<link>, :nodes([$.link]));
