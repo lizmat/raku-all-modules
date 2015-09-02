@@ -3,7 +3,7 @@ unit module File::Temp:ver<0.02>;
 use File::Directory::Tree;
 
 # Characters used to create temporary file/directory names
-my @filechars = 'a'..'z', 'A'..'Z', 0..9, '_';
+my @filechars = flat('a'..'z', 'A'..'Z', 0..9, '_');
 constant MAX-RETRIES = 10;
 
 sub gen-random($n) {
