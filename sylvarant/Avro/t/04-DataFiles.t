@@ -4,7 +4,7 @@ use lib 'lib';
 use Avro; 
 use Avro::DataFile;
 
-plan 13;
+plan 14;
 
 #======================================
 # Test Setup
@@ -127,6 +127,20 @@ $reader = Avro::DataFileReader.new(:handle($fh));
 lives-ok { %result = $reader.read(); }, "Deflated data read from file";
 is-deeply %data, %result, "Correct data read";
 $reader.close;
+
+$fh = $path.IO.open(:w);
+%data = "name" => "Boo","number" => 2 , list => [];
+$writer = Avro::DataFileWriter.new(:handle($fh),:schema($schema),:codec(Avro::Codec::deflate));
+$count = 20;
+loop ($i = 0; $i < $count; $i++) {
+  $writer.append(%data);
+}
+$writer.close;
+$fh = $path.IO.open(:r);
+$reader = Avro::DataFileReader.new(:handle($fh)); 
+@arr = $reader.slurp;
+$reader.close;
+is +@arr,$count, "Slurp works";
 
 
 # clean up
