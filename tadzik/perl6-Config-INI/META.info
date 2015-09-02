@@ -7,5 +7,13 @@
         "Config::INI::Writer" : "lib/Config/INI/Writer.pm"
     },
     "depends"     : [],
+    "authors" : [
+        "Tadeusz “tadzik” Sośnierz",
+        "Nobuo Danjou"
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/tadzik/perl6-Config-INI/issues",
+        "source" : "git://github.com/tadzik/perl6-Config-INI.git"
+    },
     "source-url"  : "git://github.com/tadzik/perl6-Config-INI.git"
 }
