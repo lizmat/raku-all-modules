@@ -22,4 +22,4 @@ is-deeply([lcs(<A B C L M N X Y Z>, <A B C P Q R X Y Z>)], [<A B C X Y Z>]);
 is-deeply([lcs(<A B C D E F G>, <B C D G K>)], [<B C D G>]);
 is-deeply([lcs(<A B C D E F G>, <A C E G>)], [<A C E G>]);
 
-done;
+done-testing;

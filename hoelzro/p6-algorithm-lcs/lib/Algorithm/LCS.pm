@@ -62,7 +62,7 @@ module Algorithm::LCS:ver<0.0.1>:auth<hoelzro> {
         my @matrix  = 0 xx ((@a + 1) * (@b + 1));
         my $row-len = @a + 1;
 
-        for 1 .. @b X 1 .. @a -> $row, $offset {
+        for 1 .. @b X 1 .. @a -> ($row, $offset) {
             my $index = $row * $row-len + $offset;
 
             if &compare-i($offset - 1, $row - 1) {
@@ -118,7 +118,7 @@ module Algorithm::LCS:ver<0.0.1>:auth<hoelzro> {
                 } else {
                     die "this should never be reached!";
                 }
-            };
+            }.list;
 
             ( @prefix, @result.reverse, @suffix ).flat
         } else {
