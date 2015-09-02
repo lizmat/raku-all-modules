@@ -13,7 +13,7 @@ copyright notice and this permission notice appear in all copies.
 
 if not @*ARGS {
     say "Usage:";
-    say "$*PROGRAM_NAME example.jdf [--pages]";
+    say "$*PROGRAM-NAME example.jdf [--pages]";
     exit(0);
 }
 
@@ -27,7 +27,7 @@ pages();
 sub templates {
     say "Templates:";
     for @($jdf.ResourcePool.Layout<Signatures>) -> $signature {
-        my $parts = $signature<Template>.split('/');
+        my $parts = $signature<Template>.split('/').Array;
         my $use = $parts.splice(6);
         printf("%02d: ", $signature<PressRun>);
         say unurl($use.join(' - '));
