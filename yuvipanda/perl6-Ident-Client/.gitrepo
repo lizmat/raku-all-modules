@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/yuvipanda/perl6-Ident-Client.git
+	branch = master
+	commit = 49784f843b7b296930ca84d3319772a6fe51cc00
+	parent = c0cea032ae46118c53c2729224142c2126b9af2a
+	cmdver = 0.2.2

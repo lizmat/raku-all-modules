@@ -1,0 +1,11 @@
+{
+  "name" : "Ident::Client",
+  "source-type": "git",
+  "source-url": "https://github.com/yuvipanda/perl6-Ident-Client.git",
+  "perl" : "v6",
+  "description" : "Simple client implementation for the Ident protocol (RFC 1413)",
+  "provides": {
+      "Ident::Client": "lib/Ident/Client.pm6"
+  },
+  "version" : "v0.1.0"
+}
