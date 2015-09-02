@@ -17,12 +17,13 @@ my @cases = (
     [ '*', $data_tree, 0.001, ],
     [ '-*', {}, 0.001, ],
     [
-        '[foo_3,foo_1]', $%( <foo_3 foo_1>.map: { ( $_, $data_tree{$_}, ); } ),
+        '[foo_3,foo_1]',
+        (<foo_3 foo_1>.map: { ($_, $data_tree{$_}).Slip }).hash,
         0.001,
     ],
     [
         'foo_1,-foo_1',
-        $%( <foo_2 foo_3 +foo_4 -foo_4>.map: { ( $_, $data_tree{$_}, ); } ),
+        (<foo_2 foo_3 +foo_4 -foo_4>.map: { ($_, $data_tree{$_}).Slip }).hash,
         0.001,
     ],
     [ '-foo_1,foo_1', { foo_1 => 'a', }, 0.001, ],
@@ -42,19 +43,19 @@ my @cases = (
     [ '-foo_3,*', $data_tree, 0.001, ],
     [
         '*,-foo_3',
-        $%( <foo_1 foo_2 +foo_4 -foo_4>.map: { ( $_, $data_tree{$_}, ); } ),
+        (<foo_1 foo_2 +foo_4 -foo_4>.map: { ($_, $data_tree{$_}).Slip }).hash,
         0.001,
     ],
     [ 'foo_3,-*', {}, 0.001, ],
-    [ '-*,foo_3', $%( <foo_3>.map: { ( $_, $data_tree{$_}, ); } ), 0.001,
+    [ '-*,foo_3', (<foo_3>.map: { ($_, $data_tree{$_}).Slip }).hash, 0.001,
     ],
     [
         '-foo*,foo*',
-        $%( <foo_1 foo_2 foo_3>.map: { ( $_, $data_tree{$_}, ); } ),
+        (<foo_1 foo_2 foo_3>.map: { ($_, $data_tree{$_}).Slip }).hash,
     ],
     [
         'foo*,-foo*',
-        $%( <+foo_4 -foo_4>.map: { ( $_, $data_tree{$_}, ); } ),
+        (<+foo_4 -foo_4>.map: { ($_, $data_tree{$_}).Slip }).hash,
         0.001,
     ],
     [
@@ -187,4 +188,4 @@ for @cases {
     is-deeply( $data_tree_local, $data_tree_expected, "$desc applied" );
 }
 
-done;
+done-testing;

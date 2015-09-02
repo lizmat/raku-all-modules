@@ -63,4 +63,4 @@ is-deeply(
     'data tree'
 );
 
-done;
+done-testing;

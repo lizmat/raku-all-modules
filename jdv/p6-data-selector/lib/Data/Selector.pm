@@ -238,11 +238,11 @@ class Data::Selector::SelectorString::Actions {
     has $.named_selectors is rw;
 
     method TOP( Match $/ --> Hash ) {
-        make $/.<selector_group>>>.ast.hash;
+        make $/.<selector_group>.ast.hash;
     }
 
     method selector_group( Match $/ --> Hash ) {
-        my Hash %h;
+        my %h;
         for @( $/.<selector> ) -> $v {
             for $v.ast.kv -> $k, $v {
                 for $v.kv -> $k2, $v2 {
@@ -277,7 +277,7 @@ class Data::Selector::SelectorString::Actions {
                 my @h_cur_new;
                 for $v.ast.kv -> $k, $v {
                     for @h_current.keys -> $i {
-                        push( @h_cur_new, ( @h_current[$i]{$k} = Hash.new(%($v)) ) );
+                        push( @h_cur_new, @h_current[$i]{$k} = Hash.new(%($v)) );
                     }
                 }
                 @h_current = @h_cur_new;
@@ -286,7 +286,7 @@ class Data::Selector::SelectorString::Actions {
                 my @h_cur_new;
                 for $v.ast.kv -> $k, $v {
                     for @h_current.keys -> $i {
-                        push( @h_cur_new, ( @h_current[$i]{$k} = Hash.new(%($v)) ) );
+                        push( @h_cur_new, @h_current[$i]{$k} = Hash.new(%($v)) );
                     }
                 }
                 @h_current = @h_cur_new;
@@ -501,7 +501,7 @@ Required Args:  selector_tree, data_tree
                         )
                     );
 
-                    @queue.push( [ $selector_sub_tree, $data_sub_tree, ] )
+                    @queue.push( $[ $selector_sub_tree, $data_sub_tree, ] )
                     if $data_sub_tree ~~ Array|Hash &&
                     $selector_sub_tree.keys.grep: { $_ ne '_order_'; };
                 }
@@ -533,7 +533,7 @@ Required Args:  selector_tree, data_tree
 
             for values %arrays_to_be_trimmed -> $array {
                 @($array) =
-                map { $_ eq '_to_be_trimmed_' ?? () !! $_; }, @($array);
+                map { $_ eq '_to_be_trimmed_' ?? |() !! $_; }, @($array);
             }
         }
 

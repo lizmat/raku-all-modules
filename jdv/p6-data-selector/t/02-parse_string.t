@@ -273,7 +273,7 @@ my @cases = (
 );
 push(
     @cases,
-    [
+    $[
         join( ',', map { @cases[8][0]; }, 1 .. 20, ),
         {
             '+foo_2_1' => {
@@ -331,4 +331,4 @@ for @cases -> $case {
     #}
 }
 
-done;
+done-testing;

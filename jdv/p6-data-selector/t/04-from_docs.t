@@ -155,4 +155,4 @@ my $examples_data_tree = {
     );
 }
 
-done;
+done-testing;
