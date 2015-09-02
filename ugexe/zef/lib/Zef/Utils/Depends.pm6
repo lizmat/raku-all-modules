@@ -23,7 +23,7 @@ class Zef::Utils::Depends {
     # http://rosettacode.org/wiki/Topological_sort/Extracted_top_item#Perl_6
     method topological-sort (*@wanted, *%fields) {
         %fields<depends> = True unless %fields.elems;
-        my @top = @wanted.flatmap({ $_.<name> });
+        my @top = @wanted.flat.list.map({ $_.<name> });
         my %deps;
 
         # Handle where provides has 2+ package names mapped to the same path
@@ -87,50 +87,15 @@ class Zef::Utils::Depends {
         return @levels;
     }
 
-
-    # Creates a build order from a list of meta files
-    method build-dep-tree(@xmetas = @!projects, :$target) {
-        my @depends = $target // @xmetas // @!projects;
-        my @tree = gather while @depends.shift -> %meta {
-            state %marked;
-            unless %marked.{%meta.<name>} {
-                my @required = @xmetas.grep({ $_.<name> ~~ any(%meta<depends>.list) });
-                my @needed   = @required.grep(-> %d { not %marked.{%d.<name>} });
-                @needed.map(-> %d { @depends.unshift({ %d }) });
-                @depends.push({ %meta });
-                next if @needed;
-            }
-            take { %meta } unless %marked.{%meta.<name>}++;
-        }
-        return @tree;
-    }
-
-    method compress(@tree is copy) {
-        my @ctree;
-        my ($i, $level) = 0, 0;
-        for @tree -> $n {
-            for $i == 0 ?? () !! @tree[0..$i-1] -> $l {
-                $level++ if $n<dependencies>.grep($l<name>);
-            }
-            while $level > @ctree.elems {
-                @ctree.push([]);
-            }
-            @ctree[$level].push($n);
-            $i++;
-            $level = 0;
-        }
-
-        return @ctree.grep({ $_.elems > 0 });
-    }
-
     # Determine build order for a CompUnitRepo's provides by parsing the source
     method extract-deps(*@paths) {
         my @pm-files = @paths.grep(*.IO.f).grep({ $_.IO.basename ~~ / \.pm6? $/ });
         my $slash    = / [ \/ | '\\' ]  /;
-        my $not-deps = any(<v6 MONKEY-TYPING MONKEY_TYPING strict fatal nqp NativeCall cur lib Test>);
+        my @skip     = <v6 MONKEY-TYPING MONKEY_TYPING strict fatal nqp NativeCall cur lib Test>;
 
         my @minimeta = gather for @pm-files -> $f is copy {
-            my @depends = $f.IO.slurp.lines.map(-> $line {
+            my @depends;
+            for $f.IO.slurp.lines -> $line {
                 state Int $pod-block;
                 my $code-only = do given $line {
                     # remove pod
@@ -150,11 +115,14 @@ class Zef::Utils::Depends {
 
                 # Only bother parsing if the line has enough chars for a `use *`
                 next unless $code-only.chars > 5;
+
                 my $dep-parser = Grammar::Dependency::Parser.parse($code-only);
-                $dep-parser.<load-statement>.list\
-                    .grep({ $_.<short-name>.Str ~~ none($not-deps) })\
+                my @deps = $dep-parser.<load-statement>.list.grep(*.so)\
+                    .grep({ $_.<short-name>.Str ~~ none(@skip) })\
                     .map({ $_.<short-name>.Str });
-            });
+
+                @depends.push($(@deps));
+            }
 
             my $file-path = $f.IO.path;
 

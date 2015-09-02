@@ -1,6 +1,6 @@
 unit class Zef::App;
 
-use Zef::Distribution;
+use Zef::Distribution::Local;
 use Zef::Manifest;
 
 use Zef::Roles::Installing;
@@ -26,7 +26,7 @@ multi MAIN('test', *@repos, :$lib, Bool :$async, Bool :$v,
 
     my $dists := gather for @repos -> $path {
         state @perl6lib; # store paths to be used in PERL6LIB in subsequent `depends` processes
-        my $dist := Zef::Distribution.new(
+        my $dist := Zef::Distribution::Local.new(
             path     => $path.IO, 
             includes => $lib.list.unique,
             perl6lib => @perl6lib.unique,
@@ -81,7 +81,7 @@ multi MAIN('test', *@repos, :$lib, Bool :$async, Bool :$v,
 }
 
 
-multi MAIN('smoke', :$ignore, Bool :$no-wrap, :$projects-file is copy,
+multi MAIN('smoke', :$ignore, Bool :$no-wrap, :$projects-file is copy, Bool :$dry,
     Bool :$report, Bool :$v, Bool :$boring, Bool :$shuffle, Bool :$async) is export(:smoke) {
     say "===> Smoke testing started: [{time}]";
 
@@ -93,17 +93,18 @@ multi MAIN('smoke', :$ignore, Bool :$no-wrap, :$projects-file is copy,
     # todo: save to a custom CURLI so the install command can automatically ignore modules
     # that have already been tested to satisfy earlier dependencies.
     for @packages -> $result {
-        my @args = '-Ilib', 'bin/zef', '--dry', '--boring', 
-            "--projects-file={$projects-file}", $ignore.map({ "--ignore={$_}" }).list;
+        my @args = 'zef', '--boring', "--projects-file={$projects-file}";
         @args.push('-v')        if $v;
         @args.push('--report')  if $report;
+        @args.push('--dry')     if $dry;
         @args.push('--shuffle') if $shuffle;
         @args.push('--no-wrap') if $no-wrap;
         @args.push('--async')   if $async;
+        @args.push("--ignore=$_") for $ignore.grep(*.so).list;
 
         say "===> Smoking next: {$result.<name>}";
 
-        my $proc = run($*EXECUTABLE, @args.grep(*.so).list, 'install', $result.<name>, :out);
+        my $proc = run(@args.grep(*.so).list, 'install', $result.<name>, :out);
         say $_ for $proc.out.lines;
     }
 
@@ -145,8 +146,10 @@ multi MAIN('install', *@modules, :$lib, :$ignore, :$save-to = $*TMPDIR, :$projec
     Bool :$shuffle, Bool :$no-wrap, Bool :$boring) is export(:install) {
 
     # todo:
-    # check $dist.is-installed and $force before building/testing instead of waiting until
-    # the install process to abort the needless install.
+    # Change workflow so we can check the packages file and remove already installed modules 
+    # if needed, so that we don't attempt a possibly pointless `git pull`.
+    # Cannot just use :ignore, as this removes modules that depend on anything ignored.
+    # Add :skip to act like ignore, but not follow depends?
 
     # FETCHING
     my $fetched := &MAIN('get', @modules, :ignore($ignore.list),
@@ -161,7 +164,6 @@ multi MAIN('install', *@modules, :$lib, :$ignore, :$save-to = $*TMPDIR, :$projec
     # VALIDATION
     # Ignore anything we downloaded that doesn't have a META.info in its root directory
     my @m := $fetched.list.grep({ $_.<ok>.so }).list;
-
     verbose('META.info availability', @m);
 
     # An array of `path`s to each modules repo (local directory, 1 per module) and their meta files
@@ -186,17 +188,21 @@ multi MAIN('install', *@modules, :$lib, :$ignore, :$save-to = $*TMPDIR, :$projec
 
     # Prevent processing modules that are already installed with the same or greater version.
     # Version '*' is always installed for now.
-    # TEMPORARY - need to refactor as to not create Zef::Distribution for a path multiple times
-    my @dists  = @repos.map({ Zef::Distribution.new(path => $_.IO) }).list;
-    my @wanted = @dists.grep({ $_.wanted || ($force && $_.name ~~ any(@modules)) }).list;
+    # TEMPORARY - need to refactor as to not create Zef::Distribution::Local for a path multiple times
+    my @dists     = @repos.map(   { Zef::Distribution::Local.new(path => $_.IO)            } ).list;
+    my @wanted    = @dists.grep(  { $_.wanted || ($force && $_.name ~~ any(@modules.list)) } ).list;
+    my @installed = @dists.grep(  { $_.name !~~ any(@wanted>>.name)                        } ).list;
+    @wanted       = @wanted.grep( { $_.name ~~ none(@installed)                            } ).list if @installed.elems;
+
     if @wanted.elems != @dists.elems {
-        my @skipped = @dists.grep({ $_.name !~~ any(@wanted>>.name) });
-        print "===> The following modules are already up to date: {@skipped.map(*.name).join(', ')}\n";
-        @repos = @repos.grep: { none(@skipped.map(*.path).grep(*.ACCEPTS($_.IO)))         }
-        @metas = @metas.grep: { none(@skipped.map(*.path).grep(*.ACCEPTS($_.dirname.IO))) }
+        print "===> The following modules are already up to date: {@installed.map(*.name).join(', ')}\n";
+        if !$force {
+            @repos = @repos.grep: { none(@installed.map(*.path).grep(*.ACCEPTS($_.IO)))         }
+            @metas = @metas.grep: { none(@installed.map(*.path).grep(*.ACCEPTS($_.dirname.IO))) }
+        }
+        print "===> ...but using --force\n" if ?$force;
         print "===> Nothing to do.\n" and exit 0 unless @repos.elems && @metas.elems;
     }
-
 
     # BUIDLING
     my $built = &MAIN('build', @repos, :save-to('blib/lib'), :$lib, :$v, :$boring, :$async, :$no-wrap)\
@@ -255,7 +261,7 @@ multi MAIN('install', *@modules, :$lib, :$ignore, :$save-to = $*TMPDIR, :$projec
             for $built.list -> $dist {
                 # todo: check against $tested to make sure tests were passed
                 # currently we call &MAIN for each phase, thus creating a new
-                # Zef::Distribution object for each phase. This means the roles
+                # Zef::Distribution::Local object for each phase. This means the roles
                 # do not carry over. The fix should work around is.
 
                 # todo: refactor
@@ -362,7 +368,7 @@ multi MAIN('build', *@repos, :$lib, :$ignore, :$save-to = 'blib/lib', Bool :$v, 
 
     my $dists := gather for @repos -> $path {
         state @perl6lib; # store paths to be used in -I in subsequent `depends` processes
-        my $dist := Zef::Distribution.new(
+        my $dist := Zef::Distribution::Local.new(
             path         => $path.IO, 
             precomp-path => (?$save-to.IO.is-relative
                 ?? $save-to.IO.absolute($path).IO
@@ -512,7 +518,7 @@ multi MAIN('info', *@modules, :$projects-file is copy, :$ignore, Bool :$v, Bool 
 }
 
 # this should go into Zef::Authority
-sub packages(Bool :$force, :$ignore, :$boring, :$packages-file is copy) {
+sub packages(Bool :$force, :$ignore, :$boring, :$packages-file) {
     use Zef::Utils::JSON;
     my $file = $packages-file // $*TMPDIR.child("p6c-packages.{~time}.{(1..10000).pick(1)}.json");
     state $p6c = Zef::Authority::P6C.new(:projects-files($file));
@@ -520,25 +526,20 @@ sub packages(Bool :$force, :$ignore, :$boring, :$packages-file is copy) {
 
     my @packages = $p6c.projects.list;
     print "===> Module count: {@packages.elems}\n";
-    @packages = @packages\
-        .grep({ $_.<name>:exists })\
-        .grep({ $_.<name> ~~ none($ignore.list) })\
-        .grep({ any($_.<depends>.flat)       ~~ none($ignore.list) })\
-        .grep({ any($_.<test-depends>.flat)  ~~ none($ignore.list) })\
-        .grep({ any($_.<build-depends>.flat) ~~ none($ignore.list) })\
-        .pick(*);
-
-    unless ?$force {
-        my @curlis = @*INC.grep( { .starts-with("inst#") } )\
-            .map: { CompUnitRepo::Local::Installation.new(PARSE-INCLUDE-SPEC($_).[*-1]) };
-        @packages = @packages.grep(-> $package {not @curlis.flat.map({
-            $_.candidates($package<name>, :ver($package<ver> // $package<version> // '*'))
-        }).flat.elems });
+    if $ignore.list.elems {
+        @packages = @packages\
+            .grep({ $_.<name>:exists })\
+            .grep({ $_.<name> ~~ none($ignore.list.grep(*.so)) })\
+            .grep({ any($_.<depends>.list.grep(*.so))       ~~ none($ignore.list.grep(*.so)) })\
+            .grep({ any($_.<test-depends>.list.grep(*.so))  ~~ none($ignore.list.grep(*.so)) })\
+            .grep({ any($_.<build-depends>.list.grep(*.so)) ~~ none($ignore.list.grep(*.so)) })\
+            .pick(*);
     }
 
     print "===> Filtered module count: {@packages.elems}\n";
     my $json = to-json(@packages.list);
     $file.IO.spurt($json);
+    print "===> Package file: $file\n";
     return ~$file;
 }
 
