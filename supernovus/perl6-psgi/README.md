@@ -2,11 +2,10 @@
 
 ## Introduction
 
-A helper library for creating PSGI-compliant frameworks in Perl 6.
+A helper library for creating PSGI Classic and P6SGI compliant frameworks.
 
-Currently provides the encode-psgi-response() subroutine, which takes
-a PSGI-response from an application, and parses it into a CGI or HTTP
-response (in either Str or Buf format, depending on the Body contents.)
+Provides functions for encoding PSGI/P6SGI responses, and populating PSGI/P6SGI 
+environments.
 
 ## Usage
 
@@ -48,6 +47,11 @@ response (in either Str or Buf format, depending on the Body contents.)
   ##
   ## Same output as first example
   ##
+
+  ## Populate an %environment with PSGI/P6SGI variables.
+  ##
+  populate-psgi-env(%env, :input($in), :errors($err), :!psgi-classic, :p6sgi);
+
 
 ```
 
