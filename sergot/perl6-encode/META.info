@@ -7,6 +7,7 @@
     "provides" : {
         "Encode" : "lib/Encode.pm6",
         "Encode::Latin2" : "lib/Encode/Latin2.pm6",
+        "Encode::Windows1251" : "lib/Encode/Windows1251.pm6",
         "Encode::Windows1252" : "lib/Encode/Windows1252.pm6"
     },
     "source-url" : "git://github.com/sergot/perl6-encode.git"
