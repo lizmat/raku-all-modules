@@ -1,0 +1,29 @@
+=NAME IO::Notification::Recursive
+
+=SYNOPSIS
+
+    use IO::Notification::Recursive;
+
+    my $supply = watch-recursive(".");
+
+    # mention any changes on any files in the current directory and any subdirectories.
+    $supply.tap({ .say; });
+
+    # Also watch for changes in any newly created subdirectories
+    my $supply = watch-recursive(".", :update);
+
+=DESCRIPTION
+
+Perl 6 comes with a way to watch a file or directory for changes called
+IO::Notification.watch-path().  As files are changed or created or removed
+from a directory you are watching, these changes are registered on the
+C<Supply> created by .watch-path(). However, if any files are changed or
+created or removed from any subdirectories, those do not generate changes
+on the Supply.  This module provides a C<watch-recursive()> subroutine
+that will generate changes for a directory and any subdirectories.
+
+By default, if the directory you are watching has subdirectories created
+while you are watching it, these new directories are B<not> added to the
+list of watched directories.  If you pass the C<:update> parameter, newly
+created subdirectories within any directories you are currently watching
+will also be watched for changes.

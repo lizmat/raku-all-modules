@@ -1,0 +1,11 @@
+{
+    "name" : "IO::Notification::Recursive",
+    "version" : "0.0.1",
+    "description" : "Recursively watch a directory and any subdirectories",
+    "author" : "Jonathan Scott Duff <duff@pobox.com>",
+    "provides" : {
+        "IO::Notification::Recursive" : "lib/IO/Notification/Recursive.pm"
+    },
+    "depends" : [ "File::Find" ],
+    "source-url" : "git://github.com/perlpilot/p6-IO-Notification-Recursive.git"
+}
