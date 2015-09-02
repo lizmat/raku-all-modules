@@ -14,7 +14,7 @@ class Panda::Ecosystem {
     method init-states {
         state $done = False;
         return if $done;
-        for $!statefile, @!extra-statefiles -> $file {
+        for flat $!statefile, @!extra-statefiles -> $file {
             if $file.IO ~~ :f {
                 my $fh = open($file);
                 for $fh.lines -> $line {
@@ -45,7 +45,7 @@ class Panda::Ecosystem {
     method init-projects {
         state $done = False;
         return if $done;
-        self.update();
+        self.update() unless $!projectsfile.IO.f;
 
         my $contents = slurp $!projectsfile;
         my $list = try from-json $contents;
@@ -61,7 +61,7 @@ class Panda::Ecosystem {
             my $p = Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).list.flat],
+                dependencies => (flat @($mod<depends>//Empty), @($mod<test-depends>//Empty), @($mod<build-depends>//Empty)).unique.Array,
                 metainfo     => $mod,
             );
             self.add-project($p);
@@ -71,7 +71,7 @@ class Panda::Ecosystem {
             my $p = Panda::Project.new(
                 name         => $name,
                 version      => $mod<version>,
-                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).list.flat],
+                dependencies => (flat @($mod<depends>//Empty), @($mod<test-depends>//Empty), @($mod<build-depends>//Empty)).unique.Array,
                 metainfo     => $mod,
             );
             self.add-project($p);

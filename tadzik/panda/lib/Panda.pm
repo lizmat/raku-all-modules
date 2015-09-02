@@ -65,7 +65,7 @@ class Panda {
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).list.flat],
+                dependencies => (flat @($mod<depends>//Empty), @($mod<test-depends>//Empty), @($mod<build-depends>//Empty)).unique.Array,
                 metainfo     => $mod,
             );
         }
@@ -81,7 +81,7 @@ class Panda {
             return Panda::Project.new(
                 name         => $mod<name>,
                 version      => $mod<version>,
-                dependencies => [($mod<depends> (|) $mod<test-depends> (|) $mod<build-depends>).list.flat],
+                dependencies => (flat @($mod<depends>//Empty), @($mod<test-depends>//Empty), @($mod<build-depends>//Empty)).unique.Array,
                 metainfo     => $mod,
             );
         }
@@ -169,11 +169,11 @@ class Panda {
         }).grep({
             $.ecosystem.project-get-state($_) == Panda::Project::State::absent
         });
-        return () unless +@bonedeps;
+        return Empty unless +@bonedeps;
         self.announce('depends', $bone => @bonedeps».name);
         my @deps;
         for @bonedeps -> $p {
-            @deps.push: self.get-deps($p), $p;
+            @deps.push: flat self.get-deps($p), $p;
         }
         return @deps;
     }

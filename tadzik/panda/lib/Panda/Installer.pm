@@ -9,7 +9,7 @@ has $.prefix = self.default-prefix();
 method sort-lib-contents(@lib) {
     my @generated = @lib.grep({ $_ ~~  / \. <{compsuffix}> $/});
     my @rest = @lib.grep({ $_ !~~ / \. <{compsuffix}> $/});
-    return @rest, @generated;
+    return flat @rest, @generated;
 }
 
 # default install location
