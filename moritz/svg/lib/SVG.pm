@@ -9,7 +9,7 @@ class SVG is XML::Writer {
             'xmlns:xlink'   => 'http://www.w3.org/1999/xlink',
             ;
         if $preamble {
-            $arg = $arg.key => [ @preamble, $arg.value.flat];
+            $arg = $arg.key => [ flat @preamble, $arg.value.flat];
         }
         self.XML::Writer::serialize($arg);
     }

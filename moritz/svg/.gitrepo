@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moritz/svg.git
 	branch = master
-	commit = 81804e0744f3bff4c6cfc8d6437e34b0ec30e475
-	parent = 98a7733f816bf841cfb193171968485ac1ee6a17
-	cmdver = 0.2.0
+	commit = 26edc3bd93e3532163b9f2424ca9058c7bb946a5
+	parent = f0e4441f140568bcedcf78707822d4f36333ca9b
+	cmdver = 0.2.2
