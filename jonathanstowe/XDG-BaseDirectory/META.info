@@ -1,0 +1,23 @@
+{
+  "name" : "XDG::BaseDirectory",
+  "support" : {
+    "source" : "git://github.com/jonathanstowe/XDG-BaseDirectory.git"
+  },
+  "source-url" : "git://github.com/jonathanstowe/XDG-BaseDirectory.git",
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "XDG::BaseDirectory" : "lib/XDG/BaseDirectory.pm"
+  },
+  "depends" : [ ],
+  "test-depends" : [
+    "File::Find",
+    "Shell::Command"
+  ],
+  "description" : "Implementation of the freedesktop.org XDG BaseDirectory specifications",
+  "tags" : [ "xdg", "desktop", "utils" ],
+  "auth" : "github:jonathanstowe",
+  "version" : "v0.0.1"
+}
