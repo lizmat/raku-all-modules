@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ugexe/P6TCI.git
 	branch = master
-	commit = b17dc5d105abe9d57ae93cf0f1ab285f9f42a5a7
-	parent = 2de9b382567f5e34e2fea3ea0f7c215af2ba28b4
-	cmdver = 0.2.1
+	commit = b2089222c08360793ddce4a57eb272f205b3ff74
+	parent = cc6119a3b4c61747d34bc9c260b6195efa5719b8
+	cmdver = 0.2.2
