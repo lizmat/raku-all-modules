@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301 USA.
 
-module App::Kains::Native;
+unit module App::Kains::Native;
 
 use NativeCall;
 
@@ -30,7 +30,7 @@ class X::Errno is Exception is export {
 		sub strerror(int $errno --> Str) is native { * }
 
 		my @arguments = @!arguments.map: {
-			when Str { qq/"$_"/		}
+			when Str { qq<"$_">		}
 			when Int { '0x' ~ .base(16)	}
 			default	 { $_			}
 		}

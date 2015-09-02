@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301 USA.
 
-module App::Kains::Core;
+unit module App::Kains::Core;
 
 use App::Kains::Core::Chrooted;
 use App::Kains::Native;
@@ -49,7 +49,7 @@ sub mount-actual-rootfs(Config $config --> Str) {
 	$actual-rootfs;
 }
 
-our sub launch(Config $config --> Proc::Status) is export {
+our sub launch(Config $config --> Proc) is export {
 	CATCH {
 		when X::Errno {
 			my Str $message = "Error: { .message }";

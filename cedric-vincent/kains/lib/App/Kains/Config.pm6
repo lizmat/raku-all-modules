@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301 USA.
 
-module App::Kains::Config;
+unit module App::Kains::Config;
 
 class Config is export {
 	has Str $.rootfs	 = '/';
@@ -30,17 +30,17 @@ class Config is export {
 
 	method set-rootfs(Str $path) {
 		given $path.IO {
-			die qq/"$_" doesn't exist/ if ! .e;
-			die qq/"$_" isn't a directory/ if ! .d;
-			die qq/"$_" isn't accessible ('x' permission denied)/ if ! .x;
-			die qq/"$_" isn't accessible ('r' permission denied)/ if ! .r;
+			die qq<"$_" doesn't exist>     if ! .e;
+			die qq<"$_" isn't a directory> if ! .d;
+			die qq<"$_" isn't accessible ('x' permission denied)> if ! .x;
+			die qq<"$_" isn't accessible ('r' permission denied)> if ! .r;
 		}
 
 		$!rootfs = $path;
 	}
 
 	method add-binding(Str $source, Str $destination = $source) {
-		die qq/"$source" doesn't exist/ if ! $source.IO.e;
+		die qq<"$source" doesn't exist> if ! $source.IO.e;
 
 		# $destination path can't be checked now because
 		# symlinks have to be resolved respectively to the

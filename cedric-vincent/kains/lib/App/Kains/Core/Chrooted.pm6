@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301 USA.
 
-module App::Kains::Core::Chrooted;
+unit module App::Kains::Core::Chrooted;
 
 use App::Kains::Config;
 use App::Kains::Native;
@@ -31,9 +31,10 @@ multi sub create-placeholder(IO::Path $source, IO::Path $destination
 multi sub create-placeholder(IO::Path $source, IO::Path $destination
 	where {    $destination.f and ! $source.f
 		or $destination.d and ! $source.d }) {
-	die X::Kains.new: :works-with-proot, message =>
-qq[[Error: can't mount/bind "$destination", its type in the virtual rootfs
-doesn't match its type in the actual rootfs.]];
+	die X::Kains.new: :works-with-proot, message => q:to<END>;
+		Error: can't mount/bind "$destination", its type in the virtual rootfs
+		doesn't match its type in the actual rootfs.
+		END
 }
 
 multi sub create-placeholder(IO::Path $source, IO::Path $destination)
@@ -48,7 +49,7 @@ multi sub create-placeholder(IO::Path $source, IO::Path $destination)
 	}
 
 	multi sub paths(IO() $path where * cmp '/' === Same) { $path }
-	multi sub paths(IO() $path) { paths($path.parent), $path }
+	multi sub paths(IO() $path) { |paths($path.parent), $path }
 
 	.mkdir if ! .e for paths $destination.parent;
 
