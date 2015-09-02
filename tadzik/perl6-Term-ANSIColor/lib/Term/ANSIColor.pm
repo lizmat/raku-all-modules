@@ -36,6 +36,7 @@ my %attrs =
 	on_default => "49";
 
 sub color (Str $what) is export {
+    DEPRECATED('Terminal::ANSIColor');
 	my @res;
 	my @a = $what.split(' ');
 	for @a -> $attr {
