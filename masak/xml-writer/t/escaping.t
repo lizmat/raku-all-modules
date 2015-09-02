@@ -2,7 +2,7 @@ use v6;
 
 use XML::Writer;
 use Test;
-plan *;
+plan 3;
 ok XML::Writer.serialize('a' => [ :b<c>, '<foo>' ]) !~~ / '<foo>' /,
    'plain text is escaped (<>)';
 given XML::Writer.serialize('a' => [ :b<c>, '&' ]) {
@@ -13,4 +13,3 @@ given XML::Writer.serialize('a' => [ :b<c>, '&' ]) {
 ok XML::Writer.serialize('a' => [ :b<c>, 'a"b' ]) !~~ / 'a"b' /,
    'plain text is escaped (")';
 
-done;

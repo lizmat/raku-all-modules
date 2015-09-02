@@ -1,5 +1,5 @@
 use Test;
-plan *;
+plan 8;
 
 use XML::Writer;
 
@@ -26,5 +26,4 @@ my $xml = :longidentifier[
 ok XML::Writer.serialize($xml).match(rx/\n/, :x(5)),
     'Long XML is occasionally line-wrapped';
 
-done;
 # vim: ft=perl6
