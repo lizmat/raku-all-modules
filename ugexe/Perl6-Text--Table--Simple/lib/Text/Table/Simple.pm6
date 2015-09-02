@@ -27,12 +27,12 @@ sub lol2table (@header_rows,@body_rows?,@footer_rows?,%options = %defaults) is e
 
 sub _build_table (@header_rows,@body_rows?,@footer_rows?,%options = %defaults) is export {
     my @widths = _get_column_widths(@header_rows,@body_rows);  
-    my @rows   = _build_header(@widths,@header_rows), _build_body(@widths,@body_rows), _build_footer(@widths);
-    return @rows.grep(* ~~ Str)
+    my @rows   = flat _build_header(@widths,@header_rows), _build_body(@widths,@body_rows), _build_footer(@widths);
+    return @rows.grep(*.so).list;
 }
 
 sub _build_header (@widths, @columns, %options = %defaults) is export {
-    my Str @processed;
+    my @processed;
 
     # Top border
     @processed.push( %options<headers><corner_marker>  
@@ -117,5 +117,7 @@ sub _row2str (@widths, @cells, %options = %defaults) {
 
 # Iterate over ([1,2,3],[2,3,4,5],[33,4,3,2]) to find the longest string in each column
 sub _get_column_widths ( *@rows ) is export {
-    return (0..@rows[0].elems-1).map( -> $col { reduce { max($^a, $^b)}, map { .chars }, @rows[*;$col]; } );
+    return (0..@rows[0].elems-1).map( -> $col { 
+        reduce { max($^a, $^b)}, map { .chars }, @rows[*;$col]; 
+    } );
 }

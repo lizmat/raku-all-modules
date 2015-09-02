@@ -3,7 +3,7 @@ use Test;
 plan 6;
 use Text::Table::Simple;
 
-my @columns = ['id','name','email'];
+my @columns = $(['id','name','email']);
 my @rows   = (
     [1,"John Doe",'johndoe@cpan.org'],
     [2,'Jane Doe','mrsjanedoe@hushmail.com'],
@@ -48,7 +48,7 @@ my @rows   = (
     # Test when first row labels are shorter than others
     {
         my @widths = _get_column_widths(@columns,@columns2);
-        my @output = _build_header( @widths, (@columns, @columns2) );
+        my @output = _build_header( @widths, flat (@columns, @columns2) );
 
         is-deeply @output, @expected, 'Multi row header with first header row cells as the longest';
     }
@@ -58,7 +58,7 @@ my @rows   = (
         my @widths = _get_column_widths( (@columns2,@columns) );
         my @new_expected := @expected;
         (@new_expected[1], @new_expected[2]) = (@new_expected[2], @new_expected[1]);
-        my @output = _build_header( @widths, (@columns2, @columns) );
+        my @output = _build_header( @widths, flat (@columns2, @columns) );
 
         is-deeply @output, @expected, 'Multi row header with last header row cells as the longest';
     }
@@ -82,7 +82,3 @@ my @rows   = (
     is _build_table(@columns,@rows), lol2table(@columns,@rows), 'Public api matches private api';
     is-deeply @output, @expected, 'Create a table (header + body)'
 }
-
-
-
-done;

@@ -7,7 +7,7 @@ Text::Table::Simple - Create basic tables from a two dimensional array.
 
     use Text::Table::Simple;
 
-    my @columns = ['id','name','email'];
+    my @columns = $(['id','name','email']);
     my @rows   = (
         [1,"John Doe",'johndoe@cpan.org'],
         [2,'Jane Doe','mrsjanedoe@hushmail.com'],
@@ -72,22 +72,6 @@ Create a an array of strings that can be printed line by line to create a table 
       },
     };
 
-
-# TODO
-
-### as_table
-
-Arguments: \@rows 2 dimentional array ref 
-$rows: 2 dimentional array ref
-- _OPTIONAL argument_ \@columns: Header column names 
-- _OPTIONAL argument_ \%format: Formatting options 
-
-Prints out the 2D array as a table.
-
-    @some_array.as_table(rows => @rows);
-    # or maybe @some_array.as_table(headers => @headers);
-
-
 # BUGS
 
 Please report bugs to:
@@ -96,4 +80,4 @@ Please report bugs to:
 
 # AUTHOR
 
-Nick Logan <`ugexe@cpan.org`\>
+Nick Logan <`nlogan@gmail.com`\>
