@@ -234,6 +234,7 @@ class TuneConvertor {
                     given $element.value {
                         when "~" { $suffix ~= "\\turn"; }
                         when "." { $suffix ~= "\\staccato"; }
+                        when "T" { $suffix ~= "\\trill"; }
                         when "segno"  { $lilypond ~= '\\mark \\markup { \\musicglyph #"scripts.segno" }'; }
                         when "coda"   { $lilypond ~= '\\mark \\markup { \\musicglyph #"scripts.coda" }'; }
                         when "D.C."   { $lilypond ~= '\\mark "D.C."'; }
@@ -426,6 +427,7 @@ sub TuneStreamToLilypondStream($in, $out, $filter = *) {
 
         # say ~$tune.music;
 
+        # dd $tune.header;
         my $key = $tune.header.get-first-value("K");
         my $meter = $tune.header.get-first-value("M");
         my $length = $tune.header.get-first-value("L") // default-length-from-meter($meter);

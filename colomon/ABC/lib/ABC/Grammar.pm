@@ -8,7 +8,7 @@ grammar ABC::Grammar
     
     token header_field_name { \w }
     token header_field_data { <-[ % \v ]>* }
-    token header_field { ^^ <header_field_name> ':' \s* <header_field_data> <comment>? $$ }
+    token header_field { ^^ <header_field_name> ':' \h* <header_field_data> <comment>? $$ }
     token header { [[<header_field> | <comment_line>] \v+]+ }
 
     token basenote { <[a..g]+[A..G]> }
@@ -37,7 +37,7 @@ grammar ABC::Grammar
     
     token long_gracing_text { [<alpha> | '.' | ')' | '(']+ }
     token long_gracing { '+' <long_gracing_text> '+' }
-    token gracing { '.' | '~' | <long_gracing> }
+    token gracing { '.' | '~' | 'T' | <long_gracing> }
     
     token spacing { \h+ }
     
