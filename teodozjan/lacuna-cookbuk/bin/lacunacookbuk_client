@@ -5,7 +5,7 @@ use v6;
 use LacunaCookbuk::Client;
 use LacunaCookbuk::Logic::Chairman;
 use LacunaCookbuk::Logic::BodyBuilder;
-use Term::ANSIColor;
+use Terminal::ANSIColor;
 use LacunaCookbuk::Logic::Ambassador;
 
 # Seems to not work

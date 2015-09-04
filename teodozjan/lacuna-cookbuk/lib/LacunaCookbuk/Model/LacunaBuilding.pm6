@@ -1,7 +1,7 @@
 use v6;
 
 
-use Term::ANSIColor;
+use Terminal::ANSIColor;
 use LacunaCookbuk::Id;
 use LacunaCookbuk::Model::Empire;
 use LacunaCookbuk::Model::Structure::BuildingView;

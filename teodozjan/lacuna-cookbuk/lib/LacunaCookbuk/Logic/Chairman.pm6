@@ -1,18 +1,22 @@
 use v6;
 
 use LacunaCookbuk::Model::Body;
+use LacunaCookbuk::Model::Structure::Development;
+
 use LacunaCookbuk::Logic::BodyBuilder;
 
-use LacunaCookbuk::Model::Structure::Development;
-use LacunaCookbuk::Logic::Chairman::BuildingEnum;
 
-use Term::ANSIColor;
+use Terminal::ANSIColor;
 
 #| Chairman is the class that does all the magic.
 unit class LacunaCookbuk::Logic::Chairman;
 
 #| Basic resources that regulate any planet int the empire
 enum LacunaCookbuk::Logic::Chairman::Resource <food ore water energy waste happiness>;
+
+#|all buildings ever
+enum LacunaCookbuk::Logic::Chairman::BuildingEnum<algae algaepond amalgusmeadow apple archaeology atmosphericevaporator beach bean beeldeban beeldebannest blackholegenerator bread burger capitol cheese chip cider citadelofknope cloakinglab corn cornmeal crashedshipsite crater dairy denton dentonbrambles deployedbleeder development distributioncenter embassy energyreserve entertainment espionage essentiavein fission fissure foodreserve fusion gasgiantlab gasgiantplatform geneticslab geo geothermalvent gratchsgauntlet greatballofjunk grove hallsofvrbansk hydrocarbon intelligence inteltraining interdimensionalrift junkhengesculpture kalavianruins kasternskeep lake lagoon lapis lapisforest libraryofjith lostcityoftyleon luxuryhousing malcud malcudfield massadshenge mayhemtraining mercenariesguild metaljunkarches mine miningministry missioncommand munitionslab naturalspring network19 observatory oracleofanid orerefinery orestorage oversight pancake pantheonofhagness park pie pilottraining planetarycommand politicstraining potato propulsion pyramidjunksculpture ravine rockyoutcrop sand saw security shake shipyard singularity soup spacejunkpark spaceport spacestationlab stockpile subspacesupplydepot supplypod syrup templeofthedrajilites terraforminglab terraformingplatform thedillonforge thefttraining themepark trade transporter university volcano wastedigester wasteenergy wasteexchanger wasterecycling wastesequestration wastetreatment waterproduction waterpurification waterreclamation waterstorage wheat>; 
+
 
 
 class BuildGoal {

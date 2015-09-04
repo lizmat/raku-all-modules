@@ -2,7 +2,7 @@ use v6;
 
 
 use Form;
-use Term::ANSIColor;
+use Terminal::ANSIColor;
 
 use LacunaCookbuk::Logic::BodyBuilder;
 

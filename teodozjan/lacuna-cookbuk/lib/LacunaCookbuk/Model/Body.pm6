@@ -41,9 +41,29 @@ method get_buildings_view {#( --> BuildingsView) {
 
 
 method get_happiness(--> Int:D){
-    my %res = %(rpc($URL).get_status(session_id, self.id));
+    my %res = self.status();
     %res<body><happiness>;
 
+}
+
+method get_waste_stored(--> Int:D){
+    my %res = self.status();
+    +%res<body><waste_stored>;
+}
+
+method get_waste_hour(--> Int:D){
+    my %res = self.status();
+    +%res<body><waste_hour>;
+}
+
+method get_waste_capacity(--> Int:D){
+    my %res = self.status();
+    +%res<body><waste_capacity>;
+}
+
+
+method status(){
+   %(rpc($URL).get_status(session_id, self.id));
 }
 
 

@@ -1,7 +1,7 @@
 use v6;
 
 use Form;
-use Term::ANSIColor;
+use Terminal::ANSIColor;
 use LacunaCookbuk::Model::Body::Planet;
 use LacunaCookbuk::Model::Empire;
 use LacunaCookbuk::Logic::BodyBuilder;

@@ -3,14 +3,14 @@ use v6;
 use LacunaCookbuk::Model::Body::Planet;
 use LacunaCookbuk::Logic::BodyBuilder;
 use Form;
-use Term::ANSIColor;
+use Terminal::ANSIColor;
 
 #= This class has evil design. REFACTOR me
 unit class LacunaCookbuk::Logic::IntelCritic;
 
 constant $TERM_SIZE = 128;
 constant @summary_header = <planet num limit details>;
-constant $limited_format= '{<<<<<<<<<<<<<<<<<<<<<<<<<<<} {>>>>}/{<<<<} {>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>}';
+our constant $limited_format= '{<<<<<<<<<<<<<<<<<<<<<<<<<<<} {>>>>}/{<<<<} {>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>}';
 constant $ruler = '-' x $TERM_SIZE;
 
 constant @spy_header = <name level politics mayhem theft intel defense offense mission_off mission_def assignment>; 
