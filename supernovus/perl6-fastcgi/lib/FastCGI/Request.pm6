@@ -5,6 +5,7 @@ unit class FastCGI::Request;
 use FastCGI::Constants;
 use FastCGI::Protocol;
 #use FastCGI::Logger;
+use PSGI;
 
 has $.connection;
 has Buf $.input;
@@ -47,17 +48,12 @@ method env
 
   ## Now add some meta data.
   %env<fastcgi.request> = self;
-  if $.connection.parent.PSGI
+  if $.connection.parent.PSGI || $.connection.parent.P6SGI
   {
-    %env<psgi.version>      = [1,0];
-    %env<psgi.url_scheme>   = 'http'; ## FIXME: detect this.
-    %env<psgi.multithread>  = False;
-    %env<psgi.multiprocess> = False;
-    %env<psgi.input>        = $.input;
-    %env<psgi.errors>       = $.connection.err;
-    %env<psgi.run_once>     = False;
-    %env<psgi.nonblocking>  = False; ## Allow when NBIO.
-    %env<psgi.streaming>    = False; ## Allow eventually?
+    populate-psgi-env(%env, :input($.input), :errors($.connection.err),
+      :psgi-classic($.connection.parent.PSGI),
+      :p6sgi($.connection.parent.P6SGI)
+    );
   }
 
 #  $log.say: "Added meta data, returning env." if $debug;

@@ -122,7 +122,7 @@ method send-response ($request-id, $response-data)
 #  my $debug = $.parent.debug;
 #  my $log = FastCGI::Logger.new(:name<C::response>);
   my $http_message;
-  if $.parent.PSGI
+  if $.parent.PSGI || $.parent.P6SGI
   {
     $http_message = encode-psgi-response($response-data);
     if $http_message ~~ Str {
