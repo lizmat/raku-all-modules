@@ -2,7 +2,7 @@ unit class SCGI;
 
 use SCGI::Connection;
 
-has $.version = 2.0;
+has $.version = 2.2;
 
 has Int $.port = 8118;
 has Str $.addr = 'localhost';

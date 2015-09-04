@@ -9,7 +9,7 @@ has $.connection;
 method send ($response-data)
 {
   my $http_message;
-  if $.connection.parent.PSGI
+  if $.connection.parent.PSGI || $.connection.parent.P6SGI
   {
     my $nph = $.connection.parent.NPH;
     $http_message = encode-psgi-response($response-data, :$nph);
