@@ -86,4 +86,4 @@ for ('.aural-test { stress: 42; speech-rate: fast; volume: inherit; voice-family
     CSS::Grammar::Test::parse-tests($aural-class, $input, 
                                     :$actions, :$expected);
 }
-done;
+done-testing;

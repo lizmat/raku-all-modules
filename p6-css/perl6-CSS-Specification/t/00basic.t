@@ -66,4 +66,4 @@ for (
     }
 }
 
-done;
+done-testing;
