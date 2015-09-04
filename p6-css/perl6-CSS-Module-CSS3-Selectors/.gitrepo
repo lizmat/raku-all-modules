@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-css/perl6-CSS-Module-CSS3-Selectors.git
 	branch = master
-	commit = 46e8c0d660b482fe97f818434d7b6ad31699b7c5
-	parent = fc46f3740a113dffb9b8e4a41310c10627f8e37f
-	cmdver = 0.2.0
+	commit = 749bd80722c7a8596a4ff8b7a8cdda811d693047
+	parent = 58b314646a69959825fea023adf9e497448b328f
+	cmdver = 0.2.2

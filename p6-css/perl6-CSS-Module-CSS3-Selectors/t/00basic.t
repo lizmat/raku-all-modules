@@ -22,4 +22,4 @@ for ( 't/00basic.json'.IO.lines ) {
 				    :$expected );
 }
 
-done;
+done-testing;
