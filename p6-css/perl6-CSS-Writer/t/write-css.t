@@ -47,4 +47,4 @@ for 't/write-css.json'.IO.lines {
     }
 }
 
-done;
+done-testing;

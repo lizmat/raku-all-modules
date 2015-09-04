@@ -47,4 +47,4 @@ for 't/write-ast.json'.IO.lines {
 
 }
 
-done;
+done-testing;
