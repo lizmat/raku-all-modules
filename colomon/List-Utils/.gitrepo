@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/List-Utils.git
 	branch = master
-	commit = 992039f5988eb86bdf0fe641a126470384437927
-	parent = 3edc25e269aa929650695ff8a8e89ea33fb0fa50
-	cmdver = 0.2.1
+	commit = ce48a5c401a914f717e7c1ca9f0873064cd69cb7
+	parent = 9d4606a1a3e9e9f7cfcdbac24deffe596b7fe96a
+	cmdver = 0.2.2
