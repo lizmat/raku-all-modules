@@ -300,7 +300,7 @@ plan *;
     nok $match, 'Check matches_mask() with non-matching name, no mapping';
 }
 
-done;
+done-testing;
 
 # vim: ft=perl6
 
