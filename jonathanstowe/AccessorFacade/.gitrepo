@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/AccessorFacade.git
 	branch = master
-	commit = 7f566f632af535a8271493d268d738ad4b019521
-	parent = 29f9930035e3f688c4e755c23ffabbbf4fcb445d
-	cmdver = 0.2.1
+	commit = 1ac474252221284e86b12796035d8ee4e89cdbf7
+	parent = 4539808836a66065508884e5ddd33e890784a0e3
+	cmdver = 0.2.2

@@ -15,5 +15,5 @@ $test_class = 'class Bar { method boom() is rw is accessor-facade("foo", "bar") 
 throws-like { EVAL $test_class }, X::AccessorFacade::Usage, "accessor-facade - non-code args",  message => q[trait 'accessor-facade' only takes Callable arguments];
  
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

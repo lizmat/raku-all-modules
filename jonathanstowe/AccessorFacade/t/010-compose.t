@@ -64,5 +64,5 @@ is($a.burbio, Bar::B, "enum coercion works");
 lives-ok { $a.burbio = Bar::C }, "set with an enum";
 is($a.burbio, Bar::C, "enum coercion works");
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

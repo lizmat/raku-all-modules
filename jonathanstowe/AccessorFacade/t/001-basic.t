@@ -6,5 +6,5 @@ use Test;
 
 use-ok('AccessorFacade', "can use AccessorFacade ok");
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

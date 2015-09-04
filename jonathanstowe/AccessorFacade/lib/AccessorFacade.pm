@@ -165,7 +165,7 @@ trait are checked.)
 =end pod
 
 
-module AccessorFacade:ver<v0.0.2>:auth<github:jonathanstowe> {
+module AccessorFacade:ver<v0.0.3>:auth<github:jonathanstowe> {
 
     my role Provider[&get, &set, &before?, &after?] {
         method CALL-ME(*@args) is rw {
@@ -237,7 +237,7 @@ module AccessorFacade:ver<v0.0.2>:auth<github:jonathanstowe> {
         }
     }
 
-    my sub accessor-facade(Method $r, Parcel $accessor_facade) {
+    my sub accessor-facade(Method $r, List $accessor_facade) {
         if $accessor_facade.elems < 2 {
             die X::AccessorFacade::Usage.new(message => "trait 'accessor-facade' requires &getter and &setter arguments");
 
