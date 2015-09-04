@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Heather/ignore.git
 	branch = master
-	commit = 846dc47e5b4d3b12d52a9d2bee1a2e31e18e9d2b
-	parent = be7d549282dfcc39c0d212941d456de48ad25c71
-	cmdver = 0.2.0
+	commit = 4e0dfc98eae948d6dc0a592acc1d31eeaa421945
+	parent = 9fd0cbf3669ddb13e28701c66a97b527bb82426f
+	cmdver = 0.2.2
