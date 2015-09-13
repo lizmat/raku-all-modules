@@ -11,4 +11,4 @@ is Perl6::Literate::convert(q[[[> my $a = "OH ";
   say $a;]]],
    'a program consisting only of code has all its ">" chars stripped';
 
-done;
+done-testing;

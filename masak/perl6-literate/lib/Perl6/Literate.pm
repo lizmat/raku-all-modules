@@ -1,4 +1,4 @@
-module Perl6::Literate;
+unit module Perl6::Literate;
 
 my regex empty { ^ \s* $ }
 

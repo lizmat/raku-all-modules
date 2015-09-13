@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/perl6-literate.git
 	branch = master
-	commit = 3b002cbc08f50c69a3b87065252c9357ac407f52
-	parent = 0909d5445d8157de99e8d218e6343f834cd76914
-	cmdver = 0.1.0
+	commit = d9db04ccafa8743a4b498a3efc939bb37eb69c64
+	parent = 76bc82197647c26f551cbb95268c69fc997afa54
+	cmdver = 0.2.2
