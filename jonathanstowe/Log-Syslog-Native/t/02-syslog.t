@@ -30,5 +30,5 @@ for @levs -> $lev {
    lives-ok { $obj."$meth"("[TEST] - test $meth method") }, "$meth method";
 }
 
-done();
+done-testing();
 # vim: expandtab shiftwidth=4 ft=perl6

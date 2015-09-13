@@ -75,7 +75,7 @@ your system, alter how and where the messages are logged to.
 
 =end pod
 
-class Log::Syslog::Native:ver<v0.0.3>:auth<github:jonathanstowe> {
+class Log::Syslog::Native:ver<v0.0.4>:auth<github:jonathanstowe> {
 
 =begin pod
 
