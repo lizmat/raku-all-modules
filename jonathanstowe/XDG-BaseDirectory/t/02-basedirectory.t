@@ -64,4 +64,4 @@ END {
 
 
 
-done();
+done-testing();

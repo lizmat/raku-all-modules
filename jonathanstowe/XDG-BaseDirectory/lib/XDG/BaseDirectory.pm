@@ -34,7 +34,7 @@ methods that return a string path in that module return an L<IO::Path> here.
 
 =end pod
 
-class XDG::BaseDirectory:ver<v0.0.1>:auth<github:jonathanstowe> {
+class XDG::BaseDirectory:ver<v0.0.2>:auth<github:jonathanstowe> {
 
 =begin pod
 
@@ -66,7 +66,7 @@ but will always prefer C<data-home>.
 
     method data-dirs() {
         if ! @!data-dirs.elems {
-            @!data-dirs = $.data-home, (%*ENV<XDG_DATA_DIRS> || '/usr/local/share:/usr/share').split(':').map({ $_.IO });
+            @!data-dirs = ($.data-home, (%*ENV<XDG_DATA_DIRS> || '/usr/local/share:/usr/share').split(':').map({ $_.IO })).flat;
         }
         @!data-dirs;
     }
@@ -102,7 +102,7 @@ colons.
 
     method config-dirs() {
         if ! @!config-dirs.elems {
-            @!config-dirs = $.config-home, (%*ENV<XDG_CONFIG_DIRS> || '/etc/xdg' ).split(':').map({ $_.IO });
+            @!config-dirs = ($.config-home, (%*ENV<XDG_CONFIG_DIRS> || '/etc/xdg' ).split(':').map({ $_.IO })).flat;
         }
         @!config-dirs;
     }
