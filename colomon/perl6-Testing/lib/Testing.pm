@@ -1,4 +1,4 @@
-module Testing:ver<0.0.1>:auth<cpan:DCONWAY>;
+unit module Testing:ver<0.0.1>:auth<cpan:DCONWAY>;
 
 # Track how many tests to report...
 my $test_count = 0;
