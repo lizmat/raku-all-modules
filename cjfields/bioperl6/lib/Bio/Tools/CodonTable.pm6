@@ -1,9 +1,19 @@
 use v6;
 
+# TODO: this should be immutable, as setting the codon table once allows for
+# caching the codons in a faster hash lookup.
+use Bio::Tools::IUPAC;
+
 class Bio::Tools::CodonTable {
     our %codons;
     our %trcol;
-    our %iub;
+    
+    # not sure this is necessary
+    our %iub = %Bio::Tools::IUPAC::IUB;
+
+    constant CODONSIZE = 3 ;
+    
+    has $!codon-table;
     
     INIT {
         my @nucs = <t c a g>;
@@ -19,27 +29,22 @@ class Bio::Tools::CodonTable {
                 }
             }
         }
-        use Bio::Tools::IUPAC;
-        %iub = %Bio::Tools::IUPAC::IUB;
     }
     
     # first set internal values for all translation tables
     
-    # has Str $.gap is rw where {$_.chars == 1} = '-';
-    has Str $.gap = '-';
+    has Str $.gap where {$_.chars == 1};
         
-    #has Str $.terminator is rw where { $_.chars == 1 } = '*';
-    has Str $.terminator = '*';    
+    has Str $.terminator where { $_.chars == 1 };
     
     #has $.CODONGAP = $GAP x CODONSIZE;
-    has $.CODONGAP is rw = '---';
-    constant CODONSIZE = 3 ;
+    has $.CODONGAP = '---';
     
-    has $.id is rw = 1;
+    has $.id;
     
     # thinking these could go into a simple basic data class
     #constant NYI    
-    has @!NAMES = (
+    our @NAMES = (
         'Standard',        #1
         'Vertebrate Mitochondrial',#2
         'Yeast Mitochondrial',# 3
@@ -61,7 +66,7 @@ class Bio::Tools::CodonTable {
         'Thraustochytrium Mitochondrial'  #23
     );
     
-    has @!TABLES = <
+    our @TABLES = <
         FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
         FFLLSSSSYY**CCWWLLLLPPPPHHQQRRRRIIMMTTTTNNKKSS**VVVVAAAADDEEGGGG
         FFLLSSSSYY**CCWWTTTTPPPPHHQQRRRRIIMMTTTTNNKKSSRRVVVVAAAADDEEGGGG
@@ -83,7 +88,7 @@ class Bio::Tools::CodonTable {
         FF*LSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG
     >;
     
-    has @!STARTS = <
+    our @STARTS = <
         ---M---------------M---------------M----------------------------
         --------------------------------MMMM---------------M------------
         ----------------------------------MM----------------------------
@@ -105,18 +110,34 @@ class Bio::Tools::CodonTable {
         --------------------------------M--M---------------M------------
     >;
     
-    
+    submethod BUILD(:$!id = 1, 
+                    :$table?,
+                    :$table-name = 'Custom' ~ @NAMES.elems +1,
+                    :$starts = @STARTS[1],
+                    :$!gap = '-',
+                    :$!terminator = '*'
+                    )
+    {
+        if $table {
+            push @TABLES, $table;
+            push @NAMES, $table-name;
+            push @STARTS, $starts;
+            # overrides id for custom tables
+            $!id = @NAMES.elems;
+        }
+        for %codons.kv -> $codon, $aa {
+            $!codon-table{ $codon } = @TABLES[self.id-1].substr(%codons{$codon}, 1)
+        }
+    }
     
     method name() {
-        #minus one since array starts at zero
-        my ($id) = self.id - 1;
-        return @!NAMES[$id];
+        return @NAMES[self.id - 1];
     }
     
     method tables() {
         my %tables;
-        for  1 .. @!NAMES ->  $id {
-          my $name = @!NAMES[$id-1];
+        for  1 .. @NAMES ->  $id {
+          my $name = @NAMES[$id-1];
           %tables{$id} = $name if $name;
         }
         return %tables;
@@ -129,32 +150,30 @@ class Bio::Tools::CodonTable {
         
         $seq .= trans('uU' => 'tt');
     
-        my $tbl = @!TABLES[self.id - 1];
+        my $tbl = @TABLES[self.id - 1];
         
-        my $protein = '';
-    
-        # special case most common scenario
-        # TODO: This could definitely be optimized using hyper/race/etc.
-        if $seq ~~ m:i/^^<[atgc]>+$$/ {
-            $protein = $seq.comb(/.../).map({
-                @!TABLES[ self.id-1 ].substr( %codons{ $_.lc }, 1);
-                }).join('');
-        } else {
-            loop (my $i = 0; $i < ($seq.chars - (CODONSIZE - 1)); $i+=CODONSIZE) {
-                given substr($seq, $i, CODONSIZE).lc {
+        my $aa = (0..^($seq.chars / 3).floor)>>.map(
+            {
+                my $codon = substr($seq, $_ * 3, CODONSIZE);
+                my $res;
+                given $codon.lc {
                     when $.CODONGAP {
-                        $protein ~= '-';
+                        $res = '-';
                     }
                     when /<-[ATUGCatugc]>/ {
-                        # TODO: rewrite this to be more consistent
-                        $protein ~= self!translate_ambiguous_codon($_);
+                        # TODO: rewrite this to be more consistent?
+                        $res = self!translate_ambiguous_codon($_);
                     }
                     default {
-                        $protein ~= @!TABLES[self.id-1].substr(%codons{$_}, 1);
+                        $res = $!codon-table{ $_ };
                     }
                 }
+                $res;
             }
-        }
+            );
+        
+        my $protein = $aa.join('');
+        
         # any leftover?  TODO: this doesn't account for possible gaps
         if $seq.chars % CODONSIZE == 2 {
             my $aa = self!translate_ambiguous_codon( $seq.substr(*-2, 2).lc ~ 'n' );
@@ -209,7 +228,7 @@ class Bio::Tools::CodonTable {
        }
        else {
            my $result = 1;
-           my @ms = map { substr(@!STARTS[$id-1],%codons{$_},1) }, self!unambiquous_codons($value);
+           my @ms = map { substr(@STARTS[$id-1],%codons{$_},1) }, self!unambiquous_codons($value);
            for @ms -> $c {
                $result = 0 if $c ne 'M';
            }
@@ -228,7 +247,7 @@ class Bio::Tools::CodonTable {
         }
         else {
             my $result = 1;
-            my @ms = map { substr(@!TABLES[$id-1],%codons{$_},1) }, self!unambiquous_codons($value);
+            my @ms = map { substr(@TABLES[$id-1],%codons{$_},1) }, self!unambiquous_codons($value);
             for @ms -> $c {
                 $result = 0 if $c ne $.terminator;
             }
@@ -248,7 +267,7 @@ class Bio::Tools::CodonTable {
        }
        else {
            my $result = 0;
-           my @cs = map { substr(@!TABLES[$id-1],%codons{$_},1) }, self!unambiquous_codons($value);
+           my @cs = map { substr(@TABLES[$id-1],%codons{$_},1) }, self!unambiquous_codons($value);
            $result = 1 if @cs.elems == 0;
            return $result;
        }    
@@ -267,19 +286,8 @@ class Bio::Tools::CodonTable {
            return 'X';
        }
        else {
-           return substr(@!TABLES[$id-1],%codons{$value},1);
+           return substr(@TABLES[$id-1],%codons{$value},1);
        }    
-    }
-    
-    method add_table($table,$name? = 'Custom' ~ @!NAMES.elems +1 ,$starts? = @!STARTS[0]) {
-        #where { $table.chars == 64 and $starts.length == 64   } 
-        #some reason getting a syntax error when adding where clause
-    
-         push @!NAMES, $name;
-         push @!TABLES, $table;
-         push @!STARTS, $starts;
-    
-        return @!NAMES.elems;    
     }
     
     method reverse_translate_all(*@params) {
@@ -293,7 +301,7 @@ class Bio::Tools::CodonTable {
         my %aas;
         
         for @codons -> $codon {
-            %aas{substr(@!TABLES[$id-1],%codons{$codon},1)} = 1;
+            %aas{substr(@TABLES[$id-1],%codons{$codon},1)} = 1;
         }
         my $count =  %aas.keys.elems;
         if $count == 1  {
