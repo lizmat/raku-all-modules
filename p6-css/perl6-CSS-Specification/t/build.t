@@ -32,7 +32,7 @@ my $interface-name = $base-name ~ '::Interface';
 my $input-path = $*SPEC.catfile('examples', 'css21-aural.txt' );
 my @summary = CSS::Specification::Build::summary( :$input-path );
 is +@summary, 21, 'number of summary items';
-is-deeply [@summary.grep({ .<box> })], [{:box, :!inherit, :name<border-color>, :synopsis("[ <color> | transparent ]\{1,4}")}], 'summary item';
+is-deeply [@summary.grep({ .<box> })], [{:box, :!inherit, :name<border-color>, :synopsis("[ <color> | transparent ]\{1,4}")},], 'summary item';
 
 pipe( $input-path, {
     CSS::Specification::Build::generate( 'grammar', $grammar-name );
