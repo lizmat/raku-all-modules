@@ -85,4 +85,9 @@ our sub get_http_status_msg ($code) is export {
   return 'Unknown';
 }
 
-
+our sub is-info         ($code) is export { 100 <= $code < 200 }
+our sub is-success      ($code) is export { 200 <= $code < 300 }
+our sub is-redirect     ($code) is export { 300 <= $code < 400 }
+our sub is-error        ($code) is export { 400 <= $code < 600 }
+our sub is-client-error ($code) is export { 400 <= $code < 500 }
+our sub is-server-error ($code) is export { 500 <= $code < 600 }
