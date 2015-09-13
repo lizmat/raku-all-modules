@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/flussence/Test-ClientServer.git
 	branch = master
-	commit = 847603394155713fb5d142da9cd8c5603d315540
-	parent = 307d645fe194cf40e3ab960338b559f82b505ad7
+	commit = 3c60f14f8d7ea0012e72d89d7b87a54e3dcfd9c1
+	parent = 7f7c256e2a61b91db2cea434a1256f4429ccc310
 	cmdver = 0.2.2
