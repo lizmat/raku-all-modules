@@ -6,6 +6,6 @@
     "source-url" : "git://github.com/perlpilot/p6-Math-Trig.git",
     "depends" : [ ],
     "provides" : {
-      "Math::Trig" : "Math-Trig/lib/Math/Trig.pm"
+      "Math::Trig" : "lib/Math/Trig.pm"
     }
 }
