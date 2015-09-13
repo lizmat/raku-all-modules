@@ -35,7 +35,7 @@ subtest {
     given '4a¾' {
         is unival(.encode('utf-8')), 4,
             "unival({$_.perl})";
-        is-deeply univals(.encode('utf-8')).item, (4, NaN, 3/4).item,
+        is-deeply univals(.encode('utf-8')).list, (4, NaN, 3/4),
             "univals({$_.perl})";
         dies-ok { univals(.encode('latin-1')) },
             'univals() wants Blob[utf8]';

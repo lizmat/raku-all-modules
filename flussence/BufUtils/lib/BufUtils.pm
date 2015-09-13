@@ -1,4 +1,4 @@
-unit module BufUtils:auth<github:flussence>:ver<0.0.2>;
+unit module BufUtils:auth<github:flussence>:ver<0.0.3>;
 
 our sub infix:<x>(Stringy \piece, Int \count --> Stringy) is export {
     [~] piece xx count
@@ -37,4 +37,4 @@ our sub tc(Blob $_ --> Blob) is export { .decode.tc.encode }
 our sub tclc(Blob $_ --> Blob) is export { .decode.tclc.encode }
 
 our sub unival(utf8 $_ --> Numeric) is export { .decode('utf-8').unival }
-our sub univals(utf8 $_ --> List) is export { .decode('utf-8').univals }
+our sub univals(utf8 $_ --> Seq) is export { .decode('utf-8').univals }

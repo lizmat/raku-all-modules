@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/flussence/BufUtils.git
 	branch = master
-	commit = 40bae4d9f3d3e5f28dba7da95ccce51d3b4c3004
-	parent = 62f6ca8ba7f22041a727eff37fb006956f2ff37e
+	commit = 9be7233f678c99b870b13867d700fe48a8af2ca0
+	parent = 6e8993c87c1b493812464a3aedb960dc0ae756b6
 	cmdver = 0.2.2
