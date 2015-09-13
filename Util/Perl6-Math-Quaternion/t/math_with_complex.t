@@ -6,7 +6,7 @@ use Math::Quaternion;
 sub is_q ( Math::Quaternion $got, @expected, $reason = '' ) {
     # Complex always have real coefficients, so we use .Num to force
     # conversion when @expected might contain Ints.
-    is_deeply( [$got.coeffs».Num], [@expected».Num], $reason );
+    is-deeply( [$got.coeffs».Num], [@expected».Num], $reason );
 }
 
 my          Complex $c   = 8+9i;
@@ -28,5 +28,5 @@ ok $qc eqv Math::Quaternion.new( $c.re, $c.im, 0, 0 ), 'eqv';
 ok ! $q.is_complex,  '$q is not Complex';
 ok  $qc.is_complex,  '$c is     Complex';
 
-done;
+done-testing;
 # vim: ft=perl6

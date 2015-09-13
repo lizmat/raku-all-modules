@@ -3,7 +3,7 @@ use Test;
 plan *;
 use Math::Quaternion;
 
-isa_ok Math::Quaternion.new(), Math::Quaternion;
+isa-ok Math::Quaternion.new(), Math::Quaternion;
 
-done;
+done-testing;
 # vim: ft=perl6

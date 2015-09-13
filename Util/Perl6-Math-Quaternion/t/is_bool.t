@@ -41,5 +41,5 @@ for @test_pairs.kv -> $i, ( :key($test_name), :value($subref) ) {
     }
 }
 
-done;
+done-testing;
 # vim: ft=perl6

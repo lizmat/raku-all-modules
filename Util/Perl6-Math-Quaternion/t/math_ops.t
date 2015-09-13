@@ -4,10 +4,10 @@ plan *;
 use Math::Quaternion;
 
 multi sub is_q ( Math::Quaternion $got, @expected, $reason = '' ) {
-    is_deeply( [$got.coeffs], @expected, $reason );
+    is-deeply( [$got.coeffs], @expected, $reason );
 }
 multi sub is_q ( Math::Quaternion $got, Math::Quaternion $expected, $reason = '' ) {
-    is_deeply( [$got.coeffs], [$expected.coeffs], $reason );
+    is-deeply( [$got.coeffs], [$expected.coeffs], $reason );
 }
 
 my $r  = 7;
@@ -44,10 +44,10 @@ ok !$q1.is_real, '$q1 is not real';
 ok !$q2.is_real, '$q2 is not real';
 ok  $qr.is_real, '$qr is     real';
 
-is_deeply [$q.v ], [ 2, 3, 4 ], '$q  .v works';
-is_deeply [$q1.v], [ 3, 4, 5 ], '$q1 .v works';
-is_deeply [$q2.v], [ 4, 5, 6 ], '$q2 .v works';
-is_deeply [$qr.v], [ 0, 0, 0 ], '$qr .v works';
+is-deeply [$q.v ], [ 2, 3, 4 ], '$q  .v works';
+is-deeply [$q1.v], [ 3, 4, 5 ], '$q1 .v works';
+is-deeply [$q2.v], [ 4, 5, 6 ], '$q2 .v works';
+is-deeply [$qr.v], [ 0, 0, 0 ], '$qr .v works';
 
 
 # The product of an Quaternion with its conjugate is a non-negative real number.
@@ -76,5 +76,5 @@ my sub four_quats ( $n ) {
     is_q $i * $k,  -$j, 'i * k = -j';
 }
 
-done;
+done-testing;
 # vim: ft=perl6
