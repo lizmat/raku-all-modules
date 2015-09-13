@@ -12,7 +12,7 @@ use ABC::Actions;
     ok $match, 'bar recognized';
     
     # first run loads up C# and Db
-    for (@($match.ast) Z ("" xx 9, "^", "_", "^", "_")).flat -> $note, $desired-accidental {
+    for (@($match.ast) Z ("" xx 9, "^", "_", "^", "_").flat).flat -> $note, $desired-accidental {
         my $accidental = $context.working-accidental($note.value);
         is $accidental, $desired-accidental;
     }
@@ -26,7 +26,7 @@ use ABC::Actions;
     $context.bar-line;
 
     # and now we've reset to the initial state
-    for (@($match.ast) Z ("" xx 9, "^", "_", "^", "_")).flat -> $note, $desired-accidental {
+    for (@($match.ast) Z ("" xx 9, "^", "_", "^", "_").flat).flat -> $note, $desired-accidental {
         my $accidental = $context.working-accidental($note.value);
         is $accidental, $desired-accidental;
     }
@@ -40,7 +40,7 @@ use ABC::Actions;
     ok $match, 'bar recognized';
     
     # first run loads up C# and Db
-    for (@($match.ast) Z ("^" xx 9, "^", "_", "^", "_")).flat -> $note, $desired-accidental {
+    for (@($match.ast) Z ("^" xx 9, "^", "_", "^", "_").flat).flat -> $note, $desired-accidental {
         my $accidental = $context.working-accidental($note.value);
         is $accidental, $desired-accidental;
     }
@@ -54,10 +54,10 @@ use ABC::Actions;
     $context.bar-line;
 
     # and now we've reset to the initial state
-    for (@($match.ast) Z ("^" xx 9, "^", "_", "^", "_")).flat -> $note, $desired-accidental {
+    for (@($match.ast) Z ("^" xx 9, "^", "_", "^", "_").flat).flat -> $note, $desired-accidental {
         my $accidental = $context.working-accidental($note.value);
         is $accidental, $desired-accidental;
     }
 }
 
-done;
+done-testing;

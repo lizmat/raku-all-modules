@@ -39,7 +39,7 @@ for @simple-cases -> $test-case {
     is ~$object, $test-case, "Stringified version matches";
 }
 
-for @simple-cases, @tricky-cases -> $test-case {
+for |@simple-cases, |@tricky-cases -> $test-case {
     my $match = ABC::Grammar.parse($test-case, :rule<element>, :actions(ABC::Actions.new));
     ok $match, "$test-case parsed";
     is element-to-str($match.ast), $test-case, "element-to-str version matches";
@@ -50,4 +50,4 @@ for @simple-cases, @tricky-cases -> $test-case {
 # is ABC::Tuplet.new(3, 2, @notes[^4]), "(3::4ab2c/d", "triplet with four notes";
 # is ABC::Tuplet.new(3, 3, @notes[^4]), "(3:3:4ab2c/d", "triplet with four notes and a weird rhythm";
 
-done;
+done-testing;

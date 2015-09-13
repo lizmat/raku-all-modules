@@ -13,4 +13,4 @@ is duration-from-parse(Any, "2").ticks.perl, (1/2).perl, "/2 works properly";
 is duration-from-parse("1").ticks.perl, (1).perl, "1 works properly";
 is duration-from-parse(Any).ticks.perl, (1).perl, "'' works properly";
 
-done;
+done-testing;

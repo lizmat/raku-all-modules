@@ -1,8 +1,9 @@
 use v6;
 use ABC::Grammar;
 
+#SHOULD: rename parcel to list?
 sub parcel-first-if-needed($a) {
-    $a ~~ Parcel ?? $a[0] !! $a;
+    $a ~~ List ?? $a[0] !! $a;
 }
 
 class ABC::KeyInfo {

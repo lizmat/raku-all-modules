@@ -445,7 +445,7 @@ multi sub MAIN() {
 }
 
 multi sub MAIN($first-abc-file, *@other-abc-files, :x($index)?, :$o?, :$mc?) {
-    my @abc-files = $first-abc-file, @other-abc-files;
+    my @abc-files = $first-abc-file, |@other-abc-files;
     for @abc-files -> $abc-file {
         my $ly-file;
         if $o {

@@ -90,4 +90,4 @@ use ABC::KeyInfo;
     is apply_key_signature($key.key, ABC::Grammar.parse("b'", :rule<pitch>)), "b'", "b' => b'";
 }
 
-done;
+done-testing;

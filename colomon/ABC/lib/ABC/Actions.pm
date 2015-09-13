@@ -37,7 +37,7 @@ class ABC::Actions {
     
     method note_length($/) {
         if $<note_length_denominator> {
-            if $<note_length_denominator> ~~ Parcel {
+            if $<note_length_denominator> ~~ List {
                 make duration-from-parse($<top>, $<note_length_denominator>[0]<bottom>);
             } else {
                 make duration-from-parse($<top>, $<note_length_denominator><bottom>);
@@ -144,7 +144,7 @@ class ABC::Actions {
     method chord_or_text($/) {
         my @chords = $/<chord>.flatmap({ $_.ast });
         my @texts = $/<text_expression>.flatmap({ ~$_ });
-        make (@chords, @texts).flat;
+        make (@chords, @texts).flat.list;
     }
     
     method element($/) {
@@ -170,9 +170,9 @@ class ABC::Actions {
     
     method bar($/) {
         $!current-tune ~= ~$/;
-        my @bar = @( $<element> )>>.ast;
+        my @bar = @( $<element> )».ast;
         if $<barline> {
-            @bar.push($<barline>>>.ast);
+            @bar.push($<barline>.ast);
         }
         make @bar;
     }

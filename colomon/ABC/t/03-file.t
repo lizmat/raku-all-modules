@@ -15,4 +15,4 @@ use ABC::Grammar;
     is @titles[2], "Peacock Followed the Hen. JWDM.07", "Third is Peacock";
 }
 
-done;
+done-testing;

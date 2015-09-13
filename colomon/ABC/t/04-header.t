@@ -125,4 +125,4 @@ isa-ok ABC::Header.new, ABC::Header, "Can create ABC::Header object";
     nok $a.is-valid, "Not valid, too few Ts";
 }
 
-done;
+done-testing;

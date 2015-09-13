@@ -523,4 +523,4 @@ K:D
     is $match<tune>[0]<music><line_of_music>.elems, 2, "with two lines of music";
 }
 
-done;
+done-testing;

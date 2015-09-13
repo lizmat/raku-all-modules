@@ -168,4 +168,4 @@ class Transposer {
 }
 
 
-done;
+done-testing;
