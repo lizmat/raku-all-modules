@@ -8,7 +8,7 @@
         "XML::Writer",
         "SVG",
         "SVG::Plot",
-        "Term::ANSIColor",
+        "Terminal::ANSIColor",
         "Test::Mock",
         "Grammar::Profiler::Simple",
         "Grammar::Debugger",
