@@ -1,0 +1,13 @@
+{
+  "name"        : "Pekyll",
+  "version"     : "*",
+  "author"      : "github:nunorc",
+  "description" : "A static website generator.",
+  "provides": {
+    "Pekyll"            : "lib/Pekyll.pm6",
+    "Pekyll::Routers"   : "lib/Pekyll/Routers.pm6",
+    "Pekyll::Compilers" : "lib/Pekyll/Compilers.pm6"
+  },
+  "depends"     : [ "Template6", "Syndication" ],
+  "source-url"  : "git://github.com/nunorc/p6-Pekyll.git"
+}
