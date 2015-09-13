@@ -29,4 +29,4 @@ is $p{'Y'}, 42;
 is %h{'X'}, 43;
 is %h{'Y'}, 42;
 
-done;
+done-testing;

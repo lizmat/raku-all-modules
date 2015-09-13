@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/perl6-KnottyPair.git
 	branch = master
-	commit = d8e3c44bdd7a7ffd9617e06b53dc9eafcf9cad6e
-	parent = 6e0732228af320c87e0a37de6b42536ee4e802a1
-	cmdver = 0.2.1
+	commit = 2b36ec0d50f47b4212d6a93dde04cb5f68097429
+	parent = b5b7477c6568d2303d4e0ee012f129f777e4e32d
+	cmdver = 0.2.2

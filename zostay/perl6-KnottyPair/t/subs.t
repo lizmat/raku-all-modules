@@ -21,4 +21,4 @@ sub call(*@pairs) {
 
 call('a' =x> 1, 'b' =x> 2, 'c' =x> 3);
 
-done;
+done-testing;
