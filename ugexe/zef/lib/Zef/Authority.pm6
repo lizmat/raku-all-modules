@@ -11,7 +11,7 @@ role Zef::Authority {
             if $file.chars {
                 if $file.IO.e {
                     my $json     := from-json($file.IO.slurp);
-                    @!projects    = try { $json.list }\
+                    @!projects    = try { $json.cache }\
                         or fail "!!!> Invalid projects file.";
                 }
                 else {
@@ -46,9 +46,9 @@ role Zef::Authority {
                 next FIELDS unless %META{$field}:exists && %META{$field}.so;
                 FILTERS:
 
-                for $filters.list -> $f {
+                for $filters.cache -> $f {
                     next unless $f.so;
-                    next FILTERS unless $f.isa(Str) || $f.isa(Int) || $f.isa(Num) || $f.isa(Rat);
+                    next FILTERS unless $f ~~ Str|Int|Num|Rat;
                     temp $ver;
 
                     if $field ~~ /^ver[sion]?/ {

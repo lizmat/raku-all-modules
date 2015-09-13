@@ -2,26 +2,27 @@ language: perl
 perl:
     - '5.20'
 env:
-    - BACKEND=moar BRANCH=nom ASYNC=""
-    - BACKEND=moar BRANCH=nom ASYNC="--async"
-    - BACKEND=moar BRANCH=glr ASYNC=""
-    - BACKEND=moar BRANCH=glr ASYNC="--async"
+    - BACKEND=moar JOBS=""
+    - BACKEND=moar JOBS="--jobs=4"
+    - BACKEND=jvm  JOBS=""
 matrix:
     allow_failures:
-        - env: BACKEND=moar BRANCH=nom ASYNC="--async"
-        - env: BACKEND=moar BRANCH=glr ASYNC="--async"
+        - env: BACKEND=jvm  JOBS=""
     fast_finish: true
 sudo: false
 before_install:
-    - git clone https://github.com/tadzik/rakudobrew ~/.rakudobrew
-    - export PATH=~/.rakudobrew/bin:$PATH
-    - rakudobrew build $BACKEND $BRANCH
+    - git clone https://github.com/rakudo/rakudo.git $HOME/rakudo
+    - cd $HOME/rakudo
+    - 'if [[ $BACKEND == "moar" ]]; then perl Configure.pl --gen-moar --gen-nqp --backends=$BACKEND; fi'
+    - 'if [[ $BACKEND == "jvm" ]]; then perl Configure.pl --gen-nqp --backends=$BACKEND; fi'
+    - make install
+    - export PATH=$HOME/rakudo/install/bin:$PATH
+    - cd $TRAVIS_BUILD_DIR
 install:
     # need at least 1 statement in 'install'
     - perl6 -v
 script:
     - prove -j4 -v -e "perl6 -Ilib" t/ xt/
 after_success:
-    # now run tests with precompiled code
-    perl6 -Ilib bin/zef -v --boring $ASYNC --save-to=precomp/ build; fi'
-    perl6 -Iprecomp bin/zef -v --boring --lib=precomp $ASYNC install Zef; fi'
+    - perl6 -Ilib bin/zef -v --boring $JOBS --save-to=precomp/ build
+    - perl6 -Iprecomp bin/zef -v --boring --lib=precomp $JOBS install Zef
