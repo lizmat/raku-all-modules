@@ -17,5 +17,5 @@ lives-ok { $ver = $obj.libshout-version }, "get libshout version";
 isa-ok($ver, Version, "and it is a Version");
 diag "testing against $ver";
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

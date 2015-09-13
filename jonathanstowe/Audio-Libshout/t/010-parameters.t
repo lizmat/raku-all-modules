@@ -46,5 +46,5 @@ for @tests -> $test {
     }
 }
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6
