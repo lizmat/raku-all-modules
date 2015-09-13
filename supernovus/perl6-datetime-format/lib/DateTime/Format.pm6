@@ -65,6 +65,7 @@ multi sub strftime (
         'F' => { $dt.year.fmt('%04d') ~ '-' ~ $dt.month.fmt(
                   '%02d') ~ '-' ~ $dt.day.fmt('%02d') },
         'I' => { (($dt.hour+23)%12+1).fmt('%02d') },
+        'j' => { $dt.day-of-year.fmt('%03d') },
         'k' => { $dt.hour.fmt('%2d') },
         'l' => { (($dt.hour+23)%12+1).fmt('%2d') },
         'n' => { "\n" },
