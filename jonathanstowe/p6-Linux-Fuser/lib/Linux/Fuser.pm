@@ -55,7 +55,7 @@ The class has one method, with two signatures, that does most of the work:
 
 =end pod
 
-class Linux::Fuser:ver<v0.0.4>:auth<github:jonathanstowe> {
+class Linux::Fuser:ver<v0.0.5>:auth<github:jonathanstowe> {
 
     #| Given the path to a file as a String returns a list of L<doc:Linux::Fuser::Procinfo>
     #| objects describing any processes that have the file open
@@ -65,7 +65,7 @@ class Linux::Fuser:ver<v0.0.4>:auth<github:jonathanstowe> {
 
     #| Given the L<doc:IO::Path> that describes the filereturns a list of L<doc:Linux::Fuser::Procinfo>
     #| objects describing any processes that have the file open
-    multi method fuser (IO::Path $file ) returns Array {
+    multi method fuser(IO::Path $file ) returns Array {
         my @procinfo;
         my $device = $file.device;
         my $inode  = $file.inode;
@@ -80,7 +80,7 @@ class Linux::Fuser:ver<v0.0.4>:auth<github:jonathanstowe> {
                 }
             }
         }
-        return @procinfo;
+        @procinfo;
     }
 
     method !same_file(IO::Path $left, IO::Path $right) {

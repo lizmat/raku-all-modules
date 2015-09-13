@@ -17,7 +17,8 @@ isa-ok($obj,Linux::Fuser, "and it's the right kind of object");
 
 my $filename = $*PID ~ '.tmp';
 
-my $fh = open "$*PID.tmp", :w;
+
+my $fh = open $filename, :w;
 
 do_tests($filename, "with string filename");
 do_tests($filename.IO, "with IO::Path");
@@ -59,5 +60,5 @@ is(@procs.elems,0, "and there aren't any processes");
 
 $filename.IO.remove;
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6
