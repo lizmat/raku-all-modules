@@ -20,15 +20,7 @@ package TAP {
 			$!exit-status.defined ?? $!exit-status.exitcode !! Int;
 		}
 		method wait() {
-			# XXX Workaround for rakudobug
-			if ($!exit-status.defined) {
-				my $exit-code = $!exit-status.exitcode // 0;
-				my $signal = $!exit-status.signal // 0;
-				return ($exit-code +< 8) +| $signal;
-			}
-			else {
-				return Int;
-			}
+			$!exit-status.defined ?? $!exit-status.status !! Int;
 		}
 
 		method has-problems() {
