@@ -18,14 +18,6 @@ my @testlist = (
 
 my @list;
 
-sub un-obj (@aoo) {
-    my @aoa;
-    for @aoo -> @aof {
-        @aoa.push ([ @aof.map (~*) ]);
-        }
-    return @aoa;
-    } # un-obj
-
 sub do_tests (Sub $sub) {
     $sub.(@list);
     $sub.(@list,         0);
@@ -58,8 +50,7 @@ for ("\n", "\r") -> $eol {
             my $s_args = @args.join (", ");
 
             my $fh = open $tfn, :r or die "$tfn: $!";
-            # un-obj for is-deeply
-            my @f = un-obj ($csv.getline_all ($fh, |@args));
+            my @f = $csv.getline_all ($fh, |@args);
             is-deeply (@f, @exp, "getline_all ($s_args)");
             $fh.close;
 
@@ -72,7 +63,7 @@ for ("\n", "\r") -> $eol {
         my $fh = open $tfn, :r or die "$tfn: $!";
         ok ($csv.colrange ("1;4"),      "ColRange 1;4");
         ok ($csv.rowrange ("2;4"),      "RowRange 2;4");
-        is-deeply (un-obj ($csv.getline_all ($fh)),
+        is-deeply ($csv.getline_all ($fh),
             [["2","B"],["4","D"]],      "Selection");
         }
 
@@ -83,8 +74,8 @@ my Str @hdr = < A B C D >;
 sub expect_hr (@expect) {
     my @expect_hr;
     for @expect -> @r {
-        my %h = @hdr Z @r;
-        @expect_hr.push: { %h };
+        my %h = @hdr Z=> @r;
+        @expect_hr.push: $%h;
         }
     return @expect_hr;
     }
@@ -129,7 +120,7 @@ for ("\n", "\r") -> $eol {
 
 {   ok (my $csv = Text::CSV.new, "new for sep=");
     my $fh = IO::String.new (qq{sep=;\n"a b";3\n});
-    is-deeply ($csv.getline_all ($fh), [["a b", "3"]], "valid sep=");
+    is-deeply ($csv.getline_all ($fh), [["a b", "3"],], "valid sep=");
     is (+$csv.error_diag, 2012, "EOF");
     }
 
@@ -141,7 +132,7 @@ for ("\n", "\r") -> $eol {
 
 {   ok (my $csv = Text::CSV.new, "new for sep=");
     my $fh = IO::String.new (qq{sep=XX\n"a b"XX3\n});
-    is-deeply ($csv.getline_all ($fh), [["a b", "3"]], "multibyte sep=");
+    is-deeply ($csv.getline_all ($fh), [["a b", "3"],], "multibyte sep=");
     is (+$csv.error_diag, 2012, "EOF");
     }
 
@@ -153,4 +144,4 @@ for ("\n", "\r") -> $eol {
     is (+$csv.error_diag, 2023, "error");
     }
 
-done;
+done-testing;

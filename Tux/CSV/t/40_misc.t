@@ -21,7 +21,7 @@ ok ($csv.parse ($string),                                       "parse ()");
 is ($csv.fields.elems, @binField.elems,                         "field count");
 
 my @field = $csv.fields ();
-for (0 .. @binField.elems - 1) {
+for (flat 0 .. @binField.elems - 1) {
     is (@field[$_].text, @binField[$_],                         "Field $_");
     }
 
@@ -55,4 +55,4 @@ ok ($csv2,                                                      "new ()");
 ok ($csv2.combine ("abc","def","ghi"),                          "combine ()");
 is ($csv2.string, '"abc","def","ghi"',                          "string ()");
 
-done;
+done-testing;

@@ -120,7 +120,8 @@ class RangeSet {
             my Int $max = -1;
             for sort @!ranges -> $r {
                 my $from = ($r.key, $max + 1).max.Int;
-                take $from .. $r.value;
+                my $to   = $r.value == Inf ?? 65535 !! $r.value;
+                take (($from .. $to).Slip);
                 $r.value == Inf and last;
                 $max = ($max, $r.value).max.Int;
                 }
@@ -286,15 +287,16 @@ class CSV::Field {
 
 class Text::CSV { ... }
 
-class CSV::Row is Iterable does Positional {
+class CSV::Row does Iterable does Positional does Associative {
     has Text::CSV  $.csv;
     has CSV::Field @.fields is rw;
 
     multi method new (@f)  { @!fields = @f.map ({ CSV::Field.new (*) }); }
 
     method Str             { $!csv ?? $!csv.string (@!fields) !! Str; }
-    method iterator        { [ @.fields ].iterator; }
+    method iterator        { @.fields.iterator; }
     method hash            { hash $!csv.column_names Z=> @!fields».Str; }
+    method of              { return CSV::Field }
     method AT-KEY (Str $k) { %($!csv.column_names Z=> @!fields){$k}; }
     method list ()         { @!fields».Str; }
     method AT-POS (int $i) { @!fields[$i]; }
@@ -353,7 +355,7 @@ class Text::CSV {
     has Str  $!error_input;
     has Str  $!error_message;
 
-    class CSV::Diag is Iterable does Positional is Exception {
+    class CSV::Diag does Iterable does Positional is Exception {
         has Int $.error   is readonly = 0;
         has Str $.message is readonly = %errors{$!error};
         has Int $.pos     is readonly;
@@ -380,7 +382,7 @@ class Text::CSV {
             }
         method Numeric  { $!error; }
         method Str      { $!message; }
-        method iterator { [ $!error, $!message, $!pos, $!field, $!record, $!buffer ].iterator; }
+        method iterator { $[ $!error, $!message, $!pos, $!field, $!record, $!buffer ].iterator; }
         method hash     { { errno  => $!error,
                             error  => $!message,
                             pos    => $!pos,
@@ -583,7 +585,6 @@ class Text::CSV {
     method !a_bool_int ($attr is rw, *@s) returns Int {
         if (@s.elems == 1) {
             my $v = @s[0];
-            $v.perl.say;
             $attr = $v ~~ Bool ?? +$v !! $v.defined ?? $v eq "" ?? 0 !! +$v !! 0;
             }
         $attr;
@@ -592,7 +593,7 @@ class Text::CSV {
 
     method column_names (*@c) returns Array[Str] {
         if (@c.elems == 1 and !@c[0].defined || (@c[0] ~~ Bool && !?@c[0])) {
-            @!cnames = @();
+            @!cnames = ();
             }
         elsif (@c.elems) {
             @!cnames = @c.map (*.Str);
@@ -625,7 +626,6 @@ class Text::CSV {
                 $hook.defined && ($hook ~~ Routine || $hook ~~ Callable) or
                     self!fail (1004);
 
-$hook.perl.say;
                 $name ~~ s{"-"} = "_";
                 $name ~~ /^ after_parse
                           | before_print
@@ -655,18 +655,22 @@ $hook.perl.say;
         $range;
         }
 
-    multi method colrange (@cr) returns Array[Int] {
-        @cr.elems and @!crange = @cr;
+    multi method colrange (@cr) {
+        if (@cr.elems) {
+            my RangeSet $range = RangeSet.new;
+            $range.add ($_) for @cr;
+            @!crange = $range.to_list;
+            }
         @!crange;
         }
 
-    multi method colrange (Str $range) returns Array[Int] {
+    multi method colrange (Str $range) {
         @!crange = ();
-        $range.defined and @!crange = self!rfc7111ranges ($range).to_list;
+        $range.defined and @!crange = self!rfc7111ranges ($range).to_list.flat;
         @!crange;
         }
 
-    multi method colrange () returns Array[Int] {
+    multi method colrange () {
         @!crange;
         }
 
@@ -764,7 +768,7 @@ $hook.perl.say;
         }
 
     method list () {
-        self.fields».Str;
+        self.fields».Str.Array;
         }
 
     multi method string () returns Str {
@@ -782,7 +786,7 @@ $hook.perl.say;
         my Str $q = $!quo;
         my Str $e = $!esc;
         my Str @f;
-        for @fld -> $f {
+        for flat @fld -> $f {
             if (!$f.defined || $f.undefined) {
                 @f.push: "";
                 next;
@@ -817,7 +821,7 @@ $hook.perl.say;
     multi method combine (@f) returns Bool {
         $!csv-row.fields = ();
         my int $i = 0;
-        for @f -> $f {
+        for flat @f -> $f {
             $i++;
             my CSV::Field $cf;
             if ($f.isa (CSV::Field)) {
@@ -859,7 +863,7 @@ $hook.perl.say;
             $str.defined or  return ();
             $str eq ""   and return ("");
 
-            $str.split ($re, :all).flat.map: {
+            $str.split ($re, :all).map: {
                 if $_ ~~ Str {
                     $_   if .chars;
                     }
@@ -874,13 +878,16 @@ $hook.perl.say;
 
         # A scoping bug in perl6 inhibits the use of $!eol inside the split
         # my Regex $chx = rx{ $!eol | $sep | $quo | $esc };
-        my            $eol = $!eol // rx{ \r\n | \r | \n };
+        my            $eol = $!eol // rx{ \r\n || \r || \n };
         my Str        $sep = $!sep;
         my Str        $quo = $!quo;
         my Str        $esc = $!esc;
+        my Bool       $noe = !$esc.defined || ($quo.defined && $esc eq $quo);
         my Regex      $chx = $!eol.defined
-                       ?? rx{ $eol           | $sep | $quo | $esc }
-                       !! rx{ \r\n | \r | \n | $sep | $quo | $esc };
+            ?? $noe ?? rx{ $eol             || $sep || $quo }
+                    !! rx{ $eol             || $sep || $quo || $esc }
+            !! $noe ?? rx{ \r\n || \r || \n || $sep || $quo }
+                    !! rx{ \r\n || \r || \n || $sep || $quo || $esc };
         my CSV::Field $f   = CSV::Field.new;
 
         $!csv-row.fields = ();
@@ -1234,11 +1241,11 @@ $hook.perl.say;
 
     method !row (Bool:D $meta, Bool:D $hr) {
         my @row = $meta ?? self.fields !! self.list;
-        $hr or return [ @row ];
+        $hr or return $[ @row ];
 
         my @cn = (@!crange ?? @!cnames[@!crange] !! @!cnames);
         my %hash = @cn Z=> @row;
-        { %hash };
+        $%hash;
         }
 
     # @a = $csv.getline_all ($io);
@@ -1347,10 +1354,10 @@ $hook.perl.say;
             my @row = $meta ?? @f !! @f.map (*.Str);
             if (@!cnames.elems) {
                 my %h = @!cnames Z=> @row;
-                @lines.push: { %h };
+                @lines.push: $%h;
                 next;
                 }
-            @lines.push: [ @row ];
+            @lines.push: $[ @row ];
             }
 
         $!io =  IO;
@@ -1502,8 +1509,8 @@ $hook.perl.say;
                         $fragment ~~ s:i{^ "row=" } = "" and
                             self.rowrange ($fragment);
                         my @i = $in.list[0] ~~ Hash
-                            ?? ([ $in.list[0].keys ], $in.list.map ({[ $_.values ]}))
-                            !! $in.list;
+                            ?? ([ $in.list[0].keys ], $in.map ({$[ $_.values ]}).Slip)
+                            !!    $in.list;
                         @in = $!rrange ?? @i[$!rrange.list (@i.elems)] !! @i;
                         }
                     }
@@ -1517,7 +1524,7 @@ $hook.perl.say;
                 $in.act (
                     -> \row {
                         !$!rrange || $!rrange.in ($i++) and @in.push:
-                          row ~~ Str ?? [ self.getline (row) ] !! row;
+                          row ~~ Str ?? $[ self.getline (row) ] !! row;
                         },
                     );
                 $in.wait;
