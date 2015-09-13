@@ -173,5 +173,5 @@ my $test-file-out   = $test-data.child("test-out-{ $*PID }.wav");
 
 
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

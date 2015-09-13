@@ -7,6 +7,6 @@ use Test;
 use-ok('Audio::Convert::Samplerate', 'Can use Audio::Convert::Samplerate');
 
 
-done;
+done-testing;
 
 # vim: expandtab shiftwidth=4 ft=perl6

@@ -14,6 +14,6 @@ lives-ok { $v = $obj.samplerate-version }, "get samplerate version";
 isa-ok($v, Version, "and it is a version");
 diag "testing with samplerate version " ~ $v;
 
-done;
+done-testing;
 
 # vim: expandtab shiftwidth=4 ft=perl6
