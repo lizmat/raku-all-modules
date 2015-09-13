@@ -9,4 +9,4 @@ my $h = HTTP::Headers.new;
 
 is $h.Content-Type.primary, Str, 'primary from empty is Str';
 
-done;
+done-testing;

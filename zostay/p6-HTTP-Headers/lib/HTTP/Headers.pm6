@@ -1,7 +1,7 @@
 use v6;
 
 #| Enumeration of standard headers
-enum HTTP::Header::Standard::Name is export 
+enum HTTP::Header::Standard::Name is export
     # General, Request, Response, Entity Headers
     <
         Cache-Control Connection Date Pragma Trailer Transfer-Encoding
@@ -54,7 +54,7 @@ role HTTP::Header {
     }
 
     #| Treat the values of this header as a single value
-    method value is rw { 
+    method value is rw {
         my $self = self;
         Proxy.new(
             FETCH => method ()     { $self.prepared-values.join(', ') },
@@ -67,9 +67,9 @@ role HTTP::Header {
         my $self = self;
         Proxy.new(
             FETCH => method () {
-                try { 
+                try {
                     if $self.values.elems > 0 {
-                        $self.prepared-values[0].comb(/ <-[ ; ]>+ /)[0].trim 
+                        $self.prepared-values[0].comb(/ <-[ ; ]>+ /)[0].trim
                     }
                     else {
                         Str
@@ -102,23 +102,20 @@ role HTTP::Header {
         my $found = False;
         @!values = do for @(self.prepared-values) -> $prep-value {
             my @pairs = try { $prep-value.comb(/ <-[ ; ]>+ /) };
-            my @result-pairs = do for @pairs {
+            my @result-pairs = gather for @pairs {
                 when !$found && /'='/ { # only change the first
                     my ($key, $value) = .split('=', 2);
                     if ($key.trim.lc eq $name.trim.lc) {
                         $found++;
                         if ($new-value.defined) {
-                            "{$key.trim}={$new-value.trim}"
-                        }
-                        else {
-                            ()
+                            take "{$key.trim}={$new-value.trim}"
                         }
                     }
                     else {
-                        $_
+                        take $_
                     }
                 }
-                default { $_ }
+                default { take $_ }
             };
 
             @result-pairs.push: "{$name.trim}={$new-value.trim}"
@@ -142,7 +139,7 @@ role HTTP::Header {
 
     # TODO Why can't I make this a stub ... ?
     #method name { } #= The name of the header
-    
+
     method key returns Str { self.name.lc } #= The header lookup key
 
     method push(*@values) { @!values.push: @values } #= Push values into the header
@@ -156,7 +153,7 @@ role HTTP::Header {
             @!values = @values;
         }
     }
-    
+
     #| Remove all values from this header
     method remove() { @!values = () }
 
@@ -281,7 +278,7 @@ class HTTP::Headers {
     }
 
     #| Helper for building header objects
-    method build-header($name, *@values) returns HTTP::Header { 
+    method build-header($name, *@values) returns HTTP::Header {
         my $std-name = $name;
         if $name ~~ Str {
             $std-name = $name.trans('_' => ' ', '-' => ' ').wordcase.trans(' ' => '-');
@@ -349,7 +346,7 @@ class HTTP::Headers {
         my $tmp = self.build-header($name);
         %!headers{$tmp.key} :delete;
     }
-    
+
     method remove-headers(*@names) {
         DEPRECATED('remove-header',|<0.2 1.0>);
         self.remove-header(|@names);
@@ -431,12 +428,18 @@ class HTTP::Headers {
 
     #| Return the headers as a list of Pairs for use with PSGI
     method for-PSGI {
-        self.flatmap: -> $h { 
+        # Should be deprecated...
+        self.for-P6SGI;
+    }
+
+    method for-P6SGI {
+        self.flatmap: -> $h {
             do for $h.prepared-values -> $v {
                 ~$h.name => ~$v
             }
         }
     }
+
 
     method Cache-Control       is rw { self.header(HTTP::Header::Standard::Name::Cache-Control) }
     method Connection          is rw { self.header(HTTP::Header::Standard::Name::Connection) }

@@ -18,4 +18,4 @@ Content-Length: text/html
 X-Foo: Bar
 END_OF_HEADERS
 
-done;
+done-testing;

@@ -32,4 +32,4 @@ is($h.X-Foo.value, 42);
 is($h.X-Bar.value, 42);
 is($h.as-string(:eol('; ')), "X-Bar: 42; X-Foo: 42; ");
 
-done;
+done-testing;

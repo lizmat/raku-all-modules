@@ -19,4 +19,4 @@ is($h<Zoo> :exists, True);
 ok($h<Zoo> :delete);
 is($h<Zoo> :exists, False);
 
-done;
+done-testing;

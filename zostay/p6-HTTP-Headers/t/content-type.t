@@ -20,4 +20,4 @@ is($h.Content-Type.is-text, True);
 is($h.Content-Type.is-xhtml, False);
 is($h.Content-Type.is-xml, False);
 
-done;
+done-testing;

@@ -162,4 +162,4 @@ $h2 = Nil;
 
 $h.clear;
 
-done;
+done-testing;

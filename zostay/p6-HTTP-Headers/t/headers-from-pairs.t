@@ -76,4 +76,4 @@ use HTTP::Headers;
     is $h.Allow.value, 'POST', 'Allow';
 }
 
-done;
+done-testing;

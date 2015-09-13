@@ -15,4 +15,4 @@ is($h.as-string, "Date: Thu, 14 May 2015 09:48:00 GMT\n");
 $h.Retry-After = Duration.new(120);
 is($h.as-string, "Date: Thu, 14 May 2015 09:48:00 GMT\nRetry-After: 120\n");
 
-done;
+done-testing;
