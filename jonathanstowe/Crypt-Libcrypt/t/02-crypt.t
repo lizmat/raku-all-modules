@@ -13,5 +13,5 @@ ok my $crypted = crypt($pass, 'HJ'), "crypt for DES";
 
 is crypt($pass, $crypted), $crypted, "and crypting the pw with the crypt-text returns the same";
 
-done();
+done-testing();
 # vim: expandtab shiftwidth=4 ft=perl6
