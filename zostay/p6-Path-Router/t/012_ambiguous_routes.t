@@ -106,4 +106,4 @@ use Path::Router;
     is($match.mapping.<id>, 1, "optional components don't matter");
 }
 
-done;
+done-testing;

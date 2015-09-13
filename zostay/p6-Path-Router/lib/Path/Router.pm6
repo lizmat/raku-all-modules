@@ -14,13 +14,13 @@ class Path::Router {
     has $.route-class = Path::Router::Route;
 
     multi method add-route(Str $path, *%options) {
-        @!routes.push: my $r = $!route-class.new(
+        @!routes.push: $!route-class.new(
             path => $path,
             |%options,
         );
     }
 
-    multi method add-route(Str $path, Parcel $options) {
+    multi method add-route(Str $path, List $options) {
         self.add-route($path, |$options);
     }
 
@@ -52,7 +52,7 @@ class Path::Router {
         }
     }
 
-    multi method insert-route(Str $path, Parcel $options) {
+    multi method insert-route(Str $path, List $options) {
         self.insert-route($path, |$options);
     }
 
@@ -138,7 +138,7 @@ class Path::Router {
 
         my %match = $route.defaults;
 
-        for $required.list, $optional.list -> $component {
+        for $required.keys.Slip, $optional.keys.Slip -> $component {
             next unless %match{$component} :exists;
             %url-defaults{$component} = %match{$component} :delete;
         }
@@ -146,7 +146,7 @@ class Path::Router {
         # appear in the url, so they need to match exactly rather
         # than being filled in
 
-        %url-map = %url-defaults, %url-map;
+        %url-map = flat %url-defaults, %url-map;
 
         my @keys = %url-map.keys;
 
@@ -165,7 +165,7 @@ class Path::Router {
             $required.elems <= @keys.elems <= $required.elems + $optional.elems + %match.elems
         ) || die X::RouteNotMatched.new("LENGTH DID NOT MATCH ({$required.elems} {$required.elems <= @keys.elems ?? "≤" !! "≰"} {@keys.elems} {@keys.elems <= $required.elems + $optional.elems + %match.elems ?? "≤" !! "≰"} {$required.elems} + {$optional.elems} + {%match.elems})");
 
-        if my @missing = $required.list.grep({ !(%url-map{$_} :exists) }) {
+        if my @missing = $required.keys.grep({ !(%url-map{$_} :exists) }) {
             warn "missing: {@missing}" if $DEBUG;
             die X::RouteNotMatched.new("MISSING ITEM [{@missing}]");
         }
@@ -229,7 +229,7 @@ class Path::Router {
         my @possible;
         for @!routes -> $route {
             my $url = self!try-route(%url-map, $route);
-            @possible.push: [ $route, $url ] if $url.defined;
+            @possible.push: $[ $route, $url ] if $url.defined;
         }
 
         return Str unless @possible;

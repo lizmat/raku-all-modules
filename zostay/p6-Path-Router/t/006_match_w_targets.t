@@ -114,4 +114,4 @@ $router.add-route('blog/:action/:id' => {
     );
 }
 
-done;
+done-testing;

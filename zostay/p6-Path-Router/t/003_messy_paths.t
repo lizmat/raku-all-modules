@@ -88,4 +88,4 @@ path-is($router,
     },
 '... this path matches the mapping');
 
-done;
+done-testing;

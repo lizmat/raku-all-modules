@@ -119,4 +119,4 @@ routes-ok($router, {
 },
 "... our routes are solid");
 
-done;
+done-testing;

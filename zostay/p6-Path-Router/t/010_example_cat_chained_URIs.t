@@ -206,4 +206,4 @@ path-not-ok($router, $_, '... ' ~ $_ ~ ' is not okay') for <
     /plan/5/edit/100
 >;
 
-done;
+done-testing;

@@ -101,14 +101,14 @@ my %tests = (
     routes-ok => {
         pass => {
             desc => 'routes-ok passes when all paths and mappings match',
-            args => [{
+            args => [${
                 blog => {controller => 'Blog'},
                 feed => {controller => 'Feed'},
             }],
         },
         fail => {
             desc => 'routes-ok fails when all paths and mappings do not match',
-            args => [{
+            args => [${
                 blog => {controller => 'Blog'},
                 feed => {controller => 'Wiki'},
             }],
@@ -126,7 +126,7 @@ for %tests.keys.sort -> $function {
         
         my ($output, $error) = init-io;
 
-        my @arguments   = @(%tests{$function}{$state}<args>);
+        my @arguments   = %tests{$function}{$state}<args>.Slip;
         my $description = %tests{$function}{$state}<desc>;
 
         # This is a trick to prevent Test.pm from blowing up the exit status

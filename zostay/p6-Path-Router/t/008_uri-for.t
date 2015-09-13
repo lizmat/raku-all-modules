@@ -97,4 +97,4 @@ mapping-is(
     'do not match with missing component variable',
 );
 
-done;
+done-testing;

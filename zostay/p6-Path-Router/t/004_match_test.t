@@ -71,4 +71,4 @@ path-not-ok($router, $_, '... could not match path (' ~ $_ ~ ')')
         /blog/2006/310/1
     >;
 
-done;
+done-testing;

@@ -214,4 +214,4 @@ throws-like(
     "... this dies correctly"
 );
 
-done;
+done-testing;

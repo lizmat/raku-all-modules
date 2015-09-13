@@ -24,4 +24,4 @@ isa-ok($r.match('math/simple/sub').target, 'Math::Simple::Sub');
 isa-ok($r.match('math/simple/mul').target, 'Math::Simple::Mul');
 isa-ok($r.match('math/simple/div').target, 'Math::Simple::Div');
 
-done;
+done-testing;

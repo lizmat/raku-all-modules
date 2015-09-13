@@ -45,4 +45,4 @@ is(
     'defaults correctly excluded (no trailing slash)',
 );
 
-done;
+done-testing;

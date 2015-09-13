@@ -58,4 +58,4 @@ path-not-ok($router, $_, '... could not match path (' ~ $_ ~ ')')
         /users/edit/12/
     >;
 
-done;
+done-testing;

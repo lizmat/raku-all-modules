@@ -24,4 +24,4 @@ throws-like(
     path       => '/foo/:bar',
 );
 
-done;
+done-testing;
