@@ -48,5 +48,5 @@ is($a, "Int 1", "multi works (Int)");
 lives-ok { $a = Multi.multi-foo("foo") }, "multi";
 is($a, "Str foo", "multi works (Str)");
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

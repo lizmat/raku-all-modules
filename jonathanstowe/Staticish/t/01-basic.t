@@ -7,5 +7,5 @@ use Test;
 
 use-ok('Staticish', 'Can load "Staticish" ok');
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6
