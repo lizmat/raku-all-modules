@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/PerlGameDev/SDL6.git
 	branch = master
-	commit = 021fd8c86abefa592a3a88f4ff6d03480e494f4c
-	parent = 6ab404504543088a02f8e60ef0d75a690a3be25d
-	cmdver = 0.2.0
+	commit = e7cbce4be893cbee08ba41252dd2defb1aafd71c
+	parent = df9172b083031422ef5a1fae86751a716988dd52
+	cmdver = 0.2.2

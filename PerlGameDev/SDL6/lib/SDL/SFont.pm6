@@ -1,82 +1,82 @@
 
-module SDL::SFont;
-
 use NativeCall;
 use SDL::Rect;
 use SDL::Surface;
+use SDL::Surfacish;
 
-class SDL::SFont is SDL::Surface {
-	has $.char_pos = Array.new;
-	method init {
-		my $x       = 0;
-		my $i       = 0;
-		my $pointer = SDL::Surface::_get_pointer(self.struct[1]);
-		my $color   = SDL::Surface::_map_rgb( $pointer, 255, 0, 255 );
+unit class SDL::SFont does SDL::Surfacish;
+has $.char_pos = [];
 
-		#if (SDL_MUSTLOCK(Font->Surface)) SDL_LockSurface(Font->Surface);
-		while ( $x < self.width ) {
-			if self.get_pixel( $x ) == $color {
-				$!char_pos[$i++] = $x;
-				while ($x < self.width - 1) && (self.get_pixel( $x ) == $color) {
-					$x++
-				}
-				$!char_pos[$i++] = $x;
-			}
-			$x++;
-		}
+method new($file) {
+    my $self = self.bless: surface => SDL::Surface.new($file);
+    $self.init;
+    $self
+}
 
-		#if (SDL_MUSTLOCK(Font->Surface)) SDL_UnlockSurface(Font->Surface);
+method FALLBACK($name, |c) {
+    $!surface."$name"(|c)
+}
 
-		#Font->h=Font->Surface->h;
-		#SDL_SetColorKey(Font->Surface, SDL_SRCCOLORKEY, SFont_GetPixel(Font->Surface, 0, Font->Surface->h-1));
-	}
+method init {
+    my $x     = 0;
+    my $i     = 0;
+    my $color = SDL::Surface::_map_rgb(self.format, 255, 0, 255);
 
-	multi method text_width ( Int $text ) {
-		self.text_width( $text.Str )
-	}
+    #if (SDL_MUSTLOCK(Font->Surface)) SDL_LockSurface(Font->Surface);
+    while ( $x < self.w ) {
+        if self.get_pixel( $x ) == $color {
+            $!char_pos[$i++] = $x;
+            while ($x < self.surface.w - 1) && (self.surface.get_pixel( $x ) == $color) {
+                $x++
+            }
+            $!char_pos[$i++] = $x;
+        }
+        $x++;
+    }
 
-	multi method text_width ( Str $text ) {
-		my Int $o;
-		my Int $i = 0;
-		my Int $x = 0;
+    #if (SDL_MUSTLOCK(Font->Surface)) SDL_UnlockSurface(Font->Surface);
 
-		while $i < $text.chars {
-			if $text.substr( $i, 1 ) ~~ ' ' {
-				$x += $!char_pos[2] - $!char_pos[1];
-			}
-			else {
-				$o  = ($text.substr( $i, 1 ).ord - 33) * 2 + 1;
-				$x += $!char_pos[$o + 1] - $!char_pos[$o];
-			}
-			$i++;
-		}
+    #Font->h=Font->Surface->h;
+    #SDL_SetColorKey(Font->Surface, SDL_SRCCOLORKEY, SFont_GetPixel(Font->Surface, 0, Font->Surface->h-1));
+}
 
-		return $x
-	}
+method text_width ( Str() $text ) {
+    my Int $o;
+    my Int $i = 0;
+    my Int $x = 0;
 
-	multi method blit_text ( SDL::Surface $target, Int $x is copy, Int $y, Int $text ) {
-		self.blit_text( $target, $x, $y, $text.Str );
-	}
+    while $i < $text.chars {
+        if $text.substr( $i, 1 ) ~~ ' ' {
+            $x += $!char_pos[2] - $!char_pos[1];
+        }
+        else {
+            $o  = ($text.substr( $i, 1 ).ord - 33) * 2 + 1;
+            $x += $!char_pos[$o + 1] - $!char_pos[$o];
+        }
+        $i++;
+    }
 
-	multi method blit_text ( SDL::Surface $target, Int $x is copy, Int $y, Str $text ) {
-		my Int $o;
-		my Int $i = 0;
+    return $x
+}
 
-		while $i < $text.chars {
-			if $text.substr( $i, 1 ) ~~ ' ' {
-				$x += $!char_pos[2] - $!char_pos[1];
-			}
-			else {
-				$o          = ($text.substr( $i, 1 ).ord - 33) * 2 + 1;
-				my $srcrect = SDL::Rect.new( (($!char_pos[$o] + $!char_pos[$o - 1]) / 2).Int, 1,
-				                             (($!char_pos[$o + 2] + $!char_pos[$o + 1]) / 2 - ($!char_pos[$o] + $!char_pos[$o - 1]) / 2).Int, self.height - 1 );
-				my $dstrect = SDL::Rect.new( ($x - ($!char_pos[$o] - $!char_pos[$o - 1]) / 2).Int, $y, 0, 0 );
+method blit_text($target, Int $x is copy, Int $y, Str() $text ) {
+    my Int $o;
+    my Int $i = 0;
 
-				SDL::Surface::_blit( self.pointer, $srcrect.CArray, $target.pointer, $dstrect.CArray ); 
+    while $i < $text.chars {
+        if $text.substr( $i, 1 ) ~~ ' ' {
+            $x += $!char_pos[2] - $!char_pos[1];
+        }
+        else {
+            $o          = ($text.substr( $i, 1 ).ord - 33) * 2 + 1;
+            my $srcrect = SDL::Rect.new( (($!char_pos[$o] + $!char_pos[$o - 1]) / 2).Int, 1,
+                                         (($!char_pos[$o + 2] + $!char_pos[$o + 1]) / 2 - ($!char_pos[$o] + $!char_pos[$o - 1]) / 2).Int, self.h - 1 );
+            my $dstrect = SDL::Rect.new( ($x - ($!char_pos[$o] - $!char_pos[$o - 1]) / 2).Int, $y, 0, 0 );
 
-				$x += $!char_pos[$o + 1] - $!char_pos[$o];
-			}
-			$i++;
-		}
-	}
+            self.surface.blit($target, $srcrect, $dstrect); 
+
+            $x += $!char_pos[$o + 1] - $!char_pos[$o];
+        }
+        $i++;
+    }
 }
