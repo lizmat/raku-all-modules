@@ -19,5 +19,5 @@
   "test-depends" : [
   ],
   "description" : "Helper subroutines for working with Perl6 Native Arrays (CArray)",
-  "version" : "v0.0.1"
+  "version" : "v0.0.2"
 }

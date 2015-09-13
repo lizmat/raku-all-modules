@@ -37,6 +37,6 @@ sub compare-to-carray($array, CArray $carray) returns Bool {
     return any(@tests).Bool;
 }
 
-done;
+done-testing;
 
 # vim: expandtab shiftwidth=4 ft=perl6
