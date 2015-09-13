@@ -230,4 +230,4 @@ for @tests -> $test {
     }, $name;
 }
 
-done;
+done-testing;

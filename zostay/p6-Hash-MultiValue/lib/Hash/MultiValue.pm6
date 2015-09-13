@@ -99,7 +99,7 @@ This takes a hash and constructs a new L<Hash::MultiValue> from it. If any value
 multi method from-mixed-hash(%hash) returns Hash::MultiValue {
     my @pairs = do for %hash.kv -> $k, $v {
         given $v {
-            when Positional { .map: $k => * }
+            when Positional { .map($k => *).Slip }
             default         { $k => $v }
         }
     }
@@ -316,7 +316,7 @@ method push(*@values) {
         warn "Training item in Hash::MultiValue.push";
     }
 
-    %!singles = %!singles, %new-singles;
+    %!singles = flat %!singles, %new-singles;
 }
 
 # For future consideration
