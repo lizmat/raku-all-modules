@@ -44,7 +44,7 @@ method get-response(:$multiline) {
 }
 
 method send($stuff, :$multiline-response) {
-    $.conn.send($stuff ~ "\r\n");
+    $.conn.print($stuff ~ "\r\n");
     return self.get-response(:multiline($multiline-response));
 }
 
