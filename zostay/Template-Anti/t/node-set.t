@@ -29,9 +29,9 @@ END_OF_XML
     );
     $ns.attrib(motto => 'The Force shall free me.');
 
-    is $ns.nodes[0].Str, '<one motto="The Force shall free me."></one>', 'attrib one works';
-    is $ns.nodes[1].Str, '<two motto="The Force shall free me."></two>', 'attrib two works';
-    is $ns.nodes[2].Str, '<three motto="The Force shall free me."></three>', 'attrib three works';
+    is $ns.nodes[0].Str, '<one motto="The Force shall free me."/>', 'attrib one works';
+    is $ns.nodes[1].Str, '<two motto="The Force shall free me."/>', 'attrib two works';
+    is $ns.nodes[2].Str, '<three motto="The Force shall free me."/>', 'attrib three works';
 }
 
 {
@@ -40,7 +40,7 @@ END_OF_XML
     );
     $ns.truncate(1);
 
-    is $ns.nodes[0].Str, '<root><one></one></root>';
+    is $ns.nodes[0].Str, '<root><one/></root>';
 
     $ns.find('one').apply([
         { name => 'Vader',   url => 'http://example.com/vader' },
@@ -61,5 +61,5 @@ END_OF_XML
     is $xml.root.Str, '<root>Vader</root>', 'modifies original';
 }
 
-done;
+done-testing;
 

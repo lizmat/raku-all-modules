@@ -115,4 +115,4 @@ my $sq = Template::Anti::Selector.new(:source($xml));
     is $a-multi.elems, 1, 'select a[class=zip][hreflang]';
 }
 
-done;
+done-testing;

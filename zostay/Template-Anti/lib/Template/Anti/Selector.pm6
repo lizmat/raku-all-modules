@@ -13,7 +13,7 @@ class Template::Anti::Selector::NodeSet {
         }
     }
 
-    method to-list { @!nodes }
+    method list { @!nodes }
 }
 
 class Template::Anti::Selector::NodeWalker {
@@ -393,11 +393,11 @@ class Template::Anti::Selector {
         my $set = Template::Anti::Selector::NodeSet.new;
         $match.made.($iter, $set);
 
-        return $set.to-list;
+        $set.list;
     }
 
     multi method perl() {
-        return 'Template::Anti::Selector.new(source => from-xml("' ~ $!source.Str.trans([ '"' ] => [ "\"" ]) ~ '"))';
+        'Template::Anti::Selector.new(source => from-xml("' ~ $!source.Str.trans([ '"' ] => [ "\"" ]) ~ '"))';
     }
 }
 

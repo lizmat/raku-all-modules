@@ -21,4 +21,4 @@ my $at = Template::Anti.load("t/basic.html".IO);
     like $output, rx{"<h1>Test</h1>"}, '.html(HTML) was not escaped';
 }
 
-done;
+done-testing;

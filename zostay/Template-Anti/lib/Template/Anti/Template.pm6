@@ -212,7 +212,7 @@ class Template::Anti::Template {
     }
 
     #| Render the template as HTML.
-    method render {
+    method render() {
         # From the HTML 5.1 spec
         my $void-elements = set <area base br col embed hr img input keygen link menuitem meta param source track wbr>;
 
@@ -255,7 +255,7 @@ class Template::Anti::Template {
         }
 
         multi sub render-walk($print, %attribs) {
-            %attribs.sort».kv.flatmap: -> $k, $v {
+            %attribs.sort».kv.flatmap: -> ($k, $v) {
                 $print(qq[ $k="{$v.trans('"' => '&quot;')}"]);
             }
         }

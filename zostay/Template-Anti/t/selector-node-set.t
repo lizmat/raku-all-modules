@@ -12,7 +12,7 @@ $ns.put(1);
 $ns.put(3);
 $ns.put(1);
 
-my @list = $ns.to-list;
+my @list = $ns.list;
 
 diag @list.perl;
 
@@ -21,5 +21,5 @@ is @list[0], 1, 'first is 1';
 is @list[1], 2, 'second is 2';
 is @list[2], 3, 'third is 3';
 
-done;
+done-testing;
 

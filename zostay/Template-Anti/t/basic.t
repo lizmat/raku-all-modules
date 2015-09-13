@@ -22,4 +22,4 @@ my $output = $at.render.subst(/\>\s+\</, "><", :g);
 
 is "$output\n", "t/basic.out".IO.slurp, 'output is as expected';
 
-done;
+done-testing;

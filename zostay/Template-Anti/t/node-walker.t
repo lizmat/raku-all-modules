@@ -31,4 +31,4 @@ for @expected -> $expected {
 
 nok $helper.next-node, "the end";
 
-done;
+done-testing;
