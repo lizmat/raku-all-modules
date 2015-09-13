@@ -10,13 +10,13 @@ my @rationals = 3 => [3],
                 
 for flat @rationals>>.kv -> $rational, $cf-form {
     my $cf = Math::ContinuedFraction.new($rational);
-    isa_ok $cf, Math::ContinuedFraction, "We made a Math::ContinuedFraction object for $rational";
+    isa-ok $cf, Math::ContinuedFraction, "We made a Math::ContinuedFraction object for $rational";
     is $cf.a, $cf-form, "With the correct value";
     my $cf2 = Math::ContinuedFraction.new($cf.a);
-    isa_ok $cf2, Math::ContinuedFraction, "We created a Math::ContinuedFraction object by array";
+    isa-ok $cf2, Math::ContinuedFraction, "We created a Math::ContinuedFraction object by array";
     is $cf2.a, $cf-form, "Still with the correct value";
     my $cf3 = Math::ContinuedFraction.new($cf);
-    isa_ok $cf3, Math::ContinuedFraction, "We copied Math::ContinuedFraction object using .new";
+    isa-ok $cf3, Math::ContinuedFraction, "We copied Math::ContinuedFraction object using .new";
     is $cf3.a, $cf-form, "Still has the correct value";
 }
 
@@ -69,17 +69,17 @@ my @values = # cf => [name, .sign, .truncate, floor, ceiling, round]
              Math::ContinuedFraction.new(-403.1) => ["-403.1", -1, -403, -404, -403, -403];
 
 for flat @values>>.kv -> $cf, [$name, $sign, $truncate, $floor, $ceiling, $round] {
-    isa_ok $cf, Math::ContinuedFraction, "$name is a ContinuedFraction";
+    isa-ok $cf, Math::ContinuedFraction, "$name is a ContinuedFraction";
     is $cf.sign, $sign, "$name .sign is $sign";
-    isa_ok $cf.sign, Int, "$name .sign is Int";
+    isa-ok $cf.sign, Int, "$name .sign is Int";
     is $cf.truncate, $truncate, "$name .truncate is $truncate";
-    isa_ok $cf.truncate, Int, "$name .sign is Int";
+    isa-ok $cf.truncate, Int, "$name .sign is Int";
     is $cf.floor, $floor, "$name .floor is $floor";
-    isa_ok $cf.floor, Int, "$name .sign is Int";
+    isa-ok $cf.floor, Int, "$name .sign is Int";
     is $cf.ceiling, $ceiling, "$name .ceiling is $ceiling";
-    isa_ok $cf.ceiling, Int, "$name .sign is Int";
+    isa-ok $cf.ceiling, Int, "$name .sign is Int";
     is $cf.round, $round, "$name .round is $round";
-    isa_ok $cf.round, Int, "$name .sign is Int";
+    isa-ok $cf.round, Int, "$name .sign is Int";
 }
 
-done;
+done-testing;

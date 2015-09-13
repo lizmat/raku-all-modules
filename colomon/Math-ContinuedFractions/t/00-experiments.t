@@ -17,7 +17,8 @@ is make-continued-fraction(-42), [-42], "Sanity test";
 is make-continued-fraction(3.245), [3, 4, 12, 4], "Wikipedia example works";
 is make-continued-fraction(-4.2), [-5, 1, 4], "Wikipedia example works";
 
-multi sub z($a is copy, $b is copy, $c is copy, $d is copy, @x) {
+multi sub z($a is copy, $b is copy, $c is copy, $d is copy, Iterable $xx) {
+    my $x = $xx.iterator;
     gather loop {
         # say "abcd: $a $b $c $d";
         my $a-div-c = $c ?? $a div $c !! Inf;
@@ -30,13 +31,13 @@ multi sub z($a is copy, $b is copy, $c is copy, $d is copy, @x) {
             take $n;
             # say "took $n";
         } else {
-            if @x {
-                my $p = @x.shift;
-                ($a, $b, $c, $d) = ($b, $a + $b * $p, $d, $c + $d * $p);
-                # say "got $p";
-            } else {
+            my \p = $x.pull-one;
+            if p =:= IterationEnd {
                 ($a, $b, $c, $d) = ($b, $b, $d, $d); # WHY????
                 # say "got Inf";
+            } else {
+                ($a, $b, $c, $d) = ($b, $a + $b * p, $d, $c + $d * p);
+                # say "got $p";
             }
         }
     }
@@ -51,8 +52,11 @@ is z(1, 0, 0, 1, make-continued-fraction(22/7)), make-continued-fraction(7/22), 
 
 multi sub z($a is copy, $b is copy, $c is copy, $d is copy, 
             $e is copy, $f is copy, $g is copy, $h is copy, 
-            @x, @y) {
+            Iterable $xx, Iterable $yy) {
     my $oops = 0;
+    my $x = $xx.iterator;
+    my $y = $yy.iterator;
+    
     gather loop {
         # say "\n$a $b $c $d $e $f $g $h";
         last if all($e, $f, $g, $h) == 0;
@@ -87,10 +91,9 @@ multi sub z($a is copy, $b is copy, $c is copy, $d is copy,
             # say "xw = $xw   yw = $yw";
 
             if $xw > $yw {
-                if @x {
-                    my $p = @x.shift;
+                if (my \p = $x.pull-one) !=:= IterationEnd {
                     ($a, $b, $c, $d, $e, $f, $g, $h)
-                        = ($b, $a + $b * $p, $d, $c + $d * $p, $f, $e + $f * $p, $h, $g + $h * $p);
+                        = ($b, $a + $b * p, $d, $c + $d * p, $f, $e + $f * p, $h, $g + $h * p);
                     # say "p = $p";
                 } else {
                     ($a, $b, $c, $d, $e, $f, $g, $h)
@@ -98,10 +101,9 @@ multi sub z($a is copy, $b is copy, $c is copy, $d is copy,
                     # say "p = Inf";
                 }
             } else {
-                if @y {
-                    my $q = @y.shift;
+                if (my \q = $y.pull-one) !=:= IterationEnd {
                     ($a, $b, $c, $d, $e, $f, $g, $h)
-                        = ($c, $d, $a + $c * $q, $b + $d * $q, $g, $h, $e + $g * $q, $f + $h * $q);
+                        = ($c, $d, $a + $c * q, $b + $d * q, $g, $h, $e + $g * q, $f + $h * q);
                     # say "q = $q";
                 } else {
                     ($a, $b, $c, $d, $e, $f, $g, $h)
@@ -138,4 +140,4 @@ is z(0, 1, 1, 0, 1, 0, 0, 0, cf-sqrt-two(), make-continued-fraction(1/2))[^10],
 is z(0, 1, 1, 0, 1, 0, 0, 0, cf-sqrt-two(), cf-sqrt-two())[^10],
    make-continued-fraction(sqrt(2)*2)[^10],
    "Extended continued fraction addition";
-eval_dies_ok "z(0, 0, 0, 1, 1, 0, 0, 0, cf-sqrt-two(), cf-sqrt-two())[0]", "sqrt(2)^2 cannot be calculated";
+eval-dies-ok "z(0, 0, 0, 1, 1, 0, 0, 0, cf-sqrt-two(), cf-sqrt-two())[0]", "sqrt(2)^2 cannot be calculated";

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/Math-ContinuedFractions.git
 	branch = master
-	commit = b5a06f63178f82f75a5a1da43afa611fca15ae55
-	parent = a3ae84c5cc915d91b97ee8081b447d0ec720f48a
-	cmdver = 0.2.1
+	commit = d657704ad389fb3a0943d89547223fc0f1647467
+	parent = c5114e9c8cedd4a089a4a1e89d4e0f99c61215d0
+	cmdver = 0.2.2
