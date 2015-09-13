@@ -123,7 +123,7 @@ ok(@doubles-in ~~ @doubles, "and it is the same data");
 compare-arrays(@doubles-in, @doubles);
 lives-ok { $double-obj-in.close }, "close that";
 
-done;
+done-testing;
 
 END {
        rm_rf $test-output.Str;

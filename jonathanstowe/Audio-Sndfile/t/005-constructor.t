@@ -47,5 +47,5 @@ throws-like { $f = Audio::Sndfile.new(filename => "bogus-test-file.wav", :r) },"
 
 
 
-done();
+done-testing();
 # vim: expandtab shiftwidth=4 ft=perl6

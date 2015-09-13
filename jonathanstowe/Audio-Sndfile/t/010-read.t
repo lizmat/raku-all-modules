@@ -258,5 +258,5 @@ for @tests -> $test {
     lives-ok { $obj.close }, "close that";
 }
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

@@ -305,7 +305,7 @@ for @tests.pick(*) -> $file {
     $obj.close;
 }
 
-done;
+done-testing;
 
 END {
     rm_rf $test-output.Str;
