@@ -80,16 +80,16 @@ class X::Sum::Recourse is Exception {
 
     # It can be used to tap a feed
     my @a <== $s <== (1,2);
-    say @a;                              # 1 2
+    say @a;                              # [1 2]
     say +$s.finalize;                    # 15
 
     # Since it does Sum::Partial, one can generate partials as a List
-    $s.partials(1,1,2,1)».Int.say;       # 16 17 19 20
+    $s.partials(1,1,2,1)».Int.say;       # (16 17 19 20)
 
     # Since it does Sum::Marshal::Method[:atype(Str) :method<ords>]
     # Str addends are exploded into multiple character ordinals.
-    'abc'.ords.say;                      # 97 98 99
-    $s.partials(1,'abc',1)».Int.say;     # 21 118 216 315 316
+    'abc'.ords.say;                      # (97 98 99)
+    $s.partials(1,'abc',1)».Int.say;     # (21 118 216 315 316)
 
 =end code
 =end SYNOPSIS
@@ -122,7 +122,7 @@ $Sum::Doc::synopsis = $=pod[1].contents[0].contents.Str;
 
 =end pod
 
-role Sum:auth<skids>:ver<0.1.0> {
+role Sum:auth<skids>:ver<0.1.1> {
 
 =begin pod
 =head3 method finalize (*@addends)
@@ -377,7 +377,7 @@ role Sum::Partial {
         # rakudo-m does not implement the "last" with a value conjectural
         # form from S04.  Neither does it provide &?BLOCK from which to
         # launch the method form .last($value).
-#        flat self.marshal(|@addends).map: {
+#       list eager flat self.marshal(|@addends).map: {
 #            last($^addend) if $addend ~~ Failure;
 #            given self.add($addend) {
 #                when Failure { last($_) };
@@ -385,7 +385,7 @@ role Sum::Partial {
 #            self.clone.finalize;
 #        }
 	# ...so this is just slapped together until then.
-	eager self.marshal(|@addends).map: {
+	self.marshal(|@addends).map( {
 	        my $addend := $_;
 		state $done = 0;
 		last if $done;
@@ -398,7 +398,7 @@ role Sum::Partial {
                     }
 		}
                 $addend;
-        }
+        }).list;
     }
 }
 
@@ -481,7 +481,7 @@ role Sum::Marshal::Cooked {
 
     # multi/constrained candidate to temporarily workaround diamond problem
     multi method push ($self: :$diamond? where {True}, *@addends --> Failure) {
-        sink self.marshal(|@addends).map: {
+        self.marshal(|@addends).map: {
             return $^addend if $addend ~~ Failure;
             given self.add($addend) {
                 when Failure { return $_ };

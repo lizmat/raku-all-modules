@@ -234,17 +234,17 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
 
     method md4_comp (--> Nil) {
         my uint32 @s = @!s;
-        for flat (^16) Z (3,7,11,19) xx 4 {
+        for flat (^16) Z flat (3,7,11,19) xx 4 {
             self.md4_round1_step(@!w[$^idx],$^shift);
 	    self.md4_ext_round1_step(@!w[$^idx],$^shift)
                 if $alg eqv "MD4ext";
         }
-        for flat (0,4,8,12,1,5,9,13,2,6,10,14,3,7,11,15) Z (3,5,9,13) xx 4 {
+        for flat (0,4,8,12,1,5,9,13,2,6,10,14,3,7,11,15) Z flat (3,5,9,13) xx 4 {
             self.md4_round2_step(@!w[$^idx],$^shift);
             self.md4_ext_round2_step(@!w[$^idx],$^shift)
                 if $alg eqv "MD4ext";
         }
-        for flat (0,8,4,12,2,10,6,14,1,9,5,13,3,11,7,15) Z (3,9,11,15) xx 4 {
+        for flat (0,8,4,12,2,10,6,14,1,9,5,13,3,11,7,15) Z flat (3,9,11,15) xx 4 {
             self.md4_round3_step(@!w[$^idx],$^shift);
             self.md4_ext_round3_step(@!w[$^idx],$^shift)
                 if $alg eqv "MD4ext";
@@ -256,19 +256,19 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
 
     method md5_comp (--> Nil) {
         my uint32 @s = @!s;
-        for flat (^16) Z (^16) Z (7,12,17,22) xx 4 {
+        for flat (^16) Z (^16) Z flat (7,12,17,22) xx 4 {
             self.md5_round1_step(@!w[$^didx], $^idx, $^shift);
         }
         for flat (1,6,11,0,5,10,15,4,9,14,3,8,13,2,7,12)
-            Z (16..^32) Z (5,9,14,20) xx 4 {
+            Z (16..^32) Z flat (5,9,14,20) xx 4 {
             self.md5_round2_step(@!w[$^didx], $^idx, $^shift);
         }
         for flat (5,8,11,14,1,4,7,10,13,0,3,6,9,12,15,2)
-            Z (32..^48) Z (4,11,16,23) xx 4 {
+            Z (32..^48) Z flat (4,11,16,23) xx 4 {
             self.md5_round3_step(@!w[$^didx], $^idx, $^shift);
         }
         for flat (0,7,14,5,12,3,10,1,8,15,6,13,4,11,2,9)
-            Z (48..^64) Z (6,10,15,21) xx 4 {
+            Z (48..^64) Z flat (6,10,15,21) xx 4 {
             self.md5_round4_step(@!w[$^didx], $^idx, $^shift);
         }
         @!s »+=« @s;
@@ -373,10 +373,16 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
         }
         @!s[4,9] = @!s[9,4] if $alg eqv "RIPEMD-320";
         if $alg eqv "RIPEMD-160" {
+#            my @d = @s[1,2,3,4,0] Z+ @!s[2,3,4,0,1] Z+ @!s[8,9,5,6,7];
+#            @!s = @d;
+# XXX This gives "this type cannot unbox to a native integer"
             @!s = @s[1,2,3,4,0] Z+ @!s[2,3,4,0,1] Z+ @!s[8,9,5,6,7];
         }
         else {
-            @!s = @!s Z+ @s;
+            my @d = @!s Z+ @s;
+            @!s = @d;
+# XXX Same here
+#            @!s = @!s Z+ @s;
         }
 	return; # This should not be needed per S06/Signatures
     }
@@ -415,10 +421,16 @@ role Sum::MD4_5 [ Str :$alg where { $_ eqv one <MD5 MD4 MD4ext RIPEMD-128 RIPEMD
         }
         @!s[3,7] = @!s[7,3] if $alg eqv "RIPEMD-256";
         if $alg eqv "RIPEMD-128" {
-            @!s = @s[1,2,3,0] Z+ @!s[2,3,0,1] Z+ @!s[7,4,5,6];
+            my @d = @s[1,2,3,0] Z+ @!s[2,3,0,1] Z+ @!s[7,4,5,6];
+            @!s = @d;
+# XXX This gives "this type cannot unbox to a native integer"
+#            @!s = @s[1,2,3,0] Z+ @!s[2,3,0,1] Z+ @!s[7,4,5,6];
         }
         else {
-            @!s = @!s Z+ @s;
+            my @d = @!s Z+ @s;
+            @!s = @d;
+# XXX Same here
+#            @!s = @!s Z+ @s;
         }
 	return; # This should not be needed per S06/Signatures
     }
@@ -577,7 +589,7 @@ role Sum::MD2 does Sum {
          128 127  93 154  90 144  50  39  53  62 204 231 191 247 151   3
          255  25  48 179  72 165 181 209 215  94 146  42 172  86 170 198
           79 184  56 210 150 164 125 182 118 252 107 226 156 116   4 241
-        >».Int;
+        >.map(*.Int);
     # rakudo-j does not like list literals over 256 items long.  So we split.
     @S.push(<
           69 157 112  89 100 113 135  32 134  91 207 101 230  45 168   2
@@ -588,7 +600,7 @@ role Sum::MD2 does Sum {
          120 136 149 139 227  99 232 109 233 203 213 254  59   0  29  57
          242 239 183  14 102  88 208 228 166 119 114 248 235 117  75  10
           49  68  80 180 143 237 31   26 219 153 141  51 159  17 131  20
-        >».Int);
+        >.map(*.Int));
 
     has @!C = 0 xx 16;   # The checksum, computed in parallel
     has @!X = 0 xx 48;   # The digest state
@@ -605,13 +617,13 @@ role Sum::MD2 does Sum {
     multi method add (blob8 $block where { -1 < .elems < 16 }) {
         my int $empty = 16 - $block.elems;
         $.final = True;
-        self.add(Buf.new($block.values, $empty xx $empty));
+        self.add(Buf.new($block.values, ($empty xx $empty).Slip));
         self.add(Buf.new(@!C.values));
     }
     multi method add (blob8 $block where { .elems == 16 }) {
         @!X[16..^32] = $block.values;
         @!X[32..^48] = @!X[^16] Z+^ @!X[16..^32];
-        for flat 15,^15 Z ^16 -> $last, $x {
+        for (15,^15).flat Z ^16 -> ($last, $x) {
             @!C[$x] +^= @S[$block[$x] +^ @!C[$last]]
         }
         my $t = 0;

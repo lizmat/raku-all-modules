@@ -239,7 +239,7 @@ role Sum::CRC [ :@header?, :@footer?, :$residual = 0,
 
     method buf8 () {
         my $bytes = ($columns + 7) div 8;
-        buf8.new(self.Int X+> ($bytes*8-8,{$_-8}...0));
+        buf8.new(0xff X+& (self.Int X+> ($bytes*8-8,{$_-8}...0)));
     }
     method buf1 () {
         Buf.new( 1 X+& (self.Int X+> ($columns-1...0)) );

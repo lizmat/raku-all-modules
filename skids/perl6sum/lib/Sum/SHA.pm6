@@ -117,17 +117,17 @@ role Sum::SHA1 [ :$recourse where { not $_ }
         my $d := @s[3];
         my $e := @s[4];
 
-        for ((0x5A827999,{ $b +& $c +| +^$b +& $d }).item xx 20,
-             (0x6ED9EBA1,{ $b +^ $c +^ $d }).item xx 20,
-             (0x8F1BBCDC,{ $b +& $c +| $b +& $d +| $c +& $d }).item xx 20,
-             (0xCA62C1D6,{ $b +^ $c +^ $d }).item xx 20).kv
+        for (flat (0x5A827999,{ $b +& $c +| +^$b +& $d }).item xx 20,
+                  (0x6ED9EBA1,{ $b +^ $c +^ $d }).item xx 20,
+                  (0x8F1BBCDC,{ $b +& $c +| $b +& $d +| $c +& $d }).item xx 20,
+                  (0xCA62C1D6,{ $b +^ $c +^ $d }).item xx 20).kv
             -> $i,($k,$f) {
             ($b,$c,$d,$e,$a) =
                 ($a, rol($b,30), $c, $d,
                  (rol($a,5) + $f() + $e + $k + @!w[$i]));
         }
 
-        @!s[0..^*] = @!s.values Z+ @s.values;
+        @!s[0..^*] = (@!s.values Z+ @s.values).list;
 	return; # This should not be needed per S06/Signatures
     }
 
@@ -325,9 +325,9 @@ role Sum::SHAmix32 does Sum::SHA2common {
 
         # Fill the rest of the scratchpad with permutations.
         @m.push(0xffffffff +& (
-                [+] @m[*-16,*-7],
-                ([+^] ((@m[*-15] Xror (7,18)),  @m[*-15] +> 3 )),
-                ([+^] ((@m[*-2]  Xror (17,19)), @m[*-2]  +> 10))
+                [+] flat @m[*-16,*-7],
+                         ([+^] (flat (@m[*-15] Xror (7,18)),  @m[*-15] +> 3 )),
+                         ([+^] (flat (@m[*-2]  Xror (17,19)), @m[*-2]  +> 10))
                 )) for 16..^64;
 	@.w = @m;
 	return; # This should not be needed per S06/Signatures
@@ -398,9 +398,9 @@ role Sum::SHAmix64 does Sum::SHA2common {
 
         # Fill the rest of the scratchpad with permutations.
         @m.push(0xffffffffffffffff +& (
-                [+] @m[*-7,*-16],
-                ([+^] ((@m[*-15] Xror (1,8)),  @m[*-15] +> 7 )),
-                ([+^] ((@m[*-2]  Xror (19,61)),@m[*-2]  +> 6))
+                [+] flat @m[*-7,*-16],
+                         ([+^] (flat (@m[*-15] Xror (1,8)),  @m[*-15] +> 7 )),
+                         ([+^] (flat (@m[*-2]  Xror (19,61)),@m[*-2]  +> 6))
                 )) for 16..^80;
 	@.w = @m;
 	return; # This should not be needed per S06/Signatures

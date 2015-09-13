@@ -105,7 +105,7 @@ is +$dwim.finalize(('0123456789' x 100).ords), 0x895ffd5f1acfe6f760c777e7883605e
 
 $dwim .= new();
 
-is +$dwim.finalize(buf8.new((0x30..0x39) xx 100)), 0x895ffd5f1acfe6f760c777e7883605e9, "MD4 of 8000-bit Buf is correct";
+is +$dwim.finalize(buf8.new(flat (0x30..0x39) xx 100)), 0x895ffd5f1acfe6f760c777e7883605e9, "MD4 of 8000-bit Buf is correct";
 
 class MD4ext does Sum::MD4ext does Sum::Marshal::Raw { };
 is MD4ext.size, 256, "extended MD4 .size is correct.  And a class method.";

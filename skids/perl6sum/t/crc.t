@@ -335,7 +335,7 @@ class CRC32 does Sum::CRC_32 does Sum::Marshal::Bits[ :bits(32) :reflect ]
 
     multi method marshal ( $addend ) is default { $addend }
     multi method marshal (*@addends) is default {
-        return ( for @addends { self.marshal($_) } )
+        return flat ( for @addends { self.marshal($_) } )
     }
 }
 $s = CRC32.new();

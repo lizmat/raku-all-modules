@@ -21,7 +21,7 @@ is $s.recourse, "Perl6", "Correct recourse for SM3";
 ok $s.WHAT === S1, 'We create a Sum::SM3 class and object (:recourse)';
 is $s.finalize("abc".encode("ascii")).fmt, "66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0", "SM3 test vector #1 (:recourse)";
 is $s.base(16), "66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0", "SM3 retains values after finalization (:recourse)";
-is S1.new.finalize(buf8.new(flat((0x61..0x64) xx 16))).fmt, "debe9ff92275b8a138604889c18e5a4d6fdb70e5387e5765293dcba39c0c5732", "SM3 test vector #2 (:recourse)";
+is S1.new.finalize(buf8.new(flat ((0x61..0x64) xx 16))).fmt, "debe9ff92275b8a138604889c18e5a4d6fdb70e5387e5765293dcba39c0c5732", "SM3 test vector #2 (:recourse)";
 
 class S2 does Sum::SM3[:!recourse] does Sum::Marshal::Raw { };
 my S2 $s2 .= new();
@@ -29,7 +29,7 @@ ok $s2.WHAT === S2, 'We create a Sum::SM3 class and object (:!recourse)';
 is S2.size, 256, 'Sum::SM3 size is correct, and a class method (:!recourse)';
 is $s2.finalize("abc".encode("ascii")).fmt, "66c7f0f462eeedd9d1f2d46bdc10e4e24167c4875cf2f7a2297da02b8f4ba8e0", "SM3 test vector #1 (:!recourse)";
 is $s2.base(16), "66C7F0F462EEEDD9D1F2D46BDC10E4E24167C4875CF2F7A2297DA02B8F4BA8E0", "SM3 retains values after finalization (:!recourse)";
-is S2.new.finalize(buf8.new((0x61..0x64) xx 16)).fmt, "debe9ff92275b8a138604889c18e5a4d6fdb70e5387e5765293dcba39c0c5732", "SM3 test vector #2 (:!recourse)";
+is S2.new.finalize(buf8.new(flat (0x61..0x64) xx 16)).fmt, "debe9ff92275b8a138604889c18e5a4d6fdb70e5387e5765293dcba39c0c5732", "SM3 test vector #2 (:!recourse)";
 
 diag "We have very few test vectors for SM3.  Use with caution.";
 

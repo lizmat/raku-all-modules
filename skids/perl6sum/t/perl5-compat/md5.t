@@ -33,5 +33,5 @@ for @cases -> $values, $md5 {
 
 }
 
-done;
+done-testing;
 

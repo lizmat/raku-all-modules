@@ -95,11 +95,12 @@ role Sum::SM3 [ :$recourse where { not $_ }
     }
 
     method comp ( --> Nil) {
-        my ($A, $B, $C, $D, $E, $F, $G, $H) = @!V[];
+        my ($A, $B, $C, $D, $E, $F, $G, $H) = @!V;
 
 	my sub P0 ($X) { [+^] $X, rol($X, 9), rol($X, 17) }
 
-        for ((0x79cc4519,
+        for (flat
+             (0x79cc4519,
               -> $X, $Y, $Z { [+^] $X, $Y, $Z },
               -> $X, $Y, $Z { [+^] $X, $Y, $Z }).item xx 16,
              (0x7a879d8a,
@@ -117,12 +118,11 @@ role Sum::SM3 [ :$recourse where { not $_ }
 	    ($D, $C, $B, $A, $H, $G, $F, $E) =
 	    ($C, rol($B, 9), $A, $TT1, $G, rol($F, 19), $E, P0($TT2));
         }
-        @!V[] = @!V[] Z+^ (0xffffffff X+& ($A,$B,$C,$D,$E,$F,$G,$H));
+        @!V = @!V Z+^ (0xffffffff X+& ($A,$B,$C,$D,$E,$F,$G,$H));
 	return; # This should not be needed per S06/Signatures
     }
 
     multi method add (blob8 $block where { .elems == 64 }) {
-
         return Failure.new(X::Sum::Final.new()) if $.final;
 
         # Update the length count and check for problems via Sum::MDPad
@@ -141,7 +141,7 @@ role Sum::SM3 [ :$recourse where { not $_ }
 	my sub P1 ($X) { [+^] $X, rol($X, 15), rol($X, 23) }
 
         @W.push([+^]
-                P1([+^] @W[*-16,*-9], rol(@W[*-3], 15)),
+                P1([+^] flat @W[*-16,*-9], rol(@W[*-3], 15)),
                 rol(@W[*-13], 7),@W[*-6])
             for 16..67;
         @W.push([+^] @W[*-68,*-64]) for 0..63;
@@ -154,11 +154,11 @@ role Sum::SM3 [ :$recourse where { not $_ }
         self.finalize;
         # This does not work yet on 32-bit machines
         # :4294967296[@!s[]]
-        [+|] (@!V[] Z+< (224,192...0))
+        [+|] (@!V Z+< (224,192...0))
     }
     method Int () { self.Numeric }
     method bytes_internal {
-        @!V[] X+> (24,16,8,0);
+        @!V X+> (24,16,8,0);
     }
     method buf8 {
         self.finalize;

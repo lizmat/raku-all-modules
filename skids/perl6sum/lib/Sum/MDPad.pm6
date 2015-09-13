@@ -72,7 +72,7 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
                                                                     = "uint64_be", Bool :$overflow = True, :@firstpad = [True], :@lastpad, Bool :$justify = False ] does Sum {
 
     my $bbytes = $blocksize/8;
-    my int @lenshifts = (
+    my @lenshifts = (
         given $lengthtype {
             when "uint64_le" { (0,8...^64) }
             when "uint128_le" { (0,8...^128) }
@@ -239,7 +239,7 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
 	}
 	else {
 	    my @pad = @firstpad;
-	    @bcat.splice(* div 8 * 8, 0,
+	    @bcat.splice(* div 8 * 8, 0, flat
                 (False xx (8 - @bcat % 8 - @pad)),
 # This should just be:
 #	         @pad.splice(0, min(8 - @bcat % 8, *-0)).reverse
@@ -248,11 +248,10 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
             );
 	    # Rest of this block is conjectural
 	    while (+@pad > 8) {
-	        @bcat.push(reverse(@pad.splice(0,8)));
+	        @bcat.push(@pad.splice(0,8).reverse);
 	    }
-	    @bcat.push(False xx (8 - @pad), @pad.reverse) if @pad;
+	    @bcat.push(flat False xx (8 - @pad), @pad.reverse) if @pad;
 	}
-
 
         my $padbits = ($bbytes * 16 - $block.elems * 8 - @lenshifts.elems * 8
                        - @bcat - @lastpad);
@@ -262,10 +261,9 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
         @bcat.push(@lastpad);
         my @bytes = (gather while +@bcat { take :2[@bcat.splice(0,8)] });
 
-        my @vals = ($block.values, @bytes, (255 X+& ($!o X+> @lenshifts)));
+        my @vals = flat $block.values, @bytes, (255 X+& ($!o X+> @lenshifts));
         self.add(buf8.new(@vals[^$bbytes]));
         self.add(buf8.new(@vals[$bbytes .. *-1])) if +@vals > $bbytes;
-
         $.final = True;
     }
 

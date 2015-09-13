@@ -363,7 +363,7 @@ role Sum::Tiger {
     method size ( --> int) { 192 }
 
     submethod BUILD () {
-        @!s = (0x0123456789ABCDEF,0xFEDCBA9876543210,0xF096A5B4C3B2E187)
+        @!s = 0x0123456789ABCDEF,0xFEDCBA9876543210,0xF096A5B4C3B2E187;
     }
 
     method key_schedule () {
@@ -426,7 +426,7 @@ role Sum::Tiger {
 
     method comp () {
 
-        my (Int $a, Int $b, Int $c) = @!s[];
+        my (Int $a, Int $b, Int $c) = @!s;
 
         self.pass($a,$b,$c,5);
         self.key_schedule;
@@ -458,11 +458,11 @@ role Sum::Tiger {
     method Numeric {
         self.finalize;
         # This does not work correctly yet under rakudo.
-        # :18446744073709551616[@!s[]]
-        :256[(255 X+& (@!s[] X+> (0,8...^64)))]
+        # :18446744073709551616[@!s]
+        :256[(255 X+& (@!s X+> (0,8...^64)))]
     }
     method Int () { self.Numeric }
-    method bytes_internal { @!s[] X+> (0,8...^64) };
+    method bytes_internal { @!s X+> (0,8...^64) };
     method buf8 {
         self.finalize;
         buf8.new(self.bytes_internal);

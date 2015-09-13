@@ -295,4 +295,4 @@ class sayer {
 }
 my sayer $s .= new();
 { temp $*OUT = $s; EVAL $Sum::Doc::synopsis; }
-is $s.accum, $Sum::Doc::synopsis.comb(/<.after \x23\s> (<.ws> \d+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';
+is $s.accum, $Sum::Doc::synopsis.comb(/<.after \x23\s> (<.ws> <[\d\(\)\[\]]>+)+/).join("\n") ~ "\n", 'Code in manpage synopsis actually works';
