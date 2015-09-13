@@ -119,7 +119,7 @@ method space_plans {
 
   my Trade $t = home_planet.find_trade_ministry;
   my $pns = $t.get_plans_hash();
-  say $pns.perl;
+  dd $pns;
   say "!!!!!";
 
 
