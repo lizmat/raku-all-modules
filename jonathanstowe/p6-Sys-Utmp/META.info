@@ -22,5 +22,5 @@
   "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
   "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
   "description" : "Perl 6 access to Utmp entries on Unix-like systems",
-  "version" : "v0.0.4"
+  "version" : "v0.0.5"
 }
