@@ -8,12 +8,15 @@ matrix:
     allow_failures:
         - env: BACKEND=jvm
     fast_finish: true
+sudo: false
 before_install:
-    - git config --global user.name "TravisCI"
-    - git config --global user.email $HOSTNAME":not-for-mail@travis-ci.org"
-    - git clone https://github.com/tadzik/rakudobrew ~/.rakudobrew
-    - export PATH=~/.rakudobrew/bin:$PATH
-    - rakudobrew build $BACKEND
+    - git clone https://github.com/rakudo/rakudo.git $HOME/rakudo
+    - cd $HOME/rakudo
+    - 'if [[ $BACKEND == "moar" ]]; then perl Configure.pl --gen-moar --gen-nqp --backends=$BACKEND; fi'
+    - 'if [[ $BACKEND == "jvm" ]]; then perl Configure.pl --gen-nqp --backends=$BACKEND; fi'
+    - make install
+    - export PATH=$HOME/rakudo/install/bin:$PATH
+    - cd $TRAVIS_BUILD_DIR
 install:
     # need at least 1 statement in 'install'
     - perl6 -v
