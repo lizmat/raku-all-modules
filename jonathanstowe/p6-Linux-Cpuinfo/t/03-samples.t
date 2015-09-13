@@ -32,5 +32,5 @@ for 't/proc'.IO.dir.grep({ .f }) -> $file {
 }
 
 
-done();
+done-testing();
 # vim: expandtab shiftwidth=4 ft=perl6
