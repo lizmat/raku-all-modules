@@ -250,6 +250,15 @@ multi method p6_to_p5(Str:D $value) returns OpaquePointer {
     my $buf = $value.encode('UTF-8');
     p5_str_to_sv($!p5, $buf.elems, $buf);
 }
+multi method p6_to_p5(IntStr:D $value) returns OpaquePointer {
+    p5_int_to_sv($!p5, $value.Int);
+}
+multi method p6_to_p5(NumStr:D $value) returns OpaquePointer {
+    p5_float_to_sv($!p5, $value.Num);
+}
+multi method p6_to_p5(RatStr:D $value) returns OpaquePointer {
+    p5_float_to_sv($!p5, $value.Num);
+}
 multi method p6_to_p5(blob8:D $value) returns OpaquePointer {
     p5_buf_to_sv($!p5, $value.elems, $value);
 }
@@ -475,13 +484,13 @@ method !unpack_return_values($av) {
 }
 
 method call(Str $function, *@args, *%args) {
-    my $av = p5_call_function($!p5, $function, |self!setup_arguments([@args.list, %args.list]));
+    my $av = p5_call_function($!p5, $function, |self!setup_arguments([flat @args, %args.list]));
     self.handle_p5_exception();
     self!unpack_return_values($av);
 }
 
 multi method invoke(Str $package, Str $function, *@args, *%args) {
-    my $av = p5_call_package_method($!p5, $package, $function, |self!setup_arguments([@args.list, %args.list]));
+    my $av = p5_call_package_method($!p5, $package, $function, |self!setup_arguments([flat @args.list, %args.list]));
     self.handle_p5_exception();
     self!unpack_return_values($av);
 }
@@ -491,7 +500,7 @@ multi method invoke(OpaquePointer $obj, Str $function, *@args) {
 }
 
 method invoke-parent(Str $package, OpaquePointer $obj, Bool $context, Str $function, *@args, *%args) {
-    my $av = p5_call_method($!p5, $package, $obj, $context ?? 1 !! 0, $function, |self!setup_arguments([@args.list, %args.list]));
+    my $av = p5_call_method($!p5, $package, $obj, $context ?? 1 !! 0, $function, |self!setup_arguments([flat @args.list, %args.list]));
     self.handle_p5_exception();
     self!unpack_return_values($av);
 }
@@ -544,6 +553,8 @@ class Perl6Callbacks {
     }
     method invoke(Str $package, Str $name, @args) {
         my %named = classify * ~~ Pair, @args;
+        %named<False> //= [];
+        %named<True> //= [];
         return ::($package)."$name"(|%named<False>, |%(%named<True>));
         CONTROL {
             note $_.gist;
@@ -756,7 +767,7 @@ role Perl5Package[Inline::Perl5 $p5, Str $module] {
     multi method FALLBACK($name, @args, %kwargs) {
         return self.defined
             ?? $p5.invoke-parent($module, $!parent.ptr, False, $name, $!parent, |@args, |%kwargs)
-            !! $p5.invoke($module, $name, |@args, |%kwargs);
+            !! $p5.invoke($module, $name, |@args.list, |%kwargs);
     }
 
     for Any.^methods>>.name.list, <say> -> $name {
@@ -782,7 +793,7 @@ method import (Str $module, *@args) {
     my $before = set self.subs_in_module('main').list;
     self.invoke($module, 'import', @args.list);
     my $after = set self.subs_in_module('main').list;
-    return ($after ∖ $before).list;
+    return ($after ∖ $before).keys;
 }
 
 my $loaded_modules = SetHash.new;
@@ -807,6 +818,7 @@ method require(Str $module, Num $version?) {
 
     # install methods
     for @$symbols -> $name {
+        next if $name eq 'new';
         my $method = my method (*@args, *%kwargs) {
             self.FALLBACK($name, @args, %kwargs);
         }
@@ -819,9 +831,14 @@ method require(Str $module, Num $version?) {
     # register the new class by its name
     my @parts = $module.split('::');
     my $inner = @parts.pop;
-    my $ns = ::GLOBAL.WHO;
-    $ns = ($ns{$_} := Metamodel::PackageHOW.new_type(name => $_)).WHO for @parts;
+    my $ns := ::GLOBAL.WHO;
+    for @parts {
+        $ns{$_} := Metamodel::PackageHOW.new_type(name => $_) unless $ns{$_}:exists;
+        $ns := $ns{$_}.WHO;
+    }
+    my @existing = $ns{$inner}.WHO.pairs;
     $ns{$inner} := $class;
+    $class.WHO{$_.key} := $_.value for @existing;
 
     # install subs like Test::More::ok
     for @$symbols -> $name {
@@ -835,7 +852,7 @@ method require(Str $module, Num $version?) {
         return EnumMap.new(self.import($module, @args.list).map({
             my $name = $_;
             '&' ~ $name => sub (*@args, *%args) {
-                self.call("{$module}::$name", @args.list, %args.list);
+                self.call("{$module}::$name", |@args.list, %args.list);
             }
         }));
     };
@@ -954,6 +971,8 @@ role Perl5Parent[Str:D $package, Inline::Perl5:D $perl5] {
     method unwrap-perl5-object() {
         $!parent;
     }
+
+    method sink() { self }
 
     method can($name) {
         my @candidates = self.^can($name);
