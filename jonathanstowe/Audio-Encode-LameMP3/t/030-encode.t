@@ -471,5 +471,5 @@ sub uninterleave(@a) {
     return $b, $c ;
 }
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

@@ -51,5 +51,5 @@ is($taglib.comment, "Test Comment", "got the comment we expected");
 
 $out-file.unlink;
 
-done;
+done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

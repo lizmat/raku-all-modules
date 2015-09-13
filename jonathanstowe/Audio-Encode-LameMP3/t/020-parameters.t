@@ -43,7 +43,7 @@ is( $obj.bitrate, 192, "correct bitrate");
 is( $obj.quality, 5, "correct quality");
 
 
-done;
+done-testing;
 
 
 # vim: expandtab shiftwidth=4 ft=perl6
