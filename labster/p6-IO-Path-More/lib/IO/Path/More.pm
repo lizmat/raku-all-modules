@@ -62,7 +62,7 @@ method device() {
 }
 
 method next {
-    my @dir := self.parent.dir;
+    my @dir = self.parent.dir;
     if self.e {
         while (@dir.shift ne self.basename) { ; }
         @dir[0];
@@ -73,7 +73,7 @@ method next {
 }
 
 method previous {
-    my @dir := self.parent.dir;
+    my @dir = self.parent.dir;
     if self.e {
         my $previtem := Nil;
         for @dir -> $curritem {

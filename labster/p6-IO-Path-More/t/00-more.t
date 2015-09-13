@@ -16,7 +16,7 @@ my @dir = dir('.');
 is @dir[2].previous,    @dir[1],  "previous correct";
 is @dir[2].next,   @dir[3],  "next correct";
 is @dir[0].previous,   Nil,  "previous from first path is Nil";
-is @dir[*-1].next,     Nil,  "next from last path is Nil";
+is @dir[*-1].next,     Any,  "next from last path is Nil";
 is " ".IO.previous,       Nil,  "previous from ' ' path is Nil";
 todo "I don't understand this test", 1;
 is " ".IO.next,       @dir[0],  "next from ' ' path is \@dir[0]";
