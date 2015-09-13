@@ -17,12 +17,14 @@ has @.grid-indices;
 has @.column-range;
 has @.row-range;
 
-has $!grid-string;
+has %!grep-cache;
+
+has Str $!grid-string = '';
 
 method new( :$max-columns, :$max-rows ) {
     my @column-range = ^$max-columns;
     my @row-range    = ^$max-rows;
-    my @grid-indices = (@column-range X @row-range).map({ [$^x, $^y] });
+    my @grid-indices = @column-range X @row-range;
 
     my (@grid, @buffer);
     for @column-range -> $x {
@@ -56,12 +58,34 @@ method print-grid {
 }
 
 method print-row( $y ) {
-#    my $row-string = [~] @!grid[*][$y] for ^$!max-columns;
     print move-cursor(0,$y) ~ ~@!rows[$y];
 }
 
+multi method grep-grid( $test ) {
+    do for @!grid-indices -> [$x,$y] {
+        [$x,$y] if $test($x,$y);
+    }
+}
+         
+multi method grep-grid( $test, :$p! ) {
+    for @!grid-indices -> [$x,$y] {
+        @!grid[$x][$y].print-cell if $test($x,$y);
+    }
+}
+
+multi method grep-grid( $test, :$o! ) {
+    for @!grid-indices -> [$x,$y] {
+        if $test($x,$y) {
+            @!grid[$x][$y].print-cell;
+        } else {
+            @!grid[$x][$y].clear-cell-string;
+        }
+    }
+    $!grid-string = '';
+}
+
 method Str {
-    if not $!grid-string.defined {
+    if not $!grid-string {
         for 0..^$!max-rows -> $y {
             $!grid-string ~= [~] ~@!grid[$_][$y] for @!column-range;
         }
