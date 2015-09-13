@@ -141,7 +141,7 @@ method connect(){
 
         my $buf = buf8.new();
 
-        $!conn.bytes_supply.act(-> $bytes {
+        $!conn.bytes-supply.act(-> $bytes {
             $buf ~= $bytes;
             my $continue = True;
             while $continue && $buf.bytes >= 7 {
