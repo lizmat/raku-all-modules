@@ -8,5 +8,5 @@ use Test;
 
 use-ok('Sys::Lastlog');
 
-done();
+done-testing();
 # vim: expandtab shiftwidth=4 ft=perl6

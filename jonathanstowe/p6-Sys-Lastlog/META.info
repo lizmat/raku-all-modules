@@ -22,6 +22,6 @@
     "Test"
   ],
   "description" : "Perl 6 access to Lastlog information on Unix-like systems",
-  "version" : "v0.0.3",
+  "version" : "v0.0.4",
   "auth" : "github:jonathanstowe"
 }
