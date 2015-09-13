@@ -60,4 +60,4 @@ sub remove_temporary_file(Str $file) {
     ok($file.IO ~~ :!e, "cleanup: removed test file $file"); 
 }
 
-done;
+done-testing;

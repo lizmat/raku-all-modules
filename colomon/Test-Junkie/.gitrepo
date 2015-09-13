@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/Test-Junkie.git
 	branch = master
-	commit = 61e50072847977d7009bacc654f1750b5b397d54
-	parent = 481308c5d870ec731e5637aad04d82e1dc23241a
-	cmdver = 0.1.0
+	commit = 8a939bc07b05c92ccbd6623a3dc36f8968faea9b
+	parent = 5bc46f52b0d65457e371678f2c9eed1780dcf406
+	cmdver = 0.2.2
