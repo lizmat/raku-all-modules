@@ -30,4 +30,4 @@ use IO::Glob;
     is @files[5], "t/fixtures/foo.txt".IO;
 }
 
-done;
+done-testing;

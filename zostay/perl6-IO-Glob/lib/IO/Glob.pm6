@@ -65,12 +65,12 @@ class Globber {
            die "unknown match term: $term";
        }
 
-       if @terms { @roots.map({ self!compile-terms-ind($^base, @terms) }) }
-       else { @roots }
+       if @terms { @roots.map({ self!compile-terms-ind($^base, @terms).Slip }) }
+       else { @roots.Slip }
     }
     method !compile-terms() {
         return if @!matchers;
-        @!matchers = self!compile-terms-ind(rx/<?>/, @.terms).map({rx/^$_$/});
+        @!matchers = self!compile-terms-ind(rx/<?>/, @.terms).map(-> $rx {rx/^$rx$/});
     }
 
     multi method ACCEPTS(Str:U $) returns Bool:D { False }
@@ -328,7 +328,7 @@ multi method ACCEPTS(IO::Path:D $path) returns Bool:D {
     self!compile-globs;
     my @parts = $path.split($.spec.dir-sep);
     return False unless @parts.elems == @!globbers.elems;
-    [&&] (@parts Z @!globbers).flatmap: -> $p, $g { $p ~~ $g };
+    [&&] (@parts Z @!globbers).flatmap: -> ($p, $g) { $p ~~ $g };
 }
 
 multi sub glob(Str:D $pattern, :$grammar = BSD.new, :$spec = $*SPEC) returns IO::Glob:D is export {

@@ -38,4 +38,4 @@ use IO::Glob;
     is @files[1], 't/fixtures/bar.md'.IO;
 }
 
-done;
+done-testing;

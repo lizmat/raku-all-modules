@@ -31,4 +31,4 @@ ok 't/fixtures/foo.md'.IO ~~ $fixtures-foo;
 ok 't/fixtures/foo.txt'.IO ~~ $fixtures-foo;
 ok 't/fixtures/bar.md'.IO !~~ $fixtures-foo;
 
-done;
+done-testing;
