@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/grammar-debugger.git
 	branch = master
-	commit = b093bbe31b9c3a08f49c66caebeebb2344e8ce8f
-	parent = e4bb0e75a1ab1a329162c6b60ad8a6b287bf7a66
-	cmdver = 0.2.1
+	commit = 2791ceeda690c295d97936b703808a2e4398de62
+	parent = 936d85ed3ac5a0dcf0a3c3a7791572b4d8764770
+	cmdver = 0.2.2
