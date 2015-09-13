@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/flussence/Test-Corpus.git
 	branch = master
-	commit = c690bc22438c4c0d518726e99b4773f01928e1ae
-	parent = 011c6df1c42c3cc9c69db84b4d70819277513def
+	commit = 661e1f434661538ebe6afd56e269d1c8fd42b36f
+	parent = fce792672d11edec20f05196d53dee6d7ce5cb29
 	cmdver = 0.2.2

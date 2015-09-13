@@ -1,10 +1,10 @@
-unit module Test::Corpus:auth<github:flussence>:ver<2.0.5>;
+unit module Test::Corpus:auth<github:flussence>:ver<2.0.7>;
 
 use Test;
 
 #| Convenience sub for testing filter functions of arity 1
 sub simple-test(&func:(Str --> Str)) is export {
-    return sub (IO::Path $in, IO::Path $out, Str $testcase) {
+    sub (IO::Path $in, IO::Path $out, Str $testcase) {
         is &func($in.slurp), $out.slurp, $testcase;
     }
 }
@@ -14,46 +14,21 @@ sub simple-test(&func:(Str --> Str)) is export {
 #| order.
 sub run-tests(
     &test,
-    Str :$basename = $*PROGRAM-NAME.IO.basename,
+    Str :$basename = $*PROGRAM.basename,
 ) is export {
     my @files = dir('t_files/' ~ $basename ~ '.input');
 
-    # If you need multiple tests per file, use &Test::subtest
+    # If you need multiple tests per file, use &Test::subtest. Although I could
+    # wrap that around each iteration here for convenience, I prefer the
+    # pay-for-what-you-use approach.
     plan +@files;
 
-    my sub test-closure($input) {
-        return &test.assuming(
-            $input.IO,
-            $input.subst('.input/', '.output/').IO,
-            $input.basename
-        );
-    }
-
-    #@files».&test-closure».();
-    await @files».&test-closure».&start;
+    &test(.IO, .subst('.input/', '.output/').IO, .basename) for @files;
 }
 
-=begin pod
-This module would be a good candidate to use threading and I've been trying to
-find a way to pull this off for a while:
-
-    await @files».&test-closure».&start;
-
-Ideally everything would run nice and fast and your CPU would burst into flames.
-
-We can't do that (yet) for various reasons:
-
-=item
-It just straight up crashes moarvm, before completing the module's own tests
-(and worse, some of the ones that do run randomly fail!).
-
-=item
-Threads + say/print just don't mix. This code also doesn't seem particularly
-amenable to my attempts to override $*OUT with an object that does that, and
-just spits everything straight to /dev/stdout regardless. The amount of
-difficulty here makes me think I'm trying to solve the thread-safety problem at
-the wrong level.
-
-=end pod
+=for anyone-who-knows-what-they're-doing
+This module is excruciatingly slow and I'm burned out trying to improve it at
+this point. I've tried threading but that just makes Rakudo segfault. Help would
+be greatly appreciated.
 
 # vim: set tw=80 :
