@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/carbin/p6-fcgi.git
 	branch = master
-	commit = ce662a16dcd8b06138e460cc3d63ca698890b35e
-	parent = a906c2dbb9bf9d62e84a07c5d67c8ed3916b53d8
+	commit = 439729f2c0d3f52b2bda739fd58cf9536f9831d7
+	parent = af0d509eaf9e81699fcfed71134b2925ce649753
 	cmdver = 0.2.2

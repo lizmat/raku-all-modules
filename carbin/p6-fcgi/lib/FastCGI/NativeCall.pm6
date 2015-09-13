@@ -9,8 +9,9 @@ sub library {
 		my $libname = 'fcgi.so';
 		for @*INC {
 			my $inc-path = $_.IO.path.subst(/ ['file#' || 'inst#'] /, '');
-			$path = $*SPEC.catfile($inc-path, $libname);
-			if $path.IO ~~ :f {
+			my $check = $*SPEC.catfile($inc-path, $libname);
+			if $check.IO ~~ :f {
+				$path = $check;
 				last;
 			}
 		}
