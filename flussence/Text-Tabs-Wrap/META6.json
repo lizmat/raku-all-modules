@@ -1,0 +1,11 @@
+{ "perl"        : "v6"
+, "name"        : "Text-Tabs-Wrap"
+, "version"     : "0.2.4"
+, "description" : "Simple line-wrapping and tab [un]expansion tools"
+, "authors"     : [ "Takadonet"
+                  , "flussence" ]
+, "provides"    : { "Text::Tabs": "lib/Text/Tabs.pm"
+                  , "Text::Wrap": "lib/Text/Wrap.pm" }
+, "test-depends": [ "Test::Corpus" ]
+, "support"     : { "bugtracker": "https://github.com/flussence/Text-Tabs-Wrap/issues"
+                  , "source"    : "https://github.com/flussence/Text-Tabs-Wrap.git" } }

@@ -1,4 +1,4 @@
-unit module Text::Wrap:auth<github:flussence>:ver<0.2.3>;
+unit module Text::Wrap:auth<github:flussence>:ver<0.2.4>;
 use Text::Tabs;
 
 sub wrap(Str $lead-indent,
@@ -10,7 +10,7 @@ sub wrap(Str $lead-indent,
          Bool :$unexpand        = True,
          Bool :$may-overflow    = False,
          Bool :$strict-break    = False,
-         Regex    :$word-break  = { rx{\s} }(),   # RT #125670
+         Regex :$word-break     = rx{\s},
          *@texts) is export {
 
     my Str $text = expand(:$tabstop, trailing-space-join(@texts));
@@ -138,7 +138,7 @@ sub compute-sizes(Str $lead-indent, Str $body-indent, UInt $tabstop, UInt $colum
     # NOTE "all(" causes an error in both R and N here, and ()s are necessary for precedence.
     %widths»-- if all (%widths{$_} > %min-widths{$_} for <lead body>);
 
-    return $intrinsic-width, %widths<lead body>;
+    return $intrinsic-width, |%widths<lead body>;
 }
 
 # vim: ft=perl6 sw=4 ts=4 tw=100
