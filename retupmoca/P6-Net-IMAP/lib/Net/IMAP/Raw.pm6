@@ -17,7 +17,7 @@ method get-response($code?){
 method send($stuff) {
     my $code = $.reqcode;
     $.reqcode = $.reqcode.succ;
-    $.conn.send($code ~ " $stuff\r\n");
+    $.conn.print($code ~ " $stuff\r\n");
     return self.get-response($code);
 }
 
