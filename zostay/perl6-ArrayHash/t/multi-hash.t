@@ -447,4 +447,4 @@ for %tests.kv -> $desc, &test {
 }
 
 
-done;
+done-testing;

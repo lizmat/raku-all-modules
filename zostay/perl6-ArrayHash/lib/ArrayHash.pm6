@@ -484,7 +484,7 @@ multi method splice(ArrayHash:D: Int(Cool) $offset = 0, Int(Cool) $size?, *@valu
     # Compile the list of replacements, nullifying those that have keys
     # matching pairs later in the list (the later items are kept).
     my @repl;
-    for @values, %values.pairs -> $pair {
+    for @values.Slip, %values.pairs.Slip -> $pair {
         my $p = do given $pair {
             when KnottyPair:D { $pair }
             when .defined { $pair.key =x> $pair.value }
@@ -662,10 +662,10 @@ This returns a list of pairs stored in the ArrayHash.
 
 =end pod
 
-method values() returns List:D { @!array».value.list }
-method keys() returns List:D { @!array».key.list }
+method values() returns List:D { @!array».value.List }
+method keys() returns List:D { @!array».key.List }
 method indexes() returns List:D { @!array.keys }
-method kv() returns List:D { @!array».kv.list }
+method kv() returns List:D { @!array».kv.List }
 method ip() returns List:D { @!array.kv }
 method ikv() returns List:D { 
     @!array.kv.flatmap({ .defined && KnottyPair ?? .kv !! $_ })

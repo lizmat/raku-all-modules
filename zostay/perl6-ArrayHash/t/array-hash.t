@@ -7,10 +7,10 @@ use ArrayHash;
 
 my ($b, %hash, @array);
 
-sub make-iter(@o) {
+sub make-iter(Array(Positional) $o) {
     class { 
-        method CALL-ME() { @o.shift } 
-        method AT-POS($pos) { @o[$pos] } 
+        method CALL-ME() { $o.shift } 
+        method AT-POS($pos) { $o[$pos] } 
     }
 }
 
@@ -429,4 +429,4 @@ for %tests.kv -> $desc, &test {
 }
 
 
-done;
+done-testing;
