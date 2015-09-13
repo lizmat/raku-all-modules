@@ -73,7 +73,7 @@ class CSS::Writer
 
     proto method write(|c --> Str) {*}
 
-    #| @top-left { margin: 5px; } :=   $.write( :at-keyw<top-left>, :declarations[ { :ident<margin>, :expr[ :px(5) ] } ] )
+    #| @top-left { margin: 5px; } :=   $.write( :at-keyw<top-left>, :declarations[ { :ident<margin>, :expr[ :px(5) ] }, ] )
     multi method write( Str :$at-keyw!, List :$declarations! ) {
         ($.write( :$at-keyw ),  $.write( :$declarations)).join: ' ';
     }
@@ -95,7 +95,7 @@ class CSS::Writer
 
     #| [foo]   := $.write( :attrib[ :ident<foo> ] )
     multi method write( List :$attrib! ) {
-        [~] '[', $attrib.map({ $.write( $_ ) }), ']';
+        [~] flat '[', $attrib.map({ $.write( $_ ) }), ']';
     }
 
     #| @charset 'utf-8';   := $.write( :charset-rule<utf-8> )
@@ -129,13 +129,13 @@ class CSS::Writer
     multi method write( List :$declarations! ) {
         my @decls-indented =  $declarations.map: {
             my $prop = .<ident>:exists
-                ?? %(property => $_)
+                ?? :property(%$_)
                 !! $_;
 
             $.write-indented( $prop, 2);
         };
 
-        ('{', @decls-indented, $.indent ~ '}').join: $.nl;
+        (flat '{', @decls-indented, $.indent ~ '}').join: $.nl;
     }
 
     #| h1 := $.write: :element-name<H1>
@@ -156,7 +156,7 @@ class CSS::Writer
 
             if %.color-values && $term<ident> && my $rgb = %.color-values{ $term<ident>.lc } {
                 # substitute a named color with it's rgb value
-                $term = {rgb => $rgb.map({ num => $_})};
+                $term = {rgb => [ $rgb.map({ num => $_}) ]};
             }
 
             my $out = $sep ~ $.write($term);
@@ -165,7 +165,7 @@ class CSS::Writer
         });
     }
 
-    #| @font-face { src: 'foo.ttf'; } := $.write( :fontface-rule{ :declarations[ { :ident<src>, :expr[ :string<foo.ttf> ] } ] } )
+    #| @font-face { src: 'foo.ttf'; } := $.write( :fontface-rule{ :declarations[ { :ident<src>, :expr[ :string<foo.ttf> ] }, ] } )
     multi method write( Hash :$fontface-rule! ) {
         [~] '@font-face ', $.write( $fontface-rule, :nodes<declarations> );
     }
@@ -221,7 +221,7 @@ class CSS::Writer
         $.write-num( $length, $units );
     }
 
-    #| @top-left { margin: 5px; } :=   $.write( :margin-rule{ :at-keyw<top-left>, :declarations[ { :ident<margin>, :expr[ :px(5) ] } ] } )
+    #| @top-left { margin: 5px; } :=   $.write( :margin-rule{ :at-keyw<top-left>, :declarations[ { :ident<margin>, :expr[ :px(5) ] }, ] } )
     multi method write( Hash :$margin-rule! ) {
         $.write( $margin-rule );
     }
@@ -245,7 +245,7 @@ class CSS::Writer
         }) );
     }
 
-    #| @media all { body { background: lime; }} := $.write( :media-rule{ :media-list[ { :media-query[ :ident<all> ] } ], :rule-list[ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<body> } ] } ] ], :declarations[ { :ident<background>, :expr[ :ident<lime> ] } ] } } ]} )
+    #| @media all { body { background: lime; }} := $.write( :media-rule{ :media-list[ { :media-query[ :ident<all> ] } ], :rule-list[ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<body> } ] } ] ], :declarations[ { :ident<background>, :expr[ :ident<lime> ] }, ] } } ]} )
     multi method write( Hash :$media-rule! ) {
         [~] '@media ', $.write( $media-rule, :nodes<media-list rule-list> );
     }
@@ -283,7 +283,7 @@ class CSS::Writer
         $op.lc;
     }
 
-    #| @page :first { margin: 5mm; } := $.write( :page-rule{ :pseudo-class<first>, :declarations[ { :ident<margin>, :expr[ :mm(5) ] } ] } )
+    #| @page :first { margin: 5mm; } := $.write( :page-rule{ :pseudo-class<first>, :declarations[ { :ident<margin>, :expr[ :mm(5) ] }, ] } )
     multi method write( Hash :$page-rule! ) {
     [~] '@page ', $.write( $page-rule, :nodes<pseudo-class declarations> );
     }
@@ -298,7 +298,7 @@ class CSS::Writer
         '!' ~ $prio.lc;
     }
 
-    #| color: red !important; := $.write( :property{ :ident<color>, :expr[ :ident<red> ], :prio<important> } )
+    #| color: red !important; := $.write( :property{ :ident<color>, :expr[ :ident<red> ], :prio<important> }, )
     multi method write( Hash :$property! ) {
         my @p = $.write( $property, :node<ident> );
         @p.push: ': ' ~ $.write($property, :node<expr>)
@@ -344,12 +344,12 @@ class CSS::Writer
         $.write-num( $resolution, $units );
     }
 
-    #| { h1 { margin: 5pt; } h2 { margin: 3pt; color: red; }} := $.write( :rule-list[ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<h1> } ] } ] ], :declarations[ { :ident<margin>, :expr[ :pt(5) ] } ] } }, { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<h2> } ] } ] ], :declarations[ { :ident<margin>, :expr[ :pt(3) ] }, { :ident<color>, :expr[ :ident<red> ] } ] } } ])
+    #| { h1 { margin: 5pt; } h2 { margin: 3pt; color: red; }} := $.write( :rule-list[ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<h1> } ] } ] ], :declarations[ { :ident<margin>, :expr[ :pt(5) ] }, ] } }, { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<h2> } ] } ] ], :declarations[ { :ident<margin>, :expr[ :pt(3) ] }, { :ident<color>, :expr[ :ident<red> ] } ] } } ])
     multi method write( List :$rule-list! ) {
         '{ ' ~ $.write( $rule-list, :sep($.nl)) ~ '}';
     }
 
-    #| a:hover { color: green; } := $.write( :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<a> }, { :pseudo-class<hover> } ] } ] ], :declarations[ { :ident<color>, :expr[ :ident<green> ] } ] } )
+    #| a:hover { color: green; } := $.write( :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<a> }, { :pseudo-class<hover> } ] } ] ], :declarations[ { :ident<color>, :expr[ :ident<green> ] }, ] } )
     multi method write( Hash :$ruleset! ) {
         [~] $.write($ruleset, :nodes<selectors declarations>);
     }
@@ -374,7 +374,7 @@ class CSS::Writer
         $.write-string($string);
     }
 
-    #| h1 { color: blue; } := $.write( :stylesheet[ { :ruleset{ :selectors[ { :selector[ { :simple-selector[ { :qname{ :element-name<h1> } } ] } ] } ], :declarations[ { :ident<color>, :expr[ { :ident<blue> } ] } ] } } ] )
+    #| h1 { color: blue; } := $.write( :stylesheet[ { :ruleset{ :selectors[ { :selector[ { :simple-selector[ { :qname{ :element-name<h1> } } ] } ] } ], :declarations[ { :ident<color>, :expr[ { :ident<blue> } ] }, ] } } ] )
     multi method write( List :$stylesheet! ) {
         my $sep = $.terse ?? "\n" !! "\n\n";
         $.write( $stylesheet, :$sep);
@@ -453,15 +453,15 @@ class CSS::Writer
             if @args;
 
         use CSS::Grammar::AST :CSSUnits;
-        for %opts.keys {
-            if my $type = CSSUnits.enums{$_} {
+        for %opts.pairs {
+            if my $type = CSSUnits.enums{.key} {
                 # e.g. redispatch $.write( :px(12) ) as $.write( :length(12), :units<px> )
-                my %new-opts = $type => %opts{$_}, units => $_;
+                my %new-opts = $type => .value, units => .key;
                 return $.write( |%new-opts );
             }
         }
         
-        die "unable to handle struct: {%opts.perl}"
+        die "unable to handle {%opts.keys} options: {%opts.perl}"
     }
 
     # -- helper methods --

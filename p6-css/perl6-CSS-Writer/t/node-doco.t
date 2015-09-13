@@ -2,7 +2,11 @@ use CSS::Writer;
 
 use Test;
 
-for CSS::Writer.^methods.map({.candidates}).map({.WHY}).grep({.defined}).map({.Str}) -> $doc {
+##my $docs = CSS::Writer.^methods.map({.candidates}).map({.WHY}).grep({.defined}).map({.Str});
+
+my @docs = 'lib/CSS/Writer.pm'.IO.slurp.lines.grep({ m/ '#|' \s* (.*)? $/}).map({ ~$0 });
+
+for @docs -> $doc {
 
     my $writer = CSS::Writer.new( :terse );
 
@@ -18,4 +22,4 @@ for CSS::Writer.^methods.map({.candidates}).map({.WHY}).grep({.defined}).map({.S
 }
 
 
-done();
+done-testing;

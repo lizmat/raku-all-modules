@@ -20,7 +20,7 @@ class CSS::Writer::BaseTypes {
 
     # -- strings -- #
     method write-string( Str $str --> Str) {
-        [~] ("'",
+        [~] flat ("'",
              $str.comb.map({
                  when /<CSS::Grammar::CSS3::stringchar-regular>|\"/ {$_}
                  when /<CSS::Grammar::CSS3::regascii>/ {'\\' ~ $_}
@@ -51,7 +51,7 @@ class CSS::Writer::BaseTypes {
             ?? @mask.map: {sprintf "%X", $_ / 17}
             !! @mask.map: {sprintf "%02X", $_ };
 
-        [~] '#', @hex-digits;
+        [~] flat '#', @hex-digits;
     }
 
     proto write-color(List $ast, Str $units --> Str) {*}
