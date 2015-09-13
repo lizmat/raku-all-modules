@@ -4,7 +4,7 @@ use HTTP::Cookies;
 use HTTP::Request;
 use HTTP::Response;
 
-plan 24;
+plan 29;
 
 BEGIN my $file = './cookies.dat';
 LEAVE try $file.IO.unlink;
@@ -59,7 +59,7 @@ my token fields_1 {
                        |  <domain_1>
                        |  <secure_1>
                        |  <http_only_1>
-                     ] * % '; ' <?{ 1 == all %($/).values }>
+                     ] * % '; '
 
 }
 
@@ -82,7 +82,7 @@ my token fields_2 {
          <expires_2>
       |  <path_2>
       |  <domain_2>
-   ] * % '; ' <?{ 1 == all %($/).values }>
+   ] * % '; '
 }
 
 
@@ -99,7 +99,13 @@ my rule cookies {
                    <cookie_2>
 }
 
-like $c.Str, /^<cookies>$/, "Str 1/1";
+like $c.Str, /^<cookies>$/, "Str 1/6";
+like $c.Str, /<expires_1>/, "Str 2/6"; 
+like $c.Str, /<path_1>/, "Str 3/6";
+like $c.Str, /<domain_1>/, "Str 4/6";
+like $c.Str, /<secure_1>/, "Str 5/6";
+like $c.Str, /<http_only_1>/, "Str 6/6";
+
 
 
 # save

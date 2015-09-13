@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sergot/http-useragent.git
 	branch = master
-	commit = f6838ab5beb9f18a0ad157f8ba5b297e4a7fd24e
-	parent = 8862bec1aa6ffc6781056072350c093be5754534
+	commit = c83945c3808f9fa0dca1c3ccddeee0d8f4a63b24
+	parent = e2bfcd92735acc5fcba9b9a58f72d6a4aa4e6af9
 	cmdver = 0.2.2
