@@ -63,6 +63,7 @@ class HTML::Parser::XML {
           while $cbuffer !~~ rx{ [ \s | '>' ] } {
             $tag     ~= $cbuffer;
             $cbuffer  = $.html.substr(++$.index, 1);
+            last if $tag eq '!--';
           }
           $tag = lc $tag;
           #gather the attributes
@@ -90,7 +91,7 @@ class HTML::Parser::XML {
               $qnest   = 0        if $cbuffer eq $mquote && $qnest == 1;
             }
             $.index++;
-            { $aclose = 1; ++$.index; $cbuffer = $.html.substr($.index, 1); } if $cbuffer eq '/';
+            { $aclose = 1 if %!voids{$tag}.defined; ++$.index; $cbuffer = $.html.substr($.index, 1); } if $cbuffer eq '/';
           }
           #parse attribute string;
           $bindex  = 0;
