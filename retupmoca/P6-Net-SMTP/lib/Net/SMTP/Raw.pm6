@@ -18,7 +18,7 @@ method get-response() {
 }
 
 method send($stuff) {
-    $.conn.send($stuff ~ "\r\n");
+    $.conn.print($stuff ~ "\r\n");
     return self.get-response;
 }
 
