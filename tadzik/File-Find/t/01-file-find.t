@@ -68,7 +68,7 @@ if 0 {
 	callsame;
     });
 
-    dies_ok(sub { find(:dir<t/dir1>) },
+    dies-ok(sub { find(:dir<t/dir1>) },
         "dies due to X::IO::Dir");
 
     $throw = $skip-first = True;
