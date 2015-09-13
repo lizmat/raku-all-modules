@@ -13,25 +13,23 @@ has Str  $.best_source    is rw;
 method get_results {
     my @working;
 
-    for @.sources -> $source {
-        for @.targets -> $target {
-            @working.push(start { %.results{$source}{$target} = dld($source, $target) });
-            await Promise.anyof(@working);
+    for @!sources -> $source {
+        for @!targets -> $target {
+            @working.push(%!results{$source}{$target} = dld($source, $target));
         }
     }
-    await Promise.allof(@working);
 
-    for %.results.kv -> $source, $targets {
+    for %!results.kv -> $source, $targets {
         for $targets.kv -> $target, $distance {
-            if !$.best_distance || $.best_distance > $distance {
-                $.best_target   = $target;
-                $.best_distance = $distance;
-                $.best_source   = $source if @.sources.elems > 1;
+            if !$!best_distance || $!best_distance > $distance {
+                $!best_target   = $target;
+                $!best_distance = $distance;
+                $!best_source   = $source if @!sources.elems > 1;
             }
         }
     }
 
-    return %.results;
+    return %!results;
 }
 
 

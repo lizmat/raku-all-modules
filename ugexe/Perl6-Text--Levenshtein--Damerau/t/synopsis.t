@@ -1,9 +1,10 @@
 use v6;
+use Text::Levenshtein::Damerau;
+
 use Test;
 plan 1;
 
 lives-ok {
-    use Text::Levenshtein::Damerau;
 
     my @names = 'John','Jonathan','Jose','Juan','Jimmy';
     my $name_mispelling = 'Jonh';
