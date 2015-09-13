@@ -402,7 +402,7 @@ it under the same terms as Perl itself.
     }
 
     method FontBBox returns List {
-        self<FontBBox>.comb(/< + - >?\d+/).map({ .Int });
+        flat self<FontBBox>.comb(/< + - >?\d+/).map({ .Int });
     }
 
     method !is-prop(Str $prop-name --> Bool) {
