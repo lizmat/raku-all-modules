@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/avuserow/perl6-audio-taglib-simple.git
 	branch = master
-	commit = 42f93c16007b2d708a83269645576f18712175ad
-	parent = 1c2eb7de4ad4666fa861ad6dac632c2b2ca47fa3
-	cmdver = 0.2.0
+	commit = 659480365694e8c8858fd82b373b16500cdc9909
+	parent = 7548fda8d60afc4d0e8d39c22ac2d5b9becaca39
+	cmdver = 0.2.2

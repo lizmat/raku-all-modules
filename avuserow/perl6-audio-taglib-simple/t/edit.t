@@ -34,4 +34,4 @@ for %edits.kv -> $key, $val {
 
 $tl.free();
 
-done;
+done-testing;
