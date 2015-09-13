@@ -1,4 +1,4 @@
-v6;
+use v6;
 use Test;
 use Template::Mustache;
 
@@ -8,7 +8,7 @@ class TestObj {
 
 my $tm = Template::Mustache.new;
 is $tm.render('{{object}}', { object => TestObj.new }),
-    'I am your father!',
+    "I am your father!",
     'Object stringifies';
 
-done;
+done-testing;

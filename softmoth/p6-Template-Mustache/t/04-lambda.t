@@ -1,4 +1,4 @@
-v6;
+use v6;
 use Test;
 use Template::Mustache;
 
@@ -11,5 +11,5 @@ is $m.render('Hello, {{lambda}}!', { lambda => $l.EVAL }),
     "Hello, world!",
     'Interpolate lambda value';
 
-done;
+done-testing;
 # vim:set ft=perl6:
