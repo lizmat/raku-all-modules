@@ -43,7 +43,7 @@ module LibraryCheck {
     sub library-exists(Str $lib --> Bool) is export {
         my $rc = True;  
 
-        my $name = ("a".."z","A".."Z").pick(15).join("");
+        my $name = ("a".."z","A".."Z").flat.pick(15).join("");
         my $f = EVAL("sub $name\(\) is native(\{'$lib'\}) \{ * \}");
         try { 
                 $f(); 

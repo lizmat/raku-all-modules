@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/LibraryCheck.git
 	branch = master
-	commit = a0c8f6a96316071db41bea55f6ed2d2820fa1d1e
-	parent = 959db23746e7c37cca9a96ac1ecbc2d28b9ec5b9
-	cmdver = 0.2.1
+	commit = 2ccdb73dcff66a01172a486c523a951aa4a9cc19
+	parent = 14fed063c6431d45917157a5988da48d7c0f4263
+	cmdver = 0.2.2
