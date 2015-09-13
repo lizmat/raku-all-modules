@@ -158,7 +158,7 @@ package Avro {
       $!name = $hash{'name'};
       $!fullname = $!name;
 
-      my List $ls = $!name.split('.');
+      my List $ls = $!name.split('.').values;
       for $ls.values -> $n {
         X::Avro::FaultyName.new(:source($n)).throw() unless self.valid_name($n);
       }
@@ -359,7 +359,7 @@ package Avro {
     has List $.types;
 
     submethod BUILD(Positional :$types){
-      $!types = $types.map: { parse($_) };
+      $!types = ($types.map({ parse($_) })).values;
       my %encountered;
       for $!types.values -> $schema {
         X::Avro::Union.new("Union not permitted") if $schema ~~ Avro::Union;
@@ -375,7 +375,7 @@ package Avro {
           %encountered{$key} = 1;
         }
       }
-      $!native = $!types.map:{ $_.native() };
+      $!native = ($!types.map:{ $_.native() }).values;
     }
 
     method native(--> List){
@@ -417,15 +417,15 @@ package Avro {
 
     has List $.fields;
 
-    sub create_field(Associative:D $hash --> Avro::Field) { Avro::Field.new(:hash($hash)) }
+    submethod create_field(Associative:D $hash --> Avro::Field) { Avro::Field.new(:hash($hash)) }
 
     submethod BUILD(Associative:D :$hash){
       X::Avro::Record.new(:note("Missing Fields!")).throw() 
         unless $hash{'fields'}:exists;
       my List $ls = $hash{'fields'};
-      $!fields = $ls.map: { create_field($_) }; 
-      $break_lazy = $!fields.elems(); #force the computations --> this perl6 lazy map is obnoxius
-      my $nativesf = $!fields.map:{ $_.native() };
+      $!fields = ($ls.map({ self.create_field($_) })).values; 
+      $break_lazy = $!fields.elems(); # TODO -- no longer needed
+      my $nativesf = $!fields.map({ $_.native() });
       $!native = { 'type' => type, 'name' => self.name(), 'fields' => $nativesf.values };
       $!native{'aliases'} = self.aliases() unless self.aliases() ~~ ();
       $!native{'namespace'} = self.namespace() unless self.namespace() eq "";
@@ -460,6 +460,7 @@ package Avro {
     submethod BUILD(Associative :$hash) {
       X::Avro::Enum.new(:note("Requires symbols")).throw() unless $hash{'symbols'}:exists;
       $!sym = $hash{'symbols'};
+      $!native = Hash.new();
       if $hash{'doc'}:exists {
         $!documentation = $hash{'doc'};
         $!native{'doc'} = $!documentation;

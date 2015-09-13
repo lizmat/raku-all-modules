@@ -58,17 +58,15 @@ my @datas =  True, False, Any, 56, -668, (1 +< 60),"00FF","Hello Me", 'møp', 2.
   [<cabana banana mango>], [], Any, 5, "string","12345678", { "key1" => 12, "key2" => 23 },
   { "key1" => "key", "key2" => 23 }, { "a" => 27, b => "foo"}, {"name" => "Alyssa", "favorite_number" =>  256, favorite_color => Any},
   {"name" => "Ben", "favorite_number" => 7, "favorite_color" => "red"};
-my @zipped = (@schemas Z @datas);
 
-
+my @zipped = zip(@schemas,@datas);
 plan +@schemas;
 
 
 #======================================
 # decode and encode
 #======================================
-
-for @zipped -> $schema, $data {
+for @zipped -> [$schema, $data] {
   my Blob $result = $encoder.encode($schema,$data);
   my $res = $decoder.decode($result,$schema);
   is-deeply $res, $data, to_str($data) ~ " -> correctly encoded & decoded as:"~ $schema.type;

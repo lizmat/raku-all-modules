@@ -1,7 +1,8 @@
 # perl6 Avro support
 
 [![Build Status](https://travis-ci.org/sylvarant/Avro.svg?branch=master)](https://travis-ci.org/sylvarant/Avro)
-Aims to implement the [Avro specification](https://avro.apache.org/docs/current/spec.html) for perl6.
+
+Provides a native perl6 implementation of the [Avro specification](https://avro.apache.org/docs/current/spec.html).
 
 ## TODO
 
@@ -12,7 +13,7 @@ Still to implement:
 
 ## Example
 
-The official [python example ](https://avro.apache.org/docs/current/gettingstartedpython.html) can be written in perl6 as follows.
+The official [python example ](https://avro.apache.org/docs/current/gettingstartedpython.html) can be rewritten in perl6 as follows.
 
 ```Perl6
 use Avro; 
