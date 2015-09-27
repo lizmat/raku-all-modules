@@ -3,7 +3,7 @@
 use v6;
 use Audio::Taglib::Simple;
 
-@*ARGS = @*ARGS.grep(/^"--"/), @*ARGS.grep({ $_ !~~ /^"--"/ });
+@*ARGS = |@*ARGS.grep(/^"--"/), |@*ARGS.grep({ $_ !~~ /^"--"/ });
 
 sub MAIN(*@files, :$title?, :$artist?, :$album?, :$track?) {
     for @files -> $file {
