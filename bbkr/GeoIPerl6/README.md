@@ -1,3 +1,9 @@
+#Warning
+
+This module works with legacy databases and legacy libgeoip C library.
+New GeoIP2 can be accessed through libmaxminddb library that is quite different and I cannot give any timeline when updated version of module will be available.
+
+
 #GeoIP City
 
 Connect to [MaxMind](http://www.maxmind.com/en/home) GeoIP City databases.
