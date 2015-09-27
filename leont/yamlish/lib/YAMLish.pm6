@@ -4,68 +4,136 @@ module YAMLish {
 	grammar Grammar {
 		method parse($, *%) {
 			my $*yaml-indent = '';
+			my %*yaml-anchors;
 			callsame;
 		}
 		method subparse($, *%) {
 			my $*yaml-indent = '';
+			my %*yaml-anchors;
 			callsame;
 		}
 		token version {
-			'%YAML' ' '? <[\d.]>+ \n
+			'%YAML' ' '? <[\d.]>+ <.line-break>
 		}
-		token ws { <[\s] - [\n]> }
 		token TOP {
 			<version>?
 			[ <header> <content> ]+
 			<.footer>
 		}
 		token header { ^^ '---' }
-		token footer { [ \n '...' ]? \n? $ }
-		token content { \n <map> | \n <list> | ' '+ <inline> | ' '+ <block-string> }
-		token map {
-			$*yaml-indent <map-entry>+ % [ \n $*yaml-indent ]
+		token footer { [ <.newline> '...' ]? <.newline>?? $ }
+		token content { <.newline> <map> | <.newline> <list> | <.space>+ <inline> | <.space>+ <block-string> | <.space>+ <plain> }
+
+		token ws {
+			<.space>*
+			[ [ <!after <.alnum>> <.comment> ]? <.newline> <empty-line> ]*
 		}
-		token inline-map {
-			 <map-entry>+ % [ \n $*yaml-indent ]
+		token block-ws {
+			<.space>*
+			[ <!after <.alnum>> <.comment> <.newline> $*yaml-indent <.space>* ]*
 		}
-		token map-entry {
-			<key> <.ws>* ':' <!alpha> <.ws>* <element>
+		token newline {
+			<.space>* <.comment>? <.line-break> [ [ <.space>* <.comment> | <empty-line> ] <.line-break> ]*
 		}
-		token key { <bareword> | <string> }
-		token bareword { <alpha> <[\w.-]>* }
-		token plain {
-			<!before <key> <.ws>* ':'> <alpha> \N*
+		token space {
+			<[\ \t]>
 		}
-		token string {
-			<single-quoted> | <double-quoted>
+		token comment {
+			'#' <-[\x0a\x0d]>*
+		}
+		token line-break {
+			<[\x0A\x0D]> | "\x0D\x0A"
+		}
+		token break {
+			<.line-break> | <.space>
+		}
+		token empty-line {
+			<.indent> <.space>*
+		}
+		token indent {
+			$*yaml-indent
 		}
 
-		token single-quoted {
-			"'" $<value>=[ [ <-[\\']> | "''" ]* ] "'"
+		token nb {
+			<[\x09\x20..\x10FFFF]>
 		}
-		token double-quoted {
-			\" ~ \" [ <str=.quoted-bare> | \\ <str=.quoted-escape> ]*
+
+		token block {
+			[ <.newline> | <?after <.newline>> ]
+			:my $sp;
+			<?before <.indent> $<sp>=' '+ { $sp = $<sp> }>
+			:temp $*yaml-indent ~= $sp;
+			<.indent>
+			[ <list> | <map> ]
 		}
-		token quoted-bare {
-			<-["\\\n]>+
+
+		token map {
+			<map-entry>+ % [ <.newline> <.indent> ]
 		}
-		token quoted-escape {
-			<["\\/abefnrvtz]> | x <xdigit>**2 | u <xdigit>**4 | U<xdigit>**8
+		token map-entry {
+			  <key> <.space>* ':' <?break> <.block-ws> <element>
+			| '?' <.block-ws> <key=.element> <.newline> <.indent>
+			  <.space>* ':' <.space>+ <element>
 		}
 
 		token list {
-			<list-entry>+ % \n
+			<list-entry>+ % [ <.newline> <.indent> ]
 		}
 		token list-entry {
-			$*yaml-indent '-'
+			'-' <?break>
 			[
-				<.ws>* <element>
-			|
 				:my $sp;
 				$<sp>=' '+ { $sp = $<sp> }
 				:temp $*yaml-indent ~= ' ' ~ $sp;
-				<element=inline-map>
+				[ <element=map> | <element=list> ]
+			  ||
+				<.block-ws> <element> <.comment>?
 			]
+		}
+
+		token key {
+			| <inline-plain>
+			| <single-key>
+			| <double-key>
+		}
+		token plainfirst {
+			<-[\-\?\:\,\[\]\{\}\#\&\*\!\|\>\'\"\%\@\`\ \t]>
+			| <[\?\:\-]> <!before <.space> | <.line-break>>
+		}
+		token plain {
+			<.plainfirst> [ <-[\x0a\x0d\:]> | ':' <!break> ]*
+		}
+		regex inline-plain {
+			<.plainfirst> : [ <-[\x0a\x0d\:\,\[\]\{\}]> | ':' <!break> ]* <!after <.space>> : <.space>*
+		}
+		token single-key {
+			"'" $<value>=[ [ <-['\x0a]> | "''" ]* ] "'"
+		}
+		token double-key {
+			\" ~ \" [ <str=.quoted-bare> | \\ <str=.quoted-escape> | <str=.space> ]*
+		}
+
+		token single-quoted {
+			"'" $<value>=[ [ <-[']> | "''" ]* ] "'"
+		}
+		token double-quoted {
+			\" ~ \" [ <str=.quoted-bare> | \\ <str=.quoted-escape> | <str=foldable-whitespace> | <str=space> ]*
+		}
+		token quoted-bare {
+			<-space-["\\\n]>+
+		}
+		token quoted-escape {
+			<["\\/abefnrvtzNLP_\ ]> | x <xdigit>**2 | u <xdigit>**4 | U<xdigit>**8
+		}
+		token foldable-whitespace {
+			<.space>* <.line-break> <.space>*
+		}
+		token block-string {
+			$<kind>=<[|\>]> <.space>* <.comment>? <.line-break>
+			:my $sp;
+			<?before <.indent> $<sp>=' '+ { $sp = $<sp> }>
+			:temp $*yaml-indent ~= $sp;
+			[ <.indent> $<content>=[ \N* ] ]+ % <.line-break>
 		}
 
 		token yes {
@@ -77,49 +145,106 @@ module YAMLish {
 		token boolean {
 			<yes> | <no>
 		}
+		token inline-map {
+			'{' <.ws> <pairlist> <.ws> '}'
+		}
+		rule pairlist {
+			<pair>* % \,
+		}
+		rule pair {
+			<key> ':' [ <inline> || <inline=inline-plain> ]
+		}
 
-		proto token inline { * }
+		token inline-list {
+			'[' <.ws> <inline-list-inside> <.ws> ']'
+		}
+		rule inline-list-inside {
+			[ <inline> || <inline=inline-plain> ]* % \,
+		}
 
-		token inline:sym<number> {
+		token identifier-char {
+			<[\x21..\x7E\x85\xA0..\xD7FF\xE000..\xFFFD\x10000..\x10FFFF]-[\,\[\]\{\}]>+
+		}
+		token identifier {
+			<identifier-char>+ <!before <identifier-char> >
+		}
+
+		token inline {
+			| <int>
+			| <hex>
+			| <oct>
+			| <float>
+			| <inf>
+			| <nan>
+			| <yes>
+			| <no>
+			| <null>
+			| <inline-map>
+			| <inline-list>
+			| <single-quoted>
+			| <double-quoted>
+			| <alias>
+			| <datetime>
+			| <date>
+		}
+
+		token int {
+			'-'?
+			[ 0 | <[1..9]> <[0..9]>* ]
+			<|w>
+		}
+		token hex {
+			:i
+			'-'?
+			'0x'
+			$<value>=[ <[0..9A..F]>+ ]
+			<|w>
+		}
+		token oct {
+			:i
+			'-'?
+			'0o'
+			$<value>=[ <[0..7]>+ ]
+			<|w>
+		}
+		token float {
 			'-'?
 			[ 0 | <[1..9]> <[0..9]>* ]
 			[ \. <[0..9]>+ ]?
 			[ <[eE]> [\+|\-]? <[0..9]>+ ]?
 			<|w>
 		}
-		token inline:sym<yes> { <yes> }
-		token inline:sym<no> { <no> }
-		token inline:sym<null> { '~' }
-		token inline:sym<plain> { <plain> }
-		token inline:sym<empty-map> { '{}' }
-		token inline:sym<empty-list> { '[]' }
-		token inline:sym<string> { <string> }
-		token inline:sym<datetime> {
+		token inf {
+			:i
+			$<sign>='-'?
+			'.inf'
+		}
+		token nan {
+			:i '.nan'
+		}
+		token null {
+			'~'
+		}
+		token alias {
+			'*' <identifier>
+		}
+		token datetime {
 			$<year>=<[0..9]>**4 '-' $<month>=<[0..9]>**2 '-' $<day>=<[0..9]>**2
 			[ ' ' | 'T' ]
 			$<hour>=<[0..9]>**2 '-' $<minute>=<[0..9]>**2 '-' $<seconds>=<[0..9]>**2
 			$<offset>=[ <[+-]> <[0..9]>**1..2]
 		}
-		token inline:sym<date> {
+		token date {
 			$<year>=<[0..9]>**4 '-' $<month>=<[0..9]>**2 '-' $<day>=<[0..9]>**2
 		}
 
-
-		token element { <inline> | <block> | <block-string> }
-
-		token block {
-			[ \n | <after \n> ]
-			:my $sp;
-			<before $*yaml-indent $<sp>=' '+ { $sp = $<sp> }>
-			:temp $*yaml-indent ~= $sp;
-			[ <list> | <map> ]
+		token element {
+			   <anchor>? <.block-ws> [ <value=block> | <value=block-string> ]
+			|| [ <anchor> <.space>+ ]? <value=inline> <.comment>?
+			|| [ <anchor> <.space>+ ]? <value=plain> <.comment>?
 		}
-		token block-string {
-			$<kind>=<[|\>]> \n
-			:my $sp;
-			<before $*yaml-indent $<sp>=' '+ { $sp = $<sp> }>
-			:temp $*yaml-indent ~= $sp;
-			[ $*yaml-indent $<content>=\N* ]+ % \n
+		token anchor {
+			'&' <identifier>
 		}
 	}
 
@@ -142,7 +267,7 @@ module YAMLish {
 		method map-entry($/) {
 			make $<key>.ast => $<element>.ast
 		}
-		method inline-map($/) {
+		method cuddly-map($/) {
 			self.map($/);
 		}
 		method key($/) {
@@ -154,42 +279,109 @@ module YAMLish {
 		method list-entry($/) {
 			make $<element>.ast;
 		}
-		method string($/) {
-			self!first($/);
+		method space($/) {
+			make ~$/;
 		}
 		method single-quoted($/) {
+			make $<value>.Str.subst(/<Grammar::foldable-whitespace>/, ' ', :g).subst("''", "'", :g);
+		}
+		method single-key($/) {
 			make $<value>.Str.subst("''", "'", :g);
 		}
 		method double-quoted($/) {
 			make @<str> == 1 ?? $<str>[0].ast !! @<str>».ast.join;
 		}
-		method bareword($/) {
-			make ~$/;
+		method double-key($/) {
+			self.double-quoted($/);
+		}
+		method foldable-whitespace($/) {
+			make ' ';
 		}
 		method plain($/) {
 			make ~$/;
 		}
+		method inline-plain($/) {
+			make $/.Str.subst(/ <[\ \t]>+ $/, '');
+		}
 		method block-string($/) {
 			 my $ret = @<content>.map(* ~ "\n").join('');
-			 $ret.=subst(/ \n <!before ' ' | $> /, ' ', :g) if $<kind> eq '>';
+			 $ret.=subst(/ <[\x0a\x0d]> <!before ' ' | $> /, ' ', :g) if $<kind> eq '>';
 			 make $ret;
 		}
+
+		method !save($name, $node) {
+			%*yaml-anchors{$name} = $node.ast;
+		}
 		method element($/) {
+			make $<value>.ast;
+			self!save($<anchor>.ast, $/) if $<anchor>;
+		}
+
+		method inline-map($/) {
+			make $<pairlist>.ast;
+		}
+		method pairlist($/) {
+			make $<pair>».ast.hash.item;
+		}
+		method pair($/) {
+			make $<key>.ast => $<inline>.ast;
+		}
+		method identifier($/) {
+			make ~$/;
+		}
+		method inline-list($/) {
+			make $<inline-list-inside>.ast
+		}
+		method inline-list-inside($/) {
+			make [ @<inline>».ast ];
+		}
+
+		method inline($/) {
 			self!first($/);
 		}
-		method inline:sym<yes>($/) { make True }
-		method inline:sym<no>($/) { make False }
-		method inline:sym<number>($/) { make +$/.Str }
-		method inline:sym<string>($/) { make $<string>.ast }
-		method inline:sym<null>($/) { make Any }
-		method inline:sym<empty-map>($/) { make {} }
-		method inline:sym<empty-list>($/) { make [] }
-		method inline:sym<plain>($/) { make $<plain>.ast }
-		method inline:sym<bareword>($/) { make $<bareword>.ast }
-		method inline:sym<datetime>($/) { make DateTime.new(|$/.hash».Int)}
-		method inline:sym<date>($/) { make Date.new(|$/.hash».Int)}
+
+		method inf($/) {
+			make $<sign> ?? -Inf !! Inf;
+		}
+		method nan($/) {
+			make NaN;
+		}
+		method yes($/) {
+			make True;
+		}
+		method no($/) {
+			make False;
+		}
+		method int($/) {
+			make $/.Str.Int;
+		}
+		method hex($/) {
+			make :16($<value>.Str);
+		}
+		method oct($/) {
+			make :8($<value>.Str);
+		}
+		method float($/) {
+			make +$/.Str;
+		}
+		method null($/) {
+			make Any;
+		}
+		method alias($/) {
+			make %*yaml-anchors{~$<identifier>.ast} // die "Unknown anchor " ~ $<identifier>.ast;
+		}
+		method datetime($/) {
+			make DateTime.new(|$/.hash».Int);
+		}
+		method date($/) {
+			make Date.new(|$/.hash».Int);
+		}
 
 		method block($/) { make $/.values.[0].ast }
+
+		method anchor($/) {
+			make $<identifier>.ast;
+		}
 
 		method quoted-bare ($/) { make ~$/ }
 
@@ -204,7 +396,13 @@ module YAMLish {
 				'r' => "\r",
 				'v' => "\x0b",
 				'z' => "\0",
-				'"' => "\"";
+				'"' => "\"",
+				' ' => ' ',
+				"\n"=> "\n",
+				'N' => "\x85",
+				'_' => "\xA0",
+				'L' => "\x2028",
+				'P' => "\x2029";
 		method quoted-escape($/) {
 			if $<xdigit> {
 				make chr(:16($<xdigit>.join));

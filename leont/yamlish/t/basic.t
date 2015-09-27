@@ -6,17 +6,27 @@ use YAMLish;
 
 my $text1 = q:heredoc/END/;
 ---
-- 1
+- &first 1
 -
   - 1
-  - 2
+  - 0x10
 -
   foo: bar
+  
   baz: quz
+  ? baaz
+  : buuz
+- { "baz": 1 }
+- [
+    *first
+  ]
+- - 1
+  - 2
 ...
 END
+
 my $match = load-yaml($text1);
-is-deeply($match, [1, [1, 2], {:baz("quz"), :foo("bar")}], "First test matches");
+is-deeply($match, [1, [1, 16], {:baz("quz"), :foo("bar"), :baaz("buuz")}, { :baz(1) }, [ 1 ], [1, 2] ], "First test matches");
 
 
 
@@ -34,6 +44,8 @@ dump:
   - '      01G   17C   00C        '
   - '      G A G G N R R N R      '
   - '        G     R     G        '
+comment: "foo
+bar"
 ...
 END
 my $expected2 = {
@@ -50,6 +62,7 @@ my $expected2 = {
 		"      G A G G N R R N R      ",
 		"        G     R     G        ",
 	],
+	comment => "foo bar",
 }
 is-deeply(load-yaml($text2), $expected2, "Second test matches");
 
@@ -58,8 +71,10 @@ my $text3 = q:heredoc/END/;
 ---
 User: ed
 Fatal: "Unknown variable \"bar\""
+  #comment
 Stack:
   - file: TopClass.pl
+  #comment 2
     line: 23
     code: "x = MoreObject(\"345\n\")"
   -
@@ -87,4 +102,4 @@ my $expected3 = {
 is-deeply(load-yaml($text3), $expected3, "Third test matches");
 is-deeply(load-yamls($text3), [ $expected3 ], "Third test matches in multi-doc mode too");
 
-done();
+done-testing();
