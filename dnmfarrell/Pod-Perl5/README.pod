@@ -2,17 +2,15 @@
 
 =head1 NAME
 
-Pod::Perl5
+Pod::Perl5 - a parser for Perl 5 pod
 
 =head1 VERSION
 
-0.09
+0.13
 
 =head1 DESCRIPTION
 
-This is a Perl 6 module for parsing Perl 5 pod. The grammar for this module lives at C<Pod::Perl5::Grammar>.
-The parser can parse inline pod and standalone F<*.pod> files and supports all pod syntax. It also comes with
-a pod-to-html action class for the grammar C<Pod::Perl5::ToHTML>.
+This is a Perl 6 module for parsing Perl 5 pod. The grammar for this module lives at C<Pod::Perl5::Grammar>. The parser can parse inline pod and standalone F<*.pod> files and supports all pod syntax. It also comes with a pod-to-html and pod-to-markdown action classes for (C<Pod::Perl5::ToHTML>, C<Pod::Perl5::ToMarkdown>).
 
 =head1 SYNOPSIS
 
@@ -23,6 +21,9 @@ a pod-to-html action class for the grammar C<Pod::Perl5::ToHTML>.
 
   my $html_from_string = Pod::Perl5::string-to-html($pod);
   my $html_from_file   = Pod::Perl5::file-to-html('/some.pod');
+
+  my $html_from_string = Pod::Perl5::string-to-markdown($pod);
+  my $html_from_file   = Pod::Perl5::file-to-markdown('/some.pod');
 
 =head2 INSTALL
 
@@ -38,11 +39,11 @@ The parser has a decent test suite. You'll need Perl 5 and Perl 6 installed to r
 
 Or run individual test files with C<perl6>:
 
-  $ perl6 t/01_basic.t
+  $ perl6 t/Perl5.5
 
 =head1 AUTHOR
 
-David Farrell (C) 2015
+David Farrell E<copy> 2015
 
 =head1 LICENSE
 

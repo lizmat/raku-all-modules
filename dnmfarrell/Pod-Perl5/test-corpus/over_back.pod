@@ -1,31 +1,16 @@
-
-
 =over
 
 =item 1 bullet point one
- 
 
-  
-=item * bullet point two
-  
-=item some_code() bullet point three
+=item 2 bullet point two
 
+=item * bullet point three
 
-=item NoPara
+=item *
 
-=item NoParaTrailingWhitespace  
+=item 0 
 
-=item ParaNextLine
-
-This is the para for the bullet point
-
-=item ParaNextLineTrailWhitespace 
-
-This is the para for the bullet point after trailing whitespace
-
-=pod
-
-=encoding utf8
+=item 345
 
 paragraph one
 
@@ -33,49 +18,43 @@ paragraph one
 	verbatim paragraph one
 	verbatim paragraph one
 
-
 paragraph two
 paragraph two
 paragraph two
 paragraph two
 
+	verbatim paragraph two
+	verbatim paragraph two
+	verbatim paragraph two
 
-	verbatim paragraph two
-	verbatim paragraph two
-	verbatim paragraph two
+=item *
 
 =back
 
 =over 4
 
-=item 1
+=item * one
 
-=item 2
+=item * two
 
-=item 3
+=item * three
 
 =back
 
-  
 =over 4
 
-=item outer list bullet one
+=item 1 outer list bullet one
 
-
-=item outer list bullet two
-
+=item 2 outer list bullet two
 
 =over 8
 
-=item inner list bullet one
+=item 1 inner list bullet one
 
-
-=item inner list bullet two
-
-=back
-
-=item outer list bullet three
-
+=item 2 inner list bullet two
 
 =back
 
+=item 3 outer list bullet three
+
+=back

@@ -28,7 +28,7 @@ This is a Perl6 module for parsing B<Perl 5> pod. The grammar for this module li
 
 =head1 AUTHOR
 
-David Farrell (C) 2015
+David Farrell E<copy> 2015
 
 =head1 LICENSE
 
@@ -40,7 +40,9 @@ FreeBSD, see LICENSE file
 
 =item * L<perlpod documentation|http://perldoc.perl.org/perlpod.html> is the reference spec for this grammar
 
-=item * L<perlvar/DESCRIPTION> should convert into a perldoc link to perlvar with a section
+=item *
+
+L<perlvar/DESCRIPTION> should convert into a perldoc link to perlvar with a section
 
 =over 4
 

@@ -12,3 +12,9 @@ This paragraph has inline I<italicised
 words> breaking across a newline
 
 I<bolded B<words> within italics!>
+
+Run this C<program>
+
+This should be escaped: E<gt>
+
+X<Something> to be > indexed

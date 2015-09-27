@@ -1,0 +1,4 @@
+lib/Pod/Perl5/PerlTricks/*
+t/PerlTricks/*
+test-corpus/PerlTricks/*
+.vimrc.local

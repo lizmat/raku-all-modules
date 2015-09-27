@@ -1,16 +1,12 @@
-
 =pod
 
-
 In Perl5 pod, ordinary paragraphs are streams of text separated by an empty line.
-
 
   use strict;
   print "Hello, World!\n";
 
+  some more code
 
 You can use formatting codes in ordinary paragraphs, for bold, italic,
 "code-style", hyperlinks, and more. Such codes are explained in the
 "Formatting Codes" section, below.
-
-
