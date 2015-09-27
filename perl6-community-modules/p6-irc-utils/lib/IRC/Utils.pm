@@ -758,7 +758,7 @@ our %NAME2NUMERIC;
     my Int @keys  = map { +$_ }, %NUMERIC2NAME.keys;
     my Str @vals  = %NUMERIC2NAME.values;
 
-    %NAME2NUMERIC = @vals Z @keys;
+    %NAME2NUMERIC = flat @vals Z @keys;
 }
 
 sub numeric_to_name(Int $code) returns Str is export {
@@ -982,7 +982,7 @@ sub matches_mask(Str $mask is copy, Str $match is copy, Str $mapping? is copy) i
 }
 
 sub parse_user(Str $user) returns List is export {
-    return $user.split(/<[!@]>/);
+    return $user.split(/<[!@]>/).list;
 }
 
 sub has_color(Str $string) returns Bool is export {

@@ -3,7 +3,7 @@ use v6;
 use Test;
 use IRC::Utils;
 
-plan 25;
+plan 17;
 
 # Verify that the public-facing API is as it should be
 ok(defined(&numeric_to_name),    'Check that numeric_to_name() is exported');
