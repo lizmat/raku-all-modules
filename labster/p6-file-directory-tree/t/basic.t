@@ -23,6 +23,6 @@ say "# ", "$tmpdir/$tmpfn".IO.dir;
 ok rmtree($tmppath.child($tmpfn)), "rmtree runs";
 ok $tmppath.child($tmpfn).e.not, "rmtree successfully deletes temp files";
 
-done;
+done-testing;
 
 # vim: expandtab shiftwidth=4 ft=perl6
