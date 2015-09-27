@@ -225,10 +225,10 @@ EOP
 
 #   title "Range", "plan is not lazy", "RT#124059";
 
-{   title "Type", "Int \$i cannot be Int.Range.max", "RT#124082";
+{   title "Type", "Int \$i cannot be Int.Range.max", "RT#61602"; # RT#124082
     # Type check failed in assignment to '$i'; expected 'Int' but got 'Num'
     #   in block <unit> at t4156.pl:1
-    test (qr{expected 'Int' but got 'Num'},
+    test (qr{expected '?Int'? but got '?Num'?},
           q{my Int $i = Int.Range.max});
     }
 
