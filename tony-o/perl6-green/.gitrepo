@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-green.git
+	branch = master
+	commit = 0c6db61436e3966ebeb4dae78950cb787297c9b3
+	parent = 8194f65be8e715394f61db4911aa297ca47fe93d
+	cmdver = 0.2.2

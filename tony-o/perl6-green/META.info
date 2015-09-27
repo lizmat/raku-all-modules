@@ -1,0 +1,12 @@
+{
+  "name"        : "Green",
+  "version"     : "0.1.0",
+  "description" : "Parallel testing utility, it's really great",
+  "auth"        : "github:tony-o",
+  "authors"     : [ "Tony O" ],
+  "provides"    : {
+    "Green" : "lib/Green.pm6"
+   },
+  "source-url"  : "git://github.com/tony-o/perl6-green.git"
+} 
+
