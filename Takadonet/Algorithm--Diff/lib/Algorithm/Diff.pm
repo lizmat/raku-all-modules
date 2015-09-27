@@ -53,7 +53,7 @@ sub _withPositionsOfInInterval( @aCollection, $start, $end, &keyGen )
 # This is where the bulk (75%) of the time is spent in this module, so
 # try to make it fast!
 
-our sub _replaceNextLargerWith( @array is rw, $aValue, $high is copy )
+our sub _replaceNextLargerWith( @array, $aValue, $high is copy )
 {
     $high ||= +@array-1;
 
@@ -420,7 +420,7 @@ sub LCS_length( @a, @b, &keyGen = &default_keyGen ) is export
 sub LCSidx( @a, @b, &keyGen = &default_keyGen ) is export
 {
      my @match = _longestCommonSubsequence( @a, @b, 0, &keyGen );
-     my $amatch_indices = (^@match).grep: { @match[$^a].defined };
+     my $amatch_indices = (^@match).grep({ @match[$^a].defined }).list;
      my $bmatch_indices = @match[@$amatch_indices];
      # return list references, @arrays will flatten
      return ($amatch_indices, $bmatch_indices);

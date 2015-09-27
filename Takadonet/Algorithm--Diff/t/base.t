@@ -48,9 +48,9 @@ is(  @result.grep( *.defined ).elems(),
 # result has b[] line#s keyed by a[] line#
 #say "result = " ~ @result;
 
-my @aresult = map { @result[$_].defined ?? @a[$_] !! () } , 0..^@result;
+my @aresult = map { @result[$_].defined ?? @a[$_] !! slip() } , 0..^@result;
 
-my @bresult = map { @result[$_].defined ?? @b[@result[$_]]  !! () } , 0..^@result;
+my @bresult = map { @result[$_].defined ?? @b[@result[$_]]  !! slip() } , 0..^@result;
 
 is( ~@aresult, $correctResult,
   "_longestCommonSubsequence @a results match expected results" );
