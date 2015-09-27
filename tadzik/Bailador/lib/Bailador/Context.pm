@@ -13,7 +13,9 @@ class Bailador::Context {
                 # reset response to default
                 $!response.code    = 404;
                 $!response.content = 'Not found';
+                $!response.headers = {};
                 $!response.headers<Content-Type> = 'text/html';
+                $!response.cookies = ();
                 $!request.env = $!env = $value;
             },
         );
