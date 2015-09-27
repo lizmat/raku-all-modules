@@ -1,0 +1,12 @@
+{
+    "name" : "UNIX::Privileges",
+    "version" : "0.1.0",
+    "author" : "github:carbin",
+    "description" : "A module for handling UNIX Privileges",
+    "depends" : [ ],
+    "provides" : {
+        "UNIX::Privileges" : "lib/UNIX/Privileges.pm6"
+    },
+    "source-url" : "git://github.com/carbin/p6-unix-privileges.git"
+}
+

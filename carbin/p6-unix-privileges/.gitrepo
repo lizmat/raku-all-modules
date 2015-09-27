@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/carbin/p6-unix-privileges.git
+	branch = master
+	commit = f350ad2bb88775be3ff10cc7d8582d8b5b5e5274
+	parent = bf0a84e59a29adc7d4487f6778e182840fa26c44
+	cmdver = 0.2.2
