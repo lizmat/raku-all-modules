@@ -2,18 +2,27 @@
 
 A Perl 6 module for encoding / decoding URIs
 
-=head2 Synopsis
+=head1 Synopsis
 
     use URI::Encode;
 
-    my $encoded_uri = uri_encode('www.example.com/');
-    my $decoded_uri = uri_decode('www.example.com%2f/a%20new%20way');
+    # for encoding whole URIs, ignores reserved chars: #$&+,/:;=?@
+    my $encoded_uri = uri_encode('http://www.example.com/?name=john doe&age=54');
 
-=head2 Author
+    # encode every reserved char
+    my $encoded_uri_component = uri_encode_component('some text/to encode+ safely');
 
-David Farrell
+    # remove percent encoding
+    my $decoded_uri = uri_decode(http://www.example.com/?name=john%20doe&age=54');
 
-=head2 License
+    # provided for symmetry, is the same as decode_uri()
+    my $decoded_component = uri_decode_component('some%20text%2Fto%20%2B%20safely');
+
+=head1 Author
+
+David Farrell E<copy> 2015
+
+=head1 License
 
 FreeBSD - see LICENSE
 
