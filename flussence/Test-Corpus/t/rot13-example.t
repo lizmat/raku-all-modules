@@ -2,8 +2,8 @@ use v6;
 use Test::Corpus;
 
 sub rot13(Str $in) {
-    $in.trans('a'..'z' => ['n'..'z', 'a'..'m'])\
-       .trans('A'..'Z' => ['N'..'Z', 'A'..'M']);
+    $in.trans('A..Z' => 'N..ZA..M')\
+       .trans('a..z' => 'n..za..m');
 }
 
-run-tests(simple-test(&rot13));
+run-tests(&rot13);
