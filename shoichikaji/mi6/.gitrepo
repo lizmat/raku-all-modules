@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/shoichikaji/mi6.git
+	branch = master
+	commit = e13b9a67ad15033e206ae69d6618aca74b013f58
+	parent = 23fdf3f4060f0ac0fd791619d4c1c0017add1ef2
+	cmdver = 0.2.2
