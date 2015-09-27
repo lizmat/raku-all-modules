@@ -27,8 +27,8 @@ is %res<time>[0],   0, 'time starts at 0';
 is %res<time>[*-1], 3, '... and it integrated up to the end time';
 
 is        %res<b>[0],   0, 'b starts with the right initial value';
-is_approx %res<b>[*-1], 6, '... and got a roughly working result';
+is-approx %res<b>[*-1], 6, '... and got a roughly working result';
 
 # TODO: test various error conditions
 
-done;
+done-testing;
