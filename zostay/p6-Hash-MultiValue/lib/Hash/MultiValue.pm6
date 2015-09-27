@@ -2,9 +2,7 @@ unit class Hash::MultiValue is Associative;
 
 use v6;
 
-=TITLE Hash::MultiValue
-
-=SUBTITLE Store multiple values per key, but act like a regular hash too
+=NAME Hash::MultiValue - Store multiple values per key, but act like a regular hash too
 
 =begin SYNOPSIS
 
@@ -158,7 +156,7 @@ method ASSIGN-KEY($key, $value) {
     $value;
 }
 
-# Not supported, since Pair values can't be bound
+# Not supported yet
 # method BIND-KEY($key, $value is rw) { 
 #     @!all-pairs = @!all-pairs.grep(*.key !eqv $key);
 #     @!all-pairs.push: $key => $value;
@@ -292,17 +290,17 @@ This adds new pairs to the list. Any pairs given with a key matching an existing
 
 =end pod
 
-method push(*@values) {
+method push(*@values, *%values) {
     my %new-singles;
     my ($previous, Bool $has-previous);
-    for @values -> $v {
+    for flat @values, %values.pairs -> $v {
         if $has-previous {
             self.add-pairs: $previous => $v;
             %new-singles{ $previous } = $v;
 
             $has-previous--;
         }
-        elsif $v ~~ Enum {
+        elsif $v ~~ Pair {
             self.add-pairs: $v.key => $v.value;
             %new-singles{ $v.key } = $v.value;
         }
@@ -313,10 +311,10 @@ method push(*@values) {
     }
 
     if ($has-previous) {
-        warn "Training item in Hash::MultiValue.push";
+        warn "Trailing item in Hash::MultiValue.push";
     }
 
-    %!singles = flat %!singles, %new-singles;
+    %!singles = %!singles.Slip, %new-singles.Slip;
 }
 
 # For future consideration

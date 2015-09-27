@@ -212,7 +212,7 @@ for @tests -> $test {
         is %t.perl, 'Hash::MultiValue.from-pairs(:a(7), :b(8), :b(9), :c(10), :d(6), :e(11), :e(12), :f(13))', ".perl"; 
         is %t.gist, 'Hash::MultiValue.from-pairs(a => 7, b => 8, b => 9, c => 10, d => 6, e => 11, e => 12, f => 13)', ".gist"; 
 
-        %t.push: (a => 14, 'c', 15, e => 16);
+        %t.push: a => 14, 'c', 15, 'e' => 16;
 
         is %t<a>, 14, 'a = 14';
         is %t<b>, 9, 'b = 9';
