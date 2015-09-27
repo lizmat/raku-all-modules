@@ -86,6 +86,4 @@ plan *;
         "Successfully got Bool::False";
 }
 
-
-
-done;
+done-testing;
