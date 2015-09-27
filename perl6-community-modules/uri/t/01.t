@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 43;
+plan 44;
 
 use URI;
 ok(1,'We use URI and we are still alive');
@@ -108,5 +108,7 @@ try {
 is($url_2_valid, 0, 'validating parser rejected bad URI');
 
 nok(URI.new('foo://bar.com').port, '.port without default value lives');
+
+lives-ok { URI.new('/foo/bar').port }, '.port on relative URI lives';
 
 # vim:ft=perl6

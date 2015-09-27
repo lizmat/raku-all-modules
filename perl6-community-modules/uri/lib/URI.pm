@@ -135,7 +135,7 @@ method new(Str $uri_pos1?, Str :$uri, :$is_validating) {
 }
 
 method scheme {
-    return ~$!scheme.lc;
+    return ~($!scheme || '').lc;
 }
 
 method authority {
