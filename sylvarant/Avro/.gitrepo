@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sylvarant/Avro.git
 	branch = master
-	commit = d6172f67df91499d27969dac77f5092b0b55e91e
-	parent = 33b2b6ec5fe46e1b3213b41536c18dfdfedaeba2
+	commit = 17b86c53f1fb97be0181ef23620aa0e62b462a02
+	parent = 6e4827e85e8e6c36c0290519a77037d2bf06f46d
 	cmdver = 0.2.2

@@ -188,7 +188,7 @@ package Avro {
 
     also does Documented;
      
-    has EnumMap $.native;
+    has Hash $.native;
     has Str $.name;
     has Avro::Schema $.type;
     has $.default;
@@ -235,8 +235,8 @@ package Avro {
 
     has Str $.type;
 
-    method native(--> EnumMap){
-      return EnumMap.new("type",self.type()); 
+    method native(--> Hash){
+      return Hash.new("type",self.type()); 
     }
 
     method is_valid_default(Cool:D $default){ ... }
@@ -298,10 +298,10 @@ package Avro {
       X::Avro::Array.new(:note("Requires values")).throw() unless $hash{'items'}:exists;
       $!items = parse($hash{'items'});
       my Iterable $other = $!items.native();
-      $!native = EnumMap.new("type",type,"items",$other);
+      $!native = Hash.new("type",type,"items",$other);
     }
     
-    method native(--> EnumMap){
+    method native(--> Hash){
       return $!native;
     }
 
@@ -330,10 +330,10 @@ package Avro {
       X::Avro::Schema.new(:note("Requires values")).throw() unless $hash{'values'}:exists;
       $!values = parse($hash{'values'});
       my Iterable $other = $!values.native();
-      $!native = EnumMap.new("type",type,"values",$other);
+      $!native = Hash.new("type",type,"values",$other);
     }
 
-    method native(--> EnumMap){
+    method native(--> Hash){
       return $!native;
     }
 
