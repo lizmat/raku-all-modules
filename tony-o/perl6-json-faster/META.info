@@ -1,0 +1,18 @@
+{
+    "perl"        : "v6.0.0",
+    "name"        : "JSON::Faster",
+    "version"     : "*",
+    "description" : "[Much] faster to-json function.",
+    "provides"    : {
+        "JSON::Faster" : "lib/JSON/Faster.pm6"
+    },
+    "auth"    : "github:tony-o",
+    "authors" : [
+        "Tony O'Dell"       
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/tony-o/perl6-json-faster/issues"
+    },
+    "source-url"  : "git://github.com/tony-o/perl6-json-faster.git"
+}
+
