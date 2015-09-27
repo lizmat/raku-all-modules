@@ -21,10 +21,15 @@ This is an implementation of bcrypt for Perl 6
 
  - `gensalt(Int $rounds = 12)`
 
-	Generates a salt
+	Generates a salt seeded with random data
 	The generated salt includes a prefix specifying the number of rounds
 	that the password will be hashed with when the returned salt is 
 	passed to `hash`
+
+ - `hash(Str $password, Int $rounds = 12)`
+
+	A convenience method for generating a hash
+	Automatically generates the salt used by calling `gensalt`
 
  - `hash(Str $password, Str $salt)`
 

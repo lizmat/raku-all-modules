@@ -53,34 +53,39 @@ END {
 sub crypt(Str $key, Str $setting)
 is native(&library) returns Str { ... }
 
-sub crypt_gensalt(Str $prefix, int32 $count, Str $input, int32 $size)
+sub crypt_gensalt(Str $prefix, int32 $count, Buf $input, int32 $size)
 is native(&library) returns Str { ... }
+
+sub crypt_ptr(Str $key, Pointer $setting)
+is native(&library) is symbol('crypt') returns Str { ... }
+
+sub crypt_gensalt_ptr(Str $prefix, int32 $count, Buf $input, int32 $size)
+is native(&library) is symbol('crypt_gensalt') returns Pointer { ... }
 
 class Crypt::Bcrypt {
 	
-	sub rand_chars(Int $chars = 16) returns Str {
-		my $bin = $urandom.read($chars);
-		return $bin.list.fmt('%c', '');
-	}
-
 	method gensalt(Int $rounds = 12) returns Str {
 		# lower limit is log2(2**4 = 16) = 4
 		# upper limit is log2(2**31 = 2147483648) = 31
-		die "rounds must be between 4 and 31"
-			unless $rounds ~~ 4..31;
-
-		my $salt = rand_chars();
-		return crypt_gensalt('$2a$', $rounds, $salt, 128);
+		die "rounds must be between 4 and 31" unless $rounds ~~ 4..31;
+		return crypt_gensalt('$2a$', $rounds, $urandom.read(16), 128);
 	}
 
-	method hash(Str $password, Str $salt) returns Str {
-		# bcrypt limits passwords to 72 characters
-		return crypt($password.substr(0, 72), $salt);
+	method !gensalt_ptr(Int $rounds = 12) returns Pointer {
+		die "rounds must be between 4 and 31" unless $rounds ~~ 4..31;
+		return crypt_gensalt_ptr('$2a$', $rounds, $urandom.read(16), 128);
+	}
+
+	multi method hash(Str $password, Int $rounds = 12) returns Str {
+		return crypt_ptr($password, self!gensalt_ptr($rounds));
+	}
+
+	multi method hash(Str $password, Str $salt) returns Str {
+		return crypt($password, $salt);
 	}
 
 	method compare(Str $password, Str $hash) returns Bool {
-		return Crypt::Bcrypt.hash($password, $hash)
-		eq $hash;
+		return Crypt::Bcrypt.hash($password, $hash) eq $hash;
 	}
 }
 

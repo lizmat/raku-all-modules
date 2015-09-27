@@ -2,11 +2,13 @@ use v6;
 use Test;
 use Crypt::Bcrypt;
 
-plan 7;
+plan 9;
 
 ok Crypt::Bcrypt.new(), 'module loads';
 ok Crypt::Bcrypt.gensalt(), 'gensalt called';
 ok Crypt::Bcrypt.hash(Str.new(), Crypt::Bcrypt.gensalt()), 'hash called';
+ok Crypt::Bcrypt.hash(Str.new()), 'hash called with 1 param';
+ok Crypt::Bcrypt.hash(Str.new(), 7), 'hash called with rounds';
 
 my Crypt::Bcrypt $bc .= new();
 ok $bc, 'object created';

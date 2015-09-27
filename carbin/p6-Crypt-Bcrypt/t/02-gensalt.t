@@ -25,6 +25,4 @@ lives-ok { $bc.gensalt(4) }, 'lives with 4 rounds';
 lives-ok { $bc.gensalt(31) }, 'lives with 31 rounds';
 dies-ok { $bc.gensalt(32) }, 'dies with 32 rounds';
 
-done();
-
 # vim: ft=perl6

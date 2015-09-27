@@ -4,7 +4,7 @@ use Crypt::Bcrypt;
 
 plan 19;
 
-my $hash = Crypt::Bcrypt.hash("test", Crypt::Bcrypt.gensalt());
+my $hash = Crypt::Bcrypt.hash("test");
 ok Crypt::Bcrypt.compare("test", $hash), 'hash matches';
 nok Crypt::Bcrypt.compare("testing", $hash), 'hash correctly does not match';
 
@@ -34,7 +34,7 @@ ok Crypt::Bcrypt.compare('Perl 6', '$2a$15$FPbnJKF1j70EbrGN89Tt6.bbp2qg0EGs4B04T
 
 # would be nice to test more rounds but this becomes too slow on some hardware
 
-$hash = Crypt::Bcrypt.hash('MQyKyjdvI5kp', Crypt::Bcrypt.gensalt());
+$hash = Crypt::Bcrypt.hash('MQyKyjdvI5kp');
 ok Crypt::Bcrypt.compare('MQyKyjdvI5kp', $hash), 'matches known hash';
 nok Crypt::Bcrypt.compare('MQyKyjdvI5k', $hash), 'letter short at end';
 nok Crypt::Bcrypt.compare('QyKyjdvI5kp', $hash), 'letter short at beginning';
