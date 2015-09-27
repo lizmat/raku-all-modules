@@ -6,7 +6,7 @@
 
     class Signature { ... }
 
-A signature is a static description of the C<parameter|Parameter> list
+A signature is a static description of the L<parameter|Parameter> list
 of a code object.  That is, it describes what and how many arguments
 you need to pass to the code or function in order to call it.
 
@@ -17,7 +17,7 @@ a L<Capture>, to the signature.
 
 Signatures appear in parenthesis after subroutine and method names, on
 blocks after a C<< -> >> or C<< <-> >> arrow, as the input to
-L<variable declarators|language/variables.html#Variable_Declarators_and_Scope>
+L<variable declarators|/language/variables#Variable_Declarators_and_Scope>
 like L<C<my>>, or as a separate term starting with a colon.
 
 =begin code :allow<B L>
@@ -79,9 +79,11 @@ Anonymous parameters are fine too, if a parameter is only needed for
 its type constraint.
 
 =for code :allow<B L>
-:(B<$>, B<@>, %a)         # two anonymous and a "normal" parameter
+:(B<$>, B<@>, %a)               # two anonymous and a "normal" parameter
 :(B<L<Int>>, B<L<Positional>>)  # just a type is also fine (two parameters)
 sub baz (B<L<Str>>) { "Got passed a Str" }
+
+Type constraints may also be L<type captures|Signature/#method_type_captures>.
 
 In addition to those I<nominal> types, additional constraints can
 be placed on parameters in the form of code blocks which must return
@@ -179,13 +181,13 @@ parameters.
     :(*@args, $last) # !!! Cannot put required parameter after variadic parameters
 
 Slurpy parameters declared with one asterisk will flatten arguments by
-dissolving one layer of bare C<Iterables>.  Slurpy parameters declared
+dissolving one or more layers of bare C<Iterables>.  Slurpy parameters declared
 with two stars do not do so:
 
     sub a (*@a) { @a.join("|").say };
-    a(1,[1,2],[[3,4],5]); # 1|1|2|3 4|5
+    a(1,[1,2],([3,4],5)); # 1|1|2|3|4|5
     sub b (**@b) { @b.join("|").say };
-    b(1,[1,2],[[3,4],5]); # 1|1 2|3 4 5
+    b(1,[1,2],([3,4],5)); # 1|1 2|3 4 5
 
 Normally a slurpy parameter will create an Array, create a new
 Scalar container for each argument, and assign the value from each
@@ -194,7 +196,7 @@ intermediary Scalar it is bypassed during this process, and
 is not available inside the called function.
 
 Slurpy parameters have special behaviors when combined with some
-L<traits and modifiers|Parameter Traits and Modifiers>,
+L<traits and modifiers|#Parameter_Traits_and_Modifiers>,
 as described below.
 
 =head2 Positional vs. Named
@@ -320,13 +322,12 @@ value of the variable at the caller side.
 On slurpy parameters, C<is rw> is reserved for future use by language
 designers.
 
-The C<is raw> trait is automatically applied to sigilless parameters,
-and may be used to make sigiled parameters behave like sigilless
-parameters.  In the special case of slurpies, which normally produce
-an C<Array> full of C<Scalar>s as described above, C<is raw>
-will instead cause the parameter to produce a C<List>.  Each element
-of that list will be bound directly as per a sigilless parameter,
-including any intermediary Scalars from the caller.
+The L<C<is raw> trait|/type/Parameter#method_raw> is automatically applied to
+parameters declared with a backslash as a "sigil", and may also be used
+to make normally sigiled parameters behave like these do.  In the special
+case of slurpies, which normally produce an C<Array> full of C<Scalar>s
+as described above, C<is raw> will instead cause the parameter to produce
+a C<List>.  Each element of that list will be bound directly as raw parameter.
 
 =head1 Methods
 
