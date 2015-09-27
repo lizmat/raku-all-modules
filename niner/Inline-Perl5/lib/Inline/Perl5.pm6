@@ -12,7 +12,6 @@ has Bool $!scalar_context = False;
 
 my $default_perl5;
 
-use nqp;
 use NativeCall;
 
 sub native(Sub $sub) {
@@ -694,7 +693,6 @@ method init_callbacks {
         }
 
         package v6::inline;
-        use Sub::Name ();
         use mro;
 
         my $package_to_create;
@@ -704,11 +702,11 @@ method init_callbacks {
             my $package = $package_to_create = scalar caller;
             foreach my $constructor (@{ $args{constructors} }) {
                 no strict 'refs';
-                *{"${package}::$constructor"} = Sub::Name::subname "${package}::$constructor", sub {
+                *{"${package}::$constructor"} = v6::set_subname("${package}::", $constructor, sub {
                     my ($class, @args) = @_;
                     my $self = $class->next::method(@args);
                     return v6::extend($package, $self, \@args, $class);
-                };
+                });
             }
         }
 
@@ -849,7 +847,7 @@ method require(Str $module, Num $version?) {
 
     ::($module).WHO<EXPORT> := Metamodel::PackageHOW.new();
     ::($module).WHO<&EXPORT> := sub EXPORT(*@args) {
-        return EnumMap.new(self.import($module, @args.list).map({
+        return Map.new(self.import($module, @args.list).map({
             my $name = $_;
             '&' ~ $name => sub (*@args, *%args) {
                 self.call("{$module}::$name", |@args.list, %args.list);
@@ -1024,7 +1022,7 @@ class Perl5ModuleLoader {
     }
 }
 
-nqp::getcurhllsym('ModuleLoader').p6ml.register_language_module_loader('Perl5', Perl5ModuleLoader, :force(True));
+CompUnitRepo.register_language_module_loader('Perl5', Perl5ModuleLoader, :force(True));
 
 my Bool $inline_perl6_in_use = False;
 sub init_inline_perl6_new_callback(&inline_perl5_new (Perl5Interpreter --> OpaquePointer)) { ... };
