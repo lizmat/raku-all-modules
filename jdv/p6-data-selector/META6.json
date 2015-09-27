@@ -1,7 +1,7 @@
 {
     "perl" : "v6",
     "name" : "Data::Selector",
-    "version" : "v1.00",
+    "version" : "v1.02",
     "description" : "data selection dsl parser and applicator",
     "authors" : [ "Justin DeVuyst" ],
     "provides" : {

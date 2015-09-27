@@ -8,7 +8,7 @@ Data::Selector - data selection dsl parser and applicator
 
 =head1 VERSION
 
-1.00
+1.02
 
 =head1 SYNOPSIS
 

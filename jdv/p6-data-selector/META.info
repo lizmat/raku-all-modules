@@ -1,6 +1,6 @@
 {
     "name" : "Data::Selector",
-    "version" : "1.00",
+    "version" : "1.02",
     "description" : "data selection dsl parser and applicator",
     "author" : "Justin DeVuyst",
     "depends" : [ ],
