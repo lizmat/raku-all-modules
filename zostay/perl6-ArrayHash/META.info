@@ -6,6 +6,6 @@
     "provides" : {
         "ArrayHash": "lib/ArrayHash.pm6"
     },
-    "depends" : [ "KnottyPair" ],
+    "depends" : [ ],
     "source-url" : "git://github.com/zostay/perl6-ArrayHash.git"
 }

@@ -8,12 +8,12 @@ SYNOPSIS
 
     use ArrayHash;
 
-    my @array := array-hash('a' =x> 1, 'b' => 2);
+    my @array := array-hash('a' => 1, 'b' => 2);
     my %hash := @array;
 
-    @array[0].say; #> "a" =x> 1
+    @array[0].say; #> "a" => 1
     %hash<b> = 3;
-    @array[1].say; #> "b" =x> 3;
+    @array[1].say; #> "b" => 3;
 
     # The order of the keys is preserved
     for %hash.kv -> $k, $v { 
@@ -34,27 +34,27 @@ DESCRIPTION
 
 You can think of this as a [Hash](Hash) that always iterates in insertion order or you can think of this as an [Array](Array) of [Pair](Pair)s with fast lookups by key. Both are correct, though it really is more hashish than arrayish because of the Pairs, which is why it's an ArrayHash and not a HashArray. 
 
-This class uses [KnottyPair](KnottyPair) internally, rather than plain old Pairs, but you can usually use either when interacting with objects of this class.
-
 An ArrayHash is both Associative and Positional. This means you can use either a `@` sigil or a `%` sigil safely. However, there is some amount of conflicting tension between a [Positional](Positional) and [Assocative](Assocative) data structure. An Associative object in Perl requires unique keys and has no set order. A Positional, on the othe rhand, is a set order, but no inherent uniqueness invariant. The primary way this tension is resolved depends on whether the operations you are performing are hashish or arrayish.
+
+By hashish, we mean operations that are either related to Associative objects or operations receiving named arguments. By arrayish, we mean operations that are either related to Positional objects or operations receiving positional arguments. In Perl 6, a Pair may generally be passed either Positionally or as a named argument. A bare name generally implies a named argument, e.g., `:a(1)` or `a => 1` are named while `'a' => 1` is positional.
 
 For example, consider this `push` operation:
 
-    my @a := array-hash('a' =x> 1, 'b' =x> 2);
-    @a.push: 'a' =x> 3, b => 4;
+    my @a := array-hash('a' => 1, 'b' => 2);
+    @a.push: 'a' => 3, b => 4;
     @a.perl.say;
-    #> array-hash(KnottyPair, "b" =x> 4, "a" =x> 3);
+    #> array-hash(:b(4), :a(3));
 
-Here, the `push` is definitely an arrayish operation, but it is given both an arrayish argument, `'a' =x> 3`, and a hashish argument `b => 4`. Therefore, the [KnottyPair](KnottyPair) keyed with `"a"` is pushed onto the end of the ArrayHash and the earlier value is nullified. The [Pair](Pair) keyed with `"b"` performs a more hash-like operation and replaces the value on the existing pair.
+Here, the `push` is an arrayish operation, but it is given both a Pair, `'a' => 3`, and a hashish argument `b => 4`. Therefore, the [Pair](Pair) keyed with `"a"` is pushed onto the end of the ArrayHash and the earlier value is nullified. The [Pair](Pair) keyed with `"b"` performs a more hash-like operation and replaces the value on the existing pair.
 
-Now, compare this to a similar `unshit` operation:
+Now, compare this to a similar `unshift` operation:
 
-    my @a := array-hash('a' =x> 1, 'b' =x> 2);
-    @a.unshift: 'a' =x> 3, b => 4;
+    my @a := array-hash('a' => 1, 'b' => 2);
+    @a.unshift: 'a' => 3, b => 4;
     @a.perl.say;
-    #> array-hash(KnottyPair, 'a' =x> 1, 'b' =x> 2);
+    #> array-hash('a' => 1, 'b' => 2);
 
-What happened? Why didn't the values changed and where did this extra [KnottyPair](KnottyPair) come from? Again, `unshift` is arrayish and we have an arrayish and a hashish argument, but this time we demonstrate another normal principle of Perl hashes that is enforced, which is, when dealing with a list of [Pair](Pair)s, the latest Pair is the one that bequeaths its value to the hash. That is,
+What happened? Why didn't the values changed and where did this extra [Pair](Pair) come from? Again, `unshift` is arrayish and we have an arrayish and a hashish argument, but this time we demonstrate another normal principle of Perl hashes that is enforced, which is, when dealing with a list of [Pair](Pair)s, the latest Pair is the one that bequeaths its value to the hash. That is,
 
     my %h = a => 1, a => 2;
     say "a = %h<a>";
@@ -68,18 +68,18 @@ The same rule holds for all operations: If the key already exists, but before th
 
 For a regular ArrayHash, the losing value will either be replaced, if the operation is hashish, or will be nullified, if the operation is arrayish. 
 
-This might not always be the desired behavior so this module also provides the multivalued ArrayHash, or multi-hash:
+This might not always be the desired behavior so this module also provides a multi-valued ArrayHash, or multi-hash interface:
 
-    my @a := multi-hash('a' =x> 1, 'b' =x> 2);
-    @a.push: 'a' =x> 3, b => 4;
+    my @a := multi-hash('a' => 1, 'b' => 2);
+    @a.push: 'a' => 3, b => 4;
     @a.perl.say;
-    #> multi-hash('a' =x> 1, "b" =x> 4, "a" =x> 3);
+    #> multi-hash('a' => 1, "b" => 4, "a" => 3);
 
-The operations all work the same, but array values are not nullified and it is find for there to be multiple values in the array. This is the same class, ArrayHash, but the [has $.multivalued](has $.multivalued) property is set to true.
+The operations all work the same, but array values are not nullified and it is fine for there to be multiple values in the array. This is the same class, ArrayHash, but the [has $.multivalued](has $.multivalued) property is set to true.
 
-[Conjecture: Consider adding a `has $.collapse` attribute or some such to govern whether a replaced value in a `$.multivalued` array hash is replaced with a type object or spiced out. Or perhaps change the `$.multivalued` into an enum of operational modes.]
+[For future consideration: Consider adding a `has $.collapse` attribute or some such to govern whether a replaced value in a `$.multivalued` array hash is replaced with a type object or spiced out. Or perhaps change the `$.multivalued` into an enum of operational modes.]
 
-[Conjecture: In the future, a parameterizable version of this class could be created with some sort of general keyable object trait rather than KnottyPair.]
+[For future consideration: A parameterizable version of this class could be created with some sort of general keyable object trait rather than Pair.]
 
 Methods
 =======
@@ -89,7 +89,7 @@ method multivalued
 
     method multivalued() returns Bool:D
 
-This setting determines whether the ArrayHash is a regular array-hash or a multi-hash. Usually, you will use the [sub array-hash](sub array-hash) or [sub multi-hash](sub multi-hash) constructors rather than setting this directly on the constructor.
+This setting determines whether the ArrayHash is a regular array-hash or a multi-hash. Usually, you will use the [sub array-hash](sub array-hash) or [sub multi-hash](sub multi-hash) constructors rather than setting this directly on the `new` constructor.
 
 method new
 ----------
@@ -103,55 +103,55 @@ method of
 
     method of() returns Mu:U
 
-Returns what type of values are stored. This always returns a [KnottyPair](KnottyPair) type object.
+Returns what type of values are stored. This always returns a [Pair](Pair) type object.
 
 method postcircumfix:<{ }>
 --------------------------
 
-    method postcircumfix:<( )>(ArrayHash:D: $key) returns Mu
+    method postcircumfix:<{ }>(ArrayHash:D: $key) returns Mu
 
 This provides the usual value lookup by key. You can use this to retrieve a value, assign a value, or bind a value. You may also combine this with the hash adverbs `:delete` and `:exists`.
 
 method postcircumfix:<[ ]>
 --------------------------
 
-    method postcircumfix:<[ ]>(ArrayHash:D: Int:D $pos) returns KnottyPair
+    method postcircumfix:<[ ]>(ArrayHash:D: Int:D $pos) returns Pair
 
-This returns the value lookup by index. You can use this to retrieve the pair at the given index or assign a new pair or even bind a pair. It may be combined with the array adverts `:delete` and `:exists` as well.
+This returns the value lookup by index. You can use this to retrieve the pair at the given index or assign a new pair or even bind a pair. It may be combined with the array adverbs `:delete` and `:exists` as well.
 
 method push
 -----------
 
     method push(ArrayHash:D: *@values, *%values) returns ArrayHash:D
 
-Adds the given values onto the end of the ArrayHash. These values will replace any existing values with matching keys. If the values pushed are [Pair](Pair)s (hashish interface), then the existing values are replaced. If the values are [KnottyPair](KnottyPair)s (arrayish interface), then new values are added to the end of the ArrayHash.
+Adds the given values onto the end of the ArrayHash. These values will replace any existing values with matching keys.
 
-    my @a := array-hash('a' =x> 1, 'b' =x> 2);
-    @a.push: 'a' =x> 3, b => 4, 'c' =x> 5;
+    my @a := array-hash('a' => 1, 'b' => 2);
+    @a.push: 'a' => 3, b => 4, 'c' => 5;
     @a.perl.say; 
-    #> array-hash(KnottyPair, "b" =x> 4, "a" =x> 3, "c" =x> 5);
+    #> array-hash("b" => 4, "a" => 3, "c" => 5);
 
-    my @m := multi-hash('a' =x> 1, 'b' =x> 2);
-    @m.push: 'a' =x> 3, b => 4, 'c' =x> 5;
+    my @m := multi-hash('a' => 1, 'b' => 2);
+    @m.push: 'a' => 3, b => 4, 'c' => 5;
     @m.perl.say; 
-    #> multi-hash("a" =x> 1, "b" =x> 4, "a" =x> 3, "c" =x> 5);
+    #> multi-hash("a" => 1, "b" => 4, "a" => 3, "b" => 4, "c" => 5);
 
 method unshift
 --------------
 
     method unshift(ArrayHash:D: *@values, *%values) returns ArrayHash:D
 
-Adds the given values onto the front of the ArrayHash. These values will never replace any existing values in the data structure. If the values are passed as [KnottyPair](KnottyPair)s, these pairs will be put onto the front of the data structure without changing the primary keyed value. These insertions will be nullified if the hash is not multivalued.
+Adds the given values onto the front of the ArrayHash. These values will never replace any existing values in the data structure. In a multi-hash, these unshifted pairs will be put onto the front of the data structure without changing the primary keyed value. These insertions will be nullified if the hash is not multivalued.
 
-    my @a := array-hash('a' =x> 1, 'b' =x> 2);
-    @a.unshift 'a' =x> 3, b => 4, 'c' =x> 5;
+    my @a := array-hash('a' => 1, 'b' => 2);
+    @a.unshift 'a' => 3, b => 4, 'c' => 5;
     @a.perl.say; 
-    #> array-hash(KnottyPair, "c" =x> 5, "a" =x> 1, "b" =x> 2);
+    #> array-hash("c" => 5, "a" => 1, "b" => 2);
 
-    my @m := multi-hash('a' =x> 1, 'b' =x> 2);
-    @m.push: 'a' =x> 3, b => 4, 'c' =x> 5;
+    my @m := multi-hash('a' => 1, 'b' => 2);
+    @m.push: 'a' => 3, b => 4, 'c' => 5;
     @m.perl.say; 
-    #> multi-hash("a" =x> 3, "c" =x> 5, "a" =x> 1, "b" =x> 2);
+    #> multi-hash("a" => 3, "b" => 4, "c" => 5, "a" => 1, "b" => 2);
 
 method splice
 -------------
@@ -163,20 +163,20 @@ method splice
 
 This is a general purpose splice method for ArrayHash. As with [Array](Array) splice, it is able to perform most modification operations.
 
-    my KnottyPair $p;
+    my Pair $p;
     my @a := array-hash( ... );
 
-    @a.splice: *, 0, "a" =x> 1;  # push
-    $p = @a.splice: *, 1;        # pop
-    @a.splice: 0, 0, "a" =x> 1;  # unshift
-    $p = @a.splice: *, 1;        # shift
-    @a.splice: 3, 1, "a" =x> 1;  # assignment
-    @a.splice: 4, 1, "a" =X> $a; # binding
-    @a.splice: 5, 1, KnottyPair; # deletion
+    @a.splice: *, 0, "a" => 1;  # push
+    $p = @a.splice: *, 1;       # pop
+    @a.splice: 0, 0, "a" => 1;  # unshift
+    $p = @a.splice: *, 1;       # shift
+    @a.splice: 3, 1, "a" => 1;  # assignment
+    @a.splice: 4, 1, "a" => $a; # binding
+    @a.splice: 5, 1, Pair;      # deletion
 
     # And some operations that are uniqe to splice
     @a.splice: 1, 3;             # delete and squash
-    @a.splice: 3, 0, "a" =x> 1;  # insertion
+    @a.splice: 3, 0, "a" => 1;  # insertion
 
     # And the no-op, the $offset could be anything legal
     @a.splice: 4, 0;
@@ -191,7 +191,7 @@ This method will fail with an [X::OutOfRange](X::OutOfRange) exception if the `$
 
 **Caveat:** It should be clarified that splice does not perform precisely the same sort of operation its named equivalent would. Unlike [#method push](#method push) or [#method unshift](#method unshift), all arguments are treated as arrayish. This is because a splice is very specific about what parts of the data structure are being manipulated.
 
-[Conjecture: Is the caveat correct or should [Pair](Pair)s be treated as hashish instead anyway?]
+[For the future: Is the caveat correct or should [Pair](Pair)s be treated as hashish instead anyway?]
 
 method sort
 -----------
@@ -222,14 +222,14 @@ Not yet implemented.
 method pop
 ----------
 
-    method pop(ArrayHash:D:) returns KnottyPair
+    method pop(ArrayHash:D:) returns Pair
 
 Takes the last element off the ArrayHash and returns it.
 
 method shift
 ------------
 
-    method shift(ArrayHash:D:) returns KnottyPair
+    method shift(ArrayHash:D:) returns Pair
 
 Takes the first element off the ArrayHash and returns it.
 

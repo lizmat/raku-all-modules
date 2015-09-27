@@ -5,6 +5,9 @@ use v6;
 use Test;
 use ArrayHash;
 
+# TODO Some of these tests are redundant as the way *%_ and such is handled has
+# changed since this was first written.
+
 my ($b, %hash, @array);
 
 sub make-iter(@o) {
@@ -17,20 +20,20 @@ sub make-iter(@o) {
 my %inits = 
     '01-init-hash-then-array' => {
         $b      = 2;
-        %hash  := multi-hash('a' =x> 1, 'b' =X> $b, 'c' =x> 3, 'a' =x> 4);
+        %hash  := multi-hash('a' => 1, 'b' => $b, 'c' => 3, 'a' => 4);
         @array := %hash;
         make-iter(@ = 0, 1, 2, 3);
     }, 
     '02-init-array-then-hash' => {
         $b      = 2;
-        @array := multi-hash('a' =x> 1, 'b' =X> $b, 'c' =x> 3, 'a' =x> 4);
+        @array := multi-hash('a' => 1, 'b' => $b, 'c' => 3, 'a' => 4);
         %hash  := @array;
         make-iter(@ = 0, 1, 2, 3);
     }, 
     '03-init-from-pairs' => {
         $b = 2;
         my $init = multi-hash(a => 1, b => $b, c => 3);
-        $init.push: 'a' =x> 4;
+        $init.push: 'a' => 4;
         $init{'b'} := $b;
         @array := $init;
         %hash  := $init;
@@ -38,7 +41,7 @@ my %inits =
     }, 
     '04-init-from-pairs-and-positionals' => {
         $b = 2;
-        my $init = multi-hash('a' =x> 1, 'b' =X> $b, c => 3, 'a' =x> 4);
+        my $init = multi-hash('a' => 1, 'b' => $b, c => 3, 'a' => 4);
         @array := $init;
         %hash  := $init;
         make-iter($init.values »-» 1);
@@ -75,11 +78,11 @@ my %tests =
         is @array[4].value, 5, 'array d value added';
     },
     '04-replace-array' => {
-        @array[.[1]] = 'e' =x> 6;
+        @array[.[1]] = 'e' => 6;
         is %hash<b>, Any, 'hash b removed';
         is %hash<e>, 6, 'hash e added';
 
-        @array[.[3]] = 'f' =x> 7;
+        @array[.[3]] = 'f' => 7;
         is %hash<a>, 1, 'hash a changed';
         is %hash<f>, 7, 'hash f added';
     },
@@ -87,10 +90,6 @@ my %tests =
         $b = 7;
         is %hash<b>, 7, 'hash b modified';
         is @array[.[1]].value, 7, 'array b value modified';
-
-        my $a = 8;
-        @array[.[3]].value = $a;
-        is %hash<a>, 8, 'hash a value changed';
     },
     '06-delete-hash-squashes-blanks' => {
         %hash<b> :delete;
@@ -104,45 +103,45 @@ my %tests =
         is %hash.elems, 4, 'after array delete elems still == 4';
     },
     '08-perl' => {
-        my @els = q["a" =x> 1], q["b" =x> 2], q["c" =x> 3], q["a" =x> 4];
+        my @els = q[:a(1)], q[:b(2)], q[:c(3)], q[:a(4)];
         is @array.perl, q[multi-hash(] ~ @els[.[0], .[1], .[2], .[3]].join(', ') ~ q[)], "array.perl";
         is %hash.perl, q[multi-hash(] ~ @els[.[0], .[1], .[2], .[3]].join(', ') ~ q[)], "hash.perl";
     },
     '09-replace-earlier' => {
-        @array[3] = 'b' =x> 8;
+        @array[3] = 'b' => 8;
         is %hash<b>, 8, 'hash b changed';
         is @array[.[1]].key, 'b', 'array 1 key same';
         is @array[.[1]].value, 2, 'array 1 value same';
     },
     '10-replace-later' => {
         if (.[1] == 0) {
-            @array[0] = 'b' =x> 9;
+            @array[0] = 'b' => 9;
             is %hash<b>, 9, 'hash b is changed';
             is @array[0].key, 'b', 'array 0 key same';
             is @array[0].value, 9, 'array 0 value changed';
         }
         else {
-            @array[0] = 'b' =x> 9;
+            @array[0] = 'b' => 9;
             is %hash<b>, $b, 'hash b is unchanged';
             is @array[0].key, 'b', 'array 0 key set';
             is @array[0].value, 9, 'array 0 value set';
         }
     },
     '11-bind-replace-earlier' => {
-        @array[3] := 'b' =x> 8;
+        @array[3] := 'b' => 8;
         is %hash<b>, 8, 'hash b changed';
         is @array[.[1]].key, 'b', 'array 1 key same';
         is @array[.[1]].value, $b, 'array 1 value same';
     },
     '12-bind-replace-later' => {
         if (.[1] == 0) {
-            @array[0] := 'b' =x> 9;
+            @array[0] := 'b' => 9;
             is %hash<b>, 9, 'hash b is changed';
             is @array[0].key, 'b', 'array 0 key same';
             is @array[0].value, 9, 'array 0 value changed';
         }
         else {
-            @array[0] := 'b' =x> 9;
+            @array[0] := 'b' => 9;
             is %hash<b>, 2, 'hash b is unchanged';
             is @array[0].key, 'b', 'array 0 key set';
             is @array[0].value, 9, 'array 0 value set';
@@ -188,10 +187,10 @@ my %tests =
             is %hash.elems, 4, 'deleted hash did not shrink';
             is @array.elems, 4, 'deleted array did not shrink';
         }
-        is @array[.[1]], KnottyPair, 'deleted array position is undef';
+        is @array[.[1]], Pair, 'deleted array position is undef';
     },
     '18-push' => {
-        @array.push: d => 11, 'e' =x> 12, b => 13, 'c' =x> 14;
+        @array.push: d => 11, 'e' => 12, b => 13, 'c' => 14;
         note '# ', @array.perl;
         is %hash<a>, 4, 'hash a same';
         is %hash<b>, 13, 'hash b changed';
@@ -216,7 +215,7 @@ my %tests =
         }
     },
     '19-unshift' => {
-        @array.unshift: d => 11, 'e' =x> 12, b => 13, 'c' =x> 14;
+        @array.unshift: d => 11, 'e' => 12, b => 13, 'c' => 14;
         is %hash<a>, 4, 'hash a same';
         is %hash<b>, $b, 'hash b same';
         is %hash<c>, 3, 'hash c same';
@@ -240,7 +239,7 @@ my %tests =
         is @array[.[3] + 4].value, 4, 'array 3 value same';
     },
     '20-splice-push' => {
-        @array.splice: 4, 0, d => 11, 'e' =x> 12, b => 13, 'c' =x> 14;
+        @array.splice: 4, 0, d => 11, 'e' => 12, b => 13, 'c' => 14;
         is %hash<a>, 4, 'hash a same';
         is %hash<b>, 13, 'hash b changed';
         is %hash<c>, 14, 'hash c changed';
@@ -264,7 +263,7 @@ my %tests =
         }
     },
     '21-splice-unshift' => {
-        @array.splice: 0, 0, d => 11, 'e' =x> 12, b => 13, 'c' =x> 14;
+        @array.splice: 0, 0, d => 11, 'e' => 12, b => 13, 'c' => 14;
         is %hash<a>, 4, 'hash a same';
         is %hash<b>, $b, 'hash b same';
         is %hash<c>, 3, 'hash c same';
@@ -288,7 +287,7 @@ my %tests =
         is @array[.[3] + 4].value, 4, 'array 3 value same';
     },
     '22-splice-insert' => {
-        @array.splice: 2, 0, d => 11, 'e' =x> 12, b => 13, 'c' =x> 14;
+        @array.splice: 2, 0, d => 11, 'e' => 12, b => 13, 'c' => 14;
 
         my @orig = (.[0], .[1], .[2], .[3]).map({
             when * >= 2 { $_ + 4 }
@@ -334,7 +333,7 @@ my %tests =
         }
     },
     '23-splice-replace' => {
-        @array.splice: 1, 1, d => 11, 'e' =x> 12, b => 13, 'c' =x> 14;
+        @array.splice: 1, 1, d => 11, 'e' => 12, b => 13, 'c' => 14;
 
         my @orig = (.[0], .[1], .[2], .[3]).map({
             when * == 1 { Nil }

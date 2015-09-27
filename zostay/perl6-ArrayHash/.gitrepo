@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/perl6-ArrayHash.git
 	branch = master
-	commit = b046d047e5f50276bd45d2c8689a472256233525
-	parent = 16454ea1259a548eb692eb68ecc35888486c4742
+	commit = b2005c6e3d0740f917850e55e483866f0d9a5431
+	parent = 388bc8b63f3ca6e144c9f059608d2e50df9d5a9f
 	cmdver = 0.2.2
