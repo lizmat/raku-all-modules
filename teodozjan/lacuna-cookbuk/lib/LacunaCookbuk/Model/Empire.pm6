@@ -100,6 +100,7 @@ sub session_id is export {
     $session_id;
 }
 
+#| There is module homedir for that but... I'm too lazy
 sub make_path(Str $anyth) is export {    
-    IO::Path.new('.lacuna_cookbuk/' ~ $anyth)
+    IO::Path.new(return %*ENV<HOME> ~ '/.lacuna_cookbuk/' ~ $anyth)
 }

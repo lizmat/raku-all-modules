@@ -18,20 +18,8 @@ submethod read {
     my $path_planets = make_path('planets.pl');
     my $path_stations = make_path('stations.pl');
 
-#= I want this code back
     @planets = from_file($path_planets);
     @stations = from_file($path_stations);
-    #moar hack
-#    say 'Readin $path_planets';
-#    my $plan = slurp $path_planets;
-#    @planets = EVAL $plan;
-
-    #moar hack
-#    say 'Readin $path_stations';
-#    my $stat =  slurp $path_stations;
-#    @stations = EVAL $stat; 
-
-
 }
 
 submethod write {
@@ -109,7 +97,7 @@ submethod report_waste {
 
 constant $ZONE_SIZE = 250;
 submethod report_zones {
-    for @planets, @stations -> $body {
+    for (@planets, @stations).flat -> $body {
 	my Int $zone_x = (+$body.x / $ZONE_SIZE).Int;	
 	my Int $zone_y = (+$body.y / $ZONE_SIZE).Int;
 

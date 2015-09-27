@@ -54,6 +54,16 @@ multi sub MAIN(Str :$tasks!, Bool :$update?){
 }
 
 
+multi sub MAIN(Str :$view_body!){
+
+  create_session;
+  LacunaCookbuk::Logic::BodyBuilder.read;
+  LacunaCookbuk::Logic::Chairman.view_body(find_planet($view_body));
+
+  close_session;  
+}
+
+
 multi sub MAIN(Str :$repair!){
 
   create_session;

@@ -23,6 +23,10 @@ class BuildGoal {
     has LacunaCookbuk::Logic::Chairman::BuildingEnum $.building;
     has Int $.level;
     has Bool $.priority=False;
+
+    multi method gist returns Str {
+        "{$!building.key} {$!level} {$!priority}"
+    }
 }
 
 has LacunaCookbuk::Logic::Chairman::BuildGoal @.build_goals;
@@ -215,7 +219,9 @@ submethod repair_one($planet) {
     say "{$planet.name}:";
     for @buildings -> $b {        
         #TODO check efficency because glyph buildings have repair cost 0
-        $b.repair;
+        if $b.view.damaged {
+            $b.repair;
+        }
     }
     CATCH {
         default {
@@ -232,6 +238,17 @@ sub truncate(Str $s) {
         return $s.chop($s.chars-124) ~ "..."
     } else {
         return $s;
+    }
+
+}
+
+submethod view_body($planet){
+    my @buildings = $planet.get_buildings;
+    dd @buildings;
+
+
+    for @buildings -> $b {
+        dd $b.view;
     }
 
 }

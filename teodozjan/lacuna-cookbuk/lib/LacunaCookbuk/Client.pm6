@@ -168,5 +168,3 @@ method make_space {
 method waste {
     LacunaCookbuk::Logic::BodyBuilder.report_waste;
 }
-
-
