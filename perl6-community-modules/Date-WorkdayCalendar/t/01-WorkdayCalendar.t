@@ -9,11 +9,11 @@ my $FILE_CAL_SHORT_WEEK  = 't/res/SHORT_WEEK.cal';
 
 #------------------------------------------------------------------------------#
 diag 'Testing WorkdayCalendar constructors';
-lives_ok {
+lives-ok {
     { my $calendar = WorkdayCalendar.new },
     "Constructing default calendar"
 }
-lives_ok {
+lives-ok {
     { my $calendar = WorkdayCalendar.new($FILE_CAL_CORRECT) },
     "Constructing calendar from a calendar file"
 }
