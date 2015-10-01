@@ -28,7 +28,7 @@ sub splitint(int $i) {
 }
 
 sub CArray2Buf($A, Int $length) returns Buf {
-    Buf.new: map &splitint, $A[^$length];
+    Buf.new: $A[^$length].flatmap({ splitint(my int $ = $_) });
 }
 
 sub Buf2Args($buf) {
