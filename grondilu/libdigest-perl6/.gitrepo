@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/grondilu/libdigest-perl6.git
 	branch = master
-	commit = 9c66542453831946b2e4b98439289c7e51f667d5
-	parent = fe582a69e373d9ab69c2e0b3c8ca4f952ba90d75
+	commit = 8e5d33d24d146554b33fd9b426033dbe11fa597f
+	parent = b927d8bfa673d12da6181b218c81036895436852
 	cmdver = 0.2.2
