@@ -120,7 +120,6 @@ $reduce-func = q:to/EOJS/;
    }
    EOJS
 
-
 $result = $collection.map_reduce(
             $map-func, $reduce-func, 
             :criteria(%(name => %('$gt' => 'k0'))),
@@ -139,5 +138,5 @@ is $mrc.count(%(_id => 'othervalue')), 1, 'One othervalue id';
 #
 $collection.database.drop;
 
-done();
+done-testing();
 exit(0);

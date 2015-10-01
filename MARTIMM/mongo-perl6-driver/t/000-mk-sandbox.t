@@ -8,6 +8,12 @@
 BEGIN { @*INC.unshift( './t' ) }
 use Test-support;
 
+#if %*ENV<TRAVIS>  {
+#  plan 1;
+#  skip-rest('No sandboxing on TRAVIS-CI?');
+#  exit(0);
+#}
+
 #-----------------------------------------------------------------------------
 #
 use v6;
@@ -148,8 +154,8 @@ spurt 'Sandbox/m.conf', $config;
 spurt 'Sandbox/m-auth.conf', $config ~ qq:to/EOCNF/;
 
   security:
-#    keyFile:                    m.key-file
-#    clusterAuthMode:            keyFile
+  #  keyFile:                    m.key-file
+  #  clusterAuthMode:            keyFile
     authorization:              enabled
 
   setParameter:
@@ -204,5 +210,5 @@ ok $version<release1> >= 3, "MongoDB release >= 3";
 # Cleanup and close
 #
 
-done();
+done-testing();
 exit(0);
