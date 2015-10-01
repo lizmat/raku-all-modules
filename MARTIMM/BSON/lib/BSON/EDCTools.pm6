@@ -25,7 +25,8 @@ package BSON {
   # string ::= int32 (byte*) "\x00"
   #
   sub encode_string ( Str $s --> Buf ) is export {
-    my utf8 $b = $s.encode('UTF-8');
+#    my utf8 $b = $s.encode('UTF-8');
+    my Buf $b .= new($s.encode('UTF-8'));
     return [~] encode_int32($b.bytes + 1), $b, Buf.new(0x00);
   }
 

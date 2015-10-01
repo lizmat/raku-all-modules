@@ -8,7 +8,7 @@ use BSON::Exception;
 
 package BSON {
 
-  class Bson:ver<0.9.8> {
+  class Bson:ver<0.9.9> {
     constant $BSON_BOOL = 0x08;
 
     has Int $.index is rw = 0;
@@ -41,6 +41,7 @@ package BSON {
     }
 
     multi method encode_document ( Pair @p --> Buf ) {
+#say "EE: ", @p.perl;
       my Buf $b = self.encode_e_list(@p);
       return [~] encode_int32($b.elems + 5), $b, Buf.new(0x00);
     }
@@ -53,6 +54,7 @@ package BSON {
       my Buf $b = Buf.new();
 
       for @p -> $p {
+#say "EELi: ", $p.perl;
         $b ~= self.encode_element($p);
       }
 
@@ -63,6 +65,8 @@ package BSON {
     # element ::= type-code e_name some-encoding
     #
     method encode_element ( Pair $p --> Buf ) {
+
+#say "EELe: '", $p.key, "' <=> '", $p.value, "' === ", $p.value.WHAT;
 
       given $p.value {
 
@@ -85,13 +89,28 @@ package BSON {
                      ;
         }
 
+        # Converting a pair same way as a hash:
+        #
+        when Pair {
+          # Embedded document
+          # "\x03" e_name document
+          #
+#say "Pair: {$p.value.perl}";
+          my Pair @pairs = $p.value;
+          return [~] Buf.new(0x03),
+                     encode_e_name($p.key),
+                     self.encode_document(@pairs)
+                     ;
+        }
+
         when Hash {
           # Embedded document
           # "\x03" e_name document
           #
+#say "Hash: {$p.value.perl}";
           return [~] Buf.new(0x03),
                      encode_e_name($p.key),
-                     self.encode_document($_)
+                     self.encode_document($p.value)
                      ;
         }
 
@@ -106,10 +125,20 @@ package BSON {
           # would be encoded as the document {'0': 'red', '1': 'blue'}.
           # The keys must be in ascending numerical order.
           #
-          my %h = .kv;
+          # Simple assigning .kv to %hash wouldn't work because the order
+          # of items can go wrong. Mongo doesn't process it very well if e.g.
+          # { 1 => 'abc', 0 => 'def' } was encoded instead of
+          # { 0 => 'def', 1 => 'abc' }.
+          #
+#say "Array: {$p.value.perl}";
+           my Pair @pairs;
+          for .kv -> $k, $v {
+            @pairs.push: ("$k" => $v);
+          }
+
           return [~] Buf.new(0x04),
                      encode_e_name($p.key),
-                     self.encode_document(%h)
+                     self.encode_document(@pairs)
                      ;
         }
 

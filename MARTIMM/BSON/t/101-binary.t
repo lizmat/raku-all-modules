@@ -17,10 +17,13 @@ subtest {
 
   is-deeply( $bin-obj.Buf, $raw-bin, 'compare data');
 
-  my Array $bin-test = [ 0x03, 0x00, 0x00, 0x00,          # Size of buf
-                         0x00,                            # Generic binary type
-                         0x55 xx 3,                       # Raw Buf
+  my Array $bin-test = [ ( 0x03, 0x00, 0x00, 0x00,        # Size of buf
+                           0x00,                          # Generic binary type
+                           0x55 xx 3,                     # Raw Buf
+                         ).flat
                        ];
+say $bin-test.perl;
+
   my Buf $enc-bin = $bin-obj.enc_binary;
   is-deeply( $enc-bin.list, $bin-test, 'encode general binary test');
 
@@ -45,9 +48,10 @@ subtest {
 
   is-deeply( $bin-obj.Buf, $uuid.Blob, 'compare uuid binary data');
 
-  my Array $bin-test = [ 0x10, 0x00, 0x00, 0x00,          # Size of buf
-                         $BSON::UUID,                     # UUID binary type
-                         $uuid.Blob.list,                 # Raw Buf
+  my Array $bin-test = [ ( 0x10, 0x00, 0x00, 0x00,        # Size of buf
+                           $BSON::UUID,                   # UUID binary type
+                           $uuid.Blob.list,               # Raw Buf
+                         ).flat
                        ];
   my Buf $enc-bin = $bin-obj.enc_binary;
   is-deeply( $enc-bin.list, $bin-test, 'encode uuid test');
@@ -75,9 +79,10 @@ subtest {
 
   is-deeply( $bin-obj.Buf, $md5-b, 'compare md5 binary data');
 
-  my Array $bin-test = [ 0x10, 0x00, 0x00, 0x00,          # Size of buf
-                         $BSON::MD5,                      # MD5 binary type
-                         $md5-b.list,                     # Raw Buf
+  my Array $bin-test = [ ( 0x10, 0x00, 0x00, 0x00,        # Size of buf
+                           $BSON::MD5,                    # MD5 binary type
+                           $md5-b.list,                   # Raw Buf
+                         ).flat
                        ];
   my Buf $enc-bin = $bin-obj.enc_binary;
   is-deeply( $enc-bin.list, $bin-test, 'encode md5 test');
@@ -129,5 +134,5 @@ subtest {
 #-------------------------------------------------------------------------------
 # Cleanup
 #
-done();
+done-testing();
 exit(0);

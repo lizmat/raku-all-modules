@@ -16,9 +16,8 @@ When installing MongoDB, BSON will be installed automatically as a dependency.
 
 ## VERSION PERL AND MOARVM
 
-```
-$ perl6 -v
-This is perl6 version 2015.07.1-54-gd11c710 built on MoarVM version 2015.07-8-gb8fdeae
+* Perl6 version ```2015.09-162-gdd6c855```
+* MoarVM version ```2015.09-39-g1434283```
 
 ## SYNOPSIS
 
@@ -106,6 +105,8 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.9
+  * Changes because of updates in perl6
 * 0.9.8
   * Tests for binary data UUID and MD5
 * 0.9.7

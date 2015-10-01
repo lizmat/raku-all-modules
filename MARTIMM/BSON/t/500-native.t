@@ -232,12 +232,13 @@ my Hash $samples = {
 
     '0x0C DBPointer - deprecated' => {
 #        decoded => { u => '?'}
-        encoded => [ 0x0D, 0x00, 0x00, 0x00,            # 14 bytes
-                     0x0C,                              # DBPointer
-                     0x75, 0x00,                        # 'u' + 0
-                     0x02, 0x00 xx 3,                   # length of string + 1
-                     0x74, 0x00,                        # 't' + 0
-                     0x00                               # + 0
+        encoded => [ ( 0x0D, 0x00, 0x00, 0x00,          # 14 bytes
+                       0x0C,                            # DBPointer
+                       0x75, 0x00,                      # 'u' + 0
+                       0x02, 0x00 xx 3,                 # length of string + 1
+                       0x74, 0x00,                      # 't' + 0
+                       0x00                             # + 0
+                     ).flat
                    ],
     },
 
@@ -295,36 +296,39 @@ my Hash $samples = {
 
     '0x12 64-bit Integer' => {
         'decoded' => { "mike" => -72057594037927935 },
-        'encoded' => [ 0x13, 0x00, 0x00, 0x00,          # 19 bytes
-                       0x12,                            # 64 bits integer
-                       0x6D, 0x69, 0x6B, 0x65, 0x00,    # 'mike' + 0
-                       0x01, 0x00 xx 6, 0xff,           # -72057594037927935
-                       0x00                             # + 0
+        'encoded' => [ ( 0x13, 0x00, 0x00, 0x00,        # 19 bytes
+                         0x12,                          # 64 bits integer
+                         0x6D, 0x69, 0x6B, 0x65, 0x00,  # 'mike' + 0
+                         0x01, 0x00 xx 6, 0xff,         # -72057594037927935
+                         0x00                           # + 0
+                       ).flat
                      ],
     },
 
     '0x12 64-bit Integer, too small' => {
         'decoded' => { "mike" => -72057594037927935 * 2**8 },
-        'encoded' => [ 0x13, 0x00, 0x00, 0x00,          # 19 bytes
-                       0x12,                            # 64 bits integer
-                       0x6D, 0x69, 0x6B, 0x65, 0x00,    # 'mike' + 0
-                       0x00, 0x01, 0x00 xx 6,           # ?
-                       0x00                             # + 0
+        'encoded' => [ ( 0x13, 0x00, 0x00, 0x00,        # 19 bytes
+                         0x12,                          # 64 bits integer
+                         0x6D, 0x69, 0x6B, 0x65, 0x00,  # 'mike' + 0
+                         0x00, 0x01, 0x00 xx 6,         # ?
+                         0x00                           # + 0
+                       ).flat
                      ],
     },
 
     '0x12 64-bit Integer, too large' => {
         'decoded' => { "mike" => 0x7fffffff_ffffffff + 1 },
-        'encoded' => [ 0x13, 0x00, 0x00, 0x00,          # 19 bytes
-                       0x12,                            # 64 bits integer
-                       0x6D, 0x69, 0x6B, 0x65, 0x00,    # 'mike' + 0
-                       0x00 xx 7, 0x80,                 # ?
-                       0x00                             # + 0
+        'encoded' => [ ( 0x13, 0x00, 0x00, 0x00,        # 19 bytes
+                         0x12,                          # 64 bits integer
+                         0x6D, 0x69, 0x6B, 0x65, 0x00,  # 'mike' + 0
+                         0x00 xx 7, 0x80,               # ?
+                         0x00                           # + 0
+                       ).flat
                      ],
     },
 };
 
-for $samples.keys -> $key {
+for $samples.keys -> Str $key {
 #   say "Testing $key";
 
     my $value = $samples{$key};
@@ -346,6 +350,7 @@ for $samples.keys -> $key {
     }
 
     if $value<encoded>:exists {
+#say "{$key.perl}";
         given $key {
             when '0x05 Binary' {
                 is-deeply
@@ -415,6 +420,7 @@ for $samples.keys -> $key {
             }
 
             default {
+#say "default: $key, {$value.perl}";
                 is-deeply
                     $b.decode( Buf.new( $value<encoded>.list ) ),
                     $value<decoded>,
@@ -446,7 +452,7 @@ for $samples.keys -> $key {
     }
 }
 
-done();
+done-testing();
 exit(0);
 
 
@@ -505,5 +511,5 @@ say "E:", $e, ', ', $e.perl;
 #-------------------------------------------------------------------------------
 # Cleanup
 #
-done();
+done-testing();
 exit(0);

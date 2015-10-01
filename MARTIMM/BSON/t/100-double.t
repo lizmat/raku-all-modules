@@ -129,5 +129,5 @@ is-deeply $br, $b, "Compare bufs {$br.perl}";
 #-------------------------------------------------------------------------------
 # Cleanup
 #
-done();
+done-testing();
 exit(0);
