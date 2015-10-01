@@ -1,0 +1,16 @@
+{
+  "name" : "Cookie::Baker",
+  "source-url" : "git://github.com/tokuhirom/p6-Cookie-Baker.git",
+  "perl" : "v6",
+  "provides" : {
+    "Cookie::Baker" : "lib/Cookie/Baker.pm6"
+  },
+  "depends" : [
+    "URI::Encode"
+  ],
+  "description" : "",
+  "version" : "*",
+  "authors" : [
+    "Tokuhiro Matsuno"
+  ]
+}
