@@ -6,7 +6,7 @@
 
 This is a Proposed Draft.
 
-Version 0.5.Draft
+Version 0.6.Draft
 
 =head1 0 INTRODUCTION
 
@@ -46,11 +46,21 @@ An D<application developer> is a developer who writes a I<P6SGI application>.
 
 =head1 2 SPECIFICATION
 
-This specification is divided into three layers: Layer 0: Server, Layer 1: Middleware, and Layer 2: Application.
+This specification is divided into three layers:
+
+=item Layer 0: Server
+
+=item Layer 1: Middleware
+
+=item Layer 2: Application
+
+Each layer has a specific role related the other layers. The server layer is primarily responsible for managing the application lifecycle and performing the low-level protocol handling aspects. The application layer is primarily responsible for receiving metadata and content from the server and delivering metadata and content back to the server. The middleware layer is responsible for enhancing the application or server by providing additional services and utilities.
+
+This specification goes through each layer in order.
 
 =head2 2.0 Layer 0: Server
 
-A P6SGI application server is a program capable of running P6SGI applications as defined by this specification. 
+A P6SGI application server is a program capable of running P6SGI applications as defined by this specification.
 
 A P6SGI application server typically implements some variant of web service. This typically means implementing an HTTP/1.x protocol service or a related protocol such as CGI, FastCGI, SCGI, etc. An application server also manages the application lifecycle and executes the application, providing it with a complete environment, and processing the response from the application to determine how to respond to the origin.
 
@@ -108,8 +118,9 @@ The environment MUST be an L<Associative>. The keys of this map are mostly deriv
                              |                                        | server.
 
     C<SERVER_PROTOCOL>       | C<< Str:D where *.chars > 0 >>         | This is the server protocol sent by
-                             |                                        | the client. Typically set to
-                             |                                        | "HTTP/1.1" or a similar value.
+                             |                                        | the client. It MAY be set to "HTTP/1.0"
+                             |                                        | or "HTTP/1.1" or "HTTP/2" or
+                             |                                        | "WebSocket/13" or a similar value.
 
     C<CONTENT_LENGTH>        | C<< Int:_ >>                           | This corresponds to the
                              |                                        | Content-Length header sent by the
@@ -141,7 +152,7 @@ The environment MUST be an L<Associative>. The keys of this map are mostly deriv
                              |                                        | or formally specified.
 
     C<p6sgi.version>         | C<< Version:D >>                       | This is the version of this
-                             |                                        | specification, C<v0.3.Draft>.
+                             |                                        | specification, C<v0.6.Draft>.
 
     C<p6sgi.url-scheme>      | C<< Str:D >>                           | Either "http" or "https".
 
@@ -150,10 +161,10 @@ The environment MUST be an L<Associative>. The keys of this map are mostly deriv
 
     C<p6sgi.errors>          | C<< Supply:D >>                        | The error stream for logging.
 
-    C<p6sgi.ready>           | C<< Promise:D >>                       | This is a vowed Promise that MUST be 
-                             |                                        | kept by the server as soon as the 
-                             |                                        | server has tapped the application's 
-                             |                                        | output Supply and is ready to 
+    C<p6sgi.ready>           | C<< Promise:D >>                       | This is a vowed Promise that MUST be
+                             |                                        | kept by the server as soon as the
+                             |                                        | server has tapped the application's
+                             |                                        | output Supply and is ready to
                              |                                        | receive emitted messages. The value
                              |                                        | of the kept Promise is irrelevent.
                              |                                        | The server SHOULD NOT break this
@@ -226,19 +237,23 @@ Aside from the typical response, applications are permitted to return any part o
         });
     }
 
-Calling C<Promise> on the returned object returns a Promise that is kept with the required Capture. The first two elements are what are normally expected, but the third is just a list. A L<List>, however, coerces to Supply as required.
+The server will coerce the returned object to a C<Promise>, which is kept with the required Capture. The first two elements are what are normally expected, but the third is just a list. A L<List>, however, coerces to Supply as required.
 
 The server SHOULD NOT assume that the Promise will always be kept and SHOULD handle a broken Promise as appropriate. The server SHOULD assume the Promise has been vowed a MUST NOT try to keep or break the Promise itself.
 
+=head4 2.0.4.0 Response Headers
+
 Each L<Pair> in the list of headers maps a header name to a header value. The application may return the same header name multiple times. The order of multiple headers with the same name SHOULD be preserved.
 
-If the application is missing headers that are required for the Status Code given or provides headers that are forbidden, the application server SHOULD treat that as a server error.
+If the application is missing headers that are required for the status code given or provides headers that are forbidden, the application server SHOULD treat that as a server error.
 
-The server SHOULD examine the C<Content-Type> header for the C<charset> setting. This SHOULD be used to aid in encoding any L<Str> encountered when processing the Message Body. If the application does not provide a C<charset>, the server MAY choose to add this header itself using the encoding provided in C<p6sgi.body.encoding> in the environment.
+If given, the server SHOULD examine the C<Content-Type> header for the C<charset> setting. This SHOULD be used to aid in encoding any L<Str> encountered when processing the message payload. If the application does not provide a C<charset>, the server MAY choose to add this header itself using the encoding provided in C<p6sgi.body.encoding> in the environment.
 
-The server SHOULD examine the C<Content-Length> header, if given. It MAY choose to stop consuming the Message Body once the number of bytes given has been read. It SHOULD guarantee that the body length is the same as described in the C<Content-Length>.
+The server SHOULD examine the C<Content-Length> header, if given. It MAY choose to stop consuming the message payload once the number of bytes given has been read.
 
-Unless the status code is one that is not permitted to have a message body, the application server MUST tap the Supply and process each emitted L<Blob> or L<Cool>, until the the either the Supply is done or the server decides to quit tapping the stream for some reason.
+=head4 2.0.4.1 Response Payload
+
+Unless the status code is one that is not permitted to have a message payload, the application server MUST tap the Supply and process each emitted L<Blob> or L<Cool>, until the the either the Supply is done or the server decides to quit tapping the stream for some reason.
 
 The application server SHOULD continue processing emitted values until the Supply is done or until C<Content-Length> bytes have been emitted. The server MAY stop tapping the Supply for various other reasons as well, such as timeouts or because the client has closed the socket, etc.
 
@@ -444,6 +459,8 @@ For example, here is another example that demonstrates the flexibility possible 
 
 This application will print out all the values of factorial from 1 to N where N is given as the query string. The header is returned immediately, but the lines of the body are returned as the values of factorial are calculated.
 
+The application MUST return this Promise as soon as possible. It is recommended that applications wrap themselves in a C<start {}> block to make this automatic.
+
 =head3 2.2.5 Payload and Encoding
 
 The application may emit any object to the returned L<Supply> to be part of the response payload. It is expected, however, that either these objects will be mapped into the expectations of the application server by middleware or already be in such a form.
@@ -462,15 +479,11 @@ Applications SHOULD avoid characters that require encoding in HTTP headers.
 
 =head1 3 Extensions
 
-In addition to the standard specification, there are a number of extensions that servers or middleware MAY choose to implement. They are completely optional and applications and middleware SHOULD check for their presence before depending on them
+In addition to the standard specification, there are a number of extensions that servers or middleware MAY choose to implement. They are completely optional and applications and middleware SHOULD check for their presence before depending on them.
 
-=head2 3.0 Environment Extensions
+=head2 3.0 Header Done
 
-These are extensions to the standard environment.
-
-=head3 3.0.0 Header Done
-
-The C<p6sgix.header.done> environment variable, if provided, MUST be a vowed L<Promise>. This Promise MUST be kept when the server is done sending or processing the response header. The Promise MUST be broken if the server is unable to or will not send the application provided headers. 
+The C<p6sgix.header.done> environment variable, if provided, MUST be a vowed L<Promise>. This Promise MUST be kept when the server is done sending or processing the response header. The Promise MUST be broken if the server is unable to or will not send the application provided headers.
 
 This is not an exhaustive list, but here are a few possible reasons why this Promise MAY be broken:
 
@@ -480,25 +493,25 @@ This is not an exhaustive list, but here are a few possible reasons why this Pro
 
 =item The client hungup the connection before the headers could be sent.
 
-=head3 3.0.1 Body Done
+=head2 3.1 Body Done
 
 The C<p6sgix.body.done> environment variable, if provided, MUST be a vowed L<Promise>. This Promise MUST be kept when the server is done sending or processing the response body. The Promise MUST be broken if the server is unable to or will not send the complete application body.
 
 This is not an exhaustive list, but here are a few possible reasons why this Promise MAY be broken:
 
-See also 3.0.7.
+See also 3.7.
 
 =item The application server has already transmitted C<Content-Length>, but the application continued to send bytes after that point.
 
 =item The client hungup the connection before it finished sending the response.
 
-=head3 3.0.2 Raw Socket
+=head2 3.2 Raw Socket
 
-The C<p6sgix.io> environment variable, if provided, MUST be the bare metal L<IO::Socket::INET> used to communicate to the client. This is the interface of last resort as it sidesteps the entire P6SGI interface. 
+The C<p6sgix.io> environment variable, if provided, MUST be the bare metal L<IO::Socket::INET> used to communicate to the client. This is the interface of last resort as it sidesteps the entire P6SGI interface.
 
 If your application requires the use of this socket, please file an issue describing the nature of your application in detail. You may have a use-case that requires revisions to the P6SGI standard to cope with.
 
-=head3 3.0.3 Logger
+=head2 3.3 Logger
 
 The C<p6gix.logger> environment variable, if provided, MUST be a L<Routine> defined with a signature as follows:
 
@@ -506,27 +519,27 @@ The C<p6gix.logger> environment variable, if provided, MUST be a L<Routine> defi
 
 When called application MUST provide a C<$level> that is one of: `debug`, `info`, `warn`, `error`, `fatal`.
 
-=head3 3.0.4 Sessions
+=head2 3.4 Sessions
 
 The C<p6sgix.session> environment variable, if provided, MUST be an L<Associative> mapping arbitrary keys and values that may be read and written to by an application. The application SHOULD only use L<Str> keys and values. The implementation of persisting this data is up to the application or middleware implementing the session.
 
 The C<p6sgix.session.options> environment variable, if provided, MUST be an L<Associative> mapping implementation-specific keys and values. This allows the application a channel by which to instruct the session handler how to operate.
 
-=head3 3.0.5 Harikiri Mode
+=head2 3.5 Harikiri Mode
 
 The C<p6sgix.harikiri> environment variable, if provided, MUST be a L<Bool>. If set to C<True> it signals to the application that the server supports harikiri mode, which allows the application to ask the server to terminate the current work when the request is complete.
 
 The C<p6sgix.harikiri.commit> environment variable MAY be set by the application to signal to the server that the current worker should be killed after the current request has been processed.
 
-=head3 3.0.6 Cleanup Handlers
+=head2 3.6 Cleanup Handlers
 
 The C<p6sgix.cleanup> environment variable, if provided, MUST be a L<Bool>. If set to C<True> it tells the application that the server supports running cleanup handlers after the request is complete.
 
 The C<p6sgix.cleanup.handlers> environment variable MUST be provided if the C<p6sgix.cleanup> flag is set. This MUST an L<Array>. The application adds cleanup handlers to the list by putting L<Callable>s into the Array (usually by C<push>ing). Each handler will be given a copy of the C<%env> as the first argument.
 
-If the server supports harikiri mode, it SHOULD allow the cleanup handlers to invoke harikiri mode if they set C<p6sgix.hariki.commit> (see 3.0.5).
+If the server supports harikiri mode, it SHOULD allow the cleanup handlers to invoke harikiri mode if they set C<p6sgix.hariki.commit> (see 3.5).
 
-=head3 3.0.7 Output Block Detection
+=head2 3.7 Output Block Detection
 
 The C<p6sgix.body.backpressure> environment variable, if provided, MUST be a L<Bool> flag. It is set to C<True> to indicate that the P6SGI server provide response backpressure detection by polling for non-blocking I/O problems. In this case, the server MUST provide the other two environment variables. If C<False> or not defined, the server does not provide these two environment variables.
 
@@ -534,7 +547,99 @@ The C<p6sgix.body.backpressure.supply> environment variable MUST be provided if 
 
 The C<p6sgix.body.backpressure.test> environment variable MUST be provided if C<p6sgix.body.backpressure> is C<True>. When provided, it MUST be a L<Bool> that is C<True> while output is blocked and C<False> otherwise. This can be useful for detecting the initial state before the backpressure supply has emitted any value or just as a way to poll the last known status of the socket.
 
+=head2 3.8 Protocol Upgrade
+
+The C<p6sgix.protocol.upgrade> environment variable MUST be provided if the server implements the protocol upgrade extension. It MUST be set to an L<Array> of protocol names of protocols the server supports.
+
+When the client makes a protocol upgrade request using an C<Upgrade> header, the application MAY request that the server upgrade to one of these supported protocols by sending a C<P6SGIx-Upgrade> header back to the server with the named protocol. The application MAY send any other headers related to the Upgrade and MAY send a message payload if the upgrade allows it. These SHOULD override any server supplied values or headers.
+
+The server MUST negotiate the new protocol and enable any environment variables required for interacting through that protocol.
+
+Aside from the protocols named here, additional upgrade protocols may be added by other specifications or implementations. However, the common rule all such upgrades follow is that the application MUST complete work on the current protocol (generally HTTP/1.1) in the current method call.
+
+The server MUST make a new call to the application with a new environment to start processing on the new protocol as is appropriate for that protocol. This lets the application reliably process the activity for a single protocol interaction per subroutine call safely whether an upgrade is performed at the application's request or the protocol is otherwise initiated by the server (e.g., an HTTP/2 request may be initiated by a user agent without an upgrade from HTTP/1.1 or a server MAY automatically perform these upgrades in some or all circumstances depending on implementation).
+
+=head3 3.8.0 HTTP/2 Protocol Upgrade
+
+The workings of HTTP/2 are similar enough to HTTP/1.0 and HTTP/1.1 that use of a protocol upgrade may not be necessary in most or all use-cases. However, servers MAY choose to delegate this to the application using the protocol upgrade extension.
+
+Servers that support this protocol upgrade MUST place the name "h2c" and/or "h2" into the C<p6sgix.protocol.upgrade> array, for support of HTTP/2 over cleartext connections and HTTP/2 over TLS, respectively.
+
+The application MUST NOT tap the C<p6sgix.input> stream when performing this upgrade. The application SHOULD NOT return a message payload aside from an empty L<Supply>.
+
+Once upgraded the application server MUST adhere to all the requirements for HTTP/2 as described in section 4.2. The application will be called again once a web request is received on the upgraded connection and is ready for processing.
+
+=head3 3.8.1 WebSocket Protocol Upgrade
+
+Servers that support the WebSocket protocol upgrade MUST place the name "websocket" into the C<p6sgix.protocol.upgrade> array.
+
+The application MUST NOT tap the C<p6sgix.input> stream when performing this upgrade. The application SHOULD NOT return a message payload aside from an empty L<Supply>.
+
+Once upgraded the application server MUST adhere to all the requirements for WebSocket as described in section 4.3. The application will be called again immediately after the upgrade is complete to allow it to begin sending and receiving frames.
+
+Once upgraded the application
+
+=head2 3.9 Transfer Encoding
+
+This extension is only for HTTP/1.1 protocol connections. When the server supporst this extension, it MUST provide a C<p6sgix.http11.transfer-encoding> variable listing the transfer encodings the server supports.
+
+When the application returns a header named C<P6SGIx-Transfer-Encoding> with the name of one of the supported transfer encodings, the server MUST apply that transfer encoding to the message payload. If the connection is not HTTP/1.1, the server SHOULD ignore this header.
+
+=head3 3.9.0 Chunked Encoding
+
+When the server supports and the application requests "chunked" encoding. The application server MUST treat each emitted L<Str> or L<Blob> as a chunk to be encoded according to L<RFC7230|https://tools.ietf.org/html/draft-ietf-httpbis-p1-messaging>.
+
+=head3 3.9.1 Other Encodings
+
+All other encodings should be handled as required by the relevant rules for HTTP/1.1.
+
+=head1 4 Protocol Implementation
+
+The goal of a P6SGI application server is to allow the application to operate on one of several different web communication protocols without having to deal with all of the mundane of implementing a web server. The reason this requires a standard rather than just an implementation is because we admit at the start that there are many different ways to go about interfacing an application to a server. Some are different ways of communicating, e.g., CGI versus FastCGI versus HTTP. Some are related to implementation and optimization, e.g., a new application server implementation may outperform an older one. Part of the first goal of this specification is to allow application developers to write the application once and allow the application to run on any P6SGI application server with no (or at least very few) changes required.
+
+Therefore, what is meant by "Protocol" in this section of the P6SGI standard is the ultimate protocol the application server is communicating. For example, a typical CGI application works according to the Common Gateway Interface specification, but is ultimately communicating via HTTP/1.0 (or at least that's the only applicable standard in the typical case).
+
+This section defines the additional per-protocol requirements a P6SGI server SHOULD implement for a given protocol. This section will avoid repeating the requirements given in the RFC for each protocol and focus in on the server's responsibility to the application instead.
+
+=head2 4.0 HTTP/1.0
+
+It is generally expected, but not required, that most or all application servers will implement HTTP/1.0. This assumption is so integral to the specification that nearly all the requirements stated in section 2 could be considered the protocol requirements of HTTP/1.0. No additional requirements need to be stated here.
+
+=head2 4.1 HTTP/1.1
+
+Most application servers will implement some aspects of HTTP/1.1. Again, this assumption is integral enough that most HTTP/1.1 protocol details are already mentioned above in section 2. No additional requirements need to be stated here.
+
+=head2 4.2 HTTP/2
+
+Any application server implementing HTTP/2 MUST adhere to the requirements described above with the following additional requirements:
+
+=item The C<SERVER_PROTOCOL> MUST be set to "HTTP/2".
+
+=item The environment MUST contain a variable named C<p6sgix.h2.push-promise>. This MUST be a L<Supply> that the application MAY use to initiate any C<PUSH_PROMISE> frames related to the current response.
+
+=item The server MUST decode incoming frames and only deliver the data contained within the frames to the application in the environment with the same semantics applied as if each incoming stream were an HTTP/1.1 request.
+
+=item The server MUST encode outgoing data emitted by the application into HTTP/2 frames as appropriate.
+
+=head3 4.3 WebSocket
+
+Any application server implementing WebSocket MUST adhere to all the requirements described above with the following modifications:
+
+=item The C<SERVER_PROTOCOL> MUST be set to "WebSocket/13".
+
+=item The server MUST decode frames received from the client and emit them each to C<p6sgix.input>. The frames MUST NOT be buffered or concatenated.
+
+=item The server MUST encode frames emitted by the application in the message payload as data frames sent to the client. The frames MUST be separated out as emitted by the application without any buffering or concatenation.
+
 =head1 Changes
+
+=head2 0.6.Draft
+
+=item Added Protocol-specific details and modifications to the standard HTTP/1.x environment.
+
+=item Adding the Protocol Upgrade extension and started details for HTTP/2 and WebSocket upgrade handling.
+
+=item Adding the Transfer Encoding extension because leaving this to the application or unspecified can lead to tricky scenarios.
 
 =head2 0.5.Draft
 

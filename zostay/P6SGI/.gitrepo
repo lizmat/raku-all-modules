@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/P6SGI.git
 	branch = master
-	commit = ef0ba726b3c6e5ac5368aaf97848df25589b599c
-	parent = b7556e44a8c78000fa527e3aaded5cd732096f2c
+	commit = fae79c6c0ac0f4dbcfdffa35d85313a5487f9a18
+	parent = 5c5989e2630fb201e2dc67f2f5c0d90231a104a4
 	cmdver = 0.2.2
