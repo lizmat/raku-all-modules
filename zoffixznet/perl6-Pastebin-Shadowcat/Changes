@@ -1,0 +1,9 @@
+Revision history for Pastebin-Shadowcat
+
+1.001002  2015-09-29
+  - Fix failures when fetching pastes with more than one line
+  - Properly "fail()" on errors
+  - Fixed incorrect handling of "#$&+,/:;=?@" chars in pastes
+
+1.001001  2015-04-03
+  - First version released on an unsuspecting world

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Pastebin-Shadowcat.git
 	branch = master
-	commit = ddc9d01a3689b10fce645e9e65550cf4a08c06f5
-	parent = 098a4f219797292bc3fc429186c3e6fbaa991864
-	cmdver = 0.2.1
+	commit = 8d840b53e18b45b8da1764ff84bc97fc99807581
+	parent = 5aae15018bb8681069b95d007c523274505e82a0
+	cmdver = 0.2.2
