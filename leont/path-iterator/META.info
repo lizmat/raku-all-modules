@@ -1,5 +1,5 @@
 {
-    "name" : "YAMLish",
+    "name" : "Path::Iterator",
     "version" : "0.0.1",
     "description" : "Iterative, recursive file finder for Perl 6",
     "provides" : {
