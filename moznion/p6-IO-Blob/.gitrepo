@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/moznion/p6-IO-Blob.git
+	branch = master
+	commit = d4ab66d3f89d586e1879f34604c5d85faa553547
+	parent = f1beb069d0bf7b62d391cc1c923ad34733dd9a8f
+	cmdver = 0.2.2
