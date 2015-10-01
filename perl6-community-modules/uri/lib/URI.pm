@@ -47,23 +47,23 @@ method parse (Str $str) {
     # now deprecated
     $!uri = $!grammar.parse_result;
 
-    my $comp_container = $!grammar.parse_result<URI_reference><URI> ||
-        $!grammar.parse_result<URI_reference><relative_ref>;
+    my $comp_container = $!grammar.parse_result<URI-reference><URI> ||
+        $!grammar.parse_result<URI-reference><relative-ref>;
     $!scheme = $comp_container<scheme>;
     $!query = $comp_container<query>;
     $!frag = $comp_container<fragment>;
-    $comp_container = $comp_container<hier_part> || $comp_container<relative_part>;
+    $comp_container = $comp_container<hier-part> || $comp_container<relative-part>;
 
     $!authority = $comp_container<authority>;
-    $!path =    $comp_container<path_abempty>       ||
-                $comp_container<path_absolute>      ;
+    $!path =    $comp_container<path-abempty>       ||
+                $comp_container<path-absolute>      ;
     $!is_absolute = ?($!path || $!scheme); # part of deprecated code
 
-    $!path ||=  $comp_container<path_noscheme>      ||
-                $comp_container<path_rootless>      ;
+    $!path ||=  $comp_container<path-noscheme>      ||
+                $comp_container<path-rootless>      ;
 
     @!segments = $!path<segment>.list() || ('');
-    if my $first_chunk = $!path<segment_nz_nc> || $!path<segment_nz> {
+    if my $first_chunk = $!path<segment-nz-nc> || $!path<segment-nz> {
         unshift @!segments, $first_chunk;
     }
     if @!segments.elems == 0 {
@@ -160,6 +160,10 @@ method port {
     $._port // $.default_port;
 }
 
+method userinfo {
+    return ~($!authority<userinfo> || '');
+}
+
 method path {
     return ~($!path || '');
 }
@@ -191,7 +195,6 @@ method query {
 method path_query {
     $.query ?? $.path ~ '?' ~ $.query !! $.path
 }
-
 
 method frag {
     return ~($!frag || '').lc;
@@ -251,8 +254,8 @@ URI — Uniform Resource Identifiers (absolute and relative)
 
     # something p5 URI without grammar could not easily do !
     my $host_in_grammar =
-        $u.grammar.parse_result<URI_reference><URI><hier_part><authority><host>;
-    if ($host_in_grammar<reg_name>) {
+        $u.grammar.parse_result<URI-reference><URI><hier-part><authority><host>;
+    if ($host_in_grammar<reg-name>) {
         say 'Host looks like registered domain name - approved!';
     }
     else {

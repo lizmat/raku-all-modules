@@ -23,7 +23,7 @@ method parse($parse_str) {
 }
 
 method parse_validating($parse_str) {
-    $!parse_result = $!grammar.parse($parse_str, :rule<TOP_validating>)
+    $!parse_result = $!grammar.parse($parse_str, :rule<TOP-validating>)
         or die "Parse failed";
 }
 

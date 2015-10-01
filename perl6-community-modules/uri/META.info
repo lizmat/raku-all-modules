@@ -1,6 +1,6 @@
 {
     "name"        : "URI",
-    "version"     : "v0.1.0",
+    "version"     : "v0.1.1",
     "description" : "A URI implementation using Perl 6 grammars to implement RFC 3986 BNF",
     "depends"     : [ ],
     "provides" : {
