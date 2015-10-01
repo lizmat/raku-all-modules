@@ -9,8 +9,11 @@ has $!author = qx{git config --global user.name}.chomp;
 has $!email  = qx{git config --global user.email}.chomp;
 has $!year   = Date.today.year;
 
+my $normalize-path = -> $path {
+    $*DISTRO.is-win ?? $path.subst('\\', '/', :g) !! $path;
+};
 my $to-module = -> $file {
-    $file.subst('lib/', '').subst('/', '::', :g).subst(/\.pm6?$/, '');
+    $normalize-path($file).subst('lib/', '').subst('/', '::', :g).subst(/\.pm6?$/, '');
 };
 my $to-file = -> $module {
     'lib/' ~ $module.subst('::', '/', :g) ~ '.pm6';
@@ -38,7 +41,9 @@ multi method cmd('new', $module is copy) {
         spurt($f, %content{$c});
     }
     self.cmd("build");
-    run "git", "init", ".";
+    my $devnull = open $*SPEC.devnull, :w;
+    run "git", "init", ".", :out($devnull);
+    $devnull.close;
     run "git", "add", ".";
     note "Successfully created $main-dir";
 }
@@ -85,15 +90,15 @@ sub withp6lib(&code) {
         }
     }
     my $new = "$*CWD/blib/lib".IO.e ?? "$*CWD/blib/lib" !! "$*CWD/lib";
-    %*ENV<PERL6LIB> = $new ~ ($old ?? ":$old" !! "");
+    %*ENV<PERL6LIB> = $new ~ ($old ?? ",$old" !! "");
     &code();
 }
 
 sub build() {
     return unless "Build.pm".IO.e;
     require Panda::Builder;
-    my $builder = ::("Panda::Builder").new;
-    $builder.build($*CWD.Str);
+    note '==> Execute Panda::Builder.build($*CWD)';
+    ::("Panda::Builder").build($*CWD);
 }
 
 sub test(@file, Bool :$verbose, Int :$jobs) {
@@ -101,7 +106,9 @@ sub test(@file, Bool :$verbose, Int :$jobs) {
         my @option = "-r";
         @option.push("-v") if $verbose;
         @option.push("-j", $jobs) if $jobs;
-        @file = "t/" if @file.elems == 0;
+        if @file.elems == 0 {
+            @file = <t xt>.grep({.IO.d});
+        }
         my @command = "prove", "-e", $*EXECUTABLE, |@option, |@file;
         note "==> Set PERL6LIB=%*ENV<PERL6LIB>";
         note "==> @command[]";
@@ -191,7 +198,7 @@ sub guess-user-and-repo() {
 sub find-provides() {
     my %provides = find(dir => "lib", name => /\.pm6?$/).list.map(-> $file {
         my $module = $to-module($file.Str);
-        $module => $file.Str;
+        $module => $normalize-path($file.Str);
     });
     %provides;
 }
