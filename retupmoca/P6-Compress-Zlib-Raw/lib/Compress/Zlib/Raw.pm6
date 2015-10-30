@@ -2,14 +2,14 @@ use v6;
 unit module Compress::Zlib::Raw;
 
 use NativeCall;
-use LibraryMake;
+use Find::Bundled;
 
 sub find-lib {
     state $lib;
     unless $lib {
         if $*VM.config<dll> ~~ /dll/ {
             # we're on windows, different library name
-            $lib = find-bundled('zlib1.dll', 'Compress/Zlib');
+            $lib = Find::Bundled.find('zlib1.dll', 'Compress/Zlib', :keep-filename, :return-original);
         } elsif $*VM.config<dll> ~~ /so$/ {
             $lib = 'libz.so.1';
         } else {
