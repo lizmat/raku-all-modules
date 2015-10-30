@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Audio-Sndfile.git
 	branch = master
-	commit = 1b2361767748b2df4d240e7215281fbe95b5581b
-	parent = 70117b41b7e0ca1180213e790fab93e3f2ed1395
+	commit = 307d2d3c23892369782084ebb5eb7e320f2e9963
+	parent = 1a54de8ce9adb9b1c4b99fa93c07c97dcdaf5760
 	cmdver = 0.2.2

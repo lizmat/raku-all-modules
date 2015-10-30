@@ -338,7 +338,7 @@ copying or converting the file.
 
 =end pod
 
-class Audio::Sndfile:ver<v0.0.4>:auth<github:jonathanstowe> {
+class Audio::Sndfile:ver<v0.0.5>:auth<github:jonathanstowe> {
 
     subset RawEncode of Array where  ($_.elems == 2 ) && ($_[0] ~~ CArray) && ($_[1] ~~ Int);
 
@@ -368,7 +368,7 @@ class Audio::Sndfile:ver<v0.0.4>:auth<github:jonathanstowe> {
 
             my $buff = CArray[$type].new;
 
-            $buff[$frames * $info.channels] = 0;
+            $buff[$frames * $info.channels] = $type ~~ Num ?? Num(0) !! Int(0);
 
             my $rc = &read-sub(self, $buff, $frames);
 
