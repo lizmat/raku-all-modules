@@ -1,0 +1,10 @@
+{
+  "name" : "Module::Does",
+  "version" : "0.1",
+  "description" : "role for finding loaded modules in global scope that 'does' some role or class, useful for modules that want to support hot swapping modules with minimal end user code",
+  "depends" : [],
+  "provides" : {
+      "Module::Does": "lib/Module/Does.pm6"
+  },
+  "source-url" : "git://github.com/tony-o/perl6-module-does.git"
+}
