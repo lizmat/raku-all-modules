@@ -142,8 +142,8 @@ role HTTP::Header {
 
     method key returns Str { self.name.lc } #= The header lookup key
 
-    method push(*@values) { @!values.push: @values } #= Push values into the header
-    method unshift(*@values) { @!values.push: @values } #= Unshift values into the header
+    method push(*@values) { @!values.append: @values } #= Push values into the header
+    method unshift(*@values) { @!values.append: @values } #= Unshift values into the header
     method shift() { @!values.shift } #= Shift values off the header
     method pop() { @!values.pop } #= Pop values off the header
 
