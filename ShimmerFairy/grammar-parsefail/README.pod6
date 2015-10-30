@@ -1,0 +1,242 @@
+=begin pod
+
+=TITLE Grammar::Parsefail
+
+=AUTHOR Faye (ShimmerFairy)
+
+=begin SYNOPSIS
+
+Offers facilities to give usable errors out of parsing, pointing to the problem
+in the text being parsed, instead of the point in the program where you threw
+the error.
+
+=begin code :allow<B>
+    grammar ParenParser B<is Grammar::Parsefail> {
+        token TOP {
+            <expr>+
+
+            [')' {B«$¢.sorry(X::Grammar::ExtraParen, HINT-MATCH => $<expr>[*-1])»}]*
+
+            [$ || B«<.typed_panic(X::Grammar::EarlyEOF)>»]
+            B«<.express_concerns>»
+        }
+
+        token expr {
+            '('
+            [<-[()\\]> | <expr> | \\ [\(|\)] B«<.worry("Escaped paren found, but ignored")>»]+
+            ')'
+        }
+    }
+=end code
+
+This module gives a role to be applied to grammars which lets you give users an
+infinitely more helpful error message when they've given files (or other kinds
+of text) to your P6 program for parsing.
+
+=end SYNOPSIS
+
+=head1 Basics
+
+The module provides a role for doing error reporting within the grammar, and a
+base exception type to inherit from for your own grammar error types.
+
+=head2 Error Levels
+
+The Parsefail role provides three different levels of error reporting, depending
+on the severity of the problem encountered. These levels are the same as used in
+rakudo's parser. From least to most severe:
+
+=head3 Worry
+
+A X<worry> is basically just a warning; your grammar has encountered something
+that works just fine in whatever you're parsing, but it could easily be
+problematic for some users who were expecting different behavior. An example
+from Perl 6 is a leading zero on numbers:
+
+    =begin output
+    $ K<perl6 -e 'my $a = 042'>
+    Potential difficulties:
+        Leading 0 does not indicate octal in Perl 6.
+        Please use 0o42 if you mean that.
+        at -e:1
+        ------> my $a = 042⏏<EOL>
+    =end output
+
+Perl 6 doesn't interpret a leading zero as indicating an octal number, it's just
+a decimal number with a leading zero. However, since a lot of people would
+expect a leading zero to mean octal, P6 emits a worry that you're not getting
+what you expected.
+
+=head3 Sorry
+
+A X<sorry> is a fatal problem in parsing, but doesn't keep from being able to
+parse a bit more. A sorry allows you to continue parsing the text to find more
+problems in the text being parsed.
+
+For example, if you're parsing a language that has reserved keywords which
+variables can't use as a name (e.g. C++), and you encounter a declaration of a
+variable with a reserved keyword, you can use a sorry. The use of a reserved
+keyword is a parsing-time error, but it doesn't make the file impossible to
+parse (since the text did provide a legal variable name, just one that's
+reserved).
+
+=head3 Panic
+
+A X<panic> is like a sorry, only it stops parsing immediately. This is when the
+problem you found leaves you unable to figure out how to parse things going
+forward.
+
+In the previous section, an example of sorry usage was given about declaring
+variables with a reserved names. An example of a panic would be code later on
+that tries to I<use> the bad variable; since the reserved keyword changes
+parsing behavior, an unexpected reserved keyword means you don't know what to
+expect anymore.
+
+Take this snippet of bad C++ as an example, assuming a hypothetical C++ parser:
+
+=begin code
+    int main() {
+        std::vector<int> if;  // issue a sorry for trying to declare an
+                              // 'if' variable
+
+        if = other_vector;    // a panic goes here, since there's no telling what's
+                              // going on with this "if" (did you mean a conditional
+                              // and forget a variable on the left of the =, or
+                              // did you mean to assign to a badly-named variable?)
+
+        return 0;
+    }
+=end code
+
+=head2 How to Use
+
+Make your grammar do the C<Grammar::Parsefail> role, and then you can use the
+following methods:
+
+=item C<panic(Stringy $a)> — Takes a string and throws it as an error of type
+      C<X::Grammar::AdHoc>.
+
+=item C<sorry(Stringy $a)> — Makes a sorry of type C<X::Grammar::AdHoc>.
+
+=item C<worry(Stringy $a)> — Makes a worry of type C<S::Grammar::AdHoc>.
+
+=item C<typed_panic(Exception $a, *%opts)> — Throws a panic of type C<$a>,
+      giving it C<%opts> to its constructor (with some exceptions; see below).
+
+=item C<typed_sorry(Exception $a, *%opts)> — Makes a sorry in a fashion similar
+      to C<typed_panic>.
+
+=item C<typed_worry(Exception $a, *%opts)> — Makes a worry in a fashion similar
+      to C<typed_panic>.
+
+As well as these methods, which unlike the above don't create exceptions:
+
+=item C<express_concerns> — Call at the end of your grammar to throw any sorrows
+      or worries that have accumulated.
+
+=item C<limit_sorrows> — Limits the number of sorrows your grammar can generate
+      before it bails out. You could think of this as saying how many sorrows
+      equals a panic. The default is 10, which means your 10th sorrow causes
+      your grammar to immediately throw all 10 sorrows.
+
+      =item2 Note that, unlike rakudo's grammar, this does I<not> treat the 10th
+             sorrow as though it were a panic. We make a slight distinction
+             between a "true" panic and just too many sorrows.
+
+      =item2 Does not return C<self>, so you cannot do C«<.limit_sorrows(10)>».
+
+=item C<set_filename> — sets the filename for use in error messages. By default
+      says "<unspecified file>" in place of the file name.
+
+      =item2 Does not return C<self>, so you cannot do
+             C«<.set_filename("foo.txt")>».
+
+=head3 How to Call Methods
+
+Except for C<limit_sorrows> and C<set_filename>, as mentioned above, you can use
+these methods as regular assertions, but using the C<.> to avoid capturing
+(since there's nothing useful to capture; no harm if you forget the dot).
+
+    <.panic("AAAAAAAAAAAAAAAAH!")>
+    <.express_concerns>
+
+If, however, you need to access parts of the current match state, you have to
+call the method from within a block:
+
+    <.typed_panic(X::Grammar::Something, bad_char => ~$<bracket>)>    # WRONG
+    {$¢.typed_panic(X::Grammar::Something, bad_char => ~$<bracket>)}  # ok
+
+You can spell C<$¢> as C<$/.CURSOR> if you prefer. They are exactly equivalent.
+
+Using this, you can also create a failure from some other part of the match,
+instead of the current position:
+
+    {$<open_block>.CURSOR.worry("EEK!")}
+
+=head3 Typed Exceptions
+
+The two named options that are usually supported by C<X::Grammar> types are
+C<hint-message> and C<HINT-MATCH> (see below on C<HINT-MATCH>). C<hint-message>
+provides an extra hint about the problem, to help the user fix the
+issue.
+
+C<HINT-MATCH> points to a particular spot in the source text to go along with
+the hint, where applicable. You can have a hint message without a C<HINT-MATCH>,
+if the hint for the error doesn't have anywhere to point.
+
+For the actual error message, different types will have different ways of
+constructing it. Some types have constant error messages, some ask for specific
+pieces of information to construct the message, and yet others will allow
+setting a C<message> attribute.
+
+=head3 Special Options
+
+When using C<typed_worry>, C<typed_sorry>, or C<typed_panic>, certain named
+params are handled specially by the exception construction mechanism. Currently
+this is just C<HINT-MATCH>.
+
+    =begin defn
+    C<HINT-MATCH>
+
+    This named option takes a C<Match> (not a C<Cursor>) that points to wherever
+    the hint wants to. As part of the error construction process, the C<Match>
+    given here is turned into a few attributes C<X::Grammar> uses to print the
+    location of the hint.
+
+    The C<Match> passed to C<HINT-MATCH> should be a location that's helpful
+    with the error, e.g. the C<Match> object for an opening bracket in an error
+    about a missing closing bracket.
+
+    This only works with C<X::Grammar>-based exceptions. The resulting
+    attributes will be ignored (or worse, used differently) by other exceptions.
+    =end defn
+
+=head2 How to Make Your Own Exceptions
+
+This package by default doesn't provide any exception classes, aside from
+C<X::Grammar> and C<X::Grammar::AdHoc>. The C<AdHoc> class is used for the
+untyped exception handlers. The base C<X::Grammar> class isn't suitable by
+itself.
+
+To create your own exceptions to use with this role, it's recommended you derive
+from C<X::Grammar>. Then you just need to provide a C<message> method. The
+C<message> method can either be a public C<$.message> attribute declaration in
+your class, or a method that constructs the appropriate message.
+
+The hint mechanism doesn't need any additional work by you. If you want your
+hint messages to have a certain structure, then you can define a C<hint-message>
+method:
+
+    method hint-message { $!hint-info.defined ?? "Try doing $!hint-info" !! Str }
+
+The base C<X::Grammar> uses the defined-ness of C<hint-message> to check if
+there's a hint to display, so if your class doesn't unconditionally provide a
+hint, make sure to return an undefined object if there's no hint (like the
+example above).
+
+Note that certain attributes will never be filled by class construction (see
+L<#Special Options> above).
+
+=COPYRIGHT Copyright © 2015 Faye, under the Artistic License 2.0
+
+=end pod
