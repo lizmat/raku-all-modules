@@ -1,0 +1,13 @@
+{
+    "name"         : "Pastebin::Gist",
+    "version"      : "1.001001",
+    "description"  : "Use https://gist.github.com/ as a pastebin",
+    "depends"      : [ "HTTP::Tinyish" ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "Pastebin::Gist" : "lib/Pastebin/Gist.pm6"
+    },
+    "author"       : "Zoffix Znet",
+    "authority"    : "zoffixznet",
+    "source-url"   : "git://github.com/zoffixznet/perl6-Pastebin-Gist.git"
+}

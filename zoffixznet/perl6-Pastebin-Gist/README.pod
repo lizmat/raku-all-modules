@@ -1,0 +1,143 @@
+=encoding utf8
+
+=head1 NAME
+
+Pastebin::Gist - Perl 6 interface to https://gist.github.com/
+
+=head1 SYNOPSIS
+
+    use Pastebin::Gist;
+    my $p = Pastebin::Gist.new(
+        token => '3f2b4ca292960fafc63fb6798f148e3b47ea9fff',
+    );
+
+    my $paste_url = $p.paste("<foo>bar</foo>");
+    my $paste_url = $p.paste(
+        {
+            'file1.p6' => { content => "Paste content 1" },
+            'meow.css' => { content => "Paste content 2" },
+        },
+        desc => "Foo Bar",
+        public => 0,
+    );
+
+=head1 DESCRIPTION
+
+This module allows to paste to create GitHub Gists as retrieve them.
+
+=head1 METHODS
+
+=head2 C<new>
+
+    # Assuming PASTEBIN_GIST_TOKEN env var has the token:
+    my $p = Pastebin::Gist.new;
+
+    # Set token via an argument:
+    my $p = Pastebin::Gist.new(
+        token => '3f2b4ca292960fafc63fb6798f148e3b47ea9fff',
+    )
+
+Creates new C<Pastebin::Gist> object. Accepts the following settings:
+
+=head3 C<token>
+
+    token => '3f2b4ca292960fafc63fb6798f148e3b47ea9fff'
+
+B<Mandatory>. To use this module you need to
+L<create a GitHub token|https://github.com/settings/tokens>. Only the C<gist>
+permission is needed.
+
+You can avoid providing the C<token> argument by setting the
+C<PASTEBIN_GIST_TOKEN> environmental variable to the value of your token.
+
+=head2 C<paste>
+
+    my $paste_url = $p.paste('Paste content');
+    my $paste_url = $p.paste('Paste content', filename => 'foo.p6');
+    my $paste_url = $p.paste(
+        {
+            'file1.p6' => { content => "Paste content 1" },
+            'meow.css' => { content => "Paste content 2" },
+        },
+        desc => 'Optional summary',
+        public => True,
+    );
+
+B<Returns> URL to the created paste (e.g.
+L<https://gist.github.com/5590bc07b8d5bd8fd98d>).
+First positional argument can either be a string of content to paste or
+a hashref where keys are filenames and values are hashrefs with
+values key C<content> set to content of files to paste. Using a hashref
+allows you to make a gist with multiple files. All other arguments
+are optional and are as follows:
+
+=head3 C<desc>
+
+    desc => 'Optional summary',
+
+B<Optional>. Provides the description (summary) of the gist. By default
+not specified.
+
+=head3 C<public>
+
+    public => True,
+
+B<Optional>. Takes C<True> or C<False> values. If set to C<True>, your
+gist will be visible in search results and I<recent gists> page.
+B<Defaults to:> C<False>.
+
+=head3 C<filename>
+
+    filename => "Foo.p6"
+
+B<Optional>. Applies only when the first positional argument to
+L</paste> is a string. Specifies the filename to use for your gist
+(affects syntax highlighting). B<Defaults to:> C<nopaste.txt>.
+
+Note: L<GitHub's API docs|https://developer.github.com/v3/gists/#create-a-gist>
+have this blurb in them:
+
+    Don't name your files "gistfile" with a numerical suffix.
+    This is the format of the automatic naming scheme that
+    Gist uses internally.
+
+It tells you not to use files C<gistfile3> or C<gistfile33.txt>. Behaviour
+when using this types of values for C<filename> is not defined.
+
+=head2 C<fetch>
+
+    my ( $files, $desc )
+    = $p.fetch('https://gist.github.com/5590bc07b8d5bd8fd98d');
+
+    my ( $files, $desc ) = $p.fetch('5590bc07b8d5bd8fd98d');
+    say "Title: $desc";
+    for $files.keys {
+        say "File: $_\nContent:\n$files{$_}";
+    }
+
+B<Returns> a two-item list: files in the gist and gist's title.
+B<Takes> one mandatory argument: a full URL or just the
+ID number of the gist  you want to retrieve. The C<$files> is a hashref,
+where keys are file names and values are the file's contents.
+
+=head1 REPOSITORY
+
+Fork this module on GitHub:
+L<https://github.com/zoffixznet/perl6-Pastebin-Gist>
+
+=head1 BUGS
+
+To report bugs or request features, please use
+L<https://github.com/zoffixznet/perl6-Pastebin-Gist/issues>
+
+=head1 AUTHOR
+
+Zoffix Znet L<http://zoffix.com/>
+
+=head1 LICENSE
+
+You can use and distribute this module under the same terms as Perl 6
+itself. See the C<LICENSE> file included in this distribution for complete
+details.
+
+=cut
