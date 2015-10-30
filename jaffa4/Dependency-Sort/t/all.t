@@ -45,4 +45,4 @@ $r = $s.serialise;
 
 ok !$r,"test failure of operation";
 
-done;
+done-testing;
