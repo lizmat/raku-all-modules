@@ -11,7 +11,7 @@ role HTTP::Request {
     my @r;
     my %h = @headers.map({ $_.lc => $_ });
     %.headers.keys.map(-> $k {
-      @r.push(%h{$k.lc} => %.headers{$k}) if $k.lc ~~ any %h.keys;
+      @r.append($( %h{$k.lc} => %.headers{$k} )) if $k.lc ~~ any %h.keys;
     });
     return @r;
   }
