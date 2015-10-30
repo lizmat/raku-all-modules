@@ -2,7 +2,7 @@
     "name"        : "App::p6tags",
     "version"     : "0.2",
     "description" : "Generate editor tags for perl6. ",
-    "depends"     : [],
+    "depends"     : ["File::Find"],
     "provides"    : {
             "App::p6tags": "lib/App/p6tags"
     },
