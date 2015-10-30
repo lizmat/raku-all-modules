@@ -5,17 +5,20 @@ class CSS::Writer::BaseTypes {
     use CSS::Grammar::CSS3;
 
     # -- numbers -- #
-    proto method write-num($, $? --> Str) {*};
+    proto method write-num( Numeric $, $? --> Str) {*};
 
     multi method write-num( 1, 'em' ) { 'em' }
     multi method write-num( 1, 'ex' ) { 'ex' }
-    multi method write-num( Numeric $num, Any $units? ) {
+    multi method write-num( Numeric $num, Str $units ) {
+	$.write-num($num) ~ $units.lc;
+    }
+    multi method write-num( Numeric $num, Mu $units? ) {
         my $int = $num.Int;
-        return ($int == $num ?? $int !! $num) ~ ($units.defined ?? $units.lc !! '');
+        $int == $num ?? $int !! $num;
     }
 
     multi method write-num( *@args) is default {
-        die "unable to .write-num({[@args].perl})";
+        die "unable to .write-num({@args.perl})";
     }
 
     # -- strings -- #

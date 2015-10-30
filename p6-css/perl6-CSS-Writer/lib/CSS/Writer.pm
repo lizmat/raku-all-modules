@@ -79,7 +79,7 @@ class CSS::Writer
     }
 
     #| 42deg   := $.write( :angle(42), :units<deg>) or $.write( :deg(42) )
-    multi method write( Numeric :$angle!, Any :$units? ) {
+    multi method write( Numeric :$angle!, Str :$units? ) {
         $.write-num( $angle, $units );
     }
 
@@ -105,7 +105,7 @@ class CSS::Writer
 
     #| rgb(10, 20, 30) := $.write( :color[ :num(10), :num(20), :num(30) ], :units<rgb> )
     #| or $.write( :rgb[ :num(10), :num(20), :num(30) ] )
-    multi method write( Any :$color!, Any :$units? ) {
+    multi method write( Any :$color!, Str :$units? ) {
         $.write-color( $color, $units );
     }
 
@@ -217,7 +217,7 @@ class CSS::Writer
     }
 
     #| 42mm   := $.write( :length(42), :units<mm>) or $.write( :mm(42) )
-    multi method write( Numeric :$length!, Any :$units? ) {
+    multi method write( Numeric :$length!, Str :$units? ) {
         $.write-num( $length, $units );
     }
 
@@ -289,7 +289,7 @@ class CSS::Writer
     }
 
     #| 100% := $.write( :percent(100) )
-    multi method write( :$percent! ) {
+    multi method write( Numeric :$percent! ) {
         $.write-num( $percent, '%' );
     }
 
@@ -300,7 +300,7 @@ class CSS::Writer
 
     #| color: red !important; := $.write( :property{ :ident<color>, :expr[ :ident<red> ], :prio<important> }, )
     multi method write( Hash :$property! ) {
-        my @p = $.write( $property, :node<ident> );
+        my Str @p = $.write( $property, :node<ident> );
         @p.push: ': ' ~ $.write($property, :node<expr>)
             if $property<expr>:exists;
         @p.push: ' ' ~  $.write($property, :node<prio>)
@@ -340,7 +340,7 @@ class CSS::Writer
     }
 
     #| 600dpi   := $.write( :resolution(600), :units<dpi>) or $.write( :dpi(600) )
-    multi method write( Numeric :$resolution!, Any :$units? ) {
+    multi method write( Numeric :$resolution!, Str :$units? ) {
         $.write-num( $resolution, $units );
     }
 
@@ -381,7 +381,7 @@ class CSS::Writer
     }
 
     #| 20s := $.write( :time(20), :units<s> ) or $.write( :s(20) )
-    multi method write( Numeric :$time!, Any :$units? ) {
+    multi method write( Numeric :$time!, Str :$units? ) {
         $.write-num( $time, $units );
     }
 
@@ -416,9 +416,9 @@ class CSS::Writer
 
     ## generic handling of Lists, Pairs, Hashs and Lists
 
-    multi method write(List $ast, :$sep=' ') {
-        my %sifted = classify { .isa(EnumMap) && (.<comment>:exists) ?? 'comment' !! 'elem' }, $ast.list;
-        my $out = (%sifted<elem> // []).list.map({ $.write( $_ ) }).join: $sep;
+    multi method write(List $ast, Str :$sep=' ') {
+        my Array %sifted = classify { .isa(Hash) && (.<comment>:exists) ?? 'comment' !! 'elem' }, $ast.list;
+        my Str $out = (%sifted<elem> // []).list.map({ $.write( $_ ) }).join: $sep;
         $out ~= [~] %sifted<comment>.list.map({ ' ' ~ $.write($_) })
             if %sifted<comment>:exists && ! $.terse;
         $out;
@@ -433,7 +433,7 @@ class CSS::Writer
     }
 
     multi method write(Hash $ast!, :$nodes!, Str :$punc='', Str :$sep=' ')  {
-        my $str = $nodes.grep({ $ast{$_}:exists}).map({
+        my Str $str = $nodes.grep({ $ast{$_}:exists}).map({
                           $.write( |( .subst(/':'.*/, '') => $ast{$_}) )
                          }).join($sep)  ~  $punc;
 
@@ -482,7 +482,7 @@ class CSS::Writer
         $.indent ~ $.write( $ast );
     }
 
-    method nl {
+    method nl returns Str {
         $.terse ?? ' ' !! "\n";
     }
 
