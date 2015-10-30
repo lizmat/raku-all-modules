@@ -1,0 +1,9 @@
+branches:
+  except:
+    - gh-pages
+language: perl6
+perl6:
+  - latest
+install:
+  - rakudobrew build-panda
+

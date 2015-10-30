@@ -38,8 +38,9 @@ method new(Str $rfc, $grammar?) {
     ) {
         unless %rfc_grammar{$rfc}:exists {
             my $module = %rfc_grammar_build{$rfc};
-            require ::($module);
-            %rfc_grammar{$rfc} = EVAL %rfc_grammar_build{$rfc};
+            # less disruptive fix to RT126390
+            unless ($rfc eq 'rfc3986') { require ::($module); }
+            %rfc_grammar{$rfc} = ::($module);
         }
         $init_grammar = %rfc_grammar{$rfc};
     }

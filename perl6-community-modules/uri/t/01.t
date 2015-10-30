@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 45;
+plan 46;
 
 use URI;
 use URI::Escape;
@@ -81,22 +81,23 @@ ok(! $host_in_grammar<reg-name>.defined, 'grammar detected no registered domain 
 
 $u.parse('http://example.com:80/about?foo=cod&bell=bob#bar');
 is($u.query, 'foo=cod&bell=bob', 'query with form params');
-is($u.query_form<foo>, 'cod', 'query param foo');
-is($u.query_form<bell>, 'bob', 'query param bell');
+is($u.query-form<foo>, 'cod', 'query param foo');
+is($u.query_form<foo>, 'cod', 'snake case query param foo');
+is($u.query-form<bell>, 'bob', 'query param bell');
 
 $u.parse('http://example.com:80/about?foo=cod&foo=trout#bar');
-is($u.query_form<foo>[0], 'cod', 'query param foo - el 1');
-is($u.query_form<foo>[1], 'trout', 'query param foo - el 2');
+is($u.query-form<foo>[0], 'cod', 'query param foo - el 1');
+is($u.query-form<foo>[1], 'trout', 'query param foo - el 2');
 is($u.frag, 'bar', 'test query and frag capture');
 
 $u.parse('http://example.com:80/about?foo=cod&foo=trout');
-is($u.query_form<foo>[1], 'trout', 'query param foo - el 2 without frag');
+is($u.query-form<foo>[1], 'trout', 'query param foo - el 2 without frag');
 
 $u.parse('about/perl6uri?foo=cod&foo=trout#bar');
-is($u.query_form<foo>[1], 'trout', 'query param foo - el 2 relative path');
+is($u.query-form<foo>[1], 'trout', 'query param foo - el 2 relative path');
 
 $u.parse('about/perl6uri?foo=cod&foo=trout');
-is($u.query_form<foo>[1], 'trout', 'query param foo - el 2 relative path without frag');
+is($u.query-form<foo>[1], 'trout', 'query param foo - el 2 relative path without frag');
 
 my ($url_1_valid, $url_2_valid) = (1, 1);
 try {
@@ -115,7 +116,7 @@ lives-ok { URI.new('/foo/bar').port }, '.port on relative URI lives';
 my Str $user-info = URI.new(
     'http://user%2Cn:deprecatedpwd@obscurity.com:8080/ucantcme'
 ).userinfo,
-is( uri_unescape($user-info), 'user,n:deprecatedpwd',
+is( uri-unescape($user-info), 'user,n:deprecatedpwd',
     'extracted userinfo correctly');
 
 # vim:ft=perl6

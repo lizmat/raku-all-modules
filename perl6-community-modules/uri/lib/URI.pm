@@ -81,7 +81,7 @@ method parse (Str $str) {
     }
 }
 
-our sub split_query(Str $query) {
+our sub split-query(Str $query) {
     my %query_form;
 
     for map { [split(/<[=]>/, $_) ]}, split(/<[&;]>/, $query) -> $qmap {
@@ -104,7 +104,11 @@ our sub split_query(Str $query) {
     }
 
     return %query_form;
+
 }
+
+# artifact form
+our sub split_query(Str $query) { split-query($query) }
 
 # deprecated old call for parse
 method init ($str) {
@@ -146,9 +150,10 @@ method host {
     return ($!authority<host> || '').lc;
 }
 
-method default_port {
-    URI::DefaultPort::scheme_port($.scheme)
+method default-port {
+    URI::DefaultPort::scheme-port($.scheme)
 }
+method default_port { $.default-port() } # artifact form
 
 method _port {
     # port 0 is off limits and see also RT 96424
@@ -157,7 +162,7 @@ method _port {
 }
 
 method port {
-    $._port // $.default_port;
+    $._port // $.default-port;
 }
 
 method userinfo {
@@ -192,9 +197,10 @@ method query {
     item ~($!query || '');
 }
 
-method path_query {
+method path-query {
     $.query ?? $.path ~ '?' ~ $.query !! $.path
 }
+method path_query { $.path-query } #artifact form
 
 method frag {
     return ~($!frag || '').lc;
@@ -228,9 +234,11 @@ method uri {
     return $!uri;
 }
 
-method query_form {
+method query-form {
     return %!query_form;
 }
+
+method query_form { $.query-form }
 
 =begin pod
 
