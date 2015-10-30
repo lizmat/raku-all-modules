@@ -79,10 +79,7 @@ start {
     my ($err, $index) = 1, 1;
     try {
       require Term::ANSIColor;
-      'here1'.say;
-      CATCH { default { .say; } }
       my $color = GLOBAL::Term::ANSIColor::EXPORT::DEFAULT::<&color>;
-      'here1'.say;
       $pass = $color.('green') ~ '✓' ~ $color.('reset');
       $fail = $color.('red') ~ '✗' ~ $color.('reset');
     };
