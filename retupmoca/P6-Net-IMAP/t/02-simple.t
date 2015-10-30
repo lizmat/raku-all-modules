@@ -1,15 +1,18 @@
 use v6;
 use Test;
 
-plan 2;
+plan 3;
 
 class IMAPSocket {
     my @server-send =
         "* OK Ready",
+        "* CAPABILITY TEST JUSTATEST",
+        "aaaa OK CAPABILITY completed",
         "* BYE Logging out",
-        "aaaa OK Logout completed";
+        "aaab OK Logout completed";
     my @server-get =
-        "aaaa LOGOUT";
+        "aaaa CAPABILITY",
+        "aaab LOGOUT";
     has $.host;
     has $.port;
     has $.input-line-separator is rw = "\n";
@@ -19,7 +22,7 @@ class IMAPSocket {
     method get {
         return @server-send.shift;
     }
-    method send($string is copy) {
+    method print($string is copy) {
         $string .= substr(0, *-2); # strip \r\n
         die "Bad client-send" unless $string eq @server-get.shift;
     }
@@ -31,4 +34,5 @@ use Net::IMAP;
 my $imap = Net::IMAP.new(:server('foo.com'), :socket(IMAPSocket));
 
 ok $imap ~~ Net::IMAP::Simple, 'Is simple object';
+ok $imap.capabilities ~~ ['TEST', 'JUSTATEST'], 'Got correct capabilities';
 ok $imap.logout, 'Can log out';

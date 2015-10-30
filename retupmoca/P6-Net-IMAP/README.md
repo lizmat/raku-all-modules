@@ -15,7 +15,7 @@ An IMAP client library.
 
 ## Simple interface methods ##
 
- -  `new(:$server, :$port = 143, :$debug, :$socket)`
+ -  `new(:$server, :$port = 143, :$debug, :$socket, :$ssl, :$starttls, :$plain)`
 
  -  `authenticate($user, $pass)`
 
@@ -68,6 +68,10 @@ An IMAP client library.
  -  `noop`
 
  -  `logout`
+
+ -  `starttls`
+
+ -  `switch-to-ssl`
 
  -  `login($user, $pass)`
 

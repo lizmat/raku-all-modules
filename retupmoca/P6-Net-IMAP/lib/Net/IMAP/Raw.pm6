@@ -1,5 +1,7 @@
 unit class Net::IMAP::Raw;
 
+use IO::Socket::SSL;
+
 has $.conn is rw;
 has $.reqcode is rw = 'aaaa';
 
@@ -19,6 +21,15 @@ method send($stuff) {
     $.reqcode = $.reqcode.succ;
     $.conn.print($code ~ " $stuff\r\n");
     return self.get-response($code);
+}
+
+method switch-to-ssl() {
+    $!conn = IO::Socket::SSL.new(:client-socket($.conn));
+    $!conn.input-line-separator = "\r\n";
+}
+
+method starttls {
+    return self.send('STARTTLS');
 }
 
 method capability {

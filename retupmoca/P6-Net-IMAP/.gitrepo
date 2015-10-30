@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Net-IMAP.git
 	branch = master
-	commit = d5956990b4546dfa3c456b5ec287777cec99a4e0
-	parent = 0e99fcc0d094ca01061e1f587c65b90c7781bab0
+	commit = b675077e83620f5387152717046ead8eb7802c5d
+	parent = ee81f789653c49d34ccb38d67aee87fea7092b4d
 	cmdver = 0.2.2

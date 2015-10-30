@@ -4,17 +4,48 @@ use Net::IMAP::Message;
 
 has $.raw;
 has $.mailbox;
+has @.capabilities;
 
-method new(:$raw!){
-    my $self = self.bless(:$raw);
+method new(:$raw!, :$ssl, :$tls, :$plain){
+    $raw.switch-to-ssl() if $ssl;
     
-    my $greeting = $self.raw.get-response;
+    my $greeting = $raw.get-response;
 
     fail "Bad greeting" unless $greeting ~~ /^\*\s+[OK|PREAUTH]/;
 
-    # capabilities list, etc...
+    my @capabilities = self.get_capabilities($raw);
+
+    if @capabilities.grep('STARTTLS') {
+        if !$ssl && !$plain {
+            my $resp = $raw.starttls;
+            if $resp ~~ /OK/ {
+                $raw.switch-to-ssl;
+                @capabilities = self.get_capabilities($raw);
+            }
+            elsif $tls {
+                fail "STARTTLS failed: " ~ $resp;
+            }
+        }
+    }
+    else {
+        fail "Server doesn't support STARTTLS" if $tls;
+    }
+
+    my $self = self.bless(:$raw, :capabilities(@capabilities));
 
     return $self;
+}
+
+method get_capabilities($raw) {
+    my @cap_lines = $raw.capability.split("\r\n");
+    my @capabilities;
+    for @cap_lines -> $line is rw {
+        if $line ~~ s/^\*\sCAPABILITY\s// {
+            @capabilities.append($line.split(/\s+/).grep({ $_ }));
+        }
+    }
+
+    return @capabilities;
 }
 
 method quit {
