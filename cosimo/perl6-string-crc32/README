@@ -6,9 +6,7 @@ http://github.com/cosimo/perl6-string-crc32/
 Pure Perl6 version of String::CRC32 from Perl5.
 Based on CPAN version 1.4 by Sönke J. Peters.
 
-Current status (2011/03/06)
+Current status (2015/10/22)
 ===========================
 
-Needed for Cache::Memcached.
-Works fine, maybe slower than the Perl5 XS :)
-
+Works, maybe slower than the Perl5 XS :)

@@ -3,7 +3,7 @@ use Test;
 
 use String::CRC32;
 
-ok(1, 'Module is loaded');
+plan 1;
 
-done;
+ok(1, 'Module is loaded');
 

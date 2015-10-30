@@ -3,7 +3,7 @@
 
 use v6;
 
-class String::CRC32:auth<cosimo>:ver<0.03>;
+unit class String::CRC32:auth<cosimo>:ver<0.03>;
 
 my @CRC_TABLE =
 0x0, 0x77073096, 0xee0e612c, 0x990951ba, 0x76dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,

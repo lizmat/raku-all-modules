@@ -2,6 +2,8 @@ use v6;
 use Test;
 use String::CRC32;
 
+plan 6;
+
 my $string1 = "This is the test string";
 
 is(
@@ -39,7 +41,4 @@ is(
     String::CRC32::crc32($buf2), 4278190080,
     "Test the CRC of a Buf containing invalid utf8"
 );
-
-
-done;
 
