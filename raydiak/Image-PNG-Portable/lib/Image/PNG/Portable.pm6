@@ -54,7 +54,7 @@ method write (Str $file) {
 
     $fh.write: $magic;
 
-    write-chunk $fh, 'IHDR', @(bytes($!width, 4).list, bytes($!height, 4).list,
+    write-chunk $fh, 'IHDR', @(bytes($!width, 4).Slip, bytes($!height, 4).Slip,
         8, 2, 0, 0, 0); # w, h, bits/channel, color, compress, filter, interlace
 
     # would love to skip compression for my purposes, but PNG mandates it
@@ -95,7 +95,7 @@ sub bytes (Int $n is copy, Int $count = 0) {
     if $count {
         my $diff = $exp - $count;
         die 'Overflow' if $diff > 0;
-        @return.push(0 xx -$diff) if $diff < 0;
+        @return.append(0 xx -$diff) if $diff < 0;
     }
 
     while $exp {

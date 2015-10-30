@@ -25,7 +25,7 @@ sub MAIN (
         5;
 
     say 'Rendering...' unless $quiet;
-    for ^$width X ^$half-height -> $x, $y {
+    for ^$width X ^$half-height -> ($x, $y) {
 
         # this knot will go away when initial fill color can be specified
         my $set = False;

@@ -7,4 +7,4 @@ use Image::PNG::Portable;
 
 ok 1, 'Module loads successfully';
 
-done;
+done-testing;
