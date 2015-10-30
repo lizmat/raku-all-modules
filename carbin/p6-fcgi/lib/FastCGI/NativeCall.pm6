@@ -28,7 +28,7 @@ is native(&library) returns int32 { ... }
 sub XS_Init(int32 $sock)
 is native(&library) returns FCGX_Request { ... }
 
-sub XS_Accept(FCGX_Request $request)
+sub XS_Accept(FCGX_Request $request, &populate_env_callback (Str, Str))
 is native(&library) returns int32 { ... }
 
 sub XS_Print(Str $str, FCGX_Request $request)
@@ -40,13 +40,12 @@ is native(&library) returns Pointer { ... }
 sub XS_Flush(FCGX_Request $request)
 is native(&library) { ... }
 
-sub XS_set_populate_env_callback(&callback (Str, Str))
-is native(&library) { ... }
-
 sub XS_Finish(FCGX_Request $request)
 is native(&library) { ... }
 
 sub free(Pointer $ptr) is native { ... }
+
+my Lock $accept_mutex = Lock.new();
 
 class FastCGI::NativeCall {
 	has FCGX_Request $!fcgx_req;
@@ -64,21 +63,23 @@ class FastCGI::NativeCall {
 
 	submethod BUILD(:$sock) {
 		$!fcgx_req = XS_Init($sock);
-		XS_set_populate_env_callback(&populate_env);
 	}
 
 	our sub OpenSocket(Str $path, Int $backlog) {
 		return FCGX_OpenSocket($path, $backlog);
 	}
 
-        our sub CloseSocket(Int $socket) {
-                sub close(int32 $d) is native { ... }
-                close($socket);
-        }
+	our sub CloseSocket(Int $socket) {
+		sub close(int32 $d) is native { ... }
+		close($socket);
+	}
 
 	method Accept() {
+		self.Finish();
 		%env = ();
-		my $ret = XS_Accept($!fcgx_req);
+		$accept_mutex.lock();
+		my $ret = XS_Accept($!fcgx_req, &populate_env);
+		$accept_mutex.unlock();
 		$ret;
 	}
 

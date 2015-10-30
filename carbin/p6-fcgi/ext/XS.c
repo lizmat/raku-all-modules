@@ -4,14 +4,12 @@
 #include "fcgiapp.h"
 
 FCGX_Request * XS_Init(int);
-int XS_Accept(FCGX_Request *);
+int XS_Accept(FCGX_Request *, void (* callback)(char *, char *));
 int XS_Print(const char *, FCGX_Request *);
 char * XS_Read(int, FCGX_Request *);
 void XS_Flush(FCGX_Request *);
-void XS_set_populate_env_callback(void (*)(char *, char*));
-void XS_populate_env(FCGX_Request *);
-
-void (* populate_env_callback)(char *, char *);
+void XS_Finish(FCGX_Request *);
+static void XS_populate_env(FCGX_Request *, void (* callback)(char *, char *));
 
 FCGX_Request *
 XS_Init(int sock)
@@ -26,13 +24,13 @@ XS_Init(int sock)
 }
 
 int
-XS_Accept(FCGX_Request *request)
+XS_Accept(FCGX_Request *request, void (* pop_env_callback)(char *, char *))
 {
 	int ret;
 	ret = FCGX_Accept_r(request);
 	if (ret < 0)
 		return ret;
-	XS_populate_env(request);
+	XS_populate_env(request, pop_env_callback);
 	return ret;
 }
 
@@ -68,14 +66,8 @@ XS_Flush(FCGX_Request *request)
 	FCGX_FFlush(request->err);
 }
 
-void
-XS_set_populate_env_callback(void (* callback)(char *, char *))
-{
-	populate_env_callback = callback;
-}
-
-void
-XS_populate_env(FCGX_Request *request)
+static void
+XS_populate_env(FCGX_Request *request, void (* populate_env)(char *, char *))
 {
 	int i;
 	char *p, *p1;
@@ -86,7 +78,7 @@ XS_populate_env(FCGX_Request *request)
 		p1 = strchr(p, '=');
 		assert(p1 != NULL);
 		*p1++ = '\0';
-		populate_env_callback(p, p1);
+		populate_env(p, p1);
 	}
 }
 
