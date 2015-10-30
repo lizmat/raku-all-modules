@@ -35,10 +35,7 @@ class EncodedData {
 }
 
 method encode(Blob $data, :$oneline --> Str){
-    my $encoded = EncodedData.new;
-    if $oneline {
-        $encoded.maxlen = 0;
-    }
+    my $encoded = $oneline ?? EncodedData.new(maxlen => 0) !! EncodedData.new();
     my $linelen = 0;
     for $data.list -> $byte1, $byte2?, $byte3? {
         # first 6 bits of 1
