@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/awwaiid/p6-lrep.git
+	branch = master
+	commit = 74a7198874b92cedcf02a4d4a169b63ca639256a
+	parent = 2c138238400737a28e2ff1be10739c3be32713b5
+	cmdver = 0.2.2

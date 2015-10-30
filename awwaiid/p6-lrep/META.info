@@ -1,0 +1,11 @@
+{
+    "name" : "LREP",
+    "version" : "0.1.2",
+    "description" : "A fun little REPL inspired by Pry, nREPL, and others.",
+    "author" : "Brock Wilcox",
+    "provides" : {
+        "LREP" : "lib/LREP.pm6"
+    },
+    "depends" : [ "Linenoise" ],
+    "source-url" : "git://github.com/awwaiid/p6-lrep.git"
+}
