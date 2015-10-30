@@ -90,7 +90,7 @@ class Printing::Jdf::ResourcePool is Printing::Jdf::Pool {
                 Offsets => parseOffset($pagecell<SSi:RunListOffsets>),
                 Scaling => parseScaling($pagecell<SSi:RunListScaling>),
                 IsBlank => $layout.attribs<IsBlank>:exists
-            },);
+            });
         }
         @!runlist = @files;
         return @!runlist;
@@ -106,7 +106,7 @@ class Printing::Jdf::ResourcePool is Printing::Jdf::Pool {
                 PressRun => $_<SSi:PressRunNo>.Int,
                 Template => IO::Path.new($fs<URL>)
             ;
-            @s.push: ({%sig},);
+            @s.push: ({%sig});
         }
         return @s;
     }

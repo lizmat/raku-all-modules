@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/carbin/p6-jdf.git
 	branch = master
-	commit = ce899890459f67db3338a6a1403423009777ef1e
-	parent = 654f85e79a5d0a5799f072e95cc138b29b693aeb
+	commit = ff130e4081f1c7b6ebf89b075831df30b7ca30d6
+	parent = 40f7a5d12fee70235e7d22dba19be96145953305
 	cmdver = 0.2.2
