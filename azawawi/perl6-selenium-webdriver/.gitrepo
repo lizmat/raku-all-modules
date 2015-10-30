@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/perl6-selenium-webdriver.git
+	branch = master
+	commit = c0a73195395ca9625943978969a6557bda13f47b
+	parent = 82a62107107e8048705f9866c93ea9cef95d0e34
+	cmdver = 0.2.2
