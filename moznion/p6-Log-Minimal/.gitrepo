@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/moznion/p6-Log-Minimal.git
+	branch = master
+	commit = f26494dbddeb41bb7ecf5919d812a88083d995e2
+	parent = ce17fc84776f888b31abd7b4eed0b11bf4e7687f
+	cmdver = 0.2.2
