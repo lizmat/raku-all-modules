@@ -229,8 +229,8 @@ Returns the grammar set during construction.
 
 =end pod
 
-has Str:D $.pattern;
-has IO::Spec:D $.spec = $*SPEC;
+has Str:D $.pattern is required;
+has IO::Spec $.spec = $*SPEC;
 
 has $.grammar = BSD.new;
 has Globber $!globber;
@@ -255,7 +255,7 @@ method !compile-globs() {
 
 =head2 method dir
 
-    method dir(Cool $path = '.') returns List:D
+    method dir(Cool $path = '.') returns Seq:D
 
 Returns a list of files matching the glob. This will descend directories if the
 pattern contains a L<IO::Spec#dir-sep> using a depth-first search. (This ought
@@ -264,7 +264,7 @@ not supported yet at this time.)
 
 =end pod
 
-method dir(Cool $path = '.') returns List:D {
+method dir(Cool $path = '.') returns Seq:D {
     self!compile-globs;
 
     my $current = $path.IO;
@@ -274,23 +274,20 @@ method dir(Cool $path = '.') returns List:D {
 
     # Depth-first-search... commence!
     my @open-list = \(:path($current), :@globbers);
-    my @result;
-    while @open-list {
+    gather while @open-list {
         my (:$path, :@globbers) := @open-list.shift;
 
         if @globbers {
             my ($globber, @remaining) = @globbers;
-            @open-list.unshift: $path.dir(test => $globber)\
+            @open-list.prepend: $path.dir(test => $globber)
                 .map({
                     \(:$^path, :globbers(@remaining))
                 });
         }
         else {
-            @result.push: $path;
+            take $path;
         }
     }
-
-    @result;
 }
 
 =begin pod
