@@ -33,7 +33,7 @@ method AT_KEY ($statement)
   self.apply($statement.join(' '));
 }
 
-method postcircumfix:<( )> ($statement)
+method CALL-ME ($statement)
 {
   self.apply($statement.join(','));
 }
