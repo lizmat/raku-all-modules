@@ -7,11 +7,11 @@ use URI;
 use URI::Escape;
 try require IO::Socket::SSL;
 
-unit class LWP::Simple:auth<cosimo>:ver<0.086>;
+unit class LWP::Simple:auth<cosimo>:ver<0.090>;
 
-our $VERSION = '0.086';
+our $VERSION = '0.090';
 
-enum RequestType <GET POST PUT HEAD>;
+enum RequestType <GET POST PUT HEAD DELETE>;
 
 has Str $.default_encoding = 'utf-8';
 our $.class_default_encoding = 'utf-8';
@@ -27,12 +27,20 @@ method base64encode ($user, $pass) {
     return $encoded;
 }
 
-method get (Str $url) {
+method get (Str $url, %headers = {}) {
     self.request_shell(RequestType::GET, $url)
+}
+
+method delete (Str $url, %headers = {}) {
+    self.request_shell(RequestType::DELETE, $url)
 }
 
 method post (Str $url, %headers = {}, Any $content?) {
     self.request_shell(RequestType::POST, $url, %headers, $content)
+}
+
+method put (Str $url, %headers = {}, Any $content?) {
+    self.request_shell(RequestType::DELETE, $url, %headers, $content)
 }
 
 method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
@@ -90,7 +98,8 @@ method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
             return self.request_shell($rt, $new_url, %headers, $content);
         }
 
-        when /200/ {
+        when / 20 <[0..9]> / {
+
             # should be fancier about charset decoding application - someday
             if  $resp_headers<Content-Type> &&
                 $resp_headers<Content-Type> ~~
@@ -200,10 +209,27 @@ method make_request (
 
     my $headers = self.stringify_headers(%headers);
 
-    my $sock = $ssl ?? ::('IO::Socket::SSL').new(:$host, :$port) !! IO::Socket::INET.new(:$host, :$port);
-    my Str $req_str = $rt.Stringy ~ " {$path} HTTP/1.1\r\n"
+    # TODO https_proxy
+    my ($sock, Str $req_str);
+    if %*ENV<http_proxy> and !$ssl {
+
+        my ($proxy, $proxy-port) = %*ENV<http_proxy>.split('/').[2].split(':');
+
+        $sock = IO::Socket::INET.new(:host($proxy), :port(+($proxy-port)));
+        
+        $req_str = $rt.Stringy ~ " http://{$host}:{$port}{$path} HTTP/1.1\r\n"
         ~ $headers
         ~ "\r\n";
+
+    }
+    else {
+        $sock = $ssl ?? ::('IO::Socket::SSL').new(:$host, :$port) !! IO::Socket::INET.new(:$host, :$port);
+        
+        $req_str = $rt.Stringy ~ " {$path} HTTP/1.1\r\n"
+        ~ $headers
+        ~ "\r\n";
+        
+    }
 
     # attach $content if given
     # (string context is forced by concatenation)
