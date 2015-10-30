@@ -1,5 +1,5 @@
 use v6;
-class Pod::Parser;
+unit class Pod::Parser;
 
 use Pod::Parser::Common;
 

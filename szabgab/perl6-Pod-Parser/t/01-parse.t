@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-my $N = chr(13) ~ chr(10);
+my $N = $*KERNEL.name eq "win32" ?? chr(13) ~ chr(10) !! "\n";
 
 my @expected = Array.new(
 	{type => 'text', content => "text before$N$N"},
@@ -28,7 +28,7 @@ use Pod::Parser;
 ok 1, 'Loading module succeeded';
 
 my $pp = Pod::Parser.new;
-isa_ok $pp, 'Pod::Parser';
+isa-ok $pp, 'Pod::Parser';
 
 my @result = $pp.parse_file('t/files/a.pod');
 for 0 .. @expected.elems-1 -> $i {
@@ -36,7 +36,7 @@ for 0 .. @expected.elems-1 -> $i {
 	is @result[$i]<content>, @expected[$i]<content>, "part $i - content";
 }
 
-is_deeply @result, @expected, 'parse a.pod';
+is-deeply @result, @expected, 'parse a.pod';
 
 try {
 	$pp.parse_file('t/files/two-titles.pod');

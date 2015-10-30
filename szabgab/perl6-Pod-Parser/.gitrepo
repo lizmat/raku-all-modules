@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/szabgab/perl6-Pod-Parser.git
 	branch = master
-	commit = ad29b1daabb05443472152889a8d0f603d85822e
-	parent = 17816cb3976f4d6084a726a607569884e3838914
-	cmdver = 0.2.0
+	commit = adb64fc5bdd20e913b9af4039601ae63de324f29
+	parent = eb4c3c941df885855e2b2c9e2603e264556da937
+	cmdver = 0.2.2
