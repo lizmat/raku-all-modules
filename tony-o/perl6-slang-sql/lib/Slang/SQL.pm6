@@ -1,3 +1,4 @@
+use nqp;
 use QAST:from<NQP>;
 
 sub Slang::SQL::sql(Str $statement, @args?, $cb?) is export {
@@ -41,7 +42,7 @@ sub EXPORT(|) {
       nqp::atkey(nqp::findmethod(h, 'hash')(h), k)
     }
 
-    method statement_control:sym<sql>(Mu $/ is rw) {
+    method statement_control:sym<sql>(Mu $/) {
       my $sql   := lk($/, 'sql');
       my $args  := lk($/, 'arglist');
       my $cb    := lk($/, 'pblock');

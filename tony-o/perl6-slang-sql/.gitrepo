@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-slang-sql.git
 	branch = master
-	commit = 5e96a07cc7ef85971ac8cfe7a0a63bcae8461359
-	parent = bb3d6146dc47dad04f259e575d3ade77e08610fa
-	cmdver = 0.2.0
+	commit = f4b1e9bffc2977fac143ac6305200c1a90c4bb8f
+	parent = abc9aa222419976a737090cb20e56118181297ea
+	cmdver = 0.2.2
