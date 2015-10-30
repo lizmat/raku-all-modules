@@ -1,6 +1,6 @@
 use v6;
 
-module Netstring;
+unit module Netstring;
 
 proto to-netstring ($) is export {*}
 proto to-netstring-buf ($) is export {*}
