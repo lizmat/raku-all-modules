@@ -49,7 +49,7 @@ multi method add-pairs(@new is copy) {
         last unless @new;
     }
 
-    @!all-pairs.push: @new;
+    @!all-pairs.append: @new;
 }
 
 multi method add-pairs(*@new) {
@@ -150,7 +150,7 @@ method AT-KEY($key) {
 }
 
 method ASSIGN-KEY($key, $value) { 
-    @!all-pairs[ @!all-pairs.grep-index({ .defined && .key eqv $key }) ] :delete;
+    @!all-pairs[ @!all-pairs.grep({ .defined && .key eqv $key }, :k) ] :delete;
     self.add-pairs(($key => $value).list);
     %!singles{$key} = $value;
     $value;
@@ -164,7 +164,7 @@ method ASSIGN-KEY($key, $value) {
 # }
 
 method DELETE-KEY($key) {
-    @!all-pairs[ @!all-pairs.grep-index({ .defined && .key eqv $key }) ] :delete;
+    @!all-pairs[ @!all-pairs.grep({ .defined && .key eqv $key }, :k) ] :delete;
     %!singles{$key} :delete;
 }
 
@@ -195,7 +195,7 @@ You may also use it to write multiple values, which will replace all values curr
 At this time, this operator does not support slices (i.e., using a L<Range> or L<List> of keys to get values for more than one key at once). This might be supported in the future.
 =end pod
 
-method postcircumfix:<( )>($key) is rw {
+method CALL-ME($key) is rw {
     my $self = self;
     my @all-pairs := @!all-pairs;
     Proxy.new(
@@ -203,7 +203,7 @@ method postcircumfix:<( )>($key) is rw {
             @(@all-pairs.grep({ .defined && .key eqv $key })».value)
         },
         STORE => method (*@new) {
-            @all-pairs[ @all-pairs.grep-index({ .defined && .key eqv $key }) ] :delete;
+            @all-pairs[ @all-pairs.grep({ .defined && .key eqv $key }, :k) ] :delete;
             $self.add-pairs: @new.map($key => *);
             $self.singles{$key} = @new[*-1];
             @new
