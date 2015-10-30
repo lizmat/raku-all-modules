@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cygx/p6-debug.git
 	branch = master
-	commit = e7667b622c57e479193e88c36988d2659684c231
-	parent = f0d0a6c5d123359c9c58ab552d6dcae7c1131249
-	cmdver = 0.2.1
+	commit = 12955b4bd3c8da09bc79cc4703509d6ea59b0236
+	parent = 6c8f831eaefacbc6634da1ac194b6063042572d4
+	cmdver = 0.2.2

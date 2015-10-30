@@ -30,7 +30,8 @@ sub EXPORT($cb = &note) {
                 $cb(Event.new({{{ $expression }}}));
             }
         }
+        else { Nil }
     }
 
-    EnumMap.new('&logger' => &logger);
+    Map.new('&logger' => &logger);
 }

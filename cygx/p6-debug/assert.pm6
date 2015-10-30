@@ -14,7 +14,8 @@ sub EXPORT($cb = &die) {
                     unless {{{ $assertion }}}
             }
         }
+        else { Nil }
     }
 
-    EnumMap.new('&assert' => &assert);
+    Map.new('&assert' => &assert);
 }

@@ -3,5 +3,5 @@ sub EXPORT {
         %*ENV{"PERL6_DEBUG_{ .uc }"} = '1';
     }
 
-    once EnumMap.new;
+    once Map.new;
 }

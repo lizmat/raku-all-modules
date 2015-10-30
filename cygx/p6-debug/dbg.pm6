@@ -6,5 +6,5 @@ macro dbg($statement) {
 }
 
 sub EXPORT {
-    once EnumMap.new('&dbg' => &dbg);
+    once Map.new('&dbg' => &dbg);
 }
