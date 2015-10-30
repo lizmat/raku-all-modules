@@ -1,6 +1,6 @@
 {
     "name"	  : "Email::MIME",
-    "version"	  : "1.0.0",
+    "version"	  : "2.0.0",
     "author"      : "github:retupmoca",
     "description" : "Simple MIME email parsing module",
     "depends"	  : ["Email::Simple", "MIME::QuotedPrint", "MIME::Base64"],

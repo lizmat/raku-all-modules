@@ -104,11 +104,12 @@ This is a port of perl 5's Email::MIME.
 
     Returns the full header data for an email.
 
- -  `header-str($name)`
+ -  `header-str($name, :$multi)`
 
-    Returns a list of email headers with the name `$name`. If used in string context,
-    will act like the first value of the list. (So you can call
-    `say $eml.header('Subject')` and it will work correctly).
+    Returns the email header with the name `$name`. If `:$multi` is not passed, then
+    this will return the first header found. If `:$multi` is set, then this will
+    return a list of all headers with the name `$name` (note the change from v1.0!)
+
 
  -  `header-str-set($name, *@lines)`
 

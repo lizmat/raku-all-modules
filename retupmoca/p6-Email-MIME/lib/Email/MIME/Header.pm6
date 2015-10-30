@@ -28,8 +28,8 @@ method set-encoding-handler($encoding, $handler){
     %cte-coders{$encoding} = $handler;
 }
 
-method header-str($header) {
-    my $values = self.header($header);
+method header-str($header, :$multi) {
+    my $values = self.header($header, :$multi);
     for $values.list -> $value is rw {
         while my $stuff = EncodedHeader.parse($value) {
             my $newstuff;
