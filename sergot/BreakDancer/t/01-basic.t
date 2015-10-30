@@ -112,4 +112,4 @@ for @sites -> $s {
 
 rm_rf $basedir; # cleanup
 
-done;
+done-testing;

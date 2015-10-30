@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sergot/BreakDancer.git
 	branch = master
-	commit = 59c613954e146ca1816076bbd1f01debfc302cb1
-	parent = 579877ff86897049893a4f76bdd93762e269da3f
-	cmdver = 0.2.1
+	commit = 8ab467d052f68ae9cfd59738b753b6caf20c4773
+	parent = ee0451b86bfe546e0de49e7a63dc0a3efa260bb9
+	cmdver = 0.2.2
