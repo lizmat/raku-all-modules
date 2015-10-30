@@ -1,0 +1,11 @@
+{
+    "name"          : "Gravatar::URL",
+    "version"       : "0.1.0",
+    "author"        : "github:fayland",
+    "description"   : "Make URLs for Gravatars from an email address",
+    "depends"       : [ "URI::Escape", "Digest::MD5" ],
+    "provides" : {
+        "Gravatar::URL" : "lib/Gravatar/URL.pm"
+    },
+    "source-url"    : "git://github.com/fayland/perl6-Gravatar-URL.git"
+}

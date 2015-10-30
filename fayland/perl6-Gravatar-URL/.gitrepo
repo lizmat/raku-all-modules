@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/fayland/perl6-Gravatar-URL.git
+	branch = master
+	commit = 50842b939ae679c5b63ef266e34331c6d4101766
+	parent = 380895af2cd635bf9f9d026a69d3fcddbb21d94e
+	cmdver = 0.2.2
