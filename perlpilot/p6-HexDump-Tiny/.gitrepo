@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/perlpilot/p6-HexDump-Tiny.git
+	branch = master
+	commit = 4a52df1144074d8f83820a495cd742008fe1d7e9
+	parent = e6076913ee9388af1332afaedd74715732093545
+	cmdver = 0.2.2
