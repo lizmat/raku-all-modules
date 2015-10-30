@@ -18,7 +18,7 @@ method to-string (DateTime $datetime, *%opts) {
 }
 
 ## For use as the formatter for a DateTime object.
-method postcircumfix:<( )> ($args) {
+method CALL-ME($args) {
   $.to-string(|$args);
 }
 
