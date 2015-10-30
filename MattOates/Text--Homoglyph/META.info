@@ -1,0 +1,12 @@
+{
+    "name" : "Text::Homoglyph",
+    "version" : "0.0.1",
+    "description" : "Map ASCII to unicode homoglyphs.",
+    "author" : "Matt Oates",
+    "depends" : [ ],
+    "source-type" : "git",
+    "source-url" : "git://github.com/MattOates/Text--Homoglyph.git",
+    "provides" : {
+        "Text::Homoglyph" : "lib/Text/Homoglyph.pm"
+    }
+}
