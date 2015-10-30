@@ -1,0 +1,3 @@
+ok 1 - ok 1 from file
+ok 2 - ok 2 from file
+ok 3 - ok 3 from file

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/cygx/p6-native-libc.git
+	branch = master
+	commit = 0241765977b8c87fdb4439e90344443f23efa49c
+	parent = faf1507495c9dcd13ea7468a82bd359986b88712
+	cmdver = 0.2.2
