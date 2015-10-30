@@ -1,0 +1,144 @@
+=pod
+
+=encoding utf8
+
+=head2 PathTools
+
+General purpose file system utility routines
+
+=for HTML <a href="https://travis-ci.org/ugexe/Perl6-PathTools"><img src="https://travis-ci.org/ugexe/Perl6-PathTools.svg?branch=master"></a>
+
+=head3 Exports
+
+=head4 FLAGS
+
+Definitions of the argument flags that can be passed to C<PathTools> routines:
+
+    :f - list files
+    :d - list directories
+    :r - recursively visit directories
+
+    :!f - exclude files
+    :!d - exclude directories
+    :!r - only in the immediate path
+
+=head4 B<routine> L<ls>
+
+B<Args> C<$path, Bool :$f = True, Bool :$d = True, Bool :$r>
+
+B<Returns> C<Str @paths>
+
+    use PathTools;
+
+    # all paths using directory recursion
+    my @all   = ls($path, :r, :d, :f);
+
+    # only *file* paths, found using directory recursion
+    my @files = ls($path, :r, :!d, :f);
+
+    # only directories in the current level (no directory recursion)
+    my @dirs  = ls($path, :d, :!r);
+
+Like the built-in C<dir> but with optional recursion. Any undocumented 
+additional named arguments passed in will be passed along to the internal 
+C<mkdir> and C<dir> calls used. For instance, one may wish to pass C<:$test> 
+which internally defaults to C<none('.','..')> and is documented further 
+here: L<dir|http://doc.perl6.org/routine/dir>
+
+    > .say for ls('t');
+    /home/perl6/Perl6-PathTools/t/01-basic.t
+    /home/perl6/Perl6-PathTools/t/00-sanity.t
+
+To search for files, just grep the results of C<ls>:
+
+    > my @files     = ls($path, :r, :!d, :f);
+    > my @p6modules = @files.grep(*.IO.extension ~~ 'pm6')
+
+=head4 B<routine> L<rm> 
+
+B<Args> C<*@paths, :Bool $f = True, Bool :$d = True, Bool :$r>
+
+B<Returns> C<Str @deleted-paths>
+
+    # rm -rf tmp/foo
+    my @deleted-files = rm("tmp/foo"), :r, :f, :d);
+
+Passes its arguments to L<ls> and subsequently unlinks the files and/or deletes folders, 
+possibly recursively.
+
+    > .say for rm('t');
+    /home/perl6/Perl6-PathTools/t/01-basic.t
+    /home/perl6/Perl6-PathTools/t/00-sanity.t
+
+=head4 B<routine> L<mkdirs> 
+
+B<Args> C<$paths>
+
+B<Returns> C<Str $created-path>
+
+    # generate a multi level temporary path name
+    my $created-path = mkdirs(".work/{$new-month}/{$new-day}")
+
+VM/OS independent folder creation. Identical to the built-in C<mkdir> except the path 
+parts are created folder by folder. This usually isn't needed, but in some edge cases 
+the built-in C<mkdir> fails when creating a multi level folder.
+
+    > say mkdirs('newDir/newSubdir');
+    /home/perl6/newDir/newSubdir
+
+=head4 B<routine> L<mktemp> 
+
+B<Args> C<$path?, Bool :$f = False>
+
+B<Returns> C<Str $tmppath>
+
+    # create a temporary folder and clean it up after program exit
+    my $cleanup-path = mkdirs("/tmp/.worker{$id}/{time}")
+
+If argument C<:$f> is C<True> it will create a new file to be deleted at C<END { }>.
+Otherwise, by default, creates a new folder, C<$path>, and will attempt to recursively
+cleanup its contents at C<END { }>.
+
+If C<$path> is not supplied, a path name will be generated automatically with L<tmppath>
+
+    # a random directory
+    > say mktemp();
+    /tmp/p6tmppath/1444251805_1
+
+    # a random file
+    > say mktemp(:f);
+    /tmp/p6tmppath/1444251805_1
+
+    # a file (or directory) name of your choosing
+    > say mktemp(".cache", :f);
+    /home/perl6/Perl6-PathTools/.cache
+
+
+=head4 B<routine> L<tmppath>
+
+B<Args> C<$base? = $*TMPDIR>
+
+B<Returns> C<Str $pathname>
+
+    my $pathname = tmppath(".work")
+
+Generate a (hopefully) unique timestamp based path name that is prefixed by C<$base>.
+This does not actually create the path; Use C<mkdirs> or L<mkdir|http://doc.perl6.org/routine/mkdir>
+on the result.
+
+    > say tmppath();
+    /tmp/p6tmppath/1444251805_1
+
+    > say tmppath(".work");
+    .work/p6tmppath/1444255482_1
+
+    > say tmppath("/con/con")'
+    /con/con/p6tmppath/1444268295_1
+
+    > say tmppath.IO.e;
+    False
+
+    > say mkdirs(tmppath).IO.e
+    True
+
+=cut
