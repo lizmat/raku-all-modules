@@ -160,6 +160,12 @@ extern struct _p_utmp *_p_getutent(void)
      if ( utent )
      {
 
+       static char ut_user[sizeof(utent->ut_user) + 1];
+       static char ut_line[sizeof(utent->ut_line) + 1];
+#ifdef _HAVE_UT_HOST
+       static char ut_host[sizeof(utent->ut_host) + 1];
+#endif
+
 #ifdef _NO_UT_ID
        fixed_utent.ut_id = "";
 #else
@@ -184,7 +190,6 @@ extern struct _p_utmp *_p_getutent(void)
        fixed_utent.ut_tv = (int)utent->ut_time;
 #endif
 #ifdef _HAVE_UT_HOST
-       static char ut_host[sizeof(utent->ut_host) + 1];
        strncpy(ut_host, utent->ut_host,sizeof(utent->ut_host));
        ut_host[sizeof(utent->ut_host)] = 0;
        fixed_utent.ut_host = ut_host;
@@ -192,12 +197,10 @@ extern struct _p_utmp *_p_getutent(void)
 	    fixed_utent.ut_host = "";
 #endif
 
-       static char ut_user[sizeof(utent->ut_user) + 1];
        strncpy(ut_user, utent->ut_user,sizeof(utent->ut_user));
        ut_user[sizeof(utent->ut_user)] = 0;
        fixed_utent.ut_user = ut_user;
 
-       static char ut_line[sizeof(utent->ut_line) + 1];
        strncpy(ut_line, utent->ut_line,sizeof(utent->ut_line));
        ut_line[sizeof(utent->ut_line)] = 0;
        fixed_utent.ut_line = ut_line;

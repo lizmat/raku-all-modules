@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/p6-Sys-Utmp.git
 	branch = master
-	commit = 0acb79dc33ef791c4ce20105b7a8274fe2931412
-	parent = 57f78f135f57484c5cdcde1f07cbb6ef85642fc6
+	commit = f54d160e687f9c478c2e6bdbe583ae0e6ec01e80
+	parent = 25f4cf1d7945d6837f4199e0f8d427c38d0402f2
 	cmdver = 0.2.2
