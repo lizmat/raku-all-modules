@@ -1,0 +1,56 @@
+#!/usr/bin/env perl6
+ 
+use v6;
+#use LWP::Simple;
+#use IO::Socket::SSL; # XXX Digest broken 20151005
+use Net::Curl::Easy; 
+use Panda;
+use Panda::Ecosystem;
+use Panda::App;
+use IO::Capture::Simple;
+
+constant DEBUG = %*ENV<DEBUG>;
+constant CACHE-DIR = %*ENV<HOME> ~ '/.p6-eco-readme/';
+
+mkdir CACHE-DIR unless CACHE-DIR.IO.d;
+
+my @prefixes = (".md", "", ".txt",".pod");
+
+sub MAIN (Str $module, Bool :$get = False) { 
+
+    # :: invalid on windows
+    my $cache = CACHE-DIR ~ $module.subst("::","_",:g);
+
+    unlink $cache if $get;
+
+    if $cache.IO.e {
+        DEBUG and warn "cache hit";
+        $cache.IO.slurp.say;
+        exit;
+    }
+
+    my $panda = Panda.new(:ecosystem(make-default-ecosystem()));
+
+    # XXX capture STDOUT but better to have an accessible API
+    my @lines = (capture_stdout { projectinfo($panda, [$module]) }).split("\n");
+
+    my $found = @lines.grep(/'Source-url'/).list.join;
+
+    $found = $found.split("github.com").list.[1].subst(".git","");
+    $found = "https://raw.githubusercontent.com{$found}/master/README";
+
+    my @urls = $found X~ @prefixes;
+
+    my $md;
+    for @urls -> $url {
+
+        $md = Net::Curl::Easy.new(:$url).download;
+
+        last if $md !~~ "Not Found"
+
+    };
+
+    spurt($cache, $md);
+
+    $md.say;
+}
