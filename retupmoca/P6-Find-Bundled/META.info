@@ -1,0 +1,11 @@
+{
+    "name" : "Find::Bundled",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "A replacement for %?RESOURCE",
+    "depends" : [],
+    "provides" : {
+        "Find::Bundled" : "lib/Find/Bundled.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-Find-Bundled.git"
+}

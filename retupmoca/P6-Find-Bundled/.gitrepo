@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/retupmoca/P6-Find-Bundled.git
+	branch = master
+	commit = d6bf8040f7c67ad10db3a0a4264ece99726436a0
+	parent = 91a637037e337e3583fe33fc199f1aec13348cf2
+	cmdver = 0.2.2
