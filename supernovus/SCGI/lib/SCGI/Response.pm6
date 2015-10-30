@@ -36,6 +36,6 @@ method send ($response-data)
       $http_message = $response-data; 
     }
   }
-  $.connection.socket.send($http_message);
+  $.connection.socket.print($http_message);
 }
 

@@ -50,7 +50,7 @@ method parse ()
   {
     populate-psgi-env(%.env, :input($.input), :errors($.connection.err), 
         :psgi-classic($.connection.parent.PSGI), 
-        :p6sgi($.connection.parent.P6SCGI)
+        :p6sgi($.connection.parent.P6SGI)
     );
   }
 
