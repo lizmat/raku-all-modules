@@ -1,0 +1,11 @@
+{
+    "name"          : "WebService::GitHub",
+    "version"       : "0.1.0",
+    "author"        : "github:fayland",
+    "description"   : "GitHub API",
+    "depends"       : [ "MIME::Base64", "URI", "IO::Socket::SSL", "HTTP::UserAgent", "JSON::Fast" ],
+    "provides" : {
+        "WebService::GitHub"    : "lib/WebService/GitHub.pm"
+    },
+    "source-url"    : "git://github.com/fayland/perl6-WebService-GitHub.git"
+}
