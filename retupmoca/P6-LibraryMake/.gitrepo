@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-LibraryMake.git
 	branch = master
-	commit = efea4b68df11cfec19cf74a9a20d35b28baf4e67
-	parent = 38dd0995485e36a1a09a1a2e210d888083b2feaa
+	commit = 4f616fe9aec2cd83df2f010987d617fa4db0bd40
+	parent = 6bb655ad9150533258776356a52ccc9f0ff6bb81
 	cmdver = 0.2.2
