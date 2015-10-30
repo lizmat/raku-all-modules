@@ -65,7 +65,7 @@ method header-obj-set ($obj) {
     $!header = $obj;
 }
 
-method header ($name) { $!header.header($name); }
+method header ($name, :$multi) { $!header.header($name, :$multi); }
 method header-set ($name, *@lines) { $!header.header-set($name, |@lines); }
 method header-names { $!header.header-names; }
 method headers { self.header-names; }

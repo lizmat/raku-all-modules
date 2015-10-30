@@ -74,20 +74,6 @@ method as-string {
 }
 method Str { self.as-string }
 
-# array that returns its first value in string context
-class HeaderResponse is Positional {
-    has @.values;
-
-    method new(@values) {
-	self.bless(:@values);
-    }
-
-    method get_at($k) { @.values.get_at($k) }
-    method list() { @.values.list }
-
-    method Str { @.values[0] }
-}
-
 method header-names {
     my @names = gather {
 	for @!headers {
@@ -102,7 +88,7 @@ method header-pairs {
     return @!headers;
 }
 
-method header (Str $name) {
+method header (Str $name, :$multi) {
     my @values = gather {
 	for @!headers {
 	    if lc($_[0]) eq lc($name) {
@@ -112,7 +98,12 @@ method header (Str $name) {
     }
 
     if +@values {
-	return HeaderResponse.new(@values);
+	if $multi {
+	    return @values;
+	}
+	else {
+	    return @values[0];
+	}
     } else {
 	return Nil;
     }
@@ -147,7 +138,7 @@ method header-set ($field, *@values) {
     }
 
     if +@values {
-	return HeaderResponse.new(@values);
+	return @values;
     } else {
 	return Nil;
     }

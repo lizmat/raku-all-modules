@@ -25,11 +25,11 @@ This is my attempt at porting Email::Simple from perl 5 to perl 6 (mostly just b
 
  -  `create(Array :$header, Str :$body, :$header-class = Email::Simple::Header)`
 
- -  `header($name)`
+ -  `header($name, :$multi)`
 
-    Returns a list of email headers with the name `$name`. If used in string context,
-    will act like the first value of the list. (So you can call
-    `say $eml.header('Subject')` and it will work correctly)
+    Returns the email header with the name `$name`. If `:$multi` is not passed, then
+    this will return the first header found. If `:$multi` is set, then this will
+    return a list of all headers with the name `$name` (note the change from v1.0!)
 
  -  `header-set($name, *@lines)`
 

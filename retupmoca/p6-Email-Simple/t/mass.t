@@ -44,7 +44,7 @@ for %headers.keys.sort -> $file {
    my %h := %headers{$file};
    my $header-str = $m.header-obj.Str;
    for %h.sort -> $p {
-       is ~$m.header($p.key).list, $p.value, "Header $p.key() in mail $file";
+       is ~$m.header($p.key, :multi).list, $p.value, "Header $p.key() in mail $file";
        ok defined($header-str.index($p.key)), "Header text for $file contains $p.key()"
            or diag("Header-string: $header-str.perl()");
    }

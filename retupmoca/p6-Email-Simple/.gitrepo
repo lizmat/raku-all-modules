@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/p6-Email-Simple.git
 	branch = master
-	commit = 95609eaeb84621394df5acb160b676669c06feae
-	parent = 79a480a663e73c9822df02f8cf5d7f28930b1966
-	cmdver = 0.2.1
+	commit = bcffd72d99ce2367cd855f50880977f940175c44
+	parent = 3ce43f9d0109761a9f97d310e14f17bba02030de
+	cmdver = 0.2.2

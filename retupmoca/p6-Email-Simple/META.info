@@ -1,6 +1,6 @@
 {
     "name"	  : "Email::Simple",
-    "version"	  : "1.0.0",
+    "version"	  : "2.0.0",
     "author"      : "github:retupmoca",
     "description" : "Simple email parsing module",
     "depends"	  : ["DateTime::Format"],
