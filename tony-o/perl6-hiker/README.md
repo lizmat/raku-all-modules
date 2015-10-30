@@ -1,5 +1,7 @@
 #hiker
 
+[![Build Status](https://travis-ci.org/tony-o/perl6-hiker.svg)](https://travis-ci.org/tony-o/perl6-hiker)
+
 ##usage
 
 ```perl6
@@ -38,7 +40,7 @@ use Hiker::Route;
 
 class MyApp::Basic does Hiker::Route {
   has $.path     = '/'; # can also be a regex, eg: /.+/
-  has $.template = 'basic.pt';
+  has $.template = 'basic.mustache';
   has $.model    = 'MyApp::Model'; #this is an optional attribute
 
   method handler($req, $res) {
@@ -80,7 +82,7 @@ This will create a boilerplate application for you in the current directory
 
 ##Templates
 
-`Hiker` uses `Template::Protone` for the time being.  `Template::Protone` reduces the templates to `sub`s.  If the `.template` specified by the route doesn't exist then a default `404` message is shown to the user.
+`Hiker` uses `Template::Mustache`.  If the `.template` specified by the route doesn't exist then a default `404` message is shown to the user.
 
 For the time being this isn't configurable
 

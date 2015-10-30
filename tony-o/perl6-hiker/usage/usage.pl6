@@ -9,4 +9,4 @@ my $app = Hiker.new(
   templates => 'templates',
 );
 
-$app.listen;
+$app.listen(:block);

@@ -1,4 +1,4 @@
-use HTTP::Server::Threaded;
+use HTTP::Server::Async;
 use HTTP::Server::Router;
 
 use Hiker::Model;
@@ -14,8 +14,8 @@ class Hiker {
   has      $.templates;
 
   submethod BUILD(:$!host? = '127.0.0.1', :$!port? = 8080, :@!hikes? = @('lib'), :$!autobind? = True, :$!server?, Str :$!templates = 'templates') {
-    if $!server !~~ HTTP::Server::Threaded {
-      $!server = HTTP::Server::Threaded.new(:ip($!host), :$!port);
+    if $!server !~~ HTTP::Server::Async {
+      $!server = HTTP::Server::Async.new(:ip($!host), :$!port);
     }
     if $!autobind {
       self.bind;
@@ -29,27 +29,28 @@ class Hiker {
     my $recurse = sub (*@m) {
       my @r;
       for @m -> $m {
-        @r.push($m) unless @ignore.grep($m) || ::($m.^name) !~~ any(Hiker::Route, Hiker::Model);
-        try @r.push($recurse($m.WHO.values)) if $m.WHO.values.elems;
+        @r.append($m) unless @ignore.grep($m) || ::($m.^name) !~~ any(Hiker::Route, Hiker::Model);
+        try @r.append($recurse($m.WHO.values)) if $m.WHO.values.elems;
       }
       return @r.flat;
     };
     for @($recurse(GLOBAL::.values)) {
-      @ignore.push($_);
+      @ignore.append($_);
     }
     for @!hikes -> $d {
       try {
-        for $d.IO.dir.grep(/ ('.pm6' | '.pl6') $$ /) -> $f {
+        for $d.IO.dir.grep(/ ('.pm6' || '.pl6') $$ /).Slip -> $f {
           try {
-            require $f;
+            require "{$f.absolute}";
             my @globmods = $recurse(GLOBAL::.values);
             for @globmods -> $module {  
-              @ignore.push($module);
+              @ignore.append($module);
               try {
                 next if ::($module.^name) ~~ Failure;
-                @routes.push($f.Str => $module) if $module.^can('path');
+                @routes.append($f.Str => $module) if $module.^can('path');
               }
             }
+            CATCH { default { warn $_; } }
           }
         }
       }
@@ -107,10 +108,9 @@ class Hiker {
     }
   }
 
-  method listen(Bool $async? = False) {
-    if $async {
-      return start { $.server.listen; };
-    }
-    $.server.listen;
+  method listen(Bool :$block = False) {
+    my $prom = $.server.listen;
+    await $prom if $block;
+    $prom;
   }
 }

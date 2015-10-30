@@ -2,7 +2,7 @@
   "name" : "Hiker",
   "version" : "0.1",
   "description" : "MVC Framework built on HTTP::Server HTTP::Server::Router",
-  "depends" : ["HTTP::Server::Threaded", "HTTP::Server::Router", "Template::Protone"],
+  "depends" : ["HTTP::Server::Async", "HTTP::Server::Router", "Template::Mustache"],
   "provides" : {
       "Hiker": "lib/Hiker.pm6",
       "Hiker::Route": "lib/Hiker/Route.pm6",
