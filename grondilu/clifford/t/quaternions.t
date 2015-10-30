@@ -1,15 +1,12 @@
+use MultiVector;
 use Test;
-use Clifford;
 
-my $i = e(0)*e(1);
-my $j = e(1)*e(2);
-my $k = e(0)*e(2);
+plan 1;
 
-plan 4;
+my constant i = e(1)*e(2);
+my constant j = e(2)*e(3);
+my constant k = e(1)*e(3);
 
-ok $i**2 == -1, 'i² = -1';
-ok $j**2 == -1, 'j² = -1';
-ok $k**2 == -1, 'k² = -1';
-ok $i*$j*$k == -1, 'i*j*k = -1';
+ok i**2 == j**2 == k**2 == i*j*k == -1;
 
 # vim: ft=perl6

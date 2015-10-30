@@ -1,256 +1,144 @@
 unit module Clifford;
 
+die 'This module is deprecated.  Please use the MultiVector class instead, with "use MultiVector;"';
+
 # Metric signature
 our @signature = 1 xx *;
 
-#
-# PRE-DECLARATIONS AND SUBSETS
-#
-subset UInt of Int where * >= 0;
-subset NonZeroReal of Real where * != 0;
+our class MultiVector {...}
 
-# The user should never have to instantiate a MultiVector himself.
-# Instantiation should always be done via &e and its algebraic combinations.
-my class MultiVector is Cool does Numeric {...}
-proto e(|) returns MultiVector is export {*}
-
-# Canonical is a subset for MultiVectors of the form e(i)*e(j)*e(k)*...
-# where i < j < k < ...
-# They form the elements of the so-called 'canonical basis', thus the name.
-my subset Canonical of MultiVector where *.pairs.elems == 1;
-my subset Zero      of MultiVector where *.pairs.elems == 0;
-
-# Those canonical elements are identified by a positive integer
-# so we need a few functions to quickly get information from them.
-my sub bitcount(UInt $n --> UInt) { sb($n).elems }
-my sub sb (UInt $n) { !$n ?? () !! do for 0 .. $n.msb { $_ if $n +& (1 +< $_) } }
-my sub canonicalReorderingSign(UInt $a is copy, UInt $b) returns Int {
-    $_ +& 1 ?? -1 !! 1 given [+]
-    gather loop ($a +>= 1; $a ; $a +>= 1) {
-	take bitcount($a +& $b);
-    }
+sub e(UInt $n?) returns MultiVector is export {
+    $n.defined ?? MultiVector.new(:blades(my Real %{UInt} = (1 +< $n) => 1)) !! MultiVector.new
 }
 
-# Vector is defined as a subset.  It is exported.
-subset Vector of MultiVector is export where *.keys.map(&bitcount).all == 1;
+my sub grade(UInt $n) is cached { [+] $n.base(2).comb }
+my sub order(UInt:D $i is copy, UInt:D $j) is cached {
+    my $n = 0;
+    repeat {
+	$i +>= 1;
+	$n += [+] ($i +& $j).base(2).comb;
+    } until $i == 0;
+    return $n +& 1 ?? -1 !! 1;
+}
 
-# 
-# MULTIVECTOR
-#
-class MultiVector does Positional {
-    has NonZeroReal %.canonical{UInt} handles <pairs keys values>;
-    multi method grade(Canonical:) returns Int {
-	self == 0 ?? 0 !! bitcount self.pairs[0].key
+sub metric-product(UInt $i, UInt $j) {
+    my $r = order($i, $j);
+    my $t = $i +& $j;
+    my $k = 0;
+    while $t !== 0 {
+	if $t +& 1 {
+	    $r *= @signature[$k];
+	}
+	$t +>= 1;
+	$k++;
     }
-    method canonical-decomposition {
-	map { MultiVector.new(:canonical($_)) },
-	self.pairs;
+    return $r;
+}
+
+class MultiVector {
+    has Real %.blades{UInt};
+    method clean {
+	for %!blades {
+	    %!blades{.key} :delete unless .value;
+	}
     }
     multi method gist {
-	self ~~ Zero ?? '0' !!
-	join ' + ', map {
-	    my @sb = sb .key;
-	    @sb == 0 ?? ~.value !! (
-		(
-		    .value == 1 ?? '' !!
-		    .value == -1 ?? '-' !!
-		    "{.value}*"
-		) ~
-		join '',
-		map {"e$_"},
-		@sb
-	    )
-	},
-	sort { bitcount .key },
-	self.pairs
-    }
-    multi method AT-POS(UInt $grade) returns MultiVector {
-	MultiVector.new: :canonical( grep { bitcount(.key) == $grade }, self.pairs )
-    }
-    method reverse returns MultiVector {
-	MultiVector.new: :canonical(
-	    map {
-		my $grade = bitcount .key;
-		.key => (-1)**($grade * ($grade - 1) div 2) * .value
-	    },
-	    self.pairs
-	)
-    }
-
-    # 
-    # Methods for the Numeric role
-    #
-    method reals(MultiVector:) { self.values || 0 }
-    method isNaN(MultiVector:) { [||] map *.isNaN, self.reals }
-    method coerce-to-real(MultiVector: $exception-target) {
-	unless self ~~ Canonical and self.grade == 0 {
-	    fail X::Numeric::Real.new(target => $exception-target, reason => "non-scalar part not zero", source => self);
+	my sub blade-gist($blade) {
+	    join(
+		'*',
+		$blade.value,
+		map { "e({$_ - 1})" },
+		grep +*,
+		($blade.key.base(2).comb.reverse Z* 1 .. *)
+	    ).subst(/<|w>1\*/, '')
 	}
-	%!canonical{0} // 0;
+	if    %!blades == 0 { return '0' }
+	elsif %!blades == 1 {
+	    given %!blades.pick {
+		if .key == 0 {
+		    return .value.gist;
+		} else {
+		    return blade-gist($_);
+		}
+	    }
+	} else {
+	    return 
+	    join(
+		' + ', do for sort *.key, %!blades {
+		    .key == 0 ?? .value.gist !! blade-gist($_);
+		}
+	    ).subst('+ -','- ', :g);
+	}
     }
-    multi method Real(MultiVector:) { self.coerce-to-real(Real) }
-    method Num { self.coerce-to-real(Num).Num; }
-    method Int { self.coerce-to-real(Int).Int; }
-    method Rat { self.coerce-to-real(Rat).Rat; }
-    multi method Bool { not self == 0 }
-    method MultiVector { self }
-    method floor    { MultiVector.new: :canonical( map { $^p.key => $p.value.floor }, self.pairs ) }
-    method ceiling  { MultiVector.new: :canonical( map { $^p.key => $p.value.ceiling }, self.pairs ) }
-    method truncate { MultiVector.new: :canonical( map { $^p.key => $p.value.truncate }, self.pairs ) }
-    multi method round($scale as Real = 1) {
-	MultiVector.new: :canonical(
-	    map { $^p.key => $p.value.round($scale) }, self.pairs
-	);
-    }
+    method reals { %!blades.values }
+    method max-grade { self.clean(); max map &grade, %!blades.keys }
+    method AT-POS($n) {
+	MultiVector.new: :blades(my Real %{UInt} = %!blades.grep: *.key.&grade == $n)
+    }	
     method narrow {
-	self ~~ Zero ?? 0 !!
-	self.pairs == 1 && self.pairs[0].key == 0 ?? self.pairs[0].value.narrow !!
-	self
+	for %!blades {
+	    return self if .key > 0 && .value !== 0;
+	}
+	return %!blades{0} // 0;
+    }
+    method reverse {
+	[+] do for 0..self.max-grade -> $grade {
+	    (-1)**($grade*($grade - 1) div 2) * self[$grade];
+	}
     }
 }
 
-#
-# EQUALITY
-#
-multi infix:<==>(MultiVector $A, MultiVector $B) returns Bool is export { $A - $B == 0 }
-multi infix:<==>($A, MultiVector $B) returns Bool is export { $A - $B == 0 }
-multi infix:<==>(MultiVector $A, $B) returns Bool is export { $A - $B == 0 }
-multi infix:<==>(MultiVector $A, 0) returns Bool is export { $A ~~ Zero }
-
-#
-# ORDER RELATION
-#
-multi infix:« < »(MultiVector $A, MultiVector $B) returns Bool is export {
-    $A == $B ?? False !! $A.keys».&bitcount.max < $B.keys».&bitcount.max
-}
-
-#
-# ADDITION AND SUBSTRACTION WITH A REAL
-#
-multi infix:<+>(Real $r, MultiVector $A) returns MultiVector is export { $r*e() + $A }
-multi infix:<->(Real $r, MultiVector $A) returns MultiVector is export { $r*e() + -1*$A }
-multi infix:<+>(MultiVector $A, Real $r) returns MultiVector is export { $A + $r*e() }
-multi infix:<->(MultiVector $A, Real $r) returns MultiVector is export { $A + (-$r)*e() }
-
-#
-# ADDITION AND SUBSTRACTION WITH A NULL MULTIVECTOR
-#
-multi infix:<+>( $A, Zero ) is export { $A }
-multi infix:<+>( Zero, $B ) is export { $B }
-
-#
-# GENERIC ADDITION
-#
 multi infix:<+>(MultiVector $A, MultiVector $B) returns MultiVector is export {
-    MultiVector.new: canonical =>
-    gather for unique $A.keys, $B.keys {
-	my $sum = ($A.canonical{$_}//0) + ($B.canonical{$_}//0);
-	take $_ => $sum if $sum != 0;
+    my Real %blades{UInt} = $A.blades.clone;
+    for $B.blades {
+	%blades{.key} += .value;
+	%blades{.key} :delete unless %blades{.key};
     }
+    return MultiVector.new: :%blades;
 }
-multi prefix:<->(MultiVector $M) returns MultiVector is export { -1 * $M }
-multi prefix:<+>(MultiVector $M) returns MultiVector is export { $M }
-multi infix:<->(MultiVector $A, MultiVector $B) returns MultiVector is export { $A + -1 * $B }
-
-
-#
-# SCALAR MULTIPLICATION AND DIVISION
-#
-multi infix:<*>(Real $r, MultiVector $M) returns MultiVector is export {
-    $r == 0 ?? MultiVector.new !!
-    MultiVector.new: canonical =>
-    map { $^p.key => $r * $p.value }, $M.pairs;
+multi infix:<+>(Real $s, MultiVector $A) returns MultiVector is export {
+    my Real %blades{UInt} = $A.blades.clone;
+    %blades{0} += $s;
+    %blades{0} :delete unless %blades{0};
+    return MultiVector.new: :%blades;
 }
-multi infix:<*>(MultiVector $M, Real $r) returns MultiVector is export { $r * $M }
-multi infix:</>(MultiVector $M, Real $r) returns MultiVector is export { (1/$r) * $M }
-
-#
-# GEOMETRIC PRODUCT
-#
-multi infix:<*>(Zero $ , MultiVector $) returns MultiVector is export { 0 }
-multi infix:<*>(MultiVector $ , Zero $) returns MultiVector is export { 0 }
+multi infix:<+>(MultiVector $A, Real $s) returns MultiVector is export { $s + $A }
 multi infix:<*>(MultiVector $A, MultiVector $B) returns MultiVector is export {
-    [+] $A.canonical-decomposition X* $B.canonical-decomposition
+    my Real %blades{UInt};
+    for $A.blades -> $a {
+	for $B.blades -> $b {
+	    my $c = $a.key +^ $b.key;
+	    %blades{$c} += $a.value * $b.value * metric-product($a.key, $b.key);
+	    %blades{$c} :delete unless %blades{$c};
+	}
+    }
+    return MultiVector.new: :%blades;
 }
-multi infix:<*>(Canonical $A, Canonical $B) returns Canonical is export {
-    my ($a, $b) = $A.pairs[0], $B.pairs[0];
-    return MultiVector.new: :canonical(
-	($a.key +^ $b.key) => [*]
-	$a.value, $b.value,
-	canonicalReorderingSign($a.key, $b.key),
-	@signature[sb $a.key +& $b.key];
-    );
+multi infix:<**>(MultiVector $ , 0) returns MultiVector is export { return MultiVector.new }
+multi infix:<**>(MultiVector $A, 1) returns MultiVector is export { return $A }
+multi infix:<**>(MultiVector $A, 2) returns MultiVector is export { return $A * $A }
+multi infix:<**>(MultiVector $A, UInt $n where $n %% 2) returns MultiVector is export {
+    return ($A ** ($n div 2)) ** 2;
 }
-
-#
-# EXPONENTIATION
-#
-multi infix:<**>(Vector $a, 2) returns Real is export { ($a*$a).narrow }
-multi infix:<**>(Vector $a, Int $ where -1) returns Vector is export { $a / $a**2 }
-multi infix:<**>(Vector $a, Int $n where $n %% 2 && $n > 3) returns Real is export {
-    ($a**2)**($n div 2)
-}
-multi infix:<**>(Vector $a, Int $n where $n % 2 && $n > 2) returns Vector is export {
-    ($a**2)**($n div 2) * $a
-}
-multi infix:<**>(Zero $ , UInt $ ) returns Real is export { 0 }
-multi infix:<**>(MultiVector $M, 0) returns Real is export { 1 }
-multi infix:<**>(MultiVector $M, 1) returns MultiVector is export { $M }
-multi infix:<**>(MultiVector $M, 2) returns MultiVector is export { $M * $M }
-multi infix:<**>(MultiVector $M, Int $n where $n > 2 && $n %% 2) returns MultiVector is export {
-    ($M**($n div 2))**2
-}
-multi infix:<**>(MultiVector $M, Int $n where $n > 2 && $n % 2) returns MultiVector is export {
-    $M**($n - 1) * $M
+multi infix:<**>(MultiVector $A, UInt $n) returns MultiVector is export {
+    return $A * ($A ** ($n div 2)) ** 2;
 }
 
-#
-#
-# Metric products
-#
-# 
-# Hestenes's inner product
-multi infix:<cdot>(Canonical $A, Canonical $B) returns MultiVector is export {
-    ($A*$B)[ ($A.grade - $B.grade).abs ]
+multi infix:<*>(MultiVector $,  0) returns MultiVector is export { MultiVector.new }
+multi infix:<*>(MultiVector $A, 1) returns MultiVector is export { $A }
+multi infix:<*>(MultiVector $A, Real $s) returns MultiVector is export {
+    return MultiVector.new: :blades(my Real %{UInt} = map { .key => $s * .value }, $A.blades);
 }
-multi infix:<cdot>(MultiVector $A, MultiVector $B) returns MultiVector is export {
-    [+] $A.canonical-decomposition X[cdot] $B.canonical-decomposition
-}
-# Left contraction
-multi infix:<⌋>(Canonical $A, Canonical $B) returns MultiVector is export {
-    $B.grade < $A.grade ?? 0*e() !!
-    ($A*$B)[ $B.grade - $A.grade ]
-}
-multi infix:<⌋>(MultiVector $A, MultiVector $B) returns MultiVector is export {
-    [+] $A.canonical-decomposition X[⌋] $B.canonical-decomposition
-}
-# Right contraction
-multi infix:<⌊>(Canonical $A, Canonical $B) returns MultiVector is export {
-    $B.grade > $A.grade ?? 0*e() !!
-    ($A*$B)[ $A.grade - $B.grade ]
-}
-multi infix:<⌊>(MultiVector $A, MultiVector $B) returns MultiVector is export {
-    [+] $A.canonical-decomposition X[⌊] $B.canonical-decomposition
-}
+multi infix:<*>(Real $s, MultiVector $A) returns MultiVector is export { $A * $s }
+multi infix:</>(MultiVector $A, Real $s) returns MultiVector is export { $A * (1/$s) }
+multi prefix:<->(MultiVector $A) returns MultiVector is export { return -1 * $A }
+multi infix:<->(MultiVector $A, MultiVector $B) returns MultiVector is export { $A + -$B }
+multi infix:<->(MultiVector $A, Real $s) returns MultiVector is export { $A + -$s }
+multi infix:<->(Real $s, MultiVector $A) returns MultiVector is export { $s + -$A }
 
-#
-# OUTER PRODUCT
-# 
-multi infix:<wedge>(Canonical $A, Canonical $B) returns MultiVector is export {
-    ($A*$B)[ $A.grade + $B.grade ]
+multi infix:<==>(MultiVector $A, MultiVector $B) returns Bool is export { $A - $B == 0 }
+multi infix:<==>(Real $x, MultiVector $A) returns Bool is export { $A == $x }
+multi infix:<==>(MultiVector $A, Real $x) returns Bool is export {
+    my $narrowed = $A.narrow;
+    $narrowed ~~ Real and $narrowed == $x;
 }
-multi infix:<wedge>(MultiVector $A, MultiVector $B) returns MultiVector is export {
-    [+] $A.canonical-decomposition X[wedge] $B.canonical-decomposition
-}
-
-#
-# REVERSION
-#
-sub postfix:<†>(MultiVector $M) returns MultiVector is export { $M.reverse }
-
-#
-# main interface (prototype was defined earlier)
-#
-multi e() { state $ = MultiVector.new: :canonical( 0 => 1 ) }
-multi e(UInt $n) { (state @)[$n] //= MultiVector.new: :canonical( (1 +< $n) => 1 ) }
-multi e(Whatever) { map { MultiVector.new: :canonical($_ => 1) }, 0 .. * }
