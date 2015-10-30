@@ -1,5 +1,8 @@
 Revision history for Pastebin-Shadowcat
 
+2.001001  2015-10-11
+  - Use OO instead of plain subs to be compat with App::Nopaste
+
 1.001002  2015-09-29
   - Fix failures when fetching pastes with more than one line
   - Properly "fail()" on errors
