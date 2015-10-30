@@ -1,15 +1,41 @@
 use v6;
 use Test;
 
-
-plan 1;
-
 use LacunaCookbuk::Client;
+use IO::Capture::Simple;
+ 
 
-lives-ok {LacunaCookbuk::Client.new}; 
+plan 8;
 
-=begin pod
+unless %*ENV<TRAVIS> {
+skip-rest 'Cannot perform all test without game login data'; 
+exit;
+}
 
-Even though it may seem it is not doing anything. It gives some info about code errors
 
-=end pod
+my $client;
+lives-ok {$client = LacunaCookbuk::Client.new}, 'Construction'; 
+
+lives-ok {create_session}, 'Login';
+lives-ok {
+    capture_stdout {LacunaCookbuk::Logic::BodyBuilder.process_all_bodies}
+}, 'Update';
+
+lives-ok {
+    capture_stdout {$client.cleanbox}
+}, 'Remove mail';
+
+lives-ok {
+    capture_stdout {$client.defend}
+}, 'Show attackers';
+
+lives-ok {
+    capture_stdout {$client.ordinary}
+}, 'Make halls  and transport them';
+
+lives-ok {
+    capture_stdout {$client.chairman}
+}, 'Upgrade buildings';
+
+lives-ok {close_session}, "Logout";
+

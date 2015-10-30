@@ -39,7 +39,7 @@ submethod transport(@goods,Planet $src, Planet $dst = home_planet)
 
     }
     for @goods -> $load {
-	@cargo.push($load.gather($trade))
+	@cargo.append($load.gather($trade))
     }
     my $ship = $trade.find_fastest_ship;
     unless $ship {
@@ -48,7 +48,7 @@ submethod transport(@goods,Planet $src, Planet $dst = home_planet)
     }
 
     my @packed = self.cut_size(@cargo, +$ship<hold_size>);
-    say $trade.push(@packed) if @packed;   
+    say $trade.push_cargo(@packed) if @packed;   
 }
 
 submethod transport_all_cargo(Planet $dst = home_planet) {
@@ -68,7 +68,7 @@ method cut_size(@cargo, Int $limit --> Array){
     
     my @neCargo;
     for @cargo -> $load {
-	my $size = self.container_size($load<type>);
+ 	my $size = self.container_size($load<type>);
 	$space += $size * $load<quantity>;
 	
 	return @neCargo if $space >= $limit;

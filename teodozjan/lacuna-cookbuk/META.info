@@ -3,7 +3,7 @@
     "version"     : "*",
     "author"	  : "github:teodozjan",
     "description" : "Lacuna expanse lazy player helper",
-    "depends"     : [ "JSON::RPC", "Form", "Terminal::ANSIColor", "PerlStore"],
+    "depends"     : [ "JSON::RPC", "Form", "Terminal::ANSIColor", "PerlStore", "IO::Capture::Simple"],
     "provides"    : {
 	        "LacunaCookbuk::Client" : "lib/LacunaCookbuk/Client.pm6"
 	 },

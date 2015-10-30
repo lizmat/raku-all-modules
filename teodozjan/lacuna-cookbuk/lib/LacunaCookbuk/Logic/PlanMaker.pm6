@@ -76,7 +76,7 @@ method show_possible_plans {
 #TODO use achaeology instead of trade
 method make_possible_halls {
   my $hp = home_planet;
-  my Trade $t = $hp.find_trade_ministry;
+  my $t = $hp.find_trade_ministry;
   my %glyphs = $t.get_glyphs_hash();
 
   for @(keys %recipes).grep(/Halls/) -> $recipename {

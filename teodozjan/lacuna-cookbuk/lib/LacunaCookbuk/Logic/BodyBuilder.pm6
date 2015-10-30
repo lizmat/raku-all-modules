@@ -58,7 +58,7 @@ sub home_planet(--> Planet) is export {
     for @planets -> Planet $planet {
 	return $planet if $planet.is_home;
     }
-    Planet;
+    fail();
 }
 
 sub planets is export {

@@ -1,5 +1,55 @@
 use v6;
 
+=begin pod
+
+=head1 Model
+
+Model contains choosen attributes inisde classes and and low level methods to contact game servers like get mentioned attributes or do something. No decisions or logic should be found here.
+
+=head1 Logic
+
+L<doc:LacunaCookbuk::Logic::Ambassador>
+
+P<doc:LacunaCookbuk::Logic::Ambassador>
+
+L<doc:LacunaCookbuk::Logic::BodyBuilder>
+
+P<doc:LacunaCookbuk::Logic::BodyBuilder>
+
+L<doc:LacunaCookbuk::Logic::Chairman>
+
+P<doc:LacunaCookbuk::Logic::Chairman>
+
+L<doc:LacunaCookbuk::Logic::Chairman>
+
+P<doc:LacunaCookbuk::Logic::Commander>
+
+L<doc:LacunaCookbuk::Logic::IntelCritic>
+
+P<doc:LacunaCookbuk::Logic::IntelCritic>
+
+L<doc:LacunaCookbuk::Logic::OreCritic>
+
+P<doc:LacunaCookbuk::Logic::OreCritic>
+
+L<doc:LacunaCookbuk::Logic::PlanMaker>
+
+P<doc:LacunaCookbuk::Logic::PlanMaker>
+
+L<doc:LacunaCookbuk::Logic::Secretary>
+
+P<doc:LacunaCookbuk::Logic::Secretary>
+
+L<doc:LacunaCookbuk::Logic::ShipCritic>
+
+P<doc:LacunaCookbuk::Logic::ShipCritic>
+
+L<doc:LacunaCookbuk::Logic::Transporter>
+
+P<doc:LacunaCookbuk::Logic::Transporter>
+	
+=end pod
+
 use LacunaCookbuk::Logic::Chairman;
 use LacunaCookbuk::Logic::ShipCritic;
 use LacunaCookbuk::Logic::OreCritic;
@@ -11,6 +61,7 @@ use LacunaCookbuk::Logic::Commander;
 use LacunaCookbuk::Logic::Secretary;
 
 use LacunaCookbuk::Model::Empire;
+
 
 
 #| LacunaCookbuk main client
@@ -59,7 +110,7 @@ method ordinary {
    LacunaCookbuk::Logic::Transporter.transport_all_cargo;
 }
 
-#| Will upgrade buildings in order passed to L<doc:LacunaCookbuk::Chariman>
+#| Will upgrade buildings in order passed to L<doc:LacunaCookbuk::Logic::Chairman>
 #| chairman will work only on existing buildings but this may change in future
 method chairman {
     #| FIXME isolate and fill bug report
@@ -168,3 +219,5 @@ method make_space {
 method waste {
     LacunaCookbuk::Logic::BodyBuilder.report_waste;
 }
+
+

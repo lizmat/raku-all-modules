@@ -18,7 +18,7 @@ submethod find_archaeology_ministry(--> Archaeology) {
 	return Archaeology.new(id => $building.id, url => $Archaeology::URL) if $building.url ~~ $Archaeology::URL;
     }
     say "No archaeology ministry on " ~ self.name;
-    Archaeology;
+    fail();
 }   
 
 submethod find_trade_ministry(--> Trade) { 
@@ -26,7 +26,7 @@ submethod find_trade_ministry(--> Trade) {
 	return Trade.new(id => $building.id, url => $Trade::URL) if $building.url ~~ $Trade::URL;
     }
     say "No trade ministry on " ~ self.name;
-    Trade;
+    fail();
 }   
 
 submethod find_shipyard(--> Shipyard) { 
@@ -34,7 +34,7 @@ submethod find_shipyard(--> Shipyard) {
 	return Shipyard.new(id => $building.id, url => $Shipyard::URL) if $building.url ~~ $Shipyard::URL;
     }
     say "No shipyard on " ~ self.name;
-    Shipyard;
+    fail();
 } 
 
 submethod find_space_port(--> SpacePort) {
@@ -48,7 +48,7 @@ submethod find_space_port(--> SpacePort) {
 	}
     }
     say "No space port on " ~ self.name;
-    SpacePort;
+    fail();
 }
 
 
@@ -66,7 +66,7 @@ submethod find_intelligence_ministry(--> Intelligence) {
 	}
     }
     say "No intelligence on " ~ self.name;
-    Intelligence;
+    fail();
 }
 
 submethod find_development_ministry(--> Development) {
@@ -83,7 +83,7 @@ submethod find_development_ministry(--> Development) {
 	}
     }
     say "No intelligence on " ~ self.name;
-    Development;
+    fail();
 }
 
 #todo -> compare with body hour production - supply chains

@@ -10,6 +10,6 @@ submethod find_parliament(--> Parliament) {
 	return Parliament.new(id => $building.id, url => $Parliament::URL) if $building.url ~~ $Parliament::URL;
     }
     #warn "No Parliament on " ~ self.name;
-    Parliament;
+    fail();
 }
 
