@@ -4,7 +4,7 @@ plan *;
 use Text::Fortune;
 let $*CWD = 't/test_data';
 
-throws_like { Text::Fortune::Index.new.load-dat( 'not_found.dat' ) },
+throws-like { Text::Fortune::Index.new.load-dat( 'not_found.dat' ) },
   X::Index::NotFound,
   message => rx:s/not found/;
 
@@ -22,6 +22,6 @@ given Text::Fortune::Index.new.load-dat( 'empty.dat' ) {
   is .Buf, $b, 'serializes correctly';
 }
 
-done;
+done-testing;
 
 # vim: ft=perl6

@@ -12,11 +12,11 @@ given Text::Fortune::Index.new.load-dat( 'with_dat.dat' ) {
   is .offset-at(3), 17, 'final offset correct';
   is .bytelength-of(0), 2, 'first length correct';
   is .bytelength-of(2), 6, 'last length correct';
-  throws_like { .bytelength-of(3) },
+  throws-like { .bytelength-of(3) },
     X::Index::OutOfBounds;
   is .Buf, $b, 'serializes correctly';
 }
 
-done;
+done-testing;
 
 # vim: ft=perl6

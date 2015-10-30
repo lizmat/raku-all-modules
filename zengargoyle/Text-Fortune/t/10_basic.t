@@ -25,6 +25,6 @@ given Text::Fortune::File.new( path => 'with_dat', rotated => True) {
   is .get-fortune(2), "n\no\np\n", 'got last fortune';
 }
 
-done;
+done-testing;
 
 # vim: ft=perl6

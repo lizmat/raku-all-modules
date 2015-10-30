@@ -18,6 +18,6 @@ given Text::Fortune::Index.new(:rotated, delimiter => '@') {
   is .rotated, True, 'is rotated';
 }
 
-done;
+done-testing;
 
 # vim: ft=perl6

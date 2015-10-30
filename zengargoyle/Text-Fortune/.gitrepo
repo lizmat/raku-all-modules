@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zengargoyle/Text-Fortune.git
 	branch = master
-	commit = 41f6d0ed569f755c499065ed595653bd3aa1b34e
-	parent = 29f662c51509b515814ecc50c854a39da7789b12
-	cmdver = 0.2.1
+	commit = eac810672fff8de1c4efca1aa82c200bb4bfe838
+	parent = dc3534b206c029ca7a7638a448ca970a9c76ce60
+	cmdver = 0.2.2
