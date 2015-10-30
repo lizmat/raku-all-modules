@@ -6,14 +6,24 @@ class Path::Iterator {
 		return $rule;
 	}
 	my multi rulify(Path::Iterator:D $rule) {
-		return $rule.rules;
+		return |$rule.rules;
 	}
-	method and(Path::Iterator:D $self: *@also) {
-		return self.bless(:rules(@!rules, @also.map(&rulify)));
+	multi method and(Path::Iterator:D $self: *@also) {
+		return self.bless(:rules(|@!rules, |@also.map(&rulify)));
 	}
-	method not(*@no) {
-		my $obj = self.new.and(|@no);
-		return self.and(sub ($item) {
+	multi method and(Path::Iterator:U: *@also) {
+		return self.bless(:rules(|@also.map(&rulify)));
+	}
+	multi method none(Path::Iterator:U: Path::Iterator:D $obj) {
+		return $obj.not;
+	}
+	multi method none(Path::Iterator:U: *@no) {
+		my $obj = self.bless(:rules(|@no.map(&rulify)));
+		return $obj.not;
+	}
+	method not() {
+		my $obj = self;
+		return self.bless(:rules[sub ($item) {
 			given $obj.test($item) -> $original {
 				when Prune {
 					return Prune(+!$original);
@@ -22,7 +32,7 @@ class Path::Iterator {
 					return !$original;
 				}
 			}
-		});
+		}]);
 	}
 	my multi unrulify(Callable $rule) {
 		return Path::Iterator.new(:rules[$rule]);
@@ -31,14 +41,14 @@ class Path::Iterator {
 		return $iterator;
 	}
 	method or(*@also) {
-		my @iterators = self, @also.map(&unrulify);
-		my $rule = sub ($item) {
+		my @iterators = self, |@also.map(&unrulify);
+		my @rules = sub ($item) {
 			for @iterators -> $iterator {
 				return True if $iterator.test($item);
 			}
 			return False;
 		}
-		return self.bless(:rules[$rule]);
+		return self.bless(:@rules);
 	}
 	method skip(*@garbage) {
 		my $obj = self.new.or(|@garbage);
@@ -57,9 +67,9 @@ class Path::Iterator {
 		});
 	}
 
-	method test($item) {
+	method test($item, *%args) {
 		for @!rules -> &rule {
-			return False if not rule($item);
+			return False if not rule($item, |%args);
 		}
 		return True;
 	}
@@ -98,8 +108,7 @@ class Path::Iterator {
 		self.and: sub ($item) { $item.f && $item.s ~~ $size };
 	}
 	method depth (Range $depth-range) {
-		self.and: sub ($item) {
-			my $depth = ...;
+		self.and: sub ($item, :$depth) {
 			return do given $depth {
 				when $depth-range.max {
 					Prune-exclusive;
@@ -159,31 +168,46 @@ class Path::Iterator {
 	method !is-unique(IO::Path $item, *%opts) {
 		return True; # XXX
 	}
-	method iter(*@dirs, Bool :$follow-symlinks = True, Bool :$depthfirst = False, Bool :$sorted = True, Bool :$loop-safe = True, Bool :$relative = False, :&visitor?, :&error-handler = sub ($item, $reason) { die sprintf "%s: %s\n", $item, $reason }) {
+	method iter(*@dirs,
+		Bool :$follow-symlinks = True,
+		Bool :$depth-first = False,
+		Bool :$sorted = True,
+		Bool :$loop-safe = True,
+		Bool :$relative = False,
+		:&visitor?,
+		:&error-handler = sub ($item, $reason) { die sprintf "%s: %s\n", $item, $reason }
+	) {
 		@dirs = '.' if not @dirs;
 		my @queue = @dirs.map: -> $filename {
 			my $path = $filename.IO;
-			[ $path, 0, $path ];
+			($path, 0, $path, Bool);
 		};
 
 		gather {
 			while @queue.elems {
-				my ($item, $depth, $origin) = @( @queue.shift );
+				my ($item, $depth, $origin, $result) = @( @queue.shift );
 
-				redo if not $follow-symlinks and $item.l;
+				without ($result) {
+					next if not $follow-symlinks and $item.l;
 
-				my $result = @!rules ?? self.test($item) !! True;
+					$result = @!rules ?? self.test($item, :$depth, :$origin) !! True;
 
-				if &visitor && $result {
-					visitor($item);
-				}
+					if &visitor && $result {
+						visitor($item);
+					}
 
-				if $item.d && $result !~~ Prune && (!$loop-safe || self!is-unique($item)) {
-					my $depth-p1 = $depth + 1;
-					my @next = $item.dir(test => none('.', '..')).map: -> $child { [ $child, $depth + 1, $origin ] };
-					@next .= sort if $sorted;
-					# depthfirst
-					@queue.push: @next;
+					if $item.d && $result !~~ Prune && (!$loop-safe || self!is-unique($item)) {
+						my @next = $item.dir(test => none('.', '..')).map: -> $child { ($child, $depth + 1, $origin, Bool) };
+						@next .= sort if $sorted;
+						if ($depth-first) {
+							@next.push: $($item, $depth, $origin, $result);
+							@queue.unshift: |@next;
+							next;
+						}
+						else {
+							@queue.push: |@next;
+						}
+					}
 				}
 
 				take $relative ?? $item.relative($origin) !! $item if $result;

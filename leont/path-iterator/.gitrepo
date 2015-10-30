@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/leont/path-iterator.git
 	branch = master
-	commit = a1b35fca817bca17e207e1eeef722e445a51b63e
-	parent = ac085c44703804f3b96920e56c0f0e51237e82c5
+	commit = fc16ffc0375bab1f0ef2dd6d37dbc939f4435e9e
+	parent = b3a3c5450498ddd8850afaabc190a0d72c3c5668
 	cmdver = 0.2.2
