@@ -11,8 +11,8 @@ class Text::VimColour:ver<0.4> {
 
     proto method BUILD(|z) {
         ENTER {
-            my $version = .[0] given split /','/, q:x/ex --version/;
-            die "didn't find a recent vim/ex"  unless $version ~~ /' Vi IMproved 7.4 '/;
+            my $version = .[0] given split /','/, q:x/vim --version/;
+            die "didn't find a recent vim"  unless $version ~~ /' Vi IMproved 7.4 '/;
             callsame;
         }
         {*}

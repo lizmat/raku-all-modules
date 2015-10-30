@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/stmuk/p6-Text-VimColour.git
 	branch = master
-	commit = f298fd62c7c92d8ce5fd4840e1e913c1f8b1b138
-	parent = 777f4fa08b6a151dfe85542aaf08a8a698f22d19
+	commit = e8731c813544fba0eb38ffa2702853babecaa5e8
+	parent = 714651941653b39411d24c58f0c46b30f2bb1412
 	cmdver = 0.2.2
