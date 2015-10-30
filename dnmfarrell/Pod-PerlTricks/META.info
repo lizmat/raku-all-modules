@@ -1,0 +1,14 @@
+{
+    "name" : "Pod::PerlTricks",
+    "version" : "0.01",
+    "description" : "Parser for PerlTricks pseudopod",
+    "author" : "David Farrell",
+    "depends" : [ "Pod::Perl5", "JSON::Tiny" ],
+    "provides" : {
+      "Pod::Grammar" : "lib/Pod/PerlTricks/Grammar.pm6",
+      "Pod::ToHTML"  : "lib/Pod/PerlTricks/ToHTML.pm6",
+      "Pod::ToHTML"  : "lib/Pod/PerlTricks/ToJSON.pm6"
+    },
+    "source-type" : "git",
+    "source-url" : "git://github.com/dnmfarrell/Pod-PerlTricks.git"
+}

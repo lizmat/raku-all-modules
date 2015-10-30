@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/dnmfarrell/Pod-PerlTricks.git
+	branch = master
+	commit = 0b520c2fa6f0945b89026e8f9233acc25cd89bb3
+	parent = 03dfa63fdef2366e4b6b839be685b8bfdbc9b570
+	cmdver = 0.2.2
