@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ShaneKilkelly/perl6-config-clever.git
+	branch = master
+	commit = 09a6da94ab5fea9c6a46b423b1bfb5b6e9383fd7
+	parent = 9fd377842ca0bd7bbd256e981b260a7631139bf7
+	cmdver = 0.2.2

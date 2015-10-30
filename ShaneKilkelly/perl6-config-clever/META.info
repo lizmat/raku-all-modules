@@ -1,0 +1,10 @@
+{
+  "name"        : "Config::Clever",
+  "version"     : "1.0.0",
+  "description" : "A clever, heirarchical config loader",
+  "depends"     : ["JSON::Tiny"],
+  "provides"    : {
+    "Config::Clever"       : "lib/Config/Clever.pm6"
+  },
+  "source-url"  : "git://github.com/ShaneKilkelly/perl6-config-clever.git"
+}
