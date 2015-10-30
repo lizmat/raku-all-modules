@@ -1,0 +1,18 @@
+{
+    "name"        : "Config::TOML",
+    "version"     : "*",
+    "author"      : "Andy Weidenbaum",
+    "description" : "TOML parser for Perl 6",
+    "source-type" : "git",
+    "source-url"  : "git://github.com/atweiden/config-toml.git",
+    "support"     : {
+        "bugtracker" : "https://github.com/atweiden/config-toml/issues",
+        "source"     : "https://github.com/atweiden/config-toml"
+    },
+    "provides" : {
+        "Config::TOML"                  : "lib/Config/TOML.pm",
+        "Config::TOML::Parser"          : "lib/Config/TOML/Parser.pm",
+        "Config::TOML::Parser::Actions" : "lib/Config/TOML/Parser/Actions.pm",
+        "Config::TOML::Parser::Grammar" : "lib/Config/TOML/Parser/Grammar.pm"
+    }
+}

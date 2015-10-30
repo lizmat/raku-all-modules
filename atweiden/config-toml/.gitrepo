@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/atweiden/config-toml.git
+	branch = master
+	commit = c7d2e301d3e008a4a79b7794c6acf10d80b2a884
+	parent = e85b029a9b7bfcffe0976c47077addefefcc975c
+	cmdver = 0.2.2
