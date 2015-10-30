@@ -1,6 +1,6 @@
-It's the port of Perl 5's Acme::Meow [1]
+This is a Perl 6 port of Perl 5's Acme::Meow [1]
 
-It's not the verbatim port, some things have changed,
-and there are more to come. Stay tuned for more fun :)
+It's not a verbatim port. Some things have changed,
+and there is more to come. Stay tuned for more fun :)
 
-[1] http://search.cpan.org/~foolish/Acme-Meow-0.01/lib/Acme/Meow.pm
+[1] http://metacpan.org/pod/Acme::Meow
