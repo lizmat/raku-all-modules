@@ -1,44 +1,50 @@
-P6-Compress-Zlib
-================
+# Compress::Zlib
 
-## Name ##
+This is a (hopefully) nice interface to zlib. It compresses and uncompresses
+data using zlib native library.
 
-Compress::Zlib - A (hopefully) nice interface to zlib
+## Usage
 
-## Description ##
+```Perl6
+use Compress::Zlib;
 
-Compresses and uncompresses data using zlib.
+my $wrapped = Compress::Zlib::Wrap.new($handle); # can be a socket, filehandle, etc
+my $wrapped = zwrap($handle); # does the same thing as the above line
 
-## Example Usage ##
+$wrapped.send("data");
+my $response = $wrapped.get;
 
-    use Compress::Zlib;
+gzslurp("file.gz"); # reads in a gzipped file
+gzspurt("file.gz", "stuff"); # spits out a gzipped file
+```
 
-    my $wrapped = Compress::Zlib::Wrap.new($handle); # can be a socket, filehandle, etc
-    my $wrapped = zwrap($handle); # does the same thing as the above line
+- Streaming (de)compression
 
-    $wrapped.send("data");
-    my $response = $wrapped.get;
+```Perl6
+use Compress::Zlib;
 
-    gzslurp("file.gz"); # reads in a gzipped file
-    gzspurt("file.gz", "stuff"); # spits out a gzipped file
+my $compressor = Compress::Zlib::Stream.new;
+loop {
+    $socket.write($compressor.deflate($data-chunk));
+}
+$socket.write($compressor.finish);
 
+my $decompressor = Compress::Zlib::Stream.new;
+while !$decompressor.finished {
+    my $data-chunk = $decompressor.inflate($socket.read($size));
+}
+```
 
-    my $compressor = Compress::Zlib::Stream.new;
-    loop {
-        $socket.write($compressor.deflate($data-chunk));
-    }
-    $socket.write($compressor.finish);
+- Miscellaneous Functions
 
-    my $decompressor = Compress::Zlib::Stream.new;
-    while !$decompressor.finished {
-        my $data-chunk = $decompressor.inflate($socket.read($size));
-    }
+```Perl6
+use Compress::Zlib;
 
+my $compressed = compress($string.encode('utf8'));
+my $original = uncompress($compressed).decode('utf8');
+```
 
-    my $compressed = compress($string.encode('utf8'));
-    my $original = uncompress($compressed).decode('utf8');
-
-## Handle Wrapper ##
+## Handle Wrapper
 
  -  `zwrap($handle, :$gzip, :$zlib, :$deflate --> Compress::Zlib::Wrap)`
 
@@ -48,7 +54,7 @@ Compresses and uncompresses data using zlib.
 
  -  `gzspurt($filename, $stuff, :$bin)`
 
-## Stream Class ##
+## Stream Class
 
 This currently has very few options. Over time, I will add support for custom
 compression levels, gzip/raw deflate streams, etc. If you need a specific feature,
@@ -98,9 +104,9 @@ open an issue and I will move it to the top of my priority list.
     Call when you want a Z_STREAM_END to happen when compressing, or if you are
     finished with the object.
 
-## Misc Functions ##
+## Misc Functions
 
-These only handle zlib format data, not gzip or deflate.
+**NOTE: These only handle zlib format data, not gzip or deflate.**
 
  -  `compress(Blob $data, Int $level? --> Buf)`
 
