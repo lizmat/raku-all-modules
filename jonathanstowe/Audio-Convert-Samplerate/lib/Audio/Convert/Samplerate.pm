@@ -172,7 +172,7 @@ methods will throw an exception if supplied an invalid ratio.
 
 =end pod
 
-class Audio::Convert::Samplerate:ver<v0.0.2>:auth<github:jonathanstowe> {
+class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
     use NativeCall;
     use NativeHelpers::Array;
 
@@ -214,7 +214,7 @@ class Audio::Convert::Samplerate:ver<v0.0.2>:auth<github:jonathanstowe> {
             $!src-ratio = $src-ratio;
             my CArray[num32] $data-out := CArray[num32].new;
             $!output-frames = ($input-frames * $src-ratio).Int + 10;
-            $data-out[$!output-frames * $channels] = 0;
+            $data-out[$!output-frames * $channels] = Num(0);
             $!data-out := $data-out;
             $!input-frames-used = 0;
             $!output-frames-gen = 0;
@@ -322,7 +322,7 @@ class Audio::Convert::Samplerate:ver<v0.0.2>:auth<github:jonathanstowe> {
     method !process-other(Mu $type, CArray $data-in, Int $input-frames, Num() $src-ratio, Bool $last, &to, &from) returns RawProcess {
         my CArray[num32] $new-data = CArray[num32].new;
         my Int $total-frames = ($input-frames * $!channels).Int;
-        $new-data[$total-frames] = 0;
+        $new-data[$total-frames] = Num(0);
         &to($data-in, $new-data, $total-frames);
         (my $float-out, my $frames-out ) = self.process($new-data, $input-frames, $src-ratio, $last).list;
         my CArray $int-out = CArray[$type].new;
