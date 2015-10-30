@@ -122,7 +122,7 @@ class HTTP::Server::Async does HTTP::Server {
     if $req ~~ Nil || !( $req.^can('headers') && $req.headers.keys.elems ) {
       my @lines       = Buf.new($data[0..$index]).decode.lines;
       my ($m, $u, $v) = @lines.shift.match(/^(.+?)\s(.+)\s(HTTP\/.+)$/).list.map({ .Str });
-      my %h           = @lines.map({ .split(':', 2).map({.trim}) });
+      my %h           = %(@lines.map({ .split(':', 2).map({.trim}).Slip }).Slip);
 
       $req    = HTTP::Server::Async::Request.new(
                   :method($m), 
@@ -166,11 +166,11 @@ class HTTP::Server::Async does HTTP::Server {
         $i = 0;
       }
     } else {
-      my $req-len = $req.header('Content-Length')[0] // ($data.elems - $index);
+      my $req-len = try { $req.header('Content-Length')[0].value } // ($data.elems - $index);
       if $data.elems - $req-len >= 0 {
-        $req.data     = Buf.new($data[0..$req-len]); 
+        $req.data     = Buf.new($data[0..$req-len].Slip); 
         $req.complete = True;
-        $data = Buf.new($data[$req-len..$data.elems]);
+        $data = Buf.new($data[$req-len..$data.elems].Slip);
       }
     }
     $.requests.send($req) if $req.^can('complete') && $req.complete;
