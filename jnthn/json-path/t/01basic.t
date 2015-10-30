@@ -60,7 +60,7 @@ is($results2<isbn>, "0-395-19395-8", "hashref seems to be correct");
 
 ok($JSON::Path::Safe, "safe by default");
 
-dies_ok({
+dies-ok({
     my $path3 = JSON::Path.new('$..book[?(.<author> ~~ rx:i/tolkien/)]');
     my $results3 = $path3.values($object);
     1;

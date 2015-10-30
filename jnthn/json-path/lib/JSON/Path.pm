@@ -88,14 +88,14 @@ class JSON::Path {
                 method command:sym<.>($/) {
                     my $key = ~$<ident>;
                     make sub ($next, $current, @path) {
-                        $next($current{$key}, [@path, "['$key']"]);
+                        $next($current{$key}, [flat @path, "['$key']"]);
                     }
                 }
                 
                 method command:sym<[*]>($/) {
                     make sub ($next, $current, @path) {
                         for @($current).kv -> $idx, $object {
-                            $next($object, [@path, "[$idx]"]);
+                            $next($object, [flat @path, "[$idx]"]);
                         }
                     }
                 }
@@ -106,7 +106,7 @@ class JSON::Path {
                     make sub ($next, $current, @path) {
                         multi descend(Associative $o) {
                             if $o{$key}:exists {
-                                $next($o{$key}, [@path, "..$key"]);
+                                $next($o{$key}, [flat @path, "..$key"]);
                             }
                             for $o.keys -> $k {
                                 descend($o{$k});
@@ -130,14 +130,14 @@ class JSON::Path {
                 method command:sym<[n]>($/) {
                     my $idx = +$<n>;
                     make sub ($next, $current, @path) {
-                        $next($current[$idx], [@path, "['$idx']"]);
+                        $next($current[$idx], [flat @path, "['$idx']"]);
                     }
                 }
                 
                 method command:sym<['']>($/) {
                     my $key = ~$<key>;
                     make sub ($next, $current, @path) {
-                        $next($current{$key}, [@path, "['$key']"]);
+                        $next($current{$key}, [flat @path, "['$key']"]);
                     }
                 }
 
@@ -145,7 +145,7 @@ class JSON::Path {
                     my @idxs = $<ns>>>.Int;
                     make sub ($next, $current, @path) {
                         for @idxs {
-                            $next($current[$_], [@path, "[$_]"]);
+                            $next($current[$_], [flat @path, "[$_]"]);
                         }
                     }
                 }
@@ -158,7 +158,7 @@ class JSON::Path {
                             ..
                             (($to < 0 ?? +$current + $to !! $to) min ($current.?end // 0));
                         for @idxs {
-                            $next($current[$_], [@path, "[$_]"]);
+                            $next($current[$_], [flat @path, "[$_]"]);
                         }
                     }
                 }

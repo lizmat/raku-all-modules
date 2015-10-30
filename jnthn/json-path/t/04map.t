@@ -45,12 +45,12 @@ my $path1 = '$.store.book[*].title';
 
 jpath_map { uc $_ }, $object, '$.store.book[*].title';
 
-is_deeply(
+is-deeply(
 	[ jpath1($object, $path1) ],
 	[ map &uc, 'Sayings of the Century' ],
 );
 
-is_deeply(
+is-deeply(
 	[ jpath($object, $path1) ],
 	[ map &uc, 'Sayings of the Century', 'Sword of Honour', 'Moby Dick', 'The Lord of the Rings' ],
 );
@@ -60,9 +60,9 @@ is(
 	2,
 );
 
-is_deeply(
+is-deeply(
 	[ jpath($object, '$.store.book[*].author') ],
 	[ 'Anon', 'Anon', 'Herman Melville', 'J. R. R. Tolkien' ],
 );
 
-done();
+done-testing();
