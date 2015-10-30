@@ -1,0 +1,17 @@
+{
+  "name" : "Text::LTSV",
+  "source-url" : "git://github.com/moznion/p6-Text-LTSV",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "Text::LTSV::Parser" : "lib/Text/LTSV/Parser.pm6",
+    "Text::LTSV" : "lib/Text/LTSV.pm6"
+  },
+  "depends" : [ ],
+  "description" : "LTSV (Labeled Tab Separated Value) toolkit",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "moznion"
+  ]
+}
