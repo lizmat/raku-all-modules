@@ -131,11 +131,23 @@ sub dispatch($env) {
     my ($r, $match) = $app.find_route($env);
 
     if $r {
-        status 200;
-        if $match {
-            $app.response.content = $r.value.(|$match.list);
-        } else {
-            $app.response.content = $r.value.();
+        try {
+            status 200;
+            if $match {
+                $app.response.content = $r.value.(|$match.list);
+            } else {
+                $app.response.content = $r.value.();
+            }
+            CATCH {
+                default {
+                    my $env = $app.request.env;
+                    my $err = $env<p6sgi.version>:exists ?? $env<p6sgi.errors> !! $env<psgi.errors>;
+                    $err.say(.gist);
+                    status 500;
+                    content_type 'text/plain';
+                    $app.response.content = 'Internal Server Error';
+                }
+            }
         }
     }
 
