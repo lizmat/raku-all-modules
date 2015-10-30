@@ -1,5 +1,7 @@
 #Bench[mark]
 
+[![Build Status](https://travis-ci.org/tony-o/perl6-bench.svg)](https://travis-ci.org/tony-o/perl6-bench)
+
 Benchmark tool for benchmarking how long a block of code runs for X iterations *or* how many times it can run in a given period.
 
 
