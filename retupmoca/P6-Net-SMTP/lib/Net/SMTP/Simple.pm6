@@ -8,7 +8,7 @@ has @.auth-methods is rw;
 has $.auth-methods-raw is rw;
 my @supported-auth = "CRAM-MD5", "PLAIN", "LOGIN";
 
-class X::Net::SMTP is Exception {
+my class X::Net::SMTP is Exception {
     has $.server-response;
     has $.nicename;
     method message {
@@ -18,7 +18,7 @@ class X::Net::SMTP is Exception {
         self.bless(:server-response($response));
     }
 }
-class X::Net::SMTP::Address is Exception {
+my class X::Net::SMTP::Address is Exception {
     has $.server-response;
     has $.address;
     has $.nicename;
@@ -40,16 +40,16 @@ class X::Net::SMTP::Address is Exception {
     }
 }
 
-class X::Net::SMTP::BadGreeting is X::Net::SMTP { has $.nicename = 'Bad greeting from server: '; };
-class X::Net::SMTP::BadHELO is X::Net::SMTP { has $.nicename = 'Unable to successfully HELO: '; };
-class X::Net::SMTP::BadFrom is X::Net::SMTP::Address { has $.nicename = 'Bad from address: '; };
-class X::Net::SMTP::BadTo is X::Net::SMTP::Address { has $.nicename = 'Bad to address: '; };
-class X::Net::SMTP::NoValidTo is X::Net::SMTP::Address { has $.nicename = 'No valid to addresses: '; };
-class X::Net::SMTP::BadData is X::Net::SMTP { has $.nicename = 'Unable to enter DATA mode: '; };
-class X::Net::SMTP::BadPayload is X::Net::SMTP { has $.nicename = 'Unable to send message: '; };
-class X::Net::SMTP::SomeBadTo is X::Net::SMTP::Address { has $.nicename = 'Some to addresses failed to send: '; };
-class X::Net::SMTP::AuthFailed is X::Net::SMTP { has $.nicename = 'Authentication failed: '; };
-class X::Net::SMTP::NoAuthMethods is X::Net::SMTP { has $.nicename = 'No valid authentication methods found.'; };
+my class X::Net::SMTP::BadGreeting is X::Net::SMTP { has $.nicename = 'Bad greeting from server: '; };
+my class X::Net::SMTP::BadHELO is X::Net::SMTP { has $.nicename = 'Unable to successfully HELO: '; };
+my class X::Net::SMTP::BadFrom is X::Net::SMTP::Address { has $.nicename = 'Bad from address: '; };
+my class X::Net::SMTP::BadTo is X::Net::SMTP::Address { has $.nicename = 'Bad to address: '; };
+my class X::Net::SMTP::NoValidTo is X::Net::SMTP::Address { has $.nicename = 'No valid to addresses: '; };
+my class X::Net::SMTP::BadData is X::Net::SMTP { has $.nicename = 'Unable to enter DATA mode: '; };
+my class X::Net::SMTP::BadPayload is X::Net::SMTP { has $.nicename = 'Unable to send message: '; };
+my class X::Net::SMTP::SomeBadTo is X::Net::SMTP::Address { has $.nicename = 'Some to addresses failed to send: '; };
+my class X::Net::SMTP::AuthFailed is X::Net::SMTP { has $.nicename = 'Authentication failed: '; };
+my class X::Net::SMTP::NoAuthMethods is X::Net::SMTP { has $.nicename = 'No valid authentication methods found.'; };
 
 method start {
     $.smtp-raw = self.new(:server($.server), :port($.port), :raw, :debug($.debug), :socket($.socket), :ssl($.ssl), :starttls($.tls), :plain($.plain));
@@ -113,7 +113,7 @@ method auth($username, $password, :$methods is copy, :$disallow, :$force) {
             next;
         }
         # skip an auth method if it was explicitly disallowed
-        if @disallow.grep(* eq $method) {
+        if @disallow && @disallow.grep({$_ && $_ eq $method}) {
             next;
         }
         
@@ -178,13 +178,15 @@ multi method send($message, :$keep-going) {
     } else {
         $parsed = Email::Simple.new(~$message);
     }
-    my $from = $parsed.header('From');
-    my @to = $parsed.header('To');
-    @to.push($parsed.header('CC').list);
-    @to.push($parsed.header('BCC').list);
+    my $from = $parsed.header('From').Str;
+    my @to = $parsed.header('To').list if $parsed.header('To');
+    my @cc = $parsed.header('CC').list if $parsed.header('CC');
+    my @bcc = $parsed.header('BCC').list if $parsed.header('BCC');
+    @to.push(|@cc);
+    @to.push(|@bcc);
     $parsed.header-set('BCC'); # clear the BCC headers
 
-    return self.send($from, @to, $parsed, :$keep-going);
+    return self.send($from, @to, $parsed, :keep-going($keep-going));
 }
 
 method quit {

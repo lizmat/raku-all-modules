@@ -15,7 +15,7 @@ has $.plain;
 
 method new(:$server!, :$port = 25, :$raw, :$debug, :$hostname, :$socket = IO::Socket::INET, :$starttls, :$ssl, :$plain){
     my role debug-connection {
-        method send($string){
+        method print($string){
             my $tmpline = $string.substr(0, *-2);
             note '==> '~$tmpline;
             nextwith($string);

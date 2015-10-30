@@ -34,7 +34,7 @@ class SMTPSocket {
     method get {
         return @server-send.shift;
     }
-    method send($string is copy) {
+    method print($string is copy) {
         $string .= substr(0,*-2); # strip \r\n
         die "Bad client-send: $string" unless $string eq @server-get.shift;
     }
