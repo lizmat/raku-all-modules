@@ -1,0 +1,11 @@
+{
+  "name"        : "Pod::To::Markdown",
+  "version"     : "v0.0.1",
+  "description" : "Render Perl6 Pod as Markdown",
+  "author"      : "Jorn van Engelen",
+  "depends"     : [ ],
+  "provides"    : {
+    "Pod::To::Markdown"     : "lib/Pod/To/Markdown.pm6"
+  },
+  "source-url"  : "git://github.com/softmoth/perl6-pod-to-markdown.git"
+}

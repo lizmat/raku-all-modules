@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/softmoth/perl6-pod-to-markdown.git
+	branch = master
+	commit = 86e07bde8974c7afe6e3966ba7675a2f2f2a7719
+	parent = 45242744399d86f6b01e914317111593791235d6
+	cmdver = 0.2.2
