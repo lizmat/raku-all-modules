@@ -1,6 +1,6 @@
 unit role Net::DNS::Message::DomainName;
 
-method parse-domain-name($data is copy, %name-offsets is rw, $start-offset) {
+method parse-domain-name($data is copy, %name-offsets, $start-offset) {
     my @offset-list = (0);
     my $parsed-bytes = 1;
     my $len = $data.unpack('C');
@@ -10,13 +10,13 @@ method parse-domain-name($data is copy, %name-offsets is rw, $start-offset) {
         if $len >= 192 {
             $parsed-bytes += 1;
             @offset-list.push(0);
-            @name.push(%name-offsets{$data[0]}.list);
+            @name.append(%name-offsets{$data[0]}.list);
             $data = Buf.new($data[1..*]);
             $len = 0;
         } else {
             $parsed-bytes += $len;
             @offset-list.push($parsed-bytes);
-            @name.push(Buf.new($data[0..^$len]).decode('ascii'));
+            @name.append(Buf.new($data[0..^$len]).decode('ascii'));
             $data = Buf.new($data[$len..*]);
             $len = $data.unpack('C');
             $parsed-bytes += 1;

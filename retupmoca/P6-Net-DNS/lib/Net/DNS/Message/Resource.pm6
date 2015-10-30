@@ -23,7 +23,7 @@ has Int $.start-offset;
 has %.name-offsets is rw;
 has Int $.parsed-bytes;
 
-multi method new($data is copy, %name-offsets is rw, $start-offset){
+multi method new($data is copy, %name-offsets, $start-offset){
     my $domain-name = self.parse-domain-name($data, %name-offsets, $start-offset);
     my @name = $domain-name<name>.list;
     my $parsed-bytes = $domain-name<bytes>;
@@ -78,7 +78,7 @@ multi method new () {
     self.bless();
 }
 
-method set-name-offsets(%name-offsets is rw){
+method set-name-offsets(%name-offsets){
     %!name-offsets := %name-offsets;
 }
 

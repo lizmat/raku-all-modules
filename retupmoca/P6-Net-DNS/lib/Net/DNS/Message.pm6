@@ -59,10 +59,10 @@ multi method new() {
 
 method Buf {
     return [~] $.header.Buf,
-               @.question».Buf,
-               @.answer».Buf,
-               @.authority».Buf,
-               @.additional».Buf;
+               |@.question».Buf,
+               |@.answer».Buf,
+               |@.authority».Buf,
+               |@.additional».Buf;
 }
 
 method Blob {
