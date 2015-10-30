@@ -1,0 +1,11 @@
+{
+  "name"        : "Encoding::Huffman::PP6",
+  "version"     : "0.0.1",
+  "description" : "Huffman Encoding with pure perl6",
+  "auth"        : "github:tony-o",
+  "depends"     : [ ],
+  "provides" : {
+    "Encoding::Huffman::PP6" : "lib/Encoding/Huffman/PP6.pm6"
+  },
+  "source-url"  : "git://github.com/tony-o/perl6-encoding-huffman-pp6.git"
+} 
