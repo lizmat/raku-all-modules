@@ -32,7 +32,7 @@ class Template::Anti::Selector::NodeWalker {
             $next-node = $next-node.root
                 if $next-node ~~ XML::Document;
 
-            @!open-list.unshift: $next-node.nodes
+            @!open-list.prepend: $next-node.nodes
                 if $next-node ~~ XML::Element;
 
             return $next-node;
