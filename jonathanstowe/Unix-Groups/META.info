@@ -1,0 +1,22 @@
+{
+  "name" : "Unix::Groups",
+  "tags" : [ "devel", "authorisation", "system", "user" ],
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth" : "github:jonathanstowe",
+  "support" : {
+    "source" : "git://github.com/jonathanstowe/Unix-Groups.git"
+  },
+  "source-url" : "git://github.com/jonathanstowe/Unix-Groups.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+     "Unix::Groups" : "lib/Unix/Groups.pm"
+  },
+  "depends" : [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "description" : "Access to the Unix group file in Perl 6",
+  "version" : "v0.0.2"
+}
