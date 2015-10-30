@@ -1,0 +1,11 @@
+{
+        "name" : "Gumbo",
+        "version" : "*",
+        "description" : "Binding of the gumbo C library, a html parser lib",
+        "author" : "Sylvain Colinet",
+        "provides" : {
+            "Gumbo" : "lib/Gumbo.pm6"
+        },
+        "depends" : [ "XML" ],
+        "source-url" : "git://github.com/Skarsnik/perl6-gumbo.git"
+}
