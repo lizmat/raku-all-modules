@@ -6,6 +6,7 @@
   "depends"     : [ ],
   "provides"    : {
     "Net::Packet"               : "lib/Net/Packet.pm6",
+    "Net::Packet::Base"         : "lib/Net/Packet/Base.pm6",
     "Net::Packet::Ethernet"     : "lib/Net/Packet/Ethernet.pm6",
     "Net::Packet::EtherType"    : "lib/Net/Packet/EtherType.pm6",
     "Net::Packet::MAC_addr"     : "lib/Net/Packet/MAC_addr.pm6",

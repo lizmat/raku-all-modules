@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jpve/perl6-net-packet.git
 	branch = master
-	commit = 9949d17ec292f26bf4e375a0afe700268984bbc0
-	parent = a08654da88c04dae194aacc4f5e37d01c49d5674
-	cmdver = 0.2.1
+	commit = afed2d712c05414687e662a4be4e7d02ff2a5f0a
+	parent = c07df2b4da5bc573a5b59efb956842e055a79f87
+	cmdver = 0.2.2
