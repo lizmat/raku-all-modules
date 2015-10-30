@@ -79,4 +79,11 @@ sub dos2unix($file) is export {
     ???
 }
 
+sub which($name) is export {
+    for $*SPEC.path.map({ $*SPEC.catfile($^dir, $name) }) {
+        return $_ if .IO.x;
+    }
+    Str
+}
+
 # vim: ft=perl6
