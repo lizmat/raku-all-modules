@@ -12,4 +12,4 @@ Chess-related stuff in Perl 6
     use Chess::FEN;
     say Chess::FEN.parse('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
 
-See L<http://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation> for more information.
+See [the wikipedia article about FEN](http://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation) for more information.
