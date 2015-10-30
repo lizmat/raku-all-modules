@@ -52,7 +52,8 @@ multi sub canonical(XML::CDATA $xml, *%) {
     return $text;
 }
 
-multi sub canonical(XML::Element $xml, :$subset is copy, :$exclusive, :@namespaces is copy, :%exc-rendered-ns is copy) {
+multi sub canonical(XML::Element $xml, :$subset is copy, :$exclusive, :$namespaces, :%exc-rendered-ns is copy) {
+    my @namespaces = @$namespaces;
     %exc-rendered-ns{'#default'} = '' unless %exc-rendered-ns;
 
     my %extra-attribs;
@@ -117,7 +118,7 @@ multi sub canonical(XML::Element $xml, :$subset is copy, :$exclusive, :@namespac
         }
     }
 
-    @keys.push(%extra-attribs.keys);
+    @keys.append(%extra-attribs.keys);
 
     @keys .= sort(&_sort_attributes.assuming($xml));
 
