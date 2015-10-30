@@ -1,0 +1,15 @@
+{
+    "name": "Parse::Selenese",
+    "version": "*",
+    "description": "A Parser for Selenium Test Cases and Suites",
+    "depends": [],
+    "provides": {
+        "Parse::Selenese": "lib/Parse/Selenese.pm6",
+        "Parse::Selenese::Actions"    : "lib/Parse/Selenese/Actions.pm6",
+        "Parse::Selenese::Command"    : "lib/Parse/Selenese/Command.pm6",
+        "Parse::Selenese::Grammar"    : "lib/Parse/Selenese/Grammar.pm6",
+        "Parse::Selenese::TestCase"   : "lib/Parse/Selenese/TestCase.pm6",
+        "Parse::Selenese::TestSuite"  : "lib/Parse/Selenese/TestSuite.pm6"
+    },
+    "source-url": "git://github.com/azawawi/perl6-parse-selenese.git"
+}
