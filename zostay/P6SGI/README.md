@@ -486,8 +486,9 @@ For example, here is another example that demonstrates the flexibility possible 
             [ Content-Type => 'text/plain' ],
             Supply.on-demand(-> $content {
                 my $acc = 1.FatRat;
-                for 1..$n {
-                    $content.emit("{$acc *= $n}\n");
+                for 1..$n -> $v {
+                    $content.emit($acc *= $v);
+                    $content.emit("\n");
                 }
                 $content.done;
             });
