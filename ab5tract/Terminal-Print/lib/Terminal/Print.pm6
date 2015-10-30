@@ -3,13 +3,15 @@ unit class Terminal::Print;
 use Terminal::Print::Commands;
 my constant T = Terminal::Print::Commands;
 
-use Terminal::Print::Element::Grid;
+#use Terminal::Print::Grid;
+
+use Terminal::Print::Grid;
 
 has $!current-buffer;
-has Terminal::Print::Element::Grid $!current-grid;
+has Terminal::Print::Grid $!current-grid;
 
 has @!buffers;
-has Terminal::Print::Element::Grid @.grids;
+has Terminal::Print::Grid @.grids;
 
 
 has @.grid-indices;
@@ -22,7 +24,7 @@ method new {
     my $max-columns   = +%T::attribute-values<columns>;
     my $max-rows      = +%T::attribute-values<rows>;
 
-    my $grid = Terminal::Print::Element::Grid.new( :$max-columns, :$max-rows );
+    my $grid = Terminal::Print::Grid.new( :$max-columns, :$max-rows );
     my @grid-indices = $grid.grid-indices;
 
     self!bind-buffer( $grid, my $buffer = [] );
@@ -46,12 +48,11 @@ submethod BUILD( :$current-grid, :$current-buffer, :$!max-columns, :$!max-rows, 
 
 method !bind-buffer( $grid, $new-buffer is rw ) {
     for $grid.grid-indices -> [$x,$y] {
-        $new-buffer[$x + ($y * $grid.max-rows)] := $grid[$x][$y];
+        $new-buffer[$x + ($y * $grid.max-rows)] ::= $grid[$x][$y];
     }
 }
 
-
-method add-grid( $name?, :$new-grid = Terminal::Print::Element::Grid.new( :$!max-columns, :$!max-rows ) ) {
+method add-grid( $name?, :$new-grid = Terminal::Print::Grid.new( :$!max-columns, :$!max-rows ) ) {
     self!bind-buffer( $new-grid, my $new-buffer = [] );
 
     push @!grids, $new-grid;
@@ -73,6 +74,7 @@ method clear-screen {
 }
 
 method initialize-screen {
+    $!current-grid.initialize;
     print %T::human-commands<save-screen>;
     self.hide-cursor;
     self.clear-screen;
@@ -80,6 +82,7 @@ method initialize-screen {
 
 method shutdown-screen {
     self.clear-screen;
+    @!grids>>.shutdown;
     print %T::human-commands<restore-screen>;
     self.show-cursor;
 }
@@ -95,7 +98,7 @@ method AT-POS( $column-idx ) {
     $!current-grid.grid[ $column-idx ];
 }
 
-# AT-KEY returns the Terminal::Print::Element::Grid.grid of whichever the key specifies
+# AT-KEY returns the Terminal::Print::Grid.grid of whichever the key specifies
 #   $b<specific-grid>[$x][$y]
 method AT-KEY( $grid-identifier ) {
     self.grid( $grid-identifier );
@@ -123,7 +126,7 @@ multi method FALLBACK( Str $command-name ) {
 #    one). The name is optionally supplied when calling .add-grid.
 #
 #    In the case of @!grids, we pass back the grid array directly from the
-#    Terminal::Print::Element::Grid object, actually notching both DWIM and DRY in one swoosh.
+#    Terminal::Print::Grid object, actually notching both DWIM and DRY in one swoosh.
 #    because you can do things like  $b.grid("background")[42][42] this way.
 multi method grid( Int $index ) {
     @!grids[$index].grid;
@@ -147,6 +150,9 @@ multi method grid-object( Str $name ) {
     @!grids[$grid-index];
 } 
 
+method print-cell( Int $x, Int $y ) {
+    $!current-grid.print-cell($x,$y);
+}
 
 #### buffer stuff
 
@@ -202,3 +208,76 @@ method column-range {
 method row-range {
     $!current-grid.row-range;
 }
+
+
+=begin pod
+=title Terminal::Print
+
+=head1 Synopsis
+
+L<Terminal::Print> implements an abstraction layer for printing characters to terminal
+screens. The idea is to provide all the necessary mechanical details while leaving the actual
+so called 'TUI' abstractions to higher level libraries.
+
+This is/will be done by achieving two technical goals: a) multiple grid objects
+which may be swapped in place, allowing for behind the sccene and b) allow any
+code at any time to print async to the screen. I say 'is/will be' because
+objective 'a' is finished, including both named and positional access.
+
+    $t.grid(0);  # first grid, comes free
+    $t.add-grid('home'); # create a second grid named 'home'
+    $t.grid('home');     # or $t.grid(1)
+
+'b', unfortunately, is not fully finished. I think we need to have a scheduled
+print cycle, ticking at a specific framerate.
+
+Obvious applications include snake clones, rogue engines and golfed art works :)
+
+Oh, and serious monitoring apps.
+
+=head1 Usage
+
+In general an application will have only one L<Terminal::Print> object at a
+time. This object can <L|.initialize-screen>, which stores the current state of
+the terminal window and replaces it with a blank canvas.
+
+TODO: Write more. For now please check out C<examples/show-love.p6> and
+C<examples/zig-zag.p6> for usage examples. C<zig-zag> has an async invocation commented
+out above the current 'main' line of the program.
+
+=head1 Miscellany
+
+=head2 Where are we at now?
+
+All the features you can observe while running C<perl6 t/basics.t> work using
+the new react/supply based L<Terminal::Print::Grid>. If you run that test file,
+you will notice that C<Terminal::Print> is needing a better test harness.
+Part of that is getting a C<STDERR> or some such pipe going, and printing state/
+That will make debugging a lot easier.
+
+Testing a thing that is primarily designed to print to a screen seems a bit
+difficult anyway. I almost think we should make it interactive. 'Did you see a
+screen of hearts?'
+
+So: async (as mentioned above), testing, and debugging are current pain points.
+Contributions welcome.
+
+=head2 Why not just use L<NativeCall> and C<ncurses>? 
+
+I tried that first and it wasn't any fun. C<ncurses> unicode support is
+admirable considering the age and complexity of the library, but it 
+still feels bolted on.
+
+C<ncurses> is not re-entrant, either, which would nix one of the main benefits
+we might be able to get from using Perl 6 -- easy async abstractions.
+
+=head2 A note on buffers
+
+C<buffer> was designed to provide a flat access mechanism: the first cell is
+at 0 and the last cell is at *-1.
+
+It's not currently in the test suite and I wonder if it is actually necessary.
+If we do keep it we should move it to Terminal::Print::Grid.
+
+=end pod
+
