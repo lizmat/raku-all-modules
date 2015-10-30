@@ -1,0 +1,16 @@
+{
+  "name" : "Getopt::Tiny",
+  "source-url" : "git://github.com/tokuhirom/p6-Getopt-Tiny.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "Getopt::Tiny" : "lib/Getopt/Tiny.pm6"
+  },
+  "depends" : [ ],
+  "description" : "Tiny option parser for Perl6",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "Tokuhiro Matsuno"
+  ]
+}

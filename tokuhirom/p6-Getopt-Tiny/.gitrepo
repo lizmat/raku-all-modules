@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tokuhirom/p6-Getopt-Tiny.git
+	branch = master
+	commit = feb4342e1b4d823eb9c4318f8b377a5451e0f739
+	parent = d9336334fc09b24d65575cc8e75a422b3b7b4aec
+	cmdver = 0.2.2
