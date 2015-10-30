@@ -1,39 +1,184 @@
 use v6;
 
 module YAMLish {
+
+	my $yaml-namespace = 'tag:yaml.org,2002:';
+	my %yaml-tags = (
+		$yaml-namespace => {
+			str => sub ($ast, $value) {
+				given $value {
+					when Str {
+						return $value;
+					}
+					when Bool|Numeric|Date|DateTime|*.defined.not {
+						return ~$ast;
+					}
+					when Positional|Associative {
+						die "Couldn't convert collection into string";
+					}
+					default {
+						die "Couldn't resolve { $value.WHAT } to string";
+					}
+				}
+			},
+			int => sub ($, $value) {
+				given $value {
+					when Numeric|Str|Bool {
+						return $value.Int;
+					}
+					default {
+						die "Couldn't resolve a { $value.WHAT } to integer";
+					}
+				}
+			},
+			float => sub ($, $value) {
+				given $value {
+					when Rat|Num {
+						return $value;
+					}
+					when Int|Str {
+						return $value.Rat;
+					}
+					default {
+						die "Couldn't resolve a { $value.WHAT } to float";
+					}
+				}
+			},
+			null => sub ($, $value) {
+				return Any;
+			},
+			binary => sub ($, $value) {
+				require MIME::Base64;
+				return MIME::Base64.decode($value.subst(/<[\ \t\n]>/, '', :g)) if $value ~~ Str;
+				die "Binary has to be a string";
+			},
+			seq => sub ($, $value) {
+				return $value if $value ~~ Iterable;
+				die "Could not convert { $value.WHAT } to a sequence";
+			},
+			map => sub ($, $value) {
+				return $value if $value ~~ Associative;
+				die "Could not convert { $value.WHAT } to am Associative";
+			},
+			set => sub ($ast, $value) {
+				return $value.keys.set if $value ~~ Associative;
+				die "Could not convert { $value.WHAT } to a set";
+			},
+			omap => sub ($ast, $value) {
+				die "Ordered maps not implemented yet"
+			},
+		},
+	);
+	my sub flatten-tags(%tags) {
+		return %tags.kv.map({ |$^value.kv.map($^namespace ~ * => *) } );
+	}
+	my %default-tags = flatten-tags(%yaml-tags);
+
 	grammar Grammar {
-		method parse($, *%) {
+		method parse($, :%tags, *%) {
 			my $*yaml-indent = '';
 			my %*yaml-anchors;
+			my %*yaml-tags = |%default-tags, |flatten-tags(%tags);
+			my $*yaml-version = 1.2;
+			my %*yaml-prefix;
 			callsame;
 		}
-		method subparse($, *%) {
+		method subparse($, :%tags, *%) {
 			my $*yaml-indent = '';
 			my %*yaml-anchors;
+			my %*yaml-tags = |%default-tags, |flatten-tags(%tags);
+			my $*yaml-version = 1.2;
+			my %*yaml-prefix;
 			callsame;
-		}
-		token version {
-			'%YAML' ' '? <[\d.]>+ <.line-break>
 		}
 		token TOP {
-			<version>?
-			[ <header> <content> ]+
-			<.footer>
+			<.document-prefix>?
+			<document=any-document>
+			[
+			| <.document-suffix>+ <.document-prefix>* <document=any-document>?
+			| <.document-prefix>* <document=explicit-document>
+			]*
 		}
-		token header { ^^ '---' }
-		token footer { [ <.newline> '...' ]? <.newline>?? $ }
-		token content { <.newline> <map> | <.newline> <list> | <.space>+ <inline> | <.space>+ <block-string> | <.space>+ <plain> }
+		token document-prefix {
+			<.bom>? <.comment-line>* <?{ $/.chars > 0 }>
+		}
+		token bom {
+			"\x[FEFF]"
+		}
+		token comment-line {
+			<.space>* <.comment> <.line-end>
+		}
+		token line-end {
+			<line-break> | $
+		}
+		token document-suffix {
+			<.document-end> <.comment>? <.line-end> <.comment-line>*
+		}
+		token any-document {
+			| <directive-document>
+			| <explicit-document>
+			| <bare-document>
+		}
+		token directive-document {
+			<directives>
+			{  }
+			:my %*yaml-prefix = %( $<directives>.ast<tags> );
+			<explicit-document>
+		}
+		token directives {
+			[ '%' [ <yaml-directive> | <tag-directive> ] <.space>* <.line-break> ]+
+		}
+		token yaml-directive {
+			'YAML' <.space>+ $<version>=[ <[0..9]>+ \. <[0..9]>+ ]
+		}
+		token tag-directive {
+			'TAG' <.space>+ <tag-handle> <.space>+ <tag-prefix>
+		}
+		token tag-prefix {
+			| '!' <.uri-char>+
+			| <.tag-char> <.uri-char>*
+		}
+		token explicit-document	{
+			<.directives-end>
+			[
+			| <document=bare-document>
+			| <document=empty-document>
+			]
+		}
+		token empty-document {
+			<.comment-line>* <?before <document-suffix> | <document-prefix> | $>
+		}
+		token directives-end {
+			'---'
+		}
+		token document-end {
+			'...'
+		}
+		token bare-document {
+			[
+			| <.newline> <!before '---' | '...'> <map>
+			| <.newline> <list>
+			| <.begin-space> <inline>
+			| <.begin-space> <block-string>
+			| <.begin-space> <!before '---' | '...'> <plain>
+			]
+			<.line-end>
+		}
+		token begin-space {
+			<?before <break>> <.ws>
+		}
 
 		token ws {
 			<.space>*
-			[ [ <!after <.alnum>> <.comment> ]? <.newline> <empty-line> ]*
+			[ [ <!after <.alnum>> <.comment> ]? <.line-break> <.empty-line> ]*
 		}
 		token block-ws {
 			<.space>*
-			[ <!after <.alnum>> <.comment> <.newline> $*yaml-indent <.space>* ]*
+			[ <!after <.alnum>> <.comment> <.line-break> $*yaml-indent <.space>* ]*
 		}
 		token newline {
-			<.space>* <.comment>? <.line-break> [ [ <.space>* <.comment> | <empty-line> ] <.line-break> ]*
+			<.space>* <.comment>? <.line-break>
+			[ [ <.space>* <.comment> | <.empty-line> ] <.line-break> ]*
 		}
 		token space {
 			<[\ \t]>
@@ -59,12 +204,13 @@ module YAMLish {
 		}
 
 		token block {
-			[ <.newline> | <?after <.newline>> ]
+			<properties>?
+			<.newline>
 			:my $sp;
 			<?before <.indent> $<sp>=' '+ { $sp = $<sp> }>
 			:temp $*yaml-indent ~= $sp;
 			<.indent>
-			[ <list> | <map> ]
+			[ <value=list> | <value=map> ]
 		}
 
 		token map {
@@ -82,13 +228,15 @@ module YAMLish {
 		token list-entry {
 			'-' <?break>
 			[
-				:my $sp;
-				$<sp>=' '+ { $sp = $<sp> }
-				:temp $*yaml-indent ~= ' ' ~ $sp;
-				[ <element=map> | <element=list> ]
-			  ||
-				<.block-ws> <element> <.comment>?
+			  || <element=cuddly-list-entry>
+			  || <.block-ws> <element> <.comment>?
 			]
+		}
+		token cuddly-list-entry {
+			:my $sp;
+			$<sp>=' '+ { $sp = $<sp> }
+			:temp $*yaml-indent ~= ' ' ~ $sp;
+			[ <element=map> | <element=list> ]
 		}
 
 		token key {
@@ -97,14 +245,20 @@ module YAMLish {
 			| <double-key>
 		}
 		token plainfirst {
-			<-[\-\?\:\,\[\]\{\}\#\&\*\!\|\>\'\"\%\@\`\ \t]>
+			<-[\-\?\:\,\[\]\{\}\#\&\*\!\|\>\'\"\%\@\`\ \t\x0a\x0d]>
 			| <[\?\:\-]> <!before <.space> | <.line-break>>
 		}
 		token plain {
+			<properties>?
 			<.plainfirst> [ <-[\x0a\x0d\:]> | ':' <!break> ]*
 		}
 		regex inline-plain {
-			<.plainfirst> : [ <-[\x0a\x0d\:\,\[\]\{\}]> | ':' <!break> ]* <!after <.space>> : <.space>*
+			$<value> = [
+				<.plainfirst> :
+				[ <-[\x0a\x0d\:\,\[\]\{\}]> | ':' <!break> ]*
+				<!after <.space>> :
+			]
+			<.space>*
 		}
 		token single-key {
 			"'" $<value>=[ [ <-['\x0a]> | "''" ]* ] "'"
@@ -120,7 +274,7 @@ module YAMLish {
 			\" ~ \" [ <str=.quoted-bare> | \\ <str=.quoted-escape> | <str=foldable-whitespace> | <str=space> ]*
 		}
 		token quoted-bare {
-			<-space-["\\\n]>+
+			<-space-[\"\\\n]>+
 		}
 		token quoted-escape {
 			<["\\/abefnrvtzNLP_\ ]> | x <xdigit>**2 | u <xdigit>**4 | U<xdigit>**8
@@ -129,7 +283,9 @@ module YAMLish {
 			<.space>* <.line-break> <.space>*
 		}
 		token block-string {
-			$<kind>=<[|\>]> <.space>* <.comment>? <.line-break>
+			<properties>?
+			$<kind>=<[\|\>]> <.space>*
+			<.comment>? <.line-break>
 			:my $sp;
 			<?before <.indent> $<sp>=' '+ { $sp = $<sp> }>
 			:temp $*yaml-indent ~= $sp;
@@ -170,22 +326,32 @@ module YAMLish {
 		}
 
 		token inline {
-			| <int>
-			| <hex>
-			| <oct>
-			| <float>
-			| <inf>
-			| <nan>
-			| <yes>
-			| <no>
-			| <null>
-			| <inline-map>
-			| <inline-list>
-			| <single-quoted>
-			| <double-quoted>
-			| <alias>
-			| <datetime>
-			| <date>
+			<properties>?
+
+			[
+			| <value=int>
+			| <value=hex>
+			| <value=oct>
+			| <value=rat>
+			| <value=float>
+			| <value=inf>
+			| <value=nan>
+			| <value=yes>
+			| <value=no>
+			| <value=null>
+			| <value=inline-map>
+			| <value=inline-list>
+			| <value=single-quoted>
+			| <value=double-quoted>
+			| <value=alias>
+			| <value=datetime>
+			| <value=date>
+			]
+		}
+
+		token properties {
+			| <anchor> <.space>+ [ <tag> <.space>+ ]?
+			| <tag> <.space>+ [ <anchor> <.space>+ ]?
 		}
 
 		token int {
@@ -205,6 +371,12 @@ module YAMLish {
 			'-'?
 			'0o'
 			$<value>=[ <[0..7]>+ ]
+			<|w>
+		}
+		token rat {
+			'-'?
+			[ 0 | <[1..9]> <[0..9]>* ]
+			\. <[0..9]>+
 			<|w>
 		}
 		token float {
@@ -239,36 +411,87 @@ module YAMLish {
 		}
 
 		token element {
-			   <anchor>? <.block-ws> [ <value=block> | <value=block-string> ]
-			|| [ <anchor> <.space>+ ]? <value=inline> <.comment>?
-			|| [ <anchor> <.space>+ ]? <value=plain> <.comment>?
+			[  [ <value=block> | <value=block-string> ]
+			|  <value=inline> <.comment>?
+			|| <value=plain> <.comment>?
+			]
 		}
 		token anchor {
 			'&' <identifier>
+		}
+
+		token tag {
+			| <value=verbatim-tag>
+			| <value=shorthand-tag>
+			| <value=non-specific-tag>
+		}
+
+		token verbatim-tag {
+			'!<' <uri-char>+ '>'
+		}
+		token uri-char {
+			<char=uri-escaped-char> | <char=uri-real-char>
+		}
+		token uri-escaped-char {
+			:i '%' $<hex>=<[ 0..9 A..F ]>**2
+		}
+		token uri-real-char {
+			<[ 0..9 A..Z a..z \-#;/?:@&=+$,_.!~*'()\[\] ]>
+		}
+
+		token shorthand-tag {
+			<tag-handle> $<tag-name>=[ <tag-char>+ ]
+		}
+		token tag-handle {
+			'!' [ <[ A..Z a..z 0..9 ]>* '!' ]?
+		}
+		token tag-real-char {
+			<[ 0..9 A..Z a..z \-#;/?:@&=+$_.~*'() ]>
+		}
+		token tag-char {
+			[ <char=uri-escaped-char> | <char=tag-real-char> ]
+		}
+
+		token non-specific-tag {
+			'!'
 		}
 	}
 
 	class Actions {
 		method TOP($/) {
-			make [ @<content>».ast ];
+			make [ @<document>».ast ];
 		}
 		method !first($/) {
 			make $/.values.[0].ast;
 		}
-		method document($/) {
-			make $<header>.ast => $<content>.ast;
-		}
-		method content($/) {
+		method any-document($/) {
 			self!first($/);
+		}
+		method directive-document($/) {
+			make $<explicit-document>.ast;
+		}
+		method directives($/) {
+			my %tags = @<tag-directive>».ast;
+			my $version = $<version-directive>.ast // 1.2;
+			make { :%tags, :$version };
+		}
+		method tag-directive($/) {
+			make ~$<tag-handle> => ~$<tag-prefix>
+		}
+		method explicit-document($/) {
+			make $<document>.ast;
+		}
+		method bare-document($/) {
+			self!first($/);
+		}
+		method empty-document($/) {
+			make Any;
 		}
 		method map($/) {
 			make @<map-entry>».ast.hash.item;
 		}
 		method map-entry($/) {
 			make $<key>.ast => $<element>.ast
-		}
-		method cuddly-map($/) {
-			self.map($/);
 		}
 		method key($/) {
 			self!first($/);
@@ -277,6 +500,9 @@ module YAMLish {
 			make [ @<list-entry>».ast ];
 		}
 		method list-entry($/) {
+			make $<element>.ast;
+		}
+		method cuddly-list-entry($/) {
 			make $<element>.ast;
 		}
 		method space($/) {
@@ -298,30 +524,32 @@ module YAMLish {
 			make ' ';
 		}
 		method plain($/) {
-			make ~$/;
+			make self!handle_properties($<properties>, $/, ~$/);
 		}
 		method inline-plain($/) {
-			make $/.Str.subst(/ <[\ \t]>+ $/, '');
+			make ~$<value>
 		}
 		method block-string($/) {
-			 my $ret = @<content>.map(* ~ "\n").join('');
-			 $ret.=subst(/ <[\x0a\x0d]> <!before ' ' | $> /, ' ', :g) if $<kind> eq '>';
-			 make $ret;
+			my $ret = $<content>.map(* ~ "\n").join('');
+			if $<kind> eq '>' {
+				my $/;
+				$ret.=subst(/ <[\x0a\x0d]> <!before ' ' | $> /, ' ', :g);
+			}
+			make self!handle_properties($<properties>, $/, $ret);
 		}
 
-		method !save($name, $node) {
-			%*yaml-anchors{$name} = $node.ast;
+		method !save($name, $value) {
+			%*yaml-anchors{$name} = $value;
 		}
 		method element($/) {
 			make $<value>.ast;
-			self!save($<anchor>.ast, $/) if $<anchor>;
 		}
 
 		method inline-map($/) {
-			make $<pairlist>.ast;
+			make $<pairlist>.ast.hash.item;
 		}
 		method pairlist($/) {
-			make $<pair>».ast.hash.item;
+			make [ @<pair>».ast ];
 		}
 		method pair($/) {
 			make $<key>.ast => $<inline>.ast;
@@ -335,9 +563,60 @@ module YAMLish {
 		method inline-list-inside($/) {
 			make [ @<inline>».ast ];
 		}
-
 		method inline($/) {
-			self!first($/);
+			make self!handle_properties($<properties>, $<value>);
+		}
+
+		method !decode_value($properties, $ast, $value) {
+			if $properties<tag> -> $tag {
+				return $value if $tag.ast eq '!';
+				my &resolve = %*yaml-tags{$tag.ast} // return die "Unknown tag { $tag.ast }";
+				return resolve($ast, $value);
+			}
+			return $value;
+		}
+		method !handle_properties($properties, $ast, $original-value = $ast.ast) {
+			return $original-value if not $properties;
+			my $value = self!decode_value($properties, $ast, $original-value);
+			self!save($properties<anchor>.ast, $value) if $properties<anchor>;
+			return $value;
+		}
+		method tag($/) {
+			make $<value>.ast;
+		}
+		method verbatim-tag($/) {
+			make @<uri-char>».ast.join('');
+		}
+		method uri-char($/) {
+			make $<char>;
+		}
+		method uri-real-char($/) {
+			make ~$/;
+		}
+		method uri-escaped-char($/) {
+			:16(~$<hex>);
+		}
+		method !lookup-namespace($name) {
+			return %*yaml-prefix{$name} // do given $name {
+				when '!' {
+					'!';
+				}
+				when '!!' {
+					$yaml-namespace;
+				}
+				default {
+					die "No such prefix $name known: " ~ %*yaml-prefix.keys.join(", ");
+				}
+			}
+		}
+		method shorthand-tag($/) {
+			make self!lookup-namespace($<tag-handle>.ast) ~ ~$<tag-name>;
+		}
+		method tag-handle($/) {
+			make ~$/;
+		}
+		method non-specific-tag {
+			make '!';
 		}
 
 		method inf($/) {
@@ -356,10 +635,13 @@ module YAMLish {
 			make $/.Str.Int;
 		}
 		method hex($/) {
-			make :16($<value>.Str);
+			make :16(~$<value>);
 		}
 		method oct($/) {
-			make :8($<value>.Str);
+			make :8(~$<value>);
+		}
+		method rat($/) {
+			make $/.Rat;
 		}
 		method float($/) {
 			make +$/.Str;
@@ -377,7 +659,9 @@ module YAMLish {
 			make Date.new(|$/.hash».Int);
 		}
 
-		method block($/) { make $/.values.[0].ast }
+		method block($/) {
+			make self!handle_properties($<properties>, $<value>);
+		}
 
 		method anchor($/) {
 			make $<identifier>.ast;
