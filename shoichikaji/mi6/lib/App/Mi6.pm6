@@ -51,7 +51,7 @@ multi method cmd('new', $module is copy) {
 multi method cmd('build') {
     my ($module, $module-file) = guess-main-module();
     regenerate-readme($module-file);
-    self.regenerate-meta-info($module);
+    self.regenerate-meta-info($module, $module-file);
     build();
 }
 
@@ -62,6 +62,7 @@ multi method cmd('test', @file, Bool :$verbose, Int :$jobs) {
 }
 
 multi method cmd('release') {
+    self.cmd('build');
     my ($module, $module-file) = guess-main-module();
     my ($user, $repo) = guess-user-and-repo();
     die "Cannot find user and repository settting" unless $repo;
@@ -134,7 +135,7 @@ sub regenerate-readme($module-file) {
     spurt "README.md", $header ~ $markdown;
 }
 
-method regenerate-meta-info($module) {
+method regenerate-meta-info($module, $module-file) {
     my $meta-file = <META6.json META.info>.grep({.IO ~~ :f & :!l})[0];
     my $already = $meta-file.defined ?? from-json $meta-file.IO.slurp !! {};
 
@@ -147,17 +148,31 @@ method regenerate-meta-info($module) {
     };
 
     my %new-meta =
-        name        => $module,
-        perl        => "v6",
-        authors     => $authors,
-        depends     => $already<depends> || [],
-        description => $already<description> || "",
-        provides    => find-provides(),
-        source-url  => $already<source-url> || find-source-url(),
-        version     => $already<version> || "*",
+        name          => $module,
+        perl          => "v6",
+        authors       => $authors,
+        depends       => $already<depends> || [],
+        test-depends  => $already<test-depends> || [],
+        build-depends => $already<build-depends> || [],
+        description   => find-description($module-file) || $already<description> || "",
+        provides      => find-provides(),
+        source-url    => $already<source-url> || find-source-url(),
+        version       => $already<version> || "*",
     ;
-    %new-meta{$_} = $already{$_} for <build-depends test-depends>.grep({$already{$_}});
     ($meta-file || "META6.json").IO.spurt: to-json(%new-meta) ~ "\n";
+}
+
+sub find-description($module-file) {
+    my $content = $module-file.IO.slurp;
+    if $content ~~ /^^
+        '=' head. \s+ NAME
+        \s+
+        \S+ \s+ '-' \s+ (\S<-[\n]>*)
+    / {
+        return $/[0].Str;
+    } else {
+        return "";
+    }
 }
 
 sub find-source-url() {
@@ -199,7 +214,7 @@ sub find-provides() {
     my %provides = find(dir => "lib", name => /\.pm6?$/).list.map(-> $file {
         my $module = $to-module($file.Str);
         $module => $normalize-path($file.Str);
-    });
+    }).sort;
     %provides;
 }
 
@@ -264,15 +279,15 @@ App::Mi6 is a minimal authoring tool for Perl6. Features are:
 
 =head1 FAQ
 
-=item How can I manage depends, description, ...?
+=item How can I manage depends, build-depends, test-depends?
 
-  Write them to META.info directly :)
+  Write them to META6.json directly :)
 
 =item Where is Changes file?
 
   TODO
 
-=item Where is the spec of META.info or META6.json?
+=item Where is the spec of META6.json or META.info?
 
   Maybe https://github.com/perl6/ecosystem/blob/master/spec.pod or http://design.perl6.org/S22.html
 
@@ -286,9 +301,13 @@ L<<https://github.com/tokuhirom/Minilla>>
 
 L<<https://github.com/rjbs/Dist-Zilla>>
 
+=head1 AUTHOR
+
+Shoichi Kaji <skaji@cpan.org>
+
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2015 Shoichi Kaji <skaji@cpan.org>
+Copyright 2015 Shoichi Kaji
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 

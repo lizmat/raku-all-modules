@@ -2,6 +2,7 @@
   "name" : "App::Mi6",
   "source-url" : "git://github.com/shoichikaji/mi6.git",
   "perl" : "v6",
+  "build-depends" : [ ],
   "provides" : {
     "App::Mi6" : "lib/App/Mi6.pm6",
     "App::Mi6::Template" : "lib/App/Mi6/Template.pm6"
@@ -12,6 +13,9 @@
     "Shell::Command"
   ],
   "description" : "minimal authoring tool for Perl6",
+  "test-depends" : [
+    "File::Temp"
+  ],
   "version" : "*",
   "authors" : [
     "Shoichi Kaji"
