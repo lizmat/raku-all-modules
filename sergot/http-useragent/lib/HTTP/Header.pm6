@@ -7,7 +7,7 @@ has @.fields;
 
 our grammar HTTP::Header::Grammar {
     token TOP {
-        [ <message-header> "\r\n" ]*
+        [ <message-header> "\r"? "\n" ]*
     }
 
     token message-header {
@@ -15,7 +15,10 @@ our grammar HTTP::Header::Grammar {
     }
 
     token field-value {
-        [ <!before \h> $<field-content>=[ <-[\r\n]>+ ] | \h+ ]*
+        [ <!before \h> <quot> $<field-content>=[ <-['"\r\n]>+ ]  || \h+ ]* 
+    }
+    token quot {
+        <['"]>?
     }
 }
 
@@ -51,8 +54,8 @@ method new(*%fields) {
 multi method field(*%fields) {
     for %fields.kv -> $k, $v {
         my $f = HTTP::Header::Field.new(:name($k), :values($v.list));
-        if @.fields.first({ .name eq $k }) {
-            @.fields[@.fields.first-index({ .name eq $k })] = $f;
+        if @.fields.first({ .name.lc eq $k.lc }) {
+            @.fields[@.fields.first({ .name.lc eq $k.lc }, :k)] = $f;
         } else {
             @.fields.push: $f;
         }
@@ -61,13 +64,13 @@ multi method field(*%fields) {
 
 # get fields
 multi method field($field) {
-    return @.fields.first({ .name eq $field });
+    return @.fields.first({ .name.lc eq $field.lc });
 }
 
 # initialize fields
 method init-field(*%fields) {
     for %fields.kv -> $k, $v {
-        if not @.fields.grep({ .name eq $k }) {
+        if not @.fields.grep({ .name.lc eq $k.lc }) {
             @.fields.push: HTTP::Header::Field.new(:name($k), :values($v.list));
         }
     }
@@ -76,19 +79,24 @@ method init-field(*%fields) {
 # add value to existing fields
 method push-field(*%fields) {
     for %fields.kv -> $k, $v {
-        @.fields.first({ .name eq $k }).values.push: $v.list;
+        @.fields.first({ .name.lc eq $k.lc }).values.append: $v.list;
     }
 }
 
 # remove a field
 method remove-field(Str $field) {
-    my $index = @.fields.first-index({ .name eq $field });
+    my $index = @.fields.first({ .name.lc eq $field.lc }, :k);
     @.fields.splice($index, 1);
 }
 
 # get fields names
 method header-field-names() {
     @.fields>>.name;
+}
+
+# return the headers as name -> value hash
+method hash() returns Hash {
+    % = @.fields.map({ $_.name => $_.values });
 }
 
 # remove all fields

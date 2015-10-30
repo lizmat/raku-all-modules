@@ -1,0 +1,64 @@
+#!perl6
+
+use v6;
+
+use Test;
+
+use HTTP::Response;
+
+plan 25;
+
+# new
+my $r = HTTP::Response.new(200, a => 'a');
+
+isa-ok $r, HTTP::Response, 'new 1/3';
+isa-ok $r, HTTP::Message, 'new 2/3';
+is $r.field('a'), 'a', 'new 3/3';
+
+# field
+$r.field(h => 'h');
+is $r.field('h'), 'h', 'field 1/2';
+$r.field(h => 'abc');
+is $r.field('h'), 'abc', 'field 2/2';
+
+# status-line
+is $r.status-line, '200 OK', 'status-line 1/1';
+
+# is-success
+ok $r.is-success, 'is-success 1/2';
+## 200-300 status is-success
+$r.set-code(204);
+ok $r.is-success, 'is-success 2/2';
+$r.set-code(404);
+ok !$r.is-success, 'is-success  2/3';
+
+# set-code
+is $r.status-line, '404 Not Found', 'set-code 1/1';
+
+# parse
+my $res = "HTTP/1.1 200 OK\r\nHost: hoscik\r\n\r\ncontent\r\n";
+$r = HTTP::Response.new.parse($res);
+is $r.Str, $res, 'parse - Str 1/4';
+is $r.content, 'content', 'parse - content 2/4';
+is $r.status-line, '200 OK', 'parse - status-line 3/4';
+is $r.protocol, 'HTTP/1.1', 'parse - protocol 4/4';
+
+# has-content
+
+$r = HTTP::Response.new(204);
+ok !$r.has-content, "has-content 1/2";
+$r.set-code(200);
+ok $r.has-content, "has-content 2/2";
+
+my $buf = Buf[uint8].new(72, 84, 84, 80, 47, 49, 46, 49, 32, 52, 48, 51, 32, 70, 111, 114, 98, 105, 100, 100, 101, 110, 10, 68, 97, 116, 101, 58, 32, 84, 104, 117, 44, 32, 50, 50, 32, 79, 99, 116, 32, 50, 48, 49, 53, 32, 49, 50, 58, 50, 48, 58, 53, 52, 32, 71, 77, 84, 10, 83, 101, 114, 118, 101, 114, 58, 32, 65, 112, 97, 99, 104, 101, 47, 50, 46, 52, 46, 49, 54, 32, 40, 70, 101, 100, 111, 114, 97, 41, 32, 79, 112, 101, 110, 83, 83, 76, 47, 49, 46, 48, 46, 49, 107, 45, 102, 105, 112, 115, 32, 109, 111, 100, 95, 112, 101, 114, 108, 47, 50, 46, 48, 46, 57, 32, 80, 101, 114, 108, 47, 118, 53, 46, 50, 48, 46, 51, 10, 76, 97, 115, 116, 45, 77, 111, 100, 105, 102, 105, 101, 100, 58, 32, 70, 114, 105, 44, 32, 49, 55, 32, 74, 117, 108, 32, 50, 48, 49, 53, 32, 48, 55, 58, 49, 50, 58, 48, 52, 32, 71, 77, 84, 10, 69, 84, 97, 103, 58, 32, 34, 49, 50, 48, 49, 45, 53, 49, 98, 48, 99, 101, 55, 97, 100, 51, 57, 48, 48, 34, 10, 65, 99, 99, 101, 112, 116, 45, 82, 97, 110, 103, 101, 115, 58, 32, 98, 121, 116, 101, 115, 10, 67, 111, 110, 116, 101, 110, 116, 45, 76, 101, 110, 103, 116, 104, 58, 32, 52, 54, 48, 57, 10, 67, 111, 110, 110, 101, 99, 116, 105, 111, 110, 58, 32, 99, 108, 111, 115, 101, 10, 67, 111, 110, 116, 101, 110, 116, 45, 84, 121, 112, 101, 58, 32, 116, 101, 120, 116, 47, 104, 116, 109, 108, 59, 32, 99, 104, 97, 114, 115, 101, 116, 61, 85, 84, 70, 45, 56, 10, 10, 10);
+
+lives-ok { $r = HTTP::Response.new($buf) }, "create Response from a Buf";
+is $r.code, 403, "got the code we expected";
+is $r.field('ETag').values[0], "1201-51b0ce7ad3900", "got a header we expected";
+
+lives-ok { $r = HTTP::Response.new(200, Content-Length => "hsh") }, "create a response with a Content-Length";
+throws-like { $r.content-length }, HTTP::Response::X::ContentLength;
+lives-ok { $r = HTTP::Response.new(200, Content-Length => "888") }, "create a response with a Content-Length";
+lives-ok { $r.content-length }, "content-length lives";
+is $r.content-length, 888, "got the right value";
+isa-ok $r.content-length, Int, "and it is an Int";

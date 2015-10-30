@@ -1,4 +1,4 @@
-HTTP::UserAgent
+HTTP::UserAgent [![Build Status](https://travis-ci.org/sergot/http-useragent.svg?branch=master)](https://travis-ci.org/sergot/http-useragent)
 =============
 
 Web user agent class for Perl 6.
@@ -13,7 +13,7 @@ SYNOPSIS
     my $ua = HTTP::UserAgent.new;
     $ua.timeout = 10;
 
-    try my $response = $ua.get("URL");
+    my $response = $ua.get("URL");
 
     if $response.is-success {
         say $response.content;

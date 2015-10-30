@@ -10,22 +10,58 @@ has HTTP::Request $.request is rw;
 
 my $CRLF = "\r\n";
 
+class HTTP::Response::X is Exception {
+    has $.message;
+}
+
+class HTTP::Response::X::ContentLength is HTTP::Response::X {
+}
+
 submethod BUILD(:$!code) {
     $!status-line = self.set-code($!code);
 }
 
-method new(Int $code? = 200, *%fields) {
+# This candidate makes it easier to test weird responses
+multi method new(Blob $header-chunk) {
+    my ( $rl, $header ) = $header-chunk.decode('ascii').split(/\x0d?\x0a/, 2);
+    my $code = $rl.split(' ')[1].Int;
+    my $response = self.new($code);
+    $response.header.parse( $header.subst(/"\x0d"? "\x0a" $/, '') );
+    return $response;
+}
+
+multi method new(Int $code? = 200, *%fields) {
     my $header = HTTP::Header.new(|%fields);
     self.bless(:$code, :$header);
 }
 
+method content-length() returns Int {
+    my $content-length = self.field('Content-Length').values[0];
+
+    if $content-length.defined {
+        my $c = $content-length;
+        if not ($content-length = try +$content-length).defined {
+            HTTP::Response::X::ContentLength.new(message => "Content-Length header value '$c' is not numeric").throw;
+        }
+    }
+    else {
+        $content-length = Int
+    }
+    $content-length;
+}
+
 method is-success {
-    return so $!code ~~ "200";
+    return so is-success($!code);
+}
+
+# please extend as necessary
+method has-content returns Bool {
+    $!code == 204 ?? False !! True;
 }
 
 method is-chunked {
-   return self.header.field('Transfer-Encoding') &&
-          self.header.field('Transfer-Encoding') eq 'chunked' ?? True !! False; 
+   return self.field('Transfer-Encoding') &&
+          self.field('Transfer-Encoding') eq 'chunked' ?? True !! False;
 }
 
 method set-code(Int $code) {
@@ -39,11 +75,19 @@ method next-request() returns HTTP::Request {
     my $location = ~self.header.field('Location').values;
 
     if $location.defined {
-        my %args = $!request.method => $location;
+        # Special case for the HTTP status code 303 (redirection):
+        # The response to the request can be found under another URI using
+        # a separate GET method. This relates to POST, PUT, DELETE and PATCH methods.
+        my $method = $!request.method;
+        $method = "GET"
+          if self.code == 303 &&
+             $!request.method eq any('POST', 'PUT', 'DELETE', 'PATCH');
+
+        my %args = $method => $location;
         $new-request = HTTP::Request.new(|%args);
-        if not ~$new-request.header.field('Host').values {
-            my $hh = ~$!request.header.field('Host').values;
-            $new-request.header.field(Host => $hh);
+        if not ~$new-request.field('Host').values {
+            my $hh = ~$!request.field('Host').values;
+            $new-request.field(Host => $hh);
             $new-request.host = $!request.host;
             $new-request.port = $!request.port;
         }
