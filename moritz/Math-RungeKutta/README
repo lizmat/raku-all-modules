@@ -19,7 +19,8 @@ You'd solve that numerically with this Perl 6 code:
 
     use Math::RungeKutta;
     
-    # function that calculates the derivative
+    # function that calculates the derivative that
+    # Math::RungeKutta will integrate
     sub d($t, @values) { @values[0]**2 + $t}
     
     # that's a function that gets called with the
@@ -44,5 +45,4 @@ $ PERL6LIB=lib perl6 synopsis.pl | xmgrace -nxy -
 The interfaces is inspired by Perl 5 module Math::RungeKutta, to be found at
 <http://search.cpan.org/perldoc?Math::RungeKutta>.
 
-Math::RungeKutta has last been verified to work on contemporary rakudo on
-2011-02-13.
+[![Build Status](https://travis-ci.org/moritz/Math-RungeKutta.svg)](https://travis-ci.org/moritz/Math-RungeKutta)
