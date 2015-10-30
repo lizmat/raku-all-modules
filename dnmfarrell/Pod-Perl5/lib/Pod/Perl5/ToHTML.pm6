@@ -1,12 +1,16 @@
 class Pod::Perl5::ToHTML
 {
-  # meta directives like encoding
-  has $!meta;
+  # for meta directives like encoding
+  has @.meta;
+
+  # these attributes will be populated after a parse
+  has $.head is rw;
+  has $.body is rw;
 
   my $indent_level = 0;
   my $indent_text  = '  ';
 
-  sub stringify-match ($match)
+  method stringify-match ($match)
   {
     my $pod = '';
     for $match.caps -> $value
@@ -18,16 +22,14 @@ class Pod::Perl5::ToHTML
 
   method TOP ($match)
   {
-    my $head = $!meta ?? "\n<head>{$!meta}\n</head>" !! '';
-    my $body = "\n<body>\n{stringify-match($match)}\n</body>";
-    my $html = "<html>{$head}{$body}\n</html>\n";
-    # remove double blank lines
-    $match.make($html.subst(/\n ** 3..*/, {"\n\n"}, :g));
+    $.head = @.meta.elems ?? @.meta.values.join("\n") !! '';
+    $.body = self.stringify-match($match).subst(/\n ** 3..*/, {"\n\n"}, :g);
+    $match.make("<html>\n{$.head ?? "<head>\n" ~ $.head ~ "\n</head>\n" !! ''}<body>\n{$.body}\n</body>\n</html>\n");
   }
 
   method pod-section ($match)
   {
-    $match.make(stringify-match($match));
+    $match.make(self.stringify-match($match));
   }
 
   #######################
@@ -65,12 +67,12 @@ class Pod::Perl5::ToHTML
 
   method format-text ($match)
   {
-    $match.make(stringify-match($match));
+    $match.make(self.stringify-match($match));
   }
 
   method multiline-text ($match)
   {
-    $match.make(stringify-match($match).subst(/\n+$/, ''));
+    $match.make(self.stringify-match($match).subst(/\n+$/, ''));
   }
 
   method section ($match) { $match.make($match.Str) }
@@ -135,7 +137,7 @@ class Pod::Perl5::ToHTML
     my $html_encoding = $pod_encoding eq 'utf8' ?? 'UTF-8' !! $pod_encoding;
 
     # save in meta to be used in <head> later
-    $!meta ~= qq/\n<meta charset="$html_encoding">/;
+    @.meta.push("<meta charset=\"$html_encoding\">");
 
     # make an empty string so the encoding is not returned inline
     $match.make('');
@@ -149,12 +151,12 @@ class Pod::Perl5::ToHTML
         && $match<_item>[0]<bullet-point>.Str ~~ /^<[0..9]>+$/)
     {
       $match.make("\n{$indent_text x $indent_level}<ol>{
-        stringify-match($match) ~ $indent_text x $indent_level}</ol>\n");
+        self.stringify-match($match) ~ $indent_text x $indent_level}</ol>\n");
     }
     else
     {
       $match.make("\n{$indent_text x $indent_level}<ul>{
-        stringify-match($match) ~ $indent_text x $indent_level}</ul>\n");
+        self.stringify-match($match) ~ $indent_text x $indent_level}</ul>\n");
     }
   }
 
@@ -168,7 +170,7 @@ class Pod::Perl5::ToHTML
 
   method _item ($match)
   {
-    $match.make($indent_text x $indent_level ~ "<li>{ stringify-match($match).subst(/\n+$/, '') }</li>\n");
+    $match.make($indent_text x $indent_level ~ "<li>{ self.stringify-match($match).subst(/\n+$/, '') }</li>\n");
   }
 
   method command-block:pod ($match) { $match.make('') }
@@ -178,12 +180,12 @@ class Pod::Perl5::ToHTML
   ########################
   multi method format-code:italic ($match)
   {
-    $match.make("<i>{$match<format-text>.made}</i>");
+    $match.make("<em>{$match<format-text>.made}</em>");
   }
 
   multi method format-code:bold ($match)
   {
-    $match.make("<b>{$match<format-text>.made}</b>");
+    $match.make("<strong>{$match<format-text>.made}</strong>");
   }
 
   multi method format-code:code ($match)
@@ -200,7 +202,7 @@ class Pod::Perl5::ToHTML
   # spec says to display in italics
   multi method format-code:filename ($match)
   {
-    $match.make("<i>{$match<format-text>.made}</i>");
+    $match.make("<em>{$match<format-text>.made}</em>");
   }
 
   # singleline shouldn't break across lines ...

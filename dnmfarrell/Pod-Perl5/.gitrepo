@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dnmfarrell/Pod-Perl5.git
 	branch = master
-	commit = d7adf625678a5e17f5dfc700754ab7051a11e3e0
-	parent = 5a28c24d26aa9403ae012fece3b3148e03716d13
+	commit = b7bda816ad89abf737244dee481abf5ad148d550
+	parent = e37a65e5f91698ba069cb8334883bbfb29bbecdc
 	cmdver = 0.2.2

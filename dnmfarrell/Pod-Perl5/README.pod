@@ -2,11 +2,11 @@
 
 =head1 NAME
 
-Pod::Perl5 - a parser for Perl 5 pod
+Pod::Perl5 - a parser for Perl 5 pod written in Perl 6 with HTML and Markdown serialization
 
 =head1 VERSION
 
-0.13
+0.18
 
 =head1 DESCRIPTION
 

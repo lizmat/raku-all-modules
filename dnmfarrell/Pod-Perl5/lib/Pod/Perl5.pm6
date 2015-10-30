@@ -2,7 +2,7 @@ use Pod::Perl5::Grammar;
 use Pod::Perl5::ToHTML;
 use Pod::Perl5::ToMarkdown;
 
-class Pod::Perl5:ver<0.15>
+class Pod::Perl5:ver<0.18>
 {
   our sub parse-file (Str:D $filepath, $actions?)
   {
