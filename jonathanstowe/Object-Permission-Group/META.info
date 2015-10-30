@@ -1,0 +1,22 @@
+{
+  "name" : "Object::Permission::Group",
+  "tags" : [ "devel", "authorisation", "object", "user", "unix" ],
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth" : "github:jonathanstowe",
+  "support" : {
+    "source" : "git://github.com/jonathanstowe/Object-Permission-Group.git"
+  },
+  "source-url" : "git://github.com/jonathanstowe/Object-Permission-Group.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+     "Object::Permission::Group" : "lib/Object/Permission/Group.pm"
+  },
+  "depends" : [ "Object::Permission", "Unix::Groups" ],
+  "test-depends" : [
+    "Test"
+  ],
+  "description" : "Object helper for Object::Permission using unix groups.",
+  "version" : "v0.0.1"
+}
