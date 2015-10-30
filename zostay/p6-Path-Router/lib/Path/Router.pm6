@@ -1,135 +1,244 @@
+unit class Path::Router;
+
 use v6;
 
-=TITLE Path::Router
-
-=SUBTITLE A tool for routing paths
+=NAME Path::Router - A tool for routing paths
 
 use Path::Router::Route;
 use X::Path::Router;
 
-class Path::Router {
-    constant $DEBUG = ?%*ENV<PATH_ROUTER_DEBUG>;
+constant $DEBUG = ?%*ENV<PATH_ROUTER_DEBUG>;
 
-    has Path::Router::Route @.routes;
-    has $.route-class = Path::Router::Route;
+has Path::Router::Route @.routes;
+has $.route-class = Path::Router::Route;
 
-    multi method add-route(Str $path, *%options) {
-        @!routes.push: $!route-class.new(
-            path => $path,
-            |%options,
-        );
-    }
+multi method add-route(Str $path, *%options) {
+    @!routes.push: $!route-class.new(
+        path => $path,
+        |%options,
+    );
+}
 
-    multi method add-route(Str $path, List $options) {
-        self.add-route($path, |$options);
-    }
+multi method add-route(Str $path, List $options) {
+    self.add-route($path, |$options);
+}
 
-    multi method add-route(Str $path, %options) {
-        self.add-route($path, |%options);
-    }
+multi method add-route(Str $path, %options) {
+    self.add-route($path, |%options);
+}
 
-    multi method add-route(Pair $pair) {
-        my (Str $path, $options) = $pair.kv;
+multi method add-route(Pair $pair) {
+    my (Str $path, $options) = $pair.kv;
+    self.add-route($path, |%($options));
+}
+
+multi method add-route(*%pairs) {
+    for %pairs.kv -> $path, $options {
         self.add-route($path, |%($options));
     }
+}
 
-    multi method add-route(*%pairs) {
-        for %pairs.kv -> $path, $options {
-            self.add-route($path, |%($options));
-        }
+multi method insert-route(Str $path, Int :$at = 0, *%options) {
+    my $route = $!route-class.new(
+        path => $path,
+        |%options,
+    );
+
+    given ($at) {
+        when 0                { @!routes.unshift: $route }
+        when @!routes.end < * { @!routes.push: $route }
+        default               { @!routes.splice($at, 0, $route) }
     }
+}
 
-    multi method insert-route(Str $path, Int :$at = 0, *%options) {
-        my $route = $!route-class.new(
-            path => $path,
-            |%options,
-        );
+multi method insert-route(Str $path, List $options) {
+    self.insert-route($path, |$options);
+}
 
-        given ($at) {
-            when 0                { @!routes.unshift: $route }
-            when @!routes.end < * { @!routes.push: $route }
-            default               { @!routes.splice($at, 0, $route) }
-        }
-    }
+multi method insert-route(Str $path, %options) {
+    self.insert-route($path, |%options);
+}
 
-    multi method insert-route(Str $path, List $options) {
-        self.insert-route($path, |$options);
-    }
+multi method insert-route(Pair $pair) {
+    my (Str $path, $options) = $pair.kv;
+    self.insert-route($path, |%($options));
+}
 
-    multi method insert-route(Str $path, %options) {
-        self.insert-route($path, |%options);
-    }
-
-    multi method insert-route(Pair $pair) {
-        my (Str $path, $options) = $pair.kv;
+multi method insert-route(*%pairs) {
+    for %pairs.kv -> $path, $options {
         self.insert-route($path, |%($options));
     }
+}
 
-    multi method insert-route(*%pairs) {
-        for %pairs.kv -> $path, $options {
-            self.insert-route($path, |%($options));
+multi method include-router(Str $path, Path::Router $router) {
+    ($path eq '' || $path ~~ /\/$$/)
+        || die X::Path::Router::BadInclusion.new;
+
+    @!routes.push(
+        |$router.routes.map: { 
+            my %attr = .copy-attrs;
+            %attr<path> = $path ~ %attr<path>;
+            .new(|%attr)
+        }
+    );
+}
+
+multi method include-router(Pair $pair) {
+    my (Str $path, Path::Router $router) = $pair.kv;
+    self.include-router($path, $router);
+}
+
+method match(Str $url is copy) returns Path::Router::Route::Match {
+    $url  = IO::Spec::Unix.canonpath($url, :parent);
+    $url .= subst(/^\//, '');
+
+    my Str @parts = $url.comb(/ <-[ \/ ]>+ /);
+
+    my Path::Router::Route::Match @matches;
+    for @!routes -> $route {
+        my $match = $route.match(@parts) or next;
+        @matches.push: $match;
+    }
+
+    return Path::Router::Route::Match if @matches.elems == 0;
+    return @matches[0]                if @matches.elems == 1;
+    return self!disambiguate-matches($url, @matches);
+}
+
+method !disambiguate-matches(Str $path, Path::Router::Route::Match @matches) {
+    my Int $min;
+    my Path::Router::Route::Match @found;
+    
+    for @matches -> $match {
+        my $vars = $match.route.required-variable-component-names.elems;
+        if !$min.defined || $vars < $min {
+            @found = $match;
+            $min = $vars;
+        }
+        elsif $vars == $min {
+            @found.push: $match;
         }
     }
 
-    multi method include-router(Str $path, Path::Router $router) {
-        ($path eq '' || $path ~~ /\/$$/)
-            || die X::Path::Router::BadInclusion.new;
+    die X::Path::Router::AmbiguousMatch::PathMatch.new(
+        :matches(@found), :$path
+    ) if @found.elems > 1;
 
-        @!routes.push(
-            |$router.routes.map: { 
-                my %attr = .copy-attrs;
-                %attr<path> = $path ~ %attr<path>;
-                .new(|%attr)
-            }
-        );
+    return @found[0];
+}
+
+method !try-route(%url-map is copy, Path::Router::Route $route) returns Str {
+    my @url;
+
+    my $required = $route.required-variable-component-names;
+    my $optional = $route.optional-variable-component-names;
+
+    my %url-defaults;
+
+    my %match = $route.defaults;
+
+    for $required.keys.Slip, $optional.keys.Slip -> $component {
+        next unless %match{$component} :exists;
+        %url-defaults{$component} = %match{$component} :delete;
+    }
+    # any remaining keys in %defaults are 'extra' -- they don't
+    # appear in the url, so they need to match exactly rather
+    # than being filled in
+
+    %url-map = |%url-defaults, |%url-map;
+
+    my @keys = |%url-map.keys;
+
+    my class X::RouteNotMatched is Exception { 
+        has Str $.reason; 
+        method new($reason) {
+            self.bless(:$reason);
+        }
+        method message() { $!reason } 
     }
 
-    multi method include-router(Pair $pair) {
-        my (Str $path, Path::Router $router) = $pair.kv;
-        self.include-router($path, $router);
+    if ($DEBUG) {
+        warn "> Attempting to match ", $route.path, " to (", @keys.join(" / "), ")";
+    }
+    (
+        $required.elems <= @keys.elems <= $required.elems + $optional.elems + %match.elems
+    ) || die X::RouteNotMatched.new("LENGTH DID NOT MATCH ({$required.elems} {$required.elems <= @keys.elems ?? "≤" !! "≰"} {@keys.elems} {@keys.elems <= $required.elems + $optional.elems + %match.elems ?? "≤" !! "≰"} {$required.elems} + {$optional.elems} + {%match.elems})");
+
+    if my @missing = $required.keys.grep({ !(%url-map{$_} :exists) }) {
+        warn "missing: {@missing}" if $DEBUG;
+        die X::RouteNotMatched.new("MISSING ITEM [{@missing}]");
     }
 
-    method match(Str $url is copy) returns Path::Router::Route::Match {
-        $url  = IO::Spec::Unix.canonpath($url, :parent);
-        $url .= subst(/^\//, '');
+    if my @extra = %url-map.keys.grep({
+        $_ ∉ $required && $_ ∉ $optional && !%match{$_}
+    }) {
+        warn "extra: {@extra}" if $DEBUG;
+        die X::RouteNotMatched.new("EXTRA ITEM[{@extra}]");
+    }
+    
+    if my @nomatch = %match.keys.grep({
+        %url-map{$_} :exists and %url-map{$_} ne %match{$_}
+    }) {
+        warn "no match: {@nomatch}" if $DEBUG;
+        die X::RouteNotMatched.new("NO MATCH[{@nomatch}]");
+    }
 
-        my Str @parts = $url.comb(/ <-[ \/ ]>+ /);
+    for $route.components -> $component {
+        if $route.is-component-variable($component) {
+            warn "\t\t... found a variable ($component)" if $DEBUG;
+            my $name = $route.get-component-name($component);
 
-        my Path::Router::Route::Match @matches;
-        for @!routes -> $route {
-            my $match = $route.match(@parts) or next;
-            @matches.push: $match;
+            @url.push: %url-map{$name}
+                unless
+                    $route.is-component-optional($component) &&
+                    $route.defaults{$name}                   &&
+                    $route.defaults{$name} eq %url-map{$name};
         }
 
-        return Path::Router::Route::Match if @matches.elems == 0;
-        return @matches[0]                if @matches.elems == 1;
-        return self!disambiguate-matches($url, @matches);
-    }
+        else {
+            warn "\t\t... found a constant ($component)" if $DEBUG;
 
-    method !disambiguate-matches(Str $path, Path::Router::Route::Match @matches) {
-        my Int $min;
-        my Path::Router::Route::Match @found;
-        
-        for @matches -> $match {
-            my $vars = $match.route.required-variable-component-names.elems;
-            if !$min.defined || $vars < $min {
-                @found = $match;
-                $min = $vars;
-            }
-            elsif $vars == $min {
-                @found.push: $match;
-            }
+            @url.push: $component;
         }
 
-        die X::Path::Router::AmbiguousMatch::PathMatch.new(
-            :matches(@found), :$path
-        ) if @found.elems > 1;
-
-        return @found[0];
+        warn "+++ URL so far ... ", @url.join("/") if $DEBUG;
     }
 
-    method !try-route(%url-map is copy, Path::Router::Route $route) returns Str {
-        my @url;
+    CATCH {
+        when X::RouteNotMatched {
+            if $DEBUG {
+                warn 'URL: ', @url.join("/");
+                warn "... ", $_;
+            }
+
+            return Str;
+        }
+    }
+
+    return @url.grep({ .defined }).join("/");
+}
+
+method uri-for(*%url-map is copy) returns Str {
+
+    # anything => undef is useless; ignore it and let the defaults override it
+    for %url-map {
+        %url-map{$_} :delete unless %url-map{$_}.defined;
+    }
+
+    my @possible = gather for @!routes -> $route {
+        my $url = self!try-route(%url-map, $route);
+        take $[ $route, $url ] if $url.defined;
+    }
+
+    return Str unless @possible;
+    return @possible[0][1] if @possible == 1;
+
+    my @found;
+    my $min;
+    for @possible -> $possible {
+        my ($route, $url) = @($possible);
+
+        temp %url-map = %url-map;
 
         my $required = $route.required-variable-component-names;
         my $optional = $route.optional-variable-component-names;
@@ -138,146 +247,34 @@ class Path::Router {
 
         my %match = $route.defaults;
 
-        for $required.keys.Slip, $optional.keys.Slip -> $component {
+        for $required.list, $optional.list -> $component {
             next unless %match{$component} :exists;
             %url-defaults{$component} = %match{$component} :delete;
         }
-        # any remaining keys in %defaults are 'extra' -- they don't
-        # appear in the url, so they need to match exactly rather
-        # than being filled in
-
-        %url-map = flat %url-defaults, %url-map;
-
-        my @keys = %url-map.keys;
-
-        my class X::RouteNotMatched is Exception { 
-            has Str $.reason; 
-            method new($reason) {
-                self.bless(:$reason);
-            }
-            method message() { $!reason } 
-        }
-
-        if ($DEBUG) {
-            warn "> Attempting to match ", $route.path, " to (", @keys.join(" / "), ")";
-        }
-        (
-            $required.elems <= @keys.elems <= $required.elems + $optional.elems + %match.elems
-        ) || die X::RouteNotMatched.new("LENGTH DID NOT MATCH ({$required.elems} {$required.elems <= @keys.elems ?? "≤" !! "≰"} {@keys.elems} {@keys.elems <= $required.elems + $optional.elems + %match.elems ?? "≤" !! "≰"} {$required.elems} + {$optional.elems} + {%match.elems})");
-
-        if my @missing = $required.keys.grep({ !(%url-map{$_} :exists) }) {
-            warn "missing: {@missing}" if $DEBUG;
-            die X::RouteNotMatched.new("MISSING ITEM [{@missing}]");
-        }
-
-        if my @extra = %url-map.keys.grep({
-            $_ ∉ $required && $_ ∉ $optional && !%match{$_}
-        }) {
-            warn "extra: {@extra}" if $DEBUG;
-            die X::RouteNotMatched.new("EXTRA ITEM[{@extra}]");
-        }
+        # any remaining keys in %defaults are 'extra' -- they don't appear
+        # in the url, so they need to match exactly rather than being filled
+        # in
         
-        if my @nomatch = %match.keys.grep({
-            %url-map{$_} :exists and %url-map{$_} ne %match{$_}
-        }) {
-            warn "no match: {@nomatch}" if $DEBUG;
-            die X::RouteNotMatched.new("NO MATCH[{@nomatch}]");
+        %url-map = |%url-defaults, |%url-map;
+
+        my $wanted = ($required.list ∪ $optional.list ∪ set %match.keys).SetHash;
+        $wanted{$_} :delete for %url-map.keys;
+
+        if (!$min.defined || $wanted.elems < $min) {
+            @found = $possible;
+            $min = $wanted.elems;
         }
-
-        for $route.components -> $component {
-            if $route.is-component-variable($component) {
-                warn "\t\t... found a variable ($component)" if $DEBUG;
-                my $name = $route.get-component-name($component);
-
-                @url.push: %url-map{$name}
-                    unless
-                        $route.is-component-optional($component) &&
-                        $route.defaults{$name}                   &&
-                        $route.defaults{$name} eq %url-map{$name};
-            }
-
-            else {
-                warn "\t\t... found a constant ($component)" if $DEBUG;
-
-                @url.push: $component;
-            }
-
-            warn "+++ URL so far ... ", @url.join("/") if $DEBUG;
+        elsif ($wanted.elems == $min) {
+            push @found, $possible;
         }
-
-        CATCH {
-            when X::RouteNotMatched {
-                if $DEBUG {
-                    warn 'URL: ', @url.join("/");
-                    warn "... ", $_;
-                }
-
-                return Str;
-            }
-        }
-
-        return @url.grep({ .defined }).join("/");
     }
 
-    method uri-for(*%url-map is copy) returns Str {
+    die X::Path::Router::AmbiguousMatch::ReverseMatch.new(
+        match-keys => %url-map.keys,
+        routes     => @found,
+    ) if @found > 1;
 
-        # anything => undef is useless; ignore it and let the defaults override it
-        for %url-map {
-            %url-map{$_} :delete unless %url-map{$_}.defined;
-        }
-
-        my @possible;
-        for @!routes -> $route {
-            my $url = self!try-route(%url-map, $route);
-            @possible.push: $[ $route, $url ] if $url.defined;
-        }
-
-        return Str unless @possible;
-        return @possible[0][1] if @possible == 1;
-
-        my @found;
-        my $min;
-        for @possible -> $possible {
-            my ($route, $url) = @($possible);
-
-            temp %url-map = %url-map;
-
-            my $required = $route.required-variable-component-names;
-            my $optional = $route.optional-variable-component-names;
-
-            my %url-defaults;
-
-            my %match = $route.defaults;
-
-            for $required.list, $optional.list -> $component {
-                next unless %match{$component} :exists;
-                %url-defaults{$component} = %match{$component} :delete;
-            }
-            # any remaining keys in %defaults are 'extra' -- they don't appear
-            # in the url, so they need to match exactly rather than being filled
-            # in
-            
-            %url-map = %url-defaults, %url-map;
-
-            my $wanted = ($required.list ∪ $optional.list ∪ set %match.keys).SetHash;
-            $wanted{$_} :delete for %url-map.keys;
-
-            if (!$min.defined || $wanted.elems < $min) {
-                @found = $possible;
-                $min = $wanted.elems;
-            }
-            elsif ($wanted.elems == $min) {
-                push @found, $possible;
-            }
-        }
-
-        die X::Path::Router::AmbiguousMatch::ReverseMatch.new(
-            match-keys => %url-map.keys,
-            routes     => @found,
-        ) if @found > 1;
-
-        return @found[0][1];
-    }
+    return @found[0][1];
 }
 
 =begin pod
