@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tokuhirom/p6-HTTP-Server-Tiny.git
+	branch = master
+	commit = 4828c081f47506ce0bdac7bd80e453a9d7e489d5
+	parent = bb0d9a5dd4621185b88a40cc9b3be457cb66eb71
+	cmdver = 0.2.2
