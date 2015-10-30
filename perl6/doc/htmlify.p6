@@ -29,8 +29,6 @@ use Perl6::Documentable::Registry;
 use Pod::Convenience;
 use Pod::Htmlify;
 
-my $*DEBUG = False;
-
 my $type-graph;
 my %routines-by-type;
 my %*POD2HTML-CALLBACKS;
@@ -94,7 +92,7 @@ sub recursive-dir($dir) {
                 take $f;
             }
             else {
-                @todo.push($f.path);
+                @todo.append($f.path);
             }
         }
     }
@@ -103,7 +101,6 @@ sub recursive-dir($dir) {
 # --sparse=5: only process 1/5th of the files
 # mostly useful for performance optimizations, profiling etc.
 sub MAIN(
-    Bool :$debug,
     Bool :$typegraph = False,
     Int  :$sparse,
     Bool :$disambiguation = True,
@@ -111,8 +108,6 @@ sub MAIN(
     Bool :$no-highlight = False,
     Bool :$no-inline-python = False,
 ) {
-    $*DEBUG = $debug;
-
     say 'Creating html/ subdirectories ...';
     for flat '', <type language routine images syntax> {
         mkdir "html/$_" unless "html/$_".IO ~~ :e;
@@ -158,12 +153,12 @@ sub MAIN(
 }
 
 sub process-pod-dir($dir, :&sorted-by = &[cmp], :$sparse) {
-    say "Reading lib/$dir ...";
+    say "Reading doc/$dir ...";
     my @pod-sources =
-        recursive-dir("lib/$dir/")\
+        recursive-dir("doc/$dir/")\
         .grep({.path ~~ / '.pod' $/})\
         .map({;
-            .path.subst("lib/$dir/", '')\
+            .path.subst("doc/$dir/", '')\
                  .subst(rx{\.pod$},  '')\
                  .subst(:g,    '/',  '::')
             => $_
@@ -222,7 +217,8 @@ sub process-pod-source(:$kind, :$pod, :$filename, :$pod-is-complete) {
         |%type-info,
     );
 
-    find-definitions :$pod, :$origin;
+    find-definitions :$pod, :$origin, :url("/$kind/$filename");
+    find-references  :$pod, :$origin, :url("/$kind/$filename");
 }
 
 # XXX: Generalize
@@ -244,7 +240,7 @@ multi write-type-source($doc) {
         to the documentation pages for the related types. If not, try the
         <a href="/images/type-graph-{uri_escape $podname}.png">PNG
         version</a> instead.</p>];
-        $pod.contents.push: Pod::Raw.new(
+        $pod.contents.append: Pod::Raw.new(
             target => 'html',
             contents => $tg-preamble ~ svg-for-file("html/images/type-graph-$podname.svg"),
 
@@ -258,8 +254,8 @@ multi write-type-source($doc) {
         while @roles-todo.shift -> $role {
             next unless %routines-by-type{$role};
             next if %roles-seen{$role}++;
-            @roles-todo.push: $role.roles;
-            $pod.contents.push:
+            @roles-todo.append: $role.roles;
+            $pod.contents.append:
                 pod-heading("Routines supplied by role $role"),
                 pod-block(
                     "$podname does role ",
@@ -271,7 +267,7 @@ multi write-type-source($doc) {
         }
         for @mro -> $class {
             next unless %routines-by-type{$class};
-            $pod.contents.push:
+            $pod.contents.append:
                 pod-heading("Routines supplied by class $class"),
                 pod-block(
                     "$podname inherits from class ",
@@ -282,7 +278,7 @@ multi write-type-source($doc) {
                 ;
             for $class.roles -> $role {
                 next unless %routines-by-type{$role};
-                $pod.contents.push:
+                $pod.contents.append:
                     pod-heading("Methods supplied by role $role"),
                     pod-block(
                         "$podname inherits from class ",
@@ -305,8 +301,53 @@ multi write-type-source($doc) {
     spurt $html-filename, p2h($pod, $what, pod-path => $pod-path);
 }
 
+sub find-references(:$pod!, :$url, :$origin) {
+    if $pod ~~ Pod::FormattingCode && $pod.type eq 'X' {
+        register-reference(:$pod, :$origin, :$url);
+    }
+    elsif $pod.?contents {
+        for $pod.contents -> $sub-pod {
+            find-references(:pod($sub-pod), :$url, :$origin) if $sub-pod ~~ Pod::Block;
+        }
+    }
+}
+
+sub register-reference(:$pod!, :$origin, :$url) {
+    if $pod.meta {
+        for @( $pod.meta ) -> $meta {
+            my $name;
+            if  $meta.elems > 1 {
+                my $last = $meta[*-1];
+                my $rest = $meta[0..*-2].join;
+                $name = "$last ($rest)";
+            }
+            else {
+                $name = $meta.Str;
+            }
+            $*DR.add-new(
+                :$pod,
+                :$origin,
+                :$url,
+                :kind<reference>,
+                :subkinds['reference'],
+                :$name,
+            )
+        }
+    }
+    elsif $pod.contents[0] -> $name {
+        $*DR.add-new(
+            :$pod,
+            :$origin,
+            :$url,
+            :kind<reference>,
+            :subkinds['reference'],
+            :$name,
+        )
+    }
+}
+
 #| A one-pass-parser for pod headers that define something documentable.
-sub find-definitions (:$pod, :$origin, :$min-level = -1) {
+sub find-definitions (:$pod, :$origin, :$min-level = -1, :$url) {
     # Runs through the pod content, and looks for headings.
     # If a heading is a definition, like "class FooBar", processes
     # the class and gives the rest of the pod to find-definitions,
@@ -324,7 +365,12 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
         # Is this new header a definition?
         # If so, begin processing it.
         # If not, skip to the next heading.
-        my @header := $pod-element.contents[0].contents;
+        
+        my @header;
+        try {
+            @header := $pod-element.contents[0].contents;
+            CATCH { next }
+        }
         my @definitions; # [subkind, name]
         my $unambiguous = False;
         given @header {
@@ -332,6 +378,8 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
                 my $fc := .[1];
                 proceed unless $fc.type eq "X";
                 @definitions = $fc.meta[0].flat;
+                # set default name if none provide so X<if|control> gets name 'if'
+                @definitions[1] = $fc.contents[0] if @definitions == 1;
                 $unambiguous = True;
             }
             when :(Str $ where /^The \s \S+ \s \w+$/) {
@@ -395,7 +443,7 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
                 }
                 default {
                     # No clue, probably not meant to be indexed
-                    last
+                    next;
                 }
             }
 
@@ -415,6 +463,7 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
                 $new-i = $i + find-definitions
                     :pod(@pod-section[$i+1..*]),
                     :origin($created),
+                    :$url,
                     :min-level(@pod-section[$i].level);
             }
 
@@ -425,7 +474,7 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
                 ]
             );
             my @orig-chunk = flat $new-head, @pod-section[$i ^.. $new-i];
-            my $chunk = $created.pod.push: pod-lower-headings(@orig-chunk, :to(%attr<kind> eq 'type' ?? 0 !! 2));
+            my $chunk = $created.pod.append: pod-lower-headings(@orig-chunk, :to(%attr<kind> eq 'type' ?? 0 !! 2));
 
             if $subkinds eq 'routine' {
                 # Determine proper subkinds
@@ -440,7 +489,7 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1) {
                 $created.categories = @subkinds;
             }
             if %attr<kind> eq 'routine' {
-                %routines-by-type{$origin.name}.push: $chunk;
+                %routines-by-type{$origin.name}.append: $chunk;
                 write-qualified-method-call(
                     :$name,
                     :pod($chunk),
@@ -475,8 +524,8 @@ sub write-type-graph-images(:$force) {
 
     say 'Writing specialized visualizations to html/images/ ...';
     my %by-group = $type-graph.sorted.classify(&viz-group);
-    %by-group<Exception>.push: $type-graph.types< Exception Any Mu >;
-    %by-group<Metamodel>.push: $type-graph.types< Any Mu >;
+    %by-group<Exception>.append: $type-graph.types< Exception Any Mu >;
+    %by-group<Metamodel>.append: $type-graph.types< Any Mu >;
 
     for %by-group.kv -> $group, @types {
         my $viz = Perl6::TypeGraph::Viz.new(:types(@types),
@@ -551,7 +600,7 @@ sub write-disambiguation-files () {
         if $p.elems == 1 {
             $p = $p[0] if $p ~~ Array;
             if $p.origin -> $o {
-                $pod.contents.push:
+                $pod.contents.append:
                     pod-block(
                         pod-link("'$name' is a $p.human-kind()", $p.url),
                         ' from ',
@@ -559,14 +608,14 @@ sub write-disambiguation-files () {
                     );
             }
             else {
-                $pod.contents.push:
+                $pod.contents.append:
                     pod-block(
                         pod-link("'$name' is a $p.human-kind()", $p.url)
                     );
             }
         }
         else {
-            $pod.contents.push:
+            $pod.contents.append:
                 pod-block("'$name' can be anything of the following"),
                 $p.map({
                     if .origin -> $o {
@@ -590,7 +639,7 @@ sub write-disambiguation-files () {
 sub write-index-files () {
     say 'Writing html/index.html ...';
     spurt 'html/index.html',
-        p2h(EVAL(slurp('lib/HomePage.pod') ~ "\n\$=pod"),
+        p2h(EVAL(slurp('doc/HomePage.pod') ~ "\n\$=pod"),
             pod-path => 'HomePage.pod');
 
     say 'Writing html/language.html ...';

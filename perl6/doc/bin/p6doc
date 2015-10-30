@@ -73,7 +73,7 @@ multi sub MAIN() {
     say "Examples: $me Type::Str";
     say "          $me Type::Str.split";
 
-    say "\nYou can also look up specific method/routine defintions:";
+    say "\nYou can also look up specific method/routine definitions:";
     say "          $me -f push";
 }
 
@@ -121,6 +121,7 @@ sub disambiguate-f-search( $docee, %data ) {
 
         if %data{$ndocee} {
             my @types = %data{$ndocee}.values>>.Str.grep({ $^v ~~ /^ 'Type' / and not $^v ~~ / 'Cool' $ / });
+            @types = [gather @types.deepmap(*.take)].unique.list;
             %found{$ndocee}.push: @types X~ "." ~ $docee;
         }
     }
