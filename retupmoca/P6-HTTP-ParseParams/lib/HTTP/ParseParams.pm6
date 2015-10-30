@@ -52,7 +52,7 @@ our sub parse(Str $data, Bool :$cookie, Bool :$urlencoded is copy, Bool :$formda
             my @parts = .split(/\=/, 2);
             @parts[1] = uri_decode(@parts[1]);
             if %paramdata{@parts[0]} {
-                %paramdata{@parts[0]} = [ %paramdata{@parts[0]}.flat, @parts[1] ].flat;
+                %paramdata{@parts[0]} = [ |%paramdata{@parts[0]}, @parts[1] ];
             }
             else {
                 %paramdata{@parts[0]} = @parts[1];
