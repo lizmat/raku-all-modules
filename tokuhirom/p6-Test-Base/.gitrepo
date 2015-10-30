@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tokuhirom/p6-Test-Base.git
+	branch = master
+	commit = 31c738f84f3c94c77bd2fe01654ce10372d8633d
+	parent = cabcefd2fae26ff34eb7c861f9182b411e2155d9
+	cmdver = 0.2.2
