@@ -2,13 +2,15 @@
   "name" : "Cookie::Baker",
   "source-url" : "git://github.com/tokuhirom/p6-Cookie-Baker.git",
   "perl" : "v6",
+  "build-depends" : [ ],
   "provides" : {
     "Cookie::Baker" : "lib/Cookie/Baker.pm6"
   },
   "depends" : [
     "URI::Encode"
   ],
-  "description" : "",
+  "description" : "Cookie string generator / parser",
+  "test-depends" : [ ],
   "version" : "*",
   "authors" : [
     "Tokuhiro Matsuno"

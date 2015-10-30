@@ -60,7 +60,7 @@ sub crush-cookie(Str $cookie_string) is export {
     for @pairs ==> map { .trim } -> $pair {
         my ($key, $value) = split( "=", $pair, 2 );
         $key   = uri_decode($key);
-        $value = uri_decode($value);
+        $value = $value.defined ?? uri_decode($value) !! '';
 
         # Take the first one like CGI.pm or rack do
         %results{$key} = $value unless %results{$key}:exists;
