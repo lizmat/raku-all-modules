@@ -8,7 +8,11 @@ has $.port;
 has $.debug;
 has $.socket;
 
-method new(:$server!, :$port = 110, :$raw, :$debug, :$socket = IO::Socket::INET){
+has $.tls;
+has $.ssl;
+has $.plain;
+
+method new(:$server!, :$port = 110, :$raw, :$debug, :$socket = IO::Socket::INET, :$ssl, :$starttls, :$plain){
     my role debug-connection {
         method send($string){
             my $tmpline = $string.substr(0, *-2);
@@ -21,7 +25,7 @@ method new(:$server!, :$port = 110, :$raw, :$debug, :$socket = IO::Socket::INET)
             return $line;
         }
     };
-    my $self = self.bless(:$server, :$port, :$debug, :$socket);
+    my $self = self.bless(:$server, :$port, :$debug, :$socket, :tls($starttls), :$ssl, :$plain);
     if $raw {
         $self does Net::POP3::Raw;
         $self.conn = $socket.defined ?? $socket !! $socket.new(:host($server), :$port);

@@ -3,8 +3,6 @@ P6-Net-POP3
 
 A pure-perl implementation of a POP3 client.
 
-SSL/STARTTLS is not currently suppored.
-
 ## Example Usage ##
 
     ####
@@ -44,7 +42,7 @@ SSL/STARTTLS is not currently suppored.
 Note that all of these methods should return a true value (or a valid false response,
 such as '0' from message-count) on success or a Failure object on failure.
 
- -  `new(:$server!, :$port, :$debug, :$socket)`
+ -  `new(:$server!, :$port, :$debug, :$socket, :$ssl, :$starttls, :$plain)`
 
     Creates a new POP3 client and opens a connection to the server.
 

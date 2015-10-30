@@ -4,6 +4,7 @@ use Net::POP3::Message;
 
 has $.raw is rw;
 has $.authed = True;
+has @.capabilities;
 
 my class X::Net::POP3::BadGreeting is Exception { };
 my class X::Net::POP3::BadAuth is Exception { };
@@ -12,9 +13,38 @@ my class X::Net::POP3::NoMessageList is Exception { };
 
 method start {
     $.raw = self.new(:server($.server), :port($.port), :raw, :debug($.debug), :socket($.socket));
+    $.raw.switch-to-ssl() if $.ssl;
+
     my $greeting = $.raw.get-response;
     return fail(X::Net::POP3::BadGreeting.new) unless $greeting.substr(0,3) eq '+OK';
+
+    self.get_capabilities;
+
+    if @!capabilities.grep('STLS') {
+        if !$.plain && !$.ssl {
+            if $.raw.stls.substr(0,3) eq '+OK' {
+                $.raw.switch-to-ssl;
+                self.get_capabilities;
+            }
+            elsif $.tls {
+                return fail("STARTTLS failed!");
+            }
+        }
+    }
+    elsif $.tls {
+        return fail("Server does not support STARTTLS");
+    }
+
     return True;
+}
+
+method get_capabilities {
+    my $capa = $.raw.capa;
+    if $capa.substr(0,3) eq '+OK' {
+        my @lines = $capa.split("\r\n");
+        @lines.shift; # remove the OK line
+        @!capabilities = @lines;
+    }
 }
 
 method auth($username, $password) {

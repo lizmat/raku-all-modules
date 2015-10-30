@@ -6,6 +6,7 @@ plan 6;
 class POP3Socket {
     my @server-send =
         "+OK Greeting",
+        "-ERR CAPA not supported in this test",
         "+OK USER",
         "+OK PASS",
         "+OK 1 message",
@@ -18,6 +19,7 @@ class POP3Socket {
         "+OK QUIT"
     ;
     my @server-get =
+        "CAPA",
         "USER bar",
         "PASS barpass",
         "LIST",
@@ -35,7 +37,7 @@ class POP3Socket {
     method get {
         return @server-send.shift;
     }
-    method send($string is copy) {
+    method print($string is copy) {
         $string .= substr(0, *-2); # strip \r\n
         die "Bad client-send: $string" unless $string eq @server-get.shift;
     }
