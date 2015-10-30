@@ -4,4 +4,4 @@ use Cache::Memcached;
 
 ok(1, "loaded");
 
-done;
+done-testing;

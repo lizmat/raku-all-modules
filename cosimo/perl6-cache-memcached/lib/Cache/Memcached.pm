@@ -1,4 +1,6 @@
+
 use v6;
+
 use String::CRC32;
 
 unit class Cache::Memcached:auth<cosimo>:ver<0.04>;
@@ -23,7 +25,7 @@ use fields qw{
 };
 =end pod
 
-has Int   $!debug;
+has Bool  $!debug = False;
 has Bool  $!no_rehash;
 has       %!stats;
 has Int   $.compress_threshold is rw;
@@ -31,28 +33,31 @@ has Bool  $.compress_enable is rw;
 has Bool  $.readonly is rw;
 has       &.stat_callback is rw;
 has       $.select_timeout is rw;
-has Str   $!namespace = "";
+has Str   $.namespace = "";
 has Int   $!namespace_len = 0;
 has       @!servers = ();
 has       $!active;
-has       @.buckets is rw;
+has Str   @.buckets = (); # is rw;
 has Str   $!pref_ip;
 has Int   $!bucketcount = 0;
 has       $!_single_sock = False;
 has       $!_stime;
-has Int   $!connect_timeout;
+has Rat   $!connect_timeout;
 has       &.cb_connect_fail;
 #as Str   $.parser_class is rw = 'Cache::Memcached::GetParser';
 has       @!buck2sock;
+has Version $!server-version;
 
-submethod BUILD {
+submethod BUILD(:@!servers, Bool :$!debug = False, Str :$namespace) {
 
+    $!namespace = ( $namespace // "" );
     # TODO understand why @!servers is empty here
     if ! @!servers {
+        self.log_debug("setting default servers");
         @!servers = "127.0.0.1:11211";
     }
 
-    say "Setting servers: ", @!servers;
+    self.log_debug("Setting servers: ", @!servers);
     self.set_servers(@!servers);
 }
 
@@ -135,13 +140,13 @@ method set_servers (@servers) {
     @!servers = @servers;
     $!active = +@servers;
 
-    @!buckets = Nil;
+    @!buckets = ();
     $!bucketcount = 0;
     $.init_buckets();
     @!buck2sock = ();
     $!_single_sock = Mu;
 
-    if @servers == 1 {
+    if +@servers == 1 {
         $!_single_sock = @servers[0];
     }
 }
@@ -176,7 +181,7 @@ sub set_debug {
 }
 =end pod
 
-method set_debug (Bool $debug = 0) {
+method set_debug (Bool $debug = False) {
     $!debug = $debug;
 }
 
@@ -188,7 +193,7 @@ sub set_readonly {
 }
 =end pod
 
-method set_readonly (Bool $ro = 0) {
+method set_readonly (Bool $ro = False) {
     $!readonly = $ro;
 }
 
@@ -200,7 +205,7 @@ sub set_norehash {
 }
 =end pod
 
-method set_norehash (Bool $no_rehash = 0) {
+method set_norehash (Bool $no_rehash = False) {
     $!no_rehash = $no_rehash;
 }
 
@@ -224,7 +229,7 @@ sub enable_compress {
 }
 =end pod
 
-method enable_compress (Bool $comp = 1) {
+method enable_compress (Bool $comp = True) {
     $!compress_enable = $comp;
 }
 
@@ -271,11 +276,12 @@ sub _dead_sock {
 =end pod
 
 method _dead_sock ($sock, $ret, $dead_for) {
-    if my $ipport = %sock_map{$sock} {
-        my $now = time;
-        %host_dead{$ipport} = $now + $dead_for if $dead_for;
-        %cache_sock.delete($ipport);
-        %sock_map.delete($sock);
+    if $sock.defined {
+        if my $ipport = %sock_map{$sock} {
+            %host_dead{$ipport} = now + $dead_for if $dead_for;
+            %cache_sock.delete($ipport);
+            %sock_map.delete($sock);
+        }
     }
     @!buck2sock = ();
     return $ret;
@@ -353,21 +359,25 @@ sub _connect_sock ($sock, $sin, $timeout = 0.25) {
     #my $ret = connect($sock, $sin);
 
     # TODO FIXME
-    my $host = 'localhost';
-    my $port = 11211;
+    my $host = $sock;
+    my $port = $sin;
 
-    my $sock_obj = IO::Socket::INET.new;
-    my $ret = $sock_obj.open($host, $port);
+    my $ret;
 
-    # TODO non-blocking sockets support yanked for now
+    try {
+        my $sock_obj = IO::Socket::INET.new(host => $host, port => $port);
 
-    if $ret {
-        say "Connected to localhost:11211 (hardcoded)...\n";
-        return $sock_obj;
+        if $sock {
+            $ret = $sock_obj;
+        }
+        CATCH {
+           default {
+              say $_.message;
+           }
+        }
     }
 
-    return;
-
+    return $ret;
 }
 
 =begin pod
@@ -462,9 +472,11 @@ sub sock_to_host { # (host)  #why is this public? I wouldn't have to worry about
 =end pod
 
 # Why is this public? I wouldn't have to worry about undef $self if it weren't.
-method sock_to_host ($host) {
+method sock_to_host (Str $host) {
 
+    $.log_debug("sock_to_host");
     if %cache_sock{$host} {
+        $.log_debug("cache_sock hit");
         return %cache_sock{$host};
     }
     
@@ -473,8 +485,8 @@ method sock_to_host ($host) {
     my $port;
 
     if $host ~~ m/ (.*) \: (\d+) / {
-        $ip = $0;
-        $port = $1;
+        $ip = $0.Str;
+        $port = $1.Int;
         # Get rid of optional IPv6 brackets
         $ip ~~ s:g [ \[ | \] ] = '' if $ip.defined;
     }
@@ -487,10 +499,11 @@ method sock_to_host ($host) {
     my $sock = _connect_sock($ip, $port, $timeout);
 
     if ! $sock {
+        $.log_debug("sock not defined");
         # TODO connect fail callback
         #my &cb = &!cb_connect_fail;
         #if &cb { &cb->() }
-        return self._dead_sock($sock, Mu, 20 + 10.rand.Int);
+        return self._dead_sock($sock, Nil, 20 + 10.rand.Int);
     }
 
     %sock_map{$sock} = $host;
@@ -560,17 +573,24 @@ sub init_buckets {
 =end pod
 
 method init_buckets () {
-    return if @!buckets;
 
-    my @bu = @!buckets //= ();
-    for @!servers -> $v {
-        # TODO support weighted servers
-        # [ ['127.0.0.1:11211', 2],
-        #   ['127.0.0.1:11212', 1], ]
-        @bu.push($v);
+    $.log_debug("init_buckets with ", @!buckets);
+
+    if not @!buckets.elems {
+        $.log_debug("setting buckets");
+
+        for @!servers -> $v {
+            $.log_debug("adding server to buckets $v");
+            # TODO support weighted servers
+            # [ ['127.0.0.1:11211', 2],
+            #   ['127.0.0.1:11212', 1], ]
+            @!buckets.push($v);
+        }
+
     }
-
-    @!buckets = @bu;
+    else {
+        say "already got buckets : ", @!buckets;
+    }
     $!bucketcount = +@!buckets;
 
     return $!bucketcount;
@@ -673,7 +693,7 @@ sub _write_and_read {
 # writes a line, then reads result.  by default stops reading after a
 # single line, but caller can override the $check_complete subref,
 # which gets passed a scalarref of buffer read thus far.
-method _write_and_read ($sock, $command, $check_complete = Mu) {
+method _write_and_read (IO::Socket $sock, Str $command, Mu $check_complete?) {
 
     my $res;
     my $ret = Mu; 
@@ -688,7 +708,7 @@ method _write_and_read ($sock, $command, $check_complete = Mu) {
     my $state = 0;
     my $copy_state = -1;
   
-    while True {
+    loop {
 
         if $copy_state != $state {
             last if $state == 2;
@@ -697,15 +717,15 @@ method _write_and_read ($sock, $command, $check_complete = Mu) {
 
         my $to_send = $line.chars;
 
-        say "Chars to send: $to_send";
+        $.log_debug("Chars to send: $to_send");
 
 =begin oldpart
         while $to_send > 0 {
         
-            say "Sending [$line] ...";
+            $.log_debug("Sending [$line] ...");
 
             $res = $sock.send($line);
-            say "Send result: $res";
+            $.log_debug("Send result: $res");
 
             last unless $res.defined;
 
@@ -725,7 +745,7 @@ method _write_and_read ($sock, $command, $check_complete = Mu) {
 =end oldpart
 
         if $to_send > 0 {
-            my $sent = $sock.send($line);
+            my $sent = $sock.print($line);
             if $sent == 0 {
                 self._close_sock($sock);
                 return;
@@ -739,7 +759,7 @@ method _write_and_read ($sock, $command, $check_complete = Mu) {
             }
         }
 
-        say "Receiving from socket";
+        $.log_debug("Receiving from socket");
 
         $ret = $sock.recv();
         #$ret = "";
@@ -747,10 +767,10 @@ method _write_and_read ($sock, $command, $check_complete = Mu) {
         #    $ret ~= $c;
         #}
 
-        say "Got from socket (recv=" ~ $ret.perl ~ ")";
+        $.log_debug("Got from socket (recv=" ~ $ret.perl ~ ")");
 
         if $ret ~~ m/\r\n$/ {
-            say "Got a terminator (\\r\\n)";
+            $.log_debug("Got a terminator (\\r\\n)");
             $state = 2;
         }
 
@@ -797,7 +817,7 @@ method delete ($key, $time = "") {
     my $stime;
     my $etime;
 
-    $stime = time if &!stat_callback;
+    $stime = now if &!stat_callback;
 
     my $sock = $.get_sock($key);
     return 0 unless $sock;
@@ -809,7 +829,7 @@ method delete ($key, $time = "") {
     my $res = $._write_and_read($sock, $cmd);
 
     if &!stat_callback {
-        my $etime = time;
+        my $etime = now;
         &!stat_callback.($stime, $etime, $sock, 'delete');        
     }
 
@@ -916,13 +936,13 @@ sub _set {
 }
 =end pod
 
-method _set ($cmdname, $key, $val, $exptime = 0) {
+method _set ($cmdname, $key, $val, Int $exptime = 0) {
     return 0 if ! $!active || $!readonly;
     my $stime;
     my $etime;
 
-    $stime = time if &!stat_callback;
-    my $sock = $._get_sock($key);
+    $stime = now if &!stat_callback;
+    my $sock = $.get_sock($key);
     return 0 unless $sock;
 
     my $app_or_prep = ($cmdname eq 'append' or $cmdname eq 'prepend') ?? 1 !! 0;
@@ -932,8 +952,8 @@ method _set ($cmdname, $key, $val, $exptime = 0) {
     my $len = $val.chars;
 
     # TODO COMPRESS THRESHOLD support
-    $exptime //= 0;
-    $exptime = $exptime.Int;
+    #$exptime //= 0;
+    #$exptime = $exptime.Int;
     my $line = "$cmdname " ~ $!namespace ~ "$key $flags $exptime $len\r\n$val\r\n";
     my $res  = $._write_and_read($sock, $line);
 
@@ -956,7 +976,7 @@ method incr ($key, $offset) {
 }
 
 method decr ($key, $offset) {
-    $._incrdecr("incr", $key, $offset);
+    $._incrdecr("decr", $key, $offset);
 }
 
 method _incrdecr ($cmdname, $key, $value) {
@@ -964,7 +984,7 @@ method _incrdecr ($cmdname, $key, $value) {
 
     my $stime;
 
-    $stime = time if &!stat_callback;
+    $stime = now if &!stat_callback;
     my $sock = $.get_sock($key);
     return unless $sock;
 
@@ -975,7 +995,7 @@ method _incrdecr ($cmdname, $key, $value) {
     my $res = $._write_and_read($sock, $line);
 
     if &!stat_callback {
-        my $etime = time;
+        my $etime = now;
         &!stat_callback.($stime, $etime, $sock, $cmdname);
     }
 
@@ -1001,26 +1021,32 @@ sub get {
 
 method get ($key) {
 
+    my @res;
     my $hv = _hashfunc($key);
-    say "get(): hash value '$hv'";
+    $.log_debug("get(): hash value '$hv'");
 
     my $sock = $.get_sock($key);
-    say "get(): socket '$sock'";
+    if $sock.defined {
+        $.log_debug("get(): socket '$sock'");
 
-    my $namespace = $!namespace // "";
-    my $full_key = $namespace ~ $key;
-    say "get(): full key '$full_key'";
+        my $namespace = $!namespace // "";
+        my $full_key = $namespace ~ $key;
+        $.log_debug("get(): full key '$full_key'");
+   
+        my $get_cmd = "get $full_key\r\n";
+        $.log_debug("get(): command '$get_cmd'");
 
-    my $get_cmd = "get $full_key\r\n";
-    say "get(): command '$get_cmd'";
+        @res = self.run_command($sock, $get_cmd);
 
-    my @res = self.run_command($sock, $get_cmd);
+        %!stats<get>++;
 
-    %!stats<get>++;
+        say "memcache: got ", @res.perl;
+    }
+    else {
+       $.log_debug("No socket ...");
+    }
 
-    say "memcache: got ", @res.perl;
-
-    return @res;
+    return @res[1].defined ?? @res[1] !! Nil;
 }
 
 =begin pod
@@ -1337,14 +1363,15 @@ method run_command ($sock, $cmd) {
     while (my $res = self._write_and_read($sock, $line)) {
         $line = "";
         $ret ~= $res;
-        say "Received [$res] total [$ret]";
+        $.log_debug("Received [$res] total [$ret]");
         last if $ret ~~ /[ OK | END | ERROR ] \r\n $/;
     }
 
     $ret .= chop;
     $ret .= chop;
 
-    $ret.split("\r\n") ==> map { "$_\r\n" } ==> my @lines;
+    #$ret.split("\r\n") ==> map { "$_\r\n" } ==> my @lines;
+    my @lines = $ret.split(/\r\n/);
 
     return @lines;
 }
@@ -1435,6 +1462,83 @@ sub stats {
 }
 =end pod
 
+method stats(*@types) {
+
+    my %stats_hr = ();
+
+    if $!active {
+        if not @types.elems {
+            @types = <misc malloc self>;
+        }
+
+        # The "self" stat type is special, it only applies to this very
+        # object.
+        if @types ~~ /^self$/ {
+            %stats_hr<self> = %!stats.clone;
+        }
+
+        my %misc_keys = <bytes bytes_read bytes_written
+            cmd_get cmd_set connection_structures curr_items
+            get_hits get_misses
+            total_connections total_items>.map({ $_ => 1 });
+
+        # Now handle the other types, passing each type to each host server.
+        my @hosts = @!buckets;
+
+        HOST: 
+        for @hosts -> $host {
+            my $sock = $.sock_to_host($host);
+            next HOST unless $sock;
+            TYPE: 
+            for @types.grep({ $_ !~~ /^self$/ }) -> $typename {
+                my $type = $typename eq 'misc' ?? "" !! " $typename";
+                my $lines = $._write_and_read($sock, "stats$type\r\n", -> $bref {
+                    return $bref ~~ /:m^[END|ERROR]\r?\n/;
+                });
+                unless ($lines) {
+                    $._dead_sock($sock);
+                    next HOST;
+                }
+
+                $lines ~~ s:g/\0//;  # 'stats sizes' starts with NULL?
+
+                # And, most lines end in \r\n but 'stats maps' (as of
+                # July 2003 at least) ends in \n. ??
+                my @lines = $lines.split(/\r?\n/);
+
+                # Some stats are key-value, some are not.  malloc,
+                # sizes, and the empty string are key-value.
+                # ("self" was handled separately above.)
+                if $typename ~~ any(<malloc sizes misc>) {
+                    # This stat is key-value.
+                    for @lines -> $line {
+                        if $line ~~ /^STAT\s+(\w+)\s(.*)/ {
+                            my $key = $0;
+                            my $value = $1;
+                            if ($key) {
+                                %stats_hr<hosts>{$host}{$typename}{$key} = $value;
+                            }
+                            %stats_hr<total>{$key} += $value
+                                if $typename eq 'misc' && $key && %misc_keys{$key};
+                            %stats_hr<total>{"malloc_$key"} += $value
+                            if $typename eq 'malloc' && $key;
+                        }
+                    }
+                } 
+                else {
+                    # This stat is not key-value so just pull it
+                    # all out in one blob.
+                    $lines ~~ s:m/^END\r?\n//;
+                    %stats_hr<hosts>{$host}{$typename} ||= "";
+                    %stats_hr<hosts>{$host}{$typename} ~= "$lines";
+                }
+            }
+        }
+    }
+
+    return %stats_hr;
+}
+
 =begin pod
 sub stats_reset {
     my Cache::Memcached $self = shift;
@@ -1467,6 +1571,14 @@ method stats_reset ($types) {
 
     return 1;
 }
+
+method log_debug(*@message ) {
+    if $!debug {
+        say @message;
+    }
+}
+
+
 
 =begin pod
 
@@ -1761,3 +1873,4 @@ Jamie McCarthy <jamie@mccarthy.vg>
 
 =end pod
 
+# vim: ft=perl6 sw=4 ts=4 st=4 sts=4 et

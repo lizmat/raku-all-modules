@@ -1,17 +1,13 @@
-#!/usr/bin/env perl -w
+#!/usr/bin/env perl6
 
-use strict;
-use Test::More;
+use v6;
+
+use Test;
 use Cache::Memcached;
-use IO::Socket::INET;
+
 
 my $port = 11311;
 my $testaddr = "127.0.0.1:$port";
-my $sock = IO::Socket::INET->new(
-    LocalAddr => $testaddr,
-    Proto     => 'tcp',
-    ReuseAddr => 1,
-);
 
 my @res = (
     ["OK\r\n", 1],
@@ -23,40 +19,39 @@ my @res = (
     ["END\r\n", 0],
 );
 
-if ($sock) {
-    plan tests => scalar @res;
-} else {
-    plan skip_all => "cannot bind to $testaddr\n";
-    exit 0;
-}
-close $sock;
+plan +@res;
 
-my $pid = fork;
-die "Cannot fork because: '$!'" unless defined $pid;
-unless ($pid) {
+try {
+   my $sock = IO::Socket::INET.new(host => $testaddr, port => $port);
+   CATCH {
+      default {
+         skip-rest "cannot bind to $testaddr";
+         exit 0;
+      }
+   }
+   close $sock;
+}
+
+my $p = start {
     
-    my $sock = IO::Socket::INET->new(
-        LocalAddr  => $testaddr,
-        Proto      => 'tcp',
-        ReuseAddr  => 1,
-        Listen     => 1,
-    ) or die "cannot open $testaddr: $!";
-    my $csock = $sock->accept();
+    my $sock = IO::Socket::INET.new( host => $testaddr, listen => True);
+    my $csock = $sock.accept();
     while (defined (my $buf = <$csock>)) {
-        my $res = shift @res;
-        print $csock $res->[0];
+        my $res = @res.shift;
+        $csock.send($res[0]);
     }
     close $csock;
     close $sock;
-    exit 0;
 }
 
 # give the forked server a chance to startup
 sleep 1;
 
-my $memd = Cache::Memcached->new({ servers   => [ $testaddr ] });
+my $memd = Cache::Memcached.new( servers   => [ $testaddr ] );
 
-for (@res) {
-    ($_->[0] =~ s/\W//g);
-    is $memd->flush_all, $_->[1], $_->[0];
+for @res <-> $v {
+    ($v[0] ~~ s:g/\W//);
+    is $memd.flush_all, $v[1], $v[0];
 }
+
+done-testing();
