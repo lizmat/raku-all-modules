@@ -1,0 +1,15 @@
+{
+    "name"        : "Digest::xxHash",
+    "version"     : "*",
+    "authors"     : [ "Bartłomiej Palmowski", "Andy Weidenbaum" ],
+    "description" : "xxHash bindings for Perl 6",
+    "source-type" : "git",
+    "source-url"  : "git://github.com/atweiden/digest-xxhash.git",
+    "support"     : {
+        "bugtracker" : "https://github.com/atweiden/digest-xxhash/issues",
+        "source"     : "https://github.com/atweiden/digest-xxhash"
+    },
+    "provides"    : {
+        "Digest::xxHash" : "lib/Digest/xxHash.pm"
+    }
+}
