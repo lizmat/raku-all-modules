@@ -180,7 +180,7 @@ class ABC::Actions {
     method line_of_music($/) {
         my @line;
         if $<barline> {
-            @line.push($<barline>>>.ast);
+            @line.push($<barline>.ast);
         }
         my @bars = @( $<bar> )>>.ast;
         for @bars -> $bar {
