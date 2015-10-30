@@ -49,4 +49,4 @@ for traverse($doc) -> $node {
     }
 }
 
-done;
+done-testing;
