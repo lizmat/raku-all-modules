@@ -1,9 +1,9 @@
 # Copyright 2015 cygx <cygx@cpan.org>
 # Distributed under the Boost Software License, Version 1.0
 
-unit module Uni63;
+unit module Uni63:version<0.1.2>;
 
-my constant ENC = @('0'..'9', 'a'..'z', 'A'..'Z');
+my constant ENC = @(flat '0'..'9', 'a'..'z', 'A'..'Z');
 my constant DEC = %(ENC.pairs.invert);
 
 our sub enc($_) {
