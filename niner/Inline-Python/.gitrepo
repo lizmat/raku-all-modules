@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/niner/Inline-Python.git
 	branch = master
-	commit = 6fc18316eb3dfbf34669a59a33240be52aa6552e
-	parent = 61ad30bdf3599ef26ab12d9d06763fc43cd6ed55
+	commit = d2b79b705200e8abdc033564fd53d661739eb189
+	parent = 54851a5bffeef4382d7c61c5475b6773ee8f19bf
 	cmdver = 0.2.2
