@@ -1,0 +1,101 @@
+=pod
+
+=encoding utf8
+
+=head2 Base64
+
+Lazy base64 encoding and decoding routines
+
+=for HTML <a href="https://travis-ci.org/ugexe/Perl6-Base64"><img src="https://travis-ci.org/ugexe/Perl6-Base64.svg?branch=master"></a>
+
+=head3 SYNOPSIS
+
+    use Base64;
+
+
+    # ENCODING
+
+    > say encode-base64("g-g-g-g-g unit", :str);
+    Zy1nLWctZy1nIHVuaXQ=
+
+    > say encode-base64("g-g-g-g-g unit").perl;
+    ("Z", "y", "1", "n", "L", "W", "c", "t", "Z", "y", "1", "n", "I", "H", "V", "u", "a", "X", "Q", "=").Seq
+
+    > .print for lazy encode-base64("g-g-g-g-g unit")
+    Zy1nLWctZy1nIHVuaXQ=
+
+
+    # DECODING
+
+    > say decode-base64("Zy1nLWctZy1nIHVuaXQ=", :buf).decode
+    g-g-g-g-g unit
+
+    > say decode-base64("Zy1nLWctZy1nIHVuaXQ=", :buf)
+    Buf:0x<67 2d 67 2d 67 2d 67 2d 67 20 75 6e 69 74>
+
+    > say decode-base64("Zy1nLWctZy1nIHVuaXQ=").perl
+    (103, 45, 103, 45, 103, 45, 103, 45, 103, 32, 117, 110, 105, 116).Seq
+
+=head3 Exports
+
+=head4 B<routine> L<encode-base64>
+
+B<Args> C<$encode-me where Buf|Str, :$pad, :@alpha, Bool :$str>
+
+B<Returns> C<Seq|Str>
+
+    encode-base64($encode-me)                  # Returns a base64 encoded string
+    encode-base64($encode-me, :str)            # Stringify and return the sequence that would be returned
+    encode-base64($encode-me, :!pad)           # No padding
+    encode-base64($encode-me, :pad("*"))       # Alternative padding character
+    encode-base64($encode-me, :uri)            # Use '-' and '_' for chars 63 and 64
+    encode-base64($encode-me, :alpha(1..64))   # Set the entire alphabet
+    encode-base64($encode-me, :alpha('-','_')) # Same as :uri
+
+Takes a C<Buf> and applies base64 encoding with the requested options. If passed a C<Str> it will be converted to a C<Buf> via C<.ords> first.
+
+    > say encode-base64("test", :str)
+    dGVzdA==
+
+    > say encode-base64(Buf.new("test".ords), :str)
+    dGVzdA==
+
+    > say encode-base64("test").perl'
+    ("d", "G", "V", "z", "d", "A", "=", "=").Seq
+
+=head4 B<routine> L<decode-base64> 
+
+B<Args> C<$decode-me where Buf|Str, :$pad, :@alpha, Bool :$buf>
+
+B<Returns> C<Seq|Buf>
+
+    decode-base64($decode-me)                  # Decodes a base64 encoded string to a Buf for further decoding
+    encode-base64($encode-me, :buf)            # Return a buffer from the sequence that would be returned
+    decode-base64($decode-me, :!pad)           # No padding
+    decode-base64($decode-me, :pad("*"))       # Alternative padding character
+    decode-base64($decode-me, :uri)            # Use '-' and '_' for chars 63 and 64
+    decode-base64($decode-me, :alpha(1..64))   # Set the entire alphabet
+    decode-base64($decode-me, :alpha('-','_')) # Same as :uri
+
+Takes a C<Str> and applies base64 decoding with the requested options. If passed a C<Buf> it will be converted to a C<Str> with C<.decode> first.
+
+    > say decode-base64("YW55IGNhcm5hbCBwbGVhc3VyZS4=", :buf).decode
+    any carnal pleasure.
+
+    > say Buf.new(decode-base64("YW55IGNhcm5hbCBwbGVhc3VyZS4=")).decode('utf-8')
+    any carnal pleasure.
+
+    > say decode-base64("YW55IGNhcm5hbCBwbGVhc3VyZS4=").perl
+    (97, 110, 121, 32, 99, 97, 114, 110, 97, 108, 32, 112, 108, 101, 97, 115, 117, 114, 101, 46).Seq
+
+=head3 TODO 
+
+=over 4
+
+=item * Provide C<Supply> based routines for streaming IO
+
+=item * Handle line lengths, per requested, transparently for the user
+
+=back
+
+=cut
