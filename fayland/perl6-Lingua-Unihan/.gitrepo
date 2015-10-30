@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/fayland/perl6-Lingua-Unihan.git
+	branch = master
+	commit = 6f4c255a3159c2b58488838880b2696fccc06e0b
+	parent = 542514eac7f53bc363cbe223a59a0495978d3e2b
+	cmdver = 0.2.2
