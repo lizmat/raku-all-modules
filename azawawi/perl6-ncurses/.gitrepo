@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-ncurses.git
 	branch = master
-	commit = 2cd08b76f1dcf39b215c556b34910aa5b87ee7be
-	parent = 870c35e67cfcc12ba215c89f8507c53394fbc67e
+	commit = f6c7f76ec0dba8ad1532b5550eef7088b2e042f7
+	parent = f748157ebbb34b79eadd8dff2deb5e01bfb96cda
 	cmdver = 0.2.2
