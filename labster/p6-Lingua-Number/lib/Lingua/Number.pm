@@ -9,7 +9,7 @@ my $data_location = $?FILE.split( /'.pm' $/ ).[0];   # i.e. lib/Lingua/Number/
 my %rbnf;
 my %rbnf-rulesets;
 
-my %numberformat := from-json("$data_location/digitformat.json".IO.open.slurp);
+my %numberformat := from-json("$data_location/digitformat.json".IO.slurp);
 
 sub load_xml ($lingua) {
 	my @locs := @*INC.grep: { "$_/Lingua/Number/rbnf-xml".path.e }
@@ -31,7 +31,7 @@ sub load_xml ($lingua) {
 				radix => +($r<radix> // 10) };
 			@rulevals.push: $r<value>;
 		}
-		%rbnf{$lingua}{$ruletype}<values> = [ @rulevals.grep( { .Numeric.defined // Nil } )];
+		%rbnf{$lingua}{$ruletype}<values> = [ @rulevals.grep( *.Numeric.defined )];
 	}
 	%rbnf-rulesets{$lingua} := @nonprivaterulesets;
 	# tree:
@@ -44,7 +44,7 @@ sub load_xml ($lingua) {
 
 
 sub load_json ($lingua) {
-	my $json = from-json("$data_location/rbnf-json/$lingua.json".IO.open.slurp);
+	my $json = from-json("$data_location/rbnf-json/$lingua.json".IO.slurp);
 
 	my @rulesetnames;
 
@@ -63,7 +63,7 @@ sub load_json ($lingua) {
 				radix => +(%r<radix> // 10) };
 			@rulevals.push: %r<value>;
 		}
-		%rbnf{$lingua}{$ruletype}<values> = [ @rulevals.grep( { .Numeric.defined // Nil } )];
+		%rbnf{$lingua}{$ruletype}<values> = [ @rulevals.grep( *.Numeric.defined )];
 
 	}
 
