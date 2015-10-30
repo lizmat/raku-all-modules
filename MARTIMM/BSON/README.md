@@ -1,6 +1,6 @@
 # BSON support
 
-![Face](http://modules.perl6.org/logos/BSON.png)
+![Face](http://modules.perl6.org/logos/BSON.png) [![Build Status](https://travis-ci.org/MARTIMM/BSON.svg?branch=master)](https://travis-ci.org/MARTIMM/BSON)
 
 Implements [BSON specification](http://bsonspec.org/).
 
@@ -53,7 +53,8 @@ When installing MongoDB, BSON will be installed automatically as a dependency.
     [-]                     0x03 UUID old, deprecated
     [x]                     0x04 UUID
     [x]                     0x05 MD5
-    [x] Array           <=> Array
+    [x] Array           <=> Array as Embedded document
+    [x] Pair             => Embedded document
     [x] Hash            <=> Embedded document
     [x] BSON::ObjectId  <=> ObjectId
 
@@ -105,6 +106,13 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.10
+  * Change module filenames
+  * quick fix using multi methods/subs caused by new version of perl6. Its now
+    more logical while before automtic coercion took place it must modified
+    explicitly now. Later proper types must be used like byte arrays to handle
+    Buf's or maybe read from the Buf directly. Saves a translation step.
+  
 * 0.9.9
   * Changes because of updates in perl6
 * 0.9.8

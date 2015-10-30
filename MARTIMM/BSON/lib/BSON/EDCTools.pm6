@@ -9,11 +9,11 @@ package BSON {
   #-----------------------------------------------------------------------------
   # Encoding tools
   #
-  sub encode_e_name ( Str $s --> Buf ) is export {
+  sub encode_e_name ( Str:D $s --> Buf ) is export {
     return encode_cstring($s);
   }
 
-  sub encode_cstring ( Str $s --> Buf ) is export {
+  sub encode_cstring ( Str:D $s --> Buf ) is export {
     die X::BSON::Parse.new(
       :operation('encode_cstring'),
       :error('Forbidden 0x00 sequence in $s')
@@ -24,7 +24,7 @@ package BSON {
 
   # string ::= int32 (byte*) "\x00"
   #
-  sub encode_string ( Str $s --> Buf ) is export {
+  sub encode_string ( Str:D $s --> Buf ) is export {
 #    my utf8 $b = $s.encode('UTF-8');
     my Buf $b .= new($s.encode('UTF-8'));
     return [~] encode_int32($b.bytes + 1), $b, Buf.new(0x00);
@@ -32,7 +32,7 @@ package BSON {
 
   # 4 bytes (32-bit signed integer)
   #
-  sub encode_int32 ( Int $i ) is export {
+  sub encode_int32 ( Int:D $i ) is export {
     my int $ni = $i;      
     return Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
                     ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF
@@ -45,7 +45,7 @@ package BSON {
 
   # 8 bytes (64-bit int)
   #
-  sub encode_int64 ( Int $i ) is export {
+  sub encode_int64 ( Int:D $i ) is export {
     # No tests for too large/small numbers because it is called from
     # _enc_element normally where it is checked
     #
@@ -70,11 +70,20 @@ package BSON {
   #-----------------------------------------------------------------------------
   # Decoding tools
   #
-  sub decode_e_name ( Array $b, Int $index is rw --> Str ) is export {
+  multi sub decode_e_name ( List:D $b, Int:D $index is rw --> Str ) is export {
+    return decode_cstring( $b.Array, $index);
+  }
+
+  multi sub decode_e_name ( Array:D $b, Int:D $index is rw --> Str ) is export {
     return decode_cstring( $b, $index);
   }
 
-  sub decode_cstring ( Array $a, Int $index is rw --> Str ) is export {
+
+  multi sub decode_cstring ( List:D $a, Int:D $index is rw --> Str ) is export {
+    return decode_cstring( $a.Array, $index);
+  }
+
+  multi sub decode_cstring ( Array:D $a, Int:D $index is rw --> Str ) is export {
     my @a;
     my $l = $a.elems;
     while $index < $l and $a[$index] !~~ 0x00 { @a.push($a[$index++]); }
@@ -86,9 +95,14 @@ package BSON {
     return Buf.new(@a).decode();
   }
 
+
   # string ::= int32 (byte*) "\x00"
   #
-  sub decode_string ( Array $a, Int $index is rw --> Str ) is export {
+  multi sub decode_string ( List:D $a, Int:D $index is rw --> Str ) is export {
+    decode_string( $a.Array, $index);
+  }
+  
+  multi sub decode_string ( Array:D $a, Int:D $index is rw --> Str ) is export {
     my $i = decode_int32( $a, $index);
 
     # Check if there are enaugh letters left
@@ -112,7 +126,12 @@ package BSON {
     return Buf.new(@a).decode();
   }
 
-  sub decode_int32 ( Array $a, Int $index is rw --> Int ) is export {
+
+  multi sub decode_int32 ( List:D $a, Int:D $index is rw --> Int ) is export {
+    decode_int32( $a.Array, $index);
+  }
+  
+  multi sub decode_int32 ( Array:D $a, Int:D $index is rw --> Int ) is export {
     # Check if there are enaugh letters left
     #
     die X::BSON::Parse.new(
@@ -142,9 +161,14 @@ package BSON {
     # return [+] $a.shift, $a.shift +< 0x08, $a.shift +< 0x10, $a.shift +< 0x18;
   }
 
+
   # 8 bytes (64-bit int)
   #
-  sub decode_int64 ( Array $a, Int $index is rw --> Int ) is export {
+  multi sub decode_int64 ( List:D $a, Int:D $index is rw --> Int ) is export {
+    decode_int64( $a.Array, $index);
+  }
+  
+  multi sub decode_int64 ( Array:D $a, Int:D $index is rw --> Int ) is export {
     # Check if there are enaugh letters left
     #
     die X::BSON::Parse.new(

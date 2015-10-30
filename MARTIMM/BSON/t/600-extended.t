@@ -75,7 +75,7 @@ my $oid = BSON::ObjectId.decode(
 
 my BSON::Bson $bson .= new;
 is-deeply
-    $bson.encode( { "oid" => $oid } ).list,
+    $bson.encode( { "oid" => $oid } ).Array,
     [ 0x16, 0x00, 0x00, 0x00,
       0x07,
       0x6F, 0x69, 0x64, 0x00,
@@ -95,7 +95,7 @@ is-deeply
                0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,
                0x00                                     # end doc
              )
-    ).{'oid'}.Buf.list,
+    ).{'oid'}.Buf.Array,
     [ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05,
       0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B
     ],

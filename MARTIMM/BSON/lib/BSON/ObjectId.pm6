@@ -100,7 +100,7 @@ package BSON {
 
     #---------------------------------------------------------------------------
     #
-    method decode ( Buf $b --> BSON::ObjectId ) {
+    method decode ( Buf:D $b --> BSON::ObjectId ) {
       die X::BSON::Parse.new(
         :operation('BSON::ObjectId::decode'),
         :error("Buffer doesn't have 12 bytes")
