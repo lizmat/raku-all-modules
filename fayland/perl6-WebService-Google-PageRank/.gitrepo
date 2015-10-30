@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/fayland/perl6-WebService-Google-PageRank.git
+	branch = master
+	commit = 243f4651ef9290f1459e5d55649180e6e7171601
+	parent = 1e57809823bec3713f61ed98d41202ef9e29098d
+	cmdver = 0.2.2
