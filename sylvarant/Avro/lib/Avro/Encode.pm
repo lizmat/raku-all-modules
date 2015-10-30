@@ -99,7 +99,7 @@ package Avro{
     } 
 
     multi submethod encode_schema(Avro::Enum $schema, Str:D $str) { 
-      my Int $result = $schema.sym.first-index: { ($^a eq $str) }; 
+      my Int $result = $schema.sym.first({ ($^a eq $str) }, :k); 
       if $result.defined {
         return encode_long($result);
       } else { 
@@ -109,7 +109,7 @@ package Avro{
 
     multi submethod encode_schema(Avro::Union $schema, Mu $data) { 
       my Avro::Schema $type = $schema.find_type($data);
-      my Int $index = $schema.types.first-index: { ($^a ~~ $type) };
+      my Int $index = $schema.types.first({ ($^a ~~ $type) }, :k);
       my BlobStream $stream = BlobStream.new(:blob(encode_long($index)));
       $stream.append(self.encode_schema($type,$data));
       $stream.blob
