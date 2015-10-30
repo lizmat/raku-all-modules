@@ -1,9 +1,3 @@
-Building Algorithm::Diff
-
-$ ufo && make
-
-
-
 The module is a direct port from the Perl 5 version and should be close to 100% similair
 other then some Perl 6 idioms.
 
