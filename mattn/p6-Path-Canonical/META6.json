@@ -1,0 +1,15 @@
+{
+  "name" : "Path::Canonical",
+  "source-url" : "git://github.com/mattn/p6-Path-Canonical.git",
+  "perl" : "v6",
+  "provides" : {
+    "Path::Canonical" : "lib/Path/Canonical.pm6"
+  },
+  "depends" : [
+  ],
+  "description" : "Simple utility to get canonical paths.",
+  "version" : "*",
+  "authors" : [
+    "Yasuhiro Matsumoto"
+  ]
+}

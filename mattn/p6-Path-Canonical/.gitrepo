@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/mattn/p6-Path-Canonical.git
+	branch = master
+	commit = 40601b9c6be1b38dd2b44c8934df3d3bd1375ace
+	parent = a1ebdc86a2b21bbd3d8068457ba09cd74c23c17d
+	cmdver = 0.2.2
