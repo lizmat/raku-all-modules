@@ -1,0 +1,11 @@
+{ "name" : "Rototo"
+, "version" : "*"
+, "description" : "the xml/html templating system that came after hipccup"
+, "author" : "Marc Chantreux"
+, "provides" :
+    { "Rototo"       : "lib/Rototo.pm"
+    , "Rototo::html" : "lib/Rototo/html.pm"
+    },
+"depends" : [ ],
+"source-url" : "git://github.com/eiro/p6-rototo.git"
+}
