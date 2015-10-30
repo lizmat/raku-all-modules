@@ -1,0 +1,16 @@
+{
+  "name" : "Growl::GNTP",
+  "source-url" : "git://github.com/mattn/p6-Growl-GNTP.git",
+  "perl" : "v6",
+  "provides" : {
+    "Growl::GNTP" : "lib/Growl/GNTP.pm6"
+  },
+  "depends" : [
+    "IO::Socket::INET"
+  ],
+  "description" : "Perl6 implementation of GNTP Protocol (Client Part)",
+  "version" : "*",
+  "authors" : [
+    "Yasuhiro Matsumoto"
+  ]
+}
