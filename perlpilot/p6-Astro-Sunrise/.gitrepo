@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/perlpilot/p6-Astro-Sunrise.git
+	branch = master
+	commit = a6aebed35d3b57b0f8bbb977effb252db8dca66f
+	parent = 4220f5a64e7c37d0676166313325932df9030b42
+	cmdver = 0.2.2
