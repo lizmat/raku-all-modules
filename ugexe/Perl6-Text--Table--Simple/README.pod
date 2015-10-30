@@ -1,0 +1,114 @@
+=pod
+
+=encoding utf8
+
+=head2 Text::Table::Simple
+
+Create basic tables from a two dimensional array
+
+=for HTML <a href="https://travis-ci.org/ugexe/Perl6-Text--Table--Simple"><img src="https://travis-ci.org/ugexe/Perl6-Text--Table--Simple.svg?branch=master"></a>
+
+=head3 Synopsis
+
+    use Text::Table::Simple;
+
+    my @columns = <id name email>;
+    my @rows    = (
+        [1,"John Doe",'johndoe@cpan.org'],
+        [2,'Jane Doe','mrsjanedoe@hushmail.com'],
+    );
+
+    my @table = lol2table(@columns,@rows);
+    .say for @table;
+
+    # O----O----------O-------------------------O
+    # | id | name     | email                   |
+    # O====O==========O=========================O
+    # | 1  | John Doe | johndoe@cpan.org        |
+    # | 2  | Jane Doe | mrsjanedoe@hushmail.com |
+    # -------------------------------------------
+
+=head2 Exports
+
+=head4 routine B<lol2table>
+
+B<Args> C<@body, *%options>
+
+B<Args> C<@header, @body, @footer?, *%options>
+
+B<Returns> C<Str @rows>
+
+Create a an array of strings that can be printed line by line to create a table view of the data.
+
+    > my @cols = <XXX XXXX>;
+    > my @rows = ([1,2],[3,4]);
+    > say lol2table(@cols, @rows).join("\n");
+
+    O-----O------O
+    | XXX | XXXX |
+    O=====O======O
+    | 1   | 2    |
+    | 3   | 4    |
+    --------------
+
+B<Options>
+
+    # default values
+    %options = %(
+        rows => {
+            column_separator     => '|',
+            corner_marker        => '-',
+            bottom_border        => '-',
+        },
+        headers => {
+            top_border           => '-',
+            column_separator     => '|',
+            corner_marker        => 'O',
+            bottom_border        => '=',
+        },
+        footers => {
+            column_separator     => 'I',
+            corner_marker        => '%',
+            bottom_border        => '*',
+        },
+    );
+
+You can replace any of the default options above by passing in a replacement
+
+    > my @cols = <XXX XXXX>;
+    > my @rows = ([1,2],[3,4]);
+    > .say for lol2table(@cols, @rows, rows => column_separator => "?"  );
+
+    O-----O------O
+    | XXX | XXXX |
+    O=====O======O
+    ? 1   ? 2    ?
+    ? 3   ? 4    ?
+    --------------
+
+=head3 Examples
+
+Showing your Benchmark output:
+
+    use Text::Table::Simple;
+
+    use Text::Levenshtein::Damerau; 
+    use Benchmark;
+
+    my $str1 = "lsd";
+    my $str2 = "lds";
+
+    my %results = timethese(1000, {
+        'dld' => sub { Text::Levenshtein::Damerau::{"&dld($str1,$str2)"} },
+        'ld ' => sub { Text::Levenshtein::Damerau::{"&ld($str1,$str2)"}  },
+    });
+
+    my @headers = ['func','start','end','diff','avg'];
+    my @rows    = %results.map: {.key, .value.Slip}
+    my @table   = lol2table(@headers,@rows);
+
+    .say for @table;
+
+Also see the L<examples|https://github.com/ugexe/Perl6-Text--Table--Simple/tree/master/examples> directory
+
+=cut

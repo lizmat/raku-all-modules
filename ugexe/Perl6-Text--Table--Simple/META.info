@@ -1,11 +1,14 @@
 {
+    "perl"        : "v6.0.0",
     "name"        : "Text::Table::Simple",
-    "version"     : "0.0.2",
-    "description" : "Create basic tables from a two dimensional array.",
+    "version"     : "0.0.3",
     "auth"        : "github:ugexe",
-    "depends"     : [],
-    "provides" : {
+    "description" : "Create basic tables from a two dimensional array",
+    "depends"     : [ ],
+    "provides"    : {
         "Text::Table::Simple": "lib/Text/Table/Simple.pm6"
     },
-    "source-url"  : "git://github.com/ugexe/Perl6-Text--Table--Simple.git"
+    "source-url"  : "git://github.com/ugexe/Perl6-Text--Table--Simple.git",
+    "owner"       : "ugexe",
+    "authors"     : [ "Nick Logan" ]
 }
