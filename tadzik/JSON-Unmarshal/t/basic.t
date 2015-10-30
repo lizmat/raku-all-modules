@@ -44,4 +44,4 @@ is $p.dogs[1].name, 'Panda';
 is $p.dogs[1].race, 'wolfish';
 is $p.dogs[1].age, 13;
 
-done;
+done-testing;
