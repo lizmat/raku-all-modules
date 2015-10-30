@@ -1,0 +1,14 @@
+{
+  "name" : "HTTP::MultiPartParser",
+  "source-url" : "git://github.com/tokuhirom/p6-HTTP-MultiPartParser.git",
+  "perl" : "v6",
+  "provides" : {
+    "HTTP::MultiPartParser" : "lib/HTTP/MultiPartParser.pm6"
+  },
+  "depends" : [ ],
+  "description" : "",
+  "version" : "*",
+  "authors" : [
+    "Tokuhiro Matsuno"
+  ]
+}
