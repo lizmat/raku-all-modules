@@ -1,4 +1,4 @@
-class Tag;
+unit class Tag;
 
 use HTML::Entity;
 

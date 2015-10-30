@@ -1,6 +1,8 @@
 use Test;
 use Tag;
 
+plan 47;
+
 my $tag = Tag.new;
 
 {
@@ -142,5 +144,3 @@ my $tag = Tag.new;
 
 }
 
-
-done;

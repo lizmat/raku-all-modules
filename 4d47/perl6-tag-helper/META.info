@@ -1,6 +1,6 @@
 {
         "name" : "Tag",
-        "version" : "0.1.0",
+        "version" : "0.1.1",
         "description" : "Tag string generator (Engineered for making XML or HTML5 soup)",
         "author" : "Mathieu Gagnon",
         "depends" : [ "HTML::Entity" ],
