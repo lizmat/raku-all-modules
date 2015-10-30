@@ -28,7 +28,7 @@ my @lines = Form::TextFormatting::unjustified-wrap($text, 6);
 # okay, we should have...
 my @expected = <The quick brown fox, jumps over the lazy dog.>;
 ok(@lines.elems == 9, "Correct number of lines.");
-my $lines_correct = all(map -> $g, $e { $g eq $e }, (@lines Z @expected)) == 1;
+my $lines_correct = all(map -> $g, $e { $g eq $e }, flat (@lines Z @expected)) == 1;
 ok($lines_correct, "Lines were correct");
 
 # justification checks

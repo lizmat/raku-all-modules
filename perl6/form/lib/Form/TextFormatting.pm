@@ -124,9 +124,9 @@ our sub full-justify(Str $line, Int $width, Str $space = ' ') {
 			$spaces-width = [+] @spaces.map({ .chars });
 			$act-space = 0 if $act-space == @spaces.elems;
 		}
-               # We add empty elem to make zip operation work here
-               @spaces.push('');
-               return (@words Z~ @spaces).join;
+		# We add empty elem to make zip operation work here
+		@spaces.push('');
+		return (@words Z~ @spaces).flat.join;
 	}
 
 	return $line.substr(0, $width);

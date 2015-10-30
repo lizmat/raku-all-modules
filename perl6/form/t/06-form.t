@@ -52,35 +52,32 @@ ok(form(
 
 # Multiple numbers
 my @nums = (4.5, 5.6, 6.78, 9.101);
-ok(
+is(
 	form(
-		'{>>.<<}', [@nums]
-	)
-	eq
+		'{>>.<<}', $@nums
+	),
 	"  4.5  \n  5.6  \n  6.78 \n  9.101\n",
 	"Array of numbers"
 ); 
 
 # Multiple strings
 my @strings = <one two three four>;
-ok(
+is(
 	form(
 		'{>>>>>>}',
-		[@strings]
-	)
-	eq
+		$@strings
+	),
 	"     one\n     two\n   three\n    four\n",
 	"Array of strings"
 );
 
 # Both!
 
-ok(
+is(
 	form(
 		'{>>>>>>}|{>.<<}',
-		[@strings], [@nums]
-	)
-	eq
+		$@strings, $@nums
+	),
 	"     one| 4.5  \n     two| 5.6  \n   three| 6.78 \n    four| 9.101\n",
 	"Array of strings and array of numbers"
 );
