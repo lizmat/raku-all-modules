@@ -1,6 +1,6 @@
 {
     "name" : "Crypt::Bcrypt",
-    "version" : "1.2.1",
+    "version" : "1.2.2",
     "author" : "github:carbin",
     "description" : "An implementation of bcrypt using NativeCall",
     "build-depends" : [ "LibraryMake" ],

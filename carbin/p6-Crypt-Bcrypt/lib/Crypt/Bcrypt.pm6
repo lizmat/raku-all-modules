@@ -39,6 +39,7 @@ sub library returns Str {
 }
 
 my IO::Handle $urandom;
+my Sub $check_thread_exit = sub { Mu; }
 
 BEGIN {
 	# open a handle to urandom in advance
@@ -47,6 +48,9 @@ BEGIN {
 }
 
 END {
+	$check_thread_exit = sub {
+		die 'The main thread has exited. Call finish() on your threads.';
+	}
 	$urandom.close();
 }
 
@@ -63,16 +67,18 @@ sub crypt_gensalt_ptr(Str $prefix, int32 $count, Buf $input, int32 $size)
 is native(&library) is symbol('crypt_gensalt') returns Pointer { ... }
 
 class Crypt::Bcrypt {
-	
+
 	method gensalt(Int $rounds = 12) returns Str {
 		# lower limit is log2(2**4 = 16) = 4
 		# upper limit is log2(2**31 = 2147483648) = 31
-		die "rounds must be between 4 and 31" unless $rounds ~~ 4..31;
+		if $rounds < 4 or $rounds > 31 { die 'rounds must be between 4 to 31'; }
+		$check_thread_exit();
 		return crypt_gensalt('$2a$', $rounds, $urandom.read(16), 128);
 	}
 
 	method !gensalt_ptr(Int $rounds = 12) returns Pointer {
-		die "rounds must be between 4 and 31" unless $rounds ~~ 4..31;
+		if $rounds < 4 or $rounds > 31 { die 'rounds must be between 4 to 31'; }
+		$check_thread_exit();
 		return crypt_gensalt_ptr('$2a$', $rounds, $urandom.read(16), 128);
 	}
 
