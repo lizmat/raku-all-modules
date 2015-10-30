@@ -1,0 +1,16 @@
+{
+  "name" : "Data::Section::Simple",
+  "source-url" : "git://github.com/shoichikaji/Data-Section-Simple.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "Data::Section::Simple" : "lib/Data/Section/Simple.pm6"
+  },
+  "depends" : [ ],
+  "description" : "Read data from =finish",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "Shoichi Kaji"
+  ]
+}
