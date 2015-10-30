@@ -1,0 +1,51 @@
+=encoding utf8
+
+=head1 NAME
+
+App::Nopaste - command line interface to pastebins
+
+=head1 USAGE
+
+    nopaste http://fpaste.scsys.co.uk/500226
+
+    nopaste https://gist.github.com/zoffixznet/83adc0789cdb0cf57d43
+
+    nopaste file1 dir/foo/file2 file3
+
+=head1 DESCRIPTION
+
+This module allows to paste to create GitHub Gists as retrieve them.
+
+=head1 PASTEBINS
+
+Currently, the module supports fetching/pasting from
+L<https://gist.github.com/> and L<http://fpaste.scsys.co.uk/>. To
+use L<https://gist.github.com/> you need to
+L<create a GitHub token|https://github.com/settings/tokens>. Only the C<gist>
+permission is needed. Set C<PASTEBIN_GIST_TOKEN> environmental variable
+to the value of that token.
+
+If C<PASTEBIN_GIST_TOKEN> is set, pastes will be created on
+L<https://gist.github.com/>; otherwise on L<http://fpaste.scsys.co.uk/>.
+
+=head1 REPOSITORY
+
+Fork this module on GitHub:
+L<https://github.com/zoffixznet/perl6-App-Nopaste>
+
+=head1 BUGS
+
+To report bugs or request features, please use
+L<https://github.com/zoffixznet/perl6-App-Nopaste/issues>
+
+=head1 AUTHOR
+
+Zoffix Znet L<http://zoffix.com/>
+
+=head1 LICENSE
+
+You can use and distribute this module under the same terms as Perl 6
+itself. See the C<LICENSE> file included in this distribution for complete
+details.
+
+=cut
