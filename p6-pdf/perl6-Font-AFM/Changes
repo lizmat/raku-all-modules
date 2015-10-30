@@ -1,3 +1,8 @@
+   Release 1.23.1
+   Replaced dynamic Pand Build.pm with semi-static make_metrics.pl.
+   - generated AFM foiles should seldom change. build-time generation of modules
+     was overkill. generated sources are now checked in, and can be occasionally
+     regenerated, when needed.
    Release 1.23
    Making things less ISO-Latin1 centric
    - inverted @ISOLatin1Encoding => %ISOLatin1Encoding

@@ -11,10 +11,8 @@ BEGIN %*ENV<METRICS> //= 'etc/Core14_AFMs';
 
 use lib 'lib';
 use Font::AFM;
-use Panda::Builder;
-use Panda::Common;
 
-class Build is Panda::Builder {
+class Build {
 
     method !build-metrics {
 
