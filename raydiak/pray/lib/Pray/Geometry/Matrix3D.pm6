@@ -6,11 +6,7 @@ multi sub m3d () is export {
     $?CLASS
 }
 
-multi sub m3d (@values) is export {
-    $?CLASS.new( values => @values )
-}
-
-multi sub m3d (*@values) is export {
+multi sub m3d (+@values) is export {
     $?CLASS.new( values => @values )
 }
 

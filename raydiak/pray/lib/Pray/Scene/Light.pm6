@@ -31,7 +31,7 @@ method intersection_color (
         );
 
         # obstructing objects which are not opaque
-        my @filters = @obstructions.map: {
+        my @filters = @obstructions.flatmap: {
             (my $t = .material.transparent) && $t.intensity ??
                 $t
             !!

@@ -65,7 +65,7 @@ method ray_intersection (
             my $u = [min] @intersect.map: {$_[2]};
             next unless !@return || @return[2] > $u;
             my $i = (^@intersect).first: { @intersect[$_][2] == $u };
-            @return = @intersect[$i].list, $obj;
+            @return = @intersect[$i].Slip, $obj;
         }
     }
 

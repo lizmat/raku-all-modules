@@ -175,7 +175,7 @@ method ray_intersection_csg_add (
 ) {
     @return .= grep: { !$obj.contains_point($_[0], csg => self) };
     
-    @return.push(
+    @return.append(
         $obj.ray_intersection(
             $ray, :$segment, :$inside, :csg(self)
         ).grep: { !self.contains_point($_[0], :csg($obj), :!transform) }
@@ -189,7 +189,7 @@ method ray_intersection_csg_subtract (
 ) {
     @return .= grep: { !$obj.contains_point($_[0], csg => self, :$transform) };
     
-    @return.push(
+    @return.append(
         $obj.ray_intersection(
             $ray, :$segment, :inside(!$inside), :csg(self), :$transform,
         ).grep: {
@@ -205,7 +205,7 @@ method ray_intersection_csg_intersect (
 ) {
     @return .= grep: { $obj.contains_point($_[0], csg => self) };
     
-    @return.push(
+    @return.append(
         $obj.ray_intersection(
             $ray, :$segment, :$inside, csg => self
         ).grep: { self.contains_point($_[0], :csg($obj), :!transform) }
@@ -225,7 +225,7 @@ method ray_intersection_csg_deintersect (
     );
 
     # +
-    @return.push(
+    @return.append(
         # B - A
         $obj.ray_intersection_csg_subtract(
             $ray, self,
