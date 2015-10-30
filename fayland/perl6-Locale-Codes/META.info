@@ -1,0 +1,15 @@
+{
+    "name"          : "Locale::Codes",
+    "version"       : "0.1.0",
+    "author"        : "github:fayland",
+    "description"   : "Locale codes - Country, Currency, Langauge",
+    "depends"       : [],
+    "provides" : {
+        "Locale::Codes"    : "lib/Locale/Codes.pm",
+        "Locale::Country"  : "lib/Locale/Country.pm",
+        "Locale::Currency" : "lib/Locale/Currency.pm",
+        "Locale::Language" : "lib/Locale/Language.pm",
+        "Locale::Script"   : "lib/Locale/Script.pm"
+    },
+    "source-url"    : "git://github.com/fayland/perl6-Locale-Codes.git"
+}
