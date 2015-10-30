@@ -4,6 +4,9 @@
   "description" : "Utility to help keep a processes running and restart them if they stop.",
   "auth"        : "github:tony-o",
   "authors"     : [ "Tony O" ],
-  "provides"    : { },
+  "depends"     : ["Shell::Command"],
+  "provides"    : {
+    "overwatch": "lib/overwatch.pm6"
+  },
   "source-url"  : "git://github.com/tony-o/perl6-overwatch.git"
 } 

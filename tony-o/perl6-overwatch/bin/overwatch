@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-use Shell::Command;
+use overwatch;
 
 sub MAIN (
   *@args, 
@@ -12,96 +12,63 @@ sub MAIN (
   Str :f(:$filter) = '',
   :w(:@watch) = [],
 ) {
-  my ($prom, $proc, $killer, @filters);
+
+  my overwatch $overwatch;
 
   USAGE if @args.elems == 0;
   exit 0 if @args.elems == 0;
 
-  @filters = $filter.split(',').map({ .trim });
+  $overwatch .=new(
+    :$execute,
+    :$keep-alive,
+    :$exit-on-error,
+    :$git,
+    :$quiet,
+    :$filter,
+    :@watch
+  );
 
-  my $interval = $git;
-  $interval = 5 if $interval ~~ Bool && $interval:so;
 
   if !$quiet {
-    '[INFO] Starting overseer with options:'.say;
-    "[INFO]   --execute: $execute".say;
-    "[INFO]   --restart: $execute".say;
-    "[INFO]   --filters: {@filters.join(', ')}".say;
-    "[INFO]     --watch: {@watch.join(', ')}".say;
-    "[INFO]       --git: {$interval <= 0 ?? 'disabled' !! "{$interval}m"}".say;
-    "[INFO]      script: {@args.map({ "'$_'" }).join(' ')}".say;
-  }
-
-  for @watch -> $dir {
-    die "Unable to find directory: $dir" if $dir.IO !~~ :e;
-    $dir.IO.watch.tap: -> $f {
-      my $restart = False;
-      for @filters -> $e { 
-        $restart = True, last if $f.path.chars > $e.chars &&  $e eq $f.path.substr(*- $e.chars); 
-      }
-      if @filters.elems == 0 || (@filters.elems > 0 && $restart) {
-        try {
-          $proc.kill(SIGQUIT);
-          CATCH { 
-            default { 
-              "[ERROR] Killing process: {.message}".say if !$quiet; 
-            } 
-          }
+    $overwatch.events.tap(-> $event {
+      given $event<action> {
+        when 'start' {
+          '[INFO] Starting overseer with options:'.say;
+          "[INFO]   --execute: {$event<execute>}".say;
+          "[INFO]   --restart: {$event<execute>}".say;
+          "[INFO]   --filters: {$event<filters>.join(', ')}".say;
+          "[INFO]     --watch: {$event<watch>.join(', ')}".say;
+          "[INFO]       --git: {$event<git-interval> <= 0 ?? 'disabled' !! "{$event<git-interval>}m"}".say;
+          "[INFO]      script: {$event<args>.map({ "'$_'" }).join(' ')}".say;
         }
-        try {
-          $killer.keep(True);
+        when 'error' {
+          "[ERROR] {$event<msg>}".say;
         }
-        "[INFO] Restart process, file changed: {"$dir/{$f.path}".IO.path}".say if !$quiet;
-      }
-    }
-  }
-  
-  my $s;
-  if $interval >= 0 {
-    start { 
-      $s = Supply.interval($interval * 60);
-      my Promise $p .= new;
-      $s.tap({
-        qx<git remote update>; 
-        my $local  = qx<git rev-parse @{0}>.chomp; 
-        my $remote = qx<git rev-parse @{u}>.chomp; 
-        my $base   = qx<git merge-base @{0} @{u}>.chomp;
-        if $local ne $remote && $local eq $base {
+        when 'file-changed' {
+          "[ERROR] Restarting process, file changed: {$event<file-path>}".say;
+        }
+        when 'git-pull' {
           '[INFO] Pulling from remote repository'.say;
-          qx<git pull>;
         }
-      }, quit => { $p.keep; });
-      await $p;
-    };
+        when 'kill-proc' {
+          "[INFO] Killing process with {$event<signal>}".say;
+        }
+        when 'proc-died' {
+          "[INFO] Exit code ({$event<code>}) caught, exiting".say;
+        }
+        when 'restart' {
+          "[INFO] Restarting {$event<execute>}".say;
+        }
+      }
+    });
   }
 
-  signal(SIGTERM,SIGINT,SIGHUP,SIGQUIT).tap({
-    "[INFO] Killing process with $_".say if !$quiet;
-    await $proc.kill($_);
-    exit 0;
-  });
-
-  while Any ~~ $proc || $keep-alive {
-    $proc = Proc::Async.new($execute, @args);
-    $proc.stdout.act(&print);
-    $proc.stderr.act(-> $r { $*ERR.print($r); });
-    $prom = $proc.start;
-    $killer = Promise.new;
-    await Promise.anyof($prom, $killer);
-    $killer.break if $killer.status !~~ Kept;
-    if $killer.status !~~ Kept && $prom.result:exists && $prom.result.exit != 0 && $exit-on-error {
-      "[INFO] Exit code ({$prom.result.exit}) from process caught, exiting".say if !$quiet;
-      exit 0;
-    }
-    "[INFO] Restarting $execute {@args.map({ "'$_'" }).join(' ')}".say if !$quiet;
-  }
-  try $s.quit;
+  $overwatch.go(@args);
 }
 
 sub USAGE {
   my $space = ' ' x 4;
-  say [[qq|
-Perl6 Overwatch can be used to restart programs when they crash or 
+  say qq|Perl6 Overwatch can be used to restart programs when they crash or 
 when files are modified.  
 
 Usage: 
@@ -154,6 +121,6 @@ Examples:
 {$space}overwatch app.pl6
 {$space}overwatch -w=models mvc.pl6
 {$space}overwatch -w=/tmp/ -e=/bin/sh shellscript.sh --shellarg=go
+|
 
-|]]
 }
