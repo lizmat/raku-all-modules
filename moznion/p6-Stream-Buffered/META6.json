@@ -1,0 +1,22 @@
+{
+  "name" : "Stream::Buffered",
+  "source-url" : "git://github.com/moznion/p6-Stream-Buffered.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "Stream::Buffered" : "lib/Stream/Buffered.pm6",
+    "Stream::Buffered::Blob" : "lib/Stream/Buffered/Blob.pm6",
+    "Stream::Buffered::Auto" : "lib/Stream/Buffered/Auto.pm6",
+    "Stream::Buffered::File" : "lib/Stream/Buffered/File.pm6"
+  },
+  "depends" : [
+    "IO::Blob",
+    "File::Temp"
+  ],
+  "description" : "Temporary buffer to save bytes",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "moznion"
+  ]
+}
