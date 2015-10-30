@@ -44,7 +44,7 @@ subtest {
         is $io.ins(), 1;
         is $io.eof(), False;
 
-        my @expected = ["line1\n".encode, "line2\n".encode, "line3\n".encode, "line4".encode];
+        my @expected = ["line1\n", "line2\n", "line3\n", "line4"];
         is-deeply $io.lines(), @expected;
         is $io.tell(), 23;
         is $io.ins(), 4;
@@ -60,7 +60,7 @@ subtest {
         is $io.ins(), 1;
         is $io.eof(), False;
 
-        my @expected = ["line1\n".encode, "line2\n".encode];
+        my @expected = ["line1\n", "line2\n"];
         is-deeply $io.lines(2), @expected;
         is $io.tell(), 12;
         is $io.ins(), 3;
@@ -97,6 +97,8 @@ subtest {
     is $io.ins(), 4;
 
     is $io.eof(), True;
+    is $io.perl, 'IO::Blob.new(data => utf8.new(108, 105, 110, 101, 49, 10, 108, 105, 110, 101, 50, 10, 108, 105, 110, 101, 51, 10, 108, 105, 110, 101, 52))';
+    is $io.gist, 'IO::Blob(opened, at ins 4 / pos 23)';
 }, 'Test for getc()';
 
 subtest {
@@ -137,7 +139,7 @@ subtest {
         is $io.ins(), 1;
         is $io.eof(), False;
 
-        my @expected = ["word1 ".encode, "word2\t".encode, "word3\n".encode, "word4".encode];
+        my @expected = ["word1 ", "word2\t", "word3\n", "word4"];
         is-deeply $io.words(), @expected;
         is $io.tell(), 23;
         is $io.ins(), 2;
@@ -153,7 +155,7 @@ subtest {
         is $io.ins(), 1;
         is $io.eof(), False;
 
-        my @expected = ["word1 ".encode, "word2\t".encode, "word3\n".encode];
+        my @expected = ["word1 ", "word2\t", "word3\n"];
         is-deeply $io.words(3), @expected;
         is $io.tell(), 18;
         is $io.ins(), 2;
@@ -183,13 +185,13 @@ subtest {
     my IO::Blob $io = IO::Blob.new(TEXT.encode);
 
     $io.print('line5', 'line6');
-    is $io.tell(), 35;
+    is $io.tell(), 33;
     # is $io.ins(), 5;
     is $io.eof(), True;
 
     $io.seek(0, 0);
-    is $io.read(TEXT.chars + 12), "line1\nline2\nline3\nline4line5\nline6\n".encode;
-    is $io.data(), "line1\nline2\nline3\nline4line5\nline6\n".encode;
+    is $io.read(TEXT.chars + 12), "line1\nline2\nline3\nline4line5line6".encode;
+    is $io.data(), "line1\nline2\nline3\nline4line5line6".encode;
 }, 'Test for print() and seek()';
 
 subtest {
@@ -224,6 +226,16 @@ subtest {
         $io.seek(6, 0);
         is $io.slurp-rest(enc => 'utf8'), "line2\nline3\nline4";
     }, 'with encode';
+
+    subtest {
+        my IO::Blob $io = IO::Blob.new(TEXT.encode);
+
+        is $io.slurp-rest(), "line1\nline2\nline3\nline4";
+        is $io.slurp-rest(), "";
+
+        $io.seek(6, 0);
+        is $io.slurp-rest(), "line2\nline3\nline4";
+    }, 'with out encode';
 }, 'Test for slurp-rest';
 
 subtest {
@@ -241,6 +253,8 @@ subtest {
     is $io.read(100), "".encode;
     is $io.slurp-rest(bin => True), "".encode;
     is $io.slurp-rest(enc => 'utf8'), "";
+    is $io.perl, 'IO::Blob.new(data => Blob)';
+    is $io.gist, 'IO::Blob(closed)';
 }, 'Test for close()';
 
 subtest {
@@ -248,6 +262,17 @@ subtest {
     $io.nl = Nil;
     is $io.get(), TEXT.encode;
 }, 'Test for nl';
+
+subtest {
+    {
+        my IO::Blob $io = IO::Blob.new(TEXT);
+        is $io.slurp-rest, TEXT;
+    }
+    {
+        my IO::Blob $io = IO::Blob.open(TEXT);
+        is $io.slurp-rest, TEXT;
+    }
+}, 'Test for constructor for string';
 
 done-testing;
 

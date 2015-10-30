@@ -9,25 +9,42 @@ constant SPACE = " ".encode;
 
 has Int $!pos = 0;
 has Int $!ins = 1;
-has Blob $.data is rw;
+has Blob $.data is rw = Buf.new;
 has Bool $!is_closed = False;
 has Str $.nl is rw = "\n";
+has $.path;
 
-method new(Blob $data = Buf.new) {
+multi method gist(IO::Blob:D:) {
+    $!is_closed
+        ?? "IO::Blob(closed)"
+        !! "IO::Blob(opened, at ins {$!ins} / pos {$!pos})"
+}
+
+multi method perl(IO::Blob:D:) {
+    "IO::Blob.new(data => {$.data.perl})"
+}
+
+multi method new(Blob $data = Buf.new) {
     return self.bless(:$data);
 }
 
-method open(Blob $data = Buf.new) {
+multi method open(Blob $data = Buf.new) returns IO::Blob {
     return self.new($data);
 }
 
-method get(IO::Blob:D:) {
-    if self.eof {
-        return EMPTY;
-    }
+multi method new(Str $str) {
+    return self.new($str.encode);
+}
+
+multi method open(Str $str) {
+    return self.new($str.encode);
+}
+
+method get(IO::Blob:D:) returns Str {
+    return '' if self.eof;
 
     unless (defined $.nl) {
-        return self.slurp-rest(bin => True);
+        return self.slurp-rest();
     }
 
     my $i = $!pos;
@@ -49,13 +66,11 @@ method get(IO::Blob:D:) {
         $!pos = $len;
     }
 
-    return $line;
+    return $line.decode;
 }
 
-method getc(IO::Blob:D:) {
-    if self.eof {
-        return EMPTY;
-    }
+method getc(IO::Blob:D:) returns Str {
+    return '' if self.eof;
 
     my $char = $.data.subbuf($!pos++, 1);
 
@@ -64,7 +79,7 @@ method getc(IO::Blob:D:) {
         $!ins++;
     }
 
-    return $char;
+    return $char.decode;
 }
 
 method lines(IO::Blob:D: $limit = Inf) {
@@ -80,9 +95,9 @@ method lines(IO::Blob:D: $limit = Inf) {
     return @lines;
 }
 
-method word(IO::Blob:D:) {
+method word(IO::Blob:D:) returns Str {
     if self.eof {
-        return EMPTY;
+        return '';
     }
 
     # TODO other separator
@@ -106,7 +121,7 @@ method word(IO::Blob:D:) {
         $buf = $.data.subbuf($!pos, $i - $!pos);
         $!pos = $len;
     }
-    return $buf;
+    return $buf.decode;
 }
 
 method words(IO::Blob:D: $count = Inf) {
@@ -123,14 +138,11 @@ method words(IO::Blob:D: $count = Inf) {
 }
 
 method print(IO::Blob:D: *@text) returns Bool {
-    for (@text) -> $text {
-        self.write(($text ~ $.nl).encode)
-    }
-
+    self.write(@text.join.encode);
     return True;
 }
 
-method read(IO::Blob:D: Int(Cool:D) $bytes) {
+method read(IO::Blob:D: Int(Cool:D) $bytes) returns Blob {
     if self.eof {
         return EMPTY;
     }
@@ -143,7 +155,7 @@ method read(IO::Blob:D: Int(Cool:D) $bytes) {
     return $read;
 }
 
-method write(IO::Blob:D: Blob:D $buf) {
+method write(IO::Blob:D: Blob:D $buf) returns Bool {
     my $data = $.data ~ $buf;
     $!pos = $data.elems;
     $.data = $data;
@@ -153,7 +165,7 @@ method write(IO::Blob:D: Blob:D $buf) {
     return True;
 }
 
-method seek(IO::Blob:D: int $offset, int $whence) {
+method seek(IO::Blob:D: int $offset, int $whence) returns Bool {
     my $eofpos = $.data.elems;
 
     # Seek:
@@ -196,7 +208,7 @@ multi method slurp-rest(IO::Blob:D: :$bin!) returns Buf {
     return $buf ~ $read;
 }
 
-multi method slurp-rest(IO::Blob:D: :$enc) returns Str {
+multi method slurp-rest(IO::Blob:D: :$enc = 'utf8') returns Str {
     if self.eof {
         return "";
     }
@@ -209,7 +221,7 @@ multi method slurp-rest(IO::Blob:D: :$enc) returns Str {
     return $read;
 }
 
-method eof(IO::Blob:D:) {
+method eof(IO::Blob:D:) returns Bool {
     return $!is_closed || $!pos >= $.data.elems;
 }
 
@@ -220,11 +232,13 @@ method close(IO::Blob:D:) {
     $!is_closed = True;
 }
 
-method is-closed(IO::Blob:D:) {
+method is-closed(IO::Blob:D:) returns Bool {
     return $!is_closed;
 }
 
 =begin pod
+
+=head1 NAME
 
 IO::Blob - IO:: interface for reading/writing a Blob
 
@@ -236,9 +250,17 @@ IO::Blob - IO:: interface for reading/writing a Blob
     my $data = "foo\nbar\n";
     my IO::Blob $io = IO::Blob.new($data.encode);
 
+    $io.get; # => "foo\n"
+
+    $io.print('buz');
+
+    $io.seek(0, 0); # rewind
+
+    $io.slurp-rest; # => "foo\nbar\nbuz"
+
 =head1 DESCRIPTION
 
-IO:: interface for reading/writing a Blob.
+C<IO::> interface for reading/writing a Blob.
 This class inherited from L<IO::Handle>.
 
 The IO::Blob class implements objects which behave just like
@@ -261,19 +283,31 @@ Make a instance. This method is equivalent to C<new>.
 
     my $io = IO::Blob.open("foo\nbar\n".encode);
 
+=head2 new(Str $str)
+
+Make a instance. This method is equivalent to C<open>.
+
+    my $io = IO::Blob.new("foo\nbar\n");
+
+=head2 open(Str $str)
+
+Make a instance. This method is equivalent to C<new>.
+
+    my $io = IO::Blob.open("foo\nbar\n");
+
 =head2 get(IO::Blob:D:)
 
 Reads a single line from the Blob.
 
     my $io = IO::Blob.open("foo\nbar\n".encode);
-    $io.get; // => "foo\n"
+    $io.get; # => "foo\n"
 
 =head2 getc(IO::Blob:D:)
 
 Read a single character from the Blob.
 
     my $io = IO::Blob.open("foo\nbar\n".encode);
-    $io.getc; // => "f\n"
+    $io.getc; # => "f\n"
 
 =head2 lines(IO::Blob:D: $limit = Inf)
 
@@ -281,7 +315,7 @@ Return a lazy list of the Blob's lines read via C<get>, limited to C<$limit> lin
 
     my $io = IO::Blob.open("foo\nbar\n".encode);
     for $io.lines -> $line {
-        $line; // 1st: "foo\n", 2nd: "bar\n"
+        $line; # 1st: "foo\n", 2nd: "bar\n"
     }
 
 =head2 word(IO::Blob:D:)
@@ -289,7 +323,7 @@ Return a lazy list of the Blob's lines read via C<get>, limited to C<$limit> lin
 Read a single word (separated on whitespace) from the Blob.
 
     my $io = IO::Blob.open("foo bar\tbuz\nqux".encode);
-    $io.word; // => "foo "
+    $io.word; # => "foo "
 
 =head2 words(IO::Blob:D: $count = Inf)
 
@@ -297,7 +331,7 @@ Return a lazy list of the Blob's words (separated on whitespace) read via C<word
 
     my $io = IO::Blob.open("foo bar\tbuz\nqux".encode);
     for $io.words -> $word {
-        $word; // 1st: "foo ", 2nd: "bar\t", 3rd: "buz\n", 4th: "qux"
+        $word; # 1st: "foo ", 2nd: "bar\t", 3rd: "buz\n", 4th: "qux"
     }
 
 =head2 print(IO::Blob:D: *@text) returns Bool
@@ -340,7 +374,7 @@ Returns the number of lines read from the file.
 
 Return the remaining content of the Blob from the current position (which may have been set by previous reads or by seek.) If the adverb C<:bin> is provided a Buf will be returned.
 
-=head2 slurp-rest(IO::Blob:D: :$enc) returns Str
+=head2 slurp-rest(IO::Blob:D: :$enc = 'utf8') returns Str
 
 Return the remaining content of the Blob from the current position (which may have been set by previous reads or by seek.) Return will be a Str with the optional encoding C<:enc>.
 
@@ -364,15 +398,21 @@ Returns the current Blob.
 
 L<IO::Scalar of perl5|https://metacpan.org/pod/IO::Scalar>
 
+=head1 AUTHOR
+
+moznion <moznion@gmail.com>
+
+=head1 CONTRIBUTORS
+
+=item mattn
+
+=item shoichikaji
+
 =head1 LICENSE
 
 Copyright 2015 moznion <moznion@gmail.com>
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
-
-=head1 AUTHOR
-
-moznion E<lt>moznion@gmail.comE<gt>
 
 =end pod
 

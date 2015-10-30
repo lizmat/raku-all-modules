@@ -1,4 +1,6 @@
-NAME [![Build Status](https://travis-ci.org/moznion/p6-IO-Blob.svg?branch=master)](https://travis-ci.org/moznion/p6-IO-Blob)
+[![Build Status](https://travis-ci.org/moznion/p6-IO-Blob.svg?branch=master)](https://travis-ci.org/moznion/p6-IO-Blob)
+
+NAME
 ====
 
 IO::Blob - IO:: interface for reading/writing a Blob
@@ -12,10 +14,18 @@ SYNOPSIS
     my $data = "foo\nbar\n";
     my IO::Blob $io = IO::Blob.new($data.encode);
 
+    $io.get; # => "foo\n"
+
+    $io.print('buz');
+
+    $io.seek(0, 0); # rewind
+
+    $io.slurp-rest; # => "foo\nbar\nbuz"
+
 DESCRIPTION
 ===========
 
-IO:: interface for reading/writing a Blob. This class inherited from [IO::Handle](IO::Handle).
+`IO::` interface for reading/writing a Blob. This class inherited from [IO::Handle](IO::Handle).
 
 The IO::Blob class implements objects which behave just like IO::Handle objects, except that you may use them to write to (or read from) Blobs.
 
@@ -38,13 +48,27 @@ Make a instance. This method is equivalent to `new`.
 
     my $io = IO::Blob.open("foo\nbar\n".encode);
 
+new(Str $str)
+-------------
+
+Make a instance. This method is equivalent to `open`.
+
+    my $io = IO::Blob.new("foo\nbar\n");
+
+open(Str $str)
+--------------
+
+Make a instance. This method is equivalent to `new`.
+
+    my $io = IO::Blob.open("foo\nbar\n");
+
 get(IO::Blob:D:)
 ----------------
 
 Reads a single line from the Blob.
 
     my $io = IO::Blob.open("foo\nbar\n".encode);
-    $io.get; // => "foo\n"
+    $io.get; # => "foo\n"
 
 getc(IO::Blob:D:)
 -----------------
@@ -52,7 +76,7 @@ getc(IO::Blob:D:)
 Read a single character from the Blob.
 
     my $io = IO::Blob.open("foo\nbar\n".encode);
-    $io.getc; // => "f\n"
+    $io.getc; # => "f\n"
 
 lines(IO::Blob:D: $limit = Inf)
 -------------------------------
@@ -61,7 +85,7 @@ Return a lazy list of the Blob's lines read via `get`, limited to `$limit` lines
 
     my $io = IO::Blob.open("foo\nbar\n".encode);
     for $io.lines -> $line {
-        $line; // 1st: "foo\n", 2nd: "bar\n"
+        $line; # 1st: "foo\n", 2nd: "bar\n"
     }
 
 word(IO::Blob:D:)
@@ -70,7 +94,7 @@ word(IO::Blob:D:)
 Read a single word (separated on whitespace) from the Blob.
 
     my $io = IO::Blob.open("foo bar\tbuz\nqux".encode);
-    $io.word; // => "foo "
+    $io.word; # => "foo "
 
 words(IO::Blob:D: $count = Inf)
 -------------------------------
@@ -79,7 +103,7 @@ Return a lazy list of the Blob's words (separated on whitespace) read via `word`
 
     my $io = IO::Blob.open("foo bar\tbuz\nqux".encode);
     for $io.words -> $word {
-        $word; // 1st: "foo ", 2nd: "bar\t", 3rd: "buz\n", 4th: "qux"
+        $word; # 1st: "foo ", 2nd: "bar\t", 3rd: "buz\n", 4th: "qux"
     }
 
 print(IO::Blob:D: *@text) returns Bool
@@ -129,8 +153,8 @@ slurp-rest(IO::Blob:D: :$bin!) returns Buf
 
 Return the remaining content of the Blob from the current position (which may have been set by previous reads or by seek.) If the adverb `:bin` is provided a Buf will be returned.
 
-slurp-rest(IO::Blob:D: :$enc) returns Str
------------------------------------------
+slurp-rest(IO::Blob:D: :$enc = 'utf8') returns Str
+--------------------------------------------------
 
 Return the remaining content of the Blob from the current position (which may have been set by previous reads or by seek.) Return will be a Str with the optional encoding `:enc`.
 
@@ -159,14 +183,21 @@ SEE ALSO
 
 [IO::Scalar of perl5](https://metacpan.org/pod/IO::Scalar)
 
+AUTHOR
+======
+
+moznion <moznion@gmail.com>
+
+CONTRIBUTORS
+============
+
+  * mattn
+
+  * shoichikaji
+
 LICENSE
 =======
 
 Copyright 2015 moznion <moznion@gmail.com>
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
-
-AUTHOR
-======
-
-moznion (<moznion@gmail.com>)
