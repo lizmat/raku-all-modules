@@ -135,7 +135,7 @@ class RangeSet {
             my $from = ($r.key,   $max  + 1).max.Int;
             my $to   = ($r.value, $last - 1).min.Int;
             $from > $to and next;
-            @x.push: $from .. $to;
+            @x.append: $from .. $to;
             $to >= $last || $r.value == Inf and last;
             $max = ($max, $r.value).max.Int;
             }
@@ -154,12 +154,7 @@ class RangeSet {
             }
         @x.elems and return @x;
 
-        # There's a more efficient way to do this... :-)
-        gather {
-            for $.min .. $.max -> $maybe {
-                take $maybe if $maybe ~~ self;
-                }
-            }
+        ($.min .. $.max).grep (self);
         }
     }
 
@@ -726,7 +721,7 @@ class Text::CSV {
         }
 
     method !accept-field (CSV::Field $f) returns Bool {
-        $!csv-row.push ($f);
+        $!csv-row.push: $f;
         True;
         }
 
@@ -909,7 +904,7 @@ class Text::CSV {
         my @ch;
         $!io and @ch = @!ahead;
         @!ahead = ();
-        $buffer.defined and @ch.push: chunks ($buffer, $chx);
+        $buffer.defined and @ch.append: chunks ($buffer, $chx);
         @ch or return parse_error (2012);
 
         $opt_v > 2 and progress (0, @ch.perl);
@@ -1132,7 +1127,7 @@ class Text::CSV {
 
                         if ($i == @ch.elems - 1 && $!io.defined) {
                             my $str = $!io.get or return parse_error (2012);
-                            @ch.push: chunks ($str, $chx);
+                            @ch.append: chunks ($str, $chx);
                             }
 
                         next;
