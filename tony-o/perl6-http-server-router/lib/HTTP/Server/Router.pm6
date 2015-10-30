@@ -3,22 +3,22 @@ use HTTP::Server;
 class HTTP::Server::Router {
   has @.routes;
 
-  multi method push(Str $path, Sub $method) {
+  multi method append(Str $path, Callable $method) {
     my @parts = $path.split('/');
-    @.routes.push({
+    @.routes.append($({
       path   => $path,
       method => $method,
       type   => 1,
       delim  => @parts,
-    });
+    }));
   }
 
-  multi method push(Regex $path, Sub $method) {
-    @.routes.push({
+  multi method append(Regex $path, Callable $method) {
+    @.routes.append($({
       path   => $path,
       method => $method,
       type   => 0,
-    });
+    }));
   }
 
   method serve(HTTP::Server $app) {
@@ -52,14 +52,14 @@ class HTTP::Server::Router {
           }
         }
 
-        my $p = try { $r<method>($req, $res); CATCH { default { .say; } } } // False;
+        my $p = try { CATCH { default { .say; } }; $r<method>($req, $res); } // False;
         if $p ~~ Promise {
           await $p;
           $p = $p.result;
         }
-        return False unless $p;
+        return True if $p;
       }
-      try $req.close('no route found');
+      try { $res.close('no route found'); CATCH { default { } } }
       CATCH { default { .say; } }
     });
   }
@@ -67,12 +67,12 @@ class HTTP::Server::Router {
 
 my HTTP::Server::Router $r .=new;
 
-multi sub route(Str $path, Sub $method) is export {
-  $r.push($path, $method);
+multi sub route(Str $path, Callable $method) is export {
+  $r.append($path, $method);
 }
 
-multi sub route(Regex $path, Sub $method) is export {
-  $r.push($path, $method);
+multi sub route(Regex $path, Callable $method) is export {
+  $r.append($path, $method);
 }
 
 sub serve(HTTP::Server $app) is export {

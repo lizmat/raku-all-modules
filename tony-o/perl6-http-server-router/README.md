@@ -1,4 +1,6 @@
-# Yet another HTTP Router
+# Perl6's HTTP Router for the Pros
+
+[![Build Status](https://travis-ci.org/tony-o/perl6-http-server-router.svg)](https://travis-ci.org/tony-o/perl6-http-server-router)
 
 This here module provides a routing system for use with ```HTTP::Server::Threaded```.  It can accept named parameters (currently no restraints on what the parameter is), and hard typed paths.  Check out below for examples and usage.
 

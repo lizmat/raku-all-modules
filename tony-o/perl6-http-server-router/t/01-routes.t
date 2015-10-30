@@ -1,18 +1,22 @@
 #!/usr/bin/env perl6
 
-use HTTP::Server::Threaded;
+use HTTP::Server::Async;
 use HTTP::Server::Router;
 use Test;
 
+plan 3;
+
 
 start { 
-  my HTTP::Server::Threaded $app .=new;
+  my HTTP::Server::Async $app .=new;
 
   serve $app;
 
   route '/:named/whatever', sub ($req, $res) {
     my $str = $req.params<named> // '';
+    $res.perl.say;
     $res.close($str); 
+    'here'.say;
   };
 
   route '/poboy', sub ($req, $res) {
@@ -29,16 +33,16 @@ start {
 sleep 2;
 
 await start {
-  sub req ($req) {
-    my IO::Socket::INET $client .=new(:host<127.0.0.1>, :port(8091));
+  sub req (Str $req) {
+    my IO::Socket::INET $client .=new(:host<127.0.0.1>, :port(1666));
     my $data                     = '';
-    $client.send($req);
+    $client.print($req);
     sleep .5;
     while my $d = $client.recv {
       $data ~= $d;
     }
-    CATCH { default { .say; } }
-    try { $client.close; CATCH { default { .say; } } };
+    CATCH { default { "CAUGHT {$_}".say; } }
+    try { $client.close; CATCH { default { } } }
     return $data;
   }
 
