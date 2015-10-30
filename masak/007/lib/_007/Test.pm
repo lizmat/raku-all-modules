@@ -4,10 +4,10 @@ use Test;
 
 sub read(Str $ast) is export {
     my %qclass_lookup =
+        none        => Q::Literal::None,
         int         => Q::Literal::Int,
         str         => Q::Literal::Str,
         array       => Q::Literal::Array,
-        block       => Q::Literal::Block,
 
         '-'         => Q::Prefix::Minus,
 
@@ -31,9 +31,10 @@ sub read(Str $ast) is export {
         macro       => Q::Statement::Macro,
 
         ident       => Q::Identifier,
-        statements  => Q::Statements,
-        parameters  => Q::Parameters,
-        arguments   => Q::Arguments,
+        stmtlist    => Q::StatementList,
+        paramlist   => Q::ParameterList,
+        arglist     => Q::ArgumentList,
+        block       => Q::Block,
     ;
 
     my grammar _007::Syntax {
@@ -46,7 +47,9 @@ sub read(Str $ast) is export {
     }
 
     my $actions = role {
-        method TOP($/) { make $<expr>.ast }
+        method TOP($/) {
+            make $<expr>.ast;
+        }
         method expr:list ($/) {
             my $qname = ~$<expr>[0];
             die "Unknown name: $qname"
@@ -62,33 +65,134 @@ sub read(Str $ast) is export {
 
     _007::Syntax.parse($ast, :$actions)
         or die "failure";
-    return $/.ast;
+    return Q::CompUnit.new(Q::Block.new(
+        Q::ParameterList.new(),
+        $/.ast
+    ));
 }
 
-role Output {
+role StrOutput {
     has $.result = "";
 
-    method say($s) { $!result ~= $s ~ "\n" }
+    method say($s) { $!result ~= $s.gist ~ "\n" }
 }
 
-role BadOutput {
+role UnwantedOutput {
     method say($s) { die "Program printed '$s'; was not expected to print anything" }
+}
+
+sub check(Q::CompUnit $ast, $runtime) {
+    my %*assigned;
+    handle($ast);
+
+    # a bunch of nodes we don't care about descending into
+    multi handle(Q::ParameterList $) {}
+    multi handle(Q::Statement::Return $) {}
+    multi handle(Q::Statement::Expr $) {}
+    multi handle(Q::Statement::BEGIN $) {}
+    multi handle(Q::Literal $) {}
+    multi handle(Q::Postfix $) {}
+
+    multi handle(Q::StatementList $statementlist) {
+        for @$statementlist -> $statement {
+            handle($statement);
+        }
+    }
+
+    multi handle(Q::Statement::My $my) {
+        my $symbol = $my.ident.name;
+        my $block = $runtime.current-frame();
+        die X::Redeclaration.new(:$symbol)
+            if $runtime.declared-locally($symbol);
+        die X::Redeclaration::Outer.new(:$symbol)
+            if %*assigned{$block ~ $symbol};
+        $runtime.declare-var($symbol);
+
+        if $my.expr !=== Empty {
+            handle($my.expr);
+        }
+    }
+
+    # XXX: should handle Q::Statement::Constant, too
+
+    multi handle(Q::Statement::Block $block) {
+        $runtime.enter($block.block.eval($runtime));
+        handle($block.block.statementlist);
+        $block.block.static-lexpad = $runtime.current-frame.pad;
+        $runtime.leave();
+    }
+
+    multi handle(Q::Statement::Sub $sub) {
+        my $outer-frame = $runtime.current-frame;
+        my $name = $sub.ident.name;
+        my $val = Val::Sub.new(:$name,
+            :parameterlist($sub.block.parameterlist),
+            :statementlist($sub.block.statementlist),
+            :static-lexpad($sub.block.static-lexpad),
+            :$outer-frame
+        );
+        $runtime.enter($val);
+        handle($sub.block);
+        $runtime.leave();
+
+        $runtime.declare-var($name, $val);
+    }
+
+    multi handle(Q::Statement::Macro $macro) {
+        my $outer-frame = $runtime.current-frame;
+        my $name = $macro.ident.name;
+        my $val = Val::Macro.new(:$name,
+            :parameterlist($macro.block.parameterlist),
+            :statementlist($macro.block.statementlist),
+            :static-lexpad($macro.block.static-lexpad),
+            :$outer-frame
+        );
+        $runtime.enter($val);
+        handle($macro.block);
+        $runtime.leave();
+
+        $runtime.declare-var($name, $val);
+    }
+
+    multi handle(Q::Statement::If $if) {
+        handle($if.block);
+    }
+
+    multi handle(Q::Statement::For $for) {
+        handle($for.block);
+    }
+
+    multi handle(Q::Statement::While $while) {
+        handle($while.block);
+    }
+
+    multi handle(Q::Block $block) {
+        my $valblock = Val::Block.new(
+            :outer-frame($runtime.current-frame));
+        $runtime.enter($valblock);
+        handle($block.parameterlist);
+        handle($block.statementlist);
+        $block.static-lexpad = $runtime.current-frame.pad;
+        $runtime.leave();
+    }
 }
 
 sub is-result($input, $expected, $desc = "MISSING TEST DESCRIPTION") is export {
     my $ast = read($input);
-    my $output = Output.new;
+    my $output = StrOutput.new;
     my $runtime = _007.runtime(:$output);
-    $runtime.run($ast, :$output);
+    check($ast, $runtime);
+    $runtime.run($ast);
 
     is $output.result, $expected, $desc;
 }
 
 sub is-error($input, $expected-error, $desc = $expected-error.^name) is export {
     my $ast = read($input);
-    my $output = Output.new;
+    my $output = StrOutput.new;
     my $runtime = _007.runtime(:$output);
-    $runtime.run($ast, :$output);
+    check($ast, $runtime);
+    $runtime.run($ast);
 
     CATCH {
         when $expected-error {
@@ -109,19 +213,19 @@ sub empty-diff($text1 is copy, $text2 is copy, $desc) {
 
 sub parses-to($program, $expected, $desc = "MISSING TEST DESCRIPTION") is export {
     my $expected-ast = read($expected);
-    my $parser = _007.parser;
-    my $output = BadOutput.new;
+    my $output = UnwantedOutput.new;
     my $runtime = _007.runtime(:$output);
-    my $actual-ast = $parser.parse($program, :$runtime);
+    my $parser = _007.parser(:$runtime);
+    my $actual-ast = $parser.parse($program);
 
     empty-diff ~$expected-ast, ~$actual-ast, $desc;
 }
 
 sub parse-error($program, $expected-error, $desc = $expected-error.^name) is export {
-    my $parser = _007.parser;
-    my $output = BadOutput.new;
+    my $output = UnwantedOutput.new;
     my $runtime = _007.runtime(:$output);
-    $parser.parse($program, :$runtime);
+    my $parser = _007.parser(:$runtime);
+    $parser.parse($program);
 
     CATCH {
         when $expected-error {
@@ -135,21 +239,12 @@ sub parse-error($program, $expected-error, $desc = $expected-error.^name) is exp
     flunk $desc;
 }
 
-sub outputs-during-parse($program, $expected, $desc = "MISSING TEST DESCRIPTION") is export {
-    my $parser = _007.parser;
-    my $output = Output.new;
-    my $runtime = _007.runtime(:$output);
-    $parser.parse($program, :$runtime);
-
-    is $output.result, $expected, $desc;
-}
-
 sub outputs($program, $expected, $desc = "MISSING TEST DESCRIPTION") is export {
-    my $parser = _007.parser;
-    my $output = Output.new;
+    my $output = StrOutput.new;
     my $runtime = _007.runtime(:$output);
-    my $ast = $parser.parse($program, :$runtime);
-    $runtime.run($ast, :$output);
+    my $parser = _007.parser(:$runtime);
+    my $ast = $parser.parse($program);
+    $runtime.run($ast);
 
     is $output.result, $expected, $desc;
 }

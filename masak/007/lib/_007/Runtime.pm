@@ -1,4 +1,5 @@
 use _007::Q;
+use _007::Runtime::Builtins;
 
 role Frame {
     has $.block;
@@ -7,7 +8,7 @@ role Frame {
 
 constant NO_OUTER = {};
 
-role Runtime {
+role _007::Runtime {
     has $.output;
     has @!frames;
 
@@ -19,14 +20,8 @@ role Runtime {
         self.load-builtins;
     }
 
-    method run(Q::Statements $statements) {
-        my $compunit = Val::Block.new(
-            :$statements,
-            :outer-frame(self.current-frame));
-        self.enter($compunit);
-
-        $statements.run(self);
-        self.leave;
+    method run(Q::CompUnit $compunit) {
+        $compunit.run(self);
         CATCH {
             when X::Control::Return {
                 die X::ControlFlow::Return.new;
@@ -34,17 +29,28 @@ role Runtime {
         }
     }
 
-    method enter($block) {
+    method enter(Val::Block $block) {
         my $frame = Frame.new(:$block);
         @!frames.push($frame);
-        for $block.statements.statements -> $statement {
-            $statement.declare(self);
+        for $block.static-lexpad.kv -> $name, $value {
+            self.declare-var($name, $value);
         }
-        for $block.statements.static-lexpad.kv -> $name, $value {
-            self.put-var($name, $value)
-                unless $value ~~ Val::None; # XXX: this is almost certainly wrong
-                                            # but I seemed to need it or subroutines
-                                            # would be overwritten by None
+        for $block.statementlist.kv -> $i, $_ {
+            when Q::Statement::Sub {
+                my $name = .ident.name;
+                my $parameterlist = .block.parameterlist;
+                my $statementlist = .block.statementlist;
+                my %static-lexpad = .block.static-lexpad;
+                my $outer-frame = $frame;
+                my $val = Val::Sub.new(
+                    :$name,
+                    :$parameterlist,
+                    :$statementlist,
+                    :%static-lexpad,
+                    :$outer-frame
+                );
+                self.declare-var($name, $val);
+            }
         }
     }
 
@@ -63,33 +69,34 @@ role Runtime {
         @!frames[*-1];
     }
 
-    method !find($symbol) {
-        my $frame = self.current-frame;
-        loop {
+    method !find($symbol, $frame is copy) {
+        repeat until $frame === NO_OUTER {
             return $frame.pad
                 if $frame.pad{$symbol} :exists;
             $frame = $frame.block.outer-frame;
-            last if $frame === NO_OUTER;
         }
         die X::Undeclared.new(:$symbol);
     }
 
     method put-var($name, $value) {
-        my %pad := self!find($name);
+        my %pad := self!find($name, self.current-frame);
         %pad{$name} = $value;
     }
 
-    method get-var($name) {
-        my %pad := self!find($name);
+    method get-var($name, $frame = self.current-frame) {
+        my %pad := self!find($name, $frame);
         return %pad{$name};
     }
 
-    method declare-var($name) {
+    method declare-var($name, $value?) {
         self.current-frame.pad{$name} = Val::None.new;
+        if defined $value {
+            self.put-var($name, $value);
+        }
     }
 
     method declared($name) {
-        try self!find($name) && return True;
+        try self!find($name, self.current-frame) && return True;
         return False;
     }
 
@@ -105,71 +112,27 @@ role Runtime {
     }
 
     method load-builtins {
-        my %builtins =
-            say      => -> $arg { self.output.say(~$arg) },
-            type     => sub ($arg) { return 'Sub' if $arg ~~ Val::Sub; $arg.^name.substr('Val::'.chars) },
-            abs      => -> $arg { Val::Int.new(:value($arg.value.abs)) },
-            min      => -> $a, $b { Val::Int.new(:value(min($a.value, $b.value))) },
-            max      => -> $a, $b { Val::Int.new(:value(max($a.value, $b.value))) },
-            chr      => -> $arg { Val::Str.new(:value($arg.value.chr)) },
-            ord      => -> $arg { Val::Int.new(:value($arg.value.ord)) },
-            int      => sub ($arg) { return Val::Int.new(:value($arg.value.Int)) if $arg.value ~~ /^ '-'? \d+ $/; return $arg },
-            str      => -> $arg { Val::Str.new(:value($arg.value.Str)) },
-            chars    => -> $arg { Val::Int.new(:value($arg.value.Str.chars)) },
-            uc       => -> $arg { Val::Str.new(:value($arg.value.uc)) },
-            lc       => -> $arg { Val::Str.new(:value($arg.value.lc)) },
-            trim     => -> $arg { Val::Str.new(:value($arg.value.trim)) },
-            elems    => -> $arg { Val::Int.new(:value($arg.elements.elems)) },
-            reversed => -> $arg { Val::Array.new(:elements($arg.elements.reverse)) },
-            sorted   => -> $arg { Val::Array.new(:elements($arg.elements.sort)) },
-            join     => -> $a, $sep { Val::Str.new(:value($a.elements.join($sep.value.Str))) },
-            split    => -> $s, $sep { Val::Array.new(:elements($s.value.split($sep.value))) },
-            index    => -> $s, $substr { Val::Int.new(:value($s.value.index($substr.value) // -1)) },
-            substr   => sub ($s, $pos, $chars?) { Val::Str.new(:value($s.value.substr($pos.value, $chars.defined ?? $chars.value !! $s.value.chars))) },
-            charat   => -> $s, $pos { Val::Str.new(:value($s.value.comb[$pos.value] // die X::Subscript::TooLarge.new)) },
-            grep     => -> $fn, $a {
-                my $array = Val::Array.new;
-                for $a.elements {
-                    $array.elements.push($_) if truthy(self.call($fn, [$_]));
-                }
-                $array;
-            },
-            map      => -> $fn, $a {
-                my $array = Val::Array.new;
-                for $a.elements {
-                    $array.elements.push(self.call($fn, [$_]));
-                }
-                $array;
-            },
-            'Q::Postfix::Call' => -> $expr, $arguments { Q::Postfix::Call.new($expr, $arguments) },
-            'Q::Literal::Str' => -> $str { Q::Literal::Str.new($str.value) },
-            'Q::Identifier' => -> $name { Q::Identifier.new($name.value) },
-            'Q::Arguments' => -> $arguments { Q::Arguments.new($arguments.elements) },
-            'infix:<+>' => -> $l, $r { #`[not implemented here] },
-            'prefix:<->' => -> $l, $r { #`[not implemented here] },
-        ;
-
-        for %builtins.kv -> $name, $sub {
-            self.declare-var($name);
-            self.put-var($name, Val::Sub::Builtin.new($sub));
+        my $builtins = _007::Runtime::Builtins.new(:runtime(self));
+        for $builtins.get-subs.kv -> $name, $subval {
+            self.declare-var($name, $subval);
         }
     }
 
     method sigbind($type, $c, @args) {
-        die "$type with {$c.parameters.parameters.elems} parameters "       # XXX: make this into an X::
-            ~ "called with {@args.elems} arguments"
-            unless $c.parameters.parameters == @args;
+        my $paramcount = $c.parameterlist.elems;
+        my $argcount = @args.elems;
+        die X::ParameterMismatch.new(:$type, :$paramcount, :$argcount)
+            unless $paramcount == $argcount;
         self.enter($c);
-        for $c.parameters.parameters Z @args -> ($param, $arg) {
+        for @($c.parameterlist) Z @args -> ($param, $arg) {
             my $name = $param.name;
-            self.declare-var($name);
-            self.put-var($name, $arg);
+            self.declare-var($name, $arg);
         }
     }
 
     multi method call(Val::Block $c, @args) {
         self.sigbind("Block", $c, @args);
-        $c.statements.run(self);
+        $c.statementlist.run(self);
         self.leave;
         return Val::None.new;
     }
@@ -178,7 +141,7 @@ role Runtime {
         self.sigbind("Sub", $c, @args);
         self.register-subhandler;
         my $frame = self.current-frame;
-        $c.statements.run(self);
+        $c.statementlist.run(self);
         self.leave;
         CATCH {
             when X::Control::Return {
@@ -196,5 +159,10 @@ role Runtime {
         my $result = $c.code.(|@args);
         return $result if $result;
         return Val::None.new;
+    }
+
+    method property($obj, $propname) {
+        my $builtins = _007::Runtime::Builtins.new(:runtime(self));
+        return $builtins.property($obj, $propname);
     }
 }
