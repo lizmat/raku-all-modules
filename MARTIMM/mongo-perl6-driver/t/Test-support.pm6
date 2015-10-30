@@ -1,4 +1,5 @@
 use v6;
+use MongoDB;
 use MongoDB::Connection;
 use Test;
 
@@ -8,7 +9,14 @@ package Test-support
   # Get selected port number. When file is not there the process fails.
   #
   sub get-port-number ( --> Int ) is export {
-    if 'Sandbox/port-number'.IO !~~ :e {
+    # Skip sandbox setup if testing on TRAVIS-CI or no sandboxing is requested,
+    # just return default port.
+    #
+    if %*ENV<NOSANDBOX> {
+      return 27017;
+    }
+
+    elsif 'Sandbox/port-number'.IO !~~ :e {
       plan 1;
       flunk('No port number found, Sandbox cleaned up?');
       skip-rest('No port number found, Sandbox cleaned up?');
@@ -16,7 +24,6 @@ package Test-support
     }
 
     my $port-number = slurp('Sandbox/port-number').Int;
-    diag "MongoDB server ready on port $port-number";
     return $port-number
   }
 
@@ -24,18 +31,37 @@ package Test-support
   # Get a connection and test version. When version is wrong the process fails.
   #
   sub get-connection ( --> MongoDB::Connection ) is export {
+
+    if 'Sandbox/NO-MONGODB-SEFVER'.IO ~~ :e {
+      plan 1;
+      flunk('No database server started!');
+      skip-rest('No database server started!');
+      exit(0);
+    }
+
     my Int $port-number = get-port-number();
     my MongoDB::Connection $connection .= new(
       :host('localhost'),
       :port($port-number)
-      );
+    );
 
-    my $version = $connection.version;
-    diag "MongoDB version: $version<release1>.$version<release2>.$version<revision>";
-    if $version<release1> < 3 {
+    my $version = $MongoDB::version;
+    if ? $version {
+      diag "MongoDB server ready on port $port-number";
+      diag "MongoDB version: $version<release1>.$version<release2>.$version<revision>";
+      if $version<release1> < 3 {
+        plan 1;
+        flunk('Mongod version not ok to use this set of modules?');
+        skip-rest('Mongod version not ok to use this set of modules?');
+        exit(0);
+      }
+    }
+
+    else {
+      diag "No version found === no mongod server found";
       plan 1;
-      flunk('Version not ok to use this set of modules?');
-      skip-rest('Version not ok to use this set of modules?');
+      flunk('No mongod server found?');
+      skip-rest('No mongod server found?');
       exit(0);
     }
 
@@ -49,20 +75,17 @@ package Test-support
     my Int $port-number = get-port-number();
     my MongoDB::Connection $connection;
     for ^10 {
-      $connection .= new( :host('localhost'), :port($port-number));
-      isa-ok( $connection, 'MongoDB::Connection');
-      last;
-
-      CATCH {
-        default {
-          diag [~] "Error: ", .message, ". Wait a bit longer";
-          sleep 2;
-        }
+      $connection .= new( :host<localhost>, :port($port-number));
+      if ? $connection.status {
+        diag [~] "Error: ",
+                 $connection.status.error-text,
+                 ". Wait a bit longer";
+        sleep 2;
       }
     }
 
-    my $version = $connection.version;
-    diag "MongoDB version: $version<release1>.$version<release2>.$version<revision>";
+    my $version = $MongoDB::version;
+    diag "MongoDB version: " ~ $version<release1 release2 revision>.join('.');
     if $version<release1> < 3 {
       plan 1;
       flunk('Version not ok to use this set of modules?');
@@ -80,12 +103,12 @@ package Test-support
                             Str $col-name
                             --> MongoDB::Collection
                           ) is export {
-                          
+
     my MongoDB::Connection $connection = get-connection();
     my MongoDB::Database $database = $connection.database($db-name);
     return $database.collection($col-name);
   }
-  
+
   #-----------------------------------------------------------------------------
   # Search and show content of documents
   #
@@ -100,12 +123,12 @@ package Test-support
       show-document(%document);
     }
   }
-  
+
   #-----------------------------------------------------------------------------
   # Display a document
   #
   sub show-document ( Hash $document ) is export {
-  
+
     print "Document: ";
     my $indent = '';
     for $document.keys -> $k {

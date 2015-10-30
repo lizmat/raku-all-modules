@@ -1,10 +1,10 @@
 #`{{
   Testing;
     database.collection()               Create collection
-    database.create_collection()        Create collection explicitly
+    database.create-collection()        Create collection explicitly
     collection.drop()                   Drop collection
 
-    X::MongoDB::Collection              Catch exceptions
+    X::MongoDB                          Catch exceptions
 }}
 
 BEGIN { @*INC.unshift( './t' ) }
@@ -21,8 +21,36 @@ my MongoDB::Database $database = $connection.database('test');
 #
 my MongoDB::Collection $collection = $database.collection('cl1');
 isa-ok( $collection, 'MongoDB::Collection');
-$collection.insert( $%( 'name' => 'Jan Klaassen'));
 
+#-------------------------------------------------------------------------------
+subtest {
+  $collection.insert( $%( name => 'Jan Klaassen'));
+  $collection.insert( { name => 'Piet B'},{ name => 'Me T'});
+  $collection.insert( %( :name('Di D')));
+
+  my MongoDB::Cursor $cursor = $collection.find({name => 'Me T'});
+  is $cursor.count, 1, '1 record of "Me T"';
+
+  $cursor = $collection.find({name => 'Di D'});
+  is $cursor.count, 1, '1 record of "Di D"';
+
+  $cursor = $collection.find({name => 'Jan Klaassen'});
+  is $cursor.count, 1, '1 record of "Jan Klaassen"';
+
+  my %r1 = :name('n1'), :test(0);
+  my Hash $r2 = {:name('n2'), :test(0)};
+  my @r3 = ( %(:name('n3'), :test(0)), %(:name('n4'), :test(0)));
+  my Array $r4 = [ %(:name('n5'), :test(0)), %(:name('n6'), :test(0))];
+  $collection.insert( %r1, $r2, |@r3, |$r4);
+
+  $cursor = $collection.find({:test(0)});
+  is $cursor.count, 6, '6 records of Test(0)';
+
+#show-documents( $collection, {:test(0)}, {:_id(0)});
+
+}, "Several inserts";
+
+#-------------------------------------------------------------------------------
 # Drop current collection twice
 #
 my $doc = $collection.drop;
@@ -30,10 +58,10 @@ ok $doc<ok>.Bool == True, 'Dropping cl1 ok';
 is $doc<ns>, 'test.cl1', 'Dropped collection';
 is $doc<nIndexesWas>, 1, 'Number of dropped indexes';
 
-if 1 {
+try {
   $doc = $collection.drop;
   CATCH {
-    when X::MongoDB::Collection {
+    when X::MongoDB {
       ok $_.message ~~ m/ns \s+ not \s* found/, 'Collection cl1 not found';
     }
   }
@@ -42,10 +70,10 @@ if 1 {
 #-------------------------------------------------------------------------------
 # Create using illegal collection name
 #
-if 1 {
-  $database.create_collection('abc-def and a space');
+try {
+  $database.create-collection('abc-def and a space');
   CATCH {
-    when X::MongoDB::Database {
+    when X::MongoDB {
       ok $_.message ~~ m/Illegal \s* collection \s* name/, 'Illegal collection name';
     }
   }
@@ -55,7 +83,7 @@ if 1 {
 # Drop collection and create one explicitly with some parameters
 #
 #$collection.drop;
-$database.create_collection( 'cl1', :capped, :size(1000));
+$database.create-collection( 'cl1', :capped, :size(1000));
 
 # Fill collection with 100 records. Should be too much.
 #
@@ -73,7 +101,7 @@ isnt $cursor.count, 100, 'Less than 100 records in collection';
 # Drop collection and create one explicitly with other parameters
 #
 $collection.drop;
-$database.create_collection( 'cl1', :capped, :size(1000), :max(10));
+$database.create-collection( 'cl1', :capped, :size(1000), :max(10));
 
 # Fill collection with 100 records. Should be too much.
 #

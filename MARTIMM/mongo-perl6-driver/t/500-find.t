@@ -105,7 +105,7 @@ subtest {
 
   # Now set an index on the field and the scan goes only through one document
   #
-  $collection.ensure_index(%(test_record => 1));
+  $collection.ensure-index(%(test_record => 1));
   $doc = $collection.explain({test_record => 'tr38'});
 #  ok $doc<cursor> ~~ m/BtreeCursor/, 'Different cursor type';
   $s = $doc<executionStats>;
@@ -142,7 +142,7 @@ subtest {
 #-------------------------------------------------------------------------------
 subtest {
   $cursor.kill;
-  my $error-doc = $collection.database.get_last_error;
+  my $error-doc = $collection.database.get-last-error;
   ok $error-doc<ok>.Bool, 'No error after kill cursor';
 
   # Is this ok (No fifty because of test with explain on cursor????
@@ -153,37 +153,37 @@ subtest {
 #-------------------------------------------------------------------------------
 subtest {
   my Hash $d2;
-  if 1 {
+  try {
     $d2 = { '$abc' => 'pqr'};
     $collection.insert($d2);
     CATCH {
-      when X::MongoDB::Collection {
+      when X::MongoDB {
         ok $_.message ~~ m:s/is not properly defined/, "Key '\$abc' not properly defined";
       }
     }
   }
 
-  if 1 {
+  try {
     $d2 = { 'abc.def' => 'pqr'};
     $collection.insert($d2);
     CATCH {
-      when X::MongoDB::Collection {
+      when X::MongoDB {
         ok .message ~~ m:s/is not properly defined/, "Key 'abc.def' not properly defined";
       }
     }
   }
 
-  if 1 {
+  try {
     $d2 = { x => {'abc.def' => 'pqr'}};
     $collection.insert($d2);
     CATCH {
-      when X::MongoDB::Collection {
+      when X::MongoDB {
         ok .message ~~ m:s/is not properly defined/, "Key 'abc.def' not properly defined";
       }
     }
   }
 
-  if 1 {
+  try {
     $d2 = { _id => BSON::ObjectId.encode('123456789012123456789012'),
             x => 'y',
             a => 'c'
@@ -194,7 +194,7 @@ subtest {
           };
     $collection.insert($d2);
     CATCH {
-      when X::MongoDB::Collection {
+      when X::MongoDB {
         ok .message ~~ m:s/not unique/, .error-text;
       }
     }

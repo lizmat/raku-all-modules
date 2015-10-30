@@ -4,22 +4,6 @@ use MongoDB::Collection;
 #-------------------------------------------------------------------------------
 #
 package MongoDB {
-  class X::MongoDB::Database is Exception {
-    has $.error-text;                     # Error text
-    has $.error-code;                     # Error code if from server
-    has $.oper-name;                      # Operation name
-    has $.oper-data;                      # Operation data
-    has $.database-name;                  # Database name
-
-    method message () {
-      return [~] "\n$!oper-name\() error:\n",
-                 "  $!error-text",
-                 $.error-code.defined ?? "\($!error-code)" !! '',
-                 $!oper-data.defined ?? "\n  Data $!oper-data" !! '',
-                 "\n  Database '$!database-name'\n"
-                 ;
-    }
-  }
 
   #-----------------------------------------------------------------------------
   #
@@ -46,14 +30,14 @@ package MongoDB {
     #
     method drop ( --> Hash ) {
       my Pair @req = dropDatabase => 1;
-      my $doc =  self.run_command(@req);
+      my $doc =  self.run-command(@req);
 
       if $doc<ok>.Bool == False {
-        die X::MongoDB::Database.new(
+        die X::MongoDB.new(
           error-text => $doc<errmsg>,
           oper-name => 'drop',
           oper-data => @req.perl,
-          database-name => $!name
+          collection-ns => $!name
         );
       }
 
@@ -64,13 +48,13 @@ package MongoDB {
     # Select a collection. When it is new it comes into existence only
     # after inserting data
     #
-    method collection ( Str $name --> MongoDB::Collection ) {
+    method collection ( Str:D $name --> MongoDB::Collection ) {
 
       if !($name ~~ m/^ <[_ A..Z a..z]> <[.\w _]>+ $/) {
-        die X::MongoDB::Database.new(
+        die X::MongoDB.new(
             error-text => "Illegal collection name: '$name'",
             oper-name => 'collection()',
-            database-name => $!name
+            collection-ns => $!name
         );
       }
 
@@ -80,53 +64,66 @@ package MongoDB {
     #---------------------------------------------------------------------------
     # Create collection explicitly with control parameters
     #
-    method create_collection ( Str $collection_name, Bool :$capped,
+    method create_collection ( Str:D $collection-name, Bool :$capped,
+                               Bool :$autoIndexId, Int :$size,
+                               Int :$max, Int :$flags
+                               --> MongoDB::Collection
+                             ) is DEPRECATED('create-collection') {
+      my $c = self.create-collection(
+        $collection-name, :$capped, :$autoIndexId, :$size, :$max, :$flags
+      );
+      return $c;
+    }
+
+    method create-collection ( Str:D $collection-name, Bool :$capped,
                                Bool :$autoIndexId, Int :$size,
                                Int :$max, Int :$flags
                                --> MongoDB::Collection
                              ) {
 
-      if !($collection_name ~~ m/^ <[_ A..Z a..z]> <[.\w _]>+ $/) {
-        die X::MongoDB::Database.new(
-            error-text => "Illegal collection name: '$collection_name'",
-            oper-name => 'create_collection()',
-            database-name => $!name
+      if !($collection-name ~~ m/^ <[_ A..Z a..z]> <[.\w _]>+ $/) {
+        die X::MongoDB.new(
+            error-text => "Illegal collection name: '$collection-name'",
+            oper-name => 'create-collection()',
+            collection-ns => $!name
         );
       }
 
       # Setup the collection create command
       #
-      my Pair @req = create => $collection_name;
+      my Pair @req = create => $collection-name;
       @req.push: (:$capped) if $capped;
       @req.push: (:$autoIndexId) if $autoIndexId;
       @req.push: (:$size) if $size;
       @req.push: (:$max) if $max;
       @req.push: (:$flags) if $flags;
 
-      my Hash $doc = self.run_command(@req);
+      my Hash $doc = self.run-command(@req);
       if $doc<ok>.Bool == False {
-        die X::MongoDB::Database.new(
+        die X::MongoDB.new(
             error-text => $doc<errmsg>,
-            oper-name => 'create_collection',
+            oper-name => 'create-collection',
             oper-data => @req.perl,
-            database-name => $!name
+            collection-ns => $!name
         );
       }
 
-      return MongoDB::Collection.new: :database(self), :name($collection_name);
+      return MongoDB::Collection.new: :database(self), :name($collection-name);
     }
 
     #---------------------------------------------------------------------------
     # Return all information from system namespaces
     #
-    method list_collections ( --> Array ) {
+    method list_collections ( --> Array ) is DEPRECATED('list-collections') {
+      return self.list-collections;
+    }
+
+    method list-collections ( --> Array ) {
 
       my @docs;
       my $system-indexes = self.collection('system.namespaces');
       my $cursor = $system-indexes.find;
-      while $cursor.next -> $doc {
-        @docs.push($doc);
-      }
+      while $cursor.next -> $doc { @docs.push($doc); }
 
       return @docs;
     }
@@ -134,8 +131,11 @@ package MongoDB {
     #---------------------------------------------------------------------------
     # Return only the user collection names in the database
     #
-    method collection_names ( --> Array ) {
+    method collection_names ( --> Array ) is DEPRECATED('collection-names'){
+      return self.collection-names;
+    }
 
+    method collection-names ( --> Array ) {
       my @docs;
       my $system-indexes = self.collection('system.namespaces');
       my $cursor = $system-indexes.find;
@@ -158,7 +158,11 @@ package MongoDB {
     # %("ok" => 0e0, "errmsg" => <Some error string>)
     # %("ok" => 1e0, ...);
     #
-    multi method run_command ( Pair @command --> Hash ) {
+    method run_command ( Pair:D @command --> Hash ) is DEPRECATED('run-command') {
+      return self.run-command(@command);
+    }
+
+    method run-command ( Pair:D @command --> Hash ) {
 
       # Create a local collection structure here
       #
@@ -169,7 +173,7 @@ package MongoDB {
 
       # Use it to do a find on it, get the doc and return it.
       #
-      my MongoDB::Cursor $cursor = $c.find( @command, :number_to_return(1));
+      my MongoDB::Cursor $cursor = $c.find( @command, :number-to-return(1));
       my $doc = $cursor.fetch();
       return $doc.defined ?? $doc !! %();
     }
@@ -182,19 +186,27 @@ package MongoDB {
     method get_last_error ( Bool :$j = True, Int :$w = 0,
                             Int :$wtimeout = 1000, Bool :$fsync = False
                             --> Hash
-                          ) {
+                          ) is DEPRECATED('get-last-error') {
+      my $h = self.get-last-error( :$j, :$w, :$wtimeout, :$fsync);
+      return $h;
+    }
+
+    method get-last-error (
+      Bool :$j = True, Int :$w = 0, Int :$wtimeout = 1000, Bool :$fsync = False
+      --> Hash
+    ) {
 
       my Pair @req = getLastError => 1;
-      @req.push: ( :$j, :$fsync);
-      @req.push: ( :$w, :$wtimeout) if $w and $wtimeout;
+      @req.push: |( :$j, :$fsync);
+      @req.push: |( :$w, :$wtimeout) if $w and $wtimeout;
 
-      my Hash $doc = self.run_command(@req);
+      my Hash $doc = self.run-command(@req);
       if $doc<ok>.Bool == False {
-        die X::MongoDB::Database.new(
+        die X::MongoDB.new(
           error-text => $doc<errmsg>,
-          oper-name => 'get_last_error',
+          oper-name => 'get-last-error',
           oper-data => @req.perl,
-          database-name => $!name
+          collection-ns => $!name
         );
       }
 
@@ -204,17 +216,20 @@ package MongoDB {
     #---------------------------------------------------------------------------
     # Get errors since last reset error command
     #
-    method get_prev_error ( --> Hash ) {
+    method get_prev_error ( --> Hash ) is DEPRECATED('get-prev-error') {
+      return self.get-prev-error;
+    }
 
+    method get-prev-error ( --> Hash ) {
       my Pair @req = getPrevError => 1;
-      my Hash $doc =  self.run_command(@req);
+      my Hash $doc =  self.run-command(@req);
 
       if $doc<ok>.Bool == False {
-        die X::MongoDB::Database.new(
+        die X::MongoDB.new(
           error-text => $doc<errmsg>,
-          oper-name => 'get_prev_error',
+          oper-name => 'get-prev-error',
           oper-data => @req.perl,
-          database-name => $!name
+          collection-ns => $!name
         );
       }
 
@@ -224,17 +239,21 @@ package MongoDB {
     #---------------------------------------------------------------------------
     # Reset error command
     #
-    method reset_error ( --> Hash ) {
+    method reset_error ( --> Hash ) is DEPRECATED('reset-error') {
+      return self.reset-error;
+    }
+
+    method reset-error ( --> Hash ) {
 
       my Pair @req = resetError => 1;
-      my Hash $doc = self.run_command(@req);
+      my Hash $doc = self.run-command(@req);
 
       if $doc<ok>.Bool == False {
-        die X::MongoDB::Database.new(
+        die X::MongoDB.new(
           error-text => $doc<errmsg>,
-          oper-name => 'reset_error',
+          oper-name => 'reset-error',
           oper-data => @req.perl,
-          database-name => $!name
+          collection-ns => $!name
         );
       }
 

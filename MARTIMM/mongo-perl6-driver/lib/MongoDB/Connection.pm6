@@ -4,46 +4,51 @@ use v6;
 #  @*INC.unshift('/home/marcel/Languages/Perl6/Projects/BSON/lib');
 #}
 
+use MongoDB;
 use MongoDB::Database;
 use BSON::EDCTools;
 
 package MongoDB {
-  #-----------------------------------------------------------------------------
-  #
-  class X::MongoDB::Connection is Exception {
-    has $.error-text;                     # Error text
-    has $.error-code;                     # Error code if from server
-    has $.oper-name;                      # Operation name
-    has $.oper-data;                      # Operation data
-    has $.database-name;                  # Database name
-
-    method message () {
-      return [~] "\n$!oper-name\() error:\n",
-                 "  $!error-text",
-                 $.error-code.defined ?? "\($!error-code)" !! '',
-                 $!oper-data.defined ?? "\n  Data $!oper-data" !! '',
-                 "\n  Database '$!database-name'\n"
-                 ;
-    }
-  }
 
   #-----------------------------------------------------------------------------
   #
   class MongoDB::Connection {
 
     has IO::Socket::INET $!sock;
+    has Exception $.status = Nil;
 
     #---------------------------------------------------------------------------
     #
     submethod BUILD ( Str :$host = 'localhost', Int :$port = 27017 ) {
-      $!sock = IO::Socket::INET.new( host => $host, port => $port );
-    #  $!sock = IO::Socket::INET.new( host => "$host/?connectTimeoutMS=3000",
-    # port => $port );
+
+      # Try block used because IO::Socket::INET throws an exception when things
+      # go wrong. This is not nessesary because there is no risc of data loss
+      #
+      try {
+        if ? $!sock {
+          $!sock.close;
+          $!sock = IO::Socket::INET;
+        }
+
+        $!status = Nil;
+        $!sock .= new( :$host, :$port);
+        CATCH {
+          default {
+            $!status = X::MongoDB.new(
+              :error-text("Failed to connect to $host at port $port"),
+              :oper-name<new>
+              :severity(MongoDB::Severity::Error)
+            );
+          }
+        }
+      }
+
+      $MongoDB::version = self.version unless ? $!status;
     }
 
     #---------------------------------------------------------------------------
     #
-    method _send ( Buf $b, Bool $has_response --> Any ) {
+    method _send ( Buf:D $b, Bool $has_response --> Any ) {
       $!sock.write($b);
 
       # some calls do not expect response
@@ -63,7 +68,7 @@ package MongoDB {
 
     #---------------------------------------------------------------------------
     #
-    method database ( Str $name --> MongoDB::Database ) {
+    method database ( Str:D $name --> MongoDB::Database ) {
       return MongoDB::Database.new(
         :connection(self),
         :name($name)
@@ -73,17 +78,25 @@ package MongoDB {
     #---------------------------------------------------------------------------
     # List databases using MongoDB db.runCommand({listDatabases: 1});
     #
-    method list_databases ( --> Array ) {
+    method list_databases ( --> Array ) is DEPRECATED('list-databases') {
+      return self.list-databases();
+    }
+
+    method list-databases ( --> Array ) {
+
+      $!status = Nil;
+
       my $database = self.database('admin');
       my Pair @req = listDatabases => 1;
-      my Hash $doc = $database.run_command(@req);
-
+      my Hash $doc = $database.run-command(@req);
       if $doc<ok>.Bool == False {
-        die X::MongoDB::Connection.new(
+        $!status = X::MongoDB.new(
           error-text => $doc<errmsg>,
-          oper-name => 'list_databases',
+          error-code => $doc<code>,
+          oper-name => 'listDatabases',
           oper-data => @req.perl,
-          database-name => 'admin.$cmd'
+          collection-ns => 'admin.$cmd',
+          severity => MongoDB::Severity::Error
         );
       }
 
@@ -93,18 +106,24 @@ package MongoDB {
     #---------------------------------------------------------------------------
     # Get database names.
     #
-    method database_names ( --> Array ) {
-      my @db_docs = self.list_databases();
+    method database_names ( --> Array ) is DEPRECATED('database-names') {
+      return self.database-names();
+    }
+
+    method database-names ( --> Array ) {
+      my @db_docs = self.list-databases();
       my @names = map {$_<name>}, @db_docs; # Need to do it like this otherwise
                                             # returns List instead of Array.
       return @names;
     }
 
     #---------------------------------------------------------------------------
-    # Get mongodb version.
+    # Get mongodb version. When making a new connection the version is store
+    # at $MongoDB::version for later lookups by other code whithout the need
+    # of quering the server all the time. See BUILD above.
     #
     method version ( --> Hash ) {
-      my Hash $doc = self.build_info;
+      my Hash $doc = self.build-info;
       my Hash $version = hash( <release1 release2 revision>
                                Z=> (for $doc<version>.split('.') {Int($_)})
                              );
@@ -118,17 +137,25 @@ package MongoDB {
     #---------------------------------------------------------------------------
     # Get mongodb server info.
     #
-    method build_info ( --> Hash ) {
+    method build_info ( --> Hash ) is DEPRECATED('build-info') {
+      return self.build-info();
+    }
+
+    method build-info ( --> Hash ) {
+
+      $!status = Nil;
+
       my $database = self.database('admin');
       my Pair @req = buildinfo => 1;
-      my Hash $doc = $database.run_command(@req);
-
+      my Hash $doc = $database.run-command(@req);
       if $doc<ok>.Bool == False {
-        die X::MongoDB::Connection.new(
+        $!status = X::MongoDB.new(
           error-text => $doc<errmsg>,
-          oper-name => 'build_info',
+          error-code => $doc<code>,
+          oper-name => 'build-info',
           oper-data => @req.perl,
-          collection-name => 'admin.$cmd'
+          collection-ns => 'admin.$cmd',
+          severity => MongoDB::Severity::Error
         );
       }
 

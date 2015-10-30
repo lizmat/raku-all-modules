@@ -1,6 +1,29 @@
 # MongoDB Driver
 
-![Leaf](http://modules.perl6.org/logos/MongoDB.png)
+![Leaf](http://modules.perl6.org/logos/MongoDB.png) [![Build Status](https://travis-ci.org/MARTIMM/mongo-perl6-driver.svg?branch=master)](https://travis-ci.org/MARTIMM/mongo-perl6-driver)
+
+# IMPORTANT NOTICE
+As of version 0.25.1 a sandbox is setup to run a separate mongod server. Since
+version 0.25.3 it tests the environment variable or NOSANDBOX to turn off
+sand-boxing. This can be used to speedup testing. The default port number of
+27017 is used to get to the mongod server.
+
+*IT IS IMPORTANT TO KNOW THAT ANYTHING MAY HAPPEN DURING TESTS INCLUDING
+ACCIDENTAL DELETION OF ANY DATABASES AND COLLECTIONS ON YOUR SERVER! ALSO
+TESTING ADMINISTRATION TASKS MAY CREATE PROBLEMS FOR EXISTING ACCOUNTS! THIS
+WILL BE TOTALLY AT YOUR OWN RISK.*
+
+Also when sandboxing is turned on, the testing programs are free to test
+administration tasks, authentication and multi server setup.
+
+See also the license link below
+
+## API CHANGES
+
+There has been a lot of changes in the API. All methods which had underscores ('_')
+are converted to dashed ones ('-'). The old ones will show deprecation info.
+However, it is importend to know that also named parameters are changed in the
+same way but these cannot be warned for.
 
 ## DOCUMENTATION
 
@@ -56,9 +79,9 @@ $ panda install MongoDB
 ```
 
 ## Versions of PERL, MOARVM and MongoDB
-
-* Perl6 version ```2015.09-162-gdd6c855```
-* MoarVM version ```2015.09-39-g1434283```
+perl6 version 2015.10-70-gba70274 built on MoarVM version 2015.10-14-g5ff3001
+* Perl6 version ```2015.10-70-gba70274```
+* MoarVM version ```2015.10-14-g5ff3001```
 * MongoDB version ```3.0.5```
 
 Maybe we also need to test other versions of mongodb such as 2.6.* and provide
@@ -70,7 +93,7 @@ and act on it but it is not on all methods nessesary.
 
 There are lists on the MongoDB site see references above. Items from the list
 below will be worked on. There are many items shown here, it might be impossible
-to implement it all. By using run_command(), much can be accomplished. A lot of the
+to implement it all. By using run-command(), much can be accomplished. A lot of the
 items are using that call to get the information for you. Also quite a few items
 are shown in in more than one place place. Removed all internal commands.
 
@@ -129,29 +152,29 @@ Legend;
 
 * [C] Set database is done with database(). Database is created implicitly after
       inserting data into a collection.
-* [D] list_databases(). Returns database statistics.
-* [D] database_names(). Returns a list of database names.
-* [D] run_command(), Many helper methods are using this command.
-* [D] get_last_error(). Get error status from last operation
-* [D] get_prev_error().
-* [D] reset_error().
+* [D] list-databases(). Returns database statistics.
+* [D] database-names(). Returns a list of database names.
+* [D] run-command(), Many helper methods are using this command.
+* [D] get-last-error(). Get error status from last operation
+* [D] get-prev-error().
+* [D] reset-error().
 
 ### Collection Methods
 
 * [D] collection(). Set collection. Collection is created implicitly after
       inserting data into a collection.
-* [D] create_collection(). Create collection explicitly and sets collection parameters.
-* [D] list_collections().
-* [D] collection_names().
+* [D] create-collection(). Create collection explicitly and sets collection parameters.
+* [D] list-collections().
+* [D] collection-names().
 
 ### Data serialization
 
 * [x] Convert all strings to UTF-8. This is inherent to perl6. Everything is
       UTF8 and conversion to buffers is done using encode and decode.
 * [x] Automatic _id generation. See BSON module.
-* [ ] BSON serialization/deserialization. See BSON module and [Site](http://bsonspec.org/).
-      Parts are finished but not all variable types are supported. See BSON
-      documentation of what is supported.
+* [x] BSON serialization/deserialization. See [BSON module](https://github.com/MARTIMM/BSON) and
+      [Site](http://bsonspec.org/). Parts are finished but not all variable
+      types are supported. See BSON documentation of what is supported.
 * [ ] Support detecting max BSON size on connection (e.g., using buildInfo or
       isMaster commands) and allowing users to insert docs up to that size.
 * [ ] File chunking (/applications/gridfs)
@@ -171,16 +194,16 @@ Legend;
 
 ### User Management Commands
 
-* [DU] create_user. Creates a new user.
-* [DU] drop_all_users_from_database. Deletes all users associated with a
+* [DU] create-user. Creates a new user.
+* [DU] drop-all-users-from-database. Deletes all users associated with a
        database.
-* [DU] drop_user. Removes a single user.
-* [DU] grant_roles_to_user. Grants a role and its privileges to a user.
-* [DU] revoke_roles_from_user. Removes a role from a user.
-* [DU] update_user. Updates a user's data.
-* [DU] users_info. Returns information about the specified users.
-* [DU] set_pw_security, Specify restrictions on username and password.
-* [DU] get_users, Get info about all users
+* [DU] drop-user. Removes a single user.
+* [DU] grant-roles-to-user. Grants a role and its privileges to a user.
+* [DU] revoke-roles-from-user. Removes a role from a user.
+* [DU] update-user. Updates a user's data.
+* [DU] users-info. Returns information about the specified users.
+* [DU] set-pw-security, Specify restrictions on username and password.
+* [DU] get-users, Get info about all users
 
 
 
@@ -258,11 +281,11 @@ Legend;
       instance. Deprecated since version MongoDB 3.0.
 * [O] count(). Wraps count to return a count of the number of documents in a
       collection or matching a query.
-* [-] create_index(). Builds an index on a collection. Use ensure_index().
+* [-] create-index(). Builds an index on a collection. Use ensure-index().
       Deprecated since 1.8 according to [message](http://stackoverflow.com/questions/25968592/difference-between-createindex-and-ensureindex-in-java-using-mongodb)
-* [-] create_indexes(), see ensure_index(). Builds one or more indexes for a
+* [-] create-indexes(), see ensure-index(). Builds one or more indexes for a
       collection.
-* [O] data_size(). Returns the size of the collection. Wraps the size field in
+* [O] data-size(). Returns the size of the collection. Wraps the size field in
       the output of the collStats.
 * [O] explain(). Done also in collection! Reports on the query execution plan,
       including index use, for a cursor.
@@ -270,19 +293,19 @@ Legend;
       the specified field. Displays the distinct values found for a specified
       key in a collection.
 * [O] drop(). Removes the specified collection from the database.
-* [O] drop_index(). Removes a specified index on a collection.
-* [O] drop_indexes(). Removes all indexes on a collection.
-* [O] ensure_index(). Creates an index if it does not currently exist. If the
-      index exists ensure_index() does nothing. Ensure_index commands should be
+* [O] drop-index(). Removes a specified index on a collection.
+* [O] drop-indexes(). Removes all indexes on a collection.
+* [O] ensure-index(). Creates an index if it does not currently exist. If the
+      index exists ensure-index() does nothing. Ensure-index commands should be
       cached to prevent excessive communication with the database. Or, the
       driver user should be informed that ensureIndex is not a lightweight
       operation for the particular driver.
 * [O] find(). Performs a query on a collection and returns a cursor object.
     * [x] %criteria (Search criteria)
     * [x] %projection (Field selection)
-    * [x] Int :$number_to_skip = 0
-    * [x] Int :$number_to_return = 0
-    * [x] Bool :$no_cursor_timeout = False
+    * [x] Int :$number-to-skip = 0
+    * [x] Int :$number-to-return = 0
+    * [x] Bool :$no-cursor-timeout = False
   * Testing find(). Not all is tested because e.g. $eq is not yet supported in
     my version of Mongod.
     * [x] exact matching, implicit AND.
@@ -295,15 +318,15 @@ Legend;
     * [ ] embedded docs, $elemMatch
     * [ ] null
 
-* [O] find_and_modify(). Atomically modifies and returns a single document.
-* [O] find_one(). Performs a query and returns a single document.
+* [O] find-and-modify(). Atomically modifies and returns a single document.
+* [O] find-one(). Performs a query and returns a single document.
     * [x] %criteria (Search criteria)
     * [x] %projection (Field selection)
 * [-] getIndexStats(). Renders a human-readable view of the data collected by
       indexStats which reflects B-tree utilization. The function/command can be
       run only on a mongod instance that uses the
       --enableExperimentalIndexStatsCmd option.
-* [O] get_indexes(). Returns an array of documents that describe the existing
+* [O] get-indexes(). Returns an array of documents that describe the existing
       indexes on a collection.
 * [ ] getShardDistribution(). For collections in sharded clusters, db.collection.getShardDistribution() reports data of chunk distribution.
 * [O] group(). Provides simple data aggregation function. Groups documents in a
@@ -314,7 +337,7 @@ Legend;
       indexStats which reflects B-tree utilization. See getIndexStats().
 * [O] insert(). Creates a new document in a collection.
 * [ ] isCapped(). Reports if a collection is a capped collection.
-* [O] map_reduce(). Performs map-reduce style data aggregation for large data
+* [O] map-reduce(). Performs map-reduce style data aggregation for large data
       sets.
 * [ ] reIndex(). Rebuilds all existing indexes on a collection.
 * [O] remove(). Deletes documents from a collection.
@@ -369,15 +392,44 @@ are also items to be implemented in BSON. You need to look there for info
 * Following [priority recomendations](http://docs.mongodb.org/meta-driver/latest/legacy/mongodb-driver-requirements/) from the mongodb site about writing drivers.
 * Speed, protocol correctness and clear code are priorities for now.
   * Speed can be influenced by specifying types on all variables
+  * Also setting constraints like (un)definedness etc on parameters
   * Furthermore the speedup of the language perl6 itself would have more impact
-    than the programming of a one month student(me) can accomplish ;-)
-* Change die() statements to throw exception objects to notify caller.
+    than the programming of a several month student(me) can accomplish ;-).
+    As of september 2015 a great improvement is made.
+  * The compile step of perl6 takes some time before running. This obviously
+    depends on the code base of the programs. One thing I can do is remove all
+    exception classes from the modules and replace them by only one class
+    defined in MongoDB.pm.
+
+    Below is the output of a small benchmark test taken at 20th of October 2015.
+    With an extra perl6 option one can see what time is used at each stage.
+    The program loads the Bench and MongoDB::Connection. The last one triggers
+    the loading of several other MongoDB modules. This takes much processing
+    time.
+```
+    > perl6 --stagestats Tests/bench-connect.pl6
+    Stage start      :   0.000
+    Stage parse      :   8.462
+    Stage syntaxcheck:   0.000
+    Stage ast        :   0.000
+    Stage optimize   :   0.003
+    Stage mast       :   0.010
+    Stage mbc        :   0.000
+    Stage moar       :   0.000
+    INIT Time: 8
+    RUN 1 Time: 8
+    RUN 2 Time: 8
+    Benchmark: 
+    Timing 50 iterations of connect...
+       connect: 1.0916 wallclock secs @ 45.8058/s (n=50)
+    RUN 3 Time: 9
+    END Time: 9
+```
 * Keys must be checked for illegal characters when inserting documents.
-* Tests for connection to non existing server. timeout setting.
 * Test to compare documents
 * Test group aggregation keyf field and finalize
 * Test map reduce aggregation more thoroughly.
-* Map_reduce, look into scope. argument is not used.
+* Map-reduce, look into scope. argument is not used.
 * Explain changed after mongodb 3.0
 * Testing $mod in queries seems to have problems in version 3.0.5
 * Get info about multiple accounts instead of one at the time
@@ -388,12 +440,73 @@ are also items to be implemented in BSON. You need to look there for info
   of supported modules in perl 6. E.g. I'd like to have SCRAM-SHA1 to
   authenticate with. 
 
+* Sharpening check on database-, collection- and document key names.
+* other items to [check](https://docs.mongodb.org/manual/reference/limits/)
+* table to map mongo status codes to severity level. This will modify the
+  default severity when an error code from the server is received.
+  Look [here](https://github.com/mongodb/mongo/blob/master/docs/errors.md)
+
 ## CHANGELOG
 
 See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable.*
 
+* 0.*.0
+  * Remove deprecation messages of converted method names
+
+* 0.25.10
+  * Deprecated underscore methods modified in favor of dashed ones:
+      MongoDB::Database: create_collection, list_collections, collection_names,
+        run_command, get_last_error, get_prev_error, reset_error
+      MongoDB::Wire: OP_INSERT, OP_QUERY, OP_GETMORE, OP_KILL_CURSORS,
+        OP_UPDATE, OP_DELETE, OP_REPLY
+      MongoDB::Users: set_pw_security, create_user, drop_user,
+        drop_all_users_from_database, grant_roles_to_user,
+        revoke_roles_from_user, update_user, users_info, get_users
+  * Naming of variables and routines made clearer in MongoDB::Wire.
+* 0.25.9
+  * Deprecated underscore methods modified in favor of dashed ones:
+      MongoDB::Connection: list_database, database_names, build_info.
+      MongoDB::Collection: find_one, find_and_modify, map_reduce, ensure_index,
+        drop_index, drop_indexes, get_indexes, data_size. Several parameters
+        and attributes are also changed.
+  * Change die X::MongoDB.new(...) into $!status = X::MongoDB.new(...)
+      MongoDB::Connection
+* 0.25.8
+  * Removed exception class from Connection.pm, Collection.pm, Database.pm,
+    Users.pm, Authenticate.pm and Cursor.pm. Usage is replaced by
+    X::MongoDB from MongoDB.pm.
+  * Renamed some test files.
+  * Renamed some module files.
+  * Bugfixes in callframe processing in MongoDB
+* 0.25.7
+  * Experiment converting OP_INSERT() to OP-INSERT() using deprication traits.
+    Use of the method is modified in the package and users should not have
+    problems seeing deprecation messages.
+  * modify 'if 1 { with CATCH }' in try {}.
+* 0.25.6
+  * Module MongoDB::Protocol removed
+  * Moving out exception code in modules into MongoDB.pm.
+  * Enum type Severity with values Trace Debug Info Warn Error Fatal
+  * Logging role added to log exception information. This logging will throw
+    when severity is above some level.
+* 0.25.5
+  * Tests for connection to non existing server. There is no timeout setting
+    at the moment. Sets $.status to an Exception object when it fails.
+  * Moved modules User and Authenticate out of Database directory into toplevel
+    MongoDB because User is not a Database, i.e. User is not inheriting from
+    Database. Same goes for Authentication.
+* 0.25.4
+  * Travis-ci uses a mongod version of 2.4.12 which can not be used (yet) by
+    this driver. A situation is now created to use the sandbox also for Travis
+    for which a proper version mongodb server is downloaded as a pre install
+    step.
+* 0.25.3
+  * Extending the sandbox control. When environment variables TRAVIS or
+    NOSANDBOX is set sandboxing is not done. Default portnumber of 27017 is used
+    to get to the mongod server. Important to be sure that anything may happen
+    including deletion of any databases and collections on the server!
 * 0.25.2
   * Changes because of updates in perl6
 * 0.25.1
@@ -519,6 +632,6 @@ Current maintainer Marcel Timmerman (2015-present) (MARTIMM on github)
 ```
 ## CONTACT
 
-MARTIMM on github: MARTIMM/MongoDB
+MARTIMM on github: MARTIMM/mongo-perl6-driver
 
 

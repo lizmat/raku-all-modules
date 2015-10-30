@@ -6,8 +6,8 @@
 use v6;
 use Test;
 use MongoDB::Connection;
-use MongoDB::Database::Users;
-use MongoDB::Database::Authenticate;
+use MongoDB::Users;
+use MongoDB::Authenticate;
 
 BEGIN { @*INC.unshift( './t' ) }
 use Test-support;
@@ -19,14 +19,14 @@ my MongoDB::Connection $connection = get-connection();
 #$connection.database('test').drop;
 
 my MongoDB::Database $database;
-my MongoDB::Database::Users $users;
-my MongoDB::Database::Authenticate $auth;
+my MongoDB::Users $users;
+my MongoDB::Authenticate $auth;
 
 my Hash $doc;
 my $exit_code;
 
 plan 1;
-skip-rest "Some authentication modules not yet supported in perl 6";
+skip-rest "Some modules needed for authentication are not yet supported in perl 6";
 exit(0);
 
 #-------------------------------------------------------------------------------
@@ -37,25 +37,25 @@ subtest {
   $doc = $users.drop_all_users_from_database();
   ok $doc<ok>, 'All users dropped';
 
-  $users.set_pw_security(
-    :min_un_length(10), 
-    :min_pw_length(8),
-    :pw_attribs($MongoDB::Database::Users::PW-OTHER-CHARS)
+  $users.set-pw-security(
+    :min-un-length(10), 
+    :min-pw-length(8),
+    :pw_attribs($MongoDB::Users::PW-OTHER-CHARS)
   );
 
-  $doc = $users.create_user(
+  $doc = $users.create-user(
     :user('site-admin'),
     :password('B3n@Hurry'),
-    :custom_data({user-type => 'site-admin'}),
+    :custom-data({user-type => 'site-admin'}),
     :roles([{role => 'userAdminAnyDatabase', db => 'admin'}])
   );
 
   ok $doc<ok>, 'User site-admin created';
 
-  $doc = $users.create_user(
+  $doc = $users.create-user(
     :user('Dondersteen'),
     :password('w@tD8jeDan'),
-    :custom_data(
+    :custom-data(
       { license => 'to_kill',
         user-type => 'database-test-admin'
       }
@@ -65,7 +65,7 @@ subtest {
 
   ok $doc<ok>, 'User Dondersteen created';
 
-  $doc = $users.get_users;
+  $doc = $users.get-users;
 #say "Users: ", $doc.perl;
   is $doc<users>.elems, 2, '2 users defined';
   is $doc<users>[0]<user>, 'site-admin', 'User site-admin';
@@ -93,22 +93,22 @@ subtest {
   $users .= new(:$database);
   $auth .= new(:$database);
 
-  if 1 {
+  try {
     $doc = $users.drop_all_users_from_database();
     ok $doc<ok>, 'All users dropped';
     
     CATCH {
-      when X::MongoDB::Database {
+      when X::MongoDB {
         ok .message ~~ m:s/not authorized on test to execute/, .error-text;
       }
     }
   }
 
-  if 1 {
+  try {
     $doc = $auth.authenticate( :user('mt'), :password('mt++'));
 
     CATCH {
-      when X::MongoDB::Database {
+      when X::MongoDB {
         ok .message ~~ m:s/\w/, .error-text;
       }
     }

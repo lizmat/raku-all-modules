@@ -8,11 +8,23 @@
 BEGIN { @*INC.unshift( './t' ) }
 use Test-support;
 
-#if %*ENV<TRAVIS>  {
-#  plan 1;
-#  skip-rest('No sandboxing on TRAVIS-CI?');
-#  exit(0);
-#}
+#-----------------------------------------------------------------------------
+# Skip sandbox setup if requested
+#
+if %*ENV<NOSANDBOX> {
+  plan 1;
+  skip-rest('No sand-boxing requested');
+  exit(0);
+}
+
+#-----------------------------------------------------------------------------
+# Download mongodb binaries before testing on TRAVIS-CI. Version is still from
+# the middle ages (2.4.12)
+#
+my $mongodb-server-path = 'mongod';
+if ? %*ENV<TRAVIS> {
+  $mongodb-server-path = "$*CWD/Travis-ci/MongoDB/mongod";
+}
 
 #-----------------------------------------------------------------------------
 #
@@ -133,7 +145,7 @@ my $config = qq:to/EOCNF/;
     pidFilePath:                $*CWD/Sandbox/m.pid
 
   net:
-    bindIp:                     localhost
+#    bindIp:                     localhost
     port:                       $port-number
     wireObjectCheck:            true
     http:
@@ -194,7 +206,24 @@ spurt 'Sandbox/m-repl.conf', $config ~ qq:to/EOCNF/;
 # Start mongodb
 #
 diag "Wait for server to start up using port $port-number";
-my $exit_code = shell("mongod --config '$*CWD/Sandbox/m.conf'");
+say "Starting \"$mongodb-server-path --config '$*CWD/Sandbox/m.conf'\"";
+my Proc $proc = shell("$mongodb-server-path --config '$*CWD/Sandbox/m.conf'");
+
+if $proc.exitcode != 0 {
+  spurt 'Sandbox/NO-MONGODB-SEFVER', '' unless $proc.exitcode == 0;
+  plan 1;
+  flunk('No database server started!');
+  skip-rest('No database server started!');
+  exit(0);
+}
+
+else {
+  # Remove the file if still there
+  #
+  if 'Sandbox/NO-MONGODB-SEFVER'.IO ~~ :e {
+    unlink 'Sandbox/NO-MONGODB-SEFVER';
+  }
+}
 
 # Test communication
 #
@@ -203,7 +232,6 @@ my MongoDB::Connection $connection = get-connection-try10();
 # Test version
 #
 my $version = $connection.version;
-diag "MongoDB version: $version<release1>.$version<release2>.$version<revision>";
 ok $version<release1> >= 3, "MongoDB release >= 3";
 
 #-----------------------------------------------------------------------------
