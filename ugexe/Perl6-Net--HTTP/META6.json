@@ -1,0 +1,23 @@
+{
+    "perl"        : "v6.0.0",
+    "name"        : "Net::HTTP",
+    "version"     : "*",
+    "owner"       : "ugexe",
+    "auth"        : "github:ugexe",
+    "authors"     : ["ugexe"],
+    "description" : "Roll your own http client",
+    "provides"    : {
+        "Net::HTTP::Client"     : "lib/Net/HTTP/Client.pm6",
+        "Net::HTTP::Dialer"     : "lib/Net/HTTP/Dialer.pm6",
+        "Net::HTTP::GET"        : "lib/Net/HTTP/GET.pm6",
+        "Net::HTTP::Interfaces" : "lib/Net/HTTP/Interfaces.pm6",
+        "Net::HTTP::Request"    : "lib/Net/HTTP/Request.pm6",
+        "Net::HTTP::Response"   : "lib/Net/HTTP/Response.pm6",
+        "Net::HTTP::Transport"  : "lib/Net/HTTP/Transport.pm6",
+        "Net::HTTP::URL"        : "lib/Net/HTTP/URL.pm6",
+        "Net::HTTP::Utils"      : "lib/Net/HTTP/Utils.pm6"
+    },
+    "depends"     : [ ],
+    "support"     : { "bugtracker" : "https://github.com/ugexe/Perl6-Net--HTTP/issues" },
+    "source-url"  : "git://github.com/ugexe/Perl6-Net--HTTP.git"
+}

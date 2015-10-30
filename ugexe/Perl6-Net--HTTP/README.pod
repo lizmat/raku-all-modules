@@ -1,0 +1,121 @@
+=pod
+
+=encoding utf8
+
+=head2 Net::HTTP
+
+=for HTML <a href="https://travis-ci.org/ugexe/Perl6-Net--HTTP"><img src="https://travis-ci.org/ugexe/Perl6-Net--HTTP.svg?branch=master"></a>
+
+Interfaces and default implementations for rolling your own http client and/or components
+
+=head2 Synopsis
+
+    # Basic
+    use Net::HTTP::GET;
+    my $response = Net::HTTP::GET("http://httpbin.org/ip");
+    say $response.body.decode;
+
+=head2 Why
+
+Connection caching/keep-alive, thread safety, highly interfaceable. Loosely modeled on the golang http library with the goal
+of having a strong separation of components to allow easy interchangability.
+
+=head2 Coming soon
+
+Cookies, forwarding, generic method handler (POST/PUT/etc)
+
+=head2 How do I...?
+
+=over 4
+
+=item Use a proxy
+
+Simply add a proxy method to your client or transport object. For instance, to simply return a url
+from a string you could do:
+
+    my $transport = Net::HTTP::Transport.new;
+    $transport does role { 
+        method proxy { ::('Net::HTTP::URL').new("http://proxy-lord.org") }
+    }
+
+But you could also implement rotating proxies, proxy from C<$*ENV>, etc
+
+=back
+
+=head2 Client Implementations
+
+=head3 Net::HTTP::GET
+
+    my $response = Net::HTTP::GET("http://httpbin.org/ip");
+
+Simple access to the http C<GET> client api.
+
+=head3 Net::HTTP::Transport
+
+        my $url = Net::HTTP::URL.new($abs-url);
+        my $req = Net::HTTP::Request.new(:$url, :method<GET>, :User-Agent<perl6-net-http>);
+        my $transport = Net::HTTP::Transport.new;
+        my $response  = $transport.round-trip($req);
+
+A high level round-robin implementation that provides connection caching is thread safe.
+For a user-agent level implementation that handles cookies, redirects, auth, etc then use
+a C<Net::HTTP::Client>. Can provide an alternative C<Response> object as an argument.
+
+    > use HTTP::SomethingElse::Response;
+    > my \ALTRESPONSE = HTTP::SomethingElse::Response;
+    > my $response    = $transport.round-trip($req, ALTRESPONSE);
+
+=head3 Net::HTTP::Client
+
+    # NYI
+
+Highest level of http client implementation.
+
+=head2 Interface Default Implementations
+
+Most C<Net::HTTP> components can be swapped out for generic alternatives. C<Net::HTTP> provides a set of interfaces
+(see: L<Net::HTTP::Interfaces|https://github.com/ugexe/Perl6-Net--HTTP/blob/master/lib/Net/HTTP/Interfaces.pm6>)
+and the other included classes in C<Net::HTTP> can be viewed as I<default> implementations.
+
+=head3 Net::HTTP::URL
+
+    my $url = Net::HTTP::URL.new("http://google.com/");
+
+Create a C<url> object to provide an api to the url parts, such as I<scheme>, I<host>, and I<port>.
+
+    > say ~$url
+    http://google.com/
+    > say $url.host;
+    google.com
+
+=head3 Net::HTTP::Request
+
+    my $url     = Net::HTTP::URL.new("http://google.com/");
+    my $request = Net::HTTP::Request.new(:$url, :method<GET>, header => :Host<google.com>);
+
+Create a C<Request> object which provides an api to generating an over-the-wire or human readable representation
+of an http request. C<.raw> gives a binary representation, and C<.Str> gives a utf8 encoded version.
+
+    > my $socket = IO::Socket::INET.new(:host<google.com>, :port(80));
+    > $socket.write($request.raw)
+
+=head3 Net::HTTP::Response
+
+    my $response-from-args = Net::HTTP::Response.new(:$status-line, :%header, :$body);
+    my $response-from-buf  = Net::HTTP::Response.new($response-as-buf);
+
+Creates a C<Response> object that provides an api to parsing an http response. It can be created with named arguments
+representing the http message parts, or it can be given a raw C<Blob>.
+
+    > my $data = buf8.new andthen while $socket.recv(:bin) -> d { $data ~= $d }
+    > my $response = Net::HTTP::Response.new($data)
+
+=head3 Net::HTTP::Dialer
+
+    my $url     = Net::HTTP::URL.new("http://google.com/");
+    my $request = Net::HTTP::Request.new(:$url, :method<GET>, header => :Host<google.com>);
+    my $socket  = Net::HTTP::Dialer.new.dial($request);
+
+A role for providing access to scheme appropriate socket connections.
+
+=cut
