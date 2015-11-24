@@ -4,7 +4,9 @@
 
 =head1 Name
 
-Text::Levenshtein::Damerau - Levenshtein and Damerau Levenshtein edit distances.
+Text::Levenshtein::Damerau - Levenshtein and Damerau Levenshtein edit distances
+
+=for HTML <a href="https://travis-ci.org/ugexe/Perl6-Text--Levenshtein--Damerau"><img src="https://api.travis-ci.org/ugexe/Perl6-Text--Levenshtein--Damerau.svg?branch=master"></a>
 
 =head1 Synopsis
 
