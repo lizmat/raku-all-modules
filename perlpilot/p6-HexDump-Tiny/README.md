@@ -1,8 +1,10 @@
-= Name =
+Name
+====
 
 HexDump::Tiny
 
-= Synopsis =
+Synopsis
+========
 
     #!/usr/bin/env perl6
 
@@ -10,6 +12,7 @@ HexDump::Tiny
 
     .say for hexdump(slurp("filename"));
 
-= Description =
+Description
+===========
 
 Generate a hexdump from a scalar.

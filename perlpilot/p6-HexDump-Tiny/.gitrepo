@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/p6-HexDump-Tiny.git
 	branch = master
-	commit = 4a52df1144074d8f83820a495cd742008fe1d7e9
-	parent = e6076913ee9388af1332afaedd74715732093545
+	commit = f1c0556958efc6468bc60358bedcd8ae9c20ef00
+	parent = 79f317fb250ecf72e6f9abecf9e03eb9271c598e
 	cmdver = 0.2.2
