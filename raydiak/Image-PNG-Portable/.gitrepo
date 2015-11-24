@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/raydiak/Image-PNG-Portable.git
 	branch = master
-	commit = f46e38dcf503eb86978796ab70193d6fa4f37d15
-	parent = a2a2a5399c2c46bf594f26940e3ee65c1c72d398
+	commit = b54323be344a09d4a0d1df486e238f81f79abb36
+	parent = 83c21637a1e772f1dad80150a8f4b0fdb061e2bd
 	cmdver = 0.2.2

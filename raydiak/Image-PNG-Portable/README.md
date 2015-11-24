@@ -30,7 +30,7 @@ here for brevity, not exported in the public API.
 
 ### .new(PInt :$width!, PInt :$height!)
 
-Creates a new Image::PNG object, initialized to black.
+Creates a new Image::PNG::Portable object, initialized to black.
 
 ### .set(UInt $x, UInt $y, UInt8 $red, UInt8 $green, UInt8 $blue)
 
