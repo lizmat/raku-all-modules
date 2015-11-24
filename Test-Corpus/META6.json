@@ -1,0 +1,11 @@
+{ "perl"        : "v6"
+, "name"        : "Test::Corpus"
+, "version"     : "2.1.1"
+, "description" : "Run a test function against a directory of input and expected output files"
+, "authors"     : [ "flussence" ]
+, "provides"    : { "Test::Corpus": "lib/Test/Corpus.pm" }
+, "depends"     : [ "Test" ]
+, "test-depends": [ "Test" ]
+, "support"     : { "bugtracker": "https://github.com/flussence/Test-Corpus/issues"
+                  , "source"    : "https://github.com/flussence/Test-Corpus.git" }
+, "license"     : "https://creativecommons.org/publicdomain/zero/1.0/" }

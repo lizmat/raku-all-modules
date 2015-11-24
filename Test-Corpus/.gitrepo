@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/flussence/Test-Corpus
+	branch = master
+	commit = f6889d25e5ec87a24bfa4a32973afc3c2d3c1d28
+	parent = 9a72c1a562c31b0e2d0dc27dc770366cc74d7e40
+	cmdver = 0.2.2
