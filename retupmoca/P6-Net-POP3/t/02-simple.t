@@ -38,7 +38,7 @@ class POP3Socket {
         return @server-send.shift;
     }
     method print($string is copy) {
-        $string .= substr(0, *-2); # strip \r\n
+        $string .= chomp; # strip \r\n
         die "Bad client-send: $string" unless $string eq @server-get.shift;
     }
     method close { }
