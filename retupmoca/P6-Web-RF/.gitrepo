@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/retupmoca/P6-Web-RF.git
+	branch = master
+	commit = 892ccf57aca31be78e95b350ed3bfc59534615e0
+	parent = a00317385753345b52e9e4832bd7c26ee601dbd1
+	cmdver = 0.2.2

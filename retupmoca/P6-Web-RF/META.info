@@ -1,0 +1,11 @@
+{
+    "name" : "Web::RF",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "Web Application Routing Framework",
+    "depends" : [ "Crust",
+                  "URI::Escape",
+                  "Path::Router" ],
+    "provides" : { "Web::RF" : "lib/Web/RF.pm6" },
+    "source-url" : "git://github.com/retupmoca/P6-Web-RF.git"
+}
