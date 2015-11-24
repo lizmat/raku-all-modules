@@ -1,0 +1,6 @@
+=rgba 8 2 palette
+=scale 20
+
+# The 16 predefined basic colours
+
+0 1 2 3 4 5 6 7 8 9 A B C D E F

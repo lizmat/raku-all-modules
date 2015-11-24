@@ -1,0 +1,15 @@
+{
+    "name"        : "Image::RGBA::Text",
+    "version"     : "*",
+    "description" : "Reads RGBA image data from text files",
+    "author"      : "cygx <cygx@cpan.org>",
+    "source-url"  : "git://github.com/cygx/p6-image-rgba-text.git",
+    "provides" : {
+        "Image::RGBA::Text" : "lib/Image/RGBA/Text.pm"
+    },
+    "depends" : [ ],
+    "support" : {
+        "bugtracker" : "https://github.com/cygx/p6-image-rgba-text/issues",
+        "source"     : "https://github.com/cygx/p6-image-rgba-text"
+    }
+}
