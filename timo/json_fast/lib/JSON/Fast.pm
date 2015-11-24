@@ -11,8 +11,8 @@ sub str-escape(str $text) {
 }
 
 sub to-json($obj is copy, Bool :$pretty = True, Int :$level = 0, Int :$spacing = 2) is export {
-    return "{$obj}" if $obj ~~ Int|Rat;
-    return "{$obj ?? 'true' !! 'false'}" if $obj ~~ Bool;
+    return $obj ?? 'true' !! 'false' if $obj ~~ Bool;
+    return $obj.Str if $obj ~~ Int|Rat;
     return "\"{str-escape($obj)}\"" if $obj ~~ Str;
 
     if $obj ~~ Seq {
@@ -273,7 +273,8 @@ my sub parse-thing(str $text, int $pos is rw) {
             die "at $pos: expected 'false', found { $initial ~ nqp::substr($text, $pos, 4) } instead.";
         }
     } else {
-        die "at $pos: can't parse objects starting in $initial yet"
+        my str $rest = nqp::substr($text, $pos, 6);
+        die "at $pos: can't parse objects starting in $initial yet (context: $rest)"
     }
 }
 
