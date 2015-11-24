@@ -16,6 +16,12 @@ my $newua = get-ua('chrome_linux');
 $ua = HTTP::UserAgent.new(:useragent('chrome_linux'));
 is $ua.useragent, $newua, 'new 3/3';
 
+unless %*ENV<NETWORK_TESTING> {
+  diag "NETWORK_TESTING was not set";
+  skip-rest("NETWORK_TESTING was not set");
+  exit;
+}
+
 # user agent
 is $ua.get('http://ua.offensivecoder.com/').content, "$newua\n", 'useragent 1/1';
 
