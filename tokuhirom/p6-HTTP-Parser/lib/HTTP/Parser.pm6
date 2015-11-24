@@ -18,7 +18,7 @@ grammar HTTPRequestHead {
     token path { <-[?#\ ]>* }
     token query { <-[#\ ]>* }
 
-    token CRLF { "\x0d"? "\x0a" }
+    token CRLF { \x[0d] \x[0a] || \x[0a] }
 
     token HTTP-version {
         "HTTP/1." <[0..1]>
@@ -32,7 +32,7 @@ grammar HTTPRequestHead {
 
     token field-content { \N* }
 
-    token obs-fold { "\x0d"? "\x0a" [ <.SP> || <.HTAB> ]+ }
+    token obs-fold { <.CRLF> [ <.SP> || <.HTAB> ]+ }
 
     # https://tools.ietf.org/html/rfc5234#appendix-B.1
     # visible (printing) characters
@@ -53,7 +53,7 @@ my class HTTPRequestHeadAction {
     has %.env;
 
     method TOP($/) {
-        $/.make: $/[0].Str.chars;
+        $/.make: $/[0].Str.encode('latin1').bytes;
     }
 
     method method($/) {
@@ -107,8 +107,8 @@ sub parse-http-request(Blob $req) is export {
         return $got.made, $actions.env;
     } else {
         # pre-header blank lines are allowed (RFC 2616 4.1)
-        $decoded = $decoded.subst(/ [ \x0d? \x0a ]* /, '');
-        return $decoded ~~ /\x0d? \x0a \x0d? \x0a / ?? -1 !! -2;
+        $decoded = $decoded.subst(/ [ \x0d\x0a || \x0a ]* /, '');
+        return $decoded ~~ / [\x0d\x0a || \x0a]  [\x0d\x0a || \x0a] / ?? -1 !! -2;
     }
 }
 
@@ -122,7 +122,7 @@ HTTP::Parser - HTTP parser.
 
     use HTTP::Parser;
 
-    my ($result, $env) = parse-http-request("GET / HTTP/1.0\r\ncontent-type: text/html\r\n\r\n".encode("ascii"));
+    my ($result, $env) = parse-http-request("GET / HTTP/1.0\x0d\x0acontent-type: text/html\x0d\x0a\x0d\x0a".encode("ascii"));
     # $result => 43
     # $env => ${:CONTENT_TYPE("text/html"), :PATH_INFO("/"), :QUERY_STRING(""), :REQUEST_METHOD("GET")}
 
