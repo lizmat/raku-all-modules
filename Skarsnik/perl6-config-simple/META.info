@@ -1,0 +1,15 @@
+{
+        "perl" : "v6",
+	"name" : "Config::Simple",
+        "version" : "*",
+        "description" : "A simple module for your configuration file need",
+        "author" : "Sylvain Colinet",
+        "provides" : {
+            "Config::Simple" : "lib/Config/Simple.pm6",
+            "Config::Simple::Role" : "lib/Config/Simple/Role.pm6",
+            "Config::Simple::ini" : "lib/Config/Simple/ini.pm6",
+            "Config::Simple::JSON" : "lib/Config/Simple/JSON.pm6"
+        },
+        "depends" : [ "JSON::Pretty", "Config::INI", "Data::Dump" ],
+        "source-url" : "git://github.com/Skarsnik/perl6-config-simple.git"
+}
