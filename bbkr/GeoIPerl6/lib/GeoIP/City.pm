@@ -1,8 +1,8 @@
 use NativeCall;
 
-unit class GeoIP::City is repr('CPointer');
+unit class GeoIP::City is repr( 'CPointer' );
 
-class GeoIPRecord is repr('CStruct') {
+class GeoIPRecord is repr( 'CStruct' ) {
     has Str $.country_code;
     has Str $.country_code3;
     has Str $.country_name;
@@ -15,34 +15,20 @@ class GeoIPRecord is repr('CStruct') {
     has int32 $.area_code;
     has int32 $.charset;
     has Str $.continent_code;
-    has int8 $.country_conf;
-    has int8 $.region_conf;
-    has int8 $.city_conf;
-    has int8 $.postal_conf;
-    has int32 $.accuracy_radius;
+    has int32 $.netmask;
 };
 
-# point NativeCall to correct library
-# (may become obsolete in the future)
-sub LIB  {
-    given $*VM.config{'load_ext'} {
-        when '.so'      { return 'libGeoIP.so.1' }   # Linux
-        when '.bundle'  { return 'libGeoIP.dylib' }  # Mac OS
-        default         { return 'libGeoIP' }
-    }
-}
-
 # initialize database
-sub GeoIP_open ( Str, Int ) returns GeoIP::City is native( LIB ) { * }
-sub GeoIP_open_type ( Int, Int ) returns GeoIP::City is native( LIB ) { * }
-sub GeoIP_set_charset ( GeoIP::City, Int ) returns Int is native( LIB ) { * }
+sub GeoIP_open ( Str, Int ) returns GeoIP::City is native( 'libGeoIP' ) { * }
+sub GeoIP_open_type ( Int, Int ) returns GeoIP::City is native( 'libGeoIP' ) { * }
+sub GeoIP_set_charset ( GeoIP::City, Int ) returns Int is native( 'libGeoIP' ) { * }
 
-sub GeoIP_database_info ( GeoIP::City ) returns Str is native( LIB ) { * }
+sub GeoIP_database_info ( GeoIP::City ) returns Str is native( 'libGeoIP' ) { * }
 
-sub GeoIP_record_by_name (GeoIP::City, Str) returns GeoIPRecord is native( LIB ) { * }
-sub GeoIP_record_by_addr (GeoIP::City, Str) returns GeoIPRecord is native( LIB ) { * }
-sub GeoIP_region_name_by_code ( Str, Str ) returns Str is native( LIB ) { * }
-sub GeoIP_time_zone_by_country_and_region ( Str, Str ) returns Str is native( LIB ) { * }
+sub GeoIP_record_by_name ( GeoIP::City, Str ) returns GeoIPRecord is native( 'libGeoIP' ) { * }
+sub GeoIP_record_by_addr ( GeoIP::City, Str ) returns GeoIPRecord is native( 'libGeoIP' ) { * }
+sub GeoIP_region_name_by_code ( Str, Str ) returns Str is native( 'libGeoIP' ) { * }
+sub GeoIP_time_zone_by_country_and_region ( Str, Str ) returns Str is native( 'libGeoIP' ) { * }
 
 multi method new ( ) {
 

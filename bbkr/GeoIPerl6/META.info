@@ -1,6 +1,6 @@
 {
     "name" : "GeoIP::City",
-    "version" : "0.4",
+    "version" : "0.5",
     "description" : "MaxMind GeoIP City library interface",
     "provides" : {
         "GeoIP::City" : "lib/GeoIP/City.pm"

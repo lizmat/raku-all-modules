@@ -7,7 +7,7 @@ plan( 5 );
 
 my $geo;
 
-lives_ok { $geo = GeoIP::City.new }, 'initialize free database';
+lives-ok { $geo = GeoIP::City.new }, 'initialize free database';
 
 ok $geo.info ~~ /GEO .* LITE .* \d ** 8/, 'info';
 
