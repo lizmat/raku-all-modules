@@ -1,0 +1,28 @@
+{
+  "name" : "URI::Template",
+  "tags" : [ "URI", "URL", "Template", "RFC" ],
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth" : "github:jonathanstowe",
+  "support" : {
+    "source"     : "git://github.com/jonathanstowe/URI-Template.git",
+    "irc"        : "irc:// irc.freenode.net/#perl6",
+    "bugtracker" : "https://github.com/jonathanstowe/URI-Template/issues"
+  },
+  "source-url" : "git://github.com/jonathanstowe/URI-Template.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+     "URI::Template"     : "lib/URI/Template.pm"
+  },
+  "depends" : [ 
+    "URI::Encode" 
+  ],
+  "test-depends" : [
+    "JSON::Tiny", 
+    "Test",
+    "Test::META"
+  ],
+  "description" : "URI Templates as per https://tools.ietf.org/html/rfc6570",
+  "version" : "v0.0.1"
+}
