@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/flussence/Test-ClientServer
+	branch = master
+	commit = 3c60f14f8d7ea0012e72d89d7b87a54e3dcfd9c1
+	parent = 3f6ba344d384d377eccc62c1444cfe5aa1c2daca
+	cmdver = 0.2.2

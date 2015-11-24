@@ -1,0 +1,10 @@
+{ "perl"        : "v6"
+, "name"        : "Test::ClientServer"
+, "version"     : "2.0.0"
+, "description" : "Multithreading wrapper for testing network server/client code"
+, "authors"     : [ "flussence" ]
+, "provides"    : { "Test::ClientServer": "lib/Test/ClientServer.pm" }
+, "test-depends": [ "Test" ]
+, "support"     : { "bugtracker": "https://github.com/flussence/Test-ClientServer/issues"
+                  , "source"    : "https://github.com/flussence/Test-ClientServer.git" }
+, "license"     : "https://creativecommons.org/publicdomain/zero/1.0/" }
