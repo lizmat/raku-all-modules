@@ -29,10 +29,11 @@ method anymethod ($path, **@handlers) {
     %!routes<ANY>.push(@($path, @handlers));
 }
 
-
 method !keyword-match ($path, $uri) {
     my @p = $path.split('/');
     my @u =  $uri.split('/');
+    say @p.perl;
+    say @u.perl;
     if @p.elems != @u.elems {
         return;
     }
@@ -54,7 +55,14 @@ method !apply-handlers (%env, @handlers) {
     for @handlers -> &handler {
         $result = &handler($result);
     }
-    return $result;
+    $result;
+}
+method !apply-handlers-with-params (%env, @handlers, $params) {
+    my $result = %env;
+    for @handlers -> &handler {
+        $result = &handler($result, $params);
+    }
+    $result;
 }
 
 method dispatch ($method, $uri, %env) {
@@ -69,16 +77,14 @@ method dispatch ($method, $uri, %env) {
             if $path.contains(':') {
                 my $params = self!keyword-match($path, $uri);
                 if $params {
-                    %env<params> = %($params);
-                    return self!apply-handlers(%env, @funcs);
+                    return self!apply-handlers-with-params(%env, @funcs, $params);
                 }
             }
         }
         if $path ~~ Regex {
             my $match = $uri ~~ $path;
             if $match {
-                %env<params> = $match;
-                return self!apply-handlers(%env, @funcs);
+                return self!apply-handlers-with-params(%env, @funcs, $match);
             }
         }
     }
