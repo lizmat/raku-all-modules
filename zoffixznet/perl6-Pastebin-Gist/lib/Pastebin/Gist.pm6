@@ -1,4 +1,4 @@
-unit class Pastebin::Gist:version<1.001001>;
+unit class Pastebin::Gist:ver<1.001001>;
 
 use HTTP::Tinyish;
 
