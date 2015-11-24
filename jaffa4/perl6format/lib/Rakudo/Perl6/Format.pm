@@ -1,5 +1,5 @@
 use Rakudo::Perl6::Parsing;
-class Rakudo::Perl6::Format;
+unit class Rakudo::Perl6::Format;
 
 
 constant $debug = 0;
