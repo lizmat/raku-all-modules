@@ -568,6 +568,10 @@ class XML::Element does XML::Node
   #              position index (starts with 0) rather than the user idea of
   #              odd and even elements (starting with 1.)
   #
+  
+  method lookfor(*%query) {
+    return self.elements(:RECURSE, |%query);
+  }
   method elements (*%query)
   {
     my $recurse = 0;
@@ -578,7 +582,10 @@ class XML::Element does XML::Node
     my @elements;
     my $nodepos = 0;
 
-    if %query{'RECURSE'}:exists { $recurse = %query<RECURSE>; }
+    if %query{'RECURSE'}:exists {
+      $recurse = %query<RECURSE> if %query<RECURSE> ne True;
+      $recurse = Inf if %query<RECURSE> eq True;
+    }
     if %query{'NEST'}:exists    { $nest    = %query<NEST>;    }
     if %query{'SINGLE'}:exists  { $single  = %query<SINGLE>;  }
     if %query{'OBJECT'}:exists  { $object  = %query<OBJECT>;  }
@@ -949,7 +956,7 @@ class XML::Document does XML::Node
   has $.encoding;
   has %.doctype;
   has $.root handles <
-    attribs nodes elements getElementById getElementsByTagName
+    attribs nodes elements lookfor getElementById getElementsByTagName
     nsURI nsPrefix setNamespace
     append insert set unset before after
     appendNode insertNode insertBefore insertAfter
@@ -991,9 +998,13 @@ class XML::Document does XML::Node
       if ($doc<xmldecl>)
       {
         $version = ~$doc<xmldecl><version><value>;
+        $version ~~ s:g/\"//;		## get rid of any quotes in the version
+        $version ~~ s:g/\'//;
         if ($doc<xmldecl><encoding>)
         {
           $encoding = ~$doc<xmldecl><encoding><value>;
+	  $encoding ~~ s:g/\"//;		## get rid of any quotes in the version
+	  $encoding ~~ s:g/\'//;
         }
       }
       if ($doc<doctypedecl>)
