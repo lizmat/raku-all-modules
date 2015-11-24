@@ -11,6 +11,7 @@
         "Net::HTTP::Dialer"     : "lib/Net/HTTP/Dialer.pm6",
         "Net::HTTP::GET"        : "lib/Net/HTTP/GET.pm6",
         "Net::HTTP::Interfaces" : "lib/Net/HTTP/Interfaces.pm6",
+        "Net::HTTP::POST"       : "lib/Net/HTTP/POST.pm6",
         "Net::HTTP::Request"    : "lib/Net/HTTP/Request.pm6",
         "Net::HTTP::Response"   : "lib/Net/HTTP/Response.pm6",
         "Net::HTTP::Transport"  : "lib/Net/HTTP/Transport.pm6",

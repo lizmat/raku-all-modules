@@ -10,19 +10,25 @@ Interfaces and default implementations for rolling your own http client and/or c
 
 =head2 Synopsis
 
-    # Basic
     use Net::HTTP::GET;
-    my $response = Net::HTTP::GET("http://httpbin.org/ip");
-    say $response.body.decode;
+    my %header   = :Connection<keep-alive>;
+    my $response = Net::HTTP::GET("http://httpbin.org/ip", :%header);
+    say $response.content;
+
+
+    use Net::HTTP::POST;
+    my $body     = Buf.new("a=b&c=d&f=".ords);
+    my $response = Net::HTTP::POST("http://httpbin.org/post", :$body);
+    say $response.content;
 
 =head2 Why
 
-Connection caching/keep-alive, thread safety, highly interfaceable. Loosely modeled on the golang http library with the goal
+Connection caching/keep-alive, thread safety (?), highly interfaceable. Loosely modeled on the golang http library with the goal
 of having a strong separation of components to allow easy interchangability.
 
 =head2 Coming soon
 
-Cookies, forwarding, generic method handler (POST/PUT/etc)
+Cookies, multipart posting
 
 =head2 How do I...?
 
@@ -50,6 +56,13 @@ But you could also implement rotating proxies, proxy from C<$*ENV>, etc
 
 Simple access to the http C<GET> client api.
 
+=head3 Net::HTTP::POST
+
+    my $body = Buf.new("a=1&b=2".ords);
+    my $response = Net::HTTP::POST("http://httpbin.org/post", :$body);
+
+Simple access to the http C<POST> client api (Still lacking anything beyond basic functionality)
+
 =head3 Net::HTTP::Transport
 
         my $url = Net::HTTP::URL.new($abs-url);
@@ -57,7 +70,7 @@ Simple access to the http C<GET> client api.
         my $transport = Net::HTTP::Transport.new;
         my $response  = $transport.round-trip($req);
 
-A high level round-robin implementation that provides connection caching is thread safe.
+A high level round-robin implementation that attempts connection caching and is thread safe.
 For a user-agent level implementation that handles cookies, redirects, auth, etc then use
 a C<Net::HTTP::Client>. Can provide an alternative C<Response> object as an argument.
 

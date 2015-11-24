@@ -21,19 +21,20 @@ class Net::HTTP::Transport does RoundTripper {
         self.hijack($req);
 
         # MAKE REQUEST
-        my $socket = self.get-socket($req);
+        my $socket := $.get-socket($req);
         $socket.write($req.?raw // $req.Str.encode);
 
-        my $status-line  = $socket.get(:bin).unpack('A*');
-        my @header-lines = $socket.lines(:bin).map({$_ or last})>>.unpack('A*');
-        my %header andthen do { %header{hc(.[0])}.append(.[1]) for @header-lines>>.split(/':' \s+/, 2) }
+        my $status-line   = $socket.get(:bin).unpack('A*');
 
-        # these belong in a socket specific hijack method
-        with %header<Content-Length>    { $socket.content-length = $_[0] }
-        with %header<Connection>        { $socket.keep-alive = not @$_ ~~ /[:i close]/ }
-        with %header<Transfer-Encoding> { $socket.is-chunked = so @$_.first({$_ ~~ /[:i chunked]/}) }
+        my @header-lines  = $socket.lines(:bin).map({$_ or last})>>.unpack('A*');
+        my %header andthen do { %header{hc(.[0])}.append(.[1].trim-leading) for @header-lines>>.split(':', 2) }
 
-        my $body = buf8.new andthen $socket.supply.tap: { $body ~= $_ }
+        my $body    = buf8.new;
+        my $buffer  = do with %header<Content-Length> { +$_.[0] } // Inf;
+        my $chunked = do with %header<Transfer-Encoding> { .any ~~ /[:i chunked]/ } ?? True !! False;
+        $socket.supply(:$buffer, :$chunked).tap: { $body ~= $_ }, done => {
+            with %header<Connection> { .any ~~ /[:i close]/ ?? $socket.close !! $socket.release }
+        }
 
         my $res = RESPONSE.new(:$status-line, :$body, :%header);
 
@@ -61,17 +62,28 @@ class Net::HTTP::Transport does RoundTripper {
         $!lock.protect({
             my $connection;
 
-            with %!connections{$req.header<Host>.lc} -> $conns {
-                for $conns.grep(*.keep-alive.so) -> $sock {
-                    await Promise.anyof( start { await $sock.promise }, Promise.in(3) );
-                    $connection = $sock and last if $sock.promise.status;
+            # index connections by:
+            my $scheme    = $req.url.scheme;
+            my $host      = $req.header<Host>;
+            my $usable   := %!connections{$*THREAD}{$host}{$scheme};
+
+            if $usable -> $conns {
+                for $conns.grep(*.closing.not) -> $sock {
+                    # don't wait too long for a new socket before moving on
+                    next unless await Promise.anyof( $sock.promise, start { $ = Promise.in(3); False });
+                    next if $sock.promise.status ~~ Broken;
+                    last if $connection = $sock.init;
                 }
             }
 
-            without $connection && %!connections{$req.header<Host>.lc} {
-                $connection = self.dial($req) but IO::Socket::HTTP;
-                %!connections{$req.header<Host>.lc}.append($connection);
+            if $connection.not {
+                $connection = $.dial($req) but IO::Socket::HTTP;
+                $connection.init;
+
+                $usable.append($connection) unless $req.header<Connection>.any ~~ /[:i close]/;
             }
+
+            $connection.closing = True if $req.header<Connection>.any ~~ /[:i close]/;
 
             $connection;
         });
