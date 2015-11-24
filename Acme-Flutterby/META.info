@@ -1,0 +1,11 @@
+{
+        "name" : "Acme::Flutterby",
+        "version" : "0.01",
+        "description" : "Acme::Flutterby - An object-oriented interface to a butterfly.  In what else but Perl 6...",
+        "author" : "John Scoles",
+        "provides" : {
+            "Acme::Flutterby" : "lib/Acme/Flutterby.pm"
+        },
+        "depends" : [ ],
+        "source-url" : "https://github.com/byterock/Acme-Flutterby.git"
+    }

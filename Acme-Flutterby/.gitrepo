@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/byterock/Acme-Flutterby
+	branch = master
+	commit = 588ebad5e8beb0553ebb7da199379b140d75e9a6
+	parent = e09645c39aba4f97f8a5e2575b0c8a0f27e8fdd4
+	cmdver = 0.2.2
