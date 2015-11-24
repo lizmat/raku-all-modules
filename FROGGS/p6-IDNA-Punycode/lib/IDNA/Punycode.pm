@@ -55,7 +55,7 @@ sub decode_punycode($code is copy) is export {
         my $w    = 1;
         LOOP:
         loop (my $k = BASE; 1; $k += BASE) {
-            (my $cp, $code) = $code.?split('', 2);
+            (my $cp, $code) = substr($code, 0, 1), substr($code, 1);
             my $digit = digit_value($cp);
             $digit.defined or fail "invalid punycode input";
             $i += $digit * $w;
