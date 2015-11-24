@@ -94,7 +94,7 @@ method !set-global (Str:D $name) {
     $!raw.lua_setfield: $!state, $!raw.LUA_INDEX<GLOBALS>, $name;
 }
 
-method run (Str:D $code, *@args) {
+method run (Str:D $code, **@args) {
     self.ensure:
         :e<Compilation failed>,
         $!raw.luaL_loadstring: $!state, $code;
@@ -102,12 +102,12 @@ method run (Str:D $code, *@args) {
     self!call: @args;
 }
 
-method call (Str:D $name, *@args) {
+method call (Str:D $name, **@args) {
     self!get-global: $name;
     self!call: @args;
 }
 
-method !call (*@args) {
+method !call (@args) {
     # - 1 excludes the function we're about to pop via pcall
     my $top = $!raw.lua_gettop($!state) - 1;
 
@@ -121,11 +121,11 @@ method !call (*@args) {
 }
 
 method values-from-lua (Int:D $count, |args) {
-    $count == 1 ??
+    if $count == 1 {
         self.value-from-lua(|args)
-    !!
+    } elsif $count > 1 {
         (^$count).map({ self.value-from-lua(|args) }).reverse # won't work with :keep
-    if $count;
+    }
 }
 
 method value-from-lua (:$keep) {
@@ -154,7 +154,7 @@ method value-from-lua (:$keep) {
     $val;
 }
 
-method values-to-lua (*@vals) {
+method values-to-lua (@vals) {
     self.value-to-lua: $_ for @vals;
 }
 

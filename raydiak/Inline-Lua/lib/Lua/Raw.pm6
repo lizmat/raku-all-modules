@@ -175,7 +175,7 @@ has $.lib = do {
     my $lib = ($!lua //= '5.1');
     $lib = 'jit-5.1' if $lib.uc eq 'JIT';
     warn "Attempting to use unsupported Lua version '$lib'; this is likely to fail"
-        if $lib ∉ <5.1 jit-5.1>;
+        unless $lib eq <5.1 jit-5.1>.any;
     $lib = "lua$lib";
     $lib = "lib$lib" unless $*VM.config<dll> ~~ /dll/;
 };

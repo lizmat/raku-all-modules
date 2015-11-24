@@ -2,7 +2,7 @@ role Inline::Lua::Object::Callable {
     also is Callable; # why not 'does'? https://rt.perl.org/Public/Bug/Display.html?id=124006
     has $.signature handles <arity count> = :(|);
 
-    method call (*@args, :$stack) {
+    method call (**@args, :$stack) {
         self.get unless $stack;
 
         my $top = self.lua.raw.lua_gettop(self.lua.state) - 1;
@@ -39,6 +39,7 @@ class Inline::Lua::WrapperObj {
 
 
 
+class Inline::Lua::Function {...}
 role Inline::Lua::Object::Indexable {
     also does Positional;
     also does Associative;
@@ -109,7 +110,7 @@ role Inline::Lua::Object::Indexable {
         $val := self.AT-KEY($val) unless $val ~~ Callable;
         my $cur-val = $val;
 
-        $call !eqv False && $cur-val ~~ (class Inline::Lua::Function {...}) ??
+        $call !eqv False && $cur-val ~~ Inline::Lua::Function ??
             $cur-val(self, |args) !! $val;
     }
 
@@ -133,7 +134,7 @@ role Inline::Lua::Object::Iterable {
         self;
     }
 
-    method elems (|args) {Int( max 0, self.keys(|args).grep: Numeric )}
+    method elems (|args) {Int( max 0, |(self.keys(|args).grep: Numeric) )}
 
     method end (|args) { self.elems(|args) - 1 }
 

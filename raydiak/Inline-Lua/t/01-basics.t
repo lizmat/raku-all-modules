@@ -88,4 +88,4 @@ ok $L.get-global('foo') eq 'bar', '.set-global() and .get-global() work';
     ok LuaChild.plus-Y(7) == 7**2, "Inheritance works";
 }
 
-done;
+done-testing;
