@@ -37,11 +37,38 @@ say "Time spend creating the XML::Document, : ", $gumbo_last_xml_creation_durati
 
 ```
 
+## Gumbo::Parser
+
+This module provide a Gumbo::Parser class that does the role defined by the `HTML::Parser` module.
+It also provide some additionnals attribute that contains various informations.
+
+```perl
+use Gumbo::Parser;
+
+my $parser = Gumbo::Parser.new;
+my $xmldoc = $parser->parse($html);
+say $parser.c_parse_duration;
+say $parser.xml_creation_duration;
+say $parser.stats<xml_objects>; # the number of XML::* created (excluding the XML::Document)
+say $parser.stats<whitespaces>; # the number of Whitespaces elements (created or not)
+say $parser.stats<elements>; # the number of XML::Element (including root)
+```
+
 ## Warning
 
-The XML::Document include all whitespace. That why in the previous example, the 'p' element is not acceded with $xmldoc.root[1][0][0]
+The XML::Document include all whitespaces. That why in the example, the 'p' element is not acceded with $xmldoc.root[1][0][0]
 
 Etheir use the XML::Element.elements method (eg: $xmldoc.root.elements[1].elements[0][0]) or the search form of the method.
+
+BUT `Gumbo::parse-html` and `Gumbo::Parser::parse` can take a `nowhitespace` named parameter to not include them.
+
+
+```perl
+# same data than the example
+my $xmldoc = parse-html($html, :nowhitespace(True));
+my $title = $xmldoc.root[0][0]; #give you title element
+
+```
 
 ## Filters
 
@@ -74,7 +101,7 @@ parse-html($html, :TAG<div>, :class<banner>); # will only have 'div' tag having 
 parse-html($html, :TAG<div>, :class<banner>, :SINGLE); #will stop at the first one
 ```
 
-
+The filters are also available on the `Gumbo::Parser` parse method
 
 ## Contact
 

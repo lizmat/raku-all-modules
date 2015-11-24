@@ -4,8 +4,10 @@
         "description" : "Binding of the gumbo C library, a html parser lib",
         "author" : "Sylvain Colinet",
         "provides" : {
-            "Gumbo" : "lib/Gumbo.pm6"
+            "Gumbo" : "lib/Gumbo.pm6",
+	    "Gumbo::Parser" : "lib/Gumbo/Parser.pm6",
+	    "Gumbo::Binding" : "lib/Gumbo/Binding.pm6"
         },
-        "depends" : [ "XML" ],
+        "depends" : [ "XML" , "HTML::Parser" ],
         "source-url" : "git://github.com/Skarsnik/perl6-gumbo.git"
 }

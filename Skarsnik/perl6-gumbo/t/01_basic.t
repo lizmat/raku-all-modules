@@ -14,7 +14,7 @@ my $html = q:to/END_HTML/;
 
 END_HTML
 
-plan 4;
+plan 5;
 
 
 my $xmldoc = parse-html($html);
@@ -23,5 +23,9 @@ ok $xmldoc ~~ XML::Document, "Return a XML::Document";
 ok $xmldoc.root.name eq "html", "Root element is html";
 ok $xmldoc.root.elements[0].elements[0][0] ~~ XML::Text, "Found text";
 ok $xmldoc.root.elements(:TAG<title>, :RECURSE<3>)[0][0].text eq "Fancy", "Title is Fancy";
+
+$xmldoc = parse-html($html, :nowhitespace(True));
+
+ok $xmldoc.root[0][0].name eq "title";
 
 
