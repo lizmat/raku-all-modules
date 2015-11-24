@@ -27,7 +27,7 @@ plan 3;
         $match_document.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($document)] - 1 of 1
+        ♪ [Grammar.parse($document)] - 1 of 3
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses TOML v0.4.0 document successfully
         ┃   Success   ┃
@@ -39,7 +39,7 @@ plan 3;
         $match_document_hard.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($document_hard)] - 1 of 1
+        ♪ [Grammar.parse($document_hard)] - 2 of 3
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses TOML v0.4.0 document successfully
         ┃   Success   ┃
@@ -51,7 +51,7 @@ plan 3;
         $match_document_standard.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($document_standard)] - 1 of 1
+        ♪ [Grammar.parse($document_standard)] - 3 of 3
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses TOML v0.4.0 document successfully
         ┃   Success   ┃

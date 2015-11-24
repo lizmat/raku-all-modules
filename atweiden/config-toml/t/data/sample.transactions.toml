@@ -1,0 +1,280 @@
+[[Entry]]
+
+  [Entry.Header]
+  date = 2014-01-01
+  description = 'I started the year with $1000 in Bankwest cheque account'
+  importance = 0
+  tags = [ 'TAG1', 'TAG2' ]
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'ASSETS'
+    entity = 'Personal'
+    subaccount = [ 'Bankwest', 'Cheque' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 1000.00
+    asset_symbol = '$'
+    plus_or_minus = ''
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'EQUITY'
+    entity = 'Personal'
+    subaccount = []
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 1000.00
+    asset_symbol = '$'
+    plus_or_minus = ''
+
+
+
+[[Entry]]
+
+  [Entry.Header]
+  date = 2014-01-03
+  description = 'I bought ฿0.80000000 BTC on Coinbase.com for $670.66 USD at a price of $830.024 USD/BTC with a fee of $6.64 USD'
+  importance = 1
+  tags = []
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'ASSETS'
+    entity = 'Personal'
+    subaccount = [ 'Coinbase', 'BTC' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'BTC'
+    asset_quantity = 0.80000000
+    asset_symbol = '฿'
+    plus_or_minus = ''
+
+      [Entry.Posting.Amount.XE]
+      xe_asset_code = 'USD'
+      xe_asset_quantity = 830.024
+      xe_asset_symbol = '$'
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'EXPENSES'
+    entity = 'Personal'
+    subaccount = [ 'CoinbaseFee' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 6.64
+    asset_symbol = '$'
+    plus_or_minus = ''
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'ASSETS'
+    entity = 'Personal'
+    subaccount = [ 'Bankwest', 'Cheque' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 670.66
+    asset_symbol = '$'
+    plus_or_minus = '-'
+
+
+
+[[Entry]]
+
+  [Entry.Header]
+  date = 2014-01-02
+  description = 'GAP ENTRY 1'
+  importance = 0
+  tags = []
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'EXPENSES'
+    entity = 'Personal'
+    subaccount = [ 'GAP' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 2.70
+    asset_symbol = '$'
+    plus_or_minus = ''
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'ASSETS'
+    entity = 'Personal'
+    subaccount = [ 'Bankwest', 'Cheque' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 2.70
+    asset_symbol = '$'
+    plus_or_minus = '-'
+
+
+
+[[Entry]]
+
+  [Entry.Header]
+  date = 2014-01-02
+  description = 'I paid Exxon Mobile $10 for gas from Bankwest cheque account'
+  importance = 2
+  tags = []
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'EXPENSES'
+    entity = 'Personal'
+    subaccount = [ 'Fuel' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 10.00
+    asset_symbol = '$'
+    plus_or_minus = ''
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'Assets'
+    entity = 'Personal'
+    subaccount = [ 'Bankwest', 'Cheque' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 10.00
+    asset_symbol = '$'
+    plus_or_minus = '-'
+
+
+
+[[Entry]]
+
+  [Entry.Header]
+  date = 2014-01-02
+  description = 'GAP ENTRY 2'
+  importance = 0
+  tags = []
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'Expenses'
+    entity = 'Personal'
+    subaccount = [ 'GAP' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 13.37
+    asset_symbol = '$'
+    plus_or_minus = ''
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'Assets'
+    entity = 'Personal'
+    subaccount = [ 'Bankwest', 'Cheque' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 13.37
+    asset_symbol = '$'
+    plus_or_minus = '-'
+
+
+
+[[Entry]]
+
+  [Entry.Header]
+  date = 2014-01-02
+  description = ''
+  importance = 3
+  tags = []
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'Expenses'
+    entity = 'Personal'
+    subaccount = [ 'Fuel' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 20.00
+    asset_symbol = '$'
+    plus_or_minus = ''
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'Assets'
+    entity = 'Personal'
+    subaccount = [ 'Bankwest', 'Cheque' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 20.00
+    asset_symbol = '$'
+    plus_or_minus = '-'
+
+
+
+[[Entry]]
+
+  [Entry.Header]
+  date = 2014-11-11
+  description = 'I bought ฿1.11111111 BTC on Coinbase.com for $1121.11 USD at a price of $999.999 USD/BTC with a fee of $10.00 USD'
+  importance = 0
+  tags = []
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'Assets'
+    entity = 'Personal'
+    subaccount = [ 'Coinbase', 'BTC' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'BTC'
+    asset_quantity = 1.11111111
+    asset_symbol = '฿'
+    plus_or_minus = ''
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'Expenses'
+    entity = 'Personal'
+    subaccount = [ 'CoinbaseFee' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 10.00
+    asset_symbol = '$'
+    plus_or_minus = ''
+
+  [[Entry.Posting]]
+
+    [Entry.Posting.Account]
+    silo = 'Assets'
+    entity = 'Personal'
+    subaccount = [ 'Bankwest', 'Cheque' ]
+
+    [Entry.Posting.Amount]
+    asset_code = 'USD'
+    asset_quantity = 1121.11
+    asset_symbol = '$'
+    plus_or_minus = '-'

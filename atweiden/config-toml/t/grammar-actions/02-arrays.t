@@ -1841,9 +1841,9 @@ subtest
     is(
         $match_array_of_inline_tables.made,
         [
-            [ x => 1, y => 2, z => 3 ],
-            [ x => 7, y => 8, z => 9 ],
-            [ x => 2, y => 4, z => 8 ]
+            %( x => 1, y => 2, z => 3 ),
+            %( x => 7, y => 8, z => 9 ),
+            %( x => 2, y => 4, z => 8 )
         ],
         q:to/EOF/
         ♪ [Is expected array value?] - 105 of 123

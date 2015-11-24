@@ -146,7 +146,7 @@ subtest
 
     is(
         $match_commented_inline_table_difficult.made.WHAT,
-        Array,
+        Hash,
         q:to/EOF/
         ♪ [Is inline table?] - 2 of 3
         ┏━━━━━━━━━━━━━┓
@@ -159,7 +159,7 @@ subtest
 
     is(
         $match_commented_inline_table_difficult.made,
-        [
+        {
             :array_of_arrays(
                 [
                     ["a", "b", "c", "d"],
@@ -184,7 +184,7 @@ subtest
             ),
             "diff\"i\\ \"cult\"?#'\\'" => Bool::True,
             :empty_array_of_arrays([[[[[[[[],],],],],],],])
-        ],
+        },
         q:to/EOF/
         ♪ [Is expected inline table value?] - 3 of 3
         ┏━━━━━━━━━━━━━┓

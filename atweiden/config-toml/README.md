@@ -28,12 +28,10 @@ TOML date values can take three different forms:
 3. Standard calendar dates (`YYYY-MM-dd`)
 
 By default, Config::TOML builds Perl 6 DateTimes from TOML date values
-that do not include a local offset using the host machine's local offset.
-Full RFC 3339 TOML date timestamp values are built as-is.
-
-To override the default behavior of using the host machine's local offset
-for date values where the offset is omitted, pass the `date-local-offset`
-parameter (with an integer value) to `from-toml`:
+that do not include a local offset using the host machine's local
+offset. To override the default behavior of using the host machine's
+local offset for date values where the offset is omitted, pass the
+`date-local-offset` parameter (with an integer value) to `from-toml`:
 
 ```perl6
 my $cfg = slurp 'config.toml';
@@ -58,9 +56,6 @@ UTC                 | UTC±00:00  | `((0 * 60) + 0) * 60 = 0`
 
 To more easily ascertain your host machine's local offset, open a perl6
 repl and print the value of `$*TZ`.
-
-Only dates with a local offset omitted will have their local offset
-converted to the value specified. Full RFC 3339 timestamps are unaffected.
 
 
 Licensing

@@ -1,0 +1,43 @@
+[[TXN]]
+drift = 0
+entity = "VarName"
+
+  [TXN.EntryID]
+  number = 0
+  xxhash = 5555555
+  text = "capture entry"
+
+  [TXN.ModHoldings.AssetCode]
+  entity = "VarName"
+  asset_code = "AssetCode"
+  asset_flow = "AssetFlow"
+  costing = "Costing"
+  date = "DateTime"
+  price = 5.55
+  acquisition_price_asset_code = "AssetCode"
+  quantity = 5.5555555
+
+  [[TXN.ModWallet]]
+  silo = "SILO"
+  entity = "VarName"
+  subwallet = [ "VarName" ]
+  asset_code = "AssetCode"
+  decinc = "DecInc"
+  quantity = 5.5555555
+  xe_asset_code = ""
+  xe_asset_quantity = ""
+
+    [TXN.ModWallet.EntryID]
+    number = 0
+    xxhash = 5555555
+    text = "capture entry"
+
+    [TXN.ModWallet.PostingID]
+    number = 0
+    xxhash = 55555557
+    text = "capture posting"
+
+      [TXN.ModWallet.PostingID.EntryID]
+      number = 0
+      xxhash = 5555555
+      text = "capture entry"
