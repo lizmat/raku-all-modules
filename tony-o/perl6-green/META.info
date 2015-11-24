@@ -4,6 +4,7 @@
   "description" : "Parallel testing utility, it's really great",
   "auth"        : "github:tony-o",
   "authors"     : [ "Tony O" ],
+  "depends"     : ["Terminal::ANSIColor"],
   "provides"    : {
     "Green" : "lib/Green.pm6"
    },

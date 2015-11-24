@@ -1,4 +1,5 @@
 unit module Green;
+use Terminal::ANSIColor;
 
 my @sets;
 my ($p0, $i,$i2) = 1, 0, 0;
@@ -12,17 +13,20 @@ my $supply        = Supply.new;
 my $tsets         = 0;
 my $csets         = 0;
 my $completion    = Promise.new;
+my $clean         = False;
 my $t1;
 
 my @promises;
 my %results;
+
+multi sub clean is export(:DEFAULT, :harness) { $clean = True; }
 
 
 my @prefixed;
 
 multi sub prefix:<\>\>>(| (Bool $bool, Str $descr? = "Prefixed {$p0}")) is export(:DEFAULT, :harness) is hidden-from-backtrace {
   $p0++;
-  @prefixed.push($%(
+  @prefixed.append($%(
     test => "$descr",
     sub  => sub :: is hidden-from-backtrace { die 'not ok' unless $bool; },
   ));
@@ -30,7 +34,7 @@ multi sub prefix:<\>\>>(| (Bool $bool, Str $descr? = "Prefixed {$p0}")) is expor
 
 multi sub prefix:<\>\>>(Callable $sub, Str $descr? = "Prefixed {$p0}") is export(:DEFAULT, :harness) is hidden-from-backtrace { 
   $p0++;
-  @prefixed.push($%(
+  @prefixed.append($%(
     test => $descr, 
     sub  => $sub,
   ));
@@ -44,7 +48,7 @@ multi sub set(Str $description, Callable $sub) is export(:DEFAULT, :harness) is 
   my multi sub test(Callable $sub) is export(:DEFAULT, :harness) is hidden-from-backtrace { test("Test $i2", $sub); };
   my multi sub test(Str $description, Callable $sub) is export(:DEFAULT, :harness) is hidden-from-backtrace {
     $i2++;
-    @tests.push($%(
+    @tests.append($%(
       test => $description,
       sub  => $sub,
     ));
@@ -52,10 +56,10 @@ multi sub set(Str $description, Callable $sub) is export(:DEFAULT, :harness) is 
   $i++;
   $sub();
   $tsets++;
-  $CHANNEL.send({
+  $CHANNEL.send($%(
     description => $description,
     tests       => @tests,
-  });
+  ));
 }
 
 sub ok (Bool $eval, Str $testname? = '') is export(:harness) is hidden-from-backtrace {
@@ -77,16 +81,13 @@ start {
   loop {
     my $set = $CHANNEL.receive;
     my ($err, $index) = 1, 1;
-    try {
-      require Term::ANSIColor;
-      my $color = GLOBAL::Term::ANSIColor::EXPORT::DEFAULT::<&color>;
-      $pass = $color.('green') ~ '✓' ~ $color.('reset');
-      $fail = $color.('red') ~ '✗' ~ $color.('reset');
+    unless $clean {
+      $pass = color('green') ~ '✓' ~ color('reset');
+      $fail = color('red') ~ '✗' ~ color('reset');
     };
 
-
     my $i = @promises.elems;
-    @promises.push(start {
+    @promises.append(start {
       my Str  $output  = '';
       my Str  $errors  = '';
       my Bool $overall = True;
@@ -134,6 +135,7 @@ END {
       tests       => @prefixed,      
     });
   }
+  CATCH { .say; }
 
   await $completion if $tsets != 0;
   $t1 = now;
