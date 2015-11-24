@@ -1,0 +1,11 @@
+{
+    "name"          : "Business::CreditCard",
+    "version"       : "0.1.0",
+    "author"        : "github:fayland",
+    "description"   : "Validate/generate credit card checksums/names",
+    "depends"       : [],
+    "provides" : {
+        "Business::CreditCard" : "lib/Business/CreditCard.pm"
+    },
+    "source-url"    : "git://github.com/fayland/perl6-Business-CreditCard.git"
+}
