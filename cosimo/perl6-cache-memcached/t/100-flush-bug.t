@@ -4,6 +4,7 @@ use v6;
 
 use Test;
 use Cache::Memcached;
+use CheckSocket;
 
 
 my $port = 11311;
@@ -21,15 +22,11 @@ my @res = (
 
 plan +@res;
 
-try {
-   my $sock = IO::Socket::INET.new(host => $testaddr, port => $port);
-   CATCH {
-      default {
-         skip-rest "cannot bind to $testaddr";
-         exit 0;
-      }
-   }
-   close $sock;
+
+if not check-socket($port, "127.0.0.1") {
+    skip-rest "no memcached server"; 
+    exit;
+
 }
 
 my $p = start {

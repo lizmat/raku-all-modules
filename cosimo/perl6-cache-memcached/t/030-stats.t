@@ -3,7 +3,7 @@
 use strict;
 use Test;
 use Cache::Memcached;
-#use IO::Socket::INET;
+use CheckSocket;
 
 my @misc_stats_keys = qw/ bytes bytes_read bytes_written
                           cmd_get cmd_set connection_structures curr_items
@@ -15,14 +15,10 @@ plan 16 + @misc_stats_keys.elems;
 my $testaddr = "127.0.0.1:11211";
 my $port = 11211;
 
-try {
-   my $msock = IO::Socket::INET.new(host => $testaddr, port => $port);
-   CATCH {
-      default {
-         skip-rest "No memcached instance running at $testaddr";
-         exit 0;
-      }
-   }
+if not check-socket($port, "127.0.0.1") {
+    skip-rest "no memcached server"; 
+    exit;
+
 }
 
 my $memd = Cache::Memcached.new(
