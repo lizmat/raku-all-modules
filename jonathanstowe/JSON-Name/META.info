@@ -1,0 +1,22 @@
+{
+  "name" : "JSON::Name",
+  "tags" : [ "object", "serialisation", "JSON" ],
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth" : "github:jonathanstowe",
+  "support" : {
+    "source" : "git://github.com/jonathanstowe/JSON-Name.git"
+  },
+  "source-url" : "git://github.com/jonathanstowe/JSON-Name.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+     "JSON::Name" : "lib/JSON/Name.pm"
+  },
+  "depends" : [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "description" : "Provides a trait to store an alternative JSON Name",
+  "version" : "v0.0.1"
+}
