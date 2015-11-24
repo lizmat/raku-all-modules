@@ -51,6 +51,8 @@ my sub zmq_msg_init_size(Net::ZMQ::Message, int --> int) is native('libzmq') { *
 #     size_t size, zmq_free_fn *ffn, void *hint);
 my sub zmq_msg_init_data(Net::ZMQ::Message, Str, int,
     OpaquePointer, OpaquePointer --> int) is native('libzmq') { * }
+my sub zmq_msg_init_bytes(Net::ZMQ::Message, CArray[int8], int,
+    OpaquePointer, OpaquePointer --> int) is native('libzmq') is symbol('zmq_msg_init_data') { * }
 # ZMQ_EXPORT int zmq_msg_close (zmq_msg_t *msg);
 my sub zmq_msg_close(Net::ZMQ::Message --> int) is native('libzmq') { * }
 # ZMQ_EXPORT int zmq_msg_move (zmq_msg_t *dest, zmq_msg_t *src);
@@ -68,11 +70,20 @@ multi submethod BUILD() {
     zmq_die() if $ret != 0;
 }
 
-multi submethod BUILD(:$message!) {
+multi submethod BUILD(Str :$message!) {
     # XXX: This is only going to work with ASCII data
     # XXX: This is going to leak memory without proper lifecycle handling
     explicitly-manage($message); # TODO: Goes away with better blob handling
     my $ret = zmq_msg_init_data(self, $message, $message.chars, OpaquePointer,
+        OpaquePointer);
+    zmq_die() if $ret != 0;
+}
+
+has CArray[uint8] $!data;
+multi submethod BUILD(Blob[uint8] :$data!) {
+    my CArray[uint8] $msg .= new;
+    $msg[$_] = $data[$_] for 0..^$data.elems;
+    my $ret = zmq_msg_init_bytes(self, $msg, $msg.elems, OpaquePointer,
         OpaquePointer);
     zmq_die() if $ret != 0;
 }
@@ -85,7 +96,7 @@ method data() {
     my $buf = buf8.new;
     my $zmq_data = zmq_msg_data(self);
     for 0..^zmq_msg_size(self) {
-        $buf ~= buf8.new($zmq_data[$_]);
+        $buf.push: $zmq_data[$_];
     }
     return $buf;
 }

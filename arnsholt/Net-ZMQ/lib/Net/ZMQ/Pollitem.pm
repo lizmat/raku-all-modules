@@ -4,16 +4,18 @@ unit class Net::ZMQ::Pollitem is repr('CStruct');
 use Net::ZMQ::Constants;
 use Net::ZMQ::Socket;
 
-has Net::ZMQ::Socket $.socket;
-has int              $.fd;
-has int16            $.events;
+has Net::ZMQ::Socket $!socket;
+has int32            $!fd;
+has int16            $!events;
 has int16            $.revents;
 
-multi method new(Net::ZMQ::Socket $socket, :$in? as Bool, :$out? as Bool, :$err? as Bool) {
-    my int16 $eventmask = $in.Bool * ZMQ_POLLIN
-                        +| $out.Bool * ZMQ_POLLOUT
-                        +| $err.Bool * ZMQ_POLLERR;
-    return self.bless(:$socket, :fd(0), :events($eventmask), :revents(0));
+submethod BUILD(Net::ZMQ::Socket :$socket, :$in as Bool, :$out as Bool, :$err as Bool) {
+    $!socket := $socket;
+    $!events = 0;
+    $!events +|= ZMQ_POLLIN  if $in;
+    $!events +|= ZMQ_POLLOUT if $out;
+    $!events +|= ZMQ_POLLERR if $err;
+    $!revents = 0;
 }
 
 # TODO "native" fd pollitem constructor

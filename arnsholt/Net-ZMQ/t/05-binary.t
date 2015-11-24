@@ -22,6 +22,6 @@ pass 'connecting to inproc address';
 
 my $buf = buf8.new(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 $alice.send($buf, 0);
-is $bob.receive(0).data(), $buf, 'sending and receiving simple binary message';
+ok $bob.receive(0).data() eqv $buf, 'sending and receiving simple binary message';
 
 # vim: ft=perl6
