@@ -1,7 +1,7 @@
 use Base64;
 
 use Test;
-plan 5;
+plan 6;
 
 subtest {
     is encode-base64("", :str), '', 'Encoding the empty string';
@@ -16,6 +16,11 @@ subtest {
     is encode-base64(Buf.new(0), :str), 'AA==', 'encode Test on NULL/0 byte';
     is encode-base64(Buf.new(1), :str), 'AQ==', 'encode Test on byte value 1';
     is encode-base64(Buf.new(255), :str), '/w==', 'encode Test on byte value 255';
+    is encode-base64(Buf.new(<1 1>), :str), 'AQE=', 'encode Test on bytes, value 1 1';
+    is encode-base64(Blob.new(0), :str), 'AA==', 'encode Test on NULL/0 immutable byte';
+    is encode-base64(Blob.new(1), :str), 'AQ==', 'encode Test on immutable byte value 1';
+    is encode-base64(Blob.new(255), :str), '/w==', 'encode Test on immutable byte value 255';
+    is encode-base64(Blob.new(<1 1>), :str), 'AQE=', 'encode Test on immutable bytes, value 1 1';
 }, 'Encode';
 
 subtest {
@@ -32,7 +37,12 @@ subtest {
     is-deeply decode-base64("AA==", :buf), Buf.new(0), 'decode Test on NULL/0 byte';
     is-deeply decode-base64("AQ==", :buf), Buf.new(1), 'decode Test on byte value 1';
     is-deeply decode-base64("/w==", :buf), Buf.new(255), 'decode Test on byte value 255';
+    is-deeply decode-base64("AQE=", :buf), Buf.new(<1 1>), 'decode Test on bytes value 1 1';
 }, 'Decode';
+
+subtest {
+    is encode-base64( decode-base64("w0OfABDTw0Of", :buf) , :str ), "w0OfABDTw0Of", "decoded then re-encoded value equals to origianl one, with A in first position of a 4 characters group";
+}
 
 subtest {
     is encode-base64("\x14\xfb\x9c\x03\xd9\x7e", :str), "FPucA9l+";
@@ -47,5 +57,5 @@ subtest {
 
 subtest {
     my @invalid = <!!!! ==== =AAA A=AA AA=A AA==A AAA=AAAA AAAAA AAAAAA A= A== AA= AA== AAA= AAAA AAAAAA=>;
-    @invalid.map: { is-deeply decode-base64($_, :uri), Buf.new(0) }
+    @invalid.map: { is-deeply decode-base64($_, :uri).grep( * > 0 ).elems , 0 }
 }, 'Currupt/invalid encodings';

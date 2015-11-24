@@ -40,7 +40,7 @@ Lazy base64 encoding and decoding routines
 
 =head4 B<routine> L<encode-base64>
 
-B<Args> C<$encode-me where Buf|Str, :$pad, :@alpha, Bool :$str>
+B<Args> C<$encode-me where Blob|Str, :$pad, :@alpha, Bool :$str>
 
 B<Returns> C<Seq|Str>
 
@@ -52,7 +52,7 @@ B<Returns> C<Seq|Str>
     encode-base64($encode-me, :alpha(1..64))   # Set the entire alphabet
     encode-base64($encode-me, :alpha('-','_')) # Same as :uri
 
-Takes a C<Buf> and applies base64 encoding with the requested options. If passed a C<Str> it will be converted to a C<Buf> via C<.ords> first.
+Takes a C<Blob> and applies base64 encoding with the requested options. If passed a C<Str> it will be converted to a C<Blob> via C<.ords> first.
 
     > say encode-base64("test", :str)
     dGVzdA==
@@ -65,7 +65,7 @@ Takes a C<Buf> and applies base64 encoding with the requested options. If passed
 
 =head4 B<routine> L<decode-base64> 
 
-B<Args> C<$decode-me where Buf|Str, :$pad, :@alpha, Bool :$buf>
+B<Args> C<$decode-me where Blob|Str, :$pad, :@alpha, Bool :$buf>
 
 B<Returns> C<Seq|Buf>
 
@@ -77,7 +77,7 @@ B<Returns> C<Seq|Buf>
     decode-base64($decode-me, :alpha(1..64))   # Set the entire alphabet
     decode-base64($decode-me, :alpha('-','_')) # Same as :uri
 
-Takes a C<Str> and applies base64 decoding with the requested options. If passed a C<Buf> it will be converted to a C<Str> with C<.decode> first.
+Takes a C<Str> and applies base64 decoding with the requested options. If passed a C<Blob> it will be converted to a C<Str> with C<.decode> first.
 
     > say decode-base64("YW55IGNhcm5hbCBwbGVhc3VyZS4=", :buf).decode
     any carnal pleasure.
@@ -91,8 +91,6 @@ Takes a C<Str> and applies base64 decoding with the requested options. If passed
 =head3 TODO 
 
 =over 4
-
-=item * Provide C<Supply> based routines for streaming IO
 
 =item * Handle line lengths, per requested, transparently for the user
 

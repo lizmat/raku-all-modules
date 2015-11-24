@@ -10,7 +10,7 @@ my @chars64uri  = chars64with('-', '_');
 
 our proto sub encode-base64(|) is export {*}
 multi sub encode-base64(Str $str, |c) {
-    samewith(Buf.new($str.ords), |c)
+    samewith(Blob.new($str.ords), |c)
 }
 multi sub encode-base64(Bool :$uri! where *.so, |c) {
     samewith(:alpha(@chars64uri), |c)
@@ -24,8 +24,8 @@ multi sub encode-base64(:$pad = '=', |c)            {
     callwith(:pad($pad ~~ Bool ?? ?$pad ?? '=' !! '' !! $pad), |c)
 }
 
-multi sub encode-base64(Buf $buf, :$pad, :@alpha, |c --> Seq) {
-    $buf.rotor(3, :partial).map: -> $chunk {
+multi sub encode-base64(Blob $blob, :$pad, :@alpha, |c --> Seq) {
+    $blob.rotor(3, :partial).map: -> $chunk {
         state $encodings = chars64with(@alpha);
         my $padding = 0;
         my $n = [+] $chunk.pairs.map: -> $c {
@@ -40,13 +40,13 @@ multi sub encode-base64(Buf $buf, :$pad, :@alpha, |c --> Seq) {
 
 
 our proto sub decode-base64(|) is export {*}
-multi sub decode-base64(Buf $buf, |c) {
-    samewith($buf.decode, |c)
+multi sub decode-base64(Blob $blob, |c) {
+    samewith($blob.decode, |c)
 }
 multi sub decode-base64(Bool :$uri! where *.so, |c) {
     samewith(:buf, :alpha(@chars64uri), |c);
 }
-multi sub decode-base64(Bool :$buf! where *.so, |c --> Buf)  {
+multi sub decode-base64(Bool :$buf! where *.so, |c --> Blob)  {
     Buf.new(samewith(|c) || 0);
 }
 multi sub decode-base64(:$pad = '=', |c)            {
@@ -61,7 +61,8 @@ multi sub decode-base64(Str $str, :$pad, :@alpha, |c --> Seq) {
         state %lookup = $encodings.kv.hash.antipairs;
         my $n   = [+] $chunk.map: { (%lookup{$_} || 0) +< ((state $m = 24) -= 6) }
         my $res = (16, 8, 0).map: { $n +> $_ +& 255 }
-        slip($res.grep(* > 0));
+        #slip($res.grep(* > 0));
+        slip($res.head( 3 - ( 4 - $chunk.elems ) ) );
     }
 }
 
