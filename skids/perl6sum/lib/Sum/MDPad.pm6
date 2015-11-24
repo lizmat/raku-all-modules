@@ -235,7 +235,7 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
         $!ignore_block_inc = True;
 
 	if (!$justify) {
-            @bcat.push(@firstpad);
+            @bcat.append(@firstpad);
 	}
 	else {
 	    my @pad = @firstpad;
@@ -248,17 +248,17 @@ role Sum::MDPad [ int :$blocksize where { not $_ % 8 }
             );
 	    # Rest of this block is conjectural
 	    while (+@pad > 8) {
-	        @bcat.push(@pad.splice(0,8).reverse);
+	        @bcat.append(@pad.splice(0,8).reverse);
 	    }
-	    @bcat.push(flat False xx (8 - @pad), @pad.reverse) if @pad;
+	    @bcat.append(flat False xx (8 - @pad), @pad.reverse) if @pad;
 	}
 
         my $padbits = ($bbytes * 16 - $block.elems * 8 - @lenshifts.elems * 8
                        - @bcat - @lastpad);
         $padbits -= $bbytes * 8 if $padbits >= $bbytes * 8;
 
-        @bcat.push(False xx $padbits);
-        @bcat.push(@lastpad);
+        @bcat.append(False xx $padbits);
+        @bcat.append(@lastpad);
         my @bytes = (gather while +@bcat { take :2[@bcat.splice(0,8)] });
 
         my @vals = flat $block.values, @bytes, (255 X+& ($!o X+> @lenshifts));
