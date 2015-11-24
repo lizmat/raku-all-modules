@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/fayland/perl6-Cache-LRU.git
+	branch = master
+	commit = 45cb43600c56679e2275e3a9b1435bff8b352b65
+	parent = 24d2d78d23c9d0befe12fa319889dd9a68a32ab2
+	cmdver = 0.2.2
