@@ -1,0 +1,11 @@
+{
+    "name" : "Terminal::WCWidth",
+    "version" : "0.1.0",
+    "description" : "Returns what the character width should be on the terminal.",
+    "author" : "Tae Lim Kook",
+    "provides" : {
+        "Terminal::WCWidth" : "lib/Terminal/WCWidth.pm6"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/bluebear94/Terminal-WCWidth.git"
+}

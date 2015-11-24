@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bluebear94/Terminal-WCWidth.git
+	branch = master
+	commit = ae5f9e4dc30550f0f128d29b9a1db464ba9c11ff
+	parent = 6d2f6e341236b93ddf4227b945822a859ccba2e8
+	cmdver = 0.2.2
