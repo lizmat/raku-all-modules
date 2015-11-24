@@ -1,0 +1,10 @@
+{
+  "name" : "HTML::Parser",
+  "version" : "0.1",
+  "description" : "role for HTML parsing",
+  "depends" : ["XML"],
+  "provides" : {
+      "HTML::Parser": "lib/HTML/Parser.pm6"
+  },
+  "source-url" : "git://github.com/tony-o/perl6-html-parser.git"
+}
