@@ -1,19 +1,33 @@
-PROVE  = prove
-PERL6  = perl6
-MODULE = blib/TinyCC.pm6.moarvm
+PROVE = prove
+PERL6 = perl6
+
+BC = blib/TinyCC.pm6.moarvm \
+     blib/TinyCC/CCall.pm6.moarvm \
+     blib/TinyCC/CFunc.pm6.moarvm \
+     blib/TinyCC/Eval.pm6.moarvm \
+     blib/TinyCC/Invoke.pm6.moarvm \
+     blib/TinyCC/Types.pm6.moarvm \
+     blib/TinyCC/NC.pm6.moarvm
 
 export PERL6LIB = blib
 
-all: README.md $(MODULE)
+all: $(BC)
 
-README.md: build/README.md.in build/README.md.p6 TinyCC.pm6
-	$(PERL6) build/$@.p6 <build/$@.in >$@
+clean:
+	rm -f $(BC)
 
-$(MODULE): TinyCC.pm6
-	$(PERL6) --target=mbc --output=$@ TinyCC.pm6
+$(BC): blib/%.pm6.moarvm: lib/%.pm6
+	$(PERL6) --target=mbc --output=$@ $<
 
-test: $(MODULE)
+blib/TinyCC.pm6.moarvm: blib/TinyCC/Types.pm6.moarvm
+blib/TinyCC/CCall.pm6.moarvm: blib/TinyCC.pm6.moarvm
+blib/TinyCC/CFunc.pm6.moarvm: blib/TinyCC/Invoke.pm6.moarvm
+blib/TinyCC/Eval.pm6.moarvm: blib/TinyCC.pm6.moarvm
+blib/TinyCC/Invoke.pm6.moarvm: blib/TinyCC.pm6.moarvm
+blib/TinyCC/Types.pm6.moarvm: blib/TinyCC/NC.pm6.moarvm
+
+test: $(BC)
 	$(PROVE) -e '$(PERL6)' t
 
-t-%: t/%-*.t $(MODULE)
+t-%: t/%-*.t $(BC)
 	$<

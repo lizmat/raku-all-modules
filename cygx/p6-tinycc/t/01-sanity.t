@@ -3,10 +3,11 @@
 use v6;
 
 use Test;
-use TinyCC;
+use TinyCC *;
 
-ok defined(tcc), 'TinyCC appears to have been loaded';
-ok defined(tcc.state), 'TinyCC state is defined';
-ok tcc.state != 0, 'TinyCC state is not NULL';
+plan 1;
 
-done;
+tcc.compile('void dummy(void) {}').relocate;
+pass 'still alive after relocation';
+
+done-testing;

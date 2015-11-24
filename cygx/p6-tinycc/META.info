@@ -1,9 +1,20 @@
 {
-    "name" : "TinyCC",
-    "version" : "*",
+    "name"        : "TinyCC",
+    "version"     : "*",
     "description" : "The Tiny C Compiler",
-    "author" : "cygx <cygx@cpan.org>",
-    "provides" : { "TinyCC" : "TinyCC.pm6" },
-    "depends" : [ ],
-    "source-url" : "git://github.com/cygx/p6-tinycc.git"
+    "author"      : "cygx <cygx@cpan.org>",
+    "source-url"  : "git://github.com/cygx/p6-tinycc.git",
+    "provides"    : {
+        "TinyCC"        : "lib/TinyCC.pm6",
+        "TinyCC::CCall" : "lib/TinyCC/CCall.pm6",
+        "TinyCC::CFunc" : "lib/TinyCC/CFunc.pm6",
+        "TinyCC::Eval"  : "lib/TinyCC/Eval.pm6",
+        "TinyCC::NC"    : "lib/TinyCC/NC.pm6",
+        "TinyCC::Types" : "lib/TinyCC/Types.pm6"
+    },
+    "depends"     : [ ],
+    "support"     : {
+        "bugtracker" : "https://github.com/cygx/p6-tinycc/issues",
+        "source"     : "https://github.com/cygx/p6-tinycc"
+    }
 }
