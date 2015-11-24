@@ -5,11 +5,11 @@ use v6;
 use Test;
 plan 1;
 
-ok $_, $_ ?? "Everything's shiny, Cap'n." !! "Big mosquito." given try {
-    use Native::Array;
+ok $_, $_ ?? "Everything's shiny, Cap'n." !! "Big mosquito." given do {
+    use Native::Types;
     use Native::LibC <malloc sizeof>;
 
-    class Point is repr('CStruct') {
+    class Point is repr<CStruct> {
         has num64 $.x;
         has num64 $.y;
     }

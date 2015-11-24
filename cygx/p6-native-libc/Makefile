@@ -12,7 +12,7 @@ RM       = rm -f
 MV       = mv
 MKDIR    = mkdir -p
 INSTALL  = cp -t
-GEN      = blib/Native/LibC.pm6.moarvm blib/Native/Array.pm6.moarvm $(DLL)
+GEN      = blib/Native/LibC.pm6.moarvm blib/Native/Types.pm6.moarvm $(DLL)
 GARBAGE  =
 
 all: $(GEN) README.md
@@ -34,8 +34,8 @@ __PHONY__:
 blib/Native/LibC.pm6.moarvm: lib/Native/LibC.pm6 $(DLL)
 	$(PERL6) --target=mbc --output=$@ lib/Native/LibC.pm6
 
-blib/Native/Array.pm6.moarvm: lib/Native/Array.pm6 blib/Native/LibC.pm6.moarvm
-	$(PERL6) -Iblib --target=mbc --output=$@ lib/Native/Array.pm6
+blib/Native/Types.pm6.moarvm: lib/Native/Types.pm6 blib/Native/LibC.pm6.moarvm
+	$(PERL6) -Iblib --target=mbc --output=$@ lib/Native/Types.pm6
 
 $(DLL): build/p6-native-libc.c
 	$(CC) build/p6-native-libc.c $(CFLAGS) $(DLLFLAGS) $(OUT)$@

@@ -19,8 +19,9 @@ The C standard library
 # Description
 
 Provides access to the C standard library. It's accompanied by the module
-`Native::Array` that provides an iterable wrapper over `CArray` as well as
-patching `NativeCall::Pointer`, among other things adding an `rw` accessor.
+`Native::Types` that provides an iterable wrapper over `CArray`, adds
+`CScalarRef` and `CStrucRef` types as well as patching `NativeCall::Pointer`
+to provide an `rw` accessor.
 
 This is still work in progress and not a finished product. Feel free to
 [open a ticket](https://github.com/cygx/p6-native-libc/issues/new) if you

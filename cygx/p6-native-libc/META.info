@@ -5,7 +5,7 @@
     "author" : "cygx <cygx@cpan.org>",
     "provides" : {
         "Native::LibC" : "lib/Native/LibC.pm6",
-        "Native::Array" : "lib/Native/Array.pm6"
+        "Native::Types" : "lib/Native/Types.pm6"
     },
     "depends" : [ ],
     "support" : {

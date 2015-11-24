@@ -3,10 +3,10 @@
 use v6;
 
 use Test;
-use Native::Array;
+use Native::Types;
 use Native::LibC <NULL>;
 
 plan 1;
 
-class S is repr('CStruct') { has int $.i }
+class S is repr<CStruct> { has int $.i }
 ok try { NULL.to(S) }, 'cast NULL to struct';
