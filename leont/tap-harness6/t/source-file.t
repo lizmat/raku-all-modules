@@ -1,6 +1,5 @@
 use v6;
-use TAP::Parser;
-use TAP::Harness;
+use TAP;
 
 use Test::More;
 
@@ -8,7 +7,7 @@ plan 4;
 
 my $source = TAP::Runner::Source::File.new(:filename('t/source-file-test-data'));
 my $parser = TAP::Runner::Async.new(:$source);
-await $parser;
+await $parser.waiter;
 my $result = $parser.result;
 
 is $result.tests-planned, 2;

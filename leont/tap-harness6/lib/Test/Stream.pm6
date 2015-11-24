@@ -34,7 +34,7 @@ package Test {
 	}
 
 	my class Context::Main does Context {
-		has TAP::Entry::Handler:D $.output;
+		has TAP::Entry::Handler:D $.output is required;
 		method emit(TAP::Entry $entry) {
 			$!output.handle-entry($entry);
 		}
@@ -60,7 +60,7 @@ package Test {
 		}
 	}
 	class Stream {
-		has TAP::Entry::Handler:D $.output;
+		has TAP::Entry::Handler:D $.output is required;
 		has Int $.version;
 		has Context @!constack;
 		has Context $!context handles <tests-seen handle-entry>;

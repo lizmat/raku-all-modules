@@ -1,5 +1,4 @@
-use TAP::Harness;
-use TAP::Entry;
+use TAP;
 
 use Test::More;
 
@@ -27,10 +26,10 @@ is($tester.result, 0, 'Test would have returned 0');
 my $result = $parser.result;
 is($result.tests-planned, 3, 'Expected 3 tests');
 is($result.tests-run, 3, 'Ran 3 tests');
-is($result.passed.elems, 3, 'Passed 3 tests');
+is($result.passed, 3, 'Passed 3 tests');
 is($result.failed.elems, 0, 'Failed 0 tests');
 is($result.todo-passed.elems, 0, 'Todo-passed 0 tests');
-is($result.skipped.elems, 1, 'Skipped 1 test');
+is($result.skipped, 1, 'Skipped 1 test');
 
 like($elements.entries[0], TAP::Plan, 'Expected a Plan');
 like($elements.entries[1], TAP::Test, 'Expected a Test');

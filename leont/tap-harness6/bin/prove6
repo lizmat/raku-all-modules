@@ -1,26 +1,180 @@
 #! perl6
 
-use TAP::Harness;
+use TAP;
 
 my $path-sep = $*DISTRO.path-sep;
 
 multi listall(IO::Path $path where .d) {
-	return $path.dir(:test(rx/\.t$/)).map(&listall);
+	return $path.dir(:test(rx/\.t$/)).flatmap(&listall);
 }
 multi listall(IO::Path $path) {
 	return ~$path;
 }
-
-sub MAIN(Bool :l($lib), Bool :b($blib), Bool :$timer, Int :j($jobs) = 1, *@files) {
-	die "No files given to run" if not @files;
-
-	my @extra = (%*ENV<PERL6LIB> // '').split($path-sep);
-	@extra.unshift($*CWD ~ '/lib') if $lib;
-	@extra.unshift($*CWD ~ '/blib/lib') if $blib;
-	%*ENV<PERL6LIB> = @extra.join($path-sep) if @extra;
-
-	my @sources = @files.map(*.IO).map(&listall);
-	my $harness = TAP::Harness.new(:@sources).run(:$jobs, :$timer);
-	my $int = signal(SIGINT).tap(-> { $harness.kill("Interrupted"); $int.close(); });
-	return min($harness.result.failed, 254);
+sub load(Str $classname) {
+	my $loaded = try ::($classname);
+	return $loaded if $loaded !eqv Any;
+	require ::($classname);
+	return ::($classname);
 }
+
+multi sub MAIN(
+	Bool :l($lib), Bool :b($blib), Bool :$timer = False, Int :j($jobs) = 1,
+	Bool :$ignore-exit = False, Bool :$trap = False,
+	Bool :$shuffle = False, Str :$err = 'stderr', Bool :$reverse = False,
+	Str :e($exec), Str :$harness, Str :$reporter, Str :I($incdir),
+	*@files) {
+	@files = 't' if not @files;
+	die "Invalid value '$err' for --err\n" if $err ne any('stderr','merge','ignore');
+
+	my %more;
+	with $exec {
+		%more<handlers> = [ TAP::Harness::SourceHandler::Exec.new($exec.words) ];
+	}
+	else {
+		my @incdirs;
+		@incdirs.unshift($*CWD ~ '/lib') if $lib;
+		@incdirs.unshift($*CWD ~ '/blib/lib') if $blib;
+		@incdirs.unshift($incdir) with $incdir;
+		%more<handlers> = [ TAP::Harness::SourceHandler::Perl6.new(:@incdirs) ];
+	}
+	my $harness-class = $harness ?? load($harness) !! TAP::Harness;
+	with $reporter {
+		%more<reporter-class> = load($reporter);
+	}
+	my @sources = @files.map(*.IO).flatmap(&listall);
+	@sources = $shuffle ?? @sources.pick(*) !! @sources.sort;
+	@sources = @sources.reverse if $reverse;
+	my $run = $harness-class.new(:$jobs, :$timer, :$ignore-exit, :$err, |%more).run(@sources);
+	exit min($run.result.failed, 254);
+}
+
+multi sub MAIN(Bool :$help!) {
+	require Pod::To::Text;
+	my $text = ::('Pod::To::Text').render($=pod[0]);
+	with %*ENV<PERLDOC_PAGER> // %*ENV<PAGER> -> $pager {
+		my $proc = shell($pager, :in);
+		$proc.in.print($text);
+		$proc.in.close;
+	}
+	else {
+		say $text;
+	}
+}
+multi sub MAIN(Bool :$version!) {
+	say "prove6 0.0.1 with TAP::Harness 0.001 on $*PERL";
+}
+
+=begin pod
+
+=head1 NAME
+
+prove6 - Run tests through a TAP harness.
+
+=head1 USAGE
+
+ prove [options] [files or directories]
+
+=head1 OPTIONS
+
+Boolean options:
+
+ -v,                    Print all test lines.
+ -l,                    Add 'lib' to the path for your tests (-Ilib).
+ -b,                    Add 'blib/lib' and 'blib/arch' to the path for
+                        your tests
+      --shuffle         Run the tests in random order.
+      --ignore-exit     Ignore exit status from test scripts.
+      --reverse         Run the tests in reverse order.
+      --timer           Print elapsed time after each test.
+      --trap            Trap Ctrl-C and print summary on interrupt.
+      --help            Display this help
+      --version         Display the version
+
+Options that take arguments:
+
+ -e,                    Interpreter to run the tests ('' for compiled
+                        tests.)
+      --harness         Define test harness to use.  See TAP::Harness.
+      --reporter        Result reporter to use. See REPORTERS.
+ -j,                    Run N test jobs in parallel (try 9.)
+      --err=stdout      Direct the test's $*ERR to the harness' $*ERR.
+      --err=merge       Merge test scripts' $*ERR with their $*OUT.
+      --err=ignore      Ignore test script' $*ERR.
+
+=head1 NOTES
+
+=head2 Default Test Directory
+
+If no files or directories are supplied, C<prove> looks for all files
+matching the pattern C<t/*.t>.
+
+=head2 Colored Test Output
+
+Colored test output is the default, but if output is not to a terminal, color
+is disabled.
+
+Color support requires L<Terminal::ANSIColor> on Unix-like platforms. If the
+necessary module is not installed colored output will not be available.
+
+=head2 Exit Code
+
+If the tests fail C<prove> will exit with non-zero status.
+
+=head2 C<--exec>
+
+Normally you can just pass a list of Perl tests and the harness will know how
+to execute them.  However, if your tests are not written in Perl or if you
+want all tests invoked exactly the same way, use the C<-e>, or C<--exec>
+switch:
+
+ prove --exec '/usr/bin/ruby -w' t/
+ prove --exec '/usr/bin/perl -Tw -mstrict -Ilib' t/
+ prove --exec '/path/to/my/customer/exec'
+
+=head2 C<--err={stderr,merge,ignore}>
+
+=over 4
+
+=item stderr
+
+
+
+=item merge
+
+If you need to make sure your diagnostics are displayed in the correct
+order relative to test results you can use the C<--merge> option to
+merge the test scripts' $*ERR into their $*OUT.
+
+This guarantees that $*OUT (where the test results appear) and $*ERR
+(where the diagnostics appear) will stay in sync. The harness will
+display any diagnostics your tests emit on $*ERR.
+
+Caveat: this is a bit of a kludge. In particular note that if anything
+that appears on $*ERR looks like a test result the test harness will
+get confused. Use this option only if you understand the consequences
+and can live with the risk.
+
+=head2 C<--trap>
+
+The C<--trap> option will attempt to trap SIGINT (Ctrl-C) during a test
+run and display the test summary even if the run is interrupted
+
+=head2 @*INC
+
+prove introduces a separation between "options passed to the perl which
+runs prove" and "options passed to the perl which runs tests"; this
+distinction is by design. Thus the perl which is running a test starts
+with the default C<@INC>. Additional library directories can be added
+via the C<PERL6LIB> environment variable, via -Ifoo in C<PERL6OPT> or
+via the C<-Ilib> option to F<prove6>.
+
+=head1 FORMATTERS
+
+You can load a custom L<TAP::Parser::Formatter>:
+
+  prove --formatter MyFormatter
+
+=end pod
+
+# vim:ts=4:sw=4:et:sta
+

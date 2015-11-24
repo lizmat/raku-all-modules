@@ -1,5 +1,4 @@
-use TAP::Parser;
-use TAP::Harness;
+use TAP;
 use Test::More;
 
 my $content1 = q:heredoc/END/;
@@ -75,7 +74,9 @@ is(@entries2[1].description, 'a#b', 'Test has a description');
 like(@entries2[2], TAP::Sub-Test, 'Third entry is a subtest');
 is-deeply(@entries2[2].inconsistencies, [], 'Subtests has no errors');
 like(@entries2[2].entries[1], TAP::YAML, 'Got YAML') or diag(@entries2[2].perl);
-is-deeply(@entries2[2].entries[1].deserialized, [ <Foo Bar> ], 'Could deserialize YAML');
+if try (require YAMLish) {
+	is-deeply(@entries2[2].entries[1].deserialized, [ <Foo Bar> ], 'Could deserialize YAML');
+}
 
 diag("Extra tests for Test-5");
 
@@ -89,10 +90,10 @@ sub parse-and-get($content, :$tests-planned, :$tests-run, :$passed, :$failed, :$
 	my $result = $parser.result;
 	is($result.tests-planned, $tests-planned, "Expected $tests-planned planned tests in $name") if $tests-planned.defined;
 	is($result.tests-run, $tests-run, "Expected $tests-run run tests in $name") if $tests-run.defined;
-	is($result.passed.elems, $passed, "Expected $passed passed tests in $name") if $passed.defined;
+	is($result.passed, $passed, "Expected $passed passed tests in $name") if $passed.defined;
 	is($result.failed.elems, $failed, "Expected $failed failed tests in $name") if $failed.defined;
 	is($result.todo-passed.elems, $todo-passed, "Expected $todo-passed todo-passed tests in $name") if $todo-passed.defined;
-	is($result.skipped.elems, $skipped, "Expected $skipped skipped tests in $name") if $skipped.defined;
+	is($result.skipped, $skipped, "Expected $skipped skipped tests in $name") if $skipped.defined;
 	is($result.unknowns, $unknowns, "Expected $unknowns unknown tests in $name") if $unknowns.defined;
 	is-deeply($result.errors, Array[Str].new(|@errors), 'Got expected errors: ' ~ @errors.map({qq{"$_"}}).join(', ')) if @errors.defined;
 

@@ -1,10 +1,10 @@
-use TAP::Entry;
-use TAP::Generator;
+use TAP;
+use Test::Generator;
 
 module Test::More {
 	my sub generator() {
 		state $generator;
-		return $*tap-generator // $generator //= TAP::Generator.new(:output(TAP::Output.new));
+		return $*tap-generator // $generator //= Test::Generator.new(:output(TAP::Output.new));
 	}
 
 	multi plan(Int $tests) is export {
@@ -135,7 +135,7 @@ module Test::More {
 	}
 
 	sub test-to(TAP::Entry::Handler $output, &tests, Bool :$keep-alive, Int :$version = 12) is export {
-		my $*tap-generator = TAP::Generator.new(:$output, :$version);
+		my $*tap-generator = Test::Generator.new(:$output, :$version);
 		tests();
 		my $ret = 0;
 		LEAVE {

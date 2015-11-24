@@ -1,12 +1,11 @@
 #! perl6
-use TAP::Harness;
-use TAP::Entry;
-use TAP::Generator;
+use TAP;
+use Test::Generator;
 
 my $source = TAP::Runner::Source::Through.new(:name<Self-Testing>);
 my $parser = TAP::Runner::Async.new(:$source);
 my $elements = TAP::Collector.new();
-my $g = TAP::Generator.new(:output(TAP::Entry::Handler::Multi.new(:handlers($source, $elements))));
+my $g = Test::Generator.new(:output(TAP::Entry::Handler::Multi.new(:handlers($source, $elements))));
 
 my $tester = start {
 	$g.plan(3);
@@ -22,7 +21,7 @@ my $tester = start {
 	$g.stop-tests();
 };
 
-my $h = TAP::Generator.new(:output(TAP::Output.new));
+my $h = Test::Generator.new(:output(TAP::Output.new));
 
 $h.test(:ok($tester.result == 0), :description('Test would have returned 0'));
 

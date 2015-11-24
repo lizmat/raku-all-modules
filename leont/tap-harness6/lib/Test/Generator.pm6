@@ -1,9 +1,7 @@
-use TAP::Entry;
-use Test::Event;
-use Test::Stream;
-
-package TAP {
+package Test {
 	class Generator {
+		use Test::Stream;
+
 		has Test::Stream $.stream handles <start-subtest stop-subtest tests-seen stop-tests>;
 		submethod BUILD(TAP::Entry::Handler :$output, Int :$version = 12) {
 			$!stream = Test::Stream.new(:$output, :$version);
