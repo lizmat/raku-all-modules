@@ -1,3 +1,5 @@
+notifications:
+  email: false
 branches:
   except:
     - gh-pages
@@ -5,6 +7,9 @@ language: perl6
 sudo: false
 perl6:
   - latest
-#install:
-#  - rakudobrew build-panda
-#  - panda installdeps .
+install:
+  - cd ~/build
+  - rakudobrew build-panda
+  - panda install cygx/p6-uni63
+script:
+  - perl6 -MUni63 -e 'say Uni63::enc("All is well, 先生!")'

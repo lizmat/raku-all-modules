@@ -1,6 +1,6 @@
-# Name
+# Uni63 [![Build Status](https://travis-ci.org/cygx/p6-uni63.svg?branch=master)](https://travis-ci.org/cygx/p6-uni63)
 
-Uni63 - A Unicode encoding scheme suitable for name mangling
+A Unicode encoding scheme suitable for name mangling
 
 # Synopsis
 
