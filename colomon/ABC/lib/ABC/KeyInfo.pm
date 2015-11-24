@@ -9,6 +9,7 @@ sub parcel-first-if-needed($a) {
 class ABC::KeyInfo {
     has %.key;
     has $.clef;
+    has $.octave-shift;
     has $.basenote;
     
     method new($key-field, :$current-key-info) {
@@ -19,9 +20,11 @@ class ABC::KeyInfo {
 
         my %key-info;
         my $clef-info;
+        my $octave-shift;
         if $current-key-info {
             %key-info = $current-key-info.key;
             $clef-info = $current-key-info.clef;
+            $octave-shift = $current-key-info.octave-shift;
         }
         
         if $match<key-def> {
@@ -79,9 +82,14 @@ class ABC::KeyInfo {
         if $match<clef> {
             my $clef = parcel-first-if-needed($match<clef>);
             $clef-info = ~($clef<clef-name> // $clef<clef-note>);
+            if $match<clef><clef-octave> {
+                $octave-shift = $match<clef><clef-octave>.Int;
+            } else {
+                $octave-shift = 0;
+            }
         }
         
-        self.bless(:key(%key-info), :clef($clef-info), :basenote($match<key-def><basenote>.uc));
+        self.bless(:key(%key-info), :clef($clef-info), :octave-shift($octave-shift) :basenote($match<key-def><basenote>.uc));
     }
 
     method scale-names is export {

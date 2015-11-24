@@ -92,10 +92,11 @@ grammar ABC::Grammar
     
     token tune_file { \s* [<tune> \s*]+ }
     
-    token clef { [ ["clef=" [<clef-note> | <clef-name>]] | <clef-name>] <clef-line>? ["+8" | "-8"]? [\h+ <clef-middle>]? }
+    token clef { [ ["clef=" [<clef-note> | <clef-name>]] | <clef-name>] <clef-line>? ["+8" | "-8"]? [\h+ "octave=" <clef-octave>]? [\h+ <clef-middle>]? }
     token clef-note { "G" | "C" | "F" | "P" }
     token clef-name { "treble" | "alto" | "tenor" | "baritone" | "bass" | "mezzo" | "soprano" | "perc" | "none" }
     token clef-line { <[1..5]> }
+    token clef-octave { ['+' | '-']? \d+ }
     token clef-middle { "middle=" <basenote> <octave> }
 
     token key { [ [<key-def> [\h+ <clef>]?] | <clef> | "HP" | "Hp" ] \h* }

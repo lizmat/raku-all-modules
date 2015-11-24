@@ -42,7 +42,7 @@ class LilypondContext {
     method get-Lilypond-pitch(ABC::Note $abc-pitch) {
         my $real-accidental = $.context.working-accidental($abc-pitch);
         
-        my $octave = +($abc-pitch.basenote ~~ 'a'..'z');
+        my $octave = +($abc-pitch.basenote ~~ 'a'..'z') + $.context.key-info.octave-shift;
         given $abc-pitch.octave {
             when !*.defined { } # skip if no additional octave info
             when /\,/ { $octave -= $abc-pitch.octave.chars }
@@ -244,7 +244,7 @@ class TuneConvertor {
                         when "crescendo)" | "<)"  { $suffix ~= "\\!"; }
                         when "diminuendo(" | ">(" { $suffix ~= "\\>"; }
                         when "diminuendo)" | ">)" { $suffix ~= "\\!"; }
-                        when /^p+$/ | "mp" | "mf" | /^f+$/ | "fermata" | "accent" | "trill"
+                        when /^p+$/ | "mp" | "mf" | /^f+$/ | "fermata" | "accent" | "trill" | "sfz" | "marcato"
                                  { $suffix ~= "\\" ~ $element.value; }
                         $*ERR.say: "Unrecognized gracing: " ~ $element.value.perl;
                         %unrecognized_gracings{~$element.value} = 1;
@@ -314,7 +314,7 @@ class TuneConvertor {
                 when "grace_notes" {
                     $*ERR.say: "Unused suffix in grace note code: $suffix" if $suffix;
                     
-                    $lilypond ~= "\\grace \{";
+                    $lilypond ~= $element.value.acciaccatura ?? "\\acciaccatura \{" !! "\\grace \{";
                     if $element.value.notes == 1 {
                         $lilypond ~= self.StemToLilypond($element.value.notes[0], ""); 
                     } else {
