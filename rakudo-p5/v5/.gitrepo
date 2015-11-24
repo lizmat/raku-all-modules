@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/rakudo-p5/v5.git
 	branch = master
-	commit = 5732e658be933ac443147518a4787dd23f329244
-	parent = c85c431a8fa7e79032bbe4bdefb702971de937d8
-	cmdver = 0.2.1
+	commit = 49ff712c49c7494a74f54df404e2779ce777edc7
+	parent = 56eee7403c27b20b8155fefc09fcca0f6c97f66e
+	cmdver = 0.2.2
