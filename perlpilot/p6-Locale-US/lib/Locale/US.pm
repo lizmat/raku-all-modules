@@ -1,6 +1,7 @@
 unit module Locale::US;
 
-my $data = "AL:ALABAMA
+my $data = q:to/END_OF_STATES/;
+AL:ALABAMA
 AK:ALASKA
 AS:AMERICAN SAMOA
 AZ:ARIZONA
@@ -58,7 +59,8 @@ VA:VIRGINIA
 WA:WASHINGTON
 WV:WEST VIRGINIA
 WI:WISCONSIN
-WY:WYOMING";
+WY:WYOMING
+END_OF_STATES
 
 my @states; my @codes;
 my %code-to-state = $data.lines.map:{ 

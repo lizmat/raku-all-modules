@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/p6-Locale-US.git
 	branch = master
-	commit = 106f14c48e436e6d2f4b71b47d6035a4d5c172d5
-	parent = 780a6789a7286004a34a94dca8f3eaeeac9d13ce
-	cmdver = 0.2.1
+	commit = 64a1f06a93c5671b705ba061f42928b799aaf9fc
+	parent = 79ff387945698fcadb9f14ff2216d877eb240545
+	cmdver = 0.2.2
