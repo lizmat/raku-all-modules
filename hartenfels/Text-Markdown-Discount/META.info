@@ -1,0 +1,11 @@
+{
+    "name"        : "Text::Markdown::Discount",
+    "version"     : "0.2.4",
+    "description" : "Markdown to HTML using the Discount C library.",
+    "author"      : "Carsten Hartenfels",
+    "source-url"  : "git://github.com/hartenfels/Text-Markdown-Discount.git",
+    "depends"     : [],
+    "provides"    : {
+        "Text::Markdown::Discount" : "lib/Text/Markdown/Discount.pm6"
+    }
+}

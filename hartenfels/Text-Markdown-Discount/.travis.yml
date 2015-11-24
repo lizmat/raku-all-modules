@@ -1,0 +1,4 @@
+language: perl6
+before_install:
+    - sudo apt-get update  -qq
+    - sudo apt-get install -qq libmarkdown2-dev

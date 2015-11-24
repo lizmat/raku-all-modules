@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/hartenfels/Text-Markdown-Discount.git
+	branch = master
+	commit = 0524ec8434858ff8409bdfae2b132cab828a7ccb
+	parent = 6696ebe8593b57772df1b59d9c5f85efd926715c
+	cmdver = 0.2.2
