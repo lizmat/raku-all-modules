@@ -1,0 +1,16 @@
+lib/POSIX.pm6
+LICENSE
+MANIFEST
+META.info
+README.md
+t/0-load-module.t
+t/1-getgid.t
+t/10-getpwent.t
+t/2-getuid.t
+t/3-getegid.t
+t/4-geteuid.t
+t/5-setgid.t
+t/6-setuid.t
+t/7-setegid.t
+t/8-seteuid.t
+t/9-getpwnam.t
