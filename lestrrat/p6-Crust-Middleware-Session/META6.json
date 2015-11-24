@@ -1,0 +1,20 @@
+{
+  "name" : "Crust::Middleware::Session",
+  "source-url" : "git://github.com/lestrrat/p6-Crust-Middleware-Session.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "Crust::Middleware::Session" : "lib/Crust/Middleware/Session.pm6"
+  },
+  "depends" : [
+    "Cookie::Baker",
+    "Crust",
+    "Digest::SHA"
+  ],
+  "description" : "Session Middleware for Crust Framework",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "Daisuke Maki"
+  ]
+}
