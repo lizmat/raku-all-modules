@@ -44,7 +44,8 @@ Imagine we have a directory `config`, with two files: `default.json` and `develo
 }
 ```
 
-If we call `Config::Clever.load`, we'll get a hash which consists of the data from
+If we call `Config::Clever.load`, with `"development"` as the environment,
+we'll get a hash which consists of the data from
 `development.json` merged on top of the data in `default.json`.
 
 ```perl6
@@ -70,3 +71,4 @@ say %config
 ## Todo
 
 - more tests
+- support more file formats such as `ini`, `yaml` and `toml`
