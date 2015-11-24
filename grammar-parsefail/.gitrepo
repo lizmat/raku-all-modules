@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ShimmerFairy/grammar-parsefail
+	branch = master
+	commit = 13bfc780d1867fb730ac30e16154ac12a1226c2c
+	parent = 04a4ee16e83a7498cd452b9086cb9316b28d6395
+	cmdver = 0.2.2
