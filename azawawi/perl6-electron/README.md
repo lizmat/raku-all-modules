@@ -1,5 +1,4 @@
-# Electron
-[![Build Status](https://travis-ci.org/azawawi/perl6-electron.svg?branch=master)](https://travis-ci.org/azawawi/perl6-electron)
+# Electron [![Build Status](https://travis-ci.org/azawawi/perl6-electron.svg?branch=master)](https://travis-ci.org/azawawi/perl6-electron)
 
 The goal is to write cross-platform Perl 6 desktop applications using
 JavaScript, HTML and CSS on top of the [Electron](https://github.com/atom/electron) platform. It is based on [io.js](http://iojs.org) and [Chromium](http://www.chromium.org) and is used in
@@ -13,13 +12,12 @@ Please follow the instructions below based on your platform:
 
 - Install nodejs using apt
 ```
-    sudo apt-get install nodejs
+$ sudo apt-get install nodejs
 ```
 - Install pre-built electron for your platform using the following command
   line:
-
 ```
-    sudo npm install electron-prebuilt -g
+$ sudo npm install electron-prebuilt -g
 ```
 
 After a successful installation, electron should be installed in
@@ -34,9 +32,8 @@ can be called from the command line.
 - Install the installer from https://nodejs.org/
 - Install pre-built electron for your platform using the following command
   line:
-
 ```
-    npm install electron-prebuilt -g
+$ npm install electron-prebuilt -g
 ```
 
 
@@ -47,14 +44,18 @@ After a success installation, electron should be installed in
 
 To install it using Panda (a module management tool bundled with Rakudo Star):
 
-    panda update
-    panda install Electron
+```
+$ panda update
+$ panda install Electron
+```
 
 ## Testing
 
 To run tests:
 
-    prove -e perl6
+```
+$ prove -e "perl6 -Ilib"
+```
 
 ## Author
 
