@@ -12,6 +12,30 @@ my class X::Encode::Unknown is Exception {
     }
 }
 
+sub latin2(Buf $buf) {
+    $buf.list.map({ %Encode::Latin2::map{$_} // $_ })>>.chr.join;
+}
+
+sub latin1(Buf $buf) {
+    $buf.decode('iso-8859-1');
+}
+
+sub utf8(Buf $buf) {
+    $buf.decode('utf8');
+}
+
+sub ascii(Buf $buf) {
+    $buf.decode('ascii');
+}
+
+sub cp1251(Buf $buf) {
+    $buf.list.map({ %Encode::Windows1251::map{$_} // $_ })>>.chr.join;
+}
+
+sub cp1252(Buf $buf) {
+    $buf.list.map({ %Encode::Windows1252::map{$_} // $_ })>>.chr.join;
+}
+
 my %encodings =
     'iso-8859-2' => &latin2,
     'iso_8859-2' => &latin2,
@@ -43,30 +67,6 @@ our sub decode($encoding, Buf $buf) {
     X::Encode::Unknown.new(:encoding($encoding)).throw unless %encodings{$encoding}.defined;
 
     &(%encodings{$encoding})($buf);
-}
-
-sub latin2(Buf $buf) {
-    $buf.list.map({ %Encode::Latin2::map{$_} // $_ })>>.chr.join;
-}
-
-sub latin1(Buf $buf) {
-    $buf.decode('iso-8859-1');
-}
-
-sub utf8(Buf $buf) {
-    $buf.decode('utf8');
-}
-
-sub ascii(Buf $buf) {
-    $buf.decode('ascii');
-}
-
-sub cp1251(Buf $buf) {
-    $buf.list.map({ %Encode::Windows1251::map{$_} // $_ })>>.chr.join;
-}
-
-sub cp1252(Buf $buf) {
-    $buf.list.map({ %Encode::Windows1252::map{$_} // $_ })>>.chr.join;
 }
 
 =begin pod
