@@ -5,6 +5,10 @@ role Val {
 }
 
 role Val::None does Val {
+    method quoted-Str {
+        self.Str
+    }
+
     method Str {
         "None"
     }
@@ -16,6 +20,10 @@ role Val::None does Val {
 
 role Val::Int does Val {
     has Int $.value;
+
+    method quoted-Str {
+        self.Str
+    }
 
     method Str {
         $.value.Str
@@ -29,6 +37,10 @@ role Val::Int does Val {
 role Val::Str does Val {
     has Str $.value;
 
+    method quoted-Str {
+        q["] ~ $.value.subst("\\", "\\\\", :g).subst(q["], q[\\"], :g) ~ q["]
+    }
+
     method Str {
         $.value
     }
@@ -41,8 +53,12 @@ role Val::Str does Val {
 role Val::Array does Val {
     has @.elements;
 
+    method quoted-Str {
+        "[" ~ @.elements>>.quoted-Str.join(', ') ~ "]"
+    }
+
     method Str {
-        '[' ~ @.elements>>.Str.join(', ') ~ ']'
+        self.quoted-Str
     }
 
     method truthy {
@@ -53,11 +69,39 @@ role Val::Array does Val {
 role Q::ParameterList { ... }
 role Q::StatementList { ... }
 
+our $global-object-id = 0;
+
+role Val::Object does Val {
+    has %.properties{Str};
+    has $.id = $global-object-id++;
+
+    method Str {
+        '{' ~ %.properties.map({
+            my $key = .key ~~ /^<!before \d> [\w+]+ % '::'$/
+              ?? .key
+              !! Val::Str.new(value => .key).quoted-Str;
+            "{$key}: {.value.quoted-Str}"
+        }).sort.join(', ') ~ '}'
+    }
+
+    method quoted-Str {
+        self.Str
+    }
+
+    method truthy {
+        ?%.properties
+    }
+}
+
 role Val::Block does Val {
-    has $.parameterlist = Q::ParameterList.new;
+    has $.parameterlist is rw = Q::ParameterList.new;
     has $.statementlist = Q::StatementList.new;
     has %.static-lexpad;
     has $.outer-frame;
+
+    method quoted-Str {
+        self.Str
+    }
 
     method pretty-params {
         sprintf "(%s)", $.parameterlist».name.join(", ");
@@ -68,15 +112,28 @@ role Val::Block does Val {
 role Val::Sub does Val::Block {
     has $.name;
 
+    method quoted-Str {
+        self.Str
+    }
+
     method Str { "<sub {$.name}{$.pretty-params}>" }
 }
 
 role Val::Macro does Val::Sub {
+    method quoted-Str {
+        self.Str
+    }
+
     method Str { "<macro {$.name}{$.pretty-params}>" }
 }
 
 role Val::Sub::Builtin does Val::Sub {
     has $.code;
+    has $.qtype;
+    has $.assoc;
+    has %.precedence;
 
-    method new($name, $code) { self.bless(:$name, :$code) }
+    method new($name, $code, :$qtype, :$assoc, :%precedence, :$parameterlist) {
+        self.bless(:$name, :$code, :$qtype, :$assoc, :%precedence, :$parameterlist)
+    }
 }

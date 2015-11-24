@@ -1,6 +1,7 @@
+use _007::Parser::Exceptions;
 use _007::Parser::Precedence;
 
-class _007::Parser::OpLevel {
+class _007::Parser::OpScope {
     has %.ops =
         prefix => {},
         infix => {},
@@ -13,9 +14,9 @@ class _007::Parser::OpLevel {
 
     method install($type, $op, $q?, :%precedence, :$assoc) {
         %!ops{$type}{$op} = $q !=== Any ?? $q !! {
-            prefix => Q::Prefix::Custom[$op],
-            infix => Q::Infix::Custom[$op],
-            postfix => Q::Postfix::Custom[$op],
+            prefix => Q::Prefix["<$op>"],
+            infix => Q::Infix["<$op>"],
+            postfix => Q::Postfix["<$op>"],
         }{$type};
 
         my @namespace := $type eq 'infix' ?? @!infixprec !! @!prepostfixprec;

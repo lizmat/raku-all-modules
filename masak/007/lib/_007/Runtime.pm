@@ -7,16 +7,19 @@ role Frame {
 }
 
 constant NO_OUTER = {};
+constant RETURN_TO = "--RETURN-TO--";
 
 role _007::Runtime {
     has $.output;
     has @!frames;
+    has $!builtins;
 
     submethod BUILD(:$output) {
         $!output = $output;
         my $setting = Val::Block.new(
             :outer-frame(NO_OUTER));
         self.enter($setting);
+        $!builtins = _007::Runtime::Builtins.new(:runtime(self));
         self.load-builtins;
     }
 
@@ -75,6 +78,8 @@ role _007::Runtime {
                 if $frame.pad{$symbol} :exists;
             $frame = $frame.block.outer-frame;
         }
+        die X::ControlFlow::Return.new
+            if $symbol eq RETURN_TO;
         die X::Undeclared.new(:$symbol);
     }
 
@@ -107,15 +112,17 @@ role _007::Runtime {
     }
 
     method register-subhandler {
-        self.declare-var("--RETURN-TO--");
-        self.put-var("--RETURN-TO--", $.current-frame);
+        self.declare-var(RETURN_TO, $.current-frame);
     }
 
     method load-builtins {
-        my $builtins = _007::Runtime::Builtins.new(:runtime(self));
-        for $builtins.get-subs.kv -> $name, $subval {
+        for $!builtins.get-subs -> Pair (:key($name), :value($subval)) {
             self.declare-var($name, $subval);
         }
+    }
+
+    method builtin-opscope {
+        return $!builtins.opscope;
     }
 
     method sigbind($type, $c, @args) {
@@ -163,6 +170,59 @@ role _007::Runtime {
 
     method property($obj, $propname) {
         my $builtins = _007::Runtime::Builtins.new(:runtime(self));
-        return $builtins.property($obj, $propname);
+        if $obj ~~ Q {
+            return $builtins.property($obj, $propname);
+        }
+        if $obj.properties{$propname} :exists {
+            return $obj.properties{$propname};
+        }
+        elsif $propname eq "get" {
+            return Val::Sub::Builtin.new("get", sub ($prop) {
+                    return self.property($obj, $prop.value);
+                }
+            );
+        }
+        elsif $propname eq "has" {
+            return Val::Sub::Builtin.new("has", sub ($prop) {
+                    # XXX: problem: we're not lying hard enough here. we're missing
+                    #      both Q objects, which are still hard-coded into the
+                    #      substrate, and the special-cased properties
+                    #      <get has extend update id>
+                    my $exists = $obj.properties{$prop.value} :exists ?? 1 !! 0;
+                    return Val::Int.new(:value($exists));
+                }
+            );
+        }
+        elsif $propname eq "update" {
+            return Val::Sub::Builtin.new("update", sub ($newprops) {
+                    my @properties = $obj.properties.keys;
+                    sub updated($key) {
+                        $newprops.properties{$key} // $obj.properties{$key}
+                    }
+                    return Val::Object.new(:properties(@properties.map({
+                        $_ => updated($_)
+                    })));
+                }
+            );
+        }
+        elsif $propname eq "extend" {
+            return Val::Sub::Builtin.new("update", sub ($newprops) {
+                    my @properties = $obj.properties.keys;
+                    my @newproperties = $newprops.properties.keys;
+                    return Val::Object.new(:properties(|@properties.map({
+                        $_ => $obj.properties{$_}
+                    }), |@newproperties.map({
+                        $_ => $newprops.properties{$_}
+                    })));
+                }
+            );
+        }
+        elsif $propname eq "id" {
+            # XXX: Make this work for Q-type objects, too.
+            return $obj.id;
+        }
+        else {
+            die X::PropertyNotFound.new(:$propname);
+        }
     }
 }

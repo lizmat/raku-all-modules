@@ -1,4 +1,5 @@
 use _007::Val;
+use _007::Parser::Exceptions;
 
 grammar _007::Parser::Syntax {
     token TOP {
@@ -87,27 +88,27 @@ grammar _007::Parser::Syntax {
         <.finishpad>
     }
     token statement:return {
-        return [\s+ <EXPR>]?
+        return [<.ws> <EXPR>]?
         {
             die X::ControlFlow::Return.new
                 unless $*insub;
         }
     }
     token statement:if {
-        if \s+ <xblock>
+        if <.ws> <xblock>
     }
     token statement:for {
-        for \s+ <xblock>
+        for <.ws> <xblock>
     }
     token statement:while {
-        while \s+ <xblock>
+        while <.ws> <xblock>
     }
     token statement:BEGIN {
         BEGIN <.ws> <block>
     }
 
     token trait {
-        'is' \s* <identifier> '(' <EXPR> ')'
+        'is' <.ws> <identifier> '(' <EXPR> ')'
     }
 
     # requires a <.newpad> before invocation
@@ -135,27 +136,17 @@ grammar _007::Parser::Syntax {
     }
 
     token eat_terminator {
-        || \s* ';'
+        || <.ws> ';'
         || <?after '}'> $$
-        || \s* <?before '}'>
-        || \s* $
+        || <.ws> <?before '}'>
+        || <.ws> $
     }
 
-    rule EXPR { <termish> +% [<infix> || <argumentlist1>
-        { die X::Syntax::BogusListop.new(
-            :wrong("$<termish>[*-1] $<argumentlist1>"),
-            :right("{$<termish>[*-1]}($<argumentlist1>)")
-          );
-        }]
-    }
+    rule EXPR { <termish> +% <infix> }
 
     token termish { <prefix>* [<term>|<term=unquote>] <postfix>* }
 
     method prefix {
-        # XXX: remove this hack
-        if / '->' /(self) {
-            return /<!>/(self);
-        }
         my @ops = $*parser.oplevel.ops<prefix>.keys;
         if /@ops/(self) -> $cur {
             return $cur."!reduce"("prefix");
@@ -163,12 +154,19 @@ grammar _007::Parser::Syntax {
         return /<!>/(self);
     }
 
+    token str { '"' ([<-["]> | '\\\\' | '\\"']*) '"' }
+
     proto token term {*}
     token term:none { None >> }
     token term:int { \d+ }
-    token term:str { '"' ([<-["]> | '\\\\' | '\\"']*) '"' }
-    token term:array { '[' ~ ']' <EXPR>* %% [\h* ',' \h*] }
+    token term:array { '[' ~ ']' [<.ws> <EXPR>]* %% [\h* ','] }
+    token term:str { <str> }
     token term:parens { '(' ~ ')' <EXPR> }
+    token term:quasi { quasi >> [<.ws> <block> || <.panic("quasi")>] }
+    token term:object {
+        [<identifier> <?{ $*parser.types{$<identifier>} }> <.ws>]?
+        '{' ~ '}' <propertylist>
+    }
     token term:identifier {
         <identifier>
         {
@@ -185,9 +183,23 @@ grammar _007::Parser::Syntax {
             }
         }
     }
-    token term:quasi { quasi >> [<.ws> '{' ~ '}' <statementlist> || <.panic("quasi")>] }
+
+    token propertylist { [<.ws> <property>]* % [\h* ','] <.ws> }
 
     token unquote { '{{{' <EXPR> '}}}' }
+
+    proto token property {*}
+    rule property:str-expr { <key=str> ':' <value=term> }
+    rule property:ident-expr { <identifier> ':' <value=term> }
+    rule property:method {
+        <identifier>
+        <.newpad>
+        '(' ~ ')' <parameterlist>
+        <trait> *
+        <blockoid>:!s
+        <.finishpad>
+    }
+    token property:ident { <identifier> }
 
     method infix {
         my @ops = $*parser.oplevel.ops<infix>.keys;
@@ -199,13 +211,13 @@ grammar _007::Parser::Syntax {
 
     method postfix {
         # XXX: should find a way not to special-case [] and () and .
-        if /$<index>=[ \s* '[' ~ ']' [\s* <EXPR>] ]/(self) -> $cur {
+        if /$<index>=[ <.ws> '[' ~ ']' [<.ws> <EXPR>] ]/(self) -> $cur {
             return $cur."!reduce"("postfix");
         }
-        elsif /$<call>=[ \s* '(' ~ ')' [\s* <argumentlist>] ]/(self) -> $cur {
+        elsif /$<call>=[ <.ws> '(' ~ ')' [<.ws> <argumentlist>] ]/(self) -> $cur {
             return $cur."!reduce"("postfix");
         }
-        elsif /$<prop>=[ \s* '.' <identifier> ]/(self) -> $cur {
+        elsif /$<prop>=[ <.ws> '.' <identifier> ]/(self) -> $cur {
             return $cur."!reduce"("postfix");
         }
 
@@ -223,10 +235,6 @@ grammar _007::Parser::Syntax {
 
     rule argumentlist {
         <EXPR> *% ','
-    }
-
-    rule argumentlist1 {
-        <EXPR> +% ','
     }
 
     rule parameterlist {

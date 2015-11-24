@@ -8,8 +8,8 @@ use _007::Test;
         .
 
     my $expected = read(
-        "(stmtlist (stexpr (+ (int 1) (int 1))))"
-    ).block; # need to peel off the CompUnit
+        "(stmtlist (stexpr (infix:<+> (int 1) (int 1))))"
+    ).block.Str.subst("Q::Block", "Q::Expr::Block");
     outputs $program, "$expected\n", "Basic quasi quoting";
 }
 
@@ -41,6 +41,21 @@ use _007::Test;
         .
 
     outputs $program, "Mr Bond!\n", "very basic unquote";
+}
+
+{
+    my $program = q:to/./;
+        macro foo() {
+            my x = 7;
+            return quasi {
+                say(x);
+            }
+        }
+
+        foo();
+        .
+
+    outputs $program, "7\n", "a variable is looked up in the quasi's environment";
 }
 
 done-testing;

@@ -2,7 +2,7 @@
 
 > **Q**: Good to see you Mr Bond, things have been awfully dull around
 > here...Now you're on this, I hope we're going to have some gratuitous
-> sex and violence!\
+> sex and violence!  
 > **James Bond**: I certainly hope so too.
 
 007 is a small language. It has been designed with the purpose of
@@ -29,8 +29,8 @@ A small number of values in 007 can be expressed using literal syntax.
 
     123                 Q::Literal::Int
     "Bond."             Q::Literal::Str
-    [0, 0, 7]           Q::Literal::Array
     None                Q::Literal::None
+    [0, 0, 7]           Q::Term::Array
 
 Only double quotes are allowed. Strings don't have any form of
 interpolation.
@@ -40,7 +40,7 @@ and subroutines that don't `return` anything.
 
 ## Expressions
 
-> **James Bond**: A gun and a radio. It's not exactly Christmas, is it?\
+> **James Bond**: A gun and a radio. It's not exactly Christmas, is it?  
 > **Q**: Were you expecting an exploding pen? We don't really go in for
 > that anymore.
 
@@ -113,8 +113,8 @@ it's no longer visible.
 
 ## Statements
 
-> **Q**: It is to be handled with special care!\
-> **Bond**: Everything you give me...\
+> **Q**: It is to be handled with special care!  
+> **Bond**: Everything you give me...  
 > **Q**: ...is treated with equal contempt. Yes, I know.
 
 We've seen two types of statement already: variable declarations, and
@@ -231,13 +231,13 @@ There are also constructor methods for creating program elements.
 
     Q::Literal::Int(value)
     Q::Literal::Str(value)
-    Q::Literal::Array(value)
+    Q::Term::Array(value)
+    Q::Term::Quasi(block)
     Q::Identifier(str)
     Q::StatementList(array)
     Q::ParameterList(array)
     Q::ArgumentList(array)
     Q::Block(paramlist, stmtlist)
-    Q::Quasi(stmtlist)
     Q::Trait(ident, expr)
     Q::Prefix::Minus(expr)
     Q::Infix::Addition(lhs, rhs)
@@ -265,8 +265,8 @@ represented as destructors in the setting.
 
 ## Macros
 
-> **Q**: Now, look...\
-> **Bond**: So where is this cutting edge stuff?\
+> **Q**: Now, look...  
+> **Bond**: So where is this cutting edge stuff?  
 > **Q**: I'm trying to get to it!
 
 Macros are a form of routine, just like subs.
@@ -287,8 +287,8 @@ call the macro, and then install whatever code the macro said to return.
 ## Quasis
 
 > **Q**: Right. Now pay attention, 007. I want you to take great care of
-> this equipment. There are one or two rather special accessories...\
-> **James Bond**: Q, have I ever let you down?\
+> this equipment. There are one or two rather special accessories...  
+> **James Bond**: Q, have I ever let you down?  
 > **Q**: Frequently.
 
 It's sometimes convenient to express code as Qtree constructors, like
