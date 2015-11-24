@@ -55,11 +55,26 @@ to C<$count> words.
     ++%dict{$_} for $*IN.words;
     say "Most common words: ", %dict.sort(*.value).reverse.[^5];
 
+=head2 method split
+
+    method split(splitter = "")
+
+Returns a lazy list of strings found between the splitter, just like C<split>
+on strings.
+
+=head2 method comb
+
+    method comb(comber = "")
+
+Returns a lazy list of strings combed from the handle, just like C<comb>
+on strings.
+
 =head2 method print
 
     method print(*@text --> Bool)
 
-Text writing; writes the given C<@text> to the filehandle.
+Text writing; writes the given C<@text> to the filehandle.  See L<write>
+to write bytes.
 
     my $fh = open 'path/to/file', :w;
     $fh.print("some text\n");
@@ -69,34 +84,43 @@ Text writing; writes the given C<@text> to the filehandle.
 
     method read(IO::Handle:D: Int(Cool:D) $bytes --> Blob)
 
-Binary reading; reads and returns C<$bytes> bytes from the handle
+Binary reading; reads and returns up to C<$bytes> bytes from the filehandle.
+
+=head2 method readchars
+
+    method readchars(IO::Handle:D: Int(Cool:D) $chars --> Str)
+
+Reading chars; reads and returns up to C<$chars> chars (graphemes) from the
+filehandle.
 
 =head2 method write
 
     method write(IO::Handle:D: Blob:D $buf)
 
-Binary writing; writes C<$buf> to the filehandle.
+Binary writing; writes C<$buf> to the filehandle.  See L<print> to write
+characters.
 
 =head2 method seek
 
-     method seek(IO::Handle:D: Int:D $offset, Int:D $whence)
+     method seek(IO::Handle:D: Int:D $offset, SeekType:D $whence --> True)
 
 Move the file pointer (that is the position at which any subsequent read
 or write operations will begin,) to the byte position specified by
 C<$offset> relative to the location specified by C<$whence> which may be
 one of:
 
-=item 0
+=item SeekFromBeginning
 
 The beginning of the file.
 
-=item 1
+=item SeekFromCurrent
 
 The current position in the file.
 
-=item 2
+=item SeekFromEnd
 
-The end of the file.
+The end of the file.  Please note that you need to specify a negative
+offset if you want to position before the end of the file.
 
 =head2 method tell
 
@@ -119,6 +143,16 @@ Return the remaining content of the file from the current file position
 (which may have been set by previous reads or by C<seek>.)  If the
 adverb C<:bin> is provided a L<Buf> will be returned,
 otherwise the return will be a C<Str> with the optional encoding C<:enc>.
+
+=head2 method Supply
+
+    multi method Supply(IO::Handle:D: :$size = 65536, :$bin --> Supply)
+
+Returns a C<Supply> that will emit the contents of the handle in chunks.
+The size of the chunks is determined by the optional C<:size> named parameter
+and defaults to 64K.  The optional C<:bin> named parameter can be specified
+to indicate binary reading of the contents, rather than character based
+reading.
 
 =head2 method close
 

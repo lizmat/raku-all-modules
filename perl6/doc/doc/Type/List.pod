@@ -241,13 +241,15 @@ invokes C<uc|/type/Str#routine uc> four times.
 
 Defined as:
 
-    multi sub    grep(Mu $matcher, *@elems) returns Seq:D
-    multi method grep(List:D:  Mu $matcher) returns Seq:D
+    multi sub    grep(Mu $matcher, *@elems, :k, :kv, :p, :v) returns Seq:D
+    multi method grep(List:D:  Mu $matcher, :k, :kv, :p, :v) returns Seq:D
 
 Usage:
 
     grep MATCHER, LIST
+    grep MATCHER, LIST, :RETURN_AS
     LIST.grep(MATCHER)
+    LIST.grep(MATCHER, :RETURN_AS)
 
 Returns a sequence of elements against which C<$matcher> smart-matches.
 The elements are returned in the order in which they appear in the original
@@ -260,80 +262,120 @@ Examples:
     > grep { .Str.chars > 3 }, 'hello', 1, 22/7, 42, 'world'
     (hello 3.142857 world)
 
-=head2 routine grep-index
+The optional named parameters C<:k>, C<:kv>, C<:p>, C<:v> provide the same
+functionality as on slices:
 
-Defined as:
+=item k
 
-    multi method grep-index(List:D: Mu $matcher) returns Seq:D
+Only return the index values of the matching elements in order.
 
-Usage:
+=item kv
 
-    LIST.grep-index(MATCHER)
+Return both the index and matched elements in order.
 
-Returns a sequence of indices against which the associated elements
-smart-match.  The indices are returned in order.
+=item p
+
+Return the index and the matched element as a C<Pair>, in order.
+
+=item v
+
+Only return the matched elements (same as not specifying any named parameter
+at all).
+
+=back
 
 Examples:
 
-    > ('hello', 1, 22/7, 42, 'world').grep-index: Int
+    > ('hello', 1, 22/7, 42, 'world').grep: Int, :k
     (1 3)
-    > grep-index { .Str.chars > 3 }, 'hello', 1, 22/7, 42, 'world'
-    (0 2 4)
+    > grep { .Str.chars > 3 }, :kv, 'hello', 1, 22/7, 42, 'world'
+    (0 hello 2 3.142857 4 world)
+    > grep { .Str.chars > 3 }, :p, 'hello', 1, 22/7, 42, 'world'
+    (0 => hello 2 => 3.142857 4 => world)
 
 =head2 routine first
 
 Defined as:
 
-    multi sub    first(Mu $matcher, *@elems)
-    multi method first(List:D:  Mu $matcher)
+    multi sub    first(Mu $matcher, *@elems, :k, :kv, :p, :end)
+    multi method first(List:D:  Mu $matcher, :k, :kv, :p, :end)
 
 Usage:
 
-    first MATCHER, LIST
-    LIST.first(MATCHER)
+    first MATCHER, LIST, :RETURN_AS, :FROM_END
+    LIST.first(MATCHER, :RETURN_AS, :FROM_END)
 
 Returns the first item of the list which smart-matches against C<$matcher>,
-fails when no values match.
+returns Nil when no values match.  The optional named parameter C<:end>
+indicates that the search should be from the B<end> of the list, rather than
+from the start.
 
 Examples:
 
-    say (1, 22/7, 42).first: * > 5;     # 42
-    say $f = ('hello', 1, 22/7, 42, 'world').first: Complex;
-    say $f.perl;                        #  Failure.new(exception => X::AdHoc.new(payload => "No values matched"))
+    say (1, 22/7, 42, 300).first: * > 5;                  # 42
+    say (1, 22/7, 42, 300).first: * > 5, :end;            # 300
+    say ('hello', 1, 22/7, 42, 'world').first: Complex;   # Nil
 
-=head2 routine first-index
+The optional named parameters C<:k>, C<:kv>, C<:p> provide the same
+functionality as on slices:
+
+=item k
+
+Return the index value of the matching element.  Index is always counted from
+the beginning of the list, regardless of whether the C<:end> named parameter
+is specified or not.
+
+=item kv
+
+Return both the index and matched element.
+
+=item p
+
+Return the index and the matched element as a C<Pair>.
+
+=back
+
+Examples:
+
+    say (1, 22/7, 42, 300).first: * > 5, :k;        # 2
+    say (1, 22/7, 42, 300).first: * > 5, :p;        # 2 => 42
+    say (1, 22/7, 42, 300).first: * > 5, :kv, :end; # 3 300
+
+=head2 method head
 
 Defined as:
 
-    multi method first-index(List:D: Mu $matcher)
+    multi method head(List:D: Int:D $number) returns Seq:D
 
 Usage:
 
-    LIST.first-index(MATCHER)
+    LIST.head(NUMBER)
 
-Returns the first index against which C<$matcher> smart-matches, or C<Nil> if
-no match was found.
+Returns the B<first> NUMBER items of the list.  Returns an empty list if
+NUMBER <= 0.
 
-Example:
+Examples:
 
-    say (1, 22/7, 42, 300, 72).first-index: * > 5;   # 2
+    say ^10 .head(5)       # 0 1 2 3 4
+    say ^Inf .head(5)      # 0 1 2 3 4
 
-=head2 routine last-index
+=head2 method tail
 
 Defined as:
 
-    multi method last-index(List:D: Mu $matcher)
+    multi method tail(List:D: Int:D $number) returns Seq:D
 
 Usage:
 
-    LIST.last-index(MATCHER)
+    LIST.tail(NUMBER)
 
-Returns the last index against which C<$matcher> smart-matches, or C<Nil> if
-no match was found.
+Returns the B<last> NUMBER items of the list.  Returns an empty list if
+NUMBER <= 0.  Throws an exception if the list is lazy.
 
-Example:
+Examples:
 
-    say (1, 22/7, 42, 300, 72).last-index: * > 5;   # 4
+    say ^10 .tail(5)      # 5 6 7 8 9
+    say ^Inf .tail(5)     # Cannot tail a lazy list
 
 =head2 routine classify
 
@@ -556,19 +598,20 @@ Examples:
 
 Defined as:
 
-    multi sub    unique(*@values, :&as) returns Seq:D
-    multi method unique(List:D:,  :&as) returns Seq:D
+    multi sub    unique(*@values, :&as, :&with) returns Seq:D
+    multi method unique(List:D:,  :&as, :&with) returns Seq:D
 
 Usage:
 
-    unique LIST, :COMPARE_AS
-    LIST.unique(:COMPARE_AS)
+    unique LIST, :COMPARE_AS, :COMPARE_WITH
+    LIST.unique(:COMPARE_AS, :COMPARE_WITH)
 
-Returns a sequence of unique values from the invocant/argument list, such
+Returns a sequence of B<unique> values from the invocant/argument list, such
 that only the first occurrence of each duplicated value remains in the
-result list. C<unique> uses the semantics of the L<===> operator to decide whether
-two objects are the same. The order of the original list is preserved even as
-duplicates are removed.
+result list. C<unique> uses the semantics of the L<===> operator to decide
+whether two objects are the same, unless the optional C<:with> parameter is
+specified with another comparator. The order of the original list is preserved
+even as duplicates are removed.
 
 Examples:
 
@@ -579,12 +622,47 @@ Examples:
 objects are adjacent.)
 
 The optional C<:as> parameter allows you to normalize/canonicalize the elements
-before unique-ing. The values are transformed for the purposes of comparison, but
-it's still the original values that make it to the result list:
+before unique-ing. The values are transformed for the purposes of comparison,
+but it's still the original values that make it to the result list:
 
 Example:
 
     say <a A B b c b C>.unique(:as(&lc))          # a B c
+
+One can also specify the comparator with the optional C<:with> parameter.  For
+instance if one wants a list of unique hashes, one could use the C<eqv>
+comparator.
+
+Example:
+
+    my @list = {a => 42}, {b => 13}, {a => 42};
+    say @list.unique(:with(&[eqv]))               # {a=>42} {b=>13}
+
+=head2 routine repeated
+
+Defined as:
+
+    multi sub    repeated(*@values, :&as, :&with) returns Seq:D
+    multi method repeated(List:D:,  :&as, :&with) returns Seq:D
+
+Usage:
+
+    repeated LIST, :COMPARE_AS, :COMPARE_WITH
+    LIST.repeated(:COMPARE_AS, :COMPARE_WITH)
+
+Returns a sequence of B<repeated> values from the invocant/argument list.
+It takes the same parameters as L<C<unique>>, but instead of passing through
+any elements when they're first seen, they're only passed through as soon
+as they're seen for the second time (or more).
+
+Examples:
+
+    say <a a b b b c c>.repeated                    # a b b c
+    say <a b b c c b a>.repeated                    # b c b a
+    say <a A B b c b C>.repeated(:as(&lc))          # A b b C
+
+    my @list = {a => 42}, {b => 13}, {a => 42};
+    say @list.repeated(:with(&[eqv]))               # {a=>42}
 
 =head2 routine squish
 
@@ -618,24 +696,60 @@ temporarily transformed before comparison.
 
 Defined as:
 
-    multi sub    reduce(&with, *@elems)
+    multi sub    reduce(&with, *@values)
     multi method reduce(List:D: &with)
 
 Usage:
 
-    reduce WITH, LIST
-    LIST.reduce(WITH)
+    reduce CODE, LIST
+    LIST.reduce(CODE)
 
-Applies C<&with> to the first and the second value of the list, then to the
-result of that calculation and the third value and so on. Returns a single item
-generated that way.
+Generates a single "combined" value from a list of arbitrarily many of values,
+by repeatedly applying a function which knows how to combine I<two> values.
 
-Note that C<reduce> is an implicit loop, and thus responds to C<next>, C<last>
-and C<redo> statements.
+More precisely, the specified C<&with> is first called for the first two
+values of the list, then for the result of that calculation and the third
+value, and so on - and the final result is returned. In other words,
+C<(2,4,6,8).reduce(*+*)> is the same as C<(((2+4)+6)+8)>.
 
-Example:
+If C<@values> contains just a single element, that element is returned
+immediately. If it contains no elements, an exception is thrown. For this
+reason, you may want to prefix the input list with an explicit identity
+value:
 
-    say (1, 2, 3).reduce: * - *;    # -4
+    say reduce { $^a ~ $^b }, '', |@strings;               # like @strings.join
+    say reduce { $^a > $^b ?? $^a !! $^b }, 0, |@numbers;  # like @numbers.max
+
+As a special case, if C<&with> is the function object of an I<operator>, its
+inherent identity value and associativity is respected - in other words,
+C<(VAL1,VAL2,VAL3).reduce(&[OP])> is the same as C<VAL1 OP VAL2 OP VAL3> even
+for operators which aren't left-associative, and an empty C<@values> list is
+allowed now. And since reducing with an infix operator is a common thing to do,
+the C<[ ]> meta-operator provides a syntactic shortcut:
+
+    # The following all do the same thing...
+    say reduce { $^a + $^b }, 0, |@numbers;
+    say reduce * + *, 0, |@numbers;
+    say reduce &[+], @numbers;
+    say [+] @numbers;
+
+Since C<reduce> is an implicit loop, it responds to C<next>, C<last> and C<redo>
+statements.
+
+Practical example:
+
+    # Generate a random-ish math formula like "(4 + ((3 * x) + 11) / 6))"
+    
+    my @ops = [Z] (<+ - * />, 1..20)».roll(4);
+    
+    say ('x', |@ops).reduce: -> $formula, [$op, $number] {
+        Bool.pick ?? "($formula $op $number)"
+                  !! "($number $op $formula)"
+    }
+
+I<Note:> In the functional programming world, this operation is generally
+called a L<left fold|
+https://en.wikipedia.org/wiki/Fold_%28higher-order_function%29#Folds_on_lists>.
 
 =head2 routine splice
 
@@ -779,7 +893,7 @@ doesn't satisfy the length requirement:
     say ('a'..'h').rotor(3).join('|');              # a b c|d e f
     say ('a'..'h').rotor(3, :partial).join('|');    # a b c|d e f|g h
 
-If the element of C<@cycle> is a L</type/Pair|Pair> instead, the key of the
+If the element of C<@cycle> is a L<Pair|/type/Pair> instead, the key of the
 pair specifies the length of the return sublist, and the value the gap between
 sublists; negative gaps produce overlap:
 

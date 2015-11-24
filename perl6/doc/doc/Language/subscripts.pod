@@ -85,7 +85,7 @@ collection to be sure whether the keys are strings or objects:
     my %h; %h{pi}  = 1; say %h.perl; #-> { "3.14159265358979" => 1 }
 
 While the invisible quotes around single names is built into C<=>>,
-string conversion is not built into the braces: it is a behavior
+string conversion is not built into the curly braces: it is a behavior
 of the default C<Hash>.  Not all types of hashes or collections
 do so:
 
@@ -777,7 +777,7 @@ L<Hash> type), you'll have to make sure to return it in the form of an item
 container that evaluates to the element's value when read, and updates it
 when assigned to. (Remember to use C<return-rw> or the C<is rw> routine
 trait to make that work; see the L<example
-|/language/subscripting#Custom_type_example>.)
+|/language/subscripts#Custom_type_example>.)
 
 On the other hand if you want your collection to be read-only, feel free
 to return non-container values directly.

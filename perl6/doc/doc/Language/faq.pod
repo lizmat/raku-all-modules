@@ -6,51 +6,54 @@
 
 =head1 General
 
-=head2 What's the difference between Rakudo and Perl 6?
+=head2 What's the difference between Rakudo and Perl 6?
 
-Rakudo is an implementation of Perl 6. Its currently the most developed but
-there have been other implementations in the past and probably others in the
-future. Perl 6 is the definition of the language. Many times the two names
-will be used loosely and interchangeably.
+Rakudo is an implementation of Perl 6. It's currently the most developed, but
+there have been other implementations in the past and should be others in the
+future. Perl 6 is the definition of the language. Many times the two names will
+be used loosely and interchangeably.
 
-=head2 As a Perl 6 beginner what should I install?
+=head2 As a Perl 6 beginner what should I install?
 
 If you are a Linux or Mac user you probably want to download Rakudo Star and
 install via compilation (a simple process) the MoarVM version available from
 L<http://rakudo.org/downloads/star/|http://rakudo.org/downloads/star>.
 
-If you are a Windows 32 or 64 bit user then Rakudo Star binaries are also
-available at the rakudo site. You will need Windows Git to use panda. 
+Or there is an official rakudo star docker image at
+L<https://hub.docker.com/_/rakudo-star/>
 
-There will probably be Linux and Mac binaries available shortly from vendors
-and third parties. Although vendor versions may be outdated. 
+If you are a Windows 32 or 64 bit user then Rakudo Star binaries are also
+available at the rakudo site. You will need Windows Git to use panda.
+
+There should be Linux and Mac binaries available shortly from vendors and third
+parties. Although vendor versions may be outdated.
 
 =head2 As an intermediate to advanced user I want to track Rakudo development.
 
 Install L<rakudobrew|https://github.com/tadzik/rakudobrew> which resembles
 Perl 5's perlbrew and the equivalent Python and Ruby tools.
 
-=head2 Where can I find good documentation on Perl 6?
+=head2 Where can I find good documentation on Perl 6?
 
 The most reliable information is to be found either under the perl6.org domains or directly linked from it.
 
-L<http://www.perl6.org/documentation/|http://www.perl6.org/documentation/> with 
+L<http://www.perl6.org/documentation/|http://www.perl6.org/documentation/> with
 L<http://doc.perl6.org/|http://doc.perl6.org/> as the canonical technical reference.
 
 There is much good recent material on Youtube but be careful to check any dates
-on webpages since much of the Perl 6 information on random websites found by
+on webpages since much of the Perl 6 information on random websites found by
 Google is often outdated.
 
 You could also try searching the Freenode #perl6 IRC channel log via
 L<Google|https://www.google.co.uk/search?q=site:irclog.perlgeek.de+inurl:perl6>
 
-=head2 What is the Perl 6 spec?
+=head2 What is the Perl 6 spec?
 
-The "spec" refers to the official test suite for Perl 6.  It's called
+The "spec" refers to the official test suite for Perl 6.  It's called
 roast and L<hosted on github|https://github.com/perl6/roast>. It
-is the measure of how complete a Perl 6 implementation is.
+is the measure of how complete a Perl 6 implementation is.
 
-=head2 Is there a glossary of Perl 6 related terms?
+=head2 Is there a glossary of Perl 6 related terms?
 
 See L<S99|http://design.perl6.org/S99.html>
 
@@ -58,35 +61,38 @@ See L<S99|http://design.perl6.org/S99.html>
 
 See the pod with the 5to6- prefix under L<http://doc.perl6.org/language.html|http://doc.perl6.org/language.html>
 
-=head1 Modules 
+=head1 Modules
 
-=head2 Is there a CPAN for Perl 6?
+=head2 Is there a CPAN for Perl 6?
 
-There isn't yet a module repository for Perl 6 as sophisticated as CPAN. But
-L<modules.perl6.org|http://modules.perl6.org/> has a list of known Perl 6
+There isn't yet a module repository for Perl 6 as sophisticated as CPAN. But
+L<modules.perl6.org|http://modules.perl6.org/> has a list of known Perl 6
 modules called the "ecosystem" hosted on github, and
 L<panda|https://github.com/tadzik/panda/> can install those that work with
 L<rakudo|http://rakudo.org/>.
 
-Support for installing Perl 6 modules from the Perl 5 CPAN is on its way.
+Support for installing Perl 6 modules from the Perl 5 CPAN is on its way.
 
-=head2 Can I use Perl 5 modules from Perl 6?
+=head2 Can I use Perl 5 modules from Perl 6?
 
-With L<Inline::Perl5|https://github.com/niner/Inline-Perl5/> which works well
-enough to run Perl 5 Catalyst and DBI.
+Yes, with L<Inline::Perl5|https://github.com/niner/Inline-Perl5/>, which works
+well with most Perl 5 modules. It can even run Perl 5 Catalyst and DBI.
 
-=head2 Can I use C and C++ from Perl 6?
+=head2 Can I use C and C++ from Perl 6?
 
 L<Nativecall|http://docs.perl6.org/language/nativecall> makes this particularly easy.
 
 =head2 Nativecall can't find libfoo.so and I only have libfoo.so.1.2!
 
 This is commonly seen on Debian-like systems. You need to install "libfoo-dev"
-to set a sym link for the missing file. 
+to set a sym link for the missing file.
 
 =head2 Where have all the traditional UNIX library functions gone?
 
 It's very easy to use Nativecall to access them.
+
+A ecosystem module L<POSIX|https://github.com/cspencer/perl6-posix> is
+also available.
 
 =head2 Does Rakudo have a core standard library?
 
@@ -98,7 +104,7 @@ and many more can be installed from the ecosystem.
 
 =head1 Language Features
 
-=head2 How can I dump Perl 6 data structures (like Perl 5 Data::Dumper and similar)?
+=head2 How can I dump Perl 6 data structures (like Perl 5 Data::Dumper and similar)?
 
 Examples:
 
@@ -107,9 +113,10 @@ Examples:
     say :$foo.perl # :foo("bar")
     say :$foo.gist # foo => bar
 
-There are also modules to do this in the ecosystem like L<Data::Dump|https://github.com/tony-o/perl6-data-dump/> which uses color.
+There are also modules in the ecosystem to do this, like
+L<Data::Dump|https://github.com/tony-o/perl6-data-dump/>, which uses color.
 
-=head2 How can I get command line history in the perl 6 prompt (REPL)?
+=head2 How can I get command line history in the Perl 6 prompt (REPL)?
 
 Install  L<Linenoise|https://github.com/hoelzro/p6-linenoise/> from the
 ecosystem.
@@ -119,7 +126,7 @@ be done on Debian-ish systems by "apt-get install rlwrap".
 
 =head2 Why is the Rakudo compiler sometimes more apologetic?
 
-If SORRY! is present in the output the error is a compile time error 
+If SORRY! is present in the output the error is a compile time error
 otherwise it's runtime.
 
 Example:
@@ -134,7 +141,7 @@ Example:
 L<Any|type/Any> is a top level class used as a default superclass for new
 classes. It is often seen in a context where a variable has been defined but
 not assigned where it loosely resembles the undef or null values in other
-languages. 
+languages.
 
 Example:
 
@@ -142,7 +149,7 @@ Example:
     say $foo # (Any) note the parens indicate type object
     say $foo.^name # Any
 
-(Any) shouldn't be used to check for definedness. In Perl 6, definedness is a
+(Any) shouldn't be used to check for definedness. In Perl 6, definedness is a
 property of an object. Usually instances are defined and type objects are
 undefined.
 
@@ -183,7 +190,7 @@ which stands for "definite":
 
     my Int:D $x = 42;
     $x = Int;   # dies with:
-                # Type check failed in assignment to $x; 
+                # Type check failed in assignment to $x;
                 # expected Int:D but got Int
 
 Likewise C<:U> constrains to undefined values, that is, type objects.
@@ -200,7 +207,7 @@ Example:
             return $a + $b;
     }
 
-    foo(2,3.1) 
+    foo(2,3.1)
     # ===SORRY!===  ... Calling foo(Int, Rat) will never work with declared signature (Int $a, Int $b --> Int)
 
 =head2 How can I extract the values from a Junction?
@@ -226,15 +233,15 @@ If you want to do it anyway, you can abuse autothreading for that:
 
 In Perl 6, many basic types are immutable, but the variables holding them are
 not. The C<s///> operator works on a variable, into which it puts a newly
-creates string object. Likewise C<$i++> works on the C<$i> variable, not
+created string object. Likewise C<$i++> works on the C<$i> variable, not
 just on the value in it.
 
 See the documentation on L<containers|/language/containers> for more
 information.
 
-=head2 What's up with array references and automatic derferencing? Do I still need the C<@> sigil?
+=head2 What's up with array references and automatic dereferencing? Do I still need the C<@> sigil?
 
-In Perl 6, nearly everything is a reference, so talking about taking
+In Perl 6, nearly everything is a reference, so talking about taking
 references doesn't make much sense. Unlike Perl 5, scalar variables
 can also contain arrays directly:
 
@@ -279,9 +286,9 @@ There are several reasons:
 =item many natural languages use mandatory noun markers, so our brains are built to handle it
 
 
-=head2 Does Perl 6 have coroutines? What about C<yield>?
+=head2 Does Perl 6 have coroutines? What about C<yield>?
 
-Perl 6 has no C<yield> statement like python does, but it does offer similar
+Perl 6 has no C<yield> statement like python does, but it does offer similar
 functionality through lazy lists. There are two popular ways to write
 routines that return lazy lists:
 
@@ -298,7 +305,7 @@ routines that return lazy lists:
 
 =head2 Why can't I initialize private attributes from the new method, and how can I fix this?
 
-A code like
+Code like
 
     class A {
         has $!x;
@@ -341,7 +348,7 @@ uses the C<gist> method instead. The former is meant for computers,
 the latter for human interpretation.
 
 Or phrased differently, C<$obj.Str> gives a string representation,
->$obj.gist> a short summary of that object suitable for fast recognition
+C<$obj.gist> a short summary of that object suitable for fast recognition
 by the programmer, and C<$obj.perl> gives a Perlish representation.
 
 For example type objects, also known as "undefined values", stringify
@@ -391,11 +398,11 @@ the exception with the C<exception> method.
 =head2 Why is C<wantarray> or C<want> gone? Can I return different things in different contexts?
 
 Perl 5 has the C<wantarray> function that tells you whether it is called in
-void, scalar or list context. Perl 6 has no equivalent construct,
+void, scalar or list context. Perl 6 has no equivalent construct,
 because context does not flow inwards, i.e. a routine cannot know which
 context it is called in.
 
-One reason is that Perl 6 has multi dispatch, and in a code example like
+One reason is that Perl 6 has multi dispatch, and in a code example like
 
     multi w(Int $x) { say 'Int' }
     multi w(Str $x) { say 'Str' }
@@ -403,10 +410,10 @@ One reason is that Perl 6 has multi dispatch, and in a code example like
 
 there is no way to determine if the caller of sub C<f> wants a string or
 an integer, because it is not yet known what the caller is. In general
-this requires solving the halting problem, which even Perl 6 compiler
+this requires solving the halting problem, which even Perl 6 compiler
 writers have trouble with.
 
-The way to achieve context sensitivity in Perl 6 is to return an object
+The way to achieve context sensitivity in Perl 6 is to return an object
 that knows how to respond to method calls that are typical for a context.
 
 For example regex matches return L<Match objects that know how to respond
@@ -415,21 +422,21 @@ string|/type/Match>.
 
 =head1 Meta Questions and Advocacy
 
-=head2 When will Perl 6 be ready? Is it ready now?
+=head2 When will Perl 6 be ready? Is it ready now?
 
 Readiness of programming languages and their compilers is not a binary
 decision. As they (both the language and the implementations) evolve, they
 grow steadily more usable. Depending on your demands on a programming
-language, Perl 6 and its compilers might or might not be ready for you.
+language, Perl 6 and its compilers might or might not be ready for you.
 
 Please see the L<feature comparison
 matrix|http://perl6.org/compilers/features> for an overview of implemented
 features.
 
 
-=head2 Why should I learn Perl 6? What's so great about it?
+=head2 Why should I learn Perl 6? What's so great about it?
 
-Perl 6 unifies many great ideas that aren't usually found in other programming
+Perl 6 unifies many great ideas that aren't usually found in other programming
 languages. While several other languages offer some of these features, none of
 them offer all.
 
@@ -490,31 +497,31 @@ Please see the L<feature comparison
 matrix|http://perl6.org/compilers/features> for an overview of implemented
 features.
 
-=head2 Is Perl 6 fast enough for me?
+=head2 Is Perl 6 fast enough for me?
 
 That depends on what you are doing. Rakudo has been developed with the
 philosophy of "make it work right then make it work fast". It's fast for some
 things already but needs work on others.
 
-Perl 6 is mostly being worked on by volunteers but it's expected that Perl 6
+Perl 6 is mostly being worked on by volunteers but it's expected that Perl 6
 performance will improve in the near future since the MoarVM backend contains a
 modern Just In Time (JIT) compiler.
 
-Perl 5 programmers should be aware that Perl 6 comes with more built in in
+Perl 5 programmers should be aware that Perl 6 comes with more built in in
 terms of object orientation and much else. Simple benchmarks will be misleading
 unless you include things like Moose, type checking modules etc. in your Perl 5
 script.
 
 The following crude benchmarks, with all the usual caveats about such things,
-can show Perl 6 to be of roughly equivalent speed to Perl 5 for some similar
-common tasks.
+can show Perl 6 can be faster than Perl 5 for some similar common tasks if
+the big weaponry is included, but at the same time Perl 5 can be much faster
+if only the bare bones are included.
 
 Try it on your system you may be pleasantly surprised!
 
 Examples:
 
-
-    # perl 6 version
+    # Perl 6 version
     use v6;
 
     class Foo { has $.i is rw};
@@ -522,12 +529,10 @@ Examples:
     for (1..1_000_000) -> $i {
         my $obj = Foo.new;
         $obj.i = $i;
-        say $obj.i;
     }
 
-    # perl 5 version
+    # Perl 5 version
     package Foo;
-    use 5.10.0;
     use Moose;
 
     has i => ( is=> 'rw');
@@ -535,13 +540,35 @@ Examples:
     for my $i (1..1_000_000) {
         my $obj = Foo->new;
         $obj->i($i);
-        say $obj->i;
     }
 
     __PACKAGE__->meta->make_immutable;
 
     1;
 
+    # Another Perl 5 version that offers bare-bones set of features
+    # compared to Moose/Perl 6's version but those are not needed in this
+    # specific, simple program anyway.
+    package Foo;
+    use Mojo::Base -base;
 
+    has 'i';
+
+    for my $i (1..1_000_000) {
+        my $obj = Foo->new;
+        $obj->i($i);
+    }
+
+    1;
+
+    # A perl program which works under both perl5 (with perl -Mbigint)
+    # and perl6
+
+    my ($prev, $current) = (1,0);
+
+    for ( 0..100_000) {
+        ($prev, $current) = ($current, $prev + $current);
+    }
+    print $current;
 
 =end pod

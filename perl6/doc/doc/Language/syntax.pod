@@ -62,9 +62,9 @@ A Perl 6 program is a list of statements, separated by semicolons C<;>.
 A semicolon after the final statement (or after the final statement inside a
 block) is optional, though it's good form to include it.
 
-A closing curling brace followed by a newline character implies a statement
-separator, which is why you don't need to write a semicolon before the last
-line in the code
+A closing curly brace followed by a newline character implies a statement
+separator, which is why you don't need to write a semicolon after an C<if>
+statement block.
 
 =begin code
 if True {
@@ -75,6 +75,13 @@ say "world";
 
 Both semicolons are optional here, but leaving them out increases the chance
 of syntax errors when adding more lines later.
+
+You do need to include a semicolon between the C<if> block and the say statement if you want them all on one line.
+
+=begin code
+if True { say "Hello" }; say "world";
+#                     ^^^ this ; is required
+=end code
 
 =head2 Comments
 
@@ -90,27 +97,31 @@ The most common form of comments in Perl 6 starts with a single hash character
 C<#> and goes until the end of the line.
 
 =begin code
-
 if $age > 250 {     # catch obvious outliers
     # this is another comment!
     die "That doesn't look right"
 }
 =end code
 
-=head3 Embedded comments
+=head3 Multi-line / embedded comments
 
-Embedded comments start with a hash character, followed by a backtick, and
-then some opening bracketing character, and end with the matching closing
-bracketing character.
+Multi-line and embedded comments start with a hash character, followed by a
+backtick, and then some opening bracketing character, and end with the matching
+closing bracketing character. The content can not only span multiple lines, but
+can also be embedded inline.
 
-    if #`( why would I ever write an inline comment here? ) True {
-        say "something stupid";
-    }
+=begin code
+if #`( why would I ever write an inline comment here? ) True {
+    say "something stupid";
+}
+=end code
 
 Brackets inside the comment can be nested, so in C<#`{ a { b } c }>, the
-comment goes until the very end of the string.
+comment goes until the very end of the string. You may also use more complex
+brackets, such as C<#`{{ double-curly-brace }}>, which might help disambiguate
+from nested brackets.
 
-=head3 Multiline comments
+=head3 Pod comments
 
 Pod syntax can be used for multi-line comments
 
@@ -131,25 +142,27 @@ say 'code again';
 =head2 Identifiers
 
 Identifiers are a grammatical building block that occur in several places. An
-identifier is a primitive name, and must start with an alphabetic character
-(or an underscore), followed by zero or more word characters (alphabetic,
-underscore or letter). You can also join two or more identifiers by a dash
-C<-> or a single quote C<'>, and the result is also considered to be an
-identifier.
+identifier is a primitive name, and must start with an alphabetic character (or
+an underscore), followed by zero or more word characters (alphabetic,
+underscore or number). You can also embed dashes C<-> or single quotes C<'> in
+the middle, but not two in a row.
 
     # valid identifiers:
     x
     something-longer
     with-numbers1234
     don't
+    fish-food
 
     # not valid identifiers:
     with-nubmers1234-5
     42
+    is-prime?
+    fish--food
 
-Names of constants, types and routines are identifiers, and they also appear
-in variable names (optionally proceeded by a sigil; see
-L</language/variables|variables> for more details.)
+Names of constants, types (including classes and modules) and routines (subs
+and methods) are identifiers, and they also appear in variable names (usually
+proceeded by a sigil; see L<variables|/language/variables> for more details.)
 
 =head1 Statements and Expressions
 
@@ -164,7 +177,7 @@ The C<do> prefix turns statements into expressions. So while
 
 is an error,
 
-   my $x = do if True { 42; };
+   my $x = do if True { 42 };
 
 assigns the return value of the if statement (here C<42>) to the variable
 C<$x>.
@@ -208,14 +221,14 @@ variables:
     say answer;
     #   ^^^^^^ constant
 
-    class Meta {
+    class Foo {
         method type-name {
             self.^name;
           # ^^^^ built-in term 'self'
         }
     }
-    say Meta.type-name;     # Meta
-    #   ^^^^ type name
+    say Foo.type-name;     # Foo
+    #   ^^^ type name
 
 
 =head2 Literals
@@ -250,27 +263,31 @@ number:
 
     1000000
     1_000_000
-    10_0000
-    10_00_00
+    10_00000
+    100_00_00
 
-=head4 L<Int|/type/Int> literals
+=head4 Int literals
+
+Integers default to signed base-10, but you can use other bases. For details,
+see L<Int|/type/Int>.
 
     -2
     12345
     0xBEEF      # base 16
     0o755       # base 8
+    :3<1201>    # arbitrary base, here base 3
 
-=comment TODO adverbial bases with :20<...>
+=head4 Rat literals
 
-=head4 L<Rat|/type/Rat> literals
+L<Rat|/type/Rat> literals (rationals) are very common, and take the place of decimals or floats in many other languages. Integer division also results in a C<Rat>.
 
     1.0
     3.14159
     -2.5
+    :3<21.0012> # Base 3 rational
+    2/3         # Not actually a literal, but still a Rat
 
-=comment TODO adverbial bases with :20<...>
-
-=head4 L<Num|/type/Num> literals
+=head4 Num literals
 
 Scientific notation with an exponent to base ten after an C<e> produces
 L<floating point number|/type/Num>:
@@ -280,7 +297,7 @@ L<floating point number|/type/Num>:
     1e-9
     -2e48
 
-=head4 L<Complex|/type/Complex> literals
+=head4 Complex literals
 
 L<Complex|/type/Complex> numbers are written either as an imaginary number
 (which is just a rational number with postfix C<i> appended), or as a sum of
@@ -292,7 +309,7 @@ a real and an imaginary number:
 
 =head3 Pair literals
 
-Pairs are made of a key and a value, and there are two basic forms for
+L<Pairs|/type/Pair> are made of a key and a value, and there are two basic forms for
 constructing them: C<< key => 'value' >> and C<:key('value')>.
 
 =head4 Arrow pairs
@@ -343,24 +360,147 @@ arrays themselves:
 
 =head3 Hash literals
 
-=comment TODO
+A pair of curly braces can surround a list of pairs to form a
+L<Hash|/type/Hash> literal; typically there is a comma-delimited list of pairs
+inside. If a non-pair is used, it is assumed to be a key and the next element
+is the value. Most often this is used with simple arrow pairs.
+
+    say { a => 3, b => 23, :foo, :dog<cat>, "french", "fries" };
+    # a => 3, b => 23, dog => cat, foo => True, french => fries
+
+    say {a => 73, foo => "fish"}.keys.join(" ");   # a foo
+    #   ^^^^^^^^^^^^^^^^^^^^^^^^ Hash constructor
+
+When assigning to a C<%> sigil variable, the curly braces are optional.
+
+    my %ages = fred => 23, jean => 87, ann => 4;
 
 =head3 Regex literals
 
-=comment TODO
+A L<Regex|/type/Regex> is declared with slashes like C</foo/>. Note that this C<//> syntax is shorthand for the full C<rx//> syntax.
+
+    /foo/          # Short version
+    rx/foo/        # Longer version
+    Q :regex /foo/ # Even longer version
+
+    my $r = /foo/; # Regexes can be assigned to variables
 
 =head2 Declarations
 
+=head3 Variable declaration
+
+    my $x;                          # simple lexical variable
+    my $x = 7;                      # initialize the variable
+    my Int $x = 7;                  # declare the type
+    my Int:D $x = 7;                # specify that the value must be defined (not undef)
+    my Int $x where { $_ > 3 } = 7; # constrain the value based on a function
+    my Int $x where * > 3 = 7;      # same constraint, but using L<Whatever> short-hand
+
+See L<Variable Declarators and
+Scope|http://docs.perl6.org/language/variables#Variable_Declarators_and_Scope>
+for more details on other scopes (our, has).
+
+=head3 Subroutine declaration
+
+    # The signature is optional
+    sub foo { say "Hello!" }
+
+    sub say-hello($to-whom) { say "Hello $to-whom!" }
+
+You can also assign subroutines to variables.
+
+    my &f = sub { say "Hello!" } # Un-named sub
+    my &f = -> { say "Hello!" }  # Lambda style syntax. The & sigil indicates the variable holds a function
+    my $f = -> { say "Hello!" }  # Functions can also be put into scalars
+
+=head3 Module, Class, Role, and Grammar declaration
+
+There are several types of compilation units (packages), each declared with a
+keyword, a name, some optional traits, and a body of functions.
+
+    module Gar { }
+
+    class Foo { }
+
+    role Bar { }
+
+    grammar Baz { }
+
+You can declare a unit of things without explicit curly brackets.
+
+    unit module Gar;
+    # ... stuff goes here instead of in {}'s
+
+=head3 Multi-dispatch declaration
+
+See also L<Multi-dispatch|http://docs.perl6.org/language/functions#Multi-dispatch>.
+
+Subroutines can be declared with multiple signatures.
+
+    multi sub foo() { say "Hello!" }
+    multi sub foo($name) { say "Hello $name!" }
+
+Inside of a class, you can also declare multi-dispatch methods.
+
+    multi method greet { }
+    multi method greet(Str $name) { }
+
+=head1 Subroutine calls
+
+See L<functions|/language/functions>.
+
 =comment TODO
 
-=head2 Subroutine calls
-
-=comment TODO
+    foo;   # Invoke the function foo with no arguments
+    foo(); # Invoke the function foo with no arguments
+    &f();  # Invoke &f, which contains a function
 
 =head1 Operators
 
-=comment TODO: link to language/operators
+See L<Operators|/language/operators> for lots of details.
 
-=head1
+Operators are functions with a more symbol heavy and composable syntax. Like
+other functions, operators can be multi-dispatch to allow for context-specific
+usage.
+
+There are five types (arrangements) for operators, each taking either one or two arguments.
+
+    ++$x           # prefix, operator comes before single input
+    5 + 3          # infix, operator is between two inputs
+    $x++           # postfix, operator is after single input
+    <the blue sky> # circumfix, operator surrounds single input
+    %foo<bar>      # postcircumfix, operator comes after first input and surrounds second
+
+=head2 Meta Operators
+
+Operators can be composed. A common example of this is combining an infix
+(binary) operator with assignment. You can combine assignment with any binary
+operator.
+
+    $x += 5     # Adds 5 to $x, same as $x = $x + 5
+    $x min= 3   # Sets $x to the smaller of $x and 3, same as $x = $x min 3
+    $x .= child # Equivalent to $x = $x.child
+
+Wrap an infix operator in C<[ ]> to create a new reduction operator that works
+on a single list of inputs, resulting in a single value.
+
+    [+] <1 2 3 4 5>         # 15
+    (((1 + 2) + 3) + 4) + 5 # equivalent expanded version
+
+Wrap an infix operator in C<« »> (or the ASCII equivalent C<<< >>>) to create a
+new hyper operator that works pairwise on two lists.
+
+    <1 2 3> «+» <4 5 6> # <5 7 9>
+
+The direction of the arrows indicates what to do when the lists are not the same size.
+
+    @a «+« @b # Result is the size of @b, elements from @a will be re-used
+    @a »+» @b # Result is the size of @a, elements from @b will be re-used
+    @a «+» @b # Result is the size of the biggest input, the smaller one is re-used
+    @a »+« @b # Exception if @a and @b are different sizes
+
+You can also wrap a unary operator with a hyper operator.
+
+    -« <1 2 3> # <-1 -2 -3>
 
 =end pod

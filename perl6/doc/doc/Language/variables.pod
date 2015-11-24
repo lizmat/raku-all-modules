@@ -48,9 +48,7 @@ List assignment leaves the choice of what to do to the variable on the left.
 
 For example, L<Array> variables (C<@> sigil) empty themselves on list
 assignment and then put all the values from the right-hand side into
-themselves. Contrary to item assignment, it means that the type of the
-variable on the left always stays C<Array>, regardless of the type of the
-right-hand side.
+themselves.
 
 The type of assignment (item or list) is decided by the first context
 seen in the current expression or declarator:
@@ -192,6 +190,25 @@ time C<&say-all> is called C<$*dynamic1> isn't C<11> anymore, but
 C<$*dynamic2> is still C<101>. This stems from the fact that we declared a
 new dynamic variable C<$*dynamic1> in the block and did not assign to the
 old variable as we did with C<$*dynamic2>.
+
+The dynamic variables differ from other variable types in that refering
+to an undeclared dynamic variable is not a compile time error but a
+runtime L<failure|/type/Failure>, so a dynamic variable can be used
+undeclared as long as it is checked for definedness or used in a
+boolean context before using it for anything else:
+
+    =begin code
+    sub foo() {
+        $*FOO // 'foo';
+    }
+
+    say foo; # -> 'foo'
+
+    my $*FOO = 'bar';
+
+    say foo; # -> 'bar'
+    =end code
+
 
 =head2 The C<!> Twigil
 
@@ -647,8 +664,28 @@ say $cookies; # -> 6
 
 =head2 The C<let> Prefix
 
-Like the L<C<temp>|#The_temp_Listop> listop, but only restores the value if
-the block exits unsuccessfully.
+Restores the previous value if the block exits unsuccessfully. A
+successful exit means the block returned a defined value or a list.
+
+    my $answer = 42;
+
+    {
+        let $answer = 84;
+        die if not Bool.pick;
+        CATCH {
+            default { say "it's been reset :(" }
+        }
+        say "we made it 84 sticks!";
+    }
+
+    say $answer;
+
+In the above case, if the C<Bool.pick> returns true, the answer will
+stay as 84 because the block returns a defined value (C<say> returns
+true). Otherwise the C<die> statement will cause the block to exit
+unsuccessfully, resetting the answer to 42.
+
+=comment this is duplicated in operators.pod
 
 =head1 Type Constraints and Initialization
 

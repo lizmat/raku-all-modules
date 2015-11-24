@@ -351,6 +351,25 @@ is possible: C<a ** 5> matches C<a> exactly five times.
     say Bool('aaaaa' ~~ /a ** 5/);   #-> True
 =end code
 
+It is also posible to use non inclusive ranges using a caret:
+
+=begin code
+    say Bool('a' ~~ /a ** 1^..^6); #-> False
+    say Bool('aaaa' ~~ /a ** 1^..^6); #-> True
+=end code
+
+This includes the numeric ranges staring from 0:
+
+=begin code
+    say Bool('aaa' ~~ /a ** ^6/); #->true
+=end code
+
+or a Whatever operator for an infinite range with a non inclusive minimum:
+
+=begin code
+    say Bool('aaaa' ~~ /a ~~ 1^..*/); #-> True
+=end code
+
 =head2 X<Modified quantifier: %|regex,%;regex,%%>
 
 To more easily match things like comma separated values, you can tack on a
@@ -379,6 +398,13 @@ That is, either a word surrounded by square brackets, or a string of
 non-whitespace characters, followed by zero or more spaces, followed by the
 equals sign C<=>, followed again by optional whitespace, followed by another
 string of non-whitespace characters.
+
+=head1 X<Longest Alternation|regex,|>
+
+In regexes branches separated by C<|>, the longest match wins, independent of
+the lexical ordering in the regexes.
+
+    say ('abc' ~~ / a | .b /).Str;
 
 =head1 Anchors
 
@@ -577,6 +603,13 @@ and slightly verbose -- way of naming captures is like this:
 
 The access to the named capture, C<< $<myname> >>, is a shorthand for indexing
 the match object as a hash, in other words: C<$/{ 'myname' }> or C<< $/<myname> >>.
+
+Named captures can also be nested using regular capture group syntax:
+
+    if 'abc-abc-abc' ~~ / $<string>=( [ $<part>=[abc] ]* % '-' ) / {
+        say ~$<string> # abc-abc-abc
+        say ~$<string><part> # [abc, abc, abc]
+    }
 
 Coercing the match object to a hash gives you easy programmatic access to
 all named captures:
