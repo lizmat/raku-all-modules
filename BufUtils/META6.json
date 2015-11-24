@@ -1,0 +1,10 @@
+{ "perl"        : "v6"
+, "name"        : "BufUtils"
+, "version"     : "0.0.3"
+, "description" : "Makes Blobs/Bufs a little more Stringy"
+, "authors"     : [ "flussence" ]
+, "provides"    : { "BufUtils": "lib/BufUtils.pm" }
+, "test-depends": [ "Test" ]
+, "support"     : { "bugtracker": "https://github.com/flussence/BufUtils/issues"
+                  , "source"    : "https://github.com/flussence/BufUtils.git" }
+, "license"     : "https://creativecommons.org/publicdomain/zero/1.0/" }
