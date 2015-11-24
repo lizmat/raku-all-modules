@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/retupmoca/p6-Crust-Handler-SCGI.git
+	branch = master
+	commit = 4fd3374f679768cacb1331ea70dcd5fcdb878d93
+	parent = fe0842b5587205bc1aa8b8c082c4811674ae08f0
+	cmdver = 0.2.2

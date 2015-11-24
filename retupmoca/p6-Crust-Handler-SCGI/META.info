@@ -1,0 +1,11 @@
+{
+    "name" : "Crust::Handler::SCGI",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "Crust handler using the SCGI library",
+    "depends" : ["SCGI","IO::Blob"],
+    "provides" : {
+        "Crust::Handler::SCGI" : "lib/Crust/Handler/SCGI.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/p6-Crust-Handler-SCGI.git"
+}
