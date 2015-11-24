@@ -197,7 +197,7 @@ class Path::Iterator {
 					}
 
 					if $item.d && $result !~~ Prune && (!$loop-safe || self!is-unique($item)) {
-						my @next = $item.dir(test => none('.', '..')).map: -> $child { ($child, $depth + 1, $origin, Bool) };
+						my @next = $item.dir.map: -> $child { ($child, $depth + 1, $origin, Bool) };
 						@next .= sort if $sorted;
 						if ($depth-first) {
 							@next.push: $($item, $depth, $origin, $result);
