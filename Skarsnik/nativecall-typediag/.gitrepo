@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Skarsnik/nativecall-typediag.git
+	branch = master
+	commit = 97988cc1551232848c7b7858a73f73a2876a2e01
+	parent = 8d92bff16a7c4fe5acd2ef212e1ba8d2d1bf62af
+	cmdver = 0.2.2
