@@ -1,12 +1,10 @@
-use Panda::Builder;
-
 use Shell::Command;
 use NativeCall;
 
 # test sub for system library
 our sub zlibVersion() returns Str is encoded('ascii') is native('zlib1.dll') is export { * }
 
-class Build is Panda::Builder {
+class Build {
     method build($workdir) {
         my $need-copy = False;
 
@@ -29,4 +27,6 @@ class Build is Panda::Builder {
             say 'Found system zlib library.';
         }
     }
+
+    method isa($what) { return True if $what.^name eq 'Panda::Builder'; callsame }
 }

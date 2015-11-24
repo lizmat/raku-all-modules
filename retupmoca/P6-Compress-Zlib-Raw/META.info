@@ -4,6 +4,7 @@
     "author" : "github:retupmoca",
     "description" : "Low-level bindings to zlib",
     "depends" : ["Find::Bundled"],
+    "build-depends" : ["Shell::Command"],
     "provides" : {
         "Compress::Zlib::Raw" : "lib/Compress/Zlib/Raw.pm6"
     },

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Compress-Zlib-Raw.git
 	branch = master
-	commit = 42c0492812837bb711b6ee314b7f3701862ee186
-	parent = 8d1c4efa1ecbdc86051b7319793f283a17e197bd
+	commit = 3a7b0a8b98ffd069a2a1856e92a7a6c668aff42b
+	parent = a488f69712c8ed5fccc0dcc3b06e61a223764f36
 	cmdver = 0.2.2
