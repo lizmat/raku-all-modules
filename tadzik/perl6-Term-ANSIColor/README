@@ -1,2 +1,4 @@
+This module is **deprecated**. Please use [Terminal::ANSIColor](https://github.com/tadzik/Terminal-ANSIColor/) from now on.
+
 This is a Term::ANSIColor module for Perl 6.
 For example usage, see example.pl or SYNOPSIS in the Pod.
