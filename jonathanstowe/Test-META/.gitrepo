@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Test-META.git
+	branch = master
+	commit = c21e19ad643d7e377030f765ce24efe27c7cb926
+	parent = 0692c71f6b96be2affa77e173b4ed75f2fec5e03
+	cmdver = 0.2.2
