@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/hoelzro/p6-priorityqueue.git
 	branch = master
-	commit = 3478901e9578373325f02ab9ad4eeaa79bd1c30f
-	parent = eb85e055d62295b1d685ca01c6e4f7dd335ceb71
+	commit = 9ba50f732f6b71ead87121245f2fbd81cfba6031
+	parent = 3c456574fb0db05607d9f3f3b471f072a0db9e94
 	cmdver = 0.2.2
