@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zengargoyle/p6-Algorithm-Trie-libdatrie.git
+	branch = master
+	commit = 96b756ece67003080732e11a1337d0a30b635952
+	parent = 2211fb039fa8627db775f55ca5a2e3a92e978c1d
+	cmdver = 0.2.2

@@ -1,0 +1,20 @@
+language: perl6
+perl6:
+  - latest
+addons:
+  apt:
+    packages:
+      - libdatrie-dev
+install:
+  - wget http://jklmnop.net/libdatrie_0.2.10.orig.tar.xz
+  - tar xf libdatrie_0.2.10.orig.tar.xz
+  - echo $PWD
+  - ( cd libdatrie-0.2.10 && ./configure --prefix=$HOME/datrie && make install-exec )
+  - rm -rf libdatrie-0.2.10
+  - echo $PWD
+  - rakudobrew build-panda
+  - panda --notests installdeps .
+script:
+  - perl6 -MPanda::Builder -e 'Panda::Builder.build($*CWD)'
+  - PERL6LIB=$PWD/blib/lib LD_LIBRARY_PATH=$HOME/datrie/lib prove -e perl6 -vr t/
+sudo: false
