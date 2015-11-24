@@ -1,0 +1,39 @@
+#!/usr/bin/env perl6
+
+use JSON::Infer;
+
+multi sub MAIN(Str :$uri!, Str :$out-dir = "lib", Str :$class-name) {
+
+    CATCH {
+        when JSON::Infer::Exception {
+            note $_.message;
+            exit 5;
+        }
+    }
+    my IO::Path $base-dir = do if $out-dir.IO.is-relative {
+        $*CWD.child($out-dir);
+    }
+    else {
+        $out-dir.IO;
+    }
+
+    my $infer = JSON::Infer.new;
+
+    my $class = $infer.infer(:$uri, :$class-name);
+
+    my $file = $base-dir.child($class.file-path);
+
+    my $parent = $file.parent;
+
+    if not $parent.d {
+        $parent.mkdir;
+    }
+
+    my $out = $file.open(:w);
+
+    $out.print($class.make-class);
+    $out.close;
+}
+
+
+# vim: expandtab shiftwidth=4 ft=perl6

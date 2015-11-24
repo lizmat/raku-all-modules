@@ -1,0 +1,37 @@
+{
+  "name" : "JSON::Infer",
+  "tags" : [ "object", "serialisation", "JSON" ],
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth" : "github:jonathanstowe",
+  "support" : {
+    "source"     : "git://github.com/jonathanstowe/JSON-Infer.git",
+    "irc"        : "irc:// irc.freenode.net/#perl6",
+    "bugtracker" : "https://github.com/jonathanstowe/JSON-Infer/issues"
+  },
+  "source-url" : "git://github.com/jonathanstowe/JSON-Infer.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+     "JSON::Infer::Exception"     : "lib/JSON/Infer/Exception.pm",
+     "JSON::Infer::Type"          : "lib/JSON/Infer/Type.pm",
+     "JSON::Infer::Class"         : "lib/JSON/Infer/Class.pm",
+     "JSON::Infer::Role::Classes" : "lib/JSON/Infer/Role/Classes.pm",
+     "JSON::Infer::Role::Entity"  : "lib/JSON/Infer/Role/Entity.pm",
+     "JSON::Infer::Role::Types"   : "lib/JSON/Infer/Role/Types.pm",
+     "JSON::Infer::Attribute"     : "lib/JSON/Infer/Attribute.pm",
+     "JSON::Infer"                : "lib/JSON/Infer.pm"
+  },
+  "depends" : [ 
+    "JSON::Tiny", 
+    "HTTP::UserAgent", 
+    "JSON::Class", 
+    "JSON::Name" 
+  ],
+  "test-depends" : [
+    "Test",
+    "Test::META"
+  ],
+  "description" : "Infer Perl 6 Classes from JSON input",
+  "version" : "v0.0.2"
+}
