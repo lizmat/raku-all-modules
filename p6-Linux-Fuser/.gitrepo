@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/p6-Linux-Fuser
+	branch = master
+	commit = 36ae0171ab2603f6121faaf48bc8bddb45fd6e03
+	parent = bdc78cd835a7d28cf4cccdc1640d71dee4832f75
+	cmdver = 0.2.2
