@@ -20,7 +20,7 @@ use v6;
 module File::Which {
 
   constant IS_MAC = $*DISTRO.name eq 'macosx';
-  constant IS_WIN = $*DISTRO.name eq 'mswin32';
+  constant IS_WIN = $*DISTRO.is-win;
   # Removed support for VMS
   # Delayed support for CYGWIN
 
@@ -29,8 +29,8 @@ module File::Which {
   my @PATHEXT = '';
   if ( IS_WIN ) {
     # WinNT. PATHEXT might be set on Cygwin, but not used.
-    if ( %*ENV<PATHEXT> ) {
-      @PATHEXT.push( %*ENV<PATHEXT>.split(';') );
+    if ( %*ENV<PATHEXT>.defined ) {
+      @PATHEXT = flat( %*ENV<PATHEXT>.split(';') );
     } else {
       # Win9X or other: doesn't have PATHEXT, so needs hardcoded.
       @PATHEXT.push( <.com .exe .bat> );
@@ -62,10 +62,7 @@ module File::Which {
     return $exec
             if !IS_MAC && !IS_WIN && $exec ~~ /\// && $exec.IO ~~ :f && $exec.IO ~~ :x;
 
-    my @path = $*SPEC.path;
-    if IS_WIN {
-       @path.unshift( $*SPEC.curdir );
-    }
+    my @path = flat( $*SPEC.path );
 
     for  @path.map({ $*SPEC.catfile($_, $exec) }) -> $base  {
       for @PATHEXT -> $ext {
