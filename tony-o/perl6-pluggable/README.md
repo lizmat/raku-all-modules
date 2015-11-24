@@ -36,7 +36,7 @@ a::Plugins::PluginClass1::PluginClass2::Plugin3
 
 ##Options
 
-Usage:  $.plugin( :$plugin, :$module, :$pattern )
+Usage:  $.plugins( :$plugin, :$module, :$pattern )
 
 ###:$plugin (mandatory)
 

@@ -3,7 +3,7 @@
 role Pluggable {
   method plugins(:$module, :$plugin = 'Plugins', :$pattern = / '.pm6' $ /){
     my @list;
-    my $class = "{$module:defined ?? $module !! ::?CLASS.^name}";
+    my $class = "{$module.defined ?? $module !! ::?CLASS.^name}";
     $class   ~~ s:g/'::'/\//;
     for (@*INC) -> $dir, {
       my ($type, $path) = $dir.split('#', 2);
@@ -13,7 +13,6 @@ role Pluggable {
           try {
             my $m = $t;
             $m ~~ s:g/\//::/;
-            $m.say;
             require ::("$m");
             @list.push($m);
           };
@@ -21,7 +20,7 @@ role Pluggable {
         #CATCH { .say; }
       }
     };
-    return @list;
+    return @list.unique.Array;
   }
 
   method !search(Str $dir, Int $recursion = 10, :$baseclass, :$base, :$pattern){ #default to 10 iterations deep
