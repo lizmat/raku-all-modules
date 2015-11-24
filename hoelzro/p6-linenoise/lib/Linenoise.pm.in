@@ -10,9 +10,10 @@ module Linenoise {
     my constant F_GETFL      = #`(FILL-ME-IN);
     my constant F_SETFL      = #`(FILL-ME-IN);
     my constant O_NONBLOCK   = #`(FILL-ME-IN);
+    my constant CLIB         = #`(FILL-ME-IN);
 
     my sub fcntl(Int $fd, Int $cmd, Int $arg) returns Int is native(Str) { * }
-    my sub free(Pointer $p) is native { * }
+    my sub free(Pointer $p) is native(CLIB) { * }
 
     #| Completions objects are opaque data structures provided by linenoise
     #| that contain the current list of completions for the completions
@@ -61,18 +62,20 @@ module Linenoise {
     #| returns that line.  During this operation, standard input is set to
     #| blocking, and line editing functions provided by linenoise are available.
     our sub linenoise(Str $prompt) returns Str is export {
-        my $flags = fcntl(STDIN_FILENO, F_GETFL, 0);
+        unless $*DISTRO.is-win {
+            my $flags = fcntl(STDIN_FILENO, F_GETFL, 0);
 
-        if $flags == -1 {
-            fail "fcntl(\$*IN, F_GETFL, 0) failed";
-        }
+            if $flags == -1 {
+                fail "fcntl(\$*IN, F_GETFL, 0) failed";
+            }
 
-        KEEP fcntl(STDIN_FILENO, F_SETFL, $flags);
+            KEEP fcntl(STDIN_FILENO, F_SETFL, $flags);
 
-        my $status = fcntl(STDIN_FILENO, F_SETFL, $flags +& +^O_NONBLOCK);
+            my $status = fcntl(STDIN_FILENO, F_SETFL, $flags +& +^O_NONBLOCK);
 
-        if $status == -1 {
-            fail "fcntl(\$*IN, F_SETFL, ~O_NONBLOCK) failed";
+            if $status == -1 {
+                fail "fcntl(\$*IN, F_SETFL, ~O_NONBLOCK) failed";
+            }
         }
 
         my $p = linenoise_raw($prompt);
