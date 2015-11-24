@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/masak/text-indented
+	branch = master
+	commit = 498480710aba212997cbc654a7be68853b3100b2
+	parent = 5446ae1d36114fc77a73a94b0d6d86c49a62db55
+	cmdver = 0.2.2
