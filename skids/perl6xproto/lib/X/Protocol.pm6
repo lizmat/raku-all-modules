@@ -112,7 +112,7 @@ class X::Protocol is X::Protocol::Internal is Exception {
 	    self.code-to-human);
     }
 
-    method codes { EnumMap.new() }
+    method codes { Map.new() }
 
     method code-to-human (X::Protocol:D $:) {
         self.human or self.codes{$.status} or nextsame;
