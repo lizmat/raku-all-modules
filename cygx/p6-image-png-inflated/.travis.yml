@@ -1,0 +1,16 @@
+notifications:
+  email: false
+branches:
+  except:
+    - gh-pages
+sudo: false
+language: perl6
+perl6:
+  - latest
+install:
+  - rakudobrew build-panda
+  - gcc -o pngcheck pngcheck.c
+script:
+  - panda install .
+  - perl6 camelia.p6
+  - ./pngcheck camelia.png
