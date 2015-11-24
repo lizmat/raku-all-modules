@@ -1,0 +1,11 @@
+{
+    "name" : "Crust::Middleware::Syslog",
+    "version" : "1.0.0",
+    "author" : "github:retupmoca",
+    "description" : "Crust logger for syslog",
+    "depends" : ["Log::Syslog::Native","Crust"],
+    "provides" : {
+        "Crust::Middleware::Syslog" : "lib/Crust/Middleware/Syslog.pm6"
+    },
+    "source-url" : "git://github.com/retupmoca/P6-Crust-Middleware-Syslog.git"
+}
