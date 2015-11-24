@@ -1,0 +1,13 @@
+{
+  "perl" : "v6",
+  "name" : "Hydrate",
+  "version" : "*",
+  "description" : "A simple hydration module",
+  "author" : "vendethiel",
+  "provides" : {
+    "Hydrate" : "lib/Hydrate.pm"
+  },
+  "depends" : [ ],
+  "source-url" : "git://github.com/vendethiel/hydrate6.git"
+}
+

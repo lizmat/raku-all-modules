@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/vendethiel/hydrate6.git
+	branch = master
+	commit = 463b46f87e65741365d9e34381c5de73a9082b82
+	parent = e30cd550ba8c155a6e2d798bf1bbf55c59fff45d
+	cmdver = 0.2.2
