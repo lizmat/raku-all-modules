@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Tux/CSV.git
 	branch = master
-	commit = 1a195c7d35fdb672ed6e464d21e8fc0102ad1b2b
-	parent = 40908ac9f7d100ca14b388849b55a70b20d93e94
+	commit = d78d7bbe405069523ec326fb4a0488e6282fcb19
+	parent = ca977a9131be36dc1379f9564d0318fef503820a
 	cmdver = 0.2.2

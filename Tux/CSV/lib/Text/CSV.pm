@@ -855,36 +855,26 @@ class Text::CSV {
             False;
             }
 
-        my sub chunks (Str $str, Regex:D $re) {
+        my sub chunks (Str $str, @re) {
             $str.defined or  return ();
             $str eq ""   and return ("");
 
-            $str.split ($re, :all).map: {
-                if $_ ~~ Str {
-                    $_   if .chars;
-                    }
-                else {
-                    .Str if .Bool;
-                    };
-                };
+            $str.split (@re, :v, :skip-empty);
             }
 
         $!record_number++;
         $opt_v > 4 and progress ($!record_number, $buffer.perl);
 
-        # A scoping bug in perl6 inhibits the use of $!eol inside the split
-        # my Regex $chx = rx{ $!eol | $sep | $quo | $esc };
+        my CSV::Field $f   = CSV::Field.new;
         my            $eol = $!eol // rx{ \r\n || \r || \n };
         my Str        $sep = $!sep;
         my Str        $quo = $!quo;
         my Str        $esc = $!esc;
         my Bool       $noe = !$esc.defined || ($quo.defined && $esc eq $quo);
-        my Regex      $chx = $!eol.defined
-            ?? $noe ?? rx{ $eol             || $sep || $quo }
-                    !! rx{ $eol             || $sep || $quo || $esc }
-            !! $noe ?? rx{ \r\n || \r || \n || $sep || $quo }
-                    !! rx{ \r\n || \r || \n || $sep || $quo || $esc };
-        my CSV::Field $f   = CSV::Field.new;
+        my            @chx = $!eol.defined ?? $eol !! ("\r\n", "\r", "\n");
+        defined $sep and @chx.push: $sep;
+        defined $quo and @chx.push: $quo;
+        $noe         or  @chx.push: $esc;
 
         $!csv-row.fields = ();
 
@@ -904,7 +894,7 @@ class Text::CSV {
         my @ch;
         $!io and @ch = @!ahead;
         @!ahead = ();
-        $buffer.defined and @ch.append: chunks ($buffer, $chx);
+        $buffer.defined and @ch.append: chunks ($buffer, @chx);
         @ch or return parse_error (2012);
 
         $opt_v > 2 and progress (0, @ch.perl);
@@ -1127,7 +1117,7 @@ class Text::CSV {
 
                         if ($i == @ch.elems - 1 && $!io.defined) {
                             my $str = $!io.get or return parse_error (2012);
-                            @ch.append: chunks ($str, $chx);
+                            @ch.append: chunks ($str, @chx);
                             }
 
                         next;
@@ -1144,7 +1134,7 @@ class Text::CSV {
                             !$f.undefined && $f.Str ~~ /^ "sep=" (.*) /) {
                         $!sep = $0.Str;
                         $!record_number = 0;
-                        return self.parse ($!io.get);
+                        return self.parse ($!io.get // Str);
                         }
 
                     return parse_done ();
@@ -1182,7 +1172,7 @@ class Text::CSV {
                 return False;
                 }
 
-            @ch = chunks ($str, $chx);
+            @ch = chunks ($str, @chx);
             $i = 0;
             };
 
@@ -1216,13 +1206,13 @@ class Text::CSV {
 
     multi method getline (IO:D $io, Bool :$meta = $!keep_meta) {
         my Bool $chomped = $io.chomp;
-        my Str  $nl      = $io.nl;
-        $!eol.defined  and $io.nl = $!eol;
+        my $nl    = $io.nl-in;
+        $!eol.defined  and $io.nl-in = $!eol;
         $io.chomp = False;
         $!io      = $io;
-        my Bool $status  = self.parse ($io.get);
+        my Bool $status  = self.parse ($io.get // Str);
         $!io      =  IO;
-        $io.nl    = $nl;
+        $io.nl-in = $nl;
         $io.chomp = $chomped;
         $status ?? $meta ?? self.fields !! self.list !! ();
         } # getline
@@ -1253,15 +1243,15 @@ class Text::CSV {
                         Bool :$meta = $!keep_meta,
                         Bool :$hr   = False) {
         my Bool $chomped = $io.chomp;
-        my Str  $nl      = $io.nl;
-        $!eol.defined  and $io.nl = $!eol;
+        my $nl           = $io.nl-in;
+        $!eol.defined  and $io.nl-in = $!eol;
         $io.chomp        = False;
         $!io             = $io;
         $!record_number  = 0;
 
         my @lines;
         if ($offset >= 0) {
-            while (self.parse ($io.get)) {
+            while (self.parse ($io.get // Str)) {
                 !$!rrange || $!rrange.in ($!record_number - 1) or next;
 
                 $offset--  > 0 and next;
@@ -1275,7 +1265,7 @@ class Text::CSV {
             }
         else {
             $offset = -$offset;
-            while (self.parse ($io.get)) {
+            while (self.parse ($io.get // Str)) {
                 !%!callbacks<filter>.defined ||
                     %!callbacks<filter>.($!csv-row) or next;
 
@@ -1286,7 +1276,7 @@ class Text::CSV {
             }
 
         $!io =  IO;
-        $io.nl    = $nl;
+        $io.nl-in = $nl;
         $io.chomp = $chomped;
         @lines;
         }
@@ -1331,14 +1321,14 @@ class Text::CSV {
             }
 
         my Bool $chomped = $io.chomp;
-        my Str  $nl      = $io.nl;
-        $!eol.defined  and $io.nl = $!eol;
+        my $nl           = $io.nl-in;
+        $!eol.defined  and $io.nl-in = $!eol;
         $io.chomp        = False;
         $!io             = $io;
         $!record_number  = 0;
 
         my @lines;
-        while (self.parse ($io.get)) {
+        while (self.parse ($io.get // Str)) {
 
             my CSV::Field @f = $!csv-row.fields[
                 (^($!csv-row.fields.elems)).grep ({
@@ -1357,7 +1347,7 @@ class Text::CSV {
             }
 
         $!io =  IO;
-        $io.nl    = $nl;
+        $io.nl-in = $nl;
         $io.chomp = $chomped;
         @lines;
         }
