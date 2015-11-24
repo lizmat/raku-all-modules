@@ -1,4 +1,4 @@
-unit module File::Temp:ver<0.02>;
+unit module File::Temp:ver<0.0.2>;
 
 use File::Directory::Tree;
 
@@ -6,17 +6,13 @@ use File::Directory::Tree;
 my @filechars = flat('a'..'z', 'A'..'Z', 0..9, '_');
 constant MAX-RETRIES = 10;
 
-sub gen-random($n) {
-    @filechars.roll($n).join
-}
-
-my @open-files;
+my @created-files;
 
 sub make-temp($type, $template, $tempdir, $prefix, $suffix, $unlink) {
     my $count = MAX-RETRIES;
     while ($count--) {
         my $tempfile = $template;
-        $tempfile ~~ s/ '*' ** 4..* /{ gen-random($/.chars) }/;
+        $tempfile ~~ s/ '*' ** 4..* /{ @filechars.roll($/.chars).join }/;
         my $name = $*SPEC.catfile($tempdir,"$prefix$tempfile$suffix");
         next if $name.IO ~~ :e;
         my $fh;
@@ -26,7 +22,7 @@ sub make-temp($type, $template, $tempdir, $prefix, $suffix, $unlink) {
         else {
             try { CATCH { next }; mkdir($name) };
         }
-        push @open-files, $name if $unlink;
+        push @created-files, [ $name, $fh ] if $unlink;
         return $type eq 'file' ?? ($name,$fh) !! $name;
     }
     return ();
@@ -56,17 +52,50 @@ our sub tempdir (
 }
 
 END {
-    for @open-files -> $f {
-        next unless $f.IO ~~ :e; # maybe warn here
+    for @created-files -> [$fn,$fh] {
+        $fh.close if $fh;
+        next unless $fn.IO ~~ :e; # maybe warn here
 
-        if $f.IO ~~ :f
+        if $fn.IO ~~ :f
         {
-            unlink($f);
+            unlink($fn);
         }
-        elsif $f.IO ~~ :d
+        elsif $fn.IO ~~ :d
         {
-            rmtree($f);
+            rmtree($fn);
         }
     }
 }
 
+
+=begin pod
+=NAME       File::Temp
+=SYNOPSIS
+
+    # Generate a temp file in a temp dir
+    my ($filename,$filehandle) = tempfile;
+
+    # specify a template for the filename
+    #  * are replaced with random characters
+    my ($filename,$filehandle) = tempfile("******");
+
+    # Automatically unlink files at end of program (this is the default)
+    my ($filename,$filehandle) = tempfile("******", :unlink);
+
+    # Specify the directory where the tempfile will be created
+    my ($filename,$filehandle) = tempfile(:tempdir("/path/to/my/dir"));
+
+    # don't unlink this one
+    my ($filename,$filehandle) = tempfile(:tempdir('.'), :!unlink);
+
+    # specify a prefix and suffix for the filename
+    my ($filename,$filehandle) = tempfile(:prefix('foo'), :suffix(".txt"));
+
+=DESCRIPTION
+
+This module exports two routines:
+=item tempfile
+=item tempdir
+
+=AUTHOR Jonathan Scott Duff <duff@pobox.com>
+=end pod

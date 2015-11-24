@@ -1,6 +1,6 @@
 {
     "name" : "File::Temp",
-    "version" : "0.01",
+    "version" : "0.0.2",
     "description" : "Create temporary files",
     "depends" : [ "File::Directory::Tree" ],
     "build-depends" : [ ],

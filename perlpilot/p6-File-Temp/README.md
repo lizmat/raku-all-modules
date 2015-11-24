@@ -1,8 +1,8 @@
 File::Temp
 ==========
 
-Create temporary files.
-This module is loosely based on the Perl 5 module of the same name.
+Create temporary files. This module is loosely based on the Perl 5
+module of the same name.
 
 Synopsis
 ========
@@ -27,8 +27,14 @@ Synopsis
     my ($filename,$filehandle) = tempfile(:prefix('foo'), :suffix(".txt"));
 
 
+Description
+===========
 
+This module exports 2 routines:
 
+* tempfile
+* tempdir
 
+`tempfile`  will create a 
 
 

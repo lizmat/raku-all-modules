@@ -1,7 +1,7 @@
 {
     "name" : "File::Temp",
     "perl" : "v6.0.0",
-    "version" : "0.01",
+    "version" : "0.0.2",
     "description" : "Create temporary files",
     "depends" : [ "File::Directory::Tree" ],
     "provides" : [ "File::Temp" ],
