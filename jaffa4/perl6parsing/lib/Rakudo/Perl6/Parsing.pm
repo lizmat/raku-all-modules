@@ -94,11 +94,12 @@ method walk($isprint,Mu $tree, $level,$key1?)
 
 %!visited_objects{$id} = True;
   
-  if ($type eq "Parcel")
+  if ($type eq "List")
   {
     #say "parcel "~$tree[0];
     for @($tree) -> $i
     {
+        
       say "{$indent}parcel "~$i.HOW.name($i) if $isprint;
       self.walk($isprint,$i,$level+1,"parcel "~$level);
     }
@@ -138,7 +139,7 @@ method walk($isprint,Mu $tree, $level,$key1?)
     say "{$indent}key:"~$key if $isprint;
     if ($key)
     {
-      self.walk($isprint,$tree.hash(){$key},$level+1,$key);
+        self.walk($isprint,$tree.hash(){$key},$level+1,$key);
     }
   }
   
