@@ -9,11 +9,20 @@ package BSON {
   #-----------------------------------------------------------------------------
   # Encoding tools
   #
-  sub encode_e_name ( Str:D $s --> Buf ) is export {
-    return encode_cstring($s);
+  sub encode_e_name ( Str:D $s --> Buf ) is export is DEPRECATED('encode-e-name') {
+    return encode-cstring($s);
   }
 
-  sub encode_cstring ( Str:D $s --> Buf ) is export {
+  sub encode-e-name ( Str:D $s --> Buf ) is export {
+    return encode-cstring($s);
+  }
+
+  #-----------------------------------------------------------------------------
+  sub encode_cstring ( Str:D $s --> Buf ) is export is DEPRECATED('encode-cstring') {
+    return encode-cstring($s);
+  }
+
+  sub encode-cstring ( Str:D $s --> Buf ) is export {
     die X::BSON::Parse.new(
       :operation('encode_cstring'),
       :error('Forbidden 0x00 sequence in $s')
@@ -22,30 +31,57 @@ package BSON {
     return $s.encode() ~ Buf.new(0x00);
   }
 
+  #-----------------------------------------------------------------------------
   # string ::= int32 (byte*) "\x00"
   #
-  sub encode_string ( Str:D $s --> Buf ) is export {
-#    my utf8 $b = $s.encode('UTF-8');
+  sub encode_string ( Str:D $s --> Buf ) is export is DEPRECATED('encode-string') {
     my Buf $b .= new($s.encode('UTF-8'));
-    return [~] encode_int32($b.bytes + 1), $b, Buf.new(0x00);
+    return [~] encode-int32($b.bytes + 1), $b, Buf.new(0x00);
   }
 
+  sub encode-string ( Str:D $s --> Buf ) is export {
+    my Buf $b .= new($s.encode('UTF-8'));
+    return [~] encode-int32($b.bytes + 1), $b, Buf.new(0x00);
+  }
+
+  #-----------------------------------------------------------------------------
   # 4 bytes (32-bit signed integer)
   #
-  sub encode_int32 ( Int:D $i ) is export {
+  sub encode_int32 ( Int:D $i ) is export is DEPRECATED('encode-int32') {
     my int $ni = $i;      
     return Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
                     ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF
                   );
+  }
+
+  sub encode-int32 ( Int:D $i ) is export {
+    my int $ni = $i;      
+    return Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
+                    ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF
+                  );
+
     # Original method goes wrong on negative numbers. Also modulo
     # operations are slower than the bit operations.
     #
     # return Buf.new( $i % 0x100, $i +> 0x08 % 0x100, $i +> 0x10 % 0x100, $i +> 0x18 % 0x100 );
   }
 
+  #-----------------------------------------------------------------------------
   # 8 bytes (64-bit int)
   #
-  sub encode_int64 ( Int:D $i ) is export {
+  sub encode_int64 ( Int:D $i ) is export is DEPRECATED('encode-int64') {
+    # No tests for too large/small numbers because it is called from
+    # _enc_element normally where it is checked
+    #
+    my int $ni = $i;
+    return Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
+                    ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF,
+                    ($ni +> 0x20) +& 0xFF, ($ni +> 0x28) +& 0xFF,
+                    ($ni +> 0x30) +& 0xFF, ($ni +> 0x38) +& 0xFF
+                  );
+  }
+
+  sub encode-int64 ( Int:D $i ) is export {
     # No tests for too large/small numbers because it is called from
     # _enc_element normally where it is checked
     #
@@ -70,40 +106,70 @@ package BSON {
   #-----------------------------------------------------------------------------
   # Decoding tools
   #
-  multi sub decode_e_name ( List:D $b, Int:D $index is rw --> Str ) is export {
-    return decode_cstring( $b.Array, $index);
+  multi sub decode_e_name ( List:D $b, Int:D $index is rw --> Str
+  ) is export is DEPRECATED('decode-e-name') {
+    return decode-cstring( $b.Array, $index);
   }
 
-  multi sub decode_e_name ( Array:D $b, Int:D $index is rw --> Str ) is export {
-    return decode_cstring( $b, $index);
+  multi sub decode-e-name ( List:D $b, Int:D $index is rw --> Str ) is export {
+    return decode-cstring( $b.Array, $index);
   }
 
-
-  multi sub decode_cstring ( List:D $a, Int:D $index is rw --> Str ) is export {
-    return decode_cstring( $a.Array, $index);
+  multi sub decode_e_name ( Array:D $b, Int:D $index is rw --> Str
+  ) is export is DEPRECATED('decode-e-name') {
+    return decode-cstring( $b, $index);
   }
 
-  multi sub decode_cstring ( Array:D $a, Int:D $index is rw --> Str ) is export {
+  multi sub decode-e-name ( Array:D $b, Int:D $index is rw --> Str ) is export {
+    return decode-cstring( $b, $index);
+  }
+
+  #-----------------------------------------------------------------------------
+  multi sub decode_cstring ( List:D $a, Int:D $index is rw --> Str
+  ) is export is DEPRECATED('decode-cstring') {
+    return decode-cstring( $a.Array, $index);
+  }
+
+  multi sub decode-cstring ( List:D $a, Int:D $index is rw --> Str ) is export {
+    return decode-cstring( $a.Array, $index);
+  }
+
+  multi sub decode_cstring ( Array:D $a, Int:D $index is rw --> Str
+  ) is export is DEPRECATED('decode-cstring') {
+    return decode-cstring( $a, $index);
+  }
+
+  multi sub decode-cstring ( Array:D $a, Int:D $index is rw --> Str ) is export {
     my @a;
     my $l = $a.elems;
     while $index < $l and $a[$index] !~~ 0x00 { @a.push($a[$index++]); }
 
     die X::BSON::Parse.new(
-      :operation('decode_cstring'),
+      :operation('decode-cstring'),
       :error('Missing trailing 0x00')
     ) unless $index < $l and $a[$index++] ~~ 0x00;
     return Buf.new(@a).decode();
   }
 
-
+  #-----------------------------------------------------------------------------
   # string ::= int32 (byte*) "\x00"
   #
-  multi sub decode_string ( List:D $a, Int:D $index is rw --> Str ) is export {
-    decode_string( $a.Array, $index);
+  multi sub decode_string ( List:D $a, Int:D $index is rw --> Str
+  ) is export is DEPRECATED('decode-string') {
+    decode-string( $a.Array, $index);
   }
-  
-  multi sub decode_string ( Array:D $a, Int:D $index is rw --> Str ) is export {
-    my $i = decode_int32( $a, $index);
+
+  multi sub decode-string ( List:D $a, Int:D $index is rw --> Str ) is export {
+    decode-string( $a.Array, $index);
+  }
+
+  multi sub decode_string ( Array:D $a, Int:D $index is rw --> Str
+  ) is export is DEPRECATED('decode-string') {
+    decode-string( $a, $index);
+  }
+
+  multi sub decode-string ( Array:D $a, Int:D $index is rw --> Str ) is export {
+    my $i = decode-int32( $a, $index);
 
     # Check if there are enaugh letters left
     #
@@ -113,7 +179,6 @@ package BSON {
       :operation('decode_string'),
       :error('Not enaugh characters left')
     ) if $l < $i;
-    
 
     my @a;
     @a.push($a[$index++]) for ^ ($i - 1);
@@ -126,12 +191,22 @@ package BSON {
     return Buf.new(@a).decode();
   }
 
-
-  multi sub decode_int32 ( List:D $a, Int:D $index is rw --> Int ) is export {
-    decode_int32( $a.Array, $index);
+  #-----------------------------------------------------------------------------
+  multi sub decode_int32 ( List:D $a, Int:D $index is rw --> Int
+  ) is export is DEPRECATED('decode-int32') {
+    decode-int32( $a.Array, $index);
   }
-  
-  multi sub decode_int32 ( Array:D $a, Int:D $index is rw --> Int ) is export {
+
+  multi sub decode-int32 ( List:D $a, Int:D $index is rw --> Int ) is export {
+    decode-int32( $a.Array, $index);
+  }
+
+  multi sub decode_int32 ( Array:D $a, Int:D $index is rw --> Int
+  ) is export is DEPRECATED('decode-int32') {
+    decode-int32( $a, $index);
+  }
+
+  multi sub decode-int32 ( Array:D $a, Int:D $index is rw --> Int ) is export {
     # Check if there are enaugh letters left
     #
     die X::BSON::Parse.new(
@@ -162,13 +237,24 @@ package BSON {
   }
 
 
+  #-----------------------------------------------------------------------------
   # 8 bytes (64-bit int)
   #
-  multi sub decode_int64 ( List:D $a, Int:D $index is rw --> Int ) is export {
-    decode_int64( $a.Array, $index);
+  multi sub decode_int64 ( List:D $a, Int:D $index is rw --> Int
+  ) is export is DEPRECATED('decode-int64') {
+    decode-int64( $a.Array, $index);
   }
-  
-  multi sub decode_int64 ( Array:D $a, Int:D $index is rw --> Int ) is export {
+
+  multi sub decode-int64 ( List:D $a, Int:D $index is rw --> Int ) is export {
+    decode-int64( $a.Array, $index);
+  }
+
+  multi sub decode_int64 ( Array:D $a, Int:D $index is rw --> Int
+  ) is export is DEPRECATED('decode-int64') {
+    decode-int64( $a, $index);
+  }
+
+  multi sub decode-int64 ( Array:D $a, Int:D $index is rw --> Int ) is export {
     # Check if there are enaugh letters left
     #
     die X::BSON::Parse.new(

@@ -13,31 +13,31 @@ shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
 
 =begin pod
 
-=head1 NAME BSON::Bson - Encoding and decoding of Hash documents to or from byte buffer
+=TITLE class BSON::Bson
 
-=head1 SYNOPSIS
+=SUBTITLE Encoding and decoding of Hash documents to or from byte buffer
 
-=begin nested
-=begin code
+Defined as
 
-use BSON;
+  package MongoDB { class Users { ... } }
 
-my BSON::Bson $b .= new;
-my Buf $encoded = $b.encode(hash( mike => 100));
-my Hash $decoded = $b.decode(
-  Buf.new(
-    0x0F, 0x00, 0x00, 0x00,                     # 15 bytes
-    0x10,                                       # 3BSon code: 2 bits integer
-    0x6D, 0x69, 0x6B, 0x65, 0x00,               # 'mike' + 0
-    0x64, 0x00, 0x00, 0x00,                     # Integer number 100
-    0x00                                        # + 0
-  )
-);
+Use as
 
-=end code
-=end nested
+  use BSON;
 
-=head1 DESCRIPTION
+  my BSON::Bson $b .= new;
+  my Buf $encoded = $b.encode(hash( mike => 100));
+  my Hash $decoded = $b.decode(
+    Buf.new(
+      0x0F, 0x00, 0x00, 0x00,                     # 15 bytes
+      0x10,                                       # 3BSon code: 2 bits integer
+      0x6D, 0x69, 0x6B, 0x65, 0x00,               # 'mike' + 0
+      0x64, 0x00, 0x00, 0x00,                     # Integer number 100
+      0x00                                        # + 0
+    )
+  );
+
+
 
 This class is used to encode documents into a format called BSON which is a
 binary form of JSON. This BSON encoded data is stored in a Buf. The opposite
@@ -50,24 +50,31 @@ See L<http://bsonspec.org|BSON spec> for details.
 
 =head1 METHODS
 
-Below are the most interesting methods for users of this class.
+=head2 method encode
 
-=for head2
-method encode ( Hash $h --> Buf ) {...}
+Defined as
+
+  method encode ( Hash $h --> Buf )
 
 Encode document to BSON.
 
-=for head2
-multi method encode_document ( Hash $h --> Buf ) {...}
-multi method encode_document ( Pair @p --> Buf ) {...}
+=head2 method encode-document
+
+Defined as
+
+  multi method encode-document ( Hash $h --> Buf )
+  multi method encode-document ( Pair @p --> Buf )
 
 Encode as above. The second method is used to keep order in the keys.
 
-=for head2
-method _init_index ( ) {...}
+=head2 method _init_index
+
+Defined as
+
+  method _init_index ( )
 
 To decode the BSON buffer an index is kept as the current location in the array.
-This is added to have parallel processing possebility of the buffer when the
+This is added to have parallel processing possibility of the buffer when the
 length of the first item is known. This will reset the index to 0.
 
 =for head2

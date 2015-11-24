@@ -23,12 +23,12 @@ subtest {
                          ).flat
                        ];
 
-  my Buf $enc-bin = $bin-obj.enc_binary;
+  my Buf $enc-bin = $bin-obj.encode-binary;
   is-deeply( $enc-bin.Array, $bin-test, 'encode general binary test');
 
   my $index = 0;
   $bin-obj .= new;
-  $bin-obj.dec_binary( $enc-bin.list, $index);
+  $bin-obj.decode-binary( $enc-bin.list, $index);
   is-deeply( $bin-obj.Buf, $raw-bin, 'compare data after decoding');
   is( $index, $bin-test.elems, "Index is shifted $index bytes");
 
@@ -52,18 +52,18 @@ subtest {
                            $uuid.Blob.list,               # Raw Buf
                          ).flat
                        ];
-  my Buf $enc-bin = $bin-obj.enc_binary;
+  my Buf $enc-bin = $bin-obj.encode-binary;
   is-deeply( $enc-bin.Array, $bin-test, 'encode uuid test');
 
   my $index = 0;
   $bin-obj .= new;
-  $bin-obj.dec_binary( $enc-bin.list, $index);
+  $bin-obj.decode-binary( $enc-bin.list, $index);
   is-deeply( $bin-obj.Buf.list,
              $uuid.Blob.list,
              'compare uuid data after decoding'
            );
   is( $index, $bin-test.elems, "Index is shifted $index bytes");
-  is( $bin-obj.get_type, $BSON::UUID, "Test UUID type");
+  is( $bin-obj.get-type, $BSON::UUID, "Test UUID type");
 
 }, "Test uuid binary data";
 
@@ -83,18 +83,18 @@ subtest {
                            $md5-b.list,                   # Raw Buf
                          ).flat
                        ];
-  my Buf $enc-bin = $bin-obj.enc_binary;
+  my Buf $enc-bin = $bin-obj.encode-binary;
   is-deeply( $enc-bin.Array, $bin-test, 'encode md5 test');
 
   my $index = 0;
   $bin-obj .= new;
-  $bin-obj.dec_binary( $enc-bin.list, $index);
+  $bin-obj.decode-binary( $enc-bin.list, $index);
   is-deeply( $bin-obj.Buf.list,
              $md5-b.list,
              'compare md5 data after decoding'
            );
   is( $index, $bin-test.elems, "Index is shifted $index bytes");
-  is( $bin-obj.get_type, $BSON::MD5, "Test MD5 type");
+  is( $bin-obj.get-type, $BSON::MD5, "Test MD5 type");
 
 }, "Test md5 binary data";
 
@@ -122,7 +122,7 @@ subtest {
       %test<encoded>,
       "encode type {%test<type>}";
 
-  $bson._init_index;
+  $bson.init-index;
   is-deeply
       $bson.decode(Buf.new(%test<encoded>))<b>.Buf,
       %test<decoded><b>.Buf,

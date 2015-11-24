@@ -85,7 +85,7 @@ is-deeply
     ],
     'encode ObjectId';
 
-$bson._init_index;
+$bson.init-index;
 is-deeply
     $bson.decode(
       Buf.new( 0x16, 0x00, 0x00, 0x00,                  # Length

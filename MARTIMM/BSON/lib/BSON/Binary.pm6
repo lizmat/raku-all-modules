@@ -12,54 +12,70 @@ package BSON {
 
   class Binary {
 
-    has Buf $.binary_data;
-    has Bool $.has_binary_data = False;
-    has Int $.binary_type;
+    has Buf $!binary-data;
+    has Bool $!has-binary-data = False;
+    has Int $!binary-type;
 
     #-----------------------------------------------------------------------------
     #
     submethod BUILD ( Buf :$data, Int :$type = $GENERIC ) {
-      $!binary_data = $data;
-      $!has_binary_data = ?$!binary_data;
-      $!binary_type = $type;
+      $!binary-data = $data;
+      $!has-binary-data = ?$!binary-data;
+      $!binary-type = $type;
     }
 
     #-----------------------------------------------------------------------------
     #
-    method get_type ( --> Int ) {
-      return $!binary_type;
+    method get_type ( --> Int ) is DEPRECATED('get-type') {
+      return $!binary-type;
+    }
+
+    method get-type ( --> Int ) {
+      return $!binary-type;
     }
 
     #-----------------------------------------------------------------------------
     #
     method Buf ( --> Buf ) {
-      return $!binary_data;
+      return $!binary-data;
     }
 
     #-----------------------------------------------------------------------------
     #
-    method enc_binary ( --> Buf ) {
-      if $!has_binary_data {
-        return [~] encode_int32($!binary_data.elems),
-                   Buf.new( $!binary_type, $!binary_data.list);
+    method enc_binary ( --> Buf ) is DEPRECATED('encode-binary') {
+      return self.encode-binary;
+    }
+
+    method encode-binary ( --> Buf ) {
+      if $!has-binary-data {
+        return [~] encode-int32($!binary-data.elems),
+                   Buf.new( $!binary-type, $!binary-data.list);
       }
 
       else {
-        return [~] encode_int32(0), Buf.new($!binary_type);
+        return [~] encode-int32(0), Buf.new($!binary-type);
       }
     }
 
     #-----------------------------------------------------------------------------
     #
-    multi method dec_binary ( List:D $a, Int:D $index is rw ) {
-      self.dec_binary( $a.Array, $index);
+    multi method dec_binary ( List:D $a, Int:D $index is rw ) is DEPRECATED('decode-binary') {
+      self.decode-binary( $a.Array, $index);
     }
 
-    multi method dec_binary ( Array:D $a, Int:D $index is rw ) {
+    multi method decode-binary ( List:D $a, Int:D $index is rw ) {
+      self.decode-binary( $a.Array, $index);
+    }
+
+    multi method dec_binary ( Array:D $a, Int:D $index is rw ) is DEPRECATED('decode-binary') {
+      self.decode-binary( $a, $index);
+    }
+
+    multi method decode-binary ( Array:D $a, Int:D $index is rw ) {
 
       # Get length of binary data
       #
-      my Int $lng = decode_int32( $a, $index);
+      my Int $lng = decode-int32( $a, $index);
 
       # Get subtype
       #
@@ -106,10 +122,10 @@ package BSON {
 
       # Store the data from the encoding in this object
       #
-      $!binary_data = Buf.new($a[$offset ..^ ($offset+$lng)]);
+      $!binary-data = Buf.new($a[$offset ..^ ($offset+$lng)]);
       $index += $lng + 1;
-      $!binary_type = $sub_type;
-      $!has_binary_data = ?$!binary_data;
+      $!binary-type = $sub_type;
+      $!has-binary-data = ?$!binary-data;
     }
   }
 }
