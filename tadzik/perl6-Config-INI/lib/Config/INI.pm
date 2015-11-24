@@ -39,19 +39,7 @@ our sub parse (Str $string) {
 }
 
 our sub parse_file (Str $file) {
-    my $conf = slurp $file;
-    my $parseconf = 0;
-    my %result;
-    try {
-        %result = parse $conf;
-        CATCH {
-            $parseconf = 1
-        }
-    }
-    if $parseconf {
-        die "Failed parsing $file"
-    }
-    return %result
+    INI.parsefile($file, :actions(INI::Actions.new)).ast;
 }
 
 =begin pod

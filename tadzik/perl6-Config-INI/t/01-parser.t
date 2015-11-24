@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 42;
+plan 44;
 
 use Config::INI;
 
@@ -152,3 +152,17 @@ my %ni = Config::INI::parse($ninth);
 
 pass 'ninth config parsed';
 is-deeply %ni, { 'Hello... world' => {} };
+
+my $tenth = q{t/test00.ini};
+
+my %te = Config::INI::parse_file($tenth);
+
+pass 'tenth config (file) parsed';
+is-deeply %te, {
+    '_' => {
+        foo => 'comma, separated, values',
+        ano => 'ther',
+        ki  => 'waliu',
+        asd => 'esd'
+    }
+};
