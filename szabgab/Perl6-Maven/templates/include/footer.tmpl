@@ -1,0 +1,63 @@
+% my (%h) = @_;
+
+    </div>
+
+    <div class="span3">
+% if %h<github_link> {
+       <a class="btn btn-default" href="<%= %h<github_link> %>" role="button">Suggest a change</a>
+       <br>
+       Elapsed time: ELAPSED_TIME
+% }
+
+       <h3>Perl 6 Tricks and Treats newsletter</h3>
+       Register to the free newsletter now, and get updates and news.
+       <form method=POST action="http://mail.szabgab.com/mailman/subscribe/perl6">
+       Email: <input type="text" name="email" size="30" value=""><br />
+       Name:  <input type="text" name="fullname" size="30" value=""><br />
+       <INPUT type="Submit" name="email-button" value="Subscribe">
+       </form>
+
+<%= Template::Mojo.new(slurp "templates/include/social_sharing.tmpl").render(%h); %>
+    </div>
+  </div>
+</div>
+
+
+<script src="/js/jquery-1.7.2.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-transition.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-alert.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-modal.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-dropdown.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-scrollspy.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-tab.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-tooltip.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-popover.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-button.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-collapse.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-carousel.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/2.0.4/js/bootstrap-typeahead.js"></script>
+
+<script src="/js/maven.js"></script>
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-12199211-12']);
+  _gaq.push(['_setDomainName', 'perl6maven.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+
+<script type="text/javascript">
+$(".alert").alert();
+</script>
+
+</body>
+</html>
+

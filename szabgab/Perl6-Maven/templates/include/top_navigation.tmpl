@@ -1,0 +1,15 @@
+% my (%h) = @_;
+
+<div>
+% if %h<prev_file> {
+  <a class="btn btn-info" href="/<%= %h<prev_file> %>">Prev: <%= %h<prev_title> %></a>
+% }
+% if %h<next_file> {
+  <div class="pull-right">
+  <a class="btn btn-primary" style="text-align: right" href="/<%= %h<next_file> %>">Next: <%= %h<next_title> %></a>
+  </div>
+% }
+</div>
+
+<hr />
+
