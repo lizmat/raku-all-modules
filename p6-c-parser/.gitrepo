@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/andydude/p6-c-parser
+	branch = master
+	commit = 8acaeaad91a1908544fb1f42e8f36a0eb9ea350b
+	parent = 27adb000ac2281de30121a8b1a14ca79376fef46
+	cmdver = 0.2.2

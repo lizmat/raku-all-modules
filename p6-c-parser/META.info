@@ -1,0 +1,23 @@
+{
+        "name" : "C::Parser",
+        "version" : "0.2.5",
+        "description" : "Grammar for Parsing C in Perl6",
+        "author" : "Andrew Robbins",
+        "build-depends" : [ ],
+        "test-depends" : [
+                "Test"
+        ],
+        "depends" : [ ],
+        "provides" : {
+                "C::Parser::Lexer" : "lib/C/Parser/Lexer.pm6",
+                "C::Parser::Actions" : "lib/C/Parser/Actions.pm6",
+                "C::Parser::Utils" : "lib/C/Parser/Actions.pm6",
+                "C::Parser::Grammar" : "lib/C/Parser/Grammar.pm6",
+                "C::AST::Ops" : "lib/C/AST/Ops.pm6",
+                "C::AST::Utils" : "lib/C/AST/Utils.pm6",
+                "C::AST" : "lib/C/AST/Utils.pm6",
+                "C::Parser::Actions" : "lib/C/Parser/Actions.pm6",
+                "C::Parser" : "lib/C/Parser.pm6"
+        },
+        "source-url" : "https://github.com/andydude/p6-c-parser.git"
+}
