@@ -48,7 +48,7 @@ class Digest::MD5:auth<cosimo>:ver<0.05> {
         @H «⊞=» ($A, $B, $C, $D);
     }
 
-    sub md5($msg) {
+    our sub md5($msg) {
         my @M = md5-pad($msg);
         my @H = 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476;
         md5-block(@H, @M[$_ .. $_+15]) for 0, 16 ...^ +@M;
@@ -56,18 +56,18 @@ class Digest::MD5:auth<cosimo>:ver<0.05> {
     }
 
     multi method md5_hex(Str $str) {
-        md5( $str.encode('ascii') ).list».fmt('%02x').join
+        md5( $str.encode('latin-1') ).list».fmt('%02x').join
     }
 
     multi method md5_hex(@str) {
-        md5( @str.join.encode('ascii') ).list».fmt('%02x').join
+        md5( @str.join.encode('latin-1') ).list».fmt('%02x').join
     }
 
     multi method md5_buf(Str $str --> Buf) {
-        md5( $str.encode('ascii') );
+        md5( $str.encode('latin-1') );
     }
 
     multi method md5_buf(@str --> Buf) {
-        md5( @str.join.encode('ascii') );
+        md5( @str.join.encode('latin-1') );
     }
 }
