@@ -1,0 +1,189 @@
+=encoding utf8
+
+=for HTML <a href="https://travis-ci.org/zoffixznet/perl6-Operators-Math-Superscripts"><img src="https://travis-ci.org/zoffixznet/perl6-Operators-Math-Superscripts.svg?branch=master"></a>
+
+=head1 NAME
+
+Operators::Math::Superscripts - Superscript numerical operators for raising to powers
+
+=head1 SYNOPSIS
+
+    use Operators::Math::Superscripts;
+    say 2⁰; # 1
+    say 2¹; # 2
+    say 2²; # 4
+    say 2³; # 8
+    say 2⁴; # 16
+    say 2⁵; # 32
+    say 2⁶; # 64
+    say 2⁷; # 128
+    say 2⁸; # 256
+    say 2⁹; # 512
+
+    say 10⁻¹; # 0.1
+    say 10⁻²; # 0.01
+    say 10⁻³; # 0.001
+    say 10⁻⁴; # 0.0001
+    say 10⁻⁵; # 0.00001
+    say 10⁻⁶; # 0.000001
+    say 10⁻⁷; # 0.0000001
+    say 10⁻⁸; # 0.00000001
+    say 10⁻⁹; # 0.000000001
+
+=head1 DESCRIPTION
+
+This module allows you to use Unicode superscript numbers to raise stuff
+into powers
+
+=head1 OPERATORS
+
+=head2 C<⁰>
+
+    say 2⁰; # 1
+
+C<U+2070 (e2 81 b0): SUPERSCRIPT ZERO [⁰]>. Raise to zeroth power.
+
+=head2 C<¹>
+
+    say 2¹; # 2
+
+C<U+00B9 (c2 b9): SUPERSCRIPT ONE [¹]>. Raise to first power.
+
+=head2 C²>
+
+    say 2²; # 4
+
+C<U+00B2 (c2 b2): SUPERSCRIPT TWO [²]>. Raise to the second power.
+
+=head2 C<³>
+
+    say 2³; # 8
+
+C<U+00B3 (c2 b3): SUPERSCRIPT THREE [³]>. Raise to the third power.
+
+=head2 C<⁴>
+
+    say 2⁴; # 16
+
+C<U+2074 (e2 81 b4): SUPERSCRIPT FOUR [⁴]>. Raise to the fourth power.
+
+=head2 C<⁵>
+
+    say 2⁵; # 32
+
+C<U+2075 (e2 81 b5): SUPERSCRIPT FIVE [⁵]>. Raise to the fifth power.
+
+=head2 C<⁶>
+
+    say 2⁶; # 64
+
+C<U+2076 (e2 81 b6): SUPERSCRIPT SIX [⁶]>. Raise to the sixth power.
+
+=head2 C<⁷>
+
+    say 2⁷; # 128
+
+C<U+2077 (e2 81 b7): SUPERSCRIPT SEVEN [⁷]>. Raise to the seventh power.
+
+=head2 C<⁸>
+
+    say 2⁸; # 256
+
+C<U+2078 (e2 81 b8): SUPERSCRIPT EIGHT [⁸]>. Raise to the eighth power.
+
+=head2 C<⁹>
+
+    say 2⁹; # 512
+
+C<U+2079 (e2 81 b9): SUPERSCRIPT NINE [⁹]>. Raise to the ninth power.
+
+=head2 C<⁰>
+
+    say 2⁰; # 1
+
+C<U+2070 (e2 81 b0): SUPERSCRIPT ZERO [⁰]>. Raise to zeroth power.
+
+=head2 C<⁻¹>
+
+    say 10⁻¹; # 0.1
+
+C<U+207B (e2 81 bb): SUPERSCRIPT MINUS [⁻] U+00B9 (c2 b9): SUPERSCRIPT ONE [¹]>.
+Raise to negative first power.
+
+=head2 C<⁻²>
+
+    say 10⁻²; # 0.01
+
+C<U+207B (e2 81 bb): SUPERSCRIPT MINUS [⁻] U+00B2 (c2 b2): SUPERSCRIPT TWO [²]>.
+Raise to the negative second power.
+
+=head2 C<⁻³>
+
+    say 10⁻³; # 0.001
+
+C<U+207B (e2 81 bb): SUPERSCRIPT MINUS [⁻] U+00B3 (c2 b3): SUPERSCRIPT
+THREE [³]>. Raise to the negative third power.
+
+=head2 C<⁻⁴>
+
+    say 10⁻⁴; # 0.0001
+
+C<U+207B (e2 81 bb): SUPERSCRIPT MINUS [⁻] U+2074 (e2 81 b4): SUPERSCRIPT
+FOUR [⁴]>. Raise to the negative fourth power.
+
+=head2 C<⁻⁵>
+
+    say 10⁻⁵; # 0.00001
+
+C<U+207B (e2 81 bb): SUPERSCRIPT MINUS [⁻] U+2075 (e2 81 b5): SUPERSCRIPT FIVE
+[⁵]>. Raise to the negative fifth power.
+
+=head2 C<⁻⁶>
+
+    say 10⁻⁶; # 0.000001
+
+C<U+207B (e2 81 bb): SUPERSCRIPT MINUS [⁻] U+2076 (e2 81 b6): SUPERSCRIPT SIX
+[⁶]>. Raise to the negative sixth power.
+
+=head2 C<⁻⁷>
+
+    say 10⁻⁷; # 0.0000001
+
+C<U+207B (e2 81 bb): SUPERSCRIPT MINUS [⁻] U+2077 (e2 81 b7): SUPERSCRIPT SEVEN
+[⁷]>. Raise to the negative seventh power.
+
+=head2 C<⁻⁸>
+
+    say 10⁻⁸; # 0.00000001
+
+C<U+207B (e2 81 bb): SUPERSCRIPT MINUS [⁻] U+2078 (e2 81 b8): SUPERSCRIPT EIGHT
+[⁸]>. Raise to the negative eighth power.
+
+=head2 C<⁻⁹>
+
+    say 10⁻⁹; # 0.000000001
+
+C<U+207B (e2 81 bb): SUPERSCRIPT MINUS [⁻] U+2079 (e2 81 b9): SUPERSCRIPT NINE
+[⁹]>. Raise to the negative ninth power.
+
+=head1 REPOSITORY
+
+Fork this module on GitHub:
+L<https://github.com/zoffixznet/perl6-Operators-Math-Superscripts>
+
+=head1 BUGS
+
+To report bugs or request features, please use
+L<https://github.com/zoffixznet/perl6-Operators-Math-Superscripts/issues>
+
+=head1 AUTHOR
+
+Zoffix Znet L<http://zoffix.com/>
+
+=head1 LICENSE
+
+You can use and distribute this module under the same terms as Perl 6
+itself. See the C<LICENSE> file included in this distribution for complete
+details.
+
+=cut

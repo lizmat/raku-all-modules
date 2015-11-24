@@ -1,0 +1,14 @@
+{
+    "name"         : "Operators::Math::Superscripts",
+    "version"      : "1.001002",
+    "description"
+        : "Superscript numerical operators for raising to powers",
+    "depends"      : [ ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "Operators::Math::Superscripts" : "lib/Operators/Math/Superscripts.pm6"
+    },
+    "author"       : "Zoffix Znet",
+    "authority"    : "zoffixznet",
+    "source-url"   : "git://github.com/zoffixznet/perl6-Operators-Math-Superscripts.git"
+}
