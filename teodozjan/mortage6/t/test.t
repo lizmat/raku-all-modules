@@ -1,10 +1,10 @@
 use v6;
 use Test;
-use Mortage;
+use Mortgage;
 
 plan 15;
 
-class DBIWP is AnnualCostConst {
+class DBIWP is Mortgage::AnnualCostConst {
     has $.cumulation;
     has $.antiinterest;
     method get($toPay,$mortage){
@@ -14,34 +14,34 @@ class DBIWP is AnnualCostConst {
     }
 }
 
-my $bank2 = Mortage.new(bank=>"BANK",interest_rate => rate-monthly(3.24), mortage => 1290.93, mortages => 360, loan-left=> 297000.FatRat);
+my $bank2 = Mortgage.new(bank=>"BANK",interest_rate => rate-monthly(3.24), mortage => 1290.93, mortages => 360, loan-left=> 297000.FatRat);
 # polisa
-$bank2.add(AnnualCostConst.new(from=>1, to=>1, value=>$bank2.loan-left * basis-point(164)));
+$bank2.add(Mortgage::AnnualCostConst.new(from=>1, to=>1, value=>$bank2.loan-left * basis-point(164)));
 # Prowizja
-$bank2.add(AnnualCostConst.new(from=>1, to=>1, value=>$bank2.loan-left * percent 1));
+$bank2.add(Mortgage::AnnualCostConst.new(from=>1, to=>1, value=>$bank2.loan-left * percent 1));
 # ubezp
-$bank2.add(AnnualCostMort.new(from=>25, to=>60, interest_rate => percent 4));
-$bank2.add(AnnualCostConst.new(from=>1, to=>360, value => 21.45));
+$bank2.add(Mortgage::AnnualCostMort.new(from=>25, to=>60, interest_rate => percent 4));
+$bank2.add(Mortgage::AnnualCostConst.new(from=>1, to=>360, value => 21.45));
 
-my $bank = Mortage.new(bank=>"BANK2",interest_rate => rate-monthly(3.30), mortage=> 1300.73, mortages => 360, loan-left=> 297000.FatRat);
+my $bank = Mortgage.new(bank=>"BANK2",interest_rate => rate-monthly(3.30), mortage=> 1300.73, mortages => 360, loan-left=> 297000.FatRat);
 # polisa
-$bank.add(AnnualCostConst.new(from=>1, to=>1, value=>$bank.loan-left * basis-point 164));
+$bank.add(Mortgage::AnnualCostConst.new(from=>1, to=>1, value=>$bank.loan-left * basis-point 164));
 # Prowizja
-$bank.add(AnnualCostConst.new(from=>1, to=>1, value=>$bank.loan-left * percent 1));
+$bank.add(Mortgage::AnnualCostConst.new(from=>1, to=>1, value=>$bank.loan-left * percent 1));
 # ubezp
-$bank.add(AnnualCostMort.new(from=>25, to=>60, interest_rate => percent 4));
-$bank.add(AnnualCostConst.new(from=>1, to=>360, value => 21.45));
+$bank.add(Mortgage::AnnualCostMort.new(from=>25, to=>60, interest_rate => percent 4));
+$bank.add(Mortgage::AnnualCostConst.new(from=>1, to=>360, value => 21.45));
 
 
 
-my $bank3 = Mortage.new(bank=>"BANK3",interest_rate => rate-monthly(3.24), mortage=> 1290.93, mortages => 360, loan-left=> 297000.FatRat);
+my $bank3 = Mortgage.new(bank=>"BANK3",interest_rate => rate-monthly(3.24), mortage=> 1290.93, mortages => 360, loan-left=> 297000.FatRat);
 #POlisa DBIWP
 $bank3.add(DBIWP.new(from=>1, to=>120,
                             cumulation=>$bank3.loan-left * basis-point(108),
                             antiinterest => percent 2));
-$bank3.add(AnnualCostPercentage.new(from=>1, to=>12, interest_rate=> rate-monthly(-0.39)));
-$bank3.add(AnnualCostPercentage.new(from=>25, to=>66, interest_rate => rate-monthly(0.20)));
-$bank3.add(AnnualCostConst.new(from=>1, to=>360, value=>20));
+$bank3.add(Mortgage::AnnualCostPercentage.new(from=>1, to=>12, interest_rate=> rate-monthly(-0.39)));
+$bank3.add(Mortgage::AnnualCostPercentage.new(from=>25, to=>66, interest_rate => rate-monthly(0.20)));
+$bank3.add(Mortgage::AnnualCostConst.new(from=>1, to=>360, value=>20));
 
 
 is $bank.calc_mortage, 1300.73,"Basic monthly";
