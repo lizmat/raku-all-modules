@@ -1,0 +1,9 @@
+{
+    "name"        : "path-coverage",
+    "version"     : "*",
+    "authors"	  : ["github:teodozjan"],
+    "description" : "Checks whether package name equals with module path",
+    "depends"     : ["File::Find" ],
+    "provides"    : { },
+    "source-url"  : "git://github.com/teodozjan/path6-coverage.git"
+}
