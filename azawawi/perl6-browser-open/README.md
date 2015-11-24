@@ -1,22 +1,21 @@
-Browser::Open
-=============
+# Browser::Open [![Build Status](https://travis-ci.org/azawawi/perl6-browser-open.svg?branch=master)](https://travis-ci.org/azawawi/perl6-browser-open)
 
-[![Build Status](https://travis-ci.org/azawawi/perl6-browser-open.svg?branch=master)](https://travis-ci.org/azawawi/perl6-browser-open)
-
-This is a Perl 6 port of Browser::Open http://metacpan.org/module/Browser::Open. 
+This is a humble Perl 6 port of Perl's [Browser::Open](http://metacpan.org/module/Browser::Open).
 
 ## Installation
 
 To install it using Panda (a module management tool bundled with Rakudo Star):
 
-    panda update
-    panda install Browser::Open
+```
+$ panda update
+$ panda install Browser::Open
+```
 
 ## Testing
 
 To run tests:
 
-    prove -e perl6
+$ prove -e "perl6 -Ilib"
 
 ## Author
 
