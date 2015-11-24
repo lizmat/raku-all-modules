@@ -6,7 +6,7 @@ use LacunaCookbuk::Id;
 use LacunaCookbuk::Model::Empire;
 use LacunaCookbuk::Model::Structure::BuildingView;
 
-unit role LacunaBuilding;
+unit role LacunaCookbuk::Model::LacunaBuilding;
 
 has $.url; 
 has $.id;

@@ -2,7 +2,7 @@ use v6;
 
 use LacunaCookbuk::Model::LacunaBuilding;
 
-unit class Development is LacunaBuilding;
+unit class LacunaCookbuk::Model::Structure::Development is LacunaCookbuk::Model::LacunaBuilding;
 
 constant $URL = '/development';
 

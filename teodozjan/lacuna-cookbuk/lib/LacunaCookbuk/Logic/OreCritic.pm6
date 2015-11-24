@@ -10,7 +10,7 @@ unit class LacunaCookbuk::Logic::OreCritic;
 constant $ore_format_str = '{<<<<<<<<<<<<<<<<<<<<} ' ~ '{||} ' x 20;
 
 
-submethod elaborate_ores(Planet $planet, Str @header, @summarize) {
+submethod elaborate_ores(LacunaCookbuk::Model::Body::Planet $planet, Str @header, @summarize) {
 #keys and values in hash 
     my Str @header_copy = @header.clone;
     @header_copy.shift;
@@ -34,7 +34,7 @@ submethod elaborate_ore {
     @header.unshift('Planet name');
     print BOLD, form($ore_format_str, @header), RESET;
     
-    for (planets) -> Planet $planet {
+    for (planets) -> LacunaCookbuk::Model::Body::Planet $planet {
 	self.elaborate_ores($planet, @header, @summarize);
     }    
 

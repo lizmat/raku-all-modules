@@ -3,7 +3,7 @@ use PerlStore::FileStore;
 use JSON::RPC::Client;
 
 #| Data provided by this class are required by anything in this  game 
-unit class Empire;
+unit class LacunaCookbuk::Model::Empire;
 
 constant $EMPIRE = '/empire';
 my %status;

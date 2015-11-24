@@ -2,7 +2,7 @@ use v6;
 
 use LacunaCookbuk::Id;
 
-unit class Ship does LacunaCookbuk::Id;
+unit class LacunaCookbuk::Model::Ship does LacunaCookbuk::Id;
 has %.attr;
 
 multi method gist {

@@ -16,7 +16,7 @@ my Str $form =
 method find_incoming {
 
     print BOLD, form($form, 'Body', 'Hostile', 'Ally', 'Own'), RESET;
-    for (planets,  stations).flat -> Body $body {
+    for (planets,  stations).flat -> LacunaCookbuk::Model::Body $body {
 	my $status = $body.get_status<body>;	
 	next if all($status<num_incoming_enemy>,
 		     $status<num_incoming_ally>,

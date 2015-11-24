@@ -1,6 +1,6 @@
 use v6;
 
-class Spy {
+class  LacunaCookbuk::Model::Spy {
     has $.id;
     has $.name;
     has $.assignment;

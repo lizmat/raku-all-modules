@@ -10,8 +10,8 @@ use Terminal::ANSIColor;
 #| Class is responsible for reading bodies and storing them
 unit class LacunaCookbuk::Logic::BodyBuilder;
 
-my Planet @planets;
-my SpaceStation @stations;
+my LacunaCookbuk::Model::Body::Planet @planets;
+my LacunaCookbuk::Model::Body::SpaceStation @stations;
 
 
 submethod read {
@@ -34,18 +34,18 @@ submethod write {
 submethod process_all_bodies {
     @planets = ();
     @stations = ();
-    for Empire.planets_hash.keys -> $planet_id {
+    for LacunaCookbuk::Model::Empire.planets_hash.keys -> $planet_id {
 	#TODO report rakudobug for .=
-	my Body $body = Body.new(id => $planet_id);
+	my LacunaCookbuk::Model::Body $body = LacunaCookbuk::Model::Body.new(id => $planet_id);
 	$body.get_buildings;	
        
 	if $body.is_station {
-	    my SpaceStation $station .= new(id => $planet_id, buildings => $body.buildings,  x => $body.x, y => $body.y);
+	    my LacunaCookbuk::Model::Body::SpaceStation $station .= new(id => $planet_id, buildings => $body.buildings,  x => $body.x, y => $body.y);
 	    say $station.name ~ " is a Space Station";
 	    @stations.push($station)
 	} elsif $body.is_planet {
-	    my Planet $planet .= new(id => $planet_id, buildings => $body.buildings, ore => $body.ore, x => $body.x, y => $body.y);
-	    say $planet.name ~ " is a Planet";
+	    my LacunaCookbuk::Model::Body::Planet $planet .= new(id => $planet_id, buildings => $body.buildings, ore => $body.ore, x => $body.x, y => $body.y);
+	    say $planet.name ~ " is a LacunaCookbuk::Model::Body::Planet";
 	    @planets.push($planet)
 	}else {
 	    warn $body.name ~ " Cannot be used -- neither planet nor station";
@@ -54,8 +54,8 @@ submethod process_all_bodies {
     LacunaCookbuk::Logic::BodyBuilder.write;
 }
 
-sub home_planet(--> Planet) is export {
-    for @planets -> Planet $planet {
+sub home_planet(--> LacunaCookbuk::Model::Body::Planet) is export {
+    for @planets -> LacunaCookbuk::Model::Body::Planet $planet {
 	return $planet if $planet.is_home;
     }
     fail();

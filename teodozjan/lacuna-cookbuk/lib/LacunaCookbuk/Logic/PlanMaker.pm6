@@ -33,7 +33,7 @@ constant %recipes =
  "Beeldeban Nest" => @($ANTHRACITE, $KEROGEN,$TRONA),
  "Black Hole Generator"=> @($ANTHRACITE, $BERYL, $KEROGEN, $MONAZITE),
  "Citadel of Knope" => @($BERYL, $GALENA, $MONAZITE, $SULFUR),
- "Crashed Ship Site" =>@($BAUXITE, $GOLD, $MONAZITE, $TRONA),
+ "Crashed LacunaCookbuk::Model::Ship Site" =>@($BAUXITE, $GOLD, $MONAZITE, $TRONA),
  "Denton Brambles" =>@($GOETHITE, $RUTILE),
  "Gas Giant Settlement Platform" => @($ANTHRACITE, $GALENA, $METHANE, $SULFUR),
  "Geo Thermal Vent" => @($CHALCOPYRITE, $SULFUR),
@@ -61,7 +61,7 @@ constant %recipes =
 #TODO use achaeology instead of trade
 method show_possible_plans {
   my $hp = home_planet;
-  my Trade $t = $hp.find_trade_ministry;
+  my LacunaCookbuk::Model::Structure::Trade $t = $hp.find_trade_ministry;
   my %glyphs = $t.get_glyphs_hash();
 
   for @(keys %recipes) -> $recipename {
@@ -117,7 +117,7 @@ method create_recipe(@recipe, Int $quantity) {
 
 method space_plans {
 
-  my Trade $t = home_planet.find_trade_ministry;
+  my LacunaCookbuk::Model::Structure::Trade $t = home_planet.find_trade_ministry;
   my $pns = $t.get_plans_hash();
   dd $pns;
   say "!!!!!";

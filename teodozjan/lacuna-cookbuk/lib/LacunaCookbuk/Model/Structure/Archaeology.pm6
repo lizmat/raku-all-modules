@@ -2,7 +2,7 @@ use v6;
 use LacunaCookbuk::Model::Empire;
 use LacunaCookbuk::Model::LacunaBuilding;
 
-unit class Archaeology is LacunaBuilding;
+unit class LacunaCookbuk::Model::Structure::Archaeology is LacunaCookbuk::Model::LacunaBuilding;
 
 constant $URL = '/archaeology';
 method assemble_glyphs(@glyphs, Int $quantity --> Str){

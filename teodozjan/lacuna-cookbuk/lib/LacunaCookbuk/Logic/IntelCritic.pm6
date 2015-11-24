@@ -16,8 +16,8 @@ constant $ruler = '-' x $TERM_SIZE;
 constant @spy_header = <name level politics mayhem theft intel defense offense mission_off mission_def assignment>; 
 constant $spy_format = '{<<<<<<<<<<<<<<<<<<<<} {|||} {|||||} {|||||} {|||||} {|||||} {>>>>>}/{<<<<<} {>>>>}/{<<<<<} {<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<}';
 
-sub elaborate_intelligence(Planet $planet) {
-    my Intelligence $imini = $planet.find_intelligence_ministry;
+sub elaborate_intelligence(LacunaCookbuk::Model::Body::Planet $planet) {
+    my LacunaCookbuk::Model::Structure::Intelligence $imini = $planet.find_intelligence_ministry;
     my Str $numspies = ~$imini.current;
     my Str $max = ~$imini.maximum;   
     my Str $spies = $numspies == 0 ?? "NONE!!!" !! ~$numspies;
@@ -30,18 +30,18 @@ sub elaborate_intelligence(Planet $planet) {
 
 }
 
-sub rename_intelligence(Planet $planet) {
+sub rename_intelligence(LacunaCookbuk::Model::Body::Planet $planet) {
     say "Looking for Agent null on {$planet.name}";
-    my Intelligence $imini = $planet.find_intelligence_ministry;
+    my LacunaCookbuk::Model::Structure::Intelligence $imini = $planet.find_intelligence_ministry;
     my @list = $imini.get_view_spies;
     my Str $spiesl = format_spies(@list);
     rename_spies($planet, @list);	
     
 }
 
-sub elaborate_staff(Planet $planet) {
+sub elaborate_staff(LacunaCookbuk::Model::Body::Planet $planet) {
     say "Planet {$planet.name}";
-    my Intelligence $imini = $planet.find_intelligence_ministry;
+    my LacunaCookbuk::Model::Structure::Intelligence $imini = $planet.find_intelligence_ministry;
     my @list = $imini.get_view_spies;
     my Str $spiesl = format_spies(@list);
     show_spies($planet, @list);
@@ -49,11 +49,11 @@ sub elaborate_staff(Planet $planet) {
 }
 
 sub show_spies($planet, @spies){
-    my Intelligence $imini = $planet.find_intelligence_ministry;
+    my LacunaCookbuk::Model::Structure::Intelligence $imini = $planet.find_intelligence_ministry;
     print form($spy_format, @spy_header);
     say $ruler;
 
-    for @spies -> Spy $spy {
+    for @spies ->  LacunaCookbuk::Model::Spy $spy {
         my $delegated;
         if ($spy.assigned_to<body_id> != $spy.based_from<body_id>) {
             $delegated = $spy.assigned_to<name>;
@@ -77,8 +77,8 @@ sub show_spies($planet, @spies){
 }
 
 sub rename_spies($planet, @spies){
-    my Intelligence $imini = $planet.find_intelligence_ministry;
-    for @spies -> Spy $spy {
+    my LacunaCookbuk::Model::Structure::Intelligence $imini = $planet.find_intelligence_ministry;
+    for @spies ->  LacunaCookbuk::Model::Spy $spy {
 	if $spy.name ~~ "Agent Null"  {
 	    $imini.name_spy($spy.id, $planet.name);
 	    say "Renamed spy {$spy.name}";
@@ -92,15 +92,15 @@ submethod elaborate_spies{
     print form ($limited_format, @summary_header);
     say $ruler;
     my @planets = planets.grep({.find_intelligence_ministry.repaired});
-    for @planets -> Planet $planet {
+    for @planets -> LacunaCookbuk::Model::Body::Planet $planet {
 	elaborate_intelligence($planet);
     }
     say $ruler;    
-    for @planets -> Planet $planet {
+    for @planets -> LacunaCookbuk::Model::Body::Planet $planet {
 	rename_intelligence($planet);
     }
     say $ruler;
-    for @planets -> Planet $planet {
+    for @planets -> LacunaCookbuk::Model::Body::Planet $planet {
 	elaborate_staff($planet);
     }
 
@@ -109,7 +109,7 @@ submethod elaborate_spies{
 
  sub format_spies(@spies --> Str) {
     my %assignments;
-    for @spies -> Spy $spy {
+    for @spies ->  LacunaCookbuk::Model::Spy $spy {
 	%assignments{$spy.assignment}++;
     }
 

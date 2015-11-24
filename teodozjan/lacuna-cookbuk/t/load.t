@@ -5,7 +5,9 @@ use LacunaCookbuk::Client;
 use IO::Capture::Simple;
  
 
-plan 8;
+plan 9;
+
+ok 1, "Import";
 
 unless %*ENV<TRAVIS> {
 skip-rest 'Cannot perform all test without game login data'; 

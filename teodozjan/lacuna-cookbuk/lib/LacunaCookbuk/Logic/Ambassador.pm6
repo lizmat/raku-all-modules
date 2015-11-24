@@ -11,8 +11,8 @@ unit class LacunaCookbuk::Logic::Ambassador;
 constant $ALLIANCE = "/alliance"; 
 
 submethod vote_all(Bool $vote) {
-    for (stations) -> SpaceStation $station {
-	my Parliament $par = $station.find_parliament;
+    for (stations) -> LacunaCookbuk::Model::Body::SpaceStation $station {
+	my LacunaCookbuk::Model::Structure::Parliament $par = $station.find_parliament;
 	next unless $par;
 	my @prop = $par.view_propositions;
 	for @prop -> @weirdo {

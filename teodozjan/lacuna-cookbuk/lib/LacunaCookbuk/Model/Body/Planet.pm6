@@ -11,40 +11,43 @@ use LacunaCookbuk::Model::Structure::Development;
 use LacunaCookbuk::Model::Structure::Shipyard;
 
 
-unit class Planet does Body;
+unit class LacunaCookbuk::Model::Body::Planet does LacunaCookbuk::Model::Body;
 
-submethod find_archaeology_ministry(--> Archaeology) {
-    for self.buildings -> LacunaBuilding $building {
-	return Archaeology.new(id => $building.id, url => $Archaeology::URL) if $building.url ~~ $Archaeology::URL;
+submethod find_archaeology_ministry(--> LacunaCookbuk::Model::Structure::Archaeology) {
+    for self.buildings -> LacunaCookbuk::Model::LacunaBuilding $building {
+	return LacunaCookbuk::Model::Structure::Archaeology.new(id => $building.id, url => $LacunaCookbuk::Model::Structure::Archaeology::URL) if $building.url ~~ $LacunaCookbuk::Model::Structure::Archaeology::URL;
     }
     say "No archaeology ministry on " ~ self.name;
     fail();
 }   
 
-submethod find_trade_ministry(--> Trade) { 
-    for self.buildings -> LacunaBuilding $building {
-	return Trade.new(id => $building.id, url => $Trade::URL) if $building.url ~~ $Trade::URL;
+submethod find_trade_ministry(--> LacunaCookbuk::Model::Structure::Trade) { 
+    for self.buildings -> LacunaCookbuk::Model::LacunaBuilding $building {
+	return LacunaCookbuk::Model::Structure::Trade.new(
+            id => $building.id,
+            url => $LacunaCookbuk::Model::Structure::Trade::URL
+            ) if $building.url ~~ $LacunaCookbuk::Model::Structure::Trade::URL;
     }
     say "No trade ministry on " ~ self.name;
     fail();
 }   
 
-submethod find_shipyard(--> Shipyard) { 
-    for self.buildings -> LacunaBuilding $building {
-	return Shipyard.new(id => $building.id, url => $Shipyard::URL) if $building.url ~~ $Shipyard::URL;
+submethod find_shipyard(--> LacunaCookbuk::Model::Structure::Shipyard) { 
+    for self.buildings -> LacunaCookbuk::Model::LacunaBuilding $building {
+	return LacunaCookbuk::Model::Structure::Shipyard.new(id => $building.id, url => $Shipyard::URL) if $building.url ~~ $LacunaCookbuk::Model::Structure::Shipyard::URL;
     }
     say "No shipyard on " ~ self.name;
     fail();
 } 
 
-submethod find_space_port(--> SpacePort) {
-    for self.buildings -> LacunaBuilding $building {
+submethod find_space_port(--> LacunaCookbuk::Model::Structure::SpacePort) {
+    for self.buildings -> LacunaCookbuk::Model::LacunaBuilding $building {
 	
-	if $building.url ~~ $SpacePort::URL {
-	    my %attr = %(rpc($SpacePort::URL).view(session_id,$building.id));
+	if $building.url ~~ $LacunaCookbuk::Model::Structure::SpacePort::URL {
+	    my %attr = %(rpc($LacunaCookbuk::Model::Structure::SpacePort::URL).view(session_id,$building.id));
 	    %attr<id> = $building.id;
-	    %attr<url> = $SpacePort::URL;
-	    return SpacePort.new(|%attr)
+	    %attr<url> = $LacunaCookbuk::Model::Structure::SpacePort::URL;
+	    return LacunaCookbuk::Model::Structure::SpacePort.new(|%attr)
 	}
     }
     say "No space port on " ~ self.name;
@@ -52,34 +55,34 @@ submethod find_space_port(--> SpacePort) {
 }
 
 
-submethod find_intelligence_ministry(--> Intelligence) {
+submethod find_intelligence_ministry(--> LacunaCookbuk::Model::Structure::Intelligence) {
     
-    for self.buildings -> LacunaBuilding $building {
+    for self.buildings -> LacunaCookbuk::Model::LacunaBuilding $building {
 	
-	if $building.url ~~ $Intelligence::URL {
+	if $building.url ~~ $LacunaCookbuk::Model::Structure::Intelligence::URL {
 	    my $id = $building.id;
 	    
-	    my %attr = %(rpc($Intelligence::URL).view(session_id, $id)<spies>);	  
+	    my %attr = %(rpc($LacunaCookbuk::Model::Structure::Intelligence::URL).view(session_id, $id)<spies>);	  
 	    %attr<id> = $id;
-	    %attr<url> = $Intelligence::URL;
-	    return Intelligence.new(|%attr);
+	    %attr<url> = $LacunaCookbuk::Model::Structure::Intelligence::URL;
+	    return LacunaCookbuk::Model::Structure::Intelligence.new(|%attr);
 	}
     }
     say "No intelligence on " ~ self.name;
     fail();
 }
 
-submethod find_development_ministry(--> Development) {
+submethod find_development_ministry(--> LacunaCookbuk::Model::Structure::Development) {
     
-    for self.buildings -> LacunaBuilding $building {
+    for self.buildings -> LacunaCookbuk::Model::LacunaBuilding $building {
 	
-	if $building.url ~~ $Development::URL {
+	if $building.url ~~ $LacunaCookbuk::Model::Structure::Development::URL {
 	    my $id = $building.id;
-	    my %resp = %(rpc($Development::URL).view(session_id, $id));
+	    my %resp = %(rpc($LacunaCookbuk::Model::Structure::Development::URL).view(session_id, $id));
 	    my %attr = %resp;
-	    %attr<url> = $Development::URL;
+	    %attr<url> = $LacunaCookbuk::Model::Structure::Development::URL;
 	    %attr<id> = $id;
-	    return Development.new(|%attr);
+	    return LacunaCookbuk::Model::Structure::Development.new(|%attr);
 	}
     }
     say "No intelligence on " ~ self.name;
@@ -98,7 +101,7 @@ submethod calculate_sustainablity (--> Hash) {
 }  
 
 method is_home(--> Bool) {
-    +self.id == +Empire.home_planet_id;
+    +self.id == +LacunaCookbuk::Model::Empire.home_planet_id;
 }
 
 

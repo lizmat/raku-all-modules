@@ -9,13 +9,13 @@ use LacunaCookbuk::Model::Structure::Trade;
 unit class LacunaCookbuk::Logic::Transporter;
 
 my role Cargo{
-    method gather(Trade $Trade --> List) { ... }   
+    method gather(LacunaCookbuk::Model::Structure::Trade $Trade --> List) { ... }   
 }
 
 my class Glyphs does Cargo {
     
 
-    method gather(Trade $trade --> List){
+    method gather(LacunaCookbuk::Model::Structure::Trade $trade --> List){
 	$trade.get_glyphs;
     }
 
@@ -23,18 +23,18 @@ my class Glyphs does Cargo {
 
 my class Plans does Cargo {
     
-    method gather(Trade $trade --> List){
+    method gather(LacunaCookbuk::Model::Structure::Trade $trade --> List){
 	$trade.get_plans;
     }
 }
 
-submethod transport(@goods,Planet $src, Planet $dst = home_planet)
+submethod transport(@goods,LacunaCookbuk::Model::Body::Planet $src, LacunaCookbuk::Model::Body::Planet $dst = home_planet)
 {
     my @cargo;
     my $trade = $src.find_trade_ministry;
     return unless $trade;
     unless $trade.repaired {
-        say "Cannot use TradeMinistry on " ~ $src.name;
+        say "Cannot use LacunaCookbuk::Model::Structure::TradeMinistry on " ~ $src.name;
         return;
 
     }
@@ -51,10 +51,10 @@ submethod transport(@goods,Planet $src, Planet $dst = home_planet)
     say $trade.push_cargo(@packed) if @packed;   
 }
 
-submethod transport_all_cargo(Planet $dst = home_planet) {
+submethod transport_all_cargo(LacunaCookbuk::Model::Body::Planet $dst = home_planet) {
     my @goods = (Glyphs, Plans);
     my @planets = planets;
-    for @planets -> Planet $planet {
+    for @planets -> LacunaCookbuk::Model::Body::Planet $planet {
 	#say $planet.name;	
 	next if $planet.is_home;
 	self.transport(@goods, $planet, $dst);

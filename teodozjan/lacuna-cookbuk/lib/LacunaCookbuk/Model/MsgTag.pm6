@@ -1,5 +1,5 @@
 use v6;
 
-unit module MsgTag;
+unit module LacunaCookbuk::Model::MsgTag;
 
-enum MsgTag <Tutorial Correspondence Medal Intelligence Alert Attack Colonization Complaint Excavator Mission Parliament Probe Spies Trade>
+enum LacunaCookbuk::Model::MsgTag <Tutorial Correspondence Medal LacunaCookbuk::Model::Structure::Intelligence Alert Attack Colonization Complaint Excavator Mission LacunaCookbuk::Model::Structure::Parliament Probe Spies Trade>
