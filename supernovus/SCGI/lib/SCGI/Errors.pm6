@@ -8,7 +8,7 @@ method print ($message)
 {
   my $crlf = CRLF x 2;
   $*ERR.print: "[{time}] $message";
-  $.connection.socket.send(SCGI_ERROR_CODE~$crlf);
+  $.connection.socket.print(SCGI_ERROR_CODE~$crlf);
   $.connection.close;
 }
 

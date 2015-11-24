@@ -46,11 +46,13 @@ method parse ()
   }
 
   %.env<scgi.request> = self;
+  my $scheme = %.env<HTTPS> ?? 'https' !! 'http';
   if $.connection.parent.PSGI || $.connection.parent.P6SGI
   {
     populate-psgi-env(%.env, :input($.input), :errors($.connection.err), 
         :psgi-classic($.connection.parent.PSGI), 
-        :p6sgi($.connection.parent.P6SGI)
+        :p6sgi($.connection.parent.P6SGI),
+        :url-scheme($scheme)
     );
   }
 
