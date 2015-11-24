@@ -1,7 +1,7 @@
 unit class SP6;
 
-has $.templ_dir;
-has $.debug;
+has $.templ_dir = '.';
+has $.debug = 0;
 
 class X::SP6::Error is Exception {
      has $.reason;
