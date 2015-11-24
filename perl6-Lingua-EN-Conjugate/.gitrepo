@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/kolikov/perl6-Lingua-EN-Conjugate
+	branch = master
+	commit = 88f9ae00eddcb347188f5134514691f118f0c95c
+	parent = 95cbb0774c85cd5e35d3858574b63a9f2c7e160f
+	cmdver = 0.2.2
