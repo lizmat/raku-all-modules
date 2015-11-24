@@ -1,6 +1,6 @@
 # perl6 Avro support
 
-[![Build Status](https://travis-ci.org/sylvarant/Avro.svg?branch=master)](https://travis-ci.org/sylvarant/Avro)
+[![Build Status](https://travis-ci.org/sylvarant/Avro.svg?branch=master)](https://travis-ci.org/sylvarant/Avro) [![artistic](https://img.shields.io/badge/license-Artistic%202.0-blue.svg?style=flat)](https://opensource.org/licenses/Artistic-2.0)
 
 Provides a native perl6 implementation of the [Avro specification](https://avro.apache.org/docs/current/spec.html).
 
