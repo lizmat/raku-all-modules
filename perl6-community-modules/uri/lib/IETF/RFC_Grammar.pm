@@ -19,13 +19,13 @@ has $.grammar;
 has $.parse_result;
 
 method parse($parse_str) {
-    $!parse_result = $!grammar.parse($parse_str) or die "Parse failed";
+    $!parse_result = $!grammar.parse($parse_str);
 }
 
-method parse_validating($parse_str) {
-    $!parse_result = $!grammar.parse($parse_str, :rule<TOP-validating>)
-        or die "Parse failed";
+method subparse($parse_str) {
+    $!parse_result = $!grammar.subparse($parse_str);
 }
+
 
 submethod BUILD(:$!rfc, :$!grammar) {}
 

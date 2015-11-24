@@ -8,11 +8,10 @@ use v6;
 
 use IETF::RFC_Grammar::IPv6;
 
-unit grammar IETF::RFC_Grammar::URI:version<0.02> is IETF::RFC_Grammar::IPv6;
+unit grammar IETF::RFC_Grammar::URI:ver<0.02> is IETF::RFC_Grammar::IPv6;
 
 token TOP               { <URI-reference> };
 token TOP-non-empty     { <URI> | <relative-ref-non-empty> };
-token TOP-validating    { ^ <URI-reference> $ };
 token URI-reference     { <URI> | <relative-ref> };
 
 token absolute-URI      { <scheme> ':' <.hier-part> [ '?' query ]? };

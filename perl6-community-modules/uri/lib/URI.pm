@@ -5,8 +5,13 @@ use IETF::RFC_Grammar::URI;
 use URI::Escape;
 need URI::DefaultPort;
 
+class X::URI::Invalid is Exception {
+    has $.source;
+    method message { "Could not parse URI: $!source" }
+}
+
 has $.grammar;
-has $.is_validating is rw = False;
+has Bool $.match-prefix = False;
 has $!path;
 has $!is_absolute;  # part of deprecated code scheduled for removal
 has $!scheme;
@@ -18,10 +23,10 @@ has $!uri;  # use of this now deprecated
 
 has @.segments;
 
-method parse (Str $str) {
+method parse (Str $str, :$match-prefix) {
 
     # clear string before parsing
-    my $c_str = $str;
+    my Str $c_str = $str;
     $c_str .= subst(/^ \s* ['<' | '"'] /, '');
     $c_str .= subst(/ ['>' | '"'] \s* $/, '');
 
@@ -29,19 +34,16 @@ method parse (Str $str) {
         $!frag = Mu;
     %!query_form = @!segments = ();
 
-    try {
-        if ($.is_validating) {
-            $!grammar.parse_validating($c_str);
-        }
-        else {
-            $!grammar.parse($c_str);
-        }
+    if ($!match-prefix or $match-prefix) {
+        $!grammar.subparse($c_str);
+    }
+    else {
+        $!grammar.parse($c_str);
+    }
 
-        CATCH {
-            default {
-                die "Could not parse URI: $str"
-            }
-        }
+    # hacky but for the time being an improvement
+    if (not $!grammar.parse_result) {
+        X::URI::Invalid.new(source => $str).throw
     }
 
     # now deprecated
@@ -86,7 +88,7 @@ our sub split-query(Str $query) {
 
     for map { [split(/<[=]>/, $_) ]}, split(/<[&;]>/, $query) -> $qmap {
         for (0, 1) -> $i { # could go past 1 in theory ...
-            $qmap[ $i ] = uri_unescape($qmap[ $i ]);
+            $qmap[ $i ] = uri-unescape($qmap[ $i ]);
         }
         if %query_form{$qmap[0]}:exists {
             if %query_form{ $qmap[0] } ~~ Array  {
@@ -117,37 +119,32 @@ method init ($str) {
 }
 
 # new can pass alternate grammars some day ...
-submethod BUILD(:$!is_validating) {
+submethod BUILD(:$match-prefix) {
+    $!match-prefix = ? $match-prefix;
     $!grammar = IETF::RFC_Grammar.new('rfc3986');
 }
 
-method new(Str $uri_pos1?, Str :$uri, :$is_validating) {
-    my $obj = self.bless;
+multi method new(Str $uri, :$match-prefix) {
+    my $obj = self.bless(:$match-prefix);
 
-    if $is_validating.defined {
-        $obj.is_validating = ?$is_validating;
-    }
-
-    if $uri.defined and $uri_pos1.defined {
-        die "Please specify the uri by name or position but not both.";
-    }
-    elsif $uri.defined or $uri_pos1.defined {
-        $obj.parse($uri // $uri_pos1);
-    }
-
+    $obj.parse($uri) if $uri.defined;
     return $obj;
 }
 
+multi method new(Str :$uri, :$match-prefix) {
+    return self.new($uri, :$match-prefix);
+}
+
 method scheme {
-    return ~($!scheme || '').lc;
+    return ($!scheme // '').lc;
 }
 
 method authority {
-    return ~$!authority.lc;
+    return ($!authority // '').lc;
 }
 
 method host {
-    return ($!authority<host> || '').lc;
+    return ($!authority<host> // '').lc;
 }
 
 method default-port {
@@ -166,11 +163,11 @@ method port {
 }
 
 method userinfo {
-    return ~($!authority<userinfo> || '');
+    return ~($!authority<userinfo> // '');
 }
 
 method path {
-    return ~($!path || '');
+    return ~($!path // '');
 }
 
 my $warn-deprecate-abs-rel = q:to/WARN-END/;
@@ -194,7 +191,7 @@ method relative {
 }
 
 method query {
-    item ~($!query || '');
+    item ~($!query // '');
 }
 
 method path-query {
@@ -203,7 +200,7 @@ method path-query {
 method path_query { $.path-query } #artifact form
 
 method frag {
-    return ~($!frag || '').lc;
+    return ($!frag // '').lc;
 }
 
 method fragment { $.frag }
@@ -271,8 +268,14 @@ URI — Uniform Resource Identifiers (absolute and relative)
         say 'Please use registered domain name!';
     }
 
+    {
     # require whole string matches URI and throw exception otherwise ..
-    my $u_v = URI.new('http://?#?#', :is_validating<1>);# throw exception
+    my $u_v = URI.new('http://?#?#');
+    CATCH { when X::URI::Invalid { ... } }
+    }
+
+    my $u_pfx = URI.new('http://example.com } function(var mm){',
+        match-prefix => True);
 =end pod
 
 

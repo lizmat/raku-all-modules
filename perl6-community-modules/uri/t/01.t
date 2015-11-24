@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 46;
+plan 47;
 
 use URI;
 use URI::Escape;
@@ -99,17 +99,14 @@ is($u.query-form<foo>[1], 'trout', 'query param foo - el 2 relative path');
 $u.parse('about/perl6uri?foo=cod&foo=trout');
 is($u.query-form<foo>[1], 'trout', 'query param foo - el 2 relative path without frag');
 
-my ($url_1_valid, $url_2_valid) = (1, 1);
-try {
-    my $u_v = URI.new('http://www.perl.com', :is_validating<1>);
-    is($url_1_valid, 1, 'validating parser okd good URI');
-    $u_v = URI.new('http:://?#?#', :is_validating<1>);
-    CATCH {
-        default { $url_2_valid = 0 }
-    }
-}
-is($url_2_valid, 0, 'validating parser rejected bad URI');
+throws-like {URI.new('http:://?#?#')}, X::URI::Invalid, 
+    'Bad URI raises exception x:URI::Invalid';
 
+my $uri-w-js = 'http://example.com } function(var mm){ alert(mm) }';
+throws-like {URI.new($uri-w-js)}, X::URI::Invalid,
+    'URI followed by trailing javascript raises exception';
+my $uri-pfx = URI.new($uri-w-js, :match-prefix);
+is(~$uri-pfx, 'http://example.com', 'Pulled of prefix URI');
 nok(URI.new('foo://bar.com').port, '.port without default value lives');
 lives-ok { URI.new('/foo/bar').port }, '.port on relative URI lives';
 
