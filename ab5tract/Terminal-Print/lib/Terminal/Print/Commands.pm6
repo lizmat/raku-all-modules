@@ -6,19 +6,33 @@ our %tput-commands;
 our %attributes;
 our %attribute-values;
 
+my Bool $use-ansi = True;
+
+subset Terminal::Print::MoveCursorProfile is export where * ~~ / ^('ansi' | 'universal')$ /;
+
 BEGIN {
 
     my sub build-cursor-to-template {
-        my ($x,$y) = 13,13;
-        my $raw = qq:x{ tput cup $y $x };
-    
-        my Str sub cursor-template( Int :$x,  Int :$y ) {
-            # there may be single digit numbers in the escape preamble
-            $raw ~~ s:nth(*-1)[\d+] = $y+1;
-            $raw ~~ s:nth(*)[\d+]   = $x+1;
-            return $raw;
+
+        my Str sub ansi( Int $x,  Int $y ) {
+            "\e[{$y+1};{$x+1}H";
         }
-        return &cursor-template;
+
+        my $raw = q:x{ tput cup 13 13 };
+        # Replace the digits with format specifiers used
+        # by sprintf
+        $raw ~~ s:nth(*-1)[\d+] = "%d";
+        $raw ~~ s:nth(*)[\d+]   = "%d";
+
+
+        my Str sub universal( Int $x, Int $y ) {
+            sprintf($raw, $y + 1, $x + 1)
+        }
+
+        return %(
+                    :&ansi,
+                    :&universal
+                );
     }
 
     %human-command-names = %(
@@ -28,16 +42,22 @@ BEGIN {
         'pos-cursor-save'    => 'sc',
         'pos-cursor-restore' => 'rc',
         'hide-cursor'        => 'civis',
-        'show-cursor'        => 'cnorm', 
+        'show-cursor'        => 'cnorm',
         'move-cursor'        => 'cup',
         'erase-char'         => 'ech',
     );
 
     for %human-command-names.kv -> $human,$command {
         given $human {
-            when 'move-cursor'  { %tput-commands{$command} = &( build-cursor-to-template ) }
-            when 'erase-char'   { %tput-commands{$command} = qq:x{ tput $command 1 } }
-            default             { %tput-commands{$command} = qq:x{ tput $command } }
+            when 'move-cursor'  {
+                %tput-commands{$command} = build-cursor-to-template;
+            }
+            when 'erase-char'   {
+                %tput-commands{$command} = qq:x{ tput $command 1 }
+            }
+            default             {
+                %tput-commands{$command} = qq:x{ tput $command }
+            }
         }
         %human-commands{$human} = &( %tput-commands{$command} );
     }
@@ -52,16 +72,12 @@ BEGIN {
     %attribute-values<rows>     = %*ENV<ROWS>    //= qq:x{ tput lines };
 }
 
-sub move-cursor-template returns Code is export {
-    %human-commands<move-cursor>;
+sub move-cursor-template( Terminal::Print::MoveCursorProfile $profile = 'ansi' ) returns Code is export {
+    %human-commands<move-cursor>{$profile};
 }
 
-sub move-cursor( Int $x, Int $y ) is export {
-    %human-commands<move-cursor>( :$x, :$y );
-}
-
-sub cursor_to( Int $x, Int $y ) is export {
-    %human-commands<move-cursor>( :$x, :$y );
+sub move-cursor( Int $x, Int $y, Terminal::Print::MoveCursorProfile $profile = 'ansi' ) is export {
+    %human-commands<move-cursor><$profile>( $x, $y );
 }
 
 sub tput( Str $command ) is export {

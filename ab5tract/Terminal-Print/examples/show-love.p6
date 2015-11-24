@@ -1,3 +1,5 @@
+use lib './lib';
+
 use Terminal::Print;
 use Terminal::ANSIColor;
 my @colors = <red magenta yellow white>;
@@ -8,10 +10,10 @@ $b.initialize-screen;
 
 my @hearts;
 #for $b.grep-grid({$^x %% 3 && $^y}) -> [$x,$y] {
-for $b.grid-indices -> [$x,$y] {
+for $b.grid-indices.pick(*) -> [$x,$y] {
     next unless $x %% 3;
-    $b[$x][$y] = colored('♥', @colors.roll);
-    $b.print-cell($x,$y);
+    #    $b[$x][$y] = colored('♥', @colors.roll);
+    $b.print-cell($x,$y,colored('♥', @colors.roll));
     # $b[$x][$y] ='♥';
     push @hearts, [$x,$y];
 }
@@ -29,7 +31,7 @@ my $hg := $b.grid-object('hearts');
 my $og := $b.grid-object(0);
 my $h3 := $b.clone-grid(0,'h3');
 
-$h3.grep-grid: {$^x == 21 || $^y == 12}, :o;
+#$h3.grep-grid: {$^x == 21 || $^y == 12}, :o;
 
 sleep 5;
 

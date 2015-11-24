@@ -3,8 +3,6 @@ unit class Terminal::Print;
 use Terminal::Print::Commands;
 my constant T = Terminal::Print::Commands;
 
-#use Terminal::Print::Grid;
-
 use Terminal::Print::Grid;
 
 has $!current-buffer;
@@ -13,30 +11,32 @@ has Terminal::Print::Grid $!current-grid;
 has @!buffers;
 has Terminal::Print::Grid @.grids;
 
-
 has @.grid-indices;
 has %!grid-name-map;
 
 has $.max-columns;
 has $.max-rows;
 
-method new {
+has Terminal::Print::MoveCursorProfile $.move-cursor-profile;
+
+method new( :$move-cursor-profile = 'ansi' ) {
     my $max-columns   = +%T::attribute-values<columns>;
     my $max-rows      = +%T::attribute-values<rows>;
 
-    my $grid = Terminal::Print::Grid.new( :$max-columns, :$max-rows );
+    my $grid = Terminal::Print::Grid.new( :$max-columns, :$max-rows, :$move-cursor-profile );
     my @grid-indices = $grid.grid-indices;
 
     self!bind-buffer( $grid, my $buffer = [] );
 
     self.bless(
                 :$max-columns, :$max-rows, :@grid-indices,
+                :$move-cursor-profile,
                     current-grid    => $grid,
                     current-buffer  => $buffer
               );
 }
 
-submethod BUILD( :$current-grid, :$current-buffer, :$!max-columns, :$!max-rows, :@grid-indices ) {
+submethod BUILD( :$current-grid, :$current-buffer, :$!max-columns, :$!max-rows, :@grid-indices, :$move-cursor-profile ) {
     push @!buffers, $current-buffer;
     push @!grids, $current-grid;
 
@@ -61,6 +61,8 @@ method add-grid( $name?, :$new-grid = Terminal::Print::Grid.new( :$!max-columns,
     if $name {
         %!grid-name-map{$name} = +@!grids-1;
     }
+    $new-grid.initialize;
+    $new-grid;
 }
 
 method blit( $grid-identifier = 0 ) {
@@ -104,15 +106,18 @@ method AT-KEY( $grid-identifier ) {
     self.grid( $grid-identifier );
 }
 
-method postcircumfix:<( )> (*@t) {
-    die "Can only specify x, y, and char" if @t > 3;
-    my ($x,$y,$char) = @t;
-    given +@t {
-        when 3 { $!current-grid[$x][$y] = $char; $!current-grid[$x][$y].print-cell }
-        when 2 { $!current-grid[$x][$y].print-cell }
-        when 1 { $!current-grid[$x] }
-    }
-}
+# This is not re-enabled. Needs to be reimplemented via CALL-ME, if it wants to
+# come back.
+#
+#method postcircumfix:<( )> (*@t) {
+#    die "Can only specify x, y, and char" if @t > 3;
+#    my ($x,$y,$char) = @t;
+#    given +@t {
+#        when 3 { $!current-grid[$x][$y] = $char; $!current-grid[$x][$y].print-cell }
+#        when 2 { $!current-grid[$x][$y].print-cell }
+#        when 1 { $!current-grid[$x] }
+#    }
+#}
 
 multi method FALLBACK( Str $command-name ) {
     die "Do not know command $command-name" unless %T::human-command-names{$command-name};
@@ -150,8 +155,16 @@ multi method grid-object( Str $name ) {
     @!grids[$grid-index];
 } 
 
-method print-cell( Int $x, Int $y ) {
+multi method print-cell( Int $x, Int $y ) {
     $!current-grid.print-cell($x,$y);
+}
+
+# TODO: provide reasonable constraint?
+#   where *.comb == 1 means that you can't add escape chars
+#   of any kind before sending to print-cell. but maybe that's
+#   not such a bad thing?
+multi method print-cell( Int $x, Int $y, Str $char ) {
+    $!current-grid.print-cell($x,$y,$char);
 }
 
 #### buffer stuff
@@ -177,12 +190,13 @@ multi method print-grid( Str $name ) {
 }
 
 method !clone-grid-index( $origin, $dest? ) {
+    my $new-grid;
     if $dest {
-        self.add-grid($dest, new-grid => @!grids[$origin].clone);
+        $new-grid := self.add-grid($dest, new-grid => @!grids[$origin].clone);
     } else {
         @!grids.push: @!grids[$origin].clone;
     }
-    return @!grids[*-1];
+    return $new-grid;
 }
 
 #### clone-grid stuff
