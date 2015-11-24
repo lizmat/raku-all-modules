@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/META6.git
+	branch = master
+	commit = f84b6d2f30154c49ec3e17015988e2794ce98911
+	parent = 4f54b4915dc9faafa5a26dd90ed10cdc24e5d6ff
+	cmdver = 0.2.2
