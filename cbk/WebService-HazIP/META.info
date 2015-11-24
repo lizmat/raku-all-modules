@@ -1,0 +1,11 @@
+{
+       "name" : "WebService::HazIP",
+       "version" : "1.0.0",
+       "description" : "Simple web service client that queries the canihazip.com web site, to obtain the host's public facing IP address.",
+       "author" : "Michael",
+       "provides" : {
+           "WebService::HazIP"    : "lib/WebService/HazIP.pm6"
+       },
+       "depends" : [ "LWP::Simple" ],
+       "source-url" : "git://github.com/cbk/WebService-HazIP"
+}
