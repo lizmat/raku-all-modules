@@ -4,9 +4,18 @@ use URI;
 use URI::Escape;
 use MIME::Base64;
 use JSON::Fast; # from-json
+use Cache::LRU;
 use HTTP::Request;
 use HTTP::UserAgent;
 use WebServices::GitHub::Response;
+
+class X::WebServices::GitHub is Exception {
+  has $.reason;
+  method message()
+  {
+    "Error : $.reason";
+  }
+}
 
 role WebServices::GitHub::Role {
     has $.endpoint = 'https://api.github.com';
@@ -17,6 +26,8 @@ role WebServices::GitHub::Role {
     has $.useragent = 'perl6-WebService-GitHub/0.1.0';
     has $.ua = HTTP::UserAgent.new;
 
+    has $.cache = Cache::LRU.new(size => 200);
+
     # request args
     has $.per_page;
     has $.jsonp_callback;
@@ -26,7 +37,18 @@ role WebServices::GitHub::Role {
     # response args
     has $.auto_pagination = 0;
 
+    has @.with = ();
     has %.role_data;
+
+    submethod BUILD(*%args) {
+        if %args<with>:exists {
+            for %args<with> -> $n {
+                my $class = "WebServices::GitHub::Role::$n";
+                require ::($class);
+                self does ::($class);
+            }
+        }
+    }
 
     method request(Str $path, $method='GET', :%data is copy) {
         my $url = $.endpoint ~ $path;
@@ -71,13 +93,53 @@ role WebServices::GitHub::Role {
         }
 
         $request = $.prepare_request($request);
-        my $res = $.ua.request($request);
+        my $res = self._make_request($request);
         $res = $.handle_response($res);
 
-        return WebServices::GitHub::Response.new(
-            raw => $res,
-            auto_pagination => $.auto_pagination,
+        my $ghres = WebServices::GitHub::Response.new(
+          raw => $res,
+          auto_pagination => $.auto_pagination,
         );
+
+        if (!$ghres.is-success && $ghres.data<message>) {
+          my $message = $ghres.data<message>;
+          my $errors =  $ghres.data<errors>;
+          if ($errors[0]{"message"}) {
+            $message = $message ~ ' - ' ~ $errors[0]{"message"};
+          }
+          X::WebServices::GitHub.new(reason => $message).throw;
+        }
+
+        return $ghres;
+    }
+
+    method _make_request($request) {
+        ## only support GET
+        if $request.method ne 'GET' {
+            return $.ua.request($request);
+        }
+
+        my $cached_res = $.cache.get($request.file);
+        if $cached_res {
+            # $request.header.field(
+            #     If-None-Match => $cached_res.field('ETag').Str
+            # );
+            $request.header.field(
+                If-Modified-Since => $cached_res.field('Last-Modified').Str
+            );
+
+            my $res = $.ua.request($request);
+            if $res.code == 304 {
+                return $cached_res;
+            }
+
+            $.cache.set($request.file, $res);
+            return $res;
+        } else {
+            my $res = $.ua.request($request);
+            $.cache.set($request.file, $res);
+            return $res;
+        }
     }
 
     # for role override

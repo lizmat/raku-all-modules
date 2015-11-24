@@ -21,7 +21,6 @@ Patches welcome
 
  * Break down modules (Users, Repos, Issues etc.)
  * Errors Handle
- * Conditional requests
  * Auto Pagination
  * API Throttle
 
@@ -52,6 +51,16 @@ from [Doc](https://developer.github.com/v3/#pagination), default to 30, max to 1
  * `time-zone`
 
 UTC by default, [Doc](https://developer.github.com/v3/#timezones)
+
+ * `with`
+
+ does the roles
+
+```
+my $gh = WebServices::GitHub.new(
+    with => ('Debug')
+);
+```
 
 ### Response
 
