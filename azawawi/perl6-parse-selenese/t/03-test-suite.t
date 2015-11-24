@@ -2,7 +2,6 @@
 use v6;
 
 use Test;
-use lib 'lib';
 
 my $NUM_TEST_CASE_DEFS = 2;
 

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-parse-selenese.git
 	branch = master
-	commit = 2d889739ec6ae4dcdc3e14c4933bceaed82c9bf4
-	parent = eb04036d9ee068ac11d1c974a2d558565eb3713d
+	commit = c95684971162f77a19d1c545ed367b365180822e
+	parent = 38dbea6bb8ab369deab17d26ff870ad17453c1fe
 	cmdver = 0.2.2

@@ -1,9 +1,9 @@
 
 use v6;
 
-class Parse::Selenese::TestSuite {
-  use Parse::Selenese::TestCaseDef;
+unit class Parse::Selenese::TestSuite;
 
-  has Str $.name is rw;
-  has Parse::Selenese::TestCaseDef @.test_case_defs is rw;
-}
+use Parse::Selenese::TestCaseDef;
+
+has Str $.name is rw;
+has Parse::Selenese::TestCaseDef @.test_case_defs is rw;
