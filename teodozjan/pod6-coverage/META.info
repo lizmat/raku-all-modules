@@ -1,0 +1,13 @@
+{
+    "name"        : "Pod::Coverage",
+    "version"     : "*",
+    "author"	  : "github:teodozjan",
+    "description" : "Pod coverage library",
+    "depends"     : ["JSON::Tiny"],
+    "provides"    : {
+	"Pod::Coverage" : "lib/Pod/Coverage.pm6",
+	"Pod::To::Keywords" : "lib/Pod/To/Keywords.pm6",
+        "Test::Coverage" : "lib/Test/Coverage.pm6"
+	 },
+    "source-url"  : "git://github.com/teodozjan/pod6-coverage.git"
+}
