@@ -9,20 +9,59 @@ sand-boxing. This can be used to speedup testing. The default port number of
 27017 is used to get to the mongod server.
 
 *IT IS IMPORTANT TO KNOW THAT ANYTHING MAY HAPPEN DURING TESTS INCLUDING
-ACCIDENTAL DELETION OF ANY DATABASES AND COLLECTIONS ON YOUR SERVER! ALSO
-TESTING ADMINISTRATION TASKS MAY CREATE PROBLEMS FOR EXISTING ACCOUNTS! THIS
-WILL BE TOTALLY AT YOUR OWN RISK.*
+DELETION OF ANY EXISTING DATABASES (SUCH AS THE TEST DATABASE) AND COLLECTIONS
+ON YOUR SERVER WHEN NOT IN SANDBOX MODE! ALSO TESTING ADMINISTRATION TASKS MAY
+CREATE PROBLEMS FOR EXISTING ACCOUNTS! THIS WILL BE TOTALLY AT YOUR OWN RISK.*
 
-Also when sandboxing is turned on, the testing programs are free to test
-administration tasks, authentication and multi server setup.
+To be save enaugh some tests are turned off when not in sandbox mode.
+
+When sandboxing is turned on, the testing programs are able to test
+administration tasks, authentication, sharding and master/slave server setup.
+This testing might put some presure on your system and the default situation
+will then be that some of those elaborate tests are skipped and you are given
+some opportunities in the form of environment variables to turn it on when you
+are installing this package. We're not yet there so watch this space to see
+when it comes to that. Btw, on Travis-ci this package is tested so you can also
+study the test results there. Just click on the link (green hopefully) above at
+the top of this page.
 
 See also the license link below
+
+## IMPLEMENTATION TRACK
+
+After some discussion with developers from MongoDB and the perl5 driver
+developer David Golden I decided to change my ideas about the driver
+implementation. The following things became an issue
+
+* Implementation of helper methods. [The blog 'Why Command Helpers
+Suck'](http://www.kchodorow.com/blog/2011/01/25/why-command-helpers-suck/) of
+Kristina Chodorow told me to be careful implementing all kinds of helper methods
+and perhaps even to slim down the current set of methods and to document the use
+of the run-command so that the user of this package can, after reading the
+mongodb documents, use the run-command method to get the work done themselves.
+
+* The use of hashes to send and receive mongodb documents is wrong. It is
+wrong because the key-value pairs in the hash are getting a different order then
+is entered in the hash. Mongodb needs the command at the front of the document
+for example. Another place that order matters are sub document queries.  A
+subdocument is matched as encoded documents.  So if the server has ```{ a: {b:1,
+c:2} }``` and you search for ```{ a: {c:2, b:1} }```, it won't find it.  Since
+Perl 6 randomizes key order you never know what the order is.
+
+* Experiments are done using arrays of pairs to keep the order the same as
+entered. This works but it is cumbersome. In the mean time thoughts about how to
+implement parallel encoding to and decoding from BSON byte strings have been
+past my mind. These thoughts are crystalized into a Document module in the BSON
+package which a) keeps the order, 2) have the same capabilities as Hashes, 3)
+can do encoding and decoding in parallel. This BSON::Document will probably be
+implemented in the coming (sub)versions of this package after complete testing
+of the module in BSON.
 
 ## API CHANGES
 
 There has been a lot of changes in the API. All methods which had underscores ('_')
 are converted to dashed ones ('-'). The old ones will show deprecation info.
-However, it is importend to know that also named parameters are changed in the
+However, it is important to know that also named parameters are changed in the
 same way but these cannot be warned for.
 
 ## DOCUMENTATION
@@ -80,8 +119,8 @@ $ panda install MongoDB
 
 ## Versions of PERL, MOARVM and MongoDB
 perl6 version 2015.10-70-gba70274 built on MoarVM version 2015.10-14-g5ff3001
-* Perl6 version ```2015.10-70-gba70274```
-* MoarVM version ```2015.10-14-g5ff3001```
+* Perl6 version ```2015.10-206-gca7ed86```
+* MoarVM version ```2015.10-56-g9fd3005```
 * MongoDB version ```3.0.5```
 
 Maybe we also need to test other versions of mongodb such as 2.6.* and provide
@@ -96,6 +135,10 @@ below will be worked on. There are many items shown here, it might be impossible
 to implement it all. By using run-command(), much can be accomplished. A lot of the
 items are using that call to get the information for you. Also quite a few items
 are shown in in more than one place place. Removed all internal commands.
+
+As explained above a lot of helper functions will not be implemented. Thorough
+documentation must be written to help the user to write their own code using the
+documentation of mongodb.
 
 Legend;
 
@@ -455,6 +498,8 @@ change at any time. The public API should not be considered stable.*
 * 0.*.0
   * Remove deprecation messages of converted method names
 
+* 0.25.11
+  * Changes caused by changes in BSON
 * 0.25.10
   * Deprecated underscore methods modified in favor of dashed ones:
       MongoDB::Database: create_collection, list_collections, collection_names,
