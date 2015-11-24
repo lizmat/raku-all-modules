@@ -11,7 +11,7 @@ multi sub blocks() is export {
 multi sub blocks(Str $src) is export {
     my $got = Test::Base::Grammar.parse($src, :actions(Test::Base::Actions));
     if $got {
-        my @blocks = $got.made;
+        my @blocks = grep { !($_<SKIP>:exists) }, $got.made;
         my ($only, ) = grep { $_<ONLY>:exists }, @blocks;
         if $only {
             $*ERR.say: "I found ONLY: maybe you're debugging?";

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tokuhirom/p6-Test-Base.git
 	branch = master
-	commit = 31c738f84f3c94c77bd2fe01654ce10372d8633d
-	parent = cabcefd2fae26ff34eb7c861f9182b411e2155d9
+	commit = 403d4715f46cb9c0de03b1683428d7c6c5aa1df7
+	parent = 76da591f6ce009ea88d1a567873c0c2111924912
 	cmdver = 0.2.2
