@@ -1,4 +1,4 @@
-unit class Pastebin::Shadowcat:version<2.001001>;
+unit class Pastebin::Shadowcat:ver<2.001001>;
 
 use LWP::Simple;
 use URI::Encode;
