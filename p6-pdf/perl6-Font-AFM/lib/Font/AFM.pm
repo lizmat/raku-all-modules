@@ -1,6 +1,6 @@
 # This -*- perl6 -*-  module is a simple parser for Adobe Font Metrics files.
 
-class Font::AFM:vers<1.23>
+class Font::AFM
     is Hash {
 
 =begin pod
@@ -208,7 +208,7 @@ it under the same terms as Perl itself.
         $class.new;
     }
 
-    multi submethod BUILD( Str :$name! is copy) {
+    multi method build( Str :$name! is copy) {
 
        my $metrics = {};
 
@@ -284,9 +284,11 @@ it under the same terms as Perl itself.
        self.BUILD(:$metrics);
     }
 
-    multi submethod BUILD( Hash :$metrics! ) {
+    multi method build( Hash :$metrics! ) {
         self{.key} = .value for $metrics.pairs;
     }
+
+    submethod BUILD(|c) { self.build( |c ) }
 
     multi method new(Str $name)  { self.bless( :$name ) }
     multi method new(Hash $metrics) { self.bless( :$metrics ) }
