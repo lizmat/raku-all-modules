@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/p6-pdf/perl6-Crypt-RC4.git
+	branch = master
+	commit = f88ad26af8af0a238296ccb9ec18c4189a183455
+	parent = c3fdeeb05c27e3c455ca5ccc07357feb03da8637
+	cmdver = 0.2.2
