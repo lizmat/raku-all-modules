@@ -3,7 +3,7 @@ use Panda::Builder;
 
 class Build is Panda::Builder {
     method build ($where) {
-        require($?FILE.IO.parent.child('gen-libs.p6'));
+        require($?FILE.IO.parent.child('gen-libs.p6').abspath);
     }
 }
 

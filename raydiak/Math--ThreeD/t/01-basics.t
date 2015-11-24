@@ -36,4 +36,4 @@ is $v1[2], 3, "Vector creation z correct";
 is-approx $v1.add($v2), Vec3.new(4, 6, 3), "Basic sum works";
 is-approx $v1.add($origin3d), $v1, "Addition with origin leaves original";
 
-done;
+done-testing;

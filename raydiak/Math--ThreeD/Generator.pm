@@ -1,5 +1,4 @@
 use v6;
-use Shell::Command;
 
 class Math::ThreeD::Operation {
     has Str $.function;
@@ -8,7 +7,7 @@ class Math::ThreeD::Operation {
     has Bool $.postfix = False;
     has Bool $.selfarg = True;
 
-    has Positional @.args = []; # Str:D where any <num obj>
+    has Positional @.args = [[],]; # Str:D where any <num obj>
     has $.return = 'obj';
 
     has Str $.intro;
@@ -216,7 +215,7 @@ class Math::ThreeD::Operation {
 }
 
 class Math::ThreeD::Library {
-    has Str:D $.name;
+    has Str:D $.name is required;
     has Numeric:D @.dims;
     has Str $.intro;
     has Str $.constructor = $!name.lc;
@@ -276,7 +275,7 @@ class Math::ThreeD::Library {
         print "Writing $filename...";
         chdir $?FILE.IO.dirname;
         my $file = $filename.IO;
-        mkpath($file.parent);
+        $file.parent.mkdir;
         my $out = $file.open(:w);
         $out.print: self.build;
         $out.close;
@@ -286,8 +285,7 @@ class Math::ThreeD::Library {
     method indices () {
         my @return =
             @.dims == 1 ?? (^@.dims[0]).map({"[$_]"}) !!
-            @.dims == 2 ?? (^(@.dims[0]) X ^(@.dims[1])).map({ "[$^a][$^b]" }) !!
-            die 'Only dimensions 1 and 2 are currently supported';
+            [X](^«@.dims).map: { (@$_).map({"[$_]"}).join("") };
         return @return;
     }
 }

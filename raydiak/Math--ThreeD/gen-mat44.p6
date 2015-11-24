@@ -11,18 +11,18 @@ Math::ThreeD::Library.new(
     ops => (
 
         op( function => 'mat44-trans',
-            args => [[ <num num num> ]],
+            args => [<num num num>,],
             :!selfarg,
-            expressions => [ <
+            expressions => <
                 1 0 0 $a
                 0 1 0 $b
                 0 0 1 $c
                 0 0 0  1
-            > ],
+            >,
         ),
 
         op( function => 'mat44-scale',
-            args => [[ <num num num> ]],
+            args => [<num num num>,],
             :!selfarg,
             expressions => [ <
                 $a  0  0 0
@@ -33,7 +33,7 @@ Math::ThreeD::Library.new(
         ),
 
         op( function => 'mat44-rot-x',
-            args => [[ <num> ]],
+            args => [[ <num> ],],
             :!selfarg,
             intro => 'my ($sin, $cos) = sin($a), cos($a);',
             expressions => [ <
@@ -45,7 +45,7 @@ Math::ThreeD::Library.new(
         ),
 
         op( function => 'mat44-rot-y',
-            args => [[ <num> ]],
+            args => [[ <num> ],],
             :!selfarg,
             intro => 'my ($sin, $cos) = sin($a), cos($a);',
             expressions => [ <
@@ -57,7 +57,7 @@ Math::ThreeD::Library.new(
         ),
 
         op( function => 'mat44-rot-z',
-            args => [[ <num> ]],
+            args => [[ <num> ],],
             :!selfarg,
             intro => 'my ($sin, $cos) = sin($a), cos($a);',
             expressions => [ <
@@ -157,7 +157,7 @@ my $invdet = 1 / $det;]]],
 
         op( function => 'prod',
             mutator => 'product',
-            args => [[ <obj> ]],
+            args => [[ <obj> ],],
             expressions => [
                 '$a[0][0]*$b[0][0] + $a[0][1]*$b[1][0] + $a[0][2]*$b[2][0] + $a[0][3]*$b[3][0]',
                 '$a[0][0]*$b[0][1] + $a[0][1]*$b[1][1] + $a[0][2]*$b[2][1] + $a[0][3]*$b[3][1]',

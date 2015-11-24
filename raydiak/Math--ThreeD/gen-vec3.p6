@@ -54,9 +54,10 @@ Math::ThreeD::Library.new(
         ),
 
         op( operator => '⨯',
-            function => 'cross',
+            # https://rt.perl.org/Public/Bug/Display.html?id=126508
+            # function => 'cross',
             mutator => 'cross-with',
-            args => [ ['obj'] ],
+            args => [ ['obj'], ],
             expressions => [
                 '$a[1] * $b[2] - $a[2] * $b[1]',
                 '$a[2] * $b[0] - $a[0] * $b[2]',
@@ -66,7 +67,7 @@ Math::ThreeD::Library.new(
 
         op( operator => '⋅',
             function => 'dot',
-            args => [ ['obj'] ],
+            args => [ ['obj'], ],
             return => 'num',
             expression => '$a[0]*$b[0] + $a[1]*$b[1] + $a[2]*$b[2]',
         ),
@@ -83,7 +84,7 @@ Math::ThreeD::Library.new(
 
         op( function => 'rot-x',
             mutator => 'rotate-x',
-            args => [ ['num'] ],
+            args => [ ['num'], ],
             intro => 'my ($sin, $cos) = sin($b), cos($b);',
             expressions => [
                 '$a[0]',
@@ -94,7 +95,7 @@ Math::ThreeD::Library.new(
 
         op( function => 'rot-y',
             mutator => 'rotate-y',
-            args => [ ['num'] ],
+            args => [ ['num'], ],
             intro => 'my ($sin, $cos) = sin($b), cos($b);',
             expressions => [
                 '$a[0] * $cos - $a[2] * $sin',
@@ -105,7 +106,7 @@ Math::ThreeD::Library.new(
 
         op( function => 'rot-z',
             mutator => 'rotate-z',
-            args => [ ['num'] ],
+            args => [ ['num'], ],
             intro => 'my ($sin, $cos) = sin($b), cos($b);',
             expressions => [
                 '$a[0] * $cos - $a[1] * $sin',
@@ -116,7 +117,7 @@ Math::ThreeD::Library.new(
 
         op( function => 'rot',
             mutator => 'rotate',
-            args => [[ <obj num> ]],
+            args => [ <obj num>, ],
             intro => 
 q[my $sin = sin $c;
 my $cos = cos $c;
@@ -131,7 +132,7 @@ my $cross = $b.cross($a);],
 
         op( function => 'trans',
             mutator => 'transform',
-            args => [ ['Mat44'] ],
+            args => [ ['Mat44'], ],
             expressions => [
                 '$a[0]*$b[0][0] + $a[1]*$b[0][1] + $a[2]*$b[0][2] + $b[0][3]',
                 '$a[0]*$b[1][0] + $a[1]*$b[1][1] + $a[2]*$b[1][2] + $b[1][3]',
@@ -151,7 +152,7 @@ my $cross = $b.cross($a);],
 
         op( function => 'refl',
             mutator => 'reflect',
-            args => [[ <obj> ]],
+            args => [[ <obj> ],],
             intro => 'my $scale = 2 * $a.dot($b);',
             expressions => [
                 '$b[0] * $scale - $a[0]',
