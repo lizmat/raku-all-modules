@@ -17,7 +17,7 @@ has Int $.port = 443;
 has Str $.localhost;
 has Int $.localport;
 has Str $.certfile;
-has Bool $.listen;
+has Bool $.listening;
 has Str $.input-line-separator is rw = "\n";
 has Int $.ins = 0;
 
@@ -53,7 +53,7 @@ method new(*%args is copy) {
         }
     }
 
-    %args<listen>.=Bool if %args.EXISTS-KEY('listen');
+    %args<listening>.=Bool if %args.EXISTS-KEY('listen');
 
     self.bless(|%args)!initialize;
 }
@@ -98,7 +98,7 @@ method !initialize {
             } while $e != 0 && $e != 4294967296;
         }
     }
-    elsif $!listen-socket || $!listen {
+    elsif $!listen-socket || $!listening {
         $!socket = $!listen-socket || IO::Socket::INET.new(:localhost($!localhost), :localport($!localport), :listen);
     }
     self;
@@ -154,6 +154,14 @@ method accept {
 method close {
     $!ssl.close;
     $!socket.close;
+}
+
+method connect(Str() $host, Int() $port) {
+    self.new(:$host, :$port)
+}
+
+method listen(Str() $localhost, Int() $localport) {
+    self.new(:$localhost, :$localport, :listen)
 }
 
 =begin pod
