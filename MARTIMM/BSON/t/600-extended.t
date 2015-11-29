@@ -3,7 +3,7 @@
 use v6;
 use Test;
 use BSON;
-use BSON::ObjectId;
+use BSON::ObjectId-old;
 
 my %samples = (
   'ObjectId minimum' => {

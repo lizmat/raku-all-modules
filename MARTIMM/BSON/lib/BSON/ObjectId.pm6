@@ -4,11 +4,20 @@
 #
 use v6;
 use Digest::MD5;
-use BSON::Exception;
-#use BSON::EDCTools;
 
 package BSON {
 
+  #-----------------------------------------------------------------------------
+  class X::Parse is Exception {
+    has $.operation;                      # Operation method
+    has $.error;                          # Parse error
+
+    method message () {
+      return "\n$!operation\() error: $!error\n";
+    }
+  }
+
+  #-----------------------------------------------------------------------------
   class ObjectId {
 
     # Represents ObjectId BSON type described in
@@ -16,140 +25,142 @@ package BSON {
     #
     has Buf $.oid;
 
-    has Int $.seconds;
-    has Int $.machine-id;
+    has Int $.time;
+    has Str $.machine-id;
     has Int $.pid;
     has Int $.count;
 
     #---------------------------------------------------------------------------
+    # A string of 24 hexadecimal characters.
     #
-    method encode ( Str $s = '' --> BSON::ObjectId ) {
-      # Check length of string
+    multi submethod BUILD ( Str:D :$string! ) {
+
+      die X::Parse.new(
+        :operation('ObjectId.new'),
+        :error('String too short or nonhexadecimal')
+      ) unless $string ~~ m/ ^ <xdigit>**24 $ /;
+
+
+      $!oid .= new: ($string.comb(/../) ==> map { :16($_) });
+
+      $!time = :16(
+        ( $!oid[3...0].list ==> map { $_.fmt('%02x') }
+        ).reverse.join('')
+      );
+
+      try {
+        $!machine-id = (
+          $!oid[6...4].list ==> map { $_.fmt('%02x') }
+          ).reverse.join('').decode;
+        CATCH {
+          default {
+            $!machine-id = 'Not defined';
+          }
+        }
+      }
+
+      $!pid = :16(
+        ( $!oid[8,7].list ==> map { $_.fmt('%02x') }
+        ).reverse.join('')
+      );
+
+      $!count = :16(
+        ( $!oid[11...9].list ==> map { $_.fmt('%02x') }
+        ).reverse.join('')
+      );
+    }
+
+    #---------------------------------------------------------------------------
+    # A buffer of 12 bytes
+    #
+    multi submethod BUILD ( Buf:D :$bytes ) {
+
+      die X::Parse.new(
+        :operation('ObjectId.new'),
+        :error('Byte buffer too short or long')
+      ) unless $bytes.elems == 12;
+
+
+      $!oid = $bytes;
+
+      $!time = :16( ($!oid[0..3].list ==> map { $_.fmt('%02x') }).join('') );
+
+      try {
+        $!machine-id = (
+          $!oid[4..6].list ==> map { $_.fmt('%02x') }
+          ).join('').decode;
+        CATCH {
+          default {
+            $!machine-id = 'No utf-8 encoded machine name';
+          }
+        }
+      }
+
+      $!pid = :16( ($!oid[7..8].list ==> map { $_.fmt('%02x') }).join('') );
+
+      $!count = :16( ($!oid[9..11].list ==> map { $_.fmt('%02x') }).join('') );
+    }
+
+    #---------------------------------------------------------------------------
+    # Only given a machine name and a count
+    # See also: http://docs.mongodb.org/manual/reference/object-id
+    #
+    multi submethod BUILD ( Str:D :$machine-name!, Int:D :$count! ) {
+
+      $!machine-id = Digest::MD5.md5_hex($machine-name).substr( 0, 6);
+      $!time = time;
+      $!pid = $*PID;
+      $!count = $count;
+
+      self!generate-oid;
+    }
+
+    #---------------------------------------------------------------------------
+    # No arguments. Generated id.
+    # See also: http://docs.mongodb.org/manual/reference/object-id
+    #
+    multi submethod BUILD ( ) {
+
+      $!machine-id = Digest::MD5.md5_hex(~$*KERNEL).substr( 0, 6);
+      $!time = time;
+      $!pid = $*PID;
+      $!count = 0xFFFFFF.rand.Int;
+
+      self!generate-oid;
+    }
+
+    #---------------------------------------------------------------------------
+    method !generate-oid ( ) {
+
+      my @numbers = ();
+
+      # Generate object id
       #
-      my Buf $b;
-      given $s.chars {
-        when 0 {
-          my int $ni = my Int $seconds = time;
-          $b = Buf.new(
-                 $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
-                 ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF
-               );
-
-          # Machine name will be 3 bytes from an MD5 generated string from
-          # the $*KERNEL variable. Tried to find out what is used but could not
-          # find it. uname -m, ip, hostname, localhost, ... nothing! I believe
-          # any random 3 byte character string will do!
-          #
-          $ni = my Int $machine-id
-              = :16(Digest::MD5.md5_hex("$*KERNEL").substr( 0, 6));
-          $b ~= Buf.new(
-                  $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
-                  ($ni +> 0x10) +& 0xFF
-                );
-
-          $ni = $*PID;
-          $b ~= Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF);
-
-          # If count is not defined then start with 2 byte random number
-          # otherwise increment with one
-          #
-          # Check if this is an object or a type object
-          #
-          my Int $count;
-          if ?self {
-            $ni = $count = ?$!count ?? ++$!count !! 0xFFFF.rand.Int;
-          }
-
-          else {
-            $ni = $count = 0xFFFF.rand.Int;
-          }
-
-          $b ~= Buf.new(
-            $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
-            ($ni +> 0x10) +& 0xFF
-          );
-
-          # Make object
-          #
-#note "B: ", $b.elems;
-          return self.bless( :oid($b), :$seconds, :$machine-id, :$count);
-        }
-
-        when 24 {
-          # Check if all characters are hex characters.
-          #
-          die X::BSON::Parse.new(
-            :operation('BSON::ObjectId::encode'),
-            :error("String is not a hexadecimal number")
-          ) unless $s ~~ m:i/^ <[0..9a..f]>+ $/;
-
-          my @a = map {:16($_) }, $s.comb(/../);
-          $b = Buf.new(@a);
-#note "B: ", $b.elems;
-          return self.bless( *, oid => $b);
-        }
-
-        default {
-          die X::BSON::Parse.new(
-            :operation('BSON::ObjectId::encode'),
-            :error("String must have 24 hexadecimal characters")
-          );
-        }
-      }
-    }
-
-    #---------------------------------------------------------------------------
-    #
-    method decode ( Buf:D $b --> BSON::ObjectId ) {
-      die X::BSON::Parse.new(
-        :operation('BSON::ObjectId::decode'),
-        :error("Buffer doesn't have 12 bytes")
-      ) unless $b.elems == 12;
-
-      return self.bless( *, oid => $b);
-    }
-
-    #---------------------------------------------------------------------------
-    #
-    method Buf ( ) {
-      return $.oid;
-    }
-
-    #---------------------------------------------------------------------------
-    #
-    method perl ( ) {
-      my $s = '';
-      for $.oid.list {
-        $s ~= ( $_ +> 4 ).fmt('%x') ~ ( $_ % 16 ).fmt('%x');
+      # Time in 4 bytes => no substr needed
+      #
+      for $!time.fmt('%08x').comb(/../)[3...0] -> $hexnum {
+        @numbers.push: :16($hexnum);
       }
 
-      return 'ObjectId( "' ~ $s ~ '" )';
-    }
+      # Machine id in 3 bytes
+      #
+      for $!machine-id.fmt('%6.6s').comb(/../)[2...0] -> $hexnum {
+        @numbers.push: :16($hexnum);
+      }
 
-    #---------------------------------------------------------------------------
-    #
-    method get-seconds ( --> Int ) {
-      return $!seconds;
-    }
+      # Process id in 2 bytes
+      #
+      for $!pid.fmt('%04x').comb(/../)[1,0] -> $hexnum {
+        @numbers.push: :16($hexnum);
+      }
 
-    #---------------------------------------------------------------------------
-    #
-    method get-timestamp ( --> DateTime ) {
-      return DateTime.new($!seconds);
-    }
-
-    #---------------------------------------------------------------------------
-    #
-    method get-machine-id ( --> Int ) {
-      return $!machine-id;
-    }
-
-    #---------------------------------------------------------------------------
-    #
-    method value-of ( --> Str ) {
-      my Str $s = $!oid[*].fmt('02X');
-      $s ~~ s:g/\s//;
-      return $s;
+      # Result of count truncated to 3 bytes
+      #
+      for $!count.fmt('%08x').comb(/../)[2...0] -> $hexnum {
+        @numbers.push: :16($hexnum);
+      }
+      
+      $!oid .= new(@numbers);
     }
   }
 }

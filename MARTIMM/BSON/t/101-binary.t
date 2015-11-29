@@ -1,7 +1,7 @@
 use v6;
 use Test;
 use BSON;
-use BSON::Binary;
+use BSON::Binary-old;
 use UUID;
 use Digest::MD5;
 
@@ -42,13 +42,13 @@ subtest {
 
   my BSON::Binary $bin-obj .= new(
     data => $uuid.Blob,
-    type => $BSON::UUID
+    type => BSON::C-UUID
   );
 
   is-deeply( $bin-obj.Buf, $uuid.Blob, 'compare uuid binary data');
 
   my Array $bin-test = [ ( 0x10, 0x00, 0x00, 0x00,        # Size of buf
-                           $BSON::UUID,                   # UUID binary type
+                           BSON::C-UUID,                   # UUID binary type
                            $uuid.Blob.list,               # Raw Buf
                          ).flat
                        ];
@@ -63,7 +63,7 @@ subtest {
              'compare uuid data after decoding'
            );
   is( $index, $bin-test.elems, "Index is shifted $index bytes");
-  is( $bin-obj.get-type, $BSON::UUID, "Test UUID type");
+  is( $bin-obj.get-type, BSON::C-UUID, "Test UUID type");
 
 }, "Test uuid binary data";
 
@@ -74,12 +74,12 @@ subtest {
 
   my Digest::MD5 $md5 .= new;
   my Buf $md5-b = $md5.md5_buf('Something I like to be md5-ed');
-  my BSON::Binary $bin-obj .= new( data => $md5-b, type => $BSON::MD5);
+  my BSON::Binary $bin-obj .= new( data => $md5-b, type => BSON::C-MD5);
 
   is-deeply( $bin-obj.Buf, $md5-b, 'compare md5 binary data');
 
   my Array $bin-test = [ ( 0x10, 0x00, 0x00, 0x00,        # Size of buf
-                           $BSON::MD5,                    # MD5 binary type
+                           BSON::C-MD5,                    # MD5 binary type
                            $md5-b.list,                   # Raw Buf
                          ).flat
                        ];
@@ -94,7 +94,7 @@ subtest {
              'compare md5 data after decoding'
            );
   is( $index, $bin-test.elems, "Index is shifted $index bytes");
-  is( $bin-obj.get-type, $BSON::MD5, "Test MD5 type");
+  is( $bin-obj.get-type, BSON::C-MD5, "Test MD5 type");
 
 }, "Test md5 binary data";
 

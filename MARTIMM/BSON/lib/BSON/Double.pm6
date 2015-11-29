@@ -3,31 +3,28 @@ use BSON::EDCTools;
 
 package BSON {
 
+  # https://www.doc.ic.ac.uk/~eedwards/compsys/float/nan.html
+  # http://steve.hollasch.net/cgindex/coding/ieeefloat.html
+  # https://en.wikipedia.org/wiki/Floating_point
+  #
   class Double {
-  
-#    has Buf $.double_data;
-  
-#    submethod BUILD (  ) {
-    
-#    }
 
     #---------------------------------------------------------------------------
     # 8 bytes double (64-bit floating point number)
     #
-#`{{
-    method encode_double ( Num:D $r is copy --> Buf
+#`{{    method encode_double ( Num:D $r is copy --> Buf
     ) is DEPRECATED('encode-double') {
       BSON::Double.encode-double($r);
     }
 }}
 
-    method encode-double ( Pair:D $p --> Buf ) {
+    method encode-double ( Num:D $r is copy --> Buf ) {
 
-      my Str $key-name = $p.key;
-      my Num $r = $p.value;
+#      my Str $key-name = $p.key;
+#      my Num $r = $p.value;
 
       # Make array starting with bson code 0x01 and the key name
-      my Buf $a = Buf.new(0x01) ~ encode-e-name($key-name);
+      my Buf $a = Buf.new(); # Buf.new(0x01) ~ encode-e-name($key-name);
       my Num $r2;
 
       # Test special cases
@@ -36,6 +33,10 @@ package BSON {
       # 0x 8000 0000 0000 0000 = -0       Not recognizable
       # 0x 7ff0 0000 0000 0000 = Inf
       # 0x fff0 0000 0000 0000 = -Inf
+      # 0x 7ff0 0000 0000 0001 <= nan <= 0x 7ff7 ffff ffff ffff signalling NaN
+      # 0x fff0 0000 0000 0001 <= nan <= 0x fff7 ffff ffff ffff
+      # 0x 7ff8 0000 0000 0000 <= nan <= 0x 7fff ffff ffff ffff quiet NaN
+      # 0x fff8 0000 0000 0000 <= nan <= 0x ffff ffff ffff ffff
       #
       given $r {
         when 0.0 {
@@ -48,6 +49,12 @@ package BSON {
 
         when Inf {
           $a ~= Buf.new( 0 xx 6, 0xF0, 0x7F);
+        }
+
+        when NaN {
+          # Choose only one number out of the quiet NaN range
+          #
+          $a ~= Buf.new( 0 xx 6, 0xF8, 0x7F);
         }
 
         default {
@@ -149,9 +156,11 @@ package BSON {
     multi method decode-double ( Array:D $a, Int:D $index is rw ) {
 }}
 
-    multi method decode-double ( Array:D $a, Int:D $index is rw --> Pair ) {
+    multi method decode-double ( Array:D $a, Int:D $index is rw --> Num ) {
+      self.decode-double( Buf.new($a.List), $index);
+    }
 
-      my Str $key-name = decode-e-name( $a, $index);
+    multi method decode-double ( Buf:D $a, Int:D $index is rw --> Num ) {
 
       # Test special cases
       #
@@ -159,10 +168,14 @@ package BSON {
       # 0x 8000 0000 0000 0000 = -0
       # 0x 7ff0 0000 0000 0000 = Inf
       # 0x fff0 0000 0000 0000 = -Inf
+      # 0x 7ff0 0000 0000 0001 <= nan <= 0x 7ff7 ffff ffff ffff signalling NaN
+      # 0x fff0 0000 0000 0001 <= nan <= 0x fff7 ffff ffff ffff
+      # 0x 7ff8 0000 0000 0000 <= nan <= 0x 7ff7 ffff ffff ffff quiet NaN
+      # 0x fff8 0000 0000 0000 <= nan <= 0x ffff ffff ffff ffff
       #
       my Bool $six-byte-zeros = True;
       for ^6 -> $i {
-        if $a[$i] {
+        if ? $a[$i] {
           $six-byte-zeros = False;
           last;
         }
@@ -179,7 +192,7 @@ package BSON {
         }
       }
 
-      elsif $a[6] == 0xF0 {
+      elsif $six-byte-zeros and $a[6] == 0xF0 {
         if $a[7] == 0x7F {
           $value .= new(Inf);
         }
@@ -187,6 +200,14 @@ package BSON {
         elsif $a[7] == 0xFF {
           $value .= new(-Inf);
         }
+      }
+
+      elsif $a[7] == 0x7F and (0xf0 <= $a[6] <= 0xf7 or 0xf8 <= $a[6] <= 0xff) {
+        $value .= new(NaN);
+      }
+
+      elsif $a[7] == 0xFF and (0xf0 <= $a[6] <= 0xf7 or 0xf8 <= $a[6] <= 0xff) {
+        $value .= new(NaN);
       }
 
       # If value is set by the special cases above, remove the 8 bytes from
@@ -200,7 +221,7 @@ package BSON {
       # If value is not set by the special cases above, calculate it here
       #
       else {
-        my Int $i = decode-int64( $a, $index);
+        my Int $i = decode-int64( $a.Array, $index);
         my Int $sign = $i +& 0x8000_0000_0000_0000 ?? -1 !! 1;
 
         # Significand + implicit bit
@@ -214,7 +235,7 @@ package BSON {
         $value = Num.new((2 ** $exponent) * $significand * $sign);
       }
 
-      return $key-name => $value;
+      return $value;
     }
   }
 }

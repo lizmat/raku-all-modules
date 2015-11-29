@@ -67,7 +67,7 @@ Defined as
 
 Encode as above. The second method is used to keep order in the keys.
 
-=head2 method _init_index
+=head2 method init-index
 
 Defined as
 
@@ -83,8 +83,8 @@ method decode ( Buf $b --> Hash ) {...}
 Decode BSON buffer.
 
 =for head2
-multi method decode_document ( Array $a --> Hash ) {...}
-multi method decode_document ( Array $a, Int $index is rw --> Hash ) {...}
+multi method decode-document ( Array $a --> Hash ) {...}
+multi method decode-document ( Array $a, Int $index is rw --> Hash ) {...}
 
 Same as above but the first method takes an array and the second needs an
 external index. Index will be modified to point past the end of the document.

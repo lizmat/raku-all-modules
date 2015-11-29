@@ -5,6 +5,31 @@ use BSON::Exception;
 # strings and integers.
 
 package BSON {
+  constant C-DOUBLE             = 0x01;
+  constant C-STRING             = 0x02;
+  constant C-DOCUMENT           = 0x03;
+  constant C-ARRAY              = 0x04;
+  constant C-BINARY             = 0x05;
+  constant C-UNDEFINED          = 0x06;         # Deprecated
+  constant C-OBJECTID           = 0x07;
+  constant C-BOOLEAN            = 0x08;
+  constant C-DATETIME           = 0x09;
+  constant C-NULL               = 0x0A;
+  constant C-REGEX              = 0x0B;
+  constant C-DBPOINTER          = 0x0C;         # Deprecated
+  constant C-JAVASCRIPT         = 0x0D;
+  constant C-DEPRECATED         = 0x0E;         # Deprecated
+  constant C-JAVASCRIPT-SCOPE   = 0x0F;
+  constant C-INT32              = 0x10;
+  constant C-TIMESTAMP          = 0x11;         # Used internally
+  constant C-INT64              = 0x12;
+  constant C-MIN-KEY            = 0xFF;
+  constant C-MAX-KEY            = 0x7F;
+
+  #-----------------------------------------------------------------------------
+  constant C-INT32-SIZE         = 4;
+  constant C-INT64-SIZE         = 8;
+  constant C-DOUBLE-SIZE        = 8;
 
   #-----------------------------------------------------------------------------
   # Encoding tools
@@ -124,6 +149,10 @@ package BSON {
     return decode-cstring( $b, $index);
   }
 
+#  multi sub decode-e-name ( Buf:D $b, Int:D $index is rw --> Str ) is export {
+#    return decode-cstring( $b, $index);
+#  }
+
   #-----------------------------------------------------------------------------
   multi sub decode_cstring ( List:D $a, Int:D $index is rw --> Str
   ) is export is DEPRECATED('decode-cstring') {
@@ -235,7 +264,6 @@ package BSON {
     #
     # return [+] $a.shift, $a.shift +< 0x08, $a.shift +< 0x10, $a.shift +< 0x18;
   }
-
 
   #-----------------------------------------------------------------------------
   # 8 bytes (64-bit int)

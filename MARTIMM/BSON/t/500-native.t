@@ -259,7 +259,7 @@ my Hash $samples = {
 # '0x0E ? - deprecated' => { },
 
     '0x0F Javascript with scope' => {
-        'decoded' => { "t" => BSON::Javascript.new( :javascript($script)
+        'decoded' => { "t" => BSON::Javascript.new( :javascript($script),
                                                     :scope($scope)
                                                   )
                      },

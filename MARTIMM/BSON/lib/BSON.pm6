@@ -1,15 +1,15 @@
 use v6;
-use BSON::ObjectId;
+use BSON::ObjectId-old;
 use BSON::Regex;
-use BSON::Javascript;
-use BSON::Binary;
+use BSON::Javascript-old;
+use BSON::Binary-old;
 use BSON::Double;
 use BSON::EDCTools;
 use BSON::Exception;
 
 package BSON {
 
-  class Bson:ver<0.9.11> {
+  class Bson:ver<0.9.13> {
     constant $BSON_BOOL = 0x08;
 
     has Int $!index = 0;
@@ -94,12 +94,11 @@ package BSON {
           # Double precision
           # "\x01" e_name Num
           #
-          return BSON::Double.encode-double($p);
-#`{{
+#          return BSON::Double.encode-double($p);
+
           return [~] Buf.new(0x01),
                      encode-e-name($p.key),
                      BSON::Double.encode-double($p.value);
-}}
         }
 
         when Str {
@@ -252,17 +251,17 @@ package BSON {
         #
         when BSON::Javascript {
 
-          return .encode-javascript( $p.key, self);
-#`{{
+#          return .encode-javascript( $p.key, self);
+#`{{}}
           # Javascript code
           # "\x0D" e_name string
           # "\x0F" e_name int32 string document
           #
-          if $p.value.has_javascript {
-            my Buf $js = encode-string($p.value.javascript);
+          if .has_javascript {
+            my Buf $js = encode-string(.javascript);
 
             if $p.value.has_scope {
-              my Buf $doc = self.encode-document($p.value.scope);
+              my Buf $doc = self.encode-document(.scope);
               return [~] Buf.new(0x0F),
                          encode-e-name($p.key),
                          encode-int32([+] $js.elems, $doc.elems, 4),
@@ -281,7 +280,7 @@ package BSON {
                                           :emsg('cannot send empty code')
                                         );
           }
-}}
+
         }
 
   #`{{
@@ -351,7 +350,7 @@ package BSON {
 
         default {
           if .can('encode') {
-            my $code = 1; # which bson code
+            my $code = 0x1F; # which bson code??
 
             return [~] Buf.new($code),
                        encode-e-name($p.key),
@@ -360,7 +359,10 @@ package BSON {
           }
 
           else {
-            die X::BSON::NYS.new( :operation('encode'), :type($_));
+            die X::BSON::NYS.new(
+              :operation('encode'),
+              :type($_ ~ '(' ~ $_.WHAT ~ ')')
+            );
           }
         }
       }
@@ -474,7 +476,9 @@ package BSON {
         # Double precision
         # "\x01" e_name Num
         #
-        return BSON::Double.decode-double( $a, $!index);
+        my Str $key-name = decode-e-name( $a, $!index);
+
+        return $key-name => BSON::Double.decode-double( $a, $!index);
 #`{{
         return decode-e-name( $a, $!index) =>
                BSON::Double.decode-double( $a, $!index);
@@ -625,11 +629,11 @@ package BSON {
         # Javascript code
         # "\x0D" e_name string
         #
-        return BSON::Javascript.decode-javascript( $a, $!index);
-#`{{
+#        return BSON::Javascript.decode-javascript( $a, $!index);
+#`{{}}
+
         return decode-e-name( $a, $!index) =>
           BSON::Javascript.new( :javascript(decode-string( $a, $!index)));
-}}
       }
 
       elsif $bson_code == 0x0E {
@@ -655,7 +659,7 @@ package BSON {
                               );
       }
 
-      elsif $bson_code == 0x10 {
+      elsif $bson_code == BSON::C-INT32 {
         # 32-bit Integer
         # "\x10" e_name int32
         #
