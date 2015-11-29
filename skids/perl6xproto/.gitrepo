@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/skids/perl6xproto.git
 	branch = master
-	commit = 5a70b1b5c99f0f890e41e8c196166f8a7bec8e22
-	parent = 01d47b61a138a0fc7397087acdc747f3dd3ef5d8
+	commit = 57b6e34eae4908e3ff1371aaca68da8e44f4b472
+	parent = 156b60c8d26b850aa7dc7f603db35035ae54a8db
 	cmdver = 0.2.2
