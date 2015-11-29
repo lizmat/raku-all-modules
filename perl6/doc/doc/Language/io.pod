@@ -11,17 +11,17 @@ L<IO::Path|/type/IO::Path> types.
 
 =head1 Reading from files
 
-To read in the contents of a file one could open the file via the C<open>
+One way to read the contents of a file is to open the file via the C<open>
 function with the C<:r> (read) file mode option and slurp in the contents:
 
     my $fh = open "testfile", :r;
     my $contents = $fh.slurp-rest;
     $fh.close;
 
-where we explicitly close the file handle using the C<close> method on the
-C<IO::Handle> object.  This is a very traditional way of reading the
-contents of a file.  However, we can do the same much more easily and
-clearly like so:
+Here we explicitly close the file handle using the C<close> method on the
+C<IO::Handle> object. This is a very traditional way of reading the
+contents of a file. However, the same can be done more easily and clearly
+like so:
 
     my $contents = "testfile".IO.slurp;
     # or in procedural form:
@@ -64,13 +64,13 @@ writing the data to the file and closing it again for us:
 
     spurt "testfile", "data and stuff\n";
 
-By default all (text) files are written as UTF-8, however if necessary, one
-can explicitly specify an encoding via the C<:enc> option:
+By default all (text) files are written as UTF-8, however if necessary, an
+explicit encoding can be specified via the C<:enc> option:
 
     spurt "testfile", "latin1 text: äöüß", enc => "latin1";
 
-To append to a file, one can specify the C<:a> option when opening the file
-handle explicitly,
+To append to a file, specify the C<:a> option when opening the file handle
+ explicitly,
 
     my $fh = open "testfile", :a;
     $fh.print("more data\n");
@@ -86,15 +86,14 @@ or even simpler with the C<:append> option in the call to C<spurt>:
 
     spurt "testfile", "more data\n", :append;
 
-One can also explicitly write binary data to a file by opening it with the
-C<:bin> option.  The input/output operations now take place using the C<Buf>
-type instead of the C<Str> type.
+To explicitly write binary data to a file, open it with the C<:bin> option.
+The input/output operations then will take place using the C<Buf> type instead
+of the C<Str> type.
 
 =head1 Checking files and directories
 
-We don't want an error to be thrown if we try to open a file that doesn't
-exist.  So, how do we know that the file even exists before reading it?
-This is what the C<e> method on an C<IO::Handle> object is for.
+Use the C<e> method on an C<IO::Handle> object to test whether the file or
+directory exists.
 
     if "nonexistent_file".IO.e {
         say "file exists";
@@ -136,9 +135,8 @@ the file test method C<f>:
 
 =head1 Getting a directory listing
 
-To list the files and directories in the current directory, one merely needs
-to use the C<dir> function.  This returns a list of L<IO::Path> objects one
-can then write to, read from etc.
+To list the contents of the current directory, use the C<dir> function. It
+returns a list of L<IO::Path> objects.
 
     say dir;    # "/path/to/testfile".IO "/path/to/lib".IO
 
@@ -155,13 +153,11 @@ directory name as its argument:
     mkdir "newdir";
 
 The function returns the name of the created directory on success and C<Nil>
-on failure.  Thus the standard Perl idiom
+on failure. Thus the standard Perl idiom works as expected:
 
     mkdir "newdir" or die "$!";
 
-works as expected.
-
-Similarly, one can remove I<empty> directories with C<rmdir>:
+Use C<rmdir> to remove I<empty> directories:
 
     rmdir "newdir" or die "$!";
 

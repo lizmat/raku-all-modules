@@ -60,8 +60,8 @@ C<rule> declarator causes L<C<:sigspace>|/language/regexes#Sigspace> to go
 into effect for the Regex:
 
     =begin code :allow<B>
-    my token non-space-y { once upon a time }
-    my rule space-y { once upon a time }
+    my token non-space-y { 'once' 'upon' 'a' 'time' }
+    my rule space-y { 'once' 'upon' 'a' 'time' }
     say 'onceuponatime'    ~~ &non-space-y;
     say 'once upon a time' ~~ &space-y;
     =end code
@@ -100,7 +100,7 @@ grammar TestGrammar {
 
 class TestActions {
     method TOP($/) {
-        $/.make(2 + ~$/);
+        $/.make(2 + $/);
     }
 }
 
@@ -183,5 +183,11 @@ C<parse>, which was possible because none of the action methods use attributes
 
 In other cases, action methods might want to keep state in attributes. Then of
 course you must pass an instance to method parse.
+
+Note that C<token> C<ws> is special: when C<:sigspace> is enabled (and it is
+when we are using C<rule>), it replaces certain whitespace sequences. This is
+why the spaces around the equals sign in C<rule pair> work just fine and why
+the whitespace before closing C<}> does not gobble up the newlines looked for
+in C<token TOP>.
 
 =end pod

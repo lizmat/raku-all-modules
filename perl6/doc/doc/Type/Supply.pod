@@ -330,6 +330,18 @@ Creates a new supply in which changes to the number of values seen are
 emitted.  It optionally also takes an interval (in seconds) if you only want
 to be updated every so many seconds.
 
+=head2 method head
+
+    method head(Supply:D: Int(Cool) $number = 1) returns Supply:D
+
+Creates a "head" supply with the same semantics as List.head.
+
+=head2 method tail
+
+    method tail(Supply:D: Int(Cool) $number = 1) returns Supply:D
+
+Creates a "tail" supply with the same semantics as List.tail.
+
 =head2 method rotor
 
     method rotor(Supply:D: @cycle) returns Supply:D
@@ -387,10 +399,47 @@ for the types of messages that you can send to control the throttle.
 
 The :status named parameter optionally specifies a Supply that will receive
 any status messages.  If specified, it will at least send one status message
-after the original Supply is exhausted.  The status message is a hash with
-the following keys:
+after the original Supply is exhausted.  See L<status message> below.
 
-=over 2 
+The :bleed named parameter optionally specifies a Supply that will receive
+any values that were either explicitly bled (with the B<bleed> control
+message), or automatically bled (if there's a B<vent-at> active).
+
+The :vent-at named parameter indicates the number of values that may be
+buffered before any additional value will be routed to the :bleed Supply.
+Defaults to 0 if not specified (causing no automatic bleeding to happen).
+Only makes sense if a :bleed Supply has also been specified.
+
+The :scheduler named parameter indicates the scheduler to be used.  Defaults
+to $*SCHEDULER.
+
+=head3 control messages
+
+These messages can be sent to the :control Supply.  A control message
+consists of a string of the form "key: value", e.g. "limit: 4".
+
+=item limit
+
+Change the number of messages (as initially given in the first positional)
+to the value given.
+
+=item bleed
+
+Route the given number of buffered messages to the :bleed Supply.
+
+=item vent-at
+
+Change the maximum number of buffered values before automatic bleeding
+takes place.  If the value is lower than before, will cause immediate
+rerouting of buffered values to match the new maximum.
+
+=item status
+
+Send a status message to the :status Supply with the given id.
+
+=head3 status message
+
+The status return message is a hash with the following keys:
 
 =item allowed
 
@@ -423,47 +472,33 @@ The current limit that is being applied.
 The maximum number of messages that may be buffered before they're
 automatically re-routed to the :bleed Supply.
 
-=back
+=head3 Examples
 
-The :bleed named parameter optionally specifies a Supply that will receive
-any values that were either explicitly bled (with the B<bleed> control
-message), or automatically bled (if there's a B<vent-at> active).
+Have a simple piece of code announce when it starts running asynchronously,
+wait a random amount of time, then announce when it is done.  Do this 6 times,
+but don't let more than 3 of them run simultaneously.
 
-The :vent-at named parameter indicates the number of values that may be
-buffered before any additional value will be routed to the :bleed Supply.
-Defaults to 0 if not specified (causing no automatic bleeding to happen).
-Only makes sense if a :bleed Supply has also been specified.
-
-The :scheduler named parameter indicates the scheduler to be used.  Defaults
-to $*SCHEDULER.
-
-=head3 control messages
-
-These messages can be sent to the :control Supply.  A control message
-consists of a string of the form "key: value", e.g. "limit: 4".
-
-=over 2
-
-=item limit
-
-Change the number of messages (as initially given in the first positional)
-to the value given.
-
-=item bleed
-
-Route the given number of buffered messages to the :bleed Supply.
-
-=item vent-at
-
-Change the maximum number of buffered values before automatic bleeding
-takes place.  If the value is lower than before, will cause immediate
-rerouting of buffered values to match the new maximum.
-
-=item status
-
-Send a status message to the :status Supply with the given id.
-
-=back
+  my $s = Supply.from-list(^6);  # set up supply 
+  my $t = $s.throttle: 3,        # only allow 3 at a time
+  {                              # code block to run
+      say "running $_";          # announce we've started
+      sleep rand;                # wait some random time
+      say "done $_"              # announce we're done
+  }                              # don't need ; because } at end of line
+  $t.wait;                       # wait for the supply to be done
+  =============
+  running 0
+  running 1
+  running 2
+  done 2
+  running 3
+  done 1
+  running 4
+  done 4
+  running 5
+  done 0
+  done 3
+  done 5
 
 =head2 method stable
 

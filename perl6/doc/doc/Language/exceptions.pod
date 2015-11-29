@@ -54,19 +54,27 @@ A C<CATCH> block uses smart matching similarly to how C<given/when> smart
 matches on options, thus it is possible to catch various categories of
 exceptions and handle them appropriately inside a C<when> block.
 
+To handle all exceptions use a C<default> statement.
+
+   CATCH {
+        default { 
+            say .WHAT.perl, do given .backtrace[0] { .file, .line, .subname }
+        }
+   }
+
 =head2 Throwing exceptions
 
 One can also explicitly throw exceptions via the C<.throw> method on an
 C<Exception> object.
 
-This example throws an C<AdHoc> exception, catching it and allowing the code
-to continue from the point of the exception.
+This example throws an C<AdHoc> exception, catches it and allows the code
+to continue from the point of the exception by calling the C<.resume> method.
 
     {
         X::AdHoc.new(:payload<foo>).throw;
         "OHAI".say;
         CATCH {
-            when X::AdHoc { $_.resume }
+            when X::AdHoc { .resume }
         }
     }
     "OBAI".say;
@@ -86,7 +94,7 @@ exception's payload is passed on to the backtrace printing mechanism.
     #!> in block <unit> at /tmp/FbtB60dxVO:1
 
 This example doesn't resume from the point of the exception, however
-continues after the enclosing block, since the exception was caught and
+it continues after the enclosing block, since the exception was caught, and
 control continues after the C<CATCH> block.
 
     {
