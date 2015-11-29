@@ -89,7 +89,7 @@ multi _unmarshal($json, Any $x) {
             $attr-name;
         }
         if $json{$json-name}:exists {
-            %args{$attr-name} = do if $attr ~~ CustomUnmarshaller {
+            %args{$attr-name} := do if $attr ~~ CustomUnmarshaller {
                 $attr.unmarshal($json{$json-name}, $attr.type);
             }
             else {
@@ -104,9 +104,9 @@ multi _unmarshal($json, @x) {
     my @ret;
     for $json.list -> $value {
        my $type = @x.of =:= Any ?? $value.WHAT !! @x.of;
-       @ret.push(_unmarshal($value, $type));
+       @ret.append(_unmarshal($value, $type));
     }
-    return @ret
+    return @ret;
 }
 
 multi _unmarshal($json, %x) {
