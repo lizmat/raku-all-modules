@@ -101,13 +101,23 @@ method auth(Str $login, Str $password) {
     $!auth_password = $password;
 }
 
-multi method get(URI $uri is copy ) {
-    my $request  = HTTP::Request.new(GET => $uri);
+multi method get(URI $uri is copy, *%header ) {
+    my $request  = HTTP::Request.new(GET => $uri, |%header);
     self.request($request);
 }
 
-multi method get(Str $uri is copy ) {
-    self.get(URI.new(_clear-url($uri)));
+multi method get(Str $uri is copy, *%header ) {
+    self.get(URI.new(_clear-url($uri)), |%header);
+}
+
+multi method post(URI $uri is copy, %form , *%header) {
+    my $request = HTTP::Request.new(POST => $uri, |%header);
+    $request.add-form-data(%form);
+    self.request($request);
+}
+
+multi method post(Str $uri is copy, %form, *%header ) {
+    self.post(URI.new(_clear-url($uri)), %form, |%header);
 }
 
 method request(HTTP::Request $request) returns HTTP::Response {
@@ -435,12 +445,30 @@ Sets username and password needed to HTTP Auth.
 
 =head2 method get
 
-    multi method get(HTTP::UserAgent:, Str $url is copy) returns HTTP::Response
-    multi method get(HTTP::UserAgent: URI $uri) returns HTTP::Response
+    multi method get(HTTP::UserAgent:, Str $url is copy, *%headers) returns HTTP::Response
+    multi method get(HTTP::UserAgent: URI $uri, *%headers) returns HTTP::Response
 
 Requests the $url site, returns HTTP::Response, except if throw-exceptions
 is set as described above whereby an exception will be thrown if the
 response indicates that the request wasn't successfull.
+
+Any additional named arguments will be applied as headers in the request.
+
+=head2 method post
+
+    multi method post(URI $uri, %form, *%header ) -> HTTP::Response
+    multi method post(Str $uri, %form, *%header ) -> HTTP::Response
+
+Make a POST request to the specified uri, with the provided Hash of %form
+data in the body encoded as "application/x-www-form-urlencoded" content.
+Any additional named style arguments will be applied as headers in the
+request.
+
+An L<HTTP::Response> will be returned, except if throw-exceptions has been set
+and the response indicates the request was not successfull.
+
+If greater control over the content of the request is required you should
+create an L<HTTP::Request> directly and populate it as needed,
 
 =head2 method request
 
