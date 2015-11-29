@@ -1,4 +1,4 @@
-unit class App::Nopaste:version<1.001001>;
+unit class App::Nopaste:ver<1.001001>;
 
 use Pastebin::Gist;
 use Pastebin::Shadowcat;
