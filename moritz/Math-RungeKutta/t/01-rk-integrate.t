@@ -3,7 +3,7 @@ use Test;
 
 plan 6;
 
-BEGIN { @*INC.push: 'blib' };
+use lib 'lib';
 use Math::RungeKutta;
 
 # simple differential equation:
