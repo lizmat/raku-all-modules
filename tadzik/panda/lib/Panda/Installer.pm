@@ -14,7 +14,8 @@ method sort-lib-contents(@lib) {
 
 # default install location
 method default-prefix {
-    my $ret;
+    my $ret = $*REPO.repo-chain.grep(CompUnit::Repository::Installable).first(*.can-install);
+    return $ret if $ret;
     for grep(*.defined, %*CUSTOM_LIB<site home>) -> $prefix {
 #        $ret = CompUnitRepo.new("inst#$prefix");   # TEMPORARY !!!
         $ret = $prefix;
@@ -35,25 +36,24 @@ method install($from, $to? is copy, Panda::Project :$bone) {
     unless $to {
         $to = $.prefix;
     }
-    $to = $to.IO.absolute; # we're about to change cwd
+    $to = $to.IO.absolute if $to ~~ IO::Path; # we're about to change cwd
+    if $to !~~ CompUnit::Repository and INCLUDE-SPEC2CUR($to, :next-repo($*REPO)) -> $cur {
+        $to = $cur;
+    }
     indir $from, {
-        # check if $.prefix is under control of a CompUnitRepo
+        # check if $.prefix is under control of a CompUnit::Repository
         if $to.can('install') {
-            my @files;
-            if 'blib'.IO ~~ :d {
-                @files.append: find(dir => 'blib', type => 'file').list.grep( -> $lib {
-                    next if $lib.basename.substr(0, 1) eq '.';
-                    $lib
-                } )
-            }
+            my %sources = $bone.metainfo<provides>.map({ $_.key => ~$_.value.IO.absolute });
+            my %scripts;
             if 'bin'.IO ~~ :d {
-                @files.append: find(dir => 'bin', type => 'file').list.grep( -> $bin {
-                    next if $bin.basename.substr(0, 1) eq '.';
-                    next if !$*DISTRO.is-win and $bin.basename ~~ /\.bat$/;
-                    $bin
-                } )
+                for find(dir => 'bin', type => 'file').list -> $bin {
+                    my $basename = $bin.basename;
+                    next if $basename.substr(0, 1) eq '.';
+                    next if !$*DISTRO.is-win and $basename ~~ /\.bat$/;
+                    %scripts{$basename} = ~$bin.IO.absolute;
+                }
             }
-            $to.install(:dist($bone), @files);
+            $to.install(CompUnitRepo::Distribution.new(|$bone.metainfo), %sources, %scripts);
         }
         else {
             if 'blib'.IO ~~ :d {
