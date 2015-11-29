@@ -42,25 +42,25 @@ use PDF::DAO::Doc;
 
 sub prefix:</>($name){ PDF::DAO.coerce(:$name) };
 
+my @MediaBox  = 0, 0, 420, 595;
+my %Resources = :Procset[ /'PDF', /'Text'],
+                :Font{
+                    :F1{
+                        :Type(/'Font'),
+                        :Subtype(/'Type1'),
+                        :BaseFont(/'Helvetica'),
+                        :Encoding(/'MacRomanEncoding'),
+                    },
+                };
+
 my $doc = PDF::DAO::Doc.new;
-my $catalog  = $doc.Root          = { :Type(/'Catalog') };
-my $outlines = $catalog<Outlines> = { :Type(/'Outlines'), :Count(0) };
-my $pages    = $catalog<Pages>    = { :Type(/'Pages'), :MediaBox[0, 0, 420, 595] };
+my $root     = $doc.Root       = { :Type(/'Catalog') };
+my $outlines = $root<Outlines> = { :Type(/'Outlines'), :Count(0) };
+my $pages    = $root<Pages>    = { :Type(/'Pages'), :@MediaBox, :%Resources, :Kids[], :Count(0), };
 
-$pages<Resources><Procset> = [ /'PDF', /'Text'];
-$pages<Resources><Font><F1> = {
-        :Type(/'Font'),
-        :Subtype(/'Type1'),
-        :BaseFont(/'Helvetica'),
-        :Encoding(/'MacRomanEncoding'),
-    };
-
-$pages<Kids> = [ { :Type(/'Page') }, ];
-$pages<Count> = + $pages<Kids>;
-my $page = $pages<Kids>[0];
-$page<Parent> = $pages;
-
-$page<Contents> = PDF::DAO.coerce( :stream{ :decoded("BT /F1 24 Tf  100 250 Td (Hello, world!) Tj ET" ) } );
+my $Contents = PDF::DAO.coerce( :stream{ :decoded("BT /F1 24 Tf  100 250 Td (Hello, world!) Tj ET" ) });
+$pages<Kids>.push: { :Type(/'Page'), :Parent($pages), :$Contents };
+$pages<Count>++;
 
 my $info = $doc.Info = {};
 $info.CreationDate = DateTime.now;
@@ -130,19 +130,19 @@ endobj
   /Type /Pages
   /Count 1
   /Kids [ 5 0 R ]
->>
-endobj
-5 0 obj <<
-  /Type /Page
-  /Contents 6 0 R
   /MediaBox [ 0 0 420 595 ]
-  /Parent 4 0 R
   /Resources <<
     /Font <<
       /F1 7 0 R
     >>
     /Procset [ /PDF /Text ]
   >>
+>>
+endobj
+5 0 obj <<
+  /Type /Page
+  /Contents 6 0 R
+  /Parent 4 0 R
 >>
 endobj
 6 0 obj <<
@@ -166,12 +166,12 @@ xref
 0000000114 00000 n 
 0000000185 00000 n 
 0000000235 00000 n 
-0000000300 00000 n 
+0000000413 00000 n 
 0000000482 00000 n 
 0000000580 00000 n 
 trailer
 <<
-  /ID [ <4386DC7BC3489E418B44434E3A168843> <4386DC7BC3489E418B44434E3A168843> ]
+  /ID [ <4386dc7bc3489e418b44434e3a168843> <4386dc7bc3489e418b44434e3a168843> ]
   /Info 1 0 R
   /Root 2 0 R
   /Size 8
