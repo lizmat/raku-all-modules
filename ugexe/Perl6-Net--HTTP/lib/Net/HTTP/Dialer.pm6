@@ -1,6 +1,6 @@
 use Net::HTTP::Interfaces;
 
-my constant CAN-SSL = (try require IO::Socket::SSL) // False;
+my constant CAN-SSL = (try require IO::Socket::SSL) !~~ Nil;
 BEGIN $! = Nil unless CAN-SSL; # avoid serializing a VMException
 
 # Get a scheme appropriate connected socket
