@@ -15,7 +15,7 @@ plan *;
 
     my @results;
     prompt :in($stub), :out($stub), -> Str $i {
-        isa_ok $i, Str, "Block gets Str as specified";
+        isa-ok $i, Str, "Block gets Str as specified";
         @results.push($i);
     };
     
@@ -27,7 +27,7 @@ plan *;
 
     my @results;
     prompt :in($stub), :out($stub), -> Int $i {
-        isa_ok $i, Int, "Block gets Int as specified";
+        isa-ok $i, Int, "Block gets Int as specified";
         @results.push($i);
     };
     
@@ -39,7 +39,7 @@ plan *;
 
     my @results;
     prompt :in($stub), :out($stub), -> Num $i {
-        isa_ok $i, Num, "Block gets Num as specified";
+        isa-ok $i, Num, "Block gets Num as specified";
         @results.push($i);
     };
     
@@ -51,7 +51,7 @@ plan *;
 
     my @results;
     prompt :in($stub), :out($stub), -> Bool $i {
-        isa_ok $i, Bool, "Block gets Bool as specified";
+        isa-ok $i, Bool, "Block gets Bool as specified";
         @results.push($i);
     };
     
@@ -63,7 +63,7 @@ plan *;
 
     my @results;
     prompt :in($stub), :out($stub), -> Str $i where /\D/ {
-        isa_ok $i, Str, "Block gets Str as specified";
+        isa-ok $i, Str, "Block gets Str as specified";
         @results.push($i);
     };
     
@@ -78,7 +78,7 @@ plan *;
 # 
 #     my @results;
 #     prompt :in($stub), :out($stub), -> Coefficient $i {
-#         isa_ok $i, Coefficient, "Block gets Coefficient as specified";
+#         isa-ok $i, Coefficient, "Block gets Coefficient as specified";
 #         @results.push($i);
 #     };
 #     

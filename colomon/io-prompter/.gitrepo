@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/io-prompter.git
 	branch = master
-	commit = baa0cf753eaa35b028cdcf056e20f56570c7e49e
-	parent = 6ed857d174461731995d9155b160b2095bd26f01
+	commit = beb22ee26b58c65a05032f934bf4e055ab45e5f6
+	parent = 81d5c5c2f33d400642af8e2a53f48e697e8ae6c6
 	cmdver = 0.2.2
