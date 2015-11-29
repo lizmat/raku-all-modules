@@ -70,7 +70,7 @@ B<Args> C<$decode-me where Blob|Str, :$pad, :@alpha, Bool :$buf>
 B<Returns> C<Seq|Buf>
 
     decode-base64($decode-me)                  # Decodes a base64 encoded string to a Buf for further decoding
-    encode-base64($encode-me, :buf)            # Return a buffer from the sequence that would be returned
+    decode-base64($encode-me, :buf)            # Return a buffer from the sequence that would be returned
     decode-base64($decode-me, :!pad)           # No padding
     decode-base64($decode-me, :pad("*"))       # Alternative padding character
     decode-base64($decode-me, :uri)            # Use '-' and '_' for chars 63 and 64
