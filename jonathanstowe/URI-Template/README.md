@@ -1,4 +1,4 @@
-# URI::Template
+# URI::Template [![Build Status](https://travis-ci.org/jonathanstowe/URI-Template.svg?branch=master)](https://travis-ci.org/jonathanstowe/URI-Template)
 
 Implementation of https://tools.ietf.org/html/rfc6570 for Perl 6
 

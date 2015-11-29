@@ -98,9 +98,7 @@ recommended to use a different object.
 
 =end pod
 
-class URI::Template:ver<v0.0.1>:auth<github:jonathanstowe> {
-
-    use URI::Encode;
+class URI::Template:ver<v0.0.3>:auth<github:jonathanstowe> {
 
     has Str $.template is rw;
 
@@ -157,7 +155,7 @@ class URI::Template:ver<v0.0.1>:auth<github:jonathanstowe> {
             if @value.elems {
                 my $joiner = self!get-joiner($operator);
                 my &exp = self!get-exploder($operator);
-                my Str $exp-value = @value.map(&uri_encode_component).map(&exp).join($joiner);
+                my Str $exp-value = @value.map(&uri-encode-component).map(&exp).join($joiner);
     
                 $exp-value does PreEncoded;
                 if self!was-exploded($operator) {
@@ -208,11 +206,11 @@ class URI::Template:ver<v0.0.1>:auth<github:jonathanstowe> {
                 my $joiner = self!get-joiner($operator);
                 my &enc = self!get-hash-encoder($operator);
                 if self.explode {
-                    $res = %value.kv.map(&enc).map( -> $k, $v { "$k=$v"}).join($joiner);
+                    $res = %value.kv.map({.Str}).map(&enc).map( -> $k, $v { "$k=$v"}).join($joiner);
                     $res does PreExploded;
                 }
                 else {
-                    $res = %value.kv.map(&enc).join($joiner);
+                    $res = %value.kv.map({.Str}).map(&enc).join($joiner);
                 }
 
                 $res does PreEncoded;
@@ -236,9 +234,24 @@ class URI::Template:ver<v0.0.1>:auth<github:jonathanstowe> {
                         '&'  =>     "&" ,
         );
 
+        #| Get the appropriate character to join elements
         method !get-joiner(Str $operator) returns Str {
             my $joiner = self.explode ?? $operator.defined ?? %joiners{$operator} !! ',' !! ',';
             $joiner;
+        }
+
+        my &enc = sub ($m) {
+            $m.Str.encode.list.map({.fmt('%%%02X')}).join('')
+        }
+
+        my sub uri-encode (Str:D $text)
+        {
+            return $text.subst(/<[\x00..\x10ffff]-[a..zA..Z0..9_.~\!\+\-\#\$\&\+,\/\:;\=\?@]>/, &enc, :g);
+        }
+
+        my sub uri-encode-component (Str:D $text)
+        {
+            return $text.subst(/<[\x00..\x10ffff]-[a..zA..Z0..9_.~\-]>/, &enc, :g);
         }
 
         #| Returns the appropriate encoding sub for the operator
@@ -246,15 +259,15 @@ class URI::Template:ver<v0.0.1>:auth<github:jonathanstowe> {
             my &encoder = do if $operator.defined {
                 given $operator {
                     when /<[\+\#\;\.]>/ {
-                        &uri_encode;
+                        &uri-encode;
                     }
                     default {
-                        &uri_encode_component;
+                        &uri-encode-component;
                     }
                 }
             }
             else {
-                &uri_encode_component;
+                &uri-encode-component;
             }
             &encoder;
         }
@@ -265,15 +278,15 @@ class URI::Template:ver<v0.0.1>:auth<github:jonathanstowe> {
             my &encoder = do if $operator.defined {
                 given $operator {
                     when /<[\+\#]>/ {
-                        &uri_encode;
+                        &uri-encode;
                     }
                     default {
-                        &uri_encode_component;
+                        &uri-encode-component;
                     }
                 }
             }
             else {
-                &uri_encode_component;
+                &uri-encode-component;
             }
             &encoder;
         }
