@@ -29,9 +29,7 @@ class _007::Runtime::Builtins {
                 Nil;
             },
             type     => -> $arg {
-                $arg ~~ Val::Sub
-                    ?? "Sub"
-                    !! $arg.^name.substr('Val::'.chars);
+                $arg.^name.subst(/^ "Val::"/, "").subst(/"::Builtin" $/, "");
             },
             str => &str,
             int => sub ($_) {
@@ -67,94 +65,12 @@ class _007::Runtime::Builtins {
             charat   => -> $s, $pos { $s.value.comb[$pos.value] // die X::Subscript::TooLarge.new(:value($pos.value), :length($s.value.elems)) },
             filter   => -> $fn, $a { $a.elements.grep({ $.runtime.call($fn, [$_]).truthy }) },
             map      => -> $fn, $a { $a.elements.map({ $.runtime.call($fn, [$_]) }) },
+            melt     => sub ($q) {
+                die X::TypeCheck.new(:operation<melt>, :got($q), :expected(Q::Expr))
+                    unless $q ~~ Q::Expr;
+                return $q.eval($.runtime);
+            },
 
-            'Q::Literal::Int' => -> $int { Q::Literal::Int.new(:value($int.value)) },
-            'Q::Literal::Str' => -> $str { Q::Literal::Str.new(:value($str.value)) },
-            'Q::Term::Array' => -> $array { Q::Term::Array.new(:elements($array.elements)) },
-            'Q::Literal::None' => -> { Q::Literal::None.new },
-            'Q::Block' => -> $paramlist, $stmtlist { Q::Block.new(:parameterlist($paramlist), :statementlist($stmtlist)) },
-            'Q::Identifier' => -> $name { Q::Identifier.new(:name($name.value)) },
-            'Q::StatementList' => -> $array { Q::StatementList.new(:statements($array.elements)) },
-            'Q::ParameterList' => -> $array { Q::ParameterList.new(:parameters($array.elements)) },
-            'Q::ArgumentList' => -> $array { Q::ArgumentList.new(:arguments($array.elements)) },
-            'Q::Prefix::Minus' => -> $expr { Q::Prefix::Minus.new(:$expr) },
-            'Q::Infix::Addition' => -> $lhs, $rhs { Q::Infix::Addition.new(:$lhs, :$rhs) },
-            'Q::Infix::Concat' => -> $lhs, $rhs { Q::Infix::Concat.new(:$lhs, :$rhs) },
-            'Q::Infix::Assignment' => -> $lhs, $rhs { Q::Infix::Assignment.new(:$lhs, :$rhs) },
-            'Q::Infix::Eq' => -> $lhs, $rhs { Q::Infix::Eq.new(:$lhs, :$rhs) },
-            'Q::Postfix::Call' => -> $expr, $arglist { Q::Postfix::Call.new(:$expr, :argumentlist($arglist)) },
-            'Q::Postfix::Index' => -> $expr, $pos { Q::Postfix::Index.new(:$expr, :index($pos)) },
-            'Q::Statement::My' => -> $ident, $assign = Any { Q::Statement::My.new(:$ident, :$assign) },
-            'Q::Statement::Constant' => -> $ident, $assign { Q::Statement::Constant.new(:$ident, :$assign) },
-            'Q::Statement::Expr' => -> $expr { Q::Statement::Expr.new(:$expr) },
-            'Q::Statement::If' => -> $expr, $block { Q::Statement::If.new(:$expr, :$block) },
-            'Q::Statement::Block' => -> $block { Q::Statement::Block.new(:$block) },
-            'Q::Statement::Sub' => -> $ident, $block { Q::Statement::Sub.new(:$ident, :$block) },
-            'Q::Statement::Macro' => -> $ident, $block { Q::Statement::Macro.new(:$ident, :$block) },
-            'Q::Statement::Return' => -> $expr = Any { Q::Statement::Return.new(:$expr) },
-            'Q::Statement::For' => -> $expr, $block { Q::Statement::For.new(:$expr, :$block) },
-            'Q::Statement::While' => -> $expr, $block { Q::Statement::While.new(:$expr, :$block) },
-            'Q::Statement::BEGIN' => -> $block { Q::Statement::BEGIN.new(:$block) },
-
-            value => sub ($_) {
-                when Q::Literal::None {
-                    return Val::None.new;
-                }
-                when Q::Term::Array {
-                    return Val::Array.new(:elements(.elements));
-                }
-                when Q::Literal {
-                    return .value;
-                }
-                die X::TypeCheck.new(
-                    :operation<value()>,
-                    :got($_),
-                    :expected("a Q::Literal type that has a value()"));
-            },
-            paramlist => sub ($_) {
-                # XXX: typecheck
-                return .parameterlist.parameters;
-            },
-            stmtlist => sub ($_) {
-                # XXX: typecheck
-                return .statementlist.statements;
-            },
-            expr => sub ($_) {
-                # XXX: typecheck
-                return .expr;
-            },
-            lhs => sub ($_) {
-                # XXX: typecheck
-                return .lhs;
-            },
-            rhs => sub ($_) {
-                # XXX: typecheck
-                return .rhs;
-            },
-            pos => sub ($_) {
-                # XXX: typecheck
-                return .index;
-            },
-            arglist => sub ($_) {
-                # XXX: typecheck
-                return .argumentlist.arguments;
-            },
-            ident => sub ($_) {
-                # XXX: typecheck
-                return .ident;
-            },
-            assign => sub ($_) {
-                # XXX: typecheck
-                return .assignment;
-            },
-            block => sub ($_) {
-                # XXX: typecheck
-                return .block;
-            },
-            name => sub ($_) {
-                # XXX: typecheck
-                return .name;
-            },
             'prefix:<->' => Val::Sub::Builtin.new('prefix:<->',
                 sub ($expr) {
                     die X::TypeCheck.new(:operation<->, :got($expr), :expected(Val::Int))
@@ -186,6 +102,14 @@ class _007::Runtime::Builtins {
                         [&&] $l.elements == $r.elements,
                             |(^$l.elements).map(&equal-at-index);
                     }
+                    multi equal-value(Val::Object $l, Val::Object $r) {
+                        sub equal-at-key(Str $key) {
+                            equal-value($l.properties{$key}, $r.properties{$key});
+                        }
+
+                        [&&] $l.properties.keys.sort.perl eq $r.properties.keys.sort.perl,
+                            |($l.properties.keys).map(&equal-at-key);
+                    }
                     multi equal-value(Val::Block $l, Val::Block $r) {
                         $l.name eq $r.name
                             && equal-value($l.parameterlist, $r.parameterlist)
@@ -199,12 +123,6 @@ class _007::Runtime::Builtins {
                         [&&] $l.WHAT === $r.WHAT,
                             |$l.attributes.map(&same-avalue);
                     }
-                    multi equal-value(@l, @r) { # arrays occur in the internals of Qtrees
-                        sub equal-at-index($i) { equal-value(@l[$i], @r[$i]) }
-
-                        @l == @r && |(^@l).map(&equal-at-index);
-                    }
-                    multi equal-value(Str $l, Str $r) { $l eq $r } # strings do too
 
                     # converting Bool->Int because the implemented language doesn't have Bool
                     return wrap(+equal-value($lhs, $rhs));
@@ -242,7 +160,9 @@ class _007::Runtime::Builtins {
 
         sub create-paramlist(@params) {
             Q::ParameterList.new(:parameters(
-                @params».name».substr(1).map({ Q::Identifier.new(:name($_)) })
+                Val::Array.new(:elements(@params».name».substr(1).map({
+                    Q::Identifier.new(:name(Val::Str.new(:value($_))))
+                })))
             ));
         }
 

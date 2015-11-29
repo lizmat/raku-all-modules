@@ -115,4 +115,60 @@ use _007::Test;
         "the object property doesn't exist on that type";
 }
 
+{
+    my $program = q:to/./;
+        my q = Q::Identifier { name: "foo" };
+
+        say(type(q));
+        .
+
+    outputs
+        $program,
+        qq[Q::Identifier\n],
+        "an object literal is of the declared type";
+}
+
+{
+    my $program = q:to/./;
+        my q = Object { foo: 42 };
+
+        say(q.foo);
+        .
+
+    outputs
+        $program,
+        qq[42\n],
+        "can create a Val::Object by explicitly naming 'Object'";
+}
+
+{
+    my $program = q:to/./;
+        my i = Int { value: 7 };
+        my s = Str { value: "Bond" };
+        my a = Array { elements: [0, 0, 7] };
+        my n = None {};
+
+        say(i == 7);
+        say(s == "Bond");
+        say(a == [0, 0, 7]);
+        say(n == None);
+        .
+
+    outputs
+        $program,
+        qq[1\n1\n1\n1\n],
+        "can create normal Val:: objects using typed object literals";
+}
+
+{
+    my $program = q:to/./;
+        my q = Q::Identifier {};
+        .
+
+    parse-error
+        $program,
+        X::Property::Required,
+        "need to specify required properties on objects";
+}
+
 done-testing;

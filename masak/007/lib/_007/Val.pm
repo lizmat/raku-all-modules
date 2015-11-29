@@ -2,6 +2,10 @@ role Val {
     method truthy {
         True
     }
+
+    method attributes {
+        self.^attributes
+    }
 }
 
 role Val::None does Val {
@@ -104,7 +108,7 @@ role Val::Block does Val {
     }
 
     method pretty-params {
-        sprintf "(%s)", $.parameterlist».name.join(", ");
+        sprintf "(%s)", $.parameterlist.parameters.elements».name.join(", ");
     }
     method Str { "<block {$.pretty-params}>" }
 }

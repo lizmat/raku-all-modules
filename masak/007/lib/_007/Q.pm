@@ -39,15 +39,8 @@ class X::PropertyNotFound is Exception {
 role Q {
     method Str {
         sub pretty($_) {
-            when Any:U { return "None" }
-            when Array {
-                return .elems == 0
-                    ?? "[]"
-                    !! .elems == 1 && .[0].Str.lines == 1
-                        ?? "[{.[0].Str}]"
-                        !! "[\n{.map({.Str}).join(",\n").indent(4)}\n]"
-            }
-            when Str { return .perl }
+            when Val::Array { return .quoted-Str }
+            when Val::Str { return .quoted-Str }
             default { return .Str }
         }
         sub aname($attr) { $attr.name.substr(2) }
@@ -63,6 +56,10 @@ role Q {
         }
         my $contents = @attrs.map(&keyvalue).join(",\n").indent(4);
         return "{self.^name} \{\n$contents\n\}";
+    }
+
+    method quoted-Str {
+        self.Str
     }
 
     method attributes {
@@ -87,18 +84,24 @@ role Q::Literal::None does Q::Literal {
 }
 
 role Q::Literal::Int does Q::Literal {
-    has $.value;
+    has Val::Int $.value;
 
-    method eval($) { Val::Int.new(:$.value) }
+    method eval($) { $.value }
     method interpolate($) { self }
 }
 
 role Q::Literal::Str does Q::Literal {
-    has $.value;
+    has Val::Str $.value;
 
-    method eval($) {
-        my $value = $.value.subst(q[\"], q["], :g).subst(q[\\\\], q[\\], :g);
-        Val::Str.new(:$value);
+    method eval($) { $.value }
+    method interpolate($) { self }
+}
+
+role Q::Identifier does Q::Expr {
+    has Val::Str $.name;
+
+    method eval($runtime) {
+        return $runtime.get-var($.name.value);
     }
     method interpolate($) { self }
 }
@@ -107,10 +110,10 @@ role Q::Term does Q::Expr {
 }
 
 role Q::Term::Array does Q::Term {
-    has @.elements;
+    has Val::Array $.elements;
 
     method eval($runtime) {
-        Val::Array.new(:elements(@.elements>>.eval($runtime)));
+        Val::Array.new(:elements($.elements.elements».eval($runtime)));
     }
     method interpolate($runtime) {
         self.new(:elements(@.elements».interpolate($runtime)));
@@ -120,23 +123,40 @@ role Q::Term::Array does Q::Term {
 role Q::Expr::Block { ... }
 
 role Q::Term::Object does Q::Term {
-    has $.type;
+    has Q::Identifier $.type;
     has $.propertylist;
 
     method eval($runtime) {
-        Val::Object.new(:properties(
-            $.propertylist.properties.map({.key => .value.eval($runtime)})
-        ));
+        if $.type.name.value eq "Object" {
+            return Val::Object.new(:properties(
+                $.propertylist.properties.elements.map({.key.value => .value.eval($runtime)})
+            ));
+        }
+        elsif $.type.name.value eq "Int" | "Str" {
+            return types(){$.type.name.value}.new(
+                :value($.propertylist.properties.elements[0].value.eval($runtime).value)
+            );
+        }
+        elsif $.type.name.value eq "Array" {
+            return types(){$.type.name.value}.new(
+                :elements($.propertylist.properties.elements[0].value.eval($runtime).elements)
+            );
+        }
+        else {
+            return types(){$.type.name.value}.new(
+                |%($.propertylist.properties.elements.map({.key.value => .value.eval($runtime)}))
+            );
+        }
     }
 }
 
 role Q::Property does Q {
-    has $.key;
+    has Val::Str $.key;
     has $.value;
 }
 
 role Q::PropertyList does Q {
-    has @.properties handles <elems Numeric Real list>;
+    has Val::Array $.properties = Val::Array.new;
     method interpolate($runtime) {
         self.new(:properties(@.properties».interpolate($runtime)));
     }
@@ -183,15 +203,6 @@ role Q::Expr::Block does Q::Block {
             :$.outer-frame
         );
     }
-}
-
-role Q::Identifier does Q::Expr {
-    has $.name;
-
-    method eval($runtime) {
-        return $runtime.get-var($.name);
-    }
-    method interpolate($) { self }
 }
 
 role Q::Unquote does Q {
@@ -253,7 +264,7 @@ role Q::Infix::Assignment does Q::Infix["<=>"] {
         die "Needs to be an identifier on the left"     # XXX: Turn this into an X::
             unless $.lhs ~~ Q::Identifier;
         my $value = $.rhs.eval($runtime);
-        $runtime.put-var($.lhs.name, $value);
+        $runtime.put-var($.lhs.name.value, $value);
         return $value;
     }
 }
@@ -315,7 +326,7 @@ role Q::Postfix::Call does Q::Postfix["<(>"] {
             if $c ~~ Val::Macro;
         die "Trying to invoke a {$c.^name.subst(/^'Val::'/, '')}" # XXX: make this into an X::
             unless $c ~~ Val::Block;
-        my @args = $.argumentlist».eval($runtime);
+        my @args = $.argumentlist.arguments.elements».eval($runtime);
         return $runtime.call($c, @args);
     }
     method interpolate($runtime) {
@@ -330,7 +341,7 @@ role Q::Postfix::Property does Q::Postfix["<.>"] {
 
     method eval($runtime) {
         my $obj = $.expr.eval($runtime);
-        my $propname = $.ident.name;
+        my $propname = $.ident.name.value;
         $runtime.property($obj, $propname);
     }
 
@@ -340,16 +351,16 @@ role Q::Postfix::Property does Q::Postfix["<.>"] {
 }
 
 role Q::ParameterList does Q {
-    has @.parameters handles <elems Numeric Real list>;
+    has Val::Array $.parameters = Val::Array.new;
     method interpolate($runtime) {
-        self.new(:parameters(@.parameters».interpolate($runtime)));
+        self.new(:parameters(Val::Array.new(:elements($.parameters.elements».interpolate($runtime)))));
     }
 }
 
 role Q::ArgumentList does Q {
-    has @.arguments handles <elems Numeric Real list>;
+    has Val::Array $.arguments = Val::Array.new;
     method interpolate($runtime) {
-        self.new(:arguments(@.arguments».interpolate($runtime)));
+        self.new(:arguments(Val::Array.new(:elements($.arguments.elements».interpolate($runtime)))));
     }
 }
 
@@ -364,14 +375,14 @@ role Q::Statement::My does Q::Statement {
 
     method run($runtime) {
         return
-            unless $.expr;
+            unless $.expr !~~ Val::None;
         my $value = $.expr.eval($runtime);
-        $runtime.put-var($.ident.name, $value);
+        $runtime.put-var($.ident.name.value, $value);
     }
     method interpolate($runtime) {
         self.new(
             :ident($.ident.interpolate($runtime)),
-            :expr($.expr === Any ?? Any !! $.expr.interpolate($runtime)));
+            :expr($.expr ~~ Val::None ?? $.expr !! $.expr.interpolate($runtime)));
     }
 }
 
@@ -387,7 +398,7 @@ role Q::Statement::Constant does Q::Statement {
     method interpolate($runtime) {
         self.new(
             :ident($.ident.interpolate($runtime)),
-            :expr($.expr === Any ?? Any !! $.expr.interpolate($runtime)));   # XXX: and here
+            :expr($.expr ~~ Val::None ?? $.expr !! $.expr.interpolate($runtime)));   # XXX: and here
     }
 }
 
@@ -417,8 +428,8 @@ role Q::Statement::If does Q::Statement {
             die X::ParameterMismatch.new(
                 :type("If statement"), :$paramcount, :argcount("0 or 1"))
                 if $paramcount > 1;
-            for @($c.parameterlist) Z $expr -> ($param, $arg) {
-                $runtime.declare-var($param.name, $arg);
+            for @($c.parameterlist.parameters.elements) Z $expr -> ($param, $arg) {
+                $runtime.declare-var($param.name.value, $arg);
             }
             $.block.statementlist.run($runtime);
             $runtime.leave;
@@ -467,7 +478,7 @@ role Q::Statement::For does Q::Statement {
         }
 
         my $c = $.block.eval($runtime);
-        my $count = $c.parameterlist.elems;
+        my $count = $c.parameterlist.parameters.elements.elems;
 
         my $array = $.expr.eval($runtime);
         die X::TypeCheck.new(:operation("for loop"), :got($array), :expected(Val::Array))
@@ -483,8 +494,8 @@ role Q::Statement::For does Q::Statement {
         else {
             for split_elements($array.elements, $count) -> $arg {
                 $runtime.enter($c);
-                for @($c.parameterlist) Z $arg.list -> ($param, $real_arg) {
-                    $runtime.declare-var($param.name, $real_arg);
+                for @($c.parameterlist.parameters.elements) Z $arg.list -> ($param, $real_arg) {
+                    $runtime.declare-var($param.name.value, $real_arg);
                 }
                 $.block.statementlist.run($runtime);
                 $runtime.leave;
@@ -506,12 +517,12 @@ role Q::Statement::While does Q::Statement {
         while (my $expr = $.expr.eval($runtime)).truthy {
             my $c = $.block.eval($runtime);
             $runtime.enter($c);
-            my $paramcount = $c.parameterlist.elems;
+            my $paramcount = $c.parameterlist.parameters.elements.elems;
             die X::ParameterMismatch.new(
                 :type("While loop"), :$paramcount, :argcount("0 or 1"))
                 if $paramcount > 1;
-            for @($c.parameterlist) Z $expr -> ($param, $arg) {
-                $runtime.declare-var($param.name, $arg);
+            for @($c.parameterlist.parameters.elements) Z $expr -> ($param, $arg) {
+                $runtime.declare-var($param.name.value, $arg);
             }
             $.block.statementlist.run($runtime);
             $runtime.leave;
@@ -526,7 +537,7 @@ role Q::Statement::Return does Q::Statement {
     has $.expr;
 
     method run($runtime) {
-        my $value = $.expr === Any ?? Val::None.new !! $.expr.eval($runtime);
+        my $value = $.expr ~~ Val::None ?? $.expr !! $.expr.eval($runtime);
         my $frame = $runtime.get-var("--RETURN-TO--");
         die X::Control::Return.new(:$value, :$frame);
     }
@@ -575,15 +586,15 @@ role Q::Statement::BEGIN does Q::Statement {
 }
 
 role Q::StatementList does Q {
-    has @.statements handles <elems Numeric Real list>;
+    has Val::Array $.statements = Val::Array.new;
 
     method run($runtime) {
-        for @.statements -> $statement {
+        for $.statements.elements -> $statement {
             $statement.run($runtime);
         }
     }
     method interpolate($runtime) {
-        self.new(:statements(@.statements».interpolate($runtime)));
+        self.new(:statements(Val::Array.new(:elements($.statements.elements».interpolate($runtime)))));
     }
 }
 
@@ -611,4 +622,51 @@ role Q::Term::Quasi does Q::Term {
         # interpolated in the context of the outer quasi. is this correct?
         # can we come up with a case where it matters?
     }
+}
+
+sub types() is export {
+    return %(
+        "None"                   => Val::None,
+        "Int"                    => Val::Int,
+        "Str"                    => Val::Str,
+        "Array"                  => Val::Array,
+        "Object"                 => Val::Object,
+        "Q::Identifier"          => Q::Identifier,
+        "Q::Literal::None"       => Q::Literal::None,
+        "Q::Literal::Int"        => Q::Literal::Int,
+        "Q::Literal::Str"        => Q::Literal::Str,
+        "Q::Term::Array"         => Q::Term::Array,
+        "Q::Term::Object"        => Q::Term::Object,
+        "Q::Property"            => Q::Property,
+        "Q::PropertyList"        => Q::PropertyList,
+        "Q::Block"               => Q::Block,
+        "Q::Expr::Block"         => Q::Expr::Block,
+        "Q::Identifier"          => Q::Identifier,
+        "Q::Unquote"             => Q::Unquote,
+        "Q::Prefix::Minus"       => Q::Prefix::Minus,
+        "Q::Infix::Addition"     => Q::Infix::Addition,
+        "Q::Infix::Concat"       => Q::Infix::Concat,
+        "Q::Infix::Assignment"   => Q::Infix::Assignment,
+        "Q::Infix::Eq"           => Q::Infix::Eq,
+        "Q::Postfix::Index"      => Q::Postfix::Index,
+        "Q::Postfix::Call"       => Q::Postfix::Call,
+        "Q::Postfix::Property"   => Q::Postfix::Property,
+        "Q::ParameterList"       => Q::ParameterList,
+        "Q::ArgumentList"        => Q::ArgumentList,
+        "Q::Statement::My"       => Q::Statement::My,
+        "Q::Statement::Constant" => Q::Statement::Constant,
+        "Q::Statement::Expr"     => Q::Statement::Expr,
+        "Q::Statement::If"       => Q::Statement::If,
+        "Q::Statement::Block"    => Q::Statement::Block,
+        "Q::CompUnit"            => Q::CompUnit,
+        "Q::Statement::For"      => Q::Statement::For,
+        "Q::Statement::While"    => Q::Statement::While,
+        "Q::Statement::Return"   => Q::Statement::Return,
+        "Q::Statement::Sub"      => Q::Statement::Sub,
+        "Q::Statement::Macro"    => Q::Statement::Macro,
+        "Q::Statement::BEGIN"    => Q::Statement::BEGIN,
+        "Q::StatementList"       => Q::StatementList,
+        "Q::Trait"               => Q::Trait,
+        "Q::Term::Quasi"         => Q::Term::Quasi,
+    );
 }
