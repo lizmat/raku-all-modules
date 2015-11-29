@@ -1,5 +1,5 @@
 use v6;
-class JSON5::Tiny::Actions;
+unit class JSON5::Tiny::Actions;
 
 method TOP($/) {
     make $/.values.[0].ast;

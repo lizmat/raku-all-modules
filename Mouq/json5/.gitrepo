@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Mouq/json5.git
 	branch = master
-	commit = 66d040a228d2e5c7e3f61bc353c30909378277c7
-	parent = dd8f197ee36bfaf00fd28c8ed14dc496e3a59aa1
-	cmdver = 0.1.0
+	commit = b2968f31859596336e59a05ebe1226c1bcfaf698
+	parent = 0fb3d37f54fdf5390e63dd2a60b3724fcef639c3
+	cmdver = 0.2.2

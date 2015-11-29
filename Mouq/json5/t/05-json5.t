@@ -1,6 +1,4 @@
 use v6;
-BEGIN { @*INC.push('lib') }
-
 use JSON5::Tiny::Grammar;
 use Test;
 

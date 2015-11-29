@@ -14,7 +14,7 @@ It supports strings, numbers, arrays and hashes (no custom objects).
 
 =end pod
 
-module JSON5::Tiny;
+unit module JSON5::Tiny;
 
 use JSON5::Tiny::Actions;
 use JSON5::Tiny::Grammar;

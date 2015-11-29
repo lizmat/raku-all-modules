@@ -1,5 +1,5 @@
 use v6;
-grammar JSON5::Tiny::Grammar;
+unit grammar JSON5::Tiny::Grammar;
 
 rule TOP        { ^ [ <object> | <array> ] $ }
 rule object     { '{' ~ '}' <pairlist>       }

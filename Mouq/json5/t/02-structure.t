@@ -1,5 +1,4 @@
 use v6;
-BEGIN { @*INC.push('lib') };
 use JSON5::Tiny;
 use Test;
 
@@ -12,7 +11,7 @@ my @t =
    '["\t\n"]'    => ["\t\n"],
    '["\""]'      => ['"'],
    '[{ "foo" : { "bar" : 3 } }, 78]' => [{ foo => { bar => 3 }}, 78],
-   '[{ "a" : 3, "b" : 4 }]' => [{ a => 3, b => 4}],
+   '[{ "a" : 3, "b" : 4 }]' => [{ a => 3, b => 4},],
     Q<<{
     "glossary": {
         "title": "example glossary",
@@ -62,7 +61,7 @@ plan +@t;
 
 for @t -> $p {
     my $s = from-json($p.key);
-    is_deeply $s, $p.value, 
+    is-deeply $s, $p.value, 
         "Correct data structure for «{$p.key.subst(/\n/, '\n', :g)}»";
 }
 
