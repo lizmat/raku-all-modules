@@ -1,5 +1,5 @@
 use v6;
-BEGIN { @*INC.push: '../lib' };
+use lib 'lib', '../lib';
 
 use Math::Model;
 

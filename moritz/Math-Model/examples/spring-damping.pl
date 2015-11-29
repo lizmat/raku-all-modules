@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 use v6;
-BEGIN { @*INC.push: 'lib', '../lib' };
+use lib 'lib', '../lib';
 
 use Math::Model;
 
