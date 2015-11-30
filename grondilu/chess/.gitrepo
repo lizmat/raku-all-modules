@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/grondilu/chess.git
 	branch = master
-	commit = 3490c0b5b588e9ff1cfa0a663a5cffdeba2903ad
-	parent = e432f2b71d0ce13106fb344b47178c0d0310fc7c
+	commit = 5c3547dfd2ba4616815d73e2851c0b40fc28e22a
+	parent = df31d573aeadcfe186318cc473b25b9425119953
 	cmdver = 0.2.2
