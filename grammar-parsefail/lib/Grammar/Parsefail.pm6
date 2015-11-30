@@ -63,13 +63,13 @@ class Grammar::Parsefail is Grammar {
         }
 
         # now to find the right line number
-        my $line-number = $at == $text.chars ?? +@!nl-list !! @!nl-list.first-index(* >= $at) + 1; # +1 for zero-index to line numbers
+        my $line-number = $at == $text.chars ?? +@!nl-list !! @!nl-list.first(* >= $at, :k) + 1; # +1 for zero-index to line numbers
 
         # and now the column
         my $col-number = $line-number == 1 ?? $at !! @!nl-list[$line-number - 1] - $at - 1;
 
-        # hackish correction for EOF pointer
-        $col-number = $text.lines[*-1].chars if $col-number < 0;
+        # hackish correction for EOF and other empty lines
+        $col-number = $text.lines[$line-number - 1].chars if $col-number < 0;
 
         return ($line-number, $col-number);
     }
@@ -77,9 +77,11 @@ class Grammar::Parsefail is Grammar {
     method !takeline(Str $fromthis, Int $lineno) { $fromthis.lines[$lineno - 1] }
 
     method !make-ex($/, Exception $type, %opts is copy) {
-        my $linecol = self!linecol($/.orig, $/.to);
+        $¢ = $/.CURSOR;
+        $¢.'!cursor_pos'($¢.'!highwater'()) if $¢.'!highwater'() >= $¢.pos;
+        my $linecol = self!linecol($¢.orig, $¢.pos);
 
-        my $fled-line = self!takeline($/.orig, $linecol[0]);
+        my $fled-line = self!takeline($¢.orig, $linecol[0]);
 
         %opts<goodpart> = $fled-line.substr(0, $linecol[1]);
         %opts<badpart>  = $fled-line.substr($linecol[1]);
