@@ -38,22 +38,14 @@ class X::PropertyNotFound is Exception {
 
 role Q {
     method Str {
-        sub pretty($_) {
-            when Val::Array { return .quoted-Str }
-            when Val::Str { return .quoted-Str }
-            default { return .Str }
-        }
         sub aname($attr) { $attr.name.substr(2) }
         sub avalue($attr) { $attr.get_value(self) }
 
         my @attrs = self.attributes;
         if @attrs == 1 {
-            return "{self.^name} {pretty(avalue(@attrs[0]))}";
+            return "{self.^name} { avalue(@attrs[0]).Str }";
         }
-        sub keyvalue($attr) { aname($attr) ~ ": " ~ pretty(avalue($attr)) }
-        if @attrs == 2 && aname(@attrs[1]) eq "expr" {  # prefix or postfix
-            @attrs .= reverse;  # because it looks nicer to have expr first
-        }
+        sub keyvalue($attr) { aname($attr) ~ ": " ~ avalue($attr) }
         my $contents = @attrs.map(&keyvalue).join(",\n").indent(4);
         return "{self.^name} \{\n$contents\n\}";
     }
@@ -117,6 +109,21 @@ role Q::Term::Array does Q::Term {
     }
     method interpolate($runtime) {
         self.new(:elements(@.elements».interpolate($runtime)));
+    }
+}
+
+role Q::Term::Quasi does Q::Term {
+    has $.block;
+
+    method eval($runtime) {
+        return $.block.interpolate($runtime);
+    }
+    method interpolate($runtime) {
+        self.new(:block($.block.interpolate($runtime)));
+        # XXX: the fact that we keep interpolating inside of the quasi means
+        # that unquotes encountered inside of this inner quasi will be
+        # interpolated in the context of the outer quasi. is this correct?
+        # can we come up with a case where it matters?
     }
 }
 
@@ -606,21 +613,6 @@ role Q::Trait does Q {
 
     method interpolate($runtime) {
         self.new(:ident($.ident.interpolate($runtime)), :expr($.expr.interpolate($runtime)));
-    }
-}
-
-role Q::Term::Quasi does Q::Term {
-    has $.block;
-
-    method eval($runtime) {
-        return $.block.interpolate($runtime);
-    }
-    method interpolate($runtime) {
-        self.new(:block($.block.interpolate($runtime)));
-        # XXX: the fact that we keep interpolating inside of the quasi means
-        # that unquotes encountered inside of this inner quasi will be
-        # interpolated in the context of the outer quasi. is this correct?
-        # can we come up with a case where it matters?
     }
 }
 
