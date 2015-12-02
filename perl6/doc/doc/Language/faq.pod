@@ -15,15 +15,20 @@ be used loosely and interchangeably.
 
 =head2 As a Perl 6 beginner what should I install?
 
-If you are a Linux or Mac user you probably want to download Rakudo Star and
-install via compilation (a simple process) the MoarVM version available from
-L<http://rakudo.org/downloads/star/|http://rakudo.org/downloads/star>.
+Linux or Mac users probably want to download Rakudo Star and
+install via compilation (a simple process) the MoarVM based version available
+from L<http://rakudo.org/downloads/star/|http://rakudo.org/downloads/star>.
+
+Compilation needs a C compiler and Perl 5 installed.
 
 Or there is an official rakudo star docker image at
 L<https://hub.docker.com/_/rakudo-star/>
 
 If you are a Windows 32 or 64 bit user then Rakudo Star binaries are also
 available at the rakudo site. You will need Windows Git to use panda.
+
+To use panda (see below) to install library modules you will need git and Perl
+5's Test::Harness.
 
 There should be Linux and Mac binaries available shortly from vendors and third
 parties. Although vendor versions may be outdated.
@@ -197,18 +202,26 @@ Likewise C<:U> constrains to undefined values, that is, type objects.
 
 To explicitly allow either type objects or instances, you can use C<:_>.
 
-=head2 What is the --> thing in the signature?
+=head2 What is the C<< --> >> thing in the signature?
 
---> is a return constraint checked at compile time.
+C<< --> >> is a return constraint, either a type or a definite value.
 
-Example:
+Example of a type constraint:
 
-    sub foo ( Int $a, Int $b --> Int ) {
-            return $a + $b;
+    sub divide-to-int( Int $a, Int $b --> Int ) {
+            return ($a / $b).narrow;
     }
 
-    foo(2,3.1)
-    # ===SORRY!===  ... Calling foo(Int, Rat) will never work with declared signature (Int $a, Int $b --> Int)
+    divide-to-int(3, 2)
+    # Type check failed for return value; expected Int but got Rat
+
+Example of a definite return value:
+
+    sub discard-random-number( --> 42 ) { rand }
+    say discard-random-number
+    # 42
+
+In this case the final value is thrown away because the return value is already specified.
 
 =head2 How can I extract the values from a Junction?
 
@@ -279,11 +292,13 @@ There are several reasons:
 
 =item they make it easy to interpolate variables into strings
 
-=item they form micro-namespaces for different variables, thus avoiding name clashes
+=item they form micro-namespaces for different variables and twigils, thus avoiding name clashes
 
 =item they allow easy single/plural distinction
 
-=item many natural languages use mandatory noun markers, so our brains are built to handle it
+=item they work like natural languages that use mandatory noun markers, so our brains are built to handle it
+
+=item they aren't mandatory, since you can declare sigilless names (if you don't mind the ambiguity)
 
 
 =head2 Does Perl 6 have coroutines? What about C<yield>?
@@ -301,7 +316,7 @@ routines that return lazy lists:
 
     # second method, use .map or similar method
     # on a lazy list
-    my @squares = (1..*).map(-> $x { $x * $x });
+    my @squares = (1..*).map(-> \x { x² });
 
 =head2 Why can't I initialize private attributes from the new method, and how can I fix this?
 
@@ -337,6 +352,10 @@ for more details) with all the named arguments that the user passes to the
 constructor. C<:$!x> is a named parameter with name C<x>, and when called
 with a named argument of name C<x>, its value is bound to the attribute C<$!x>.
 
+But don't do that.  If the name is public, there is no downside to
+declaring it that way with C<$.x> since the external view is readonly
+by default, and you can still access it internally with C<$!x>.
+
 =head2 How and why do C<say> and C<print> differ?
 
 The most obvious difference is that C<say> appends a newline at the
@@ -362,6 +381,7 @@ nothing in that value except the type).
 
 So C<say> is optimized for debugging and display to people, C<print>
 is more suitable for producing output for other programs to consume.
+(Use C<put> if you want C<print> semantics with a newline.)
 
 =head2 What's the difference between C<token> and C<rule> ?
 
@@ -384,25 +404,24 @@ C<regex> declares a plain regex without any implied modifiers.
 
 C<die> throws an exception.
 
-If C<use fatal;> (which is dynamically scoped) is in scope, C<fail> also
-throws an exception. Otherwise it returns a C<Failure> from the routine
-it is called from.
+C<fail> returns a C<Failure> object.  (If the caller has declared C<use fatal;>
+in the calling lexical scope, C<fail> throws an exception instead of returning.)
 
-A C<Failure> is an "unthrown" or "soft" exception. It is an object that
-contains the exception, and throws the exception when the Failure is used
-as an ordinary object.
+A C<Failure> is an "unthrown" or "lazy" exception. It is an object that
+contains the exception, and throws the exception if you try to use the C<Failure>
+as an ordinary object, or ignore it in sink context.
 
-A Failure returns False from a C<defined> check, and you can extract
+A C<Failure> returns C<False> from a C<defined> check, and you can extract
 the exception with the C<exception> method.
 
 =head2 Why is C<wantarray> or C<want> gone? Can I return different things in different contexts?
 
 Perl 5 has the C<wantarray> function that tells you whether it is called in
 void, scalar or list context. Perl 6 has no equivalent construct,
-because context does not flow inwards, i.e. a routine cannot know which
-context it is called in.
+because context does not flow inwards, i.e. a routine would need time travel to know which
+context it is called in because context is lazy, known only when the results are used later.
 
-One reason is that Perl 6 has multi dispatch, and in a code example like
+For example, Perl 6 has multiple dispatch, so in a code example like
 
     multi w(Int $x) { say 'Int' }
     multi w(Str $x) { say 'Str' }
@@ -429,10 +448,8 @@ decision. As they (both the language and the implementations) evolve, they
 grow steadily more usable. Depending on your demands on a programming
 language, Perl 6 and its compilers might or might not be ready for you.
 
-Please see the L<feature comparison
-matrix|http://perl6.org/compilers/features> for an overview of implemented
-features.
-
+That said, version 6c (Christmas 2015) is the first official release of Perl 6
+as a language, along with a validation suite and a compiler that passes it.
 
 =head2 Why should I learn Perl 6? What's so great about it?
 
@@ -458,8 +475,7 @@ Unlike most languages, it offers
 
 =item  optional type annotations
 
-=item  powerful run-time multi dispatch for both subroutines and methods based on
-  arity, types and additional code constraints
+=item  powerful run-time multi dispatch for both subroutines and methods based on arity, types and additional code constraints
 
 =item lexical imports
 
@@ -501,16 +517,15 @@ features.
 
 That depends on what you are doing. Rakudo has been developed with the
 philosophy of "make it work right then make it work fast". It's fast for some
-things already but needs work on others.
+things already but needs work on others.  After the Christmas 2015 release stabilizes
+the definition of the language, we'll be spending much of our effort on optimizing in 2016.
+Since Perl 6 provides lots of clues to the JIT that other dynamic languages don't, we think
+we'll have a lot of headroom for performance improvements.  Some things already
+run faster than Perl 5.
 
-Perl 6 is mostly being worked on by volunteers but it's expected that Perl 6
-performance will improve in the near future since the MoarVM backend contains a
-modern Just In Time (JIT) compiler.
-
-Perl 5 programmers should be aware that Perl 6 comes with more built in in
-terms of object orientation and much else. Simple benchmarks will be misleading
-unless you include things like Moose, type checking modules etc. in your Perl 5
-script.
+Perl 5 programmers should be aware that Perl 6 comes with more built-in
+functionality.  Simple benchmarks will be misleading unless you include
+things like Moose, type checking modules etc. in your Perl 5 script.
 
 The following crude benchmarks, with all the usual caveats about such things,
 can show Perl 6 can be faster than Perl 5 for some similar common tasks if
