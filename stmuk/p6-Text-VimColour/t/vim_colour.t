@@ -2,8 +2,7 @@
 
 use v6;
 
-BEGIN { @*INC.unshift( 'lib' ) }
-
+use lib 'lib';
 use Test;
 use Text::VimColour;
 
@@ -23,7 +22,7 @@ ok $c.html ~~ /vimCodeElement/, 'to temp file';
 
 my $x = Text::VimColour.new(:lang('perl6'), code => 'use v6; BEGIN {}; ');
 ok $x.html-full-page ~~ /vimCodeElement/, 'from string';
-ok $x.html-full-page ~~ /'<span class="PreProc">use</span> <span class="Statement">'/, 'colour syntax present';
+ok $x.html-full-page ~~ /'<span class="PreProc">use</span>'/, 'colour syntax present';
 
 ok $x.html ~~ /vimCodeElement/, 'body';
 ok $x.css ~~ /background/, 'css';
