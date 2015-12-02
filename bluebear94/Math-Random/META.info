@@ -1,0 +1,13 @@
+{
+    "name" : "Math::Random",
+    "version" : "0.1.0",
+    "description" : "Random numbers à la java.util.Random.",
+    "author" : "Tae Lim Kook",
+    "provides" : {
+        "Math::Random" : "lib/Math/Random.pm6",
+        "Math::Random::JavaStyle" : "lib/Math/Random/JavaStyle.pm6",
+        "Math::Random::MT" : "lib/Math/Random/MT.pm6"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/bluebear94/Math-Random.git"
+}
