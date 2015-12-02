@@ -20,7 +20,7 @@ sub MAIN(Str :$prefix is copy) {
     my $repo;
     $prefix = "$CWD/$prefix" if defined($prefix) && $is_win && $prefix !~~ /^ '/' /;
     my @repos = $*REPO.repo-chain.grep(CompUnit::Repository::Installable).grep(*.can-install);
-    for grep(*.defined, flat $prefix, @repos, %*CUSTOM_LIB<site home>) -> $target {
+    for grep(*.defined, flat $prefix, %*CUSTOM_LIB<site home>, @repos) -> $target {
         if $target ~~ CompUnit::Repository {
             $prefix = $target.path-spec;
             $repo   = $prefix;
@@ -61,7 +61,7 @@ sub MAIN(Str :$prefix is copy) {
     );
 
     my $prefix_str = $prefix ?? "--prefix=$prefix" !! '';
-    shell "$*EXECUTABLE --ll-exception bin/panda $prefix_str install $*CWD";
+    shell "$*EXECUTABLE --ll-exception bin/panda --force $prefix_str install $*CWD";
     say "==> Please make sure that $prefix/bin is in your PATH";
 
     unlink "$panda-base/projects.json";
