@@ -9,7 +9,7 @@ method find(Str $lib, Str $base, :$keep-filename, :$return-original, :$throw) {
     for @*INC -> $_ is copy {
         $_ = CompUnitRepo.new($_);
         my $base = $b;
-        if $_ ~~ CompUnitRepo::Local::File {
+        if ($_ ~~ CompUnitRepo::Local::File) {
             # CUR::Local::File has screwed up .files semantics
             $base = $_.IO ~ '/' ~ $base;
         }
