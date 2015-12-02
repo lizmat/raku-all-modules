@@ -5,6 +5,22 @@ use BSON::Document;
 #-------------------------------------------------------------------------------
 subtest {
 
+  my BSON::Document $d .= new;
+  my Buf $b = $d.encode;
+  
+  is $b, Buf.new( 0x05, 0x00 xx 4), 'Empty doc encoded ok';
+
+  $d .= new;
+  $d.decode($b);
+  
+  is $d.elems, 0, 'No items in decoded doc';
+
+}, "Empty document";
+
+
+#-------------------------------------------------------------------------------
+subtest {
+
   my BSON::Document $d .= new: ('a' ... 'z') Z=> 120..145;
   is $d.^name, 'BSON::Document', 'Isa ok';
 
@@ -106,7 +122,7 @@ subtest {
   is ($d.values)[*-1], 145, "Last value is 145";
   is ($d.keys)[3], 'd', "4th key is 'd'";
   is ($d.values)[3], 123, '4th value is 123';
-  
+
 }, "Test document, other";
 
 #-------------------------------------------------------------------------------
@@ -155,17 +171,31 @@ subtest {
     }
   }
 
+}, "Document nesting 1";
+
+#-------------------------------------------------------------------------------
+subtest {
+
   # Try nesting with k => v
   #
-  $d .= new;
+  my BSON::Document $d .= new;
   $d<abcdef> = a1 => 10, bb => 11;
   is $d<abcdef><a1>, 10, "sub document \$d<abcdef><a1> = $d<abcdef><a1>";
 
   $d<abcdef><b1> = q => 255;
   is $d<abcdef><b1><q>, 255,
      "sub document \$d<abcdef><b1><q> = $d<abcdef><b1><q>";
+  $d.encode;
 
-}, "Document nesting";
+
+  $d .= new;
+  $d<a> = v1 => v2 => 'v3';
+  is $d<a><v1><v2>, 'v3', "\$d<a><v1><v2> = $d<a><v1><v2>";
+  $d<a><v1><w3> = 110;
+  is $d<a><v1><w3>, 110, "\$d<a><v1><w3> = $d<a><v1><w3>";
+  $d.encode;
+
+}, "Document nesting 2";
 
 #-------------------------------------------------------------------------------
 # Cleanup

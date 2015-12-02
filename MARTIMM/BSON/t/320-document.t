@@ -255,7 +255,7 @@ subtest {
 
   # Fresh doc, load handcrafted data and decode into document
   #
-  diag "Sequence of keys";
+#  diag "Sequence of keys";
 
   $d .= new;
   $d.decode($etst);
@@ -296,7 +296,7 @@ subtest {
 
   # Test sequence
   #
-  diag "Sequence of index";
+#  diag "Sequence of index";
 
   is $d[0], -203.345.Num, "0: $d[0], double";
   is $d[1], 1234, "1: $d[1], int32";
