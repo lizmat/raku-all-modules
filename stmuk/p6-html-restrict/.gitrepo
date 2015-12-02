@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/stmuk/p6-html-restrict.git
 	branch = master
-	commit = 9d682502ef2a294df8b23af9cb7394c6ef19d2b3
-	parent = 15e41ca53c4a4914b016f9d800b43fb2a62b17e4
-	cmdver = 0.2.2
+	commit = 7e44633e05848250bec2bd4e7a1f0cc83f2b9164
+	parent = 13025c04ded73460667d73bfa952bd6f0ffeb3c8
+	cmdver = 0.2.3
