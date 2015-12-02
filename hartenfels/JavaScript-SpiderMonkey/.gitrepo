@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/hartenfels/JavaScript-SpiderMonkey.git
+	branch = master
+	commit = a34ae07e64913ec8d2fe00b39d8f3ecfcb8f5261
+	parent = 204245067a06363fd2708930833c203138926d76
+	cmdver = 0.2.3

@@ -1,0 +1,9 @@
+sudo: false
+language: perl6
+install:
+    - wget http://ftp.mozilla.org/pub/js/mozjs-24.2.0.tar.bz2
+    - tar xjf mozjs-24.2.0.tar.bz2
+    - cd mozjs-24.2.0/js/src && ./configure && make && cd ../../..
+    - CPLUS_INCLUDE_PATH=mozjs-24.2.0/js/src/dist/include LIBRARY_PATH=mozjs-24.2.0/js/src/dist/lib make libp6-spidermonkey.so
+script:
+    - LD_LIBRARY_PATH='.:mozjs-24.2.0/js/src/dist/lib' PERL6LIB=lib prove -ve perl6
