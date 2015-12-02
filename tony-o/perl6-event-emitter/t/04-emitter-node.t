@@ -25,12 +25,12 @@ ok(my $tap = $obj.on('test', { pass("event got handled"); $test_handled = True  
 
 $obj.on("boom", { fail("different named event didn't get handled"); $boom_handled = True });
 
-lives_ok { $obj.emit('test', "yahaha") }, "emit to 'test' works";
+lives-ok { $obj.emit('test', "yahaha") }, "emit to 'test' works";
 
 ok($test_handled, "and test handler was right");
 ok(!$boom_handled, "and the other one wasn't called");
 
-dies_ok({ $obj.on("foo","bar") }, "dies with a non-code argument");
+dies-ok({ $obj.on("foo","bar") }, "dies with a non-code argument");
 
 class Bar does Event::Emitter::Role::Node[:threaded] {
 }
@@ -44,7 +44,7 @@ ok($tap = $obj.on('test', { pass("event got handled (threaded)"); }), "set handl
 
 $obj.on("boom", { fail("different named event didn't get handled (threaded)"); });
 
-lives_ok { $obj.emit('test', "yahaha") }, "emit to 'test' works (threaded)";
+lives-ok { $obj.emit('test', "yahaha") }, "emit to 'test' works (threaded)";
 
-dies_ok({ $obj.on("foo","bar") }, "dies with a non-code argument (threaded)");
+dies-ok({ $obj.on("foo","bar") }, "dies with a non-code argument (threaded)");
 
