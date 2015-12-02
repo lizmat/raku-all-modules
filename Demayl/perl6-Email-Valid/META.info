@@ -1,0 +1,17 @@
+{
+    "name"        : "Email::Valid",
+    "version"     : "0.1",
+    "description" : "Email validator for Perl6",
+    "provides": {
+        "Email::Valid"         : "lib/Email/Valid.pm6"
+    },
+    "depends"     : ["Net::DNS"],
+    "authors" : [
+        "Denis Kanchev - demayl"
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/Demayl/perl6-Email-Valid/issues",
+        "source" : "git://github.com/Demayl/perl6-Email-Valid.git"
+    },
+    "source-url"  : "git://github.com/Demayl/perl6-Email-Valid.git"
+}

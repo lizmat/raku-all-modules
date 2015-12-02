@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Demayl/perl6-Email-Valid.git
+	branch = master
+	commit = 5e4f7289246ba0a79343ce98767f665597354f53
+	parent = 3570938974a18c4a33ad01c91f750c13d409fcbd
+	cmdver = 0.2.3
