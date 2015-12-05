@@ -1,6 +1,6 @@
 use v6;
 use Test;
-
+use lib '../t/lib';
 plan *;
 
 #%*ENV<CGI_APP_RETURN_ONLY> = 1;
@@ -9,7 +9,7 @@ plan *;
 # setting ENV variables fails (WTF?), so let's use a dynamic variable instead
 my $*CGI_APP_RETURN_ONLY = 1;
 
-BEGIN { @*INC.push('t/lib', 'lib') };
+use lib <t/lib lib>;
 
 use CGI::Application;
 
@@ -26,7 +26,7 @@ sub response-like($app, Mu $header, Mu $body, $comment,
 
 {
     my $app = CGI::Application.new;
-    isa_ok $app, CGI::Application;
+    isa-ok $app, CGI::Application;
     # TODO: make that CGI.new
     $app.query = {};
     response-like($app,
@@ -39,7 +39,7 @@ sub response-like($app, Mu $header, Mu $body, $comment,
 use TestApp;
 {
     my $app = TestApp.new();
-    isa_ok $app, CGI::Application;
+    isa-ok $app, CGI::Application;
 
     response-like(
         $app,
@@ -50,7 +50,7 @@ use TestApp;
 }
 
 {
-    dies_ok { TestApp.new(query => [1, 2, 3]) },
+    dies-ok { TestApp.new(query => [1, 2, 3]) },
             'query is restricted to Associative';
 }
 
@@ -108,7 +108,7 @@ if 0 {
 
     my $app = TestAppWithError.new(query => { rm => 'throws_error' });
 
-    dies_ok { $app.run() },
+    dies-ok { $app.run() },
         'when the run mode dies, the whole execution aborts';
     ok $error_hook_called, 'and the error hook was called';
     nok $error_mode_called, '... but error mode was not set';
@@ -117,7 +117,7 @@ if 0 {
     $error_hook_called = 0;
     $error_mode_called = 0;
     $app.error-mode = 'my_error_mode';
-    lives_ok { $app.run() }, 'Lives when run mode dies and error mode is set';
+    lives-ok { $app.run() }, 'Lives when run mode dies and error mode is set';
     ok $error_hook_called, 'Error hook was called';
     ok $error_mode_called, 'Error mode was called too';
 }
@@ -184,6 +184,6 @@ if 0 {
     );
 }
 
-done;
+done-testing;
 
 # vim: ft=perl6
