@@ -1,0 +1,12 @@
+{
+    "perl" : "6.*",
+    "name" : "Subsets::Common",
+    "version" : "0.0.1",
+    "description" : "Some common subsets to built-in types.",
+    "author" : "Brad Clawsie",
+    "provides" : {
+        "Subsets::Common" : "lib/Subsets/Common.pm6"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/bradclawsie/Subsets-Common.git"
+}
