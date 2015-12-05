@@ -2,7 +2,7 @@ use v6;
 use Test;
 plan 4;
 
-#BEGIN { @*INC.unshift: './lib'; }
+# use lib 'lib';
 
 use-ok("Pekyll");
 use-ok("Pekyll::Routers");
