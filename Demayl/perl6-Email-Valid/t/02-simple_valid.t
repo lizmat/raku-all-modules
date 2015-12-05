@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 30;
+plan 31;
 use Email::Valid;
 my Email::Valid $validator .= new();
 
@@ -10,6 +10,7 @@ nok $validator.validate('ta@aach'), 'ta@aach';
 nok $validator.validate('taaach@'), 'taaach@';
 ok $validator.validate('ta@aa.ch'), 'ta@aa.ch';
 nok $validator.validate('t@aa.ch'), 'ta@aa.ch';
+ok $validator.validate('test@gmail.co.uk'), 'test@gmail.co.uk OK';
 ok $validator.validate('test@gmail.com'), 'test@gmail.com OK';
 ok $validator.validate('t.123+asd@aa.tr'), 't.123+asd@aa.tr OK' ;
 nok $validator.validate('-t.123+asd@aa.tr'), '-t.123+asd@aa.tr OK' ;

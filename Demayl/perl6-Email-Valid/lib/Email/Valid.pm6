@@ -11,12 +11,15 @@ has Str  $.ns_server = '8.8.8.8'; # TODO Allow multiple NS servers
 has Int  $.ns_server_timeout where 3 <= * <= 250 = 5;
 
 has $!regex_parsed = {}; # Hold regex parse results here. Wait for "is cached" trait and remove this var
+has $!resolver;          # One resolver per instance
+
 
 # TODO allow quoted local parts
 # TODO allow ip address parts ?
 # TODO implement Punycode to convert for IDN
 my Int $max_length = 254;
 my Int $mailbox_max_length = 64;
+my %domain_mx;                     # Cache MX records for domains, its cached in class, not instance. One instance can handle multiple checks
 
 
 # grammar got exported in the GLOBAL namespace ... wtf ?
@@ -37,19 +40,29 @@ method !parse_regex(Str $email!) {
     return $!regex_parsed{$email};
 }
 
+method !mx_lookup( Str $domain! ) {
+
+    $!resolver    //= Net::DNS.new( $.ns_server );
+
+    if not %domain_mx{$domain}.defined {
+        my Promise $promise   = start { %domain_mx{$domain} =  $!resolver.lookup('MX', $domain) // False };
+
+        # TODO remove warning and put it in exception
+        # Simple hack - start 2 async promises and wait only 1 to finish, when the empty launches in X seconds - its a failure
+        await Promise.anyof( Promise.in( $.ns_server_timeout ).then({ warn "Failed to make MX lookup to '$domain'" }), $promise );
+    }
+
+    return %domain_mx{$domain};
+}
+
 # Net::DNS cannot handle timeouts & UDP connections for now. Check it later
 # So use async promise to handle NS lookup timeout.
+# You must validate domain to get the mx records, so this function is required
 method !validate_domain(Str $domain!) {
-    my $resolver = Net::DNS.new( $.ns_server );
-    my $result   = Nil;
-    my Promise $promise   = start { $result = so $resolver.lookup('MX', $domain) };
 
-    # TODO remove warning and put it in exception
-    # Simple hack - start 2 async promises and wait only 1 to finish, when the empty launches in X seconds - its a failure
-    await Promise.anyof( Promise.in( $.ns_server_timeout ).then({ warn "Failed to make MX lookup to '$domain'" }), $promise );
-
-    return so $result; # Force Bool context
+    return so self!mx_lookup( $domain );
 }
+
 
 # Allow multiple email validations from single instance
 # Currently only simple regex validation implemented
@@ -75,7 +88,7 @@ method validate(Str $email!) returns Bool {
 # 0 -> mailbox
 # 1 -> domain -> [subdomain1, subdomain2 ], tld --> Str $full_domain
 # Returns Nil on fail
-method parse(Str $email!) returns Match {
+method parse(Str $email!) {
     return  self!parse_regex($email);
 }
 
