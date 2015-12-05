@@ -76,7 +76,7 @@ sub discard_b
 sub discard_a
 {
     my ( $a, $b ) = @_;
-    @discardsA.push(@a[$a]);        
+    @discardsA.push(@a[$a]);
 }
 
 sub finished_a
@@ -138,14 +138,14 @@ my $diff = diff( @a, @b );
 my $correctDiffResult = [
     [ [ '-', 0,  'a' ] ],
     [ [ '+', 2,  'd' ] ],
-    [ 
+    [
       [ '-', 4,  'h' ],
       [ '+', 4,  'f' ]
     ],
     [ [ '+', 6,  'k' ] ],
-    [ 
-      [ '-', 8,  'n' ], 
-      [ '+', 9,  'r' ], 
+    [
+      [ '-', 8,  'n' ],
+      [ '+', 9,  'r' ],
       [ '-', 9,  'p' ],
       [ '+', 10, 's' ],
       [ '+', 11, 't' ],
@@ -186,7 +186,7 @@ is( ~@lcs, $correctResult.uc,
 
 ########################################################################
 # Exercise LCS (which in turn calls _longestCommonSubsequence,
-# _replaceNextLargerWith & _withPositionsOfInInterval ) with 
+# _replaceNextLargerWith & _withPositionsOfInInterval ) with
 # various corner cases.
 #
 
@@ -237,7 +237,7 @@ is(@cdiff,
 ], "compact_diff() returns expected result" );
 
 ##################################################
-# <Mike Schilli> m@perlmeister.com 03/23/2002: 
+# <Mike Schilli> m@perlmeister.com 03/23/2002:
 # Tests for sdiff-interface
 #################################################
 
@@ -302,7 +302,7 @@ is(@result, $correctDiffResult,
 #################################################
 @a = <v x a e>;
 @b = <w y a b c d e>;
-$correctDiffResult = [ 
+$correctDiffResult = [
                        ['c', 'v', 'w' ],
                        ['c', 'x', 'y' ],
                        ['u', 'a', 'a' ],
@@ -318,7 +318,7 @@ is(@result, $correctDiffResult,
 #################################################
 @a = <x a e>;
 @b = <a b c d e>;
-$correctDiffResult = [ 
+$correctDiffResult = [
                        ['-', 'x', '' ],
                        ['u', 'a', 'a' ],
                        ['+', '', 'b'],
@@ -333,7 +333,7 @@ is(@result, $correctDiffResult,
 #################################################
 @a = <a e>;
 @b = <x a b c d e>;
-$correctDiffResult = [ 
+$correctDiffResult = [
                        ['+', '', 'x' ],
                        ['u', 'a', 'a' ],
                        ['+', '', 'b'],
@@ -348,7 +348,7 @@ is(@result, $correctDiffResult,
 #################################################
 @a = <a e v>;
 @b = <x a b c d e w x>;
-$correctDiffResult = [ 
+$correctDiffResult = [
                        ['+', '', 'x' ],
                        ['u', 'a', 'a' ],
                        ['+', '', 'b'],
@@ -365,7 +365,7 @@ is(@result, $correctDiffResult,
 #################################################
 @a=();
 @b = <a b c>;
-$correctDiffResult = [ 
+$correctDiffResult = [
                        ['+', '', 'a' ],
                        ['+', '', 'b' ],
                        ['+', '', 'c' ],
@@ -377,7 +377,7 @@ is(@result, $correctDiffResult,
 #################################################
 @a = <a b c>;
 @b = ();
-$correctDiffResult = [ 
+$correctDiffResult = [
                        ['-', 'a', '' ],
                        ['-', 'b', '' ],
                        ['-', 'c', '' ],
@@ -389,7 +389,7 @@ is(@result, $correctDiffResult,
 #################################################
 @a = <a b c>;
 @b = <1>;
-$correctDiffResult = [ 
+$correctDiffResult = [
                        ['c', 'a', '1' ],
                        ['-', 'b', '' ],
                        ['-', 'c', '' ],
@@ -401,7 +401,7 @@ is(@result, $correctDiffResult,
 #################################################
 @a = <a b c>;
 @b = <c>;
-$correctDiffResult = [ 
+$correctDiffResult = [
                        ['-', 'a', '' ],
                        ['-', 'b', '' ],
                        ['u', 'c', 'c' ],
@@ -414,7 +414,7 @@ is(@result, $correctDiffResult,
 @a = <a b c>;
 @b = <a x c>;
 my $r = "";
-traverse_balanced( @a, @b, 
+traverse_balanced( @a, @b,
                    MATCH     => sub { $r ~= "M " ~@_;},
                    DISCARD_A => sub { $r ~= "DA " ~@_;},
                    DISCARD_B => sub { $r ~= "DB " ~@_;},
@@ -429,7 +429,7 @@ is($r, "M 0 0C 1 1M 2 2",
 @a = <a b c>;
 @b = <a x c>;
 $r = "";
-traverse_balanced( @a, @b, 
+traverse_balanced( @a, @b,
                    MATCH     => sub { $r ~= "M " ~@_;},
                    DISCARD_A => sub { $r ~= "DA " ~@_;},
                    DISCARD_B => sub { $r ~= "DB " ~@_;},
@@ -441,7 +441,7 @@ is($r, "M 0 0DA 1 1DB 2 1M 2 2",
 @a = <a x y c>;
 @b = <a v w c>;
 $r = "";
-traverse_balanced( @a, @b, 
+traverse_balanced( @a, @b,
                    MATCH     => sub { $r ~= "M " ~@_;},
                    DISCARD_A => sub { $r ~= "DA " ~@_;},
                    DISCARD_B => sub { $r ~= "DB " ~@_;},
@@ -455,7 +455,7 @@ is($r, "M 0 0C 1 1C 2 2M 3 3",
 @a = <a x y c>;
 @b = <a v c>;
 $r = "";
-traverse_balanced( @a, @b, 
+traverse_balanced( @a, @b,
                    MATCH     => sub { $r ~= "M " ~@_;},
                    DISCARD_A => sub { $r ~= "DA " ~@_;},
                    DISCARD_B => sub { $r ~= "DB " ~@_;},
@@ -468,7 +468,7 @@ is($r, "M 0 0C 1 1DA 2 2M 3 2",
 @a = <x y c>;
 @b = <v w c>;
 $r = "";
-traverse_balanced( @a, @b, 
+traverse_balanced( @a, @b,
                    MATCH     => sub { $r ~= "M " ~@_;},
                    DISCARD_A => sub { $r ~= "DA " ~@_;},
                    DISCARD_B => sub { $r ~= "DB " ~@_;},
@@ -481,7 +481,7 @@ is($r,  "C 0 0C 1 1M 2 2",
 @a = <a x y z>;
 @b = <b v w>;
 $r = "";
-traverse_balanced( @a, @b, 
+traverse_balanced( @a, @b,
                    MATCH     => sub { $r ~= "M " ~@_;},
                    DISCARD_A => sub { $r ~= "DA " ~@_;},
                    DISCARD_B => sub { $r ~= "DB " ~@_;},
@@ -494,7 +494,7 @@ is($r, "C 0 0C 1 1C 2 2DA 3 3",
 @a = <a z>;
 @b = <a>;
 $r = "";
-traverse_balanced( @a, @b, 
+traverse_balanced( @a, @b,
                    MATCH     => sub { $r ~= "M " ~@_;},
                    DISCARD_A => sub { $r ~= "DA " ~@_;},
                    DISCARD_B => sub { $r ~= "DB " ~@_;},
@@ -507,7 +507,7 @@ is($r, "M 0 0DA 1 1",
 @a = <z a>;
 @b = <a>;
 $r = "";
-traverse_balanced( @a, @b, 
+traverse_balanced( @a, @b,
                    MATCH     => sub { $r ~= "M " ~@_;},
                    DISCARD_A => sub { $r ~= "DA " ~@_;},
                    DISCARD_B => sub { $r ~= "DB " ~@_;},
@@ -520,7 +520,7 @@ is($r, "DA 0 0M 1 0",
 @a = <a b c>;
 @b = <x y z>;
 $r = "";
-traverse_balanced( @a, @b, 
+traverse_balanced( @a, @b,
                    MATCH     => sub { $r ~= "M " ~@_;},
                    DISCARD_A => sub { $r ~= "DA " ~@_;},
                    DISCARD_B => sub { $r ~= "DB " ~@_;},

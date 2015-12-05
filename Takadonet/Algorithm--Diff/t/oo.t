@@ -2,7 +2,7 @@ use v6;
 use Test;
 
 plan 801;
-   
+
 # Before 'make install' is performed this script should be runnable with
 # 'make test'. After 'make install' it should work as 'perl6 oo.t'
 
@@ -121,8 +121,8 @@ for (
             is( ~$d.Items(1),      ~$d.Items(2),     "if loop sequence #{$i++}" );
             is( ~$d.Items(2),      ~@a[$d.Range(1)], "if loop sequence #{$i++}" );
             is( ~@a[$d.Range(1,0)], @b[$d.Range(2)], "if loop sequence #{$i++}" );
-            push @A, $d.Same;
-            push @B, @b[$d.Range(2)];
+            append @A, $d.Same;
+            append @B, @b[$d.Range(2)];
         } else {
             is( $d.Same,      '',                   "else loop sequence #{$i++}" );
             is( $d.Diff && 1, 1 * $d.Range(1).Bool, "else loop sequence #{$i++}" );
@@ -130,8 +130,8 @@ for (
             is( ~$d.Items(1), ~@a[$d.Range(1)],     "else loop sequence #{$i++}" );
             is( ~$d.Items(2), ~@b[$d.Range(2,0)],   "else loop sequence #{$i++}" );
 
-            push @A, @a[$d.Range(1)];
-            push @B, $d.Items(2);
+            append @A, @a[$d.Range(1)];
+            append @B, $d.Items(2);
         }
     }
     is( ~@A, ~@a, 'A & a arrays are equivalent' );
@@ -140,7 +140,7 @@ for (
     next unless $hunks;
 
     is($d.Next, 1, 'next ok if hunks left' );
-    dies-ok( { $d.Items    }, 'need to call Items with a parameter' ); 
+    dies-ok( { $d.Items    }, 'need to call Items with a parameter' );
     dies-ok( { $d.Items(0) }, 'need to call Items with a valid parameter' );
     dies-ok( { $d.Range    }, 'need to call Range with a parameter' );
     dies-ok( { $d.Range(3) }, 'need to call Range with a valid parameter' );
@@ -171,6 +171,3 @@ for (
 #     ok( ! eval { $c->Get('range'); 1 } );
 #     ok( ! eval { $c->Get('min'); 1 } );
 #     ok( ! eval { $c->Get('max'); 1 } ); }
-
-
-

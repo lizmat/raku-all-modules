@@ -5,5 +5,5 @@ install:
   - rakudobrew build-panda
   - panda --notests installdeps .
 script:
-  - PERL6LIB=$PWD/lib prove -e perl6 -r t/ xt/
+  - PERL6LIB=$PWD/lib prove -e perl6 -r t/
 sudo: false

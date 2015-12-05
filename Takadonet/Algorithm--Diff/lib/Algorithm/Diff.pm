@@ -458,9 +458,9 @@ sub diff( @a, @b ) is export
     my ( @retval, @hunk );
     traverse_sequences(
       @a, @b,
-      MATCH     => sub ($x,$y) { @retval.push( @hunk ); @hunk = ()   },
-      DISCARD_A => sub ($x,$y) { @hunk.push( [ '-', $x, @a[ $x ] ] ) },
-      DISCARD_B => sub ($x,$y) { @hunk.push( [ '+', $y, @b[ $y ] ] ) }
+      MATCH     => sub ($x,$y) { @retval.append( @hunk ); @hunk = ()   },
+      DISCARD_A => sub ($x,$y) { @hunk.append( [ '-', $x, @a[ $x ] ] ) },
+      DISCARD_B => sub ($x,$y) { @hunk.append( [ '+', $y, @b[ $y ] ] ) }
     );
     return @retval, @hunk;
 }
@@ -470,10 +470,10 @@ sub sdiff( @a, @b ) is export
     my @retval;
     traverse_balanced(
       @a, @b,
-      MATCH     => sub ($x,$y) { @retval.push( [ 'u', @a[ $x ], @b[ $y ] ] ) },
-      DISCARD_A => sub ($x,$y) { @retval.push( [ '-', @a[ $x ],    ''    ] ) },
-      DISCARD_B => sub ($x,$y) { @retval.push( [ '+',    ''   , @b[ $y ] ] ) },
-      CHANGE    => sub ($x,$y) { @retval.push( [ 'c', @a[ $x ], @b[ $y ] ] ) }
+      MATCH     => sub ($x,$y) { @retval.append( [ 'u', @a[ $x ], @b[ $y ] ] ) },
+      DISCARD_A => sub ($x,$y) { @retval.append( [ '-', @a[ $x ],    ''    ] ) },
+      DISCARD_B => sub ($x,$y) { @retval.append( [ '+',    ''   , @b[ $y ] ] ) },
+      CHANGE    => sub ($x,$y) { @retval.append( [ 'c', @a[ $x ], @b[ $y ] ] ) }
     );
     return @retval;
 }
@@ -1609,5 +1609,3 @@ The OO interface and some other changes are by Tye McQueen.
 Perl 6 port by Philip Mabon (takadonet) and Steve Schulze (thundergnat)
 
 =end pod
-
-
