@@ -4,7 +4,7 @@
     "description" : "Converts scripts into colour syntax HTML using vim. ",
     "depends"     : ["File::Temp"],
     "provides"    : {
-            "Text::VimColour": "lib/Text/VimColour"
+            "Text::VimColour": "lib/Text/VimColour.pm"
     },
     "source-url"  : "git://github.com/stmuk/p6-Text-VimColour.git",
     "author"      : "Steve Mynott <steve.mynott@gmail.com>"
