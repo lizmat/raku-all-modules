@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/cbk/WebService-GoogleDyDNS.git
+	branch = master
+	commit = 6d03ab790272e6df5ae3ea4cb4c1ab200096777e
+	parent = 087ff37cc8ab7dc95c966e7805322d1577bc8f7f
+	cmdver = 0.2.3
