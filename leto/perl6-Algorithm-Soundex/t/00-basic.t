@@ -1,9 +1,6 @@
 use v6;
 use Test;
 
-# because prove -l doesn't work for perl 6 modules
-BEGIN { unshift @*INC, './lib'; }
-
 plan 4;
 
 use Algorithm::Soundex;

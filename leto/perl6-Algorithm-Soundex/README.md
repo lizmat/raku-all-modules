@@ -9,5 +9,4 @@
 
 ## Running Tests
 
-    prove -e perl6 -r t/
-
+    $ prove -e "perl6 -Ilib" -r t/
