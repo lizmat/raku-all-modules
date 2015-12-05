@@ -1,7 +1,6 @@
 use NativeCall;
 
 use soft; # for now
-use Inline;
 
 enum GD_Format <GD_GIF GD_JPEG GD_PNG>;
 
@@ -22,37 +21,19 @@ class GD::File is repr('CPointer') {
 	}
 }
 
+sub malloc(int $size) is native(Str) returns OpaquePointer {*};
+
 class GD::Image is repr('CPointer') {
 
 	# This is pretty ugly so I'm looking for a more elegant solution...
-	sub GD_add_point(OpaquePointer, int32 $idx, int32 $x, int32 $y) is inline('C') {'
-		typedef struct {
-			int x;
-			int y;
-		} gdPoint, *gdPointPtr;
+	sub GD_add_point(CArray[int32] $points, int32 $idx, int32 $x, int32 $y) {
+	    $points[$idx * 2] = $x;
+	    $points[$idx * 2 + 1] = $y;
+	}
 
-		DLLEXPORT void GD_add_point(gdPointPtr points, int idx, int x, int y) {
-			points[idx].x = x;
-			points[idx].y = y;
-		}
-	'}
-
-	sub GD_new_set_of_points(int32 $size)
-		is inline('C') returns OpaquePointer {'
-		#include <stdlib.h>
-
-		typedef struct {
-			int x;
-			int y;
-		} gdPoint, *gdPointPtr;
-
-		DLLEXPORT gdPointPtr GD_new_set_of_points(int size) {
-			gdPointPtr points;
-
-			points = (gdPointPtr)malloc(size * sizeof(gdPoint));
-			return points;
-		}
-	'}
+    sub GD_new_set_of_points(Int $size) returns OpaquePointer {
+        malloc($size * 4 * 2);
+    }
 
 	sub gdImageGif(GD::Image, GD::File)
 		is native('libgd') { ... };
@@ -149,16 +130,16 @@ class GD::Image is repr('CPointer') {
 	}
 
 	method line(
-		Parcel :$start(Int $x1 where { $x1 >= 0 }, Int $y1 where { $y1 >= 0 }) = (0, 0),
-		Parcel :$end!(Int $x2 where { $x2 > 0 }, Int $y2 where { $y2 > 0 }),
+		List :$start (Int $x1 where { $x1 >= 0 }, Int $y1 where { $y1 >= 0 }) = (0, 0),
+		List :$end! (Int $x2 where { $x2 >= 0 }, Int $y2 where { $y2 >= 0 }),
 		   Int :$color where { $color >= 0 } = 0) {
 
 		gdImageLine(self, $x1, $y1, $x2, $y2, $color);
 	}
 
 	method rectangle(
-		Parcel :$location(Int $x1 where { $x1 >= 0 }, Int $y1 where { $y1 >= 0 }) = (0, 0),
-		Parcel :$size!(Int $x2 where { $x2 > 0 }, Int $y2 where { $y2 > 0 }),
+		List :$location (Int $x1 where { $x1 >= 0 }, Int $y1 where { $y1 >= 0 }) = (0, 0),
+		List :$size! (Int $x2 where { $x2 > 0 }, Int $y2 where { $y2 > 0 }),
 		   Int :$color where { $color >= 0 } = 0,
 		  Bool :$fill = False) {
 
@@ -169,9 +150,9 @@ class GD::Image is repr('CPointer') {
 
 	# style to enum
 	method arc(
-		Parcel :$center!(Int $cx, Int $cy),
-		Parcel :$amplitude!(Int $w where { $w > 0 }, Int $h where { $h > 0 }),
-		Parcel :$aperture!(Int $s, Int $e),
+		List :$center!(Int $cx, Int $cy),
+		List :$amplitude!(Int $w where { $w > 0 }, Int $h where { $h > 0 }),
+		List :$aperture!(Int $s, Int $e),
 		   Int :$color where { $color >= 0 } = 0,
 		  Bool :$fill = False,
 		   Int :$style = 0) {
@@ -182,8 +163,8 @@ class GD::Image is repr('CPointer') {
 	}
 
 	method ellipse(
-		Parcel :$center!(Int $cx, Int $cy),
-		Parcel :$axes!(Int $w where { $w > 0 }, Int $h where { $h > 0 }),
+		List :$center!(Int $cx, Int $cy),
+		List :$axes!(Int $w where { $w > 0 }, Int $h where { $h > 0 }),
 		   Int :$color where { $color >= 0 } = 0,
 		  Bool :$fill = False) {
 
@@ -193,7 +174,7 @@ class GD::Image is repr('CPointer') {
 	}
 
 	method circumference(
-		Parcel :$center!(Int $cx, Int $cy),
+		List :$center!(Int $cx, Int $cy),
 		   Int :$diameter! where { $diameter > 0 },
 		   Int :$color where { $color >= 0 } = 0,
 		  Bool :$fill = False) {

@@ -1,7 +1,6 @@
 #!/usr/bin/env perl6
 
-BEGIN { @*INC.push('../lib') };
-
+use lib 'lib';
 use GD;
 
 my $image = GD::Image.new(300, 300);

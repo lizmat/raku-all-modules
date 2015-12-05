@@ -6,7 +6,7 @@
         "GD": "lib/GD.pm"
     },
 	"author" : "Henrique Dias",
-	"depends" : [ "Inline" ],
+	"depends" : [],
 	"source-type" : "git",
 	"source-url" : "git://github.com/perl6-community-modules/perl6-GD.git"
 }

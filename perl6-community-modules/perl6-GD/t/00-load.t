@@ -9,7 +9,7 @@ use GD;
 ok 1, 'GD is loaded successfully';
 
 my $image = GD::Image.new(200, 200);
-isa_ok $image, GD::Image, "Successfully created a GD::Image";
+isa-ok $image, GD::Image, "Successfully created a GD::Image";
 
 my $black = $image.colorAllocate(
     red   => 0,
