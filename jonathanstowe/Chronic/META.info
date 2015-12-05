@@ -1,0 +1,26 @@
+{
+  "name" : "Chronic",
+  "tags" : [ "util", "schedule", "cron", "event" ],
+  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
+  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth" : "github:jonathanstowe",
+  "support" : {
+    "source"     : "git://github.com/jonathanstowe/Chronic.git",
+    "irc"        : "irc:// irc.freenode.net/#perl6",
+    "bugtracker" : "https://github.com/jonathanstowe/Chronic/issues"
+  },
+  "source-url" : "git://github.com/jonathanstowe/Chronic.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+     "Chronic"                : "lib/Chronic.pm"
+  },
+  "depends" : [ 
+  ],
+  "test-depends" : [
+    "Test",
+    "Test::META"
+  ],
+  "description" : "Low-level Scheduling thingy for Perl6",
+  "version" : "v0.0.1"
+}
