@@ -1,13 +1,13 @@
 {
     "name" : "Uni63",
-    "version" : "0.1.2",
+    "version" : "0.2.0",
     "description" : "A Unicode encoding scheme suitable for name mangling",
     "author" : "cygx <cygx@cpan.org>",
     "provides" : { "Uni63" : "lib/Uni63.pm6" },
     "depends" : [ ],
     "support" : {
         "bugtracker" : "https://github.com/cygx/p6-uni63/issues",
-        "source" : "git://github.com/cygx/p6-uni63.git"
+        "source" : "https://github.com/cygx/p6-uni63"
     },
     "source-url" : "git://github.com/cygx/p6-uni63.git"
 }

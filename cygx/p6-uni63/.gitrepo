@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cygx/p6-uni63.git
 	branch = master
-	commit = 1c4aef70e797beb0dd629d0bae9d287a36ba313f
-	parent = 775f71f113257ecfc2ab761ba6600b2c73cc4d6f
-	cmdver = 0.2.2
+	commit = ae7031a503fdcca681f6a55be75accd7482fb798
+	parent = 3e6442af9a34f8097690afd4f94b3af1f73a1567
+	cmdver = 0.2.3
