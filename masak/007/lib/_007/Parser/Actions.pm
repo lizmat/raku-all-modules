@@ -27,9 +27,13 @@ class _007::Parser::Actions {
     }
 
     method statement:constant ($/) {
+        die X::Syntax::Missing.new(:what("initializer on constant declaration"))
+            unless $<EXPR>;
+
         make Q::Statement::Constant.new(
             :ident($<identifier>.ast),
-            :expr($<EXPR> ?? $<EXPR>.ast !! Val::None.new)); # XXX: remove ?? !! once we throw an error
+            :expr($<EXPR>.ast));
+
         my $name = $<identifier>.ast.name.value;
         my $value = $<EXPR>.ast.eval($*runtime);
         $*runtime.put-var($name, $value);
@@ -231,7 +235,7 @@ class _007::Parser::Actions {
             my $t1 = @termstack.pop;
 
             my $name = $op.type.substr(1, *-1);
-            my $c = try $*runtime.get-var("infix:<$name>");
+            my $c = $*runtime.maybe-get-var("infix:<$name>");
             if $c ~~ Val::Macro {
                 @termstack.push($*runtime.call($c, [$t1, $t2]));
             }
@@ -300,7 +304,7 @@ class _007::Parser::Actions {
         sub handle-prefix($/) {
             my $prefix = @prefixes.shift.ast;
             my $name = $prefix.type.substr(1, *-1);
-            my $c = try $*runtime.get-var("prefix:<$name>");
+            my $c = $*runtime.maybe-get-var("prefix:<$name>");
             if $c ~~ Val::Macro {
                 make $*runtime.call($c, [$/.ast]);
             }
@@ -315,7 +319,7 @@ class _007::Parser::Actions {
             my @p = $postfix.list;
             if @p[0] ~~ Q::Postfix::Call
             && $/.ast ~~ Q::Identifier
-            && (try my $macro = $*runtime.get-var($/.ast.name.value)) ~~ Val::Macro {
+            && (my $macro = $*runtime.maybe-get-var($/.ast.name.value)) ~~ Val::Macro {
                 my @args = @p[1]<argumentlist>.arguments.elements;
                 my $qtree = $*runtime.call($macro, @args);
                 make $qtree;
@@ -325,7 +329,7 @@ class _007::Parser::Actions {
             }
             else {
                 my $name = $postfix.type.substr(1, *-1);
-                my $c = try $*runtime.get-var("postfix:<$name>");
+                my $c = $*runtime.maybe-get-var("postfix:<$name>");
                 if $c ~~ Val::Macro {
                     make $*runtime.call($c, [$/.ast]);
                 }
