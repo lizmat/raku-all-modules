@@ -1,5 +1,5 @@
 use v6;
-BEGIN { @*INC.unshift: 'blib/lib', 'lib' }
+use lib <blib/lib lib>;
 
 use Test;
 use Pod::To::Markdown;
