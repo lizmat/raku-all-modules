@@ -7,9 +7,9 @@ use BSON::Double;
 use BSON::EDCTools;
 use BSON::Exception;
 
-package BSON {
+package BSON:ver<0.9.14> {
 
-  class Bson:ver<0.9.13> {
+  class Bson {
     constant $BSON_BOOL = 0x08;
 
     has Int $!index = 0;

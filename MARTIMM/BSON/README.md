@@ -87,54 +87,8 @@ $new-doc.decode($enc-doc);
 
 ```
 
+See also BSON/Document.pod
 
-### SUPPORTED TYPES
-
-        Perl6           <=> BSON
-
-    [x] Str             <=> UTF-8 string
-    [x] Int              => 32-bit Integer if -2147483646 < n < 2147483647
-                         => 64-bit Integer if -9,22337203685e+18 < n < 9,22337203685e+18
-                            Fails if larger/smaller with X::BSON::ImProperUse
-    [x] Int             <=  32/64 bit integers.
-    [x] Bool            <=> Boolean "true" / "false"
-    [x] BSON::Binary    <=> All kinds of binary data
-    [x]                     0x00 Generic type
-    [ ]                     0x01 Function
-    [-]                     0x02 Binary old, deprecated
-    [-]                     0x03 UUID old, deprecated
-    [x]                     0x04 UUID
-    [x]                     0x05 MD5
-    [x] Array           <=> Array as Embedded document
-    [x] Pair             => Embedded document
-    [x] Hash            <=> Embedded document
-    [x] BSON::ObjectId  <=> ObjectId
-
-    [x] Num             <=> 64-bit Double. This is kind of emulated and
-                            therefore slower. It suffices to say that this will
-                            be implemented differently later.
-    [ ] FatRat
-    [ ] Rat
-    [x] DateTime        <=> int64 UTC datetime, seconds since January 1st 1970
-    [x] BSON::Regex     <=> Regular expression for serverside searches
-    [x] BSON::Javascript<=> Javascript code transport with or whithout scope
-
-        And quite a few more perl6 types. Now binary types are possible it
-        might be an idea to put the perl6 specific types into binary. There
-        are 127 user definable types there, so place enough.
-
-
-### EXTENDED TYPES
-
-```BSON::ObjectId``` - Internal representation is 12 bytes,
-but to keep it consistent with MongoDB presentation described in
-[ObjectId spec](http://dochub.mongodb.org/core/objectids)
-constructor accepts string containing 12 hex pairs:
-
-    BSON::ObjectId.new( '4e4987edfed4c16f8a56ed1d' )
-
-Internal ```Buf``` can be reached by `.Buf` accessor.
-Method ```.perl``` is available for easy debug.
 
 ## BUGS, KNOWN LIMITATIONS AND TODO
 
@@ -144,7 +98,7 @@ Method ```.perl``` is available for easy debug.
 * Lack of other Perl 6 types support, this is directly related to not yet
   specified pack/unpack in Perl6.
 * Change die() statements in return with exception to notify caller and place
-  further responsability there.
+  further responsability there. This is done for Document.pm6
 * Perl 6 Int variables are integral numbers of arbitrary size. This means that
   any integer can be stored as large or small as you like. Int can be coded as
   described in version 0.8.4 and when larger or smaller then maybe it is
@@ -157,8 +111,12 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.14
+  * All dies are now throwing excpetions X::Parse-document or X::NYS in
+    BSON::Document.
+  * More tests are added.
 * 0.9.13
-  * Document with encoding and decoding running in parallel. Much slower that
+  * Document with encoding and decoding running in parallel. Much slower than
     direct hashes but keeps input order.
 * 0.9.12
   * Num needs test for NaN.

@@ -3,7 +3,7 @@ use v6;
 package BSON {
 
   #-----------------------------------------------------------------------------
-  class X::Parse is Exception {
+  class X::Parse-regex is Exception {
     has $.operation;                      # Operation method
     has $.error;                          # Parse error
 
@@ -30,7 +30,7 @@ package BSON {
 Wait until bug is fixed in perl6: Cannot use match here. Error is caused by
 reference of match to this class instead of the proper one.
 
-      die X::Parse.new(
+      die X::Parse-regex.new(
         :operation('Regex.new'),
         :error("Options may only be one of 'imxlsu'")
       ) unless $options ~~ m/ ^ <[imxlsu]>* $ /;

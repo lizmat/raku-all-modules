@@ -6,28 +6,88 @@ use BSON::Document;
 subtest {
 
   my BSON::Document $d .= new;
+  is $d.^name, 'BSON::Document', 'Isa ok';
   my Buf $b = $d.encode;
-  
+
   is $b, Buf.new( 0x05, 0x00 xx 4), 'Empty doc encoded ok';
 
   $d .= new;
   $d.decode($b);
-  
-  is $d.elems, 0, 'No items in decoded doc';
-
 }, "Empty document";
 
 
 #-------------------------------------------------------------------------------
 subtest {
 
+  # Init via Seq
+  #
   my BSON::Document $d .= new: ('a' ... 'z') Z=> 120..145;
-  is $d.^name, 'BSON::Document', 'Isa ok';
 
   is $d<a>, 120, "\$d<a> = $d<a>";
   is $d<b>, 121, "\$d<b> = $d<b>";
+  is $d.elems, 26, "{$d.elems} elements";
+
+  # Add one element, encode and decode using new(Buf)
+  #
+  $d<aaa> = 11;
+  my Buf $b2 = $d.encode;
+  my BSON::Document $d2 .= new($b2);
+  is $d2.elems, 27, "{$d.elems} elements in decoded doc";
+  is $d2<aaa>, 11, "Item is $d2<aaa>";
+
+  # Init via list
+  #
+  $d .= new: (ppp => 100, qqq => ( d => 110, e => 120));
+  is $d<ppp>, 100, "\$d<ppp> = $d<ppp>";
+  is $d<qqq><d>, 110, "\$d<qqq><d> = $d<qqq><d>";
+
+  # Init via hash inhibited
+  #
+  try {
+    $d .= new: ppp => 100, qqq => ( d => 110, e => 120);
+
+    CATCH {
+      when X::Parse-document {
+        ok .message ~~ ms/'Cannot' 'use' 'hash' 'values' 'on' 'init'/,
+           'Cannot use hashes on init';
+      }
+    }
+  }
 
 }, "Initialize document";
+
+#-------------------------------------------------------------------------------
+subtest {
+
+  my BSON::Document $d .= new;
+  try {
+    $d<q> = {a => 20};
+    is $d<q><a>, 20, "Hash value $d<q><a>";
+
+    CATCH {
+      when X::Parse-document {
+        ok .message ~~ ms/'Cannot' 'use' 'hash' 'values'/,
+           'Cannot use hashes';
+      }
+    }
+  }
+
+  $d.accept-hash = True;
+  $d<q> = {
+    a => 120, b => 121, c => 122, d => 123, e => 124, f => 125, g => 126,
+    h => 127, i => 128, j => 129, k => 130, l => 131, m => 132, n => 133,
+    o => 134, p => 135, q => 136, r => 137, s => 138, t => 139, u => 140,
+    v => 141, w => 142, x => 143, y => 144, z => 145
+  };
+  is $d<q><a>, 120, "Hash value $d<q><a>";
+#  my $x = $d<q>.keys.sort;
+#  nok $x eqv $d<q>.keys.List, 'Not same order';
+
+  $d.autovivify = True;
+  $d<e><f><g> = {b => 30};
+  is $d<e><f><g><b>, 30, "Autovivified hash value $d<e><f><g><b>";
+
+}, "Ban the hash";
 
 #-------------------------------------------------------------------------------
 subtest {
@@ -56,7 +116,7 @@ subtest {
     is $d<e>, 11, "Bound: \$d<e> = $d<e> == \$x = $x";
 
     CATCH {
-      default {
+      when X::Parse-document {
         my $s = ~$_;
         $s ~~ s:g/\n//;
         ok .message ~~ ms/'Cannot' 'use' 'binding'/, $s;
@@ -77,6 +137,10 @@ subtest {
   $d[1] = 2000;
   is $d[1], 2000, "assign \$d[1] = $d[1]";
   is $d<b>, 2000, "assign \$<b> = \$d[1] = $d[1]";
+
+  is $d<b>, $d[$d.find-key('b')],
+     "Same values on key 'b'($d<b>) and found index {$d.find-key('b')}($d[1])";
+
 
   $d[1000] = 'text';
   is $d[26], 'text', "assign \$d[1000] = \$d[26] = '$d[26]'";
@@ -100,7 +164,7 @@ subtest {
     is $d[4], 11, "Bound: \$d[4] = $d[4] == \$x = $x";
 
     CATCH {
-      default {
+      when X::Parse-document {
         my $s = ~$_;
         $s ~~ s:g/\n//;
         ok .message ~~ ms/'Cannot' 'use' 'binding'/, $s;
@@ -152,9 +216,8 @@ subtest {
   try {
     say $d[1][2];
     CATCH {
-      default {
-        is ~$_,
-           'Index out of range. Is: 2, should be in 0..0',
+      when X::OutOfRange {
+        ok .message ~~ m/'Index out of range. Is: 2, should be in 0..0'/,
            '$d[1][2]: ' ~ $_;
       }
     }
@@ -163,9 +226,8 @@ subtest {
   try {
     is $d[2][5], Any, '$d[2][5]: not out of range but not defined';
     CATCH {
-      default {
-        is ~$_,
-           'Index out of range. Is: 2, should be in 0..0',
+      when X::OutOfRange {
+        ok .message ~~ m/'Index out of range. Is: 2, should be in 0..0'/,
            '$d[2][5]: ' ~ $_;
       }
     }
@@ -189,13 +251,176 @@ subtest {
 
 
   $d .= new;
-  $d<a> = v1 => v2 => 'v3';
+  $d<a> = v1 => (v2 => 'v3');
   is $d<a><v1><v2>, 'v3', "\$d<a><v1><v2> = $d<a><v1><v2>";
   $d<a><v1><w3> = 110;
   is $d<a><v1><w3>, 110, "\$d<a><v1><w3> = $d<a><v1><w3>";
+
+  $d<foo> = 'v3';
+  $d<bar> = 10;
   $d.encode;
 
+#say $d.perl;
+#say $d<a><v1>.perl;
+
+#$d .= new: ('a' ... 'z') Z=> 120..145;
+#say $d.kv;
+
 }, "Document nesting 2";
+
+#-------------------------------------------------------------------------------
+subtest {
+
+  # Hash tests done above
+  # Bind keys done above
+
+
+  try {
+    my BSON::Document $d .= new;
+    $d<js> = BSON::Javascript.new(:javascript(''));
+    $d.encode;
+
+    CATCH {
+      when X::Parse-document {
+        ok .message ~~ ms/'cannot' 'send' 'empty' 'code'/,
+           'Cannot send empty code';
+      }
+    }
+  }
+
+  try {
+    my BSON::Document $d .= new;
+    $d<int1> = 1762534762537612763576215376534;
+    $d.encode;
+
+    CATCH {
+#say $_.WHAT;
+      when X::Parse-document {
+        ok .message ~~ m/'Number too large'/,
+           "encode Int error, number too large";
+      }
+    }
+  }
+
+  try {
+    my BSON::Document $d .= new;
+    $d<int2> = -1762534762537612763576215376534;
+    $d.encode;
+
+    CATCH {
+      when X::Parse-document {
+        ok .message ~~ m/'Number too small'/,
+           "encode Int error, number too small";
+      }
+    }
+  }
+
+  try {
+    my BSON::Document $d .= new;
+    $d{"Double\0test"} = 1.2.Num;
+    $d.encode;
+
+    CATCH {
+      when X::Parse-document {
+        ok .message ~~ m/'Forbidden 0x00 sequence in'/,
+           "Forbidden 0x00 sequence in 'Double\0test'";
+      }
+    }
+  }
+
+  try {
+    my BSON::Document $d .= new;
+    $d<test> = 1.2.Num;
+    my Buf $b = $d.encode;
+    $d .= new(Buf.new($b[0 ..^ ($b.elems - 2)]));
+
+    CATCH {
+      when X::Parse-document {
+        ok .message ~~ m/'Not enaugh characters left'/,
+           "Not enaugh characters left";
+      }
+    }
+  }
+
+  try {
+    my $b = Buf.new(
+      0x0B, 0x00, 0x00, 0x00,           # 11 bytes
+        BSON::C-INT32,                  # 0x10
+        0x62,                           # 'b' note missing tailing char
+        0x01, 0x01, 0x00, 0x00,         # integer
+      0x00
+    );
+
+    my BSON::Document $d .= new($b);
+
+    CATCH {
+      when X::Parse-document {
+        ok .message ~~ ms/'Size of document' .* 'does not match'/,
+           'Size of document(11) does not match with index';
+      }
+    }
+  }
+
+  try {
+    class A { }
+    my A $a .= new;
+
+    my BSON::Document $d .= new;
+    $d{"A"} = $a;
+    $d.encode;
+
+    CATCH {
+      when X::NYS {
+        ok .message ~~ m/'encode-element() error: Type \'A<' \d+ '>\' is not (yet) supported'/,
+           'encode-element() error: Type \'A<...>\' is not (yet) supported';
+      }
+    }
+  }
+
+  try {
+    my $b = Buf.new(
+      0x0B, 0x00, 0x00, 0x00,           # 11 bytes
+        0xa0,                           # Unimplemented BSON code
+        0x62, 0x00,                     # 'b'
+        0x01, 0x01, 0x00, 0x00,         # integer
+      0x00
+    );
+
+    my BSON::Document $d .= new($b);
+
+    CATCH {
+      when X::Parse-document {
+        ok .message ~~ ms/'BSON code \'0xa0\' not supported'/,
+           'BSON code \'0xa0\' not supported';
+      }
+    }
+  }
+
+  try {
+    my $b = Buf.new(
+      0x0F, 0x00, 0x00, 0x00,           # 15 bytes
+        BSON::C-STRING,                 # 0x02
+        0x62, 0x00,                     # 'b'
+        0x03, 0x00, 0x00, 0x00,         # 3 bytes total
+        0x61, 0x62, 0x63,               # Missing 0x00 at the end
+      0x00
+    );
+
+    my BSON::Document $d .= new($b);
+
+    CATCH {
+      when X::Parse-document {
+        ok .message ~~ ms/'Missing trailing 0x00'/, 'Missing trailing 0x00';
+      }
+    }
+  }
+
+
+
+#  my BSON::Document $d .= new;
+#  $d( 1, 2, 'test', ( ('a' ... 'd') Z=> 20 .. 13), :w<fd>);
+
+}, "Exception tests";
 
 #-------------------------------------------------------------------------------
 # Cleanup

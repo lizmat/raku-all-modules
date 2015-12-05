@@ -1,10 +1,6 @@
 use v6;
 use Test;
 use BSON::Document;
-use BSON::Javascript;
-use BSON::Binary;
-use BSON::ObjectId;
-use BSON::Regex;
 use UUID;
 
 #-------------------------------------------------------------------------------
@@ -255,10 +251,8 @@ subtest {
 
   # Fresh doc, load handcrafted data and decode into document
   #
-#  diag "Sequence of keys";
+  $d .= new($etst);
 
-  $d .= new;
-  $d.decode($etst);
   is $d<a>, 1234, "a => $d<a>, int32";
   is $d<b>, -203.345, "b => $d<b>, double";
   is $d<v>, 4295392664, "v => $d<v>, int64";

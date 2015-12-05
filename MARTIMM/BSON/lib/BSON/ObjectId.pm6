@@ -8,7 +8,7 @@ use Digest::MD5;
 package BSON {
 
   #-----------------------------------------------------------------------------
-  class X::Parse is Exception {
+  class X::Parse-objectid is Exception {
     has $.operation;                      # Operation method
     has $.error;                          # Parse error
 
@@ -35,7 +35,7 @@ package BSON {
     #
     multi submethod BUILD ( Str:D :$string! ) {
 
-      die X::Parse.new(
+      die X::Parse-objectid.new(
         :operation('ObjectId.new'),
         :error('String too short or nonhexadecimal')
       ) unless $string ~~ m/ ^ <xdigit>**24 $ /;
@@ -75,7 +75,7 @@ package BSON {
     #
     multi submethod BUILD ( Buf:D :$bytes ) {
 
-      die X::Parse.new(
+      die X::Parse-objectid.new(
         :operation('ObjectId.new'),
         :error('Byte buffer too short or long')
       ) unless $bytes.elems == 12;
