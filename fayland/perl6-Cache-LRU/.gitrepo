@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/fayland/perl6-Cache-LRU.git
 	branch = master
-	commit = 45cb43600c56679e2275e3a9b1435bff8b352b65
-	parent = 24d2d78d23c9d0befe12fa319889dd9a68a32ab2
-	cmdver = 0.2.2
+	commit = d1aed701ad904d0ecc5a8e839f99dafa88281f8c
+	parent = e606dab0ce25b66ad196d8ac62c317c882150cb6
+	cmdver = 0.2.3
