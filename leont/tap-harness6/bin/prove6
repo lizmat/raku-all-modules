@@ -28,14 +28,14 @@ multi sub MAIN(
 
 	my %more;
 	with $exec {
-		%more<handlers> = [ TAP::Harness::SourceHandler::Exec.new($exec.words) ];
+		%more<handlers> = ( TAP::Harness::SourceHandler::Exec.new($exec.words) );
 	}
 	else {
 		my @incdirs;
 		@incdirs.unshift($*CWD ~ '/lib') if $lib;
 		@incdirs.unshift($*CWD ~ '/blib/lib') if $blib;
 		@incdirs.unshift($incdir) with $incdir;
-		%more<handlers> = [ TAP::Harness::SourceHandler::Perl6.new(:@incdirs) ];
+		%more<handlers> = ( TAP::Harness::SourceHandler::Perl6.new(:@incdirs) );
 	}
 	my $harness-class = $harness ?? load($harness) !! TAP::Harness;
 	with $reporter {

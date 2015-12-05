@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/leont/tap-harness6.git
 	branch = master
-	commit = be891b34e8ea9f4bb607b55edc292009668e1339
-	parent = e0531cfd70d45ad10fcf049fb90cae54e9ada556
-	cmdver = 0.2.2
+	commit = d3bd6f7e5be0f90641127e6a4420b842a467f04b
+	parent = e4f3e0e3db7922849d96dda57bf84bfbbf41136f
+	cmdver = 0.2.3
