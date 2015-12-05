@@ -1,13 +1,7 @@
 use v6;
 use Test;
 plan 11;
-BEGIN
-{
-    @*INC.push('lib');
-    @*INC.push('blib');
-}
-
-
+use lib <blib lib>;
 
 eval_lives_ok 'use Text::Diff', 'Can use Text::Diff';
 use Text::Diff;
