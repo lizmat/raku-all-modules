@@ -8,7 +8,9 @@
     "DateTime::Format::Factory"  : "lib/DateTime/Format/Factory.pm6",
     "DateTime::Format::RFC2822"  : "lib/DateTime/Format/RFC2822.pm6",
     "DateTime::Format::Lang::FR" : "lib/DateTime/Format/Lang/FR.pm6",
-    "DateTime::Format::Lang::PT" : "lib/DateTime/Format/Lang/PT.pm6"
+    "DateTime::Format::Lang::PT" : "lib/DateTime/Format/Lang/PT.pm6",
+    "DateTime::Format::Lang::DE" : "lib/DateTime/Format/Lang/DE.pm6",
+    "DateTime::Format::Lang::BG" : "lib/DateTime/Format/Lang/BG.pm6"
   },
   "source-url"    : "git://github.com/supernovus/perl6-datetime-format.git"
 }
