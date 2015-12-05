@@ -1,6 +1,6 @@
 use v6;
 
-BEGIN { push @*INC, "lib" }
+use lib 'lib';
 use ABC;
 
 my $abc = q«X:64

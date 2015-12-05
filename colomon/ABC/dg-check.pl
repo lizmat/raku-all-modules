@@ -1,6 +1,6 @@
 use v6;
 
-BEGIN { push @*INC, "lib" }
+use lib 'lib';
 use ABC;
 
 my @matches = $*IN.slurp.comb(m/ <ABC::tune> /, :match);
