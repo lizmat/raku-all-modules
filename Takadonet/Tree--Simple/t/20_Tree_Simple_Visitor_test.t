@@ -1,11 +1,7 @@
 use v6;
 use Test;
 plan 35;
-BEGIN
-{
-    @*INC.push('lib');
-    @*INC.push('blib');
-}
+use lib <lib blib>;
 use Tree::Simple;
 use Tree::Simple::Visitor;
 

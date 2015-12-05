@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Takadonet/Tree--Simple.git
 	branch = master
-	commit = 16c4b1fefa1c152c81f01274ec541ccf59f23930
-	parent = 02942aab6220660c93dbf2fc5bd7a216d1a622a7
-	cmdver = 0.2.2
+	commit = 86b93b6cd4d1089c6bb7193693994f524567da2f
+	parent = fd3e3fd1a30a70a5f316535e8d35063344989479
+	cmdver = 0.2.3
