@@ -1,6 +1,6 @@
 use v6;
 use Test;
-BEGIN { @*INC.unshift( 'lib' ) }
+use lib 'lib';
 
 plan 3;
 
