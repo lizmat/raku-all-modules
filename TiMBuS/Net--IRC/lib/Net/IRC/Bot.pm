@@ -48,33 +48,30 @@ class Net::IRC::Bot {
 	}
 
 	method !connect(){
-		#Establish connection to server
-		self!reset-state;
-		say "Connecting to $.server on port $.port";
+		self!disconnect();
+		self!reset-state();
+
+		say "Connecting to $.server on port $.port" if $.debug;
 		my role irc-connection[$debug] {
 			method sendln(Str $string, :$scrubbed = $string){
 				say "»»» $scrubbed" if $debug;
 				self.print($string~"\c13\c10");
 			}
-			method get(|){
-				my $line = callsame();
-				say "<-- $line" if $debug;
-				$line;
-			}
 		}
-		$.conn = IO::Socket::INET.new(host => $.server, port => $.port)
-			but irc-connection[$.debug];
+		return IO::Socket::Async.connect($.server, $.port).then: -> $promise {
+			$.conn = $promise.result but irc-connection[$.debug];
 
-		#Send PASS if needed
-		$.conn.sendln("PASS $.password", scrubbed => 'PASS ...')
-			if $.password;
+			#Send PASS if needed
+			$.conn.sendln("PASS $.password", scrubbed => 'PASS ...')
+				if $.password;
 
-		#Send NICK & USER.
-		#If the nick collides, we'll resend a new one when we recieve the error later.
-		#USER Parameters: 	<username> <hostname> <servername> <realname>
-		$.conn.sendln("NICK $.nick");
-		$.conn.sendln("USER $.username abc.xyz.net $.server :$.realname");
-		%.state<connected> = True;
+			#Send NICK & USER.
+			#If the nick collides, we'll resend a new one when we recieve the error later.
+			#USER Parameters: 	<username> <hostname> <servername> <realname>
+			$.conn.sendln("NICK $.nick");
+			$.conn.sendln("USER $.username abc.xyz.net $.server :$.realname");
+			%.state<connected> = True;
+		};
 	}
 
 	method !disconnect($quitmsg = "Leaving"){
@@ -84,47 +81,58 @@ class Net::IRC::Bot {
 		}
 	}
 
+	method run(Bool :$async = False) {
+		# Connect, then attach the dispatcher to the line feed.
+		my $connected-promise = self!connect().then: -> $promise {
+			# Poke the promise to shake any failures out of it.
+			my $res = $promise.result;
 
-	method run() {
-		self!disconnect;
-		self!connect;
-		loop {
-			#XXX: Support for timed events?
-			my $line = $.conn.get
-				or die "Connection error.";
-			$line ~~ s/<[\n\r]>+$//;
+			my $runloop-promise = Promise.new;
+			$.conn.chars-supply.lines.act:
+				-> $line { self!dispatch($line) },
+				done => { $runloop-promise.keep(1) };
 
-			my $event = Net::IRC::Parser::RawEvent.parse($line)
-				or $*ERR.say("Could not parse the following IRC event: $line.perl()") and next;
+			$runloop-promise;
+		};
 
-			self!dispatch($event);
+		if (!$async) {
+			# Wait to connect.
+			my $runloop = await $connected-promise;
+			await $runloop;
 		}
+
+		return $connected-promise;
 	}
 
-	method !dispatch($raw) {
+	method !dispatch($line) {
+		say "<-- $line" if $.debug;
+
+		my $raw = Net::IRC::Parser::RawEvent.parse($line)
+			or $*ERR.say("Could not parse the following IRC event: $line.perl()") and return;
+
 		#Make an event object and fill it as much as we can.
 		#XXX: Should I just use a single cached Event to save memory?
 		my $who = {
-			'nick'  => ~($raw<user><nick> // ''),
+			'nick'  => ~($raw<user><nick>  // ''),
 			'ident' => ~($raw<user><ident> // ''),
-			'host'  => ~($raw<user><host> // $raw<server> // ''),
+			'host'  => ~($raw<user><host>  // $raw<server> // ''),
 		};
 		$who does role { method Str { self<nick> // self<host> } }
 
 		my $event = Net::IRC::Event.new(
-			:raw($raw),
+			:$raw,
 			:command(~$raw<command>),
 			:conn($.conn),
 			:state(%.state),
 			:bot(self),
 			:who($who),
-			:where(~$raw<params>[0]),
-			:what(~$raw<params>[*-1]),
+			:where(~($raw<params>[0]//'')),
+			:what(~($raw<params>[*-1]//'')),
 		);
 
 
 		# Dispatch to the raw event handlers.
-		@.modules>>.*"irc_{ lc $event.command }"($event);
+		@.modules>>.*"irc_{ lc $event.command }"($event);  #"
 		given uc $event.command {
 			when "PRIVMSG" {
 				#Check to see if its a CTCP request.
