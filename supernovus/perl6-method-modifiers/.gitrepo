@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-method-modifiers.git
 	branch = master
-	commit = a74270cd313f538ec9d9fe6c7f28c11a3b8a1c4f
-	parent = 9fe66505146b872fcc4ba397ff2f8eaaddd42865
-	cmdver = 0.2.1
+	commit = 31189201c61419c46ec2593408c143fa80e920e6
+	parent = 7d3e7bf593ac09307b23b8417c0f5d81435fe2b6
+	cmdver = 0.2.3
