@@ -41,9 +41,14 @@ return true if there is no error.
 Analyse a given list of structures
 
 %types pairs must look like this :
-"C name of the struct" => ::("name of NC type")
+`"C name of the struct" => ::("name of NC type")`
 
 return true if there is no error.
+
+## diag-functions(:@functions)
+
+Analyse the signature of your function mapping a C routine
+Return true of false if something fail.
 
 ## @nctd-extracompileroptions
 
@@ -121,6 +126,16 @@ my @l;
 diag-struct("rgba_color_t", wrong_rgba_color_s, :cheaders(@h));
 say "----";
 diag-struct("toyunda_sub_t", toyunda_subtitle_s, :cheaders(@h));
+say "\n Some function \n";
+
+sub foo1(Str $a, Int $b) is native('whatever') { * };
+
+sub foo2(Num $a, Int $b) is native('whatever') { * };
+
+sub foo3(Str $a, int32 $b) is native('whatever') returns Int { * };
+
+diag-functions(:functions([&foo1, &foo2, &foo3]));
+
 ```
 
 Its output
@@ -155,4 +170,15 @@ __has int32  $fadingsize : c-size=4 | nc-size=4 -- :
 __has str  $image : c-size=4 | nc-size=4 -- : You should replace your 'str' type with 'Str'
 -Size given by sizeof and nativesizeof : C:100/NC:88
 -Calculated total sizes : C:100/NC:88
+
+ Some function 
+
+foo1 - Not a valid parameter type for parameter [2] $b : Int
+-->For Numerical type, use the appropriate int32/int64/num64...
+foo2 - Not a valid parameter type for parameter [1] $a : Num
+-->For Numerical type, use the appropriate int32/int64/num64...
+foo2 - Not a valid parameter type for parameter [2] $b : Int
+-->For Numerical type, use the appropriate int32/int64/num64...
+Int foo3 - You should not return a non NC type (like Int inplace of int32), truncating errors can appear with different architectures
+
 ```

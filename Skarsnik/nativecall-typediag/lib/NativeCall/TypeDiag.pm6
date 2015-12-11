@@ -7,10 +7,57 @@ module NativeCall::TypeDiag {
   our $CC = 'cc';
   our $silent = False;
   
-  #sub say(*@a) {
-  #  say @a unless $silent;
-  #}
-  sub diag-cstructs(:@cheaders, :@clibs = (), :%types) returns Bool is export {
+  sub say(*@a) {
+    &CORE::say(|@a) unless $silent;
+  }
+  
+  
+sub auto-diag($module-name, $conv-func = sub ($a){$a}, :@cheaders, :@clibs, :$deep) returns Bool is export {
+  my %cstructs;
+  my @functions;
+  my $ret = True;
+  for ::("$module-name::EXPORT::DEFAULT")::.keys -> $export {
+    say $export;
+    if ::($export).REPR eq 'CStruct' {
+      %cstructs{$conv-func($export)} = ::($export);
+    }
+    if ::($export).does(Callable) and ::($export).^roles.perl ~~ /NativeCall/ {
+      @functions.push(::($export));
+    }  
+  }
+  $ret = diag-functions(:functions(@functions));
+  if ! $deep {
+    $ret &= diag-cstructs(:types(%cstructs), :cheaders(@cheaders), :clibs(@clibs));
+  } else {
+    for %cstructs.kv -> $k, $v {
+      $ret &= diag-struct($k, $v, :cheaders(@cheaders), :clibs(@clibs));
+    }
+  }
+  return $ret;
+}
+  
+sub diag-functions(:@functions) returns Bool is export {
+    my $ret = True;
+    for @functions -> $f {
+      my $sig = $f.signature;
+      # check params
+      for @($sig.params).kv -> $i, $param {
+        if $param.type.REPR eq 'P6opaque' and $param.type.^name ne 'Str' {
+           say "{$f.name} - Not a valid parameter type for parameter [{$i + 1}] {$param.name ?? $param.name !! ''} : {$param.type.^name}";
+           say "-->For Numerical type, use the appropriate int32/int64/num64...";
+           $ret = False;
+        }
+      }
+      if $f.returns.REPR eq 'P6opaque' and $f.returns.^name ne 'Str' | 'Mu' {
+        say "{$f.returns.^name} {$f.name} - You should not return a non NC type (like Int inplace of int32), truncating errors can appear with different architectures";
+        $ret = False;
+      }
+    }
+    return $ret;
+  }
+  
+  
+sub diag-cstructs(:@cheaders, :@clibs = (), :%types) returns Bool is export {
 
   my @c_struct_list = %types.keys;
   my @nc_struct_list = %types.values;

@@ -65,5 +65,13 @@ my @l;
 diag-struct("rgba_color_t", wrong_rgba_color_s, :cheaders(@h));
 say "----";
 diag-struct("toyunda_sub_t", toyunda_subtitle_s, :cheaders(@h));
+say "\n Some function \n";
 
+sub foo1(Str $a, Int $b) is native('whatever') { * };
+
+sub foo2(Num $a, Int $b) is native('whatever') { * };
+
+sub foo3(Str $a, int32 $b) is native('whatever') returns Int { * };
+
+diag-functions(:functions([&foo1, &foo2, &foo3]));
 
