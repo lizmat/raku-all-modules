@@ -38,6 +38,13 @@ class ANTLR4::Actions::Perl6
 		has $.perl6;
 		}
 
+	method java2perl( Str $str )
+		{
+		my $copy = $str;
+		$copy ~~ s/\\u(....)/\\x[$0]/;
+		$copy
+		}
+
 	method alternation( $ast )
 		{
 		my $json;
@@ -54,16 +61,22 @@ class ANTLR4::Actions::Perl6
 			my $json-str = to-json( $json );
 			$terms ~= qq{ #=$json-str};
 			}
-		qq{[ $terms ]};
+		$terms;
 		}
 
 	method concatenation( $ast )
 		{
 		my $json;
 		my $terms = '';
-		$terms = join( ' ', map { self.term( $_ ) },
-			       @( $ast.<content> ) )
-			if @( $ast.<content> );
+		if @( $ast.<content> )
+			{
+			$terms = join( ' ', map { self.term( $_ ) },
+				       @( $ast.<content> ) );
+			}
+		else
+			{
+			$terms = '(Nil)';
+			}
 		for <command options label> -> $key
 			{
 			$json.{$key} = $ast.{$key} if $ast.{$key};
@@ -73,7 +86,7 @@ class ANTLR4::Actions::Perl6
 			my $json-str = to-json( $json );
 			$terms ~= qq{ #=$json-str};
 			}
-		qq{[ $terms ]};
+		$terms;
 		}
 
 	method _modify( $ast, $term )
@@ -87,8 +100,10 @@ class ANTLR4::Actions::Perl6
 	method terminal( $ast )
 		{
 		my $term = '';
+		my $content = self.java2perl( $ast.<content> );
+
 		$term ~= '!' if $ast.<complemented>;
-		$term ~= qq{'$ast.<content>'};
+		$term ~= qq{'$content'};
 		self._modify( $ast, $term );
 		}
 
@@ -107,11 +122,13 @@ class ANTLR4::Actions::Perl6
 	method range( $ast )
 		{
 		my $term = '';
+		my $from = self.java2perl( $ast.<content>[0]<from> );
+		my $to = self.java2perl( $ast.<content>[0]<to> );
 		
 		$term ~= '!' if $ast.<complemented>;
-		$term ~= qq{'$ast.<content>[0]<from>'};
+		$term ~= qq{'$from'};
 		$term ~= q{..};
-		$term ~= qq{'$ast.<content>[0]<to>'};
+		$term ~= qq{'$to'};
 		self._modify( $ast, $term );
 		}
 
@@ -124,9 +141,13 @@ class ANTLR4::Actions::Perl6
 		$term ~= '[ ';
 		$term ~= join( ' ', map
 			{
-			if /^(.)\-(.)/
+			if /^(.) '-' (.)/
 				{
 				$_ = qq{$0 .. $1};
+				}
+			elsif /^\\u(....) '-' \\u(....)/
+				{
+				$_ = qq{\\x[$0] .. \\x[$1]};
 				}
 			elsif /^\\u(....)/
 				{
@@ -134,7 +155,11 @@ class ANTLR4::Actions::Perl6
 				}
 			elsif /' '/
 				{
-				$_ = qq{' '};
+				$_ = q{' '};
+				}
+			elsif /\\\-/
+				{
+				$_ = q{-};
 				}
 			$_
 			},
