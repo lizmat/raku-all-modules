@@ -1,3 +1,6 @@
+   Release 1.23.3
+   Fixed `provides` paths in META.info
+
    Release 1.23.2
    Fixed for latest rakudo
    - a multi submethod BUILD can no longer be directly inherited. Changed
