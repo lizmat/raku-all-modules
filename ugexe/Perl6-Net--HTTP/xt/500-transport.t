@@ -29,21 +29,21 @@ subtest {
     is $res.body.decode.lines.grep(/^0/).elems, 1000;
 }, 'Threads: start { $transport.round-trip($req) }';
 
-subtest {
-    unless Net::HTTP::Dialer.?can-ssl {
-        print("ok 3 - # Skip: Can't do SSL. Is IO::Socket::SSL available?\n");
-        return;
-    }
 
-    my $url = Net::HTTP::URL.new('https://jigsaw.w3.org/HTTP/ChunkedScript');
-    my $req = Net::HTTP::Request.new: :$url, :method<GET>,
-        header => :Connection<close>, :User-Agent<perl6-net-http>;
+if Net::HTTP::Dialer.?can-ssl {
+    subtest {
+        my $url = Net::HTTP::URL.new('https://jigsaw.w3.org/HTTP/ChunkedScript');
+        my $req = Net::HTTP::Request.new: :$url, :method<GET>,
+            header => :Connection<close>, :User-Agent<perl6-net-http>;
 
-    my $transport = Net::HTTP::Transport.new;
-    my $res       = $transport.round-trip($req);
-    my $decoded   = $res.body.decode;
+        my $transport = Net::HTTP::Transport.new;
+        my $res       = $transport.round-trip($req);
+        my $decoded   = $res.body.decode;
 
-    is $decoded.lines.grep(/^0/).elems, 1000;
-    is $decoded.chars, 72200;
-}, 'Transfer-Encoding: chunked [IO::Socket::SSL]';
-
+        is $decoded.lines.grep(/^0/).elems, 1000;
+        is $decoded.chars, 72200;
+    }, 'Transfer-Encoding: chunked [IO::Socket::SSL]';
+}
+else {
+    ok 1, "Skip: Can't do SSL. Is IO::Socket::SSL available?";
+}

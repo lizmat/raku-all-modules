@@ -16,17 +16,18 @@ subtest {
     ok $socket ~~ IO::Socket::INET, 'IO::Socket::INET';
 }, 'IO::Socket::INET selected and works';
 
-subtest {
-    unless Net::HTTP::Dialer.?can-ssl {
-        print("ok 2 - # Skip: Can't do SSL. Is IO::Socket::SSL available?\n");
-        return;
-    }
 
-    my $url     = Net::HTTP::URL.new("https://httpbin.org/ip");
-    my $method  = 'GET';
-    my %header  = :Host<httpbin.org>, :User-Agent("perl6-net-http");
-    my $request = Net::HTTP::Request.new(:$url, :$method, :%header);
-    my $socket  = Net::HTTP::Dialer.new.dial($request);
+if Net::HTTP::Dialer.?can-ssl {
+    subtest {
+        my $url     = Net::HTTP::URL.new("https://httpbin.org/ip");
+        my $method  = 'GET';
+        my %header  = :Host<httpbin.org>, :User-Agent("perl6-net-http");
+        my $request = Net::HTTP::Request.new(:$url, :$method, :%header);
+        my $socket  = Net::HTTP::Dialer.new.dial($request);
 
-    ok $socket ~~ IO::Socket::SSL, 'IO::Socket::SSL';
-}, 'IO::Socket::SSL selected and works';
+        ok $socket ~~ IO::Socket::SSL, 'IO::Socket::SSL';
+    }, 'IO::Socket::SSL selected and works';
+}
+else {
+    ok 1, "Skip: Can't do SSL. Is IO::Socket::SSL available?";
+}

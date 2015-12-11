@@ -28,17 +28,17 @@ subtest {
 }, "Redirect";
 
 
-subtest {
-    unless Net::HTTP::Dialer.?can-ssl {
-        print("ok 3 - # Skip: Can't do SSL. Is IO::Socket::SSL available?\n");
-        return;
-    }
+if Net::HTTP::Dialer.?can-ssl {
+    subtest {
+        my $https2https-url = "https://httpbin.org/absolute-redirect/2";
+        my $https2https-response = Net::HTTP::GET($https2https-url);
+        is $https2https-response.status-code, 200, 'Status code of final redirect is 200';
 
-    my $https2https-url = "https://httpbin.org/absolute-redirect/2";
-    my $https2https-response = Net::HTTP::GET($https2https-url);
-    is $https2https-response.status-code, 200, 'Status code of final redirect is 200';
-
-    my $http2https-url = "http://github.com";
-    my $http2https-response = Net::HTTP::GET($http2https-url);
-    is $http2https-response.status-code, 200, 'Status code of final redirect is 200';
-}, 'Redirect with SSL';
+        my $http2https-url = "http://github.com";
+        my $http2https-response = Net::HTTP::GET($http2https-url);
+        is $http2https-response.status-code, 200, 'Status code of final redirect is 200';
+    }, 'Redirect with SSL';
+}
+else {
+    ok 1, "Skip: Can't do SSL. Is IO::Socket::SSL available?";
+}

@@ -9,7 +9,7 @@ role IO::Socket::HTTP {
     has $!lock = Lock.new;
 
     # Currently assumes these are called in a specific order per request
-    method get(Bool :$bin where True, Bool :$chomp = True) {
+    method get(Bool :$bin where *.so, Bool :$chomp = True) {
         my @sep      = $CRLF.contents;
         my $sep-size = +@sep;
         my $buf = buf8.new;
@@ -20,7 +20,7 @@ role IO::Socket::HTTP {
         $ = ?$chomp ?? $buf.subbuf(0, $buf.elems - $sep-size) !! $buf;
     }
 
-    method lines(Bool :$bin where True) {
+    method lines(Bool :$bin where *.so) {
         gather while (my $data = $.get(:bin)).DEFINITE {
             take $data;
         }
