@@ -6,6 +6,7 @@ inc/
 Build
 !Build/
 Build.bat
+lib/.precomp
 .last_cover_stats
 /Makefile
 /Makefile.old
