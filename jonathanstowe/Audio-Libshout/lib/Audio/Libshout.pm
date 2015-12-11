@@ -305,10 +305,9 @@ There is no default.
 
 =end pod
 
-class Audio::Libshout:ver<v0.0.4>:auth<github:jonathanstowe> {
+class Audio::Libshout:ver<v0.0.5>:auth<github:jonathanstowe> {
     use NativeCall;
-    use AccessorFacade:ver<v0.0.2>;
-    use OO::Monitors;
+    use AccessorFacade;
 
     # encapsulate (bytes, count) in a type safe way
     subset RawEncode of Array where  ($_.elems == 2 ) && ($_[0] ~~ CArray[uint8]) && ($_[1] ~~ Int);
@@ -556,7 +555,7 @@ class Audio::Libshout:ver<v0.0.4>:auth<github:jonathanstowe> {
         }
     }
 
-    monitor Initialiser {
+    class Initialiser {
         has Int $!initialisers = 0;
 
         sub shout_init() is native('libshout') { * }

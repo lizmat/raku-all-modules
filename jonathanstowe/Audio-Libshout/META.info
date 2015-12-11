@@ -17,14 +17,15 @@
     "Audio::Libshout" : "lib/Audio/Libshout.pm"
   },
   "depends" : [
-       "AccessorFacade", "OO::Monitors"
+       "AccessorFacade"
   ],
   "test-depends" : [
     "Test",
+	 "Test::META",
     "File::Find",
     "Shell::Command",
     "CheckSocket"
   ],
   "description" : "Binding for libshout - source streaming client library for icecast",
-  "version" : "v0.0.4"
+  "version" : "v0.0.5"
 }
