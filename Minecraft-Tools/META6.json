@@ -1,0 +1,17 @@
+{ "perl"        : "v6"
+, "name"        : "Minecraft-Tools"
+, "version"     : "0.1.0"
+, "description" : "Perl 6 modules for interacting with Minecraft servers/APIs"
+, "authors"     : [ "flussence" ]
+, "provides"    : { "Net::Minecraft::Packet": "lib/Net/Minecraft/Packet.pm"
+                  , "Net::Minecraft::Query" : "lib/Net/Minecraft/Query.pm"
+                  , "Net::Minecraft::Rcon"  : "lib/Net/Minecraft/Rcon.pm"
+                  , "Net::Minecraft::Version"
+                    : "lib/Net/Minecraft/oldVersion.pm"
+                  , "Net::Minecraft::Version"
+                    : "lib/Net/Minecraft/Version.pm" }
+, "depends"     : [ "JSON::Fast", "Net::HTTP", "Terminal::ANSIColor" ]
+, "test-depends": [ "Test" ]
+, "support"     : { "bugtracker": "https://github.com/flussence/Minecraft-Tools/issues"
+                  , "source"    : "https://github.com/flussence/Minecraft-Tools.git" }
+, "license"     : "https://creativecommons.org/publicdomain/zero/1.0/" }

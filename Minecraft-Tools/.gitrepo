@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/flussence/Minecraft-Tools
+	branch = master
+	commit = 69d4cb8968063f4a0faba1f1594025dd8291a3e2
+	parent = a3e72bd023880effdce49473cbc9dadcded223cb
+	cmdver = 0.2.3
