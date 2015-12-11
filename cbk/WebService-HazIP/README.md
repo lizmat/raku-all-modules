@@ -1,4 +1,4 @@
-# perl6-WebService-HazIP
+# perl6-WebService-HazIP [![Build Status](https://travis-ci.org/cbk/WebService-HazIP.svg?branch=master)](https://travis-ci.org/cbk/WebService-HazIP)
 
 
 ## SYNOPSIS
