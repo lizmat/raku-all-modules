@@ -1,6 +1,27 @@
 use _007::Val;
 use _007::Q;
-use _007::Parser::OpScope;
+use _007::OpScope;
+
+class Val::Sub::Builtin is Val::Sub {
+    has $.code;
+    has $.qtype;
+    has $.assoc;
+    has %.precedence;
+
+    method new($name, $code, :$qtype, :$assoc, :%precedence,
+            :$parameterlist = Q::ParameterList.new,
+            :$statementlist = Q::StatementList.new) {
+        self.bless(
+            :$name,
+            :$code,
+            :$qtype,
+            :$assoc,
+            :%precedence,
+            :$parameterlist,
+            :$statementlist,
+        )
+    }
+}
 
 class _007::Runtime::Builtins {
     has $.runtime;
@@ -14,7 +35,7 @@ class _007::Runtime::Builtins {
         default { die "Got some unknown value of type ", .^name }
     }
 
-    method get-subs {
+    method get-builtins {
         my &str = sub ($_) {
             when Val { return .Str }
             die X::TypeCheck.new(
@@ -28,9 +49,7 @@ class _007::Runtime::Builtins {
                 $.runtime.output.say($arg ~~ Val::Array ?? &str($arg).Str !! ~$arg);
                 Nil;
             },
-            type     => -> $arg {
-                $arg.^name.subst(/^ "Val::"/, "").subst(/"::Builtin" $/, "");
-            },
+            type => -> $arg { Val::Type.of($arg.WHAT) },
             str => &str,
             int => sub ($_) {
                 when Val::Str {
@@ -110,6 +129,9 @@ class _007::Runtime::Builtins {
                         [&&] $l.properties.keys.sort.perl eq $r.properties.keys.sort.perl,
                             |($l.properties.keys).map(&equal-at-key);
                     }
+                    multi equal-value(Val::Type $l, Val::Type $r) {
+                        $l.type === $r.type
+                    }
                     multi equal-value(Val::Block $l, Val::Block $r) {
                         $l.name eq $r.name
                             && equal-value($l.parameterlist, $r.parameterlist)
@@ -174,6 +196,70 @@ class _007::Runtime::Builtins {
                 :qtype(Q::Infix::Concat),
                 :precedence{ equal => "+" },
             ),
+            'postfix:<[]>' => Val::Sub::Builtin.new('postfix:<[]>',
+                sub ($expr, $index) {
+                    # can't express this one as a built-in sub
+                },
+                :qtype(Q::Postfix::Index),
+                :assoc<right>,
+            ),
+            'postfix:<()>' => Val::Sub::Builtin.new('postfix:<()>',
+                sub ($expr, $arguments) {
+                    # can't express this one as a built-in sub
+                },
+                :qtype(Q::Postfix::Call),
+                :assoc<right>,
+            ),
+            'postfix:<.>' => Val::Sub::Builtin.new('postfix:<.>',
+                sub ($expr, $property) {
+                    # can't express this one as a built-in sub
+                },
+                :qtype(Q::Postfix::Property),
+                :assoc<right>,
+            ),
+            "None"                   => Val::Type.of(Val::None),
+            "Int"                    => Val::Type.of(Val::Int),
+            "Str"                    => Val::Type.of(Val::Str),
+            "Array"                  => Val::Type.of(Val::Array),
+            "Object"                 => Val::Type.of(Val::Object),
+            "Type"                   => Val::Type.of(Val::Type),
+            "Q::Identifier"          => Val::Type.of(Q::Identifier),
+            "Q::Literal::None"       => Val::Type.of(Q::Literal::None),
+            "Q::Literal::Int"        => Val::Type.of(Q::Literal::Int),
+            "Q::Literal::Str"        => Val::Type.of(Q::Literal::Str),
+            "Q::Term::Array"         => Val::Type.of(Q::Term::Array),
+            "Q::Term::Object"        => Val::Type.of(Q::Term::Object),
+            "Q::Property"            => Val::Type.of(Q::Property),
+            "Q::PropertyList"        => Val::Type.of(Q::PropertyList),
+            "Q::Block"               => Val::Type.of(Q::Block),
+            "Q::Identifier"          => Val::Type.of(Q::Identifier),
+            "Q::Unquote"             => Val::Type.of(Q::Unquote),
+            "Q::Prefix::Minus"       => Val::Type.of(Q::Prefix::Minus),
+            "Q::Infix::Addition"     => Val::Type.of(Q::Infix::Addition),
+            "Q::Infix::Concat"       => Val::Type.of(Q::Infix::Concat),
+            "Q::Infix::Assignment"   => Val::Type.of(Q::Infix::Assignment),
+            "Q::Infix::Eq"           => Val::Type.of(Q::Infix::Eq),
+            "Q::Postfix::Index"      => Val::Type.of(Q::Postfix::Index),
+            "Q::Postfix::Call"       => Val::Type.of(Q::Postfix::Call),
+            "Q::Postfix::Property"   => Val::Type.of(Q::Postfix::Property),
+            "Q::ParameterList"       => Val::Type.of(Q::ParameterList),
+            "Q::Parameter"           => Val::Type.of(Q::Parameter),
+            "Q::ArgumentList"        => Val::Type.of(Q::ArgumentList),
+            "Q::Statement::My"       => Val::Type.of(Q::Statement::My),
+            "Q::Statement::Constant" => Val::Type.of(Q::Statement::Constant),
+            "Q::Statement::Expr"     => Val::Type.of(Q::Statement::Expr),
+            "Q::Statement::If"       => Val::Type.of(Q::Statement::If),
+            "Q::Statement::Block"    => Val::Type.of(Q::Statement::Block),
+            "Q::CompUnit"            => Val::Type.of(Q::CompUnit),
+            "Q::Statement::For"      => Val::Type.of(Q::Statement::For),
+            "Q::Statement::While"    => Val::Type.of(Q::Statement::While),
+            "Q::Statement::Return"   => Val::Type.of(Q::Statement::Return),
+            "Q::Statement::Sub"      => Val::Type.of(Q::Statement::Sub),
+            "Q::Statement::Macro"    => Val::Type.of(Q::Statement::Macro),
+            "Q::Statement::BEGIN"    => Val::Type.of(Q::Statement::BEGIN),
+            "Q::StatementList"       => Val::Type.of(Q::StatementList),
+            "Q::Trait"               => Val::Type.of(Q::Trait),
+            "Q::Term::Quasi"         => Val::Type.of(Q::Term::Quasi),
         ;
 
         sub _007ize(&fn) {
@@ -183,12 +269,15 @@ class _007::Runtime::Builtins {
         sub create-paramlist(@params) {
             Q::ParameterList.new(:parameters(
                 Val::Array.new(:elements(@params».name».substr(1).map({
-                    Q::Identifier.new(:name(Val::Str.new(:value($_))))
+                    Q::Parameter.new(:ident(Q::Identifier.new(:name(Val::Str.new(:value($_))))))
                 })))
             ));
         }
 
         return @builtins.map: {
+            when .value ~~ Val::Type {
+                .key => .value;
+            }
             when .value ~~ Callable {
                  my $paramlist = create-paramlist(.value.signature.params);
                  .key => Val::Sub::Builtin.new(.key, _007ize(.value), :parameterlist($paramlist));
@@ -202,9 +291,9 @@ class _007::Runtime::Builtins {
     }
 
     method opscope {
-        my $scope = _007::Parser::OpScope.new;
+        my $scope = _007::OpScope.new;
 
-        for self.get-subs -> Pair (:key($name), :value($subval)) {
+        for self.get-builtins -> Pair (:key($name), :value($subval)) {
             $name ~~ /^ (prefix | infix | postfix) ':<' (<-[\>]>+) '>' $/
                 or next;
             my $type = ~$0;
@@ -307,13 +396,24 @@ class _007::Runtime::Builtins {
                 given $obj {
                     when Q::Statement::My | Q::Statement::Constant
                         | Q::Statement::Sub | Q::Statement::Macro
-                        | Q::Statement::Trait | Q::Postfix::Property {
+                        | Q::Trait {
                         $obj.ident;
                     }
                     die X::TypeCheck.new(
                         :operation<.ident>,
                         :got($obj),
                         :expected("any number of types with the .ident property"));
+                }
+            }
+            when "property" {
+                given $obj {
+                    when Q::Postfix::Property {
+                        $obj.property;
+                    }
+                    die X::TypeCheck.new(
+                        :operation<.property>,
+                        :got($obj),
+                        :expected(Q::Postfix::Property));
                 }
             }
             when "assign" {

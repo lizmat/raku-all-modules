@@ -9,7 +9,7 @@ use _007::Test;
 
     my $expected = read(
         "(stmtlist (stexpr (infix:<+> (int 1) (int 1))))"
-    ).block.Str.subst("Q::Block", "Q::Expr::Block");
+    ).block.Str;
     outputs $program, "$expected\n", "Basic quasi quoting";
 }
 
@@ -56,6 +56,60 @@ use _007::Test;
         .
 
     outputs $program, "7\n", "a variable is looked up in the quasi's environment";
+}
+
+{
+    my $program = q:to/./;
+        macro foo(expr) {
+            my x = "oh noes";
+            return quasi {
+                say({{{expr}}});
+            }
+        }
+
+        my x = "yay";
+        foo(x);
+        .
+
+    outputs $program, "yay\n", "macro arguments also carry their original environment";
+}
+
+{
+    my $program = q:to/./;
+        macro moo() {
+            sub infix:<**>(l, r) {
+                return l ~ " to the " ~ r;
+            }
+            return quasi {
+                say("pedal" ** "metal");
+            }
+        }
+
+        moo();
+        .
+
+    outputs
+        $program,
+        "pedal to the metal\n",
+        "operator used in quasi block carries its original environement";
+}
+
+{
+    my $program = q:to/./;
+        macro gah() {
+            return quasi { say(2 + 2) }
+        }
+
+        {
+            sub infix:<+>(l, r) { return "lol, pwnd!" }
+            gah()
+        }
+        .
+
+    outputs
+        $program,
+        "4\n",
+        "operators in quasi aren't unhygienically overriden by mainline environment";
 }
 
 done-testing;

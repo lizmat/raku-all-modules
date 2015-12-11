@@ -14,7 +14,7 @@ use _007::Test;
         '{a() {}}' '(object (ident "Object") (proplist
           (property "a" (block (paramlist) (stmtlist)))))'
         '{a(a, b) {}}' '(object (ident "Object") (proplist (property "a" (block
-          (paramlist (ident "a") (ident "b")) (stmtlist)))))'
+          (paramlist (param (ident "a")) (param (ident "b"))) (stmtlist)))))'
     »;
 
     for @exprs -> $expr, $frag {
@@ -56,6 +56,31 @@ use _007::Test;
         .
 
     is-error $ast, X::PropertyNotFound, "can't access non-existing property (dot syntax)";
+}
+
+{
+    my $ast = q:to/./;
+          (stmtlist
+            (my (ident "o") (object (ident "Object") (proplist
+              (property "foo" (int 1))
+              (property "foo" (int 2))))))
+        .
+
+    is-error
+        $ast,
+        X::Property::Duplicate,
+        "can't have duplicate properties (I)";
+}
+
+{
+    my $program = q:to/./;
+        my o = { foo: 1, foo: 2 };
+        .
+
+    parse-error
+        $program,
+        X::Property::Duplicate,
+        "can't have duplicate properties (II)";
 }
 
 {
@@ -124,7 +149,7 @@ use _007::Test;
 
     outputs
         $program,
-        qq[Q::Identifier\n],
+        qq[<type Q::Identifier>\n],
         "an object literal is of the declared type";
 }
 

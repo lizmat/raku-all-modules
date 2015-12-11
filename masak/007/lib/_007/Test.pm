@@ -3,6 +3,10 @@ use _007;
 use Test;
 
 sub read(Str $ast) is export {
+    sub n($type, $op) {
+        Q::Identifier.new(:name(Val::Str.new(:value($type ~ ":<$op>"))));
+    }
+
     my %q_lookup =
         none           => -> { Q::Literal::None.new },
         int            => -> $value { Q::Literal::Int.new(:$value) },
@@ -10,18 +14,18 @@ sub read(Str $ast) is export {
         array          => -> *@elements { Q::Term::Array.new(:elements(Val::Array.new(:@elements))) },
         object         => -> $type, $propertylist { Q::Term::Object.new(:$type, :$propertylist) },
 
-        'prefix:<->'   => -> $expr { Q::Prefix::Minus.new(:$expr) },
+        'prefix:<->'   => -> $expr { Q::Prefix::Minus.new(:$expr, :ident(n("prefix", "-"))) },
 
-        'infix:<+>'    => -> $lhs, $rhs { Q::Infix::Addition.new(:$lhs, :$rhs) },
-        'infix:<->'    => -> $lhs, $rhs { Q::Infix::Subtraction.new(:$lhs, :$rhs) },
-        'infix:<*>'    => -> $lhs, $rhs { Q::Infix::Multiplication.new(:$lhs, :$rhs) },
-        'infix:<~>'    => -> $lhs, $rhs { Q::Infix::Concat.new(:$lhs, :$rhs) },
-        'infix:<=>'    => -> $lhs, $rhs { Q::Infix::Assignment.new(:$lhs, :$rhs) },
-        'infix:<==>'   => -> $lhs, $rhs { Q::Infix::Eq.new(:$lhs, :$rhs) },
+        'infix:<+>'    => -> $lhs, $rhs { Q::Infix::Addition.new(:$lhs, :$rhs, :ident(n("infix", "+"))) },
+        'infix:<->'    => -> $lhs, $rhs { Q::Infix::Subtraction.new(:$lhs, :$rhs, :ident(n("infix", "-"))) },
+        'infix:<*>'    => -> $lhs, $rhs { Q::Infix::Multiplication.new(:$lhs, :$rhs, :ident(n("infix", "*"))) },
+        'infix:<~>'    => -> $lhs, $rhs { Q::Infix::Concat.new(:$lhs, :$rhs, :ident(n("infix", "~"))) },
+        'infix:<=>'    => -> $lhs, $rhs { Q::Infix::Assignment.new(:$lhs, :$rhs, :ident(n("infix", "="))) },
+        'infix:<==>'   => -> $lhs, $rhs { Q::Infix::Eq.new(:$lhs, :$rhs, :ident(n("infix", "=="))) },
 
-        'postfix:<()>' => -> $expr, $argumentlist { Q::Postfix::Call.new(:$expr, :$argumentlist) },
-        'postfix:<[]>' => -> $expr, $index { Q::Postfix::Index.new(:$expr, :$index) },
-        'postfix:<.>'  => -> $expr, $ident { Q::Postfix::Property.new(:$expr, :$ident) },
+        'postfix:<()>' => -> $expr, $argumentlist { Q::Postfix::Call.new(:$expr, :$argumentlist, :ident(n("postfix", "()"))) },
+        'postfix:<[]>' => -> $expr, $index { Q::Postfix::Index.new(:$expr, :$index, :ident(n("postfix", "[]"))) },
+        'postfix:<.>'  => -> $expr, $property { Q::Postfix::Property.new(:$expr, :$property, :ident(n("postfix", "."))) },
 
         my             => -> $ident, $expr = Val::None.new { Q::Statement::My.new(:$ident, :$expr) },
         stexpr         => -> $expr { Q::Statement::Expr.new(:$expr) },
@@ -36,6 +40,7 @@ sub read(Str $ast) is export {
 
         ident          => -> $name { Q::Identifier.new(:$name) },
         block          => -> $parameterlist, $statementlist { Q::Block.new(:$parameterlist, :$statementlist) },
+        param          => -> $ident { Q::Parameter.new(:$ident) },
         property       => -> $key, $value { Q::Property.new(:$key, :$value) },
 
         stmtlist       => -> *@statements { Q::StatementList.new(:statements(Val::Array.new(:elements(@statements)))) },
@@ -77,13 +82,13 @@ sub read(Str $ast) is export {
     )));
 }
 
-role StrOutput {
+class StrOutput {
     has $.result = "";
 
     method say($s) { $!result ~= $s.gist ~ "\n" }
 }
 
-role UnwantedOutput {
+class UnwantedOutput {
     method say($s) { die "Program printed '$s'; was not expected to print anything" }
 }
 
@@ -97,7 +102,7 @@ sub check(Q::CompUnit $ast, $runtime) {
     multi handle(Q::Statement::Expr $) {}
     multi handle(Q::Statement::BEGIN $) {}
     multi handle(Q::Literal $) {}
-    multi handle(Q::Term $) {}
+    multi handle(Q::Term $) {} # except Q::Term::Object, see below
     multi handle(Q::Postfix $) {}
 
     multi handle(Q::StatementList $statementlist) {
@@ -183,12 +188,27 @@ sub check(Q::CompUnit $ast, $runtime) {
 
     multi handle(Q::Block $block) {
         my $valblock = Val::Block.new(
+            :parameterlist(Q::ParameterList.new),
+            :statementlist(Q::StatementList.new),
             :outer-frame($runtime.current-frame));
         $runtime.enter($valblock);
         handle($block.parameterlist);
         handle($block.statementlist);
         $block.static-lexpad = $runtime.current-frame.pad;
         $runtime.leave();
+    }
+
+    multi handle(Q::Term::Object $object) {
+        handle($object.propertylist);
+    }
+
+    multi handle(Q::PropertyList $propertylist) {
+        my %seen;
+        for $propertylist.properties.elements -> Q::Property $p {
+            my Str $property = $p.key.value;
+            die X::Property::Duplicate.new(:$property)
+                if %seen{$property}++;
+        }
     }
 }
 

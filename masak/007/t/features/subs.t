@@ -30,7 +30,7 @@ use _007::Test;
 {
     my $ast = q:to/./;
         (stmtlist
-          (sub (ident "f") (block (paramlist (ident "name")) (stmtlist
+          (sub (ident "f") (block (paramlist (param (ident "name"))) (stmtlist
             (stexpr (postfix:<()> (ident "say") (arglist (infix:<~> (str "Good evening, Mr ") (ident "name"))))))))
           (stexpr (postfix:<()> (ident "f") (arglist (str "Bond")))))
         .
@@ -41,7 +41,7 @@ use _007::Test;
 {
     my $ast = q:to/./;
         (stmtlist
-          (sub (ident "f") (block (paramlist (ident "X") (ident "Y")) (stmtlist
+          (sub (ident "f") (block (paramlist (param (ident "X")) (param (ident "Y"))) (stmtlist
             (stexpr (postfix:<()> (ident "say") (arglist (infix:<~> (ident "X") (ident "Y"))))))))
           (my (ident "X") (str "y"))
           (stexpr (postfix:<()> (ident "f") (arglist (str "X") (infix:<~> (ident "X") (ident "X"))))))
@@ -53,7 +53,7 @@ use _007::Test;
 {
     my $ast = q:to/./;
         (stmtlist
-          (sub (ident "f") (block (paramlist (ident "callback")) (stmtlist
+          (sub (ident "f") (block (paramlist (param (ident "callback"))) (stmtlist
             (my (ident "scoping") (str "dynamic"))
             (stexpr (postfix:<()> (ident "callback") (arglist))))))
           (my (ident "scoping") (str "lexical"))
@@ -105,7 +105,7 @@ use _007::Test;
     my $ast = q:to/./;
         (stmtlist
           (stexpr (postfix:<()> (ident "f") (arglist (str "Bond"))))
-          (sub (ident "f") (block (paramlist (ident "name")) (stmtlist
+          (sub (ident "f") (block (paramlist (param (ident "name"))) (stmtlist
             (stexpr (postfix:<()> (ident "say") (arglist (infix:<~> (str "Good evening, Mr ") (ident "name")))))))))
         .
 
@@ -122,6 +122,34 @@ use _007::Test;
     my $program = 'my b = 42; sub g() { say(b) }; g()';
 
     outputs $program, "42\n", "lexical scope works correctly from inside a sub";
+}
+
+{
+    my $program = q:to/./;
+        sub f() {}
+        f = 5;
+        .
+
+    parse-error
+        $program,
+        X::Assignment::RO,
+        "cannot assign to a subroutine";
+}
+
+{
+    my $program = q:to/./;
+        sub f() {}
+        sub h(a, b, f) {
+            f = 17;
+            say(f == 17);
+        }
+        h(0, 0, 7);
+        say(f == 17);
+        .
+
+    outputs $program,
+        "1\n0\n",
+        "can assign to a parameter which hides a subroutine";
 }
 
 done-testing;
