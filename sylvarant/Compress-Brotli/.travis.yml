@@ -8,6 +8,8 @@ install:
     - sudo apt-get -qq install g++-4.8
     - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
     - rakudobrew build-panda
+    - panda --notests installdeps .
+    - panda --notests installdeps .
     - panda install LibraryMake
 
 script: panda-build && prove -e perl6 t

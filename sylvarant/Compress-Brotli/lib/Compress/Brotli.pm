@@ -25,14 +25,11 @@ module Compress::Brotli:ver<0.1.0> {
 	  unless $path {
       my $so = get-vars('')<SO>;
 		  my $libname = 'libperl6brotli'~$so;
-		  for @*INC {
-			  my $inc-path = $_.IO.path.subst(/ ['file#' || 'inst#'] /, '');
-			  my $check = $*SPEC.catfile($inc-path, $libname);
-			  if $check.IO ~~ :f {
-				  $path = $check;
-				  last;
-			  }
-		  }
+			my $inc-path = "./lib/".IO.path.subst(/ ['file#' || 'inst#'] /, '');
+			my $check = $*SPEC.catfile($inc-path, $libname);
+			if $check.IO ~~ :f {
+				$path = $check;
+			}
 			die ("Unable to locate library: $libname") unless $path;
 	  }
 	  return $path;
