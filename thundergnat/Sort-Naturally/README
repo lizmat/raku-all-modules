@@ -86,7 +86,7 @@ To create the method .nsort that can be used similar to .sort:
 
 use Sort::Naturally;
 
-use MONKEY_TYPING;
+use MONKEY-TYPING;
 augment class Any {
     method nsort (*@) { self.list.flat.sort( { .&naturally } ) };
 }
