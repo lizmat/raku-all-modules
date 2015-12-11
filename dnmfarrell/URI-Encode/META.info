@@ -1,6 +1,6 @@
 {
     "name" : "URI::Encode",
-    "version" : "0.03",
+    "version" : "0.05",
     "description" : "Encode and decode URIs according to RFC 3986",
     "author" : "David Farrell",
     "build-depends" : [ ],
@@ -9,7 +9,7 @@
     ],
     "depends" : [ ],
     "provides" : {
-      "URI::Encode" : "lib/Pod/Perl5.pm6"
+      "URI::Encode" : "lib/URI/Encode.pm6"
     },
     "source-type" : "git",
     "source-url" : "git://github.com/dnmfarrell/URI-Encode.git"

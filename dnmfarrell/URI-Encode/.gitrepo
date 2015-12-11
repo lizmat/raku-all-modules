@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dnmfarrell/URI-Encode.git
 	branch = master
-	commit = e7e5114693f969d4522e53af15da9415db4eea9f
-	parent = 1c340ce4447ccce8167588863cdcab8d86dd52f8
-	cmdver = 0.2.2
+	commit = 5aa6a2245c25a3d76157873426ef4b58b966180d
+	parent = 3349757fc4d2b0eb67c16d53d5df11ca9f0ecefe
+	cmdver = 0.2.3
