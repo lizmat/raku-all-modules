@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-Acme-GiveUp.git
+	branch = master
+	commit = 6d1afed459f5104b58698600ec57c28f43bfdd5b
+	parent = 1dcb8734037bdb1202a2fbd23c0f10abd132d664
+	cmdver = 0.2.3

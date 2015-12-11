@@ -1,0 +1,14 @@
+{
+    "name"         : "Acme::GiveUp",
+    "version"      : "1.001001",
+    "description"
+        : "(╯°□°）╯︵┻━┻  when you just want to give up for the day",
+    "depends"      : [ ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "Acme::GiveUp" : "lib/Acme/GiveUp.pm6"
+    },
+    "author"       : "Zoffix Znet",
+    "authority"    : "zoffixznet",
+    "source-url"   : "git://github.com/zoffixznet/perl6-Acme-GiveUp.git"
+}
