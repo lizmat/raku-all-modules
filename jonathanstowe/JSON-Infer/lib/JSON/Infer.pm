@@ -81,11 +81,11 @@ This is the content type that we want to use.  The default is
 =end pod
 
 
-class JSON::Infer:ver<v0.0.2>:auth<github:jonathanstowe> {
+class JSON::Infer:ver<v0.0.3>:auth<github:jonathanstowe> {
 
-    our $VERSION = v0.0.1;
+    our $VERSION = v0.0.3;
 
-    use HTTP::UserAgent;
+    #use HTTP::UserAgent;
     use JSON::Infer::Class;
     use JSON::Infer::Exception;
 
@@ -115,26 +115,28 @@ class JSON::Infer:ver<v0.0.2>:auth<github:jonathanstowe> {
     }
 
 
-    has HTTP::UserAgent $.ua is rw;
+    has $.ua is rw;
 
-    method get(|c) returns HTTP::Response {
+    method get(|c) {
         self.ua.get(|c);
     }
 
-    method ua() is rw returns HTTP::UserAgent {
+    method ua() is rw {
+        require HTTP::UserAgent;
         if not $!ua.defined {
-            $!ua = HTTP::UserAgent.new( default-headers   => $.headers, useragent => $?PACKAGE.^name ~ '/' ~ $VERSION);
+            $!ua = ::('HTTP::UserAgent').new( default-headers   => $.headers, useragent => $?PACKAGE.^name ~ '/' ~ $VERSION);
         }
         $!ua;
     }
 
 
-    has HTTP::Header $.headers is rw;
+    has $.headers is rw;
 
-    method headers() returns HTTP::Header is rw {
+    method headers() is rw {
 
+        require HTTP::Header;
         if not $!headers.defined {
-            $!headers = HTTP::Header.new();
+            $!headers = ::('HTTP::Header').new();
             $!headers.field('Content-Type'  => $!content-type);
             $!headers.field('Accept'  => $!content-type);
         }
