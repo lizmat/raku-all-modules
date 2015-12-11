@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/flower.git
 	branch = master
-	commit = b5e0fcc1c03f69b3ef5e688cb0154592c1e00bd0
-	parent = fcb487e2f718a81506e4b818ed769b7ece895622
-	cmdver = 0.1.0
+	commit = dc13c7cbc853b674d609dd9b3aaef93c955fdc48
+	parent = dbdb66b47735b8f8c5ccc2385c6512e28da7a809
+	cmdver = 0.2.3

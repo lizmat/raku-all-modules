@@ -4,10 +4,7 @@
 ## Add a separate set of tests for Flower::Utils::Text, and one
 ## for all modifiers in the DefaultModifiers set.
 
-BEGIN { 
-  @*INC.push: './lib';       ## Standard lib.
-  @*INC.unshift: './t/lib';  ## Test libraries.
-}
+use lib <t/lib lib>;
 
 use Test;
 use Flower::TAL;
