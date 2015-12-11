@@ -5,7 +5,7 @@ use BSON::Regex;
 use BSON::Javascript;
 use BSON::Binary;
 
-package BSON:ver<0.9.14> {
+package BSON {#:ver<0.9.16> {
 
   #-----------------------------------------------------------------------------
   # BSON type codes
@@ -167,7 +167,8 @@ package BSON:ver<0.9.14> {
           "\n  Autivivify: $!autovivify",
           "\n  Accept hash: $!accept-hash",
           "\n  Keys(", @!keys.elems, "): ", @!keys.join(', '),
-          "\n  Values(", @!values.elems, "): ", @!values.join(', '),
+#          "\n  Values(", @!values.elems, "): ",
+#             (map { $_.^name eq 'BSON::Document' ?? '=Document=' !! $_}, @!values).join(', '),
           "\n  Encoded Entries(", @!encoded-entries.elems, "):",
              (map { "\n   - " ~ $_.>>.fmt('0x%02x'); }, @!encoded-entries),
           ;
@@ -810,7 +811,7 @@ package BSON:ver<0.9.14> {
     }
 
     #---------------------------------------------------------------------------
-    sub encode-cstring ( Str:D $s --> Buf ) {
+    sub encode-cstring ( Str:D $s --> Buf ) is export {
       die X::Parse-document.new(
         :operation('encode-cstring()'),
         :error('Forbidden 0x00 sequence in $s')
@@ -826,8 +827,8 @@ package BSON:ver<0.9.14> {
     }
 
     #---------------------------------------------------------------------------
-    sub encode-int32 ( Int:D $i --> Buf ) {
-      my int $ni = $i;      
+    sub encode-int32 ( Int:D $i --> Buf ) is export {
+      my int $ni = $i;
       return Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
                       ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF
                     );
@@ -1437,7 +1438,7 @@ package BSON:ver<0.9.14> {
     }
 
     #-----------------------------------------------------------------------------
-    sub decode-int32 ( Buf:D $b, Int:D $index --> Int ) {
+    sub decode-int32 ( Buf:D $b, Int:D $index --> Int ) is export {
 
       # Check if there are enaugh letters left
       #

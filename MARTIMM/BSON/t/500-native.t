@@ -1,4 +1,4 @@
-#BEGIN { @*INC.unshift( 'lib' ) }
+# use lib 'lib';
 
 use v6;
 use Test;

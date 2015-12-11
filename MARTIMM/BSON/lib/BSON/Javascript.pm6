@@ -12,7 +12,7 @@ package BSON {
 
     #---------------------------------------------------------------------------
     #
-    submethod BUILD ( Str:D :$javascript, :$scope ) {
+    submethod BUILD ( Str :$javascript, :$scope ) {
 
       # Store the attribute values. ? sets True if defined and filled.
       #

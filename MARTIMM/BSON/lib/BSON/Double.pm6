@@ -180,7 +180,6 @@ package BSON {
           last;
         }
       }
-
       my Num $value;
       if $six-byte-zeros and $a[6] == 0 {
         if $a[7] == 0 {
@@ -214,23 +213,25 @@ package BSON {
       # the array.
       #
       if $value.defined {
-#        $a.splice( 0, 8);
         $index += 8;
       }
 
       # If value is not set by the special cases above, calculate it here
       #
       else {
+
         my Int $i = decode-int64( $a.Array, $index);
         my Int $sign = $i +& 0x8000_0000_0000_0000 ?? -1 !! 1;
 
         # Significand + implicit bit
         #
         my $significand = 0x10_0000_0000_0000 +| ($i +& 0xF_FFFF_FFFF_FFFF);
+#        my $significand = 0x10_0000_0000_0000 +| $i;
 
         # Exponent - bias (1023) - the number of bits for precision
         #
         my $exponent = (($i +& 0x7FF0_0000_0000_0000) +> 52) - 1023 - 52;
+#say "Dbl: $significand, $exponent, $i, $sign, ", $a;
 
         $value = Num.new((2 ** $exponent) * $significand * $sign);
       }

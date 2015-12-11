@@ -1,6 +1,6 @@
 # BSON support
 
-![Face](http://modules.perl6.org/logos/BSON.png) [![Build Status](https://travis-ci.org/MARTIMM/BSON.svg?branch=master)](https://travis-ci.org/MARTIMM/BSON)
+![Face](logotype/logo_32x32.png) [![Build Status](https://travis-ci.org/MARTIMM/BSON.svg?branch=master)](https://travis-ci.org/MARTIMM/BSON)
 
 Implements [BSON specification](http://bsonspec.org/).
 
@@ -111,6 +111,12 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.16
+  * move around things
+  * some subs exported
+* 0.9.15
+  * ```@*INC``` is gone, ```use lib``` is the way. A lot of changes done by
+    zoffixznet.
 * 0.9.14
   * All dies are now throwing excpetions X::Parse-document or X::NYS in
     BSON::Document.

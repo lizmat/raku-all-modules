@@ -1,10 +1,4 @@
 use v6;
-
-#BEGIN {
-#  @*INC.unshift('/home/marcel/Languages/Perl6/Projects/BSON/lib');
-#}
-
-#use BSON::Encodable-Tools;
 use BSON::EDC-Tools;
 
 package BSON {
