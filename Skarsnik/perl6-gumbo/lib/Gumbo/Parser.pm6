@@ -6,8 +6,8 @@ use Gumbo::Binding;
 
 unit class Gumbo::Parser does HTML::Parser;
 
-has Duration	$.c_parse_duration;
-has Duration	$.xml_creation_duration;
+has Duration	$.c-parse-duration;
+has Duration	$.xml-creation-duration;
 has Int		%.stats;
 has Bool	$!nowhitespace = False;
 
@@ -18,14 +18,14 @@ method parse (Str $html, :$nowhitespace = False, *%filters) returns XML::Documen
       die "Gumbo, parse_html : No TAG specified in the filter" unless %filters<TAG>.defined;
       die "Gumbo, parse_html : Filters only allow 3 elements, did you try to filter on more than one attribute?" if %filters.elems > 3;
     }
-    
+
     my gumbo_output_t $gumbo_output = gumbo_parse($html);
-    $!c_parse_duration = now - $t;
+    $!c-parse-duration = now - $t;
     $t = now;
     my gumbo_output_s $go = nativecast(gumbo_output_s, $gumbo_output);
     my gumbo_node_s $groot = nativecast(gumbo_node_s, $go.root);
     my gumbo_node_s $gdoc = nativecast(gumbo_node_s, $go.document);
-    %!stats<xml_objects> = 1;
+    %!stats<xml-objects> = 1;
     %!stats<whitespaces> = 0;
     %!stats<elements> = 1;
     if ($groot.type eq GUMBO_NODE_ELEMENT.value) {
@@ -51,7 +51,7 @@ method parse (Str $html, :$nowhitespace = False, *%filters) returns XML::Documen
 	}
       }
     }
-    $!xml_creation_duration = now - $t;
+    $!xml-creation-duration = now - $t;
     my gumbo_options_s $kGumboDefaultOptions := cglobal('libgumbo', 'kGumboDefaultOptions', gumbo_options_s);
     my gumbo_options_s $gopt = $kGumboDefaultOptions;
     gumbo_destroy_output($gopt, $gumbo_output);
@@ -59,7 +59,7 @@ method parse (Str $html, :$nowhitespace = False, *%filters) returns XML::Documen
   }
 
   method	!build-tree(gumbo_node_s $node, XML::Element $parent is rw) {
-    %!stats<xml_objects>++;
+    %!stats<xml-objects>++;
     given $node.type {
       when GUMBO_NODE_ELEMENT.value {
         my $xml = build-element($node.v.element);
@@ -80,7 +80,7 @@ method parse (Str $html, :$nowhitespace = False, *%filters) returns XML::Documen
 	  my $xml = XML::Text.new(text => $node.v.text.text);
 	  $parent.append($xml);
 	} else {
-	  %!stats<xml_objects>--;
+	  %!stats<xml-objects>--;
 	}
       }
       when GUMBO_NODE_COMMENT.value {
@@ -105,7 +105,10 @@ method parse (Str $html, :$nowhitespace = False, *%filters) returns XML::Documen
 	    my $tab_attr = nativecast(CArray[gumbo_attribute_t], $elem.attributes.data);
 	    loop (my $i = 0; $i < $elem.attributes.length; $i++) {
 	      my $cattr = nativecast(gumbo_attribute_s, $tab_attr[$i]);
-	      {$in_filter = True; last } if (%filters{$cattr.name}.defined && %filters{$cattr.name} eq $cattr.value);
+	      if %filters{$cattr.name}.defined && %filters{$cattr.name} eq $cattr.value {
+	        $in_filter = True; 
+	        last;
+	      }
 	    }
 	  }
 	  #No filtering on attributes
@@ -114,7 +117,7 @@ method parse (Str $html, :$nowhitespace = False, *%filters) returns XML::Documen
 	    $in_filter = True;
 	  }
 	  if ($in_filter) {
-	    %!stats<xml_objects>++;
+	    %!stats<xml-objects>++;
 	    %!stats<elements>++;
 	    $xml = build-element($node.v.element);
 	    $parent.append($xml);
