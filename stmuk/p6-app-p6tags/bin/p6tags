@@ -1,6 +1,4 @@
 #!/usr/bin/env perl6
-# originally based on an old perl5 script "ptags" by tchrist@perl.com
-# heavily tweaked and ported to perl6 by steve.mynott@gmail.com
 
 use v6;
 use File::Find;
@@ -8,10 +6,10 @@ use File::Find;
 my (@tags, $fullpack);
 
 # package
-constant ptagfield = ';"	p';
+constant ptagfield = ";\"\tp";
 
 # subroutine
-constant stagfield = ';"	s';
+constant stagfield = ";\"\ts";
 
 grammar Purl6 {
     
@@ -43,7 +41,7 @@ class Purl6::Actions {
         $rest ~~ s:g/\-/\\-/; 
 
         if $fullpack {
-            @tags.push: "{$fullpack}\t{$.file}\t/$rest/{ptagfield}";
+            take "{$fullpack}\t{$.file}\t/$rest/{ptagfield}";
         }
     }
 
@@ -57,31 +55,29 @@ class Purl6::Actions {
         my $line = "$func\t{$.file}\t/^$rest/{stagfield}";
 
         if $fullpack {
-            @tags.push: $line, "{$fullpack}::$func\t{$.file}\t/^$rest/{stagfield}";
+            take "{$fullpack}::$line";
         }
 
-        @tags.push: $line;
+        take $line;
 
     }
 }
 
-my @files = find( :dir("."), :type('file'), :name( rx/(.p(m|l|6)|pm6 )$/) ).map({.IO});
+my @files = find( :dir("."), :type('file'), :name( rx/(.p(m|l|6)|pm6 )$/) ).».IO;
 
-for @files.sort -> $io {
+for @files -> $io {
 
     my $file = $io.relative;
-    my $lines = slurp $file;
-    my @lines = $lines.split(/\n/);
 
-    for @lines -> $line {
-        $line.chomp;
+    for $io.lines -> $line {
         next unless $line;
+        $line.chomp;
 
-        Purl6.parse( $line, :actions( Purl6::Actions.new(:$file) ) )  ;
+        @tags.append: gather Purl6.parse( $line, :actions( Purl6::Actions.new( :$file ) ) );
 
     }  
 }
 
 @tags = @tags.unique.sort;
 
-spurt("tags", @tags.join("\n"));
+'tags'.IO.spurt: @tags.join: "\n";
