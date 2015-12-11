@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Color.git
 	branch = master
-	commit = b5b069a5562de62f7876c3082aafff2b204676fe
-	parent = bec2bd4845521a74424d836548494d7fe3d10424
-	cmdver = 0.2.2
+	commit = 4b1158da5ab164d75d14a32ff8f4e285ed0f07b9
+	parent = ce7a8bf67cf1ce98ae8f88a92dd8bab09c54ad99
+	cmdver = 0.2.3
