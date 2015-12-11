@@ -1,0 +1,14 @@
+notifications:
+  email: false
+branches:
+  except:
+    - gh-pages
+sudo: false
+language: perl6
+perl6:
+  - latest
+install:
+  - rakudobrew build-panda
+script:
+  - panda install .
+  - perl6 42.p6

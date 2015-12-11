@@ -1,0 +1,13 @@
+{
+    "name" : "NQP::Eval",
+    "version" : "*",
+    "description" : "Enables EVAL :lang<nqp>",
+    "author" : "cygx <cygx@cpan.org>",
+    "provides" : { "NQP::Eval" : "lib/NQP/Eval.pm6" },
+    "depends" : [ ],
+    "support" : {
+        "bugtracker" : "https://github.com/cygx/p6-nqp-eval/issues",
+        "source" : "https://github.com/cygx/p6-nqp-eval"
+    },
+    "source-url" : "git://github.com/cygx/p6-nqp-eval.git"
+}
