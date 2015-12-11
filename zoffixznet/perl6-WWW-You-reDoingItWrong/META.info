@@ -1,0 +1,12 @@
+{
+    "name"         : "WWW::You'reDoingItWrong",
+    "version"      : "1.001001",
+    "description"  : "Why say someone is doing it wrong when you can SHOW it?",
+    "depends"      : [ "HTTP::Tinyish" ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "WWW::You'reDoingItWrong" : "lib/WWW/You'reDoingItWrong.pm6"
+    },
+    "author"       : "Zoffix Znet",
+    "source-url"   : "git://github.com/zoffixznet/perl6-WWW-You-reDoingItWrong.git"
+}
