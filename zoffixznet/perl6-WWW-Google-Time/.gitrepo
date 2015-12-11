@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-WWW-Google-Time.git
+	branch = master
+	commit = b2a41f9833063da272e22ad895e0a87ff487495d
+	parent = fd0c358c161a4e3fce6ebdebbba693e22a0e0781
+	cmdver = 0.2.3
