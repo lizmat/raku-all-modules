@@ -1,6 +1,6 @@
 use v6;
 
-BEGIN { @*INC.push('t', 'lib') };
+use lib <t lib>;
 use Redis;
 use Test;
 
