@@ -392,13 +392,13 @@ A comment. The id3v2 tag is created with a language of "XXX" for some reason.
 
 =end pod
 
-class Audio::Encode::LameMP3:ver<v0.0.4>:auth<github:jonathanstowe> {
+class Audio::Encode::LameMP3:ver<v0.0.5>:auth<github:jonathanstowe> {
     use NativeCall;
     use AccessorFacade;
     use NativeHelpers::Array;
 
     # Output of ':raw' methods for notational convenience
-    subset RawEncode of Array where  ($_.elems == 2 ) && ($_[0] ~~ CArray[uint8]) && ($_[1] ~~ Int);
+    subset RawEncode of Array where  ($_.elems == 2 ) && ($_[0] ~~ CArray) && ($_[1] ~~ Int);
 
     enum EncodeError ( Okay => 0, BuffTooSmall => -1, Malloc => -2, NotInit => -3, Psycho => -4 );
 
@@ -524,7 +524,7 @@ class Audio::Encode::LameMP3:ver<v0.0.4>:auth<github:jonathanstowe> {
             $num;
         }
 
-        sub get-out-buffer(Int $size) returns CArray[uint8] {
+        sub get-out-buffer(Int $size) returns CArray {
             my $buff =  CArray[uint8].new;
             $buff[$size] = 0;
             $buff;
