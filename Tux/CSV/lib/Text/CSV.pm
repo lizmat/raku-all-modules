@@ -83,11 +83,61 @@ sub progress (*@y) {
 # I don't want this inside Text::CSV
 class IO::String is IO::Handle {
 
-    multi method new (Str $str!) returns IO::Handle {
-        (my Str $filename, my $fh) = tempfile;
-        $fh.print ($str);
-        $fh.close;
-        open $filename, :r, :!chomp;
+    has      $.nl-in   is rw;
+    has      $.nl-out  is rw;
+    has Bool $.ro      is rw = False;
+    has Str  $!str;
+    has Str  @!content;
+
+    # my $fh = IO::String ($foo);
+    multi method new (Str $str! is rw, *%init) {
+        my \obj = self.new ($str.Str, |%init);
+        obj.bind-str ($str);
+        obj;
+        }
+
+    # my $fh = IO::String ("foo");
+    multi method new (Str $str!, *%init) {
+        my \obj = self.bless;
+        obj.nl-in  = $*IN.nl-in;
+        obj.nl-out = $*OUT.nl-out;
+        obj.ro     = %init<ro>     if %init<ro>:exists;
+        obj.nl-in  = %init<nl-in>  if %init<nl-in>:exists;
+        obj.nl-out = %init<nl-out> if %init<nl-out>:exists;
+        obj.print ($str);
+        obj;
+        }
+
+    method bind-str (Str $s is rw) {
+        $!str := $s;
+        }
+
+    method print (*@what) {
+        if (my Str $str = @what.join ("")) {
+            my Str @x = $str eq "" || !$.nl-in.defined
+                ??  $str
+                !! |$str.split ($.nl-in, :v).map (-> $a, $b? { $a ~ ($b // "") });
+            @x.elems > 1 && @x.tail eq "" and @x.pop;
+            @!content.push: |@x;
+            }
+        self;
+        }
+
+    method print-nl {
+        self.print ($.nl-out);
+        }
+
+    method get {
+        @!content or return Str;
+        shift @!content;
+        }
+
+    method close {
+        $!str.defined && !$.ro and $!str = ~ self;
+        }
+
+    method Str {
+        @!content.join ("");
         }
     }
 
@@ -366,7 +416,8 @@ class Text::CSV {
             my $m =
                  "\e[34m" ~ $!message
                ~ "\e[0m"  ~ " : error $!error @ record $r, field $f, position $p\n";
-            $!buffer.defined && $!buffer.chars  && $!pos.defined and $m ~=
+            $!buffer.defined && $!buffer.chars  && $!pos.defined &&
+                $!pos >= 0 && $!pos < $!buffer.chars and $m ~=
                  "\e[32m" ~ substr ($!buffer, 0, $!pos - 1)
                ~ "\e[33m" ~ "\x[23CF]"
                ~ "\e[31m" ~ substr ($!buffer,    $!pos - 1)
@@ -478,7 +529,7 @@ class Text::CSV {
         alias ("callbacks",             < hooks >);
 
         alias ("column_names",          < column-names >);
-        alias ("error_diag",            < error-diag >);
+        alias ("error_diag",            < error-diag diag diag-error diag_error >);
         alias ("error_input",           < error-input >);
         alias ("getline_all",           < getline-all >);
         alias ("getline_hr_all",        < getline-hr-all >);
@@ -1210,7 +1261,7 @@ class Text::CSV {
     multi method getline (IO:D $io, Bool :$meta = $!keep_meta) {
         my Bool $chomped = $io.chomp;
         my $nl    = $io.nl-in;
-        $!eol.defined  and $io.nl-in = $!eol;
+        $!eol.defined and $io.nl-in = $!eol;
         $io.chomp = False;
         $!io      = $io;
         my Bool $status  = self.parse ($io.get // Str);
@@ -1371,7 +1422,10 @@ class Text::CSV {
 
     multi method print (IO:D $io,  @fld) returns Bool {
         self.combine (@fld) or return False;
+        my $nl = $io.nl-out;
+        $!eol.defined and $io.nl-out = $!eol;
         $io.print (self.string);
+        $io.nl-out = $nl;
         True;
         }
 
