@@ -1,6 +1,7 @@
+use JSON::Name;
+
 unit module JSON::Unmarshal;
 use JSON::Tiny;
-use JSON::Name;
 
 role CustomUnmarshaller {
     method unmarshal($value, Mu:U $type) {
