@@ -2,6 +2,7 @@ language: perl6
 install:
 - rakudobrew build-panda
 - panda --notests installdeps .
+- panda --notests installdeps .
 script:
 - perl6 -MPanda::Builder -e 'Panda::Builder.build($*CWD)'
 - echo Running spesh enabled && PERL6LIB=$PWD/blib/lib MVM_SPESH_NODELAY=1 prove -e perl6 -vr t/
