@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/gge.git
 	branch = master
-	commit = d9374dce86384d417d8c383aa4b03cd3cf687ce1
-	parent = 8ef9b66d3832910afdaefd6bdadbdaf084ba0281
-	cmdver = 0.1.0
+	commit = d6a018cdd3e5391e59e1e8d20548997708c330be
+	parent = d6aa4077b0960e0ed1848991bb0b8bcab3e0d776
+	cmdver = 0.2.3
