@@ -1,6 +1,5 @@
-unit class Pastebin::Gist:ver<1.001001>;
-
 use HTTP::Tinyish;
+unit class Pastebin::Gist:ver<1.001001>;
 
 constant API-URL   = 'https://api.github.com/';
 constant PASTE-URL = 'https://gist.github.com/';
