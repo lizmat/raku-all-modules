@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Skarsnik/acme-wtf.git
+	branch = master
+	commit = 04992c516de8749d8cef6f28c13688ca6f74b4bb
+	parent = 27014e23be1b848a9e19636c62fef8b0255e63c9
+	cmdver = 0.2.3
