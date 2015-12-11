@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/araraloren/Net-FTP.git
+	branch = master
+	commit = 3ae3187af795826514ed4be536b1b78fa39aea00
+	parent = d6e02ac47aac400574c973c4d7083a7e3c9ee99c
+	cmdver = 0.2.3
