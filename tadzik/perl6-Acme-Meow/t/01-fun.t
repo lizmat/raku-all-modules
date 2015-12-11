@@ -14,4 +14,4 @@ lives-ok { $c.feed('nip') }, 'feeding nip works';
 lives-ok { $c.feed('milk') }, 'feeding milk works';
 lives-ok { $c.pet  }, 'petting works';
 
-done;
+done-testing;
