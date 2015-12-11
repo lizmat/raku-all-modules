@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-Lingua-Conjunction.git
+	branch = master
+	commit = 137de5c2b679119e6585f8622caf0848fd97a815
+	parent = ac9e56a541f3bb693f32089d9d74a36b22558623
+	cmdver = 0.2.3
