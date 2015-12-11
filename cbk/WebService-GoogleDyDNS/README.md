@@ -1,5 +1,4 @@
-# perl6-WebService-HazIP
-
+# WebService::DyDNS [![Build Status](https://travis-ci.org/cbk/WebService-GoogleDyDNS.svg?branch=master)](https://travis-ci.org/cbk/WebService-GoogleDyDNS) 
 
 ## SYNOPSIS
 
@@ -19,10 +18,17 @@ is then called to update the IP address using the HTTP::UserAgent module.
 * One of the response codes from domains.google.com
 * "No change. No action taken."
 
-## Example usage
+## Example usage:
 
 ```
+use v6;
 use WebService::GoogleDyDNS;
-my $updater = WebService::GoogleDyDNS.new(domainName => $domain, login => $login , password => $password );
-if $updater.checkPreviousIP.outDated { say $updater.updateIP(); } else { say "No change. No action taken."; }
+
+multi sub MAIN( :$domain, :$login, :$password ) {
+
+  my $updater = WebService::GoogleDyDNS.new(domainName => $domain, login => $login , password => $password );
+  $updater.checkPreviousIP();
+  if $updater.outdated { say $updater.updateIP(); } else { say "No change. No action taken."; }
+
+}
 ```

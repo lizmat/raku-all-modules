@@ -36,7 +36,8 @@ class WebService::GoogleDyDNS {
       ## Open file and read lines into data array.
       $fh = open($lastIPFile, :r);
       my @dataFile = $fh.IO.lines;
-      if @dataFile[1] eq self.currentHostPublicIP { self.outdated = False; } else { self.outdated = True; }
+
+      if @dataFile[1].Str eq self.currentHostPublicIP { self.outdated = False; } else { self.outdated = True; }
       $fh.close;
     } else {
       ## File does not exist, make new one
@@ -59,7 +60,10 @@ class WebService::GoogleDyDNS {
       return $response.content;
       if $response.content ~~ / good / {
         my $fh = open(self.lastIPFile, :w);
+        $fh.say( self.domainName );
         $fh.say( self.currentHostPublicIP );
+        $fh.say( self.login );
+        $fh.say( self.password );
         $fh.close;
       }
     } else {

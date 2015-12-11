@@ -3,9 +3,9 @@
        "version" : "1.0.0",
        "description" : "Simple web service used to update an IP address on domains.google.com if the current one has changed. ",
        "author" : "Michael",
+       "depends" : [ "WebService::HazIP", "HTTP::UserAgent" ],
        "provides" : {
            "WebService::GoogleDyDNS"    : "lib/WebService/GoogleDyDNS.pm6"
        },
-       "depends" : [ "LWP::Simple", "HTTP::UserAgent" ],
-       "source-url" : "git://github.com/cbk/WebService-GoogleDyDNS"
+       "source-url" : "git://github.com/cbk/WebService-GoogleDyDNS.git"
 }
