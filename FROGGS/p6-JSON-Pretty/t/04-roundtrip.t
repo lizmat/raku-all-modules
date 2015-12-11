@@ -1,5 +1,5 @@
 use Test;
-BEGIN { @*INC.push: 'lib' };
+use lib 'lib';
 use JSON::Pretty;
 
 my @s =
