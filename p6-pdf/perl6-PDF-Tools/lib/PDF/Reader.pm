@@ -182,13 +182,13 @@ class PDF::Reader {
     }
 
     #| load the data for a stream object. Cross check actual size versus expected /Length
-    method !fetch-stream-data(Array $ind-obj,     #| primary object
+    method !fetch-stream-data(@ind-obj,           #| primary object
                               $input,             #| associated input stream
                               UInt :$offset,      #| offset of the object in the input stream
                               UInt :$max-end,     #| upper bound for the end of the stream
         )
     {
-        (my UInt $obj-num, my UInt $gen-num, my $obj-raw) = @$ind-obj;
+        (my UInt $obj-num, my UInt $gen-num, my $obj-raw) = @ind-obj;
 
         $obj-raw.value<encoded> //= do {
             die "stream mandatory /Length field is missing: $obj-num $gen-num R \@$offset "
@@ -349,9 +349,7 @@ class PDF::Reader {
     #| Use full-scan mode, as these are not indexed.
     multi method load('FDF') {
         use PDF::Grammar::FDF;
-        use PDF::Grammar::FDF::Actions;
-        my $actions = PDF::Grammar::FDF::Actions.new;
-        self!full-scan( PDF::Grammar::FDF, $actions);
+        self!full-scan( PDF::Grammar::FDF, $.actions);
     }
 
     #| scan the entire PDF, bypass any indices. Populate index with
@@ -621,27 +619,17 @@ class PDF::Reader {
                     default { die "unknown ind-obj index <type> $obj-num $gen-num: {.perl}" }
                 }
 
-                my $ast;
+		my Bool $eager = ! $incremental;
+                my $ast = $.ind-obj($obj-num, $gen-num, :get-ast, :$eager)
+		    or next;
+
                 if $incremental {
-
-		    # preparing incremental updates. only need to consider fetched objects
-		    $ast = $.ind-obj($obj-num, $gen-num, :get-ast, :!eager);
-
-		    # the object hasn't been fetched. It cannot have been updated!
-		    next unless $ast;
-
 		    if $offset && $obj-num {
 			# check updated vs original PDF value.
 			my $original-ast = self!fetch-ind-obj(%!ind-obj-idx{$obj-num}{$gen-num}, :$obj-num, :$gen-num);
 			# discard, if not updated
 			next if $original-ast eqv $ast.value;
 		    }
-                }
-                else {
-                    # renegerating PDF. need to eagerly copy updates + unaltered entries
-                    # from the full object tree.
-                    $ast = $.ind-obj($obj-num, $gen-num, :get-ast, :eager)
-                        or next;
                 }
 
                 my $ind-obj = $ast.value[2];
