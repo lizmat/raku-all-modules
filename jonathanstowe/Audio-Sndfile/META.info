@@ -21,9 +21,10 @@
   ],
   "test-depends" : [
     "Test",
+    "Test::META",
     "File::Find",
     "Shell::Command"
   ],
   "description" : "Binding for libsndfile - read/write multiple audio formats",
-  "version" : "v0.0.5"
+  "version" : "v0.0.6"
 }
