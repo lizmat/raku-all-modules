@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/totem.git
 	branch = master
-	commit = ec43570bf92e29258aef9413402a44e7dc530363
-	parent = f6d1e0c6f3df400cf6f21b9d002a8725280926c6
-	cmdver = 0.1.0
+	commit = 6f43aece567c5df7830e22d82a4ff17285d5a3bb
+	parent = 5a429a82064940e3839efaf4f78dd334de290861
+	cmdver = 0.2.3
