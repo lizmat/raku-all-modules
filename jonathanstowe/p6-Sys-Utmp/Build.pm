@@ -8,8 +8,10 @@ use LibraryMake;
 use Shell::Command;
 
 class Build is Panda::Builder {
-    method build($workdir) {
-        mkpath "$workdir/blib/lib";
-        make("$workdir/src", "$workdir/blib/lib");
-    }
+   method build($workdir) {
+         my Str $destdir = "$workdir/lib/../resources/lib";
+         mkpath $destdir;
+         make("$workdir/src", $destdir);
+   }
 }
+# vim: ft=perl6 expandtab sw=4

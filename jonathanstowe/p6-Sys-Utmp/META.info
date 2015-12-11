@@ -1,7 +1,9 @@
 {
   "name" : "Sys::Utmp",
   "support" : {
-    "source" : "git://github.com/jonathanstowe/p6-Sys-Utmp.git"
+    "source"     : "git://github.com/jonathanstowe/p6-Sys-Utmp.git",
+    "irc"        : "irc:// irc.freenode.net/#perl6",
+    "bugtracker" : "https://github.com/jonathanstowe/p6-Sys-Utmp/issues"
   },
   "source-url" : "git://github.com/jonathanstowe/p6-Sys-Utmp.git",
   "perl" : "v6",
@@ -12,6 +14,7 @@
   "provides" : {
     "Sys::Utmp" : "lib/Sys/Utmp.pm"
   },
+  "resources" : [ "lib/utmphelper.so" ],
   "depends" : [
     "LibraryMake"
   ],
@@ -22,5 +25,6 @@
   "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
   "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
   "description" : "Perl 6 access to Utmp entries on Unix-like systems",
-  "version" : "v0.0.5"
+  "tags" : [ "unix", "users", "utility" ],
+  "version" : "v0.0.6"
 }

@@ -144,7 +144,7 @@ This returns a L<DateTime> that corresponds to C<tv>
 
 =end pod
 
-class Sys::Utmp:ver<v0.0.5>:auth<github:jonathanstowe> {
+class Sys::Utmp:ver<v0.0.6>:auth<github:jonathanstowe> {
 
     enum UtmpType is export <EmptyRecord RunLevel BootTime NewTime OldTime InitProcess LoginProcess UserProcess DeadProcess Accounting>;
 
@@ -176,27 +176,8 @@ class Sys::Utmp:ver<v0.0.5>:auth<github:jonathanstowe> {
 
     sub library {
         my $so = get-vars('')<SO>;
-        my $libname = "utmphelper$so";
-        my $base = "lib/Sys/Utmp/$libname";
-        for @*INC <-> $v {
-            if $v ~~ Str {
-                $v ~~ s/^.*\#//;
-                if ($v ~ '/' ~ $libname).IO.r {
-                    my $l =  $v ~ '/' ~ $libname;
-                    return $l;
-                }
-            }
-            else {
-                if my @files = ($v.files($base) || $v.files("blib/$base")) {
-                    my $files = @files[0]<files>;
-                    my $tmp = $files{$base} || $files{"blib/$base"};
-
-                    $tmp.IO.copy($*SPEC.tmpdir ~ '/' ~ $libname);
-                    return $*SPEC.tmpdir ~ '/' ~ $libname;
-                }
-            }
-        }
-        die "Unable to find library";
+        my $libname = "lib/utmphelper$so";
+        %?RESOURCES{$libname}.Str;
     }
 
     my sub _p_setutent() is native(&library) { * }
