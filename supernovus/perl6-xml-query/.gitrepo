@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-xml-query.git
 	branch = master
-	commit = 5080a24c7dfd3ea5da5c6293e43755dee11943c9
-	parent = d8ac082305efe777684873ec389f05b0c8cdf07d
-	cmdver = 0.2.2
+	commit = c066166feb6ae757961b2ff6c7d517f534ede07e
+	parent = 91a86eb007265cbeac5b475514ce987163501e23
+	cmdver = 0.2.3
