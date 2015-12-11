@@ -3,7 +3,7 @@ unit class Email::Simple::Header;
 has $!crlf;
 has @!headers;
 
-multi method new (Array $headers, Str :$crlf = "\r\n") {
+multi method new (Array $headers, Str :$crlf = "\x0d\x0a") {
     if $headers[0] ~~ Array {
         self.bless(crlf => $crlf, headers => $headers);
     } else {
@@ -16,7 +16,7 @@ multi method new (Array $headers, Str :$crlf = "\r\n") {
     }
 }
 
-multi method new (Str $header-text, Str :$crlf = "\r\n") {
+multi method new (Str $header-text, Str :$crlf = "\x0d\x0a") {
     #define this grammar here
     #because we need $crlf
     # (and I don't know if it's possible to pass parameters
@@ -30,11 +30,11 @@ multi method new (Str $header-text, Str :$crlf = "\r\n") {
 	    || <junk> <newline>
 	}
 	token name {
-	    <-[:\s]>*
+	    <-[:\s]>+
 	}
 	regex value {
-	    \N*
-	    [<newline> \s+ \N+?]*
+	    \N+
+	    [<newline> \h+ \N+?]*
 	}
 	token newline {
 	    $crlf
@@ -64,7 +64,7 @@ submethod BUILD (:$!crlf, :@!headers) { }
 
 method as-string {
     my $header-str;
-    
+
     for @!headers {
 	my $header = $_[0] ~ ': ' ~ $_[1];
 	$header-str ~= self!fold($header);
@@ -150,7 +150,7 @@ method crlf {
 
 method !fold (Str $line is copy) {
     my $limit = self!default-fold-at - 1;
-    
+
     if $line.chars <= $limit {
 	return $line ~ self.crlf;
     }

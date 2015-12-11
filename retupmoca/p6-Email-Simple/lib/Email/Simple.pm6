@@ -14,7 +14,7 @@ grammar Message {
     <body>
   }
   token header-separate {
-      [\x0a\x0d] ** 2 | [\x0d\x0a] ** 2 | \x0a ** 2 | \x0d ** 2
+      [\x0a\x0d\x0a\x0d] | [\x0d\x0a\x0d\x0a] | \x0a ** 2 | \x0d ** 2
   }
   token body {
     .*
@@ -28,7 +28,7 @@ multi method new (Str $text, :$header-class = Email::Simple::Header) {
     my $parsed = Message.parse($text);
     unless $parsed {
         # no header separator found, so it must be a header-only email
-        my $crlf = ~($text ~~ /\xa\xd|\xd\xa|\xa\xd/ || "\n");
+        my $crlf = ~($text ~~ /\xa\xd|\xd\xa|\xa|\xd/);
         return self.bless(
                 body   => '',
                 header => Email::Simple::Header.new($text, :$crlf),
@@ -36,7 +36,7 @@ multi method new (Str $text, :$header-class = Email::Simple::Header) {
         );
     }
     my $newlines = ~$parsed<header-separate>;
-    my $crlf = $newlines.substr(0, ($newlines.chars / 2));
+    my $crlf = $newlines.NFC[^($newlines.codes / 2)]>>.chr.join;
     my $headers = ~$parsed<headers>;
     $headers ~= $crlf;
     my $header-object = $header-class.new($headers, crlf => $crlf);

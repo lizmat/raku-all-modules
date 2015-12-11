@@ -40,8 +40,9 @@ is $mail.header('Previously-Unknown'), 'wonderful species', "We can add new head
 ok $mail.Str ~~ m:s/Previously\-Unknown\: wonderful species/, "...that show up in the stringification";
 
 # with odd newlines
-my $nasty = "Subject: test\n\rTo: foo\n\r\n\rfoo\n\r";
+my $nr = "\x0a\x0d";
+my $nasty = "Subject: test{$nr}To: foo{$nr}{$nr}foo{$nr}";
 $mail = Email::Simple.new($nasty);
-is $mail.crlf, "\n\r", "got correct line terminator";
-is $mail.body, "foo\n\r", "got correct body";
+is $mail.crlf, "{$nr}", "got correct line terminator";
+is $mail.body, "foo{$nr}", "got correct body";
 is ~$mail, $nasty, "Round trip nasty";
