@@ -2,6 +2,7 @@ use v6;
 unit class Email::Valid;
 
 use Net::DNS;
+#use Net::SMTP;
 
 has Bool $.mx_check  = False;
 has Bool $.tld_check = False;
@@ -23,15 +24,21 @@ my %domain_mx;                     # Cache MX records for domains, its cached in
 
 
 # grammar got exported in the GLOBAL namespace ... wtf ?
+# Use tokens, not rules !
+# Difference between token & rule is that rule enables :sigspace modifier ( match literally a space )
 my grammar Email::Valid::Tokens {
-    token TOP     { ^ (<mailbox>)<?{$0.codes <= $mailbox_max_length}> '@' (<domain>)<?{$1.codes <= $max_length - $mailbox_max_length - 1}> $ }
+    token TOP     { ^ <email> $}
+    token email   { <mailbox><?{$/<mailbox>.codes <= $mailbox_max_length}> '@' <domain><?{$/<domain>.codes <= $max_length - $mailbox_max_length - 1}>  }
     token mailbox { <:alpha +digit> [\w|'.'|'%'|'+'|'-']+<!after < . % + - >> } # we can extend allowed characters or allow quoted mailboxes
     token tld     { [ 'xn--' <:alpha +digit> ** 2..* | <:alpha> ** 2..15 ] }
     token domain  { ([ <!before '-'> [ 'xn--' <:alpha +digit> ** 2..* | [\w | '-']+ ] <!after '-'> '.' ]) ** 1..4 <?{ all($0.flat) ~~ /^. ** 2..64$/ }>
-         (<tld>)
+         <tld>
     }
 }
 
+my grammar Email::Valid::Ripper is Email::Valid::Tokens {
+    token TOP { ^ .*? [.*? [<.after \W>|^] (<email>) [\W|$] .*?]+ .*? $ }
+}
 
 # Wait for "is cached" trait to remove $!regex_parsed
 method !parse_regex(Str $email!) {
@@ -92,8 +99,26 @@ method parse(Str $email!) {
     return  self!parse_regex($email);
 }
 
+# Extract emails from text
+# TODO documentation
+method extract( Str $text!, Bool :$matchs = False, Bool :$validate = False ){
+    my @mails = Email::Valid::Ripper.parse($text)[0];
+
+    return Nil if !@mails.elems || @mails[0] !~~ Match;
+
+    if $validate {
+        @mails.=grep({ 
+            self.validate: $^a.Str
+        });
+    }
+
+    return @mails if $matchs;
+    return @mails.map: *<email>.Str;
+}
+
 method mx_validate(Str $email!) {
-    my Str $domain = self!parse_regex($email)[1].Str;
+    my Str $domain = self!parse_regex($email)<email><domain>.Str;
+
     return self!validate_domain( $domain );
 }
 

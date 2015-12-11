@@ -1,5 +1,5 @@
 # Email::Valid
-Email::Valid - Check validity of email addresses
+Email::Valid - WIP module to check validity of email addresses
 ## Synopsis
 ```perl6
 use v6;
@@ -23,6 +23,7 @@ It allows IDN domains ( 'xn--' )
 - validate( Str $email! --> Bool )
 - parse( Str $email! --> Match )
 - mx_validate( Str $email! --> Bool ) # Just check if domain has MX record
+- extract( Str $text!, Bool :$matchs = False, Bool :$validate = False --> List )
 
 ## Examples
 ### Enable MX check
@@ -36,8 +37,17 @@ if !$email.validate("test@domain.tld") {
 }
 ```
 
+### Extract emails from text & validate them
+```perl6
+my $txt   = 'Some mails - <mail1@dont-exist.com,mail2@mail.com>'
+my $email = Email::Valid.new(:simple(False), :mx_check );
+
+$email.extract( $txt, :validate ) ; 
+# (mail2@mail.com) because it has valid MX record
+```
+
 ## TODO
-- [ ] Add MX Check
+- [x] Add MX Check
 - [ ] Add "Hello" Callback verification
 - [ ] Add TLD check ( create module Net::Domain::TLD )
 - [ ] Add POD documentation
