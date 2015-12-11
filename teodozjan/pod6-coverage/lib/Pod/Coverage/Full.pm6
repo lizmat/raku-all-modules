@@ -101,7 +101,7 @@ method parse($whoO) {
     # it looks like we dont need grepper
     }
     else {
-        warn "What is " ~ $whoO.^name ~ " ?";
+        die "What is " ~ $whoO.^name ~ " ?";
     }
 }
 
@@ -144,6 +144,7 @@ sub routine-result($what){
 
 method parse-exports($whoO) {
     for $whoO.WHO<EXPORT>.WHO<ALL>.WHO.values -> $val {
+        next unless $val ~~ Sub;
         self.parse($val);
     }
 }
