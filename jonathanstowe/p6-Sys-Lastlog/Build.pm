@@ -17,7 +17,9 @@ class Build is Panda::Builder {
                 die "This currently does not work on darwin";
             }
         }
-        mkpath "$workdir/blib/lib";
-        make("$workdir/src", "$workdir/blib/lib");
+        my Str $destdir = "$workdir/lib/../resources/lib";
+        mkpath $destdir;
+        make("$workdir/src", "$destdir");
     }
 }
+# vim: expandtab shiftwidth=4 ft=perl6 ts=4 sts=4

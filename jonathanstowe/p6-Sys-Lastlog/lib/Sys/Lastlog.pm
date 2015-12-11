@@ -147,7 +147,7 @@ record is for.
 
 =end pod
 
-class Sys::Lastlog:ver<v0.0.4>:auth<github:jonathanstowe> {
+class Sys::Lastlog:ver<v0.0.5>:auth<github:jonathanstowe> {
 
     use System::Passwd;
 
@@ -189,26 +189,14 @@ class Sys::Lastlog:ver<v0.0.4>:auth<github:jonathanstowe> {
 
     sub library {
         my $so = get-vars('')<SO>;
-        my $libname = "lastloghelper$so";
-        my $base = "lib/Sys/Lastlog/$libname";
-        for @*INC <-> $v {
-            if $v ~~ Str {
-                $v ~~ s/^.*\#//;
-                if ($v ~ '/' ~ $libname).IO.r {
-                    return $v ~ '/' ~ $libname;
-                }
-            }
-            else {
-                if my @files = ($v.files($base) || $v.files("blib/$base")) {
-                    my $files = @files[0]<files>;
-                    my $tmp = $files{$base} || $files{"blib/$base"};
+        my $libname = "lib/lastloghelper$so";
 
-                    $tmp.IO.copy($*SPEC.tmpdir ~ '/' ~ $libname);
-                    return $*SPEC.tmpdir ~ '/' ~ $libname;
-                }
-            }
+        my $lib = %?RESOURCES{$libname}.Str;
+
+        if not $lib.defined {
+           die "Unable to find library";
         }
-        die "Unable to find library";
+        $lib;
     }
 
     my sub p_getllent()    returns Entry is native(&library) { * }
