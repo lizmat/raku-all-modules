@@ -48,7 +48,7 @@ above.
 
 use JSON::Name;
 
-module JSON::Marshal:ver<v0.0.4>:auth<github:jonathanstowe> {
+module JSON::Marshal:ver<v0.0.5>:auth<github:jonathanstowe> {
 
     use JSON::Tiny;
 
@@ -113,7 +113,7 @@ module JSON::Marshal:ver<v0.0.4>:auth<github:jonathanstowe> {
     multi sub _marshal(Mu $obj) returns Hash {
         my %ret;
         for $obj.^attributes -> $attr {
-            if $attr.has-accessor {
+            if $attr.has_accessor {
                 my $name = do if $attr ~~ JSON::Name::NamedAttribute {
                     $attr.json-name;
                 }

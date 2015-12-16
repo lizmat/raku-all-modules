@@ -18,5 +18,5 @@
     "Test"
   ],
   "description" : "Simple serialisation of objects to JSON",
-  "version" : "v0.0.4"
+  "version" : "v0.0.5"
 }
