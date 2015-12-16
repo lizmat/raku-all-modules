@@ -69,6 +69,8 @@ likely grow with time).
     Str            (C string)
     CArray[int32]  (int* in C, an array of integers)
     Pointer[void]  (void* in C, can point to all other types)
+    bool           (bool from C99)
+    size_t         (size_t in C)
 
 Note that the lack of a C<returns> trait is used to indicate void return type.
 Do I<not> use the 'void' type anywhere except in the Pointer parameterization.
@@ -218,11 +220,13 @@ CStruct reprs). Other than that, you can do the usual set of things you would wi
 a class; you could even have some of the attributes come from roles or have them
 inherited from another class. Of course, methods are completely fine too. Go wild!
 
-The memory management rules are very much like for arrays, though simpler since a
-struct is never resized. When you create a struct, the memory is managed for you and
-when the variable(s) pointing to the instance of a CStruct go away, the memory will
-be freed when GC gets to it. When a CStruct-based type is used for the return type,
-the memory is not managed for you.
+CStruct objects are passed to native functions by reference and native functions 
+must also return CStruct objects by reference. The memory management 
+rules for these references are very much like the rules for arrays, though simpler 
+since a struct is never resized. When you create a struct, the memory is managed for 
+you and when the variable(s) pointing to the instance of a CStruct go away, the memory 
+will be freed when the GC gets to it. When a CStruct-based type is used as the return 
+type of a native function, the memory is not managed for you by the GC.
 
 NativeCall currently doesn't put object members in containers, so assigning new values
 to them (with =) doesn't work. Instead, you have to bind new values to the private
@@ -269,7 +273,21 @@ instead:
 
 =comment TODO
 
-TBD
+TBD more
+
+You can type your C<Pointer> with passing the type as parameter. It works with native type
+but also C<CArray> and C<CStruct> defined type. NativeCall will not implicitly alloc the memory for it
+even when calling new on them.
+It's mostly useful in the case of a C routine returning one or if emebeded in a C<CStruct>.
+
+You have to call C<.deref> on it to access the embeded type.
+
+  my Pointer[int32] $p; #For a pointer on int32;
+  my Pointer[MyCstruct] $p2 = some_c_routine();
+  my MyCstruct $mc = $p2.deref;
+  say $mc.field1;
+  
+  
 
 =head1 Buffers and Blobs
 
