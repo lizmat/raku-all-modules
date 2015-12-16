@@ -1,0 +1,16 @@
+{
+    "name"          : "Unicode::UTF8-Parser",
+    "version"       : "*",
+    "perl"          : "v6.0.0",
+    "author"        : "github:krunen",
+    "authors"       : [ "Karl Rune Nilsen" ],
+    "description"   : "Supply which converts a supply of UTF8 bytes to unicode characters",
+    "depends"       : [ ],
+    "provides"      : { "Unicode::UTF8-Parser" : "lib/Unicode/UTF8-Parser.pm6"},
+    "repo-type"     : "git",
+    "license"       : "http://www.perlfoundation.org/artistic_license_2_0",
+    "source-url"    : "git://github.com/krunen/unicode-utf8-parser.git",
+    "support"       : {
+        "irc" : "irc://irc.freenode.org/#perl6"
+    }
+}
