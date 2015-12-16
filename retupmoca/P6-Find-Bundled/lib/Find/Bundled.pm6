@@ -7,9 +7,9 @@ method find(Str $lib, Str $base, :$keep-filename, :$return-original, :$throw) {
         $b = $base~"/$lib";
     }
     for @*INC -> $_ is copy {
-        $_ = CompUnitRepo.new($_);
+        $_ = CompUnit::Repository.new($_);
         my $base = $b;
-        if ($_ ~~ CompUnitRepo::Local::File) {
+        if ($_ ~~ CompUnit::PrecompilationStore::File) {
             # CUR::Local::File has screwed up .files semantics
             $base = $_.IO ~ '/' ~ $base;
         }
