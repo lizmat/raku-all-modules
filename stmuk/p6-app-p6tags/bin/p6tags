@@ -71,7 +71,6 @@ for @files -> $io {
 
     for $io.lines -> $line {
         next unless $line;
-        $line.chomp;
 
         @tags.append: gather Purl6.parse( $line, :actions( Purl6::Actions.new( :$file ) ) );
 

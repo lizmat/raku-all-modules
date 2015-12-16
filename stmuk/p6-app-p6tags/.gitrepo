@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/stmuk/p6-app-p6tags.git
 	branch = master
-	commit = 7ec59bded86717481dba80c8df83d7636ef889c4
-	parent = 966341cde0127ba8dc11404a9749c6c1f7a5449d
+	commit = 0f2c20c8f7d797c58be89e8e2835ebed5e10a8e1
+	parent = 32ef472daa2128b5fb5e6c5c80531871aaa04ce7
 	cmdver = 0.2.3
