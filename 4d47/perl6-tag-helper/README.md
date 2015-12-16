@@ -3,6 +3,10 @@
 
 The tag string generator (Engineered for making XML or HTML5 soup). In Perl 6 !
 
+## Warning
+
+My friend, this is broken. It is implemented using FALLBACK method, unfortunatly it calls only _if all other attempts to locate a method fail_. Since parents provide plenty of methods this is not a good idea, eg. as of 2015-11 the tests broke because of a new `head` method.
+
 ## Why ?
 
 To start writing Perl 6. Was learning the language and wanted something small
