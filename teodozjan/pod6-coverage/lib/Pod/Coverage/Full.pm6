@@ -49,7 +49,7 @@ method parse($whoO) {
                 for @!currentAttr -> $attr {
                     if $attr.name.subst(/.\!/, "") ~~ $whoO.name {
                         
-                        if $attr.has-accessor {
+                        if $attr.has_accessor {
                             return if $!ignore-accessors;
                             unless $attr.WHY {
                                 @.results.push: routine-result($attr);
