@@ -87,6 +87,6 @@ is ordinal(999999999999999), "nine hundred ninety-nine trillion nine hundred nin
 
 # what about a number that's two big?
 my $googol = ('1' ~ ('0' xx 100).join).Int; # a googol!
-dies_ok {ordinal($googol);}, "fails with 1 googol";
+dies-ok {ordinal($googol);}, "fails with 1 googol";
 
-done;
+done-testing;

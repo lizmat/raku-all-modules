@@ -74,4 +74,4 @@ ok ordinal_digit($googol), "Can process 1 googol";
 # I'm *not* outputting the whole number in the message!
 is ordinal_digit($googol), "{$googol}th", "1 googol is 1 googol-th";
 
-done;
+done-testing;

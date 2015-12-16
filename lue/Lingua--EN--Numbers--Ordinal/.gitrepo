@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/lue/Lingua--EN--Numbers--Ordinal.git
 	branch = master
-	commit = 650e291f05e289477cfe0e7eb123fa3766390d06
-	parent = c0c1b8efbbc93aa284bfd0e62bde6dae8d8cb727
-	cmdver = 0.2.2
+	commit = b04e6c46b2c8cb4196094b131b30c6c887c6c5b9
+	parent = 7092e45889926055b10752d564c47e3f8a6b23d9
+	cmdver = 0.2.3
