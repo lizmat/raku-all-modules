@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6-community-modules/Date-WorkdayCalendar.git
 	branch = master
-	commit = 64899002003bae676f40b6f0984ffa0ddc773f13
-	parent = 9124004f05d3f01fb28ef7e1cf8f23e1fe74aa0c
-	cmdver = 0.2.2
+	commit = 7cf7d2cad4aa8942731ec201869d36a62e329e65
+	parent = 2c4f61961cd36e1f49b7954535787b7caff87cc9
+	cmdver = 0.2.3
