@@ -29,7 +29,7 @@ is $h<version>, "0.0.1", "version is right";
 is $h<perl>, "6", "perl is right";
 
 for $obj.^attributes -> $attr {
-    if $attr.has-accessor {
+    if $attr.has_accessor {
 
         ok $attr.^does(META6::MetaAttribute), "attribute { $attr.name } has the trait";
 

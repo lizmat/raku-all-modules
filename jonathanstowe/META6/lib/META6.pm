@@ -100,7 +100,7 @@ use JSON::Class;
 import JSON::Marshal;
 import JSON::Unmarshal;
 
-class META6 does JSON::Class {
+class META6:ver<v0.0.2>:auth<github:jonathanstowe> does JSON::Class {
 
     enum Optionality <Mandatory Optional>;
 
