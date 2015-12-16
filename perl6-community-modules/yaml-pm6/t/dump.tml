@@ -144,7 +144,7 @@ class Foo {
 Foo.new(x => 1, y => 2);
 
 +++ yaml
---- !Foo
+--- !t::Bridge::Foo
 x: 1
 y: 2
 ...
