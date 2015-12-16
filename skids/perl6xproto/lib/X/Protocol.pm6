@@ -38,19 +38,19 @@
 
     class X::Protocol::IPoUSPO is X::Protocol {
         method protocol { "IPoUSPO" }
-	method codes {
+        method codes {
             {
                 500 => "Chased away by dog",
                 400 => "A snowy, rainy, hot and gloomy night",
                 200 => "Delivered"
             }
 	}
-	method severity { ~$.status ~~ /\d/ // "unknown" }
-	method toss {
-	    if self.severity > 4 { self.fail }
-	    elsif self.severity > 2 { self.throw }
-	    else { note self.gist }
-	}
+        method severity { ~$.status ~~ /\d/ // "unknown" }
+        method toss {
+            if self.severity > 4 { self.fail }
+            elsif self.severity > 2 { self.throw }
+            else { note self.gist }
+        }
     }
 
     # The default message shows protocol, severity, status, human-friendly text
@@ -80,13 +80,25 @@
 =begin DESCRIPTION
 
 The C<X::Protocol> superclass is a convenience for working with status results
-in protocol code.  Other than the quick subclass creation with sensible
-defaults, the primary convenience is the ability to smartmatch against
-terse C<Str> and C<Numeric> literals, or against regular expressions.
+in protocol code.  It allows one to reap the benefits of typed exceptions
+without having to type out their names very often.  You simply feed the
+error code from the protocol in as an argument to X::Protocol.new (or,
+more usually, to a subclass) and it is automatically paired with a human
+readable error message, producing an object that can be printed, thrown,
+or inspected.
 
-Beyond that, the X::Protocol module repo serves as a place for
-protocol-specific subclasses so that long lists of human-readable
-error messages can be shared by different protocol implementations.
+One can easily tell a protocol error apart from an internal code error
+by whether it matches C<X::Protocol>, and tell which protocol an error came
+from either by looking at the C<.protocol> attribute, or checking which
+subclass it belongs to.
+
+Better yet, you can simply smart match the object against integers, strings
+and regular expressions in your error handling code.
+
+For commonly used protocols, the X::Protocol module repo serves as a place
+for protocol-specific subclasses to store long lists of human-readable
+error messages so they can be shared by different protocol implementations
+and maintained in one place.
 
 =end DESCRIPTION
 
@@ -96,7 +108,18 @@ class X::Protocol::Internal {
     method code-to-human { () };
 }
 
+#| A base class which can also be used directly if there is no subclass
+#| for the protocol being implemented.
 class X::Protocol is X::Protocol::Internal is Exception {
+
+=begin ATTRIBUTES
+An instance of this base class has only three actual attributes:  
+
+=item1 C<.status>   -- the machine-friendly status code a protocol produced.
+=item1 C<.human>    -- an optional override to the human-readable message.
+=item1 C<!protocol> -- the name of the protocol, usually set by default.
+
+=end ATTRIBUTES
 
     has $.status = "ad-hoc";
     has Str $.protocol = self.protocol;
@@ -106,24 +129,29 @@ class X::Protocol is X::Protocol::Internal is Exception {
         $!protocol || die "A protocol name is required";
     }
 
+    #| A string showing the protocol, severity, status code and message
     method message (X::Protocol:D $:) {
         join(" -- ",
 	    $!protocol ~ " " ~ self.severity ~ ": $.status",
 	    self.code-to-human);
     }
 
+    #| Class method returning a C<Map> of error codes to human readable messages
     method codes { Map.new() }
 
+    #| The human readable message from $.human, or a code-specific default
     method code-to-human (X::Protocol:D $:) {
         self.human or self.codes{$.status} or nextsame;
     }
 
+    #| A string classifying the error into a category.  May be used by C<.toss>.
     method severity { "error" }
 
-    method Numeric (X::Protocol:D $:) {
-        +$.status // NaN;
-    }
-
+    #| Performs default action based on the exception, such as throwing,
+    #| returning a C<Failure>, printing a warning, or nothing.  This can be
+    #| highly subclass-specific -- the base class checks C<.severity> to see
+    #| if it contains "error", "failure", or "warning".  Of course, you
+    #| may override this method or C<.severity> locally by subclassing.
     method toss (X::Protocol:D $:) {
         given self.severity {
             when "failure" { self.fail }
@@ -133,6 +161,12 @@ class X::Protocol is X::Protocol::Internal is Exception {
         }
     }
 
+    #| Attempts to cast C<.code> to C<Numeric> or returns NaN.
+    method Numeric (X::Protocol:D $:) {
+        +$.status // NaN;
+    }
+
+    #| Attempts to cast C<.code> to C<Str> or returns an empty string.
     method Str (X::Protocol:D $:) {
         ~$.status // "";
     }
