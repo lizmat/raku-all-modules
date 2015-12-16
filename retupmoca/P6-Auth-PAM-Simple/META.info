@@ -3,9 +3,12 @@
     "version" : "1.0.0",
     "author" : "github:retupmoca",
     "description" : "Simple PAM authentication",
-    "depends" : ["LibraryMake","Find::Bundled","Pod::Coverage"],
+    "depends" : ["LibraryMake"],
     "provides" : {
         "Auth::PAM::Simple" : "lib/Auth/PAM/Simple.pm6"
     },
+    "resources" : [
+        "libauthpamsimple.so"
+    ],
     "source-url" : "git://github.com/retupmoca/P6-Auth-PAM-Simple.git"
 }

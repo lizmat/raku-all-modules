@@ -20,11 +20,10 @@ our sub authenticate($service, Str $user, Str $pass --> Bool) is export {
 
 use NativeCall;
 use LibraryMake;
-use Find::Bundled;
 
 sub library {
     my $so = get-vars('')<SO>;
-    return Find::Bundled.find("libauthpamsimple$so", "Auth/PAM", :throw); 
+    return ~(%?RESOURCES{"libauthpamsimple$so"});
 }
 
 sub auth(Str is encoded('ascii'), Str is encoded('ascii'), Str is encoded('ascii')) is native(&library) returns int32 { * };
