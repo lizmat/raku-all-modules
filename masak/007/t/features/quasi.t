@@ -112,4 +112,20 @@ use _007::Test;
         "operators in quasi aren't unhygienically overriden by mainline environment";
 }
 
+{
+    my $program = q:to/./;
+        say(type(quasi @ Q::Infix { + }));
+        .
+
+    outputs $program, "<type Q::Infix::Addition>\n", "quasi @ Q::Infix";
+}
+
+{
+    my $program = q:to/./;
+        say(type(quasi @ Q::Prefix { - }));
+        .
+
+    outputs $program, "<type Q::Prefix::Minus>\n", "quasi @ Q::Prefix";
+}
+
 done-testing;
