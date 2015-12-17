@@ -17,7 +17,8 @@
   "depends" : [
   ],
   "test-depends" : [
+     "Test"
   ],
   "description" : "Quick hack to determine whether a shared libray is present",
-  "version" : "v0.0.2"
+  "version" : "v0.0.3"
 }
