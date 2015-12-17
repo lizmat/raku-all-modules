@@ -1,0 +1,20 @@
+{
+  "name" : "Discord",
+  "tags" : [ "Webservice" ],
+  "author" : "Sylvain Colinet <scolinet@gmail.com>",
+  "support" : {
+    "source" : "git://github.com/Skarsnik/perl6-discord.git"
+  },
+  "source-url" : "git://github.com/Skarsnik/perl6-discord.git",
+  "perl" : "v6",
+  "provides" : {
+     "Discord" : "lib/Discord.pm6",
+     "Discord::User" : "lib/Discord/User.pm6",
+     "Discord::Channel" : "lib/Discord/Channel.pm6",
+     "Discord::Message" : "lib/Discord/Message.pm6",
+     "Discord::Guild" : "lib/Discord/Guild.pm6"
+  },
+  "depends" : [ "JSON::Tiny", "JSON::Name", "JSON::Unmarshal", "HTTP::UserAgent" ],
+  "description" : "Client for the Discord application",
+  "version" : "0.0.1"
+}
