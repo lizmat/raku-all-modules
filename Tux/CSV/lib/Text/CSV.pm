@@ -956,7 +956,8 @@ class Text::CSV {
         @ch.elems or return parse_done ();       # An empty line
 
         loop {
-            loop (my int $i = 0; $i < @ch.elems; $i = $i + 1) {
+            # faster than @ch.kv, faster than my int $i
+            loop (my Int $i = 0; $i < @ch.elems; $i = $i + 1) {
                 my Str $chunk = @ch[$i];
                 $ppos += $chunk.chars;
 
@@ -1452,7 +1453,7 @@ class Text::CSV {
 
     # Only as a method, both in and out are required
     method CSV ( Any    :$in!,
-                 Any    :$out!,
+                 Any    :$out!     is copy,
                  Any    :$headers  is copy,
                  Str    :$key,
                  Str    :$encoding is copy,
@@ -1535,6 +1536,10 @@ class Text::CSV {
         #     sub { ... }                      Routine
         #     { ... }                          Callable
         #     Supply.new                       Supply
+        #     start { ...}                     Channel
+        if $in ~~ Supplier {
+            $in = $in.Supply;
+            }
         given $in {
             when Str {
                 $io-in = open $in, :r, :!chomp;
@@ -1567,11 +1572,22 @@ class Text::CSV {
                 $in.act (
                     -> \row {
                         !$!rrange || $!rrange.in ($i++) and @in.push:
-                          row ~~ Str ?? $[ self.getline (row) ] !! row;
+                            row ~~ Str ?? $[ self.getline (row) ] !! row;
                         },
                     );
                 $in.wait;
                 @in;
+                }
+            when Channel {
+                $fragment ~~ s:i{^ "row=" } = "" and self.rowrange ($fragment);
+                my int $i = 0;
+                react {
+                    whenever $in -> \row {
+                        !$!rrange || $!rrange.in ($i++) and @in.push:
+                            row ~~ Str ?? $[ self.getline (row) ] !! row;
+                        LAST { done; }
+                        }
+                    }
                 }
             when Callable { # Sub, Routine, Callable, Block, Code
                 $fragment ~~ s:i{^ "row=" } = "" and self.rowrange ($fragment);
@@ -1608,8 +1624,9 @@ class Text::CSV {
         #   Str         - return output as Str
         #   "file.csv"  - write to file
         #   $fh         - write to $fh
-        #   Supply:D    - emit to Supply
         #   Routine:D   - pass row(s) to Routine
+        #   Supply:D    - emit to Supply
+        #   Channel:D   - emit to Channel
         given $out {
             when Str {
                 ($tmpfn, $io-out) = $out.defined
@@ -1618,6 +1635,16 @@ class Text::CSV {
                 }
             when IO {
                 $io-out = $out;
+                }
+            when Channel:U {
+                $out = Channel.new;
+                }
+            when Supply:U {
+                $out = Supplier::Preserving.new;
+                }
+            when Array:U | Hash:U | Capture:U |
+                 Supplier:D | Callable:D | Channel:D {
+                # No specific action required here
                 }
             when Any {
                 $in ~~ Array and $io-out = $*OUT;
@@ -1670,15 +1697,38 @@ class Text::CSV {
             return @in;
             }
 
-        {   my $eol = self.eol;
-            $eol.defined or self.eol ("\r\n");
-            for @in -> $row {
-                $!csv-row.fields = $row[0] ~~ CSV::Field
-                    ?? $row
-                    !! $row.map ({ CSV::Field.new.add ($_.Str); });
-                $io-out.print (self.string);
+        my $eol = self.eol;
+        $eol.defined or self.eol ("\r\n");
+        for @in -> $row {
+            $!csv-row.fields = $row[0] ~~ CSV::Field
+                ?? $row
+                !! $row.map ({ CSV::Field.new.add ($_.Str); });
+            given $out {
+                when Callable {
+                    $out($meta ?? self.fields !! self.list);
+                    }
+                when Supplier {
+                    $out.emit ($meta ?? self.fields !! self.list);
+                    }
+                when Channel {
+                    $out.send ($meta ?? self.fields !! self.list);
+                    }
+                default {
+                    $io-out.print (self.string);
+                    }
                 }
-            self.eol ($eol);
+            }
+        self.eol ($eol);
+
+        given $out {
+            when Supplier::Preserving {
+                $out.done;
+                return $out.Supply;
+                }
+            when Channel {
+                $out.close;
+                return $out;
+                }
             }
 
         if (?$tmpfn) {

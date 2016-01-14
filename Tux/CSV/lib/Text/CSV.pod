@@ -186,6 +186,9 @@ When not set in a B<parser> instance, the default behavior is to accept
 C<\n>, C<\r>, and C<\r\n>, so it is probably safer to not specify C<eol> at
 all. Passing C<Str> or the empty string behave the same.
 
+As perl6 interprets C<\r\n> as a single grapheme in input, it is dissuaded
+to use C<\r\n> as C<eol> when parsing. Please choose C<Str> instead.
+
 When not passed in a B<generating> instance, records are not terminated at
 all, so it is probably wise to pass something you expect. A safe choice for
 C<eol> on output is either C<\n> or C<\r\n>.
@@ -273,7 +276,8 @@ The escape sequence can not be equal to the separation sequence.
 =item binary
 X<binary>
 
-WIP: Default is True. Non-UTF-8 real binary (Blob) does not yet parse
+WIP: Default is True. Non-UTF-8 real binary (Blob) does not yet parse.
+Opening the resource with encoding utf8-c8 is most likely the way to go.
 
  my $csv = Text::CSV.new(:binary);
            $csv.binary(False);
@@ -1067,7 +1071,7 @@ X<is_binary>
 =head2 is-binary
 X<is-binary>
 
-NYI/WIP
+NYI/WIP: utf8-c8
 
  my $binary = $csv.is_binary($column_idx);
 
@@ -1367,7 +1371,7 @@ this a required method.
 
 =head2 is_binary
 
-WIP
+WIP: utf8-c8
 
  $f.is_binary and say "Do we need a Buf instead?";
 
@@ -1517,6 +1521,90 @@ arguments.
  my $csv = [[qw( Foo Bar )], [ 1, 2 ], [ 2, 3 ]];
  my $err = csv(in => $csv, out => "file.csv");
 
+The C<in> attribute supports a wide range of types, all of which can be
+combined with the use of C<fragment>:
+
+=over 2
+
+=item Str
+
+ csv(in => "file.csv")
+
+A plain string is interpreted as a file name to be opened for parsing.
+
+=item IO
+
+ my $io = open "file.csv", :r;
+ csv(in => $io);
+
+Parse from the already opened data stream.
+
+=item Capture
+
+ csv(in => \("str,ing"));
+
+Parse from a single string.
+
+=item Array of Strings
+
+ csv(in => ["a,b\n1,2\n3,4\n"]);
+ csv(in => ["a,b", "1,2", "3,4"]);
+
+Parse from the String(s)
+
+=item Array of Data
+
+ csv(in => [[<a b>], [1, 2], [3, 4]]);
+ csv(in => [{:a(1), :b(2)}, {:a(3), :b(4)}]);
+
+Use the data as provided
+
+=item Sub, Routine
+
+ sub provider {
+     @data.elems == 0 and return False;
+     return @data.pop;
+     }
+ csv(in => &provider);
+
+While the providing Routine returns a data row, use that as is. Stop when
+the provider returns C<False>.
+
+=item Callable, Block
+
+ csv(in => { $sth.fetch });
+
+While the providing Callable returns a data row, use that as is. Stop when
+the provider returns C<False>.
+
+=item Supply
+
+ my $supply = Supply.from-list(@data);
+ csv(in => $supply);
+
+Fetch data rows from the supply.
+
+=item Channel
+
+ my $ch = Channel.new;
+ start {
+     $ch.send($_) for @data;
+     $ch.close;
+     }
+ csv(in => $ch);
+
+Fetch data from the Channel.
+
+=item Any
+
+ csv(in => Any);
+
+is a shortcut/fallback for
+
+ csv(in => $*IN);
+
+=back
+
 =head3 out
 X<out>
 
@@ -1538,6 +1626,91 @@ When a code-ref is used for C<in>, the output is generated per invocation,
 so no buffering is involved. This implies that there is no size restriction
 on the number of records. The C<csv> function ends when the coderef returns
 C<False>.
+
+=over 2
+
+=item Str:U
+
+ my $str = csv(in => $in, out => Str);
+
+Returns a single String of CSV data.
+
+=item Str:D
+
+ my $str = csv(in => $in, out => "out.csv");
+
+Writes the data as CSV to the named file.
+
+=item Array:U
+
+ my $aoa = csv(in => $in, out => Array);
+
+Returns an Array of Arrays.
+
+=item Hash:U
+
+ my $aoh = csv(in => $in, out => Hash);
+
+Returns an Array of Hashes
+
+=item IO:D
+
+ my $io = open "file.csv", :w;
+ csv(in => $in, out => $io);
+
+Writes the data as CSV to the IO handle.
+
+=item Callable, Block, Sub, Routine
+
+ my @d;
+ csv(in => $in, out => { @d.push: $_ });
+
+Passes the data rows to the Callable
+
+=item Channel:U
+
+ my $ch = csv(in => $in, out => Channel, :!meta);
+ react {
+     whenever $ch -> \row {
+         @d.push: row;
+         LAST { done; }
+         }
+     }
+
+Writes the data rows into a new Channel, which is returned.
+
+=item Channel:D
+
+ my $ch = Channel.new;
+ my $pr = start {
+     react {
+         whenever $ch -> \row {
+             @d.push: row;
+             LAST { done; }
+             }
+         }
+     }
+ csv(in => $in, out => $ch);
+ await $pr;
+
+Writes the data rows into the existing Channel.
+
+=item Supplier:D
+
+ my $sup = Supplier.new;
+ $sup.Supply.tap (-> \row { @d.push: row; });
+ csv(in => $in, out => $sup, :!meta);
+
+Writes the data rows into the Supplier.
+
+=item Supply:U
+
+ my $sup = csv(in => $in, out => Supply, :!meta);
+ $ch.tap (-> \row { @d.push: row; });
+
+Writes the data rows into a new Supply.
+
+=back
 
 =head3 encoding
 X<encoding>
@@ -1987,11 +2160,13 @@ A lone first line with just
 will be recognized and honored: it will set L<C<sep>|/sep> to C<;> and skip
 that line.
 
-=head1 TODO
+=head1 TODO / WIP / NYI
 
 =over 2
 
 =item Real binary data
+
+The solution would be a working C<utf8-c8> encoding.
 
 =item Metadata and CSV for the web
 
@@ -2308,7 +2483,7 @@ features provided by perl5's Text::CSV_XS.
 
 =head1 COPYRIGHT AND LICENSE
 
- Copyright (C) 2014-2015 H.Merijn Brand. All rights reserved.
+ Copyright (C) 2014-2016 H.Merijn Brand. All rights reserved.
 
 This library is free software; you can redistribute and/or modify it under
 the same terms as Perl itself.

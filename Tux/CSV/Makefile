@@ -46,3 +46,19 @@ check:
 time:
 	perl time.pl
 	rm -rf /tmp/*-p5helper.so
+
+opencsv-2.3.jar:
+	test -f opencsv-2.3.jar || wget -q http://www.java2s.com/Code/JarDownload/opencsv/opencsv-2.3.jar.zip
+	test -f opencsv-2.3.jar || unzip opencsv-2.3.jar.zip
+	-@rm opencsv-2.3.jar.zip
+
+# If you have more than one java version, just use this as a guide
+csv-java.jar:	csvJava.java opencsv-2.3.jar
+	javac -cp opencsv-2.3.jar csvJava.java
+	zip -9 csv-java.jar csvJava.class
+
+csv-c:	csv-c.c
+	cc -O3 -s -o csv-c csv-c.c -lcsv3
+
+csv-go: csv-go.go
+	go build csv-go.go

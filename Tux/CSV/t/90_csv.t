@@ -60,6 +60,7 @@ my @in =
             }
         },
     # Supply push later         # Supply
+    # Channel push later        # Channel
     ;
 
 sub sleep-time {
@@ -76,6 +77,12 @@ sub sleep-time {
 sub in {
     my @i = @in;
     @i.push: Supply.from-list (@data);
+    my $ch = Channel.new;
+    start {
+        $ch.send ($_) for @data;
+        $ch.close;
+        }
+    @i.push: $ch;
     @i;
     }
 
@@ -113,13 +120,14 @@ for in () -> $in {
     }
 
 # Test supported "out" formats
+my $datn = $data; $datn ~~ s:g{ "\r\n" } = "\n";
 for in () -> $in {
-    is (csv (in => $in, out => Str, :!quote-space), $data, "csv => Str   { s-in ($in) }");
+    is (csv (in => $in, out => Str, :!quote-space), $data|$datn, "csv => Str   { s-in ($in) }");
     }
 
-is (csv (in => $fni, out => Str, fragment => "row=2"),    "1,2,3\r\n",        "Fragment, row");
-is (csv (in => $fni, out => Str, fragment => "col=3"),    "foo\r\n3\r\n\r\n", "Fragment, col");
-is (csv (in => $fni, out => Str, fragment => "cell=1,1"), "bar\r\n",          "Fragment, cell");
+is (csv (in => $fni, out => Str, fragment => "row=2"),    "1,2,3\r\n"       |"1,2,3\n",    "Fragment, row");
+is (csv (in => $fni, out => Str, fragment => "col=3"),    "foo\r\n3\r\n\r\n"|"foo\n3\n\n", "Fragment, col");
+is (csv (in => $fni, out => Str, fragment => "cell=1,1"), "bar\r\n"         |"bar\n",      "Fragment, cell");
 
 $io-in.seek (0, SeekFromBeginning);
 for in () -> $in {
@@ -133,7 +141,7 @@ for in () -> $in {
 
 $io-in.seek (0, SeekFromBeginning);
 for in () -> $in {
-    ok (my $csv = Text::CSV.new,           "new");
+    ok (my $csv = Text::CSV.new, "new for Hash + skip");
     ok ($csv.column_names (@hdr), "colnames");
     is-deeply ($csv.csv (in => $in, out => Hash, skip => 1),
         $full-aoh, "csv => Hash + skip { s-in ($in) }");
@@ -141,14 +149,82 @@ for in () -> $in {
 
 $io-in.seek (0, SeekFromBeginning);
 for in () -> $in {
-    ok (my $csv = Text::CSV.new,           "new");
-#   is-deeply ([$csv.csv (in => $in, headers => "auto")],
-#       $full-aoh, "csv => Hash + auto { s-in ($in) }");
+    ok (my $csv = Text::CSV.new, "new for Hash + auto");
+    is-deeply ([$csv.csv (in => $in, headers => "auto")],
+        $full-aoh, "csv => Hash + auto { s-in ($in) }");
     }
 
 $io-in.seek (0, SeekFromBeginning);
 for in () -> $in {
-    ok (my $csv = Text::CSV.new,           "new");
+    ok (my $csv = Text::CSV.new, "new for Block");
+    my @d;
+    $csv.csv (in => $in, out => { @d.push: $_ }, :!meta);
+    is-deeply ([@d], $full-aoa, "csv => Block { s-in ($in) }");
+    }
+
+#$io-in.seek (0, SeekFromBeginning);
+#for in () -> $in {
+#    my @d;
+#    Text::CSV.csv (in => $in, out => { @d.push: $_ }, :!meta, headers => "auto");
+#    is-deeply ([@d], $full-aoa, "csv => Block { s-in ($in) }");
+#    }
+
+$io-in.seek (0, SeekFromBeginning);
+for in () -> $in {
+    ok (my $csv = Text::CSV.new, "new for Channel");
+    my @d;
+    my $ch = Channel.new;
+    my $thr = start {
+        react {
+            whenever $ch -> \row {
+                @d.push: row;
+                LAST { done; }
+                }
+            }
+        }
+    $csv.csv (in => $in, out => $ch, :!meta);
+    await $thr;
+    is-deeply ([@d], $full-aoa, "csv => Channel { s-in ($in) }");
+    }
+
+$io-in.seek (0, SeekFromBeginning);
+for in () -> $in {
+    ok (my $csv = Text::CSV.new, "new for Channel");
+    my @d;
+    my $ch = $csv.csv (in => $in, out => Channel, :!meta);
+    react {
+        whenever $ch -> \row {
+            @d.push: row;
+            LAST { done; }
+            }
+        }
+    is-deeply ([@d], $full-aoa, "csv => Channel { s-in ($in) }");
+    }
+
+$io-in.seek (0, SeekFromBeginning);
+for in () -> $in {
+    ok (my $csv = Text::CSV.new, "new for Supplier");
+    my @d;
+    my $ch = Supplier.new;
+    $ch.Supply.tap (-> \row { @d.push: row; });
+    $csv.csv (in => $in, out => $ch, :!meta);
+    is-deeply ([@d], $full-aoa, "csv => Supplier { s-in ($in) }");
+    }
+
+$io-in.seek (0, SeekFromBeginning);
+for in () -> $in {
+    ok (my $csv = Text::CSV.new, "new for Supply");
+    my @d;
+    my $ch = $csv.csv (in => $in, out => Supply, :!meta);
+    $ch.tap (-> \row { @d.push: row; });
+    is-deeply ([@d], $full-aoa, "csv => Supplier { s-in ($in) }");
+    }
+
+# Additional attributes like headers and fragment
+
+$io-in.seek (0, SeekFromBeginning);
+for in () -> $in {
+    ok (my $csv = Text::CSV.new, "new for Hash + hdrs");
     is-deeply ($csv.csv (in => $in, headers => [@hdr], frag => "row=2-*"),
         $full-aoh, "csv => Hash + hdrs { s-in ($in) }");
     }
@@ -186,6 +262,6 @@ $idx = 0;
 ok (csv (in => &getrowh, out => $fno), "out from CODE/HR (auto headers)");
 is-deeply (csv (in => $fno, headers => "auto"), $full-aoh, "data from CODE/HR");
 
-is (csv (in => [$[1,2,3]], out => Str), "1,2,3\r\n", "Out to Str");
+is (csv (in => [$[1,2,3]], out => Str), "1,2,3\r\n"|"1,2,3\n", "Out to Str");
 
 done-testing;
