@@ -7,5 +7,5 @@
     },
     "author": "Rob Hoelz",
     "depends": [],
-    "source-url": "git://github.com/hoelzro/p6-io-string.git"
+    "source-url": "https://github.com/hoelzro/p6-io-string.git"
 }

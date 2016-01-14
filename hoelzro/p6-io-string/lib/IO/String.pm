@@ -43,7 +43,7 @@ class IO::String:ver<0.1.0>:auth<hoelzro> is IO::Handle {
     }
 
     method print-nl {
-        self.print($.nl);
+        self.print($.nl-out);
     }
 
     #| Returns, as a string, everything that's been written to
