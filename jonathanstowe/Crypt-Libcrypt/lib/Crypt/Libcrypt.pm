@@ -101,6 +101,6 @@ SHA-512
 
     use NativeCall;
 
-    sub crypt(Str , Str  --> Str) is native('libcrypt') is export { * }
+    sub crypt(Str , Str  --> Str) is native('crypt', v1) is export { * }
 }
 # vim: expandtab shiftwidth=4 ft=perl6
