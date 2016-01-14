@@ -17,12 +17,10 @@ is @dir[2].previous,    @dir[1],  "previous correct";
 is @dir[2].next,   @dir[3],  "next correct";
 is @dir[0].previous,   Nil,  "previous from first path is Nil";
 is @dir[*-1].next,     Any,  "next from last path is Nil";
-is " ".IO.previous,       Nil,  "previous from ' ' path is Nil";
-todo "I don't understand this test", 1;
-is " ".IO.next,       @dir[0],  "next from ' ' path is \@dir[0]";
-todo "I don't understand this test", 1;
-is "~".IO.previous, @dir[*-1],  "previous from '~' path is \@dir[*-1]";
-is "~".IO.next,           Nil,  "next from '~' path is Nil";
+is "\x01".IO.previous,       Nil,  'previous from low sorting path ("\x01") is Nil';
+is "\x01".IO.next,       @dir[0],  "next from low sorting path (\"\x01\") is \@dir[0]";
+is "~".IO.previous, @dir[*-1],  "previous from high sorting path ('~') is \@dir[*-1]";
+is "~".IO.next,           Nil,  "next from high sorting path ('~') is Nil";
          
 ok ".".IO.find(:name<t>), "find basic";
 ok ".".IO.find(:recursive, :name(/00\-more/)), "find with :recursive";
@@ -47,5 +45,5 @@ if $*DISTRO.name ne any( <MSWin32 dos VMS MacOS> ) {
 }
 else { skip "all unix tests for now", 2; }
 
-done;
+done-testing;
 

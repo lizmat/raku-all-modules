@@ -2,8 +2,8 @@ use MONKEY-TYPING;
 use File::Find;
 use Shell::Command;
 
-# needed to prevent warning now;
-use nqp;
+# needed to prevent nqp warning now;
+use MONKEY-GUTS;
 
 ##### Functions for Export: path() variants ######
 # because Str.path is already taken by IO::Path
