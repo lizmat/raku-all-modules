@@ -36,7 +36,7 @@ sub do_tests(Any $file, Str $description)
    is($proc.pid, $*PID, "got the expected PID ($description)");
    ok($proc.cmd.elems, "got some command line ($description)");
    todo("not sure how to test this yet",1);
-   is($proc.cmd[0], $*EXECUTABLE, "and got something like we expected");
+   like($proc.cmd[0], /{ $*VM.config<bindir> }/, "and got something like we expected");
 
    is($proc.user, $*USER, "got the right user ($description)");
 
@@ -58,7 +58,7 @@ lives-ok { @procs = $obj.fuser('ThiSdoesNotExIst') }, "fuser() no-existent file"
 is(@procs.elems,0, "and there aren't any processes");
 
 
-$filename.IO.remove;
+$filename.IO.unlink;
 
 done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

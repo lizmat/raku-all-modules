@@ -1,13 +1,13 @@
 {
     "name" : "Linux::Fuser",
-    "version" : "v0.0.5",
+    "version" : "v0.0.6",
     "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk" ],
     "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk",
     "auth" : "github:jonathanstowe",
     "description" : "Discover which process has a file open, in pure Perl 6",
     "tags" : [ "linux", "system", "utils" ],
     "build-depends" : [ "panda" ],
-    "depends" : ["IO::Path::More", "System::Passwd"],
+    "depends" : ["System::Passwd"],
     "provides" : {
         "Linux::Fuser" : "lib/Linux/Fuser.pm",
         "Linux::Fuser::Procinfo" : "lib/Linux/Fuser/Procinfo.pm",

@@ -1,8 +1,7 @@
 use v6;
 
-use lib 'lib';
 
-use IO::Path::More;
+#use IO::Path::More;
 use Linux::Fuser::Procinfo;
 
 =begin pod
@@ -55,7 +54,26 @@ The class has one method, with two signatures, that does most of the work:
 
 =end pod
 
-class Linux::Fuser:ver<v0.0.5>:auth<github:jonathanstowe> {
+class Linux::Fuser:ver<v0.0.6>:auth<github:jonathanstowe> {
+    # Shamelessly stolen from IO::Path::More
+    # for my own stability
+    my role IO::Helper {
+        use nqp;
+        method inode() {
+            $*DISTRO.name ne any(<MSWin32 os2 dos NetWare symbian>)
+                && self.e
+                && nqp::p6box_i(nqp::stat(nqp::unbox_s(self.Str), nqp::const::STAT_PLATFORM_INODE))
+        }
+
+        method device() {
+            self.e && nqp::p6box_i(nqp::stat(nqp::unbox_s(self.Str), nqp::const::STAT_PLATFORM_DEV))
+        }
+        method append (*@nextpaths) {
+            my $lastpath = @nextpaths.pop // '';
+            self.new($.SPEC.join($.volume, $.SPEC.catdir($.dirname, $.basename, @nextpaths), $lastpath));
+        }
+
+    }
 
     #| Given the path to a file as a String returns a list of L<doc:Linux::Fuser::Procinfo>
     #| objects describing any processes that have the file open
@@ -66,14 +84,17 @@ class Linux::Fuser:ver<v0.0.5>:auth<github:jonathanstowe> {
     #| Given the L<doc:IO::Path> that describes the filereturns a list of L<doc:Linux::Fuser::Procinfo>
     #| objects describing any processes that have the file open
     multi method fuser(IO::Path $file ) returns Array {
+        $file does IO::Helper;
         my @procinfo;
         my $device = $file.device;
         my $inode  = $file.inode;
 
         for dir('/proc', test => /^\d+$/) -> $proc {
+            $proc does IO::Helper;
             my $fd_dir = $proc.append('fd');
             if $fd_dir.r {
                 try for $fd_dir.dir(test => /^\d+$/) -> $fd {
+                    $fd does IO::Helper;
                     if ( self!same_file($file, $fd ) ) {
                         @procinfo.push(Linux::Fuser::Procinfo.new(proc_file => $proc, fd_file => $fd));
                     }
