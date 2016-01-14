@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/peelle/Finance-CompoundInterest.git
+	branch = master
+	commit = 66c39a58335b02c73eb1a789696deb59ac0ac3d5
+	parent = 93bb7ee15666b28c34a30c30a01886afa6e2d5b4
+	cmdver = 0.2.3

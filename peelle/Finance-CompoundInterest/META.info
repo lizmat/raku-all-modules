@@ -1,0 +1,13 @@
+{
+	"perl" : "6.*",
+	"name" : "Finance::CompoundInterest",
+	"version" : "0.1.0",
+	"description" : "Compound Interest calculations for fun and profit.",
+	"authors" : [ "James (Jeremy) Carman <developer@peelle.org>" ],
+	"provides" : {
+		"Finance::CompoundInterest" : "lib/Finance/CompoundInterest.pm"
+	},
+	"depends" : [ ],
+	"test-depends" : [ "Test" ],
+	"source-url" : "git://github.com/peelle/Finance-CompoundInterest.git"
+}
