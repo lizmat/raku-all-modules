@@ -73,5 +73,4 @@ sub foo2(Num $a, Int $b) is native('whatever') { * };
 
 sub foo3(Str $a, int32 $b) is native('whatever') returns Int { * };
 
-diag-functions(:functions([&foo1, &foo2, &foo3]));
 

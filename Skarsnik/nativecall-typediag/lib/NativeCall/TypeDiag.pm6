@@ -16,16 +16,18 @@ sub auto-diag($module-name, $conv-func = sub ($a){$a}, :@cheaders, :@clibs, :$de
   my %cstructs;
   my @functions;
   my $ret = True;
-  for ::("$module-name::EXPORT::DEFAULT")::.keys -> $export {
-    say $export;
+  $silent = False;
+  #require $module-name;
+  for ::("{$module-name}::EXPORT::DEFAULT").WHO.keys -> $export {
+    say ::($export).REPR;
     if ::($export).REPR eq 'CStruct' {
+      say $conv-func($export);
       %cstructs{$conv-func($export)} = ::($export);
     }
     if ::($export).does(Callable) and ::($export).^roles.perl ~~ /NativeCall/ {
       @functions.push(::($export));
     }  
   }
-  $ret = diag-functions(:functions(@functions));
   if ! $deep {
     $ret &= diag-cstructs(:types(%cstructs), :cheaders(@cheaders), :clibs(@clibs));
   } else {
@@ -35,26 +37,6 @@ sub auto-diag($module-name, $conv-func = sub ($a){$a}, :@cheaders, :@clibs, :$de
   }
   return $ret;
 }
-  
-sub diag-functions(:@functions) returns Bool is export {
-    my $ret = True;
-    for @functions -> $f {
-      my $sig = $f.signature;
-      # check params
-      for @($sig.params).kv -> $i, $param {
-        if $param.type.REPR eq 'P6opaque' and $param.type.^name ne 'Str' {
-           say "{$f.name} - Not a valid parameter type for parameter [{$i + 1}] {$param.name ?? $param.name !! ''} : {$param.type.^name}";
-           say "-->For Numerical type, use the appropriate int32/int64/num64...";
-           $ret = False;
-        }
-      }
-      if $f.returns.REPR eq 'P6opaque' and $f.returns.^name ne 'Str' | 'Mu' {
-        say "{$f.returns.^name} {$f.name} - You should not return a non NC type (like Int inplace of int32), truncating errors can appear with different architectures";
-        $ret = False;
-      }
-    }
-    return $ret;
-  }
   
   
 sub diag-cstructs(:@cheaders, :@clibs = (), :%types) returns Bool is export {

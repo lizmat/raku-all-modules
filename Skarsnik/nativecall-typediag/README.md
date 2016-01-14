@@ -47,8 +47,7 @@ return true if there is no error.
 
 ## diag-functions(:@functions)
 
-Analyse the signature of your function mapping a C routine
-Return true of false if something fail.
+REMOVED. It's now part of NativeCall
 
 ## @nctd-extracompileroptions
 
