@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-BEGIN { @*INC.unshift('lib') }
+use lib 'lib';
 
 use GD::Raw;
 plan 7;

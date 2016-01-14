@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dagurval/perl6-gd-raw.git
 	branch = master
-	commit = 95d3de36ad292904c6171ec4e3a2f02331b25a9a
-	parent = 1eb46d65ddee7e5243153eae07ed399e891418e4
-	cmdver = 0.2.1
+	commit = 7b8523d8f02bf2adc9f3085d8fd01bcf9312c50c
+	parent = c919cee0552c48e310f019d94b9bf6b80a3a6f6e
+	cmdver = 0.2.3
