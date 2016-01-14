@@ -418,7 +418,8 @@ method lexerAltList($/)
 		{
 		type    => 'alternation',
 		label   => Nil,
-		content => @<lexerAlt>>>.ast,
+#content => @<lexerAlt>>>.ast,
+content => [$/<lexerAlt>[0].ast],
 		command => [ ],
 		options => [ ],
 		}
@@ -426,6 +427,7 @@ method lexerAltList($/)
 
 method lexerAlt($/)
 	{
+#`(
 	make
 		{
 		type    => 'concatenation',
@@ -433,6 +435,15 @@ method lexerAlt($/)
 		label   => Nil,
                 options => [ ],
 		command => $/<lexerCommands>.ast || [ ],
+		}
+)
+	make
+		{
+		type    => 'concatenation',
+		label   => Nil,
+		options => [ ],
+ command => [ skip => Nil ],
+content => [$<lexerElement>[0].ast],
 		}
 	}
 
@@ -463,47 +474,35 @@ method lexerElement($/)
 			|| False
 		}
 )
-
-	if $/<lexerBlock>
-		{
-		make
-			{
-			type         => $/<lexerBlock>.ast.<type>,
-			alias        => $/<labeledElement>
-				     ?? $/<labeledElement><ID>
-				     !! Nil,
-			modifier     => $/<ebnfSuffix>.ast.<modifier>,
-			greedy       => $/<ebnf><ebnfSuffix>.ast.<greedy>
-				     || $/<ebnfSuffix>.ast.<greedy>
-				     || False,
-			complemented => $/<lexerBlock>.ast.<complemented>,
-         content =>
-           [{ type    => 'alternation',
-              label   => Nil,
-              options => [ ],
-              command => [ ],
-              content =>
-                [{ type    => 'concatenation',
-                   label   => Nil,
-                   options => [ ],
-                   command => [ ],
-                   content =>
-                     [{ type         => 'terminal',
-                        content      => '1',
-                        alias        => Nil,
-                        modifier     => Nil,
-                        greedy       => False,
-                        complemented => False },
-                      { type         => 'terminal',
-                        content      => '2',
-                        alias        => Nil,
-                        modifier     => Nil,
-                        greedy       => False,
-                        complemented => False }] }] }] }
-		}
-	else
-		{
-		}
+make
+   { type         => 'capturing group',
+      alias        => Nil,
+      modifier     => Nil,
+      greedy       => False,
+      complemented => False,
+      content =>
+        [{ type    => 'alternation',
+           label   => Nil,
+           options => [ ],
+           command => [ ],
+           content =>
+             [{ type    => 'concatenation',
+                label   => Nil,
+                options => [ ],
+                command => [ ],
+                content =>
+                  [{ type         => 'terminal',
+                     content      => '1',
+                     alias        => Nil,
+                     modifier     => Nil,
+                     greedy       => False,
+                     complemented => False },
+                   { type         => 'terminal',
+                     content      => '2',
+                     alias        => Nil,
+                     modifier     => Nil,
+                     greedy       => False,
+                     complemented => False }] }] }] }
 	}
 
 #method labeledLexerElement($/)

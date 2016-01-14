@@ -341,7 +341,6 @@ is-deeply
                                           complemented => False }] }] }] }] }] }] }] },
   'grammar with options and skipped capturing group';
 
-#`(
 is-deeply
   $g.parse(
     q{grammar Name; number : ( '1' | '2' ) -> skip ;},
@@ -406,7 +405,6 @@ is-deeply
                                          greedy       => False,
                                          complemented => False }] }] }] }] }] }] }] },
   'grammar with options and skipped capturing group';
-)
 
 #`(
 is-deeply
