@@ -1,0 +1,36 @@
+# Maintainer: Andy Weidenbaum <archbaum@gmail.com>
+
+pkgname=quoted-asset-code-jrnl
+pkgver=3.4.9
+pkgrel=1
+pkgdesc="Transactions with quoted asset codes"
+arch=('any')
+makedepends=('mktxn')
+optdepends=('nightscape: double-entry bookkeeping TXN reporting and analysis')
+groups=('nightscape' 'txn')
+source=("quoted-asset-code-jrnl.tar.gz"{,.asc})
+sha256sums=('addfed6b73fb70d904dc094933d22bd07f91b2bff7a5584c353e78e45e19fa60'
+            'SKIP')
+validpgpkeys=('DA996E276B1F51FBC492E9873DBB92CDB1B08DAB')
+
+build() {
+  cd "$srcdir"
+
+  msg2 'Building...'
+  mktxn \
+    --name="$pkgname" \
+    --version="$pkgver" \
+    --release=$pkgrel \
+    --description="$pkgdesc" \
+    quoted-asset-codes.txn
+}
+
+package() {
+  cd "$srcdir"
+
+  msg2 'Installing...'
+  install -Dm 644 $pkgname-$pkgver-$pkgrel.txn.tar.xz \
+          -t "$pkgdir/$HOME/.nightscape/db/"
+
+  find "$pkgdir" -mindepth 1 -maxdepth 1 -exec chown -R $USER:users '{}' \;
+}

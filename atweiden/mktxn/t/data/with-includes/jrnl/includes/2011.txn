@@ -1,0 +1,5 @@
+2011-01-01 "FooCorp started the year with $1000 in Bankwest cheque account"
+  Assets:FooCorp:Bankwest:Cheque      $1000.00 USD
+  Equity:FooCorp                      $1000.00 USD
+
+# vim: ft=txn

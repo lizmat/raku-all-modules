@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/atweiden/mktxn.git
+	branch = master
+	commit = dbd60caee54bb1af71ba7f789920c9b79d019f6b
+	parent = 00f6c7682f9744fa433772f619c94bdd13beaa50
+	cmdver = 0.2.3
