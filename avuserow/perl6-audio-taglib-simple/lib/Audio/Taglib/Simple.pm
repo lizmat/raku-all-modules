@@ -10,7 +10,7 @@ my class X::InvalidAudioFile is Exception {
 	}
 }
 
-my constant taglib = 'libtag_c';
+my constant taglib = ('tag_c', v0);
 
 class Audio::Taglib::Simple {
 	has $.file is readonly;
