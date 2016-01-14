@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/autarch/perl6-File-LibMagic.git
+	branch = master
+	commit = c8075db5d348c5d02ffa09bda7e5722363a7d25a
+	parent = 37c4d8831392b3d25e94fbcc6238b8643bd9a01c
+	cmdver = 0.2.3
