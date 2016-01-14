@@ -1,0 +1,12 @@
+{
+    "name"        : "if",
+    "version"     : "0.1.0",
+    "author"      : "github:FROGGS",
+    "description" : "conditionally use packages",
+    "depends"     : [ ],
+    "provides"    : {
+        "if" : "lib/if.pm"
+    },
+    "source-url"  : "git://github.com/FROGGS/p6-if.git"
+}
+
