@@ -1,0 +1,31 @@
+{
+   "authors" : [
+      "Brian S. Julin"
+   ],
+   "build-depends" : [
+      "File::Temp",
+      "Test"
+   ],
+   "depends" : [
+      "File::Temp",
+      "Test"
+   ],
+   "description" : "Perl6 -- manage GNU screen sessions and use them for tests",
+   "license" : "http://www.perlfoundation.org/artistic_license_2_0",
+   "name" : "Proc::Screen",
+   "perl" : "6",
+   "provides" : {
+      "Proc::Screen" : "lib/Proc/Screen.pm6",
+      "Test::Screen" : "lib/Test/Screen.pm6"
+   },
+   "source-url" : "https://github.com/skids/perl6-Proc-Screen.git",
+   "support" : {
+      "bugtracker" : "https://github.com/skids/perl6-Proc-Screen/issues",
+      "source" : "https://github.com/skids/perl6-Proc-Screen.git"
+   },
+   "test-depends" : [
+      "File::Temp",
+      "Test"
+   ],
+   "version" : "v0.0.1"
+}

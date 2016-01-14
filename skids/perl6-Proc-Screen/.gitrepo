@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/skids/perl6-Proc-Screen.git
+	branch = master
+	commit = 1e6fae836681c8b5669872cba1d5a4b15e48dcc6
+	parent = f43ee891a92d55bf7ffa26c62106b5f47354735f
+	cmdver = 0.2.3
