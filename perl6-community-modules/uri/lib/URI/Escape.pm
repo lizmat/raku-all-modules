@@ -16,8 +16,7 @@ sub uri-escape($s, Bool :$no-utf8 = False) is export {
     $s.subst(:g, /<- [\-._~A..Za..z0..9]>/,
         {
             ( $no-utf8 || .Str.ord < 128 ) ?? %escapes{ .Str } !!
-                # as unpack progresses the line below can improve ...
-                '%' ~ .Str.encode.unpack('H*').uc.comb(/../).join('%')
+                .Str.encode.list.fmt('%%%X', "")
         }
     );
 }
