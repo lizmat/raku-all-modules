@@ -1,0 +1,14 @@
+{
+  "perl" : "6.*",
+  "name" : "Haikunator",
+  "version" : "0.1.0",
+  "description" : "Generate Heroku-like random names to use in your perl 6 applications.",
+  "authors" : [ "Atrox <mail@atrox.me>" ],
+  "provides" : {
+      "Haikunator" : "lib/Haikunator.pm6"
+  },
+  "depends" : [ ],
+  "test-depends" : [ "Test::META" ],
+  "resources" : [ ],
+  "source-url" : "git://github.com/Atrox/haikunatorperl.git"
+}
