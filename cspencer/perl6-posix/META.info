@@ -1,0 +1,12 @@
+{
+    "name" : "POSIX",
+    "version" : "0.1.1",
+    "description" : "POSIX - Perl interface to IEEE Std 1003.1",
+    "author" : "Cory Spencer",
+    "provides" : {
+        "POSIX" : "lib/POSIX.pm6"
+    },
+    "test-depends" : [ "Test" ],
+    "depends" : [ ],
+    "source-url" : "https://github.com/cspencer/perl6-posix.git"
+}   
