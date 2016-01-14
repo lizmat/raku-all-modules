@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/hoelzro/p6-priorityqueue.git
+	remote = https://github.com/hoelzro/p6-priorityqueue.git
 	branch = master
-	commit = 9ba50f732f6b71ead87121245f2fbd81cfba6031
-	parent = 3c456574fb0db05607d9f3f3b471f072a0db9e94
-	cmdver = 0.2.2
+	commit = 8b2862299f0b6481c177e2a0722688251bbf5a7b
+	parent = 4ebd3032fd70e0b746bc1c788b930cb510a22c20
+	cmdver = 0.2.3

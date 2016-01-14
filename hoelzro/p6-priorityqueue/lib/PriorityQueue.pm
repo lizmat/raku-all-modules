@@ -4,7 +4,7 @@ constant $VERSION = '0.01';
 
 # XXX can I make this parameterized?
 #| A priority queue implementation. Z<Implemented as a binary heap>
-class PriorityQueue {
+class PriorityQueue:auth<github:hoelzro>:ver<0.1.0> {
     has @!elements; # XXX should be @!elements{1..*}
     has &!cmp;
 
