@@ -1,6 +1,7 @@
 use v6;
 use Test;
 use String::CRC32;
+use newline :lf;
 
 plan 6;
 
@@ -30,10 +31,11 @@ is(
 
 # Test CRC of a filehandle
 my $fh = open("t/testfile", :bin, :r);
-is(
-    String::CRC32::crc32($fh), 1925609391,
-    "Test the CRC of a file handle"
-);
+my $crc = String::CRC32::crc32($fh);
+is($crc, 1925609391, "Test the CRC of a file handle");
+if $crc == 443916274 {
+    diag("CRC value of $crc indicates a possibly incorrect handling of EOL");
+}
 
 # Test a Buf made of invalid UTF8
 my $buf2 = Buf.new(0xff);

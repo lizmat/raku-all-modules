@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cosimo/perl6-string-crc32.git
 	branch = master
-	commit = 1ddba1152beb69f6f29f2e87b5e95b3ebdd8226f
-	parent = d1e9f9d08c4460d95eea21b8914f6d981b492dc2
-	cmdver = 0.2.2
+	commit = 1f0b00c7933b30a8b9dc85463883132274cf4bba
+	parent = ab89f0a5edbd3db3a2ca6c9a1ca83b089ca9c2dc
+	cmdver = 0.2.3
