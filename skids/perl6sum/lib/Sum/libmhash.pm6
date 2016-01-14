@@ -90,7 +90,7 @@ use NativeCall;
 # TODO: also ensure the size of hashid enum is properly determined and
 #       used where appropriate.
 
-our sub count() returns int is native('libmhash')
+our sub count() returns int is native('mhash', v2)
     is symbol('mhash_count') { * }
 
 our $up = False;
@@ -101,13 +101,13 @@ try { $count.defined; $count = count(); }
 $up = True if $count.defined;
 $count = 0 unless $count.defined;
 
-our sub name(int) returns str is native('libmhash')
+our sub name(int) returns str is native('mhash', v2)
     is symbol('mhash_get_hash_name_static') { * }
 
-our sub block_size(int) returns int is native('libmhash')
+our sub block_size(int) returns int is native('mhash', v2)
     is symbol('mhash_get_block_size') { * }
 
-our sub pblock_size(int) returns int is native('libmhash')
+our sub pblock_size(int) returns int is native('mhash', v2)
     is symbol('mhash_get_hash_pblock') { * }
 
 =begin pod
@@ -194,22 +194,22 @@ class Instance is repr('CPointer') {
       my %allocated = ();
 
       my sub init(int) returns Instance
-          is native('libmhash')
+          is native('mhash', v2)
           is symbol('mhash_init') { * };
       my sub deinit(Instance, CArray[int8])
-          is native('libmhash')
+          is native('mhash', v2)
           is symbol('mhash_deinit') { * };
       my sub mhash(Instance, blob8 $data, int $len) returns int
-          is native('libmhash')
+          is native('mhash', v2)
           is symbol('mhash') { * };
       my sub end(Instance) returns CArray[int8]
-          is native('libmhash')
+          is native('mhash', v2)
           is symbol('mhash_end') { * };
       my sub cp(Instance) returns Instance
-          is native('libmhash')
+          is native('mhash', v2)
           is symbol('mhash_cp') { * };
       my sub algo(Instance) returns int
-          is native('libmhash')
+          is native('mhash', v2)
           is symbol('mhash_get_mhash_algo') { * };
       my sub ca8_free(CArray[int8])
           is native

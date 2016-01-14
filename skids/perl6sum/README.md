@@ -3,6 +3,17 @@ perl6sum
 
 Sum:: Perl 6 modules implementing checksums, hashes, etc.
 
+## Status
+
+Very broken at the moment, to the point where API may have to
+change.  Changes made right before the 6.c release
+have left an important API decision up in the air -- that being
+whether a feed tap has .push or .append called on it.  The
+API of Sum depends on this -- the only reaon it was using .push
+was to match this feed API.  If .append is to continue to be
+called, Sum will change API to suit.  Unfortunately it does
+not look to be the case that this will be resolved anytime soon.
+
 ## Purpose
 
 This suite of modules intends to become a thorough, idiomatic Perl 6

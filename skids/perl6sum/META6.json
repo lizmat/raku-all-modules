@@ -30,7 +30,7 @@
       "Sum::librhash" : "lib/Sum/librhash.pm6"
    },
    "support" : {
-      "source" : "git://github.com/skids/perl6sum.git"
+      "source" : "https://github.com/skids/perl6sum.git"
    },
    "version" : "v0.1.0"
 }

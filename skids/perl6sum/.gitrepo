@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/skids/perl6sum.git
+	remote = https://github.com/skids/perl6sum.git
 	branch = master
-	commit = fd6f88d838e10d32b2d0c5225fc8aeacb3238aa2
-	parent = d58f8026ce5738e9c39cb7c62c5215b8a65d0bd7
-	cmdver = 0.2.2
+	commit = 0371a5e8b9c12f1dba99caca39b44c302ca07810
+	parent = a319d2c083f0dbd04063439d119412ba7f34c8b6
+	cmdver = 0.2.3

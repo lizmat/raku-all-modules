@@ -87,7 +87,7 @@ use Sum;
 
 use NativeCall;
 
-my  sub add_digests is native('libcrypto')
+my  sub add_digests is native('crypto', v0 but False)
     is symbol('OpenSSL_add_all_digests') { * };
 
 our $up = try { add_digests() }
@@ -136,16 +136,16 @@ class Algo {
 
 our %Algos;
 
-our sub nid(OpaquePointer) returns int is native('libcrypto')
+our sub nid(OpaquePointer) returns int is native('crypto', v0 but False)
     is symbol('EVP_MD_type') { * }
 
-our sub size(OpaquePointer) returns int is native('libcrypto')
+our sub size(OpaquePointer) returns int is native('crypto', v0 but False)
     is symbol('EVP_MD_size') { * }
 
-our sub block_size(OpaquePointer) returns int is native('libcrypto')
+our sub block_size(OpaquePointer) returns int is native('crypto', v0 but False)
     is symbol('EVP_MD_block_size') { * }
 
-our sub get_digestbyname(Str) returns OpaquePointer is native('libcrypto')
+our sub get_digestbyname(Str) returns OpaquePointer is native('crypto', v0 but False)
     is symbol('EVP_get_digestbyname') { * }
 
 if ($up) {
@@ -195,25 +195,25 @@ class Instance is repr('CPointer') {
     my %allocated = ();
 
     my  sub create() returns Instance
-        is native('libcrypto')
+        is native('crypto', v0 but False)
         is symbol('EVP_MD_CTX_create') { * };
     my  sub init(Instance, OpaquePointer, OpaquePointer) returns int
-        is native('libcrypto')
+        is native('crypto', v0 but False)
         is symbol('EVP_DigestInit_ex') { * };
     my  sub destroy(Instance)
-        is native('libcrypto')
+        is native('crypto', v0 but False)
         is symbol('EVP_MD_CTX_destroy') { * };
     my  sub update(Instance, blob8 $data, int $len) returns int
-        is native('libcrypto')
+        is native('crypto', v0 but False)
         is symbol('EVP_DigestUpdate') { * };
     my  sub final(Instance, buf8 $data, OpaquePointer $size) returns int
-        is native('libcrypto')
+        is native('crypto', v0 but False)
         is symbol('EVP_DigestFinal_ex') { * };
     my  sub copy(Instance $out, Instance $in) returns int
-        is native('libcrypto')
+        is native('crypto', v0 but False)
         is symbol('EVP_MD_CTX_copy_ex') { * };
     my  sub algo(Instance) returns OpaquePointer
-        is native('libcrypto')
+        is native('crypto', v0 but False)
         is symbol('EVP_MD_CTX_md') { * };
 
     multi method new (Str $name) {

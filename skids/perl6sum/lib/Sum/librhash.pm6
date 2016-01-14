@@ -94,7 +94,7 @@ use Sum;
 
 use NativeCall;
 
-my sub rhash_library_init is native('librhash')
+my sub rhash_library_init is native('rhash', v0)
     is symbol('rhash_library_init') { * }
 
 # TODO: allow the user to explictly prevent all libssl interaction
@@ -119,11 +119,11 @@ else {
 # $msg_id should be uint
 our sub transmit (int $msg_id, OpaquePointer $dst,
                   OpaquePointer $ldata, OpaquePointer $rdata) returns OpaquePointer
-		  is native('librhash')
+		  is native('rhash', v0)
 		  is symbol('rhash_transmit')
 		  { * }
 
-our sub count returns int is native('librhash')
+our sub count returns int is native('rhash', v0)
     is symbol('rhash_count') { * }
 
 our $count;
@@ -132,23 +132,23 @@ if ($up) {
 }
 
 # $id should be uint
-our sub digest_size (int $id) returns int is native('librhash')
+our sub digest_size (int $id) returns int is native('rhash', v0)
     is symbol('rhash_get_digest_size') { * }
 
 # $id should be uint
-our sub hash_length (int $id) returns int is native('librhash')
+our sub hash_length (int $id) returns int is native('rhash', v0)
     is symbol('rhash_get_hash_length') { * } # size of asciified presentation
 
 # $id should be uint
-our sub is_base32 (int $id) returns int is native('librhash')
+our sub is_base32 (int $id) returns int is native('rhash', v0)
     is symbol('rhash_is_base32') { * } # conventional asciification procedure
 
 # $id should be uint
-our sub name (int $id) returns str is native('librhash')
+our sub name (int $id) returns str is native('rhash', v0)
     is symbol('rhash_get_name') { * }
 
 # $id should be uint
-our sub magnet_name (int $id) returns str is native('librhash')
+our sub magnet_name (int $id) returns str is native('rhash', v0)
     is symbol('rhash_get_magnet_name') { * }
 
 =begin pod
@@ -290,20 +290,20 @@ class Instance is repr('CPointer') {
 
       # should be uint
       my sub init(int) returns Instance
-          is native('librhash')
+          is native('rhash', v0)
           is symbol('rhash_init') { * };
       my sub reset(Instance)
-          is native('librhash')
+          is native('rhash', v0)
           is symbol('rhash_reset') { * };
       my sub free(Instance)
-          is native('librhash')
+          is native('rhash', v0)
           is symbol('rhash_free') { * };
       # $len should be size_t
       my sub update(Instance, buf8 $data, int $len) returns int
-          is native('librhash')
+          is native('rhash', v0)
           is symbol('rhash_update') { * };
       my sub final(Instance, buf8) returns int
-          is native('librhash')
+          is native('rhash', v0)
           is symbol('rhash_final') { * };
 
       multi method new (Int $id) {

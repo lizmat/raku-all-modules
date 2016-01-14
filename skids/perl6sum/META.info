@@ -4,7 +4,7 @@
     "description" : "Perl6 modules for computing hashes and checksums.",
     "author" : "Brian S. Julin",
     "depends" : [ ],
-    "source-url" : "git://github.com/skids/perl6sum.git",
+    "source-url" : "https://github.com/skids/perl6sum.git",
     "provides" : {
         "Sum" : "lib/Sum.pm6",
         "Sum::HAS" : "lib/Sum/HAS.pm6",
