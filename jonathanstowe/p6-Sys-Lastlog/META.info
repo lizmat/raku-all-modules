@@ -8,7 +8,7 @@
   "source-url" : "git://github.com/jonathanstowe/p6-Sys-Lastlog.git",
   "authors" : [ "Jonathan Stowe <jns+git@gellyfish.com>" ],
   "author" : "Jonathan Stowe <jns+git@gellyfish.com>",
-  "perl" : "v6",
+  "perl" : "6",
   "build-depends" : [
     "panda",
     "LibraryMake",
@@ -17,7 +17,7 @@
   "provides" : {
     "Sys::Lastlog" : "lib/Sys/Lastlog.pm"
   },
-  "resources" : [ "lib/lastloghelper.so" ],
+  "resources" : [ "libraries/lastloghelper" ],
   "depends" : [
     "LibraryMake",
     "System::Passwd"
@@ -26,7 +26,7 @@
     "Test"
   ],
   "description" : "Perl 6 access to Lastlog information on Unix-like systems",
-  "version" : "v0.0.5",
+  "version" : "0.0.7",
   "tags" : [ "unix", "audit", "lastlog" ],
   "auth" : "github:jonathanstowe"
 }

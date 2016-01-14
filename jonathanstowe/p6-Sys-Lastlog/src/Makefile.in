@@ -1,7 +1,7 @@
-all: %DESTDIR%/lastloghelper%SO%
+all: %DESTDIR%/%lastloghelper%
 
-%DESTDIR%/lastloghelper%SO%: lastloghelper%O%
-	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/lastloghelper%SO% lastloghelper%O%
+%DESTDIR%/%lastloghelper%: lastloghelper%O%
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/%lastloghelper% lastloghelper%O%
 
 lastloghelper%O%: lastloghelper.c
-	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT%lastloghelper%O% lastloghelper.c
+	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT% lastloghelper%O% lastloghelper.c

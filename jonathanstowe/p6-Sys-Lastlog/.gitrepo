@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/p6-Sys-Lastlog.git
 	branch = master
-	commit = 52f62da2177a7d185d24295c19a0844f3c53851c
-	parent = fe88ce4210689af961319fd156f5a4fe390868f7
+	commit = 4c8552afade80cad73ecf14cf5d621e32531deb0
+	parent = 6879374764a04ce139ae5de9640b75929e20a03f
 	cmdver = 0.2.3
