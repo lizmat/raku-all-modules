@@ -6,13 +6,15 @@ use v6;
 
 use X::Path::Router;
 
-class Path::Router::Route {
+class Path::Router::Route { ... }
 
-    class Path::Router::Route::Match {
-        has Str $.path;
-        has %.mapping;
-        has Path::Router::Route $.route handles <target>;
-    }
+class Path::Router::Route::Match {
+    has Str $.path;
+    has %.mapping;
+    has Path::Router::Route $.route handles <target>;
+}
+
+class Path::Router::Route {
 
     has Str $.path;
     has %.defaults; # is copy
@@ -154,13 +156,17 @@ class Path::Router::Route {
                         }
 
                         # Absorb coercion exceptions
-                        CATCH { when True { } }
+                        CATCH { default { } }
                     }
 
-                    my $match = $test-part ~~ $smart-match;
+                    # Work-around RT#127071
+                    my $match = do given $smart-match {
+                        when Regex { $test-part ~~ /$smart-match/ }
+                        default    { $test-part ~~ $smart-match }
+                    };
 
                     # Make sure a regex is a total match
-                    if ($smart-match ~~ Regex) {
+                    if ($match ~~ Match) {
                         return Path::Router::Route::Match 
                             unless $match && $match eq $test-part;
                     }

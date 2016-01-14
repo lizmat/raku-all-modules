@@ -46,8 +46,8 @@ use Path::Router;
         { $router.uri-for(a => 'b', c => 'd') },
         X::Path::Router::AmbiguousMatch::ReverseMatch,
         "error when it's actually ambiguous",
-        match-keys => *.sort.join(' ') eq 'a c',
-        routes     => *.map(*.[0].path).sort.join(' ') eq '/bar /foo',
+        match-keys => { join(' ', .sort) eq 'a c' },
+        routes     => { join(' ', .map({.[0].path}).sort) eq '/bar /foo' },
     );
 }
 
@@ -81,7 +81,7 @@ use Path::Router;
         { $router.match('/foo/bar') },
         X::Path::Router::AmbiguousMatch::PathMatch,
         "error when it's actually ambiguous",
-        matches => *.map(*.route.path).sort.join(' ') eq '/:foo/bar /foo/:bar',
+        matches => { join(' ', .map({.route.path}).sort) eq '/:foo/bar /foo/:bar' },
         path    => 'foo/bar',
     );
 }

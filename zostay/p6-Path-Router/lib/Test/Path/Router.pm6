@@ -58,7 +58,7 @@ sub path-ok(Path::Router $router, Str $path, Str $message = '') is export {
 }
 
 sub path-not-ok(Path::Router $router, Str $path, Str $message = '') is export {
-    if (!$router.match($path)) {
+    if !$router.match($path) {
         ok(True, $message);
     }
     else {
