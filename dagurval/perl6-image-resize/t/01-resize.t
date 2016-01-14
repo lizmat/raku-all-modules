@@ -1,8 +1,7 @@
 use v6;
 use Test;
 
-BEGIN { @*INC.unshift('lib') }
-BEGIN { @*INC.unshift('t') }
+use lib <t lib>;
 
 use common;
 use Image::Resize;
