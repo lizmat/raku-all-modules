@@ -1,11 +1,11 @@
 use XML;
-use HTML::Parser;
 
 use NativeCall;
 use Gumbo::Binding;
 
-unit class Gumbo::Parser does HTML::Parser;
+unit class Gumbo::Parser;
 
+has XML::Document $.xmldoc;
 has Duration	$.c-parse-duration;
 has Duration	$.xml-creation-duration;
 has Int		%.stats;
@@ -32,6 +32,7 @@ method parse (Str $html, :$nowhitespace = False, *%filters) returns XML::Documen
       my $htmlroot = build-element($groot.v.element);
       my $tab_child = nativecast(CArray[gumbo_node_t], $groot.v.element.children.data);
       loop (my $i = 0; $i < $groot.v.element.children.length; $i++) {
+        my $n = nativecast(gumbo_node_s, $tab_child[$i]);
 	self!build-tree(nativecast(gumbo_node_s, $tab_child[$i]), $htmlroot) if %filters.elems eq 0;
 	if %filters.elems > 0 {
 	  my $ret = self!build-tree2(nativecast(gumbo_node_s, $tab_child[$i]), $htmlroot, %filters);
@@ -52,7 +53,7 @@ method parse (Str $html, :$nowhitespace = False, *%filters) returns XML::Documen
       }
     }
     $!xml-creation-duration = now - $t;
-    my gumbo_options_s $kGumboDefaultOptions := cglobal('libgumbo', 'kGumboDefaultOptions', gumbo_options_s);
+    my gumbo_options_s $kGumboDefaultOptions := cglobal(('gumbo', v1), 'kGumboDefaultOptions', gumbo_options_s);
     my gumbo_options_s $gopt = $kGumboDefaultOptions;
     gumbo_destroy_output($gopt, $gumbo_output);
     return $!xmldoc;
@@ -69,6 +70,7 @@ method parse (Str $html, :$nowhitespace = False, *%filters) returns XML::Documen
 	loop (my $i = 0; $i < $node.v.element.children.length; $i++) {
 	  self!build-tree(nativecast(gumbo_node_s, $tab_child[$i]), $xml);
 	}
+	0;
       }
       when GUMBO_NODE_TEXT.value {
         my $xml = XML::Text.new(text => $node.v.text.text);

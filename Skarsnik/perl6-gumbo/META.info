@@ -8,6 +8,6 @@
 	    "Gumbo::Parser" : "lib/Gumbo/Parser.pm6",
 	    "Gumbo::Binding" : "lib/Gumbo/Binding.pm6"
         },
-        "depends" : [ "XML" , "HTML::Parser" ],
+        "depends" : [ "XML" ],
         "source-url" : "git://github.com/Skarsnik/perl6-gumbo.git"
 }
