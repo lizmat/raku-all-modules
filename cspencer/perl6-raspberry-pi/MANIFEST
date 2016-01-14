@@ -1,0 +1,15 @@
+META.info
+MANIFEST
+lib/RPi.pm6
+lib/RPi
+lib/RPi/Device
+lib/RPi/Device/DS18B20
+lib/RPi/Device/DS18B20/Sensor.pm6
+lib/RPi/Device/DS18B20.pm6
+lib/RPi/GPIO
+lib/RPi/GPIO/Pin.pm6
+lib/RPi/GPIO.pm6
+lib/RPi/Wiring.pm6
+bin/example-1.p6
+t/0-load-module.t
+README.md

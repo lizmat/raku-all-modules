@@ -1,0 +1,15 @@
+{
+    "name" : "RPi",
+    "version" : "0.1.1",
+    "description" : "RPi - An interface to the Raspberry Pi's GPIO and other peripherals",
+    "author" : "Cory Spencer",
+    "provides" : {
+        "RPi"            : "lib/RPi.pm6",
+        "RPi::Wiring"    : "lib/RPi/Wiring.pm6",
+        "RPi::GPIO"      : "lib/RPi/GPIO.pm6",
+        "RPi::GPIO::Pin" : "lib/RPi/GPIO/Pin.pm6"
+    },
+    "test-depends" : [ "Test" ],
+    "depends" : [ "POSIX" ],
+    "source-url" : "https://github.com/cspencer/perl6-raspberry-pi.git"
+}   
