@@ -1,0 +1,19 @@
+{
+    "name"           : "CompUnit::Repository::Panda",
+    "version"       : "0.1",
+    "perl"          : "v6.c",
+    "author"        : "github:niner",
+    "authors"       : [ "Stefan Seifert" ],
+    "description"   : "Auto-install modules you use",
+    "test-depends"  : [ "File::Temp", "panda" ],
+    "build-depends" : [ "panda" ],
+    "provides"      : {
+        "CompUnit::Repository::Panda" : "lib/CompUnit/Repository/Panda.pm6"
+    },
+    "repo-type"     : "git",
+    "source-url"    : "git://github.com/niner/CompUnit-Repository-Panda.git",
+    "license"       : "http://www.perlfoundation.org/artistic_license_2_0",
+    "support"       : {
+        "irc" : "irc://irc.freenode.org/#perl6"
+    }
+}
