@@ -1,0 +1,12 @@
+{ 
+    "name" : "Test::Class", 
+    "version" : "*", 
+    "description" : "Simple Test::Class similar to Perl 5's", 
+    "depends" : [ ], 
+    "provides" : { 
+        "Test::Class"    : "lib/Test/Class.pm6"
+    },
+    "repo-type" : "git",
+    "source-url" : "git://github.com/perlpilot/p6-Test-Class.git"
+}
+
