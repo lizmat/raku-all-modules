@@ -4,7 +4,7 @@ use Software::License;
 
 sub MAIN (Str:D $license_shortname, Str:D $owner_name, $year?)
 {
-  my $license = Software::License.new, 'Constructor';
+  my $license = Software::License.new;
 
   if $year
   {

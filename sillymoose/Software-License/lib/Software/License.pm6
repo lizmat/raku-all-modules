@@ -8,7 +8,7 @@ use Software::License::LGPL3;
 use Software::License::MIT;
 use Software::License::MPL2;
 
-class Software::License:ver<0.04>
+class Software::License:ver<0.05>
 {
     method full-text (Str:D $license_name, Str:D $holder, Int:D $year=DateTime.new(time).year)
     {
@@ -110,3 +110,5 @@ David Farrell
 FreeBSD - see LICENSE
 
 =end pod
+
+# vim: set ft=perl6
