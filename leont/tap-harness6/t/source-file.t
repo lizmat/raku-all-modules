@@ -1,7 +1,7 @@
 use v6;
 use TAP;
 
-use Test::More;
+use Test;
 
 plan 4;
 

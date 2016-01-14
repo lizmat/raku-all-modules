@@ -2,29 +2,18 @@ use v6;
 
 unit package TAP;
 role Entry {
-	has Str $.raw;
-	method to-string { ... }
-	method Str {
-		return $.raw // $.to-string;
-	}
+	has Str:D $.raw is required handles <Str>;
 }
 class Version does Entry {
 	has Int:D $.version is required;
-	method to-string() {
-		return "TAP Version $!version";
-	}
 }
 class Plan does Entry {
 	has Int:D $.tests is required;
 	has Bool $.skip-all;
 	has Str $.explanation;
-	method to-string() {
-		return ('1..' ~ $!tests, ($!skip-all ?? ('#SKIP', $!explanation).grep(*.defined) !! () )).join(' ');
-	}
 }
 
 enum Directive <No-Directive Skip Todo>;
-subset Directive::Explanation of Str where { not .defined or m/ ^ \N* $ / };
 
 class Test does Entry {
 	has Bool:D $.ok is required;
@@ -36,13 +25,7 @@ class Test does Entry {
 	method is-ok() {
 		return $!ok || $!directive ~~ Todo;
 	}
-	method to-string() {
-		my @ret = ($!ok ?? 'ok' !! 'not ok'), $!number, '-', $!description;
-		@ret.push('#'~$!directive.uc, $!explanation) if $!directive;
-		return @ret.grep(*.defined).join(' ');
-	}
 }
-subset Test::Description of Str where { not .defined or m/ ^ \N* $ / };
 
 class Sub-Test is Test {
 	has @.entries;
@@ -65,34 +48,19 @@ class Sub-Test is Test {
 		}
 		return @errors;
 	}
-	method to-string() {
-		return (@!entries».to-string()».indent(4), callsame).join("\n");
-	}
 }
 
 class Bailout does Entry {
 	has Str $.explanation;
-	method to-string {
-		return ('Bail out!', $.explanation).grep(*.defined).join(' ');
-	}
 }
 class Comment does Entry {
 	has Str:D $.comment is required;
-	method to-string {
-		return "# $!comment";
-	}
 }
 class YAML does Entry {
 	has Str:D $.serialized is required;
 	has Any $.deserialized;
-	method to-string {
-		return "  ---\n" ~ $!serialized.indent(2) ~~ '  ...'
-	}
 }
 class Unknown does Entry {
-	method to-string {
-		$!raw // fail 'Can\'t stringify empty Unknown';
-	}
 }
 
 role Entry::Handler {
@@ -100,47 +68,11 @@ role Entry::Handler {
 	method end-entries() { }
 }
 
-class Output does Entry::Handler {
-	has IO::Handle $.handle = $*OUT;
-	method handle-entry(Entry $entry) {
-		$!handle.say(~$entry);
-	}
-	method end-entries() {
-		$!handle.flush;
-	}
-	method open(Str $filename) {
-		my $handle = open $filename, :w;
-		$handle.autoflush(True);
-		return Output.new(:$handle);
-	}
-}
-
-class Entry::Handler::Multi does Entry::Handler {
-	has @!handlers;
-	submethod BUILD(:@handlers) {
-		@!handlers = @handlers;
-	}
-	method handle-entry(Entry $entry) {
-		for @!handlers -> $handler {
-			$handler.handle-entry($entry);
-		}
-	}
-	method end-entries() {
-		for @!handlers -> $handler {
-			$handler.end-entries();
-		}
-	}
-	method add-handler(Entry::Handler $handler) {
-		@!handlers.push($handler);
-	}
-}
-
 class Collector does Entry::Handler {
 	has @.entries;
-	submethod BUILD() {
-	}
+	submethod BUILD() { }
 	method handle-entry(Entry $entry) {
-		@!entries.push($entry);
+		 @!entries.push($entry);
 	}
 }
 
@@ -231,14 +163,6 @@ class Aggregator {
 }
 
 grammar Grammar {
-	method parse {
-		my $*tap-indent = 0;
-		callsame;
-	}
-	method subparse($, *%) {
-		my $*tap-indent = 0;
-		callsame;
-	}
 	token TOP { ^ <line>+ $ }
 	token sp { <[\s] - [\n]> }
 	token num { <[0..9]>+ }
@@ -285,57 +209,65 @@ grammar Grammar {
 	token unknown {
 		\N*
 	}
-}
-class Action {
-	method TOP($/) {
-		make @<line>».made;
-	}
-	method line($/) {
-		make $/.values[0].made;
-	}
-	method plan($/) {
-		my %args = :raw(~$/), :tests(+$<count>);
-		if $<directive> {
-			%args<skip-all explanation> = True, $<explanation>;
+	class Actions {
+		method TOP($/) {
+			make @<line>».made;
 		}
-		make TAP::Plan.new(|%args);
+		method line($/) {
+			make $/.values[0].made;
+		}
+		method plan($/) {
+			my %args = :raw(~$/), :tests(+$<count>);
+			if $<directive> {
+				%args<skip-all explanation> = True, $<explanation>;
+			}
+			make TAP::Plan.new(|%args);
+		}
+		method description($/) {
+			make ~$/.subst(/\\('#'|'\\')/, { $_[0] }, :g)
+		}
+		method !make_test($/) {
+			my %args = (:ok($<nok> eq ''));
+			%args<number> = $<num> ?? +$<num> !! Int;
+			%args<description> = $<description>.made if $<description>;
+			%args<directive> = $<directive> ?? TAP::Directive::{~$<directive>.substr(0,4).tclc} !! TAP::No-Directive;
+			%args<explanation> = ~$<explanation> if $<explanation>;
+			return %args;
+		}
+		method test($/) {
+			make TAP::Test.new(:raw(~$/), |self!make_test($/));
+		}
+		method bailout($/) {
+			make TAP::Bailout.new(:raw(~$/), :explanation($<explanation> ?? ~$<explanation> !! Str));
+		}
+		method version($/) {
+			make TAP::Version.new(:raw(~$/), :version(+$<version>));
+		}
+		method comment($/) {
+			make TAP::Comment.new(:raw(~$/), :comment(~$<comment>));
+		}
+		method yaml($/) {
+			my $serialized = $<yaml-line>.join('');
+			my $deserialized = try (require YAMLish) ?? YAMLish::load-yaml("---\n$serialized...") !! Any;
+			make TAP::YAML.new(:raw(~$/), :$serialized, :$deserialized);
+		}
+		method sub-entry($/) {
+			make $/.values[0].made;
+		}
+		method sub-test($/) {
+			make TAP::Sub-Test.new(:raw(~$/), :entries(@<sub-entry>».made), |self!make_test($<test>));
+		}
+		method unknown($/) {
+			make TAP::Unknown.new(:raw(~$/));
+		}
 	}
-	method description($/) {
-		make ~$/.subst(/\\('#'|'\\')/, { $_[0] }, :g)
+	method parse(|c) {
+		my $*tap-indent = 0;
+		nextwith(:actions(Actions), |c);
 	}
-	method !make_test($/) {
-		my %args = (:ok($<nok> eq ''));
-		%args<number> = $<num>.defined ?? +$<num> !! Int;
-		%args<description> = $<description>.made if $<description>;
-		%args<directive> = $<directive> ?? TAP::Directive::{~$<directive>.substr(0,4).tclc} !! TAP::No-Directive;
-		%args<explanation> = ~$<explanation> if $<explanation>;
-		return %args;
-	}
-	method test($/) {
-		make TAP::Test.new(:raw(~$/), |self!make_test($/));
-	}
-	method bailout($/) {
-		make TAP::Bailout.new(:raw(~$/), :explanation($<explanation> ?? ~$<explanation> !! Str));
-	}
-	method version($/) {
-		make TAP::Version.new(:raw(~$/), :version(+$<version>));
-	}
-	method comment($/) {
-		make TAP::Comment.new(:raw(~$/), :comment(~$<comment>));
-	}
-	method yaml($/) {
-		my $serialized = $<yaml-line>.join('');
-		my $deserialized = try (require YAMLish) ?? YAMLish::load-yaml("---\n$serialized...") !! Any;
-		make TAP::YAML.new(:raw(~$/), :$serialized, :$deserialized);
-	}
-	method sub-entry($/) {
-		make $/.values[0].made;
-	}
-	method sub-test($/) {
-		make TAP::Sub-Test.new(:raw(~$/), :entries(@<sub-entry>».made), |self!make_test($<test>));
-	}
-	method unknown($/) {
-		make TAP::Unknown.new(:raw(~$/));
+	method subparse(|c) {
+		my $*tap-indent = 0;
+		nextwith(:actions(Actions), |c);
 	}
 }
 
@@ -343,11 +275,10 @@ class Parser {
 	has Str $!buffer = '';
 	has TAP::Entry::Handler @!handlers;
 	has Grammar $!grammar = Grammar.new;
-	has Action $!actions = Action.new;
 	submethod BUILD(:@!handlers) { }
 	method add-data(Str $data) {
 		$!buffer ~= $data;
-		while ($!grammar.subparse($!buffer, :$!actions)) -> $match {
+		while ($!grammar.subparse($!buffer)) -> $match {
 			$!buffer.=substr($match.to);
 			for @($match.made) -> $result {
 				@!handlers».handle-entry($result);
@@ -374,11 +305,6 @@ role Reporter {
 }
 
 role Session does Entry::Handler {
-	method close-test() { ... }
-}
-
-class TAP::Reporter::Text { ... }
-role Reporter::Text::Session does Session {
 	has TAP::Reporter $.reporter;
 	has Str $.name;
 	has Str $.header;
@@ -387,6 +313,9 @@ role Reporter::Text::Session does Session {
 	method close-test(TAP::Result $result) {
 		$!reporter.print-result(self, $result);
 	}
+}
+
+class Reporter::Text::Session does Session {
 	method handle-entry(TAP::Entry $) {
 	}
 }
@@ -459,7 +388,7 @@ class Formatter::Text does Formatter {
 	method format-return(Str $output) {
 		return $output;
 	}
-	method format-result(Reporter::Text::Session $session, TAP::Result $result) {
+	method format-result(Session $session, TAP::Result $result) {
 		my $output;
 		my $name = $session.header;
 		if ($result.skip-all) {
@@ -520,7 +449,7 @@ class Reporter::Text does Reporter {
 
 	method open-test(Str $name) {
 		my $header = $!formatter.format-name($name);
-		return Formatter::Text::Session.new(:$name, :$header, :formatter(self));
+		return Reporter::Text::Session.new(:$name, :$header, :reporter(self));
 	}
 	method summarize(TAP::Aggregator $aggregator, Bool $interrupted, Duration $duration) {
 		self!output($!formatter.format-summary($aggregator, $interrupted, $duration));
@@ -534,7 +463,7 @@ class Reporter::Text does Reporter {
 }
 
 class Formatter::Console is Formatter::Text {
-	my &colored = try { EVAL q{ use Terminal::ANSIColor; &colored } } // sub ($text, $) { $text }
+	my &colored = sub ($text, $) { $text }
 	method format-success(Str $output) {
 		return colored($output, 'green');
 	}
@@ -546,7 +475,7 @@ class Formatter::Console is Formatter::Text {
 	}
 }
 
-class Reporter::Console::Session does Reporter::Text::Session {
+class Reporter::Console::Session does Session {
 	has Int $!last-updated = 0;
 	has Int $.plan = Int;
 	has Int $.number = 0;
@@ -764,11 +693,11 @@ package Runner {
 		}
 	}
 	my class Run {
-		subset Killable of Any where { not .defined or .can('kill') };
+		subset Killable of Any where { .can('kill') };
 		has Promise:D $.process is required;
 		has Killable $!killer;
 		has Promise $!timer;
-		submethod BUILD(Promise :$!process, Killable :$!killer, Promise :$!timer) {
+		submethod BUILD(Promise :$!process, Killable :$!killer = Killable, Promise :$!timer) {
 		}
 		method kill() {
 			$!killer.kill if $!process;
@@ -798,13 +727,12 @@ package Runner {
 		has TAP::Entry @!entries;
 		has Supplier $!input = Supplier.new;
 		has Supply $!output = $!input.Supply;
-		has Promise $.promise = $!input.Promise;
-		has Bool $!done = False;
+		has Promise $.promise = Promise.new;
 		method staple(TAP::Entry::Handler @handlers) {
 			for @!entries -> $entry {
 				@handlers».handle-entry($entry);
 			}
-			if $!done {
+			if $!promise {
 				@handlers».end-entries;
 			}
 			else {
@@ -819,7 +747,7 @@ package Runner {
 		}
 		method end-entries() {
 			$!input.done();
-			$!done = True;
+			$!promise.keep;
 		}
 	}
 
@@ -1008,7 +936,8 @@ class Harness {
 	}
 
 	has SourceHandler @.handlers = SourceHandler::Perl6.new();
-	has TAP::Reporter:U $.reporter-class = TAP::Reporter::Console;
+	has IO::Handle $.output = $*OUT;
+	has TAP::Reporter:U $.reporter-class = $!output.t ?? TAP::Reporter::Console !! TAP::Reporter::Text;
 	has Int:D $.jobs = 1;
 	has Bool:D $.timer = False;
 	subset ErrValue where any(IO::Handle:D, Supply, 'stderr', 'ignore', 'merge');
@@ -1035,7 +964,7 @@ class Harness {
 	method make-source(Str $name) {
 		return @!handlers.max(*.can-handle($name)).make-source($name, :$!err);
 	}
-	my &sigint = do try { EVAL 'sub { signal(SIGINT) }' } or sub { state $s = Supplier.new; return $s.Supply };
+	my &sigint = sub { signal(SIGINT) }
 
 	method run(*@sources) {
 		my $killed = Promise.new;

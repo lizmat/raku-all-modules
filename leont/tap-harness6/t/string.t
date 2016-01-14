@@ -1,5 +1,5 @@
 use TAP;
-use Test::More;
+use Test;
 
 my $content1 = q:heredoc/END/;
     ok 1 - subtest 1a
@@ -44,14 +44,12 @@ END
 parse-and-get($content4, :tests-planned(2), :tests-run(2), :passed(2), :failed(0), :todo-passed(0), :skipped(0), :unknowns(0), :errors());
 
 my @entries = lex-and-get($content4);
-like(@entries[0], TAP::Plan, 'First Entry is a Plan');
-like(@entries[1], TAP::Test, 'Second entry is a subtest');
-like(@entries[2], TAP::Sub-Test, 'Third entry is a subtest');
+isa-ok(@entries[0], TAP::Plan, 'First Entry is a Plan');
+isa-ok(@entries[1], TAP::Test, 'Second entry is a subtest');
+isa-ok(@entries[2], TAP::Sub-Test, 'Third entry is a subtest');
 is-deeply(@entries[2].inconsistencies, [], 'Subtests has no errors');
-like(@entries[2].entries[0], TAP::Sub-Test, 'First sub-entry is a subtest');
+isa-ok(@entries[2].entries[0], TAP::Sub-Test, 'First sub-entry is a subtest');
 is-deeply(@entries[2].entries[0].inconsistencies, [], 'Subsubtests has no errors');
-
-diag("Extra tests for Test-4");
 
 my $content5 = q:heredoc/END/;
 1..2
@@ -68,17 +66,15 @@ END
 parse-and-get($content5, :tests-planned(2), :tests-run(2), :passed(2), :failed(0), :todo-passed(0), :skipped(0), :unknowns(0), :errors());
 
 my @entries2 = lex-and-get($content5);
-like(@entries2[0], TAP::Plan, 'First Entry is a Plan');
-like(@entries2[1], TAP::Test, 'Second entry is a test');
+isa-ok(@entries2[0], TAP::Plan, 'First Entry is a Plan');
+isa-ok(@entries2[1], TAP::Test, 'Second entry is a test');
 is(@entries2[1].description, 'a#b', 'Test has a description');
-like(@entries2[2], TAP::Sub-Test, 'Third entry is a subtest');
+isa-ok(@entries2[2], TAP::Sub-Test, 'Third entry is a subtest');
 is-deeply(@entries2[2].inconsistencies, [], 'Subtests has no errors');
-like(@entries2[2].entries[1], TAP::YAML, 'Got YAML') or diag(@entries2[2].perl);
+isa-ok(@entries2[2].entries[1], TAP::YAML, 'Got YAML');
 if try (require YAMLish) {
 	is-deeply(@entries2[2].entries[1].deserialized, [ <Foo Bar> ], 'Could deserialize YAML');
 }
-
-diag("Extra tests for Test-5");
 
 done-testing();
 
@@ -97,12 +93,10 @@ sub parse-and-get($content, :$tests-planned, :$tests-run, :$passed, :$failed, :$
 	is($result.unknowns, $unknowns, "Expected $unknowns unknown tests in $name") if $unknowns.defined;
 	is-deeply($result.errors, Array[Str].new(|@errors), 'Got expected errors: ' ~ @errors.map({qq{"$_"}}).join(', ')) if @errors.defined;
 
-	diag("Finished $name");
 	return $result;
 }
 
 sub lex-and-get($content) {
-	my $output = Supply.new;
 	my $ret = TAP::Collector.new;
 	my $lexer = TAP::Parser.new(:handlers[$ret]);
 	$lexer.add-data($content);
