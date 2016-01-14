@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/hoelzro/p6-linenoise.git
+	remote = https://github.com/hoelzro/p6-linenoise.git
 	branch = master
-	commit = d0475a1540466991e5a10db34204489ab3ab2580
-	parent = c45c62a5c583ce899dd1dbcdaf222c141b3eaae6
+	commit = a6f05b98f35092b2197d99e5c48bfb3fc3ca1a31
+	parent = 5508951a11130378ad1457a847a927cf2b11a6be
 	cmdver = 0.2.3
