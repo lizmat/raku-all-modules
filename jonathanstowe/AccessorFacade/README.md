@@ -43,10 +43,16 @@ The above code will be reduced with the use of AccessorFacade to:
         sub shout_set_host(Shout, Str) returns int32 is native('libshout') { * } 
         sub shout_get_host(Shout) returns Str is native('libshout') { * }
 
-        method host() is rw is accessor-facade(&shout_set_host, &shout_get_host) { }
+        method host() is rw is accessor-facade(&shout_get_host, &shout_set_host) { }
 
         ...
     }
+
+The named argument style is also support so the method could be written as:
+
+    method host() is rw is accessor-facade(getter => &shout_get_host, setter => &shout_set_host) { }
+
+if that proves more suitable.
 
 (The call to explicitly manage is omitted for simplicity but how this is
 achieved is described in the documentation.)  Libshout has a significant

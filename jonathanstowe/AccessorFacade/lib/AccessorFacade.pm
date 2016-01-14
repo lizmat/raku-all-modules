@@ -69,10 +69,18 @@ The above code will be reduced with the use of AccessorFacade to:
         sub shout_set_host(Shout, Str) returns int32 is native('libshout') { * } 
         sub shout_get_host(Shout) returns Str is native('libshout') { * }
 
-        method host() is rw is attribute-facade(&shout_set_host, &shout_get_host) { }
+        method host() is rw is attribute-facade(&shout_get_host, &shout_set_host) { }
 
         ...
     }
+
+=end code
+
+Named arguments are also supported so the above method could also be written as:
+
+=begin code
+
+    method host() is rw is attribute-facade(setter => &shout_set_host, getter => &shout_get_host) { }
 
 =end code
 
@@ -96,13 +104,18 @@ with no arguments that has the C<rw> trait, (if the method isn't rw then
 assignment simply won't work, no check is currently performed.)  The body
 of the method should be empty, but will be discarded anyway if it isn't.
 
-The signature of the trait can be thought of as being:
+The arguments can be supplied as positional or named arguments.
+
+The signatures of the trait can be thought of as being:
 
     attribute-facade(Method:D: $method, &getter, &setter, &before?, &after?)
+    attribute-facade(Method:D: $method, :&getter!, :&setter!, :&before?, :&after?)
 
 The individual arguments are:
 
 =head3 &getter
+
+Named parameter C<getter>.
 
 This is the function that is called to retrieve the attribute value.
 It has exactly one argument which is the invocant of the method
@@ -111,12 +124,16 @@ invocation.
 
 =head3 &setter
 
+Named parameter C<setter>.
+
 This is the function that will be called to set the attribute value
 (i.e. when it is assigned to.)  It will be called with two arguments:
 the invocant (C<self>) and the value to set.  It may return a value
 which will be passed to L<&after|#&amp;after> if it is defined.
 
 =head3 &before
+
+Named parameter C<before>.
 
 If this is defined this will be called when the value is being set with
 the invocant and the value and its returned value will be passed to
@@ -132,7 +149,15 @@ This is how the C<explicitly-manage> would be applied in the example above:
         $str;
     }
 
-    method host() is rw is attribute-facade(&shout_set_host, &shout_get_host, &managed) { }
+    method host() is rw is attribute-facade(&shout_get_host, &shout_set_host, &managed) { }
+
+=end code
+
+Or with named parameters:
+
+=begin code
+
+    method host() is rw is attribute-facade(getter => &shout_get_host, setter => &shout_set_host, before => &managed) { }
 
 =end code
 
@@ -140,6 +165,8 @@ It is of course free to perform a validation and throw an exception or
 whatever may be appropriate.
 
 =head3 &after
+
+Named parameter C<after>.
 
 This will be called after L<&setter|#&amp;setter> with the invocant
 and the return value of C<&setter>.  It is primarily intended where
@@ -154,7 +181,7 @@ setting the attribute and this should be turned into an exception:
         }
     }
 
-    method host() is rw is attribute-facade(&shout_set_host, &shout_get_host, Code, &check) { }
+    method host() is rw is attribute-facade(&shout_get_host, &shout_set_host, Code, &check) { }
 
 =end code
 
@@ -162,10 +189,18 @@ Note in the above example the C<Code> type if used as a placeholder
 for the empty C<&before> (this is due to the way the "arguments" to the
 trait are checked.)
 
+This may be more conveniently written with named argument style:
+
+=begin code
+
+    method host() is rw is attribute-facade(getter => &shout_get_host, setter => &shout_set_host, after => &check) { }
+
+=end code
+
 =end pod
 
 
-module AccessorFacade:ver<v0.0.4>:auth<github:jonathanstowe> {
+module AccessorFacade:ver<v0.0.5>:auth<github:jonathanstowe> {
 
     my role Provider[&get, &set, &before?, &after?] {
         method CALL-ME(*@args) is rw {
@@ -211,45 +246,42 @@ module AccessorFacade:ver<v0.0.4>:auth<github:jonathanstowe> {
 	    }
     }
 
-    class X::AccessorFacade::Usage is Exception {
+    class X::Usage is Exception {
         has Str $.message is rw;
     }
 
-    multi trait_mod:<is>(Method $r, :$accessor_facade!) is export {
-        DEPRECATED('accessor-facade',|<0.0.2 0.0.3>);
+    multi trait_mod:<is> (Method $r, :$accessor-facade! where { $_.elems < 2 }) is export {
+        X::Usage.new(message => q[trait 'accessor-facade' requires &getter and &setter arguments]).throw;
+    }
+    multi trait_mod:<is> (Method $r, :$accessor-facade! (*@a) where { any($_.list) !~~ Code }) is export {
+        say $accessor-facade.perl;
+        X::Usage.new( message => q[trait 'accessor-facade' only takes Callable arguments]).throw;
+    }
+
+    multi trait_mod:<is>(Method $r, :@accessor-facade! (&getter, &setter, &before?, &after?)) is export {
         try {
-            accessor-facade($r, $accessor_facade);
+            accessor-facade($r, &getter, &setter, &before, &after);
             CATCH {
                 when X::TypeCheck::Binding {
-                    die X::AccessorFacade::Usage.new(message => "trait 'accessor-facade' requires &getter and &setter arguments");
+                    die X::Usage.new(message => "trait 'accessor-facade' requires &getter and &setter arguments");
                 }
             }
         }
     }
-    multi trait_mod:<is>(Method $r, :$accessor-facade!) is export {
+
+    multi trait_mod:<is>(Method $r, :@accessor-facade! (:&getter!, :&setter!, :&before, :&after )) is export {
         try {
-            accessor-facade($r, $accessor-facade);
+            accessor-facade($r, &getter, &setter, &before, &after);
             CATCH {
                 when X::TypeCheck::Binding {
-                    die X::AccessorFacade::Usage.new(message => "trait 'accessor-facade' requires &getter and &setter arguments");
+                    die X::Usage.new(message => "trait 'accessor-facade' requires &getter and &setter arguments");
                 }
             }
         }
     }
 
-    my sub accessor-facade(Method $r, List $accessor_facade) {
-        if $accessor_facade.elems < 2 {
-            die X::AccessorFacade::Usage.new(message => "trait 'accessor-facade' requires &getter and &setter arguments");
-
-        }
-        if not all($accessor_facade.list) ~~ Callable {
-            die X::AccessorFacade::Usage.new(message => "trait 'accessor-facade' only takes Callable arguments");
-        }
-
-        my $before = $accessor_facade[2]:exists ?? $accessor_facade[2] !! Code;
-        my $after  = $accessor_facade[3]:exists ?? $accessor_facade[3] !! Code;
-
-	    $r does Provider[$accessor_facade[0], $accessor_facade[1], $before, $after];
+    my sub accessor-facade(Method $r, &getter, &setter, &before?, &after?) {
+	    $r does Provider[&getter, &setter, &before, &after];
     }
 }
 
