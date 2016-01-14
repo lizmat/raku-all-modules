@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moznion/p6-Backtrace-AsHTML.git
 	branch = master
-	commit = 4d7a91ea09e43a097cce78ae63a3644881ec8942
-	parent = 0acd461df05d86ab4427557627c14fcd72f3d45b
-	cmdver = 0.2.2
+	commit = be6605cfd543845dfeba5f9d70783790bcc84a3c
+	parent = 21518a751210c562ed4ea5ae248b42a3eb3c289a
+	cmdver = 0.2.3
