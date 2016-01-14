@@ -1,0 +1,111 @@
+#!/usr/bin/env perl6
+#
+use v6;
+
+# Running the pod file will create a pdf using wkhtmltopdf
+#
+my Str $pod = "$*PROGRAM";
+my Str $pdf = $pod;
+$pdf ~~ s/\. <-[.]>+ $/.pdf/;
+shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
+
+#-------------------------------------------------------------------------------
+
+=begin pod
+
+=begin Xhtml
+<style>
+  pre {
+/**/
+    border-width:       2px;
+    border-style:       solid;
+    border-color:       #060;
+    padding:            10px 0 3px 10px;
+    color:              #060;
+    background-color:   #eaefea;
+    font-family:        FreeMono;
+  }
+</style>
+=end Xhtml
+
+=TITLE class MongoDB::Connection
+
+=SUBTITLE Mongod server connection and info
+
+Defined as
+
+  package MongoDB { class Connection { ... } }
+
+The class provides methods such as connecting to mongod server and ask
+information from the server.
+
+This class helps the client to connect to the server and provides some
+maintenance commands. The class is loaded automatically with the MongoDB
+module.
+
+=begin code
+
+use v6;
+use MongoDB::Connection;
+
+# Connect to MongoDB server at localhost port 27017
+my MongoDB::Connection $connection .= new();
+
+=end code
+
+
+
+=head1 METHODS
+
+=head2 method new
+
+Defined as:
+
+  method new ( Str :$host = 'localhost', Int :$port = 27017 )
+
+Usage:
+
+  my MongoDB::Connection $c .= new( :host<example.com>, :port(1234));
+
+Creates a new C<Connection> object. When all is ok the connection status will
+be undefined. Otherwise it will hold the X::MongoDB exception which can be
+thrown when needed.
+
+Example:
+
+  my MongoDB::Connection $c .= new(:host<non-existent-host.gov>);
+  if ? $c.status {
+    note 'Oh oh not good, try something else';
+    note $c.status.error-text;
+
+    # Try default or die
+    $c .= new;
+    die $connection.status if ? $c.status;
+  }
+
+B<NOTE: This is going to change when connections are created in the background.
+furthermore the way hosts and ports are to be defined will be as a kind of url
+format.>
+
+=head2 method send
+
+Defined as
+
+  method send ( Buf:D $b --> Nil )
+
+Send encoded data to the mongo server. DO NOT ATTEMPT TO USE IT YOURSELF. Let
+instead the several modules do the sending because they know what to send.
+Besides this, it is subject to change when connection pooling comes into play.
+
+=head2 method receive
+
+Defined as
+
+  method receive ( Int $nbr-bytes --> Buf )
+
+Receive the number of bytes from the server. Again: DO NOT ATTEMPT TO USE IT
+YOURSELF. Let instead the several modules do the receiving because they know
+what to expect.Besides this, it is subject to change when connection pooling
+comes into play.
+
+=end pod

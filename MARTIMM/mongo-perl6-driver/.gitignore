@@ -1,6 +1,5 @@
 .directory
 *.pdf
-*/*.pdf
 *.html
 */*.html
 Old/*
@@ -9,3 +8,6 @@ Sandbox/*
 Travis-ci/M*
 Travis-ci/m*
 *.log
+.precomp
+*/.procomp
+*.zargo~
