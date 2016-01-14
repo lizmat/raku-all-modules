@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 use v6;
-BEGIN { @*INC.unshift: '../lib'; }
+use lib '../lib';
 
 use HTML::Strip;
 use Test;
