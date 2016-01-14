@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/dankogai/p6-num-hexfloat.git
+	branch = master
+	commit = 72395527ec4b639f07d12a0bd5bf2a8a23bca749
+	parent = 88e7f512204fd0bc363ca0202d51fbea3b4ed8b0
+	cmdver = 0.2.3

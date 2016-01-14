@@ -1,0 +1,13 @@
+{
+    "perl" : "6.*",
+    "name" : "Num::HexFloat",
+    "version" : "0.1.2",
+    "description" : "Rudimentary C99 Hexadecimal Floating Point Support in Perl6",
+    "authors" : [ "Dan Kogai" ],
+    "provides" : {
+        "Num::HexFloat" : "lib/Num/HexFloat.pm"
+    },
+    "depends" : [ ],
+    "resources" : [ ],
+    "source-url" : "git://github.com/dankogai/p6-num-hexfloat.git"
+}
