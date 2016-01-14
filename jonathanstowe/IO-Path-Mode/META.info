@@ -1,0 +1,31 @@
+{
+	"meta6" : "0",
+   "tags" : [
+		"IO",
+		"permissions",
+		"mode",
+		"utility"
+   ],
+   "provides" : {
+      "IO::Path::Mode" : "lib/IO/Path/Mode.pm"
+   },
+   "test-depends" : [
+      "Test"
+   ],
+   "support" : {
+      "source" : "git://github.com/jonathanstowe/IO-Path-Mode.git"
+   },
+   "perl" : "6",
+   "build-depends" : [],
+   "auth" : "github:jonathanstowe",
+   "source-url" : "git://github.com/jonathanstowe/IO-Path-Mode.git",
+   "depends" : [
+   ],
+   "name" : "IO::Path::Mode",
+   "authors" : [
+      "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+   ],
+   "version" : "0.0.1",
+   "license" : "Artistic",
+   "description" : "Augment IO::Path with a .mode() method to get the file mode"
+}
