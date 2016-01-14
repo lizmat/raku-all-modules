@@ -1,0 +1,12 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Pod::TreeWalker",
+    "version"     : "0.0.3",
+    "author"      : "Dave Rolsky <autarch@urth.org>",
+    "description" : "Walk a Pod tree and generate an event for each node",
+    "provides"    : {
+        "Pod::TreeWalker"   : "lib/Pod/TreeWalker.pm6",
+        "Pod::TreeWalker::Listener" : "lib/Pod/TreeWalker/Listener.pm6"
+    },
+    "source-url"  : "git://github.com/autarch/perl6-Pod-TreeWalker.git"
+}
