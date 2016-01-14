@@ -2,7 +2,7 @@
   "name"        : "CSV::Parser",
   "version"     : "0.1.2",
   "description" : "Parses CSV files, duh",
-  "auth"        : "auth:tony-o",
+  "auth"        : "github:tony-o",
   "depends"     : [ ],
   "provides"    : {
     "CSV::Parser" : "lib/CSV/Parser.pm"

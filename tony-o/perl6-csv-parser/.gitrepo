@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-csv-parser.git
 	branch = master
-	commit = 164317f1cf6dd12c71ea2b418ad6d94c0ea1cd33
-	parent = 46aaa2374001352dd1ab41ad9a5a4eacc0a06941
-	cmdver = 0.2.2
+	commit = a29d57d192e7eebb5ac295dcc55700219113be8d
+	parent = d20435e31df91a3d8acb6dcd07316443a9d3f7bc
+	cmdver = 0.2.3
