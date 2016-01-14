@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+  <title>class StrictNamedArguments</title>
+  <meta charset="UTF-8" />
+  <style>
+    /* code gets the browser-default font
+     * kbd gets a slightly less common monospace font
+     * samp gets the hard pixelly fonts
+     */
+    kbd { font-family: "Droid Sans Mono", "Luxi Mono", "Inconsolata", monospace }
+    samp { font-family: "Terminus", "Courier", "Lucida Console", monospace }
+    /* WHATWG HTML frowns on the use of <u> because it looks like a link,
+     * so we make it not look like one.
+     */
+    u { text-decoration: none }
+    .nested {
+        margin-left: 3em;
+    }
+    // footnote things:
+    aside, u { opacity: 0.7 }
+    a[id^="fn-"]:target { background: #ff0 }
+  </style>
+  <link rel="stylesheet" href="http://design.perl6.org/perl.css">
+  
+  
+</head>
+<body class="pod" id="___top">
+
+
+<h1 class='title'>class StrictNamedArguments</h1>
+<p class='subtitle'>Checks for extra named parameters on method calls and throws X::Parameter::ExtraNamed. </p>
+<nav class="indexgroup">
+<ol class="indexList indexList1">
+  <li class="indexItem indexItem1"><a href="#SYNOPSIS">SYNOPSIS</a></li>
+  <li class="indexItem indexItem1"><a href="#DESCRIPTION">DESCRIPTION</a></li>
+  <li class="indexItem indexItem1"><a href="#CREDITS">CREDITS</a></li>
+  <li class="indexItem indexItem1"><a href="#BUGS">BUGS</a></li>
+</ol>
+</nav>
+<h1 id="SYNOPSIS"><a class="u" href="#___top" title="go to top of document">SYNOPSIS</a></h1>
+<pre>use v6;
+use StrictNamedArguments;
+
+# Just use the trait &#39;strict&#39; for methods
+class Foo { 	 # your class
+    has $.valid; # attribute, used by .new
+
+	# A regular method that expects a named argument:
+	# msg =&gt; &#39;some_value&#39;
+	# and returns the value in upper case (in this example)
+    method shout(:$msg) is strict { $msg.uc.say; self }
+
+	# The Perl6 constructor is a regular method and can also
+	# me made strict if you provide the method strictly.
+	# The syntax of named parameters is a hash to be blessed.
+    method new(:$valid) is strict { self.bless(valid =&gt; $valid) }
+}
+
+Foo.new(:not-valid).shout(:not-valid);
+
+CATCH {
+	when X::Parameter::ExtraNamed {
+		note Backtrace.new.full;
+		note .gist;
+	} 
+}</pre>
+<h1 id="DESCRIPTION"><a class="u" href="#___top" title="go to top of document">DESCRIPTION</a></h1>
+<p>Module StrictNamedArguments adds the trait <code>is strict</code> that wraps any method and applies a check for extra named arguments. If a call to the wrapped methods does got extra named arguments the exception <code>X::Parameter::ExtraNamed</code> is thrown.</p>
+<h1 id="CREDITS"><a class="u" href="#___top" title="go to top of document">CREDITS</a></h1>
+<ul><li><p>Claudio Ramirez ()</p>
+</li>
+<li><p>Wenzel P. P. Peppmeyer (wenzel.peppmeyer@gmx.de)</p>
+</li>
+</ul>
+<h1 id="BUGS"><a class="u" href="#___top" title="go to top of document">BUGS</a></h1>
+<p>Please file bug reports on <a href="https://github.com/nxadm/StrictNamedArguments/issues">github</a>.</p>
+
+
+
+</body>
+</html>
+

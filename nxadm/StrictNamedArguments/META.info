@@ -1,0 +1,12 @@
+{
+    "perl" : "6.*",
+    "name" : "StrictNamedArguments",
+    "version" : "0.1.0",
+    "description" : "Guards against extra named arguments on methods.",
+    "authors" : [ "Claudio Ramirez", "Wenzel P. P. Peppmeyer" ],
+    "provides" : {
+        "StrictNamedArguments" : "lib/StrictNamedArguments.pm"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/nxadm/StrictNamedArguments.git"
+}

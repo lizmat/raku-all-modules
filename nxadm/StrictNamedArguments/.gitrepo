@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/nxadm/StrictNamedArguments.git
+	branch = master
+	commit = 4dda802103a270b4bc9bd82bafc88db7306de6de
+	parent = 2ea264b8b0ce82b853926823fa70a556c0bd6509
+	cmdver = 0.2.3
