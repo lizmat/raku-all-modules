@@ -15,14 +15,49 @@ class WebService::GoogleDyDNS {
   use HTTP::UserAgent;
 
   has $.currentHostPublicIP is rw;
-  has $.login is rw;
-  has $.password is rw;
-  has $.domainName is rw;
+  has %.login is rw;
+  has %.password is rw;
+  has %.domainName is rw;
+  has %.lastIP is rw;
   has Bool $.outdated is rw;
 
   has $lastIPFile = $*CWD ~ "/{self.domainName}" ~ ".lastIP";
+  grammar DataFile {
+    token TOP            { <line> };
+    token line           { <domainKey> \t <lastipKey> \t <loginKey> \t <passwordKey> };
+    token domainKey      { 'domain' \t <DOMAINNAME> };
+    token lastipKey      { 'ip' \t <LASTIP> };
+    token loginKey       { 'login' \t <LOGIN> };
+    token passwordKey    { 'password' \t <PASSWORD> };
+    token DOMAINNAME     { \w+ '.' \w+ };
+    token LASTIP         { [\d ** 1..3] ** 4 % '.' };
+    token LOGIN          { \w+ };
+    token PASSWORD       { \w+ };
+  }
 
   ##########################################################
+method batchMode( @dataSet ) {
+  my $elemNum = 0;
+  for @dataSet -> $line {
+    my $match = DataFile.parse($line);
+    if DataFile.parse($line) {
+      if $match<line><lastipKey><LASTIP> eq self.currentHostPublicIP { next; }
+      else {
+        ## current host ip and last ip do not match update the dataset array and update the DNS service
+        %.lastIP = 'ip' => self.currentHostPublicIP;
+        %.domainName = 'domain' => $match<line><domainKey><DOMAINNAME>;
+        %.login = 'login' => $match<line><loginKey><LOGIN>;
+        %.password = 'password' => $match<line><passwordKey><PASSWORD>;
+        @data[$elemNum] = (  %domain ~ "\t" ~ %lastIP ~ "\t" ~  %login ~ "\t" ~  %password);
+        self.updateIP();
+      }
+    }
+    else { say "DataSet read error!"; exit; }
+    $elemNum++;
+  }
+  return @dataSet;
+}
+##########################################################
   method checkPreviousIP() {
     my $fh;
     my $previousIP;
@@ -50,20 +85,20 @@ class WebService::GoogleDyDNS {
     # Make HTTP::UserAgent Object and set the useragent to Chrome/41.0 then set the time out
     # and then set the authorization's login and pasword.
     my $webAgent = HTTP::UserAgent.new(useragent => "Chrome/41.0");
-    $webAgent.auth(self.login, self.password);
+    $webAgent.auth(self.login.values(), self.password.values() );
     $webAgent.timeout = 10;
 
     # Craft URL and make a GET response.  The get method will reachout to the URL provided on internet.
-    my $response = $webAgent.get("https://domains.google.com/nic/update?hostname={self.domainName}&myip={self.currentHostPublicIP}");
+    my $response = $webAgent.get("https://domains.google.com/nic/update?hostname={self.domainName.values()}&myip={self.currentHostPublicIP}");
     # Handle the results of the get method.
     if $response.is-success {
       return $response.content;
       if $response.content ~~ / good / {
         my $fh = open(self.lastIPFile, :w);
-        $fh.say( self.domainName );
+        $fh.say( self.domainName.values() );
         $fh.say( self.currentHostPublicIP );
-        $fh.say( self.login );
-        $fh.say( self.password );
+        $fh.say( self.login.values() );
+        $fh.say( self.password.values() );
         $fh.close;
       }
     } else {
