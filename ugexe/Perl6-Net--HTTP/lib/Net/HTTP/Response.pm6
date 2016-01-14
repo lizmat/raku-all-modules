@@ -1,6 +1,8 @@
 use Net::HTTP::Interfaces;
 use Net::HTTP::Utils;
 
+use experimental :pack;
+
 my $CRLF = Buf.new(13, 10);
 
 class Net::HTTP::Response does Response {

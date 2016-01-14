@@ -1,3 +1,5 @@
+use experimental :pack;
+
 unit module Net::HTTP::Utils;
 
 # ease transition to \r\n graphme stuff

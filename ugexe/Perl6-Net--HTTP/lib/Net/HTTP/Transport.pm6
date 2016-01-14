@@ -6,6 +6,8 @@ use Net::HTTP::Dialer;
 use Net::HTTP::Response;
 use Net::HTTP::Request;
 
+use experimental :pack;
+
 # Higher level HTTP transport for creating a custom HTTP::Client
 # similar to ::GET and ::POST but made for reuse (connection caching and other state control)
 

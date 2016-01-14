@@ -1,3 +1,5 @@
+use experimental :pack;
+
 use Test;
 plan 1;
 
