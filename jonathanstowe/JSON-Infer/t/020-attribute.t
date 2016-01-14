@@ -2,7 +2,7 @@
 use v6;
 use Test;
 
-use JSON::Fast;
+use JSON::Tiny;
 
 use JSON::Infer::Attribute;
 
