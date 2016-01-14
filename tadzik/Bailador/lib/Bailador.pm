@@ -141,7 +141,7 @@ sub dispatch($env) {
             CATCH {
                 default {
                     my $env = $app.request.env;
-                    my $err = $env<p6sgi.version>:exists ?? $env<p6sgi.errors> !! $env<psgi.errors>;
+                    my $err = $env<p6sgi.version>:exists ?? $env<p6sgi.errors> !! $env<p6sgi.errors>;
                     $err.say(.gist);
                     status 500;
                     content_type 'text/plain';
