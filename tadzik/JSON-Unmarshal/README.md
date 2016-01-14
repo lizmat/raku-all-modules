@@ -8,15 +8,15 @@ Make JSON from an Object (the opposite of JSON::Marshal)
     use JSON::Unmarshal;
 
     class SomeClass {
-      has Str $.string;
-      has Int $.int;
+        has Str $.string;
+        has Int $.int;
     }
 
-	 my $json = '{ "string" : "string", "int" : 42 }';
+    my $json = '{ "string" : "string", "int" : 42 }';
 
     my SomeClass $object = unmarshal($json, SomeClass);
 
-	 say $object.string; # -> "string"
+    say $object.string; # -> "string"
     say $object.int;    # -> 42
 
 ```
@@ -35,7 +35,7 @@ It is also possible to use a trait to control how the value is unmarshalled:
 
     my SomeClass $object = unmarshal($json, SomeClass);
 
-	 say $object.version; # -> "v0.0.1"
+    say $object.version; # -> "v0.0.1"
 
 ```
 
@@ -84,7 +84,7 @@ This should be considered experimental software until such time that
 Perl 6 reaches an official release.  However suggestions/patches are
 welcomed via github at
 
-   https://github.com/tadzik/JSON-Unmarshal
+    https://github.com/tadzik/JSON-Unmarshal
 
 ## Licence
 
