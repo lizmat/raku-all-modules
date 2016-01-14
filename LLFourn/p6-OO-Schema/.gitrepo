@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/LLFourn/p6-OO-Schema.git
+	branch = master
+	commit = 22329292229d1bcffba912f219daebfc9ede61cf
+	parent = 04900dee2132220425fe99d72b131450f17cb2c1
+	cmdver = 0.2.3
