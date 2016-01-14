@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Juerd/p6-mqtt.git
+	branch = master
+	commit = f664d269f935bf609628097d8671e052ae80e1f8
+	parent = 8fbe73819bffae8248a1fcbb1b5ae78077db3332
+	cmdver = 0.2.3

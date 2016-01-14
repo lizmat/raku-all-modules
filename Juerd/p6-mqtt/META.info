@@ -1,0 +1,13 @@
+{
+    "perl": "6.*",
+    "name": "MQTT::Client",
+    "version": "*",
+    "description": "Minimal MQTT v3 client interface",
+    "author": "Juerd Waalboer",
+    "provides": {
+        "MQTT::Client": "lib/MQTT/Client.pm",
+        "MQTT::Client::MyPack": "lib/MQTT/Client/MyPack.pm"
+    },
+    "depends": [ ],
+    "source-url": "git://github.com/Juerd/p6-mqtt.git"
+}
