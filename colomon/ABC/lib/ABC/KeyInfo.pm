@@ -19,8 +19,8 @@ class ABC::KeyInfo {
         die "Illegal key signature $key-field\n" unless $match;
 
         my %key-info;
-        my $clef-info;
-        my $octave-shift;
+        my $clef-info = "treble";
+        my $octave-shift = 0;
         if $current-key-info {
             %key-info = $current-key-info.key;
             $clef-info = $current-key-info.clef;

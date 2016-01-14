@@ -9,7 +9,8 @@ use ABC::KeyInfo;
     is $key.key.elems, 2, "D has two sharps";
     is $key.key<F>, "^", "F is sharp";
     is $key.key<C>, "^", "C is sharp";
-    nok $key.clef.defined, "no clef defined";
+    ok !$key.clef.defined || $key.clef eq "treble" , "no clef defined";
+    is $key.octave-shift, 0, "octave-shift is 0";
 }
 
 {
