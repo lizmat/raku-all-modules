@@ -38,6 +38,8 @@ This library is free software; you can redistribute it and/or modify it under th
 
 unit module Text::Fortune:ver<0.03>;
 
+use experimental :pack;
+
 my class X::Index::NotFound is Exception {
   method message() {
     "not found.";
@@ -134,7 +136,7 @@ class Index {
 
       $!delimiter = $dat.read(1).unpack('C').chr;
 
-      $dat.seek(24,0);
+      $dat.seek(24,SeekFromBeginning);
       loop (my $i = 0; $i <= $!count; $i++) {
         @!offset.push: $dat.read(4).unpack('N');
       }
@@ -176,7 +178,7 @@ class File {
   has Bool $.rotated;  # need our own to override in case .dat is wrong.
 
   submethod BUILD (
-    :$path as IO,
+    IO(Cool) :$path,
     :$index?,
     :$datpath = $path ~ '.dat',
     :$rotated,
@@ -199,7 +201,7 @@ class File {
 
   method get-from-offset ( Int $o ) {
     my $stop = $!index.delimiter ~ "\n";
-    $!handle.seek: $o, 0;
+    $!handle.seek: $o, SeekFromBeginning;
     my Str $content;
     while $!handle.get -> $line {
       last if $line eq $stop;
