@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/yowcow/p6-String-CamelCase.git
+	branch = master
+	commit = 4a0c0b758ceeeb91ca6e441f2225217759685e46
+	parent = 2d2faf27dd6651d6e3023b7a7fa0370b3c788198
+	cmdver = 0.2.3

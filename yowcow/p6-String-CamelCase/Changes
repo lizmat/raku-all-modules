@@ -1,0 +1,18 @@
+Revision history for String::CamelCase
+
+0.0.4 2015-01-03T18:04:00+0900
+
+    - Fix email in POD and README
+    - Add a file "Changes" for revision history
+
+0.0.3 2015-01-03
+
+    - Remove Makefile, and place .proverc
+
+0.0.2 2015-01-03
+
+    - Fix typo in POD
+
+0.0.1 2015-01-03
+
+    - Original version
