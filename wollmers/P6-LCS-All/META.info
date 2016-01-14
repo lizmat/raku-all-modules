@@ -1,0 +1,12 @@
+{
+    "perl" : "6.*",
+    "name": "LCS::All",
+    "version": "0.2.0",
+    "description": "Calculate all Longest Common Subsequences",
+    "author": "Helmut Wollmersdorfer",
+    "depends": [],
+    "provides" : {
+        "LCS::All" : "lib/LCS/All.pm"
+    },
+    "source-url": "git://github.com/wollmers/P6-LCS-All.git"
+}
