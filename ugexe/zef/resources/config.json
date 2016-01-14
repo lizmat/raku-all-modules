@@ -1,0 +1,79 @@
+{
+    "Store" : "$*HOME/.zef",
+    "License" : {
+        "whitelist" : "*",
+        "blacklist" : []
+    },
+    "ContentStorage" : [
+        {
+            "name" : "p6c",
+            "module" : "Zef::ContentStorage::P6C",
+            "default" : 1,
+            "options" : {
+                "auto-update" : 1,
+                "mirrors" : [
+                    "https://github.com/ugexe/Perl6-ecosystems.git",
+                    "https://raw.githubusercontent.com/ugexe/Perl6-ecosystems/master/p6c.json"
+                ]
+            }
+        },
+        {
+            "name" : "CPAN",
+            "module" : "Zef::ContentStorage::CPAN",
+            "disabled" : 1,
+            "options" : {
+                "mirrors" : ["https://api.metacpan.org/v0/release/"]
+            }
+        }
+    ],
+    "Fetch" : [
+        {
+            "name" : "git",
+            "module" : "Zef::Shell::git"
+        },
+        {
+            "name" : "wget",
+            "module" : "Zef::Shell::wget"
+        },
+        {
+            "name" : "curl",
+            "module" : "Zef::Shell::curl"
+        },
+        {
+            "name" : "pswebrequest",
+            "module" : "Zef::Shell::PowerShell::download"
+        }
+    ],
+    "Extract" : [
+        {
+            "name" : "unzip",
+            "module" : "Zef::Shell::unzip"
+        },
+        {
+            "name" : "tar",
+            "module" : "Zef::Shell::tar"
+        },
+        {
+            "name" : "psunzip",
+            "module" : "Zef::Shell::PowerShell::unzip"
+        },
+        {
+            "name" : "p5tar",
+            "module" : "Zef::Shell::p5tar"
+        }
+    ],
+    "Test" : [
+        {
+            "name" : "prove6",
+            "module" : "Zef::Shell::prove6"
+        },
+        {
+            "name" : "prove",
+            "module" : "Zef::Shell::prove"
+        },
+        {
+            "name" : "default",
+            "module" : "Zef::Shell::Test"
+        }
+    ]
+}

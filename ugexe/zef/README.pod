@@ -2,286 +2,103 @@
 
 =encoding utf8
 
-=head2 Name
+=head2 Zef
 
-Zef - Perl6 Module Management
+Perl6 Module Management
 
 =for HTML <a href="https://travis-ci.org/ugexe/zef"><img src="https://travis-ci.org/ugexe/zef.svg?branch=master"></a>
 
-=head1 INSTALLATION
+=head1 Installation
+
+=head4 Rakudobrew
+
+To install it via rakudobrew, please use the following command:
+
+    $ rakudobrew build-zef
+
+=head4 Manual
 
     git clone https://github.com/ugexe/zef.git
     cd zef
-    perl6 -Ilib bin/zef -v install Zef
-
-Be sure your `PATH` includes the file path shown by the command below:
-
-    $ perl6 -e "say %*CUSTOM_LIB<site>.IO.child('bin').Str"
-    # example: /home/perl6/install/share/perl6/site/bin
+    perl6 -Ilib bin/zef install .
 
 =head1 USAGE
 
     # duh
-    zef -v install CSV::Parser
-
-    # noooooo!
-    zef -v uninstall CSV::Parser
-
-    # fire off test reports this time *onomatopoeia of an uzi*
-    zef -v --report install CSV::Parser
+    zef install CSV::Parser
 
     # search for module names matching `CSV::Parser`
-    zef -v search CSV::Parser
-
-    # META information about `CSV::Parser`
-    zef -v info CSV::Parser
-
-    # build project in current directory
-    zef -v build
+    zef search CSV::Parser
 
     # test project in current directory    
-    zef -v test
+    zef test .
 
     # fetch a specific module only
-    zef -v get CSV::Parser
+    zef get CSV::Parser
 
-    # fetch a specific module, and shell into the directory it is saved to
-    zef -v look CSV::Parser
+=head2 Notice
 
-    # build/test/install all modules in the ecosystem
-    zef -v --report smoke
+Still Beta level software. The process of implementing all of the previous features, test suite, and documentation is
+still in the works (see an older readme to see expected full feature set). No real work has been done porting over the
+old CLI overlay from the previous version of Zef, so the output is rather bleh.
 
 =head2 More CLI
 
 =head4 B<install>
 
-Fetch, build, test, optional report, and install.
-
-    # verbose output
-    -v
-
-    # send a test report
-    --report
-
-    # parallel testing and precompilation (max processes/threads)
-    --jobs=2
-
-    # cut off lines that reach (our guess at) the term width in columns
-    --no-wrap
-
-    # no status bar or other CLI eye candy
-    --boring
-
-    # do everything except the actually install
-    --dry
-
-    # include library paths to the spawned processes
-    # zef -v -lib=lib-old --lib=blib-old/lib build
-    #  -> perl6 -Ilib-old -Iblib-old/lib <compiler/test commands>
-    --lib
-
-    # run the tests in a random order instead of sorted
-    --shuffle
-
-    # skip modules with matching names (or any modules depending on them)
-    --ignore=Acme::Virus --ignore=Acme::TakesForever
-
-    # sets Zef::Authority.projects based on supplied file instead of downloading
-    --projects-file=projects.json
-
-    # install the requested modules regardless of currently installed versions
-    # (does not affect dependencies)
+Note: The install process does not install anything until all other phases have completed. So if A requires B,
+and a user has requested to C<install A>, it would download A and B, possibly Build A and B, test A and B,
+and then finally install A and B but only if A and B passed all their tests. For instance: if A failed its
+tests then B will not be installed (even if it passed its own tests) without force.
+    
+    # install the requested modules regardless of: currently installed versions,
+    # test results, or failed dependency installations
     --force
 
-    # livin that multi thread life
-    zef -v --report --jobs=4 install HTTP::Server::Threaded
-    
-B<Example>: (note parallelized output format will be improved)
+    # install to a location determined by short-id
+    --install-to=<id> # site/home/vendor/perl
 
-    $ zef -v --jobs=2 install CSV::Parser
-    Initializing
-    ===> Module count: 364
-    ===> Filtered module count: 364
-    ===> Package file: /tmp/p6c-packages.1441864140.72.json
-    ===> Attempting to update via `git pull`
-    ===> Fetching [done]
-    ===> Fetching OK for: CSV::Parser
-    ===> META.info availability OK for: CSV::Parser
-    Parser.pm # perl6 -Iblib/lib -Ilib --target=mbc --output=blib/lib/CSV/Parser.pm.moarvm lib/CSV/Parser.pm
-    ===> Precompiling [done]
-    ===> Precompiling OK for: Parser.pm
-    01_multiline_csv.t  # perl6 --ll-exception -Iblib/lib -Ilib t/01_multiline_csv.t
-    02_escaped_csv.t    # perl6 --ll-exception -Iblib/lib -Ilib t/02_escaped_csv.t
-    01_multiline_csv.t  # 1..1
-    01_multiline_csv.t  # ok 1 -
-    03_delimiters_csv.t # perl6 --ll-exception -Iblib/lib -Ilib t/03_delimiters_csv.t
-    02_escaped_csv.t    # 1..1
-    02_escaped_csv.t    # ok 1 -
-    04_binary_csv.t     # perl6 --ll-exception -Iblib/lib -Ilib t/04_binary_csv.t
-    03_delimiters_csv.t # 1..1
-    03_delimiters_csv.t # ok 1 -
-    04_binary_csv.t     # 1..1
-    04_binary_csv.t     # ok 1 -
-    ===> Testing [done]
-    ===> Testing OK for: 01_multiline_csv.t 02_escaped_csv.t 03_delimiters_csv.t 04_binary_csv.t
-    ===> Installing [done]
-    ===> Install OK for: CSV::Parser
+    # More detailed output
+    --verbose
 
-=head4 B<smoke>
-
-Tests every module in the ecosystem, ignoring any modules with a name (or dependency name) matching argument C<*@ignores>
-
-    snoop@cali:~/ zef -v --report smoke
-
-    # skip modules with matching names (or any modules depending on them)
-    --ignore=Acme::Virus --ignore=Acme::TakesForever
-
-    # same as install options
-    --boring
-    --smoke
+    # do everything except the actual installations
     --dry
-    -v
+
+    # disable testing
+    --/test
+
+    # disable fetching dependencies
+    --/depends
+    --/build-depends
+    --/test-depends
 
 =head4 B<search>
 
-Take C<*%args> filters. That is, any C<--[field]="term"> passed will search for "term" in it's META [field].
+How these are handled depends on the `ContentStorage` engine used, which by default is the p6c ecosystem and
+metacpan. Note that metacpan search is not likely to produce any useful results yet. More documentation will
+be available when I have a better idea how to integrate results from these 2 services.
 
-Add a C<*> to any filter to have the filter apply a C<.starts-with()> filter using the string to the left of the C<*>.
+=head2 Plugins and Configuration
 
-Note: C<*> behaves slightly differently for C<--version>
+See the root zef directory for config.json. Each phase module will attempt to load/use each plugin in order.
+More details to be made available in time, but they are fairly simple and the code itself should provide enough
+insight to get something done.
 
-    # search by name
-    zef -v search Text::Table::Simple            # or zef -v --name="Text::Table::Simple"
+See the configuration file in L<resources/config.json|https://github.com/ugexe/zef/blob/master/resources/config.json> for a little more information on how plugins are invoked.
 
-    # search by version
-    zef -v --version="*" search                  # Version filter only
-    zef -v --version="*" search HTTP::Server     # Can search for 'whatevers'
-    zef -v --version="0.1" search HTTP::Server   # Version matching
-    zef -v --version="0.1+" search HTTP::Server  # Basic version ranges
-
-    # search by other fields in META
-    zef -v --depends="HTTP::Server" search       # Match `HTTP::Server` inside --`depends`
-
-    # a naive substring search using a wildcard
-    zef -v --depends="HTTP*" search              # Matches anything that $results.starts-with("HTTP")
-
-    # sure
-    zef -v --depends="HTTP::Server" --version="0.1+" search HTTP::Server::Threaded
-
-B<Example>:
-
-    $ zef -v search HTTP*
-    ===> Querying Server [done]
-    ===> Filtering Results [done]
-    ===> Found 13 results
-    ---------------------------------------------------------------------------------------------------------------------------------
-    ID | Package                                      | Version | Description
-    ---------------------------------------------------------------------------------------------------------------------------------
-    1  | HTTP::Server::Simple                         | *       | Simple webserver module, with PSGI support
-    2  | HTTP::UserAgent                              | 1.1.3   | Web user agent
-    3  | HTTP::Easy                                   | *       | HTTP servers made easy, including PSGI
-    4  | HTTP::Status                                 | *       | Get the text message associated with an HTTP status code
-    5  | HTTP::Client                                 | *       | A flexible HTTP Client library
-    6  | HTTP::ParseParams                            | 1.0.0   | cookie/query/post data parsing
-    7  | HTTP::Server::Async                          | 0.1.0   | Asynchronous Base HTTP Server
-    8  | HTTP::Server::Async::Plugins::Router::Simple | 0.1.0   | Basic routing for http server
-    9  | HTTP::Server::Threaded                       | 0.1.0   | Threaded Base HTTP Server
-    10 | HTTP::Server::Router                         | 0.1.0   | Router for HTTP::Server based servers
-    11 | HTTP::Server                                 | 0.1     | role for HTTP::Server so we can have start building out some ser...
-    12 | HTTP::Server::Logger                         | 0.1     | A common log format logger for anything abiding by HTTP::Server
-    13 | HTTP::Headers                                | 0.1     | Tools for working with HTTP message headers
-    ---------------------------------------------------------------------------------------------------------------------------------
-
-=head4 B<info>
-
-Given C<*@modules> it will list a formatted version of each's C<META.info> data.
-    
-    # basics
-    zef info JSON::Tiny
-
-    # -v to also list:
-    #   * `provides` section
-    #   * Entire dependency chain, ordered and grouped into build levels
-    zef -v info Task::Star
-
-B<Example>:
-
-    $ zef -v info HTTP::UserAgent
-    ===> Querying Server [done]
-    ===> Filtering Results [done]
-    ===> Found 1 results
-    [HTTP::UserAgent]
-    # Version: 1.1.3
-    # Author:        github:sergot
-    # Description:   Web user agent
-    # Source-url:    git://github.com/sergot/http-useragent.git
-    # Provides: 9 items
-    #       HTTP::Cookies
-    #       HTTP::Message
-    #       HTTP::UserAgent::Common
-    #       HTTP::Header::Field
-    #       HTTP::Request
-    #       HTTP::Header
-    #       HTTP::Cookie
-    #       HTTP::Response
-    #       HTTP::UserAgent
-    # Depends: 7 items
-    #   0)  HTTP::Status
-    #   1)  File::Temp
-    #   2)  DateTime::Parse
-    #   3)  IO::Capture::Simple
-    #   4)  Encode
-    #   5)  MIME::Base64
-    #   6)  URI
-    # Depends-chain:
-    #   0.0) DateTime::Parse
-    #   0.1) Encode
-    #   0.2) File::Directory::Tree
-    #   0.3) HTTP::Status
-    #   0.4) IO::Capture::Simple
-    #   0.5) MIME::Base64
-    #   0.6) URI
-    #   1.0) File::Temp
-    #   2.0) HTTP::UserAgent
-    
 =head1 FAQ
 
-=head3 Why does it test with --ll-exception??
+=head3 CPAN?
 
-Due to a bug in L<Test.pm|https://github.com/rakudo/rakudo/blob/nom/lib/Test.pm> related to automatically setting the plan count and the END cleanup phaser the only way to get a proper exit code at the moment requires using the I<--ll-exception> flag.
+The functionality is mostly there. The API to search and find a specific module needs more work, but currently can execute
+a query and takes the first matching distribution name. It can also download, extract, and install as well. Other than
+polishing up the search API access it needs metacpan itself to host Perl6 distributions (not interested in the PSIXDIST
+author hackery).
 
-    perl6 -e "use Test; use aeflkaje;" && echo "OK"
-    perl6 --ll-exception -e "use Test; use aeflkaje;" && echo "OK"
+=head3 Proxy support?
 
-=head3 Segmentation fault!
-
-Use the C<--boring> option. This works around a bug that appears to be caused by rakudo's threads.
-
-=head1 INCLUDED TOOLS
-
-=head2 Zef::Net::HTTP
-
-HTTP library interfaces and Grammars.
-
-    use Zef::Net::HTTP::Client;
-    
-    my $client = Zef::Net::HTTP::Client.new(:auto-check);
-
-    my $body     = to-json({ term => "zef" });
-    my $response = $client.post("http://httpbin.org/post", :$body);
-
-    # .content takes care of encoding. The .body attribute has the raw data for manual processing
-    my $json     = from-json($response.content);
-
-    my $response = $client.get("https://www.google.com");
-    say $reponse.content; # returns $.body with encoding/chunked/etc applied
-
-=head1 NOTES
-
-=head2 Links
-
-L<Zef.pm|https://zef.pm/>
-
-L<http://modules.perl6.org/>
+All the default fetching plugins support it except for the windows specific `download.pm6` (which only needs a slight change).
+However the git fetcher should support proxies on windows, and a git url is the first mirror tried for fetching package lists
+(for the p6c ecosystem) so for the most part it should Just Work.
 
 =cut

@@ -1,3 +1,67 @@
-#!/usr/bin/env perl6
-BEGIN { say 'Initializing' }
-use Zef::App :ALL;
+#! perl6
+use v6;
+
+use Zef::App;
+use Zef::Utils::SystemInfo;
+
+my $app = Zef::App.new;
+
+#| Download specific distributions
+multi MAIN('fetch', Bool :$depends, Bool :$test-depends, Bool :$build-depends, Bool :v(:$verbose), *@identities) {
+    $app.fetch(:$depends, :$test-depends, :$build-depends, |@identities);
+}
+
+#| Run tests
+multi MAIN('test', Bool :$force, Bool :v(:$verbose), *@paths) {
+
+    my %results = $app.test(:$force, :$verbose, |@paths);
+    %results<fail>.elems ?? exit(1) !! exit(0);
+}
+
+#| Install
+multi MAIN('install', Bool :$depends = True, Bool :$test-depends = True, Bool :$build-depends = True,
+                      Bool :v(:$verbose) = False, Bool :$force = False, Bool :$test = True, Bool :$fetch = True,
+                      Bool :$dry, :$install-to = ['site'], *@identities) {
+
+    $app.install( :$depends, :$test-depends, :$build-depends, :$force, :$verbose,
+                  :$fetch, :$install-to, :$test, :dry(?$dry), |@identities );
+}
+
+#| Find that shit
+multi MAIN('search', *@identities, *%fields) {
+    say $app.search(|@identities, |%fields);
+}
+
+multi MAIN(Bool :$help?) {
+    note q:to/END_USAGE/
+        Zef - Perl6 Module Management
+
+        USAGE
+
+          zef [flags|options] command [package]
+
+
+        COMMANDS
+
+          install                Install specific dependencies by name or path
+          test                   Run tests on a given module's path
+          fetch                  Fetch and extract module's source
+
+
+        OPTIONS
+
+          --install-to=[name]    Short name of CompUnit::Repository to install to
+
+
+        FLAGS
+
+          --verbose              More detailed output
+          --force                Continue each phase regardless of failures
+          --dry                  Run all phases except the actual installations
+
+          --/tests               Skip the testing phase
+          --/depends             Do not fetch runtime dependencies
+          --/test-depends        Do not fetch test dependencies
+          --/build-depends       Do not fetch build dependencies
+        END_USAGE
+}
