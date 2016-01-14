@@ -1,0 +1,19 @@
+{
+  "perl"        : "6.*",
+  "name"        : "AWS::Pricing",
+  "version"     : "0.1.0",
+  "author"      : "github:scmorrison",
+  "description" : "AWS Price List API library",
+  "build-depends" : [ ],
+  "test-depends" : [
+      "Test"
+  ],
+  "provides" : {
+      "AWS::Pricing" : "lib/AWS/Pricing.pm6"
+  },
+  "depends"     : [ "HTTP::Tinyish" ],
+  "source-url"  : "git://github.com/scmorrison/perl6-aws-pricing.git",
+  "authors" : [
+      "Sam Morrison"
+  ]
+}

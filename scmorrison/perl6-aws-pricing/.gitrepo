@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/scmorrison/perl6-aws-pricing.git
+	branch = master
+	commit = ef581541cbf998856331ce474d19671e1d187e2a
+	parent = 6fd4185ca12ea3baf34562a49ab4b455486ad02d
+	cmdver = 0.2.3
