@@ -16,11 +16,13 @@
      "Audio::Silan"                : "lib/Audio/Silan.pm"
   },
   "depends" : [ 
+		"File::Which",
+		"JSON::Fast"
   ],
   "test-depends" : [
     "Test",
     "Test::META"
   ],
   "description" : "Detect audio cue-in, cue-out using silan https://github.com/x42/silan",
-  "version" : "v0.0.1"
+  "version" : "v0.0.2"
 }
