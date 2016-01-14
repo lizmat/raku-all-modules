@@ -1,0 +1,47 @@
+
+
+------------- [List variables] ---------------
+my     vars: $_ $! @parent_vars $*DISPATCHER @my_vars RETURN $¢ $x $/
+caller vars: $y $_ $! $*DISPATCHER RETURN $¢ $x $/
+
+
+------------- [Eval Variable] ---------------
+Local          $x=5
+EVAL           $x=5
+EVAL LEXICAL:: $x=5
+EVAL CALLER::  $x=2
+
+
+------------- [EVAL var file/line] ---------------
+Local        $?FILE/$?LINE:/home/awwaiid/tlt/projects/perl6/lrep/./trystuff.p6:27
+EVAL         $?FILE/$?LINE:/home/awwaiid/tlt/projects/perl6/lrep/EVAL_3:1
+EVAL LEXICAL $?FILE/$?LINE:/home/awwaiid/tlt/projects/perl6/lrep/EVAL_4:1
+EVAL CALLER  $?FILE/$?LINE:/home/awwaiid/tlt/projects/perl6/lrep/EVAL_5:1
+
+
+------------- [EVAL callframe file/line] ---------------
+Local        callframe file/line:./trystuff.p6:33
+EVAL         callframe file/line:EVAL_6:1
+EVAL LEXICAL callframe file/line:EVAL_7:1
+EVAL CALLER  callframe file/line:EVAL_8:1
+
+
+------------- [EVAL callframe(1) file/line] ---------------
+Local        callframe(1) file/line:./trystuff.p6:60
+EVAL         callframe(1) file/line:EVAL_9:1
+EVAL LEXICAL callframe(1) file/line:EVAL_10:1
+EVAL CALLER  callframe(1) file/line:EVAL_11:1
+
+
+------------- [EVAL callframe(2) file/line] ---------------
+Local        callframe(2) file/line:./trystuff.p6:63
+EVAL         callframe(2) file/line:gen/moar/m-CORE.setting:789
+EVAL LEXICAL callframe(2) file/line:gen/moar/m-CORE.setting:789
+EVAL CALLER  callframe(2) file/line:gen/moar/m-CORE.setting:789
+
+
+------------- [EVAL callframe(3) file/line] ---------------
+Local        callframe(3) file/line:./trystuff.p6:1
+EVAL         callframe(3) file/line:./trystuff.p6:52
+EVAL LEXICAL callframe(3) file/line:./trystuff.p6:53
+EVAL CALLER  callframe(3) file/line:./trystuff.p6:54

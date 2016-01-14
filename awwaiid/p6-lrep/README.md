@@ -1,5 +1,7 @@
 A fun little REPL for perl6 inspired by Pry, nREPL, and others
 
+[![Build Status](https://travis-ci.org/awwaiid/p6-lrep.svg?branch=master)](https://travis-ci.org/awwaiid/p6-lrep)
+
 ## EXAMPLE
 
 Demo program:

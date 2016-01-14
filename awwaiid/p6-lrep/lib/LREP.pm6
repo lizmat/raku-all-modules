@@ -1,40 +1,53 @@
 
 class LREP::Message {
+  use IO::String;
   has $.context is rw;
   has $.input is rw = "";
-  has $.output is rw = "";
-  method append($text) {
-    $.output = $text;
-  }
+  has IO::String $.output is rw = IO::String.new;
 }
 
 class LREP {
 
+  use MONKEY-SEE-NO-EVAL;
   use Linenoise;
 
   has $.context is rw;
   has $.composed is rw;
 
-  # Ignore &handler
-  sub echo_middleware(&handler) {
+  # Do nothing, end the chain
+  sub null_middleware(&handler) {
     -> $message {
-      $message.append($message.input);
       $message;
     }
   }
 
+  # Echo input -> output
+  sub echo_middleware(&handler) {
+    -> $message {
+      $message.output.print($message.input);
+      &handler($message);
+    }
+  }
+
+  # Insane self-replacing func that keeps nesting the scope with each eval,
+  # thereby allowing you to create lexical vars
+  our &f;
+  sub context-eval($code, $context) {
+    my $result;
+    &LREP::f ||= -> $c { EVAL($c, context => $context) };
+    &LREP::f('&LREP::f = -> $c { use MONKEY-SEE-NO-EVAL; EVAL($c) }; ' ~ $code);
+  }
+
+  # Filter input from a code-string to the EVAL result
   sub eval_middleware(&handler) {
     -> $message {
       if $message {
-        my $eval_result = EVAL $message.input, context => $message.context;
-        # TODO: Does the result here overwrite input? output? new thing?
-        $message.input = $eval_result;
+        my $eval_result = context-eval($message.input, $message.context);
+        $message.input = $eval_result.gist;
         &handler($message);
-        $message;
         CATCH {
           default {
-            # say "Message: [ $message ]";
-            $message.output = "REPL Exception: $_";
+            $message.output.print("REPL Exception: $_");
             $message;
           }
         }
@@ -50,7 +63,7 @@ class LREP {
         my $input = $message.input;
         $input ~~ s/^\>//;
         my $eval_result = shell $input;
-        $message.input = $eval_result;
+        $message.output.print($eval_result);
         $message
       } else {
         &handler($message);
@@ -59,11 +72,12 @@ class LREP {
 
   }
 
+  # Take the current output and write it to STDOUT
+  # You'll only want this on the CLIENT side of the middleware chain
   sub print_middleware(&handler) {
     -> $message {
       my $result = &handler($message);
-      # say "result: [ $result ]";
-      say $result.output;
+      say ~$result.output;
       $result;
     }
   }
@@ -73,7 +87,7 @@ class LREP {
     -> $message {
       if $message.input ~~ /^look$/ {
         my @vars = $message.context.keys;
-        $message.output = "VARS: {@vars}";
+        $message.output.print("VARS: {@vars}");
       } else {
         &handler($message);
       }
@@ -87,6 +101,7 @@ class LREP {
       my $cmd = linenoise '> ';
       last if !$cmd.defined;
       $message.input = $cmd;
+      linenoiseHistoryAdd($cmd);
       my $result = &handler($message);
       # say "ReadHandleResult: [ $result ]";
       $result;
@@ -103,7 +118,7 @@ class LREP {
   method start {
     self.add_middleware(&echo_middleware);
     self.add_middleware(&eval_middleware);
-    # self.add_middleware(&shell_middleware);
+    self.add_middleware(&shell_middleware);
     self.add_middleware(&look_middleware);
     self.add_middleware(&read_middleware);
     self.add_middleware(&print_middleware);

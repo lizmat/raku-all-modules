@@ -5,6 +5,7 @@ use LREP;
 
 sub hmm {
   my $x = "hello";
+  say "I am at $?FILE : $?LINE";
   LREP::here;
   say $x;
 }
