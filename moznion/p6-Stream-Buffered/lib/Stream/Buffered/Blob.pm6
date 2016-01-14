@@ -23,7 +23,7 @@ method size(Stream::Buffered::Blob:D:) returns Int {
 }
 
 method rewind(Stream::Buffered::Blob:D:) returns IO::Handle {
-    $!blob.seek(0, 0);
+    $!blob.seek(0, SeekFromBeginning);
     return $!blob;
 }
 

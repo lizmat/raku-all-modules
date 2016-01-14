@@ -1,7 +1,7 @@
 {
   "name" : "Stream::Buffered",
   "source-url" : "git://github.com/moznion/p6-Stream-Buffered.git",
-  "perl" : "v6",
+  "perl" : "6",
   "build-depends" : [ ],
   "provides" : {
     "Stream::Buffered" : "lib/Stream/Buffered.pm6",
