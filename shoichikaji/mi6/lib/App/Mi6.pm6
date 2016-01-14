@@ -50,6 +50,9 @@ multi method cmd('new', $module is copy) {
 
 multi method cmd('build') {
     my ($module, $module-file) = guess-main-module();
+    if migrate-travis-yml() {
+        note "==> migrated .travis.yml for latest panda change";
+    }
     regenerate-readme($module-file);
     self.regenerate-meta-info($module, $module-file);
     build();
@@ -81,25 +84,16 @@ multi method cmd('release') {
 }
 
 sub withp6lib(&code) {
-    # copy from Panda::Common::withp6lib
-    my $old = %*ENV<PERL6LIB>:exists ?? %*ENV<PERL6LIB> !! False;
-    LEAVE {
-        if $old {
-            %*ENV<PERL6LIB> = $old;
-        } else {
-            %*ENV<PERL6LIB>:delete;
-        }
-    }
-    my $new = "$*CWD/blib/lib".IO.e ?? "$*CWD/blib/lib" !! "$*CWD/lib";
-    %*ENV<PERL6LIB> = $new ~ ($old ?? ",$old" !! "");
+    temp %*ENV;
+    %*ENV<PERL6LIB> = %*ENV<PERL6LIB>:exists ?? "$*CWD/lib," ~ %*ENV<PERL6LIB> !! "$*CWD/lib";
     &code();
 }
 
 sub build() {
     return unless "Build.pm".IO.e;
     require Panda::Builder;
-    note '==> Execute Panda::Builder.build($*CWD)';
-    ::("Panda::Builder").build($*CWD);
+    note '==> Execute Panda::Builder.build(~$*CWD)';
+    ::("Panda::Builder").build(~$*CWD);
 }
 
 sub test(@file, Bool :$verbose, Int :$jobs) {
@@ -147,9 +141,13 @@ method regenerate-meta-info($module, $module-file) {
         [ $!author ];
     };
 
+    my $perl = $already<perl> || "6.c";
+    $perl = "6.c" if $perl eq "v6";
+    $perl ~~ s/^v//;
+
     my %new-meta =
         name          => $module,
-        perl          => "v6",
+        perl          => $perl,
         authors       => $authors,
         depends       => $already<depends> || [],
         test-depends  => $already<test-depends> || [],
@@ -158,6 +156,7 @@ method regenerate-meta-info($module, $module-file) {
         provides      => find-provides(),
         source-url    => $already<source-url> || find-source-url(),
         version       => $already<version> || "*",
+        resources     => $already<resources> || [],
     ;
     ($meta-file || "META6.json").IO.spurt: to-json(%new-meta) ~ "\n";
 }
@@ -173,6 +172,38 @@ sub find-description($module-file) {
     } else {
         return "";
     }
+}
+
+# FIXME
+sub migrate-travis-yml() {
+    my $travis-yml = ".travis.yml".IO;
+    return False unless $travis-yml.f;
+    my %fix =
+        q!  - perl6 -MPanda::Builder -e 'Panda::Builder.build($*CWD)'!
+            => q!  - perl6 -MPanda::Builder -e 'Panda::Builder.build(~$*CWD)'!,
+        q!  - PERL6LIB=$PWD/blib/lib prove -e perl6 -vr t/!
+            => q!  - PERL6LIB=$PWD/lib prove -e perl6 -vr t/!,
+        q!  - PERL6LIB=$PWD/blib/lib prove -e perl6 -r t/!
+            => q!  - PERL6LIB=$PWD/lib prove -e perl6 -vr t/!,
+    ;
+
+    my @lines = $travis-yml.lines;
+    my @out;
+    my $replaced = False;
+    for @lines -> $line {
+        if %fix{$line} -> $fix {
+            @out.push($fix);
+            $replaced = True;
+        } else {
+            @out.push($line);
+        }
+    }
+    return False unless $replaced;
+    given $travis-yml.open(:w) -> $fh {
+        LEAVE { $fh.close }
+        $fh.say($_) for @out;
+    }
+    return True;
 }
 
 sub find-source-url() {
