@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Skarsnik/p6-linux-proc-statm.git
+	branch = master
+	commit = 6a437003065be2342fee38f3a4487e0ede4aff49
+	parent = d67cb6c06cf8fc250565bba2a57a91113d45d507
+	cmdver = 0.2.3

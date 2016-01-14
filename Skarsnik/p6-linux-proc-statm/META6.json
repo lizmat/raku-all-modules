@@ -1,0 +1,14 @@
+{
+  "name" : "Linux::Proc::Statm",
+  "source-url" : "https://github.com/Skarsnik/p6-linux-proc-statm.git",
+  "perl" : "6",
+  "provides" : {
+    "Linux::Proc::Statm" : "lib/Linux/Proc/Statm.pm"
+  },
+  "depends" : [ ],
+  "description" : "Provide info about a process memory usage",
+  "version" : "*",
+  "authors" : [
+    "Sylvain Colinet <scolinet@gmail.com>"
+  ]
+}
