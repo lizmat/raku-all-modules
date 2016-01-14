@@ -27,10 +27,10 @@ Lazy base64 encoding and decoding routines
 
     # DECODING
 
-    > say decode-base64("Zy1nLWctZy1nIHVuaXQ=", :buf).decode
+    > say decode-base64("Zy1nLWctZy1nIHVuaXQ=", :bin).decode
     g-g-g-g-g unit
 
-    > say decode-base64("Zy1nLWctZy1nIHVuaXQ=", :buf)
+    > say decode-base64("Zy1nLWctZy1nIHVuaXQ=", :bin)
     Buf:0x<67 2d 67 2d 67 2d 67 2d 67 20 75 6e 69 74>
 
     > say decode-base64("Zy1nLWctZy1nIHVuaXQ=").perl
@@ -65,12 +65,12 @@ Takes a C<Blob> and applies base64 encoding with the requested options. If passe
 
 =head4 B<routine> L<decode-base64> 
 
-B<Args> C<$decode-me where Blob|Str, :$pad, :@alpha, Bool :$buf>
+B<Args> C<$decode-me where Blob|Str, :$pad, :@alpha, Bool :$bin>
 
 B<Returns> C<Seq|Buf>
 
     decode-base64($decode-me)                  # Decodes a base64 encoded string to a Buf for further decoding
-    decode-base64($encode-me, :buf)            # Return a buffer from the sequence that would be returned
+    decode-base64($encode-me, :bin)            # Return a buffer from the sequence that would be returned
     decode-base64($decode-me, :!pad)           # No padding
     decode-base64($decode-me, :pad("*"))       # Alternative padding character
     decode-base64($decode-me, :uri)            # Use '-' and '_' for chars 63 and 64
@@ -79,7 +79,7 @@ B<Returns> C<Seq|Buf>
 
 Takes a C<Str> and applies base64 decoding with the requested options. If passed a C<Blob> it will be converted to a C<Str> with C<.decode> first.
 
-    > say decode-base64("YW55IGNhcm5hbCBwbGVhc3VyZS4=", :buf).decode
+    > say decode-base64("YW55IGNhcm5hbCBwbGVhc3VyZS4=", :bin).decode
     any carnal pleasure.
 
     > say Buf.new(decode-base64("YW55IGNhcm5hbCBwbGVhc3VyZS4=")).decode('utf-8')

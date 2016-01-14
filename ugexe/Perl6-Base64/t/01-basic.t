@@ -24,24 +24,24 @@ subtest {
 }, 'Encode';
 
 subtest {
-    is decode-base64("", :buf).decode, "\x0", 'decoding the empty string';
-    is decode-base64("QQ==", :buf).decode, 'A', 'decoding "A"';
-    is decode-base64("QWI=", :buf).decode, 'Ab', 'decoding "Ab"';
-    is decode-base64("QWJj", :buf).decode, "Abc", 'decoding "Abc"';
-    is decode-base64("QWJjZA==", :buf).decode, "Abcd", 'decoding "Abcd"';
-    is decode-base64("UGVybA==", :buf).decode, "Perl", 'decoding "Perl"';
-    is decode-base64("UGVybDY=", :buf).decode, "Perl6", 'decoding "Perl6"';
-    is decode-base64("UGVy\nbDY=", :buf).decode, "Perl6", 'decoding "Perl6 with invalid b64 character"';
-    is decode-base64("QW5vdGhlciB0ZXN0IQ==", :buf).decode, "Another test!", 'decoding "Another test!"';
-    is decode-base64("dXNlcm5hbWU6dGhpc2lzbm90bXlwYXNzd29yZA==", :buf).decode, "username:thisisnotmypassword", 'decoding "username:thisisnotmypassword"';
-    is-deeply decode-base64("AA==", :buf), Buf.new(0), 'decode Test on NULL/0 byte';
-    is-deeply decode-base64("AQ==", :buf), Buf.new(1), 'decode Test on byte value 1';
-    is-deeply decode-base64("/w==", :buf), Buf.new(255), 'decode Test on byte value 255';
-    is-deeply decode-base64("AQE=", :buf), Buf.new(<1 1>), 'decode Test on bytes value 1 1';
+    is decode-base64("", :bin).decode, "\x0", 'decoding the empty string';
+    is decode-base64("QQ==", :bin).decode, 'A', 'decoding "A"';
+    is decode-base64("QWI=", :bin).decode, 'Ab', 'decoding "Ab"';
+    is decode-base64("QWJj", :bin).decode, "Abc", 'decoding "Abc"';
+    is decode-base64("QWJjZA==", :bin).decode, "Abcd", 'decoding "Abcd"';
+    is decode-base64("UGVybA==", :bin).decode, "Perl", 'decoding "Perl"';
+    is decode-base64("UGVybDY=", :bin).decode, "Perl6", 'decoding "Perl6"';
+    is decode-base64("UGVy\nbDY=", :bin).decode, "Perl6", 'decoding "Perl6 with invalid b64 character"';
+    is decode-base64("QW5vdGhlciB0ZXN0IQ==", :bin).decode, "Another test!", 'decoding "Another test!"';
+    is decode-base64("dXNlcm5hbWU6dGhpc2lzbm90bXlwYXNzd29yZA==", :bin).decode, "username:thisisnotmypassword", 'decoding "username:thisisnotmypassword"';
+    is-deeply decode-base64("AA==", :bin), Buf.new(0), 'decode Test on NULL/0 byte';
+    is-deeply decode-base64("AQ==", :bin), Buf.new(1), 'decode Test on byte value 1';
+    is-deeply decode-base64("/w==", :bin), Buf.new(255), 'decode Test on byte value 255';
+    is-deeply decode-base64("AQE=", :bin), Buf.new(<1 1>), 'decode Test on bytes value 1 1';
 }, 'Decode';
 
 subtest {
-    is encode-base64( decode-base64("w0OfABDTw0Of", :buf) , :str ), "w0OfABDTw0Of", "decoded then re-encoded value equals to origianl one, with A in first position of a 4 characters group";
+    is encode-base64( decode-base64("w0OfABDTw0Of", :bin) , :str ), "w0OfABDTw0Of", "decoded then re-encoded value equals to origianl one, with A in first position of a 4 characters group";
 }
 
 subtest {

@@ -32,7 +32,7 @@ multi sub encode-base64(Blob $blob, :$pad, :@alpha, |c --> Seq) {
             $c.value +< ((state $m = 24) -= 8)
         }
         my $res = (18, 12, 6, 0).map({ $n +> $_ +& 63 });
-        (slip($encodings[$res>>.item][0..*-($padding ?? $padding+1 !! 0)]),
+        (slip($encodings[$res[*]][0..*-($padding ?? $padding+1 !! 0)]),
             ((^$padding).map({"$pad"}).Slip if $padding)).Slip;
     }
 }
@@ -43,9 +43,9 @@ multi sub decode-base64(Blob $blob, |c) {
     samewith($blob.decode, |c)
 }
 multi sub decode-base64(Bool :$uri! where *.so, |c) {
-    samewith(:buf, :alpha(@chars64uri), |c);
+    samewith(:bin, :alpha(@chars64uri), |c);
 }
-multi sub decode-base64(Bool :$buf! where *.so, |c --> Blob)  {
+multi sub decode-base64(Bool :buf(:$bin)! where *.so, |c --> Blob)  {
     Buf.new(samewith(|c) || 0);
 }
 multi sub decode-base64(:$pad = '=', |c)            {
