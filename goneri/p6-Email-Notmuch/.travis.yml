@@ -1,0 +1,13 @@
+branches:
+  except:
+    - gh-pages
+language: perl6
+sudo: required
+perl6:
+  - latest
+before_install:
+  - sudo apt-get update -q
+  - sudo apt-get install -y libnotmuch4
+install:
+  - rakudobrew build-panda
+  - panda installdeps .

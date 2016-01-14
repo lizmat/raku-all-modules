@@ -1,0 +1,13 @@
+{
+  "perl"        : "6.c",
+  "name"        : "Email::Notmuch",
+  "version"     : "0.1",
+  "description" : "lib NotmuchMail binding",
+  "provides"    : {
+    "Email::Notmuch": "lib/Email/Notmuch.pm6"
+  },
+  "authors"     : ["Gonéri Le Bouder"],
+  "depends"     : [ ],
+  "test-depends": [ "File::Temp", "Test" ],
+  "source-url"  : "git://github.com/goneri/p6-Email-Notmuch.git"
+}
