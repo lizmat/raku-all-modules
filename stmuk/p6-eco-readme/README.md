@@ -11,4 +11,4 @@ Pull requests welcome.
 
 -- steve.mynott@gmail.com 20151006
 
-# p6-app-p6tags
+# p6-eco-readme

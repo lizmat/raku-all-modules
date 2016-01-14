@@ -1,4 +1,5 @@
 {
+    "perl"        : "v6.0.0",
     "name"        : "App::ecoreadme",
     "version"     : "0.1",
     "description" : "Display and cache ecosystem README files for perl6",
