@@ -1,4 +1,4 @@
-unit class IRC::Grammar::Actions:ver<1.001001>;
+unit class IRC::Grammar::Actions:ver<2.003001>;
 method TOP ($/) { $/.make: $<message>>>.made }
 method message ($/) {
     my $pref = $/<prefix>;
@@ -10,7 +10,8 @@ method message ($/) {
     %args<who><host> = ~$pref<servername> if $pref<servername>.defined;
 
     my $p = $/<params>;
-    loop {
+
+    for ^100 { # bail out after 100 iterations; we're stuck
         if ( $p<middle>.defined ) {
             %args<params>.append: ~$p<middle>;
         }
