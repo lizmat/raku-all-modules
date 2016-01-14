@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/gfldex/perl6-xhtml-writer.git
+	branch = master
+	commit = 8699f5045957a20eca870917421475fb567519df
+	parent = fe320071d5bed06852f364d6cbefb9de36d3ae26
+	cmdver = 0.2.3
