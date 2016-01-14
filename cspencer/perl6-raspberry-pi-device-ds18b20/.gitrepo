@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/cspencer/perl6-raspberry-pi-device-ds18b20.git
+	branch = master
+	commit = cc5bcab5a107728d097459b2ea5b35de8ea82566
+	parent = eb15845cb5210c47bb9ead3203ba260551c0ac04
+	cmdver = 0.2.3

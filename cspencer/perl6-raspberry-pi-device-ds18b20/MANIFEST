@@ -1,0 +1,8 @@
+META.info
+MANIFEST
+lib/RPi/Device/DS18B20/Sensor.pm6
+lib/RPi/Device/DS18B20.pm6
+bin/example-2.p6
+bin/example-1.p6
+t/0-load-module.t
+README.md

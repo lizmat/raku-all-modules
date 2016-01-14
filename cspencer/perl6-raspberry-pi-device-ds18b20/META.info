@@ -1,0 +1,13 @@
+{
+    "name" : "RPi::Device::DS18B20",
+    "version" : "0.2.0",
+    "description" : "RPi::Device::DS18B20 provides support for the DS18B20 family of temperature sensors.",
+    "author" : "Cory Spencer",
+    "provides" : {
+        "RPi::Device::DS18B20"         : "lib/RPi/Device/DS18B20.pm6",
+        "RPi::Device::DS18B20::Sensor" : "lib/RPi/Device/DS18B20/Sensor.pm6"
+    },
+    "test-depends" : [ "Test" ],
+    "depends" : [ "RPi" ],
+    "source-url" : "https://github.com/cspencer/perl6-raspberry-pi-device-ds18b20.git"
+}   
