@@ -23,7 +23,7 @@ Script helps https://us1.lacunaexpanse.com players doing boring tasks like movin
 
 Instalation:
 
-    $ panda install LacunaCookbuk
+    $ panda install LacunaCookbuk::Client
 
 More about panda [here](https://github.com/tadzik/panda)
 

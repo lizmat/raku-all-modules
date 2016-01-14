@@ -82,10 +82,11 @@ submethod find_development_ministry(--> LacunaCookbuk::Model::Structure::Develop
 	    my %attr = %resp;
 	    %attr<url> = $LacunaCookbuk::Model::Structure::Development::URL;
 	    %attr<id> = $id;
+	    %attr<build_queue>:delete unless %attr<build_queue>.elems;
 	    return LacunaCookbuk::Model::Structure::Development.new(|%attr);
 	}
     }
-    say "No intelligence on " ~ self.name;
+    say "No Development on " ~ self.name;
     fail();
 }
 

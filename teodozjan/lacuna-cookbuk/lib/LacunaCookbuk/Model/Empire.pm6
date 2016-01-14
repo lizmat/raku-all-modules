@@ -1,6 +1,7 @@
 use v6;
 use PerlStore::FileStore;
 use JSON::RPC::Client;
+use MONKEY-SEE-NO-EVAL;
 
 #| Data provided by this class are required by anything in this  game 
 unit class LacunaCookbuk::Model::Empire;
