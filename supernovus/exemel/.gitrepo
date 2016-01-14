@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/exemel.git
 	branch = master
-	commit = dd3816129ddcdfcf4949028fd23560908190b883
-	parent = 04a9eb59b31fba247bcf5d314dd4730b5aa3d648
+	commit = c3b1cced46ded2df84bd53b3733800a86f5fe042
+	parent = 5ce60bf779449b44ff0be95ca6afcd6f7274f1ff
 	cmdver = 0.2.3
