@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/skids/perl6xproto.git
+	remote = https://github.com/skids/perl6xproto.git
 	branch = master
-	commit = 7d0eff77d0da02fc88bcb9a3931088a0638835b0
-	parent = 751d21285df2185babb9a0e53b8331f67937509f
+	commit = dfa37167f08def40df3e70ce755ce21541dc8b4e
+	parent = cb4bb26d3560a618203a1c377b0e42fa7e6051cc
 	cmdver = 0.2.3

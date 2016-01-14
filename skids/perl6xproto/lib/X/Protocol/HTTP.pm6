@@ -87,6 +87,7 @@ method codes {
         429 => 'Too Many Requests',
         431 => 'Request Header Fields Too Large',
         449 => 'Retry with',                      # unofficial Microsoft
+        451 => 'Unavailable For Legal Reasons',   # IESG Dec 18, 2015 RFC TBA
         500 => 'Internal Server Error',
         501 => 'Not Implemented',
         502 => 'Bad Gateway',
