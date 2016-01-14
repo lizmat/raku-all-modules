@@ -1,0 +1,13 @@
+{
+    "perl"         : "6.c",
+    "name"         : "IO::MiddleMan",
+    "version"      : "1.001001",
+    "description"  : "hijack, capture, or mute writes to an IO::Handle",
+    "depends"      : [ ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "IO::MiddleMan": "lib/IO/MiddleMan.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   : "git://github.com/zoffixznet/perl6-IO-MiddleMan.git"
+}

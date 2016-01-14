@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-IO-MiddleMan.git
+	branch = master
+	commit = ae257ec9ddee9348bc53405c2176819abf3f99fa
+	parent = 3ac39d53d1390a9a787882468be1fee7a81ab033
+	cmdver = 0.2.3
