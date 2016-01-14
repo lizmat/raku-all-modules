@@ -1,4 +1,4 @@
-module Algorithm::Elo {
+module Algorithm::Elo:auth<github:hoelzro>:ver<0.1.0> {
     my $k = 32;
 
     my sub do-it(Int $delta) {

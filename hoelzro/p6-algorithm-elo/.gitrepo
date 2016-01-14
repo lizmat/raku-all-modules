@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/hoelzro/p6-algorithm-elo.git
+	remote = https://github.com/hoelzro/p6-algorithm-elo.git
 	branch = master
-	commit = 0f533295f286c9380d1f88369404cf97ecee5733
-	parent = 98fa183859e499a02902cb37c246e87b2d025014
-	cmdver = 0.2.2
+	commit = 5a6959f39b83e7c741fa3111c2bdede31208b2d1
+	parent = 1eabe3c8eeb486ab3db4c58b18f998c2f290ff27
+	cmdver = 0.2.3

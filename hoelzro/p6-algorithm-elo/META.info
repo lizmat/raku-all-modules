@@ -7,5 +7,5 @@
     "provides" : {
         "Algorithm::Elo" : "lib/Algorithm/Elo.pm"
     },
-    "source-url": "git://github.com/hoelzro/p6-algorithm-elo.git"
+    "source-url": "https://github.com/hoelzro/p6-algorithm-elo.git"
 }
