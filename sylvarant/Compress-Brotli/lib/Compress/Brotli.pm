@@ -35,9 +35,9 @@ module Compress::Brotli:ver<0.1.0> {
 	  return $path;
   }
 
-  sub compress_buffer(Int,CArray[uint8], CArray[int], CArray[uint8],Config --> Int) 
+  sub compress_buffer(uint64,CArray[uint8], CArray[uint64], CArray[uint8],Config --> uint64) 
     is native(&library) { * }
-  sub decompress_buffer(Int,CArray[uint8], CArray[int]--> CArray[uint8]) 
+  sub decompress_buffer(uint64,CArray[uint8], CArray[uint64]--> CArray[uint8]) 
     is native(&library) { * }
   sub clear_internal_buffer() is native(&library) { * }
 
@@ -57,7 +57,7 @@ module Compress::Brotli:ver<0.1.0> {
   # from Compress::Snappy
 	# Simulate an int pointer with a CArray
   sub to_pointer(Int $value = 0) {
-	  my $intpointer = CArray[int].new();
+	  my $intpointer = CArray[uint64].new();
 	  $intpointer[0] = $value;
 	  return $intpointer;
   }
@@ -78,7 +78,7 @@ module Compress::Brotli:ver<0.1.0> {
 
 
   multi sub compress(Blob $data, Config $conf = $def_conf) { 
-    my Int $in_size = $data.bytes();
+    my uint64 $in_size = $data.bytes();
     my $input = CArray[uint8].new();
 	  $input[$_] = $data[$_] for ^$data.bytes;
     my $max_out_size = 1.2 * $in_size  + 10240;

@@ -49,7 +49,7 @@ extern "C" {
    *  Description:  use the brotli compression function
    * =====================================================================================
    */ 
-  uint8_t * decompress_buffer(int encoded_size, const uint8_t* encoded_buffer, size_t* decoded_size)
+  uint8_t * decompress_buffer(size_t encoded_size, const uint8_t* encoded_buffer, size_t* decoded_size)
   {
     /* Brotlin Input */
     BrotliMemInput memin;
@@ -83,7 +83,7 @@ extern "C" {
    *  Description:  use the brotli buffer compression function
    * =====================================================================================
    */ 
-  int compress_buffer(size_t input_size, const uint8_t* input_buffer,size_t* encoded_size, uint8_t* encoded_buffer, config * conf)
+  size_t compress_buffer(size_t input_size, const uint8_t* input_buffer,size_t* encoded_size, uint8_t* encoded_buffer, config * conf)
   {
     brotli::BrotliParams params;
     params.mode = (enum brotli::BrotliParams::Mode) conf->mode; 
