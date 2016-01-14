@@ -2,7 +2,6 @@
 
 use v6;
 
-use lib 'lib';
 use Test;
 
 use-ok('WebService::Soundcloud', 'can load WebService::Soundcloud');

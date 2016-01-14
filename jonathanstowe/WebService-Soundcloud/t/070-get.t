@@ -2,7 +2,6 @@
 
 use v6;
 use Test;
-use lib 'lib';
 
 use WebService::Soundcloud;
 # Create a constuctor
