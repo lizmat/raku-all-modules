@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/tadzik/Grammar-BNF.git
+	remote = https://github.com/tadzik/Grammar-BNF.git
 	branch = master
-	commit = a3f2d469601f4248d2fa34614fc2fa51d12b3c47
-	parent = 430a88cc98b586b34b5601cf414dd4917c849bb0
-	cmdver = 0.2.2
+	commit = 14f51ca5882f00f0acee643c9845ab37559b5119
+	parent = 5fb081a5ff5b5602b0ecfd84d0dc27d9876b243e
+	cmdver = 0.2.3
