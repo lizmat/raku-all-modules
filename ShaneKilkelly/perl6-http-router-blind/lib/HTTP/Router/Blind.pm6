@@ -82,7 +82,7 @@ method dispatch ($method, $uri, %env) {
             }
         }
         if $path ~~ Regex {
-            my $match = $uri ~~ $path;
+            my $match = $uri.match: $path;
             if $match {
                 return self!apply-handlers-with-params(%env, @funcs, $match);
             }
