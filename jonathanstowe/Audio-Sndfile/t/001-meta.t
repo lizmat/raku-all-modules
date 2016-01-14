@@ -1,10 +1,10 @@
 #!perl6
 
 use v6;
-use lib 'lib';
 
 use Test;
 use Test::META;
+use lib 'lib';
 
 plan 1;
 

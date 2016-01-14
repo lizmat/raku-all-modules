@@ -343,7 +343,7 @@ class Audio::Sndfile::Info:ver<v0.0.5>:auth<github:jonathanstowe> is repr('CStru
     has int32     $.sections;
     has int32     $._seekable;
 
-    sub  sf_format_check(Audio::Sndfile::Info $info) returns int32 is native('libsndfile') { * }
+    sub  sf_format_check(Audio::Sndfile::Info $info) returns int32 is native('sndfile',v1) { * }
 
     # Masks to get at the parts of format
     constant SUBMASK    = 0x0000FFFF;

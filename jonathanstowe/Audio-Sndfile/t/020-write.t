@@ -1,9 +1,9 @@
 #!perl6
 
 use v6;
-use lib 'lib';
 use Test;
 use Shell::Command;
+use lib 'lib';
 
 use Audio::Sndfile;
 
