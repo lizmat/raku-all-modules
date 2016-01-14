@@ -130,6 +130,13 @@ package BSON {
     }
 
     #---------------------------------------------------------------------------
+    method perl ( --> Str ) {
+      my Str $string = $!oid.list.fmt('%02x');
+      $string ~~ s:g/\s+//;
+      [~] 'BSON::ObjectId.new(', ":string('0x$string')", ')';
+    }
+
+    #---------------------------------------------------------------------------
     method !generate-oid ( ) {
 
       my @numbers = ();
@@ -159,8 +166,22 @@ package BSON {
       for $!count.fmt('%08x').comb(/../)[2...0] -> $hexnum {
         @numbers.push: :16($hexnum);
       }
-      
+
       $!oid .= new(@numbers);
+    }
+
+    #---------------------------------------------------------------------------
+    method encode ( ) {
+      $!oid;
+    }
+
+    #---------------------------------------------------------------------------
+    method decode (
+      Buf:D $b,
+      Int:D $index is copy,
+      --> BSON::ObjectId
+    ) {
+      BSON::ObjectId.new(:bytes($b[$index ..^ ($index + 12)]));
     }
   }
 }

@@ -44,10 +44,10 @@ use BSON::Document;
 my BSON::Document $d .= new;
 $d<name> = 'Jose';
 $d<address> = street => '24th', city => 'NY';
-$d<keywords> = <perl6 language programming>;
+$d<keywords> = [<perl6 language programming>];
 
 # Automatic generating subdocuments
-$d.autovivify = True;
+$d.autovivify(True);
 $d<a><b><c><d><e> = 10;
 
 # Encoding and decoding
@@ -187,64 +187,7 @@ is $d[100], $d[2], "Location 100 is same as pointed by index 2";
 Modify or create locations using an index into the document. When locations
 exist, data at that location is overwritten by the new data. Non-existent
 locations are set as the next free location in the document and a key is
-generated using the index prefixed with 'key'.
-
-=head1 ATTRIBUTES
-
-=head2 autovivify
-
-Defined as
-
-  has Bool $.autovivify is rw = False;
-
-By default it is set to C<False> and will throw an exception with an message
-like 'Cannot modify an immutable Any' when an attempt is made like in the
-following.piece of code
-
-=begin code
-
-my BSON::Document $d .= new;
-$d<a><b> = 10;                  # Throw error
-
-=end code
-
-To have this feature one must turn this option on like so;
-
-=begin code
-
-my BSON::Document $d .= new;
-$d.autovivify = True;
-$d<a><b> = 10;
-
-=end code
-
-NOTE: Testing for items will also create the entries if they weren't there.
-
-=head2 accept-hash
-
-Defined as
-
-  has Bool $.accept-hash is rw = False;
-
-By default it is set to C<False> and will throw an exception with a message
-like 'Cannot use hash values'. This is explicitly done to keep input order.
-When it is turned off try something like below to see what is meant;
-
-=begin code
-
-my BSON::Document $d .= new;
-$d.accept-hash = True;
-$d<q> = {
-  a => 120, b => 121, c => 122, d => 123, e => 124, f => 125, g => 126,
-  h => 127, i => 128, j => 129, k => 130, l => 131, m => 132, n => 133,
-  o => 134, p => 135, q => 136, r => 137, s => 138, t => 139, u => 140,
-  v => 141, w => 142, x => 143, y => 144, z => 145
-};
-
-say $d<q>.keys;
-# Outputs [x p k h g z a y v s q e d m f c w o n u t b j i r l]
-
-=end code
+generated using the index prefixed with 'key' (depending on autovivify).
 
 
 =head1 METHODS
@@ -279,10 +222,7 @@ $d .= new: ( a => 10, b => 11);
 
 =end code
 
-Initialize a new document. Take care not to use named arguments because this
-will throw an exception. This input method is not provided because the named
-arguments in a Capture will loose their order of specification when calling
-C<new()>.
+Initialize a new document.
 
 =head2 method perl
 
@@ -290,7 +230,7 @@ Defined as
 
   method perl ( --> Str )
 
-Return some information about the object.
+Return some information about the object and its structure.
 
 =head2 method WHAT
 
@@ -307,6 +247,61 @@ Defined as
   method Str ( --> Str )
 
 Return type and location of the object.
+
+=head2 method autovivify
+
+Defined as
+
+  submethod autovivify ( Bool $avvf = True )
+
+By default it is set to C<False> and will throw an exception with an message
+like 'Cannot modify an immutable Any' when an attempt is made like in the
+following.piece of code
+
+=begin code
+
+my BSON::Document $d .= new;
+$d<a><b> = 10;                  # Throw error
+
+=end code
+
+To have this feature one must turn this option on like so;
+
+=begin code
+
+my BSON::Document $d .= new;
+$d.autovivify(True);
+$d<a><b> = 10;
+
+=end code
+
+NOTE: Testing for items will also create the entries if they weren't there.
+
+=head2 method accept-hash
+
+Defined as
+
+  submethod accept-hash ( Bool $acch = True )
+
+By default it is set to C<False> and will throw an exception with a message
+like 'Cannot use hash values'. This is explicitly done to keep input order.
+When it is turned off try something like below to see what is meant;
+
+=begin code
+
+my BSON::Document $d .= new;
+$d.accept-hash(True);
+$d<q> = {
+  a => 120, b => 121, c => 122, d => 123, e => 124, f => 125, g => 126,
+  h => 127, i => 128, j => 129, k => 130, l => 131, m => 132, n => 133,
+  o => 134, p => 135, q => 136, r => 137, s => 138, t => 139, u => 140,
+  v => 141, w => 142, x => 143, y => 144, z => 145
+};
+
+say $d<q>.keys;
+# Outputs [x p k h g z a y v s q e d m f c w o n u t b j i r l]
+
+=end code
 
 =head2 method find-key
 
@@ -361,6 +356,14 @@ say $d.kv;
 
 =end code
 
+=head2 method pairs
+
+Defined as
+
+  method pairs ( --> List )
+
+Return a list of pairs in the same order as entered.
+
 =head2 method keys
 
 Defined as
@@ -394,6 +397,21 @@ say $d.values;
 # Outputs: [120 121 122 123 ... 143 144 145]
 
 =end code
+
+=head2 method modify-array
+
+Defined as
+
+  method modify-array ( Str $key, Str $operation, $data --> List )
+
+Use as
+
+  BSON::Document $d .= new:(docs => []);
+  $d.modify-array( 'docs', 'push', (a => 1, b => 2));
+
+Modify an array in a document afterwards. This method is necessary to apply
+changes because when doing it directly like B<$d<docs>.push: (c => 2);> it
+wouldn't be encoded because the document object is not aware of these changes.
 
 =head2 method encode
 

@@ -23,7 +23,7 @@ subtest {
 
   my BSON::ObjectId $oid .= new;
 
-  my DateTime $datetime .= now;
+  my DateTime $datetime .= new( DateTime.now.posix, :timezone($*TZ));
 
   my BSON::Regex $rex .= new( :regex('abc|def'), :options<is>);
 
@@ -227,7 +227,8 @@ subtest {
     # 15
     BSON::C-DATETIME,                           # 0x09
       0x64, 0x74, 0x69, 0x6d, 0x65, 0x00,       # 'dtime'
-      local-encode-int64($datetime.posix).List, # time
+#      local-encode-int64($datetime.posix).List, # time
+      encode-int64($datetime.posix).List,       # time
 
     # 6
     BSON::C-NULL,                               # 0x0A
@@ -244,9 +245,13 @@ subtest {
     0x00                                        # End document
   );
 
+  say "\n\nBSON::Document perl() show off: ", $d.perl;
+  print " \n";
+
   # Encode document and compare with handcrafted byte array
   #
   my Buf $edoc = $d.encode;
+
   is-deeply $edoc, $etst, 'Encoded document is correct';
 
   # Fresh doc, load handcrafted data and decode into document
@@ -322,6 +327,7 @@ subtest {
 done-testing();
 exit(0);
 
+=finish
 #---------------------------------------------------------------------------
 sub local-encode-int64 ( Int:D $i ) {
   # No tests for too large/small numbers because it is called from

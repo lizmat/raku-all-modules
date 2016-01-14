@@ -6,7 +6,7 @@ use BSON::Document;
 subtest {
 
   my BSON::Document $d .= new;
-  $d.autovivify = True;
+  $d.autovivify(True);
 
   $d<a><b><c><d><e><f1><g><h><i><j><h><i><j> = ('a' ... 'z') Z=> 120..145;
   $d<a><b><c><d><e><f2><g><h><i><j><h><i><j> = ('a' ... 'z') Z=> 120..145;
@@ -19,7 +19,6 @@ subtest {
      "Very deep ...<j><a> = $d<a><b><c><d><e><f2><g><h><i><j><h><i><j><a>";
 
   my Buf $b = $d.encode;
-#  say "E: {$b.elems}, ", $b;
 
   # Handcrafted encoded BSON data
   #
@@ -143,7 +142,7 @@ subtest {
     0x00,
   );
 
-  is-deeply $etst, $b, 'Buf compare';
+  is-deeply $b, $etst, 'Buf compare';
 
   my BSON::Document $d2 .= new;
   $d2.decode($b);

@@ -16,45 +16,16 @@ When installing MongoDB, BSON will be installed automatically as a dependency.
 
 ## VERSION PERL AND MOARVM
 
-* Perl6 version ```2015.11-143-g7046681```
-* MoarVM version ```2015.11-19-g623eadf```
+* Perl6 version ```2015.12-1-g6452f8d``` implementing ```Perl 6.c```
+* MoarVM version ```2015.12```
 
 
 ## SYNOPSIS
 
-The first example code is the original method of serializing data into a BSON
-structure. When used to save it lokally it is fine. However, because hashes are
-involved the structure cannot be used to communicate with a mongodb server. The
-hashes in perl6 do not keep the order as you will enter your data into the
-structure and the mongodb server needs the data in some order. E.g. when using
-commands, the command needs to be on the first key-value pair. Tricky
-manipulations must be performed to keep the input order such as using arrays of
-Pair.
-
-Because of this a BSON::Document class has been developed (see second
-example). This structure will keep the order and because of that there is no
-need for cumbersome operations. At the moment it is much slower than the hashed
-variant even with the encoding happening in the background and parallel.
-
-
-```
-use BSON;
-my $b = BSON::Bson.new;
-
-my Buf $encoded = $b.encode( {
-    "_id" => BSON::ObjectId.new("4e4987edfed4c16f8a56ed1d"),
-    "some string"   => "foo",
-    "some number"   => 123,
-    "some array"    => [ ],
-    "some hash"     => { },
-    "some bool"     => True,
-  }
-);
-
-my $decoded = $b.decode($encoded);
-```
-
-Using the BSON::Document
+A BSON::Document class has been developed. This structure will keep the order
+and because of that there is no need for cumbersome operations. At the moment it
+is much slower than the hashed variant even with the encoding happening in the
+background and parallel.
 
 ```
 use BSON::Document;
@@ -103,7 +74,8 @@ See also BSON/Document.pod
   any integer can be stored as large or small as you like. Int can be coded as
   described in version 0.8.4 and when larger or smaller then maybe it is
   possible the Int can be coded as a binary array of some type.
-
+* BUG. An array in a document which is modified later with push, pop or
+  otherwise will not be properly encoded.
 
 ## CHANGELOG
 
@@ -111,9 +83,33 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.21
+  * Beautify perl() output and added perl() methods to Binary, Javascript, Regex
+    and ObjectId.
+  * Cutting out old stuff now that Document is matured and MongoDB does not rely
+    on the old stuff anymore. Their accompanying test programs are removed too.
+  * Documentation for the other modules
+  * Factored out Buf encoding. Must be done via BSON::Binary
+  * Refactored encode/decode from Document to Binary and ObjectId
+*.0.9.20
+  * Bugfix. When a entry is overwritten, the promise used for it to encode the
+    entry was only deleted. It needs to be read first otherwise a thread is kept
+    hanging around.
+  * Bugfix. Promise needs to be tested for definiteness before await and delete
+*.0.9.19
+  * Modified taking sections of buf using subbuf
+  * perl method modified showing structure of document
+* 0.9.18
+  * Bugfixes in Double decoding
+* 0.9.17
+  * Bugfixes in BSON::Document
+  * Changes caused by perl6 6.c. Z operator changes and datetime usage
+  * Ideas about parallel computing entries revised. Now only non-subdocuments
+    are calculated in parallel. Subducuments are calculated when encode() is
+    called.
 * 0.9.16
-  * move around things
-  * some subs exported
+  * Move around things
+  * Some subs exported
 * 0.9.15
   * ```@*INC``` is gone, ```use lib``` is the way. A lot of changes done by
     zoffixznet.
@@ -143,7 +139,8 @@ change at any time. The public API should not be considered stable*.
 * 0.9.8
   * Tests for binary data UUID and MD5
 * 0.9.7
-  * Factoring out Exception classes from BSON and EDC-Tools into BSON/Exception.pm6
+  * Factoring out Exception classes from BSON and EDC-Tools into
+    BSON/Exception.pm6
   * Bugfix in META.info
   * Parse errors throw exceptions.
 * 0.9.6

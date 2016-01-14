@@ -13,8 +13,9 @@ subtest {
 
   $d .= new;
   $d.decode($b);
-}, "Empty document";
+  is $d.elems, 0, "Zero elements/keys in decoded document";
 
+}, "Empty document";
 
 #-------------------------------------------------------------------------------
 subtest {
@@ -72,7 +73,7 @@ subtest {
     }
   }
 
-  $d.accept-hash = True;
+  $d.accept-hash(True);
   $d<q> = {
     a => 120, b => 121, c => 122, d => 123, e => 124, f => 125, g => 126,
     h => 127, i => 128, j => 129, k => 130, l => 131, m => 132, n => 133,
@@ -80,10 +81,11 @@ subtest {
     v => 141, w => 142, x => 143, y => 144, z => 145
   };
   is $d<q><a>, 120, "Hash value $d<q><a>";
-#  my $x = $d<q>.keys.sort;
-#  nok $x eqv $d<q>.keys.List, 'Not same order';
+  my $x = $d<q>.keys.sort;
+  nok $x eqv $d<q>.keys.List, 'Not same order';
 
-  $d.autovivify = True;
+  $d.autovivify(True);
+
   $d<e><f><g> = {b => 30};
   is $d<e><f><g><b>, 30, "Autovivified hash value $d<e><f><g><b>";
 
@@ -100,6 +102,7 @@ subtest {
   is $d.elems, 26, "26 pairs";
   is $d{'d'}, 3, "\$d\{'d'\} = $d{'d'}";
 
+  ok $d<a>:exists, 'First pair $d<a> exists';
   ok $d<q>:exists, '$d<q> exists';
   ok ! ($d<hsdgf>:exists), '$d<hsdgf> does not exist';
 
@@ -141,6 +144,7 @@ subtest {
   is $d<b>, $d[$d.find-key('b')],
      "Same values on key 'b'($d<b>) and found index {$d.find-key('b')}($d[1])";
 
+  ok $d[0]:exists, "First pair $d[0] exists";
 
   $d[1000] = 'text';
   is $d[26], 'text', "assign \$d[1000] = \$d[26] = '$d[26]'";
@@ -247,8 +251,6 @@ subtest {
   $d<abcdef><b1> = q => 255;
   is $d<abcdef><b1><q>, 255,
      "sub document \$d<abcdef><b1><q> = $d<abcdef><b1><q>";
-  $d.encode;
-
 
   $d .= new;
   $d<a> = v1 => (v2 => 'v3');
@@ -256,9 +258,9 @@ subtest {
   $d<a><v1><w3> = 110;
   is $d<a><v1><w3>, 110, "\$d<a><v1><w3> = $d<a><v1><w3>";
 
-  $d<foo> = 'v3';
-  $d<bar> = 10;
-  $d.encode;
+#  $d<foo> = 'v3';
+#  $d<bar> = 10;
+#  $d.encode;
 
 #say $d.perl;
 #say $d<a><v1>.perl;
