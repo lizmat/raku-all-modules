@@ -79,7 +79,7 @@ method rows() {
 method _row(:$hash) {
     my @row_array;
     my %ret_hash;
-    return Any if $!current_row >= $!row_count;
+    return $hash ?? Hash !! Array if $!current_row >= $!row_count;
 
     unless defined $!field_count {
         $!field_count = PQnfields($!result);
@@ -99,11 +99,33 @@ method _row(:$hash) {
             }
             my $value;
             given (@types[$_]) {
-                $value = $res when 'Str';
-                $value = $res.Num when 'Num';
-                $value = $res.Int when 'Int';
-                $value = self.true_false($res) when 'Bool';
-                $value = $res.Real when 'Real';
+                when 'Str' {
+                  $value = $res
+                }
+                when 'Num' {
+                  $value = $res.Num
+                }
+                when 'Int' {
+                  $value = $res.Int
+                }
+                when 'Bool' {
+                  $value = self.true_false($res)
+                }
+                when 'Real' {
+                  $value = $res.Real
+                }
+                when 'Array<Int>' {
+                  $value := _pg-to-array( $res, 'Int' );
+                }
+                when 'Array<Str>' {
+                  $value := _pg-to-array( $res, 'Str' );
+                }
+                when 'Array<Num>' {
+                  $value := _pg-to-array( $res, 'Num' );
+                }
+                default {
+                  $value = $res;
+                }
             }
             $hash ?? (%ret_hash{@names[$_]} = $value) !! @row_array.push($value);
         }
@@ -179,6 +201,74 @@ method fetchall_hashref(Str $key) {
 method column_p6types {
    my @types = self.column_oids;
    return @types.map:{%oid-to-type-name{$_}};
+}
+
+my grammar PgArrayGrammar {
+    rule array        { '{' (<element> ','?)* '}' }
+    rule TOP         { ^ <array> $ }
+    rule element      { <array> | <float> | <integer> | <string> }
+    token float        { (\d+ '.' \d+) }
+    token integer      { (\d+) }
+    rule string       { '"' $<value>=( [\w|\s]+ ) '"' | $<value>=( \w+ ) }
+};
+
+sub _to-type($value, Str $type where $_ eq any([ 'Str', 'Num', 'Int' ])) {
+  return $value unless $value.defined;
+  if $type eq 'Str' {
+      # String
+      return ~$value;
+  } elsif $type eq 'Num' {
+      # Floating point number
+      return Num($value);
+  } else {
+      # Must be Int
+      return Int($value);
+  }
+}
+
+sub _to-array(Match $match, Str $type where $_ eq any([ 'Str', 'Num', 'Int' ])) {
+    my @array;
+    for $match.<array>.values -> $element {
+      if $element.values[0]<array>.defined {
+          # An array
+          push @array, _to-array( $element.values[0], $type );
+      } elsif $element.values[0]<float>.defined {
+          # Floating point number
+          push @array, _to-type( $element.values[0]<float>, $type );
+      } elsif $element.values[0]<integer>.defined {
+          # Integer
+          push @array, _to-type( $element.values[0]<integer>, $type );
+      } else {
+          # Must be a String
+          push @array, _to-type( $element.values[0]<string><value>, $type );
+      }
+    }
+
+    return @array;
+}
+
+sub _pg-to-array(Str $text, Str $type where $_ eq any([ 'Str', 'Num', 'Int' ])) {
+    my $match = PgArrayGrammar.parse( $text );
+    die "Failed to parse" unless $match.defined;
+    return _to-array($match, $type);
+}
+
+
+method pg-array-str(@data) {
+  my @tmp;
+  for @data -> $c {
+    if  $c ~~ Array {
+      @tmp.push(self.pg-array-str($c));
+    } else {
+      if $c ~~ Numeric {
+        @tmp.push($c);
+      } else {
+         my $t = $c.subst('"', '\\"');
+         @tmp.push('"'~$t~'"');
+      }
+    }
+  }
+  return '{' ~ @tmp.join(',') ~ '}';
 }
 
 method true_false(Str $s) {

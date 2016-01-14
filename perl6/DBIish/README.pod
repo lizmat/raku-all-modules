@@ -106,6 +106,16 @@ Supports basic CRUD operations and prepared statements with placeholders
 
     my $dbh = DBIish.connect('Pg', :host<db01.yourdomain.com>, :port(5432),
             :database<blerg>, :user<myuser>, :$password);
+
+Pg array are supported when fetching array fields with C<row/allrows>. You will
+get the properly typed array according to the field type.
+
+But passing array to C<execute/do> is not implemanted yet. You can use the
+C<pg-array-str> method on your Pg StatementHandle to convert an Array to a
+string Pg can understand.
+
+  #prepare an insertion of an array field;
+  $sth.execute($sth.pg-array-str(@data));
             
 =head2 SQLite
 
