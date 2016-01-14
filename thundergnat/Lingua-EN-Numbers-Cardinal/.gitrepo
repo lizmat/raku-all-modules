@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/thundergnat/Lingua-EN-Numbers-Cardinal.git
+	branch = master
+	commit = 6c04fe1469443b893eeaa9dc38a43fbf48a6a02e
+	parent = fed25d5dd0b5b7299fa2524f9d554357d8f2d32d
+	cmdver = 0.2.3

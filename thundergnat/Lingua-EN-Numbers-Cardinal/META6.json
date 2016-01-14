@@ -1,0 +1,13 @@
+{
+    "perl"        : "v6.*",
+    "name"        : "Lingua::EN::Numbers::Cardinal",
+    "version"     : "v0.2.1",
+    "description" : "Convert integer numbers to their cardinal representation",
+    "authors"     : [ "Steve Schulze (thundergnat)" ],
+    "provides"    : {
+        "Lingua::EN::Numbers::Cardinal" : "lib/Lingua/EN/Numbers/Cardinal.pm6"
+    },
+    "depends"     : [],
+    "source-type" : "git",
+    "source-url"  : "git://github.com/thundergnat/Lingua-EN-Numbers-Cardinal.git"
+}
