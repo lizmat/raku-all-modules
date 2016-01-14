@@ -1,7 +1,5 @@
 use v6;
-
-BEGIN { @*INC.push: 'lib' }
-
+use lib 'lib';
 use MPD;
 
 my $a = MPD.new('localhost', 6600);
