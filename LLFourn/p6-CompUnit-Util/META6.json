@@ -1,0 +1,13 @@
+{
+    "name" : "CompUnit::Util",
+    "perl" : "6.*",
+    "version" : "0.4.2",
+    "description" : "Utilities for introspecting compunits and re-exporting",
+    "authors"     : ["Lloyd Fournier"],
+    "provides"    : {
+        "CompUnit::Util" : "lib/CompUnit/Util.pm6"
+    },
+    "depends" : [],
+    "resources" : [],
+    "source-url" : "git://github.com/LLFourn/p6-CompUnit-Util"
+}
