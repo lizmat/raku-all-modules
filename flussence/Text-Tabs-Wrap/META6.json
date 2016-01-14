@@ -1,6 +1,6 @@
-{ "perl"        : "v6"
+{ "perl"        : "6.c"
 , "name"        : "Text-Tabs-Wrap"
-, "version"     : "0.2.4"
+, "version"     : "0.2.5"
 , "description" : "Simple line-wrapping and tab [un]expansion tools"
 , "authors"     : [ "Takadonet"
                   , "flussence" ]

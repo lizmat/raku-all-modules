@@ -1,11 +1,11 @@
-unit module Text::Tabs:auth<github:flussence>:ver<0.2.3>;
+unit module Text::Tabs:auth<github:flussence>:ver<0.2.5>;
 
 sub expand($text, UInt :$tabstop = $?TABSTOP) returns Str is export {
     return $text.split("\n").map({
         # Split the line up into non-\t and \t, go through and replace \t with their *visual*
         # space equivalent - the end of the tab should be rounded down to the nearest tabstop
         my UInt $pos = 0;
-        $^line.split(/\t/, :all).map({
+        $^line.split(/\t/, :v).map({
             my $out = $^in ~~ Match ?? ' ' x $tabstop - ($pos mod $tabstop)
                                     !! $^in;
             $pos += $out.chars;
