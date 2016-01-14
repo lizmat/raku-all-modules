@@ -1,5 +1,5 @@
 use v6;
-BEGIN { @*INC.unshift('lib') }
+use lib 'lib';
 use WebService::Justcoin;
 use Test;
 
