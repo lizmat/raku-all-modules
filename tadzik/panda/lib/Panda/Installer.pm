@@ -43,17 +43,21 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
         # check if $.prefix is under control of a CompUnit::Repository
         if $to.can('install') {
             fail "'provides' key mandatory in META information" unless $bone.metainfo<provides>:exists;
-            my %sources = $bone.metainfo<provides>.map({ $_.key => ~$_.value.IO.absolute });
+            my %sources = $bone.metainfo<provides>.map({ $_.key => ~$_.value.IO });
             my %scripts;
             if 'bin'.IO ~~ :d {
                 for find(dir => 'bin', type => 'file').list -> $bin {
                     my $basename = $bin.basename;
                     next if $basename.substr(0, 1) eq '.';
                     next if !$*DISTRO.is-win and $basename ~~ /\.bat$/;
-                    %scripts{$basename} = ~$bin.IO.absolute;
+                    %scripts{$basename} = ~$bin.IO;
                 }
             }
-            my %resources = ($bone.metainfo<resources> // []).map({ $_ => ~"resources/$_".IO.absolute });
+            my %resources = ($bone.metainfo<resources> // []).map({
+                $_ => $_ ~~ m/^libraries\/(.*)/
+                    ?? ~"resources/libraries".IO.child($*VM.platform-library-name($0.Str.IO))
+                    !! ~"resources/$_".IO
+            });
             $to.install(
                 Distribution.new(|$bone.metainfo),
                 %sources,
@@ -63,13 +67,12 @@ method install($from, $to? is copy, Panda::Project :$bone, Bool :$force) {
             );
         }
         else {
-            if 'blib'.IO ~~ :d {
-                my @lib = find(dir => 'blib', type => 'file').list;
+            if 'lib'.IO ~~ :d {
+                my @lib = find(dir => 'lib', type => 'file').list;
                 for self.sort-lib-contents(@lib) -> $i {
                     next if $i.basename.substr(0, 1) eq '.';
-                    # .substr(5) to skip 'blib/'
-                    mkpath "$to/{$i.dirname.substr(5)}";
-                    copy($i, "$to/{$i.substr(5)}");
+                    mkpath "$to/{$i.dirname}";
+                    copy($i, "$to/{$i}");
                 }
             }
             if 'bin'.IO ~~ :d {

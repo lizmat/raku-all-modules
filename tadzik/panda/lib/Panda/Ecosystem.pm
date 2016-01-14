@@ -15,8 +15,8 @@ class Panda::Ecosystem {
         state $done = False;
         return if $done;
         for flat $!statefile, @!extra-statefiles -> $file {
-            if $file.IO ~~ :f {
-                my $fh = open($file);
+            if $file ~~ :f {
+                my $fh = $file.open;
                 for $fh.lines -> $line {
                     my ($mod, $state, $json) = split ' ', $line, 3;
                     %!states{$mod} = ::("Panda::Project::State::$state");
@@ -117,12 +117,30 @@ class Panda::Ecosystem {
                $buf ~= $g;
             }
 
-
+            die "Got an empty metadata file." unless $buf.chars;
             $!projectsfile.IO.spurt: $buf;
         }
 
         CATCH {
-            die "Could not download module metadata: {$_.message}"
+            default {
+                note "Could not download module metadata: {$_.message}.";
+                note "Falling back to the curl command.";
+                run 'curl', $url, '-#', '-o', $!projectsfile;
+                die "Got an empty metadata file." unless $!projectsfile.IO.s;
+                CATCH {
+                    default {
+                        note "curl failed: {$_.message}.";
+                        note "Falling back to the wget command.";
+                        run 'wget', '-nv', '--unlink', $url, '-O', $!projectsfile;
+                        die "Got an empty metadata file." unless $!projectsfile.IO.s;
+                        CATCH {
+                            default {
+                                die "wget failed as well: {$_.message}. Sorry, have to give up."
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -130,7 +148,7 @@ class Panda::Ecosystem {
         @!projects.push: $p;
     }
 
-    method get-project($p as Str) {
+    method get-project(Str() $p) {
         self.init-projects();
         my @cands;
         for @!projects {
@@ -149,7 +167,7 @@ class Panda::Ecosystem {
         }
     }
 
-    method suggest-project($p as Str) {
+    method suggest-project(Str() $p) {
         self.init-projects();
         my &canonical = *.subst(/ <[\- _ :]>+ /, "", :g).lc;
         my $cpname = canonical($p);

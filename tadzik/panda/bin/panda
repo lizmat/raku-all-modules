@@ -11,7 +11,7 @@ if %*ENV<PANDA_DEFAULT_OPTS> {
 my %failed;
 
 #| Install the specified modules
-multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$force,
+multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$force = False,
             Str :$prefix) {
     my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
     for @modules -> $x {
@@ -22,10 +22,10 @@ multi MAIN ('install', *@modules, Bool :$notests, Bool :$nodeps, Bool :$force,
 }
 
 #| Install dependencies, but don't build the modules themselves
-multi MAIN ('installdeps', *@modules, Bool :$notests, Str :$prefix) {
+multi MAIN ('installdeps', *@modules, Bool :$notests, Bool :$force = False, Str :$prefix) {
     my $panda = Panda.new(:ecosystem(make-default-ecosystem($prefix)));
     for @modules -> $x {
-        $panda.resolve($x, :$notests, :action<install-deps-only>,
+        $panda.resolve($x, :$notests, :action<install-deps-only>, :$force,
                        :$prefix);
         CATCH { when X::Panda { %failed{$x}.push($_) && say $_ } };
     }
@@ -96,11 +96,11 @@ sub USAGE {
 Panda -- Perl 6 Module Installer
 
 Usage:
-    panda [options] <action>
+    panda [options] <action> # OPTIONS GO IN FRONT!! Not like git.
 
 Examples:
-    panda --installed list           List only installed modules
-    panda --force install Foo::Bar   Reinstall module
+    panda --installed list           # List only installed modules
+    panda --force install Foo::Bar   # Reinstall module
 
 Common options:
     --prefix=/path/to/modules    Place to put modules, executable scripts, etc.

@@ -51,7 +51,7 @@ class Panda {
         self.announce: "{$p.key.name} depends on {$p.value.join(", ")}"
     }
 
-    method project-from-local($proj as Str) {
+    method project-from-local(Str() $proj) {
         my $metafile = find-meta-file($proj);
         if $proj.IO ~~ :d and $metafile {
             if $proj !~~ rx{'/'|'.'|'\\'} {
@@ -72,7 +72,7 @@ class Panda {
         return False;
     }
 
-    method project-from-git($proj as Str, $tmpdir) {
+    method project-from-git(Str() $proj, $tmpdir) {
         if $proj ~~ m{^git\:\/\/} {
             mkpath $tmpdir;
             $.fetcher.fetch($proj, $tmpdir);
@@ -115,8 +115,20 @@ class Panda {
         }
     }
 
+    method !check-perl-version(Panda::Project $bone) {
+        if $bone.metainfo<perl> -> $perl-version-str is copy {
+            note "Please remove leading 'v' from perl version in {$bone.Str}'s meta info."
+                if $perl-version-str ~~ s/^v//; # remove superfluous leading "v"
+            my $perl-version = Version.new($perl-version-str);
+            use MONKEY-SEE-NO-EVAL;
+            my Bool $supported = try { EVAL "use { $perl-version.gist }"; True };
+            die "$bone requires Perl version $perl-version-str. Cannot continue."
+                unless $supported;
+        }
+    }
+
     method install(Panda::Project $bone, $nodeps, $notests,
-                   $isdep as Bool, :$rebuild = True, :$prefix, Bool :$force) {
+                   Bool() $isdep, :$rebuild = True, :$prefix, Bool :$force) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
         my $reports-file = ($.ecosystem.statefile.IO.dirname ~ '/reports.' ~ $*PERL.compiler.version).IO;
@@ -129,6 +141,8 @@ class Panda {
         unless $_ = $.fetcher.fetch($source, $dir) {
             die X::Panda.new($bone.name, 'fetch', $_)
         }
+
+        self!check-perl-version($bone);
         self.announce('building', $bone);
         unless $_ = $.builder.build($dir, :$bone) {
             die X::Panda.new($bone.name, 'build', $_)
@@ -178,7 +192,7 @@ class Panda {
         return @deps;
     }
 
-    method resolve($proj as Str is copy, Bool :$nodeps, Bool :$notests, Bool :$force,
+    method resolve(Str() $proj is copy, Bool :$nodeps, Bool :$notests, Bool :$force,
                    :$action = 'install', Str :$prefix) {
         my $tmpdir = tmpdir();
         LEAVE { rm_rf $tmpdir if $tmpdir.IO.e }
@@ -211,7 +225,7 @@ class Panda {
                 $.ecosystem.project-get-state($_)
                     == Panda::Project::absent
             };
-            self.install($_, $nodeps, $notests, 1, :$force) for @deps;
+            self.install($_, $nodeps, $notests, 1, :$prefix, :$force) for @deps;
         }
 
         given $action {

@@ -1,5 +1,6 @@
 #!/usr/bin/env perl6
 use v6;
+use v6.c;
 use lib 'ext/File__Find/lib/';
 use lib 'ext/Shell__Command/lib/';
 use Shell::Command;
@@ -63,6 +64,7 @@ sub MAIN(Str :$prefix is copy) {
 
     my $prefix_str = $prefix ?? "--prefix=$prefix" !! '';
     shell "$*EXECUTABLE --ll-exception bin/panda --force $prefix_str install $*CWD";
+    $prefix = $prefix.substr(5) if $prefix.starts-with("inst#");
     say "==> Please make sure that $prefix/bin is in your PATH";
 
     unlink "$panda-base/projects.json";
