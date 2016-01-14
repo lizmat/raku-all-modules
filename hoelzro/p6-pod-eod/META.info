@@ -1,0 +1,13 @@
+{
+  "name" : "Pod::EOD",
+  "source-url" : "https://github.com/hoelzro/p6-pod-eod.git",
+  "perl" : "6.c",
+  "provides" : {
+    "Pod::EOD" : "lib/Pod/EOD.pm"
+  },
+  "description" : "Moves declarative POD blocks to the end of the POD, allowing for end-of-document style POD",
+  "version" : "0.1.0",
+  "authors" : [
+    "Rob Hoelz"
+  ]
+}

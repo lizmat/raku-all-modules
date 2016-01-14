@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/hoelzro/p6-pod-eod.git
+	branch = master
+	commit = a5263e1c0651e9abe0b82331bc62cbcdc8e8288a
+	parent = accf38ebba583019c0467e74116a5ca66f4f7aed
+	cmdver = 0.2.3
