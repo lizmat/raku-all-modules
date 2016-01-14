@@ -1,5 +1,5 @@
 {
-    "source-url"  : "https://github.com/ShimmerFairy/grammar-parsefail.git",
+    "source-url"  : "git://github.com/ShimmerFairy/grammar-parsefail.git",
     "perl"        : "v6.0.0",
     "name"        : "Grammar::Parsefail",
     "api"         : "0",
