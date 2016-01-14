@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/p6-Astro-Sunrise.git
 	branch = master
-	commit = a6aebed35d3b57b0f8bbb977effb252db8dca66f
-	parent = 4220f5a64e7c37d0676166313325932df9030b42
-	cmdver = 0.2.2
+	commit = 10f748bfe733fbc5081b019533c83ed5b003176d
+	parent = abdd31a2dcef606e4623768983c76b05cbea395f
+	cmdver = 0.2.3
