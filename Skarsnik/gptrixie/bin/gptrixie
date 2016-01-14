@@ -1,0 +1,292 @@
+use XML;
+use GPT::Class;
+use GPT::DumbGenerator;
+#use OOGenerator;
+
+
+
+
+
+
+sub MAIN($header-file, Bool :$all, Str :$define-enum, Str :$ooc, Bool :$enums,
+         Bool :$functions, Bool :$structs, Bool :$externs, *@other) {
+
+  if $define-enum.defined and ! $define-enum.index(':').defined {
+      die "The define-enum option must be of the form enumname:pattern";
+  }
+  my AllTheThings $att = do-magic($header-file, @other);
+  note "Time to generate stuff\n\n";
+  
+  
+  #if $ooc {
+  #  oog-config($ooc);
+  #  oog-generate();
+  #}
+  if $define-enum {
+    my ($enum-name, $enum-pattern) := $define-enum.split(':');
+    my CEnum $e .= new(:name($enum-name), :id(-1));
+    for $att.files.kv -> $k, $v {
+      if $v.IO.basename ne 'gccxml_builtins.h' and $v.IO.basename !~~ /^std/ {
+        my $fh = open $v;
+        for $fh.lines -> $line {
+          if $line ~~ /^"#"\s*"define" \s+ ($enum-pattern\S*) \s+ (<-[\/]>+)/ {
+            my EnumValue $ev .= new;
+            $ev.name = $0;
+            $ev.init = $1;
+            $e.values.push($ev);
+          }
+        }
+      }
+    }
+    if $e.values.elems !== 0 {
+      $att.enums.push($e);
+    }    
+  }
+  dg-init($att);
+  if $enums or $all or $define-enum {
+    say '## Enumerations';
+    dg-generate-enums();
+  }
+  if $structs or $all {
+    say '## Structures';
+    my %h = dg-generate-structs();
+    my @sorted = %h.values.sort({$^a<obj>.start-line > $^b<obj>.start-line});
+    #say @sorted;
+    for @sorted.kv -> $i, $v {
+       if $v<obj> ~~ Struct {
+         if @sorted[$i + 1].defined and @sorted[$i + 1]<obj> ~~ CUnion and @sorted[$i + 1]<obj>.struct.defined {
+           say @sorted[$i + 1]<p6str>;
+         }
+       }
+       if !($v<obj> ~~ CUnion and $v<obj>.struct.defined) {
+         say $v<p6str>;
+       }
+    }
+  }
+  
+  if $functions or $all {
+    say '## Extras stuff';
+    dg-generate-extra();
+    say '## Functions';
+    my %h = dg-generate-functions();
+    for %h.values -> $v {
+       say $v;
+    }
+  }
+  
+  if $externs or $all {
+    say '## Externs';
+    dg-generate-externs();
+  }
+}
+
+
+
+
+
+
+sub do-magic($header, @other) {
+  my %types;
+  my %fields;
+  my %structs;
+  my @cfunctions;
+  my @cenums;
+  my %cunions;
+  my %files;
+  my @variables;
+  
+  my %times;
+
+  my $t = now;
+  note "Calling GCCXML : gccxml $header -fxml=plop.xml";
+  run "gccxml",  $header, "-fxml=plop.xml", @other;
+  %times<gccxml> = now - $t;
+  $t = now;
+  note "Parsing the XML file";
+  my $xml = from-xml-file('plop.xml');
+  %times<parse-xml> = now - $t;
+  $t = now;
+  note "Doing magic";
+  
+  
+  for $xml.elements() -> $elem {
+    given $elem.name {
+      when 'File' {
+        %files{$elem<id>} = $elem<name>;
+      }
+      # == Types
+      when 'FundamentalType' {
+        my FundamentalType $t .= new(:id($elem<id>));
+        $t.name = $elem<name>;
+        %types{$t.id} = $t;
+      }
+      when 'FunctionType' {
+         my FunctionType $t .= new(:id($elem<id>));
+         %types{$t.id} = $t;
+      }
+      when 'PointerType' {
+        my PointerType $t .= new(:id($elem<id>));
+        $t.ref-id = $elem<type>;
+        $t.ref-type = %types{$t.ref-id} if %types{$t.ref-id}:exists ;
+        %types{$t.id} = $t;
+      }
+      when 'CvQualifiedType' {
+        my QualifiedType $t .= new(:id($elem<id>));
+        $t.ref-id = $elem<type>;
+        $t.ref-type = %types{$t.ref-id} if %types{$t.ref-id}:exists ;
+        %types{$t.id} = $t;
+      }
+      when 'Typedef' {
+        my TypeDefType $t .= new(:id($elem<id>));
+        $t.ref-id = $elem<type>;
+#         say $elem<name>;
+#         say $t.ref-id;
+        $t.ref-type = %types{$t.ref-id} if %types{$t.ref-id}:exists;
+        $t.name = $elem<name>;
+        %types{$t.id} = $t;
+      }
+      when 'ArrayType' {
+        my $size = $elem<max>.subst('u', '') eq "0xffffffffffffffff" ?? '' !! $elem<max>.subst('u', '') + 1;   
+        my ArrayType $t .= new(:id($elem<id>), :size($size));
+        $t.ref-id = $elem<type>;
+        %types{$t.id} = $t;
+      }
+      # == 'Real' Stuff
+      when 'Field' {
+        my $pf = Field.new();
+        $pf.set-clocation($elem);
+        $pf.file = %files{$pf.file-id};
+        $pf.name = $elem<name>;
+        $pf.type-id = $elem<type>;
+        %fields{$elem<id>} = $pf;
+        %structs{$elem<context>}.fields.push($pf) if %structs{$elem<context>}.defined;
+        %cunions{$elem<context>}.members.push($pf) if %cunions{$elem<context>}.defined;
+      }
+      when 'Struct' {
+        my $s = Struct.new;
+        $s.name = $elem<name>;
+        $s.id = $elem<id>;
+        $s.set-clocation($elem);
+        $s.file = %files{$s.file-id};
+        %structs{$s.id} = $s;
+        my StructType $t .= new(:id($s.id), :name($s.name));
+        %types{$t.id} = $t;
+      }
+      when 'Union' {
+        my UnionType $t .= new(:id($elem<id>));
+        %types{$t.id} = $t;
+        my CUnion $u .= new(:id($elem<id>));
+        $u.set-clocation($elem);
+        $u.struct = %structs{$elem<context>} with $elem<context>;
+        %cunions{$u.id} = $u;
+      }
+      when 'Enumeration' {
+        my CEnum $enum .= new(:id($elem<id>), :name($elem<name>));
+        my EnumType $t .= new(:id($elem<id>), :name($elem<name>));
+        %types{$t.id} = $t;
+        $enum.set-clocation($elem);
+        $enum.file = %files{$enum.file-id};
+        for @($elem.elements()) -> $enumv {
+          my EnumValue $nv .= new(:name($enumv.attribs<name>), :init($enumv.attribs<init>));
+          $enum.values.push($nv);
+        }
+        @cenums.push($enum);
+      }
+      when 'Function' {
+        next if $elem<name> ~~ /^__/;
+        my Function $f .= new(:name($elem<name>), :id($elem<id>));
+        $f.returns-id = $elem<returns>;
+        $f.set-clocation($elem);
+        $f.file = %files{$f.file-id};
+        for @($elem.elements()) -> $param {
+          next if $param.name ne 'Argument';
+          my FunctionArgument $a .= new(:name($param.attribs<name>));
+          $a.set-clocation($param);
+          $a.file = %files{$a.file-id};
+          $a.type-id = $param<type>;
+          $f.arguments.push($a);
+        }
+        @cfunctions.push($f)
+      }
+      when 'Variable' {
+        if $elem<extern> == 1 {
+          my ExternVariable $e .= new(:id($elem<id>), :name($elem<name>));
+          $e.type-id = $elem<type>;
+          $e.set-clocation($elem);
+          #$e.file = %files($e.file-id);
+          @variables.push($e);
+        }
+      }
+    }
+  }
+  
+
+  #We probably can resolve every type now.
+  sub resolvetype {
+    my $change = True; #Do something like bubble sort, until we solve everytype, let's boucle
+    while ($change) {
+      $change = False;
+      for %types.kv -> $id, $t {
+	if $t ~~ IndirectType {
+	  unless $t.ref-type:defined {
+	    #say "Found an undef indirect id: "~ $t.ref-id;
+	    $t.ref-type = %types{$t.ref-id};
+	    $change = True;
+	  }
+	}
+      }
+    }
+  }
+  resolvetype();
+
+  for @cfunctions -> $f {
+    $f.returns = %types{$f.returns-id};
+    for $f.arguments -> $a {
+      $a.type = %types{$a.type-id};
+    }
+  }
+  for %fields.kv ->  $id, $f {
+    $f.type = %types{$f.type-id};
+    if $f.type ~~ UnionType {
+      %cunions{$f.type.id}.field = $f;
+    }
+  }
+  for %cunions.kv -> $k, $cu {
+    $cu.gen-name = $cu.struct.name ~ "_" ~ $cu.field.name ~ "_Union";
+  }
+  for @variables -> $v {
+    $v.type = %types{$v.type-id};
+    #say $v.name ~ ' - ' ~ $v.type;
+  }
+  
+  %times<magic> = now - $t;
+  note "Times -- gccxml: %times<gccxml> sec; xml parsing: %times<parse-xml> sec; magic: %times<magic>";
+   my $att = AllTheThings.new;
+   $att.files = %files;
+   $att.types = %types;
+   $att.functions = @cfunctions;
+   $att.enums = @cenums;
+   $att.structs = %structs;
+   $att.unions = %cunions;
+   $att.variables = @variables;
+   return $att;
+}
+
+# say "\n==CSTRUCT==";
+# for %struct.kv -> $k, $v {
+#   say "-$k : {$v.name}";
+#   for $v.fields -> $f {
+#     say "   {$f.type.Str} ({$f.type-id})  '{$f.name}'";
+#   }
+# }
+# 
+# say "==FUNCTIONS==";
+# 
+# for @cfunctions -> $f {
+#   my @tmp;
+#   for $f.arguments -> $a {
+#     @tmp.push($a.type ~ ' ' ~ $a.name);
+#   }
+#   say $f.returns ~ "\t\t" ~ $f.name ~ '(' ~ @tmp.join(', ') ~ ')';
+# }
+

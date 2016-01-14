@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Skarsnik/gptrixie.git
+	branch = master
+	commit = f45170a5be0c0d8a7b270c12324725b9e51e6d76
+	parent = 0492c2ff99fdf572fb1ff1f917c0a4c69f439c6e
+	cmdver = 0.2.3
