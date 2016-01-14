@@ -1,7 +1,7 @@
 =begin pod
 
 This is a direct port of the Perl 5 version and should be close to 100% similar
-other then some Perl 6 idioms. I didn't port the fastdistance routine since the
+other then some Perl 6 idioms. The fastdistance routine was not ported since the
 logic was buggy and the code to fix it made it the same speed as the regular
 distance routine.
 
@@ -22,7 +22,7 @@ Text::Levenshtein - An implementation of the Levenshtein edit distance
 
     print "@distances";
     # prints "2 0 3"
- 
+
 
 =head1 DESCRIPTION
 
@@ -37,7 +37,6 @@ L< http://www.merriampark.com/ld.htm >
 
 Copyright 2002 Dree Mistrut <F<dree@friul.it>>
 perl6 port: 2010 Steve Schulze aka thundergnat
-L< http://perlmonks.org/?node=thundergnat >
 
 This package is free software and is provided "as is" without express or implied
 warranty.  You can redistribute it and/or modify it under the same terms as Perl

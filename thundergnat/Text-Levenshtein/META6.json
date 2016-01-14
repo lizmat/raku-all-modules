@@ -1,7 +1,9 @@
 {
-    "name"        : "Text-Levenshtein",
-    "version"     : "*",
+    "perl"        : "v6.*",
+    "name"        : "Text::Levenshtein",
+    "version"     : "v0.2.0",
     "description" : "Calculate Levenshtein edit distance for strings. Perl 5 -> 6 port.",
+    "authors"     : [ "Steve Schulze (thundergnat)" ],
     "provides"    : {
         "Text::Levenshtein" : "lib/Text/Levenshtein.pm"
     },
@@ -9,4 +11,3 @@
     "source-type" : "git",
     "source-url"  : "git://github.com/thundergnat/Text-Levenshtein.git"
 }
-
