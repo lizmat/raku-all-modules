@@ -1,0 +1,10 @@
+{
+  "name" : "Slang::Roman",
+  "version" : "0.1",
+  "description" : "A slang to allow Roman numerals",
+  "depends" : [],
+  "provides" : {
+      "Slang::Roman": "lib/Slang/Roman.pm6"
+  },
+  "source-url" : "git://github.com/drforr/perl6-slang-roman.git"
+}

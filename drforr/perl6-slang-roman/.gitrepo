@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/drforr/perl6-slang-roman.git
+	branch = master
+	commit = f1055a270178d1787ddefe4ee8761ee7b5de4e90
+	parent = c05c2ccab17106ad5f3bd27c5ca7361461359d42
+	cmdver = 0.2.3
