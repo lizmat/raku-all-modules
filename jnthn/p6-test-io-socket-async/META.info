@@ -1,0 +1,12 @@
+{
+    "name" : "Test::IO::Socket::Async",
+    "version" : "0.1",
+    "description" : "A test double for IO::Socket::Async",
+    "depends" : [ "OO::Monitors" ],
+    "provides" :  {
+        "Test::IO::Socket::Async" : "lib/Test/IO/Socket/Async.pm6"
+    },
+    "repo-type" : "git",
+    "source-url" : "git://github.com/jnthn/p6-test-io-socket-async.git",
+    "author" : "Jonathan Worthington"
+}
