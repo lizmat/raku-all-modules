@@ -3,7 +3,7 @@ use Test;
 plan 135;
 
 
-BEGIN { @*INC.unshift: '../lib'; }
+use lib 'lib';
 
 use Time::Duration;
 ok 1;
