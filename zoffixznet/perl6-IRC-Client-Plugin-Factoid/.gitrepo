@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-IRC-Client-Plugin-Factoid.git
+	branch = master
+	commit = dc79db97f401ef258120b60deaae01905f3d7a97
+	parent = bb4ed31459ac472791477b05c04f5e97e3a6ba77
+	cmdver = 0.2.3
