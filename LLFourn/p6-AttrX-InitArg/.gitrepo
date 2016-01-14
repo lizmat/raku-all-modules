@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/LLFourn/p6-AttrX-InitArg.git
+	branch = master
+	commit = 64268d932070be2c6355a470318d243f71a8f0cb
+	parent = a41a22e9cd27797de359025596fe679cbda0f4f8
+	cmdver = 0.2.3
