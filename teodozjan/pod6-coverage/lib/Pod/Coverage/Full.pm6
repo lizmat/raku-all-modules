@@ -101,7 +101,7 @@ method parse($whoO) {
     # it looks like we dont need grepper
     }
     else {
-        die "What is " ~ $whoO.^name ~ " ?";
+        warn "What is " ~ $whoO.^name ~ " ?";
     }
 }
 
