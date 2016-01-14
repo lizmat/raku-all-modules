@@ -1,5 +1,6 @@
 #!/usr/bin/env perl6
 
+use lib 't';
 use Test;
 use CSS::Grammar::Test;
 use CSS::Specification::Build;
@@ -22,8 +23,6 @@ sub pipe($input-path, $code, $output-path?) {
     return $output-path // $output;
 }
 
-use lib 't';
-
 my $base-name = 'CSS::Aural::Spec';
 my $grammar-name = $base-name ~ '::Grammar';
 my $actions-name = $base-name ~ '::Actions';
@@ -37,25 +36,27 @@ is-deeply [@summary.grep({ .<box> })], [{:box, :!inherit, :name<border-color>, :
 pipe( $input-path, {
     CSS::Specification::Build::generate( 'grammar', $grammar-name );
 }, 't/CSS/Aural/Spec/Grammar.pm');
-lives-ok {EVAL "use $grammar-name"}, 'grammar compilation';
+lives-ok {require ::($grammar-name)}, "$grammar-name compilation";
 
 pipe( $input-path, {
     CSS::Specification::Build::generate( 'actions', $actions-name );
 }, 't/CSS/Aural/Spec/Actions.pm');
-lives-ok {EVAL "use $actions-name"}, 'actions compilation';
+lives-ok {require ::($actions-name)}, "$actions-name compilation";
 
 my $aural-interface-code = pipe( $input-path, {
     CSS::Specification::Build::generate( 'interface', $interface-name );
 }, 't/CSS/Aural/Spec/Interface.pm');
-lives-ok {EVAL "use $interface-name"}, 'interface compilation';
+lives-ok {require ::($interface-name)}, "$interface-name compilation";
 
-dies-ok {EVAL 'use CSS::Aural::BadGrammar'}, 'grammar composition, unimplemented interface - dies';
+dies-ok {require ::("CSS::Aural::BadGrammar")}, 'grammar composition, unimplemented interface - dies';
 
 my $aural-class;
-lives-ok {EVAL "use CSS::Aural::Grammar; \$aural-class = CSS::Aural::Grammar"}, 'grammar composition - lives';
+lives-ok {require ::("CSS::Aural::Grammar"); $aural-class = ::("CSS::Aural::Grammar")}, 'grammar composition - lives';
+isa-ok $aural-class, ::("CSS::Aural::Grammar");
 
 my $actions;
-lives-ok {EVAL "use CSS::Aural::Actions; \$actions = CSS::Aural::Actions.new"}, 'class composition - lives';
+lives-ok {require ::("CSS::Aural::Actions"); $actions = ::("CSS::Aural::Actions").new}, 'class composition - lives';
+ok $actions.defined, '::("CSS::Aural::Actions").new';
 
 for ('.aural-test { stress: 42; speech-rate: fast; volume: inherit; voice-family: female; }' =>
      {ast => { :stylesheet[

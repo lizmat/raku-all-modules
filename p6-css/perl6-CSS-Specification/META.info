@@ -1,4 +1,4 @@
-{
+{   "perl"        : "v6",
     "name"        : "CSS::Specification",
     "version"     : "0.01.1",
     "description" : "CSS Property definition grammar and tools",
