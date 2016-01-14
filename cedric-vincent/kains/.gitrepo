@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cedric-vincent/kains.git
 	branch = master
-	commit = 6a93dfa5e08193a1375d1287570c5e210fc3b1e5
-	parent = e326eeefb9d3b81fdf57100f6582f32a633e5434
-	cmdver = 0.2.2
+	commit = d7ae6a4e0563217fa03efa3aa6add329e911760c
+	parent = 4300cea5a96ad87d39843e7e68fab1481371e5b3
+	cmdver = 0.2.3
