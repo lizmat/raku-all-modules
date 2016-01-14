@@ -239,17 +239,6 @@ sub do-footnotes returns Str {
          ~ qq[</ol></aside>\n];
 }
 
-sub twine2text($twine) returns Str {
-    Debug { note colored("twine2text called for ", "bold") ~ $twine.perl };
-    return '' unless $twine.elems;
-    my $r = $twine[0];
-    for $twine[1..*] -> $f, $s {
-        $r ~= twine2text($f.contents);
-        $r ~= $s;
-    }
-    return $r;
-}
-
 #| block level or below
 proto sub node2html(|) returns Str is export {*}
 multi sub node2html($node) {
@@ -484,7 +473,7 @@ multi sub node2inline(Pod::FormattingCode $node) returns Str {
         # Links
         when 'L' {
             my $text = node2inline($node.contents);
-            my $url  = $node.meta[0] // node2text($node.contents);
+            my $url  = $node.meta[0] || node2text($node.contents);
             if $text ~~ /^'#'/ {
                 # if we have an internal-only link, strip the # from the text.
                 $text = $/.postmatch
@@ -575,7 +564,7 @@ multi sub node2rawtext($node) returns Str {
 
 multi sub node2rawtext(Pod::Block $node) returns Str {
     Debug { note colored("node2rawtext called for ", "bold") ~ $node.gist };
-    return twine2text($node.contents);
+    return node2rawtext($node.contents);
 }
 
 multi sub node2rawtext(Positional $node) returns Str {
