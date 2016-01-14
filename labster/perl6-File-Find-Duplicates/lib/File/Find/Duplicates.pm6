@@ -9,9 +9,9 @@ sub find_duplicates (:@dirs!, :$ignore_empty = False, :$recursive = False, :$met
     my (@files, @duplicates);
     if $recursive {
         use File::Find;
-        @files = map -> $d {find( dir => $d ).flat}, @dirs.flat
+        @files = map -> $d {find( dir => $d ).Slip}, @dirs.flat;
     }
-    else { @files = @dirs».IO».dir.flat }
+    else { @files = @dirs».IO».dir».Slip.flat }
 
     my %filesizes;
     for @files.unique -> $f { $f.f and push %filesizes, $f.s=>$f }
@@ -19,14 +19,14 @@ sub find_duplicates (:@dirs!, :$ignore_empty = False, :$recursive = False, :$met
       # since empty files are obviously equivalent
 
     if ($method eq 'compare') {
-        %filesizes
+        %filesizes.pairs
 	    ==> grep( { .value ~~ Array } )
 	    ==> map( { .value } )
 	    ==> map( { compare_multiple_files($_.Array) } )
 	    ==> @duplicates ;
     }
     else {
-        %filesizes 
+        %filesizes.pairs
             ==> grep( { .value ~~ Array } )
             ==> map(  {  computeMD5($_) } )
             ==> grep( { .value ~~ Array } )
@@ -54,7 +54,7 @@ sub computeMD5 (Pair $size_files) {
 
     for @files -> $f { %checksums.push( md5( $f.IO.slurp(:bin) ).list».fmt("%02x").join => $f)}
 
-    return %checksums;
+    return %checksums.pairs.Slip;
 
 }
 
