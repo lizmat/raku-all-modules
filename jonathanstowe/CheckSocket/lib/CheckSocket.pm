@@ -39,7 +39,7 @@ service is present to test against.
 
 =end pod
 
-module CheckSocket:ver<v0.0.1>:auth<github:jonathanstowe> {
+module CheckSocket:ver<v0.0.2>:auth<github:jonathanstowe> {
     sub check-socket(Int $port, Str $host = "localhost") returns Bool is export {
         my Bool $rc = True;
         try {

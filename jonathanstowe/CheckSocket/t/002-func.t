@@ -1,7 +1,7 @@
 use v6;
-use lib 'lib';
 use Test;
 
+use lib 'lib';
 plan 6;
 
 use CheckSocket;
