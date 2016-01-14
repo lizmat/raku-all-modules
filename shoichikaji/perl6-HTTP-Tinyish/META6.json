@@ -2,6 +2,7 @@
   "name" : "HTTP::Tinyish",
   "source-url" : "git://github.com/shoichikaji/perl6-HTTP-Tinyish.git",
   "perl" : "v6",
+  "resources" : [ ],
   "build-depends" : [ ],
   "provides" : {
     "HTTP::Tinyish::Curl" : "lib/HTTP/Tinyish/Curl.pm6",
