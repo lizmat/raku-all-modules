@@ -1,5 +1,7 @@
 unit class SP6;
 
+use MONKEY-SEE-NO-EVAL;
+
 has $.templ_dir = '.';
 has $.debug = 0;
 
