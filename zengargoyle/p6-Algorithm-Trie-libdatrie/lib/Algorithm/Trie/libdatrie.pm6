@@ -119,14 +119,18 @@ or from a TrieState via C<TrieIterator.new($trie-state)>.
 
 =end pod
 
-unit class Algorithm::Trie::libdatrie;
+unit class Algorithm::Trie::libdatrie:ver<v0.2>:auth<github:zengargoyle>;
 use NativeCall;
 use LibraryMake;
-use Find::Bundled;
 
 sub library {
   my $so = get-vars('')<SO>;
-  return Find::Bundled.find("libdatrie$so", "", :throw);
+  my $libname = "lib/libdatrie$so";
+  my $lib = %?RESOURCES{$libname}.Str;
+  if not $lib.defined {
+    die "Unable to find library";
+  }
+  $lib;
 }
 
 # for freeing returned key from TrieIterator.key
