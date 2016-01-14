@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/leont/yamlish.git
 	branch = master
-	commit = 649f6be5fb56062d9c7a6b51cafe8852fb30fc96
-	parent = e9c453bac9de1bc04730ab67e2867fa2b38e2407
-	cmdver = 0.2.2
+	commit = 6ac468655527d35bed5b125c26c1c7d1c2a693be
+	parent = 812919aa2d9e47dd4e0dab1859be9d41993a519e
+	cmdver = 0.2.3
