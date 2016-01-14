@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/p6-HTTP-Headers.git
 	branch = master
-	commit = 06e4150de3f53630554e102185991b72d468d034
-	parent = a7bd83cfcfd0cccf5ab827842ecbf4d1adbe50cf
-	cmdver = 0.2.2
+	commit = 8f087c23c17ce84c843ea5d4553c000bb8271301
+	parent = c01245d00ec1971a74b17ef17d2625c933098901
+	cmdver = 0.2.3
