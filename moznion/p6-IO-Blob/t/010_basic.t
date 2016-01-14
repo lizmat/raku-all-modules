@@ -169,15 +169,18 @@ subtest {
     is $io.read(TEXT.chars), TEXT.encode;
     is $io.read(TEXT.chars), "".encode;
 
-    $io.seek(0, 0);
+    $io.seek(0);
     is $io.read(TEXT.chars), TEXT.encode;
 
-    $io.seek(0, 0);
-    $io.seek(6, 1);
+    $io.seek(0, SeekFromBeginning);
+    is $io.read(TEXT.chars), TEXT.encode;
+
+    $io.seek(0, SeekFromBeginning);
+    $io.seek(6, SeekFromCurrent);
     is $io.read(10), "line2\nline".encode;
 
     is $io.eof(), False;
-    $io.seek(0, 2);
+    $io.seek(0, SeekFromEnd);
     is $io.eof(), True;
 }, 'Test for seek() and read()';
 
@@ -189,7 +192,7 @@ subtest {
     # is $io.ins(), 5;
     is $io.eof(), True;
 
-    $io.seek(0, 0);
+    $io.seek(0, SeekFromBeginning);
     is $io.read(TEXT.chars + 12), "line1\nline2\nline3\nline4line5line6".encode;
     is $io.data(), "line1\nline2\nline3\nline4line5line6".encode;
 }, 'Test for print() and seek()';
@@ -202,7 +205,7 @@ subtest {
     # is $io.ins(), 5;
     is $io.eof(), True;
 
-    $io.seek(0, 0);
+    $io.seek(0, SeekFromBeginning);
     is $io.read(TEXT.chars + 12), "line1\nline2\nline3\nline4line5".encode;
 }, 'Test for write() and seek()';
 
@@ -213,7 +216,7 @@ subtest {
         is $io.slurp-rest(bin => True), "line1\nline2\nline3\nline4".encode;
         is $io.slurp-rest(bin => True), Buf.new();
 
-        $io.seek(6, 0);
+        $io.seek(6, SeekFromBeginning);
         is $io.slurp-rest(bin => True), "line2\nline3\nline4".encode;
     }, 'bin';
 
@@ -223,7 +226,7 @@ subtest {
         is $io.slurp-rest(enc => 'utf8'), "line1\nline2\nline3\nline4";
         is $io.slurp-rest(enc => 'utf8'), "";
 
-        $io.seek(6, 0);
+        $io.seek(6, SeekFromBeginning);
         is $io.slurp-rest(enc => 'utf8'), "line2\nline3\nline4";
     }, 'with encode';
 
@@ -233,7 +236,7 @@ subtest {
         is $io.slurp-rest(), "line1\nline2\nline3\nline4";
         is $io.slurp-rest(), "";
 
-        $io.seek(6, 0);
+        $io.seek(6, SeekFromBeginning);
         is $io.slurp-rest(), "line2\nline3\nline4";
     }, 'with out encode';
 }, 'Test for slurp-rest';

@@ -165,15 +165,14 @@ method write(IO::Blob:D: Blob:D $buf) returns Bool {
     return True;
 }
 
-method seek(IO::Blob:D: int $offset, int $whence) returns Bool {
+method seek(IO::Blob:D: int $offset, SeekType:D $whence = SeekFromBeginning) returns Bool {
     my $eofpos = $.data.elems;
 
     # Seek:
     given $whence {
-        when 0 { $!pos = $offset } # SEEK_SET
-        when 1 { $!pos += $offset } # SEEK_CUR
-        when 2 { $!pos = $eofpos + $offset } #SEEK_END
-        default { die "bad seek whence ($whence)" }
+        when SeekFromBeginning { $!pos = $offset }
+        when SeekFromCurrent   { $!pos += $offset }
+        when SeekFromEnd       { $!pos = $eofpos + $offset }
     }
 
     # Fixup
@@ -346,19 +345,19 @@ Binary reading; reads and returns C<$bytes> bytes from the Blob.
 
 Binary writing; writes $buf to the Blob.
 
-=head2 seek(IO::Blob:D: int $offset, int $whence)
+=head2 seek(IO::Blob:D: int $offset, SeekType:D $whence = SeekFromBeginning)
 
 Move the pointer (that is the position at which any subsequent read or write operations will begin,) to the byte position specified by C<$offset> relative to the location specified by C<$whence> which may be one of:
 
-=item 0
+=item SeekFromBeginning
 
 The beginning of the file.
 
-=item 1
+=item SeekFromCurrent
 
 The current position in the file.
 
-=item 2
+=item SeekFromEnd
 
 The end of the file.
 
