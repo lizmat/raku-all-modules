@@ -1,0 +1,12 @@
+{
+    "name" : "Concurrent::Iterator",
+    "version" : "1.0",
+    "description" : "Enables safe concurrent consumption of Iterable values",
+    "depends" : [ ],
+    "provides" :  {
+        "Concurrent::Iterator" : "lib/Concurrent/Iterator.pm6"
+    },
+    "repo-type" : "git",
+    "source-url" : "git://github.com/jnthn/p6-concurrent-iterator.git",
+    "author" : "Jonathan Worthington"
+}
