@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/viklund/november.git
 	branch = master
-	commit = 139a445887e8c250efe1dceec5a793f318c5fcec
-	parent = 1aaf141d87fccd68c7fe87a4daf2c7e191ba9ac2
-	cmdver = 0.2.2
+	commit = 9e44a7357b2637a4f36a62cd9655ad8d919c031e
+	parent = 77bafd18f95374afb6db4beed2d1f3c504b58017
+	cmdver = 0.2.3
