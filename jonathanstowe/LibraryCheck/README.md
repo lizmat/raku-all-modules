@@ -17,9 +17,15 @@ are possible.
 
      use LibraryCheck;
 
-     if !library-exists('libsndfile') {
-         die "Cannot load libsndfile";
+     if !library-exists('sndfile', v1) {
+         die "Cannot load sndfile";
      }
+
+The case above can be more simply written as:
+
+     library-check('sndfile',v1, :exception);
+
+Which will throw an ```X::NoLibrary``` exception rather than return False.
 
 The implementation is somewhat of a hack currently and definitely shouldn't
 be taken as an example of nice Perl 6 code.
