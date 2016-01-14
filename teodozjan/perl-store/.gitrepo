@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/teodozjan/perl-store.git
 	branch = master
-	commit = 36f11e86e652a11d8d1076e94ddb13b2115b504e
-	parent = 6377799a934f14651570a64841b82af28436c035
-	cmdver = 0.2.2
+	commit = 4c9194498756eccd1be9aecb104245128d82c8f8
+	parent = c88e2ba4ffd3712505d234ee525e9be543ad8fce
+	cmdver = 0.2.3

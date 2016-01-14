@@ -1,4 +1,5 @@
 use v6;
+use MONKEY-SEE-NO-EVAL;
 
 unit role FileStore;
 
