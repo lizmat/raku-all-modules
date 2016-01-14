@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/hoelzro/p6-native-resources.git
+	branch = master
+	commit = b05fd025d5a3541e88b5acc266446d3814d79cc0
+	parent = 7baa392cd9077ca52cd6cfdbd58d593eef25a0cf
+	cmdver = 0.2.3
