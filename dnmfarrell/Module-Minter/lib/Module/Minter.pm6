@@ -61,7 +61,7 @@ module Module::Minter
     sub make-main-module (Str:D $parent_dir, Str:D $module_name)
     {
         my $module_filename = $module_name.split(/\:\:/)[*-1];
-        my $full_path = $parent_dir ~ '/' ~ $module_filename ~ '.pm';
+        my $full_path = $parent_dir ~ '/' ~ $module_filename ~ '.pm6';
         my $fh = $full_path.IO.open(:w);
 
         my $file_contents = qq:to/END/;
@@ -108,7 +108,7 @@ module Module::Minter
             "source-url" : "",
             "depends" : [ ],
             "provides" : \{
-              "$module_name" : "$main_module_path",
+              "$module_name" : "$main_module_path"
             \},
         \}
         END
@@ -129,5 +129,6 @@ module Module::Minter
 
         return $full_path;
     }
-
 }
+
+# vim: set ft=perl6

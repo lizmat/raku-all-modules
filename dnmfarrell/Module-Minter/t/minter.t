@@ -1,3 +1,4 @@
+#!/usr/bin/env perl6
 use Test;
 use lib 'lib';
 use File::Temp;
@@ -10,13 +11,13 @@ my $tmp_dir = tempdir;
 ok my $root_filepath = mint-new-module("$tmp_dir/Super::Module::Mighty", 'David Farrell', 'FreeBSD'), "Mint new module: Super::Module::Mighty";
 ok $root_filepath.IO ~~ :e, 'Root module directory exists';
 ok $root_filepath.IO ~~ :d, 'Root module directory is a dir';
-ok "$root_filepath/lib/Super/Module/Mighty.pm".IO ~~ :e, 'Main .pm file was created';
+ok "$root_filepath/lib/Super/Module/Mighty.pm6".IO ~~ :e, 'Main .pm6 file was created';
 ok "$root_filepath/t/Mighty.t".IO ~~ :e, 'test file was created';
 ok "$root_filepath/LICENSE".IO ~~ :e, 'LICENSE file was created';
 ok "$root_filepath/META.info".IO ~~ :e, 'META file was created';
 
 # illegal module names
-dies_ok { mint-new-module('1::No::Leading:Numeric') }, 'dies on leading numeric';
+dies-ok { mint-new-module('1::No::Leading:Numeric') }, 'dies on leading numeric';
 
 # grammar - illegal
 nok Module::Minter::Legal-Module-Name.parse('1Leading::Numeric'), 'illegal leading number';
@@ -38,4 +39,4 @@ ok Module::Minter::Legal-Module-Name.parse('Perl6::Alpha::Numer1c'), 'Perl6::Alp
 my $matches = Module::Minter::Legal-Module-Name.parse('Perl6::Alpha::Numer1c');
 say $matches<identifier>[0].Str;
 
-
+# vim: set ft=perl6

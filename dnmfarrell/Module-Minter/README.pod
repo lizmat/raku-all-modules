@@ -16,6 +16,10 @@ Or use a different directory and the FreeBSD license:
 
 David Farrell L<PerlTricks.com|http://perltricks.com>
 
+=head2 SEE ALSO
+
+L<Software::License>
+
 =head2 LICENSE
 
 FreeBSD, see LICENSE
