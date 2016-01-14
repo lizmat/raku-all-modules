@@ -1,4 +1,6 @@
 use v6;
+use experimental :pack;
+use MONKEY-SEE-NO-EVAL;
 
 grammar Apache::LogFormat::Grammar {
     token TOP {

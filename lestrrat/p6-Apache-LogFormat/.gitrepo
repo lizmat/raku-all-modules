@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/lestrrat/p6-Apache-LogFormat.git
 	branch = master
-	commit = 96d57aa16110cd5639229f517588bad56a226c7f
-	parent = 8894c7f913693d662a494cd199f1d4289a782229
+	commit = a7eb951228604477fd73636f74a6473b79c6dde2
+	parent = 13383cd09220622c85e42383b7349d29c538695d
 	cmdver = 0.2.3
