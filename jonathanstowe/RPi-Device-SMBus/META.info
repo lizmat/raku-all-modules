@@ -1,0 +1,33 @@
+{
+	"meta6" : "0",
+   "tags" : [
+      "RPi",
+      "Rapberry Pi",
+      "i2c",
+      "SMBus"
+   ],
+   "provides" : {
+      "RPi::Device::SMBus" : "lib/RPi/Device/SMBus.pm"
+   },
+   "test-depends" : [
+      "Test"
+   ],
+   "support" : {
+      "source" : "git://github.com/jonathanstowe/RPi-Device-SMBus.git"
+   },
+   "perl" : "6",
+   "build-depends" : [ "LibraryMake" ],
+   "auth" : "github:jonathanstowe",
+   "source-url" : "git://github.com/jonathanstowe/RPi-Device-SMBus.git",
+   "depends" : [
+      "NativeHelpers::Array"
+   ],
+   "name" : "RPi::Device::SMBus",
+   "authors" : [
+      "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+   ],
+	"resources" : [ "libraries/i2chelper" ],
+   "version" : "0.0.1",
+   "license" : "Artistic",
+   "description" : "SMBus/i2c interface on the Raspberry Pi"
+}

@@ -1,0 +1,7 @@
+all: %DESTDIR%/%i2chelper%
+
+%DESTDIR%/%i2chelper%: i2chelper%O%
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/%i2chelper% i2chelper%O%
+
+i2chelper%O%: i2chelper.c
+	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT% i2chelper%O% i2chelper.c
