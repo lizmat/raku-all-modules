@@ -1,7 +1,7 @@
 {
     "name"           : "Inline::Perl5",
-    "version"       : "*",
-    "perl"          : "v6.0.0",
+    "version"       : "0.3",
+    "perl"          : "v6.c",
     "author"        : "github:niner",
     "authors"       : [ "Stefan Seifert" ],
     "description"   : "Use Perl 5 code in a Perl 6 program",
@@ -12,7 +12,7 @@
         "Inline::Perl5" : "lib/Inline/Perl5.pm6"
     },
     "resources"      : [
-        "p5helper.so"
+        "libraries/p5helper"
     ],
     "repo-type"     : "git",
     "source-url"    : "git://github.com/niner/Inline-Perl5.git",

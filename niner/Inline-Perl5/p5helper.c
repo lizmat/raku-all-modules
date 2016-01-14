@@ -21,6 +21,14 @@ EXTERN_C void xs_init(pTHX) {
     newXS("v6::set_subname", p5_set_subname, file);
 }
 
+size_t p5_size_of_iv() {
+    return IVSIZE;
+}
+
+size_t p5_size_of_nv() {
+    return NVSIZE;
+}
+
 void p5_inline_perl6_xs_init(PerlInterpreter *my_perl) {
     char *file = __FILE__;
     newXS("Perl6::Object::call_method", p5_call_p6_method, file);
@@ -37,8 +45,15 @@ PerlInterpreter *p5_init_perl() {
     char *embedding[] = { "", "-e", "0" };
     int argc = 0;
     char **argv;
-    if (!inited++)
+    if (inited) {
+#ifndef MULTIPLICITY
+        return NULL;
+#endif
+    }
+    else {
+        inited = 1;
         PERL_SYS_INIT(&argc, &argv);
+    }
 
     interpreters++;
 
@@ -97,8 +112,8 @@ IV p5_sv_iv(PerlInterpreter *my_perl, SV* sv) {
     return SvIV(sv);
 }
 
-double p5_sv_nv(PerlInterpreter *my_perl, SV* sv) {
-    return (double)SvNV(sv);
+NV p5_sv_nv(PerlInterpreter *my_perl, SV* sv) {
+    return SvNV(sv);
 }
 
 SV *p5_sv_rv(PerlInterpreter *my_perl, SV* sv) {
@@ -165,8 +180,8 @@ SV *p5_int_to_sv(PerlInterpreter *my_perl, IV value) {
     return newSViv(value);
 }
 
-SV *p5_float_to_sv(PerlInterpreter *my_perl, double value) {
-    return newSVnv((NV)value);
+SV *p5_float_to_sv(PerlInterpreter *my_perl, NV value) {
+    return newSVnv(value);
 }
 
 SV *p5_str_to_sv(PerlInterpreter *my_perl, STRLEN len, char* value) {
