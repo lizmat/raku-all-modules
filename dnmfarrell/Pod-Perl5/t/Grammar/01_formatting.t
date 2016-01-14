@@ -5,7 +5,7 @@ use Pod::Perl5::Grammar;
 
 plan 11;
 
-ok my $match = Pod::Perl5::Grammar.parsefile('test-corpus/formatting_codes.pod'),
+ok my $match = Pod::Perl5::Grammar.parsefile('t/test-corpus/formatting_codes.pod'),
   'parse formatting codes';
 
 is $match<pod-section>[0]<paragraph>.elems, 8, 'found 8 paragraphs';

@@ -5,7 +5,7 @@ use Pod::Perl5::Grammar;
 
 plan 9;
 
-ok my $match = Pod::Perl5::Grammar.parsefile('test-corpus/readme_example.pod'),
+ok my $match = Pod::Perl5::Grammar.parsefile('t/test-corpus/readme_example.pod'),
   'parse readme example';
 
 # basic counts

@@ -5,7 +5,7 @@ use Pod::Perl5::Grammar;
 
 plan 6;
 
-ok my $match = Pod::Perl5::Grammar.parsefile('test-corpus/begin_end.pod'), 'parse begin/end command';
+ok my $match = Pod::Perl5::Grammar.parsefile('t/test-corpus/begin_end.pod'), 'parse begin/end command';
 is $match<pod-section>[0]<command-block>.elems, 2, 'Parser extracted two begin/end pairs';
 
 # block 1

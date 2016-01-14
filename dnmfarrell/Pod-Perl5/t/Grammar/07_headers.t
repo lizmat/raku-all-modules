@@ -5,7 +5,7 @@ use Pod::Perl5::Grammar;
 
 plan 6;
 
-ok my $match = Pod::Perl5::Grammar.parsefile('test-corpus/headers.pod'), 'parse headers';
+ok my $match = Pod::Perl5::Grammar.parsefile('t/test-corpus/headers.pod'), 'parse headers';
 
 is $match<pod-section>[0]<command-block>.elems, 4, 'Parser extracted four comamnd blocks';
 is $match<pod-section>[0]<command-block>[0]<singleline-text>.Str, "heading 1", 'Parser extracted header 1';

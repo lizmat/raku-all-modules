@@ -5,7 +5,7 @@ use Pod::Perl5::Grammar;
 
 plan 17;
 
-ok my $match = Pod::Perl5::Grammar.parsefile('test-corpus/over_back.pod'), 'parse over_back';
+ok my $match = Pod::Perl5::Grammar.parsefile('t/test-corpus/over_back.pod'), 'parse over_back';
 is $match<pod-section>[0]<command-block>.elems, 3, 'Parser extracted three over/back pairs';
 
 # tests for list 1

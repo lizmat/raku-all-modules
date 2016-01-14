@@ -22,8 +22,8 @@ This is a Perl 6 module for parsing Perl 5 pod. The grammar for this module live
   my $html_from_string = Pod::Perl5::string-to-html($pod);
   my $html_from_file   = Pod::Perl5::file-to-html('/some.pod');
 
-  my $html_from_string = Pod::Perl5::string-to-markdown($pod);
-  my $html_from_file   = Pod::Perl5::file-to-markdown('/some.pod');
+  my $markdown_from_string = Pod::Perl5::string-to-markdown($pod);
+  my $markdown_from_file   = Pod::Perl5::file-to-markdown('/some.pod');
 
 =head2 INSTALL
 

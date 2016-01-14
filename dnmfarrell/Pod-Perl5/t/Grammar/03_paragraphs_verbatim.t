@@ -5,7 +5,7 @@ use Pod::Perl5::Grammar;
 
 plan 4;
 
-ok my $match = Pod::Perl5::Grammar.parsefile('test-corpus/paragraphs_advanced.pod'), 'parse paragraphs with verbatim example';
+ok my $match = Pod::Perl5::Grammar.parsefile('t/test-corpus/paragraphs_advanced.pod'), 'parse paragraphs with verbatim example';
 
 is $match<pod-section>[0]<paragraph>.elems, 2,
   'Parser extracted two paragraphs';

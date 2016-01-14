@@ -5,7 +5,7 @@ use Pod::Perl5::Grammar;
 
 plan 5;
 
-ok my $match = Pod::Perl5::Grammar.parsefile('test-corpus/paragraphs_simple.pod'), 'parse paragraphs';
+ok my $match = Pod::Perl5::Grammar.parsefile('t/test-corpus/paragraphs_simple.pod'), 'parse paragraphs';
 
 is $match<pod-section>[0]<paragraph>.elems, 3, 'Parser extracted three paragraphs';
 
