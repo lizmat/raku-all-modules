@@ -5,10 +5,10 @@ unit module Digest::xxHash;
 # xxHash C wrapper functions (/usr/lib/libxxhash.so) {{{
 
 # unsigned int XXH32 (const void* input, size_t length, unsigned seed);
-sub XXH32(CArray[int8], int32, uint) returns uint is native('libxxhash') {*}
+sub XXH32(CArray[int8], size_t, uint32) returns uint32 is native('xxhash', v0.42.0) {*}
 
 # unsigned long long XXH64 (const void* input, size_t length, unsigned long long seed);
-sub XXH64(CArray[int8], int64, ulonglong) returns ulonglong is native('libxxhash') {*}
+sub XXH64(CArray[int8], size_t, ulonglong) returns ulonglong is native('xxhash', v0.42.0) {*}
 
 # end xxHash C wrapper functions (/usr/lib/libxxhash.so) }}}
 
