@@ -6,7 +6,30 @@ use File::Directory::Tree;
 my @filechars = flat('a'..'z', 'A'..'Z', 0..9, '_');
 constant MAX-RETRIES = 10;
 
-my @created-files;
+my %roster = ();
+my Lock $roster-lock;
+BEGIN { # Because --doc runs END
+    $roster-lock = Lock.new;
+}
+
+my role File::Temp::AutoUnlink {
+    submethod DESTROY {
+        given self.path {
+            if $_.path.IO ~~ :f { # Workaround, should just be $_ ~~ :f
+                my $did;
+                $roster-lock.protect: {
+                    $did = %roster{$_.path}:delete;
+                    $_.unlink if $did;
+                };
+                unless $did {
+                    # Something (probably END) already unlinked it
+                    # We could have a debug/testing flag do something here.
+                }
+            }
+            # Directories will not get here yet
+        }
+    }
+}
 
 sub make-temp($type, $template, $tempdir, $prefix, $suffix, $unlink) {
     my $count = MAX-RETRIES;
@@ -22,12 +45,16 @@ sub make-temp($type, $template, $tempdir, $prefix, $suffix, $unlink) {
         else {
             try { CATCH { next }; mkdir($name) };
         }
-        push @created-files, [ $name, $fh ] if $unlink;
+        if $unlink {
+            $roster-lock.protect: {
+                %roster{$name} = True;
+            };
+            $fh &&= $fh does File::Temp::AutoUnlink;
+        }
         return $type eq 'file' ?? ($name,$fh) !! $name;
     }
     return ();
 }
-
 
 sub tempfile (
     $tmpl? = '*' x 10,          # positional template
@@ -52,18 +79,20 @@ our sub tempdir (
 }
 
 END {
-    for @created-files -> [$fn,$fh] {
-        $fh.close if $fh;
-        next unless $fn.IO ~~ :e; # maybe warn here
-
-        if $fn.IO ~~ :f
-        {
-            unlink($fn);
+    $roster-lock.protect: {
+        # Workaround -- directly using %roster.keys not reliable under stress.
+        my @rk = %roster.keys;
+        for @rk -> $fn {
+            if $fn.IO ~~ :f
+            {
+                unlink($fn);
+            }
+            elsif $fn.IO ~~ :d
+            {
+                rmtree($fn);
+            }
         }
-        elsif $fn.IO ~~ :d
-        {
-            rmtree($fn);
-        }
+        %roster = ();
     }
 }
 
