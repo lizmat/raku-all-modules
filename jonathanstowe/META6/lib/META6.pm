@@ -100,12 +100,13 @@ use JSON::Class;
 import JSON::Marshal;
 import JSON::Unmarshal;
 
-class META6:ver<v0.0.2>:auth<github:jonathanstowe> does JSON::Class {
+class META6:ver<0.0.4>:auth<github:jonathanstowe> does JSON::Class {
 
     enum Optionality <Mandatory Optional>;
 
     role MetaAttribute {
         has Optionality $.optionality is rw;
+        has Version $.spec-version is rw = Version.new(0);
     }
 
     role MetaAttribute::Specfication does MetaAttribute {
@@ -117,11 +118,23 @@ class META6:ver<v0.0.2>:auth<github:jonathanstowe> does JSON::Class {
     }
 
     multi sub trait_mod:<is> (Attribute $a, Optionality :$specification!) {
-        $a does MetaAttribute::Specfication;
-        $a.optionality = $specification // Optional;
+        set-specification($a, $specification);
     }
 
-    multi sub trait_mod:<is> (Attribute $a, :$customary ) {
+
+    multi sub trait_mod:<is> (Attribute $a, :@specification! (Optionality $optionality, Version $spec-version)) {
+        set-specification($a, $optionality, $spec-version);
+    }
+
+    my sub set-specification(Attribute $a, Optionality $optionality = Optional, Version $spec-version = Version.new(0)) {
+        $a does MetaAttribute::Specfication;
+        $a.optionality = $optionality // Optional;
+        $a.spec-version = $spec-version // Version.new(0);
+        $a;
+    }
+
+
+    multi sub trait_mod:<is> (Attribute $a, :$customary! ) {
         $a does MetaAttribute::Customary;
         $a.optionality = Optional;
         $a.where = $customary ~~ Str ?? $customary !! 'unknown';
@@ -140,7 +153,10 @@ class META6:ver<v0.0.2>:auth<github:jonathanstowe> does JSON::Class {
         self.new(:$json);
     }
 
+    my Bool $seen-vee = False;
+
     multi method new(Str:D :$json!) {
+        $seen-vee = False;
         self.from-json($json);
     }
 
@@ -158,16 +174,20 @@ class META6:ver<v0.0.2>:auth<github:jonathanstowe> does JSON::Class {
         my $ver = Version.new($v);
         if $ver.parts[0] eq 'v' {
             $ver.parts.shift;
+            warn 'prefix "v" seen in version string, this may not be what you want' unless $seen-vee;
+            $seen-vee = True;
         }
         $ver;
     }
 
 
+    has Version     $.meta6          is rw is marshalled-by('Str') is unmarshalled-by(&unmarsh-version) is specification(Optional) = Version.new(0);
     has Version     $.perl          is rw is marshalled-by('Str') is unmarshalled-by(&unmarsh-version) is specification(Mandatory);
     has Str         $.name          is rw is specification(Mandatory);
     has Version     $.version       is rw is marshalled-by('Str') is unmarshalled-by(&unmarsh-version) is specification(Mandatory);
     has Str         $.description   is rw is specification(Mandatory);
     has Str         @.authors       is rw is specification(Optional);
+    has Str         $.author        is rw is customary;
     has Str         %.provides      is rw is specification(Mandatory);
     has Str         @.depends       is rw is specification(Optional);
     has Str         %.emulates      is rw is specification(Optional);
