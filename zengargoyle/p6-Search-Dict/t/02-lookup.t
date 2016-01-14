@@ -57,7 +57,7 @@ $ret = lookup($last-word);
 is ?$ret, True, "last word found";
 is +$ret, $end-pos - $last-word.chars - 2, "position is at start of last word";
 given $dict.IO.open {
-  .seek: +$ret, 0;
+  .seek: +$ret, SeekFromBeginning;
   is .get, $last-word, 'seek and read last word';
 }
 is $ret, $last-word, "string is last word";

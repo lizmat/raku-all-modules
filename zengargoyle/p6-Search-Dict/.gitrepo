@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zengargoyle/p6-Search-Dict.git
 	branch = master
-	commit = 3f4e9417eec3c9bf65418cb5e54b3321612004dc
-	parent = f3a34870c89f54741ee1267599a78dd7c8ebab11
-	cmdver = 0.2.2
+	commit = baed3df53a53d0313f25d7041af0b5e803bd22ff
+	parent = 6e04aee094d898dd7d1dc4a94f7a681716c95787
+	cmdver = 0.2.3

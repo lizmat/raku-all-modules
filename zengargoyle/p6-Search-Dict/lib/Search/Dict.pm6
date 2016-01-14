@@ -48,7 +48,7 @@ my class R {
 
 sub search-dict( $filename, :$block-size = 128 ) is export {
   my $fh = $filename.IO.open;
-  my $size = $fh.s // do { .seek(0,2); my $s = .tell; .seek(0,0); $s }($fh);
+  my $size = $fh.s // do { .seek(0,SeekFromEnd); my $s = .tell; .seek(0,SeekFromBeginning); $s }($fh);
   my $min = 0;
   my $max = Int($size / $block-size);  # XXX: blksize?
 
@@ -56,7 +56,7 @@ sub search-dict( $filename, :$block-size = 128 ) is export {
     while $max - $min > 1 {
       state $mid;
       $mid = Int(($max + $min) / 2);
-      $fh.seek: $mid * $block-size, 0;
+      $fh.seek: $mid * $block-size, SeekFromBeginning;
       $fh.get if $mid;
       given $fh.get {
         when !*.defined { last }
@@ -64,7 +64,7 @@ sub search-dict( $filename, :$block-size = 128 ) is export {
         default { $max = $mid }
       }
     }
-    $fh.seek: $min * $block-size, 0;
+    $fh.seek: $min * $block-size, SeekFromBeginning;
     $fh.get if $min;
 
     my Bool $found = False;
