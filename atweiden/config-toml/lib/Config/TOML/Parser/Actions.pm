@@ -333,32 +333,6 @@ method full_time($/)
 
 method date_time_omit_local_offset($/)
 {
-    my %fmt;
-    %fmt<formatter> =
-        {
-            # adapted from rakudo/src/core/Temporal.pm
-            # needed in place of passing a True :$subseconds arg to
-            # the rakudo DateTime default-formatter subroutine
-            # for DateTimes with defined time_secfrac
-            my $o = .offset;
-            $o %% 60
-                or warn "DateTime subseconds formatter: offset $o not
-                         divisible by 60.";
-            my $year = sprintf(
-                (0 <= .year <= 9999 ?? '%04d' !! '%+05d'),
-                .year
-            );
-            sprintf '%s-%02d-%02dT%02d:%02d:%s%s',
-                $year, .month, .day, .hour, .minute,
-                .second.fmt('%09.6f'),
-                do $o
-                    ?? sprintf '%s%02d:%02d',
-                        $o < 0 ?? '-' !! '+',
-                        ($o.abs / 60 / 60).floor,
-                        ($o.abs / 60 % 60).floor
-                    !! 'Z';
-        } if $<partial_time>.made<subseconds>;
-
     make DateTime.new(
         :year(Int($<full_date>.made<year>)),
         :month(Int($<full_date>.made<month>)),
@@ -366,39 +340,12 @@ method date_time_omit_local_offset($/)
         :hour(Int($<partial_time>.made<hour>)),
         :minute(Int($<partial_time>.made<minute>)),
         :second(Rat($<partial_time>.made<second>)),
-        :timezone($.date_local_offset),
-        |%fmt
+        :timezone($.date_local_offset)
     );
 }
 
 method date_time($/)
 {
-    my %fmt;
-    %fmt<formatter> =
-        {
-            # adapted from rakudo/src/core/Temporal.pm
-            # needed in place of passing a True :$subseconds arg to
-            # the rakudo DateTime default-formatter subroutine
-            # for DateTimes with defined time_secfrac
-            my $o = .offset;
-            $o %% 60
-                or warn "DateTime subseconds formatter: offset $o not
-                         divisible by 60.";
-            my $year = sprintf(
-                (0 <= .year <= 9999 ?? '%04d' !! '%+05d'),
-                .year
-            );
-            sprintf '%s-%02d-%02dT%02d:%02d:%s%s',
-                $year, .month, .day, .hour, .minute,
-                .second.fmt('%09.6f'),
-                do $o
-                    ?? sprintf '%s%02d:%02d',
-                        $o < 0 ?? '-' !! '+',
-                        ($o.abs / 60 / 60).floor,
-                        ($o.abs / 60 % 60).floor
-                    !! 'Z';
-        } if $<full_time>.made<subseconds>;
-
     make DateTime.new(
         :year(Int($<full_date>.made<year>)),
         :month(Int($<full_date>.made<month>)),
@@ -406,8 +353,7 @@ method date_time($/)
         :hour(Int($<full_time>.made<hour>)),
         :minute(Int($<full_time>.made<minute>)),
         :second(Rat($<full_time>.made<second>)),
-        :timezone(Int($<full_time>.made<timezone>)),
-        |%fmt
+        :timezone(Int($<full_time>.made<timezone>))
     );
 }
 
@@ -955,7 +901,7 @@ method !is_trodden(@keypath) returns Bool:D
 # arraytable indices
 # returns either a keyname or array index at each step of the path
 class Step { has $.key; has Int $.index; }
-method !pwd(%h, *@k) returns Array[Str]
+method !pwd(%h, *@k) returns Array
 {
     my Step @steps;
 
@@ -981,7 +927,7 @@ method !pwd(%h, *@k) returns Array[Str]
 }
 
 # convert list of Steps to strings
-sub unfold(Step @steps) returns Array[Str]
+sub unfold(Step @steps) returns Array
 {
     my Str @unfold;
 

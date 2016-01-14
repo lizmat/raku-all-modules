@@ -61,6 +61,6 @@ plan 3;
     );
 }
 
-# end table grammar tests }}}
+# end document grammar tests }}}
 
 # vim: ft=perl6 fdm=marker fdl=0
