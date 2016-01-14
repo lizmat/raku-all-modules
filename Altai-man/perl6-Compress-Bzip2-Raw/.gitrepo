@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Altai-man/perl6-Compress-Bzip2-Raw.git
+	branch = master
+	commit = 98100bd0807abcf6749165645655bfb6a6d4a91c
+	parent = 9d2917fc5984c4ed4c4ccb295b0b45936df34c17
+	cmdver = 0.2.3
