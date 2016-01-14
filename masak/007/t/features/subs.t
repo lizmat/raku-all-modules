@@ -4,9 +4,9 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist) (stmtlist
-            (stexpr (postfix:<()> (ident "say") (arglist (str "OH HAI from inside sub"))))))))
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist) (statementlist
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (str "OH HAI from inside sub"))))))))
         .
 
     is-result $ast, "", "subs are not immediate";
@@ -14,14 +14,14 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (my (ident "x") (str "one"))
-          (stexpr (postfix:<()> (ident "say") (arglist (ident "x"))))
-          (sub (ident "f") (block (paramlist) (stmtlist
-            (my (ident "x") (str "two"))
-            (stexpr (postfix:<()> (ident "say") (arglist (ident "x")))))))
-          (stexpr (postfix:<()> (ident "f") (arglist)))
-          (stexpr (postfix:<()> (ident "say") (arglist (ident "x")))))
+        (statementlist
+          (my (identifier "x") (str "one"))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "x"))))
+          (stsub (identifier "f") (block (parameterlist) (statementlist
+            (my (identifier "x") (str "two"))
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "x")))))))
+          (stexpr (postfix:<()> (identifier "f") (argumentlist)))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "x")))))
         .
 
     is-result $ast, "one\ntwo\none\n", "subs have their own variable scope";
@@ -29,10 +29,10 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist (param (ident "name"))) (stmtlist
-            (stexpr (postfix:<()> (ident "say") (arglist (infix:<~> (str "Good evening, Mr ") (ident "name"))))))))
-          (stexpr (postfix:<()> (ident "f") (arglist (str "Bond")))))
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist (param (identifier "name"))) (statementlist
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (infix:<~> (str "Good evening, Mr ") (identifier "name"))))))))
+          (stexpr (postfix:<()> (identifier "f") (argumentlist (str "Bond")))))
         .
 
     is-result $ast, "Good evening, Mr Bond\n", "calling a sub with parameters works";
@@ -40,25 +40,25 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist (param (ident "X")) (param (ident "Y"))) (stmtlist
-            (stexpr (postfix:<()> (ident "say") (arglist (infix:<~> (ident "X") (ident "Y"))))))))
-          (my (ident "X") (str "y"))
-          (stexpr (postfix:<()> (ident "f") (arglist (str "X") (infix:<~> (ident "X") (ident "X"))))))
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist (param (identifier "X")) (param (identifier "Y"))) (statementlist
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (infix:<~> (identifier "X") (identifier "Y"))))))))
+          (my (identifier "X") (str "y"))
+          (stexpr (postfix:<()> (identifier "f") (argumentlist (str "X") (infix:<~> (identifier "X") (identifier "X"))))))
         .
 
-    is-result $ast, "Xyy\n", "arglist are evaluated before parameters are bound";
+    is-result $ast, "Xyy\n", "argumentlist are evaluated before parameters are bound";
 }
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist (param (ident "callback"))) (stmtlist
-            (my (ident "scoping") (str "dynamic"))
-            (stexpr (postfix:<()> (ident "callback") (arglist))))))
-          (my (ident "scoping") (str "lexical"))
-          (stexpr (postfix:<()> (ident "f") (arglist (block (paramlist) (stmtlist
-            (stexpr (postfix:<()> (ident "say") (arglist (ident "scoping"))))))))))
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist (param (identifier "callback"))) (statementlist
+            (my (identifier "scoping") (str "dynamic"))
+            (stexpr (postfix:<()> (identifier "callback") (argumentlist))))))
+          (my (identifier "scoping") (str "lexical"))
+          (stexpr (postfix:<()> (identifier "f") (argumentlist (block (parameterlist) (statementlist
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "scoping"))))))))))
         .
 
     is-result $ast, "lexical\n", "scoping is lexical";
@@ -66,10 +66,10 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (stexpr (postfix:<()> (ident "f") (arglist)))
-          (sub (ident "f") (block (paramlist) (stmtlist
-            (stexpr (postfix:<()> (ident "say") (arglist (str "OH HAI from inside sub"))))))))
+        (statementlist
+          (stexpr (postfix:<()> (identifier "f") (argumentlist)))
+          (stsub (identifier "f") (block (parameterlist) (statementlist
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (str "OH HAI from inside sub"))))))))
         .
 
     is-result $ast, "OH HAI from inside sub\n", "call a sub before declaring it";
@@ -77,11 +77,11 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (stexpr (postfix:<()> (ident "f") (arglist)))
-          (my (ident "x") (str "X"))
-          (sub (ident "f") (block (paramlist) (stmtlist
-            (stexpr (postfix:<()> (ident "say") (arglist (ident "x"))))))))
+        (statementlist
+          (stexpr (postfix:<()> (identifier "f") (argumentlist)))
+          (my (identifier "x") (str "X"))
+          (stsub (identifier "f") (block (parameterlist) (statementlist
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "x"))))))))
         .
 
     is-result $ast, "None\n", "using an outer lexical in a sub that's called before the outer lexical's declaration";
@@ -89,13 +89,13 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist) (stmtlist
-            (stexpr (postfix:<()> (ident "say") (arglist (str "OH HAI")))))))
-          (sub (ident "g") (block (paramlist) (stmtlist
-            (return (block (paramlist) (stmtlist
-              (stexpr (postfix:<()> (ident "f") (arglist)))))))))
-          (stexpr (postfix:<()> (postfix:<()> (ident "g") (arglist)) (arglist))))
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist) (statementlist
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (str "OH HAI")))))))
+          (stsub (identifier "g") (block (parameterlist) (statementlist
+            (return (block (parameterlist) (statementlist
+              (stexpr (postfix:<()> (identifier "f") (argumentlist)))))))))
+          (stexpr (postfix:<()> (postfix:<()> (identifier "g") (argumentlist)) (argumentlist))))
         .
 
     is-result $ast, "OH HAI\n", "left hand of a call doesn't have to be an identifier, just has to resolve to a callable";
@@ -103,10 +103,10 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (stexpr (postfix:<()> (ident "f") (arglist (str "Bond"))))
-          (sub (ident "f") (block (paramlist (param (ident "name"))) (stmtlist
-            (stexpr (postfix:<()> (ident "say") (arglist (infix:<~> (str "Good evening, Mr ") (ident "name")))))))))
+        (statementlist
+          (stexpr (postfix:<()> (identifier "f") (argumentlist (str "Bond"))))
+          (stsub (identifier "f") (block (parameterlist (param (identifier "name"))) (statementlist
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (infix:<~> (str "Good evening, Mr ") (identifier "name")))))))))
         .
 
     is-result $ast, "Good evening, Mr Bond\n", "calling a post-declared sub works (I)";
@@ -150,6 +150,61 @@ use _007::Test;
     outputs $program,
         "1\n0\n",
         "can assign to a parameter which hides a subroutine";
+}
+
+{
+    my $program = q:to/./;
+        my f = sub (x) { say(x) };
+        f("Mr Bond");
+        .
+
+    outputs $program,
+        "Mr Bond\n",
+        "expression subs work";
+}
+
+{
+    my $program = q:to/./;
+        my f = sub g(x) { say(x) };
+        f("Mr Bond");
+        .
+
+    outputs $program,
+        "Mr Bond\n",
+        "expression subs can be named, too";
+}
+
+{
+    my $program = q:to/./;
+        my f = sub g(x) {};
+        say(f);
+        .
+
+    outputs $program,
+        "<sub g(x)>\n",
+        "...and they know their own name";
+}
+
+{
+    my $program = q:to/./;
+        my f = sub g() { say(g) };
+        f();
+        .
+
+    outputs $program,
+        "<sub g()>\n",
+        "the name of a sub is visible inside the sub...";
+}
+
+{
+    my $program = q:to/./;
+        my f = sub g() {};
+        g();
+        .
+
+    parse-error $program,
+        X::Undeclared,
+        "...but not outside of the sub";
 }
 
 done-testing;

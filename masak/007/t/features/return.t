@@ -4,10 +4,10 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist) (stmtlist
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist) (statementlist
             (return (int 7)))))
-          (stexpr (postfix:<()> (ident "say") (arglist (postfix:<()> (ident "f") (arglist))))))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (identifier "f") (argumentlist))))))
         .
 
     is-result $ast, "7\n", "sub returning an Int";
@@ -15,10 +15,10 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist) (stmtlist
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist) (statementlist
             (return (str "Bond. James Bond.")))))
-          (stexpr (postfix:<()> (ident "say") (arglist (postfix:<()> (ident "f") (arglist))))))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (identifier "f") (argumentlist))))))
         .
 
     is-result $ast, "Bond. James Bond.\n", "sub returning a Str";
@@ -26,10 +26,10 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist) (stmtlist
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist) (statementlist
             (return (array (int 1) (int 2) (str "three"))))))
-          (stexpr (postfix:<()> (ident "say") (arglist (postfix:<()> (ident "f") (arglist))))))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (identifier "f") (argumentlist))))))
         .
 
     is-result $ast, qq|[1, 2, "three"]\n|, "sub returning an Array";
@@ -37,11 +37,11 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist) (stmtlist
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist) (statementlist
             (return (int 1953))
-            (stexpr (postfix:<()> (ident "say") (arglist (str "Dead code. Should have returned by now.")))))))
-          (stexpr (postfix:<()> (ident "say") (arglist (postfix:<()> (ident "f") (arglist))))))
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (str "Dead code. Should have returned by now.")))))))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (identifier "f") (argumentlist))))))
         .
 
     is-result $ast, "1953\n", "a return statement forces immediate exit of the subroutine";
@@ -49,15 +49,15 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist) (stmtlist
-            (my (ident "b") (block (paramlist) (stmtlist
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist) (statementlist
+            (my (identifier "b") (block (parameterlist) (statementlist
               (return (int 5)))))
-            (sub (ident "g") (block (paramlist) (stmtlist
-              (stexpr (postfix:<()> (ident "b") (arglist))))))
-            (stexpr (postfix:<()> (ident "g") (arglist)))
-            (stexpr (postfix:<()> (ident "say") (arglist (str "Dead code. Should have returned from f.")))))))
-          (stexpr (postfix:<()> (ident "f") (arglist))))
+            (stsub (identifier "g") (block (parameterlist) (statementlist
+              (stexpr (postfix:<()> (identifier "b") (argumentlist))))))
+            (stexpr (postfix:<()> (identifier "g") (argumentlist)))
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (str "Dead code. Should have returned from f.")))))))
+          (stexpr (postfix:<()> (identifier "f") (argumentlist))))
         .
 
     is-result $ast, "", "return statements bind lexically to their surrounding subroutine";
@@ -65,13 +65,13 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist) (stmtlist
-            (my (ident "b") (block (paramlist) (stmtlist
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist) (statementlist
+            (my (identifier "b") (block (parameterlist) (statementlist
               (return (int 5)))))
-            (return (ident "b")))))
-          (my (ident "c") (postfix:<()> (ident "f") (arglist)))
-          (stexpr (postfix:<()> (ident "c") (arglist))))
+            (return (identifier "b")))))
+          (my (identifier "c") (postfix:<()> (identifier "f") (argumentlist)))
+          (stexpr (postfix:<()> (identifier "c") (argumentlist))))
         .
 
     is-error $ast, X::ControlFlow::Return, "cannot run a return statement of a subroutine that already exited";
@@ -79,10 +79,10 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "f") (block (paramlist) (stmtlist
+        (statementlist
+          (stsub (identifier "f") (block (parameterlist) (statementlist
             (return))))
-          (stexpr (postfix:<()> (ident "say") (arglist (postfix:<()> (ident "f") (arglist))))))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (identifier "f") (argumentlist))))))
         .
 
     is-result $ast, "None\n", "sub returning nothing";

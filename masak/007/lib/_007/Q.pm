@@ -28,7 +28,7 @@ class X::ParameterMismatch is Exception {
     }
 }
 
-# XXX: rename to X::Property::NotFound once [RT #126827] has been fixed
+# RAKUDO: rename to X::Property::NotFound once [RT #126827] has been fixed
 class X::PropertyNotFound is Exception {
     has $.propname;
 
@@ -41,16 +41,16 @@ class X::Associativity::Conflict is Exception {
     method message { "The operator already has a defined associativity" }
 }
 
+sub aname($attr) { $attr.name.substr(2) }
+sub avalue($attr, $obj) { $attr.get_value($obj) }
+
 role Q {
     method Str {
-        sub aname($attr) { $attr.name.substr(2) }
-        sub avalue($attr) { $attr.get_value(self).quoted-Str }
-
         my @attrs = self.attributes;
         if @attrs == 1 {
-            return "{self.^name} { avalue(@attrs[0]) }";
+            return "{self.^name} { avalue(@attrs[0], self).quoted-Str }";
         }
-        sub keyvalue($attr) { aname($attr) ~ ": " ~ avalue($attr) }
+        sub keyvalue($attr) { aname($attr) ~ ": " ~ avalue($attr, self).quoted-Str }
         my $contents = @attrs.map(&keyvalue).join(",\n").indent(4);
         return "{self.^name} \{\n$contents\n\}";
     }
@@ -60,7 +60,6 @@ role Q {
     }
 
     method attributes {
-        sub aname($attr) { $attr.name.substr(2) }
         sub find($aname) { self.^attributes.first({ $aname eq aname($_) }) }
 
         self.can("attribute-order")
@@ -72,29 +71,29 @@ role Q {
 role Q::Expr does Q {
 }
 
-role Q::Literal does Q::Expr {
+role Q::Term does Q::Expr {
+}
+
+role Q::Literal does Q::Term {
 }
 
 class Q::Literal::None does Q::Literal {
     method eval($) { Val::None.new }
-    method interpolate($) { self }
 }
 
 class Q::Literal::Int does Q::Literal {
     has Val::Int $.value;
 
     method eval($) { $.value }
-    method interpolate($) { self }
 }
 
 class Q::Literal::Str does Q::Literal {
     has Val::Str $.value;
 
     method eval($) { $.value }
-    method interpolate($) { self }
 }
 
-class Q::Identifier does Q::Expr {
+class Q::Identifier does Q::Term {
     has Val::Str $.name;
     has $.frame = Val::None.new;
 
@@ -106,13 +105,6 @@ class Q::Identifier does Q::Expr {
             $.frame ~~ Val::None ?? $runtime.current-frame !! $.frame
         );
     }
-
-    method interpolate($runtime) {
-        return self.new(:$.name, :frame($runtime.current-frame));
-    }
-}
-
-role Q::Term does Q::Expr {
 }
 
 class Q::Term::Array does Q::Term {
@@ -120,24 +112,6 @@ class Q::Term::Array does Q::Term {
 
     method eval($runtime) {
         Val::Array.new(:elements($.elements.elements».eval($runtime)));
-    }
-    method interpolate($runtime) {
-        self.new(:elements(@.elements».interpolate($runtime)));
-    }
-}
-
-class Q::Term::Quasi does Q::Term {
-    has $.contents;
-
-    method eval($runtime) {
-        return $.contents.interpolate($runtime);
-    }
-    method interpolate($runtime) {
-        self.new(:contents($.contents.interpolate($runtime)));
-        # XXX: the fact that we keep interpolating inside of the quasi means
-        # that unquotes encountered inside of this inner quasi will be
-        # interpolated in the context of the outer quasi. is this correct?
-        # can we come up with a case where it matters?
     }
 }
 
@@ -158,9 +132,49 @@ class Q::Property does Q {
 }
 
 class Q::PropertyList does Q {
+    # RAKUDO: Can simplify this to `.=` once [RT #126975] is fixed
     has Val::Array $.properties = Val::Array.new;
+}
+
+role Q::Declaration {
+    method is-assignable { False }
+}
+
+class Q::Trait does Q {
+    has $.identifier;
+    has $.expr;
+
+    method attribute-order { <identifier expr> }
+}
+
+class Q::TraitList does Q {
+    # RAKUDO: Can simplify this to `.=` once [RT #126975] is fixed
+    has Val::Array $.traits = Val::Array.new;
+
+    method attribute-order { <traits> }
+
     method interpolate($runtime) {
-        self.new(:properties(@.properties».interpolate($runtime)));
+        self.new(:traits(Val::Array.new(:elements($.traits.elements».interpolate($runtime)))));
+    }
+}
+
+class Q::Term::Sub does Q::Term does Q::Declaration {
+    has $.identifier;
+    has $.traitlist = Q::TraitList.new;
+    has $.block;
+
+    method attribute-order { <identifier traitlist block> }
+
+    method eval($runtime) {
+        my $name = $.identifier ~~ Val::None
+            ?? "(anon)"
+            !! $.identifier.name.value;
+        return Val::Sub.new(
+            :$name,
+            :parameterlist($.block.parameterlist),
+            :statementlist($.block.statementlist),
+            :outer-frame($runtime.current-frame),
+        );
     }
 }
 
@@ -180,69 +194,39 @@ class Q::Block does Q {
             :$outer-frame
         );
     }
-    method interpolate($runtime) {
-        Q::Block.new(
-            :parameterlist($.parameterlist.interpolate($runtime)),
-            :statementlist($.statementlist.interpolate($runtime)));
-        # XXX: but what about the static lexpad? we kind of lose it here, don't we?
-        # what does that *mean* in practice? can we come up with an example where
-        # it matters? if the static lexpad happens to contain a value which is a
-        # Q node, do we continue into *it*, interpolating it, too?
-    }
-}
-
-class Q::Unquote does Q {
-    has $.expr;
-
-    method eval($runtime) {
-        die "Should never hit an unquote at runtime"; # XXX: turn into X::
-    }
-    method interpolate($runtime) {
-        my $q = $.expr.eval($runtime);
-        die "Expression inside unquote did not evaluate to a Q" # XXX: turn into X::
-            unless $q ~~ Q;
-        return $q;
-    }
 }
 
 class Q::Prefix does Q::Expr {
-    has $.ident;
-    has $.expr;
+    has $.identifier;
+    has $.operand;
 
-    method attribute-order { <expr> }
+    method attribute-order { <identifier operand> }
 
     method eval($runtime) {
-        my $e = $.expr.eval($runtime);
-        my $c = $.ident.eval($runtime);
+        my $e = $.operand.eval($runtime);
+        my $c = $.identifier.eval($runtime);
         return $runtime.call($c, [$e]);
-    }
-
-    method interpolate($runtime) {
-        self.new(:expr($.expr ~~ Val::None ?? $.expr !! $.expr.interpolate($runtime)));
     }
 }
 
 class Q::Prefix::Minus is Q::Prefix {}
 
+class Q::Prefix::Not is Q::Prefix {}
+
+class Q::Prefix::Upto is Q::Prefix {}
+
 class Q::Infix does Q::Expr {
-    has $.ident;
+    has $.identifier;
     has $.lhs;
     has $.rhs;
 
-    method attribute-order { <lhs rhs> }
+    method attribute-order { <identifier lhs rhs> }
 
     method eval($runtime) {
         my $l = $.lhs.eval($runtime);
         my $r = $.rhs.eval($runtime);
-        my $c = $.ident.eval($runtime);
+        my $c = $.identifier.eval($runtime);
         return $runtime.call($c, [$l, $r]);
-    }
-
-    method interpolate($runtime) {
-        self.new(
-            :lhs($.lhs ~~ Val::None ?? $.lhs !! $.lhs.interpolate($runtime)),
-            :rhs($.rhs ~~ Val::None ?? $.rhs !! $.rhs.interpolate($runtime)),
-            :ident($.ident.interpolate($runtime)));
     }
 }
 
@@ -253,6 +237,12 @@ class Q::Infix::Subtraction is Q::Infix {}
 class Q::Infix::Multiplication is Q::Infix {}
 
 class Q::Infix::Concat is Q::Infix {}
+
+class Q::Infix::Replicate is Q::Infix {}
+
+class Q::Infix::ArrayReplicate is Q::Infix {}
+
+class Q::Infix::Cons is Q::Infix {}
 
 class Q::Infix::Assignment is Q::Infix {
     method eval($runtime) {
@@ -266,15 +256,45 @@ class Q::Infix::Assignment is Q::Infix {
 
 class Q::Infix::Eq is Q::Infix {}
 
-class Q::Postfix does Q::Expr {
-    has $.ident;
-    has $.expr;
+class Q::Infix::Ne is Q::Infix {}
 
-    method attribute-order { <expr> }
+class Q::Infix::Gt is Q::Infix {}
+
+class Q::Infix::Lt is Q::Infix {}
+
+class Q::Infix::Ge is Q::Infix {}
+
+class Q::Infix::Le is Q::Infix {}
+
+class Q::Infix::Or is Q::Infix {
+    method eval($runtime) {
+        my $l = $.lhs.eval($runtime);
+        return $l.truthy
+            ?? $l
+            !! $.rhs.eval($runtime);
+    }
+}
+
+class Q::Infix::And is Q::Infix {
+    method eval($runtime) {
+        my $l = $.lhs.eval($runtime);
+        return !$l.truthy
+            ?? $l
+            !! $.rhs.eval($runtime);
+    }
+}
+
+class Q::Infix::TypeEq is Q::Infix {}
+
+class Q::Postfix does Q::Expr {
+    has $.identifier;
+    has $.operand;
+
+    method attribute-order { <identifier operand> }
 
     method eval($runtime) {
-        my $e = $.expr.eval($runtime);
-        my $c = $.ident.eval($runtime);
+        my $e = $.operand.eval($runtime);
+        my $c = $.identifier.eval($runtime);
         return $runtime.call($c, [$e]);
     }
 }
@@ -282,10 +302,10 @@ class Q::Postfix does Q::Expr {
 class Q::Postfix::Index is Q::Postfix {
     has $.index;
 
-    method attribute-order { <expr index> }
+    method attribute-order { <identifier operand index> }
 
     method eval($runtime) {
-        given $.expr.eval($runtime) {
+        given $.operand.eval($runtime) {
             when Val::Array {
                 my $index = $.index.eval($runtime);
                 die X::Subscript::NonInteger.new
@@ -306,91 +326,128 @@ class Q::Postfix::Index is Q::Postfix {
             die X::TypeCheck.new(:operation<indexing>, :got($_), :expected(Val::Array));
         }
     }
-    method interpolate($runtime) {
-        self.new(
-            :expr($.expr ~~ Val::None ?? $.expr !! $.expr.interpolate($runtime)),
-            :index($.index.interpolate($runtime))
-        );
-    }
 }
 
 class Q::Postfix::Call is Q::Postfix {
     has $.argumentlist;
 
-    method attribute-order { <expr argumentlist> }
+    method attribute-order { <identifier operand argumentlist> }
 
     method eval($runtime) {
-        my $c = $.expr.eval($runtime);
+        my $c = $.operand.eval($runtime);
         die "macro is called at runtime"
             if $c ~~ Val::Macro;
         die "Trying to invoke a {$c.^name.subst(/^'Val::'/, '')}" # XXX: make this into an X::
             unless $c ~~ Val::Block;
-        my @args = $.argumentlist.arguments.elements».eval($runtime);
-        return $runtime.call($c, @args);
-    }
-    method interpolate($runtime) {
-        self.new(
-            :expr($.expr ~~ Val::None ?? $.expr !! $.expr.interpolate($runtime)),
-            :argumentlist($.argumentlist.interpolate($runtime))
-        );
+        my @arguments = $.argumentlist.arguments.elements».eval($runtime);
+        return $runtime.call($c, @arguments);
     }
 }
 
 class Q::Postfix::Property is Q::Postfix {
     has $.property;
 
-    method attribute-order { <expr property> }
+    method attribute-order { <identifier operand property> }
 
     method eval($runtime) {
-        my $obj = $.expr.eval($runtime);
+        my $obj = $.operand.eval($runtime);
         my $propname = $.property.name.value;
         $runtime.property($obj, $propname);
     }
+}
 
-    method interpolate($runtime) {
-        self.new(
-            :expr($.expr ~~ Val::None ?? $.expr !! $.expr.interpolate($runtime)),
-            :property($.property.interpolate($runtime))
-        );
+class Q::Unquote does Q {
+    has $.expr;
+
+    method eval($runtime) {
+        die "Should never hit an unquote at runtime"; # XXX: turn into X::
     }
 }
 
-role Q::Declaration {
-    method is-assignable { False }
+class Q::Unquote::Prefix is Q::Unquote {
+    has $.operand;
+}
+
+class Q::Unquote::Infix is Q::Unquote {
+    has $.lhs;
+    has $.rhs;
+}
+
+class Q::Term::Quasi does Q::Term {
+    has $.contents;
+
+    method eval($runtime) {
+        sub interpolate($thing) {
+            return $thing.new(:elements($thing.elements.map(&interpolate)))
+                if $thing ~~ Val::Array;
+
+            return $thing.new(:properties(%($thing.properties.map(.key => interpolate(.value)))))
+                if $thing ~~ Val::Object;
+
+            return $thing
+                if $thing ~~ Val;
+
+            return $thing.new(:name($thing.name), :frame($runtime.current-frame))
+                if $thing ~~ Q::Identifier;
+
+            if $thing ~~ Q::Unquote::Prefix {
+                my $prefix = $thing.expr.eval($runtime);
+                die X::TypeCheck.new(:operation("interpolating an unquote"), :got($prefix), :expected(Q::Prefix))
+                    unless $prefix ~~ Q::Prefix;
+                return $prefix.new(:identifier($prefix.identifier), :operand($thing.operand));
+            }
+            elsif $thing ~~ Q::Unquote::Infix {
+                my $infix = $thing.expr.eval($runtime);
+                die X::TypeCheck.new(:operation("interpolating an unquote"), :got($infix), :expected(Q::Infix))
+                    unless $infix ~~ Q::Infix;
+                return $infix.new(:identifier($infix.identifier), :lhs($thing.lhs), :rhs($thing.rhs));
+            }
+
+            if $thing ~~ Q::Unquote {
+                my $ast = $thing.expr.eval($runtime);
+                die "Expression inside unquote did not evaluate to a Q" # XXX: turn into X::
+                    unless $ast ~~ Q;
+                return $ast;
+            }
+
+            my %attributes = $thing.attributes.map: -> $attr {
+                aname($attr) => interpolate(avalue($attr, $thing))
+            };
+
+            $thing.new(|%attributes);
+        }
+
+        if $.contents ~~ Q::Unquote {   # special exception: `quasi @ Q::Unquote`
+            return $.contents;
+        }
+        return interpolate($.contents);
+    }
 }
 
 class Q::ParameterList does Q {
+    # RAKUDO: Can simplify this to `.=` once [RT #126975] is fixed
     has Val::Array $.parameters = Val::Array.new;
-    method interpolate($runtime) {
-        self.new(:parameters(Val::Array.new(:elements($.parameters.elements».interpolate($runtime)))));
-    }
 }
 
 class Q::Parameter does Q does Q::Declaration {
-    has $.ident;
+    has $.identifier;
 
     method is-assignable { True }
-
-    method interpolate($runtime) {
-        self.new(:ident($.ident.interpolate));
-    }
 }
 
 class Q::ArgumentList does Q {
+    # RAKUDO: Can simplify this to `.=` once [RT #126975] is fixed
     has Val::Array $.arguments = Val::Array.new;
-    method interpolate($runtime) {
-        self.new(:arguments(Val::Array.new(:elements($.arguments.elements».interpolate($runtime)))));
-    }
 }
 
 role Q::Statement does Q {
 }
 
 class Q::Statement::My does Q::Statement does Q::Declaration {
-    has $.ident;
-    has $.expr;
+    has $.identifier;
+    has $.expr = Val::None.new;
 
-    method attribute-order { <expr ident> }
+    method attribute-order { <identifier expr> }
 
     method is-assignable { True }
 
@@ -398,28 +455,18 @@ class Q::Statement::My does Q::Statement does Q::Declaration {
         return
             unless $.expr !~~ Val::None;
         my $value = $.expr.eval($runtime);
-        $runtime.put-var($.ident.name.value, $value);
-    }
-    method interpolate($runtime) {
-        self.new(
-            :ident($.ident.interpolate($runtime)),
-            :expr($.expr ~~ Val::None ?? $.expr !! $.expr.interpolate($runtime)));
+        $runtime.put-var($.identifier.name.value, $value);
     }
 }
 
 class Q::Statement::Constant does Q::Statement does Q::Declaration {
-    has $.ident;
+    has $.identifier;
     has $.expr;
 
-    method attribute-order { <expr ident> }
+    method attribute-order { <identifier expr> }
 
     method run($runtime) {
         # value has already been assigned
-    }
-    method interpolate($runtime) {
-        self.new(
-            :ident($.ident.interpolate($runtime)),
-            :expr($.expr.interpolate($runtime)));
     }
 }
 
@@ -429,16 +476,14 @@ class Q::Statement::Expr does Q::Statement {
     method run($runtime) {
         $.expr.eval($runtime);
     }
-    method interpolate($runtime) {
-        self.new(:expr($.expr.interpolate($runtime)));
-    }
 }
 
 class Q::Statement::If does Q::Statement {
     has $.expr;
     has $.block;
+    has $.else = Val::None.new;
 
-    method attribute-order { <expr block> }
+    method attribute-order { <expr block else> }
 
     method run($runtime) {
         my $expr = $.expr.eval($runtime);
@@ -450,14 +495,25 @@ class Q::Statement::If does Q::Statement {
                 :type("If statement"), :$paramcount, :argcount("0 or 1"))
                 if $paramcount > 1;
             for @($c.parameterlist.parameters.elements) Z $expr -> ($param, $arg) {
-                $runtime.declare-var($param.ident.name.value, $arg);
+                $runtime.declare-var($param.identifier.name.value, $arg);
             }
             $.block.statementlist.run($runtime);
             $runtime.leave;
         }
-    }
-    method interpolate($runtime) {
-        self.new(:expr($.expr.interpolate($runtime)), :block($.block.interpolate($runtime)));
+        else {
+            given $.else {
+                when Val::None { }
+                when Q::Statement::If {
+                    $.else.run($runtime)
+                }
+                when Q::Block {
+                    my $c = $.else.eval($runtime);
+                    $runtime.enter($c);
+                    $.else.statementlist.run($runtime);
+                    $runtime.leave;
+                }
+            }
+        }
     }
 }
 
@@ -468,9 +524,6 @@ class Q::Statement::Block does Q::Statement {
         $runtime.enter($.block.eval($runtime));
         $.block.statementlist.run($runtime);
         $runtime.leave;
-    }
-    method interpolate($runtime) {
-        self.new(:block($.block.interpolate($runtime)));
     }
 }
 
@@ -516,15 +569,12 @@ class Q::Statement::For does Q::Statement {
             for split_elements($array.elements, $count) -> $arg {
                 $runtime.enter($c);
                 for @($c.parameterlist.parameters.elements) Z $arg.list -> ($param, $real_arg) {
-                    $runtime.declare-var($param.ident.name.value, $real_arg);
+                    $runtime.declare-var($param.identifier.name.value, $real_arg);
                 }
                 $.block.statementlist.run($runtime);
                 $runtime.leave;
             }
         }
-    }
-    method interpolate($runtime) {
-        self.new(:expr($.expr.interpolate($runtime)), :block($.block.interpolate($runtime)));
     }
 }
 
@@ -543,55 +593,43 @@ class Q::Statement::While does Q::Statement {
                 :type("While loop"), :$paramcount, :argcount("0 or 1"))
                 if $paramcount > 1;
             for @($c.parameterlist.parameters.elements) Z $expr -> ($param, $arg) {
-                $runtime.declare-var($param.ident.name.value, $arg);
+                $runtime.declare-var($param.identifier.name.value, $arg);
             }
             $.block.statementlist.run($runtime);
             $runtime.leave;
         }
     }
-    method interpolate($runtime) {
-        self.new(:expr($.expr.interpolate($runtime)), :block($.block.interpolate($runtime)));
-    }
 }
 
 class Q::Statement::Return does Q::Statement {
-    has $.expr;
+    has $.expr = Val::None.new;
 
     method run($runtime) {
         my $value = $.expr ~~ Val::None ?? $.expr !! $.expr.eval($runtime);
         my $frame = $runtime.get-var("--RETURN-TO--");
         die X::Control::Return.new(:$value, :$frame);
     }
-    method interpolate($runtime) {
-        self.new(:expr($.expr.interpolate($runtime)));
-    }
 }
 
 class Q::Statement::Sub does Q::Statement does Q::Declaration {
-    has $.ident;
+    has $.identifier;
+    has $.traitlist = Q::TraitList.new;
     has $.block;
 
-    method attribute-order { <ident block> }
+    method attribute-order { <identifier traitlist block> }
 
     method run($runtime) {
-    }
-    method interpolate($runtime) {
-        self.new(:ident($.ident.interpolate($runtime)),
-            :block($.block.interpolate($runtime)));
     }
 }
 
 class Q::Statement::Macro does Q::Statement does Q::Declaration {
-    has $.ident;
+    has $.identifier;
+    has $.traitlist = Q::TraitList.new;
     has $.block;
 
-    method attribute-order { <ident block> }
+    method attribute-order { <identifier traitlist block> }
 
     method run($runtime) {
-    }
-    method interpolate($runtime) {
-        self.new(:ident($.ident.interpolate($runtime)),
-            :block($.block.interpolate($runtime)));
     }
 }
 
@@ -601,31 +639,15 @@ class Q::Statement::BEGIN does Q::Statement {
     method run($runtime) {
         # a BEGIN block does not run at runtime
     }
-    method interpolate($runtime) {
-        self.new(:block($.block.interpolate($runtime)));
-    }
 }
 
 class Q::StatementList does Q {
+    # RAKUDO: Can simplify this to `.=` once [RT #126975] is fixed
     has Val::Array $.statements = Val::Array.new;
 
     method run($runtime) {
         for $.statements.elements -> $statement {
             $statement.run($runtime);
         }
-    }
-    method interpolate($runtime) {
-        self.new(:statements(Val::Array.new(:elements($.statements.elements».interpolate($runtime)))));
-    }
-}
-
-class Q::Trait does Q {
-    has $.ident;
-    has $.expr;
-
-    method attribute-order { <ident expr> }
-
-    method interpolate($runtime) {
-        self.new(:ident($.ident.interpolate($runtime)), :expr($.expr.interpolate($runtime)));
     }
 }

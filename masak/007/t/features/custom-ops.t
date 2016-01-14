@@ -9,8 +9,8 @@ use _007::Test;
         .
 
     my $ast = q:to/./;
-        (stmtlist
-          (sub (ident "infix:<n>") (block (paramlist (param (ident "left")) (param (ident "right"))) (stmtlist))))
+        (statementlist
+          (stsub (identifier "infix:<n>") (block (parameterlist (param (identifier "left")) (param (identifier "right"))) (statementlist))))
         .
 
     parses-to $program, $ast, "custom operator parses to the right thing";
@@ -165,6 +165,16 @@ use _007::Test;
 
     parse-error $program, X::Trait::Conflict, "can't have both tighter and looser traits";
 }
+
+{
+    my $program = q:to/./;
+        sub infix:<!?!>(left, right) is equal(infix:<+>) is equal(infix:<*>) {
+        }
+        .
+
+    parse-error $program, X::Trait::Duplicate, "can't use the same trait more than once";
+}
+
 
 {
     my $program = q:to/./;
@@ -414,11 +424,11 @@ use _007::Test;
 
 {
     my $program = q:to/./;
-        sub postfix:<!>(term) is assoc("right") {
+        sub postfix:<¡>(term) is assoc("right") {
             return "postfix is looser";
         }
 
-        sub prefix:<?>(term) is equal(postfix:<!>) {
+        sub prefix:<?>(term) is equal(postfix:<¡>) {
             return "prefix is looser";
         }
 
@@ -430,7 +440,7 @@ use _007::Test;
             return "postfix is looser";
         }
 
-        say(?[]!);
+        say(?[]¡);
         say(%[]$);
         .
 

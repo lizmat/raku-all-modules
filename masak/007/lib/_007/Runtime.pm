@@ -41,7 +41,7 @@ class _007::Runtime {
         }
         for $block.statementlist.statements.elements.kv -> $i, $_ {
             when Q::Statement::Sub {
-                my $name = .ident.name;
+                my $name = .identifier.name.value;
                 my $parameterlist = .block.parameterlist;
                 my $statementlist = .block.statementlist;
                 my %static-lexpad = .block.static-lexpad;
@@ -53,8 +53,11 @@ class _007::Runtime {
                     :%static-lexpad,
                     :$outer-frame
                 );
-                self.declare-var($name.value, $val);
+                self.declare-var($name, $val);
             }
+        }
+        if $block ~~ Val::Sub {
+            self.declare-var($block.name, $block);
         }
     }
 
@@ -66,7 +69,6 @@ class _007::Runtime {
         until self.current-frame === $frame {
             self.leave;
         }
-        return;
     }
 
     method current-frame {
@@ -86,7 +88,6 @@ class _007::Runtime {
         }
         die X::ControlFlow::Return.new
             if $symbol eq RETURN_TO;
-        return;
     }
 
     method put-var(Str $name, $value) {
@@ -103,7 +104,6 @@ class _007::Runtime {
         if self!maybe-find($name, self.current-frame) -> %pad {
             return %pad{$name};
         }
-        return;
     }
 
     method declare-var(Str $name, $value?) {
@@ -137,27 +137,27 @@ class _007::Runtime {
         return $!builtins.opscope;
     }
 
-    method sigbind($type, Val::Block $c, @args) {
+    method sigbind($type, Val::Block $c, @arguments) {
         my $paramcount = $c.parameterlist.parameters.elements.elems;
-        my $argcount = @args.elems;
+        my $argcount = @arguments.elems;
         die X::ParameterMismatch.new(:$type, :$paramcount, :$argcount)
             unless $paramcount == $argcount;
         self.enter($c);
-        for @($c.parameterlist.parameters.elements) Z @args -> ($param, $arg) {
-            my $name = $param.ident.name.value;
+        for @($c.parameterlist.parameters.elements) Z @arguments -> ($param, $arg) {
+            my $name = $param.identifier.name.value;
             self.declare-var($name, $arg);
         }
     }
 
-    multi method call(Val::Block $c, @args) {
-        self.sigbind("Block", $c, @args);
+    multi method call(Val::Block $c, @arguments) {
+        self.sigbind("Block", $c, @arguments);
         $c.statementlist.run(self);
         self.leave;
         return Val::None.new;
     }
 
-    multi method call(Val::Sub $c, @args) {
-        self.sigbind("Sub", $c, @args);
+    multi method call(Val::Sub $c, @arguments) {
+        self.sigbind("Sub", $c, @arguments);
         self.register-subhandler;
         my $frame = self.current-frame;
         $c.statementlist.run(self);
@@ -174,18 +174,127 @@ class _007::Runtime {
         return Val::None.new;
     }
 
-    multi method call(Val::Sub::Builtin $c, @args) {
-        my $result = $c.code.(|@args);
+    multi method call(Val::Sub::Builtin $c, @arguments) {
+        my $result = $c.code.(|@arguments);
         return $result if $result;
         return Val::None.new;
     }
 
     method property($obj, Str $propname) {
-        my $builtins = _007::Runtime::Builtins.new(:runtime(self));
         if $obj ~~ Q {
-            return $builtins.property($obj, $propname);
+            sub aname($attr) { $attr.name.substr(2) }
+            my %known-properties = $obj.WHAT.attributes.map({ aname($_) => 1 });
+
+            die X::PropertyNotFound.new(:$propname)
+                unless %known-properties{$propname};
+
+            return $obj."$propname"();
         }
-        if $obj.properties{$propname} :exists {
+        elsif $obj ~~ Val::Int && $propname eq "abs" {
+            return Val::Sub::Builtin.new("abs", sub () {
+                return Val::Int.new(:value($obj.value.abs));
+            });
+        }
+        elsif $obj ~~ Val::Int && $propname eq "chr" {
+            return Val::Sub::Builtin.new("chr", sub () {
+                return Val::Str.new(:value($obj.value.chr));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "ord" {
+            return Val::Sub::Builtin.new("ord", sub () {
+                return Val::Int.new(:value($obj.value.ord));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "chars" {
+            return Val::Sub::Builtin.new("chars", sub () {
+                return Val::Int.new(:value($obj.value.chars));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "uc" {
+            return Val::Sub::Builtin.new("uc", sub () {
+                return Val::Str.new(:value($obj.value.uc));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "lc" {
+            return Val::Sub::Builtin.new("lc", sub () {
+                return Val::Str.new(:value($obj.value.lc));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "trim" {
+            return Val::Sub::Builtin.new("trim", sub () {
+                return Val::Str.new(:value($obj.value.trim));
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "elems" {
+            return Val::Sub::Builtin.new("elems", sub () {
+                return Val::Int.new(:value($obj.elements.elems));
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "reverse" {
+            return Val::Sub::Builtin.new("reverse", sub () {
+                return Val::Array.new(:elements($obj.elements.reverse));
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "sort" {
+            return Val::Sub::Builtin.new("sort", sub () {
+                return Val::Array.new(:elements($obj.elements.sort));
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "concat" {
+            return Val::Sub::Builtin.new("concat", sub ($array) {
+                die X::TypeCheck.new(:operation<concat>, :got($array), :expected(Val::Array))
+                    unless $array ~~ Val::Array;
+                return Val::Array.new(:elements([|$obj.elements , |$array.elements]));
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "join" {
+            return Val::Sub::Builtin.new("join", sub ($sep) {
+                return Val::Str.new(:value($obj.elements.join($sep.value.Str)));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "split" {
+            return Val::Sub::Builtin.new("split", sub ($sep) {
+                my @elements = (Val::Str.new(:value($_)) for $obj.value.split($sep.value));
+                return Val::Array.new(:@elements);
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "index" {
+            return Val::Sub::Builtin.new("index", sub ($substr) {
+                return Val::Int.new(:value($obj.value.index($substr.value) // -1));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "substr" {
+            return Val::Sub::Builtin.new("substr", sub ($pos, $chars?) {
+                return Val::Str.new(:value($obj.value.substr(
+                    $pos.value,
+                    $chars.defined
+                        ?? $chars.value
+                        !! $obj.value.chars)));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "charat" {
+            return Val::Sub::Builtin.new("charat", sub ($pos) {
+                my $s = $obj.value;
+
+                die X::Subscript::TooLarge.new(:value($pos.value), :length($s.chars))
+                    if $pos.value >= $s.chars;
+
+                return Val::Str.new(:value($s.substr($pos.value, 1)));
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "filter" {
+            return Val::Sub::Builtin.new("filter", sub ($fn) {
+                my @elements = $obj.elements.grep({ self.call($fn, [$_]).truthy });
+                return Val::Array.new(:@elements);
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "map" {
+            return Val::Sub::Builtin.new("map", sub ($fn) {
+                my @elements = $obj.elements.map({ self.call($fn, [$_]) });
+                return Val::Array.new(:@elements);
+            });
+        }
+        elsif $obj ~~ (Q | Val::Object) && ($obj.properties{$propname} :exists) {
             return $obj.properties{$propname};
         }
         elsif $propname eq "get" {
@@ -218,7 +327,7 @@ class _007::Runtime {
             );
         }
         elsif $propname eq "extend" {
-            return Val::Sub::Builtin.new("update", sub ($newprops) {
+            return Val::Sub::Builtin.new("extend", sub ($newprops) {
                     my @properties = $obj.properties.keys;
                     my @newproperties = $newprops.properties.keys;
                     return Val::Object.new(:properties(|@properties.map({

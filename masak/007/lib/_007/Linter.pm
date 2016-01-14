@@ -61,17 +61,17 @@ class _007::Linter {
                 @blocks.pop;
             }
 
-            multi traverse(Q::ParameterList $paramlist) {
+            multi traverse(Q::ParameterList $parameterlist) {
             }
 
-            multi traverse(Q::StatementList $stmtlist) {
-                for $stmtlist.statements.elements -> $stmt {
+            multi traverse(Q::StatementList $statementlist) {
+                for $statementlist.statements.elements -> $stmt {
                     traverse($stmt);
                 }
             }
 
             multi traverse(Q::Statement::Sub $sub) {
-                my $name = $sub.ident.name;
+                my $name = $sub.identifier.name;
                 %declared{"{@blocks[*-1].WHICH.Str}|$name"} = L::SubNotUsed;
             }
 
@@ -80,7 +80,7 @@ class _007::Linter {
             }
 
             multi traverse(Q::Postfix::Call $call) {
-                traverse($call.expr);
+                traverse($call.operand);
                 traverse($call.argumentlist);
             }
 
@@ -94,8 +94,8 @@ class _007::Linter {
                 fail X::AssertionFailure.new("A thing that is used must be declared somewhere");
             }
 
-            multi traverse(Q::Identifier $ident) {
-                my $name = $ident.name;
+            multi traverse(Q::Identifier $identifier) {
+                my $name = $identifier.name;
                 # XXX: what we should really do is whitelist all of he built-ins
                 return if $name eq "say";
                 my $ref = ref $name;
@@ -106,8 +106,8 @@ class _007::Linter {
                 }
             }
 
-            multi traverse(Q::ArgumentList $arglist) {
-                for $arglist.arguments.elements -> $expr {
+            multi traverse(Q::ArgumentList $argumentlist) {
+                for $argumentlist.arguments.elements -> $expr {
                     traverse($expr);
                 }
             }
@@ -124,7 +124,7 @@ class _007::Linter {
             }
 
             multi traverse(Q::Statement::My $my) {
-                my $name = $my.ident.name;
+                my $name = $my.identifier.name;
                 my $ref = "{@blocks[*-1].WHICH.Str}|$name";
                 %declared{$ref} = L::VariableNotUsed;
                 if $my.expr !~~ Val::None {

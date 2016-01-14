@@ -3,7 +3,9 @@ use _007::Q;
 use _007::Parser::Exceptions;
 
 grammar _007::Parser::Syntax {
-    token TOP {
+    token TOP { <compunit> }
+
+    token compunit {
         <.newpad>
         <statementlist>
         <.finishpad>
@@ -62,23 +64,18 @@ grammar _007::Parser::Syntax {
         <EXPR>
     }
     token statement:block { <pblock> }
-    rule statement:sub {
-        sub [<identifier> || <.panic("identifier")>]
+    rule statement:sub-or-macro {
+        $<routine>=(sub|macro) [<identifier> || <.panic("identifier")>]
         :my $*insub = True;
-        { declare(Q::Statement::Sub, $<identifier>.Str); }
+        {
+            declare($<routine> eq "sub"
+                        ?? Q::Statement::Sub
+                        !! Q::Statement::Macro,
+                    $<identifier>.Str);
+        }
         <.newpad>
         '(' ~ ')' <parameterlist>
-        <trait> *
-        <blockoid>:!s
-        <.finishpad>
-    }
-    rule statement:macro {
-        macro [<identifier> || <.panic("identifier")>]
-        :my $*insub = True;
-        { declare(Q::Statement::Macro, $<identifier>.Str); }
-        <.newpad>
-        '(' ~ ')' <parameterlist>
-        <trait> *
+        <traitlist>
         <blockoid>:!s
         <.finishpad>
     }
@@ -91,7 +88,14 @@ grammar _007::Parser::Syntax {
     }
     token statement:if {
         if <.ws> <xblock>
+        [  <.ws> else <.ws>
+            [
+                | <else=block>
+                | <else=statement:if>
+            ]
+        ] ?
     }
+
     token statement:for {
         for <.ws> <xblock>
     }
@@ -102,6 +106,9 @@ grammar _007::Parser::Syntax {
         BEGIN <.ws> <block>
     }
 
+    rule traitlist {
+        <trait> *
+    }
     token trait {
         'is' <.ws> <identifier> '(' <EXPR> ')'
     }
@@ -137,9 +144,9 @@ grammar _007::Parser::Syntax {
         || <.ws> $
     }
 
-    rule EXPR { <termish> +% <infix> }
+    rule EXPR { <termish> +% [<infix> | <infix=infix-unquote>] }
 
-    token termish { <prefix>* [<term>|<term=unquote>] <postfix>* }
+    token termish { [<prefix> | <prefix=prefix-unquote>]* [<term>|<term=unquote>] <postfix>* }
 
     method prefix {
         my @ops = $*parser.oplevel.ops<prefix>.keys;
@@ -162,6 +169,29 @@ grammar _007::Parser::Syntax {
             || "@" <.ws> "Q::Infix" <.ws> '{' <.ws> <infix> <.ws> '}'
             || "@" <.ws> "Q::Prefix" <.ws> '{' <.ws> <prefix> <.ws> '}'
             || "@" <.ws> "Q::Postfix" <.ws> '{' <.ws> <postfix> <.ws> '}'
+            || "@" <.ws> "Q::Expr" <.ws> '{' <.ws> <EXPR> <.ws> '}'
+            || "@" <.ws> "Q::Identifier" <.ws> '{' <.ws> <term:identifier> <.ws> '}'
+            || "@" <.ws> "Q::Block" <.ws> '{' <.ws> <block> <.ws> '}'
+            || "@" <.ws> "Q::CompUnit" <.ws> '{' <.ws> <compunit> <.ws> '}'
+            || "@" <.ws> "Q::Literal" <.ws> '{' <.ws> [<term:int> | <term:none> | <term:str>] <.ws> '}'
+            || "@" <.ws> "Q::Literal::Int" <.ws> '{' <.ws> <term:int> <.ws> '}'
+            || "@" <.ws> "Q::Literal::None" <.ws> '{' <.ws> <term:none> <.ws> '}'
+            || "@" <.ws> "Q::Literal::Str" <.ws> '{' <.ws> <term:str> <.ws> '}'
+            || "@" <.ws> "Q::Property" <.ws> '{' <.ws> <property> <.ws> '}'
+            || "@" <.ws> "Q::PropertyList" <.ws> '{' <.ws> <propertylist> <.ws> '}'
+            || "@" <.ws> "Q::Term" <.ws> '{' <.ws> <term> <.ws> '}'
+            || "@" <.ws> "Q::Term::Array" <.ws> '{' <.ws> <term:array> <.ws> '}'
+            || "@" <.ws> "Q::Term::Object" <.ws> '{' <.ws> <term:object> <.ws> '}'
+            || "@" <.ws> "Q::Term::Quasi" <.ws> '{' <.ws> <term:quasi> <.ws> '}'
+            || "@" <.ws> "Q::Trait" <.ws> '{' <.ws> <trait> <.ws> '}'
+            || "@" <.ws> "Q::TraitList" <.ws> '{' <.ws> <traitlist> <.ws> '}'
+            || "@" <.ws> "Q::Statement" <.ws> '{' <.ws> <statement><.eat_terminator> <.ws> '}'
+            || "@" <.ws> "Q::StatementList" <.ws> '{' <.ws> <statementlist> <.ws> '}'
+            || "@" <.ws> "Q::Parameter" <.ws> '{' <.ws> <parameter> <.ws> '}'
+            || "@" <.ws> "Q::ParameterList" <.ws> '{' <.ws> <parameterlist> <.ws> '}'
+            || "@" <.ws> "Q::ArgumentList" <.ws> '{' <.ws> <argumentlist> <.ws> '}'
+            || "@" <.ws> "Q::Unquote" <.ws> '{' <.ws> <unquote> <.ws> '}'
+            || "@" <.ws> (\S+) { die "Unknown Q type $0" } # XXX: turn into X::
             || <block>
             || <.panic("quasi")>
         ]
@@ -186,14 +216,28 @@ grammar _007::Parser::Syntax {
             }
         }
     }
+    token term:sub {
+        sub <.ws> <identifier>?
+        :my $*insub = True;
+        <.newpad>
+        {
+            if $<identifier> {
+                declare(Q::Term::Sub, $<identifier>.Str);
+            }
+        }
+        '(' ~ ')' <parameterlist>
+        <traitlist>
+        <blockoid>:!s
+        <.finishpad>
+    }
 
     token propertylist { [<.ws> <property>]* % [\h* ','] <.ws> }
 
-    token unquote { '{{{' <EXPR> '}}}' }
+    token unquote { '{{{' <EXPR> [:s "@" <identifier> ]? '}}}' }
 
     proto token property {*}
     rule property:str-expr { <key=str> ':' <value=term> }
-    rule property:ident-expr { <identifier> ':' <value=term> }
+    rule property:identifier-expr { <identifier> ':' <value=term> }
     rule property:method {
         <identifier>
         <.newpad>
@@ -202,7 +246,7 @@ grammar _007::Parser::Syntax {
         <blockoid>:!s
         <.finishpad>
     }
-    token property:ident { <identifier> }
+    token property:identifier { <identifier> }
 
     method infix {
         my @ops = $*parser.oplevel.ops<infix>.keys;
@@ -210,6 +254,14 @@ grammar _007::Parser::Syntax {
             return $cur."!reduce"("infix");
         }
         return /<!>/(self);
+    }
+
+    rule infix-unquote {
+        <unquote>
+    }
+
+    rule prefix-unquote {
+        <unquote> <?{ ($<unquote><identifier> // "") eq "Q::Prefix" }>
     }
 
     method postfix {
@@ -248,5 +300,9 @@ grammar _007::Parser::Syntax {
 
     rule parameter {
         <identifier>
+    }
+
+    token ws {
+        [ \s+ | '#' \N* ]*
     }
 }

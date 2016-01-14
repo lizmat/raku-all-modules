@@ -79,8 +79,8 @@ class Val::Object does Val {
     method Str {
         '{' ~ %.properties.map({
             my $key = .key ~~ /^<!before \d> [\w+]+ % '::'$/
-              ?? .key
-              !! Val::Str.new(value => .key).quoted-Str;
+                ?? .key
+                !! Val::Str.new(value => .key).quoted-Str;
             "{$key}: {.value.quoted-Str}"
         }).sort.join(', ') ~ '}'
     }
@@ -132,20 +132,20 @@ class Val::Block does Val {
         self.Str
     }
 
-    method pretty-params {
-        sprintf "(%s)", $.parameterlist.parameters.elements».ident».name.join(", ");
+    method pretty-parameters {
+        sprintf "(%s)", $.parameterlist.parameters.elements».identifier».name.join(", ");
     }
-    method Str { "<block {$.pretty-params}>" }
+    method Str { "<block {$.pretty-parameters}>" }
 }
 
 class Val::Sub is Val::Block {
-    has $.name;
+    has Str $.name;
 
     method quoted-Str {
         self.Str
     }
 
-    method Str { "<sub {$.name}{$.pretty-params}>" }
+    method Str { "<sub {$.name}{$.pretty-parameters}>" }
 }
 
 class Val::Macro is Val::Sub {
@@ -153,5 +153,5 @@ class Val::Macro is Val::Sub {
         self.Str
     }
 
-    method Str { "<macro {$.name}{$.pretty-params}>" }
+    method Str { "<macro {$.name}{$.pretty-parameters}>" }
 }

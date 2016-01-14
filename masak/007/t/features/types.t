@@ -4,9 +4,9 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (my (ident "n") (int 7))
-          (stexpr (postfix:<()> (ident "say") (arglist (ident "n")))))
+        (statementlist
+          (my (identifier "n") (int 7))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "n")))))
         .
 
     is-result $ast, "7\n", "int type works";
@@ -14,9 +14,9 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (my (ident "s") (str "Bond"))
-          (stexpr (postfix:<()> (ident "say") (arglist (ident "s")))))
+        (statementlist
+          (my (identifier "s") (str "Bond"))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "s")))))
         .
 
     is-result $ast, "Bond\n", "str type works";
@@ -24,16 +24,16 @@ use _007::Test;
 
 {
     outputs 'say("Mr \"Bond")', qq[Mr "Bond\n], qq[\\" gets unescaped correctly to "];
-    outputs 'say(chars("Mr \"Bond"))', qq[8\n], qq[...and counts as one character];
+    outputs 'say("Mr \"Bond".chars())', qq[8\n], qq[...and counts as one character];
     outputs 'say("Mr \\\\Bond")', qq[Mr \\Bond\n], qq[\\\\ gets unescaped correctly to \\];
-    outputs 'say(chars("Mr \\Bond"))', qq[8\n], qq[...and counts as one character];
+    outputs 'say("Mr \\Bond".chars())', qq[8\n], qq[...and counts as one character];
 }
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (my (ident "n") (array (int 1) (int 2)))
-          (stexpr (postfix:<()> (ident "say") (arglist (ident "n")))))
+        (statementlist
+          (my (identifier "n") (array (int 1) (int 2)))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "n")))))
         .
 
     is-result $ast, "[1, 2]\n", "array type works";

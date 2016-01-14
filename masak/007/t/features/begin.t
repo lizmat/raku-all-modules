@@ -4,9 +4,9 @@ use _007::Test;
 
 {
     my $ast = q:to/./;
-        (stmtlist
-          (begin (block (paramlist) (stmtlist
-            (stexpr (postfix:<()> (ident "say") (arglist (str "won't get printed"))))))))
+        (statementlist
+          (begin (block (parameterlist) (statementlist
+            (stexpr (postfix:<()> (identifier "say") (argumentlist (str "won't get printed"))))))))
         .
 
     is-result $ast, "", "BEGIN blocks don't run at runtime";

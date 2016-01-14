@@ -1,6 +1,6 @@
 # Roadmap
 
-007 is conceptually still a v0.0.x product. That is, we make no particular
+007 is conceptually still a v0.x.x product. That is, we make no particular
 guarantees about backwards compatibility yet, as we're heading towards some
 kind of publicly releasable stable condition.
 
@@ -36,8 +36,6 @@ The first track is still the *raison d'être* for 007. The second track rounds
 * Also want to close [a philosophical
   issue](https://github.com/masak/007/issues/7) about the statement/expression
   discrepancy that's exhibited in quasi blocks.
-* A small thing, but we will probably want to enable [creating Q nodes with
-  some optional properties omitted](https://github.com/masak/007/issues/84).
 * Make unhygienic declarations that are injected into code [actually declare
   stuff](https://github.com/masak/007/issues/88). We can cheat majorly at this
   one at first, as long as it works.
@@ -65,14 +63,6 @@ The first track is still the *raison d'être* for 007. The second track rounds
       so that they can see e.g. macros in their unexpanded form.
     * masak would also like to take this opportunity to tie together some kind
       of doc-comments, automated tests, and documentation on the web page.
-* We probably want [sub expressions](https://github.com/masak/007/issues/66) to
-  land before v1.0.0, because it's a small but valuable thing.
-    * And as a followup, the method declarations in blocks [should then be sub
-      expressions](https://github.com/masak/007/issues/90).
-* Implement [`else`](https://github.com/masak/007/issues/79).
-* Provide [`Q::TraitList`](https://github.com/masak/007/issues/77). (Right now
-  traits don't show up in the Qtree, they only cause semantic changes in
-  operator declarations.)
 
 ### General cleanup that should happen before v1.0.0
 
