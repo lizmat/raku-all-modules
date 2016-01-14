@@ -172,7 +172,7 @@ methods will throw an exception if supplied an invalid ratio.
 
 =end pod
 
-class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
+class Audio::Convert::Samplerate:ver<v0.0.5>:auth<github:jonathanstowe> {
     use NativeCall;
     use NativeHelpers::Array;
 
@@ -183,7 +183,7 @@ class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
     class X::ConvertError is Exception {
         has Int $.error-code = 0;
 
-        sub src_strerror(int32 $error) returns Str is native('libsamplerate') { * }
+        sub src_strerror(int32 $error) returns Str is native('samplerate',v0) { * }
 
         method message() returns Str {
             src_strerror($!error-code);
@@ -224,7 +224,7 @@ class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
 
     class State is repr('CPointer') {
 
-        sub src_new(int32 $converter-type, int32 $channels, int32 $error) returns State is native('libsamplerate') { * }
+        sub src_new(int32 $converter-type, int32 $channels, int32 $error) returns State is native('samplerate',v0) { * }
 
         method new(Type $type, Int $channels) returns State {
             my Int $error = 0;
@@ -237,7 +237,7 @@ class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
             $state;
         }
 
-        sub src_process(State $st, Data $d is rw) returns int32 is native('libsamplerate') { * }
+        sub src_process(State $st, Data $d is rw) returns int32 is native('samplerate',v0) { * }
 
         multi method process(Data $data is rw) returns Data {
             my $rc = src_process(self, $data);
@@ -249,7 +249,7 @@ class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
         }
 
         # put this in here as it simplifies matters
-        sub src_is_valid_ratio (num64 $ratio) returns int32 is native('libsamplerate') { * }
+        sub src_is_valid_ratio (num64 $ratio) returns int32 is native('samplerate',v0) { * }
 
         method is-valid-ratio(Num $ratio) returns Bool {
             if src_is_valid_ratio($ratio) {
@@ -260,7 +260,7 @@ class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
             }
         }
 
-        sub src_set_ratio(State $state, num64 $new_ratio) returns int32 is native('libsamplerate') { * }
+        sub src_set_ratio(State $state, num64 $new_ratio) returns int32 is native('samplerate',v0) { * }
 
         method set-ratio(Num $new-ratio) {
             my $rc = src_set_ratio(self, $new-ratio);
@@ -270,7 +270,7 @@ class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
             }
         }
 
-        sub src_reset(State) returns int32 is native('libsamplerate') { * }
+        sub src_reset(State) returns int32 is native('samplerate',v0) { * }
 
         method reset() {
             my $rc = src_reset(self);
@@ -280,7 +280,7 @@ class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
             }
         }
 
-        sub src_delete(State) is native('libsamplerate') { * }
+        sub src_delete(State) is native('samplerate',v0) { * }
 
         method DESTROY() {
             src_delete(self);
@@ -297,7 +297,7 @@ class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
         $!state = State.new($!type, $!channels);
     }
 
-    sub src_get_version() returns Str is native('libsamplerate') { * }
+    sub src_get_version() returns Str is native('samplerate',v0) { * }
 
     method samplerate-version() returns Version {
         my $v = src_get_version();
@@ -356,11 +356,11 @@ class Audio::Convert::Samplerate:ver<v0.0.3>:auth<github:jonathanstowe> {
         self!process-array(int32, @items, $src-ratio, $last);
     }
 
-    sub src_short_to_float_array(CArray[int16] $in, CArray[num32] $out, int32 $len) is native('libsamplerate') { * }
-    sub src_float_to_short_array(CArray[num32] $in, CArray[int16] $out, int32 $len) is native('libsamplerate') { * }
+    sub src_short_to_float_array(CArray[int16] $in, CArray[num32] $out, int32 $len) is native('samplerate',v0) { * }
+    sub src_float_to_short_array(CArray[num32] $in, CArray[int16] $out, int32 $len) is native('samplerate',v0) { * }
 
-    sub src_int_to_float_array(CArray[int32] $in, CArray[num32] $out, int32 $len) is native('libsamplerate') { * }
-    sub src_float_to_int_array(CArray[num32] $in, CArray[int32] $out, int32 $len) is native('libsamplerate') { * }
+    sub src_int_to_float_array(CArray[int32] $in, CArray[num32] $out, int32 $len) is native('samplerate',v0) { * }
+    sub src_float_to_int_array(CArray[num32] $in, CArray[int32] $out, int32 $len) is native('samplerate',v0) { * }
 
 }
 

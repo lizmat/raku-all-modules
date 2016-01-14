@@ -1,7 +1,6 @@
 #!perl6
 
 use v6;
-use lib 'lib';
 use Test;
 
 use Audio::Convert::Samplerate;
@@ -111,7 +110,6 @@ my $test-file-out   = $test-data.child("test-out-{ $*PID }.wav");
         my Bool $last = (@data.elems != ($bufsize * $in-obj.channels));
 
         my @buf;
-        todo("Bug with CArray[num32] : https://rt.perl.org/Ticket/Display.html?id=125408", 1);
         lives-ok { @buf = $conv-obj.process-float(@data, 2, $last) }, "process { @data.elems / $in-obj.channels } frames (floats as an array)";
         $out-frames-total += @buf.elems;
         last if $last;
