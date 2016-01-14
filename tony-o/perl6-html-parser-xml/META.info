@@ -5,7 +5,7 @@
   "auth"        : "github:tony-o",
   "depends"     : [ "XML" ],
   "provides" : {
-    "HTTP::Parser::XML" : "lib/HTML/Parser/XML.pm6"
+    "HTML::Parser::XML" : "lib/HTML/Parser/XML.pm6"
   },
   "source-url"  : "git://github.com/tony-o/perl6-html-parser-xml.git"
 } 
