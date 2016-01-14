@@ -1,8 +1,8 @@
 #!perl6
 
 use v6;
-use lib 'lib';
 use Test;
+use lib 'lib';
 
 use-ok('Audio::Encode::LameMP3', 'Can use Audio::Encode::LameMP3');
 

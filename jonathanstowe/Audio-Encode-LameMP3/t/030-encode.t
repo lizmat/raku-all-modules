@@ -1,7 +1,6 @@
 #!perl6
 
 use v6;
-use lib 'lib';
 use Test;
 
 use Audio::Encode::LameMP3;
@@ -149,7 +148,6 @@ subtest {
     $out-file.unlink;
 }, "encode longs";
 
-todo("still got the https://rt.perl.org/Ticket/Display.html?id=125408");
 subtest {
     my $sndfile;
     lives-ok { $sndfile = Audio::Sndfile.new(filename => $test-file, :r) }, "open a soundfile to get data";
@@ -195,7 +193,6 @@ subtest {
 
     $out-file.unlink;
 }, "encode floats";
-todo("still got the https://rt.perl.org/Ticket/Display.html?id=125408");
 subtest {
     my $sndfile;
     lives-ok { $sndfile = Audio::Sndfile.new(filename => $test-file, :r) }, "open a soundfile to get data";
@@ -374,7 +371,6 @@ subtest {
     $out-file.unlink;
 }, "encode longs (interleaved)";
 
-todo("still got the https://rt.perl.org/Ticket/Display.html?id=125408");
 subtest {
     my $sndfile;
     lives-ok { $sndfile = Audio::Sndfile.new(filename => $test-file, :r) }, "open a soundfile to get data";
@@ -419,7 +415,6 @@ subtest {
 
     $out-file.unlink;
 }, "encode floats (interleaved)";
-todo("still got the https://rt.perl.org/Ticket/Display.html?id=125408");
 subtest {
     my $sndfile;
     lives-ok { $sndfile = Audio::Sndfile.new(filename => $test-file, :r) }, "open a soundfile to get data";
