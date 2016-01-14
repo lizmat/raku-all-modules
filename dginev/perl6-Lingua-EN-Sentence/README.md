@@ -1,6 +1,8 @@
 Lingua::EN::Sentence - Perl6 port
 ========================
 
+[![Build Status](https://secure.travis-ci.org/dginev/perl6-Lingua-EN-Sentence.png?branch=master)](http://travis-ci.org/dginev/perl6-Lingua-EN-Sentence)
+
 Perl6 port of the Lingua::EN::Sentence CPAN module
 
 The Port is complete, you're welcome to use the library in production code.

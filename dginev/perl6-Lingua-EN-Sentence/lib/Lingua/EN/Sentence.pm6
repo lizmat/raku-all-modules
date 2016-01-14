@@ -22,11 +22,11 @@ my @MATH = <fig eq sec i'.'e e'.'g P'-'a'.'s cf Thm Def Conj resp>;
 my @MONTHS = <jan feb mar apr may jun jul aug sep oct nov dec sept>;
 my @MISC = <vs no esp>; # etc causes more problems than it solves
 
-my Str @ABBREVIATIONS = (@PEOPLE, @ARMY, @INSTITUTES, @COMPANIES, @PLACES, @MONTHS, @MATH, @MISC ).map({.lc}).sort;
+my Str @ABBREVIATIONS = (@PEOPLE, @ARMY, @INSTITUTES, @COMPANIES, @PLACES, @MONTHS, @MATH, @MISC).flat.flatmap(&lc).sort;
 my $acronym_regexp = array_to_regexp(@ABBREVIATIONS);
 
 sub add_acronyms(*@new_acronyms) is export {
-  push @ABBREVIATIONS, @new_acronyms;
+  @ABBREVIATIONS.append: @new_acronyms;
   $acronym_regexp = array_to_regexp(@ABBREVIATIONS);
 }
 sub get_acronyms() is export {return @ABBREVIATIONS;}
@@ -47,12 +47,10 @@ sub set_EOS(Str $end_marker) is export {$EOS=$end_marker;}
 sub get_sentences(Str $text) is export {
   my @sentences;
   if ($text.defined) {
-    my $quoteless_text;
-    my @quotes;
-    ($quoteless_text, @quotes) = hide_quotes($text);
+    my ($quoteless_text, Array[Str] $quotes) = hide_quotes($text);
     my $marked_text = first_sentence_breaking($quoteless_text);
     my $fixed_marked_text = remove_false_end_of_sentence($marked_text);
-    my $quoteful_text = show_quotes($fixed_marked_text,@quotes);
+    my $quoteful_text = show_quotes($fixed_marked_text, $quotes);
     @sentences = clean_sentences(split(/$EOS/,$quoteful_text));
   }
   return @sentences;
@@ -63,6 +61,7 @@ sub get_sentences(Str $text) is export {
 # for extra convenience. Sweet!
 #------------------------------------------------------------------------------
 use MONKEY-TYPING;
+use MONKEY-SEE-NO-EVAL;
 augment class Str { method sentences { return get_sentences(self); } }
 
 #==============================================================================
@@ -174,7 +173,7 @@ sub hide_quotes(Str $request) {
   return ($text,@quotes);
 }
 
-sub show_quotes(Str $request, @quotes) {
+sub show_quotes(Str $request, Str @quotes) {
   my $text = $request;
   if (@quotes.elems > 0) {
     my $quote = @quotes.shift;
