@@ -1,8 +1,9 @@
 {
     "perl"        : "v6.*",
     "name"        : "Sort::Naturally",
-    "version"     : "0.2.0",
+    "version"     : "v0.2.0",
     "description" : "Provides several routines to ease natural sorting.",
+    "authors"     : [ "Steve Schulze (thundergnat)" ],
     "provides"    : {
         "Sort::Naturally" : "lib/Sort/Naturally.pm6"
     },
