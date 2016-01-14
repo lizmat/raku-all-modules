@@ -63,7 +63,7 @@ class Purl6::Actions {
     }
 }
 
-my @files = find( :dir("."), :type('file'), :name( rx/(.p(m|l|6)|pm6 )$/) ).».IO;
+my @files = find( :dir("."), :type('file'), :name( rx/(.p(m|l|6)|pm6 )$/) )».IO.flat.list;
 
 for @files -> $io {
 
