@@ -62,6 +62,45 @@ To handle all exceptions use a C<default> statement.
         }
    }
 
+=head2 C<try> blocks
+
+To contain an exception use a C<try> block. Any exception that is thrown in
+such a block will be caught by the implicit C<CATCH> block or a C<CATCH> block
+provided by the user. In the latter case, any exception not handled will be 
+rethrown.
+    
+    class E is Exception { method message() { "Just stop already!" } }
+
+    try {
+        E.throw.new; # this will be local
+        
+        say "This won't be said.";
+    }
+
+    say "I'm alive!";
+
+    try {
+        CATCH {
+            when X::AdHoc { .Str.say; .resume }
+        }
+
+        die "No, I expect you to DIE Mr. Bond!";
+
+        say "I'm immortal.";
+
+        E.new.throw;
+
+        say "No, you don't!";
+    }
+
+Output:
+
+    I'm alive!
+    No, I expect you die DIE Mr. Bond!
+    I'm immortal.
+    Just stop already!
+      in block <unit> at exception.p6 line 21
+
 =head2 Throwing exceptions
 
 One can also explicitly throw exceptions via the C<.throw> method on an
@@ -110,6 +149,20 @@ control continues after the C<CATCH> block.
 C<throw> can be viewed as the method form of C<die>, just that in this
 particular case, the sub and method forms of the routine have different
 names.
+
+=head2 Resuming of Exceptions
+
+Exceptions interrupt control flow and divert it away from the statement
+following the statement that threw it. Any exception handled by the
+user can be resumed and control flow will continue with the statement
+following the statement that threw the exception. To do so call the
+method C<.resume> on the exception object.
+
+    CATCH { when X::AdHoc { .resume } } # this is step 2
+
+    die "We leave control after this."; # this is step 1
+
+    say "We have continued with control flow."; # this is step 3
 
 =end pod
 

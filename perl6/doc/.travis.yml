@@ -1,6 +1,20 @@
+addons:
+  apt:
+    packages:
+      - graphviz
 branches:
   except:
     - gh-pages
+notifications:
+  irc:
+    channels:
+    - "irc.freenode.net#perl6"
+    on_success: change
+    on_failure: always
+    template:
+      - "Doc build %{result}. %{author} '%{commit_message}'"
+      - "%{build_url} %{compare_url}"
+
 language: perl6
 sudo: false
 perl6:
@@ -8,3 +22,6 @@ perl6:
 install:
   - rakudobrew build-panda
   - panda installdeps .
+  - panda install Pod::To::HTML
+
+script: make test && make html

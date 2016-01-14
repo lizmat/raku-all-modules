@@ -21,13 +21,16 @@ files in a namespace.
 
 =head2 Basic Structure
 
-Module distributions in Perl 6 have the same structure as any distribution in
-the Perl family of languages:  there is a main project directory containing
-a C<README> and C<LICENSE> file, a C<lib> directory for modules, a C<t>
-directory for tests, and possibly a C<bin> directory for executable programs
-and scripts.
+Module distributions (in the I<set of related source files> sense) in Perl 6
+have the same structure as any distribution in the Perl family of languages:
+there is a main project directory containing a C<README> and a C<LICENSE> file,
+a C<lib> directory for the source filesE<mdash>which may be individually
+referred to as modules and/or may themselves define modules with the C<module>
+keywordN<As L<synopsis S11|https://design.perl6.org/S11.html#Units> says:
+Confusing? Yes it is.>, a C<t> directory for tests, and possibly a C<bin>
+directory for executable programs and scripts.
 
-Module files generally use the standard C<.pm> extension, and scripts or
+Source files generally use the standard C<.pm> extension, and scripts or
 executables use C<.pl>.  However, if you wish to highlight that the file is
 written in Perl 6 you can use the C<.pm6> extension for modules, and the
 C<.p6> extension for scripts.  Test files still use the normal C<.t>
@@ -252,16 +255,22 @@ to C<use>, the C<EXPORT> sub handles positional parameters. If you
 pass positional parameters to C<use> they will be passed to
 C<EXPORT>. If a positional is passed the module no longer exports
 default symbols. You may still import them explicitly by
-passing C<:DEFAULT> to C<use> along with your positional parameters.
+passing C<:DEFAULT> to C<use> along with your positional parameters. Type captures are supported and operators can be exported via their long name.
 
     =begin code
     # lib/MyModule
 
     class MyModule::Class {}
 
-    sub EXPORT($short_name?) {
+    sub EXPORT($short_name?, ::T) {
+        role R[::TT] { }
+        class C { }
+        multi sub infix:<~>(C \l, T \r){ note "supressed concat with: ", T.WHAT; };
+        multi sub infix:<~>(T \l, C \r){ note "supressed concat with: ", T.WHAT; };
         {
-          do $short_name => MyModule::Class if $short_name
+            do $short_name => MyModule::Class if $short_name,
+            'MixedC' => C but R.^parameterize(T), # workaround for RT#127256
+            'infix:<~>' => &infix:<~>
         }
     }
 
@@ -307,6 +316,9 @@ To share your module, do the following:
         |-- lib
         |   `-- Vortex
         |       `-- TotalPerspective.pm
+        |-- doc
+        |   `-- Vortex
+        |       `-- TotalPerspective.pod6
         |-- LICENSE
         |-- META.info
         |-- README.md
@@ -323,6 +335,8 @@ To share your module, do the following:
                 |-- FairyCake.pm
                 `-- Gargravarr.pm
     =end item
+
+    =item If you have any additional files (such as templates or a dynamic library ) that you wish to have installed so you can access them at runtime they should be placed in a C<resources> sub-directory of your project.
 
     =item The C<README.md> file is a L<markdown-formatted|https://help.github.com/articles/markdown-basics/> text file, which
     will later be automatically rendered as HTML by GitHub.
@@ -362,11 +376,12 @@ To share your module, do the following:
         "name" : "Vortex::TotalPerspective",
         "version" : "0.1.0",
         "description" : "Wonderful simulation to get some perspective.",
-        "author" : "R<Your Name>",
+        "authors" : [ "R<Your Name>" ],
         "provides" : {
             "Vortex::TotalPerspective" : "lib/Vortex/TotalPerspective.pm"
         },
         "depends" : [ ],
+        "resources" : [ ],
         "source-url" : "git://github.com/R<you>/Vortex-TotalPerspective.git"
     }
 
@@ -376,9 +391,22 @@ To share your module, do the following:
     details). If the version number doesn't matter to you or your users
     right now, you can just put in an asterisk (*) for the version.
 
-    In C<provides> section, include all the namespaces provided by
+	The C<authors> section includes a list of all the module authors. In
+	the case there is only one author, a single element list must be
+	supplied.
+
+    In the C<provides> section, include all the namespaces provided by
     your distribution and set C<perl> version to the minimum perl version
     your module works with
+
+    The C<resources> section is optional, but, if present, should contain a
+    list of the files in your C<resources> directory that you wish to be
+    installed, these will be installed with hashed names alongside your
+    library files and their installed location can be determined through the
+    C<%?RESOURCES> Hash indexed on the name provided.
+
+	The L<Test::META module | https://github.com/jonathanstowe/Test-META/>
+	can help you check the correctness of the META.info file.
 
     =end item
 
@@ -393,13 +421,13 @@ To share your module, do the following:
 
     =item Push your project to GitHub.
 
-    =item Ping someone on IRC (#perl6 at freenode) to either show you how to
-    add your module to the L<ecosystem|https://github.com/perl6/ecosystem>, or
-    else ask them if they could please add it for you.
+    =item Create a PR on L<ecosystem|https://github.com/perl6/ecosystem> adding
+    your module to META.list, or Ping someone on IRC (#perl6 at freenode) to
+    get help having it added.
 
     =item After the pull request has been accepted, wait for an hour. If
     your module doesn't show up on L<https://modules.perl6.org/>, please
-    view the log file at L<https://modules.perl6.org/log/update.log> to see
+    view the log file at L<https://modules.perl6.org/update.log> to see
     if it identifies an error with your module or meta file.
 
 B<That's it! Thanks for contributing to the Perl 6 community!>

@@ -217,6 +217,18 @@ passes C<(1, 2)> and C<< <a b> >> in turn to the block, leading to a total
 of two iterations and the result sequence C<"1,2", "a,b">.
 See L<method flatmap|/type/List/#method_flatmap> for an alternative that flattens.
 
+=head2 sub flat
+
+Defined as:
+
+    sub flat (**@list is raw)
+
+Constructs a list which contains any arguments provided in the order
+provided, and returns the result of calling the C<.flat> method (L<inherited
+from C<Any>|/type/Any#method_flat>) on that list:
+
+    flat 1, (2, (3, 4), $(5, 6)));  # (1, 2, 3, 4, $(5, 6)).Seq
+
 =head2 method flatmap
 
 Defined as:
@@ -753,28 +765,6 @@ Practical example:
 I<Note:> In the functional programming world, this operation is generally
 called a L<left fold|
 https://en.wikipedia.org/wiki/Fold_%28higher-order_function%29#Folds_on_lists>.
-
-=head2 routine splice
-
-Defined as:
-
-    multi sub    splice(@list,  $start, $elems?, *@replacement) returns List:D
-    multi method splice(List:D: $start, $elems?, *@replacement) returns List:D
-
-Usage:
-
-    splice(LIST, START, ELEMS?, REPLACEMENT?)
-    LIST.splice(START, ELEMS?, REPLACEMENT?)
-
-Deletes C<$elems> elements starting from index C<$start> from the list,
-returns them and replaces them by C<@replacement>. If C<$elems> is omitted,
-all the elements starting from index C<$start> are deleted.
-
-Example:
-
-    my @foo = <a b c d e f g>;
-    say @foo.splice(2, 3, <M N O P>);       # c d e
-    say @foo;                               # a b M N O P f g
 
 =head2 routine combinations
 

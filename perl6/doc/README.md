@@ -1,5 +1,7 @@
 # p6doc -- an attempt to write something like 'perldoc' for Perl 6
 
+[![Build Status](https://travis-ci.org/perl6/doc.svg?branch=master)](https://travis-ci.org/perl6/doc) [![artistic](https://img.shields.io/badge/license-Artistic%202.0-blue.svg?style=flat)](https://opensource.org/licenses/Artistic-2.0)
+
 An HTML version of this documentation can be found at http://doc.perl6.org/.
 
 (If you are browsing this repository via github, it will not display most
@@ -22,6 +24,8 @@ to see the documentation for method `split` in class `Str`.
 To build the documentation web pages, simply run
 
     $ make html
+
+In addition to the Perl 6 dependencies, you need to have `graphviz` installed.
 
 After the pages have been generated, you can view them on your local
 computer by starting the included `app.pl` program:
@@ -106,7 +110,7 @@ get started contributing documentation.
     the operator.  (`p6doc '%%'`  returns the documentation for
     `&infix:<%%>`.)
 
- *  Perl6 implementations could embed `P<...>` tags in their source
+ *  Perl 6 implementations could embed `P<...>` tags in their source
     code that would then inline the corresponding entry from `p6doc`.
     This would enable things like `&say.WHY` to (dynamically!)
     retrieve the documentation string from `p6doc`, without having

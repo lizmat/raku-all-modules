@@ -30,6 +30,7 @@ use Pod::Convenience;
 use Pod::Htmlify;
 
 use experimental :cached;
+use experimental :pack;
 
 my $type-graph;
 my %routines-by-type;
@@ -154,14 +155,19 @@ sub MAIN(
     }
 }
 
+sub extract-pod($file) {
+    use MONKEY-SEE-NO-EVAL;
+    my $pod  = EVAL(slurp($file.path) ~ "\n\$=pod")[0];
+}
+
 sub process-pod-dir($dir, :&sorted-by = &[cmp], :$sparse) {
     say "Reading doc/$dir ...";
     my @pod-sources =
-        recursive-dir("doc/$dir/")\
-        .grep({.path ~~ / '.pod' $/})\
-        .map({;
-            .path.subst("doc/$dir/", '')\
-                 .subst(rx{\.pod$},  '')\
+        recursive-dir("doc/$dir/")
+        .grep({.path ~~ / '.pod' $/})
+        .map({
+            .path.subst("doc/$dir/", '')
+                 .subst(rx{\.pod$},  '')
                  .subst(:g,    '/',  '::')
             => $_
         }).sort(&sorted-by);
@@ -174,7 +180,7 @@ sub process-pod-dir($dir, :&sorted-by = &[cmp], :$sparse) {
     my $kind  = $dir.lc;
     for @pod-sources.kv -> $num, (:key($filename), :value($file)) {
         printf "% 4d/%d: % -40s => %s\n", $num+1, $total, $file.path, "$kind/$filename";
-        my $pod  = EVAL(slurp($file.path) ~ "\n\$=pod")[0];
+        my $pod  = extract-pod($file.path);
         process-pod-source :$kind, :$pod, :$filename, :pod-is-complete;
     }
 }
@@ -202,10 +208,10 @@ sub process-pod-source(:$kind, :$pod, :$filename, :$pod-is-complete) {
     my %type-info;
     if $kind eq "type" {
         if $type-graph.types{$name} -> $type {
-            %type-info := :{ :subkinds($type.packagetype), :categories($type.categories) };
+            %type-info = :subkinds($type.packagetype), :categories($type.categories);
         }
         else {
-            %type-info := :{ :subkinds<class> };
+            %type-info = :subkinds<class>;
         }
     }
     my $origin = $*DR.add-new(
@@ -367,7 +373,7 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1, :$url) {
         # Is this new header a definition?
         # If so, begin processing it.
         # If not, skip to the next heading.
-
+        
         my @header;
         try {
             @header := $pod-element.contents[0].contents;
@@ -376,6 +382,15 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1, :$url) {
         my @definitions; # [subkind, name]
         my $unambiguous = False;
         given @header {
+            when :(Pod::FormattingCode $) {
+                my $fc := .[0];
+                proceed unless $fc.type eq "X";
+                @definitions = $fc.meta[0].flat;
+                # set default name if none provide so X<if|control> gets name 'if'
+                @definitions[1] = $fc.contents[0] if @definitions == 1;
+                $unambiguous = True;
+            }
+            # XXX: Remove when extra "" have been purged
             when :("", Pod::FormattingCode $, "") {
                 my $fc := .[1];
                 proceed unless $fc.type eq "X";
@@ -400,8 +415,12 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1, :$url) {
                 # The C<Foo> infix
                 @definitions = .[2].words[0], .[1].contents[0];
             }
-            when :(Str $ where /^(\w+) \s$/, Pod::FormattingCode $, "") {
+            when :(Str $ where /^(\w+) \s$/, Pod::FormattingCode $) {
                 # infix C<Foo>
+                @definitions = .[0].words[0], .[1].contents[0];
+            }
+            # XXX: Remove when extra "" have been purged
+            when :(Str $ where /^(\w+) \s$/, Pod::FormattingCode $, "") {
                 @definitions = .[0].words[0], .[1].contents[0];
             }
             default { next }
@@ -414,16 +433,12 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1, :$url) {
             my %attr;
             given $subkinds {
                 when / ^ [in | pre | post | circum | postcircum ] fix | listop / {
-                    %attr := :{
-                        :kind<routine>,
-                        :categories<operator>,
-                    };
+                    %attr = :kind<routine>,
+                            :categories<operator>,
                 }
                 when 'sub'|'method'|'term'|'routine'|'trait' {
-                    %attr := :{
-                        :kind<routine>,
-                        :categories($subkinds),
-                    };
+                    %attr = :kind<routine>,
+                            :categories($subkinds),
                 }
                 when 'class'|'role'|'enum' {
                     my $summary = '';
@@ -433,25 +448,19 @@ sub find-definitions (:$pod, :$origin, :$min-level = -1, :$url) {
                     else {
                         note "$name does not have an =SUBTITLE";
                     }
-                    %attr := :{
-                        :kind<type>,
-                        :categories($type-graph.types{$name}.?categories//''),
-                        :$summary,
-                    };
+                    %attr = :kind<type>,
+                            :categories($type-graph.types{$name}.?categories//''),
+                            :$summary,
                 }
                 when 'variable'|'sigil'|'twigil'|'declarator'|'quote' {
                     # TODO: More types of syntactic features
-                    %attr := :{
-                        :kind<syntax>,
-                        :categories($subkinds),
-                    };
+                    %attr = :kind<syntax>,
+                            :categories($subkinds),
                 }
                 when $unambiguous {
                     # Index anything from an X<>
-                    %attr := :{
-                        :kind<syntax>,
-                        :categories($subkinds),
-                    };
+                    %attr = :kind<syntax>,
+                            :categories($subkinds),
                 }
                 default {
                     # No clue, probably not meant to be indexed
@@ -596,9 +605,9 @@ sub write-search-file () {
     my $items = $*DR.get-kinds.map(-> $kind {
         $*DR.lookup($kind, :by<kind>).categorize({escape .name})\
             .pairs.sort({.key}).map: -> (:key($name), :value(@docs)) {
-                qq[[\{ label: "{
+                qq[[\{ category: "{
                     ( @docs > 1 ?? $kind !! @docs.[0].subkinds[0] ).wordcase
-                }: $name", value: "$name", url: "{@docs.[0].url}" \}]] #"
+                }", value: "$name", url: "{@docs.[0].url}" \}]] #"
             }
     }).flat.join(",\n");
     spurt("html/js/search.js", $template.subst("ITEMS", $items));
@@ -651,7 +660,7 @@ sub write-disambiguation-files () {
 sub write-index-files () {
     say 'Writing html/index.html ...';
     spurt 'html/index.html',
-        p2h(EVAL(slurp('doc/HomePage.pod') ~ "\n\$=pod"),
+        p2h(extract-pod('doc/HomePage.pod'),
             pod-path => 'HomePage.pod');
 
     say 'Writing html/language.html ...';
@@ -698,7 +707,7 @@ sub write-main-index(:$kind, :&summary = {Nil}) {
             "Use the above menu to narrow it down topically."
         ),
         pod-table($*DR.lookup($kind, :by<kind>)\
-            .categorize(*.name).sort(*.key)>>.value\
+            .categorize(*.name).sort(*.key)>>.value
             .map({[
                 .map({.subkinds // Nil}).unique.join(', '),
                 pod-link(.[0].name, .[0].url),
@@ -715,7 +724,7 @@ sub write-sub-index(:$kind, :$category, :&summary = {Nil}) {
         "Perl 6 {$category.tc} {$kind.tc}s",
         pod-table($*DR.lookup($kind, :by<kind>)\
             .grep({$category ⊆ .categories})\ # XXX
-            .categorize(*.name).sort(*.key)>>.value\
+            .categorize(*.name).sort(*.key)>>.value
             .map({[
                 .map({.subkinds // Nil}).unique.join(', '),
                 pod-link(.[0].name, .[0].url),
@@ -727,8 +736,8 @@ sub write-sub-index(:$kind, :$category, :&summary = {Nil}) {
 
 sub write-kind($kind) {
     say "Writing per-$kind files ...";
-    $*DR.lookup($kind, :by<kind>)\
-        .categorize({.name})\
+    $*DR.lookup($kind, :by<kind>)
+        .categorize({.name})
         .kv.map: -> $name, @docs {
             my @subkinds = @docs.map({.subkinds}).unique;
             my $subkind = @subkinds.elems == 1 ?? @subkinds.list[0] !! $kind;

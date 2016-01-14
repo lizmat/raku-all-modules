@@ -102,16 +102,16 @@ Returns C<True> if C<$a> is an B<element> of C<$b>.
 
 =head4 infix ∈
 
-    only sub infix:<<"\x2208">>($a, $b --> Bool)
+    only sub infix:<<"∈">>($a, $b --> Bool)
 
-Equivalent to L«(elem)».
+Equivalent to L«(elem)», at codepoint U+2208 (ELEMENT OF).
 
 =head4 infix ∉
 
-    only sub infix:<<"\x2209">>($a, $b --> Bool)
+    only sub infix:<<"∉">>($a, $b --> Bool)
 
 Equivalent to C<!(elem)>, i.e., returns C<True> if C<$a> is not an element
-of C<$b>.
+of C<$b>, at codepoint U+2209 (NOT AN ELEMENT OF).
 
 =head3 infix (cont)
 
@@ -122,16 +122,16 @@ Returns C<True> if C<$a> B<contains> C<$b> as an element.
 
 =head4 infix ∋
 
-    only sub infix:<<"\x220B">>($a, $b --> Bool)
+    only sub infix:<<"∋">>($a, $b --> Bool)
 
-Equivalent to L«(cont)».
+Equivalent to L«(cont)», at codepoint U+220B (CONTAINS AS MEMBER).
 
 =head4 infix ∌
 
-    only sub infix:<<"\x220C">>($a, $b --> Bool)
+    only sub infix:<<"∌">>($a, $b --> Bool)
 
 Equivalent to C<!(cont)>, i.e., returns C<True> if C<$a> does not contain
-C<$b>.
+C<$b>, at codepoint U+220C (DOES NOT CONTAIN AS MEMBER).
 
 =head3 infix (<=)
 
@@ -144,15 +144,15 @@ sized set than C<$b>.
 
 =head4 infix ⊆
 
-    only sub infix:<<"\x2286">>($a, $b --> Bool)
+    only sub infix:<<"⊆">>($a, $b --> Bool)
 
-Equivalent to L«(<=)».
+Equivalent to L«(<=)», at codepoint U+2286 (SUBSET OF OR EQUAL TO).
 
 =head4 infix ⊈
 
-    only sub infix:<<"\x2288">>($a, $b --> Bool)
+    only sub infix:<<"⊈">>($a, $b --> Bool)
 
-Equivalent to C«!(<=)».
+Equivalent to C«!(<=)», at codepoint U+2288 (NEITHER A SUBSET OF NOR EQUAL TO).
 
 =head3 infix (<)
 
@@ -165,15 +165,15 @@ C<$b>.
 
 =head4 infix ⊂
 
-    only sub infix:<<"\x2282">>($a, $b --> Bool)
+    only sub infix:<<"⊂">>($a, $b --> Bool)
 
-Equivalent to L«(<)».
+Equivalent to L«(<)», at codepoint U+2282 (SUBSET OF).
 
 =head4 infix ⊄
 
-    only sub infix:<<"\x2284">>($a, $b --> Bool)
+    only sub infix:<<"⊄">>($a, $b --> Bool)
 
-Equivalent to C«!(<)».
+Equivalent to C«!(<)», at codepoint U+2284 (NOT A SUBSET OF).
 
 =head3 infix (>=)
 
@@ -185,15 +185,16 @@ B<superset> of or equal to C<$b>.
 
 =head4 infix ⊇
 
-    only sub infix:<<"\x2287">>($a, $b --> Bool)
+    only sub infix:<<"⊇">>($a, $b --> Bool)
 
-Equivalent to L«(>=)».
+Equivalent to L«(>=)», at codepoint U+2287 (SUPERSET OF OR EQUAL TO).
 
 =head4 infix ⊉
 
-    only sub infix:<<"\x2289">>($a, $b --> Bool)
+    only sub infix:<<"⊉">>($a, $b --> Bool)
 
-Equivalent to C«!(>=)».
+Equivalent to C«!(>=)», at codepoint U+2289 (NEITHER A SUPERSET OF
+NOR EQUAL TO).
 
 =head3 infix (>)
 
@@ -205,15 +206,15 @@ B<strict superset> of C<$b>.
 
 =head4 infix ⊃
 
-    only sub infix:<<"\x2283">>($a, $b --> Bool)
+    only sub infix:<<"⊃">>($a, $b --> Bool)
 
-Equivalent to L«(>)».
+Equivalent to L«(>)», at codepoint U+2283 (SUPERSET OF).
 
 =head4 infix ⊅
 
-    only sub infix:<<"\x2285">>($a, $b --> Bool)
+    only sub infix:<<"⊅">>($a, $b --> Bool)
 
-Equivalent to C«!(>)».
+Equivalent to C«!(>)», at codepoint U+2285 (NOT A SUPERSET OF).
 
 =head3 infix (<+)
 
@@ -226,9 +227,9 @@ least as heavily as the element is in C<$a>.
 
 =head4 infix ≼
 
-    only sub infix:<<"\x227C">>($a, $b --> Bool)
+    only sub infix:<<"≼">>($a, $b --> Bool)
 
-Equivalent to L«(<+)».
+Equivalent to L«(<+)», at codepoint U+227C (PRECEDES OR EQUAL TO).
 
 =head3 infix (>+)
 
@@ -241,9 +242,9 @@ than that element is in C<$a>.
 
 =head4 infix ≽
 
-    only sub infix:<<"\x227D">>($a, $b --> Bool)
+    only sub infix:<<"≽">>($a, $b --> Bool)
 
-Equivalent to L«(+>)».
+Equivalent to L«(+>)», at codepoint U+227D (SUCCEEDS OR EQUAL TO).
 
 =head2 Operators that return C<Set> or C<Bag>
 
@@ -264,9 +265,9 @@ appeared for that element.
 
 =head4 infix ∪
 
-    only sub infix:<<"\x222A">>(|p)
+    only sub infix:<<"∪">>(|p)
 
-Equivalent to L«(V<|>)».
+Equivalent to L«(V<|>)», at codepoint U+222A (UNION).
 
 =head3 infix (&)
 
@@ -286,9 +287,9 @@ is the minimum of the weights of that element over all arguments).
 
 =head4 infix ∩
 
-    only sub infix:<<"\x2229">>(|p)
+    only sub infix:<<"∩">>(|p)
 
-Equivalent to L«(&)».
+Equivalent to L«(&)», at codepoint U+2229 (INTERSECTION).
 
 =head3 infix (-)
 
@@ -324,9 +325,9 @@ $a)>.
 
 =head4 infix ⊖
 
-    only sub infix:<<"\x2296">>($a, $b --> Setty)
+    only sub infix:<<"⊖">>($a, $b --> Setty)
 
-Equivalent to L«(^)».
+Equivalent to L«(^)», at codepoint U+2296 (CIRCLED MINUS).
 
 =head3 infix (.)
 
@@ -341,9 +342,9 @@ across the arguments multiplied together to get the new weight.
 
 =head4 infix ⊍
 
-    only sub infix:<<"\x228D">>(|p)
+    only sub infix:<<"⊍">>(|p)
 
-Equivalent to L«(.)».
+Equivalent to L«(.)», at codepoint U+228D (MULTISET MULTIPLICATION).
 
 =head3 infix (+)
 
@@ -358,8 +359,12 @@ arguments added together to get the new weight.
 
 =head4 infix ⊎
 
-    only sub infix:<<"\x228E">>(|p)
+    only sub infix:<<"⊎">>(|p)
 
-Equivalent to L«(+)».
+Equivalent to L«(+)», at codepoint U+228E (MULTISET UNION).
+
+=head3 term ∅
+
+Equivalent to set(), aka the empty set, at codepoint U+2205 (EMPTY SET).
 
 =end pod
