@@ -1,14 +1,17 @@
 # Manage which facts exist and how we access them.  Largely just a wrapper
 # around a hash of facts.
-class Facter::Util::Collection;
+
+use Facter::Debug;
+
+unit class Facter::Util::Collection does Facter::Debug;
 
 #se Facter;
 #se Facter::Util::Fact;
 use Facter::Util::Loader;
 
 # Private members
-has %!facts is rw = ();
-has $!loader is rw;
+has %!facts = ();
+has $!loader;
 
 # Return a fact object by name.  If you use this, you still have to call
 # 'value' on it to retrieve the actual value.
@@ -23,17 +26,17 @@ method add($fact_name, $block) {
     # TODO add %options support
     my %options = ();
 
-    Facter.debug("Facter::Util::Collection.add $fact_name: $block");
+    self.debug("Facter::Util::Collection.add $fact_name: $block");
 
     my $name = self.canonize($fact_name);
 
     my $fact = %!facts{$name};
     unless $fact {
-        Facter.debug("- new Fact '$name'");
+        self.debug("- new Fact '$name'");
         $fact = Facter::Util::Fact.new(name => $name);
-        Facter.debug("- new Fact '$name' created: " ~ $fact.perl);
+        self.debug("- new Fact '$name' created: " ~ $fact.perl);
         %!facts{$name} = $fact;
-        Facter.debug('%!facts{$name}' ~ " = '" ~ %!facts{$name});
+        self.debug('%!facts{$name}' ~ " = '" ~ %!facts{$name});
     }
 
     # Set any fact-appropriate options.
@@ -47,7 +50,7 @@ method add($fact_name, $block) {
 
     if $block {
 
-        Facter.debug("Fact " ~ $fact ~ " adding block " ~ $block.perl);
+        self.debug("Fact " ~ $fact ~ " adding block " ~ $block.perl);
         my $resolve = $fact.add($block);
 
         # Set any resolve-appropriate options
@@ -64,7 +67,7 @@ method add($fact_name, $block) {
         die "Invalid facter option(s) " ~ %options.keys ==> map { $_.Str } ==> join(",");
     }
 
-    Facter.debug("Facter::Util::Collection.add returns \$fact=$fact");
+    self.debug("Facter::Util::Collection.add returns \$fact=$fact");
     return $fact;
 }
 
@@ -83,12 +86,12 @@ method each () {
 method fact($name) {
     my $fact_name = self.canonize($name);
 
-    unless %!facts{$fact_name} {
-        Facter.debug("Facter::Util::Collection.fact loading fact $fact_name through loader");
+    unless %!facts{$fact_name}:exists {
+        self.debug("Facter::Util::Collection.fact loading fact $fact_name through loader");
         self.loader.load($fact_name);
     }
 
-    Facter.debug("Facter::Util::Collection.fact fact $fact_name: " ~ %!facts{$fact_name});
+    # self.debug("Facter::Util::Collection.fact fact $fact_name: " ~ %!facts{$fact_name});
 
     return %!facts{$fact_name};
 }

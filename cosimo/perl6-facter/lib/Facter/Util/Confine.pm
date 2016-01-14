@@ -5,7 +5,9 @@
 # for the resolution mechanism to be suitable.
 #
 
-class Facter::Util::Confine;
+use Facter::Debug;
+
+unit class Facter::Util::Confine does Facter::Debug;
 
 use Facter::Util::Values;
 
@@ -16,7 +18,7 @@ has @.values is rw;
 # we're comparing to.
 method BUILD ($fact, *@values) {
 
-    Facter.debug("Building confine for " ~ $fact ~ " = " ~ @values.perl);
+    self.debug("Building confine for " ~ $fact ~ " = " ~ @values.perl);
 
     die "The fact name must be provided" unless $fact; # ArgumentError
     die "One or more values must be provided" if @values.elems == 0;
@@ -33,10 +35,10 @@ method Str {   # ruby: to_s
 # Evaluate the fact, returning true or false.
 method Bool {
 
-    Facter.debug("Confine processing: checking truth for fact " ~ $.fact ~ " = " ~ @.values.perl);
+    self.debug("Confine processing: checking truth for fact " ~ $.fact ~ " = " ~ @.values.perl);
 
     unless my $fact = Facter.get_fact($.fact) {
-        Facter.debug("No fact for $.fact");
+        self.debug("No fact for $.fact");
         return False;
     }
 

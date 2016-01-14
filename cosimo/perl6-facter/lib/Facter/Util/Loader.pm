@@ -2,9 +2,11 @@
 
 use v6;
 
-class Facter::Util::Loader;
+use Facter::Debug;
 
-has $!loaded_all is rw = False;
+unit class Facter::Util::Loader does Facter::Debug;
+
+has $!loaded_all = False;
 
 # Load all resolutions for a single fact.
 method load($fact) {
@@ -18,6 +20,7 @@ method load($fact) {
     # TODO: would be cool to also run the ".rb" facts
     my $filename = $shortname ~ ".pm";
     my $module = "Facter::$shortname";
+    self.debug("Attempting to load $module");
     try {
         require $module;
     }
@@ -45,13 +48,13 @@ method load($fact) {
 method load_all {
     return if $!loaded_all;
 
-    Facter.debug("Loading env facts");
+    self.debug("Loading env facts");
     self.load_env();
 
-    Facter.debug("Loading facts from search_path: " ~ self.search_path.perl);
+    self.debug("Loading facts from search_path: " ~ self.search_path.perl);
     for self.search_path -> $dir {
 
-        Facter.debug("    - $dir");
+        self.debug("    - $dir");
 
         next unless $dir.IO ~~ :d;
 
@@ -104,19 +107,20 @@ method load_file($file) {
     # $file can be 'lib/Facter/kernel.pm'
     # We need to require 'Facter::kernel'
     # Only lowercase names!
+    self.debug("Attempting to load $file in load_file");
     return unless $file ~~ /(<[a..z]>\w*)\.pm$/;
 
     my $fact-name = $0.Str;
     my $module-name = "Facter::$fact-name";
 
-    Facter.debug("Fact file name $file triggers load of module $module-name");
+    self.debug("Fact file name $file triggers load of module $module-name");
 
     # TODO: would be cool to also run the ".rb" facts
     try {
         require $module-name;
     }
     CATCH {
-        Facter.debug("Failed loading fact file $file ($module-name)");
+        self.debug("Failed loading fact file $file ($module-name)");
         return False;
     }
 

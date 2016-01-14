@@ -27,10 +27,14 @@
 
 use v6;
 
-class Facter;
+use Facter::Debug;
+
+unit class Facter does Facter::Debug;
 
 use Facter::Util::Fact;
+use Facter::Util::Loader;
 use Facter::Util::Collection;
+
 
 our $VERSION = '0.04';
 our $LAST_OBJECT;
@@ -39,12 +43,11 @@ our $LAST_OBJECT;
 #%*ENV<LANG> = 'C';
 
 # Static variables (@@debug)
-our $debug = 0;
 our $timing = 0;
 our $collection;
 
 # Private members
-has @!search_path is rw = ();
+has @!search_path = ();
 
 method collection {
     $collection //= Facter::Util::Collection.new
@@ -58,29 +61,6 @@ method BUILD {
     $LAST_OBJECT = self;
 }
 
-multi method debugging {
-    return $debug != 0
-}
-
-# Set debugging on or off (1/0)
-multi method debugging($bit) {
-    if $bit {
-        $debug = 1;
-    }
-    else {
-        $debug = 0;
-    }
-}
-
-method debug($string) {
-    if ! defined $string {
-        return
-    }
-    if self.debugging {
-        say $string;
-    }
-    return;
-}
 
 method show_time($string) {
     if $string and self.timing {
@@ -110,7 +90,7 @@ method get_fact($name) {
 
 method fact(*@args) {
     my $fact = self.collection.fact(@args);
-    Facter.debug("Facter.fact returns $fact");
+    self.debug("Facter.fact returns $fact");
     return $fact;
 }
 
@@ -148,7 +128,7 @@ method to_hash {
 # Add a resolution mechanism for a named fact.  This does not distinguish
 # between adding a new fact and adding a new way to resolve a fact.
 method add ($name, Sub $block) {
-    Facter.debug("Facter: adding fact $name as " ~ $block.perl);
+    self.debug("Facter: adding fact $name as " ~ $block.perl);
     my $instance = self // Facter.get_instance;
     $instance.collection.add($name, $block);
 }

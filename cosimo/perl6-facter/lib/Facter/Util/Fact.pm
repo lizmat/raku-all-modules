@@ -1,16 +1,18 @@
-class Facter::Util::Fact;
+use Facter::Debug;
+
+unit class Facter::Util::Fact does Facter::Debug;
 
 use Facter::Util::Resolution;
 
 our $TIMEOUT = 5;
 
-has $!value is rw;
-has $!suitable is rw = False;
+has $!value;
+has $!suitable;
 
 has $.name is rw = "";
 has $.ldapname is rw = "";
 has @.resolves is rw = ();
-has $!searching is rw = False;
+has $!searching = False;
 
 # Create a new fact, with no resolution mechanisms.
 method initialize($name, %options = ()) {
@@ -36,16 +38,16 @@ method add ($block) {
         die "You must pass a block to Fact<instance>.add";
     }
 
-    Facter.debug("Fact.add($.name, $block)");
+    self.debug("Fact.add($.name, $block)");
     my $resolve = Facter::Util::Resolution.new(name => $.name);
-    Facter.debug("\$resolve = " ~ $resolve.perl);
+    self.debug("\$resolve = " ~ $resolve.perl);
 
     # ruby: resolve.instance_eval(block);
     $block($resolve);
 
     @.resolves.push($resolve);
 
-    Facter.debug("\$resolve = " ~ $resolve.perl);
+    self.debug("\$resolve = " ~ $resolve.perl);
 
     # Immediately sort the resolutions, so that we always have
     # a sorted list for looking up values.
@@ -67,34 +69,34 @@ method flush {
 method value {
 
     if $!value.defined {
-        Facter.debug("Fact value already defined: $!value");
+        self.debug("Fact value already defined: $!value");
         return $!value;
     }
 
     if @.resolves.elems == 0 {
-        Facter.debug("No resolves for $!name");
+        self.debug("No resolves for $!name");
         return;
     }
 
     $!value = self.searching(sub {
 
-        Facter.debug("Facter::Util::Fact.value for $!name. Searching.");
+        self.debug("Facter::Util::Fact.value for $!name. Searching.");
 
         $!value = Mu;
         my $foundsuits = False;
 
         while @.resolves {
             my $resolve = @.resolves.shift;
-            Facter.debug("- Evaluating resolve $resolve");
+            self.debug("- Evaluating resolve $resolve");
 
             unless $resolve.suitable {
-                Facter.debug("- Resolve $resolve unsuitable");
+                self.debug("- Resolve $resolve unsuitable");
                 next;
             }
 
             $foundsuits = True;
             my $candidate_value = $resolve.value;
-            Facter.debug("- Candidate value from resolve $resolve is $candidate_value");
+            self.debug("- Candidate value from resolve $resolve is $candidate_value");
 
             if $candidate_value.defined and $candidate_value ne "" {
                 return $candidate_value;
@@ -102,7 +104,7 @@ method value {
         }
 
         unless $foundsuits {
-            Facter.debug("Found no suitable resolves of "
+            self.debug("Found no suitable resolves of "
                 ~ @.resolves.elems ~ " for " ~ $!name
             );
         }
@@ -110,7 +112,7 @@ method value {
     });
 
     if ! $!value.defined {
-        Facter.debug("value for $!name is still undef");
+        self.debug("value for $!name is still undef");
         return;
     } else {
         return $!value
@@ -126,7 +128,7 @@ method are-we-searching {
 method searching (Sub $block) {
 
     if self.are-we-searching {
-        Facter.debug("Caught recursion on $!name");
+        self.debug("Caught recursion on $!name");
 
         # return a cached value if we've got it
         if $!value {
@@ -139,14 +141,14 @@ method searching (Sub $block) {
     # If we've gotten this far, we're not already searching, so go ahead and do so.
     $!searching = True;
 
-    Facter.debug("Facter::Util::Fact.searching for $!name: start");
+    self.debug("Facter::Util::Fact.searching for $!name: start");
 
     my @fact-values = gather {
-        #Facter.debug("- Block is " ~ $block.perl);
+        #self.debug("- Block is " ~ $block.perl);
         my $next-value = $block();
-        #Facter.debug("- 1 Got next value: " ~ $next-value ~ " (" ~ $next-value.perl ~ ")");
+        #self.debug("- 1 Got next value: " ~ $next-value ~ " (" ~ $next-value.perl ~ ")");
         $next-value = $next-value();
-        #Facter.debug("- 2 Got next value: " ~ $next-value ~ " (" ~ $next-value.perl ~ ")");
+        #self.debug("- 2 Got next value: " ~ $next-value ~ " (" ~ $next-value.perl ~ ")");
         take $next-value;
         $!searching = False;
     };

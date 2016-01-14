@@ -1,6 +1,6 @@
 Facter.add("kernel", sub ($f) {
     $f.setcode(block => sub {
-        given $*OS {
+        given $*DISTRO.name  {
             when m:i/mswin|win32|dos|cygwin|mingw/ {
                 "windows"
             }

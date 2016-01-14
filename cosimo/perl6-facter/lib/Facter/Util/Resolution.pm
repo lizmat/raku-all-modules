@@ -8,13 +8,15 @@
 # suitable.
 #
 
-class Facter::Util::Resolution;
+use Facter::Debug;
+
+unit class Facter::Util::Resolution does Facter::Debug;
 
 #equire 'timeout'
 #equire 'rbconfig'
 
-has $!value is rw;
-has $!suitable is rw;
+has $!value;
+has $!suitable;
 
 has $.code is rw;
 has $.interpreter is rw;
@@ -64,23 +66,23 @@ method exec($code, $interpreter = $INTERPRETER) {
         if $code ~~ /^\// {
             $path = $binary;
         } else {
-            Facter.debug("Trying to find which '$binary'");
+            self.debug("Trying to find which '$binary'");
             $path = qqx{which '$binary' 2>/dev/null}.chomp;
             # we don't have the binary necessary
-            return if $path eq "" or $path.match(/Command not found\./);
+            return if $path eq "" or $path.match(/"Command not found\."/);
         }
-        Facter.debug("path=$path");
+        self.debug("path=$path");
         return unless $path.IO ~~ :e;
     }
 
     my $out;
 
-    Facter.debug("Running command $code");
+    self.debug("Running command $code");
     try {
         $out = qqx{$code}.chomp;
     }
     CATCH {
-        Facter.debug("Command failed: $!");
+        self.debug("Command failed: $_");
         return;
     }
 
@@ -92,7 +94,7 @@ method exec($code, $interpreter = $INTERPRETER) {
 method confine(%confines) {
     require Facter::Util::Confine;
     for %confines.kv -> $fact, $value {
-        Facter.debug("Adding confine '$fact' => '$value'");
+        self.debug("Adding confine '$fact' => '$value'");
         @.confines.push(Facter::Util::Confine.new($fact, $value));
     }
 }
@@ -146,21 +148,21 @@ method to_s {
 method value {
 
     if ! $.code and ! $.interpreter {
-        Facter.debug("No code and no interpreter. Can't get value of fact $.name");
+        self.debug("No code and no interpreter. Can't get value of fact $.name");
         return;
     }
 
     my $result;
     my $starttime = time;
 
-    Facter.debug("Getting value of fact $.name...");
+    self.debug("Getting value of fact $.name...");
 
     try {
         if "Sub()" eq $.code.WHAT {
-            Facter.debug("   Running block $.code");
+            self.debug("   Running block $.code");
             $result = $.code();
         } else {
-            Facter.debug("   Running command $.code through $.interpreter");
+            self.debug("   Running command $.code through $.interpreter");
             $result = Facter::Util::Resolution.exec($.code, $.interpreter);
         }
     }

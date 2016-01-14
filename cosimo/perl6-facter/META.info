@@ -4,6 +4,7 @@
     "description" : "A port of puppetlabs facter to Perl 6",
     "provides"    : {
         "Facter"                   : "lib/Facter.pm",
+        "Facter::Debug"            : "lib/Facter/Debug.pm",
         "Facter::kernel"           : "lib/Facter/kernel.pm",
         "Facter::perl6os"          : "lib/Facter/perl6os.pm",
         "Facter::Util::Confine"    : "lib/Facter/Util/Confine.pm",
