@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/labster/perl6-File-Compare.git
 	branch = master
-	commit = 07d4ffb166b7253d92b48bf8fba38d2613862571
-	parent = 64bab6a8d43db813e4899a7d19792659a4c372ce
-	cmdver = 0.2.2
+	commit = 70e47a6c760ded0cf06e8dc0bfe35b30a1837c41
+	parent = 289b19cf8e86e32d0ec575c981837e17919b5cf3
+	cmdver = 0.2.3

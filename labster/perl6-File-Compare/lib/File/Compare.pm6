@@ -61,10 +61,10 @@ sub compare_multiple_files (@file_list, Int :$chunk_size = $MAX) is export {
 		my %skip = map { $_ => True},
 			   grep {@sizes[$_] != $size or @type[$_].defined }, @index;
 
-		@file[$i].seek(0,0);
+		@file[$i].seek(0, SeekFromBeginning);
 		#reset .tell in files we're not skipping
-		#  TODO: check and see if @file».seek(0,0) would be faster anyway
-		@file[grep {%skip{$_}.not}, @index]».seek(0,0);
+		#  TODO: check and see if @file».seek(0, SeekFromBeginning) would be faster anyway
+		@file[grep {%skip{$_}.not}, @index]».seek(0, SeekFromBeginning);
 
 		while my $left := @file[$i].read($chunk_size) {
 			for $i^..^@file.elems -> $j {
