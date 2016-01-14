@@ -31,29 +31,25 @@ class PDF::Writer {
 	('[', $array.map({ $.write($_) }), ']').join: ' ';
     }
 
-    multi method write( Array :$body!, Str :$type='PDF' ) {
+    multi method write( Array :$body!, Bool :$write-xref = True ) {
         temp $!prev = Nil;
-        $body.map({ $.write( :body($_), :$type )}).join: "\n";
+        $body.map({ $.write( :body($_), :$write-xref )}).join: "\n";
     }
 
-    multi method write( Hash :$body!, Str :$type = 'PDF' ) {
-	my Hash @entries;
-	$.build-index( $body, @entries, :$type);
+    multi method write( Hash :$body!,  Bool :$write-xref = True ) {
+	$.write-body( $body, :$write-xref);
     }
 
-    method build-index( Hash $body!, @entries!, Str :$type = 'PDF' --> Str ) {
-        @entries = [{ :type(0), :offset(0), :gen-num(65535), :obj-num(0) }, ];
-        my @out;
-
-        for $body<objects>.list -> $obj {
+    method make-objects( @objects, @out = [], @idx = [] ) {
+        for @objects -> $obj {
 
             if my $ind-obj = $obj<ind-obj> {
-                my UInt $obj-num = $ind-obj[0];
-                my UInt $gen-num = $ind-obj[1];
-
-                @entries.push: { :type(1), :$.offset, :$gen-num, :$obj-num, :$ind-obj };
                 @out.push: $.write( :$ind-obj );
 
+		my UInt $obj-num = $ind-obj[0];
+		my UInt $gen-num = $ind-obj[1];
+
+		@idx.push: { :type(1), :$.offset, :$gen-num, :$obj-num, :$ind-obj };
             }
             elsif my $comment = $obj<comment> {
                 @out.push: $.write( :$comment );
@@ -64,45 +60,54 @@ class PDF::Writer {
 
             $!offset += @out[*-1].codes + 1;
         }
+	@out;
+    }
 
-        my Hash $trailer = $body<trailer>
-            // {};
+    method make-xref( Hash $trailer, @out, @idx, Bool :$write-xref ) {
 
-        if $type eq 'FDF' {
-            # don't write an index
-            @out.push: [~] (
-                $.write( :$trailer ),
-                '%%EOF');
-        }
-        else {
+	@idx = @idx.sort: { $^a<obj-num> <=> $^b<obj-num> || $^a<gen-num> <=> $^b<gen-num> };
 
-            @entries = @entries.sort: { $^a<obj-num> <=> $^b<obj-num> || $^a<gen-num> <=> $^b<gen-num> };
+	my Hash @xref;
 
-            my Hash @xref;
+	for @idx {
+	    # [ PDF 1.7 ] 3.4.3 Cross-Reference Table:
+	    # "Each cross-reference subsection contains entries for a contiguous range of object numbers"
+	    my $contigous = +@xref && .<obj-num> && .<obj-num> == $!size;
+	    @xref.push: %( obj-first-num => .<obj-num>, entries => [] )
+		unless $contigous;
+	    @xref[*-1]<entries>.push: $_;
+	    @xref[*-1]<obj-count>++;
+	    $!size = .<obj-num> + 1;
+	}
 
-            for @entries {
-                # [ PDF 1.7 ] 3.4.3 Cross-Reference Table:
-                # "Each cross-reference subsection contains entries for a contiguous range of object numbers"
-                my $contigous = +@xref && .<obj-num> && .<obj-num> == $!size;
-                @xref.push: %( obj-first-num => .<obj-num>, entries => [] )
-                    unless $contigous;
-                @xref[*-1]<entries>.push: $_;
-                @xref[*-1]<obj-count>++;
-                $!size = .<obj-num> + 1;
-            }
+	my Str $xref-str = $.write( :@xref );
+	my UInt $startxref = $.offset;
 
-            my Str $xref-str = $.write( :@xref );
-            my UInt $startxref = $.offset;
+	@out.push: [~] (
+	    $xref-str,
+	    $.write( :$trailer, :$!prev, :$!size ),
+	    $.write( :$startxref ),
+	    '%%EOF');
 
-            @out.push: [~] (
-                $xref-str,
-                $.write( :$trailer, :$!prev, :$!size ),
-                $.write( :$startxref ),
-                '%%EOF');
+	$!offset += $xref-str.codes;
+	$!prev = $startxref;
+    }
 
-            $!offset += $xref-str.codes;
-            $!prev = $startxref;
-        }
+    method write-body( Hash $body!, @idx = [], Bool :$write-xref = True --> Str ) {
+        my @out;
+	@idx.unshift: { :type(0), :offset(0), :gen-num(65535), :obj-num(0) };
+
+	$.make-objects( $body<objects>, @out, @idx );
+
+	my $trailer = $body<trailer> // {};
+
+	if $write-xref {
+	    $.make-xref( $trailer, @out, @idx );
+	}
+	else {
+            # simple trailer, no xref
+            @out.push: [~] ( $.write( :$trailer ), '%%EOF' );
+	}
 
         $!offset += @out[*-1].codes + 2;
 
@@ -133,15 +138,18 @@ class PDF::Writer {
     #| BI <dict> - BeginImage
     multi method write-op('BI', $arg = :dict{}) {
         my Hash $entries = $arg<dict>;
-        my @lines = flat 'BI', $entries.pairs.sort.map( {
-            [~] $.write( :name( .key )), ' ', $.write( .value ),
-        });
-        @lines.join: "\n";
+        my @lines;
+	"BI\n" ~
+	  $.indented({
+	      $entries.pairs.sort.map({
+		  [~] $.indent, $.write( :name( .key )), ' ', $.write( .value ),
+	      }).join: "\n"
+	 });
     }
 
     #| ID <bytes> - ImageData
     multi method write-op('ID', $image-data) {
-        ('ID', $image-data<encoded>).join: "\n";
+        "ID\n" ~ $image-data<encoded>;
     }
 
     multi method write-op(Str $op, *@args) is default {
@@ -222,7 +230,7 @@ class PDF::Writer {
 
         [~] (sprintf('%d %d obj ', $obj-num, $gen-num),
 	     $.write( $object ),
-	     "\nendobj");
+	     " endobj");
     }
 
     multi method write(Array :$ind-ref!) {
@@ -267,7 +275,8 @@ class PDF::Writer {
         $!offset = $header.codes + $comment.codes + 2;  # since format is byte orientated
         # Form Definition Format is normally written without an xref
         my Str $type = $pdf<header><type> // 'PDF';
-        my $body = $.write( :body($pdf<body>), :$type );
+	my Bool $write-xref = $type ne 'FDF';
+        my $body = $.write( :body($pdf<body>), :$write-xref );
         [~] ($header, "\n", $comment, "\n", $body);
     }
 
@@ -296,11 +305,7 @@ class PDF::Writer {
         my $data = $stream<encoded> // $.input.stream-data( :$stream ),
         %dict<Length> //= :int($data.codes);
 
-        ($.write( :%dict ),
-         "stream",
-         $data,
-         "endstream",
-        ).join: "\n";
+        [~] $.write( :%dict ), " stream\n", $data, "\nendstream";
     }
 
     multi method write( Hash :$trailer!, :$prev, :$size ) {

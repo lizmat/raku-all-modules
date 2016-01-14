@@ -24,6 +24,9 @@ $doc<Root>[2] := $doc<Root>;
 # cycle back from hash to array
 $doc<Root>[0]<Parent> := $doc<Root>;
 
+my $doc-ast = to-ast($doc);
+is $doc-ast<dict><Root><array>[1]<dict><ID><int>, 2, 'ast dereference';
+
 # our serializer should create indirect refs to resolve the above
 my $body = PDF::Storage::Serializer.new.body( $doc )[0];
 is-deeply $body<trailer><dict><Root>, (:ind-ref[1, 0]), 'body trailer dict - Root';
@@ -96,7 +99,7 @@ my $writer = PDF::Writer.new;
 
 $objects = PDF::Storage::Serializer.new.body($obj-with-utf8)[0]<objects>;
 is-json-equiv $objects, [:ind-obj[1, 0, :dict{ Name => :name("Heydər Əliyev")}]], 'name serialization';
-is $writer.write( :ind-obj($objects[0].value)), "1 0 obj <<\n  /Name /Heyd#c9#99r#20#c6#8fliyev\n>>\nendobj", 'name write';
+is $writer.write( :ind-obj($objects[0].value)), "1 0 obj <<\n  /Name /Heyd#c9#99r#20#c6#8fliyev\n>> endobj", 'name write';
 
 my $objects-compressed = PDF::Storage::Serializer.new.body($doc, :compress)[0]<objects>;
 my $stream = $objects-compressed[*-2].value[2]<stream>;

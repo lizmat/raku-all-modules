@@ -57,7 +57,7 @@ class PDF::DAO::Doc
 	my UInt $prev = $trailer<Prev>.value;
         my $writer = PDF::Writer.new( :$offset, :$prev );
 	my @entries;
-        my Str $new-body = "\n" ~ $writer.build-index( $body[0], @entries, :$prev, :$trailer );
+        my Str $new-body = "\n" ~ $writer.write-body( $body[0], @entries, :$prev, :$trailer );
 	# merge the updated entries in the index
 	$prev = $writer.prev;
         my UInt $size = $writer.size;
@@ -72,7 +72,7 @@ class PDF::DAO::Doc
 	$type //= $file-name ~~ /:i '.fdf' $/  ?? 'FDF' !! 'PDF';
 	self!generate-id( :$type );
 	my $serializer = PDF::Storage::Serializer.new;
-	my $crypt = self.reader.?crypt;
+	my Bool $crypt = ? self.reader.?crypt;
 	$serializer.save-as( $file-name, self, :$type, :$crypt, |c)
     }
 
