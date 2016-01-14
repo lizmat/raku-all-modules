@@ -1,14 +1,58 @@
 use v6;
 
 unit class Path::Iterator;
-has @.rules;
-enum Prune <Prune-inclusive Prune-exclusive>;
+has Sub @!rules;
+our enum Prune is export(:prune) <Prune-Inclusive Prune-Exclusive>;
 
-my multi rulify(Callable $rule) {
+my %priority = (
+	0 => <depth skip-hidden>,
+	1 => <skip skip-dir skip-subdir skip-vcs>,
+	2 => <name ext>,
+	4 => <content line-match shebang>
+).flatmap: { ($_ => $^pair.key for @($^pair.value)) };
+
+our sub finder(*%options) is export(:find) {
+	my @keys = %options.keys.sort: { %priority{$_} // 3 };
+	return (Path::Iterator, |@keys).reduce: -> $current, $key {
+		my $value = %options{$key};
+		my $capture = do given $key {
+			when any(<skip-dir skip-subdir depth name ext size path inode device mode nlinks uid gid accessed changed modified>) {
+				\($value);
+			}
+			when any(<and or none skip>) {
+				\(|@($value));
+			}
+			when 'shebang' {
+				my ($regex, %options) = @($value);
+				$regex === True ?? \(|%options) !! \($regex, |%options);
+			}
+			when any(<contents line-match>) {
+				my ($regex, %options) = @($value);
+				\($regex, |%options);
+			}
+			default {
+				\();
+			}
+		}
+		$current."$key"(|$capture);
+	}
+}
+
+our sub find(*@dirs, *%options) is export(:DEFAULT :find) {
+	my %in-options = %options<follow-symlinks order sorted loop-safe relative visitor as map>:delete:p;
+	return finder(|%options).in(|@dirs, |%in-options);
+}
+
+submethod BUILD(:@!rules) { }
+method !rules() {
+	return @!rules;
+}
+
+my multi rulify(Sub $rule) {
 	return $rule;
 }
 my multi rulify(Path::Iterator:D $rule) {
-	return |$rule.rules;
+	return |$rule!rules;
 }
 multi method and(Path::Iterator:D $self: *@also) {
 	return self.bless(:rules(|@!rules, |@also.map(&rulify)));
@@ -16,17 +60,13 @@ multi method and(Path::Iterator:D $self: *@also) {
 multi method and(Path::Iterator:U: *@also) {
 	return self.bless(:rules(|@also.map(&rulify)));
 }
-multi method none(Path::Iterator:U: Path::Iterator:D $obj) {
-	return $obj.not;
-}
-multi method none(Path::Iterator:U: *@no) {
-	my $obj = self.bless(:rules(|@no.map(&rulify)));
-	return $obj.not;
+method none(Path::Iterator:U: *@no) {
+	return self.or(|@no).not;
 }
 method not() {
 	my $obj = self;
-	return self.bless(:rules[sub ($item) {
-		given $obj.test($item) -> $original {
+	return self.bless(:rules[sub ($item, *%opts) {
+		given $obj!test($item, |%opts) -> $original {
 			when Prune {
 				return Prune(+!$original);
 			}
@@ -36,59 +76,78 @@ method not() {
 		}
 	}]);
 }
-my multi unrulify(Callable $rule) {
-	return Path::Iterator.new(:rules[$rule]);
+my multi unrulify(Sub $rule) {
+	return Path::Iterator.and($rule);
 }
 my multi unrulify(Path::Iterator:D $iterator) {
 	return $iterator;
 }
-method or(*@also) {
-	my @iterators = self, |@also.map(&unrulify);
-	my @rules = sub ($item) {
+multi method or(Path::Iterator:U: $rule) {
+	return unrulify($rule);
+}
+multi method or(Path::Iterator:U: *@also) {
+	my @iterators = |@also.map(&unrulify);
+	my @rules = sub ($item, *%opts) {
+		my $ret = False;
 		for @iterators -> $iterator {
-			return True if $iterator.test($item);
+			given $iterator!test($item, |%opts) {
+				when * === True {
+					return True;
+				}
+				when Prune-Exclusive {
+					$ret = $_;
+				}
+				when Prune-Inclusive {
+					$ret = $_ if $ret === False;
+				}
+			}
 		}
-		return False;
+		return $ret;
 	}
 	return self.bless(:@rules);
 }
 method skip(*@garbage) {
-	my $obj = self.new.or(|@garbage);
-	self.and(sub ($item, $base) {
-		given $obj.test($item, $base) {
-			when Prune {
-				return Prune-inclusive;
-			}
-			when True {
-				return Prune-inclusive;
-			}
-			when False {
-				return True;
+	my @iterators = |@garbage.map(&unrulify);
+	self.and: sub ($item, *%opts) {
+		for @iterators -> $iterator {
+			if $iterator!test($item, |%opts) !== False {
+				return Prune-Inclusive;
 			}
 		}
-	});
+		return True;
+	};
 }
 
-method test($item, *%args) {
+method !test(IO::Path $item, *%args) {
 	for @!rules -> &rule {
-		return False if not rule($item, |%args);
+		unless rule($item, |%args) -> $value {
+			return $value;
+		}
 	}
 	return True;
 }
 
-method name($name) {
+method name(Mu $name) {
 	self.and: sub ($item, *%) { $item.basename ~~ $name };
 }
+multi method ext(Mu $ext) {
+	self.and: sub ($item, *%) { $item.extension ~~ $ext };
+}
+method path(Mu $path) {
+	self.and: sub ($item, *%) { $item ~~ $path };
+}
 method dangling() {
-	self.and: sub ($item, *%) { $item.l && !$item.e };
+	self.and: sub ($item, *%) { $item.l and not $item.e };
+}
+method not-dangling() {
+	self.and: sub ($item, *%) { not $item.l or $item.e };
 }
 
-my $package = $?CLASS;
 my %X-tests = %(
-	:r('readable'),    :R('r_readable'),
-	:w('writable'),    :W('r_writable'),
-	:x('executable'),  :X('r_executable'),
-	:o('owned'),       :O('r_owned'),
+	:r('readable'),    :R('r-readable'),
+	:w('writable'),    :W('r-writable'),
+	:x('executable'),  :X('r-executable'),
+	:o('owned'),       :O('r-owned'),
 
 	:e('exists'),      :f('file'),
 	:z('empty'),       :d('directory'),
@@ -100,20 +159,41 @@ my %X-tests = %(
 	:p('fifo'),        :t('tty'),
 );
 for %X-tests.kv -> $test, $method {
-	my $rule = sub ($item, *%) { ?$item."$test"() };
-	$?CLASS.^add_method: $method, anon method () { return self.and($rule); };
-	$?CLASS.^add_method: "not-$method", anon method () { return self.not($rule) };
+	$?CLASS.^add_method: $method,       anon method () { return self.and: sub ($item, *%) { ?$item."$test"() } };
+	$?CLASS.^add_method: "not-$method", anon method () { return self.and: sub ($item, *%) { !$item."$test"() } };
+}
+
+{
+	use nqp;
+	my %stat-tests = %(
+		inode  => nqp::const::STAT_PLATFORM_INODE,
+		device => nqp::const::STAT_PLATFORM_DEV,
+		mode   => nqp::const::STAT_PLATFORM_MODE,
+		nlinks => nqp::const::STAT_PLATFORM_NLINKS,
+		uid    => nqp::const::STAT_UID,
+		gid    => nqp::const::STAT_GID,
+	);
+	for %stat-tests.kv -> $method, $constant {
+		$?CLASS.^add_method: $method, anon method (Mu $matcher) {
+			self.and: sub ($item, *%) { nqp::stat(nqp::unbox_s(~$item), $constant) ~~ $matcher }
+		}
+	}
+}
+for <accessed changed modified> -> $time-method {
+	$?CLASS.^add_method: $time-method, anon method (Mu $matcher) {
+		self.and: sub ($item, *%) { $item."$time-method"() ~~ $matcher }
+	}
 }
 $?CLASS.^compose;
 
-method size ($size) {
+method size(Mu $size) {
 	self.and: sub ($item, *%) { $item.f && $item.s ~~ $size };
 }
-method depth (Range $depth-range) {
+multi method depth(Range $depth-range) {
 	self.and: sub ($item, :$depth, *%) {
 		return do given $depth {
 			when $depth-range.max {
-				Prune-exclusive;
+				Prune-Exclusive;
 			}
 			when $depth-range {
 				True;
@@ -122,97 +202,127 @@ method depth (Range $depth-range) {
 				False;
 			}
 			default {
-				Prune-inclusive;
+				Prune-Inclusive;
 			}
 		}
 	};
 }
-method skip-dirs(*@patterns) {
+multi method depth(Int $depth) {
+	return self.depth($depth..$depth);
+}
+multi method depth(Mu $depth-match) {
+	self.and: sub ($item, :$depth, *%) {
+		return $depth ~~ $depth-match;
+	}
+}
+
+method skip-dir(Mu $pattern) {
 	self.and: sub ($item, *%) {
-		if $item.d && $item ~~ any(@patterns) {
-			return Prune(False);
+		if $item.basename ~~ $pattern && $item.d {
+			return Prune-Inclusive;
 		}
 		return True;
 	}
 }
-method skip-subdirs(*@patterns) {
-	self.and: sub ($item, *%) {
-		if $item.d && $item.Str ne $item.basename && $item ~~ any(@patterns) {
-			return Prune(False);
+method skip-subdirs(Mu $pattern) {
+	self.and: sub ($item, :$depth, *%) {
+		if $depth > 0 && $item.basename ~~ $pattern && $item.d {
+			return Prune-Inclusive;
 		}
 		return True;
 	}
 }
-method shebang($pattern) {
-	self.and: sub ($item, *%) {
-		return False unless $item.f;
-		my $first = $item.lines[0];
-		return $first ~~ $pattern;
+method skip-hidden() {
+	self.and: sub ($item, :$depth, *%) {
+		if $depth > 0 && $item.basename ~~ rx/ ^ '.' / {
+			return Prune-Inclusive;
+		}
+		return True;
 	}
 }
-method contents($pattern) {
+my $vcs-dirs = any(<.git .bzr .hg _darcs CVS RCS .svn>, |($*DISTRO.name eq 'mswin32' ?? '_svn' !! ()));
+my $vcs-files = none(rx/ '.#' $ /, rx/ ',v' $ /);
+method skip-vcs() {
+	return self.skip-dir($vcs-dirs).name($vcs-files);
+}
+
+method shebang(Mu $pattern = rx/ ^ '#!' /, *%opts) {
 	self.and: sub ($item, *%) {
 		return False unless $item.f;
-		my $content = $item.slurp;
-		return $content ~~ $pattern;
+		return $item.lines(|%opts)[0] ~~ $pattern;
 	}
 }
-method line-match($pattern) {
+method contents(Mu $pattern, *%opts) {
 	self.and: sub ($item, *%) {
 		return False unless $item.f;
-		for $item.lines -> $line {
+		return $item.slurp(|%opts) ~~ $pattern;
+	}
+}
+method line-match(Mu $pattern, *%opts) {
+	self.and: sub ($item, *%) {
+		return False unless $item.f;
+		for $item.lines(|%opts) -> $line {
 			return True if $line ~~ $pattern;
 		}
 		return False;
 	}
 }
 
-method !is-unique(IO::Path $item, *%opts) {
-	return True; # XXX
-}
-method iter(*@dirs,
-	Bool :$follow-symlinks = True,
-	Bool :$depth-first = False,
-	Bool :$sorted = True,
-	Bool :$loop-safe = True,
-	Bool :$relative = False,
-	:&visitor?,
-	:&error-handler = sub ($item, $reason) { die sprintf "%s: %s\n", $item, $reason }
+my &is-unique = $*DISTRO.name ne any(<MSWin32 os2 dos NetWare symbian>)
+	?? sub (Bool %seen, IO::Path $item) {
+		use nqp;
+		my $inode = nqp::stat(nqp::unbox_s(~$item), nqp::const::STAT_PLATFORM_INODE);
+		my $device = nqp::stat(nqp::unbox_s(~$item), nqp::const::STAT_PLATFORM_DEV);
+		my $key = "$inode\-$device";
+		return False if %seen{$key};
+		return %seen{$key} = True;
+	}
+	!! sub (Bool %seen, IO::Path $item) { return True };
+
+enum Order is export(:DEFAULT :order) < BreadthFirst PreOrder PostOrder >;
+
+my %as{Any:U} = ((Str) => { ~$_ }, (IO::Path) => Sub);
+method in(*@dirs,
+	Bool:D :$follow-symlinks = True,
+	Order:D :$order = BreadthFirst,
+	Bool:D :$sorted = True,
+	Bool:D :$loop-safe = True,
+	Bool:D :$relative = False,
+	Any:U :$as = IO::Path,
+	:&map = %as{$as},
+	:&visitor,
 ) {
-	@dirs = '.' if not @dirs;
-	my @queue = @dirs.map: -> $filename {
-		my $path = $filename.IO;
-		($path, 0, $path, Bool);
-	};
+	my @queue = (@dirs || '.').map(*.IO).map: { ($^path, 0, $^path, Bool) };
 
-	gather {
-		while @queue.elems {
-			my ($item, $depth, $origin, $result) = @( @queue.shift );
+	my Bool %seen;
+	my $seq := gather while @queue {
+		my ($item, $depth, $origin, $result) = @( @queue.shift );
 
-			without ($result) {
-				next if not $follow-symlinks and $item.l;
+		without ($result) {
+			$result = self!test($item, :$depth, :$origin);
 
-				$result = @!rules ?? self.test($item, :$depth, :$origin) !! True;
+			visitor($item) if &visitor && $result;
 
-				if &visitor && $result {
-					visitor($item);
-				}
-
-				if $item.d && $result !~~ Prune && (!$loop-safe || self!is-unique($item)) {
-					my @next = $item.dir.map: -> $child { ($child, $depth + 1, $origin, Bool) };
-					@next .= sort if $sorted;
-					if ($depth-first) {
-						@next.push: $($item, $depth, $origin, $result);
-						@queue.unshift: |@next;
+			if $result !~~ Prune && $item.d && (!$loop-safe || is-unique(%seen, $item)) && ($follow-symlinks || !$item.l) {
+				my @next = $item.dir.map: { ($^child, $depth + 1, $origin, Bool) };
+				@next .= sort if $sorted;
+				given $order {
+					when BreadthFirst {
+						@queue.append: @next;
+					}
+					when PostOrder {
+						@next.push: ($item, $depth, $origin, $result);
+						@queue.prepend: @next;
 						next;
 					}
-					else {
-						@queue.push: |@next;
+					when PreOrder {
+						@queue.prepend: @next;
 					}
 				}
 			}
-
-			take $relative ?? $item.relative($origin) !! $item if $result;
 		}
+
+		take $relative ?? $item.relative($origin).IO !! $item if $result;
 	}
+	return &map ?? $seq.map(&map) !! $seq;
 }

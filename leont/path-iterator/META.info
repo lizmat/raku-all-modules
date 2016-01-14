@@ -3,7 +3,7 @@
     "version" : "0.0.1",
     "description" : "Iterative, recursive file finder for Perl 6",
     "provides" : {
-        "Path::Iterator"       : "lib/Path/Iterator.pm6"
+        "Path::Iterator"       : "lib/Path/Iterator.pm"
     },
     "author" : "Leon Timmermans",
     "depends" : [ ],
