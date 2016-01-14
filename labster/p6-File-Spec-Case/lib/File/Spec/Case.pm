@@ -1,10 +1,10 @@
 unit class File::Spec::Case;
 
-method default-case-tolerant ($OS = $*OS) {
+method default-case-tolerant ($OS = $*KERNEL.name) {
     so $OS eq any <MacOS Mac VMS darwin Win32 MSWin32 os2 dos NetWare symbian cygwin Cygwin epoc>;
 }
 
-method always-case-tolerant  ($OS = $*OS) {
+method always-case-tolerant  ($OS = $*KERNEL.name) {
     so $OS eq any <MacOS Mac VMS os2 dos>;
 }
 
@@ -12,7 +12,7 @@ method sensitive(|c)   { not self.tolerant( |c ) }
 method insensitive(|c) {     self.tolerant( |c ) }
 
 method tolerant (Cool:D $path is copy = ~$*CWD, :$no_write = False ) {
-    return True if self.always-case-tolerant($*OS);
+    return True if self.always-case-tolerant($*KERNEL.name);
 
     $path = $path.IO;
     $path.e or fail "Invalid path given";
@@ -48,7 +48,7 @@ method tolerant (Cool:D $path is copy = ~$*CWD, :$no_write = False ) {
     }
 
     # Okay, we don't have write access... give up and just return the platform default
-    return self.default-case-tolerant($*OS);
+    return self.default-case-tolerant($*KERNEL.name);
 
 }
 
