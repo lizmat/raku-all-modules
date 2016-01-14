@@ -2,6 +2,7 @@ use v6;
 use JSON::Tiny;
 use Avro::Auxiliary;
 use Avro::Schema;
+use experimental :pack;
 
 package Avro{
 
@@ -140,7 +141,8 @@ package Avro{
     }
 
     multi submethod encode_schema(Avro::Boolean $schema, Bool:D $bool) {  
-      (pack("C",$bool))
+      my $buf = (pack("C",$bool));
+      return $buf;
     }   
 
     multi submethod encode_schema(Avro::Integer $schema, Int:D $int) {

@@ -2,6 +2,8 @@ use v6;
 use JSON::Tiny;
 use Avro::Auxiliary;
 use Avro::Schema;
+use experimental :pack;
+
 
 package Avro{
 
