@@ -41,7 +41,7 @@ To run tests:
 
 ## Author
 
-Jeffrey Goff, DrFOrr on #perl6, https://github.com/drforr/
+Jeffrey Goff, DrForr on #perl6, https://github.com/drforr/
 
 ## License
 

@@ -40,7 +40,8 @@ subtest sub {
   my $str = 'foo';
   my $filename = 'test.txt';
   my $src-offset;
-  my ( $offset, $p-offset ) = ( 0, \$src-offset );
+  my $offset = 0;
+#  my $p-offset = \$src-offset;
 
   lives-ok { my $rv = $r.tilde-expand( $str ) },
            'tilde-expand lives';
@@ -228,7 +229,7 @@ subtest sub {
   lives-ok { my $HIST-ENTRY = $r.replace-history-entry(
                                  $index, $line, $data ) },
            'replace-history-entry lives';
-  lives-ok { $r.clear-history };
+  lives-ok { $r.clear-history },
            'clear-history lives';
   subtest sub {
     lives-ok { my $rv = $r.history-is-stifled },
