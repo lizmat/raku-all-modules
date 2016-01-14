@@ -9,9 +9,16 @@ use Shell::Command;
 
 class Build is Panda::Builder {
    method build($workdir) {
-         my Str $destdir = "$workdir/lib/../resources/lib";
+         my $srcdir = $workdir.IO.child('src').Str;
+         my Str $destdir = "$workdir/lib/../resources/libraries";
          mkpath $destdir;
-         make("$workdir/src", $destdir);
+         my %vars = get-vars($destdir);
+         %vars<utmphelper> = $*VM.platform-library-name('utmphelper'.IO).Str;
+         process-makefile($srcdir, %vars);
+         my $goback = $*CWD;
+         chdir($srcdir);
+         shell(%vars<MAKE>);
+         chdir($goback);
    }
 }
 # vim: ft=perl6 expandtab sw=4

@@ -3,8 +3,6 @@
 use v6;
 use Test;
 
-use lib 'lib';
-
 use Sys::Utmp;
 
 ok(my $obj = Sys::Utmp.new, "get a Sys::Utmp");

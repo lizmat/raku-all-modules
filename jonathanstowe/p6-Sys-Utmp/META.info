@@ -14,7 +14,7 @@
   "provides" : {
     "Sys::Utmp" : "lib/Sys/Utmp.pm"
   },
-  "resources" : [ "lib/utmphelper.so" ],
+  "resources" : [ "libraries/utmphelper" ],
   "depends" : [
     "LibraryMake"
   ],
@@ -26,5 +26,5 @@
   "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
   "description" : "Perl 6 access to Utmp entries on Unix-like systems",
   "tags" : [ "unix", "users", "utility" ],
-  "version" : "v0.0.6"
+  "version" : "v0.0.7"
 }

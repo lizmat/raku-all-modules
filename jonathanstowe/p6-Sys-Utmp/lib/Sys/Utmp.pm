@@ -144,7 +144,7 @@ This returns a L<DateTime> that corresponds to C<tv>
 
 =end pod
 
-class Sys::Utmp:ver<v0.0.6>:auth<github:jonathanstowe> {
+class Sys::Utmp:ver<v0.0.7>:auth<github:jonathanstowe> {
 
     enum UtmpType is export <EmptyRecord RunLevel BootTime NewTime OldTime InitProcess LoginProcess UserProcess DeadProcess Accounting>;
 
@@ -174,25 +174,26 @@ class Sys::Utmp:ver<v0.0.6>:auth<github:jonathanstowe> {
         }
     }
 
+    my constant HELPER = %?RESOURCES<libraries/utmphelper>.Str;
+
     sub library {
-        my $so = get-vars('')<SO>;
-        my $libname = "lib/utmphelper$so";
-        %?RESOURCES{$libname}.Str;
+        my $lib = 'libraries/' ~ $*VM.platform-library-name('utmphelper'.IO).Str;
+        %?RESOURCES{$lib}.Str;
     }
 
-    my sub _p_setutent() is native(&library) { * }
+    my sub _p_setutent() is native(HELPER) { * }
 
     method setutent() {
         _p_setutent();
     }
 
-    my sub _p_endutent() is native(&library) { * }
+    my sub _p_endutent() is native(HELPER) { * }
 
     method endutent() {
         _p_endutent()
     }
 
-    my sub _p_utmpname(Str) is native(&library) { * }
+    my sub _p_utmpname(Str) is native(HELPER) { * }
 
     method utpname(Str $utname ) {
         my $n = $utname;
@@ -200,7 +201,7 @@ class Sys::Utmp:ver<v0.0.6>:auth<github:jonathanstowe> {
         _p_utmpname($n);
     }
 
-    my sub _p_getutent() returns Utent is native(&library) { * }
+    my sub _p_getutent() returns Utent is native(HELPER) { * }
 
     method getutent() returns Utent {
         _p_getutent();
