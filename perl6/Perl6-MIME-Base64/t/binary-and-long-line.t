@@ -5,6 +5,7 @@ use Test;
 use lib 'lib';
 
 use MIME::Base64;
+use experimental :pack;
 
 plan 11;
 
