@@ -1,5 +1,5 @@
 {
-        "perl" : "v6",
+        "perl" : "6",
 	"name" : "Config::Simple",
         "version" : "*",
         "description" : "A simple module for your configuration file need",

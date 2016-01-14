@@ -1,5 +1,6 @@
 use Config::Simple::Role;
 use Data::Dump;
+use MONKEY-SEE-NO-EVAL;
 
 class Config::Simple does Config::Simple::Role {
 
