@@ -1,9 +1,9 @@
 #!perl6
 
 use v6;
-use lib 'lib';
 use Test;
 
+use lib 'lib';
 use Audio::Libshout;
 
 my $obj;

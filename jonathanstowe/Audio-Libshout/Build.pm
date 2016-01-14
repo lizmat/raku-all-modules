@@ -6,8 +6,8 @@ use LibraryCheck;
 
 class Build is Panda::Builder {
     method build($workdir) {
-        if !library-exists('libshout') {
-            say "Won't build because no libshout";
+        if !library-exists('shout', v3) {
+            say "Won't build because no libshout (API v3)";
             die "You need to have libshout installed";
         }
         True;
