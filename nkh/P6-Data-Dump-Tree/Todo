@@ -1,0 +1,87 @@
+
+roles to sub dump
+
+filters on generic containers
+scoped filter and roles
+
+Requirements:
+
+user interaction layer
+	cache
+		to avoid re-generating the data
+	
+	representation in
+		Prima, curses, gtk, dhtml
+
+
+dumper
+	options
+		#max depth, ...
+
+	name
+		allow dumper to be switched on and off by name at higher level
+		eg: a piece of code contains a dumper but the user wants to control
+			in which scope the dump should be done		
+
+	handles multiple iterators
+		synchronized glyphs (diff)
+
+	returns one or multiple "row representations"
+		multiple rows have synchronization points
+
+	start and end tag per level
+		ease generation of HTML for example
+
+	#user defined filters
+
+	dumps can be gathered from multiple source dynamically
+		when getting to a specific point, data is gathered from another source
+		no need to create a data structure in advance
+
+	dump, gather, dump_gathered, reset interface.
+
+	dumper can re-synchronize the glyphs
+		if a stream ends, the glyph for the previous element
+		may need to be changed	
+
+	supports threads
+
+	lazy row represention element generation
+
+	can modify a previous glyph if the level after it is not the expected one
+		ie, an element becomes the latest in the level
+
+	when dumping multiple structures simulteanously
+		diff color
+		diff column
+		diff glyphs
+
+row representation
+	can contain multiple fields for each data element dumped
+		level, #data, #type, #inheritence, size, taint, tie, weak references, ...
+	
+	#user registrable representation generators
+	class defined generator
+		it can use this module and the glyphs get aligned properly
+
+	colorizer
+		per level
+		per type
+
+	lazy represention generation
+
+	},
+
+data iterator
+	from data structure
+	from feeder
+		ie data can come from a stream
+
+
+glyph generator
+	option for different glyph representations
+
+	generate a glyph based on a hierarchical level
+		methode, input level, input glyphs, output a string
+
+

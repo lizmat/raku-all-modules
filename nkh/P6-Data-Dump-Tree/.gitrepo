@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/nkh/P6-Data-Dump-Tree.git
+	branch = master
+	commit = 5af8e9bb911d87184910f1c12646cdf58dec77f0
+	parent = 7e15d426dd2516e5444c6256aacccf530a4e74de
+	cmdver = 0.2.3
