@@ -143,12 +143,12 @@ method of() {
 }
 
 method !clear-before($pos, $key) {
-    my @pos = @!array[0 .. $pos - 1].grep-index(want($key));
+    my @pos = @!array[0 .. $pos - 1].grep(want($key), :k);
     @!array[@pos] :delete;
 }
 
 method !found-after($pos, $key) returns Bool {
-    @!array[$pos + 1 .. @!array.end].first-index(want($key)) ~~ Int
+    @!array[$pos + 1 .. @!array.end].first(want($key), :k) ~~ Int
 }
 
 =begin pod
@@ -180,7 +180,7 @@ method AT-POS(ArrayHash:D: $pos) returns Pair {
 }
 
 method ASSIGN-KEY(ArrayHash:D: $key, $value is copy) { 
-    POST { %!hash{$key} =:= @!array[ @!array.last-index(want($key)) ].value }
+    POST { %!hash{$key} =:= @!array[ @!array.first(want($key), :k, :end) ].value }
 
     if %!hash{$key} :exists {
         %!hash{$key} = $value;
@@ -189,7 +189,7 @@ method ASSIGN-KEY(ArrayHash:D: $key, $value is copy) {
             # Handle the case where value is immutable
             when X::Assignment::RO {
                 %!hash{$key} := $value;
-                @!array[ @!array.last-index(want($key)) ] := $key => $value;
+                @!array[ @!array.first(want($key), :k, :end) ] := $key => $value;
             }
         }
     }
@@ -202,7 +202,7 @@ method ASSIGN-KEY(ArrayHash:D: $key, $value is copy) {
 method ASSIGN-POS(ArrayHash:D: $pos, Pair:D $pair) {
     PRE  { $!multivalued || @!array.grep(want($pair.key)).elems <= 1 }
     POST { $!multivalued || @!array.grep(want($pair.key)).elems <= 1 }
-    POST { %!hash{$pair.key} =:= @!array[ @!array.last-index(want($pair.key)) ].value }
+    POST { %!hash{$pair.key} =:= @!array[ @!array.first(want($pair.key), :k, :end) ].value }
 
     if !$!multivalued && (%!hash{ $pair.key } :exists) {
         self!clear-before($pos, $pair.key);
@@ -232,7 +232,7 @@ method ASSIGN-POS(ArrayHash:D: $pos, Pair:D $pair) {
     }
 
     if $!multivalued && $orig.defined {
-        my $npos = @!array.last-index(want($orig.key));
+        my $npos = @!array.first(want($orig.key), :k, :end);
         if $npos ~~ Int {
             %!hash{ $orig.key } := @!array[$npos].value;
         }
@@ -246,7 +246,7 @@ method BIND-KEY(ArrayHash:D: $key, $value is rw) is rw {
 
     if %!hash{$key} :exists {
         %!hash{$key} := $value;
-        my $pos = @!array.last-index(want($key));
+        my $pos = @!array.first(want($key), :k, :end);
         @!array[$pos] := $key => $value;
     }
     else {
@@ -292,10 +292,10 @@ method EXISTS-POS(ArrayHash:D: $pos) {
 
 method DELETE-KEY(ArrayHash:D: $key) {
     POST { %!hash{$key} :!exists }
-    POST { @!array.first-index(want($key)) ~~ Nil }
+    POST { @!array.first(want($key), :k) ~~ Nil }
 
     if %!hash{$key} :exists {
-        for @!array.grep-index(want($key)).reverse -> $pos {
+        for @!array.grep(want($key), :k).reverse -> $pos {
             @!array.splice($pos, 1);
         }
     }
@@ -309,14 +309,14 @@ method DELETE-POS(ArrayHash:D: $pos) returns Pair {
     POST { @!array[$pos] ~~ Pair:U }
     POST { 
         $pair.defined && !$!multivalued ??
-            @!array.first-index(want($pair.key)) ~~ Nil
+            @!array.first(want($pair.key), :k) ~~ Nil
         !! True
     }
     POST {
         $pair.defined && $!multivalued ??
-            (@!array.first-index(want($pair.key)) ~~ Int
+            (@!array.first(want($pair.key), :k) ~~ Int
                 and %!hash{ $pair.key } :exists)
-         ^^ (@!array.first-index(want($pair.key)) ~~ Nil
+         ^^ (@!array.first(want($pair.key), :k) ~~ Nil
                 and %!hash{ $pair.key } :!exists)
         !! True
     }
@@ -485,7 +485,7 @@ multi method splice(ArrayHash:D: Int(Cool) $offset = 0, Int(Cool) $size?, *@valu
         };
 
         my $pos = do if !$!multivalued && $p.defined {
-            @!array[$offset + $size .. @!array.end].first-index(want($p.key));
+            @!array[$offset + $size .. @!array.end].first(want($p.key), :k);
         }
         else { Nil }
 

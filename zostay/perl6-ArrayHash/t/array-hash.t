@@ -96,7 +96,7 @@ my %tests =
     '09-replace-earlier' => {
         @array[3] = 'b' => 8;
         is %hash<b>, 8, 'hash b changed';
-        is @array[.[1]], Pair:U, 'array 1 nullified';
+        ok @array[.[1]] ~~ Pair:U, 'array 1 nullified';
     },
     '10-replace-later' => {
         if (.[1] == 0) {
@@ -108,13 +108,13 @@ my %tests =
         else {
             @array[0] = 'b' => 9;
             is %hash<b>, $b, 'hash b is unchanged';
-            is @array[0], Pair:U, 'array 0 nullified';
+            ok @array[0] ~~ Pair:U, 'array 0 nullified';
         }
     },
     '11-bind-replace-earlier' => {
         @array[3] := 'b' => 8;
         is %hash<b>, 8, 'hash b changed';
-        is @array[.[1]], Pair:U, 'array 1 nullified';
+        ok @array[.[1]] ~~ Pair:U, 'array 1 nullified';
     },
     '12-bind-replace-later' => {
         if (.[1] == 0) {
@@ -126,7 +126,7 @@ my %tests =
         else {
             @array[0] := 'b' => 9;
             is %hash<b>, 2, 'hash b is unchanged';
-            is @array[0], Pair:U, 'array 0 nullified';
+            ok @array[0] ~~ Pair:U, 'array 0 nullified';
         }
     },
     '13-bind-key' => {
