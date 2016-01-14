@@ -1,90 +1,108 @@
-#Warning
+# MaxMind GeoIP legacy free/pro interface
 
-This module works with legacy databases and legacy libgeoip C library.
-New GeoIP2 can be accessed through libmaxminddb library that is quite different and I cannot give any timeline when updated version of module will be available.
+[![Build Status](https://travis-ci.org/bbkr/GeoIPerl6.svg?branch=master)](https://travis-ci.org/bbkr/GeoIPerl6)
 
+Currently City databases are supported.
 
-#GeoIP City
+Country, Region, Organization or ISP support may follow.
 
-Connect to [MaxMind](http://www.maxmind.com/en/home) GeoIP City databases.
+## SYNOPSIS
 
-Compatible with Perl 6 [Rakudo](http://rakudo.org/) 2013.02+,
-
-##REQUIREMENTS
-
-####Ubuntu Linux
-
-* In terminal enter `sudo apt-get install libgeoip1 geoip-database-contrib`
-
-####Mac OS X
-
-* Install [MacPorts](http://www.macports.org/).
-* In terminal enter `sudo port install libgeoip GeoLiteCity`.
-* Add `DYLD_LIBRARY_PATH=/opt/local/lib` to your `~/.profile` and relog.
-
-####Microsoft Windows
-
-?
-
-####Other systems
-
-* Follow [installation instructions](http://www.maxmind.com/en/installation?city=1) from MaxMind.
-
-##USAGE
-
-```perl
+```perl6
     use GeoIP::City;
     
-    my $geo = GeoIP::City.new;
+    my $gc = GeoIP::City.new;
     
-    say $geo.locate( 'perl.org' );
-    say $geo.locate( '207.171.7.63' );
+    say $gc.locate( '8.8.8.8' );                # IPv4
+    say $gc.locate( '2001:4860:4860::8888' );   # IPv6
 ```
 
-In both cases it should print following Hash:
+## METHODS
 
-```perl
+### new( directory => '/home/me/geoip' )
+
+Initialize databases.
+
+Optional ```directory``` param overwrites default databases location,
+which may be useful for customized [geoipupdate](http://dev.maxmind.com/geoip/geoipupdate/) configuration and/or non-root users.
+
+### info
+
+Check available database versions.
+
+```perl6
     {
-        "area_code" => 310,
-        "city" => "Beverly Hills",
-        "continent_code" => "NA",
-        "country" => "United States",
-        "country_code" => "US",
-        "dma_code" => 803,
-        "latitude" => "34.074902",
-        "longitude" => "-118.399696",
-        "postal_code" => "90209",
-        "region" => "California",
-        "region_code" => "CA",
-        "time_zone" => "America/Los_Angeles"
+        'GEOIP_CITY_EDITION_REV1' => 'GEO-533LITE 20151103 Build 1...',
+        'GEOIP_CITY_EDITION_REV1_V6' => 'GEO-536LITE 20151103 Build 1...'
     }
 ```
 
-Precision of response and amount of its fields may vary.
+### locate ( $ip )
 
-`Nil` is returned if location is not found.
+Find geo location for given IPv4 or IPv6 address.
 
-###Paid databases
+Amount of fields in response may vary, below is the most complete one:
 
-If you own [paid database](http://www.maxmind.com/en/city) you can provide its location.
+```perl6
+    {
+        'area_code' => 650,
+        'city' => 'Mountain View',
+        'continent_code' => 'NA',
+        'country' => 'United States',
+        'country_code' => 'US',
+        'dma_code' => 807,
+        'latitude' => 37.384499,
+        'longitude' => -122.088097,
+        'postal_code' => '94040',
+        'region' => 'California',
+        'region_code' => 'CA',
+        'time_zone' => 'America/Los_Angeles'
+    }
+```
+ 
+If geo location for IP was not found then ```Nil``` is returned.
 
-```perl
-    my $geo = GeoIP::City.new( '/Users/bbkr/GeoIPCity.dat' );
+If database for given IP version is not available then ```GeoIP::City::X::DatabaseMissing``` exception is thrown.
+
+## REQUIREMENTS
+
+MaxMind [GeoIP C library](https://github.com/maxmind/geoip-api-c)
+and [City legacy databases](http://dev.maxmind.com/geoip/legacy/geolite/) are required.
+
+### Ubuntu Linux
+
+In terminal enter:
+
+```bash
+    sudo apt-get install libgeoip1 geoip-database-contrib
+    sudo ln -s /usr/share/GeoIP/GeoLiteCityv6.dat /usr/share/GeoIP/GeoIPCityv6.dat
 ```
 
-###Info
+### Mac OS X
 
-You can get version and date of used database.
+Install [Xcode](https://developer.apple.com/xcode/) from AppStore, then install [HomeBrew](http://brew.sh).
 
-```perl
-    say $geo.info;
+In terminal enter:
+
+```bash
+    brew install geoip geoipupdate
+    geoipupdate
+    ln -s /usr/local/var/GeoIP/GeoLiteCityv6.dat /usr/local/var/GeoIP/GeoIPCityv6.dat
 ```
 
-Will print.
+### geoipupdate
 
-```
-    GEO-533LITE 20110501 Build 1 Copyright (c) 2011 MaxMind Inc All Rights Reserved
-```
+To obtain databases through [geoipupdate](http://dev.maxmind.com/geoip/geoipupdate/) use following names as ```ProductIds```:
+
+* ```533``` - Free IPv4 database. File ```GeoLiteCity.dat``` must be linked as ```GeoIPCity.dat```.
+* ```133``` - Paid IPv4 database. In this case you also need valid license filled.
+* ```GeoLite-Legacy-IPv6-City``` - Free IPv6 database. File ```GeoLiteCityv6.dat``` must be linked as ```GeoIPCityv6.dat```.
+(there is no paid version of IPv6 database)
+
+***Warning:*** Make sure your geoipupdate uses the same directory that libGeoIP expects. Or pass it explicitly to ```new( )```.
+
+***Warning:*** Do not use old REV0 databases (for example paid ```ProductIds``` = ```132```).
+
 
 ## LICENSE
 
@@ -92,5 +110,5 @@ Released under [Artistic License 2.0](http://www.perlfoundation.org/artistic_lic
 
 ## CONTACT
 
-You can find me (and many awesome people who helped me to develop this module)
+You can find me (and awesome people who helped me to develop this module)
 on irc.freenode.net #perl6 channel as **bbkr**.

@@ -1,70 +1,40 @@
-use NativeCall;
+unit class GeoIP::City;
 
-unit class GeoIP::City is repr( 'CPointer' );
+use GeoIP;
 
-class GeoIPRecord is repr( 'CStruct' ) {
-    has Str $.country_code;
-    has Str $.country_code3;
-    has Str $.country_name;
-    has Str $.region;
-    has Str $.city;
-    has Str $.postal_code;
-    has num32 $.latitude;
-    has num32 $.longitude;
-    has int32 $.dma_code;
-    has int32 $.area_code;
-    has int32 $.charset;
-    has Str $.continent_code;
-    has int32 $.netmask;
-};
+has GeoIP %!db;
 
-# initialize database
-sub GeoIP_open ( Str, Int ) returns GeoIP::City is native( 'libGeoIP' ) { * }
-sub GeoIP_open_type ( Int, Int ) returns GeoIP::City is native( 'libGeoIP' ) { * }
-sub GeoIP_set_charset ( GeoIP::City, Int ) returns Int is native( 'libGeoIP' ) { * }
+class X::DatabaseMissing is Exception is export { };
 
-sub GeoIP_database_info ( GeoIP::City ) returns Str is native( 'libGeoIP' ) { * }
-
-sub GeoIP_record_by_name ( GeoIP::City, Str ) returns GeoIPRecord is native( 'libGeoIP' ) { * }
-sub GeoIP_record_by_addr ( GeoIP::City, Str ) returns GeoIPRecord is native( 'libGeoIP' ) { * }
-sub GeoIP_region_name_by_code ( Str, Str ) returns Str is native( 'libGeoIP' ) { * }
-sub GeoIP_time_zone_by_country_and_region ( Str, Str ) returns Str is native( 'libGeoIP' ) { * }
-
-multi method new ( ) {
-
-    # open GEOIP_CITY_EDITION_REV1 by default
-    # because this free version is distributed
-    # in most package repositories
-    my $self = GeoIP_open_type( 2, 0 );
-
-    GeoIP_set_charset( $self, 1 );
-
-    return $self;
-}
-
-multi method new ( Str $file! where $_.IO ~~ :f & :r ) {
-
-    # open any GEOIP_CITY_EDITION_* file provided
-    my $self = GeoIP_open( $file, 0 );
-
-    GeoIP_set_charset( $self, 1 );
-
-    return $self;
+submethod BUILD ( Str :$directory where { .defined.not or .IO ~~ :d } ) {
+    
+    # change default directory
+    GeoIP_setup_custom_directory( $directory ) if defined $directory;
+    
+    # initialize GeoIPCity.dat and GeoIPCityv6.dat databases
+    for GEOIP_CITY_EDITION_REV1, GEOIP_CITY_EDITION_REV1_V6 {
+        
+        # check if database is available
+        next unless GeoIP_db_avail( +$_ );
+        
+        # open database
+        %!db{$_} = GeoIP_open_type( +$_, 0 );
+        
+        # set UTF-8 encoding
+        GeoIP_set_charset( %!db{$_}, 1 );
+    }
+    
+    # clean up directory paths
+    GeoIP_cleanup( );
 }
 
 method info {
-    return GeoIP_database_info( self );
+    
+    return map { .key => GeoIP_database_info( .value ) }, %!db;
 }
 
-multi method locate ( Str $ip! where /^\d+\.\d+\.\d+\.\d+$/ ) {
-    return self!derive( GeoIP_record_by_addr( self, $ip ) );
-}
-
-multi method locate ( Str $host! ) {
-    return self!derive( GeoIP_record_by_name( self, $host ) );
-}
-
-method !derive ( GeoIPRecord $record! ) {
+method !locate ( Record $record! ) {
+    
     return unless defined $record;
 
     my %result;
@@ -87,25 +57,39 @@ method !derive ( GeoIPRecord $record! ) {
     %result{'dma_code'} = $record.dma_code
         if defined $record.dma_code;
 
-    %result{'latitude'} = $record.latitude.fmt( '%f' )
+    %result{'latitude'} = $record.latitude.round(0.000001)
         if defined $record.latitude;
 
-    %result{'longitude'} = $record.longitude.fmt( '%f' )
+    %result{'longitude'} = $record.longitude.round(0.000001)
         if defined $record.longitude;
 
     %result{'postal_code'} = $record.postal_code
         if defined $record.postal_code;
 
-    %result{'region'} = GeoIP_region_name_by_code(
-        $record.country_code, $record.region
-    ) if defined $record.country_code and defined $record.region;
+    %result{'region'} = GeoIP_region_name_by_code( $record.country_code, $record.region )
+        if defined $record.country_code and defined $record.region;
 
     %result{'region_code'} = $record.region
         if defined $record.region;
 
-    %result{'time_zone'} = GeoIP_time_zone_by_country_and_region(
-        $record.country_code, $record.region
-    ) if defined $record.country_code and defined $record.region;
+    %result{'time_zone'} = GeoIP_time_zone_by_country_and_region( $record.country_code, $record.region )
+        if defined $record.country_code and defined $record.region;
 
     return %result;
+}
+
+# locate by IPv4
+multi method locate ( Str:D $ip! where / ^ [\d ** 1..3] ** 4 % '.' $ / ) {
+    
+    my $db = %!db{GEOIP_CITY_EDITION_REV1} or X::DatabaseMissing.new.throw( );
+    
+    return self!locate( GeoIP_record_by_addr( $db, $ip ) );
+}
+
+# locate by IPv6
+multi method locate ( Str:D $ip! where / ^ [<xdigit> ** 0..4] ** 3..8 % ':' $ / ) {
+    
+    my $db = %!db{GEOIP_CITY_EDITION_REV1_V6} or X::DatabaseMissing.new.throw( );
+    
+    return self!locate( GeoIP_record_by_addr_v6( $db, $ip ) );
 }

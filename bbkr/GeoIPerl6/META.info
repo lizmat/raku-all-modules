@@ -1,8 +1,9 @@
 {
     "name" : "GeoIP::City",
-    "version" : "0.5",
+    "version" : "1.0",
     "description" : "MaxMind GeoIP City library interface",
     "provides" : {
+        "GeoIP" : "lib/GeoIP.pm",
         "GeoIP::City" : "lib/GeoIP/City.pm"
     },
     "author" : "Pawel Pabian",

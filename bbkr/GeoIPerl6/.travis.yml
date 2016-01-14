@@ -1,0 +1,12 @@
+branches:
+  only:
+    - master
+language: perl6
+perl6:
+  - latest
+before_install:
+  - sudo apt-get update -q
+  - sudo apt-get install libgeoip1 -y
+  - wget http://launchpadlibrarian.net/154810880/geoip-database-contrib_1.14_all.deb
+  - sudo dpkg -i geoip-database-contrib_1.14_all.deb
+  - sudo ln -s /usr/share/GeoIP/GeoLiteCityv6.dat /usr/share/GeoIP/GeoIPCityv6.dat
