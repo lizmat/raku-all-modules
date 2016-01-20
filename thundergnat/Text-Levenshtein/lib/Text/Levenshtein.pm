@@ -1,30 +1,30 @@
-unit module Text::Levenshtein:ver<0.2.0>:auth<github:thundergnat>;
+unit module Text::Levenshtein:ver<0.2.1>:auth<github:thundergnat>;
 
 sub distance ($s, *@t) is export {
 
-	my $n = $s.chars;
-	my @result;
+    my $n = $s.chars;
+    my @result;
 
-	for @t -> $t {
-		@result.push(0)  and next if $s eq $t;
+    for @t -> $t {
+        @result.push(0)  and next if $s eq $t;
         @result.push($n) and next unless my $m = $t.chars;
-		@result.push($m) and next unless $n;
+        @result.push($m) and next unless $n;
 
-		my @d;
+        my @d;
 
-		map { @d[$_; 0] = $_ }, 1 .. $n;
-		map { @d[0; $_] = $_ }, 0 .. $m;
+        map { @d[$_; 0] = $_ }, 1 .. $n;
+        map { @d[0; $_] = $_ }, 0 .. $m;
 
-		for 1 .. $n -> $i {
-			my $s_i = $s.substr($i-1, 1);
-			for 1 .. $m -> $j {
-				@d[$i; $j] = min @d[$i-1; $j] + 1, @d[$i; $j-1] + 1,
-				  @d[$i-1; $j-1] + ($s_i eq $t.substr($j-1, 1) ?? 0 !! 1)
-			}
-		}
-		@result.push: @d[$n; $m];
-	}
-	return |@result;
+        for 1 .. $n -> $i {
+            my $s_i = $s.substr($i-1, 1);
+            for 1 .. $m -> $j {
+                @d[$i; $j] = min @d[$i-1; $j] + 1, @d[$i; $j-1] + 1,
+                  @d[$i-1; $j-1] + ($s_i eq $t.substr($j-1, 1) ?? 0 !! 1)
+            }
+        }
+        @result.push: @d[$n; $m];
+    }
+    return |@result;
 }
 
 

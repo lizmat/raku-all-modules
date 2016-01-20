@@ -1,7 +1,7 @@
 {
-    "perl"        : "v6.*",
+    "perl"        : "6.*",
     "name"        : "Text::Levenshtein",
-    "version"     : "v0.2.0",
+    "version"     : "0.2.1",
     "description" : "Calculate Levenshtein edit distance for strings. Perl 5 -> 6 port.",
     "authors"     : [ "Steve Schulze (thundergnat)" ],
     "provides"    : {
