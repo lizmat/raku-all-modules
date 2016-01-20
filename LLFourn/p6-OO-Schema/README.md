@@ -205,7 +205,7 @@ Fedora  Ubuntu
 
 When a node-backing class is loaded marking itself with `is
 schema-node`, it attaches itself to the node class and
-recursively loads and inherits from it's parent. Afterwards the inheritance tree
+recursively loads and inherits from its parent. Afterwards the inheritance tree
 will look like:
 
 ```perl6

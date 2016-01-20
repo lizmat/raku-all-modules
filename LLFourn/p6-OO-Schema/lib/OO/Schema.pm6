@@ -1,4 +1,4 @@
-use CompUnit::Util :load ,:at-unit, :set-symbols,:descend-WHO,:get-symbols;
+use CompUnit::Util :load ,:at-unit, :set-symbols,:who,:get-symbols;
 
 {
     # don't want these locally
@@ -30,8 +30,8 @@ my class OO::Schema::NodeHOW is Metamodel::ClassHOW {
         @path.push($_) with $!part-of-path;
 
         my $composed := self.Metamodel::ClassHOW::compose(type);
-        set-globalish({ "OO-SCHEMA::{$composed.^name}" => $composed });
-        set-export({$composed.^name => $composed});
+        set-unit("GLOBALish::OO-SCHEMA::{$composed.^name}",$composed );
+        set-unit("EXPORT::DEFAULT::{$composed.^name}",$composed);
 
         for type.WHO.kv -> $name,$child is raw {
             next unless $child.HOW ~~ OO::Schema::NodeHOW;
@@ -83,12 +83,12 @@ my class OO::Schema::SchemaHOW is OO::Schema::NodeHOW {
 
 multi trait_mod:<is>(Mu:U $class,:$schema-node!) {
 
-    my $schema-WHO = get-globalish('OO-SCHEMA').WHO;
+    my $schema-WHO = get-unit('GLOBALish::OO-SCHEMA').WHO;
     my $node-name = $schema-node ~~ Str ?? $schema-node !! $class.^shortname;
 
     if (my $node = $schema-WHO{$node-name}) !=== Any {
 
-        set-unit(%("OO-SCHEMA-ENTRY::{$node-name}" => $class.^name));
+        set-unit("OO-SCHEMA-ENTRY::{$node-name}",$class.^name);
 
         for $node.^parents(:local(1)) {
             my $parent = .^load-node-class;
@@ -104,7 +104,7 @@ multi trait_mod:<is>(Mu:U $class,:$schema-node!) {
 }
 
 sub EXPORT {
-    set-export(%('&trait_mod:<is>' => &trait_mod:<is>),'node');
+    set-unit('EXPORT::node::&trait_mod:<is>', &trait_mod:<is>);
     {};
 }
 
