@@ -8,7 +8,7 @@
     "source" : "git://github.com/jonathanstowe/Object-Permission-Group.git"
   },
   "source-url" : "git://github.com/jonathanstowe/Object-Permission-Group.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
      "Object::Permission::Group" : "lib/Object/Permission/Group.pm"
