@@ -10,7 +10,7 @@
     "bugtracker" : "https://github.com/jonathanstowe/WebService-Soundcloud/issues"
   },
   "source-url" : "git://github.com/jonathanstowe/WebService-Soundcloud.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
      "WebService::Soundcloud"                : "lib/WebService/Soundcloud.pm"
