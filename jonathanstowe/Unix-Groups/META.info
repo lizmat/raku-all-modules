@@ -8,7 +8,7 @@
     "source" : "git://github.com/jonathanstowe/Unix-Groups.git"
   },
   "source-url" : "git://github.com/jonathanstowe/Unix-Groups.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
      "Unix::Groups" : "lib/Unix/Groups.pm"
