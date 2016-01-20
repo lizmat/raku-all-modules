@@ -10,7 +10,7 @@
     "bugtracker" : "https://github.com/jonathanstowe/Chronic/issues"
   },
   "source-url" : "git://github.com/jonathanstowe/Chronic.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
      "Chronic"                : "lib/Chronic.pm"
