@@ -1,5 +1,7 @@
 #!/usr/bin/env perl6
 use MONKEY-SEE-NO-EVAL; # until we have a better serialisation
+use JSON::Fast;
+use Panda::Installer;
 
 my $PROGRAM-NAME="p6doc";
 
@@ -40,9 +42,15 @@ sub module-names(Str $modulename) {
 }
 
 sub locate-module(Str $modulename) {
-    my @candidates = (search-paths() X~ module-names($modulename).list);
+    my @candidates = (search-paths() X~ </ Type/ Language/> X~ module-names($modulename).list);
     DEBUG and warn :@candidates.perl;
     my $m = @candidates.first: *.IO.f;
+
+    unless $m.defined {
+        # not "core" pod now try for panda installed module XXX not zef
+        $m = locate-curli-module($modulename);
+    }
+
     unless $m.defined {
         my $message = join "\n",
             "Cannot locate $modulename in any of the following paths:",
@@ -55,8 +63,6 @@ sub locate-module(Str $modulename) {
 sub show-docs(Str $path, :$section, :$no-pager) {
     my $pager;
     $pager = %*ENV<PAGER> // ($*DISTRO.is-win ?? 'more' !! 'less') unless $no-pager;
-    my $which-fmt = qq:x{which fmt}.chomp;
-    my $fmt-string = $which-fmt.IO.e ?? "| $which-fmt -w 80 " !! "";
     if not open($path).lines.grep( /^'=' | '#|' | '#='/ )  {
         say "No Pod found in $path";
         return;
@@ -69,7 +75,7 @@ sub show-docs(Str $path, :$section, :$no-pager) {
     } else {
         $doc-command-str ~= " --doc"
     }
-    $doc-command-str ~= " $path $fmt-string";
+    $doc-command-str ~= " $path ";
     $doc-command-str ~= " | $pager" if $pager;
     say "launching '$doc-command-str'" if DEBUG;
     shell $doc-command-str;
@@ -79,14 +85,18 @@ multi sub MAIN() {
     my $me = $PROGRAM-NAME;
 
     say 'What documentation do you want to read?';
-    say "Examples: $me Type::Str";
-    say "          $me Type::Str.split";
+    say "Examples: $me Str";
+    say "          $me Str.split";
+    say "          $me faq";
+
+    say "\nYou can list some top level documents:";
+    say "          $me -l";
 
     say "\nYou can also look up specific method/routine definitions:";
     say "          $me -f push";
 
     say "\nYou can bypass the pager and print straight to stdout:";
-    say "          $me -n Type::Str"
+    say "          $me -n Str"
 }
 
 multi sub MAIN($docee, Bool :$n) {
@@ -99,6 +109,18 @@ multi sub MAIN($docee, Bool :$n) {
         }
     }
     show-docs(locate-module($docee), :no-pager($n));
+}
+
+multi sub MAIN(Bool :$l!) {
+    my @paths = search-paths() X~ <Type/ Language/> ;
+    my @modules;
+    for @paths -> $dir {
+        for dir($dir).sort -> $file {
+            @modules.push: $file.basename.Str.subst('.pod','');
+        }
+    }
+    @modules.append: get-panda-modules(); 
+    .say for @modules.sort;
 }
 
 multi sub MAIN($docee, Bool :$f!, Bool :$n) {
@@ -206,6 +228,36 @@ sub prompt-with-options( %options, %found ) {
         }
     }
     return $final-docee;
+}
+
+sub locate-curli-module($module) {
+    my $prefix = Panda::Installer.new.default-prefix();
+    my $dist =  $prefix ~ '/dist';
+    my $hdist;
+    my @modules;
+    for dir($dist) -> $f {
+        my $d = from-json $f.slurp;
+        my @keys = $d<provides>.keys.list;
+        $hdist{$_} = $d<provides>{$_} for @keys;
+        @modules.append: @keys;
+    }
+
+    if any(@modules) eq $module {
+        my $sha = $hdist{$module}<pm><file>;
+        return "{$prefix}/sources/{$sha}";
+    }
+    return;
+}
+sub get-panda-modules {
+    my $state = Panda::Installer.new.default-prefix() ~ '/panda/state';
+    my @modules;
+    for $state.IO.lines -> $line {
+        my (Any, $json ) = $line.split(/'installed '|'installed-dep '/);
+        my $state = from-json $json;
+        @modules.append: $state<provides>.keys.list;
+    }
+
+    return @modules;
 }
 
 # vim: expandtab shiftwidth=4 ft=perl6
