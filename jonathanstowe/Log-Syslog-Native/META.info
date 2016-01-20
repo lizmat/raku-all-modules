@@ -1,5 +1,5 @@
 {
-  "perl" : "v6",
+  "perl" : "6.c",
   "name" : "Log::Syslog::Native",
   "description" : "Provide logging to POSIX native syslog facility",
   "version" : "v0.0.4",
