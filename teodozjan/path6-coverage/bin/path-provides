@@ -1,0 +1,53 @@
+#!/usr/bin/env perl6
+
+use v6;
+
+use File::Find;
+my $f;
+grammar GG {
+    rule TOP {^^ [<unit><myunit>] $$ }
+    token keyword {[class|role|module]}
+    token classname {<-[\;\{\s]>+}
+    token igclassname {\S+}
+    token edl {[\;|\{]}
+    token unitw {unit}
+    rule myunit {my <unitw>? <keyword> <igclassname> <edl>}
+    rule unit {<unitw>? <keyword> <classname> <edl>}
+}
+
+class GGActions {
+    has $.expected;
+    #method TOP($/) {say $/}#= don't care
+    method classname($/) {
+        say "\"$/\" : \"$f\",";}
+    #method igclassname($/) {say "!name $/" ;}
+    #method unit($/) {say "check $/";}
+    #method keyword($/) {say "key $/";}
+    #method myunit($/) {say "Ignored $/"};    
+}
+
+sub MAIN($path = './' ) {
+
+    my @perl-files = find(dir => $path, name => /.p [l||m] 6? $/).eager;
+
+    for @perl-files -> $file {
+        $f = $file;
+        my $path = $file.Str;
+        
+        my $package = $path.subst(/.*lib\//, '').subst(/\//, '::',:g).subst(/\.pm6?$/,"");
+        my $co  =  slurp($path).lines;
+        my $actions = GGActions.new(expected => $package);
+        for  $path.IO.lines -> $line {
+            GG.parse($line, :$actions);
+        }
+        
+    }
+}
+
+=begin pod
+
+C< find . -name "*.pm6" -print | xargs sed -i 's/\sBody/ LacunaCookbuk::Model::Body/g'>
+
+=end pod
+
+
