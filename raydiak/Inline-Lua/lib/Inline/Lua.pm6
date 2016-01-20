@@ -24,7 +24,7 @@ method new (Bool :$auto, Str :$lua, Str :$lib, :$raw is copy, |args) {
         }
         $new = Inline::Lua.bless: :$raw, |args;
     }
-    Inline::Lua.default-lua = $new;
+    Inline::Lua.default-lua //= $new;
 }
 
 method new-state () {
@@ -200,6 +200,11 @@ role LuaParent[Str:D $parent] is export {
     method FALLBACK (|args) {
         Inline::Lua.default-lua.get-global($parent).invoke: |args;
     }
+}
+
+multi sub EVAL(Cool $code, Str :$lang where { ($lang // '') eq 'Lua' }, PseudoStash :$context) is export {
+    my $lua = Inline::Lua.default-lua // Inline::Lua.new;
+    $lua.run($code);
 }
 
 #`[[[ has problems, one being that $parent is needed at compose time

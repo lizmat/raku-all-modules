@@ -2,11 +2,7 @@ use v6;
 
 use Test;
 
-plan 25;
-
-my constant $root = $?FILE.IO.parent.parent;
-use lib $root.child: 'lib';
-use lib $root.child('blib').child: 'lib';
+plan 26;
 
 use Inline::Lua;
 
@@ -86,6 +82,11 @@ ok $L.get-global('foo') eq 'bar', '.set-global() and .get-global() work';
     ok LuaClass.Y == 42, "Composition works";
     my class LuaChild is LuaClass {};
     ok LuaChild.plus-Y(7) == 7**2, "Inheritance works";
+}
+
+{
+    my $sum = EVAL 'return(5+3)', :lang<Lua>;
+    ok $sum == 8, 'Simple EVAL works';
 }
 
 done-testing;

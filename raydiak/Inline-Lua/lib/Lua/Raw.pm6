@@ -177,7 +177,6 @@ has $.lib = do {
     warn "Attempting to use unsupported Lua version '$lib'; this is likely to fail"
         unless $lib eq <5.1 jit-5.1>.any;
     $lib = "lua$lib";
-    $lib = "lib$lib" unless $*VM.config<dll> ~~ /dll/;
 };
 
 # mainly make this private to omit from .perl
