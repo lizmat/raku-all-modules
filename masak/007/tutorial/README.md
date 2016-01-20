@@ -158,19 +158,6 @@ Subroutines can return values.
 
     return 42;          Q::Statement::Return
 
-A return statement finds the lexically surrounding subroutine, and
-returns from it. Blocks are transparent to this process; a `return`
-simply doesn't see blocks.
-
-    sub outer() {
-        my inner = {
-            return 42;
-        }
-        inner();
-        say("not printed");
-    }
-    say(outer());
-
 ## `BEGIN` and constants
 
 `BEGIN` blocks are blocks of code that run as soon as the parser has
@@ -205,28 +192,8 @@ subroutines. These should be fairly self-explanatory.
     type(any)
     str(any)
     int(any)
-
-    abs(int)
     min(a, b)
     max(a, b)
-    chr(int)
-
-    ord(char)
-    chars(str)
-    uc(str)
-    lc(str)
-    trim(str)
-    split(str, sep)
-    index(str, substr)
-    charat(str, pos)
-    substr(str, pos, chars?)
-
-    elems(array)
-    reversed(array)
-    sorted(array)
-    join(array, sep)
-    filter(fn, array)
-    map(fn, array)
 
 ## Objects
 
@@ -246,6 +213,36 @@ making these two forms more or less equivalent:
 
     sub quip() { say("I'd say one of their aircraft is missing") }
     { quip: quip }
+
+## Methods on built-in types
+
+The following built-in types have methods associated with them:
+
+### `Int`
+
+    .abs()
+    .chr()
+
+### `Str`
+
+    .ord()
+    .chars()
+    .uc()
+    .lc()
+    .trim()
+    .split(sep)
+    .index(substr)
+    .charat(pos)
+    .substr(pos, chars?)
+
+### `Array`
+
+    .elems()
+    .reverse()
+    .sort()
+    .join(sep)
+    .map(fn)
+    .filter(fn)
 
 ## Q objects
 
