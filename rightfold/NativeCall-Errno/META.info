@@ -1,0 +1,12 @@
+{
+    "name": "NativeCall::Errno",
+    "perl": "6.*",
+    "version": "0.0.4",
+    "description": "Read errno from Perl 6 code.",
+    "authors": ["rightfold"],
+    "provides": {
+        "NativeCall::Errno": "lib/NativeCall/Errno.pm6",
+        "X:NativeCall::Errno": "lib/NativeCall/Errno.pm6"
+    },
+    "source-url": "git://github.com/rightfold/NativeCall-Errno.git"
+}

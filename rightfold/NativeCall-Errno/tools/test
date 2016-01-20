@@ -1,0 +1,2 @@
+#!/bin/zsh
+prove --exec 'perl6 -I lib' t/**/*.t

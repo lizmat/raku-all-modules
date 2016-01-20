@@ -1,0 +1,12 @@
+NativeCall::Errno
+
+Use NativeCall::Errno to read errno from Perl 6 code after invoking native
+functions. For example:
+
+    sub pipe(CArray[int32] --> int32) is native {*}
+
+    my @ends := CArray[int32].new;
+    @ends[0] = @ends[1] = 0;
+    if pipe(@ends) == -1 {
+        errno.fail;
+    }
