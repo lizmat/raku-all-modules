@@ -1,8 +1,8 @@
-use v6;
+use v6.c;
 
 use Test;
 
-plan 7;
+plan 11;
 
 use Net::AMQP;
 
@@ -21,6 +21,8 @@ await $channel-promise;
 is $channel-promise.status, Kept, 'channel.open success';
 ok $channel-promise.result ~~ Net::AMQP::Channel, 'value has right class';
 my $channel = $channel-promise.result;
+
+is $channel.closed.status , Planned, "the closed Promise remains planned";
 
 my $p;
 
@@ -46,5 +48,10 @@ is $p.status, Kept, 'basic.recover success';
 my $chan-close-promise = $channel-promise.result.close("", "");
 await $chan-close-promise;
 is $chan-close-promise.status, Kept, 'channel.close success';
+is $channel.closed.status, Kept, "and closed is not Kept";
+
+lives-ok { $chan-close-promise = $channel-promise.result.close("", "") }, "try and close it again";
+await $chan-close-promise;
+is $chan-close-promise.status, Kept, 'channel.close success (already closed)';
 
 await $n.close("", "");

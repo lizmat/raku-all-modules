@@ -2,7 +2,7 @@ use v6;
 
 use Test;
 
-plan 2;
+plan 6;
 
 use Net::AMQP;
 
@@ -22,10 +22,20 @@ my $channel = $channel-promise.result;
 my $queue-promise = $channel.declare-queue("foobaz");
 await $queue-promise;
 is $queue-promise.status, Kept, "Can declare new queue";
+isa-ok $queue-promise.result, Net::AMQP::Queue, "and there is a queue back";
 
 my $queue-delete-promise = $queue-promise.result.delete;
 await $queue-delete-promise;
 is $queue-delete-promise.status, Kept, "Can delete queue";
+
+$queue-promise = $channel.declare-queue("");
+await $queue-promise;
+is $queue-promise.status, Kept, "Can declare new queue without an explicit name";
+ok $queue-promise.result.name, "and it has the auto-generated name now";
+
+$queue-delete-promise = $queue-promise.result.delete;
+await $queue-delete-promise;
+is $queue-delete-promise.status, Kept, "Can delete that queue";
 
 my $chan-close-promise = $channel.close("", "");
 await $chan-close-promise;

@@ -29,8 +29,12 @@ method declare {
     my $p = Promise.new;
     my $v = $p.vow;
 
-    my $tap = $!methods.grep(*.method-name eq 'queue.declare-ok').tap({
+    my $tap = $!methods.grep(*.method-name eq 'queue.declare-ok').tap( -> $ok {
         $tap.close;
+
+        if not $!name {
+            $!name = $ok.arguments[0];
+        }
 
         $v.keep(self);
     });
@@ -187,8 +191,8 @@ class Net::AMQP::Message {
     has $.body;
 }
 
-method message-supply {
-    my $s = Supply.new;
+method message-supply() returns Supply {
+    my $s = Supplier.new;
 
     my $delivery-lock = Lock.new;
 
@@ -241,7 +245,7 @@ method message-supply {
 
     });
 
-    return $s;
+    return $s.Supply;
 }
 
 method recover {

@@ -1,5 +1,7 @@
 unit class Net::AMQP::Frame;
 
+use experimental :pack;
+
 use Net::AMQP::Payload::Body;
 use Net::AMQP::Payload::Header;
 use Net::AMQP::Payload::Heartbeat;

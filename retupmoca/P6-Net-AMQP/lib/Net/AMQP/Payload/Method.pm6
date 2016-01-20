@@ -2,6 +2,8 @@ use Net::AMQP::Payload::ArgumentSerialization;
 
 unit class Net::AMQP::Payload::Method does Net::AMQP::Payload::ArgumentSerialization;
 
+use experimental :pack;
+
 my %standard = (
     connection =>
         { id => 10,

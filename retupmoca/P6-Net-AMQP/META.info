@@ -1,7 +1,9 @@
 {
+	 "perl" : "6.c",
     "name" : "Net::AMQP",
-    "version" : "0.1.0",
-    "author" : "github:retupmoca",
+    "version" : "0.1.3",
+	 "authors" : [ "Andrew Egeler" ],
+    "auth" : "github:retupmoca",
     "description" : "AMQP (RabbitMQ) 0.9.1 client",
     "depends" : [],
     "provides" : {
@@ -16,5 +18,6 @@
         "Net::AMQP::Payload::Heartbeat"             : "lib/Net/AMQP/Payload/Heartbeat.pm6",
         "Net::AMQP::Payload::Method"                : "lib/Net/AMQP/Payload/Method.pm6"
     },
-    "source-url" : "git://github.com/retupmoca/P6-Net-AMQP.git"
+    "source-url" : "git://github.com/retupmoca/P6-Net-AMQP.git",
+    "tags" : [ "messaging", "amqp", "mq", "amqp" ]
 }

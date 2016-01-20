@@ -21,35 +21,38 @@ has $!vow;
 
 has $!conn;
 
-has $!frame-supply;
+has Bool $.debug = False;
 
-has $!method-supply;
-has $!header-supply;
-has $!body-supply;
+has Supplier $!frame-supplier;
+has Supply   $!frame-supply;
+
+has Supply $!method-supply;
+has Supply $!header-supply;
+has Supply $!body-supply;
 
 method connect(){
     my $p = Promise.new;
     $!vow = $p.vow;
     $!promise = $p;
 
-    $!frame-supply = Supply.new;
+    $!frame-supplier    = Supplier.new;
+    $!frame-supply      = $!frame-supplier.Supply;
 
-    $!method-supply = $!frame-supply.grep({ $_.type == 1 })\
-                                    .map({ (channel => $_.channel,
-                                            method  => Net::AMQP::Payload::Method.new($_.payload)).hash });
-    $!header-supply = $!frame-supply.grep({ $_.type == 2 })\
-                                    .map({ (channel => $_.channel,
-                                            header  => Net::AMQP::Payload::Header.new($_.payload)).hash });
-    $!body-supply = $!frame-supply.grep({ $_.type == 3 })\
-                                    .map({ (channel => $_.channel,
-                                            payload  => $_.payload).hash });
+
+
+    $!method-supply = $!frame-supply.grep({ $_.type == 1 }).map({ (channel => $_.channel, method  => Net::AMQP::Payload::Method.new($_.payload)).hash });
+    $!method-supply.tap({ say "got method ",$_<method>.method-name }) if $!debug;
+
+    $!header-supply = $!frame-supply.grep({ $_.type == 2 }).map({ (channel => $_.channel, header  => Net::AMQP::Payload::Header.new($_.payload)).hash });
+    $!body-supply = $!frame-supply.grep({ $_.type == 3 }).map({ (channel => $_.channel, payload  => $_.payload).hash });
     
     ###
     # initial connection setup
     #
     # once these are hit, we will never need them again
     ###
-    my $connstart = $!method-supply.grep(*<method>.method-name eq 'connection.start').tap({
+
+    my $connstart = $!method-supply.grep({ $_<method>.method-name eq 'connection.start'}).tap({
         $connstart.close;
 
         my $start-ok = Net::AMQP::Payload::Method.new("connection.start-ok",
@@ -59,8 +62,7 @@ method connect(){
                                                       "en_US");
         $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $start-ok.Buf).Buf);
     });
-
-    my $conntune = $!method-supply.grep(*<method>.method-name eq 'connection.tune').tap({
+    my $conntune = $!method-supply.grep( { $_<method>.method-name eq 'connection.tune' }).tap({
         $conntune.close;
 
         $!channel-max = $_<method>.arguments[0];
@@ -116,7 +118,7 @@ method connect(){
         $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $open.Buf).Buf);
     });
 
-    my $connopen = $!method-supply.grep(*<method>.method-name eq 'connection.open-ok').tap({
+    my $connopen = $!method-supply.grep({ $_<method>.method-name eq 'connection.open-ok' }).tap({
         $connopen.close;
 
         my $p = Promise.new;
@@ -129,7 +131,7 @@ method connect(){
     ###
     ###
 
-    $!method-supply.grep(*<method>.method-name eq 'connection.close').tap({
+    $!method-supply.grep({ $_<method>.method-name eq 'connection.close' }).tap({
         my $close-ok = Net::AMQP::Payload::Method.new("connection.close-ok");
         $!conn.write(Net::AMQP::Frame.new(type => 1, channel => 0, payload => $close-ok.Buf).Buf);
         $!conn.close();
@@ -141,7 +143,7 @@ method connect(){
 
         my $buf = buf8.new();
 
-        $!conn.bytes-supply.act(-> $bytes {
+        $!conn.Supply(:bin).act(-> $bytes {
             $buf ~= $bytes;
             my $continue = True;
             while $continue && $buf.bytes >= 7 {
@@ -152,7 +154,7 @@ method connect(){
 
                     my $frame = Net::AMQP::Frame.new($framebuf);
 
-                    $!frame-supply.emit($frame);
+                    $!frame-supplier.emit($frame);
                 } else {
                     $continue = False;
                 }
@@ -171,7 +173,7 @@ method connect(){
 
 method close($reply-code, $reply-text, $class-id = 0, $method-id = 0) {
 
-    my $tap = $!method-supply.grep(*<method>.method-name eq 'connection.close-ok').tap({
+    my $tap = $!method-supply.grep({ $_<method>.method-name eq 'connection.close-ok' }).tap({
         $tap.close;
 
         $!conn.close;
@@ -195,7 +197,7 @@ method open-channel(Int $id?) {
                                   conn => $!conn,
                                   login => $!login,
                                   frame-max => $!frame-max,
-                                  headers => $!header-supply.grep(*<channel> == $id).map(*<header>),
-                                  bodies => $!body-supply.grep(*<channel> == $id).map(*<payload>),
-                                  methods => $!method-supply.grep(*<channel> == $id).map(*<method>)).open;
+                                  headers => $!header-supply.grep( { $_<channel> == $id }).map( {$_<header> }),
+                                  bodies => $!body-supply.grep({$_<channel> == $id }).map({$_<payload> }),
+                                  methods => $!method-supply.grep({ $_<channel> == $id }).map({ $_<method> })).open;
 }

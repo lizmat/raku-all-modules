@@ -41,7 +41,7 @@ method declare {
                                                  0,
                                                  0,
                                                  0,
-                                                 {});
+                                                 Nil);
     $!channel-lock.protect: {
         $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $declare.Buf).Buf);
     };

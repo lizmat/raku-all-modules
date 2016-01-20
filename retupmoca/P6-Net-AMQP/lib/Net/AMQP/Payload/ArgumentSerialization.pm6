@@ -1,5 +1,7 @@
 unit role Net::AMQP::Payload::ArgumentSerialization;
 
+use experimental :pack;
+
 method serialize-arg($type, $value, $buf? is copy, $bitsused? = 0) {
     given $type {
         when 'boolean' {

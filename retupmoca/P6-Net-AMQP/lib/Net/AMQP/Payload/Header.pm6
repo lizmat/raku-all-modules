@@ -2,6 +2,8 @@ use Net::AMQP::Payload::ArgumentSerialization;
 
 unit class Net::AMQP::Payload::Header does Net::AMQP::Payload::ArgumentSerialization;
 
+use experimental :pack;
+
 has $.class-id;
 has $.weight = 0;
 has $.body-size;
