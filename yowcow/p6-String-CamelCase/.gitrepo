@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/yowcow/p6-String-CamelCase.git
 	branch = master
-	commit = 4a0c0b758ceeeb91ca6e441f2225217759685e46
-	parent = 2d2faf27dd6651d6e3023b7a7fa0370b3c788198
+	commit = 7d2677614a7d8a9470654b0c0173c08fde2e394c
+	parent = 9930e18368a56484e08d82de7f1b5daf78972b1c
 	cmdver = 0.2.3
