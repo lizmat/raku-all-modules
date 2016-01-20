@@ -17,7 +17,7 @@ Writting own:
          
 ### DESCRIPTION    
     
-[![Build Status](https://travis-ci.org/teodozjan/lacuna-cookbuk.svg?branch=v3.1.2)](https://travis-ci.org/teodozjan/lacuna-cookbuk) Don't worry it is usable but SPESH has little bug that prevents it from working
+[![Build Status](https://travis-ci.org/teodozjan/lacuna-cookbuk.svg?branch=v3.1.2)](https://travis-ci.org/teodozjan/lacuna-cookbuk) Works only with MVM_SPESH_DISABLE = 1
 
 Script helps https://us1.lacunaexpanse.com players doing boring tasks like moving glyphs to one place that can make plans from them or searching where excess fighters can be put. The intention was putting perl6 into life. 
 
