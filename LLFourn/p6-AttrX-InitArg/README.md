@@ -1,4 +1,4 @@
-# AttrX::InitArg
+# AttrX::InitArg [![Build Status](https://travis-ci.org/LLFourn/p6-AttrX-InitArg.svg?branch=master)](https://travis-ci.org/LLFourn/p6-AttrX-InitArg)
 
 Moose like `init_arg` for Perl 6
 
@@ -103,12 +103,6 @@ This module modfiies .gist and .perl (in a fairly ugly way) so that
 `.perl`'s EVALablilty is preserved. However, `.gist` is modified so
 that it never prints out the values of `$!` attributes.
 
-### Performance
-
-Presently, this module is implemented more as an experiment. Objects
-with `is init-arg` attributes will take an unnecessary performance penalty each
-time the object is creadted until I've done some optimization.
-
 ### Is this even a good idea?
 
 It depends. If you are using the no-argument form of `init-arg` with `$!`
@@ -117,5 +111,7 @@ read-only not good enough? Does it **have** to have no accessors?
 
 ### BUILDALL
 
-This trait creates a custom BUILDALL on the role/class containing the
-trait. If you write your own one this won't work atm.
+~~This trait creates a custom BUILDALL on the role/class containing
+the trait. If you write your own one this won't work atm.~~ This
+Should be fine now. You can write your own BUILD or BUILDALL and it
+won't conflict.

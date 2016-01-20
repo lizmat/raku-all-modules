@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/LLFourn/p6-AttrX-InitArg.git
 	branch = master
-	commit = 64268d932070be2c6355a470318d243f71a8f0cb
-	parent = a41a22e9cd27797de359025596fe679cbda0f4f8
+	commit = 0ca85c6d7248e4889f4756654f7515b31b9bd90d
+	parent = c3fb2780d612a2702d48a1aee65ff071354696f2
 	cmdver = 0.2.3

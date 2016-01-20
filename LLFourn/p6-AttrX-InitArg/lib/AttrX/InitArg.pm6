@@ -3,7 +3,7 @@ my role InitArg {
     has $.null-init-arg is rw = False;
 }
 
-my role InitArgContainer {
+my class InitArgContainer {
 
     method BUILDALL(@,%named) {
 
@@ -20,8 +20,6 @@ my role InitArgContainer {
         }
 
         callsame;
-
-        self;
     }
 
 
@@ -56,6 +54,23 @@ my role InitArgContainer {
     }
 }
 
+# this is the only way I found to get the right answer
+sub in-parents(Mu $pkg is raw) {
+    if $pkg.HOW ~~ Metamodel::ParametricRoleGroupHOW {
+        for $pkg.^candidates {
+            return True if in-parents($_);
+        }
+    } else {
+        # XXX:  you have to do both :local and without atm because of a bug
+        return True if $pkg.^parents().first(InitArgContainer) !=== Nil;
+        return True if $pkg.^parents(:local).first(InitArgContainer) !=== Nil;
+        for $pkg.^roles_to_compose {
+            return True if in-parents($_);
+        }
+    }
+
+    False;
+}
 
 multi sub trait_mod:<is>(Attribute $attr, :$init-arg!) is export {
     $attr does InitArg;
@@ -66,6 +81,19 @@ multi sub trait_mod:<is>(Attribute $attr, :$init-arg!) is export {
     }
 
     # XXX: HACK -- it should use $attr.package but this doesn't work in roles atm
-    # can't use .does here because we haven't composed it yet.
-    $*PACKAGE.^add_role(InitArgContainer) unless $*PACKAGE.^roles_to_compose.first(InitArgContainer) !=== Nil;
+    my Mu $pkg := $*PACKAGE;
+
+    if not in-parents($pkg) {
+        if $pkg.HOW !~~ Metamodel::ClassHOW {
+            # XXX: HACK++, need to create > 1 inheritence distance when we have
+            # a role. Otherwise 'class A does B does C { }' will die "already has parent"
+            # if B and C both have init-args
+            my $tmp := Metamodel::ClassHOW.new_type(:name<initArgHack>);
+            $tmp.^add_parent(InitArgContainer);
+            $tmp.^compose;
+            $pkg.^add_parent($tmp,:hides);
+        } else {
+            $pkg.^add_parent(InitArgContainer);
+        }
+    }
 }

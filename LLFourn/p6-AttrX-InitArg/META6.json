@@ -1,7 +1,7 @@
 {
     "name" : "AttrX::InitArg",
     "perl" : "6.*",
-    "version" : "0.1",
+    "version" : "0.1.1",
     "description" : "Moose-like init-arg attribute trait for Perl 6",
     "authors"     : ["Lloyd Fournier"],
     "provides"    : {
@@ -9,5 +9,5 @@
     },
     "depends" : [],
     "resources" : [],
-    "source-url" : "git@github.com:LLFourn/p6-AttrX-InitArg.git"
+    "source-url" : "git://github.com/LLFourn/p6-AttrX-InitArg.git"
 }
