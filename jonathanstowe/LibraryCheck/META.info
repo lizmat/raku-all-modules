@@ -8,7 +8,7 @@
     "source" : "git://github.com/jonathanstowe/LibraryCheck.git"
   },
   "source-url" : "git://github.com/jonathanstowe/LibraryCheck.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [
   ],
   "provides" : {
