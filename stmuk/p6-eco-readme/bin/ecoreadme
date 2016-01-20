@@ -1,9 +1,8 @@
 #!/usr/bin/env perl6
  
 use v6;
-#use LWP::Simple;
-#use IO::Socket::SSL; # XXX Digest broken 20151005
-use Net::Curl::Easy; 
+use LWP::Simple;
+use IO::Socket::SSL;
 use Panda;
 use Panda::Ecosystem;
 use Panda::App;
@@ -44,7 +43,7 @@ sub MAIN (Str $module, Bool :$get = False) {
     my $md;
     for @urls -> $url {
 
-        $md = Net::Curl::Easy.new(:$url).download;
+        $md =  LWP::Simple.get($url);
 
         last if $md !~~ "Not Found"
 
