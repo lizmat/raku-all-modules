@@ -8,7 +8,7 @@
     "source" : "git://github.com/jonathanstowe/Audio-Libshout.git"
   },
   "source-url" : "git://github.com/jonathanstowe/Audio-Libshout.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [
 	   "panda",
 		"LibraryCheck"
