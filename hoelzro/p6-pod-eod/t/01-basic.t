@@ -9,20 +9,27 @@ sub load-pod($code) {
     EVAL $full-code;
 }
 
-my $pod = load-pod(q:to/END_PERL6/);
-#| Example sub!
-sub example { }
+my @features = (
+    'sub example {}',
+    'module My::Module {}',
+);
 
-=begin head1
-NAME
-Example
-=end head1
+for @features -> $feature {
+    my $pod = load-pod(qq:to/END_PERL6/);
+    #| Example Feature!
+    $feature
 
-END_PERL6
+    =begin head1
+    NAME
+    Example
+    =end head1
 
-move-declarations-to-end($pod);
+    END_PERL6
 
-isa-ok $pod[0], Pod::Heading;
-isa-ok $pod[1], Pod::Block::Declarator;
+    move-declarations-to-end($pod);
+
+    isa-ok $pod[0], Pod::Heading, "rearrangement should be successful for feature '$feature'";
+    isa-ok $pod[1], Pod::Block::Declarator, "rearrangement should be successful for feature '$feature'";
+}
 
 done-testing;

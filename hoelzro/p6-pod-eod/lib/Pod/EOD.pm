@@ -6,7 +6,7 @@ use v6;
 #| to the end of the document.  Note that this happens
 #| I<in place>, so your original array is modified!
 our sub move-declarations-to-end($pod) is export {
-    $pod[0..*] = $pod.sort(*.?WHEREFORE.Bool).eager;
+    $pod[0..*] = $pod.sort(*.?WHEREFORE !=:= Nil).eager;
 }
 
 DOC INIT {
