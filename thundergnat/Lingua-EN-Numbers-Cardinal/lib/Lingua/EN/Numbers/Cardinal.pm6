@@ -1,7 +1,7 @@
 
 use v6;
 
-unit module Cardinal:ver<0.2.1>:auth<github:thundergnat>;
+unit module Cardinal:ver<0.2.2>:auth<github:thundergnat>;
 
 # Arrays probably should be constants but constant arrays and pre-comp
 # don't get along very well right now.
