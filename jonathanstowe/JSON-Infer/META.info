@@ -10,7 +10,7 @@
     "bugtracker" : "https://github.com/jonathanstowe/JSON-Infer/issues"
   },
   "source-url" : "git://github.com/jonathanstowe/JSON-Infer.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
      "JSON::Infer::Exception"     : "lib/JSON/Infer/Exception.pm",
