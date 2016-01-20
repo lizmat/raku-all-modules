@@ -1,9 +1,10 @@
 {
+    "perl"          : "6.c",
     "name"          : "Math::Matrix",
     "version"       : "0.1.0",
-    "author"        : "github:pierre-vigier",
+    "authors"       : [ "github:pierre-vigier", "github:lichtkind" ],
     "description"   : "Math::Matrix",
-    "depends"       : [ ],
+    "depends"       : [],
     "provides" : {
         "Math::Matrix"    : "lib/Math/Matrix.pm6"
     },
