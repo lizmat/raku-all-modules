@@ -31,26 +31,34 @@ class Zef::App {
         $!tester    = Zef::Test.new( :backends(@testers) );
     }
 
-    method fetch(Bool :$depends = True, Bool :$test-depends = True, Bool :$build-depends = True,
-                 Bool :$force, Bool :$verbose, *@wants) {
+    method candidates(Bool :$depends, Bool :$test-depends, Bool :$build-depends,
+                 Bool :$force, Bool :$verbose, Bool :$upgrade, *@wants) {
 
         my &stdout = ?$verbose ?? -> $o {$o.say} !! -> $ { };
         # Once metacpan can return results again this will need to be modified so as not to
-        # duplicate an identity that shows up from multiple ContentStorages
-        #
-        # todo: Update ContentStorage::CPAN to use Distribution.name/etc instead of %meta<name>/<etc>
+        # duplicate an identity that shows up from multiple ContentStorages.
+        # XXX: :$update means to *not* take the first matching candidate encountered, but
+        # the highest version that matches from all available storages (break out of ::LocalCache)
         sub get-dists(*@_) {
             state %found;
             my @allowed = |@_.grep(* ~~ none(|@!ignore, |%found.keys)).unique || return;
             say "Searching for {'dependencies ' if state $once++}{@allowed.join(', ')}" if ?$verbose;
             ALLOWED:
             for @allowed -> $wanted {
+
+                # todo: allow sorting `candidates` by version
                 CONTENT:
-                for $!storage.candidates($wanted) -> $cs {
-                    my $storage = $cs.key;
-                    my $dist    = $cs.value[0];
+                for $!storage.candidates($wanted, :$upgrade) -> $cs {
+                    my $storage := $cs.key;
+                    my $dist    := $cs.value[0];
+
                     unless %found{$wanted}:exists {
-                        %found{$wanted} = $dist;
+                        say "[$storage] found {$dist.name}" if ?$verbose;
+                        %found{$wanted} := $cs;
+
+                        # so the user can see if $wanted was discovered as dist or a module
+                        $dist.metainfo<requested-as> = $wanted;
+
                         # todo: alternatives, i.e. not a Str but [Str, Str]
                         my @wanted-deps = unique(grep *.chars,
                             ($dist.depends       if ?$depends).Slip,
@@ -66,20 +74,43 @@ class Zef::App {
 
         my %found = get-dists(|@wants);
 
-        if @wants.grep({ not %found{$_}:exists }) -> @wanted {
+        if @wants.grep(* !~~ any(@!ignore)).grep({ not %found{$_}:exists }) -> @wanted {
             say "Could not find distributions matching {@wanted.join(',')}";
             die unless ?$force;
         }
 
-        gather for %found.values -> $dist {
+        %found;
+    }
+
+    method fetch(Bool :$depends = True, Bool :$test-depends = True, Bool :$build-depends = True,
+                 Bool :$force, Bool :$verbose, *@wants) {
+
+        my %found = self.candidates(:$depends, :$test-depends, :$build-depends, :$force, :$verbose, |@wants);
+        self!fetch(%found, :$depends, :$test-depends, :$build-depends, :$force, :$verbose)
+    }
+    method !fetch($storage, :$depends, :$test-depends, :$build-depends, Bool :$force, Bool :$verbose) {
+        my &stdout = ?$verbose ?? -> $o {$o.say} !! -> $ { };
+
+        gather for $storage.kv -> $requested-as, $cs {
+            my $from = $cs.key;
+            my $dist = $cs.value[0];
             my $sanitized-name = $dist.name.subst(':', '-', :g);
             my $uri = $dist.source-url;
             my $extract-to = $!cache.IO.child($sanitized-name);
             my $save-as    = $!cache.IO.child($uri.IO.basename);
 
-            say "Fetching {$dist.identity}#{$uri}{?$verbose ?? qq| to $save-as| !! ''}";
-            $!fetcher.fetch($uri, $save-as, :&stdout);
-            
+            say "Fetching `{$requested-as}` as {$dist.identity}";
+
+            # todo: abstract this away properly with either a specific file uri
+            # fetcher, modifying the source-url field to a path, or create a cacher role
+            if $from eq 'Zef::ContentStorage::LocalCache' {
+                say "[$from] cached at $save-as" if ?$verbose;
+            }
+            else {
+                $!fetcher.fetch($uri, $save-as, :&stdout);
+                say "[$from] {$uri} --> $save-as" if ?$verbose;
+            }
+
             # should probably break this out into its out method
             if $save-as.lc.ends-with('.tar.gz' | '.zip') {
                 say "Extracting: {$save-as} to {$extract-to}" if ?$verbose;
@@ -87,6 +118,8 @@ class Zef::App {
             }
 
             $dist does Zef::Distribution::Local($save-as);
+            $!storage.store($dist);
+
             take $dist;
         }
     }
@@ -97,7 +130,7 @@ class Zef::App {
 
             my &stdout = ?$verbose ?? -> $o {$o.say} !! -> $ { };
 
-            my $result = $!tester.test($path, :includes(@includes.grep(*.so)), :&stdout);
+            my $result = try $!tester.test($path, :includes(@includes.grep(*.so)), :&stdout);
 
             if !$result {
                 die "Aborting due to test failure at: {$path} (use :force to override)" unless ?$force;
@@ -128,50 +161,50 @@ class Zef::App {
 
         self!install(:@target-curs, |%_, |@wants);
     }
+
     method !install(:@target-curs, Bool :$force, Bool :$fetch, Bool :$test, Bool :$dry, Bool :$verbose,
-                    Bool :$depends, Bool :$build-depends, Bool :$test-depends, *@wants, *%_) {
+                    Bool :$depends, Bool :$build-depends, Bool :$test-depends, Bool :$upgrade, *@wants, *%_) {
 
         my &notice = ?$force ?? &say !! &die;
 
-        my @dists = eager gather for @wants -> $want {
-            # todo: manifest/lookup for ContentStorage.cache + Fetcher for local paths (for .fetch("some-path", :depends))
-            # 1) Will allow checking path for meta info to see if we can skip fetching it
-            # 2) @wants may contain an identity but also a path string. However, if dependencies
-            # are needed they will always be identities so this would let us translate those
-            # identities into local paths (if they exist) to take any required actions on
+        my @discovered = eager gather for @wants -> $want {
             if $want.starts-with('.' | '/') && $want.IO.e {
                 my $dist = Zef::Distribution::Local.new($want.IO.absolute);
+
                 my @deps = unique(grep *.defined,
                     ($dist.depends       if ?$depends).Slip,
                     ($dist.test-depends  if ?$test-depends).Slip,
                     ($dist.build-depends if ?$build-depends).Slip);
 
-                # ideally we check all of @wants for paths before trying to fetch anything
-                if +@deps  && ?$fetch {
-                    take $_ for |self.fetch(|@deps, :$depends, :$build-depends, :$test-depends, :$verbose, :$force, |%_);
+                if +@deps {
+                    take $_ for |self.candidates(|@deps, :$depends, :$build-depends, :$test-depends, :$verbose, :$force, :$upgrade, |%_);
                 }
 
-                take $dist;
-            }
-            elsif ?$fetch {
-                take $_ for |self.fetch($want, :$depends, :$build-depends, :$test-depends, :$verbose, :$force, |%_);
+                # local paths should probably just use LocalCache
+                take ($want => ('IO::Path' => $dist));
             }
             else {
-                notice "Don't know how to locate '$want'. Did you mean to pass :fetch?";
+                take $_ for |self.candidates($want, :$depends, :$build-depends, :$test-depends, :$verbose, :$force, :$upgrade, |%_);
             }
-
         }
+
+
+        my @dists = eager gather for @discovered -> $store {
+            take $_ for |self!fetch($store, :$depends, :$build-depends, :$test-depends, :$verbose, :$force, |%_);
+        }
+
 
         # todo: put this into its own subroutine or module. just a placeholder example for now
         my @filtered-dists = eager gather DIST: for @dists -> $dist {
             say "[DEBUG] Filtering {$dist.name}" if ?$verbose;
-            # todo: handle this lazily or in a way where we don't fetch stuf we already have
-            if $dist.name ne 'Zef' && ?$dist.is-installed && $dist.IO !~~ $*CWD {
+            if ?$dist.is-installed {
+                my $reported-id = ?$verbose ?? $dist.identity !! $dist.name;
                 unless ?$force {
-                    say "{$dist.name} is already installed. Skipping... (use :force to override)";
+                    say "{$reported-id} is already installed. Skipping... (use :force to override)";
                     next;
                 }
-                say "{$dist.name} is already installed. Continuing anyway with :force";
+
+                say "{$reported-id} is already installed. Continuing anyway with :force";
             }
 
             # Should `License` be a root option key?
@@ -209,7 +242,7 @@ class Zef::App {
             $dist.metainfo<includes> = eager gather DEPSPEC: for @dep-specs -> $spec {
                 for @filtered-dists -> $fd {
                     if $fd.contains-spec($spec) {
-                        take $fd.path.IO.child('lib').absolute;
+                        take $fd.IO.child('lib').absolute;
                         take $_ for |$fd.metainfo<includes>;
                         next DEPSPEC;
                     }
@@ -232,6 +265,14 @@ class Zef::App {
                         $cur.install($dist, $dist.sources(:absolute), $dist.scripts, $dist.resources, :force(?$force));
                     #});
                 }
+            }
+        }
+
+        # report phase
+        unless $dry {
+            if @installable-dists.flatmap(*.scripts.keys).unique -> @bins {
+                say "\n{+@bins} bin/ script{+@bins>1??'s'!!''}{+@bins&&?$verbose??' ['~@bins~']'!!''} installed to:"
+                ~   "\n\t" ~ @target-curs.map(*.prefix.child('bin')).join("\n");
             }
         }
     }
@@ -270,7 +311,7 @@ sub topological-sort(@dists, Bool :$depends = True, Bool :$build-depends = True,
 # todo: write a real hooking implementation to CU::R::I instead of the current practice
 # of writing an installer specific (literally) Build.pm
 sub legacy-hook($dist) {
-    my $builder-path = $dist.path.IO.child('Build.pm');
+    my $builder-path = $dist.IO.child('Build.pm');
 
     # if panda is declared as a dependency then there is no need to fix the code, although
     # it would still be wise for the author to change their code as outlined in $legacy-fixer-code
@@ -293,13 +334,14 @@ sub legacy-hook($dist) {
         try { $builder-path.spurt($legacy-code) } || $builder-path.subst-mutate(/'.zef'$/, '');
     }
 
-    my $cmd = "require <{$builder-path.basename}>; ::('Build').new.build('{$dist.path.IO.absolute}') ?? exit(0) !! exit(1);";
+    my $cmd = "require <{$builder-path.basename}>; ::('Build').new.build('{$dist.IO.absolute}') ?? exit(0) !! exit(1);";
 
     my $result;
     try {
+        use Zef::Shell;
         CATCH { default { $result = False; } }
         my @includes = $dist.metainfo<includes>.map: { "-I{$_}" }
-        my $proc = run($*EXECUTABLE, '-I.', '-Ilib', |@includes, '-e', "$cmd", :cwd($dist.path), :out, :err);
+        my $proc = zrun($*EXECUTABLE, '-I.', '-Ilib', |@includes, '-e', "$cmd", :cwd($dist.path), :out, :err);
         .say for $proc.out.lines;
         .say for $proc.err.lines;
         $proc.out.close;

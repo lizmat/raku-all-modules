@@ -7,6 +7,7 @@
 Perl6 Module Management
 
 =for HTML <a href="https://travis-ci.org/ugexe/zef"><img src="https://travis-ci.org/ugexe/zef.svg?branch=master"></a>
+          <a href="https://ci.appveyor.com/project/ugexe/zef/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/ugexe/zef?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
 
 =head1 Installation
 
@@ -67,10 +68,19 @@ tests then B will not be installed (even if it passed its own tests) without for
     # disable testing
     --/test
 
+    # When multiple content storages are used this will use
+    # the install candidate with the highest matching version
+    # ***option name may change***
+    --upgrade
+
     # disable fetching dependencies
     --/depends
     --/build-depends
     --/test-depends
+
+=head4 B<update>
+
+Update the package indexes for all `ContentStorage` backends
 
 =head4 B<search>
 
