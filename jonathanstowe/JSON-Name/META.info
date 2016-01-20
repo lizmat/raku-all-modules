@@ -8,7 +8,7 @@
     "source" : "git://github.com/jonathanstowe/JSON-Name.git"
   },
   "source-url" : "git://github.com/jonathanstowe/JSON-Name.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
      "JSON::Name" : "lib/JSON/Name.pm"
