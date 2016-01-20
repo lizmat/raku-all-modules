@@ -5,16 +5,16 @@ Copyright (c) 2016 Maxim Noah Khailo, All Rights Reserved
 This file is part of PKafka.
 
 PKafka is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
+it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PKafka is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with PKafka.  If not, see <http://www.gnu.org/licenses/>.
 use NativeCall;
 
@@ -25,6 +25,43 @@ use PKafka::Native;
 use PKafka::Kafka;
 use PKafka::Config;
 use PKafka::Message;
+
+class PKafka::X::Consuming is Exception {
+   has $.topic;
+   has $.partition;
+   has $.offset;
+   has $.errstr;
+};
+
+class PKafka::X::ConsumeCalledTwice is PKafka::X::Consuming 
+{
+    method message {"Called consume twice for topic $.topic and partition $.partition"}
+};
+
+class PKafka::X::StartingConsumer is PKafka::X::Consuming 
+{
+    submethod BUILD { self.errstr = PKafka::errno2str() }
+    method message {"Error starting to consume partition $.partition of topic $.topic at offset $.offset: $.errstr"}
+}
+
+class PKafka::X::StoppingConsumer is PKafka::X::Consuming 
+{
+    submethod BUILD { self.errstr = PKafka::errno2str() }
+    method message {"Error stopping consuming partition $.partition of topic $.topic: $.errstr"}
+}
+
+class PKafka::X::StoringOffset is PKafka::X::Consuming 
+{
+    has $.error-code;
+    submethod BUILD(:$!error-code) { self.errstr = PKafka::rd_kafka_err2str($!error-code)}
+    method message {"Error storing offset $.offset for partition $.partition of topic $.topic: $.errstr"}
+}
+
+class PKafka::X::StoringOffsetForWrongTopic is PKafka::X::Consuming
+{
+    has $.actual-topic;
+    method message {"Error storing offset $.offset for partition $.partition of topic $.topic: Got message from topic $.actual-topic. Make sure to call save-offset with message from correct topic."}
+}
 
 class PKafka::Consumer 
 {
@@ -69,10 +106,10 @@ class PKafka::Consumer
 
     method consume(Int :$partition, Int :$offset) 
     {
-        die "Called consume twice" if %!running{$partition};
+        die PKafka::X::ConsumeCalledTwice(topic=>self.topic, :$partition) if %!running{$partition};
 
         my $res = PKafka::rd_kafka_consume_start($!topic, $partition, $offset);
-        die "Error starting parrition $partition of topic { self.topic } at offset $offset: { PKafka::errno2str() }" if $res == -1;
+        die PKafka::X::ErrorStartingConsumer(topic=>self.topic, :$partition, :$offset) if $res == -1;
         %!running{$partition} = True;
 
         start 
@@ -119,7 +156,7 @@ class PKafka::Consumer
     {
         return if %!running{$partition} == False;
         my $res = PKafka::rd_kafka_consume_stop($!topic, $partition);
-        die "Error stopping consuming partition $partition of topic { self.topic }: { PKafka::errno2str() }" if $res == -1;
+        die PKafka::StoppingConsumer(topic=>self.topic, :$partition) if $res == -1;
         %!running{$partition} = False;
     }
 
@@ -129,6 +166,34 @@ class PKafka::Consumer
     }
 
     method messages { $!messages }
+
+    multi method save-offset(Int :$partition, Int :$offset) 
+    {
+        my $res = PKafka::rd_kafka_offset_store($!topic, $partition, $offset);
+
+        if $res != PKafka::RD_KAFKA_RESP_ERR_NO_ERROR 
+        {
+            die PKafka::X::StoringOffset.new(
+                :$partition, 
+                :$offset, 
+                topic=>self.topic, 
+                err=>$res); 
+        }
+    }
+
+    multi method save-offset(PKafka::Message $m)
+    {
+        if $m.topic ne self.topic 
+        {
+            die PKafka::X::StoringOffsetForWrongTopic(
+                partition=>$m.partition, 
+                offset=>$m.offset, 
+                topic=>self.topic,
+                actual-topic=>$m.topic);
+        }
+
+        self.save-offset(partition=>$m.partition, offset=>$m.offset);
+    }
 
     submethod DESTROY 
     { 

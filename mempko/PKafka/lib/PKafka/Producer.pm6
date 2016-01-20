@@ -5,16 +5,16 @@ Copyright (c) 2016 Maxim Noah Khailo, All Rights Reserved
 This file is part of PKafka.
 
 PKafka is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
+it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PKafka is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with PKafka.  If not, see <http://www.gnu.org/licenses/>.
 use NativeCall;
 
@@ -24,6 +24,15 @@ use NativeCall;
 use PKafka::Native;
 use PKafka::Kafka;
 use PKafka::Config;
+
+class PKafka::X::ProducingMessage is Exception
+{
+    has $.partition;
+    has $.topic;
+    has $.errstr;
+    submethod BUILD { $!errstr = PKafka::errno2str() }
+    method message {"Error producing message to partition $.partition for topic $.topic: $.errstr"}
+};
 
 class PKafka::Producer 
 {
@@ -72,7 +81,7 @@ class PKafka::Producer
             $!topic, $p, $msgops,
             $payload, $payload.elems, $key, $key.elems, $msg-opaque);
 
-        die "Error producing message to partition $partition for topic { self.topic}: {PKafka::errno2str}" if $res == -1;
+        die PKafka::X::ProducingMessage.new(:$partition, topic=>self.topic) if $res == -1;
     }
 
     submethod DESTROY { PKafka::rd_kafka_topic_destroy($!topic) }

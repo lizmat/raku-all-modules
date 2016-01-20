@@ -5,16 +5,16 @@ Copyright (c) 2016 Maxim Noah Khailo, All Rights Reserved
 This file is part of PKafka.
 
 PKafka is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
+it under the terms of the GNU Lesser General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
 PKafka is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+GNU Lesser General Public License for more details.
 
-You should have received a copy of the GNU General Public License
+You should have received a copy of the GNU Lesser General Public License
 along with PKafka.  If not, see <http://www.gnu.org/licenses/>.
 use NativeCall;
 
@@ -22,6 +22,17 @@ use NativeCall;
 
 use NativeCall;
 unit module PKafka;
+
+class PKafka::X::DidNotSpecifyBrokers is Exception
+{
+    method message {"No brokers specified"}
+};
+
+class PKafka::X::DidNotProvideValidBrokers is Exception
+{
+    has $.brokers;
+    method message {"No valid brokers specified $.brokers"}
+};
 
 my $errno := cglobal(Str, 'errno', int);
 
@@ -190,14 +201,21 @@ our sub rd_kafka_consume_start(Pointer, int32, int64) returns int is native('rdk
 #int rd_kafka_consume_stop (rd_kafka_topic_t *rkt, int32_t partition);
 our sub rd_kafka_consume_stop(Pointer, int32) returns int is native('rdkafka', v1) { * }
 
+#rd_kafka_resp_err_t rd_kafka_offset_store (rd_kafka_topic_t *rkt, int32_t partition, int64_t offset);
+our sub _rd_kafka_offset_store(Pointer, int32, int64) returns int32 is native('rdkafka', v1) is symbol('rd_kafka_offset_store') { * }
+our sub rd_kafka_offset_store(Pointer $topic, int32 $partition, int64 $offset) returns rd_kafka_resp_err_t
+{
+    rd_kafka_resp_err_t(_rd_kafka_offset_store($topic, $partition, $offset));
+}
+
 #int rd_kafka_brokers_add (rd_kafka_t *rk, const char *brokerlist);
 our sub rd_kafka_brokers_add(Pointer, Str) returns int is native('rdkafka', v1) { * }
 
 our sub gaurded_rd_kafka_brokers_add(Pointer $kafka, Str $brokers = "")
 {
-    die "No brokers specified" if $brokers.chars == 0;
+    die PKafka::X::DidNotSpecifyBrokers.new if $brokers.chars == 0;
     my $added = rd_kafka_brokers_add($kafka, $brokers);
-    die "No valid brokers specified $brokers" if $added == 0;
+    die PKafka::X::DidNotProvideValidBrokers.new(:$brokers) if $added == 0;
 }
 
 our $RD_KAFKA_OFFSET_BEGINNING = -2;
