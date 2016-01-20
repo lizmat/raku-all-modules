@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/perl6-opencv.git
+	branch = master
+	commit = 6eee82527aec4c42c748d2c6a9dc0c50b6aa75ec
+	parent = 65d2f7acb17424eae6ee36b9019110c308293bc0
+	cmdver = 0.2.3
