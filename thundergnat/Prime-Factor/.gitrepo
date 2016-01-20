@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/thundergnat/Prime-Factor.git
 	branch = master
-	commit = 956f051e219e887753e185ed70124306cdcf26ce
-	parent = 52c6bb21666d5e4cb4f0ed36a1b2ec5ab8b174bb
+	commit = da47cef805992ee2a4dfdb894ef05e1722ddc521
+	parent = 0851f23a4e6ca9feee94635955769cf6956753ef
 	cmdver = 0.2.3

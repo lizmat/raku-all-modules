@@ -1,4 +1,7 @@
-my @primes := 2, |(3, 5, 7 ... *).grep: *.is-prime;
+unit module Prime::Factor:ver<0.0.2>:auth<github:thundergnat>;
+use v6;
+
+my @primes := 2, 3, |(flat map( { $^i-1, $i+1 }, (6, 12, 18 ... *))).grep: *.is-prime;
 
 multi sub factors(1) is export { 1 }
 multi sub factors(Int $remainder is copy where $remainder > 1) is export {
