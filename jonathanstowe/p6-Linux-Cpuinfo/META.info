@@ -1,5 +1,5 @@
 {
-  "perl" : "v6",
+  "perl" : "6.c",
   "name" : "Linux::Cpuinfo",
   "description" : "Get the kernel CPU information on Linux",
   "tags" : [ "linux", "system", "utils", "cpu" ],
