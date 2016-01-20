@@ -2,8 +2,8 @@
 [![Build Status](https://travis-ci.org/gfldex/perl6-typesafe-html.svg?branch=master)](https://travis-ci.org/gfldex/perl6-typesafe-html)
 
 Baseclass to be used with Typesafe::XHTML::Writer. It overloads `infix:<~>` to
-guard against omision of HTML-entity quotation. This is not a DOM
-Implementation, it's merely a secure way to concatanate HTML and non-HTML
+guard against omision of HTML-element quotation. This is not a DOM
+implementation, it's merely a secure way to concatanate HTML and non-HTML
 strings. It's lightweight by design, resulting in fairly good speed.
 
 The only characters that are turned into HTML-Entities are `<` and `&`. If you
