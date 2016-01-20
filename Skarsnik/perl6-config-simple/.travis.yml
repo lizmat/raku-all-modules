@@ -1,0 +1,10 @@
+language: perl6
+perl6:
+    - latest
+install:
+    - rakudobrew build panda
+    # Pull in the dependencies before running tests
+    - panda installdeps .
+after_success:
+    - panda --installed --verbose list
+sudo: false

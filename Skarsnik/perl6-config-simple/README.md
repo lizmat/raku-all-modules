@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Skarsnik/perl6-config-simple.svg?branch=master)](https://travis-ci.org/Skarsnik/perl6-config-simple)
+
 # Config::Simple
 
 This is a simple module to offer you a simple interface for when you need a configuration file.
@@ -56,3 +58,7 @@ Create a Config::Simple::myformat class that does Config::Simple::Role and defin
 ## TODO
 
 Edit the format tests for skipping when the attached module is not installed
+
+## LICENCE
+
+This software is under the same licence as Rakudo, see the LICENCE file
