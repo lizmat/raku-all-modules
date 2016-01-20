@@ -6,10 +6,8 @@ plan *;
 
 my int32 $bzerror;
 my $text = "Text string.";
-my Blob $blob_text = $text.encode("UTF-8");
-my $size = $blob_text.elems;
-my $write_array = CArray[uint8].new;
-$write_array[$_] = $blob_text[$_] for ^$size;
+my buf8 $write_buffer = buf8.new($text.encode);
+my $size = $write_buffer.elems;
 
 ## Writing.
 # Open.
@@ -19,7 +17,7 @@ ok $bzerror == BZ_OK, 'Stream was opened.';
 if $bzerror != BZ_OK { bzWriteClose($bzerror, $bz) };
 
 # Writing.
-BZ2_bzWrite($bzerror, $bz, $write_array, $size);
+BZ2_bzWrite($bzerror, $bz, $write_buffer, $size);
 ok $bzerror == BZ_OK, 'No errors in writing.';
 if $bzerror == BZ_IO_ERROR { bzWriteClose($bzerror, $bz) }
 
@@ -31,20 +29,17 @@ close($handle);
 ## Reading.
 # Opening.
 $handle = fopen("/tmp/test.bz2", "rb");
-$bz = BZ2_bzReadOpen($bzerror, $handle, 0, 0, $null, 0);
+$bz = bzReadOpen($bzerror, $handle);
 ok $bzerror == BZ_OK, 'Stream was opened.';
 if $bzerror != BZ_OK { BZ2_bzReadClose($bzerror, $bz) }
 
 # Reading.
-my $read_array = CArray[uint8].new;
-$read_array[$size] = 0;
-
-my $len = BZ2_bzRead($bzerror, $bz, $read_array, $size);
+my $read_buffer = buf8.new();
+$read_buffer[$size-1] = 0;
+my $len = BZ2_bzRead($bzerror, $bz, $read_buffer, $size);
 ok $bzerror == BZ_STREAM_END, 'No errors at reading';
 
-my Buf $read_buffer = Buf.new;
-$read_buffer[$_] = $read_array[$_] for ^$len;
-my $decoded_text = $read_buffer.decode("UTF-8");
+my $decoded_text = $read_buffer.decode;
 is $decoded_text, $text, 'Text is correct.';
 
 # Closing.

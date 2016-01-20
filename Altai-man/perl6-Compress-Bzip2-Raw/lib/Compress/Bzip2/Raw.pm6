@@ -19,9 +19,19 @@ our class bz_stream is repr('CStruct') is export {
 
     has Pointer[void] $.state;
 
-    has Pointer[void] $.bzalloc;
-    has Pointer[void] $.bzfree;
-    has Pointer[void] $.opaque;
+    has Pointer[void] $.bzalloc is rw;
+    has Pointer[void] $.bzfree is rw;
+    has Pointer[void] $.opaque is rw;
+
+    method set-input(Blob $stuff){
+        $!next-in := nativecast CArray[uint8], $stuff;
+        $!avail-in = $stuff.bytes;
+    }
+
+    method set-output(Blob $stuff){
+        $!next-out := nativecast CArray[uint8], $stuff;
+        $!avail-out = $stuff.bytes;
+    }
 }
 
 # constants
@@ -57,16 +67,19 @@ our sub BZ2_bzDecompressEnd(bz_stream) returns int32 is native("bz2", v1) is exp
 
 ## High-level.
 # Reading.
-our sub BZ2_bzReadOpen(int32 is rw, OpaquePointer, int32, int32, Pointer[uint8], int32) returns OpaquePointer is native("bz2", v1) is export { * }
-our sub BZ2_bzRead(int32 is rw, OpaquePointer, CArray[int8], int32) returns int32 is native("bz2", v1) is export { * }
+our sub BZ2_bzReadOpen(int32 is rw, OpaquePointer, int32, int32, Pointer[uint8], int32) returns OpaquePointer is native("bz2", v1) { * }
+our sub bzReadOpen(int32 $bzerror is rw, OpaquePointer $file, $verbosity=0, $small=0, $unused=$null, $nUnused=0) is export {
+    BZ2_bzReadOpen($bzerror, $file, $verbosity, $small, $unused, $nUnused);
+}
+our sub BZ2_bzRead(int32 is rw, OpaquePointer, Blob, int32) returns int32 is native("bz2", v1) is export { * }
 our sub BZ2_bzReadClose(int32 is rw, Pointer[void]) is native("bz2", v1) is export { * }
 our sub BZ2_bzReadGetUnused(int32 is rw, Pointer[void], Pointer, int32 is rw) is native("bz2", v1) is export { * }
 # Writing.
 our sub BZ2_bzWriteOpen(int32 is rw, OpaquePointer, int32, int32, int32) returns OpaquePointer is native("bz2", v1) { * }
-our sub bzWriteOpen(int32 $bzerror is rw, OpaquePointer $file, $blockSize100k=6, $verbosity=1, $workFactor=0) is export {
+our sub bzWriteOpen(int32 $bzerror is rw, OpaquePointer $file, $blockSize100k=6, $verbosity=0, $workFactor=0) is export {
     BZ2_bzWriteOpen($bzerror, $file, $blockSize100k, $verbosity, $workFactor);
 }
-our sub BZ2_bzWrite(int32 is rw, OpaquePointer, CArray[int8], int32) is native("bz2", v1) is export { * }
+our sub BZ2_bzWrite(int32 is rw, OpaquePointer, Blob, int32) is native("bz2", v1) is export { * }
 our sub BZ2_bzWriteClose(int32 is rw, Pointer, int32, Pointer[uint32], Pointer[uint32]) is native("bz2", v1) { * }
 our sub bzWriteClose(int32 $bzerror is rw, OpaquePointer $bz, $abandon=0, $nbytes_in=$null, $nbytes_out=$null) is export {
     BZ2_bzWriteClose($bzerror, $bz, $abandon, $nbytes_in, $nbytes_out);
@@ -74,16 +87,23 @@ our sub bzWriteClose(int32 $bzerror is rw, OpaquePointer $bz, $abandon=0, $nbyte
 our sub BZ2_bzWriteClose64(int32 is rw, OpaquePointer, int32, Pointer[uint32], Pointer[uint32], Pointer[uint32], Pointer[uint32]) is native("bz2", v1) is export { * }
 
 ## Utility.
-our sub BZ2_bzBuffToBuffCompress(CArray[uint8], Pointer[uint32], CArray[uint8], uint32, int32, int32, int32) returns int32 is native("bz2", v1) is export { * }
-our sub BZ2_bzBuffToBuffDecompress(CArray[uint8], Pointer[uint32], CArray[uint8], uint32, int32, int32) returns int32 is native("bz2", v1) is export { * }
+our sub BZ2_bzBuffToBuffCompress(Blob, uint32 is rw, Blob, uint32, int32, int32, int32) returns int32 is native("bz2", v1) is export { * }
+our sub BZ2_bzBuffToBuffDecompress(Blob, uint32 is rw, Blob, uint32, int32, int32) returns int32 is native("bz2", v1) is export { * }
 our sub fopen(Str $filename, Str $mode) returns OpaquePointer is native() is export { * }
 our sub close(OpaquePointer $handle) is native() is export { * }
 
 # High-level helpers.
-our sub filename-to-info(Str $filename) is export {
+our sub name-to-compress-info(Str $filename) is export {
     # TODO: docs. This function provides all needed data to compress file.
-    my $handle = fopen(($filename ~~ m/.+\./) ~ "bz2", "wb");
+    my $handle = fopen($filename ~ ".bz2", "wb");
     my $blob = slurp $filename, :bin;
     my $len = $blob.elems;
     my @array = ($handle, $blob, $len);
+}
+
+our sub name-to-decompress-info(Str $filename) is export {
+    my $handle = fopen($filename, "rb");
+    my Str $output = ($filename ~~ m/(.+).bz2/)[0].Str;
+    my $fd = open $output, :w, :bin;
+    my @array = ($handle, $fd);
 }
