@@ -8,7 +8,7 @@
     "source" : "git://github.com/jonathanstowe/JSON-Marshal.git"
   },
   "source-url" : "git://github.com/jonathanstowe/JSON-Marshal.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
      "JSON::Marshal" : "lib/JSON/Marshal.pm"
