@@ -1,39 +1,25 @@
 use v6;
-module LCS::BV:ver<0.3.0>:auth<wollmers> {
+module LCS::BV:ver<0.4.0>:auth<wollmers> {
 
-my int $width = 64;
+  our sub LCS($a, $b) is export {
 
-# H. Hyyroe. A Note on Bit-Parallel Alignment Computation. In
-# M. Simanek and J. Holub, editors, Stringology, pages 79-87. Department
-# of Computer Science and Engineering, Faculty of Electrical
-# Engineering, Czech Technical University, 2004.
+    my ($amin, $amax, $bmin, $bmax) = (0, $a.elems - 1, 0, $b.elems - 1);
 
-our sub LCS($a, $b) is export {
+    while ($amin <= $amax and $bmin <= $bmax and $a[$amin] eqv $b[$bmin]) {
+      $amin++;
+      $bmin++;
+    }
+    while ($amin <= $amax and $bmin <= $bmax and $a[$amax] eqv $b[$bmax]) {
+      $amax--;
+      $bmax--;
+    }
 
-  my $amin = 0;
-  my $amax = $a.elems - 1;
-  my $bmin = 0;
-  my $bmax = $b.elems - 1;
+    my $positions;
+    $positions{$a[$_]} +|= 1 +< $_  for $amin..$amax;
 
-  while ($amin <= $amax and $bmin <= $bmax and $a[$amin] eqv $b[$bmin]) {
-    $amin++;
-    $bmin++;
-  }
-  while ($amin <= $amax and $bmin <= $bmax and $a[$amax] eqv $b[$bmax]) {
-    $amax--;
-    $bmax--;
-  }
-
-  my $positions;
-  my @lcs;
-
-  if ($amax < $width ) {
-    $positions{$a[$_]} +|= 1 +< ($_ % $width) for $amin..$amax;
-
-    my uint64 $S = +^0;
-
+    my $S = +^0;
     my $Vs = [];
-    my uint64 ($y,$u);
+    my ($y,$u);
 
     # outer loop
     for ($bmin..$bmax) -> $j {
@@ -46,6 +32,7 @@ our sub LCS($a, $b) is export {
     # recover alignment [Hyy04b]
     my $i = $amax;
     my $j = $bmax;
+    my @lcs;
 
     while ($i >= $amin && $j >= $bmin) {
       if ($Vs[$j] +& (1 +< $i)) {
@@ -59,57 +46,13 @@ our sub LCS($a, $b) is export {
         $j--;
       }
     }
+
+    return [(
+        map({$[$_, $_]}, (0..($bmin-1))),
+        @lcs,
+        map({$[++$amax, $_]}, (($bmax+1)..@($b)-1)),
+    ).flat ];
   }
-  else {
-    $positions{$a[$_]}[$_ / $width] +|= 1 +< ($_ % $width) for $amin..$amax;
-
-    my $S;
-    my $Vs = [];
-    my ($y,$u,$carry);
-    my $kmax = $amax / $width + 1;
-
-    # outer loop
-    for ($bmin..$bmax) -> $j {
-      $carry = 0;
-
-      loop (my $k=0; $k < $kmax; $k++ ) {
-        $S = ($j) ?? $Vs[$j-1][$k] !! +^0;
-        $S //= +^0;
-        $y = $positions{$b[$j]}[$k] // 0;
-        $u = $S +& $y;             # [Hyy04]
-        $Vs[$j][$k] = $S = ($S + $u + $carry) +| ($S +& +^$y);
-        $carry = (($S +& $u) +| (($S +| $u) +& +^($S + $u + $carry))) +> 63;
-      }
-    }
-
-    # recover alignment
-    my $i = $amax;
-    my $j = $bmax;
-
-    while ($i >= $amin && $j >= $bmin) {
-      my $k = $i / $width;
-      if ($Vs[$j][$k] +& (1 +< ($i % $width))) {
-        $i--;
-      }
-      else {
-        unless ($j && +^$Vs[$j-1][$k] +& (1 +< ($i % $width))) {
-           unshift @lcs, [$i,$j];
-           $i--;
-        }
-        $j--;
-      }
-    }
-  }
-
-  return [
-    (
-      map({$[$_, $_]}, (0..($bmin-1))),
-      @lcs,
-      map({$[++$amax, $_]}, (($bmax+1)..@($b)-1)),
-    ).flat
-  ];
-}
-
 
 }
 

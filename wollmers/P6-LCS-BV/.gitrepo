@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/wollmers/P6-LCS-BV.git
 	branch = master
-	commit = 3b15f7c8a70bbec8f3e1519ae457dc76d078ebbf
-	parent = b67e0043bd7e7c7c4069de962b31636f19eaa857
+	commit = 1585383475986cfbfbd404081b1d4574ff75d73b
+	parent = 1828001d009eea5a3d2b525290ab1b46c3bae1e7
 	cmdver = 0.2.3
