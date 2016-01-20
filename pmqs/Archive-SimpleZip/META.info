@@ -1,0 +1,27 @@
+{
+    "perl" : "6.*",
+    "name" : "Archive::SimpleZip",
+    "version" : "0.1.0",
+    "description" : "Write Zip Files.",
+    "authors" : [ "Paul Marquess <pmqs@cpan.org" ],
+    "provides" : {
+        "Archive::SimpleZip" : "lib/Archive/SimpleZip.pm6"
+    },
+    "test-depends" : [ 
+       "Test",
+       "Test::META",
+       "File::Temp"
+    ], 
+    "depends" : [ 
+        "Compress::Zlib::Raw",
+        "Compress::Zlib",
+        "IO::Blob"
+    ],
+    "resources" : [ ],
+    "source-url" : "git://github.com/pmqs/Archive-SimpleZip.git",
+    "support" : { 
+       "source" : "git://github.com/pmqs/Archive-SimpleZip.git" 
+    }, 
+    "license" : "Artistic"
+}
+

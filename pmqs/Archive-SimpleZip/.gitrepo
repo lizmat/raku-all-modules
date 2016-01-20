@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/pmqs/Archive-SimpleZip.git
+	branch = master
+	commit = 6c392d571f5996f266203332a8c44fcd46a5231e
+	parent = 0191783d832dbe82379b6fe8ab0b5797e6e6867d
+	cmdver = 0.2.3
