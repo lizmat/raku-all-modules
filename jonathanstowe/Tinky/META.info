@@ -1,0 +1,30 @@
+{
+	"meta6" : "0",
+   "tags" : [
+      "Workflow",
+      "toolkit",
+      "state machine"
+   ],
+   "provides" : {
+      "Tinky" : "lib/Tinky.pm"
+   },
+   "test-depends" : [
+      "Test"
+   ],
+   "support" : {
+      "source" : "git://github.com/jonathanstowe/Tinky.git"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "auth" : "github:jonathanstowe",
+   "source-url" : "git://github.com/jonathanstowe/Tinky.git",
+   "depends" : [
+   ],
+   "name" : "Tinky",
+   "authors" : [
+      "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+   ],
+   "version" : "0.0.1",
+   "license" : "Artistic",
+   "description" : "An Experimental Workflow / State Management toolit"
+}

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Tinky.git
+	branch = master
+	commit = fc5e9754c3e10170cdefec86274aa59a75a3b1cc
+	parent = 187abac45c541cbc94c4759fba227a04fba6ddda
+	cmdver = 0.2.3
