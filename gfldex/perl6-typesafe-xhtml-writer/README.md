@@ -12,17 +12,15 @@ across one that works please let me know.
 
 It uses [Typesafe::HTML](https://github.com/gfldex/perl6-typesafe-xhtml-writer)
 to guard against lack of quoting of HTML-tags. As a dropin-replacement of
-`HTML::Writer`, it's about 5% slower then the former. For now neither `HTML`
-nor `HTML::utf8-to-htmlentity()` can be overloaded. You can replace the entire
-module to get the same result.
-
+`HTML::Writer`, it's about 5% slower then the former. See below how to "overload"
+that module, see below.
+ 
 [`Typesafe::HTML::Skeleton`](https://raw.githubusercontent.com/gfldex/perl6-typesafe-xhtml-writer/master/lib/Typesafe/XHTML/Skeleton.pm6)
 provides the routine `xhtml-skeleton` that takes instances of `HTML` (the type)
 as parameters and returns `HTML`. The named arguments takes a single or a list
 of tags of type `HTML` to be added to the header of the resulting XHTML
 document. `HTML` is a flat eager string that is about 5% slower then without
 typesafety. If you need a DOM use a module that does not focus on speed.
-
 
 ## Usage:
 ```
@@ -53,6 +51,38 @@ put xhtml-skeleton(
         'Camelia can quote all the <<<< and &&&&.', 
         header=>(title('Hello Camelia'), style('p.foo { color: #fff; }' ))
     );
+```
+
+## Provide your own type guard
+
+You can provide your own type guard to replace `Typesafe::HTML` by providing a
+type object as the first positional to `use`. To use the original operators
+defined in `Typesafe::HTML` make sure to subclass from `HTML`.
+
+```
+use Typesafe::HTML;
+
+class ExtendedHTML is HTML {	
+	multi method utf8-to-htmlentity (Str:D \s) is export {
+		s.subst('&', '&amp;', :g).subst('<', '&lt;', :g).subst('>', '&gt;', :g);
+	}
+}
+
+use Typesafe::XHTML::Writer ExtendedHTML, :span;
+
+put span(id=>'foo', "<span>Hello Camelia!</span>");
+
+# OUTPUT:
+# <span id="foo">
+#   &lt;span&gt;Hello Camelia!&lt;/span&gt;
+# </span>
+```
+
+## Disable indentation
+
+```
+use Typesafe::XHTML::Writer :writer-shall-indent; # :ALL will work too
+writer-shall-indent False;
 ```
 
 ## License

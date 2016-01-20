@@ -30,6 +30,8 @@ sub MAIN($schema-file?) {
 	put 'use Typesafe::HTML;';
 	put 'my $indent = 0;' ~ "\n";
 	put 'constant NL = "\n";';
+	put 'my $Guard = HTML;';
+	put 'my Bool $shall-indent = True;';
 	multi sub walk(XML::Element $_ where .name ~~ <xs:element> && (.attribs<name>:exists)) {
 		my $name := .attribs<name> // Failure.new;
 		%elements{$name} = Any;
@@ -43,17 +45,18 @@ sub MAIN($schema-file?) {
 		# workaround for #127226
         constant $indent = '$indent';
 		constant $e = '$e';
-        put Q:s:b:to/EOH/;
-        sub $name ( $named-arguments *@c --> HTML) is export(:ALL :$name) {
-            (temp $indent)+=2;
-            for @c -> $e is rw { $e = HTML.new ~ $e.Str unless $e ~~ HTML }
-            HTML.new(
+		constant $Guard = '$Guard';
+        put qq:to/EOH/;
+        sub $name ( $named-arguments *\@c --> HTML) is export(:ALL :$name) \{
+            (temp \$indent)+=2;
+            for \@c -> \$e is rw \{ \$e = \$Guard.new ~ \$e.Str unless \$e ~~ HTML \}
+            \$Guard.new(
                 '<$name' ~ 
                 $attributes-switch 
-                ( +@c ?? ('>' ~ NL ~ @c>>.Str>>.indent($indent).join(NL) ~ (+@c ?? NL !! "") ~ '</$name>') 
+                ( +\@c ?? ('>' ~ NL ~ (\$shall-indent ?? \@c>>.Str>>.indent(\$indent).join(NL) !! \@c>>.Str.join(NL) )~ (+\@c ?? NL !! "") ~ '</$name>') 
                       !! '/>' )
             )
-        }
+        \}
         
         EOH
 	}
@@ -76,5 +79,13 @@ sub MAIN($schema-file?) {
 	}
 
 	$doc.root.nodes>>.&walk;
-
+	put Q:to/END/;
+	sub writer-shall-indent(Bool $shall-it) is export(:ALL :writer-shall-indent) { $shall-indent = $shall-it }
+	sub EXPORT(::Guard = HTML) {
+		$Guard = Guard;
+		{
+			Guard => $Guard,
+	    }
+	}
+	END
 }
