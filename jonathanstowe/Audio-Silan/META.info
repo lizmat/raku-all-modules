@@ -10,7 +10,7 @@
     "bugtracker" : "https://github.com/jonathanstowe/Audio-Silan/issues"
   },
   "source-url" : "git://github.com/jonathanstowe/Audio-Silan.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
      "Audio::Silan"                : "lib/Audio/Silan.pm"
