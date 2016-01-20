@@ -1,42 +1,76 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-- [CompUnit::Util](#compunitutil)
-  - [General Utilities](#general-utilities)
-    - [load](#load)
-    - [find-loaded](#find-loaded)
-    - [all-loaded](#all-loaded)
-    - [at-unit](#at-unit)
-    - [unit-to-hash](#unit-to-hash)
-    - [capture-import](#capture-import)
-  - [Re-Exporting](#re-exporting)
-    - [re-export](#re-export)
-    - [re-exporthow](#re-exporthow)
-    - [steal-export-sub](#steal-export-sub)
-    - [steal-globalish](#steal-globalish)
-    - [re-export-everything](#re-export-everything)
-  - [Symbol setting](#symbol-setting)
-    - [set-export](#set-export)
-    - [set-globalish](#set-globalish)
-    - [set-unit](#set-unit)
-    - [set-lexical](#set-lexical)
-    - [mixin_LANG](#mixin_lang)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # CompUnit::Util [![Build Status](https://travis-ci.org/LLFourn/p6-CompUnit-Util.svg?branch=master)](https://travis-ci.org/LLFourn/p6-CompUnit-Util)
 
 Utility functions for introspecting `CompUnit`s and re-exporting their symbols.
 
-Apart from `load` none of the routines here will load a compunit. All
-parameters named `$handle` are converted to a `CompUnit::Handle`
-automatically. If the `$handle` you pass is not a defined `CompUnit` or
-`CompUnit::Handle`, `&find-loaded` will be used to search for an
-loaded compunit matching it.
+- [CompUnit Utilities](#general-utilities)
+  - [load](#load)
+  - [find-loaded](#find-loaded)
+  - [all-loaded](#all-loaded)
+  - [at-unit](#at-unit)
+  - [unit-to-hash](#unit-to-hash)
+  - [capture-import](#capture-import)
+- [WHO Utilities](#who-utilities)
+  - [descend-WHO](#descend-WHO)
+  - [set-in-WHO](#set-in-WHO)
+- [Re-Exporting](#re-exporting)
+  - [re-export](#re-export)
+  - [re-exporthow](#re-exporthow)
+  - [steal-export-sub](#steal-export-sub)
+  - [steal-globalish](#steal-globalish)
+  - [re-export-everything](#re-export-everything)
+- [Symbol Setting](#symbol-setting)
+  - [set-unit](#set-unit)
+  - [set-lexpad](#set-lexical)
+- [Symbol Getting](#symbol-getting)
+  - [get-unit](#get-unit)
+  - [get-lexpad](#get-lexpad)
+  - [get-lexical](#get-lexical)
+- [Push Multi](#push-multi)
+  - [push-unit-multi](#push-unit-multi)
+  - [push-lexpad-multi](#push-lexpad-multi)
+  - [push-lexical-multi](#push-lexical-multi)
+- [Slangs](#slangs)
+  - [mixin_LANG](#mixin_lang)
+
+CompUnit::Util contains set of utilities to introspect `CompUnit`
+stuff and a bunch of compile time symbol manipulation tools. Its main
+purpose is to encapsulate the compiler hacks needed to implement
+features like 're-exporting' which don't exist in rakudo yet.
+
+The API should now be stable enough to use.
 
 **warning** this module relies on unspec'd rakudo internals and could
 break without warning
 
-## General Utilities
+## CompUnit Utilities
+
+`CompUnit` introspection utilities.
+
+Apart from `load` none of the routines here will load a compunit. All
+parameters named `$handle` are converted to a `CompUnit::Handle`
+automatically. If the `$handle` you pass is not a defined `CompUnit`
+or `CompUnit::Handle`, `&find-loaded` will be used to search for an
+loaded compunit matching it.
+
+**warning** because of RT
+ [#127302](https://rt.perl.org/Public/Bug/Display.html?id=127302), you
+ should be very careful about manipulating `CompUnit` and
+ `CompUnit::Handle` objects within `BEGIN` blocks. `CompUnit::Handle`s
+ cannot be serialized at the moment. For example,
+
+``` perl6
+use CompUnit::Util :load;
+BEGIN load('SomeModule');
+```
+should be written as
+
+``` perl6
+use CompUnit::Util :load;
+BEGIN {
+    load('SomeModule');
+    Nil;
+}
+```
 
 ### load
 `(Str:D $short-name,*%opts --> CompUnit:D)`
@@ -76,7 +110,7 @@ use CompUnit::Util :all-loaded;
 .note for all-loaded;
 ```
 
-Returns all presently loaded `CompUnit`s.
+Returns all loaded `CompUnit`s.
 
 ### at-unit
 `($handle,Str:D $key)`
@@ -86,35 +120,9 @@ use CompUnit::Util :at-unit;
 say at-unit('CompUnit::Util','$=pod');
 ```
 
-Gets a symbol from the `UNIT` scope of the compunit.
-
-### set-in-WHO
-`($WHO,$key,$value)`
-
-``` perl6
-use CompUnit::Util :set-in-who;
-my package Example {};
-BEGIN set-in-who(Example.WHO,'Foo::Bar::Baz','win');
-
-say Example::Foo::Bar::<$Baz>; #-> win
-```
-
-Convenience routine for setting a symbol's value inside a package that
-might not exist yet. Only useful outside the currently
-compiling compunit (where you can just use the normal syntax).
-
-### descend-WHO
-`($WHO,Str:D $path)`
-
-``` perl6
-my package Example {};
-BEGIN set-in-who(Example.WHO,'Foo::Bar::Baz','win');
-BEGIN note descend-who(Example.WHO,'Foo::Bar::Baz'); #-> win
-```
-
-Convenience routine for getting a symbol's value with a path from a
-`Stash` like `.WHO`. Only useful outside the currently compiling
-compunit (where you can just use the normal syntax).
+Gets a symbol from the `UNIT` scope of the compunit. If you want to do
+this at compile time while a compunit is loading see `get-unit`.
+[get-unit](#get-unit).
 
 ### unit-to-hash
 `($handle)`
@@ -137,6 +145,36 @@ my %symbols = capture-import('SomeModule',:tag);
 
 Attempts to simulate a `use` statement. Returns a hash of all the
 symbols the compunit would export if it were `use`d.
+
+## WHO Utilities
+
+### set-in-WHO
+`($WHO,$key,$value)`
+
+``` perl6
+use CompUnit::Util :who;
+my package Example {};
+BEGIN set-in-who(Example.WHO,'Foo::Bar::Baz','win');
+
+say Example::Foo::Bar::<$Baz>; #-> win
+```
+
+Convenience routine for setting a symbol's value inside a package that
+might not exist yet. Only useful outside the compunit being compiled.
+
+### descend-WHO
+`($WHO,Str:D $path)`
+
+``` perl6
+use CompUnit::Util :who;
+my package Example {};
+BEGIN set-in-who(Example.WHO,'Foo::Bar::Baz','win');
+BEGIN note descend-who(Example.WHO,'Foo::Bar::Baz'); #-> win
+```
+
+Convenience routine for getting a symbol's value with a path from a
+`Stash` like `.WHO`. Only useful outside the currently compiling
+compunit (where you can just use the normal syntax).
 
 ## Re-Exporting
 
@@ -233,68 +271,107 @@ different places.
 
 **note:** These subs will overwrite existing symbols without warning.
 
-### set-export
-`(%syms, :$tag = 'DEFAULT')`
-
-```perl6
-# anything that imports from this module will export &foo under DEFAULT
-sub EXPORT {
-    use CompUnit::Util :set-export;
-    set-export( %( '&foo' => my sub foo { } ) );
-    {};
-}
-```
-
 Inserts name/value pairs into the present `UNIT::EXPORT` under `$tag`.
 
-### set-globalish
-`(%syms)`
-
-```perl6
-# inserts a class under a dynamic name into GLOBALish
-sub EXPORT($name) {
-    use CompUnit::Util :set-export;
-    set-globalish( %( $name => my class { } ) );
-    {};
-}
-```
-Inserts the name/value pairs into the present `GLOBALish`.
-
-**this routine can only be called at `BEGIN` time**
-
 ### set-unit
-`(%syms)`
+`(Str:D $path,Mu $value)`
 
 ```perl6
-# inserts a class under a dynamic name into UNIT
-
-sub EXPORT($name) {
-    use CompUnit::Util :set-export;
-    set-unit( %( $name => my class { } ) )
-    {};
-}
+# like is export, but prefixes the the exported name with 'fun-'
+sub trait_mod:<is>(Routine:D $r, :$export-fun!) {
+    my $exported-name = '&fun-' ~ $r.name;
+    set-unit("EXPORT::DEFAULT::{$exported-name}",$r);
+    {};}
 ```
 
-Inserts the name/value pairs into the present `UNIT`.
+Inserts the `$value` at `$path` in `UNIT` of the currently compiling
+compunit.
 
 **this routine can only be called at `BEGIN` time**
 
-### set-lexical
-`(%syms)`
+### set-lexpad
+`(Str:D $path,Mu $value)`
+
+The same as `set-unit` but inserts the $value into the lexical
+scope being compiled.
+
+**this routine can only be called at `BEGIN` time**
+
+## Symbol Getting
+
+## get-unit
+`(Str:D $path)`
 
 ``` perl6
-# inserts a class under a dynamic name into lexical scope
-sub EXPORT($name) {
-    use CompUnit::Util :set-export;
-    set-lexical( %( $name => my class { } ) );
-    {};
-}
+use CompUnit::Util :get-symbols;
+sub foo is export { };
+BEGIN note get-unit('EXPORT::DEFAULT::&foo') === &foo; #-> True
 ```
 
-Inserts the name/value pairs into the present lexical scope being
-compiled.
+## get-lexpad
+`(Str:D $path)`
 
-**this routine can only be called at `BEGIN` time**
+The same as `get-unit` but looks for the symbol in the lexpad
+being compiled.
+
+## get-lexical
+`(Str:D $name)`
+
+Like `get-lexpad` but does a full lexical lookup. At the moment it can
+only take a single `$name` with no `::`.
+
+## Push Multi
+
+These routines help you construct `multi` dispatchers *candidate by
+candidate* in a procedural manner. Useful when you want to construct a
+trait that adds a multi candidate each time it's called.
+
+### push-unit-multi
+`(Str:D $path,Routine:D $mutli where { .multi || .is_dispatcher } )`
+
+``` perl6
+## lib/SillyModule.pm6
+use CompUnit::Util :push-multi
+# exports the multi under a sub named after its first letter
+sub trait_mod:<is>(Routine:D $r,:$one-letter-export!) {
+    my $exported-name = '&' ~ $r.name.comb[0];
+    push-unit-multi("EXPORT::DEFAULT::{$exported-name}",$r);
+}
+
+multi bar(Str) is one-letter-export { say "bar" }
+multi baz(Int) is one-letter-export { say "baz" }
+
+...
+use SillyModule;
+
+b("string"); #-> bar
+b(1) #-> baz
+
+```
+
+Takes `$multi` and pushses it onto a dispatcher located at `$path`. If
+one doesn't exist it will be created. You can pass a `proto` instead
+of a multi but only when `$path` is empty (ie only the first time). It
+will become the dispatcher for any further calls.
+
+### push-lexpad-multi
+
+`(Str:D $path,Routine:D $mutli where { .multi || .is_dispatcher } )`
+
+The same as `push-unit-multi` but pushes onto a symbol in the lexical
+scope currently being compiled.
+
+### push-lexical-multi
+
+`(Str:D $name,Routine:D $mutli where { .multi || .is_dispatcher } )`
+
+The smart version of `push-lexpad-multi`. If it doesn't find a
+dispatcher in the current lexpad it will do a lexical lookup for one
+of the same `$name`. If it finds one it clones it, installs it in the
+current lexpad and pushes `$multi` onto it. Like
+[get-lexical](#get-lexical), it can't take a `$name` with `::` in it.
+
+## Slangs
 
 ### mixin_LANG
 `($lang = 'MAIN',:$grammar,:$actions)`
@@ -321,7 +398,7 @@ sub EXPORT {
 }
 ```
 
-Modifies the `%*LANG` of the present lexical scope being compiled.
+Modifies the `%*LANG` of the lexical scope currently being compiled.
 Presently this is the best way to modify rakudo's parser and create a
 *slang*. You will need to know about
 [QAST](https://github.com/perl6/nqp/blob/master/docs/qast.markdown) to

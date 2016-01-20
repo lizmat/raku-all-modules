@@ -29,7 +29,7 @@ ok unit-to-hash($cu)<$=pod>[0] === $pod, 'unit-to-hash returns same thing';
 
 {
     EVAL q|
-        use CompUnit::Util :set-in-WHO,:descend-WHO;
+        use CompUnit::Util :who;
         my package tmp {};
         BEGIN set-in-WHO(tmp.WHO,'Foo','foo');
         is tmp::Foo,'foo','set-in-WHO 1 name';
@@ -39,7 +39,7 @@ ok unit-to-hash($cu)<$=pod>[0] === $pod, 'unit-to-hash returns same thing';
 
 {
     EVAL q|
-        use CompUnit::Util :set-in-WHO,:descend-WHO;
+        use CompUnit::Util :who;
         my package tmp {};
         BEGIN set-in-WHO(tmp.WHO,'Foo::Bar::$Baz','bar');
         is tmp::Foo::Bar::<$Baz>,'bar','set-in-WHO multiple';

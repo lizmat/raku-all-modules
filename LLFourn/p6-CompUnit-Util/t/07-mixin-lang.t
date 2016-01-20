@@ -7,6 +7,7 @@ plan 2;
     use nqp;
     use QAST:from<NQP>;
     use MONKEY-SEE-NO-EVAL;
+
     BEGIN mixin_LANG(
         grammar => role {
             token term:sym<foo> { <sym> <.tok> }
@@ -15,7 +16,7 @@ plan 2;
             method term:sym<foo>(Mu $/){
                 return $/.'!make'(QAST::SVal.new(:value("FOO")));
             }
-        }
+       }
     );
 
     is foo,'FOO', 'slang works';

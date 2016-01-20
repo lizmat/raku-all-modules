@@ -2,13 +2,11 @@ use Test;
 use lib $?FILE.IO.parent.child("lib").Str;
 use CompUnit::Util :set-symbols;
 
-plan 9;
+plan 7;
 
 {
-    use set-export;
+    use set-symbols;
     ok &foo, 'set-export code wtih name';
-    is EXPORT-Foo,'foo',"name option worked";
-    is GLOBALish-Foo,'foo','set-globalish';
     is Foo::Bar::Baz,'foobarbaz','set-globlish ::';
     is lex-EXPORT-sub-Foo,'foo','set-lexical';
     is Lexi::Foo, 'lexifoo','set-lexical ::';
