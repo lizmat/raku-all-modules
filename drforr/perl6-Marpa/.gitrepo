@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/drforr/perl6-Marpa.git
 	branch = master
-	commit = 4366c08164d0a40e10ef9dcbbeea287951602b26
-	parent = c927ecaf096e36006df5b813f73695f06787f975
-	cmdver = 0.2.1
+	commit = 909f9313c8a7db1081a46d528cc1d188d8036aa3
+	parent = d2cae8b2a07bc5d97f66a91a2f33f2663937232e
+	cmdver = 0.2.3
