@@ -1,0 +1,8 @@
+.build
+*META.yml
+*~
+*.bak
+*.swp
+*.tdy
+*.tar.gz
+Build-Simple-*
