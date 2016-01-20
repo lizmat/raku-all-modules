@@ -2,7 +2,7 @@
 
 ### HOWTO
 
-Just copy the .travis.yml file from this repo to yours and turn on testing for that repository on Travis-CI.org
+Just copy the .travis.yml file from this repo to yours and turn on testing for that repository on Travis-CI.org (toggle the appropriate slider on `https://travis-ci.org/profile/YOUR_GITHUB_USERNAME`)
 
 ### DESCRIPTION
 
