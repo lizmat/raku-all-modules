@@ -4,7 +4,7 @@
     "source" : "git://github.com/jonathanstowe/Crypt-Libcrypt.git"
   },
   "source-url" : "git://github.com/jonathanstowe/Crypt-Libcrypt.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [
      "panda"
   ],
