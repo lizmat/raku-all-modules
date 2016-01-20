@@ -51,7 +51,7 @@ prove -e 'perl6' -r t
 
 which will run all tests. **This will certainly fail at this stage!** Most
 current tests are ports from the original BioPerl distribution, and the current
-code is in various stages of updating. We aniticipate this changing more over
+code is in various stages of updating. We anticipate this changing more over
 the next year.
 
 To run a single test:
@@ -63,7 +63,7 @@ prove -e 'perl6' t/Root.t
 # Notes
 
 Perl 6 is a specification and thus can represent multiple implementations. More
-in the Perl 6 [synopses](http://feather.perl6.nl/syn/).
+in the Perl 6 [synopses](http://design.perl6.org/).
 
 # Related
 
