@@ -43,3 +43,8 @@ react {
   }
 }
 ```
+
+
+#Licence
+
+This software is under the same licence as Rakudo, see the LICENCE file
