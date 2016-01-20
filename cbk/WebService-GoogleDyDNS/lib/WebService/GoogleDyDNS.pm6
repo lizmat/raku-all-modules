@@ -48,7 +48,7 @@ method batchMode( @dataSet ) {
         %.domainName = 'domain' => $match<line><domainKey><DOMAINNAME>;
         %.login = 'login' => $match<line><loginKey><LOGIN>;
         %.password = 'password' => $match<line><passwordKey><PASSWORD>;
-        @data[$elemNum] = (  %domain ~ "\t" ~ %lastIP ~ "\t" ~  %login ~ "\t" ~  %password);
+        @dataSet[$elemNum] = (  %.domainName ~ "\t" ~ %.lastIP ~ "\t" ~  %.login ~ "\t" ~  %.password);
         self.updateIP();
       }
     }
