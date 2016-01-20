@@ -1,12 +1,12 @@
 {
     "perl"          : "6.c",
     "name"          : "AttrX::PrivateAccessor",
-    "version"       : "0.0.1",
+    "version"       : "0.0.2",
     "authors"       : [ "github:pierre-vigier" ],
     "description"   : "Providing private accessors for private attributes",
     "depends"       : [ ],
     "provides" : {
         "AttrX::PrivateAccessor"    : "lib/AttrX/PrivateAccessor.pm6"
     },
-    "source-url"    : "https://github.com/pierre-vigier/Perl6-AttrX-PrivateAccessor"
+    "source-url"    : "git@github.com:pierre-vigier/Perl6-AttrX-PrivateAccessor.git"
 }

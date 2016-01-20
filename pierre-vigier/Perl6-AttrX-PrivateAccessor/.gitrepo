@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/pierre-vigier/Perl6-AttrX-PrivateAccessor
+	remote = git://github.com/pierre-vigier/Perl6-AttrX-PrivateAccessor.git
 	branch = master
-	commit = 0449f85921803c53e2a62c75c76f5bc31ac153b2
-	parent = 88084fdd543f8bef091fa918824a4adcb0eeb80f
+	commit = dc4dd4e0586c5c56ddf64c8aa5055c48af91c1b8
+	parent = 92d71a925b61e1f490c79bdad1afe4d8abff1628
 	cmdver = 0.2.3
