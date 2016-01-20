@@ -6,7 +6,7 @@
     "bugtracker" : "https://github.com/jonathanstowe/p6-Sys-Utmp/issues"
   },
   "source-url" : "git://github.com/jonathanstowe/p6-Sys-Utmp.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [
     "panda",
     "LibraryMake"
