@@ -6,7 +6,7 @@
   "source-url" : "git://github.com/jonathanstowe/XDG-BaseDirectory.git",
   "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk" ],
   "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
     "XDG::BaseDirectory" : "lib/XDG/BaseDirectory.pm"
