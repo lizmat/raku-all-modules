@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/CheckSocket.git
 	branch = master
-	commit = 7ac728bcf5ab280a28f98077e7f74d22d0db732a
-	parent = 564ce7f9e2b446e5e3d581ce21ea049ba58b6d55
+	commit = 63660e6e403b474df262e6cd7388d02353a87407
+	parent = 6bbcbe7a60c93d6528e7cae996e249e4a519ad0d
 	cmdver = 0.2.3

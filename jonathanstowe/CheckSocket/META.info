@@ -8,7 +8,7 @@
     "source" : "git://github.com/jonathanstowe/CheckSocket.git"
   },
   "source-url" : "git://github.com/jonathanstowe/CheckSocket.git",
-  "perl" : "v6",
+  "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
     "CheckSocket" : "lib/CheckSocket.pm"
