@@ -1,0 +1,2 @@
+There once was a fool.
+And that fool didn't use a version control tool.

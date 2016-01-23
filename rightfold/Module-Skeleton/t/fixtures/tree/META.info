@@ -1,0 +1,10 @@
+{
+  "name" : "Foolish::VCS::Git",
+  "perl" : "6.*",
+  "provides" : {
+    "Foolish::VCS::Git" : "lib/Foolish/VCS/Git.pm6"
+  },
+  "description" : "",
+  "version" : "0.0.1",
+  "authors" : [ ]
+}

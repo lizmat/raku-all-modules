@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/rightfold/Module-Skeleton.git
+	branch = master
+	commit = 4852a878439434285b8ecc56c3ee2a653908648d
+	parent = 431e159b51d5f17873ff918690f8be7a16bc3bcf
+	cmdver = 0.2.3
