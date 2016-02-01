@@ -34,8 +34,9 @@ class Module::Skeleton {
             provides => {
                 $.name => 'lib/' ~ $.name.subst('::', '/', :g) ~ '.pm6',
             },
+            test-depends => ['Test::META'],
         };
-        superspurt($meta-path, to-json($meta), :!overwrite);
+        superspurt($meta-path, to-json($meta) ~ "\n", :!overwrite);
     }
 
     method !spurt-lib(IO::Path:D $root) {
@@ -50,6 +51,7 @@ class Module::Skeleton {
 
     method !spurt-t(IO::Path:D $root) {
         catpath($root, 't').mkdir;
+
         my $test-path = catpath($root, 't', $.name.subst('::', '/', :g) ~ '.t');
         superspurt($test-path, q:to:c/EOF/, :!overwrite);
         use v{$*PERL.version};
@@ -58,6 +60,17 @@ class Module::Skeleton {
 
         diag('TODO: add tests');
         ok('foo' eq 'bar');
+
+        done-testing;
+        EOF
+
+        my $meta-test-path = catpath($root, 't', 'META.t');
+        superspurt($meta-test-path, q:to:c/EOF/, :!overwrite);
+        use v{$*PERL.version};
+        use Test;
+        use Test::META;
+
+        meta-ok;
 
         done-testing;
         EOF

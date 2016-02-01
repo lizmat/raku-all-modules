@@ -7,6 +7,7 @@
   "description" : "Module::Skeleton is a program for creating Perl 6 module skeletons.",
   "version" : "0.0.1",
   "authors" : ["rightfold"],
-  "test-depends" : ["File::Temp"],
+  "depends" : ["JSON::Pretty"],
+  "test-depends" : ["File::Temp", "Test::META"],
   "source-url" : "git://github.com/rightfold/Module-Skeleton.git"
 }
