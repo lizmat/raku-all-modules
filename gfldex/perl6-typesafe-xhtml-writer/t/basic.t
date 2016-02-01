@@ -1,6 +1,7 @@
 use v6;
 use Test;
 use Typesafe::XHTML::Writer :ALL;
+writer-shall-indent True;
 
 plan 2;
 

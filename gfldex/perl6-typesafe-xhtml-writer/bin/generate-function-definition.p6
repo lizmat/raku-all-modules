@@ -31,7 +31,7 @@ sub MAIN($schema-file?) {
 	put 'my $indent = 0;' ~ "\n";
 	put 'constant NL = "\n";';
 	put 'my $Guard = HTML;';
-	put 'my Bool $shall-indent = True;';
+	put 'my Bool $shall-indent = False;';
 	multi sub walk(XML::Element $_ where .name ~~ <xs:element> && (.attribs<name>:exists)) {
 		my $name := .attribs<name> // Failure.new;
 		%elements{$name} = Any;
@@ -46,9 +46,13 @@ sub MAIN($schema-file?) {
         constant $indent = '$indent';
 		constant $e = '$e';
 		constant $Guard = '$Guard';
+		constant $indentor = '$indentor';
+		constant $index = '$index';
         put qq:to/EOH/;
         sub $name ( $named-arguments *\@c --> HTML) is export(:ALL :$name) \{
             (temp \$indent)+=2;
+			my $indentor;
+			my method indent()\{ my $index = 0; $index += 2 while self.subst-eq('  ', $index); $indentor = '  ' x $index+2; \}
             for \@c -> \$e is rw \{ \$e = \$Guard.new ~ \$e.Str unless \$e ~~ HTML \}
             \$Guard.new(
                 '<$name' ~ 

@@ -10,10 +10,10 @@ TESTS=t/basic.t t/skeleton.t t/parametric.t
 
 $(TESTS): lib/Typesafe/XHTML/Writer.pm6
 
-benchmark: bin/benchmark.p6 bin/benchmark-parameterised.p6 bin/benchmark-noindent.p6
+benchmark: bin/benchmark.p6 bin/benchmark-parameterised.p6 bin/benchmark-indent.p6
 	perl6 $(LIB-PATH) bin/benchmark.p6 > /dev/null
 	perl6 $(LIB-PATH) bin/benchmark-parameterised.p6 > /dev/null
-	perl6 $(LIB-PATH) bin/benchmark-noindent.p6 > /dev/null
+	perl6 $(LIB-PATH) bin/benchmark-indent.p6 > /dev/null
 
 test: $(TESTS)
 	prove -v --exec "perl6 $(LIB-PATH)" -r ./t/

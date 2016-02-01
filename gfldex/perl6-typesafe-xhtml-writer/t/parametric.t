@@ -9,7 +9,8 @@ class ExtendedHTML is HTML {
 	}
 }
 
-use Typesafe::XHTML::Writer ExtendedHTML, :span;
+use Typesafe::XHTML::Writer ExtendedHTML, :span, :writer-shall-indent;
+writer-shall-indent True;
 
 plan 1;
 

@@ -43,7 +43,7 @@ With skeleton:
 
 ```
 use v6;
-use Typesafe::XHTML::Writer :p, :title;
+use Typesafe::XHTML::Writer :p, :title, :style;
 use Typesafe::XHTML::Skeleton;
 
 put xhtml-skeleton(
@@ -52,6 +52,20 @@ put xhtml-skeleton(
         header=>(title('Hello Camelia'), style('p.foo { color: #fff; }' ))
     );
 ```
+## Enable typesafe concatenation
+
+```
+use v6;
+use Typesafe::HTML;
+use Typesafe::XHTML::Writer :p;
+use Typesafe::XHTML::Skeleton;
+
+my $inject = '<script src="http://dr.evil.ord/1337.js></script>';
+put xhtml-skeleton(p('Hello Camelia!') ~ $inject);
+```
+
+Without `Typesafe::HTML` the p-tag would also be quoted. It would be secure but
+would not do what you want.
 
 ## Provide your own type guard
 
@@ -78,11 +92,11 @@ put span(id=>'foo', "<span>Hello Camelia!</span>");
 # </span>
 ```
 
-## Disable indentation
+## Enable indentation
 
 ```
 use Typesafe::XHTML::Writer :writer-shall-indent; # :ALL will work too
-writer-shall-indent False;
+writer-shall-indent True;
 ```
 
 ## License

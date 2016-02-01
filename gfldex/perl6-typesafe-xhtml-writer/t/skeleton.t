@@ -1,6 +1,7 @@
 use v6;
 use Test;
-use Typesafe::XHTML::Writer :p, :span, :title, :style;
+use Typesafe::XHTML::Writer :p, :span, :title, :style, :writer-shall-indent;
+writer-shall-indent True;
 use Typesafe::XHTML::Skeleton;
 
 plan 6;
