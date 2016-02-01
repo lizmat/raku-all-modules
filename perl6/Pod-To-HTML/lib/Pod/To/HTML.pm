@@ -157,7 +157,7 @@ sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$foote
             aside, u \{ opacity: 0.7 }
             a[id^="fn-"]:target \{ background: #ff0 }
           </style>
-          <link rel="stylesheet" href="http://design.perl6.org/perl.css">
+          <link rel="stylesheet" href="//design.perl6.org/perl.css">
           { do-metadata() // () }
           $head
         </head>
