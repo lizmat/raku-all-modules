@@ -1,0 +1,12 @@
+{
+    "name": "Inline::FALSE",
+    "perl": "6.*",
+    "version": "1.0.0",
+    "description": "Embed FALSE code in Perl 6 code!",
+    "authors": ["rightfold"],
+    "provides": {
+        "Inline::FALSE": "lib/Inline/FALSE.pm6"
+    },
+    "test-depends": ["IO::String", "Test::META"],
+    "source-url": "git://github.com/rightfold/Inline-False.git"
+}
