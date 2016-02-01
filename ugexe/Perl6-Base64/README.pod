@@ -7,6 +7,7 @@
 Lazy base64 encoding and decoding routines
 
 =for HTML <a href="https://travis-ci.org/ugexe/Perl6-Base64"><img src="https://travis-ci.org/ugexe/Perl6-Base64.svg?branch=master"></a>
+          <a href="https://ci.appveyor.com/project/ugexe/Perl6-Base64/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/ugexe/Perl6-Base64?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
 
 =head3 SYNOPSIS
 
