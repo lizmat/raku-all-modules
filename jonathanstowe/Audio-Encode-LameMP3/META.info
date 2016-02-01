@@ -27,5 +27,5 @@
     "Audio::Sndfile"
   ],
   "description" : "Encode PCM Audio data to MP3 in Perl 6 using a binding to liblame",
-  "version" : "v0.0.7"
+  "version" : "0.0.8"
 }

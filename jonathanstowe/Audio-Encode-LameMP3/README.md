@@ -1,4 +1,5 @@
 # Audio-Encode-LameMP3
+
 Encode PCM Audio data to MP3 in Perl 6 using a binding to liblame
 
 ## Description
@@ -73,9 +74,7 @@ quite a lot of file I/O involved.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at
 
 https://github.com/jonathanstowe/Audio-Encode-LameMP3
 
@@ -94,4 +93,4 @@ and I cannot answer questions related to the licensing of that library.
 
 Please see the LICENCE file in the distribution regarding the licence for this library module.
 
-(C) Jonathan Stowe 2015
+(C) Jonathan Stowe 2015, 2016
