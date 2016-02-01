@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/peelle/LendingClub.git
+	branch = master
+	commit = 54591da376c1a9447a9ffda8b4a5c0d45b42048b
+	parent = 0d4e10a9ca29818960059dc6cb400a2f61aaf0cd
+	cmdver = 0.2.3

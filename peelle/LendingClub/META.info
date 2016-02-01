@@ -1,0 +1,13 @@
+{
+	"perl" : "6.*",
+	"name" : "LendingClub",
+	"version" : "0.1.0",
+	"description" : "A wrapper for the Lending Club API.",
+	"authors" : [ "James (Jeremy) Carman <developer@peelle.org>" ],
+	"provides" : {
+		"LendingClub" : "lib/LendingClub.pm"
+	},
+	"depends" : [ "Net::HTTP", "JSON::Tiny" ],
+	"test-depends" : [ "Test" ],
+	"source-url" : "git://github.com/peelle/LendingClub.git"
+}
