@@ -1,0 +1,12 @@
+{
+    "name" : "Build::Graph",
+    "version" : "0.0.1",
+    "description" : "A flexible and serializable dependency graph",
+    "provides" : {
+        "Build::Graph"       : "lib/Build/Graph.pm"
+    },
+    "author" : "Leon Timmermans",
+    "depends" : [ ],
+    "test-depends" : [ "Shell::Command", "File::Temp" ],
+    "source-url" : "https://github.com/Leont/build-graph6.git"
+}
