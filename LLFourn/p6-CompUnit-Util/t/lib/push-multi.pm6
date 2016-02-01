@@ -4,8 +4,12 @@ BEGIN { push-unit-multi('EXPORT::DEFAULT::&foo', my multi foo ('one') { "one" } 
 BEGIN { push-unit-multi('EXPORT::DEFAULT::&foo', my multi foo ('two') { "two" } ) };
 
 BEGIN { push-unit-multi 'EXPORT::DEFAULT::&bar',my proto bar(Numeric) {*} }
-BEGIN { push-unit-multi 'EXPORT::DEFAULT::&bar',my multi foo(Int) { 'Int' } }
-BEGIN { push-unit-multi 'EXPORT::DEFAULT::&bar',my multi foo(Num) { 'Num' } }
+BEGIN { push-unit-multi 'EXPORT::DEFAULT::&bar',my multi bar(Int) { 'Int' } }
+BEGIN { push-unit-multi 'EXPORT::DEFAULT::&bar',my multi bar(Num) { 'Num' } }
+BEGIN { push-unit-multi 'EXPORT::DEFAULT::&non-multi',sub (Int) { 'Int' } }
+BEGIN { push-unit-multi 'EXPORT::DEFAULT::&non-multi',sub (Num) { 'Num' } }
+
+class Foo { }
 
 sub EXPORT {
     {
@@ -16,6 +20,10 @@ sub EXPORT {
     }
     {
         push-lexical-multi('&no-clobber',my multi no-clobber('two') { 'two' });
+    }
+
+    {
+        push-lexical-multi('&postcircumfix:<{ }>',sub (Foo:D,Str:D) { "win" });
     }
     {};
 }

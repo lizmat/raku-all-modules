@@ -10,8 +10,8 @@ Utility functions for introspecting `CompUnit`s and re-exporting their symbols.
   - [unit-to-hash](#unit-to-hash)
   - [capture-import](#capture-import)
 - [WHO Utilities](#who-utilities)
-  - [descend-WHO](#descend-WHO)
-  - [set-in-WHO](#set-in-WHO)
+  - [descend-WHO](#descend-who)
+  - [set-in-WHO](#set-in-who)
 - [Re-Exporting](#re-exporting)
   - [re-export](#re-export)
   - [re-exporthow](#re-exporthow)
@@ -121,8 +121,7 @@ say at-unit('CompUnit::Util','$=pod');
 ```
 
 Gets a symbol from the `UNIT` scope of the compunit. If you want to do
-this at compile time while a compunit is loading see `get-unit`.
-[get-unit](#get-unit).
+this at compile time while a compunit is loading see [get-unit](#get-unit).
 
 ### unit-to-hash
 `($handle)`
@@ -154,7 +153,7 @@ symbols the compunit would export if it were `use`d.
 ``` perl6
 use CompUnit::Util :who;
 my package Example {};
-BEGIN set-in-who(Example.WHO,'Foo::Bar::Baz','win');
+BEGIN set-in-WHO(Example.WHO,'Foo::Bar::$Baz','win');
 
 say Example::Foo::Bar::<$Baz>; #-> win
 ```
@@ -168,8 +167,8 @@ might not exist yet. Only useful outside the compunit being compiled.
 ``` perl6
 use CompUnit::Util :who;
 my package Example {};
-BEGIN set-in-who(Example.WHO,'Foo::Bar::Baz','win');
-BEGIN note descend-who(Example.WHO,'Foo::Bar::Baz'); #-> win
+BEGIN set-in-WHO(Example.WHO,'Foo::Bar::Baz','win');
+BEGIN note descend-WHO(Example.WHO,'Foo::Bar::Baz'); #-> win
 ```
 
 Convenience routine for getting a symbol's value with a path from a
@@ -324,10 +323,12 @@ only take a single `$name` with no `::`.
 
 These routines help you construct `multi` dispatchers *candidate by
 candidate* in a procedural manner. Useful when you want to construct a
-trait that adds a multi candidate each time it's called.
+trait that adds a multi candidate each time it's called. Parameters
+marked `$multi` can be any `Routine:D`,but if you pass a dispatcher it
+will behave differently.
 
 ### push-unit-multi
-`(Str:D $path,Routine:D $mutli where { .multi || .is_dispatcher } )`
+`(Str:D $path,Routine:D $mutli)`
 
 ``` perl6
 ## lib/SillyModule.pm6
@@ -356,14 +357,14 @@ will become the dispatcher for any further calls.
 
 ### push-lexpad-multi
 
-`(Str:D $path,Routine:D $mutli where { .multi || .is_dispatcher } )`
+`(Str:D $path,Routine:D $mutli)`
 
 The same as `push-unit-multi` but pushes onto a symbol in the lexical
 scope currently being compiled.
 
 ### push-lexical-multi
 
-`(Str:D $name,Routine:D $mutli where { .multi || .is_dispatcher } )`
+`(Str:D $name,Routine:D $mutli)`
 
 The smart version of `push-lexpad-multi`. If it doesn't find a
 dispatcher in the current lexpad it will do a lexical lookup for one

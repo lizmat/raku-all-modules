@@ -223,24 +223,37 @@ sub push-QBlock-multi(Mu \qblock,$path,$multi is copy) {
             push-multi($existing,$multi);
         }
     } else {
-        $multi .= dispatcher unless $multi.is_dispatcher;
-        set-in-QBlock(qblock,$path,$multi);
+        my $install = do given $multi {
+            when .multi {
+                .dispatcher;
+            }
+            when .is_dispatcher {
+                $multi
+            }
+            default {
+                # not multi or dispatcher
+                my $new_proto = my proto anon (|) {*};
+                $new_proto.add_dispatchee(nqp::decont($multi));
+                $new_proto;
+            }
+        }
+        set-in-QBlock(qblock,$path,$install);
     }
 }
 
-sub push-unit-multi(Str:D $path, $multi where { .multi || .is_dispatcher } --> Nil) is export(:push-multi) {
+sub push-unit-multi(Str:D $path, $multi --> Nil) is export(:push-multi) {
     die "{&?ROUTINE.name} can only be called at BEGIN time" unless $*W;
     push-QBlock-multi($*UNIT,$path,$multi);
     Nil;
 }
 
-sub push-lexpad-multi(Str:D $path,$multi where { .multi || .is_dispatcher } --> Nil) is export(:push-multi) {
+sub push-lexpad-multi(Str:D $path,$multi --> Nil) is export(:push-multi) {
     die "{&?ROUTINE.name} can only be called at BEGIN time" unless $*W;
     push-QBlock-multi($*W.cur_lexpad,$path,$multi);
     Nil;
 }
 
-sub push-lexical-multi(Str:D $path, $multi where { .multi || .is_dispatcher } --> Nil) is export(:push-multi) {
+sub push-lexical-multi(Str:D $path, $multi --> Nil) is export(:push-multi) {
     if get-lexpad($path) -> $existing {
         push-multi($existing,$multi);
     }
