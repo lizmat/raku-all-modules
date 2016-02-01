@@ -3,6 +3,7 @@ perl6xproto
 
 X::Protocol:: Perl 6 modules for protocol exceptions
 
+
 ## Purpose
 
 The X::Protocol superclass is a convenience for working with status results
@@ -21,12 +22,13 @@ subclass it belongs to.
 Better yet, you can simply smart match the object against integers, strings
 and regular expressions in your error handling code.
 
-For commonly used protocols, the X::Protocol module repo serves as a place
-for protocol-specific subclasses to store long lists of human-readable
+For commonly used protocols, the X::Protocol module repository serves as a
+place for protocol-specific subclasses to store long lists of human-readable
 error messages so they can be shared by different protocol implementations
 and maintained in one place.
 
 More finicky features are also available.  See the embedded pod.
+
 
 ## Idioms
 
