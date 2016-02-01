@@ -2,13 +2,14 @@
 
 =encoding utf8
 
-=head1 Name
+=head2 Text::Levenshtein::Damerau
 
-Text::Levenshtein::Damerau - Levenshtein and Damerau Levenshtein edit distances
+Levenshtein and Damerau Levenshtein edit distances
 
-=for HTML <a href="https://travis-ci.org/ugexe/Perl6-Text--Levenshtein--Damerau"><img src="https://api.travis-ci.org/ugexe/Perl6-Text--Levenshtein--Damerau.svg?branch=master"></a>
+=for HTML <a href="https://travis-ci.org/ugexe/Perl6-Text--Levenshtein--Damerau"><img src="https://travis-ci.org/ugexe/Perl6-Text--Levenshtein--Damerau.svg?branch=master"></a>
+          <a href="https://ci.appveyor.com/project/ugexe/Perl6-Text--Levenshtein--Damerau/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/ugexe/Perl6-Text--Levenshtein--Damerau?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
 
-=head1 Synopsis
+=head2 Synopsis
 
     use Text::Levenshtein::Damerau;
 
@@ -18,7 +19,7 @@ Text::Levenshtein::Damerau - Levenshtein and Damerau Levenshtein edit distances
     say ld('Neil','Niel'); # levenshtein distance
     prints 2
 
-=head1 Description
+=head2 Description
 
 Returns the true Levenshtein or Damerau Levenshtein edit distance of strings with adjacent transpositions. 
 
@@ -52,7 +53,7 @@ Returns the true Levenshtein or Damerau Levenshtein edit distance of strings wit
     say "-";
     say "\@names:                   {~@names}";
 
-=head2 Routines
+=head3 Routines
 
 =over 8
 
@@ -96,7 +97,7 @@ Returns: Int that represents edit distance between the two argument. Stops calcu
 
 =back
 
-=head2 Methods
+=head3 Methods
 
 =over 8
 
@@ -124,13 +125,13 @@ Returns: %.results
 
 =back
 
-=head2 Bugs
+=head3 Bugs
 
 Please report bugs to:
 
 L<https://github.com/ugexe/Perl6-Text--Levenshtein--Damerau/issues>
 
-=head2 Author
+=head3 Author
 
 Nick Logan L<nlogan@gmail.com>
 
