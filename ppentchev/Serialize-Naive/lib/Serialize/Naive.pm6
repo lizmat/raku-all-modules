@@ -21,7 +21,8 @@ sub walk-type($type, $value, Sub :$objfunc, :$array-type, :$hash-type, Sub :$war
 
 	if $type ~~ Positional {
 		my $sub = $type.of;
-		my $arr-type = $array-type !=== Any?? $array-type!! $type;
+		my $arr-type = $array-type !=== Any?? $array-type!!
+		    $type.WHICH ~~ /^ 'Positional[' /?? Array!! $type;
 		return $arr-type.new($value.values.map: {
 			walk-type($sub, $_, :objfunc($objfunc), :warn($warn))
 		});
@@ -29,7 +30,8 @@ sub walk-type($type, $value, Sub :$objfunc, :$array-type, :$hash-type, Sub :$war
 
 	if $type ~~ Associative {
 		my $sub = $type.of;
-		my $h-type = $hash-type !=== Any?? $hash-type!! $type;
+		my $h-type = $hash-type !=== Any?? $hash-type!!
+		    $type.WHICH ~~ /^ 'Associative[' /?? Hash!! $type;
 		return $h-type.new($value.kv.map: -> $k, $v {
 			$k => walk-type($sub, $v, :objfunc($objfunc),
 			    :array-type($array-type), :hash-type($hash-type),
@@ -46,13 +48,13 @@ sub do-deserialize(%data, $type, Sub :$warn)
 	my Bool %handled;
 	for $type.^attributes -> $attr {
 		my Str $name = $attr.name;
-		$name ~~ s/^\$\!//;
+		$name ~~ s/^ <[$%@]> '!' //;
 		my $type = $attr.type;
 
 		next unless %data{$name}:exists;
 		%handled{$name} = True;
 		my $value = %data{$name};
-		%build{$name} = walk-type($type, $value,
+		%build{$name} := walk-type($type, $value,
 		    :objfunc(&do-deserialize), :warn($warn));
 	}
 
@@ -81,7 +83,7 @@ sub do-serialize($obj, $type, Sub :$warn)
 		next unless $attr.has_accessor;
 
 		my Str $name = $attr.name;
-		$name ~~ s/^\$\!//;
+		$name ~~ s/^ <[$%@]> '!' //;
 		my $value = $attr.get_value($obj);
 		next unless $value.defined;
 
@@ -129,7 +131,7 @@ Serialize::Naive - recursive serialization and deserialization interface
     class Polygon does Serialize::Naive
     {
         has Str $.label;
-        has Array[Point] $.vertices;
+        has Point @.vertices;
     }
 
     my %data = radius => 5, center => { x => 0.5, y => 1.5 };
@@ -235,24 +237,6 @@ Deserialize an object of the specified type just as
 C<$type.deserialize(%data, :warn($warn))> would.
 
 =end item1
-
-=head1 BUGS
-
-The reason the regular expressions matching attribute names expect them to
-start with "$!" is that for some reason I can't get deserialization to work
-right with actual C<Positional> and C<Associative> attributes; even after
-changing the regular expressions, this won't work:
-
-=begin code
-    class Label does Serialize::Naive {
-        has Str @.lines;
-    }
-
-    my $label = Label.deserialize({ :lines(['first', 'second']) });
-=end code
-
-I've tried several magic incantations in C<do-deserialize()> and I can't seem
-to be able to figure it out, hence the C<Array[Point]> in the examples.
 
 =head1 SEE ALSO
 

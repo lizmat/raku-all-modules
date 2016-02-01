@@ -32,24 +32,24 @@ multi sub infix:<==>(Circle:D $c1, Circle:D $c2)
 
 class Triangle does Serialize::Naive
 {
-	has Array[Point] $.vertices;
+	has Point @.vertices;
 	has Str $.label;
 
 	method is-valid() returns Bool:D
 	{
-		return $!vertices.elems == 3;
+		return @!vertices.elems == 3;
 	}
 }
 
 class Drawing does Serialize::Naive
 {
 	has Str $.label;
-	has Hash[Point] $.points;
+	has Point %.points;
 
 	method is-valid() returns Bool:D
 	{
 		return $!label.defined &&
-		    not $!points.grep: not *.defined;
+		    not %!points.grep: not *.defined;
 	}
 }
 

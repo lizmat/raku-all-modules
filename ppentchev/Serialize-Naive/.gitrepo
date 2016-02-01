@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ppentchev/Serialize-Naive.git
 	branch = master
-	commit = 81ed1cf2e6946f5f87f382d46d65022688679e6b
-	parent = 65eb067b42743eb67d8e02a002c7166b855487e3
+	commit = 4f4c1f0c1e6fb6af7e95f86675817e2ff82a66a1
+	parent = cf5ac32336df49a7f618b618ad9af8c3d86fed8b
 	cmdver = 0.2.3

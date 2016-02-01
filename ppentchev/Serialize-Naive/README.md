@@ -23,7 +23,7 @@ SYNOPSIS
         class Polygon does Serialize::Naive
         {
             has Str $.label;
-            has Array[Point] $.vertices;
+            has Point @.vertices;
         }
 
         my %data = radius => 5, center => { x => 0.5, y => 1.5 };
@@ -101,19 +101,6 @@ The `Serialize::Naive` module also exports two functions:
         sub deserialize($type, %data, Sub :$warn)
 
     Deserialize an object of the specified type just as `$type.deserialize(%data, :warn($warn))` would.
-
-BUGS
-====
-
-The reason the regular expressions matching attribute names expect them to start with "$!" is that for some reason I can't get deserialization to work right with actual `Positional` and `Associative` attributes; even after changing the regular expressions, this won't work:
-
-        class Label does Serialize::Naive {
-            has Str @.lines;
-        }
-
-        my $label = Label.deserialize({ :lines(['first', 'second']) });
-
-I've tried several magic incantations in `do-deserialize()` and I can't seem to be able to figure it out, hence the `Array[Point]` in the examples.
 
 SEE ALSO
 ========
