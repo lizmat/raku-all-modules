@@ -5,13 +5,13 @@ unit class TXN::Parser;
 
 method parse(
     Str:D $content,
-    Int :$date_local_offset,
+    Int :$date-local-offset,
     Bool :$json,
     *%opts
 ) returns Match
 {
     my %a;
-    %a<date_local_offset> = $date_local_offset if $date_local_offset;
+    %a<date-local-offset> = $date-local-offset if $date-local-offset;
     %a<json> = $json if $json;
 
     my TXN::Parser::Actions $actions .= new(|%a);
@@ -20,13 +20,13 @@ method parse(
 
 method parsefile(
     Str:D $file,
-    Int :$date_local_offset,
+    Int :$date-local-offset,
     Bool :$json,
     *%opts
 ) returns Match
 {
     my %a;
-    %a<date_local_offset> = $date_local_offset if $date_local_offset;
+    %a<date-local-offset> = $date-local-offset if $date-local-offset;
     %a<json> = $json if $json;
 
     my TXN::Parser::Actions $actions .= new(|%a);
@@ -35,23 +35,23 @@ method parsefile(
 
 multi method preprocess(Str:D $content) returns Str:D
 {
-    self!resolve_includes($content);
+    self!resolve-includes($content);
 }
 
 multi method preprocess(Str:D :$file!) returns Str:D
 {
-    self!resolve_includes(slurp $file);
+    self!resolve-includes(slurp $file);
 }
 
-method !resolve_includes(Str:D $journal_orig) returns Str:D
+method !resolve-includes(Str:D $journal-orig) returns Str:D
 {
     my Str:D $journal = "";
-    for $journal_orig.lines -> $line
+    for $journal-orig.lines -> $line
     {
         $journal ~= TXN::Parser::Grammar.parse(
             "$line\n",
             :actions(TXN::Parser::Actions),
-            :rule<include_line>
+            :rule<include-line>
         ) ?? self.preprocess(:file($/.made)) !! $line ~ "\n";
     }
     $journal;

@@ -12,10 +12,10 @@ token gap:comment { <.comment> \n }
 
 token comment
 {
-    '#' <comment_text>
+    '#' <comment-text>
 }
 
-token comment_text
+token comment-text
 {
     \N*
 }
@@ -24,38 +24,38 @@ token comment_text
 # string grammar {{{
 
 proto token string {*}
-token string:basic { <string_basic> }
-token string:basic_multi { <string_basic_multiline> }
-token string:literal { <string_literal> }
-token string:literal_multi { <string_literal_multiline> }
+token string:basic { <string-basic> }
+token string:basic-multi { <string-basic-multiline> }
+token string:literal { <string-literal> }
+token string:literal-multi { <string-literal-multiline> }
 
 # --- string basic grammar {{{
 
-token string_basic
+token string-basic
 {
-    '"' <string_basic_text>? '"'
+    '"' <string-basic-text>? '"'
 }
 
-token string_basic_text
+token string-basic-text
 {
-    <string_basic_char>+
+    <string-basic-char>+
 }
 
-proto token string_basic_char {*}
+proto token string-basic-char {*}
 
-token string_basic_char:common
+token string-basic-char:common
 {
     # anything but linebreaks, double-quotes, backslashes and control
     # characters (U+0000 to U+001F)
     <+[\N] -[\" \\] -[\x00..\x1F]>
 }
 
-token string_basic_char:tab
+token string-basic-char:tab
 {
     \t
 }
 
-token string_basic_char:escape_sequence
+token string-basic-char:escape-sequence
 {
     # backslash followed by a valid (TOML) escape code, or error
     \\
@@ -99,58 +99,58 @@ token hex
     <[0..9A..F]>
 }
 
-token string_basic_multiline
+token string-basic-multiline
 {
-    <string_basic_multiline_delimiter>
-    <string_basic_multiline_leading_newline>?
-    <string_basic_multiline_text>?
-    <string_basic_multiline_delimiter>
+    <string-basic-multiline-delimiter>
+    <string-basic-multiline-leading-newline>?
+    <string-basic-multiline-text>?
+    <string-basic-multiline-delimiter>
 }
 
-token string_basic_multiline_delimiter
+token string-basic-multiline-delimiter
 {
     '"""'
 }
 
-token string_basic_multiline_leading_newline
+token string-basic-multiline-leading-newline
 {
     # A newline immediately following the opening delimiter will be
     # trimmed.
     \n
 }
 
-token string_basic_multiline_text
+token string-basic-multiline-text
 {
-    <string_basic_multiline_char>+
+    <string-basic-multiline-char>+
 }
 
-proto token string_basic_multiline_char {*}
+proto token string-basic-multiline-char {*}
 
-token string_basic_multiline_char:common
+token string-basic-multiline-char:common
 {
     # anything but delimiters ("""), backslashes and control characters
     # (U+0000 to U+001F)
-    <-string_basic_multiline_delimiter -[\\] -[\x00..\x1F]>
+    <-string-basic-multiline-delimiter -[\\] -[\x00..\x1F]>
 }
 
-token string_basic_multiline_char:tab
+token string-basic-multiline-char:tab
 {
     \t
 }
 
-token string_basic_multiline_char:newline
+token string-basic-multiline-char:newline
 {
     \n+
 }
 
-token string_basic_multiline_char:escape_sequence
+token string-basic-multiline-char:escape-sequence
 {
     # backslash followed by either a valid (TOML) escape code or
     # linebreak, else error
     \\
     [
         [
-            <escape> | $$ <ws_remover>
+            <escape> | $$ <ws-remover>
         ]
 
         ||
@@ -163,7 +163,7 @@ token string_basic_multiline_char:escape_sequence
     ]
 }
 
-token ws_remover
+token ws-remover
 {
     # For writing long strings without introducing extraneous whitespace,
     # end a line with a \. The \ will be trimmed along with all whitespace
@@ -175,19 +175,19 @@ token ws_remover
 # --- end string basic grammar }}}
 # --- string literal grammar {{{
 
-token string_literal
+token string-literal
 {
-    \' <string_literal_text>? \'
+    \' <string-literal-text>? \'
 }
 
-token string_literal_text
+token string-literal-text
 {
-    <string_literal_char>+
+    <string-literal-char>+
 }
 
-proto token string_literal_char {*}
+proto token string-literal-char {*}
 
-token string_literal_char:common
+token string-literal-char:common
 {
     # anything but linebreaks and single quotes
     # Since there is no escaping, there is no way to write a single
@@ -195,45 +195,45 @@ token string_literal_char:common
     <+[\N] -[\']>
 }
 
-token string_literal_char:backslash
+token string-literal-char:backslash
 {
     \\
 }
 
-token string_literal_multiline
+token string-literal-multiline
 {
-    <string_literal_multiline_delimiter>
-    <string_literal_multiline_leading_newline>?
-    <string_literal_multiline_text>?
-    <string_literal_multiline_delimiter>
+    <string-literal-multiline-delimiter>
+    <string-literal-multiline-leading-newline>?
+    <string-literal-multiline-text>?
+    <string-literal-multiline-delimiter>
 }
 
-token string_literal_multiline_delimiter
+token string-literal-multiline-delimiter
 {
     \'\'\'
 }
 
-token string_literal_multiline_leading_newline
+token string-literal-multiline-leading-newline
 {
     # A newline immediately following the opening delimiter will be
     # trimmed.
     \n
 }
 
-token string_literal_multiline_text
+token string-literal-multiline-text
 {
-    <string_literal_multiline_char>+
+    <string-literal-multiline-char>+
 }
 
-proto token string_literal_multiline_char {*}
+proto token string-literal-multiline-char {*}
 
-token string_literal_multiline_char:common
+token string-literal-multiline-char:common
 {
     # anything but delimiters (''') and backslashes
-    <-string_literal_multiline_delimiter -[\\]>
+    <-string-literal-multiline-delimiter -[\\]>
 }
 
-token string_literal_multiline_char:backslash
+token string-literal-multiline-char:backslash
 {
     \\
 }
@@ -243,21 +243,21 @@ token string_literal_multiline_char:backslash
 # end string grammar }}}
 # number grammar {{{
 
-proto token plus_or_minus {*}
-token plus_or_minus:sym<+> { <sym> }
-token plus_or_minus:sym<-> { <sym> }
+proto token plus-or-minus {*}
+token plus-or-minus:sym<+> { <sym> }
+token plus-or-minus:sym<-> { <sym> }
 
 token integer
 {
-    <plus_or_minus>? <integer_unsigned>
+    <plus-or-minus>? <integer-unsigned>
 }
 
-token integer_unsigned
+token integer-unsigned
 {
-    <whole_number>
+    <whole-number>
 }
 
-token whole_number
+token whole-number
 {
     0
 
@@ -281,12 +281,12 @@ token digits
 
 token float
 {
-    <plus_or_minus>? <float_unsigned>
+    <plus-or-minus>? <float-unsigned>
 }
 
-token float_unsigned
+token float-unsigned
 {
-    <integer_part=.integer_unsigned> '.' <fractional_part=.digits>
+    <integer-part=.integer-unsigned> '.' <fractional-part=.digits>
 }
 
 # end number grammar }}}
@@ -295,130 +295,115 @@ token float_unsigned
 proto token date {*}
 
 # RFC 3339 timestamp: http://tools.ietf.org/html/rfc3339
-token date:date_time
+token date:date-time
 {
-    <date_time>
+    <date-time>
 }
 
 # RFC 3339 timestamp (omit local offset)
-token date:date_time_omit_local_offset
+token date:date-time-omit-local-offset
 {
-    <date_time_omit_local_offset>
+    <date-time-omit-local-offset>
 }
 
 # YYYY-MM-DD
-token date:full_date
+token date:full-date
 {
-    <full_date>
+    <full-date>
 }
 
-token date_fullyear
+token date-fullyear
 {
     \d ** 4
 }
 
-token date_month
+token date-month
 {
     0 <[1..9]> | 1 <[0..2]>
 }
 
-token date_mday
+token date-mday
 {
     0 <[1..9]> | <[1..2]> \d | 3 <[0..1]>
 }
 
-token time_hour
+token time-hour
 {
     <[0..1]> \d | 2 <[0..3]>
 }
 
-token time_minute
+token time-minute
 {
     <[0..5]> \d
 }
 
-token time_second
+token time-second
 {
     # The grammar element time-second may have the value "60" at the end
     # of months in which a leap second occurs.
     <[0..5]> \d | 60
 }
 
-token time_secfrac
+token time-secfrac
 {
     '.' \d+
 }
 
-token time_numoffset
+token time-numoffset
 {
-    <plus_or_minus> <time_hour> ':' <time_minute>
+    <plus-or-minus> <time-hour> ':' <time-minute>
 }
 
-token time_offset
+token time-offset
 {
-    <[Zz]> | <time_numoffset>
+    <[Zz]> | <time-numoffset>
 }
 
-token partial_time
+token partial-time
 {
-    <time_hour> ':' <time_minute> ':' <time_second> <time_secfrac>?
+    <time-hour> ':' <time-minute> ':' <time-second> <time-secfrac>?
 }
 
-token full_date
+token full-date
 {
-    <date_fullyear> '-' <date_month> '-' <date_mday>
+    <date-fullyear> '-' <date-month> '-' <date-mday>
 }
 
-token full_time
+token full-time
 {
-    <partial_time> <time_offset>
+    <partial-time> <time-offset>
 }
 
-token date_time
+token date-time
 {
-    <full_date> <[Tt]> <full_time>
+    <full-date> <[Tt]> <full-time>
 }
 
-token date_time_omit_local_offset
+token date-time-omit-local-offset
 {
-    <full_date> <[Tt]> <partial_time>
+    <full-date> <[Tt]> <partial-time>
 }
 
 # end datetime grammar }}}
 # variable name grammar {{{
 
-proto token var_name {*}
+# quoted variable names can be either basic strings or literal strings
+proto token var-name {*}
+token var-name:bare { <+alnum +[-]>+ }
+token var-name:quoted { <var-name-string> }
 
-token var_name:bare
-{
-    <+alnum +[-]>+
-}
-
-# only double quoted variable names are allowed
-token var_name:quoted
-{
-    <var_name_string_basic>
-}
-
-# quoted variable names must contain chars inside double quotes
-token var_name_string_basic
-{
-    '"' <string_basic_text> '"'
-}
-
-token var_name_string_literal
-{
-    \' <string_literal_text> \'
-}
+proto token var-name-string {*}
+token var-name-string:basic { '"' <string-basic-text> '"' }
+token var-name-string:literal { \' <string-literal-text> \' }
 
 # end variable grammar }}}
 # reserved words grammar {{{
 
-my Str @reserved_words = qw<assets base-costing base-currency>;
+my Str @reserved-words = qw<assets base-costing base-currency>;
 
 token reserved
 {
-    :i @reserved_words
+    :i @reserved-words
 }
 
 # end reserved words grammar }}}
@@ -446,17 +431,17 @@ token meta:tag { <tag> }
 
 token important
 {
-    <exclamation_mark>+
+    <exclamation-mark>+
 }
 
-token exclamation_mark
+token exclamation-mark
 {
     '!'
 }
 
 token tag
 {
-    '@' <var_name>
+    '@' <var-name>
 }
 
 # end header grammar }}}
@@ -464,17 +449,17 @@ token tag
 
 token postings
 {
-    <posting_line>+
+    <posting-line>+
 }
 
-proto token posting_line {*}
+proto token posting-line {*}
 
-token posting_line:comment
+token posting-line:comment
 {
-    <.comment_line>
+    <.comment-line>
 }
 
-token posting_line:content
+token posting-line:content
 {
     ^^ \h* <posting> \h* <.comment>? $$ \n
 }
@@ -489,8 +474,8 @@ token posting
 token account
 {
     # silo and entity are required, subaccounts are optional
-    <silo> <account_delimiter> <entity=.var_name>
-    [ <account_delimiter> <account_sub=.acct_name> ]?
+    <silo> <account-delimiter> <entity=.var-name>
+    [ <account-delimiter> <account-sub=.acct-name> ]?
 }
 
 proto token silo {*}
@@ -521,13 +506,13 @@ token silo:equity
 }
 
 # accounts can be separated by a colon (:) or period (.)
-proto token account_delimiter {*}
-token account_delimiter:sym<:> { <sym> }
-token account_delimiter:sym<.> { <sym> }
+proto token account-delimiter {*}
+token account-delimiter:sym<:> { <sym> }
+token account-delimiter:sym<.> { <sym> }
 
-token acct_name
+token acct-name
 {
-    <var_name> [ <account_delimiter> <var_name> ]*
+    <var-name> [ <account-delimiter> <var-name> ]*
 }
 
 # --- end posting account grammar }}}
@@ -536,30 +521,22 @@ token acct_name
 token amount
 {
     # -$100.00 USD
-    <plus_or_minus>? <asset_symbol>? <asset_quantity> \h+ <asset_code>
-        [\h+ <exchange_rate>]?
+    <plus-or-minus>? <asset-symbol>? <asset-quantity> \h+ <asset-code>
+        [\h+ <exchange-rate>]?
 
     |
 
     # USD -$100.00
-    <asset_code> \h+ <plus_or_minus>? <asset_symbol>? <asset_quantity>
-        [\h+ <exchange_rate>]?
+    <asset-code> \h+ <plus-or-minus>? <asset-symbol>? <asset-quantity>
+        [\h+ <exchange-rate>]?
 }
 
-proto token asset_code {*}
-
-token asset_code:bare
-{
-    <:Letter>+
-}
-
-token asset_code:quoted
-{
-    <var_name_string_basic>
-}
+proto token asset-code {*}
+token asset-code:bare { <:Letter>+ }
+token asset-code:quoted { <var-name-string> }
 
 # e.g. http://www.xe.com/symbols.php
-token asset_symbol
+token asset-symbol
 {
     # any char excluding digits, plus signs, whitespace or unicode
     # punctuation less periods and slashes (some currencies use these)
@@ -570,11 +547,11 @@ token asset_symbol
     <+[\D] -[+] -[\s] -punct +[./]>+
 }
 
-proto token asset_quantity {*}
-token asset_quantity:float { <float_unsigned> }
-token asset_quantity:integer { <integer_unsigned> }
+proto token asset-quantity {*}
+token asset-quantity:float { <float-unsigned> }
+token asset-quantity:integer { <integer-unsigned> }
 
-token exchange_rate
+token exchange-rate
 {
     '@' \h+ <xe>
 }
@@ -583,12 +560,12 @@ token exchange_rate
 token xe
 {
     # @ $830.024 USD
-    <asset_symbol>? <asset_quantity> \h+ <asset_code>
+    <asset-symbol>? <asset-quantity> \h+ <asset-code>
 
     |
 
     # @ USD $830.024
-    <asset_code> \h+ <asset_symbol>? <asset_quantity>
+    <asset-code> \h+ <asset-symbol>? <asset-quantity>
 }
 
 # --- end posting amount grammar }}}
@@ -596,7 +573,7 @@ token xe
 # end posting grammar }}}
 # include grammar {{{
 
-token include_line
+token include-line
 {
     ^^ \h* <include> \h* <.comment>? $$ \n
 }
@@ -606,14 +583,15 @@ token include
     include \h+ <filename>
 }
 
-proto token filename {*}
-token filename:basic { <var_name_string_basic> }
-token filename:literal { <var_name_string_literal> }
+token filename
+{
+    <var-name-string>
+}
 
 # end include grammar }}}
 # extends grammar {{{
 
-token extends_line
+token extends-line
 {
     ^^ \h* <extends> \h* <.comment>? $$ \n
 }
@@ -637,18 +615,18 @@ token journal
 }
 
 proto token segment {*}
-token segment:blank { <.blank_line> }
-token segment:comment { <.comment_line> }
+token segment:blank { <.blank-line> }
+token segment:comment { <.comment-line> }
 token segment:entry { <entry> }
-token segment:include { <include_line> }
-token segment:extends { <extends_line> }
+token segment:include { <include-line> }
+token segment:extends { <extends-line> }
 
-token blank_line
+token blank-line
 {
     ^^ \h* $$ \n
 }
 
-token comment_line
+token comment-line
 {
     ^^ \h* <.comment> $$ \n
 }

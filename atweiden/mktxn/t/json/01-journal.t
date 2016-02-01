@@ -21,7 +21,7 @@ subtest
 
     # old fashioned way
     my TXN::Parser::Actions $actions .= new;
-    my $match_journal = TXN::Parser::Grammar.parsefile($file, :$actions);
+    my $match-journal = TXN::Parser::Grammar.parsefile($file, :$actions);
 
     # with public API
     my @txn = from-txn(:$file);
@@ -29,11 +29,11 @@ subtest
     # with JSON round trip
     use JSON::Tiny;
     my $json = from-txn(:$file, :json);
-    my @round_trip = from-json($json);
+    my @round-trip = from-json($json);
 
     is(
         @txn,
-        $match_journal.made,
+        $match-journal.made,
         q:to/EOF/
         ♪ [Is from-txn equivalent to Match.made?] - 1 of 2
         ┏━━━━━━━━━━━━━┓
@@ -46,7 +46,7 @@ subtest
 
     is(
         @txn,
-        @round_trip,
+        @round-trip,
         q:to/EOF/
         ♪ [Is from-txn JSON round trip valid?] - 2 of 2
         ┏━━━━━━━━━━━━━┓

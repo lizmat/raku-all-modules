@@ -9,34 +9,34 @@ plan 3;
 
 subtest
 {
-    my Str @include_lines;
+    my Str @include-lines;
 
-    push @include_lines, Q:to/EOF/;
+    push @include-lines, Q:to/EOF/;
     include 'includes/2014'
     EOF
 
-    push @include_lines, Q:to/EOF/;
+    push @include-lines, Q:to/EOF/;
     include "includes/2014"
     EOF
 
-    push @include_lines, Q:to/EOF/;
+    push @include-lines, Q:to/EOF/;
     include 'journal includes/file with whitespace'
     EOF
 
-    push @include_lines, Q:to/EOF/;
+    push @include-lines, Q:to/EOF/;
     include "journal includes/file with whitespace"
     EOF
 
-    sub is_valid_include_line(Str:D $include_line) returns Bool:D
+    sub is-valid-include-line(Str:D $include-line) returns Bool:D
     {
-        TXN::Parser::Grammar.parse($include_line, :rule<include_line>).so;
+        TXN::Parser::Grammar.parse($include-line, :rule<include-line>).so;
     }
 
     ok(
-        @include_lines.grep({is_valid_include_line($_)}).elems ==
-            @include_lines.elems,
+        @include-lines.grep({is-valid-include-line($_)}).elems ==
+            @include-lines.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($include_line, :rule<include_line>)] - 1 of 4
+        ♪ [Grammar.parse($include-line, :rule<include-line>)] - 1 of 4
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Include lines validate successfully, as
         ┃   Success   ┃    expected.
@@ -90,13 +90,13 @@ subtest
     Expenses:Business:Cats      $1200.00 USD
     EOF
 
-    sub is_valid_entry(Str:D $entry) returns Bool:D
+    sub is-valid-entry(Str:D $entry) returns Bool:D
     {
         TXN::Parser::Grammar.parse($entry, :rule<entry>).so;
     }
 
     ok(
-        @entries.grep({is_valid_entry($_)}).elems == @entries.elems,
+        @entries.grep({is-valid-entry($_)}).elems == @entries.elems,
         q:to/EOF/
         ♪ [Grammar.parse($entry, :rule<entry>)] - 2 of 4
         ┏━━━━━━━━━━━━━┓
@@ -114,14 +114,14 @@ subtest
 subtest
 {
     my Str $journal = slurp 't/data/sample/sample.txn';
-    my Str $journal_quoted =
+    my Str $journal-quoted =
         slurp 't/data/quoted-asset-codes/quoted-asset-codes.txn';
 
-    my $journal_match = TXN::Parser::Grammar.parse($journal);
-    my $journal_quoted_match = TXN::Parser::Grammar.parse($journal_quoted);
+    my $journal-match = TXN::Parser::Grammar.parse($journal);
+    my $journal-quoted-match = TXN::Parser::Grammar.parse($journal-quoted);
 
     is(
-        $journal_match.WHAT,
+        $journal-match.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse($journal)] - 3 of 4
@@ -133,10 +133,10 @@ subtest
         EOF
     );
     is(
-        $journal_quoted_match.WHAT,
+        $journal-quoted-match.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($journal_quoted)] - 4 of 4
+        ♪ [Grammar.parse($journal-quoted)] - 4 of 4
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Journal with quoted asset codes validates
         ┃   Success   ┃    successfully, as expected.

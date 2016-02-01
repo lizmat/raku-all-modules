@@ -13,20 +13,20 @@ constant $VERSION = '0.0.1';
 # helper functions
 # -----------------------------------------------------------------------------
 
-sub get_entities_seen(@txn) returns Array[Str]
+sub get-entities-seen(@txn) returns Array[Str]
 {
-    my Str @entities_seen;
+    my Str @entities-seen;
 
     for @txn -> $entry
     {
         for $entry<postings>.Array -> $posting
         {
-            push @entities_seen, $posting<account><entity>;
+            push @entities-seen, $posting<account><entity>;
         }
     }
 
-    @entities_seen .= unique;
-    @entities_seen .= sort;
+    @entities-seen .= unique;
+    @entities-seen .= sort;
 }
 
 
@@ -47,10 +47,10 @@ multi sub MAIN(
     my Str $dt = ~DateTime.now;
 
     # make build directory
-    my Str $build_dir = $*CWD ~ '/build';
-    my Str $txn_file = "$build_dir/txn.json";
-    my Str $txninfo_file = "$build_dir/.TXNINFO";
-    mkdir $build_dir;
+    my Str $build-dir = $*CWD ~ '/build';
+    my Str $txn-file = "$build-dir/txn.json";
+    my Str $txninfo-file = "$build-dir/.TXNINFO";
+    mkdir $build-dir;
 
     # parse build template into .TXNINFO
     my %txninfo;
@@ -83,25 +83,25 @@ multi sub MAIN(
 
     # compute basic stats about the transaction journal
     %txninfo<count> = @txn.elems;
-    %txninfo<entities_seen> = get_entities_seen(@txn);
+    %txninfo<entities-seen> = get-entities-seen(@txn);
 
     # serialize .TXNINFO to JSON
     use JSON::Tiny;
-    spurt $txninfo_file, to-json(%txninfo) ~ "\n";
+    spurt $txninfo-file, to-json(%txninfo) ~ "\n";
 
     say "Creating txn \"%txninfo<name>\"...";
 
     # serialize transactions to JSON
-    spurt $txn_file, to-json(@txn) ~ "\n";
+    spurt $txn-file, to-json(@txn) ~ "\n";
 
     # compress
     my Str $tarball =
         "%txninfo<name>-%txninfo<version>-%txninfo<release>\.txn.tar.xz";
     shell "tar \\
-             -C $build_dir \\
+             -C $build-dir \\
              --xz \\
              -cvf $tarball \\
-             {$txninfo_file.IO.basename} {$txn_file.IO.basename}";
+             {$txninfo-file.IO.basename} {$txn-file.IO.basename}";
 
     say "Finished making: %txninfo<name> ",
         "%txninfo<version>-%txninfo<release> ($dt)";
@@ -109,8 +109,8 @@ multi sub MAIN(
     say "Cleaning up...";
 
     # clean up build directory
-    dir($build_dir)».unlink;
-    rmdir $build_dir;
+    dir($build-dir)».unlink;
+    rmdir $build-dir;
 }
 
 # serialize
@@ -145,7 +145,7 @@ multi sub MAIN('serialize', Str:D $file, Str:D :m(:$mode) = 'perl', *%opts)
 
 sub USAGE()
 {
-    my Str:D $help_text = q:to/EOF/;
+    my Str:D $help-text = q:to/EOF/;
     Usage:
       mktxn [--name=NAME]
             [--version=VERSION]
@@ -169,7 +169,7 @@ sub USAGE()
       -m, --mode=MODE
         the serialization format (json, perl)
     EOF
-    say $help_text.trim;
+    say $help-text.trim;
 }
 
 # vim: ft=perl6

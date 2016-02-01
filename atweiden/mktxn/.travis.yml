@@ -10,6 +10,9 @@ perl6:
 # sudo required for libxxhash installation
 sudo: required
 
+env:
+  - PATH=~/.rakudobrew/bin:~/.rakudobrew/moar-nom/install/share/perl6/site/bin:~/.rakudobrew/moar-nom/panda/bin:$PATH
+
 before_install:
   # install libxxhash into /usr/lib/libxxhash.so
   - curl https://codeload.github.com/Cyan4973/{xxHash}/{tar.gz}/{r42} -o "#1-#3.#2"
@@ -23,5 +26,5 @@ before_install:
   - cd $TRAVIS_BUILD_DIR
 
 install:
-  - rakudobrew build-panda
+  - rakudobrew build panda
   - panda --notests installdeps .

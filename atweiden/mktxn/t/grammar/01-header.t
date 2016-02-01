@@ -18,13 +18,13 @@ subtest
         Q{2014-01-01T08:48:00.99999-07:00};
         Q{2014-01-01T08:48:00.99999};
 
-    sub is_valid_date(Str:D $date) returns Bool:D
+    sub is-valid-date(Str:D $date) returns Bool:D
     {
         TXN::Parser::Grammar.parse($date, :rule<date>).so;
     }
 
     ok(
-        @dates.grep({is_valid_date($_)}).elems == @dates.elems,
+        @dates.grep({is-valid-date($_)}).elems == @dates.elems,
         q:to/EOF/
         ♪ [Grammar.parse($date, :rule<date>)] - 1 of 8
         ┏━━━━━━━━━━━━━┓
@@ -44,7 +44,7 @@ subtest
     my Str @metainfo =
         Q{@tag1 ! @TAG2 !! @TAG5 @bliss !!!!!},
         Q{@"∅" !! @96 !!!!};
-    my Str $metainfo_multiline = Q:to/EOF/;
+    my Str $metainfo-multiline = Q:to/EOF/;
     !!!# comment
     @tag1 # comment
     # comment
@@ -53,15 +53,15 @@ subtest
     @tag3#comment
     !!!!!
     EOF
-    push @metainfo, $metainfo_multiline.trim;
+    push @metainfo, $metainfo-multiline.trim;
 
-    sub is_valid_metainfo(Str:D $metainfo) returns Bool:D
+    sub is-valid-metainfo(Str:D $metainfo) returns Bool:D
     {
         TXN::Parser::Grammar.parse($metainfo, :rule<metainfo>).so;
     }
 
     ok(
-        @metainfo.grep({is_valid_metainfo($_)}).elems == @metainfo.elems,
+        @metainfo.grep({is-valid-metainfo($_)}).elems == @metainfo.elems,
         q:to/EOF/
         ♪ [Grammar.parse($metainfo, :rule<metainfo>)] - 2 of 8
         ┏━━━━━━━━━━━━━┓
@@ -83,21 +83,21 @@ subtest
         Q{"""Transaction\nDescription"""},
         Q{'Transaction Description\'};
         Q{'''Transaction Description\'''};
-    my Str $description_multiline = Q:to/EOF/;
+    my Str $description-multiline = Q:to/EOF/;
     """
     Multiline description line one. \
     Multiline description line two.
     """
     EOF
-    push @descriptions, $description_multiline.trim;
+    push @descriptions, $description-multiline.trim;
 
-    sub is_valid_description(Str:D $description) returns Bool:D
+    sub is-valid-description(Str:D $description) returns Bool:D
     {
         TXN::Parser::Grammar.parse($description, :rule<description>).so;
     }
 
     ok(
-        @descriptions.grep({is_valid_description($_)}).elems ==
+        @descriptions.grep({is-valid-description($_)}).elems ==
             @descriptions.elems,
         q:to/EOF/
         ♪ [Grammar.parse($description, :rule<description>)] - 3 of 8
@@ -126,7 +126,7 @@ subtest
 
     push @headers, qq{2014-01-03 "I bought ฿0.80000000 BTC for 800 USD#@*!%"\n};
 
-    my Str $header_multiline = Q:to/EOF/;
+    my Str $header-multiline = Q:to/EOF/;
     2014-05-09# comment
     # comment
     @tag1 @tag2 @tag3 !!!# comment
@@ -197,7 +197,7 @@ subtest
     );
 
     is(
-        TXN::Parser::Grammar.parse($header_multiline, :rule<header>).WHAT,
+        TXN::Parser::Grammar.parse($header-multiline, :rule<header>).WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 8 of 8

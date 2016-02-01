@@ -93,40 +93,40 @@ to JSON.
   {
     "drift": 0,
     "entity": "VarName",
-    "entry_id": {
+    "entry-id": {
       "number": 0,
       "xxhash": 5555555,
       "text": "capture entry"
     },
-    "mod_holdings": {
+    "mod-holdings": {
       "AssetCode": {
         "entity": "VarName",
-        "asset_code": "AssetCode",
-        "asset_flow": "AssetFlow",
+        "asset-code": "AssetCode",
+        "asset-flow": "AssetFlow",
         "costing": "Costing",
         "date": "DateTime",
         "price": 5.55,
-        "acquisition_price_asset_code": "AssetCode",
+        "acquisition-price-asset-code": "AssetCode",
         "quantity": 5.5555555
       }
     },
-    "mod_wallet": [
+    "mod-wallet": [
       {
         "silo": "SILO",
         "entity": "VarName",
         "subwallet": [ "VarName" ],
-        "asset_code": "AssetCode",
+        "asset-code": "AssetCode",
         "decinc": "DecInc",
         "quantity": 5.5555555,
-        "xe_asset_code": "",
-        "xe_asset_quantity": "",
-        "entry_id": {
+        "xe-asset-code": "",
+        "xe-asset-quantity": "",
+        "entry-id": {
           "number": 0,
           "xxhash": 5555555,
           "text": "capture entry"
         },
-        "posting_id": {
-          "entry_id": {
+        "posting-id": {
+          "entry-id": {
             "number": 0,
             "xxhash": 5555555,
             "text": "capture entry"

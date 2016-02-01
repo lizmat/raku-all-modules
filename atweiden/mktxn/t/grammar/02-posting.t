@@ -26,13 +26,13 @@ subtest
         Q{EqUItY:"Moon Crow"},
         Q{EQUITY.Business};
 
-    sub is_valid_account(Str:D $account) returns Bool:D
+    sub is-valid-account(Str:D $account) returns Bool:D
     {
         TXN::Parser::Grammar.parse($account, :rule<account>).so;
     }
 
     ok(
-        @accounts.grep({is_valid_account($_)}).elems == @accounts.elems,
+        @accounts.grep({is-valid-account($_)}).elems == @accounts.elems,
         q:to/EOF/
         ♪ [Grammar.parse($account, :rule<account>)] - 1 of 9
         ┏━━━━━━━━━━━━━┓
@@ -51,21 +51,21 @@ subtest
 
 subtest
 {
-    my Str @plus_or_minus = Q{+}, Q{-};
+    my Str @plus-or-minus = Q{+}, Q{-};
 
-    sub is_valid_plus_or_minus(Str:D $plus_or_minus) returns Bool:D
+    sub is-valid-plus-or-minus(Str:D $plus-or-minus) returns Bool:D
     {
         TXN::Parser::Grammar.parse(
-            $plus_or_minus,
-            :rule<plus_or_minus>
+            $plus-or-minus,
+            :rule<plus-or-minus>
         ).so;
     }
 
     ok(
-        @plus_or_minus.grep({is_valid_plus_or_minus($_)}).elems ==
-            @plus_or_minus.elems,
+        @plus-or-minus.grep({is-valid-plus-or-minus($_)}).elems ==
+            @plus-or-minus.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($plus_or_minus, :rule<plus_or_minus>)] - 2 of 9
+        ♪ [Grammar.parse($plus-or-minus, :rule<plus-or-minus>)] - 2 of 9
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Plus / Minus signs validate successfully, as
         ┃   Success   ┃    expected.
@@ -81,103 +81,103 @@ subtest
 subtest
 {
     # asset code and symbol, indexed by name
-    my List %asset_code_symbol{Str} =
+    my List %asset-code-symbol{Str} =
         bitcoin                        => Qw{BTC ฿},
         litecoin                       => Qw{LTC Ł},
-        us_dollar                      => Qw{USD $},
+        us-dollar                      => Qw{USD $},
         euro                           => Qw{EUR €},
-        british_pound                  => Qw{GBP £},
-        indian_rupee                   => Qw{INR ₹},
-        australian_dollar              => Qw{AUD $},
-        canadian_dollar                => Qw{CAD $},
-        singapore_dollar               => Qw{SGD $},
-        swiss_franc                    => Qw{CHF CHF},
-        malaysian_ringgit              => Qw{MYR RM},
-        japanese_yen                   => Qw{JPY ¥},
-        chinese_yuan_renminbi          => Qw{CNY ¥},
-        new_zealand_dollar             => Qw{NZD $},
-        thai_baht                      => Qw{THB ฿},
-        hungarian_forint               => Qw{HUF Ft},
-        emirati_dirham                 => Qw{AED د.إ},
-        hong_kong_dollar               => Qw{HKD HK$},
-        mexican_peso                   => Qw{MXN $},
-        south_african_rand             => Qw{ZAR R},
-        philippine_peso                => Qw{PHP ₱},
-        swedish_krona                  => Qw{SEK kr},
-        indonesian_rupiah              => Qw{IDR Rp},
-        saudi_arabian_riyal            => Qw{SAR ﷼},
-        brazilian_real                 => Qw{BRL R$},
-        turkish_lira                   => Qw{TRY TRY},
-        kenyan_shilling                => Qw{KES KSh},
-        south_korean_won               => Qw{KRW ₩},
-        egyptian_pound                 => Qw{EGP £},
-        iraqi_dinar                    => Qw{IQD د.ع},
-        norwegian_krone                => Qw{NOK kr},
-        kuwaiti_dinar                  => Qw{KWD ك},
-        russian_ruble                  => Qw{RUB руб},
-        danish_krone                   => Qw{DKK kr},
-        pakistani_rupee                => Qw{PKR ₨},
-        israeli_shekel                 => Qw{ILS ₪},
-        polish_zloty                   => Qw{PLN zł},
-        qatari_riyal                   => Qw{QAR ﷼},
-        gold_ounce                     => Qw{XAU XAU},
-        omani_rial                     => Qw{OMR ﷼},
-        colombian_peso                 => Qw{COP $},
-        chilean_peso                   => Qw{CLP $},
-        taiwan_new_dollar              => Qw{TWD NT$},
-        argentine_peso                 => Qw{ARS $},
-        czech_koruna                   => Qw{CZK Kč},
-        vietnamese_dong                => Qw{VND ₫},
-        moroccan_dirham                => Qw{MAD MAD},
-        jordanian_dinar                => Qw{JOD JOD},
-        bahraini_dinar                 => Qw{BHD BD},
-        cfa_franc                      => Qw{XOF XOF},
-        sri_lankan_rupee               => Qw{LKR ₨},
-        ukrainian_hryvnia              => Qw{UAH ₴},
-        nigerian_naira                 => Qw{NGN ₦},
-        tunisian_dinar                 => Qw{TND TND},
-        ugandan_shilling               => Qw{UGX UGX},
-        romanian_new_leu               => Qw{RON lei},
-        bangladeshi_taka               => Qw{BDT Tk},
-        peruvian_nuevo_sol             => Qw{PEN S/.},
-        georgian_lari                  => Qw{GEL GEL},
-        central_african_cfa_franc_beac => Qw{XAF XAF},
-        fijian_dollar                  => Qw{FJD $},
-        venezuelan_bolivar             => Qw{VEF Bs.},
-        belarusian_ruble               => Qw{BYR p.},
-        croatian_kuna                  => Qw{HRK kn},
-        uzbekistani_som                => Qw{UZS лв},
-        bulgarian_lev                  => Qw{BGN лв},
-        algerian_dinar                 => Qw{DZD DZD},
-        iranian_rial                   => Qw{IRR ﷼},
-        dominican_peso                 => Qw{DOP RD$},
-        icelandic_krona                => Qw{ISK kr},
-        silver_ounce                   => Qw{XAG XAG},
-        costa_rican_colon              => Qw{CRC ₡};
+        british-pound                  => Qw{GBP £},
+        indian-rupee                   => Qw{INR ₹},
+        australian-dollar              => Qw{AUD $},
+        canadian-dollar                => Qw{CAD $},
+        singapore-dollar               => Qw{SGD $},
+        swiss-franc                    => Qw{CHF CHF},
+        malaysian-ringgit              => Qw{MYR RM},
+        japanese-yen                   => Qw{JPY ¥},
+        chinese-yuan-renminbi          => Qw{CNY ¥},
+        new-zealand-dollar             => Qw{NZD $},
+        thai-baht                      => Qw{THB ฿},
+        hungarian-forint               => Qw{HUF Ft},
+        emirati-dirham                 => Qw{AED د.إ},
+        hong-kong-dollar               => Qw{HKD HK$},
+        mexican-peso                   => Qw{MXN $},
+        south-african-rand             => Qw{ZAR R},
+        philippine-peso                => Qw{PHP ₱},
+        swedish-krona                  => Qw{SEK kr},
+        indonesian-rupiah              => Qw{IDR Rp},
+        saudi-arabian-riyal            => Qw{SAR ﷼},
+        brazilian-real                 => Qw{BRL R$},
+        turkish-lira                   => Qw{TRY TRY},
+        kenyan-shilling                => Qw{KES KSh},
+        south-korean-won               => Qw{KRW ₩},
+        egyptian-pound                 => Qw{EGP £},
+        iraqi-dinar                    => Qw{IQD د.ع},
+        norwegian-krone                => Qw{NOK kr},
+        kuwaiti-dinar                  => Qw{KWD ك},
+        russian-ruble                  => Qw{RUB руб},
+        danish-krone                   => Qw{DKK kr},
+        pakistani-rupee                => Qw{PKR ₨},
+        israeli-shekel                 => Qw{ILS ₪},
+        polish-zloty                   => Qw{PLN zł},
+        qatari-riyal                   => Qw{QAR ﷼},
+        gold-ounce                     => Qw{XAU XAU},
+        omani-rial                     => Qw{OMR ﷼},
+        colombian-peso                 => Qw{COP $},
+        chilean-peso                   => Qw{CLP $},
+        taiwan-new-dollar              => Qw{TWD NT$},
+        argentine-peso                 => Qw{ARS $},
+        czech-koruna                   => Qw{CZK Kč},
+        vietnamese-dong                => Qw{VND ₫},
+        moroccan-dirham                => Qw{MAD MAD},
+        jordanian-dinar                => Qw{JOD JOD},
+        bahraini-dinar                 => Qw{BHD BD},
+        cfa-franc                      => Qw{XOF XOF},
+        sri-lankan-rupee               => Qw{LKR ₨},
+        ukrainian-hryvnia              => Qw{UAH ₴},
+        nigerian-naira                 => Qw{NGN ₦},
+        tunisian-dinar                 => Qw{TND TND},
+        ugandan-shilling               => Qw{UGX UGX},
+        romanian-new-leu               => Qw{RON lei},
+        bangladeshi-taka               => Qw{BDT Tk},
+        peruvian-nuevo-sol             => Qw{PEN S/.},
+        georgian-lari                  => Qw{GEL GEL},
+        central-african-cfa-franc-beac => Qw{XAF XAF},
+        fijian-dollar                  => Qw{FJD $},
+        venezuelan-bolivar             => Qw{VEF Bs.},
+        belarusian-ruble               => Qw{BYR p.},
+        croatian-kuna                  => Qw{HRK kn},
+        uzbekistani-som                => Qw{UZS лв},
+        bulgarian-lev                  => Qw{BGN лв},
+        algerian-dinar                 => Qw{DZD DZD},
+        iranian-rial                   => Qw{IRR ﷼},
+        dominican-peso                 => Qw{DOP RD$},
+        icelandic-krona                => Qw{ISK kr},
+        silver-ounce                   => Qw{XAG XAG},
+        costa-rican-colon              => Qw{CRC ₡};
 
-    my Str @quoted_asset_codes =
+    my Str @quoted-asset-codes =
         Q{"Honda S2000 VIN JHLRE4H73AC092103"},
         Q{"The House at 178 Blue Kodiak Trail"},
         Q{"Widget:Bobblehead #88"};
 
-    sub is_valid_asset_code(Str:D $asset_code) returns Bool:D
+    sub is-valid-asset-code(Str:D $asset-code) returns Bool:D
     {
-        TXN::Parser::Grammar.parse($asset_code, :rule<asset_code>).so;
+        TXN::Parser::Grammar.parse($asset-code, :rule<asset-code>).so;
     }
 
-    sub is_valid_asset_symbol(Str:D $asset_symbol) returns Bool:D
+    sub is-valid-asset-symbol(Str:D $asset-symbol) returns Bool:D
     {
         TXN::Parser::Grammar.parse(
-            $asset_symbol,
-            :rule<asset_symbol>
+            $asset-symbol,
+            :rule<asset-symbol>
         ).so;
     }
 
     ok(
-        %asset_code_symbol.grep({is_valid_asset_code(.values[0][0])}).elems ==
-            %asset_code_symbol.elems,
+        %asset-code-symbol.grep({is-valid-asset-code(.values[0][0])}).elems ==
+            %asset-code-symbol.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($asset_code, :rule<asset_code>)] - 3 of 9
+        ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 3 of 9
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Asset codes validate successfully, as
         ┃   Success   ┃    expected.
@@ -187,10 +187,10 @@ subtest
     );
 
     ok(
-        %asset_code_symbol.grep({is_valid_asset_symbol(.values[0][1])}).elems ==
-            %asset_code_symbol.elems,
+        %asset-code-symbol.grep({is-valid-asset-symbol(.values[0][1])}).elems ==
+            %asset-code-symbol.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($asset_symbol, :rule<asset_symbol>)] - 4 of 9
+        ♪ [Grammar.parse($asset-symbol, :rule<asset-symbol>)] - 4 of 9
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Asset symbols validate successfully, as
         ┃   Success   ┃    expected.
@@ -200,10 +200,10 @@ subtest
     );
 
     ok(
-        @quoted_asset_codes.grep({is_valid_asset_code($_)}).elems ==
-            @quoted_asset_codes.elems,
+        @quoted-asset-codes.grep({is-valid-asset-code($_)}).elems ==
+            @quoted-asset-codes.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($asset_code, :rule<asset_code>)] - 5 of 9
+        ♪ [Grammar.parse($asset-code, :rule<asset-code>)] - 5 of 9
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Quoted asset codes validate successfully, as
         ┃   Success   ┃    expected.
@@ -218,25 +218,25 @@ subtest
 
 subtest
 {
-    my Str @asset_quantities =
+    my Str @asset-quantities =
         Q{10000},
         Q{10_000},
         Q{10_000.00},
         Q{9_8_7_6_5.4_3_2_1_0};
 
-    sub is_valid_asset_quantity(Str:D $asset_quantity) returns Bool:D
+    sub is-valid-asset-quantity(Str:D $asset-quantity) returns Bool:D
     {
         TXN::Parser::Grammar.parse(
-            $asset_quantity,
-            :rule<asset_quantity>
+            $asset-quantity,
+            :rule<asset-quantity>
         ).so;
     }
 
     ok(
-        @asset_quantities.grep({is_valid_asset_quantity($_)}).elems ==
-            @asset_quantities.elems,
+        @asset-quantities.grep({is-valid-asset-quantity($_)}).elems ==
+            @asset-quantities.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($asset_quantity, :rule<asset_quantity>)] - 6 of 9
+        ♪ [Grammar.parse($asset-quantity, :rule<asset-quantity>)] - 6 of 9
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Asset quantities validate successfully, as
         ┃   Success   ┃    expected.
@@ -251,7 +251,7 @@ subtest
 
 subtest
 {
-    my Str @exchange_rates =
+    my Str @exchange-rates =
         Q{@ 10_000 USD},
         Q{@ USD 10_000},
         Q{@ $10_000.99 USD},
@@ -301,19 +301,19 @@ subtest
         Q{@ د.ع5000.99 IQD},
         Q{@ IQD د.ع5000.99};
 
-    sub is_valid_exchange_rate(Str:D $exchange_rate) returns Bool:D
+    sub is-valid-exchange-rate(Str:D $exchange-rate) returns Bool:D
     {
         TXN::Parser::Grammar.parse(
-            $exchange_rate,
-            :rule<exchange_rate>
+            $exchange-rate,
+            :rule<exchange-rate>
         ).so;
     }
 
     ok(
-        @exchange_rates.grep({is_valid_exchange_rate($_)}).elems ==
-            @exchange_rates.elems,
+        @exchange-rates.grep({is-valid-exchange-rate($_)}).elems ==
+            @exchange-rates.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($exchange_rate, :rule<exchange_rate>)] - 7 of 9
+        ♪ [Grammar.parse($exchange-rate, :rule<exchange-rate>)] - 7 of 9
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Exchange rates validate successfully, as
         ┃   Success   ┃    expected.
@@ -366,13 +366,13 @@ subtest
         Q{BTC +฿100.00},
         Q{BTC +฿1_0_0.0_0};
 
-    sub is_valid_amount(Str:D $amount) returns Bool:D
+    sub is-valid-amount(Str:D $amount) returns Bool:D
     {
         TXN::Parser::Grammar.parse($amount, :rule<amount>).so;
     }
 
     ok(
-        @amounts.grep({is_valid_amount($_)}).elems == @amounts.elems,
+        @amounts.grep({is-valid-amount($_)}).elems == @amounts.elems,
         q:to/EOF/
         ♪ [Grammar.parse($amount, :rule<amount>)] - 8 of 9
         ┏━━━━━━━━━━━━━┓
@@ -396,13 +396,13 @@ subtest
         Q{Assets:Personal:FirstBank +฿1_000_000.00 USD},
         Q{Expenses:Business:Cats:Food      Ł5.99 LTC};
 
-    sub is_valid_posting(Str:D $posting) returns Bool:D
+    sub is-valid-posting(Str:D $posting) returns Bool:D
     {
         TXN::Parser::Grammar.parse($posting, :rule<posting>).so;
     }
 
     ok(
-        @postings.grep({is_valid_posting($_)}).elems == @postings.elems,
+        @postings.grep({is-valid-posting($_)}).elems == @postings.elems,
         q:to/EOF/
         ♪ [Grammar.parse($amount, :rule<amount>)] - 9 of 9
         ┏━━━━━━━━━━━━━┓

@@ -6,7 +6,7 @@ sub emit(Str:D $journal, Int :$date-local-offset, Bool :$json)
 {
     # perform parse with given options
     my %a;
-    %a<date_local_offset> = $date-local-offset if $date-local-offset;
+    %a<date-local-offset> = $date-local-offset if $date-local-offset;
     %a<json> = $json if $json;
     my @txn = TXN::Parser.parse($journal, |%a).made;
 
@@ -31,7 +31,7 @@ multi sub from-txn(
     my Str:D $journal = TXN::Parser.preprocess($content);
 
     my %a;
-    %a<date_local_offset> = $date-local-offset if $date-local-offset;
+    %a<date-local-offset> = $date-local-offset if $date-local-offset;
     %a<json> = $json if $json;
 
     emit($journal, |%a);
@@ -47,7 +47,7 @@ multi sub from-txn(
     my Str:D $journal = TXN::Parser.preprocess(:$file);
 
     my %a;
-    %a<date_local_offset> = $date-local-offset if $date-local-offset;
+    %a<date-local-offset> = $date-local-offset if $date-local-offset;
     %a<json> = $json if $json;
 
     emit($journal, |%a);

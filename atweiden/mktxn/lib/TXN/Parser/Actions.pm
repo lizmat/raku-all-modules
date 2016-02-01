@@ -5,7 +5,7 @@ unit class TXN::Parser::Actions;
 
 # DateTime offset for when the local offset is omitted in dates. if
 # not passed as a parameter during instantiation, use UTC
-has Int $.date_local_offset = 0;
+has Int $.date-local-offset = 0;
 
 # if json output expected, stringify DateTimes
 has Bool $.json = False;
@@ -16,12 +16,12 @@ subset Quantity of FatRat where * >= 0;
 
 # --- string basic grammar-actions {{{
 
-method string_basic_char:common ($/)
+method string-basic-char:common ($/)
 {
     make ~$/;
 }
 
-method string_basic_char:tab ($/)
+method string-basic-char:tab ($/)
 {
     make ~$/;
 }
@@ -71,102 +71,102 @@ method escape:sym<U>($/)
     make chr :16(@<hex>.join);
 }
 
-method string_basic_char:escape_sequence ($/)
+method string-basic-char:escape-sequence ($/)
 {
     make $<escape>.made;
 }
 
-method string_basic_text($/)
+method string-basic-text($/)
 {
-    make @<string_basic_char>».made.join;
+    make @<string-basic-char>».made.join;
 }
 
-method string_basic($/)
+method string-basic($/)
 {
-    make $<string_basic_text> ?? $<string_basic_text>.made !! "";
+    make $<string-basic-text> ?? $<string-basic-text>.made !! "";
 }
 
-method string_basic_multiline_char:common ($/)
-{
-    make ~$/;
-}
-
-method string_basic_multiline_char:tab ($/)
+method string-basic-multiline-char:common ($/)
 {
     make ~$/;
 }
 
-method string_basic_multiline_char:newline ($/)
+method string-basic-multiline-char:tab ($/)
 {
     make ~$/;
 }
 
-method string_basic_multiline_char:escape_sequence ($/)
+method string-basic-multiline-char:newline ($/)
+{
+    make ~$/;
+}
+
+method string-basic-multiline-char:escape-sequence ($/)
 {
     if $<escape>
     {
         make $<escape>.made;
     }
-    elsif $<ws_remover>
+    elsif $<ws-remover>
     {
         make "";
     }
 }
 
-method string_basic_multiline_text($/)
+method string-basic-multiline-text($/)
 {
-    make @<string_basic_multiline_char>».made.join;
+    make @<string-basic-multiline-char>».made.join;
 }
 
-method string_basic_multiline($/)
+method string-basic-multiline($/)
 {
-    make $<string_basic_multiline_text>
-        ?? $<string_basic_multiline_text>.made
+    make $<string-basic-multiline-text>
+        ?? $<string-basic-multiline-text>.made
         !! "";
 }
 
 # --- end string basic grammar-actions }}}
 # --- string literal grammar-actions {{{
 
-method string_literal_char:common ($/)
+method string-literal-char:common ($/)
 {
     make ~$/;
 }
 
-method string_literal_char:backslash ($/)
+method string-literal-char:backslash ($/)
 {
     make '\\';
 }
 
-method string_literal_text($/)
+method string-literal-text($/)
 {
-    make @<string_literal_char>».made.join;
+    make @<string-literal-char>».made.join;
 }
 
-method string_literal($/)
+method string-literal($/)
 {
-    make $<string_literal_text> ?? $<string_literal_text>.made !! "";
+    make $<string-literal-text> ?? $<string-literal-text>.made !! "";
 }
 
-method string_literal_multiline_char:common ($/)
+method string-literal-multiline-char:common ($/)
 {
     make ~$/;
 }
 
-method string_literal_multiline_char:backslash ($/)
+method string-literal-multiline-char:backslash ($/)
 {
     make '\\';
 }
 
-method string_literal_multiline_text($/)
+method string-literal-multiline-text($/)
 {
-    make @<string_literal_multiline_char>».made.join;
+    make @<string-literal-multiline-char>».made.join;
 }
 
-method string_literal_multiline($/)
+method string-literal-multiline($/)
 {
-    make $<string_literal_multiline_text>
-        ?? $<string_literal_multiline_text>.made
+    make $<string-literal-multiline-text>
+        ?? $<string-literal-multiline-text>.made
         !! "";
 }
 
@@ -174,44 +174,44 @@ method string_literal_multiline($/)
 
 method string:basic ($/)
 {
-    make $<string_basic>.made;
+    make $<string-basic>.made;
 }
 
-method string:basic_multi ($/)
+method string:basic-multi ($/)
 {
-    make $<string_basic_multiline>.made;
+    make $<string-basic-multiline>.made;
 }
 
 method string:literal ($/)
 {
-    make $<string_literal>.made;
+    make $<string-literal>.made;
 }
 
-method string:literal_multi ($/)
+method string:literal-multi ($/)
 {
-    make $<string_literal_multiline>.made;
+    make $<string-literal-multiline>.made;
 }
 
 # end string grammar-actions }}}
 # number grammar-actions {{{
 
-method integer_unsigned($/)
+method integer-unsigned($/)
 {
     # ensure integers are coerced to type FatRat
     make FatRat(+$/);
 }
 
-method float_unsigned($/)
+method float-unsigned($/)
 {
     make FatRat(+$/);
 }
 
-method plus_or_minus:sym<+>($/)
+method plus-or-minus:sym<+>($/)
 {
     make ~$/;
 }
 
-method plus_or_minus:sym<->($/)
+method plus-or-minus:sym<->($/)
 {
     make ~$/;
 }
@@ -219,158 +219,158 @@ method plus_or_minus:sym<->($/)
 # end number grammar-actions }}}
 # datetime grammar-actions {{{
 
-method date_fullyear($/)
+method date-fullyear($/)
 {
     make Int(+$/);
 }
 
-method date_month($/)
+method date-month($/)
 {
     make Int(+$/);
 }
 
-method date_mday($/)
+method date-mday($/)
 {
     make Int(+$/);
 }
 
-method time_hour($/)
+method time-hour($/)
 {
     make Int(+$/);
 }
 
-method time_minute($/)
+method time-minute($/)
 {
     make Int(+$/);
 }
 
-method time_second($/)
+method time-second($/)
 {
     make Rat(+$/);
 }
 
-method time_secfrac($/)
+method time-secfrac($/)
 {
     make Rat(+$/);
 }
 
-method time_numoffset($/)
+method time-numoffset($/)
 {
-    my Int $multiplier = $<plus_or_minus> ~~ '+' ?? 1 !! -1;
+    my Int $multiplier = $<plus-or-minus> ~~ '+' ?? 1 !! -1;
     make Int(
         (
-            ($multiplier * $<time_hour>.made * 60) + $<time_minute>.made
+            ($multiplier * $<time-hour>.made * 60) + $<time-minute>.made
         )
         * 60
     );
 }
 
-method time_offset($/)
+method time-offset($/)
 {
-    make $<time_numoffset> ?? Int($<time_numoffset>.made) !! 0;
+    make $<time-numoffset> ?? Int($<time-numoffset>.made) !! 0;
 }
 
-method partial_time($/)
+method partial-time($/)
 {
-    my Rat $second = Rat($<time_second>.made);
+    my Rat $second = Rat($<time-second>.made);
     my Bool $subseconds = False;
 
-    if $<time_secfrac>
+    if $<time-secfrac>
     {
-        $second += Rat($<time_secfrac>.made);
+        $second += Rat($<time-secfrac>.made);
         $subseconds = True;
     }
 
     make %(
-        :hour(Int($<time_hour>.made)),
-        :minute(Int($<time_minute>.made)),
+        :hour(Int($<time-hour>.made)),
+        :minute(Int($<time-minute>.made)),
         :$second,
         :$subseconds
     );
 }
 
-method full_date($/)
+method full-date($/)
 {
     make %(
-        :year(Int($<date_fullyear>.made)),
-        :month(Int($<date_month>.made)),
-        :day(Int($<date_mday>.made))
+        :year(Int($<date-fullyear>.made)),
+        :month(Int($<date-month>.made)),
+        :day(Int($<date-mday>.made))
     );
 }
 
-method full_time($/)
+method full-time($/)
 {
     make %(
-        :hour(Int($<partial_time>.made<hour>)),
-        :minute(Int($<partial_time>.made<minute>)),
-        :second(Rat($<partial_time>.made<second>)),
-        :subseconds(Bool($<partial_time>.made<subseconds>)),
-        :timezone(Int($<time_offset>.made))
+        :hour(Int($<partial-time>.made<hour>)),
+        :minute(Int($<partial-time>.made<minute>)),
+        :second(Rat($<partial-time>.made<second>)),
+        :subseconds(Bool($<partial-time>.made<subseconds>)),
+        :timezone(Int($<time-offset>.made))
     );
 }
 
-method date_time_omit_local_offset($/)
+method date-time-omit-local-offset($/)
 {
     make DateTime.new(
-        :year(Int($<full_date>.made<year>)),
-        :month(Int($<full_date>.made<month>)),
-        :day(Int($<full_date>.made<day>)),
-        :hour(Int($<partial_time>.made<hour>)),
-        :minute(Int($<partial_time>.made<minute>)),
-        :second(Rat($<partial_time>.made<second>)),
-        :timezone($.date_local_offset)
+        :year(Int($<full-date>.made<year>)),
+        :month(Int($<full-date>.made<month>)),
+        :day(Int($<full-date>.made<day>)),
+        :hour(Int($<partial-time>.made<hour>)),
+        :minute(Int($<partial-time>.made<minute>)),
+        :second(Rat($<partial-time>.made<second>)),
+        :timezone($.date-local-offset)
     );
 }
 
-method date_time($/)
+method date-time($/)
 {
     make DateTime.new(
-        :year(Int($<full_date>.made<year>)),
-        :month(Int($<full_date>.made<month>)),
-        :day(Int($<full_date>.made<day>)),
-        :hour(Int($<full_time>.made<hour>)),
-        :minute(Int($<full_time>.made<minute>)),
-        :second(Rat($<full_time>.made<second>)),
-        :timezone(Int($<full_time>.made<timezone>))
+        :year(Int($<full-date>.made<year>)),
+        :month(Int($<full-date>.made<month>)),
+        :day(Int($<full-date>.made<day>)),
+        :hour(Int($<full-time>.made<hour>)),
+        :minute(Int($<full-time>.made<minute>)),
+        :second(Rat($<full-time>.made<second>)),
+        :timezone(Int($<full-time>.made<timezone>))
     );
 }
 
-method date:full_date ($/)
+method date:full-date ($/)
 {
-    make DateTime.new(|$<full_date>.made, :timezone($.date_local_offset));
+    make DateTime.new(|$<full-date>.made, :timezone($.date-local-offset));
 }
 
-method date:date_time_omit_local_offset ($/)
+method date:date-time-omit-local-offset ($/)
 {
-    make $<date_time_omit_local_offset>.made;
+    make $<date-time-omit-local-offset>.made;
 }
 
-method date:date_time ($/)
+method date:date-time ($/)
 {
-    make $<date_time>.made;
+    make $<date-time>.made;
 }
 
 # end datetime grammar-actions }}}
 # variable name grammar-actions {{{
 
-method var_name:bare ($/)
+method var-name:bare ($/)
 {
     make ~$/;
 }
 
-method var_name_string_basic($/)
+method var-name-string:basic ($/)
 {
-    make $<string_basic_text>.made;
+    make $<string-basic-text>.made;
 }
 
-method var_name:quoted ($/)
+method var-name-string:literal ($/)
 {
-    make $<var_name_string_basic>.made;
+    make $<string-literal-text>.made;
 }
 
-method var_name_string_literal($/)
+method var-name:quoted ($/)
 {
-    make $<string_literal_text>.made;
+    make $<var-name-string>.made;
 }
 
 # end variable name grammar-actions }}}
@@ -385,7 +385,7 @@ method important($/)
 method tag($/)
 {
     # make tag (with leading @ stripped)
-    make $<var_name>.made;
+    make $<var-name>.made;
 }
 
 method meta:important ($/)
@@ -438,9 +438,9 @@ method header($/)
 
 # --- posting account grammar-actions {{{
 
-method acct_name($/)
+method acct-name($/)
 {
-    make @<var_name>».made;
+    make @<var-name>».made;
 }
 
 method silo:assets ($/)
@@ -479,7 +479,7 @@ method account($/)
     %account<entity> = $<entity>.made;
 
     # subaccount
-    %account<subaccount> = $<account_sub>.made if $<account_sub>;
+    %account<subaccount> = $<account-sub>.made if $<account-sub>;
 
     # make account
     make %account;
@@ -488,48 +488,48 @@ method account($/)
 # --- end posting account grammar-actions }}}
 # --- posting amount grammar-actions {{{
 
-method asset_code:bare ($/)
+method asset-code:bare ($/)
 {
     make ~$/;
 }
 
-method asset_code:quoted ($/)
+method asset-code:quoted ($/)
 {
-    make $<var_name_string_basic>.made;
+    make $<var-name-string>.made;
 }
 
-method asset_symbol($/)
+method asset-symbol($/)
 {
     make ~$/;
 }
 
-method asset_quantity:integer ($/)
+method asset-quantity:integer ($/)
 {
-    make $<integer_unsigned>.made;
+    make $<integer-unsigned>.made;
 }
 
-method asset_quantity:float ($/)
+method asset-quantity:float ($/)
 {
-    make $<float_unsigned>.made;
+    make $<float-unsigned>.made;
 }
 
 method xe($/)
 {
     # asset code
-    my Str $asset_code = $<asset_code>.made;
+    my Str $asset-code = $<asset-code>.made;
 
     # asset quantity
-    my Quantity $asset_quantity = $<asset_quantity>.made;
+    my Quantity $asset-quantity = $<asset-quantity>.made;
 
     # asset symbol
-    my Str $asset_symbol = '';
-    $asset_symbol = $<asset_symbol>.made if $<asset_symbol>;
+    my Str $asset-symbol = '';
+    $asset-symbol = $<asset-symbol>.made if $<asset-symbol>;
 
     # make exchange rate
-    make %(:$asset_code, :$asset_quantity, :$asset_symbol);
+    make %(:$asset-code, :$asset-quantity, :$asset-symbol);
 }
 
-method exchange_rate($/)
+method exchange-rate($/)
 {
     make $<xe>.made;
 }
@@ -537,30 +537,30 @@ method exchange_rate($/)
 method amount($/)
 {
     # asset code
-    my Str $asset_code = $<asset_code>.made;
+    my Str $asset-code = $<asset-code>.made;
 
     # asset quantity
-    my Quantity $asset_quantity = $<asset_quantity>.made;
+    my Quantity $asset-quantity = $<asset-quantity>.made;
 
     # asset symbol
-    my Str $asset_symbol = '';
-    $asset_symbol = $<asset_symbol>.made if $<asset_symbol>;
+    my Str $asset-symbol = '';
+    $asset-symbol = $<asset-symbol>.made if $<asset-symbol>;
 
     # minus sign
-    my Str $plus_or_minus = '';
-    $plus_or_minus = $<plus_or_minus>.made if $<plus_or_minus>;
+    my Str $plus-or-minus = '';
+    $plus-or-minus = $<plus-or-minus>.made if $<plus-or-minus>;
 
     # exchange rate
-    my %exchange_rate;
-    %exchange_rate = $<exchange_rate>.made if $<exchange_rate>;
+    my %exchange-rate;
+    %exchange-rate = $<exchange-rate>.made if $<exchange-rate>;
 
     # make amount
     make %(
-        :$asset_code,
-        :$asset_quantity,
-        :$asset_symbol,
-        :$plus_or_minus,
-        :%exchange_rate
+        :$asset-code,
+        :$asset-quantity,
+        :$asset-symbol,
+        :$plus-or-minus,
+        :%exchange-rate
     );
 }
 
@@ -577,7 +577,7 @@ method posting($/)
     my %amount = $<amount>.made;
 
     # dec / inc
-    my Str $decinc = mkdecinc(%amount<plus_or_minus>);
+    my Str $decinc = mkdecinc(%amount<plus-or-minus>);
 
     # xxHash of transaction journal posting text
     my Int $xxhash = xxHash32($text);
@@ -586,27 +586,22 @@ method posting($/)
     make %(:%account, :%amount, :$decinc, :$text, :$xxhash);
 }
 
-method posting_line:content ($/)
+method posting-line:content ($/)
 {
     make $<posting>.made;
 }
 
 method postings($/)
 {
-    make @<posting_line>».made.grep(Hash);
+    make @<posting-line>».made.grep(Hash);
 }
 
 # end posting grammar-actions }}}
 # include grammar-actions {{{
 
-method filename:basic ($/)
+method filename($/)
 {
-    make $<var_name_string_basic>.made;
-}
-
-method filename:literal ($/)
-{
-    make $<var_name_string_literal>.made;
+    make $<var-name-string>.made;
 }
 
 method include($/)
@@ -627,7 +622,7 @@ method include($/)
     }
 }
 
-method include_line($/)
+method include-line($/)
 {
     make $<include>.made;
 }
@@ -653,7 +648,7 @@ method extends($/)
     }
 }
 
-method extends_line($/)
+method extends-line($/)
 {
     make $<extends>.made;
 }
@@ -682,8 +677,8 @@ method entry($/)
         {
             # error: invalid use of more than one entity per journal entry
             die X::TXN::Parser::Entry::MultipleEntities.new(
-                :number_entities(@entities.elems),
-                :entry_text($text)
+                :number-entities(@entities.elems),
+                :entry-text($text)
             );
         }
     }
@@ -702,18 +697,18 @@ method segment:entry ($/)
 
 method journal($/)
 {
-    my @entry_containers = @<segment>».made.grep(Hash);
+    my @entry-containers = @<segment>».made.grep(Hash);
 
     # increments on each entry (0+)
-    my Int $entry_number = 0;
+    my Int $entry-number = 0;
 
     # build entry containers
     my @entries;
-    for @entry_containers -> %entry
+    for @entry-containers -> %entry
     {
         # EntryID
-        my %entry_id =
-            :number($entry_number++),
+        my %entry-id =
+            :number($entry-number++),
             :xxhash(%entry<xxhash>),
             :text(%entry<text>);
 
@@ -721,18 +716,18 @@ method journal($/)
         my %header = %entry<header>;
 
         # increments on each posting (0+), resets after each entry
-        my Int $posting_number = 0;
+        my Int $posting-number = 0;
 
         # postings
         my @postings;
-        for %entry<postings> -> @posting_containers
+        for %entry<postings> -> @posting-containers
         {
-            for @posting_containers -> %posting
+            for @posting-containers -> %posting
             {
                 # PostingID
-                my %posting_id =
-                    :%entry_id,
-                    :number($posting_number++),
+                my %posting-id =
+                    :%entry-id,
+                    :number($posting-number++),
                     :xxhash(%posting<xxhash>),
                     :text(%posting<text>);
 
@@ -740,12 +735,12 @@ method journal($/)
                     :account(%posting<account>),
                     :amount(%posting<amount>),
                     :decinc(%posting<decinc>),
-                    :id(%posting_id)
+                    :id(%posting-id)
                 );
             }
         }
 
-        push @entries, %(:id(%entry_id), :%header, :@postings);
+        push @entries, %(:id(%entry-id), :%header, :@postings);
     }
 
     make @entries;
@@ -760,7 +755,7 @@ method TOP($/)
 
 # helper functions {{{
 
-sub mkasset_flow(FatRat:D $d) returns Str:D
+sub mkasset-flow(FatRat:D $d) returns Str:D
 {
     if $d > 0
     {
@@ -776,9 +771,9 @@ sub mkasset_flow(FatRat:D $d) returns Str:D
     }
 }
 
-sub mkdecinc(Str $plus_or_minus) returns Str:D
+sub mkdecinc(Str $plus-or-minus) returns Str:D
 {
-    $plus_or_minus ~~ '-' ?? 'DEC' !! 'INC';
+    $plus-or-minus ~~ '-' ?? 'DEC' !! 'INC';
 }
 
 # end helper functions }}}

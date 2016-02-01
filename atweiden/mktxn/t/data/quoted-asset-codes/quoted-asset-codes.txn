@@ -1,13 +1,13 @@
 2014-01-01
 @auto
 "I bought a Honda S2000 for $34,000"
-Assets:Personal    +1 "Honda S2000 VIN JHLRE4H73AC092103" @ $34000 USD
+Assets:Personal    +1 'Honda S2000 VIN JHLRE4H73AC092103' @ $34000 USD
 Assets:Personal    -$34000 USD
 
 2014-01-01
 @re
 "I bought a new house"
-Assets:Personal      1 "The House at 178 Blue Kodiak Trail" @ $379799 USD
+Assets:Personal      1 'The House at 178 Blue Kodiak Trail' @ $379799 USD
 Assets:Personal    -$379799 USD
 
 2014-01-01

@@ -3,18 +3,18 @@ use v6;
 # for Actions.entry verify entry is limited to one entity
 class X::TXN::Parser::Entry::MultipleEntities is Exception
 {
-    has Str $.entry_text;
-    has Int $.number_entities;
+    has Str $.entry-text;
+    has Int $.number-entities;
 
     method message()
     {
         say qq:to/EOF/;
         Sorry, only one entity per journal entry allowed, but found
-        $.number_entities entities.
+        $.number-entities entities.
 
         In entry:
 
-        「$.entry_text」
+        「$.entry-text」
         EOF
     }
 }
