@@ -24,7 +24,7 @@ class WebService::Lastfm {
 
 	#= Common parameters we want on all requests, factored out from request()
 	# and write()
-	method !expand-params($method, %args is rw) {
+	method !expand-params($method, %args) {
 		%args<method> = $method;
 		%args<format> = 'json';
 		%args<api_key> = $.api-key;
