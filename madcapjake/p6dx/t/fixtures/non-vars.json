@@ -1,0 +1,4 @@
+[
+	{ "line" : 14, "name" : "words", "file" : "/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6", "kind" : "sub" },
+	{ "line" : 19, "name" : "lines", "file" : "/home/travis/build/MadcapJake/p6dx/t/fixtures/word-wrap.pl6", "kind" : "sub" }
+]

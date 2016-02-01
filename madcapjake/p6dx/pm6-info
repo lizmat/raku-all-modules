@@ -1,0 +1,7 @@
+#!/usr/bin/env perl6
+use v6.c;
+sub MAIN(Str $module) {
+        my $cu = $*REPO.need(CompUnit::DependencySpecification.new(:short-name($module)));
+        say "Dist:   " ~ $cu.repo.prefix.child('dist/' ~ $cu.distribution.id);
+        say "Source: " ~ $cu.repo.prefix.child('sources/' ~ $cu.distribution.provides{$module}.values[0]<file>);
+}
