@@ -5,6 +5,7 @@
 =head2 Net::HTTP
 
 =for HTML <a href="https://travis-ci.org/ugexe/Perl6-Net--HTTP"><img src="https://travis-ci.org/ugexe/Perl6-Net--HTTP.svg?branch=master"></a>
+          <a href="https://ci.appveyor.com/project/ugexe/Perl6-Net--HTTP/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/ugexe/Perl6-Net--HTTP?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
 
 Interfaces and default implementations for rolling your own http client and/or components
 
