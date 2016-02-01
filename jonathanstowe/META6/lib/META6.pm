@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -94,13 +94,10 @@ exception.
 
 =end pod
 
-use JSON::Class;
+use JSON::Name;
+use JSON::Class:ver(v0.0.5..*);
 
-# Need to import here to get the traits
-import JSON::Marshal;
-import JSON::Unmarshal;
-
-class META6:ver<0.0.4>:auth<github:jonathanstowe> does JSON::Class {
+class META6:ver<0.0.5>:auth<github:jonathanstowe> does JSON::Class {
 
     enum Optionality <Mandatory Optional>;
 
