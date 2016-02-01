@@ -17,7 +17,7 @@ sub XXH64(CArray[int8], size_t, ulonglong) returns ulonglong is native('xxhash',
 multi sub xxHash(Str $string, Int :$seed = 0) is export returns Int
 {
     my Int @data = $string.split('')».encode».contents.flat».Int;
-    build_xxhash(@data, $seed);
+    build-xxhash(@data, $seed);
 }
 
 multi sub xxHash(Str :$file!, Int :$seed = 0) is export returns Int
@@ -28,14 +28,14 @@ multi sub xxHash(Str :$file!, Int :$seed = 0) is export returns Int
 multi sub xxHash(Buf[uint8] :$buf-u8!, Int :$seed = 0) is export returns Int
 {
     my Int @data = $buf-u8.list;
-    build_xxhash(@data, $seed);
+    build-xxhash(@data, $seed);
 }
 
-sub build_xxhash(Int @data, Int $seed = 0) returns Int
+sub build-xxhash(Int @data, Int $seed = 0) returns Int
 {
     $*KERNEL.bits == 64
-        ?? build_xxhash64(@data, $seed)
-        !! build_xxhash32(@data, $seed);
+        ?? build-xxhash64(@data, $seed)
+        !! build-xxhash32(@data, $seed);
 }
 
 # end 32 or 64 bit }}}
@@ -44,7 +44,7 @@ sub build_xxhash(Int @data, Int $seed = 0) returns Int
 multi sub xxHash32(Str $string, Int :$seed = 0) is export returns Int
 {
     my Int @data = $string.split('')».encode».contents.flat».Int;
-    build_xxhash32(@data, $seed);
+    build-xxhash32(@data, $seed);
 }
 
 multi sub xxHash32(Str :$file!, Int :$seed = 0) is export returns Int
@@ -55,10 +55,10 @@ multi sub xxHash32(Str :$file!, Int :$seed = 0) is export returns Int
 multi sub xxHash32(Buf[uint8] :$buf-u8!, Int :$seed = 0) is export returns Int
 {
     my Int @data = $buf-u8.list;
-    build_xxhash32(@data, $seed);
+    build-xxhash32(@data, $seed);
 }
 
-sub build_xxhash32(Int @data, uint $seed = 0) returns uint
+sub build-xxhash32(Int @data, uint $seed = 0) returns uint
 {
     my @input := CArray[int8].new;
     my Int $len = 0;
@@ -72,7 +72,7 @@ sub build_xxhash32(Int @data, uint $seed = 0) returns uint
 multi sub xxHash64(Str $string, Int :$seed = 0) is export returns Int
 {
     my Int @data = $string.split('')».encode».contents.flat».Int;
-    build_xxhash64(@data, $seed);
+    build-xxhash64(@data, $seed);
 }
 
 multi sub xxHash64(Str :$file!, Int :$seed = 0) is export returns Int
@@ -83,10 +83,10 @@ multi sub xxHash64(Str :$file!, Int :$seed = 0) is export returns Int
 multi sub xxHash64(Buf[uint8] :$buf-u8!, Int :$seed = 0) is export returns Int
 {
     my Int @data = $buf-u8.list;
-    build_xxhash64(@data, $seed);
+    build-xxhash64(@data, $seed);
 }
 
-sub build_xxhash64(Int @data, ulonglong $seed = 0) returns ulonglong
+sub build-xxhash64(Int @data, ulonglong $seed = 0) returns ulonglong
 {
     my @input := CArray[int8].new;
     my Int $len = 0;

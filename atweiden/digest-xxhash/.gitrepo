@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/atweiden/digest-xxhash.git
 	branch = master
-	commit = 1cd69c1a3433a99a9b8815abca0fdd5f07a854f6
-	parent = 9dfaf3173caa01337fd5ce9358e9c98937f177bd
+	commit = aad5831a2d29dbcf7786c704f2ef9b6c9be62065
+	parent = 89a17ddbcdf622c9f9a50e6959fbfb02387e0d0a
 	cmdver = 0.2.3

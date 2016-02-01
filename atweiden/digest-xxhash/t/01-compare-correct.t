@@ -4,12 +4,12 @@ use Digest::xxHash;
 
 plan 4;
 
-my Str $file_for_tests = $*PROGRAM-NAME.IO.dirname ~ "/digest-from-file";
+my Str $file-for-tests = $*PROGRAM-NAME.IO.dirname ~ "/digest-from-file";
 
-unless $file_for_tests.IO ~~ :f
+unless $file-for-tests.IO ~~ :f
 {
     die ">>> File: '"
-        ~ $file_for_tests
+        ~ $file-for-tests
         ~ "' doesn't exist (it should be distributed along with this
            Digest::xxHash archive)!"
 }
@@ -23,7 +23,7 @@ unless $file_for_tests.IO ~~ :f
 }
 
 {
-    is xxHash32(file => $file_for_tests), 0x1A47C09D,
+    is xxHash32(file => $file-for-tests), 0x1A47C09D,
         "digest from file content is correct";
 }
 
