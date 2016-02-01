@@ -1,0 +1,18 @@
+{
+  "name" : "Algorithm::AhoCorasick",
+  "source-url" : "git://github.com/okaoka/p6-Algorithm-AhoCorasick.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "Algorithm::AhoCorasick" : "lib/Algorithm/AhoCorasick.pm6",
+    "Algorithm::AhoCorasick::Node" : "lib/Algorithm/AhoCorasick/Node.pm6"
+  },
+  "depends" : [ ],
+  "description" : "efficient search for multiple strings",
+  "test-depends" : [ ],
+  "version" : "0.03",
+  "authors" : [
+    "okaoka"
+  ]
+}
