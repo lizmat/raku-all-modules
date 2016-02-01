@@ -12,16 +12,16 @@ if $r.info<redis_version> gt "2.6" {
     plan 5;
 
     $r.set("key", 1);
-    is_deeply $r.eval("return redis.call('get', 'key')", 0), "1";
+    is-deeply $r.eval("return redis.call('get', 'key')", 0), "1";
 
-    is_deeply $r.script_flush(), True;
+    is-deeply $r.script_flush(), True;
 
-    dies_ok { $r.script_kill() };
+    dies-ok { $r.script_kill() };
 
     my $sha = $r.script_load("return redis.call('get', 'key')");
-    is_deeply $r.script_exists($sha, "unknown"), [1, 0];
+    is-deeply $r.script_exists($sha, "unknown"), [1, 0];
 
-    is_deeply $r.evalsha($sha, 0), "1";
+    is-deeply $r.evalsha($sha, 0), "1";
 } else {
     done;
 }

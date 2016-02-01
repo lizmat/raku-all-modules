@@ -53,7 +53,7 @@ if $r.info<redis_version> gt "2.6" {
 # keys
 $r.set("pattern1", 1);
 $r.set("pattern2", 2);
-is-deeply $r.keys("pattern*"), ["pattern1", "pattern2"];
+is-deeply $r.keys("pattern*").sort, ("pattern1", "pattern2");
 
 # migrate TODO
 
@@ -64,7 +64,7 @@ $r.set("key", "value");
 is-deeply $r.object("refcount", "key"), 1;
 
 # randomkey
-is-deeply $r.randomkey().WHAT.gist, "Str()";
+is-deeply $r.randomkey().WHAT.gist, "(Str)";
 
 # rename
 is-deeply $r.rename("key", "newkey"), True;

@@ -11,6 +11,6 @@ $r.flushall;
 plan 2;
 
 # arbitary binary string 
-my Buf $binary = Buf.new(1,2,3,129);
+my Buf $binary = Buf[uint8].new(1,2,3,129);
 is-deeply $r.set("key", $binary), True;
 is-deeply $r.get("key"), $binary;

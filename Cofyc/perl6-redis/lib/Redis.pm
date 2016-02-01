@@ -30,7 +30,7 @@ Executes arbitrary command.
     
 =end pod
 
-class Redis;
+unit class Redis;
 
 has Str $.host = '127.0.0.1';
 has Int $.port = 6379;
@@ -69,8 +69,8 @@ for "INCRBYFLOAT HINCRBYFLOAT ZINCRBY ZSCORE".split(" ") -> $c {
     }
     return %h;
 };
-%command_callbacks{"INFO"} = {
-    my @lines = $_.decode.split("\r\n");
+%command_callbacks{"INFO"} = sub ($info) {
+    my @lines = $info.decode.split("\r\n");
     my %info;
     for @lines -> $l {
         if $l.substr(0, 1) eq "#" {
@@ -85,7 +85,7 @@ for "INCRBYFLOAT HINCRBYFLOAT ZINCRBY ZSCORE".split(" ") -> $c {
 has %!command_callbacks = %command_callbacks;
 
 method new(Str $server?, Str :$encoding?, Bool :$decode_response?) {
-    my %config = {}
+    my %config := {}
     if $server.defined {
         if $server ~~ m/^([\d+]+ %\.) [':' (\d+)]?$/ {
             %config<host> = $0.Str;
@@ -116,7 +116,7 @@ method reconnect {
 }
 
 multi method encode(Str:D $value) returns Buf {
-    return $value.encode(self.encoding);
+    return Buf.new($value.encode(self.encoding));
 }
 
 multi method encode(Buf:D $value) returns Buf {
@@ -187,7 +187,7 @@ method !read_response returns Any {
 }
 
 method !decode_response($response) {
-    if $response.WHAT === Buf {
+    if $response.WHAT === Buf[uint8] {
         return $response.decode(self.encoding);
     } elsif $response.WHAT === Array {
         return $response.map( { self!decode_response($_) } ).Array;
@@ -203,7 +203,7 @@ method !decode_response($response) {
 }
 
 method !parse_response($response is copy, Str $command) {
-    if %!command_callbacks.exists($command) {
+    if %!command_callbacks{$command}:exists {
         $response =  %!command_callbacks{$command}($response);
     }
     if self.decode_response and $command !eq any("DUMP") {
