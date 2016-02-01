@@ -1,0 +1,13 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Inline::Brainfuck",
+    "version"      : "1.001001",
+    "description"  : "Use Brainfuck language in your Perl 6 programs",
+    "depends"      : [ "Term::termios" ],
+    "test-depends" : [ "Test", "Test::Output" ],
+    "provides"     : {
+        "Inline::Brainfuck" : "lib/Inline/Brainfuck.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   : "git://github.com/zoffixznet/perl6-Inline-Brainfuck.git"
+}
