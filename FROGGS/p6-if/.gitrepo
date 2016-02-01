@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FROGGS/p6-if.git
 	branch = master
-	commit = 18de6df1f4eb979febca738f99e4c48870cb9162
-	parent = aa52ab1d9283092567d88422e9137a6426489359
+	commit = 6b082df258a420b7592547c96b6a273689c80e9c
+	parent = f7d34e03bb1b932eac647623545d424a07060127
 	cmdver = 0.2.3
