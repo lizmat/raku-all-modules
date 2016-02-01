@@ -3,7 +3,7 @@ use GPT::Class;
 module GPT::DumbGenerator {
 
 my AllTheThings	$allthings;
-my	$debug = False;
+my	$debug = %*ENV<DG_DEBUG>;
 
 sub	debug(*@stuff) {
   say(|@stuff) if $debug;
@@ -62,15 +62,16 @@ my %stdinttype-to-p6 = (
 
 
 sub	resolve-type($t, $cpt = 0) is export {
-  debug "==" x $cpt ~ $t.id ~ $t.WHAT.perl ~ ' ' ~ $t;
+  debug "==" x $cpt ~ $t.id ~ ' ' ~ $t.WHAT.perl ~ ' ' ~ $t;
   if $t ~~ PointerType {
+    debug "ref-type : " ~ $t.ref-type.id ~ '/'  ~ $t.ref-id ~ ' '~ $t.ref-type.WHAT.perl ~ " - " ~ $t.ref-type;
     if $t.ref-type ~~ TypeDefType and $t.ref-type.ref-type ~~ FundamentalType and $t.ref-type.ref-type.name eq 'void' {
       return $t.ref-type.name ~ 'Ptr';
     }
     return 'Str' if ($t.ref-type ~~ FundamentalType and $t.ref-type.name eq 'char') ||
-      ($t.ref-type ~~ QualifiedType and $t.ref-type.ref-type.name eq 'char');
+      ($t.ref-type ~~ QualifiedType and $t.ref-type.ref-type ~~ FundamentalType and $t.ref-type.ref-type.name eq 'char');
     return 'Pointer' if ($t.ref-type ~~ FundamentalType and $t.ref-type.name eq 'void') ||
-      ($t.ref-type ~~ QualifiedType and $t.ref-type.ref-type.name eq 'void');
+      ($t.ref-type ~~ QualifiedType and $t.ref-type.ref-type ~~ FundamentalType and $t.ref-type.ref-type.name eq 'void');
     return 'Pointer[PtrFunc]' if $t.ref-type ~~ FunctionType;
     return 'Pointer[' ~ resolve-type($t.ref-type, $cpt + 1) ~ ']';
     
@@ -82,7 +83,7 @@ sub	resolve-type($t, $cpt = 0) is export {
     if %ctype-to-p6{$t.name}:exists {
       return %ctype-to-p6{$t.name};
     } else {
-      warn "Encounter a not know FundamentalType ({$t.name}), either it missing in DG dic or you need to do something specific";
+      warn "Encountered a non know FundamentalType ({$t.name}), either it missing in DG dic or you need to do something specific";
       return "NAT{$t.name}NAT";
     }
   }
@@ -119,32 +120,62 @@ sub dg-generate-extra is export {
     }
 }
 
+sub extract-func-definition($func) {
+  my $fh = open $allthings.files{$func.file-id};
+  my $i = $func.start-line - 1;
+  my @lines = $fh.lines;
+  my @tmp = ();
+  @tmp.push(@lines[$i--]);
+  while @lines[$i].chars > 0 {
+    last if @lines[$i].contains(';');
+    @tmp.push(@lines[$i--]);
+  }
+  return @tmp.reverse;
+}
+
 sub dg-generate-functions is export {
   my %toret;
   for $allthings.functions -> $f {
     my @tmp = ();
-    debug "Function:" ~ $f.name;
-    for $f.arguments -> $a {
-      @tmp.push(resolve-type($a.type) ~ ' ' ~ ($a.name.defined ?? '$' ~ $a.name !! ''));
+    debug "Function (" ~ $allthings.files{$f.file-id} ~ ':' ~ $f.start-line ~ "):" ~ $f.name;
+    if $f.arguments.elems > 1 {
+      for $f.arguments.kv -> $i, $a {
+        debug "Param $i : " ~ ($a.name.defined ?? '$' ~ $a.name !! '');
+        @tmp.push(sprintf("%-30s%s # %s", resolve-type($a.type), ($a.name.defined ?? '$' ~ $a.name !! ''), ~$a.type));
+      }
+    } 
+    if $f.arguments.elems == 1 {
+      my $a = $f.arguments[0];
+      debug "Param : " ~ ($a.name.defined ?? '$' ~ $a.name !! '');
+      @tmp.push(sprintf("%s %s, # %s", resolve-type($a.type), ($a.name.defined ?? '$' ~ $a.name !! ''), ~$a.type));
     }
+    debug "Returns";
     my $returns = ($f.returns ~~ FundamentalType && $f.returns.name eq 'void') ?? '' !!
            "returns " ~ resolve-type($f.returns);
-    my $p6gen = "sub {$f.name}(" ~  @tmp.join(', ') ~ ") is native(LIB) $returns is export \{ * \}";
-    %toret{$f.name} = $p6gen;
+    my $decl-size = "sub {$f.name}(".chars;
+    my $p6gen = "#-From " ~ $allthings.files{$f.file-id} ~ ':' ~ $f.start-line ~ "\n" ~ (extract-func-definition($f).map:{'#' ~ $_}).join("\n") ~ "\n";
+    $p6gen ~= "sub {$f.name}(" ~  @tmp.join(sprintf("\n%{$decl-size - 1}s,", ' ')) ~ "\n" ~ ' ' x $decl-size ~ ") is native(LIB) $returns is export \{ * \}\n";
+    %toret{$f.name}<p6str> = $p6gen;
+    %toret{$f.name}<obj> = $f;
   }
   return %toret;
 }
 
 sub dg-generate-enums() is export {
+  my %toret;
   for $allthings.enums -> $e {
-    say 'enum ' ~ $e.name ~ ' is export (';
+    my $p6gen = '';
+    $p6gen ~= 'enum ' ~ $e.name ~ ' is export (' ~ "\n";
     my @tmp;
     for @($e.values) -> $v {
       @tmp.push("   " ~ $v.name ~ " => " ~ $v.init);
     }
-    say @tmp.join(",\n");
-    say ");";
+    $p6gen ~= @tmp.join(",\n") ~ "\n";
+    $p6gen ~= ");";
+    %toret{$e.name}<p6str> = $p6gen;
+    %toret{$e.name}<obj> = $e;
   }
+  return %toret;
 }
 
 sub dg-generate-structs is export {
@@ -178,10 +209,12 @@ sub dg-generate-structs is export {
 }
 
 sub	dg-generate-externs is export {
+  my %toret;
   for $allthings.variables -> $v {
-    say 'our '~ resolve-type($v.type) ~ ' $' ~ $v.name ~ ' is export = cglobals(LIB, "' ~ $v.name ~ '", ' ~ resolve-type($v.type) ~ ');'
+    %toret{$v.name}<p6str> =  'our '~ resolve-type($v.type) ~ ' $' ~ $v.name ~ ' is export = cglobals(LIB, "' ~ $v.name ~ '", ' ~ resolve-type($v.type) ~ ');';
+    %toret{$v.name}<obj> = $v;
   }
-  
+  return %toret;
 }
 
 }
