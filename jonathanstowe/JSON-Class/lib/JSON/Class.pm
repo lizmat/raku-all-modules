@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -40,9 +40,8 @@ L<JSON::Unmarshal|https://github.com/tadzik/JSON-Unmarshal> respectively.
 
 The  L<JSON::Marshal|https://github.com/jonathanstowe/JSON-Marshal> and
 L<JSON::Unmarshal|https://github.com/tadzik/JSON-Unmarshal> provide traits
-for controlling the unmarshalling/marshalling of specific attributes. If these
-are required for your application then you will need to use these modules
-directly in your code for the time being.
+for controlling the unmarshalling/marshalling of specific attributes which
+are re-exported by this module.
 
 =head1 METHODS
 
@@ -59,26 +58,37 @@ type for the target class then an exception may be thrown.
 
 =head2 method to-json
 
-    method to-json() returns Str
+    method to-json(Bool :$skip-null) returns Str
 
 Serialises the public attributes of the object to a JSON string that
 represents the object, this JSON can be fed to the L<from-json> of the
 class to create a new object with matching (public) attributes.
 
+If the C<:skip-null> adverb is provided all attributes without a
+defined value will be ignored in serialisation. If you need finer
+grained control then you should apply the C<json-skip-null> attribute
+trait (defined by L<JSON::Marshal> ) to the traits you want to skip
+if they aren't defined (C<:json-skip> will still have the same effect
+though.)
+
 =end pod
 
+use JSON::Unmarshal;
+use JSON::Marshal:ver(v0.0.6..*);
 
-role JSON::Class:ver<v0.0.2>:auth<github:jonathanstowe> {
+sub EXPORT {
+    { '&trait_mod:<is>'    =>  &trait_mod:<is> }
+}
 
-    use JSON::Unmarshal;
-    use JSON::Marshal;
+role JSON::Class:ver<0.0.5>:auth<github:jonathanstowe> {
+
 
     method from-json(Str $json) returns JSON::Class {
         unmarshal($json, self);
     }
 
-    method to-json() returns Str {
-        marshal(self);
+    method to-json(Bool :$skip-null) returns Str {
+        marshal(self, :$skip-null);
     }
 }
 

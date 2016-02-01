@@ -1,12 +1,7 @@
 #!perl6
-use v6;
+use v6.c;
 use Test;
 use JSON::Class;
-
-# These are needed for the traits
-
-import JSON::Unmarshal;
-import JSON::Marshal;
 
 class TraitTest does JSON::Class {
     has Version $.version is marshalled-by('Str') is unmarshalled-by('new');
