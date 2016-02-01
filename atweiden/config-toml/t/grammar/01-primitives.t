@@ -11,13 +11,13 @@ subtest
 {
     my Str $comment = '# Yeah, you can do this.';
 
-    my $match_comment = Config::TOML::Parser::Grammar.parse(
+    my $match-comment = Config::TOML::Parser::Grammar.parse(
         $comment,
         :rule<comment>
     );
 
     is(
-        $match_comment.WHAT,
+        $match-comment.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse($comment, :rule<comment>)] - 1 of 28
@@ -35,22 +35,22 @@ subtest
 
 subtest
 {
-    my Str $string_basic = Q:to/EOF/;
+    my Str $string-basic = Q:to/EOF/;
     "I'm a string with backslashes (\\). \"You can quote me\". Name\tJosh\nLocation\tSF.\\"
     EOF
-    $string_basic .= trim;
+    $string-basic .= trim;
 
-    my Str $string_basic_backslash = Q:to/EOF/;
+    my Str $string-basic-backslash = Q:to/EOF/;
     "I'm a string ending with a backslash followed by a whitespace\\ "
     EOF
-    $string_basic_backslash .= trim;
+    $string-basic-backslash .= trim;
 
-    my Str $string_basic_empty = Q:to/EOF/;
+    my Str $string-basic-empty = Q:to/EOF/;
     ""
     EOF
-    $string_basic_empty .= trim;
+    $string-basic-empty .= trim;
 
-    my Str $string_basic_multiline = Q:to/EOF/;
+    my Str $string-basic-multiline = Q:to/EOF/;
     """\
     asdf	<-- tab
     \"\"\"
@@ -58,61 +58,61 @@ subtest
     what
     """
     EOF
-    $string_basic_multiline .= trim;
+    $string-basic-multiline .= trim;
 
-    my Str $string_literal = Q:to/EOF/;
+    my Str $string-literal = Q:to/EOF/;
     '\\\Server\X\admin$\system32\\\\\\'
     EOF
-    $string_literal .= trim;
+    $string-literal .= trim;
 
-    my Str $string_literal_empty = Q:to/EOF/;
+    my Str $string-literal-empty = Q:to/EOF/;
     ''
     EOF
-    $string_literal_empty .= trim;
+    $string-literal-empty .= trim;
 
-    my Str $string_literal_multiline = Q:to/EOF/;
+    my Str $string-literal-multiline = Q:to/EOF/;
     '''\
     asdf		<-- two tabs
     \'\'\'
     what
     '''
     EOF
-    $string_literal_multiline .= trim;
+    $string-literal-multiline .= trim;
 
-    my $match_string_basic = Config::TOML::Parser::Grammar.parse(
-        $string_basic,
-        :rule<string_basic>
+    my $match-string-basic = Config::TOML::Parser::Grammar.parse(
+        $string-basic,
+        :rule<string-basic>
     );
-    my $match_string_basic_backslash = Config::TOML::Parser::Grammar.parse(
-        $string_basic_backslash,
-        :rule<string_basic>
+    my $match-string-basic-backslash = Config::TOML::Parser::Grammar.parse(
+        $string-basic-backslash,
+        :rule<string-basic>
     );
-    my $match_string_basic_empty = Config::TOML::Parser::Grammar.parse(
-        $string_basic_empty,
-        :rule<string_basic>
+    my $match-string-basic-empty = Config::TOML::Parser::Grammar.parse(
+        $string-basic-empty,
+        :rule<string-basic>
     );
-    my $match_string_basic_multiline = Config::TOML::Parser::Grammar.parse(
-        $string_basic_multiline,
-        :rule<string_basic_multiline>
+    my $match-string-basic-multiline = Config::TOML::Parser::Grammar.parse(
+        $string-basic-multiline,
+        :rule<string-basic-multiline>
     );
-    my $match_string_literal = Config::TOML::Parser::Grammar.parse(
-        $string_literal,
-        :rule<string_literal>
+    my $match-string-literal = Config::TOML::Parser::Grammar.parse(
+        $string-literal,
+        :rule<string-literal>
     );
-    my $match_string_literal_empty = Config::TOML::Parser::Grammar.parse(
-        $string_literal_empty,
-        :rule<string_literal>
+    my $match-string-literal-empty = Config::TOML::Parser::Grammar.parse(
+        $string-literal-empty,
+        :rule<string-literal>
     );
-    my $match_string_literal_multiline = Config::TOML::Parser::Grammar.parse(
-        $string_literal_multiline,
-        :rule<string_literal_multiline>
+    my $match-string-literal-multiline = Config::TOML::Parser::Grammar.parse(
+        $string-literal-multiline,
+        :rule<string-literal-multiline>
     );
 
     is(
-        $match_string_basic.WHAT,
+        $match-string-basic.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($string_basic, :rule<string_basic>)] - 2 of 28
+        ♪ [Grammar.parse($string-basic, :rule<string-basic>)] - 2 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses double quoted string successfully
         ┃   Success   ┃
@@ -122,12 +122,12 @@ subtest
     );
 
     is(
-        $match_string_basic_backslash.WHAT,
+        $match-string-basic-backslash.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $string_basic_backslash,
-              :rule<string_basic>
+              $string-basic-backslash,
+              :rule<string-basic>
            )] - 3 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses double quoted string successfully
@@ -138,10 +138,10 @@ subtest
     );
 
     is(
-        $match_string_basic_empty.WHAT,
+        $match-string-basic-empty.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($string_basic_empty, :rule<string_basic>)] - 4 of 28
+        ♪ [Grammar.parse($string-basic-empty, :rule<string-basic>)] - 4 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses double quoted empty string successfully
         ┃   Success   ┃
@@ -151,12 +151,12 @@ subtest
     );
 
     is(
-        $match_string_basic_multiline.WHAT,
+        $match-string-basic-multiline.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-            $string_basic_multiline,
-            :rule<string_basic_multiline>
+            $string-basic-multiline,
+            :rule<string-basic-multiline>
            )] - 5 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses double quoted multiline string successfully
@@ -167,10 +167,10 @@ subtest
     );
 
     is(
-        $match_string_literal.WHAT,
+        $match-string-literal.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($string_literal, :rule<string_literal>)] - 6 of 28
+        ♪ [Grammar.parse($string-literal, :rule<string-literal>)] - 6 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses single quoted string successfully
         ┃   Success   ┃
@@ -180,12 +180,12 @@ subtest
     );
 
     is(
-        $match_string_literal_empty.WHAT,
+        $match-string-literal-empty.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $string_literal_empty,
-              :rule<string_literal>
+              $string-literal-empty,
+              :rule<string-literal>
            )] - 7 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses single quoted empty string successfully
@@ -196,12 +196,12 @@ subtest
     );
 
     is(
-        $match_string_literal_multiline.WHAT,
+        $match-string-literal-multiline.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $string_literal_multiline,
-              :rule<string_literal_multiline>
+              $string-literal-multiline,
+              :rule<string-literal-multiline>
            )] - 8 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses single quoted multiline string
@@ -217,43 +217,43 @@ subtest
 
 subtest
 {
-    my Str $integer_basic = '-1';
-    my Str $integer_underscore = '1_000_000';
-    my Str $float_basic = '-0.1';
-    my Str $float_underscore = '+1_000_000_000.111_111_111';
-    my Str $float_exponent = '1e1_000';
-    my Str $float_exponent_underscore = '987_654.321e1_234_567';
+    my Str $integer-basic = '-1';
+    my Str $integer-underscore = '1_000_000';
+    my Str $float-basic = '-0.1';
+    my Str $float-underscore = '+1_000_000_000.111_111_111';
+    my Str $float-exponent = '1e1_000';
+    my Str $float-exponent-underscore = '987_654.321e1_234_567';
 
-    my $match_integer_basic = Config::TOML::Parser::Grammar.parse(
-        $integer_basic,
+    my $match-integer-basic = Config::TOML::Parser::Grammar.parse(
+        $integer-basic,
         :rule<integer>
     );
-    my $match_integer_underscore = Config::TOML::Parser::Grammar.parse(
-        $integer_underscore,
+    my $match-integer-underscore = Config::TOML::Parser::Grammar.parse(
+        $integer-underscore,
         :rule<integer>
     );
-    my $match_float_basic = Config::TOML::Parser::Grammar.parse(
-        $float_basic,
+    my $match-float-basic = Config::TOML::Parser::Grammar.parse(
+        $float-basic,
         :rule<float>
     );
-    my $match_float_underscore = Config::TOML::Parser::Grammar.parse(
-        $float_underscore,
+    my $match-float-underscore = Config::TOML::Parser::Grammar.parse(
+        $float-underscore,
         :rule<float>
     );
-    my $match_float_exponent = Config::TOML::Parser::Grammar.parse(
-        $float_exponent,
+    my $match-float-exponent = Config::TOML::Parser::Grammar.parse(
+        $float-exponent,
         :rule<float>
     );
-    my $match_float_exponent_underscore = Config::TOML::Parser::Grammar.parse(
-        $float_exponent_underscore,
+    my $match-float-exponent-underscore = Config::TOML::Parser::Grammar.parse(
+        $float-exponent-underscore,
         :rule<float>
     );
 
     is(
-        $match_integer_basic.WHAT,
+        $match-integer-basic.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($integer_basic, :rule<integer>)] - 9 of 28
+        ♪ [Grammar.parse($integer-basic, :rule<integer>)] - 9 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer successfully
         ┃   Success   ┃
@@ -263,10 +263,10 @@ subtest
     );
 
     is(
-        $match_integer_underscore.WHAT,
+        $match-integer-underscore.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($integer_underscore, :rule<integer>)] - 10 of 28
+        ♪ [Grammar.parse($integer-underscore, :rule<integer>)] - 10 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal integer (with
         ┃   Success   ┃    underscores) successfully
@@ -276,10 +276,10 @@ subtest
     );
 
     is(
-        $match_float_basic.WHAT,
+        $match-float-basic.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($float_basic, :rule<float>)] - 11 of 28
+        ♪ [Grammar.parse($float-basic, :rule<float>)] - 11 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float successfully
         ┃   Success   ┃
@@ -289,10 +289,10 @@ subtest
     );
 
     is(
-        $match_float_underscore.WHAT,
+        $match-float-underscore.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($float_underscore, :rule<float>)] - 12 of 28
+        ♪ [Grammar.parse($float-underscore, :rule<float>)] - 12 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float (with underscores)
         ┃   Success   ┃    successfully
@@ -302,10 +302,10 @@ subtest
     );
 
     is(
-        $match_float_exponent.WHAT,
+        $match-float-exponent.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($float_exponent, :rule<float>)] - 13 of 28
+        ♪ [Grammar.parse($float-exponent, :rule<float>)] - 13 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float (with exponent)
         ┃   Success   ┃    successfully
@@ -315,10 +315,10 @@ subtest
     );
 
     is(
-        $match_float_exponent_underscore.WHAT,
+        $match-float-exponent-underscore.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($float_exponent_underscore, :rule<float>)] - 14 of 28
+        ♪ [Grammar.parse($float-exponent-underscore, :rule<float>)] - 14 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal float (with exponent
         ┃   Success   ┃    and underscores) successfully
@@ -333,23 +333,23 @@ subtest
 
 subtest
 {
-    my Str $boolean_true = 'true';
-    my Str $boolean_false = 'false';
+    my Str $boolean-true = 'true';
+    my Str $boolean-false = 'false';
 
-    my $match_boolean_true = Config::TOML::Parser::Grammar.parse(
-        $boolean_true,
+    my $match-boolean-true = Config::TOML::Parser::Grammar.parse(
+        $boolean-true,
         :rule<boolean>
     );
-    my $match_boolean_false = Config::TOML::Parser::Grammar.parse(
-        $boolean_false,
+    my $match-boolean-false = Config::TOML::Parser::Grammar.parse(
+        $boolean-false,
         :rule<boolean>
     );
 
     is(
-        $match_boolean_true.WHAT,
+        $match-boolean-true.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($boolean_true, :rule<boolean>)] - 15 of 28
+        ♪ [Grammar.parse($boolean-true, :rule<boolean>)] - 15 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal true successfully
         ┃   Success   ┃
@@ -359,10 +359,10 @@ subtest
     );
 
     is(
-        $match_boolean_false.WHAT,
+        $match-boolean-false.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($boolean_false, :rule<boolean>)] - 16 of 28
+        ♪ [Grammar.parse($boolean-false, :rule<boolean>)] - 16 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal false successfully
         ┃   Success   ┃
@@ -384,61 +384,61 @@ subtest
     my Str $date5 = '1979-05-27T00:32:00.999999';
     my Str $date6 = '1979-05-27';
 
-    # *_proto vars test for match against proto token date
-    my $match_date1 = Config::TOML::Parser::Grammar.parse(
+    # *-proto vars test for match against proto token date
+    my $match-date1 = Config::TOML::Parser::Grammar.parse(
         $date1,
-        :rule<date_time>
+        :rule<date-time>
     );
-    my $match_date1_proto = Config::TOML::Parser::Grammar.parse(
+    my $match-date1-proto = Config::TOML::Parser::Grammar.parse(
         $date1,
         :rule<date>
     );
-    my $match_date2 = Config::TOML::Parser::Grammar.parse(
+    my $match-date2 = Config::TOML::Parser::Grammar.parse(
         $date2,
-        :rule<date_time>
+        :rule<date-time>
     );
-    my $match_date2_proto = Config::TOML::Parser::Grammar.parse(
+    my $match-date2-proto = Config::TOML::Parser::Grammar.parse(
         $date2,
         :rule<date>
     );
-    my $match_date3 = Config::TOML::Parser::Grammar.parse(
+    my $match-date3 = Config::TOML::Parser::Grammar.parse(
         $date3,
-        :rule<date_time>
+        :rule<date-time>
     );
-    my $match_date3_proto = Config::TOML::Parser::Grammar.parse(
+    my $match-date3-proto = Config::TOML::Parser::Grammar.parse(
         $date3,
         :rule<date>
     );
-    my $match_date4 = Config::TOML::Parser::Grammar.parse(
+    my $match-date4 = Config::TOML::Parser::Grammar.parse(
         $date4,
-        :rule<date_time_omit_local_offset>
+        :rule<date-time-omit-local-offset>
     );
-    my $match_date4_proto = Config::TOML::Parser::Grammar.parse(
+    my $match-date4-proto = Config::TOML::Parser::Grammar.parse(
         $date4,
         :rule<date>
     );
-    my $match_date5 = Config::TOML::Parser::Grammar.parse(
+    my $match-date5 = Config::TOML::Parser::Grammar.parse(
         $date5,
-        :rule<date_time_omit_local_offset>
+        :rule<date-time-omit-local-offset>
     );
-    my $match_date5_proto = Config::TOML::Parser::Grammar.parse(
+    my $match-date5-proto = Config::TOML::Parser::Grammar.parse(
         $date5,
         :rule<date>
     );
-    my $match_date6 = Config::TOML::Parser::Grammar.parse(
+    my $match-date6 = Config::TOML::Parser::Grammar.parse(
         $date6,
-        :rule<full_date>
+        :rule<full-date>
     );
-    my $match_date6_proto = Config::TOML::Parser::Grammar.parse(
+    my $match-date6-proto = Config::TOML::Parser::Grammar.parse(
         $date6,
         :rule<date>
     );
 
     is(
-        $match_date1.WHAT,
+        $match-date1.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($date1, :rule<date_time>)] - 17 of 28
+        ♪ [Grammar.parse($date1, :rule<date-time>)] - 17 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime successfully
         ┃   Success   ┃
@@ -447,7 +447,7 @@ subtest
         EOF
     );
     is(
-        $match_date1_proto.WHAT,
+        $match-date1-proto.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse($date1, :rule<date>)] - 18 of 28
@@ -459,10 +459,10 @@ subtest
         EOF
     );
     is(
-        $match_date2.WHAT,
+        $match-date2.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($date2, :rule<date_time>)] - 19 of 28
+        ♪ [Grammar.parse($date2, :rule<date-time>)] - 19 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime successfully
         ┃   Success   ┃
@@ -471,7 +471,7 @@ subtest
         EOF
     );
     is(
-        $match_date2_proto.WHAT,
+        $match-date2-proto.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse($date2, :rule<date>)] - 20 of 28
@@ -483,10 +483,10 @@ subtest
         EOF
     );
     is(
-        $match_date3.WHAT,
+        $match-date3.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($date3, :rule<date_time>)] - 21 of 28
+        ♪ [Grammar.parse($date3, :rule<date-time>)] - 21 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime successfully
         ┃   Success   ┃
@@ -495,7 +495,7 @@ subtest
         EOF
     );
     is(
-        $match_date3_proto.WHAT,
+        $match-date3-proto.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse($date3, :rule<date>)] - 22 of 28
@@ -507,12 +507,12 @@ subtest
         EOF
     );
     is(
-        $match_date4.WHAT,
+        $match-date4.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
                $date4,
-               :rule<date_time_omit_local_offset>
+               :rule<date-time-omit-local-offset>
            )] - 23 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime (omit local offset)
@@ -522,7 +522,7 @@ subtest
         EOF
     );
     is(
-        $match_date4_proto.WHAT,
+        $match-date4-proto.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse($date4, :rule<date>)] - 24 of 28
@@ -534,12 +534,12 @@ subtest
         EOF
     );
     is(
-        $match_date5.WHAT,
+        $match-date5.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
                $date5,
-               :rule<date_time_omit_local_offset>
+               :rule<date-time-omit-local-offset>
            )] - 25 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime (omit local offset)
@@ -549,7 +549,7 @@ subtest
         EOF
     );
     is(
-        $match_date5_proto.WHAT,
+        $match-date5-proto.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse($date5, :rule<date>)] - 26 of 28
@@ -561,10 +561,10 @@ subtest
         EOF
     );
     is(
-        $match_date6.WHAT,
+        $match-date6.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($date6, :rule<full_date>)] - 27 of 28
+        ♪ [Grammar.parse($date6, :rule<full-date>)] - 27 of 28
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal datetime (omit local offset
         ┃   Success   ┃    and time) successfully
@@ -573,7 +573,7 @@ subtest
         EOF
     );
     is(
-        $match_date6_proto.WHAT,
+        $match-date6-proto.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse($date6, :rule<date>)] - 28 of 28

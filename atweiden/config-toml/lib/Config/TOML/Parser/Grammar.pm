@@ -12,10 +12,10 @@ token gap:comment { <.comment> \n }
 
 token comment
 {
-    '#' <comment_text>
+    '#' <comment-text>
 }
 
-token comment_text
+token comment-text
 {
     \N*
 }
@@ -24,38 +24,38 @@ token comment_text
 # string grammar {{{
 
 proto token string {*}
-token string:basic { <string_basic> }
-token string:basic_multi { <string_basic_multiline> }
-token string:literal { <string_literal> }
-token string:literal_multi { <string_literal_multiline> }
+token string:basic { <string-basic> }
+token string:basic-multi { <string-basic-multiline> }
+token string:literal { <string-literal> }
+token string:literal-multi { <string-literal-multiline> }
 
 # --- string basic grammar {{{
 
-token string_basic
+token string-basic
 {
-    '"' <string_basic_text>? '"'
+    '"' <string-basic-text>? '"'
 }
 
-token string_basic_text
+token string-basic-text
 {
-    <string_basic_char>+
+    <string-basic-char>+
 }
 
-proto token string_basic_char {*}
+proto token string-basic-char {*}
 
-token string_basic_char:common
+token string-basic-char:common
 {
     # anything but linebreaks, double-quotes, backslashes and control
     # characters (U+0000 to U+001F)
     <+[\N] -[\" \\] -[\x00..\x1F]>
 }
 
-token string_basic_char:tab
+token string-basic-char:tab
 {
     \t
 }
 
-token string_basic_char:escape_sequence
+token string-basic-char:escape-sequence
 {
     # backslash followed by a valid TOML escape code, or error
     \\
@@ -99,58 +99,58 @@ token hex
     <[0..9A..F]>
 }
 
-token string_basic_multiline
+token string-basic-multiline
 {
-    <string_basic_multiline_delimiter>
-    <string_basic_multiline_leading_newline>?
-    <string_basic_multiline_text>?
-    <string_basic_multiline_delimiter>
+    <string-basic-multiline-delimiter>
+    <string-basic-multiline-leading-newline>?
+    <string-basic-multiline-text>?
+    <string-basic-multiline-delimiter>
 }
 
-token string_basic_multiline_delimiter
+token string-basic-multiline-delimiter
 {
     '"""'
 }
 
-token string_basic_multiline_leading_newline
+token string-basic-multiline-leading-newline
 {
     # A newline immediately following the opening delimiter will be
     # trimmed.
     \n
 }
 
-token string_basic_multiline_text
+token string-basic-multiline-text
 {
-    <string_basic_multiline_char>+
+    <string-basic-multiline-char>+
 }
 
-proto token string_basic_multiline_char {*}
+proto token string-basic-multiline-char {*}
 
-token string_basic_multiline_char:common
+token string-basic-multiline-char:common
 {
     # anything but delimiters ("""), backslashes and control characters
     # (U+0000 to U+001F)
-    <-string_basic_multiline_delimiter -[\\] -[\x00..\x1F]>
+    <-string-basic-multiline-delimiter -[\\] -[\x00..\x1F]>
 }
 
-token string_basic_multiline_char:tab
+token string-basic-multiline-char:tab
 {
     \t
 }
 
-token string_basic_multiline_char:newline
+token string-basic-multiline-char:newline
 {
     \n+
 }
 
-token string_basic_multiline_char:escape_sequence
+token string-basic-multiline-char:escape-sequence
 {
     # backslash followed by either a valid TOML escape code or linebreak,
     # else error
     \\
     [
         [
-            <escape> | $$ <ws_remover>
+            <escape> | $$ <ws-remover>
         ]
 
         ||
@@ -163,7 +163,7 @@ token string_basic_multiline_char:escape_sequence
     ]
 }
 
-token ws_remover
+token ws-remover
 {
     # For writing long strings without introducing extraneous whitespace,
     # end a line with a \. The \ will be trimmed along with all whitespace
@@ -175,19 +175,19 @@ token ws_remover
 # --- end string basic grammar }}}
 # --- string literal grammar {{{
 
-token string_literal
+token string-literal
 {
-    \' <string_literal_text>? \'
+    \' <string-literal-text>? \'
 }
 
-token string_literal_text
+token string-literal-text
 {
-    <string_literal_char>+
+    <string-literal-char>+
 }
 
-proto token string_literal_char {*}
+proto token string-literal-char {*}
 
-token string_literal_char:common
+token string-literal-char:common
 {
     # anything but linebreaks and single quotes
     # Since there is no escaping, there is no way to write a single
@@ -195,45 +195,45 @@ token string_literal_char:common
     <+[\N] -[\']>
 }
 
-token string_literal_char:backslash
+token string-literal-char:backslash
 {
     \\
 }
 
-token string_literal_multiline
+token string-literal-multiline
 {
-    <string_literal_multiline_delimiter>
-    <string_literal_multiline_leading_newline>?
-    <string_literal_multiline_text>?
-    <string_literal_multiline_delimiter>
+    <string-literal-multiline-delimiter>
+    <string-literal-multiline-leading-newline>?
+    <string-literal-multiline-text>?
+    <string-literal-multiline-delimiter>
 }
 
-token string_literal_multiline_delimiter
+token string-literal-multiline-delimiter
 {
     \'\'\'
 }
 
-token string_literal_multiline_leading_newline
+token string-literal-multiline-leading-newline
 {
     # A newline immediately following the opening delimiter will be
     # trimmed.
     \n
 }
 
-token string_literal_multiline_text
+token string-literal-multiline-text
 {
-    <string_literal_multiline_char>+
+    <string-literal-multiline-char>+
 }
 
-proto token string_literal_multiline_char {*}
+proto token string-literal-multiline-char {*}
 
-token string_literal_multiline_char:common
+token string-literal-multiline-char:common
 {
     # anything but delimiters (''') and backslashes
-    <-string_literal_multiline_delimiter -[\\]>
+    <-string-literal-multiline-delimiter -[\\]>
 }
 
-token string_literal_multiline_char:backslash
+token string-literal-multiline-char:backslash
 {
     \\
 }
@@ -250,14 +250,14 @@ token number
 
 token integer
 {
-    <plus_or_minus>? <whole_number>
+    <plus-or-minus>? <whole-number>
 }
 
-proto token plus_or_minus {*}
-token plus_or_minus:sym<+> { <sym> }
-token plus_or_minus:sym<-> { <sym> }
+proto token plus-or-minus {*}
+token plus-or-minus:sym<+> { <sym> }
+token plus-or-minus:sym<-> { <sym> }
 
-token whole_number
+token whole-number
 {
     0
 
@@ -281,16 +281,16 @@ token digits
 
 token float
 {
-    <integer_part=.integer>
+    <integer-part=.integer>
     [
-        '.' <fractional_part=.digits> <exponent_part>?
-        | <exponent_part>
+        '.' <fractional-part=.digits> <exponent-part>?
+        | <exponent-part>
     ]
 }
 
-token exponent_part
+token exponent-part
 {
-    <[Ee]> <integer_part=.integer>
+    <[Ee]> <integer-part=.integer>
 }
 
 # end number grammar }}}
@@ -327,93 +327,93 @@ token boolean:sym<false> { <sym> }
 proto token date {*}
 
 # RFC 3339 timestamp: http://tools.ietf.org/html/rfc3339
-token date:date_time
+token date:date-time
 {
-    <date_time>
+    <date-time>
 }
 
 # RFC 3339 timestamp (omit local offset)
-token date:date_time_omit_local_offset
+token date:date-time-omit-local-offset
 {
-    <date_time_omit_local_offset>
+    <date-time-omit-local-offset>
 }
 
 # YYYY-MM-DD
-token date:full_date
+token date:full-date
 {
-    <full_date>
+    <full-date>
 }
 
-token date_fullyear
+token date-fullyear
 {
     \d ** 4
 }
 
-token date_month
+token date-month
 {
     0 <[1..9]> | 1 <[0..2]>
 }
 
-token date_mday
+token date-mday
 {
     0 <[1..9]> | <[1..2]> \d | 3 <[0..1]>
 }
 
-token time_hour
+token time-hour
 {
     <[0..1]> \d | 2 <[0..3]>
 }
 
-token time_minute
+token time-minute
 {
     <[0..5]> \d
 }
 
-token time_second
+token time-second
 {
     # The grammar element time-second may have the value "60" at the end
     # of months in which a leap second occurs.
     <[0..5]> \d | 60
 }
 
-token time_secfrac
+token time-secfrac
 {
     '.' \d+
 }
 
-token time_numoffset
+token time-numoffset
 {
-    <plus_or_minus> <time_hour> ':' <time_minute>
+    <plus-or-minus> <time-hour> ':' <time-minute>
 }
 
-token time_offset
+token time-offset
 {
-    <[Zz]> | <time_numoffset>
+    <[Zz]> | <time-numoffset>
 }
 
-token partial_time
+token partial-time
 {
-    <time_hour> ':' <time_minute> ':' <time_second> <time_secfrac>?
+    <time-hour> ':' <time-minute> ':' <time-second> <time-secfrac>?
 }
 
-token full_date
+token full-date
 {
-    <date_fullyear> '-' <date_month> '-' <date_mday>
+    <date-fullyear> '-' <date-month> '-' <date-mday>
 }
 
-token full_time
+token full-time
 {
-    <partial_time> <time_offset>
+    <partial-time> <time-offset>
 }
 
-token date_time
+token date-time
 {
-    <full_date> <[Tt]> <full_time>
+    <full-date> <[Tt]> <full-time>
 }
 
-token date_time_omit_local_offset
+token date-time-omit-local-offset
 {
-    <full_date> <[Tt]> <partial_time>
+    <full-date> <[Tt]> <partial-time>
 }
 
 # end datetime grammar }}}
@@ -423,14 +423,14 @@ token array
 {
     '['
     <.gap>*
-    [ <array_elements> <.gap>* ','? ]?
+    [ <array-elements> <.gap>* ','? ]?
     <.gap>*
     ']'
 }
 
-proto token array_elements {*}
+proto token array-elements {*}
 
-token array_elements:strings
+token array-elements:strings
 {
     <string>
     [
@@ -439,7 +439,7 @@ token array_elements:strings
     ]*
 }
 
-token array_elements:integers
+token array-elements:integers
 {
     <integer>
     [
@@ -448,7 +448,7 @@ token array_elements:integers
     ]*
 }
 
-token array_elements:floats
+token array-elements:floats
 {
     <float>
     [
@@ -457,7 +457,7 @@ token array_elements:floats
     ]*
 }
 
-token array_elements:booleans
+token array-elements:booleans
 {
     <boolean>
     [
@@ -466,7 +466,7 @@ token array_elements:booleans
     ]*
 }
 
-token array_elements:dates
+token array-elements:dates
 {
     <date>
     [
@@ -475,7 +475,7 @@ token array_elements:dates
     ]*
 }
 
-token array_elements:arrays
+token array-elements:arrays
 {
     <array>
     [
@@ -484,28 +484,28 @@ token array_elements:arrays
     ]*
 }
 
-token array_elements:table_inlines
+token array-elements:table-inlines
 {
-    <table_inline>
+    <table-inline>
     [
         <.gap>* ',' <.gap>*
-        <table_inline>
+        <table-inline>
     ]*
 }
 
 # end array grammar }}}
 # table grammar {{{
 
-token table_inline
+token table-inline
 {
     '{'
     <.gap>*
-    [ <table_inline_keypairs> <.gap>* ','? ]?
+    [ <table-inline-keypairs> <.gap>* ','? ]?
     <.gap>*
     '}'
 }
 
-token table_inline_keypairs
+token table-inline-keypairs
 {
     <keypair>
     [
@@ -516,51 +516,43 @@ token table_inline_keypairs
 
 token keypair
 {
-    <keypair_key> \h* '=' \h* [ <keypair_value> | <table_inline> ]
+    <keypair-key> \h* '=' \h* [ <keypair-value> | <table-inline> ]
 }
 
-proto token keypair_key {*}
+proto token keypair-key {*}
+token keypair-key:bare { <+alnum +[-]>+ }
+token keypair-key:quoted { <keypair-key-string> }
 
-token keypair_key:bare
-{
-    <+alnum +[-]>+
-}
+# quoted keys follow the exact same rules as either basic strings or
+# literal strings
+proto token keypair-key-string {*}
+token keypair-key-string:basic { <string-basic> }
+token keypair-key-string:literal { <string-literal> }
 
-token keypair_key:quoted
-{
-    <keypair_key_string_basic>
-}
-
-# quoted keys must contain chars inside double quotes
-token keypair_key_string_basic
-{
-    '"' <string_basic_text> '"'
-}
-
-proto token keypair_value {*}
-token keypair_value:string { <string> }
-token keypair_value:number { <number> }
-token keypair_value:boolean { <boolean> }
-token keypair_value:date { <date> }
-token keypair_value:array { <array> }
+proto token keypair-value {*}
+token keypair-value:string { <string> }
+token keypair-value:number { <number> }
+token keypair-value:boolean { <boolean> }
+token keypair-value:date { <date> }
+token keypair-value:array { <array> }
 
 # end table grammar }}}
 # document grammar {{{
 
 # blank line
-token blank_line
+token blank-line
 {
     ^^ \h* $$ \n
 }
 
 # comment appearing on its own line
-token comment_line
+token comment-line
 {
     ^^ \h* <.comment> $$ \n
 }
 
 # keypair appearing on its own line
-token keypair_line
+token keypair-line
 {
     ^^ \h* <keypair> \h* <.comment>? $$ \n
 }
@@ -570,49 +562,49 @@ proto token table {*}
 # standard TOML table (hash of hashes)
 token table:hoh
 {
-    ^^ \h* <hoh_header> \h* <.comment>? $$ \n
-    [ <keypair_line> | <.comment_line> | <.blank_line> ]*
+    ^^ \h* <hoh-header> \h* <.comment>? $$ \n
+    [ <keypair-line> | <.comment-line> | <.blank-line> ]*
 }
 
 # TOML array of tables (array of hashes)
 token table:aoh
 {
-    ^^ \h* <aoh_header> \h* <.comment>? $$ \n
-    [ <keypair_line> | <.comment_line> | <.blank_line> ]*
+    ^^ \h* <aoh-header> \h* <.comment>? $$ \n
+    [ <keypair-line> | <.comment-line> | <.blank-line> ]*
 }
 
 # hash of hashes header
-token hoh_header
+token hoh-header
 {
-    '[' \h* <table_header_text> \h* ']'
+    '[' \h* <table-header-text> \h* ']'
 }
 
 # array of hashes header
-token aoh_header
+token aoh-header
 {
-    '[[' \h* <table_header_text> \h* ']]'
+    '[[' \h* <table-header-text> \h* ']]'
 }
 
-token table_header_text
+token table-header-text
 {
-    <keypair_key> [ \h* '.' \h* <keypair_key> ]*
+    <keypair-key> [ \h* '.' \h* <keypair-key> ]*
 }
 
 proto token segment {*}
 
-token segment:blank_line
+token segment:blank-line
 {
-    <.blank_line>
+    <.blank-line>
 }
 
-token segment:comment_line
+token segment:comment-line
 {
-    <.comment_line>
+    <.comment-line>
 }
 
-token segment:keypair_line
+token segment:keypair-line
 {
-    <keypair_line>
+    <keypair-line>
 }
 
 token segment:table

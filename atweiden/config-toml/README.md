@@ -1,7 +1,7 @@
 Config::TOML
 ============
 
-TOML parser for Rakudo Perl 6.
+Parse TOML from file or perl6 Str.
 
 
 Usage
@@ -9,8 +9,18 @@ Usage
 
 ```perl6
 use Config::TOML;
-my $toml_text = slurp 'config.toml';
-my %toml = from-toml $toml_text;
+
+# parse toml from string
+my $toml = Q:to/EOF/;
+[server]
+host = "192.168.1.1"
+ports = [ 8001, 8002, 8003 ]
+EOF
+my %toml = from-toml($toml);
+
+# parse toml from file
+my $file = 'config.toml';
+my %toml = from-toml(:$file);
 ```
 
 

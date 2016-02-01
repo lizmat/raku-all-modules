@@ -14,10 +14,10 @@
     subaccount = [ 'Bankwest', 'Cheque' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 1000.00
-    asset_symbol = '$'
-    plus_or_minus = ''
+    asset-code = 'USD'
+    asset-quantity = 1000.00
+    asset-symbol = '$'
+    plus-or-minus = ''
 
   [[Entry.Posting]]
 
@@ -27,10 +27,10 @@
     subaccount = []
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 1000.00
-    asset_symbol = '$'
-    plus_or_minus = ''
+    asset-code = 'USD'
+    asset-quantity = 1000.00
+    asset-symbol = '$'
+    plus-or-minus = ''
 
 
 
@@ -50,15 +50,15 @@
     subaccount = [ 'Coinbase', 'BTC' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'BTC'
-    asset_quantity = 0.80000000
-    asset_symbol = '฿'
-    plus_or_minus = ''
+    asset-code = 'BTC'
+    asset-quantity = 0.80000000
+    asset-symbol = '฿'
+    plus-or-minus = ''
 
       [Entry.Posting.Amount.XE]
-      xe_asset_code = 'USD'
-      xe_asset_quantity = 830.024
-      xe_asset_symbol = '$'
+      xe-asset-code = 'USD'
+      xe-asset-quantity = 830.024
+      xe-asset-symbol = '$'
 
   [[Entry.Posting]]
 
@@ -68,10 +68,10 @@
     subaccount = [ 'CoinbaseFee' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 6.64
-    asset_symbol = '$'
-    plus_or_minus = ''
+    asset-code = 'USD'
+    asset-quantity = 6.64
+    asset-symbol = '$'
+    plus-or-minus = ''
 
   [[Entry.Posting]]
 
@@ -81,10 +81,10 @@
     subaccount = [ 'Bankwest', 'Cheque' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 670.66
-    asset_symbol = '$'
-    plus_or_minus = '-'
+    asset-code = 'USD'
+    asset-quantity = 670.66
+    asset-symbol = '$'
+    plus-or-minus = '-'
 
 
 
@@ -104,10 +104,10 @@
     subaccount = [ 'GAP' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 2.70
-    asset_symbol = '$'
-    plus_or_minus = ''
+    asset-code = 'USD'
+    asset-quantity = 2.70
+    asset-symbol = '$'
+    plus-or-minus = ''
 
   [[Entry.Posting]]
 
@@ -117,10 +117,10 @@
     subaccount = [ 'Bankwest', 'Cheque' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 2.70
-    asset_symbol = '$'
-    plus_or_minus = '-'
+    asset-code = 'USD'
+    asset-quantity = 2.70
+    asset-symbol = '$'
+    plus-or-minus = '-'
 
 
 
@@ -140,10 +140,10 @@
     subaccount = [ 'Fuel' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 10.00
-    asset_symbol = '$'
-    plus_or_minus = ''
+    asset-code = 'USD'
+    asset-quantity = 10.00
+    asset-symbol = '$'
+    plus-or-minus = ''
 
   [[Entry.Posting]]
 
@@ -153,10 +153,10 @@
     subaccount = [ 'Bankwest', 'Cheque' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 10.00
-    asset_symbol = '$'
-    plus_or_minus = '-'
+    asset-code = 'USD'
+    asset-quantity = 10.00
+    asset-symbol = '$'
+    plus-or-minus = '-'
 
 
 
@@ -176,10 +176,10 @@
     subaccount = [ 'GAP' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 13.37
-    asset_symbol = '$'
-    plus_or_minus = ''
+    asset-code = 'USD'
+    asset-quantity = 13.37
+    asset-symbol = '$'
+    plus-or-minus = ''
 
   [[Entry.Posting]]
 
@@ -189,10 +189,10 @@
     subaccount = [ 'Bankwest', 'Cheque' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 13.37
-    asset_symbol = '$'
-    plus_or_minus = '-'
+    asset-code = 'USD'
+    asset-quantity = 13.37
+    asset-symbol = '$'
+    plus-or-minus = '-'
 
 
 
@@ -212,10 +212,10 @@
     subaccount = [ 'Fuel' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 20.00
-    asset_symbol = '$'
-    plus_or_minus = ''
+    asset-code = 'USD'
+    asset-quantity = 20.00
+    asset-symbol = '$'
+    plus-or-minus = ''
 
   [[Entry.Posting]]
 
@@ -225,10 +225,10 @@
     subaccount = [ 'Bankwest', 'Cheque' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 20.00
-    asset_symbol = '$'
-    plus_or_minus = '-'
+    asset-code = 'USD'
+    asset-quantity = 20.00
+    asset-symbol = '$'
+    plus-or-minus = '-'
 
 
 
@@ -248,10 +248,10 @@
     subaccount = [ 'Coinbase', 'BTC' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'BTC'
-    asset_quantity = 1.11111111
-    asset_symbol = '฿'
-    plus_or_minus = ''
+    asset-code = 'BTC'
+    asset-quantity = 1.11111111
+    asset-symbol = '฿'
+    plus-or-minus = ''
 
   [[Entry.Posting]]
 
@@ -261,10 +261,10 @@
     subaccount = [ 'CoinbaseFee' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 10.00
-    asset_symbol = '$'
-    plus_or_minus = ''
+    asset-code = 'USD'
+    asset-quantity = 10.00
+    asset-symbol = '$'
+    plus-or-minus = ''
 
   [[Entry.Posting]]
 
@@ -274,7 +274,7 @@
     subaccount = [ 'Bankwest', 'Cheque' ]
 
     [Entry.Posting.Amount]
-    asset_code = 'USD'
-    asset_quantity = 1121.11
-    asset_symbol = '$'
-    plus_or_minus = '-'
+    asset-code = 'USD'
+    asset-quantity = 1121.11
+    asset-symbol = '$'
+    plus-or-minus = '-'

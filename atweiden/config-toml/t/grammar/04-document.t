@@ -10,21 +10,21 @@ plan 3;
 # subtest
 {
     my Str $document = slurp 't/data/example-v0.4.0.toml';
-    my Str $document_hard = slurp 't/data/hard_example.toml';
-    my Str $document_standard = slurp 't/data/example.toml';
+    my Str $document-hard = slurp 't/data/hard_example.toml';
+    my Str $document-standard = slurp 't/data/example.toml';
 
-    my $match_document = Config::TOML::Parser::Grammar.parse(
+    my $match-document = Config::TOML::Parser::Grammar.parse(
         $document
     );
-    my $match_document_hard = Config::TOML::Parser::Grammar.parse(
-        $document_hard
+    my $match-document-hard = Config::TOML::Parser::Grammar.parse(
+        $document-hard
     );
-    my $match_document_standard = Config::TOML::Parser::Grammar.parse(
-        $document_standard
+    my $match-document-standard = Config::TOML::Parser::Grammar.parse(
+        $document-standard
     );
 
     is(
-        $match_document.WHAT,
+        $match-document.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse($document)] - 1 of 3
@@ -36,10 +36,10 @@ plan 3;
         EOF
     );
     is(
-        $match_document_hard.WHAT,
+        $match-document-hard.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($document_hard)] - 2 of 3
+        ♪ [Grammar.parse($document-hard)] - 2 of 3
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses TOML v0.4.0 document successfully
         ┃   Success   ┃
@@ -48,10 +48,10 @@ plan 3;
         EOF
     );
     is(
-        $match_document_standard.WHAT,
+        $match-document-standard.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($document_standard)] - 3 of 3
+        ♪ [Grammar.parse($document-standard)] - 3 of 3
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses TOML v0.4.0 document successfully
         ┃   Success   ┃

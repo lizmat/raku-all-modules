@@ -10,7 +10,7 @@ plan 1;
 
 subtest
 {
-    my Str $commented_inline_table_difficult = Q:to/EOF/;
+    my Str $commented-inline-table-difficult = Q:to/EOF/;
     {# this is ok 1
         # this is ok 2
         # this is ok 3
@@ -119,22 +119,22 @@ subtest
     # this is ok 89
     }
     EOF
-    $commented_inline_table_difficult .= trim;
+    $commented-inline-table-difficult .= trim;
 
     my Config::TOML::Parser::Actions $actions .= new;
-    my $match_commented_inline_table_difficult = Config::TOML::Parser::Grammar.parse(
-        $commented_inline_table_difficult,
+    my $match-commented-inline-table-difficult = Config::TOML::Parser::Grammar.parse(
+        $commented-inline-table-difficult,
         :$actions,
-        :rule<table_inline>
+        :rule<table-inline>
     );
 
     is(
-        $match_commented_inline_table_difficult.WHAT,
+        $match-commented-inline-table-difficult.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $commented_inline_table_difficult,
-              :rule<table_inline>
+              $commented-inline-table-difficult,
+              :rule<table-inline>
            )] - 1 of 3
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal commented inline
@@ -145,12 +145,12 @@ subtest
     );
 
     is(
-        $match_commented_inline_table_difficult.made.WHAT,
+        $match-commented-inline-table-difficult.made.WHAT,
         Hash,
         q:to/EOF/
         ♪ [Is inline table?] - 2 of 3
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_inline_table_difficult.made.WHAT
+        ┃             ┃  ∙ $match-commented-inline-table-difficult.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -158,7 +158,7 @@ subtest
     );
 
     is(
-        $match_commented_inline_table_difficult.made,
+        $match-commented-inline-table-difficult.made,
         {
             :array_of_arrays(
                 [
@@ -188,7 +188,7 @@ subtest
         q:to/EOF/
         ♪ [Is expected inline table value?] - 3 of 3
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_inline_table_difficult.made
+        ┃             ┃  ∙ $match-commented-inline-table-difficult.made
         ┃   Success   ┃        ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛

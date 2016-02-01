@@ -9,7 +9,7 @@ plan 1;
 
 subtest
 {
-    my Str $commented_inline_table_difficult = Q:to/EOF/;
+    my Str $commented-inline-table-difficult = Q:to/EOF/;
     {# this is ok 1
         # this is ok 2
         # this is ok 3
@@ -130,20 +130,20 @@ subtest
     # this is ok 95
     }
     EOF
-    $commented_inline_table_difficult .= trim;
+    $commented-inline-table-difficult .= trim;
 
-    my $match_commented_inline_table_difficult = Config::TOML::Parser::Grammar.parse(
-        $commented_inline_table_difficult,
-        :rule<table_inline>
+    my $match-commented-inline-table-difficult = Config::TOML::Parser::Grammar.parse(
+        $commented-inline-table-difficult,
+        :rule<table-inline>
     );
 
     is(
-        $match_commented_inline_table_difficult.WHAT,
+        $match-commented-inline-table-difficult.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $commented_inline_table_difficult,
-              :rule<table_inline>
+              $commented-inline-table-difficult,
+              :rule<table-inline>
            )] - 1 of 1
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal commented inline

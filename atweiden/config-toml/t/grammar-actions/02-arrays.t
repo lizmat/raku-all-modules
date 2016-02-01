@@ -10,78 +10,78 @@ plan 9;
 
 subtest
 {
-    my Str $empty_array = '[]';
-    my Str $empty_array_space = '[ ]';
-    my Str $empty_array_spaces = '[   ]';
-    my Str $empty_array_tab = '[	]';
-    my Str $empty_array_tabs = '[			]';
-    my Str $empty_array_newline = Q:to/EOF/;
+    my Str $empty-array = '[]';
+    my Str $empty-array-space = '[ ]';
+    my Str $empty-array-spaces = '[   ]';
+    my Str $empty-array-tab = '[	]';
+    my Str $empty-array-tabs = '[			]';
+    my Str $empty-array-newline = Q:to/EOF/;
     [
     ]
     EOF
-    $empty_array_newline .= trim;
-    my Str $empty_array_newlines = Q:to/EOF/;
+    $empty-array-newline .= trim;
+    my Str $empty-array-newlines = Q:to/EOF/;
     [
 
 
     ]
     EOF
-    $empty_array_newlines .= trim;
-    my Str $empty_array_newlines_tabbed = Q:to/EOF/;
+    $empty-array-newlines .= trim;
+    my Str $empty-array-newlines-tabbed = Q:to/EOF/;
     [
 
 
 		]
     EOF
-    $empty_array_newlines_tabbed .= trim;
+    $empty-array-newlines-tabbed .= trim;
 
     my Config::TOML::Parser::Actions $actions .= new;
-    my $match_empty_array = Config::TOML::Parser::Grammar.parse(
-        $empty_array,
+    my $match-empty-array = Config::TOML::Parser::Grammar.parse(
+        $empty-array,
         :$actions,
         :rule<array>
     );
-    my $match_empty_array_space = Config::TOML::Parser::Grammar.parse(
-        $empty_array_space,
+    my $match-empty-array-space = Config::TOML::Parser::Grammar.parse(
+        $empty-array-space,
         :$actions,
         :rule<array>
     );
-    my $match_empty_array_spaces = Config::TOML::Parser::Grammar.parse(
-        $empty_array_spaces,
+    my $match-empty-array-spaces = Config::TOML::Parser::Grammar.parse(
+        $empty-array-spaces,
         :$actions,
         :rule<array>
     );
-    my $match_empty_array_tab = Config::TOML::Parser::Grammar.parse(
-        $empty_array_tab,
+    my $match-empty-array-tab = Config::TOML::Parser::Grammar.parse(
+        $empty-array-tab,
         :$actions,
         :rule<array>
     );
-    my $match_empty_array_tabs = Config::TOML::Parser::Grammar.parse(
-        $empty_array_tabs,
+    my $match-empty-array-tabs = Config::TOML::Parser::Grammar.parse(
+        $empty-array-tabs,
         :$actions,
         :rule<array>
     );
-    my $match_empty_array_newline = Config::TOML::Parser::Grammar.parse(
-        $empty_array_newline,
+    my $match-empty-array-newline = Config::TOML::Parser::Grammar.parse(
+        $empty-array-newline,
         :$actions,
         :rule<array>
     );
-    my $match_empty_array_newlines = Config::TOML::Parser::Grammar.parse(
-        $empty_array_newlines,
+    my $match-empty-array-newlines = Config::TOML::Parser::Grammar.parse(
+        $empty-array-newlines,
         :$actions,
         :rule<array>
     );
-    my $match_empty_array_newlines_tabbed = Config::TOML::Parser::Grammar.parse(
-        $empty_array_newlines_tabbed,
+    my $match-empty-array-newlines-tabbed = Config::TOML::Parser::Grammar.parse(
+        $empty-array-newlines-tabbed,
         :$actions,
         :rule<array>
     );
 
     is(
-        $match_empty_array.WHAT,
+        $match-empty-array.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($empty_array, :rule<array>)] - 1 of 123
+        ♪ [Grammar.parse($empty-array, :rule<array>)] - 1 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal empty array successfully
         ┃   Success   ┃
@@ -90,10 +90,10 @@ subtest
         EOF
     );
     is(
-        $match_empty_array_space.WHAT,
+        $match-empty-array-space.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($empty_array_space, :rule<array>)] - 2 of 123
+        ♪ [Grammar.parse($empty-array-space, :rule<array>)] - 2 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal empty array (with
         ┃   Success   ┃    single space) successfully
@@ -102,10 +102,10 @@ subtest
         EOF
     );
     is(
-        $match_empty_array_spaces.WHAT,
+        $match-empty-array-spaces.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($empty_array_spaces, :rule<array>)] - 3 of 123
+        ♪ [Grammar.parse($empty-array-spaces, :rule<array>)] - 3 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal empty array (with
         ┃   Success   ┃    spaces) successfully
@@ -114,10 +114,10 @@ subtest
         EOF
     );
     is(
-        $match_empty_array_tab.WHAT,
+        $match-empty-array-tab.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($empty_array_tab, :rule<array>)] - 4 of 123
+        ♪ [Grammar.parse($empty-array-tab, :rule<array>)] - 4 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal empty array (with
         ┃   Success   ┃    single tab) successfully
@@ -126,10 +126,10 @@ subtest
         EOF
     );
     is(
-        $match_empty_array_tabs.WHAT,
+        $match-empty-array-tabs.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($empty_array_tabs, :rule<array>)] - 5 of 123
+        ♪ [Grammar.parse($empty-array-tabs, :rule<array>)] - 5 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal empty array (with
         ┃   Success   ┃    tabs) successfully
@@ -138,10 +138,10 @@ subtest
         EOF
     );
     is(
-        $match_empty_array_newline.WHAT,
+        $match-empty-array-newline.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($empty_array_newline, :rule<array>)] - 6 of 123
+        ♪ [Grammar.parse($empty-array-newline, :rule<array>)] - 6 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal empty array (with
         ┃   Success   ┃    single newline) successfully
@@ -150,10 +150,10 @@ subtest
         EOF
     );
     is(
-        $match_empty_array_newlines.WHAT,
+        $match-empty-array-newlines.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($empty_array_newlines, :rule<array>)] - 7 of 123
+        ♪ [Grammar.parse($empty-array-newlines, :rule<array>)] - 7 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal empty array (with
         ┃   Success   ┃    newlines) successfully
@@ -162,10 +162,10 @@ subtest
         EOF
     );
     is(
-        $match_empty_array_newlines_tabbed.WHAT,
+        $match-empty-array-newlines-tabbed.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($empty_array_newlines_tabbed, :rule<array>)] - 8 of 123
+        ♪ [Grammar.parse($empty-array-newlines-tabbed, :rule<array>)] - 8 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal empty array (with
         ┃   Success   ┃    newlines and tab) successfully
@@ -175,96 +175,96 @@ subtest
     );
 
     is(
-        $match_empty_array.made.WHAT,
+        $match-empty-array.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 9 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-empty-array.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_space.made.WHAT,
+        $match-empty-array-space.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 10 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_space.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-empty-array-space.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_spaces.made.WHAT,
+        $match-empty-array-spaces.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 11 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_spaces.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-empty-array-spaces.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_tab.made.WHAT,
+        $match-empty-array-tab.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 12 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_tab.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-empty-array-tab.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_tabs.made.WHAT,
+        $match-empty-array-tabs.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 13 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_tabs.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-empty-array-tabs.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_newline.made.WHAT,
+        $match-empty-array-newline.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 14 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_newline.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-empty-array-newline.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_newlines.made.WHAT,
+        $match-empty-array-newlines.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 15 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_newlines.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-empty-array-newlines.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_newlines_tabbed.made.WHAT,
+        $match-empty-array-newlines-tabbed.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 16 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_newlines_tabbed.made.WHAT
+        ┃             ┃  ∙ $match-empty-array-newlines-tabbed.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -272,96 +272,96 @@ subtest
     );
 
     is(
-        $match_empty_array.made,
+        $match-empty-array.made,
         [],
         q:to/EOF/
         ♪ [Is expected array value?] - 17 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array.made ~~ []
+        ┃             ┃  ∙ $match-empty-array.made ~~ []
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_space.made,
+        $match-empty-array-space.made,
         [],
         q:to/EOF/
         ♪ [Is expected array value?] - 18 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_space.made ~~ []
+        ┃             ┃  ∙ $match-empty-array-space.made ~~ []
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_spaces.made,
+        $match-empty-array-spaces.made,
         [],
         q:to/EOF/
         ♪ [Is expected array value?] - 19 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_spaces.made ~~ []
+        ┃             ┃  ∙ $match-empty-array-spaces.made ~~ []
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_tab.made,
+        $match-empty-array-tab.made,
         [],
         q:to/EOF/
         ♪ [Is expected array value?] - 20 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_tab.made ~~ []
+        ┃             ┃  ∙ $match-empty-array-tab.made ~~ []
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_tabs.made,
+        $match-empty-array-tabs.made,
         [],
         q:to/EOF/
         ♪ [Is expected array value?] - 21 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_tabs.made ~~ []
+        ┃             ┃  ∙ $match-empty-array-tabs.made ~~ []
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_newline.made,
+        $match-empty-array-newline.made,
         [],
         q:to/EOF/
         ♪ [Is expected array value?] - 22 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_newline.made ~~ []
+        ┃             ┃  ∙ $match-empty-array-newline.made ~~ []
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_newlines.made,
+        $match-empty-array-newlines.made,
         [],
         q:to/EOF/
         ♪ [Is expected array value?] - 23 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_newlines.made ~~ []
+        ┃             ┃  ∙ $match-empty-array-newlines.made ~~ []
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_empty_array_newlines_tabbed.made,
+        $match-empty-array-newlines-tabbed.made,
         [],
         q:to/EOF/
         ♪ [Is expected array value?] - 24 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_empty_array_newlines_tabbed.made
+        ┃             ┃  ∙ $match-empty-array-newlines-tabbed.made
         ┃   Success   ┃        ~~ []
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -374,36 +374,36 @@ subtest
 
 subtest
 {
-    my Str $array_of_basic_strings = Q:to/EOF/;
+    my Str $array-of-basic-strings = Q:to/EOF/;
     ["red", "maroon", "crimson"]
     EOF
-    $array_of_basic_strings .= trim;
+    $array-of-basic-strings .= trim;
 
-    my Str $array_of_basic_strings_newlines = Q:to/EOF/;
+    my Str $array-of-basic-strings-newlines = Q:to/EOF/;
     [
         "red",
         "maroon",
         "crimson",
     ]
     EOF
-    $array_of_basic_strings_newlines .= trim;
+    $array-of-basic-strings-newlines .= trim;
 
-    my Str $array_of_basic_empty_strings = Q:to/EOF/;
+    my Str $array-of-basic-empty-strings = Q:to/EOF/;
     ["", " ", "		"]
     EOF
-    $array_of_basic_empty_strings .= trim;
+    $array-of-basic-empty-strings .= trim;
 
-    my Str $array_of_basic_multiline_string = Q:to/EOF/;
+    my Str $array-of-basic-multiline-string = Q:to/EOF/;
     ["""red""",]
     EOF
-    $array_of_basic_multiline_string .= trim;
+    $array-of-basic-multiline-string .= trim;
 
-    my Str $array_of_basic_multiline_strings = Q:to/EOF/;
+    my Str $array-of-basic-multiline-strings = Q:to/EOF/;
     ["""red""", """maroon""", """crimson"""]
     EOF
-    $array_of_basic_multiline_strings .= trim;
+    $array-of-basic-multiline-strings .= trim;
 
-    my Str $array_of_basic_multiline_strings_newlines = Q:to/EOF/;
+    my Str $array-of-basic-multiline-strings-newlines = Q:to/EOF/;
     [
         """
         red \
@@ -416,38 +416,38 @@ subtest
         turquoise
         """, """ brown tan\n auburn""", ]
     EOF
-    $array_of_basic_multiline_strings_newlines .= trim;
+    $array-of-basic-multiline-strings-newlines .= trim;
 
-    my Str $array_of_literal_strings = Q:to/EOF/;
+    my Str $array-of-literal-strings = Q:to/EOF/;
     ['red', 'maroon', 'crimson']
     EOF
-    $array_of_literal_strings .= trim;
+    $array-of-literal-strings .= trim;
 
-    my Str $array_of_literal_strings_newlines = Q:to/EOF/;
+    my Str $array-of-literal-strings-newlines = Q:to/EOF/;
     [
         'red',
         'maroon',
         'crimson',
     ]
     EOF
-    $array_of_literal_strings_newlines .= trim;
+    $array-of-literal-strings-newlines .= trim;
 
-    my Str $array_of_literal_empty_strings = Q:to/EOF/;
+    my Str $array-of-literal-empty-strings = Q:to/EOF/;
     ['', ' ', '		']
     EOF
-    $array_of_literal_empty_strings .= trim;
+    $array-of-literal-empty-strings .= trim;
 
-    my Str $array_of_literal_multiline_string = Q:to/EOF/;
+    my Str $array-of-literal-multiline-string = Q:to/EOF/;
     ['''red''',]
     EOF
-    $array_of_literal_multiline_string .= trim;
+    $array-of-literal-multiline-string .= trim;
 
-    my Str $array_of_literal_multiline_strings = Q:to/EOF/;
+    my Str $array-of-literal-multiline-strings = Q:to/EOF/;
     ['''red''', '''maroon''', '''crimson''']
     EOF
-    $array_of_literal_multiline_strings .= trim;
+    $array-of-literal-multiline-strings .= trim;
 
-    my Str $array_of_literal_multiline_strings_newlines = Q:to/EOF/;
+    my Str $array-of-literal-multiline-strings-newlines = Q:to/EOF/;
     [
         '''
         red \
@@ -460,19 +460,19 @@ subtest
         turquoise
         ''', ''' brown tan auburn''', ]
     EOF
-    $array_of_literal_multiline_strings_newlines .= trim;
+    $array-of-literal-multiline-strings-newlines .= trim;
 
-    my Str $array_of_mixed_strings = Q:to/EOF/;
+    my Str $array-of-mixed-strings = Q:to/EOF/;
     [ "first", 'second', """third""", '''fourth''', "", '', ]
     EOF
-    $array_of_mixed_strings .= trim;
+    $array-of-mixed-strings .= trim;
 
-    my Str $array_of_difficult_strings = q:to/EOF/;
+    my Str $array-of-difficult-strings = q:to/EOF/;
     [ "] ", " # ", '\ ', '\', '''\ ''', '''\''']
     EOF
-    $array_of_difficult_strings .= trim;
+    $array-of-difficult-strings .= trim;
 
-    my Str $array_of_difficult_strings_leading_commas = q:to/EOF/;
+    my Str $array-of-difficult-strings-leading-commas = q:to/EOF/;
     [
         "] "
         , " # "
@@ -482,90 +482,90 @@ subtest
         , '''\'''
     ]
     EOF
-    $array_of_difficult_strings_leading_commas .= trim;
+    $array-of-difficult-strings-leading-commas .= trim;
 
     my Config::TOML::Parser::Actions $actions .= new;
-    my $match_array_of_basic_strings = Config::TOML::Parser::Grammar.parse(
-        $array_of_basic_strings,
+    my $match-array-of-basic-strings = Config::TOML::Parser::Grammar.parse(
+        $array-of-basic-strings,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_basic_strings_newlines = Config::TOML::Parser::Grammar.parse(
-        $array_of_basic_strings_newlines,
+    my $match-array-of-basic-strings-newlines = Config::TOML::Parser::Grammar.parse(
+        $array-of-basic-strings-newlines,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_basic_empty_strings = Config::TOML::Parser::Grammar.parse(
-        $array_of_basic_empty_strings,
+    my $match-array-of-basic-empty-strings = Config::TOML::Parser::Grammar.parse(
+        $array-of-basic-empty-strings,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_basic_multiline_string = Config::TOML::Parser::Grammar.parse(
-        $array_of_basic_multiline_string,
+    my $match-array-of-basic-multiline-string = Config::TOML::Parser::Grammar.parse(
+        $array-of-basic-multiline-string,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_basic_multiline_strings = Config::TOML::Parser::Grammar.parse(
-        $array_of_basic_multiline_strings,
+    my $match-array-of-basic-multiline-strings = Config::TOML::Parser::Grammar.parse(
+        $array-of-basic-multiline-strings,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_basic_multiline_strings_newlines = Config::TOML::Parser::Grammar.parse(
-        $array_of_basic_multiline_strings_newlines,
+    my $match-array-of-basic-multiline-strings-newlines = Config::TOML::Parser::Grammar.parse(
+        $array-of-basic-multiline-strings-newlines,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_literal_strings = Config::TOML::Parser::Grammar.parse(
-        $array_of_literal_strings,
+    my $match-array-of-literal-strings = Config::TOML::Parser::Grammar.parse(
+        $array-of-literal-strings,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_literal_strings_newlines = Config::TOML::Parser::Grammar.parse(
-        $array_of_literal_strings_newlines,
+    my $match-array-of-literal-strings-newlines = Config::TOML::Parser::Grammar.parse(
+        $array-of-literal-strings-newlines,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_literal_empty_strings = Config::TOML::Parser::Grammar.parse(
-        $array_of_literal_empty_strings,
+    my $match-array-of-literal-empty-strings = Config::TOML::Parser::Grammar.parse(
+        $array-of-literal-empty-strings,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_literal_multiline_string = Config::TOML::Parser::Grammar.parse(
-        $array_of_literal_multiline_string,
+    my $match-array-of-literal-multiline-string = Config::TOML::Parser::Grammar.parse(
+        $array-of-literal-multiline-string,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_literal_multiline_strings = Config::TOML::Parser::Grammar.parse(
-        $array_of_literal_multiline_strings,
+    my $match-array-of-literal-multiline-strings = Config::TOML::Parser::Grammar.parse(
+        $array-of-literal-multiline-strings,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_literal_multiline_strings_newlines = Config::TOML::Parser::Grammar.parse(
-        $array_of_literal_multiline_strings_newlines,
+    my $match-array-of-literal-multiline-strings-newlines = Config::TOML::Parser::Grammar.parse(
+        $array-of-literal-multiline-strings-newlines,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_mixed_strings = Config::TOML::Parser::Grammar.parse(
-        $array_of_mixed_strings,
+    my $match-array-of-mixed-strings = Config::TOML::Parser::Grammar.parse(
+        $array-of-mixed-strings,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_difficult_strings = Config::TOML::Parser::Grammar.parse(
-        $array_of_difficult_strings,
+    my $match-array-of-difficult-strings = Config::TOML::Parser::Grammar.parse(
+        $array-of-difficult-strings,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_difficult_strings_leading_commas = Config::TOML::Parser::Grammar.parse(
-        $array_of_difficult_strings_leading_commas,
+    my $match-array-of-difficult-strings-leading-commas = Config::TOML::Parser::Grammar.parse(
+        $array-of-difficult-strings-leading-commas,
         :$actions,
         :rule<array>
     );
 
     is(
-        $match_array_of_basic_strings.WHAT,
+        $match-array-of-basic-strings.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_basic_strings, :rule<array>)] - 25 of 123
+        ♪ [Grammar.parse($array-of-basic-strings, :rule<array>)] - 25 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of basic strings
         ┃   Success   ┃    successfully
@@ -574,11 +574,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_basic_strings_newlines.WHAT,
+        $match-array-of-basic-strings-newlines.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_basic_strings_newlines,
+              $array-of-basic-strings-newlines,
               :rule<array>
            )] - 26 of 123
         ┏━━━━━━━━━━━━━┓
@@ -589,11 +589,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_basic_empty_strings.WHAT,
+        $match-array-of-basic-empty-strings.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_basic_empty_strings,
+              $array-of-basic-empty-strings,
               :rule<array>
            )] - 27 of 123
         ┏━━━━━━━━━━━━━┓
@@ -604,11 +604,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_basic_multiline_string.WHAT,
+        $match-array-of-basic-multiline-string.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_basic_multiline_string,
+              $array-of-basic-multiline-string,
               :rule<array>
            )] - 28 of 123
         ┏━━━━━━━━━━━━━┓
@@ -619,11 +619,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_basic_multiline_strings.WHAT,
+        $match-array-of-basic-multiline-strings.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_basic_multiline_strings,
+              $array-of-basic-multiline-strings,
               :rule<array>
            )] - 29 of 123
         ┏━━━━━━━━━━━━━┓
@@ -634,11 +634,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_basic_multiline_strings_newlines.WHAT,
+        $match-array-of-basic-multiline-strings-newlines.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_basic_multiline_strings_newlines,
+              $array-of-basic-multiline-strings-newlines,
               :rule<array>
            )] - 30 of 123
         ┏━━━━━━━━━━━━━┓
@@ -649,10 +649,10 @@ subtest
         EOF
     );
     is(
-        $match_array_of_literal_strings.WHAT,
+        $match-array-of-literal-strings.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_literal_strings, :rule<array>)] - 31 of 123
+        ♪ [Grammar.parse($array-of-literal-strings, :rule<array>)] - 31 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of literal strings
         ┃   Success   ┃    successfully
@@ -661,11 +661,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_literal_strings_newlines.WHAT,
+        $match-array-of-literal-strings-newlines.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_literal_strings_newlines,
+              $array-of-literal-strings-newlines,
               :rule<array>
            )] - 32 of 123
         ┏━━━━━━━━━━━━━┓
@@ -676,11 +676,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_literal_empty_strings.WHAT,
+        $match-array-of-literal-empty-strings.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_literal_empty_strings,
+              $array-of-literal-empty-strings,
               :rule<array>
            )] - 33 of 123
         ┏━━━━━━━━━━━━━┓
@@ -691,11 +691,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_literal_multiline_string.WHAT,
+        $match-array-of-literal-multiline-string.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_literal_multiline_string,
+              $array-of-literal-multiline-string,
               :rule<array>
            )] - 34 of 123
         ┏━━━━━━━━━━━━━┓
@@ -706,11 +706,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_literal_multiline_strings.WHAT,
+        $match-array-of-literal-multiline-strings.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_literal_multiline_strings,
+              $array-of-literal-multiline-strings,
               :rule<array>
            )] - 35 of 123
         ┏━━━━━━━━━━━━━┓
@@ -721,11 +721,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_literal_multiline_strings_newlines.WHAT,
+        $match-array-of-literal-multiline-strings-newlines.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_literal_multiline_strings_newlines,
+              $array-of-literal-multiline-strings-newlines,
               :rule<array>
            )] - 36 of 123
         ┏━━━━━━━━━━━━━┓
@@ -736,10 +736,10 @@ subtest
         EOF
     );
     is(
-        $match_array_of_mixed_strings.WHAT,
+        $match-array-of-mixed-strings.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_mixed_strings, :rule<array>)] - 37 of 123
+        ♪ [Grammar.parse($array-of-mixed-strings, :rule<array>)] - 37 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of mixed strings
         ┃   Success   ┃    successfully
@@ -748,10 +748,10 @@ subtest
         EOF
     );
     is(
-        $match_array_of_difficult_strings.WHAT,
+        $match-array-of-difficult-strings.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_difficult_strings, :rule<array>)] - 38 of 123
+        ♪ [Grammar.parse($array-of-difficult-strings, :rule<array>)] - 38 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of difficult
         ┃   Success   ┃    strings successfully
@@ -760,11 +760,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_difficult_strings_leading_commas.WHAT,
+        $match-array-of-difficult-strings-leading-commas.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_difficult_strings_leading_commas,
+              $array-of-difficult-strings-leading-commas,
               :rule<array>
            )] - 39 of 123
         ┏━━━━━━━━━━━━━┓
@@ -776,180 +776,180 @@ subtest
     );
 
     is(
-        $match_array_of_basic_strings.made.WHAT,
+        $match-array-of-basic-strings.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 40 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_strings.made.WHAT
+        ┃             ┃  ∙ $match-array-of-basic-strings.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_basic_strings_newlines.made.WHAT,
+        $match-array-of-basic-strings-newlines.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 41 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_strings_newlines.made.WHAT
+        ┃             ┃  ∙ $match-array-of-basic-strings-newlines.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_basic_empty_strings.made.WHAT,
+        $match-array-of-basic-empty-strings.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 42 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_empty_strings.made.WHAT
+        ┃             ┃  ∙ $match-array-of-basic-empty-strings.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_basic_multiline_string.made.WHAT,
+        $match-array-of-basic-multiline-string.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 43 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_multiline_string.made.WHAT
+        ┃             ┃  ∙ $match-array-of-basic-multiline-string.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_basic_multiline_strings.made.WHAT,
+        $match-array-of-basic-multiline-strings.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 44 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_multiline_strings.made.WHAT
+        ┃             ┃  ∙ $match-array-of-basic-multiline-strings.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_basic_multiline_strings_newlines.made.WHAT,
+        $match-array-of-basic-multiline-strings-newlines.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 45 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_multiline_strings_newlines
+        ┃             ┃  ∙ $match-array-of-basic-multiline-strings-newlines
         ┃   Success   ┃        .made
         ┃             ┃        .WHAT ~~ Array
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_strings.made.WHAT,
+        $match-array-of-literal-strings.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 46 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_strings.made.WHAT
+        ┃             ┃  ∙ $match-array-of-literal-strings.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_strings_newlines.made.WHAT,
+        $match-array-of-literal-strings-newlines.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 47 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_strings_newlines
+        ┃             ┃  ∙ $match-array-of-literal-strings-newlines
         ┃   Success   ┃        .made
         ┃             ┃        .WHAT ~~ Array
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_empty_strings.made.WHAT,
+        $match-array-of-literal-empty-strings.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 48 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_empty_strings.made.WHAT
+        ┃             ┃  ∙ $match-array-of-literal-empty-strings.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_multiline_string.made.WHAT,
+        $match-array-of-literal-multiline-string.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 49 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_multiline_string
+        ┃             ┃  ∙ $match-array-of-literal-multiline-string
         ┃   Success   ┃        .made
         ┃             ┃        .WHAT ~~ Array
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_multiline_strings.made.WHAT,
+        $match-array-of-literal-multiline-strings.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 50 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_multiline_strings
+        ┃             ┃  ∙ $match-array-of-literal-multiline-strings
         ┃   Success   ┃        .made
         ┃             ┃        .WHAT ~~ Array
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_multiline_strings_newlines.made.WHAT,
+        $match-array-of-literal-multiline-strings-newlines.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 51 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_multiline_strings_newlines
+        ┃             ┃  ∙ $match-array-of-literal-multiline-strings-newlines
         ┃   Success   ┃        .made
         ┃             ┃        .WHAT ~~ Array
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_mixed_strings.made.WHAT,
+        $match-array-of-mixed-strings.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 52 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_mixed_strings.made.WHAT
+        ┃             ┃  ∙ $match-array-of-mixed-strings.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_difficult_strings.made.WHAT,
+        $match-array-of-difficult-strings.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 53 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_difficult_strings.made.WHAT
+        ┃             ┃  ∙ $match-array-of-difficult-strings.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_difficult_strings_leading_commas.made.WHAT,
+        $match-array-of-difficult-strings-leading-commas.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 54 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_difficult_strings_leading_commas
+        ┃             ┃  ∙ $match-array-of-difficult-strings-leading-commas
         ┃   Success   ┃        .made
         ┃             ┃        .WHAT ~~ Array
         ┗━━━━━━━━━━━━━┛
@@ -957,60 +957,60 @@ subtest
     );
 
     is(
-        $match_array_of_basic_strings.made,
+        $match-array-of-basic-strings.made,
         ["red", "maroon", "crimson"],
         q:to/EOF/
         ♪ [Is expected array value?] - 55 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_strings.made
+        ┃             ┃  ∙ $match-array-of-basic-strings.made
         ┃   Success   ┃        ~~ ["red", "maroon", "crimson"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_basic_strings_newlines.made,
+        $match-array-of-basic-strings-newlines.made,
         ["red", "maroon", "crimson"],
         q:to/EOF/
         ♪ [Is expected array value?] - 56 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_strings_newlines.made
+        ┃             ┃  ∙ $match-array-of-basic-strings-newlines.made
         ┃   Success   ┃        ~~ ["red", "maroon", "crimson"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_basic_empty_strings.made,
+        $match-array-of-basic-empty-strings.made,
         ["", " ", "\t\t"],
         q:to/EOF/
         ♪ [Is expected array value?] - 57 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_empty_strings.made
+        ┃             ┃  ∙ $match-array-of-basic-empty-strings.made
         ┃   Success   ┃        ~~ ["", " ", "\t\t"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_basic_multiline_string.made,
+        $match-array-of-basic-multiline-string.made,
         ["red"],
         q:to/EOF/
         ♪ [Is expected array value?] - 58 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_multiline_string.made
+        ┃             ┃  ∙ $match-array-of-basic-multiline-string.made
         ┃   Success   ┃        ~~ ["red"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_basic_multiline_strings.made,
+        $match-array-of-basic-multiline-strings.made,
         ["red", "maroon", "crimson"],
         q:to/EOF/
         ♪ [Is expected array value?] - 59 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_multiline_strings.made
+        ┃             ┃  ∙ $match-array-of-basic-multiline-strings.made
         ┃   Success   ┃        ~~ ["red", "maroon", "crimson"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1020,7 +1020,7 @@ subtest
     # parse heredocs like Perl 6, leading spaces on the outside edges
     # of multiline string delimiters are preserved
     is(
-        $match_array_of_basic_multiline_strings_newlines.made,
+        $match-array-of-basic-multiline-strings-newlines.made,
         [
             "    red maroon \ncrimson\n    ",
             "    blue\n    aqua\n    turquoise\n    ",
@@ -1029,74 +1029,74 @@ subtest
         q:to/EOF/
         ♪ [Is expected array value?] - 60 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_basic_multiline_strings_newlines
+        ┃             ┃  ∙ $match-array-of-basic-multiline-strings-newlines
         ┃   Success   ┃        .made ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_strings.made,
+        $match-array-of-literal-strings.made,
         ["red", "maroon", "crimson"],
         q:to/EOF/
         ♪ [Is expected array value?] - 61 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_strings.made
+        ┃             ┃  ∙ $match-array-of-literal-strings.made
         ┃   Success   ┃        ~~ ["red", "maroon", "crimson"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_strings_newlines.made,
+        $match-array-of-literal-strings-newlines.made,
         ["red", "maroon", "crimson"],
         q:to/EOF/
         ♪ [Is expected array value?] - 62 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_strings_newlines
+        ┃             ┃  ∙ $match-array-of-literal-strings-newlines
         ┃   Success   ┃        .made ~~ ["red", "maroon", "crimson"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_empty_strings.made,
+        $match-array-of-literal-empty-strings.made,
         ["", " ", "\t\t"],
         q:to/EOF/
         ♪ [Is expected array value?] - 63 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_empty_strings.made
+        ┃             ┃  ∙ $match-array-of-literal-empty-strings.made
         ┃   Success   ┃        ~~ ["", " ", "\t\t"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_multiline_string.made,
+        $match-array-of-literal-multiline-string.made,
         ["red"],
         q:to/EOF/
         ♪ [Is expected array value?] - 64 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_multiline_string
+        ┃             ┃  ∙ $match-array-of-literal-multiline-string
         ┃   Success   ┃        .made ~~ ["red"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_multiline_strings.made,
+        $match-array-of-literal-multiline-strings.made,
         ["red", "maroon", "crimson"],
         q:to/EOF/
         ♪ [Is expected array value?] - 65 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_multiline_strings
+        ┃             ┃  ∙ $match-array-of-literal-multiline-strings
         ┃   Success   ┃        .made ~~ ["red", "maroon", "crimson"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_literal_multiline_strings_newlines.made,
+        $match-array-of-literal-multiline-strings-newlines.made,
         [
             "    red \\\n    maroon \\\n    crimson\n    ",
             "    blue\n    aqua\n    turquoise\n    ",
@@ -1105,43 +1105,43 @@ subtest
         q:to/EOF/
         ♪ [Is expected array value?] - 66 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_literal_multiline_strings_newlines
+        ┃             ┃  ∙ $match-array-of-literal-multiline-strings-newlines
         ┃   Success   ┃        .made ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_mixed_strings.made,
+        $match-array-of-mixed-strings.made,
         ["first", "second", "third", "fourth", "", ""],
         q:to/EOF/
         ♪ [Is expected array value?] - 67 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_mixed_strings.made
+        ┃             ┃  ∙ $match-array-of-mixed-strings.made
         ┃   Success   ┃        ~~ ["first", "second", "third", "fourth", "", ""]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_difficult_strings.made,
+        $match-array-of-difficult-strings.made,
         ["] ", " # ", "\\ ", "\\", "\\ ", "\\"],
         q:to/EOF/
         ♪ [Is expected array value?] - 68 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_difficult_strings.made
+        ┃             ┃  ∙ $match-array-of-difficult-strings.made
         ┃   Success   ┃        ~~ ["] ", " # ", "\\ ", "\\", "\\ ", "\\"]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_difficult_strings_leading_commas.made,
+        $match-array-of-difficult-strings-leading-commas.made,
         ["] ", " # ", "\\ ", "\\", "\\ ", "\\"],
         q:to/EOF/
         ♪ [Is expected array value?] - 69 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_difficult_strings_leading_commas
+        ┃             ┃  ∙ $match-array-of-difficult-strings-leading-commas
         ┃   Success   ┃        .made ~~
         ┃             ┃             ["] ", " # ", "\\ ", "\\", "\\ ", "\\"]
         ┗━━━━━━━━━━━━━┛
@@ -1154,8 +1154,8 @@ subtest
 
 subtest
 {
-    my Str $array_of_integers = '[ 8001, 8001, 8002 ]';
-    my Str $array_of_integers_newlines = Q:to/EOF/;
+    my Str $array-of-integers = '[ 8001, 8001, 8002 ]';
+    my Str $array-of-integers-newlines = Q:to/EOF/;
     [
         +99,
         42,
@@ -1166,25 +1166,25 @@ subtest
         1_2_3_4_5
     ]
     EOF
-    $array_of_integers_newlines .= trim;
+    $array-of-integers-newlines .= trim;
 
     my Config::TOML::Parser::Actions $actions .= new;
-    my $match_array_of_integers = Config::TOML::Parser::Grammar.parse(
-        $array_of_integers,
+    my $match-array-of-integers = Config::TOML::Parser::Grammar.parse(
+        $array-of-integers,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_integers_newlines = Config::TOML::Parser::Grammar.parse(
-        $array_of_integers_newlines,
+    my $match-array-of-integers-newlines = Config::TOML::Parser::Grammar.parse(
+        $array-of-integers-newlines,
         :$actions,
         :rule<array>
     );
 
     is(
-        $match_array_of_integers.WHAT,
+        $match-array-of-integers.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_integers, :rule<array>)] - 70 of 123
+        ♪ [Grammar.parse($array-of-integers, :rule<array>)] - 70 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of integers
         ┃   Success   ┃    successfully
@@ -1193,10 +1193,10 @@ subtest
         EOF
     );
     is(
-        $match_array_of_integers_newlines.WHAT,
+        $match-array-of-integers-newlines.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_integers_newlines, :rule<array>)] - 71 of 123
+        ♪ [Grammar.parse($array-of-integers-newlines, :rule<array>)] - 71 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of integers
         ┃   Success   ┃    (with newlines) successfully
@@ -1206,24 +1206,24 @@ subtest
     );
 
     is(
-        $match_array_of_integers.made.WHAT,
+        $match-array-of-integers.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 72 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_integers.made.WHAT
+        ┃             ┃  ∙ $match-array-of-integers.made.WHAT
         ┃   Success   ┃        ~~ Array[Int]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_integers_newlines.made.WHAT,
+        $match-array-of-integers-newlines.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 73 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_integers_newlines.made.WHAT
+        ┃             ┃  ∙ $match-array-of-integers-newlines.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1231,24 +1231,24 @@ subtest
     );
 
     is(
-        $match_array_of_integers.made,
+        $match-array-of-integers.made,
         [8001, 8001, 8002],
         q:to/EOF/
         ♪ [Is expected array value?] - 74 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_integers.made
+        ┃             ┃  ∙ $match-array-of-integers.made
         ┃   Success   ┃        ~~ [8001, 8001, 8002]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_integers_newlines.made,
+        $match-array-of-integers-newlines.made,
         [99, 42, 0, -17, 1000, 5349221, 12345],
         q:to/EOF/
         ♪ [Is expected array value?] - 75 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_integers_newlines.made
+        ┃             ┃  ∙ $match-array-of-integers-newlines.made
         ┃   Success   ┃        ~~ [99, 42, 0, -17, 1000, 5349221, 12345]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1261,8 +1261,8 @@ subtest
 
 subtest
 {
-    my Str $array_of_floats = '[ 0.0, -1.1, +2.2, -3.3, +4.4, -5.5 ]';
-    my Str $array_of_floats_newlines = Q:to/EOF/;
+    my Str $array-of-floats = '[ 0.0, -1.1, +2.2, -3.3, +4.4, -5.5 ]';
+    my Str $array-of-floats-newlines = Q:to/EOF/;
     [
         +1.0,
         3.1415,
@@ -1275,25 +1275,25 @@ subtest
         1e1_000
     ]
     EOF
-    $array_of_floats_newlines .= trim;
+    $array-of-floats-newlines .= trim;
 
     my Config::TOML::Parser::Actions $actions .= new;
-    my $match_array_of_floats = Config::TOML::Parser::Grammar.parse(
-        $array_of_floats,
+    my $match-array-of-floats = Config::TOML::Parser::Grammar.parse(
+        $array-of-floats,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_floats_newlines = Config::TOML::Parser::Grammar.parse(
-        $array_of_floats_newlines,
+    my $match-array-of-floats-newlines = Config::TOML::Parser::Grammar.parse(
+        $array-of-floats-newlines,
         :$actions,
         :rule<array>
     );
 
     is(
-        $match_array_of_floats.WHAT,
+        $match-array-of-floats.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_floats, :rule<array>)] - 76 of 123
+        ♪ [Grammar.parse($array-of-floats, :rule<array>)] - 76 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of floats
         ┃   Success   ┃    successfully
@@ -1302,10 +1302,10 @@ subtest
         EOF
     );
     is(
-        $match_array_of_floats_newlines.WHAT,
+        $match-array-of-floats-newlines.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_floats_newlines, :rule<array>)] - 77 of 123
+        ♪ [Grammar.parse($array-of-floats-newlines, :rule<array>)] - 77 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of floats
         ┃   Success   ┃    (with newlines) successfully
@@ -1315,24 +1315,24 @@ subtest
     );
 
     is(
-        $match_array_of_floats.made.WHAT,
+        $match-array-of-floats.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 78 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_floats.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-array-of-floats.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_floats_newlines.made.WHAT,
+        $match-array-of-floats-newlines.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 79 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_floats_newlines.made.WHAT
+        ┃             ┃  ∙ $match-array-of-floats-newlines.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1340,19 +1340,19 @@ subtest
     );
 
     is(
-        $match_array_of_floats.made,
+        $match-array-of-floats.made,
         [0.0, -1.1, 2.2, -3.3, 4.4, -5.5],
         q:to/EOF/
         ♪ [Is expected array value?] - 80 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_floats.made
+        ┃             ┃  ∙ $match-array-of-floats.made
         ┃   Success   ┃        ~~ [0.0, -1.1, 2.2, -3.3, 4.4, -5.5]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_floats_newlines.made,
+        $match-array-of-floats-newlines.made,
         [
             1.0,
             3.1415,
@@ -1367,7 +1367,7 @@ subtest
         q:to/EOF/
         ♪ [Is expected array value?] - 81 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_floats_newlines.made.WHAT
+        ┃             ┃  ∙ $match-array-of-floats-newlines.made.WHAT
         ┃   Success   ┃        ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1380,32 +1380,32 @@ subtest
 
 subtest
 {
-    my Str $array_of_booleans = '[true,false]';
-    my Str $array_of_booleans_newlines = Q:to/EOF/;
+    my Str $array-of-booleans = '[true,false]';
+    my Str $array-of-booleans-newlines = Q:to/EOF/;
     [
         true
         , false
     ]
     EOF
-    $array_of_booleans_newlines .= trim;
+    $array-of-booleans-newlines .= trim;
 
     my Config::TOML::Parser::Actions $actions .= new;
-    my $match_array_of_booleans = Config::TOML::Parser::Grammar.parse(
-        $array_of_booleans,
+    my $match-array-of-booleans = Config::TOML::Parser::Grammar.parse(
+        $array-of-booleans,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_booleans_newlines = Config::TOML::Parser::Grammar.parse(
-        $array_of_booleans_newlines,
+    my $match-array-of-booleans-newlines = Config::TOML::Parser::Grammar.parse(
+        $array-of-booleans-newlines,
         :$actions,
         :rule<array>
     );
 
     is(
-        $match_array_of_booleans.WHAT,
+        $match-array-of-booleans.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_booleans, :rule<array>)] - 82 of 123
+        ♪ [Grammar.parse($array-of-booleans, :rule<array>)] - 82 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of booleans successfully
         ┃   Success   ┃
@@ -1414,10 +1414,10 @@ subtest
         EOF
     );
     is(
-        $match_array_of_booleans_newlines.WHAT,
+        $match-array-of-booleans-newlines.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_booleans_newlines, :rule<array>)] - 83 of 123
+        ♪ [Grammar.parse($array-of-booleans-newlines, :rule<array>)] - 83 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of booleans
         ┃   Success   ┃    (with newlines) successfully
@@ -1427,24 +1427,24 @@ subtest
     );
 
     is(
-        $match_array_of_booleans.made.WHAT,
+        $match-array-of-booleans.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 84 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_booleans.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-array-of-booleans.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_booleans_newlines.made.WHAT,
+        $match-array-of-booleans-newlines.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 85 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_booleans_newlines.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-array-of-booleans-newlines.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1452,24 +1452,24 @@ subtest
     );
 
     is(
-        $match_array_of_booleans.made,
+        $match-array-of-booleans.made,
         [True, False],
         q:to/EOF/
         ♪ [Is expected array value?] - 86 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_booleans.made ~~ [True, False]
+        ┃             ┃  ∙ $match-array-of-booleans.made ~~ [True, False]
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_booleans_newlines.made,
+        $match-array-of-booleans-newlines.made,
         [True, False],
         q:to/EOF/
         ♪ [Is expected array value?] - 87 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_booleans_newlines.made
+        ┃             ┃  ∙ $match-array-of-booleans-newlines.made
         ┃   Success   ┃        ~~ [True, False]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1482,8 +1482,8 @@ subtest
 
 subtest
 {
-    my Str $array_of_date_times = '[1979-05-27T07:32:00Z,]';
-    my Str $array_of_date_times_newlines = Q:to/EOF/;
+    my Str $array-of-date-times = '[1979-05-27T07:32:00Z,]';
+    my Str $array-of-date-times-newlines = Q:to/EOF/;
     [
         1979-05-27T07:32:00Z,
         1979-05-27T00:32:00-07:00,
@@ -1493,26 +1493,26 @@ subtest
         1979-05-27
     ]
     EOF
-    $array_of_date_times_newlines .= trim;
+    $array-of-date-times-newlines .= trim;
 
     # assume UTC when local offset unspecified in TOML dates
-    my Config::TOML::Parser::Actions $actions .= new(:date_local_offset(0));
-    my $match_array_of_date_times = Config::TOML::Parser::Grammar.parse(
-        $array_of_date_times,
+    my Config::TOML::Parser::Actions $actions .= new(:date-local-offset(0));
+    my $match-array-of-date-times = Config::TOML::Parser::Grammar.parse(
+        $array-of-date-times,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_date_times_newlines = Config::TOML::Parser::Grammar.parse(
-        $array_of_date_times_newlines,
+    my $match-array-of-date-times-newlines = Config::TOML::Parser::Grammar.parse(
+        $array-of-date-times-newlines,
         :$actions,
         :rule<array>
     );
 
     is(
-        $match_array_of_date_times.WHAT,
+        $match-array-of-date-times.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_date_times, :rule<array>)] - 88 of 123
+        ♪ [Grammar.parse($array-of-date-times, :rule<array>)] - 88 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of datetimes
         ┃   Success   ┃    successfully
@@ -1521,11 +1521,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_date_times_newlines.WHAT,
+        $match-array-of-date-times-newlines.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_date_times_newlines,
+              $array-of-date-times-newlines,
               :rule<array>
            )] - 89 of 123
         ┏━━━━━━━━━━━━━┓
@@ -1537,24 +1537,24 @@ subtest
     );
 
     is(
-        $match_array_of_date_times.made.WHAT,
+        $match-array-of-date-times.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 90 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_date_times.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-array-of-date-times.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_date_times_newlines.made.WHAT,
+        $match-array-of-date-times-newlines.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 91 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_date_times_newlines.made.WHAT
+        ┃             ┃  ∙ $match-array-of-date-times-newlines.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1562,19 +1562,19 @@ subtest
     );
 
     is(
-        $match_array_of_date_times.made,
+        $match-array-of-date-times.made,
         ['1979-05-27T07:32:00Z'],
         q:to/EOF/
         ♪ [Is expected array value?] - 92 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_date_times.made ~~ [ ... ]
+        ┃             ┃  ∙ $match-array-of-date-times.made ~~ [ ... ]
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_date_times_newlines.made,
+        $match-array-of-date-times-newlines.made,
         [
             '1979-05-27T07:32:00Z',
             '1979-05-27T00:32:00-07:00',
@@ -1586,7 +1586,7 @@ subtest
         q:to/EOF/
         ♪ [Is expected array value?] - 93 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_date_times_newlines.made
+        ┃             ┃  ∙ $match-array-of-date-times-newlines.made
         ┃   Success   ┃        ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1599,8 +1599,8 @@ subtest
 
 subtest
 {
-    my Str $array_of_arrays = '[ [ 1, 2 ], [-3e1_000, +4.56, 5.0] ]';
-    my Str $array_of_arrays_newlines = Q:to/EOF/;
+    my Str $array-of-arrays = '[ [ 1, 2 ], [-3e1_000, +4.56, 5.0] ]';
+    my Str $array-of-arrays-newlines = Q:to/EOF/;
     [
         [ [ 1, 2 ], [3, 4, 5] ],
         [
@@ -1642,34 +1642,34 @@ subtest
         ]
     ]
     EOF
-    $array_of_arrays_newlines .= trim;
-    my Str $array_of_empty_arrays = Q:to/EOF/;
+    $array-of-arrays-newlines .= trim;
+    my Str $array-of-empty-arrays = Q:to/EOF/;
     [[[[[]]]]]
     EOF
-    $array_of_empty_arrays .= trim;
+    $array-of-empty-arrays .= trim;
 
     my Config::TOML::Parser::Actions $actions .= new;
-    my $match_array_of_arrays = Config::TOML::Parser::Grammar.parse(
-        $array_of_arrays,
+    my $match-array-of-arrays = Config::TOML::Parser::Grammar.parse(
+        $array-of-arrays,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_arrays_newlines = Config::TOML::Parser::Grammar.parse(
-        $array_of_arrays_newlines,
+    my $match-array-of-arrays-newlines = Config::TOML::Parser::Grammar.parse(
+        $array-of-arrays-newlines,
         :$actions,
         :rule<array>
     );
-    my $match_array_of_empty_arrays = Config::TOML::Parser::Grammar.parse(
-        $array_of_empty_arrays,
+    my $match-array-of-empty-arrays = Config::TOML::Parser::Grammar.parse(
+        $array-of-empty-arrays,
         :$actions,
         :rule<array>
     );
 
     is(
-        $match_array_of_arrays.WHAT,
+        $match-array-of-arrays.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_arrays, :rule<array>)] - 94 of 123
+        ♪ [Grammar.parse($array-of-arrays, :rule<array>)] - 94 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of arrays
         ┃   Success   ┃    successfully
@@ -1678,11 +1678,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_arrays_newlines.WHAT,
+        $match-array-of-arrays-newlines.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_arrays_newlines,
+              $array-of-arrays-newlines,
               :rule<array>
            )] - 95 of 123
         ┏━━━━━━━━━━━━━┓
@@ -1693,11 +1693,11 @@ subtest
         EOF
     );
     is(
-        $match_array_of_empty_arrays.WHAT,
+        $match-array-of-empty-arrays.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $array_of_empty_arrays,
+              $array-of-empty-arrays,
               :rule<array>
            )] - 96 of 123
         ┏━━━━━━━━━━━━━┓
@@ -1709,36 +1709,36 @@ subtest
     );
 
     is(
-        $match_array_of_arrays.made.WHAT,
+        $match-array-of-arrays.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 97 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_arrays.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-array-of-arrays.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_arrays_newlines.made.WHAT,
+        $match-array-of-arrays-newlines.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 98 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_arrays_newlines.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-array-of-arrays-newlines.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_empty_arrays.made.WHAT,
+        $match-array-of-empty-arrays.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 99 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_empty_arrays.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-array-of-empty-arrays.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1746,19 +1746,19 @@ subtest
     );
 
     is(
-        $match_array_of_arrays.made,
+        $match-array-of-arrays.made,
         [[1, 2], [-Inf, 4.56, 5.0]],
         q:to/EOF/
         ♪ [Is expected array value?] - 100 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_arrays.made ~~ [ ... ]
+        ┃             ┃  ∙ $match-array-of-arrays.made ~~ [ ... ]
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_arrays_newlines.made,
+        $match-array-of-arrays-newlines.made,
         [
             [[1, 2], [3, 4, 5]],
             [[1, 2], ["a", "b", "c"]],
@@ -1773,19 +1773,19 @@ subtest
         q:to/EOF/
         ♪ [Is expected array value?] - 101 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_arrays_newlines.made ~~ [ ... ]
+        ┃             ┃  ∙ $match-array-of-arrays-newlines.made ~~ [ ... ]
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_array_of_empty_arrays.made,
+        $match-array-of-empty-arrays.made,
         [[[[[]]]]],
         q:to/EOF/
         ♪ [Is expected array value?] - 102 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_empty_arrays.made ~~ [ ... ]
+        ┃             ┃  ∙ $match-array-of-empty-arrays.made ~~ [ ... ]
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1798,25 +1798,25 @@ subtest
 
 subtest
 {
-    my Str $array_of_inline_tables = Q:to/EOF/;
+    my Str $array-of-inline-tables = Q:to/EOF/;
     [ { x = 1, y = 2, z = 3 },
       { x = 7, y = 8, z = 9 },
       { x = 2, y = 4, z = 8 } ]
     EOF
-    $array_of_inline_tables .= trim;
+    $array-of-inline-tables .= trim;
 
     my Config::TOML::Parser::Actions $actions .= new;
-    my $match_array_of_inline_tables = Config::TOML::Parser::Grammar.parse(
-        $array_of_inline_tables,
+    my $match-array-of-inline-tables = Config::TOML::Parser::Grammar.parse(
+        $array-of-inline-tables,
         :$actions,
         :rule<array>
     );
 
     is(
-        $match_array_of_inline_tables.WHAT,
+        $match-array-of-inline-tables.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($array_of_inline_tables, :rule<array>)] - 103 of 123
+        ♪ [Grammar.parse($array-of-inline-tables, :rule<array>)] - 103 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal array of inline tables
         ┃   Success   ┃    successfully
@@ -1826,12 +1826,12 @@ subtest
     );
 
     is(
-        $match_array_of_inline_tables.made.WHAT,
+        $match-array-of-inline-tables.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 104 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_inline_tables.made.WHAT ~~ Array
+        ┃             ┃  ∙ $match-array-of-inline-tables.made.WHAT ~~ Array
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1839,7 +1839,7 @@ subtest
     );
 
     is(
-        $match_array_of_inline_tables.made,
+        $match-array-of-inline-tables.made,
         [
             %( x => 1, y => 2, z => 3 ),
             %( x => 7, y => 8, z => 9 ),
@@ -1848,7 +1848,7 @@ subtest
         q:to/EOF/
         ♪ [Is expected array value?] - 105 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_array_of_inline_tables.made ~~ [ ... ]
+        ┃             ┃  ∙ $match-array-of-inline-tables.made ~~ [ ... ]
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1861,7 +1861,7 @@ subtest
 
 subtest
 {
-    my Str $commented_array_of_mixed_strings = Q:to/EOF/;
+    my Str $commented-array-of-mixed-strings = Q:to/EOF/;
     [# this is ok
         # this is ok
         'a', # this is ok
@@ -1873,8 +1873,8 @@ subtest
         # this is ok
     ]
     EOF
-    $commented_array_of_mixed_strings .= trim;
-    my Str $commented_array_of_integers = Q:to/EOF/;
+    $commented-array-of-mixed-strings .= trim;
+    my Str $commented-array-of-integers = Q:to/EOF/;
     [# this is ok
         # this is ok
         1, # this is ok
@@ -1885,8 +1885,8 @@ subtest
         # this is ok
     ]
     EOF
-    $commented_array_of_integers .= trim;
-    my Str $commented_array_of_floats = Q:to/EOF/;
+    $commented-array-of-integers .= trim;
+    my Str $commented-array-of-floats = Q:to/EOF/;
     [# this is ok
         # this is ok
         +1.1, # this is ok
@@ -1897,8 +1897,8 @@ subtest
         # this is ok
     ]
     EOF
-    $commented_array_of_floats .= trim;
-    my Str $commented_array_of_booleans = Q:to/EOF/;
+    $commented-array-of-floats .= trim;
+    my Str $commented-array-of-booleans = Q:to/EOF/;
     [# this is ok
         # this is ok
         true, # this is ok
@@ -1909,8 +1909,8 @@ subtest
         # this is ok
     ]
     EOF
-    $commented_array_of_booleans .= trim;
-    my Str $commented_array_of_date_times = Q:to/EOF/;
+    $commented-array-of-booleans .= trim;
+    my Str $commented-array-of-date-times = Q:to/EOF/;
     [# this is ok
         # this is ok
         1979-05-27T07:32:00Z, # this is ok
@@ -1924,8 +1924,8 @@ subtest
         # this is ok
     ]
     EOF
-    $commented_array_of_date_times .= trim;
-    my Str $commented_array_of_arrays = Q:to/EOF/;
+    $commented-array-of-date-times .= trim;
+    my Str $commented-array-of-arrays = Q:to/EOF/;
     [# this is ok
         # this is ok
         [ [ 1, 2 ], [3, 4, 5] ], # this is ok
@@ -1987,61 +1987,61 @@ subtest
         # this is ok
     ]
     EOF
-    $commented_array_of_arrays .= trim;
+    $commented-array-of-arrays .= trim;
 
     # assume UTC when local offset unspecified in TOML dates
-    my Config::TOML::Parser::Actions $actions .= new(:date_local_offset(0));
-    my $match_commented_array_of_mixed_strings = Config::TOML::Parser::Grammar.parse(
-        $commented_array_of_mixed_strings,
+    my Config::TOML::Parser::Actions $actions .= new(:date-local-offset(0));
+    my $match-commented-array-of-mixed-strings = Config::TOML::Parser::Grammar.parse(
+        $commented-array-of-mixed-strings,
         :$actions,
         :rule<array>
     );
-    my $match_commented_array_of_integers = Config::TOML::Parser::Grammar.parse(
-        $commented_array_of_integers,
+    my $match-commented-array-of-integers = Config::TOML::Parser::Grammar.parse(
+        $commented-array-of-integers,
         :$actions,
         :rule<array>
     );
-    my $match_commented_array_of_floats = Config::TOML::Parser::Grammar.parse(
-        $commented_array_of_floats,
+    my $match-commented-array-of-floats = Config::TOML::Parser::Grammar.parse(
+        $commented-array-of-floats,
         :$actions,
         :rule<array>
     );
-    my $match_commented_array_of_booleans = Config::TOML::Parser::Grammar.parse(
-        $commented_array_of_booleans,
+    my $match-commented-array-of-booleans = Config::TOML::Parser::Grammar.parse(
+        $commented-array-of-booleans,
         :$actions,
         :rule<array>
     );
-    my $match_commented_array_of_date_times = Config::TOML::Parser::Grammar.parse(
-        $commented_array_of_date_times,
+    my $match-commented-array-of-date-times = Config::TOML::Parser::Grammar.parse(
+        $commented-array-of-date-times,
         :$actions,
         :rule<array>
     );
-    my $match_commented_array_of_arrays = Config::TOML::Parser::Grammar.parse(
-        $commented_array_of_arrays,
+    my $match-commented-array-of-arrays = Config::TOML::Parser::Grammar.parse(
+        $commented-array-of-arrays,
         :$actions,
         :rule<array>
     );
 
     is(
-        $match_commented_array_of_mixed_strings.WHAT,
+        $match-commented-array-of-mixed-strings.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $commented_array_of_mixed_strings,
+              $commented-array-of-mixed-strings,
               :rule<array>
            )] - 106 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal commented array
-        ┃   Success   ┃    of mixed_strings successfully
+        ┃   Success   ┃    of mixed-strings successfully
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_integers.WHAT,
+        $match-commented-array-of-integers.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($commented_array_of_integers, :rule<array>)] - 107 of 123
+        ♪ [Grammar.parse($commented-array-of-integers, :rule<array>)] - 107 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal commented array
         ┃   Success   ┃    of integers successfully
@@ -2050,10 +2050,10 @@ subtest
         EOF
     );
     is(
-        $match_commented_array_of_floats.WHAT,
+        $match-commented-array-of-floats.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($commented_array_of_floats, :rule<array>)] - 108 of 123
+        ♪ [Grammar.parse($commented-array-of-floats, :rule<array>)] - 108 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal commented array
         ┃   Success   ┃    of floats successfully
@@ -2062,10 +2062,10 @@ subtest
         EOF
     );
     is(
-        $match_commented_array_of_booleans.WHAT,
+        $match-commented-array-of-booleans.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($commented_array_of_booleans, :rule<array>)] - 109 of 123
+        ♪ [Grammar.parse($commented-array-of-booleans, :rule<array>)] - 109 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal commented array
         ┃   Success   ┃    of booleans successfully
@@ -2074,11 +2074,11 @@ subtest
         EOF
     );
     is(
-        $match_commented_array_of_date_times.WHAT,
+        $match-commented-array-of-date-times.WHAT,
         Match,
         q:to/EOF/
         ♪ [Grammar.parse(
-              $commented_array_of_date_times,
+              $commented-array-of-date-times,
               :rule<array>
            )] - 110 of 123
         ┏━━━━━━━━━━━━━┓
@@ -2089,10 +2089,10 @@ subtest
         EOF
     );
     is(
-        $match_commented_array_of_arrays.WHAT,
+        $match-commented-array-of-arrays.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($commented_array_of_arrays, :rule<array>)] - 111 of 123
+        ♪ [Grammar.parse($commented-array-of-arrays, :rule<array>)] - 111 of 123
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses string literal commented array
         ┃   Success   ┃    of arrays successfully
@@ -2102,72 +2102,72 @@ subtest
     );
 
     is(
-        $match_commented_array_of_mixed_strings.made.WHAT,
+        $match-commented-array-of-mixed-strings.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 112 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_mixed_strings.made.WHAT
+        ┃             ┃  ∙ $match-commented-array-of-mixed-strings.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_integers.made.WHAT,
+        $match-commented-array-of-integers.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 113 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_integers.made.WHAT
+        ┃             ┃  ∙ $match-commented-array-of-integers.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_floats.made.WHAT,
+        $match-commented-array-of-floats.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 114 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_floats.made.WHAT
+        ┃             ┃  ∙ $match-commented-array-of-floats.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_booleans.made.WHAT,
+        $match-commented-array-of-booleans.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 115 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_booleans.made.WHAT
+        ┃             ┃  ∙ $match-commented-array-of-booleans.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_date_times.made.WHAT,
+        $match-commented-array-of-date-times.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 116 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_date_times.made.WHAT
+        ┃             ┃  ∙ $match-commented-array-of-date-times.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_arrays.made.WHAT,
+        $match-commented-array-of-arrays.made.WHAT,
         Array,
         q:to/EOF/
         ♪ [Is array?] - 117 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_arrays.made.WHAT
+        ┃             ┃  ∙ $match-commented-array-of-arrays.made.WHAT
         ┃   Success   ┃        ~~ Array
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -2175,55 +2175,55 @@ subtest
     );
 
     is(
-        $match_commented_array_of_mixed_strings.made,
+        $match-commented-array-of-mixed-strings.made,
         ["a", "b", "c", "d"],
         q:to/EOF/
         ♪ [Is expected array value?] - 118 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_mixed_strings.made
+        ┃             ┃  ∙ $match-commented-array-of-mixed-strings.made
         ┃   Success   ┃        ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_integers.made,
+        $match-commented-array-of-integers.made,
         [1, 2, 3],
         q:to/EOF/
         ♪ [Is expected array value?] - 119 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_integers.made
+        ┃             ┃  ∙ $match-commented-array-of-integers.made
         ┃   Success   ┃        ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_floats.made,
+        $match-commented-array-of-floats.made,
         [1.1, -2e1000, 0.0000001],
         q:to/EOF/
         ♪ [Is expected array value?] - 120 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_floats.made
+        ┃             ┃  ∙ $match-commented-array-of-floats.made
         ┃   Success   ┃        ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_booleans.made,
+        $match-commented-array-of-booleans.made,
         [True, False, True],
         q:to/EOF/
         ♪ [Is expected array value?] - 121 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_booleans.made
+        ┃             ┃  ∙ $match-commented-array-of-booleans.made
         ┃   Success   ┃        ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_date_times.made,
+        $match-commented-array-of-date-times.made,
         [
             '1979-05-27T07:32:00Z',
             '1979-05-27T00:32:00-07:00',
@@ -2235,14 +2235,14 @@ subtest
         q:to/EOF/
         ♪ [Is expected array value?] - 122 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_date_times.made
+        ┃             ┃  ∙ $match-commented-array-of-date-times.made
         ┃   Success   ┃        ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        $match_commented_array_of_arrays.made,
+        $match-commented-array-of-arrays.made,
         [
             [
                 [1, 2],
@@ -2263,7 +2263,7 @@ subtest
         q:to/EOF/
         ♪ [Is expected array value?] - 123 of 123
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match_commented_array_of_arrays.made
+        ┃             ┃  ∙ $match-commented-array-of-arrays.made
         ┃   Success   ┃        ~~ [ ... ]
         ┃             ┃
         ┗━━━━━━━━━━━━━┛

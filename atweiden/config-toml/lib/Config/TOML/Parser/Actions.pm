@@ -6,30 +6,30 @@ unit class Config::TOML::Parser::Actions;
 has %.toml;
 
 # TOML arraytable tracker, records arraytables seen
-has Bool %.aoh_seen;
+has Bool %.aoh-seen;
 
 # TOML table tracker, records tables seen
-has Bool %.hoh_seen;
+has Bool %.hoh-seen;
 
 # TOML key tracker, records keypair keys seen
-has Bool %.keys_seen;
+has Bool %.keys-seen;
 
 # DateTime offset for when the local offset is omitted in TOML dates,
 # see: https://github.com/toml-lang/toml#datetime
 # if not passed as a parameter during instantiation, use host machine's
 # local offset
-has Int $.date_local_offset = $*TZ;
+has Int $.date-local-offset = $*TZ;
 
 # string grammar-actions {{{
 
 # --- string basic grammar-actions {{{
 
-method string_basic_char:common ($/)
+method string-basic-char:common ($/)
 {
     make ~$/;
 }
 
-method string_basic_char:tab ($/)
+method string-basic-char:tab ($/)
 {
     make ~$/;
 }
@@ -79,102 +79,102 @@ method escape:sym<U>($/)
     make chr :16(@<hex>.join);
 }
 
-method string_basic_char:escape_sequence ($/)
+method string-basic-char:escape-sequence ($/)
 {
     make $<escape>.made;
 }
 
-method string_basic_text($/)
+method string-basic-text($/)
 {
-    make @<string_basic_char>».made.join;
+    make @<string-basic-char>».made.join;
 }
 
-method string_basic($/)
+method string-basic($/)
 {
-    make $<string_basic_text> ?? $<string_basic_text>.made !! "";
+    make $<string-basic-text> ?? $<string-basic-text>.made !! "";
 }
 
-method string_basic_multiline_char:common ($/)
-{
-    make ~$/;
-}
-
-method string_basic_multiline_char:tab ($/)
+method string-basic-multiline-char:common ($/)
 {
     make ~$/;
 }
 
-method string_basic_multiline_char:newline ($/)
+method string-basic-multiline-char:tab ($/)
 {
     make ~$/;
 }
 
-method string_basic_multiline_char:escape_sequence ($/)
+method string-basic-multiline-char:newline ($/)
+{
+    make ~$/;
+}
+
+method string-basic-multiline-char:escape-sequence ($/)
 {
     if $<escape>
     {
         make $<escape>.made;
     }
-    elsif $<ws_remover>
+    elsif $<ws-remover>
     {
         make "";
     }
 }
 
-method string_basic_multiline_text($/)
+method string-basic-multiline-text($/)
 {
-    make @<string_basic_multiline_char>».made.join;
+    make @<string-basic-multiline-char>».made.join;
 }
 
-method string_basic_multiline($/)
+method string-basic-multiline($/)
 {
-    make $<string_basic_multiline_text>
-        ?? $<string_basic_multiline_text>.made
+    make $<string-basic-multiline-text>
+        ?? $<string-basic-multiline-text>.made
         !! "";
 }
 
 # --- end string basic grammar-actions }}}
 # --- string literal grammar-actions {{{
 
-method string_literal_char:common ($/)
+method string-literal-char:common ($/)
 {
     make ~$/;
 }
 
-method string_literal_char:backslash ($/)
+method string-literal-char:backslash ($/)
 {
     make '\\';
 }
 
-method string_literal_text($/)
+method string-literal-text($/)
 {
-    make @<string_literal_char>».made.join;
+    make @<string-literal-char>».made.join;
 }
 
-method string_literal($/)
+method string-literal($/)
 {
-    make $<string_literal_text> ?? $<string_literal_text>.made !! "";
+    make $<string-literal-text> ?? $<string-literal-text>.made !! "";
 }
 
-method string_literal_multiline_char:common ($/)
+method string-literal-multiline-char:common ($/)
 {
     make ~$/;
 }
 
-method string_literal_multiline_char:backslash ($/)
+method string-literal-multiline-char:backslash ($/)
 {
     make '\\';
 }
 
-method string_literal_multiline_text($/)
+method string-literal-multiline-text($/)
 {
-    make @<string_literal_multiline_char>».made.join;
+    make @<string-literal-multiline-char>».made.join;
 }
 
-method string_literal_multiline($/)
+method string-literal-multiline($/)
 {
-    make $<string_literal_multiline_text>
-        ?? $<string_literal_multiline_text>.made
+    make $<string-literal-multiline-text>
+        ?? $<string-literal-multiline-text>.made
         !! "";
 }
 
@@ -182,22 +182,22 @@ method string_literal_multiline($/)
 
 method string:basic ($/)
 {
-    make $<string_basic>.made;
+    make $<string-basic>.made;
 }
 
-method string:basic_multi ($/)
+method string:basic-multi ($/)
 {
-    make $<string_basic_multiline>.made;
+    make $<string-basic-multiline>.made;
 }
 
 method string:literal ($/)
 {
-    make $<string_literal>.made;
+    make $<string-literal>.made;
 }
 
-method string:literal_multi ($/)
+method string:literal-multi ($/)
 {
-    make $<string_literal_multiline>.made;
+    make $<string-literal-multiline>.made;
 }
 
 # end string grammar-actions }}}
@@ -241,219 +241,224 @@ method boolean:sym<false>($/)
 # end boolean grammar-actions }}}
 # datetime grammar-actions {{{
 
-method date_fullyear($/)
+method date-fullyear($/)
 {
     make Int(+$/);
 }
 
-method date_month($/)
+method date-month($/)
 {
     make Int(+$/);
 }
 
-method date_mday($/)
+method date-mday($/)
 {
     make Int(+$/);
 }
 
-method time_hour($/)
+method time-hour($/)
 {
     make Int(+$/);
 }
 
-method time_minute($/)
+method time-minute($/)
 {
     make Int(+$/);
 }
 
-method time_second($/)
+method time-second($/)
 {
     make Rat(+$/);
 }
 
-method time_secfrac($/)
+method time-secfrac($/)
 {
     make Rat(+$/);
 }
 
-method time_numoffset($/)
+method time-numoffset($/)
 {
-    my Int $multiplier = $<plus_or_minus> ~~ '+' ?? 1 !! -1;
+    my Int $multiplier = $<plus-or-minus> ~~ '+' ?? 1 !! -1;
     make Int(
         (
-            ($multiplier * $<time_hour>.made * 60) + $<time_minute>.made
+            ($multiplier * $<time-hour>.made * 60) + $<time-minute>.made
         )
         * 60
     );
 }
 
-method time_offset($/)
+method time-offset($/)
 {
-    make $<time_numoffset> ?? Int($<time_numoffset>.made) !! 0;
+    make $<time-numoffset> ?? Int($<time-numoffset>.made) !! 0;
 }
 
-method partial_time($/)
+method partial-time($/)
 {
-    my Rat $second = Rat($<time_second>.made);
+    my Rat $second = Rat($<time-second>.made);
     my Bool $subseconds = False;
 
-    if $<time_secfrac>
+    if $<time-secfrac>
     {
-        $second += Rat($<time_secfrac>.made);
+        $second += Rat($<time-secfrac>.made);
         $subseconds = True;
     }
 
     make %(
-        :hour(Int($<time_hour>.made)),
-        :minute(Int($<time_minute>.made)),
+        :hour(Int($<time-hour>.made)),
+        :minute(Int($<time-minute>.made)),
         :$second,
         :$subseconds
     );
 }
 
-method full_date($/)
+method full-date($/)
 {
     make %(
-        :year(Int($<date_fullyear>.made)),
-        :month(Int($<date_month>.made)),
-        :day(Int($<date_mday>.made))
+        :year(Int($<date-fullyear>.made)),
+        :month(Int($<date-month>.made)),
+        :day(Int($<date-mday>.made))
     );
 }
 
-method full_time($/)
+method full-time($/)
 {
     make %(
-        :hour(Int($<partial_time>.made<hour>)),
-        :minute(Int($<partial_time>.made<minute>)),
-        :second(Rat($<partial_time>.made<second>)),
-        :subseconds(Bool($<partial_time>.made<subseconds>)),
-        :timezone(Int($<time_offset>.made))
+        :hour(Int($<partial-time>.made<hour>)),
+        :minute(Int($<partial-time>.made<minute>)),
+        :second(Rat($<partial-time>.made<second>)),
+        :subseconds(Bool($<partial-time>.made<subseconds>)),
+        :timezone(Int($<time-offset>.made))
     );
 }
 
-method date_time_omit_local_offset($/)
+method date-time-omit-local-offset($/)
 {
     make DateTime.new(
-        :year(Int($<full_date>.made<year>)),
-        :month(Int($<full_date>.made<month>)),
-        :day(Int($<full_date>.made<day>)),
-        :hour(Int($<partial_time>.made<hour>)),
-        :minute(Int($<partial_time>.made<minute>)),
-        :second(Rat($<partial_time>.made<second>)),
-        :timezone($.date_local_offset)
+        :year(Int($<full-date>.made<year>)),
+        :month(Int($<full-date>.made<month>)),
+        :day(Int($<full-date>.made<day>)),
+        :hour(Int($<partial-time>.made<hour>)),
+        :minute(Int($<partial-time>.made<minute>)),
+        :second(Rat($<partial-time>.made<second>)),
+        :timezone($.date-local-offset)
     );
 }
 
-method date_time($/)
+method date-time($/)
 {
     make DateTime.new(
-        :year(Int($<full_date>.made<year>)),
-        :month(Int($<full_date>.made<month>)),
-        :day(Int($<full_date>.made<day>)),
-        :hour(Int($<full_time>.made<hour>)),
-        :minute(Int($<full_time>.made<minute>)),
-        :second(Rat($<full_time>.made<second>)),
-        :timezone(Int($<full_time>.made<timezone>))
+        :year(Int($<full-date>.made<year>)),
+        :month(Int($<full-date>.made<month>)),
+        :day(Int($<full-date>.made<day>)),
+        :hour(Int($<full-time>.made<hour>)),
+        :minute(Int($<full-time>.made<minute>)),
+        :second(Rat($<full-time>.made<second>)),
+        :timezone(Int($<full-time>.made<timezone>))
     );
 }
 
-method date:full_date ($/)
+method date:full-date ($/)
 {
-    make DateTime.new(|$<full_date>.made, :timezone($.date_local_offset));
+    make DateTime.new(|$<full-date>.made, :timezone($.date-local-offset));
 }
 
-method date:date_time_omit_local_offset ($/)
+method date:date-time-omit-local-offset ($/)
 {
-    make $<date_time_omit_local_offset>.made;
+    make $<date-time-omit-local-offset>.made;
 }
 
-method date:date_time ($/)
+method date:date-time ($/)
 {
-    make $<date_time>.made;
+    make $<date-time>.made;
 }
 
 # end datetime grammar-actions }}}
 # array grammar-actions {{{
 
-method array_elements:strings ($/)
+method array-elements:strings ($/)
 {
     make @<string>».made;
 }
 
-method array_elements:integers ($/)
+method array-elements:integers ($/)
 {
     make @<integer>».made;
 }
 
-method array_elements:floats ($/)
+method array-elements:floats ($/)
 {
     make @<float>».made;
 }
 
-method array_elements:booleans ($/)
+method array-elements:booleans ($/)
 {
     make @<boolean>».made;
 }
 
-method array_elements:dates ($/)
+method array-elements:dates ($/)
 {
     make @<date>».made;
 }
 
-method array_elements:arrays ($/)
+method array-elements:arrays ($/)
 {
     make @<array>».made;
 }
 
-method array_elements:table_inlines ($/)
+method array-elements:table-inlines ($/)
 {
-    make @<table_inline>».made;
+    make @<table-inline>».made;
 }
 
 method array($/)
 {
-    make $<array_elements> ?? $<array_elements>.made !! [];
+    make $<array-elements> ?? $<array-elements>.made !! [];
 }
 
 # end array grammar-actions }}}
 # table grammar-actions {{{
 
-method keypair_key:bare ($/)
+method keypair-key:bare ($/)
 {
     make ~$/;
 }
 
-method keypair_key_string_basic($/)
+method keypair-key-string:basic ($/)
 {
-    make $<string_basic_text>.made;
+    make $<string-basic>.made;
 }
 
-method keypair_key:quoted ($/)
+method keypair-key-string:literal ($/)
 {
-    make $<keypair_key_string_basic>.made;
+    make $<string-literal>.made;
 }
 
-method keypair_value:string ($/)
+method keypair-key:quoted ($/)
+{
+    make $<keypair-key-string>.made;
+}
+
+method keypair-value:string ($/)
 {
     make $<string>.made;
 }
 
-method keypair_value:number ($/)
+method keypair-value:number ($/)
 {
     make $<number>.made;
 }
 
-method keypair_value:boolean ($/)
+method keypair-value:boolean ($/)
 {
     make $<boolean>.made;
 }
 
-method keypair_value:date ($/)
+method keypair-value:date ($/)
 {
     make $<date>.made;
 }
 
-method keypair_value:array ($/)
+method keypair-value:array ($/)
 {
     make $<array>.made;
 }
@@ -462,21 +467,21 @@ method keypair($/)
 {
     # if keypair value is inline table, map inline table keypairs to
     # keypair key as hash
-    if $<table_inline>
+    if $<table-inline>
     {
         my %h;
-        $<table_inline>.made.map({
-            %h{Str($<keypair_key>.made)}{.keys[0]} = .values[0]
+        $<table-inline>.made.map({
+            %h{Str($<keypair-key>.made)}{.keys[0]} = .values[0]
         });
         make %h;
     }
     else
     {
-        make Str($<keypair_key>.made) => $<keypair_value>.made;
+        make Str($<keypair-key>.made) => $<keypair-value>.made;
     }
 }
 
-method table_inline_keypairs($/)
+method table-inline-keypairs($/)
 {
     # verify inline table does not contain duplicate keys
     #
@@ -484,12 +489,12 @@ method table_inline_keypairs($/)
     # method being assigned in a hash and are at risk of being overwritten
     # by duplicate keys
     {
-        my Str @keys_seen = |@<keypair>».made».keys.flat;
-        unless @keys_seen.elems == @keys_seen.unique.elems
+        my Str @keys-seen = |@<keypair>».made».keys.flat;
+        unless @keys-seen.elems == @keys-seen.unique.elems
         {
             die X::Config::TOML::InlineTable::DuplicateKeys.new(
-                :table_inline_text($/.Str),
-                :@keys_seen
+                :table-inline-text($/.Str),
+                :@keys-seen
             );
         }
     }
@@ -499,12 +504,12 @@ method table_inline_keypairs($/)
     make %h;
 }
 
-method table_inline($/)
+method table-inline($/)
 {
     # did inline table contain keypairs?
-    if $<table_inline_keypairs>
+    if $<table-inline-keypairs>
     {
-        make $<table_inline_keypairs>.made;
+        make $<table-inline-keypairs>.made;
     }
     else
     {
@@ -516,126 +521,126 @@ method table_inline($/)
 # end table grammar-actions }}}
 # document grammar-actions {{{
 
-method keypair_line($/)
+method keypair-line($/)
 {
     make $<keypair>.made;
 }
 
 # this segment represents keypairs not belonging to any table
-method segment:keypair_line ($/)
+method segment:keypair-line ($/)
 {
     # update keypath
-    my Str @keypath = $<keypair_line>.made.keys[0];
+    my Str @keypath = $<keypair-line>.made.keys[0];
 
     # mark key as seen, verify key is not being redeclared
-    if %!keys_seen{$(self!pwd(%.toml, @keypath))}++
+    if %!keys-seen{$(self!pwd(%.toml, @keypath))}++
     {
         die X::Config::TOML::KeypairLine::DuplicateKeys.new(
-            :keypair_line_text($/.Str),
+            :keypair-line-text($/.Str),
             :@keypath
         );
     }
 
-    self!at_keypath(%!toml, @keypath) = $<keypair_line>.made.values[0];
+    self!at-keypath(%!toml, @keypath) = $<keypair-line>.made.values[0];
 }
 
-method table_header_text($/)
+method table-header-text($/)
 {
-    make @<keypair_key>».made;
+    make @<keypair-key>».made;
 }
 
-method hoh_header($/)
+method hoh-header($/)
 {
-    make $<table_header_text>.made;
+    make $<table-header-text>.made;
 }
 
 method table:hoh ($/)
 {
-    my Str @base_keypath = $<hoh_header>.made;
-    my Str $hoh_text = $/.Str;
+    my Str @base-keypath = $<hoh-header>.made;
+    my Str $hoh-text = $/.Str;
 
     # verify table does not overwrite existing key
-    if %.keys_seen{$(self!pwd(%.toml, @base_keypath))}
+    if %.keys-seen{$(self!pwd(%.toml, @base-keypath))}
     {
         die X::Config::TOML::HOH::Seen::Key.new(
-            :$hoh_text,
-            :keypath(@base_keypath)
+            :$hoh-text,
+            :keypath(@base-keypath)
         );
     }
 
     # verify table does not overwrite existing arraytable
-    if %.aoh_seen{$@base_keypath}
+    if %.aoh-seen{$@base-keypath}
     {
         die X::Config::TOML::HOH::Seen::AOH.new(
-            :hoh_header_text($<hoh_header>.Str),
-            :$hoh_text
+            :hoh-header-text($<hoh-header>.Str),
+            :$hoh-text
         );
     }
 
     # mark table as seen, verify table is not being redeclared
-    if %!hoh_seen{$(self!pwd(%.toml, @base_keypath))}++
+    if %!hoh-seen{$(self!pwd(%.toml, @base-keypath))}++
     {
         die X::Config::TOML::HOH::Seen.new(
-            :hoh_header_text($<hoh_header>.Str),
-            :$hoh_text
+            :hoh-header-text($<hoh-header>.Str),
+            :$hoh-text
         );
     }
 
     # verify base keypath is clear
     try
     {
-        self.is_keypath_clear(@base_keypath);
+        self.is-keypath-clear(@base-keypath);
 
         CATCH
         {
             default
             {
                 die X::Config::TOML::Keypath::HOH.new(
-                    :$hoh_text,
-                    :keypath(@base_keypath)
+                    :$hoh-text,
+                    :keypath(@base-keypath)
                 );
             }
         }
     }
 
     # does table contain keypairs?
-    if @<keypair_line>
+    if @<keypair-line>
     {
         # verify keypair lines do not contain duplicate keys
         {
-            my Str @keys_seen = |@<keypair_line>».made».keys.flat;
-            unless @keys_seen.elems == @keys_seen.unique.elems
+            my Str @keys-seen = |@<keypair-line>».made».keys.flat;
+            unless @keys-seen.elems == @keys-seen.unique.elems
             {
                 die X::Config::TOML::HOH::DuplicateKeys.new(
-                    :$hoh_text,
-                    :@keys_seen
+                    :$hoh-text,
+                    :@keys-seen
                 );
             }
         }
 
-        for @<keypair_line>».made -> $keypair
+        for @<keypair-line>».made -> $keypair
         {
-            my Str @keypath = @base_keypath;
+            my Str @keypath = @base-keypath;
             push @keypath, $keypair.keys[0];
 
             # verify keypair key does not conflict with existing key
             try
             {
-                self.is_keypath_clear(@keypath);
+                self.is-keypath-clear(@keypath);
 
                 CATCH
                 {
                     when X::Config::TOML::BadKeypath::ArrayNotAOH
                     {
                         die X::Config::TOML::HOH::Seen::Key.new(
-                            :$hoh_text,
-                            :keypath(@base_keypath)
+                            :$hoh-text,
+                            :keypath(@base-keypath)
                         );
                     }
                     default
                     {
                         die X::Config::TOML::Keypath::HOH.new(
-                            :$hoh_text,
+                            :$hoh-text,
                             :@keypath
                         );
                     }
@@ -643,80 +648,80 @@ method table:hoh ($/)
             }
 
             # assign value to keypath
-            self!at_keypath(%!toml, @keypath) = $keypair.values[0];
+            self!at-keypath(%!toml, @keypath) = $keypair.values[0];
 
             # mark key as seen
-            %!keys_seen{$(self!pwd(%.toml, @keypath))}++;
+            %!keys-seen{$(self!pwd(%.toml, @keypath))}++;
         }
     }
     else
     {
-        self!at_keypath(%!toml, @base_keypath) = {};
+        self!at-keypath(%!toml, @base-keypath) = {};
     }
 }
 
-method aoh_header($/)
+method aoh-header($/)
 {
-    make $<table_header_text>.made;
+    make $<table-header-text>.made;
 }
 
 method table:aoh ($/)
 {
-    my Str @base_keypath = $<aoh_header>.made;
-    my Str $aoh_header_text = $<aoh_header>.Str;
-    my Str $aoh_text = $/.Str;
+    my Str @base-keypath = $<aoh-header>.made;
+    my Str $aoh-header-text = $<aoh-header>.Str;
+    my Str $aoh-text = $/.Str;
 
     # verify arraytable does not overwrite existing key
-    if %.keys_seen{$(self!pwd(%.toml, @base_keypath))}
+    if %.keys-seen{$(self!pwd(%.toml, @base-keypath))}
     {
         die X::Config::TOML::AOH::OverwritesKey.new(
-            :$aoh_header_text,
-            :$aoh_text,
-            :keypath(@base_keypath)
+            :$aoh-header-text,
+            :$aoh-text,
+            :keypath(@base-keypath)
         );
     }
 
     # verify arraytable does not overwrite existing table
-    if %.hoh_seen{$(self!pwd(%.toml, @base_keypath))}
+    if %.hoh-seen{$(self!pwd(%.toml, @base-keypath))}
     {
         die X::Config::TOML::AOH::OverwritesHOH.new(
-            :$aoh_header_text,
-            :$aoh_text,
-            :keypath(@base_keypath)
+            :$aoh-header-text,
+            :$aoh-text,
+            :keypath(@base-keypath)
         );
     }
 
     my %h;
-    if @<keypair_line>
+    if @<keypair-line>
     {
         # verify keypair lines do not contain duplicate keys
         {
-            my Str @keys_seen = |@<keypair_line>».made».keys.flat;
-            unless @keys_seen.elems == @keys_seen.unique.elems
+            my Str @keys-seen = |@<keypair-line>».made».keys.flat;
+            unless @keys-seen.elems == @keys-seen.unique.elems
             {
                 die X::Config::TOML::AOH::DuplicateKeys.new(
-                    :$aoh_text,
-                    :@keys_seen
+                    :$aoh-text,
+                    :@keys-seen
                 );
             }
         }
 
-        @<keypair_line>».made.map({ %h{.keys[0]} = .values[0]; });
+        @<keypair-line>».made.map({ %h{.keys[0]} = .values[0]; });
     }
 
-    sub append_to_aoh(@keypath, %h)
+    sub append-to-aoh(@keypath, %h)
     {
-        push self!at_keypath(
+        push self!at-keypath(
             %!toml,
             @keypath.end > 0 ?? @keypath[0..^@keypath.end] !! []
         ){@keypath[@keypath.end]}, %h;
     }
 
     # is base keypath an existing array of hashes?
-    if %.aoh_seen{$@base_keypath}
+    if %.aoh-seen{$@base-keypath}
     {
         # push values to existing array of hashes
-        append_to_aoh(@base_keypath, %h);
+        append-to-aoh(@base-keypath, %h);
     }
     # new array of hashes
     else
@@ -724,33 +729,33 @@ method table:aoh ($/)
         # make sure we're not trodding over scalars or tables
         try
         {
-            self.is_keypath_clear(@base_keypath, :aoh);
+            self.is-keypath-clear(@base-keypath, :aoh);
 
             CATCH
             {
                 when X::Config::TOML::BadKeypath::ArrayNotAOH
                 {
                     die X::Config::TOML::AOH::OverwritesKey.new(
-                        :$aoh_header_text,
-                        :$aoh_text,
-                        :keypath(@base_keypath)
+                        :$aoh-header-text,
+                        :$aoh-text,
+                        :keypath(@base-keypath)
                     );
                 }
                 default
                 {
                     die X::Config::TOML::Keypath::AOH.new(
-                        :$aoh_text,
-                        :keypath(@base_keypath)
+                        :$aoh-text,
+                        :keypath(@base-keypath)
                     );
                 }
             }
         }
 
         # push values to new array of hashes
-        append_to_aoh(@base_keypath, %h);
+        append-to-aoh(@base-keypath, %h);
 
         # mark arraytable as seen
-        %!aoh_seen{$@base_keypath}++;
+        %!aoh-seen{$@base-keypath}++;
     }
 }
 
@@ -765,7 +770,7 @@ method TOP($/)
 
 # given TOML hash and keypath, return scalar container of deepest path,
 # with special treatment of array of hashes
-method !at_keypath(%h, *@k) is rw
+method !at-keypath(%h, *@k) is rw
 {
     my $h := %h;
 
@@ -780,7 +785,7 @@ method !at_keypath(%h, *@k) is rw
         if $h{$k} ~~ List
         {
             # verify this is aoh before traversing
-            unless %.aoh_seen{$@path}
+            unless %.aoh-seen{$@path}
             {
                 die X::Config::TOML::BadKeypath::ArrayNotAOH.new;
             }
@@ -797,18 +802,18 @@ method !at_keypath(%h, *@k) is rw
 }
 
 # verify keypath does not conflict with existing key
-multi method is_keypath_clear(Str:D @full_keypath) returns Bool:D
+multi method is-keypath-clear(Str:D @full-keypath) returns Bool:D
 {
     my Bool:D $clear = False;
 
     # does full keypath exist?
-    if self!at_keypath(%.toml, @full_keypath).defined
+    if self!at-keypath(%.toml, @full-keypath).defined
     {
         # is it a scalar?
-        unless self!at_keypath(%.toml, @full_keypath).WHAT ~~ Hash
+        unless self!at-keypath(%.toml, @full-keypath).WHAT ~~ Hash
         {
             $clear = False;
-            die X::Config::TOML::Keypath.new(:keypath(@full_keypath));
+            die X::Config::TOML::Keypath.new(:keypath(@full-keypath));
         }
 
         $clear = True;
@@ -816,7 +821,7 @@ multi method is_keypath_clear(Str:D @full_keypath) returns Bool:D
     else
     {
         # full keypath does not exist, and full keypath has depth of 1?
-        if @full_keypath.end == 0
+        if @full-keypath.end == 0
         {
             $clear = True;
         }
@@ -824,8 +829,8 @@ multi method is_keypath_clear(Str:D @full_keypath) returns Bool:D
         {
             # for extended keypaths, make sure we're not trodding
             # over scalars
-            $clear = self._is_keypath_clear(
-                @full_keypath[0..^@full_keypath.end].Array
+            $clear = self._is-keypath-clear(
+                @full-keypath[0..^@full-keypath.end].Array
             );
         }
     }
@@ -834,26 +839,26 @@ multi method is_keypath_clear(Str:D @full_keypath) returns Bool:D
 }
 
 # special keypath check for arraytables
-multi method is_keypath_clear(
-    Str:D @full_keypath,
+multi method is-keypath-clear(
+    Str:D @full-keypath,
     Bool:D :$aoh! where *.so
 ) returns Bool:D
 {
     my Bool:D $clear = False;
 
     # does full keypath exist?
-    if self!at_keypath(%.toml, @full_keypath).defined
+    if self!at-keypath(%.toml, @full-keypath).defined
     {
         # we're tracking arraytables so if we got here, it's because
         # we're tasked with making a new arraytable
         # this new arraytable cannot overwrite any existing value
         $clear = False;
-        die X::Config::TOML::Keypath.new(:keypath(@full_keypath));
+        die X::Config::TOML::Keypath.new(:keypath(@full-keypath));
     }
     else
     {
         # full keypath does not exist, and full keypath has depth of 1?
-        if @full_keypath.end == 0
+        if @full-keypath.end == 0
         {
             $clear = True;
         }
@@ -861,8 +866,8 @@ multi method is_keypath_clear(
         {
             # for extended keypaths, make sure we're not trodding
             # over scalars
-            $clear = self._is_keypath_clear(
-                @full_keypath[0..^@full_keypath.end].Array
+            $clear = self._is-keypath-clear(
+                @full-keypath[0..^@full-keypath.end].Array
             );
         }
     }
@@ -870,25 +875,25 @@ multi method is_keypath_clear(
     $clear;
 }
 
-multi method _is_keypath_clear(@keypath where *.end > 0) returns Bool:D
+multi method _is-keypath-clear(@keypath where *.end > 0) returns Bool:D
 {
-    self!is_trodden(@keypath)
+    self!is-trodden(@keypath)
         ?? die X::Config::TOML::Keypath.new(:@keypath)
-        !! self._is_keypath_clear(@keypath[0..^@keypath.end]);
+        !! self._is-keypath-clear(@keypath[0..^@keypath.end]);
 }
 
-multi method _is_keypath_clear(@keypath where *.end == 0) returns Bool:D
+multi method _is-keypath-clear(@keypath where *.end == 0) returns Bool:D
 {
-    self!is_trodden(@keypath)
+    self!is-trodden(@keypath)
         ?? die X::Config::TOML::Keypath.new(:@keypath)
         !! True;
 }
 
-method !is_trodden(@keypath) returns Bool:D
+method !is-trodden(@keypath) returns Bool:D
 {
-    if self!at_keypath(%.toml, @keypath).defined
+    if self!at-keypath(%.toml, @keypath).defined
     {
-        unless self!at_keypath(%.toml, @keypath).WHAT ~~ Hash
+        unless self!at-keypath(%.toml, @keypath).WHAT ~~ Hash
         {
             die X::Config::TOML::Keypath.new(:@keypath);
             True;

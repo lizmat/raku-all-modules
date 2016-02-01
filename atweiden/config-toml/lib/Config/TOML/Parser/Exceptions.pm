@@ -3,18 +3,18 @@ unit class Config::TOML::Parser::Exceptions;
 
 class X::Config::TOML::AOH::DuplicateKeys is Exception
 {
-    has Str $.aoh_text;
-    has Str @.keys_seen;
+    has Str $.aoh-text;
+    has Str @.keys-seen;
 
     method message()
     {
         say "Sorry, arraytable contains duplicate keys.";
         print '-' x 72, "\n";
         say "Array table:";
-        say $.aoh_text;
+        say $.aoh-text;
         print '-' x 72, "\n";
         say "Keys seen:";
-        .say for @.keys_seen.sort».subst(
+        .say for @.keys-seen.sort».subst(
             /(.*)/,
             -> $/
             {
@@ -26,7 +26,7 @@ class X::Config::TOML::AOH::DuplicateKeys is Exception
         );
         print '-' x 72, "\n";
         say "Keys seen (unique):";
-        .say for @.keys_seen.unique.sort».subst(
+        .say for @.keys-seen.unique.sort».subst(
             /(.*)/,
             -> $/
             {
@@ -41,18 +41,18 @@ class X::Config::TOML::AOH::DuplicateKeys is Exception
 
 class X::Config::TOML::HOH::DuplicateKeys is Exception
 {
-    has Str $.hoh_text;
-    has Str @.keys_seen;
+    has Str $.hoh-text;
+    has Str @.keys-seen;
 
     method message()
     {
         say "Sorry, table contains duplicate keys.";
         print '-' x 72, "\n";
         say "Table:";
-        say $.hoh_text;
+        say $.hoh-text;
         print '-' x 72, "\n";
         say "Keys seen:";
-        .say for @.keys_seen.sort».subst(
+        .say for @.keys-seen.sort».subst(
             /(.*)/,
             -> $/
             {
@@ -64,7 +64,7 @@ class X::Config::TOML::HOH::DuplicateKeys is Exception
         );
         print '-' x 72, "\n";
         say "Keys seen (unique):";
-        .say for @.keys_seen.unique.sort».subst(
+        .say for @.keys-seen.unique.sort».subst(
             /(.*)/,
             -> $/
             {
@@ -79,18 +79,18 @@ class X::Config::TOML::HOH::DuplicateKeys is Exception
 
 class X::Config::TOML::InlineTable::DuplicateKeys is Exception
 {
-    has Str $.table_inline_text;
-    has Str @.keys_seen;
+    has Str $.table-inline-text;
+    has Str @.keys-seen;
 
     method message()
     {
         say "Sorry, inline table contains duplicate keys.";
         print '-' x 72, "\n";
         say "Inline table:";
-        say $.table_inline_text;
+        say $.table-inline-text;
         print '-' x 72, "\n";
         say "Keys seen:";
-        .say for @.keys_seen.sort».subst(
+        .say for @.keys-seen.sort».subst(
             /(.*)/,
             -> $/
             {
@@ -102,7 +102,7 @@ class X::Config::TOML::InlineTable::DuplicateKeys is Exception
         );
         print '-' x 72, "\n";
         say "Keys seen (unique):";
-        .say for @.keys_seen.unique.sort».subst(
+        .say for @.keys-seen.unique.sort».subst(
             /(.*)/,
             -> $/
             {
@@ -117,7 +117,7 @@ class X::Config::TOML::InlineTable::DuplicateKeys is Exception
 
 class X::Config::TOML::KeypairLine::DuplicateKeys is Exception
 {
-    has Str $.keypair_line_text;
+    has Str $.keypair-line-text;
     has Str @.keypath;
 
     method message()
@@ -125,7 +125,7 @@ class X::Config::TOML::KeypairLine::DuplicateKeys is Exception
         say "Sorry, keypair line contains duplicate key.";
         print '-' x 72, "\n";
         say "Keypair line:";
-        say $.keypair_line_text;
+        say $.keypair-line-text;
         print '-' x 72, "\n";
         say "The key 「{@.keypath.join('.')}」 has already been seen";
     }
@@ -133,7 +133,7 @@ class X::Config::TOML::KeypairLine::DuplicateKeys is Exception
 
 class X::Config::TOML::AOH is Exception
 {
-    has Str $.aoh_text;
+    has Str $.aoh-text;
     has Str @.keypath;
 
     method message()
@@ -143,48 +143,48 @@ class X::Config::TOML::AOH is Exception
 
         In arraytable:
 
-        {$.aoh_text}
+        {$.aoh-text}
         EOF
     }
 }
 
 class X::Config::TOML::AOH::OverwritesHOH is X::Config::TOML::AOH
 {
-    has Str $.aoh_header_text;
+    has Str $.aoh-header-text;
 
     method message()
     {
         say qq:to/EOF/;
-        Sorry, arraytable 「$.aoh_header_text」 has been declared previously
+        Sorry, arraytable 「$.aoh-header-text」 has been declared previously
         as regular table in TOML document.
 
         In arraytable:
 
-        {$.aoh_text}
+        {$.aoh-text}
         EOF
     }
 }
 
 class X::Config::TOML::AOH::OverwritesKey is X::Config::TOML::AOH
 {
-    has Str $.aoh_header_text;
+    has Str $.aoh-header-text;
 
     method message()
     {
         say qq:to/EOF/;
-        Sorry, arraytable 「$.aoh_header_text」 overwrites existing key in
+        Sorry, arraytable 「$.aoh-header-text」 overwrites existing key in
         TOML document.
 
         In arraytable:
 
-        {$.aoh_text}
+        {$.aoh-text}
         EOF
     }
 }
 
 class X::Config::TOML::HOH is Exception
 {
-    has Str $.hoh_text;
+    has Str $.hoh-text;
     has Str @.keypath;
 
     method message()
@@ -194,23 +194,23 @@ class X::Config::TOML::HOH is Exception
 
         In table:
 
-        {$.hoh_text}
+        {$.hoh-text}
         EOF
     }
 }
 
 class X::Config::TOML::HOH::Seen is X::Config::TOML::HOH
 {
-    has Str $.hoh_header_text;
+    has Str $.hoh-header-text;
 
     method message()
     {
         say qq:to/EOF/;
-        Sorry, table 「$.hoh_header_text」 has been declared previously in TOML document.
+        Sorry, table 「$.hoh-header-text」 has been declared previously in TOML document.
 
         In table:
 
-        {$.hoh_text}
+        {$.hoh-text}
         EOF
     }
 }
@@ -226,7 +226,7 @@ class X::Config::TOML::HOH::Seen::Key is X::Config::TOML::HOH
 
         In table:
 
-        {$.hoh_text}
+        {$.hoh-text}
         EOF
     }
 }
