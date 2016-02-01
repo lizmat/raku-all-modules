@@ -1,11 +1,12 @@
 {
+    "perl"        : "6.c",
     "name"        : "HTML::Restrict",
     "version"     : "0.1",
     "description" : "Delete specified HTML tags and attributes",
+    "authors"      : ["Steve Mynott <steve.mynott@gmail.com>"],
     "depends"     : ["HTML::Parser::XML"],
     "provides"    : {
             "HTML::Restrict": "lib/HTML/Restrict.pm"
     },
-    "source-url"  : "git://github.com/stmuk/p6-html-restrict.git",
-    "author"      : "Steve Mynott <steve.mynott@gmail.com>"
+    "source-url"  : "git://github.com/stmuk/p6-html-restrict.git"
 }

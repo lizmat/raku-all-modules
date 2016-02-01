@@ -1,6 +1,51 @@
 use v6;
 use HTML::Parser::XML;
 
+=begin pod
+
+=head1 NAME
+
+HTML::Restrict - attempt to sanitise HTML via good and bad tags
+
+=head1 SYNOPSIS
+
+=begin code
+
+   use HTML::Restrict;
+
+   my $hr = HTML::Restrict.new(
+                      :good-tags(<a b br em hr i img p strong tt u>),
+                      :bad-attrib-vals(any(rx/onmouseover/, rx/javascript/)),
+                      :recurse-depth(100), 
+                      );
+
+   my XML::Document $doc = $hr.process(:$html);
+
+   my $got = $doc.gist;
+
+=end code
+
+=head1 DESCRIPTION
+
+CAUTION THIS MAY NOT BE SECURE FOR PRODUCTION USE YET.
+
+Delete specified HTML tags, attributes and attribute values from HTML in an
+attempt to sanitise HTML for safer use.
+
+Heavily influenced by existing similar perl5 modules such as the one of the
+same name.
+
+Defaults for @.good-tags, $.recurse-depth and @.bad-attrib-vals are as above so
+may be omitted.
+
+Pull requests welcome.
+
+=head1 AUTHOR
+
+Steve Mynott <steve.mynott@gmail.com> 20150806
+
+=end pod
+
 class HTML::Restrict {
 
     has @.good-tags =  <a b br em hr i img p strong tt u>;
