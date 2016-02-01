@@ -1,12 +1,16 @@
 unit class HTTP::Message;
 
 use HTTP::Header;
+use HTTP::MediaType;
 use Encode;
 
 has HTTP::Header $.header = HTTP::Header.new;
 has $.content is rw;
 
 has $.protocol is rw = 'HTTP/1.1';
+
+has Bool $.binary = False;
+has Str  @.text-types;
 
 my $CRLF = "\r\n";
 
@@ -20,23 +24,144 @@ method add-content($content) {
     $.content ~= $content;
 }
 
-method decoded-content {
+class X::Decoding is Exception {
+    has HTTP::Message $.response;
+    has Blob $.content;
+    method message() {
+        "Problem decoding content";
+    }
+}
+
+method content-type() returns Str {
+    $!header.field('Content-Type').values[0] // '';
+}
+
+has HTTP::MediaType $!media-type;
+
+method media-type() returns HTTP::MediaType {
+    if not $!media-type.defined { 
+        if self.content-type() -> $ct {
+            $!media-type = HTTP::MediaType.parse($ct);
+        }
+    }
+    $!media-type;
+}
+
+# Don't want to put the heuristic in the HTTP::MediaType
+# Also moving this here makes it much more easy to test
+
+method charset() returns Str {
+    if self.media-type -> $mt {
+        $mt.charset || ( $mt.major-type eq 'text' ?? $mt.sub-type eq 'html' ?? 'utf-8' !! 'iso-8859-1' !! 'utf-8');
+    }
+    else {
+        # At this point we're probably screwed anyway
+        'iso-8859-1'
+    }
+}
+
+# This is already a candidate for refactoring
+# Just want to get it working
+method is-text() returns Bool {
+    my Bool $ret = do {
+        if $!binary {
+            False;
+        }
+        else {
+            if self.media-type -> $mt {
+                if $mt.type ~~ any(@!text-types) {
+                    True;
+                }
+                else {
+                    given $mt.major-type {
+                        when 'text' {
+                            True;
+                        }
+                        when any(<image audio video>) {
+                            False;
+                        }
+                        when 'application' {
+                            given $mt.sub-type {
+                                when /xml|javascript|json/ {
+                                    True;
+                                }
+                                default {
+                                    False;
+                                }
+                            }
+                        }
+                        default {
+                            # Not sure about this
+                            True;
+                        }
+                    }
+                }
+            }
+            else {
+                # No content type, try and blow up
+                True;
+            }
+        }
+    }
+    $ret;
+}
+
+method is-binary() returns Bool {
+    !self.is-text;
+}
+
+method content-encoding() {
+    $!header.field('Content-Encoding');
+}
+
+class X::Deflate is Exception {
+    has Str $.message;
+}
+
+method inflate-content() returns Blob {
+    if self.content-encoding -> $v is copy {
+        # This is a guess
+        $v = 'zlib' if $v eq 'compress' ;
+        $v = 'zlib' if $v eq 'deflate';
+        try require Compress::Zlib;
+        if ::('Compress::Zlib::Stream') ~~ Failure {
+            X::Deflate.new(message => "Please install 'Compress::Zlib' to uncompress '$v' encoded content").throw;
+        }
+        else {
+            my $z = ::('Compress::Zlib::Stream').new( |{ $v => True });
+            $z.inflate($!content);
+        }
+    }
+    else {
+        $!content;
+    }
+}
+
+method decoded-content(:$bin) {
     return $!content if $!content ~~ Str || $!content.bytes == 0;
 
+    my $content = self.inflate-content;
     # [todo]
     # If charset is missing from Content-Type, then before defaulting
     # to anything it should attempt to extract it from $.content like (for HTML):
-    # <meta charset="UTF-8"> <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    my $content-type  = $!header.field('Content-Type').values[0] // '';
-    my $charset = $content-type ~~ / charset '=' $<charset>=[ <-[\s;]>+ ] /
-                ?? $<charset>.Str.lc
-                !! ( $content-type ~~ /^ text / ?? 'iso-8859-1' !! 'utf-8' );
+    # <meta charset="UTF-8"> 
+    # <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    
+    my $decoded_content;
 
-    my $decoded_content = try {
-        Encode::decode($charset, $!content);
-    } || try { 
-        $!content.unpack("A*") 
-    } || die "Problem decoding content";
+    if !$bin && self.is-text {
+        my $charset = self.charset;
+        $decoded_content = try {
+            Encode::decode($charset, $content);
+        } || try {
+            $content.decode('iso-8859-1');
+        } || try { 
+            $content.unpack("A*") 
+        } || X::Decoding.new(content => $content, response => self).throw;
+    }
+    else {
+        $decoded_content = $content;
+    }
 
     $decoded_content
 }
@@ -96,14 +221,25 @@ method parse($raw_message) {
     self;
 }
 
-method Str($eol = "\n", :$debug) {
+method Str($eol = "\n", :$debug, Bool :$bin) {
     my constant $max_size = 300;
     my $s = $.header.Str($eol);
-    $s ~= $eol ~ $.content ~ $eol if $.content and !$debug;
+    $s ~= $eol if $.content;
+    
+    # The :bin will be passed from the H::UA
+    if not $bin {
+        $s ~=  $.content ~ $eol if $.content and !$debug;
+    }
     if $.content and $debug {
-      $s ~= $eol ~ "=Content size: "~$.content.Str.chars~" chars";
-      $s ~= "- Displaying only $max_size" if $.content.Str.chars > $max_size;
-      $s ~= $eol ~ $.content.Str.substr(0, $max_size) ~ $eol;
+        if $bin {
+            $s ~= $eol ~ "=Content size : " ~ $.content.elems ~ " bytes ";
+            $s ~= "$eol ** Not showing binary content ** $eol";
+        }
+        else {
+            $s ~= $eol ~ "=Content size: "~$.content.Str.chars~" chars";
+            $s ~= "- Displaying only $max_size" if $.content.Str.chars > $max_size;
+            $s ~= $eol ~ $.content.Str.substr(0, $max_size) ~ $eol;
+        }
     }
 
     return $s;
