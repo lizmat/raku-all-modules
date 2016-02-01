@@ -2,12 +2,13 @@ branches:
   except:
     - gh-pages
 language: perl6
-sudo: required
+addons:
+  apt:
+    packages:
+    - libnotmuch-dev
 perl6:
   - latest
-before_install:
-  - sudo apt-get update -q
-  - sudo apt-get install -y libnotmuch4
 install:
   - rakudobrew build-panda
+  - export PATH=~/.rakudobrew/bin:~/.rakudobrew/moar-nom/install/share/perl6/site/bin:~/.rakudobrew/moar-nom/panda/bin:$PATH
   - panda installdeps .

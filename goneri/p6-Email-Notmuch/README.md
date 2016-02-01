@@ -4,6 +4,8 @@
 Notmuchmail ( https://notmuchmail.org/ ) is a mail indexation tool. This Perl6 module provides
 binding for a limited subset of its API.
 
+The library has been tested with Notmuch 0.18, it should also work with older version.
+
 ## Example
 
     use v6;

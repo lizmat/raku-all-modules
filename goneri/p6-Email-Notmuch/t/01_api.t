@@ -1,8 +1,11 @@
 use v6;
+
 use Email::Notmuch;
 use File::Temp;
+
 use Test;
 
+plan 19;
 
 my %mails =
     'first_mail' => "From: bob\@example.com\n
@@ -41,6 +44,9 @@ isa-ok $first_message, Message;
 
 ok $first_message.get_header('from') eq 'bob@example.com';
 ok $first_message.add_tag('new') == NOTMUCH_STATUS_SUCCESS;
+ok $first_message.get_tags().all().grep('new');
+ok $first_message.remove_tag('new') == NOTMUCH_STATUS_SUCCESS;
+nok $first_message.get_tags().all().grep('new');
 
 isa-ok $database.add_message($test_dir ~ '/second_mail.eml'), Message;
 isa-ok $database.find_message_by_filename($test_dir ~ '/second_mail.eml'), Message;

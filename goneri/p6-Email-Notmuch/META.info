@@ -1,7 +1,7 @@
 {
   "perl"        : "6.c",
   "name"        : "Email::Notmuch",
-  "version"     : "0.1",
+  "version"     : "0.3",
   "description" : "lib NotmuchMail binding",
   "provides"    : {
     "Email::Notmuch": "lib/Email/Notmuch.pm6"
