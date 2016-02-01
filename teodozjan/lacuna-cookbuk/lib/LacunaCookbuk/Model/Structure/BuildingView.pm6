@@ -2,7 +2,7 @@ use v6;
 
 unit class LacunaCookbuk::Model::Structure::BuildingView;
 
-has Str $.level;
+has $.level;
 has Any $.pending_build;
 has Hash $.upgrade;
 has $.repair_costs;
