@@ -1,0 +1,11 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Acme::Scrub",
+    "version"     : "0.2.0",
+    "description" : "For REALLY clean code.",
+    "authors"     : [ "Steve Schulze (thundergnat)" ],
+    "provides"    : {"Acme::Scrub" : "lib/Acme/Scrub.pm6"},
+    "depends"     : [],
+    "source-type" : "git",
+    "source-url"  : "git://github.com/thundergnat/Acme-Scrub.git"
+}

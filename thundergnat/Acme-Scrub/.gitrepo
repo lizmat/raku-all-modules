@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/thundergnat/Acme-Scrub.git
+	branch = master
+	commit = 8d81faf311544d6e621d9c441fdf320b40a65f14
+	parent = 5c6db24628201b402a8e8efe21c099ef2e5b2a40
+	cmdver = 0.2.3
