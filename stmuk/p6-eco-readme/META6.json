@@ -1,10 +1,12 @@
 {
     "perl"        : "6.c",
     "name"        : "App::ecoreadme",
-    "version"     : "0.1",
+    "version"     : "0.2",
     "description" : "Display and cache ecosystem README files for perl6",
     "depends"     : ["LWP::Simple","IO::Socket::SSL","Panda","IO::Capture::Simple"],
-    "provides"    : {},
+    "provides"    : {
+            "App::ecoreadme": "bin/ecoreadme"
+    },
     "source-url"  : "git://github.com/stmuk/p6-eco-readme.git",
     "author"      : "Steve Mynott <steve.mynott@gmail.com>"
 }
