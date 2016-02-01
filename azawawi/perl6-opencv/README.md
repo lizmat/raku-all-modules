@@ -32,7 +32,7 @@ Please follow the instructions below based on your platform:
 
 - To install OpenCV 2.4 development libraries, please run:
 ```
-    $ sudo apt-get install libopencv-dev
+    $ sudo apt-get install libopencv-dev g++
 ```
 
 ## Windows
