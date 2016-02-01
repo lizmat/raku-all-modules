@@ -1,0 +1,25 @@
+{
+  "name"          : "MagickWand",
+  "version"       : "0.0.1",
+  "perl"          : "v6",
+  "description"   : "ImageMagick's MagickWand API Bindings for Perl6",
+  "build-depends" : [ ],
+  "depends"       : [ "LibraryCheck" ],
+  "auth"          : "github:azawawi",
+  "authors"       : [ "Ahmad M. Zawawi" ],
+  "provides"      : {
+    "MagickWand"                             : "lib/MagickWand.pm6",
+    "MagickWand::NativeCall"                 : "lib/MagickWand/NativeCall.pm6",
+    "MagickWand::NativeCall::Common"         : "lib/MagickWand/NativeCall/Common.pm6",
+    "MagickWand::NativeCall::DrawingWand"    : "lib/MagickWand/NativeCall/DrawingWand.pm6",
+    "MagickWand::NativeCall::Image"          : "lib/MagickWand/NativeCall/Image.pm6",
+    "MagickWand::NativeCall::PixelIterator"  : "lib/MagickWand/NativeCall/PixelIterator.pm6",
+    "MagickWand::NativeCall::PixelWand"      : "lib/MagickWand/NativeCall/PixelWand.pm6",
+    "MagickWand::NativeCall::Mogrify"        : "lib/MagickWand/NativeCall/Mogrify.pm6",
+    "MagickWand::NativeCall::Property"       : "lib/MagickWand/NativeCall/Property.pm6",
+    "MagickWand::NativeCall::Wand"           : "lib/MagickWand/NativeCall/Wand.pm6",
+    "MagickWand::NativeCall::WandView"       : "lib/MagickWand/NativeCall/WandView.pm6"
+  },
+  "resources"     : [ ],
+  "source-url"    : "git://github.com/azawawi/perl6-magickwand.git"
+}
