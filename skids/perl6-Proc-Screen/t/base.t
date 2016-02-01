@@ -3,12 +3,12 @@ use lib <blib/lib lib>;
 use File::Temp;
 
 use Test;
-if run "screen", "-ls", :out {
+if qx{screen -version} ~~ /<!before [4\.0<[01]>|4\.1\D]><[4..9]>\./ {
   plan 11;
 }
 else {
   plan 1;
-  ok 1, "Skipping tests since 'screen' not installed or not in path";
+  ok 1, "Skipping tests since 'screen' not installed or not in path or < 4.02";
   exit;
 }
 

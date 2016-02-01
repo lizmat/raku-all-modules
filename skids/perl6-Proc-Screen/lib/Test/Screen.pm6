@@ -28,7 +28,7 @@ our $test-screen-shell is export = ["sh"];
 our %test-screens is export;
 
 #| A screen can be exempted from further tests by adding its key here
-#| (and turned back on by deleting the key).  Note this does not
+#| (and turned back on by deleting the key.)  Note this does not
 #| count as a "skip" in the Test::skip sense.
 our %test-skipped-screens is export;
 
@@ -77,7 +77,7 @@ our sub restart-screens is export {
     %test-screens{$sn}.start;
   }
 }
-#| Just an alias
+#| Just an alias for restart-screens
 our sub start-screens is export {
   restart-screens
 }
@@ -100,6 +100,9 @@ sub screen-keystrokes (*@keystrokes) is export {
   });
 }
 
+#| Take screenshots from all unskipped screens.  Include the scrollback
+#| buffer if :$inscrollback is True.  Do not include the on-screen portion
+#| if :$onscreen is False.  Returns a hash of screen session ID to content.
 sub get-hardcopies (:$inscrollback = False; :$onscreen = True) is export {
   my %res;
   for tested-screens() -> $sn, $ss {

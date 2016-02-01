@@ -3,8 +3,11 @@ Perl6 programmatic interface for manipulating GNU screen sesssions
 
 ## Status
 
-This is in "release early" status.  Not even the ecosystem hooks
-are done yet, but basic use of Proc::Screen may work.
+This is in "release early" status.  Basic use of Proc::Screen may
+work and Test::Screen may also work, but has very few available tests.
+The version of GNU screen must be 4.02 (a.k.a. 4.2) or greater since
+there is no way I know of to get the session ID back from a detached launch
+on prior versions.
 
 ## Proc::Screen
 

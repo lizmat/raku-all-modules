@@ -107,7 +107,7 @@ method new(::?CLASS:U: *%iv is copy) {
 
   # Inject commands to get the PID, so we can match the session
   %iv<rcfh>.print(sprintf(Q:to<EORC>, %iv<pidfn>, %iv<rc>.join("\n")));
-    eval 'register . "$PID"' 'writebuf %s' 'register . ""'
+    eval 'register . "[$PID]"' 'writebuf %s' 'register . ""'
     %s
     EORC
   %iv<args> := [ '-q', '-c', %iv<rcfn>, '-S', %iv<sessionname>,
@@ -124,7 +124,8 @@ method start (::?CLASS:D:) {
     if $res.result.WHAT === IO::Notification::Change {
       $!screen-pid = $!pidfh.slurp-rest;
       self.clean-old-files;
-      if $!screen-pid.chars {
+      if $!screen-pid ~~ /\[(\d+)\]/ {
+        $!screen-pid = ~$/[0];
         $tokill_lock.protect: {
           %tokill{"$!screen-pid.$.sessionname"} = ( $.path, $.remain );
         }
@@ -161,6 +162,8 @@ method await-ready (::?CLASS:D:) {
     await Promise.anyof($pid, Promise.in(5));
     fail "Screen session never sent PID"
       unless $!screen-pid.WHAT === Str and $!screen-pid.chars;
+    fail "Screen session sent strange or blank PID: $!screen-pid"
+      if $!screen-pid ~~ /\D/;
   }
   True;
 }
