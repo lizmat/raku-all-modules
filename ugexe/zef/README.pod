@@ -45,12 +45,32 @@ old CLI overlay from the previous version of Zef, so the output is rather bleh.
 
 =head2 More CLI
 
-=head4 B<install>
+=head4 B<install> [identities]
 
 Note: The install process does not install anything until all other phases have completed. So if A requires B,
 and a user has requested to C<install A>, it would download A and B, possibly Build A and B, test A and B,
 and then finally install A and B but only if A and B passed all their tests. For instance: if A failed its
 tests then B will not be installed (even if it passed its own tests) without force.
+
+[C<identities>] can be in the form of a file path (starting with B<.> or B</>), URNs, or full identities:
+
+    # URN
+    `zef install CSV-Parser`
+    `zef install github:tony-o:CSV-Parser:0.1.2`
+    `zef install CSV-Parser:0.1.2`
+
+    # IDENTITY
+    `zef install CSV::Parser`
+    `zef install "CSV::Parser:auth<tony-o>:ver<0.1.2>"`
+    `zef install "CSV::Parser:ver('0.1.2')"`
+
+    # URN + IDENTITY
+    `zef install "CSV::Parser:ver<0.1.2>" github:ugexe:Net-HTTP:0.1`
+
+    # PATH
+    `zef install /some/path`
+
+B<Options>
     
     # install the requested modules regardless of: currently installed versions,
     # test results, or failed dependency installations
@@ -67,11 +87,6 @@ tests then B will not be installed (even if it passed its own tests) without for
 
     # disable testing
     --/test
-
-    # When multiple content storages are used this will use
-    # the install candidate with the highest matching version
-    # ***option name may change***
-    --upgrade
 
     # disable fetching dependencies
     --/depends
@@ -94,16 +109,20 @@ See the root zef directory for config.json. Each phase module will attempt to lo
 More details to be made available in time, but they are fairly simple and the code itself should provide enough
 insight to get something done.
 
-See the configuration file in L<resources/config.json|https://github.com/ugexe/zef/blob/master/resources/config.json> for a little more information on how plugins are invoked.
+See the configuration file in L<resources/config.json|https://github.com/ugexe/zef/blob/master/resources/config.json> for a
+little more information on how plugins are invoked.
+
+You can see debug output related to plugins by setting the env variable B<ZEF_PLUGIN_DEBUG=1>
 
 =head1 FAQ
 
 =head3 CPAN?
 
 The functionality is mostly there. The API to search and find a specific module needs more work, but currently can execute
-a query and takes the first matching distribution name. It can also download, extract, and install as well. Other than
-polishing up the search API access it needs metacpan itself to host Perl6 distributions (not interested in the PSIXDIST
-author hackery).
+a query and takes a matching distribution name with a matching (or newest) version. It can also download, extract, and
+install as well. Other than polishing up the search API access it needs metacpan itself to host Perl6 distributions.
+
+You can enable it by setting I<"enabled" : 1> in the config under the ContentStorage::CPAN plugin
 
 =head3 Proxy support?
 
