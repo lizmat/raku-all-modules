@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ShimmerFairy/grammar-parsefail.git
 	branch = master
-	commit = 3463caedce8c2319cfc9331d9619c71bd84b3c14
-	parent = fccba971de2852f1dbd0100384a6115495a860d9
+	commit = fe47ec1088557c0f937dadfe7add5b92a03a38e3
+	parent = f30bee5e25c625a6fb9453565f75b2f25b1f4728
 	cmdver = 0.2.3
