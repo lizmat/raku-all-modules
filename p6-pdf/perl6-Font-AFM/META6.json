@@ -1,4 +1,4 @@
-{
+{   "perl"        : "6",
     "name"        : "Font::AFM",
     "version"     : "1.23.3",
     "description" : "Interface to Adobe Font Metrics files",
