@@ -1,6 +1,7 @@
 use v6;
 use Test;
-use XHTML::Writer :p;
+use XHTML::Writer :p, :writer-shall-indent;
+writer-shall-indent True;
 use XHTML::Skeleton;
 
 plan 2;

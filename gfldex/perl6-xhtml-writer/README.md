@@ -34,6 +34,13 @@ use XHTML::Skeleton;
 put xhtml-skeleton(p('Hello Camelia!'), header=>title('Hello Camelia'));
 ```
 
+## Enable indentation
+
+```
+use Typesafe::XHTML::Writer :writer-shall-indent; # :ALL will work too
+writer-shall-indent True;
+```
+
 ## License
 
 (c) Wenzel P. P. Peppmeyer, Released under Artistic License 2.0.

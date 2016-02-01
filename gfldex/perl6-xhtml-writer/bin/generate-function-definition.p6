@@ -28,6 +28,7 @@ sub MAIN($schema-file?) {
 	my %elements;
 	put 'my $indent = 0;' ~ "\n";
 	put 'constant NL = "\n";';
+	put 'my Bool $shall-indent = False;';
 	multi sub walk(XML::Element $_ where .name ~~ <xs:element> && (.attribs<name>:exists)) {
 		my $name := .attribs<name> // Failure.new;
 		%elements{$name} = Any;
@@ -38,15 +39,21 @@ sub MAIN($schema-file?) {
 			"   (\${$_.subst(':', '-')} ?? ' $_' ~ '=' ~ \"\\\"\${$_.subst(':', '-')}\\\"\" !! Empty) ~\n" 	
 		}).Str;
 
+		# workaround for #127226
         constant $indent = '$indent';
-        put Q:s:b:to/EOH/;
-        sub $name ( $named-arguments *@c ) is export(:ALL :$name) {
+		constant $indentor = '$indentor';
+		constant $index = '$index';
+		constant $shall-indent = '$shall-indent';
+        put qq:to/EOH/;
+        sub $name ( $named-arguments *\@c ) is export(:ALL :$name) \{
             (temp $indent)+=2;
+			my $indentor;
+			my method indent()\{ my $index = 0; $index += 2 while self.subst-eq('  ', $index); $indentor = '  ' x $index+2; \}
             '<$name' ~ 
          $attributes-switch 
-            ( +@c ?? ('>' ~ NL ~ @c>>.Str>>.indent($indent).join(NL) ~ (+@c ?? NL !! "") ~ '</$name>') 
+            ( +\@c ?? ('>' ~ NL ~ ($shall-indent ?? \@c>>.Str>>.indent($indent).join(NL) !! \@c>>.Str.join(NL)) ~ (+\@c ?? NL !! "") ~ '</$name>') 
             !! '/>' ) 
-        }
+        \}
         
         EOH
 	}
@@ -69,5 +76,6 @@ sub MAIN($schema-file?) {
 	}
 
 	$doc.root.nodes>>.&walk;
+	put 'sub writer-shall-indent(Bool $shall-it) is export(:ALL :writer-shall-indent) { $shall-indent = $shall-it }';
 
 }
