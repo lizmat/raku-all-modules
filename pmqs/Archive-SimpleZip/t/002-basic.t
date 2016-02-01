@@ -5,13 +5,13 @@ use lib 'lib';
  
 use Test; 
  
-plan 15; 
+plan 16; 
 
 use File::Temp;
 use Archive::SimpleZip;
 
 # Keep the test directory?
-my $wipe = True;
+my $wipe = False;
 
 my $base_dir_name = tempdir(:unlink($wipe));
 ok $base_dir_name.IO.d, "tempdir { $base_dir_name } created";
@@ -40,6 +40,7 @@ ok $zip.add($datafile.IO), "add file";
 ok $zip.add($datafile.IO, :name<new>), "add file but override name";
 ok $zip.add("abcde", :name<fred>, comment => 'member comment'), "add string ok";
 ok $zip.add("def", :name<joe>, :method(Zip-CM-Store), :stream), "add string, STORE";
+ok $zip.add("def", :name<joe>, :method(Zip-CM-Bzip2), :stream), "add string, STORE";
 ok $zip.close(), "closed";
 
 ok $zipfile.IO.e, "$zipfile exists";

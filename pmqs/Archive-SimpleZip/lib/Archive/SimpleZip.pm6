@@ -6,6 +6,7 @@ use experimental :pack;
 
 need Compress::Zlib::Raw;
 need Compress::Zlib;
+use Compress::Bzip2;
 
 use NativeCall;
 use IO::Blob;
@@ -22,7 +23,7 @@ sub crc32(int32 $crc, Blob $data)
 enum Zip-CM is export (
     Zip-CM-Store      => 0 ,
     Zip-CM-Deflate    => 8 ,
-    #Zip-CM-BZIP2      => 12 , # Not supported yet
+    Zip-CM-Bzip2      => 12 , # Not supported yet
     #Zip-CM-LZMA       => 14 , # Not Supported yet
     #Zip-CM-PPMD       => 98 , # Not Supported yet
 );
@@ -40,7 +41,7 @@ enum Zip-GP-Flag (
 our %Zip-CM-Min-Versions = 
             Zip-CM-Store                     => 20,
             Zip-CM-Deflate                   => 20,
-            #Zip-CM-BZIP2                     => 46,
+            Zip-CM-Bzip2                     => 46,
             #Zip-CM-LZMA                      => 63,
             #Zip-CM-PPMD                      => 63,
             ;
@@ -355,10 +356,11 @@ class SimpleZip is export
     has IO::Handle               $!zip-filehandle ;
     has IO::Path                 $.filename ;
     has Str                      $.comment ;
-    has Bool                     $.stream ;
+    has Bool                     $.default-stream ;
     has Instant                  $!now  = DateTime.now.Instant;
  
     has Bool                     $!any-zip64 = False;
+    has Zip-CM                   $!default-method ;
     has Bool                     $!zip64 = False ;
     has Central-Header-Directory $!cd .= new() ;
 
@@ -387,8 +389,9 @@ class SimpleZip is export
 
     multi submethod BUILD(IO::Handle :$!zip-filehandle?, 
                           IO::Path   :$!filename?,
-                          Bool       :$!stream  = False, 
-                          Str        :$!comment = ""
+                          Str        :$!comment = "",
+                          Bool       :stream($!default-stream) = False, 
+                          Zip-CM     :method($!default-method) = Zip-CM-Deflate,
                          #Bool       :$!zip64   = False, 
                          )
     {
@@ -414,8 +417,9 @@ class SimpleZip is export
     multi method add(IO::Handle  $handle, 
                      Str        :$name    = '', 
                      Str        :$comment = '',
-                     Instant    :$time = $!now,
-                     Zip-CM     :$method  = Zip-CM-Deflate)
+                     Instant    :$time    = $!now,
+                     Bool       :$stream  = $!default-stream,
+                     Zip-CM     :$method  = $!default-method)
     {
         my $compressed-size = 0;
         my $uncompressed-size = 0;
@@ -429,7 +433,7 @@ class SimpleZip is export
         $hdr.file-comment = $comment.encode;
 
         $hdr.general-purpose-bit-flag +|= Zip-GP-Streaming-Mask 
-            if $.stream ;
+            if $stream ;
 
         my $start-local-hdr = $!out.tell();
         my $local-hdr = $hdr.get();
@@ -445,6 +449,13 @@ class SimpleZip is export
                 my $zlib = Compress::Zlib::Stream.new(:deflate);
                 $read-action  = -> $in { $zlib.deflate($in) } ;
                 $flush-action = ->     { $zlib.finish()     } ;
+            }
+
+            when Zip-CM-Bzip2 
+            {
+                my $zlib = Compress::Bzip2::Stream.new(:deflate);
+                $read-action  = -> $in { $zlib.compress($in) } ;
+                $flush-action = ->     { $zlib.finish()      } ;
             }
 
             when Zip-CM-Store
@@ -476,7 +487,7 @@ class SimpleZip is export
         $hdr.uncompressed-size = $uncompressed-size;
         $hdr.crc32 = $crc32;
 
-        if $.stream
+        if $stream
         {
             $!out.write($hdr.data-descriptor()) ;
         }
@@ -563,7 +574,21 @@ To create an in-memory zip archive the first parmameter must be a Blob.
 
 =head4 stream
 
-Write the zip archive in streaming mode.
+Write the zip archive in streaming mode. Default is False.
+
+=head4 method
+
+Used to set the default compression algorithm used for all members of the
+archive. If not specified then <Zip-CM-Deflate> is the default.
+
+Specify the C<method> option on individual call to C<add> to override
+this default.
+
+Valid values are
+
+=item Zip-CM-Deflate
+=item Zip-CM-Bzip2
+=item Zip-CM-Store
 
 =head4 comment
 
@@ -602,6 +627,18 @@ To add a string/blob to
 Set the B<name> field in the zip archive. 
 
 When a filename is passed to C<add>, this option will 
+
+=head4 method
+
+Used to set the compression algorithm used for this member. If C<method>
+has not been specifed here or in C<new> it will default to
+C<Zip-CM-Deflate>.
+
+Valid values are
+
+=item Zip-CM-Deflate
+=item Zip-CM-Bzip2
+=item Zip-CM-Store
 
 =head4 stream
 

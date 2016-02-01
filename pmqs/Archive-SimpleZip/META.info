@@ -15,6 +15,7 @@
     "depends" : [ 
         "Compress::Zlib::Raw",
         "Compress::Zlib",
+        "Compress::Bzip2",
         "IO::Blob"
     ],
     "resources" : [ ],
