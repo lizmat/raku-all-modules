@@ -5,40 +5,42 @@ need Compress::Zlib::Raw;
 use NativeCall;
 use nqp;
 
+sub _internal-compression(Blob $data, Bool $compression, Int $level?) {
+    my $outlen = CArray[long].new;
+    my $bufsize = $data.bytes;
+    my buf8 $outdata .= new;
+
+    if $compression {
+	$outlen[0] = Compress::Zlib::Raw::compressBound($bufsize);
+	$outdata[$outlen[0] - 1] = 1;
+	Compress::Zlib::Raw::compress2($outdata, $outlen, $data, $bufsize, $level);
+    } else {
+	my $ret = Compress::Zlib::Raw::Z_BUF_ERROR;
+	while $ret == Compress::Zlib::Raw::Z_BUF_ERROR {
+	    $bufsize = $bufsize * 2;
+	    $outdata[$bufsize - 1] = 1;
+	    $outlen[0] = $bufsize;
+
+	    $ret = Compress::Zlib::Raw::uncompress($outdata, $outlen, $data, $bufsize);
+	    if $ret == Compress::Zlib::Raw::Z_DATA_ERROR {
+		die "uncompress data error";
+	    }
+	}
+    }
+
+    my $len = $outlen[0];
+    $outdata.subbuf(0, $len);
+}
+
 our sub compress(Blob $data, Int $level = 6 --> Buf) is export {
     if $level < -1 || $level > 9 {
         die "compression level must be between -1 and 9";
     }
-
-    my $outlen = CArray[long].new();
-    $outlen[0] = Compress::Zlib::Raw::compressBound($data.bytes);
-    my $outdata = buf8.new;
-    $outdata[$outlen[0] - 1] = 1;
-
-    Compress::Zlib::Raw::compress2($outdata, $outlen, $data, $data.bytes, $level);
-
-    my $len = $outlen[0];
-    return $outdata.subbuf(0, $len);
+    _internal-compression($data, True, $level);
 }
 
 our sub uncompress(Blob $data --> Buf) is export {
-    my $bufsize = $data.bytes;
-    my $outdata = buf8.new();
-    my $outlen = CArray[long].new();
-    my $ret = Compress::Zlib::Raw::Z_BUF_ERROR;
-    while $ret == Compress::Zlib::Raw::Z_BUF_ERROR {
-        $bufsize = $bufsize * 2;
-        $outdata[$bufsize - 1] = 1;
-        $outlen[0] = $bufsize;
-
-        $ret = Compress::Zlib::Raw::uncompress($outdata, $outlen, $data, $data.bytes);
-        if $ret == Compress::Zlib::Raw::Z_DATA_ERROR {
-            die "uncompress data error";
-        }
-    }
-
-    my $len = $outlen[0];
-    return $outdata.subbuf(0, $len);
+    _internal-compression($data, False);
 }
 
 sub _buf-chop($buf is rw, $length) {
