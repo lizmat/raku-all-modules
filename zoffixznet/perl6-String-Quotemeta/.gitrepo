@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-String-Quotemeta.git
+	branch = master
+	commit = 34fabc4ce2049dc9917fd1c48ad5ea0a2619c4ff
+	parent = d3529547881348eaa7dafc94476d4f84288346f0
+	cmdver = 0.2.3

@@ -1,0 +1,12 @@
+{
+    "perl"         : "6.c",
+    "name"         : "String::Quotemeta",
+    "version"      : "1.001001",
+    "description"  : "Perl-ish templates!",
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "String::Quotemeta" : "lib/String/Quotemeta.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   : "git://github.com/zoffixznet/perl6-String-Quotemeta.git"
+}
