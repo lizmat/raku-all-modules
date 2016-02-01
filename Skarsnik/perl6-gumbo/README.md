@@ -117,4 +117,4 @@ Sylvain "Skarsnik" Colinet <scolinet@gmail.com>
 License
 =======
 
-The modules provided by Gumbo are under the same licence as Rakudo
+The modules provided by Gumbo are under the same licence as Rakudo, see the LICENCE file

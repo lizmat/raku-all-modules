@@ -5,7 +5,7 @@ use Gumbo;
 my $html = slurp "t/data/fancy.html";
 
 
-plan 3;
+plan 5;
 
 my $xmldoc = parse-html($html, :TAG<div>, :class<content_div>);
 
@@ -19,3 +19,10 @@ $xmldoc = parse-html($html, :TAG<div>, :class<content>, :SINGLE);
 
 ok $xmldoc.root.elements().elems == 1;
 
+$xmldoc = parse-html($html, :TAG<div>, :class(/tent/), :SINGLE);
+
+ok $xmldoc.root.elements().elems == 1;
+
+$xmldoc = parse-html($html, :TAG<div>, :class(/dsjdksl/), :SINGLE);
+
+ok $xmldoc.root.elements().elems == 0;

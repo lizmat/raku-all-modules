@@ -107,9 +107,12 @@ method parse (Str $html, :$nowhitespace = False, *%filters) returns XML::Documen
 	    my $tab_attr = nativecast(CArray[gumbo_attribute_t], $elem.attributes.data);
 	    loop (my $i = 0; $i < $elem.attributes.length; $i++) {
 	      my $cattr = nativecast(gumbo_attribute_s, $tab_attr[$i]);
-	      if %filters{$cattr.name}.defined && %filters{$cattr.name} eq $cattr.value {
-	        $in_filter = True; 
-	        last;
+	      with %filters{$cattr.name} {
+                 my $filter = %filters{$cattr.name};
+		 if $filter ~~ Str && $filter eq $cattr.value || $filter ~~ Regex && $cattr.value ~~ $filter {
+	           $in_filter = True;
+                   last;
+                 }
 	      }
 	    }
 	  }
