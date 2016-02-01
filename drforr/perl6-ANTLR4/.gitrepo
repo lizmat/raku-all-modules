@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/drforr/perl6-ANTLR4.git
 	branch = master
-	commit = b9f3d49934d7d80d85ff8e56b7e5d9575b5a41e8
-	parent = e8e9fb98997d8854a78ab2c3f740072881783ad8
+	commit = e7b123ba95ad449dbc4b2b348353b9bb83046d3b
+	parent = 330739f5268b140a69474a23d69adc56bc35dbcf
 	cmdver = 0.2.3
