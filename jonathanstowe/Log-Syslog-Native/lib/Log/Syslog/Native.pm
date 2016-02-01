@@ -75,7 +75,7 @@ your system, alter how and where the messages are logged to.
 
 =end pod
 
-class Log::Syslog::Native:ver<v0.0.4>:auth<github:jonathanstowe> {
+class Log::Syslog::Native:ver<0.0.5>:auth<github:jonathanstowe> {
 
 =begin pod
 
@@ -280,8 +280,8 @@ Log to stderr as well
     has Int $.option   = Pid +| ODelay;
     has Int $.facility = Local0;
 
-    sub _syslog(Int, Str) is native is symbol('syslog') { ... }
-    sub _openlog(Str, Int, Int) is native is symbol('openlog') { ... }
+    sub _syslog(int32, Str) is native is symbol('syslog') { ... }
+    sub _openlog(Str, int32, int32) is native is symbol('openlog') { ... }
     sub _closelog() is native is symbol('closelog') { ... }
 
     submethod BUILD(:$!ident = $*PROGRAM-NAME, :$option?, :$facility) {
