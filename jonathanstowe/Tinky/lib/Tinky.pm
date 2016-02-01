@@ -716,7 +716,7 @@ current state on the object.
 
 =end pod
 
-module Tinky:ver<0.0.1>:auth<github:jonathanstowe> {
+module Tinky:ver<0.0.2>:auth<github:jonathanstowe> {
 
     # Stub here, definition below
     class State      { ... };
@@ -764,7 +764,17 @@ module Tinky:ver<0.0.1>:auth<github:jonathanstowe> {
             my @promises = do for @subs.grep( -> $v { c ~~ $v.signature  }) -> &callback {
                 start { callback(|c) };
             }
-            Promise.allof(@promises).then({ so all(@promises>>.result) })
+            my $p1 = do {
+                if all(@promises>>.status) ~~ Kept {
+                    my $p = Promise.new;
+                    $p.keep: so all(@promises>>.result);
+                    $p;
+                }
+                else {
+                    Promise.allof(@promises);
+                }
+            }
+            $p1.status ~~ Kept ?? $p1 !! $p1.then({ so all(@promises>>.result) });
         }
         run($object);
     }
@@ -937,7 +947,18 @@ module Tinky:ver<0.0.1>:auth<github:jonathanstowe> {
 
         method validate-apply(Object:D $object) returns Promise {
             my @promises = (self.validate($object), self.from.validate-leave($object), self.to.validate-enter($object));
-            Promise.allof(@promises).then({ so all(@promises>>.result)});
+            my $p1 = do {
+                            if all(@promises>>.status) ~~ Kept {
+                                my $p = Promise.new;
+                                $p.keep: so all(@promises>>.result);
+                                $p;
+                            }
+                            else {
+                                Promise.allof(@promises);
+                            }
+            };
+
+            $p1.status ~~ Kept ?? $p1 !! $p1.then({ so all(@promises>>.result)});
         }
 
         method supply() returns Supply {
@@ -1082,7 +1103,8 @@ module Tinky:ver<0.0.1>:auth<github:jonathanstowe> {
         }
 
         method apply-workflow(Workflow $wf) {
-            if await $wf.validate-apply(self) {
+            my $p = $wf.validate-apply(self);
+            if $p.result {
                 $!workflow = $wf;
                 if not $!state.defined and $!workflow.initial-state.defined {
                     $!state = $!workflow.initial-state;

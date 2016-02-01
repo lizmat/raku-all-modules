@@ -1,0 +1,127 @@
+#!/usr/bin/env perl6
+
+use Tinky;
+
+=begin pod
+
+=head1 NAME
+
+encode-files - watch a directory of files and encode WAV to FLAC
+
+=head1 SYNOPSIS
+
+=begin code
+
+    encode-files [--out-dir=/tmp/flac ] <DIRECTORY>
+
+=end code
+
+=head1 DESCRIPTION
+
+This watches the directory supplied as an argument and when a new WAV file
+shows up it will be copied to the output directory (default "/tmp/flac"
+but can be specified with the C<--out-dir> parameter, ) and then encoded
+as FLAC.
+
+It notifies of state changes to STDERR.
+
+You will of course need the 'flac' program for this to work.
+
+=end pod
+
+my $state-new       =   Tinky::State.new(name   =>  'new');
+my $state-ready     =   Tinky::State.new(name   =>  'ready');
+my $state-copied    =   Tinky::State.new(name   =>  'copied');
+my $state-done      =   Tinky::State.new(name   =>  'done');
+my $state-failed    =   Tinky::State.new(name   =>  'failed');
+
+my $ready           =   Tinky::Transition.new(name  =>  'ready', from => $state-new, to => $state-ready);
+my $copied          =   Tinky::Transition.new(name  =>  'copied',   from => $state-ready, to => $state-copied);
+my $copy-fail       =   Tinky::Transition.new(name  =>  'fail', from => $state-ready, to => $state-failed);
+my $encoded         =   Tinky::Transition.new(name  =>  'done', from => $state-copied, to => $state-done);
+my $encode-fail     =   Tinky::Transition.new(name  =>  'fail', from => $state-copied, to => $state-failed); 
+
+my @transitions = ( $ready, $copied, $copy-fail, $encoded, $encode-fail);
+
+my $workflow = Tinky::Workflow.new(name => "encoding", :@transitions, initial-state => $state-new);
+
+class ProcessFile does Tinky::Object {
+    has Str $.path      is required;
+    has Str $.out-dir   is required;
+    has Str $.new-path;
+    has Str $.flac-file;
+    has     @.errors;
+    method new-path() returns Str {
+        $!new-path //= $!out-dir.IO.child($!path.IO.basename).Str;
+    }
+    method flac-file() returns Str {
+        $!flac-file //= self.new-path.subst(/\.wav$/, '.flac');
+        $!flac-file;
+    }
+
+}
+
+
+multi sub MAIN($dir, Str :$out-dir = '/tmp/flac') {
+    my ProcessFile @process-files;
+
+    my $watch-supply = IO::Notification.watch-path($dir).grep({ $_.path ~~ /\.wav$/ }).unique(as => { $_.path }, expires => 5);
+
+    say "Watching '$dir'";
+
+    react {
+        whenever $watch-supply -> $change {
+            if @process-files.grep({ $_.path eq $change.path }) {
+                $*ERR.say: "** Already processing '", $change.path, "' **";
+            }
+            else {
+                CATCH {
+                    default {
+                        say $_;
+                    }
+                }
+                my $pf = ProcessFile.new(path => $change.path, :$out-dir);
+                say "Processing '{ $pf.path }'";
+                $pf.apply-workflow($workflow);
+                @process-files.append: $pf;
+                $pf.ready;
+            }
+        }
+        whenever $state-ready.enter-supply -> $pf {
+            CATCH {
+                default {
+                    $pf.fail;
+                }
+            }
+            my $copy = Proc::Async.new('/usr/bin/cp', $pf.path, $pf.new-path, :err);
+            whenever $copy.start {
+                $pf.copied;
+            }
+        }
+        whenever $state-copied.enter-supply -> $pf {
+            CATCH {
+                default {
+                    $pf.fail;
+                }
+            }
+            my $encode = Proc::Async.new('/usr/bin/flac', $pf.new-path);
+            whenever $encode.stdout {
+                   # ignored 
+            }
+            whenever $encode.stderr -> $error {
+                $pf.errors.append: $error;
+            }
+            whenever $encode.start {
+                $pf.done;
+            }
+        }
+        whenever $state-done.enter-supply -> $pf {
+            say "File '{ $pf.path }' has been processed to '{ $pf.flac-file }'";
+        }
+        whenever $workflow.transition-supply -> ($trans, $pf ) {
+            $*ERR.say("File '{ $pf.path }' went from '{ $trans.from.name }' to '{ $trans.to.name }'");
+        }
+    }
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
