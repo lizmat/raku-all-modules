@@ -1,7 +1,7 @@
 use Test;
 use lib $?FILE.IO.parent.child("lib01").Str;
 
-plan 23;
+plan 24;
 
 {
     use OS::Userland;
@@ -10,7 +10,6 @@ plan 23;
     ok Ubuntu ~~ Ubuntu;
     ok Ubuntu ~~ POSIX;
     ok Ubuntu ~~ Userland;
-    dies-ok { Ubuntu.new }, "nodes cannot be instantiated";
 }
 
 {
@@ -53,5 +52,11 @@ plan 23;
     ok $class.isa('Userland::RHEL::Fedora');
     ok $class ~~ RHEL;
     ok $class.isa('Userland::RedHat'),'load-from';
-    ok $class.new.test eq 'win', "can create instance";
+    is $class.new.test,'win', "can create instance";
+}
+
+{
+    use OS::Userland;
+    is (my $instance = Fedora.new).^name, "Userland::RHEL::Fedora",'.new loads real class';
+    is $instance.test,'win','instance methods work';
 }

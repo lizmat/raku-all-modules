@@ -11,8 +11,8 @@ use CompUnit::Util :load ,:at-unit, :set-symbols,:who,:get-symbols;
     }
 }
 
-my submethod node-new(|) {
-    die "you cannot instantiate schema node: '{self.^name}'";
+my submethod node-new(|a) {
+    self.load-class.new(|a)
 }
 
 my submethod load-class {
@@ -22,7 +22,8 @@ my submethod load-class {
 my class OO::Schema::NodeHOW is Metamodel::ClassHOW {
 
     has $!load-from; #= CompUnit to load from
-    has Str $!part-of-path;
+    has Str $!part-of-path; #= Wether to add it
+    has $!class-cache;      #= cache the loaded class
 
     method actually-compose(Mu \type,:@path is copy){
         $!load-from ||= join '::', |@path, type.^shortname;
@@ -43,12 +44,13 @@ my class OO::Schema::NodeHOW is Metamodel::ClassHOW {
     }
 
     method load-node-class(Mu \type) {
+        return $!class-cache if $!class-cache !=== Any;
         my $cu = load($!load-from);
         my $loaded-GLOBALish = $cu.handle.globalish-package;
         my $sym-name = at-unit($cu,"OO-SCHEMA-ENTRY::{type.^name}")
              or die "couldn't find the schema-node in '$!load-from'";
 
-        return descend-WHO($loaded-GLOBALish.WHO,$sym-name);
+        return $!class-cache = descend-WHO($loaded-GLOBALish.WHO,$sym-name);
     }
 
     method load-from(Mu \type) is rw { $!load-from }
@@ -59,6 +61,8 @@ my class OO::Schema::NodeHOW is Metamodel::ClassHOW {
 
     method part-of-path(Mu \type) { $!part-of-path }
 
+    # do nothing on compose - compose the class in backwards order,
+    # that's what actually-compose is for
     method compose(Mu \type) { type }
 
     method new_type(:$name,|a) {

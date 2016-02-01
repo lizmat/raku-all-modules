@@ -224,6 +224,17 @@ Fedora  Ubuntu  <-- Userland::Ubuntu
 
 ```
 
+## Node Methods
+
+Each node has `new` and `load-class` installed as
+submethods. `load-class` will load the underlying class while `.new`
+is just shorthand for:
+
+``` perl6
+Fedora.load-class.new( fancy => 'arg' )
+```
+
+
 ## Traits
 
 ### is path
@@ -282,8 +293,8 @@ unit class OS::Userland::RedHat is schema-node('RHEL');
 Sets the node the class should attach to when loaded. By default it uses the shortname of
 the class itself.
 
-## probabal changes
+## potential changes
 
-1. Right now, you can't `.new` a node. I will probably just autoload the underlying class in the future. Maybe combined with a `is abstract` for when you don't want that.
+1.`is abstract` for when you don't want a node that doesn't have an underlying class
 2. It's tricky to apply roles with required methods to nodes because you probably want to implement them in the underlying class not the node. Maybe the nodes should be more like roles which don't do that.
 3. I might make it possible to put `::` in the names of nodes things.

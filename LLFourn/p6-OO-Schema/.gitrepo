@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/LLFourn/p6-OO-Schema.git
 	branch = master
-	commit = a4012b1c5999afd15a601178905e2f777e99f80c
-	parent = db1cc65a362075615ae977ca04ea492367c73c47
+	commit = 78f912abdbac78f4bf51717f3c50a65165cfb5bc
+	parent = de5f182214b5b845f7282bf65c8578df68241a11
 	cmdver = 0.2.3
