@@ -127,7 +127,7 @@ class Panda {
         }
     }
 
-    method install(Panda::Project $bone, $nodeps, $notests,
+    method install(Panda::Project $bone is copy, $nodeps, $notests,
                    Bool() $isdep, :$rebuild = True, :$prefix, Bool :$force) {
         my $cwd = $*CWD;
         my $dir = tmpdir();
@@ -141,6 +141,7 @@ class Panda {
         unless $_ = $.fetcher.fetch($source, $dir) {
             die X::Panda.new($bone.name, 'fetch', $_)
         }
+        $bone.update-from-meta-file(find-meta-file(~$dir));
 
         self!check-perl-version($bone);
         self.announce('building', $bone);
@@ -215,8 +216,8 @@ class Panda {
         if not $bone {
             sub die($m) { X::Panda.new($proj, 'resolve', $m).throw }
             my $suggestion = $.ecosystem.suggest-project($proj);
-            die "Project $proj not found in the ecosystem. Maybe you meant $suggestion?" if $suggestion;
-            die "Project $proj not found in the ecosystem";
+            $suggestion = $suggestion ?? " Maybe you meant $suggestion?" !! '';
+            die qq[Project $proj not found in the ecosystem.$suggestion Maybe try "panda update" first?];
         }
 
         unless $nodeps {
