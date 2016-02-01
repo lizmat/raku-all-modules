@@ -81,11 +81,9 @@ This is the content type that we want to use.  The default is
 =end pod
 
 
-class JSON::Infer:ver<v0.0.4>:auth<github:jonathanstowe> {
+class JSON::Infer:ver<0.0.5>:auth<github:jonathanstowe> {
 
-    our $VERSION = v0.0.3;
 
-    #use HTTP::UserAgent;
     use JSON::Infer::Class;
     use JSON::Infer::Exception;
 
@@ -124,7 +122,7 @@ class JSON::Infer:ver<v0.0.4>:auth<github:jonathanstowe> {
     method ua() is rw {
         require HTTP::UserAgent;
         if not $!ua.defined {
-            $!ua = ::('HTTP::UserAgent').new( default-headers   => $.headers, useragent => $?PACKAGE.^name ~ '/' ~ $VERSION);
+            $!ua = ::('HTTP::UserAgent').new( default-headers   => $.headers, useragent => $?PACKAGE.^name ~ '/' ~ $?PACKAGE.^ver);
         }
         $!ua;
     }

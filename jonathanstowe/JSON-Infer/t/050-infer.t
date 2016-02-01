@@ -5,8 +5,8 @@ use Test;
 
 use JSON::Infer;
 
-use JSON::Class;
 use JSON::Name;
+use JSON::Class;
 
 my $obj;
 

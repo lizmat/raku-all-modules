@@ -149,8 +149,7 @@ class JSON::Infer::Class does JSON::Infer::Role::Classes does JSON::Infer::Role:
         my Str $ret;
 
         if $!top-level {
-            $ret ~= "{ $indent }use JSON::Class;\n{ $indent }use JSON::Name;\n";
-
+            $ret ~= "\n{ $indent }use JSON::Name;\n{ $indent }use JSON::Class;\n";
         }
 
         $ret ~= $indent ~ "class { self.name } does JSON::Class \{";
