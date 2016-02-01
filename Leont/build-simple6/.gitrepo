@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Leont/build-simple6.git
+	branch = master
+	commit = c953ab5ce1a72f64c010aebec3caf4b0f87d7158
+	parent = 62d0f7ea0e5d200cbd86c767a22a48fe067ae764
+	cmdver = 0.2.3

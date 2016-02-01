@@ -1,0 +1,5 @@
+branches:
+sudo: false
+language: perl6
+perl6:
+  - latest

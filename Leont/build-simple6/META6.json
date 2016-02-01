@@ -1,0 +1,11 @@
+{
+    "name" : "Build::Simple",
+    "version" : "0.0.1",
+    "description" : "A minimalistic dependency system",
+    "provides" : {
+        "Build::Simple"       : "lib/Build/Simple.pm"
+    },
+    "author" : "Leon Timmermans",
+    "depends" : [ ],
+    "source-url" : "https://github.com/Leont/build-simple6.git"
+}
