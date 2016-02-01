@@ -45,4 +45,4 @@ $l.w("end");
 
 
 
-done;
+done-testing;
