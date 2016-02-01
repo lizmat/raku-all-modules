@@ -82,13 +82,13 @@ class CSV::Parser {
     }
 
     $key = %header{~$fcnt}:exists ?? %header{~$fcnt} !! $fcnt;
+    %values{ $key } = $buffer unless subpart($buffer, 0, $fop_size) eqv $!field_operator;
     %values{ $key } = subpart($buffer, $fop_size, size_of($buffer) - ( $fop_size * 2 ))\
       if subpart($buffer, 0, $fop_size) eqv $!field_operator;
 
     while %header{~(++$fcnt)}:exists {
       %values{%header{~$fcnt}} = Nil;
     }
-
     return %values;
   };
 

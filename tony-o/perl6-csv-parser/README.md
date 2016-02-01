@@ -1,5 +1,6 @@
 #README CSV::Parser
  
+
 ##Synopsis
 This module is pretty badass.  It reads CSV files line by line and can handle individual lines so you can handle your own file reads or you can let me do the damn work for you.  It handles binary files with relative ease so you can parse your binary 'Comma Separated Value' files like a pro.
 
