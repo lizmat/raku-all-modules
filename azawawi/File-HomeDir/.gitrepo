@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/File-HomeDir.git
 	branch = master
-	commit = 73163dd1ee20fb449c23f25ec0efb388f967017a
-	parent = 9e403a7974abae9597ade444263ee75463826819
-	cmdver = 0.2.2
+	commit = 79736fe26d6bc98f5bf274449ecf941ff163a43d
+	parent = 30fefd48201e34c4f356129c55dd51ee1e72cda6
+	cmdver = 0.2.3
