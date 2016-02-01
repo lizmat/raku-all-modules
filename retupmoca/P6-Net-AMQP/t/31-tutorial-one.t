@@ -45,18 +45,20 @@ my $p = start {
 
 # wait for the receiver to start u
 my ( $receiver, $receiver-promise) =  await $start-promise;
-{
-    my $n = Net::AMQP.new;
-    my $con =  await $n.connect;
-    my $channel = $n.open-channel(1).result;;
-    $channel.exchange.result.publish(routing-key => "hello", body => "Hello, World".encode);
-    await $n.close("", "");
-    await $con;
-}
+my $n = Net::AMQP.new;
+my $con =  await $n.connect;
+my $channel = $n.open-channel(1).result;
+$channel.exchange.result.publish(routing-key => "hello", body => "Hello, World".encode);
 
 await $p;
 is $p.status, Kept, "receiver status Kept";
 is $p.result, "Hello, World", "and it got our message";
+
+my $queue = $channel.declare-queue("hello").result;
+await $queue.delete;
+
+await $n.close("", "");
+await $con;
 
 done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6

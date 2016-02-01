@@ -18,6 +18,8 @@ has $!bodies;
 has $!channel;
 has $!channel-lock;
 
+has Str $.consumer-tag;
+
 submethod BUILD(:$!name, :$!passive, :$!durable, :$!exclusive, :$!auto-delete, :$!conn, :$!methods,
                 :$!headers, :$!bodies, :$!channel, :$!channel-lock, :$!arguments) { }
                 
@@ -154,13 +156,19 @@ method consume(:$consumer-tag = "", :$exclusive, :$no-local, :$ack, *%arguments)
     my $p = Promise.new;
     my $v = $p.vow;
 
+    $!consumer-tag = $consumer-tag;
+
     my $tap = $!methods.grep(*.method-name eq 'basic.consume-ok').tap({
         $tap.close;
+
+        if not $!consumer-tag {
+            $!consumer-tag = $_.arguments[0];
+        }
 
         $v.keep($_.arguments[0]);
     });
 
-    my $delete = Net::AMQP::Payload::Method.new('basic.consume',
+    my $consume = Net::AMQP::Payload::Method.new('basic.consume',
                                                 0,
                                                 $.name,
                                                 $consumer-tag,
@@ -170,7 +178,7 @@ method consume(:$consumer-tag = "", :$exclusive, :$no-local, :$ack, *%arguments)
                                                 0,
                                                 $%arguments);
     $!channel-lock.protect: {
-        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $delete.Buf).Buf);
+        $!conn.write(Net::AMQP::Frame.new(type => 1, channel => $!channel, payload => $consume.Buf).Buf);
     };
 
     return $p;
@@ -180,7 +188,7 @@ method cancel {
 
 }
 
-class Net::AMQP::Message {
+class Message {
     has $.consumer-tag;
     has $.delivery-tag;
     has $.redelivered;
@@ -191,58 +199,69 @@ class Net::AMQP::Message {
     has $.body;
 }
 
+method !accept-message(Net::AMQP::Payload::Method $method where { $_.method-name eq 'basic.deliver' }) returns Bool {
+    my @checks;
+    if $!consumer-tag {
+        if $method.arguments[0] ne $!consumer-tag {
+            @checks.push: False;
+        }
+    }
+    return so all(@checks);
+}
+
 method message-supply() returns Supply {
     my $s = Supplier.new;
 
     my $delivery-lock = Lock.new;
 
     $!methods.grep(*.method-name eq 'basic.deliver').tap(-> $method {
-        $delivery-lock.lock();
+        if self!accept-message($method) {
+            $delivery-lock.lock();
 
-        my $header-payload;
-        my $body = buf8.new();
+            my $header-payload;
+            my $body = buf8.new();
 
-        my $htap = $!headers.tap({
-            $htap.close;
-            $header-payload = $_;
-            $delivery-lock.unlock();
-        });
+            my $htap = $!headers.tap({
+                $htap.close;
+                $header-payload = $_;
+                $delivery-lock.unlock();
+            });
 
-        my $btap = $!bodies.tap(-> $chunk {
-            $delivery-lock.protect: {
-                $body ~= $chunk;
-                if $header-payload.body-size == $body.bytes {
-                    # last chunk
-                    $btap.close;
+            my $btap = $!bodies.tap(-> $chunk {
+                $delivery-lock.protect: {
+                    $body ~= $chunk;
+                    if $header-payload.body-size == $body.bytes {
+                        # last chunk
+                        $btap.close;
 
-                    my $h = $header-payload.headers;
-                    my %headers = %$h;
-                    %headers<content-type> = $header-payload.content-type;
-                    %headers<content-encoding> = $header-payload.content-encoding;
-                    %headers<delivery-mode> = $header-payload.delivery-mode;
-                    %headers<priority> = $header-payload.priority;
-                    %headers<correlation-id> = $header-payload.correlation-id;
-                    %headers<reply-to> = $header-payload.reply-to;
-                    %headers<expiration> = $header-payload.expiration;
-                    %headers<message-id> = $header-payload.message-id;
-                    %headers<timestamp> = $header-payload.timestamp;
-                    %headers<type> = $header-payload.type;
-                    %headers<user-id> = $header-payload.user-id;
-                    %headers<app-id> = $header-payload.app-id;
+                        my $h = $header-payload.headers;
+                        my %headers = %$h;
+                        %headers<content-type> = $header-payload.content-type;
+                        %headers<content-encoding> = $header-payload.content-encoding;
+                        %headers<delivery-mode> = $header-payload.delivery-mode;
+                        %headers<priority> = $header-payload.priority;
+                        %headers<correlation-id> = $header-payload.correlation-id;
+                        %headers<reply-to> = $header-payload.reply-to;
+                        %headers<expiration> = $header-payload.expiration;
+                        %headers<message-id> = $header-payload.message-id;
+                        %headers<timestamp> = $header-payload.timestamp;
+                        %headers<type> = $header-payload.type;
+                        %headers<user-id> = $header-payload.user-id;
+                        %headers<app-id> = $header-payload.app-id;
 
-                    start {
-                    $s.emit(Net::AMQP::Message.new(consumer-tag => $method.arguments[0],
-                                                   delivery-tag => $method.arguments[1],
-                                                   redelivered => $method.arguments[2],
-                                                   exchange-name => $method.arguments[3],
-                                                   routing-key => $method.arguments[4],
-                                                   :%headers,
-                                                   :$body));
+                        start {
+                        $s.emit(Message.new(consumer-tag => $method.arguments[0],
+                                            delivery-tag => $method.arguments[1],
+                                            redelivered => $method.arguments[2],
+                                            exchange-name => $method.arguments[3],
+                                            routing-key => $method.arguments[4],
+                                            :%headers,
+                                            :$body));
+                        }
                     }
-                }
-            };
-        });
-
+                };
+            });
+        }
     });
 
     return $s.Supply;
