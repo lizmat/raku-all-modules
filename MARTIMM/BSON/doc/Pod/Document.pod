@@ -175,12 +175,13 @@ use BSON::Document;
 my BSON::Document $d .= new;
 $d<abc> = 10;                   # Key 'abc' on location 0
 $d<def> = 11;                   # Key 'def' on location 1
-$d[1] = 'Timezone of New York'; # Modify location 1 for key 'def'
+$d[1] = 'Timezone of New York'; # Modify location 1 which is key 'def'
 $d[100] = 'new data';           # New location 2 with generated key 'key100'.
 
 is $d[100], $d<key100>, "Location 100 is same as pointed by 'key100'";
 is $d.find-key('key100'), 2, 'Index is 2 instead of 100';
 is $d[100], $d[2], "Location 100 is same as pointed by index 2";
+is $d.find-key(100), 'key100', 'Check $d[100] to be key100';
 
 =end code
 
@@ -230,7 +231,7 @@ Defined as
 
   method perl ( --> Str )
 
-Return some information about the object and its structure.
+Return objects structure.
 
 =head2 method WHAT
 
@@ -307,9 +308,11 @@ say $d<q>.keys;
 
 Defined as
 
-  method find-key ( Str:D $key --> Int )
+  multi method find-key ( Int:D $idx --> Str )
+  multi method find-key ( Str:D $key --> Int )
 
-Search for key and return index.
+Search for indes and find key or search for key and return index. It returns an
+undefined value if $idx or $key is not found.
 
 =begin code
 
@@ -318,6 +321,7 @@ use BSON::Document;
 my $d = BSON::Document.new: ('a' ... 'z') Z=> 120..145;
 
 is $d<b>, $d[$d.find-key('b')], 'Value on key and found index are the same';
+is $d.find-key(2), 'c', "Index 2 is mapped to key 'c'";
 
 =end code
 
@@ -412,6 +416,19 @@ Use as
 Modify an array in a document afterwards. This method is necessary to apply
 changes because when doing it directly like B<$d<docs>.push: (c => 2);> it
 wouldn't be encoded because the document object is not aware of these changes.
+
+This is a slow method because every change will trigger an encoding procedure
+in the background. When a whole array needs to be entered then it is a lot
+faster to make the array first and then assign it to an entry in the document
+e.g;
+
+  BSON::Document $d .= new;
+  my $arr = [];
+  for ^10 -> $i {
+    $arr.push($i);
+  }
+  $d<myarray> = $arr;
+  
 
 =head2 method encode
 

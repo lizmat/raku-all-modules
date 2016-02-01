@@ -5,7 +5,7 @@ use BSON::Regex;
 use BSON::Javascript;
 use BSON::Binary;
 
-package BSON:ver<0.9.21> {
+package BSON:ver<0.9.23> {
 
   #-----------------------------------------------------------------------------
   # BSON type codes
@@ -80,6 +80,8 @@ package BSON:ver<0.9.21> {
     #---------------------------------------------------------------------------
     # Make new document and initialize with a list of pairs
     #
+#TODO better type checking:  List $pairs where all($_) ~~ Pair
+#TODO better API
     multi method new ( List $pairs, *%h ) {
       self.bless( :$pairs, :%h);
     }
@@ -182,7 +184,7 @@ package BSON:ver<0.9.21> {
         my $key;
         my $value;
 
-        if $item.can('key') {
+        if $item.^can('key') {
           $key = $item.key;
           $value = $item.value // 'Nil';
           $perl ~= '  ' x $indent ~ "$key => ";
@@ -191,7 +193,6 @@ package BSON:ver<0.9.21> {
         else {
           $value = $item // 'Nil';
         }
-
 
         given $value {
           when $value ~~ BSON::Document {
@@ -211,6 +212,12 @@ package BSON:ver<0.9.21> {
             $perl ~= "(\n";
             $perl ~= self!str-pairs( $indent + 1, @$value);
             $perl ~= '  ' x $indent ~ "),\n";
+          }
+
+#TODO check if this can be removed in later perl versions
+          when $value ~~ Buf {
+            $perl ~= '  ' x $indent unless $key.defined;
+            $perl ~= $value.perl ~ ",\n";
           }
 
 #          when $value.^name eq 'BSON::ObjectId' {
@@ -233,7 +240,7 @@ package BSON:ver<0.9.21> {
             $perl ~= $value.perl($indent) ~ ",\n";
           }
 
-          when $value.can('perl') {
+          when ?$value.^can('perl') {
             $perl ~= '  ' x $indent unless $key.defined;
             $perl ~= $value.perl ~ ",\n";
           }
@@ -284,7 +291,14 @@ package BSON:ver<0.9.21> {
 }}
 
     #---------------------------------------------------------------------------
-    method find-key ( Str:D $key --> Int ) {
+    multi method find-key ( Int:D $idx --> Str ) {
+
+      my $key = $idx >= @!keys.elems ?? 'key' ~ $idx !! @!keys[$idx];
+      return self{$key}:exists ?? $key !! Str;
+    }
+
+    #---------------------------------------------------------------------------
+    multi method find-key ( Str:D $key --> Int ) {
 
       my Int $idx;
       loop ( my $i = 0; $i < @!keys.elems; $i++) {
@@ -617,6 +631,7 @@ package BSON:ver<0.9.21> {
     }
 
     #---------------------------------------------------------------------------
+#TODO very slow method
     method modify-array ( Str $key, Str $operation, $data --> List ) {
 
       my Int $idx = self.find-key($key);

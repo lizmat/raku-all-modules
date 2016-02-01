@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/BSON.git
 	branch = master
-	commit = 0c0130e8d799f00cdf4274859a23fe4d7a7c4048
-	parent = 8eb1578689d1824dacc438eb9874fee704b0f177
+	commit = 973fe06a99f1b9eaab6d18dcb11faefc47a09b3c
+	parent = c89b8468c14ba3235b937addd6ca34e580c258a7
 	cmdver = 0.2.3

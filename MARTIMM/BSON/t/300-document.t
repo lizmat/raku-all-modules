@@ -149,6 +149,7 @@ subtest {
   $d[1000] = 'text';
   is $d[26], 'text', "assign \$d[1000] = \$d[26] = '$d[26]'";
   is $d<key1000>, 'text', "assign \$d<key1000> = \$d[26] = '$d[26]'";
+  is $d.find-key(1000), 'key1000', "Get key from index 1000";
 
   is $d[2000], Any, "Any undefined field returns 'Any'";
   ok $d[26]:exists, '$d[26] exists';

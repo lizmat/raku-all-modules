@@ -83,6 +83,10 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+*.0.9.23
+  * Added method find-key(Int -> Str). We had find-key(Str -> Int) already.
+* 0.9.22
+  * bugfix in perl showing Buf data
 * 0.9.21
   * Beautify perl() output and added perl() methods to Binary, Javascript, Regex
     and ObjectId.

@@ -19,5 +19,5 @@
     "BSON::Regex":              "lib/BSON/Regex.pm6"
   },
   "source-url": "git://github.com/MARTIMM/BSON.git",
-  "version": "0.9.21"
+  "version": "0.9.23"
 }
