@@ -1,7 +1,7 @@
 {
     "name"          : "Cache::LRU",
     "version"       : "0.1.0",
-    "author"        : "github:fayland",
+    "authors"       : [ "github:fayland" ],
     "description"   : "Simple, fast implementation of LRU cache in pure perl",
     "depends"       : [],
     "provides" : {
