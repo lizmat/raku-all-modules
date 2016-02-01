@@ -1,0 +1,12 @@
+{
+    "perl"          : "6.c",
+    "name"          : "AttrX::Lazy",
+    "version"       : "0.0.1",
+    "authors"       : [ "github:pierre-vigier" ],
+    "description"   : "Moo similar Lazy attribute funtionality",
+    "depends"       : [ ],
+    "provides"      : {
+        "AttrX::Lazy"    : "lib/AttrX/Lazy.pm6"
+    },
+    "source-url"    : "git@github.com:pierre-vigier/Perl6-AttrX-Lazy.git"
+}

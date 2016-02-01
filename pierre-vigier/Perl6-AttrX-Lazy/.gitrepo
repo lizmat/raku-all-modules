@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/pierre-vigier/Perl6-AttrX-Lazy.git
+	branch = master
+	commit = 8d1cbbb50d74e271a41e014b0a303c87aff1f8c2
+	parent = a424c8b31e5091d2d42a569b132b9cee1cd580cc
+	cmdver = 0.2.3
