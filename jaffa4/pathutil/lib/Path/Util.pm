@@ -281,7 +281,7 @@ method test
 
 method fsseparator
 {
-  if ($*OS!~~m:i/mswin/)
+  if ($*DISTRO.name!~~m:i/mswin/)
   {
     return '/';
   }

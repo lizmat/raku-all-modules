@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jaffa4/pathutil.git
 	branch = master
-	commit = 21032d93c388de6335de84463b1cec9c743b64e5
-	parent = 34cfb1107a73f5cc75cca7f971ac31f902aa2344
-	cmdver = 0.2.1
+	commit = a224888720aa03a796ee99e535ec8d8307a9829e
+	parent = 624d310adea97b9d24b020f2cef1e08e95fed9f9
+	cmdver = 0.2.3

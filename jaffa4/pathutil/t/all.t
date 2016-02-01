@@ -43,4 +43,4 @@ ok   Path::Util.tocygwin("D:\\g\\c.mp4") eq "/cygdrive/d/g/c.mp4", "to cygwin";
 ok   Path::Util.tomsys("D:\\g\\c.mp4") eq "/d/g/c.mp4", "to msys";
 
 
-done;
+done-testing;
