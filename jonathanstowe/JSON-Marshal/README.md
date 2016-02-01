@@ -31,8 +31,17 @@ It only outputs the "public" attributes (that is those with accessors
 created by declaring them with the '.' twigil. Attributes without acccessors
 are ignored.
 
+
+If you want to ignore any attributes without a value you can use the
+```:skip-null``` adverb to ```marshal```, which will supress the
+marshalling of any undefined attributes.  Additionally if you want a
+finer-grained control over this behaviour there is a 'json-skip-null'
+attribute trait which will cause the specific attribute to be skipped
+if it isn't defined irrespective of the ```skip-null```.
+
+
 To allow a finer degree of control of how an attribute is marshalled an
-attribute trait C<is marshalled-by> is provided, this can take either
+attribute trait ```is marshalled-by``` is provided, this can take either
 a Code object (an anonymous subroutine,) which should take as an argument
 the value to be marshalled and should return a value that can be completely
 represented as JSON, that is to say a string, number or boolean or a Hash
@@ -67,9 +76,7 @@ Other install mechanisms may be become available in the future.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at
 
    https://github.com/jonathanstowe/JSON-Marshal
 
@@ -77,5 +84,4 @@ welcomed via github at
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015
-
+(C) Jonathan Stowe 2015, 2016
