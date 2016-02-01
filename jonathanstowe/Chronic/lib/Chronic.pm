@@ -68,9 +68,10 @@ This module provides a low-level scheduling mechanism, that be used to
 create cron-like schedules, the specifications can be provided as cron
 expression strings, lists of integer values or L<Junctions> of values.
 
-There is a single class method C<every> that takes a schedule specification
+There is a class method C<every> that takes a schedule specification
 and returns a L<Supply> that will emit a value (a L<DateTime>) on the
-schedule specified.
+schedule specified. There is also a class method C<at> that returns
+a Promise that will be kept at the specified time.
 
 This can be used to build custom scheduling services like C<cron> with
 additional code to read the specification from a file and arrange the
@@ -99,6 +100,27 @@ indicating when the event was fired,) at the frequency specified by the
 arguments. The arguments are infact passed directly to the constructor
 of C<Chronic::Description> (described below,) which is used to match
 the times that an event should occur.
+
+=head2 method at
+
+    multi method at(Int $i) returns Promise
+    multi method at(Instant:D $i) returns Promise
+    multi method at(Str:D $d) returns Promise
+    multi method at(DateTime $d) returns Promise
+
+This takes a datetime specification (either a L<DateTime> object,
+a L<Str> that can be parsed as a DateTime, an L<Instant> or an L<Int>
+representing the epoch seconds,) and returns a L<Promise> which will be
+kept with a DateTime when that time arrives.  If the supplied datetime
+specification resolves to the current time or is in the past the Promise
+will be returned Kept. The resolution of the comparison is at the second
+level (as with C<every> above,) and any fractional part in the presented
+DateTime will be truncated.
+
+If you want to do something at some time period from the current time
+then you may actually be better off using the C<in> method of L<Promise>
+which returns a Promise that will be kept a certain number of seconds
+in the future.
 
 =head2 method supply
 
@@ -167,7 +189,7 @@ The day of the week (starting on Monday) in the range 1 .. 7
 
 =end pod
 
-class Chronic:ver<v0.0.1>:auth<github:jonathanstowe> {
+class Chronic:ver<0.0.3>:auth<github:jonathanstowe> {
     class Description {
 
         sub expand-expression(Str $exp, Range $r) returns Array[Int] {
@@ -357,7 +379,7 @@ class Chronic:ver<v0.0.1>:auth<github:jonathanstowe> {
     method supply() {
         if not $supply.defined {
             $supply = Supply.on-demand( -> $p {
-                Supply.interval(1).tap({ $p.emit(DateTime.now); });
+                Supply.interval(1).tap({ $p.emit(DateTime.now.truncated-to('second')); });
             });
         }
         $supply;
@@ -370,6 +392,31 @@ class Chronic:ver<v0.0.1>:auth<github:jonathanstowe> {
         $supply;
     }
 
+    multi method at(Int $i) returns Promise {
+        samewith(DateTime.new($i));
+    }
+    multi method at(Instant:D $i) returns Promise {
+        samewith(DateTime.new($i));
+    }
+    multi method at(Str:D $d) returns Promise {
+        samewith(DateTime.new($d));
+    }
+    multi method at(DateTime $d) returns Promise {
+        my $datetime = $d.truncated-to('second');
+        my $promise = Promise.new;
+        my $v = $promise.vow;
+
+        if $datetime <= DateTime.now.truncated-to('second') {
+            $v.keep($datetime);
+        }
+        else {
+            my $tap = self.supply.grep({ $_ == $datetime }).tap({
+                $tap.close;
+                $v.keep($_);
+            });
+        }
+        $promise;
+    }
 }
 
 use MONKEY-TYPING;

@@ -2,6 +2,8 @@
 
 Scheduling thingy for Perl6
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Chronic.svg?branch=master)](https://travis-ci.org/jonathanstowe/Chronic)
+
 ## Synopsis
 
 ```
@@ -64,9 +66,12 @@ This module provides a low-level scheduling mechanism, that be used to
 create cron-like schedules, the specifications can be provided as cron
 expression strings, lists of integer values or L<Junctions> of values.
 
-There is a single class method ```every``` that takes a schedule specification
+There is a class method ```every``` that takes a schedule specification
 and returns a ```Supply``` that will emit a value (a ```DateTime```) on the
-schedule specified.
+schedule specified. There is also a method ```at``` (also a class method)
+that returns a Promise that will be kept at a specified point in time (as
+opposed to ```Promise.in``` which will return a Promise that will be kept
+after a specified number of seconds.)
 
 This can be used to build custom scheduling services like ```cron``` with
 additional code to read the specification from a file and arrange the
@@ -111,9 +116,7 @@ Other install mechanisms may be become available in the future.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at
 
    https://github.com/jonathanstowe/Chronic
 
@@ -121,7 +124,4 @@ welcomed via github at
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015
-
-
-
+(C) Jonathan Stowe 2015, 2016
