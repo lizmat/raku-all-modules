@@ -11,11 +11,27 @@ $ panda update
 $ panda install Browser::Open
 ```
 
+## Synopsis
+
+```Perl6
+use Browser::Open;
+
+my $ok = open_browser($url);
+```
+
+## Description
+
+The functions optionally exported by this module allows you to open URLs in the user browser.
+
+A set of known commands per OS-name is tested for presence, and the first one found is executed. With an optional parameter, all known commands are checked.
+
 ## Testing
 
 To run tests:
 
+```
 $ prove -e "perl6 -Ilib"
+```
 
 ## Author
 
