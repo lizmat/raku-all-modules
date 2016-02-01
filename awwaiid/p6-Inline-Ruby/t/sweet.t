@@ -29,5 +29,11 @@ is $data.length.gist, '«2»:rb', 'Method invocation';
 is $data[0]["type"].gist, '«ClutterGroup»:rb', 'Array method index';
 is $data[0]<type>.gist, '«ClutterGroup»:rb', 'Hash method index alias';
 
+my $list = "[1,2,3]":rb;
+
+# Have to do the +$n to prevent going back into ruby?
+my $inclist = $list.map: -> $n { +$n + 1 };
+is $inclist.gist, '«[2, 3, 4]»:rb', 'Map with block';
+
 done-testing;
 

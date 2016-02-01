@@ -32,12 +32,12 @@ my $default_instance;
 use NativeCall;
 constant RUBY = %?RESOURCES<libraries/rbhelper>.Str;
 
+# say "Ruby: " ~ RUBY;
+
 our $wrap_in_rbobject = -> $val {
   ::('Inline::Ruby::RbObject').new( value => $val );
   # ::('Inline::Ruby')::RbObject.new( value => $val );
 };
-
-our $fishies = 7;
 
 use Inline::Ruby::RbValue;
 use Inline::Ruby::RbObject;
@@ -45,6 +45,9 @@ use Inline::Ruby::RbObject;
 # Native functions
 
 sub ruby_init() is native(RUBY) { * }
+sub ruby_init_loadpath() is native(RUBY) { * }
+sub protect_ruby_init_loadpath() returns int32 is native(RUBY) { * }
+# sub rb_protect(Pointer, Inline::Ruby::RbValue, int32 $state is rw) is native(RUBY) { * }
 
 sub rb_eval_string_protect(Str $code, int32 $state is rw)
     returns Inline::Ruby::RbValue
@@ -58,21 +61,29 @@ sub ruby_options(int32 $argc, CArray[Str] $argv)
     is native(RUBY) { * }
 
 method BUILD() {
+#   say "Ruby lib: " ~ RUBY;
   $default_instance //= self;
   ruby_init();
+  
+  # say "Ruby init loadpath...";
+  # my $state = protect_ruby_init_loadpath();
+  # say "Load init state: $state";
+  ruby_init_loadpath();
+  # my int32 $state = 0;
+  # rb_eval_string_protect('puts "Hello from Ruby"', $state);
+  # exit;
 
   # TODO: What else do we need to do?
-  # Inline::Ruby::ruby_init_loadpath();
   # rb_gc_start();
   # rb_funcall(rb_stdout, rb_intern("sync="), 1, 1);
 
   # Setting options to -enil lets us start ruby
   # without complaint about not having some stuff.
-  my $opts = CArray[Str].new;
-  $opts[0] = "";
-  $opts[1] = "-enil";
-  my $options = ruby_options(2, $opts);
-  ruby_exec_node($options);
+  # my $opts = CArray[Str].new;
+  # $opts[0] = "";
+  # $opts[1] = "-enil";
+  # my $options = ruby_options(2, $opts);
+  # ruby_exec_node($options);
 
 }
 

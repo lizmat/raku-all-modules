@@ -4,7 +4,6 @@ use v6;
 use Test;
 use Inline::Ruby;
 
-
 sub postfix:<:rb>($code) {
   use MONKEY-SEE-NO-EVAL;
   EVAL $code, :lang<Ruby>;
