@@ -30,4 +30,4 @@ ok $o, "construction";
 
 
 
-done;
+done-testing;
