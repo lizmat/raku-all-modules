@@ -43,6 +43,7 @@ sub test
     print $fh $p;
     close $fh;
 
+    my $exit;
     eval {
         local $SIG{ALRM} = sub {
             open my $fh, ">", $e;
@@ -51,20 +52,21 @@ sub test
             };
         alarm (3);
         system "perl6 $t @arg >$e 2>&1";
+        $exit = $?;
         alarm (0);
         };
     my $E = do { local (@ARGV, $/) = $e; <> };
     (my $P = $E) =~ s{^}{  }gm;
     $P =~s/[\s\r\n]+\z//;
     $opt_v and say "Expected: $re\nGot     : $E\n";
-    my $fail = $E =~ $re;
+    my $fail = $E =~ $re || $exit || $E =~ m/(?:Error while compiling|===SORRY!===)/;
     if ($opt_s) {
         my $color = $fail ? 31 : 32;
         (my $msg = $title) =~ s/34m/${color}m/;
         say $msg;
         return;
         }
-    printf "\n  --8<--- %s\n%s\n  -->8---\n", $fail
+    printf "\n  --8<--- %s\n%s\n(exit: $exit)\n  -->8---\n", $fail
         ? colored (["red"  ], "BUG")
         : colored (["green"], "Fixed"), $P;
     } # test
@@ -200,21 +202,21 @@ EOP
           q{use Test;my Str $s;is($s, Str, "");});
     }
 
-{   title "IO", "Cannot change input-line-separator", "RT#123888";
+{   title "IO", "Cannot change nl-in", "RT#123888";
     open my $fh, ">", "xx.txt";
     print $fh "A+B+C+D+";
     close $fh;
     test (qr{A\+B\+C\+D\+},
-          q{$*IN.input-line-separator="+";.say for lines():eager},
+          q{$*ARGFILES.nl-in="+";.say for lines():eager},
           "xx.txt");
     }
 
-{   title "IO", "Cannot clear \$*OUT.nl", "RT#123978";
+{   title "IO", "Cannot clear \$*OUT.nl-out", "RT#123978";
     # Invalid string index: max 4294967295, got 4294967295
     #   in block  at src/gen/m-CORE.setting:16933
     #   in block <unit> at t23114.pl:1
     test (qr{index:},
-          q{$*OUT.nl = ""});
+          q{$*OUT.nl-out = ""});
     }
 
 {   title "Scope", "* does not allow // in map", "RT#123980";
@@ -244,10 +246,21 @@ EOP
     qx{perl6 --target=mbc --output=blib/lib/Text/CSV.pm.moarvm lib/Text/CSV.pm};
     test (qr{Segmentation fault},
           q{use lib "blib/lib";use Text::CSV; my $c = Text::CSV.new});
+    qx{find blib};
     qx{rm -rf blib};
     }
 
 {   title "MoarVM", "Read bytes too often", "RT#124394";
     test (qr{\+\+},
           q{my$fh=open "t.csv",:w;$fh.print("+");$fh.close;$fh=open "t.csv",:r;$fh.get.perl.say;});
+    }
+
+{   title "IO", "Mangle CRNL", "RT#127358";
+    test (qr{\\\\r\\\\n\\n}, # should be \\\\r\\\\n\\r\\n
+          q{my$fh=open "crnl.csv",:r,:!chomp;$fh.get.perl.say;});
+    }
+
+{   title "Encoding", "utf8-c8", "-";
+    test (qr{^Exit [1-9]},
+          q{my Str$s=Buf.new(^2048 .map({256.rand.Int})).decode("utf8-c8") for 1..1024});
     }
