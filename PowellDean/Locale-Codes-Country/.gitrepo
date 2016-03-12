@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/PowellDean/Locale-Codes-Country.git
+	branch = master
+	commit = cd35e17a9d9c03b6fa6b6764751bc10518b671b4
+	parent = 0b5bdaeda0a5fe60bd812f828b8c5bf0200f97b0
+	cmdver = 0.2.3
