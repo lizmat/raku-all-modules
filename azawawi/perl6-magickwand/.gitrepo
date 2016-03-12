@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-magickwand.git
 	branch = master
-	commit = ea36999a44e9d2e67778d96e71c8af2018549b8f
-	parent = 695b1512564a8f1b4f891cf45e7d20231fb862fe
+	commit = d739ba860782c83e27588c2658107642fab05316
+	parent = ec40cf36597632ae0b2eb30218aa79fef6809455
 	cmdver = 0.2.3
