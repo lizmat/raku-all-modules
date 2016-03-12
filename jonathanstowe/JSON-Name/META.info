@@ -18,5 +18,5 @@
     "Test"
   ],
   "description" : "Provides a trait to store an alternative JSON Name",
-  "version" : "v0.0.1"
+  "version" : "0.0.2"
 }

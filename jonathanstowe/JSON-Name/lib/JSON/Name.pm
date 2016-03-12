@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -38,7 +38,7 @@ Of course it could be used in other modules for a similar purpose.
 
 
 
-module JSON::Name:ver<v0.0.1>:auth<github:jonathanstowe> {
+module JSON::Name:ver<0.0.2>:auth<github:jonathanstowe> {
     role NamedAttribute {
         has Str $.json-name is rw;
     }
