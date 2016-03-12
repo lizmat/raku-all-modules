@@ -26,5 +26,5 @@
     "Shell::Command"
   ],
   "description" : "Binding for libsndfile - read/write multiple audio formats",
-  "version" : "v0.0.8"
+  "version" : "0.0.9"
 }

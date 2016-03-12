@@ -1,3 +1,5 @@
+use v6.c;
+
 use NativeCall;
 
 =begin pod
@@ -338,7 +340,7 @@ copying or converting the file.
 
 =end pod
 
-class Audio::Sndfile:ver<v0.0.8>:auth<github:jonathanstowe> {
+class Audio::Sndfile:ver<0.0.9>:auth<github:jonathanstowe> {
 
     subset RawEncode of Array where  ($_.elems == 2 ) && ($_[0] ~~ CArray) && ($_[1] ~~ Int);
 
