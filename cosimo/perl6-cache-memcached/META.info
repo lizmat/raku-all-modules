@@ -1,6 +1,7 @@
 {
+	 "perl"        : "6",
     "name"        : "Cache::Memcached",
-    "version"     : "0.0.5",
+    "version"     : "0.0.6",
     "description" : "Interface to memcached service",
     "provides"    : { "Cache::Memcached": "lib/Cache/Memcached.pm" },
     "depends"     : [ "String::CRC32" ],

@@ -1,9 +1,9 @@
 
-use v6;
+use v6.c;
 
 use String::CRC32;
 
-unit class Cache::Memcached:auth<cosimo>:ver<0.0.5>;
+unit class Cache::Memcached:auth<cosimo>:ver<0.0.6>;
 
 has Bool  $.debug is rw = False;
 has Bool  $.no-rehash is rw;
@@ -278,6 +278,7 @@ method write-and-read (IO::Socket $sock, Str $command, Mu $check_complete?) {
         if $ret ~~ m/\r\n$/ {
             $.log-debug("Got a terminator (\\r\\n)");
             $state = 2;
+            last;
         }
 
     }
@@ -471,7 +472,7 @@ method run-command ($sock, $cmd) {
         $line = "";
         $ret ~= $res;
         $.log-debug("Received [$res] total [$ret]");
-        last if $ret ~~ /[ OK | END | ERROR ] \r\n $/;
+        last if $ret ~~ /[ OK | END | ERROR ]\r\n$/;
     }
 
     $ret .= chop;
