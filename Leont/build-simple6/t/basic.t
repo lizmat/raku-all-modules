@@ -78,3 +78,4 @@ for <build test install> -> $run {
 	}
 }
 
+done-testing();

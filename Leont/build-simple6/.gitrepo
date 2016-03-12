@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Leont/build-simple6.git
 	branch = master
-	commit = c953ab5ce1a72f64c010aebec3caf4b0f87d7158
-	parent = 62d0f7ea0e5d200cbd86c767a22a48fe067ae764
+	commit = 7b3d905a5f28a35032722285c120a0feb9bddd24
+	parent = 6beaae6be5094fe792219d54ccc7340c0500567c
 	cmdver = 0.2.3

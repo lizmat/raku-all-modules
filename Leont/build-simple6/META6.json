@@ -7,5 +7,6 @@
     },
     "author" : "Leon Timmermans",
     "depends" : [ ],
+    "test-depends" : [ "Shell::Command" ],
     "source-url" : "https://github.com/Leont/build-simple6.git"
 }
