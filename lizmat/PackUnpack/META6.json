@@ -1,0 +1,20 @@
+{
+    "name"         : "PackUnpack",
+    "version"      : "0.06",
+    "perl"         : "6.c",
+    "description"  : "Implementation of pack/unpack a la Perl 5",
+    "auth"         : "github:lizmat",
+    "authors"      : [ "Elizabeth Mattijsen"     ],
+    "tags"         : [ "pack","unpack"           ],
+    "depends"      : [ ],
+    "test-depends" : [ "Test"           ],
+    "provides"     : {
+      "PackUnpack" : "lib/PackUnpack.pm"
+    },
+    "repo-type"    : "git",
+    "source-url"   : "https://github.com/lizmat/PackUnpack.git",
+    "license"      : "http://www.perlfoundation.org/artistic_license_2_0",
+    "support"      : {
+      "irc"          : "irc://irc.freenode.org/#perl6"
+    }
+}
