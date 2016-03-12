@@ -1,5 +1,7 @@
 unit role Net::DNS::Message::Resource::SOA;
 
+use experimental :pack;
+
 my class Net::DNS::SOA {
     has @.owner-name;
     has @.mname;

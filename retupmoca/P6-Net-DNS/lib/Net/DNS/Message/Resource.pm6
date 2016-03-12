@@ -11,6 +11,8 @@ use Net::DNS::Message::Resource::SRV;
 use Net::DNS::Message::Resource::TXT;
 use Net::DNS::Message::Resource::SOA;
 
+use experimental :pack;
+
 unit class Net::DNS::Message::Resource does Net::DNS::Message::DomainName;
 
 has Str @.name is rw;

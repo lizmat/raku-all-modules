@@ -1,6 +1,7 @@
 unit class Net::DNS;
 
 use Net::DNS::Message;
+use experimental :pack;
 
 has $.server;
 has $.socket;

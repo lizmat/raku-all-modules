@@ -1,5 +1,7 @@
 unit role Net::DNS::Message::Resource::MX;
 
+use experimental :pack;
+
 my class Net::DNS::MX {
     has @.owner-name;
     has $.priority;

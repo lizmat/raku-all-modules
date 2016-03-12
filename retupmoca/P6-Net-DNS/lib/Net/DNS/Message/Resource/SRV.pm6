@@ -1,5 +1,7 @@
 unit role Net::DNS::Message::Resource::SRV;
 
+use experimental :pack;
+
 my class Net::DNS::SRV {
     has @.owner-name;
     has $.priority;

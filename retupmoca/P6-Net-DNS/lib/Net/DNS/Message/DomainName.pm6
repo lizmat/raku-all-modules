@@ -1,5 +1,7 @@
 unit role Net::DNS::Message::DomainName;
 
+use experimental :pack;
+
 method parse-domain-name($data is copy, %name-offsets, $start-offset) {
     my @offset-list = (0);
     my $parsed-bytes = 1;

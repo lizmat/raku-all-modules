@@ -1,5 +1,7 @@
 unit class Net::DNS::Message::Header;
 
+use experimental :pack;
+
 has Int $.id is rw = 0;
 has Int $.qr is rw = 0;
 has Int $.opcode is rw = 0;
