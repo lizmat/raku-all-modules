@@ -1,8 +1,7 @@
 use v6;
 
 use Test;
-
-
+use lib 'lib';
 
 # Methods to test
 my @methods = 'on', 'on-display-added', 'on-display-removed',
@@ -31,7 +30,7 @@ for @methods -> $method {
 my $app = Electron::App.instance;
 LEAVE {
   diag 'Destroy electron app';
-  $app.destroy;
+  $app.destroy if $app.defined;
 }
 
 

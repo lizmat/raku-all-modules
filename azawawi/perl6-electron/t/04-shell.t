@@ -1,8 +1,7 @@
 use v6;
 
 use Test;
-
-
+use lib 'lib';
 
 # Methods to test
 my @methods = 'show-item-in-folder', 'open-item', 'open-external',
@@ -29,7 +28,7 @@ for @methods -> $method {
 my $app = Electron::App.instance;
 LEAVE {
   diag 'Destroy electron app';
-  $app.destroy;
+  $app.destroy if $app.defined;
 }
 
 my $file-to-delete = "delete-me.txt";
