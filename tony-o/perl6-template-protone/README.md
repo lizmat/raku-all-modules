@@ -1,5 +1,7 @@
 #Template::Protone 
 
+[![Build Status](https://travis-ci.org/tony-o/perl6-template-protone.svg?branch=master)](https://travis-ci.org/tony-o/perl6-template-protone)
+
 Creating synergy throughout the world by bringing harmonious designs and interfaces into a collaborative space that resides between what users want and also giving people what they need.
 
 Also, a templating system that allows you to embed perl6.  ```EVAL```s your templates into a callable sub and caches them for later use, if you want.
@@ -84,6 +86,11 @@ Timing 1000 iterations of parsing, render...
     render: 0.1288 wallclock secs @ 7762.4681/s (n=1000)
 ```
 
+#Author
+
+Tony O'Dell
+
 #License
 
-Free for all
+You can use and distribute this module under the terms of the The Artistic License 2.0.
+See the `LICENSE` file included in this distribution for complete details.

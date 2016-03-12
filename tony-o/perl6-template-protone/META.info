@@ -1,5 +1,5 @@
 {
-    "perl"        : "v6.0.0",
+    "perl"        : "6.c",
     "name"        : "Template::Protone",
     "version"     : "0.1.0",
     "description" : "Perl6 embedded templates",

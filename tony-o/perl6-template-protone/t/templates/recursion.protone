@@ -1,0 +1,14 @@
+
+<%
+  sub factorial($x) {
+    return $x * factorial($x-1) unless $x == 1;
+    return $x;
+  };
+%>
+
+Factorial 5 = <% say factorial(5); %>
+Factorial 4 = <% say factorial(4); %>
+Factorial 3 = <% say factorial(3); %>
+Factorial 2 = <% say factorial(2); %>
+Factorial 1 = <% say factorial(1); %>
+
