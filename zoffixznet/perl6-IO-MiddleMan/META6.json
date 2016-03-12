@@ -9,5 +9,5 @@
         "IO::MiddleMan": "lib/IO/MiddleMan.pm6"
     },
     "authors"      : [ "Zoffix Znet" ],
-    "source-url"   : "git://github.com/zoffixznet/perl6-IO-MiddleMan.git"
+    "support"      : { "source"   : "git://github.com/zoffixznet/perl6-IO-MiddleMan.git" }
 }
