@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/pierre-vigier/Perl6-AttrX-PrivateAccessor.git
 	branch = master
-	commit = dc4dd4e0586c5c56ddf64c8aa5055c48af91c1b8
-	parent = 92d71a925b61e1f490c79bdad1afe4d8abff1628
+	commit = f22065bbe53631c1df77e63e7d56d632bb7ba866
+	parent = ab8dc7ee152599cb34bd7a2f00968dc8d24c59dc
 	cmdver = 0.2.3

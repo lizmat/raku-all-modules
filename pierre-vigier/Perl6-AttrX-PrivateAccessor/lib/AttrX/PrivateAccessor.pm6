@@ -70,7 +70,7 @@ is equivalent to
     class Sample
         has $!attribute;
 
-        !method attribute() {
+        method !attribute() {
             return $!attribute;
         }
     }
