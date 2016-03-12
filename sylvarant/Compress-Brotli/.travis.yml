@@ -10,5 +10,5 @@ install:
     - rakudobrew build-panda
     - panda --force install LibraryMake
 
-script: panda-build && prove -e perl6 t
+script: (cd stub; make) && prove -e perl6 t
 

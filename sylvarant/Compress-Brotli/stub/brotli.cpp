@@ -22,14 +22,16 @@
 
 // global variable output, to deal with memory leaks
 // due to perl6 native call being very limited
-std::vector<uint8_t> buffer;
+//std::vector<uint8_t> buffer;
+//
+uint8_t * buffer = NULL;
 
 // callback
-int callback(void* data, const uint8_t* more, size_t count) 
+/*int callback(void* data, const uint8_t* more, size_t count) 
 {
   buffer.insert(buffer.end(), more, more + count);
   return (int)count;
-}
+}*/
 
 
 extern "C" {
@@ -51,31 +53,28 @@ extern "C" {
    */ 
   uint8_t * decompress_buffer(size_t encoded_size, const uint8_t* encoded_buffer, size_t* decoded_size)
   {
-    /* Brotlin Input */
-    BrotliMemInput memin;
-    BrotliInput in = BrotliInitMemInput(encoded_buffer,encoded_size,&memin);
 
-    /* Brotlin Output */
-    BrotliOutput out;
-    out.cb_ = &callback;
-    buffer.clear();
-    out.data_ = &buffer;
-    
-    if(BrotliDecompress(in, out)){
-      *decoded_size = buffer.size(); 
-      return buffer.data();
-    } else {
-      *decoded_size = -1;
+    if (!BrotliDecompressedSize(encoded_size, encoded_buffer,decoded_size))
+    {
       return NULL;
     }
+
+    /* allocate and execute */
+    buffer = (uint8_t *) malloc(!decoded_size);
+    BrotliResult res = BrotliDecompressBuffer(encoded_size, encoded_buffer,decoded_size,buffer);
+    if(res != BROTLI_RESULT_SUCCESS)
+    {
+      return NULL;
+    }
+
+    return buffer;
   }
 
   // to limit memory usage
   void clear_internal_buffer()
   {
-    buffer.clear(); 
+    free(buffer); 
   }
-
 
   /* 
    * ===  FUNCTION  ======================================================================
