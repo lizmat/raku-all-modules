@@ -58,7 +58,11 @@ class Val::Array does Val {
     has @.elements;
 
     method quoted-Str {
-        "[" ~ @.elements>>.quoted-Str.join(', ') ~ "]"
+        if %*stringification-seen{self.WHICH} {
+            return "[...]";
+        }
+        %*stringification-seen{self.WHICH}++;
+        return "[" ~ @.elements>>.quoted-Str.join(', ') ~ "]";
     }
 
     method Str {
@@ -77,12 +81,16 @@ class Val::Object does Val {
     has $.id = $global-object-id++;
 
     method Str {
-        '{' ~ %.properties.map({
+        if %*stringification-seen{self.WHICH} {
+            return "\{...\}";
+        }
+        %*stringification-seen{self.WHICH}++;
+        return '{' ~ %.properties.map({
             my $key = .key ~~ /^<!before \d> [\w+]+ % '::'$/
                 ?? .key
                 !! Val::Str.new(value => .key).quoted-Str;
             "{$key}: {.value.quoted-Str}"
-        }).sort.join(', ') ~ '}'
+        }).sort.join(', ') ~ '}';
     }
 
     method quoted-Str {
@@ -154,4 +162,20 @@ class Val::Macro is Val::Sub {
     }
 
     method Str { "<macro {$.name}{$.pretty-parameters}>" }
+}
+
+class Val::Exception does Val {
+    has Val::Str $.message;
+
+    method Str {
+        return "Exception \{message: {$.message.quoted-Str}\}";
+    }
+
+    method quoted-Str {
+        self.Str
+    }
+
+    method truthy {
+        ?%.properties
+    }
 }

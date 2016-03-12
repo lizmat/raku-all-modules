@@ -159,7 +159,7 @@ sub check(Q::CompUnit $ast, $runtime) {
             if $runtime.declared-locally($symbol);
         die X::Redeclaration::Outer.new(:$symbol)
             if %*assigned{$block ~ $symbol};
-        $runtime.declare-var($symbol);
+        $runtime.declare-var($my.identifier);
 
         if $my.expr !~~ Val::None {
             handle($my.expr);
@@ -197,7 +197,7 @@ sub check(Q::CompUnit $ast, $runtime) {
         handle($sub.block);
         $runtime.leave();
 
-        $runtime.declare-var($name, $val);
+        $runtime.declare-var($sub.identifier, $val);
     }
 
     multi handle(Q::Statement::Macro $macro) {
@@ -212,7 +212,7 @@ sub check(Q::CompUnit $ast, $runtime) {
         handle($macro.block);
         $runtime.leave();
 
-        $runtime.declare-var($name, $val);
+        $runtime.declare-var($macro.identifier, $val);
     }
 
     multi handle(Q::Statement::If $if) {
@@ -293,6 +293,7 @@ sub parses-to($program, $expected, $desc = "MISSING TEST DESCRIPTION") is export
     my $runtime = _007.runtime(:$output);
     my $parser = _007.parser(:$runtime);
     my $actual-ast = $parser.parse($program);
+    my %*stringification-seen;
 
     empty-diff ~$expected-ast, ~$actual-ast, $desc;
 }
@@ -323,4 +324,21 @@ sub outputs($program, $expected, $desc = "MISSING TEST DESCRIPTION") is export {
     $runtime.run($ast);
 
     is $output.result, $expected, $desc;
+}
+
+sub throws-exception($program, $message, $desc = "MISSING TEST DESCRIPTION") is export {
+    my $output = StrOutput.new;
+    my $runtime = _007.runtime(:$output);
+    my $parser = _007.parser(:$runtime);
+    my $ast = $parser.parse($program);
+    $runtime.run($ast);
+
+    CATCH {
+        when X::_007::RuntimeException {
+            is .message, $message, "passing the right Exception's message";
+            pass $desc;
+        }
+    }
+
+    flunk $desc;
 }

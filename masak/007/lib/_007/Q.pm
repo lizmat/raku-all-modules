@@ -41,6 +41,14 @@ class X::Associativity::Conflict is Exception {
     method message { "The operator already has a defined associativity" }
 }
 
+class X::_007::RuntimeException is Exception {
+    has $.msg;
+
+    method message {
+        $.msg.Str;
+    }
+}
+
 sub aname($attr) { $attr.name.substr(2) }
 sub avalue($attr, $obj) { $attr.get_value($obj) }
 
@@ -104,6 +112,10 @@ class Q::Identifier does Q::Term {
             $.name.value,
             $.frame ~~ Val::None ?? $runtime.current-frame !! $.frame
         );
+    }
+
+    method put-value($value, $runtime) {
+        $runtime.put-var(self, $value);
     }
 }
 
@@ -246,10 +258,8 @@ class Q::Infix::Cons is Q::Infix {}
 
 class Q::Infix::Assignment is Q::Infix {
     method eval($runtime) {
-        die "Needs to be an identifier on the left"     # XXX: Turn this into an X::
-            unless $.lhs ~~ Q::Identifier;
         my $value = $.rhs.eval($runtime);
-        $runtime.put-var($.lhs.name.value, $value);
+        $.lhs.put-value($value, $runtime);
         return $value;
     }
 }
@@ -326,6 +336,29 @@ class Q::Postfix::Index is Q::Postfix {
             die X::TypeCheck.new(:operation<indexing>, :got($_), :expected(Val::Array));
         }
     }
+
+    method put-value($value, $runtime) {
+        given $.operand.eval($runtime) {
+            when Val::Array {
+                my $index = $.index.eval($runtime);
+                die X::Subscript::NonInteger.new
+                    if $index !~~ Val::Int;
+                die X::Subscript::TooLarge.new(:value($index.value), :length(+.elements))
+                    if $index.value >= .elements;
+                die X::Subscript::Negative.new(:$index, :type([]))
+                    if $index.value < 0;
+                .elements[$index.value] = $value;
+            }
+            when Val::Object | Q {
+                my $property = $.index.eval($runtime);
+                die X::Subscript::NonString.new
+                    if $property !~~ Val::Str;
+                my $propname = $property.value;
+                $runtime.put-property($_, $propname, $value);
+            }
+            die X::TypeCheck.new(:operation<indexing>, :got($_), :expected(Val::Array));
+        }
+    }
 }
 
 class Q::Postfix::Call is Q::Postfix {
@@ -354,6 +387,16 @@ class Q::Postfix::Property is Q::Postfix {
         my $propname = $.property.name.value;
         $runtime.property($obj, $propname);
     }
+
+    method put-value($value, $runtime) {
+        given $.operand.eval($runtime) {
+            when Val::Object | Q {
+                my $propname = $.property.name.value;
+                $runtime.put-property($_, $propname, $value);
+            }
+            die "We don't handle this case yet"; # XXX: think more about this case
+        }
+    }
 }
 
 class Q::Unquote does Q {
@@ -374,7 +417,10 @@ class Q::Unquote::Infix is Q::Unquote {
 }
 
 class Q::Term::Quasi does Q::Term {
+    has $.qtype;
     has $.contents;
+
+    method attribute-order { <qtype contents> }
 
     method eval($runtime) {
         sub interpolate($thing) {
@@ -417,22 +463,22 @@ class Q::Term::Quasi does Q::Term {
             $thing.new(|%attributes);
         }
 
-        if $.contents ~~ Q::Unquote {   # special exception: `quasi @ Q::Unquote`
+        if $.qtype.value eq "Q::Unquote" && $.contents ~~ Q::Unquote {
             return $.contents;
         }
         return interpolate($.contents);
     }
 }
 
-class Q::ParameterList does Q {
-    # RAKUDO: Can simplify this to `.=` once [RT #126975] is fixed
-    has Val::Array $.parameters = Val::Array.new;
-}
-
 class Q::Parameter does Q does Q::Declaration {
     has $.identifier;
 
     method is-assignable { True }
+}
+
+class Q::ParameterList does Q {
+    # RAKUDO: Can simplify this to `.=` once [RT #126975] is fixed
+    has Val::Array $.parameters = Val::Array.new;
 }
 
 class Q::ArgumentList does Q {
@@ -455,7 +501,7 @@ class Q::Statement::My does Q::Statement does Q::Declaration {
         return
             unless $.expr !~~ Val::None;
         my $value = $.expr.eval($runtime);
-        $runtime.put-var($.identifier.name.value, $value);
+        $.identifier.put-value($value, $runtime);
     }
 }
 
@@ -495,7 +541,7 @@ class Q::Statement::If does Q::Statement {
                 :type("If statement"), :$paramcount, :argcount("0 or 1"))
                 if $paramcount > 1;
             for @($c.parameterlist.parameters.elements) Z $expr -> ($param, $arg) {
-                $runtime.declare-var($param.identifier.name.value, $arg);
+                $runtime.declare-var($param.identifier, $arg);
             }
             $.block.statementlist.run($runtime);
             $runtime.leave;
@@ -569,7 +615,7 @@ class Q::Statement::For does Q::Statement {
             for split_elements($array.elements, $count) -> $arg {
                 $runtime.enter($c);
                 for @($c.parameterlist.parameters.elements) Z $arg.list -> ($param, $real_arg) {
-                    $runtime.declare-var($param.identifier.name.value, $real_arg);
+                    $runtime.declare-var($param.identifier, $real_arg);
                 }
                 $.block.statementlist.run($runtime);
                 $runtime.leave;
@@ -593,7 +639,7 @@ class Q::Statement::While does Q::Statement {
                 :type("While loop"), :$paramcount, :argcount("0 or 1"))
                 if $paramcount > 1;
             for @($c.parameterlist.parameters.elements) Z $expr -> ($param, $arg) {
-                $runtime.declare-var($param.identifier.name.value, $arg);
+                $runtime.declare-var($param.identifier, $arg);
             }
             $.block.statementlist.run($runtime);
             $runtime.leave;
@@ -608,6 +654,20 @@ class Q::Statement::Return does Q::Statement {
         my $value = $.expr ~~ Val::None ?? $.expr !! $.expr.eval($runtime);
         my $frame = $runtime.get-var("--RETURN-TO--");
         die X::Control::Return.new(:$value, :$frame);
+    }
+}
+
+class Q::Statement::Throw does Q::Statement {
+    has $.expr = Val::None.new;
+
+    method run($runtime) {
+        my $value = $.expr ~~ Val::None
+            ?? Val::Exception.new(:message(Val::Str.new(:value("Died"))))
+            !! $.expr.eval($runtime);
+        die X::TypeCheck.new(:got($value), :excpected(Val::Exception))
+            if $value !~~ Val::Exception;
+
+        die X::_007::RuntimeException.new(:msg($value.message.value));
     }
 }
 
@@ -649,5 +709,14 @@ class Q::StatementList does Q {
         for $.statements.elements -> $statement {
             $statement.run($runtime);
         }
+    }
+}
+
+class Q::Expr::StatementListAdapter does Q {
+    has $.statementlist;
+
+    method eval($runtime) {
+        $.statementlist.run($runtime);
+        return Val::None.new;
     }
 }

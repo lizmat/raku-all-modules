@@ -28,7 +28,7 @@ class _007::Runtime::Builtins {
 
     method get-builtins {
         my &str = sub ($_) {
-            when Val { return .Str }
+            when Val { my %*stringification-seen; return .Str }
             die X::TypeCheck.new(
                 :operation<str()>,
                 :got($_),
@@ -51,6 +51,12 @@ class _007::Runtime::Builtins {
         multi equal-value(Val::Int $l, Val::Int $r) { $l.value == $r.value }
         multi equal-value(Val::Str $l, Val::Str $r) { $l.value eq $r.value }
         multi equal-value(Val::Array $l, Val::Array $r) {
+            if %*equality-seen{$l.WHICH} && %*equality-seen{$r.WHICH} {
+                return $l === $r;
+            }
+            %*equality-seen{$l.WHICH}++;
+            %*equality-seen{$r.WHICH}++;
+
             sub equal-at-index($i) {
                 equal-value($l.elements[$i], $r.elements[$i]);
             }
@@ -59,6 +65,12 @@ class _007::Runtime::Builtins {
                 |(^$l.elements).map(&equal-at-index);
         }
         multi equal-value(Val::Object $l, Val::Object $r) {
+            if %*equality-seen{$l.WHICH} && %*equality-seen{$r.WHICH} {
+                return $l === $r;
+            }
+            %*equality-seen{$l.WHICH}++;
+            %*equality-seen{$r.WHICH}++;
+
             sub equal-at-key(Str $key) {
                 equal-value($l.properties{$key}, $r.properties{$key});
             }
@@ -102,8 +114,12 @@ class _007::Runtime::Builtins {
 
         my @builtins =
             say      => -> $arg {
+                my %*stringification-seen;
                 $.runtime.output.say($arg ~~ Val::Array ?? &str($arg).Str !! ~$arg);
                 Nil;
+            },
+            prompt => sub ($arg) {
+                return wrap(prompt($arg));
             },
             type => -> $arg { Val::Type.of($arg.WHAT) },
             str => &str,
@@ -119,7 +135,7 @@ class _007::Runtime::Builtins {
                 die X::TypeCheck.new(
                     :operation<int()>,
                     :got($_),
-                    :expected("something that can be converted to an int"));
+                    :expected(Val::Int));
             },
             min      => -> $a, $b { min($a.value, $b.value) },
             max      => -> $a, $b { max($a.value, $b.value) },
@@ -160,12 +176,14 @@ class _007::Runtime::Builtins {
             # comparison precedence
             'infix:<==>' => Val::Sub::Builtin.new('infix:<==>',
                 sub ($lhs, $rhs) {
+                    my %*equality-seen;
                     return wrap(equal-value($lhs, $rhs));
                 },
                 :qtype(Q::Infix::Eq),
             ),
             'infix:<!=>' => Val::Sub::Builtin.new('infix:<!=>',
                 sub ($lhs, $rhs) {
+                    my %*equality-seen;
                     return wrap(!equal-value($lhs, $rhs))
                 },
                 :qtype(Q::Infix::Ne),
@@ -180,6 +198,7 @@ class _007::Runtime::Builtins {
             ),
             'infix:<<=>' => Val::Sub::Builtin.new('infix:<<=>',
                 sub ($lhs, $rhs) {
+                    my %*equality-seen;
                     return wrap(less-value($lhs, $rhs) || equal-value($lhs, $rhs))
                 },
                 :qtype(Q::Infix::Le),
@@ -194,6 +213,7 @@ class _007::Runtime::Builtins {
             ),
             'infix:<>=>' => Val::Sub::Builtin.new('infix:<>=>',
                 sub ($lhs, $rhs) {
+                    my %*equality-seen;
                     return wrap(more-value($lhs, $rhs) || equal-value($lhs, $rhs))
                 },
                 :qtype(Q::Infix::Ge),
@@ -341,6 +361,7 @@ class _007::Runtime::Builtins {
             Val::Str,
             Val::Sub,
             Val::Type,
+            Val::Exception,
         ;
 
         for @val-types -> $type {
@@ -351,6 +372,7 @@ class _007::Runtime::Builtins {
             Q::ArgumentList,
             Q::Block,
             Q::CompUnit,
+            Q::Expr::StatementListAdapter,
             Q::Identifier,
             Q::Infix,
             Q::Infix::Addition,
@@ -395,6 +417,7 @@ class _007::Runtime::Builtins {
             Q::Statement::My,
             Q::Statement::Return,
             Q::Statement::Sub,
+            Q::Statement::Throw,
             Q::Statement::While,
             Q::StatementList,
             Q::Term::Array,

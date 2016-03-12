@@ -228,33 +228,11 @@ use _007::Test;
 
 {
     my $program = q:to/./;
-        my a = [1, 2];
-        a[1] = 4;
-        .
-
-    parse-error $program, X::Immutable, "cannot assign to a non-identifier";
-}
-
-{
-    my $program = q:to/./;
         sub f() {}
         my f;
         .
 
     parse-error $program, X::Redeclaration, "can't have a sub and a variable sharing a name";
-}
-
-{
-    my $program = q:to/./;
-        my f;
-        {
-            f = 3;
-            sub f() {
-            }
-        }
-        .
-
-    parse-error $program, X::Redeclaration::Outer, "cannot first use outer and then declare inner sub";
 }
 
 {

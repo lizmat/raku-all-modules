@@ -34,13 +34,16 @@ grammar _007::Parser::Syntax {
         die X::Syntax::Missing.new(:$what);
     }
 
-    sub declare(Q::Declaration $decltype, $symbol) {
+    our sub declare(Q::Declaration $decltype, $symbol) {
         die X::Redeclaration.new(:$symbol)
             if $*runtime.declared-locally($symbol);
-        my $block = $*runtime.current-frame();
+        my $frame = $*runtime.current-frame();
         die X::Redeclaration::Outer.new(:$symbol)
-            if %*assigned{$block ~ $symbol};
-        $*runtime.declare-var($symbol);
+            if %*assigned{$frame ~ $symbol};
+        my $identifier = Q::Identifier.new(
+            :name(Val::Str.new(:value($symbol))),
+            :$frame);
+        $*runtime.declare-var($identifier);
         @*declstack[*-1]{$symbol} = $decltype;
     }
 
@@ -65,7 +68,7 @@ grammar _007::Parser::Syntax {
     }
     token statement:block { <pblock> }
     rule statement:sub-or-macro {
-        $<routine>=(sub|macro) [<identifier> || <.panic("identifier")>]
+        $<routine>=(sub|macro)» [<identifier> || <.panic("identifier")>]
         :my $*insub = True;
         {
             declare($<routine> eq "sub"
@@ -86,6 +89,11 @@ grammar _007::Parser::Syntax {
                 unless $*insub;
         }
     }
+
+    token statement:throw {
+        throw [<.ws> <EXPR>]?
+    }
+
     token statement:if {
         if <.ws> <xblock>
         [  <.ws> else <.ws>
@@ -119,7 +127,7 @@ grammar _007::Parser::Syntax {
         '{' ~ '}' <statementlist>
     }
     token block {
-        <?[{]> <.newpad> <blockoid> <.finishpad>    # }], vim
+        <!before '{{{'> <?[{]> <.newpad> <blockoid> <.finishpad>    # } }}}, vim
     }
 
     # "pointy block"
@@ -171,7 +179,7 @@ grammar _007::Parser::Syntax {
             || "@" <.ws> "Q::Postfix" <.ws> '{' <.ws> <postfix> <.ws> '}'
             || "@" <.ws> "Q::Expr" <.ws> '{' <.ws> <EXPR> <.ws> '}'
             || "@" <.ws> "Q::Identifier" <.ws> '{' <.ws> <term:identifier> <.ws> '}'
-            || "@" <.ws> "Q::Block" <.ws> '{' <.ws> <block> <.ws> '}'
+            || "@" <.ws> $<qtype>=["Q::Block"] <.ws> '{' <.ws> <block> <.ws> '}'
             || "@" <.ws> "Q::CompUnit" <.ws> '{' <.ws> <compunit> <.ws> '}'
             || "@" <.ws> "Q::Literal" <.ws> '{' <.ws> [<term:int> | <term:none> | <term:str>] <.ws> '}'
             || "@" <.ws> "Q::Literal::Int" <.ws> '{' <.ws> <term:int> <.ws> '}'
@@ -190,7 +198,7 @@ grammar _007::Parser::Syntax {
             || "@" <.ws> "Q::Parameter" <.ws> '{' <.ws> <parameter> <.ws> '}'
             || "@" <.ws> "Q::ParameterList" <.ws> '{' <.ws> <parameterlist> <.ws> '}'
             || "@" <.ws> "Q::ArgumentList" <.ws> '{' <.ws> <argumentlist> <.ws> '}'
-            || "@" <.ws> "Q::Unquote" <.ws> '{' <.ws> <unquote> <.ws> '}'
+            || "@" <.ws> $<qtype>=["Q::Unquote"] <.ws> '{' <.ws> <unquote> <.ws> '}'
             || "@" <.ws> (\S+) { die "Unknown Q type $0" } # XXX: turn into X::
             || <block>
             || <.panic("quasi")>
@@ -231,13 +239,13 @@ grammar _007::Parser::Syntax {
         <.finishpad>
     }
 
-    token propertylist { [<.ws> <property>]* % [\h* ','] <.ws> }
+    token propertylist { [<.ws> <property>]* %% [\h* ','] <.ws> }
 
     token unquote { '{{{' <EXPR> [:s "@" <identifier> ]? '}}}' }
 
     proto token property {*}
-    rule property:str-expr { <key=str> ':' <value=term> }
-    rule property:identifier-expr { <identifier> ':' <value=term> }
+    rule property:str-expr { <key=str> ':' <value=EXPR> }
+    rule property:identifier-expr { <identifier> ':' <value=EXPR> }
     rule property:method {
         <identifier>
         <.newpad>
@@ -289,13 +297,13 @@ grammar _007::Parser::Syntax {
     }
 
     rule argumentlist {
-        <EXPR> *% ','
+        <EXPR> *%% ','
     }
 
     rule parameterlist {
         [<parameter>
         { declare(Q::Parameter, $<parameter>[*-1]<identifier>.Str); }
-        ]* % ','
+        ]* %% ','
     }
 
     rule parameter {

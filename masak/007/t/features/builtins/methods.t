@@ -141,11 +141,28 @@ use _007::Test;
     my $ast = q:to/./;
         (statementlist
           (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (postfix:<.> (str "abc") (identifier "substr")) (argumentlist (int 0) (int 1))))))
-          (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (postfix:<.> (str "abc") (identifier "substr")) (argumentlist (int 1))))))
           (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (postfix:<.> (str "abc") (identifier "substr")) (argumentlist (int 0) (int 5)))))))
         .
 
-    is-result $ast, "a\nbc\nabc\n", "substr() works";
+    is-result $ast, "a\nabc\n", "substr() works";
+}
+
+{
+    my $ast = q:to/./;
+        (statementlist
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (postfix:<.> (str "abc") (identifier "prefix")) (argumentlist (int 1)))))))
+        .
+
+    is-result $ast, "a\n", "prefix() works";
+}
+
+{
+    my $ast = q:to/./;
+        (statementlist
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (postfix:<.> (str "abc") (identifier "suffix")) (argumentlist (int 1)))))))
+        .
+
+    is-result $ast, "bc\n", "suffix() works";
 }
 
 {
@@ -188,6 +205,108 @@ use _007::Test;
         .
 
     is-result $ast, "[2, 3, 4]\n[1, 2, 3]\n", "map() works";
+}
+
+{
+    my $program = q:to/./;
+        macro so_hygienic() {
+            my x = "yay, clean!";
+            return quasi {
+                say(x);
+            };
+        }
+
+        macro so_unhygienic() {
+            my x = "something is implemented wrong";
+            return quasi {
+                say(x)
+            }.detach();
+        }
+
+        my x = "that's gross!";
+        so_hygienic();    # yay, clean!
+        so_unhygienic();  # that's gross!
+        .
+
+    outputs $program, "yay, clean!\nthat's gross!\n",
+        "detaching a qtree makes its identifiers unhygienic";
+}
+
+{
+    my $ast = q:to/./;
+        (statementlist
+          (my (identifier "a") (array (int 1) (int 2)))
+          (stexpr (postfix:<()> (postfix:<.> (identifier "a") (identifier "push")) (argumentlist (int 3))))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "a")))))
+        .
+
+    is-result $ast, "[1, 2, 3]\n", "Array.push() works";
+}
+
+{
+    my $ast = q:to/./;
+        (statementlist
+          (my (identifier "a") (array (int 1) (int 2) (int 5)))
+          (my (identifier "x") (postfix:<()> (postfix:<.> (identifier "a") (identifier "pop")) (argumentlist)))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "x"))))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "a")))))
+        .
+
+    is-result $ast, "5\n[1, 2]\n", "Array.pop() works";
+}
+
+{
+    my $ast = q:to/./;
+        (statementlist
+          (my (identifier "a") (array))
+          (stexpr (postfix:<()> (postfix:<.> (identifier "a") (identifier "pop")) (argumentlist))))
+        .
+
+    is-error $ast, X::Cannot::Empty, "cannot Array.pop() an empty array";
+}
+
+{
+    my $ast = q:to/./;
+        (statementlist
+          (my (identifier "a") (array (int 1) (int 2)))
+          (stexpr (postfix:<()> (postfix:<.> (identifier "a") (identifier "unshift")) (argumentlist (int 3))))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "a")))))
+        .
+
+    is-result $ast, "[3, 1, 2]\n", "Array.unshift() works";
+}
+
+{
+    my $ast = q:to/./;
+        (statementlist
+          (my (identifier "a") (array (int 1) (int 2) (int 5)))
+          (my (identifier "x") (postfix:<()> (postfix:<.> (identifier "a") (identifier "shift")) (argumentlist)))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "x"))))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "a")))))
+        .
+
+    is-result $ast, "1\n[2, 5]\n", "Array.shift() works";
+}
+
+{
+    my $ast = q:to/./;
+        (statementlist
+          (my (identifier "a") (array))
+          (stexpr (postfix:<()> (postfix:<.> (identifier "a") (identifier "shift")) (argumentlist))))
+        .
+
+    is-error $ast, X::Cannot::Empty, "cannot Array.shift() an empty array";
+}
+
+{
+    my $ast = q:to/./;
+        (statementlist
+          (my (identifier "a") (str "007"))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (postfix:<.> (identifier "a") (identifier "contains")) (argumentlist (str "07"))))))
+          (stexpr (postfix:<()> (identifier "say") (argumentlist (postfix:<()> (postfix:<.> (identifier "a") (identifier "contains")) (argumentlist (str "8")))))))
+        .
+
+    is-result $ast, "1\n0\n", "String.contains() works";
 }
 
 done-testing;

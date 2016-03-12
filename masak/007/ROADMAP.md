@@ -31,8 +31,6 @@ The first track is still the *raison d'être* for 007. The second track rounds
 * The big focus is [quasi unquotes](https://github.com/masak/007/issues/30), a
   big part of making simple macros work as expected. The champion on this one
   is **masak**.
-* We want [a `.detach()` operation on
-  Qtrees](https://github.com/masak/007/issues/62).
 * Also want to close [a philosophical
   issue](https://github.com/masak/007/issues/7) about the statement/expression
   discrepancy that's exhibited in quasi blocks.
@@ -45,13 +43,6 @@ The first track is still the *raison d'être* for 007. The second track rounds
 * The first big thing to fix here is [an `examples/`
   directory](https://github.com/masak/007/issues/54). The champion for this one
   is **masak**.
-    * [The format macro
-      example](https://github.com/masak/007/issues/54#issuecomment-151440144)
-      requires macros to be ready enough, which they sort of are (synthetic
-      macros now work) and sort of are not (still waiting for quasi unquotes).
-    * As part of this, we should also add the [man or boy
-      test](https://github.com/masak/007/issues/22), to show that 007 is no
-      worse than Algol.
 * The second big thing is to [give the web page a big
   facelift](https://github.com/masak/007/issues/67), including more examples
   and interactive Qtrees. The champion on this one is **masak**.
@@ -64,8 +55,6 @@ The first track is still the *raison d'être* for 007. The second track rounds
 ### General cleanup that should happen before v1.0.0
 
 * [More Q node test coverage](https://github.com/masak/007/issues/52).
-* Looking through Q names and similar names, [maximizing for
-  consistency](https://github.com/masak/007/issues/81).
 * Various things to make the parser give better errors, like [this
   issue](https://github.com/masak/007/issues/10) and [this
   issue](https://github.com/masak/007/issues/48) and [this

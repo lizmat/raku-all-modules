@@ -7,7 +7,9 @@ class Frame {
 }
 
 constant NO_OUTER = {};
-constant RETURN_TO = "--RETURN-TO--";
+constant RETURN_TO = Q::Identifier.new(
+    :name(Val::Str.new(:value("--RETURN-TO--"))),
+    :frame(Val::None.new));
 
 class _007::Runtime {
     has $.output;
@@ -37,7 +39,10 @@ class _007::Runtime {
         my $frame = Frame.new(:$block);
         @!frames.push($frame);
         for $block.static-lexpad.kv -> $name, $value {
-            self.declare-var($name, $value);
+            my $identifier = Q::Identifier.new(
+                :name(Val::Str.new(:value($name))),
+                :frame(Val::None.new));
+            self.declare-var($identifier, $value);
         }
         for $block.statementlist.statements.elements.kv -> $i, $_ {
             when Q::Statement::Sub {
@@ -53,11 +58,14 @@ class _007::Runtime {
                     :%static-lexpad,
                     :$outer-frame
                 );
-                self.declare-var($name, $val);
+                self.declare-var(.identifier, $val);
             }
         }
         if $block ~~ Val::Sub {
-            self.declare-var($block.name, $block);
+            my $identifier = Q::Identifier.new(
+                :name(Val::Str.new(:value($block.name))),
+                :$frame);
+            self.declare-var($identifier, $block);
         }
     }
 
@@ -75,12 +83,12 @@ class _007::Runtime {
         @!frames[*-1];
     }
 
-    method !find(Str $symbol, $frame is copy) {
-        self!maybe-find($symbol, $frame)
+    method !find-pad(Str $symbol, $frame is copy) {
+        self!maybe-find-pad($symbol, $frame)
             // die X::Undeclared.new(:$symbol);
     }
 
-    method !maybe-find(Str $symbol, $frame is copy) {
+    method !maybe-find-pad(Str $symbol, $frame is copy) {
         repeat until $frame === NO_OUTER {
             return $frame.pad
                 if $frame.pad{$symbol} :exists;
@@ -90,31 +98,36 @@ class _007::Runtime {
             if $symbol eq RETURN_TO;
     }
 
-    method put-var(Str $name, $value) {
-        my %pad := self!find($name, self.current-frame);
+    method put-var(Q::Identifier $identifier, $value) {
+        my $name = $identifier.name.value;
+        my $frame = $identifier.frame ~~ Val::None
+            ?? self.current-frame
+            !! $identifier.frame;
+        my %pad := self!find-pad($name, $frame);
         %pad{$name} = $value;
     }
 
     method get-var(Str $name, $frame = self.current-frame) {
-        my %pad := self!find($name, $frame);
+        my %pad := self!find-pad($name, $frame);
         return %pad{$name};
     }
 
     method maybe-get-var(Str $name) {
-        if self!maybe-find($name, self.current-frame) -> %pad {
+        if self!maybe-find-pad($name, self.current-frame) -> %pad {
             return %pad{$name};
         }
     }
 
-    method declare-var(Str $name, $value?) {
-        self.current-frame.pad{$name} = Val::None.new;
-        if defined $value {
-            self.put-var($name, $value);
-        }
+    method declare-var(Q::Identifier $identifier, $value?) {
+        my $name = $identifier.name.value;
+        my $frame = $identifier.frame ~~ Val::None
+            ?? self.current-frame
+            !! $identifier.frame;
+        $frame.pad{$name} = $value // Val::None.new;
     }
 
     method declared($name) {
-        so self!maybe-find($name, self.current-frame);
+        so self!maybe-find-pad($name, self.current-frame);
     }
 
     method declared-locally($name) {
@@ -129,7 +142,10 @@ class _007::Runtime {
 
     method load-builtins {
         for $!builtins.get-builtins -> Pair (:key($name), :value($subval)) {
-            self.declare-var($name, $subval);
+            my $identifier = Q::Identifier.new(
+                :name(Val::Str.new(:value($name))),
+                :frame(Val::None.new));
+            self.declare-var($identifier, $subval);
         }
     }
 
@@ -144,8 +160,7 @@ class _007::Runtime {
             unless $paramcount == $argcount;
         self.enter($c);
         for @($c.parameterlist.parameters.elements) Z @arguments -> ($param, $arg) {
-            my $name = $param.identifier.name.value;
-            self.declare-var($name, $arg);
+            self.declare-var($param.identifier, $arg);
         }
     }
 
@@ -182,6 +197,38 @@ class _007::Runtime {
 
     method property($obj, Str $propname) {
         if $obj ~~ Q {
+            if $propname eq "detach" {
+                sub aname($attr) { $attr.name.substr(2) }
+                sub avalue($attr, $obj) { $attr.get_value($obj) }
+
+                sub interpolate($thing) {
+                    return $thing.new(:elements($thing.elements.map(&interpolate)))
+                        if $thing ~~ Val::Array;
+
+                    return $thing.new(:properties(%($thing.properties.map(.key => interpolate(.value)))))
+                        if $thing ~~ Val::Object;
+
+                    return $thing
+                        if $thing ~~ Val;
+
+                    return $thing.new(:name($thing.name), :frame(Val::None.new))
+                        if $thing ~~ Q::Identifier;
+
+                    return $thing
+                        if $thing ~~ Q::Unquote;
+
+                    my %attributes = $thing.attributes.map: -> $attr {
+                        aname($attr) => interpolate(avalue($attr, $thing))
+                    };
+
+                    $thing.new(|%attributes);
+                }
+
+                return Val::Sub::Builtin.new("detach", sub () {
+                    return interpolate($obj);
+                });
+            }
+
             sub aname($attr) { $attr.name.substr(2) }
             my %known-properties = $obj.WHAT.attributes.map({ aname($_) => 1 });
 
@@ -240,6 +287,11 @@ class _007::Runtime {
                 return Val::Array.new(:elements($obj.elements.sort));
             });
         }
+        elsif $obj ~~ Val::Array && $propname eq "shuffle" {
+            return Val::Sub::Builtin.new("shuffle", sub () {
+                return Val::Array.new(:elements($obj.elements.pick(*)));
+            });
+        }
         elsif $obj ~~ Val::Array && $propname eq "concat" {
             return Val::Sub::Builtin.new("concat", sub ($array) {
                 die X::TypeCheck.new(:operation<concat>, :got($array), :expected(Val::Array))
@@ -264,12 +316,33 @@ class _007::Runtime {
             });
         }
         elsif $obj ~~ Val::Str && $propname eq "substr" {
-            return Val::Sub::Builtin.new("substr", sub ($pos, $chars?) {
+            return Val::Sub::Builtin.new("substr", sub ($pos, $chars) {
                 return Val::Str.new(:value($obj.value.substr(
                     $pos.value,
-                    $chars.defined
-                        ?? $chars.value
-                        !! $obj.value.chars)));
+                    $chars.value)));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "contains" {
+            return Val::Sub::Builtin.new("contains", sub ($substr) {
+                die X::TypeCheck.new(:operation<contains>, :got($substr), :expected(Val::Str))
+                    unless $substr ~~ Val::Str;
+
+                return Val::Int.new(:value(
+                        $obj.value.contains($substr.value) ?? 1 !! 0;
+                ));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "prefix" {
+            return Val::Sub::Builtin.new("prefix", sub ($pos) {
+                return Val::Str.new(:value($obj.value.substr(
+                    0,
+                    $pos.value)));
+            });
+        }
+        elsif $obj ~~ Val::Str && $propname eq "suffix" {
+            return Val::Sub::Builtin.new("suffix", sub ($pos) {
+                return Val::Str.new(:value($obj.value.substr(
+                    $pos.value)));
             });
         }
         elsif $obj ~~ Val::Str && $propname eq "charat" {
@@ -294,6 +367,32 @@ class _007::Runtime {
                 return Val::Array.new(:@elements);
             });
         }
+        elsif $obj ~~ Val::Array && $propname eq "push" {
+            return Val::Sub::Builtin.new("push", sub ($newelem) {
+                $obj.elements.push($newelem);
+                return Val::None.new;
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "pop" {
+            return Val::Sub::Builtin.new("pop", sub () {
+                die X::Cannot::Empty.new(:action<pop>, :what($obj.^name))
+                    if $obj.elements.elems == 0;
+                return $obj.elements.pop();
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "shift" {
+            return Val::Sub::Builtin.new("shift", sub () {
+                die X::Cannot::Empty.new(:action<pop>, :what($obj.^name))
+                    if $obj.elements.elems == 0;
+                return $obj.elements.shift();
+            });
+        }
+        elsif $obj ~~ Val::Array && $propname eq "unshift" {
+            return Val::Sub::Builtin.new("unshift", sub ($newelem) {
+                $obj.elements.unshift($newelem);
+                return Val::None.new;
+            });
+        }
         elsif $obj ~~ (Q | Val::Object) && ($obj.properties{$propname} :exists) {
             return $obj.properties{$propname};
         }
@@ -316,25 +415,19 @@ class _007::Runtime {
         }
         elsif $propname eq "update" {
             return Val::Sub::Builtin.new("update", sub ($newprops) {
-                    my @properties = $obj.properties.keys;
-                    sub updated($key) {
-                        $newprops.properties{$key} // $obj.properties{$key}
+                    for $obj.properties.keys {
+                        $obj.properties{$_} = $newprops.properties{$_} // $obj.properties{$_};
                     }
-                    return Val::Object.new(:properties(@properties.map({
-                        $_ => updated($_)
-                    })));
+                    return $obj;
                 }
             );
         }
         elsif $propname eq "extend" {
             return Val::Sub::Builtin.new("extend", sub ($newprops) {
-                    my @properties = $obj.properties.keys;
-                    my @newproperties = $newprops.properties.keys;
-                    return Val::Object.new(:properties(|@properties.map({
-                        $_ => $obj.properties{$_}
-                    }), |@newproperties.map({
-                        $_ => $newprops.properties{$_}
-                    })));
+                    for $newprops.properties.keys {
+                        $obj.properties{$_} = $newprops.properties{$_};
+                    }
+                    return $obj;
                 }
             );
         }
@@ -344,6 +437,18 @@ class _007::Runtime {
         }
         else {
             die X::PropertyNotFound.new(:$propname);
+        }
+    }
+
+    method put-property($obj, Str $propname, $newvalue) {
+        if $obj ~~ Q {
+            die "We don't handle assigning to Q object properties yet";
+        }
+        elsif $obj !~~ Val::Object {
+            die "We don't handle assigning to non-Val::Object types yet";
+        }
+        else {
+            $obj.properties{$propname} = $newvalue;
         }
     }
 }

@@ -1,4 +1,5 @@
 use _007::Q;
+use _007::Parser::Syntax;
 use _007::Parser::Exceptions;
 
 class _007::Parser::Actions {
@@ -38,9 +39,8 @@ class _007::Parser::Actions {
             :identifier($<identifier>.ast),
             :expr($<EXPR>.ast));
 
-        my $name = $<identifier>.ast.name.value;
         my $value = $<EXPR>.ast.eval($*runtime);
-        $*runtime.put-var($name, $value);
+        $<identifier>.ast.put-value($value, $*runtime);
     }
 
     method statement:expr ($/) {
@@ -139,13 +139,17 @@ class _007::Parser::Actions {
             die "Unknown routine type $<routine>"; # XXX: Turn this into an X:: exception
         }
 
-        $*runtime.put-var($name, $val);
+        $identifier.put-value($val, $*runtime);
 
         maybe-install-operator($name, $<traitlist><trait>);
     }
 
     method statement:return ($/) {
         make Q::Statement::Return.new(:expr($<EXPR> ?? $<EXPR>.ast !! Val::None.new));
+    }
+
+    method statement:throw ($/) {
+        make Q::Statement::Throw.new(:expr($<EXPR> ?? $<EXPR>.ast !! Val::None.new));
     }
 
     method statement:if ($/) {
@@ -249,9 +253,7 @@ class _007::Parser::Actions {
             else {
                 @termstack.push($infix.new(:lhs($t1), :rhs($t2), :identifier($infix.identifier)));
 
-                if $infix ~~ Q::Infix::Assignment {
-                    die X::Immutable.new(:method<assignment>, :typename($t1.^name))
-                        unless $t1 ~~ Q::Identifier;
+                if $infix ~~ Q::Infix::Assignment && $t1 ~~ Q::Identifier {
                     my $block = $*runtime.current-frame();
                     my $symbol = $t1.name.value;
                     die X::Undeclared.new(:$symbol)
@@ -334,7 +336,21 @@ class _007::Parser::Actions {
             && (my $macro = $*runtime.maybe-get-var($/.ast.name.value)) ~~ Val::Macro {
                 my @arguments = $postfix.argumentlist.arguments.elements;
                 my $qtree = $*runtime.call($macro, @arguments);
-                make $qtree;
+
+                if $qtree ~~ Q::Statement::My {
+                    _007::Parser::Syntax::declare(Q::Statement::My, ~$qtree.identifier.name);
+                }
+
+                if $qtree ~~ Q::Statement {
+                    make Q::Expr::StatementListAdapter.new(
+                        :statementlist(Q::StatementList.new(
+                            :statements(Val::Array.new(:elements([$qtree])))
+                        ))
+                    );
+                }
+                else {
+                    make $qtree;
+                }
             }
             elsif $postfix ~~ Q::Postfix::Index {
                 make $postfix.new(:$identifier, :operand($/.ast), :index($postfix.index));
@@ -432,12 +448,37 @@ class _007::Parser::Actions {
     }
 
     method term:quasi ($/) {
+        my $qtype = Val::Str.new(:value(~($<qtype> // "")));
+
+        if $<block> -> $block {
+
+            # If the quasi consists of a block with a single expression statement, it's very
+            # likely that what we want to inject is the expression, not the block.
+            #
+            # The exception to that heuristic is when we've explicitly specified `@ Q::Block`
+            # on the quasi.
+            #
+            # This is not a "nice" solution, nor a comprehensive one. In the end it's connected
+            # to the troubled musings in <https://github.com/masak/007/issues/7>, which aren't
+            # completely solved yet.
+
+            if $qtype.value ne "Q::Block"
+                && $block.ast ~~ Q::Block
+                && $block.ast.statementlist.statements.elements.elems == 1
+                && $block.ast.statementlist.statements.elements[0] ~~ Q::Statement::Expr {
+
+                my $contents = $block.ast.statementlist.statements.elements[0].expr;
+                make Q::Term::Quasi.new(:$contents, :$qtype);
+                return;
+            }
+        }
+
         for <argumentlist block compunit EXPR infix parameter parameterlist
             postfix prefix property propertylist statement statementlist
             term trait traitlist unquote> -> $subrule {
 
             if $/{$subrule} -> $submatch {
-                make Q::Term::Quasi.new(:contents($submatch.ast));
+                make Q::Term::Quasi.new(:contents($submatch.ast), :$qtype);
                 return;
             }
         }
@@ -456,7 +497,7 @@ class _007::Parser::Actions {
             my $outer-frame = $*runtime.current-frame;  # XXX: this is not really the outer frame, is it?
             my %static-lexpad = $*runtime.current-frame.pad;
             my $val = Val::Sub.new(:$name, :$parameterlist, :$statementlist, :$outer-frame, :%static-lexpad);
-            $*runtime.put-var($name, $val);
+            $<identifier>.ast.put-value($val, $*runtime);
         }
         self.finish-block($block);
 
