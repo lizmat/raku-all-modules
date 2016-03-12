@@ -1,0 +1,18 @@
+{
+  "name" : "Algorithm::TernarySearchTree",
+  "source-url" : "git://github.com/okaoka/p6-Algorithm-TernarySearchTree.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "Algorithm::TernarySearchTree" : "lib/Algorithm/TernarySearchTree.pm6",
+    "Algorithm::TernarySearchTree::Node" : "lib/Algorithm/TernarySearchTree/Node.pm6"
+  },
+  "depends" : [ ],
+  "description" : "the algorithm which blends trie and binary search tree",
+  "test-depends" : [ ],
+  "version" : "0.02",
+  "authors" : [
+    "okaoka"
+  ]
+}
