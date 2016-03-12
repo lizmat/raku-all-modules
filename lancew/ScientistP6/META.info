@@ -1,0 +1,13 @@
+{
+    "perl" : "6.*",
+    "name" : "Scientist",
+    "version" : "0.0.2",
+    "description" : "Perl 6 Scientist - Test new code against old.",
+    "authors" : [ "Lance Wicks" ],
+    "provides" : {
+        "Scientist" : "lib/Scientist.pm"
+    },
+    "depends" : [ ],
+    "resources" : [ ],
+    "source-url" : "git://github.com/lancew/ScientistP6.git"
+}
