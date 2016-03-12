@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Lingua-Conjunction.git
 	branch = master
-	commit = 137de5c2b679119e6585f8622caf0848fd97a815
-	parent = ac9e56a541f3bb693f32089d9d74a36b22558623
+	commit = 2defca34a249020856046440a9356c7d76998299
+	parent = e3221a3a58307ab8a0b4bc4944b41d974c7d1e03
 	cmdver = 0.2.3
