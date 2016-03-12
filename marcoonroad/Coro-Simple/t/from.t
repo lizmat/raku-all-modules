@@ -2,28 +2,26 @@
 
 use v6;
 
-# 'from' test, "cast" a generator to lazy array
+# "casts" a generator to lazy array
 
 use Test;
 use Coro::Simple;
 
 plan 3;
 
-# iterator example
-my &iter = coro -> $xs {
-    for @$xs -> $x {
-        say "Yay! You get $x."; # just a action to check the "eval by need"...
+my &iter = coro sub (*@xs) {
+    for @xs -> $x {
+        say "Yay! You get $x.";
         yield $x;
     }
 }
 
-# generator function
-my $next = iter [ 3 ... -2 ];
+my $next = iter 3 ... -2;
 
-my @array := (from $next).map: * + 1; # bind the lazy array returned
+my @array := (from $next).map(* + 1).list; # bind the lazy array returned
 
-ok say @array[ 0 ];
-ok say @array[ 1 ];
-ok say @array[ 2 ];
+ok @array[ 0 ] == 4;
+ok @array[ 1 ] == 3;
+ok @array[ 2 ] == 2;
 
 # end of test

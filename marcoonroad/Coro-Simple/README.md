@@ -1,10 +1,14 @@
 Coro-Simple
 ===========
 
-Simple coroutines for Perl 6, inspired by the Lua coroutines.
 
-This is a module for *stackful asymmetric coroutines*, that suspend
-their control flows with **yield** instead change the flow to another
+[![Build Status](https://travis-ci.org/marcoonroad/Coro-Simple.svg?branch=master)](https://travis-ci.org/marcoonroad/Coro-Simple)
+
+
+Simple coroutines for Perl 6, inspired by the Lua's coroutines.
+
+This is a module for *stackful asymmetric coroutines*, which suspend
+their control flows with **yield** instead of shift the flow to another
 coroutine with **transfer** (these are called *symmetric coroutines*).
 
 If you want to know more about coroutines, I suggest you to read this
@@ -18,12 +22,12 @@ The **coro** / **yield** functions from this module are implemented using
 the **gather** / **take** built-in P6's functions, which has some
 interesting features:
 
-* *It has a dynamic scope:* it don't care about how many calls down are
+* *It has a dynamic scope:* it doesn't care about how many calls down are need
 to find a **take**.
 
-* *Is a list generator:* useful for processing lists with filters and transformers.
+* *Is a list generator:* useful for list processing with filters and transformers.
 
-* *And also lazy:* delay the evaluation until you really need the result.
+* *And also lazy:* delaying the evaluation until you really need the result.
 
 Some p6 programmers argue that the **gather** / **take** itself is like a
 coroutine. In fact, the *lazy property* of **gather** / **take** does it fits well
@@ -34,30 +38,29 @@ in the definitions of Marlin’s doctoral thesis:
 And:
 
 > the execution of a coroutine is suspended as control leaves it, only
-> to carry on where it left oﬀ when control re-enters the coroutine at
+> to carry on where it left off when control re-enters the coroutine at
 > some later stage.
 
 Based on the brief discussion above, the **coro** / **yield** also has some
 features:
 
-* The coroutine don't care about how many calls down are to find a **yield**,
-even inside many other nested functions.
+* The coroutine doesn't care about how many calls down are need to find a **yield**,
+even inside many other nested function stacks.
 
-* The **yield** only generates one value per cycle, but you can yield an
+* The **yield** generates only one value per cycle, but you can yield an
 anonymous list to avoid it.
 
-But, there are some issues, too:
+But there are some issues too:
 
 * I advise you to not use **gather** / **take** inside any coroutine, even I
 don't know what will happen.
 
-* It don't generates the last values with **return** (as is the case of Lua),
+* It doesn't generate the last values with **return** (as is the case of Lua),
 so you must use **yield** again.
 
 You can also yield "nothing" using the **suspend** function (and with none
-argument, just for a temporary change of control flow). Don't worry about,
-it will return internally the **True** value (as a status for coroutine that
-is alive).
+argument, just for a temporary shift of control). Don't worry about,
+it will return internally the **True** value (as a status that the coroutine is alive).
 
 
 
@@ -67,7 +70,7 @@ is alive).
 
 So, let's go see some examples.
 
-First, you declares a coroutine with:
+First and foremost, you declare a coroutine with:
 
 ```perl
 coro { ... }; # zero-arity coroutine
@@ -91,15 +94,15 @@ coro -> @params {
 
 ##### Coroutine: Constructor #####
 
-Soon after, the **coro** keyword gives back a constructor, and you may think *"but why it returns a
-constructor?"*... Well, for two mainly reasons:
+The **coro** keyword above gives back a constructor, and you may think *"but why it returns a
+constructor?"*... Well, for two main reasons:
 
 * *For code reuse:* you can use the coroutine on different places, without declare / return
 again it every time.
 
-* *Reset to a initial state:* when the coroutine dies, you can just reassign it to the generator.
+* *Recovering to a initial state:* when the coroutine dies, you can just reassign it to the generator.
 
-With Lua, if you want to reuse a coroutine, you need explicitly to return a coroutine that will
+With Lua, if you want to reuse a coroutine, you will need explicitly return a coroutine that will
 reuse the given arguments as a closure:
 
 ```lua
@@ -122,16 +125,16 @@ my &iter = coro -> $xs {
 }
 ```
 
-The **iter** function above will receive an anonymous list and give back a *generator*
-function... Well-minded, now we will see generators.
+The **iter** function above will receive an anonymous list and then gives back a *generator*
+function... generator? Well-minded, now we will see generators.
 
 
 
 ##### Coroutine: Generator #####
 
-Note: here, the generator definition is just for a function that return the next value (every
+Note: here, the generator definition is just for a function that returns the next value (every
 time that it's called), not as is usually called a *asymmetric coroutine without dedicated
-stacks* (that cares about if you will call **yield** out of their block / lexical scope).
+stacks* (which cares about if you will call **yield** out of its block / lexical scope).
 
 Reusing the **iter** example:
 
@@ -149,7 +152,7 @@ say $generator( ); # >>> False, here, the coroutine is dead.
 
 ##### Coroutine: More complex examples #####
 
-Yep, you can build a **map** / **grep** / **range** like coroutines / generators!
+Following the "coroutines generalize functions" idea (a function may be thought as a coroutine without *yield* keywords), we can write **map** / **grep** / **range** functions like coroutines / generators!
 
 ```perl
 # map coroutine
@@ -174,7 +177,7 @@ my &xrange = coro -> $min, $max {
 # Usage:
 #
 # sub incr ($x) { $x + 1 }      # >>> number.
-# sub even ($x) { $x % 2 == 0 } # >>> boolean. use "$x %% 2" if you wish...
+# sub even ($x) { $x % 2 == 0 } # >>> boolean. use "$x %% 2" if you wish a short version
 #
 # my $generator = ([ @array ] ==> transform &incr);
 # my $filtered  = ([ @array ] ==> filter &even);
@@ -187,9 +190,9 @@ my &xrange = coro -> $min, $max {
 
 ##### Coroutine: "casting" generator to a lazy list #####
 
-If you want to access the values that a generator yields with a nice way, you can use **from**.
-The **from** function does the opposite from **iter** function above: instead taking an array and
-returning a generator, it takes a reference to a generator and returns a lazy array to bind.
+Thinking in access the values that a generator yields in a nice way? No problem, there's **from** to solve that.
+The **from** function does the opposite from **iter** above: rather than taking an array and
+mapping it to a generator, it takes a reference to a generator and returns a lazy array to bind.
 
 Some examples:
 
@@ -203,8 +206,8 @@ Or, too:
 my @lazy-array := from some-constructor ($x, $y, $z);
 ```
 
-You can build more complex things with it too, without evaluate the whole thing at all
-(because **map** and **grep** are lazy too :) ...):
+Build more complex things with it isn't hard, for instance, "pipelines" running on demand, without evaluate the whole thing at all
+(because **map** and **grep** are lazy as well :) ...):
 
 ```perl
 my @lazy-array-1 := (from some-constructor($arg1, $arg2, ...)).map: * + 1;
@@ -256,7 +259,7 @@ Pull requests are welcome.
 
 ### Tips and Tricks ###
 
-Normally, you can build a *enumerator / generator* as this below (because **gather** / **take**
+Normally, it is possible to build a *enumerator / generator* as this case below ('cause **gather** / **take**
 has a dynamic scope):
 
 ```perl
@@ -264,7 +267,7 @@ has a dynamic scope):
 my &iter = coro sub (*@xs) { @xs ==> map &yield }
 ```
 
-And some short version (that receives an anonymous list) with:
+And some short version (which receives an anonymous list) with:
 
 ```perl
 my &iter = coro { @$^xs.map: &yield }
@@ -283,4 +286,4 @@ as argument.
 
 
 
-End of Document.
+EOF

@@ -7,10 +7,10 @@ use v6;
 use Test;
 use Coro::Simple;
 
-plan 6;
+plan 1;
 
 sub transfer (&generator) {
-    yield &generator; # 'transfer' is just a alias for 'yield'
+    yield &generator;
 }
 
 # impure 'begin' function
@@ -29,7 +29,7 @@ my $third;
 
 my &ping = coro -> $msg {
     for ^3 -> $i {
-	ok say "$msg -> $i";
+	say "$msg -> $i";
 	transfer $second;
     }
 }
@@ -43,7 +43,7 @@ my &wtf = coro {
 
 my &pong = coro -> $msg {
     for ^3 -> $i {
-	ok say "$msg -> $i";
+	say "$msg -> $i";
 	transfer $first;
     }
 }
@@ -51,6 +51,8 @@ my &pong = coro -> $msg {
 $first  = ping "Ping!";
 $second = wtf;
 $third  = pong "Pong!";
+
+ok $first and $second and $third;
 
 begin $first; # begin the cycle with this generator
 

@@ -30,8 +30,6 @@ $hs<right><right>       = value => 10;
 
 for from tree-next $hs -> $x {
     ok $x;
-    say $x;
-    sleep 0.5;
 }
 
 # end of test

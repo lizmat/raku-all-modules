@@ -7,9 +7,8 @@ use v6;
 use Test;
 use Coro::Simple;
 
-plan 9;
+plan 7;
 
-# map-like example
 my &transform = coro sub (&fn, *@xs) {
     for @xs -> $x, $y, $z {
         fn $x;
@@ -18,19 +17,16 @@ my &transform = coro sub (&fn, *@xs) {
     }
 }
 
-# constructor use
 my &get-next = transform -> $x {
     yield [ $x, $x + 1, $x ** 2 ] # will yields an anonymous list
 }, (45 ... 15);
 
 my $items;
 
-# iterating with delays of 1/2 second
-for ^9 {
+for ^7 {
     $items = get-next;
     ok defined $items;
     say $items;
-    sleep 0.5;
 }
 
 # end of test

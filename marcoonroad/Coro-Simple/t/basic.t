@@ -2,20 +2,17 @@
 
 use v6;
 
-# most simple test
-
 use Test;
 use Coro::Simple;
 
 plan 5;
 
-# coroutine example
-my $coro = coro { # zero arity block
+my $coro = coro {
     my $cnt = 1;
     say "cnt has: $cnt";
     yield $cnt;
 
-    $cnt += 1; # mutable variable
+    $cnt += 1;
     say "cnt (again) has: $cnt";
     yield [ $cnt, $cnt ];
 
@@ -25,23 +22,18 @@ my $coro = coro { # zero arity block
 
     say "Hi, folks!";
     say "Hello ", "World!" ;
-    suspend; # True implicit
+    suspend;
 
     say "See ya later";
     yield [ "Bye-bye!".comb ];
 };
 
-# generator function
-my $gen = $coro( );
-
+my $gen    = $coro( );
 my $result = $gen( );
 
-# loop until $result becomes False
 while ($result !~~ Bool) || (?$result) {
     ok defined $result;
-    say $result;
     $result = $gen( );
-    sleep 0.5;
 }
 
 # end of test

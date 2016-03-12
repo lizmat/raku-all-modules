@@ -7,29 +7,16 @@ use v6;
 use Test;
 use Coro::Simple;
 
-plan 15;
-
-# TODO: fix the 'coro' to accept streams
+plan 3;
 
 # lazy fibonacci sequence generator
-my &fibonacci = coro {
-    my @xs := ^2, * + * ... *;
+my &gen-fib = coro sub ( ) {
+    my @xs := (1, 1, *+* ... *).list;
     yield $_ for @xs;
 };
 
-# generator function
-my $get = fibonacci;
+my $get = gen-fib( );
 
-my $result;
-
-# will generates the first 15
-# numbers from fibonacci sequence
-# (per 1/2 sec of delay, each)
-for ^15 {
-    $result = $get( );
-    ok defined $result;
-    say $result;
-    sleep 0.5;
-}
+ok $get( ) for 1 ... 3;
 
 # end of test

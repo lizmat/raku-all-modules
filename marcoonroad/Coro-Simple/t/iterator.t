@@ -7,9 +7,8 @@ use v6;
 use Test;
 use Coro::Simple;
 
-plan 6;
+plan 3;
 
-# iterator example
 my &iter = coro sub (*@xs) {
     for @xs -> $x {
 	say "Yielding $x...\n";
@@ -17,10 +16,8 @@ my &iter = coro sub (*@xs) {
     }
 };
 
-for from iter 3 ... -2 -> $x {
-    ok say $x;
-    sleep 0.5;
+for from iter 1 ... 3 -> $x {
+    ok $x;
 }
-
 
 # end of test
