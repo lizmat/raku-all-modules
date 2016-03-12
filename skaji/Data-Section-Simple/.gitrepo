@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/skaji/Data-Section-Simple.git
+	branch = master
+	commit = 5469df44c4fadd3f84eed3af14960dd08812302c
+	parent = 808f65784143179a8ac5d002e92b46a18ed06119
+	cmdver = 0.2.3
