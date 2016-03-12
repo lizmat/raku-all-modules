@@ -1,0 +1,14 @@
+{
+	"name" : "Acme::Cow",
+	"version" : "0.1",
+	"description" : "Perl 6 implementation of cowsay.",
+	"provides" : {
+		"Acme::Cow" : "lib/Acme/Cow.pm6",
+		"cow-say" : "bin/cow-say"
+	},
+	"authors" : ["Naoum Hankache"],
+	"perl" : "6.c",
+	"depends" : [ ],
+	"source-type" : "git",
+	"source-url" : "git://github.com/hankache/Acme-Cow.git"
+}

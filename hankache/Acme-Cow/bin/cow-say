@@ -1,0 +1,36 @@
+#!/usr/bin/env perl6
+
+use Acme::Cow;
+
+multi sub MAIN(Bool :$about) {
+  if $about {
+    say "Inspired by the original cowsay https://en.wikipedia.org/wiki/Cowsay." ;
+    say "Written in Perl 6";
+    say "The repo is hosted at https://github.com/hankache/Acme-Cow";
+    say "Version 0.1";
+  }
+}
+multi sub MAIN(Bool :$help) {
+  if $help {
+    say "Usage:";
+    say " cow-say --help                               => Help";
+    say " cow-say --about                              => About cow-say";
+    say " cow-say --message='...'                      => Use default template and prints your message";
+    say " cow-say --message='...' --face='...'         => Use default template and chosen face";
+    say " cow-say --message='...' --template='...'     => Use selected template and prints your message";
+    say "\n The available templates are: cow, camelia, head-in, bud-frogs, bong, tux, www";
+    say "\n The available faces are: borg, dead, greedy, paranoid, stoned, tired, wired, young";
+  }
+}
+multi sub MAIN(Str :$message) {
+  Cow::cow.new(initial-text => $message).display;
+}
+multi sub MAIN(Str :$message,Str :$template) {
+  ::("Cow::$template").new(initial-text => $message).display
+}
+multi sub MAIN(Str :$message,Str :$face) {
+  Cow::cow.new(initial-text => $message).set-face($face).display;
+}
+multi sub MAIN(Str :$message,Str :$template,Str :$face) {
+  ::("Cow::$template").new(initial-text => $message).set-face($face).display;
+}

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/hankache/Acme-Cow.git
+	branch = master
+	commit = c62ad79226c6b71f310cfe84ce70f408d3623ade
+	parent = 9008e7f4386c117d4a8781aff39f3e5c207afaa8
+	cmdver = 0.2.3
