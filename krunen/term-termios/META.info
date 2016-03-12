@@ -1,7 +1,7 @@
 {
     "name"          : "Term::termios",
     "version"       : "*",
-    "perl"          : "v6.0.0",
+    "perl"          : "6.c",
     "author"        : "github:krunen",
     "authors"       : [ "Karl Rune Nilsen" ],
     "description"   : "termios routines for Rakudo Perl 6",
