@@ -8,8 +8,14 @@ $disc.login(@*ARGS[0], @*ARGS[1]);
 
 #Every call to get message without argument give the "historic" of the channel
 #So we keep the last msg to keep his ID
-my @msg = $disc.get-messages($disc.me.private-channels<Skarsnik>);
+my @msg;
+@msg = $disc.get-messages($disc.me.private-channels<Skarsnik>);
 my $last-msg = @msg.tail[0];
+while @msg.elems > 0 {
+  @msg = $disc.get-messages($disc.me.private-channels<Skarsnik>,:after($last-msg.id));
+  $last-msg = @msg.tail[0] if @msg.elems > 0;
+}
+say $last-msg;
 
 react {
   whenever Supply.interval(5) {

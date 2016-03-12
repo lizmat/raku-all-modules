@@ -29,8 +29,8 @@ class Discord::Guild is export is rw {
     has			$.icon;
     has			$.region;
     has Int		$.afk-timeout is json-name('afk_timeout');
-    has Int		$.afk-channel-id is json-name('afk_channel_id');
-    has Int		$.embed-channel-id is json-name('embed_channel_id');
+    has			$.afk-channel-id is json-name('afk_channel_id');
+    has 		$.embed-channel-id is json-name('embed_channel_id');
     has Bool		$.embed is json-name('embed_enabled');
     has			$.owner-id is json-name('owner_id');
     has Bool		$.large;

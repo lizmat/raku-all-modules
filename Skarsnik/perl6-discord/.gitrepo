@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Skarsnik/perl6-discord.git
 	branch = master
-	commit = 447dcc63f245ecffa3a7ef20bcdf6cae0fba38d6
-	parent = f0c8715dc7b6d5e5f933dcb38b216988a9b261e5
+	commit = adf5f4e90d852b91a380a94a6e1b84fed1c219c2
+	parent = 1b7ac290e10a289934f0554777560f68ca337a45
 	cmdver = 0.2.3

@@ -16,9 +16,9 @@ class Discord::Channel is export {
     has Discord::User	$.recipient;
     has Int		$.position;
     has			$.type;
-    has Int		$.last-message-id is json-name('last-message-id');
+    has			$.last-message-id is json-name('last_message_id');
     has	Discord::PermissionOverwrite	@.permission-overwrites is json-name('permission_overwrites');
-    has	Int		$.guild-id is json-name('guild_id');
+    has			$.guild-id is json-name('guild_id');
 
 }
 
