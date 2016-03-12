@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 # Abandon all hope etc;
 use MONKEY;
@@ -19,12 +19,24 @@ my $mode = "some-file".IO.mode;
 
 say $mode.set-user-id ?? 'setuid' !! 'not setuid';
 
-say $mode.user.executable ?? 'executable' !! 'not executable';
+say $mode.user.execute ?? 'executable' !! 'not executable';
 
 say $mode.file-type == IO::Path::Mode::File ?? 'plain file' !! 'something else';
 
 ...
 
+
+=end code
+
+Or part of "ls -al" :
+
+=begin code
+
+use IO::Path::Mode; 
+
+for ".".IO.dir -> $f { 
+    say $f.mode.Str, "   ", $f.Str; 
+}
 
 =end code
 
@@ -74,6 +86,13 @@ That is to say it can be coerced to an Int.
 
 This returns the mode as an C<Int> it may be useful if a smart match
 against a numeric value is required.
+
+=head2 method Str
+
+    method Str()
+
+This returns the file mode as a string representing the file permissions
+as described by POSIX C<ls>.
 
 =head2 method file-type
 
@@ -159,7 +178,7 @@ the same manner as C<user>.
 =end pod
 
 
-class IO::Path::Mode:ver<0.0.1>:auth<github:jonathanstowe> {
+class IO::Path::Mode:ver<0.0.4>:auth<github:jonathanstowe> {
 
     my constant S_IFMT  = 0o170000;
 
@@ -193,6 +212,11 @@ class IO::Path::Mode:ver<0.0.1>:auth<github:jonathanstowe> {
         method read() returns Bool {
             Bool(self.Int +& Read.Int);
         }
+        method bits() {
+             self.read ?? 'r' !! '-' ,
+             self.write ?? 'w' !! '-',
+             self.execute ?? 'x' !! '-' ;
+        }
     }
 
     has Int $.mode;
@@ -200,7 +224,7 @@ class IO::Path::Mode:ver<0.0.1>:auth<github:jonathanstowe> {
         self.new(file => $path.Str);
     }
     multi method new(Str:D :$file) {
-        my Int $mode = nqp::p6box_i(nqp::stat(nqp::unbox_s($file), nqp::const::STAT_PLATFORM_MODE));
+        my Int $mode = nqp::p6box_i(nqp::lstat(nqp::unbox_s($file), nqp::const::STAT_PLATFORM_MODE));
         self.new(:$mode);
     }
 
@@ -244,6 +268,69 @@ class IO::Path::Mode:ver<0.0.1>:auth<github:jonathanstowe> {
     method other() returns Permissions {
         my Int $perms = ($!mode +& S_IRWXO);
         return $perms but Permissions;
+    }
+
+    method type-char() {
+        given self.file-type() {
+            when Socket {
+                's'
+            }
+            when SymbolicLink {
+                'l'
+            }
+            when File {
+                '-'
+            }
+            when Block {
+                'b'
+            }
+            when Directory {
+                'd'
+            }
+            when Character {
+                'c'
+            }
+            when FIFO {
+                'p'
+            }
+            default {
+                ' '
+            }
+        }
+    }
+
+    method user-bits() {
+        my @bits = self.user.bits;
+        if self.set-user-id {
+            @bits[2] = self.user.execute ?? 's' !! 'S'
+        }
+        @bits;
+    }
+    method group-bits() {
+        my @bits = self.group.bits;
+        if self.set-group-id {
+            @bits[2] = self.group.execute ?? 's' !! 'S'
+        }
+        @bits;
+    }
+    method other-bits() {
+        my @bits = self.other.bits;
+        if self.sticky {
+            @bits[2] = self.other.execute ?? 't' !! 'T'
+        }
+        @bits;
+    }
+
+    method bits() {
+        my @bits = self.type-char;
+        @bits.append: self.user-bits.flat;
+        @bits.append: self.group-bits.flat;
+        @bits.append: self.other-bits.flat;
+        @bits.flat;
+    }
+
+    method Str() returns Str {
+        self.bits.join('');
     }
 }
 

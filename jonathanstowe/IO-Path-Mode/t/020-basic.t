@@ -18,6 +18,7 @@ my @perms = <read write execute>;
 
 my @tests = {
                 mode => 0o400,
+                string => '-r--------',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -25,7 +26,27 @@ my @tests = {
                 },
             },
             {
+                mode => 0o4400,
+                string  => '-r-S------',
+                permissions => {
+                    user    =>  {
+                        read    =>  True,
+                    },
+                },
+            },
+            {
+                mode => 0o4500,
+                string  => '-r-s------',
+                permissions => {
+                    user    =>  {
+                        read    =>  True,
+                        execute =>  True,
+                    },
+                },
+            },
+            {
                 mode => 0o500,
+                string  => '-r-x------',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -35,6 +56,7 @@ my @tests = {
             },
             {
                 mode => 0o600,
+                string  => '-rw-------',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -44,6 +66,7 @@ my @tests = {
             },
             {
                 mode => 0o700,
+                string => '-rwx------',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -54,6 +77,7 @@ my @tests = {
             },
             {
                 mode => 0o440,
+                string => '-r--r-----',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -64,7 +88,33 @@ my @tests = {
                 },
             },
             {
+                mode => 0o2440,
+                string => '-r--r-S---',
+                permissions => {
+                    user    =>  {
+                        read    =>  True,
+                    },
+                    group   =>  {
+                        read    => True,
+                    }
+                },
+            },
+            {
+                mode => 0o2450,
+                string => '-r--r-s---',
+                permissions => {
+                    user    =>  {
+                        read    =>  True,
+                    },
+                    group   =>  {
+                        read    => True,
+                        execute => True,
+                    }
+                },
+            },
+            {
                 mode => 0o640,
+                string => '-rw-r-----',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -77,6 +127,7 @@ my @tests = {
             },
             {
                 mode => 0o660,
+                string => '-rw-rw----',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -90,6 +141,7 @@ my @tests = {
             },
             {
                 mode => 0o750,
+                string => '-rwxr-x---',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -104,6 +156,7 @@ my @tests = {
             },
             {
                 mode => 0o770,
+                string => '-rwxrwx---',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -119,6 +172,7 @@ my @tests = {
             },
             {
                 mode => 0o444,
+                string => '-r--r--r--',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -133,6 +187,7 @@ my @tests = {
             },
             {
                 mode => 0o644,
+                string => '-rw-r--r--',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -147,7 +202,41 @@ my @tests = {
                 },
             },
             {
+                mode => 0o1644,
+                string => '-rw-r--r-T',
+                permissions => {
+                    user    =>  {
+                        read    =>  True,
+                        write   =>  True,
+                    },
+                    group   =>  {
+                        read    => True,
+                    },
+                    other   =>  {
+                        read    =>  True,
+                    },
+                },
+            },
+            {
+                mode => 0o1645,
+                string => '-rw-r--r-t',
+                permissions => {
+                    user    =>  {
+                        read    =>  True,
+                        write   =>  True,
+                    },
+                    group   =>  {
+                        read    => True,
+                    },
+                    other   =>  {
+                        read    =>  True,
+                        execute =>  True,
+                    },
+                },
+            },
+            {
                 mode => 0o664,
+                string => '-rw-rw-r--',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -164,6 +253,7 @@ my @tests = {
             },
             {
                 mode => 0o666,
+                string => '-rw-rw-rw-',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -181,6 +271,7 @@ my @tests = {
             },
             {
                 mode => 0o754,
+                string => '-rwxr-xr--',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -198,6 +289,7 @@ my @tests = {
             },
             {
                 mode => 0o755,
+                string => '-rwxr-xr-x',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -216,6 +308,7 @@ my @tests = {
             },
             {
                 mode => 0o774,
+                string => '-rwxrwxr--',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -234,6 +327,7 @@ my @tests = {
             },
             {
                 mode => 0o775,
+                string => '-rwxrwxr-x',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -253,6 +347,7 @@ my @tests = {
             },
             {
                 mode => 0o777,
+                string => '-rwxrwxrwx',
                 permissions => {
                     user    =>  {
                         read    =>  True,
@@ -284,6 +379,7 @@ for @tests -> $test {
         ok $mode.file-type +& IO::Path::Mode::File, "file-type";
         is $mode.Int, $test<mode> +| IO::Path::Mode::File, "mode.Int";
         is +$mode, $test<mode> +| IO::Path::Mode::File, "mode numeric";
+        is $mode.Str, $test<string>, "mode string is { $test<string> }";
 
         for @who -> $who {
             for @perms -> $perm {
@@ -291,8 +387,21 @@ for @tests -> $test {
             }
         }
 
+
         $file.unlink;
     }, "file with " ~ $test<mode>.base(8) ~ " permissions";
+}
+
+if !$*DISTRO.is-win {
+    my $link-file = $test-dir.parent.child('test-link');
+    $link-file.symlink($test-dir.Str);
+
+    ok $link-file.mode.file-type ~~ IO::Path::Mode::SymbolicLink, "symbolic link is a SymbolicLink";
+
+    LEAVE {
+        $link-file.unlink
+    }
+
 }
 
 

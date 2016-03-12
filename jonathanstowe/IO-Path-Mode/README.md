@@ -12,7 +12,7 @@ my $mode = "some-file".IO.mode;
 
 say $mode.set-user-id ?? 'setuid' !! 'not setuid';
 
-say $mode.user.executable ?? 'executable' !! 'not executable';
+say $mode.user.execute ?? 'executable' !! 'not executable';
 
 say $mode.file-type == IO::Path::Mode::File ?? 'file' !! 'something other than a normal file';
 

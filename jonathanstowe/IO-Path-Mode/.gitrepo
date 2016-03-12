@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/IO-Path-Mode.git
 	branch = master
-	commit = c4a2fe189689131f7008368eec54221cbb7a4e84
-	parent = 2d7fcda98551c071c44f20fe092cb1caa1957032
+	commit = 4c8a47d61ae91bf39d7e0f94c83609bdb5540abc
+	parent = a6cac4b2bf71e1281338eb5a35005fee546dc6a5
 	cmdver = 0.2.3
