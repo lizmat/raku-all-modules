@@ -25,9 +25,10 @@ sub set-in-QBlock(Mu \qblock is raw,$path,Mu $value) {
     if @parts {
         my $pkg = vivify-QBlock-pkg(qblock,$first);
         set-in-WHO($pkg.WHO,@parts.join('::'),$value);
-    } else {
+     } else {
         $*W.install_lexical_symbol(qblock,$first,$value);
     }
+    Nil;
 }
 
 sub get-in-QBblock(Mu \qblock is raw,$path) {
@@ -210,7 +211,7 @@ sub set-lexpad(Str:D $path,Mu $value --> Nil) is export(:set-symbols) {
 }
 
 
-sub push-multi(Routine:D $target where { .is_dispatcher },Routine:D $r --> Nil) {
+sub push-multi(Routine:D $target where { .is_dispatcher },Routine:D $r --> Nil) is export(:push-multi) {
     $target.add_dispatchee(nqp::decont($r));
     Nil;
 }
@@ -224,21 +225,19 @@ sub push-QBlock-multi(Mu \qblock,$path,$multi is copy) {
         }
     } else {
         my $install = do given $multi {
-            when .multi {
-                .dispatcher;
-            }
-            when .is_dispatcher {
-                $multi
-            }
+            when .multi { .dispatcher }
+            when .is_dispatcher { $multi }
             default {
-                # not multi or dispatcher
-                my $new_proto = my proto anon (|) {*};
-                $new_proto.add_dispatchee(nqp::decont($multi));
+                # not multi or dispatcher have to create one to attach to
+                # XXX: this results in Missing serialize REPR function for REPR MVMContext
+                my $new_proto = (my proto anon (|) {*}).clone;
+                push-multi($new_proto,$multi);
                 $new_proto;
             }
         }
         set-in-QBlock(qblock,$path,$install);
     }
+    Nil;
 }
 
 sub push-unit-multi(Str:D $path, $multi --> Nil) is export(:push-multi) {

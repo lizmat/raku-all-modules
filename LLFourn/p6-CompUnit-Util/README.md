@@ -25,7 +25,8 @@ Utility functions for introspecting `CompUnit`s and re-exporting their symbols.
   - [get-unit](#get-unit)
   - [get-lexpad](#get-lexpad)
   - [get-lexical](#get-lexical)
-- [Push Multi](#push-multi)
+- [Dispatcher Manipulation](#dispatcher-manipulation)
+  - [push-multi](#push-multi)
   - [push-unit-multi](#push-unit-multi)
   - [push-lexpad-multi](#push-lexpad-multi)
   - [push-lexical-multi](#push-lexical-multi)
@@ -298,7 +299,7 @@ scope being compiled.
 
 ## Symbol Getting
 
-## get-unit
+### get-unit
 `(Str:D $path)`
 
 ``` perl6
@@ -307,25 +308,51 @@ sub foo is export { };
 BEGIN note get-unit('EXPORT::DEFAULT::&foo') === &foo; #-> True
 ```
 
-## get-lexpad
+### get-lexpad
 `(Str:D $path)`
 
 The same as `get-unit` but looks for the symbol in the lexpad
 being compiled.
 
-## get-lexical
+### get-lexical
 `(Str:D $name)`
 
 Like `get-lexpad` but does a full lexical lookup. At the moment it can
 only take a single `$name` with no `::`.
 
-## Push Multi
+## Dispatcher Manipulation
 
 These routines help you construct `multi` dispatchers *candidate by
 candidate* in a procedural manner. Useful when you want to construct a
 trait that adds a multi candidate each time it's called. Parameters
-marked `$multi` can be any `Routine:D`,but if you pass a dispatcher it
-will behave differently.
+marked `$multi` can be any `Routine:D`. If you pass a dispatcher it
+will just use it as the dispatcher or die if you are trying to push
+onto an existing dispatcher.
+
+**warning** pushing a normal routine onto a dispatcher will work but if
+  one doesn't exist, CompUnit::Util will try and vivify one for
+  you. This hits some sort of precompilation bug which looks like:
+
+`Missing serialize REPR function for REPR MVMContext`
+
+So try and avoid doing that.
+
+### push-multi
+`(Routine:D $target where { .is_dispatcher },Routine:D $candidate)`
+
+Adds the `$candidate` onto `$target`.
+
+``` perl6
+use CompUnit::Util :push-multi;
+multi foo('one') { 'one' }
+multi foo('two') { 'two' }
+
+&foo.&push-multi(sub ('three') { "win" });
+say foo('three') #-> "win"
+```
+
+**note** This is NYI in rakudo. The design docs says that protos should have a
+`.push` method. see [S06](https://design.perl6.org/S06.html#Introspection).
 
 ### push-unit-multi
 `(Str:D $path,Routine:D $mutli)`
