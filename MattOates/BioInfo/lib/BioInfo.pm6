@@ -10,13 +10,13 @@ sub BioInfo::seq(Str $sequence) is export {
 sub EXPORT(|) {
     role BioInfo::Grammar {
         token quote:sym<` `> {
-        '`' <bioseq> [ '`' || <.panic: "Unable to parse bio sequence; couldn't find final '`'"> ]
+        '`' <bioseq> [ '`' || <.FAILGOAL: '`'> ]
         }
         token bioseq { <-[`]>* }
     }
  
     role BioInfo::Actions {
-        method quote:sym<` `>(Mu $/ is rw) {
+        method quote:sym<` `>($/) {
             my $seq := nqp::atkey(nqp::findmethod($/, 'hash')($/), 'bioseq');
             my $call := QAST::Op.new(
                                 :op<call>,
