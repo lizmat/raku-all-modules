@@ -64,24 +64,28 @@ the functionality is available in role form, and as such may
 be mixed into classes that might want to provide automatic
 checksums:
 
-    class myStream does Sum::SHA1 does Sum::Marshal::Raw {
+```perl6
+class myStream does Sum::SHA1 does Sum::Marshal::Raw {
+    ...
+    method rx {
+        my $received_data;
         ...
-        method rx {
-            my $received_data;
-            ...
-            self.push($received_data);
-        }
+        self.push($received_data);
     }
+}
+```
 
 Another is that the objects may be used as a "tap" on a feed,
 creating a checksum of all the values passed through that
 feed without interfering with the feed result:
 
-    @pbytes <== $mySHA1 <== $myMD5 <== generate_packet();
-    ...
-    $packet = blob8.new[@pbytes,
-                        $mySHA1.finalize.Buf.values,
-                        net_endian(+@pbytes)]
+```perl6
+@pbytes <== $mySHA1 <== $myMD5 <== generate_packet();
+...
+$packet = blob8.new[@pbytes,
+                    $mySHA1.finalize.Buf.values,
+                    net_endian(+@pbytes)]
+```
 
 ## 5to6
 
@@ -105,12 +109,14 @@ objects from Sum:: versus the Perl 5 Digest:: interface.
     you encounter characters with ordinal values between
     129 and 255:
 
-        use Digest::SHA sha1_base64;
-        use Encode qw(encode_utf8);
-        say sha1_base64(encode_utf8('here is a french brace »'));
-        # S+YAQNtj1tluLgYewYgoWvdrSgQ
-        say sha1_base64(            'here is a french brace »')";
-        # 5hoNlI0QihTToOzKPc8pdMwEhWM
+```perl
+    use Digest::SHA sha1_base64;
+    use Encode qw(encode_utf8);
+    say sha1_base64(encode_utf8('here is a french brace »'));
+    # S+YAQNtj1tluLgYewYgoWvdrSgQ
+    say sha1_base64(            'here is a french brace »')";
+    # 5hoNlI0QihTToOzKPc8pdMwEhWM
+```
 
     However, in Perl 5 you MUST use encode_utf8 if you handle any
     characters with ordinals above 255.  There is too much opportunity
@@ -123,7 +129,9 @@ objects from Sum:: versus the Perl 5 Digest:: interface.
 
     Fortunately, encoding is a built-in capability of Perl 6:
 
-        $sha.push('here is a french brace »'.encode('utf8'));
+```perl6
+    $sha.push('here is a french brace »'.encode('utf8'));
+```
 
 4.  Note that the return value of .finalize is the finalized
     Sum object.  This can be coerced to common types you might
@@ -132,15 +140,19 @@ objects from Sum:: versus the Perl 5 Digest:: interface.
     passed to .push.  Together this gives the following idiom
     for one-shot purposes:
 
-        say mysha.new.finalize($buffer).Int.fmt("%20x");
+```perl6
+    say mysha.new.finalize($buffer).Int.fmt("%20x");
+```
 
     There are some shortcuts built in, which also have the
     benefit of including leading zeros.
 
-        say mysha.new.finalize($buffer).fmt(); # lowercase hex (e.g. sha1_hex)
-        say mysha.new.finalize($buffer).fmt("%2.2x",":"); # colon octets
-        say mysha.new.finalize($buffer).base(16); # uppercase hex
-        say mysha.new.finalize($buffer).base(2);  # binary text
+```perl6
+    say mysha.new.finalize($buffer).fmt(); # lowercase hex (e.g. sha1_hex)
+    say mysha.new.finalize($buffer).fmt("%2.2x",":"); # colon octets
+    say mysha.new.finalize($buffer).base(16); # uppercase hex
+    say mysha.new.finalize($buffer).base(2);  # binary text
+```
 
     Base32 and Base64 is not yet implemented pending a review of
     which variations of these encodings are used in modern applications.
@@ -150,8 +162,10 @@ objects from Sum:: versus the Perl 5 Digest:: interface.
     creates a new Perl 6 object.  Sum objects are meant
     to be thrown away after use.  Replacing them is easy:
 
-        # assuming $md has a Sum in it, or was constrained when defined.
-        $md .= new;
+```perl6
+    # assuming $md has a Sum in it, or was constrained when defined.
+    $md .= new;
+```
 
     If you are concerned about tying up crypto resources, the
     only thing to worry about is to ensure you finalize the object
