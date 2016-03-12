@@ -1,7 +1,7 @@
 
 use v6;
 
-unit module Cardinal:ver<0.2.2>:auth<github:thundergnat>;
+unit module Cardinal:ver<1.0.0>:auth<github:thundergnat>;
 
 # Arrays probably should be constants but constant arrays and pre-comp
 # don't get along very well right now.
@@ -15,9 +15,10 @@ my @M = (<0 thousand>,
     <dec vigint trigint quadragint quinquagint sexagint septuagint octogint nonagint>),
     'cent').flat X~ 'illion')).flat;
 
-my @d = < 0     first    second    third      fourth     fifth     sixth     seventh     eighth     ninth
-          tenth eleventh twelfth   thirteenth fourteenth fifteenth sixteenth seventeenth eighteenth nineteenth >;
-my @t = < ''    ''       twentieth thirtieth  fortieth   fiftieth  sixtieth  seventieth  eightieth  ninetieth >;
+my @d = < zeroth first    second    third      fourth     fifth     sixth     seventh     eighth     ninth
+          tenth  eleventh twelfth   thirteenth fourteenth fifteenth sixteenth seventeenth eighteenth nineteenth >;
+my @t = < ''     ''       twentieth thirtieth  fortieth   fiftieth  sixtieth  seventieth  eightieth  ninetieth >;
+
 
 sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export {
     if $rat.substr(0,1) eq '-' {
@@ -46,6 +47,7 @@ sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export 
 
     # numerator is just a regular cardinal, add a separator if desired
     $s ~= cardinal-int($num) ~ $separator;
+    # now determine the denoiminator
     if $denom == 2 { # special case irregular halfs
         if $num == 1 {
             $s ~= 'half';
@@ -71,8 +73,8 @@ sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export 
             $s ~= ' ' if $mil;
             if $cen %% 100 {
                 if $cen == 100 and not $mil {
-                    # Drop the one for even one hundreth
-                    $s ~= 'hundreth'
+                    # Drop the one for even one hundredth
+                    $s ~= 'hundredth'
                 } else {
                     $s ~= cardinal-int($cen) ~ 'th'
                 }
@@ -147,4 +149,42 @@ sub cardinal-year ($year where 0 < $year < 10000) is export {
         return cardinal($h) ~ ' ought-' ~ cardinal($l);
     }
     return join ' ', cardinal($h), cardinal($l);
+}
+
+sub ordinal ($int is copy) is export {
+    $int .= Int;
+    my $ten = $int.chars > 2 ?? +$int.substr(*-2) !! +$int;
+    my $mil = $int - $ten;
+    my $s = '';
+    if $mil > 0 {
+        $s = cardinal-int($mil);
+    }
+    if +$mil and !+$ten { return $s ~ 'th' }
+    if +$mil and  +$ten { $s ~= ' ' }
+    if $ten < 20 {
+        $s ~= @d[$ten]
+    } elsif +$ten and $ten %% 10 {
+        $s ~= @t[$ten div 10]
+    } else {
+        $s ~= cardinal-int($ten div 10 * 10) ~ '-' ~ @d[$ten % 10]
+    }
+    $s;
+}
+
+sub ordinal-digit ($int is copy) is export {
+    $int .= Int;
+    my $ten = $int.abs.chars > 2 ?? +$int.substr(*-2) !! +$int.abs;
+    my $s = $int;
+
+    if 10 < $ten < 14  {
+        $s ~= "th";
+    } else {
+        given $int.substr(*-1) {
+            when 1  { $s ~= "st" }
+            when 2  { $s ~= "nd" }
+            when 3  { $s ~= "rd" }
+            default { $s ~= "th" }
+        }
+    }
+    $s;
 }

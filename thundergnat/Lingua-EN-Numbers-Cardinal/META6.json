@@ -1,8 +1,8 @@
 {
     "perl"        : "6.*",
     "name"        : "Lingua::EN::Numbers::Cardinal",
-    "version"     : "0.2.2",
-    "description" : "Convert integer numbers to their cardinal representation",
+    "version"     : "1.0.0",
+    "description" : "Convert integer numbers to their cardinal or ordinal representation",
     "authors"     : [ "Steve Schulze (thundergnat)" ],
     "provides"    : {
         "Lingua::EN::Numbers::Cardinal" : "lib/Lingua/EN/Numbers/Cardinal.pm6"

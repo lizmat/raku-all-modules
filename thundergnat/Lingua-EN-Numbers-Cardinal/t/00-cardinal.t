@@ -2,7 +2,7 @@ use v6;
 use Test;
 use Lingua::EN::Numbers::Cardinal;
 
-plan 62;
+plan *;
 
 is((join ', ', (1..10)».&cardinal), 'one, two, three, four, five, six, seven, eight, nine, ten', 'Int list');
 
@@ -22,7 +22,7 @@ is((join ', ', map {cardinal($_/8, common => 8) }, 0..8),
   'zero, one eighth, two eighths, three eighths, four eighths, five eighths, six eighths, seven eighths, one', 'Rat list common');
 
  {
-      my @t = ( 'one', 'one tenth', 'one hundreth', 'one thousandth',
+      my @t = ( 'one', 'one tenth', 'one hundredth', 'one thousandth',
             'one ten thousandth', 'one one hundred thousandth',
             'one millionth', 'one ten millionth', 'one one hundred millionth',
             'one billionth', 'one ten billionth', 'one one hundred billionth',
@@ -55,7 +55,7 @@ is(cardinal(97873/10000000, separator => '/'),
   'ninety-seven thousand, eight hundred seventy-three/ten millionths', 'Rat separator');
 is(cardinal(17/57, separator => '/'), 'seventeen/fifty-sevenths', 'Rat separator');
 
-is(cardinal(1/100.FatRat), 'one hundreth', 'FatRat');
+is(cardinal(1/100.FatRat), 'one hundredth', 'FatRat');
 is(cardinal(-1/1000.FatRat), 'negative one thousandth', 'FatRat');
 is(cardinal(1/10000.FatRat), 'one ten thousandth', 'FatRat');
 is(cardinal(-1/1000000.FatRat), 'negative one millionth', 'FatRat');
@@ -84,6 +84,5 @@ is(cardinal(-2.5+0i), 'negative two and one half', 'complex with out imaginary p
 #dies-ok({ cardinal() }, 'Dies if no parameter is passed'); # compile time error
 dies-ok({ cardinal(1+1i) }, 'Dies on complex with imaginary part');
 dies-ok({ cardinal(1e306) }, 'Dies on overflow');
-
 
 done-testing();

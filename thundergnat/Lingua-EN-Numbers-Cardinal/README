@@ -4,7 +4,7 @@ Lingua::EN::Numbers::Cardinal
 
 SYNOPSIS
 
-Convert numbers to their cardinal representation.
+Convert numbers to their cardinal or ordinal representation.
 
      use Lingua::EN::Numbers::Cardinal;
 
@@ -22,10 +22,20 @@ Convert numbers to their cardinal representation.
 
         $year      <value; must be an integer between 99 and 10000>
 
+     ordinal( $integer )
+
+        $integer   <value; an integer or something that can be coerced to a
+                    sensible integer value>
+
+     ordinal-digit( $integer )
+
+         $integer   <value; an integer or something that can be coerced to a
+                     sensible integer value>
+
 
 DESCRIPTION
 
-Returns cardinal representations of integers following the American
+Returns cardinal  or ordinal representations of integers following the American
 English, short scale convention.
 
 See L<https://en.wikipedia.org/wiki/Long_and_short_scales>
@@ -129,6 +139,13 @@ Even millenniums are returned as thousands: 2000 -> two thousand.
 Even centuries are returned as hundreds: 1900 -> nineteen hundred.
 Years 1 .. 9 in each century are returned as oughts: 2001 -> twenty ought-one.
 
+ordinal() takes an integer or something that can be coerced to an integer and
+returns a string similar cardinal() except it is "positional" rather than
+valuation. E.G. 'first' rather than 'one', 'eleventh' rather than 'eleven'.
+
+ordinal-digit() takes an integer or something that can be coerced to an integer
+and returns the given value with the appropriate suffix appended to the number.
+1 -> 1st, 3 -> 3rd, 24 -> 24th etc.
 
 USAGE
 
@@ -170,11 +187,18 @@ USAGE
     # or
     say cardinal(15/1000, common => 1000); # fifteen thousandths
 
+    say ordinal(1);               # first
+    say ordinal(2);               # second
+    say ordinal(124 );            # one hundred twenty-third
+    say ordinal(1776);            # one thousand, seven hundred seventy-sixth
+    say ordinal-digit(1776)       # 1776th
+
 BUGS
 
-Expects rational or integer numbers. If you feed it something else, it will try
-to coerce but be prepared for non-sensible results. Does some cursory error
-trapping and coercion but the foot cannon is still loaded.
+The cardinal() routine expects rational or integer numbers. All the other expect
+integers. If you feed them something else, they will try to coerce but be
+prepared for non-sensible results. Does some cursory error trapping and coercion
+but the foot cannon is still loaded.
 
 
 AUTHOR
