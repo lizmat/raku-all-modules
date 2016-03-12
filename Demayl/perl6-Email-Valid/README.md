@@ -17,13 +17,21 @@ say "Mailbox is: " ~ $email.parse('test@domain.tld')[0].Str;
 ## Description
 This module validates if given email is valid.
 It's a validation only for "most" popular email types.
-It allows IDN domains ( 'xn--' )
+It allows IDN domains ( 'xn--' ) and IP address domains ( IPv4 + IPv6 ) disabled by default
 
 ## Methods
 - validate( Str $email! --> Bool )
 - parse( Str $email! --> Match )
 - mx_validate( Str $email! --> Bool ) # Just check if domain has MX record
 - extract( Str $text!, Bool :$matchs = False, Bool :$validate = False --> List )
+
+## Constructor
+- Bool mx_check      = False    # MX test
+- Bool allow-ip      = False    # Allow IPv4 & IPv6 as domain
+- Bool allow-local   = False    # Allow IP private addresses in domain
+- Bool simple        = True     # Perform only local tests ( w/o MX check for example )
+- Str  ns_server     = '8.8.8.8'# Define NS server for MX test
+- Int  ns_server_timeout = 5    # NS server timeout in seconds
 
 ## Examples
 ### Enable MX check
@@ -52,5 +60,5 @@ $email.extract( $txt, :validate ) ;
 - [ ] Add TLD check ( create module Net::Domain::TLD )
 - [ ] Add POD documentation
 - [ ] Allow quoted mailboxes
-- [ ] Allow ip addresses in domain part
+- [x] Allow ip addresses in domain part
 - [ ] Fix ( Add ) IDN domain char limit

@@ -4,11 +4,13 @@ unit class Email::Valid;
 use Net::DNS;
 #use Net::SMTP;
 
-has Bool $.mx_check  = False;
-has Bool $.tld_check = False;
-has Bool $.allow_tags= False;
-has Bool $.simple    = True; # Try only simple regex validation. Usefull in mose cases. You must explicit set it to False to use other tests
-has Str  $.ns_server = '8.8.8.8'; # TODO Allow multiple NS servers
+has Bool $.mx_check     = False;
+has Bool $.tld_check    = False;
+has Bool $.allow_tags   = False;
+has Bool $.allow-ip     = False;
+has Bool $.allow-local  = False;
+has Bool $.simple       = True; # Try only simple regex validation. Usefull in mose cases. You must explicit set it to False to use other tests
+has Str  $.ns_server    = '8.8.8.8'; # TODO Allow multiple NS servers
 has Int  $.ns_server_timeout where 3 <= * <= 250 = 5;
 
 has $!regex_parsed = {}; # Hold regex parse results here. Wait for "is cached" trait and remove this var
@@ -16,23 +18,51 @@ has $!resolver;          # One resolver per instance
 
 
 # TODO allow quoted local parts
-# TODO allow ip address parts ?
 # TODO implement Punycode to convert for IDN
 my Int $max_length = 254;
 my Int $mailbox_max_length = 64;
+my Int $max_subd_parts = 4;
 my %domain_mx;                     # Cache MX records for domains, its cached in class, not instance. One instance can handle multiple checks
 
+# TODO separate grammars
+# Multicast & Experimental addresses are excluded
+my grammar IPv4 {
+    token octet      { (\d**1..3) <?{ $0 < 256 }> }
+    token ipv4       { <!before 0>(<.octet>) \. (<.octet>) \. (<.octet>) \. (<.octet>) }
+    token ipv4-host  { <!before [<multicast>||<experiment>]>[<ipv4-local>||<ipv4>] <!after 0> }
+    token multicast  { (<.octet>)<?{ $0 ~~ 224..239}>\.<.octet> ** 3 % '.' }
+    token experiment { (<.octet>)<?{ $0 ~~ 240..255}>\.<.octet> ** 3 % '.' }
+    token ipv4-local {
+        10\.<.octet> ** 3 % '.' ||
+        172\.(<.octet>)<?{$0 ~~ 16..31}>\.<.octet>\.<.octet> ||
+        192\.168\.<.octet>\.<.octet> ||
+        127\.0\.0\.1
+    }
+}
 
-# grammar got exported in the GLOBAL namespace ... wtf ?
+# This grammar will ignore anycast addresses ( that ends with :: )
+# In short variant :: can be used only once
+# TODO exclude local variants
+my grammar IPv6 {
+    token ipv6-host  { <ipv6-full> || <ipv6-short> || <ipv6-tiny> }
+    token ipv6-full  { <ipv6-block> ** 8 % <.ipv6-sep> <!before ':'0+> }
+    token ipv6-short { <ipv6-block> ** 1..6 % <.ipv6-sep> <.ipv6-sep>**2 <ipv6-block> ** 1..6 % <.ipv6-sep> <?{$/<ipv6-block>.elems < 8}> <!after ':'0+>  }
+    token ipv6-tiny  { <.ipv6-sep> ** 2 <ipv6-block> <!after ':'0+> }
+    token ipv6-sep   { ':' }
+    token ipv6-block { :i <[ a..f 0..9 ]> ** 1..4 }
+}
+
+
 # Use tokens, not rules !
 # Difference between token & rule is that rule enables :sigspace modifier ( match literally a space )
-my grammar Email::Valid::Tokens {
+my grammar Email::Valid::Tokens is IPv4 is IPv6 {
     token TOP     { ^ <email> $}
     token email   { <mailbox><?{$/<mailbox>.codes <= $mailbox_max_length}> '@' <domain><?{$/<domain>.codes <= $max_length - $mailbox_max_length - 1}>  }
     token mailbox { <:alpha +digit> [\w|'.'|'%'|'+'|'-']+<!after < . % + - >> } # we can extend allowed characters or allow quoted mailboxes
     token tld     { [ 'xn--' <:alpha +digit> ** 2..* | <:alpha> ** 2..15 ] }
-    token domain  { ([ <!before '-'> [ 'xn--' <:alpha +digit> ** 2..* | [\w | '-']+ ] <!after '-'> '.' ]) ** 1..4 <?{ all($0.flat) ~~ /^. ** 2..64$/ }>
-         <tld>
+    token domain  { 
+        ([ <!before '-'> [ 'xn--' <:alpha +digit> ** 2..* | [\w | '-']+ ] <!after '-'> '.' ]) ** {1..$max_subd_parts} <?{ all($0.flat) ~~ /^. ** 2..64$/ }>
+         <tld> || \[<ipv4-host>\] || \[ < I i > < P p > < V v >6':'<ipv6-host>\]
     }
 }
 
@@ -41,8 +71,25 @@ my grammar Email::Valid::Ripper is Email::Valid::Tokens {
 }
 
 # Wait for "is cached" trait to remove $!regex_parsed
+# TODO add warnings when mix weird options
 method !parse_regex(Str $email!) {
-    $!regex_parsed{$email} //= Email::Valid::Tokens.parse($email) // False;
+    if $!regex_parsed{$email}.defined.not {
+        my $parsed  = Email::Valid::Tokens.parse($email) // False;
+
+        if $parsed {
+            my $ip      = $parsed<email><domain><ipv4-host> || $parsed<email><domain><ipv6-host>;
+
+            if !$.allow-ip && so $ip { # IP's not allowed
+                $parsed = False;
+            }
+            if $.allow-ip && !$.allow-local && so $ip<ipv4-local> { # IP's allowed but without private addresses
+                $parsed = False;
+            }
+        }
+
+        $!regex_parsed{$email} = $parsed;
+    }
+
 
     return $!regex_parsed{$email};
 }

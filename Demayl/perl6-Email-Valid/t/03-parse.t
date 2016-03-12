@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 2;
+plan 4;
 
 use Email::Valid;
 my $email = Email::Valid.new();
@@ -44,3 +44,11 @@ is [
     validate( 'кутия@тест.ру', 'кутия', 'тест.ру' ),
     ], [ True xx 7 ],
 'Simple mails';
+
+my $ipv4   = Email::Valid.new( :allow-ip, :allow-local );
+my $local  = $ipv4.parse('aa@[10.0.0.1]')<email><domain>;
+my $public = $ipv4.parse('aa@[195.15.15.15]')<email><domain>;
+
+
+is [ $local.Str, $local<ipv4-host>.Str, $local<ipv4-host><ipv4-local> ], [ '[10.0.0.1]', '10.0.0.1' xx 2 ], 'Parse local IPv4';
+is [ $public.Str, $public<ipv4-host>.Str, $public<ipv4-host><ipv4>.Str], [ '[195.15.15.15]', '195.15.15.15' xx 2 ], 'Parse public IPv4';
