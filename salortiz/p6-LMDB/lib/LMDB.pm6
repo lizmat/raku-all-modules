@@ -134,7 +134,6 @@ my class MDB-envinfo is repr('CStruct') {
     has uint32  $.me_numreaders;
 }
 
-
 my sub mdb_strerror(int32) returns Str is native(LIB) { * };
 
 package GLOBAL::X::LMDB {
@@ -147,25 +146,32 @@ package GLOBAL::X::LMDB {
     our class LowLevel is Exception is export {
 #   For errors reported by the lowlevel C library
 	has Int $.code;
-	has Str $.what;
+	has $.what;
 	submethod BUILD(:$!code, :$!what) { };
 	method message() {
-	    my $msg;
-	    $msg ~= "{$!what}: ";
-	    $msg ~= mdb_strerror($!code);
+	    "{~$!what}: &mdb_strerror($!code)"
+	}
+    }
+
+    our class MutuallyExcludedArgs is Exception is export {
+	has Str @.args;
+	has $.method;
+	method message() {
+	    "You must provide one and only one of @.args[] to method $.method";
 	}
     }
 }
 
-my sub mdb_version(Pointer[int32] is rw, Pointer[int32] is rw, Pointer[int32] is rw)
+my sub mdb_version(int32 is rw, int32 is rw, int32 is rw)
     returns Str is native(LIB) { ... };
 
 our sub version() {
     my $res = mdb_version(
-	my Pointer[int32] $mayor .= new,
-	my Pointer[int32] $minor .= new,
-	my Pointer[int32] $patch .= new
+	my int32 $mayor,
+	my int32 $minor,
+	my int32 $patch
     );
+    #dd "Ver: $mayor $minor $patch";
     $res;
 }
 
@@ -177,7 +183,8 @@ our class Env {
 	    returns int32 is native(LIB) { * };
 	method new() {
 	    if mdb_env_create(my Pointer[MDB_env] $p .= new) -> $code {
-		X::LMDB::LowLevel.new(:$code, :what<Can't create>).fail;
+		mdb_env_close($p.deref);
+		X::LMDB::LowLevel.new(:$code, :what<Env create>).fail;
 	    }
 	    $p.deref
 	}
@@ -191,7 +198,18 @@ our class Env {
     has MDB_env $!env;
     method !env { $!env };
 
-    has Txn @.txns;
+    # An attempt to track Txns per thread, see lmdb.h caveats
+    has Array[Txn] @!txns;
+    method !addtxn(Txn $txn) {
+	Lock.new.protect({
+	    my \tid = $*THREAD.id;
+	    (@!txns[tid] //= Array[Txn].new).unshift($txn);
+	    tid;
+	})
+    };
+    method !gettxnl {
+	Lock.new.protect({ @!txns[$*THREAD.id] //= Array[Txn].new; });
+    }
 
     our class DB { ... };
 
@@ -200,7 +218,8 @@ our class Env {
 	Int :$size = 1024 * 1024,
 	Int :$maxdbs,
 	Int :$maxreaders,
-	Int :$flags
+	Int :$flags = 0,
+	int :$mode = 0o777
     ) {
 	sub mdb_env_set_mapsize(MDB_env, size_t)
 	    returns int32 is native(LIB) { };
@@ -210,19 +229,40 @@ our class Env {
 	    returns int32 is native(LIB) { };
 	sub mdb_env_open(MDB_env, Str , uint32, int32)
 	    returns int32 is native(LIB) { };
+	constant EnvFlagMask = [+|] EnvFlag::.values;
 
 	$!env = MDB_env.new;
 	mdb_env_set_mapsize($!env, $size);
 	mdb_env_set_maxreaders($!env, $maxreaders) if $maxreaders;
 	mdb_env_set_maxdbs($!env, $maxdbs) if $maxdbs;
-	if mdb_env_open($!env, $path, $flags || 0, 0o777) -> $code {
-	    X::LMDB::LowLevel.new(:$code, what => "Can't open $path").fail;
+	if mdb_env_open($!env, $path, $flags +& EnvFlagMask, $mode) -> $code {
+	    mdb_env_close($!env);
+	    X::LMDB::LowLevel.new(:$code, what => "Env open '$path'").fail;
 	}
 	self;
     }
 
-    multi method new(Str $path, |args) {
-	self.new(:$path, |args);
+    multi method new(Str $path, Int :$flags is copy = 0;; :$ro, |args) {
+	$flags +|= MDB_RDONLY if $ro;
+	self.new(:$path, :$flags, |args);
+    }
+
+    multi method copy(Env:D: Str:D :$path!, Bool :$compact --> True) {
+	sub mdb_env_copy2(MDB_env, Str, uint32)
+	    returns int32 is native(LIB) { * };
+	my $flag = +$compact; # MDB_CP_COMPACT == 1;
+	if mdb_env_copy2($!env, $path, $flag) -> $code {
+	    X::LMDB::LowLevel.new(:$code, :what<copy to path>).fail;
+	}
+    }
+    multi method copy(Env:D: IO::Handle:D :$io, Bool :$compact --> True) {
+	sub mdb_env_copyfd2(MDB_env, int32, uint32)
+	    returns int32 is native(LIB) { * };
+	my $flag = +$compact; # MDB_CP_COMPACT == 1
+	# TODO: Ensure io opened
+	if mdb_env_copyfd2($!env, $io.native-descriptor, $flag) -> $code {
+	    X::LMDB::LowLevel.new(:$code, :what<copy to fd>).fail;
+	}
     }
 
     method stat(Env:D:) {
@@ -239,15 +279,45 @@ our class Env {
 	Map.new: $a.^attributes.map: { .name.substr(5) => .get_value($a) };
     }
 
+    method close(Env:D: --> True) {
+	if [+] @!txns[*].grep(Array) -> $at {
+	    note "Closing Env with $at active Txn";
+	}
+	mdb_env_close($!env);
+	$!env = Nil;
+    }
+
+    method get-flags(Env:D:) {
+	sub mdb_env_get_flags(MDB_env, uint32 is rw)
+	    returns int32 is native(LIB) { * };
+	if mdb_env_get_flags($!env, my uint32 $flags) -> $code {
+	    X::LMDB::LowLevel.new(:$code, :what<get-flags>).fail;
+	}
+	$flags;
+    }
+
     method get-path(Env:D:) {
 	sub mdb_env_get_path(MDB_env, Pointer[Str] is rw)
 	    returns int32 is native(LIB) { * };
-	mdb_env_get_path($!env, my Pointer[Str] $p .= new);
-	$p.deref;
+	mdb_env_get_path($!env, my Pointer[Str] $path .= new);
+	$path.deref
     }
 
     method begin-txn(Int :$flags = 0) {
 	Txn.new(Env => self, :$flags);
+    }
+
+    method current-txn(Env:D:) {
+	my \txl = self!gettxnl;
+	(my \els = txl.elems) ?? txl[els-1] !! Nil;
+    }
+
+    method txn(Env:D: Int:$flags = 0) {
+	self.current-txn || Txn.new(Env => self, :$flags);
+    }
+
+    method _deep {
+	self!gettxnl.elems;
     }
 
     our class Txn {
@@ -257,23 +327,48 @@ our class Env {
 	    method new($env, MDB_txn $parent, $flags) {
 		my Pointer[MDB_txn] $p .= new;
 		if mdb_txn_begin($env, $parent, $flags, $p) -> $code {
-		    X::LMDB::LowLevel.new(:$code, :what<Can't create>).fail;
+		    X::LMDB::LowLevel.new(:$code, :what<Txn create>).fail;
 		}
 		$p.deref;
 	    }
+	    #method track {
+	    #	use nqp;
+	    #	" txn: " ~ nqp::p6box_i(nqp::unbox_i(nqp::decont(self))).base(16);
+	    #}
 	}
 
-	has Env $!Env;
+	has Env $.Env;
 	has MDB_txn $!txn;
-	method !txn { $!txn };
+	has int $!tid;
+	method !txn is rw { $!txn };
 	class Cursor { ... };
 	trusts Cursor;
+	#method track {
+	#    "Txn " ~ self.WHERE.base(16) ~ $!txn.track;
+	#}
 
 	multi method Bool(::?CLASS:D:) { $!txn.defined };  # Still alive?
 
-	submethod BUILD(:$!Env, Int :$flags = 0) {
-	    my MDB_txn $parent;
+	submethod DESTROY() {
+	    note "Destroy active Txn!" if $!txn;
+	}
+	submethod BUILD(:$!Env, Int :$flags = 0 --> Nil) {
+	    my MDB_txn $parent = do {
+		with $!Env!Env::gettxnl[0] { $_!Txn::txn }
+		else { Nil; }
+	    };
 	    $!txn = MDB_txn.new($!Env!Env::env, $parent, $flags);
+	    without $!txn { $_.throw };
+	    $!tid = $!Env!Env::addtxn(self);
+	}
+	submethod !prune(::?CLASS:D:) {
+	    my \tl = $!Env!Env::gettxnl;
+	    while tl.shift -> \ctxn {
+		last if ctxn === self;
+		ctxn!Txn::txn = Nil;
+	    };
+	    #note "In thread $*THREAD.id() txn deep now {tl.elems}";
+	    $!txn = Nil;
 	}
 
 	method commit(::?CLASS:D: --> True) {
@@ -284,7 +379,7 @@ our class Env {
 	    if mdb_txn_commit($!txn) -> $code {
 		X::LMDB::LowLevel.new(:$code, :what<commit>).fail;
 	    }
-	    $!txn = Nil;
+	    self!prune;
 	}
 
 	method abort(::?CLASS:D: --> True) {
@@ -295,24 +390,27 @@ our class Env {
 	    if mdb_txn_abort($!txn) -> $code {
 		X::LMDB::LowLevel.new(:$code, :what<abort>).fail;
 	    }
-	    $!txn = Nil;
+	    self!prune;
 	}
 
 
-	method db-open(Str :$name, Int :$flags) {
-	    sub mdb_dbi_open(MDB_txn, Str is encoded('utf8'), uint64, Pointer[int32] is rw)
+	method db-open(Str :$name, Int :$flags = 0) {
+	    sub mdb_dbi_open(MDB_txn, Str is encoded('utf8'), uint32, int32 is rw)
 		returns int32 is native(LIB) { * };
+	    constant DbFlagMask = [+|] DbFlag::.values;
 
 	    X::LMDB::TerminatedTxn.new.fail unless $!txn;
-	    my Pointer[int32] $rp .= new;
-	    if mdb_dbi_open($!txn, $name, $flags || 0, $rp) -> $code {
+	    my int32 $rp;
+	    if mdb_dbi_open($!txn, $name, $flags +& DbFlagMask, $rp) -> $code {
 		X::LMDB::LowLevel.new(:$code, :what<db-open>).fail;
 	    }
 	    $rp.Int but dbi;
 	}
 
-	method open(Str :$name, Int :$flags) {
-	    DB.new(Txn => self, dbi => self.db-open(:$name, :$flags));
+	method open(Str :$name, Int :$flags, :$comparer) {
+	    my $dbi = self.db-open(:$name, :$flags) orelse $dbi.fail;
+	    self.set-compare($dbi, $comparer) if $comparer;
+	    DB.new(Txn => self, :$dbi);
 	}
 
 	method opened(dbi $dbi) {
@@ -326,7 +424,7 @@ our class Env {
 	    X::LMDB::TerminatedTxn.new.fail unless $!txn;
 	    if mdb_put($!txn, $dbi,
 		       MDB-val.new-from-str($key), MDB-val.new-from-buf($val),
-		       0
+		       0 # TODO flags
 	    ) -> $code { X::LMDB::LowLevel.new(:$code, :what<put>).fail }
 	    $val;
 	}
@@ -334,7 +432,7 @@ our class Env {
 	    X::LMDB::TerminatedTxn.new.fail unless $!txn;
 	    if mdb_put($!txn, $dbi,
 		       MDB-val.new-from-str($key), MDB-val.new-from-str($val),
-		       0
+		       0 # TODO flags
 	    ) -> $code { X::LMDB::LowLevel.new(:$code, :what<put>).fail }
 	    $val;
 	}
@@ -380,6 +478,20 @@ our class Env {
 	    Map.new: $a.^attributes.map: { .name.substr(5) => .get_value($a) };
 	}
 
+	method set-compare(::?CLASS:D: dbi $dbi, &cb:(Str, Str) --> True) {
+	    sub mdb_set_compare(MDB_txn, int32, &cb (MDB-val, MDB-val -->int32))
+		returns int32 is native(LIB) { * };
+	    X::LMDB::TerminatedTxn.new.fail unless $!txn;
+	    #'&cb needs 2 arguments'.fail unless &cb.arity + &vb.count == 2;
+	    my &wrapper = -> MDB-val $a, MDB-val $b --> int32 {
+		my int32 $res = &cb($a.Str, $b.Str);
+		$res;
+	    };
+	    if mdb_set_compare($!txn, $dbi, &wrapper) -> $code {
+		X::LMDB::LowLevel.new(:$code, :what<set-compare>).fail;
+	    }
+	}
+
 	method cursor-open(::?CLASS:D: dbi $dbi) {
 	    Cursor.new(Txn => self, :$dbi);
 	}
@@ -391,7 +503,7 @@ our class Env {
 		method new($txn, $dbi) {
 		    my Pointer[MDB_cursor] $c .= new;
 		    if mdb_cursor_open($txn, $dbi, $c) -> $code {
-			X::LMDB::LowLevel.new(:$code, :what<Can't create>).fail;
+			X::LMDB::LowLevel.new(:$code, :what<Cursor create>).fail;
 		    }
 		    $c.deref;
 		}
@@ -416,7 +528,7 @@ our class Env {
 		my $k = MDB-val.new-from-any($key);
 		my $d = MDB-val.new-from-any($data);
 		if mdb_cursor_get($!cursor, $k, $d, $op) -> $code {
-		    X::LMDB::LowLevel.new(:$code, :what<cursor_get>).fail;
+		    X::LMDB::LowLevel.new(:$code, :what<cursor-get>).fail;
 		}
 		$key = ~$k; $data = $d;
 		$!itermode = False unless $im;
@@ -440,26 +552,25 @@ our class Env {
 			$_.fail;
 		    }
 		}
-		( $key.Str => $data );
+		Pair.new($key.Str, $data);
 	    }
 	    method is-lazy	{ True };
 	    # Avoid read all the DB!
 	    method sink-all	{ $!itermode = False; IterationEnd }
 	}
     }
+    Metamodel::Primitives.configure_destroy(Txn, 1);
 
     # A high level class that encapsulates a Txn and a dbi
     class DB does Associative does Iterable {
-	has Txn $.Txn handles <commit abort>;
+	has Txn $.Txn handles <commit abort Env>;
 	has dbi $.dbi;
 
 	multi method AT-KEY(::?CLASS:D: $key) {
 	    my \SELF = self;
-	    #note "Atkey";
 	    Proxy.new(
 		FETCH => method () {
-		    (my \v = SELF.Txn.get(SELF.dbi, $key)).defined;
-		    v;
+		    SELF.Txn.get(SELF.dbi, $key) || Nil;
 		},
 		STORE => method ($val) { SELF.Txn.put(SELF.dbi, $key, $val) }
 	    )
@@ -489,20 +600,28 @@ our class Env {
 	method iterator(::?CLASS:D:) { self.pairs.iterator; }
 
 	method open(::?CLASS:U:
-	    Str :$path!,
+	    Env :$Env,
+	    Str :$path,
 	    Str :$name,
-	    Int :$flags = 0,
+	    Int :$flags is copy = 0,
 	    Bool :$create,
-	    Bool :$ro
+	    Bool :$ro,
+	    :$comparer
 	) {
-	    $flags |= MDB_RDONLY if $ro;
-	    my $Txn = Env.new(:$path, :$flags)
-		.begin-txn(
-		    flags => $flags & MDB_RDONLY ?? MDB_RDONLY !! 0
-		);
-	    $Txn.open(:$name, :$flags, :$create);
+	    X::LMDB::MutuallyExcludedArgs.new(:args<$Env $path>, :method<open>).throw
+		unless one($Env, $path);
+	    $flags +|= MDB_RDONLY if $ro;
+	    my $Txn = ($Env || Env.new(:$path, :$flags))
+		.txn(:flags($flags +& MDB_RDONLY));
+	    without $Txn { .fail };
+	    $flags +|= MDB_CREATE if $create;
+	    $Txn.open(:$name, :$flags, :$comparer);
+	}
+
+	method stat(::?CLASS:D:) {
+	    $!Txn.stat($!dbi);
 	}
     }
 }
 
-constant DB = Env::DB;
+constant DB is export = Env::DB;

@@ -1,4 +1,12 @@
 Revision history for Perl6 module LMDB
 
+0.0.2
+  - Experimental support for nested transactions
+  - Add Env.close, Env.copy, Env.get-flags
+  - Implement high level DB class
+  - Add lots of constants via enum
+  - Add Cursor
+  - A proper TODO
+
 0.0.1 Wed Jan 20 2016
   - original release for github, mainly a sneak preview for administrative checks

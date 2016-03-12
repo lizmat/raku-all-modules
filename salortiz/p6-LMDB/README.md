@@ -37,6 +37,11 @@ You install this module with panda:
 
     panda install LMDB
 
+## USE
+
+See QUICK-GUIDE.md
+
+
 *** WARNING ***
 This is an early release to allow the interested people the testing and
 discussion of the module: there is some missing features and you should

@@ -2,7 +2,7 @@ use v6;
 use Test;
 use File::Temp;
 
-plan 64;
+plan 75;
 
 use-ok 'LMDB';
 
@@ -24,7 +24,7 @@ use-ok 'LMDB';
     #$dir = './foo';
 
     throws-like {
-	LMDB::Env.new: $dir, flags => MDB_RDONLY;
+	LMDB::Env.new($dir):ro;
     }, X::LMDB::LowLevel,		'For RO must exists';
 
     my $lmdb = LMDB::Env.new($dir);
@@ -34,6 +34,7 @@ use-ok 'LMDB';
     is $dir, $lmdb.get-path,		'Can get-path';
     ok "$dir/data.mdb".IO ~~ :e,	'Data file created';
     ok "$dir/lock.mdb".IO ~~ :e,	'Lock file created';
+    is $lmdb.get-flags, 0,		'Without flags';
 
     # Basic environment info from native mdb_env_info
     isa-ok (my $info = $lmdb.info), Map, 'Info is-a Map';
@@ -50,9 +51,12 @@ use-ok 'LMDB';
     ok not %info<mapaddr>.defined,	'Not mapfixed';
 
     # Need a Transaction
-    my $Txn = $lmdb.begin-txn;
+    my $Txn = $lmdb.txn;
     ok ?$Txn,				'Alive Txn';
     isa-ok $Txn, LMDB::Env::Txn;
+    is $lmdb._deep, 1,			'Right deep';
+    ok $Txn === $lmdb.current-txn,	'Current one';
+    ok $Txn === $lmdb.txn,		'The same';
 
     # This is a simple db, only one unamed db allowed
     # so test some Failure handling
@@ -60,14 +64,14 @@ use-ok 'LMDB';
 	my $dbi = $Txn.db-open(name => 'NAMED');
 	ok not $dbi.defined,		    'Should fail';
 	is $dbi.WHAT, Failure,		    'Failure reported';
-	ok $dbi.Int ~~ Int,		    'Now handled';
+	ok $dbi.Int ~~ Int,		    'Now handled'; #Hack till F.handled
 	my $e = $dbi.exception;
 	ok $e ~~ X::LMDB::LowLevel,	    'right exception type';
 	like $e.message,  /MDB_DBS_FULL/,   'Expected';
 	is $e.what, 'db-open',		    'Indeed';
     }
 
-    # Lowlevel open
+    # Lowlevel dbi open
     my $dbi = $Txn.db-open;
     ok $dbi.defined,			    "DB Opened, handler: $dbi";
     isa-ok $dbi, Int but LMDB::dbi,	    'A guarded Int';
@@ -103,15 +107,21 @@ use-ok 'LMDB';
         $Txn.commit;
     }, X::LMDB::TerminatedTxn,		"Can't commit a terminated Txn";
 
+    throws-like {
+        $Txn.abort;
+    }, X::LMDB::TerminatedTxn,		"Can't abort a terminated Txn";
+
     $Txn = $lmdb.begin-txn;
     ok ?$Txn,				'Alive';
 
     # Now test the high level
-    my $DB = $Txn.opened($dbi);
-
-    my %H := $DB;
+    my %H;
+    lives-ok {
+	%H := $Txn.opened($dbi);
+    },					'From opened low level dbi';
     ok %H.defined,			'hash bindable';
     isa-ok %H, LMDB::Env::DB;
+    isa-ok %H, LMDB::DB,		'Aliased';
 
     is %H.elems, 3,			'elems';
     is +%H, 3,				'Numeric context';
@@ -121,21 +131,26 @@ use-ok 'LMDB';
     is %H<aKey>, 'aValue',		'Get';
     ok %H<uKey>:exists,			'Exists';
     ok %H<uKey>:delete,			'Delete';
-    ok not $%<uKey>:exists,		'Deleted';
+    ok %H<uKey>:!exists,		'Deleted';
 
     # Testing direct Buf access
     is %H<vKey>.mv_buff[9..12]
 	.map({($_ % 0x100).fmt('%x')})
-       .join,	    <deadbeaf>,		'Woow!';
+       .join,	    <deadbeaf>,		'Buf access works';
 
     isa-ok %H.pairs, Seq,		'pairs returns Seq';
     ok %H.pairs.is-lazy,		'a lazy one';
+    isa-ok %H.pairs.list, List,		'To List';
+    ok %H.pairs.list.is-lazy,		'lazy also';
 
     isa-ok %H.keys, Seq,		'keys returns Seq';
     ok %H.keys.is-lazy,			'a lazy one';
+    is %H.keys.flat, <aKey vKey>,	'Expected ones';
 
-    isa-ok %H.values, Seq,		'values returns Seq';
-    ok %H.values.is-lazy,		'a lazy one';
+    my $v = %H.values;
+    isa-ok $v, Seq,			'values returns Seq';
+    ok $v.is-lazy,			'a lazy one';
+    is $v[0], 'aValue',			'Expected';
 
     isa-ok %H.kv, Seq,			'kv returns Seq';
     ok %H.kv.is-lazy,			'a lazy one';
