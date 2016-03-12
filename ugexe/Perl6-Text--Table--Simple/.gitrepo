@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ugexe/Perl6-Text--Table--Simple.git
 	branch = master
-	commit = fbb7793b72c915898b9169848f204fff616ef15c
-	parent = 6f88ac94826590032246fc44ff5ec13c123d5447
+	commit = 430251b7babb1675603124439024c648860b470a
+	parent = da63e36ef9294f7f26e15430b2068fe89c92ba0a
 	cmdver = 0.2.3
