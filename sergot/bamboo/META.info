@@ -1,6 +1,6 @@
 {
     "name"      : "Bamboo",
-    "version"   : "0.0.2",
+    "version"   : "0.0.3",
     "author"   : "github:sergot",
     "description"   : "Perl 6 dependency manager",
     "depends"   : [

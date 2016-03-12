@@ -18,7 +18,6 @@ use Bamboo;
         source-url => "git://github.com/sergot/bamboo.git"
     ;
 
-    shell("rm $path/META.info");
     $bamboo.generate-meta(%meta);
 
     ok "$path/META.info".IO.f, "inits module";
