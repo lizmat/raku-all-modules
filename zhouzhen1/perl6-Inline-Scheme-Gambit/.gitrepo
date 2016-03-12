@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zhouzhen1/perl6-Inline-Scheme-Gambit.git
+	branch = master
+	commit = 4bc12d1d8d9e74b54c7fc0b8f56fd74f066ce18f
+	parent = 03fdc78c3e3a711faf5ee6b95d320924b15209ff
+	cmdver = 0.2.3

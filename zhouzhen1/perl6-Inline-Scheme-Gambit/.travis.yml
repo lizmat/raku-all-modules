@@ -1,0 +1,12 @@
+language: perl6
+git:
+    depth: 10
+perl6:
+    - latest
+before_install:
+    - sudo apt-get -qq update
+    - sudo apt-get install -y gambc
+install:
+    - rakudobrew build-panda
+    - panda installdeps .
+    - GSC=/usr/bin/gsc perl6 Configure.pl6

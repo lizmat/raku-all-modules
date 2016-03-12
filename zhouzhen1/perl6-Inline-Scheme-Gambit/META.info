@@ -1,0 +1,12 @@
+{
+    "name" : "Inline::Scheme::Gambit",
+    "version" : "0.01",
+    "author" : "github:zhouzhen1",
+    "description" : "Embedded Gambit-C for Perl 6",
+    "depends" : [ "LibraryMake" ],
+    "provides" : {
+        "Inline::Scheme::Gambit" : "lib/Inline/Scheme/Gambit.pm6"
+    },
+    "resources" : [ "libraries/gambithelper" ],
+    "source-url" : "git://github.com/zhouzhen1/perl6-Inline-Scheme-Gambit.git"
+}
