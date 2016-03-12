@@ -1,4 +1,5 @@
 unit module Benchmark;
+use MONKEY-SEE-NO-EVAL;
 
 my sub time_it (Int $count where { $_ > 0 }, Code $code) {
     my $start-time = time;
