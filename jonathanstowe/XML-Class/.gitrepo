@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/XML-Class.git
+	branch = master
+	commit = 1454a3b85fba3f0e903e8d5d9324c92de3106d24
+	parent = ab3eb2b0161667e3e600db11c987901bff5a3551
+	cmdver = 0.2.3
