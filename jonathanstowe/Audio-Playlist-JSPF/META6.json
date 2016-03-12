@@ -1,0 +1,33 @@
+{
+   "name" : "Audio::Playlist::JSPF",
+   "version" : "0.0.1",
+   "perl" : "6.c",
+   "support" : {
+      "source" : "git://github.com/jonathan/stowe/Audio-Playlist-JSPF.git"
+   },
+   "authors" : [
+      "Jonathan Stowe <jns+gh@gellyfish.com.uk>"
+   ],
+   "provides" : {
+      "Audio::Playlist::JSPF" : "lib/Audio/Playlist/JSPF.pm"
+   },
+   "auth" : "github:jonathanstowe",
+   "description" : "JSON representation of a 'playlist'",
+   "tags" : [
+      "playlist",
+      "music",
+      "JSON",
+      "xiph"
+   ],
+   "depends" : [
+      "JSON::Class"
+   ],
+   "build-depends" : [],
+   "test-depends" : [
+      "Test"
+   ],
+   "license" : "perl",
+   "resource" : {},
+   "meta6" : "0",
+   "source-url" : "git://github.com/jonathanstowe/Audio-Playlist-JSPF.git"
+}
