@@ -1,4 +1,4 @@
-unit class IO::Glob;
+unit class IO::Glob:auth<github:zostay>:ver<0.1> does Iterable;
 
 use v6;
 
@@ -8,6 +8,15 @@ use v6;
 
     use IO::Glob;
 
+    # Need a list of files somewhere?
+    for glob("src/core/*.pm") -> $file { say $file }
+
+    # Or apply the glob to a chosen directory
+    with glob("*.log") {
+        for .dir("/var/log/error") -> $err-log { ... }
+        for .dir("/var/log/access") -> $acc-log { ... }
+    }
+
     # Use a glob to match a string or path
     if "some-string" ~~ glob("some-*") { say "match string!" }
     if "some/path.txt".IO ~~ glob("some/*.txt") { say "match path!" }
@@ -15,12 +24,16 @@ use v6;
     # Use a glob as a test in built-in IO::Path.dir()
     for "/var/log".IO.dir(test => glob("*.err")) -> $err-log { ... }
 
-    # Or better, do it directly from here
-    for glob("*.err").dir("/var/log") -> $err-log { ... }
-
     # Globs are objects, which you can save, reuse, and pass around
     my $file-match = glob("*.txt);
     my @files := dir("$*HOME/docs", :test($file-match));
+
+    # Want to use SQL globbing with % and _ instead?
+    for glob("src/core/%.pm", :sql) -> $file { ... }
+
+    # Or want globbing without all the fancy bits?
+    # :simple turns off everything but * an ?
+    for glob("src/core/*.pm", :simple) -> $file { ... }
 
 =end SYNOPSIS
 
@@ -29,15 +42,17 @@ use v6;
 Traditionally, globs provide a handy shorthand for identifying the files you're
 interested in based upon their path. This class provides that shorthand using a
 BSD-style glob grammar that is familiar to Perl devs. However, it is more
-powerful than it's predecessor in Perl 5's File::Glob.
+powerful than its Perl 5 predecessor.
 
-=item # Globs are built as IO::Glob objects which encapsulate the pattern and let you pass them around for whatever use you want to put them too.
+=item Globs are built as IO::Glob objects which encapsulate the pattern. You may create them and pass them around.
 
-=item # By using L<#method dir>, you can put globs to their traditional use, listing all the files in a directory.
+=item By using them as an iterator, you can put globs to their traditional use: listing all the files in a directory.
 
-=item # It also works well as a smart-match. It will match against strings or anything that stringifies and against L<IO::Path>s too. This allows it to be used with the built-in L<IO::Path#method dir> too.
+=item Globs also work as smart-matches. It will match against strings or anything that stringifies and against L<IO::Path>s too.
 
-=item # You can use custom grammars for your smart match. This is still somewhat experimental, but if you need a different glob style that is provided, you can roll your own with a small amount of effort or extend on of the existing ones. This class ships with three grammars: Simple, BSD, and SQL.
+=item Globbing can be done with different grammars. This class ships with three: simple, BSD, and SQL.
+
+=item B<Experimental.> You can use custom grammars for your smart match.
 
 =end DESCRIPTION
 
@@ -81,9 +96,7 @@ class Globber {
 }
 
 # Unlike File::Glob in Perl 5, we don't make a bunch of options to turn off each
-# kind of feature. Instead, we give them the option to pick a grammar. They are
-# free to subclass a grammar as simple or complicated as they like and we give
-# them the obvious grammars to begin with.
+# kind of feature. Instead, we give callers the option to pick a grammar.
 grammar Base {
     token TOP {
         <term>+
@@ -179,8 +192,23 @@ grammar BSD is Simple {
 
 =head2 sub glob
 
-    sub glob(Str:D $pattern, :$grammar = IO::Glob::BSD.new, :$spec = $*SPEC) returns IO::Glob:D
-    sub glob(Whatever $, :$grammar = IO::Glob::BSD.new, :$spec = $*SPEC) returns IO::Glob:D
+    sub glob(
+        Str:D $pattern,
+        Bool :$sql,
+        Bool :$bsd,
+        Bool :$simple,
+        :$grammar,
+        :$spec = $*SPEC
+    ) returns IO::Glob:D
+
+    sub glob(
+        Whatever $,
+        Bool :$sql,
+        Bool :$bsd,
+        Bool :$simple,
+        :$grammar,
+        :$spec = $*SPEC
+    ) returns IO::Glob:D
 
 When given a string, that string will be stored in the L<#method
 pattern/pattern> attribute and will be parsed according to the L<#method
@@ -190,22 +218,34 @@ When given L<Whatever> (C<*>) as the argument, it's the same as:
 
     glob('*');
 
-which will match anything. (Note that what whatever matches may be grammar specific, so C<glob(*, :grammar(IO::Glob::SQL))> is the same as C<glob('%')>.)
+which will match anything. (Note that what whatever matches may be grammar
+specific, so C<glob(*, :sql)> is the same as C<glob('%')>.)
 
-The optional C<:$grammar> setting lets you select a globbing grammar to use. Two
-are provided:
+If you want to pick from one of the built-in grammars, you may use these options:
 
-=item IO::Glob::Simple (which supports just C<*> and C<?>)
+=item C<:bsd> is the default specifying this is explicit, but unnecessary. This grammar supports C<*>, C<?>, C<[abc]>, C<[!abc]>, C<~>, and C<{ab,cd,efg}>.
 
-=item IO::Glob::BSD (supports C<*>, C<?>, C<[abc]>, C<[!abc]>, C<~>, and C<{ab,cd,efg}>)
+=item C<:sql> uses a SQL-ish grammar that provides C<%> and C<_> matching.
 
-=item IO::Glob::SQL (supports C<%> and C<_>)
+=item C<:simple> is a simplified version of C<:bsd>, but only supports C<*> and C<?>.
 
-If you want a grammar that does something else, you may create your own as well,
-but no documentation of that process has been written yet as of this writing.
+The C<:$spec> option allows you to specify the L<IO::Spec> to use when
+matching paths. It uses C<$*SPEC>, by default. The IO::Spec is used to split
+paths by directory separator when matching paths. (This is ignored when matching
+against other kinds of objects.)
 
-Finally, the C<:$spec> option allows you to specify the L<IO::Spec> to use when
-matching paths. It uses C<$*SPEC>, by default.
+An alternative to this is to use the optional C<:$grammar> setting lets you
+select a globbing grammar object to use. These are provided:
+
+=item IO::Glob::BSD
+
+=item IO::Glob::SQL
+
+=item IO::Glob::Simple
+
+B<Experimental.> If you want a different grammar, you may create your own as
+well, but no documentation of that process has been written yet as of this
+writing.
 
 =head1 METHODS
 
@@ -251,6 +291,8 @@ method !compile-globs() {
     });
 }
 
+method iterator(IO::Glob:D:) { self.dir.iterator }
+
 =begin pod
 
 =head2 method dir
@@ -258,9 +300,15 @@ method !compile-globs() {
     method dir(Cool $path = '.') returns Seq:D
 
 Returns a list of files matching the glob. This will descend directories if the
-pattern contains a L<IO::Spec#dir-sep> using a depth-first search. (This ought
-to respect the order of alternates in expansions like C<{bc,ab}>, but that is
-not supported yet at this time.)
+pattern contains a L<IO::Spec#dir-sep> using a depth-first search. This method
+is called implicitly when you use the object as an iterator. For example, these
+two lines are identical:
+
+    for glob('*.*') -> $all-dos-files { ... }
+    for glob('*.*').dir -> $all-dos-files { ... }
+
+B<Caveat.> This ought to respect the order of alternates in expansions like C<{bc,ab}>,
+but that is not supported yet at this time.
 
 =end pod
 
@@ -328,9 +376,26 @@ multi method ACCEPTS(IO::Path:D $path) returns Bool:D {
     [&&] (@parts Z @!globbers).flatmap: -> ($p, $g) { $p ~~ $g };
 }
 
-multi sub glob(Str:D $pattern, :$grammar = BSD.new, :$spec = $*SPEC) returns IO::Glob:D is export {
+multi sub glob(
+    Str:D $pattern,
+    Bool :$sql,
+    Bool :$bsd,
+    Bool :$simple,
+    :grammar($g),
+    :$spec = $*SPEC
+) returns IO::Glob:D is export {
+    my $grammar = do with $g { $g } elsif $sql { SQL.new } elsif $simple { Simple.new } else { BSD.new };
     IO::Glob.new(:$pattern, :$grammar, :$spec);
 }
-multi sub glob(Whatever $, :$grammar = BSD.new, :$spec = $*SPEC) returns IO::Glob:D is export {
+
+multi sub glob(
+    Whatever $,
+    Bool :$sql,
+    Bool :$bsd,
+    Bool :$simple,
+    :grammar($g),
+    :$spec = $*SPEC
+) returns IO::Glob:D is export {
+    my $grammar = do with $g { $g } elsif $sql { SQL.new } elsif $simple { Simple.new } else { BSD.new };
     IO::Glob.new(:pattern($grammar.whatever-match), :$grammar, :$spec);
 }
