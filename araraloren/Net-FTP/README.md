@@ -39,6 +39,8 @@ if $ftp.login() {
  - Net::FTP::Format - getyear(), gettimet(), not yet implement.
  - Net::FTP - FTP only implemented passive mode.
 
+## TODO
+ - not available on new rakudo version
 
 
 

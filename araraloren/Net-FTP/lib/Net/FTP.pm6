@@ -104,7 +104,7 @@ method cdup() {
 method mkdir(Str $remote-path) {
 	$!ftpc.cmd_mkd($remote-path.subst("\n", "\0"));
 	if self!handlecmd() {
-		if $!code == 257 && ($!msg ~~ /\"(.*)\"/) {
+		if $!code == 257 && ($!msg ~~ /'"'(.*)'"'/) {
 			return ~$0;
 		} else {
 			return $remote-path;
@@ -125,7 +125,7 @@ method rmdir(Str $remote-path) {
 method pwd() {
 	$!ftpc.cmd_pwd();
 	if self!handlecmd() {
-		if ($!msg ~~ /\"(.*)\"/) {
+		if ($!msg ~~ /'"'(.*)'"'/) {
 			return ~$0;
 		}
 	}
@@ -134,7 +134,7 @@ method pwd() {
 
 method passive(Bool $passive?) {
 	if $passive {
-		$!passive = $passive;
+        $!passive = $passive;
 	}
 	return $!passive;
 }
@@ -445,7 +445,7 @@ method !conn_transfer() {
 			$transfer;
 		}
 	} else {
-
+		die("sorry, Not implement !!");
 	}
 }
 
@@ -647,21 +647,103 @@ Net::FTP is a ftp client class in perl6.
 
 =head2 pwd( --> Str | enum);
 
+    Get current directory.
+
+    CODE:
+        $ftp.pwd();
+
+    RETURN VALUE:
+        Current Directory - When success;
+        FTP::FAIL - When failed.
+
 =head2 passive([Bool $passive], --> Bool);
+    Get or set data connection will use passive mode.
+
+    CODE:
+        $ftp.passive(); #get passive mode status
+        $ftp.passive(True); #Then next data connection will use passive mode.
+
+    RETURN VALUE:
+        Passive mode status - When success;
+        FTP::FAIL - When failed.
 
 =head2 type(Net::FTP::Config::MODE $type, --> enum);
+    Set file transfer mode. MODE may be ASCII or BINARY.
+
+    CODE:
+        use Net::FTP::Config;
+        $ftp.type(MODE::ASCII); # set ASCII mode
+
+    RETURN VALUE:
+        FTP::OK	- When success;
+        FTP::FAIL - When failed.
 
 =head2 ascii( --> enum);
+    File transfer will use ASCII mode.
 
+    CODE:
+        $ftp.ascii();
+
+    RETURN VALUE:
+        FTP::OK	- When success;
+        FTP::FAIL - When failed.
 =head2 binary( --> enum);
+    File transfer will use BINARY mode.
+
+    CODE:
+        $ftp.binary();
+
+    RETURN VALUE:
+        FTP::OK	- When success;
+        FTP::FAIL - When failed.
 
 =head2 rest(Int $pos, --> enum);
+    FTP server keeps track of a start postion for the client,
+    use rest request set the start postion.FTP server will use
+    the start postion when next file data transfer.
 
-=head2 list(Str $remote-path, --> Array[Hash]);
+    CODE:
+        $ftp.rest(100);
 
-=head2 ls(Str $remote-path, --> Array[Hash]);
+    RETURN VALUE:
+        FTP::OK	- When success;
+        FTP::FAIL - When failed.
 
-=head2 dir(Str $remote-path, --> Array[Hash]);
+=head2 list([Str $remote-path], --> Array[Hash]);
+    List the current directory or $remote-path files and subdirectories.
+    A directory contents may be like above:
+    | .
+    | ..
+    | samplefile.c
+    | sampledir
+    Result of list('./'):
+    (
+        {:name("."), :type(FILE::DIR)},
+        {:name(".."), :type(FILE::DIR)},
+        {:name("samplefile.c"), :type(FILE::NORMAL), :size(100)},
+        {:name("sampledir"), :type(FILE::DIR)}
+    )
+    These all hash's key:
+        name    => file name
+        link    => symbol link name
+        id      => file identification
+        type    => file type
+        size    => file size
+        time    => file last modify time
+
+    CODE:
+        $ftp.list(); # list current directory contents
+        $ftp.list('/somedir'); # list /somedir contents
+
+    RETURN VALUE:
+        Hash Array - When success;
+        FTP::FAIL - When failed.
+
+=head2 ls([Str $remote-path], --> Array[Hash]);
+    An alias of list([Str]);
+
+=head2 dir([Str $remote-path], --> Array[Hash]);
+    An alias of list([Str]);
 
 =head2 stor(Str $remote-path, Buf | Str $data, --> enum);
 

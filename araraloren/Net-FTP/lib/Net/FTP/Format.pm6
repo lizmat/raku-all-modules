@@ -3,15 +3,53 @@ use Net::FTP::Config;
 
 unit module Net::FTP::Format;
 
+our ($now, $currentyear) = BEGIN {
+    my Int $day = 0;
+    my Int $year = 0;
+    my Int $base = 0;
+
+    # add code
+    my Int $now = +(time) - $base;
+
+    $day = ($now / 86400).floor; # 86400 - one day
+    $day-- if $now % 86400 < 0;
+    $day -= 11017; # ?
+    $year = 5 + ($day / 146097).floor;
+    $day %= 146097;
+    if $day < 0 {
+        $day += 146097; --$year;
+    }
+    $year *= 4;
+    if $day == 146096 {
+        $year += 3;$day = 36524;
+    }
+    $year *= 25;
+    $year += ($day / 1461).floor;
+    $day %= 1461;
+    $year *= 4;
+    if $day == 1460 {
+        $year += 3;$day = 365;
+    } else {
+        $year += ($day / 365).floor;$day %= 365;
+    }
+    $day *= 10;
+    $year++ if (($day + 5) / 306).floor >= 10;
+    ($now, $year);
+}
+
 #   FOMAT
 #   name    => file name
 #   link    => symbol link name
 #   id      => file identification
 #   type    => file type
 #   size    => file size
-#   time    => file last modify time
+#   time    => file last modify time [Date]
 
-sub format (Str $str) is export {
+# LINK
+# http://cr.yp.to/ftpparse/ftpparse.c
+
+sub format (Str $str, :$debug = False) is export {
+    note '+' ~ $str if $debug;
     ($str ~~ /^\+/) ?? formatEplf($str) !! formatBinls($str);
 }
 
@@ -35,7 +73,8 @@ sub formatEplf(Str $str is copy) {
         } elsif /s(\d+)/ {
             %info<size> = +$0;
         } elsif /m(\d+)/ {
-            %info<time> = +$0;
+            # change time type to DateTime
+            %info<time> = makeDateTime(+$0);
         }
         # seems like fmode have not use
         #(elsif /up(\d+)/ {
@@ -67,9 +106,10 @@ sub formatBinls(Str $str is copy) {
                 $<name> = (.*)$/ {
             %info<name> = ~$<name>;
             %info<size> = +$<size>;
-            %info<time> = gettimet(
-                    +($<year> ?? $<year> !! getyear()),
-                    getmonth(~$<month>),
+            my $month = getmonth(~$<month>);
+            %info<time> = makeDateTime(
+                    +($<year> ?? $<year> !! getyear($month, +$<day>)),
+                    $month,
                     +$<day>,
                     +($<year> ?? 0 !! $<hour>),
                     +($<year> ?? 0 !! $<minute>));
@@ -104,7 +144,7 @@ sub formatBinls(Str $str is copy) {
                 $<hour> = (\d+)\:
                 $<minute> = (\d+)/ {
             #$0 day $1 month $2 year $3 hour $4 minute
-            %info<time> = gettimet(
+            %info<time> = makeDateTime(
                     $<year>,
                     getmonth(~$<month>),
                     $<day>,
@@ -121,7 +161,7 @@ sub formatBinls(Str $str is copy) {
                 $<typeorsize> = ([\<DIR\> | \d+])\s+
                 $<name> = (.*)/ {
         #$0 month $1 day $2 year $3 hour $4 minute $5 AM | PM
-        %info<time> = gettimet(
+        %info<time> = makeDateTime(
                     $<year>,
                     $<month>,
                     $<day>,
@@ -171,27 +211,39 @@ constant @month = (
     "sep","oct","nov","dec"
 );
 
-sub getmonth(Str $str) {
+sub getmonth(Str $str) returns Int {
     my $strlc = $str.lc;
 
-    my $i = 0;
-
-    for @month {
-        if $strlc eq $_ {
-            return $i;
-        }
-        $i++;
+    loop (my Int $i = 0;$i < +@month;$i++) {
+        return $i + 1 if $strlc eq @month[$i];
     }
-
     return -1;
 }
 
-sub getyear() {
-    0;
+sub getyear(Int $month, Int $day) {
+    my Int $t;
+
+    loop (my Int $year = $currentyear - 1;$year < $currentyear + 100;++$year) {
+        $t = getseconds($year, $month, $day);
+        if $now - $t < 350 * 86400 {
+            return $year;
+        }
+    }
+    return -1;
 }
 
-sub gettimet(Int $year, Int $month, Int $day, Int $hour, Int $minute) {
-    0;
+multi sub makeDateTime(Int $year, Int $month, Int $day, Int $hour, Int $minute) returns DateTime {
+    return DateTime.new(
+        year => $year,
+        month => $month,
+        day => $day,
+        hour => $hour,
+        minute => $minute
+    );
+}
+
+multi sub makeDateTime(Int $timet) returns DateTime {
+    return DateTime.new($timet);
 }
 
 # $month start 0;
@@ -204,8 +256,8 @@ sub getseconds(Int $y, Int $m, Int $d) is export {
     } else {
         $month -= 2;
     }
-    
-    return (($year / 4).floor  - ($year / 100).floor + ($year / 400).floor  + 
+
+    return (($year / 4).floor  - ($year / 100).floor + ($year / 400).floor  +
         $year * 365 + (367 * $month / 12).floor + $day - 719499) * 86400;
 }
 

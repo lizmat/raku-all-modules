@@ -2,6 +2,7 @@
 use Net::FTP::Buffer;
 use Net::FTP::Config;
 use Net::FTP::Conn;
+use experimental :pack;
 
 unit class Net::FTP::Control is Net::FTP::Conn;
 
@@ -153,6 +154,10 @@ method cmd_help(Str $cmd) {
 
 method cmd_noop() {
     self.sendcmd('NOOP');
+}
+
+method cmd_feat() {
+    self.sendcmd('FEAT');
 }
 
 method cmd_close() {

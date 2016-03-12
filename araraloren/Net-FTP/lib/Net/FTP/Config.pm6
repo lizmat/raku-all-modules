@@ -2,7 +2,7 @@
 unit module Net::FTP::Config;
 
 enum FTP is export <
-	FAIL OK
+	FAIL OK UNIMPL
 >;
 
 enum MODE is export <
