@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/skids/perl6-Control-Bail.git
+	branch = master
+	commit = 3e7ff9d21de27889131b12cec6f207d0f24146aa
+	parent = 24c0439694648590e998b6df8da9ccec15ab1f3f
+	cmdver = 0.2.3

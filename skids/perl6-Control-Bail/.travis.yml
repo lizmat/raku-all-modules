@@ -1,0 +1,8 @@
+language: perl6
+perl6:
+  - latest
+script:
+  - PERL6LIB=$PWD/blib/lib prove -e perl6 -r t/
+  # And once more after auto-compilation
+  - PERL6LIB=$PWD/blib/lib prove -e perl6 -r t/
+sudo: false
