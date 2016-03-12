@@ -1,0 +1,20 @@
+{
+  "name" : "Frinfon",
+  "source-url" : "git://github.com/skaji/Frinfon.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "Frinfon" : "lib/Frinfon.pm6"
+  },
+  "depends" : [
+    "Crust",
+    "Router::Boost"
+  ],
+  "description" : "minimal sinatra",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "Shoichi Kaji"
+  ]
+}
