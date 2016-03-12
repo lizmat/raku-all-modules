@@ -254,19 +254,24 @@ Also return the B<index> of the delimiter and the delimiter as a C<Pair>.
 Examples:
 
 =begin code
-    say split(";", "a;b;c")            # (a b c)
-    say split(";", "a;b;c", :v)        # (a ; b ; c)
-    say split(";", "a;b;c", 2)         # (a b;c)
-    say split(";", "a;b;c", 2, :v)     # (a ; b;c)
-    say split(";", "a;b;c,d")          # (a b c,d)
-    say split(/\;/, "a;b;c,d")         # (a b c,d)
-    say split(<; ,>, "a;b;c,d")        # (a b c d)
-    say split(/<[;,]>/, "a;b;c,d")     # (a b c d)
-    say split(<; ,>, "a;b;c,d", :k)    # (a 0 b 0 c 1 d)
-    say split(<; ,>, "a;b;c,d", :kv)   # (a 0 ; b 0 ; c 1 , d)
 
-    say "abcde".split("")              # ( a b c d e )
-    say "abcde".split("",:skip-empty)  # (a b c d e)
+    say split(";", "a;b;c").perl            # ("a", "b", "c")
+    say split(";", "a;b;c", :v).perl        # ("a", ";", "b", ";", "c")
+    say split(";", "a;b;c", 2).perl         # ("a", "b;c").Seq
+    say split(";", "a;b;c", 2, :v).perl     # ("a", ";", "b;c")
+    say split(";", "a;b;c,d").perl          # ("a", "b", "c,d")
+    say split(/\;/, "a;b;c,d").perl         # ("a", "b", "c,d")
+    say split(<; ,>, "a;b;c,d").perl        # ("a", "b", "c", "d")
+    say split(/<[;,]>/, "a;b;c,d").perl     # ("a", "b", "c", "d")
+    say split(<; ,>, "a;b;c,d", :k).perl    # ("a", 0, "b", 0, "c", 1, "d")
+    say split(<; ,>, "a;b;c,d", :kv).perl   # ("a", 0, ";", "b", 0, ";", "c", 1, ",", "d")
+
+    say "".split("x").perl                  # ("",)
+    say "".split("x", :skip-empty).perl     # ("",)
+
+    say "abcde".split("").perl              # ("", "a", "b", "c", "d", "e", "")
+    say "abcde".split("",:skip-empty).perl  # ("a", "b", "c", "d", "e")
+
 =end code
 
 =head2 routine comb
@@ -691,17 +696,20 @@ Example:
     multi method trans(Str:D: Pair:D \what, *%n) returns Str
     multi method trans(Str:D: *@changes, :complement(:$c), :squash(:$s), :delete(:$d)) returns Str
 
-Replaces one or many substrings with one or many strings. Ranges are supported, both for keys and
-values. Regexes work as keys. When called with C<:complement> anything but the matched value or range
-is replaced with a single value. With C<:delete> the matched characters are removed.
-Combining C<:complement> and C<:delete> will remove anything but the matched values.
-The adverb C<:squash> will reduce repeated matched characters to a single character. 
+Replaces one or many characters with one or many characters. Ranges are
+supported, both for keys and values. Regexes work as keys. In case a list of
+keys and values is used, substrings can be replaced aswell. When called with
+C<:complement> anything but the matched value or range is replaced with a
+single value. With C<:delete> the matched characters are removed.  Combining
+C<:complement> and C<:delete> will remove anything but the matched values.  The
+adverb C<:squash> will reduce repeated matched characters to a single
+character. 
 
 Example:
 
     my $str = 'say $x<b> && $y<a>';
-    $str.=trans( '<' => '&lt;' );
-    $str.=trans( '<' => '&lt;', '>' => '&gt;' );
+    $str.=trans( '<' => '«' );
+    $str.=trans( '<' => '«', '>' => '»' );
     
     $str.=trans( [ '<'   , '>'   , '&' ] =>
                  [ '&lt;', '&gt;', '&amp;' ]);
@@ -758,6 +766,34 @@ Remove the whitespace characters from the end of a string. See also L<trim>.
 =head2 method trim-leading
 
 Remove the whitespace characters from the beginning of a string. See also L<trim>.
+
+=head2 method NFC
+
+    method NFC(Str:D:) returns NFC:D
+
+Returns a codepoint string in L<NFC|/type/NFC> format (Unicode Normalization
+Form C / Composed).
+
+=head2 method NFD
+
+    method NFD(Str:D:) returns NFD:D
+
+Returns a codepoint string in L<NFC|/type/NFD> format (Unicode Normalization
+Form D / Decomposed).
+
+=head2 method NFKC
+
+    method NFKC(Str:D:) returns NFKC:D
+
+Returns a codepoint string in L<NFKC|/type/NFKC> format (Unicode Normalization
+Form KC / Compatibility Composed).
+
+=head2 method NFKD
+
+    method NFKD(Str:D:) returns NFKD:D
+
+Returns a codepoint string in L<NFC|/type/NFKD> format (Unicode Normalization
+Form KD / Compatibility Decomposed).
 
 =head2 method ACCEPTS
 

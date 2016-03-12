@@ -97,13 +97,20 @@ For string arguments that are specified as C<const char *> it is necessary
 to tell Perl not to free the memory allocated to the C string after the
 function returns using C<explicitly-manage> :
 
-    # C prototype is set_foo(const char * foo)
+    # C prototype is void set_foo(const char * foo)
 	sub set_foo(Str) is native('foo') { * }
     my $string = "FOO";
     explicitly-manage($string);
     set_foo($string);
-    
+
 =head1 Basic use of Pointers
+
+When the signature of your native function needs a pointer to some native type
+(int, uint, etc.) all you need to do is declare the argument C<is rw> :
+
+   # C prototype is void my_version(int *mayor, int *minor)
+       sub my_version(int32 is rw, int32 is rw) is native('foo') { * }
+   my_version(my int32 $mayor, my int32 $minor); # Pass a pointer to
 
 Sometimes you need to get a pointer (for example, a library handle) back from a
 C library. You don't care about what it points to - you just need to keep hold
@@ -118,13 +125,28 @@ can serve this role. This means you can expose libraries that work on handles
 by writing a class like this:
 
     class FooHandle is repr('CPointer') {
+        has $!initialized;
+
         # Here are the actual NativeCall functions.
         sub Foo_init() returns FooHandle is native("foo") { * }
         sub Foo_free(FooHandle) is native("foo") { * }
 
         # Here are the methods we use to expose it to the outside world.
-        method new() { Foo_init() }
-        method free() { Foo_free(self) }
+        method new() {
+            Foo_init();
+            $!initialized = True;
+        }
+        method free() {
+            if $!initialized {
+                Foo_free(self);
+                $!initialized = False; # prevent double frees
+            }
+        }
+
+        # Free data when the object is garbage collected.
+        method DESTROY() {
+            self.free;
+        }
     }
 
 Note that the CPointer representation can do nothing more than hold a C pointer.
@@ -139,6 +161,23 @@ And just use the class as you would use Pointer, but with potential for
 better type safety and more readable code.
 
 Once again, type objects are used to represent nulls.
+
+=head1 Function Pointers
+
+C libraries can expose pointers to C functions as return values of functions and as
+members of Structures like e.g. structs and unions.
+
+Example of invoking a function pointer "$fptr" returned by a function "f", using sub "def"
+as definition of the desired function signature and return value:
+
+    sub f() returns Pointer is native('mylib') { * }
+    my $fptr = f();
+
+    sub def() returns int32 is native('mylib') { * }
+
+    my &newfunc = nativecast(&def, $fptr);
+
+    say newfunc();
 
 =head1 Arrays
 
@@ -225,12 +264,12 @@ CStruct reprs). Other than that, you can do the usual set of things you would wi
 a class; you could even have some of the attributes come from roles or have them
 inherited from another class. Of course, methods are completely fine too. Go wild!
 
-CStruct objects are passed to native functions by reference and native functions 
-must also return CStruct objects by reference. The memory management 
-rules for these references are very much like the rules for arrays, though simpler 
-since a struct is never resized. When you create a struct, the memory is managed for 
-you and when the variable(s) pointing to the instance of a CStruct go away, the memory 
-will be freed when the GC gets to it. When a CStruct-based type is used as the return 
+CStruct objects are passed to native functions by reference and native functions
+must also return CStruct objects by reference. The memory management
+rules for these references are very much like the rules for arrays, though simpler
+since a struct is never resized. When you create a struct, the memory is managed for
+you and when the variable(s) pointing to the instance of a CStruct go away, the memory
+will be freed when the GC gets to it. When a CStruct-based type is used as the return
 type of a native function, the memory is not managed for you by the GC.
 
 NativeCall currently doesn't put object members in containers, so assigning new values
@@ -292,8 +331,8 @@ You have to call C<.deref> on it to access the embeded type.
   my Pointer[MyCstruct] $p2 = some_c_routine();
   my MyCstruct $mc = $p2.deref;
   say $mc.field1;
-  
-  
+
+
 
 =head1 Buffers and Blobs
 
@@ -321,20 +360,28 @@ to callbacks.
 
 TBD more
 
-The C<native> trait accept simple lib name or a full path. It's common to
-have the lib parameter defined as a constant than can be modified via an
-environment variable. This is an example from the mysql binding in C<DBIIsh>
+The C<native> trait accept a simple lib name or a full path.
 
-  constant LIB = %*ENV<DBIISH_MYSQL_LIB> || 'mysqlclient';
+  constant LIBMYSQL = 'mysqlclient';
+  constant LIBFOO = '/usr/lib/libfoo.so.1';
   # and later
-  sub mysql_affectied_rows( .. ) returns int32 is native(LIB)
+  sub mysql_affectied_rows( .. ) returns int32 is native(LIBMYSQL);
+  sub bar is native(LIBFOO);
 
 You can also put incomplete path like './foo', NativeCall will automaticly put
 the right extension according to the plateform specification.
 
+BE CAREFUL: the C<native> trait and C<constant> are evalued at compile time. Don't write a constant
+that depend on dynamic variable like:
+
+  constant LIBMYSQL = %*ENV<P6LIB_MYSQLCLIENT> || 'mysqlclient';
+
+This will keep the value given at compile time. A module will be precompiled and C<LIBMYSQL> will
+keep the value it get evaluated when the module get precompiled.
+
 =head2 ABI/API Version
 
-If you write C<native('libfoo')> NativeCall will search libfoo.so under Unix like system (libfoo.dynlib on Os X).
+If you write C<native('foo')> NativeCall will search libfoo.so under Unix like system (libfoo.dynlib on Os X, foo.dll on win32).
 In most modern system it will requiere you or the user of your module to install
 the develepment package because it's recommanded to always provide an API/ABI version to a
 shared library, so libfoo.so ends often being a symbolic link provided only by a devel package.
@@ -344,9 +391,9 @@ version or just a part of it (Try to stick to Major version, some BSD does not c
 
   sub foo is native('foo', v1); # Will try to load libfoo.so.1
   sub foo is native('foo', v1.2.3); # Will try to load libfoo.so.1.2.3
-  
-  #From DBIish Pg driver
-  constant LIB = %*ENV<DBIISH_PG_LIB> || ('pq', v5);
+
+  my List $lib = ('foo', 'v1');
+  sub foo is native($lib);
 
 
 =head2 Routine
@@ -355,6 +402,8 @@ the C<native> trait also accept a C<Callable> as argument, allowing you to provi
 own way to handle the way it will find the library file to load.
 
   sub foo is native(sub {'libfoo.so.42'});
+
+It will only be called at the first invocation of the sub.
 
 =head2 Calling into the standard library
 

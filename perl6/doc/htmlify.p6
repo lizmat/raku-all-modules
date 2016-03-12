@@ -35,6 +35,7 @@ use experimental :pack;
 my $type-graph;
 my %routines-by-type;
 my %*POD2HTML-CALLBACKS;
+my %p5to6-functions;
 
 # TODO: Generate menulist automatically
 my @menu =
@@ -155,9 +156,22 @@ sub MAIN(
     }
 }
 
-sub extract-pod($file) {
-    use MONKEY-SEE-NO-EVAL;
-    my $pod  = EVAL(slurp($file.path) ~ "\n\$=pod")[0];
+my $precomp-store = CompUnit::PrecompilationStore::File.new(:prefix($?FILE.IO.parent.child("precompiled")));
+my $precomp = CompUnit::PrecompilationRepository::Default.new(store => $precomp-store);
+
+sub extract-pod(IO() $file) {
+    use nqp;
+    # The file name is enough for the id because POD files don't have depends
+    my $id = nqp::sha1(~$file);
+    my $handle = $precomp.load($id,:since($file.modified));
+
+    if not $handle {
+        # precomile it
+        $precomp.precompile($file, $id);
+        $handle = $precomp.load($id);
+    }
+
+    return nqp::atkey($handle.unit,'$=pod')[0];
 }
 
 sub process-pod-dir($dir, :&sorted-by = &[cmp], :$sparse) {
@@ -227,6 +241,11 @@ sub process-pod-source(:$kind, :$pod, :$filename, :$pod-is-complete) {
 
     find-definitions :$pod, :$origin, :url("/$kind/$filename");
     find-references  :$pod, :$origin, :url("/$kind/$filename");
+
+    # Special handling for 5to6-perlfunc
+    if $filename eq '5to6-perlfunc' {
+      find-p5to6-functions( :$pod, :$origin, :url("/$kind/$filename"))
+    }
 }
 
 # XXX: Generalize
@@ -318,6 +337,19 @@ sub find-references(:$pod!, :$url, :$origin) {
             find-references(:pod($sub-pod), :$url, :$origin) if $sub-pod ~~ Pod::Block;
         }
     }
+}
+
+sub find-p5to6-functions(:$pod!, :$url, :$origin) {
+  if $pod ~~ Pod::Heading && $pod.level == 2  {
+      # Add =head2 function names to hash
+      my $func-name = ~$pod.contents[0].contents;
+      %p5to6-functions{$func-name} = 1;
+  }
+  elsif $pod.?contents {
+      for $pod.contents -> $sub-pod {
+          find-p5to6-functions(:pod($sub-pod), :$url, :$origin) if $sub-pod ~~ Pod::Block;
+      }
+  }
 }
 
 sub register-reference(:$pod!, :$origin, :$url) {
@@ -602,15 +634,24 @@ sub write-search-file () {
     sub escape(Str $s) {
         $s.trans([</ \\ ">] => [<\\/ \\\\ \\">]);
     }
-    my $items = $*DR.get-kinds.map(-> $kind {
+    my @items = $*DR.get-kinds.map(-> $kind {
         $*DR.lookup($kind, :by<kind>).categorize({escape .name})\
             .pairs.sort({.key}).map: -> (:key($name), :value(@docs)) {
                 qq[[\{ category: "{
                     ( @docs > 1 ?? $kind !! @docs.[0].subkinds[0] ).wordcase
                 }", value: "$name", url: "{@docs.[0].url}" \}]] #"
             }
-    }).flat.join(",\n");
-    spurt("html/js/search.js", $template.subst("ITEMS", $items));
+    }).flat;
+
+    # Add p5to6 functions to JavaScript search index
+    @items.append( %p5to6-functions.keys.map( {
+      my $url = "/language/5to6-perlfunc#" ~ $_.subst(' ', '_', :g);
+      sprintf(
+        q[[{ category: "5to6-perlfunc", value: "%s", url: "%s" }]],
+        $_, $url
+      );
+    }));
+    spurt("html/js/search.js", $template.subst("ITEMS", @items.join(",\n") ));
 }
 
 sub write-disambiguation-files () {

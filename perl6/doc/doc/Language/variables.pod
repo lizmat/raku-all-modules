@@ -247,7 +247,8 @@ Although they may not be changed at runtime, the user is allowed to
     constant $?TABSTOP = 4; # this causes leading tabs in a heredoc or in a POD
                             # block's virtual margin to be counted as 4 spaces.
 
-For a list of these special variables see L<#Compile-time variables>.
+For a list of these special variables see
+L<compile-time variables|/language/variables#Compile-time_variables>.
 
 =head2 The C<.> Twigil
 
@@ -537,6 +538,14 @@ sub a {
 };
 
 say a for 1..6;
+
+This works per "clone" of the containing code object, so:
+
+    ({ state $i = 1; $i++.say; } xx 3).map: {$_(), $_()}; # says 1 then 2 thrice
+
+Note that this is B<not> a thread-safe construct when the same clone of the same
+block is run by multiple threads.  Also remember that methods only have one
+clone per class, not per object.
 
 =end code
 
