@@ -9,13 +9,8 @@ class ABC::Header {
 
     method set-key($new-key) {
         my $found = False;
-        for self.lines <-> $line {
-            if $line.key eq "K" {
-                $line.value = $new-key;
-                $found = True;
-            }
-        }
-        self.lines.push("K" => $new-key) unless $found;
+        self.lines = self.lines.grep(*.key ne "K"); # remove old key signatures
+        self.lines.push("K" => $new-key);
     }
     
     method get($name) {
