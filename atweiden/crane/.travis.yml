@@ -1,0 +1,10 @@
+branches:
+  only:
+    - master
+
+language: perl6
+
+perl6:
+  - latest
+
+sudo: false
