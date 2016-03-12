@@ -14,7 +14,9 @@
     "provides"     : {
         "IRC::Client::Plugin::Factoid" : "lib/IRC/Client/Plugin/Factoid.pm6"
     },
-    "author"       : "Zoffix Znet",
-    "source-url"   :
-        "git://github.com/zoffixznet/perl6-IRC-Client-Plugin-Factoid.git"
+    "authors"      : ["Zoffix Znet"],
+    "support"      : {
+        "source"   :
+           "git://github.com/zoffixznet/perl6-IRC-Client-Plugin-Factoid.git"
+    }
 }
