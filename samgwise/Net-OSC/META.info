@@ -1,0 +1,15 @@
+{
+  "perl"          : "6.c",
+  "name"          : "Net::OSC",
+  "version"       : "0.001",
+  "description"   : "A perl6 implementation of the Open Sound Control Protocol.",
+  "author"        : "Sam Gillespie",
+  "provides"      : {
+      "Net::OSC"          : "lib/Net/OSC.pm",
+      "Net::OSC::Message" : "lib/Net/OSC/Message.pm",
+      "Net::OSC::Bundle"  : "lib/Net/OSC/Bundle.pm"
+  },
+  "depends" : [ ],
+  "test-depends" : [ "Test" ],
+  "source-url" : "git://github.com/samgwise/Net-OSC.git"
+}
