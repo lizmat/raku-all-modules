@@ -4,7 +4,7 @@ use v6.c;
 use Slang::Tuxic;
 use File::Temp;
 
-my $VERSION = "0.003";
+my $VERSION = "0.004";
 
 my constant $opt_v = %*ENV<PERL6_VERBOSE> // 1;
 
@@ -18,6 +18,11 @@ my %errors =
     1002 => "INI - allow_whitespace with escape or quoter SP or TAB",
     1003 => "INI - \r or \n in main attr not allowed",
     1004 => "INI - callbacks should be Hash or undefined",
+
+    1010 => "INI - the header is empty",
+    1011 => "INI - the header contains more than one valid separator",
+    1012 => "INI - the header contains an empty field",
+    1013 => "INI - the header contains nun-unique fields",
 
     # Parse errors
     2010 => "ECR - QUO char inside quotes followed by CR not part of EOL", # 5
@@ -639,6 +644,34 @@ class Text::CSV {
         $attr;
         }
     method diag_verbose (*@s) returns Int { self!a_bool_int ($!diag_verbose, @s); }
+
+    method header (IO     $fh,
+                   Array :$sep-set            = [< , ; >],
+                   Any   :$munge-column-names = "fc",
+                   Bool  :$set-column-names   = True) {
+        my Str $hdr = $fh.get         or  self!fail (1010);
+
+        # Determine separator conflicts
+        my %sep = $hdr.comb.Bag{$sep-set.list}:kv;
+        %sep.elems > 1 and self!fail (1011);
+
+        self.sep (%sep.keys);
+
+        given $munge-column-names {
+            when Callable | "none" {             }
+            when "lc"              { $hdr .= lc; }
+            when "uc"              { $hdr .= uc; }
+            default                { $hdr .= fc; }
+            }
+
+        self.getline ($hdr)             or  self!fail ($!errno);
+        my @row = self.list             or  self!fail (1010);
+        $munge-column-names ~~ Callable and @row = @row.map ($munge-column-names);
+        @row.grep ("")                  and self!fail (1012);
+        @row.Bag.elems == @row.elems    or  self!fail (1013);
+        $set-column-names               and self.column-names: @row;
+        self;
+        }
 
     method column_names (*@c) returns Array[Str] {
         if (@c.elems == 1 and !@c[0].defined || (@c[0] ~~ Bool && !?@c[0])) {
