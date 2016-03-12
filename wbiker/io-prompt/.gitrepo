@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/wbiker/io-prompt.git
+	branch = master
+	commit = 9f2b627fa5f555f8b17486b8c5ceb5657bbb7fb8
+	parent = d90cace61838a71b2be27723d17511e5539f4912
+	cmdver = 0.2.3

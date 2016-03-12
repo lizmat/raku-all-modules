@@ -1,0 +1,14 @@
+{
+    "perl" : "6.*",
+    "name" : "IO::Prompt",
+    "version" : "0.0.2",
+    "description" : "This is a generic module for interactive prompting from the console.",
+    "authors" : [ "pnu", "wbiker" ],
+    "provides" : {
+    	"IO::Prompt" : "lib/IO/Prompt.pm"
+    },
+    "depends" : [ ],
+    "test-depends" : [ "Test" ],
+    "resources" : [ ],
+    "source-url" : "git://github.com/wbiker/io-prompt.git"
+}

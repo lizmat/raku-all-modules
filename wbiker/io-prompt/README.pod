@@ -1,0 +1,120 @@
+=head1 
+
+IO::Prompt -- Interactive validating terminal prompt
+
+=for HTML <a href="https://travis-ci.org/wbiker/io-prompt"><img src="https://travis-ci.org/wbiker/io-prompt.svg?branch=master"></a>
+
+=head1 SYNOPSIS
+
+    use v6;
+    use IO::Prompt;
+
+    my $a = ask( "Defaults to 42, type Num?", 42, :type(Num) );
+    say $a.perl;
+    say '------------------------------';
+
+    $a = ask( "Defaults to false?", Bool::False );
+    say $a.perl;
+    say '------------------------------';
+
+    $a = ask( "No default but type Bool?", :type(Bool) );
+    say $a.perl;
+    say '------------------------------';
+
+
+    ## OO style ##
+    my $prompt = IO::Prompt.new();
+
+    $a = $prompt.ask( "Dot notation?", Bool::False );
+    say $a.perl;
+    say '------------------------------';
+
+
+    ## You can override the IO methods for testing purposes
+    class IO::Prompt::Testable is IO::Prompt {
+        method !do_say( Str $question ) returns Bool {
+            say "Testable saying    '$question'";
+            say 'Please do not continue questioning';
+            return Bool::False; # do not continue
+        }   
+        method !do_prompt( Str $question ) returns Str {
+            say "Testable saying    '$question'";
+            say "Testable answering 'daa'";
+            return 'daa';
+        }
+    }
+
+    my $prompt_test = IO::Prompt::Testable.new();
+    $a = $prompt_test.ask_yn( "Testable, defaults to false?", Bool::False );
+    say $a.perl;
+    say '------------------------------';
+
+
+    ## You can override the language class attributes
+    class IO::Prompt::Finnish is IO::Prompt {
+        our $.lang_prompt_Yn        = 'K/e';
+        our $.lang_prompt_yN        = 'k/E';
+        our $.lang_prompt_yn        = 'k/e';
+        our $.lang_prompt_yn_retry  = 'Sano kyllä tai ei';
+        our $.lang_prompt_match_y   = m/ ^^ <[kK]> /;
+        our $.lang_prompt_match_n   = m/ ^^ <[eE]> /;
+        our $.lang_prompt_int       = 'Int';
+        our $.lang_prompt_int_retry = 'Anna kokonaisluku';
+        our $.lang_prompt_num       = 'Num';
+        our $.lang_prompt_num_retry = 'Anna luku';
+        our $.lang_prompt_str       = 'Str';
+        our $.lang_prompt_str_retry = 'Anna merkkijono';
+    }
+
+    my $prompt_fi = IO::Prompt::Finnish.new();
+    $a = $prompt_fi.ask( "Suomeksi Bool?", :type(Bool) );
+    say $a.perl;
+    say '------------------------------';
+    $a = $prompt_fi.ask( "Suomeksi Num?", :type(Num) );
+    say $a.perl;
+    say '------------------------------';
+    $a = $prompt_fi.ask( "Suomeksi Str?", :type(Str) );
+    say $a.perl;
+    say '------------------------------';
+
+=head1 DESCRIPTION
+
+This is a generic module for interactive prompting
+from the console. 
+
+The build-in function prompt is great, but sometimes it is convenient
+to have default values and/or the control over the return type.
+
+IO::Prompt provides both. 
+
+Original written bei pnu.
+
+=head2 FUNCTIONAL METHODS
+
+IO::Prompt provides method ask to set the question string, a default answer and/or
+a return type.
+
+Examples:
+
+    use IO::Prompt;
+
+    my $answer = ask("What do you want for Christmas?", "Perl6");
+    $answer = Whatever the user entered or if just Enter was pressed the string Perl6
+
+=head2 OO
+
+IO::Prompt provides also a OO interface.
+
+Example:
+
+    use IO::Prompt;
+
+    my $asker = IO::Prompt.new;
+    my $answer = $asker.ask("Wanna some money?", 2e9, :type(Num));
+
+=head1 COPYRIGHT
+
+Written by pnu, maintained by wbiker
+
+
+
