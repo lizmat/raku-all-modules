@@ -1,16 +1,19 @@
-use v6;
+use v6.c;
 use BSON::Document;
+use MongoDB;
+use MongoDB::CollectionIF;
+use MongoDB::ClientIF;
 use MongoDB::Wire;
 
 #-------------------------------------------------------------------------------
 #
 package MongoDB {
 
-  #-------------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   #
-  class Cursor {
+  class Cursor does Iterable {
 
-    has $.collection;
+    has $.client;
     has $.full-collection-name;
 
     # Cursor id ia an int64 (8 byte buffer). When set to 8 0 bytes, there are
@@ -22,33 +25,52 @@ package MongoDB {
     #
     has @.documents;
 
-    #-----------------------------------------------------------------------------
+    has $server where .^name eq 'MongoDB::Server';
+
+    #---------------------------------------------------------------------------
     # Support for the newer BSON::Document
     #
-    multi submethod BUILD ( :$collection!, BSON::Document:D :$server-reply ) {
+    multi submethod BUILD (
+      MongoDB::CollectionIF:D :$collection!,
+      BSON::Document:D :$server-reply!,
+      :$server! where .^name eq 'MongoDB::Server'
+    ) {
 
-      $!collection = $collection;
-      $!full-collection-name = $!collection.full-collection-name;
+      $!client = $collection.database.client;
+      $!full-collection-name = $collection.full-collection-name;
 
       # Get cursor id from reply. Will be 8 * 0 bytes when there are no more
       # batches left on the server to retrieve. Documents may be present in
       # this reply.
       #
       $!id = $server-reply<cursor-id>;
+      if [+] @($server-reply<cursor-id>) {
+        $!server = $server;
+      }
+
+      else {
+        $!server = Nil;
+      }
 
       # Get documents from the reply.
       #
       @!documents = $server-reply<documents>.list;
     }
 
-    # This can be set with data received from a command e.g. listDocuments
+    # This can be set with data received from a command e.g. listDatabases
     #
-    multi submethod BUILD ( BSON::Document:D :$cursor-doc! ) {
+    multi submethod BUILD (
+      MongoDB::ClientIF:D :$client!,
+      BSON::Document:D :$cursor-doc!,
+      BSON::Document :$read-concern
+    ) {
 
-#TODO Check provided structure for the fields.
+      $!client = $client;
 
-      $!collection = $cursor-doc<ns>;
       $!full-collection-name = $cursor-doc<ns>;
+
+      my BSON::Document $rc =
+         $read-concern.defined ?? $read-concern !! $client.read-concern;
 
       # Get cursor id from reply. Will be 8 * 0 bytes when there are no more
       # batches left on the server to retrieve. Documents may be present in
@@ -58,13 +80,43 @@ package MongoDB {
       $d does MongoDB::Header;
 
       $!id = $d.encode-cursor-id($cursor-doc<id>);
+      if [+] @$!id {
+        $!server = $!client.select-server(:$read-concern);
+      }
+
+      else {
+        $!server = Nil;
+      }
 
       # Get documents from the reply.
       #
       @!documents = @($cursor-doc<firstBatch>);
+
+#      $!read-concern = $read-concern;
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
+    # Iterator to be used in for {} statements
+    #
+    method iterator ( ) {
+      # Save object to be used in Iterator object
+      #
+      my $cursor-object = self;
+
+      # Create anonymous class which does the Iterator role
+      #
+      class :: does Iterator {
+        method pull-one ( --> Mu ) {
+          my BSON::Document $doc = $cursor-object.fetch;
+          return $doc.defined ?? $doc !! IterationEnd;
+        }
+
+      # Create the object for this class and return it
+      #
+      }.new();
+    }
+
+    #---------------------------------------------------------------------------
     method fetch ( --> BSON::Document ) {
 
       # If there are no more documents in last response batch but there is
@@ -75,33 +127,46 @@ package MongoDB {
         # Request next batch of documents
         #
         my BSON::Document $server-reply =
-          MongoDB::Wire.instance.get-more(self);
+          MongoDB::Wire.new.get-more( self, :$!server);
 
-        # Get cursor id, It may change to "0" if there are no more
-        # documents to fetch.
-        #
-        $!id = $server-reply<cursor-id>;
+        if $server-reply.defined {
 
-        # Get documents
-        #
-        @!documents = $server-reply<documents>.list;
+          # Get cursor id, It may change to "0" if there are no more
+          # documents to fetch.
+          #
+          $!id = $server-reply<cursor-id>;
+          unless [+] @$!id {
+            $!server = Nil;
+          }
+
+          # Get documents
+          #
+          @!documents = $server-reply<documents>.list;
+        }
+
+        else {
+          @!documents = ();
+        }
       }
 
       # Return a document when there is one. If none left, return Nil
       #
-      return +@!documents ?? @!documents.shift !! Nil;
+      return +@!documents ?? @!documents.shift !! BSON::Document;
     }
 
-    #-----------------------------------------------------------------------------
+    #---------------------------------------------------------------------------
     method kill ( --> Nil ) {
 
-      # invalidate cursor on database
-      MongoDB::Wire.instance.kill-cursors((self,));
+      # Invalidate cursor on database only if id is valid
+      #
+      if [+] @$.id {
+        MongoDB::Wire.new.kill-cursors( (self,), :$!server);
 
-      # invalidate cursor id
-      $!id = Buf.new( 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-
-      return;
+        # Invalidate cursor id with 8 0x00 bytes
+        #
+        $!id = Buf.new(0x00 xx 8);
+        $!server = Nil;
+      }
     }
   }
 }

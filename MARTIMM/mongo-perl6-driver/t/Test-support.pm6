@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 use Test;
 use MongoDB::Client;
 use MongoDB::Database;
@@ -8,45 +8,45 @@ package Test-support
 {
   state $empty-document = BSON::Document.new();
 
+  # N servers started
+  #
+  my $nbr-of-servers = 3;
+  our $server-range = (^$nbr-of-servers + 1);
+
   #-----------------------------------------------------------------------------
   # Get selected port number. When file is not there the process fails.
   #
-  sub get-port-number ( --> Int ) is export {
-    # Skip sandbox setup if testing on TRAVIS-CI or no sandboxing is requested,
-    # just return default port.
-    #
-    if %*ENV<NOSANDBOX> {
-      return 27017;
-    }
+  sub get-port-number ( Int :$server = 1 --> Int ) is export {
 
-    elsif 'Sandbox/port-number'.IO !~~ :e {
+    $server = 1 unless  $server ~~ any $server-range;
+
+    if "Sandbox/Server$server/port-number".IO !~~ :e {
       plan 1;
       flunk('No port number found, Sandbox cleaned up?');
       skip-rest('No port number found, Sandbox cleaned up?');
       exit(0);
     }
 
-    my $port-number = slurp('Sandbox/port-number').Int;
+    my $port-number = slurp("Sandbox/Server$server/port-number").Int;
     return $port-number;
   }
 
   #-----------------------------------------------------------------------------
   # Get a connection.
   #
-  sub get-connection ( --> MongoDB::Client ) is export {
+  sub get-connection ( Int :$server = 1 --> MongoDB::Client ) is export {
 
-    if 'Sandbox/NO-MONGODB-SEFVER'.IO ~~ :e {
+    $server = 1 unless  $server ~~ any $server-range;
+
+    if "Sandbox/Server$server/NO-MONGODB-SERVER".IO ~~ :e {
       plan 1;
       flunk('No database server started!');
       skip-rest('No database server started!');
       exit(0);
     }
 
-    my Int $port-number = get-port-number();
-    my MongoDB::Client $client .= instance(
-      :host('localhost'),
-      :port($port-number)
-    );
+    my Int $port-number = get-port-number(:$server);
+    my MongoDB::Client $client .= new(:uri("mongodb://localhost:$port-number"));
 
     return $client;
   }
@@ -54,11 +54,14 @@ package Test-support
   #-----------------------------------------------------------------------------
   # Test communication after starting up db server
   #
-  sub get-connection-try10 ( --> MongoDB::Client ) is export {
-    my Int $port-number = get-port-number();
+  sub get-connection-try10 ( Int :$server = 1 --> MongoDB::Client ) is export {
+
+    $server = 1 unless  $server ~~ any $server-range;
+
+    my Int $port-number = get-port-number(:$server);
     my MongoDB::Client $client;
     for ^10 {
-      $client .= instance( :host<localhost>, :port($port-number));
+      $client .= new(:uri("mongodb://localhost:$port-number"));
       if ? $client.status {
         diag [~] "Error: ",
                  $client.status.error-text,
@@ -98,34 +101,6 @@ package Test-support
       say $document.perl;
     }
   }
-
-#`{{
-  #-----------------------------------------------------------------------------
-  # Display a document
-  #
-  sub show-document ( BSON::Document $document ) is export {
-
-    print "Document: ";
-    my $indent = '';
-    for $document.keys -> $k {
-      say sprintf( "%s%-20.20s: %s", $indent, $k, $document{$k});
-      $indent = ' ' x 10 unless $indent;
-    }
-    say "";
-  }
-
-
-  #-----------------------------------------------------------------------------
-  # Drop database
-  #
-  sub drop-database (
-    MongoDB::Database $database
-    --> BSON::Document
-  ) is export {
-
-    return $database.run-command(BSON::Document.new: (dropDatabase => 1));
-  }
-}}
 }
 
 

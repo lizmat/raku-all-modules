@@ -1,9 +1,12 @@
-use v6;
-use lib 't'; #, '/home/marcel/Languages/Perl6/Projects/BSON/lib';
+use v6.c;
+use lib 't';
 use Test-support;
 use Test;
+use MongoDB;
 use MongoDB::Client;
 use MongoDB::Users;
+use MongoDB::Database;
+use MongoDB::Collection;
 
 #`{{
   Testing;
@@ -18,25 +21,18 @@ use MongoDB::Users;
 }}
 
 #-------------------------------------------------------------------------------
-# No sandboxing therefore administration will not be tested as a precaution.
-#
-if %*ENV<NOSANDBOX> {
-  plan 1;
-  skip-rest('No sand-boxing requested, administration tests are skipped');
-  exit(0);
-}
+#set-logfile($*OUT);
+#set-exception-process-level(MongoDB::Severity::Debug);
+info-message("Test $?FILE start");
 
-#-------------------------------------------------------------------------------
 my MongoDB::Client $client = get-connection();
-my MongoDB::Database $database .= new(:name<test>);
-my MongoDB::Database $db-admin .= new(:name<admin>);
+my MongoDB::Database $database = $client.database('test');
 my MongoDB::Collection $collection = $database.collection('testf');
-my BSON::Document $req;
 my BSON::Document $doc;
-my MongoDB::Cursor $cursor;
 my MongoDB::Users $users .= new(:$database);
 
 $database.run-command: (dropDatabase => 1);
+$database.run-command: (dropAllUsersFromDatabase => 1);
 
 #-------------------------------------------------------------------------------
 subtest {
@@ -68,7 +64,7 @@ subtest {
   $users.set-pw-security(
     :min-un-length(5),
     :min-pw-length(6),
-    :pw_attribs(MongoDB::Users::C-PW-OTHER-CHARS)
+    :pw_attribs(MongoDB::C-PW-OTHER-CHARS)
   );
 
   try {
@@ -79,8 +75,9 @@ subtest {
     );
 
     CATCH {
-      when X::MongoDB {
-        ok .error-text eq 'Username too short, must be >= 5', .error-text;
+      when MongoDB::Message {
+        ok .message ~~ m:s/Username too 'short,' must be '>= 5'/,
+           'Username too short';
       }
     }
   }
@@ -93,8 +90,9 @@ subtest {
     );
 
     CATCH {
-      when X::MongoDB {
-        ok .error-text eq 'Password too short, must be >= 6', .error-text;
+      when MongoDB::Message {
+        ok .message ~~ m:s/Password too 'short,' must be '>= 6'/,
+           'Password too short';
       }
     }
   }
@@ -107,9 +105,9 @@ subtest {
     );
 
     CATCH {
-      when X::MongoDB {
-        ok .error-text eq 'Password does not have the right properties',
-           .error-text;
+      when MongoDB::Message {
+        ok .message ~~ m:s/Password does not have the right properties/,
+           'Password does not have the right properties';
       }
     }
   }
@@ -120,7 +118,9 @@ subtest {
     :roles(['readWrite'])
   );
 
+say $doc.perl;
   ok $doc<ok>, 'User mt-and-another-few-chars created';
+
 
   $doc = $database.run-command: (dropUser => 'mt-and-another-few-chars');
   ok $doc<ok>, 'User mt-and-another-few-chars deleted';
@@ -210,5 +210,6 @@ subtest {
 #
 $database.run-command: (dropDatabase => 1);
 
+info-message("Test $?FILE start");
 done-testing();
 exit(0);

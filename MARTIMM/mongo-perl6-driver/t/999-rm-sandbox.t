@@ -1,71 +1,68 @@
-use v6;
+use v6.c;
 use lib 't';
 use Test;
 use Test-support;
+use MongoDB;
 use MongoDB::Client;
 use MongoDB::Server;
 use MongoDB::Socket;
 
+#-------------------------------------------------------------------------------
+#set-logfile($*OUT);
+#set-exception-process-level(MongoDB::Severity::Debug);
+info-message("Test $?FILE start");
+
 #-----------------------------------------------------------------------------
-# Stop mongodb unless sandbox isn't found, no sandbox requested
 #
-if %*ENV<NOSANDBOX> or 'Sandbox/port-number'.IO !~~ :e {
-  plan 1;
-  skip-rest('No sand-boxing requested');
-  exit(0);
+for @$Test-support::server-range -> $server-number {
+
+  my Str $server-dir = "Sandbox/Server$server-number";
+
+  my Int $port-number = slurp("$server-dir/port-number").Int;
+  my MongoDB::Client $client .= new(:uri("mongodb://localhost:$port-number"));
+  ok $client.nbr-servers > 0, "One or more servers via localhost:$port-number";
+
+  if $client.nbr-servers {
+    my MongoDB::Server $server = $client.select-server;
+    diag "Wait for $server.name() to stop";
+    $client.shutdown-server($server); #(:force);
+  }
+
+  $client .= new(:uri("mongodb://localhost:$port-number"));
+  is $client.nbr-servers, 0, "No servers for localhost:$port-number";
+
+  undefine $client;
 }
 
-#-----------------------------------------------------------------------------
-#
-my Int $port-number = slurp('Sandbox/port-number').Int;
+diag "Servers stopped";
 
 
-my MongoDB::Client $client .= instance( :host<localhost>, :port($port-number));
-my MongoDB::Server $server = $client.select-server;
-ok $server.defined, 'Server defined';
-#my MongoDB::Socket $socket = $server.get-socket;
-
-diag "Wait for server to stop";
-$server.shutdown; #(:force);
-
-#my $exit_code = shell("kill `cat $*CWD/Sandbox/m.pid`");
-#diag $exit_code ?? "Server already stopped" !! "Server stopped";
-sleep 2;
-diag "Server stopped";
-diag "Remove sandbox data";
-
-for <Sandbox/m.data/journal Sandbox/m.data Sandbox> -> $path {
-  next unless $path.IO ~~ :d;
-  for dir($path) -> $dir-entry {
-    if $dir-entry.IO ~~ :d {
-#      diag "delete directory $dir-entry";
-      rmdir $dir-entry;
+my $cleanup-dir = sub ( Str $dir-entry ) {
+  for dir($dir-entry) -> $entry {
+    if $entry ~~ :d {
+      $cleanup-dir(~$entry);
+#say "delete directory $entry";
+      rmdir ~$entry;
     }
 
     else {
-#      diag "delete file $dir-entry";
-      unlink $dir-entry;
+#say "delete file $entry";
+      unlink ~$entry;
     }
   }
 }
 
-diag "delete directory Sandbox";
+#say "Remove sandbox data";
+$cleanup-dir('Sandbox');
+
 rmdir "Sandbox";
 
-try {
-  $client .= instance( :host<localhost>, :port($port-number));
-  $server = $client.select-server;
-  nok $server.defined, 'Server defined';
-  CATCH {
-    default {
-      ok .message ~~ m:s/Failed to connect\: connection refused/,
-         'Failed to connect: connection refused';
-    }
-  }
-}
+diag "Sandbox data deleted";
+
 
 #-----------------------------------------------------------------------------
 # Cleanup and close
 #
+info-message("Test $?FILE start");
 done-testing();
 exit(0);

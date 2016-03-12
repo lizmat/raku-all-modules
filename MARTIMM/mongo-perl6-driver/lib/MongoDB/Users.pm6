@@ -1,5 +1,6 @@
-use v6;
+use v6.c;
 use Digest::MD5;
+use MongoDB;
 use MongoDB::Database;
 use BSON::Document;
 
@@ -7,19 +8,19 @@ use BSON::Document;
 #
 package MongoDB {
 
+  constant C-PW-LOWERCASE = 0;
+  constant C-PW-UPPERCASE = 1;
+  constant C-PW-NUMBERS = 2;
+  constant C-PW-OTHER-CHARS = 3;
+
   #-----------------------------------------------------------------------------
   #
   class MongoDB::Users {
 
-    constant C-PW-LOWERCASE = 0;
-    constant C-PW-UPPERCASE = 1;
-    constant C-PW-NUMBERS = 2;
-    constant C-PW-OTHER-CHARS = 3;
-
     has MongoDB::Database $.database;
     has Int $.min-un-length = 2;
     has Int $.min-pw-length = 2;
-    has Int $.pw-attribs-code = C-PW-LOWERCASE;
+    has Int $.pw-attribs-code = MongoDB::C-PW-LOWERCASE;
 
     #---------------------------------------------------------------------------
     #
@@ -34,23 +35,23 @@ package MongoDB {
     method set-pw-security (
       Int:D :$min-un-length where $min-un-length >= 2,
       Int:D :$min-pw-length where $min-pw-length >= 2,
-      Int :$pw_attribs = C-PW-LOWERCASE
+      Int :$pw_attribs = MongoDB::C-PW-LOWERCASE
     ) {
 
       given $pw_attribs {
-        when C-PW-LOWERCASE {
+        when MongoDB::C-PW-LOWERCASE {
           $!min-pw-length = $min-pw-length // 2;
         }
 
-        when C-PW-UPPERCASE {
+        when MongoDB::C-PW-UPPERCASE {
           $!min-pw-length = $min-pw-length // 2;
         }
 
-        when C-PW-NUMBERS {
+        when MongoDB::C-PW-NUMBERS {
           $!min-pw-length = $min-pw-length // 3;
         }
 
-        when C-PW-OTHER-CHARS {
+        when MongoDB::C-PW-OTHER-CHARS {
           $!min-pw-length = $min-pw-length // 4;
         }
 
@@ -68,15 +69,15 @@ package MongoDB {
     #
     method create-user (
       Str:D $user, Str:D $password,
-      List :$custom-data, Array :$roles, Int :timeout($wtimeout)
+      List :$custom-data, Array :$roles,
+#      Int :timeout($wtimeout)
       --> BSON::Document
     ) {
       # Check if username is too short
       #
       if $user.chars < $!min-un-length {
-        die X::MongoDB.new(
-          error-text => "Username too short, must be >= $!min-un-length",
-          oper-name => 'create-user',
+        fatal-message(
+          "Username too short, must be >= $!min-un-length",
           oper-data => $user,
           collection-ns => $!database.name
         );
@@ -85,9 +86,8 @@ package MongoDB {
       # Check if password is too short
       #
       elsif $password.chars < $!min-pw-length {
-        die X::MongoDB.new(
-          error-text => "Password too short, must be >= $!min-pw-length",
-          oper-name => 'create-user',
+        fatal-message(
+          "Password too short, must be >= $!min-pw-length",
           oper-data => $password,
           collection-ns => $!database.name
         );
@@ -98,18 +98,18 @@ package MongoDB {
       else {
         my Bool $pw-ok = False;
         given $!pw-attribs-code {
-          when C-PW-LOWERCASE {
+          when MongoDB::C-PW-LOWERCASE {
             $pw-ok = ($password ~~ m/ <[a..z]> /).Bool;
           }
 
-          when C-PW-UPPERCASE {
+          when MongoDB::C-PW-UPPERCASE {
             $pw-ok = (
               $password ~~ m/ <[a..z]> / and
               $password ~~ m/ <[A..Z]> /
             ).Bool;
           }
 
-          when C-PW-NUMBERS {
+          when MongoDB::C-PW-NUMBERS {
             $pw-ok = (
               $password ~~ m/ <[a..z]> / and
               $password ~~ m/ <[A..Z]> / and
@@ -117,7 +117,7 @@ package MongoDB {
             ).Bool;
           }
 
-          when C-PW-OTHER-CHARS {
+          when MongoDB::C-PW-OTHER-CHARS {
             $pw-ok = (
               $password ~~ m/ <[a..z]> / and
               $password ~~ m/ <[A..Z]> / and
@@ -126,9 +126,9 @@ package MongoDB {
             ).Bool;
           }
         }
-        die X::MongoDB.new(
-          error-text => "Password does not have the right properties",
-          oper-name => 'create-user',
+
+        fatal-message(
+          "Password does not have the right properties",
           oper-data => $password,
           collection-ns => $!database.name
         ) unless $pw-ok;
@@ -144,7 +144,7 @@ package MongoDB {
 
       $req<roles> = $roles if ?$roles;
       $req<customData> = $custom-data if ?$custom-data;
-      $req<writeConcern> = ( :j, :$wtimeout) if ?$wtimeout;
+#      $req<writeConcern> = ( :j, :$wtimeout) if ?$wtimeout;
       return $!database.run-command($req);
     }
 
@@ -152,7 +152,8 @@ package MongoDB {
     #
     method update-user (
       Str:D $user, Str :$password,
-      :custom-data($customData), Array :$roles, Int :timeout($wtimeout)
+      :$custom-data, Array :$roles,
+#      Int :timeout($wtimeout)
       --> BSON::Document
     ) {
 
@@ -163,9 +164,8 @@ package MongoDB {
 
       if ?$password {
         if $password.chars < $!min-pw-length {
-          die X::MongoDB.new(
-            error-text => "Password too short, must be >= $!min-pw-length",
-            oper-name => 'update-user',
+          fatal-message(
+            "Password too short, must be >= $!min-pw-length",
             oper-data => $password,
             collection-ns => $!database.name
           );
@@ -173,18 +173,18 @@ package MongoDB {
 
         my Bool $pw-ok = False;
         given $!pw-attribs-code {
-          when C-PW-LOWERCASE {
+          when MongoDB::C-PW-LOWERCASE {
             $pw-ok = ($password ~~ m/ <[a..z]> /).Bool;
           }
 
-          when C-PW-UPPERCASE {
+          when MongoDB::C-PW-UPPERCASE {
             $pw-ok = (
               $password ~~ m/ <[a..z]> / and
               $password ~~ m/ <[A..Z]> /
             ).Bool;
           }
 
-          when C-PW-NUMBERS {
+          when MongoDB::C-PW-NUMBERS {
             $pw-ok = (
               $password ~~ m/ <[a..z]> / and
               $password ~~ m/ <[A..Z]> / and
@@ -192,7 +192,7 @@ package MongoDB {
             ).Bool;
           }
 
-          when C-PW-OTHER-CHARS {
+          when MongoDB::C-PW-OTHER-CHARS {
             $pw-ok = (
               $password ~~ m/ <[a..z]> / and
               $password ~~ m/ <[A..Z]> / and
@@ -207,18 +207,17 @@ package MongoDB {
         }
 
         else {
-          die X::MongoDB.new(
-            error-text => "Password does not have the proper elements",
-            oper-name => 'update-user',
+          fatal-message(
+            "Password does not have the proper elements",
             oper-data => $password,
             collection-ns => $!database.name
           );
         }
       }
 
-      $req<writeConcern> = ( :j, :$wtimeout) if ?$wtimeout;
+#      $req<writeConcern> = ( :j, :$wtimeout) if ?$wtimeout;
       $req<roles> = $roles if ?$roles;
-      $req<customData> = $customData if ?$customData;
+      $req<customData> = $custom-data if ?$custom-data;
       return $!database.run-command($req);
     }
   }
@@ -237,9 +236,8 @@ package MongoDB {
 
       my Hash $doc = $!database.run-command(@req);
       if $doc<ok>.Bool == False {
-        die X::MongoDB.new(
-          error-text => $doc<errmsg>,
-          oper-name => 'drop-user',
+        warn-message(
+          $doc<errmsg>,
           oper-data => @req.perl,
           collection-ns => $!database.name
         );
@@ -259,9 +257,8 @@ package MongoDB {
 
       my Hash $doc = $!database.run-command(@req);
       if $doc<ok>.Bool == False {
-        die X::MongoDB.new(
-          error-text => $doc<errmsg>,
-          oper-name => 'drop_all_users_from_database',
+        warn-message(
+          $doc<errmsg>,
           oper-data => @req.perl,
           collection-ns => $!database.name
         );
@@ -285,9 +282,8 @@ package MongoDB {
 
       my Hash $doc = $!database.run-command(@req);
       if $doc<ok>.Bool == False {
-        die X::MongoDB.new(
-          error-text => $doc<errmsg>,
-          oper-name => 'grant_roles_to_user',
+        warn-message(
+          $doc<errmsg>,
           oper-data => @req.perl,
           collection-ns => $!database.name
         );
@@ -311,11 +307,9 @@ package MongoDB {
 
       my Hash $doc = $!database.run-command(@req);
       if $doc<ok>.Bool == False {
-        die X::MongoDB.new(
-          error-text => $doc<errmsg>,
-          oper-name => 'revoke-roles-from-user',
+        warn-message(
+          $doc<errmsg>,
           oper-data => @req.perl,
-#          oper-doc => $doc.perl,
           collection-ns => $!database.name
         );
       }
@@ -341,9 +335,8 @@ package MongoDB {
 
       my Hash $doc = $!database.run-command(@req);
       if $doc<ok>.Bool == False {
-        die X::MongoDB.new(
-          error-text => $doc<errmsg>,
-          oper-name => 'users-info',
+        warn-message(
+          $doc<errmsg>,
           oper-data => @req.perl,
           collection-ns => $database // $!database.name
         );
@@ -362,9 +355,8 @@ package MongoDB {
 
       my Hash $doc = $!database.run-command(@req);
       if $doc<ok>.Bool == False {
-        die X::MongoDB.new(
-          error-text => $doc<errmsg>,
-          oper-name => 'get-users',
+        warn-message(
+          $doc<errmsg>,
           oper-data => @req.perl,
           collection-ns => $!database.name
         );

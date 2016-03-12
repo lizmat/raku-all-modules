@@ -1,28 +1,20 @@
-use v6;
-use lib 't'; #, '/home/marcel/Languages/Perl6/Projects/BSON/lib';
+use v6.c;
+use lib 't';
 use Test-support;
 use Test;
+use MongoDB;
 use MongoDB::Client;
 use MongoDB::Cursor;
 use BSON::ObjectId;
 
-#`{{
-  Testing;
-    collection.find()                   Query database
-      implicit AND selection            Find with more fields
-      projection                        Select fields to return
-    collection.find() with pairs ipv hash
-    cursor.count()                      Count number of docs
-    collection.explain()                Explain what is done for a search
-    cursor.explain()                    Explain what is done for a search
-    cursor.hint()                       Control choice of index
-    cursor.kill()                       Kill a cursor
-    cursor.next()                       Fetch a document
-}}
+#-------------------------------------------------------------------------------
+#set-logfile($*OUT);
+#set-exception-process-level(MongoDB::Severity::Trace);
+info-message("Test $?FILE start");
 
-my MongoDB::Client $connection = get-connection();
-my MongoDB::Database $database .= new(:name<test>);
-my MongoDB::Database $db-admin .= new(:name<admin>);
+my MongoDB::Client $client = get-connection();
+my MongoDB::Database $database = $client.database('test');
+my MongoDB::Database $db-admin = $client.database('admin');
 my MongoDB::Collection $collection = $database.collection('testf');
 my BSON::Document $req;
 my BSON::Document $doc;
@@ -53,16 +45,17 @@ for ^200 -> $i {
   );
 }
 
-say "RTT modify array: ", now - $t0;
-
 $req .= new: (
   insert => $collection.name,
   documents => $docs
 );
 
-#say "RP:\n", $req.perl;
+say "Time create request: ", now - $t0;
 
 $doc = $database.run-command($req);
+
+say "Time insert in database: ", now - $t0;
+
 is $doc<ok>, 1, 'insert ok';
 is $doc<n>, 200, 'inserted 200 docs';
 say $doc<errmsg> unless $doc<ok>;
@@ -70,9 +63,14 @@ say $doc<errmsg> unless $doc<ok>;
 # Request to get all documents listed to generate a get-more request
 #
 $cursor = $collection.find(:projection(_id => 0,));
+
+say "Time to get cursor with some docs: ", now - $t0;
+
 while $cursor.fetch -> BSON::Document $document {
 #  say $document.perl;
 }
+
+say "Time after reading all docs: ", now - $t0;
 
 #------------------------------------------------------------------------------
 subtest {
@@ -99,7 +97,7 @@ subtest {
   $req .= new: ( count => $collection.name);
 #  $cursor = $collection.find();
 #  ok $cursor.count == 50.0, 'Counting fifty documents';
-  $req<query> = ();
+#  $req<query> = ();
   $doc = $database.run-command($req);
   is $doc<n>, 200, '200 records';
 
@@ -159,7 +157,6 @@ subtest {
   is $doc<numIndexesBefore>, 1, 'Only 1 index before call';
   is $doc<numIndexesAfter>, 2, 'Now there are 2';
 
-#say $doc.perl;
   $doc = $database.run-command($req);
   $s = $doc<executionStats>;
   is $s<nReturned>, 1, 'One doc found';
@@ -180,6 +177,7 @@ subtest {
     ),
     :number-to-return(1)
   );
+
   $doc = $cursor.fetch;
   my $s = $doc<executionStats>;
   is $s<nReturned>, 1, 'One doc found, explain via bad hint';
@@ -197,14 +195,23 @@ subtest {
     :number-to-return(1)
   );
   $doc = $cursor.fetch;
-#say "Doc: ", $doc.perl;
   $s = $doc<executionStats>;
   is $s<nReturned>, 1, 'One doc found, explain via a good hint';
   is $s<totalDocsExamined>, 1, 'Scanned 1 doc, great indexing, explain via good hint';
 }, "Testing explain and performance using hint";
 
+
+
+
+
+
+info-message("Test $?FILE stop");
 done-testing();
 exit(0);
+
+
+
+
 
 #-------------------------------------------------------------------------------
 subtest {
@@ -224,7 +231,7 @@ subtest {
     $d2 = { '$abc' => 'pqr'};
     $collection.insert($d2);
     CATCH {
-      when X::MongoDB {
+      when MongoDB::Message {
         ok $_.message ~~ m:s/is not properly defined/, "Key '\$abc' not properly defined";
       }
     }
@@ -234,7 +241,7 @@ subtest {
     $d2 = { 'abc.def' => 'pqr'};
     $collection.insert($d2);
     CATCH {
-      when X::MongoDB {
+      when MongoDB::Message {
         ok .message ~~ m:s/is not properly defined/, "Key 'abc.def' not properly defined";
       }
     }
@@ -244,7 +251,7 @@ subtest {
     $d2 = { x => {'abc.def' => 'pqr'}};
     $collection.insert($d2);
     CATCH {
-      when X::MongoDB {
+      when MongoDB::Message {
         ok .message ~~ m:s/is not properly defined/, "Key 'abc.def' not properly defined";
       }
     }
@@ -261,7 +268,7 @@ subtest {
           };
     $collection.insert($d2);
     CATCH {
-      when X::MongoDB {
+      when MongoDB::Message {
         ok .message ~~ m:s/not unique/, .error-text;
       }
     }
@@ -273,6 +280,7 @@ subtest {
 #
 #$collection.database.drop;
 
+info-message("Test $?FILE stop");
 done-testing();
 exit(0);
 
@@ -282,15 +290,19 @@ exit(0);
 #
 sub check-document ( $criteria, $field-list, $projection = ())
 {
-  $cursor = $collection.find( :$criteria, :$projection);
-  while $cursor.fetch() -> BSON::Document $document {
+#  $cursor = $collection.find( :$criteria, :$projection);
+#  while $cursor.fetch() -> BSON::Document $document {
+
+  for $collection.find( :$criteria, :$projection) -> BSON::Document $document {
     for @$field-list -> $pair {
       if $pair.value == 1 {
         is( $document{$pair.key}:exists, True, "Key '{$pair.key}' exists");
       }
 
       else {
-        is( $document{$pair.key}:exists, False, "Key '{$pair.key}' does not exist");
+        is( $document{$pair.key}:exists,
+            False, "Key '{$pair.key}' does not exist"
+        );
       }
     }
 

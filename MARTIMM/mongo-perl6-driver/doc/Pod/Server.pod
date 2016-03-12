@@ -1,0 +1,156 @@
+#!/usr/bin/env perl6
+#
+use v6.c;
+
+# Running the pod file will create a pdf using wkhtmltopdf
+#
+my Str $pod = "$*PROGRAM";
+my Str $pdf = $pod;
+$pdf ~~ s/\. <-[.]>+ $/.pdf/;
+shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
+
+#-------------------------------------------------------------------------------
+
+=begin pod
+
+=begin Xhtml
+<style>
+  pre {
+    border-width:       2px;
+    border-style:       solid;
+    border-color:       #060;
+    padding:            10px 0 3px 10px;
+    color:              #060;
+    background-color:   #eaefea;
+    font-family:        FreeMono;
+  }
+  td {
+    vertical-align:     top;
+  }
+</style>
+=end Xhtml
+
+=TITLE class MongoDB::Server
+
+=SUBTITLE Mongod server object and info
+
+  package MongoDB { class Server { ... } }
+
+=head1 Synopsis
+
+  my MongoDB::Client $client .= new(:uri<mongodb://>);
+  my Str $server-ticket = $client.select-server;
+  my MongoDB::Server $server = $client.store.get-stored-object($server-ticket);
+  my MongoDB::Socket $socket = $server.get-socket;
+
+This class is used to provide sockets for communication with a mongo database
+server. The class is loaded and controlled by the C<MongoDB::Client> module.
+I<Users should not use this class directly but ask for a server using methods
+from a Client object. And even that users should not do. All server
+communication is controlled internally>.
+
+
+=head1 Readonly attributes
+
+=head2 server-name
+
+  has Str $.server-name;
+
+Server name or ip of this object.
+
+
+=head2 server-port
+
+  has Int $.server-port;
+
+Server port of this object.
+
+
+=head2 max-sockets
+
+  has Int $.max-sockets;
+
+Maximum number of open sockets per server object
+Can be changed by user of Server object. New values must >= 3.
+
+
+=head1 Methods
+
+=head2 new
+
+Defined as:
+
+  submethod BUILD (
+    Str:D :$host!,
+    Int:D :$port! where (0 <= $_ <= 65535),
+    Int :$max-sockets where $_ >= 3 = 3,
+    Hash :$uri-data,
+    MongoDB::Database:D :$db-admin,
+    MongoDB::Client:D :$client
+  )
+
+Creates a new C<MongoDB::Server> object. The object tries to establish a
+connection to the server. The IO::Socket::INET class is used for that
+and will throw an exception when it fails. C<MongoDB::Client> creates the
+Server object normally and catches the exception on failure.
+I<Do not use this method directly!>.
+
+
+=head2 get-socket
+
+  method get-socket ( --> MongoDB::Socket )
+
+Get a MongoDB::Socket object. By default there can be only 3 open sockets per
+server object. See also set-max-sockets() below. When operations are done the
+socket must be closed to prevent problems.
+
+
+=head2 perl
+
+  method perl ( --> Str )
+
+Simple string representation of this object.
+
+
+=head2 name
+
+  method name ( --> Str )
+
+Returns a string in the format <servername> ':' <port number>.
+
+
+=head2 set-max-sockets
+
+  method set-max-sockets ( Int $max-sockets where $_ >= 3 )
+
+Modifies the maximum number of sockets.
+
+=end pod
+
+
+
+
+
+=finish
+=head2 method send
+
+Defined as
+
+  method send ( Buf:D $b --> Nil )
+
+Send encoded data to the mongo server. DO NOT ATTEMPT TO USE IT YOURSELF. Let
+instead the several modules do the sending because they know what to send.
+Besides this, it is subject to change when connection pooling comes into play.
+
+=head2 method receive
+
+Defined as
+
+  method receive ( Int $nbr-bytes --> Buf )
+
+Receive the number of bytes from the server. Again: DO NOT ATTEMPT TO USE IT
+YOURSELF. Let instead the several modules do the receiving because they know
+what to expect.Besides this, it is subject to change when connection pooling
+comes into play.
+
+=end pod
