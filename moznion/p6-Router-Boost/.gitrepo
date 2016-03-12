@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moznion/p6-Router-Boost.git
 	branch = master
-	commit = 1fc8fde4e301d3d9f0ba31574cd160fa7ae38a58
-	parent = 490ff75d907d11a2fb0c1c100bd38f0938c68f1a
-	cmdver = 0.2.2
+	commit = 2de7af46d3de3f49317933a82ba366ccbd084a9f
+	parent = 4278e35060389b15a4d16d1f78f1d76927ae5157
+	cmdver = 0.2.3

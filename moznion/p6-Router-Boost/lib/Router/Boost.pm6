@@ -1,5 +1,6 @@
 use v6;
 use Router::Boost::Node;
+use MONKEY-SEE-NO-EVAL; # suppress "Prohibited regex interpolation"
 
 unit class Router::Boost;
 
