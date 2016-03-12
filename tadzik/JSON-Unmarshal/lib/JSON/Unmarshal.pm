@@ -68,6 +68,9 @@ multi _unmarshal($json, Str) {
     if $json ~~ Stringy {
         return Str($json)
     }
+    else {
+        Str;
+    }
 }
 
 multi _unmarshal($json, Bool) {

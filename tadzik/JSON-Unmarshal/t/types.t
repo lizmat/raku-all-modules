@@ -57,6 +57,17 @@ subtest {
     is $ret.bool, True, "and the correct value";
 
 }, "Bool attribute";
+subtest {
+    my class StrClass {
+        has Str $.string;
+    }
+
+    my $json = '{ "string" : null }';
+    my $ret;
+    lives-ok { $ret = unmarshal($json, StrClass) }, "unmarshal with Str type attribute but null in JSON";
+    isa-ok $ret, StrClass, "it's the right type";
+    ok $ret.string ~~ Str && !$ret.string.defined, "and it is an undefined Str";
+}, "Undefined Str";
 
 done-testing;
 
