@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/dbrunton/Automata-Cellular.git
+	branch = master
+	commit = ffc9037c941bf5bd2bfa5bba56d2c80a8a171d61
+	parent = a464a6ec1fae937682c5d63711bba7657cbe4e22
+	cmdver = 0.2.3
