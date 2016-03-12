@@ -1,5 +1,5 @@
 {
-    "perl"         : "6.*",
+    "perl"         : "6.c",
     "name"         : "Number::Denominate",
     "version"      : "1.001001",
     "description"  : "Break up numbers into preset or arbitrary denominations",
@@ -8,6 +8,6 @@
     "provides"     : {
         "Number::Denominate" : "lib/Number/Denominate.pm6"
     },
-    "author"       : "Zoffix Znet",
-    "source-url"   : "git://github.com/zoffixznet/perl6-Number-Denominate.git"
+    "authors"      : ["Zoffix Znet"],
+    "support"      : {"source"   : "git://github.com/zoffixznet/perl6-Number-Denominate.git"}
 }
