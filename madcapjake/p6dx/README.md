@@ -33,9 +33,9 @@
          alt="License">
   </a>
 
-  <a href="https://gitter.im/MadcapJake/p6dx">
-    <img src="https://img.shields.io/gitter/room/MadcapJake/p6dx.svg"
-         alt="Gitter">
+  <a href="http://perl6.bestforever.com">
+    <img src="http://perl6.bestforever.com/badge.svg"
+         alt="Slack">
   </a>
 </p>
 

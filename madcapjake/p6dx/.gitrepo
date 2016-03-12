@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/madcapjake/p6dx.git
 	branch = master
-	commit = 39c24a0d6a046a23d04e86dc58a294ebb97b4697
-	parent = 7531abec2381c74eb1a153061c58fb4b8b8826c6
+	commit = 27faecaa8cfc97b014e317d2c1e505ccd3fb4b3a
+	parent = f5fc836c5ed755c6a4df11faa234c0db0b05fba9
 	cmdver = 0.2.3
