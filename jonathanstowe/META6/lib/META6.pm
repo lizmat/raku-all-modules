@@ -97,7 +97,7 @@ exception.
 use JSON::Name;
 use JSON::Class:ver(v0.0.5..*);
 
-class META6:ver<0.0.5>:auth<github:jonathanstowe> does JSON::Class {
+class META6:ver<0.0.6>:auth<github:jonathanstowe> does JSON::Class {
 
     enum Optionality <Mandatory Optional>;
 
@@ -158,12 +158,12 @@ class META6:ver<0.0.5>:auth<github:jonathanstowe> does JSON::Class {
     }
 
     class Support {
-        has Str $.source is rw is specification(Optional);
-        has Str $.bugtracker is rw is specification(Optional);
-        has Str $.email is rw is specification(Optional);
-        has Str $.mailinglist is rw is specification(Optional);
-        has Str $.irc is rw is specification(Optional);
-        has Str $.phone is rw is specification(Optional);
+        has Str $.source is rw      is specification(Optional);
+        has Str $.bugtracker is rw  is specification(Optional) is json-skip-null;
+        has Str $.email is rw       is specification(Optional) is json-skip-null;
+        has Str $.mailinglist is rw is specification(Optional) is json-skip-null;
+        has Str $.irc is rw         is specification(Optional) is json-skip-null;
+        has Str $.phone is rw       is specification(Optional) is json-skip-null;
     }
 
     # cope with "v0.0.1"
@@ -184,7 +184,7 @@ class META6:ver<0.0.5>:auth<github:jonathanstowe> does JSON::Class {
     has Version     $.version       is rw is marshalled-by('Str') is unmarshalled-by(&unmarsh-version) is specification(Mandatory);
     has Str         $.description   is rw is specification(Mandatory);
     has Str         @.authors       is rw is specification(Optional);
-    has Str         $.author        is rw is customary;
+    has Str         $.author        is rw is customary is json-skip-null;
     has Str         %.provides      is rw is specification(Mandatory);
     has Str         @.depends       is rw is specification(Optional);
     has Str         %.emulates      is rw is specification(Optional);
@@ -194,8 +194,8 @@ class META6:ver<0.0.5>:auth<github:jonathanstowe> does JSON::Class {
     has Str         @.build-depends is rw is specification(Optional);
     has Str         @.test-depends  is rw is specification(Optional);
     has             %.resource      is rw is specification(Optional);
-    has Support     $.support       is rw is specification(Optional);
-    has Bool        $.production    is rw is specification(Optional);
+    has Support     $.support       is rw is specification(Optional) = Support.new;
+    has Bool        $.production    is rw is specification(Optional) is json-skip-null;
     has Str         $.license       is rw is specification(Optional);
     has Str         @.tags          is rw is specification(Optional);
     has Str         $.source-url    is rw is customary;
