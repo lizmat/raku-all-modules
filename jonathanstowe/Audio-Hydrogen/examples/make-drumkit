@@ -1,0 +1,54 @@
+#!perl6
+
+use v6.c;
+
+=begin pod
+
+=head1 NAME
+
+make-drumkit - create a Hydrogen drumkit from a directory of files
+
+=head1 SYNOPSIS
+
+   make-drumkit --directory=<dirname> [--name=<name> ]
+
+=head1 DESCRIPTION
+
+This is a fairly simple utility to create a Hydrogen drumkit from
+a directory of WAV or FLAC files.  It simply makes the appropriate
+drumkit.xml file in the directory with each file as an instrument,
+because it doesn't make any attempt to understand the files themselves
+they will be in the sorted directory order and named based on the
+file names, so you will almost certainly want to edit the drunkit
+in Hydrogen itself.
+
+If the directory is not in your ~/.hydrogen directory you should
+copy it there yourself to be able to use it.
+
+=end pod
+
+use Audio::Hydrogen::Drumkit;
+
+sub MAIN(Str :$directory!, Str :$name) {
+    my $d = $directory.IO;
+
+    if $d.d {
+        my $id = 0;
+        my $kit = Audio::Hydrogen::Drumkit.new(name => ($name // $d.basename));
+        for $d.dir(test => /:i '.' [wav|flac] $/).grep({ $_.f }) -> $file {
+            my $filename = $file.basename;
+            my $name = $filename.subst(/:i '.' [wav|flac]/, '');
+            $name.subst-mutate(/<[_-]>+/, ' ', :g);
+            my $instrument = Audio::Hydrogen::Instrument.new(:$id, :$filename, :$name, volume => 1.0);
+            $kit.instruments.append: $instrument;
+            $id++;
+        }
+        $d.child('drumkit.xml').spurt($kit.to-xml);
+    }
+    else {
+        say "not a directory";
+        exit;
+    }
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6

@@ -1,0 +1,28 @@
+{
+   "depends" : [ "XML::Class" ],
+   "auth" : "github:jonathanstowe",
+   "support" : {
+      "source" : "https://github.com/jonathanstowe/Audio-Hydrogen.git"
+   },
+   "build-depends" : [],
+   "description" : "Work with Hydrogen songs and drumkits",
+   "source-url" : "https://github.com/jonathanstowe/Audio-Hydrogen.git",
+   "version" : "0.0.1",
+   "test-depends" : [ "Test" ],
+   "name" : "Audio::Hydrogen",
+   "perl" : "6.c",
+   "provides" : {
+		"Audio::Hydrogen" : "lib/Audio/Hydrogen.pm",
+		"Audio::Hydrogen::Instrument" : "lib/Audio/Hydrogen/Instrument.pm",
+		"Audio::Hydrogen::Pattern" : "lib/Audio/Hydrogen/Pattern.pm",
+		"Audio::Hydrogen::Drumkit" : "lib/Audio/Hydrogen/Drumkit.pm",
+		"Audio::Hydrogen::Song" : "lib/Audio/Hydrogen/Song.pm" 
+   },
+   "tags" : ["audio", "drumkit", "xml"],
+   "resource" : {},
+   "meta6" : "0",
+   "authors" : [
+      "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+   ],
+   "license" : "perl"
+}

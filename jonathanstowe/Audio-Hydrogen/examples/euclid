@@ -1,0 +1,180 @@
+#!perl6
+
+use v6;
+
+=begin pod
+
+=head1 NAME
+
+euclid - generate drum pattern using the Euclidean algorithm
+
+=head1 SYNOPSIS
+
+  examples/euclid --list-drumkits 
+  examples/euclid --kit=<kit name> --list-instruments 
+  examples/euclid --kit=<kit name> [--bars=<1>] [--file=<Str>] [--part=<$instruments,$slots,$fills> [--part=<...>]...] ... 
+
+
+=head1 DESCRIPTION
+
+This programme allows you to generate Hydrogen patterns using the rhythmic device
+described in http://cgm.cs.mcgill.ca/~godfried/publications/banff.pdf (which is
+incidentally a good read even if you aren't particulary interested in making
+drum patterns.)
+
+The programme generates a Hydrogen song containing a single pattern for one
+or more instruments of the specified number of bars (the default is 1,) using
+the drumkit specified by name.  Each part is specified as a triplet of the
+instrument id number (which can be determined with the C<list-instruments>
+option,) the total number of C<slots> and the number of C<fills> (the explanation
+of these is in the paper linked above,) So for instance something like a Samba
+on the cowbell (instrument 15,) of a TR808909 kit I have, one might do:
+
+    perl6 -Ilib examples/euclid --kit=TR808909 --part=15,16,7
+
+You can specify as many parts as your kit has instruments (which is typically
+a maximum of 32.)
+
+If a file isn't specified then the song is output to STDOUT.
+
+=end pod
+
+# From Björklund via http://cgm.cs.mcgill.ca/~godfried/publications/banff.pdf
+
+class Euclid
+{
+   method build_string(Int $level, @count, @remainder )
+   { 
+      my @bitmap;
+   
+      if ($level == -1) 
+      {
+         @bitmap.append: 0;
+      }
+      elsif ( $level == -2 )
+      {
+         @bitmap.append: 1;
+      }
+      else
+      {
+         for 0 .. @count[$level] - 1 
+         {
+            @bitmap.append: self.build_string($level-1, @count, @remainder); 
+         }
+         if (@remainder[$level] != 0) 
+         {     
+            @bitmap.append: self.build_string($level-2, @count, @remainder); 
+         }
+      }
+   
+      flat @bitmap;
+   }
+   
+   
+   method compute_bitmap(Int $num_slots, Int $num_pulses)
+   { 
+   
+      my @count;
+      my @remainder;
+
+      my $divisor = $num_slots - $num_pulses; 
+   
+      @remainder[0] = $num_pulses; 
+   
+      my $level = 0; 
+   
+      while (@remainder[$level] > 1 )
+      { 
+         @count[$level] = $divisor / @remainder[$level]; 
+         @remainder[$level+1] = $divisor % @remainder[$level]; 
+         $divisor = @remainder[$level]; 
+         $level++;
+      }
+   
+      @count[$level] = $divisor; 
+      my @bits = self.build_string($level, @count, @remainder); 
+      while (@bits[0] == 0)
+      {
+         @bits = @bits.rotate(1);
+      }
+   
+      flat @bits;
+   } 
+}
+
+use Audio::Hydrogen;
+use Audio::Hydrogen::Song;
+
+multi MAIN(Bool :$list-drumkits!) {
+    for Audio::Hydrogen.new.drumkits -> $dk {
+        say $dk.name;
+    }
+}
+
+multi MAIN(Str :$kit!, Bool :$list-instruments!) {
+    my $hydrogen = Audio::Hydrogen.new;
+    if $hydrogen.drumkits.grep({ $_.name eq $kit }).first -> $di {
+        for $di.drumkit.instruments -> $instrument {
+            if $instrument.name {
+                say sprintf "%3i : %s", $instrument.id, $instrument.name ;
+            }
+        }
+
+    }
+    else {
+        say "Can't find drumkit $kit";
+        exit;
+    }
+}
+
+multi MAIN(Str :$kit!, Int:D :$bars = 1, Str :$file, :$part ) {
+    my $dk;
+    my $hydrogen = Audio::Hydrogen.new;
+
+    if $hydrogen.drumkits.grep({ $_.name eq $kit }).first -> $di {
+        my $drumkit = $di.drumkit();
+        my $pattern = Audio::Hydrogen::Pattern.new(name => "Pattern 1", size => ($bars * 192));
+        my @notes;
+
+        for $part.list -> $part {
+            my ($instrument, $slots, $fills) = $part.split(',',:skip-empty).map({$_.Int});
+            my $slot-pos = (192 * $bars) / $slots;
+            if $instrument.defined && $slots.defined && $fills.defined {
+                my @fills = Euclid.new.compute_bitmap($slots, $fills);
+                my $pos = 0;
+
+                for @fills -> $fill {
+                    if $fill {
+                        my $position = Int($pos * $slot-pos);
+                        my $note = Audio::Hydrogen::Pattern::Note.new(:$position, :$instrument);
+                        @notes.append($note);
+                    }
+                    $pos++;
+                }
+            }
+            else {
+                say "part should be '<instrument id>,<slots>,<fills>";
+                exit;
+            }
+        }
+
+        $pattern.note-list.append: @notes.sort({ $_.position });
+
+        my $song = Audio::Hydrogen::Song.new(instruments => $drumkit.instruments, version => Version.new("0.9.5"));
+        $song.patterns.append($pattern);
+        my $out-xml = $song.to-xml;
+
+        if $file.defined {
+            $file.IO.spurt($out-xml);
+        }
+        else {
+            say $out-xml;
+        }
+    }
+    else {
+        say "Can't find drumkit $kit";
+        exit;
+    }
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6

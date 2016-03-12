@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/Audio-Hydrogen.git
+	branch = master
+	commit = 658262c69349c261853106a311cf4c6c7e94fce1
+	parent = 7e40578bcd753c202318dcc0d320c3dd82c3b587
+	cmdver = 0.2.3
