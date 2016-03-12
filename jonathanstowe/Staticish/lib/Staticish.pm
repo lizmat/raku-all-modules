@@ -46,17 +46,18 @@ the other trait introducing verbs to me.)
 
 =end pod
 
-module Staticish:ver<v0.0.4>:auth<github:jonathanstowe> {
+module Staticish:ver<0.0.5>:auth<github:jonathanstowe> {
     role MetamodelX::StaticHOW {
         my %bypass = :new, :bless, :BUILDALL, :BUILD, 'dispatch:<!>' => True;
         method compose(Mu $obj) {
             callsame;
+            my %public-rw-attrs = $obj.^attributes.grep({$_.has_accessor && $_.rw }).map({ $_.name.substr(2) => True });
             for  $obj.^method_table.kv -> $name, $code {
                 if not %bypass{$name}:exists {
-                    my Bool $rw = so $code.rw;
+                    my Bool $rw = so ($code.rw or %public-rw-attrs{$name});
                     # This is horrid but callwith needs to see the 'rw'
                     # when the wrapper is compiled it seems
-                    my $wrapper = $rw ?? method ( $self: |c) is rw {
+                    my $wrapper = $rw ?? method ( $self: |c) is raw {
                         my $new-self = $self;
                         if not $new-self.defined {
                             $new-self = $self.new;

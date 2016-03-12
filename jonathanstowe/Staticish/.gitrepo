@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Staticish.git
 	branch = master
-	commit = 03b7b3a5fc58a97cbea541c09d0543080eef066f
-	parent = 352b9fd07fdd2ad2a99b0a2d55f5343d5dc3e2e6
+	commit = 88f766a8598ebb118902a403b309e06256c4297f
+	parent = ee1a0a29363a397a56e3f51c4d3d3f14bc47628b
 	cmdver = 0.2.3
