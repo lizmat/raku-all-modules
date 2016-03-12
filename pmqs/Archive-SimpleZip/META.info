@@ -1,21 +1,25 @@
 {
     "perl" : "6.*",
     "name" : "Archive::SimpleZip",
-    "version" : "0.1.0",
+    "version" : "0.1.1",
     "description" : "Write Zip Files.",
     "authors" : [ "Paul Marquess <pmqs@cpan.org" ],
     "provides" : {
-        "Archive::SimpleZip" : "lib/Archive/SimpleZip.pm6"
+        "Archive::SimpleZip" : "lib/Archive/SimpleZip.pm6",
+        "Archive::SimpleZip::Headers" : "lib/Archive/SimpleZip/Headers.pm6",
+        "Archive::SimpleZip::Utils" : "lib/Archive/SimpleZip/Utils.pm6"
     },
     "test-depends" : [ 
        "Test",
        "Test::META",
-       "File::Temp"
+       "File::Temp",
+       "File::Which"
     ], 
     "depends" : [ 
         "Compress::Zlib::Raw",
         "Compress::Zlib",
         "Compress::Bzip2",
+        "CompUnit::Util",
         "IO::Blob"
     ],
     "resources" : [ ],

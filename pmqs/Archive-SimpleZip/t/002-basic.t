@@ -2,13 +2,22 @@
  
 use v6; 
 use lib 'lib'; 
+use lib 't'; 
  
 use Test; 
  
-plan 16; 
+plan 18; 
+
+use ZipTest; 
+
+if external-zip-works()
+{
+    skip-rest("Cannot find external zip/unzip or they do not work as expected.");
+    exit;
+}
 
 use File::Temp;
-use Archive::SimpleZip;
+use Archive::SimpleZip ;
 
 # Keep the test directory?
 my $wipe = False;
@@ -29,8 +38,8 @@ unlink $zipfile;
 spurt $datafile, "some data" ;
 spurt $datafile1, "more data" ;
 
-ok   $datafile.IO.e, "$datafile does exists";
-ok ! $zipfile.IO.e, "$zipfile does not exists";
+ok  $datafile.IO.e, "$datafile does exists";
+nok $zipfile.IO.e, "$zipfile does not exists";
 
 my $zip = SimpleZip.new($zipfile, :stream, comment => 'file comment');
 isa-ok $zip, SimpleZip;
@@ -39,11 +48,14 @@ ok $zip.add($datafile.IO), "add file";
 
 ok $zip.add($datafile.IO, :name<new>), "add file but override name";
 ok $zip.add("abcde", :name<fred>, comment => 'member comment'), "add string ok";
-ok $zip.add("def", :name<joe>, :method(Zip-CM-Store), :stream), "add string, STORE";
-ok $zip.add("def", :name<joe>, :method(Zip-CM-Bzip2), :stream), "add string, STORE";
+ok $zip.add("def", :name</joe//bad>, :method(Zip-CM-Store), :stream, :!canonical-name), "add string, STORE";
+ok $zip.add("def", :name</jim/>, :method(Zip-CM-Bzip2), :stream), "add string, STORE";
 ok $zip.close(), "closed";
 
 ok $zipfile.IO.e, "$zipfile exists";
+
+ok test-with-unzip($zipfile), "unzip likes the zip file";
+is pipe-in-from-unzip($zipfile, "fred"), "abcde", "member fred ok";
 
 
 my Blob $data .= new();
@@ -52,7 +64,4 @@ isa-ok $zip2, SimpleZip;
 ok $zip2.add("abcde", :name<fred>), "add";
 ok $zip2.close(), "closed";
 
-#unlink $zipfile;
-
 done-testing();
-
