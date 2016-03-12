@@ -10,7 +10,7 @@ A wrapper for the Lending Club API. It wraps all of the functions they currently
 
 EXAMPLE
 =======
-```
+```p6
 use LendingClub;
 use Data::Dump;
 
@@ -18,8 +18,7 @@ my $lc = LendingClub.new(token => 'somesecrettoken', accountId => 12345 );
 
 say Dump $lc.summary;'
 
-```
-
+=begin output
 {
   accountTotal         => 1000000000.00.Rat,
   accruedInterest      => 1.00.Rat,
@@ -33,16 +32,16 @@ say Dump $lc.summary;'
   totalNotes           => 111.Int,
   totalPortfolios      => 5.Int,
 }
+=end output
 
-```
 my $dt = DateTime.new( year => 2016, month => 3, day => 3); 
-my $transfer = $lc.transferFunds( "LOAD_ONCE", 50.00, $dt.Str ); ';
+my $transfer = $lc.transferFunds( "LOAD_ONCE", 50.00, $dt.Str );
 
 $lc.cancelTransfers( [ $transfer<transfers>[0]<transferId> ] );
 
 my $avail_notes = $lc.listing;
 
-.... Some code to decide what notes to invest in from the list.....
+# .... Some code to decide what notes to invest in from the list.....
 
 $lc.submitOrders( 12345, @some_notes_i_want );
 
