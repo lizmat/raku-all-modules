@@ -239,11 +239,11 @@ method query_form { $.query-form }
 
 =begin pod
 
-=head NAME
+=head1 NAME
 
 URI — Uniform Resource Identifiers (absolute and relative)
 
-=head SYNOPSIS
+=head1 SYNOPSIS
 
     use URI;
     my $u = URI.new('http://her.com/foo/bar?tag=woow#bla');

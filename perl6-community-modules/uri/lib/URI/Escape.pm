@@ -49,11 +49,11 @@ sub uri_unescape(*@to_unesc, Bool :$no_utf8 = False) is export {
 
 =begin pod
 
-=head NAME
+=head1 NAME
 
 URI::Escape - Escape and unescape unsafe characters
 
-=head SYNOPSIS
+=head1 SYNOPSIS
 
     use URI::Escape;
     
