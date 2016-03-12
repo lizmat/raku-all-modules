@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/kuerbis/Term-Choose-p6
+	branch = master
+	commit = 355dee588f6a0962ba9ee3c276ca836bd396f39e
+	parent = d996e62af030c5e7dc57cb6cb3ec0f3d767dd6ac
+	cmdver = 0.2.3

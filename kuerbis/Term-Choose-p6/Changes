@@ -1,0 +1,51 @@
+Revision history for Term::Choose
+
+
+0.104   2016-03-01
+        - Made the option 'll' private
+        - Update documentation
+
+0.103   2016-03-01
+        - Optional global win
+        - if ll and (pause() or index=1): on window-resize return -1
+        - ll works with 'choose', 'choose_multi' and 'pause'
+        - Update documentation.
+
+0.102   2016-02-25
+        - Update documentation: only ascii-charater strings are supported
+
+0.101   2016-02-25
+        - Update documentation: wide characters not yet supported
+
+0.100   2016-02-24
+        - Backward incompatible changes.
+        - From Term::termios to NCurses
+        - Removed the options 'clear_screen' and 'hide_cursor'
+        - Changed option 'mouse' - two values: off and on
+        - Option 'll' only for 'pause'
+
+0.013   2016-02-16
+        - Remove BEGIN block and conditional plugin loading
+
+0.012   2016-02-16
+        - Modified .travis.yml
+
+0.011   2016-02-16
+        - Update 'line_fold'
+        - Bugfix 'cut_to_printwidth'
+        - Term::Choose::LineFold: :printwidth_func -> :all
+
+0.010   2016-02-13
+        - Fixed source-url in Meta6.json
+        - Added .travis.yml
+
+0.009   2016-02-10
+        - 'choose_multi' returns a list
+        - 'line_fold' refactored
+
+0.008   2016-02-08
+        - 'choose_multi' returns an array
+
+0.007   2016-02-08
+        - 'line_fold' -> word-separator
+
