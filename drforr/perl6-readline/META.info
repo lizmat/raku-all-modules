@@ -13,7 +13,7 @@
 		"source"  : "git://github.com/drforr/perl6-readline.git"
 	},
 	"source-url"    : "git://github.com/drforr/perl6-readline.git",
-	"perl"          : "v6",
+	"perl"          : "6",
 	"build-depends" : [
 		"LibraryCheck",
 		"panda"
