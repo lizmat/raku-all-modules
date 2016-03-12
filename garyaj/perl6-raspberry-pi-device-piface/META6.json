@@ -1,0 +1,17 @@
+{
+  "name" : "RPi::Device::PiFace",
+  "source-url" : "git://github.com/garyaj/perl6-raspberry-pi-device-piface.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "RPi::Device::PiFace" : "lib/RPi/Device/PiFace.pm6"
+  },
+  "depends" : [ ],
+  "description" : "Interface the PiFace 2 GPIO expansion board for Raspberry Pi 2",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "Gary Ashton-Jones"
+  ]
+}
