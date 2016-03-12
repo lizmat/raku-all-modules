@@ -1,5 +1,4 @@
 use v6;
-use nqp;
 
 sub EXPORT(|) {
     my role BetterWorld {
@@ -14,7 +13,7 @@ sub EXPORT(|) {
                 $name := $thisname;
             }
             else {
-                my $lnd  := self.dissect_longname(nqp::atkey(nqp::atkey($/, 'module_name'), 'longname'));
+                my $lnd  := self.dissect_longname($/.hash<module_name>.hash<longname>);
                 $name    := $lnd.name;
                 %cp      := $lnd.colonpairs_hash($use ?? 'use' !! 'no');
 
@@ -37,7 +36,7 @@ sub EXPORT(|) {
                 $RMD("Imports for '$name' done") if $RMD;
             }
             else {
-                nqp::die("Don't know how to 'no $name' just yet");
+                die "Don't know how to 'no $name' just yet";
             }
         }
     }
