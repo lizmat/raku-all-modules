@@ -1,0 +1,11 @@
+{
+  "name"        : "LibZip",
+  "version"     : "*",
+  "perl"        : "6.c",
+  "description" : "Perl 6 bindings for libzip",
+  "depends"     : [ ],
+  "provides"    : {
+     "LibZip" : "lib/LibZip.pm6"
+  },
+  "source-url"  : "git://github.com/azawawi/perl6-libzip.git"
+}
