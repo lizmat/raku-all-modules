@@ -13,7 +13,7 @@ my $mount = %*ENV<SHOUT_TEST_MOUNT> // '/shout_test';
 
 my $test-data = $*CWD.child('t/data');
 
-plan 20;
+plan 128;
 
 if not check-socket($port, $host) {
     diag "not performing live tests as no icecast server";
@@ -71,7 +71,30 @@ for @tests -> $test {
             $channel.send($tmp_buf);
         }
         $channel.close;
-    }, "send data to the channel";
+    }, "send data to the channel asynchronously";
+
+    lives-ok { $obj.close }, "close the stream";
+}
+
+for @tests -> $test {
+    my $obj;
+    lives-ok { $obj = Audio::Libshout.new(user => $user, password => $pass, host => $host, port => $port, mount => $mount) }, "new to test sending " ~ $test<file>;
+
+    lives-ok { $obj.format = $test<format> }, "set format to " ~ $test<format>;
+
+    my $file = $test-data.child($test<file>).open(:bin);
+
+    my Bool $last = False;
+
+    while not $last {
+        my $tmp_buf = $file.read(1024);
+        $last = $tmp_buf.elems < 1024;
+        lives-ok { $obj.send($tmp_buf) }, "sending { $tmp_buf.elems } synchronously";
+        lives-ok { $obj.sync }, "sync stream";
+        lives-ok { 
+            $obj.add-metadata(sent => $tmp_buf.elems.Str ) 
+        }, "set some metadata";
+    }
 
     lives-ok { $obj.close }, "close the stream";
 }

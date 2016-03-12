@@ -305,12 +305,12 @@ There is no default.
 
 =end pod
 
-class Audio::Libshout:ver<v0.0.7>:auth<github:jonathanstowe> {
+class Audio::Libshout:ver<0.0.8>:auth<github:jonathanstowe> {
     use NativeCall;
     use AccessorFacade;
 
     # encapsulate (bytes, count) in a type safe way
-    subset RawEncode of Array where  ($_.elems == 2 ) && ($_[0] ~~ CArray[uint8]) && ($_[1] ~~ Int);
+    subset RawEncode of Array where  ($_.elems == 2 ) && ($_[0] ~~ CArray) && ($_[1] ~~ Int);
 
     enum Error ( Success => 0 , Insane => -1 , Noconnect => -2 , Nologin => -3 , Socket => -4 , Malloc => -5, Meta => -6, Connected => -7, Unconnected => -8, Unsupported => -9, Busy => -10 );
     enum Format ( Ogg => 0, MP3 => 1 );
@@ -376,7 +376,7 @@ class Audio::Libshout:ver<v0.0.7>:auth<github:jonathanstowe> {
 
         sub shout_metadata_add(Metadata, Str, Str ) returns int32 is native('shout',v3) { * }
 
-        method add(Str $key is rw, Str $value is rw) returns Error {
+        method add(Str $key is copy, Str $value is copy) returns Error {
             explicitly-manage($key);
             explicitly-manage($value);
             my $rc = shout_metadata_add(self, $key, $value);
@@ -422,7 +422,8 @@ class Audio::Libshout:ver<v0.0.7>:auth<github:jonathanstowe> {
         
         sub shout_send(Shout, CArray[uint8], int32) returns int32 is native('shout',v3) { * }
 
-        multi method send(CArray[uint8] $buf, Int $elems) returns Error {
+        proto method send(|c) { * }
+        multi method send(CArray $buf, Int $elems) returns Error {
             my $rc = shout_send(self, $buf, $elems);
             Error($rc);
         }
@@ -597,6 +598,7 @@ class Audio::Libshout:ver<v0.0.7>:auth<github:jonathanstowe> {
         }
     }
 
+    proto method send(|c) { * }
     multi method send(Buf $buff) {
         if not $!opened {
             self.open()
@@ -607,7 +609,7 @@ class Audio::Libshout:ver<v0.0.7>:auth<github:jonathanstowe> {
         }
     }
 
-    multi method send(CArray[uint8] $buff, Int $bytes) {
+    multi method send(CArray $buff, Int $bytes) {
         if not $!opened {
             self.open()
         }
@@ -621,17 +623,33 @@ class Audio::Libshout:ver<v0.0.7>:auth<github:jonathanstowe> {
         self.send($raw[0], $raw[1]);
     }
 
+    proto method send-channel(|c) { * }
+
     multi method send-channel(Audio::Libshout $self:) returns Channel {
         my $channel = Channel.new;
         $self.send-channel($channel);
     }
 
+    class X::ChannelError is Exception {
+        has Exception $.inner;
+        method message() {
+            "An error occurred in the send-channel : '{ $!inner.message }'";
+        }
+    }
 
     multi method send-channel(Audio::Libshout $self: Channel $channel) returns Channel {
         $!helper-promise = start {
-            for $channel.list -> $item {
-                $self.send($item);
-                $self.sync;
+            react {
+                whenever $channel -> $item {
+                    CATCH {
+                        default {
+                            $self.close;
+                            X::ChannelError.new(inner => $_).throw;
+                        }
+                    }
+                    $self.send($item);
+                    $self.sync;
+                }
             }
         }
         $channel;
@@ -655,6 +673,8 @@ class Audio::Libshout:ver<v0.0.7>:auth<github:jonathanstowe> {
             $!opened = False;
         }
     }
+
+    proto method add-metadata(|c) { * }
 
     multi method add-metadata(Str $key, Str $value) {
         my $rc = $!metadata.add($key, $value);

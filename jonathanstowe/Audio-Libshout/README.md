@@ -32,6 +32,8 @@ https://www.mixcloud.com/mikestern-awakening/mike-stern-guest-mix-for-technotic-
 Mike's a great DJ, great DJs and producers make making software
 worthwhile :)
 
+The full documentation is available as [markdown](Documentation.md) or embedded POD.
+
 ## Installation
 
 You will need to have "libshout"  installed on your system in order to
@@ -81,9 +83,7 @@ Other install mechanisms may be become available in the future.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at
 
 https://github.com/jonathanstowe/Audio-Libshout
 
@@ -97,4 +97,4 @@ with your streaming configuration.
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015
+(C) Jonathan Stowe 2015, 2016
