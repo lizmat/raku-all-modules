@@ -28,6 +28,8 @@ has @.filters ;
 
 has %!rendered ;
 has $!address ;
+has $.display_info is rw = True ;
+has $.display_type is rw = True ;
 has $.display_address is rw = True ;
 has $.display_perl_address is rw = False ; 
 
@@ -35,6 +37,7 @@ has $.width is rw ;
 
 has $!current_depth ;
 has $.max_depth is rw = -1 ;
+has $.max_depth_message is rw = True ;
 
 method new(:@does, *%attributes)
 {
@@ -47,15 +50,23 @@ else
 
 for @does // () -> $role { $object does $role }
 
+if $object.display_info == False { $object.display_type = $object.display_address = False ; };
+
 $object 
 }
 
 sub dump($s, *%options) is export { say get_dump($s, |%options) }
 sub get_dump($s, *%options) is export { Data::Dump::Tree.new(|%options).get_dump($s)}
+sub get_dump_lines($s, *%options) is export { Data::Dump::Tree.new(|%options).get_dump_lines($s)}
 
 method dump($s, *%options) { say self.get_dump($s, |%options) }
 
 method get_dump($s, *%options)
+{
+self.get_dump_lines($s, |%options).join("\n") ~ "\n"
+}
+
+method get_dump_lines($s, *%options)
 {
 # roles can be passed in new() or as options to dump
 # make a clone so we do not pollute the object
@@ -63,6 +74,8 @@ method get_dump($s, *%options)
 my $clone = self.clone(|%options) ;
 
 for %options<does> // () -> $role { $clone does $role } 
+
+if %options<display_info>.defined && %options<display_info> == False { $clone.display_type = $clone.display_address = False ; };
 
 $clone!render_root($s)
 }
@@ -81,33 +94,46 @@ my ($, $glyph_width) := $.get_level_glyphs($!current_depth) ;
 $.width //= %+(qx[stty size] ~~ /\d+ \s+ (\d+)/)[0] ; 
 $.width -= $glyph_width ;
 
-my @renderings = self!render_element((self!get_title, '', $s), (0, '', '', '', '', '')) ;
-
-@renderings.join("\n") ~ "\n"
-}
-
-method !render_element($element, @glyphs)
-{
-my ($k, $b, $s) = $element ;
-my ($glyph_width, $glyph, $continuation_glyph, $multi_line_glyph, $empty_glyph, $filter_glyph) = @glyphs ;
-
 my @renderings ;
 
-my ($v, $f, $final, $want_address) = self!get_element_header($s) ;
+self!render_element((self!get_title, '', $s), (0, '', '', '', '', ''), @renderings, '') ;
+
+@renderings
+}
+
+method !render_element($element, @glyphs, @renderings, $head_glyph)
+{
+my ($k, $b, $s) = $element ;
+
+my ($glyph_width, $glyph, $continuation_glyph, $multi_line_glyph, $empty_glyph, $filter_glyph) = @glyphs ;
+($glyph, $continuation_glyph, $filter_glyph).map: { $_ = $head_glyph ~ $_ } ; 
+
+my ($v, $f, $final, $want_address) ;
+
+($v, $f, $final, $want_address) = 
+	$s.WHAT =:= Mu
+		?? ('', '.Mu', DDT_FINAL ) 
+		!! self.get_element_header($s) ;
+
+$f = '' unless $.display_type ; 
+
 $final //= DDT_NOT_FINAL ;
 $want_address //= $final ?? False !! True ;
 
+my ($address, $rendered) =
+	$s.WHAT !=:= Mu
+		?? $want_address ?? self!get_address($s) !! (Nil, True)
+		!! (('', '', ''), True) ;
+
 my $s_replacement ;
 
-@!filters and $.filter_header($s_replacement, $s, ($filter_glyph, @renderings), ($k, $b, $v, $f, $final, $want_address))  ;
+@!filters and $s.WHAT !=:= Mu and  
+	$.filter_header($s_replacement, $s, ($filter_glyph, @renderings), ($k, $b, $v, $f, $final, $want_address)) ;
 
-$s_replacement ~~ Data::Dump::Tree::Type::Nothing and return @renderings ;
+$s_replacement ~~ Data::Dump::Tree::Type::Nothing and return ;
 $s = $s_replacement.defined ?? $s_replacement !! $s ;
 
 if $final { $multi_line_glyph = $empty_glyph }
-
-my ($address, $rendered) = self!get_address($s) ;
-$address = Nil unless $want_address ;
 
 # perl stringy $v if role is on
 ($v, $, $) = self.get_header($v) if $s !~~ Str ;
@@ -128,15 +154,14 @@ else
 
 if ! $final && ! $rendered
 	{
-	@renderings.append: self!render_non_final($s).map: { $continuation_glyph ~ $_} 
+	self!render_non_final($s, @renderings, $continuation_glyph) ;
 	}
 
-@!filters and $.filter_footer($s, ($continuation_glyph, @renderings))  ;
-
-@renderings
+@!filters and $s.WHAT !=:= Mu and 
+	$.filter_footer($s, ($continuation_glyph, @renderings))  ;
 }
 
-method !render_non_final($s)
+method !render_non_final($s, @renderings, $continuation_glyph)
 {
 $!current_depth++ ;
 
@@ -144,33 +169,33 @@ my (%glyphs, $glyph_width) := $.get_level_glyphs($!current_depth) ;
 
 $!width -= $glyph_width ; # account for mutiline text shifted for readability
 
-my @renderings ;
-
 if $!current_depth == $.max_depth 
 	{
-	@renderings.append: %glyphs<max_depth> ~ " max depth($.max_depth)" ;
+	if $.max_depth_message
+		{
+		@renderings.append: $continuation_glyph ~ %glyphs<max_depth> ~ " max depth($.max_depth)" ;
+		}
 	}
 else
 	{
 	my @sub_elements = |(self!get_sub_elements($s) // ()) ;
 
-	@!filters and $.filter_sub_elements($s, (%glyphs<filter>, @renderings), (@sub_elements,))  ;
+	@!filters and $s.WHAT !=:= Mu and
+		$.filter_sub_elements($s, (%glyphs<filter>, @renderings), (@sub_elements,))  ;
 
-	my $last_index = @sub_elements.end ;
 	for @sub_elements Z 0 .. * -> ($sub_element, $index)
 		{
-		@renderings.append: 
-			self!render_element(
-				$sub_element,
-				self!get_element_glyphs(%glyphs, $index == $last_index)
-				) ;
+		self!render_element(
+			$sub_element,
+			self!get_element_glyphs(%glyphs, $index == @sub_elements.end),
+			@renderings,
+			$continuation_glyph,
+			) ;
 		}
 	}
 
 $!width += $glyph_width ;
 $!current_depth-- ;
-
-@renderings
 }
 
 method filter_header(\s_replacement, $s, ($glyph, @renderings), (\k, \b, \v, \f, \final, \want_address))
@@ -215,119 +240,90 @@ for @.filters -> $filter
 	}
 }
 
-method !has_method($method_name, $type --> Bool) #TODO:is cached
+multi method get_element_header($e) 
 {
-so self.can($method_name)[0].candidates.grep: {.signature.params[1].type ~~ $type} ;
-}
-
-method !get_element_header($e) # :is cached
-{
-self!has_method('get_header', $e.WHAT) 
+(self.can('get_header')[0].candidates.grep: {.signature.params[1].type ~~ $e.WHAT}) 
 	?? $.get_header($e) #specific to $e
-	!! $e.can('ddt_get_header') 
+	!! $e.^name ~~ none(self.get_P6_internal()) && $e.can('ddt_get_header') 
 		?? $e.ddt_get_header() # $e class provided
 		!! $.get_header($e) ;  # generic handler
 }
 
 method !get_sub_elements($s)
 {
-self!has_method('get_elements', $s.WHAT)
+(self.can('get_elements')[0].candidates.grep: {.signature.params[1].type ~~ $s.WHAT}) 
 	?? $.get_elements($s) # self is  $s specific 
-	!! $s.can('ddt_get_elements')
+	!! $s.^name ~~ none(self.get_P6_internal()) && $s.can('ddt_get_elements')
 		?? $s.ddt_get_elements() # $s class provided
 		!! $.get_elements($s) ;  # generic handler
 }
 
 method !split_entry(Cool $k, Int $glyph_width, Cool $v, Cool $f is copy, $address)
 {
-$f = $.superscribe_type($f) ;
+my @ks = self.split_text($k, $.width + $glyph_width) ; # $k has a bit extra space
+my @vs = self.split_text($v, $.width) ; 
+my @fs = self.split_text($.superscribe_type($f), $.width) ;
 
-my @ks = self!split_text($k, $.width + $glyph_width) ; # $k has a bit extra space
-my @vs = self!split_text($v, $.width) ; 
-my @fs = self!split_text($f, $.width) ;
+my ($ddt_address, $perl_address, $link) =
+	$address.defined
+		?? $address.list.map: { $.superscribe_address($_) } 
+		!! ('', '', '') ;
 
-my $kvf = @ks.join ~ @vs.join ~ @fs.join ;
+my $kvf ;
 
-if $address.defined
+if +@ks < 2 && +@vs < 2 && +@fs < 2
+	&& (@ks.join ~ @vs.join ~ @fs.join ~ $ddt_address ~ $perl_address ~ $link).chars <= $!width 
 	{
-	# must manually handle chars as we are interested in the address char count
-	# and we have an adress with color codes
-
-	$kvf ~= $address.join ;
-
-	@fs = '' unless @fs ;
-
-	my $container := @fs[*-1] ;
-	my $chars = $container.chars ;
-
-	for $address.list Z ('ddt_address', 'perl_address', 'link') -> ($ae is copy, $ac)
-		{
-		$ae = $.superscribe_address($ae) ;
-
-		if $chars + $ae.chars < $.width
-			{
-			$container ~= $!colorizer.color($ae, $ac) ; 
-			$chars += $ae.chars
-			}
-		else
-			{
-			@fs.push: $!colorizer.color($ae, $ac) ; 
-			$container := @fs[*-1] ;
-			$chars = $ae.chars
-			}
-		}
-	}
-
-@ks = $!colorizer.color(@ks, 'key') ; 
-@vs = $!colorizer.color(@vs, 'value') ; 
-@fs = $!colorizer.color(@fs, 'header') ;
-
-if +@ks > 1 || +@vs >1 || +@fs > 1
-	{
-	$kvf = Nil ;
+	$kvf = $!colorizer.color(@ks.join, 'key') 
+		~ $!colorizer.color(@vs.join, 'value') 
+		~ $!colorizer.color(@fs.join, 'header')
+		~ $!colorizer.color($ddt_address, 'ddt_address')
+		~ $!colorizer.color($perl_address, 'perl_address')
+		~ $!colorizer.color($link, 'link') ;
 	}
 else
 	{
-	$kvf = $kvf.chars <= $!width
-		?? @ks.join('') ~ @vs.join('') ~ @fs.join('')
-		!! Nil ;
+	@ks = $!colorizer.color(@ks, 'key') ; 
+	@vs = $!colorizer.color(@vs, 'value') ; 
+	
+	if (@fs.join ~ $ddt_address ~ $perl_address ~ $link).chars <= $!width 
+		{
+		@fs[*-1] ~= $!colorizer.color($ddt_address, 'ddt_address')
+				~ $!colorizer.color($perl_address, 'perl_address')
+				~ $!colorizer.color($link, 'link') ;
+		}
+	else
+		{
+		@fs.append: 
+			$!colorizer.color($ddt_address, 'ddt_address')
+			~ $!colorizer.color($perl_address, 'perl_address')
+			~ $!colorizer.color($link, 'link') ;
+		}
+
+	@fs = $!colorizer.color(@fs, 'header') ;
 	}
 
 $kvf, @ks, @vs, @fs 
 }
 
-method !split_text(Cool $t, $width)
+multi method split_text(Cool:U $text, $width) { 'type object' }
+
+multi method split_text(Cool:D $text, $width)
 {
-return ('type object') unless $t.defined ;
-
-return $t if $width < 1 ;
-
 # given a, possibly empty, string, split the string on \n and width, handle \t
+# colorize last letter of wrapped lines
 
-my ($index, @lines) ;
-for $t.lines -> $line
+return $text if $width < 1 ;
+
+$text.subst(/\t/, ' ' x 8, :g).lines.flatmap:
 	{
-	my $index = 0 ;
-
-	my $line2 = $line.subst(/\t/, ' ' x 8, :g) ;
-	
-	while $index < $line2.chars 
-		{
-
-		my $chunk = $line2.substr($index, $width) ;
-		$index += $width ;
-		
-		if $index < $line2.chars && self.is_ansi
-			{
-			# colorize last letter of wrapped lines
-			$chunk = $chunk.substr(0, *-1) ~ $!colorizer.color($chunk.substr(*-1), 'wrap') ;
-			}
-
-		@lines.push: $chunk ;
-		}
+	$_.comb($width).map: 
+		{	
+		$_.chars == $width
+			?? $_.substr(0, *-1) ~ $!colorizer.color($_.substr(*-1), 'wrap') 
+			!! $_ ;
+		} ;
 	}
-
-@lines 
 }
 
 method superscribe($text) { $text }
@@ -339,7 +335,7 @@ method !get_address($e)
 my $ddt_address = $!address++ ;
 my $perl_address = $e.WHERE ;
 
-my ($link, $rendered) = ('', 0) ;
+my ($link, $rendered) = ('', False) ;
 
 if %!rendered{$perl_address}:exists
 	{
@@ -351,11 +347,15 @@ else
 	%!rendered{$perl_address} = $ddt_address ;
 	}
 
-$perl_address = $.display_perl_address ?? ' (' ~ $perl_address ~ ')' !! '' ;
+my $address = 
+	$.display_address
+	??	(
+		' @' ~ $ddt_address,
+		$.display_perl_address ?? ' (' ~ $perl_address ~ ')' !! '',
+		$link, 
+		) 
+	!!	('', '', '',) ;
 
-my $address = $.display_address 
-	?? (' @' ~ $ddt_address, $perl_address, $link,) 
-	!! ('', '', '',) ;
 
 $address, $rendered
 }
@@ -394,7 +394,11 @@ method !get_class_and_parents ($a) { get_class_and_parents($a) }
 sub get_class_and_parents (Any $a) is export { (($a.^name, |get_Any_parents_list($a)).map: {'.' ~ $_}).join(' ') }
  
 method !get_Any_parents_list(Any $a) { get_Any_parents_list($a) }
-sub get_Any_parents_list(Any $a) is export { $a.^parents.map({ $_.^name }) }
+sub get_Any_parents_list(Any $a) is export 
+{
+my @a = try { @a = $a.^parents.map({ $_.^name }) }  ;
+$! ?? (('DDT exception', ': ', "$!"),)  !! @a ;
+}
 
 method !get_Any_attributes (Any $a)
 {

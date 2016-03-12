@@ -58,7 +58,7 @@ multi sub my_filter($r, $s, DDT_HEADER, ($depth, $glyph, @renderings), ($k, $b, 
 
 multi sub my_filter(\r, Tomatoe $s, DDT_HEADER, ($depth, $glyph, @renderings), $)
 {
-@renderings.append: color('red') ~ 'removing tomatoe' ;
+@renderings.append: $glyph ~ color('red') ~ 'removing tomatoe' ;
 r = Data::Dump::Tree::Type::Nothing ;
 }
 
@@ -70,7 +70,7 @@ multi sub my_filter(Hash $s, DDT_SUB_ELEMENTS, ($depth, $glyph, @renderings), (@
 
 multi sub my_filter($s, DDT_FOOTER, ($depth, $filter_glyph, @renderings))
 {
-#@renderings.append: $filter_glyph ~ "FOOTER for {$s.^name}" ;
+@renderings.append: $filter_glyph ~ "FOOTER for {$s.^name}" ;
 }
 
 #$d.dump($s, filters => (&my_filter)) ;
