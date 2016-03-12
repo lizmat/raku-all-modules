@@ -12,6 +12,8 @@ sub find-lib {
             $lib = Find::Bundled.find('zlib1.dll', 'Compress/Zlib', :keep-filename, :return-original);
         } elsif $*VM.config<dll> ~~ /so$/ {
             $lib = 'libz.so.1';
+        } elsif $*VM.config<dll> ~~ /dylib$/ {
+            $lib = 'libz.dylib';
         } else {
             $lib = 'libz';
         }
