@@ -1,5 +1,14 @@
 use v6;
 
+class X::PDF::Coerce
+    is Exception {
+	has $.obj is required;
+	has $.role is required;
+	method message {
+	    "unable to coerce object $!obj of type {$!obj.WHAT.gist} to role {$!role.WHAT.gist}"
+	}
+}
+
 class PDF::DAO::Delegator {
 
     use PDF::DAO::Util :from-ast;
@@ -10,21 +19,15 @@ class PDF::DAO::Delegator {
     use PDF::DAO::Dict;
     use PDF::DAO::Tie::Hash;
 
+    use PDF::DAO::Name;
+    use PDF::DAO::DateString;
+
     multi method coerce( $obj, $role where {$obj ~~ $role}) {
 	# already does it
 	$obj
     }
 
-    multi method coerce( PDF::DAO::Dict $obj, PDF::DAO::Tie::Hash $role) {
-	$obj does $role; $obj.?tie-init;
-    }
-
-    multi method coerce( PDF::DAO::Array $obj, PDF::DAO::Tie::Array $role) {
-	$obj does $role; $obj.?tie-init;
-    }
-
     # adds the DateTime 'object' rw accessor
-    use PDF::DAO::DateString;
     multi method coerce( Str $obj is rw, PDF::DAO::DateString $class, |c) {
 	$obj = $class.new( $obj, |c );
     }
@@ -41,8 +44,28 @@ class PDF::DAO::Delegator {
 	$obj does PDF::DAO::Name
     }
 
+    multi method coerce( Array $obj where PDF::DAO, $role where PDF::DAO::Tie::Array ) {
+	$obj does $role;
+	$obj.tie-init;
+    }
+
+    multi method coerce( Hash $obj where PDF::DAO, $role where PDF::DAO::Tie::Hash ) {
+	$obj does $role;
+	$obj.tie-init;
+    }
+
+    multi method coerce( $obj, $role where PDF::DAO::Tie ) {
+	warn X::PDF::Coerce.new( :$obj, :$role );
+    }
+
     multi method coerce( $obj, $role) is default {
-	warn "unable to coerce object $obj of type {$obj.WHAT.gist} to role {$role.WHAT.gist}"
+
+	if $role.does($role) && !$role.isa($role) {
+	    $obj does $role
+	}
+	else {
+	    warn X::PDF::Coerce.new( :$obj, :$role );
+	}
     }
 
     method class-paths { <PDF::DAO::Type> }
@@ -54,11 +77,14 @@ class PDF::DAO::Delegator {
         %handler{$subclass} = $class-def;
     }
 
-    multi method find-delegate( Str $subclass! where { %handler{$_}:exists } ) {
-        %handler{$subclass}
-    }
+    method find-delegate( Str $type!, $subtype?, :$fallback! ) is default {
 
-    multi method find-delegate( Str $subclass!, :$fallback! ) is default {
+	my $subclass = $type;
+	$subclass ~= '::' ~ $subtype
+	    if $subtype.defined;
+
+	return %handler{$subclass}
+	if %handler{$subclass}:exists;
 
 	my $handler-class = $fallback;
 
@@ -75,10 +101,9 @@ class PDF::DAO::Delegator {
     }
 
     multi method delegate( Hash :$dict! where {$dict<Type>:exists}, :$fallback) {
-	my $subclass = from-ast($dict<Type>);
+	my $type = from-ast($dict<Type>);
 	my $subtype = from-ast($dict<Subtype> // $dict<S>);
-	$subclass ~= '::' ~ $subtype if $subtype.defined;
-	my $delegate = $.find-delegate( $subclass, :$fallback );
+	my $delegate = $.find-delegate( $type, $subtype, :$fallback );
 	$delegate;
     }
 

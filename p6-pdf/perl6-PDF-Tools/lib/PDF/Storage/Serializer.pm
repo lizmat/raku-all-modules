@@ -7,27 +7,26 @@ class PDF::Storage::Serializer {
     use PDF::DAO::Dict;
     use PDF::DAO::Stream;
     use PDF::DAO::Util :to-ast;
-    use PDF::Writer;
 
-    has UInt $.size is rw = 1;  #| first free object number
-    has Pair  @!objects;        #| renumbered objects
-    has Array %!objects-idx;    #| @objects index, by id
-    has UInt %.ref-count;
+    has UInt $.size is rw = 1;      #| first free object number
+    has Pair  @!objects;            #| renumbered objects
+    has Array %!objects-idx{Any};   #| unique objects index
+    has UInt %.ref-count{Any};
     has Bool $.renumber is rw = True;
-    has Str $!type;             #| 'FDF', 'PDF', .. others?
+    has Str $!type;                 #| 'FDF', 'PDF', .. others?
     has $.reader;
 
     method type { $!type //= $.reader.?type // 'PDF' }
 
     #| Reference count hashes. Could be derivate class of PDF::DAO::Dict or PDF::DAO::Stream.
     multi method analyse( Hash $dict!) {
-        return if %!ref-count{$dict.WHICH}++; # already encountered
+        return if %!ref-count{$dict}++; # already encountered
         $.analyse($dict{$_}) for $dict.keys.sort;
     }
 
     #| Reference count arrays. Could be derivate class of PDF::DAO::Array
     multi method analyse( Array $array!) {
-        return if %!ref-count{$array.WHICH}++; # already encountered
+        return if %!ref-count{$array}++; # already encountered
         $.analyse($array[$_]) for $array.keys;
     }
 
@@ -35,12 +34,23 @@ class PDF::Storage::Serializer {
     multi method analyse( $other! ) is default {
     }
 
+    my subset DictIndObj of Pair where {.key eq 'ind-obj'
+					    && .value[2] ~~ Pair
+					    && .value[2].key eq 'dict'}
+    
+    #| remove and return the root object (trailer dictionary)
     method !get-root(@objects) {
-	my subset DictIndObj of Pair where {.key eq 'ind-obj'
-					       && .value[2] ~~ Pair
-					       && .value[2].key eq 'dict'}
 	my DictIndObj $root-ind-obj = @objects.shift; # first object is trailer dict
 	$root-ind-obj.value[2]<dict>;
+    }
+
+    #| Discard Linearization aka "Fast Web View"
+    method !discard-linearization(@objects) {
+    	if @objects && @objects[0] ~~ DictIndObj {
+	    my $first-ind-obj = @objects[0].value[2];
+	    @objects.shift
+		if $first-ind-obj<dict><Linearized>:exists;
+	}
     }
 
     proto method body(|c --> Array) {*}
@@ -107,7 +117,10 @@ class PDF::Storage::Serializer {
     #| return objects without renumbering existing objects. requires a PDF reader
     multi method body( Bool:_ :$*compress ) is default {
         my @objects = @( $.reader.get-objects );
+
 	my %dict = self!get-root(@objects);
+	self!discard-linearization(@objects);
+
         %dict<Prev>:delete;
         %dict<Size> = :int($.reader.size)
             unless $.type eq 'FDF';
@@ -115,14 +128,9 @@ class PDF::Storage::Serializer {
         [ { :@objects, :trailer{ :%dict } }, ]
     }
 
-    method !get-ind-ref( Str :$id!) {
-        :ind-ref( %!objects-idx{$id} )
-            if %!objects-idx{$id}:exists;
-    }
-
-    #| construct a reverse index that unique maps unique $objects, identified by .WHICH,
+    #| construct a reverse index that unique maps unique $objects,
     #| to an object-number and generation-number. 
-    method !index-object( Pair $ind-obj! is rw, Str :$id!, :$object) {
+    method !index-object( Pair $ind-obj! is rw, :$object!) {
         my Int $obj-num = $object.obj-num 
 	    if $object.can('obj-num')
 	    && (! $.reader || $object.reader === $.reader);
@@ -141,7 +149,7 @@ class PDF::Storage::Serializer {
 
         @!objects.push: (:ind-obj[ $obj-num, $gen-num, $ind-obj]);
         my $ind-ref = [ $obj-num, $gen-num ];
-        %!objects-idx{$id} = $ind-ref;
+        %!objects-idx{$object} = $ind-ref;
         :$ind-ref;
     }
 
@@ -165,8 +173,8 @@ class PDF::Storage::Serializer {
     #| streams always need to be indirect objects
     multi method is-indirect(PDF::DAO::Stream $object)                    {True}
 
-    #| avoid duplication of multiply referenced objects
-    multi method is-indirect($, :$id! where {%!ref-count{$id} > 1})       {True}
+    #| multiply referenced objects need to be indirect
+    multi method is-indirect($obj where {%!ref-count{$obj} > 1})          {True}
 
     #| typed objects should be indirect, e.g. << /Type /Catalog .... >>
     multi method is-indirect(Hash $obj where {.<Type>:exists})            {True}
@@ -186,13 +194,10 @@ class PDF::Storage::Serializer {
 
     #| handles PDF::DAO::Dict, PDF::DAO::Stream, (plain) Hash
     multi method freeze( Hash $object!, Bool :$indirect) {
-        my $id = ~$object.WHICH;
 
         # already an indirect object
-	if %!objects-idx{$id}:exists {
-	    my $ind-ref = self!get-ind-ref( :$id );
-	    return $ind-ref;
-	}
+        return (:ind-ref( %!objects-idx{$object} ))
+	    if %!objects-idx{$object}:exists;
 
         my Bool $is-stream = $object.isa(PDF::DAO::Stream);
 
@@ -218,8 +223,8 @@ class PDF::Storage::Serializer {
         }
 
         # register prior to traversing the object. in case there are cyclical references
-        my $ret = $indirect || $.is-indirect( $object, :$id )
-            ?? self!index-object($ind-obj, :$id, :$object )
+        my $ret = $indirect || $.is-indirect( $object )
+            ?? self!index-object($ind-obj, :$object )
             !! $ind-obj;
 
         $slot = self!freeze-dict($object);
@@ -229,13 +234,10 @@ class PDF::Storage::Serializer {
 
     #| handles PDF::DAO::Array, (plain) Array
     multi method freeze( Array $object!, Bool :$indirect ) {
-        my $id = ~$object.WHICH;
 
         # already an indirect object
-	if %!objects-idx{$id}:exists {
-	    my $ind-ref = self!get-ind-ref( :$id );
-	    return $ind-ref;
-	}
+        return (:ind-ref( %!objects-idx{$object} ))
+	    if %!objects-idx{$object}:exists;
 
 	my $array;
 
@@ -243,8 +245,8 @@ class PDF::Storage::Serializer {
         my $slot := $ind-obj.value;
 
         # register prior to traversing the object. in case there are cyclical references
-        my $ret = $indirect || $.is-indirect( $object, :$id )
-            ?? self!index-object($ind-obj, :$id, :$object )
+        my $ret = $indirect || $.is-indirect( $object )
+            ?? self!index-object($ind-obj, :$object )
             !! $ind-obj;
 
         $slot = self!freeze-array($object);
@@ -258,23 +260,20 @@ class PDF::Storage::Serializer {
     }
 
     #| do a full save to the named file
-    multi method save-as(Str $file-name!,
-			 PDF::DAO $trailer-dict!,
-                         Numeric :$version=1.3,
-                         Str     :$!type,     #| e.g. 'PDF', 'FDF;
-                         Bool    :$compress,
-			         :$crypt,
+    method ast(
+	PDF::DAO $trailer!,
+	Numeric :$version=1.3,
+	Str     :$!type,     #| e.g. 'PDF', 'FDF;
+	Bool    :$compress,
+	:$crypt,
         ) {
 	$!type //= $.reader.?type;
-	$!type //= $file-name ~~ /:i '.fdf' $/  ?? 'FDF' !! 'PDF';
-        my Array $body = self.body($trailer-dict, :$compress );
+	$!type //= (($trailer<Root>:exists) && ($trailer<Root><FDF>:exists)
+		    ?? 'FDF'
+		    !! 'PDF');
+        my Array $body = self.body($trailer, :$compress );
 	$crypt.crypt-ast('body', $body)
 	    if $crypt;
-        my Pair $ast = :pdf{ :header{ :$!type, :$version }, :$body };
-        my $writer = PDF::Writer.new( );
-        use JSON::Fast;
-        $file-name ~~ m:i/'.json' $/
-            ?? $file-name.IO.spurt( to-json( $ast ))
-            !! $file-name.IO.spurt( $writer.write( $ast ), :enc<latin-1> );
+        :pdf{ :header{ :$!type, :$version }, :$body };
     }
 }

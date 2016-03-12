@@ -9,6 +9,7 @@ class PDF::DAO::Doc
 
     use PDF::Storage::Serializer;
     use PDF::Storage::Crypt;
+    use PDF::Reader;
     use PDF::Writer;
     use PDF::DAO::Tie;
     use PDF::DAO::Type::Encrypt :PermissionsFlag;
@@ -27,9 +28,9 @@ class PDF::DAO::Doc
 
     #| open the input file-name or path
     method open($spec, |c) {
-	require ::('PDF::Reader');
-        my $reader = ::('PDF::Reader').new;
+        my PDF::Reader $reader .= new;
         my $doc = self.new( :$reader );
+
         $reader.install-trailer( $doc );
         $reader.open($spec, |c);
         $doc.crypt = $reader.crypt
@@ -43,8 +44,13 @@ class PDF::DAO::Doc
         $!crypt = ::('PDF::Storage::Crypt::RC4').new( :doc(self), :$owner-pass, :$user-pass, |c);
     }
 
-    #| perform an incremental save back to the opened input file
-    method update(:$compress) {
+    #| perform an incremental save back to the opened input file, or to the
+    #| specified annex file
+    method update(:$compress, Str :$annex) {
+
+	self.?cb-init
+	    unless self<Root>:exists;
+	self<Root>.?cb-finish;
 
         my $reader = $.reader
             // die "PDF is not associated with an input source";
@@ -52,10 +58,17 @@ class PDF::DAO::Doc
 	die "PDF has not been opened for indexed read."
 	    unless $reader.input && $reader.xrefs && $reader.xrefs[0];
 
-	my $type = $reader.type;
-	self.generate-id( :$type );
+	die "annex file and input PDF are the same: $annex"
+	    if $annex && $annex eq $reader.file-name;
 
-        my $serializer = PDF::Storage::Serializer.new( :$reader, :$type );
+        die "JSON annex files are NYI"
+	    if $annex && $annex ~~ m:i/'.json' $/;
+
+	my $type = $reader.type;
+	self.generate-id( :$type )
+	    unless $annex;
+
+        my PDF::Storage::Serializer $serializer .= new( :$reader, :$type );
         my Array $body = $serializer.body( :updates, :$compress );
 	$!crypt.crypt-ast('body', $body)
 	    if $!crypt;
@@ -65,30 +78,71 @@ class PDF::DAO::Doc
 
         constant Preamble = "\n\n";
         my Numeric $offset = $reader.input.codes + Preamble.codes;
-        my $writer = PDF::Writer.new( :$offset, :$prev );
+        my PDF::Writer $writer .= new( :$offset, :$prev );
 	my @entries;
         my Str $new-body = $writer.write-body( $body[0], @entries, :$prev, :$trailer );
 
-	# merge the updated entries in the index
-	$prev = $writer.prev;
-        my UInt $size = $writer.size;
-	$reader.update( :@entries, :$prev, :$size);
-	$.Size = $size;
-	@entries = [];
+	my $fh;
+	if $annex {
+	    # saving updates as a PDF annex fragment elsewhere.
+	    $fh = $annex.IO.open(:w)
+	}
+	else {
+	    # in-place update. merge the updated entries in the index
+	    # todo: we should be able to leave the input file open and append to it
+	    $prev = $writer.prev;
+	    my UInt $size = $writer.size;
+	    $reader.update( :@entries, :$prev, :$size);
+	    $.Size = $size;
+	    @entries = [];
+	    $fh = $reader.file-name.IO.open(:a);
+	}
 
-        # todo we should be able to leave the input file open and append to it
-        my $fh = $reader.file-name.IO.open(:a);
         $fh.write: Preamble.encode('latin-1');
         $fh.write: $new-body.encode('latin-1');
         $fh.close;
     }
 
-    method save-as(Str $file-name!, |c) {
+    method ast(|c) {
+	die "no top-level Root entry"
+	    unless self<Root>:exists;
+	
+	self<Root>.?cb-finish;
+
 	my $type = $.reader.?type;
-	$type //= $file-name ~~ /:i '.fdf' $/  ?? 'FDF' !! 'PDF';
+	$type //= self<Root><FDF>:exists ?? 'FDF' !! 'PDF';
 	self.generate-id( :$type );
-	my $serializer = PDF::Storage::Serializer.new;
-	$serializer.save-as( $file-name, self, :$type, :$!crypt, |c)
+	my PDF::Storage::Serializer $serializer .= new;
+	$serializer.ast( self, :$type, :$!crypt, |c);
+    }
+
+    method save-as($target! where Str | IO::Handle | IO::Path, |c) {
+
+	multi sub save-to(Str $file-name where m:i/'.json' $/, Pair $ast) {
+            use JSON::Fast;
+	    $file-name.IO.spurt( to-json( $ast ))
+	}
+
+	multi sub save-to(Str $file-name, Pair $ast) {
+	    save-to($file-name.IO, $ast);
+	}
+
+	multi sub save-to(IO::Path $iop, Pair $ast) {
+	    save-to($iop.open(:w), $ast);
+	}
+
+	multi sub save-to(IO::Handle $ioh, Pair $ast) is default {
+            my PDF::Writer $writer .= new;
+	    $ioh.write: $writer.write( $ast ).encode('latin-1')
+	}
+
+	save-to($target, $.ast(|c) );
+    }
+
+    #| stringify to the serialized PDF
+    method Str {
+        my PDF::Writer $writer .= new;
+	$writer.write( $.ast )
     }
 
     # permissions check, e.g: $doc.permitted( PermissionsFlag::Modify )

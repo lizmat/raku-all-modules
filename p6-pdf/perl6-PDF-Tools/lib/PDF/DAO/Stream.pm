@@ -1,14 +1,12 @@
 use v6;
 
 use PDF::DAO;
-use PDF::DAO::Type;
 use PDF::DAO::Tie::Hash;
 
 #| Stream - base class for specific stream objects, e.g. Type::ObjStm, Type::XRef, ...
 class PDF::DAO::Stream
     does PDF::DAO
     is Hash
-    does PDF::DAO::Type 
     does PDF::DAO::Tie::Hash {
 
     use PDF::DAO::Tie;
@@ -35,17 +33,16 @@ class PDF::DAO::Stream
 
     has UInt $.DL is entry;                         #| (Optional; PDF 1.5) A non-negative integer representing the number of bytes in the decoded (defiltered) stream.
 
-    our %obj-cache = (); #= to catch circular references
+    my %obj-cache{Any} = (); #= to catch circular references
 
     multi method new(Hash $dict!, |c) {
 	self.new( :$dict, |c );
     }
 
     multi method new(Hash :$dict = {}, :$decoded, :$encoded, *%etc) {
-        my Str $id = ~$dict.WHICH;
-        my $obj = %obj-cache{$id};
+        my $obj = %obj-cache{$dict};
         unless $obj.defined {
-            temp %obj-cache{$id} = $obj = self.bless(|%etc);
+            temp %obj-cache{$dict} = $obj = self.bless(|%etc);
 	    $obj.tie-init;
             # this may trigger cascading PDF::DAO::Tie coercians
             $obj{.key} = from-ast(.value) for $dict.pairs;

@@ -1,7 +1,6 @@
 use v6;
 
 use PDF::DAO;
-use PDF::DAO::Type;
 use PDF::DAO::Tie;
 use PDF::DAO::Tie::Hash;
 
@@ -9,22 +8,20 @@ use PDF::DAO::Tie::Hash;
 class PDF::DAO::Dict
     does PDF::DAO
     is Hash
-    does PDF::DAO::Type
     does PDF::DAO::Tie::Hash {
 
     use PDF::DAO::Util :from-ast, :to-ast-native;
 
-    our %seen = (); #= to catch circular references
+    my %seen{Any} = (); #= to catch circular references
 
     multi method new(Hash $dict!, |c) {
 	self.new( :$dict, |c );
     }
 
     multi method new(Hash :$dict = {}, *%etc) is default {
-        my Str $id = ~$dict.WHICH;
-        my $obj = %seen{$id};
+        my $obj = %seen{$dict};
         unless $obj.defined {
-            temp %seen{$id} = $obj = self.bless(|%etc);
+            temp %seen{$dict} = $obj = self.bless(|%etc);
 	    $obj.tie-init;
             # this may trigger cascading PDF::DAO::Tie coercians
             # e.g. native Array to PDF::DAO::Array

@@ -42,7 +42,6 @@ role PDF::DAO::Tie {
 	has Str $.accessor-name is rw;
 	has Bool $.gen-accessor is rw;
 	has Code $.coerce is rw = sub ($lval is rw, Mu:U $type) { PDF::DAO.coerce($lval, $type) };
-        has Str @.aliases is rw;
         has UInt $.length is rw;
 
 	use nqp;
@@ -69,17 +68,18 @@ role PDF::DAO::Tie {
 				unless $of-type ~~ $att.type;
 			}
 			else {
+			    # init
 			    $att = Attribute.new( :name('@!' ~ $.accessor-name), :type($of-type), :package<?> );
 			    $att does TiedIndex;
 			    $att.tied = $.clone;
 			    $att.tied.type = $of-type;
 			    $lval.of-att = $att;
-			}
 			
-			for $lval.values {
-			    next if $_ ~~ Pair | $att.tied.type;
-			    ($att.tied.coerce)($_, $att.tied.type);
-			     .reader //= $reader if $reader && .can('reader');
+			    for $lval.values {
+				next if $_ ~~ Pair | $att.tied.type;
+				($att.tied.coerce)($_, $att.tied.type);
+				.reader //= $reader if $reader && .can('reader');
+			    }
 			}
 		    }
 		    else {
@@ -150,7 +150,7 @@ role PDF::DAO::Tie {
 	multi method type-check($val is copy, $type = $.type) is rw is default {
 	    if $val.defined {
 		die "{$val.WHAT.^name}.$*key: {$val.WHAT.gist} - not of type: {$type.gist}"
-		    unless $val ~~ $type || $val ~~ Pair;	#| undereferenced - don't know it's type yet
+		    unless $val ~~ $type | Pair;	#| undereferenced - don't know it's type yet
 	    }
 	    else {
 	      die "{$val.WHAT.^name}: missing required field: $*key"
@@ -172,7 +172,6 @@ role PDF::DAO::Tie {
 	    }
 	    my $val = $arg.value;
 	    given $arg.key {
-		when 'alias'    { $att.tied.aliases      = $val.list }
 		when 'inherit'  { $att.tied.is-inherited = $val }
 		when 'required' { $att.tied.is-required  = $val }
 		when 'indirect' { $att.tied.is-indirect  = $val }

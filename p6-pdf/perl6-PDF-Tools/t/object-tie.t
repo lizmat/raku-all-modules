@@ -64,20 +64,25 @@ ET
 # demonstrate low level construction of a PDF. First page is copied from an
 # input PDF. Second page is constructed from scratch.
 
+my Str $decoded = "BT /F1 24 Tf  100 250 Td (Bye for now!) Tj ET";
+my UInt $Length = $decoded.codes;
+
 lives-ok {
     my $Resources = $Pages<Kids>[0]<Resources>;
     my $new-page = PDF::DAO.coerce: { :Type(/'Page'), :MediaBox[0, 0, 420, 595], :$Resources };
-    my $contents = PDF::DAO.coerce( :stream{ :decoded("BT /F1 24 Tf  100 250 Td (Bye for now!) Tj ET" ), :dict{ :Length(46) } } );
+    my $contents = PDF::DAO.coerce( :stream{ :$decoded, :dict{ :$Length } } );
     $new-page<Contents> = $contents;
     $new-page<Parent> = $Pages;
     $Pages<Kids>.push: $new-page;
     $Pages<Count> = $Pages<Count> + 1;
     }, 'page addition';
 
-$contents<Length> = 41;
-is $contents.Length, 41, '$stream<Length> is tied to $stream.Length';
+is $contents<Length>, $Length, '$stream<Length> dereference';
+is $contents.Length, $Length, '$stream.Length accessor';
 $contents<Length>:delete;
 ok !$contents.Length.defined, '$stream<Length>:delete propagates to $stream.Length';
+
+$contents = Nil;
 
 my $doc = PDF::DAO.coerce: { :Root{ :Type(/'Catalog') } };
 $doc<Root><Outlines> = $root-obj<Outlines>;
@@ -89,5 +94,69 @@ my $body = PDF::Storage::Serializer.new.body( $doc );
 my $ast = :pdf{ :version(1.2), :$body };
 my $writer = PDF::Writer.new( );
 ok 't/hello-and-bye.pdf'.IO.spurt( $writer.write($ast), :enc<latin-1> ), 'output 2 page pdf';
+
+use PDF::DAO::Tie;
+use PDF::DAO::Tie::Hash;
+use PDF::DAO::Tie::Array;
+
+sub warns-like(&code, $ex-type, $desc = 'warning') {
+    my $ex;
+    my Bool $w = False;
+    &code();
+    CONTROL {
+	default {
+	    $ex = $_;
+	    $w = True;
+	}
+    }
+    if $w {
+        isa-ok $ex, $ex-type, $desc;
+    }
+    else {
+        flunk $desc;
+        diag "no warnings found";
+    }
+}
+
+my role HashRole does PDF::DAO::Tie::Hash {
+    has $.Foo is entry;
+}
+
+my role ArrayRole does PDF::DAO::Tie::Array {
+    has $.Bar is index[1];
+}
+
+my role GenRole {
+}
+
+my $h1 = PDF::DAO.coerce: {};
+lives-ok { PDF::DAO.coerce($h1, HashRole) }, 'tied hash role application';
+does-ok $h1, HashRole, 'Hash/Hash application';
+$h1.Foo = 42;
+is $h1<Foo>, 42, 'tied hash';
+is $h1.Foo, 42, 'tied hash accessor';
+
+my $h2 = PDF::DAO.coerce: {};
+warns-like { PDF::DAO.coerce($h2, ArrayRole) }, ::('X::PDF::Coerce'), 'Hash/Array misapplication';
+ok !$h2.does(ArrayRole), 'Hash/Array misapplication';
+
+my $a1 = PDF::DAO.coerce: [];
+lives-ok { PDF::DAO.coerce($a1, ArrayRole) }, 'tied array role application';
+does-ok $a1, ArrayRole, 'Hash/Hash application';
+$a1.Bar = 69;
+is $a1[1], 69, 'tied array accessor';
+is $a1.Bar, 69, 'tied array accessor';
+
+my $a2 = PDF::DAO.coerce: [];
+warns-like { PDF::DAO.coerce($a2, HashRole) }, ::('X::PDF::Coerce'), 'Array/Hash misapplication';
+ok !$a2.does(HashRole), 'Array/Hash misapplication';
+
+my $h3 = PDF::DAO.coerce: {};
+lives-ok { PDF::DAO.coerce($h3, GenRole) }, 'general hash role application';
+does-ok $h3, GenRole, 'Hash/Gen application';
+
+my $a3 = PDF::DAO.coerce: [];
+lives-ok { PDF::DAO.coerce($a3, GenRole) }, 'general array role application';
+does-ok $a3, GenRole, 'Array/Gen application';
 
 done-testing;
