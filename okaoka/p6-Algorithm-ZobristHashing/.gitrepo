@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/okaoka/p6-Algorithm-ZobristHashing.git
+	branch = master
+	commit = 6e3bfaae72c06ae717052f9eb6bb582ef8e0d7c8
+	parent = 6dfb0e77db9feadf019c03cced86bc04eaa9edf5
+	cmdver = 0.2.3
