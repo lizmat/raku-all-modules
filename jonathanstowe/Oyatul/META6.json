@@ -1,0 +1,31 @@
+{
+	"meta6" : "0",
+   "tags" : [
+      "filesystem",
+      "layout",
+      "util"
+   ],
+   "provides" : {
+      "Oyatul" : "lib/Oyatul.pm"
+   },
+   "test-depends" : [
+      "Test"
+   ],
+   "support" : {
+      "source" : "git://github.com/jonathanstowe/Oyatul.git"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "auth" : "github:jonathanstowe",
+   "source-url" : "git://github.com/jonathanstowe/Oyatul.git",
+   "depends" : [
+		"JSON::Tiny"
+   ],
+   "name" : "Oyatul",
+   "authors" : [
+      "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+   ],
+   "version" : "0.0.2",
+   "license" : "Artistic",
+   "description" : "Abstract representation of a filesystem layout"
+}

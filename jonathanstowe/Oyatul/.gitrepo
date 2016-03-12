@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Oyatul.git
+	branch = master
+	commit = 649787eb4ce0069bc4d6eda01bd9464a2e6e43e3
+	parent = 173e8a495525245cf0cef9691b257de4b53c3e61
+	cmdver = 0.2.3

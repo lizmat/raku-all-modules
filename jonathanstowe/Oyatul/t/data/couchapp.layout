@@ -1,0 +1,52 @@
+{
+   "type" : "layout",
+   "children" : [
+      {
+         "type" : "directory",
+         "name" : "views",
+         "children" : [
+             {
+                "purpose" : "view",
+                "type"    : "directory",
+                "template" : true,
+                "children" : [
+                   {
+                      "type" : "file",
+                      "name" : "map.js"
+                   },
+                   {
+                      "type" : "file",
+                      "name" : "reduce.js"
+                   }
+                ]
+             }
+         ]
+      },
+      {
+         "type" : "directory",
+         "name" : "updates",
+         "children" : []
+      },
+      {
+         "type" : "file",
+         "purpose" : "id",
+         "does" : "IDRole",
+         "name" : "_id"
+      },
+      {
+         "type" : "directory",
+         "name" : "shows",
+         "children" : []
+      },
+      {
+         "type" : "directory",
+         "name" : "_attachments",
+         "children" : []
+      },
+      {
+         "type" : "directory",
+         "name" : "lists",
+         "children" : []
+      }
+   ]
+}
