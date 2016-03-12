@@ -1,0 +1,30 @@
+{
+	"meta6" : "0",
+   "tags" : [
+      "network",
+      "server",
+      "test",
+      "util"
+   ],
+   "provides" : {
+      "Test::Util::ServerPort" : "lib/Test/Util/ServerPort.pm"
+   },
+   "test-depends" : [
+      "Test"
+   ],
+   "support" : {
+      "source" : "git://github.com/jonathanstowe/Test-Util-ServerPort.git"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "auth" : "github:jonathanstowe",
+   "source-url" : "git://github.com/jonathanstowe/Test-Util-ServerPort.git",
+   "depends" : [],
+   "name" : "Test::Util::ServerPort",
+   "authors" : [
+      "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+   ],
+   "version" : "0.0.1",
+   "license" : "Artistic",
+   "description" : "Get a free server port for testing with"
+}
