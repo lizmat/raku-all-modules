@@ -16,6 +16,7 @@ schema Userland is path('OS::Userland') {
         node BSD {
             node FreeBSD { }
             node OpenBSD { }
+            node OSX is alias('Darwin','xnu') { }
         }
 
         node GNU {

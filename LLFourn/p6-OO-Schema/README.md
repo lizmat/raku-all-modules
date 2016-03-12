@@ -17,15 +17,16 @@ schema Userland {
     }
 
     node POSIX {
-
-        node FreeBSD { }
-        node OpenBSD { }
-
+        node BSD {
+            node FreeBSD { }
+            node OpenBSD { }
+            node OSX is alias(<Darwin xnu>) { }
+        }
         node GNU {
             node Debian {
                 node Ubuntu { }
             }
-            node RHEL  {
+            node RHEL  is load-from("Userland::RedHat") {
                 node Fedora { }
                 node CentOS { }
             }
@@ -46,12 +47,11 @@ and finally in
 # main.p6
 
 use Userland;
-# That's enough - I don't have to load Userland::RHEL or Userland::Debian
+# Don't have to load Userland::RHEL or Userland::Debian
 
 proto install-package(Userland:D,Str:D $pkg) {*};
 
-# but you can still talk about things inheriting from them
-# with these magical short names like 'Debian' and 'RHEL'
+# 'Debian' and 'RHEL' are schema nodes -- not full classes
 multi install-package(Debian $userland,$pkg) {
     run 'apt-get', 'install', $pkg;
 }
@@ -60,13 +60,17 @@ multi install-package(RHEL $userland,$pkg) {
     run 'yum', 'install', $pkg;
 }
 
-# now at runtime you load particular real class and make
-# an instance. It just works!
-my $ubuntu = (require Userland::Ubuntu).new;
-my $fedora = (require Userland::Fedora).new;
+# Now at runtime you load particular real class from a node ( or via require )
+# The routines will accept them.
+my $ubuntu =  Userland.load-class; # Userland::Ubuntu
+# or
+my $fedora =  Userland.new; # Userland::Fedora.new
+# or
+my $centos    =  ( require Userland::CentOS );
 
 install-package($ubuntu,'ntp');
 install-package($fedora,'ntp');
+install-package($centos,'ntp');
 
 #etc
 ```
@@ -85,30 +89,36 @@ other meta-information like roles or methods attached to the node.
 There are two main use cases that I know of (but you may discover more):
 
 1. Type introspection. You want to be able to see the relationships
-   between classes without loading them.
+between classes without loading them.
 
-```perl6
-use Userland;
-# You can know that Ubuntu isa debian without loading compunits implementing either one
-say Ubuntu.isa(Debian); #-> True
-```
+    ```perl6
+    use Userland;
+    # You can know that Ubuntu isa Debian without loading compunits implementing either one
+    say Ubuntu.isa(Debian); #-> True
+    # You can declare Typed parameters that accept a certain class without loading that class
+    multi something(Debian $computer) { ... }
+    ```
 2. Dynamic loading. Depending on user input, your module may only need
-   to load a subset of the modules in your distribution.
+to load a subset of the modules in your distribution.
 
-```perl6
-use Userland;
-# check the arg is a userland without having to load them all
-sub MAIN($userland-name where { ::($_) ~~ Userland}, *%opts ){
-    my $userland = ::($userland-name).load-node-class().new(|%opts);
-
-    # do further introspection on a "real" class instance
-    given $userland {
-        when Windows { ... }
-        when RHEL    { ... }
-        when Debian  { ... }
+    ```perl6
+    use Userland;
+    sub USAGE {
+        say "pass me one of:\n" ~ Userland.children(:all)».^name.join("\n");
     }
-}
-```
+    # check the arg is a userland without having to load them all
+    sub MAIN($userland-name, *%opts ){
+        my $userland = Userland.resolve($userland-name);
+        die USAGE() if $userland === Any;
+        $userland .= new(|%opts);
+        # do further introspection on a "real" class instance
+        given $userland {
+            when Windows { ... }
+            when RHEL    { ... }
+            when Debian  { ... }
+        }
+    }
+    ```
 
 Without using `OO::Schema` you will write code like this:
 
@@ -130,6 +140,9 @@ need Userland::Debain;
 unit class Userland::Ubuntu is Userland::Debain
 ```
 
+
+
+
 ## Declaring a Schema
 
 Inside a Perl6 module file, `use OO::Schema` and declare a
@@ -137,18 +150,18 @@ Inside a Perl6 module file, `use OO::Schema` and declare a
 where the node definitions will be stored, use `is path` to set it.
 
 ```perl6
-# lib/OS/Userland.pm6
-use OO::Schema;
-# as opposed to just schema OS::Userland { }
-schema Userland is path('OS::Userland') {
+    # lib/OS/Userland.pm6
+    use OO::Schema;
+    # as opposed to just schema OS::Userland { }
+    schema Userland is path('OS::Userland') {
     # now schema definitions should go in lib/OS/Userland/
 }
 ```
 
-Declare nodes with `node`. Node names shouldn't contain any `::` (for
-now).  You can give them methods, attributes and roles if you
-want. Whether you do depends on whether you want to have them
-available without having to load the underlying class.
+Declare nodes with `node`. Node names shouldn't contain any `::`.  You
+can give them methods, attributes and roles if you want. Whether you
+do depends on whether you want to have them available without having
+to load the underlying class.
 
 ```perl6
 # lib/OS/Userland.pm6
@@ -159,7 +172,7 @@ role APT { }
 schema Userland is path('OS::Userland') {
     node Debian does APT {
 
-    method default-gui { 'GNOME' }
+        method default-gui { 'GNOME' }
 
         node Ubuntu {
             node Kubuntu {
@@ -226,60 +239,113 @@ Fedora  Ubuntu  <-- Userland::Ubuntu
 
 ## Node Methods
 
-Each node has `new` and `load-class` installed as
-submethods. `load-class` will load the underlying class while `.new`
-is just shorthand for:
+### load-class
+
+Loads the class associated with the node.
 
 ``` perl6
-Fedora.load-class.new( fancy => 'arg' )
+say Fedora.load-class.^name # Userland::Fedora
 ```
 
+### new
+
+Loads the class associated with the node and calls `.new` with the
+arguments passed.
+
+``` perl6
+Fedora.new(foo => "bar");
+# short for
+Fedora.load-class.new(foo => "bar");
+```
+
+### matches
+
+Does the node loosely match a string.
+
+``` perl6
+Debian.matches(Debian)   # True
+Debian.matches("Debian") # True
+Debian.matches("debian") # True
+Debian.matches("Userland::Debian") # True
+Debian.matches(Userland::Debian) # True
+
+# OSX is alias ('Darwin')
+OSX.matches("darwin") # True
+```
+
+### resolve
+
+``` perl6
+Userland.resolve("centos") # CentOS
+```
+
+Walks the schema calling `matches` on each node with the argument. It
+returns the first node it finds. Although node's have it too this is
+usually called on the schema.
+
+### children
+
+``` perl6
+Userland.children # Windows, POSIX
+POSIX.children # BSD, GNU
+GNU.children(:all) # Debian, Ubuntu, RHEL, Fedora, CentOS
+```
+
+Returns the node's direct child nodes. if `:all` is passed, returns
+all descendants.
 
 ## Traits
+
+### is alias
+
+``` perl6
+node OSX is alias('Darwin','xnu') { }
+
+OSX.matches("darwin") # True
+OSX.matches("xnu");   # True
+```
+
+Tells the node it should also match against the arguments to `is alias`.
 
 ### is path
 
 ```perl6
-schema userland {
-    node RHEL is path is path('OS::Userland') {
-        # Fedora, and Centos will now be loaded from
-        # Userland::RHEL::Fedora, instead of Userland::Fedora
-        node Fedora { }
-        node CentOS { }
-    }
-}
-```
-
-```perl6
-schema userland is path('OS::Userland') {
+# Everything under Userland is now loaded from OS::Userland
+schema Userland is path('OS::Userland') {
+    # Everything under RHEL is loaded from OS::Userland::RedHat
+    # (RHEL is still loaded from OS::Userland::RHEL
     node RHEL is path('RedHat') {
-        # Fedora, and Centos will now be loaded from
-        # Userland::RedHat::Fedora, instead of Userland::Fedora
-        node Fedora { }
-        node CentOS { }
+        # Fedora, and Centos will now be loaded from:
+        node Fedora { } # OS::Userland::RedHat::Fedora
+        node CentOS { } # OS::Userland::RedHat::CentOS
     }
 }
-```
-By default the underlying classes for nodes are all searched for under the `schema`'s namespace.
-`is path` indicates that the node represents a subnamespace as well as a class. `schema`s can
-use it to change the default namepsace but they are already represented by a directory.
 
-### loaded-from
+```
+
+By default the underlying classes for nodes are all searched for under
+the `schema`'s namespace.  `is path` means "prepend this to the load
+name of any child node". `schema`s can use it to change the default
+namepsace.
+
+### load-from
 ```perl6
-schema userland is path('OS::Userland') {
-    node RHEL is loaded-from('OS::Userland::RedHat') {
-        # Fedora, and Centos will now be loaded from
-        # Userland::RedHat::Fedora, instead of Userland::Fedora
-        node Fedora { }
+schema Userland is path('OS::Userland') {
+    # RHEL.load-class will not load OS::Userland::RedHat
+    node RHEL is load-from('OS::Userland::RedHat') {
+        node Fedora { } # still loaded from OS::Userland::Fedora
         node CentOS { }
     }
 }
 ```
-Sets the name to load the node's underlying class from.
+
+Overrides the name of the load path ie CompUnit short-name to load
+from. It doesn't affect child nodes.
 
 ### schema-node
 
 ```perl6
+#lib/OS/Userland/RHEL.pm
 use OS::Userland;
 
 unit class OS::Userland::RHEL is schema-node;
@@ -295,6 +361,6 @@ the class itself.
 
 ## potential changes
 
-1.`is abstract` for when you don't want a node that doesn't have an underlying class
-2. It's tricky to apply roles with required methods to nodes because you probably want to implement them in the underlying class not the node. Maybe the nodes should be more like roles which don't do that.
-3. I might make it possible to put `::` in the names of nodes things.
+1. `is abstract` for when you don't want a node that doesn't have an underlying class.
+2. It's tricky to apply roles with required methods to nodes because you probably want to
+implement them in the underlying class not the node. Maybe the nodes should be more like roles which don't do that.

@@ -1,7 +1,7 @@
 {
     "name" : "OO::Schema",
     "perl" : "6.*",
-    "version" : "0.1.1",
+    "version" : "0.2.1",
     "description" : "Declare class relationships in a single module",
     "authors"     : ["Lloyd Fournier"],
     "provides"    : {

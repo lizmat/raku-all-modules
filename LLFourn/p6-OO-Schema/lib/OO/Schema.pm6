@@ -9,14 +9,40 @@ use CompUnit::Util :load ,:at-unit, :set-symbols,:who,:get-symbols;
     multi trait_mod:<is>(Mu:U $node,Str:D :$load-from) is export {
         $node.^load-from = $load-from;
     }
+
+    multi trait_mod:<is>(Mu:U $class,:$alias!) is export {
+        $class.^aliases.append(|$alias);
+    }
 }
 
-my submethod node-new(|a) {
-    self.load-class.new(|a)
-}
+my role SchemaNode  {
+    submethod new(|a) {
+        self.load-class.new(|a)
+    }
+    submethod load-class {
+        self.^load-node-class;
+    }
+    multi submethod matches(Cool:D $test) {
+        || self.^shortname.lc ~~ $test.lc
+        || self.^load-from ~~ $test
+        || self.^aliases.map(*.lc).first($test.lc);
+    }
+    multi submethod matches(Any:U $_) {
+        when .WHAT === self.WHAT { True }
+        default { self.matches(.^name)  }
+    }
+    submethod resolve($test) {
+        do if self.matches($test) {
+            self;
+        } else {
+            my $res = self.^children.map(*.resolve($test)).first;
+            $res === Any ?? Empty !! $res;
+        }
+    }
 
-my submethod load-class {
-    self.^load-node-class;
+    submethod children(:$all){
+        |self.^children, |(self.^children».children(:all) if $all);
+    }
 }
 
 my class OO::Schema::NodeHOW is Metamodel::ClassHOW {
@@ -24,6 +50,10 @@ my class OO::Schema::NodeHOW is Metamodel::ClassHOW {
     has $!load-from; #= CompUnit to load from
     has Str $!part-of-path; #= Wether to add it
     has $!class-cache;      #= cache the loaded class
+    has @!children;
+    has @!aliases;
+
+
 
     method actually-compose(Mu \type,:@path is copy){
         $!load-from ||= join '::', |@path, type.^shortname;
@@ -38,7 +68,9 @@ my class OO::Schema::NodeHOW is Metamodel::ClassHOW {
             next unless $child.HOW ~~ OO::Schema::NodeHOW;
             $child.^add_parent(type);
             type.WHO{$name}:delete;
+            $child.^add_role(SchemaNode);
             $child.^actually-compose(:@path);
+            @!children.push: $child;
         }
         return $composed;
     }
@@ -52,6 +84,10 @@ my class OO::Schema::NodeHOW is Metamodel::ClassHOW {
 
         return $!class-cache = descend-WHO($loaded-GLOBALish.WHO,$sym-name);
     }
+
+    method aliases(Mu $) { @!aliases }
+
+    method children(Mu $) { @!children }
 
     method load-from(Mu \type) is rw { $!load-from }
 
@@ -67,10 +103,15 @@ my class OO::Schema::NodeHOW is Metamodel::ClassHOW {
 
     method new_type(:$name,|a) {
         my \type = self.Metamodel::ClassHOW::new_type(:name($name.split('::')[*-1]));
-        type.^add_method('new',&node-new);
-        type.^add_method('load-class',&load-class);
         type;
     }
+}
+
+my role Schema {
+    submethod resolve($test) {
+        self.^children.map(*.resolve($test)).first(* !=== Any);
+    }
+    submethod children(:$all) { flat self.^children,(|self.^children».children(:all) if $all) };
 }
 
 
@@ -78,6 +119,7 @@ my class OO::Schema::SchemaHOW is OO::Schema::NodeHOW {
 
     method compose(Mu \type) {
         type.^set-part-of-path(type.^name) unless type.^part-of-path;
+        type.^add_role(Schema);
         type.^actually-compose();
     }
 
@@ -106,6 +148,8 @@ multi trait_mod:<is>(Mu:U $class,:$schema-node!) {
         die "couldn't find {$node-name} in {$schema-WHO.gist}";
     }
 }
+
+
 
 sub EXPORT {
     set-unit('EXPORT::node::&trait_mod:<is>', &trait_mod:<is>);
