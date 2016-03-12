@@ -73,7 +73,7 @@ subtest
         %toml-from-string,
         %toml-from-file,
         q:to/EOF/
-        ♪ [Equivalance] - 5 of 5
+        ♪ [Equivalence] - 5 of 5
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ from-toml($content) == from-toml(:$file)
         ┃   Success   ┃

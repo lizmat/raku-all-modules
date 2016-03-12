@@ -8,3 +8,10 @@ perl6:
   - latest
 
 sudo: false
+
+env:
+  - PATH=~/.rakudobrew/bin:~/.rakudobrew/moar-nom/install/share/perl6/site/bin:~/.rakudobrew/moar-nom/panda/bin:$PATH
+
+install:
+  - rakudobrew build panda
+  - panda --notests installdeps .

@@ -286,7 +286,7 @@ subtest
     my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
-        X::Config::TOML::Keypath::HOH,
+        X::Config::TOML::HOH::Seen::Key,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 12 of 17
         ┏━━━━━━━━━━━━━┓
@@ -300,7 +300,6 @@ subtest
 
 subtest
 {
-    # TODO: change this to throw X::Config::TOML::HOH::Seen::Key
     my Str $toml = Q:to/EOF/;
     # DO NOT DO THIS
     a = { b = 1 }
@@ -312,7 +311,7 @@ subtest
     my Config::TOML::Parser::Actions $actions .= new;
     throws-like(
         {Config::TOML::Parser::Grammar.parse($toml, :$actions)},
-        X::Config::TOML::Keypath::HOH,
+        X::Config::TOML::HOH::Seen::Key,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 13 of 17
         ┏━━━━━━━━━━━━━┓

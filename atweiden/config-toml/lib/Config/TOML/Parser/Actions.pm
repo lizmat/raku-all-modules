@@ -1,18 +1,19 @@
 use v6;
-use Config::TOML::Parser::Exceptions;
+use Crane;
+use X::Config::TOML;
 unit class Config::TOML::Parser::Actions;
 
 # TOML document
 has %.toml;
 
 # TOML arraytable tracker, records arraytables seen
-has Bool %.aoh-seen;
+has Bool %.aoh-seen{Array};
 
 # TOML table tracker, records tables seen
-has Bool %.hoh-seen;
+has Bool %.hoh-seen{Array};
 
 # TOML key tracker, records keypair keys seen
-has Bool %.keys-seen;
+has Bool %.keys-seen{Array};
 
 # DateTime offset for when the local offset is omitted in TOML dates,
 # see: https://github.com/toml-lang/toml#datetime
@@ -295,19 +296,11 @@ method time-offset($/)
 method partial-time($/)
 {
     my Rat $second = Rat($<time-second>.made);
-    my Bool $subseconds = False;
-
-    if $<time-secfrac>
-    {
-        $second += Rat($<time-secfrac>.made);
-        $subseconds = True;
-    }
-
+    $second += Rat($<time-secfrac>.made) if $<time-secfrac>;
     make %(
         :hour(Int($<time-hour>.made)),
         :minute(Int($<time-minute>.made)),
-        :$second,
-        :$subseconds
+        :$second
     );
 }
 
@@ -326,7 +319,6 @@ method full-time($/)
         :hour(Int($<partial-time>.made<hour>)),
         :minute(Int($<partial-time>.made<minute>)),
         :second(Rat($<partial-time>.made<second>)),
-        :subseconds(Bool($<partial-time>.made<subseconds>)),
         :timezone(Int($<time-offset>.made))
     );
 }
@@ -493,8 +485,9 @@ method table-inline-keypairs($/)
         unless @keys-seen.elems == @keys-seen.unique.elems
         {
             die X::Config::TOML::InlineTable::DuplicateKeys.new(
-                :table-inline-text($/.Str),
-                :@keys-seen
+                :@keys-seen,
+                :subject('inline table'),
+                :text(~$/)
             );
         }
     }
@@ -529,19 +522,26 @@ method keypair-line($/)
 # this segment represents keypairs not belonging to any table
 method segment:keypair-line ($/)
 {
-    # update keypath
-    my Str @keypath = $<keypair-line>.made.keys[0];
+    my @path = $<keypair-line>.made.keys[0];
+    my $value = $<keypair-line>.made.values[0];
 
-    # mark key as seen, verify key is not being redeclared
-    if %!keys-seen{$(self!pwd(%.toml, @keypath))}++
+    if seen(%.keys-seen, :@path)
     {
         die X::Config::TOML::KeypairLine::DuplicateKeys.new(
-            :keypair-line-text($/.Str),
-            :@keypath
+            :keypair-line-text(~$/),
+            :@path
         );
     }
 
-    self!at-keypath(%!toml, @keypath) = $<keypair-line>.made.values[0];
+    Crane.exists(%.toml, :@path)
+        ?? die
+            X::Config::TOML::KeypairLine::DuplicateKeys.new(
+                :keypair-line-text(~$/),
+                :@path
+            )
+        !! Crane.set(%!toml, :@path, :$value);
+
+    %!keys-seen{$@path}++;
 }
 
 method table-header-text($/)
@@ -556,108 +556,94 @@ method hoh-header($/)
 
 method table:hoh ($/)
 {
-    my Str @base-keypath = $<hoh-header>.made;
-    my Str $hoh-text = $/.Str;
+    my @base-path = pwd(%!toml, :steps($<hoh-header>.made));
+    my Str $hoh-text = ~$/; # for error messages
 
-    # verify table does not overwrite existing key
-    if %.keys-seen{$(self!pwd(%.toml, @base-keypath))}
+    if seen(%.keys-seen, :path(@base-path))
     {
         die X::Config::TOML::HOH::Seen::Key.new(
             :$hoh-text,
-            :keypath(@base-keypath)
+            :path(@base-path)
         );
     }
-
-    # verify table does not overwrite existing arraytable
-    if %.aoh-seen{$@base-keypath}
+    if %.aoh-seen.grep({.keys[0] eqv $@base-path}).elems > 0
     {
         die X::Config::TOML::HOH::Seen::AOH.new(
-            :hoh-header-text($<hoh-header>.Str),
+            :hoh-header-text(~$<hoh-header>),
             :$hoh-text
         );
     }
-
-    # mark table as seen, verify table is not being redeclared
-    if %!hoh-seen{$(self!pwd(%.toml, @base-keypath))}++
+    if %.hoh-seen.grep({.keys[0] eqv $@base-path}).elems > 0
     {
         die X::Config::TOML::HOH::Seen.new(
-            :hoh-header-text($<hoh-header>.Str),
+            :hoh-header-text(~$<hoh-header>),
             :$hoh-text
         );
     }
 
-    # verify base keypath is clear
-    try
+    my @keypairs = @<keypair-line>».made.flat;
     {
-        self.is-keypath-clear(@base-keypath);
-
         CATCH
         {
-            default
+            when X::AdHoc
             {
-                die X::Config::TOML::Keypath::HOH.new(
-                    :$hoh-text,
-                    :keypath(@base-keypath)
-                );
-            }
-        }
-    }
-
-    # does table contain keypairs?
-    if @<keypair-line>
-    {
-        # verify keypair lines do not contain duplicate keys
-        {
-            my Str @keys-seen = |@<keypair-line>».made».keys.flat;
-            unless @keys-seen.elems == @keys-seen.unique.elems
-            {
-                die X::Config::TOML::HOH::DuplicateKeys.new(
-                    :$hoh-text,
-                    :@keys-seen
-                );
-            }
-        }
-
-        for @<keypair-line>».made -> $keypair
-        {
-            my Str @keypath = @base-keypath;
-            push @keypath, $keypair.keys[0];
-
-            # verify keypair key does not conflict with existing key
-            try
-            {
-                self.is-keypath-clear(@keypath);
-
-                CATCH
+                my rule exception-associative-indexing
                 {
-                    when X::Config::TOML::BadKeypath::ArrayNotAOH
-                    {
-                        die X::Config::TOML::HOH::Seen::Key.new(
-                            :$hoh-text,
-                            :keypath(@base-keypath)
-                        );
-                    }
-                    default
-                    {
-                        die X::Config::TOML::Keypath::HOH.new(
-                            :$hoh-text,
-                            :@keypath
-                        );
-                    }
+                    Type (\w+) does not support associative indexing
+                }
+                if .payload ~~ &exception-associative-indexing
+                {
+                    die X::Config::TOML::HOH::Seen::Key.new(
+                        :$hoh-text,
+                        :path(@base-path)
+                    );
+                }
+            }
+        }
+
+        # does table contain keypairs?
+        if @keypairs
+        {
+            # verify keypairs do not contain duplicate keys
+            {
+                my Str @keys-seen = |@keypairs».keys.flat;
+                unless @keys-seen.elems == @keys-seen.unique.elems
+                {
+                    die X::Config::TOML::HOH::DuplicateKeys.new(
+                        :@keys-seen,
+                        :subject('table'),
+                        :text($hoh-text)
+                    );
                 }
             }
 
-            # assign value to keypath
-            self!at-keypath(%!toml, @keypath) = $keypair.values[0];
-
-            # mark key as seen
-            %!keys-seen{$(self!pwd(%.toml, @keypath))}++;
+            for @keypairs -> %keypair
+            {
+                my @path = |@base-path, %keypair.keys[0];
+                my $value = %keypair.values[0];
+                Crane.exists(%.toml, :@path)
+                    ?? die
+                        X::Config::TOML::HOH::Seen::Key.new(
+                            :$hoh-text,
+                            :@path
+                        )
+                    !! Crane.set(%!toml, :@path, :$value);
+                %!keys-seen{$@path}++;
+            }
+        }
+        else
+        {
+            Crane.exists(%.toml, :path(@base-path))
+                ?? die
+                    X::Config::TOML::HOH::Seen::Key.new(
+                        :$hoh-text,
+                        :path(@base-path)
+                    )
+                !! Crane.set(%!toml, :path(@base-path), :value({}));
         }
     }
-    else
-    {
-        self!at-keypath(%!toml, @base-keypath) = {};
-    }
+
+    %!hoh-seen{$@base-path}++;
 }
 
 method aoh-header($/)
@@ -667,96 +653,55 @@ method aoh-header($/)
 
 method table:aoh ($/)
 {
-    my Str @base-keypath = $<aoh-header>.made;
-    my Str $aoh-header-text = $<aoh-header>.Str;
-    my Str $aoh-text = $/.Str;
+    my @path = pwd(%!toml, :steps($<aoh-header>.made));
+    my Str $aoh-header-text = ~$<aoh-header>;
+    my Str $aoh-text = ~$/;
 
-    # verify arraytable does not overwrite existing key
-    if %.keys-seen{$(self!pwd(%.toml, @base-keypath))}
+    if seen(%.keys-seen, :@path)
     {
         die X::Config::TOML::AOH::OverwritesKey.new(
             :$aoh-header-text,
             :$aoh-text,
-            :keypath(@base-keypath)
+            :@path
         );
     }
-
-    # verify arraytable does not overwrite existing table
-    if %.hoh-seen{$(self!pwd(%.toml, @base-keypath))}
+    if %.hoh-seen.grep({.keys[0] eqv $@path}).elems > 0
     {
         die X::Config::TOML::AOH::OverwritesHOH.new(
             :$aoh-header-text,
             :$aoh-text,
-            :keypath(@base-keypath)
+            :@path
         );
     }
 
+    unless %.aoh-seen.grep({.keys[0] eqv $@path}).elems > 0
+    {
+        Crane.exists(%.toml, :@path)
+            ?? die X::Config::TOML::Keypath::AOH.new(:$aoh-text, :@path)
+            !! Crane.set(%!toml, :@path, :value([]));
+        %!aoh-seen{$@path}++;
+    }
+
     my %h;
-    if @<keypair-line>
+    my @keypairs = @<keypair-line>».made.flat;
+    if @keypairs
     {
         # verify keypair lines do not contain duplicate keys
         {
-            my Str @keys-seen = |@<keypair-line>».made».keys.flat;
+            my Str @keys-seen = |@keypairs».keys.flat;
             unless @keys-seen.elems == @keys-seen.unique.elems
             {
                 die X::Config::TOML::AOH::DuplicateKeys.new(
-                    :$aoh-text,
-                    :@keys-seen
+                    :@keys-seen,
+                    :subject('array table'),
+                    :text($aoh-text)
                 );
             }
         }
 
-        @<keypair-line>».made.map({ %h{.keys[0]} = .values[0]; });
+        @keypairs.map({ %h{.keys[0]} = .values[0] });
     }
-
-    sub append-to-aoh(@keypath, %h)
-    {
-        push self!at-keypath(
-            %!toml,
-            @keypath.end > 0 ?? @keypath[0..^@keypath.end] !! []
-        ){@keypath[@keypath.end]}, %h;
-    }
-
-    # is base keypath an existing array of hashes?
-    if %.aoh-seen{$@base-keypath}
-    {
-        # push values to existing array of hashes
-        append-to-aoh(@base-keypath, %h);
-    }
-    # new array of hashes
-    else
-    {
-        # make sure we're not trodding over scalars or tables
-        try
-        {
-            self.is-keypath-clear(@base-keypath, :aoh);
-
-            CATCH
-            {
-                when X::Config::TOML::BadKeypath::ArrayNotAOH
-                {
-                    die X::Config::TOML::AOH::OverwritesKey.new(
-                        :$aoh-header-text,
-                        :$aoh-text,
-                        :keypath(@base-keypath)
-                    );
-                }
-                default
-                {
-                    die X::Config::TOML::Keypath::AOH.new(
-                        :$aoh-text,
-                        :keypath(@base-keypath)
-                    );
-                }
-            }
-        }
-
-        # push values to new array of hashes
-        append-to-aoh(@base-keypath, %h);
-
-        # mark arraytable as seen
-        %!aoh-seen{$@base-keypath}++;
-    }
+    Crane.set(%!toml, :path(|@path, *-0), :value(%h));
 }
 
 method TOP($/)
@@ -768,184 +713,65 @@ method TOP($/)
 
 # helper functions {{{
 
-# given TOML hash and keypath, return scalar container of deepest path,
-# with special treatment of array of hashes
-method !at-keypath(%h, *@k) is rw
-{
-    my $h := %h;
-
-    my @path;
-
-    for @k -> $k
-    {
-        push @path, $k;
-
-        # if keypath step is array of hashes, always traverse array
-        # element of highest index
-        if $h{$k} ~~ List
-        {
-            # verify this is aoh before traversing
-            unless %.aoh-seen{$@path}
-            {
-                die X::Config::TOML::BadKeypath::ArrayNotAOH.new;
-            }
-
-            my Int $l = $h{$k}.end;
-            $h := $h{$k}[$l];
-        }
-        else
-        {
-            $h := $h{$k};
-        }
-    }
-    $h;
-}
-
-# verify keypath does not conflict with existing key
-multi method is-keypath-clear(Str:D @full-keypath) returns Bool:D
-{
-    my Bool:D $clear = False;
-
-    # does full keypath exist?
-    if self!at-keypath(%.toml, @full-keypath).defined
-    {
-        # is it a scalar?
-        unless self!at-keypath(%.toml, @full-keypath).WHAT ~~ Hash
-        {
-            $clear = False;
-            die X::Config::TOML::Keypath.new(:keypath(@full-keypath));
-        }
-
-        $clear = True;
-    }
-    else
-    {
-        # full keypath does not exist, and full keypath has depth of 1?
-        if @full-keypath.end == 0
-        {
-            $clear = True;
-        }
-        else
-        {
-            # for extended keypaths, make sure we're not trodding
-            # over scalars
-            $clear = self._is-keypath-clear(
-                @full-keypath[0..^@full-keypath.end].Array
-            );
-        }
-    }
-
-    $clear;
-}
-
-# special keypath check for arraytables
-multi method is-keypath-clear(
-    Str:D @full-keypath,
-    Bool:D :$aoh! where *.so
-) returns Bool:D
-{
-    my Bool:D $clear = False;
-
-    # does full keypath exist?
-    if self!at-keypath(%.toml, @full-keypath).defined
-    {
-        # we're tracking arraytables so if we got here, it's because
-        # we're tasked with making a new arraytable
-        # this new arraytable cannot overwrite any existing value
-        $clear = False;
-        die X::Config::TOML::Keypath.new(:keypath(@full-keypath));
-    }
-    else
-    {
-        # full keypath does not exist, and full keypath has depth of 1?
-        if @full-keypath.end == 0
-        {
-            $clear = True;
-        }
-        else
-        {
-            # for extended keypaths, make sure we're not trodding
-            # over scalars
-            $clear = self._is-keypath-clear(
-                @full-keypath[0..^@full-keypath.end].Array
-            );
-        }
-    }
-
-    $clear;
-}
-
-multi method _is-keypath-clear(@keypath where *.end > 0) returns Bool:D
-{
-    self!is-trodden(@keypath)
-        ?? die X::Config::TOML::Keypath.new(:@keypath)
-        !! self._is-keypath-clear(@keypath[0..^@keypath.end]);
-}
-
-multi method _is-keypath-clear(@keypath where *.end == 0) returns Bool:D
-{
-    self!is-trodden(@keypath)
-        ?? die X::Config::TOML::Keypath.new(:@keypath)
-        !! True;
-}
-
-method !is-trodden(@keypath) returns Bool:D
-{
-    if self!at-keypath(%.toml, @keypath).defined
-    {
-        unless self!at-keypath(%.toml, @keypath).WHAT ~~ Hash
-        {
-            die X::Config::TOML::Keypath.new(:@keypath);
-            True;
-        }
-    }
-    False;
-}
-
 # given TOML hash and keypath, print working directory including
 # arraytable indices
-# returns either a keyname or array index at each step of the path
-class Step { has $.key; has Int $.index; }
-method !pwd(%h, *@k) returns Array
+multi sub pwd(Associative $container, :@steps where *.elems > 0) returns Array
 {
-    my Step @steps;
-
-    my $h := %h;
-    for @k -> $k
-    {
-        # if keypath step is array of hashes, always traverse array
-        # element of highest index
-        if $h{$k} ~~ List
-        {
-            my Int $l = $h{$k}.end;
-            $h := $h{$k}[$l];
-            push @steps, Step.new(:key($k), :index($l));
-        }
-        else
-        {
-            $h := $h{$k};
-            push @steps, Step.new(:key($k));
-        }
-    }
-
-    unfold(@steps);
+    my @steps-taken;
+    my $root := $container;
+    $root := $root{@steps[0]};
+    push @steps-taken, @steps[0], |pwd($root, :steps(@steps[1..*]));
+    @steps-taken;
 }
 
-# convert list of Steps to strings
-sub unfold(Step @steps) returns Array
+multi sub pwd(Associative $container, :@steps where *.elems == 0) returns Array
 {
-    my Str @unfold;
+    my @steps-taken;
+}
 
-    for @steps -> $step
-    {
-        # surround keypair keys with angle brackets
-        push @unfold, '<' ~ $step.key ~ '>';
+multi sub pwd(Positional $container, :@steps where *.elems > 0) returns Array
+{
+    my @steps-taken;
+    my $root := $container;
+    my Int $index = $container.end;
+    $root := $root[$index];
+    push @steps-taken, $index, |pwd($root, :@steps);
+    @steps-taken;
+}
 
-        # surround array indices with square brackets
-        push @unfold, '[' ~ $step.index ~ ']' if defined $step.index;
-    }
+multi sub pwd(Positional $container, :@steps where *.elems == 0) returns Array
+{
+    my @steps-taken;
+}
 
-    @unfold;
+multi sub pwd($container, :@steps where *.elems > 0) returns Array
+{
+    my @steps-taken;
+    my $root := $container;
+    $root := $root{@steps[0]};
+    push @steps-taken, @steps[0], |pwd($root, :steps(@steps[1..*]));
+    @steps-taken;
+}
+
+multi sub pwd($container, :@steps where *.elems == 0) returns Array
+{
+    my @steps-taken;
+}
+
+multi sub seen(Bool %h, :@path! where *.elems > 1) returns Bool
+{
+    %h.grep({.keys[0] eqv $@path}).elems > 0
+        || seen(%h, :path(@path[0..^*-1].Array));
+}
+
+multi sub seen(Bool %h, :@path! where *.elems > 0) returns Bool
+{
+    %h.grep({.keys[0] eqv $@path}).elems > 0;
+}
+
+multi sub seen(Bool %h, :@path! where *.elems == 0) returns Bool
+{
+    False;
 }
 
 # end helper functions }}}

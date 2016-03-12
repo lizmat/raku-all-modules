@@ -100,34 +100,22 @@ subtest
         "diff\"i\\ \"cult\"?#'\\'" = true, # this is ok 72
         # this is ok 73
         # this is ok 74
-        date_times = {# this is ok 75
-            # this is ok 76
-            date1 = 1979-05-27T07:32:00Z, # this is ok 77
-            date2 = 1979-05-27T00:32:00-07:00,# this is ok 78
-            date3 = 1979-05-27T00:32:00.999999-07:00,# this is ok 79
-            date4 = 1979-05-27T07:32:00,# this is ok 80
-            date5 = 1979-05-27T00:32:00.999999,# this is ok 81
-            date6 = 1979-05-27,# this is ok 82
-            # this is ok 83
-            1979-05-27 = [1979-05-27T07:32:00Z,# this is ok 84
-            #
-                1979-05-27T00:32:00-07:00,# this is ok 85
-            #
-                1979-05-27T00:32:00.999999-07:00,# this is ok 86
-            #
-                1979-05-27T07:32:00,# this is ok 87
-            #
-                1979-05-27T00:32:00.999999,# this is ok 88
-            #
-                1979-05-27,#
-                #
-            ]# this is ok 89
-        }# this is ok 90
-        # this is ok 91
-        , # this is ok 92
-        empty_array_of_arrays = [[[[[[[[]]]]]]]]# this is ok 93
-        # this is ok 94
-    # this is ok 95
+        # date_times = {# this is ok 75
+        #     # this is ok 76
+        #     date1 = 1979-05-27T07:32:00Z, # this is ok 77
+        #     date2 = 1979-05-27T00:32:00-07:00,# this is ok 78
+        #     # date3 = 1979-05-27T00:32:00.999999-07:00,# this is ok 79
+        #     # this is ok 80
+        #     1979-05-27 = [1979-05-27T07:32:00Z,# this is ok 81
+        #         1979-05-27T00:32:00-07:00,# this is ok 82
+        #         # 1979-05-27T00:32:00.999999-07:00,
+        #     ]# this is ok 83
+        # }# this is ok 84
+        # this is ok 85
+        # , # this is ok 86
+        empty_array_of_arrays = [[[[[[[[]]]]]]]]# this is ok 87
+        # this is ok 88
+    # this is ok 89
     }
     EOF
     $commented-inline-table-difficult .= trim;

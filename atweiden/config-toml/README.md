@@ -1,7 +1,7 @@
 Config::TOML
 ============
 
-Parse TOML from file or perl6 Str.
+Parse TOML from file or Perl6 Str.
 
 
 Usage
@@ -37,11 +37,11 @@ TOML date values can take three different forms:
    (`YYYY-MM-ddThh:mm:ss.ffff`)
 3. Standard calendar dates (`YYYY-MM-dd`)
 
-By default, Config::TOML builds Perl 6 DateTimes from TOML date values
-that do not include a local offset using the host machine's local
-offset. To override the default behavior of using the host machine's
-local offset for date values where the offset is omitted, pass the
-`date-local-offset` parameter (with an integer value) to `from-toml`:
+By default, Config::TOML builds Perl6 DateTimes from TOML date values that
+do not include a local offset using the host machine's local offset. To
+override the default behavior of using the host machine's local offset
+for date values where the offset is omitted, pass the `date-local-offset`
+parameter (with an integer value) to `from-toml`:
 
 ```perl6
 my $cfg = slurp 'config.toml';

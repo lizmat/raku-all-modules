@@ -1017,8 +1017,8 @@ subtest
         EOF
     );
     # leading whitespace in this array is because TOML parser does not
-    # parse heredocs like Perl 6, leading spaces on the outside edges
-    # of multiline string delimiters are preserved
+    # parse heredocs like Perl6, leading spaces on the outside edges of
+    # multiline string delimiters are preserved
     is(
         $match-array-of-basic-multiline-strings-newlines.made,
         [
