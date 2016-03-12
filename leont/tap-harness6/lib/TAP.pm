@@ -190,21 +190,21 @@ grammar Grammar {
 	token comment {
 		'#' <.sp>* $<comment>=[\N*]
 	}
-	token yaml {
-		$<yaml-indent>=['  '] '---' \n :
-		[ ^^ <.indent> $<yaml-indent> $<yaml-line>=[<!before '...'> \N* \n] ]*
-		<.indent> $<yaml-indent> '...'
+	token yaml(Int $indent = 0) {
+		$<yaml-indent>=['  '] '---' \n
+		[ ^^ <.indent($indent)> $<yaml-indent> $<yaml-line>=[<!before '...'> \N* \n] ]*
+		<.indent($indent)> $<yaml-indent> '...'
 	}
-	token sub-entry {
-		<plan> | <test> | <comment> | <yaml> | <sub-test> || <!before <sp>+ > <unknown>
+	token sub-entry(Int $indent) {
+		<plan> | <test> | <comment> | <yaml($indent)> | <sub-test($indent)> || <!before <.sp> > <unknown>
 	}
-	token indent {
-		'    ' ** { $*tap-indent }
+	token indent(Int $indent) {
+		'    ' ** { $indent }
 	}
-	token sub-test {
-		'    ' :temp $*tap-indent += 1; <sub-entry> \n
-		[ <.indent> <sub-entry> \n ]*
-		'    ' ** { $*tap-indent - 1 } <test>
+	token sub-test(Int $indent = 0) {
+		'    '
+		[ <sub-entry($indent + 1)> \n ]+ % [ <.indent($indent+1)> ]
+		<.indent($indent)> <test>
 	}
 	token unknown {
 		\N*
