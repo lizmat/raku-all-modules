@@ -1,13 +1,13 @@
 {
+    "perl"         : "6.c",
     "name"         : "App::Nopaste",
     "version"      : "1.001001",
     "description"  : "Access pastebins from command line",
     "depends"      : [ "Pastebin::Gist", "Pastebin::Shadowcat" ],
     "test-depends" : [ "Test" ],
     "provides"     : {
-        "App::Nopaste" : "lib/App::Nopaste.pm6"
+        "App::Nopaste" : "lib/App/Nopaste.pm6"
     },
-    "author"       : "Zoffix Znet",
-    "authority"    : "zoffixznet",
-    "source-url"   : "git://github.com/zoffixznet/perl6-App-Nopaste.git"
+    "authors"      : ["Zoffix Znet"],
+    "support"      : {"source"   : "git://github.com/zoffixznet/perl6-App-Nopaste.git"}
 }

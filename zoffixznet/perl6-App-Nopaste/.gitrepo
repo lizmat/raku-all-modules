@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-App-Nopaste.git
 	branch = master
-	commit = 5bb1058499a436ceeb1614b12c1c9c604056eefd
-	parent = e51ef92e1ef1470f8bd89e35d62174fed4cf198a
-	cmdver = 0.2.2
+	commit = aad0f00d1f7f5cb28c4c782bcc642cab38f621e9
+	parent = 8ea012de469067a0458e4e5b5e24bde34bbf861a
+	cmdver = 0.2.3
