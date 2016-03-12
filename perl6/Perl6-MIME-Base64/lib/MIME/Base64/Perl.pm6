@@ -64,7 +64,7 @@ method encode(Blob $data, :$oneline --> Str){
 }
 
 method decode(Str $encoded --> Buf){
-    my @decoded;
+    my @decoded = (); # = () workaround for Buf.new bug w. uninit array
     
     my $extra;
     my $spaceleft = 8;
