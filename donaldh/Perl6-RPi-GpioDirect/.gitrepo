@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/donaldh/Perl6-RPi-GpioDirect.git
+	branch = master
+	commit = b7b770895b72eb6d68fc40b19b7df2a5570e5405
+	parent = 0f7f46c46be25597f2e58d42ef0e78dad5291bdf
+	cmdver = 0.2.3
