@@ -41,7 +41,7 @@ method connect () {
     return start {
         use experimental :pack;
 
-        $!connection = await IO::Socket::Async.connect($!server, $!port);
+        $!connection = await IO::Socket::Async.connect: $!server, $!port;
         my $packets = self!incoming-packets($!connection.Supply(:bin)).share;
 
         $!messages = supply {
@@ -76,13 +76,14 @@ method !parse (Buf $buf is rw) {
     my $multiplier = 1;
     my $length = 0;
     my $d = 0;
-    {
-        return if $offset >= $buf.elems;
+
+    repeat {
+        return False if $offset >= $buf.elems;
         $d = $buf[$offset++];
         $length += ($d +& 0x7f) * $multiplier;
         $multiplier *= 128;
-        redo if $d +& 0x80;
-    }
+    } while $d +& 0x80;
+
     return False if $length > $buf.elems + $offset;
 
     my $first_byte = $buf[0];
