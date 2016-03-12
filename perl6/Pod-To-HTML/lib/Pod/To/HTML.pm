@@ -43,7 +43,7 @@ sub unescape_html(Str $str) returns Str {
 }
 
 sub escape_id ($id) {
-    $id.subst(/\s+/, '_', :g);
+    $id.subst(/\s+/, '_', :g).subst('"', '&quot;', :g);
 }
 
 multi visit(Nil, |a) { 

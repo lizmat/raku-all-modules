@@ -22,7 +22,7 @@ This is an ordinary paragraph
     While this is not
     This is a code block
 
-    =head1 Mumble mumble
+    =head1 Mumble: "mumble"
 
     Suprisingly, this is not a code block
         (with fancy indentation too)
@@ -35,8 +35,8 @@ $r = node2html $=pod[1];
 ok $r ~~ ms[['<p>' 'This is an ordinary paragraph' '</p>'
 '<pre>While this is not'
 'This is a code block</pre>'
-'<h1 id="Mumble_mumble">' '<a class="u" href="#___top" title="go to top of document">'
-    'Mumble mumble'
+'<h1 id="Mumble:_&quot;mumble&quot;">' '<a class="u" href="#___top" title="go to top of document">'
+    'Mumble: &quot;mumble&quot;'
 '</a>' '</h1>'
 '<p>' 'Suprisingly, this is not a code block (with fancy indentation too)' '</p>'
 '<p>' 'But this is just a text. Again' '</p>']];
