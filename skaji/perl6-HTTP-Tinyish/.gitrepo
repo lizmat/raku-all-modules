@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/skaji/perl6-HTTP-Tinyish.git
+	branch = master
+	commit = 8e08b309c15f0d339b56b88635e4dfe726b0f15a
+	parent = 4166f69647ddc0fde254fb37720c2b5b10628775
+	cmdver = 0.2.3
