@@ -13,7 +13,7 @@
     "provides"     : {
         "IRC::Client::Plugin::HNY" : "lib/IRC/Client/Plugin/HNY.pm6"
     },
-    "author"       : "Zoffix Znet",
-    "source-url"   :
-        "git://github.com/zoffixznet/perl6-IRC-Client-Plugin-HNY.git"
+    "authors"      : ["Zoffix Znet"],
+    "support"      : {"source"   :
+        "git://github.com/zoffixznet/perl6-IRC-Client-Plugin-HNY.git"}
 }
