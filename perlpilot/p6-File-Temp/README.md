@@ -35,6 +35,8 @@ This module exports 2 routines:
 * tempfile
 * tempdir
 
-`tempfile`  will create a 
+`tempfile`  creates a temporary file and returns the filename and a filehandle open for reading and writing on that file.
+
+`tempdir` creates a temporary directory and returns the directory name.
 
 

@@ -5,7 +5,7 @@ plan(14);
 
 my (@should-be-unlinked, @should-be-kept);
 
-# Install this END phaser here before File::Temp has a chance to create it's END phaser
+# Install this END phaser here before File::Temp has a chance to create its END phaser
 # so that we can check that files are unlinked properly
 END {
     for @should-be-kept -> $f {
