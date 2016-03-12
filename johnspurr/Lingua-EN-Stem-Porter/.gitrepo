@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/johnspurr/Lingua-EN-Stem-Porter.git
+	branch = master
+	commit = a79b86911ab9030d08072cb7487a31f63a04eb5b
+	parent = efc6a04d517fbfca46afb83843f84f61ac77012f
+	cmdver = 0.2.3

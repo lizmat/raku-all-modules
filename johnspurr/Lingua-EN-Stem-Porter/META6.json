@@ -1,0 +1,14 @@
+{
+    "perl" : "6.*",
+    "name" : "Lingua::EN::Stem::Porter",
+    "version" : "v1.0",
+    "description" : "Implementation of the Porter stemming algorithm",
+    "authors" : [ "John Spurr" ],
+    "test-depends" : [ "Test", "Test::META" ],
+    "provides" : {
+        "Lingua::EN::Stem::Porter" : "lib/Lingua/EN/Stem/Porter.pm6"
+    },
+    "license": "The MIT License (MIT)",
+    "support" : { "source" : "https://github.com/johnspurr/Lingua-EN-Stem-Porter.git" },
+    "tags" : ["NLP", "perl6", "stem", "porter"]
+}
