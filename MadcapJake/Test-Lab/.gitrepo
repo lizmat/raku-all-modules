@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MadcapJake/Test-Lab.git
+	branch = master
+	commit = 59f0b77f0a9bcbca46b1062d278ed219c501bc96
+	parent = af04cd75d64e4fb63d6c1138f9226d7c71930178
+	cmdver = 0.2.3
