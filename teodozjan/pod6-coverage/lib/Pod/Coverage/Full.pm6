@@ -111,7 +111,9 @@ method correct-pod($filename) {
     my $egg = Pod::Coverage::PodEgg.new(orig => $filename);
     my @keywords;
     for $egg.list -> $x { 
+        note "Reading $x";
         @keywords.append(read_pod($x));
+        note "Done";
     }
     
     return unless @keywords; 
@@ -134,7 +136,9 @@ method correct-pod($filename) {
     @.results =  @new_results;
 }
 
-sub read_pod($filename){        
+sub read_pod($filename){
+    say "$*EXECUTABLE-NAME --doc=Keywords $filename";
+    dd qqx/$*EXECUTABLE-NAME --doc=Keywords $filename/;
     return qqx/$*EXECUTABLE-NAME --doc=Keywords $filename/.lines;
 }
 
