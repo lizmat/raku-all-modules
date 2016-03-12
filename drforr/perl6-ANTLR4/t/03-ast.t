@@ -3,10 +3,21 @@ use ANTLR4::Grammar;
 use ANTLR4::Actions::AST;
 use Test;
 
-plan 20;
+plan 1;
 
 my $a = ANTLR4::Actions::AST.new;
 my $g = ANTLR4::Grammar.new;
+
+is-deeply
+  $g.parse( q{grammar Minimal;}, :actions($a) ).ast,
+  { type     => 'DEFAULT',
+    name     => 'Minimal',
+    options  => [ ],
+    imports  => [ ],
+    tokens   => [ ],
+    actions  => [ ],
+    contents => [ ] },
+  q{Minimal grammar};
 
 #
 # When adding a new layer to the datastructure, do just one is-deeply() test.
@@ -14,132 +25,171 @@ my $g = ANTLR4::Grammar.new;
 # This way we can show the nested nature of the dataset, without having to
 # continually repeat the huge data structures each time.
 #
-is-deeply
-  $g.parse( q{grammar Minimal;}, :actions($a) ).ast,
-  { type    => 'DEFAULT',
-    name    => 'Minimal',
-    options => [ ],
-    import  => [ ],
-    tokens  => [ ],
-    action  => [ ],
-    content => [ ] },
-  q{Minimal grammar};
-
-#
-# Now check the individual keys of the current layer.
-#
-# Earlier we determined that the overall layout has the defaults we want,
-# so just investigate each key, instead of is-deeply() on the root dataset.
-#
-is $g.parse( q{lexer grammar Name;}, :actions($a) ).ast.<type>,
-  'lexer',
-   q{Optional 'lexer' term};
-
 subtest sub {
   my $parsed;
 
-  plan 4;
+  plan 5;
 
   $parsed = $g.parse(
-    q{grammar Name; options {a=2;}}, :actions($a) ).ast;
-  is-deeply $parsed.<options>, [ a => 2 ],
-    q{Numeric option};
+    q{lexer grammar Name;}, :actions($a) ).ast;
+  is $parsed.<type>, 'lexer',
+    q{Lexer};
 
-  $parsed = $g.parse(
-    q{grammar Name; options {a='foo';}}, :actions($a) ).ast;
-  is-deeply $parsed.<options>, [ a => 'foo' ],
-    q{String option};
+  subtest sub {
+    my $parsed;
 
-  $parsed = $g.parse(
-    q{grammar Name; options {a=b,c;}}, :actions($a) ).ast;
-  is-deeply $parsed.<options>, [ a => [ 'b', 'c' ] ],
-    q{List option};
+    plan 3;
 
-  $parsed = $g.parse(
-    q{grammar Name; options {a=b,c;de=3;}}, :actions($a) ).ast;
-  is-deeply $parsed.<options>, [ a => [ 'b', 'c' ], de => 3 ],
-    q{Multiple options};
-}, q{Top-level options};
+    subtest sub {
+      my $parsed;
 
-subtest sub {
-  my $parsed;
+      plan 3;
 
-  plan 2;
+      $parsed = $g.parse(
+        q{grammar Name; options {a=2;}}, :actions($a) ).ast;
+      is-deeply $parsed.<options>, [ a => 2 ],
+        q{Numeric option};
 
-  $parsed = $g.parse(
-    q{grammar Name; options {a=2;} import Foo;}, :actions($a) ).ast;
-  is-deeply $parsed.<import>, [ Foo => Nil ],
-    q{Single grammar};
+      $parsed = $g.parse(
+        q{grammar Name; options {a='foo';}}, :actions($a) ).ast;
+      is-deeply $parsed.<options>, [ a => 'foo' ],
+        q{String option};
 
-  $parsed = $g.parse(
-    q{grammar Name; options {a=2;} import Foo,Bar=Test;},
-    :actions($a) ).ast;
-  is-deeply $parsed.<import>, [ Foo => Nil, Bar => 'Test' ],
-    q{Two grammars, one aliased};
-}, q{Imports};
+      $parsed = $g.parse(
+        q{grammar Name; options {a=b;}}, :actions($a) ).ast;
+      is-deeply $parsed.<options>, [ a => [ 'b' ] ],
+        q{Atomic option};
 
-is-deeply
-  $g.parse(
-    q{grammar Name; tokens { INDENT, DEDENT }},
-    :actions($a) ).ast.<tokens>,
-  [ 'INDENT', 'DEDENT' ],
-  q{Multiple tokens};
+    }, q{Single option};
 
-subtest sub {
-  my $parsed;
+    $parsed = $g.parse(
+      q{grammar Name; options {a=2;} options {b=3;}}, :actions($a) ).ast;
+    is-deeply $parsed.<options>, [ a => 2, b => 3 ],
+      q{Repeated single option};
 
-  plan 2;
+    subtest sub {
+      my $parsed;
 
-  $parsed = $g.parse(
-    q{grammar Name;
-      @members { protected int curlies = 0; }}, :actions($a) ).ast;
-  is-deeply $parsed.<action>,
-    [ '@members' => '{ protected int curlies = 0; }' ],
-    q{Action};
+      plan 2;
 
-  $parsed = $g.parse(
-    q{grammar Name;
-      @members { protected int curlies = 0; }
-      @sample::stuff { 1; }}, :actions($a) ).ast;
-  is-deeply $parsed.<action>,
-    [ '@members' => '{ protected int curlies = 0; }',
-      '@sample::stuff' => '{ 1; }' ],
-    q{Multiple actions};
-}, q{Actions};
+      $parsed = $g.parse(
+        q{grammar Name; options {a=b,cde;}}, :actions($a) ).ast;
+      is-deeply $parsed.<options>, [ a => [ 'b', 'cde' ] ],
+        q{Multiple atomic options};
 
-#
-# Show off the first actual rule.
-#
+      $parsed = $g.parse(
+        q{grammar Name; options {a=b,cde;f='foo';}}, :actions($a) ).ast;
+      is-deeply $parsed.<options>, [ a => [ 'b', 'cde' ], f => 'foo' ],
+        q{Multiple mixed options};
+    }, q{Multiple options};
+
+  }, q{Options};
+
+  subtest sub {
+    my $parsed;
+
+    plan 2;
+
+    $parsed = $g.parse(
+      q{grammar Name; options {a=2;} import Foo;}, :actions($a) ).ast;
+    is-deeply $parsed.<imports>, [ Foo => Nil ],
+      q{Single import};
+
+    subtest sub {
+      my $parsed;
+     
+      plan 2;
+
+      $parsed = $g.parse(
+        q{grammar Name; options {a=2;} import Foo,Bar;},
+        :actions($a) ).ast;
+      is-deeply $parsed.<imports>, [ Foo => Nil, Bar => Nil ],
+        q{Two grammars};
+
+      $parsed = $g.parse(
+        q{grammar Name; options {a=2;} import Foo,Bar=Test;},
+        :actions($a) ).ast;
+      is-deeply $parsed.<imports>, [ Foo => Nil, Bar => 'Test' ],
+        q{Two grammars, last aliased};
+
+    }, q{Multiple imports};
+
+  }, q{Import};
+
+  subtest sub {
+    my $parsed;
+
+    plan 2;
+
+    $parsed = $g.parse(
+      q{grammar Name; tokens { INDENT }},
+      :actions($a) ).ast;
+    is-deeply $parsed.<tokens>, [ 'INDENT' ],
+      q{Single token};
+
+    $parsed = $g.parse(
+      q{grammar Name; tokens { INDENT, DEDENT }},
+      :actions($a) ).ast;
+    is-deeply $parsed.<tokens>, [ 'INDENT', 'DEDENT' ],
+      q{Multiple tokens};
+
+  }, q{Tokens};
+
+  subtest sub {
+    my $parsed;
+
+    plan 2;
+
+    $parsed = $g.parse(
+      q{grammar Name; @members { protected int curlies = 0; }},
+      :actions($a) ).ast;
+    is-deeply $parsed.<actions>,
+      [ '@members' => '{ protected int curlies = 0; }' ],
+      q{Single action};
+
+    $parsed = $g.parse(
+      q{grammar Name;
+        @members { protected int curlies = 0; }
+        @sample::stuff { 1; }}, :actions($a) ).ast;
+    is-deeply $parsed.<actions>,
+      [ '@members' => '{ protected int curlies = 0; }',
+        '@sample::stuff' => '{ 1; }' ],
+      q{Multiple tokens};
+
+  }, q{Actions};
+
+}, q{Top-level keys};
+
 is-deeply
   $g.parse(
     q{grammar Name; number : '1' ;},
     :actions($a) ).ast,
-  { type    => 'DEFAULT',
-    name    => 'Name',
-    options => [ ],
-    import  => [ ],
-    tokens  => [ ],
-    action  => [ ],
-    content =>
+  { type     => 'DEFAULT',
+    name     => 'Name',
+    options  => [ ],
+    imports  => [ ],
+    tokens   => [ ],
+    actions  => [ ],
+    contents =>
       [${ type      => 'rule',
           name      => 'number',
-          attribute => [ ],
+          attribute => Nil,
           action    => Nil,
-          returns   => Nil,
+          return    => Nil,
           throws    => [ ],
-          locals    => Nil,
+          local     => Nil,
           options   => [ ],
-          content   =>
-            [${ type    => 'alternation',
-                label   => Nil,
-                options => [ ],
-                command => [ ],
-                content =>
-                  [${ type    => 'concatenation',
-                      label   => Nil,
-                      options => [ ],
-                      command => [ ],
-                      content =>
+          contents  =>
+            [${ type     => 'alternation',
+                label    => Nil,
+                options  => [ ],
+                commands => [ ],
+                contents =>
+                  [${ type     => 'concatenation',
+                      label    => Nil,
+                      options  => [ ],
+                      commands => [ ],
+                      contents =>
                         [${ type         => 'terminal',
                             content      => '1',
                             alias        => Nil,
@@ -148,36 +198,151 @@ is-deeply
                             complemented => False }] }] }] }] },
   q{Single rule};
 
+subtest sub {
+  my $parsed;
+
+  plan 6;
+
+  $parsed = $g.parse(
+    q{grammar Name; number [int x] : '1' ;}, :actions($a) ).ast;
+  is-deeply $parsed.<contents>[0]<action>, '[int x]',
+    q{Action};
+
+  $parsed = $g.parse(
+    q{grammar Name; protected number : '1' ;}, :actions($a) ).ast;
+  is-deeply $parsed.<contents>[0]<attribute>, 'protected',
+    q{Attribute};
+
+  $parsed = $g.parse(
+    q{grammar Name; number returns [int x] : '1' ;}, :actions($a) ).ast;
+  is-deeply $parsed.<contents>[0]<return>, '[int x]',
+    q{Returns};
+
+  subtest sub {
+    my $parsed;
+
+    plan 2;
+
+    $parsed = $g.parse(
+      q{grammar Name; number throws XFoo : '1' ;}, :actions($a) ).ast;
+    is-deeply $parsed.<contents>[0]<throws>, [ 'XFoo' ],
+      q{Single exception};
+
+    $parsed = $g.parse(
+      q{grammar Name; number throws XFoo, XBar : '1' ;}, :actions($a) ).ast;
+    is-deeply $parsed.<contents>[0]<throws>, [ 'XFoo', 'XBar' ],
+      q{Multiple exceptions};
+
+  }, q{Throws};
+
+  $parsed = $g.parse(
+    q{grammar Name; number locals [int x] : '1' ;}, :actions($a) ).ast;
+  is-deeply $parsed.<contents>[0]<local>, '[int x]',
+    q{Locals};
+
+  $parsed = $g.parse(
+    q{grammar Name; number options{a=2;} : '1' ;}, :actions($a) ).ast;
+  is-deeply $parsed.<contents>[0]<options>, [ a => 2 ],
+    q{Options};
+
+}, q{Rule-level keys};
+
+diag "Nothing at the second layer, apparently";
+
+subtest sub {
+  my $parsed;
+
+  plan 3;
+
+  $parsed = $g.parse(
+    q{grammar Name; number : '1' ;}, :actions($a) ).ast;
+  is $parsed.<contents>[0]<contents>[0]<contents>[0]<type>, 'concatenation',
+    q{Type};
+
+  $parsed = $g.parse(
+    q{grammar Name; number : '1' # One ;}, :actions($a) ).ast;
+  is $parsed.<contents>[0]<contents>[0]<contents>[0]<label>, 'One',
+    q{Label};
+
+  $parsed = $g.parse(
+    q{grammar Name; number : <assoc=right> '1' ;}, :actions($a) ).ast;
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<options>,
+    [ assoc => 'right' ],
+    q{Options};
+
+  diag "Testing the command actually changes top-level stuff";
+
+}, q{Third layer of rule};
+
+is-deeply
+  $g.parse(
+    q{grammar Name; number : '1' -> channel(HIDDEN) ;},
+    :actions($a) ).ast,
+  { type     => 'DEFAULT',
+    name     => 'Name',
+    options  => [ ],
+    imports  => [ ],
+    tokens   => [ ],
+    actions  => [ ],
+    contents =>
+      [${ type      => 'rule',
+          name      => 'number',
+          attribute => Nil,
+          action    => Nil,
+          return    => Nil,
+          throws    => [ ],
+          local     => Nil,
+          options   => [ ],
+          contents  =>
+            [${ type     => 'alternation',
+                label    => Nil,
+                options  => [ ],
+                commands => [ ],
+                contents =>
+                  [${ type     => 'concatenation',
+                      label    => Nil,
+                      options  => [ ],
+                      commands => [ channel => 'HIDDEN' ],
+                      contents =>
+                        [${ type         => 'terminal',
+                            content      => '1',
+                            alias        => Nil,
+                            modifier     => Nil,
+                            greedy       => False,
+                            complemented => False }] }] }] }] },
+  q{Single lexer rule};
+
+#`(
 is-deeply
   $g.parse(
     q{grammar Name; number : '1' {action++;} ;},
     :actions($a) ).ast,
-  { type    => 'DEFAULT',
-    name    => 'Name',
-    options => [ ],
-    import  => [ ],
-    tokens  => [ ],
-    action  => [ ],
-    content =>
+  { type     => 'DEFAULT',
+    name     => 'Name',
+    options  => [ ],
+    imports  => [ ],
+    tokens   => [ ],
+    actions  => [ ],
+    contents =>
       [${ type      => 'rule',
           name      => 'number',
           attribute => [ ],
           action    => Nil,
-          returns   => Nil,
+          return    => Nil,
           throws    => [ ],
-          locals    => Nil,
+          local     => Nil,
           options   => [ ],
-          content   =>
-            [${ type    => 'alternation',
-                label   => Nil,
-                options => [ ],
-                command => [ ],
-                content =>
-                  [${ type    => 'concatenation',
-                      label   => Nil,
-                      options => [ ],
-                      command => [ ],
-                      content =>
+          contents  =>
+            [${ type     => 'alternation',
+                label    => Nil,
+                options  => [ ],
+                commands => [ ],
+                contents =>
+                  [${ type     => 'concatenation',
+                      label    => Nil,
+                      options  => [ ],
+                      commands => [ ],
+                      contents =>
                         [{ type         => 'terminal',
                            content      => '1',
                            alias        => Nil,
@@ -192,81 +357,54 @@ is-deeply
                            complemented => False }] }] }] }] },
   q{Single rule with associated action};
 
-#
-# Rule-level
-#
-is-deeply $g.parse(
-  q{grammar Name; protected number : '1' ;},
-   :actions($a) ).ast.<content>[0]<attribute>,
-  [ 'protected' ],
-  q{rule with multiple alternating terms};
-
 subtest sub {
   my $parsed;
 
   plan 3;
 
-  $parsed = $g.parse(
-    q{grammar Name; number : <assoc=right> '1' ;}, :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<options>,
-    [ assoc => 'right' ],
-    q{Rule with option};
-
-  $parsed = $g.parse(
-    q{grammar Name; number : '1' # One ;}, :actions($a) ).ast;
-  is $parsed.<content>[0]<content>[0]<content>[0]<label>, 'One',
-    q{Rule with label};
-
 #`(
-  $parsed = $g.parse(
-    q{grammar Name; number : '1' -> channel(HIDDEN) ;}, :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<command>,
-    [ channel => 'HIDDEN' ],
-    q{Rule with command};
-)
-}, q{Term-level flags};
 
 is-deeply
   $g.parse(
     q{grammar Name; number : ( '1' ) ;},
     :actions($a) ).ast,
-  { type    => 'DEFAULT',
-    name    => 'Name',
-    options => [ ],
-    import  => [ ],
-    tokens  => [ ],
-    action  => [ ],
-    content =>
+  { type     => 'DEFAULT',
+    name     => 'Name',
+    options  => [ ],
+    imports  => [ ],
+    tokens   => [ ],
+    actions  => [ ],
+    contents =>
       [${ type      => 'rule',
           name      => 'number',
           attribute => [ ],
           action    => Nil,
-          returns   => Nil,
+          return    => Nil,
           throws    => [ ],
-          locals    => Nil,
+          local     => Nil,
           options   => [ ],
-          content   =>
-            [${ type    => 'alternation',
-                label   => Nil,
-                options => [ ],
-                command => [ ],
-                content =>
-                  [${ type    => 'concatenation',
-                       label   => Nil,
-                       options => [ ],
-                       command => [ ],
-                       content =>
+          contents  =>
+            [${ type     => 'alternation',
+                label    => Nil,
+                options  => [ ],
+                commands => [ ],
+                contents =>
+                  [${ type      => 'concatenation',
+                       label    => Nil,
+                       options  => [ ],
+                       commands => [ ],
+                       contents =>
                          [${ type         => 'capturing group',
                               alias        => Nil,
                               modifier     => Nil,
                               greedy       => False,
                               complemented => False,
                               content =>
-                                [{ type         => 'concatenation',
-                                   label        => Nil,
-                                   options      => [ ],
-                                   command      => [ ],
-                                   content      =>
+                                [{ type     => 'concatenation',
+                                   label    => Nil,
+                                   options  => [ ],
+                                   commands => [ ],
+                                   content  =>
                                      [${ type         => 'terminal',
                                          content      => '1',
                                          alias        => Nil,
@@ -279,32 +417,32 @@ is-deeply
   $g.parse(
     q{grammar Name; number : ( '1' '2' ) -> skip ;},
     :actions($a) ).ast,
-  { type    => 'DEFAULT',
-    name    => 'Name',
-    options => [ ],
-    import  => [ ],
-    tokens  => [ ],
-    action  => [ ],
-    content =>
+  { type     => 'DEFAULT',
+    name     => 'Name',
+    options  => [ ],
+    imports  => [ ],
+    tokens   => [ ],
+    actions  => [ ],
+    contents =>
       [${ type      => 'rule',
           name      => 'number',
           attribute => [ ],
           action    => Nil,
-          returns   => Nil,
+          return    => Nil,
           throws    => [ ],
-          locals    => Nil,
+          local     => Nil,
           options   => [ ],
-          content   =>
-            [{ type    => 'alternation',
-               label   => Nil,
-               options => [ ],
-               command => [ ],
-               content =>
-                 [{ type    => 'concatenation',
-                     label   => Nil,
-                     options => [ ],
-                     command => [ skip => Nil ],
-                     content =>
+          contents  =>
+            [{ type     => 'alternation',
+               label    => Nil,
+               options  => [ ],
+               commands => [ ],
+               contents =>
+                 [{ type      => 'concatenation',
+                     label    => Nil,
+                     options  => [ ],
+                     commands => [ skip => Nil ],
+                     contents =>
                        [{ type         => 'capturing group',
                            alias        => Nil,
                            modifier     => Nil,
@@ -315,12 +453,12 @@ is-deeply
                                 label   => Nil,
                                 options => [ ],
                                 command => [ ],
-                                content =>
-                                  [{ type    => 'concatenation',
-                                     label   => Nil,
-                                     options => [ ],
-                                     command => [ ],
-                                     content =>
+                                contents =>
+                                  [{ type     => 'concatenation',
+                                     label    => Nil,
+                                     options  => [ ],
+                                     commands => [ ],
+                                     contents =>
                                        [{ type         => 'terminal',
                                           content      => '1',
                                           alias        => Nil,
@@ -335,64 +473,63 @@ is-deeply
                                           complemented => False }] }] }] }] }] }] }] },
   q{Single rule with options and skipped capturing group};
 
-#`(
 is-deeply
   $g.parse(
     q{grammar Name; number : ( '1' | '2' ) -> skip ;},
     :actions($a) ).ast,
-  { type    => 'DEFAULT',
-    name    => 'Name',
-    options => [ ],
-    import  => [ ],
-    tokens  => [ ],
-    action  => [ ],
-    content =>
-      [{ type      => 'rule',
+  { type     => 'DEFAULT',
+    name     => 'Name',
+    options  => [ ],
+    imports  => [ ],
+    tokens   => [ ],
+    actions  => [ ],
+    contents =>
+      [${ type      => 'rule',
           name      => 'number',
           attribute => [ ],
           action    => Nil,
-          returns   => Nil,
+          return    => Nil,
           throws    => [ ],
-          locals    => Nil,
+          local     => Nil,
           options   => [ ],
-          content   =>
-            [{ type    => 'alternation',
-               label   => Nil,
-               options => [ ],
-               command => [ ],
-               content =>
-                 [{ type    => 'concatenation',
-                     label   => Nil,
-                     options => [ ],
-                     command => [ skip => Nil ],
-                     content =>
+          contents  =>
+            [{ type     => 'alternation',
+               label    => Nil,
+               options  => [ ],
+               commands => [ ],
+               contents =>
+                 [{ type      => 'concatenation',
+                     label    => Nil,
+                     options  => [ ],
+                     commands => $[ skip => Nil ],
+                     contents =>
                        [{ type         => 'capturing group',
                           alias        => Nil,
                           modifier     => Nil,
                           greedy       => False,
                           complemented => False,
-                          content =>
+                          contents     =>
                             [{ type    => 'alternation',
                                label   => Nil,
                                options => [ ],
                                command => [ ],
-                               content =>
-                                 [{ type    => 'concatenation',
-                                    label   => Nil,
-                                    options => [ ],
-                                    command => [ ],
-                                    content =>
+                               contents =>
+                                 [{ type     => 'concatenation',
+                                    label    => Nil,
+                                    options  => [ ],
+                                    commands => [ ],
+                                    contents =>
                                       [{ type         => 'terminal',
                                          content      => '1',
                                          alias        => Nil,
                                          modifier     => Nil,
                                          greedy       => False,
                                          complemented => False }] },
-                                  { type    => 'concatenation',
-                                    label   => Nil,
-                                    options => [ ],
-                                    command => [ ],
-                                    content =>
+                                  { type     => 'concatenation',
+                                    label    => Nil,
+                                    options  => [ ],
+                                    commands => [ ],
+                                    contents =>
                                       [{ type         => 'terminal',
                                          content      => '2',
                                          alias        => Nil,
@@ -400,55 +537,54 @@ is-deeply
                                          greedy       => False,
                                          complemented => False }] }] }] }] }] }] }] },
   q{grammar with options and skipped capturing group};
-)
 
 #`(
 is-deeply
   $g.parse(
     q{grammar Name; number : ( '1' ) -> skip ;},
     :actions($a) ).ast,
-  { type    => 'DEFAULT',
-    name    => 'Name',
-    options => [ ],
-    import  => [ ],
-    tokens  => [ ],
-    action  => [ ],
-    content =>
+  { type     => 'DEFAULT',
+    name     => 'Name',
+    options  => [ ],
+    imports  => [ ],
+    tokens   => [ ],
+    actions  => [ ],
+    contents =>
       [{ type      => 'rule',
          name      => 'number',
          attribute => [ ],
          action    => Nil,
-         returns   => Nil,
+         return    => Nil,
          throws    => [ ],
-         locals    => Nil,
+         local     => Nil,
          options   => [ ],
-         content   =>
-           [{ type    => 'alternation',
-              label   => Nil,
-              options => [ ],
-              command => [ ],
-              content =>
+         contents  =>
+           [{ type     => 'alternation',
+              label    => Nil,
+              options  => [ ],
+              commands => [ ],
+              contents =>
                 [${ type    => 'concatenation',
-                   label   => Nil,
-                   options => [ ],
-                   command => [ skip => Nil ],
-                   content =>
+                   label    => Nil,
+                   options  => [ ],
+                   commands => [ skip => Nil ],
+                   contents =>
                      [{ type         => 'capturing group',
                         alias        => Nil,
                         modifier     => Nil,
                         greedy       => False,
                         complemented => False,
-                        content =>
+                        contents =>
                           [{ type    => 'alternation',
                              label   => Nil,
                              options => [ ],
                              command => [ ],
-                             content =>
-                               [{ type    => 'concatenation',
-                                  label   => Nil,
-                                  options => [ ],
-                                  command => [ ],
-                                  content =>
+                             contents =>
+                               [{ type     => 'concatenation',
+                                  label    => Nil,
+                                  options  => [ ],
+                                  commands => [ ],
+                                  contents =>
                                     [{ type         => 'terminal',
                                        content      => '1',
                                        alias        => Nil,
@@ -462,43 +598,43 @@ is-deeply
   $g.parse(
     q{grammar Name; number : ( '1' )+? ;},
     :actions($a) ).ast,
-  { type    => 'DEFAULT',
-    name    => 'Name',
-    options => [ ],
-    import  => [ ],
-    tokens  => [ ],
-    action  => [ ],
-    content =>
+  { type     => 'DEFAULT',
+    name     => 'Name',
+    options  => [ ],
+    imports  => [ ],
+    tokens   => [ ],
+    actions  => [ ],
+    contents =>
       [${ type      => 'rule',
           name      => 'number',
           attribute => [ ],
           action    => Nil,
-          returns   => Nil,
+          return    => Nil,
           throws    => [ ],
-          locals    => Nil,
+          local     => Nil,
           options   => [ ],
-          content   =>
-            [${ type    => 'alternation',
-                label   => Nil,
-                options => [ ],
-                command => [ ],
-                content =>
-                  [${ type    => 'concatenation',
-                      label   => Nil,
-                      options => [ ],
-                      command => [ ],
-                      content =>
+          contents  =>
+            [${ type     => 'alternation',
+                label    => Nil,
+                options  => [ ],
+                commands => [ ],
+                contents =>
+                  [${ type     => 'concatenation',
+                      label    => Nil,
+                      options  => [ ],
+                      commands => [ ],
+                      contents =>
                         [${ type         => 'capturing group',
                             alias        => Nil,
                             modifier     => '+',
                             greedy       => True,
                             complemented => False,
-                            content =>
-                              [{ type         => 'concatenation',
-                                 label        => Nil,
-                                 options      => [ ],
-                                 command      => [ ],
-                                 content      =>
+                            contents     =>
+                              [{ type     => 'concatenation',
+                                 label    => Nil,
+                                 options  => [ ],
+                                 commands => [ ],
+                                 contents =>
                                    [${ type         => 'terminal',
                                        content      => '1',
                                        alias        => Nil,
@@ -515,12 +651,12 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : '1' ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => Nil, 
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => Nil, 
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'terminal',
             content      => '1',
             alias        => Nil,
@@ -532,12 +668,12 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : ~'1'+? ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => Nil, 
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => Nil, 
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'terminal',
             content      => '1',
             alias        => Nil,
@@ -549,7 +685,7 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : digits ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'nonterminal',
       content      => 'digits',
       alias        => Nil,
@@ -561,7 +697,7 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : ~digits+? ;},
               :actions($a) ).ast,
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'nonterminal',
       content      => 'digits',
       alias        => Nil,
@@ -574,9 +710,9 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : [0-9] ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'character class',
-      content      => [ '0-9' ],
+      contents     => [ '0-9' ],
       alias        => Nil,
       modifier     => Nil,
       greedy       => False,
@@ -587,9 +723,9 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : ~[0-9]+? ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'character class',
-      content      => [ '0-9' ],
+      contents     => [ '0-9' ],
       alias        => Nil,
       modifier     => '+',
       greedy       => True,
@@ -599,9 +735,9 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : 'a'..'f' ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'range',
-      content      => [{ from => 'a',
+      contents     => [{ from => 'a',
                          to   => 'f' }],
       alias        => Nil,
       modifier     => Nil,
@@ -612,7 +748,7 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : . ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'regular expression',
       content      => '.',
       alias        => Nil,
@@ -631,12 +767,12 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : ~'1'+? -> skip ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => Nil, 
-      options => [ ],
-      command => [ 'skip' => Nil ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => Nil, 
+      options  => [ ],
+      commands => [ 'skip' => Nil ],
+      contents =>
         [{ type         => 'terminal',
            content      => '1',
            alias        => Nil,
@@ -650,7 +786,7 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : ~'1'+? -> channel(HIDDEN) ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'terminal',
       content      => '1',
       alias        => Nil,
@@ -664,7 +800,7 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : digits -> channel(HIDDEN) ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'nonterminal',
       content      => 'digits',
       alias        => Nil,
@@ -678,7 +814,7 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : ~digits+? -> channel(HIDDEN) ;},
               :actions($a) ).ast,
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'nonterminal',
       content      => 'digits',
       alias        => Nil,
@@ -692,9 +828,9 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : [0-9] -> channel(HIDDEN) ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'character class',
-      content      => [ '0-9' ],
+      contents     => [ '0-9' ],
       alias        => Nil,
       modifier     => Nil,
       greedy       => False,
@@ -706,9 +842,9 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : ~[0-9]+? -> channel(HIDDEN) ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'character class',
-      content      => [ '0-9' ],
+      contents     => [ '0-9' ],
       alias        => Nil,
       modifier     => '+',
       greedy       => True,
@@ -720,9 +856,9 @@ subtest sub {
   $parsed =
     $g.parse( q{grammar Name; number : 'a'..'f' -> channel(HIDDEN) ;},
               :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0]<content>[0],
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0]<contents>[0],
     { type         => 'range',
-      content      => [{ from => 'a',
+      contents     => [{ from => 'a',
                          to   => 'f' }],
       alias        => Nil,
       modifier     => Nil,
@@ -732,50 +868,6 @@ subtest sub {
 )
 }, q{command};
 
-is-deeply
-  $g.parse(
-    q{grammar Name;
-number [int x]
-       returns [int y]
-       throws XFoo
-       locals [int z]
-       options{a=2;}
-  : '1' # One ;},
-    :actions($a) ).ast,
-  { type    => 'DEFAULT',
-    name    => 'Name',
-    options => [ ],
-    import  => [ ],
-    tokens  => [ ],
-    action  => [ ],
-    content =>
-      [${ type      => 'rule',
-          name      => 'number',
-          attribute => [ ],
-          action    => '[int x]',
-          returns   => '[int y]',
-          throws    => [ 'XFoo' ],
-          locals    => '[int z]',
-          options   => [ a => 2 ],
-          content   =>
-            [${ type    => 'alternation',
-               label   => Nil,
-               options => [ ],
-               command => [ ],
-               content =>
-                 [${ type    => 'concatenation',
-                     label   => 'One',
-                     options => [ ],
-                     command => [ ],
-                     content =>
-                       [${ type         => 'terminal',
-                           content      => '1',
-                           alias        => Nil,
-                           modifier     => Nil,
-                           greedy       => False,
-                           complemented => False }] }] }] }] },
-  q{grammar with single labeled rule with action};
-
 subtest sub {
   my $parsed;
 
@@ -784,12 +876,12 @@ subtest sub {
   $parsed = $g.parse(
     q{grammar Name; number : ~'1'+? # One ;},
     :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => 'One',
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => 'One',
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'terminal',
             content      => '1',
             alias        => Nil,
@@ -802,14 +894,14 @@ subtest sub {
   $parsed = $g.parse(
     q{grammar Name; number : ~[]+? # One ;},
     :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => 'One',
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => 'One',
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'character class',
-            content      => [ ],
+            contents     => [ ],
             alias        => Nil,
             modifier     => '+',
             greedy       => True,
@@ -819,14 +911,14 @@ subtest sub {
   $parsed = $g.parse(
     q{grammar Name; number : ~[0]+? # One ;},
     :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => 'One',
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => 'One',
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'character class',
-            content      => [ '0' ],
+            contents     => [ '0' ],
             alias        => Nil,
             modifier     => '+',
             greedy       => True,
@@ -836,14 +928,14 @@ subtest sub {
   $parsed = $g.parse(
     q{grammar Name; number : ~[0-9]+? # One ;},
     :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => 'One',
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => 'One',
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'character class',
-            content      => [ '0-9' ],
+            contents     => [ '0-9' ],
             alias        => Nil,
             modifier     => '+',
             greedy       => True,
@@ -853,14 +945,14 @@ subtest sub {
   $parsed = $g.parse(
     q{grammar Name; number : ~[-0-9]+? # One ;},
     :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => 'One',
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => 'One',
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'character class',
-            content      => [ '-', '0-9' ],
+            contents     => [ '-', '0-9' ],
             alias        => Nil,
             modifier     => '+',
             greedy       => True,
@@ -870,14 +962,14 @@ subtest sub {
   $parsed = $g.parse(
     q{grammar Name; number : ~[-0-9\f\u000d]+? # One ;},
     :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => 'One',
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => 'One',
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'character class',
-            content      => [ '-', '0-9', '\\f', '\\u000d' ],
+            contents     => [ '-', '0-9', '\\f', '\\u000d' ],
             alias        => Nil,
             modifier     => '+',
             greedy       => True,
@@ -887,12 +979,12 @@ subtest sub {
   $parsed = $g.parse(
     q{grammar Name; number : ~non_digits+? # One ;},
     :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => 'One',
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => 'One',
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'nonterminal',
             content      => 'non_digits',
             alias        => Nil,
@@ -904,14 +996,14 @@ subtest sub {
   $parsed = $g.parse(
     q{grammar Name; number : 'a'..'z' # One ;},
     :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => 'One',
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => 'One',
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'range',
-            content      => [{ from => 'a',
+            contents      => [{ from => 'a',
                                to   => 'z' }],
             alias        => Nil,
             modifier     => Nil,
@@ -922,14 +1014,14 @@ subtest sub {
   $parsed = $g.parse(
     q{grammar Name; number : 'a'..'z'+? # One ;},
     :actions($a) ).ast;
-  is-deeply $parsed.<content>[0]<content>[0]<content>[0],
-    { type    => 'concatenation',
-      label   => 'One',
-      options => [ ],
-      command => [ ],
-      content =>
+  is-deeply $parsed.<contents>[0]<contents>[0]<contents>[0],
+    { type     => 'concatenation',
+      label    => 'One',
+      options  => [ ],
+      commands => [ ],
+      contents =>
         [${ type         => 'range',
-            content      => [{ from => 'a',
+            contents     => [{ from => 'a',
                                to   => 'z' }],
             alias        => Nil,
             modifier     => '+',
@@ -947,17 +1039,17 @@ subtest sub {
     $g.parse(
       q{grammar Name; number : ~non_digits+? ~[-0-9\f\u000d]+? # One ;},
       :actions($a) ).ast,
-  is-deeply $parsed.<content>[0]<content>[0],
-    { type    => 'alternation',
-      label   => Nil,
-      options => [ ],
-      command => [ ],
-      content =>
-        [${ type    => 'concatenation',
-            label   => 'One',
-            options => [ ],
-            command => [ ],
-            content =>
+  is-deeply $parsed.<contents>[0]<contents>[0],
+    { type     => 'alternation',
+      label    => Nil,
+      options  => [ ],
+      commands => [ ],
+      contents =>
+        [${ type     => 'concatenation',
+            label    => 'One',
+            options  => [ ],
+            commands => [ ],
+            contents =>
               [{ type         => 'nonterminal',
                  content      => 'non_digits',
                  alias        => Nil,
@@ -965,7 +1057,7 @@ subtest sub {
                  greedy       => True,
                  complemented => True },
                { type         => 'character class',
-                 content      => [ '-', '0-9', '\\f', '\\u000d' ],
+                 contents     => [ '-', '0-9', '\\f', '\\u000d' ],
                  alias        => Nil,
                  modifier     => '+',
                  greedy       => True,
@@ -976,35 +1068,38 @@ subtest sub {
     $g.parse(
       q{grammar Name; number : ~non_digits+? | ~[-0-9\f\u000d]+? # One ;},
       :actions($a) ).ast,
-  is-deeply $parsed.<content>[0]<content>[0],
-    { type    => 'alternation',
-      label   => Nil,
-      options => [ ],
-      command => [ ],
-      content =>
-        [{ type    => 'concatenation',
-           label   => Nil,
-           options => [ ],
-           command => [ ],
-           content =>
+  is-deeply $parsed.<contents>[0]<contents>[0],
+    { type     => 'alternation',
+      label    => Nil,
+      options  => [ ],
+      commands => [ ],
+      contents =>
+        [{ type     => 'concatenation',
+           label    => Nil,
+           options  => [ ],
+           commands => [ ],
+           contents =>
              [${ type         => 'nonterminal',
                  content      => 'non_digits',
                  alias        => Nil,
                  modifier     => '+',
                  greedy       => True,
                  complemented => True }] },
-         { type    => 'concatenation',
-           label   => 'One',
-           options => [ ],
-           command => [ ],
-           content =>
+         { type     => 'concatenation',
+           label    => 'One',
+           options  => [ ],
+           commands => [ ],
+           contents =>
              [${ type         => 'character class',
-                 content      => [ '-', '0-9', '\\f', '\\u000d' ],
+                 contents     => [ '-', '0-9', '\\f', '\\u000d' ],
                  alias        => Nil,
                  modifier     => '+',
                  greedy       => True,
                  complemented => True }] }] },
     q{rule with multiple alternating terms};
 }, q{multiple terms};
+
+)
+)
 
 # vim: ft=perl6

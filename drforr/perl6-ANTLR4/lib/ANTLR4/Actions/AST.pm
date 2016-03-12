@@ -49,7 +49,7 @@ most complex, and is described in detail at the appropriate place.
   option is 'tokenVocab', which would appear as
   C<options => [ tokenVocab => 'ECMAScriptLexer' ]>.
 
-  =item import
+  =item imports
 
   An array reference of grammar files the current file imports, and their
   optional aliases. This action doesn't load imported files, but feel free
@@ -58,12 +58,12 @@ most complex, and is described in detail at the appropriate place.
   =item tokens
 
   An array reference of token names predefined in other grammar files, such as
-  the files in the C<import> key. While tokens may be defined in other files,
+  the files in the C<imports> key. While tokens may be defined in other files,
   they're beyond the scope of this action.
 
-  =item action
+  =item actions
 
-  An array reference consisting of the action performed by the top level of the
+  An array reference consisting of the actions performed by the top level of the
   grammar. It's just a reference to a single pair, even though the grammar
   doesn't seem to support multiple actions at the top level. Again, an array
   reference just for consistency's sake.
@@ -73,7 +73,7 @@ most complex, and is described in detail at the appropriate place.
   Perl6 you'll need to take note of this behavior, but it's currently beyond
   the scope of this action to parse the text here.
 
-  =item content
+  =item contents
 
   To preserve ordering in case we want to round-trip ANTLR-Perl6-ANTLR, this
   is also an array reference. It's also the most complex of the data
@@ -82,18 +82,18 @@ most complex, and is described in detail at the appropriate place.
   At this juncture you may want to keep L<t/03-actions.t> open in order to
   follow along with the story.
 
-  The C<content> key is an arrayref of hashrefs. Each of these hashrefs
+  The C<contents> key is an arrayref of hashrefs. Each of these hashrefs
   contains a full rule, laid out in a more or less conistent fashion. All of
   these hashrefs contain a fixed set of keys, only two of them important to
   Perl6 users in general.
 
-  The C<name> and C<content> are the most important items, C<name> is the
-  rule's name (go figure) and C<content> being the actual meat of the rule.
-  C<attribute>, C<action>, C<returns> and C<throws> are useful for the Java
+  The C<name> and C<contents> are the most important items, C<name> is the
+  rule's name (go figure) and C<contents> being the actual meat of the rule.
+  C<attribute>, C<action>, C<return> and C<throws> are useful for the Java
   author to restrict visibiity of the rule, and add additional arguments to the
   Java method that is called by the generated parser.
   
-  The real fun begins inside the C<content> key. Even a simple ANTLR4 rule
+  The real fun begins inside the C<contents> key. Even a simple ANTLR4 rule
   such as C<number : digits ;> will have several layers of what looks like
   redundant nesting. This is mostly for consistency's sake, and might change
   later on, especially for single-term rules where you wouldn't expect the
@@ -109,16 +109,16 @@ most complex, and is described in detail at the appropriate place.
   concatenation implicit in C<number : sign? digits ;>. Explicit groups are
   those that override ANTLR4's assumptions, such as C<number : sign? (a b)?>.
 
-  Groups will always be a hashref, with a C<type> and C<content> key. The type
-  is one of C<alternation>, C<concatenation> or C<capturing>. The content
+  Groups will always be a hashref, with a C<type> and C<contents> key. The type
+  is one of C<alternation>, C<concatenation> or C<capturing>. The contents
   will always be an arrayref of either groups or terms.
 
   Terms are the basics of the grammar, such as C<'foo'>, C<[0-9]+> or
-  C<digits>. Each term has a C<type>, C<content>, C<modifier>, C<greedy> and
+  C<digits>. Each term has a C<type>, C<contents>, C<modifier>, C<greedy> and
   C<complemented> key.
 
   The C<type> is one of C<terminal>, C<nonterminal> or C<character class>. 
-  The content is the actual text of the term (such as C<foo> if the term is
+  The contents is the actual text of the term (such as C<foo> if the term is
   C<'foo'>, or the individual "characters" of the character class.
 
   The C<modifier> is the C<+>, C<*> or C<?> modifier at the end of the term,
@@ -130,311 +130,283 @@ most complex, and is described in detail at the appropriate place.
 =end pod
 
 use v6;
-class ANTLR4::Actions::AST {
-
-method DIGITS($/)
+class ANTLR4::Actions::AST
 	{
-	make +$/
-	}
+	method grammarType($/)
+		{
+		make $/[0] ?? ~$/[0] !! 'DEFAULT'
+		}
 
-method ID($/)
-	{
-	make ~$/
-	}
+	method ID($/)
+		{
+		make ~$/
+		}
 
-method ARG_ACTION($/)
-	{
-	make ~$/
-	}
+	method ID_list($/)
+		{
+		make @<ID>>>.ast
+		}
 
-method LEXER_CHAR_SET_RANGE($/)
-	{
-	make ~$/
-	}
+	method optionValue($/)
+		{
+		# XXX Should be able to be written cleaner.
+		make $/<DIGITS>
+			?? +$/<DIGITS>
+			!! $/<STRING_LITERAL>
+			?? ~$/<STRING_LITERAL>[0]
+			!! $/<ID_list>.ast
+		}
 
-method LEXER_CHAR_SET_ELEMENT($/)
-	{
-	make ~$/
-	}
+	method option($/)
+		{
+		make ~$/<key> => $/<optionValue>.ast
+		}
 
-method action_name($/)
-	{
-	make ~$/
-	}
+	method optionsSpec($/)
+		{
+		make @<option>>>.ast
+		}
 
-method ruleAttribute($/)
-	{
-	make ~$/
-	}
+	method delegateGrammar($/)
+		{
+		make ~$/<key> => $/<value>.ast
+		}
 
-method lexerCommandName($/)
-	{
-	make ~$/
-	}
+	method delegateGrammars($/)
+		{
+		make @<delegateGrammar>>>.ast
+		}
 
-method ACTION($/)
-	{
-	make ~$/
-	}
+	method ID_list_trailing_comma($/)
+		{
+		make $<ID>>>.ast
+		}
 
-method lexerCommandExpr($/)
-	{
-	make ~$/[0]
-	}
+	method tokensSpec($/)
+		{
+		make $/<ID_list_trailing_comma>.ast
+		}
 
-method STRING_LITERAL($/)
-	{
-	make ~$/[0]
-	}
+	method action($/)
+		{
+		make ~$/<action_name> => ~$/<ACTION>
+		}
 
-method grammarType($/)
-	{
-	make $/[0] ?? ~$/[0] !! 'DEFAULT'
-	}
+	method terminal($/)
+		{
+		make
+			[${ type         => 'terminal',
+				content      => ~$/<scalar>[0],
+				alias        => Nil,
+				modifier     => Nil,
+				greedy       => False,
+				complemented => False }]
+		}
 
-method localsSpec($/)
-	{
-	make $/<ARG_ACTION>.ast
-	}
+	method atom($/)
+		{
+		make $/<terminal>.ast
+		}
 
-method ruleReturns($/)
-	{
-	make $/<ARG_ACTION>.ast
-	}
+	method element($/)
+		{
+		make
+			{
+			type     => 'concatenation',
+			label    => Nil,
+			options  => [ ],
+			commands => [ ],
+			contents => $/<atom>.ast
+			}
+		}
 
-method block($/)
-	{
-	make $/<blockAltList>.ast
-	}
-
-method tokensSpec($/)
-	{
-	make $/<ID_list_trailing_comma>.ast
-	}
-
-method action($/)
-	{
-	make $/<action_name>.ast => $/<ACTION>.ast
-	}
-
-method option($/)
-	{
-	make $/<ID>.ast => $/<optionValue>.ast
-	}
-
-method delegateGrammar($/)
-	{
-	make ~$/<key> => $/<value>.ast
-	}
-
-method elementOption($/)
-	{
-	make ~$/<key> => ~$/<value>
-	}
+	method elementOption($/)
+		{
+		make ~$/<key> => ~$/<value>
+		}
  
-method lexerCommand($/)
-	{
-	make $/<lexerCommandName>.ast => $/<lexerCommandExpr>.ast
-	}
-
-method LEXER_CHAR_SET($/)
-	{
-	make
-		[
-		$/[0]>>.Str
-		]
-	}
-
-method optionsSpec($/)
-	{
-	make @<option>>>.ast
-	}
-
-method ID_list_trailing_comma($/)
-	{
-	make @<ID>>>.ast
-	}
-
-method ID_list($/)
-	{
-	make @<ID>>>.ast
-	}
-
-method throwsSpec($/)
-	{
-	make @<ID>>>.ast
-	}
-
-method lexerCommands($/)
-	{
-	make @<lexerCommand>>>.ast
-	}
-
-method elementOptions($/)
-	{
-	make @<elementOption>>>.ast
-	}
-
-method delegateGrammars($/)
-	{
-	make @<delegateGrammar>>>.ast
-	}
-
-#method UNICODE_ESC($/)
-#	{
-#	}
-
-method TOP ($/)
-	{
-	my %content =
-		(
-		options => [ ],
-		import  => [ ],
-                tokens  => [ ],
-                action  => [ ]
-		);
-
-	for @( $/<prequelConstruct> ) -> $prequel
+	method elementOptions($/)
 		{
-		%content<options> =
-			$prequel.<options>.ast if
-			$prequel.<options>;
-		%content<tokens> =
-			$prequel.<tokens>.ast if
-			$prequel.<tokens>;
-		%content<import> =
-			$prequel.<import>.ast if
-			$prequel.<import>;
-		push @( %content<action> ),
-			$prequel.<action>.ast if
-			$prequel.<action>;
+		make @<elementOption>>>.ast
 		}
-	make
+
+	method parserElement($/)
 		{
-		type    => $/<type>.ast,
-		name    => $/<name>.ast,
-		%content,
-		content => @<rules>>>.ast || [ ]
-		},
-	}
+		my @element = @<element>>>.ast;
 
-method optionValue($/)
-	{
-	make $/<list>.ast
-		|| $/<scalar>.ast
-	}
- 
-#method actionScopeName($/)
-#	{
-#	}
+		# Add the options to the rule afterward, if there are any.
+		#
+		@element[0].<options> = $/<elementOptions>.ast
+			if $/<elementOptions>;
 
-#method modeSpec($/)
-#	{
-#	}
+		make @element;
+		}
 
-method ruleSpec($/)
-	{
-	make $/<parserRuleSpec>.ast
-		|| $/<lexerRuleSpec>.ast
-	}
-
-method parserRuleSpec($/)
-	{
-	make
+	method parserAlt($/)
 		{
-		type      => 'rule',
-		name      => $/<name>.ast,
-		content   =>
-			[
-			$/<parserAltList>.ast
-			],
-                action    => $/<action>.ast,
-                returns   => $/<returns>.ast,
-                throws    => $/<throws>.ast || [ ],
-                locals    => $/<locals>.ast,
-                options   => $/<options>.ast || [ ],
-		attribute => @<attribute>>>.ast || [ ],
+		my $ast =
+			{
+			type     => 'alternation',
+			label    => Nil,
+			options  => [ ],
+			commands => [ ],
+			contents => $/<parserElement>.ast
+			};
+
+		# Add the label to the rule afterward, if there is one.
+		#
+		$ast.<contents>[0]<label> = ~$/<label> if $/<label>;
+		make $ast;
 		}
-	}
 
-#method exceptionGroup($/)
-#	{
-#	}
-
-#method exceptionHandler($/)
-#	{
-#	}
-
-#method finallyClause($/)
-#	{
-#	}
-
-method parserAltList($/)
-	{
-	make
-		${
-		type    => 'alternation',
-		label   => Nil,
-		content => @<parserAlt>>>.ast,
-		command => [ ],
-		options => [ ],
-		}
-	}
-
-method parserAlt($/)
-	{
-	make
+	method parserAltList($/)
 		{
-		type    => 'concatenation',
-		content => $/<parserElement>.ast,
-                options => $/<parserElement><elementOptions>.ast || [ ],
-		command => [ ],
-		label   => $/<label>.ast,
+		make @<parserAlt>>>.ast
 		}
-	}
- 
-method lexerRuleSpec($/)
-	{
-	make
-		{
-		type     => 'rule',
-		name     => $/<name>.ast,
-		content  =>
-			[
-			$/<lexerAltList>.ast
-			],
-		attribute => $/<FRAGMENT> ?? [ ~$/<FRAGMENT> ] !! [ ],
-                action    => Nil,
-                returns   => Nil,
-                throws    => [ ],
-                locals    => Nil,
-                options   => [ ]
-		}
-	}
 
-method lexerAltList($/)
-	{
-	make
+	method ruleReturns($/)
 		{
-		type    => 'alternation',
-		label   => Nil,
-#content => @<lexerAlt>>>.ast,
-content => [$/<lexerAlt>[0].ast],
-		command => [ ],
-		options => [ ],
+		make ~$/<ARG_ACTION>
 		}
-	}
 
+	method throwsSpec($/)
+		{
+		make @<ID>>>.ast
+		}
+
+	method localsSpec($/)
+		{
+		make ~$/<ARG_ACTION>
+		}
+
+	method parserRuleSpec($/)
+		{
+		make 
+			{
+			type      => 'rule',
+			name      => $/<name>.ast,
+			attribute => $/<attribute> ?? ~$/<attribute>  !! Nil,
+			action    => $/<action>    ?? ~$/<action>     !! Nil,
+			return    => $/<returns>   ?? $/<returns>.ast !! Nil,
+			throws    => $<throws>     ?? $/<throws>.ast  !! [ ],
+			local     => $/<locals>    ?? $/<locals>.ast  !! Nil,
+			options   => $<options>    ?? $/<options>.ast !! [ ],
+			contents  => $/<parserAltList>.ast
+			}
+		}
+
+	# And here's where we reuse the <terminal> ... er, term.
+	#
+	method lexerAtom($/)
+		{
+		make $/<terminal>.ast
+		}
+
+	method lexerElement($/) # 'channel' not in this term.
+		{
+		make
+			{
+			type     => 'concatenation',
+			label    => Nil,
+			options  => [ ],
+			commands => [ ], # XXX Filled in by the next layer up
+			contents => [ $<lexerAtom>.ast ]
+			}
+		}
+
+	method lexerCommand($/)
+		{
+		make ~$/<lexerCommandName> => ~$/<lexerCommandExpr>[0]
+		}
+
+	method lexerCommands($/)
+		{
+		make @<lexerCommand>>>.ast
+		}
+
+	method lexerAlt($/)
+		{
+		my @lexerElement = @<lexerElement>>>.ast;
+
+		# Add the command to the lexer element afterward, if any.
+		#
+		@lexerElement[0]<commands> = [ $/<lexerCommands>.ast ];
+		make
+			{
+			type     => 'alternation',
+			label    => Nil,
+			options  => [ ],
+			commands => [ ],
+			contents => @lexerElement
+			}
+		}
+
+	method lexerAltList($/)
+		{
+		make @<lexerAlt>>>.ast
+		}
+
+	method lexerRuleSpec($/)
+		{
+		make 
+			{
+			type      => 'rule',
+			name      => $/<name>.ast,
+			attribute => Nil,
+			action    => Nil,
+			return    => Nil,
+			throws    => [ ],
+			local     => Nil,
+			options   => [ ],
+			contents  => $/<lexerAltList>.ast
+			}
+		}
+
+	method ruleSpec($/)
+		{
+		make $/<parserRuleSpec>.ast || $/<lexerRuleSpec>.ast
+		}
+
+	method TOP($/)
+		{
+		my ( @options, @imports, @tokens, @action );
+
+		@options.append( $_.<options>.ast ) for $/<prequelConstruct>;
+
+		@tokens.append( $_.<tokens>.ast ) for $/<prequelConstruct>;
+		@action.append( $_.<actions>.ast ) for $/<prequelConstruct>;
+
+		# XXX Apparently the way imports builds the list is mildly broken.
+		for $/<prequelConstruct> -> $prequel
+			{
+			next unless $prequel.<imports>.ast;
+			@imports = $prequel.<imports>.ast;
+			last;
+			}
+
+		make
+			{
+			type     => $<grammarType>.ast,
+			name     => ~$/<name>,
+			options  => @options,
+			imports  => @imports,
+			tokens   => @tokens,
+			actions  => @action,
+			contents => @<ruleSpec>>>.ast
+			}
+		}
+
+#`(
 method lexerAlt($/)
 	{
 #`(
 	make
 		{
-		type    => 'concatenation',
-		content => @<lexerElement>>>.ast,
-		label   => Nil,
-                options => [ ],
-		command => $/<lexerCommands>.ast || [ ],
+		type     => 'concatenation',
+		contents => @<lexerElement>>>.ast,
+		label    => Nil,
+                options  => [ ],
+		commands => $/<lexerCommands>.ast || [ ],
 		}
 )
 	make
@@ -442,94 +414,87 @@ method lexerAlt($/)
 		type    => 'concatenation',
 		label   => Nil,
 		options => [ ],
- command => [ skip => Nil ],
-content => [$<lexerElement>[0].ast],
+commands => [ skip => Nil ],
+contents => [$<lexerElement>[0].ast],
 		}
 	}
 
 method lexerElement($/)
 	{
-#`(
 	make
 		{
 		type         => $/<ACTION>
-			?? 'action'
-			!! $/<lexerAtom>
-			?? $/<lexerAtom>.ast.<type>
-			!! $/<lexerBlock>.ast.<type>,
-		content      => $/<ACTION>
-			?? $/<ACTION>.ast
-			!! $/<lexerAtom>
-			?? $/<lexerAtom>.ast.<content>
-			!! $/<lexerBlock>.ast.<content>,
-		alias => $/<labeledElement>
-			?? $/<labeledElement><ID>
-			!! Nil,
-		complemented => $/<lexerAtom>
-			?? $/<lexerAtom>.ast.<complemented>
-			!! $/<lexerBlock>.ast.<complemented>,
+			     ?? 'action'
+			     !! $/<lexerAtom>
+			     ?? $/<lexerAtom>.ast.<type>
+			     !! $/<lexerBlock>.ast.<type>,
+		alias        => $/<labeledElement>
+			     ?? $/<labeledElement><ID>
+			     !! Nil,
 		modifier     => $/<ebnfSuffix>.ast.<modifier>,
 		greedy       => $/<ebnf><ebnfSuffix>.ast.<greedy>
-			|| $/<ebnfSuffix>.ast.<greedy>
-			|| False
+			     || $/<ebnfSuffix>.ast.<greedy>
+			     || False,
+		complemented => $/<lexerAtom>
+			     ?? $/<lexerAtom>.ast.<complemented>
+			     !! $/<lexerBlock>.ast.<complemented>,
+		content      => $/<ACTION>
+			     ?? $/<ACTION>.ast
+			     !! $/<lexerAtom>
+			     ?? $/<lexerAtom>.ast.<content>
+			     !! $/<lexerBlock>.ast.<content>,
 		}
-)
-make
-   { type         => 'capturing group',
-      alias        => Nil,
-      modifier     => Nil,
-      greedy       => False,
-      complemented => False,
-      content =>
-        [{ type    => 'alternation',
-           label   => Nil,
-           options => [ ],
-           command => [ ],
-           content =>
-             [{ type    => 'concatenation',
-                label   => Nil,
-                options => [ ],
-                command => [ ],
-                content =>
-                  [{ type         => 'terminal',
-                     content      => '1',
-                     alias        => Nil,
-                     modifier     => Nil,
-                     greedy       => False,
-                     complemented => False },
-                   { type         => 'terminal',
-                     content      => '2',
-                     alias        => Nil,
-                     modifier     => Nil,
-                     greedy       => False,
-                     complemented => False }] }] }] }
 	}
-
-#method labeledLexerElement($/)
-#	{
-#	}
 
 method lexerBlock($/)
 	{
+#`(
 	make
 		{
 		type         => 'capturing group',
-		content      => @<lexeAltList>>>.ast,
+		contents     => @<lexeAltList>>>.ast,
 		complemented => $/[0] || False,
-		command      => [ ]
+		commands     => [ ]
 		}
+)
+
+	make
+		{
+		type         => 'capturing group',
+#		contents     => @<lexeAltList>>>.ast,
+contents =>
+  [{ type     => 'alternation',
+     label    => Nil,
+     options  => [ ],
+     commands => [ ],
+     contents =>
+       [{ type     => 'concatenation',
+          label    => Nil,
+          options  => [ ],
+          commands => [ ],
+          contents  =>
+            [{ type         => 'terminal',
+               content      => '1',
+               alias        => Nil,
+               modifier     => Nil,
+               greedy       => False,
+               complemented => False }] },
+        { type     => 'concatenation',
+          label    => Nil,
+          options  => [ ],
+          commands => [ ],
+          contents  =>
+             [{ type         => 'terminal',
+                content      => '2',
+                alias        => Nil,
+                modifier     => Nil,
+                greedy       => False,
+                complemented => False }] }] }],
+complemented => $/[0] || False,
+command      => [ ]
+}
 	}
 
-
-method blockAltList($/)
-	{
-	make @<parserElement>>>.ast
-	}
-
-method parserElement($/)
-	{
-	make @<element>>>.ast
-	}
 
 method element($/)
 	{
@@ -611,14 +576,6 @@ method element($/)
 		}
 	}
  
-method labeledElement($/)
-	{
-	make
-		{
-		type => 'nonterminal',
-		}
-	}
-
 method ebnf($/)
 	{
 my @x = $/<block><blockAltList><parserElement>;
@@ -631,11 +588,11 @@ my @foo = @x>>.ast;
 		content  =>
 			[
 				{
-				type    => 'concatenation',
-				label   => Nil,
-				options => [ ],
-				command => [ ],
-				content => @foo[0], # XXX
+				type     => 'concatenation',
+				label    => Nil,
+				options  => [ ],
+				commands => [ ],
+				content  => @foo[0], # XXX
 				}
 			]
 		}
@@ -720,16 +677,6 @@ method notSet($/)
 		}
 	}
 
-method setElementAltList($/)
-	{
-	make @<setElement>>>.ast
-	}
-
-method blockSet($/)
-	{
-	make $/<setElementAltList>.ast
-	}
-
 method setElement($/)
 	{
 	make
@@ -746,26 +693,8 @@ method setElement($/)
 			!! $/<terminal><scalar>.ast
 		}
 	}
+)
 
-#method ruleref($/)
-#	{
-#	}
-
-method range($/)
-	{
-	make
-		[
-			{
-			from => ~$/<from>[0],
-			to   => ~$/<to>[0]
-			}
-		]
 	}
-
-#method terminal($/)
-#	{
-#	}
-
-}
 
 # vim: ft=perl6

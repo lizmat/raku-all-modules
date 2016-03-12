@@ -182,7 +182,7 @@ rule grammarType
 
 rule prequelConstruct
  	{	<options=optionsSpec>
-	|	<import=delegateGrammars>
+	|	<imports=delegateGrammars>
 	|	<tokens=tokensSpec>
 	|	<actions=action>
  	}
@@ -268,7 +268,8 @@ rule ruleSpec
 
 rule parserRuleSpec
  	{
-	<COMMENTS>? <attribute=ruleAttribute>*
+	# XXX 'protected fragment' doesn't happen
+	<COMMENTS>? <attribute=ruleAttribute>?
 	<COMMENTS>? <name=ID>
 	<COMMENTS>? <action=ARG_ACTION>?
 	<COMMENTS>? <returns=ruleReturns>?
