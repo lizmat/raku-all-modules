@@ -19,44 +19,58 @@ To install it via rakudobrew, please use the following command:
 
 =head4 Manual
 
-    git clone https://github.com/ugexe/zef.git
-    cd zef
-    perl6 -Ilib bin/zef install .
+    $ git clone https://github.com/ugexe/zef.git
+    $ cd zef
+    $ perl6 -Ilib bin/zef install .
 
 =head1 USAGE
+
+    zef --help
 
     # duh
     zef install CSV::Parser
 
-    # search for module names matching `CSV::Parser`
+    # search for distribution names matching `CSV::Parser`
     zef search CSV::Parser
+
+    # detailed information for a matching distribution
+    zef info CSV::Parser
+
+    # list known available distributions
+    zef list
+
+    # list reverse dependencies of an identity
+    zef rdepends HTTP::UserAgent
 
     # test project in current directory    
     zef test .
 
     # fetch a specific module only
-    zef get CSV::Parser
+    zef fetch CSV::Parser
 
-=head2 Notice
+    # fetch a module, then shell into its local path
+    zef look CSV::Parser
 
-Still Beta level software. The process of implementing all of the previous features, test suite, and documentation is
-still in the works (see an older readme to see expected full feature set). No real work has been done porting over the
-old CLI overlay from the previous version of Zef, so the output is rather bleh.
+    # smoke test modules from all content storages
+    zef smoke
+
+    # run Build.pm if one exists in given path
+    zef build .
 
 =head2 More CLI
 
-=head4 B<install> [identities]
+=head4 B<install> [*@identities]
 
 Note: The install process does not install anything until all other phases have completed. So if A requires B,
 and a user has requested to C<install A>, it would download A and B, possibly Build A and B, test A and B,
 and then finally install A and B but only if A and B passed all their tests. For instance: if A failed its
 tests then B will not be installed (even if it passed its own tests) without force.
 
-[C<identities>] can be in the form of a file path (starting with B<.> or B</>), URNs, or full identities:
+[C<@identities>] can be in the form of a file path (starting with B<.> or B</>), URNs, URLs, paths, or identities:
 
     # URN
     `zef install CSV-Parser`
-    `zef install github:tony-o:CSV-Parser:0.1.2`
+    `zef install github:tony-o:CSV--Parser:0.1.2`
     `zef install CSV-Parser:0.1.2`
 
     # IDENTITY
@@ -64,23 +78,34 @@ tests then B will not be installed (even if it passed its own tests) without for
     `zef install "CSV::Parser:auth<tony-o>:ver<0.1.2>"`
     `zef install "CSV::Parser:ver('0.1.2')"`
 
-    # URN + IDENTITY
-    `zef install "CSV::Parser:ver<0.1.2>" github:ugexe:Net-HTTP:0.1`
-
     # PATH
-    `zef install /some/path`
+    `zef install ./Perl6-Net--HTTP`
+
+    # URL
+    `zef -v install git://github.com/ugexe/zef.git`
+    `zef -v install https://github.com/ugexe/zef/archive/master.tar.gz`
+
+A request may contain any number and combination of these. Paths and URLs will be resolved first so they are available
+to fulfill any dependencies of other requested identities.
+
+Note: In the name portion of the B<URN> style a double I<--> indicates a I<::>. This is because modules can have I<->
+as part of their name. I<--> is probably valid too, but this makes my life a lot easier for now!
 
 B<Options>
     
-    # install the requested modules regardless of: currently installed versions,
-    # test results, or failed dependency installations
-    --force
+    # install to a custom locations
+    --install-to=<id> # site/home/vendor/perl, or
+    -to=<id>          # inst#/home/some/path/custom
 
-    # install to a location determined by short-id
-    --install-to=<id> # site/home/vendor/perl
+    # Install only the dependency chains of the requested distributions
+    --depsonly
 
     # More detailed output
     --verbose
+
+    # install the requested modules regardless of: currently installed versions,
+    # test results, or failed dependency installations
+    --force
 
     # do everything except the actual installations
     --dry
@@ -93,21 +118,176 @@ B<Options>
     --/build-depends
     --/test-depends
 
+=head4 B<uninstall> [*@identities]
+
+Uninstall the specified distributions
+
+Note: Requires a a bleeding edge rakudo (not available in 6.c)
+
 =head4 B<update>
 
 Update the package indexes for all `ContentStorage` backends
 
-=head4 B<search>
+=head4 B<search> [$identity]
 
 How these are handled depends on the `ContentStorage` engine used, which by default is the p6c ecosystem and
 metacpan. Note that metacpan search is not likely to produce any useful results yet. More documentation will
 be available when I have a better idea how to integrate results from these 2 services.
+
+    $ zef -v --cpan search URI
+    ===> Found 4 results
+    -------------------------------------------------------------------------------
+    ID|From                           |Package             |Description
+    -------------------------------------------------------------------------------
+    1 |Zef::ContentStorage::LocalCache|URI:ver('0.1.1')    |A URI implementation...
+    2 |Zef::ContentStorage::P6C       |URI:ver('0.1.1')    |A URI implementation...
+    3 |Zef::ContentStorage::CPAN      |URI:ver('0.1.1')    |A URI implementation...
+    4 |Zef::ContentStorage::CPAN      |URI:ver('0.000.001')|A URI implementation...
+    -------------------------------------------------------------------------------
+
+=head4 B<info> [$identity]
+
+View meta information of a distribution
+
+    $ zef -v info HTTP::UserAgent
+    - Info for: HTTP::UserAgent
+    - Identity: HTTP::UserAgent:ver('1.1.16'):auth('github:sergot')
+    - Recommended By: Zef::ContentStorage::LocalCache
+    Author:  github:sergot
+    Description:     Web user agent
+    Source-url:      git://github.com/sergot/http-useragent.git
+    Provides: 11 modules
+    #       HTTP::Cookie
+    #       HTTP::Header
+    #       HTTP::Cookies
+    #       HTTP::Message
+    #       HTTP::Request
+    #       HTTP::Response
+    #       HTTP::MediaType
+    #       HTTP::UserAgent
+    #       HTTP::Header::Field
+    #       HTTP::Request::Common
+    #       HTTP::UserAgent::Common
+    Depends: 7 items
+    ---------------------------------
+    ID|Identity           |Installed?
+    ---------------------------------
+    1 |HTTP::Status       |✓
+    2 |File::Temp         |✓
+    3 |DateTime::Parse    |✓
+    4 |Encode             |✓
+    5 |MIME::Base64       |✓
+    6 |URI                |✓
+    7 |IO::Capture::Simple|✓
+    ---------------------------------
+
+B<Options>
+
+    # Extra details (ex: list dependencies and which ones are installed)
+    -v
+
+=head4 B<list> [*@from]
+
+List known available distributions
+
+    $ zef --installed list
+    ===> Found via /home/nickl/.rakudobrew/moar-nom/install/share/perl6/site
+    CSV::Parser:ver('0.1.2'):auth('github:tony-o')
+    Zef:auth('github:ugexe')
+    ===> Found via /home/nickl/.rakudobrew/moar-nom/install/share/perl6
+    CORE:ver('6.c'):auth('perl')
+
+Note that not every `ContentStorage` may provide such a list, and such lists may only
+be a subset. For example: we don't have a way to get a list of every distribution stored
+on metacpan, but we *can* get the $x most recent additions (we use 100 for now)
+
+[C<@from>] allows you to show results from specific storages only:
+
+    zef --installed list perl   # Only list modules installed by rakudo itself
+
+    zef list cpan               # Only show available modules from the content storage
+                                # with a name field of `cpan` in the configuration
+                                # (plugin must not be set to `"enabled" : 0`)
+
+Otherwise results from all enabled content storages will be returned.
+
+B<Options>
+
+    # Only list installed distributions
+    --installed
+
+    # Additionally list the modules of discovered distributions
+    -v
+
+=head4 B<rdepends> [$identity]
+
+List available distributions that directly depend on C<$identity>
+
+    $ zef rdepends Net::HTTP
+    Minecraft-Tools:ver('0.1.0')
+    LendingClub:ver('0.1.0')
+
+=head4 B<fetch> [*@identities]
+
+Fetches candidates for given identities, including any dependencies (if requested)
+
+=head4 B<test> [*@paths]
+
+Run tests on each distribution located at [C<@paths>]
+
+=head4 B<build> [*@paths]
+
+Run the Build.pm file located in the given [C<@paths>]
+
+If you currently want to create a build hook, put the following dependency-free boilerplate
+in a file named `Build.pm` at the root of your distribution:
+
+    class Builder {
+        method build($dist-path) {
+            # do build stuff to your module
+            # which is located at $dist-path
+        }
+
+        # Only needed for panda compatability
+        method isa($what) {
+            return True if $what.^name eq 'Panda::Builder';
+            callsame;
+        }
+    }
+
+Set the env variable B<ZEF_BUILDPM_DEBUG=1> for additional debugging information
+
+I<Note: In the future a more appropriate hooking solution will replace this>
+
+=head4 B<look> [$identity]
+
+Fetches the requested distribution and any dependencies (if requested), changes the directory to that of the fetched
+distribution, and then stops program execution. This allows you modify or look at the source code before manually
+continuing the install via `zef install .`
+
+Note that the path to any dependencies that needed to be fetched will be set in env at B<PERL6LIB>, so you should
+be able to run any build scripts, tests, or complete a manual install without having to specify their locations.
+
+=head4 B<nuke> [RootDir | TempDir | StoreDir]
+
+Deletes all paths in the specific configuration directory
+
+=head4 B<nuke> [site | home]
+
+Deletes all paths that are rooted in the prefix of the matching CompUnit::Repository name
+
+    # uninstall all modules
+    $ zef nuke site home
 
 =head2 Plugins and Configuration
 
 See the root zef directory for config.json. Each phase module will attempt to load/use each plugin in order.
 More details to be made available in time, but they are fairly simple and the code itself should provide enough
 insight to get something done.
+
+Plugins can be enabled and disabled from the command line. The flags to do this are based on the configuration
+values for each plugin. So I<--cpan> (field `short-name`) and I<--Zef::ContentStorage::CPAN> (field `module`) would
+each set I<"enabled" : 1>.  Conversely I<--/cpan> and I<--/Zef::ContentStorage::CPAN> would set I<"enabled" : 0>
 
 See the configuration file in L<resources/config.json|https://github.com/ugexe/zef/blob/master/resources/config.json> for a
 little more information on how plugins are invoked.
@@ -122,12 +302,37 @@ The functionality is mostly there. The API to search and find a specific module 
 a query and takes a matching distribution name with a matching (or newest) version. It can also download, extract, and
 install as well. Other than polishing up the search API access it needs metacpan itself to host Perl6 distributions.
 
-You can enable it by setting I<"enabled" : 1> in the config under the ContentStorage::CPAN plugin
+You can enable it by setting I<"enabled" : 1> in the config under the ContentStorage::CPAN plugin, or temporarily
+by passing the flag I<--cpan>
+
+    # Search metacpan in addition to other configuration defaults
+    $ zef -v --cpan search CSV::Parser
+
+    # Same as above, but disables the default ecosystem `p6c`
+    $ zef -v --cpan --/p6c search CSV::Parser
 
 =head3 Proxy support?
 
-All the default fetching plugins support it except for the windows specific `download.pm6` (which only needs a slight change).
-However the git fetcher should support proxies on windows, and a git url is the first mirror tried for fetching package lists
-(for the p6c ecosystem) so for the most part it should Just Work.
+All the default fetching plugins have proxy support
+
+=head3 Custom installation locations?
+
+Pass a path to the I<-to> / I<--install-to> option and prefix the path with `inst#` (unless you know what you're doing)
+
+    $ zef -to="inst#/home/perl6/custom" install Text::Table::Simple
+    Searching for Text::Table::Simple
+    Start test phase for: /home/perl6/.zef/store/Perl6-Text--Table--Simple.git/09abf9d5d59e9dfdc1be24319db0dcd76b764ede
+    Testing passed for /home/perl6/.zef/store/Perl6-Text--Table--Simple.git/09abf9d5d59e9dfdc1be24319db0dcd76b764ede
+    Installing Text::Table::Simple:ver('0.0.3'):auth('github:ugexe') to /home/perl6/custom
+
+To make the custom location discoverable:
+
+    # Set the PERL6LIB env:
+    $ PERL6LIB="inst#/home/perl6/custom" perl6 -e "use Text::Table::Simple; say 'ok'"
+    ok
+
+    # or simply include it as needed
+    $ perl6 -Iinst#/home/perl6/custom -e "use Text::Table::Simple; say 'ok'"
+    ok
 
 =cut

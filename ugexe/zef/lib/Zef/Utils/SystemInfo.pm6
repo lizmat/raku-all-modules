@@ -1,10 +1,10 @@
 unit module Zef::Utils::SystemInfo;
 
-our $MAX-TERM-COLS is export = GET-TERM-COLUMNS();
+# the extra signal stuff is because JVM does not have a `signal` symbol
 our sub signal-ignore($) { Supply.new }
 our $signal-handler := &::("signal") ~~ Failure ?? &::("signal-ignore") !! &::("signal");
 our $sig-resize     := ::("Signal::SIGWINCH");
-try $signal-handler.($sig-resize).act: { $MAX-TERM-COLS = GET-TERM-COLUMNS() }
+try $signal-handler.($sig-resize).act: { $ = GET-TERM-COLUMNS() }
 
 # Get terminal width
 sub GET-TERM-COLUMNS is export {
@@ -28,7 +28,6 @@ sub GET-TERM-COLUMNS is export {
         if $tput.out.get ~~ /$<cols>=<.digit>+/ {
             my $cols = ~$/<cols>.comb(/\d/).join;
             return +$cols - 1 if try { +$cols }
-
         }
         return $default;
     }

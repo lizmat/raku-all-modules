@@ -35,10 +35,17 @@ role Tester {
     method test-matcher($path) { ... }
 }
 
+role Candidate {
+    has $.dist;
+    has $.as;   # Requested as
+    has $.from; # Recommended from
+    has $.uri;  # url, file path, etc
+}
+
 role ContentStorage {
     # max-results is meant so we can :max-results(1) when we are interested in using it like
     # `.candidates` (i.e. 1 match per identity) so we can stop iterating search plugins earlier
-    method search(:$max-results, *@identities, *%fields) { ... }
+    method search(:$max-results, *@identities, *%fields --> Array of Candidate) { ... }
 
     # Optional method currently being called after a search/fetch
     # to assist ::ContentStorage::LocalCache in updating its MANIFEST path cache.
@@ -47,6 +54,12 @@ role ContentStorage {
     # ::LocalCache to update MANIFEST so we don't *have* to do a recursive folder search
     #
     # method store(*@dists) { }
+
+    # Optional method for listing available packages. For p6c style storages
+    # where we have an index file this is easy. For metacpan style where we
+    # make a remote query not so much (maybe it could list the most recent X
+    # modules... or maybe it just doesn't implement it at all)
+    # method available { }
 }
 
 # Used by the phase's loader (i.e Zef::Fetch) to test that the plugin can
@@ -60,53 +73,45 @@ role Pluggable {
     has $!plugins;
     has @.backends;
 
-    method plugins {
-        my $DEBUG = ?%*ENV<ZEF_PLUGIN_DEBUG>;
-        sub DEBUG($plugin, $message) {
-            say "[Plugin - {$plugin<name> // qq||}] $message" if $DEBUG;
-        }
+    sub DEBUG($plugin, $message) {
+        say "[Plugin - {$plugin<short-name> // $plugin<module> // qq||}] $message"\
+            if ?%*ENV<ZEF_PLUGIN_DEBUG>;
+    }
 
+    method plugins(*@names) {
+        +@names ?? self!list-plugins.grep({@names.contains(.short-name)}) !! self!list-plugins;
+    }
+
+    method !list-plugins {
         $!plugins := $!plugins ?? $!plugins !! cache gather for @!backends -> $plugin {
             my $module = $plugin<module>;
             DEBUG($plugin, "Checking: {$module}");
 
-            if $plugin<enabled>:exists && !$plugin<enabled> {
-                DEBUG($plugin, "\t(SKIP) Not enabled");
-                next;
-            }
+            # default to enabled unless `"enabled" : 0`
+            next() R, DEBUG($plugin, "\t(SKIP) Not enabled")\
+                if $plugin<enabled>:exists && (!$plugin<enabled> || $plugin<enabled> eq "0");
 
-            if (try require ::($ = ~$module)) ~~ Nil {
-                DEBUG($plugin, "\t(SKIP) Plugin could not be loaded");
-                next;
-            }
+            next() R, DEBUG($plugin, "\t(SKIP) Plugin could not be loaded")\
+                if (try require ::($ = $module)) ~~ Nil;
+
             DEBUG($plugin, "\t(OK) Plugin loaded successful");
 
             if ::($ = $module).^can("probe") {
-                unless ::($ = $module).probe {
-                    DEBUG($plugin, "\t(SKIP) Probing failed");
-                    next;
-                }
-                DEBUG($plugin, "\t(OK) Probing successful");
+                ::($ = $module).probe
+                    ?? DEBUG($plugin, "\t(OK) Probing successful")
+                    !! (next() R, DEBUG($plugin, "\t(SKIP) Probing failed"))
             }
 
-            my $class = ::($ = $module).new(|($plugin<options> // []));
+            # add attribute `short-name` here to make filtering by name slightly easier
+            # until a more elegant solution can be integrated into plugins themselves
+            my $class = ::($ = $module).new(|($plugin<options> // []))\
+                but role :: { has $.short-name = $plugin<short-name> // '' };
 
-            if ?$class {
-                DEBUG($plugin, "(OK) Plugin is now usable: {$module}");
-                take $class;
-            }
-            else {
-                DEBUG($plugin, "(SKIP) Plugin unusable: initialization failure");
-            }
+            next() R, DEBUG($plugin, "(SKIP) Plugin unusable: initialization failure")\
+                unless ?$class;
+
+            DEBUG($plugin, "(OK) Plugin is now usable: {$module}");
+            take $class;
         }
     }
-}
-
-role Candidate {
-    has $.dist;
-    has $.requested-as;
-    has $.recommended-by;
-    has $.uri;  # todo: use this to represnt the actual location to get the dist from.
-                # examples: ::LocalCache may have a dist stored on disk that matches
-                # the requested identity, and source-url
 }

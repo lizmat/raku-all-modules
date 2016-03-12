@@ -8,58 +8,90 @@ class Zef::ContentStorage::CPAN does ContentStorage {
     has $.fetcher is rw;
     has $.cache is rw;
 
+    # only recent, not *all*
+    method available {
+        # currently 351 indexed on jdvs metacpan matching status:latest
+        my $max-results = 100;
+        $ = self.search(:$max-results, '*');
+    }
+
     method IO {
         my $dir = $!cache.IO.child('metacpan');
         $dir.mkdir unless $dir.e;
         $dir;
     }
 
-    method search(:$max-results = 5, *@identities, *%fields) {
+    # $max-results is max results *per* search, if max-results = 2 and there are
+    # 2 identities then the max results returned could be 4
+    method search(:$max-results = 5, :%params is copy, *@identities, *%fields) {
         return () unless @identities || %fields;
 
-        my $matches := gather DIST: for |@identities -> $wants {
-            my $wants-spec = Zef::Distribution::DependencySpecification.new($wants);
-            temp %fields<distribution> = $wants-spec.name.subst('::', '-', :g);
-            temp %fields<author>       = $wants-spec.auth-matcher.match(/^.*? ':' (.*)$/)[0].Str
-                if ?$wants-spec.auth-matcher;
-            temp %fields<version>      = $wants-spec.version-matcher.subst(/^v?/, '?')
-                if ?$wants-spec.version-matcher && $wants-spec.version-matcher ne '*';
+        %params<size> //= $max-results;
+        my $params-string = %params.grep(*.value.defined).map(-> $p {
+            $p.value.map({"{$p.key}=$_"}).join('&');
+        }).join('&');
 
-            my $query-string = %fields.grep(*.key.defined).map(-> $q {
+        # Unlike ::P6C and ::LocalCache we do not have access to a complete package index.
+        # Instead we request meta data with a search term (the identity) and get results back.
+        # TODO: compare results against DependencySpecificiation of $wants to make sure it/they
+        # really match (currently trusts that the metacpan query result will contain the
+        # requested identity) and filter out those that do not instead of assuming metacpan
+        # will always do what we expect
+        my $matches := gather DIST: for |@identities -> $wants {
+            my $spec = Zef::Distribution::DependencySpecification.new($wants);
+
+            temp %fields<distribution> = $spec.name.subst('::', '-', :g)
+                if ?$spec && $spec.name ne '*';
+            temp %fields<version> = $spec.version-matcher.subst(/^v?/, '?')
+                if ?$spec && ?$spec.version-matcher && $spec.version-matcher ne '*';
+            # not all dist have a `status` field with value `latest` yet, but we don't want
+            # to exclude them from being searched for explicitly so only search for status:latest
+            # if we have nothing to go on (like `zef list`)
+            temp %fields<status> = 'latest'
+                unless %fields<distribution>.?chars || %fields<version>.?chars;
+            # auth/author are not usable on metacpan yet. `author` currently always lists
+            # the maintainer of the metacpan fork, and auth is not always available (as x_auth).
+            # Elsewhere we should just construct the auth from the other parts, but that doesn't help
+            # us search if we don't already know what the part names are to begin with to searcn and
+            # find the distribution in the first place
+            # temp %fields<author>       = $wants-spec.auth-matcher.match(/^.*? ':' (.*)$/)[0].Str
+            #    if ?$wants-spec.auth-matcher;
+
+            my $query-string = %fields.grep(*.value.defined).map(-> $q {
                 $q.value.map({"{$q.key}:$_"}).join('%20')
-            }).join('%20AND%20');
-            my $search-url = $!mirrors[0] ~ '_search?q=' ~ $query-string;
+            }).join('%20AND%20') // '';
+
+            my $search-url = "{$!mirrors[0]}_search?"
+                ~ ($params-string ?? "$params-string&" !! '')
+                ~ ($query-string  ?? "q=$query-string" !! '');
 
             # Query results currently saved to file for now to ease writing shell based
             # fetchers. Soon those will just print it to stdout, and return the captured raw data,
             # but the Fetcher interface needs to be updated to accommodate this.
             my $search-save-as = self.IO.child('search').IO.child("{time}.{$*THREAD.id}.json");
+            my $response-path = $!fetcher.fetch($search-url, $search-save-as);
 
-            if ($ = $!fetcher.fetch($search-url, $search-save-as)).IO.e {
-                if from-json($search-save-as.IO.slurp) -> %meta {
-                    # This should generally return the same distribution but in various versions.
-                    # However we will need to be prepared for when multiple distributions are returned
-                    # and sorting by version may no longer make sense
-                    my @dist-candidates = (^($max-results [min] %meta<hits><hits>.elems)).map: {
-                        my $meta6 = METACPAN2META6(%meta<hits><hits>[$_]<_source>);
-
+            if $!fetcher.fetch($search-url, $search-save-as) -> $reponse-path {
+                if from-json($response-path.IO.slurp) -> %meta {
+                    for (^%meta<hits><hits>.elems) -> $i {
+                        my $meta6 = METACPAN2META6(%meta<hits><hits>[$i]<_source>);
+                        # temporary. Some download_urls are absolute, and others are not
                         my $host           = 'http://hack.p6c.org:5001';
-                        $meta6<source-url> = $host ~ $meta6<source-url>;
+                        $meta6<source-url> = ($host ~ $meta6<source-url>) if $meta6<source-url>.starts-with('/');
 
                         my $dist      = Zef::Distribution.new(|$meta6);
                         my $candidate = Candidate.new(
-                            dist           => $dist,
-                            uri            => $dist.source-url,
-                            requested-as   => $wants,
-                            recommended-by => self.^name,
+                            dist  => $dist,
+                            uri   => $dist.source-url,
+                            as    => $wants,
+                            from  => $?CLASS.^name,
                         );
+
+                        take $candidate;
                     }
-
-                    my $newest-candidate = |@dist-candidates.sort({ $^b.dist cmp $^a.dist }).head;
-
-                    take $newest-candidate;
                 }
             }
+            try { $response-path.unlink } if $response-path.IO.e;
         }
     }
 }
@@ -71,16 +103,17 @@ sub METACPAN2META6(%cpan-meta) {
     my $meta6;
     $meta6<name>        = (%cpan-meta<distribution> // %cpan-meta<metadata><name> // '').subst('-', '::', :g);
     $meta6<version>     = (%cpan-meta<metadata><version> // %cpan-meta<version_numified> // '*');
-    $meta6<author>      = (%cpan-meta<author> // %cpan-meta<metadata><name> // '');
-    $meta6<description> = (%cpan-meta<abstract> // '');
+    $meta6<author>      = (%cpan-meta<metadata><author> // '');
+    $meta6<description> = (%cpan-meta<abstract> // %cpan-meta<metadata><description> // '');
     $meta6<license>     = (%cpan-meta<license> // '').join(',');
     $meta6<provides>    = (%cpan-meta<metadata><provides>.kv.map: { $^a => $^b<file> } // {});
 
-    # $meta6<depends>     = (%cpan-meta<dependency> // '').map({ .<module> ~ (.<version_numified> ?? ":{.<version_numified>}" !! '') }).join(',');
-    $meta6<depends>     = %cpan-meta<metadata><x_depends>;
+    $meta6<depends>       = %cpan-meta<metadata><x_depends>;
+    $meta6<build-depends> = %cpan-meta<metadata><x_build-depends>;
+    $meta6<test-depends>  = %cpan-meta<metadata><x_test-depends>;
 
-    $meta6<authority>   = 'cpan';
-    $meta6<auth>        = $meta6<metadata><x_authority> // (?$meta6<author> ?? ($meta6<authority> ~ ':' ~ $meta6<author>) !! '');
+    $meta6<auth>        = %cpan-meta<metadata><x_auth> // %cpan-meta<metadata><x_authority> // $meta6<author> // '';
+    $meta6<auth> = '' if $meta6<auth> eq 'unknown';
 
     # not official spec, but it *is* a Distribution attribute
     $meta6<source-url>  = %cpan-meta<download_url>;

@@ -1,32 +1,35 @@
 {
-    "Store" : "$*HOME/.zef",
+    "ConfigVersion" : "1",
+    "RootDir"  : "$*HOME/.zef",
+    "StoreDir" : "$*HOME/.zef/store",
+    "TempDir"  : "$*HOME/.zef/tmp",
     "License" : {
         "whitelist" : "*",
         "blacklist" : []
     },
     "ContentStorage" : [
         { 
-            "name" : "cached",
+            "short-name" : "cached",
             "enabled" : 1,
             "module" : "Zef::ContentStorage::LocalCache",
             "default" : 1,
             "options" : { }
         },
         {
-            "name" : "p6c",
+            "short-name" : "p6c",
             "enabled" : 1,
             "module" : "Zef::ContentStorage::P6C",
             "default" : 1,
             "options" : {
                 "auto-update" : 0,
                 "mirrors" : [
-                    "https://github.com/ugexe/Perl6-ecosystems.git",
+                    "git://github.com/ugexe/Perl6-ecosystems.git",
                     "https://raw.githubusercontent.com/ugexe/Perl6-ecosystems/master/p6c.json"
                 ]
             }
         },
         {
-            "name" : "cpan",
+            "short-name" : "cpan",
             "enabled" : 0,
             "module" : "Zef::ContentStorage::CPAN",
             "options" : {
@@ -36,56 +39,65 @@
     ],
     "Fetch" : [
         {
-            "name" : "git",
+            "short-name" : "git",
             "module" : "Zef::Shell::git"
         },
         {
-            "name" : "wget",
+            "short-name" : "path",
+            "module" : "Zef::Fetch::Path"
+        },
+        {
+            "short-name" : "wget",
             "module" : "Zef::Shell::wget"
         },
         {
-            "name" : "curl",
+            "short-name" : "curl",
             "module" : "Zef::Shell::curl"
         },
         {
-            "name" : "pswebrequest",
+            "short-name" : "pswebrequest",
             "module" : "Zef::Shell::PowerShell::download"
         }
     ],
     "Extract" : [
         {
-            "name" : "git",
+            "short-name" : "git",
             "module" : "Zef::Shell::git",
             "comment" : "used to checkout (extract) specific tags/sha1/commit/branch from a git repo"
         },
         {
-            "name" : "unzip",
-            "module" : "Zef::Shell::unzip"
+            "short-name" : "path",
+            "module" : "Zef::Fetch::Path",
+            "comment" : "if this goes before git then git wont be able to extract/checkout local paths because this reaches it first :("
         },
         {
-            "name" : "tar",
+            "short-name" : "tar",
             "module" : "Zef::Shell::tar"
         },
         {
-            "name" : "psunzip",
-            "module" : "Zef::Shell::PowerShell::unzip"
+            "short-name" : "p5tar",
+            "module" : "Zef::Shell::p5tar"
         },
         {
-            "name" : "p5tar",
-            "module" : "Zef::Shell::p5tar"
+            "short-name" : "unzip",
+            "module" : "Zef::Shell::unzip"
+        },
+        {
+            "short-name" : "psunzip",
+            "module" : "Zef::Shell::PowerShell::unzip"
         }
     ],
     "Test" : [
         {
-            "name" : "prove6",
-            "module" : "Zef::Shell::prove6"
-        },
-        {
-            "name" : "prove",
+            "short-name" : "prove",
             "module" : "Zef::Shell::prove"
         },
         {
-            "name" : "default",
+            "short-name" : "prove6",
+            "module" : "Zef::Shell::prove6"
+        },
+        {
+            "short-name" : "default-tester",
             "module" : "Zef::Shell::Test"
         }
     ]

@@ -1,17 +1,23 @@
 language: perl
+
 perl:
     - '5.20-shrplib'
+
 os:
     - linux
     - osx
+
 env:
     - BACKEND=moar
     - BACKEND=jvm
+
 matrix:
     allow_failures:
         - env: BACKEND=jvm
     fast_finish: true
+
 sudo: false
+
 before_install:
     - 'if [[ $BACKEND == "moar" ]]; then export VM_OPTS="--gen-moar"; fi'
     - git clone https://github.com/rakudo/rakudo.git $HOME/rakudo
@@ -20,14 +26,40 @@ before_install:
     - make install
     - export PATH=$HOME/rakudo/install/bin:$PATH
     - export ZEF_PLUGIN_DEBUG=1
+    - export ZEF_BUILDPM_DEBUG=1
+    - export PATH=$HOME/rakudo/install/share/perl6/site/bin:$PATH
     - cd $TRAVIS_BUILD_DIR
+
 install:
     # need at least 1 statement in 'install'
     - perl6 -v
+
 script:
+    # test install from local path
     - perl6 -Ilib bin/zef -v install .
-after_success:
-    - export PATH=$HOME/rakudo/install/share/perl6/site/bin:$PATH
+
+    # change path to make sure next `zef` commands aren't using any files in cwd or lib/
+    - cd $TRAVIS_BUILD_DIR/..
+
+    # test bells and whistles
+    - zef -v test ./zef
+    - zef -v update
+    - zef -v search Base64
+    - zef -v info Base64
+    - zef -v rdepends Base64
+    - zef -v fetch Base64
+    - zef -v install Base64
+    - zef -v --max=10 list
+    - zef -v --installed list
+
+    # test fetching via an identity (Inline::Perl5)
     # perl/perlbrew setup for osx on travis is buggy; not sure how to use shrplib perl without building from source
     - 'if [[ $TRAVIS_OS_NAME == "linux" ]]; then zef -v install Inline::Perl5; fi'
     - 'if [[ $TRAVIS_OS_NAME == "linux" ]]; then perl6 -MInline::Perl5 -e "exit 0;"; fi'
+
+    # Currently down :(
+    #- zef -v install http://hack.p6c.org:5001/authors/id/P/PS/PSIXDISTS/Perl6/CSV-Parser-0.000.002_1601022004.tar.gz
+
+    - zef --/confirm nuke TempDir StoreDir RootDir
+    - zef update cached # test single storage update; should be 0 after previous nuke
+    - zef --/confirm nuke site home # no more `zef` command

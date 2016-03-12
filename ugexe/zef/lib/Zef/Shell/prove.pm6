@@ -9,12 +9,10 @@ class Zef::Shell::prove is Zef::Shell does Tester does Messenger {
         once {
             # `prove --help` has exitcode == 1 unlike most other processes
             # so it requires a more convoluted probe check
-
             try {
                 my $proc = zrun('prove', '--help', :out, :err);
-                my $nl   = Buf.new(10).decode;
-                my @out <== grep *.so <== split $nl, $proc.out.slurp-rest;
-                my @err <== grep *.so <== split $nl, $proc.err.slurp-rest;
+                my @out  = $proc.out.lines;
+                my @err  = $proc.err.lines;
                 $proc.out.close;
                 $proc.err.close;
                 CATCH {

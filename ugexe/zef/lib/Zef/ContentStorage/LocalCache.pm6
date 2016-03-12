@@ -41,6 +41,16 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
 
     method !slurp-manifest { $ = self!manifest-file.IO.slurp }
 
+    method available {
+        my $candidates := gather for self!gather-dists -> $dist {
+            take Candidate.new(
+                dist => $dist,
+                uri  => ($dist.source-url || $dist.hash<support><source>),
+                from => $?CLASS.^name,
+            );
+        }
+    }
+
     method IO {
         my $dir = $!cache.IO;
         $dir.mkdir unless $dir.e;
@@ -66,7 +76,7 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
 
             try {
                 if Zef::Distribution::Local.new($current) -> $dist {
-                    %dcache{$dist.id} //= $dist;
+                    %dcache{$dist.identity} //= $dist;
                 }
             }
         }
@@ -81,34 +91,21 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
     }
 
     # todo: handle %fields
-    # todo: sort $max-results results by version
+    # note this doesn't apply the $max-results per identity searched, and always returns a 1 dist
+    # max for a single identity (todo: update to handle $max-results for each @identities)
     method search(:$max-results = 5, *@identities, *%fields) {
         my @wanted = |@identities;
-
-        # local paths
-        my $local-dists := gather LDIST: for @identities.grep(*.starts-with("." || "/")) -> $wants {
-            my $dist = Zef::Distribution::Local.new($wants);
-            my $candidate = Candidate.new(
-                dist           => $dist,
-                uri            => $wants.IO.absolute,
-                requested-as   => $wants,
-                recommended-by => self.^name,
-            );
-            take $candidate;
-            @wanted.splice(@wanted.first(/$wants/, :k), 1);
-            last LDIST unless +@wanted;
-        }
+        my %specs  = @wanted.map: { $_ => Zef::Distribution::DependencySpecification.new($_) }
 
         # identities that are cached in the localcache manifest
         my $resolved-dists := +@wanted == 0 ?? [] !! gather RDIST: for |self!gather-dists -> $dist {
             for @identities.grep(* ~~ any(@wanted)) -> $wants {
-                my $spec = Zef::Distribution::DependencySpecification.new($wants);
-                if ?$dist.contains-spec($spec) {
+                if ?$dist.contains-spec( %specs{$wants} ) {
                     my $candidate = Candidate.new(
-                        dist           => $dist,
-                        uri            => $dist.IO.absolute,
-                        requested-as   => $wants,
-                        recommended-by => self.^name,
+                        dist => $dist,
+                        uri  => $dist.IO.absolute,
+                        as   => $wants,
+                        from => $?CLASS.^name,
                     );
                     take $candidate;
                     @wanted.splice(@wanted.first(/$wants/, :k), 1);
@@ -117,7 +114,7 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
             }
         }
 
-        slip($local-dists.Slip, $resolved-dists.Slip);
+        my $sorted := $resolved-dists.sort({ $^b.dist cmp $^a.dist });
     }
 
     # After the `fetch` phase an app can call `.store` on any ContentStorage that
@@ -131,7 +128,7 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
                 my ($id, $path) = $line.split("\0");
                 %lookup{$id} = $path;
             }
-            %lookup{$_.id} = $_.IO.absolute for |@new;
+            %lookup{$_.identity} = $_.IO.absolute for |@new;
             my $contents = join "\n", %lookup.map: { join "\0", (.key, .value) }
             self!manifest-file.spurt($contents ~ "\n") if $contents;
         })

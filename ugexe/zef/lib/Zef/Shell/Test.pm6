@@ -9,7 +9,8 @@ class Zef::Shell::Test is Zef::Shell does Tester does Messenger {
 
     method test($path, :@includes) {
         die "path does not exist: {$path}" unless $path.IO.e;
-        my @test-files = grep *.extension eq 't', ls-files($path.IO.child('t').absolute);
+        my @test-files = grep *.extension eq 't',
+            list-paths($path.IO.child('t').absolute, :f, :!d, :r).sort;
 
         my @results = eager gather for @test-files -> $test-file {
             # many tests are written with the assumption that $*CWD will be their distro's base directory
@@ -27,12 +28,16 @@ class Zef::Shell::Test is Zef::Shell does Tester does Messenger {
             # precomp folder being in use/locked won't affect our custom prefix copy
             my $proc = zrun($*EXECUTABLE, '-Ilib/.precomp', $relpath, :cwd($path), :$env, :out, :err);
 
-            $.stdout.emit($_) for $proc.out.lines;
-            $.stderr.emit($_) for $proc.err.lines;
-            $proc.out.close;
-            $proc.err.close;
-            take $proc;
+            my @err = $proc.err.lines;
+            my @out = $proc.out.lines;
+
+            $.stdout.emit($_) for |@out;;
+            $.stderr.emit($_) for |@err;
+
+            $ = $proc.out.close unless +@err;
+            $ = $proc.err.close;
+
+            take ?$proc;
         }
-        @test-files.elems ?? ?@results.map(?*) !! True;
     }
 }
