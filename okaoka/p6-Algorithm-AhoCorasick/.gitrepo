@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/okaoka/p6-Algorithm-AhoCorasick.git
 	branch = master
-	commit = dfb48b393ba71cf13037f60a4108fde09e800b63
-	parent = ed6f99806d3df98f264c6fd6cc0c63e02da2767d
+	commit = 392f29df4e480d3bb744a871125c282c697d5806
+	parent = fe31ebded1200d667591a558fec4fd2262d612d2
 	cmdver = 0.2.3
