@@ -1,12 +1,13 @@
 # DBIish/t/40-SQLite-common.t
 use v6;
-use Test;
-use DBIish;
+need DBIish::CommonTesting;
 
-# Define the only database specific values used by the common tests.
-my ( $*mdriver, %*opts) = 'SQLite';
-%*opts<database> = 'minidbi-test.sqlite3';
-my $dbh;
-
-# Detect and report possible errors from EVAL of the common test script
-warn $! if "ok 99-common.pl6" ne EVAL slurp 't/99-common.pl6';
+my $TDB = IO::Path.new('dbdish-sqlite-test.sqlite3');
+DBIish::CommonTesting.new(
+    dbd => 'SQLite',
+    opts => {
+        :database(~$TDB)
+    },
+    typed-nulls => False # TODO Is the driver who needs to provide the info
+).run-tests;
+$TDB.unlink;

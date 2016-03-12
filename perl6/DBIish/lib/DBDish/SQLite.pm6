@@ -1,31 +1,26 @@
-use DBDish;
+use v6;
 
-need DBDish::SQLite::Connection;
-need DBDish::SQLite::StatementHandle;
+need DBDish;
+
+unit class DBDish::SQLite:auth<mberends>:ver<0.0.3> does DBDish::Driver;
 use DBDish::SQLite::Native;
-use NativeCall;
+need DBDish::SQLite::Connection;
 
-unit class DBDish::SQLite:auth<mberends>:ver<0.0.1>;
+method connect(:database(:$dbname)! is copy, :$RaiseError, *%params) {
 
-has $.Version = 0.01;
-has $.errstr;
-method !errstr() is rw { $!errstr }
-method connect(:$RaiseError, *%params) {
-    my $dbname = %params<dbname> // %params<database>;
-    die 'No "dbname" or "database" given' unless defined $dbname;
+    my SQLite $p .= new;
+    # Add the standard extension unless has one
+    $dbname ~= '.sqlite3' unless $dbname ~~ / '.' /;
 
-    my @conn := CArray[OpaquePointer].new;
-    @conn[0]  = OpaquePointer;
-    my $status = sqlite3_open($dbname, @conn);
+    my $status = sqlite3_open($dbname, $p);
     if $status == SQLITE_OK {
-        return DBDish::SQLite::Connection.bless(
-                :conn(@conn[0]),
-                :$RaiseError,
+        my $con = DBDish::SQLite::Connection.new(
+            :conn($p), :$RaiseError, :parent(self)
         );
+        $con;
     }
     else {
-        $!errstr = SQLITE($status);
-        die $!errstr if $RaiseError;
+        self!conn-error: :code($status) :$RaiseError :errstr(SQLITE($status));
     }
 }
 

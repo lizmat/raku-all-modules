@@ -1,54 +1,50 @@
+use v6;
+need DBDish;
 # DBDish::mysql.pm6
 
-use NativeCall;
-use DBDish;     # roles for drivers
+unit class DBDish::mysql:auth<mberends>:ver<0.0.3> does DBDish::Driver;
 use DBDish::mysql::Native;
 need DBDish::mysql::Connection;
-need DBDish::mysql::StatementHandle;
-
-#-----------------------------------------------------------------------
-
-unit class DBDish::mysql:auth<mberends>:ver<0.0.1>;
-
-has $.Version = 0.01;
 
 #------------------ methods to be called from DBIish ------------------
-method connect(Str :$user, Str :$password, :$RaiseError, *%params ) {
-    my ( $mysql_client, $mysql_error );
-    unless defined $mysql_client {
-        $mysql_client = mysql_init( OpaquePointer );
-        $mysql_error  = mysql_error( $mysql_client );
-    }
-    my $host     = %params<host>     // 'localhost';
-    my $port     = (%params<port>     // 0).Int;
-    my $database = %params<database> // 'mysql';
-    my $socket   = %params<socket> // OpaquePointer;
-    # real_connect() returns either the same client pointer or null
-    my $result   = mysql_real_connect( $mysql_client, $host,
-        $user, $password, $database, $port, $socket, 0 );
-    my $error = mysql_error( $mysql_client );
+method connect(:$RaiseError, *%params ) {
     my $connection;
-    if $error eq '' {
-        $connection = DBDish::mysql::Connection.new(
-            mysql_client => $mysql_client,
-            RaiseError => $RaiseError
+    my $mysql_client = MYSQL.mysql_init;
+    my $errstr  = $mysql_client.mysql_error;
+
+    unless $errstr {
+        %params<host>     //= 'localhost';
+        %params<port>     //= 3306;
+        %params<database> //= 'mysql';
+        %params<socket>   //= Str; # Undef
+
+        # real_connect() returns either the same client pointer or null
+        my $result   = $mysql_client.mysql_real_connect(
+            |%params<host user password database port socket>, 0
         );
+
+        unless $errstr = $mysql_client.mysql_error {
+	    $mysql_client.mysql_set_character_set('utf8'); # A sane default
+            $connection = DBDish::mysql::Connection.new(
+                :$mysql_client, :$RaiseError, :parent(self)
+            );
+        }
     }
-    else {
-        die "DBD::mysql connection failed: $error";
+    if $errstr {
+        self!conn-error :$errstr, :$RaiseError;
+    } else {
+        $connection;
     }
-    return $connection;
 }
 
 =begin pod
 
 =head1 DESCRIPTION
-# 'zavolaj' is a Native Call Interface for Rakudo/Parrot. 'DBIish' and
-# 'DBDish::mysql' are Perl 6 modules that use 'zavolaj' to use the
-# standard mysqlclient library.  There is a long term Parrot based
-# project to develop a new, comprehensive DBI architecture for Parrot
+# 'DBIish' and 'DBDish::mysql' are Perl 6 modules that use NativeCall
+# to use the standard mysqlclient library. There is a long term Rakudo
+# based project to develop a new, comprehensive DBI architecture for Parrot
 # and Perl 6.  DBIish is not that, it is a naive rewrite of the
-# similarly named Perl 5 modules.  Hence the 'Mini' part of the name.
+# similarly named Perl 5 modules.
 
 =head1 CLASSES
 The DBDish::mysql module contains the same classes and methods as every

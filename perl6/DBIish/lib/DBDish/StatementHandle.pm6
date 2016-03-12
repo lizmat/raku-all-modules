@@ -1,56 +1,58 @@
-
 use v6;
 
 =begin pod
-=head2 role DBDish::Role::StatementHandle
+=head2 role DBDish::StatementHandle
 The Connection C<prepare> method returns a StatementHandle object that
 mainly provides the C<execute> and C<finish> methods. It also has all the methods from C<DBDish::Role::ErrorHandling>.
 =end pod
 
-need DBDish::Role::ErrorHandling;
+need DBDish::ErrorHandling;
 
-unit role DBDish::Role::StatementHandle does DBDish::Role::ErrorHandling;
+unit role DBDish::StatementHandle does DBDish::ErrorHandling;
 
-method finish() { ... }
+has Int $.Executed = 0;
+has Bool $.Finished = False;
+
+method finish(--> Bool) { ... }
 method fetchrow() { ... }
 method execute(*@) { ... }
 
 method	_row(:$hash) { ... }
-
 
 method fetchrow-hash() {
     hash self.column_names Z=> self.fetchrow;
 }
 
 method row(:$hash) {
-     self._row(:hash($hash));
+     self._row(:$hash);
 }
 
-method allrows(:$array-of-hash, :$hash-of-array) {
+multi method allrows(:$array-of-hash!) {
     my @rows;
-    die "You can't use array-of-hash with hash-of-array" if $array-of-hash and $hash-of-array;
-    if $array-of-hash {
-        while self.row(:hash) -> %row {
-            @rows.push(%row);
-        }
-        return @rows;
+    while self.row(:hash) -> %row {
+	@rows.push(%row);
     }
-    if $hash-of-array {
-        my @names := self.column_names;
-        my %rows = @names Z=> [] xx *;
-        while self.row -> @a {
-            for @a Z @names -> ($v, $n) {
-                %rows{$n}.push: $v;
-            }
-        }
-        return %rows;
+    @rows;
+}
+
+multi method allrows(:$hash-of-array!) {
+    my @names := self.column_names;
+    my %rows = @names Z=> [] xx *;
+    while self.row -> @a {
+	for @a Z @names -> ($v, $n) {
+	    %rows{$n}.push: $v;
+	}
     }
+    %rows;
+}
+
+multi method allrows() {
+    my @rows;
     while self.row -> @r {
          @rows.push(@r);
     }
-    return @rows;
+    @rows;
 }
-
 
 method fetchrow_hashref { $.fetchrow-hash }
 

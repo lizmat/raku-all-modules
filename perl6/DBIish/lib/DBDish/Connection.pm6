@@ -1,16 +1,15 @@
-
 use v6;
 
 =begin pod
-=head2 role DBDish::Role::Connection
+=head2 role DBDish::Connection
 
-Does the C<DBDish::Role::ErrorHandling> role.
+Does the C<DBDish::ErrorHandling> role.
 
 =end pod
 
-need DBDish::Role::ErrorHandling;
+need DBDish::ErrorHandling;
 
-unit role DBDish::Role::Connection does DBDish::Role::ErrorHandling;
+unit role DBDish::Connection does DBDish::ErrorHandling;
 
 =begin pod
 =head4 instance variables
@@ -18,9 +17,24 @@ unit role DBDish::Role::Connection does DBDish::Role::ErrorHandling;
 =head5 do
 =end pod
 
+
+method drv { $.parent }
+
+method new(*%args) {
+    my \new = ::?CLASS.bless(|%args);
+    new.reset-err;
+    new.drv.Connections.unshift(new);
+    new;
+}
+
 method do( Str $statement, *@params ) {
-    my $sth = self.prepare($statement) or return fail();
-    $sth.execute(@params);
+    with self.prepare($statement) {
+	LEAVE { .finish }
+	.execute(@params);
+    }
+    else {
+	.fail;
+    }
 }
 
 =begin pod

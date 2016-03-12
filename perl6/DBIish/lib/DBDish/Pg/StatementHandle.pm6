@@ -1,188 +1,123 @@
-
 use v6;
-use NativeCall;
+need DBDish;
 
-need DBDish::Role::StatementHandle;
+unit class DBDish::Pg::StatementHandle does DBDish::StatementHandle;
 use DBDish::Pg::Native;
 
-unit class DBDish::Pg::StatementHandle does DBDish::Role::StatementHandle;
-
-has $!pg_conn;
+has PGconn $!pg_conn;
 has Str $!statement_name;
 has $!statement;
-has $!param_count;
-has $.dbh;
+has @!param_type;
 has $!result;
 has $!affected_rows;
 has @!column_names;
+has @!column_type;
 has Int $!row_count;
 has $!field_count;
 has $!current_row = 0;
 
 method !handle-errors {
-    my $status = PQresultStatus($!result);
-    if status-is-ok($status) {
-        self!reset_errstr;
-        return True;
-    }
-    else {
-        self!set_errstr(PQresultErrorMessage($!result));
-        die self.errstr if $.RaiseError;
-        return Nil;
+    if $!result.is-ok {
+        self.reset-err;
+    } else {
+        self!set-err($!result.PQresultStatus, $!pg_conn.PQerrorMessage);
     }
 }
 
-method !munge_statement {
-    my $count = 0;
-    $!statement.subst(:g, '?', { '$' ~ ++$count});
-}
+submethod BUILD(:$!parent!, :$!pg_conn, # Per protocol
+    :$!statement, :$!statement_name, :@!param_type
+) { }
 
-submethod BUILD(:$!statement, :$!pg_conn, :$!statement_name, :$!param_count,
-       :$!dbh) {
-}
 method execute(*@params is copy) {
-    $!current_row = 0;
-    die "Wrong number of arguments to method execute: got @params.elems(), expected $!param_count" if @params != $!param_count;
-    my @param_values := CArray[Str].new;
+    self!set-err( -1,
+	"Wrong number of arguments to method execute: got @params.elems(), expected @!param_type.elems()"
+    ) if @params != @!param_type;
+    my @param_values := ParamArray.new;
     for @params.kv -> $k, $v {
-        @param_values[$k] = $v.Str;
+	if $v.defined {
+	    @param_values[$k] = (@!param_type[$k] ~~ Buf)
+		?? $!pg_conn.escapeBytea(($v ~~ Buf) ?? $v !! ~$v.encode)
+		!! ~$v;
+	} else { Str }
     }
 
-    $!result = PQexecPrepared($!pg_conn, $!statement_name, @params.elems,
-            @param_values,
-            OpaquePointer, # ParamLengths, NULL pointer == all text
-            OpaquePointer, # ParamFormats, NULL pointer == all text
-            0,             # Resultformat, 0 == text
+    $!result = $!pg_conn.PQexecPrepared($!statement_name, @params.elems, @param_values,
+        Null, # ParamLengths, NULL pointer == all text
+        Null, # ParamFormats, NULL pointer == all text
+        0,    # Resultformat, 0 == text
     );
+    self!set-err(PGRES_FATAL_ERROR, $!pg_conn.PQerrorMessage).fail unless $!result;
 
-    self!handle-errors;
-    $!row_count = PQntuples($!result);
-
-    my $rows = self.rows;
-    return ($rows == 0) ?? "0E0" !! $rows;
+    $!current_row = 0;
+    $!affected_rows = Nil;
+    with self!handle-errors {
+        $!Executed++;
+        if $!result.PQresultStatus == PGRES_TUPLES_OK { # WAS SELECT
+	    without $!field_count {
+		$!field_count = $!result.PQnfields;
+		for ^$!field_count {
+		    @!column_names.push($!result.PQfname($_));
+		    @!column_type.push(%oid-to-type{$!result.PQftype($_)});
+		}
+	    }
+            with $!row_count = $!result.PQntuples {
+		$!affected_rows = $_ == 0 ?? '0E0' !! $_;
+	    }
+        } else { # Other stmt without data to return
+	    with $!result.PQcmdTuples.Int {
+		$!affected_rows = $_ == 0 ?? '0E0' !! $_;
+	    }
+	    self.finish;
+        }
+        self.rows;
+    } else {
+        .fail;
+    }
 }
 
 # do() and execute() return the number of affected rows directly or:
 # rows() is called on the statement handle $sth.
 method rows() {
-    unless defined $!affected_rows {
-        $!affected_rows = PQcmdTuples($!result);
-
-        self!handle-errors;
-    }
-
-    if defined $!affected_rows {
-        return +$!affected_rows;
-    }
+    $!affected_rows;
 }
 
 method _row(:$hash) {
     my @row_array;
     my %ret_hash;
-    return $hash ?? Hash !! Array if $!current_row >= $!row_count;
-
-    unless defined $!field_count {
-        $!field_count = PQnfields($!result);
-    }
-    my @names = self.column_names if $hash;
-    my @types = self.column_p6types;
-    if defined $!result {
-        self!reset_errstr;
-        my $afield = False;
+    if $!field_count && $!current_row < $!row_count {
         for ^$!field_count {
-            FIRST {
-                $afield = True;
+            my $value = @!column_type[$_];
+            if ! $!result.PQgetisnull($!current_row, $_) {
+		$value = $!result.get-value($!current_row, $_, $value);
+		if @!column_type[$_] ~~ Array {
+		    $value = _pg-to-array( $value, @!column_type[$_].of );
+		}
             }
-            my $res := PQgetvalue($!result, $!current_row, $_);
-            if $res eq '' {
-                $res := Str if PQgetisnull($!result, $!current_row, $_)
-            }
-            my $value;
-            given (@types[$_]) {
-                when 'Str' {
-                  $value = $res
-                }
-                when 'Num' {
-                  $value = $res.Num
-                }
-                when 'Int' {
-                  $value = $res.Int
-                }
-                when 'Bool' {
-                  $value = self.true_false($res)
-                }
-                when 'Real' {
-                  $value = $res.Real
-                }
-                when 'Array<Int>' {
-                  $value := _pg-to-array( $res, 'Int' );
-                }
-                when 'Array<Str>' {
-                  $value := _pg-to-array( $res, 'Str' );
-                }
-                when 'Array<Num>' {
-                  $value := _pg-to-array( $res, 'Num' );
-                }
-                default {
-                  $value = $res;
-                }
-            }
-            $hash ?? (%ret_hash{@names[$_]} = $value) !! @row_array.push($value);
+            $hash ?? (%ret_hash{@!column_names[$_]} = $value)
+	          !! @row_array.push($value);
         }
-        $!current_row++;
-        self!handle-errors;
-
-        if ! $afield { self.finish; }
+	self.finish if ++$!current_row == $!row_count;
     }
-    $hash ?? return %ret_hash !! return @row_array;
+    $hash ?? %ret_hash !! @row_array;
 }
-
 
 method fetchrow() {
     my @row_array;
-    return () if $!current_row >= $!row_count;
-
-    unless defined $!field_count {
-        $!field_count = PQnfields($!result);
+    if $!field_count && $!current_row < $!row_count {
+	@row_array.push($!result.PQgetisnull($!current_row, $_) ?? Str
+		        !! $!result.PQgetvalue($!current_row, $_)
+	) for ^$!field_count;
+	self.finish if ++$!current_row == $!row_count;
     }
-
-    if defined $!result {
-        self!reset_errstr;
-
-        for ^$!field_count {
-            my $res := PQgetvalue($!result, $!current_row, $_);
-            if $res eq '' {
-                $res := Str if PQgetisnull($!result, $!current_row, $_)
-            }
-            @row_array.push($res)
-        }
-        $!current_row++;
-        self!handle-errors;
-
-        if ! @row_array { self.finish; }
-    }
-    return @row_array;
+    @row_array;
 }
 
 method column_names {
-    $!field_count = PQnfields($!result);
-    unless @!column_names {
-        for ^$!field_count {
-            my $column_name = PQfname($!result, $_);
-            @!column_names.push($column_name);
-        }
-    }
-    @!column_names
+    @!column_names;
 }
 
-# for debugging only so far
-method column_oids {
-    $!field_count = PQnfields($!result);
-    my @res;
-    for ^$!field_count {
-        @res.push: PQftype($!result, $_);
-    }
-    @res;
+method column_type {
+    @!column_type;
 }
 
 method fetchall_hashref(Str $key) {
@@ -195,64 +130,57 @@ method fetchall_hashref(Str $key) {
     }
 
     my $results_ref = %results;
-    return $results_ref;
-}
-
-method column_p6types {
-   my @types = self.column_oids;
-   return @types.map:{%oid-to-type-name{$_}};
+    $results_ref;
 }
 
 my grammar PgArrayGrammar {
-    rule array        { '{' (<element> ','?)* '}' }
+    rule array       { '{' (<element> ','?)* '}' }
     rule TOP         { ^ <array> $ }
-    rule element      { <array> | <float> | <integer> | <string> }
-    token float        { (\d+ '.' \d+) }
-    token integer      { (\d+) }
-    rule string       { '"' $<value>=( [\w|\s]+ ) '"' | $<value>=( \w+ ) }
+    rule element     { <array> | <float> | <integer> | <string> }
+    token float      { (\d+ '.' \d+) }
+    token integer    { (\d+) }
+    rule string      { '"' $<value>=( [\w|\s]+ ) '"' | $<value>=( \w+ ) }
 };
 
-sub _to-type($value, Str $type where $_ eq any([ 'Str', 'Num', 'Int' ])) {
-  return $value unless $value.defined;
-  if $type eq 'Str' {
-      # String
-      return ~$value;
-  } elsif $type eq 'Num' {
-      # Floating point number
-      return Num($value);
-  } else {
-      # Must be Int
-      return Int($value);
-  }
+sub _to-type($value, Mu:U $type) {
+    if $value.defined {
+        given $type {
+            when 'Str' { ~$value }     # String;
+            when 'Num' { Num($value) } # SQL Floating point
+            when 'Rat' { Rat($value) } # SQL Numeric
+            default    { Int($value) } # Must be
+        }
+    }
+    else {
+        $value;
+    }
 }
 
-sub _to-array(Match $match, Str $type where $_ eq any([ 'Str', 'Num', 'Int' ])) {
-    my @array;
+sub _to-array(Match $match, Mu:U $type) {
+    my $arr = Array[$type].new;
+    my $clean = True;
     for $match.<array>.values -> $element {
-      if $element.values[0]<array>.defined {
-          # An array
-          push @array, _to-array( $element.values[0], $type );
-      } elsif $element.values[0]<float>.defined {
-          # Floating point number
-          push @array, _to-type( $element.values[0]<float>, $type );
-      } elsif $element.values[0]<integer>.defined {
-          # Integer
-          push @array, _to-type( $element.values[0]<integer>, $type );
-      } else {
-          # Must be a String
-          push @array, _to-type( $element.values[0]<string><value>, $type );
+      if $element.values[0]<array>.defined { # An array
+	  if $clean && $arr.of === $type { # Need to downgrade
+	      $arr = Array.new; $clean = False;
+	  }
+          $arr.push: @(_to-array($element.values[0], $type));
+      } elsif $element.values[0]<float>.defined { # Floating point number
+          $arr.push: $type($element.values[0]<float>);
+      } elsif $element.values[0]<integer>.defined { # Integer
+          $arr.push: $type($element.values[0]<integer>);
+      } else { # Must be a String
+          $arr.push: ~$element.values[0]<string><value>;
       }
     }
-
-    return @array;
+    $arr;
 }
 
-sub _pg-to-array(Str $text, Str $type where $_ eq any([ 'Str', 'Num', 'Int' ])) {
+sub _pg-to-array(Str $text, Mu:U $type) {
     my $match = PgArrayGrammar.parse( $text );
     die "Failed to parse" unless $match.defined;
-    return _to-array($match, $type);
+    _to-array($match, $type);
 }
-
 
 method pg-array-str(@data) {
   my @tmp;
@@ -268,29 +196,17 @@ method pg-array-str(@data) {
       }
     }
   }
-  return '{' ~ @tmp.join(',') ~ '}';
+  '{' ~ @tmp.join(',') ~ '}';
 }
 
 method true_false(Str $s) {
-    return $s eq 't';
+    $s eq 't';
 }
-
 
 method finish() {
-    if defined($!result) {
-        PQclear($!result);
-        $!result       = Any;
-        @!column_names = ();
+    if $!result {
+        $!result.PQclear;
+        $!result        = Nil;
     }
-    return Bool::True;
-}
-
-method !get_row {
-    my @data;
-    for ^$!field_count {
-        @data.push(PQgetvalue($!result, $!current_row, $_));
-    }
-    $!current_row++;
-
-    return @data;
+    $!Finished = True;
 }

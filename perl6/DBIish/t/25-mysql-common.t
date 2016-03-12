@@ -1,17 +1,27 @@
 # DBIish/t/10-mysql-common.t
+use v6;
+need DBIish::CommonTesting;
 
-use Test;
-use DBIish;
-#use DBDish::mysql;
+DBIish::CommonTesting.new(
+    :dbd<mysql>,
+    opts => {
+	:database<dbdishtest>,
+	:user<testuser>,
+	:password<testpass>,
+    },
+).run-tests;
 
-# Define the only database specific values used by the common tests.
-my $*mdriver = 'mysql';
-my %*opts = ().hash;
-%*opts<host>       = 'localhost';
-%*opts<port>       = 3306;
-%*opts<database>   = 'zavolaj';
-%*opts<user>       = 'testuser';
-%*opts<password>   = 'testpass';
+=begin pod
 
-# Detect and report possible errors from EVAL of the common test script
-warn $! if "ok 99-common.pl6" ne EVAL slurp 't/99-common.pl6';
+=head1 PREREQUISITES
+
+Your system should already have MySQL server installed and running.
+
+The tests by default use the database 'dbdishtest', user 'testuser' and
+password 'testpass', all this can be create with:
+
+    mysql -e "CREATE DATABASE dbdistest;" -uroot
+    mysql -e "CREATE USER 'testuser'@'localhost' IDENTIFIED BY 'testpass';" -uroot
+    mysql -e "GRANT ALL PRIVILEGES ON dbdishtest.* TO 'testuser'@'localhost';"
+
+=end pod

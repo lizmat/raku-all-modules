@@ -1,60 +1,43 @@
-
 use v6;
 
-use NativeCall;
-need DBDish::Role::Connection;
+need DBDish;
+
+unit class DBDish::SQLite::Connection does DBDish::Connection;
 need DBDish::SQLite::StatementHandle;
 use DBDish::SQLite::Native;
 
-
-unit class DBDish::SQLite::Connection does DBDish::Role::Connection;
-
-has $!conn;
+has SQLite $!conn is required;
 has @!sths;
 
-method BUILD(:$!conn) { }
+submethod BUILD(:$!conn, :$!parent!) { }
 
 method !handle-error(Int $status) {
-    return if $status == SQLITE_OK;
-    self!set_errstr(join ' ', SQLITE($status), sqlite3_errmsg($!conn));
+    if $status == SQLITE_OK {
+	self.reset-err;
+    } else {
+	self!set-err(SQLITE($status), sqlite3_errmsg($!conn));
+    }
 }
 
 method prepare(Str $statement, $attr?) {
-    my @stmt := CArray[OpaquePointer].new;
-    @stmt[0]  = OpaquePointer;
-    my $status;
-    if sqlite3_libversion_number() >= 3003009 {
-        $status = sqlite3_prepare_v2(
-            $!conn,
-            $statement,
-            -1,
-            @stmt,
-            CArray[OpaquePointer]
-        ); 
-    } else {
-        $status = sqlite3_prepare(
-            $!conn,
-            $statement,
-            -1,
-            @stmt,
-            CArray[OpaquePointer])
-    }
-    my $statement_handle = @stmt[0];
+    my STMT $stmt .= new;
+    my $status = (sqlite3_libversion_number() >= 3003009)
+        ?? sqlite3_prepare_v2($!conn, $statement, -1, $stmt, Null)
+        !! sqlite3_prepare($!conn, $statement, -1, $stmt, Null);
     self!handle-error($status);
-    return Nil unless $status == SQLITE_OK;
-    my $sth = DBDish::SQLite::StatementHandle.bless(
+    my $sth = DBDish::SQLite::StatementHandle.new(
         :$!conn,
+        :parent(self),
         :$statement,
-        :$statement_handle,
+        :statement_handle($stmt),
         :$.RaiseError,
-        :dbh(self),
     );
     @!sths.push: $sth;
     $sth;
 }
 
 method _remove_sth($sth) {
-    @!sths.=grep(* !=== $sth);
+    @!sths .= grep(* !=== $sth);
 }
 
 method rows() {
@@ -63,16 +46,7 @@ method rows() {
     $rows == 0 ?? '0E0' !! $rows;
 }
 
-method do(Str $sql, *@args) {
-    my $sth = self.prepare($sql);
-    $sth.execute(@args);
-    my $res = $sth.rows || '0e0';
-    $sth.finish;
-    return $sth;
-}
-
 method disconnect() {
-    .finish for @!sths;
+    .free for @!sths;
     self!handle-error(sqlite3_close($!conn));
-    return not self.errstr;
 }

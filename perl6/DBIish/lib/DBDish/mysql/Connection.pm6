@@ -1,38 +1,34 @@
-
 use v6;
-use NativeCall;
 
-need DBDish::Role::Connection;
-need DBDish::mysql::StatementHandle;
+need DBDish;
+
+unit class DBDish::mysql::Connection does DBDish::Connection;
 use DBDish::mysql::Native;
+need DBDish::mysql::StatementHandle;
 
+has MYSQL $!mysql_client is required;
 
-unit class DBDish::mysql::Connection does DBDish::Role::Connection;
+submethod BUILD(:$!mysql_client, :$!parent!) { }
 
-has $!mysql_client;
-
-submethod BUILD(:$!mysql_client) { }
-
-method prepare( Str $statement ) {
-    my $statement_handle = DBDish::mysql::StatementHandle.new(
-        mysql_client => $!mysql_client,
-        statement    => $statement,
-        RaiseError   => $.RaiseError
+method prepare(Str $statement, *%args) {
+    self.reset-err;
+    DBDish::mysql::StatementHandle.new(
+        :$!mysql_client, :parent(self), :$statement, :$!RaiseError, |%args
     );
-    return $statement_handle;
 }
 
 method mysql_insertid() {
-    mysql_insert_id($!mysql_client);
-    # but Parrot NCI cannot return an unsigned  long long :-(
+    $!mysql_client.mysql_insert_id;
 }
 
 method ping() {
-    0 == mysql_ping($!mysql_client);
+    LEAVE { self.reset-err }
+    0 == $!mysql_client.mysql_ping;
 }
 
 method disconnect() {
-    mysql_close($!mysql_client);
+    $!mysql_client.mysql_close;
+    $!mysql_client = Nil;
     True
 }
 
