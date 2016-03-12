@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/perl6-memoize.git
+	branch = master
+	commit = 1706be2f238779335dc7cb5ddf4cc05399f22286
+	parent = c0824ca4e3cccb7dc27b395622e27a7db55698c0
+	cmdver = 0.2.3

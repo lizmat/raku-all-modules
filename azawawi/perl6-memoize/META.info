@@ -1,0 +1,11 @@
+{
+	"name"        : "Memoize",
+	"version"     : "*",
+	"perl"        : "6.c",
+	"description" : "Make routines faster by trading space for time",
+	"depends"     : [ ],
+	"provides"    : {
+		"Memoize" : "lib/Memoize.pm6"
+	},
+	"source-url"  : "git://github.com/azawawi/perl6-memoize.git"
+}
