@@ -25,7 +25,7 @@ if Net::HTTP::Dialer.?can-ssl {
         my $request = Net::HTTP::Request.new(:$url, :$method, :%header);
         my $socket  = Net::HTTP::Dialer.new.dial($request);
 
-        ok $socket ~~ IO::Socket::SSL, 'IO::Socket::SSL';
+        ok $socket ~~ ::('IO::Socket::SSL'), 'IO::Socket::SSL';
     }, 'IO::Socket::SSL selected and works';
 }
 else {

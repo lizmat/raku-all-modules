@@ -1,5 +1,3 @@
-use experimental :pack;
-
 use Test;
 plan 1;
 
@@ -13,6 +11,6 @@ subtest {
     my $response = Net::HTTP::POST($url, :$body);
     is $response.status-code, 200, "200";
 
-    my $results = from-json($response.body.unpack("A*"));
+    my $results = from-json($response.content(:force));
     is $results<data>, $payload;
 }, "Basic POST";

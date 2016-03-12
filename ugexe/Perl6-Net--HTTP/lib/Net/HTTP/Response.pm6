@@ -1,8 +1,6 @@
 use Net::HTTP::Interfaces;
 use Net::HTTP::Utils;
 
-use experimental :pack;
-
 my $CRLF = Buf.new(13, 10);
 
 class Net::HTTP::Response does Response {
@@ -18,14 +16,14 @@ class Net::HTTP::Response does Response {
     multi method new(Blob $raw, *%_) {
         # Decodes headers to a string, and leaves the body as binary
         # i.e. `::("$?CLASS").new($socket.recv(:bin))`
-        my @sep      = $CRLF.contents.Slip xx 2;
+        my $sep = buf8.new($CRLF.contents.Slip xx 2);
+        my $sep-bytes = $sep.bytes;
 
-        my $sep-size = @sep.elems;
-        my $split-at = $raw.grep(*, :k).first({ $raw[$^a..($^a + $sep-size - 1)] ~~ @sep }, :k);
+        my $split-at = $raw.grep(*, :k).first({ $raw.subbuf($^a..($^a + $sep-bytes - 1)) eqv $sep }, :k);
 
-        my $hbuf := $raw.subbuf(0, $split-at + $sep-size);
-        my $bbuf := $raw.subbuf($split-at + $sep-size);
-        my @header-lines = $hbuf.unpack('A*').split($CRLF.decode).grep(*.so);
+        my $hbuf := $raw.subbuf(0, $split-at + $sep-bytes);
+        my $bbuf := $raw.subbuf($split-at + $sep-bytes);
+        my @header-lines = $hbuf.decode('latin-1').split($CRLF.decode).grep(*.so);
 
         # If the status-line was passed in as a named argument, then we assume its not also in @headers.
         # Otherwise we will use the first line of @headers if it matches a status-line like string.
@@ -69,8 +67,8 @@ role ResponseBodyDecoder {
 
         # fuck it take a wild guess
         if ?$force {
-            try { $!enc-via-force = $!sniffed = 'utf-8';   return self.body.decode('utf-8') }
-            try { $!enc-via-force = $!sniffed = 'latin-1'; return self.body.unpack("A*")    }
+            try { $!enc-via-force = $!sniffed = 'utf-8';   return self.body.decode('utf-8')   }
+            try { $!enc-via-force = $!sniffed = 'latin-1'; return self.body.decode('latin-1') }
         }
 
         die "Don't know how to decode this content; call with the `:force` argument to try harder";
@@ -84,7 +82,7 @@ role ResponseBodyDecoder {
     }
 
     multi sub sniff-meta(Buf $body) {
-        samewith($body.subbuf(0,512).unpack("A*"));
+        samewith($body.subbuf(0,512).decode('latin-1'));
     }
     multi sub sniff-meta(Str $body) {
         if $body ~~ /[:i '<' \s* meta \s* [<-[\>]> .]*? 'charset=' <q=[\'\"]>? $<charset>=<[a..z A..Z 0..9 \- \_ \.]>+ $<q>? .*? '>' ]/ {

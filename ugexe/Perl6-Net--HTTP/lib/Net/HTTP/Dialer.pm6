@@ -1,11 +1,10 @@
 use Net::HTTP::Interfaces;
 
-my constant CAN-SSL = (try require IO::Socket::SSL) !~~ Nil;
-BEGIN $! = Nil unless CAN-SSL; # avoid serializing a VMException
+sub CAN-SSL(--> Bool) { (try require IO::Socket::SSL) !~~ Nil ?? True !! False }
 
 # Get a scheme appropriate connected socket
 role Net::HTTP::Dialer does Dialer {
-    method can-ssl { CAN-SSL }
+    method can-ssl { state $ssl = ?CAN-SSL() }
     method dial(Request $req) {
         my $scheme = $req.url.scheme // 'http';
         my $host   = $req.url.host;

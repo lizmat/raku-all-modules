@@ -1,9 +1,10 @@
-use experimental :pack;
-
 unit module Net::HTTP::Utils;
 
-# ease transition to \r\n graphme stuff
-my $CRLF = Buf.new(13, 10);
+my $CRLF       = buf8.new(13, 10);
+my $CRLF-BYTES = $CRLF.bytes;
+
+# header-case
+sub hc(Str:D $str) is export { $ = $str.split("-").map(*.wordcase).join("-") }
 
 role IO::Socket::HTTP {
     has $.closing is rw = False;
@@ -12,19 +13,18 @@ role IO::Socket::HTTP {
 
     # Currently assumes these are called in a specific order per request
     method get(Bool :$bin where *.so, Bool :$chomp = True) {
-        my @sep      = $CRLF.contents;
-        my $sep-size = +@sep;
         my $buf = buf8.new;
-        loop {
-            $buf ~= $.recv(1, :bin);
-            last if $buf.tail($sep-size) ~~ @sep;
+        while (my $byte = $.recv(1, :bin)).DEFINITE {
+            $buf ~= $byte;
+            once next();
+            last if $buf.subbuf(*-$CRLF-BYTES) eqv $CRLF;
         }
-        $ = ?$chomp ?? $buf.subbuf(0, $buf.elems - $sep-size) !! $buf;
+        $ = ?$chomp ?? $buf.subbuf(0, $buf.bytes - $CRLF-BYTES) !! $buf;
     }
 
     method lines(Bool :$bin where *.so) {
-        gather while (my $data = $.get(:bin)).DEFINITE {
-            take $data;
+        gather while (my $buf = $.get(:bin)).DEFINITE {
+            take $buf;
         }
     }
 
@@ -33,9 +33,7 @@ role IO::Socket::HTTP {
         # to make it easier in the transport itself we will simply
         # ignore $buffer if ?$chunked
         my $bytes-read = 0;
-        my @sep        = $CRLF.contents;
-        my $sep-size   = @sep.elems;
-        my $want-size  = ($chunked ?? :16(self.get(:bin).unpack('A*')) !! $buffer) || 0;
+        my $want-size  = (?$chunked ?? :16(self.get(:bin).decode('latin-1')) !! $buffer) || 0;
         $ = Supply.on-demand(-> $supply {
             loop {
                 my $buffered-size = 0;
@@ -52,11 +50,13 @@ role IO::Socket::HTTP {
                     }
                 }
 
-                if ?$chunked {
-                    my @validate = $.recv($sep-size, :bin).contents;
-                    die "Chunked encoding error: expected separator ords '{@sep.perl}' not found (got: {@validate.perl})" unless @validate ~~ @sep;
-                    $bytes-read += $sep-size;
-                    $want-size = :16(self.get(:bin).unpack('A*'));
+                if ?$chunked and $.recv($CRLF-BYTES, :bin) -> $chunked-crlf {
+                    unless $chunked-crlf eqv $CRLF {
+                        die "Chunked encoding error: expected separator ords "
+                        ~   "'{$CRLF.contents}' not found (got: {$chunked-crlf.contents})";
+                    }
+                    $bytes-read += $chunked-crlf.bytes;
+                    $want-size = :16(self.get(:bin).decode('latin-1'));
                 }
                 last if $want-size == 0 || $bytes-read >= $buffer || $buffered-size == 0;
             }
@@ -96,7 +96,3 @@ role IO::Socket::HTTP {
     }
 }
 
-# header-case
-sub hc(Str:D $str) is export {
-    $ = $str.split("-").map(*.wordcase).join("-");
-}
