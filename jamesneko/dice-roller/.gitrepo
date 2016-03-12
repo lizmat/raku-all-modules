@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jamesneko/dice-roller.git
+	branch = master
+	commit = da8827939a20f8e79b2b93f8775d74753ce0537b
+	parent = c4c7626be1ef9c4c48dad2d17183e99d78d7906e
+	cmdver = 0.2.3

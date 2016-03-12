@@ -1,0 +1,18 @@
+{
+	"meta6"       : "0",
+	"perl"        : "6.c",
+	"name"        : "Dice::Roller",
+	"version"     : "0.1.1",
+	"authors"     : [
+		"James Clark"
+	],
+	"description" : "Roll RPG-style polyhedral dice",
+	"provides"    : {
+		"Dice::Roller"              : "lib/Dice/Roller.pm6",
+		"Dice::Roller::Rollable"    : "lib/Dice/Roller/Rollable.pm6",
+		"Dice::Roller::Selector"    : "lib/Dice/Roller/Selector.pm6"
+	},
+	"depends"     : [ ],
+	"support"     : { "email" : "perl@lazycat.com.au" },
+	"source-url"  : "https://github.com/jamesneko/dice-roller.git"
+}
