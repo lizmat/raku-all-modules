@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Util-Bitfield.git
+	branch = master
+	commit = 009a46ce18761dc85979357dba4f425f0a2e6249
+	parent = 9fe12e6f32e4bf12822db00508d47e50a830f6c5
+	cmdver = 0.2.3

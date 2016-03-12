@@ -1,0 +1,22 @@
+{
+   "perl" : "6.c",
+   "auth" : "github:jonathanstowe",
+   "tags" : ["util", "bit", "bitfield"],
+   "meta6" : "0",
+   "support" : {
+      "source" : "git://github.com/jonathanstowe/Util-Bitfield.git"
+   },
+   "source-url" : "git://github.com/jonathanstowe/Util-Bitfield.git",
+   "license" : "perl",
+   "version" : "0.0.1",
+   "authors" : [
+      "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+   ],
+   "description" : "Utility subroutines for working with bitfields",
+   "name" : "Util::Bitfield",
+   "test-depends" : ["Test"],
+   "provides" : {
+		"Util::Bitfield" : "lib/Util/Bitfield.pm"
+   },
+   "resource" : {}
+}
