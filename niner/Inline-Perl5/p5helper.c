@@ -70,6 +70,11 @@ PerlInterpreter *p5_init_perl() {
 
 void p5_destruct_perl(PerlInterpreter *my_perl) {
     PL_perl_destruct_level = 1;
+
+    POPSTACK_TO(PL_mainstack);
+    dounwind(-1);
+    LEAVE_SCOPE(0);
+
     perl_destruct(my_perl);
     perl_free(my_perl);
 
@@ -504,9 +509,25 @@ SV *p5_wrap_p6_object(PerlInterpreter *my_perl, IV i, SV *p5obj, SV *(*call_p6_m
 SV *p5_wrap_p6_callable(PerlInterpreter *my_perl, IV i, SV *p5obj, SV *(*call)(IV, SV *, SV **), void (*free_p6_object)(IV)) {
     SV * inst;
     SV * inst_ptr;
+
+    PERL_SET_CONTEXT(my_perl);
+
     if (p5obj == NULL) {
-        inst_ptr = newSViv(0);
-        inst = newSVrv(inst_ptr, "Perl6::Callable");
+        dSP;
+        ENTER;
+        SAVETMPS;
+
+        PUSHMARK(SP);
+        call_pv("Perl6::Callable::new", G_SCALAR);
+        SPAGAIN;
+
+        inst_ptr = POPs;
+        inst = SvRV(inst_ptr);
+        SvREFCNT_inc(inst_ptr);
+
+        PUTBACK;
+        FREETMPS;
+        LEAVE;
     }
     else {
         inst_ptr = p5obj;

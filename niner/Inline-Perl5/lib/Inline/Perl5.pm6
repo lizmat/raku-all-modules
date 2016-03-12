@@ -3,8 +3,6 @@ unit class Inline::Perl5;
 use NativeCall;
 use MONKEY-SEE-NO-EVAL;
 
-no precompilation;
-
 class Perl5Interpreter is repr('CPointer') { }
 role Perl5Package { ... };
 role Perl5Parent { ... };
@@ -583,13 +581,10 @@ method init_callbacks {
 
         package Perl6::Callable;
 
-        use overload '&{}' => \&deref_call, fallback => 1;
-
-        sub deref_call {
-            my ($self) = @_;
-            return sub {
-                $self->call(@_);
-            }
+        sub new {
+            my $sub;
+            $sub = sub { Perl6::Callable::call($sub, @_) };
+            return $sub;
         }
 
         package Perl6::Handle;
@@ -749,7 +744,7 @@ role Perl5Package[Inline::Perl5 $p5, Str $module] {
         $!parent;
     }
 
-    multi method FALLBACK($name, @args, %kwargs) {
+    multi method FALLBACK($name, *@args, *%kwargs) {
         return self.defined
             ?? $p5.invoke-parent($module, $!parent.ptr, False, $name, $!parent, |@args, |%kwargs)
             !! $p5.invoke($module, $name, |@args.list, |%kwargs);
@@ -805,7 +800,7 @@ method require(Str $module, Num $version?) {
     for @$symbols -> $name {
         next if $name eq 'new';
         my $method = my method (*@args, *%kwargs) {
-            self.FALLBACK($name, @args, %kwargs);
+            self.FALLBACK($name, |@args, |%kwargs);
         }
         $method.set_name($name);
         $class.^add_method($name, $method);
@@ -834,10 +829,11 @@ method require(Str $module, Num $version?) {
 
     ::($module).WHO<EXPORT> := Metamodel::PackageHOW.new();
     ::($module).WHO<&EXPORT> := sub EXPORT(*@args) {
+        $*W.do_pragma(Any, 'precompilation', False, []);
         return Map.new(self.import($module, @args.list).map({
             my $name = $_;
             '&' ~ $name => sub (*@args, *%args) {
-                self.call("{$module}::$name", |@args.list, %args.list);
+                self.call("main::$name", |@args.list, %args.list); # main:: because the sub got exported to main
             }
         }));
     };
