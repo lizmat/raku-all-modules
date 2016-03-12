@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/salortiz/NativeHelpers-Blob.git
+	branch = master
+	commit = 7f2756ad5e222ee25d099c28941612a723be6474
+	parent = a06b16a56f2163e7dd02c268871ebc62e599b24b
+	cmdver = 0.2.3
