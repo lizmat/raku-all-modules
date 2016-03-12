@@ -40,7 +40,7 @@ pass 'third config parsed';
 is %t<_><foo>, 'bar', '3.1 ok';
 is %t<_><another>, 'thing', '3.2 ok';
 
-my $forth = Q {
+my $fourth = Q {
     foo = bar
 [core]
 inur=section
@@ -53,7 +53,7 @@ dragon=storm
 
 };
 
-my %fo = Config::INI::parse($forth);
+my %fo = Config::INI::parse($fourth);
 
 pass 'forth config parsed';
 
