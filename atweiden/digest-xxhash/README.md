@@ -1,7 +1,7 @@
 Digest::xxHash
 ==============
 
-Perl 6 bindings for xxHash. 32 bit functions recommended pending unsigned
+Perl6 bindings for xxHash. 32 bit functions recommended pending unsigned
 long long support in NativeCall.
 
 
@@ -29,8 +29,8 @@ say xxHash(buf-u8 => Buf[uint8].new(0x64, 0x75, 0x70, 0x61))
 Dependencies
 ------------
 
-- Rakudo Perl 6
-- [libxxhash](https://aur.archlinux.org/packages/libxxhash) r42
+- Rakudo Perl6
+- [libxxhash](https://aur.archlinux.org/packages/libxxhash)
 
 
 Licensing
