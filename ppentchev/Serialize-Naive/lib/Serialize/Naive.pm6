@@ -1,6 +1,6 @@
-unit role Serialize::Naive;
+unit role Serialize::Naive:ver<0.2.1>:auth<github:ppentchev>;
 
-use v6;
+use v6.c;
 use strict;
 
 my $serialize-basic-types = (Str, Str:D, Bool, Bool:D,
