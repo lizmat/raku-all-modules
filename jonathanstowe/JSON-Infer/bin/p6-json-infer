@@ -2,10 +2,10 @@
 
 use JSON::Infer;
 
-multi sub MAIN(Str :$uri!, Str :$out-dir = "lib", Str :$class-name) {
+multi sub MAIN(Str :$file, Str :$uri, Str :$out-dir = "lib", Str :$class-name!) {
 
     CATCH {
-        when JSON::Infer::Exception {
+        when X::Infer {
             note $_.message;
             exit 5;
         }
@@ -19,17 +19,25 @@ multi sub MAIN(Str :$uri!, Str :$out-dir = "lib", Str :$class-name) {
 
     my $infer = JSON::Infer.new;
 
-    my $class = $infer.infer(:$uri, :$class-name);
+    my $class = do if $uri.defined {
+        $infer.infer(:$uri, :$class-name);
+    }
+    elsif $file.defined {
+        $infer.infer(:$file, :$class-name);
+    }
+    else {
+        JSON::Infer::Exception.new(message => "one of file or uri must be supplied").throw;
+    }
 
-    my $file = $base-dir.child($class.file-path);
+    my $out-file = $base-dir.child($class.file-path);
 
-    my $parent = $file.parent;
+    my $parent = $out-file.parent;
 
     if not $parent.d {
         $parent.mkdir;
     }
 
-    my $out = $file.open(:w);
+    my $out = $out-file.open(:w);
 
     $out.print($class.make-class);
     $out.close;

@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-use JSON::Infer::Class;
+use JSON::Infer;
 
 
 my @tests = (

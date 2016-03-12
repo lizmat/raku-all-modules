@@ -4,7 +4,7 @@ use Test;
 
 use JSON::Tiny;
 
-use JSON::Infer::Attribute;
+use JSON::Infer;
 
 
 my $object = JSON::Infer::Attribute.new();

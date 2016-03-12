@@ -13,13 +13,6 @@
   "perl" : "6.c",
   "build-depends" : [ ],
   "provides" : {
-     "JSON::Infer::Exception"     : "lib/JSON/Infer/Exception.pm",
-     "JSON::Infer::Type"          : "lib/JSON/Infer/Type.pm",
-     "JSON::Infer::Class"         : "lib/JSON/Infer/Class.pm",
-     "JSON::Infer::Role::Classes" : "lib/JSON/Infer/Role/Classes.pm",
-     "JSON::Infer::Role::Entity"  : "lib/JSON/Infer/Role/Entity.pm",
-     "JSON::Infer::Role::Types"   : "lib/JSON/Infer/Role/Types.pm",
-     "JSON::Infer::Attribute"     : "lib/JSON/Infer/Attribute.pm",
      "JSON::Infer"                : "lib/JSON/Infer.pm"
   },
   "depends" : [ 
@@ -33,5 +26,5 @@
     "Test::META"
   ],
   "description" : "Infer Perl 6 Classes from JSON input",
-  "version" : "0.0.5"
+  "version" : "0.0.9"
 }
