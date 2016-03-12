@@ -10,7 +10,7 @@ plan 1;
 =heading1 Purpose
 
 The purpose of this test is to ensure transaction journals serialized
-to JSON and round tripped back to Perl 6 are equivalent to transaction
+to JSON and round tripped back to Perl6 are equivalent to transaction
 journals parsed normally.
 
 =end pod

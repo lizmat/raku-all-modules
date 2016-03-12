@@ -273,19 +273,11 @@ method time-offset($/)
 method partial-time($/)
 {
     my Rat $second = Rat($<time-second>.made);
-    my Bool $subseconds = False;
-
-    if $<time-secfrac>
-    {
-        $second += Rat($<time-secfrac>.made);
-        $subseconds = True;
-    }
-
+    $second += Rat($<time-secfrac>.made) if $<time-secfrac>;
     make %(
         :hour(Int($<time-hour>.made)),
         :minute(Int($<time-minute>.made)),
-        :$second,
-        :$subseconds
+        :$second
     );
 }
 
@@ -304,7 +296,6 @@ method full-time($/)
         :hour(Int($<partial-time>.made<hour>)),
         :minute(Int($<partial-time>.made<minute>)),
         :second(Rat($<partial-time>.made<second>)),
-        :subseconds(Bool($<partial-time>.made<subseconds>)),
         :timezone(Int($<time-offset>.made))
     );
 }

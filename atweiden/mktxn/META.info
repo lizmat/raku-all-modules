@@ -4,6 +4,7 @@
     "author"      : "Andy Weidenbaum",
     "description" : "Double-entry bookkeeping transaction journal parser and serializer",
     "depends"     : ["Config::TOML", "Digest::xxHash", "JSON::Tiny"],
+    "license"     : "http://unlicense.org/UNLICENSE",
     "source-type" : "git",
     "source-url"  : "git://github.com/atweiden/mktxn.git",
     "support"     : {

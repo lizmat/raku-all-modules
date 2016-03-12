@@ -3,34 +3,24 @@ use TXN::Parser::Actions;
 use TXN::Parser::Grammar;
 unit class TXN::Parser;
 
-method parse(
-    Str:D $content,
-    Int :$date-local-offset,
-    Bool :$json,
-    *%opts
-) returns Match
+method parse(Str:D $content, Int :$date-local-offset, Bool :$json) returns Match
 {
     my %a;
     %a<date-local-offset> = $date-local-offset if $date-local-offset;
     %a<json> = $json if $json;
 
     my TXN::Parser::Actions $actions .= new(|%a);
-    TXN::Parser::Grammar.parse($content, :$actions, |%opts);
+    TXN::Parser::Grammar.parse($content, :$actions);
 }
 
-method parsefile(
-    Str:D $file,
-    Int :$date-local-offset,
-    Bool :$json,
-    *%opts
-) returns Match
+method parsefile(Str:D $file, Int :$date-local-offset, Bool :$json) returns Match
 {
     my %a;
     %a<date-local-offset> = $date-local-offset if $date-local-offset;
     %a<json> = $json if $json;
 
     my TXN::Parser::Actions $actions .= new(|%a);
-    TXN::Parser::Grammar.parsefile($file, :$actions, |%opts);
+    TXN::Parser::Grammar.parsefile($file, :$actions);
 }
 
 multi method preprocess(Str:D $content) returns Str:D

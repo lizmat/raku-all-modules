@@ -114,7 +114,7 @@ multi sub MAIN(
 }
 
 # serialize
-multi sub MAIN('serialize', Str:D $file, Str:D :m(:$mode) = 'perl', *%opts)
+multi sub MAIN('serialize', Str:D $file, Str:D :m(:$mode) = 'perl')
 {
     use TXN;
     given $mode
