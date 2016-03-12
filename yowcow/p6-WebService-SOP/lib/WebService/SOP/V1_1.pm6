@@ -1,8 +1,11 @@
 use v6;
 use URI;
+use WebService::SOP::V1_1::Request::DELETE;
 use WebService::SOP::V1_1::Request::GET;
 use WebService::SOP::V1_1::Request::POST;
 use WebService::SOP::V1_1::Request::POST_JSON;
+use WebService::SOP::V1_1::Request::PUT;
+use WebService::SOP::V1_1::Request::PUT_JSON;
 
 unit class WebService::SOP::V1_1;
 
@@ -22,6 +25,18 @@ method post-req($uri, Hash:D $params --> HTTP::Request) {
 
 method post-json-req($uri, Hash:D $params --> HTTP::Request) {
     self.create-request('POST_JSON', $uri, $params);
+}
+
+method put-req($uri, Hash:D $params --> HTTP::Request) {
+    self.create-request('PUT', $uri, $params);
+}
+
+method put-json-req($uri, Hash:D $params --> HTTP::Request) {
+    self.create-request('PUT_JSON', $uri, $params);
+}
+
+method delete-req($uri, Hash:D $params --> HTTP::Request) {
+    self.create-request('DELETE', $uri, $params);
 }
 
 multi method create-request(Str:D $method, Str:D $uri, Hash:D $params --> HTTP::Request) {
@@ -89,11 +104,23 @@ Creates a GET request object.
 
 =head2 post-req($uri, Hash:D $params) returns HTTP::Request
 
-Creates a POST request object with query string in body.
+Creates a POST request object with content-type `application/x-www-form-urlencoded`.
 
 =head2 post-json-req($uri, Hash:D $params) returns HTTP::Request
 
-Creates a POST request object with JSON in body.
+Creates a POST request object with content-type `application/json`.
+
+=head2 put-req($uri, Hash:D $params) returns HTTP::Request
+
+Creates a PUT request object with content-type `application/x-www-form-urlencoded`.
+
+=head2 put-json-req($uri, Hash:D $params) returns HTTP::Request
+
+Creates a PUT request object with content-type `application/json`.
+
+=head2 delete-req($uri, Hash:D $params) returns HTTP::Request
+
+Creates a DELETE request object.
 
 =head1 AUTHOR
 

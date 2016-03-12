@@ -116,6 +116,60 @@ subtest {
 
     }, 'Creating a POST request with JSON body';
 
+    subtest {
+        my HTTP::Request $req = $auth.put-req(
+            'http://hoge/fuga?bbb=bbb', { aaa => 'aaa' },
+        );
+
+        is $req.method, 'PUT';
+        is-deeply $req.uri.query-form, {};
+
+        my %query = URI::split-query(~$req.content);
+
+        is %query<app_id>, 123;
+        is %query<aaa>,     'aaa';
+        is %query<bbb>,     'bbb';
+        like ~%query<time>, rx{ ^^ <[0..9]>+ $$ };
+        like ~%query<sig>,  rx{ ^^ <[0..9 a..f]> ** 64 $$ };
+
+    }, 'Creating a PUT request';
+
+    subtest {
+        my HTTP::Request $req = $auth.put-json-req(
+            'http://hoge/fuga?bbb=bbb', { aaa => 'aaa' },
+        );
+
+        is $req.method, 'PUT';
+        is-deeply $req.uri.query-form, {};
+
+        like ~$req.header.field('X-Sop-Sig'), rx{ ^^ <[a..f 0..9]> ** 64 $$ };
+
+        my %query = from-json(~$req.content);
+
+        is %query<app_id>,  123;
+        is %query<aaa>,     'aaa';
+        is %query<bbb>,     'bbb';
+        like ~%query<time>,  rx{ ^^ <[0..9]>+ $$ };
+
+    }, 'Creating a PUT request with JSON body';
+
+    subtest {
+        my HTTP::Request $req = $auth.delete-req(
+            'http://hoge/fuga?bbb=bbb', { aaa => 'aaa' },
+        );
+
+        is $req.method, 'DELETE';
+
+        my %query = $req.uri.query-form;
+
+        is %query<app_id>,  123;
+        is %query<aaa>,     'aaa';
+        is %query<bbb>,     'bbb';
+        like ~%query<time>, rx{ ^^ <[0..9]>+ $$ };
+        like ~%query<sig>,  rx{ ^^ <[0..9 a..f]> ** 64 $$ };
+
+    }, 'Creating a DELETE request';
+
 }, 'Test create-request';
 
 done-testing;

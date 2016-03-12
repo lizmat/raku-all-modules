@@ -172,4 +172,28 @@ subtest {
 
 }, 'Test is-signature-valid on JSON';
 
+subtest {
+
+    subtest {
+        my Str $q = build-query-string({ hoge => 'fuga', fuga => 'hoge' });
+
+        is $q, 'hoge=fuga&fuga=hoge';
+
+    }, 'Simple key-value';
+
+    subtest {
+        my Str $q = build-query-string({ hoge => ['ho', 'ge'] });
+
+        is $q, 'hoge=ho&hoge=ge';
+
+    }, 'Array in value';
+
+    subtest {
+
+        dies-ok { build-query-string({ hoge => { foo => 'bar' } }) };
+
+    }, 'Dies when value isa Hash';
+
+}, 'Test build-query-string';
+
 done-testing;

@@ -2,6 +2,7 @@ use v6;
 use JSON::Fast;
 use Digest::HMAC;
 use Digest::SHA;
+use URI::Escape;
 
 unit class WebService::SOP::V1_1::Util;
 
@@ -47,4 +48,29 @@ multi sub is-signature-valid(Str $sig, Str $json-str, Str $app_secret, Int $time
     return False if (%params<time> - $time).abs > SIG_VALID_FOR_SEC;
 
     create-signature($json-str, $app_secret) eq $sig;
+}
+
+sub build-query-string(%query! --> Str) is export {
+    my Str @elements;
+    my Sub $build-query = sub ($k, $v) {
+        uri-escape($k) ~ '=' ~ uri-escape($v)
+    }
+
+    for %query.kv -> $k, $v {
+        given $v {
+            when Hash {
+                die "A Hash can't exist in value";
+            }
+            when Array {
+                for |@$v -> $val {
+                    @elements.push: $build-query($k, $val);
+                }
+            }
+            default {
+                @elements.push: $build-query($k, $v);
+            }
+        }
+    }
+
+    @elements.join('&');
 }

@@ -1,9 +1,8 @@
 use v6;
 use HTTP::Request::Common;
-use URI::Escape;
 use WebService::SOP::V1_1::Util;
 
-unit class WebService::SOP::V1_1::Request::GET;
+unit class WebService::SOP::V1_1::Request::PUT;
 
 method create-request(URI :$uri, Hash:D :$params, Str:D :$app-secret --> HTTP::Request) {
 
@@ -12,5 +11,9 @@ method create-request(URI :$uri, Hash:D :$params, Str:D :$app-secret --> HTTP::R
     my %query = %( $uri.query-form, %$params );
     %query<sig> = create-signature(%query, $app-secret);
 
-    GET(URI.new("{$uri.scheme}://{$uri.host}{$uri.path}?{build-query-string(%query)}"));
+    PUT(
+        URI.new("{$uri.scheme}://{$uri.host}{$uri.path}"),
+        content      => build-query-string(%query),
+        Content-Type => 'application/x-www-form-urlencoded',
+    );
 }

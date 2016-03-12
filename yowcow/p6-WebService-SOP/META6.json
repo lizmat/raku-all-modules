@@ -1,30 +1,33 @@
 {
-  "name" : "WebService::SOP",
-  "source-url" : "git@github.com:yowcow/p6-WebService-SOP.git",
-  "perl" : "6",
-  "resources" : [ ],
-  "build-depends" : [ ],
-  "provides" : {
-    "WebService::SOP" : "lib/WebService/SOP.pm6",
-    "WebService::SOP::V1_1" : "lib/WebService/SOP/V1_1.pm6",
-    "WebService::SOP::V1_1::Request::GET" : "lib/WebService/SOP/V1_1/Request/GET.pm6",
-    "WebService::SOP::V1_1::Request::POST" : "lib/WebService/SOP/V1_1/Request/POST.pm6",
-    "WebService::SOP::V1_1::Request::POST_JSON" : "lib/WebService/SOP/V1_1/Request/POST_JSON.pm6",
-    "WebService::SOP::V1_1::Util" : "lib/WebService/SOP/V1_1/Util.pm6"
-  },
-  "depends" : [
+  "source-url": "git@github.com:yowcow/p6-WebService-SOP.git",
+  "name": "WebService::SOP",
+  "test-depends": [
+    "Test",
+    "Test::META"
+  ],
+  "build-depends": [],
+  "resources": [],
+  "perl": "6.c",
+  "description": "SOP API authentication",
+  "depends": [
     "Digest::HMAC",
     "HTTP::UserAgent",
     "JSON::Fast",
     "URI"
   ],
-  "description" : "SOP API authentication",
-  "test-depends" : [
-    "Test",
-    "Test::META"
-  ],
-  "version" : "0.0.1",
-  "authors" : [
+  "provides": {
+    "WebService::SOP": "lib/WebService/SOP.pm6",
+    "WebService::SOP::V1_1": "lib/WebService/SOP/V1_1.pm6",
+    "WebService::SOP::V1_1::Request::DELETE": "lib/WebService/SOP/V1_1/Request/DELETE.pm6",
+    "WebService::SOP::V1_1::Request::GET": "lib/WebService/SOP/V1_1/Request/GET.pm6",
+    "WebService::SOP::V1_1::Request::POST": "lib/WebService/SOP/V1_1/Request/POST.pm6",
+    "WebService::SOP::V1_1::Request::POST_JSON": "lib/WebService/SOP/V1_1/Request/POST_JSON.pm6",
+    "WebService::SOP::V1_1::Request::PUT": "lib/WebService/SOP/V1_1/Request/PUT.pm6",
+    "WebService::SOP::V1_1::Request::PUT_JSON": "lib/WebService/SOP/V1_1/Request/PUT_JSON.pm6",
+    "WebService::SOP::V1_1::Util": "lib/WebService/SOP/V1_1/Util.pm6"
+  },
+  "authors": [
     "yowcow"
-  ]
+  ],
+  "version": "0.0.2"
 }

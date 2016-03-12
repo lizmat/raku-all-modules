@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/yowcow/p6-WebService-SOP.git
 	branch = master
-	commit = 2489d9b6b066e140339cf0a2d36e3ec7ab2f46f9
-	parent = 6b1d91cc7db8b6175c144e110d0d1d0ce7f4f9af
+	commit = 62389ac0a0876fdb4049b40fbb443af8ce904891
+	parent = 3402573278b2845c46dce78e46a1ccece984ea70
 	cmdver = 0.2.3

@@ -2,9 +2,9 @@ use v6;
 use lib 'lib';
 use JSON::Fast;
 use Test;
-use WebService::SOP::V1_1::Request::POST_JSON;
+use WebService::SOP::V1_1::Request::PUT_JSON;
 
-my Str $class = 'WebService::SOP::V1_1::Request::POST_JSON';
+my Str $class = 'WebService::SOP::V1_1::Request::PUT_JSON';
 
 subtest {
     my URI $uri .= new('http://hoge/get?hoge=hoge');
@@ -36,9 +36,10 @@ subtest {
         app-secret => 'hogehoge',
     );
 
-    is $req.method, 'POST';
+    is $req.method, 'PUT';
     is ~$req.uri,   'http://hoge/fuga';
     like ~$req.header.field('X-Sop-Sig'), rx{ ^^ <[a..f 0..9]> ** 64 $$ };
+    is $req.header.field('Content-Type'), 'application/json';
 
     my %params = from-json($req.content);
 
