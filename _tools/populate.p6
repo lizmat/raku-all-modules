@@ -1,4 +1,6 @@
 use v6;
+unit sub MAIN(Bool :$delete);
+
 run 'wget', '-O', 'projects.json', 'http://ecosystem-api.p6c.org/projects.json';
 my $json = slurp 'projects.json';
 my @projects = from-json($json).list;
@@ -20,11 +22,24 @@ for @projects {
 
 # find all dirs of the form author/module and potentially remove them
 
+my $removed = 0;
+
 for dir().grep(*.d).grep(*.basename eq none('_tools', '.git')).map({ dir($_).grep(*.d)}).flat {
     my $local = $_.relative;
     unless %local-seen{$local} {
-        say "Would remove $local";
+        if $delete {
+            say 'Removing $local';
+            run 'git', 'rm', '-rf', $local;
+            $removed++;
+        }
+        else {
+            say "Would remove $local";
+        }
     }
+}
+
+if $removed {
+    run 'git', 'commit', '-m', "Remove repos that no longer exist\n\n(This commit was automatically generated)";
 }
 
 say "Done updating, now doing a repack to save space";
