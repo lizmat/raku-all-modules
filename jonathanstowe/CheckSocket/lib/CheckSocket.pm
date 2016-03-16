@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -39,7 +39,7 @@ service is present to test against.
 
 =end pod
 
-module CheckSocket:ver<v0.0.2>:auth<github:jonathanstowe> {
+module CheckSocket:ver<0.0.3>:auth<github:jonathanstowe> {
     sub check-socket(Int $port, Str $host = "localhost") returns Bool is export {
         my Bool $rc = True;
         try {
