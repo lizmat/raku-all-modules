@@ -1,4 +1,3 @@
-use Zef::Identity;
 use Zef::Distribution::DependencySpecification;
 
 # "is Distribution" because CU::R::I.install(Distribution $dist) requires it to be the core
@@ -30,8 +29,6 @@ class Zef::Distribution is Distribution is Zef::Distribution::DependencySpecific
         @!resources     = @!resources.flatmap(*.flat);
         $self;
     }
-
-    method identity { $ = hash2identity( %(:$.name, :$.ver, :$.auth, :$.api) ) }
 
     # make matching dependency names against a dist easier
     # when sorting the install order from the meta hash
@@ -67,7 +64,11 @@ class Zef::Distribution is Distribution is Zef::Distribution::DependencySpecific
 
     method provides-spec-matcher($spec) { $ = self.provides-specs.first({ ?$_.spec-matcher($spec) })       }
 
-    method contains-spec($spec)         { so self.spec-matcher($spec) || self.provides-spec-matcher($spec) }
+    proto method contains-spec(|) {*}
+    multi method contains-spec(Str $spec)
+        { samewith( Zef::Distribution::DependencySpecification.new($spec) ) }
+    multi method contains-spec(Zef::Distribution::DependencySpecification $spec)
+        { so self.spec-matcher($spec) || self.provides-spec-matcher($spec)  }
 
     # Add new entries missing from original Distribution.hash
     method hash {

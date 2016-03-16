@@ -7,21 +7,23 @@ class Zef::Distribution::DependencySpecification {
 
     submethod new($spec) { self.bless(:$spec) }
 
-    method spec { $ = self.?identity // $!spec }
+    method identity { $ = hash2identity( %(:name($.name), :ver($.version-matcher), :auth($.auth-matcher), :api($.api-matcher)) ) }
 
-    method spec-parts(Zef::Distribution::DependencySpecification:_: $spec = self.spec) {
-        $!ident //= Zef::Identity($spec);
+    method spec-parts(Zef::Distribution::DependencySpecification:_: $spec = self!spec) {
+        $!ident := ?$!ident ?? $!ident !! Zef::Identity($spec);
         $!ident.?hash;
+
     }
 
-    method name { $ = callsame() // self.spec-parts<name> }
+    method name            { $ = self.spec-parts<name> }
 
-    method version-matcher { $ = self.spec-parts<ver>  }
+    method version-matcher { $ = self.spec-parts<ver>  // '' }
 
-    method auth-matcher    { $ = self.spec-parts<auth> }
+    method auth-matcher    { $ = self.spec-parts<auth> // '' }
 
-    method api-matcher     { $ = self.spec-parts<api>  }
+    method api-matcher     { $ = self.spec-parts<api>  // '' }
 
+    method !spec { $.spec || self.Str }
 
     method spec-matcher($spec) {
         return False unless $spec.name eq self.name;

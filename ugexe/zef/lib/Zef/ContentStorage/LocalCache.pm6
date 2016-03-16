@@ -26,8 +26,7 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
         @!dists = gather for self!slurp-manifest.lines -> $entry {
             my ($identity, $path) = $entry.split("\0");
             next unless "{$path}".IO.e;
-            try {
-                my $dist = Zef::Distribution::Local.new($path);
+            if try { Zef::Distribution::Local.new($path) } -> $dist {
                 take $dist;
             }
         }
@@ -47,6 +46,7 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
                 dist => $dist,
                 uri  => ($dist.source-url || $dist.hash<support><source>),
                 from => $?CLASS.^name,
+                as   => $dist.identity,
             );
         }
     }
@@ -69,16 +69,14 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
                 ||  $current.basename.starts-with('.')
                 ||  %dcache.values.grep({ $current.absolute.starts-with($_.IO.absolute) });
 
-            unless ?Zef::Distribution::Local.find-meta($current) {
+            my $dist = try Zef::Distribution::Local.new($current);
+
+            unless ?$dist {
                 @stack.append($current.dir.grep(*.d)>>.absolute);
                 next;
             }
 
-            try {
-                if Zef::Distribution::Local.new($current) -> $dist {
-                    %dcache{$dist.identity} //= $dist;
-                }
-            }
+            %dcache{$dist.identity} //= $dist;
         }
 
         @!dists = %dcache.values;
@@ -94,6 +92,7 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
     # note this doesn't apply the $max-results per identity searched, and always returns a 1 dist
     # max for a single identity (todo: update to handle $max-results for each @identities)
     method search(:$max-results = 5, *@identities, *%fields) {
+        return () unless @identities || %fields;
         my @wanted = |@identities;
         my %specs  = @wanted.map: { $_ => Zef::Distribution::DependencySpecification.new($_) }
 
