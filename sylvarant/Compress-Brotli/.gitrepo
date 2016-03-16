@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sylvarant/Compress-Brotli.git
 	branch = master
-	commit = a18c5434236110f5ed1a4a711c826d508f5fcfe7
-	parent = ac59ecdafb49e6ff7ebf0ba13fa32daa471e80d3
+	commit = f54082aa0285327bf4fe5f3937ce1d3b71d5d1e3
+	parent = b8c5cfdb526e24247be1953e35e3fb319b0468ae
 	cmdver = 0.2.3

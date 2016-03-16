@@ -56,14 +56,17 @@ extern "C" {
 
     if (!BrotliDecompressedSize(encoded_size, encoded_buffer,decoded_size))
     {
-      return NULL;
+      *decoded_size = encoded_size * 8;  // guess the size
+     // return NULL;
     }
 
     /* allocate and execute */
-    buffer = (uint8_t *) malloc(!decoded_size);
+    buffer = (uint8_t *) malloc((*decoded_size));
     BrotliResult res = BrotliDecompressBuffer(encoded_size, encoded_buffer,decoded_size,buffer);
     if(res != BROTLI_RESULT_SUCCESS)
     {
+     // printf("Failed to Decompress");
+     // exit(1);
       return NULL;
     }
 
