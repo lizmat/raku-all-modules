@@ -1,0 +1,17 @@
+{
+  "name" : "Algorithm::MinMaxHeap",
+  "source-url" : "git://github.com/okaoka/p6-Algorithm-MinMaxHeap.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "Algorithm::MinMaxHeap" : "lib/Algorithm/MinMaxHeap.pm6"
+  },
+  "depends" : [ ],
+  "description" : "double ended priority queue",
+  "test-depends" : [ ],
+  "version" : "0.01",
+  "authors" : [
+    "okaoka"
+  ]
+}
