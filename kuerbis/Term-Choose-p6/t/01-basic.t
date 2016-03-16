@@ -1,7 +1,9 @@
 use v6;
 use Test;
-use Term::Choose;
+plan 1;
 
-pass "replace me";
+use Terminal::WCWidth;
 
-done-testing;
+pass "Terminal::WCWidth;";
+
+done-testing();

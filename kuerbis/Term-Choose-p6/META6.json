@@ -6,6 +6,7 @@
   "build-depends" : [ ],
   "provides" : {
     "Term::Choose" : "lib/Term/Choose.pm6",
+    "Term::Choose::NCurses" : "lib/Term/Choose/NCurses.pm6",
     "Term::Choose::LineFold" : "lib/Term/Choose/LineFold.pm6"
   },
   "depends" : [

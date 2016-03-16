@@ -1,17 +1,15 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.104';
+my $VERSION = '0.105';
 
-use NCurses;
-
+use Term::Choose::NCurses :all;
 use Term::Choose::LineFold :all;
 
 
-constant R = 0;
-constant C = 1;
+constant R  = 0;
+constant C  = 1;
 constant OK = 0;
-constant WIDTH_CURSOR  = 1;
 
 constant CONTROL_SPACE = 0x00;
 constant CONTROL_A     = 0x01;
@@ -29,6 +27,8 @@ constant KEY_k         = 0x6b;
 constant KEY_l         = 0x6c;
 constant KEY_q         = 0x71;
 
+#my int32 constant LC_ALL = 6; # From locale.h
+#setlocale( LC_ALL, "" );
 
 has @!orig_list;
 has @!list;
@@ -36,8 +36,8 @@ has @!list;
 has %.o_global;
 has %!o;
 
-has NCurses::WINDOW $.g_win; ##
-has NCurses::WINDOW $!win;
+has Term::Choose::NCurses::WINDOW $.g_win;
+has Term::Choose::NCurses::WINDOW $!win;
 
 has Int   $!multiselect;
 has Int   $!term_w;
@@ -61,7 +61,7 @@ has Int   $!cursor_row;
 has Array $!marked;
 
 
-method new ( %o_global?, $g_win=NCurses::WINDOW ) { ##
+method new ( %o_global?, $g_win=Term::Choose::NCurses::WINDOW ) { ##
     _validate_options( %o_global );
     _set_defaults( %o_global );
     self.bless( :%o_global, :$g_win ); ## opt
@@ -144,7 +144,7 @@ sub _validate_options ( %opt, Int $list_end? ) {
     }
 }
 
-submethod DESTROY () { # ###
+submethod DESTROY () { #
     self!_end_term();
 }
 
@@ -189,6 +189,7 @@ method !_prepare_new_copy_of_list {
 }
 
 
+
 sub choose       ( @list, %opt? ) is export { return Term::Choose.new().choose(       @list, %opt ) }
 sub choose_multi ( @list, %opt? ) is export { return Term::Choose.new().choose_multi( @list, %opt ) }
 sub pause        ( @list, %opt? ) is export { return Term::Choose.new().pause(        @list, %opt ) }
@@ -200,20 +201,29 @@ method pause        ( @list, %opt? ) { return self!_choose( @list, %opt, Int ) }
 
 
 method !_init_term {
-    $!win = initscr;
+    my int32 constant LC_ALL = 6; # From locale.h
+    setlocale( LC_ALL, "" );
+    if $!g_win {
+        $!win = $!g_win;
+    }
+    else {
+        #my int32 constant LC_ALL = 6;
+        #setlocale( LC_ALL, "" );
+        $!win = initscr;
+    }
     noecho();
     cbreak;
     keypad( $!win, True );
     my Array[int32] $old;
     my $s = mousemask( ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION, $old );
     curs_set( 0 );
-    #mouseinterval( 500 );
 }
 
 method !_end_term {
     return if $!g_win;
     endwin();
 }
+
 
 method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
     if ! @!orig_list.elems {
@@ -235,7 +245,7 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
         my Int $new_term_w = getmaxx( $!win );
         my Int $new_term_h = getmaxy( $!win );
         if $new_term_w != $!term_w || $new_term_h != $!term_h {
-            if %!o<ll> && ( %!o<index> || ! $!multiselect.defined ) {
+            if %!o<ll> {
                 return -1;
             }
             %!o<default> = $!rc2idx[$!pos[R]][$!pos[C]];
@@ -476,11 +486,11 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
                 }
                 elsif $!multiselect == 0 {
                     my Int $i = $!rc2idx[$!pos[R]][$!pos[C]];
-                    return %!o<index> ?? $i !! @!orig_list[$i];
+                    return %!o<index> || %!o<ll> ?? $i !! @!orig_list[$i];
                 }
                 else {
                     $!marked[$!pos[R]][$!pos[C]] = 1;
-                    return %!o<index> ?? self!_marked_to_idx.List !! @!orig_list[self!_marked_to_idx()];
+                    return %!o<index> || %!o<ll> ?? self!_marked_to_idx.List !! @!orig_list[self!_marked_to_idx()];
                 }
             }
             when KEY_SPACE {
@@ -534,7 +544,7 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
                 }
             }
             when KEY_MOUSE {
-                my NCurses::MEVENT $event .= new;
+                my Term::Choose::NCurses::MEVENT $event .= new;
                 if getmouse( $event ) == OK {
                     if $event.bstate == BUTTON1_CLICKED | BUTTON1_PRESSED {
                         my $ret = self!_curr_pos_to_mouse_xy( $event.x, $event.y );
@@ -543,7 +553,7 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
                         }
                     }
                     #elsif $event.bstate == BUTTON3_CLICKED | BUTTON3_PRESSED {
-                    ####
+                    ##
                     elsif $event.bstate == 16384 | 8192 | 4096 | 2048 {
                         if $event.bstate == 4096 && $pressed {
                             $pressed = 0;
@@ -552,7 +562,7 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
                         if $event.bstate == 8192 {
                             $pressed = 1;
                         }
-                    ####
+                    ##
                         my $ret = self!_curr_pos_to_mouse_xy( $event.x, $event.y );
                         if $ret {
                             ungetch( KEY_SPACE );
@@ -665,24 +675,14 @@ method !_wr_first_screen {
     $!term_h = getmaxy( $!win );
 
     ( $!avail_w, $!avail_h ) = ( $!term_w, $!term_h );
-
-    $!avail_w += WIDTH_CURSOR;
-
     if %!o<max_width> && $!avail_w > %!o<max_width> {
         $!avail_w = %!o<max_width>;
-    }
-
-    self!_prepare_new_copy_of_list;
-
-    if $!avail_w - WIDTH_CURSOR >= $!col_w {
-        $!avail_w -= WIDTH_CURSOR;
-        # WIDTH_CURSOR: only use the last terminal-column if required and if there is only one print-column;
-        #               with only one print-column the output doesn't get messed up if an item
-        #               reaches the right edge of the terminal on a non-MSWin32-OS
     }
     if $!avail_w < 2 {
         die "Terminal width to small.";
     }
+
+    self!_prepare_new_copy_of_list;
 
     self!_prepare_prompt;
     $!avail_h -= $!nr_prompt_lines;
@@ -957,7 +957,6 @@ method !_marked_to_idx {
 
 
 
-
 =begin pod
 
 =head1 NAME
@@ -966,7 +965,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.104
+Version 0.105
 
 =head1 SYNOPSIS
 
@@ -991,8 +990,6 @@ Version 0.104
     say $choice;
 
 =head1 DESCRIPTION
-
-C<Term::Choose> supports only ascii-characters strings.
 
 Choose interactively from a list of items.
 

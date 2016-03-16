@@ -1,6 +1,11 @@
 Revision history for Term::Choose
 
 
+0.105   2016-03-16
+        - setlocale to support no-ascii string
+        - Term::Choose::NCurses
+        - Update documentation.
+
 0.104   2016-03-01
         - Made the option 'll' private
         - Update documentation
