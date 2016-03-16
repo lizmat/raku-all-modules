@@ -14,23 +14,11 @@ into modules where they may be useful.
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
+install this with *panda* :
 
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
-
-    # From the source directory
-   
     panda install .
 
-    # Remote installation
+Remote installation
 
     panda install NativeHelpers::Array
 
