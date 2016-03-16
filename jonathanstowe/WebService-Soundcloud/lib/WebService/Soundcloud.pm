@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -279,7 +279,7 @@ value.
 
 =end pod
 
-class WebService::Soundcloud:ver<v0.0.1>:auth<github:jonathanstowe> {
+class WebService::Soundcloud:ver<0.0.2>:auth<github:jonathanstowe> {
 
     use HTTP::UserAgent;
     use URI;
