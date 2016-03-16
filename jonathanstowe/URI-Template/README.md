@@ -47,9 +47,7 @@ Other install mechanisms may be become available in the future.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+However suggestions/patches are welcomed via github at
 
    https://github.com/jonathanstowe/URI-Template
 
@@ -63,7 +61,7 @@ expected output.
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015
+(C) Jonathan Stowe 2015, 2016
 
 The testing uses the test data from https://github.com/uri-templates/uritemplate-test
 please see the README.md in the t/data/uritemplate-test for the license for that project.

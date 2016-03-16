@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/URI-Template.git
 	branch = master
-	commit = 018076e53cdc526998f0b796556731d4676c83b4
-	parent = 4fb7969183f4726b5209771798e353fc3fb90dd6
+	commit = 2ff73ce0a664205be70df1702a49d7c65ce9e229
+	parent = 1f43383b7dfc5b65d1e93c982866f3dba7da9121
 	cmdver = 0.2.3

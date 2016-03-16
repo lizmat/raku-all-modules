@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -98,7 +98,7 @@ recommended to use a different object.
 
 =end pod
 
-class URI::Template:ver<v0.0.3>:auth<github:jonathanstowe> {
+class URI::Template:ver<0.0.4>:auth<github:jonathanstowe> {
 
     has Str $.template is rw;
 
