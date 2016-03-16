@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -58,7 +58,7 @@ at run time if that is required.
 
 use Object::Permission;
 
-class Object::Permission::Group:ver<v0.0.1>:auth<github:jonathanstowe> does Object::Permission::User {
+class Object::Permission::Group:ver<0.0.2>:auth<github:jonathanstowe> does Object::Permission::User {
     use Unix::Groups;
 
     has Unix::Groups $!groups;
