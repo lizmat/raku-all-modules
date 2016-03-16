@@ -1,0 +1,14 @@
+#!perl6
+
+use Audio::PortAudio;
+
+my $pa = Audio::PortAudio.new;
+
+for $pa.devices -> $dev {
+    say "device number : ", $++;
+    say $dev.perl;
+    say "=" x 12;
+}
+
+
+# vim: expandtab shiftwidth=4 ft=perl6

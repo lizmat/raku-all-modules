@@ -1,0 +1,111 @@
+#!perl6
+
+use v6.c;
+
+=begin pod
+
+=head1 NAME
+
+stream-source - stream audio from some portaudio source to icecast
+
+=head1 SYNOPSIS
+
+=begin code
+
+stream-source   --password=<source pw> 
+                [--user=<"source">] 
+                [--host=<"localhost">] 
+                [--port=<8000>]
+                [--mount=<"/stream">]
+                [--source=<source name>] 
+                [--bitrate=<128>]
+                [--quality=<5>]
+                [--buffer=<256>]
+
+=end code
+
+=head1 DESCRIPTION
+
+By default this will stream audio from the default portaudio source to
+an icecast server with default configuration on the localhost.  You must
+specify the icecast password (you did actually change that right?) You
+can specify an alternative user name to "source" (if you are using other
+than a default icecast configuration,) and a mount point name etc. The
+C<source> is the name of a portaudio source that you can identity with
+e.g. "enum-devices" in this examples directory.
+
+Some portaudio Host Api types (e.g. "JACK" )will require that you specify
+a C<buffer> size that matches some configured value, you may have to
+check the configuration or documentation of the the host.  With JACK
+for instance you can set the buffer size at the jackd command line
+(as C<period>) obviously in this case a larger buffer will give higher
+latency values, however at the current time you may have better success
+with higher values as the time budget within the read loop is very tight
+to achieve anything approaching usable throughput.
+
+Similarly the application avoids any threading managed by Perl as the
+latency headroom is so small it doesn't seem to be able to recover very
+well when some processor time is taken by another thread. Buffering is
+left as an exercise for the developer.
+
+
+=end pod
+
+use Audio::PortAudio;
+use Audio::Encode::LameMP3;
+use Audio::Libshout;
+
+sub MAIN(Str :$host = 'localhost', Int :$port = 8000, Str :$user = 'source', Str :$password!, Int :$bitrate = 128, Int :$quality = 5,  Str :$mount = '/stream', Str :$source, Int :$buffer = 256, *%extra) {
+    my $pa = Audio::PortAudio.new;
+    my $st;
+    
+    my $format = Audio::Libshout::Format::MP3;
+    my $mode   = Audio::Encode::LameMP3::JointStereo;
+
+    if $source.defined {
+        my $index = 0;
+        for $pa.devices -> $device {
+            if $device.name eq $source {
+                if $device.max-input-channels < 2 {
+                    die "Device $source does not have enough input channels";
+                }
+                else {
+                    my $la = $device.default-high-input-latency;
+                    my $si = Audio::PortAudio::StreamParameters.new(device => $index,
+                                                                    channel-count => 2,
+                                                                    sample-format => Audio::PortAudio::StreamFormat::Float32,
+                                                                    suggested-latency => ($la || 0.05e0 ));
+                    $st = $pa.open-stream($si, Audio::PortAudio::StreamParameters, 44100, $buffer );
+                    last;
+                }
+
+            }
+            $index++;
+        }
+        if !$st.defined {
+            die "Couldn't find a device for '$source'";
+        }
+    }
+    else {
+        $st = $pa.open-default-stream(2,0, Audio::PortAudio::StreamFormat::Float32, 44100, $buffer);
+    }
+    my $shout = Audio::Libshout.new(:$host, :$port, :$user, :$password, :$mount, :$format, |%extra);
+    $shout.open;
+    my $encoder = Audio::Encode::LameMP3.new(:$bitrate, :$mode, :$quality);
+
+    $st.start;
+
+    my $f = $buffer;
+    # There really isn't time to do anything else here but get the
+    # input buffer, encode and stick it to icecast, doing this
+    # asynchronously seems to work a lot less well.
+    loop {
+            my $buff = $st.read($f,2, num32);
+            my $encoded = $encoder.encode-float($buff, $f, :raw);
+            $shout.send($encoded);
+            $shout.sync;
+    }
+}
+
+
+# vim: expandtab shiftwidth=4 ft=perl6
