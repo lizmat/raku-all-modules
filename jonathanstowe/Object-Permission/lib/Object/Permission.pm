@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -45,7 +45,7 @@ populates the permissions as per the application logic.
 
 =end pod
 
-module Object::Permission:ver<v0.0.1>:auth<github:jonathanstowe> {
+module Object::Permission:ver<0.0.2>:auth<github:jonathanstowe> {
 
     role User {
         has @.permissions is rw;

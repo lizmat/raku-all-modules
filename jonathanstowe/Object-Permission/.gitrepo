@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Object-Permission.git
 	branch = master
-	commit = 088e953d72e7ad647fd406cb66aae05f421222cb
-	parent = c9e89cd1bebc4d3ce1d6e8635c8624b106d3691c
+	commit = e1f52ec2c3cfceb5ece29b91be8fdfd76deb641a
+	parent = 91067404b26423ce16539f88cd80a980fa26261d
 	cmdver = 0.2.3
