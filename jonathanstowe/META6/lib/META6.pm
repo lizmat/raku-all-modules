@@ -97,7 +97,7 @@ exception.
 use JSON::Name;
 use JSON::Class:ver(v0.0.5..*);
 
-class META6:ver<0.0.6>:auth<github:jonathanstowe> does JSON::Class {
+class META6:ver<0.0.7>:auth<github:jonathanstowe> does JSON::Class {
 
     enum Optionality <Mandatory Optional>;
 
@@ -170,7 +170,9 @@ class META6:ver<0.0.6>:auth<github:jonathanstowe> does JSON::Class {
     sub unmarsh-version(Str() $v) returns Version {
         my $ver = Version.new($v);
         if $ver.parts[0] eq 'v' {
-            $ver.parts.shift;
+            my @parts = $ver.parts;
+            @parts.shift;
+            $ver = Version.new(@parts.join('.'));
             warn 'prefix "v" seen in version string, this may not be what you want' unless $seen-vee;
             $seen-vee = True;
         }
