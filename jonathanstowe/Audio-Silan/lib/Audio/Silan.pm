@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -85,7 +85,7 @@ audio is detected to end.
 
 =end pod
 
-class Audio::Silan:ver<v0.0.2>:auth<github:jonathanstowe> {
+class Audio::Silan:ver<0.0.3>:auth<github:jonathanstowe> {
     use File::Which;
     use JSON::Fast;
 
