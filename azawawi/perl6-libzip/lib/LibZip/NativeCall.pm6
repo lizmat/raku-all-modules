@@ -464,7 +464,7 @@ sub zip_set_file_extra(Pointer[zip]                   # zip*
 #ZIP_EXTERN struct zip_source *zip_source_buffer(struct zip *, const void *,
 #						zip_int64, int);
 sub zip_source_buffer(Pointer[zip]                   # zip*
-                     ,CArray[int8]                   # const void*
+                     ,CArray[uint8]                   # const void*
                      ,int64                       # Typedef<zip_int64>->|Typedef<int64>->|long unsigned int||
                      ,int32                          # int
                       ) is native(LIB) returns Pointer[zip_source] is export { * }

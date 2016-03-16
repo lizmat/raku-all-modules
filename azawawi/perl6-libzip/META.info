@@ -3,7 +3,7 @@
   "version"     : "*",
   "perl"        : "6.c",
   "description" : "Perl 6 bindings for libzip",
-  "depends"     : [ ],
+  "depends"     : [ "NativeHelpers::Blob" ],
   "provides"    : {
      "LibZip" : "lib/LibZip.pm6"
   },
