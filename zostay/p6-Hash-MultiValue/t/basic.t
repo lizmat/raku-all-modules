@@ -134,27 +134,27 @@ for @tests -> $test {
         subtest {
             # We don't care what order the keys are in, but the order of the
             # values within the keys relative to one another is very important.
-            my %expected = (
-                a => [a => 7],
-                b => [b => 8, b => 9],
-                c => [c => 10],
-                d => [d => 6],
-                e => [e => 11, e => 12],
-                f => [f => 13],
-            );
 
             my sub expected { 
-                %expected.kv.flatmap: -> $k, $v is copy { 
+                my %expected = (
+                    a => [a => 7],
+                    b => [b => 8, b => 9],
+                    c => [c => 10],
+                    d => [d => 6],
+                    e => [e => 11, e => 12],
+                    f => [f => 13],
+                );
+                for %expected.kv -> $k, $v { 
                     %expected{$k} = [];
-                    for @($v) -> $e is copy {
-                        %expected{$k}.push: $e
+                    for @($v) -> $e  {
+                        %expected{$k}.append: $e
                     }
                 }
                 %expected;
             }
 
             subtest {
-                temp %expected = expected();
+                my %expected = expected();
 
                 for %t.all-kv -> $k, $v {
                     my $exp-p = %expected{$k}.shift;
@@ -165,7 +165,7 @@ for @tests -> $test {
             }, '.all-kv';
 
             subtest {
-                temp %expected = expected();
+                my %expected = expected();
 
                 for %t.all-pairs -> $p {
                     my $exp-p = %expected{$p.key}.shift;
@@ -176,7 +176,7 @@ for @tests -> $test {
             }, '.all-pairs';
 
             subtest {
-                temp %expected = expected();
+                my %expected = expected();
 
                 diag %t.all-antipairs.perl;
                 for %t.all-antipairs -> $p {
@@ -188,7 +188,7 @@ for @tests -> $test {
             }, '.all-antipairs';
 
             subtest {
-                temp %expected = expected();
+                my %expected = expected();
 
                 diag %t.all-invert.perl;
                 for %t.all-invert -> $p {
@@ -200,7 +200,7 @@ for @tests -> $test {
             }, '.all-invert';
 
             subtest {
-                temp %expected = expected();
+                my %expected = expected();
 
                 for flat %t.all-keys Z %t.all-values -> $k, $v {
                     my $exp-p = %expected{$k}.shift;
