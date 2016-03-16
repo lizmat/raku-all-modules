@@ -1,3 +1,0 @@
-#!/bin/zsh
-setopt extended_glob
-prove --exec 'perl6 -I lib' t/**/*.t~t/fixtures/**/*.t

@@ -1,9 +1,0 @@
-{
-        "name" : "Tag",
-        "version" : "0.1.1",
-        "description" : "Tag string generator (Engineered for making XML or HTML5 soup)",
-        "author" : "Mathieu Gagnon",
-        "depends" : [ "HTML::Entity" ],
-        "provides": { "Tag": "lib/Tag.pm" },
-        "source-url" : "git://github.com/4d47/perl6-tag-helper.git"
-}
