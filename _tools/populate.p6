@@ -29,7 +29,7 @@ for dir().grep(*.d).grep(*.basename eq none('_tools', '.git')).map({ dir($_).gre
     unless %local-seen{$local} {
         if $delete {
             say 'Removing $local';
-            run 'git', 'rm', '-rf', $local;
+            try run 'git', 'rm', '-rf', $local;
             $removed++;
         }
         else {
