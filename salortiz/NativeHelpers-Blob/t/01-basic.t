@@ -7,6 +7,7 @@ plan 14;
 use-ok 'NativeHelpers::Blob';
 
 use NativeHelpers::Blob; # Need again :-)
+#$NativeHelpers::Blob::debug = True;
 
 my $a = 'Hola a todos'.encode;
 my @orig = $a.list;

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/salortiz/NativeHelpers-Blob.git
 	branch = master
-	commit = 7f2756ad5e222ee25d099c28941612a723be6474
-	parent = a06b16a56f2163e7dd02c268871ebc62e599b24b
+	commit = bdbd81353f815aeca11ab8b2001426082b2a1922
+	parent = 7ee3ec3281131dc65770421e543349cf6d62a005
 	cmdver = 0.2.3

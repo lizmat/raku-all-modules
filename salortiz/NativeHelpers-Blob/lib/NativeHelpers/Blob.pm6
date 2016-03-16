@@ -1,9 +1,9 @@
 use v6;
 
-unit module NativeHelpers::Blob:ver<0.1.1>;
+unit module NativeHelpers::Blob:ver<0.1.3>;
 use NativeCall;
 use MoarVM::Guts::REPRs;
-use nqp;
+use nqp; # Needed by blob-allocate
 
 our $debug = False;
 
@@ -39,22 +39,26 @@ our sub carray-is-managed(CArray:D \array) is export {
     so BODY_OF(array).managed;
 }
 
-our sub blob-new(Mu \type = uint8, :$elems) is export {
-    my \b = Blob[type].new;
-    nqp::setelems(b, nqp::unbox_i($elems.Int)) if $elems;
+our sub blob-allocate(Blob:U \blob, $elems) is export {
+    my \b = blob.new;
+    nqp::setelems(b, nqp::unbox_i($elems.Int));
     b;
 }
 
-our sub blob-from-pointer(Pointer:D \ptr, Int :$elems!, Mu :$type = uint8) is export {
+our sub blob-from-pointer(Pointer:D \ptr, Int :$elems!, Blob:U :$type = Buf) is export {
     my sub memcpy(Blob:D $dest, Pointer $src, size_t $size)
 	returns Pointer is native() { * };
-    my \t = ptr.of ~~ void ?? $type !! ptr.of;
-    if  nativesizeof(t) != nativesizeof($type) {
-	fail "Pointer type don't match Buf type";
+    my \t = ptr.of ~~ void ?? $type.of !! ptr.of;
+    if  nativesizeof(t) != nativesizeof($type.of) {
+	fail "Pointer type don't match Blob type";
     }
-    my $b = (t === uint8) ?? Buf !! Buf.^parameterize($type);
+    my $b = (t === uint8) ?? $type !! $type.^parameterize(t);
     with ptr {
-	$b .= allocate($elems);
+	if $b.can('allocate') {
+	    $b .= allocate($elems);
+	} else {
+	    $b = blob-allocate($b, $elems);
+	}
 	memcpy($b, ptr, $elems * nativesizeof(t));
     }
     $b;
@@ -65,7 +69,7 @@ our sub blob-from-carray(CArray:D \array, Int :$size) is export {
     my $cb = BODY_OF(array);
     die "Need :size for unmanaged CArray" unless $cb.managed || $size;
     my $elems = $cb.elems || +$size;
-    blob-from-pointer($cb.storage, :$elems, :type(t));
+    blob-from-pointer($cb.storage, :$elems, :type(Buf[t]));
 }
 
 # vim: ft=perl6:st=4:sw=4

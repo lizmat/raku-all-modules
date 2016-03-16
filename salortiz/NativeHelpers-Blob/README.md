@@ -7,8 +7,8 @@ You can use these as arguments for native functions, but not as attributes for
 CStruct or CUnion, for example.
 
 In a `CStruct` class, you can use a `Pointer` or a `CArray`, but those don't have the
-flexibility of a `Blob` or `Buf`, and move data between them is slow, and with
-big buffers the memory involved increases dramatically.
+flexibility of a `Blob` or `Buf`, moving data between them is slow, and with
+big buffers the memory required increases dramatically.
 
 At some point, these problems will be addressed in core, but in the meantime...
 
@@ -25,6 +25,9 @@ Returns a `Pointer` to the contents of the `Blob`.
 The type of the returned `Pointer` will be the same of the `Blob` if `:typed` was used
 or `void` if not.
 
+Should be noted that the memory is owned by Rakudo, so you must not attempt
+to free it.
+
 ### sub carray-from-blob(Blob:D, :$managed)
 
 Returns a `CArray` constructed from de contents of the `Blob`.
@@ -34,20 +37,23 @@ content of the `Blob` and will be managed, otherwise the `CArray` holds a
 reference to the `Blob` content.
 
 
-### sub blob-new(Mu \type = uint8, :$elems)
+### sub blob-allocate(Blob:U \blob, $elems)
 
-A fast `Blob` constructor, initialized with `:elems` zeroed elements.
+Rakudo 2016.03+ provides `Blob.allocate` to create a Blob/Buf with a pre-allocated
+initial size.
 
-### sub blob-from-pointer(Pointer:D, Int :$elems!, Mu :$type)
+For older ones you can use this subroutine for the same effect. It create a `blob`
+with `$elems` zeroed elements.
 
-Returns a `Blob` constructed from the memory pointed by the given `Pointer` and the
-following `:elems` elements.
+### sub blob-from-pointer(Pointer:D, Int :$elems!, Blob:U :$type = Buf)
 
-The type of the `Pointer` determines the type of the `Blob`, so when given a
-`Pointer[void]` you should pass the extra `:type` with the desired type.
+Returns a `Blob` of type `:type` constructed from the memory pointed by the
+given `Pointer` and the following `:elems` elements.
+
+The type of the `Pointer` should be compatible with the type of the `Blob`,
 
 Please note that the amount of memory copied depends of `$elems` **and** `:type`´s
-native size;
+native size.
 
 ### sub blob-from-carray(CArray:D, Int :$size)
 
@@ -57,7 +63,6 @@ When the `CArray` is unmanaged, for example as returned by a native call functio
 should include de `:size` argument.
 
 The type of the `Blob` is determined by the type of the `CArray`.
-
 
 ## WARNING
 This module depends on internal details of the REPRs of the involved types in MoarVM,

@@ -12,9 +12,9 @@ my $large = Buf.new(0 xx 10000);
 
 say "Buf list";
 $b.timethese(1000, {
-    small => { $small.list },
-    medium => { $medium.list },
-    large => { $large.list }
+    small => { my @c = $small.list },
+    medium => { my @c = $medium.list },
+    large => { my @c = $large.list }
 });
 
 say "Blob to Carray";
@@ -31,9 +31,8 @@ $b.timethese(1000, {
 say "Blob creation";
 my %tests = (
     clasic => { Blob.new(0 xx 10000) },
-    fast   => { blob-new(:elems(10000)) }
+    fast   => { blob-allocate(Blob, 10000) }
 );
-
 %tests<alloc> = { Blob.allocate(10000) } if Blob.can('allocate');
 
 $b.timethese(1000, %tests);
