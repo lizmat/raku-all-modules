@@ -44,7 +44,7 @@ module File::Which {
 
     # check for aliases first
     if IS_MAC {
-      my @aliases = $*ENV<Aliases>.split( ',' );
+      my @aliases = %*ENV<Aliases>:exists ?? %*ENV<Aliases>.split( ',' ) !! ();
       for @aliases -> $alias {
         # This has not been tested!!
         # PPT which says MPW-Perl cannot resolve `Alias $alias`,
