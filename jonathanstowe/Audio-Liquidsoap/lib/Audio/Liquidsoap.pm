@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -615,7 +615,7 @@ takes care of providing the namespace for the object.
 =end pod
 
 
-class Audio::Liquidsoap:ver<0.0.2>:auth<github:jonathanstowe> {
+class Audio::Liquidsoap:ver<0.0.3>:auth<github:jonathanstowe> {
 
     class X::NoServer is Exception {
         has $.port;

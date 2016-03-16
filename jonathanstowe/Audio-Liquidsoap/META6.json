@@ -20,12 +20,13 @@
    "auth" : "github:jonathanstowe",
    "source-url" : "git://github.com/jonathanstowe/Audio-Liquidsoap.git",
    "depends" : [
+		"File::Which"
    ],
    "name" : "Audio-Liquidsoap",
    "authors" : [
       "Jonathan Stowe <jns+git@gellyfish.co.uk>"
    ],
-   "version" : "0.0.2",
+   "version" : "0.0.3",
    "license" : "Artistic",
    "description" : "Interact with the Liquidsoap command server"
 }
