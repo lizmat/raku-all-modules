@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-data-dump.git
 	branch = master
-	commit = 3713673b8ebeb4ae96ebda0928663e5ddf65c4d9
-	parent = 856bbf58308cb5a381a7a95ff7fb7496a8d16344
+	commit = 3662ebda56cc7e5c26b022b14d7e7e6b23bc1e22
+	parent = e12768ea7cb066e824cae68c79b731ec5f7c5328
 	cmdver = 0.2.3
