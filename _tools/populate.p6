@@ -27,8 +27,8 @@ my $removed = 0;
 for dir().grep(*.d).grep(*.basename eq none('_tools', '.git')).map({ dir($_).grep(*.d)}).flat {
     my $local = $_.relative;
     unless %local-seen{$local} {
-        if $delete {
-            say 'Removing $local';
+        if $delete && $local.Path.e {
+            say "Removing $local";
             try run 'git', 'rm', '-rf', $local;
             $removed++;
         }
