@@ -19,5 +19,5 @@
   "description" : "Implementation of the freedesktop.org XDG BaseDirectory specifications",
   "tags" : [ "xdg", "desktop", "utils" ],
   "auth" : "github:jonathanstowe",
-  "version" : "v0.0.2"
+  "version" : "0.0.3"
 }
