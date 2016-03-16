@@ -1,0 +1,18 @@
+Revision history for Term::TablePrint
+
+
+0.007   2016-03-16
+        - setlocale to support non-ascii strings
+        - Requires Term::Choose::NCurses
+        - Update documentation
+
+0.006   2016-03-10
+        - Update documentation
+
+0.005   2016-03-01
+        - Use NCurses
+        - Pass global ncurses-win to Term::Choose
+        - Resized window: rewrite screen immediately
+
+0.004   2016-02-25
+        - 0.004

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/kuerbis/Term-TablePrint-p6
+	branch = master
+	commit = 28b5d0df71a8472de1f52352b885b1b96190c0e7
+	parent = 6ea41ef26fbd112aabe5d28fcca60e897e61d641
+	cmdver = 0.2.3
