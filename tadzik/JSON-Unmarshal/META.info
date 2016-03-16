@@ -6,6 +6,6 @@
     "provides"    : {
         "JSON::Unmarshal" : "lib/JSON/Unmarshal.pm"
     },
-    "depends"     : ["JSON::Tiny", "JSON::Name"],
+    "depends"     : ["JSON::Fast", "JSON::Name"],
     "source-url"  : "git://github.com/tadzik/JSON-Unmarshal.git"
 }
