@@ -58,9 +58,7 @@ Other install mechanisms may be become available in the future.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+However suggestions/patches are welcomed via github at
 
 https://github.com/jonathanstowe/Audio-Convert-Samplerate
 
@@ -68,4 +66,4 @@ https://github.com/jonathanstowe/Audio-Convert-Samplerate
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015
+(C) Jonathan Stowe 2015, 2016
