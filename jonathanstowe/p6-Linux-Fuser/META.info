@@ -1,6 +1,7 @@
 {
     "name" : "Linux::Fuser",
-    "version" : "v0.0.6",
+    "version" : "0.0.7",
+    "perl" : "6.c",
     "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk" ],
     "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk",
     "auth" : "github:jonathanstowe",
