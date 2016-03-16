@@ -1,6 +1,6 @@
 #!perl6
 
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -200,7 +200,7 @@ This may be more conveniently written with named argument style:
 =end pod
 
 
-module AccessorFacade:ver<v0.0.5>:auth<github:jonathanstowe> {
+module AccessorFacade:ver<0.0.6>:auth<github:jonathanstowe> {
 
     my role Provider[&get, &set, &before?, &after?] {
         method CALL-ME(*@args) is rw {

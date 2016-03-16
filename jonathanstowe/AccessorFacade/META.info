@@ -1,6 +1,6 @@
 {
   "name" : "AccessorFacade",
-  "tags" : [ "devel", "utils" ],
+  "tags" : [ "devel", "utils", "facade" ],
   "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
   "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
   "auth" : "github:jonathanstowe",
@@ -16,5 +16,5 @@
   "depends" : [ ],
   "test-depends" : [ ],
   "description" : "Provides a method trait to turn indivdual get/set subroutines into a single attribute",
-  "version" : "v0.0.5"
+  "version" : "0.0.6"
 }
