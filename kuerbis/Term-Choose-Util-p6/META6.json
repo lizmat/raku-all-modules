@@ -1,0 +1,23 @@
+{
+  "name" : "Term::Choose::Util",
+  "source-url" : "https://github.com/kuerbis/Term-Choose-Util-p6",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "Term::Choose::Util" : "lib/Term/Choose/Util.pm6"
+  },
+  "depends" : [
+    "Term::Choose",
+    "Term::Choose::NCurses",
+    "Term::Choose::LineFold"
+  ],
+  "description" : "CLI related functions.",
+  "test-depends" : [
+    "Test"
+  ],
+  "version" : "*",
+  "authors" : [
+    "kuerbis"
+  ]
+}

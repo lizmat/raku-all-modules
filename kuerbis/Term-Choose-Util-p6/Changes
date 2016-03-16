@@ -1,0 +1,29 @@
+Revision history for Term::Choose::Util
+
+
+0.006   2016-03-16
+        - setlocale to support non-ascii strings
+        - Requires Term::Choose::NCurses
+        - 'choose_dirs': cd to the parent dir after adding a dir
+        - Update documentation
+
+0.005   2016-03-10
+        - Update documentation
+
+0.004   2016-03-01
+        - Use 'NCurses'
+        - Pass a global ncurses-win to Term::Choose
+
+0.003   2016-02-25
+        - Renamed 'change_config' to 'settings_menu'
+        - Compatible to Term::Choose version 0.100
+
+0.002   2016-02-16
+        - Added .travis.yml
+        - 'choose_a_dir': "confirm" is now ' = ' instead of ' . '
+        - Changed return-values for 'change_config'->'in_place'
+        - Made 'change_config' private
+
+0.001   2016-02-10
+        - Version 0.001
+
