@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 use Linux::Cpuinfo::Cpu;
 
@@ -43,7 +43,7 @@ in Perl programs.
 
 =end pod
 
-class Linux::Cpuinfo:ver<v0.0.5>:auth<github:jonathanstowe> {
+class Linux::Cpuinfo:ver<0.0.6>:auth<github:jonathanstowe> {
    has Str $.filename = '/proc/cpuinfo';
    has Linux::Cpuinfo::Cpu @.cpus;
    has Int $.num_cpus;

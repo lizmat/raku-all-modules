@@ -2,7 +2,27 @@
 
 Obtain Linux CPU information (p6 version of Linux::Cpuinfo)
 
+## Synopsis
+
+```perl6
+  use Linux::Cpuinfo;
+
+  my $cpuinfo = Linux::Cpuinfo.new();
+
+  my $cnt  = $cpuinfo.num_cpus();   # > 1 for an SMP system
+
+  for $cpuinfo.cpus -> $cpu {
+     say $cpu.bogomips;
+  }
+```
+
 ## Description
+
+On Linux systems various information about the CPU ( or CPUs ) in the
+computer can be gleaned from ```/proc/cpuinfo```. This module provides an
+object oriented interface to that information for relatively simple use
+in Perl programs.
+
 
 
 ## Installation
@@ -32,20 +52,19 @@ Other install mechanisms may be become available in the future.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at:
 
    https://github.com/jonathanstowe/p6-Linux-Cpuinfo
 
-I'd be particularly interested in the /proc/cpuinfo from a variety of architectures
-to test against, the ones that I already have can be seen in t/proc
+I'd be particularly interested in the /proc/cpuinfo from a variety of
+architectures to test against, the ones that I already have can be seen
+in t/proc
 
-I'm not able to test on a wide variety of platforms so any help there would be 
-appreciated. 
+I'm not able to test on a wide variety of platforms so any help there
+would be appreciated.
 
 ## Licence
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015
+(C) Jonathan Stowe 2015, 2016
