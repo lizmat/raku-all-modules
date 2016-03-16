@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -87,7 +87,7 @@ This is a list of the names of the users that are members of the group.
 
 =end pod
 
-class Unix::Groups:ver<v0.0.2>:auth<github:jonathanstowe> {
+class Unix::Groups:ver<0.0.3>:auth<github:jonathanstowe> {
 
     constant GROUPFILE = '/etc/group';
 
