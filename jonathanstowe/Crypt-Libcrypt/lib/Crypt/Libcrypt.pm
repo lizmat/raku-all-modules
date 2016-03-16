@@ -1,6 +1,6 @@
-use v6;
+use v6.c;
 
-module Crypt::Libcrypt:ver<v0.0.4>:auth<github:jonathanstowe> {
+module Crypt::Libcrypt:ver<0.0.6>:auth<github:jonathanstowe> {
 
 =begin pod
 
