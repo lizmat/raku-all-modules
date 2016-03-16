@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 use LibraryMake;
 use NativeCall;
 
@@ -144,7 +144,7 @@ This returns a L<DateTime> that corresponds to C<tv>
 
 =end pod
 
-class Sys::Utmp:ver<v0.0.7>:auth<github:jonathanstowe> {
+class Sys::Utmp:ver<0.0.8>:auth<github:jonathanstowe> {
 
     enum UtmpType is export <EmptyRecord RunLevel BootTime NewTime OldTime InitProcess LoginProcess UserProcess DeadProcess Accounting>;
 
