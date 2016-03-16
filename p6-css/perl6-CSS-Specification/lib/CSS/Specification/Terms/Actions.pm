@@ -1,8 +1,8 @@
 use v6;
 
-class CSS::Specification::Terms::Actions {
+use CSS::Grammar::AST :CSSValue;
 
-    use CSS::Grammar::AST :CSSValue;
+class CSS::Specification::Terms::Actions {
 
     has @._proforma;
 
@@ -60,12 +60,15 @@ class CSS::Specification::Terms::Actions {
         make ~ $*USAGE;
     }
 
-    use CSS::Grammar::AST;
-
     # ---- CSS::Grammar overrides ---- #
 
     method any-function($/)             {
-        return callsame if $.lax;
+	##        nextsame if $.lax;
+	if $.lax {
+	    return $<any-args>
+	        ?? $.warning('skipping function arguments', ~$<any-args>)
+		!! make $.node($/);
+	}
         $.warning('ignoring function', $<Ident>.ast.lc);
     }
 
