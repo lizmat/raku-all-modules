@@ -1,6 +1,6 @@
 {
   "name"        : "Encoding::Huffman::PP6",
-  "version"     : "0.0.1",
+  "version"     : "0.0.2",
   "description" : "Huffman Encoding with pure perl6",
   "auth"        : "github:tony-o",
   "depends"     : [ ],
