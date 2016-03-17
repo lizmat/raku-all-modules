@@ -1,7 +1,7 @@
 use v6;
 unit class Term::TablePrint;
 
-my $VERSION = '0.007';
+my $VERSION = '0.009';
 
 use Term::Choose;
 use Term::Choose::NCurses :all;
@@ -97,7 +97,7 @@ method !_choose_cols_with_order ( @avail_cols ) {
     my Str @pre = ( $ok );
     my @col_idxs;
     my $tc = Term::Choose.new(
-        { lf => [ 0, $subseq_tab ], index => 1, no_spacebar => [ 0 .. @pre.end ], mouse => %!o<mouse> },
+        { lf => [ 0, $subseq_tab ], no_spacebar => [ 0 .. @pre.end ], mouse => %!o<mouse> },
         $!g_win
     );
  
@@ -108,7 +108,7 @@ method !_choose_cols_with_order ( @avail_cols ) {
         # Choose
         my Int @idx = $tc.choose_multi(
             @choices,
-            { prompt => $prompt }
+            { prompt => $prompt, index => 1 }
         );
         if ! @idx[0].defined || ! @choices[@idx[0]].defined { ##
             if @col_idxs.elems {
@@ -195,7 +195,6 @@ method print_table ( @table, %!o? ) {
         }
     }
     if %!o<progress_bar> {
-        #mvaddstr( 0, 0, $!computing ~ ' ...' ); #
         $!show_progress = ( $!a_ref.elems * $!a_ref[0].elems / %!o<progress_bar> ).Int;
         if $!show_progress >= 1 {
             curs_set( 0 );
@@ -211,7 +210,7 @@ method print_table ( @table, %!o? ) {
 
 
 method !_inner_print_tbl {
-    my Int $term_w = term_width();
+    my Int $term_w = getmaxx( $!g_win );
     my Bool $term_w_ok = self!_calc_avail_width( $term_w );
     if ! $term_w_ok {
         return;
@@ -231,13 +230,13 @@ method !_inner_print_tbl {
     my Int $auto_jumped_to_first_row = 2;
     my Int $expanded = 0;
     my $tc = Term::Choose.new(
-        { ll => $len, index => 1, layout => 2, mouse => %!o<mouse> },
+        { ll => $len, layout => 2, mouse => %!o<mouse> },
         $!g_win
     );
 
     loop {
-        if term_width() != $term_w {
-            $term_w = term_width();
+        if getmaxx( $!g_win ) != $term_w {
+            $term_w = getmaxx( $!g_win );
             self!_inner_print_tbl();
             return;
         }
@@ -253,7 +252,7 @@ method !_inner_print_tbl {
         # Choose
         my Int $row = $tc.choose(
             $list,
-            { prompt => $prompt, default => $old_row }
+            { prompt => $prompt, default => $old_row, index => 1 }
         );
         if ! $row.defined {
             return;
@@ -301,7 +300,7 @@ method !_inner_print_tbl {
 
 
 method !_print_single_row ( Int $row ) {
-    my Int $term_w = term_width();
+    my Int $term_w = getmaxx( $!g_win );
     my Int $key_w = @!heads_w.max + 1; #
     if $key_w > $term_w div 100 * 33 {
         $key_w = $term_w div 100 * 33;
@@ -369,7 +368,7 @@ method !_calc_col_width {
     for $!a_ref.list -> $row {
         for @col_idx -> $i {
             my Int $str_w;
-            if ! $row[$i] {
+            if ! $row[$i].defined {
                 $str_w = $undef_w;
             }
             elsif %!o<binary_filter> && $row[$i].substr( 0, 100 ).match: / <binary_regexp> / { #
@@ -537,7 +536,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
 =head1 VERSION
 
-Version 0.007
+Version 0.009
 
 =head1 SYNOPSIS
 

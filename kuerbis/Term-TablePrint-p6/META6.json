@@ -1,6 +1,6 @@
 {
   "name" : "Term::TablePrint",
-  "source-url" : "https://github.com/kuerbis/Term-TablePrint-p6",
+  "source-url" : "git://github.com/kuerbis/Term-TablePrint-p6.git",
   "perl" : "6.c",
   "resources" : [ ],
   "build-depends" : [ ],

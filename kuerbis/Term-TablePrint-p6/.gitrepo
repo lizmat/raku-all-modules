@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/kuerbis/Term-TablePrint-p6
+	remote = git://github.com/kuerbis/Term-TablePrint-p6.git
 	branch = master
-	commit = 28b5d0df71a8472de1f52352b885b1b96190c0e7
-	parent = 6ea41ef26fbd112aabe5d28fcca60e897e61d641
+	commit = 6fb57f8271eea33eb21b281fe6a771fc3cf4bbf2
+	parent = 00a1688959051ec6a7a202b4fd51c770a02f84dd
 	cmdver = 0.2.3

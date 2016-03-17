@@ -8,7 +8,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 VERSION
 =======
 
-Version 0.007
+Version 0.009
 
 SYNOPSIS
 ========
