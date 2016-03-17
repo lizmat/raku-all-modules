@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6/DBIish.git
 	branch = master
-	commit = b3a1865f634f6eee2ccbdf22be14e6fe0f18bf3d
-	parent = dddf39a74f22ef435708589ec54f0bace90a414c
+	commit = bf21be9f72d6fc39b7000abd76cbe6b57729697e
+	parent = 4f437c5c81b5dd9d272a21ec9e7ffb10753b9a68
 	cmdver = 0.2.3
