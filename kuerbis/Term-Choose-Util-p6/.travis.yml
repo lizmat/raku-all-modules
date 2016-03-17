@@ -7,4 +7,5 @@ perl6:
 install:
   - rakudobrew build-panda
   - panda installdeps .
+  - panda install Term::Choose
 sudo: false

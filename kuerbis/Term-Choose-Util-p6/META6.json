@@ -1,6 +1,6 @@
 {
   "name" : "Term::Choose::Util",
-  "source-url" : "https://github.com/kuerbis/Term-Choose-Util-p6",
+  "source-url" : "git://github.com/kuerbis/Term-Choose-Util-p6.git",
   "perl" : "6.c",
   "resources" : [ ],
   "build-depends" : [ ],

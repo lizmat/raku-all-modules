@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose::Util;
 
-my $VERSION = '0.006';
+my $VERSION = '0.009';
 
 use Term::Choose;
 use Term::Choose::NCurses :all;
@@ -24,9 +24,10 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
     my IO::Path $previous = $dir;
     my @pre = ( Any, %o<confirm>, %o<add_dir>, %o<up> );
     my Int $default_idx = %o<enchanted> ?? @pre.end !! 0;
+    my $win = _ncurses_win();
     my $tc = Term::Choose.new(
         { undef => %o<back>, mouse => %o<mouse>, justify => %o<justify>, layout => %o<layout>, order => %o<order> },
-        _ncurses_win()
+        $win
     );
 
     loop {
@@ -43,7 +44,7 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
                 pause( [ 'Press ENTER to continue.' ], { prompt => $prompt } );
                 if $dir.Str eq '/' {
                     endwin();
-                    return [];
+                    return Empty;
                 }
                 $dir = $dir.dirname.IO;
                 next;
@@ -64,8 +65,8 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
             $prompt ~= sprintf "%*s: %s\n\n", $len_key, 'New', @chosen_dirs.map( { "\"$_\"" } ).join( ', ' );
         }
         my Str $key_cwd = 'pwd: ';
-        $prompt  = line_fold( $prompt,              term_width(), '', ' ' x $len_key       );
-        $prompt ~= line_fold( $key_cwd ~ $previous, term_width(), '', ' ' x $key_cwd.chars );
+        $prompt  = line_fold( $prompt,              getmaxx( $win ), '', ' ' x $len_key       );
+        $prompt ~= line_fold( $key_cwd ~ $previous, getmaxx( $win ), '', ' ' x $key_cwd.chars );
         $prompt ~= "\n";
         # Choose
         my $choice = $tc.choose(
@@ -75,9 +76,9 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
         if ! $choice.defined {
             if ! @chosen_dirs.elems {
                 endwin();
-                return [];
+                return Empty;
             }
-            @chosen_dirs = [];
+            @chosen_dirs = Empty;
             next;
         }
         $default_idx = %o<enchanted>  ?? @pre.end !! 0;
@@ -153,9 +154,10 @@ sub _choose_a_path ( %opt, Int $is_a_file --> IO::Path ) {
     my Str $curr          = %o<current> // Str;
     my IO::Path $dir      = %o<dir>;
     my IO::Path $previous = $dir;
+    my $win = _ncurses_win();
     my $tc = Term::Choose.new(
         { undef => %o<back>, mouse => %o<mouse>, justify => %o<justify>, layout => %o<layout>, order => %o<order> },
-        _ncurses_win()
+        $win
     );
 
     loop {
@@ -172,7 +174,7 @@ sub _choose_a_path ( %opt, Int $is_a_file --> IO::Path ) {
                 pause( [ 'Press ENTER to continue.' ], { prompt => $prompt } );
                 if $dir.Str eq '/' {
                     endwin();
-                    return [];
+                    return Empty;
                 }
                 $dir = $dir.dirname.IO;
                 next;
@@ -265,8 +267,9 @@ sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
     my Str $confirm = 'CONFIRM';
     my Str $back    = 'BACK';
     my Str @ranges;
+    my $win = _ncurses_win();
 
-    if $longest * 2 + $tab.chars <= term_width() {
+    if $longest * 2 + $tab.chars <= getmaxx( $win ) {
         @ranges = ( sprintf " %*s%s%*s", $longest, '0', $tab, $longest, '9' );
         for 1 .. $digits - 1 -> $zeros { #
             my Str $begin = insert_sep( '1' ~ '0' x $zeros, $sep );
@@ -292,14 +295,14 @@ sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
     my $fmt_new = "    New{$name}: %{$longest}s\n";
     my $tc = Term::Choose.new(
         { mouse => %opt<mouse> },
-        _ncurses_win()
+        $win
     );
 
     NUMBER: loop {
         my Str $new_number = $result // $undef;
         my Str $prompt;
         if $current.defined {
-            if print_columns( sprintf $fmt_cur, 1 ) <= term_width() {
+            if print_columns( sprintf $fmt_cur, 1 ) <= getmaxx( $win ) {
                 $prompt  = sprintf $fmt_cur, $current;
                 $prompt ~= sprintf $fmt_new, $new_number;
             }
@@ -310,7 +313,7 @@ sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
         }
         else {
             $prompt = sprintf $fmt_new, $new_number;
-            if print_columns( $prompt ) > term_width() {
+            if print_columns( $prompt ) > getmaxx( $win ) {
                 $prompt = $new_number;
             }
         }
@@ -380,7 +383,7 @@ sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
     my Str $prefix  = %opt<prefix>  // ( $layout == 2 ?? '- ' !! '' );
     my Int $justify = %opt<justify> // 0;
     my Str $prompt  = %opt<prompt>  // 'Choose:';
-    my     @current = %opt<current> // [];
+    my     @current = %opt<current> // Empty;
     #--------------------------------------#
     my Str $confirm = 'CONFIRM';
     my Str $back    = 'BACK';
@@ -394,10 +397,11 @@ sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
     my @new_idx;
     my @new_val;
     my @pre = ( Any, $confirm );
+    my $win = _ncurses_win();
     my $tc = Term::Choose.new(
         { layout => $layout, mouse => $mouse, justify => $justify, order => $order,
           no_spacebar => [ 0 .. @pre.end ], undef => $back, lf => [ 0, $len_key ] },
-        _ncurses_win()
+        $win
     );
 
     loop {
@@ -419,7 +423,7 @@ sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
             }
             else {
                 endwin();
-                return [];
+                return Empty;
             }
         }
         if @idx[0] == 1 {
@@ -475,10 +479,11 @@ sub settings_menu ( @menu, %setup, %opt? ) is export( :all ) {
     }
     my $no_change = %opt<in_place> ?? 0 !! {};
     my $count = 0;
+    my $win = _ncurses_win();
     my $tc = Term::Choose.new(
         { prompt => $prompt, layout => 2, justify => 0, 
           mouse => $mouse, undef => $back },
-        _ncurses_win()
+        $win
     );
 
     loop {
@@ -570,8 +575,9 @@ sub print_hash ( %hash, %opt? ) is export( :all ) {
     my Str $preface      = %opt<preface>      // Str;
     my Str $prompt       = %opt<prompt>       // ( $preface.defined  ?? '' !! 'Close with ENTER' );
     #-----------------------------------------------------------------#
-    if ! $maxcols || $maxcols > term_width() {
-        $maxcols = term_width() - $right_margin; #
+    my $win = _ncurses_win();
+    if ! $maxcols || $maxcols > getmaxx( $win ) {
+        $maxcols = getmaxx( $win ) - $right_margin; #
     }
     $key_w += $left_margin;
     my Str $sep   = ' : ';
@@ -592,10 +598,15 @@ sub print_hash ( %hash, %opt? ) is export( :all ) {
         @vals.append( $text.lines );
     }
     #return @vals.join( "\n" ) if return something;
-    pause(
+    my $tc = Term::Choose.new(
+        {},
+        $win
+    );
+    $tc.pause(
         @vals,
         { prompt => $prompt, layout => 2, justify => 0, mouse => $mouse, empty => ' ' }
     );
+    endwin();
 }
 
 
@@ -632,7 +643,7 @@ Term::Choose::Util - CLI related functions.
 
 =head1 VERSION
 
-Version 0.006
+Version 0.009
 
 =head1 DESCRIPTION
 
