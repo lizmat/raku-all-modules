@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.105';
+my $VERSION = '0.107';
 
 use Term::Choose::NCurses :all;
 use Term::Choose::LineFold :all;
@@ -27,8 +27,6 @@ constant KEY_k         = 0x6b;
 constant KEY_l         = 0x6c;
 constant KEY_q         = 0x71;
 
-#my int32 constant LC_ALL = 6; # From locale.h
-#setlocale( LC_ALL, "" );
 
 has @!orig_list;
 has @!list;
@@ -201,14 +199,12 @@ method pause        ( @list, %opt? ) { return self!_choose( @list, %opt, Int ) }
 
 
 method !_init_term {
-    my int32 constant LC_ALL = 6; # From locale.h
-    setlocale( LC_ALL, "" );
     if $!g_win {
         $!win = $!g_win;
     }
     else {
-        #my int32 constant LC_ALL = 6;
-        #setlocale( LC_ALL, "" );
+        my int32 constant LC_ALL = 6;
+        setlocale( LC_ALL, "" );
         $!win = initscr;
     }
     noecho();
@@ -965,7 +961,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.105
+Version 0.107
 
 =head1 SYNOPSIS
 

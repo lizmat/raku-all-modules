@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/kuerbis/Term-Choose-p6
+	remote = git://github.com/kuerbis/Term-Choose-p6.git
 	branch = master
-	commit = 0ed3fbc89c99471aa183e26dc4f9377a14f93eae
-	parent = a7590380c3953512a2022daebb75a779a16e3345
+	commit = 5db8f1f4d0a1a6b4a44a89e0ccfde839ad3adbed
+	parent = 40e677152477687323d5094874ca890ed2e2d34d
 	cmdver = 0.2.3

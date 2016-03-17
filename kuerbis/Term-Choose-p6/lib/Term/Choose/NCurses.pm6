@@ -1,7 +1,7 @@
 use v6;
 unit module Term::Choose::NCurses;
 
-my $VERSION = '0.105';
+my $VERSION = '0.107';
 
 
 use NativeCall;
@@ -23,9 +23,6 @@ class MEVENT is repr('CStruct') {
   has int32 $.bstate;
 };
 
-constant A_UNDERLINE is export( :all ) = 131072;
-constant A_REVERSE   is export( :all ) = 262144;
-constant A_BOLD      is export( :all ) = 2097152;
 
 constant KEY_DOWN      is export( :all ) = 258;
 constant KEY_UP        is export( :all ) = 259;
@@ -40,6 +37,12 @@ constant KEY_BTAB      is export( :all ) = 353;
 constant KEY_END       is export( :all ) = 360;
 constant KEY_MOUSE     is export( :all ) = 409;
 #constant KEY_RESIZE   is export( :all ) = 410;
+
+
+constant A_UNDERLINE is export( :all ) = 131072;
+constant A_REVERSE   is export( :all ) = 262144;
+constant A_BOLD      is export( :all ) = 2097152;
+
 
 constant BUTTON1_RELEASED         is export( :all ) = 1;
 constant BUTTON1_PRESSED          is export( :all ) = 2;

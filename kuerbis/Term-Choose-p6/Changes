@@ -1,8 +1,14 @@
 Revision history for Term::Choose
 
 
+0.107   2016-03-17
+        - Fixed source-url in META6.json
+
+0.106   2016-03-17
+        - Code refactoring
+
 0.105   2016-03-16
-        - setlocale to support no-ascii string
+        - setlocale to support non-ascii strings
         - Term::Choose::NCurses
         - Update documentation.
 
