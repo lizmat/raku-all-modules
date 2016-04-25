@@ -1,0 +1,13 @@
+{
+    "perl": "6.*",
+    "name" : "App::Whiff",
+    "version" : "0.1.0",
+    "author" : "github:Altai-man",
+    "description" : "Port of perl whiff",
+    "depends" : [ "File::Which" ],
+    "provides" : {
+        "App::Whiff" : "lib/App/Whiff.pm6"
+    },
+    "resources": [],
+    "source-url" : "git://github.com/Altai-man/perl6-app-whiff.git"
+}

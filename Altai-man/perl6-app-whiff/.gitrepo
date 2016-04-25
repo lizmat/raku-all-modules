@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Altai-man/perl6-app-whiff.git
+	branch = master
+	commit = 29e1c0f4c78aeceb4f4e9ab56cffe237e0f506c5
+	parent = 65e8417a3e5e27c4d59c203ea597adbf2d157dbc
+	cmdver = 0.2.3
