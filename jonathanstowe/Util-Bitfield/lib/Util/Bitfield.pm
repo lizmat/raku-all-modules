@@ -98,10 +98,18 @@ bits to get the actual value.  The C<:invert> adverb is provided to make
 the inverse mask (i.e. zero the selected range) that would be used when
 inserting the data.
 
+=head2 split-bits
+
+    sub split-bits(Int $bits, Int $value where { $_ < 2**$bits })
+
+This returns an array of C<$bits> length representing the bits comprising
+C<$value> which must be an integer value that would fit into the number
+of bits without overflowing.
+
 =end pod
 
 
-module Util::Bitfield:ver<0.0.1>:auth<github:jonathanstowe> {
+module Util::Bitfield:ver<0.0.2>:auth<github:jonathanstowe> {
 
     class X::BitOverflow is Exception {
         has Int $.value is required;
@@ -131,6 +139,15 @@ module Util::Bitfield:ver<0.0.1>:auth<github:jonathanstowe> {
         }
 
         ($value +& make-mask($bits, $start, $word-size, :invert)) +| ( $ins +< ($word-size - ($bits + $start)));
+    }
+
+    sub split-bits(Int $bits, Int $value where { $_ < 2**$bits }) is export(:DEFAULT) {
+	    my @bits;
+	    for ^$bits -> $j {
+		    my $k = ( $bits - 1) - $j;
+		    @bits[$k] = ($value +& ( 1 +< $j)) ?? 1 !! 0;
+	    }
+	    @bits;
     }
 
 

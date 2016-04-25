@@ -97,6 +97,10 @@ for 8, 16, 32, 64, 128 -> $p {
     }
 }
 
+for ^2**8 -> $i {
+    is split-bits(8, $i).join(''), sprintf("%08b", $i), "split-bits for $i";
+}
+
 
 done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6
