@@ -1,0 +1,12 @@
+#branches:
+#  except:
+#    - gh-pages
+language: perl6
+perl6:
+  - latest
+install:
+  - rakudobrew build-panda
+  - panda installdeps .
+  - panda install Term::Choose::NCurses
+  - panda install Term::Choose::LineFold
+sudo: false

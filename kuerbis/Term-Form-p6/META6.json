@@ -1,0 +1,22 @@
+{
+  "name" : "Term::Form",
+  "source-url" : "git://github.com/kuerbis/Term-Form-p6.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "Term::Form" : "lib/Term/Form.pm6"
+  },
+  "depends" : [
+    "Term::Choose::NCurses",
+    "Term::Choose::LineFold"
+  ],
+  "description" : "Read lines from STDIN.",
+  "test-depends" : [
+    "Test"
+  ],
+  "version" : "*",
+  "authors" : [
+    "kuerbis"
+  ]
+}
