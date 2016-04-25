@@ -1,0 +1,18 @@
+{
+  "name" : "Algorithm::SetUnion",
+  "source-url" : "git://github.com/titsuki/p6-Algorithm-SetUnion.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "Algorithm::SetUnion::Node" : "lib/Algorithm/SetUnion/Node.pm6",
+    "Algorithm::SetUnion" : "lib/Algorithm/SetUnion.pm6"
+  },
+  "depends" : [ ],
+  "description" : "a perl6 implementation for solving the disjoint set union problem (a.k.a. Union-Find Tree)",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "titsuki"
+  ]
+}
