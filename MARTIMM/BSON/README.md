@@ -63,9 +63,6 @@ See also BSON/Document.pod
 
 ## BUGS, KNOWN LIMITATIONS AND TODO
 
-* Num is implemented but kind off emulated which makes it slower. However it was
-  necessary to implement it because much information from the MongoDB server is
-  send back as a double like count() and in info returned by list_databases().
 * Lack of other Perl 6 types support, this is directly related to not yet
   specified pack/unpack in Perl6.
 * Change die() statements in return with exception to notify caller and place
@@ -83,24 +80,25 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
-*.0.9.23
+* 0.9.25
+  * Speedup in encoding/decoding double using NativeCall.
+* 0.9.24
+  * Cleanup modules and META
+  * Small bugfix in Document.perl()
+* 0.9.23
   * Added method find-key(Int -> Str). We had find-key(Str -> Int) already.
 * 0.9.22
   * bugfix in perl showing Buf data
 * 0.9.21
-  * Beautify perl() output and added perl() methods to Binary, Javascript, Regex
-    and ObjectId.
-  * Cutting out old stuff now that Document is matured and MongoDB does not rely
-    on the old stuff anymore. Their accompanying test programs are removed too.
+  * Beautify perl() output and added perl() methods to Binary, Javascript, Regex and ObjectId.
+  * Cutting out old stuff now that Document is matured and MongoDB does not rely on the old stuff anymore. Their accompanying test programs are removed too.
   * Documentation for the other modules
   * Factored out Buf encoding. Must be done via BSON::Binary
   * Refactored encode/decode from Document to Binary and ObjectId
-*.0.9.20
-  * Bugfix. When a entry is overwritten, the promise used for it to encode the
-    entry was only deleted. It needs to be read first otherwise a thread is kept
-    hanging around.
+* 0.9.20
+  * Bugfix. When a entry is overwritten, the promise used for it to encode the entry was only deleted. It needs to be read first otherwise a thread is kept hanging around.
   * Bugfix. Promise needs to be tested for definiteness before await and delete
-*.0.9.19
+* 0.9.19
   * Modified taking sections of buf using subbuf
   * perl method modified showing structure of document
 * 0.9.18
@@ -108,9 +106,7 @@ change at any time. The public API should not be considered stable*.
 * 0.9.17
   * Bugfixes in BSON::Document
   * Changes caused by perl6 6.c. Z operator changes and datetime usage
-  * Ideas about parallel computing entries revised. Now only non-subdocuments
-    are calculated in parallel. Subducuments are calculated when encode() is
-    called.
+  * Ideas about parallel computing entries revised. Now only non-subdocuments are calculated in parallel. Subducuments are calculated when encode() is called.
 * 0.9.16
   * Move around things
   * Some subs exported
@@ -189,7 +185,7 @@ change at any time. The public API should not be considered stable*.
 * 0.8.4
   * Modification of Int translation.
     Tests have shown that incrementing a 32bit integer can change into
-    64bit integers. 
+    64bit integers.
 
     So, to keep minimal number of bytes to represent an integer Int should
     be translated to int32 when -2147483646 < n < 2147483647 and it should
@@ -204,7 +200,7 @@ change at any time. The public API should not be considered stable*.
   * Created X::BSON::Deprecated to throw ```BSON Deprecated type``` messages.
 
 * 0.8.3 Bugfix test on empty javascript objects
-* 0.8.2 Bugfix Javascript type wrong size for javascript and scope 
+* 0.8.2 Bugfix Javascript type wrong size for javascript and scope
 * 0.8.1 Bugfix Javascripting
 * 0.8.0 Added BSON::Javascript with or without scope
 * 0.7.0 Added BSON::Regex type
@@ -215,20 +211,23 @@ change at any time. The public API should not be considered stable*.
 * 0.5.2
   * Change method names to have a better readability. E.g.
 
-    ####multi method _string ( Str $s ) {...}
-    ####multi method _string ( Array $a ) {...}
+    ```
+    multi method _string ( Str $s ) {...}
+    multi method _string ( Array $a ) {...}
+    ```
 
     into
 
-    ####method _enc_string ( Str $s ) {...}
-    ####method _dec_string ( Array $a ) {...}
+    ```
+    method _enc_string ( Str $s ) {...}
+    method _dec_string ( Array $a ) {...}
+    ```
 
     It also symplifies the dispatcher table.
 
 * 0.5.1 Sending of double number to server with lower precision.
 * 0.5.0 Added Buf to binary
-* 0.4.0 Added processing of double number coming from server. Sending not
-         yet possible.
+* 0.4.0 Added processing of double number coming from server. Sending not yet possible.
 * 0.2 .. 0.3 Something happened no doubt ;-).
 * 0.1 basic Proof-of-concept working on Rakudo 2011.07.
 
@@ -244,4 +243,3 @@ Current maintainer Marcel Timmerman (2015-present)
 ## CONTACT
 
 MARTIMM on github
-
