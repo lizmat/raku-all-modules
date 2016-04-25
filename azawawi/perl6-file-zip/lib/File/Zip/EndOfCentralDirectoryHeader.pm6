@@ -3,6 +3,8 @@ use v6;
 
 unit class File::Zip::EndOfCentralDirectoryHeader;
 
+use experimental :pack;
+
 has $.signature is rw;
 has $.number-disk is rw;
 has $.disk-central-directory-on-disk is rw;
@@ -14,7 +16,7 @@ has $.comment-length is rw;
 has Str $.comment is rw;
 
 method read-from-handle(IO::Handle $fh, Int $eocd-offset) {
-    $fh.seek(-$eocd-offset, 2);
+    $fh.seek(-$eocd-offset, SeekFromEnd);
 
     my Buf $eocd-buffer = $fh.read(22);
     ( $.signature, $.number-disk, $.disk-central-directory-on-disk,

@@ -3,6 +3,8 @@ use v6;
 
 unit class File::Zip::CentralDirectoryHeader;
 
+use experimental :pack;
+
 has $.signature is rw;
 has $.version-made-by is rw;
 has $.version-needed is rw;
@@ -40,7 +42,7 @@ method read-from-handle(IO::Handle $fh) {
     $.file-name = '';
   }
 
-  $fh.seek($.extra-file-name-length, 1);
+  $fh.seek($.extra-file-name-length, SeekFromCurrent);
   
   if $.file-comment-length > 0 {
     my $file-comment-buf = $fh.read($.file-comment-length);

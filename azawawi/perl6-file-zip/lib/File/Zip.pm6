@@ -1,6 +1,8 @@
 
 use v6;
 
+use experimental :pack;
+
 use File::Zip::EndOfCentralDirectoryHeader;
 use File::Zip::CentralDirectoryHeader;
 use Compress::Zlib;
@@ -62,7 +64,7 @@ method close {
 }
 
 method _read-local-file-header($cd-header, Str $directory) {
-  self.fh.seek($cd-header.local-file-header-offset, 0);
+  self.fh.seek($cd-header.local-file-header-offset, SeekFromBeginning);
 
   my Buf $local_file_header-buf = self.fh.read(30);
   my (
@@ -75,7 +77,7 @@ method _read-local-file-header($cd-header, Str $directory) {
 
   my $output-file-name = $file-name-buf.decode('ascii');
 
-  self.fh.seek($extra-field-length, 1);
+  self.fh.seek($extra-field-length, SeekFromCurrent);
 
   if $compression-method == 0x0 {
     # Not compressed
@@ -106,7 +108,7 @@ method _read-local-file-header($cd-header, Str $directory) {
 }
 
 method _read-cd-headers {
-  self.fh.seek(self.eocd-header.offset-central-directory, 0);
+  self.fh.seek(self.eocd-header.offset-central-directory, SeekFromBeginning);
 
   my $number-records = self.eocd-header.number-central-directory-records-on-disk;
   my @cd-headers;
@@ -127,12 +129,12 @@ method _read-cd-headers {
 method _find-eocd-record-offset {
 
   # Find file size
-  self.fh.seek(0, 2);
+  self.fh.seek(0, SeekFromEnd);
   my $file-size = self.fh.tell;
 
   # Find EOCD hexidecimal signature 0x04034b50 in little endian
   for 0..$file-size-1 -> $offset {
-    self.fh.seek(-$offset, 2);
+    self.fh.seek(-$offset, SeekFromEnd);
     my Buf $bytes = self.fh.read(4);
     return $offset if $bytes[0] == 0x50 && $bytes[1] == 0x4b && $bytes[2] == 0x05 && $bytes[3] == 0x06;
   }
