@@ -137,8 +137,11 @@ subtest sub {
            'make-keymap lives';
   lives-ok { $r.discard-keymap( $keymap ) },
            'discard-keymap lives';
-  lives-ok { $r.free-keymap( $keymap ) },
-           'free-keymap lives';
+
+# Skip free-keymap as it doesn't appear on CentOS 6.
+#
+#  lives-ok { $r.free-keymap( $keymap ) },
+#           'free-keymap lives';
   lives-ok { my $keymap = $r.get-keymap-by-name( $name ) },
            'get-keymap-by-name lives';
   lives-ok { my $keymap = $r.get-keymap },
