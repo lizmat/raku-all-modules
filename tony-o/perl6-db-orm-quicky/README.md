@@ -54,7 +54,7 @@ my $usersearch = $orm.search('users', { rating => 'lame' });
 
 my @users = $usersearch; #array of all users with 'lame' rating
 
-for $usersearch->next -> $user { ... }
+for $usersearch.next -> $user { ... }
 
 "User count: {$usersearch.count}".say;
 ```
@@ -62,7 +62,7 @@ for $usersearch->next -> $user { ... }
 ###cr[U]d
 
 ```perl6
-for $usersearch->next -> $user { 
+for $usersearch.next -> $user { 
   $user.set({ 
     joindate => time, #decided we want to track when a user signed up
   });
