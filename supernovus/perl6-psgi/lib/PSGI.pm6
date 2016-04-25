@@ -15,7 +15,7 @@ multi sub encode-psgi-response (
   Int(Any) $code, $headers, $body,             ## Required parameters.
   Bool :$nph, :$protocol=DEFAULT_PROTOCOL      ## Optional parameters.
 ) is export {
-  my Str $output;
+  my Stringy $output;
   my $message = get_http_status_msg($code);
   if $nph {
     $output = "$protocol $code $message" ~ CRLF;

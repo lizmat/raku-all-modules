@@ -7,13 +7,14 @@ use lib 'lib';
 use Test;
 use PSGI;
 
-plan 24;
+plan 30;
 
 my $status    = 200;
 my @headers   = 'Content-Type'=>'text/plain';
 my %headers   = 'Content-Type'=>'text/plain';
 my $body      = "Hello world";
 my @body      = $body;
+my $buf-body  = $body.encode;
 
 sub test_response ($name, $status, $headers, $body, $wanted, *%opts) {
   my $string = encode-psgi-response($status, $headers, $body, |%opts);
@@ -43,11 +44,13 @@ my $nph2  = "HTTP+TEST/2.2 200 OK$CRLF";
 test_response('defaults',     $status, @headers, @body, $cgi);
 test_response('hash headers', $status, %headers, @body, $cgi);
 test_response('str body',     $status, @headers, $body, $cgi);
+test_response('buf body',     $status, @headers, $buf-body, $cgi);
 test_response('hash & str',   $status, %headers, $body, $cgi);
 
 test_response('NPH defaults',     $status, @headers, @body, $nph, :nph);
 test_response('NPH hash headers', $status, %headers, @body, $nph, :nph);
 test_response('NPH str body',     $status, @headers, $body, $nph, :nph);
+test_response('NPH buf body',     $status, @headers, $buf-body, $nph, :nph);
 test_response('NPH hash & str',   $status, %headers, $body, $nph, :nph);
 
 my $protocol = 'HTTP+TEST/2.2';
@@ -58,5 +61,7 @@ test_response('custom NPH hash headers',
   $status, %headers, @body, $nph2, :nph, :$protocol);
 test_response('custom NPH str body',     
   $status, @headers, $body, $nph2, :nph, :$protocol);
+test_response('custom NPH buf body',     
+  $status, @headers, $buf-body, $nph2, :nph, :$protocol);
 test_response('custom NPH hash & str',   
   $status, %headers, $body, $nph2, :nph, :$protocol);
