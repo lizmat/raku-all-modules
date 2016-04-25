@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/nkh/P6-Text-Template.git
+	branch = master
+	commit = 5e1752c08ddb064e366be862fd500c4de0c4b833
+	parent = 1577080cb875ed709c95927dd20db4d447217fbb
+	cmdver = 0.2.3

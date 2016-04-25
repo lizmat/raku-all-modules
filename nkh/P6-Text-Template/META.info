@@ -1,0 +1,21 @@
+{
+
+"perl" : "6.c",
+
+"name" : "Text::Template",
+"version" : "1.0.8",
+"authors" : ["Nadim Khemir"],
+
+"description" : "Render text template with embedded variables and Perl6 code",
+"provides" : 
+	{
+	"Text::Template" : "lib/Text/Template.pm"
+	},
+
+"depends" : [ ],
+"test-depends" : [ "Test", "Test::META", "IO::Capture::Simple"  ],
+
+"source-url" : "https://github.com/nkh/P6-Text-Template.git"
+
+}
+
