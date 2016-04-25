@@ -1,0 +1,25 @@
+{
+    "perl"	    : "6",
+    "name"          : "DBDish::ODBC",
+    "version"       : "0.0.6",
+    "auth"	    : "github:salortiz",
+    "description"   : "ODBC Database connectivity for Perl 6",
+    "depends"	    : [ "DBIish", "NativeHelpers::Blob" ],
+    "provides" : {
+        "DBDish::ODBC"		        : "lib/DBDish/ODBC.pm6",
+        "DBDish::ODBC::Native"          : "lib/DBDish/ODBC/Native.pm6",
+        "DBDish::ODBC::Connection"      : "lib/DBDish/ODBC/Connection.pm6",
+        "DBDish::ODBC::StatementHandle" : "lib/DBDish/ODBC/StatementHandle.pm6"
+    },
+    "repo-type" : "git",
+    "source-url": "git://github.com/salortiz/DBDish-ODBC.git",
+    "authors" : "Salvador Ortiz <sortiz@cpan.com>",
+    "licence" : "artistic_2",
+    "support" : {
+        "email" : "sog@msg.com.mx",
+        "source" : "https://github.com/salortiz/DBDish-ODBC.git"
+    },
+    "tags" : [
+	"DBIsh", "DBDish", "ODBC"
+    ]
+}
