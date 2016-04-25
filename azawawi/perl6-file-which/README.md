@@ -1,6 +1,9 @@
 # File::Which
 
-This is a Perl 6 port of https://metacpan.org/pod/File::Which.
+[![Build Status](https://travis-ci.org/azawawi/perl6-file-which.svg?branch=master)](https://travis-ci.org/azawawi/perl6-file-which) [![Build status](https://ci.appveyor.com/api/projects/status/github/azawawi/perl6-file-which?svg=true)](https://ci.appveyor.com/project/azawawi/perl6-file-which/branch/master)
+
+This is a Perl 6 Object-oriented port of [File::Which (CPAN)](
+https://metacpan.org/pod/File::Which).
 
 File::Which finds the full or relative paths to an executable program on the
 system. This is normally the function of which utility which is typically
@@ -12,21 +15,17 @@ This module provides a consistent API to this functionality regardless of the
 underlying platform.
 
 ```Perl6
-use File::Which;
+use File::Which :whence;
 
 # All perl executables in PATH
-say which('perl', :all);
+say which('perl6', :all);
 
 # First executable in PATH
-say which('perl');
+say which('perl6');
+
+# Same as which('perl6')
+say whence('perl6');
 ```
-
-## Build Status
-
-| Operating System  |   Build Status  | CI Provider |
-| ----------------- | --------------- | ----------- |
-| Linux / Mac OS X  | [![Build Status](https://travis-ci.org/azawawi/perl6-file-which.svg?branch=master)](https://travis-ci.org/azawawi/perl6-file-which)  | Travis CI |
-| Windows 7 64-bit  | [![Build status](https://ci.appveyor.com/api/projects/status/github/azawawi/perl6-file-which?svg=true)](https://ci.appveyor.com/project/azawawi/perl6-file-which/branch/master)  | AppVeyor |
 
 ## Installation
 
@@ -49,6 +48,9 @@ $ prove -e "perl6 -Ilib"
 
 Perl 6 port:
 - Ahmad M. Zawawi, azawawi on #perl6, https://github.com/azawawi/
+
+A bit of tests:
+- Altai-man, sena_kun on freenode, https://github.com/Altai-man/
 
 Perl 5 version:
 - Author: Per Einar Ellefsen <pereinar@cpan.org>
