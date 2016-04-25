@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/FCO/Math-PascalTriangle.git
+	branch = master
+	commit = a9b4d320b066a132942a9883f7933b054a172bda
+	parent = 8681a3265ce8d32bb8b7964bad6aa738a4993412
+	cmdver = 0.2.3
