@@ -14,11 +14,6 @@ and [Web::App::MVC](https://github.com/supernovus/perl6-web-app-mvc/).
    An engine inspired by Template Toolkit. Has many features.
    Wrapper is Web::Template::Template6
 
- * [Flower::TAL](https://github.com/supernovus/flower/)
-
-   An implementation of the TAL/METAL XML-based template languages from Zope.
-   Wrapper is Web::Template::TAL
-
  * [Template::Mojo](https://github.com/tadzik/Template-Mojo/)
 
    A template engine inspired by Perl 5's Mojo::Template.
@@ -28,6 +23,16 @@ and [Web::App::MVC](https://github.com/supernovus/perl6-web-app-mvc/).
 
    A template engine inspired by Perl 5's HTML::Template.
    Wrapper is Web::Template::HTML
+
+## Broken Template Engines
+
+ * [Flower::TAL](https://github.com/supernovus/flower/)
+
+   An implementation of the TAL/METAL XML-based template languages from Zope.
+   Wrapper is Web::Template::TAL
+
+   I will get this fixed up when I can and re-add it to the list of supported
+   template engines.
 
 ## Methods
 
