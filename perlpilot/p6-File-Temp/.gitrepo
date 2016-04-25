@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/p6-File-Temp.git
 	branch = master
-	commit = ef3187b162308d9b628526acead79da3a478b90c
-	parent = 3268578313da2da4debe87f83ff29103c7278f99
+	commit = 11cf08f6a64aad19b9b60793200f212a8dcb48be
+	parent = 9837599434c6ad0d02249c22a4f69fcccda29806
 	cmdver = 0.2.3
