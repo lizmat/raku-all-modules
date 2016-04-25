@@ -3,8 +3,10 @@ use WebServices::GitHub::Response;
 use HTTP::Response;
 
 my $search_json_file = $?FILE.IO.dirname ~ '/test_data/search.response';
+my $content = slurp $search_json_file;
+$content ~~ s:g/\r?\n/\r\n/; # dummy hack
 my $raw = HTTP::Response.new;
-$raw.parse(slurp $search_json_file);
+$raw.parse($content);
 
 my $response = WebServices::GitHub::Response.new(raw => $raw);
 is $response.header('X-GitHub-Request-Id'), '3CB4420C:151E8:2C08375:5620F57C', 'X-GitHub-Request-Id';
