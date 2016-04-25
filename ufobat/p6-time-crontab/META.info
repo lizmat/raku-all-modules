@@ -1,0 +1,15 @@
+{
+        "perl" : "6.c",
+        "name" : "Time::Crontab",
+        "version" : "0.1.0",
+        "description" : "Time::Crontab for Perl6 - Parses Crontab Specifications",
+        "authors" : ["Martin Barth <martin@senfdax.de>"],
+        "provides" : {
+            "Time::Crontab" : "lib/Time/Crontab.pm6",
+            "Time::Crontab::Actions" : "lib/Time/Crontab/Actions.pm6",
+            "Time::Crontab::Grammar" : "lib/Time/Crontab/Grammar.pm6",
+            "Time::Crontab::Set" : "lib/Time/Crontab/Set.pm6"
+        },
+        "depends" : [ "Test::META" ],
+        "source-url" : "https://github.com/ufobat/p6-time-crontab.git"
+}
