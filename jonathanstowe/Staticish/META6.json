@@ -18,5 +18,5 @@
     "Test"
   ],
   "description" : "Make a singleton class that wraps the methods so they appear like class methods",
-  "version" : "0.0.5"
+  "version" : "0.0.6"
 }
