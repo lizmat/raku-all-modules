@@ -1,6 +1,7 @@
 unit module Browser::Open;
 
 use NativeCall;
+use File::Which;
 
 my @known_commands =
 (
@@ -48,6 +49,7 @@ sub open_browser(Str $url, Bool $all = False) is export
 {
 	if $*KERNEL.name eq 'win32'
 	{
+		#
 		# HINSTANCE ShellExecute(
 		#  _In_opt_  HWND hwnd,
 		#  _In_opt_  LPCTSTR lpOperation,
@@ -98,26 +100,9 @@ sub _check_all_cmds(Str $filter) returns Str
 
 		return $cmd if $exact && $cmd.IO ~~ :x;
 		return $cmd if $no_search;
-		$cmd = _search_in_path($cmd);
+		$cmd = which($cmd);
 		return $cmd if $cmd;
 	}
 
 	return;
 }
- 
-sub _search_in_path(Str $cmd) returns Str
-{
-	# TODO use File::Which once it is ported
-	my @paths = $*KERNEL.name eq 'win32'
-		?? %*ENV<Path>.split(';')
-		!! %*ENV<PATH>.split(':');
-	for @paths -> $path
-	{
-		next unless $path;
-		my Str $file = $*SPEC.catdir($path, $cmd);
-		return $file if $file.IO ~~ :x;
-	}
-
-	return;
-}
- 

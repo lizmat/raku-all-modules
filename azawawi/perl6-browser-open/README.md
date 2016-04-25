@@ -1,4 +1,4 @@
-# Browser::Open [![Build Status](https://travis-ci.org/azawawi/perl6-browser-open.svg?branch=master)](https://travis-ci.org/azawawi/perl6-browser-open)
+# Browser::Open [![Build Status](https://travis-ci.org/azawawi/perl6-browser-open.svg?branch=master)](https://travis-ci.org/azawawi/perl6-browser-open) [![Build status](https://ci.appveyor.com/api/projects/status/github/azawawi/perl6-browser-open?svg=true)](https://ci.appveyor.com/project/azawawi/perl6-browser-open/branch/master)
 
 This is a humble Perl 6 port of Perl's [Browser::Open](http://metacpan.org/module/Browser::Open).
 
@@ -39,4 +39,4 @@ Ahmad M. Zawawi, azawawi on #perl6, https://github.com/azawawi/
 
 ## License
 
-Artistic License 2.0
+MIT License
