@@ -1,0 +1,5 @@
+language: perl6
+script:
+  - rakudobrew build panda
+  - panda installdeps .
+  - prove --rc=./.proverc

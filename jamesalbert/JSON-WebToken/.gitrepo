@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jamesalbert/JSON-WebToken.git
+	branch = master
+	commit = cf72f5a1d7f1e1ae535c52282be422529a2b1a03
+	parent = 281989ae7bbaa79cf9710cd894999c178fd1c5fe
+	cmdver = 0.2.3
