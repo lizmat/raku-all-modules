@@ -5,19 +5,21 @@ use v6;
 #
 # When grow I'll move it to an independent module.
 
-unit module MoarVM::Guts::REPRs;
+unit module MoarVM::Guts::REPRs:ver<0.0.3>;
 use NativeCall;
+
+constant ptrsize is export = nativesizeof(Pointer);
+constant intptr is export = ptrsize == 4 ?? uint32 !! uint64;
 
 constant Offset = do {
     my Pointer \p = Pointer.new(0xdeadbeaf); # A type with a trivial REPR
-    my CArray[uint64] \ar = nativecast(CArray[uint64], Pointer.new(p.WHERE));
+    my CArray[intptr] \ar = nativecast(CArray[intptr], Pointer.new(p.WHERE));
     my $i = 0;
     repeat { last if ar[$i] == p; } while ++$i < 10;
     die "Can't determine actual Offset" if $i == 10;
-    $i * nativesizeof(uint64);
+    $i * ptrsize;
 };
 
-constant PPsize = nativesizeof(Pointer);
 
 # The body of the 'VMArray' REPR
 my class MVMArrayB is repr('CStruct') {
@@ -27,7 +29,7 @@ my class MVMArrayB is repr('CStruct') {
     has Pointer $.any;
 
     method realstart(::?CLASS:D:) {
-	+$!start ?? Pointer.new(+$!any + +$!start * PPsize) !! $!any;
+	+$!start ?? Pointer.new(+$!any + +$!start * ptrsize) !! $!any;
     }
 }
 
@@ -40,9 +42,16 @@ my class CArrayB is repr('CStruct') {
     has int32 $.elems;
 }
 
+# The body of the 'CStruct' REPR
+my class CStructB is repr('CStruct') {
+    has Pointer[Pointer] $.child_objs;
+    has Pointer $.cstruct;
+}
+
 my %known-bodies = (
     VMArray => MVMArrayB,
-    CArray => CArrayB
+    CArray => CArrayB,
+    CStruct => CStructB
 );
 
 sub OBJECT_BODY(Mu \any) is export {

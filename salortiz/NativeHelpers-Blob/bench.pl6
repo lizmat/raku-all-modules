@@ -31,6 +31,7 @@ $b.timethese(1000, {
 say "Blob creation";
 my %tests = (
     clasic => { Blob.new(0 xx 10000) },
+    narray => { array[uint8].new.[9999]=0 },
     fast   => { blob-allocate(Blob, 10000) }
 );
 %tests<alloc> = { Blob.allocate(10000) } if Blob.can('allocate');

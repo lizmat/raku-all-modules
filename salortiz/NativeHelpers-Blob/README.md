@@ -4,7 +4,7 @@
 
 Right now the support for `Blob`/`Buf` in Perl 6's NativeCall is incomplete.
 You can use these as arguments for native functions, but not as attributes for
-CStruct or CUnion, for example.
+`CStruct` or `CUnion`, for example.
 
 In a `CStruct` class, you can use a `Pointer` or a `CArray`, but those don't have the
 flexibility of a `Blob` or `Buf`, moving data between them is slow, and with
@@ -18,11 +18,31 @@ At some point, these problems will be addressed in core, but in the meantime...
 
 ## Exported functions
 
-### sub Pointer(Blob:D, :$typed)
+### multi sub pointer-to(Blob:D, :$typed -> Pointer)
 
 Returns a `Pointer` to the contents of the `Blob`.
 
 The type of the returned `Pointer` will be the same of the `Blob` if `:typed` was used
+or `void` if not.
+
+Should be noted that the memory is owned by Rakudo, so you must not attempt
+to free it.
+
+### multi sub pointer-to(array:D, :$typed -> Pointer)
+
+Returns a `Pointer` to the contents of the native `array`.
+
+The type of the returned `Pointer` will be the same of the `array` if `:typed` was used
+or `void` if not.
+
+Should be noted that the memory is owned by Rakudo, so you must not attempt
+to free it.
+
+### multi sub pointer-to(CArray:D, :$typed -> Pointer)
+
+Returns a `Pointer` to the contents of the native `CArray`.
+
+The type of the returned `Pointer` will be the same of the `CAarray` if `:typed` was used
 or `void` if not.
 
 Should be noted that the memory is owned by Rakudo, so you must not attempt
