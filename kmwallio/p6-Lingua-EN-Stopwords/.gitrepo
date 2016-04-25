@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/kmwallio/p6-Lingua-EN-Stopwords.git
+	branch = master
+	commit = bd42f71412f2af3bd2c909f44b48d502886eefe8
+	parent = a79efb9bce37dac3f586350aa8c05e3032cbea09
+	cmdver = 0.2.3
