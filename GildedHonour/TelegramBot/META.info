@@ -1,0 +1,11 @@
+{
+  "name" : "TelegramBot",
+  "version" : "0.1.0",
+  "description" : "A genuine Perl 6 client for the Telegram's Bot API",
+  "authors" : ["Alex Maslakov"],
+  "provides" : {
+    "TelegramBot" : "lib/Telegram.pm6"
+  },
+  "depends" : ["HTTP::UserAgent", "JSON::Tiny"],
+  "source-url" : "git@github.com:GildedHonour/TelegramBot.git"
+}

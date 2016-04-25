@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/GildedHonour/TelegramBot.git
+	branch = master
+	commit = 6279d581a36369266ad6330f0d80d6f81f70adcd
+	parent = 34d36d32b1cd1e87e120779d9bf39571cddb8f3c
+	cmdver = 0.2.3
