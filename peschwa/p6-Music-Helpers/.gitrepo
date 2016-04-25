@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/peschwa/p6-Music-Helpers.git
+	branch = master
+	commit = 883010c21b9e58fb9c81d15605fbccab28e0577a
+	parent = 721bb2c8c9c9749a70aff6fda41f07d959f05a91
+	cmdver = 0.2.3
