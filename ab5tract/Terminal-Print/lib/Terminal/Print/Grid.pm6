@@ -31,6 +31,8 @@ has $!control-supplier;
 has $!character-supply;
 has $!control-supply;
 
+has $.frame-time;
+
 has $.max-columns;
 has $.max-rows;
 has @.grid-indices;
@@ -39,10 +41,11 @@ has &.move-cursor-template;
 
 has Terminal::Print::MoveCursorProfile $.move-cursor-profile;
 
-submethod BUILD( :$!max-columns, :$!max-rows, :$!move-cursor-profile = 'ansi' ) {
+submethod BUILD( :$!max-columns, :$!max-rows, :$!move-cursor-profile = 'ansi', :$frame-time ) {
     @!grid-indices = (^$!max-columns X ^$!max-rows)>>.Array;
     for @!grid-indices -> [$x,$y] {
-        @!grid[$x;$y] = " ";
+        @!grid[$x] //= [];
+        @!grid[$x][$y] = " ";
     }
     $!character-supplier = Supplier.new;
     $!control-supplier = Supplier.new;
@@ -50,38 +53,37 @@ submethod BUILD( :$!max-columns, :$!max-rows, :$!move-cursor-profile = 'ansi' ) 
     $!control-supply = $!control-supplier.Supply;
 
     &!move-cursor-template = %T::human-commands<move-cursor>{ $!move-cursor-profile };
+
+    $!frame-time = $frame-time // 0.05;
 }
 
 method initialize {
-    state $initialized;
-
-    unless $initialized {
-        start {
-            $initialized = True;
-            my Str $frame-string;
-            react {
-                whenever $!character-supply -> [$x,$y,$c] {
-                    @!grid[$x;$y] = $c;
-                    $!grid-string = '' if $!grid-string;
-                }
-                whenever $!control-supply -> [$command, @args] {
-                    given $command {
-                        when 'print' {
-                            my ($x, $y) = @args;
-                            #   $frame-string ~= self.cell-string($x, $y);
-                            print self.cell-string($x, $y);
-                        }
-                        when 'close' { done; }
-                    }
-                    $initialized = False;
-                }
-                #                whenever Supply.interval(0.05) {
-                #                    if $frame-string {
-                #                        print $frame-string;
-                #                        $frame-string = '';
-                #                    }
-                #   }
+    my $p = Promise.new;
+    start {
+        my Str $frame-string;
+        react {
+            whenever $!character-supply -> [$x,$y,$c] {
+                @!grid[$x;$y] = $c;
+                $!grid-string = '' if $!grid-string;
             }
+            whenever $!control-supply -> [$command, @args] {
+                given $command {
+                    when 'print' {
+                        # print self.cell-string(|@args);
+                        #
+                        # In this case, @args ~~ [x, y]
+                        $frame-string ~= self.cell-string(|@args);
+                    }
+                    when 'close' { done }
+                }
+            }
+            whenever Supply.interval($!frame-time) {
+               if $frame-string {
+                   print $frame-string;
+                   $frame-string = '';
+               }
+            }
+            default { $p.keep }
         }
     }
 
@@ -90,6 +92,8 @@ method initialize {
     for ^$!max-columns -> $x {
         @!grid[$x] //= Terminal::Print::Grid::Column.new( :grid-object(self), :column($x), :$!max-rows );
     }
+
+    $p;
 }
 
 method shutdown {
@@ -103,7 +107,7 @@ method change-cell($x, $y, $c) {
 }
 
 method cell-string(Int $x, Int $y) {
-    "{&!move-cursor-template($x, $y)}{@!grid[$x;$y]}";
+    "{&!move-cursor-template($x, $y)}{@!grid[$x][$y]}";
 }
 
 multi method print-cell(Int $x, Int $y) {
@@ -134,7 +138,7 @@ multi method AT-POS($x) {
 }
 
 multi method AT-POS($x,$y) {
-    @!grid[$x;$y];
+    @!grid[$x][$y];
 }
 
 multi method EXISTS-POS($x) {
@@ -142,5 +146,5 @@ multi method EXISTS-POS($x) {
 }
 
 multi method EXISTS-POS($x,$y) {
-    @!grid[$x;$y]:exists;
+    @!grid[$x][$y]:exists;
 }
