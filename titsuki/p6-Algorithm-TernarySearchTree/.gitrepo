@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Algorithm-TernarySearchTree.git
+	branch = master
+	commit = 6d9abcc8b6c416b2ac55b1a37633b4730c8d91f9
+	parent = 6e2b6c3b3f41adb03d0c3f912afc6f7726e4c6a1
+	cmdver = 0.2.3
