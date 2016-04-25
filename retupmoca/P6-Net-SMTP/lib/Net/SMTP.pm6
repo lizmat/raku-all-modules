@@ -31,7 +31,7 @@ method new(:$server!, :$port = 25, :$raw, :$debug, :$hostname, :$socket = IO::So
         $self does Net::SMTP::Raw;
         $self.conn = $socket.defined ?? $socket !! $socket.new(:host($server), :$port);
         $self.conn = $self.conn but debug-connection if $debug;
-        $self.conn.input-line-separator = "\r\n";
+        $self.conn.nl-in = "\r\n";
     } else {
         $self does Net::SMTP::Simple;
         $self.hostname = $hostname // gethostname;

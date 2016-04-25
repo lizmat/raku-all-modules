@@ -27,7 +27,7 @@ class SMTPSocket {
 
     has $.host;
     has $.port;
-    has $.input-line-separator is rw = "\n";
+    has $.nl-in is rw = "\n";
     method new(:$host, :$port) {
         self.bless(:$host, :$port);
     }
@@ -35,7 +35,7 @@ class SMTPSocket {
         return @server-send.shift;
     }
     method print($string is copy) {
-        $string .= substr(0,*-2); # strip \r\n
+        $string.subst-mutate(/\r\n$/,'');
         die "Bad client-send: $string" unless $string eq @server-get.shift;
     }
     method close { }

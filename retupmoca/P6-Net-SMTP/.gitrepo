@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Net-SMTP.git
 	branch = master
-	commit = febdcb9e3dd998225e629efc7fc1ba3ff0bf70ed
-	parent = 23fe179a6c83198357e3a35196082f889054d15d
-	cmdver = 0.2.2
+	commit = 89ac1f6b8facd5d8f7aebdcaf0544cac2ad87ffd
+	parent = ae2b07757674520e3bbf35874fc66dec9cd15129
+	cmdver = 0.2.3

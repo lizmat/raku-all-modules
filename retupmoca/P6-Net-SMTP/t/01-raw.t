@@ -24,7 +24,7 @@ class SMTPSocket {
 
     has $.host;
     has $.port;
-    has $.input-line-separator is rw = "\n";
+    has $.nl-in is rw = "\n";
     method new(:$host, :$port) {
         self.bless(:$host, :$port);
     }
@@ -32,7 +32,7 @@ class SMTPSocket {
         return @server-send.shift;
     }
     method print($string is copy) {
-        $string .= substr(0,*-2); # strip \r\n
+        $string.subst-mutate(/\r\n$/,'');
         die "Bad client-send" unless $string eq @server-get.shift;
     }
 }
@@ -46,7 +46,7 @@ my $client = Net::SMTP.new(:server('foo.com'), :port(25), :raw, :socket(SMTPSock
 ok $client ~~ Net::SMTP, "Created raw class";
 ok $client.conn.host eq 'foo.com', "with right host";
 ok $client.conn.port eq '25', 'with right port';
-ok $client.conn.input-line-separator eq "\r\n", 'with right line sep';
+ok $client.conn.nl-in eq "\r\n", 'with right line sep';
 
 ok $client.get-response.substr(0,1) eq '2', 'Greeting';
 ok $client.helo('clientdomain.com').substr(0,1) eq '2', 'HELO';
