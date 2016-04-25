@@ -1,0 +1,14 @@
+{
+    "name" : "Crypt::Random",
+    "version" : "0.2.0",
+    "description" : "Random numbers and bytes mimicking arc4random",
+    "author" : "github:skinkade",
+    "provides" : {
+        "Crypt::Random" : "lib/Crypt/Random.pm6",
+        "Crypt::Random::Extra" : "lib/Crypt/Random/Extra.pm6",
+        "Crypt::Random::Nix" : "lib/Crypt/Random/Nix.pm6",
+        "Crypt::Random::Win" : "lib/Crypt/Random/Win.pm6"
+    },
+    "depends" : ["if"],
+    "source-url" : "git://github.com/skinkade/crypt-random.git"
+}
