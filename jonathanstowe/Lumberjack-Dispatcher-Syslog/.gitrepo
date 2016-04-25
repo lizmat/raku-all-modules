@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Lumberjack-Dispatcher-Syslog.git
+	branch = master
+	commit = 98e2d554cad862a3989191a41ded724e9843fcf8
+	parent = 114bfb34e6b9b36ef05761588fef4ec82205441d
+	cmdver = 0.2.3
