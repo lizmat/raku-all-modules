@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<icestats>
+  <admin>icemaster@localhost</admin>
+  <client_connections>19574</client_connections>
+  <clients>3</clients>
+  <connections>19657</connections>
+  <file_connections>326</file_connections>
+  <host>airtime.rabidgravy.com</host>
+  <listener_connections>123</listener_connections>
+  <listeners>0</listeners>
+  <location>Earth</location>
+  <server_id>Icecast 2.3.3</server_id>
+  <server_start>Mon, 14 Mar 2016 13:28:19 +0000</server_start>
+  <source_client_connections>14</source_client_connections>
+  <source_relay_connections>0</source_relay_connections>
+  <source_total_connections>14</source_total_connections>
+  <sources>3</sources>
+  <stats>0</stats>
+  <stats_connections>0</stats_connections>
+  <source mount="/aac">
+    <audio_info>bitrate=128;samplerate=44100;channels=2</audio_info>
+    <bitrate>128</bitrate>
+    <channels>2</channels>
+    <genre>stuff</genre>
+    <listener_peak>1</listener_peak>
+    <listeners>0</listeners>
+    <listenurl>http://airtime.rabidgravy.com:8000/aac</listenurl>
+    <max_listeners>unlimited</max_listeners>
+    <public>1</public>
+    <samplerate>44100</samplerate>
+    <server_description>aac stream</server_description>
+    <server_name>Unspecified name</server_name>
+    <server_type>audio/aac</server_type>
+    <slow_listeners>0</slow_listeners>
+    <source_ip>178.250.76.22</source_ip>
+    <stream_start>Mon, 14 Mar 2016 13:28:24 +0000</stream_start>
+    <total_bytes_read>12336479400</total_bytes_read>
+    <total_bytes_sent>425878</total_bytes_sent>
+    <user_agent>Liquidsoap/1.0.0 (Unix; OCaml 3.12.1)</user_agent>
+  </source>
+  <source mount="/mp3">
+    <audio_info>bitrate=128;samplerate=44100;channels=2</audio_info>
+    <bitrate>128</bitrate>
+    <channels>2</channels>
+    <genre>various</genre>
+    <listener_peak>1</listener_peak>
+    <listeners>0</listeners>
+    <listenurl>http://airtime.rabidgravy.com:8000/mp3</listenurl>
+    <max_listeners>unlimited</max_listeners>
+    <public>1</public>
+    <samplerate>44100</samplerate>
+    <server_description>Unspecified description</server_description>
+    <server_name>MP3 stream</server_name>
+    <server_type>audio/mpeg</server_type>
+    <slow_listeners>0</slow_listeners>
+    <source_ip>178.250.76.22</source_ip>
+    <stream_start>Mon, 14 Mar 2016 13:28:24 +0000</stream_start>
+    <total_bytes_read>12336479400</total_bytes_read>
+    <total_bytes_sent>479058</total_bytes_sent>
+    <user_agent>Liquidsoap/1.0.0 (Unix; OCaml 3.12.1)</user_agent>
+  </source>
+  <source mount="/ogg">
+    <audio_bitrate>128000</audio_bitrate>
+    <audio_channels>2</audio_channels>
+    <audio_info>quality=0.4;samplerate=44100;channels=2</audio_info>
+    <audio_samplerate>44100</audio_samplerate>
+    <channels>2</channels>
+    <genre>Stuu</genre>
+    <ice-bitrate>128</ice-bitrate>
+    <listener_peak>0</listener_peak>
+    <listeners>0</listeners>
+    <listenurl>http://airtime.rabidgravy.com:8000/ogg</listenurl>
+    <max_listeners>unlimited</max_listeners>
+    <public>1</public>
+    <quality>0.4</quality>
+    <samplerate>44100</samplerate>
+    <server_description>Unspecified description</server_description>
+    <server_name>Ogg Vorbis Stream</server_name>
+    <server_type>application/ogg</server_type>
+    <server_url>http://airtime.rabidgravy.com</server_url>
+    <slow_listeners>0</slow_listeners>
+    <source_ip>178.250.76.22</source_ip>
+    <stream_start>Mon, 14 Mar 2016 13:28:24 +0000</stream_start>
+    <subtype>Vorbis</subtype>
+    <title>Unknown</title>
+    <total_bytes_read>7428578661</total_bytes_read>
+    <total_bytes_sent>0</total_bytes_sent>
+    <user_agent>Liquidsoap/1.0.0 (Unix; OCaml 3.12.1)</user_agent>
+  </source>
+</icestats>

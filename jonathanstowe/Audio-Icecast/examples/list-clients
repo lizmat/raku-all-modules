@@ -1,0 +1,15 @@
+#!perl6
+
+use v6.c;
+
+use Audio::Icecast;
+
+sub MAIN(Str :$mount!, Str :$host = 'localhost', Int :$port = 8000, Str :$user = 'admin', Str :$password = 'hackme') {
+    my $ai = Audio::Icecast.new(:$host, :$port, :$user, :$password);
+
+    for $ai.listeners($mount) -> $listener {
+        say sprintf "%10i  %20s   %20s  %s", $listener.id, $listener.ip, DateTime.new(now - $listener.connected), $listener.user-agent;
+    }
+
+}
+# vim: expandtab shiftwidth=4 ft=perl6
