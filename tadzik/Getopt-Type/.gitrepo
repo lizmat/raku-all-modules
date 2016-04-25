@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tadzik/Getopt-Type.git
+	branch = master
+	commit = f25d2e5070cc243d55b784b1bbd090c3077a1b56
+	parent = 248a5db945d37bd45d1d62b7a466890829c9f0a2
+	cmdver = 0.2.3

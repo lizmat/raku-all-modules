@@ -1,0 +1,19 @@
+{
+    "name"        : "Getopt::Type",
+    "version"     : "0.1",
+    "perl"	      : "6.c",
+    "description" : "MAIN? Getopt semantics? Why not both?",
+    "depends"     : [
+    ],
+    "source-url"  : "git://github.com/tadzik/Getopt-Type.git",
+    "authors" : [
+        "Tadeusz “tadzik” Sośnierz"
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/tadzik/Getopt-Type/issues",
+        "source" : "git://github.com/tadzik/Getopt-Type.git"
+    },
+    "provides"    : {
+        "Getopt::Type" : "lib/Getopt/Type.pm"
+    }
+}
