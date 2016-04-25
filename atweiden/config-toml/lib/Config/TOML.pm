@@ -4,12 +4,16 @@ unit module Config::TOML;
 
 multi sub from-toml(Str:D $content, Int :$date-local-offset) is export
 {
-    Config::TOML::Parser.parse($content, :$date-local-offset).made;
+    my %opts;
+    %opts<date-local-offset> = $date-local-offset if $date-local-offset;
+    Config::TOML::Parser.parse($content, |%opts).made;
 }
 
 multi sub from-toml(Str:D :$file!, Int :$date-local-offset) is export
 {
-    Config::TOML::Parser.parsefile($file, :$date-local-offset).made;
+    my %opts;
+    %opts<date-local-offset> = $date-local-offset if $date-local-offset;
+    Config::TOML::Parser.parsefile($file, |%opts).made;
 }
 
 # vim: ft=perl6

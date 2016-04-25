@@ -9,7 +9,7 @@ class DuplicateKeys is Exception
     has Str $.subject is required;
     has Str $.text is required;
 
-    method message()
+    method message() returns Str
     {
         my Str $help-text = qq:to/EOF/;
         Sorry, $.subject contains duplicate keys.
@@ -76,7 +76,7 @@ class KeypairLine::DuplicateKeys is Exception
     has Str $.keypair-line-text;
     has @.path;
 
-    method message()
+    method message() returns Str
     {
         my Str $help-text = qq:to/EOF/;
         Sorry, keypair line contains duplicate key.
@@ -99,7 +99,7 @@ class AOH is Exception
     has Str $.aoh-text;
     has @.path;
 
-    method message()
+    method message() returns Str
     {
         my Str $help-text = qq:to/EOF/;
         Sorry, arraytable keypath 「{@.path.join(', ')}」 trodden.
@@ -120,7 +120,7 @@ class AOH::OverwritesHOH is AOH
 {
     has Str $.aoh-header-text;
 
-    method message()
+    method message() returns Str
     {
         my Str $help-text = qq:to/EOF/;
         Sorry, arraytable 「$.aoh-header-text」 has been declared previously
@@ -142,7 +142,7 @@ class AOH::OverwritesKey is AOH
 {
     has Str $.aoh-header-text;
 
-    method message()
+    method message() returns Str
     {
         my Str $help-text = qq:to/EOF/;
         Sorry, arraytable 「$.aoh-header-text」 overwrites existing key in
@@ -165,7 +165,7 @@ class HOH is Exception
     has Str $.hoh-text;
     has @.path;
 
-    method message()
+    method message() returns Str
     {
         my Str $help-text = qq:to/EOF/;
         Sorry, table keypath 「{@.path.join(', ')}」 trodden.
@@ -186,7 +186,7 @@ class HOH::Seen is HOH
 {
     has Str $.hoh-header-text;
 
-    method message()
+    method message() returns Str
     {
         my Str $help-text = qq:to/EOF/;
         Sorry, table 「$.hoh-header-text」 has been declared previously in TOML document.
@@ -211,7 +211,7 @@ class HOH::Seen::AOH is HOH::Seen {*}
 
 class HOH::Seen::Key is HOH
 {
-    method message()
+    method message() returns Str
     {
         my Str $help-text = qq:to/EOF/;
         Sorry, table keypath 「{@.path.join(', ')}」 overwrites existing key.
@@ -232,7 +232,7 @@ class Keypath is Exception
 {
     has @.path;
 
-    method message()
+    method message() returns Str
     {
         my Str $help-text = qq:to/EOF/;
         「{@.path.join(', ')}」

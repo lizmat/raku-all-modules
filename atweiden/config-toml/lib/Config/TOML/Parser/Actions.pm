@@ -4,16 +4,16 @@ use X::Config::TOML;
 unit class Config::TOML::Parser::Actions;
 
 # TOML document
-has %.toml;
+has %!toml;
 
 # TOML arraytable tracker, records arraytables seen
-has Bool %.aoh-seen{Array};
+has Bool %!aoh-seen{Array};
 
 # TOML table tracker, records tables seen
-has Bool %.hoh-seen{Array};
+has Bool %!hoh-seen{Array};
 
 # TOML key tracker, records keypair keys seen
-has Bool %.keys-seen{Array};
+has Bool %!keys-seen{Array};
 
 # DateTime offset for when the local offset is omitted in TOML dates,
 # see: https://github.com/toml-lang/toml#datetime
@@ -525,7 +525,7 @@ method segment:keypair-line ($/)
     my @path = $<keypair-line>.made.keys[0];
     my $value = $<keypair-line>.made.values[0];
 
-    if seen(%.keys-seen, :@path)
+    if seen(%!keys-seen, :@path)
     {
         die X::Config::TOML::KeypairLine::DuplicateKeys.new(
             :keypair-line-text(~$/),
@@ -533,7 +533,7 @@ method segment:keypair-line ($/)
         );
     }
 
-    Crane.exists(%.toml, :@path)
+    Crane.exists(%!toml, :@path)
         ?? die
             X::Config::TOML::KeypairLine::DuplicateKeys.new(
                 :keypair-line-text(~$/),
@@ -559,21 +559,21 @@ method table:hoh ($/)
     my @base-path = pwd(%!toml, :steps($<hoh-header>.made));
     my Str $hoh-text = ~$/; # for error messages
 
-    if seen(%.keys-seen, :path(@base-path))
+    if seen(%!keys-seen, :path(@base-path))
     {
         die X::Config::TOML::HOH::Seen::Key.new(
             :$hoh-text,
             :path(@base-path)
         );
     }
-    if %.aoh-seen.grep({.keys[0] eqv $@base-path}).elems > 0
+    if %!aoh-seen.grep({.keys[0] eqv $@base-path}).elems > 0
     {
         die X::Config::TOML::HOH::Seen::AOH.new(
             :hoh-header-text(~$<hoh-header>),
             :$hoh-text
         );
     }
-    if %.hoh-seen.grep({.keys[0] eqv $@base-path}).elems > 0
+    if %!hoh-seen.grep({.keys[0] eqv $@base-path}).elems > 0
     {
         die X::Config::TOML::HOH::Seen.new(
             :hoh-header-text(~$<hoh-header>),
@@ -621,7 +621,7 @@ method table:hoh ($/)
             {
                 my @path = |@base-path, %keypair.keys[0];
                 my $value = %keypair.values[0];
-                Crane.exists(%.toml, :@path)
+                Crane.exists(%!toml, :@path)
                     ?? die
                         X::Config::TOML::HOH::Seen::Key.new(
                             :$hoh-text,
@@ -633,7 +633,7 @@ method table:hoh ($/)
         }
         else
         {
-            Crane.exists(%.toml, :path(@base-path))
+            Crane.exists(%!toml, :path(@base-path))
                 ?? die
                     X::Config::TOML::HOH::Seen::Key.new(
                         :$hoh-text,
@@ -657,7 +657,7 @@ method table:aoh ($/)
     my Str $aoh-header-text = ~$<aoh-header>;
     my Str $aoh-text = ~$/;
 
-    if seen(%.keys-seen, :@path)
+    if seen(%!keys-seen, :@path)
     {
         die X::Config::TOML::AOH::OverwritesKey.new(
             :$aoh-header-text,
@@ -665,7 +665,7 @@ method table:aoh ($/)
             :@path
         );
     }
-    if %.hoh-seen.grep({.keys[0] eqv $@path}).elems > 0
+    if %!hoh-seen.grep({.keys[0] eqv $@path}).elems > 0
     {
         die X::Config::TOML::AOH::OverwritesHOH.new(
             :$aoh-header-text,
@@ -674,9 +674,9 @@ method table:aoh ($/)
         );
     }
 
-    unless %.aoh-seen.grep({.keys[0] eqv $@path}).elems > 0
+    unless %!aoh-seen.grep({.keys[0] eqv $@path}).elems > 0
     {
-        Crane.exists(%.toml, :@path)
+        Crane.exists(%!toml, :@path)
             ?? die X::Config::TOML::Keypath::AOH.new(:$aoh-text, :@path)
             !! Crane.set(%!toml, :@path, :value([]));
         %!aoh-seen{$@path}++;
@@ -706,7 +706,7 @@ method table:aoh ($/)
 
 method TOP($/)
 {
-    make %.toml;
+    make %!toml;
 }
 
 # end document grammar-actions }}}
