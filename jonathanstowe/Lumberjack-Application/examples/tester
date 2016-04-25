@@ -1,0 +1,66 @@
+#!perl6
+
+use v6.c;
+
+use Lumberjack;
+use Lumberjack::Dispatcher::Proxy;
+
+class Foo does Lumberjack::Logger {
+    method foo-info($str) {
+        self.log-info($str);
+    }
+    method foo-debug($str) {
+        self.log-debug($str);
+    }
+    method foo-trace($str) {
+        self.log-trace($str);
+    }
+    method foo-warn($str) {
+        self.log-warn($str);
+    }
+    method foo-error($str) {
+        self.log-error($str);
+    }
+    method foo-fatal($str) {
+        self.log-fatal($str);
+    }
+}
+
+
+my @words = "/usr/share/dict/words".IO.lines;
+
+Foo.log-level = Lumberjack::All;
+
+my $proxy = Lumberjack::Dispatcher::Proxy.new(url => 'http://rabidgravy.com:8898/log');
+
+Lumberjack.dispatchers.append: $proxy;
+
+my $foo = Foo.new;
+loop {
+    my $len = ( 5 .. 20).pick;
+   my $str = @words.pick($len).join(' ');
+
+    given (^6).pick {
+        when 0 {
+            $foo.foo-trace($str);
+        }
+        when 1 {
+            $foo.foo-debug($str);
+        }
+        when 2 {
+            $foo.foo-info($str);
+        }
+        when 3 {
+            $foo.foo-warn($str);
+        }
+        when 4 {
+            $foo.foo-error($str);
+        }
+        when 5 {
+            $foo.foo-fatal($str);
+        }
+
+    }
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
