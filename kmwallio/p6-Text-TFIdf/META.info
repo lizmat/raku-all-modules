@@ -1,0 +1,13 @@
+{
+  "perl" : "6.*",
+  "name" : "Text::TFIdf",
+  "version" : "0.0.3",
+  "description" : "Helps calculate TF-IDF values from a given set of documents.",
+  "authors" : [ "KM Wallio" ],
+  "provides" : {
+      "Text::TFIdf" : "lib/Text/TFIdf.pm6"
+  },
+  "depends" : [ "Lingua::EN::Stem::Porter" ],
+  "resources" : [ ],
+  "source-url" : "git://github.com/kmwallio/p6-Text-TFIdf.git"
+}
