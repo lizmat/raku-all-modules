@@ -1,0 +1,13 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Subset::Helper",
+    "version"      : "1.001001",
+    "description"  : "create awesome subsets",
+    "depends"      : [ ],
+    "test-depends" : [ "Test", "Test::Output" ],
+    "provides"     : {
+        "Subset::Helper" : "lib/Subset/Helper.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   : "git://github.com/zoffixznet/perl6-Subset-Helper.git"
+}
