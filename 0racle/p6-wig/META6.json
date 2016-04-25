@@ -1,0 +1,14 @@
+{
+   "name" : "wig",
+   "version" : "0.1.0",
+   "description" : "where is grep: Make grep prettier, put a wig on it!",
+   "perl" : "6.c",
+   "authors" : [ "Joshua Yeshouroun" ],
+   "provides" : {
+      "wig" : "lib/wig.pm"
+   },
+   "depends" : [ ],
+   "source-url" : "git://github.com/0racle/p6-wig.git",
+   "license" : "Artistic"
+}
+
