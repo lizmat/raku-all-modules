@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Algorithm-BinaryIndexedTree.git
+	branch = master
+	commit = f1d2db5ee47d53ee00423959151ced60c07ba4e4
+	parent = 053fec3a7dd3ddff2d423d1212d8f552e2cd0e27
+	cmdver = 0.2.3

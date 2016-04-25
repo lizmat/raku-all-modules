@@ -1,0 +1,17 @@
+{
+  "name" : "Algorithm::BinaryIndexedTree",
+  "source-url" : "git://github.com/titsuki/p6-Algorithm-BinaryIndexedTree.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "Algorithm::BinaryIndexedTree" : "lib/Algorithm/BinaryIndexedTree.pm6"
+  },
+  "depends" : [ ],
+  "description" : "data structure for cumulative frequency tables",
+  "test-depends" : [ ],
+  "version" : "0.05",
+  "authors" : [
+    "titsuki"
+  ]
+}
