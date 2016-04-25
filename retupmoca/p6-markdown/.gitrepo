@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/p6-markdown.git
 	branch = master
-	commit = b14223a71dfee895a38fa2fe06665d4e22819ff8
-	parent = cb18e693ff1d4b57b2fd4b63aaf98691d2a768a1
+	commit = 67e3d9c1d8ef9a742d75be46d03f6b212a4bf119
+	parent = abb40f110da01ec5e4fd2568ba94123fa2f84193
 	cmdver = 0.2.3
