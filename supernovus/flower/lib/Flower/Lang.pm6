@@ -1,4 +1,4 @@
-role Flower::Lang;
+unit role Flower::Lang;
 
 ## Common methods for Flower Languages.
 

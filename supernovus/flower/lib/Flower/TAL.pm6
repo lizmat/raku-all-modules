@@ -1,5 +1,5 @@
 use Flower;
-class Flower::TAL is Flower; 
+unit class Flower::TAL is Flower; 
 
 ## Extend Flower into a TAL/METAL engine.
 

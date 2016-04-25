@@ -1,4 +1,4 @@
-class Flower;
+unit class Flower;
 
 use XML;
 
@@ -97,7 +97,7 @@ method process ($name, *%data) {
 }
 
 ## parse-elements: Parse the child elements of an XML node.
-method parse-elements ($xml is rw, $custom-parser?) {
+method parse-elements ($xml is raw, $custom-parser?) {
   ## Due to the strange nature of some rules, we're not using the
   ## 'elements' helper, nor using a nice 'for' loop. Instead we're doing this
   ## by hand. Don't worry, it'll all make sense.
@@ -127,7 +127,7 @@ method parse-elements ($xml is rw, $custom-parser?) {
 }
 
 ## parse-element: parse a single element.
-method parse-element($element is rw, :$safe) {
+method parse-element($element is raw, :$safe) {
   ## Let's do this.
   for @.plugins -> $plugin {
     ## First attributes.

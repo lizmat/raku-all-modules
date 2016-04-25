@@ -1,4 +1,4 @@
-class Flower::TAL::Repeat;
+unit class Flower::TAL::Repeat;
 
 ## Represents a TAL Repeat object.
 

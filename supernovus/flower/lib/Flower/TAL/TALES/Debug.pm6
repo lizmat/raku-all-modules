@@ -1,4 +1,4 @@
-class Flower::TAL::TALES::Debug;
+unit class Flower::TAL::TALES::Debug;
 
 has $.flower is rw;
 has $.tales  is rw;

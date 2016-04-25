@@ -1,6 +1,6 @@
 use v6;
 
-class Flower::Provider::File;
+unit class Flower::Provider::File;
 
 has @.include-path;
 has %.templates;

@@ -1,5 +1,5 @@
 use Flower::Lang;
-class Flower::TAL::TAL does Flower::Lang; 
+unit class Flower::TAL::TAL does Flower::Lang; 
 
 ## The TAL XML Application Language
 
@@ -39,7 +39,7 @@ method parse-block ($element is rw, $name) {
   $element = $element.nodes;
 }
 
-method parse-define ($xml is rw, $tag) {
+method parse-define ($xml, $tag) {
   my @statements = $xml.attribs{$tag}.split(/\;\s+/);
   for @statements -> $statement {
     my ($attrib, $query) = $statement.split(/\s+/, 2);
@@ -57,7 +57,7 @@ method parse-condition ($xml is rw, $tag) {
   }
 }
 
-method parse-content ($xml is rw, $tag) {
+method parse-content ($xml, $tag) {
   my $node = $.tales.query($xml.attribs{$tag}, :forcexml);
   if defined $node {
     if $node === $xml.nodes {} # special case for 'default'.
@@ -79,7 +79,7 @@ method parse-replace ($xml is rw, $tag) {
   }
 }
 
-method parse-attrs ($xml is rw, $tag) {
+method parse-attrs ($xml, $tag) {
   my @statements = $xml.attribs{$tag}.split(/\;\s+/);
   for @statements -> $statement {
     my ($attrib, $query) = $statement.split(/\s+/, 2);

@@ -1,4 +1,4 @@
-class Example::Modifiers;
+unit class Example::Modifiers;
 
 has $.flower;
 has $.tales;

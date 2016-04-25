@@ -1,4 +1,4 @@
-class Flower::TAL::TALES::Text;
+unit class Flower::TAL::TALES::Text;
 
 has $.flower is rw;
 has $.tales  is rw;

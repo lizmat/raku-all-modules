@@ -1,5 +1,5 @@
 use Flower::Lang;
-class Flower::TAL::METAL does Flower::Lang; 
+unit class Flower::TAL::METAL does Flower::Lang; 
 
 ## The METAL XML Application Language.
 

@@ -1,4 +1,4 @@
-class Flower::TAL::TALES::Default; 
+unit class Flower::TAL::TALES::Default; 
 
 has $.flower;
 has $.tales;

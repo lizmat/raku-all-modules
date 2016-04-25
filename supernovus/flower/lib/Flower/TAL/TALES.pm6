@@ -1,4 +1,6 @@
-class Flower::TAL::TALES; ## Parses TALES strings, used by TAL.
+unit class Flower::TAL::TALES; ## Parses TALES strings, used by TAL.
+
+use MONKEY-SEE-NO-EVAL;
 
 use XML;
 use Flower::TAL::TALES::Default; ## The default TALES parsers.
