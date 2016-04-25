@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jnthn/p6-docker-file.git
+	branch = master
+	commit = 40240c5d9fa1d42d1c5c39a4a4eb0272e40f8eea
+	parent = 1fba1b1764bae63c32c529c524a55c613cf009f0
+	cmdver = 0.2.3

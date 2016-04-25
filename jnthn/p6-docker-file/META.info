@@ -1,0 +1,19 @@
+{
+  "name" : "Docker::File",
+  "tags" : [ "docker", "dockerfile" ],
+  "author" : "Jonathan Worthington <jnthn@jnthn.net>",
+  "auth" : "github:jnthn",
+  "support" : {
+    "source" : "git://github.com/jnthn/p6-docker-file.git"
+  },
+  "source-url" : "git://github.com/jnthn/p6-docker-file.git",
+  "perl" : "6.c",
+  "build-depends" : [ ],
+  "provides" : {
+    "Docker::File" : "lib/Docker/File.pm6"
+  },
+  "depends" : [ ],
+  "test-depends" : [ ],
+  "description" : "Parsing and generation of Dockerfiles.",
+  "version" : "1.0"
+}
