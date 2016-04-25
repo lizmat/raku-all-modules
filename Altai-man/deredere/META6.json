@@ -1,0 +1,13 @@
+{
+    "perl": "6.*",
+    "name" : "deredere",
+    "version" : "0.1.0",
+    "author" : "github:Altai-man",
+    "description" : "Simple scraping framework",
+    "depends" : [ "HTTP::UserAgent", "Gumbo" ],
+    "provides" : {
+        "deredere" : "lib/deredere.pm6"
+    },
+    "resources": [],
+    "source-url" : "git://github.com/Altai-man/deredere.git"
+}
