@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Audio-PortMIDI.git
+	branch = master
+	commit = c42e3e533f0a2f6e6777220ca1529431a1961c63
+	parent = 5754c7cfb168eecc2ad1cd9df05b19e5f4c930d8
+	cmdver = 0.2.3

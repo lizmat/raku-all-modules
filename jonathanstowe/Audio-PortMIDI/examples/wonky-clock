@@ -1,0 +1,22 @@
+#!perl6
+
+use Audio::PortMIDI;
+
+sub MAIN(Int :$bpm = 120, Int :$device ) {
+    my $pm = Audio::PortMIDI.new;
+    my $i = $device // $pm.default-output-device.device-id;
+    my $stream = $pm.open-output($i, 32);
+
+    my $millis = 1/(($bpm/60)*24);
+
+    react {
+        whenever Supply.interval($millis) {
+            my $m = Audio::PortMIDI::Event.new(status => 248, timestamp => $_, data-one => 0, data-two => 0);
+            $stream.write($m);
+        }
+    }
+
+
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6
