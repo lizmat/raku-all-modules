@@ -13,10 +13,10 @@
   "provides" : {
      "JSON::Marshal" : "lib/JSON/Marshal.pm"
   },
-  "depends" : [ "JSON::Tiny", "JSON::Name" ],
+  "depends" : [ "JSON::Fast", "JSON::Name" ],
   "test-depends" : [
     "Test"
   ],
   "description" : "Simple serialisation of objects to JSON",
-  "version" : "0.0.6"
+  "version" : "0.0.8"
 }

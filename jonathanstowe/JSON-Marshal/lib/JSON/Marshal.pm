@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -55,9 +55,9 @@ above.
 
 use JSON::Name;
 
-module JSON::Marshal:ver<0.0.6>:auth<github:jonathanstowe> {
+module JSON::Marshal:ver<0.0.8>:auth<github:jonathanstowe> {
 
-    use JSON::Tiny;
+    use JSON::Fast:ver(v0.4..*);
 
 
     role CustomMarshaller {
@@ -101,25 +101,25 @@ module JSON::Marshal:ver<0.0.6>:auth<github:jonathanstowe> {
         $attr does SkipNull;
     }
     
-    multi sub _marshal(Cool $value) {
+    multi sub _marshal(Cool $value, Bool :$skip-null) {
         $value;
     }
 
-    multi sub _marshal(%obj) returns Hash {
+    multi sub _marshal(%obj, Bool :$skip-null) returns Hash {
         my %ret;
 
         for %obj.kv -> $key, $value {
-            %ret{$key} = _marshal($value);
+            %ret{$key} = _marshal($value, :$skip-null);
         }
 
         %ret;
     }
 
-    multi sub _marshal(@obj) returns Array {
+    multi sub _marshal(@obj, Bool :$skip-null) returns Array {
         my @ret;
 
         for @obj -> $item {
-            @ret.push(_marshal($item));
+            @ret.push(_marshal($item, :$skip-null));
         }
         @ret;
     }

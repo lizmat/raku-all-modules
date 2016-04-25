@@ -51,18 +51,8 @@ above.
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo perl 6 installation, you can install this
+with ```panda``` :
 
     # From the source directory
    
@@ -72,7 +62,8 @@ Or you can install directly with "panda":
 
     panda install JSON::Marshal
 
-Other install mechanisms may be become available in the future.
+I haven't tested this with "zef", but I see no reason why it shouldn't
+work or any other equally capable package management tool.
 
 ## Support
 
@@ -84,4 +75,4 @@ Suggestions/patches are welcomed via github at
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016
