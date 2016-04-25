@@ -1,0 +1,27 @@
+{
+    "name"        : "Module::Toolkit",
+    "version"     : "0.6",
+    "perl"        : "6.c",
+    "description" : "Module management tools",
+    "depends"     : [
+        "File::Find",
+        "Shell::Command",
+        "JSON::Fast",
+        "TAP::Harness"
+    ],
+    "source-url"  : "git://github.com/tadzik/Module-Toolkit.git",
+    "authors" : [
+        "Tadeusz “tadzik” Sośnierz"
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/tadzik/Module-Toolkit/issues",
+        "source" : "git://github.com/tadzik/Module-Toolkit.git"
+    },
+    "provides"    : {
+        "Module::Toolkit"               : "lib/Module/Toolkit.pm",
+        "Module::Toolkit::Fetcher"      : "lib/Module/Toolkit/Fetcher.pm",
+        "Module::Toolkit::Ecosystem"    : "lib/Module/Toolkit/Ecosystem.pm",
+        "Module::Toolkit::Installer"    : "lib/Module/Toolkit/Installer.pm",
+        "Module::Toolkit::Distribution" : "lib/Module/Toolkit/Distribution.pm"
+    }
+}
