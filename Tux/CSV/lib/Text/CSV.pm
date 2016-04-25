@@ -94,14 +94,14 @@ class IO::String is IO::Handle {
     has Str  $!str;
     has Str  @!content;
 
-    # my $fh = IO::String ($foo);
+    # my $fh = IO::String.new ($foo);
     multi method new (Str $str! is rw, *%init) {
         my \obj = self.new ($str.Str, |%init);
         obj.bind-str ($str);
         obj;
         }
 
-    # my $fh = IO::String ("foo");
+    # my $fh = IO::String.new ("foo");
     multi method new (Str $str!, *%init) {
         my \obj = self.bless;
         obj.nl-in  = $*IN.nl-in;
@@ -133,8 +133,7 @@ class IO::String is IO::Handle {
         }
 
     method get {
-        @!content or return Str;
-        shift @!content;
+        @!content ?? @!content.shift !! Str;
         }
 
     method close {
@@ -207,9 +206,7 @@ class RangeSet {
             $r.value == Inf and last;
             $max = ($max, $r.value).max.Int;
             }
-        @x.elems and return @x;
-
-        ($.min .. $.max).grep (self);
+        @x.elems ?? @x !! ($.min .. $.max).grep (self);
         }
     }
 
@@ -263,6 +260,10 @@ class CSV::Field {
 
     method Str {
         $!text;
+        }
+
+    method Buf {
+        Buf.new ($!text.encode ("utf8-c8").list);
         }
 
     method Numeric {
@@ -343,18 +344,17 @@ class CSV::Row does Iterable does Positional does Associative {
 
     multi method new (@f)  { @!fields = @f.map ({ CSV::Field.new (*) }); }
 
-    method Str             { $!csv ?? $!csv.string (@!fields) !! Str; }
-    method iterator        { @.fields.iterator; }
-    method hash            { hash $!csv.column_names Z=> @!fields».Str; }
-    method of              { return CSV::Field }
+    method Str ()          { $!csv ?? $!csv.string (@!fields) !! Str; }
+    method iterator ()     { @.fields.iterator; }
+    method hash ()         { hash $!csv.column_names Z=> @!fields».Str; }
+    method of ()           { CSV::Field; }
     method AT-KEY (Str $k) { %($!csv.column_names Z=> @!fields){$k}; }
-    method list ()         { @!fields».Str; }
-    method AT-POS (int $i) { @!fields[$i]; }
+    method strings ()      { @!fields».Str; }
+    method AT-POS (int $i) { @!fields.AT-POS ($i); }
 
     multi method push (CSV::Field $f) { @!fields.push: $f; }
     multi method push (Cool       $f) { @!fields.push: CSV::Field.new ($f); }
-    multi method push (CSV::Row   $r) { for ($r.fields) -> $f { @!fields.push: $f; }}
-#   multi method push (CSV::Row   $r) { @!fields.push: @($r.fields); }}
+    multi method push (CSV::Row   $r) { @!fields.append: $r.fields; }
 
     method pop returns CSV::Field { @!fields.pop; }
     }
@@ -509,8 +509,7 @@ class Text::CSV {
     CHECK {
         sub alias (Str:D $m, *@aka) {
             my $r := Text::CSV.^find_method ($m);
-            my $p := $r.package;
-            $p.^add_method ($_, $r) for @aka;
+            Text::CSV.^add_method ($_, $r) for @aka;
             }
 
         alias ("sep",                   < sep_char sep-char separator >);
@@ -665,7 +664,7 @@ class Text::CSV {
             }
 
         self.getline ($hdr)             or  self!fail ($!errno);
-        my @row = self.list             or  self!fail (1010);
+        my @row = self.strings          or  self!fail (1010);
         $munge-column-names ~~ Callable and @row = @row.map ($munge-column-names);
         @row.grep ("")                  and self!fail (1012);
         @row.Bag.elems == @row.elems    or  self!fail (1013);
@@ -673,13 +672,11 @@ class Text::CSV {
         self;
         }
 
-    method column_names (*@c) returns Array[Str] {
-        if (@c.elems == 1 and !@c[0].defined || (@c[0] ~~ Bool && !?@c[0])) {
-            @!cnames = ();
-            }
-        elsif (@c.elems) {
-            @!cnames = @c.map (*.Str);
-            }
+    multi method column_names (False) returns Array[Str] { @!cnames = (); }
+    multi method column_names (Any:U) returns Array[Str] { @!cnames = (); }
+    multi method column_names (0)     returns Array[Str] { @!cnames = (); }
+    multi method column_names (*@c)   returns Array[Str] {
+        @c.elems and @!cnames = @c.map (*.Str);
         @!cnames;
         }
 
@@ -776,8 +773,7 @@ class Text::CSV {
         }
 
     method error_input () returns Str {
-        $!errno or return Str;
-        $!error_input;
+        $!errno ?? $!error_input !! Str
         }
 
     method error_diag () returns CSV::Diag {
@@ -820,18 +816,18 @@ class Text::CSV {
             if ($direction) {
                 $!blank_is_undef || $!empty_is_undef or $f.add ("");
                 }
-            return self!accept-field ($f);
+            #return self!accept-field ($f);
             }
 
-        if ($f.Str eq "") {
+        elsif ($f.Str eq "") {
             $!empty_is_undef and $f.text = Str;
-            return self!accept-field ($f);
+            #return self!accept-field ($f);
             }
 
         # Postpone all other field attributes like is_binary and is_utf8
         # till it is actually asked for unless it is required right now
         # to fail
-        if (!$!binary and $f.Str ~~ m{ <[ \x00..\x08 \x0A..\x1F ]> }) {
+        elsif (!$!binary and $f.Str ~~ m{ <[ \x00..\x08 \x0A..\x1F ]> }) {
             $!error_pos     = $/.from + 1 + $f.is_quoted;
             $!errno         = $f.is_quoted ??
                  $f.Str ~~ m{<[ \r ]>} ?? 2022 !!
@@ -850,7 +846,7 @@ class Text::CSV {
         @!crange ?? ($!csv-row.fields[@!crange]:v) !! $!csv-row.fields;
         }
 
-    method list () {
+    method strings () {
         self.fields».Str.Array;
         }
 
@@ -943,10 +939,11 @@ class Text::CSV {
             }
 
         my sub chunks (Str $str, @re) {
-            $str.defined or  return ();
-            $str eq ""   and return ("");
-
-            $str.split (@re, :v, :skip-empty);
+            $str.defined
+              ?? $str.chars
+                ?? $str.split (@re, :v, :skip-empty)
+                !! ("")
+              !! ()
             }
 
         $!record_number = $!record_number + 1;
@@ -965,16 +962,13 @@ class Text::CSV {
 
         $!csv-row.fields = ();
 
-        my sub keep () {
-            self!ready (1, $f) or return False;
-            $f = CSV::Field.new;
-            True;
+        my sub keep () returns Bool {
+            self!ready (1, $f) ?? !($f = CSV::Field.new) !! False;
             } # add
 
         my sub parse_done () {
             self!ready (1, $f) or return False;
-            %!callbacks<after_parse>.defined and
-                %!callbacks<after_parse>.($!csv-row);
+            .($!csv-row) with %!callbacks<after_parse>;
             True;
             }
 
@@ -1288,8 +1282,11 @@ class Text::CSV {
         } # getline_hr
 
     multi method getline (Str $str, Bool :$meta = $!keep_meta) {
-        self.parse ($str) or return ();
-        $meta ?? self.fields !! self.list;
+        self.parse ($str)
+          ?? $meta
+            ?? self.fields
+            !! self.strings
+          !! Nil;
         } # getline
 
     multi method getline (IO:D $io, Bool :$meta = $!keep_meta) {
@@ -1302,7 +1299,7 @@ class Text::CSV {
         $!io      =  IO;
         $io.nl-in = $nl;
         $io.chomp = $chomped;
-        $status ?? $meta ?? self.fields !! self.list !! ();
+        $status ?? $meta ?? self.fields !! self.strings !! ();
         } # getline
 
     method getline_hr_all (IO:D  $io,
@@ -1314,7 +1311,7 @@ class Text::CSV {
         }
 
     method !row (Bool:D $meta, Bool:D $hr) {
-        my @row = $meta ?? self.fields !! self.list;
+        my @row = $meta ?? self.fields !! self.strings;
         $hr or return $[ @row ];
 
         my @cn = (@!crange ?? @!cnames[@!crange] !! @!cnames);
@@ -1739,7 +1736,7 @@ class Text::CSV {
             $!csv-row.fields = $row[0] ~~ CSV::Field
                 ?? $row
                 !! $row.map ({ CSV::Field.new.add ($_.Str); });
-            my @row = $meta ?? self.fields !! self.list;
+            my @row = $meta ?? self.fields !! self.strings;
             my $r = (@h.elems == 0 || @row[0] ~~ Hash)
                 ?? @row
                 !! $%( @h Z=> @row );

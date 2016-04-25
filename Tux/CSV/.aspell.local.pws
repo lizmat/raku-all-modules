@@ -5,6 +5,7 @@ ASV
 attr
 bc
 BOM
+Buf
 ChangeLog
 colrange
 csvdiff
@@ -33,6 +34,7 @@ IANA
 INI
 jcsv
 multi
+munge
 ness
 NL
 NYI
