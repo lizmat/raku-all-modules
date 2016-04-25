@@ -1,6 +1,14 @@
 Revision history for Term::Choose::Util
 
 
+0.011   2016-04-12
+        - Update documentation
+
+0.010   2016-04-07
+        - Check options
+        - Code refactoring
+        - Update documentation
+
 0.009   2016-03-17
         - Fixed source-url in META6.json
 

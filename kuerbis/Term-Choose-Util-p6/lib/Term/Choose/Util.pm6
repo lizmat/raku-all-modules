@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose::Util;
 
-my $VERSION = '0.009';
+my $VERSION = '0.011';
 
 use Term::Choose;
 use Term::Choose::NCurses :all;
@@ -17,16 +17,84 @@ sub _ncurses_win {
 }
 
 
+sub _prepare_options ( %opt, %valid, %defaults ) {
+    for %opt.kv -> $key, $value {
+        when %valid{$key}:!exists {
+            die "'$key' is not a valid option name";
+        }
+        when ! $value.defined {
+            next;
+        }
+        when %valid{$key} eq 'Array' {
+            die "$key => not an ARRAY reference." if ! $value.isa( Array );
+        }
+        when %valid{$key} eq 'Str' {
+            die "$key => not a string." if ! $value.isa( Str );
+        }
+        when $value !~~ / ^ <{%valid{$key}}> $ / {
+            die "$key => '$value' is not a valid value.";
+        }
+    }
+    my %o;
+    for %valid.keys -> $key {
+        %o{$key} = %opt{$key} // %defaults{$key};
+    }
+    return %o;
+}
+
+
+sub _path_valid_opt ( %added_opt? ) {
+    my %valid_options = (
+        mouse       => '<[ 0 1 ]>',
+        order       => '<[ 0 1 ]>',
+        show_hidden => '<[ 0 1 ]>',
+        enchanted   => '<[ 0 1 2 ]>',
+        justify     => '<[ 0 1 2 ]>',
+        layout      => '<[ 0 1 2 ]>',
+        dir         => 'Str',
+        %added_opt,
+    );
+    return %valid_options;
+};
+
+
+sub _path_defaults ( %added_defaults? ) {
+    my %defaults = (
+        mouse       => 0,
+        order       => 1,
+        show_hidden => 1,
+        enchanted   => 1,
+        justify     => 0,
+        layout      => 1,
+        dir         => $*HOME,
+        %added_defaults,
+    );
+    return %defaults;
+};
+
+sub _my_array_gist ( @array ) {
+    return @array.map( { '"' ~ .gist ~ '"' } ).join( ' ' ) ~ ']';
+}
+
+
 sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
-    my %o = _prepare_opt_choose_path( %opt );
+    my %o = _prepare_options( 
+        %opt,
+        _path_valid_opt( { current => 'Array' } ),
+        _path_defaults(  { current => [] } )
+    );
     my @chosen_dirs;
-    my IO::Path $dir = %o<dir>;
+    my IO::Path $dir = %o<dir>.IO;
     my IO::Path $previous = $dir;
-    my @pre = ( Any, %o<confirm>, %o<add_dir>, %o<up> );
+    my $back    = ' < ';
+    my $confirm = ' = ';
+    my $add_dir = ' . ';
+    my $up      = ' .. ';
+    my @pre = ( Any, $confirm, $add_dir, $up );
     my Int $default_idx = %o<enchanted> ?? @pre.end !! 0;
     my $win = _ncurses_win();
     my $tc = Term::Choose.new(
-        { undef => %o<back>, mouse => %o<mouse>, justify => %o<justify>, layout => %o<layout>, order => %o<order> },
+        { undef => $back, mouse => %o<mouse>, justify => %o<justify>, layout => %o<layout>, order => %o<order> },
         $win
     );
 
@@ -53,16 +121,16 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
         my Int $len_key;
         my Str $prompt;
         $prompt ~= %o<prompt> ~ "\n" if %o<prompt>;
-        my Str $current = 'Current';
-        my Str $new     = 'New';
+        my Str $key_curr = 'Current [';
+        my Str $key_new  =     'New [';
         if %o<current>.defined {
-            $len_key = $current.chars > $new.chars ?? $current.chars !! $new.chars;
-            $prompt ~= sprintf "%*s: %s\n",   $len_key, 'Current', %o<current>.map( { "\"$_\"" } ).join( ', ' );
-            $prompt ~= sprintf "%*s: %s\n\n", $len_key, 'New',    @chosen_dirs.map( { "\"$_\"" } ).join( ', ' );
+            $len_key = max $key_curr.chars, $key_new.chars;
+            $prompt ~= sprintf "%*s%s\n",   $len_key, $key_curr, _my_array_gist( %o<current> );
+            $prompt ~= sprintf "%*s%s\n\n", $len_key, $key_new,  _my_array_gist( [ @chosen_dirs.map( { $_.Str } ) ] );
         }
         else {
-            $len_key = $new.chars;
-            $prompt ~= sprintf "%*s: %s\n\n", $len_key, 'New', @chosen_dirs.map( { "\"$_\"" } ).join( ', ' );
+            $len_key = $key_new.chars;
+            $prompt ~= sprintf "%*s %s\n\n", $len_key, $key_new, _my_array_gist( [ @chosen_dirs.map( { $_.Str } ) ] );
         }
         my Str $key_cwd = 'pwd: ';
         $prompt  = line_fold( $prompt,              getmaxx( $win ), '', ' ' x $len_key       );
@@ -81,58 +149,22 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
             @chosen_dirs = Empty;
             next;
         }
-        $default_idx = %o<enchanted>  ?? @pre.end !! 0;
-        if $choice eq %o<confirm> {
+        $default_idx = %o<enchanted> ?? @pre.end !! 0;
+        if $choice eq $confirm {
             endwin();
             return @chosen_dirs;
         }
-        elsif $choice eq %o<add_dir> {
+        elsif $choice eq $add_dir {
             @chosen_dirs.push( $previous );
             $dir = $dir.dirname.IO;
             $default_idx = 0 if $previous eq $dir;
             $previous = $dir;
             next;
         }
-        $dir = $choice eq %o<up> ?? $dir.dirname.IO !! $choice.IO;
+        $dir = $choice eq $up ?? $dir.dirname.IO !! $choice.IO;
         $default_idx = 0 if $previous eq $dir;
         $previous = $dir;
     }
-}
-
-
-sub _prepare_opt_choose_path ( %opt ) {
-    my IO::Path $dir = %opt<dir>.defined ?? %opt<dir>.IO !! $*HOME;
-    if ! $dir.d && $dir ne $*HOME {
-         my Str $prompt = "Could not find the directory \"$dir\". Falling back to the home directory.";
-         pause( [ 'Press ENTER to continue' ], { prompt => $prompt } );
-         $dir = $*HOME;
-    }
-    die "Could not find the home directory \"$dir\"" if ! $dir.d;
-    my %defaults = (
-        show_hidden  => 1,
-        mouse        => 0,
-        layout       => 1,
-        order        => 1,
-        justify      => 0,
-        enchanted    => 1,
-        confirm      => ' = ',
-        add_dir      => ' . ',
-        up           => ' .. ',
-        file         => ' >F ',
-        back         => ' < ',
-        #dir         => Str,
-        #current      => Any,
-        #prompt       => Any,
-    );
-    #for my %opt ( keys %%opt ) {
-    #    die "%opt: invalid option!" if ! exists %defaults->{%opt};
-    #}
-    my %o;
-    %o<dir> = $dir;
-    for %defaults.keys -> $key {
-        %o{$key} = %opt{$key} // %defaults{$key};
-    }
-    return %o;
 }
 
 
@@ -145,18 +177,26 @@ sub choose_a_file ( %opt? --> IO::Path ) is export( :MANDATORY ) {
 }
 
 sub _choose_a_path ( %opt, Int $is_a_file --> IO::Path ) {
-    my %o = _prepare_opt_choose_path( %opt );
+    my %o = _prepare_options( 
+        %opt, 
+        _path_valid_opt( $is_a_file ?? {} !! { current => 'Str' } ),
+        _path_defaults(  $is_a_file ?? {} !! { current => '' } ),
+    );
+    my $back        = ' < ';
+    my $confirm     = ' = ';
+    my $up          = ' .. ';
+    my $select_file = ' >F ';
     my @pre;
     @pre[0] = Any;
-    @pre[1] = $is_a_file ?? %o<file> !! %o<confirm>;
-    @pre[2] = %o<up>;
-    my Int $default_idx   = %o<enchanted>  ?? 2 !! 0;
-    my Str $curr          = %o<current> // Str;
-    my IO::Path $dir      = %o<dir>;
+    @pre[1] = $is_a_file ?? $select_file !! $confirm;
+    @pre[2] = $up;
+    my Int $default_idx = %o<enchanted>  ?? 2 !! 0;
+    my Str $curr        = %o<current> // Str;
+    my IO::Path $dir      = %o<dir>.IO;
     my IO::Path $previous = $dir;
     my $win = _ncurses_win();
     my $tc = Term::Choose.new(
-        { undef => %o<back>, mouse => %o<mouse>, justify => %o<justify>, layout => %o<layout>, order => %o<order> },
+        { undef => $back, mouse => %o<mouse>, justify => %o<justify>, layout => %o<layout>, order => %o<order> },
         $win
     );
 
@@ -197,17 +237,17 @@ sub _choose_a_path ( %opt, Int $is_a_file --> IO::Path ) {
             endwin();
             return;
         }
-        elsif $choice eq %o<confirm> {
+        elsif $choice eq $confirm {
             endwin();
             return $previous;
         }
-        elsif $choice eq %o<file> {
+        elsif $choice eq $select_file {
             my IO::Path $file = _a_file( %o, $dir, $tc ) // IO::Path;
             next if ! $file.defined; ###
             endwin();
             return $file;
         }
-        if $choice eq %o<up> {
+        if $choice eq $up {
             $dir = $dir.dirname.IO;
         }
         else {
@@ -254,14 +294,21 @@ sub _a_file ( %o, IO::Path $dir, $tc --> IO::Path ) {
 }
 
 
-
-
 sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
-    my Str $sep     = %opt<thsd_sep>                    // ',';
-    my Str $current = insert_sep( %opt<current>, $sep ) // Str;
-    my Str $name    = %opt<name>                        // '';
-    my Int $mouse   = %opt<mouse>                       // 0;
-    #-------------------------------------------#
+    my %o = _prepare_options(
+        %opt,
+        {   mouse    => '<[ 0 1 ]>',
+            current  => '<[ 0 .. 9 ]>+',
+            name     => 'Str',
+            thsd_sep => 'Str',
+        },
+        {   mouse    => 0,
+            current  => Int,
+            name     => '',
+            thsd_sep => ',',
+        }
+    );
+    my Str $sep = %o<thsd_sep>;
     my Int $longest = $digits + ( $sep eq '' ?? 0 !! ( $digits - 1 ) div 3 );
     my Str $tab     = '  -  ';
     my Str $confirm = 'CONFIRM';
@@ -290,24 +337,24 @@ sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
     my Int %numbers;
     my Str $result;
     my Str $undef = '--';
-    $name = ' ' ~ $name if $name;
+    my $name = %o<name> ?? ' ' ~ %o<name> !! '';
     my $fmt_cur = "Current{$name}: %{$longest}s\n";
     my $fmt_new = "    New{$name}: %{$longest}s\n";
     my $tc = Term::Choose.new(
-        { mouse => %opt<mouse> },
+        { mouse => %o<mouse> },
         $win
     );
 
     NUMBER: loop {
         my Str $new_number = $result // $undef;
         my Str $prompt;
-        if $current.defined {
+        if %o<current>.defined {
             if print_columns( sprintf $fmt_cur, 1 ) <= getmaxx( $win ) {
-                $prompt  = sprintf $fmt_cur, $current;
+                $prompt  = sprintf $fmt_cur, insert_sep( %o<current>, $sep );
                 $prompt ~= sprintf $fmt_new, $new_number;
             }
             else {
-                $prompt  = sprintf "%{$longest}s\n", $current;
+                $prompt  = sprintf "%{$longest}s\n", insert_sep( %o<current>, $sep );
                 $prompt ~= sprintf "%{$longest}s\n", $new_number;
             }
         }
@@ -376,39 +423,52 @@ sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
 
 
 sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
-    my Int $index   = %opt<index>   // 0;
-    my Int $mouse   = %opt<mouse>   // 0;
-    my Int $layout  = %opt<layout>  // 2;
-    my Int $order   = %opt<order>   // 1;
-    my Str $prefix  = %opt<prefix>  // ( $layout == 2 ?? '- ' !! '' );
-    my Int $justify = %opt<justify> // 0;
-    my Str $prompt  = %opt<prompt>  // 'Choose:';
-    my     @current = %opt<current> // Empty;
-    #--------------------------------------#
+    my %o = _prepare_options(
+        %opt,
+        {   index     => '<[ 0 1 ]>',
+            mouse     => '<[ 0 1 ]>',
+            order     => '<[ 0 1 ]>',
+            justify   => '<[ 0 1 2 ]>',
+            layout    => '<[ 0 1 2 ]>',
+            current   => 'Array',
+            prefix    => 'Str',
+            prompt    => 'Str',
+        },
+        {   index   => 0,
+            mouse   => 0,
+            order   => 1,
+            justify => 0,
+            layout  => 2,
+            current => [],
+            prefix  => Str,
+            prompt  => 'Choose:',
+        }
+    );
+    my Str $prefix  = %o<prefix> // ( %o<layout> == 2 ?? '- ' !! '' );
     my Str $confirm = 'CONFIRM';
     my Str $back    = 'BACK';
     if $prefix.chars {
         $confirm = ( ' ' x $prefix.chars ) ~ $confirm;
         $back    = ( ' ' x $prefix.chars ) ~ $back;
     }
-    my Str $key_cur = 'Current > ';
-    my Str $key_new = '    New > ';
-    my Int $len_key = $key_cur.chars > $key_new.chars ?? $key_cur.chars !! $key_new.chars;
+    my Str $key_cur = 'Current [';
+    my Str $key_new = '    New [';
+    my Int $len_key = max $key_cur.chars, $key_new.chars;
     my @new_idx;
     my @new_val;
     my @pre = ( Any, $confirm );
     my $win = _ncurses_win();
     my $tc = Term::Choose.new(
-        { layout => $layout, mouse => $mouse, justify => $justify, order => $order,
+        { layout => %o<layout>, mouse => %o<mouse>, justify => %o<justify>, order => %o<order>,
           no_spacebar => [ 0 .. @pre.end ], undef => $back, lf => [ 0, $len_key ] },
         $win
     );
 
     loop {
         my Str $lines = '';
-        $lines ~= $key_cur ~ @current.join( ', ' ).map( { "\"$_\"" } ) ~ "\n"   if @current.elems;
-        $lines ~= $key_new ~ @new_val.join( ', ' ).map( { "\"$_\"" } ) ~ "\n\n";
-        $lines ~= $prompt;
+        $lines ~= $key_cur ~ _my_array_gist( %o<current> ) ~ "\n"   if %o<current>;
+        $lines ~= $key_new ~ _my_array_gist(    @new_val ) ~ "\n\n";
+        $lines ~= %o<prompt>;
         my Str @avail_with_prefix = @available.map( { $prefix ~ $_ } );
         # Choose
         my Int @idx = $tc.choose_multi(
@@ -428,10 +488,10 @@ sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
         }
         if @idx[0] == 1 {
             @idx.shift;
-            @new_val.append( @available[@idx >>->> @pre.elems] ); # map
+            @new_val.append( @available[@idx >>->> @pre.elems] );
             @new_idx.append( @idx >>->> @pre.elems );
             endwin();
-            return $index ?? @new_idx !! @new_val;
+            return %o<index> ?? @new_idx !! @new_val;
         }
         @new_val.append( @available[@idx >>->> @pre.elems] );
         @new_idx.append( @idx >>->> @pre.elems );
@@ -462,10 +522,17 @@ my $changed = settings_menu( @menu, %config, { in_place => 1 } );
 >>>
 
 sub settings_menu ( @menu, %setup, %opt? ) is export( :all ) {
-    my Str $prompt   = %opt<prompt>   // 'Choose:';
-    my Int $in_place = %opt<in_place> // 1;
-    my Int $mouse    = %opt<mouse>    // 0;
-    #-------------------------------------#
+    my %o = _prepare_options(
+        %opt,
+        {   in_place => '<[ 0 1 ]>',
+            mouse    => '<[ 0 1 ]>',
+            prompt   => 'Str',
+        },
+        {   in_place => 1,
+            mouse    => 0,
+            prompt   => 'Choose:',
+        }
+    );
     my Str $confirm = '  CONFIRM';
     my Str $back    = '  BACK';
     my Int $name_w = 0;
@@ -477,12 +544,12 @@ sub settings_menu ( @menu, %setup, %opt? ) is export( :all ) {
         %setup{$key} //= 0;
         %new_setup{$key} = %setup{$key};
     }
-    my $no_change = %opt<in_place> ?? 0 !! {};
+    my $no_change = %o<in_place> ?? 0 !! {};
     my $count = 0;
     my $win = _ncurses_win();
     my $tc = Term::Choose.new(
-        { prompt => $prompt, layout => 2, justify => 0, 
-          mouse => $mouse, undef => $back },
+        { prompt => %o<prompt>, layout => 2, justify => 0, 
+          mouse => %o<mouse>, undef => $back },
         $win
     );
 
@@ -517,7 +584,7 @@ sub settings_menu ( @menu, %setup, %opt? ) is export( :all ) {
                     if %setup{$key} == %new_setup{$key} {
                         next;
                     }
-                    if $in_place {
+                    if %o<in_place> {
                         %setup{$key} = %new_setup{$key};
                     }
                     $change++;
@@ -525,7 +592,7 @@ sub settings_menu ( @menu, %setup, %opt? ) is export( :all ) {
             }
             endwin();
             return $no_change if ! $change;
-            return 1          if $in_place;
+            return 1          if %o<in_place>;
             return %new_setup;
         }
         my Str   $key          = @menu[$idx-@pre][0];
@@ -559,6 +626,7 @@ sub insert_sep ( $num, $sep = ' ' ) is export( :all ) {
     if $num !~~ / ^ <sign>? <int> <rest>? $ / {
         return $num;
     }
+    #while $num.=subst( / ^ ( -? \d+ ) ( \d\d\d ) /, "$0$sep$1" ) {};
     my $new = $<sign> // '';
     $new   ~= $<int>.flip.comb( / . ** 1..3 / ).join( $sep ).flip;
     $new   ~= $<rest> // '';
@@ -566,28 +634,45 @@ sub insert_sep ( $num, $sep = ' ' ) is export( :all ) {
 }
 
 sub print_hash ( %hash, %opt? ) is export( :all ) {
-    my Int $left_margin  = %opt<left_margin>  // 1;
-    my Int $right_margin = %opt<right_margin> // 2;
-    my Str @keys         = %opt<keys>         // %hash.keys.sort;
-    my Int $key_w        = %opt<len_key>      // @keys.map( { print_columns $_ } ).max;
-    my Int $maxcols      = %opt<maxcols>      // Int;
-    my Int $mouse        = %opt<mouse>        // 0;
-    my Str $preface      = %opt<preface>      // Str;
-    my Str $prompt       = %opt<prompt>       // ( $preface.defined  ?? '' !! 'Close with ENTER' );
-    #-----------------------------------------------------------------#
     my $win = _ncurses_win();
-    if ! $maxcols || $maxcols > getmaxx( $win ) {
-        $maxcols = getmaxx( $win ) - $right_margin; #
+    my %o = _prepare_options(
+        %opt,
+        {   mouse        => '<[ 0 1 ]>',
+            len_key      => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
+            maxcols      => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
+            left_margin  => '<[ 0 .. 9 ]>+',
+            right_margin => '<[ 0 .. 9 ]>+',
+            keys         => 'Array',
+            preface      => 'Str',
+            prompt       => 'Str',
+        },
+        {   mouse        => 0,
+            len_key      => Int,
+            maxcols      => getmaxx( $win ),
+            left_margin  => 0, #
+            right_margin => 0, #
+            keys         => Array,
+            preface      => Str,
+            prompt       => Str,
+            
+        }
+    );
+    my Str @keys    = %o<keys>     // %hash.keys.sort;
+    my Int $key_w   = %o<len_key>  // @keys.map( { print_columns $_ } ).max;
+    my Str $prompt  = %opt<prompt> // ( %o<preface>.defined  ?? '' !! 'Close with ENTER' );
+    my Int $maxcols = %o<maxcols>;
+    if $maxcols > getmaxx( $win ) {
+        $maxcols = getmaxx( $win ) - %o<right_margin>; #
     }
-    $key_w += $left_margin;
+    $key_w += %o<left_margin>;
     my Str $sep   = ' : ';
     my Int $sep_w = $sep.chars;
     if $key_w + $sep_w > $maxcols div 3 * 2 {
         $key_w = $maxcols div 3 * 2 - $sep_w;
     }
     my Str @vals;
-    if $preface.defined {
-        @vals.append( line_fold( $preface, $maxcols, '', '' ).lines );
+    if %o<preface>.defined {
+        @vals.append( line_fold( %o<preface>, $maxcols, '', '' ).lines );
     }
     for @keys -> $key {
         if %hash{$key}:!exists {
@@ -604,7 +689,7 @@ sub print_hash ( %hash, %opt? ) is export( :all ) {
     );
     $tc.pause(
         @vals,
-        { prompt => $prompt, layout => 2, justify => 0, mouse => $mouse, empty => ' ' }
+        { prompt => $prompt, layout => 2, justify => 0, mouse => %o<mouse>, empty => ' ' }
     );
     endwin();
 }
@@ -643,7 +728,7 @@ Term::Choose::Util - CLI related functions.
 
 =head1 VERSION
 
-Version 0.009
+Version 0.011
 
 =head1 DESCRIPTION
 
@@ -682,8 +767,7 @@ If set, C<choose_a_dir> shows I<current> as the current directory.
 
 =item1 dir
 
-Set the starting point directory. Defaults to the home directory or the current working directory if the home directory
-cannot be found.
+Set the starting point directory. Defaults to the home directory (C<$*HOME>).
 
 =item1 enchanted
 
@@ -710,7 +794,7 @@ Values: 0,[1],2.
 
 See the option I<mouse> in L<Term::Choose|https://github.com/kuerbis/Term-Choose-p6>
 
-Values: [0],1,2.
+Values: [0],1.
 
 =item1 order
 
@@ -750,11 +834,8 @@ I<current>.
 
 C<choose_dirs> is similar to C<choose_a_dir> but it is possible to return multiple directories.
 
-Different to C<choose_a_dir>:
-
-"C< . >" adds the current directory to the list of chosen directories.
-
-To return the chosen list of directories select the "confirm"-menu-entry "C< = >".
+"C< . >" adds the current directory to the list of chosen directories and "C< = >" returns the chosen list of
+directories.
 
 The "back"-menu-entry ( "C< E<lt> >" ) resets the list of chosen directories if any. If the list of chosen directories
 is empty, "C< E<lt> >" causes C<choose_dirs> to return nothing.
@@ -782,7 +863,7 @@ The optional second argument is a hash with these keys (options):
 
 =item1 current
 
-The current value. If set, two prompt lines are displayed - one for the current number and one for the new number.
+The current value (integer). If set, two prompt lines are displayed - one for the current number and one for the new number.
 
 =item1 name
 
@@ -794,7 +875,7 @@ Default: empty string ("");
 
 See the option I<mouse> in L<Term::Choose|https://github.com/kuerbis/Term-Choose-p6>
 
-Values: [0],1,2.
+Values: [0],1.
 
 =item1 thsd_sep
 
@@ -844,7 +925,7 @@ Values: 0,1,[2].
 
 See the option I<mouse> in L<Term::Choose|https://github.com/kuerbis/Term-Choose-p6>
 
-Values: [0],1,2.
+Values: [0],1.
 
 =item1 order
 

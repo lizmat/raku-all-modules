@@ -8,7 +8,7 @@ Term::Choose::Util - CLI related functions.
 VERSION
 =======
 
-Version 0.009
+Version 0.011
 
 DESCRIPTION
 ===========
@@ -45,7 +45,7 @@ If set, `choose_a_dir` shows *current* as the current directory.
 
   * dir
 
-Set the starting point directory. Defaults to the home directory or the current working directory if the home directory cannot be found.
+Set the starting point directory. Defaults to the home directory (`$*HOME`).
 
   * enchanted
 
@@ -71,7 +71,7 @@ Values: 0,[1],2.
 
 See the option *mouse* in [Term::Choose](https://github.com/kuerbis/Term-Choose-p6)
 
-Values: [0],1,2.
+Values: [0],1.
 
   * order
 
@@ -103,11 +103,7 @@ choose_dirs
 
 `choose_dirs` is similar to `choose_a_dir` but it is possible to return multiple directories.
 
-Different to `choose_a_dir`:
-
-"`. `" adds the current directory to the list of chosen directories.
-
-To return the chosen list of directories select the "confirm"-menu-entry "`= `".
+"`. `" adds the current directory to the list of chosen directories and "`= `" returns the chosen list of directories.
 
 The "back"-menu-entry ( "`E<lt> `" ) resets the list of chosen directories if any. If the list of chosen directories is empty, "`E<lt> `" causes `choose_dirs` to return nothing.
 
@@ -129,7 +125,7 @@ The optional second argument is a hash with these keys (options):
 
   * current
 
-The current value. If set, two prompt lines are displayed - one for the current number and one for the new number.
+The current value (integer). If set, two prompt lines are displayed - one for the current number and one for the new number.
 
   * name
 
@@ -141,7 +137,7 @@ Default: empty string ("");
 
 See the option *mouse* in [Term::Choose](https://github.com/kuerbis/Term-Choose-p6)
 
-Values: [0],1,2.
+Values: [0],1.
 
   * thsd_sep
 
@@ -186,7 +182,7 @@ Values: 0,1,[2].
 
 See the option *mouse* in [Term::Choose](https://github.com/kuerbis/Term-Choose-p6)
 
-Values: [0],1,2.
+Values: [0],1.
 
   * order
 
