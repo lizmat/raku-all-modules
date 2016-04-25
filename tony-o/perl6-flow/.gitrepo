@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tony-o/perl6-flow.git
+	branch = master
+	commit = da411cdf54aa0ac3b7d32b960769526723b1375b
+	parent = de9cd35fad68df65fbbc26b88adba91a172aa280
+	cmdver = 0.2.3

@@ -1,0 +1,28 @@
+{
+  "name" : "flow",
+  "support" : {
+    "bugtracker" : "https://github.com/tony-o/perl6-flow/issues"
+  },
+  "perl" : "6.c",
+  "provides" : {
+    "Flow": "lib/Flow.pm6",
+    "Flow::Plugins::Interface": "lib/Flow/Plugins/Interface.pm6",
+    "Flow::App": "lib/Flow/App.pm6",
+    "Flow::Config": "lib/Flow/Config.pm6",
+    "Flow::Roles": "lib/Flow/Roles.pm6",
+    "Flow::Test": "lib/Flow/Test.pm6",
+    "Flow::Utils::Cursor": "lib/Flow/Utils/Cursor.pm6",
+    "Flow::Plugins::TAP": "lib/Flow/Plugins/TAP.pm6"
+  },
+  "depends": [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "description" : "a 'prove' replacement written entirely in the perl6 you know and love.",
+  "source-url"  : "git://github.com/tony-o/perl6-flow.git",
+  "authors": [
+    "Tony O'Dell"
+  ],
+  "auth": "github:tony-o",
+  "version" : "v0.0.1"
+}
