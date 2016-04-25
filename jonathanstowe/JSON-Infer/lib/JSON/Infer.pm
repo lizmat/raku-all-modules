@@ -213,10 +213,10 @@ This returns a suitable string representation of the attribute for Perl.
 
 =end pod
 
-use JSON::Tiny;
+use JSON::Fast;
 use HTTP::UserAgent;
 
-class JSON::Infer:ver<0.0.9>:auth<github:jonathanstowe> {
+class JSON::Infer:ver<0.0.10>:auth<github:jonathanstowe> {
 
     
     role Classes        { ... }

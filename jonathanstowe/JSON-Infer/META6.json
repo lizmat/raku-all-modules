@@ -16,7 +16,7 @@
      "JSON::Infer"                : "lib/JSON/Infer.pm"
   },
   "depends" : [ 
-    "JSON::Tiny", 
+    "JSON::Fast", 
     "HTTP::UserAgent", 
     "JSON::Class", 
     "JSON::Name" 
@@ -26,5 +26,5 @@
     "Test::META"
   ],
   "description" : "Infer Perl 6 Classes from JSON input",
-  "version" : "0.0.9"
+  "version" : "0.0.10"
 }

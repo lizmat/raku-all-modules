@@ -1,9 +1,9 @@
 #!perl6
-use v6;
+
+use v6.c;
 use Test;
 
-use JSON::Tiny;
-
+use JSON::Fast;
 use JSON::Infer;
 
 
