@@ -1,0 +1,20 @@
+{
+  "name" : "HTML::MyHTML",
+  "source-url" : "git://github.com/madcapjake/p6-myhtml.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "HTML::MyHTML::Raw"      : "lib/HTML/MyHTML/Raw.pm6",
+    "HTML::MyHTML::Tag"      : "lib/HTML/MyHTML/Tag.pm6",
+    "HTML::MyHTML::Encoding" : "lib/HTML/MyHTML/Encoding.pm6",
+    "HTML::MyHTML"           : "lib/HTML/MyHTML.pm6"
+  },
+  "depends" : [ ],
+  "description" : "wrapper for MyHTML, a fast HTML parsing C library",
+  "test-depends" : [ ],
+  "version" : "0.3.0",
+  "authors" : [
+    "Jake Russo"
+  ]
+}
