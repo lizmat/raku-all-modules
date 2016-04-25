@@ -12,7 +12,6 @@ my $mm = IO::MiddleMan.hijack: $fh;
 
 throws-like { $mm.mode = 'not right' },
     Exception, 'incorrect mode must fail',
-    message => 'Type check failed in assignment to $!mode; '
-        ~ 'expected IO::MiddleMan::ValidMode but got Str';
+    message => /'Type check failed in assignment to $!mode; expected IO::MiddleMan::ValidMode but got Str'/;
 
 done-testing;
