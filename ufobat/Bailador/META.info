@@ -1,0 +1,46 @@
+{
+    "name"        : "Bailador",
+    "version"     : "*",
+    "perl"        : "6.c",
+    "description" : "A bare-bones Dancer port",
+    "depends"     : [ "HTTP::Easy", "Template::Mojo", "Template::Mustache", "URI", "Digest::HMAC", "Digest" ],
+    "provides" : {
+        "Bailador"                                : "lib/Bailador.pm",
+        "Bailador::App"                           : "lib/Bailador/App.pm",
+        "Bailador::Context"                       : "lib/Bailador/Context.pm",
+        "Bailador::Exceptions"                    : "lib/Bailador/Exceptions.pm",
+        "Bailador::Request"                       : "lib/Bailador/Request.pm",
+        "Bailador::Response"                      : "lib/Bailador/Response.pm",
+        "Bailador::Route"                         : "lib/Bailador/Route.pm",
+        "Bailador::Sessions"                      : "lib/Bailador/Sessions.pm",
+        "Bailador::Sessions::Config"              : "lib/Bailador/Sessions/Config.pm",
+        "Bailador::Sessions::Store"               : "lib/Bailador/Sessions/Store.pm",
+        "Bailador::Sessions::Store::Memory"       : "lib/Bailador/Sessions/Store/Memory.pm",
+        "Bailador::Template"                      : "lib/Bailador/Template.pm",
+        "Bailador::Template::Mojo"                : "lib/Bailador/Template/Mojo.pm",
+        "Bailador::Template::Mustache"            : "lib/Bailador/Template/Mustache.pm",
+        "Bailador::Test"                          : "lib/Bailador/Test.pm",
+        "Bailador::ContentTypes"                  : "lib/Bailador/ContentTypes.pm"
+    },
+    "authors" : [
+        "Tadeusz “tadzik” Sośnierz",
+        "Anthony Parsons",
+        "Carl Masak",
+        "Gabor Szabo",
+        "GlitchMr",
+        "Moritz Lenz",
+        "Panu Ervamaa",
+        "Paul Cochrane",
+        "Solomon Foster",
+        "Sterling Hanenkamp",
+        "Tobias Leich",
+        "ugexe",
+        "vendethiel",
+        "Martin Barth (ufobat) "
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/ufobat/Bailador/issues",
+        "source" : "git://github.com/ufobat/Bailador.git"
+    },
+    "source-url"  : "git://github.com/ufobat/Bailador.git"
+}
