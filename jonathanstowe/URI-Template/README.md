@@ -23,17 +23,7 @@ definition of a URI through variable expansion.
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+install this with *panda* :
 
     # From the source directory
    
@@ -43,11 +33,11 @@ Or you can install directly with "panda":
 
     panda install URI::Template
 
-Other install mechanisms may be become available in the future.
+I haven't tested this with "zef" but I see no reason why it shouldn't work.
 
 ## Support
 
-However suggestions/patches are welcomed via github at
+Suggestions/patches are welcomed via github at
 
    https://github.com/jonathanstowe/URI-Template
 
@@ -59,9 +49,9 @@ expected output.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+Please see the LICENSE file in the distribution
 
-(C) Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016
 
 The testing uses the test data from https://github.com/uri-templates/uritemplate-test
 please see the README.md in the t/data/uritemplate-test for the license for that project.
