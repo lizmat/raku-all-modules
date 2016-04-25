@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Emeric54/p6-text-caesar.git
+	branch = master
+	commit = f71a16ed560b0976eb0a4f435cac4d9f278bd847
+	parent = ce73c1d037e6b06470e01214b0a2c6304dd06c5d
+	cmdver = 0.2.3
