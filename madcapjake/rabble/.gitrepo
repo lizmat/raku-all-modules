@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/madcapjake/rabble.git
+	branch = master
+	commit = 9b2f8cc97e2f2ab113ea4ed6420772e12c679c6f
+	parent = 81587bf5a8adc1d3cc4e1665ad65b330cc00a94a
+	cmdver = 0.2.3

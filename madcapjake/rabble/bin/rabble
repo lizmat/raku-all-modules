@@ -1,0 +1,25 @@
+#!/usr/bin/env perl6
+use v6.c;
+use lib 'lib';
+use Rabble;
+
+multi sub MAIN(Str $expr, Bool :expression(:$e)!, Bool :debug(:$d)) {
+  my $*DEBUG = $d.so;
+  my Rabble $rabble .= new;
+  $rabble.run($expr)
+}
+
+multi sub MAIN(Str $file, Bool :debug(:$d)) {
+  die "File '$file' does not exist" unless $_.?IO.f;
+  die "File '$file' is not a Rabble file (*.rbl)" unless $_.IO.extension eq 'rbl';
+  my $*DEBUG = $d.so;
+  my Rabble $rabble .= new;
+  $rabble.run(slurp $file)
+}
+
+multi sub MAIN(Bool :repl(:$r)!) {
+  say "Rabble {Rabble.^ver} REPL";
+  say "[$*PERL on $*VM] on $*KERNEL $*DISTRO";
+  my Rabble $rabble .= new; my Str $expr;
+  while ($expr = prompt("» ")) { $rabble.run: $expr }
+}
