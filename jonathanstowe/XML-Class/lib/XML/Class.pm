@@ -1165,27 +1165,31 @@ role XML::Class[Str :$xml-namespace, Str :$xml-namespace-prefix, Str :$xml-eleme
     # first and then call the one with a specific
     # attribute with the string representation
 
+    
     multi sub serialise($val, SerialiseX $a) {
         my $str = $a.serialise($val);
         serialise($str, $a);
     }
 
-    multi sub serialise(Bool $val, Attribute $a) {
+
+    my subset DoA of Attribute where { $_ !~~ SerialiseX };
+
+    multi sub serialise(Bool $val, DoA $a) {
         my $str = $val ?? 'true' !! 'false';
         serialise($str, $a);
     }
 
-    multi sub serialise(Real $val, Attribute $a) {
+    multi sub serialise(Real $val, DoA $a) {
         my $v = $val.defined ?? $val.Str !! '';
         serialise($v, $a);
     }
 
-    multi sub serialise(DateTime $val, Attribute $a) {
+    multi sub serialise(DateTime $val, DoA $a) {
         my $v = $val.defined  ?? $val.Str !! '';
         serialise($v, $a);
     }
 
-    multi sub serialise(Date $val, Attribute $a) {
+    multi sub serialise(Date $val, DoA $a) {
         my $v = $val.defined  ?? $val.Str !! '';
         serialise($v, $a);
     }
@@ -1331,30 +1335,32 @@ role XML::Class[Str :$xml-namespace, Str :$xml-namespace-prefix, Str :$xml-eleme
         $attribute.deserialise($val);
     }
 
-    multi sub deserialise(TypedNode $element, Attribute $attribute, Bool $obj, Str :$namespace) {
+    my subset SoA of Attribute where { $_ !~~ DeserialiseX };
+
+    multi sub deserialise(TypedNode $element, SoA $attribute, Bool $obj, Str :$namespace) {
         my $val = deserialise($element, $attribute, Str, :$namespace);
         $val.defined ?? ($val eq 'true' || $val eq '1' ) ?? True !! False !! False;
     }
 
     
-    multi sub deserialise(TypedNode $element, Attribute $attribute, $obj where { $_.HOW ~~ Metamodel::SubsetHOW }, Str :$namespace) {
+    multi sub deserialise(TypedNode $element, SoA $attribute, $obj where { $_.HOW ~~ Metamodel::SubsetHOW }, Str :$namespace) {
         my $type = $obj.^refinee;
         deserialise($element, $attribute, $type, :$namespace);
     }
 
-    multi sub deserialise(TypedNode $element, Attribute $attribute, DateTime $obj, Str :$namespace) {
+    multi sub deserialise(TypedNode $element, SoA $attribute, DateTime $obj, Str :$namespace) {
         my $val = deserialise($element, $attribute, Str, :$namespace);
         my DateTime $d = try DateTime.new($val);
         $d;
     }
 
-    multi sub deserialise(TypedNode $element, Attribute $attribute, Date $obj, Str :$namespace) {
+    multi sub deserialise(TypedNode $element, SoA $attribute, Date $obj, Str :$namespace) {
         my $val = deserialise($element, $attribute, Str, :$namespace);
         my Date $d = try Date.new($val);
         $d;
     }
 
-    multi sub deserialise(TypedNode $element, Attribute $attribute, Real $obj where { $_.HOW !~~ Metamodel::SubsetHOW }, Str :$namespace) {
+    multi sub deserialise(TypedNode $element, SoA $attribute, Real $obj where { $_.HOW !~~ Metamodel::SubsetHOW }, Str :$namespace) {
         my $val = deserialise($element, $attribute, Str, :$namespace);
         $val.defined ?? $obj($val) !! $obj;
     }
