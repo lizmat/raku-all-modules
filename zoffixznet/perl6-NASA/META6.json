@@ -1,0 +1,22 @@
+{
+    "perl"         : "6.c",
+    "name"         : "NASA",
+    "version"      : "1.001001",
+    "description"  : "use NASA's APIs via Perl 6",
+    "depends"      : [
+        "HTTP::Tinyish",
+        "JSON::Fast",
+        "URI::Escape",
+        "Subset::Helper"
+    ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "NASA" : "lib/NASA.pm6",
+        "NASA::UA" : "lib/NASA/UA.pm6",
+        "NASA::APOD" : "lib/NASA/APOD.pm6",
+        "NASA::MarsRovers" : "lib/NASA/MarsRovers.pm6",
+        "NASA::MarsRovers::Rover" : "lib/NASA/MarsRovers/Rover.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   : "git://github.com/zoffixznet/perl6-NASA.git"
+}

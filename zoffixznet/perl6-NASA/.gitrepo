@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-NASA.git
+	branch = master
+	commit = 56f8583197929100d7460c4de7eba68d5ef2f20d
+	parent = 3626063abdab23375683a9c1d38e68c27d830f1f
+	cmdver = 0.2.3
