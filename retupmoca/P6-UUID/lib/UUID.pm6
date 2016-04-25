@@ -22,18 +22,9 @@ class UUID {
     }
 
     method Str {
-        my $out;
-        $out ~= $.bytes[^4]>>.fmt("%02x").join;
-        $out ~= '-';
-        $out ~= $.bytes[4..^6]>>.fmt("%02x").join;
-        $out ~= '-';
-        $out ~= $.bytes[6..^8]>>.fmt("%02x").join;
-        $out ~= '-';
-        $out ~= $.bytes[8..^10]>>.fmt("%02x").join;
-        $out ~= '-';
-        $out ~= $.bytes[10..15]>>.fmt("%02x").join;
-
-        return $out;
+        (:256[$.bytes.values].fmt("%32.32x")
+            ~~ /(........)(....)(....)(....)(............)/)
+            .join("-");
     }
 
     method Blob {
