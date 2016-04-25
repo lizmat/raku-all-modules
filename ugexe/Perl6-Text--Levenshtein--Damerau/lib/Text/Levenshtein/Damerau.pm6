@@ -3,10 +3,10 @@ unit class Text::Levenshtein::Damerau;
 
 has Str  @.targets        is rw;
 has Str  @.sources        is rw;
-has int  $.max            is rw;  # int/-1 = no max distance
-has int  $.results_limit  is rw;  # Only return X closest results
+has Int  $.max            is rw;  # Int/-1 = no max distance
+has Int  $.results_limit  is rw;  # Only return X closest results
 has Hash %.results        is rw;
-has int  $.best_distance  is rw;
+has Int  $.best_distance  is rw;
 has Str  $.best_target    is rw;
 has Str  $.best_source    is rw;
 
@@ -34,9 +34,9 @@ method get_results {
 
 
 sub dld (Str $source is copy, Str $target is copy, Int $max? is copy) is export {
-    my int $sourceLength = $source.chars;
-    my int $targetLength = $target.chars;
-    my int (@currentRow, @previousRow, @transpositionRow);
+    my Int $sourceLength = $source.chars;
+    my Int $targetLength = $target.chars;
+    my Int (@currentRow, @previousRow, @transpositionRow);
     $max ||= $sourceLength max $targetLength;
 
     # Swap source/target so that $sourceLength always contains the shorter String
@@ -45,24 +45,24 @@ sub dld (Str $source is copy, Str $target is copy, Int $max? is copy) is export 
         ($sourceLength,$targetLength) .= reverse;
     }
 
-    my int $diff = $targetLength - $sourceLength;
+    my Int $diff = $targetLength - $sourceLength;
     return Int if $diff > $max;
-    return $targetLength if 0 == any($sourceLength|$targetLength);
+    return $targetLength if $sourceLength == 0;
 
     @previousRow[$_] = $_ for 0..$sourceLength+1;
 
     my Str $lastTargetCh = '';
-    for 1..$targetLength -> int $i {
+    for 1..$targetLength -> Int $i {
         my Str $targetCh = $target.substr($i - 1, 1);
         @currentRow[0]   = $i;
 
-        my int $start = [max] $i - $max - 1, 1;
-        my int $end   = [min] $i + $max + 1, $sourceLength;
+        my Int $start = [max] $i - $max - 1, 1;
+        my Int $end   = [min] $i + $max + 1, $sourceLength;
 
         my Str $lastSourceCh = '';
-        for $start..$end -> int $j {
+        for $start..$end -> Int $j {
             my Str $sourceCh = $source.substr($j - 1, 1);
-            my int $cost     = $sourceCh eq $targetCh ?? 0 !! 1;
+            my Int $cost     = $sourceCh eq $targetCh ?? 0 !! 1;
 
             @currentRow[$j] = [min] 
                 @currentRow\[$j - 1] + 1, 
@@ -77,7 +77,7 @@ sub dld (Str $source is copy, Str $target is copy, Int $max? is copy) is export 
 
         $lastTargetCh = $targetCh;
 
-        my int @tempRow   = @transpositionRow;
+        my Int @tempRow   = @transpositionRow;
         @transpositionRow = @previousRow;
         @previousRow      = @currentRow;
         @currentRow       = @tempRow;
@@ -87,9 +87,9 @@ sub dld (Str $source is copy, Str $target is copy, Int $max? is copy) is export 
 }
 
 sub ld (Str $source is copy, Str $target is copy, Int $max? is copy) is export {
-    my int $sourceLength = $source.chars;
-    my int $targetLength = $target.chars;
-    my int (@currentRow, @previousRow);
+    my Int $sourceLength = $source.chars;
+    my Int $targetLength = $target.chars;
+    my Int (@currentRow, @previousRow);
     $max ||= $source.chars max $target.chars;
 
     #Swap source/target so that $sourceLength always contains the shorter String
@@ -98,19 +98,19 @@ sub ld (Str $source is copy, Str $target is copy, Int $max? is copy) is export {
         ($sourceLength,$targetLength) .= reverse;
     }
 
-    my int $diff = $targetLength - $sourceLength;
+    my Int $diff = $targetLength - $sourceLength;
     return Int if $diff > $max;
     return $targetLength if 0 ~~ any($sourceLength|$targetLength);
 
     @previousRow[$_] = $_ for 0..$sourceLength+1;
 
-    for 1..$targetLength -> int $i {
+    for 1..$targetLength -> Int $i {
         my Str $targetCh = $target.substr($i - 1, 1);
-        my int $start = [max] $i - $max - 1, 1;
-        my int $end   = [min] $i + $max + 1, $sourceLength;
+        my Int $start = [max] $i - $max - 1, 1;
+        my Int $end   = [min] $i + $max + 1, $sourceLength;
         @currentRow[0]   = $i;
 
-        for $start..$end -> int $j {
+        for $start..$end -> Int $j {
             my Str $sourceCh = $source.substr($j - 1, 1);
             @currentRow[$j] = [min] 
                 @currentRow\[$j - 1] + 1,
