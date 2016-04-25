@@ -143,6 +143,28 @@ subtest
     # X::Crane::PositionalIndexInvalid
     throws-like {Crane.copy(%i, :from('a', 'b'), :path('b',))},
         X::Crane::PositionalIndexInvalid, 'Positional index invalid';
+
+    my %doc = :a([qw<zero one two>]);
+
+    # Positional index of path out of range
+    throws-like {Crane.copy(%doc, :from('a', 1), :path('a', *-20))},
+        X::Crane::CopyPathOutOfRange,
+        :message(
+            /'copy operation failed, Positional index out of range.'/
+        ),
+        'Copy operation fails when positional index out of range';
+    throws-like {Crane.copy(%doc, :from('a', 1), :path('a', 20))},
+        X::Crane::CopyPathOutOfRange,
+        :message(
+            /'copy operation failed, creating sparse Positional not allowed.'/
+        ),
+        'Copy operation fails when attempts to create a sparse Positional';
+    throws-like {Crane.copy(%doc, :from('a', 1), :path('a', *+1))},
+        X::Crane::CopyPathOutOfRange,
+        :message(
+            /'copy operation failed, creating sparse Positional not allowed.'/
+        ),
+        'Copy operation fails when attempts to create a sparse Positional';
 }
 
 # end testing Exceptions }}}

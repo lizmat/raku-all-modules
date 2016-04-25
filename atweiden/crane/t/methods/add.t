@@ -339,14 +339,53 @@ subtest
         X::Crane::Add::RO,
         'Add operation fails when requests splicing List type';
 
-    # invalid Positional index
     my @a = [qw<zero one two>];
-    throws-like {Crane.add(@a, :path(-1,), :value(True))},
+    my %doc = :a([]);
+
+    # invalid Positional index
+    throws-like {Crane.add(@a, :path(-1,), :value(True))}, # invalid: Int < 0
         X::Crane::PositionalIndexInvalid,
         'Positional index invalid';
-    throws-like {Crane.add(@a, :path('0',), :value(True))},
+    throws-like {Crane.add(@a, :path('0',), :value(True))}, # invalid: Str
         X::Crane::PositionalIndexInvalid,
         'Positional index invalid';
+
+    # path not found
+    throws-like {Crane.add(%doc, :path('a', 0, 'b'), :value<barf>)},
+        X::Crane::AddPathNotFound,
+        'Add operation fails when path not found';
+
+    # Positional index out of range
+    throws-like {Crane.add(%doc, :path('a', *-2), :value<eight>)},
+        X::Crane::AddPathOutOfRange,
+        :message(
+            /'add operation failed, Positional index out of range.'/
+        ),
+        'Add operation fails when positional index out of range';
+    throws-like {Crane.add(%doc, :path('a', *-1), :value<eight>)},
+        X::Crane::AddPathOutOfRange,
+        :message(
+            /'add operation failed, Positional index out of range.'/
+        ),
+        'Add operation fails when positional index out of range';
+    throws-like {Crane.add(%doc, :path('a', 1), :value<eight>)},
+        X::Crane::AddPathOutOfRange,
+        :message(
+            /'add operation failed, creating sparse Positional not allowed.'/
+        ),
+        'Add operation fails when attempts to create a sparse Positional';
+    throws-like {Crane.add(%doc, :path('a', *+1), :value<eight>)},
+        X::Crane::AddPathOutOfRange,
+        :message(
+            /'add operation failed, creating sparse Positional not allowed.'/
+        ),
+        'Add operation fails when attempts to create a sparse Positional';
+    throws-like {Crane.add(%doc, :path('a', 8), :value<eight>)},
+        X::Crane::AddPathOutOfRange,
+        :message(
+            /'add operation failed, creating sparse Positional not allowed.'/
+        ),
+        'Add operation fails when attempts to create a sparse Positional';
 }
 
 # end testing Exceptions }}}
