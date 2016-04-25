@@ -5,7 +5,7 @@ unit class DBDish::Pg::Connection does DBDish::Connection;
 use DBDish::Pg::Native;
 need DBDish::Pg::StatementHandle;
 
-has PGconn $!pg_conn is required;
+has PGconn $!pg_conn is required handles <pg-notifies pg-socket pg-parameter-status>;
 has $.AutoCommit is rw = True;
 has $.in_transaction is rw = False;
 
@@ -19,11 +19,6 @@ method prepare(Str $statement, *%args) {
     LEAVE { $result.PQclear if $result }
     if $result && $result.is-ok {
         self.reset-err;
-        my @param_type;
-        with $!pg_conn.PQdescribePrepared($statement_name) -> $info {
-            @param_type.push(%oid-to-type{$info.PQparamtype($_)}) for ^$info.PQnparams;
-            $info.PQclear;
-        }
 
         DBDish::Pg::StatementHandle.new(
             :$!pg_conn,
@@ -31,7 +26,6 @@ method prepare(Str $statement, *%args) {
             :$statement,
             :$.RaiseError,
             :$statement_name,
-            :param_type(@param_type),
             |%args
         );
     } else {
@@ -41,6 +35,16 @@ method prepare(Str $statement, *%args) {
             self!set-err(PGRES_FATAL_ERROR, $!pg_conn.PQerrorMessage);
         }
     }
+}
+
+method execute(Str $statement, *%args) {
+    DBDish::Pg::StatementHandle.new(
+	:$!pg_conn, :parent(self), :$statement, |%args
+    ).execute;
+}
+
+method server-version() {
+    Version.new($!pg_conn.pg-parameter-status('server_version'));
 }
 
 method selectrow_arrayref(Str $statement, $attr?, *@bind is copy) {

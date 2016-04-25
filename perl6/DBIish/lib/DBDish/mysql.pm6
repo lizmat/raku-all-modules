@@ -2,12 +2,12 @@ use v6;
 need DBDish;
 # DBDish::mysql.pm6
 
-unit class DBDish::mysql:auth<mberends>:ver<0.0.3> does DBDish::Driver;
+unit class DBDish::mysql:auth<mberends>:ver<0.1.0> does DBDish::Driver;
 use DBDish::mysql::Native;
 need DBDish::mysql::Connection;
 
 #------------------ methods to be called from DBIish ------------------
-method connect(:$RaiseError, *%params ) {
+method connect(*%params ) {
     my $connection;
     my $mysql_client = MYSQL.mysql_init;
     my $errstr  = $mysql_client.mysql_error;
@@ -24,17 +24,21 @@ method connect(:$RaiseError, *%params ) {
         );
 
         unless $errstr = $mysql_client.mysql_error {
-	    $mysql_client.mysql_set_character_set('utf8'); # A sane default
+            $mysql_client.mysql_set_character_set('utf8'); # A sane default
             $connection = DBDish::mysql::Connection.new(
-                :$mysql_client, :$RaiseError, :parent(self)
+                :$mysql_client, :parent(self), |%params,
             );
         }
     }
-    if $errstr {
-        self!conn-error :$errstr, :$RaiseError;
-    } else {
-        $connection;
+    $errstr ??  self!conn-error(:$errstr) !!  $connection;
+}
+
+method version() {
+    my $ver = Version.new(mysql_get_client_info);
+    CATCH {
+        when X::AdHoc { }
     }
+    $ver;
 }
 
 =begin pod

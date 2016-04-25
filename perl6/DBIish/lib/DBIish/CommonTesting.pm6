@@ -1,7 +1,6 @@
 use v6;
 
 use Test;
-use Data::Dump;
 use DBIish;
 
 unit class DBIish::CommonTesting;
@@ -9,7 +8,6 @@ unit class DBIish::CommonTesting;
 has $.dbd is required;
 has %.opts is required;
 has $.post-connect-cb;
-has $.typed-nulls = True;
 has $.create-table-sql = q|
     CREATE TABLE nom (
         name        varchar(4),
@@ -23,30 +21,19 @@ has $.create-table-sql = q|
 has $.drop-table-sql    = 'DROP TABLE IF EXISTS nom';
 has $.select-null-query = 'SELECT NULL';
 
-# compare rows of the nom table
-method !magic-cmp(@a, @b) {
-    my $res =  @a ~~ @b;
-    unless $res {
-        diag "     Got: {Dump(@a)}";
-        diag "Expected: {Dump(@b)}";
-    }
-    $res;
-}
-
 method !hash-str(%h) {
     %h.sort.flatmap({ join '', .key, '=«', .value, '»' }).join('; ');
 }
 
 method run-tests {
     diag "Testing DBDish::$.dbd";
-    plan 105;
+    plan 107;
 
     # Verify that the driver loads before attempting a connect
     my $drh = DBIish.install-driver($.dbd);
     ok $drh, 'Install driver';
-    my $drh-version = $drh.Version;
-    ok $drh-version ~~ Version:D, "DBDish::{$.dbd} version $drh-version";
-
+    my $aversion = $drh.Version;
+    ok $aversion ~~ Version:D, "DBDish::{$.dbd} version $aversion";
     # Connect to the data source
     my $dbh;
     try {
@@ -62,8 +49,15 @@ method run-tests {
 	skip-rest 'prerequisites failed';
 	exit;
     }
+    ok $aversion = $drh.version, "{$.dbd} library version $aversion";
     ok $dbh, "connect to '{%.opts<database> || "default"}'";
     is $dbh.drv.Connections.elems, 1, 'Driver has one connection';
+
+    if $dbh.can('server-version') {
+	ok $aversion = $dbh.server-version, "Server version $aversion";
+    } else {
+       skip "No server version", 1;
+    }
 
     # Test preconditions
     nok $dbh.last-sth-id,	      'No statement executed yet';
@@ -136,6 +130,7 @@ method run-tests {
 
     is $rc, 1, "execute one with one integer parameter should return 1 row affected";
     is $sth.rows, 1, '$sth.rows for execute one with one integer parameter should report 1 row affected';
+    $sth.dispose;
 
     ok $sth = $dbh.prepare( "
         INSERT INTO nom (price)
@@ -144,6 +139,7 @@ method run-tests {
     ok $rc = $sth.execute(4.85), "execute one with one float parameter";
     is $rc, 1, "execute one with one float parameter should return 1 row affected";
     is $sth.rows, 1, '$sth.rows for execute one with one float parameter should report 1 row affected';
+    $sth.dispose;
 
     ok $sth = $dbh.prepare( "
         INSERT INTO nom (name, description, quantity, price)
@@ -186,14 +182,14 @@ method run-tests {
 
     # TODO Different drivers returns different values, should implement the
     # capabilities announce.
-    todo 'Will probably fails for the lack of proper capabilities annuonce'
-	if $.dbd eq 'SQLite';
+    todo 'Will probably fails for the lack of proper capabilities announce'
+	if $.dbd eq 'SQLite' | 'Oracle';
     is $rc, 6,		    'In an ideal world should returns rows available';
 
     #fetch stuff return Str
     my @ref = [ Str, Str, "1", Str, Str],
         [ Str, Str, Str, "4.85", Str ],
-        [ 'BEOM', 'Medium size orange juice', "2", "1.20", "2.40" ],
+        [ 'BEOM', 'Medium size orange juice', "2", "1.2", "2.4" ],
         [ 'BUBH', 'Hot beef burrito', "1", "4.95", "4.95" ],
         [ 'ONE', Str, Str, Str, Str ],
         [ 'TAFM', 'Mild fish taco', "1", "4.85", "4.85" ];
@@ -207,7 +203,6 @@ method run-tests {
     for ^6 -> $i {
         $ok &&= @array[$i] eqv @ref[$i];
     }
-    todo "Will fail in sqlite, no real NUMERIC" if $.dbd eq 'SQLite';
     ok $ok, 'selected data be fetchall-array matches';
 
     # Re-execute the same statement
@@ -220,29 +215,25 @@ method run-tests {
 
     ok (@columns = $sth.column-types), 'called column-type';
     is @columns.elems, 5, "column-type returns 5 fields in a row";
-    ok @columns eqv ($.typed-nulls ?? 
+    ok @columns eqv ($.dbd ne 'SQLite' ??
 	[ Str, Str, Int, Rat, Rat ] !!
 	[ Any, Any, Any, Any, Any ]), 'column-types matches test data';
 
+    if $.dbd eq 'SQLite' { # Munge types
+	$sth.column-types[$_] = [Str, Str, Int, Rat, Rat][$_] for ^5;
+    }
+
     #row and allrows return typed value, when possible
-    my @typed-ref = $.typed-nulls ?? (
+    my @typed-ref = (
         [ Str, Str, 1 , Rat, Rat],
         [ Str, Str, Int, 4.85, Rat ],
         [ 'BEOM', 'Medium size orange juice', 2, 1.2, 2.4 ],
         [ 'BUBH', 'Hot beef burrito', 1, 4.95, 4.95 ],
         [ 'ONE', Str, Int, Rat, Rat ],
         [ 'TAFM', 'Mild fish taco', 1, 4.85, 4.85 ]
-    ) !! (
-        [ Any, Any, 1, Any, Any],
-        [ Any, Any, Any, 4.85, Any ],
-        [ 'BEOM', 'Medium size orange juice', 2, 1.2, 2.4 ],
-        [ 'BUBH', 'Hot beef burrito', 1, 4.95, 4.95 ],
-        [ 'ONE', Any, Any, Any, Any ],
-        [ 'TAFM', 'Mild fish taco', 1, 4.85, 4.85 ]
     );
 
-    #FIXME, sqlite (for example) return NULL field as Any type, we can't really use
-    # the empty line for this. so we skip them.
+    # we skip some uninterested rows
     $sth.row(); $sth.row();
     my @results = $sth.row();
     ok @results[1] ~~ Str, "Test the type of a Str field";
@@ -283,23 +274,14 @@ method run-tests {
     $sth.execute();
     @results = $sth.allrows(:array-of-hash);
     $sth.finish;
-    my @ref-aoh =  $.typed-nulls ?? (
+    my @ref-aoh =  (
         { name => Str, description => Str, quantity => 1, price => Rat, amount => Rat },
         { name => Str, description => Str, quantity => Int, price => 4.85, amount => Rat },
         { name => 'BEOM', description => 'Medium size orange juice', quantity => 2, price => 1.2, amount => 2.4 },
         { name => 'BUBH', description => 'Hot beef burrito', quantity => 1, price => 4.95, amount => 4.95 },
         { name => 'ONE', description => Str, quantity => Int, price => Rat, amount => Rat },
         { name => 'TAFM', description => 'Mild fish taco', quantity => 1, price => 4.85, amount => 4.85 },
-    ) !! (
-        { name => Any, description => Any, quantity => 1, price => Any, amount => Any },
-        { name => Any, description => Any, quantity => Any, price => 4.85, amount => Any },
-        { name => 'BEOM', description => 'Medium size orange juice', quantity => 2, price => 1.2, amount => 2.4 },
-        { name => 'BUBH', description => 'Hot beef burrito', quantity => 1, price => 4.95, amount => 4.95 },
-        { name => 'ONE', description => Any, quantity => Any, price => Any, amount => Any },
-        { name => 'TAFM', description => 'Mild fish taco', quantity => 1, price => 4.85, amount => 4.85 },
     );
-
-    #diag "ref-aoh: {Dump(@ref-aoh)}";
 
     is-deeply @results, @ref-aoh, 'types and values match';
 
@@ -313,13 +295,9 @@ method run-tests {
     nok @results[0][0].defined, 'NULL returns an undefined value';
     ok $sth.Finished,		'After one row is finished';
 
-    #TODO: I made piña colada (+U00F1) at first to test unicode. It gets properly
-    # inserted and selected, but a comparison within arrayref fails.
-    # Output _looks_ identical.
-
     ok $sth = $dbh.prepare("
 	INSERT INTO nom (name, description, quantity, price)
-        VALUES ('PICO', 'Delish pina colada', '5', '7.9')
+        VALUES ('PICO', 'Delish piña colada', '5', '7.9')
     " ), 'insert new value for fetchrow_arrayref test'; #test 38
 
     ok $sth.execute, 'new insert statement executed'; #test 39
@@ -333,35 +311,42 @@ method run-tests {
     if $sth.^can('fetchrow_arrayref') {
         ok my $arrayref = $sth.fetchrow_arrayref(), 'called fetchrow_arrayref'; #test 43
         is $arrayref.elems, 4, "fetchrow_arrayref returns 4 fields in a row"; #test 44
-        ok self!magic-cmp($arrayref, [ 'PICO', 'Delish pina colada', '5', 7.90 ]),
+        is $arrayref, [ 'PICO', 'Delish piña colada', '5', 7.9 ],
         'selected data matches test data of fetchrow_arrayref'; #test 45
     }
     else { skip 'fetchrow_arrayref not implemented', 2 }
 
-    $sth.finish;
+    $sth.dispose;
 
     # test quotes and so on
     {
         $sth = $dbh.prepare(q[INSERT INTO nom (name, description) VALUES (?, ?)]);
         my $lived;
-        lives-ok { $sth.execute("quot", q["';]); $lived = 1 }, 'can insert single and double quotes';
+        lives-ok {
+	    $sth.execute("quot", q["';]); $lived = 1
+	}, 'can insert single and double quotes';
+	$sth.dispose;
         if $lived {
-            $sth = $dbh.prepare(q[SELECT description FROM nom where name = ?]);
-            lives-ok { $sth.execute('quot') }, 'lived while retrieving result';
+            $sth = $dbh.prepare(q[SELECT description FROM nom WHERE name = ?]);
+	    lives-ok {
+		$sth.execute('quot');
+	    }, 'lived while retrieving result';
             is $sth.fetchrow.join, q["';], 'got the right string back';
-            $sth.finish;
+            $sth.dispose;
         }
         else {
             skip('dependent tests', 2);
         }
 
         $lived = 0;
-        lives-ok { $dbh.do(q[INSERT INTO nom (name, description) VALUES(?, '?"')], 'mark'); $lived = 1}, 'can use question mark in quoted strings';
+        lives-ok {
+	    $dbh.do(q[INSERT INTO nom (name, description) VALUES(?, '?"')], 'mark'); $lived = 1
+	}, 'can use question mark in quoted strings';
         if $lived {
             my $sth = $dbh.prepare(q[SELECT description FROM nom WHERE name = 'mark']);
             $sth.execute;
             is $sth.fetchrow.join, '?"', 'correctly retrieved question mark';
-            $sth.finish;
+            $sth.dispose;
         }
         else {
             skip('dependent test', 1);
@@ -376,6 +361,7 @@ method run-tests {
         my $row = $sth.fetchrow-hash;
 
         ok !?$row, 'a query with no results should have a falsy value';
+	$sth.dispose;
     }
 
     # test that a query that's exhausted its result set has a falsy value
@@ -387,6 +373,7 @@ method run-tests {
            $row = $sth.fetchrow-hash;
 
         ok !?$row, 'a query with no more results should have a falsy value';
+	$sth.dispose;
     }
 
     # test that an integer >= 2**31 still works as an argument to execute
@@ -403,7 +390,7 @@ method run-tests {
         is $row[1], 'many', 'The contents of the row fetched via a large integer are correct';
         is $row[2], $large-int, 'The contents of the row fetched via a large integer are correct';
 
-        $sth.finish;
+        $sth.dispose;
     }
 
     # Drop the table when finished, and disconnect

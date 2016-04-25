@@ -1,6 +1,6 @@
 use v6;
 
-use NativeCall :ALL;
+use NativeLibs;
 
 unit module DBDish::SQLite::Native;
 
@@ -45,10 +45,8 @@ enum SQLITE_TYPE is export (
     SQLITE_NULL    => 5
 );
 
-sub MyLibName {
-    %*ENV<DBIISH_SQLITE_LIB> || guess_library_name(('sqlite3', v0));
-}
-constant LIB = &MyLibName;
+# Look mom, no LIB! when supported ;-)
+constant LIB = NativeLibs::is-win ?? 'sqlite3' !! Str;
 
 constant Null is export = Pointer;
 class SQLite is export is repr('CPointer') { };
@@ -109,6 +107,7 @@ sub sqlite3_step(STMT $statement_handle)
 
 
 sub sqlite3_libversion_number() returns int32 is native(LIB) is export { ... };
+sub sqlite3_libversion(--> Str) is export is native(LIB) { * }
 sub sqlite3_errstr(int32) returns Str is native(LIB) is export { ... };
 sub sqlite3_bind_blob(STMT, int32, Blob, int32, Pointer) returns int32 is native(LIB) is export { ... };
 sub sqlite3_bind_double(STMT, int32, num64) returns int32 is native(LIB) is export { ... };
@@ -120,8 +119,8 @@ sub sqlite3_changes(SQLite) returns int32 is native(LIB) is export { ... };
 sub sqlite3_bind_parameter_count(STMT --> int32) is native(LIB) is export { ... };
 
 proto sub sqlite3_bind(STMT, $, $) {*}
-multi sub sqlite3_bind(STMT $stmt, Int $n, Buf:D $b)  is export {
-    sqlite3_bind_blob($stmt, $n, $b, $b.bytes, Pointer)
+multi sub sqlite3_bind(STMT $stmt, Int $n, Blob:D $b)  is export {
+    sqlite3_bind_blob($stmt, $n, $b, $b.bytes, Pointer.new(-1))
 }
 multi sub sqlite3_bind(STMT $stmt, Int $n, Real:D $d) is export {
     sqlite3_bind_double($stmt, $n, $d.Num)

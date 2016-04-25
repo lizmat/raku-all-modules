@@ -5,13 +5,11 @@ use DBIish;
 plan 18;
 
 my %con-parms;
-# If env var set, no parameter needed.
-%con-parms<database> = 'dbdishtest' unless %*ENV<PGDATABASE>;
-%con-parms<user> = 'postgres' unless %*ENV<PGUSER>;
+%con-parms = :database<XE>, :username<TESTUSER>, :password<Testpass>;
 my $dbh;
 
 try {
-  $dbh = DBIish.connect('Pg', |%con-parms);
+  $dbh = DBIish.connect('Oracle', |%con-parms);
   CATCH {
 	    when X::DBIish::LibraryMissing | X::DBDish::ConnectionFailed {
 		diag "$_\nCan't continue.";
@@ -24,13 +22,20 @@ without $dbh {
     exit;
 }
 
+my $dropper = q|
+    BEGIN
+       EXECUTE IMMEDIATE 'DROP TABLE test';
+    EXCEPTION
+       WHEN OTHERS THEN
+	  IF SQLCODE != -942 THEN
+	     RAISE;
+	  END IF;
+    END;|;
+
 ok $dbh,    'Connected';
-lives-ok { $dbh.do('DROP TABLE IF EXISTS test') }, 'Clean';
+lives-ok { $dbh.do($dropper) }, 'Clean';
 lives-ok {
-    $dbh.do(q|
-    CREATE TABLE test (
-	id INT NOT NULL DEFAULT 0, 
-	name bytea)|)
+    $dbh.do(q|CREATE TABLE test (id NUMBER, name RAW(300) )|)
 }, 'Table created';
 my $blob = Buf.new(^256);
 my $query = 'INSERT INTO test VALUES(?, ?)';
@@ -50,4 +55,4 @@ is @res.elems,  1,	 'One field';
 $data = @res[0];
 ok $data ~~ Buf,         'Data is-a Buf';
 ok not $data.defined,    'But is NULL';
-$dbh.do('DROP TABLE IF EXISTS test');
+$dbh.do($dropper);

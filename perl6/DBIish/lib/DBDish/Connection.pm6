@@ -19,6 +19,7 @@ unit role DBDish::Connection does DBDish::ErrorHandling;
 
 has %.Statements;
 has $.last-sth-id is rw;
+has $.last-rows is rw;
 
 method dispose() {
     $_.dispose for %!Statements.values;
@@ -39,14 +40,23 @@ method drv { $.parent }
 method new(*%args) {
     my \con = ::?CLASS.bless(|%args);
     con.reset-err;
+    con.?set-defaults;
     %args<parent>.Connections{con.WHICH} = con;
 }
 
 method prepare(Str $statement, *%args) { ... }
 
 method do(Str $statement, *@params, *%args) {
-    with self.prepare($statement) {
-	LEAVE { .finish }
+    LEAVE {
+	with %!Statements{$!last-sth-id} {
+	    warn "'do' should not be used for statements that return rows"
+		unless .Finished;
+	    .dispose;
+	}
+    }
+    if !@params && self.can('execute') {
+	self.execute($statement, |%args);
+    } orwith self.prepare($statement, |%args) {
 	.execute(@params, |%args);
     }
     else {
@@ -58,6 +68,8 @@ method rows {
     if $!last-sth-id {
 	with %!Statements{$!last-sth-id} {
 	    .rows;
+	} else {
+	    $!last-rows
 	}
     }
 }
@@ -76,7 +88,7 @@ method quote-identifier(Str:D $name) {
 
 =begin pod
 =head5 _disconnect
-The C<_disconnect> method 
+The C<_disconnect> method
 =end pod
 
 method _disconnect() {

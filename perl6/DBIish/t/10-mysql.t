@@ -148,10 +148,8 @@ CREATE TABLE $table (
 ";
 lives-ok { $dbh.do("DROP TABLE IF EXISTS $table") }, "drop table if exists $table"; # test 9
 lives-ok { $dbh.do($create) }, "create table $table"; # test 10
-#todo "lock tables does not work";
 ok $dbh.do("LOCK TABLES $table WRITE"), "lock tables $table write"; # test 11
 ok $dbh.do("INSERT INTO $table VALUES(1, 'Alligator Descartes test 12')"), "Insert"; # test 12
-#todo "delete works but not here";
 lives-ok {$dbh.do("DELETE FROM $table WHERE id = 1") }, "Delete"; # test 13
 my $sth;
 try {
@@ -184,6 +182,7 @@ ok $dbh.do("DROP TABLE $table"), "Drop table $table"; # test 19
 #}
 ok($sth= $dbh.prepare("DROP TABLE IF EXISTS no_such_table"), "prepare drop no_such_table"); # test 20
 ok($sth.execute(), "execute drop no_such_table..."); # test 21
+todo "warning_count seems 0 on windows", 1 if Rakudo::Internals.IS-WIN;
 is($sth.mysql_warning_count, 1, "...returns an error"); # test 22
 
 #-----------------------------------------------------------------------
@@ -237,7 +236,7 @@ ok $dbh.do($create), "create $table"; # test 24
 my $query= "INSERT INTO $table (name) VALUES (?)";
 ok ($sth= $dbh.prepare($query)), "prepare insert with parameter"; # test 25
 ok $sth.execute("Jochen"), "execute insert with parameter"; # test 26
-is $dbh.mysql_insertid, 1, "insert id == \$dbh.mysql_insertid (but only int, not long long)"; # test 27
+is $dbh.insert-id, 1, "insert id == \$dbh.insert-id (but only int, not long long)"; # test 27
 ok $sth.execute("Patrick"), "execute 2nd insert with parameter"; # test 28
 ok (my $sth2= $dbh.prepare("SELECT max(id) FROM $table")),"selectg max(id)"; # test 29
 ok $sth2.defined,"second prepared statement"; # test 30
@@ -245,8 +244,8 @@ ok $sth2.execute(), "execute second prepared statement"; # test 31
 my $max_id;
 ok ($max_id= $sth2.fetch()),"fetch"; # test 32
 ok $max_id.defined,"fetch result defined"; # test 33
-ok $sth.mysql_insertid == $max_id[0], 'sth insert id $sth.mysql_insertid == max(id) $max_id[0] in '~$table; # test 34
-ok $dbh.mysql_insertid == $max_id[0], 'dbh insert id $dbh.mysql_insertid == max(id) $max_id[0] in '~$table; # test 35
+is $sth.insert-id, $max_id[0], 'sth insert id $sth.insert-id == max(id) $max_id[0] in '~$table; # test 34
+is $dbh.insert-id, $max_id[0], 'dbh insert id $dbh.insert-id == max(id) $max_id[0] in '~$table; # test 35
 ok $sth.finish(), "statement 1 finish"; #  test 36
 ok $sth2.finish(), "statement 2 finish"; # test 37
 ok $dbh.do("DROP TABLE $table"),"drop table $table"; # test 38
@@ -330,7 +329,7 @@ ok(($sth = $dbh.prepare("INSERT INTO $table (id,name) VALUES (?,?)")),"prepare i
 my ( %testInsertVals, $all_ok );
 $all_ok = Bool::True;
 loop (my $i = 0 ; $i < 100; $i++) {
-  my @chars = grep /<-[0O1Iil]>/, 0..9, 'A'..'Z', 'a'..'z';
+  my @chars = flat grep /<-[0O1Iil]>/, 0..9, 'A'..'Z', 'a'..'z';
   my $random_chars = @chars.roll(16).join;
   %testInsertVals{$i} = $random_chars; # save these values for later testing
   unless $sth.execute($i, $random_chars) { $all_ok = Bool::False; }
