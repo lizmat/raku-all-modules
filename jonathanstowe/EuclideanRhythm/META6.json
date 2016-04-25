@@ -1,0 +1,20 @@
+{
+   "source-url" : "git@github.com:jonathanstowe/EuclideanRhythm.git",
+   "depends" : [],
+   "name" : "EuclideanRhythm",
+   "meta6" : "0",
+   "authors" : [
+      "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+   ],
+   "description" : "create rhythmic patterns based on the Euclidean algorithm",
+   "auth" : "github:jonathanstowe",
+   "version" : "0.0.1",
+   "provides" : { "EuclideanRhythm" : "lib/EuclideanRhythm.pm" },
+   "build-depends" : [],
+   "tags" : [ "rhythm", "algorithm", "euclid" ],
+   "perl" : "6.c",
+   "license" : "perl",
+   "support" : {
+      "source" : "git@github.com:jonathanstowe/EuclideanRhythm.git"
+   }
+}
