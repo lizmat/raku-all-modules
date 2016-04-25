@@ -1,0 +1,11 @@
+{
+	"name"			: "List::Combinations",
+	"version"		: "1.3.0",
+	"description"	: "A quick and dirty way to generate an array of all n-combinations of a list or all permutations",
+	"author"		: "Daniel Green",
+	"provides"		: {
+		"List::Combinations" : "lib/List/Combinations.pm6"
+	},
+	"depends"		: [],
+	"source-url"	: "git://github.com/masterduke17/list-combinations.git"
+}

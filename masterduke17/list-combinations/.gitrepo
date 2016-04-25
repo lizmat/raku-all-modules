@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/masterduke17/list-combinations.git
+	branch = master
+	commit = ec5c08306a3307e206ec7b5fc7f29c6c85760d01
+	parent = 5b6b843e390f51e9984eecdb31497ddec8a541a3
+	cmdver = 0.2.3
