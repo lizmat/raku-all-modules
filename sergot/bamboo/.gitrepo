@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sergot/bamboo.git
 	branch = master
-	commit = e3b8e8e9c81f440945cf274b3cc8693b790966e4
-	parent = f9b9705c3c6d3dd992f58ef47195befef574dde6
+	commit = 9ffb6ceceb26e8ef2799bd261500a2ee0441a88f
+	parent = a37da9fb19da9faa45ae531922e18fdb2893be43
 	cmdver = 0.2.3
