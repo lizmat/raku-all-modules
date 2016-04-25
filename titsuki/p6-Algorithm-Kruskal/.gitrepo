@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Algorithm-Kruskal.git
+	branch = master
+	commit = 09733981765166b42944dbdf508e412f01823722
+	parent = 054195297d3c44a5e2f88f2ee83858740a21b6d7
+	cmdver = 0.2.3

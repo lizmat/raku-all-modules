@@ -1,0 +1,21 @@
+{
+  "name" : "Algorithm::Kruskal",
+  "source-url" : "git://github.com/titsuki/p6-Algorithm-Kruskal.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "Algorithm::Kruskal" : "lib/Algorithm/Kruskal.pm6"
+  },
+  "depends" : [
+    "Algorithm::SetUnion",
+    "Algorithm::MinMaxHeap",
+    "Algorithm::MinMaxHeap::Comparable"
+  ],
+  "description" : "a perl6 implementation of Kruskal's Algorithm for constructing a spanning subtree of minimum length",
+  "test-depends" : [ ],
+  "version" : "*",
+  "authors" : [
+    "titsuki"
+  ]
+}
