@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Algorithm-MinMaxHeap.git
+	branch = master
+	commit = 98a0e7f1900b6914e33fb6c069d10e655968a69c
+	parent = d76fb57d4ea006a64aa1e83308652889f5fe89c8
+	cmdver = 0.2.3
