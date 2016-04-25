@@ -18,7 +18,6 @@
         "HTTP::Status",
         "HTTP::Easy",
         "Template::Mojo",
-        "Bailador",
         "DBIish",
         "URI",
         "Linenoise",
