@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-GlotIO.git
+	branch = master
+	commit = a43aee1138ed299038d46789a504185936d2a291
+	parent = b79b99b71cc6e6c725719bbc4bfb458f5b0317e4
+	cmdver = 0.2.3

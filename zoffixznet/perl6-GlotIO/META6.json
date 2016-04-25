@@ -1,0 +1,17 @@
+{
+    "perl"         : "6.c",
+    "name"         : "GlotIO",
+    "version"      : "1.001001",
+    "description"  : "Use glot.io API: pastebin allowing execution of code",
+    "depends"      : [
+        "HTTP::Tinyish",
+        "JSON::Fast",
+        "URI::Escape"
+    ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "GlotIO" : "lib/GlotIO.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   : "git://github.com/zoffixznet/perl6-GlotIO.git"
+}
