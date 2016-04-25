@@ -1,4 +1,7 @@
+use v6;
+
 unit module Shell::Command;
+
 use File::Find;
 
 sub cat(*@files) is export {
@@ -80,10 +83,13 @@ sub dos2unix($file) is export {
 }
 
 sub which($name) is export {
-    for $*SPEC.path.map({ $*SPEC.catfile($^dir, $name) }) {
-        return $_ if .IO.x;
-    }
-    Str
+  warn "Please use File::Which instead for a more portable solution."
+    if $*DISTRO.is-win || $*DISTRO.name eq 'macosx';
+
+  for $*SPEC.path.map({ $*SPEC.catfile($^dir, $name) }) {
+    return $_ if .IO.x;
+  }
+  Str
 }
 
 # vim: ft=perl6

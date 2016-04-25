@@ -9,6 +9,7 @@
         "Test"
     ],
     "depends" : [
+        "File::Which",
         "File::Find"
     ],
     "provides" : {
