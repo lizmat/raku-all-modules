@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-datetime-math.git
 	branch = master
-	commit = 31d7e242fb81aba35a1e486bc15f36cf5af3ffbf
-	parent = 718ba3980bd2c3c3c76a38acb8898869f2c51751
+	commit = edf2920c2e1448f12dcc0b8f9a03f3c074019aa7
+	parent = e248f6e04788c552b00a8908454c2377e3e92152
 	cmdver = 0.2.3

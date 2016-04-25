@@ -87,38 +87,40 @@ multi infix:«-»(DateTime:D $dt, Numeric:D $x) is export {
 }
 
 multi infix:<->(DateTime:D $a, DateTime:D $b) is export {
-  $a.posix - $b.posix;
+  Duration.new($a.posix - $b.posix);
 }
 
-multi infix:<cmp>(DateTime $a, DateTime $b) is export {
-  $a.posix cmp $b.posix;
-}
 
-multi infix:«<=>»(DateTime $a, DateTime $b) is export {
-  $a.posix <=> $b.posix;
-}
-
-multi infix:<==>(DateTime $a, DateTime $b) is export {
-  $a.posix == $b.posix;
-}
-
-multi infix:<!=>(DateTime $a, DateTime $b) is export {
-  $a.posix != $b.posix;
-}
-
-multi infix:«<=»(DateTime $a, DateTime $b) is export {
-  $a.posix <= $b.posix;
-}
-
-multi infix:«<»(DateTime $a, DateTime $b) is export {
-  $a.posix < $b.posix;
-}
-
-multi infix:«>=»(DateTime $a, DateTime $b) is export {
-  $a.posix >= $b.posix;
-}
-
-multi infix:«>»(DateTime $a, DateTime $b) is export {
-  $a.posix > $b.posix;
-}
+# Now included in rakudo
+#multi infix:<cmp>(DateTime $a, DateTime $b) is export {
+#  $a.posix cmp $b.posix;
+#}
+#
+#multi infix:«<=>»(DateTime $a, DateTime $b) is export {
+#  $a.posix <=> $b.posix;
+#}
+#
+#multi infix:<==>(DateTime $a, DateTime $b) is export {
+#  $a.posix == $b.posix;
+#}
+#
+#multi infix:<!=>(DateTime $a, DateTime $b) is export {
+#  $a.posix != $b.posix;
+#}
+#
+#multi infix:«<=»(DateTime $a, DateTime $b) is export {
+#  $a.posix <= $b.posix;
+#}
+#
+#multi infix:«<»(DateTime $a, DateTime $b) is export {
+#  $a.posix < $b.posix;
+#}
+#
+#multi infix:«>=»(DateTime $a, DateTime $b) is export {
+#  $a.posix >= $b.posix;
+#}
+#
+#multi infix:«>»(DateTime $a, DateTime $b) is export {
+#  $a.posix > $b.posix;
+#}
 

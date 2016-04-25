@@ -24,6 +24,9 @@ is $t2.day, 31, 'day changed correctly, subtract 1y';
 is $t1 - $t2, 31622400, 'DateTime - DateTime';
 is from-seconds($t1 - $t2, 'd'), 366, 'from-seconds to days';
 
+is duration-from-to(30, 'm', 'h'), 0.5, 'duration-to-from() works.';
+
+# These now test DateTime::Math created objects using rakudo's internal methods.
 ok $t1 > $t2, 'DateTime > DateTime';
 ok $t2 < $t1, 'DateTime < DateTime';
 ok $t1 >= $t2, 'DateTime >= DateTime';
@@ -32,6 +35,3 @@ ok !($t1 == $t2), 'DateTime == DateTime';
 is $t1 cmp $t2, 'More', 'DateTime cmp DateTime';
 is $t1 <=> $t2, 'More', 'DateTime <=> DateTime';
 ok $t1 != $t2, 'DateTime != DateTime';
-
-is duration-from-to(30, 'm', 'h'), 0.5, 'duration-to-from() works.';
-

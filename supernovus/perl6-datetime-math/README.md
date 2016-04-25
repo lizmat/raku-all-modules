@@ -27,16 +27,18 @@ The math functions allowed are:
  * DateTime = DateTime + Seconds
  * DateTime = DateTime - Seconds
 
-And comparisons:
+~~And comparisons:~~
 
- * DateTime cmp DateTime
- * DateTime <=> DateTime
- * DateTime == DateTime
- * DateTime != DateTime
- * DateTime <= DateTime
- * DateTime < DateTime
- * DateTime >= DateTime
- * DateTime > DateTime
+ * ~~DateTime cmp DateTime~~
+ * ~~DateTime <=> DateTime~~
+ * ~~DateTime == DateTime~~
+ * ~~DateTime != DateTime~~
+ * ~~DateTime <= DateTime~~
+ * ~~DateTime < DateTime~~
+ * ~~DateTime >= DateTime~~
+ * ~~DateTime > DateTime~~
+
+Note: Rakudo has since implemented internal DateTime comparisons, therefore DateTime::Math's comparisons have been removed.
 
 Note that all of the math operations on DateTime objects are using the
 POSIX time, which is stored as seconds, so it does not support sub-second
@@ -45,6 +47,9 @@ math at this time.
 ## Author
 
  * [Timothy Totten](https://github.com/supernovus/)
+
+## Contributions by 
+ * [Clifton Wood](https://github.com/Xliff/)
 
 ## License
 
