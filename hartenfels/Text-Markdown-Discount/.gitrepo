@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/hartenfels/Text-Markdown-Discount.git
 	branch = master
-	commit = 0524ec8434858ff8409bdfae2b132cab828a7ccb
-	parent = 6696ebe8593b57772df1b59d9c5f85efd926715c
-	cmdver = 0.2.2
+	commit = e81de3f7cc48a9dbb2fbea4c94b949cb404e5bce
+	parent = edba1571caae056a8f873654a39df139f8f36a7c
+	cmdver = 0.2.3

@@ -5,7 +5,7 @@ use NativeCall;
 
 my $got-lib = lives-ok
 {
-    my $version := cglobal 'libmarkdown', 'markdown_version', Pointer[int8];
+    my $version := cglobal 'markdown', 'markdown_version', Pointer[int8];
     say "# markdown_version: $version";
 },
 'libmarkdown is installed';

@@ -8,7 +8,7 @@ Text::Markdown::Discount - markdown to HTML using the Discount C library
 VERSION
 =======
 
-0.2.4
+0.2.5
 
 SYNOPSIS
 ========
@@ -267,6 +267,8 @@ Please report bugs [on GitHub](https://github.com/hartenfels/Text-Markdown-Disco
 
 TODO
 ====
+
+  * Depend on `Native::LibC` for `FILE` stuff
 
   * Make sure that my NativeCall usage is correct
 

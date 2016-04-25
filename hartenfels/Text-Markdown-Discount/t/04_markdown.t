@@ -1,7 +1,7 @@
 use v6;
 use Test;
-use Text::Markdown::Discount;
 use lib "{$?FILE.IO.dirname}/data";
+use Text::Markdown::Discount;
 use TextMarkdownDiscountTestBoilerplate;
 
 
