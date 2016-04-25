@@ -8,7 +8,7 @@ Term::Choose - Choose items from a list interactively.
 VERSION
 =======
 
-Version 0.107
+Version 0.109
 
 SYNOPSIS
 ========
@@ -70,7 +70,7 @@ For the usage of `SpaceBar`, `Ctrl-SpaceBar`, `Return` and the `q`-key see [#cho
 
 With *mouse* enabled (and if supported by the terminal) use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel. - Mouse wheel not yet suppoerted! 
 
-Routines
+ROUTINES
 ========
 
 choose

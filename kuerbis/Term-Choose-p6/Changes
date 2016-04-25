@@ -1,6 +1,12 @@
 Revision history for Term::Choose
 
 
+0.109   2016-03-21
+        - Slow down the getch-loop so it doesn't eat up 100% of a core
+
+0.108   2016-03-20
+        - Upgrade Term::Choose::NCurses (required by T::F)
+
 0.107   2016-03-17
         - Fixed source-url in META6.json
 

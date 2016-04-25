@@ -23,4 +23,4 @@ if $html ~~ /
     $got = $0;
 }
 
-is( $expected, $got, 'NCurses is up to date.' );
+is( $expected, $got, 'NCurses: no unchecked update.' );

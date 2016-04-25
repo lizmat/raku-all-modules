@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.107';
+my $VERSION = '0.109';
 
 use Term::Choose::NCurses :all;
 use Term::Choose::LineFold :all;
@@ -9,7 +9,7 @@ use Term::Choose::LineFold :all;
 
 constant R  = 0;
 constant C  = 1;
-constant OK = 0;
+constant OK = 0; # ?
 
 constant CONTROL_SPACE = 0x00;
 constant CONTROL_A     = 0x01;
@@ -237,7 +237,15 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
     my Int $pressed; #
 
     GET_KEY: loop {
-        my $key = getch();
+        my $key;
+        WAIT: loop {
+            $key = getch();
+            if $key == -1 { # ERR {
+                sleep 0.01;
+                next WAIT;
+            }
+            last WAIT;
+        }
         my Int $new_term_w = getmaxx( $!win );
         my Int $new_term_h = getmaxy( $!win );
         if $new_term_w != $!term_w || $new_term_h != $!term_h {
@@ -961,7 +969,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.107
+Version 0.109
 
 =head1 SYNOPSIS
 
@@ -1024,7 +1032,7 @@ With I<mouse> enabled (and if supported by the terminal) use the the left mouse 
 the right mouse key instead of the C<SpaceBar> key. Instead of C<PageUp> and C<PageDown> it can be used the mouse wheel.
 - Mouse wheel not yet suppoerted! 
 
-=head1 Routines
+=head1 ROUTINES
 
 =head2 choose
 
