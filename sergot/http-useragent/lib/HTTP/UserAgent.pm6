@@ -19,6 +19,7 @@ class X::HTTP is Exception {
 }
 
 class X::HTTP::Internal is Exception {
+    has $.rc;
     has $.reason;
 
     method message {
@@ -272,6 +273,12 @@ method get-response(HTTP::Request $request, Connection $conn, Bool :$bin) return
         $first-chunk;
     }
 
+    CATCH {
+        when X::HTTP::NoResponse {
+            X::HTTP::Internal.new(rc => 500, reason => "server returned no data").throw;
+        }
+    }
+
     my HTTP::Response $response = HTTP::Response.new($header-chunk);
     $response.request = $request;
 
@@ -284,7 +291,7 @@ method get-response(HTTP::Request $request, Connection $conn, Bool :$bin) return
         # Turn the inner exceptions to ours
         # This may really want to be outside
         CATCH {
-            when HTTP::Response::X::ContentLength {
+            when X::HTTP::ContentLength {
                 X::HTTP::Header.new( :rc($_.message), :response($response) ).throw
             }
         }
