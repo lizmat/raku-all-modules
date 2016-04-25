@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Algorithm-Manacher.git
+	branch = master
+	commit = 4f18d49db2a6b7d567fe7c4d54973f597fa50e3c
+	parent = 12d313e5841789ecad9450b56b24c416ea3d33d6
+	cmdver = 0.2.3
