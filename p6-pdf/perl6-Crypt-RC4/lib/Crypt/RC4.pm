@@ -12,11 +12,11 @@
 #       redistributed under the same terms as Perl itself.
 #--------------------------------------------------------------------#
 
-class Crypt::RC4 {
+class Crypt::RC4:ver<0.0.2> {
 
-    has UInt @!state;
-    has Int $!x;
-    has Int $!y;
+    has uint8 @!state;
+    has uint8 $!x;
+    has uint8 $!y;
 
     multi submethod BUILD(Blob :$key!) {
         @!state = setup( $key );
@@ -30,10 +30,13 @@ class Crypt::RC4 {
 
     multi method RC4(@buf is copy --> Array) {
         for @buf {
-	    $!x = 0 if ++$!x > 255;
-	    $!y -= 256 if ($!y += @!state[$!x]) > 255;
-	    @!state[$!x, $!y] = @!state[$!y, $!x];
-	    $_ +^= @!state[( @!state[$!x] + @!state[$!y] ) % 256];
+	    ++$!x;
+	    my $sx := @!state[$!x];
+	    $!y += $sx;
+	    my $sy := @!state[$!y];
+	    ($sx, $sy) = ($sy, $sx);
+	    my uint8 $mod-sum = $sx + $sy;
+	    $_ +^= @!state[$mod-sum];
         }
         @buf;
     }
@@ -43,12 +46,12 @@ class Crypt::RC4 {
 	Blob.new: self.RC4( @buf );
     }
 
-   sub setup( $key --> Array ) {
-	my Int @state = 0..255;
-	my Int $y = 0;
-	for 0..255 -> $x {
-	    $y = ( $key[$x % +$key] + @state[$x] + $y ) % 256;
-	    @state[$x, $y] = @state[$y, $x];
+   sub setup( $key --> array[uint8] ) {
+	my uint8 @state = 0..255;
+	my uint8 $y = 0;
+	for 0..255 -> uint8 $x {
+	    $y = ( $key[$x % +$key] + @state[$x] + $y );
+	    (@state[$x], @state[$y]) = (@state[$y], @state[$x]);
 	}
 	@state;
     }
@@ -56,6 +59,7 @@ class Crypt::RC4 {
     our sub RC4($key, |c) is export(:DEFAULT) {
 	$?CLASS.new( :$key ).RC4( |c );
     }
+
 }
 
 =begin pod
