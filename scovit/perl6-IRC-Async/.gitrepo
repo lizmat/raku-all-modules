@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/scovit/perl6-IRC-Async.git
+	branch = master
+	commit = 087fbe67600558363ae712c51983c87449cf3613
+	parent = ccc841269e37ee5d966e74a958e4d2815984c010
+	cmdver = 0.2.3

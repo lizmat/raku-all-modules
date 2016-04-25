@@ -1,0 +1,11 @@
+{
+    "perl"         : "6.c",
+    "name"         : "IRC::Async",
+    "version"      : "0.9",
+    "description"  : "IRC client in the reactive paradigm",
+    "depends"      : [ "IRC::Client", "Readline" ],
+    "test-depends" : [ "Test" ],
+    "provides"     : { "IRC::Async" : "lib/IRC/Async.pm6" },
+    "authors"       : ["Vittore F. Scolari"],
+    "support"       : {"source"   : "git://github.com/scovit/perl6-IRC-Async.git"}
+}
