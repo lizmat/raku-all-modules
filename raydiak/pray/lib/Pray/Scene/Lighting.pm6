@@ -46,8 +46,10 @@ class Pray::Scene::Specularity is Pray::Scene::Lighting {
         my $specular = $reflect_dir.reverse.dot($int.ray.direction);
 
         if $specular > 0 {
-            $specular **= $!sharpness
-                if $specular != 1;
+            if $specular != 1 {
+                $specular **= $!sharpness;
+                return black if $specular ~~ Failure;
+            }
 
             $specular =
                 self.color_scaled\

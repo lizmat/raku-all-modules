@@ -34,10 +34,10 @@ multi _load ($json is copy, Any $x) {
     for $type.^attributes -> $attr {
         my $name = $attr.name.substr(2);
         next unless $json{$name} :exists;
-        %args{$name} = _load($json{$name} :delete, $attr.type);
+        %args{$name} := _load($json{$name} :delete, $attr.type);
     }
     for $json.keys -> $arg {
-        %args{$arg} = $json{$arg};
+        %args{$arg} := $json{$arg};
     }
     return $type.new(|%args)
 }
