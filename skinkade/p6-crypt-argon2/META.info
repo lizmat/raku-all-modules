@@ -1,0 +1,13 @@
+{
+    "name" : "Crypt::Argon2",
+    "version" : "0.2.0",
+    "author" : "github:skinkade",
+    "description" : "Easy Argon2i password hashing",
+    "build-depends" : [ "Crypt::Random", "LibraryMake" ],
+    "provides" : {
+        "Crypt::Argon2" : "lib/Crypt/Argon2.pm6",
+        "Crypt::Argon2::Base" : "lib/Crypt/Argon2/Base.pm6"
+    },
+    "resources" : [ "libraries/argon2" ],
+    "source-url" : "git://github.com/skinkade/p6-crypt-argon2.git"
+}
