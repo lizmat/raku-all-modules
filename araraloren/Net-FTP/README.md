@@ -41,7 +41,7 @@ if $ftp.login() {
 
 ## TODO
  - not available on new rakudo version
-
+ - FTP need bind a local port 
 
 
 
