@@ -9,17 +9,17 @@ CHECK {
     # ~ ' or set the ENDIANNESS environment variable to "big" or "little".'
 }
 
-#sub MD2(    CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
-sub MD4(    CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
-sub MD5(    CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
-sub SHA(    CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
-sub SHA1(   CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
-sub SHA224( CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
-sub SHA256( CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
-sub SHA384( CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
-sub SHA512( CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
-sub RIPEMD160( CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
-sub WHIRLPOOL( CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('libssl') { * }
+#sub MD2(    CArray[uint8], Int, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
+sub MD4(    CArray[uint8], size_t, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
+sub MD5(    CArray[uint8], size_t, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
+sub SHA(    CArray[uint8], size_t, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
+sub SHA1(   CArray[uint8], size_t, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
+sub SHA224( CArray[uint8], size_t, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
+sub SHA256( CArray[uint8], size_t, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
+sub SHA384( CArray[uint8], size_t, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
+sub SHA512( CArray[uint8], size_t, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
+sub RIPEMD160( CArray[uint8], size_t, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
+sub WHIRLPOOL( CArray[uint8], size_t, OpaquePointer ) returns CArray[uint32] is native('ssl') { * }
 
 sub splitint(int $i) {
     my $n = $i < 0 ?? 256**4 + $i !! $i;

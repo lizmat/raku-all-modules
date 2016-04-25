@@ -1,7 +1,7 @@
 {
     "name" : "SSL",
     "version" : "0.2.0",
-    "description" : "Perl6 interface to OpenSSL",
+    "description" : "Perl6 interface to a OpenSSL (so far only digests though)",
     "author" : "Lucien Grondin <grondilu@yahoo.fr>",
     "build-depends" : [
         "NativeCall"
