@@ -30,7 +30,7 @@ class Test does Entry {
 class Sub-Test is Test {
 	has @.entries;
 
-	method inconsistencies(Str $usable-number = ~$.number // '?') {
+	method inconsistencies(Str $usable-number = ~($.number // '?')) {
 		my @errors;
 		my @tests = @!entries.grep(Test);
 		if $.ok != ?all(@tests).is-ok {
@@ -191,9 +191,9 @@ grammar Grammar {
 		'#' <.sp>* $<comment>=[\N*]
 	}
 	token yaml(Int $indent = 0) {
-		$<yaml-indent>=['  '] '---' \n
-		[ ^^ <.indent($indent)> $<yaml-indent> $<yaml-line>=[<!before '...'> \N* \n] ]*
-		<.indent($indent)> $<yaml-indent> '...'
+		'  ---' \n
+		[ ^^ <.indent($indent)> '  ' $<yaml-line>=[<!before '...'> \N* \n] ]*
+		<.indent($indent)> '  ...'
 	}
 	token sub-entry(Int $indent) {
 		<plan> | <test> | <comment> | <yaml($indent)> | <sub-test($indent)> || <!before <.sp> > <unknown>
@@ -478,7 +478,7 @@ class Formatter::Console is Formatter::Text {
 class Reporter::Console::Session does Session {
 	has Int $!last-updated = 0;
 	has Int $.plan = Int;
-	has Int $.number = 0;
+	has Int:D $.number = 0;
 	proto method handle-entry(TAP::Entry $entry) {
 		{*};
 	}
@@ -499,6 +499,9 @@ class Reporter::Console::Session does Session {
 	}
 	multi method handle-entry(TAP::Entry $) {
 	}
+	method summary() {
+		return ($!number, $!plan // '?').join("/");
+	}
 }
 class Reporter::Console does Reporter {
 	has Formatter::Console $!formatter;
@@ -513,6 +516,7 @@ class Reporter::Console does Reporter {
 		$!lastlength = 0;
 		$!events = Supplier.new;
 		@!active .= new;
+		$!tests = 0;
 
 		my $now = 0;
 		my $start = now;
@@ -523,7 +527,7 @@ class Reporter::Console does Reporter {
 			$now = $new-now;
 			return if $!formatter.volume < Quiet;
 			my $header = sprintf '===( %7d;%d', $!tests, $now - $start;
-			my @items = @!active.map(-> $active { sprintf '%' ~ $active.plan.chars ~ "d/%d", $active.number, $active.plan });
+			my @items = @!active.map(*.summary);
 			my $ruler = ($header, |@items).join('  ') ~ ')===';
 			$handle.print($!formatter.format-return($ruler));
 		}
@@ -771,10 +775,10 @@ package Runner {
 				}
 				when 'merge' {
 					warn "Merging isn't supported yet on Asynchronous streams";
-					$async.stderr({});
+					$async.stderr;
 				}
 				when 'ignore' {
-					$async.stderr({});
+					$async.stderr;
 				}
 				when IO::Handle:D {
 					$async.stderr.lines.act({ $err.say($_) });
@@ -969,7 +973,7 @@ class Harness {
 	method run(*@sources) {
 		my $killed = Promise.new;
 		my $aggregator = self.make-aggregator;
-		my $reporter = $!reporter-class.new(:names(@sources), :$!timer, :$!ignore-exit);
+		my $reporter = $!reporter-class.new(:names(@sources), :$!timer, :$!ignore-exit, :handle($!output));
 
 		if $!jobs > 1 {
 			my @working;
