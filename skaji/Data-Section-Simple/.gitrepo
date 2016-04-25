@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/skaji/Data-Section-Simple.git
 	branch = master
-	commit = 5469df44c4fadd3f84eed3af14960dd08812302c
-	parent = 808f65784143179a8ac5d002e92b46a18ed06119
+	commit = 1d4a4dc785e6e4b4ede20fe094b165255da9ac72
+	parent = 72e31a83b3c3fdcde531c5eebc741fc540b32cb7
 	cmdver = 0.2.3

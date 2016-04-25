@@ -16,7 +16,7 @@ method get-data-section(Str :$name, Str :$content) {
 }
 
 method !parse(Str :$name!, Str :$content!) {
-    my @data = $content.split(/^^ '@@' \s+ (.+?) \s* \r?\n/, :all);
+    my @data = $content.split(/^^ '@@' \s+ (.+?) \s* \r?\n/, :v);
     @data.shift;
     my %all = do for @data -> $/, $c {
         $/[0].Str => $c; # XXX
