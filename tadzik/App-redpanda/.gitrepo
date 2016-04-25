@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tadzik/App-redpanda.git
+	branch = master
+	commit = 74b2e64c668dd00acb53efd2348b3c2d33e397d0
+	parent = 71fbfbec8acd3abeaca31e96489b24bb659505fa
+	cmdver = 0.2.3
