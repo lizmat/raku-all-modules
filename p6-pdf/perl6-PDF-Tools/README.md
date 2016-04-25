@@ -95,7 +95,7 @@ PDF files are also indexed for random access and may also have filters for strea
 They have a reasonably well specified structure. The document starts from
 `Root` entry in the trailer dictionary, which is the main entry point into a PDF.
 
-This module is based on the <a href='http://www.adobe.com/content/dam/Adobe/en/devnet/acrobat/pdfs/pdf_reference_1-7.pdf'>PDF Reference version 1.7<a> specification. It implements syntax, basic data-types, serialization and encryption rules as described in the first four chapters of the specification. Read and write access to data structures is via direct manipulation of tied arrays and hashes.
+This module is based on the <a href='http://www.adobe.com/content/dam/Adobe/en/devnet/acrobat/pdfs/PDF32000_2008.pdf'>PDF PDF 32000-1:2008 1.7<a> specification. It implements syntax, basic data-types, serialization and encryption rules as described in the first four chapters of the specification. Read and write access to data structures is via direct manipulation of tied arrays and hashes.
 
 ## The Basics
 
@@ -251,19 +251,18 @@ The page `/Contents` entry is a PDF stream which contains graphical instructions
   - `:!repair` causes the read to load only the trailer dictionary and cross reference tables from the tail of the PDF (Cross Reference Table or a PDF 1.5+ Stream). Remaining objects will be lazily loaded on demand.
   - `:repair` causes the reader to perform a full scan, ignoring and recalculating the cross reference stream/index and stream lengths. This can be handy if the PDF document has been hand-edited.
 
-- `$doc.update( :annex("path") )`
+- `$doc.update`
 This performs an incremental update to the input pdf, which must be indexed `PDF` (not applicable to
 PDF's opened with `:repair`, FDF or JSON files). A new section is appended to the PDF that
 contains only updated and newly created objects. This method can be used as a fast and efficient way to make
 small updates to a large existing PDF document.
-    - `:annex` - saves just an update section to a separate file. This may be useful in a mail-merge scenario, where
-    multiple PDF's are being produced from a common base PDF template. Each can be reconstituted by appending the annex file
-    to the base PDF.
+    - `:to(IO::handle $fh)` - saves just the update section to an alternate location.
 
 - `$doc.save-as("mydoc-2.pdf", :compress, :rebuild)`
 Saves a new document, including any updates. Options:
   - `:compress` - compress objects for minimal size
   - `:!compress` - uncompress objects for human readability
+  - `:update` - copy the input PDF, then incrementally update (fast).
   - `:rebuild` - discard any unreferenced objects. renumber remaining objects. It may be a good idea to rebuild a PDF Document, that's been incrementally updated a number of times.
 
 Note that the `:compress` and `:rebuild` options are a trade-off. The document may take longer to save, however file-sizes and the time needed to reopen the document may improve.
@@ -313,7 +312,7 @@ CCITTFaxDecode  | CCF | _NYI_
 Crypt           |     | _NYI_
 DCTDecode       | DCT | _NYI_
 FlateDecode     | Fl  | PDF::Storage::Filter::Flate
-LZWDecode       | LZW | PDF::Storage::Filter::LZW
+LZWDecode       | LZW | _NYI_
 JBIG2Decode     |     | _NYI_
 JPXDecode       |     | _NYI_
 RunLengthDecode | RL  | PDF::Storage::Filter::RunLength
@@ -441,6 +440,6 @@ PDF::DAO::Type::XRef | PDF::DAO::Stream | PDF 1.5+ Cross Reference stream
 ## See also
 
 - [PDF::Grammar](https://github.com/p6-pdf/perl6-PDF-Grammar) - base grammars for PDF parsing (released)
-- [PDF::Content](https://github.com/p6-pdf/perl6-PDF-Content) - Utilities for working with content; including images, fonts, text and general graphics (under construction) 
+- [PDF::Basic](https://github.com/p6-pdf/perl6-PDF-Basic) - Simple content manipulation; including images, fonts, text and general graphics (under construction) 
 - [PDF::Struct](https://github.com/p6-pdf/perl6-PDF-Struct) - Structured access to PDF Documents (experimental, under construction)
 

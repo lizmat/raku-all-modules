@@ -1,4 +1,9 @@
-    Release 0.06
+    Release 0.0.7
+    - [PDF::DAO::Doc] add saves-as( :update ) option.
+      The input PDF is copied to the destination PDF, which is then incrementally
+      updated. This should generally be faster.
+    
+    Release 0.0.6
     - [bin/pdf-rewriter.pl] unbust rewriting/recompression of encrypted PDFs
     - [PDF::Storage::Serializer][PDF::DAO::{Array|Dict|Stream}] use Perl 6 object hashes
       -- Refactored `my %h; ...; %hash{$object.WHICH}` with `my %h{Any}; ...; %hash{$object}` 
@@ -20,9 +25,13 @@
       -- JSON output of annex files
       -- add `$doc.open( $file, :annex)` option - load a base pdf, then apply
          an annex file.
-    - [PDF::Reader] Bug-fixes:
+    - [PDF::Reader] bug-fixes:
       -- avoid encrypting the encryption dictionary
       -- fixed de-Linearization. Now handled by PDF::Storage::Serializer
+    - [PDF::Storage::Filter] bug fixes:
+      -- fixed ascii-85, ascii-hex and run-length encoders to add
+         end-of-data markers
+      -- withdrew LZW encoding
 
     Release 0.0.5
     - added some reader exception classes, e.g. X::PDF::BadXRef

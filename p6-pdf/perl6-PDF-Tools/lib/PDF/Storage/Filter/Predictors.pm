@@ -2,6 +2,8 @@ use v6;
 
 role PDF::Storage::Filter::Predictors {
 
+    my subset BPC of UInt where 1 | 2 | 4 | 8 | 16;
+
     use PDF::Storage::Util :resample;
     # post prediction functions as described in the PDF 1.7 spec, table 3.8
     multi method post-prediction($decoded where Blob | Buf, 
@@ -14,17 +16,20 @@ role PDF::Storage::Filter::Predictors {
                             UInt :$Predictor! where { $_ == 2}, #| predictor function
                             UInt :$Columns = 1,          #| number of samples per row
                             UInt :$Colors = 1,           #| number of colors per sample
-                            UInt :$BitsPerComponent = 8, #| number of bits per color
+                            BPC  :$BitsPerComponent = 8, #| number of bits per color
         ) {
         my UInt $bit-mask = 2 ** $BitsPerComponent  -  1;
         my UInt @output;
         my UInt $ptr = 0;
-        my Buf $nums = resample( $decoded, 8, $BitsPerComponent );
+        my Buf $nums := resample( $decoded, 8, $BitsPerComponent );
 
         while $ptr < +$nums {
-            for 1 .. $Columns -> $i {
+	    for 1 .. $Colors {
+		@output.push: $nums[ $ptr++ ];
+	    }
+            for 2 .. $Columns -> $i {
                 for 1 .. $Colors {
-                    my UInt $prev-color = $i > 1 ?? $nums[ $ptr - $Colors] !! 0;
+                    my UInt $prev-color = $nums[$ptr - $Colors];
                     my UInt $result = ($nums[ $ptr++ ] - $prev-color) +& $bit-mask;
                     @output.push: $result;
                 }
@@ -38,7 +43,7 @@ role PDF::Storage::Filter::Predictors {
 			    UInt :$Predictor! where { 10 <= $_ <= 15}, #| predictor function
 			    UInt :$Columns = 1,          #| number of samples per row
 			    UInt :$Colors = 1,           #| number of colors per sample
-			    UInt :$BitsPerComponent = 8, #| number of bits per color
+			    BPC  :$BitsPerComponent = 8, #| number of bits per color
         ) {
 
         my UInt $bytes-per-col = ceiling($Colors * $BitsPerComponent / 8);
@@ -52,16 +57,16 @@ role PDF::Storage::Filter::Predictors {
             @output.push: 4; # Paeth indicator
 
             for 1 .. $bytes-per-row -> $i {
-                my UInt $left-byte = $i <= $bytes-per-col ?? 0 !! $encoded[$ptr - $bytes-per-col];
-                my UInt $up-byte = $row ?? $encoded[$ptr - $bytes-per-row] !! 0;
-                my UInt $up-left-byte = $row && $i > $bytes-per-col ?? $encoded[$ptr - $bytes-per-row - $bytes-per-col] !! 0;
+                my uint8 $left-byte = $i <= $bytes-per-col ?? 0 !! $encoded[$ptr - $bytes-per-col];
+                my uint8 $up-byte = $row ?? $encoded[$ptr - $bytes-per-row] !! 0;
+                my uint8 $up-left-byte = $row && $i > $bytes-per-col ?? $encoded[$ptr - $bytes-per-row - $bytes-per-col] !! 0;
 
-                my Int $p = $left-byte + $up-byte - $up-left-byte;
+                my uint8 $p = $left-byte + $up-byte - $up-left-byte;
 
-                my UInt $pa = abs($p - $left-byte);
-                my UInt $pb = abs($p - $up-byte);
-                my UInt $pc = abs($p - $up-left-byte);
-                my UInt $nearest;
+                my uint8 $pa = abs($p - $left-byte);
+                my uint8 $pb = abs($p - $up-byte);
+                my uint8 $pc = abs($p - $up-left-byte);
+                my uint8 $nearest;
 
                 if $pa <= $pb and $pa <= $pc {
                     $nearest = $left-byte;
@@ -73,7 +78,7 @@ role PDF::Storage::Filter::Predictors {
                     $nearest = $up-left-byte
                 }
 
-                @output.push: ($encoded[$ptr++] - $nearest) % 256;
+                @output.push: ($encoded[$ptr++] - $nearest);
             }
 
             $row++;
@@ -100,8 +105,8 @@ role PDF::Storage::Filter::Predictors {
         ) {
         my UInt $bit-mask = 2 ** $BitsPerComponent  -  1;
         my UInt $ptr = 0;
-        my Buf $nums = resample( $decoded, 8, $BitsPerComponent );
-        my uint8 @output;
+        my Buf $nums := resample( $decoded, 8, $BitsPerComponent );
+        my UInt @output;
 
         while $ptr < +$nums {
 
@@ -136,10 +141,10 @@ role PDF::Storage::Filter::Predictors {
 
         while $ptr < +$decoded {
             # PNG prediction can vary from row to row
-            my $filter-byte = $decoded[$ptr++];
-            my @out;
+            my uint8 $tag = $decoded[$ptr++];
+            my uint8 @out;
 
-            given $filter-byte {
+            given $tag {
                 when 0 {
                     # None
                     @out.push: $decoded[$ptr++]
@@ -149,14 +154,14 @@ role PDF::Storage::Filter::Predictors {
                     # Sub - 1
                     for 1 .. $bytes-per-row -> $i {
                         my UInt $left-byte = $i <= $bytes-per-col ?? 0 !! @out[* - $bytes-per-col];
-                        @out.push: ($decoded[$ptr++] + $left-byte) % 256;
+                        @out.push: ($decoded[$ptr++] + $left-byte);
                     }
                 }
                 when 2 {
                     # Up - 2
                     for 1 .. $bytes-per-row {
                         my UInt $up-byte = @up[ +@out ];
-                        @out.push: ($decoded[$ptr++] + $up-byte) % 256;
+                        @out.push: ($decoded[$ptr++] + $up-byte);
                     }
                 }
                 when  3 {
@@ -164,21 +169,21 @@ role PDF::Storage::Filter::Predictors {
                     for 1 .. $bytes-per-row -> $i {
                         my UInt $left-byte = $i <= $bytes-per-col ?? 0 !! @out[* - $bytes-per-col];
                         my UInt $up-byte = @up[ +@out ];
-                        @out.push: ($decoded[$ptr++] + ( ($left-byte + $up-byte) div 2 )) % 256;
+                        @out.push: ($decoded[$ptr++] + ( ($left-byte + $up-byte) div 2 ));
                     }
                 }
                 when 4 {
                     # Paeth - 4
                     for 1 .. $bytes-per-row -> $i {
-                        my UInt $left-byte = $i <= $bytes-per-col ?? 0 !! @out[* - $bytes-per-col];
-                        my UInt $up-byte = @up[ +@out ];
-                        my UInt $up-left-byte = $i <= $bytes-per-col ?? 0 !! @up[ +@out - $bytes-per-col];
-                        my Int $p = $left-byte + $up-byte - $up-left-byte;
+                        my uint8 $left-byte = $i <= $bytes-per-col ?? 0 !! @out[* - $bytes-per-col];
+                        my uint8 $up-byte = @up[ +@out ];
+                        my uint8 $up-left-byte = $i <= $bytes-per-col ?? 0 !! @up[ +@out - $bytes-per-col];
+                        my uint8 $p = $left-byte + $up-byte - $up-left-byte;
 
-                        my UInt $pa = abs($p - $left-byte);
-                        my UInt $pb = abs($p - $up-byte);
-                        my UInt $pc = abs($p - $up-left-byte);
-                        my UInt $nearest;
+                        my uint8 $pa = abs($p - $left-byte);
+                        my uint8 $pb = abs($p - $up-byte);
+                        my uint8 $pc = abs($p - $up-left-byte);
+                        my uint8 $nearest;
 
                         if $pa <= $pb and $pa <= $pc {
                             $nearest = $left-byte;
@@ -190,11 +195,11 @@ role PDF::Storage::Filter::Predictors {
                             $nearest = $up-left-byte
                         }
 
-                        @out.push: ($decoded[$ptr++] + $nearest) % 256;
+                        @out.push: ($decoded[$ptr++] + $nearest);
                     }
                 }
                 default {
-                    die "bad predictor byte: $_";
+                    die "bad PNG predictor tag: $_";
                 }
             }
 

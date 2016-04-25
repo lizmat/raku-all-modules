@@ -11,35 +11,30 @@ class PDF::DAO::TextString
 
 =begin pod
 
-See [PDF 1.7 TABLE 3.31 PDF data types]
+See [PDF 1.7 TABLE 34 PDF data types]
 
-text-string: Bytes that represent characters encoded
-using either PDFDocEncoding or UTF-16BE with a leading byte-order marker
+text-string: Bytes that represent characters encoded using either
+PDFDocEncoding or UTF-16BE with a leading byte-order marker
 
 =end pod
 
     method new( Str :$value! is copy, Bool :$bom is copy = False, |c ) {
-        if $value ~~ s/^ $<bom>=[\xFE \xFF]// {
-            $bom = True;
-            $value = $value.ords.map( -> $b1, $b2 {
-            chr($b1 +< 8  +  $b2)
-           }).join: '';
+        if $value ~~ /^ $<bom>=[\xFE \xFF]/ {
+	    my @be = $value.ords;
+            $value = Buf.new(@be).decode('utf-16');
         }
         nextwith( :$value, :$bom, |c );
     }
 
     our sub utf16-encode(Str $str --> Str) {
-         constant BOM = "\xFE\xFF";
-         constant OverflowChar = "\xFF\xFD";
-	 my Str $utf16 = $str.ords.map( -> $ord {
+         constant BOM-BE = "\xFE\xFF";
+	 my Str $byte-string = $str.encode("utf-16").map( -> $ord {
                    my $lo = $ord mod 0x100;
                    my $hi = $ord div 0x100;
-                   my $ch = $hi < 0x100
-		       ?? $hi.chr ~ $lo.chr
-		       !! OverflowChar; # � for overflpw
+		   $hi.chr ~ $lo.chr;
 	 }).join('');
 
-	 BOM ~ $utf16;
+	 BOM-BE ~ $byte-string;
     }
 
     method content {

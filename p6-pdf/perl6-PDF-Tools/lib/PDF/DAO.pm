@@ -1,6 +1,7 @@
 use v6;
 
 our $delegator;
+our %required;
 
 role PDF::DAO {
 
@@ -48,15 +49,21 @@ role PDF::DAO {
     multi method coerce(Pair %_!, |c) {
 	$.coerce( |%_, |c)
     }
+    method required(*@path where +@path) {
+	my Str $mod-name = @path.join('::');
+	unless %required{$mod-name}++ {
+	    require ::($mod-name)
+	}
+    }
     method add-role($obj, Str $role) {
-	require ::($role);
+	$.required($role);
         $obj does ::($role)
 	    unless $obj.does(::($role));
 	$obj;
     }
 
     multi method coerce( Array :$array!, |c ) {
-        require ::("PDF::DAO::Array");
+        $.required("PDF::DAO::Array");
         my $fallback = ::("PDF::DAO::Array");
         $.delegate( :$array, :$fallback ).new( :$array, |c );
     }
@@ -98,12 +105,12 @@ role PDF::DAO {
     }
 
     multi method coerce( Any :$null!, |c) {
-        require ::("PDF::DAO::Null");
+        $.required("PDF::DAO::Null");
         ::("PDF::DAO::Null").new( |c );
     }
 
     multi method coerce( Hash :$dict!, |c ) {
-        require ::("PDF::DAO::Dict");
+        $.required("PDF::DAO::Dict");
 	my $class = ::("PDF::DAO::Dict");
 	$class = $.delegate( :$dict, :fallback($class) );
 	$class.new( :$dict, |c );
@@ -116,7 +123,7 @@ role PDF::DAO {
             if $stream{$_}:exists;
         }
         my Hash $dict = $stream<dict> // {};
-        require ::("PDF::DAO::Stream");
+        $.required("PDF::DAO::Stream");
 	my $class = ::("PDF::DAO::Stream");
 	$class = $.delegate( :$dict, :fallback($class) );
         $class.new( :$dict, |%params, |c );
@@ -126,7 +133,7 @@ role PDF::DAO {
 
     method delegator is rw {
 	unless $delegator.can('delegate') {
-	    require ::('PDF::DAO::Delegator');
+	    $.required('PDF::DAO::Delegator');
 	    $delegator = ::('PDF::DAO::Delegator');
 	}
 	$delegator
