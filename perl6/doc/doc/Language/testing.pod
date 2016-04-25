@@ -26,7 +26,7 @@ project's base directory.
 A typical test file looks something like this:
 
     use v6;
-    use Test;
+    use Test;      # a Standard module included with Rakudo
     use lib 'lib';
 
     plan $num-tests;
@@ -141,6 +141,16 @@ C<$description> of the test.
     my $eulers-constant-approx = 2.71828;
     is-approx $eulers-constant-approx, e, "approximate Euler's constant";
 
+=item X<is-approx($value, $expected, $tol, $description?)|is-approx>
+
+Marks a test as passed if the C<$value> and C<$expected> numerical values
+are within C<$tol> of each other.  The function accepts an optional
+C<$description> of the test.  For example, test for an approximation of pi:
+
+    my $pi-approx = 3.1416;
+    my $pi-tol = 0.0001;
+    is-approx $pi-approx, pi, $pi-tol, "approximate Pi";
+ 
 =head2 By structural comparison
 
 =item X<is-deeply($value, $expected, $description?)|is-deeply>
@@ -325,7 +335,7 @@ eval-lives-ok q[my $daenerys-burns = False;
     "Dany is blood of the dragon";
 =end code
 
-=item X<throws-like($code, $expected-exception, $description?)|throws-like>
+=item X<throws-like($code, $expected-exception, $description?, *%matcher)|throws-like>
 
 Marks a test as passed if the given C<$code> throws the specific exception
 C<$expected-exception>. The code C<$code> may be specified as something
@@ -396,7 +406,7 @@ only one test will be marked TODO.
     sub my-custom-pi { 3 };
 
     todo 'not yet precise enough';         # Mark the test as TODO.
-    is my-custom-pi(), pi, 'my-custom-pi'; # Tun the test, but don't report
+    is my-custom-pi(), pi, 'my-custom-pi'; # Run the test, but don't report
                                            # failure in test harness.
 
 =item X<skip($reason, $count = 1)|skip>

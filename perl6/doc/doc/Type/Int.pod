@@ -34,7 +34,7 @@ Usage:
     INTEGER.chr
 
 Returns a one-character string, by interpreting the integer as a Unicode
-codepoint number and converting it the corresponding character.
+codepoint number and converting it to the corresponding character.
 
 Example:
 
@@ -55,6 +55,35 @@ Usage:
 
 Returns the given C<Int> raised to the C<$y> power within modulus C<$mod>.
 
+    say expmod(4, 2, 5);    # 1
+    say 7.expmod(2, 5);     # 4
+
+=head2 routine polymod
+
+Defined as:
+
+    method polymod(Int:D: +@mods)      
+
+Usage:
+
+    INTEGER.polymod(LIST)            
+
+Returns a sequence of mod results corresponding to the divisors in C<@mods>.       
+If the number of divisors is finite, returns one more result than the number 
+of divisors, and the final result is the remainder after all the divisions. 
+If the number of divisors is infinite, runs until the remainder is 0. 
+The Int version of this method assumes all the divisors are also integers. 
+Coerce the invocant to Num or Rat if you wish to use fractional operations.
+
+    say 3661.polymod(60,60,24);                                                  # (1 1 1 0)
+
+    my $seconds = 3600;
+    say $seconds.polymod(60,60,24) Z <seconds minutes hours days>;               # ((0 seconds) (0 minutes) (1 hours) (0 days))
+    
+    # another way to do calculations like the ones above without using polymod
+    my $secs = 3661; 
+    for 60,60,24 { say $secs mod $_; $secs div= $_ }; say $secs;                 # 1\n1\n1\n0\n
+
 =head2 routine is-prime
 
 Defined as:
@@ -66,12 +95,15 @@ Usage:
 
     is-prime INTEGER
     INTEGER.is-prime
-    INTEGER.is-prime
+
 
 Returns C<True> if this C<Int> is known to be a prime, or is likely to be a
 prime based on a probabilistic Miller-Rabin test.
 
 Returns C<False> if this C<Int> is known not to be a prime.
+
+    say 2.is-prime;         # True
+    say is-prime(9);        # False
 
 =head2 routine lsb
 
@@ -131,6 +163,10 @@ Usage:
 
 Returns the number represented by the Unicode codepoint with the given integer
 number, or L<NaN> if it does not represent a number.
+
+    say ord("¾").unival;    # 0.75
+    say 190.unival;         # 0.75
+    say unival(65);         # NaN
 
 =head1 Operators
 

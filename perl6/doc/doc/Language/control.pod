@@ -317,7 +317,8 @@ as many elements from the list as needed before running the block.
 
 =begin code
 
-for %hash.kv -> $key, $value { print "$key => $value\n" }
+for @foo.kv -> $idx, $val { say "$idx: $val" }
+for %hash.kv -> $key, $val { say "$key => $val" }
 for 1, 1.1, 2, 2.1 { say "$^x < $^y" }  # says "1 < 1.1" then says "2 < 2.1"
 
 =end code
@@ -678,6 +679,10 @@ All these forms may produce a return value the same way C<loop> does.
 =head1 X<return|control flow>
 
 =comment TODO
+
+=head1 X<return-rw|control flow>
+
+Same as C<return>, but returns a writable container.
 
 =head1 X<once|control flow>
 

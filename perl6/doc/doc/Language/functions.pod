@@ -68,7 +68,7 @@ Subroutines don't have to be named; in this case they're called anonymous.
     say sub ($a, $b) { $a ** 2 + $b ** 2 }(3, 4) # 25
 
 But in this case, it's often desirable to use the more succinct L<block|Block>
-syntax.
+syntax. Subroutines and blocks can be called in place, as in the example above.
 
 =head2 X«Blocks and Lambdas|syntax,->»
 
@@ -105,7 +105,7 @@ L<documentation on the C<Signature> class|Signature>.
 
 =head2 Arguments
 
-Arguments are supplied as a comma separated list. To disambugiate nested calls
+Arguments are supplied as a comma separated list. To disambiguate nested calls
 parentheses or adverbial form can be used.
 
     sub f(&c){ c() * 2 }; # call the function reference c with empty parameter list
@@ -529,7 +529,7 @@ say 1 § 2 § 3;      # (1|2|3)
 
 =head1 Traits
 
-I<Traits> are subroutines are run at compile time to modify the behavior of a
+I<Traits> are subroutines that are run at compile time to modify the behavior of a
 type, variable, routine, attribute, or other language object.
 
 Examples of traits are:
@@ -644,7 +644,7 @@ a 1;        # Int 1\n Any 1
 =end code
 
 As mentioned earlier, multi subs are not the only situation in which
-C<callwith>, C<callsame>, C<nextwith> and C<nextsame> can be helpful.
+X<C<callwith>|callwith>, X<C<callsame>|callsame>, X<C<nextwith>|nextwith> and X<C<nextsame>|nextsame> can be helpful.
 One is is for dispatching to wrapped routines:
 
 =begin code
