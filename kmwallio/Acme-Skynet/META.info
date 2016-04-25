@@ -1,0 +1,16 @@
+{
+  "perl" : "6.*",
+  "name" : "Acme::Skynet",
+  "version" : "0.0.3",
+  "description" : "Machine Learnings for your Perls6.",
+  "authors" : [ "KM Wallio" ],
+  "provides" : {
+      "Acme::Skynet" : "lib/Acme/Skynet.pm6",
+      "Acme::Skynet::ID3" : "lib/Acme/Skynet/ID3.pm6",
+      "Acme::Skynet::ChainLabel" : "lib/Acme/Skynet/ChainLabel.pm6",
+      "Acme::Skynet::DumbDown" : "lib/Acme/Skynet/DumbDown.pm6"
+  },
+  "depends" : ["Lingua::EN::Stem::Porter"],
+  "resources" : [ ],
+  "source-url" : "git://github.com/kmwallio/Acme-Skynet.git"
+}

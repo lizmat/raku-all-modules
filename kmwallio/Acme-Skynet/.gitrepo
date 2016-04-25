@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/kmwallio/Acme-Skynet.git
+	branch = master
+	commit = 2bf34b62c745364955cca91fdfeb5ebd48f11f28
+	parent = be4779a5ab6ca4d9cbd7f3ace0809d533f999f31
+	cmdver = 0.2.3
