@@ -30,24 +30,20 @@ my @methods = 'url', 'source', 'move-to', 'click', 'quit',
 
 plan @methods.elems + 14;
 
-use Selenium::WebDriver::PhantomJS;
-ok 1, "'use Selenium::WebDriver::PhantomJS' worked!";
+use Selenium::WebDriver::BlackBerry;
+ok 1, "'use Selenium::WebDriver::BlackBerry' worked!";
 
-{
-  # Skip tests if phantomjs is not found
-  use File::Which;
-  unless which('phantomjs') {
-    skip-rest("phantomjs is not installed. skipping tests...");
+unless %*ENV<SELENIUM_BLACKBERRY_IP> {
+    skip-rest("Environment variable SELENIUM_BLACKBERRY_IP is not set. skipping tests...");
     exit;
-  }
 }
 
-my $driver = Selenium::WebDriver::PhantomJS.new(:debug, :max-attempts(30), :port(5555));
-ok $driver, "Selenium::WebDriver::PhantomJS.new worked";
+my $driver = Selenium::WebDriver::BlackBerry.new(%*ENV<SELENIUM_BLACKBERRY_IP>);
+ok $driver, "Selenium::WebDriver::BlackBerry.new worked";
 
 for @methods -> $method {
-  ok Selenium::WebDriver::PhantomJS.can($method),
-    "Selenium::WebDriver::PhantomJS.$method is found";
+  ok Selenium::WebDriver::BlackBerry.can($method),
+    "Selenium::WebDriver::BlackBerry.$method is found";
 }
 
 {
@@ -55,7 +51,7 @@ for @methods -> $method {
   ok $sessions.defined, "Sessions returned a defined value";
   ok $sessions ~~ Array, "Sessions is an array";
   ok $sessions.elems == 1, "Only One session should be there";
-  ok $sessions[0]<id> ~~ Str, "And we have a sessionId";
+  ok $sessions[0]<id> ~~ Int, "And we have a sessionId";
 }
 
 {
@@ -78,6 +74,7 @@ for @methods -> $method {
   ok @windows[0] ~~ Selenium::WebDriver::WebWindow, "first element is a window";
 }
 
-LEAVE {
-  $driver.quit if $driver.defined;
-}
+# This would make the BlackBerry Browser quit. So we avoid that.
+# LEAVE {
+#   $driver.quit if $driver.defined;
+# }

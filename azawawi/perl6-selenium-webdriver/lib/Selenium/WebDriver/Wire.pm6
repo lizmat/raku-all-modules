@@ -2,7 +2,7 @@
 #
 # JSON Wire Protocol Perl 6 implementation
 # Please see 
-# https://code.google.com/p/selenium/wiki/JsonWireProtocol
+# https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol
 #
 
 use v6;
@@ -28,10 +28,11 @@ has Str         $.session-id is rw;
 =begin markdown
 =end markdown
 submethod BUILD(
-  Str $host        = '127.0.0.1',
-  Int :$port       = -1,
-  Str :$url-prefix = '';
-  Bool :$debug     = False )
+  Str :$host                       = '127.0.0.1',
+  Int :$port                       = -1,
+  Str :$url-prefix                 = '',
+  Bool :$debug                     = False,
+  Int :$max-attempts where $_ >= 1 = 10 )
 {
 
   # Attributes
@@ -46,9 +47,8 @@ submethod BUILD(
   self.start;
 
   # Try to create a session for n times
-  my constant MAX-ATTEMPTS = 10;
   my $session;
-  for 1..MAX-ATTEMPTS {
+  for 1..$max-attempts {
     # Try to create session
     $session = self._new-session;
     last if $session.defined;
@@ -63,7 +63,7 @@ submethod BUILD(
   }
 
   # No session could be created
-  die "Cannot obtain a session after $(MAX-ATTEMPTS) attempts" unless $session.defined;
+  die "Cannot obtain a session after $max-attempts attempts" unless $session.defined;
 
   self.session-id = $session<sessionId>;
   die "Session id is not defined" unless self.session-id.defined;
@@ -440,7 +440,7 @@ method element-by-xpath(Str $xpath) {
 =end markdown
 # POST /session/:sessionId/elements
 method _elements(Str $using, Str $value) {
-  my @elements = self._post(
+  my $elements = self._post(
     "elements",
     {
       'using' => $using,
@@ -448,13 +448,13 @@ method _elements(Str $using, Str $value) {
     }
   );
 
-  return unless @elements.defined;
-  my @results = gather {
-      take Selenium::WebDriver::WebElement.new(
-        :id( $_<value><ELEMENT> ),
-        :driver( self )
-      ) for @elements;
-  };
+  return unless $elements.defined;
+  my @results = $elements<value>.map({
+    Selenium::WebDriver::WebElement.new(
+      :id( $_<ELEMENT> ),
+      :driver( self )
+    )
+  });
 
   return @results;
 }
@@ -721,13 +721,14 @@ method _die(Str $method, Str $command, $response) {
   say "Died while doing '$method $command', content:\n";
   say $response.content if $response.defined;
   say "end of content\n";
+  return unless $response.defined;
   my $o = from-json($response.content);
 
   my $error = $o<value>;
   Selenium::WebDriver::X::Error.new(
-    reason     => $error<message>,
+    reason     => $error<message> // '',
     screenshot => $error<screen>,
-    class      => $error<class>
+    class      => $error<class> // ''
   ).throw;
 }
 =begin markdown
@@ -773,7 +774,7 @@ method _execute-command(Str $method, Str $command, Hash $params = {}) {
     $result = from-json( $response.content );
   }
   else {
-    self._die($method, $command, $_);
+    self._die($method, $command, $response);
     warn "FAILED: " ~ $response.status-line if self.debug;
   }
 

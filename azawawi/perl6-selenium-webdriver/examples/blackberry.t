@@ -5,16 +5,16 @@ use v6;
 use lib 'lib';
 use Test;
 plan 5;
-use Selenium::WebDriver::Firefox;
+use Selenium::WebDriver::BlackBerry;
 
-# Create new firefox webdriver. Please note firefox must be already
-# installed and configured in PATH
-my $driver = Selenium::WebDriver::Firefox.new;
+# Create new BlackBerry webdriver. The ip address is shown in the
+# development section of the settings menu of the BlackBerry browser.
+my $driver = Selenium::WebDriver::BlackBerry.new('169.254.0.1');
 
 # Navigate to google.com
 $driver.url( "http://google.com" );
 ok $driver.title ~~ / 'Google' /,                "Google in title";
-ok $driver.url   ~~ / ^ 'http' 's'? '://' .+? 'google'/, "google.com in url";
+ok $driver.url   ~~ / ^ 'http://' .+? 'google'/, "google.com in url";
 
 # Find search box and then type "Perl 6" in it
 my $search-box = $driver.element-by-name( 'q' );
@@ -30,8 +30,3 @@ $search-box.submit;
 my $filename = 'output.png';
 $driver.save-screenshot( $filename );
 ok $filename.IO ~~ :e, "$filename exists";
-
-LEAVE {
-  diag 'WebDriver cleanup';
-  $driver.quit if $driver.defined;
-}
