@@ -4,7 +4,7 @@ sudo: required
 language: perl6
 
 perl6:
-    - 2016.02
+    - 2016.03
     - latest
 
 install:
