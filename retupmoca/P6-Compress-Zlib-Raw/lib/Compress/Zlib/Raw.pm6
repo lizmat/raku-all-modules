@@ -2,14 +2,13 @@ use v6;
 unit module Compress::Zlib::Raw;
 
 use NativeCall;
-use Find::Bundled;
 
 sub find-lib {
     state $lib;
     unless $lib {
         if $*VM.config<dll> ~~ /dll/ {
             # we're on windows, different library name
-            $lib = Find::Bundled.find('zlib1.dll', 'Compress/Zlib', :keep-filename, :return-original);
+            $lib = ~(%?RESOURCES{"zlib1.dll"});
         } elsif $*VM.config<dll> ~~ /so$/ {
             $lib = 'libz.so.1';
         } elsif $*VM.config<dll> ~~ /dylib$/ {
@@ -150,7 +149,7 @@ our sub deflateCopy(z_stream, z_stream) returns int32 is native(&find-lib) is ex
 our sub deflateReset(z_stream) returns int32 is native(&find-lib) is export { * }
 our sub deflateParams(z_stream, int32, int32) returns int32 is native(&find-lib) is export { * }
 our sub deflateTune(z_stream, int32, int32, int32, int32) returns int32 is native(&find-lib) is export { * }
-our sub deflateBound(z_stream, int) returns long is native(&find-lib) is export { * }
+our sub deflateBound(z_stream, ulong) returns long is native(&find-lib) is export { * }
 # arguments are actually (z_stream, unsigned*, int*)
 our sub deflatePending(z_stream, CArray[int32], CArray[int32]) returns int32 is native(&find-lib) is export { * }
 our sub deflatePrime(z_stream, int32, int32) returns int32 is native(&find-lib) is export { * }
@@ -178,12 +177,12 @@ our sub zlibCompileFlags() returns long is native(&find-lib) is export { * }
 # utility functions
 
 #second argument is actually long*, but I don't know how to do a pointer to a long
-our sub compress(Blob, CArray[long], Blob, int) returns int32 is native(&find-lib) is export { * }
-our sub compress2(Blob, CArray[long], Blob, int, int32) returns int32 is native(&find-lib) is export { * }
-our sub compressBound(int) returns long is native(&find-lib) is export { * }
+our sub compress(Blob, CArray[long], Blob, ulong) returns int32 is native(&find-lib) is export { * }
+our sub compress2(Blob, CArray[long], Blob, ulong, int32) returns int32 is native(&find-lib) is export { * }
+our sub compressBound(ulong) returns long is native(&find-lib) is export { * }
 
 #second argument: see note above
-our sub uncompress(Blob, CArray[long], Blob, int) returns int32 is native(&find-lib) is export { * }
+our sub uncompress(Blob, CArray[long], Blob, ulong) returns int32 is native(&find-lib) is export { * }
 
 # gzip file access functions
 
@@ -216,10 +215,10 @@ our sub gzclearerr(gzFile) is native(&find-lib) is export { * }
 
 # checksum functions
 #
-our sub adler32(int, CArray[int8], int32) returns long is native(&find-lib) is export { * }
-our sub adler32_combine(int, int, int32) returns long is native(&find-lib) is export { * }
-our sub crc32(int, CArray[int8], int32) returns long is native(&find-lib) is export { * }
-our sub crc32_combine(int, int, int32) returns long is native(&find-lib) is export { * }
+our sub adler32(ulong, CArray[int8], int32) returns long is native(&find-lib) is export { * }
+our sub adler32_combine(ulong, ulong, int32) returns long is native(&find-lib) is export { * }
+our sub crc32(ulong, CArray[int8], int32) returns long is native(&find-lib) is export { * }
+our sub crc32_combine(ulong, ulong, int32) returns long is native(&find-lib) is export { * }
 
 # undocumented functions
 #

@@ -1,9 +1,11 @@
 {
     "name" : "Compress::Zlib::Raw",
     "version" : "1.0.0",
+    "perl"    : "6.c",
     "author" : "github:retupmoca",
     "description" : "Low-level bindings to zlib",
-    "depends" : ["Find::Bundled"],
+    "depends"       : [],
+    "resources"     : [ "zlib1.dll" ],
     "build-depends" : ["Shell::Command"],
     "provides" : {
         "Compress::Zlib::Raw" : "lib/Compress/Zlib/Raw.pm6"
