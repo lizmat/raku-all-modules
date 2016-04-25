@@ -1,6 +1,11 @@
 Revision history for Term::TablePrint
 
 
+0.010   2016-04-15
+        - No changes
+        - Try to fix travis error
+
+
 0.009   2016-03-17
         - Fixed source-url in META6.json
 
