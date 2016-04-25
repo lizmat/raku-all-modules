@@ -1,0 +1,26 @@
+{
+    "name"        : "Geo::Coder::OpenCage",
+    "version"     : "1.0",
+    "description" : "Client library for the OpenCage Geocoder",
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [
+        "HTTP::UserAgent",
+        "JSON::Unmarshal",
+        "URI"
+    ],
+    "provides" : {
+        "Geo::Coder::OpenCage" : "lib/Geo/Coder/OpenCage.pm",
+        "Geo::Coder::OpenCage::Response"
+            : "lib/Geo/Coder/OpenCage/Response.pm"
+    },
+    "authors" : [
+        "Tadeusz “tadzik” Sośnierz"
+    ],
+    "support" : {
+        "bugtracker" : "https://github.com/tadzik/Geo-Coder-OpenCage/issues",
+        "source" : "git://github.com/tadzik/Geo-Coder-OpenCage.git"
+    },
+    "source-url"  : "git://github.com/tadzik/Geo-Coder-OpenCage.git"
+}

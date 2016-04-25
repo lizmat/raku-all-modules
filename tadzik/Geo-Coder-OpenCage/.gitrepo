@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tadzik/Geo-Coder-OpenCage.git
+	branch = master
+	commit = b8e897f530a81f1c6aac60091f2d4c7e4137545a
+	parent = 7268f369ebde67eb5aa2f3b72d4caaf98e4bd406
+	cmdver = 0.2.3
