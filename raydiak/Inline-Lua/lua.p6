@@ -4,8 +4,8 @@
 # isn't very useful outside of testing during development
 
 constant $root = $?FILE.IO.parent;
-use lib $root.child('lib');
-use lib $root.child('blib').child: 'lib';
+use lib $root.child('lib').Str;
+use lib $root.child('blib').child('lib').Str;
 
 use Inline::Lua;
 
