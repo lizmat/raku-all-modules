@@ -12,7 +12,7 @@ role CustomUnmarshaller {
 role CustomUnmarshallerCode does CustomUnmarshaller {
     has &.unmarshaller is rw;
 
-    method unmarshal($value, $type) {
+    method unmarshal($value, Mu:U $type) {
         # the dot below is important otherwise it refers
         # to the accessor method
         self.unmarshaller.($value);
