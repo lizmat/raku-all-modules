@@ -1,3 +1,25 @@
+eqv bug with class o examples, lexical scope operator in rakudo, OUTER, ...
+report -match WHICH problem, match has no identity
+why has xx doesn't work in role, should 
+wy can'r pass role (does =>) with argument
+eqv not implemented for Match
+
+color objects
+
+scoped filters
+
+object size
+
+ColorStr class
+	keeps color and string separated, or colored string and length of uncolored string
+
+paths
+	can be used in filters
+	
+diff list
+	can use paths
+
+#test::compare:DDT::diff
 
 #roles to sub dump
 
