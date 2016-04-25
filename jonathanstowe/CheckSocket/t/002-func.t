@@ -33,6 +33,7 @@ start {
 my $p2 = $p.then({
             ok(check-socket($port), "check-socket - port $port default localhost");
             ok(check-socket($port, 'localhost'), "check-socket - port $port");
+            todo "this may fail if ipv6 is configured in a certain way";
             ok(check-socket($port, '127.0.0.1'), "check-socket - port $port numeric IP");
             exit 0;
             True;

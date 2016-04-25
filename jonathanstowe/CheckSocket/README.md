@@ -1,12 +1,14 @@
 # CheckSocket
 
-A very simple Perl 6 function to test if a TCP socket is listening on a given address.
+A very simple Perl 6 function to test if a TCP socket is listening on
+a given address.
 
 ## Description
 
-This module provides a very simple mechanism to determine whether something is listening on
-a TCP socket at the given port and address.  This is primarly for the convenience of testing
-where there may be a dependency on an external network service.  For example:
+This module provides a very simple mechanism to determine whether
+something is listening on a TCP socket at the given port and address.
+This is primarly for the convenience of testing where there may be a
+dependency on an external network service.  For example:
 
      use Test;
      use CheckSocket;
@@ -18,18 +20,7 @@ where there may be a dependency on an external network service.  For example:
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+You can install directly with "panda":
 
     # From the source directory
    
@@ -39,11 +30,11 @@ Or you can install directly with "panda":
 
     panda install CheckSocket
 
-Other install mechanisms may be become available in the future.
+I haven't tested with "zef" but I see no reason why it shouldn't work.
 
 ## Support
 
-However suggestions/patches are welcomed via github at
+Suggestions/patches are welcomed via github at
 
    https://github.com/jonathanstowe/CheckSocket
 

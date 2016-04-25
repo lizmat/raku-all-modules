@@ -1,6 +1,6 @@
 {
   "name" : "CheckSocket",
-  "tags" : [ "audio", "utils" ],
+  "tags" : [ "network", "utils", "test" ],
   "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
   "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
   "auth" : "github:jonathanstowe",
@@ -18,5 +18,5 @@
     "Test"
   ],
   "description" : "very simple Perl 6 function to test if a TCP socket is listening on a given address",
-  "version" : "0.0.3"
+  "version" : "0.0.4"
 }
