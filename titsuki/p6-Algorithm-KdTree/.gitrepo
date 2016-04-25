@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Algorithm-KdTree.git
+	branch = master
+	commit = fb004254b6a32648bfd3384d66873decb7d4974c
+	parent = 6c3a01504d407d2f265aaa7fc10e41f82caeb164
+	cmdver = 0.2.3

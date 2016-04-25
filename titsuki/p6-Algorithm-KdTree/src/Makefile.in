@@ -1,0 +1,35 @@
+obj = kdtree.o
+name = kdtree
+lib_a = lib$(name).a
+
+so_major = 0
+so_minor = 1
+
+CFLAGS = -pedantic -Wall $(pic) $(opt) $(dbg) $(falloc) $(pthreads)
+LDFLAGS = $(ldpthread)
+
+sys = $(shell uname -s | sed 's/MING32.*/MINGW32/')
+ifeq ($(sys), Darwin)
+	lib_so = lib$(name).dylib
+	shared = -dynamiclib
+else ifeq ($(sys), MINGW32)
+	lib_so = lib$(name).dll
+	shared = -shared -Wl,--output-def,lib$(name).def
+else
+	devname = lib$(name).so
+	soname = lib$(name).so.$(so_major)
+	lib_so = lib$(name).so.$(so_major).$(so_minor)
+	shared = -shared -Wl,-soname=$(soname)
+	pic = -fPIC
+endif
+
+all: %DESTDIR%/$(lib_a) %DESTDIR%/$(lib_so)
+
+%DESTDIR%/$(lib_a): $(obj)
+	$(AR) rcs $@ $(obj)
+
+%DESTDIR%/$(lib_so): $(obj)
+	$(CC) $(shared) -o $@ $(obj) $(LDFLAGS)
+	[ -n "%DESTDIR%/$(soname)" ] && ln -s %DESTDIR%/$(lib_so) %DESTDIR%/$(soname) || true
+	[ -n "%DESTDIR%/$(devname)" ] && ln -s %DESTDIR%/$(soname) %DESTDIR%/$(devname) || true
+
