@@ -1,0 +1,14 @@
+{
+  "name"        : "File::HomeDir",
+  "version"     : "*",
+  "perl"        : "6.c",
+  "description" : "Find your home and other directories on any platform",
+  "provides"    : {
+    "File::HomeDir"         : "lib/File/HomeDir.pm6",
+    "File::HomeDir::Win32"  : "lib/File/HomeDir/Win32.pm6",
+    "File::HomeDir::MacOSX" : "lib/File/HomeDir/MacOSX.pm6",
+    "File::HomeDir::Unix"   : "lib/File/HomeDir/Unix.pm6"
+  },
+  "depends"     : [],
+  "source-url"  : "git://github.com/azawawi/perl6-file-homedir.git"
+}
