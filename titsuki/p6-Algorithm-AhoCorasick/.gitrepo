@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Algorithm-AhoCorasick.git
+	branch = master
+	commit = 668d09ff4a152b19bff62d3df9513bbea5358036
+	parent = b3182b13de9682226f83771af1d788dbda6b108e
+	cmdver = 0.2.3
