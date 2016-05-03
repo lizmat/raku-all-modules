@@ -1,0 +1,9 @@
+{
+    "name"        : "Devel::Trace",
+    "version"     : "0.1",
+    "description" : "Perl6 code tracer.",
+    "depends"     : [],
+    "author"      : "github:Altai-man",
+    "provides"    : { "Devel::Trace": "lib/Devel/Trace.pm6" },
+    "source-url"  : "git://github.com/Altai-man/perl6-Devel-Trace.git"
+}

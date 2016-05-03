@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Altai-man/perl6-Devel-Trace.git
+	branch = master
+	commit = 7d0f0d70db6270c0257fd952ab9b9884882ebdfc
+	parent = e9d1ba08631ace888162890b6839718c1a271fef
+	cmdver = 0.2.3
