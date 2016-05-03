@@ -8,7 +8,7 @@ Term::Form - Read lines from STDIN.
 VERSION
 =======
 
-Version 0.007
+Version 0.008
 
 SYNOPSIS
 ========
@@ -37,6 +37,11 @@ SYNOPSIS
     $line = $new.readline( 'Prompt: ', { default => 'abc' } );
 
     $filled_form = $new.fillform( @aoa, { auto_up => 0 } );
+
+ANNOUNCEMENT
+============
+
+Backwards incompatible changes with the next release (`-` replaces `_` in routine and option names).
 
 DESCRIPTION
 ===========

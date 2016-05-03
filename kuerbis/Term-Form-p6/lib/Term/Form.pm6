@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Form;
 
-my $VERSION = '0.007';
+my $VERSION = '0.008';
 
 use Term::Choose::NCurses :all;
 use Term::Choose::LineFold :all;
@@ -819,7 +819,7 @@ Term::Form - Read lines from STDIN.
 
 =head1 VERSION
 
-Version 0.007
+Version 0.008
 
 =head1 SYNOPSIS
 
@@ -847,6 +847,10 @@ Version 0.007
     $line = $new.readline( 'Prompt: ', { default => 'abc' } );
 
     $filled_form = $new.fillform( @aoa, { auto_up => 0 } );
+
+=head1 ANNOUNCEMENT
+
+Backwards incompatible changes with the next release (C<-> replaces C<_> in routine and option names).
 
 =head1 DESCRIPTION
 

@@ -1,6 +1,9 @@
 Revision history for Term::Form
 
 
+0.008   2016-04-27
+        - Announcement incompatible changes
+
 0.007   2016-04-15
         - no changes - enable travis test
 
