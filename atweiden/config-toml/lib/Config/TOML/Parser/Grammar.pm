@@ -516,7 +516,7 @@ token table-inline-keypairs
 
 token keypair
 {
-    <keypair-key> \h* '=' \h* [ <keypair-value> | <table-inline> ]
+    <keypair-key> \h* '=' \h* <keypair-value>
 }
 
 proto token keypair-key {*}
@@ -535,6 +535,7 @@ token keypair-value:number { <number> }
 token keypair-value:boolean { <boolean> }
 token keypair-value:date { <date> }
 token keypair-value:array { <array> }
+token keypair-value:table-inline { <table-inline> }
 
 # end table grammar }}}
 # document grammar {{{

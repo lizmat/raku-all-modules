@@ -455,22 +455,14 @@ method keypair-value:array ($/)
     make $<array>.made;
 }
 
+method keypair-value:table-inline ($/)
+{
+    make $<table-inline>.made;
+}
+
 method keypair($/)
 {
-    # if keypair value is inline table, map inline table keypairs to
-    # keypair key as hash
-    if $<table-inline>
-    {
-        my %h;
-        $<table-inline>.made.map({
-            %h{Str($<keypair-key>.made)}{.keys[0]} = .values[0]
-        });
-        make %h;
-    }
-    else
-    {
-        make Str($<keypair-key>.made) => $<keypair-value>.made;
-    }
+    make Str($<keypair-key>.made) => $<keypair-value>.made;
 }
 
 method table-inline-keypairs($/)
