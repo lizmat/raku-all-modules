@@ -16,5 +16,5 @@
   "depends" : [ ],
   "test-depends" : [ ],
   "description" : "Provides a method trait to turn indivdual get/set subroutines into a single attribute",
-  "version" : "0.0.6"
+  "version" : "0.0.7"
 }

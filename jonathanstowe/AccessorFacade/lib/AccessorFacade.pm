@@ -200,7 +200,7 @@ This may be more conveniently written with named argument style:
 =end pod
 
 
-module AccessorFacade:ver<0.0.6>:auth<github:jonathanstowe> {
+module AccessorFacade:ver<0.0.7>:auth<github:jonathanstowe> {
 
     my role Provider[&get, &set, &before?, &after?] {
         method CALL-ME(*@args) is rw {
@@ -228,12 +228,10 @@ module AccessorFacade:ver<0.0.6>:auth<github:jonathanstowe> {
                             else {
                                 # This is necessary because can()
                                 # fails on an Enum RT#125445
-                                try {
-                                    $store-val = $val.value;
-                                    CATCH {
-                                        default {
-                                            $store-val = $val;
-                                        }
+                                $store-val = $val.value;
+                                CATCH {
+                                    default {
+                                        $store-val = $val;
                                     }
                                 }
                             }
@@ -259,23 +257,19 @@ module AccessorFacade:ver<0.0.6>:auth<github:jonathanstowe> {
     }
 
     multi trait_mod:<is>(Method $r, :@accessor-facade! (&getter, &setter, &before?, &after?)) is export {
-        try {
-            accessor-facade($r, &getter, &setter, &before, &after);
-            CATCH {
-                when X::TypeCheck::Binding {
-                    die X::Usage.new(message => "trait 'accessor-facade' requires &getter and &setter arguments");
-                }
+        accessor-facade($r, &getter, &setter, &before, &after);
+        CATCH {
+            when X::TypeCheck::Binding {
+                die X::Usage.new(message => "trait 'accessor-facade' requires &getter and &setter arguments");
             }
-        }
+       }
     }
 
     multi trait_mod:<is>(Method $r, :@accessor-facade! (:&getter!, :&setter!, :&before, :&after )) is export {
-        try {
-            accessor-facade($r, &getter, &setter, &before, &after);
-            CATCH {
-                when X::TypeCheck::Binding {
-                    die X::Usage.new(message => "trait 'accessor-facade' requires &getter and &setter arguments");
-                }
+        accessor-facade($r, &getter, &setter, &before, &after);
+        CATCH {
+            when X::TypeCheck::Binding {
+                die X::Usage.new(message => "trait 'accessor-facade' requires &getter and &setter arguments");
             }
         }
     }
