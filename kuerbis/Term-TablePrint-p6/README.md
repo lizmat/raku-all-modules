@@ -8,7 +8,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 VERSION
 =======
 
-Version 0.010
+Version 0.011
 
 SYNOPSIS
 ========
@@ -32,6 +32,11 @@ SYNOPSIS
         my $pt = Term::TablePrint->new();
 
         $pt->print_table( @table );
+
+ANNOUNCEMENT
+============
+
+Backwards incompatible changes with the next release (`-` replaces `_` in routine and option names).
 
 DESCRIPTION
 ===========

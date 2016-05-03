@@ -1,6 +1,9 @@
 Revision history for Term::TablePrint
 
 
+0.011   2016-04-27
+        - Announcement incompatible changes
+
 0.010   2016-04-15
         - No changes
         - Try to fix travis error

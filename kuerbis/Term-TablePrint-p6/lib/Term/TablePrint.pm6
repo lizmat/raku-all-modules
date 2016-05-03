@@ -1,7 +1,7 @@
 use v6;
 unit class Term::TablePrint;
 
-my $VERSION = '0.010';
+my $VERSION = '0.011';
 
 use Term::Choose;
 use Term::Choose::NCurses :all;
@@ -536,7 +536,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
 =head1 VERSION
 
-Version 0.010
+Version 0.011
 
 =head1 SYNOPSIS
 
@@ -563,6 +563,10 @@ Version 0.010
     $pt->print_table( @table );
 
 =end code
+
+=head1 ANNOUNCEMENT
+
+Backwards incompatible changes with the next release (C<-> replaces C<_> in routine and option names).
 
 =head1 DESCRIPTION
 
