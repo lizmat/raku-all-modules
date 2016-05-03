@@ -33,7 +33,7 @@
 
 =begin DESCRIPTION
 
-Using this module adds three control statements to Perl6 syntax:
+Using this module adds some control statements to Perl6 syntax:
 
 The C<bail> statement places the closure following it onto the
 C<LEAVE> queue, like the C<UNDO> phaser -- the closures will
@@ -57,7 +57,7 @@ and swift, but with the added feature that it automatically
 cancels itself if the block is left normally.
 
 The C<trail> statement is the same, but places the closure on the
-C<LEAVE> queue as a plain <LEAVE> phaser would do (it always runs,
+C<LEAVE> queue as a plain C<LEAVE> phaser would do (it always runs,
 whether the block exits successfully or not.)  The C<trail-keep>
 is probably not very useful, but is included for completeness. 
 It is the same, but places the closure as the C<KEEP> phaser would
