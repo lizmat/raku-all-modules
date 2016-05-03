@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -305,16 +305,17 @@ from state and to state individually.
 
     method new(Tinky::Transition:U: Str :$!name!, Tinky::State $!from!, Tinky::State $!to!, :@!validators)
 
-The constructor of the class,  The C<name> parameter must be supplied, it need not
-be unique but will be used to create a helper method that will be applied to the
-target Object when the workflow is applied so should be a valid Perl 6 identifier.
-The mechanism for creating these methods is decribed under L<Tinky::Workflow>.
+The constructor of the class,  The C<name> parameter must be supplied,
+it need not be unique but will be used to create a helper method that
+will be applied to the target Object when the workflow is applied so
+should be a valid Perl 6 identifier.  The mechanism for creating these
+methods is decribed under L<Tinky::Workflow>.
 
-The C<from> and C<to> states must be supplied,  A transition can only be supplied
-to an object that has a current state that matches C<from>.
+The C<from> and C<to> states must be supplied,  A transition can only
+be supplied to an object that has a current state that matches C<from>.
 
-Additionally an array of ValidateCallback subroutines can be supplied (or added later,)
-how these are applied is described below.
+Additionally an array of ValidateCallback subroutines can be supplied
+(or added later,) how these are applied is described below.
 
 =head3 method applied
 
@@ -429,54 +430,58 @@ complexity are possible.
 
     method new(Tinky::Workflow:U: Str :$!name!, :@!transitions!, State :$!initial-state, :@!validators)
 
-The constructor of L<Tinky::Workflow> should be provided with and array of the Transition objects
-that are part of the workflow and an optional list of ValidatorCallback subroutines, if they are to
-be used then they must be supplied before the first time a workflow is applied to an object.
+The constructor of L<Tinky::Workflow> should be provided with and array
+of the Transition objects that are part of the workflow and an optional
+list of ValidatorCallback subroutines, if they are to be used then they
+must be supplied before the first time a workflow is applied to an object.
 
-If the C<initial-state> is supplied this will be be  applied to a Tinky::Object with no current state
-at the time of the workflow application as described below.
+If the C<initial-state> is supplied this will be be  applied to
+a Tinky::Object with no current state at the time of the workflow
+application as described below.
 
-The name isn't required but may be useful for identification purposes if there is more than one
-workflow in a system.
+The name isn't required but may be useful for identification purposes
+if there is more than one workflow in a system.
 
 =head3  method states
 
         method states() 
 
-This is an array of the L<Tinky::State> objects that are defined for this workflow, it will be 
-constructed from the unique states found in the transitions of the workflow,  this list can
-be over-ridden by adding to the C<states> attribute but this probably doesn't make sense as a
-state is almost certainly useless if there isn't at least one transition which has it as 
-C<from> or C<to> state.
+This is an array of the L<Tinky::State> objects that are defined for
+this workflow, it will be constructed from the unique states found in the
+transitions of the workflow,  this list can be over-ridden by adding to
+the C<states> attribute but this probably doesn't make sense as a state
+is almost certainly useless if there isn't at least one transition which
+has it as C<from> or C<to> state.
 
 =head3 method transitions-for-state
 
         method transitions-for-state(State:D $state ) returns Array[Transition]
 
-This returns an array of the transitions that have the supplied State as the C<from> state,
-this is used internally but may be useful for example in a user interface if a list
-of possible transitions is required.
+This returns an array of the transitions that have the supplied State as
+the C<from> state, this is used internally but may be useful for example
+in a user interface if a list of possible transitions is required.
 
 =head3 method find-transition
 
         multi method find-transition(State:D $from, State:D $to) returns Transition
 
-This returns a Transition that matches the provided C<from> and C<to> states, ( or
-a undefined type object otherwise, this may be useful for validating in advance
-whether a transition to a new state is valid for an object at a given state (any
-further validations as described above, notwithstanding.)
+This returns a Transition that matches the provided C<from> and C<to>
+states, ( or a undefined type object otherwise, this may be useful for
+validating in advance whether a transition to a new state is valid for
+an object at a given state (any further validations as described above,
+notwithstanding.)
 
 =head3 method validate-apply
 
         method validate-apply(Object:D $object) returns Promise 
 
-This is called prior to the actual application of the workflow to a Tinky::Object
-and returns a Promise that will be kept with True if all of the validators and
-validation methods return True or False otherwise.
+This is called prior to the actual application of the workflow to a
+Tinky::Object and returns a Promise that will be kept with True if all
+of the validators and validation methods return True or False otherwise.
 
-This could be over-ridden in a sub-class if some other validation mechanism
-is required but it must always return a Promise,  in most cases however the
-existing validation mechanisms should be sufficient.
+This could be over-ridden in a sub-class if some other validation
+mechanism is required but it must always return a Promise,  in most
+cases however the existing validation mechanisms should be sufficient.
 
 =head3 method applied
 
@@ -486,9 +491,9 @@ This is called with the Tinky::Object instance to which the workflow has
 been applied immediately after the application has completed.  It will
 arranged for the object to be emitted onto the C<applied-supply>.
 
-If it is over-ridden in a sub-class then it should almost certainly call
-the base implementation with C<nextsame>, though a tap on the C<applied-supply>
-is usually preferrable.
+If it is over-ridden in a sub-class then it should almost certainly
+call the base implementation with C<nextsame>, though a tap on the
+C<applied-supply> is usually preferrable.
 
 =head3 method applied-supply
 
@@ -501,35 +506,36 @@ workflow has been applied are emitted.
 
         method enter-supply() returns Supply 
 
-This is a Supply which aggregates the C<enter-supply> of all the C<states> in the
-Workflow, it will emit a two element array comprising the State object that was
-entered and the Tinky::Object instance.
+This is a Supply which aggregates the C<enter-supply> of all the C<states>
+in the Workflow, it will emit a two element array comprising the State
+object that was entered and the Tinky::Object instance.
 
 =head3 method leave-supply
 
         method leave-supply() returns Supply 
 
-This is a Supply which aggregates the C<leave-supply> of all the C<states> in the
-Workflow, it will emit a two element array comprising the State object that was
-left and the Tinky::Object instance.
+This is a Supply which aggregates the C<leave-supply> of all the C<states>
+in the Workflow, it will emit a two element array comprising the State
+object that was left and the Tinky::Object instance.
 
 =head3 method final-supply
 
         method final-supply() returns Supply 
 
-This returns a Supply onto which are emitted an Array of State and Object whenever
-an object enters a state from which there are no further transitions possible.  It
-may be useful for notification or cleanup purposes or possibly for activating a 
-transition on another object for instance.
+This returns a Supply onto which are emitted an Array of State and
+Object whenever an object enters a state from which there are no further
+transitions possible.  It may be useful for notification or cleanup
+purposes or possibly for activating a transition on another object
+for instance.
 
 =head3 method transition-supply
 
 
         method transition-supply() returns Supply 
 
-This returns a Supply that aggregates the C<supply> of all the transitions of the
-workflow, it emits a two element array of the Transition object and the Tinky::Object
-instance to which it was applied.
+This returns a Supply that aggregates the C<supply> of all the transitions
+of the workflow, it emits a two element array of the Transition object
+and the Tinky::Object instance to which it was applied.
 
 This is particularly suitable for example for logging purposes.
 
@@ -537,14 +543,15 @@ This is particularly suitable for example for logging purposes.
 
         method role() returns Role
 
-This returns an anonymous role that will be applied to the Tinky::Object when the
-workflow is applied.
+This returns an anonymous role that will be applied to the Tinky::Object
+when the workflow is applied.
 
-The role provides methods that are named as the transitions and which cause the
-transition to be applied (throwing an exception if the transition cannot be
-applied to the current state or if any validators return false.)  If two or more
-transitions share the same name then a single method will be created which will
-select the appropriate transition based on the current state of the object.
+The role provides methods that are named as the transitions and which
+cause the transition to be applied (throwing an exception if the
+transition cannot be applied to the current state or if any validators
+return false.)  If two or more transitions share the same name then a
+single method will be created which will select the appropriate transition
+based on the current state of the object.
 
 =head3 attribute validators
 
@@ -571,10 +578,11 @@ methods as for validation subroutines.
 
 =head2 role Tinky::Object 
 
-This is a role that should should be applied to any application object that is to
-have a state managed by L<Tink::Workflow>, it provides the mechanisms for
-transition application and allows the transitions to be validated by the mechanisms
-described above for L<Tinky::State> and L<Tinky::Transition>
+This is a role that should should be applied to any application object
+that is to have a state managed by L<Tink::Workflow>, it provides the
+mechanisms for transition application and allows the transitions to
+be validated by the mechanisms described above for L<Tinky::State>
+and L<Tinky::Transition>
 
 =head3 method state
 
@@ -608,30 +616,33 @@ processing required.
 
         method apply-transition(Tinky::Transition $trans) returns Tinky::State 
 
-Applies the transition supplied to the object, if the current state of the
-object doesn't match the C<from> state of transition then an L<X::InvalidTransition>
-will be thrown, if one or more state or transition validators return False
-then a L<X::TransitionRejected> exception will be thrown,  If the object has no
-current state then  L<X::NoState> will be thrown.
+Applies the transition supplied to the object, if the current state
+of the object doesn't match the C<from> state of transition then an
+L<X::InvalidTransition> will be thrown, if one or more state or transition
+validators return False then a L<X::TransitionRejected> exception will
+be thrown,  If the object has no current state then  L<X::NoState>
+will be thrown.
 
-If the application is successfull then the state of the object will be changed to
-the C<to> state of the transition and the object will be emitted to the appropriate
-supplies of the left and entered states and the transition.
+If the application is successfull then the state of the object will
+be changed to the C<to> state of the transition and the object will be
+emitted to the appropriate supplies of the left and entered states and
+the transition.
 
 =head3 method transitions
 
         method transitions() returns Array[Transition]
 
-This returns an array of the L<Tinky::Transition>s that are available for the 
-object based on their C<from> state matching the current state of the object.
+This returns an array of the L<Tinky::Transition>s that are available
+for the object based on their C<from> state matching the current state
+of the object.
 
 =head3 method next-states
 
         method next-states() returns Array[State]
 
-This returns an Array of the states that are available as the C<to> state of
-the available C<transitions>, this may be more convenient for example for
-a user interface than the raw transitions.
+This returns an Array of the states that are available as the C<to>
+state of the available C<transitions>, this may be more convenient for
+example for a user interface than the raw transitions.
 
 =head3 method transition-for-state
 
@@ -716,7 +727,7 @@ current state on the object.
 
 =end pod
 
-module Tinky:ver<0.0.2>:auth<github:jonathanstowe> {
+module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
 
     # Stub here, definition below
     class State      { ... };
@@ -948,14 +959,14 @@ module Tinky:ver<0.0.2>:auth<github:jonathanstowe> {
         method validate-apply(Object:D $object) returns Promise {
             my @promises = (self.validate($object), self.from.validate-leave($object), self.to.validate-enter($object));
             my $p1 = do {
-                            if all(@promises>>.status) ~~ Kept {
-                                my $p = Promise.new;
-                                $p.keep: so all(@promises>>.result);
-                                $p;
-                            }
-                            else {
-                                Promise.allof(@promises);
-                            }
+                if all(@promises>>.status) ~~ Kept {
+                    my $p = Promise.new;
+                    $p.keep: so all(@promises>>.result);
+                    $p;
+                }
+                else {
+                    Promise.allof(@promises);
+                }
             };
 
             $p1.status ~~ Kept ?? $p1 !! $p1.then({ so all(@promises>>.result)});
