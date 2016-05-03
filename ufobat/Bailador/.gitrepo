@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ufobat/Bailador.git
 	branch = master
-	commit = 10ad05f7f89f3de310c6dc14eafa59e910742c3c
-	parent = b705fc99b212b884b931938642f1c2c25208b9a0
+	commit = 8b7bfe79a4136079c522861467532dacf65cd880
+	parent = 3194b01e6207c6c45068107bb2fbad8bd68a8589
 	cmdver = 0.2.3

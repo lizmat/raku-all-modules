@@ -17,24 +17,24 @@ class Bailador::App does Bailador::Routing {
 
     method request  { $.context.request  }
     method response { $.context.response }
-    method template(Str $tmpl, *@params) {
-        $!renderer.render(slurp("$.location/views/$tmpl"), @params);
+    method template(Str $tmpl, *@params, *%params) {
+        $!renderer.render(slurp("$.location/views/$tmpl"), @params, |%params);
     }
 
     multi method render($result) {
         if $result ~~ IO::Path {
             my $type = $.content-types.detect-type($result);
-            self.render: content => $result.slurp, :$type;
+            self.render: content => $result.slurp(:bin), :$type;
         }
         else {
             self.render(content => $result);
         }
     }
 
-    multi method render(Int :$status = 200, Str :$type = 'text/html', :$content!) {
+    multi method render(Int :$status = 200, Str :$type, :$content!) {
         $.context.autorender = False;
         self.response.code = $status;
-        self.response.headers<Content-Type> = $type;
+        self.response.headers<Content-Type> = $type if $type;
         self.response.content = $content;
     }
 
@@ -64,11 +64,34 @@ class Bailador::App does Bailador::Routing {
         self!sessions.store(self.response, self.request.env);
     }
 
+    method get-psgi-app {
+        # quotes from https://github.com/zostay/P6SGI
+        # draft 0.7
+        # * A P6SGI application is a Perl 6 routine that expects to receive an environment from an application server and returns a response each time it is called by the server.
+        # * An application MUST return a Promise
+        # * The message payload MUST be a sane Supply or an object that coerces into a sane Supply.
+        return sub (%env) {
+            start {
+                self.dispatch(%env).psgi;
+            }
+        }
+    }
+
     method dispatch($env) {
         self.context.env = $env;
         try {
-            my $result = self.recurse-on-routes($env);
-            self.render: $result if $.context.autorender;
+            my $method = $env<REQUEST_METHOD>;
+            my $uri    = $env<PATH_INFO>;
+            my $result = self.recurse-on-routes($method, $uri);
+
+            if $.context.autorender {
+                if $result.defined {
+                    self.render: $result;
+                }
+                else {
+                    die X::Bailador::ControllerReturnedNoResult.new(:$method, :$uri);
+                }
+            }
 
             LEAVE {
                 self.done-rendering();
@@ -79,6 +102,7 @@ class Bailador::App does Bailador::Routing {
                     self.render(content => Any);
                 }
                 when X::Bailador::NoRouteFound {
+                    # render 404
                 }
                 default {
                     if ($env<p6sgi.errors>:exists) {
