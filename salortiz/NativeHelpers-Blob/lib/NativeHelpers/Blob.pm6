@@ -1,6 +1,6 @@
 use v6;
 
-unit module NativeHelpers::Blob:ver<0.1.8>;
+unit module NativeHelpers::Blob:ver<0.1.9>;
 use NativeCall;
 use MoarVM::Guts::REPRs;
 use nqp; # Needed by blob-allocate
