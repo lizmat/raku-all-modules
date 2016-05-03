@@ -87,9 +87,22 @@ package Zef::CLI {
     }
 
     #| Install
-    multi MAIN('install', Bool :$depends = True, Bool :$test-depends = True, Bool :$build-depends = True,
-                Bool :$force, Bool :$test = True, Bool :$fetch = True, :$exclude is copy,
-                Bool :$dry, Bool :$update, Bool :$upgrade, Bool :$depsonly, :to(:$install-to) = ['site'], *@wants ($, *@)) is export {
+    multi MAIN(
+        'install',
+        Bool :$depends       = True,
+        Bool :$test-depends  = True,
+        Bool :$build-depends = True,
+        Bool :$test          = True,
+        Bool :$fetch         = True,
+        Bool :$force,
+        Bool :$dry,
+        Bool :$update,
+        Bool :$upgrade,
+        Bool :$depsonly,
+        :$exclude is copy,
+        :to(:$install-to) = ['site'],
+        *@wants ($, *@)
+    ) is export {
 
         @wants .= map: *.&str2identity;
         my (:@paths, :@urls, :@identities) := @wants.classify: -> $wanted {
@@ -117,7 +130,8 @@ package Zef::CLI {
         my @requested-identities = (?$force ?? @identities !! @wanted-identities)\
             .grep: { $_ ~~ none(@url-candidates.map(*.dist.identity)) }
         my @requested  = |$client.find-candidates(:$upgrade, |@requested-identities) if +@requested-identities;
-        die "No candidates found matching: {@requested-identities.join(', ')}" if +@requested-identities && +@requested == 0;
+        die "No candidates found matching: {@requested-identities.join(', ')}"\
+            if +@requested-identities && +@requested == 0;
 
         my @prereqs    = |$client.find-prereq-candidates(|@path-candidates, |@url-candidates, |@requested)\
             if +@path-candidates || +@url-candidates || +@requested;
@@ -144,7 +158,8 @@ package Zef::CLI {
     multi MAIN('uninstall', Bool :$force, :from(:$uninstall-from) = ['site'], *@identities ($, *@)) is export {
         my $client = get-client(:$config, :$force);
         my CompUnit::Repository @from = $uninstall-from.map(*.&str2cur);
-        die "`uninstall` command currently requires a bleeding edge version of rakudo" unless any(@from>>.can('uninstall'));
+        die "`uninstall` command currently requires a bleeding edge version of rakudo"\
+            unless any(@from>>.can('uninstall'));
 
         my %uninstalled = $client.uninstall( :@from, |@identities>>.&str2identity ).classify(*.from);
         for %uninstalled.kv -> $from, $candidates {
@@ -187,6 +202,38 @@ package Zef::CLI {
                 say "{$candi.dist.identity}";
                 say "#\t{$_}" for @($candi.dist.provides.keys.sort if ?($VERBOSITY >= VERBOSE));
             }
+        }
+
+        exit 0;
+    }
+
+    #| Upgrade installed distributions (BETA)
+    multi MAIN('upgrade', *@at) is export {
+        # XXX: This is a very inefficient prototype inefficient
+        my $client = get-client(:$config);
+
+        my @installed = $client.list-installed(|@at.map(*.&str2cur)).map(*.dist);
+        my @requested = |$client.find-candidates(|@installed.map({ .clone(ver => "*") }).map(*.identity)) if +@installed;
+        my @to-install = gather for @requested -> $latest {
+            my $latest-dist = $latest.dist;
+            my $dist = @installed.first({
+                    .name         eq $latest-dist.name
+                &&  .auth-matcher eq $latest-dist.auth-matcher
+            });
+
+            take $latest-dist if $latest-dist cmp $dist === Order::More;
+        }
+
+        if +@to-install {
+            say "===> Updating: " ~ @to-install.join(', ');
+            # Ideally we don't need to call MAIN('install'), as it will search for the identities *again*.
+            # This requires factoring out the part of the install process that comes after the search.
+            for @to-install.map(*.identity) -> $identity {
+                try &MAIN('install', $identity);
+            }
+        }
+        else {
+            say "!!!> Nothing to update";
         }
 
         exit 0;
@@ -244,27 +291,55 @@ package Zef::CLI {
         my @candidates = |$client.find-candidates( str2identity($identity) );
         die "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
         my (:@remote, :@local) := @candidates.classify: {.dist !~~ Zef::Distribution::Local ?? <remote> !! <local>}
-        my $fetched = @local[0] || |$client.fetch(@remote[0])[0] || die "Failed to fetch candidate: $identity";
+        my $fetched = @local[0] || $client.fetch(@remote[0])[0] || die "Failed to fetch candidate: $identity";
         my $dist-path = $fetched.dist.path;
         say "===> Shelling into directory: {$dist-path}";
         exit so shell(%*ENV<SHELL> // %*ENV<ComSpec> // %*ENV<COMSPEC>, :cwd($dist-path)) ?? 0 !! 1;
     }
 
     #| Smoke test
-    multi MAIN('smoke', Bool :$force, Bool :$test = True,Bool :$fetch = True, :$exclude, :to(:$install-to) = ['site']) is export {
-        my $client                  = get-client(:$config, :$force);
-        my @identities              = $client.available.values.flatmap(*.keys).unique;
+    multi MAIN(
+        'smoke',
+        Bool :$depends       = True,
+        Bool :$test-depends  = True,
+        Bool :$build-depends = True,
+        Bool :$test          = True,
+        Bool :$fetch         = True,
+        Bool :$force,
+        Bool :$update,
+        Bool :$upgrade,
+        Bool :$depsonly,
+        :$exclude is copy,
+        :to(:$install-to) = ['site'],
+    ) is export {
+        die "Smoke testing requires rakudo 2016.04 or later" unless try &*EXIT;
+        my @excluded   = $exclude.map(*.&identity2spec);
+        my $client     = get-client(:$config, :exclude(|@excluded), :$force, :$depends, :$test-depends, :$build-depends);
+        my @identities = $client.list-available.map(*.dist.identity).unique;
         my CompUnit::Repository @to = $install-to.map(*.&str2cur);
         say "===> Smoke testing with {+@identities} distributions...";
 
-        # We only need to test a specific identity once. `.install` returns the installed
-        # candidates so each iteration we can add any new dists to %skip for when we encounter
-        # them through the for loop. XXX: should probably pass in :exclude(%skip>>.values)
+        my &smoker = &MAIN.assuming(
+            'install',
+            :$depends,
+            :$test-depends,
+            :$build-depends,
+            :$test,
+            :$fetch,
+            :$force,
+            :$update,
+            :$upgrade,
+            :$depsonly,
+            :$exclude,
+            :$install-to,
+            :$force,
+        );
+
         for @identities -> $identity {
-            state %skip;
-            next if %skip{$identity}++;
-            my @installed = try $client.install( :@to, :$fetch, :$test, $identity );
-            %skip{$_.dist.identity}++ for @installed;
+            # &*EXIT requires rakudo 2016.04
+            my &*EXIT = sub ($code) { return $code == 0 ?? True !! False };
+            my $result = try smoker($identity);
+            say "===> Smoke result for {$identity}: {?$result??'OK'!!'NOT OK'}";
         }
 
         exit 0;
@@ -332,6 +407,7 @@ package Zef::CLI {
                 build                   Run the Build.pm in a given module's path
                 look                    `fetch` followed by shelling into the module's path
                 update                  Update package indexes for content storages
+                upgrade (BETA)          Upgrade all installed distributions
                 search                  Show a list of possible distribution candidates for the given terms
                 info                    Show detailed distribution information
                 list                    List known available distributions, or installed distributions with `--installed`
@@ -351,7 +427,7 @@ package Zef::CLI {
                 --force                 Continue each phase regardless of failures
                 --dry                   Run all phases except the actual installations
 
-                --/tests                Skip the testing phase
+                --/test                 Skip the testing phase
                 --/depends              Do not fetch runtime dependencies
                 --/test-depends         Do not fetch test dependencies
                 --/build-depends        Do not fetch build dependencies
@@ -407,6 +483,27 @@ package Zef::CLI {
             !! $wrap.perl eq 'Bool::True'
                 ?? 0 
                 !! $wrap;
+
+        # returns formatted row
+        my sub _row2str (@widths, @cells, Int :$max) {
+            my $format = @widths.map({"%-{$_}s"}).join('|');
+            my $str    = sprintf( $format, @cells.map({ $_ // '' }) );
+            return $str unless ?$max && $str.chars > $max;
+
+            my $cutoff = $str.substr(0, $max || $str.chars);
+            return $cutoff unless $cutoff.chars > 3;
+            return ($cutoff.substr(0,*-3) ~ '...') if $cutoff.substr(*-3,3) ~~ /\S\S\S/;
+            return ($cutoff.substr(0,*-2) ~ '..')  if $cutoff.substr(*-2,2) ~~ /\S\S/;
+            return ($cutoff.substr(0,*-1) ~ '.')   if $cutoff.substr(*-1,1) ~~ /\S/;
+            return $cutoff;
+
+        }
+
+        # Iterate over ([1,2,3],[2,3,4,5],[33,4,3,2]) to find the longest string in each column
+        my sub _get_column_widths ( *@rows ) is export {
+            return @rows[0].keys.map: { @rows>>[$_]>>.chars.max }
+        }
+
         my @widths     = _get_column_widths(@rows);
         my @fixed-rows = @rows.map: { _row2str(@widths, @$_, :max($max-width)) }
         if +@fixed-rows {
@@ -416,27 +513,5 @@ package Zef::CLI {
             .say for @fixed-rows[1..*];
             say $sep;
         }
-    }
-
-    # handle max width + yada
-    sub _widther($str, Int :$max) is export {
-        return $str unless ?$max && $str.chars > $max;
-        my $cutoff = $str.substr(0, $max || $str.chars);
-        return $cutoff unless $cutoff.chars > 3;
-        return ($cutoff.substr(0,*-3) ~ '...') if $cutoff.substr(*-3,3) ~~ /\S\S\S/;
-        return ($cutoff.substr(0,*-2) ~ '..')  if $cutoff.substr(*-2,2) ~~ /\S\S/;
-        return ($cutoff.substr(0,*-1) ~ '.')   if $cutoff.substr(*-1,1) ~~ /\S/;
-        return $cutoff;
-    }
-
-    # returns formatted row
-    sub _row2str (@widths, @cells, Int :$max) {
-        my $format = @widths.map({"%-{$_}s"}).join('|');
-        return _widther(sprintf( $format, @cells.map({ $_ // '' }) ), :$max);
-    }
-
-    # Iterate over ([1,2,3],[2,3,4,5],[33,4,3,2]) to find the longest string in each column
-    sub _get_column_widths ( *@rows ) is export {
-        return @rows[0].keys.map: { @rows>>[$_]>>.chars.max }
     }
 }

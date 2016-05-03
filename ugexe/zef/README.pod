@@ -57,6 +57,12 @@ To install it via rakudobrew, please use the following command:
     # run Build.pm if one exists in given path
     zef build .
 
+    # Update ContentStorage package lists
+    zef update
+
+    # Upgrade all distributions (BETA)
+    zef upgrade
+
 =head2 More CLI
 
 =head4 B<install> [*@identities]
@@ -67,11 +73,6 @@ and then finally install A and B but only if A and B passed all their tests. For
 tests then B will not be installed (even if it passed its own tests) without force.
 
 [C<@identities>] can be in the form of a file path (starting with B<.> or B</>), URNs, URLs, paths, or identities:
-
-    # URN
-    `zef install CSV-Parser`
-    `zef install github:tony-o:CSV--Parser:0.1.2`
-    `zef install CSV-Parser:0.1.2`
 
     # IDENTITY
     `zef install CSV::Parser`
@@ -84,6 +85,9 @@ tests then B will not be installed (even if it passed its own tests) without for
     # URL
     `zef -v install git://github.com/ugexe/zef.git`
     `zef -v install https://github.com/ugexe/zef/archive/master.tar.gz`
+
+    # URN
+    `zef install github:tony-o:CSV--Parser:0.1.2`
 
 A request may contain any number and combination of these. Paths and URLs will be resolved first so they are available
 to fulfill any dependencies of other requested identities.
@@ -124,6 +128,12 @@ Note: Requires a a bleeding edge rakudo (not available in 6.c)
 =head4 B<update>
 
 Update the package indexes for all `ContentStorage` backends
+
+Note: Some `ContentStorage` backends, like the default P6C, have an `auto-update` option in `config.json` that can be enabled
+
+=head4 B<upgrade> I<BETA>
+
+Upgrade all installed distributions
 
 =head4 B<search> [$identity]
 
@@ -203,8 +213,8 @@ on metacpan, but we *can* get the $x most recent additions (we use 100 for now)
     zef --installed list perl   # Only list modules installed by rakudo itself
 
     zef list cpan               # Only show available modules from the content storage
-                                # with a name field of `cpan` in the configuration
-                                # (plugin must not be set to `"enabled" : 0`)
+    zef list p6c                # with a name field of `cpan` in the configuration
+    zef list cached             # (be sure the content storage is enabled in config)
 
 Otherwise results from all enabled content storages will be returned.
 
@@ -324,10 +334,10 @@ All the default fetching plugins have proxy support
 Pass a path to the I<-to> / I<--install-to> option and prefix the path with `inst#` (unless you know what you're doing)
 
     $ zef -to="inst#/home/perl6/custom" install Text::Table::Simple
-    Searching for Text::Table::Simple
-    Start test phase for: /home/perl6/.zef/store/Perl6-Text--Table--Simple.git/09abf9d5d59e9dfdc1be24319db0dcd76b764ede
-    Testing passed for /home/perl6/.zef/store/Perl6-Text--Table--Simple.git/09abf9d5d59e9dfdc1be24319db0dcd76b764ede
-    Installing Text::Table::Simple:ver('0.0.3'):auth('github:ugexe') to /home/perl6/custom
+    ===> Searching for: Text::Table::Simple
+    ===> Testing: Text::Table::Simple:ver('0.0.3'):auth('github:ugexe')
+    ===> Testing [OK] for Text::Table::Simple:ver('0.0.3'):auth('github:ugexe')
+    ===> Installing: Text::Table::Simple:ver('0.0.3'):auth('github:ugexe')
 
 To make the custom location discoverable:
 
