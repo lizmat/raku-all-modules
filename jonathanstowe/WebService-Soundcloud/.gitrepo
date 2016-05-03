@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/WebService-Soundcloud.git
 	branch = master
-	commit = 2a0572bc0103cf4b616c4f08e57278227f5d5f81
-	parent = c5494af0d84c195f157df7f9f2b289cf63d13de8
+	commit = 0507f53b94778dd5a3814b44eca66c512a1fe43c
+	parent = e62a8315e66347486448cc02191364221854b68d
 	cmdver = 0.2.3

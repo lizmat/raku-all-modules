@@ -279,11 +279,11 @@ value.
 
 =end pod
 
-class WebService::Soundcloud:ver<0.0.2>:auth<github:jonathanstowe> {
+class WebService::Soundcloud:ver<0.0.3>:auth<github:jonathanstowe> {
 
     use HTTP::UserAgent;
     use URI;
-    use JSON::Tiny;
+    use JSON::Fast;
     use URI::Template;
 
     class X::NoAuthDetails is Exception {

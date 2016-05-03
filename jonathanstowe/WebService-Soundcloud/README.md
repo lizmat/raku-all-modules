@@ -1,12 +1,15 @@
-# WebService::Soundcloud [![Build Status](https://travis-ci.org/jonathanstowe/WebService-Soundcloud.svg?branch=master)](https://travis-ci.org/jonathanstowe/WebService-Soundcloud)
+# WebService::Soundcloud 
+
 
 Provide a Perl 6 interface to the Soundcloud REST API.
+
+[![Build Status](https://travis-ci.org/jonathanstowe/WebService-Soundcloud.svg?branch=master)](https://travis-ci.org/jonathanstowe/WebService-Soundcloud)
 
 ## Synopsis
 
 You can use the Full OAuth flow:
 
-```
+```perl6
 
     use WebService::Soundcloud;
     
@@ -43,7 +46,7 @@ You can use the Full OAuth flow:
 
 or you can use direct credential based authorisation that can skip the redirections:
 
-```
+```perl6
 
     use WebService::Soundcloud;
 
@@ -69,25 +72,15 @@ You can build client side applications that authenticate with user
 credentials or server applications that use the full OAuth authorization.
 
 In order to use this module you will need to register your application
-with Soundcloud at L<http://soundcloud.com/you/apps> : your application will
+with Soundcloud at http://soundcloud.com/you/apps : your application will
 be given a client ID and a client secret which you will need to use to
 connect. The client ID used in the tests will not work correctly for your
 own application as the callback URI is set to 'localhost'.
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+If you have a working Rakudo Perl 6 installation can install directly with
+"panda":
 
     # From the source directory
    
@@ -97,19 +90,21 @@ Or you can install directly with "panda":
 
     panda install WebService::Soundcloud
 
-Other install mechanisms may be become available in the future.
+Although I haven't tested it, I can't so any reason why this
+should not work with "zef" or some other similarly capable
+package manager
 
 ## Support
 
-Suggestions/patches are welcomed via github at
+Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/WebService-Soundcloud
+https://github.com/jonathanstowe/WebService-Soundcloud
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+Please see the [LICENSE](LICENSE) file in the distribution
 
-(C) Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016
 
 
 
