@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/p6-IO-Notification-Recursive.git
 	branch = master
-	commit = f2f8a43dd9f1d10ac467b8bfac15ff45fbfc9612
-	parent = a498b3466856aa7441b603745d1b53a09d5ed225
-	cmdver = 0.2.2
+	commit = 2bd7966ddca320ac7cce12b32c663c8aa7fa982f
+	parent = 9470dd6e46c5147e7a44ce35c2ae39ee2a27f63f
+	cmdver = 0.2.3
