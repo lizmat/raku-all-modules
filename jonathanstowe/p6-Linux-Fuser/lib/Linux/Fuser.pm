@@ -53,20 +53,33 @@ The class has one method, with two signatures, that does most of the work:
 
 =end pod
 
-class Linux::Fuser:ver<0.0.7>:auth<github:jonathanstowe> {
+class Linux::Fuser:ver<0.0.8>:auth<github:jonathanstowe> {
     # Shamelessly stolen from IO::Path::More
     # for my own stability
     my role IO::Helper {
         use nqp;
+
+        has Int $.inode;
         method inode() {
-            $*DISTRO.name ne any(<MSWin32 os2 dos NetWare symbian>)
-                && self.e
-                && nqp::p6box_i(nqp::stat(nqp::unbox_s(self.Str), nqp::const::STAT_PLATFORM_INODE))
+            if not $!inode.defined {
+                if self.e {
+                    $!inode = nqp::p6box_i(nqp::stat(nqp::unbox_s(self.Str), nqp::const::STAT_PLATFORM_INODE));
+                }
+            }
+            $!inode;
         }
 
+        has Int $.device;
+
         method device() {
-            self.e && nqp::p6box_i(nqp::stat(nqp::unbox_s(self.Str), nqp::const::STAT_PLATFORM_DEV))
+            if not $!device.defined {
+                if self.e {
+                    $!device = nqp::p6box_i(nqp::stat(nqp::unbox_s(self.Str), nqp::const::STAT_PLATFORM_DEV));
+                }
+            }
+            $!device;
         }
+
         method append (*@nextpaths) {
             my $lastpath = @nextpaths.pop // '';
             self.new($.SPEC.join($.volume, $.SPEC.catdir($.dirname, $.basename, @nextpaths), $lastpath));
@@ -88,14 +101,14 @@ class Linux::Fuser:ver<0.0.7>:auth<github:jonathanstowe> {
         my $device = $file.device;
         my $inode  = $file.inode;
 
-        for dir('/proc', test => /^\d+$/) -> $proc {
-            $proc does IO::Helper;
-            my $fd_dir = $proc.append('fd');
+        for dir('/proc', test => /^\d+$/) -> $proc-file {
+            $proc-file does IO::Helper;
+            my $fd_dir = $proc-file.append('fd');
             if $fd_dir.r {
-                try for $fd_dir.dir(test => /^\d+$/) -> $fd {
-                    $fd does IO::Helper;
-                    if ( self!same_file($file, $fd ) ) {
-                        @procinfo.push(Linux::Fuser::Procinfo.new(proc_file => $proc, fd_file => $fd));
+                try for $fd_dir.dir(test => /^\d+$/) -> $fd-file {
+                    $fd-file does IO::Helper;
+                    if ( self!same_file($file, $fd-file ) ) {
+                        @procinfo.push(Linux::Fuser::Procinfo.new(:$proc-file, :$fd-file));
                     }
                 }
             }

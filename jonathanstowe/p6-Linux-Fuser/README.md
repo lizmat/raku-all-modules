@@ -1,5 +1,8 @@
 # Linux::Fuser
+
 Discover which process has a file open, in pure Perl 6.
+
+[![Build Status](https://travis-ci.org/jonathanstowe/p6-Linux-Fuser.svg?branch=master)](https://travis-ci.org/jonathanstowe/p6-Linux-Fuser)
 
 ## Description
 
@@ -17,29 +20,30 @@ would be delighted to hear about any where it does work.
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to install this
-with *ufo* :
+with *panda* :
 
-   ufo
-   make test
-   make install
+   panda install Linux::Fuser
 
-*ufo* can be installed with *panda* for rakudo:
+Or if you have a local clone of the repository
 
-   panda install ufo
+	panda install .
 
-Other install mechanisms may be become available in the future.
+While I have only tested with panda I can't see any particular reason why this
+shouldn't work with *zef* or some equally capable package manager.
 
 ## Support
 
-Suggestions/patches are welcomed via github at
+Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/p6-Linux-Fuser
+https://github.com/jonathanstowe/p6-Linux-Fuser/issues
 
 I'm not able to test on a wide variety of platforms so any help there would be 
 appreciated.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015, 2016
+Please see the [LICENCE](LICENSE) file in the distribution.
+
+© Jonathan Stowe 2015, 2016

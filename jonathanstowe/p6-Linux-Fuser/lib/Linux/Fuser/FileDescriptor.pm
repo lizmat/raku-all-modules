@@ -28,32 +28,32 @@ There are no public methods only attributes.
 
 =end pod
 
-class Linux::Fuser::FileDescriptor:ver<0.0.5>:auth<github:jonathanstowe> {
+class Linux::Fuser::FileDescriptor:ver<0.0.8>:auth<github:jonathanstowe> {
 
-   #| The file descriptor number in use by the process
-   has Int $.fd;
-   #| The position in the file the opening process has the file pointer
-   has Int $.pos;
-   #| mnt_id (this may be 0 in some virtualised environments)
-   has Int $.mnt_id ;
-   #| The flags with which the file was opened
-   has Int $.flags;
+    #| The file descriptor number in use by the process
+    has Int $.fd;
+    #| The position in the file the opening process has the file pointer
+    has Int $.pos;
+    #| mnt-id (this may be 0 in some virtualised environments)
+    has Int $.mnt-id ;
+    #| The flags with which the file was opened
+    has Int $.flags;
 
-   #| The L<doc:IO::Path> of the /proc entry as passed to the constructor
-   has IO::Path $.proc_file;
-   #| The L<doc:IO::Path> of the /proc/<pid>/fd entry as passed to the constructor
-   has IO::Path $.fd_file;
-   #| The L<doc:IO::Path> corresponding to the /proc/<pid>/fdinfo 
-   has IO::Path $.fd_info;
+    #| The L<doc:IO::Path> of the /proc entry as passed to the constructor
+    has IO::Path $.proc-file;
+    #| The L<doc:IO::Path> of the /proc/<pid>/fd entry as passed to the constructor
+    has IO::Path $.fd-file;
+    #| The L<doc:IO::Path> corresponding to the /proc/<pid>/fdinfo 
+    has IO::Path $.fd-info;
 
-   submethod BUILD(:$!proc_file, :$!fd_file) {
-      $!fd = $!fd_file.basename.Int;
-      $!fd_info = $!proc_file.append('fdinfo', $!fd);
-      my %info = open($!fd_info.Str, :bin).read(255).decode.lines.map( { $_.split(/\:\t/) }).flat.hash;
-      $!pos =  %info<pos>.Int if %info<pos>.defined;
-      $!mnt_id = %info<mnt_id>.defined ?? %info<mnt_id>.Int !! 0;
-      my $str_fl = %info<flags>;
-      $!flags = :8($str_fl) if $str_fl.defined;
-   }
+    submethod BUILD(:$!proc-file, :$!fd-file) {
+        $!fd = $!fd-file.basename.Int;
+        $!fd-info = $!proc-file.append('fdinfo', $!fd);
+        my %info = $!fd-info.open(:bin).read(255).decode.lines.map( { $_.split(/\:\t/) }).flat.hash;
+        $!pos =  %info<pos>.Int if %info<pos>.defined;
+        $!mnt-id = %info<mnt_id>.defined ?? %info<mnt_id>.Int !! 0;
+        my $str_fl = %info<flags>;
+        $!flags = :8($str_fl) if $str_fl.defined;
+    }
 }
 # vim: expandtab shiftwidth=4 ft=perl6
