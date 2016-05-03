@@ -19,13 +19,13 @@
    "auth" : "github:jonathanstowe",
    "source-url" : "git://github.com/jonathanstowe/Oyatul.git",
    "depends" : [
-		"JSON::Tiny"
+		"JSON::Fast"
    ],
    "name" : "Oyatul",
    "authors" : [
       "Jonathan Stowe <jns+git@gellyfish.co.uk>"
    ],
-   "version" : "0.0.2",
+   "version" : "0.0.3",
    "license" : "Artistic",
    "description" : "Abstract representation of a filesystem layout"
 }

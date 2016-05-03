@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -512,9 +512,9 @@ layout.
 
 =end pod
 
-use JSON::Tiny;
+use JSON::Fast;
 
-module Oyatul:ver<0.0.2>:auth<github:jonathanstowe> {
+module Oyatul:ver<0.0.3>:auth<github:jonathanstowe> {
 
     my Regex $exclude = /^<-[.]>/;
 
