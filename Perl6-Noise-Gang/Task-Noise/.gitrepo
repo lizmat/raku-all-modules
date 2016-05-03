@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Perl6-Noise-Gang/Task-Noise.git
+	branch = master
+	commit = 05b54938fc575e9940015f35fbc83f51d5eeb8da
+	parent = 784115d05344c6478967c7b6cbdba86524082c52
+	cmdver = 0.2.3

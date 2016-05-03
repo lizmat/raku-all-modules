@@ -1,0 +1,42 @@
+{
+  "name": "Task::Noise",
+  "source-url": "git@github.com:Perl6-Noise-Gang/Task-Noise.git",
+  "support": {
+    "source": "git@github.com:Perl6-Noise-Gang/Task-Noise.git"
+  },
+  "perl": "6.c",
+  "auth": "github:perl6-noise-gang",
+  "provides": { },
+  "depends": [
+    "ABC",
+    "Music::Helpers",
+    "Audio::Taglib::Simple",
+    "Audio::Sndfile",
+    "Audio::Libshout",
+    "Audio::Encode::LameMP3",
+    "Audio::Convert::Samplerate",
+    "Audio::Silan",
+    "Audio::Liquidsoap",
+    "Audio::Playlist::JSPF",
+    "Audio::Hydrogen",
+    "Audio::PortAudio",
+    "Audio::PortMIDI",
+    "Audio::Icecast",
+    "EuclideanRhythm",
+    "Audio::OggVorbis",
+    "Audio::MIDI::Note"
+  ],
+  "tags": [
+    "audio",
+    "noise",
+    "sound"
+  ],
+  "license": "Artistic",
+  "test-depends": [ ],
+  "description": "META distribution to install all the noise related modules known to the Perl 6 Noise Gang",
+  "version": "0.0.1",
+  "meta6": "0",
+  "authors": [
+    "Perl6 Noise Gang"
+  ]
+}
