@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/skinkade/p6-crypt-argon2.git
 	branch = master
-	commit = 6a3f224f0c5d3f6567754b88b2a3342202b33e04
-	parent = d2be9ae2857afb99f9e2faff0c96442dfbdc69db
+	commit = 9e5a5d91d9a410ac2956d09dbdafa1dfebe135e2
+	parent = c768ac41503ebb26d55d1b6abe3fbe16362d4f7b
 	cmdver = 0.2.3
