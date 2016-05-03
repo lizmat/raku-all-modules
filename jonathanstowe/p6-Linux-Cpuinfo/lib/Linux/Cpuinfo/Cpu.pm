@@ -131,45 +131,45 @@ measure of the CPU's performance.
 
 =end pod
 
-class Linux::Cpuinfo::Cpu:ver<0.0.6>:auth<github:jonathanstowe> {
+class Linux::Cpuinfo::Cpu:ver<0.0.7>:auth<github:jonathanstowe> {
 
-   #|  a hash keyed on the names of the fields found in the record
-   has %.fields;
-   multi method new(Str $cpu ) {
-      my %fields;
+    #|  a hash keyed on the names of the fields found in the record
+    has %.fields;
+    multi method new(Str $cpu ) {
+        my %fields;
 
-      for $cpu.lines -> $line {
-         my ($key, $value) =  $line.split(/\s*\:\s*/);
-         $key.=subst(/\s+/,'_', :g);
+        for $cpu.lines -> $line {
+            my ($key, $value) =  $line.split(/\s*\:\s*/);
+            $key.=subst(/\s+/,'_', :g);
 
-         if  $value.defined {
-            if $value ~~ /^yes|no$/ {
-               $value = so $/ eq 'yes';
+            if  $value.defined {
+                if $value ~~ /^yes|no$/ {
+                    $value = so $/ eq 'yes';
+                }
+                elsif $value ~~ /^<:Nd>+\.?<:Nd>?$/ {
+                    $value = $value + 0;
+                }
             }
-            elsif $value ~~ /^<:Nd>+\.?<:Nd>?$/ {
-               $value = $value + 0;
+            given $key {
+                when 'flags' {
+                    my @flags = $value.split(/\s+/);
+                    $value = @flags;
+                }
             }
-         }
-         given $key {
-            when 'flags' {
-               my @flags = $value.split(/\s+/);
-               $value = @flags;
+
+            %fields{$key.lc} = $value;
+
+        }
+        self.new(:%fields);
+    }
+
+    # This needs to be separate as the object itself is needed.
+    submethod BUILD(:%!fields ) {
+        for %!fields.keys -> $field {
+            if not self.can($field) {
+                self.^add_method($field, { %!fields{$field} } );
             }
-         }
-
-         %fields{$key.lc} = $value;
-
-      }
-      self.new(:%fields);
-   }
-
-   # This needs to be separate as the object itself is needed.
-   submethod BUILD(:%!fields ) {
-      for %!fields.keys -> $field {
-         if not self.can($field) {
-            self.^add_method($field, { %!fields{$field} } );
-         }
-      }
-   }
+        }
+    }
 }
 # vim: expandtab shiftwidth=4 ft=perl6
