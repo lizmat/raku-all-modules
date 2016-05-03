@@ -1,0 +1,22 @@
+{
+  "name" : "Algorithm::BloomFilter",
+  "source-url" : "git@github.com:yowcow/p6-Algorithm-BloomFilter.git",
+  "perl" : "6.c",
+  "resources" : [ ],
+  "build-depends" : [ ],
+  "provides" : {
+    "Algorithm::BloomFilter" : "lib/Algorithm/BloomFilter.pm6"
+  },
+  "depends" : [
+    "Digest::SHA"
+  ],
+  "description" : "A bloom filter implementation in Perl 6",
+  "test-depends" : [
+    "Test",
+    "Test::META"
+  ],
+  "version" : "0.0.1",
+  "authors" : [
+    "yowcow"
+  ]
+}
