@@ -1,9 +1,17 @@
 #!perl6
-use v6;
+
+use v6.c;
 use Test;
-use lib 'lib';
+plan 4;
+
+use LibraryCheck;
 
 use Audio::Convert::Samplerate;
+
+if !library-exists('samplerate', v0) {
+    skip-rest "no samplerate library, won't run tests";
+    exit;
+}
 
 my $obj;
 

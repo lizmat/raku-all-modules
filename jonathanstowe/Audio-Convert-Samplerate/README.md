@@ -2,6 +2,8 @@
 
 Convert the samplerate of PCM audio data using libsamplerate (AKA "Secret Rabbit Code".)
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Audio-Convert-Samplerate.svg?branch=master)](https://travis-ci.org/jonathanstowe/Audio-Convert-Samplerate)
+
 ## Description
 
 This provides a mechanism for doing sample rate conversion of PCM audio
@@ -18,6 +20,7 @@ and a subsequent small loss of efficiency (although the int and short
 to float conversions are done in C code and so are reasonably quick.)
 There is no support for 64 bit int (long) or float (double) data.
 
+The full documentation is available as POD or [Markdown](Documentation.md)
 
 ## Installation
 
@@ -34,17 +37,7 @@ http://www.mega-nerd.com/libsamplerate/download.html
 I am however unlikely to be able to offer help with installing it this way.
 
 Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+install this with *panda* :
 
     # From the source directory
    
@@ -58,12 +51,12 @@ Other install mechanisms may be become available in the future.
 
 ## Support
 
-However suggestions/patches are welcomed via github at
+Suggestions/patches are welcomed via github at
 
-https://github.com/jonathanstowe/Audio-Convert-Samplerate
+https://github.com/jonathanstowe/Audio-Convert-Samplerate/issues
 
 ## Licence
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016

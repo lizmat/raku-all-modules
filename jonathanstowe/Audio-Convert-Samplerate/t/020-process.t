@@ -1,11 +1,20 @@
 #!perl6
 
 use v6.c;
+
 use Test;
+plan 216;
+
+use LibraryCheck;
 
 use Audio::Convert::Samplerate;
 use Audio::Sndfile;
 use NativeCall;
+
+if !library-exists('samplerate', v0) {
+    skip-rest "no samplerate library, won't run tests";
+    exit;
+}
 
 my $test-data = $*CWD.child('t/data');
 

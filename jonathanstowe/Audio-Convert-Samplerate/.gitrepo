@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Audio-Convert-Samplerate.git
 	branch = master
-	commit = 27967189314d0ab6026ecaf827db0de6b536b139
-	parent = d6b8dcd11eec67191fb2ee8e8487b87c834d9576
+	commit = 6105418c5f4806088eda991f876cedb63b739e2b
+	parent = 61c4bdb0e1371543472b6f690f4f3b988fecbb7b
 	cmdver = 0.2.3

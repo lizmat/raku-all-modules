@@ -10,9 +10,6 @@
   "source-url" : "git://github.com/jonathanstowe/Audio-Convert-Samplerate.git",
   "perl" : "6.c",
   "build-depends" : [
-    "LibraryCheck",
-    "NativeHelpers::Array",
-    "panda"
   ],
   "provides" : {
     "Audio::Convert::Samplerate":  "lib/Audio/Convert/Samplerate.pm"
@@ -21,9 +18,10 @@
     "NativeHelpers::Array"
   ],
   "test-depends" : [
+    "LibraryCheck",
     "Audio::Sndfile",
     "Test"
   ],
   "description" : "Convert the samplerate of PCM audio data using libsamplerate",
-  "version" : "0.0.6"
+  "version" : "0.0.7"
 }

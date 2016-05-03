@@ -172,7 +172,7 @@ methods will throw an exception if supplied an invalid ratio.
 
 =end pod
 
-class Audio::Convert::Samplerate:ver<0.0.6>:auth<github:jonathanstowe> {
+class Audio::Convert::Samplerate:ver<0.0.7>:auth<github:jonathanstowe> {
     use NativeCall;
     use NativeHelpers::Array;
 
