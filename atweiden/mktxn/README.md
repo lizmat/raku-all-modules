@@ -152,8 +152,8 @@ Installation
 
 - Rakudo Perl6
 - [Config::TOML](https://github.com/atweiden/config-toml)
-- [Digest::xxHash](https://github.com/atweiden/digest-xxhash)
 - [JSON::Tiny](https://github.com/moritz/json)
+- [TXN::Parser](https://github.com/atweiden/txn-parser)
 
 
 Licensing

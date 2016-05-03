@@ -2,55 +2,57 @@ use v6;
 use TXN::Parser;
 unit module TXN;
 
-sub emit(Str:D $journal, Int :$date-local-offset, Bool :$json)
+multi sub emit(
+    Str:D $content,
+    Bool :$json,
+    *%opts (Int :$date-local-offset)
+)
 {
-    # perform parse with given options
-    my %a;
-    %a<date-local-offset> = $date-local-offset if $date-local-offset;
-    %a<json> = $json if $json;
-    my @txn = TXN::Parser.parse($journal, |%a).made;
+    my @txn = TXN::Parser.parse($content, |%opts).made;
+    emit(:@txn, :$json);
+}
 
-    if $json
+multi sub emit(
+    Str:D :$file!,
+    Bool :$json,
+    *%opts (Int :$date-local-offset)
+)
+{
+    my @txn = TXN::Parser.parsefile($file, |%opts).made;
+    emit(:@txn, :$json);
+}
+
+multi sub emit(:@txn!, Bool:D :$json! where *.so)
+{
+    # stringify DateTimes in preparation for JSON serialization
+    loop (my Int $i = 0; $i < @txn.elems; $i++)
     {
-        use JSON::Tiny;
-        to-json(@txn);
+        @txn[$i]<header><date> = ~@txn[$i]<header><date>;
     }
-    else
-    {
-        @txn;
-    }
+
+    use JSON::Tiny;
+    to-json(@txn);
+}
+
+multi sub emit(:@txn!, Bool :$json)
+{
+    @txn;
 }
 
 multi sub from-txn(
     Str:D $content,
-    Int :$date-local-offset,
-    Bool :$json
+    *%opts (Int :$date-local-offset, Bool :$json)
 ) is export
 {
-    # resolve include directives in transaction journal
-    my Str:D $journal = TXN::Parser.preprocess($content);
-
-    my %a;
-    %a<date-local-offset> = $date-local-offset if $date-local-offset;
-    %a<json> = $json if $json;
-
-    emit($journal, |%a);
+    emit($content, |%opts);
 }
 
 multi sub from-txn(
     Str:D :$file!,
-    Int :$date-local-offset,
-    Bool :$json
+    *%opts (Int :$date-local-offset, Bool :$json)
 ) is export
 {
-    # resolve include directives in transaction journal
-    my Str:D $journal = TXN::Parser.preprocess(:$file);
-
-    my %a;
-    %a<date-local-offset> = $date-local-offset if $date-local-offset;
-    %a<json> = $json if $json;
-
-    emit($journal, |%a);
+    emit(:$file, |%opts);
 }
 
 # vim: ft=perl6

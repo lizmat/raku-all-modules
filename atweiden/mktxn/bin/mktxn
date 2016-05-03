@@ -5,7 +5,7 @@
 
 use v6;
 constant $PROGRAM = 'mktxn';
-constant $VERSION = '0.0.1';
+constant $VERSION = v0.0.2;
 
 
 
@@ -58,7 +58,7 @@ multi sub MAIN(
     if $template
     {
         use Config::TOML;
-        my %template = from-toml(slurp $template);
+        my %template = from-toml(:file($template));
         %txninfo<name> = %template<name> if %template<name>;
         %txninfo<version> = %template<version> if %template<version>;
         %txninfo<release> = Int(%template<release>) if %template<release>;
@@ -72,14 +72,13 @@ multi sub MAIN(
     %txninfo<description> = $description if $description;
 
     # note the compiler name and version, and time of compile
-    %txninfo<compiler> = "$PROGRAM $VERSION $dt";
+    %txninfo<compiler> = "$PROGRAM v$VERSION $dt";
 
     say "Making txn: %txninfo<name> %txninfo<version>-%txninfo<release> ($dt)";
 
     # parse transactions from journal
-    use TXN::Parser;
-    my Str:D $journal = TXN::Parser.preprocess(:$file);
-    my @txn = TXN::Parser.parse($journal, :json).made;
+    use TXN;
+    my @txn = from-txn(:$file, :json);
 
     # compute basic stats about the transaction journal
     %txninfo<count> = @txn.elems;

@@ -19,19 +19,18 @@ subtest
 {
     my Str $file = 't/data/sample/sample.txn';
 
-    # old fashioned way
-    my TXN::Parser::Actions $actions .= new;
-    my $match-journal = TXN::Parser::Grammar.parsefile($file, :$actions);
+    # with TXN::Parser
+    my $match-journal = TXN::Parser.parsefile($file);
 
-    # with public API
+    # with TXN
     my @txn = from-txn(:$file);
 
-    # with JSON round trip
+    # with TXN (JSON)
     use JSON::Tiny;
     my $json = from-txn(:$file, :json);
     my @round-trip = from-json($json);
 
-    is(
+    is-deeply(
         @txn,
         $match-journal.made,
         q:to/EOF/
@@ -44,6 +43,7 @@ subtest
         EOF
     );
 
+    # use is vs is-deeply to autostringify DateTimes in headers
     is(
         @txn,
         @round-trip,
