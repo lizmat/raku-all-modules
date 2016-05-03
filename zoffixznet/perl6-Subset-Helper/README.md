@@ -67,12 +67,12 @@ Patches to fix this are welcome.
 # REPOSITORY
 
 Fork this module on GitHub:
-https://github.com/zoffixznet/perl6-NASA
+https://github.com/zoffixznet/perl6-Subset-Helper
 
 # BUGS
 
 To report bugs or request features, please use
-https://github.com/zoffixznet/perl6-NASA/issues
+https://github.com/zoffixznet/perl6-Subset-Helper/issues
 
 # AUTHOR
 
