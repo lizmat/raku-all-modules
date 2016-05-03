@@ -1,0 +1,13 @@
+{
+    "name"          : "App::MoarVM::HeapAnalyzer",
+    "version"       : "0.1",
+    "description"   : "MoarVM heap snapshot analysis tool",
+    "author"        : "Jonathan Worthington <jnthn@jnthn.net>",
+    "depends"       : [ ],
+    "provides"      : {
+        "App::MoarVM::HeapAnalyzer::Model" : "lib/App/MoarVM/HeapAnalyzer/Model.pm6",
+        "App::MoarVM::HeapAnalyzer::Shell" : "lib/App/MoarVM/HeapAnalyzer/Shell.pm6",
+        "moar-ha"                          : "bin/moar-ha"
+    },
+    "source-url"    : "git://github.com/jnthn/p6-app-moarvm-heapanalyzer.git"
+}
