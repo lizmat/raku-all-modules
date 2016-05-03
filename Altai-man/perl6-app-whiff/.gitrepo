@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Altai-man/perl6-app-whiff.git
 	branch = master
-	commit = 29e1c0f4c78aeceb4f4e9ab56cffe237e0f506c5
-	parent = 65e8417a3e5e27c4d59c203ea597adbf2d157dbc
+	commit = 99ab7a45b6b19d9ae9d9715321e2fdd9666ef141
+	parent = 75491680822a913eecdc119b65300bcbd52c7661
 	cmdver = 0.2.3
