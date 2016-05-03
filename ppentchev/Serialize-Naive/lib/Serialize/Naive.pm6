@@ -1,4 +1,4 @@
-unit role Serialize::Naive:ver<0.2.1>:auth<github:ppentchev>;
+unit role Serialize::Naive:ver<0.2.2>:auth<github:ppentchev>;
 
 use v6.c;
 use strict;
@@ -51,11 +51,13 @@ sub do-deserialize(%data, $type, Sub :$warn)
 		$name ~~ s/^ <[$%@]> '!' //;
 		my $type = $attr.type;
 
-		next unless %data{$name}:exists;
 		%handled{$name} = True;
-		my $value = %data{$name};
-		%build{$name} := walk-type($type, $value,
-		    :objfunc(&do-deserialize), :warn($warn));
+		if %data{$name}:exists && %data{$name}.defined {
+			%build{$name} := walk-type($type, %data{$name},
+			    :objfunc(&do-deserialize), :warn($warn));
+		} else {
+			%build{$name} = $type if $attr.required;
+		}
 	}
 
 	my Str @unhandled = %data.keys.grep: { not %handled{$_}:exists };

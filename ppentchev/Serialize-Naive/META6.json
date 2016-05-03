@@ -1,7 +1,7 @@
 {
   "perl": "6.*",
   "name": "Serialize::Naive",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A somewhat naive (de-)serialization implementation",
   "authors": [ "Peter Pentchev" ],
   "provides": {
@@ -9,5 +9,5 @@
   },
   "depends": [],
   "resources": [],
-  "source-url": "git://github.com/ppentchev/Serialize-Naive.git"
+  "source-url": "https://github.com/ppentchev/Serialize-Naive.git"
 }

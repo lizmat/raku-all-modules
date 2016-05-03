@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/ppentchev/Serialize-Naive.git
+	remote = https://github.com/ppentchev/Serialize-Naive.git
 	branch = master
-	commit = e6d89239012a0762c62ff7cb3ecace1a524631d6
-	parent = dc116214105ca17534303ec476ece2059a80bf38
+	commit = 693b4bbd9178ad07593a732df6198c8a8dbe9a1e
+	parent = b37ed9acfa17d74d8a103bd2bb6493b7972eb189
 	cmdver = 0.2.3
