@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-Bailador-Plugin-Static.git
+	branch = master
+	commit = d425f9dfe8e8afb3e8898c6385092ee3beb06a4a
+	parent = 91879ca1a1e9f7238404749a7df90b82b9d8ed90
+	cmdver = 0.2.3

@@ -1,0 +1,7 @@
+Revision History for 'Bailador::Plugin::Static' Perl 6 Distribution
+
+2.001001  2016-04-30
+  - Explicit call to .install now has to be made to set up routes
+
+1.001001  2016-04-29
+  - First version released on an unsuspecting world
