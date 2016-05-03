@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-Bailador-Template-Mojo-Extended.git
+	branch = master
+	commit = eb9d26f1d2ee66193be1e74ae8983c1ab4275f30
+	parent = cc66de9baf0f574213228552c998420cf0f4c071
+	cmdver = 0.2.3

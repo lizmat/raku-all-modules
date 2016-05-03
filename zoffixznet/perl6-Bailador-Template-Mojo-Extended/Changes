@@ -1,0 +1,8 @@
+Revision History for 'Bailador::Template::Mojo::Extended' Perl 6 Distribution
+
+2.001001  2016-05-01
+  - Changed how stash variables are made available, from hash-based system to
+    scalar variable names
+
+1.001001  2016-04-30
+  - First version released on an unsuspecting world

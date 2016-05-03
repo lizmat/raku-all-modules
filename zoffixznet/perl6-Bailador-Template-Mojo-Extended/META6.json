@@ -1,0 +1,17 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Bailador::Template::Mojo::Extended",
+    "version"      : "2.001001",
+    "description"  : "Extra features on top of the default ::Mojo renderer for Bailador",
+    "depends"      : [
+        "Bailador",
+        "Bailador::Template",
+        "Template::Mojo"
+    ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "Bailador::Template::Mojo::Extended" : "lib/Bailador/Template/Mojo/Extended.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   : "git://github.com/zoffixznet/perl6-Bailador-Template-Mojo-Extended.git"
+}

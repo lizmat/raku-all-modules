@@ -1,0 +1,4 @@
+%% layout: email
+%% title:  Email Template
+%% foobar: Foo Bar
+<p>Hello, <%= $s<name> ~ ' ' ~ $s<pos>[0]%></p>

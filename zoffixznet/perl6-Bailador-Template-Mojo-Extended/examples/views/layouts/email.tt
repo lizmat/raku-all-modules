@@ -1,0 +1,6 @@
+<p>Title: <%= $s<title> %></p>
+<p>Foobar: <%= $s<foobar> %></p>
+
+<h1>This is EMAIL layout</h1>
+
+<%= $s<content> %>
