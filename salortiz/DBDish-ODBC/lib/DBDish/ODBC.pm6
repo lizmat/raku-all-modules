@@ -1,7 +1,7 @@
 use v6;
 need DBDish;
 
-unit class DBDish::ODBC:auth<salortiz>:ver<0.0.5> does DBDish::Driver;
+unit class DBDish::ODBC:auth<salortiz>:ver<0.0.7> does DBDish::Driver;
 use DBDish::ODBC::Native;
 need DBDish::ODBC::Connection;
 
@@ -50,6 +50,10 @@ multi method connect(
 multi method connect(:$RaiseError = $!RaiseError, *%args) {
     my $conn-str = %args.pairs.map( {"{.key}={.value}" }).join(';');
     self.connect(:$conn-str, :$RaiseError);
+}
+
+method version() {
+    v3.80;
 }
 
 method drivers() {

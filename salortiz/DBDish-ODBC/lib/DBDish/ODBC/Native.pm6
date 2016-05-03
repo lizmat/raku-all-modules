@@ -210,17 +210,17 @@ enum HANDLE_TYPE (
 
 class SQL_HANDLE is repr('CPointer') {
     method h-type { 0 }
-    method AllocHandle(SQL_HANDLE:U: SQL_HANDLE $parent) {
 	sub SQLAllocHandle(int16, SQL_HANDLE, SQL_HANDLE is rw --> int16)
 	    is native(LIB) { * }
 
+    method AllocHandle(SQL_HANDLE:U: SQL_HANDLE $parent) {
 	$parent.handle-res(SQLAllocHandle(self.h-type, $parent, my \prot = self.new));
 	prot;
     }
 
-    method FreeHandle(--> True) {
 	sub SQLFreeHandle(int16, SQL_HANDLE --> int16) is native(LIB) { * };
 
+    method FreeHandle(--> True) {
 	SQLFreeHandle(self.h-type, self);
     }
 
@@ -228,11 +228,11 @@ class SQL_HANDLE is repr('CPointer') {
 	self.FreeHandle;
     }
 
-    method handle-res($code, :$throw) {
 	sub SQLGetDiagRec(
 	    int16, SQL_HANDLE, int16, utf8, int32 is rw,
 	    utf8, int32, int32 is rw --> int16) is native(LIB) { * }
 
+    method handle-res($code, :$throw) {
 	if $code +& SQL_SUCCESS_MASK {
 	    my ODBCErr $rep;
 	    if self { # On allocated handle
@@ -274,10 +274,10 @@ class SQLENV is SQL_HANDLE is export is repr('CPointer') {
     method SetEnvAttr(int32 $attr, Pointer $val, int32 $len --> int16)
 	is symbol('SQLSetEnvAttr') is native(LIB) { * }
 
-    method Drivers(Int $dir) {
 	sub SQLDrivers(SQLENV:D, uint16, utf8, int16, int16 is rw,
 	    utf8, int16, int16 is rw --> int16) is native(LIB) { * }
 
+    method Drivers(Int $dir) {
 	my utf8 $drv_desc .= allocate( 255);
 	my utf8 $drv_attr .= allocate(1024);
 	self.handle-res(
@@ -288,10 +288,10 @@ class SQLENV is SQL_HANDLE is export is repr('CPointer') {
 	};
     }
 
-    method DataSources(Int $dir) {
 	sub SQLDataSources(SQLENV:D, uint16, utf8, int16, int16 is rw,
 	    utf8, int16, int16 is rw --> int16) is native(LIB) { * }
 
+    method DataSources(Int $dir) {
 	my utf8 $drv_desc .= allocate( 255);
 	my utf8 $drv_attr .= allocate(1024);
 	self.handle-res(
@@ -312,13 +312,13 @@ class SQLDBC is SQL_HANDLE is export is repr('CPointer') {
     method SetConnectAttr(int32, Pointer, int32 $len --> int16)
 	is symbol('SQLSetConnectAttr') is native(LIB) { * }
 
-    method Connect(Str $cs, Str $database, Str $user, Str $pass) {
 	sub SQLConnect(SQLDBC:D, Str, int16, Str, int16, Str, int16 --> int16)
 	    is native(LIB) { * }
 	sub SQLDriverConnect(SQLDBC:D, Pointer, Str, int16, utf8, int16,
 	    int32 is rw, int32 --> int16)
 	    is native(LIB) { * }
 
+    method Connect(Str $cs, Str $database, Str $user, Str $pass) {
 	my utf8 $ret .= allocate(1024);
 	my int32 $etl;
 	self.handle-res(
@@ -330,10 +330,10 @@ class SQLDBC is SQL_HANDLE is export is repr('CPointer') {
 
     method Disconnect(--> int16) is symbol('SQLDisconnect') is native(LIB) { * }
 
-    method GetInfo(InfoType) {
 	sub SQLGetInfo(SQLDBC:D, int16, Pointer, int16, int16 is rw --> int16)
 	    is native(LIB) { * }
 
+    method GetInfo(InfoType) {
 	#TODO
     }
 }
@@ -343,29 +343,29 @@ class SQLSTMT is SQL_HANDLE is export is repr('CPointer') {
     method Alloc(SQLDBC $parent) {
 	::?CLASS.AllocHandle($parent);
     }
-    method ExecDirect(Str $statement) {
 	sub SQLExecDirect(SQLSTMT:D, Str, int16 --> int16) is native(LIB) { * }
 
+    method ExecDirect(Str $statement) {
 	self.handle-res(SQLExecDirect(self, $statement, SQL_NTS)) || True;
     }
 
-    method Prepare(Str $statement) {
 	sub SQLPrepare(SQLSTMT:D, Str, int16 --> int16) is native(LIB) { * }
 
+    method Prepare(Str $statement) {
 	self.handle-res(SQLPrepare(self, $statement, SQL_NTS)) || True;
     }
 
-    method NumParams() {
 	sub SQLNumParams(SQLSTMT:D, int32 is rw --> int16) is native(LIB) { * }
 
+    method NumParams() {
 	my int32 $params;
 	self.handle-res(SQLNumParams(self, $params)) || $params;
     }
 
-    method DescribeParam(Int $par) {
 	sub SQLDescribeParam(SQLSTMT:D, uint16, int16 is rw, uint64 is rw,
 	    uint16 is rw, uint16 is rw --> int16) is native(LIB) { * }
 
+    method DescribeParam(Int $par) {
 	self.handle-res(SQLDescribeParam(self, $par, my int16 $datatype,
 	    my int32 $colsize, my int16 $dd, my int16 $nullable)
 	) || do {
@@ -378,10 +378,10 @@ class SQLSTMT is SQL_HANDLE is export is repr('CPointer') {
 	}
     }
 
-    method BindParameter(Int $par, $type, Blob $data, Buf[int64] $SoI) {
 	sub SQLBindParameter(SQLSTMT:D, uint16, int16, int16, int16,
 	    int32, int16, Blob, int64, Pointer --> int16) is native(LIB) { * }
 
+    method BindParameter(Int $par, $type, Blob $data, Buf[int64] $SoI) {
 	my $BS   = BPointer($SoI, :typed);
 	my $PSoI = nativecast(
 	    Pointer[int64], Pointer.new(+$BS + ($par - 1) * nativesizeof(int64))
@@ -396,16 +396,16 @@ class SQLSTMT is SQL_HANDLE is export is repr('CPointer') {
 
     method Execute(--> int16) is symbol('SQLExecute') is native(LIB) { * }
 
-    method NumResultCols() {
 	sub SQLNumResultCols(SQLSTMT:D, int32 is rw --> int16) is native(LIB) { * }
+    method NumResultCols() {
 	my int32 $cols;
 	self.handle-res(SQLNumResultCols(self, $cols)) || $cols;
     }
 
-    method DescribeCol(Int $col) {
 	sub SQLDescribeCol(SQLSTMT:D, uint16, utf8, int16, int16 is rw,
 	    int16 is rw, int64 is rw, int16 is rw, int16 is rw --> int16)
 	    is native(LIB) { * }
+    method DescribeCol(Int $col) {
 	my utf8 $name .= allocate(256);
 	self.handle-res(SQLDescribeCol(self, $col, $name, 256, my int16 $etl,
 	    my int16 $datatype, my int64 $colsize, my int16 $dd, my int16 $nullable)
@@ -422,9 +422,9 @@ class SQLSTMT is SQL_HANDLE is export is repr('CPointer') {
 
     method Fetch(--> int16) is symbol('SQLFetch') is native(LIB) { * }
 
-    method GetData(Int $col, :$raw) {
 	sub SQLGetData(SQLSTMT:D, uint16, uint16, Buf, int64, int64 is rw --> int16)
 	    is native(LIB) { * }
+    method GetData(Int $col, :$raw) {
 	my Buf $data .= allocate(4096);
 	my int64 $etl;
 	self.handle-res(
@@ -439,8 +439,8 @@ class SQLSTMT is SQL_HANDLE is export is repr('CPointer') {
 	}
     }
 
-    method RowCount() {
 	sub SQLRowCount(SQLSTMT:D, int64 is rw --> int16) is native(LIB) { * }
+    method RowCount() {
 	self.handle-res(SQLRowCount(self, my int64 $rows)) || $rows;
     }
 

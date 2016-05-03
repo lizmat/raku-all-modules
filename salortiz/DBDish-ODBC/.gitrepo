@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/salortiz/DBDish-ODBC.git
 	branch = master
-	commit = c9237579f877bc90c4077b5e06b7ede8f9c33efe
-	parent = bd5a11582d364731b345bca02b4e6886327c68b0
+	commit = 2c9b1c17bddb46115cb1aeda9dcee8f925da260d
+	parent = 4097d409e664c654788a69dbc43b607d388f9d4d
 	cmdver = 0.2.3
