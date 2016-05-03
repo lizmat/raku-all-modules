@@ -2,6 +2,8 @@
 
 Role to Serialize/De-Serialize a Perl 6 class to/from XML
 
+[![Build Status](https://travis-ci.org/jonathanstowe/XML-Class.svg?branch=master)](https://travis-ci.org/jonathanstowe/XML-Class)
+
 ## Synopsis
 
 ```
