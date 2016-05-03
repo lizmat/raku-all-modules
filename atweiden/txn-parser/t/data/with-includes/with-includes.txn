@@ -1,0 +1,9 @@
+include 'includes/2011'
+include 'includes/2012'
+include 'includes/2013'
+
+2014-01-01 "I started the year with $1000 in Bankwest cheque account"
+  Assets:Personal:Bankwest:Cheque      $1000.00 USD
+  Equity:Personal                      $1000.00 USD
+
+# vim: ft=txn

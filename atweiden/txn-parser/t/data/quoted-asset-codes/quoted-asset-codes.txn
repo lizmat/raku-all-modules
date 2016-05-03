@@ -1,0 +1,25 @@
+2014-01-01
+@auto
+"I bought a Honda S2000 for $34,000"
+Assets:Personal    +1 'Honda S2000 VIN JHLRE4H73AC092103' @ $34000 USD
+Assets:Personal    -$34000 USD
+
+2014-01-01
+@re
+"I bought a new house"
+Assets:Personal      1 'The House at 178 Blue Kodiak Trail' @ $379799 USD
+Assets:Personal    -$379799 USD
+
+2014-01-01
+@mfg
+"Mann Co manufactured 10,000 new bobbleheads (production run 88)"
+Assets:MannCo:Inventory     10_000 "Widget:Bobblehead #88" @ $5.00 USD
+Assets:MannCo:Checking     -50_000 USD
+
+2014-01-01
+@mfg
+"Mann Co sold 10,000 bobbleheads prod #88 to wholesaler"
+Assets:MannCo     $500_000 USD
+Assets:MannCo    -10_000 "Widget:Bobblehead #88" @ $50.00 USD
+
+# vim: ft=txn

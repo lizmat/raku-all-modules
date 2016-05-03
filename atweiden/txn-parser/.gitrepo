@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/atweiden/txn-parser.git
+	branch = master
+	commit = 3a76880c7e08443228275f1d0f0ec2067e1589bb
+	parent = 44dd38b015ae51914ae589b4419a078743632d85
+	cmdver = 0.2.3

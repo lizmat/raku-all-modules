@@ -1,0 +1,20 @@
+{
+    "name"        : "TXN::Parser",
+    "version"     : "*",
+    "author"      : "Andy Weidenbaum",
+    "description" : "Double-entry bookkeeping transaction journal parser",
+    "depends"     : ["Digest::xxHash"],
+    "license"     : "http://unlicense.org/UNLICENSE",
+    "source-type" : "git",
+    "source-url"  : "git://github.com/atweiden/txn-parser.git",
+    "support"     : {
+        "bugtracker" : "https://github.com/atweiden/txn-parser/issues",
+        "source"     : "https://github.com/atweiden/txn-parser"
+    },
+    "provides" : {
+        "TXN::Parser"          : "lib/TXN/Parser.pm",
+        "TXN::Parser::Actions" : "lib/TXN/Parser/Actions.pm",
+        "TXN::Parser::Grammar" : "lib/TXN/Parser/Grammar.pm",
+        "X::TXN::Parser"       : "lib/X/TXN/Parser.pm"
+    }
+}
