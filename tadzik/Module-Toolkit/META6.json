@@ -1,6 +1,6 @@
 {
     "name"        : "Module::Toolkit",
-    "version"     : "0.6",
+    "version"     : "0.7",
     "perl"        : "6.c",
     "description" : "Module management tools",
     "depends"     : [

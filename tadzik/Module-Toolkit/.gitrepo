@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Module-Toolkit.git
 	branch = master
-	commit = d3fa6bed6665892e0926d3392d49cc4443436767
-	parent = 78ae9027eda59f7de02572725107ab77ca49517f
+	commit = 659aee08c46e133c91a8619019a7b724f8e7b2ca
+	parent = 0b19bb85c900f78aa1549c0c776937d5808c4736
 	cmdver = 0.2.3

@@ -47,18 +47,34 @@ has CompUnit::Repository $.default-to =
         .first(*.can-install);
 
 
-multi method install(IO::Path() $from, Str() $curname) {
-    self.install(
-        $from,
-        CompUnit::RepositoryRegistry.repository-for-name($curname))
-}
-
 multi method install(IO::Path() $from,
-               CompUnit::Repository::Installable() $to = $.default-to,
-               Bool() :$force = False) {
+                     $to is copy = $.default-to,
+                     Bool() :$force = False) {
+    my $cur;
+    given $to {
+        when CompUnit::Repository::Installable {
+            $cur = $to
+        }
+        when Str {
+            $cur = CompUnit::RepositoryRegistry.repository-for-name(
+                    $to, :next-repo($*REPO))
+        }
+        when IO::Path {
+            $cur = CompUnit::RepositoryRegistry.repository-for-spec(
+                   "inst#$to", :next-repo($*REPO))
+        }
+        default {
+            die "Unable to handle installation target '$to'"
+        }
+    }
+
+    unless $cur {
+        die "$to is not a valid install location"
+    }
+
     my $dist-dir = Distribution::Directory.new(path => $from);
 
-    $to.install(
+    $cur.install(
         Distribution.new(|$dist-dir.meta),
         $dist-dir.sources,
         $dist-dir.scripts,

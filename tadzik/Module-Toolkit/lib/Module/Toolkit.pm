@@ -50,13 +50,13 @@ class Sink is IO::Handle {
 #| Run tests for a distribution in a given directory
 #| TAP output will be written to C<$output> if supplied,
 #| ignored otherwise
-method test(IO::Path() $where, :$output = Sink.new) {
+method test(IO::Path() $where, :$output = Sink.new, :@incdirs) {
     temp $*CWD = chdir($where);
     return True unless $*CWD.child('t').IO.d;
 
     my @tests = find(dir => $*CWD.child('t'), name => /\.t$/).list».Str;
     my $handler = TAP::Harness::SourceHandler::Perl6.new(
-        incdirs => [ $*CWD.child('lib') ]
+        incdirs => [ $*CWD.child('lib'), |@incdirs ]
     );
 
 	my $run = TAP::Harness.new(
