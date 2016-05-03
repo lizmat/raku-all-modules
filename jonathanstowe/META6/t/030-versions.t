@@ -27,7 +27,7 @@ my $obj;
 }
 
 is $obj.version, "0.0.1", "object get good version";
-is $obj.perl, "6", "got right perl version";
+is $obj.perl-version, "6", "got right perl version";
 
 is $warnings, 1, "got exactly 1 warning about v";
 

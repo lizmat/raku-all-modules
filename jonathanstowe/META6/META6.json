@@ -20,7 +20,7 @@
       "irc" : null,
       "bugtracker" : null
    },
-   "perl" : "6",
+   "perl" : "6.c",
    "build-depends" : [],
    "auth" : "github:jonathanstowe",
    "source-url" : "git://github.com/jonathanstowe/META6.git",
@@ -32,7 +32,7 @@
    "authors" : [
       "Jonathan Stowe <jns+git@gellyfish.co.uk>"
    ],
-   "version" : "0.0.7",
+   "version" : "0.0.9",
    "license" : "Artistic",
    "resource" : {},
    "superseded-by" : {},
