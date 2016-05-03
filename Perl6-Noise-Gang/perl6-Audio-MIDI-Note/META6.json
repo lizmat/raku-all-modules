@@ -1,0 +1,19 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Audio::MIDI::Note",
+    "version"      : "1.001001",
+    "description"  : "Playable MIDI note",
+    "depends"      : [
+        "Audio::PortMIDI",
+        "Subset::Helper"
+    ],
+    "test-depends" : [
+        "Test",
+        "Test::META"
+    ],
+    "provides"     : {
+        "Audio::MIDI::Note" : "lib/Audio/MIDI/Note.pm6"
+    },
+    "authors"      : [ "Perl6 Noise Gang" ],
+    "source-url"   : "git://github.com/Perl6-Noise-Gang/perl6-Audio-MIDI-Note.git"
+}
