@@ -1,0 +1,25 @@
+{
+   "authors" : [
+      "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+   ],
+   "auth" : "github:Perl6-Noise-Gang",
+   "meta6" : "0",
+   "license" : "perl",
+   "build-depends" : [],
+   "tags" : ["MIDI", "audio", "music", "sequencer", "noise-gang"],
+   "depends" : [ "Util::Bitfield" ],
+   "test-depends" : [ "LibraryCheck" ],
+   "perl" : "6.c",
+   "provides" : {
+		"Audio::PortMIDI" : "lib/Audio/PortMIDI.pm"
+   },
+   "description" : "Perl6 MIDI access using the portmidi library",
+   "source-url" : "git://github.com/Perl6-Noise-Gang/Audio-PortMIDI.git",
+   "resource" : {},
+   "version" : "0.0.6",
+   "name" : "Audio::PortMIDI",
+   "support" : {
+      "source" : "git://github.com/Perl6-Noise-Gang/Audio-PortMIDI.git",
+      "irc" : "irc://irc.freenode.net/perl6-noise-gang"
+   }
+}
