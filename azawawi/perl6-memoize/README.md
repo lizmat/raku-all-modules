@@ -1,7 +1,10 @@
 # Memoize
+
+[![Build Status](https://travis-ci.org/azawawi/perl6-memoize.svg?branch=master)](https://travis-ci.org/azawawi/perl6-memoize) [![Build status](https://ci.appveyor.com/api/projects/status/github/azawawi/perl6-memoize?svg=true)](https://ci.appveyor.com/project/azawawi/perl6-memoize/branch/master)
+
 This make a Perl 6 routine faster by caching its results. This means it trades
-more memory space used to get less execution time on cache hits. This means it is 
-faster on routines that return a result such the following:
+more memory space used to get less execution time on cache hits. This means it
+is faster on routines that return a result such the following:
 - An expensive calculation (CPU)
 - A slow database query (I/O)
 
@@ -15,13 +18,6 @@ similar to the currently experimental `is cached`.
 - Add a pluggable architecture to cache expiry.
 
 > perlpilot: it would be interesting if you could pass the thing that handles the caching as a parameter, but perhaps only as an academic exercise.
-
-## Build Status
-
-| Operating System  |   Build Status  | CI Provider |
-| ----------------- | --------------- | ----------- |
-| Linux / Mac OS X  | [![Build Status](https://travis-ci.org/azawawi/perl6-memoize.svg?branch=master)](https://travis-ci.org/azawawi/perl6-memoize)  | Travis CI |
-| Windows 7 64-bit  | [![Build status](https://ci.appveyor.com/api/projects/status/github/azawawi/perl6-memoize?svg=true)](https://ci.appveyor.com/project/azawawi/perl6-memoize/branch/master)  | AppVeyor |
 
 ## Example
 
