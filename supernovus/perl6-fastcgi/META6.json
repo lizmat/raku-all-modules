@@ -1,6 +1,6 @@
 {
   "name"        : "FastCGI",
-  "version"     : "*",
+  "version"     : "0.9.0",
   "description" : "A FastCGI library for Perl 6",
   "depends"     : [ "PSGI" ],
   "provides"    : {

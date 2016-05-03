@@ -9,9 +9,9 @@ has Int $.port = 9119;
 has Str $.addr = 'localhost';
 has $.socket;
 
-has $.PSGI  = True; ## Include PSGI Classic headers.
-has $.P6SGI = True; ## Include P6SGI headers.
-                    ## If niehter are used use raw HTTP headers.
+has $.PSGI  = False; ## Include PSGI Classic headers.
+has $.P6SGI = True;  ## Include default P6SGI headers.
+                     ## If niehter are used use raw HTTP headers.
 
 ## Settings for FastCGI management records.
 ## You can override these per-application, but support is limited.
