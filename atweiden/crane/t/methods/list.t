@@ -5,7 +5,7 @@ use Test;
 use Crane;
 use TestCrane;
 
-plan 1;
+plan 2;
 
 subtest
 {
@@ -106,6 +106,23 @@ subtest
                 :value("lbs")
             }
         ),
+        'Is expected value';
+}
+
+subtest
+{
+    # my Str $toml = "[hello]\n";
+    my %from-toml = :hello({});
+    is-deeply Crane.list(%from-toml), List({:path["hello"], :value({})}),
+        'Is expected value';
+
+    # $toml = "[[hello]]\n";
+    %from-toml = :hello([{}]);
+    is-deeply Crane.list(%from-toml), List({:path["hello"], :value([{}])}),
+        'Is expected value';
+
+    %from-toml = :hello([]);
+    is-deeply Crane.list(%from-toml), List({:path["hello"], :value([])}),
         'Is expected value';
 }
 

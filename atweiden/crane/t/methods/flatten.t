@@ -5,7 +5,7 @@ use Test;
 use Crane;
 use TestCrane;
 
-plan 1;
+plan 2;
 
 subtest
 {
@@ -41,6 +41,25 @@ subtest
         ("legumes", 3, "name")    => "split peas",
         ("legumes", 3, "unit")    => "lbs";
     is Crane.flatten(%data), %expected, 'Is expected value';
+}
+
+subtest
+{
+    my %expected{List};
+
+    # my Str $toml = "[hello]\n";
+    my %from-toml = :hello({});
+    %expected = ("hello",) => {};
+    is Crane.flatten(%from-toml), %expected, 'Is expected value';
+
+    # $toml = "[[hello]]\n";
+    %from-toml = :hello([{}]);
+    %expected = ("hello",) => [{}];
+    is Crane.flatten(%from-toml), %expected, 'Is expected value';
+
+    %from-toml = :hello([]);
+    %expected = ("hello",) => [];
+    is Crane.flatten(%from-toml), %expected, 'Is expected value';
 }
 
 # vim: ft=perl6 fdm=marker fdl=0

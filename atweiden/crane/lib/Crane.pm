@@ -1613,7 +1613,10 @@ multi method list($container) returns List
     list($container);
 }
 
-multi sub list(Associative $container, :@carry = ()) returns List
+multi sub list(
+    Associative $container where *.elems > 0,
+    :@carry = ()
+) returns List
 {
     my @tree;
     for $container.keys -> $toplevel
@@ -1624,7 +1627,10 @@ multi sub list(Associative $container, :@carry = ()) returns List
     @tree.sort.List;
 }
 
-multi sub list(Positional $container, :@carry = ()) returns List
+multi sub list(
+    Positional $container where *.elems > 0,
+    :@carry = ()
+) returns List
 {
     my @tree;
     for $container.keys -> $toplevel
