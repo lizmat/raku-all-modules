@@ -22,11 +22,11 @@
    "depends" : [
 		"File::Which"
    ],
-   "name" : "Audio-Liquidsoap",
+   "name" : "Audio::Liquidsoap",
    "authors" : [
       "Jonathan Stowe <jns+git@gellyfish.co.uk>"
    ],
-   "version" : "0.0.3",
+   "version" : "0.0.4",
    "license" : "Artistic",
    "description" : "Interact with the Liquidsoap command server"
 }
