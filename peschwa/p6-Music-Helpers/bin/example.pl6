@@ -38,7 +38,8 @@ multi MAIN(:$mode = 'major', Int :$root = 48) {
                         $next-chord = $mode-obj.next-chord($chord, :@intervals).invert((-3, -2, -1, 0, 1, 2, 3).pick);
                         if rand < .7 {
                             my $variant = $next-chord.changes-into.pick.^shortname;
-                            $next-chord = $next-chord."$variant"();
+                            $variant = $next-chord."$variant"();
+                            $next-chord = $variant if all($variant.notes>>.midi) (elem) $mode-obj.notes>>.midi;
                         }
                         $next-chord .= invert(-1) while any($next-chord.notes>>.octave) > 4;
                         $next-chord .= invert( 1) while any($next-chord.notes>>.octave) < 4;

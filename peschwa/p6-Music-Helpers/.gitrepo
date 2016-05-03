@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/peschwa/p6-Music-Helpers.git
 	branch = master
-	commit = 883010c21b9e58fb9c81d15605fbccab28e0577a
-	parent = 721bb2c8c9c9749a70aff6fda41f07d959f05a91
+	commit = 01e61c712ae3db0b15d5faf5a6cbc6277ec45e7d
+	parent = b77f8c0ee943fd4b5fe0979fac0e3d80c06302bf
 	cmdver = 0.2.3
