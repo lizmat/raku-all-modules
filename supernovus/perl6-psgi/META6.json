@@ -1,6 +1,6 @@
 {
   "name"        : "PSGI",
-  "version"     : "*",
+  "version"     : "1.2.0",
   "description" : "A PSGI helper library.",
   "depends"     : ["HTTP::Status"],
   "provides"    : {

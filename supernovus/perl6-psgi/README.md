@@ -2,10 +2,14 @@
 
 ## Introduction
 
-A helper library for creating PSGI Classic and P6SGI compliant frameworks.
+A helper library for creating P6SGI/PSGI compliant frameworks.
 
-Provides functions for encoding PSGI/P6SGI responses, and populating PSGI/P6SGI 
+Provides functions for encoding P6SGI/PSGI responses, and populating P6SGI/PSGI 
 environments.
+
+It supports (in order of preference), P6SGI 0.7Draft, P6SGI 0.4Draft, and a minimal subset of PSGI Classic (from Perl 5.)
+
+If the populate-psgi-env() method is called without specifying a specific version, both P6SGI 0.7Draft and P6SGI 0.4Draft headers will be included. PSGI Classic headers must be explicitly requested.
 
 ## Usage
 
@@ -48,14 +52,19 @@ environments.
   ## Same output as first example
   ##
 
-  ## Populate an %environment with PSGI/P6SGI variables.
+  ## Populate an %environment with P6SGI/PSGI variables.
   ##
-  populate-psgi-env(%env, :input($in), :errors($err), :!psgi-classic, :p6sgi);
+  populate-psgi-env(%env, :input($in), :errors($err), :p6sgi<latest>);
 
 
 ```
 
 See the tests for further examples.
+
+## TODO
+
+ * WebSocket support for P6SGI 0.7Draft.
+ * Ready Promise support in encode-psgi-response() method.
 
 ## Author 
 
