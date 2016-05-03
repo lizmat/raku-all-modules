@@ -6,7 +6,8 @@ perl6:
   - latest
 install:
   - rakudobrew build-panda
-  - panda installdeps .
-  - panda install Term::termios
-  - panda install Terminal::WCWidth
+  - panda --verbose installdeps .
+  - panda --verbose install NCurses
+  - panda --verbose install Term::termios
+  - panda --verbose install Terminal::WCWidth
 sudo: false

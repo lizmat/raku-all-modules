@@ -1,6 +1,15 @@
 Revision history for Term::Choose
 
 
+0.112   2016-04-27
+        - Modified '.travis.yml'
+
+0.111   2016-04-27
+        - Modified '.travis.yml'
+
+0.110   2016-04-27
+        - Announcement incompatible changes
+
 0.109   2016-03-21
         - Slow down the getch-loop so it doesn't eat up 100% of a core
 

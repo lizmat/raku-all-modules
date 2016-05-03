@@ -1,7 +1,7 @@
 use v6;
 unit module Term::Choose::NCurses;
 
-my $VERSION = '0.109';
+my $VERSION = '0.112';
 
 
 use NativeCall;

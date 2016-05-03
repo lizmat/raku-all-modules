@@ -9,7 +9,7 @@ use LWP::Simple;
 my $url = 'https://modules.perl6.org/';
 my $html = LWP::Simple.get( $url );
 
-my $expected = '2015-11-03';
+my $expected = '2016-04-06';
 my $got      = '0000-00-00';
 
 if $html ~~ /

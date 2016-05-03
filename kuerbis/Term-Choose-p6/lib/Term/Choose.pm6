@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.109';
+my $VERSION = '0.112';
 
 use Term::Choose::NCurses :all;
 use Term::Choose::LineFold :all;
@@ -969,7 +969,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.109
+Version 0.112
 
 =head1 SYNOPSIS
 
@@ -992,6 +992,10 @@ Version 0.109
     $choice = $tc.choose( @array, { layout => 1 } );
 
     say $choice;
+
+=head1 ANNOUNCEMENT
+
+Backwards incompatible changes with the next release (C<-> replaces C<_> in routine and option names).
 
 =head1 DESCRIPTION
 

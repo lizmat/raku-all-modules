@@ -8,7 +8,7 @@ Term::Choose - Choose items from a list interactively.
 VERSION
 =======
 
-Version 0.109
+Version 0.112
 
 SYNOPSIS
 ========
@@ -32,6 +32,11 @@ SYNOPSIS
     $choice = $tc.choose( @array, { layout => 1 } );
 
     say $choice;
+
+ANNOUNCEMENT
+============
+
+Backwards incompatible changes with the next release (`-` replaces `_` in routine and option names).
 
 DESCRIPTION
 ===========
