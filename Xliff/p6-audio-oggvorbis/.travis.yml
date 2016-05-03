@@ -1,0 +1,12 @@
+language: perl6
+perl6:
+  - latest
+  - 2016.04
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libogg-dev libvorbis-dev
+install:
+  - rakudobrew build-panda
+  - panda installdeps .
+  - panda install JSON::Fast
+  - panda install Test::META

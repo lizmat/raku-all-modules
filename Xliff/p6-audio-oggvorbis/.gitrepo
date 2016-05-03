@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Xliff/p6-audio-oggvorbis.git
+	branch = master
+	commit = 7ea0581f256de1c8878ab147eb5bb146a05e23a4
+	parent = 5bc6515ad0552d499e91aa64583f1428cd6a51b7
+	cmdver = 0.2.3
