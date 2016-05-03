@@ -1,10 +1,18 @@
 #!perl6
 
-use v6;
+use v6.c;
 use Test;
-use lib 'lib';
+
+plan 651;
 
 use Audio::Sndfile;
+
+use LibraryCheck;
+
+if !library-exists('sndfile', v1) {
+    skip-rest "no libsndfile can't test";
+    exit;
+}
 
 my @tests = (
                 {

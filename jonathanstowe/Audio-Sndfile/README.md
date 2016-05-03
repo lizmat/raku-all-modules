@@ -2,6 +2,8 @@
 
 Binding to libsndfile ( http://www.mega-nerd.com/libsndfile/ )
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Audio-Sndfile.svg?branch=master)](https://travis-ci.org/jonathanstowe/Audio-Sndfile)
+
 ## Description
 
 This library provides a mechanism to read and write audio data files in
@@ -22,6 +24,9 @@ features as it becomes clear how they should be implemented.
 The "examples" directory in the repository contains some sample code that
 may be useful or indicate how you might achieve a particular task.
 
+The full documentation is available as [Markdown](Documentation.md) or
+as POD withing the module file.
+
 ## Installation
 
 You will need to have "libsndfile"  installed on your system in order to
@@ -37,17 +42,7 @@ http://www.mega-nerd.com/libsndfile/#Download
 I am however unlikely to be able to offer help with installing it this way.
 
 Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+install this with *panda* :
 
     # From the source directory
    
@@ -57,13 +52,14 @@ Or you can install directly with "panda":
 
     panda install Audio::Sndfile
 
-Other install mechanisms may be become available in the future.
+Although I haven't tested it this should install fine with *zef* or
+some equally capable package manager that may come along.
 
 ## Support
 
-However suggestions/patches are welcomed via github at
+Suggestions/patches are welcomed via github at
 
-https://github.com/jonathanstowe/Audio-Sndfile
+https://github.com/jonathanstowe/Audio-Sndfile/issues
 
 There are several things that I know don't work properly at the time of the
 first release:
@@ -73,10 +69,6 @@ first release:
         native sized within libsndfile - when I have worked out how to
         do the equivalent of a conditional typedef I'll fix this .)
 
-    * Round-tripping data read with read-double() to write-double() fails.
-      ( This is due to what appears to be an optimization problem on MoarVM
-        and should be fixed at some point in the future.)
-
 Also I'd prefer to keep features that aren't directly related to those
 provided by libsndfile separate, so if you want to manipulate the data,
 play the data to some audio device or stream it for instance you probably
@@ -84,6 +76,8 @@ want to consider making a new module.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015, 2016
+Please see the [LICENCE](LICENSE) file in the distribution.
+
+© Jonathan Stowe 2015, 2016

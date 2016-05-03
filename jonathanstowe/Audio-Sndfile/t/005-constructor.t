@@ -1,8 +1,16 @@
-use v6;
+use v6.c;
 use Test;
 
-use lib "lib";
+plan 23;
+
+use LibraryCheck;
+
 use Audio::Sndfile;
+
+if !library-exists('sndfile', v1) {
+    skip-rest "no libsndfile can't test";
+    exit;
+}
 
 my $f;
 
@@ -43,7 +51,7 @@ is($f.read-double(10).elems, 20, "managed to read ten frames with read-double");
 
 lives-ok { $f.close() }, "close";
 
-throws-like { $f = Audio::Sndfile.new(filename => "bogus-test-file.wav", :r) },"System error : No such file or directory.", "constructor with bogus filename";
+throws-like { $f = Audio::Sndfile.new(filename => "bogus-test-file.wav", :r) },X::AdHoc,message => "System error : No such file or directory.", "constructor with bogus filename";
 
 
 

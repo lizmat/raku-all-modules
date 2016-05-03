@@ -1,13 +1,22 @@
 #!perl6
 
-use v6;
+use v6.c;
 use Test;
+
+plan 51;
+
 use Shell::Command;
 
 use NativeCall;
-use lib 'lib';
 
 use Audio::Sndfile;
+
+use LibraryCheck;
+
+if !library-exists('sndfile', v1) {
+    skip-rest "no libsndfile can't test";
+    exit;
+}
 
 my $test-output = "t/test-output".IO;
 

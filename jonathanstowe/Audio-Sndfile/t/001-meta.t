@@ -1,10 +1,9 @@
 #!perl6
 
-use v6;
+use v6.c;
 
 use Test;
 use Test::META;
-use lib 'lib';
 
 plan 1;
 

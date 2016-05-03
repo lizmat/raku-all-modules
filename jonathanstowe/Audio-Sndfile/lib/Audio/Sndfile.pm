@@ -241,10 +241,10 @@ This returns an array of size C<$frames> * $num-channels of 32 bit
 integers from the opened file.  The returned array may be empty or
 shorter than expected if there is no more data to read.
 
-With the the ':raw' adverb specified it will return a two element array containing the raw CArray
-returned from the underlying library and the number of frames.  This is for convenience
-(and efficiency ) where the data is going to be passed directly to another native libray
-function.
+With the the ':raw' adverb specified it will return a two element array
+containing the raw CArray returned from the underlying library and the
+number of frames.  This is for convenience (and efficiency ) where the
+data is going to be passed directly to another native libray function.
 
 =head3 write-int
 
@@ -260,8 +260,8 @@ will occur.
 
 If the values are outside the range for an int32 then wrapping will occur.
 
-The second multi is for the convenience of applications which may have obtained their data
-from some native function.
+The second multi is for the convenience of applications which may have
+obtained their data from some native function.
 
 =head3 read-float
 
@@ -272,10 +272,10 @@ This returns an array of size C<$frames> * $num-channels of 32 bit
 floating point numbers from the opened file.  The returned array may be
 empty or shorter than expected if there is no more data to read.
 
-With the the ':raw' adverb specified it will return a two element array containing the raw CArray
-returned from the underlying library and the number of frames.  This is for convenience
-(and efficiency ) where the data is going to be passed directly to another native libray
-function.
+With the the ':raw' adverb specified it will return a two element array
+containing the raw CArray returned from the underlying library and the
+number of frames.  This is for convenience (and efficiency ) where the
+data is going to be passed directly to another native libray function.
 
 =head3 write-float
 
@@ -291,8 +291,8 @@ will occur.
 
 If the values are outside the range for a num32 then wrapping will occur.
 
-The second multi is for the convenience of applications which may have obtained their data
-from some native function.
+The second multi is for the convenience of applications which may have
+obtained their data from some native function.
 
 =head3 read-double
 
@@ -303,10 +303,10 @@ This returns an array of size C<$frames> * $num-channels of 64 bit
 floating point numbers from the opened file.  The returned array may be
 empty or shorter than expected if there is no more data to read.
 
-With the the ':raw' adverb specified it will return a two element array containing the raw CArray
-returned from the underlying library and the number of frames.  This is for convenience
-(and efficiency ) where the data is going to be passed directly to another native libray
-function.
+With the the ':raw' adverb specified it will return a two element array
+containing the raw CArray returned from the underlying library and the
+number of frames.  This is for convenience (and efficiency ) where the
+data is going to be passed directly to another native libray function.
 
 =head3 write-double
 
@@ -340,7 +340,7 @@ copying or converting the file.
 
 =end pod
 
-class Audio::Sndfile:ver<0.0.9>:auth<github:jonathanstowe> {
+class Audio::Sndfile:ver<0.0.10>:auth<github:jonathanstowe> {
 
     subset RawEncode of Array where  ($_.elems == 2 ) && ($_[0] ~~ CArray) && ($_[1] ~~ Int);
 

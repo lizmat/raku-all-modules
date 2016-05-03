@@ -10,8 +10,6 @@
   "source-url" : "git://github.com/jonathanstowe/Audio-Sndfile.git",
   "perl" : "6.c",
   "build-depends" : [
-      "panda",
-		"LibraryCheck"
   ],
   "provides" : {
     "Audio::Sndfile" : "lib/Audio/Sndfile.pm",
@@ -22,9 +20,10 @@
   "test-depends" : [
     "Test",
     "Test::META",
+	 "LibraryCheck",
     "File::Find",
     "Shell::Command"
   ],
   "description" : "Binding for libsndfile - read/write multiple audio formats",
-  "version" : "0.0.9"
+  "version" : "0.0.10"
 }
