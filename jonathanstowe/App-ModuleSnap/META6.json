@@ -1,0 +1,26 @@
+{
+  "resource": { },
+  "name": "App::ModuleSnap",
+  "source-url": "git@github.com:jonathanstowe/App-ModuleSnap.git",
+  "support": {
+    "source": "git@github.com:jonathanstowe/App-ModuleSnap.git"
+  },
+  "perl": "6.c",
+  "build-depends": [ ],
+  "auth": "github:jonathanstowe",
+  "provides": {
+		"App::ModuleSnap" : "lib/App/ModuleSnap.pm"
+  },
+  "depends": [
+		"META6"
+  ],
+  "tags": [ "package", "snapshot", "utility" ],
+  "license": "perl",
+  "test-depends": [ ],
+  "description": "Take a snapshot of the installed modules for later reinstallation",
+  "version": "0.0.2",
+  "meta6": "0",
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+  ]
+}

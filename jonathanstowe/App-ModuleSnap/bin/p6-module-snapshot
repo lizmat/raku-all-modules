@@ -1,0 +1,65 @@
+#!/usr/bin/env perl6
+
+use v6.c;
+
+=begin pod
+
+=head1 NAME
+
+p6-module-snapshot - create a distribution to reinstall installed modules
+
+=head1 SYNOPSIS
+
+=begin code
+
+    p6-module-snapshot [--directory=<.>]
+
+=end code
+
+=head1 DESCRIPTION
+
+This provides a simple mechanism to take a snapshot of the installed
+modules for your rakudo perl 6 installation as a distribution with
+no installables just dependencies.
+
+The data is collected as a META6.json in a timestamped sub-directory
+of the current directory (or the directory specified on the command
+line,) and you can at some later point change directory into that
+directory and do
+
+     panda install .
+
+or
+
+     zef install .
+
+And the modules will be installed. You can of course copy the directory
+to another machine or back it up or something.
+
+This can be useful in two separate scenarios - firstly that you need to
+do a completely fresh or side-by-side Perl 6 installation on your
+system, or you need to duplicate the installed modules from one
+system on another.
+
+=end pod
+
+use App::ModuleSnap;
+
+multi sub MAIN(Str :$directory = '.') {
+
+    my @parts = 'Snapshot', 'Auto', DateTime.now.Str.subst(/<[:+.-]>/,"", :g);
+    my $name = @parts.join('::');
+    my $dir-name = @parts.join('-');
+
+    my $dir = $directory.IO.child($dir-name);
+
+    my META6 $meta = App::ModuleSnap.get-meta(:$name);
+
+    if !$dir.d {
+        $dir.mkdir;
+    }
+
+    $dir.child('META6.json').spurt($meta.to-json);
+    say "the snapshot has been written in the directory $dir";
+}
+# vim: expandtab shiftwidth=4 ft=perl6
