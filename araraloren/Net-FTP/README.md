@@ -30,18 +30,19 @@ if $ftp.login() {
 ```
 
 ## Installation
- 
+
  install with panda
- 
+
  panda install Net::FTP
- 
+
 ## WARNING
  - Net::FTP::Format - getyear(), gettimet(), not yet implement.
  - Net::FTP - FTP only implemented passive mode.
 
 ## TODO
  - not available on new rakudo version
- - FTP need bind a local port 
+ - FTP need bind a local port
 
-
-
+## Problem
+Cause perl6 can not bind a local port to a socket, it's not easy to implement a ftp client according to the standard.
+If anyone know more about this, please contact me with email: blackcatoverwall@gmail.com

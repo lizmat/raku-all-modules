@@ -20,18 +20,12 @@ method new (*%args) {
 	self.bless(|%args)!initialize(|%args);
 }
 
-submethod BUILD(Str :$user,
-		Str :$pass,
-		:$passive = False,
-		:$ascii = False,
-		:$family = 2,
-		:$encoding = 'utf8') {
-	$!user 		= $user;
-	$!pass 		= $pass;
-	$!passive	= $passive;
-	$!ascii		= $ascii;
-	$!family	= $family;
-	$!encoding 	= $encoding;
+submethod BUILD(Str :$!user,
+                Str :$!pass,
+                    :$!passive = False,
+                    :$!ascii = False,
+                    :$!family = 2,
+                    :$!encoding = 'utf8') {
 }
 
 method !initialize(*%args) {

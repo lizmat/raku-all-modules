@@ -3,7 +3,7 @@ use NativeCall;
 
 unit module Net::FTP::System;
 
-sub time () returns int is native('libc.so.6') is export { * }
+sub time () returns int32 is native('libc.so.6') is export { * }
 
 class tm is repr('CStruct') is export {
 	has int $.sec;

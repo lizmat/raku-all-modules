@@ -17,8 +17,7 @@ method new (*%args) {
 	self.bless(|%args);
 }
 
-submethod BUILD(:$ascii) {
-	$!ascii = $ascii;
+submethod BUILD(:$!ascii) {
 }
 
 method readlist() {

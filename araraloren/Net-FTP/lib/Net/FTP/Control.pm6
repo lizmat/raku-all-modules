@@ -16,8 +16,7 @@ method new (*%args) {
     self.bless(|%args);
 }
 
-submethod BUILD(:$debug = False) {
-    $!debug = $debug;
+submethod BUILD(:$!debug = False) {
 }
 
 method cmd_conn() {

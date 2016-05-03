@@ -13,14 +13,11 @@ method new (*%args) {
 	self.bless(|%args);
 }
 
-submethod BUILD(:$SOCKET = IO::Socket::INET,
-		:$host,
-		:$port = 21,
-		*%args) {
-	$!SOCKET	= $SOCKET;
-	$!host		= $host;
-	$!port 		= $port;
-	$!conn 		= $!SOCKET.new(:host($!host), :port($port), |%args);
+submethod BUILD(:$!SOCKET = IO::Socket::INET,
+				:$!host,
+				:$!port = 21,
+				*%args) {
+	$!conn = $!SOCKET.new(:host($!host), :port($!port), |%args);
 	fail("Connect failed!") unless $!conn ~~ $!SOCKET;
 }
 
