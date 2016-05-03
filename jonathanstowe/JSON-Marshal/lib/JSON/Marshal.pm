@@ -55,7 +55,7 @@ above.
 
 use JSON::Name;
 
-module JSON::Marshal:ver<0.0.8>:auth<github:jonathanstowe> {
+module JSON::Marshal:ver<0.0.9>:auth<github:jonathanstowe> {
 
     use JSON::Fast:ver(v0.4..*);
 
@@ -80,7 +80,7 @@ module JSON::Marshal:ver<0.0.8>:auth<github:jonathanstowe> {
         has Str $.marshaller is rw;
         method marshal($value, Mu:D $type) {
             my $meth = self.marshaller;
-            $value."$meth"();
+            $value.defined ?? $value."$meth"() !! $type;
         }
     }
 

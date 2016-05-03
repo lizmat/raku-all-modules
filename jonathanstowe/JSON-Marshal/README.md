@@ -2,9 +2,12 @@
 
 Make JSON from an Object (the opposite of JSON::Unmarshal)
 
+[![Build Status](https://travis-ci.org/jonathanstowe/JSON-Marshal.svg?branch=master)](https://travis-ci.org/jonathanstowe/JSON-Marshal)
+
 ## Synopsis
 
-```
+```perl6
+
    use JSON::Marshal;
 
     class SomeClass {
@@ -69,7 +72,7 @@ work or any other equally capable package management tool.
 
 Suggestions/patches are welcomed via github at
 
-   https://github.com/jonathanstowe/JSON-Marshal
+https://github.com/jonathanstowe/JSON-Marshal/issues
 
 ## Licence
 
