@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose::Util;
 
-my $VERSION = '0.011';
+my $VERSION = '0.012';
 
 use Term::Choose;
 use Term::Choose::NCurses :all;
@@ -728,7 +728,11 @@ Term::Choose::Util - CLI related functions.
 
 =head1 VERSION
 
-Version 0.011
+Version 0.012
+
+=head1 ANNOUNCEMENT
+
+Backwards incompatible changes with the next release (C<-> replaces C<_> in routine and option names).
 
 =head1 DESCRIPTION
 

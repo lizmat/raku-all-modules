@@ -1,6 +1,9 @@
 Revision history for Term::Choose::Util
 
 
+0.012   2016-04-27
+        - Announcement incompatible changes
+
 0.011   2016-04-12
         - Update documentation
 

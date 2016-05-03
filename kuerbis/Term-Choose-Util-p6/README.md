@@ -8,7 +8,12 @@ Term::Choose::Util - CLI related functions.
 VERSION
 =======
 
-Version 0.011
+Version 0.012
+
+ANNOUNCEMENT
+============
+
+Backwards incompatible changes with the next release (`-` replaces `_` in routine and option names).
 
 DESCRIPTION
 ===========
