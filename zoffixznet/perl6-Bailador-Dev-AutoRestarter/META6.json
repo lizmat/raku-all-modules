@@ -1,0 +1,11 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Bailador::Dev::AutoRestarter",
+    "version"      : "1.002001",
+    "description"  : "script to detect source code changes and auto-restart Bailador app",
+    "depends"      : [ "File::Find" ],
+    "test-depends" : [ ],
+    "provides"     : { },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   : "git://github.com/zoffixznet/perl6-Bailador-Dev-AutoRestarter.git"
+}
