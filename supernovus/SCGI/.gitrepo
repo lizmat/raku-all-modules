@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/SCGI.git
 	branch = master
-	commit = 92bb31051456ed719821bfbf137e5cbecefef845
-	parent = 9f44e49964a480901db21af90b72aca3abd0e521
-	cmdver = 0.2.2
+	commit = cf3760506743c7be45b5aa52ae64fbe890c4891a
+	parent = 9aff40179334d69cefa94a59a7ca0ec544e6aa5b
+	cmdver = 0.2.3

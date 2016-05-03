@@ -2,7 +2,7 @@ unit class SCGI;
 
 use SCGI::Connection;
 
-has $.version = 2.2;
+has $.version = 2.3;
 
 has Int $.port = 8118;
 has Str $.addr = 'localhost';
@@ -10,8 +10,8 @@ has $.socket;
 
 has $.NPH  = False;   ## Set to true to use NPH mode (not recommended.)
 
-has $.PSGI  = True;   ## Include PSGI Classic Headers.
-has $.P6SGI = True;   ## Include P6SGI Headers.
+has $.PSGI  = False;  ## Include PSGI Classic Headers.
+has $.P6SGI = True;   ## Include default P6SGI Headers.
                       ## If neither of those is used, assume raw HTTP headers.
 
 has $.debug  = False; ## Set to true to debug stuff.
