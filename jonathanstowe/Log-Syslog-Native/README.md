@@ -2,6 +2,8 @@
 
 Provide access to the Native syslog facility on Unix-like systems for Perl 6
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Log-Syslog-Native.svg?branch=master)](https://travis-ci.org/jonathanstowe/Log-Syslog-Native)
+
 ## Description
 
 This provides a simple, perhaps naive,interface to the POSIX syslog facility
@@ -22,17 +24,7 @@ Currently there is no dedicated test to determine whether your platform is
 supported, the unit tests will simply fail horribly.
 
 Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+install this with *panda* :
 
     # From the source directory
    
@@ -46,9 +38,9 @@ Other install mechanisms may be become available in the future.
 
 ## Support
 
-However suggestions/patches are welcomed via github at
+Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/Log-Syslog-Native
+https://github.com/jonathanstowe/Log-Syslog-Native/issues
 
 I'm not able to test on a wide variety of platforms so any help there would be 
 appreciated.
@@ -61,6 +53,8 @@ Help with these is explicitly invited.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015, 2016
+Please see the [LICENCE](LICENSE) file in the distribution.
+
+© Jonathan Stowe 2015, 2016

@@ -2,7 +2,7 @@
   "perl" : "6.c",
   "name" : "Log::Syslog::Native",
   "description" : "Provide logging to POSIX native syslog facility",
-  "version" : "0.0.5",
+  "version" : "0.0.6",
   "auth" : "github:jonathanstowe",
   "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
   "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
