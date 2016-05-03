@@ -6,8 +6,8 @@ use HTML::MyHTML::Status;
 
 =head2 Structs, Enums & Pointers
 
-enum MyHTMLOptions (
-  DEFAULT                 => 0x00,
+enum MyHTMLOptions is export (
+  PARSE_MODE_DEFAULT      => 0x00,
   PARSE_MODE_SINGLE       => 0x01,
   PARSE_MODE_ALL_IN_ONE   => 0x02,
   PARSE_MODE_SEPARATELY   => 0x04,
