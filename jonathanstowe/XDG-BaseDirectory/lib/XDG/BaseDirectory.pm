@@ -34,7 +34,7 @@ methods that return a string path in that module return an L<IO::Path> here.
 
 =end pod
 
-class XDG::BaseDirectory:ver<0.0.3>:auth<github:jonathanstowe> {
+class XDG::BaseDirectory:ver<0.0.4>:auth<github:jonathanstowe> {
 
 =begin pod
 
@@ -222,17 +222,20 @@ take precedence over later ones.
         }
     }
 
+    class X::InvalidResource is Exception {
+        has Str $.message = "invalid resource description";
+    }
     # return a somewhat sanitized path part that can be appended to
     # some config path based on the supplied resource description parts
     method !resource-path(*@resource where @resource.elems > 0) {
 
-        if @resource ~~ $*SPEC.updir {
-            die "invalid resource description";
+        if any(@resource) ~~ $*SPEC.updir {
+            X::InvalidResource.new.throw;
         }
         my Str $resource = $*SPEC.catfile(@resource);
 
         if $resource.IO.is-absolute {
-            die "absolute path $resource is not allowed";
+            X::InvalidResource.new(message => "absolute path $resource is not allowed").throw;
         }
 
         $resource;

@@ -55,6 +55,9 @@ ok((my @dp = $obj.load-data-paths('foo','bar')), 'load-data-paths');
 ok(@dp.elems, "got at least one element");
 is(@dp[0].Str, $sdp.Str, "and it is the one that we expected");
 
+throws-like { $obj.load-config-paths('..','..') }, X::InvalidResource, message => "invalid resource description", "throws with a '..' relative path";
+throws-like { $obj.load-config-paths('/foo','/baz') }, X::InvalidResource,"throws with a resulting absolute path";
+
 
 END {
    if $base.e {
