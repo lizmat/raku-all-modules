@@ -2,7 +2,7 @@ use v6;
 use IRC::Parser; # parse-irc
 use IRC::Client::Plugin::PingPong;
 use IRC::Client::Plugin;
-unit class IRC::Client:ver<2.003001>;
+unit class IRC::Client;
 
 has Bool:D $.debug                          = False;
 has Str:D  $.host                           = 'localhost';
@@ -26,6 +26,12 @@ method handle-event ($e) {
     for @!plugs.grep(*.^can: 'irc-all-events') -> $p {
         my $res = $p.irc-all-events(self, $e);
         return unless $res === IRC_NOT_HANDLED;
+    }
+
+    # Wait for END_MOTD or ERR_NOMOTD before attempting to join
+    if $e<command> eq '422' | '376' {
+        $.ssay("JOIN {@!channels[]}\n");
+        .irc-connected: self for @!plugs.grep(*.^can: 'irc-connected');
     }
 
     my $nick = $!nick;
@@ -124,9 +130,6 @@ method run {
         $.ssay("PASS $!password\n") if $!password.defined;
         $.ssay("NICK $!nick\n");
         $.ssay("USER $!username $!username $!host :$!userreal\n");
-        $.ssay("JOIN {@!channels[]}\n");
-
-        .irc-connected: self for @!plugs.grep(*.^can: 'irc-connected');
 
         # my $left-overs = '';
         react {
