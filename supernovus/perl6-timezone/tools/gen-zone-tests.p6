@@ -3,7 +3,7 @@ use v6;
 use File::Find;
 
 sub MAIN {
-    my @zone-files := find(dir => '../lib/DateTime/TimeZone/Zone', name => /.*pm6$/);
+    my @zone-files = find(dir => '../lib/DateTime/TimeZone/Zone', name => /.*pm6$/);
     my @zone-path-strings = @zone-files>>.abspath;
     @zone-path-strings>>.subst-mutate(/ .* '../lib/' /, '');
     my @module-names = @zone-path-strings>>.subst(/ \/ /, '::', :g);
@@ -31,14 +31,13 @@ sub MAIN {
 
 sub write-zone-test($header, $module-name, $output-dir) {
     my $test = q:to/EOT/;
-    plan 5;
+    plan 4;
 
     EOT
     $test ~= "use $module-name;\n";
     $test ~= "my \$tz = $module-name.new;\n";
     $test ~= q:to/EOT/;
     ok $tz, "timezone can be instantiated";
-    isnt $tz.rules, Empty, "timezone has rules";
     is $tz.rules.WHAT, Hash, "rules is a Hash";
     ok $tz.zonedata, "timezone has zonedata";
     is $tz.zonedata.WHAT, Array, "zonedata is an Array";

@@ -24,7 +24,7 @@ sub to-timezone (Str $name, DateTime $datetime) is export {
 
 sub tz-offset (Str $offset-string) is export {
   if $offset-string ~~ /('+'|'-')? (\d\d) ':'? (\d\d)/ {
-    my $sign = ~$0;
+    my $sign = $0 ?? ~$0 !! '+';
     my $hour = +$1;
     my $min  = +$2;
     my $offset = $hour * 60 * 60;
