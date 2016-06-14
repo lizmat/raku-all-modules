@@ -20,8 +20,10 @@ grammar CSS::Specification::Terms {
     rule declaration { <decl> <prio>? <any-arg>* <end-decl> || <any-declaration> }
     proto rule decl {*}
 
-    token length:sym<zero> {<number> <?{ +$<number> == 0 }> }
-    token angle:sym<zero>  {<number> <?{ +$<number> == 0 }> }
+    token length:sym<zero>    {<number> <?{ +$<number> == 0 }> }
+    token angle:sym<zero>     {<number> <?{ +$<number> == 0 }> }
+    token time:sym<zero>      {<number> <?{ +$<number> == 0 }> }
+    token frequency:sym<zero> {<number> <?{ +$<number> == 0 }> }
 
     token integer     {$<sign>=< + - >?<uint>}
     token number      {<num><!before ['%'|\w]>}

@@ -119,6 +119,14 @@ class CSS::Specification::Terms::Actions {
         make $.token(0, :type(CSSValue::AngleComponent))
     }
 
+    method time:sym<zero>($/) {
+        make $.token(0, :type(CSSValue::TimeComponent))
+    }
+
+    method frequency:sym<zero>($/) {
+        make $.token(0, :type(CSSValue::FrequencyComponent))
+    }
+
     has Hash $.colors = %CSS::Grammar::AST::CSS21-Colors;
 
     method color:sym<named>($/) {

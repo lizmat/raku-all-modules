@@ -67,28 +67,54 @@ module CSS::Specification::Build {
         my $actions = CSS::Specification::Actions.new;
         my @defs = load-props($input-path, $actions);
         my @summary;
+        my %properties;
 
         for @defs -> $def {
 
             my @props = @( $def<props> );
             my $perl6 = $def<perl6>;
             my $synopsis = $def<synopsis>;
-
-            # boxed repeating property. repeat the expr
             my $box = $perl6 ~~ / '**1..4' $/;
-
-            for @props -> $prop {
-                my %details = :name($prop), :$synopsis;
-                %details<default> = $def<default>
-                    if $def<default>:exists;
-                %details<inherit> = $def<inherit>
-                    if $def<inherit>:exists;
+            
+            for @props -> $name {
+                my %details = :$name, :$synopsis;
+                %details<default> = $_
+                    with $def<default>;
+                %details<inherit> = $_
+                    with $def<inherit>;
                 %details<box> = True
                     if $box;
-                @summary.push: %details.item;
+                %properties{$name} = %details;
+                @summary.push: %details;
             }
+
         }
 
+        # match boxed properties with children
+        for %properties.pairs {
+            my $key = .key;
+            next if $key ~~ / top|right|bottom|left /;
+            my $value = .value;
+            # see if the property has any children
+            for <top right bottom left> -> $side {
+                my $prop;
+                # find child. could be xxxx-side (e.g. margin-left)
+                # or xxx-yyy-side (e.g. border-left-width);
+                for $key ~ '-' ~ $side, $key.subst("-", [~] '-', $side, '-') -> $child-prop {
+                    if $child-prop ne $key
+                    && (%properties{$child-prop}:exists) {
+                        $prop = %properties{$child-prop};
+                        $prop<parent> = $key;
+                        $value<children>.push: $child-prop;
+                        $value<box> ||= True;
+                        last;
+                    }
+                }
+            }
+            # we can get defaults from the children
+            $value<default>:delete if $value<children>:exists;
+
+        } 
         return @summary;
     }
 

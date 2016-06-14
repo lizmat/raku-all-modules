@@ -23,11 +23,10 @@ class CSS::Specification::Actions {
             perl6    => $spec,
             );
 
-        %prop-def<inherit> = $<inherit>.ast
-            if $<inherit>;
+        %prop-def<inherit> = .ast with $<inherit>;
 
-        %prop-def<default> = ~$<default>
-            if $<default>;
+        %prop-def<default> = ~$_
+            with $<default>;
 
         make %prop-def;
     }
@@ -91,8 +90,8 @@ class CSS::Specification::Actions {
 
     method term($/) {
         my $value = $<value>.ast;
-        $value ~= $<occurs>.ast
-            if $<occurs>;
+        $value ~= .ast
+            with $<occurs>;
 
         make $value;
     }

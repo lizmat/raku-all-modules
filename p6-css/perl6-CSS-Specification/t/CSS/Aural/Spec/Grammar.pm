@@ -87,4 +87,20 @@ grammar CSS::Aural::Spec::Grammar {
     #| border-color: [ <color> | transparent ]{1,4}
     rule decl:sym<border-color> {:i (border\-color) ':' <val( rx{ <expr=.expr-border-color>**1..4 }, &?ROUTINE.WHY)> }
     rule expr-border-color {:i [ [ <color> | transparent & <keyw> ] ] }
+
+    #| border-top-color: <color> | transparent
+    rule decl:sym<border-top-color> {:i (border\-top\-color) ':' <val( rx{ <expr=.expr-border-top-color> }, &?ROUTINE.WHY)> }
+    rule expr-border-top-color {:i [ <color> | transparent & <keyw> ] }
+
+    #| border-right-color: <color> | transparent
+    rule decl:sym<border-right-color> {:i (border\-right\-color) ':' <val( rx{ <expr=.expr-border-right-color> }, &?ROUTINE.WHY)> }
+    rule expr-border-right-color {:i [ <color> | transparent & <keyw> ] }
+
+    #| border-bottom-color: <color> | transparent
+    rule decl:sym<border-bottom-color> {:i (border\-bottom\-color) ':' <val( rx{ <expr=.expr-border-bottom-color> }, &?ROUTINE.WHY)> }
+    rule expr-border-bottom-color {:i [ <color> | transparent & <keyw> ] }
+
+    #| border-left-color: <color> | transparent
+    rule decl:sym<border-left-color> {:i (border\-left\-color) ':' <val( rx{ <expr=.expr-border-left-color> }, &?ROUTINE.WHY)> }
+    rule expr-border-left-color {:i [ <color> | transparent & <keyw> ] }
 }

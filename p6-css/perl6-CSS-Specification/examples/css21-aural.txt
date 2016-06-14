@@ -21,3 +21,4 @@
 'volume'	<number> | <percentage> | silent | x-soft | soft | medium | loud | x-loud | inherit	medium	 	yes	refer to inherited value	aural
 # snick in a non-aural 'boxed' property
 'border-color'	[ <color> | transparent ]{1,4} | inherit	see individual properties	 	no	 	visual
+'border-top-color' 'border-right-color' 'border-bottom-color' 'border-left-color'	<color> | transparent | inherit	the value of the 'color' property	 	no	 	visual
