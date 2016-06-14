@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/araraloren/Getopt-Kinoko.git
+	branch = master
+	commit = 75331cefc2f78c2fe6c88c2891e0266db3a9733c
+	parent = 2210643f488ef51989e46bffcdd6ad6dbf1654d4
+	cmdver = 0.2.3
