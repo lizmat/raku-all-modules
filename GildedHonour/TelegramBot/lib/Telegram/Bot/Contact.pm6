@@ -1,18 +1,20 @@
+unit class Telegram::Bot::Contact; 
+use Telegram::Bot::Core;
+also does Telegram::Bot::Core::JsonParseable;
+
 use JSON::Tiny;
 use Telegram::Bot::Core;
 
-class Telegram::Bot::Contact does Telegram::Bot::Core::JsonParseable {
-  has $.phone-number;
-  has $.first-name;
-  has $.last-name;
-  has $.user-id;
+has $.phone-number;
+has $.first-name;
+has $.last-name;
+has $.user-id;
 
-  method parse-from-json($json) {
-    self.new(
-      phone-number => $json{"phone_number"},
-      first-name => $json{"first_name"},
-      last-name => $json{"last_name"},
-      user-id => $json{"user_id"}
-    )
-  }
+method parse-from-json($json) {
+  self.new(
+    phone-number => $json{"phone_number"},
+    first-name => $json{"first_name"},
+    last-name => $json{"last_name"},
+    user-id => $json{"user_id"}
+  )
 }
