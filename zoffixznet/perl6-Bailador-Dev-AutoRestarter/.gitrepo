@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Bailador-Dev-AutoRestarter.git
 	branch = master
-	commit = 72c8c93fcf59422f4be5ba74ff8db1b5df6ba6b8
-	parent = b648e9f0b0c82e4f1863a03c3c8c6826dd075180
+	commit = 88a12f328ca5c3933948b3b85cbaabe10f023d10
+	parent = f8b926cf9af39f914f0b84f3d87807c344f110de
 	cmdver = 0.2.3
