@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Altai-man/perl6-Config-Netrc.git
+	branch = master
+	commit = 2485482cfe677d53e0a7c1c4799d7b34c7908d6a
+	parent = f60f6e377b4cab07f9bcfaebf11f39b2b5a63991
+	cmdver = 0.2.3

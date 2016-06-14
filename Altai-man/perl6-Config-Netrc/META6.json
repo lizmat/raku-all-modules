@@ -1,0 +1,14 @@
+{
+    "name"        : "Config::Netrc",
+    "version"     : "*",
+    "description" : ".netrc file parser module for Perl 6",
+    "provides": {
+        "Config::Netrc"         : "lib/Config/Netrc.pm6"
+    },
+    "depends"     : [],
+    "author" : "github:Altai-man",
+    "support" : {
+        "bugtracker" : "https://github.com/Altai-man/perl6-Config-Netrc/issues"
+    },
+    "source-url"  : "git://github.com/Altai-man/perl6-Config-Netrc.git"
+}
