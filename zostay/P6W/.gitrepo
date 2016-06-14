@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/P6W.git
+	branch = master
+	commit = 57262930e5ac4ce3dc96e787ef52ae9fde4bc26e
+	parent = 612600916d4fa1fd633a6dcce3a5dbd847aea402
+	cmdver = 0.2.3

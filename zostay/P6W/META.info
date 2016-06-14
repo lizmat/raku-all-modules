@@ -1,0 +1,11 @@
+{
+    "name" : "P6W",
+    "version" : "0.7.Draft",
+    "description" : "Web API for Perl 6",
+    "author" : "Andrew Sterling Hanenkamp",
+    "provides" : {
+        "P6W": "P6W.pod"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/zostay/P6W.git"
+}
