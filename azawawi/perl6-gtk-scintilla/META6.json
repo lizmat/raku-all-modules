@@ -1,0 +1,16 @@
+{
+    "name"          : "GTK::Scintilla",
+    "version"       : "0.0.1",
+    "perl"          : "6.c",
+    "description"   : "A simpler and more efficient API for GTK::Simple",
+    "depends"       : [ "GTK::Simple" ],
+    "build-depends" : [ "panda" ],
+    "provides"      : {
+        "GTK::Scintilla"         : "lib/GTK/Scintilla.pm6",
+        "GTK::Scintilla::Raw"    : "lib/GTK/Scintilla/Raw.pm6",
+        "GTK::Scintilla::Editor" : "lib/GTK/Scintilla/Editor.pm6"
+    },
+    "resources"     : [ "libwidget.so" ],
+    "repo-type"     : "git",
+    "source-url"    : "git://github.com/azawawi/perl6-gtk-scintilla.git"
+}
