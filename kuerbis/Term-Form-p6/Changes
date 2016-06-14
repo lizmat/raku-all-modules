@@ -1,18 +1,35 @@
 Revision history for Term::Form
 
 
+0.011   2016-05-28
+        - Remove deprecated option 'prompt'
+        - Disable mouse
+
+0.010   2016-05-25
+        - Bugfix in the number of header lines
+        - Clear the screen at the beginning
+
+0.009   2016-05-15
+        - Replaced underscores with hyphens in option- and routine-names
+        - Option 'prompt' is now called 'header'
+        - Also 'readline' has now the option 'header'
+        - Bugfix: 'fillform' header line
+        - Bugfix: 'auto-up' set to 2 now works
+        - Bugfix: undefined option 'back' now works
+        - Update documentation
+
 0.008   2016-04-27
         - Announcement incompatible changes
 
 0.007   2016-04-15
-        - no changes - enable travis test
+        - No changes - enable travis test
 
 0.006   2016-03-29
-        - renamed 'read_line' to 'readline' and 'fill_form' to 'fillform'
-        - readline is now a multimethod
-        - refactored window-size-changed
-        - refactored string-to-long
-        - update documentation
+        - Renamed 'read_line' to 'readline' and 'fill_form' to 'fillform'
+        - Readline is now a multimethod
+        - Refactored window-size-changed
+        - Refactored string-to-long
+        - Update documentation
 
 0.005   2016-03-21
         - Pod fix

@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Form;
 
-my $VERSION = '0.008';
+my $VERSION = '0.011';
 
 use Term::Choose::NCurses :all;
 use Term::Choose::LineFold :all;
@@ -44,8 +44,8 @@ has Int $!sep_w;
 has Int @!len_keys;
 has Int $!key_w;
 
-has Str $!prompt;
-has Int $!nr_p_lines;
+has Str $!header;
+has Int $!nr_header_lines;
 
 has Int $!page;
 has Int $!pages;
@@ -54,28 +54,28 @@ has Int $!pages;
 
 method new ( %o_global?, $g_win=Term::Choose::NCurses::WINDOW ) {
     my %valid = (
-        mark_curr => '<[ 0 1 ]>', #
-        auto_up   => '<[ 0 1 2 ]>',
-        no_echo   => '<[ 0 1 2 ]>',
+        mark-curr => '<[ 0 1 ]>', #
+        auto-up   => '<[ 0 1 2 ]>',
+        no-echo   => '<[ 0 1 2 ]>',
         back      => 'Str',
         confirm   => 'Str',
         default   => 'Str',
-        prompt    => 'Str',
+        header    => 'Str',
         ro        => 'Array',
     );
     _validate_options( %o_global, %valid );
     _set_defaults( %o_global );
-    self.bless( :%o_global );
+    self.bless( :%o_global, :$g_win );
 }
 
 sub _set_defaults ( %opt ) {
-    %opt<no_echo>   //= 0;
+    %opt<auto-up>   //= 0;
+    %opt<no-echo>   //= 0;
+    %opt<mark-curr> //= Any;
     %opt<default>   //= '';
-    %opt<prompt>    //= Str;
-    %opt<mark_curr> //= Any;
-    %opt<back>      //= Str;
-    %opt<auto_up>   //= 0;
+    %opt<header>    //= Str;
     %opt<confirm>   //= '<<';
+    %opt<back>      //= Str;
     %opt<ro>        //= [];
 }
 
@@ -116,8 +116,10 @@ method !_init_term {
     noecho();
     cbreak;
     keypad( $!win, True );
-    #nodelay( $!win, False );
     curs_set( 1 );
+    # disable mouse:
+    my Array[int32] $old;
+    my $s = mousemask( 0, $old );
 }
 
 method !_end_term {
@@ -130,34 +132,42 @@ submethod DESTROY () {
 }
 
 
-multi readline ( $prompt, $default ) is export { return Term::Form.new().readline( $prompt, $default ) }
-multi readline ( $prompt, %opt? )    is export { return Term::Form.new().readline( $prompt, %opt ) }
+multi readline ( $key, $default ) is export( :DEFAULT, :readline ) { return Term::Form.new().readline( $key, $default ) }
+multi readline ( $key, %opt? )    is export( :DEFAULT, :readline ) { return Term::Form.new().readline( $key, %opt ) }
 
-multi method readline ( $prompt, $default ) { self!_readline( $prompt, { default => $default } ); }
-multi method readline ( $prompt, %opt? )    { self!_readline( $prompt, %opt ); }
+multi method readline ( $key, $default ) { return self!_readline( $key, { default => $default } ) }
+multi method readline ( $key, %opt? )    { return self!_readline( $key, %opt ) }
 
-method !_readline ( $prompt = ': ', %!o? ) {
+method !_readline ( $key = ': ', %!o? ) {
     my %valid = (
-        no_echo => '<[ 0 1 2 ]>',
+        no-echo => '<[ 0 1 2 ]>',
         default => 'Str',
+        header  => 'Str',
     );
     _validate_options( %!o, %valid );
     for %valid.keys -> $key {
         %!o{$key} //= %!o_global{$key};
     }
     %!o<ro> = ();
-    $!nr_p_lines = 0;
+    #$!nr_header_lines = 0;
     $!sep = '';
-    $!sep_w = print_columns( $!sep );
+    $!sep_w = print-columns( $!sep );
     $!idx = 0;
-    @!len_keys[0] = print_columns( $prompt );
+    @!len_keys[0] = print-columns( $key );
     $!key_w = @!len_keys[0];
-    my Str $str = %!o.<default>;
-    @!list = ( [ $prompt, $str ] );
+    my Str $str = %!o<default>;
+    @!list = ( [ $key, $str ] );
     my Int $pos = $str.chars;
     self!_init_term();
     my $term_w = getmaxx( $!win );
     my $term_h = getmaxy( $!win );
+    $!avail_w = $term_w - 1; #
+    $!val_w = $!avail_w - ( $!key_w + $!sep_w );
+    self!_nr_header_lines();
+    clear();
+    if $!header.defined {
+        mvaddstr( 0, 0, $!header );
+    }
     my Int $beep;
 
     GET_KEY: loop {
@@ -167,7 +177,7 @@ method !_readline ( $prompt = ': ', %!o? ) {
         }
         $!avail_w = $term_w - 1; #
         $!val_w = $!avail_w - ( $!key_w + $!sep_w );
-        self!_print_readline( $str, 0, $pos );
+        self!_print_readline( $str, $!nr_header_lines, $pos );
         nc_refresh();
         my int32 $key;
         WAIT: loop {
@@ -185,6 +195,13 @@ method !_readline ( $prompt = ': ', %!o? ) {
         my $tmp_term_h = getmaxy( $!win );
         if $tmp_term_w != $term_w || $tmp_term_h != $term_h {
             ( $term_w, $term_h ) = ( $tmp_term_w, $tmp_term_h );
+            $!avail_w = $term_w - 1; #
+            $!val_w = $!avail_w - ( $!key_w + $!sep_w );
+            self!_nr_header_lines();
+            clear();
+            if $!header.defined {
+                mvaddstr( 0, 0, $!header );
+            }
             next GET_KEY;
         }
 
@@ -287,8 +304,8 @@ method !_readline ( $prompt = ': ', %!o? ) {
 method !_print_readline ( Str $str is copy, Int $row, Int $pos is copy ) {
     my $n = min 20, $!val_w div 3;
     my ( $b, $e );
-    while print_columns( $str ) > $!val_w {
-        #if print_columns( $str.substr( 0, $pos ) ) > $!val_w / 4 {
+    while print-columns( $str ) > $!val_w {
+        #if print-columns( $str.substr( 0, $pos ) ) > $!val_w / 4 {
         if $str.substr( 0, $pos ).chars > $!val_w / 4 {
             $n = min $n, ( $pos - 1 ); #
             $str.substr-rw( 0, $n ) = '';
@@ -309,7 +326,7 @@ method !_print_readline ( Str $str is copy, Int $row, Int $pos is copy ) {
     }
 
     my $key = self!_prepare_key( $!idx );
-    if %!o.<mark_curr> {
+    if %!o<mark-curr> {
         attron( A_UNDERLINE );
         mvaddstr( $row, 0, $key );
         attroff( A_UNDERLINE );
@@ -318,11 +335,11 @@ method !_print_readline ( Str $str is copy, Int $row, Int $pos is copy ) {
         mvaddstr( $row, 0, $key );
     }
     my $sep = $!sep;
-    if %!o.<ro>.any == $!idx - @!pre.elems {
+    if %!o<ro>.any == $!idx - @!pre.elems {
         $sep = $!sep_ro;
     }
-    if %!o.<no_echo> {
-        if %!o.<no_echo> == 2 {
+    if %!o<no-echo> {
+        if %!o<no-echo> == 2 {
             mvaddstr( $row, $!key_w, $sep );
             return;
         }
@@ -334,7 +351,7 @@ method !_print_readline ( Str $str is copy, Int $row, Int $pos is copy ) {
     clrtoeol();
     move(
         $row,
-        $!key_w + $!sep_w + print_columns( $str.substr: 0, $pos )
+        $!key_w + $!sep_w + print-columns( $str.substr: 0, $pos )
     );
 }
 
@@ -345,7 +362,7 @@ method !_prepare_key ( Int $idx ) {
     $key.=subst(   / \s /, ' ', :g );
     $key.=subst( / <:C> /, '',  :g );
     if $key_len > $!key_w {
-        return cut_to_printwidth( $key, $!key_w );
+        return cut-to-printwidth( $key, $!key_w );
     }
     elsif $key_len < $!key_w {
         return " " x ( $!key_w - $key_len ) ~ $key;
@@ -359,7 +376,7 @@ method !_prepare_key ( Int $idx ) {
 method !_length_longest_key {
     $!key_w = 0;
     for 0 .. @!list.end -> $i {
-        @!len_keys[$i] = print_columns( @!list[$i][0] );
+        @!len_keys[$i] = print-columns( @!list[$i][0] );
         if $i < @!pre.elems { ##
             next;
         }
@@ -371,10 +388,10 @@ method !_length_longest_key {
 method !_prepare_size ( Int $term_w, Int $term_h ) {
     $!avail_w = $term_w - 1; #
     $!avail_h = $term_h;
-    if %!o<prompt>.defined {
-        self!_nr_nr_p_lines();
+    self!_nr_header_lines();
+    if $!nr_header_lines {
         my Int $backup_h = $!avail_h;
-        $!avail_h -= $!nr_p_lines;
+        $!avail_h -= $!nr_header_lines;
         my Int $min_avail_h = 5;
         if $!avail_h < $min_avail_h {
             if $backup_h > $min_avail_h {
@@ -384,9 +401,6 @@ method !_prepare_size ( Int $term_w, Int $term_h ) {
                 $!avail_h = $backup_h;
             }
         }
-    }
-    else {
-        $!nr_p_lines = 0;
     }
     if @!list.elems > $!avail_h {
         $!pages = @!list.elems div ( $!avail_h - 1 );
@@ -402,15 +416,18 @@ method !_prepare_size ( Int $term_w, Int $term_h ) {
 }
 
 
-method !_nr_nr_p_lines {
-    if %!o<prompt> eq '' {
-        $!nr_p_lines = 0;
+method !_nr_header_lines {
+    if ! %!o<header>.defined || %!o<header> eq '' {
+        $!nr_header_lines = 0;
         return;
     }
-    $!prompt = line_fold( %!o.<prompt>, $!avail_w, '', '' );
-    $!prompt.=subst( / \n $ /, '' );
-    my Int $matches = $!prompt.subst-mutate( / \n /, "\n\r", :g ); #
-    $!nr_p_lines = $matches.elems + 1;
+    $!header = line-fold( %!o<header>, $!avail_w, '', '' );
+    my $matches = $!header.subst-mutate( / \n /, "\n\r", :g ); #
+    if ! $matches {
+        $!nr_header_lines = 1;
+        return;
+    }
+    $!nr_header_lines = $matches.elems + 1;
 }
 
 
@@ -421,7 +438,7 @@ method !_str_and_pos {
 
 
 method !_print_current_row ( Str $str, Int $pos ) {
-    my $row = $!idx + $!nr_p_lines - $!avail_h * ( $!page - 1 );
+    my $row = $!idx + $!nr_header_lines - $!avail_h * ( $!page - 1 );
     if $!idx < @!pre.elems {
         attron( A_REVERSE );
         mvaddstr( $row, 0, @!list[$!idx][0] );
@@ -444,18 +461,17 @@ method !_get_print_row ( Int $idx ) {
         $val.=subst(   / \s /, ' ', :g );
         $val.=subst( / <:C> /, '',  :g );
         my $sep = $!sep;
-        if %!o.<ro>.any == $idx - @!pre.elems {
+        if %!o<ro>.any == $idx - @!pre.elems {
             $sep = $!sep_ro;
         }
         return
-            self!_prepare_key( $idx ) ~ $sep ~ cut_to_printwidth( $val, $!val_w );
+            self!_prepare_key( $idx ) ~ $sep ~ cut-to-printwidth( $val, $!val_w );
     }
 }
 
 
 method !_write_screen {
-    clear();
-    my $s = $!nr_p_lines;
+    my $s = $!nr_header_lines;
     for $!start_idx .. $!end_idx -> $idx {
         mvaddstr( $s++, 0, self!_get_print_row: $idx );
     }
@@ -478,22 +494,23 @@ method !_write_first_screen ( Int $curr_row ) {
         $!key_w = $!avail_w div 3;
     }
     $!val_w = $!avail_w - ( $!key_w + $!sep_w );
-    $!idx = %!o.<auto_up> == 2 ?? $curr_row !! @!pre.elems;
+    $!idx = %!o<auto-up> == 2 ?? $curr_row !! @!pre.elems;
     $!start_idx = 0;
     $!end_idx  = $!avail_h - 1;
     if $!end_idx > @!list.end {
         $!end_idx = @!list.end;
     }
-    if $!prompt.defined {
-        mvaddstr( 0, 0, $!prompt );
+    clear();
+    if $!header.defined {
+        mvaddstr( 0, 0, $!header );
     }
     self!_write_screen();
 }
 
 
 method !_reset_pre_row ( Int $idx ) {
-    if $idx == ( 0 .. @!pre.end ).any || %!o<mark_curr> {
-        my $row = $idx + $!nr_p_lines - $!avail_h * ( $!page - 1 );
+    if $idx == ( 0 .. @!pre.end ).any || %!o<mark-curr> {
+        my $row = $idx + $!nr_header_lines - $!avail_h * ( $!page - 1 );
         mvaddstr( $row, 0, self!_get_print_row: $idx );
     }
 }
@@ -503,6 +520,7 @@ method !_print_next_page {
     $!start_idx = $!end_idx + 1;
     $!end_idx   = $!end_idx + $!avail_h;
     $!end_idx   = @!list.end if $!end_idx > @!list.end;
+    clear();
     self!_write_screen();
 }
 
@@ -511,19 +529,20 @@ method !_print_previous_page {
     $!end_idx   = $!start_idx - 1;
     $!start_idx = $!start_idx - $!avail_h;
     $!start_idx = 0 if $!start_idx < 0;
+    clear();
     self!_write_screen();
 }
 
 
-sub fillform ( @list, %opt? ) is export { return Term::Form.new().fillform( @list, %opt ) }
+sub fillform ( @list, %opt? ) is export( :DEFAULT, :fillform ) { return Term::Form.new().fillform( @list, %opt ) }
 
 method fillform ( @orig_list, %!o? ) {
     my %valid = (
-        prompt    => 'Str',
+        mark-curr => '<[ 0 1 ]>',
+        auto-up   => '<[ 0 1 2 ]>',
         back      => 'Str',
         confirm   => 'Str',
-        auto_up   => '<[ 0 1 2 ]>',
-        mark_curr => '<[ 0 1 ]>',
+        header    => 'Str',
         ro        => 'Array',
     );
     @!list = @orig_list;
@@ -534,17 +553,17 @@ method fillform ( @orig_list, %!o? ) {
 
     $!sep    = ': ';
     $!sep_ro = '| ';
-    $!sep_w = print_columns( $!sep );
-    if %!o.<ro>.elems {
-        my $tmp = print_columns( $!sep_ro );
+    $!sep_w = print-columns( $!sep );
+    if %!o<ro>.elems {
+        my $tmp = print-columns( $!sep_ro );
         $!sep_w = $tmp if $tmp > $!sep_w;
     }
 
-    if %!o.<back>.chars {
-        @!pre.push: [ %!o.<back>];
+    if %!o<back>.defined && %!o<back>.chars {
+        @!pre.push: [ %!o<back> ];
     }
-    @!pre.push: [ %!o.<confirm>];
-    @!list.prepend: @!pre.list;
+    @!pre.push: [ %!o<confirm> ];
+    @!list.unshift: |@!pre;
     self!_length_longest_key();
     self!_init_term();
 
@@ -560,7 +579,7 @@ method fillform ( @orig_list, %!o? ) {
 
     LINE: loop {
         my Int $locked = 0;
-        if %!o.<ro>.any == $!idx - @!pre.elems {
+        if %!o<ro>.any == $!idx - @!pre.elems {
             $locked = 1;
         }
         if $beep {
@@ -749,21 +768,21 @@ method fillform ( @orig_list, %!o? ) {
                 }
             }
             when KEY_RETURN | KEY_ENTER {
-                if @!list[$!idx][0] eq %!o.<back> {
+                if %!o<back>.defined && @!list[$!idx][0] eq %!o<back> {
                     self!_end_term();
                     return;
                 }
-                elsif @!list[$!idx][0] eq %!o.<confirm> {
+                elsif @!list[$!idx][0] eq %!o<confirm> {
                     self!_end_term();
                     @!list.splice( 0, @!pre.elems );
                     return @!list;
                 }
-                if %!o.<auto_up> == 2 {
+                if %!o<auto-up> == 2 {
                     if $!idx == 0 {
                         $beep = 1;
                     }
                     else {
-                        ( $str, $pos ) = self!_write_first_screen( @!pre.elems ); # 0 ?
+                        ( $str, $pos ) = self!_write_first_screen( 0 );
                         ( $str, $pos ) = self!_str_and_pos();
                     }
                 }
@@ -774,7 +793,7 @@ method fillform ( @orig_list, %!o? ) {
                     $enter_row = $!idx;
                 }
                 else {
-                    if %!o.<auto_up> == 1 {
+                    if %!o<auto-up> == 1 {
                         if    $enter_row.defined && $enter_row == $!idx
                            && $enter_col.defined && $enter_col == $pos
                         {
@@ -789,7 +808,7 @@ method fillform ( @orig_list, %!o? ) {
                     $!idx++;
                     ( $str, $pos ) = self!_str_and_pos();
                     if $!idx <= $!end_idx {
-                        self!_reset_pre_row( $!idx + $!nr_p_lines - 1 );
+                        self!_reset_pre_row( $!idx + $!nr_header_lines - 1 );
                     }
                     else {
                         self!_print_next_page();
@@ -819,7 +838,7 @@ Term::Form - Read lines from STDIN.
 
 =head1 VERSION
 
-Version 0.008
+Version 0.011
 
 =head1 SYNOPSIS
 
@@ -837,7 +856,7 @@ Version 0.008
 
     my $line = readline( 'Prompt: ', { default => 'abc' } );
 
-    my @filled_form = fillform( @aoa, { auto_up => 0 } );
+    my @filled_form = fillform( @aoa, { auto-up => 0 } );
 
 
     # OO interface:
@@ -846,11 +865,7 @@ Version 0.008
 
     $line = $new.readline( 'Prompt: ', { default => 'abc' } );
 
-    $filled_form = $new.fillform( @aoa, { auto_up => 0 } );
-
-=head1 ANNOUNCEMENT
-
-Backwards incompatible changes with the next release (C<-> replaces C<_> in routine and option names).
+    $filled_form = $new.fillform( @aoa, { auto-up => 0 } );
 
 =head1 DESCRIPTION
 
@@ -897,7 +912,6 @@ The fist argument is the prompt string.
 
 The optional second argument is a hash to set the different options. The keys/options are
 
-
 With the optional second argument it can be passed the default value (see option I<default>) as string or it can be
 passed the options as a hash. The options are
 
@@ -905,7 +919,7 @@ passed the options as a hash. The options are
 
 Set a initial value of input.
 
-=item1 no_echo
+=item1 no-echo
 
 =item2 if set to C<0>, the input is echoed on the screen.
 
@@ -914,6 +928,10 @@ Set a initial value of input.
 =item2 if set to C<2>, no output is shown apart from the prompt string.
 
 default: C<0>
+
+=item1 header
+
+With the option I<header> it can be set a header-string which is shown on top of the output.
 
 =head2 fillform
 
@@ -925,20 +943,20 @@ value for the "readline" (initial value of input).
 
 The optional second argument is a hash. The keys/options are
 
-=item1 prompt
+=item1 header
 
-If I<prompt> is set, a main prompt string is shown on top of the output.
+With the option I<header> it can be set a header-string which is shown on top of the output.
 
 default: undefined
 
-=item1 auto_up
+=item1 auto-up
 
-With I<auto_up> set to C<0> or C<1> pressing C<ENTER> moves the cursor to the next line if the cursor is on a
+With I<auto-up> set to C<0> or C<1> pressing C<ENTER> moves the cursor to the next line if the cursor is on a
 "readline". If the last "readline" row is reached, the cursor jumps to the first "readline" row if C<ENTER> was pressed.
-If after an C<ENTER> the cursor has jumped to the first "readline" row and I<auto_up> is set to C<1>, C<ENTER> doesn't
+If after an C<ENTER> the cursor has jumped to the first "readline" row and I<auto-up> is set to C<1>, C<ENTER> doesn't
 move the cursor to the next row until the cursor is moved with another key.
 
-With I<auto_up> set to C<2> C<ENTER> moves the cursor to the top menu entry if the cursor is on a "readline".
+With I<auto-up> set to C<2> C<ENTER> moves the cursor to the top menu entry if the cursor is on a "readline".
 
 default: C<0>
 

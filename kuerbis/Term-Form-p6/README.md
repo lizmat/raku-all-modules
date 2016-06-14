@@ -8,7 +8,7 @@ Term::Form - Read lines from STDIN.
 VERSION
 =======
 
-Version 0.008
+Version 0.011
 
 SYNOPSIS
 ========
@@ -27,7 +27,7 @@ SYNOPSIS
 
     my $line = readline( 'Prompt: ', { default => 'abc' } );
 
-    my @filled_form = fillform( @aoa, { auto_up => 0 } );
+    my @filled_form = fillform( @aoa, { auto-up => 0 } );
 
 
     # OO interface:
@@ -36,12 +36,7 @@ SYNOPSIS
 
     $line = $new.readline( 'Prompt: ', { default => 'abc' } );
 
-    $filled_form = $new.fillform( @aoa, { auto_up => 0 } );
-
-ANNOUNCEMENT
-============
-
-Backwards incompatible changes with the next release (`-` replaces `_` in routine and option names).
+    $filled_form = $new.fillform( @aoa, { auto-up => 0 } );
 
 DESCRIPTION
 ===========
@@ -97,7 +92,7 @@ With the optional second argument it can be passed the default value (see option
 
 Set a initial value of input.
 
-  * no_echo
+  * no-echo
 
   * if set to `0`, the input is echoed on the screen.
 
@@ -106,6 +101,10 @@ Set a initial value of input.
   * if set to `2`, no output is shown apart from the prompt string.
 
 default: `0`
+
+  * header
+
+With the option *header* it can be set a header-string which is shown on top of the output.
 
 fillform
 --------
@@ -116,17 +115,17 @@ The first argument is an array of arrays. The arrays have 1 or 2 elements: the f
 
 The optional second argument is a hash. The keys/options are
 
-  * prompt
+  * header
 
-If *prompt* is set, a main prompt string is shown on top of the output.
+With the option *header* it can be set a header-string which is shown on top of the output.
 
 default: undefined
 
-  * auto_up
+  * auto-up
 
-With *auto_up* set to `0` or `1` pressing `ENTER` moves the cursor to the next line if the cursor is on a "readline". If the last "readline" row is reached, the cursor jumps to the first "readline" row if `ENTER` was pressed. If after an `ENTER` the cursor has jumped to the first "readline" row and *auto_up* is set to `1`, `ENTER` doesn't move the cursor to the next row until the cursor is moved with another key.
+With *auto-up* set to `0` or `1` pressing `ENTER` moves the cursor to the next line if the cursor is on a "readline". If the last "readline" row is reached, the cursor jumps to the first "readline" row if `ENTER` was pressed. If after an `ENTER` the cursor has jumped to the first "readline" row and *auto-up* is set to `1`, `ENTER` doesn't move the cursor to the next row until the cursor is moved with another key.
 
-With *auto_up* set to `2` `ENTER` moves the cursor to the top menu entry if the cursor is on a "readline".
+With *auto-up* set to `2` `ENTER` moves the cursor to the top menu entry if the cursor is on a "readline".
 
 default: `0`
 
