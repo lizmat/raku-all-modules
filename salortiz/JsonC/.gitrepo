@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/salortiz/JsonC.git
+	branch = master
+	commit = 77bcd21065811fc9582d673d0a6902f378db2989
+	parent = cfbc7fe249bf8f6d05f53e30d10ff3c0ff73bfca
+	cmdver = 0.2.3
