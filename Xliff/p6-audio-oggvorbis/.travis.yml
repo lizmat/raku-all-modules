@@ -10,3 +10,6 @@ install:
   - panda installdeps .
   - panda install JSON::Fast
   - panda install Test::META
+branches:
+  only:
+    - master
