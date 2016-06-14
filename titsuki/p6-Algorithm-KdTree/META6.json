@@ -1,25 +1,24 @@
 {
-  "name" : "Algorithm::KdTree",
-  "source-url" : "git://github.com/titsuki/p6-Algorithm-KdTree.git",
-  "perl" : "6.c",
-  "resources" : [
-    "libkdtree.so",
-    "libkdtree.dll",
-    "libkdtree.dylib"
+  "authors" : [
+    "titsuki"
   ],
-  "build-depends" : [ ],
-  "provides" : {
-    "Algorithm::KdTree::Response" : "lib/Algorithm/KdTree/Response.pm6",
-    "Algorithm::KdTree" : "lib/Algorithm/KdTree.pm6"
-  },
+  "build-depends" : [
+    "LibraryMake"
+  ],
   "depends" : [
-    "LibraryMake",
     "NativeHelpers::Array"
   ],
   "description" : "a perl6 binding for C implementation of the Kd-Tree Algorithm (https://github.com/jtsiomb/kdtree)",
+  "name" : "Algorithm::KdTree",
+  "perl" : "6.c",
+  "provides" : {
+    "Algorithm::KdTree" : "lib/Algorithm/KdTree.pm6",
+    "Algorithm::KdTree::Response" : "lib/Algorithm/KdTree/Response.pm6"
+  },
+  "resources" : [
+    "libraries/kdtree"
+  ],
+  "source-url" : "git://github.com/titsuki/p6-Algorithm-KdTree.git",
   "test-depends" : [ ],
-  "version" : "0.03",
-  "authors" : [
-    "titsuki"
-  ]
+  "version" : "0.04"
 }

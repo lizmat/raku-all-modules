@@ -2,21 +2,17 @@ use v6;
 unit class Algorithm::KdTree::Response is export is repr('CStruct');
 
 use NativeCall;
-use LibraryMake;
 use NativeHelpers::Array;
 
-my sub library {
-    my $so = get-vars('')<SO>;
-    return ~%?RESOURCES{"libkdtree$so"};
-}
+my constant $library = %?RESOURCES<libraries/kdtree>.Str;
 
-my sub kd_res_free(Algorithm::KdTree::Response) is native(&library) { * }
-my sub kd_res_size(Algorithm::KdTree::Response) returns int32 is native(&library) { * }
-my sub kd_res_rewind(Algorithm::KdTree::Response) is native(&library) { * }
-my sub kd_res_end(Algorithm::KdTree::Response) returns int32 is native(&library) { * }
-my sub kd_res_next(Algorithm::KdTree::Response) returns int32 is native(&library) { * }
-my sub kd_res_item(Algorithm::KdTree::Response, CArray[num64]) returns Pointer is native(&library) { * }
-my sub kd_res_item_data(Algorithm::KdTree::Response) returns Pointer is native(&library) { * }
+my sub kd_res_free(Algorithm::KdTree::Response) is native($library) { * }
+my sub kd_res_size(Algorithm::KdTree::Response) returns int32 is native($library) { * }
+my sub kd_res_rewind(Algorithm::KdTree::Response) is native($library) { * }
+my sub kd_res_end(Algorithm::KdTree::Response) returns int32 is native($library) { * }
+my sub kd_res_next(Algorithm::KdTree::Response) returns int32 is native($library) { * }
+my sub kd_res_item(Algorithm::KdTree::Response, CArray[num64]) returns Pointer is native($library) { * }
+my sub kd_res_item_data(Algorithm::KdTree::Response) returns Pointer is native($library) { * }
 my CArray[num64] $c-pos;
 my int32 $c-dim = 0;
 my Pointer $c-data;

@@ -1,20 +1,21 @@
-use Panda::Common;
-use Panda::Builder;
 use LibraryMake;
-use Shell::Command;
 
-class Build is Panda::Builder {
+class Build {
     method build($workdir) {
-	my $makefiledir = "$workdir/src";
-	my $destdir = "$workdir/resources";
-	mkpath $destdir unless $destdir.IO.d;
-	make($makefiledir, $destdir);
-	my $lib = "libkdtree";
-	my $so = get-vars('')<SO>;
-	my @fake = <.so .dll .dylib>.grep({$_ ne $so});
-	for @fake -> $fake {
-	    my $file = "$destdir/$lib$fake";
-	    $file.IO.spurt("fake\n");
-	}
+	my $srcdir = "$workdir/src";
+	my %vars = get-vars($workdir);
+	%vars<kdtree> = $*VM.platform-library-name('kdtree'.IO);
+	mkdir "$workdir/resources" unless "$workdir/resources".IO.e;
+	mkdir "$workdir/resources/libraries" unless "$workdir/resources/libraries".IO.e;
+	process-makefile($srcdir, %vars);
+	my $goback = $*CWD;
+	chdir($srcdir);
+	shell(%vars<MAKE>);
+	chdir($goback);
+    }
+
+    method isa($what) {
+	return True if $what.^name eq 'Panda::Builder';
+	callsame;
     }
 }
