@@ -1,0 +1,34 @@
+{
+   "meta6" : "0",
+   "authors" : [
+      "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+   ],
+   "test-depends" : [],
+   "perl" : "6.c",
+   "provides" : {
+      "Device::Velleman::K8055" : "lib/Device/Velleman/K8055.pm"
+   },
+   "resources" : [
+      "libraries/k8055"
+   ],
+   "support" : {
+      "source" : "git://github.com/jonathanstowe/Device-Velleman-K8055.git"
+   },
+   "build-depends" : [
+      "LibraryMake",
+      "panda",
+      "Shell::Command"
+   ],
+   "description" : "A Perl 6 interface to the Velleman USB Experiment Kit",
+   "license" : "perl",
+   "tags" : [
+      "USB",
+      "device",
+      "experimental"
+   ],
+   "name" : "Device::Velleman::K8055",
+   "auth" : "github:jonathanstowe",
+   "version" : "0.0.1",
+   "source-url" : "git://github.com/jonathanstowe/Device-Velleman-K8055.git",
+   "depends" : []
+}

@@ -1,0 +1,22 @@
+#!/usr/bin/env perl6
+
+use Device::Velleman::K8055;
+
+my $device = Device::Velleman::K8055.new(address => 0);
+
+react {
+    whenever Supply.interval(0.5) -> $i {
+        if $i %% 2 {
+            $device.set-all-digital(0b10101010);
+        }
+        else {
+            $device.set-all-digital(0b01010101);
+        }
+    }
+    whenever signal(SIGINT) {
+        $device.close(:reset);
+        exit;
+    }
+}
+
+# vim: expandtab shiftwidth=4 ft=perl6

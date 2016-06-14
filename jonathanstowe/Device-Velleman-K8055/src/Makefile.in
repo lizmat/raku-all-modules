@@ -1,0 +1,7 @@
+all: %DESTDIR%/%libk8055%
+
+%DESTDIR%/%libk8055%: libk8055%O%
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/%libk8055% libk8055%O%
+
+libk8055%O%: k8055.c
+	%CC% -c %CCSHARED% %CCFLAGS% -DVERSION='"0.4.1"' %CCOUT% libk8055%O% k8055.c
