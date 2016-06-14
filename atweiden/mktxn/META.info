@@ -1,9 +1,9 @@
 {
     "name"        : "TXN",
-    "version"     : "*",
+    "version"     : "0.0.3",
     "author"      : "Andy Weidenbaum",
     "description" : "Double-entry bookkeeping transaction journal parser and serializer",
-    "depends"     : ["Config::TOML", "JSON::Tiny", "TXN::Parser"],
+    "depends"     : ["Config::TOML", "TXN::Parser"],
     "license"     : "http://unlicense.org/UNLICENSE",
     "source-type" : "git",
     "source-url"  : "git://github.com/atweiden/mktxn.git",
@@ -12,6 +12,6 @@
         "source"     : "https://github.com/atweiden/mktxn"
     },
     "provides" : {
-        "TXN"  : "lib/TXN.pm"
+        "TXN" : "lib/TXN.pm"
     }
 }

@@ -4,30 +4,8 @@
 
 
 use v6;
-constant $PROGRAM = 'mktxn';
-constant $VERSION = v0.0.2;
 
 
-
-# -----------------------------------------------------------------------------
-# helper functions
-# -----------------------------------------------------------------------------
-
-sub get-entities-seen(@txn) returns Array[Str]
-{
-    my Str @entities-seen;
-
-    for @txn -> $entry
-    {
-        for $entry<postings>.Array -> $posting
-        {
-            push @entities-seen, $posting<account><entity>;
-        }
-    }
-
-    @entities-seen .= unique;
-    @entities-seen .= sort;
-}
 
 
 # -----------------------------------------------------------------------------
@@ -36,84 +14,31 @@ sub get-entities-seen(@txn) returns Array[Str]
 
 # release
 multi sub MAIN(
-    Str:D $file,
-    Str :D(:$description),
-    Str :N(:$name),
-    Int :R(:$release),
-    Str :T(:$template),
-    Str :V(:$version)
+    Str $file,
+    Str :N(:$pkgname),
+    Str :V(:$pkgver),
+    Int :R(:$pkgrel),
+    Str :D(:$pkgdesc),
+    Str :I(:$txndir),
+    Int :L(:$date-local-offset),
+    Str :T(:$template)
 )
 {
-    my Str $dt = ~DateTime.now;
+    my %opts;
+    %opts<pkgname> = $pkgname if $pkgname;
+    %opts<pkgver> = $pkgver if $pkgver;
+    %opts<pkgrel> = $pkgrel if $pkgrel;
+    %opts<pkgdesc> = $pkgdesc if $pkgdesc;
+    %opts<txndir> = ~$txndir.IO.resolve if $txndir;
+    %opts<date-local-offset> = Int($date-local-offset) if $date-local-offset;
+    %opts<template> = $template if $template;
 
-    # make build directory
-    my Str $build-dir = $*CWD ~ '/build';
-    my Str $txn-file = "$build-dir/txn.json";
-    my Str $txninfo-file = "$build-dir/.TXNINFO";
-    mkdir $build-dir;
-
-    # parse build template into .TXNINFO
-    my %txninfo;
-
-    if $template
-    {
-        use Config::TOML;
-        my %template = from-toml(:file($template));
-        %txninfo<name> = %template<name> if %template<name>;
-        %txninfo<version> = %template<version> if %template<version>;
-        %txninfo<release> = Int(%template<release>) if %template<release>;
-        %txninfo<description> = %template<description> if %template<description>;
-    }
-
-    # cmdline options override values defined in template
-    %txninfo<name> = $name if $name;
-    %txninfo<version> = $version if $version;
-    %txninfo<release> = Int($release) if $release;
-    %txninfo<description> = $description if $description;
-
-    # note the compiler name and version, and time of compile
-    %txninfo<compiler> = "$PROGRAM v$VERSION $dt";
-
-    say "Making txn: %txninfo<name> %txninfo<version>-%txninfo<release> ($dt)";
-
-    # parse transactions from journal
     use TXN;
-    my @txn = from-txn(:$file, :json);
-
-    # compute basic stats about the transaction journal
-    %txninfo<count> = @txn.elems;
-    %txninfo<entities-seen> = get-entities-seen(@txn);
-
-    # serialize .TXNINFO to JSON
-    use JSON::Tiny;
-    spurt $txninfo-file, to-json(%txninfo) ~ "\n";
-
-    say "Creating txn \"%txninfo<name>\"...";
-
-    # serialize transactions to JSON
-    spurt $txn-file, to-json(@txn) ~ "\n";
-
-    # compress
-    my Str $tarball =
-        "%txninfo<name>-%txninfo<version>-%txninfo<release>\.txn.tar.xz";
-    shell "tar \\
-             -C $build-dir \\
-             --xz \\
-             -cvf $tarball \\
-             {$txninfo-file.IO.basename} {$txn-file.IO.basename}";
-
-    say "Finished making: %txninfo<name> ",
-        "%txninfo<version>-%txninfo<release> ($dt)";
-
-    say "Cleaning up...";
-
-    # clean up build directory
-    dir($build-dir)».unlink;
-    rmdir $build-dir;
+    mktxn(:$file, :release, |%opts);
 }
 
 # serialize
-multi sub MAIN('serialize', Str:D $file, Str:D :m(:$mode) = 'perl')
+multi sub MAIN('serialize', Str $file, Str :m(:$mode) = 'perl')
 {
     use TXN;
     given $mode
@@ -130,7 +55,7 @@ multi sub MAIN('serialize', Str:D $file, Str:D :m(:$mode) = 'perl')
         {
             say "Sorry, invalid mode.\n";
             USAGE();
-            exit;
+            exit 1;
         }
     }
 }
@@ -144,31 +69,39 @@ multi sub MAIN('serialize', Str:D $file, Str:D :m(:$mode) = 'perl')
 
 sub USAGE()
 {
-    my Str:D $help-text = q:to/EOF/;
+    constant $HELP = q:to/EOF/;
     Usage:
-      mktxn [--name=NAME]
-            [--version=VERSION]
-            [--release=RELEASE]
-            [--description=DESCRIPTION]
-            [--template=TEMPLATE]
-            FILE                            Make release build from file
-      mktxn [--mode=MODE] serialize FILE    Serialize transaction journal
+      mktxn [--pkgname=<name>]
+            [--pkgver=<version>]
+            [--pkgrel=<release>]
+            [--pkgdesc=<description>]
+            [--txndir=<dir>]
+            [--date-local-offset=<offset>]
+            [--template=<template>]
+            <file>                              Make release build from file
+      mktxn [--mode=<mode>] serialize <file>    Serialize transaction journal
 
     optional arguments:
-      -D, --description=DESCRIPTION
-        the description of release build
-      -N, --name=NAME
+      -h, --help
+        print this help message
+      -N, --pkgname=<name>
         the name of release build
-      -R, --release=RELEASE
-        the release number of release build
-      -T, --template=TEMPLATE
-        the location of the config template for release build
-      -V, --version=VERSION
+      -V, --pkgver=<version>
         the version number of release build
-      -m, --mode=MODE
-        the serialization format (json, perl)
+      -R, --pkgrel=<release>
+        the release number of release build
+      -D, --pkgdesc=<description>
+        the description of release build
+      -I, --txndir=<dir>
+        the include directory
+      -L, --date-local-offset=<offset>
+        the local offset for dates without one
+      -T, --template=<template>
+        the location of the config template for release build
+      -m, --mode=<mode>
+        the serialization format
     EOF
-    say $help-text.trim;
+    say $HELP.trim;
 }
 
-# vim: ft=perl6
+# vim: ft=perl6 fdm=marker fdl=0

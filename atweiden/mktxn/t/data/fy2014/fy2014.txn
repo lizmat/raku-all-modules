@@ -1,7 +1,0 @@
-extends fy2013
-
-2014-12-31 "I paid Exxon Mobile $10 for gas from Bankwest cheque account"
-  Expenses:Personal:Fuel             $10.00 USD
-  Assets:Personal:Bankwest:Cheque   -$10.00 USD
-
-# vim: ft=txn

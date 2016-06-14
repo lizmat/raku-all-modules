@@ -1,31 +1,30 @@
-TXN
-===
+# TXN
 
 Double-entry bookkeeping transaction journal parser and serializer (mktxn)
 
 
-Synopsis
---------
+## Synopsis
 
-cmdline:
+**cmdline**
 
 ```bash
 $ mktxn \
-    --name="txnjrnl" \
-    --version="1.0.0" \
-    --release=1 \
-    --description="My transactions" \
+    --pkgname="txnjrnl" \
+    --pkgver="1.0.0" \
+    --pkgrel=1 \
+    --pkgdesc="My transactions" \
     sample.txn
 
 $ mktxn -m=json serialize path/to/transaction/journal
 ```
 
-perl6:
+**perl6**
+
+Parse transactions from string:
 
 ```perl6
 use TXN;
 
-# parse transactions from string
 my $txn = Q:to/EOF/;
 2014-01-01 "I started the year with $1000 in Bankwest"
   Assets:Personal:Bankwest:Cheque    $1000 USD
@@ -33,57 +32,50 @@ my $txn = Q:to/EOF/;
 EOF
 my @txn = from-txn($txn);
 my $json = from-txn($txn, :json);
+```
 
-# parse transactions from file
+Parse transactions from file:
+
+```perl6
+use TXN;
+
 my $file = 'sample.txn';
 my @txn = from-txn(:$file);
 my $json = from-txn(:$file, :json);
 ```
 
 
-Description
------------
+## Description
 
-Parses transaction journals with syntax inspired
-by [@mafm](https://github.com/mafm)'s work in
-[@ledger.py](https://github.com/mafm/ledger.py), e.g.:
+Serializes double-entry transaction journals to JSON or Perlish object
+representation.
 
-```
-2013-01-15 I paid my electricity bill.
-  Expenses:Electricity        $280.42
-  Assets:Bankwest:Cheque     -$280.42
-```
-
-Serializes to JSON or Perlish object representation.
-
-#### Release Mode
+### Release Mode
 
 In release mode, mktxn produces a tarball comprised of two JSON files:
 
-**.TXNINFO**
+#### .TXNINFO
 
-Inspired by Arch .PKGINFO files, .TXNINFO files contain transaction
-journal metadata useful in simple queries.
+Inspired by Arch Linux `.PKGINFO` files, `.TXNINFO` files contain
+transaction journal metadata useful in simple queries.
 
 ```json
 {
-  "compiler": "mktxn 0.0.1 2015-10-12T20:48:23Z",
-  "name": "mysamplejrnl",
-  "version": "0.1.9",
-  "release": "1",
-  "owner": "",
-  "description": "",
-  "config": {
-    "profile-name": "first"
-  },
-  "count": 7,
-  "count-involving-aux-assets": 2,
-  "count-involving-aux-assets-xe-missing": 1,
-  "entities-seen": ["Entity", "Names", "Go", "Here"]
+   "count" : 112,
+   "pkgrel" : 1,
+   "entities-seen" : [
+      "FooCorp",
+      "Personal",
+      "WigwamLLC"
+   ],
+   "pkgver" : "1.0.0",
+   "pkgname" : "with-includes",
+   "pkgdesc" : "txn with include directives",
+   "compiler" : "mktxn v0.0.2 2016-05-10T10:22:44.054586-07:00"
 }
 ```
 
-**txn.json**
+#### txn.json
 
 txn.json contains the output of serializing the transaction journal
 to JSON.
@@ -91,49 +83,74 @@ to JSON.
 ```json
 [
   {
-    "drift": 0,
-    "entity": "VarName",
-    "entry-id": {
-      "number": 0,
-      "xxhash": 5555555,
-      "text": "capture entry"
+    "id": {
+      "text": "2013-01-01 \"I started the year with $1000 in Bankwest cheque account\"\n  Assets:Personal:Bankwest:Cheque    $1000.00 USD\n  Equity:Personal                    $1000.00 USD\n",
+      "xxhash": 1373719837,
+      "number": [
+        0
+      ]
     },
-    "mod-holdings": {
-      "AssetCode": {
-        "entity": "VarName",
-        "asset-code": "AssetCode",
-        "asset-flow": "AssetFlow",
-        "costing": "Costing",
-        "date": "DateTime",
-        "price": 5.55,
-        "acquisition-price-asset-code": "AssetCode",
-        "quantity": 5.5555555
-      }
+    "header": {
+      "important": 0,
+      "tags": [],
+      "description": "I started the year with $1000 in Bankwest cheque account",
+      "date": "2013-01-01T00:00:00Z"
     },
-    "mod-wallet": [
+    "postings": [
       {
-        "silo": "SILO",
-        "entity": "VarName",
-        "subwallet": [ "VarName" ],
-        "asset-code": "AssetCode",
-        "decinc": "DecInc",
-        "quantity": 5.5555555,
-        "xe-asset-code": "",
-        "xe-asset-quantity": "",
-        "entry-id": {
-          "number": 0,
-          "xxhash": 5555555,
-          "text": "capture entry"
-        },
-        "posting-id": {
+        "id": {
+          "text": "Assets:Personal:Bankwest:Cheque    $1000.00 USD",
+          "xxhash": 352942826,
           "entry-id": {
-            "number": 0,
-            "xxhash": 5555555,
-            "text": "capture entry"
+            "text": "2013-01-01 \"I started the year with $1000 in Bankwest cheque account\"\n  Assets:Personal:Bankwest:Cheque    $1000.00 USD\n  Equity:Personal                    $1000.00 USD\n",
+            "xxhash": 1373719837,
+            "number": [
+              0
+            ]
           },
-          "number": 0,
-          "xxhash": 55555557,
-          "text": "capture posting"
+          "number": 0
+        },
+        "decinc": "INC",
+        "amount": {
+          "asset-code": "USD",
+          "exchange-rate": {},
+          "asset-symbol": "$",
+          "asset-quantity": 1000,
+          "plus-or-minus": ""
+        },
+        "account": {
+          "subaccount": [
+            "Bankwest",
+            "Cheque"
+          ],
+          "entity": "Personal",
+          "silo": "ASSETS"
+        }
+      },
+      {
+        "id": {
+          "text": "Equity:Personal                    $1000.00 USD",
+          "xxhash": 95742535,
+          "entry-id": {
+            "text": "2013-01-01 \"I started the year with $1000 in Bankwest cheque account\"\n  Assets:Personal:Bankwest:Cheque    $1000.00 USD\n  Equity:Personal                    $1000.00 USD\n",
+            "xxhash": 1373719837,
+            "number": [
+              0
+            ]
+          },
+          "number": 1
+        },
+        "decinc": "INC",
+        "amount": {
+          "asset-code": "USD",
+          "exchange-rate": {},
+          "asset-symbol": "$",
+          "asset-quantity": 1000,
+          "plus-or-minus": ""
+        },
+        "account": {
+          "entity": "Personal",
+          "silo": "EQUITY"
         }
       }
     ]
@@ -141,23 +158,32 @@ to JSON.
 ]
 ```
 
-.TXNINFO and txn.json are compressed and saved as filename
+`.TXNINFO` and `txn.json` are compressed and saved as filename
 `$pkgname-$pkgver-$pkgrel.txn.tar.xz` in the current working directory.
 
 
-Installation
-------------
+## Installation
 
-#### Dependencies
+### Dependencies
 
 - Rakudo Perl6
 - [Config::TOML](https://github.com/atweiden/config-toml)
-- [JSON::Tiny](https://github.com/moritz/json)
 - [TXN::Parser](https://github.com/atweiden/txn-parser)
 
+### Test Dependencies
 
-Licensing
----------
+- [Peru](https://github.com/buildinspace/peru)
+
+To run the tests:
+
+```
+$ git clone https://github.com/atweiden/mktxn && cd mktxn
+$ peru --file=.peru.yaml --sync-dir="$PWD" sync
+$ PERL6LIB=lib prove -r -e perl6
+```
+
+
+## Licensing
 
 This is free and unencumbered public domain software. For more
 information, see http://unlicense.org/ or the accompanying UNLICENSE file.

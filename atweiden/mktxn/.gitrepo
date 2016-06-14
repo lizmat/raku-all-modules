@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/atweiden/mktxn.git
 	branch = master
-	commit = f5be518aaa2278d8996ce8c4d180b244a38319ec
-	parent = b3d79e1b949e4fc1936ce6f41bec95ca62e9b90e
+	commit = 3888fa295218e7f1211976cc558289b6fa61eff9
+	parent = 5e863aefec6e1f5214ea6d2e5c8a95768d85ae82
 	cmdver = 0.2.3
