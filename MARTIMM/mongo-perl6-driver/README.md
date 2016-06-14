@@ -129,13 +129,11 @@ is $doc<value>, Any, 'record not found';
 # Finding things
 #
 my MongoDB::Collection $collection = $database.collection('names');
-my MongoDB::Cursor $cursor = $collection.find: (
-
-), (
+my MongoDB::Cursor $cursor = $collection.find: ( ), (
   _id => 0, name => 1, surname => 1, type => 1
 );
 
-for $cursor.fetch -> BSON::Document $d {
+while $cursor.fetch -> BSON::Document $d {
   say "Name and surname: ", $d<name>, ' ', $d<surname>
       ($d<type> ?? ", $d<type>" !! '');
 
@@ -156,11 +154,7 @@ for $cursor.fetch -> BSON::Document $d {
 
 As of version 0.25.1 a sandbox is setup to run a separate mongod server. Because of the sandbox, the testing programs are able to test administration tasks, authentication, replication, sharding, master/slave setup and independent server setup.
 
-This testing might put some presure on your system so when installing it not all tests will be executed. However on the Travis-ci system everything will be tested.
-
-We're not yet there so watch this space to see when it comes to that. Btw, on Travis-ci this package is tested in full so you can also study the test results there. Just click on the link (green hopefully) above at the top of this page.
-
-Because all helper functions are torn out of the modules the support is now increased to 2.6 and above. When using run-command() the documentation of MongoDB will tell for which version it applies to. 2.4 is not supported because not all of the wire protocol is supported anymore. Since version 2.6 it is possible to do insert, update and delete by using run-command() and therefore those parts of the wire protocol are not needed anymore.
+Because all helper functions are torn out of the modules the support is now increased to 2.6 and above (see below). When using run-command() the documentation of MongoDB will tell for which version it applies to. 2.4 is not supported because not all of the wire protocol is supported anymore. Since version 2.6 it is possible to do insert, update and delete by using run-command() and therefore those parts of the wire protocol are not needed anymore.
 
 ## IMPLEMENTATION TRACK
 
@@ -172,30 +166,52 @@ After some discussion with developers from MongoDB and the perl5 driver develope
 
 This is done now and it has a tremendous effect on parsing time. When someone needs a particular action often, the user can make a method for him/her-self on a higher level then in this driver.
 
-* The use of hashes to send and receive mongodb documents is wrong. It is wrong because the key-value pairs in the hash are getting a different order then is entered in the hash. Mongodb needs the command at the front of the document for example. Another place that order matters are sub document queries. A subdocument is matched as encoded documents.  So if the server has ```{ a: {b:1, c:2} }``` and you search for ```{ a: {c:2, b:1} }```, it won't find it.  Since Perl 6 randomizes key order you never know what the order is.
+* The use of hashes to send and receive mongodb documents is wrong. It is wrong because the key-value pairs in the hash often get a different order then is entered in the hash. Also mongodb needs the command pair at the front of the document. Another place where order matters are sub document queries. A sub document is matched as encoded documents.  So if the server has ```{ a: {b:1, c:2} }``` and you search for ```{ a: {c:2, b:1} }```, it won't find it.  Since Perl 6 hashes randomizes its key order you never know what the order is.
 
 * Experiments are done using List of Pair to keep the order the same as entered. In the mean time thoughts about how to implement parallel encoding to and decoding from BSON byte strings have been past my mind. These thoughts are crystalized into a Document class in the BSON package which a) keeps the order, 2) have the same capabilities as Hashes, 3) can do encoding and decoding in parallel.
 
-This BSON::Document is now available in the BSON package and many inserting actions can be done using List of Pair. There are also some convenient call interfaces for find and run-command to swallow List of Pair instead of a BSON::Document. This will be converted internally into this type.
+This BSON::Document is now available in the BSON package and many assignments can be done using List of Pair. There are also some convenient call interfaces for find and run-command to swallow List of Pair instead of a BSON::Document. This will be converted internally into this type.
 
 * In the future, host/port arguments to Client must be replaced by using a URI in the format ```mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]][/[database][?options]]```. See also the [MongoDB page](https://docs.mongodb.org/v3.0/reference/connection-string/).
 
 This is done now. The Client.instance method will only accept uri which will be processed by the Uri class. The default uri will be ```mongodb://``` which means ```localhost:27017```. For your information, the explanation on the mongodb page showed that the hostname is not optional. I felt that there was no reason to make the hostname not optional so in this driver the following is possible: ```mongodb://```, ```mongodb:///?replicaSet=my_rs```, ```mongodb://dbuser:upw@/database``` and ```mongodb://:9875,:456```. A username must be given with a password. This might be changed to have the user provide a password in another way. The supported options are; *replicaSet*.
+
+I could not use the URI module because of small differences in how the mongodb url is defined.
 
 * Authentication of users. Users can be administered in the database but authentication needs some encryption techniques which are not implemented yet. Might be me to write those using the modules from the perl5 driver which have been offered to use by David Golden.
 
 * The blogs [Server Discovery and Monitoring](https://www.mongodb.com/blog/post/server-discovery-and-monitoring-next-generation-mongodb-drivers?jmp=docs&_ga=1.148010423.1411139568.1420476116)
 and [Server Selection](https://www.mongodb.com/blog/post/server-selection-next-generation-mongodb-drivers?jmp=docs&_ga=1.107199874.1411139568.1420476116) provide directions on how to direct the read and write operations to the proper server. Parts of the methods are implemented but are not yet fully operational. Hooks are there such as RTT measurement and read conserns. What I want to provide is the following server situations;
   * Single server. The simplest of situations.
-  * Several servers in a replica set. Also not very complicated. Commands are directed to the master server because the data on that server (a master server) is up to date. The user has a choice where to send commands to when it is about reading with the risk that the particular server (a secondary server) is not up to date.
+  * Several servers in a replica set. Also not very complicated. Commands are directed to the master server because the data on that server (a master server) is up to date. The user has a choice where to send read commands to with the risk that the particular server (a secondary server) is not up to date.
   * Server setup for sharding. I have no experience with sharding yet. I believe that all commands are directed to a mongos server which sends the task to a server which can handle it.
   * Independent servers. It should be possible to have a mix of all this when there are several databases with collections which cannot be merged onto one server, replica set or otherwise. A user must have a way to send the task to one or the other server/replicaset/shard.
+
+  ### Test cases handling servers in Client object. The tests are done against the mongod server version 3.0.5.
+
+|Tested|Test Filename|Test Purpose|
+|-|-|-|
+|x|110-Client|Unknown server, fails DNS lookup|
+|x||Down server, no connection|
+|x||Standalone server, not in replicaset|
+|x||Two standalone servers, one gets rejected|
+|x|111-client|Standalone server brought down and revived, Client object must follow|
+|x||Shutdown server and restart while inserting records|
+|x|610-repl-start|Replicaset server in pre-init state, is rejected when replicaSet option is not used.|
+|x||Replicaset server in pre-init state, is not a master nor secondary server, read and write denied.|
+|x||Replicaset pre-init initialization to master server and update master info|
+|x|612-repl-start|Convert pre init replica server to master|
+|x|611-client|Replicaserver rejected when there is no replica option in uri|
+|x||Standalone server rejected when used in mix with replica option defined|
+|x|612-repl-start|Add servers to replicaset|
+|x|613-Client|Replicaset server master in uri, must search for secondaries and add them|
+|x||Replicaset server secondary or arbiter, must get master server and then search for secondary servers|
 
 ## API CHANGES
 
 There has been a lot of changes in the API.
 * All methods which had underscores ('\_') are converted to dashed ones ('-').
-* Many helper functions are removed, see change log
+* Many helper functions are removed, see change log. In the documentation must come some help to create a database/collection helper module as well as examples in the xt or doc directory.
 * The way to get a database is changed. One doesn't use a connection for that anymore.
 * Connection module is gone. The Client module has come in its place.
 
@@ -241,6 +257,10 @@ or
 $ perl6 Collection.pod
 ...
 ```
+ I can't tell about the situation on other OS though. You can always use perl6 to get the html version. '/' should become '\\' on windows of course
+ ```
+ $ perl6 --doc=HTML doc/Pod/Collection.pod
+```
 
 ## INSTALLING THE MODULES
 
@@ -255,34 +275,20 @@ $ panda install MongoDB
 
 This project is tested with Rakudo built on MoarVM implementing Perl v6.c.
 
-MongoDB versions are supported from 2.6 and up. Versions lower that this are not supported because of not completely implementing the wire protocol.
+MongoDB versions are supported from 2.6 and up. Versions lower than this are not supported because of not completely implementing the wire protocol.
+
+At this moment rakudobrew has too many differences with the perl6 directly from github. It is therefore important to know that this version is tested against the newest github version. Also it is the intention to support above mentioned mongo versions, it is only tested against 3.0.5.
 
 ## BUGS, KNOWN LIMITATIONS AND TODO
 
 * Blog [A Consistent CRUD API](https://www.mongodb.com/blog/post/consistent-crud-api-next-generation-mongodb-drivers?jmp=docs&_ga=1.72964115.1411139568.1420476116)
 * Speed
   * Speed can be influenced by specifying types on all variables
+  * Also take native types for simple things such as counters
   * Also setting constraints like (un)definedness etc on parameters
   * Furthermore the speedup of the language perl6 itself would have more impact than the programming of a several month student(me) can accomplish ;-). In september and also in december 2015 great improvements are made.
-  * The compile step of perl6 takes some time before running. This obviously depends on the code base of the programs. One thing I have done is removing all exception classes from the modules and replace them by only one class defined in MongoDB.pm.
-
-Below is the output of a small benchmark test taken at 20th of October 2015. With an extra perl6 option one can see what time is used at each stage. The program loads the Bench and MongoDB::Connection. The last one triggers the loading of several other MongoDB modules. This takes much processing time. Comand used is ```perl6 --stagestats Tests/bench-connect.pl6```
-
--|10/20 2015|29/1 2016
--||
-Stage start|0.000|0.000
-Stage parse|8.462|0.558
-Stage syntaxcheck|0.000|0.000
-Stage ast|0.000|0.000
-Stage optimize|0.003|0.003
-Stage mast|0.010|0.010
-Stage mbc|0.000|0.000
-Stage moar|0.000|0.000
-Benchmark 50 iter|1.0916|1.6775
-
-Test taken at 29th of January 2016 shows considerable improvements in parsing time. The test however was changed because of changes in the module and increased in complexity so the run time is slower.
-
-The perl6 behaviour is also changed. One thing is that it generates parsed code in directory .precomp. The first time after a change in code it takes more time at the parse stage. After the first run the parsing time is shorter.
+  * The compile step of perl6 takes some time before running. This obviously depends on the code base of the programs. One thing I have done is removing all exception classes from the modules and replace them by only one class defined in MongoDB/Log.pm.
+  * The perl6 behaviour is also changed. One thing is that it generates parsed code in directory .precomp. The first time after a change in code it takes more time at the parse stage. After the first run the parsing time is shorter.
 
 * Testing $mod in queries seems to have problems in version 3.0.5
 * While we can add users to the database we cannot authenticate due to the lack of supported modules in perl 6. E.g. I'd like to have SCRAM-SHA1 to authenticate with.
@@ -292,6 +298,16 @@ The perl6 behaviour is also changed. One thing is that it generates parsed code 
   * send the output to a separate class of which the object of it is in a thread. The information is then sent via a channel. This way it will always be synchronized (need to check that though).
   * The output to the log should be changed. Perhaps files and line numbers are not really needed. More something like an error code of a combination of class and line number of \*-message() function.
   * Use macros to get info at the calling point before sending to \*-message(). This will make the search through the stack unnecessary
+* Use semaphores in Server to get a Socket. Use the socket limit as a parameter.
+* Must check for max BSON document size
+* Handle read/write concerns.
+* Handle more options from the mongodb uri
+  * readConcernLevel - defines the level for the read concern.
+  * w - corresponds to w in the class definition.
+  * journal - corresponds to journal in the class definition.
+  * wtimeoutMS - corresponds to wtimeoutMS in the class definition.
+* Take tests from 610 into Control.pm6 for replicaset initialization.
+
 
 ## CHANGELOG
 
@@ -299,6 +315,45 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable.*
 
+* 0.30.5
+  * Change boolean checking on todo list
+* 0.30.4
+  * Setup todo list before starting thread. I should have done that before.
+* 0.30.3
+  * bugfix race conditions in Client module
+* 0.30.2
+  * Try different perl6 installment on Travis-ci. From now on the tests on travis are done with the newest perl6 version from git instead of using rakudobrew. There were always too many differences with the implementation at home. I expect that these perl6 differences will eventually disappear.
+* 0.30.1
+  * Monitor loop-time control via Client and Server interface to quicken the tests
+* 0.30.0
+  * Client, Server and Monitor working together to handle replicasets properly
+* 0.29.0
+  * Replicaset pre-init intialization.
+  * Add servers to replica set
+* 0.28.12
+  * Changing monitoring to be a Supplies instead of using channels.
+  * Major rewrite of Client, Server and Monitor modules.
+  * bugfix in uri. FQDN hostnames couldn't have dots.
+  * Added tests to test Client object behaviour.
+  * select-server() in Client split in multis.
+* 0.28.11
+  * Facturing out code from test environment into MongoDB::Server::Control to have a module to control a server like startup, shutdown, converting a standalone server to a replica server or something else.
+  * Using a new module Config::TOML to control server startup.
+  * Singleton class MongoDB::Config to read config from everywhere.
+  * start-mongod(), stop-mongod(), get-port-number() defined in Control class
+* 0.28.10
+  * Moved Socket.pm6 to MongoDB/Server directory.
+  * bugfix use of number-to-return used in Collection.find().
+* 0.28.9
+  * Factored out monitoring code into MongoDB::Server::Monitor and made it thread save.
+* 0.28.8
+  * Factoring out logging from MongoDB to new module MongoDB::Log
+  * Removed set-exception-throw-level. Is now fixed to level Fatal.
+* 0.28.7
+  * Changes to tests to prepare for start of other types of servers
+  * Modified test Authentication to use the new way of server start and stop subs.
+  * Added test to test for irregular server stops
+  * Added test to create replicaset servers.
 * 0.28.6
   * All modules are set to 'use v6.c'
   * Pod documenttation changes because of latest changes

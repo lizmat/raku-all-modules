@@ -1,18 +1,22 @@
 use v6.c;
 use lib 't';
-use Test-support;
+
 use Test;
+use Test-support;
 use MongoDB;
 use MongoDB::Client;
 use MongoDB::Cursor;
 use BSON::ObjectId;
+use BSON::Document;
 
 #-------------------------------------------------------------------------------
-#set-logfile($*OUT);
-#set-exception-process-level(MongoDB::Severity::Trace);
+set-logfile($*OUT);
+set-exception-process-level(MongoDB::Severity::Trace);
 info-message("Test $?FILE start");
 
-my MongoDB::Client $client = get-connection();
+my MongoDB::Test-support $ts .= new;
+
+my MongoDB::Client $client = $ts.get-connection();
 my MongoDB::Database $database = $client.database('test');
 my MongoDB::Database $db-admin = $client.database('admin');
 my MongoDB::Collection $collection = $database.collection('testf');
@@ -20,21 +24,13 @@ my BSON::Document $req;
 my BSON::Document $doc;
 my MongoDB::Cursor $cursor;
 
-$database.run-command: (dropDatabase => 1);
-
-$req .= new: (
-  insert => $collection.name,
-  documents => []
-);
-
-#say "RP: ", $req.perl;
-#exit(0);
+$database.run-command: (dropDatabase => 1,);
 
 # Insert many documents to see proper working of get-more docs request
 # using wireshark
 #
 my Array $docs = [];
-my $t0 = now;
+#my $t0 = now;
 for ^200 -> $i {
   $docs.push: (
     code                => 'd1',
@@ -50,27 +46,27 @@ $req .= new: (
   documents => $docs
 );
 
-say "Time create request: ", now - $t0;
+#say "Time create request: ", now - $t0;
 
 $doc = $database.run-command($req);
 
-say "Time insert in database: ", now - $t0;
+#say "Time insert in database: ", now - $t0;
 
 is $doc<ok>, 1, 'insert ok';
 is $doc<n>, 200, 'inserted 200 docs';
-say $doc<errmsg> unless $doc<ok>;
+#say $doc<errmsg> unless $doc<ok>;
 
 # Request to get all documents listed to generate a get-more request
 #
 $cursor = $collection.find(:projection(_id => 0,));
 
-say "Time to get cursor with some docs: ", now - $t0;
+#say "Time to get cursor with some docs: ", now - $t0;
 
 while $cursor.fetch -> BSON::Document $document {
 #  say $document.perl;
 }
 
-say "Time after reading all docs: ", now - $t0;
+#say "Time after reading all docs: ", now - $t0;
 
 #------------------------------------------------------------------------------
 subtest {

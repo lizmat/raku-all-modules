@@ -1,24 +1,27 @@
 use v6.c;
 use lib 't';
-use Test-support;
+
 use Test;
+use Test-support;
 use MongoDB;
 use MongoDB::Client;
 use MongoDB::Database;
 
 #-------------------------------------------------------------------------------
-#set-logfile($*OUT);
-#set-exception-process-level(MongoDB::Severity::Trace);
+set-logfile($*OUT);
+set-exception-process-level(MongoDB::Severity::Trace);
 info-message("Test $?FILE start");
+
+my MongoDB::Test-support $ts .= new;
 
 my BSON::Document $req;
 my BSON::Document $doc;
 
-my MongoDB::Client $client1 = get-connection(:1server);
+my MongoDB::Client $client1 = $ts.get-connection(:1server);
 my MongoDB::Database $database1 = $client1.database('test');
 my MongoDB::Database $db-admin1 = $client1.database('admin');
 
-my MongoDB::Client $client2 = get-connection(:2server);
+my MongoDB::Client $client2 = $ts.get-connection(:2server);
 my MongoDB::Database $database2 = $client2.database('test');
 my MongoDB::Database $db-admin2 = $client2.database('admin');
 
@@ -44,19 +47,20 @@ subtest {
   $doc = $database1.run-command($req);
   is $doc<ok>, 0, 'Second collection cl1 not created';
   is $doc<errmsg>, 'collection already exists', $doc<errmsg>;
-  is $doc<code>, 48, 'mongo error code 40';
+#  is $doc<code>, 48, 'mongo error code 48';
+say $doc.perl;
 
 }, "Database, create collection, drop";
 
 #-------------------------------------------------------------------------------
 subtest {
-  $doc = $database1.run-command: (getLastError => 1);
+  $doc = $database1.run-command: (getLastError => 1,);
   is $doc<ok>, 1, 'No last errors';
 
-  $doc = $database1.run-command: (getPrevError => 1);
+  $doc = $database1.run-command: (getPrevError => 1,);
   is $doc<ok>, 1, 'No previous errors';
 
-  $doc = $database1.run-command: (resetError => 1);
+  $doc = $database1.run-command: (resetError => 1,);
   is $doc<ok>, 1, 'Rest errors ok';
 }, "Error checking";
 
@@ -80,7 +84,7 @@ subtest {
 #-------------------------------------------------------------------------------
 subtest {
 
-  $doc = $db-admin1.run-command: (listDatabases => 1);
+  $doc = $db-admin1.run-command: (listDatabases => 1,);
 #say $doc.perl;
   ok $doc<ok>.Bool, 'Run command ran ok';
   ok $doc<totalSize> > 1, 'Total size at least bigger than one byte ;-)';
@@ -100,7 +104,7 @@ subtest {
 #-------------------------------------------------------------------------------
 subtest {
 
-  $doc = $db-admin2.run-command: (listDatabases => 1);
+  $doc = $db-admin2.run-command: (listDatabases => 1,);
   ok $doc<ok>.Bool, 'Run command ran ok';
   ok $doc<totalSize> > 1, 'Total size at least bigger than one byte ;-)';
 
@@ -118,10 +122,10 @@ subtest {
 
 #-------------------------------------------------------------------------------
 subtest {
-  $doc = $database1.run-command: (dropDatabase => 1);
+  $doc = $database1.run-command: (dropDatabase => 1,);
   is $doc<ok>, 1, 'Drop command went well';
 
-  $doc = $db-admin1.run-command: (listDatabases => 1);
+  $doc = $db-admin1.run-command: (listDatabases => 1,);
   my %db-names = %();
   my $idx = 0;
   my Array $db-docs = $doc<databases>;

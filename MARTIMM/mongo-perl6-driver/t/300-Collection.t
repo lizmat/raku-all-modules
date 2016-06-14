@@ -1,16 +1,21 @@
 use v6.c;
 use lib 't';
-use Test-support;
+
 use Test;
+use Test-support;
 use MongoDB;
 use MongoDB::Database;
 use MongoDB::Client;
+use BSON::Document;
 
 #-------------------------------------------------------------------------------
-set-exception-process-level(MongoDB::Severity::Info);
+set-logfile($*OUT);
+set-exception-process-level(MongoDB::Severity::Trace);
 info-message("Test $?FILE start");
 
-my MongoDB::Client $client = get-connection();
+my MongoDB::Test-support $ts .= new;
+
+my MongoDB::Client $client = $ts.get-connection();
 my MongoDB::Database $database = $client.database('test');
 
 # Create collection and insert data in it!
@@ -22,7 +27,7 @@ my BSON::Document $req;
 my BSON::Document $doc;
 my MongoDB::Cursor $cursor;
 
-$database.run-command: (drop => $collection.name);
+$database.run-command: (drop => $collection.name,);
 
 #-------------------------------------------------------------------------------
 subtest {
@@ -38,6 +43,7 @@ subtest {
   );
 
   $doc = $database.run-command($req);
+say $doc.perl;
   is $doc<ok>, 1, "Result is ok";
   is $doc<n>, 4, "Inserted 4 documents";
 
@@ -45,6 +51,7 @@ subtest {
 #  is $cursor.count, 1, '1 record of "Me T"';
   $req .= new: ( count => $collection.name, query => (name => 'Me T',));
   $doc = $database.run-command($req);
+say $doc.perl;
   is $doc<ok>, 1, "count request ok";
   is $doc<n>, 1, 'count 1 record of "Me T"';
 
@@ -52,12 +59,14 @@ subtest {
 #  is $cursor.count, 1, '1 record of "Di D"';
   $req<query> = (name => 'Di D',);
   $doc = $database.run-command($req);
+say $doc.perl;
   is $doc<n>, 1, 'count 1 record of "Di D"';
 
 #  $cursor = $collection.find: :criteria(name => 'Jan Klaassen',);
 #  is $cursor.count, 1, '1 record of "Jan Klaassen"';
   $req<query> = (name => 'Di D',);
   $doc = $database.run-command($req);
+say $doc.perl;
   is $doc<n>, 1, '1 record of "Jan Klaassen"';
 
   # Add next few records
@@ -72,6 +81,7 @@ subtest {
   );
 
   $doc = $database.run-command($req);
+say $doc.perl;
   is $doc<ok>, 1, "Result is ok";
   is $doc<n>, 6, "Inserted 6 documents";
 
@@ -79,6 +89,7 @@ subtest {
 #  is $cursor.count, 6, '6 records of Test(0)';
   $req<query> = (name => 'Di D',);
   $doc = $database.run-command($req);
+say $doc.perl;
   is $doc<n>, 6, '6 records of Test(0)';
 
 #show-documents( $collection, {:test(0)}, {:_id(0)});
@@ -92,6 +103,7 @@ $req .= new: (drop => $collection.name);
 $doc = $database.run-command($req);
 
 ok $doc<ok>.Bool == True, 'Dropping cl1 ok';
+say $doc.perl;
 is $doc<ns>, 'test.cl1', 'Dropped collection';
 is $doc<nIndexesWas>, 1, 'Number of dropped indexes';
 
@@ -163,6 +175,7 @@ is $cursor.count, 10, 'Only 10 records in collection';
 #
 $req .= new: ( dropDatabase => 1 );
 $doc = $database.run-command($req);
+say $doc.perl;
 
 info-message("Test $?FILE stop");
 done-testing();
