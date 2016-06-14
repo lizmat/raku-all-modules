@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-http-server-logger.git
 	branch = master
-	commit = fe03617acaca7ff151af733dd244a0fb5b4f1ce1
-	parent = c8fc71d45c7b28327f7178fdf07e725f8ffd8097
-	cmdver = 0.2.1
+	commit = 4fa4dfaf0a3c6b657ce1b23355cc085ca3e28471
+	parent = 688313bc920441d537aa2809d54971dd77d2fa52
+	cmdver = 0.2.3
