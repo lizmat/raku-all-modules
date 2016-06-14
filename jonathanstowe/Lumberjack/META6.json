@@ -10,7 +10,7 @@
    "provides" : {
       "Lumberjack" : "lib/Lumberjack.pm"
    },
-   "version" : "0.0.3",
+   "version" : "0.0.4",
    "test-depends" : [
       "Test",
       "IO::MiddleMan"
@@ -24,7 +24,6 @@
    "resource" : {},
    "auth" : "github:jonathanstowe",
    "depends" : [
-      "Staticish",
       "DateTime::Format"
    ]
 }

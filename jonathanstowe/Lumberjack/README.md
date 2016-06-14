@@ -95,9 +95,9 @@ also like to know.
 Reports, requests, suggestions and patches can be sent to
 https://github.com/jonathanstowe/Lumberjack/issues
 
-# License and Copyright
+# Licence and Copyright
 
-This is free software, please see the LICENSE file for full description.
+This is free software, please see the LICENCE file for full description.
 
     © Jonathan Stowe 2016
 

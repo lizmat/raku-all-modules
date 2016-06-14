@@ -546,14 +546,29 @@ may want to adjust this.
 
 =end pod
 
-use Staticish;
 
-class Lumberjack is Static {
+class Lumberjack {
+
+    my Lumberjack $lumberjack;
 
     class Message { ... };
 
     has Supplier $!supplier;
     has Supply   $.all-messages;
+
+    method !instance(|c) {
+        $lumberjack //= self.new(|c);
+    }
+
+    proto method all-messages(|c) { * }
+
+    multi method all-messages(Lumberjack:U:) returns Supply {
+        self!instance.all-messages;
+    }
+
+    multi method all-messages(Lumberjack:D:) returns Supply {
+        $!all-messages;
+    }
 
     enum Level <Off Fatal Error Warn Info Debug Trace All> does role {
         multi method ACCEPTS(Message $m) {
@@ -562,14 +577,81 @@ class Lumberjack is Static {
     };
 
     has Supply $.fatal-messages;
+
+    proto method fatal-messages(|c) { * }
+
+    multi method fatal-messages(Lumberjack:U:) returns Supply {
+        self!instance.fatal-messages;
+    }
+
+    multi method fatal-messages(Lumberjack:D:) returns Supply {
+        $!fatal-messages;
+    }
     has Supply $.error-messages;
+
+    proto method error-messages(|c) { * }
+
+    multi method error-messages(Lumberjack:U:) returns Supply {
+        self!instance.error-messages;
+    }
+
+    multi method error-messages(Lumberjack:D:) returns Supply {
+        $!error-messages;
+    }
     has Supply $.warn-messages;
+
+    proto method warn-messages(|c) { * }
+    multi method warn-messages(Lumberjack:U:) returns Supply {
+        self!instance.warn-messages;
+    }
+
+    multi method warn-messages(Lumberjack:D:) returns Supply {
+        $!warn-messages;
+    }
     has Supply $.info-messages;
+
+    proto method info-messages(|c) { * }
+    multi method info-messages(Lumberjack:U:) returns Supply {
+        self!instance.info-messages;
+    }
+
+    multi method info-messages(Lumberjack:D:) returns Supply {
+        $!info-messages;
+    }
     has Supply $.debug-messages;
+
+    proto method debug-messages(|c) { * }
+    multi method debug-messages(Lumberjack:U:) returns Supply {
+        self!instance.debug-messages;
+    }
+
+    multi method debug-messages(Lumberjack:D:) returns Supply {
+        $!debug-messages;
+    }
     has Supply $.trace-messages;
+
+    proto method trace-messages(|c) { * }
+    multi method trace-messages(Lumberjack:U:) returns Supply {
+        self!instance.trace-messages;
+    }
+
+    multi method trace-messages(Lumberjack:D:) returns Supply {
+        $!trace-messages;
+    }
 
 
     has Level $.default-level is rw = Error;
+
+    proto method default-level(|c) { * }
+
+    multi method default-level(Lumberjack:U:) returns Level is rw  {
+        self!instance.default-level;
+    }
+    multi method default-level(Lumberjack:D:) returns Level is rw  {
+        $!default-level;
+    }
+
+
 
     class Message {
         has Mu                  $.class;
@@ -601,8 +683,11 @@ class Lumberjack is Static {
 
     }
 
-    method log(Message $message) is hidden-from-backtrace {
+    multi method log(Lumberjack:D: Message $message) is hidden-from-backtrace {
         $!supplier.emit($message);
+    }
+    multi method log(Lumberjack:U: Message $message) is hidden-from-backtrace {
+        self!instance.log($message);
     }
 
     role Logger {
@@ -661,7 +746,27 @@ class Lumberjack is Static {
 
     has Dispatcher @.dispatchers;
 
+    proto method dispatchers(|c) { * }
+
+    multi method dispatchers(Lumberjack:U:) {
+        self!instance.dispatchers;
+    }
+
+    multi method dispatchers(Lumberjack:D:) {
+        @!dispatchers;
+    }
+
     has Supply $.filtered-messages; 
+    
+    proto method filtered-messages(|c) { * }
+
+    multi method filtered-messages(Lumberjack:U:) returns Supply {
+        self!instance.filtered-messages;
+    }
+
+    multi method filtered-messages(Lumberjack:D:) returns Supply {
+        $!filtered-messages;
+    }
 
     submethod BUILD() {
         $!supplier       = Supplier.new;
