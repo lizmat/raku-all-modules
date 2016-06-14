@@ -1,0 +1,20 @@
+{
+    "_links": {
+        "_self": {
+            "href": "teams?name=manchester"
+        }
+    },
+    "searchQuery": "manchester",
+    "count": 2,
+    "teams": [{
+        "id": 65,
+        "name": "Manchester City FC",
+        "currentSoccerseason": 354,
+        "currentLeague": "PL"
+    }, {
+        "id": 66,
+        "name": "Manchester United FC",
+        "currentSoccerseason": 354,
+        "currentLeague": "PL"
+    }]
+}

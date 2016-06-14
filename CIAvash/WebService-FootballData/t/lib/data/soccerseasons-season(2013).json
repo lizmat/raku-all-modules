@@ -1,0 +1,52 @@
+[
+    {
+        "_links": {
+            "self": {
+                "href": "soccerseasons/338"
+            },
+            "teams": {
+                "href": "soccerseasons/338/teams"
+            },
+            "fixtures": {
+                "href": "soccerseasons/338/fixtures"
+            },
+            "leagueTable": {
+                "href": "soccerseasons/338/leagueTable"
+            }
+        },
+        "id": 338,
+        "caption": "1. Bundesliga 2013/14",
+        "league": "BL1",
+        "year": "2013",
+        "currentMatchday": null,
+        "numberOfMatchdays": 34,
+        "numberOfTeams": 18,
+        "numberOfGames": 306,
+        "lastUpdated": "2014-08-30T01:00:06Z"
+    },
+    {
+        "_links": {
+            "self": {
+                "href": "soccerseasons/341"
+            },
+            "teams": {
+                "href": "soccerseasons/341/teams"
+            },
+            "fixtures": {
+                "href": "soccerseasons/341/fixtures"
+            },
+            "leagueTable": {
+                "href": "soccerseasons/341/leagueTable"
+            }
+        },
+        "id": 341,
+        "caption": "Premier League 2013/14",
+        "league": "PL",
+        "year": "2013",
+        "currentMatchday": null,
+        "numberOfMatchdays": 38,
+        "numberOfTeams": 20,
+        "numberOfGames": 380,
+        "lastUpdated": "2014-08-30T01:25:27Z"
+    }
+]

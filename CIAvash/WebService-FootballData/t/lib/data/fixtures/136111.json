@@ -1,0 +1,352 @@
+{
+    "fixture": {
+        "_links": {
+            "self": {
+                "href": "fixtures/136111"
+            },
+            "soccerseason": {
+                "href": "soccerseasons/351"
+            },
+            "homeTeam": {
+                "href": "teams/5"
+            },
+            "awayTeam": {
+                "href": "teams/11"
+            }
+        },
+        "date": "2014-08-22T18:30:00Z",
+        "status": "FINISHED",
+        "matchday": 1,
+        "homeTeamName": "FC Bayern München",
+        "awayTeamName": "VfL Wolfsburg",
+        "result": {
+            "goalsHomeTeam": 2,
+            "goalsAwayTeam": 1
+        }
+    },
+    "head2head": {
+        "count": 10,
+        "timeFrameStart": "2010-08-20",
+        "timeFrameEnd": "2015-01-30",
+        "homeTeamWins": 8,
+        "awayTeamWins": 1,
+        "draws": 1,
+        "lastHomeWinHomeTeam": {
+            "_links": {
+                "self": {
+                    "href": "fixtures/136111"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/351"
+                },
+                "homeTeam": {
+                    "href": "teams/5"
+                },
+                "awayTeam": {
+                    "href": "teams/11"
+                }
+            },
+            "date": "2014-08-22T18:30:00Z",
+            "status": "FINISHED",
+            "matchday": 1,
+            "homeTeamName": "FC Bayern München",
+            "awayTeamName": "VfL Wolfsburg",
+            "result": {
+                "goalsHomeTeam": 2,
+                "goalsAwayTeam": 1
+            }
+        },
+        "lastWinHomeTeam": {
+            "_links": {
+                "self": {
+                    "href": "fixtures/136111"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/351"
+                },
+                "homeTeam": {
+                    "href": "teams/5"
+                },
+                "awayTeam": {
+                    "href": "teams/11"
+                }
+            },
+            "date": "2014-08-22T18:30:00Z",
+            "status": "FINISHED",
+            "matchday": 1,
+            "homeTeamName": "FC Bayern München",
+            "awayTeamName": "VfL Wolfsburg",
+            "result": {
+                "goalsHomeTeam": 2,
+                "goalsAwayTeam": 1
+            }
+        },
+        "lastAwayWinAwayTeam": null,
+        "lastWinAwayTeam": {
+            "_links": {
+                "self": {
+                    "href": "fixtures/135958"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/351"
+                },
+                "homeTeam": {
+                    "href": "teams/11"
+                },
+                "awayTeam": {
+                    "href": "teams/5"
+                }
+            },
+            "date": "2015-01-30T19:30:00Z",
+            "status": "FINISHED",
+            "matchday": 18,
+            "homeTeamName": "VfL Wolfsburg",
+            "awayTeamName": "FC Bayern München",
+            "result": {
+                "goalsHomeTeam": 4,
+                "goalsAwayTeam": 1
+            }
+        },
+        "fixtures": [{
+            "_links": {
+                "self": {
+                    "href": "fixtures/135958"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/351"
+                },
+                "homeTeam": {
+                    "href": "teams/11"
+                },
+                "awayTeam": {
+                    "href": "teams/5"
+                }
+            },
+            "date": "2015-01-30T19:30:00Z",
+            "status": "FINISHED",
+            "matchday": 18,
+            "homeTeamName": "VfL Wolfsburg",
+            "awayTeamName": "FC Bayern München",
+            "result": {
+                "goalsHomeTeam": 4,
+                "goalsAwayTeam": 1
+            }
+        }, {
+            "_links": {
+                "self": {
+                    "href": "fixtures/136111"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/351"
+                },
+                "homeTeam": {
+                    "href": "teams/5"
+                },
+                "awayTeam": {
+                    "href": "teams/11"
+                }
+            },
+            "date": "2014-08-22T18:30:00Z",
+            "status": "FINISHED",
+            "matchday": 1,
+            "homeTeamName": "FC Bayern München",
+            "awayTeamName": "VfL Wolfsburg",
+            "result": {
+                "goalsHomeTeam": 2,
+                "goalsAwayTeam": 1
+            }
+        }, {
+            "_links": {
+                "self": {
+                    "href": "fixtures/131050"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/338"
+                },
+                "homeTeam": {
+                    "href": "teams/11"
+                },
+                "awayTeam": {
+                    "href": "teams/5"
+                }
+            },
+            "date": "2014-03-08T14:30:00Z",
+            "status": null,
+            "matchday": 24,
+            "homeTeamName": "VfL Wolfsburg",
+            "awayTeamName": "FC Bayern München",
+            "result": {
+                "goalsHomeTeam": 1,
+                "goalsAwayTeam": 6
+            }
+        }, {
+            "_links": {
+                "self": {
+                    "href": "fixtures/131197"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/338"
+                },
+                "homeTeam": {
+                    "href": "teams/5"
+                },
+                "awayTeam": {
+                    "href": "teams/11"
+                }
+            },
+            "date": "2013-09-27T22:00:00Z",
+            "status": null,
+            "matchday": 7,
+            "homeTeamName": "FC Bayern München",
+            "awayTeamName": "VfL Wolfsburg",
+            "result": {
+                "goalsHomeTeam": 1,
+                "goalsAwayTeam": 0
+            }
+        }, {
+            "_links": {
+                "self": {
+                    "href": "fixtures/128980"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/298"
+                },
+                "homeTeam": {
+                    "href": "teams/11"
+                },
+                "awayTeam": {
+                    "href": "teams/5"
+                }
+            },
+            "date": "2013-02-14T23:00:00Z",
+            "status": null,
+            "matchday": 22,
+            "homeTeamName": "VfL Wolfsburg",
+            "awayTeamName": "FC Bayern München",
+            "result": {
+                "goalsHomeTeam": 0,
+                "goalsAwayTeam": 2
+            }
+        }, {
+            "_links": {
+                "self": {
+                    "href": "fixtures/19738"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/298"
+                },
+                "homeTeam": {
+                    "href": "teams/5"
+                },
+                "awayTeam": {
+                    "href": "teams/11"
+                }
+            },
+            "date": "2012-09-24T22:00:00Z",
+            "status": null,
+            "matchday": 5,
+            "homeTeamName": "FC Bayern München",
+            "awayTeamName": "VfL Wolfsburg",
+            "result": {
+                "goalsHomeTeam": 3,
+                "goalsAwayTeam": 0
+            }
+        }, {
+            "_links": {
+                "self": {
+                    "href": "fixtures/14177"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/1"
+                },
+                "homeTeam": {
+                    "href": "teams/5"
+                },
+                "awayTeam": {
+                    "href": "teams/11"
+                }
+            },
+            "date": "2012-01-28T14:30:00Z",
+            "status": null,
+            "matchday": 19,
+            "homeTeamName": "FC Bayern München",
+            "awayTeamName": "VfL Wolfsburg",
+            "result": {
+                "goalsHomeTeam": 2,
+                "goalsAwayTeam": 0
+            }
+        }, {
+            "_links": {
+                "self": {
+                    "href": "fixtures/14024"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/1"
+                },
+                "homeTeam": {
+                    "href": "teams/11"
+                },
+                "awayTeam": {
+                    "href": "teams/5"
+                }
+            },
+            "date": "2011-08-13T13:30:00Z",
+            "status": null,
+            "matchday": 2,
+            "homeTeamName": "VfL Wolfsburg",
+            "awayTeamName": "FC Bayern München",
+            "result": {
+                "goalsHomeTeam": 0,
+                "goalsAwayTeam": 1
+            }
+        }, {
+            "_links": {
+                "self": {
+                    "href": "fixtures/4500"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/37"
+                },
+                "homeTeam": {
+                    "href": "teams/11"
+                },
+                "awayTeam": {
+                    "href": "teams/5"
+                }
+            },
+            "date": "2011-01-15T14:30:00Z",
+            "status": null,
+            "matchday": 18,
+            "homeTeamName": "VfL Wolfsburg",
+            "awayTeamName": "FC Bayern München",
+            "result": {
+                "goalsHomeTeam": 1,
+                "goalsAwayTeam": 1
+            }
+        }, {
+            "_links": {
+                "self": {
+                    "href": "fixtures/4341"
+                },
+                "soccerseason": {
+                    "href": "soccerseasons/37"
+                },
+                "homeTeam": {
+                    "href": "teams/5"
+                },
+                "awayTeam": {
+                    "href": "teams/11"
+                }
+            },
+            "date": "2010-08-20T18:30:00Z",
+            "status": null,
+            "matchday": 1,
+            "homeTeamName": "FC Bayern München",
+            "awayTeamName": "VfL Wolfsburg",
+            "result": {
+                "goalsHomeTeam": 2,
+                "goalsAwayTeam": 1
+            }
+        }]
+    }
+}

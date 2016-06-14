@@ -1,0 +1,10 @@
+{
+    "_links": {
+        "_self": {
+            "href": "teams?name=nonexistent"
+        }
+    },
+    "searchQuery": "nonexistent",
+    "count": 0,
+    "teams": []
+}

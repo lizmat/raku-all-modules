@@ -1,0 +1,54 @@
+{
+    "timeFrameStart": "2015-09-10",
+    "timeFrameEnd": "2015-09-23",
+    "count": 2,
+    "fixtures": [{
+        "_links": {
+            "self": {
+                "href": "fixtures/145646"
+            },
+            "soccerseason": {
+                "href": "soccerseasons/394"
+            },
+            "homeTeam": {
+                "href": "teams/5"
+            },
+            "awayTeam": {
+                "href": "teams/3"
+            }
+        },
+        "date": "2015-08-29T16:30:00Z",
+        "status": "TIMED",
+        "matchday": 3,
+        "homeTeamName": "FC Bayern München",
+        "awayTeamName": "Bayer Leverkusen",
+        "result": {
+            "goalsHomeTeam": -1,
+            "goalsAwayTeam": -1
+        }
+    }, {
+        "_links": {
+            "self": {
+                "href": "fixtures/145619"
+            },
+            "soccerseason": {
+                "href": "soccerseasons/394"
+            },
+            "homeTeam": {
+                "href": "teams/5"
+            },
+            "awayTeam": {
+                "href": "teams/11"
+            }
+        },
+        "date": "2015-09-22T18:00:00Z",
+        "status": "TIMED",
+        "matchday": 6,
+        "homeTeamName": "FC Bayern München",
+        "awayTeamName": "VfL Wolfsburg",
+        "result": {
+            "goalsHomeTeam": -1,
+            "goalsAwayTeam": -1
+        }
+    }]
+}

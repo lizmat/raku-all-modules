@@ -1,0 +1,38 @@
+{
+    "_links": {
+        "_self": {
+            "href": "teams/5/fixtures"
+        },
+        "team": {
+            "href": "teams/5"
+        }
+    },
+    "timeFrameStart": "2016-03-01",
+    "timeFrameEnd": "2016-03-05",
+    "count": 1,
+    "fixtures": [{
+        "_links": {
+            "self": {
+                "href": "fixtures/145448"
+            },
+            "soccerseason": {
+                "href": "soccerseasons/394"
+            },
+            "homeTeam": {
+                "href": "teams/4"
+            },
+            "awayTeam": {
+                "href": "teams/5"
+            }
+        },
+        "date": "2016-03-05T14:30:00Z",
+        "status": "TIMED",
+        "matchday": 25,
+        "homeTeamName": "Borussia Dortmund",
+        "awayTeamName": "FC Bayern München",
+        "result": {
+            "goalsHomeTeam": -1,
+            "goalsAwayTeam": -1
+        }
+    }]
+}

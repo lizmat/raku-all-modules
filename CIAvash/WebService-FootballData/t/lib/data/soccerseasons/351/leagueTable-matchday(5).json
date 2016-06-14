@@ -1,0 +1,71 @@
+{
+    "_links": {
+        "self": "soccerseasons/351/leagueTable/?matchday=5",
+        "soccerseason": "soccerseasons/351"
+    },
+    "leagueCaption": "1. Bundesliga 2014/15",
+    "matchday": 5,
+    "standing": [{
+        "_links": {
+            "team": {
+                "href": "teams/5"
+            }
+        },
+        "position": 1,
+        "teamName": "FC Bayern München",
+        "crestURI": "http://upload.wikimedia.org/wikipedia/commons/c/c5/Logo_FC_Bayern_München.svg",
+        "playedGames": 5,
+        "points": 11,
+        "goals": 9,
+        "goalsAgainst": 2,
+        "goalDifference": 7,
+        "wins": 3,
+        "draws": 2,
+        "losses": 0,
+        "home": {
+            "goals": 8,
+            "goalsAgainst": 1,
+            "wins": 3,
+            "draws": 0,
+            "losses": 0
+        },
+        "away": {
+            "goals": 1,
+            "goalsAgainst": 1,
+            "wins": 0,
+            "draws": 2,
+            "losses": 0
+        }
+    }, {
+        "_links": {
+            "team": {
+                "href": "teams/3"
+            }
+        },
+        "position": 2,
+        "teamName": "Bayer Leverkusen",
+        "crestURI": "http://upload.wikimedia.org/wikipedia/de/9/95/Bayer_04_Leverkusen_Logo.svg",
+        "playedGames": 5,
+        "points": 10,
+        "goals": 11,
+        "goalsAgainst": 9,
+        "goalDifference": 2,
+        "wins": 3,
+        "draws": 1,
+        "losses": 1,
+        "home": {
+            "goals": 8,
+            "goalsAgainst": 5,
+            "wins": 2,
+            "draws": 1,
+            "losses": 0
+        },
+        "away": {
+            "goals": 3,
+            "goalsAgainst": 4,
+            "wins": 1,
+            "draws": 0,
+            "losses": 1
+        }
+    }]
+}

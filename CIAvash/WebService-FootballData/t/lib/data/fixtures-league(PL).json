@@ -1,0 +1,30 @@
+{
+    "timeFrameStart": "2016-01-27",
+    "timeFrameEnd": "2016-02-02",
+    "count": 1,
+    "fixtures": [{
+        "_links": {
+            "self": {
+                "href": "fixtures/146870"
+            },
+            "soccerseason": {
+                "href": "soccerseasons/398"
+            },
+            "homeTeam": {
+                "href": "teams/71"
+            },
+            "awayTeam": {
+                "href": "teams/65"
+            }
+        },
+        "date": "2016-02-02T19:45:00Z",
+        "status": "TIMED",
+        "matchday": 24,
+        "homeTeamName": "Sunderland AFC",
+        "awayTeamName": "Manchester City FC",
+        "result": {
+            "goalsHomeTeam": null,
+            "goalsAwayTeam": null
+        }
+    }]
+}

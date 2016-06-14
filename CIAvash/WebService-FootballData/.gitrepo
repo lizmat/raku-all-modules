@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://gitlab.com/CIAvash/WebService-FootballData.git
+	branch = master
+	commit = 9329b9eeda319b9bd9437c1b38980dfa80132f53
+	parent = 9067f5068bc2d79508b54000e7142a8b40c6ec48
+	cmdver = 0.2.3
