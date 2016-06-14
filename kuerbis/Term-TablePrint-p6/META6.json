@@ -1,12 +1,8 @@
 {
-  "name" : "Term::TablePrint",
-  "source-url" : "git://github.com/kuerbis/Term-TablePrint-p6.git",
-  "perl" : "6.c",
-  "resources" : [ ],
+  "authors" : [
+    "kuerbis"
+  ],
   "build-depends" : [ ],
-  "provides" : {
-    "Term::TablePrint" : "lib/Term/TablePrint.pm6"
-  },
   "depends" : [
     "Term::Choose",
     "Term::Choose::NCurses",
@@ -14,11 +10,15 @@
     "Term::Choose::Util"
   ],
   "description" : "Print a table to the terminal and browse it interactively.",
+  "name" : "Term::TablePrint",
+  "perl" : "6.c",
+  "provides" : {
+    "Term::TablePrint" : "lib/Term/TablePrint.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/kuerbis/Term-TablePrint-p6.git",
   "test-depends" : [
     "Test"
   ],
-  "version" : "*",
-  "authors" : [
-    "kuerbis"
-  ]
+  "version" : "*"
 }

@@ -8,7 +8,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 VERSION
 =======
 
-Version 0.011
+Version 0.013
 
 SYNOPSIS
 ========
@@ -24,32 +24,29 @@ SYNOPSIS
 
         # Functional style:
 
-        print_table( @table );
+        print-table( @table );
 
 
         # or OO style:
 
-        my $pt = Term::TablePrint->new();
+        my $pt = Term::TablePrint.new();
 
-        $pt->print_table( @table );
-
-ANNOUNCEMENT
-============
-
-Backwards incompatible changes with the next release (`-` replaces `_` in routine and option names).
+        $pt.print-table( @table );
 
 DESCRIPTION
 ===========
 
-`print_table` shows a table and lets the user interactively browse it. It provides a cursor which highlights the row on which it is located. The user can scroll through the table with the different cursor keys - see [#KEYS](#KEYS).
+`print-table` shows a table and lets the user interactively browse it. It provides a cursor which highlights the row on which it is located. The user can scroll through the table with the different cursor keys - see [#KEYS](#KEYS).
 
 If the table has more rows than the terminal, the table is divided up on as many pages as needed automatically. If the cursor reaches the end of a page, the next page is shown automatically until the last page is reached. Also if the cursor reaches the topmost line, the previous page is shown automatically if it is not already the first one.
 
 If the terminal is too narrow to print the table, the columns are adjusted to the available width automatically.
 
-If the option table_expand is enabled and a row is selected with `Return`, each column of that row is output in its own line preceded by the column name. This might be useful if the columns were cut due to the too low terminal width.
+If the option table-expand is enabled and a row is selected with `Return`, each column of that row is output in its own line preceded by the column name. This might be useful if the columns were cut due to the too low terminal width.
 
 The following modifications are made (at a copy of the original data) before the output.
+
+        .gist
 
 Leading and trailing whitespaces are removed.
 
@@ -77,31 +74,31 @@ Keys to move around:
 
   * the `Home` key (or `Ctrl-A`) to jump to the first row of the table, the `End` key (or `Ctrl-E`) to jump to the last row of the table.
 
-With *keep_header* disabled the `Return` key closes the table if the cursor is on the header row.
+With *keep-header* disabled the `Return` key closes the table if the cursor is on the header row.
 
-If *keep_header* is enabled and *table_expand* is set to `0`, the `Return` key closes the table if the cursor is on the first row.
+If *keep-header* is enabled and *table-expand* is set to `0`, the `Return` key closes the table if the cursor is on the first row.
 
-If *keep_header* and *table_expand* are enabled and the cursor is on the first row, pressing `Return` three times in succession closes the table. If *table_expand* is set to `1` and the cursor is auto-jumped to the first row, it is required only one `Return` to close the table.
+If *keep-header* and *table-expand* are enabled and the cursor is on the first row, pressing `Return` three times in succession closes the table. If *table-expand* is set to `1` and the cursor is auto-jumped to the first row, it is required only one `Return` to close the table.
 
 If the cursor is not on the first row:
 
-  * with the option *table_expand* disabled the cursor jumps to the table head if `Return` is pressed.
+  * with the option *table-expand* disabled the cursor jumps to the table head if `Return` is pressed.
 
-  * with the option *table_expand* enabled each column of the selected row is output in its own line preceded by the column name if `Return` is pressed. Another `Return` closes this output and goes back to the table output. If a row is selected twice in succession, the pointer jumps to the head of the table or to the first row if *keep_header* is enabled.
+  * with the option *table-expand* enabled each column of the selected row is output in its own line preceded by the column name if `Return` is pressed. Another `Return` closes this output and goes back to the table output. If a row is selected twice in succession, the pointer jumps to the head of the table or to the first row if *keep-header* is enabled.
 
-If the width of the window is changed and the option *table_expand* is enabled, the user can rewrite the screen by choosing a row.
+If the width of the window is changed and the option *table-expand* is enabled, the user can rewrite the screen by choosing a row.
 
-If the option *choose_columns* is enabled, the `SpaceBar` key (or the right mouse key) can be used to select columns - see option [/choose_columns](/choose_columns).
+If the option *choose-columns* is enabled, the `SpaceBar` key (or the right mouse key) can be used to select columns - see option [/choose-columns](/choose-columns).
 
 ROUTINES
 ========
 
-print_table
+print-table
 -----------
 
-`print_table` prints the table passed with the first argument.
+`print-table` prints the table passed with the first argument.
 
-    print_table( @table, %options );
+    print-table( @table, %options );
 
 The first argument is an array of arrays. The first array of these arrays holds the column names. The following arrays are the table rows where the elements are the field values.
 
@@ -115,57 +112,46 @@ prompt
 
 String displayed above the table.
 
-add_header
+add-header
 ----------
 
-If *add_header* is set to 1, `print_table` adds a header row - the columns are numbered starting with 1.
+If *add-header* is set to 1, `print-table` adds a header row - the columns are numbered starting with 1.
 
 Default: 0
 
-binary_filter
--------------
-
-If *binary_filter* is set to 1, "BNRY" is printed instead of arbitrary binary data.
-
-If the data matches the repexp `/[\x00-\x08\x0B-\x0C\x0E-\x1F]/`, it is considered arbitrary binary data.
-
-Printing arbitrary binary data could break the output.
-
-Default: 0
-
-choose_columns
+choose-columns
 --------------
 
-If *choose_columns* is set to 1, the user can choose which columns to print. The columns can be marked with the `SpaceBar`. The list of marked columns including the highlighted column are printed as soon as `Return` is pressed.
+If *choose-columns* is set to 1, the user can choose which columns to print. The columns can be marked with the `SpaceBar`. The list of marked columns including the highlighted column are printed as soon as `Return` is pressed.
 
-If *choose_columns* is set to 2, it is possible to change the order of the columns. Columns can be added (with the `SpaceBar` and the `Return` key) until the user confirms with the *-ok-* menu entry.
+If *choose-columns* is set to 2, it is possible to change the order of the columns. Columns can be added (with the `SpaceBar` and the `Return` key) until the user confirms with the *-ok-* menu entry.
 
 Default: 0
 
-keep_header
+keep-header
 -----------
 
-If *keep_header* is set to 1, the table header is shown on top of each page.
+If *keep-header* is set to 1, the table header is shown on top of each page.
 
-If *keep_header* is set to 0, the table header is shown on top of the first page.
+If *keep-header* is set to 0, the table header is shown on top of the first page.
 
 Default: 1;
 
-max_rows
+max-rows
 --------
 
 Set the maximum number of used table rows. The used table rows are kept in memory.
 
-To disable the automatic limit set *max_rows* to 0.
+To disable the automatic limit set *max-rows* to 0.
 
-If the number of table rows is equal to or higher than *max_rows*, the last row of the output says `REACHED LIMIT "MAX_ROWS": $limit` or `=LIMIT= $limit` if the previous doesn't fit in the row.
+If the number of table rows is equal to or higher than *max-rows*, the last row of the output says `REACHED LIMIT "MAX_ROWS": $limit` or `=LIMIT= $limit` if the previous doesn't fit in the row.
 
 Default: 50_000
 
-min_col_width
+min-col-width
 -------------
 
-The columns with a width below or equal *min_col_width* are only trimmed if it is still required to lower the row width despite all columns wider than *min_col_width* have been trimmed to *min_col_width*.
+The columns with a width below or equal *min-col-width* are only trimmed if it is still required to lower the row width despite all columns wider than *min-col-width* have been trimmed to *min-col-width*.
 
 Default: 30
 
@@ -176,26 +162,26 @@ Set the *mouse* mode (see option `mouse` in [Term::Choose](https://github.com/ku
 
 Default: 0
 
-progress_bar
+progress-bar
 ------------
 
 Set the progress bar threshold. If the number of fields (rows x columns) is higher than the threshold, a progress bar is shown while preparing the data for the output.
 
 Default: 1_000
 
-tab_width
+tab-width
 ---------
 
 Set the number of spaces between columns.
 
 Default: 2
 
-table_expand
+table-expand
 ------------
 
-If the option *table_expand* is set to `1` or `2` and `Return` is pressed, the selected table row is printed with each column in its own line. Exception: if *table_expand* is set to `1` and the cursor auto-jumped to the first row, the first row will not be expanded.
+If the option *table-expand* is set to `1` or `2` and `Return` is pressed, the selected table row is printed with each column in its own line. Exception: if *table-expand* is set to `1` and the cursor auto-jumped to the first row, the first row will not be expanded.
 
-If *table_expand* is set to 0, the cursor jumps to the to first row (if not already there) when `Return` is pressed.
+If *table-expand* is set to 0, the cursor jumps to the to first row (if not already there) when `Return` is pressed.
 
 Default: 1
 

@@ -1,6 +1,13 @@
 Revision history for Term::TablePrint
 
 
+0.013   2016-05-28
+        - Removed option 'binary-filter'
+        - Update documentation
+
+0.012   2016-05-15
+        - Replaced underscores with hyphens in option- and routine-names
+
 0.011   2016-04-27
         - Announcement incompatible changes
 

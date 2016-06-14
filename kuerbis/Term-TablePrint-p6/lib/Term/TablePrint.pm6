@@ -1,25 +1,25 @@
 use v6;
 unit class Term::TablePrint;
 
-my $VERSION = '0.011';
+my $VERSION = '0.013';
 
 use Term::Choose;
-use Term::Choose::NCurses :all;
-use Term::Choose::LineFold :all;
-use Term::Choose::Util :all;
+use Term::Choose::NCurses   :all;
+use Term::Choose::LineFold  :all;
+use Term::Choose::Util      :all;
 
 
 has %.o_global; #
+has Term::Choose::NCurses::WINDOW $.g_win;
+
+has Term::Choose::NCurses::WINDOW $!win;
 has %!o;
 
-has Term::Choose::NCurses::WINDOW $!g_win;
 has List $!a_ref;
 has Int  @!cols_w;
 has Int  @!heads_w;
 has Int  @!new_cols_w;
-
 has Int  @!not_a_number;
-has Str  $!binary_str = 'BNRY';
 
 has Int $!show_progress;
 has Str $!computing = 'Computing:';
@@ -28,47 +28,45 @@ has Int $!bar_w;
 has Str $!progressbar_fmt;
 
 
-method new ( %o_global? ) {
+method new ( %o_global?, $g_win=Term::Choose::NCurses::WINDOW ) {
     _validate_options( %o_global );
     _set_defaults( %o_global );
-    self.bless( :%o_global );
+    self.bless( :%o_global, :$g_win );
 }
 
 submethod DESTROY () { #
-    endwin();
+    self!_end_term();
 }
 
 sub _set_defaults ( %opt ) {
-    %opt<add_header>     //= 0;
-    %opt<binary_filter>  //= 0;
-    %opt<choose_columns> //= 0;
-    %opt<keep_header>    //= 1;
-    %opt<max_rows>       //= 50000;
-    %opt<min_col_width>  //= 30;
+    %opt<add-header>     //= 0;
+    %opt<choose-columns> //= 0;
+    %opt<keep-header>    //= 1;
+    %opt<max-rows>       //= 50000;
+    %opt<min-col-width>  //= 30;
     %opt<mouse>          //= 0;
-    %opt<progress_bar>   //= 1000;
+    %opt<progress-bar>   //= 1000;
     %opt<prompt>         //= '';
-    %opt<tab_width>      //= 2;
-    %opt<table_expand>   //= 1;
+    %opt<tab-width>      //= 2;
+    %opt<table-expand>   //= 1;
     %opt<undef>          //= '';
-    %opt<no_col> = 'col'; #
+    %opt<no-col> = 'col'; #
 }
 
 sub _valid_options {
     return {
-        max_rows        => '<[ 0 .. 9 ]>+',
-        min_col_width   => '<[ 0 .. 9 ]>+',
-        progress_bar    => '<[ 0 .. 9 ]>+',
-        tab_width       => '<[ 0 .. 9 ]>+',
-        add_header      => '<[ 0 1 ]>',
-        binary_filter   => '<[ 0 1 ]>',
-        keep_header     => '<[ 0 1 ]>',
-        choose_columns  => '<[ 0 1 2 ]>',
-        table_expand    => '<[ 0 1 2 ]>',
+        max-rows        => '<[ 0 .. 9 ]>+',
+        min-col-width   => '<[ 0 .. 9 ]>+',
+        progress-bar    => '<[ 0 .. 9 ]>+',
+        tab-width       => '<[ 0 .. 9 ]>+',
+        add-header      => '<[ 0 1 ]>',
+        keep-header     => '<[ 0 1 ]>',
+        choose-columns  => '<[ 0 1 2 ]>',
+        table-expand    => '<[ 0 1 2 ]>',
         mouse           => '<[ 0 1 ]>',
         prompt          => 'Str',
         undef           => 'Str',
-        #no_col         => 'Str', #
+        #no-col         => 'Str', #
     };
 }
 
@@ -97,8 +95,8 @@ method !_choose_cols_with_order ( @avail_cols ) {
     my Str @pre = ( $ok );
     my @col_idxs;
     my $tc = Term::Choose.new(
-        { lf => [ 0, $subseq_tab ], no_spacebar => [ 0 .. @pre.end ], mouse => %!o<mouse> },
-        $!g_win
+        { lf => [ 0, $subseq_tab ], no-spacebar => [ 0 .. @pre.end ], mouse => %!o<mouse> },
+        $!win
     );
  
     loop {
@@ -106,7 +104,7 @@ method !_choose_cols_with_order ( @avail_cols ) {
         my Str $prompt = $init_prompt ~ @chosen_cols.join: ', ';
         my Str @choices = |@pre, |@avail_cols;
         # Choose
-        my Int @idx = $tc.choose_multi(
+        my Int @idx = $tc.choose-multi(
             @choices,
             { prompt => $prompt, index => 1 }
         );
@@ -133,14 +131,14 @@ method !_choose_cols_with_order ( @avail_cols ) {
 method !_choose_cols_simple ( @avail_cols ) {
     my $tc = Term::Choose.new(
         { mouse => %!o<mouse> },
-        $!g_win
+        $!win
     );
     my Str $all = '-*-';
     my Str @pre = ( $all );
     my @choices = |@pre, |@avail_cols;
-    my Int @idx = $tc.choose_multi(
+    my Int @idx = $tc.choose-multi(
         @choices,
-        { prompt => 'Choose: ', no_spacebar => [ 0 .. @pre.end ], index => 1 }
+        { prompt => 'Choose: ', no-spacebar => [ 0 .. @pre.end ], index => 1 }
     );
     if ! @idx[0].defined { ##
         return;
@@ -152,37 +150,56 @@ method !_choose_cols_simple ( @avail_cols ) {
 }
 
 
-sub print_table ( @table, %opt? ) is export {
-    return Term::TablePrint.new().print_table( @table, %opt );
+
+method !_init_term {
+    if $!g_win {
+        $!win = $!g_win;
+    }
+    else {
+        my int32 constant LC_ALL = 6;
+        setlocale( LC_ALL, "" );
+        $!win = initscr;
+    }
 }
 
-method print_table ( @table, %!o? ) {
+method !_end_term {
+    return if $!g_win;
+    endwin();
+}
+
+
+
+sub print-table ( @table, %opt? ) is export {
+    return Term::TablePrint.new().print-table( @table, %opt );
+}
+
+method print-table ( @table, %!o? ) { # ###
     if ! @table.elems {
-        pause( [ 'Close with ENTER' ], { prompt => "'print_table': Empty table!" } );
+        my $tc = Term::Choose.new(
+            { mouse => %!o<mouse>},
+            $!win
+        );
+        $tc.pause( [ 'Close with ENTER' ], { prompt => "'print-table': Empty table!" } );
         return;
     }
     _validate_options( %!o );
     for %!o_global.kv -> $key, $value {
         %!o{$key} //= $value;
     }
-    if %!o<add_header> {
-        @table.unshift: [ ( 1 .. @table[0].elems ).map: { $_ ~ '_' ~ %!o<no_col> } ];
+    if %!o<add-header> {
+        @table.unshift: [ ( 1 .. @table[0].elems ).map: { $_ ~ '_' ~ %!o<no-col> } ];
     }
-
-    my int32 constant LC_ALL = 6;
-    setlocale( LC_ALL, "" );
-    $!g_win = initscr();
-
+    self!_init_term();
     my Int @col_idxs;
-    if %!o<choose_columns> {
-        @col_idxs = self!_choose_cols_simple(     @table[0] ) if %!o<choose_columns> == 1;
-        @col_idxs = self!_choose_cols_with_order( @table[0] ) if %!o<choose_columns> == 2;
+    if %!o<choose-columns> {
+        @col_idxs = self!_choose_cols_simple(     @table[0] ) if %!o<choose-columns> == 1;
+        @col_idxs = self!_choose_cols_with_order( @table[0] ) if %!o<choose-columns> == 2;
         if @col_idxs.elems && ! @col_idxs[0].defined {##
-            endwin();
+            self!_end_term();
             return;
         }
     }
-    my Int $last_row_idx = %!o<max_rows> && %!o<max_rows> < @table.elems ?? %!o<max_rows> !! @table.end;
+    my Int $last_row_idx = %!o<max-rows> && %!o<max-rows> < @table.elems ?? %!o<max-rows> !! @table.end;
     if @col_idxs.elems {
         $!a_ref = [ ( 0 .. $last_row_idx ).map: { [ @table[$_][@col_idxs] ] } ];
     }
@@ -194,8 +211,8 @@ method print_table ( @table, %!o? ) {
             $!a_ref = @table[0..$last_row_idx];
         }
     }
-    if %!o<progress_bar> {
-        $!show_progress = ( $!a_ref.elems * $!a_ref[0].elems / %!o<progress_bar> ).Int;
+    if %!o<progress-bar> {
+        $!show_progress = ( $!a_ref.elems * $!a_ref[0].elems / %!o<progress-bar> ).Int;
         if $!show_progress >= 1 {
             curs_set( 0 );
             $!progressbar_fmt = $!computing ~ ' [%s%s]';
@@ -205,43 +222,44 @@ method print_table ( @table, %!o? ) {
 
     self!_calc_col_width();
     self!_inner_print_tbl();
-    endwin();
+    self!_end_term();
+    return;
 }
 
 
 method !_inner_print_tbl {
-    my Int $term_w = getmaxx( $!g_win );
+    my Int $term_w = getmaxx( $!win );
     my Bool $term_w_ok = self!_calc_avail_width( $term_w );
     if ! $term_w_ok {
         return;
     }
     my Array $list = self!_cols_to_avail_width();
-    my Int   $len  = [+] |@!new_cols_w, %!o<tab_width> * @!new_cols_w.end;
-    if %!o<max_rows> && $list.elems - 1 >= %!o<max_rows> {
-        my Str $limit = insert_sep( %!o<max_rows>, ' ' );
+    my Int   $len  = [+] |@!new_cols_w, %!o<tab-width> * @!new_cols_w.end;
+    if %!o<max-rows> && $list.elems - 1 >= %!o<max-rows> {
+        my Str $limit = insert-sep( %!o<max-rows>, ' ' );
         my Str $reached_limit = 'REACHED LIMIT "MAX_ROWS": ' ~ $limit;
         if $reached_limit.chars > $len {
             $reached_limit = '=LIMIT= ' ~ $limit;
             $reached_limit.=substr: 0, $len;
         }
-        $list.push: unicode_sprintf( $reached_limit, $len, 0 );
+        $list.push: unicode-sprintf( $reached_limit, $len, 0 );
     }
     my Int $old_row = 0;
     my Int $auto_jumped_to_first_row = 2;
     my Int $expanded = 0;
     my $tc = Term::Choose.new(
         { ll => $len, layout => 2, mouse => %!o<mouse> },
-        $!g_win
+        $!win
     );
 
     loop {
-        if getmaxx( $!g_win ) != $term_w {
-            $term_w = getmaxx( $!g_win );
+        if getmaxx( $!win ) != $term_w {
+            $term_w = getmaxx( $!win );
             self!_inner_print_tbl();
             return;
         }
         my Str $header = Str;
-        if %!o<keep_header> && $list.elems > 1 {
+        if %!o<keep-header> && $list.elems > 1 {
             $header = $list.shift;
         }
         my Str $prompt = %!o<prompt>;
@@ -263,20 +281,20 @@ method !_inner_print_tbl {
         if $header.defined {
             $list.unshift: $header;
         }
-        if ! %!o<table_expand> {
+        if ! %!o<table-expand> {
             return if $row == 0;
         }
         else {
             if $old_row == $row {
                 if ( $row == 0 ) {
-                    if ! %!o<keep_header> {
+                    if ! %!o<keep-header> {
                         return;
                     }
-                    elsif %!o<table_expand> == 1 {
+                    elsif %!o<table-expand> == 1 {
                         return if $expanded;
                         return if $auto_jumped_to_first_row == 1;
                     }
-                    elsif %!o<table_expand> == 2 {
+                    elsif %!o<table-expand> == 2 {
                         return if $expanded;
                     }
                     $auto_jumped_to_first_row = 0;
@@ -289,7 +307,7 @@ method !_inner_print_tbl {
                 }
             }
             $old_row = $row;
-            if %!o<keep_header> {
+            if %!o<keep-header> {
                 $row++;
             }
             $expanded = 1;
@@ -300,7 +318,7 @@ method !_inner_print_tbl {
 
 
 method !_print_single_row ( Int $row ) {
-    my Int $term_w = getmaxx( $!g_win );
+    my Int $term_w = getmaxx( $!win );
     my Int $key_w = @!heads_w.max + 1; #
     if $key_w > $term_w div 100 * 33 {
         $key_w = $term_w div 100 * 33;
@@ -310,7 +328,7 @@ method !_print_single_row ( Int $row ) {
     my $col_w = $term_w - ( $key_w + $sep_w + 1 ); #
     my @lines = ' Close with ENTER';
     for 0 .. $!a_ref[$row].end -> $col {
-        my Str $key = cut_to_printwidth( # 
+        my Str $key = cut-to-printwidth( # 
             _sanitized_string( $!a_ref[0][$col] // %!o<undef> ),
             $key_w
         );
@@ -320,7 +338,7 @@ method !_print_single_row ( Int $row ) {
             @lines.push: sprintf "%*.*s%*s%s", $key_w xx 2, $key, $sep_w, $sep, '';
         }
         else {
-            for line_fold( $!a_ref[$row][$col].gist, $col_w, '', '' ).lines -> $line {
+            for line-fold( $!a_ref[$row][$col].gist, $col_w, '', '' ).lines -> $line {
                 @lines.push: sprintf "%*.*s%*s%s", $key_w xx 2, $key, $sep_w, $sep, $line;
                 $key = '' if $key;
                 $sep = '' if $sep;
@@ -328,18 +346,18 @@ method !_print_single_row ( Int $row ) {
         }
     }
     my $tc = Term::Choose.new(
-        {},
-        $!g_win
+        { mouse => %!o<mouse>},
+        $!win
     );
     $tc.pause(
         @lines,
-        { prompt => '', layout => 2, mouse => %!o<mouse> }
+        { prompt => '', layout => 2 }
     );
 }
 
 
 sub _sanitized_string ( $str ) {
-    return $str.trim.subst( / \s+ /, ' ', :g ).subst( / <:C> /, '', :g );
+    $str.trim.subst( / \s+ /, ' ', :g ).subst( / <:C> /, '', :g );
 }
 
 
@@ -356,11 +374,10 @@ method !_calc_col_width {
     my Int $step;
     my Int $c = 0;
     if $!show_progress >= 2 {
-        $!bar_w = getmaxx( $!g_win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
+        $!bar_w = getmaxx( $!win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
         $step = $!total div $!bar_w || 1;    #
     }
-    my regex binary_regexp { <[\x00 .. \x08 \x0B .. \x0C \x0E .. \x1F]> }
-    my Int $undef_w = print_columns( %!o<undef> );
+    my Int $undef_w = print-columns( %!o<undef> );
     @!cols_w = 1 xx $!a_ref[0].elems;
     my Int $normal_row = 0;
     my Int @col_idx = 0 .. $!a_ref[0].end; #
@@ -369,14 +386,14 @@ method !_calc_col_width {
         for @col_idx -> $i {
             my Int $str_w;
             if ! $row[$i].defined {
+                $row[$i] = %!o<undef>;
                 $str_w = $undef_w;
             }
-            elsif %!o<binary_filter> && $row[$i].substr( 0, 100 ).match: / <binary_regexp> / { #
-                $str_w = $!binary_str.chars;
-            }
             else {
-                $str_w = print_columns( _sanitized_string( $row[$i] ) );
+                $row[$i] = _sanitized_string( $row[$i].gist );
+                $str_w = print-columns( $row[$i] );
             }
+
             if $normal_row {
                 if $str_w > @!cols_w[$i] {
                     @!cols_w[$i] = $str_w;
@@ -404,7 +421,7 @@ method !_calc_col_width {
 
 method !_calc_avail_width ( Int $term_w ) {
     @!new_cols_w  = @!cols_w;
-    my Int $avail_w = $term_w - %!o<tab_width> * @!new_cols_w.end;
+    my Int $avail_w = $term_w - %!o<tab-width> * @!new_cols_w.end;
     my Int $sum = [+] @!new_cols_w;
     if $sum < $avail_w {
         HEAD: loop {
@@ -421,17 +438,21 @@ method !_calc_avail_width ( Int $term_w ) {
         }
     }
     elsif $sum > $avail_w {
-        my Int $mininum_w = %!o<min_col_width> || 1;
+        my Int $mininum_w = %!o<min-col-width> || 1;
         if @!heads_w.elems > $avail_w {
+            my $tc = Term::Choose.new(
+                { mouse => %!o<mouse>},
+                $!win
+            );
             my $prompt1 = 'Terminal window is not wide enough to print this table.';
-            pause(
+            $tc.pause(
                 [ 'Press ENTER to show the column names.' ],
-                { prompt => $prompt1, mouse => %!o<mouse> }
+                { prompt => $prompt1 }
             );
             my Str $prompt2 = 'Reduce the number of columns".' ~ "\n" ~ 'Close with ENTER.';
-            pause(
+            $tc.pause(
                 $!a_ref[0],
-                { prompt => $prompt2, mouse => %!o<mouse> }
+                { prompt => $prompt2 }
             );
             return False;
         }
@@ -446,7 +467,7 @@ method !_calc_avail_width ( Int $term_w ) {
                     next;
                 }
                 if $mininum_w >= _minus_x_percent( @tmp_cols_w[$i], $percent ) {
-                    @tmp_cols_w[$i] = $mininum_w;
+                    @tmp_cols_w[$i] = $mininum_w;%!o<undef>
                 }
                 else {
                     @tmp_cols_w[$i] = _minus_x_percent( @tmp_cols_w[$i], $percent );
@@ -488,31 +509,21 @@ method !_cols_to_avail_width {
     my Int $step;
     my Int $c = 0;
     if $!show_progress {
-        $!bar_w = getmaxx( $!g_win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
+        $!bar_w = getmaxx( $!win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
         $step = $!total div $!bar_w || 1;    #
     }
     my Int @col_idx = 0 .. @!new_cols_w.end;
-    my Str $tab = ' ' x %!o<tab_width>;
+    my Str $tab = ' ' x %!o<tab-width>;
     my Array $list;
 
     for $!a_ref.list -> $row {
         my Str $str = '';
         for @col_idx -> $i {
-            if ! $row[$i].defined {
-                $str ~= unicode_sprintf( 
-                    %!o<undef>, 
-                    @!new_cols_w[$i],
-                    @!not_a_number[$i] ?? 0 !! 1 );
-            }
-            elsif %!o<binary_filter> && $row[$i].substr( 0, 100 ).match: / <binary_regexp> / { #
-                $str ~= $!binary_str.substr: 0, @!new_cols_w[$i];
-            }
-            else {
-                $str ~= unicode_sprintf( 
-                    _sanitized_string( $row[$i] ),
-                    @!new_cols_w[$i],
-                    @!not_a_number[$i] ?? 0 !! 1 );
-            }
+            $str ~= unicode-sprintf( 
+                $row[$i],
+                @!new_cols_w[$i],
+                @!not_a_number[$i] ?? 0 !! 1 );
+
             $str ~= $tab if $i != @!new_cols_w.end;
         }
         $list.push: $str;
@@ -536,7 +547,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
 =head1 VERSION
 
-Version 0.011
+Version 0.013
 
 =head1 SYNOPSIS
 
@@ -553,24 +564,20 @@ Version 0.011
 
     # Functional style:
 
-    print_table( @table );
+    print-table( @table );
 
 
     # or OO style:
 
-    my $pt = Term::TablePrint->new();
+    my $pt = Term::TablePrint.new();
 
-    $pt->print_table( @table );
+    $pt.print-table( @table );
 
 =end code
 
-=head1 ANNOUNCEMENT
-
-Backwards incompatible changes with the next release (C<-> replaces C<_> in routine and option names).
-
 =head1 DESCRIPTION
 
-C<print_table> shows a table and lets the user interactively browse it. It provides a cursor which highlights the row
+C<print-table> shows a table and lets the user interactively browse it. It provides a cursor which highlights the row
 on which it is located. The user can scroll through the table with the different cursor keys - see L<#KEYS>.
 
 If the table has more rows than the terminal, the table is divided up on as many pages as needed automatically. If the
@@ -579,10 +586,16 @@ cursor reaches the topmost line, the previous page is shown automatically if it 
 
 If the terminal is too narrow to print the table, the columns are adjusted to the available width automatically.
 
-If the option table_expand is enabled and a row is selected with C<Return>, each column of that row is output in its own
+If the option table-expand is enabled and a row is selected with C<Return>, each column of that row is output in its own
 line preceded by the column name. This might be useful if the columns were cut due to the too low terminal width.
 
 The following modifications are made (at a copy of the original data) before the output.
+
+=begin code
+
+    .gist
+
+=end code
 
 Leading and trailing whitespaces are removed.
 
@@ -618,37 +631,37 @@ Keys to move around:
 =item the C<Home> key (or C<Ctrl-A>) to jump to the first row of the table, the C<End> key (or C<Ctrl-E>) to jump to the last
 row of the table.
 
-With I<keep_header> disabled the C<Return> key closes the table if the cursor is on the header row.
+With I<keep-header> disabled the C<Return> key closes the table if the cursor is on the header row.
 
-If I<keep_header> is enabled and I<table_expand> is set to C<0>, the C<Return> key closes the table if the cursor is on
+If I<keep-header> is enabled and I<table-expand> is set to C<0>, the C<Return> key closes the table if the cursor is on
 the first row.
 
-If I<keep_header> and I<table_expand> are enabled and the cursor is on the first row, pressing C<Return> three times in
-succession closes the table. If I<table_expand> is set to C<1> and the cursor is auto-jumped to the first row, it is
+If I<keep-header> and I<table-expand> are enabled and the cursor is on the first row, pressing C<Return> three times in
+succession closes the table. If I<table-expand> is set to C<1> and the cursor is auto-jumped to the first row, it is
 required only one C<Return> to close the table.
 
 If the cursor is not on the first row:
 
-=item1 with the option I<table_expand> disabled the cursor jumps to the table head if C<Return> is pressed.
+=item1 with the option I<table-expand> disabled the cursor jumps to the table head if C<Return> is pressed.
 
-=item1 with the option I<table_expand> enabled each column of the selected row is output in its own line preceded by the
+=item1 with the option I<table-expand> enabled each column of the selected row is output in its own line preceded by the
 column name if C<Return> is pressed. Another C<Return> closes this output and goes back to the table output. If a row is
-selected twice in succession, the pointer jumps to the head of the table or to the first row if I<keep_header> is
+selected twice in succession, the pointer jumps to the head of the table or to the first row if I<keep-header> is
 enabled.
 
-If the width of the window is changed and the option I<table_expand> is enabled, the user can rewrite the screen by
+If the width of the window is changed and the option I<table-expand> is enabled, the user can rewrite the screen by
 choosing a row.
 
-If the option I<choose_columns> is enabled, the C<SpaceBar> key (or the right mouse key) can be used to select columns -
-see option L</choose_columns>.
+If the option I<choose-columns> is enabled, the C<SpaceBar> key (or the right mouse key) can be used to select columns -
+see option L</choose-columns>.
 
 =head1 ROUTINES
 
-=head2 print_table
+=head2 print-table
 
-C<print_table> prints the table passed with the first argument.
+C<print-table> prints the table passed with the first argument.
 
-    print_table( @table, %options );
+    print-table( @table, %options );
 
 The first argument is an array of arrays. The first array of these arrays holds the column names. The following arrays
 are the table rows where the elements are the field values.
@@ -661,55 +674,45 @@ As a optional second argument it can be passed a hash which holds the options.
 
 String displayed above the table.
 
-=head2 add_header
+=head2 add-header
 
-If I<add_header> is set to 1, C<print_table> adds a header row - the columns are numbered starting with 1.
-
-Default: 0
-
-=head2 binary_filter
-
-If I<binary_filter> is set to 1, "BNRY" is printed instead of arbitrary binary data.
-
-If the data matches the repexp C</[\x00-\x08\x0B-\x0C\x0E-\x1F]/>, it is considered arbitrary binary data.
-
-Printing arbitrary binary data could break the output.
+If I<add-header> is set to 1, C<print-table> adds a header row - the columns are numbered starting with 1.
 
 Default: 0
 
-=head2 choose_columns
+=head2 choose-columns
 
-If I<choose_columns> is set to 1, the user can choose which columns to print. The columns can be marked with the
+If I<choose-columns> is set to 1, the user can choose which columns to print. The columns can be marked with the
 C<SpaceBar>. The list of marked columns including the highlighted column are printed as soon as C<Return> is pressed.
 
-If I<choose_columns> is set to 2, it is possible to change the order of the columns. Columns can be added (with
+If I<choose-columns> is set to 2, it is possible to change the order of the columns. Columns can be added (with
 the C<SpaceBar> and the C<Return> key) until the user confirms with the I<-ok-> menu entry.
 
 Default: 0
 
-=head2 keep_header
+=head2 keep-header
 
-If I<keep_header> is set to 1, the table header is shown on top of each page.
+If I<keep-header> is set to 1, the table header is shown on top of each page.
 
-If I<keep_header> is set to 0, the table header is shown on top of the first page.
+If I<keep-header> is set to 0, the table header is shown on top of the first page.
 
 Default: 1;
 
-=head2 max_rows
+=head2 max-rows
 
 Set the maximum number of used table rows. The used table rows are kept in memory.
 
-To disable the automatic limit set I<max_rows> to 0.
+To disable the automatic limit set I<max-rows> to 0.
 
-If the number of table rows is equal to or higher than I<max_rows>, the last row of the output says
+If the number of table rows is equal to or higher than I<max-rows>, the last row of the output says
 C<REACHED LIMIT "MAX_ROWS": $limit> or C<=LIMIT= $limit> if the previous doesn't fit in the row.
 
 Default: 50_000
 
-=head2 min_col_width
+=head2 min-col-width
 
-The columns with a width below or equal I<min_col_width> are only trimmed if it is still required to lower the row width
-despite all columns wider than I<min_col_width> have been trimmed to I<min_col_width>.
+The columns with a width below or equal I<min-col-width> are only trimmed if it is still required to lower the row width
+despite all columns wider than I<min-col-width> have been trimmed to I<min-col-width>.
 
 Default: 30
 
@@ -719,26 +722,26 @@ Set the I<mouse> mode (see option C<mouse> in L<Term::Choose|https://github.com/
 
 Default: 0
 
-=head2 progress_bar
+=head2 progress-bar
 
 Set the progress bar threshold. If the number of fields (rows x columns) is higher than the threshold, a progress bar is
 shown while preparing the data for the output.
 
 Default: 1_000
 
-=head2 tab_width
+=head2 tab-width
 
 Set the number of spaces between columns.
 
 Default: 2
 
-=head2 table_expand
+=head2 table-expand
 
-If the option I<table_expand> is set to C<1> or C<2> and C<Return> is pressed, the selected table row is printed with
-each column in its own line. Exception: if I<table_expand> is set to C<1> and the cursor auto-jumped to the first row,
+If the option I<table-expand> is set to C<1> or C<2> and C<Return> is pressed, the selected table row is printed with
+each column in its own line. Exception: if I<table-expand> is set to C<1> and the cursor auto-jumped to the first row,
 the first row will not be expanded.
 
-If I<table_expand> is set to 0, the cursor jumps to the to first row (if not already there) when C<Return> is pressed.
+If I<table-expand> is set to 0, the cursor jumps to the to first row (if not already there) when C<Return> is pressed.
 
 Default: 1
 
