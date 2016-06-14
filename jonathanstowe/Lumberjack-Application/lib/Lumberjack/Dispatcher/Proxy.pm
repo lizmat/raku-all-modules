@@ -45,7 +45,8 @@ other mechanisms may become available in the future.
 
 =end pod
 
-use Lumberjack:ver<0.0.3>;
+use Lumberjack;
+
 use Lumberjack::Message::JSON;
 
 use HTTP::UserAgent;

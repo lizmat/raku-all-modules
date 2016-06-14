@@ -81,7 +81,7 @@ from a remote logger.
 
 =end pod
 
-use Lumberjack:ver<0.0.3>;
+use Lumberjack;
 use JSON::Class;
 
 role Lumberjack::Message::JSON does JSON::Class {
