@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/finanalyst/p6-Algorithm-Tarjan.git
+	branch = master
+	commit = f1a8f95748a79e770e367041da2f11ae694ff685
+	parent = 735e2111a4c337fca0092e72c1390a561de52eb3
+	cmdver = 0.2.3
