@@ -1,0 +1,14 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Test::Notice",
+    "version"      : "1.001001",
+    "description"  : "Display noticable messages to users during tests",
+    "depends"      : [ "Test" ],
+    "test-depends" : [ "Test", "Test::META" ],
+    "provides"     : {
+        "Test::Notice" : "lib/Test/Notice.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   :
+        "git://github.com/zoffixznet/perl6-Test-Notice.git"
+}
