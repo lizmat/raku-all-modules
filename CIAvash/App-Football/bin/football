@@ -1,0 +1,399 @@
+#!/usr/bin/env perl6
+
+use v6.c;
+
+use App::Football;
+
+subset Venue of Str where { !.defined || $_ eq <home away>.any };
+subset Timeframe of Str where { !.defined || m/^ [n|p]\d+ $/ };
+subset Year of Int where { !.defined || .Numeric.chars == 4 };
+subset LeagueCode of Str where { !.defined || m/^ [\w+]+ % ',' $/ };
+
+proto MAIN (|) {
+    CATCH {
+        when X::HTTP | X::HTTP::Internal | /^2\d\d/ {
+            note "{App::Football.program_name}: $_";
+
+            when X::HTTP::Response {
+                note "{App::Football.program_name}: football-data.org: $_" with .footballdata_error;
+            }
+        }
+    }
+    {*}
+}
+
+multi MAIN (Str:D :t(:team($team_name))!) {
+    App::Football.new.team: $team_name;
+}
+
+multi MAIN (Str:D :t(:team($team_name))!, Bool :p(:$players)!) {
+    App::Football.new.team_players: $team_name;
+}
+
+multi MAIN (Str:D :t(:team($team_name))!,
+            Bool :f(:$fixtures)!,
+            Year :s(:$season),
+            Timeframe :T(:$timeframe),
+            Venue :v(:$venue)) {
+    App::Football.new.team_fixtures: $team_name, :$season, :$timeframe, :$venue;
+}
+
+multi MAIN (Bool :L(:$leagues)!, Year :s(:$season)) {
+    App::Football.new.leagues: :$season;
+}
+
+multi MAIN (Str:D :l(:league($league_name))!, Year :s(:$season)) {
+    App::Football.new.league: $league_name, :$season;
+}
+
+multi MAIN (Str:D :l(:league($league_name))!, Bool :c(:$teams)!, Year :s(:$season)) {
+    App::Football.new.league_teams: $league_name, :$season;
+}
+
+multi MAIN (Str:D :l(:league($league_name))!,
+            Year :s(:$season),
+            Bool :t(:$table)!,
+            Int :m(:$matchday)) {
+    App::Football.new.league_table: $league_name, :$season, :$matchday;
+}
+
+multi MAIN (Str:D :l(:league($league_name))!,
+            Year :s(:$season),
+            Bool :f(:$fixtures)!,
+            Int :m(:$matchday),
+            Timeframe :T(:$timeframe)) {
+    App::Football.new.league_fixtures: $league_name, :$season, :$matchday, :$timeframe;
+}
+
+multi MAIN (Bool :F(:$all-fixtures)!, Timeframe :T(:$timeframe), LeagueCode :c(:$league-code)) {
+    App::Football.new.all_fixtures: :$timeframe, :$league-code;
+}
+
+multi MAIN (Bool :v(:$version)!) {
+    say App::Football.program_name ~ ' ' ~  App::Football.^ver;
+
+    print q:to/END/;
+
+    Copyright (C) 2016 Siavash Askari Nasr.
+
+    License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.
+    This is free software: you are free to change and redistribute it.
+    This program comes with NO WARRANTY.
+    END
+}
+
+sub USAGE {
+    say 'Usage:';
+
+    # Get SYNOPSIS from pod and print it
+    print "  $_" for $=pod[0].contents[3].contents;
+
+    print q:to/END/;
+      -t, --team=TEAM                     Print information about given TEAM.
+        -p, --players                     Print a list of TEAM players.
+        -f, --fixtures                    Print TEAM's fixtures.
+          [-s, --season=YEAR]             Fixtures in season YEAR.
+          [-T, --timeframe=TIMEFRAME]     Limit fixtures to timeframe TIMEFRAME.
+                                          TIMEFRAME is in the format of n|p followed
+                                          by number of days, e.g. n7.
+          [-v, --venue=VENUE]             Limit fixtures to venue VENUE.
+                                          VENUE is in the format of home|away.
+      -L, --leagues                       Print a list of available leagues.
+        [-s, --season=YEAR]               Leagues of season YEAR.
+      -l, --league=LEAGUE                 Print information about given LEAGUE.
+        [-s, --season=YEAR]               League in season YEAR.
+        -c, --teams                       Print a list of LEAGUE's teams/clubs.
+        -t, --table                       Print LEAGUE's table.
+          [-m, --matchday=NUM]            LEAGUE's table on matchday NUM.
+        -f, --fixtures                    Print LEAGUE's fixtures.
+          [-m, --matchday=NUM]            LEAGUE's fixtures on matchday NUM.
+          [-T, --timeframe=TIMEFRAME]     Limit fixtures to timeframe TIMEFRAME.
+                                          TIMEFRAME is in the format of n|p followed
+                                          by number of days, e.g. n7.
+      -F, --all-fixtures                  Print all fixtures from all leagues.
+        [-T, --timeframe=TIMEFRAME]       Limit fixtures to timeframe TIMEFRAME.
+                                          TIMEFRAME is in the format of n|p followed
+                                          by number of days, e.g. n7.
+        [-c, --league-code=LEAGUE_CODES]  Limit fixtures to leagues with LEAGUE_CODES.
+                                          LEAGUE_CODES is in the format of league
+                                          codes separated with ",",
+                                          e.g. "PL", "PL,BL1,PD,CL".
+      -v, --version                       Display version and copyright information.
+    END
+}
+
+=begin pod
+
+=head1 NAME
+
+football - Command line program for accessing football data
+
+=head1 SYNOPSIS
+
+=begin code
+
+football -t|--team=<Str>
+football -t|--team=<Str> -p|--players
+football -t|--team=<Str> -f|--fixtures [-s|--season=<Int>] [-T|--timeframe=<Str>] [-v|--venue=<Str>]
+football -L|--leagues [-s|--season=<Int>]
+football -l|--league=<Str> [-s|--season=<Int>]
+football -l|--league=<Str> -c|--teams [-s|--season=<Int>]
+football -l|--league=<Str> -t|--table [-s|--season=<Int>] [-m|--matchday=<Int>]
+football -l|--league=<Str> -f|--fixtures [-s|--season=<Int>] [-m|--matchday=<Int>] [-T|--timeframe=<Str>]
+football -F|--all-fixtures [-T|--timeframe=<Str>] [-c|--league-code=<Str>]
+football -v|--version
+
+=end code
+
+=head1 DESCRIPTION
+
+C<football> helps you easily access information about football leagues, teams, fixtures, ...
+
+It uses football-data.org to get the football data.
+
+=head1 OPTIONS
+
+=begin item1
+
+B<-t>=I<TEAM>, B<--team>=I<TEAM>
+
+Print information about given I<TEAM>.
+
+=end item1
+
+=begin item2
+
+B<-p>, B<--players>
+
+Print a list of I<TEAM> players.
+
+=end item2
+
+=begin item2
+
+B<-f>, B<--fixtures>
+
+Print I<TEAM>'s fixtures.
+
+=end item2
+
+=begin item3
+
+[B<-s>=I<YEAR>, B<--season>=I<YEAR>]
+
+Fixtures in season I<YEAR>.
+
+=end item3
+
+=begin item3
+
+[B<-T>=I<TIMEFRAME>, B<--timeframe>=I<TIMEFRAME>]
+
+Limit fixtures to timeframe I<TIMEFRAME>.
+
+I<TIMEFRAME> is in the format of C<n|p> followed by number of days, e.g. C<n7>.
+
+=end item3
+
+=begin item3
+
+[B<-v>=I<VENUE>, B<--venue>=I<VENUE>]
+
+Limit fixtures to venue I<VENUE>.
+
+I<VENUE> is in the format of C<home|away>.
+
+=end item3
+
+=begin item1
+
+B<-L>, B<--leagues>
+
+Print a list of available leagues.
+
+=end item1
+
+=begin item2
+
+[B<-s>=I<YEAR>, B<--season>=I<YEAR>]
+
+Leagues of season I<YEAR>.
+
+=end item2
+
+=begin item1
+
+B<-l>=I<LEAGUE>, B<--league>=I<LEAGUE>
+
+Print information about given I<LEAGUE>.
+
+=end item1
+
+=begin item2
+
+[B<-s>=I<YEAR>, B<--season>=I<YEAR>]
+
+League in season I<YEAR>.
+
+=end item2
+
+=begin item2
+
+B<-c>, B<--teams>
+
+Print a list of I<LEAGUE>'s teams/clubs.
+
+=end item2
+
+=begin item2
+
+B<-t>, B<--table>
+
+Print I<LEAGUE>'s table.
+
+=end item2
+
+=begin item3
+
+[B<-m>=I<NUM>, B<--matchday>=I<NUM>]
+
+I<LEAGUE>'s table on matchday I<NUM>.
+
+=end item3
+
+=begin item2
+
+B<-f>, B<--fixtures>
+
+Print I<LEAGUE>'s fixtures.
+
+=end item2
+
+=begin item3
+
+[B<-m>=I<NUM>, B<--matchday>=I<NUM>]
+
+I<LEAGUE>'s fixtures on matchday I<NUM>.
+
+=end item3
+
+=begin item3
+
+[B<-T>=I<TIMEFRAME>, B<--timeframe>=I<TIMEFRAME>]
+
+Limit fixtures to timeframe I<TIMEFRAME>.
+
+I<TIMEFRAME> is in the format of C<n|p> followed by number of days, e.g. C<n7>.
+
+=end item3
+
+=begin item1
+
+B<-F>, B<--all-fixtures>
+
+Print all fixtures from all leagues.
+
+=end item1
+
+=begin item2
+
+[B<-T>=I<TIMEFRAME>, B<--timeframe>=I<TIMEFRAME>]
+
+Limit fixtures to timeframe I<TIMEFRAME>.
+
+I<TIMEFRAME> is in the format of C<n|p> followed by number of days, e.g. C<n7>.
+
+=end item2
+
+=begin item2
+
+[B<-c>=I<LEAGUE_CODES>, B<--league-code>=I<LEAGUE_CODES>]
+
+Limit fixtures to leagues with I<LEAGUE_CODES>.
+
+I<LEAGUE_CODES> is in the format of league codes separated with ",", e.g. "PL", "PL,BL1,PD,CL".
+
+=end item2
+
+=begin item1
+
+B<-v>, B<--version>
+
+Display version and copyright information.
+
+=end item1
+
+=head1 DIAGNOSTICS
+
+Error messages will be printed in the format of C<football: ERROR_MESSAGE>.
+
+When a resource is empty, error message will be in form of C<football: RESOURCE not found>.
+
+When a HTTP request results in a status code other than C<200>,
+error message will be in the form of C<football: HTTP_STATUS_CODE>.
+
+When football-data.org returns an error message, an error message in the form
+of C<football: football-data.org: ERROR_MESSAGE> will be printed.
+
+=head1 EXAMPLES
+
+To print fixtures of "Manchester City":
+
+    football --team='manchester city' --fixtures
+
+To print home games of "Manchester City" in the next 30 days:
+
+    football -t=mancity -f --timeframe=n30 --venue=home
+
+To print list of "Bayern Munich" players:
+
+    football -t=bayern --players
+
+To print list of "Premier League" teams in season 2014:
+
+    football --league='premier league' --teams --season=2014
+
+To print "Premier League" table on matchday 5:
+
+    football -l='pl' --table --matchday=5
+
+To print "Primera Division" fixtures of the last 7 days:
+
+    football -l='pd' -f -T=p7
+
+To print fixtures of "Premier League", "1. Bundesliga" and "Champions League":
+
+    football --all-fixtures -c='pl,bl1,cl'
+
+=head1 REPOSITORY
+
+L<https://gitlab.com/CIAvash/App-Football>
+
+=head1 BUGS
+
+L<https://gitlab.com/CIAvash/App-Football/issues>
+
+=head1 AUTHOR
+
+Siavash Askari Nasr - L<http://ciavash.name/>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright © 2016 Siavash Askari Nasr
+
+This file is part of App::Football.
+
+App::Football is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+App::Football is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with App::Football.  If not, see <http://www.gnu.org/licenses/>.
+
+=end pod
