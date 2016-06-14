@@ -69,4 +69,4 @@ Hopefully, lazyness of attribute at one point will be integrated in perl6 core, 
 MISC
 ====
 
-To test the meta data of the modules, set environement variable PERL6_TEST_META to 1
+To test the meta data of the modules, set environement variable PERL6_TEST_META to 1 On the Christmas version of perl, the module had no issue, but it's not working correctly anymore with precompilation as of today, waiting for a fix in rakudo, add no precompilation pragma

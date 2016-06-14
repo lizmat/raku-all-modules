@@ -1,4 +1,5 @@
-unit module AttrX::Lazy:ver<v0.0.1>:auth<github:pierre-vigier>;
+unit module AttrX::Lazy:ver<v0.0.2>:auth<github:pierre-vigier>;
+no precompilation;
 
 my role LazyAttribute {
     has $.base-name = self.name.substr(2);
@@ -127,6 +128,9 @@ AttrX::Lazy will become useless
 =head1 MISC
 
 To test the meta data of the modules, set environement variable PERL6_TEST_META to 1
+On the Christmas version of perl, the module had no issue, but it's not working correctly
+anymore with precompilation as of today, waiting for a fix in rakudo, add no precompilation
+pragma
 
 =end pod
 
