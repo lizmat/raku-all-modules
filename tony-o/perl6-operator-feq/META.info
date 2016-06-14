@@ -3,6 +3,7 @@
   "version" : "0.1",
   "description" : "Adds a fuzzy matching operator for clean and fuzzy string matching in 'if' statements",
   "depends" : ["Text::Levenshtein::Damerau"],
+  "auth": "github:tony-o",
   "provides" : {
     "Operator::feq" : "lib/Operator/feq.pm6",
     "Operator::feq::Levenshtein" : "lib/Operator/feq/Levenshtein.pm6"
