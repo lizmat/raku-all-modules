@@ -1,0 +1,15 @@
+use v6;
+
+use Shell::Command;
+use HTTP::UserAgent;
+use XML;
+use App::AizuOnlineJudge::BasicCourse;
+use App::AizuOnlineJudge::IntroductionCourse;;
+
+multi MAIN ('submit', Str :$code, Str :$problem-number, Str :$user, Str :$language) {
+    App::AizuOnlineJudge::BasicCourse.new(:$code, :$problem-number, :$user, :$language).run;
+}
+
+multi MAIN ('submit', Str :$code, Str :$problem-number, Str :$user, Str :$lesson-id, Str :$language) {
+    App::AizuOnlineJudge::IntroductionCourse.new(:$code, :$problem-number, :$user, :$lesson-id, :$language).run;
+}
