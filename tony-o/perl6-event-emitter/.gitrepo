@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-event-emitter.git
 	branch = master
-	commit = 904cf000eeada2df4c46f24ab21fdb66050945e4
-	parent = d9c083b83c7f4a53a310c007eb25bc11ecf64ebb
+	commit = 027874a291e6b17ba48988118626a2afdeb6533c
+	parent = f4f913c71aa9fb95d2d839577097a5811418c253
 	cmdver = 0.2.3
