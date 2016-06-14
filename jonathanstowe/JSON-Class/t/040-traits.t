@@ -1,6 +1,7 @@
 #!perl6
 use v6.c;
 use Test;
+use JSON::Fast;
 use JSON::Class;
 
 class TraitTest does JSON::Class {

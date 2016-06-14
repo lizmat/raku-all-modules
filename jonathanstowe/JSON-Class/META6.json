@@ -2,8 +2,9 @@
    "provides" : {
       "JSON::Class" : "lib/JSON/Class.pm"
    },
-   "version" : "0.0.6",
+   "version" : "0.0.8",
    "test-depends" : [
+      "JSON::Fast",
       "Test"
    ],
    "support" : {
