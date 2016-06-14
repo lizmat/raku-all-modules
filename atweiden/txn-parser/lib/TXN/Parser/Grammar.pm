@@ -1,4 +1,5 @@
 use v6;
+use X::TXN::Parser;
 unit grammar TXN::Parser::Grammar;
 
 # disposable grammar {{{
@@ -12,7 +13,7 @@ token gap:comment { <.comment> \n }
 
 token comment
 {
-    '#' <comment-text>
+    '--' <comment-text>
 }
 
 token comment-text
@@ -237,6 +238,81 @@ token string-literal-multiline-char:backslash
 }
 
 # --- end string literal grammar }}}
+# --- var-name string grammar {{{
+
+proto token var-name-string {*}
+token var-name-string:basic { '"' <string-basic-text> '"' }
+token var-name-string:literal { \' <string-literal-text> \' }
+
+# --- end var-name string grammar }}}
+# --- txnlib string grammar {{{
+
+token txnlib-string
+{
+    <txnlib-string-delimiter-left>
+    <txnlib-string-text>
+    <txnlib-string-delimiter-right>
+}
+
+token txnlib-string-delimiter-left
+{
+    '<'
+}
+
+token txnlib-string-delimiter-right
+{
+    '>'
+}
+
+token txnlib-string-path-divisor
+{
+    '/'
+}
+
+token txnlib-string-text
+{
+    <txnlib-string-char>+
+}
+
+proto token txnlib-string-char {*}
+
+token txnlib-string-char:common
+{
+    <+[\N]                          # anything but newlines
+     -[\h]                          # exclude horizontal whitespace
+     -txnlib-string-path-divisor    # exclude path divisor
+     -txnlib-string-delimiter-right # exclude right delimiter
+     -[\\]>                         # exclude backslash
+}
+
+proto token txnlib-escape {*}
+token txnlib-escape:sym<backslash> { \\ }
+token txnlib-escape:sym<delimiter-right> { <txnlib-string-delimiter-right> }
+token txnlib-escape:sym<horizontal-ws> { \h }
+token txnlib-escape:sym<path-divisor> { <txnlib-string-path-divisor> }
+
+token txnlib-string-char:escape-sequence
+{
+    # backslash followed by a valid escape code else error
+    \\
+    [
+        <txnlib-escape>
+
+        ||
+
+        .
+        {
+            die X::TXN::Parser::String::EscapeSequence.new(:esc(~$/));
+        }
+    ]
+}
+
+token txnlib-string-char:path-divisor
+{
+    <txnlib-string-path-divisor>
+}
+
+# --- end txnlib string grammar }}}
 
 # end string grammar }}}
 # number grammar {{{
@@ -390,10 +466,6 @@ proto token var-name {*}
 token var-name:bare { <+alnum +[-]>+ }
 token var-name:quoted { <var-name-string> }
 
-proto token var-name-string {*}
-token var-name-string:basic { '"' <string-basic-text> '"' }
-token var-name-string:literal { \' <string-literal-text> \' }
-
 # end variable grammar }}}
 # reserved words grammar {{{
 
@@ -439,7 +511,7 @@ token exclamation-mark
 
 token tag
 {
-    '@' <var-name>
+    '#' <var-name>
 }
 
 # end header grammar }}}
@@ -578,7 +650,8 @@ token xe-secondary
 }
 
 proto token xe-secondary-symbol {*}
-token xe-secondary-symbol:texas { '==>' }
+token xe-secondary-symbol:hyper { '«' }
+token xe-secondary-symbol:texas { '<<' }
 
 # --- end posting amount grammar }}}
 
@@ -590,9 +663,16 @@ token include-line
     ^^ \h* <include> \h* <.comment>? $$ \n
 }
 
-token include
+proto token include {*}
+
+token include:filename
 {
     include \h+ <filename>
+}
+
+token include:txnlib
+{
+    include \h+ <txnlib>
 }
 
 token filename
@@ -600,20 +680,12 @@ token filename
     <var-name-string>
 }
 
+token txnlib
+{
+    <txnlib-string>
+}
+
 # end include grammar }}}
-# extends grammar {{{
-
-token extends-line
-{
-    ^^ \h* <extends> \h* <.comment>? $$ \n
-}
-
-token extends
-{
-    extends \h+ <filename>
-}
-
-# end extends grammar }}}
 # journal grammar {{{
 
 token TOP
@@ -631,7 +703,6 @@ token segment:blank { <.blank-line> }
 token segment:comment { <.comment-line> }
 token segment:entry { <entry> }
 token segment:include { <include-line> }
-token segment:extends { <extends-line> }
 
 token blank-line
 {

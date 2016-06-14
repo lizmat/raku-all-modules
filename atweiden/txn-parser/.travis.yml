@@ -24,6 +24,8 @@ before_install:
   - popd
   - sudo make install -C build/
   - cd $TRAVIS_BUILD_DIR
+  # get t/data
+  - git clone https://github.com/atweiden/txn-examples t/data
 
 install:
   - rakudobrew build panda

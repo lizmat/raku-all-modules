@@ -42,15 +42,15 @@ subtest
 subtest
 {
     my Str @metainfo =
-        Q{@tag1 ! @TAG2 !! @TAG5 @bliss !!!!!},
-        Q{@"∅" !! @96 !!!!};
+        Q{#tag1 ! #TAG2 !! #TAG5 #bliss !!!!!},
+        Q{#"∅" !! #96 !!!!};
     my Str $metainfo-multiline = Q:to/EOF/;
-    !!!# comment
-    @tag1 # comment
-    # comment
-    @tag2 # comment
-    # another comment
-    @tag3#comment
+    !!!-- comment
+    #tag1 -- comment
+    -- comment
+    #tag2 -- comment
+    -- another comment
+    #tag3--comment
     !!!!!
     EOF
     push @metainfo, $metainfo-multiline.trim;
@@ -118,7 +118,7 @@ subtest
     my Str @headers;
 
     push @headers,
-        qq{2014-01-01 "I started with 1000 USD" ! @TAG1 @TAG2 # COMMENT\n};
+        qq{2014-01-01 "I started with 1000 USD" ! #TAG1 #TAG2 -- COMMENT\n};
 
     push @headers, qq{2014-01-02 "I paid Exxon Mobile 10 USD"\n};
 
@@ -127,21 +127,21 @@ subtest
     push @headers, qq{2014-01-03 "I bought ฿0.80000000 BTC for 800 USD#@*!%"\n};
 
     my Str $header-multiline = Q:to/EOF/;
-    2014-05-09# comment
-    # comment
-    @tag1 @tag2 @tag3 !!!# comment
-    # comment
-    """ # non-comment
+    2014-05-09-- comment
+    -- comment
+    #tag1 #tag2 #tag3 !!!-- comment
+    -- comment
+    """ -- non-comment
     This is a multiline description of the transaction.
     This is another line of the multiline description.
-    """# comment
-    #comment
-    @tag4#comment
-    #comment
-    @tag5#comment
-    @tag6#comment
-    #comment
-    !!!# comment here
+    """-- comment
+    --comment
+    #tag4--comment
+    --comment
+    #tag5--comment
+    #tag6--comment
+    --comment
+    !!!-- comment here
     EOF
 
     is(

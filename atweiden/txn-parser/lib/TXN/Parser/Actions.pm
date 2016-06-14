@@ -1,14 +1,29 @@
 use v6;
 use Digest::xxHash;
+use TXN::Parser::Grammar;
 use X::TXN::Parser;
 unit class TXN::Parser::Actions;
 
+# public attributes {{{
+
+# base path for <include> directives
+has Str $.txndir = "%*ENV<HOME>/.config/mktxn/txn";
+
 # DateTime offset for when the local offset is omitted in dates. if
-# not passed as a parameter during instantiation, use UTC
+# not passed as a parameter during instantiation, use UTC (0)
 has Int $.date-local-offset = 0;
 
 # increments on each entry (0+)
-has UInt $!entry-number = 0;
+# each element in list represents an include level deep (0+)
+has UInt @.entry-number = 0;
+
+# the file currently being parsed
+has Str $.file = '.';
+
+# for storing parsed entries
+has @.entries;
+
+# end public attributes }}}
 
 subset Quantity of FatRat where * >= 0;
 
@@ -171,6 +186,77 @@ method string-literal-multiline($/)
 }
 
 # --- end string literal grammar-actions }}}
+# --- var-name string grammar-actions {{{
+
+method var-name-string:basic ($/)
+{
+    make $<string-basic-text>.made;
+}
+
+method var-name-string:literal ($/)
+{
+    make $<string-literal-text>.made;
+}
+
+# --- end var-name string grammar-actions }}}
+# --- txnlib string grammar-actions {{{
+
+method txnlib-string-delimiter-right($/)
+{
+    make ~$/;
+}
+
+method txnlib-string-path-divisor($/)
+{
+    make ~$/;
+}
+
+method txnlib-escape:sym<backslash>($/)
+{
+    make '\\';
+}
+
+method txnlib-escape:sym<delimiter-right>($/)
+{
+    make $<txnlib-string-delimiter-right>.made;
+}
+
+method txnlib-escape:sym<horizontal-ws>($/)
+{
+    make ~$/;
+}
+
+method txnlib-escape:sym<path-divisor>($/)
+{
+    make $<txnlib-string-path-divisor>.made;
+}
+
+method txnlib-string-char:common ($/)
+{
+    make ~$/;
+}
+
+method txnlib-string-char:escape-sequence ($/)
+{
+    make $<txnlib-escape>.made;
+}
+
+method txnlib-string-char:path-divisor ($/)
+{
+    make $<txnlib-string-path-divisor>.made;
+}
+
+method txnlib-string-text($/)
+{
+    make @<txnlib-string-char>».made.join;
+}
+
+method txnlib-string($/)
+{
+    make $<txnlib-string-text>.made;
+}
+
+# --- end txnlib string grammar-actions }}}
 
 method string:basic ($/)
 {
@@ -256,7 +342,7 @@ method time-secfrac($/)
 
 method time-numoffset($/)
 {
-    my Int $multiplier = $<plus-or-minus> ~~ '+' ?? 1 !! -1;
+    my Int $multiplier = $<plus-or-minus> eq '+' ?? 1 !! -1;
     make Int(
         (
             ($multiplier * $<time-hour>.made * 60) + $<time-minute>.made
@@ -349,16 +435,6 @@ method var-name:bare ($/)
     make ~$/;
 }
 
-method var-name-string:basic ($/)
-{
-    make $<string-basic-text>.made;
-}
-
-method var-name-string:literal ($/)
-{
-    make $<string-literal-text>.made;
-}
-
 method var-name:quoted ($/)
 {
     make $<var-name-string>.made;
@@ -375,18 +451,18 @@ method important($/)
 
 method tag($/)
 {
-    # make tag (with leading @ stripped)
+    # make tag (with leading # stripped)
     make $<var-name>.made;
 }
 
 method meta:important ($/)
 {
-    make %(important => $<important>.made);
+    make %(:important($<important>.made));
 }
 
 method meta:tag ($/)
 {
-    make %(tag => $<tag>.made);
+    make %(:tag($<tag>.made));
 }
 
 method metainfo($/)
@@ -405,8 +481,7 @@ method header($/)
     my DateTime $date = $<date>.made;
 
     # entry description
-    my Str $description = '';
-    $description = $<description>.made if $<description>;
+    my Str $description = $<description> ?? $<description>.made !! '';
 
     # entry importance
     my UInt $important = 0;
@@ -416,8 +491,8 @@ method header($/)
 
     for @<metainfo>».made -> @metainfo
     {
-        $important += [+] @metainfo.grep({ .keys ~~ 'important' })».values.flat;
-        push @tags, |@metainfo.grep({ .keys ~~ 'tag' })».values.flat.unique;
+        $important += [+] @metainfo.grep({ .keys eq 'important' })».values.flat;
+        push @tags, |@metainfo.grep({ .keys eq 'tag' })».values.flat.unique;
     }
 
     # make entry header container
@@ -513,8 +588,7 @@ method xe-main($/)
     my Quantity $asset-quantity = $<asset-quantity>.made;
 
     # asset symbol
-    my Str $asset-symbol = '';
-    $asset-symbol = $<asset-symbol>.made if $<asset-symbol>;
+    my Str $asset-symbol = $<asset-symbol> ?? $<asset-symbol>.made !! '';
 
     # make exchange rate
     make %(:$asset-code, :$asset-quantity, :$asset-symbol);
@@ -546,12 +620,10 @@ method amount($/)
     my Quantity $asset-quantity = $<asset-quantity>.made;
 
     # asset symbol
-    my Str $asset-symbol = '';
-    $asset-symbol = $<asset-symbol>.made if $<asset-symbol>;
+    my Str $asset-symbol = $<asset-symbol> ?? $<asset-symbol>.made !! '';
 
     # minus sign
-    my Str $plus-or-minus = '';
-    $plus-or-minus = $<plus-or-minus>.made if $<plus-or-minus>;
+    my Str $plus-or-minus = $<plus-or-minus> ?? $<plus-or-minus>.made !! '';
 
     # exchange rate
     my %exchange-rate;
@@ -571,7 +643,7 @@ method amount($/)
 
 method posting($/)
 {
-    my Str $text = $/.Str;
+    my Str $text = ~$/;
 
     # account
     my %account = $<account>.made;
@@ -580,7 +652,7 @@ method posting($/)
     my %amount = $<amount>.made;
 
     # dec / inc
-    my Str $decinc = mkdecinc(%amount<plus-or-minus>);
+    my Str $decinc = %amount<plus-or-minus> eq '-' ?? 'DEC' !! 'INC';
 
     # xxHash of transaction journal posting text
     my UInt $xxhash = xxHash32($text);
@@ -607,54 +679,69 @@ method filename($/)
     make $<var-name-string>.made;
 }
 
-method include($/)
+method txnlib($/)
 {
-    # relative path to transaction journal with .txn extension appended
-    make $<filename>.made ~ ".txn";
+    make $<txnlib-string>.made;
 }
 
-method include-line($/)
+method include:filename ($/ is copy)
 {
-    make $<include>.made;
+    my Str $filename = $<filename>.made.IO.is-relative
+        # if relative path given, resolve path relative to current txn
+        # file being parsed and append '.txn' extension
+        ?? join('/', $.file.IO.dirname, $<filename>.made) ~ '.txn'
+        # if absolute path given, use it directly (don't append extension)
+        !! $<filename>.made;
+
+    unless $filename.IO.e && $filename.IO.r && $filename.IO.f
+    {
+        die X::TXN::Parser::Include.new(:$filename);
+    }
+
+    my UInt @entry-number = |@.entry-number.deepmap(*.clone), 0;
+    my TXN::Parser::Actions $actions .=
+        new(:@entry-number, :$.date-local-offset, :file($filename), :$.txndir);
+    TXN::Parser::Grammar.parsefile($filename, :$actions);
+    push @!entries, |$actions.entries;
+    @!entry-number[*-1]++;
+}
+
+method include:txnlib ($/ is copy)
+{
+    unless $<txnlib>.made.IO.is-relative
+    {
+        die X::TXN::Parser::TXNLibAbsolute(:lib($<txnlib>.made));
+    }
+
+    my Str $filename = join('/', $.txndir, $<txnlib>.made) ~ '.txn';
+
+    unless $filename.IO.e && $filename.IO.r && $filename.IO.f
+    {
+        die X::TXN::Parser::Include.new(:$filename);
+    }
+
+    my UInt @entry-number = |@.entry-number.deepmap(*.clone), 0;
+    my TXN::Parser::Actions $actions .=
+        new(:@entry-number, :$.date-local-offset, :file($filename), :$.txndir);
+    TXN::Parser::Grammar.parsefile($filename, :$actions);
+    push @!entries, |$actions.entries;
+    @!entry-number[*-1]++;
 }
 
 # end include grammar-actions }}}
-# extends grammar-actions {{{
-
-method extends($/)
-{
-    my Str $filename = $<filename>.made;
-    unless $filename.IO.e && $filename.IO.r
-    {
-        die X::TXN::Parser::Extends.new(:$filename);
-    }
-    make $filename;
-}
-
-method extends-line($/)
-{
-    make $<extends>.made;
-}
-
-# end extends grammar-actions }}}
 # journal grammar-actions {{{
 
 method entry($/)
 {
-    my Str $text = $/.Str;
-
+    my Str $text = ~$/;
     my @postings = $<postings>.made;
 
     # verify entry is limited to one entity
     {
         my Str @entities;
         push @entities, $_<account><entity> for @postings;
-
-        # is the number of elements sharing the same entity name not equal
-        # to the total number of entity names seen?
         unless @entities.grep(@entities[0]).elems == @entities.elems
         {
-            # error: invalid use of more than one entity per journal entry
             die X::TXN::Parser::Entry::MultipleEntities.new(
                 :number-entities(@entities.elems),
                 :entry-text($text)
@@ -662,12 +749,9 @@ method entry($/)
         }
     }
 
-    # xxHash of transaction journal entry text
-    my UInt $xxhash = xxHash32($text);
-
-    my %entry-id = :number($!entry-number++), :$xxhash, :$text;
-
     # insert PostingID derived from EntryID into postings
+    my UInt $xxhash = xxHash32($text);
+    my %entry-id = :number(@.entry-number.deepmap(*.clone)), :$xxhash, :$text;
     my UInt $posting-number = 0;
     @postings .= map({
         %(
@@ -683,50 +767,15 @@ method entry($/)
         )
     });
 
-    make %(:id(%entry-id), :header($<header>.made), :@postings);
-}
-
-method segment:entry ($/)
-{
-    make $<entry>.made;
-}
-
-method journal($/)
-{
-    my @entries = @<segment>».made.grep(Hash);
-    make @entries;
+    push @!entries, %(:id(%entry-id), :header($<header>.made), :@postings);
+    @!entry-number[*-1]++;
 }
 
 method TOP($/)
 {
-    make $<journal>.made;
+    make @.entries;
 }
 
 # end journal grammar-actions }}}
-
-# helper functions {{{
-
-sub mkasset-flow(FatRat:D $d) returns Str:D
-{
-    if $d > 0
-    {
-        'ACQUIRE';
-    }
-    elsif $d < 0
-    {
-        'EXPEND';
-    }
-    else
-    {
-        'STABLE';
-    }
-}
-
-sub mkdecinc(Str $plus-or-minus) returns Str:D
-{
-    $plus-or-minus ~~ '-' ?? 'DEC' !! 'INC';
-}
-
-# end helper functions }}}
 
 # vim: ft=perl6 fdm=marker fdl=0

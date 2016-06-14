@@ -27,6 +27,22 @@ subtest
     include "journal includes/file with whitespace"
     EOF
 
+    push @include-lines, Q:to/EOF/;
+    include <basic>
+    EOF
+
+    push @include-lines, Q:to/EOF/;
+    include <FY/2011/Q1>
+    EOF
+
+    push @include-lines, Q:to/EOF/;
+    include <journal\ includes/lib\ with\ whitespace>
+    EOF
+
+    push @include-lines, Q:to/EOF/;
+    include <includes\\/\>・ï\/©ㄦﬁ>
+    EOF
+
     sub is-valid-include-line(Str:D $include-line) returns Bool:D
     {
         TXN::Parser::Grammar.parse($include-line, :rule<include-line>).so;
@@ -54,37 +70,37 @@ subtest
     my Str @entries;
 
     push @entries, Q:to/EOF/;
-    2015-01-01#comment
+    2015-01-01--comment
       ASSETS."∅"."First Bank Checking"  $440.00 USD
       INCOME."∅".interest               $440.00 USD
     EOF
 
     push @entries, Q:to/EOF/;
-    2015-01-01 "I bought fuel at Shell station"# EODESC comment
-      # comment
-      expenses.personal.fuel.shell  $57.00 USD#comment
-      # comment
-      liabilities.personal.amex     $57.00 USD#comment
-      # comment
-      # comment
+    2015-01-01 "I bought fuel at Shell station"-- EODESC comment
+      -- comment
+      expenses.personal.fuel.shell  $57.00 USD--comment
+      -- comment
+      liabilities.personal.amex     $57.00 USD--comment
+      -- comment
+      -- comment
     EOF
 
     push @entries, Q:to/EOF/;
     2015-01-01
 
-    # comment
-    # comment
-    # comment
+    -- comment
+    -- comment
+    -- comment
 
-    @tag1 @tag2 @tag3 !!!
+    #tag1 #tag2 #tag3 !!!
     """
     This is a multiline description.
     """
-    @more1 @more2 @more3
+    #more1 #more2 #more3
 
-    # comment
-    # comment
-    # comment
+    -- comment
+    -- comment
+    -- comment
 
     Assets:Business:Cats        1 XCAT @ $1200.00 USD
     Expenses:Business:Cats      $1200.00 USD

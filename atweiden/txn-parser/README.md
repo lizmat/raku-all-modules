@@ -1,11 +1,9 @@
-TXN::Parser
-===========
+# TXN::Parser
 
 Double-entry bookkeeping transaction journal parser
 
 
-Synopsis
---------
+## Synopsis
 
 ```perl6
 use TXN::Parser;
@@ -24,13 +22,24 @@ my @txn = TXN::Parser.parsefile($file).made;
 ```
 
 
-Installation
-------------
+## Installation
 
-#### Dependencies
+### Dependencies
 
 - Rakudo Perl6
 - [Digest::xxHash](https://github.com/atweiden/digest-xxhash)
+
+### Test Dependencies
+
+- [Peru](https://github.com/buildinspace/peru)
+
+To run the tests:
+
+```
+$ git clone https://github.com/atweiden/txn-parser && cd txn-parser
+$ peru --file=.peru.yaml --sync-dir="$PWD" sync
+$ PERL6LIB=lib prove -r -e perl6
+```
 
 
 Licensing

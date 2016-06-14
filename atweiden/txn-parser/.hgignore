@@ -1,0 +1,5 @@
+syntax: glob
+
+.peru
+.precomp
+t/data/*

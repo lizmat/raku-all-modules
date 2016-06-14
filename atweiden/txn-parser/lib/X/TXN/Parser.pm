@@ -1,5 +1,5 @@
 use v6;
-unit class X::TXN::Parser;
+unit module X::TXN::Parser;
 
 # X::TXN::Parser::Entry::MultipleEntities {{{
 
@@ -23,25 +23,6 @@ class Entry::MultipleEntities is Exception
 }
 
 # end X::TXN::Parser::Entry::MultipleEntities }}}
-
-# X::TXN::Parser::Extends {{{
-
-class Extends is Exception
-{
-    has Str $.filename is required;
-
-    method message() returns Str
-    {
-        my Str $message = qq:to/EOF/;
-        Sorry, could not locate transaction journal to extend
-
-            「$.filename」
-        EOF
-        $message.trim;
-    }
-}
-
-# end X::TXN::Parser::Extends }}}
 
 # X::TXN::Parser::Include {{{
 
@@ -101,5 +82,19 @@ class String::EscapeSequence is Exception
 }
 
 # end X::TXN::Parser::String::EscapeSequence }}}
+
+# X::TXN::Parser::TXNLibAbsolute {{{
+
+class TXNLibAbsolute is Exception
+{
+    has Str $.lib is required;
+
+    method message() returns Str
+    {
+        my Str $message = "Sorry, txnlib path can't be absolute. Got:「$.lib」";
+    }
+}
+
+# end X::TXN::Parser::TXNLibAbsolute }}}
 
 # vim: ft=perl6 fdm=marker fdl=0
