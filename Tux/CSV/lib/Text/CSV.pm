@@ -865,7 +865,7 @@ class Text::CSV {
         my Str $q = $!quo;
         my Str $e = $!esc;
         my Str @f;
-        for flat @fld -> $f {
+        for @fld -> $f {
             if (!$f.defined || $f.undefined) {
                 @f.push: "";
                 next;
@@ -895,7 +895,7 @@ class Text::CSV {
         self.combine ($c.list);
         }
     multi method combine (*@f) returns Bool {
-        self.combine ([@f]);
+        self.combine (@f);
         }
     multi method combine (@f) returns Bool {
         $!csv-row.fields = ();
