@@ -6,5 +6,6 @@
   "provides" : {
       "HTML::Parser": "lib/HTML/Parser.pm6"
   },
+  "auth": "github:tony-o",
   "source-url" : "git://github.com/tony-o/perl6-html-parser.git"
 }
