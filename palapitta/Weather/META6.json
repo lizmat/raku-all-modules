@@ -1,0 +1,16 @@
+{
+	"name" : "Weather",
+	"version" : "0.1.5",
+	"description" : "Get Weather info",
+	"depends" : [
+		"JSON::Fast",
+		"Net::HTTP::GET"
+	],
+	"authors" : [
+		"Rajkumar Reddy"
+	],
+	"provides" : {
+		"Weather" : "lib/Weather.pm6"
+	},
+	"source-url" : "git://github.com/palapitta/Weather"
+}
