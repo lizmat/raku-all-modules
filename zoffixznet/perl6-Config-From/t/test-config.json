@@ -1,0 +1,8 @@
+{
+    "scalar": "got the scalar",
+    "array" : ["got", "the", "array" ],
+    "hash"  : {
+        "got": "the",
+        "hash": "var"
+    }
+}

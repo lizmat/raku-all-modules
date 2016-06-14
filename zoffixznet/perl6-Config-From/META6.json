@@ -1,0 +1,13 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Config::From",
+    "version"      : "1.001001",
+    "description"  : "Load configuration from file to variables via traits",
+    "depends"      : [ "JSON::Fast" ],
+    "test-depends" : [ "Test", "Test::META" ],
+    "provides"     : {
+        "Config::From" : "lib/Config/From.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "support"      : {"source"   : "git://github.com/zoffixznet/perl6-Config-From.git"}
+}
