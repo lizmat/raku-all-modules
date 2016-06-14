@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jonathanstowe/p6-Linux-Fuser.git
 	branch = master
-	commit = 98b5c6187495a94a4f04c9501a8a605f2009f347
-	parent = 71af854cea756a2e05403ac38103049773e2f8b2
+	commit = 1c1e95017e497aad7688ed694632b375d1f1fc76
+	parent = 264a8773c3b03b41d960a95da91466b50cd50953
 	cmdver = 0.2.3
