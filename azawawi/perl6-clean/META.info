@@ -1,0 +1,10 @@
+{
+  "name"          : "Clean",
+  "version"       : "*",
+  "perl"          : "6.c",
+  "description"   : "Scoped object oriented automatic cleanup",
+  "depends"       : [ ],
+  "test-depends"  : [ "Test" ],
+  "provides"      : { "Clean" : "lib/Clean.pm6" },
+  "source-url"    : "git://github.com/azawawi/perl6-clean.git"
+}

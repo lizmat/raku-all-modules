@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/perl6-clean.git
+	branch = master
+	commit = 15cee9d62fc2f106c752ca80f2b8ddbfd4b7c7f5
+	parent = b1c0da0ea79ee0fcd490ad22cc40114500d1e83d
+	cmdver = 0.2.3
