@@ -1,0 +1,12 @@
+{
+	"name" : "Aria",
+	"version" : "0.1.3",
+	"description" : "using Aria",
+	"authors" : [
+		"Rajkumar Reddy"
+	],
+	"provides" : {
+		"Aria" : "lib/Aria.pm6"
+	},
+	"source-url" : "git://github.com/palapitta/Aria"
+}

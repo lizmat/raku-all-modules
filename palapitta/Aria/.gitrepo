@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/palapitta/Aria.git
+	branch = master
+	commit = e759d2e6a345b6f4aec770240265f4238a43efd8
+	parent = d252be596761b5c6210759187e640e892a577d68
+	cmdver = 0.2.3
