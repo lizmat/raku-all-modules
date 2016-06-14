@@ -22,6 +22,8 @@ HTTP::Tinyish - perl6 port of HTTP::Tinyish
 
 =head1 SYNOPSIS
 
+Synchronous way:
+
   my $http = HTTP::Tinyish.new(agent => "Mozilla/4.0");
 
   my %res = $http.get("http://www.cpan.org/");
@@ -37,6 +39,26 @@ HTTP::Tinyish - perl6 port of HTTP::Tinyish
     "http://www.cpan.org/modules/02packages.details.txt.gz",
     "./02packages.details.txt.gz",
   ;
+
+Asynchronous way:
+
+  my $http = HTTP::Tinyish.new(:async);
+
+  my @url = <
+    http://perl6.org/
+    https://doc.perl6.org/
+    http://design.perl6.org/
+  >;
+
+  my @promise = @url.map: -> $url {
+    $http.get($url).then: -> $promise {
+      my %res = $promise.result;
+      say "Done %res<status> %res<url>";
+      %res;
+    };
+  };
+
+  my @res = await @promise;
 
 =head1 DESCRIPTION
 

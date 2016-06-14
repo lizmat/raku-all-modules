@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/skaji/perl6-HTTP-Tinyish.git
 	branch = master
-	commit = 8e08b309c15f0d339b56b88635e4dfe726b0f15a
-	parent = 4166f69647ddc0fde254fb37720c2b5b10628775
+	commit = 9a4951e379fa1453339c3f0c572ddf473fe0efa0
+	parent = d8a90062c3e3f4107da6bec40ec28be30dae0371
 	cmdver = 0.2.3
