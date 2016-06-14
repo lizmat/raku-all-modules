@@ -45,10 +45,10 @@ subtest {
         capacity   => 100,
     );
 
-    lives-ok { $bloom.add('hogehoge') };
+    lives-ok { $bloom.add('hogehoge') }, 'adding "hogehoge" succeeds';
 
-    ok $bloom.check('hogehoge');
-    ok !$bloom.check('fugafuga');
+    ok $bloom.check('hogehoge'), 'checking "hogehoge" succeeds';
+    ok !$bloom.check('fugafuga'), 'checking "fugafuga" fails';
 
 }, 'Test add/check';
 

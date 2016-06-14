@@ -26,6 +26,8 @@ DESCRIPTION
 
 Algorithm::BloomFilter is a pure Perl 6 implementation of [Bloom Filter](https://en.wikipedia.org/wiki/Bloom_filter), mostly based on [Bloom::Filter](https://metacpan.org/pod/Bloom::Filter) from Perl 5.
 
+Digest::MurmurHash3 is used for hashing from version 0.1.0.
+
 METHODS
 =======
 
@@ -48,11 +50,11 @@ INTERNAL METHODS
 
 Calculates and returns filter's length and a number of hash functions.
 
-### create-salts(Int:D :$count) returns Seq[Num]
+### create-salts(Int:D :$count) returns Seq[Int]
 
-Creates and returns `$count` unique and random salts.
+Creates and returns `$count` unique and random uint32 salts.
 
-### get-cells(Cool:D $key, Int:D :$filter-length, Int:D :$blankvec, Num:D :@salts) returns Array[Int]
+### get-cells(Cool:D $key, Int:D :$filter-length, Int:D :$blankvec, Int:D :@salts) returns List
 
 Calculates and returns positions to check in a bit vector.
 

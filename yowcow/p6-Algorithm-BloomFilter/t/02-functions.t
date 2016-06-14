@@ -18,7 +18,7 @@ subtest {
 
     subtest {
 
-        my Num @salts = Algorithm::BloomFilter.create-salts(count => 1);
+        my Int @salts = Algorithm::BloomFilter.create-salts(count => 1);
 
         is @salts.elems, 1;
 
@@ -26,7 +26,7 @@ subtest {
 
     subtest {
 
-        my Num @salts = Algorithm::BloomFilter.create-salts(count => 5);
+        my Int @salts = Algorithm::BloomFilter.create-salts(count => 5);
 
         is @salts.elems, 5;
 
@@ -36,7 +36,7 @@ subtest {
 
 subtest {
 
-    my Num @salts = Algorithm::BloomFilter.create-salts(count => 2);
+    my Int @salts = Algorithm::BloomFilter.create-salts(count => 2);
     my Int @cells = Algorithm::BloomFilter.get-cells(
         'hogehoge',
         filter-length => 10,
