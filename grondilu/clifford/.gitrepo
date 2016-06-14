@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/grondilu/clifford.git
+	branch = master
+	commit = 25f4273774b806deb8cf893beeccac8308c640e8
+	parent = 1bd6c3e0c456b0ed00f576b23e4942a0412360eb
+	cmdver = 0.2.3
