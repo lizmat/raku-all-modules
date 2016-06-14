@@ -8,7 +8,7 @@ Bailador::Plugin::AssetPack::SASS - automatically serve static files
 use Bailador;
 use Bailador::Plugin::AssetPack::SASS;
 
-Bailador::Plugin::AssetPack::SASS.install;
+Bailador::Plugin::AssetPack::SASS.install: app;
 
 ```
 
@@ -27,8 +27,10 @@ http://sass-lang.com/install
 ## `.install`
 
 ```perl6
-    Bailador::Plugin::AssetPack::SASS.install;
+    Bailador::Plugin::AssetPack::SASS.install: $app;
 ```
+
+Takes one argument: your `Bailador::App` object.
 
 Starts `sass` watcher and creates a route for delivering CSS files from
 `/assets/sass/*` URL, where the filename (and directory structure) from
@@ -41,8 +43,8 @@ NOTE: if you're also using
 be sure to include it AFTER `::AssetPack::SASS` or it'll shadow the created route:
 
 ```perl6
-    Bailador::Plugin::AssetPack::SASS.install;
-    Bailador::Plugin::Static.install;
+    Bailador::Plugin::AssetPack::SASS.install: $app;
+    Bailador::Plugin::Static.install: $app;
 ```
 
 ----

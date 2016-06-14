@@ -1,7 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Bailador::Plugin::AssetPack::SASS",
-    "version"      : "1.001001",
+    "version"      : "2.001001",
     "description"  : "Automatically preprocess and serve SASS files in Bailador apps",
     "depends"      : [
         "Bailador"

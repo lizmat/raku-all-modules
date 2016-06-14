@@ -1,8 +1,6 @@
-unit class Bailador::Plugin::AssetPack::SASS:ver<1.001001>;
+unit class Bailador::Plugin::AssetPack::SASS:ver<2.001001>;
 
-use Bailador;
-
-method install {
+method install ($app) {
     my $sass = Proc::Async.new: 'sass',  '--style', 'compressed',
         '--watch', $*SPEC.catdir('assets', 'sass');
 
@@ -10,10 +8,10 @@ method install {
     $sass.stderr.tap: -> $v { $*ERR.print: $v };
     $sass.start;
 
-    get rx{ ^ '/assets/sass/' (.+) $ } => sub ($name) {
+    $app.get: rx{ ^ '/assets/sass/' (.+) $ } => sub ($name) {
         my $file = $*SPEC.catdir('assets', 'sass', $name).IO;
-        return status 404 unless .extension eq 'css' and .f and .r given $file;
-        content_type 'text/css';
-        return $file.IO.slurp: :bin;
+        return $app.response.code: 404 unless .extension eq 'css' and .f and .r given $file;
+        $app.response.headers<Content-Type> = 'text/css';
+        $app.render: $file.IO.slurp: :bin;
     };
 }
