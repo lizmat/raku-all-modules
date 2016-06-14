@@ -6,5 +6,6 @@
   "provides" : {
       "Module::Does": "lib/Module/Does.pm6"
   },
+  "auth": "github:tony-o",
   "source-url" : "git://github.com/tony-o/perl6-module-does.git"
 }
