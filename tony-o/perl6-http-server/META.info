@@ -1,6 +1,7 @@
 {
   "name" : "HTTP::Server",
   "version" : "0.1",
+  "author" : "github:tony-o",
   "description" : "role for HTTP::Server so we can have start building out some servers with interchangeable backends",
   "depends" : [],
   "provides" : {
