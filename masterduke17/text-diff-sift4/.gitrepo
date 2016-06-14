@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/masterduke17/text-diff-sift4.git
+	branch = master
+	commit = 0f8ecdeddb0876067e4043decbd135850327d72f
+	parent = 825078cf3cb8986849c946fa2093fdf45ae975d5
+	cmdver = 0.2.3

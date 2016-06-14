@@ -1,0 +1,11 @@
+{
+	"name"			: "Text::Diff::Sift4",
+	"version"		: "1.0.0",
+	"description"	: "A quick string distance algorithm",
+	"author"		: "Daniel Green",
+	"provides"		: {
+		"Text::Diff::Sift4" : "lib/Text/Diff/Sift4.pm6"
+	},
+	"depends"		: [],
+	"source-url"	: "git://github.com/masterduke17/text-diff-sift4.git"
+}
