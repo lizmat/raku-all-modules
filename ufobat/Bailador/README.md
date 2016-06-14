@@ -4,6 +4,42 @@
 
 A light-weight route-based web application framework for Perl 6
 
+# TABLE OF CONTENTS
+- [Example](#example)
+- [How to Write Web Apps](#how-to-write-web-apps)
+    - [Mixing both Approaches](#mixing-both-approaches)
+    - [Classical Approach](#classical-approach)
+        - [Subroutines for your Application](#subroutines-for-your-application)
+            - [`app(Bailador::App $app)`](#appbailadorapp-app)
+            - [`get(Pair $x)`](#getpair-x)
+            - [`post(Pair $x)`](#postpair-x)
+            - [`put(Pair $x)`](#putpair-x)
+            - [`delete(Pair $x)`](#deletepair-x)
+            - [`redirect(Str $location)`](#redirectstr-location)
+            - [`renderer(Bailador::Template $renderer)`](#rendererbailadortemplate-renderer)
+            - [`sessions-config()`](#sessions-config)
+            - [`baile()`](#baile)
+            - [`get-psgi-app`](#get-psgi-app)
+        - [Subroutines that sould only be used inside the Code block of a Route](#subroutines-that-sould-only-be-used-inside-the-code-block-of-a-route)
+            - [`content_type(Str $type)`](#content_typestr-type)
+            - [`request()`](#request)
+            - [`header(Str $name, Cool $value)`](#headerstr-name-cool-value)
+            - [`cookie(Str $name, Str $value, Str :$domain, Str :$path, DateTime :$expires, Bool :$http-only; Bool :$secure)`](#cookiestr-name-str-value-str-domain-str-path-datetime-expires-bool-http-only-bool-secure)
+            - [`status(Int $code)`](#statusint-code)
+            - [`template(Str $template-name, *@params)`](#templatestr-template-name-params)
+            - [`session()`](#session)
+    - [Web Applications via Inheriting from `Bailador::App`](#web-applications-via-inheriting-from-bailadorapp)
+        - [Nested Routes](#nested-routes)
+        - [Auto Rendering](#auto-rendering)
+        - [Return Values of Routes](#return-values-of-routes)
+        - [Bailador::Route::StaticFile](#bailadorroutestaticfile)
+- [Templates](#templates)
+    - [Error Templates](#error-templates)
+- [Sessions](#sessions)
+- [Bailador-based applications](#bailador-based-applications)
+- [Articles about Bailador](#articles-about-bailador)
+- [License](#license)
+
 ## Example
 
 ```Perl6
@@ -17,7 +53,7 @@ get '/' => sub {
 baile;
 ```
 
-For more examples, pleasee see the [examples](examples) folder.
+For more examples, please see the [examples](examples) folder.
 
 ## How to Write Web Apps
 
@@ -25,9 +61,27 @@ Bailador offers two different approaches to write web applications. The first an
 
 New features like nested routes and whatever is yet to come are implemented in `Bailador::App` and can be used through the object oriented interface. Your own web application just inherits from `Bailador::App`.
 
-### Classic Approach
+### Mixing both Approaches
+
+When you write your own application, but still want to use the exported subs described in [this](#subroutines-that-sould-only-be-used-inside-the-code-block-of-a-route) section you MUST set your `$app` to be the default app.
+
+```Perl6
+use Bailador;
+use Bailador::App;
+
+class MyWebApp is Bailador::App { ... }
+my $app = MyWebApp.new;
+
+app $app;
+```
+
+### Classical Approach
 
 #### Subroutines for your Application
+
+#### `app(Bailador::App $app)`
+
+Sets a Bailador::App to be the default app for all the other exported subs described in [Subroutines that sould only be used inside the Code block of a Route](#subroutines-that-sould-only-be-used-inside-the-code-block-of-a-route).
 
 ##### `get(Pair $x)`
 ##### `post(Pair $x)`
@@ -35,6 +89,10 @@ New features like nested routes and whatever is yet to come are implemented in `
 ##### `delete(Pair $x)`
 
 Adds a route for get, post, put or delete requests. The key of the `Pair` is either a `Str` or a `Regex`. If a string is passed it is automatically converted into a regex. The value of the pair must be a `Callable`. Whenever the route matches on the requested URL the callable is invoked with the list of the `Match` as its parameters. The return value of the callable will be autorendered. So it is the content of your response.
+
+##### `redirect(Str $location)`
+
+Redirect to the specified location, can be relative or absolute URL. Adds Location-header to response and sets status code to 302.
 
 ##### `renderer(Bailador::Template $renderer)`
 
@@ -82,7 +140,7 @@ Calls the template which is a file in the views folder. For more details see the
 
 Returns the Session Hash. Session Hashes are empty if you start a new session. For details see the Sessions section.
 
-## Web Applications via Inheriting from `Bailador::App`
+### Web Applications via Inheriting from `Bailador::App`
 
 ```Perl6
 class MyWebApp is Bailador::App {
@@ -109,29 +167,38 @@ class MyWebApp is Bailador::App {
 }
 ```
 
-### Nested Routes
+#### Nested Routes
 
 Routes can be nested and structured in a tree. If you just use the methods get, post, etc from the Bailador::App all the routes that you add are placed on the first level of the tree, so nothing is nested so far.
 Nesting routes make sense if you want to enter routes just under conditions. The most perfect example when nested routes become handy is when you want to serve content just when someone is logged in. Instead of having the same check spread over and over in each and every sub you just create a `Bailador::Route` and add it with `self.add_route`. So the return value of the route now determines what to do.
 
-### Return Values of Routes
+#### Auto Rendering
+
+Auto rendering means that whatever (except `True` and `False`) the return value of the sub is, it will be rendered. Using `self.render` will turn of auto rendering, because you obviously have rendered something manually. In the classical approach auto rendering is always used.
+
+#### Return Values of Routes
 
   * `False`
+
     The callable of a route works as a conditional check and the nested routes will not be checked nor invoked. It behaves as if the route would not have matched at all. So it will continue to look for a route that matches your request.
 
   * `True`
-    The callable of a route works as a conditional check and allows to go deeper into the tree. In case nothing in the tree matches the request an exception is thrown. That causes to leave the nested routes and continue checking for other routes. Of course, if this happens in the first level of the tree a `404` is created
+
+    The callable of a route works as a conditional check and allows to go deeper into the tree. In case nothing in the tree matches the request an exception is thrown. That causes to leave the nested routes and continue checking for other routes. Of course, if this happens in the first level of the tree a `404` is created.
 
   * `Failure`s and `Exception`s
+
     This will cause a HTTP `500`
 
-  * _Nothing_
-    It is fine if a route returns nothing as long as you have rendered something within the callable of the route.
+  * anything that is not `defined`
 
-  * _Something_
-    If something is returned this will be the content of the response as long as you don't have rendered something in the callable of the route. Using `self.render` will turn of auto rendering.
+    It is fine if a route returns nothing (e.g. `Nil` or `Any`) or anything that is not defined as long as you have rendered something within the callable of the route.
 
-### Bailador::Route::StaticFile
+  * anything that is `defined`
+
+    If anything defined is returned this will be the content of the response as long as you don't have rendered something in the callable of the route. Using `self.render` will turn off auto rendering.
+
+#### Bailador::Route::StaticFile
 
 ```Perl6
 my $files = Bailador::Route::StaticFile.new: directory => $dir, path => '/public/:file';
@@ -161,6 +228,9 @@ the template (or in other words the file views/template.tt) gets invoked "as a s
         <h1><% $name %></h1>
     <html>
 
+### Error Templates
+
+In order to customize the error pages drop a template file with the filename of the HTTP status code and the suffix `.xx` in your views directory. Curently there only two different error codes: `404` and `500`.
     
 ## Sessions
 
