@@ -3,6 +3,7 @@
 use v6;
 use Test;
 
+use JSON::Fast;
 use JSON::Infer;
 
 use JSON::Name;

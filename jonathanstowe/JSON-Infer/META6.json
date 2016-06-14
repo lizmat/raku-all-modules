@@ -22,9 +22,10 @@
     "JSON::Name" 
   ],
   "test-depends" : [
+    "JSON::Fast",
     "Test",
     "Test::META"
   ],
   "description" : "Infer Perl 6 Classes from JSON input",
-  "version" : "0.0.10"
+  "version" : "0.0.11"
 }
