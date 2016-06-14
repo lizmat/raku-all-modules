@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Algorithm-NaiveBayes.git
+	branch = master
+	commit = 5ce2c115ae6a563ee9f7237ea69bd2632a80b599
+	parent = 725da0975760245f1c2b1a6e4fc295f41ef3b2bb
+	cmdver = 0.2.3

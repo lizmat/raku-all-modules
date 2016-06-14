@@ -1,0 +1,23 @@
+{
+  "authors" : [
+    "titsuki"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "A Perl 6 Naive Bayes classifier implementation",
+  "name" : "Algorithm::NaiveBayes",
+  "perl" : "6.c",
+  "provides" : {
+    "Algorithm::NaiveBayes" : "lib/Algorithm/NaiveBayes.pm6",
+    "Algorithm::NaiveBayes::Classifiable" : "lib/Algorithm/NaiveBayes/Classifiable.pm6",
+    "Algorithm::NaiveBayes::Classifier::Bernoulli" : "lib/Algorithm/NaiveBayes/Classifier/Bernoulli.pm6",
+    "Algorithm::NaiveBayes::Classifier::Multinomial" : "lib/Algorithm/NaiveBayes/Classifier/Multinomial.pm6",
+    "Algorithm::NaiveBayes::Document" : "lib/Algorithm/NaiveBayes/Document.pm6",
+    "Algorithm::NaiveBayes::ModelUpdatable" : "lib/Algorithm/NaiveBayes/ModelUpdatable.pm6",
+    "Algorithm::NaiveBayes::Vocabulary" : "lib/Algorithm/NaiveBayes/Vocabulary.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/titsuki/p6-Algorithm-NaiveBayes.git",
+  "test-depends" : [ ],
+  "version" : "*"
+}
