@@ -18,10 +18,10 @@
   "depends" : [ 
   ],
   "test-depends" : [
-    "JSON::Tiny", 
+    "JSON::Fast", 
     "Test",
     "Test::META"
   ],
   "description" : "URI Templates as per https://tools.ietf.org/html/rfc6570",
-  "version" : "0.0.4"
+  "version" : "0.0.5"
 }

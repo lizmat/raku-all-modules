@@ -49,7 +49,7 @@ expected output.
 
 ## Licence
 
-Please see the LICENSE file in the distribution
+Please see the LICENCE file in the distribution
 
 © Jonathan Stowe 2015, 2016
 

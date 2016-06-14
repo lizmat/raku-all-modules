@@ -98,7 +98,7 @@ recommended to use a different object.
 
 =end pod
 
-class URI::Template:ver<0.0.4>:auth<github:jonathanstowe> {
+class URI::Template:ver<0.0.5>:auth<github:jonathanstowe> {
 
     has Str $.template is rw;
 
