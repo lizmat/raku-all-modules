@@ -1,11 +1,13 @@
 Config::TOML
 ============
 
-Parse TOML from file or Perl6 Str.
+TOML file parser and writer.
 
 
 Usage
 -----
+
+TOML to Perl6:
 
 ```perl6
 use Config::TOML;
@@ -21,6 +23,14 @@ my %toml = from-toml($toml);
 # parse toml from file
 my $file = 'config.toml';
 my %toml = from-toml(:$file);
+```
+
+Perl6 to TOML:
+
+```perl6
+use Config::TOML;
+my %h = :a<alpha>, :b<bravo>, :c<charlie>;
+to-toml(%h);
 ```
 
 

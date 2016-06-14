@@ -1,4 +1,5 @@
 use v6;
+use X::Config::TOML;
 unit grammar Config::TOML::Parser::Grammar;
 
 # disposable grammar {{{
@@ -66,8 +67,7 @@ token string-basic-char:escape-sequence
 
         .
         {
-            say "Sorry, found bad TOML escape sequence 「$/」";
-            exit;
+            die X::Config::TOML::String::EscapeSequence.new(:esc(~$/));
         }
     ]
 }
@@ -157,8 +157,7 @@ token string-basic-multiline-char:escape-sequence
 
         .
         {
-            say "Sorry, found bad TOML escape sequence 「$/」";
-            exit;
+            die X::Config::TOML::String::EscapeSequence.new(:esc(~$/));
         }
     ]
 }

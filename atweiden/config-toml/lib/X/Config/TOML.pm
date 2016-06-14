@@ -261,4 +261,91 @@ class BadKeypath::ArrayNotAOH is Exception {*}
 
 # end X::Config::TOML::BadKeypath::ArrayNotAOH }}}
 
+# X::Config::TOML::ParseFailed {{{
+
+class ParseFailed is Exception
+{
+    method message() returns Str
+    {
+        my Str $message = 'Sorry, parse failed';
+    }
+}
+
+# end X::Config::TOML::ParseFailed }}}
+
+# X::Config::TOML::ParsefileFailed {{{
+
+class ParsefileFailed is Exception
+{
+    method message() returns Str
+    {
+        my Str $message = 'Sorry, parsefile failed';
+    }
+}
+
+# end X::Config::TOML::ParsefileFailed }}}
+
+# X::Config::TOML::Dumper::BadKey {{{
+
+class Dumper::BadKey is Exception
+{
+    has $.key is required;
+    method message() returns Str
+    {
+        my Str $message = 'Sorry, '
+            ~ $.key.^name ~ ' types cannot be represented as TOML keypair key';
+    }
+}
+
+# end X::Config::TOML::Dumper::BadKey }}}
+
+# X::Config::TOML::Dumper::BadValue {{{
+
+class Dumper::BadValue is Exception
+{
+    has $.value is required;
+    method message() returns Str
+    {
+        my Str $message = 'Sorry, ';
+        $message ~= 'undefined ' unless $.value.defined;
+        $message ~= $.value.^name;
+        $message ~= ' types cannot be represented as TOML keypair value';
+        $message;
+    }
+}
+
+# end X::Config::TOML::Dumper::BadValue }}}
+
+# X::Config::TOML::Dumper::BadArray {{{
+
+class Dumper::BadArray is Exception
+{
+    has Positional $.array is required;
+    method message() returns Str
+    {
+        my Str $message = qq:to/EOF/;
+        Sorry, invalid TOML array.
+
+        Got: {$.array.perl}
+        EOF
+        $message.trim;
+    }
+}
+
+# end X::Config::TOML::Dumper::BadArray }}}
+
+# X::Config::TOML::String::EscapeSequence {{{
+
+class String::EscapeSequence is Exception
+{
+    has Str $.esc is required;
+
+    method message() returns Str
+    {
+        my Str $message = "Sorry, found bad string escape sequence 「$.esc」";
+    }
+}
+
+# end X::Config::TOML::String::EscapeSequence }}}
+
 # vim: ft=perl6 fdm=marker fdl=0

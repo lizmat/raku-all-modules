@@ -279,7 +279,7 @@ method time-secfrac($/)
 
 method time-numoffset($/)
 {
-    my Int $multiplier = $<plus-or-minus> ~~ '+' ?? 1 !! -1;
+    my Int $multiplier = $<plus-or-minus> eq '+' ?? 1 !! -1;
     make Int(
         (
             ($multiplier * $<time-hour>.made * 60) + $<time-minute>.made

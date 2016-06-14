@@ -8,7 +8,7 @@ plan 2;
 
 subtest
 {
-    my Str $toml = slurp 't/data/sample.transactions.toml';
+    my Str $toml = slurp 't/data/sample.txn.toml';
     my Config::TOML::Parser::Actions $actions .= new;
     my $match-toml = Config::TOML::Parser::Grammar.parse($toml, :$actions);
 

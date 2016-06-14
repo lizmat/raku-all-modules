@@ -2,7 +2,7 @@
     "name"        : "Config::TOML",
     "version"     : "*",
     "author"      : "Andy Weidenbaum",
-    "description" : "TOML parser for Perl6",
+    "description" : "TOML file parser and writer",
     "license"     : "http://unlicense.org/UNLICENSE",
     "depends"     : ["Crane"],
     "source-type" : "git",
@@ -12,10 +12,11 @@
         "source"     : "https://github.com/atweiden/config-toml"
     },
     "provides" : {
-        "Config::TOML"                     : "lib/Config/TOML.pm",
-        "Config::TOML::Parser"             : "lib/Config/TOML/Parser.pm",
-        "Config::TOML::Parser::Actions"    : "lib/Config/TOML/Parser/Actions.pm",
-        "Config::TOML::Parser::Grammar"    : "lib/Config/TOML/Parser/Grammar.pm",
-        "X::Config::TOML"                  : "lib/X/Config/TOML.pm"
+        "Config::TOML"                  : "lib/Config/TOML.pm",
+        "Config::TOML::Dumper"          : "lib/Config/TOML/Dumper.pm",
+        "Config::TOML::Parser"          : "lib/Config/TOML/Parser.pm",
+        "Config::TOML::Parser::Actions" : "lib/Config/TOML/Parser/Actions.pm",
+        "Config::TOML::Parser::Grammar" : "lib/Config/TOML/Parser/Grammar.pm",
+        "X::Config::TOML"               : "lib/X/Config/TOML.pm"
     }
 }
