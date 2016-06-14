@@ -3,6 +3,8 @@
 use v6;
 use Test;
 
+use JSON::Fast;
+
 use META6;
 
 my IO::Path $data-dir = $*PROGRAM.parent.child("data");

@@ -9,6 +9,7 @@
       "META6" : "lib/META6.pm"
    },
    "test-depends" : [
+      "JSON::Fast",
       "Test"
    ],
    "emulates" : {},
@@ -32,7 +33,7 @@
    "authors" : [
       "Jonathan Stowe <jns+git@gellyfish.co.uk>"
    ],
-   "version" : "0.0.9",
+   "version" : "0.0.10",
    "license" : "Artistic",
    "resource" : {},
    "superseded-by" : {},
