@@ -1,0 +1,28 @@
+.PHONY: clean test
+
+all: %DESTDIR% %DESTDIR%/libmurmurhash3%SO%
+
+%DESTDIR%:
+	mkdir -p %DESTDIR%
+
+%DESTDIR%/libmurmurhash3%SO%: %DESTDIR%/MurmurHash3%O% %DESTDIR%/libmurmurhash3%O%
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/libmurmurhash3%SO% %DESTDIR%/MurmurHash3%O% %DESTDIR%/libmurmurhash3%O%
+
+%DESTDIR%/MurmurHash3%O%:
+	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT% %DESTDIR%/MurmurHash3%O% MurmurHash3.cpp
+
+%DESTDIR%/libmurmurhash3%O%: libmurmurhash3.c
+	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT% %DESTDIR%/libmurmurhash3%O% libmurmurhash3.c
+
+test: %DESTDIR%/libmurmurhash3-test %DESTDIR%/libmurmurhash3%SO%
+	%DESTDIR%/libmurmurhash3-test
+	cd ../ && prove
+
+%DESTDIR%/libmurmurhash3-test: %DESTDIR%/MurmurHash3%O% %DESTDIR%/libmurmurhash3-test%O%
+	%CC% %CCSHARED% %CCFLAGS% %CCOUT% %DESTDIR%/libmurmurhash3-test %DESTDIR%/MurmurHash3%O% %DESTDIR%/libmurmurhash3-test%O%
+
+%DESTDIR%/libmurmurhash3-test%O%:
+	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT% %DESTDIR%/libmurmurhash3-test%O% libmurmurhash3-test.c
+
+clean:
+	-rm -rf %DESTDIR%
