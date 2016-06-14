@@ -30,9 +30,10 @@ class X::ParameterMismatch is Exception {
 
 class X::Property::NotFound is Exception {
     has $.propname;
+    has $.type;
 
     method message {
-        "Property '$.propname' not found"
+        "Property '$.propname' not found on object of type $.type"
     }
 }
 
@@ -59,6 +60,10 @@ role Q {
 
     method quoted-Str {
         self.Str
+    }
+
+    method truthy {
+        True
     }
 
     method attributes {
@@ -117,7 +122,7 @@ class Q::Term::Array does Q::Term {
     has Val::Array $.elements;
 
     method eval($runtime) {
-        Val::Array.new(:elements($.elements.elements».eval($runtime)));
+        Val::Array.new(:elements($.elements.elements.map(*.eval($runtime))));
     }
 }
 
@@ -158,10 +163,6 @@ class Q::TraitList does Q {
     has Val::Array $.traits = Val::Array.new;
 
     method attribute-order { <traits> }
-
-    method interpolate($runtime) {
-        self.new(:traits(Val::Array.new(:elements($.traits.elements».interpolate($runtime)))));
-    }
 }
 
 class Q::Term::Sub does Q::Term does Q::Declaration {
@@ -179,6 +180,7 @@ class Q::Term::Sub does Q::Term does Q::Declaration {
             :$name,
             :parameterlist($.block.parameterlist),
             :statementlist($.block.statementlist),
+            :static-lexpad($.block.static-lexpad),
             :outer-frame($runtime.current-frame),
         );
     }
@@ -187,16 +189,16 @@ class Q::Term::Sub does Q::Term does Q::Declaration {
 class Q::Block does Q {
     has $.parameterlist;
     has $.statementlist;
-    has %.static-lexpad;
+    has Val::Object $.static-lexpad is rw = Val::Object.new;
 
     method attribute-order { <parameterlist statementlist> }
 
     method eval($runtime) {
-        my $outer-frame = $runtime.current-frame;
+        my Val::Object $outer-frame = $runtime.current-frame;
         Val::Block.new(
             :$.parameterlist,
             :$.statementlist,
-            :%.static-lexpad,
+            :$.static-lexpad,
             :$outer-frame
         );
     }
@@ -370,7 +372,7 @@ class Q::Postfix::Call is Q::Postfix {
             if $c ~~ Val::Macro;
         die "Trying to invoke a {$c.^name.subst(/^'Val::'/, '')}" # XXX: make this into an X::
             unless $c ~~ Val::Block;
-        my @arguments = $.argumentlist.arguments.elements».eval($runtime);
+        my @arguments = $.argumentlist.arguments.elements.map(*.eval($runtime));
         return $runtime.call($c, @arguments);
     }
 }

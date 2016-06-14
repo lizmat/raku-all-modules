@@ -101,13 +101,17 @@ class Val::Type does Val {
             return $.type.new(|%(@properties));
         }
     }
+
+    method name {
+        $.type.^name.subst(/^ "Val::"/, "").subst(/"::Builtin" $/, "");
+    }
 }
 
 class Val::Block does Val {
     has $.parameterlist is rw;
     has $.statementlist;
-    has %.static-lexpad;
-    has $.outer-frame;
+    has Val::Object $.static-lexpad is rw = Val::Object.new;
+    has Val::Object $.outer-frame;
 
     method pretty-parameters {
         sprintf "(%s)", $.parameterlist.parameters.elements».identifier».name.join(", ");
@@ -135,7 +139,7 @@ class Helper {
         when Val::Str { .value }
         when Val::Array { .quoted-Str }
         when Val::Object { .quoted-Str }
-        when Val::Type { "<type {.type.^name.subst(/^ "Val::"/, "").subst(/"::Builtin" $/, "")}>" }
+        when Val::Type { "<type {.name}>" }
         when Val::Macro { "<macro {.name}{.pretty-parameters}>" }
         when Val::Sub { "<sub {.name}{.pretty-parameters}>" }
         when Val::Block { "<block {.pretty-parameters}>" }

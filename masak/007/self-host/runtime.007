@@ -1,0 +1,189 @@
+my ast = new Q::CompUnit {
+    block: new Q::Block {
+        parameterlist: new Q::ParameterList {},
+        statementlist: new Q::StatementList {
+            statements: []
+        }
+    }
+};
+
+my RealOutput = {
+    new() { return { say }; }
+};
+
+my Runtime = {
+    new(config) {
+        my out = config.output;
+        my pads = [];
+        sub enter() { pads.push({}) }
+        sub leave() { pads.pop() }
+
+        sub declare_var(name) {
+            pads[pads.elems() - 1][name] = None;
+        }
+        sub find(name) {
+            for pads.reverse() -> pad {
+                if pad.has(name) {
+                    return pad;
+                }
+            }
+            throw new Exception { message: "Cannot find variable " ~ name };
+        }
+        sub get_var(name) {
+            my pad = find(name);
+            return pad[name];
+        }
+        sub put_var(name, value) {
+            my pad = find(name);
+            pad[name] = value;
+        }
+
+        my eval_of_type = {
+            Q::Identifier(ident) {
+                return get_var(ident.name);
+            },
+            Q::Infix::Addition(op) {
+                return eval(op.lhs) + eval(op.rhs);
+            },
+            Q::Infix::Assignment(op) {
+                my value = eval(op.rhs);
+                if op.lhs ~~ Q::Identifier {    # XXX: this assumption does not always hold
+                    put_var(op.lhs.name, value);
+                }
+                return value;
+            },
+            Q::Infix::Concat(op) {
+                return eval(op.lhs) ~ eval(op.rhs);
+            },
+            Q::Infix::Eq(op) {
+                return eval(op.lhs) == eval(op.rhs);
+            },
+            Q::Literal::Int(lit_int) {
+                return lit_int.value;
+            },
+            Q::Literal::Str(lit_str) {
+                return lit_str.value;
+            },
+            Q::Postfix::Call(op) {
+                if op.operand ~~ Q::Identifier && op.operand.name == "say" {
+                    return out.say(eval(op.argumentlist.arguments[0]));
+                }
+                # else do nothing for now -- which is wrong, but makes tests fail instead of blow up
+            },
+            Q::Postfix::Index(op) {
+                return eval(op.operand)[eval(op.index)];
+            },
+            Q::Term::Array(array) {
+                return array.elements.map(eval);
+            },
+
+            # these were added to be able to run more tests
+            # please move and implement as necessary
+            Q::Block(block) {
+            },
+            Q::Infix(op) {
+            },
+            Q::Infix::Subtraction(op) {
+            },
+            Q::Infix::Multiplication(op) {
+            },
+            Q::Infix::Modulo(op) {
+            },
+            Q::Infix::Divisibility(op) {
+            },
+            Q::Infix::Replicate(op) {
+            },
+            Q::Infix::ArrayReplicate(op) {
+            },
+            Q::Infix::Cons(op) {
+            },
+            Q::Infix::Ne(op) {
+            },
+            Q::Infix::Gt(op) {
+            },
+            Q::Infix::Lt(op) {
+            },
+            Q::Infix::Ge(op) {
+            },
+            Q::Infix::Le(op) {
+            },
+            Q::Infix::Or(op) {
+            },
+            Q::Infix::And(op) {
+            },
+            Q::Infix::TypeEq(op) {
+            },
+            Q::Postfix(op) {
+            },
+            Q::Postfix::Property(op) {
+            },
+            Q::Prefix(op) {
+            },
+            Q::Prefix::Minus(op) {
+            },
+            Q::Prefix::Not(op) {
+            },
+            Q::Prefix::Upto(op) {
+            },
+            Q::Term::Object(term) {
+            },
+            Q::Term::Quasi(term) {
+            },
+            Q::Expr::StatementListAdapter(adapter) {
+            },
+        };
+        sub eval(q) { return eval_of_type[type(q).name](q); }
+
+        my run_of_type = {
+            Q::CompUnit(compunit) {
+                enter();
+                run(compunit.block.statementlist);
+                leave();
+            },
+            Q::Statement::Block(stmt) {
+                enter();
+                run(stmt.block.statementlist);
+                leave();
+            },
+            Q::Statement::Expr(stmt) {
+                eval(stmt.expr);
+            },
+            Q::Statement::My(stmt) {
+                my name = stmt.identifier.name;
+                declare_var(name);
+                if stmt.expr {
+                    put_var(name, eval(stmt.expr));
+                }
+            },
+            Q::StatementList(stmtlist) {
+                for stmtlist.statements -> statement {
+                    run(statement);
+                }
+            },
+
+            # these were added to be able to run more tests
+            # please move and implement as necessary
+            Q::Statement::BEGIN(stmt) {
+            },
+            Q::Statement::Constant(stmt) {
+            },
+            Q::Statement::For(stmt) {
+            },
+            Q::Statement::If(stmt) {
+            },
+            Q::Statement::Macro(stmt) {
+            },
+            Q::Statement::Sub(stmt) {
+            },
+            Q::Statement::While(stmt) {
+            },
+        };
+        sub run(q) { run_of_type[type(q).name](q); }
+
+        return { run, get_var, put_var };
+    }
+};
+
+my output = RealOutput.new();
+my runtime = Runtime.new({ output });
+runtime.run(ast);

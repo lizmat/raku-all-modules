@@ -39,7 +39,7 @@ grammar _007::Parser::Syntax {
             if $*runtime.declared-locally($symbol);
         my $frame = $*runtime.current-frame();
         die X::Redeclaration::Outer.new(:$symbol)
-            if %*assigned{$frame ~ $symbol};
+            if %*assigned{$frame.id ~ $symbol};
         my $identifier = Q::Identifier.new(
             :name(Val::Str.new(:value($symbol))),
             :$frame);
@@ -167,9 +167,9 @@ grammar _007::Parser::Syntax {
     token str { '"' ([<-["]> | '\\\\' | '\\"']*) '"' }
 
     proto token term {*}
-    token term:none { None >> <!before <.ws> '{'> }
+    token term:none { None» }
     token term:int { \d+ }
-    token term:array { '[' ~ ']' [<.ws> <EXPR>]* %% [\h* ','] }
+    token term:array { '[' ~ ']' [[<.ws> <EXPR>]* %% [\h* ','] <.ws>] }
     token term:str { <str> }
     token term:parens { '(' ~ ')' <EXPR> }
     token term:quasi { quasi <.ws>
@@ -205,7 +205,9 @@ grammar _007::Parser::Syntax {
         ]
     }
     token term:object {
-        [<identifier> <?{ $*runtime.maybe-get-var(~$<identifier>) ~~ Val::Type }> <.ws>]?
+        [new» <.ws>
+            [<identifier> <?{ $*runtime.maybe-get-var(~$<identifier>) ~~ Val::Type }> <.ws>]?
+        ]?
         '{' ~ '}' <propertylist>
     }
     token term:identifier {
@@ -248,6 +250,7 @@ grammar _007::Parser::Syntax {
     rule property:identifier-expr { <identifier> ':' <value=EXPR> }
     rule property:method {
         <identifier>
+        :my $*insub = True;
         <.newpad>
         '(' ~ ')' <parameterlist>
         <trait> *
