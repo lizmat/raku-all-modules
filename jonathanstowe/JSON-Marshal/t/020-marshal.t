@@ -3,7 +3,9 @@
 use v6;
 use Test;
 
+
 use JSON::Marshal;
+use JSON::Fast;
 
 class Inner {
     has %.hash = A => 1, B => 2;

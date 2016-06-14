@@ -1,7 +1,9 @@
 #!perl6
-use v6;
+use v6.c;
 use Test;
+
 use JSON::Marshal;
+use JSON::Fast;
 
 subtest {
     class VersionClassCode {

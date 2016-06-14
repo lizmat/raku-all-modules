@@ -4,6 +4,7 @@ use v6.c;
 
 use Test;
 use JSON::Marshal;
+use JSON::Fast;
 
 class TestObject {
     has Str $.string;

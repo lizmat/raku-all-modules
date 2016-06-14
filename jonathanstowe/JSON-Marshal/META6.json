@@ -15,8 +15,9 @@
   },
   "depends" : [ "JSON::Fast", "JSON::Name" ],
   "test-depends" : [
-    "Test"
+    "Test",
+	 "JSON::Fast"
   ],
   "description" : "Simple serialisation of objects to JSON",
-  "version" : "0.0.9"
+  "version" : "0.0.10"
 }
