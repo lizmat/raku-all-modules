@@ -2,53 +2,35 @@ use v6;
 
 unit module String::CamelCase;
 
-class String::CamelCase::Util {
-
-    my regex camelized-block { ^^ (.+?) <before <:Lu>> };
-
-    method parse-camelized(Str $given) returns Array {
-        my $result = $given ~~ &camelized-block;
-        $result ?? [ ~$result, |self.parse-camelized(substr $given, $result.to) ]
-                !! [ ~$given ];
-    }
-
-    method filter-camelized(@elems, Int $from = 0) returns Array {
-
-        return @elems if @elems.elems - 1 <= $from;
-
-        if @elems[ $from ] ~~ m{ ^^ <:Lu>+ $$ } && @elems[ $from + 1 ] !~~ m{ ^^ <:Lu> <:Ll> } {
-
-            @elems[ $from ] ~= @elems.splice($from + 1, 1)[0];
-
-            return self.filter-camelized(
-                @elems,
-                $from
-            );
-        }
-        else {
-            return self.filter-camelized(
-                @elems,
-                $from + 1
-            );
-        }
-    }
-}
-
-
-sub camelize(Str $given) is export(:DEFAULT) returns Str {
+our sub camelize(Str $given) is export(:DEFAULT) returns Str {
     $given.split(/\-|_/).map(-> $word { $word.tclc }).join;
 }
 
-sub decamelize(Str $given, Str $expr = '-') is export(:DEFAULT) returns Str {
-    String::CamelCase::Util.filter-camelized(
-        String::CamelCase::Util.parse-camelized($given)
-        ).map(-> $word { $word.lc }).join($expr);
+our sub decamelize(Str $given is copy, Str $expr = '-') is export(:DEFAULT) returns Str {
+    my Str ($p0, $p1, $p2, $p3, $t);
+
+    $given ~~ s:g!
+        (<-[a..z A..Z]>?)
+        (<[A..Z]>*)
+        (<[A..Z]>)
+        (<[a..z]>?)
+    !{
+        ($p0, $p1, $p2, $p3) = (~$0, ~$1.lc, ~$2.lc, ~$3);
+        $t = $p0.chars || $/.from == 0 ?? $p0 !! $expr;
+        $t ~= $p3 ?? $p1 ?? "{$p1}{$expr}{$p2}{$p3}" !! "{$p2}{$p3}" !! "{$p1}{$p2}";
+        $t;
+    }!;
+
+    $given;
 }
 
-sub wordsplit(Str $given) is export(:DEFAULT) returns Array {
-    [ String::CamelCase::Util.filter-camelized(
-        String::CamelCase::Util.parse-camelized($given)
-        ).map(-> $word { $word.split(/\-|_/) }).flat ];
+our sub wordsplit(Str $given) is export(:DEFAULT) returns List {
+    $given.split(/
+        <[_ \- \s]>+
+        | \b
+        | <?after <-[A ..Z]>> <?before <:Lu>>
+        | <?after <:Lu>> <?before <:Lu> <:Ll>>
+    /, :skip-empty);
 }
 
 =begin pod
@@ -67,6 +49,8 @@ String::CamelCase is a module to camelize and decamelize a string.
 
 =head1 FUNCTIONS
 
+Following functions are exported:
+
 =head2 camelize (Str) returns Str
 
     camelize("hoge_fuga");
@@ -75,7 +59,7 @@ String::CamelCase is a module to camelize and decamelize a string.
     camelize("hoge-fuga");
     # => "HogeFuga"
 
-=head2 decamelize (Str $string, [Str $connector = '-']) returns Str
+=head2 decamelize (Str, [Str $expr = '-']) returns Str
 
     decamelize("HogeFuga");
     # => hoge-fuga
@@ -83,13 +67,17 @@ String::CamelCase is a module to camelize and decamelize a string.
     decamelize("HogeFuga", "_");
     # => hoge_fuga
 
-=head2 wordsplit (Str $string) returns Array
+=head2 wordsplit (Str) returns List
 
     wordsplit("HogeFuga");
     # => ["Hoge", "Fuga"]
 
     wordsplit("hoge-fuga");
     # => ["hoge", "fuga"]
+
+=head1 SEE ALSO
+
+L<String::CamelCase|http://search.cpan.org/dist/String-CamelCase/lib/String/CamelCase.pm>
 
 =head1 AUTHOR
 

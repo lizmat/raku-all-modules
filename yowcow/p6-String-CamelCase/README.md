@@ -18,7 +18,10 @@ String::CamelCase is a module to camelize and decamelize a string.
 FUNCTIONS
 =========
 
-### camelize (Str) returns Str
+Following functions are exported:
+
+camelize (Str) returns Str
+--------------------------
 
     camelize("hoge_fuga");
     # => "HogeFuga"
@@ -26,7 +29,8 @@ FUNCTIONS
     camelize("hoge-fuga");
     # => "HogeFuga"
 
-### decamelize (Str $string, [Str $connector = '-']) returns Str
+decamelize (Str, [Str $expr = '-']) returns Str
+-----------------------------------------------
 
     decamelize("HogeFuga");
     # => hoge-fuga
@@ -34,13 +38,19 @@ FUNCTIONS
     decamelize("HogeFuga", "_");
     # => hoge_fuga
 
-### wordsplit (Str $string) returns Array
+wordsplit (Str) returns List
+----------------------------
 
     wordsplit("HogeFuga");
     # => ["Hoge", "Fuga"]
 
     wordsplit("hoge-fuga");
     # => ["hoge", "fuga"]
+
+SEE ALSO
+========
+
+[String::CamelCase](http://search.cpan.org/dist/String-CamelCase/lib/String/CamelCase.pm)
 
 AUTHOR
 ======
