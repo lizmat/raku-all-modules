@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Audio-Fingerprint-Chromaprint.git
+	branch = master
+	commit = 7c0b69ebbfd1cd904de9860721ebb0b57721092d
+	parent = 64334f1f9271879983a03ea9ca268d6d41451dec
+	cmdver = 0.2.3
