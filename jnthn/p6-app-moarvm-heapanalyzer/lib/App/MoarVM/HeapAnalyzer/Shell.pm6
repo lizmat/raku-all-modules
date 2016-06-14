@@ -52,6 +52,9 @@ method interactive(IO::Path $file) {
             frames  => CollectableKind::Frame;
 
         given prompt "> " {
+            when Nil {
+                exit 0
+            }
             when /^ \s* snapshot \s+ (\d+) \s* $/ {
                 $current-snapshot = $0.Int;
                 if $!model.prepare-snapshot($current-snapshot) == SnapshotStatus::Preparing {
@@ -116,6 +119,19 @@ method interactive(IO::Path $file) {
                     for @path -> $route, $target {
                         @pieces.push("    --[ $route ]-->");
                         @pieces.push($target)
+                    }
+                    say @pieces.join("\n") ~ "\n";
+                }
+            }
+            when /^ show \s+ (\d+) \s* $/ {
+                my $idx = $0.Int;
+                with-current-snapshot -> $s {
+                    my @parts = $s.details($idx);
+                    my @pieces;
+                    @pieces.push: @parts.shift;
+                    for @parts -> $ref, $target {
+                        @pieces.push("    --[ $ref ]-->");
+                        @pieces.push("      $target")
                     }
                     say @pieces.join("\n") ~ "\n";
                 }
@@ -197,9 +213,15 @@ sub help() {
             and they are ordered by their total memory size.
         find [<n>]? <what> [type="..." | repr="..." | name="..."]
             Where <what> is objects, stables, or frames. By default, <n> is 15.
-            Finds objects matching the given type or REPR, or frames by name.
+            Finds items matching the given type or REPR, or frames by name.
+        count <what> [type="..." | repr="..." | name="..."]
+            Where <what> is objects, stables, or frames. Counts the number of
+            items matching the given type or REPR, or frames by name.
         path <objectid>
             Shortest path from the root to <objectid> (find these with `find`)
+        show <objectid>
+            Shows more information about <objectid> as well as all outgoing
+            references.
     HELP
 }
 

@@ -93,7 +93,7 @@ my class StaticFrames {
 # The various kinds of collectable.
 my enum CollectableKind is export <<
     :Object(1) TypeObject STable Frame PermRoots InstanceRoots
-    CStackRoots ThreadRoots Root InterGenerationalRoots
+    CStackRoots ThreadRoots Root InterGenerationalRoots CallStackRoots
 >>;
 
 my enum RefKind is export << :Unknown(0) Index String >>;
@@ -216,6 +216,34 @@ my class Snapshot {
         @results
     }
 
+    method describe-col($cur-col) {
+        unless $cur-col ~~ ^@!col-kinds.elems {
+            die "No such collectable index $cur-col";
+        }
+        given @!col-kinds[$cur-col] {
+            when Object {
+                $!types.type-name(@!col-desc-indexes[$cur-col]) ~ ' (Object)'
+            }
+            when TypeObject {
+                $!types.type-name(@!col-desc-indexes[$cur-col]) ~ ' (Type Object)'
+            }
+            when STable {
+                $!types.type-name(@!col-desc-indexes[$cur-col]) ~ ' (STable)'
+            }
+            when Frame {
+                $!static-frames.summary(@!col-desc-indexes[$cur-col]) ~ ' (Frame)'
+            }
+            when PermRoots { 'Permanent roots' }
+            when InstanceRoots { 'VM Instance Roots' }
+            when CStackRoots { 'C Stack Roots' }
+            when ThreadRoots { 'Thread Roots' }
+            when Root { 'Root' }
+            when InterGenerationalRoots { 'Inter-generational Roots' }
+            when CallStackRoots { 'Call Stack Roots' }
+            default { '???' }
+        }
+    }
+
     method path($idx) {
         unless $idx ~~ ^@!col-kinds.elems {
             die "No such collectable index $idx";
@@ -225,27 +253,7 @@ my class Snapshot {
         my @path;
         my int $cur-col = $idx;
         until $cur-col == -1 {
-            @path.unshift: do given @!col-kinds[$cur-col] {
-                when Object {
-                    $!types.type-name(@!col-desc-indexes[$cur-col]) ~ ' (Object)'
-                }
-                when TypeObject {
-                    $!types.type-name(@!col-desc-indexes[$cur-col]) ~ ' (Type Object)'
-                }
-                when STable {
-                    $!types.type-name(@!col-desc-indexes[$cur-col]) ~ ' (STable)'
-                }
-                when Frame {
-                    $!static-frames.summary(@!col-desc-indexes[$cur-col]) ~ ' (Frame)'
-                }
-                when PermRoots { 'Permanent roots' }
-                when InstanceRoots { 'VM Instance Roots' }
-                when CStackRoots { 'C Stack Roots' }
-                when ThreadRoots { 'Thread Roots' }
-                when Root { 'Root' }
-                when InterGenerationalRoots { 'Inter-generational Roots' }
-                default { '???' }
-            }
+            @path.unshift: self.describe-col($cur-col) ~ " ($cur-col)";
 
             my int $pred-ref = @!bfs-pred-refs[$cur-col];
             if $pred-ref >= 0 {
@@ -264,6 +272,34 @@ my class Snapshot {
         }
 
         @path
+    }
+
+    method details($idx) {
+        unless $idx ~~ ^@!col-kinds.elems {
+            die "No such collectable index $idx";
+        }
+        my @parts;
+
+        @parts.push: self.describe-col($idx);
+
+        my int $num-refs = @!col-num-refs[$idx];
+        my int $refs-start = @!col-refs-start[$idx];
+        loop (my int $i = 0; $i < $num-refs; $i++) {
+            my int $ref-idx = $refs-start + $i;
+            my int $to = @!ref-tos[$ref-idx];
+
+            @parts.push: do given @!ref-kinds[$ref-idx] {
+                when String {
+                    @!strings[@!ref-indexes[$ref-idx]]
+                }
+                when Index {
+                    "Index @!ref-indexes[$ref-idx]"
+                }
+                default { 'Unknown' }
+            }
+            @parts.push: self.describe-col($to) ~ " ($to)";
+        }
+        @parts;
     }
 
     method !ensure-bfs() {
