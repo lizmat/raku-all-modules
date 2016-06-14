@@ -102,7 +102,7 @@ https://github.com/jonathanstowe/WebService-Soundcloud
 
 ## Licence
 
-Please see the [LICENSE](LICENSE) file in the distribution
+Please see the [LICENCE](LICENCE) file in the distribution
 
 © Jonathan Stowe 2015, 2016
 
