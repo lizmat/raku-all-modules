@@ -839,75 +839,110 @@ class Audio::PortMIDI {
         Systemcommon => ((1 +< 0x01) +| (1 +< 0x02) +| (1 +< 0x03) +| (1 +< 0x06)),
     );
 
-    class Stream is repr('CPointer')  {
+    class StreamPointer is repr('CPointer') { }
+    class Stream {
+        has CArray[StreamPointer] $.ptr;
+        has Channel $.ev-chan;
+        has Promise $.ev-chan-promise;
+        has Bool    $.running;
+        has Channel $.rc-chan;
+        has Stream  $!stream;
 
-        sub Pm_HasHostError(Stream $stream) is native(LIB) returns int32 { * }
+        submethod BUILD() {
+            $!ptr = CArray[StreamPointer].new(StreamPointer.new());
+            $!ev-chan = Channel.new;
+            $!rc-chan = Channel.new;
+            $!running = True;
+            $!ev-chan-promise = start {
+                while $!running {
+                    my $ev = await $!ev-chan;
+                    my $rc = $ev<call>(|@($ev<args>));
+                    $!rc-chan.send($rc);
+                }
+            }
+        }
+
+        sub Pm_HasHostError(StreamPointer $stream) is native(LIB) returns int32 { * }
 
         method has-host-error() returns Bool {
-            my $rc = Pm_HasHostError(self);
+            my $rc = Pm_HasHostError($.ptr[0]);
             Bool($rc);
         }
 
-        sub Pm_SetFilter(Stream $stream , int32 $filters) is native(LIB) returns int32 { * }
+        sub Pm_SetFilter(StreamPointer $stream , int32 $filters) is native(LIB) returns int32 { * }
 
         method set-filter(Int $filter) {
-            my $rc = Pm_SetFilter(self, $filter);
+            $.ev-chan.send(%(call => &Pm_SetFilter, args => [$.ptr[0], $filter]));
+            my $rc = await $.rc-chan; 
             if $rc < 0 {
                 X::PortMIDI.new(code => $rc, what => 'setting filter').throw;
             }
             True;
         }
 
-        sub Pm_SetChannelMask(Stream $stream, int32 $mask ) is native(LIB) returns int32 { * }
+        sub Pm_SetChannelMask(StreamPointer $stream, int32 $mask ) is native(LIB) returns int32 { * }
 
         method set-channel-mask(*@channels where { @channels.elems <= 16 && all(@channels) ~~ ( 0 ..15 ) }) {
             my int $mask = @channels.map(1 +< *).reduce(&[+|]);
-            my $rc = Pm_SetChannelMask(self, $mask);
+            $.ev-chan.send(%(call => &Pm_SetChannelMask, args => [$.ptr[0], $mask]));
+            my $rc = await $.rc-chan;
             if $rc < 0 {
                 X::PortMIDI.new(code => $rc, what => 'setting channel mask').throw;
             }
             True;
         }
 
-        sub Pm_Abort(Stream $stream) is native(LIB) returns int32 { * }
+        sub Pm_Abort(StreamPointer $stream) is native(LIB) returns int32 { * }
 
         method abort() {
-            my $rc = Pm_Abort(self);
+            $!running = False;
+            $.ev-chan.fail;
+            # await $.ev-chan-promise;
+            # $.ev-chan.close;
+            $.rc-chan.fail;
+            my $rc = Pm_Abort($.ptr[0]);
             if $rc < 0 {
                 X::PortMIDI.new(code => $rc, what => "aborting stream").throw;
             }
         }
 
-        sub Pm_Close(Stream $stream) is native(LIB) returns int32 { * }
+        sub Pm_Close(StreamPointer $stream) is native(LIB) returns int32 { * }
 
         method close() {
-            my $rc = Pm_Close(self);
+            $.ev-chan.send(%(call => &note, args => ["Closing Stream"]));
+            $!running = False;
+            await $.ev-chan-promise;
+            $.ev-chan.close;
+            $.rc-chan.close;
+            my $rc = Pm_Close($.ptr[0]);
             if $rc < 0 {
                 X::PortMIDI.new(code => $rc, what => "closing stream").throw;
             }
         }
     
-        sub Pm_Synchronize(Stream $stream ) is native(LIB) returns int32 { * }
+        sub Pm_Synchronize(StreamPointer $stream ) is native(LIB) returns int32 { * }
 
         method synchronize() {
-            my $rc = Pm_Synchronize(self);
+            $.ev-chan.send(%(call => &Pm_Synchronize, args => [$.ptr[0]]));
+            my $rc = $.rc-chan;
             if $rc < 0 {
                 X::PortMIDI.new(code => $rc, what => "synchronizing stream").throw;
             }
         }
 
 
-        sub Pm_Poll(Stream $stream ) is native(LIB) returns int32 { * }
+        sub Pm_Poll(StreamPointer $stream ) is native(LIB) returns int32 { * }
 
         method poll() returns Bool {
-            my $rc = Pm_Poll(self);
+            $.ev-chan.send(%(call => &Pm_Poll, args => [$.ptr[0]]));
+            my $rc = await $.rc-chan;
             if $rc < 0 {
                 X::PortMIDI.new(code => $rc, what => "polling stream").throw;
             }
             Bool($rc);
         }
 
-        sub Pm_Read(Stream $stream, CArray $buffer, int32 $length) is native(LIB) returns int32 { * }
+        sub Pm_Read(StreamPointer $stream, CArray $buffer, int32 $length) is native(LIB) returns int32 { * }
 
 
         proto method read(|c) { * }
@@ -915,7 +950,8 @@ class Audio::PortMIDI {
         multi method read(Int $length) {
             my CArray[int64] $buff = CArray[int64].new;
             $buff[$length - 1] = 0;
-            my $rc = Pm_Read(self, $buff, $length);
+            $.ev-chan.send(%(call => &Pm_Read, args => [$.ptr[0], $buff, $length]));
+            my $rc = await $.rc-chan;
             if $rc < 0 {
                 X::PortMIDI.new(code => $rc, what => "reading stream").throw;
             }
@@ -929,7 +965,7 @@ class Audio::PortMIDI {
             @buff;
         }
 
-        sub Pm_Write(Stream $stream, CArray[int64] $buffer, int32  $length ) is native(LIB) returns int32 { * }
+        sub Pm_Write(StreamPointer $stream, CArray[int64] $buffer, int32  $length ) is native(LIB) returns int32 { * }
 
         proto method write(|c) { * }
 
@@ -939,22 +975,24 @@ class Audio::PortMIDI {
             for @events -> $event {
                 $buffer[$++] = $event.Int;
             }
-            my $rc = Pm_Write(self, $buffer, $length);
+            $.ev-chan.send(%(call => &Pm_Write, args => [$.ptr[0], $buffer, $length]));
+            my $rc = await $.rc-chan;
             if $rc < 0 {
                 X::PortMIDI.new(code => $rc, what => "writing stream").throw;
             }
         }
 
-        sub Pm_WriteShort(Stream $stream, int32 $when, int32 $msg) is native(LIB) returns int32 { * }
+        sub Pm_WriteShort(StreamPointer $stream, int32 $when, int32 $msg) is native(LIB) returns int32 { * }
 
         multi method write(Event $event) {
-            my $rc = Pm_WriteShort(self, $event.timestamp // 0, $event.message);
+            $.ev-chan.send(%(call => &Pm_WriteShort, args => [$.ptr[0], $event.timestamp // 0, $event.message]));
+            my $rc = await $.rc-chan;
             if $rc < 0 {
                 X::PortMIDI.new(code => $rc, what => "writing stream").throw;
             }
         }
 
-        sub Pm_WriteSysEx(Stream $stream, int32 $when, Pointer[uint8] $msg) is native(LIB) returns int32 { * }
+        sub Pm_WriteSysEx(StreamPointer $stream, int32 $when, Pointer[uint8] $msg) is native(LIB) returns int32 { * }
     }
 
     class Time {
@@ -1046,7 +1084,7 @@ class Audio::PortMIDI {
         self.device-info($rc);
     }
 
-    sub Pm_OpenInput(CArray[Stream] $stream, int32 $inputDevice, Pointer $inputDriverInfo, int32 $bufferSize ,&time_proc (Pointer --> int32), Pointer $time_info) is native(LIB) returns int32 { * }
+    sub Pm_OpenInput(CArray[StreamPointer] $stream, int32 $inputDevice, Pointer $inputDriverInfo, int32 $bufferSize ,&time_proc (Pointer --> int32), Pointer $time_info) is native(LIB) returns int32 { * }
 
     proto method open-input(|c) { * }
 
@@ -1060,15 +1098,15 @@ class Audio::PortMIDI {
     }
 
     multi method open-input(Int $device-id, Int $buffer-size) returns Stream {
-        my $stream = CArray[Stream].new(Stream.new);
-        my $rc = Pm_OpenInput($stream, $device-id, Pointer, $buffer-size, Code, Pointer);
+        my $stream = Stream.new;
+        my $rc = Pm_OpenInput($stream.ptr, $device-id, Pointer, $buffer-size, Code, Pointer);
         if $rc < 0 {
             X::PortMIDI.new(code => $rc, what => "opening input stream").throw;
         }
-        $stream[0];
+        $stream;
     }
 
-    sub Pm_OpenOutput(CArray[Stream] $stream, int32 $outputDevice, Pointer $outputDriverInfo, int32 $bufferSize ,&time_proc (Pointer --> int32), Pointer $time_info, int32 $latency) is native(LIB) returns int32 { * }
+    sub Pm_OpenOutput(CArray[StreamPointer] $stream, int32 $outputDevice, Pointer $outputDriverInfo, int32 $bufferSize ,&time_proc (Pointer --> int32), Pointer $time_info, int32 $latency) is native(LIB) returns int32 { * }
 
     
     proto method open-output(|c) { * }
@@ -1084,12 +1122,12 @@ class Audio::PortMIDI {
     }
 
     multi method open-output(Int $device-id, Int $buffer-size, Int $latency = 0) returns Stream {
-        my $stream = CArray[Stream].new(Stream.new);
-        my $rc = Pm_OpenOutput($stream, $device-id, Pointer, $buffer-size, Code, Pointer, $latency);
+        my $stream = Stream.new;
+        my $rc = Pm_OpenOutput($stream.ptr, $device-id, Pointer, $buffer-size, Code, Pointer, $latency);
         if $rc < 0 {
             X::PortMIDI.new(code => $rc, what => "opening output stream").throw;
         }
-        $stream[0];
+        $stream;
     }
 }
 

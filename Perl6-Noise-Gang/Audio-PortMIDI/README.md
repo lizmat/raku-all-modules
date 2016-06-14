@@ -102,9 +102,9 @@ particular device or software I am unlikely to be able to help much
 if I don't have access to a similar device or software. A dump of the
 MIDI events being sent or received may help.
 
-## License and Copyright
+## Licence and Copyright
 
-This is free software. Please see the LICENSE file in the distribution
+This is free software. Please see the LICENCE file in the distribution
 for the terms of the license.
 
 	© Jonathan Stowe, 2016
