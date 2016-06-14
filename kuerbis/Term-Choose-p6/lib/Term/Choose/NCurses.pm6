@@ -1,7 +1,7 @@
 use v6;
 unit module Term::Choose::NCurses;
 
-my $VERSION = '0.112';
+my $VERSION = '0.115';
 
 
 use NativeCall;
@@ -23,7 +23,7 @@ class MEVENT is repr('CStruct') {
 };
 
 
-#constant OK            is export( :all ) = 0; # ?
+constant OK            is export( :all ) = 0;   #
 constant ERR           is export( :all ) = -1;  # T::F
 constant KEY_CODE_YES  is export( :all ) = 256; # T::F
 

@@ -1,24 +1,24 @@
 {
-  "name" : "Term::Choose",
-  "source-url" : "git://github.com/kuerbis/Term-Choose-p6.git",
-  "perl" : "6.c",
-  "resources" : [ ],
+  "authors" : [
+    "kuerbis"
+  ],
   "build-depends" : [ ],
-  "provides" : {
-    "Term::Choose" : "lib/Term/Choose.pm6",
-    "Term::Choose::NCurses" : "lib/Term/Choose/NCurses.pm6",
-    "Term::Choose::LineFold" : "lib/Term/Choose/LineFold.pm6"
-  },
   "depends" : [
     "NCurses",
     "Terminal::WCWidth"
   ],
   "description" : "Choose items from a list interactively.",
+  "name" : "Term::Choose",
+  "perl" : "6.c",
+  "provides" : {
+    "Term::Choose" : "lib/Term/Choose.pm6",
+    "Term::Choose::LineFold" : "lib/Term/Choose/LineFold.pm6",
+    "Term::Choose::NCurses" : "lib/Term/Choose/NCurses.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/kuerbis/Term-Choose-p6.git",
   "test-depends" : [
     "Test"
   ],
-  "version" : "*",
-  "authors" : [
-    "kuerbis"
-  ]
+  "version" : "*"
 }

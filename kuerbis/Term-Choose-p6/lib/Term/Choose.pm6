@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.112';
+my $VERSION = '0.115';
 
 use Term::Choose::NCurses :all;
 use Term::Choose::LineFold :all;
@@ -9,7 +9,6 @@ use Term::Choose::LineFold :all;
 
 constant R  = 0;
 constant C  = 1;
-constant OK = 0; # ?
 
 constant CONTROL_SPACE = 0x00;
 constant CONTROL_A     = 0x01;
@@ -77,13 +76,13 @@ sub _set_defaults ( %opt ) {
     %opt<lf>            //= Array;
     %opt<ll>            //= Int;
     %opt<mark>          //= Array;
-    %opt<max_height>    //= Int;
-    %opt<max_width>     //= Int;
+    %opt<max-height>    //= Int;
+    %opt<max-width>     //= Int;
     %opt<mouse>         //= 0;
-    %opt<no_spacebar>   //= Array;
+    %opt<no-spacebar>   //= Array;
     %opt<order>         //= 1;
     %opt<pad>           //= 2;
-    %opt<pad_one_row>   //= %opt<pad>;
+    %opt<pad-one-row>   //= %opt<pad>;
     %opt<page>          //= 1;
     %opt<undef>         //= '<undef>';
 }
@@ -100,14 +99,14 @@ sub _valid_options {
         layout          => '<[ 0 1 2 ]>',
         keep            => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
         ll              => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
-        max_height      => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
-        max_width       => '<[ 2 .. 9 ]><[ 0 .. 9 ]>*',
+        max-height      => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
+        max-width       => '<[ 2 .. 9 ]><[ 0 .. 9 ]>*',
         default         => '<[ 0 .. 9 ]>+',
         pad             => '<[ 0 .. 9 ]>+',
-        pad_one_row     => '<[ 0 .. 9 ]>+',
+        pad-one-row     => '<[ 0 .. 9 ]>+',
         lf              => 'Array',
         mark            => 'Array',
-        no_spacebar     => 'Array',
+        no-spacebar     => 'Array',
         empty           => 'Str',
         prompt          => 'Str',
         undef           => 'Str',
@@ -125,7 +124,7 @@ sub _validate_options ( %opt, Int $list_end? ) {
         }
         when $valid{$key} eq 'Array' {
             die "$key => not an ARRAY reference."     if ! $value.isa( Array );
-            die "$key => invalid array element"       if $value.grep( { / <-[0..9]> / } ); # Int;
+            die "$key => invalid array element"       if $value.grep( { / <-[0..9]> / } ); # .grep( { $_ !~~ UInt } );
             if $key eq 'lf' {
                 die "$key => too many array elemnts." if $value.elems > 2;
             }
@@ -153,7 +152,7 @@ method !_prepare_new_copy_of_list {
     if %!o<ll> {
         if %!o<ll> > $!avail_w {
             for @!list {
-                $_ = cut_to_printwidth( $_, $!avail_w - $dots_w ) ~ $dots;
+                $_ = cut-to-printwidth( $_, $!avail_w - $dots_w ) ~ $dots;
             }
             $!col_w = $!avail_w;
         }
@@ -172,9 +171,9 @@ method !_prepare_new_copy_of_list {
             @!list[$i].=subst(   / \s /, ' ', :g );  # replace, but don't squash sequences of spaces
             @!list[$i].=subst( / <:C> /, '',  :g );
             @!list[$i] = @!list[$i].gist; 
-            my Int $length = print_columns( @!list[$i] );
+            my Int $length = print-columns( @!list[$i] );
             if $length > $!avail_w {
-                @!list[$i] = cut_to_printwidth( @!list[$i], $!avail_w - $dots_w ) ~ $dots;
+                @!list[$i] = cut-to-printwidth( @!list[$i], $!avail_w - $dots_w ) ~ $dots;
                 @!length[$i] = $!avail_w;
             }
             else {
@@ -188,12 +187,12 @@ method !_prepare_new_copy_of_list {
 
 
 
-sub choose       ( @list, %opt? ) is export { return Term::Choose.new().choose(       @list, %opt ) }
-sub choose_multi ( @list, %opt? ) is export { return Term::Choose.new().choose_multi( @list, %opt ) }
-sub pause        ( @list, %opt? ) is export { return Term::Choose.new().pause(        @list, %opt ) }
+sub choose       ( @list, %opt? ) is export( :DEFAULT, :choose )       { return Term::Choose.new().choose(       @list, %opt ) }
+sub choose-multi ( @list, %opt? ) is export( :DEFAULT, :choose-mulit ) { return Term::Choose.new().choose-multi( @list, %opt ) }
+sub pause        ( @list, %opt? ) is export( :DEFAULT, :pause )        { return Term::Choose.new().pause(        @list, %opt ) }
 
 method choose       ( @list, %opt? ) { return self!_choose( @list, %opt, 0   ) }
-method choose_multi ( @list, %opt? ) { return self!_choose( @list, %opt, 1   ) }
+method choose-multi ( @list, %opt? ) { return self!_choose( @list, %opt, 1   ) }
 method pause        ( @list, %opt? ) { return self!_choose( @list, %opt, Int ) }
 
 
@@ -210,8 +209,10 @@ method !_init_term {
     noecho();
     cbreak;
     keypad( $!win, True );
-    my Array[int32] $old;
-    my $s = mousemask( ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION, $old );
+    if %!o<mouse> {
+        my Array[int32] $old;
+        my $s = mousemask( ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION, $old );
+    }
     curs_set( 0 );
 }
 
@@ -256,7 +257,6 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
             if $!marked.elems {
                 %!o<mark> = self!_marked_to_idx;
             }
-            clear();
             self!_wr_first_screen;
             next GET_KEY;
         }
@@ -500,9 +500,9 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
             when KEY_SPACE {
                 if $!multiselect {
                     my Int $locked = 0;
-                    if %!o<no_spacebar> {
-                        for %!o<no_spacebar>.list -> $no_spacebar {
-                            if $!rc2idx[$!pos[R]][$!pos[C]] == $no_spacebar {
+                    if %!o<no-spacebar> {
+                        for %!o<no-spacebar>.list -> $no-spacebar {
+                            if $!rc2idx[$!pos[R]][$!pos[C]] == $no-spacebar {
                                 ++$locked;
                                 last;
                             }
@@ -538,8 +538,8 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
                             }
                         }
                     }
-                    if %!o<no_spacebar> {
-                        self!_idx_to_marked( %!o<no_spacebar>, 0 );
+                    if %!o<no-spacebar> {
+                        self!_idx_to_marked( %!o<no-spacebar>, 0 );
                     }
                     self!_wr_screen;
                 }
@@ -549,7 +549,7 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
             }
             when KEY_MOUSE {
                 my Term::Choose::NCurses::MEVENT $event .= new;
-                if getmouse( $event ) == OK {
+                if getmouse( $event ) == 0 { # OK {
                     if $event.bstate == BUTTON1_CLICKED | BUTTON1_PRESSED {
                         my $ret = self!_curr_pos_to_mouse_xy( $event.x, $event.y );
                         if $ret {
@@ -600,14 +600,14 @@ method !_curr_pos_to_mouse_xy ( Int $abs_mouse_x, Int $abs_mouse_y ) {
     if $mouse_row > $!rc2idx.end {
         return;
     }
-    my Int $pad = $!rc2idx.end == 0 ?? %!o<pad_one_row> !! %!o<pad>;
+    my Int $pad = $!rc2idx.end == 0 ?? %!o<pad-one-row> !! %!o<pad>;
     my Int $row = $mouse_row + $!row_on_top;
     my Int $matched_col;
     my Int $end_last_col = 0;
     COL: for 0 .. $!rc2idx[$row].end -> $col {
         my Int $end_this_col;
         if $!rc2idx.end == 0 {
-            $end_this_col = $end_last_col + print_columns( @!list[$!rc2idx[$row][$col]] ) + $pad;
+            $end_this_col = $end_last_col + print-columns( @!list[$!rc2idx[$row][$col]] ) + $pad;
         }
         else { #
             $end_this_col = $end_last_col + $!col_w + $pad;
@@ -649,7 +649,7 @@ method !_prepare_prompt {
     }
     my $init   = %!o<lf>[0] // 0;
     my $subseq = %!o<lf>[1] // 0;
-    $!prompt_copy = line_fold( %!o<prompt>, $!avail_w, ' ' x $init, ' ' x $subseq );
+    $!prompt_copy = line-fold( %!o<prompt>, $!avail_w, ' ' x $init, ' ' x $subseq );
     $!prompt_copy ~= "\n";
     my $matches = $!prompt_copy.subst-mutate( / \n /, "\n\r", :g ); #
     $!nr_prompt_lines = $matches.elems;
@@ -679,8 +679,8 @@ method !_wr_first_screen {
     $!term_h = getmaxy( $!win );
 
     ( $!avail_w, $!avail_h ) = ( $!term_w, $!term_h );
-    if %!o<max_width> && $!avail_w > %!o<max_width> {
-        $!avail_w = %!o<max_width>;
+    if %!o<max-width> && $!avail_w > %!o<max-width> {
+        $!avail_w = %!o<max-width>;
     }
     if $!avail_w < 2 {
         die "Terminal width to small.";
@@ -698,8 +698,8 @@ method !_wr_first_screen {
         $!avail_h = $!term_h > $keep ?? $keep !! $!term_h;
     }
 
-    if %!o<max_height> && %!o<max_height> < $!avail_h {
-        $!avail_h = %!o<max_height>;
+    if %!o<max-height> && %!o<max-height> < $!avail_h {
+        $!avail_h = %!o<max-height>;
     }
 
     $!layout = %!o<layout>;
@@ -724,6 +724,7 @@ method !_wr_first_screen {
         self!_set_default_cell;
     }
 
+    clear();
     if %!o<prompt> ne '' {
         mvaddstr( 0, 0, $!prompt_copy );
     }
@@ -778,8 +779,8 @@ method !_wr_cell ( Int $row, Int $col ) {
         if $col > 0 {
             for ^$col -> $cl {
                 my Int $i = $!rc2idx[$row][$cl];
-                $lngth += print_columns( @!list[$i] );
-                $lngth += %!o<pad_one_row>;
+                $lngth += print-columns( @!list[$i] );
+                $lngth += %!o<pad-one-row>;
             }
         }
         attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
@@ -834,8 +835,8 @@ method !_index_to_rowcol {
     if $!layout == 0|1 {
         for 0 .. @!list.end -> $idx {
             $all_in_first_row ~= @!list[$idx];
-            $all_in_first_row ~= ' ' x %!o<pad_one_row> if $idx < @!list.end;
-            if print_columns( $all_in_first_row ) > $!avail_w {
+            $all_in_first_row ~= ' ' x %!o<pad-one-row> if $idx < @!list.end;
+            if print-columns( $all_in_first_row ) > $!avail_w {
                 $all_in_first_row = '';
                 last;
             }
@@ -969,7 +970,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.112
+Version 0.115
 
 =head1 SYNOPSIS
 
@@ -993,15 +994,11 @@ Version 0.112
 
     say $choice;
 
-=head1 ANNOUNCEMENT
-
-Backwards incompatible changes with the next release (C<-> replaces C<_> in routine and option names).
-
 =head1 DESCRIPTION
 
 Choose interactively from a list of items.
 
-For C<choose>, C<choose_multi> and C<pause> the first argument (Array) holds the list of the available choices.
+For C<choose>, C<choose-multi> and C<pause> the first argument (Array) holds the list of the available choices.
 
 With the optional second argument (Hash) it can be passed the different options. See L<#OPTIONS>.
 
@@ -1029,7 +1026,7 @@ backward,
 =item the C<Home> key (or C<Ctrl-A>) to jump to the beginning of the list, the C<End> key (or C<Ctrl-E>) to jump to the
 end of the list.
 
-For the usage of C<SpaceBar>, C<Ctrl-SpaceBar>, C<Return> and the C<q>-key see L<#choose>, L<#choose_multi> and
+For the usage of C<SpaceBar>, C<Ctrl-SpaceBar>, C<Return> and the C<q>-key see L<#choose>, L<#choose-multi> and
 L<#pause>.
 
 With I<mouse> enabled (and if supported by the terminal) use the the left mouse key instead the C<Return> key and
@@ -1045,18 +1042,18 @@ is pressed.
 
 C<choose> returns nothing if the C<q> key or C<Ctrl-D> is pressed.
 
-=head2 choose_multi
+=head2 choose-multi
 
 The user can choose many items.
 
-To choose more than one item mark an item with the C<SpaceBar>. C<choose_multi> then returns the list of the marked
+To choose more than one item mark an item with the C<SpaceBar>. C<choose-multi> then returns the list of the marked
 items including the highlighted item.
 
 C<Ctrl-SpaceBar> (or C<Ctrl-@>) inverts the choices: marked items are unmarked and unmarked items are marked. If the
 cursor is on the first row, C<Ctrl-SpaceBar> inverts the choices for the whole list else C<Ctrl-SpaceBar> inverts the
 choices for the current page.
 
-C<choose_multi> returns nothing if the C<q> key or C<Ctrl-D> is pressed.
+C<choose-multi> returns nothing if the C<q> key or C<Ctrl-D> is pressed.
 
 =head2 pause
 
@@ -1067,7 +1064,7 @@ C<q> or C<Ctrl-D>.
 
 For the output on the screen the array elements are modified.
 
-All the modifications are made on a copy of the original array so C<choose> and C<choose_multi> return the chosen
+All the modifications are made on a copy of the original array so C<choose> and C<choose-multi> return the chosen
 elements as they were passed without modifications.
 
 Modifications:
@@ -1233,32 +1230,32 @@ Allowed values for the two elements are: 0 or greater.
 
 =head2 mark
 
-This is a C<choose_multi>-only option.
+This is a C<choose-multi>-only option.
 
 I<mark> expects as its value an array. The elements of the array are list indexes. C<choose> preselects the
 list-elements correlating to these indexes.
 
 (default: undefined)
 
-=head2 max_height
+=head2 max-height
 
 If defined sets the maximal number of rows used for printing list items.
 
-If the available height is less than I<max_height>, I<max_height> is set to the available height.
+If the available height is less than I<max-height>, I<max-height> is set to the available height.
 
 Height in this context means number of print rows.
 
-I<max_height> overwrites I<keep> if I<max_height> is set to a value less than I<keep>.
+I<max-height> overwrites I<keep> if I<max-height> is set to a value less than I<keep>.
 
 Allowed values: 1 or greater
 
 (default: undefined)
 
-=head2 max_width
+=head2 max-width
 
-If defined, sets the maximal output width to I<max_width> if the terminal width is greater than I<max_width>.
+If defined, sets the maximal output width to I<max-width> if the terminal width is greater than I<max-width>.
 
-To prevent the "auto-format" to use a width less than I<max_width> set I<layout> to C<0>.
+To prevent the "auto-format" to use a width less than I<max-width> set I<layout> to C<0>.
 
 Width refers here to the number of print columns.
 
@@ -1272,13 +1269,13 @@ Allowed values: 2 or greater
 
 1 - mouse enabled
 
-=head2 no_spacebar
+=head2 no-spacebar
 
-This is a C<choose_multi>-only option.
+This is a C<choose-multi>-only option.
 
-I<no_spacebar> expects as its value an array. The elements of the array are indexes of choices which should not be
+I<no-spacebar> expects as its value an array. The elements of the array are indexes of choices which should not be
 markable with the C<SpaceBar> or with the right mouse key. If an element is preselected with the option I<mark> and also
-marked as not selectable with the option I<no_spacebar>, the user can not remove the preselection of this element.
+marked as not selectable with the option I<no-spacebar>, the user can not remove the preselection of this element.
 
 (default: undefined)
 
@@ -1296,7 +1293,7 @@ Sets the number of whitespaces between columns. (default: 2)
 
 Allowed values: 0 or greater
 
-=head2 pad_one_row
+=head2 pad-one-row
 
 Sets the number of whitespaces between elements if we have only one row. (default: value of the option I<pad>)
 
