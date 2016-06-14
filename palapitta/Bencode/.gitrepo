@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/palapitta/Bencode.git
+	branch = master
+	commit = 9b0833fd6e44099e3c145eda724235d7f4c586b1
+	parent = 1032dc21e56da6e4f5cbe4bbc129ac18f040346c
+	cmdver = 0.2.3
