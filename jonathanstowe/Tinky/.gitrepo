@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Tinky.git
 	branch = master
-	commit = ad591fb51841cf83909ac2ad0803f22021727867
-	parent = 42667838896210a93e00808728c028b77682821e
+	commit = 917904b4097b8451032f80f0f4b42b8132e952e2
+	parent = e1edc6a4549b32d74da273447bf987bc4c6f4870
 	cmdver = 0.2.3
