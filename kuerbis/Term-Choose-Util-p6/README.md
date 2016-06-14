@@ -8,29 +8,24 @@ Term::Choose::Util - CLI related functions.
 VERSION
 =======
 
-Version 0.012
-
-ANNOUNCEMENT
-============
-
-Backwards incompatible changes with the next release (`-` replaces `_` in routine and option names).
+Version 0.016
 
 DESCRIPTION
 ===========
 
 This module provides some CLI related functions.
 
-SUBROUTINES
-===========
+ROUTINES
+========
 
 Values in brackets are default values.
 
-choose_a_dir
+choose-a-dir
 ------------
 
-        $chosen_directory = choose_a_dir( { layout => 1, ... } )
+        $chosen_directory = choose-a-dir( { layout => 1, ... } )
 
-With `choose_a_dir` the user can browse through the directory tree (as far as the granted rights permit it) and choose a directory which is returned.
+With `choose-a-dir` the user can browse through the directory tree (as far as the granted rights permit it) and choose a directory which is returned.
 
 To move around in the directory tree:
 
@@ -40,13 +35,13 @@ To move around in the directory tree:
 
 To return the current working-directory as the chosen directory choose "`= `".
 
-The "back"-menu-entry ("`E<lt> `") causes `choose_a_dir` to return nothing.
+The "back"-menu-entry ("`E<lt> `") causes `choose-a-dir` to return nothing.
 
 As an argument it can be passed a hash. With this hash the user can set the different options:
 
   * current
 
-If set, `choose_a_dir` shows *current* as the current directory.
+If set, `choose-a-dir` shows *current* as the current directory.
 
   * dir
 
@@ -86,40 +81,40 @@ This option has no meaning if *layout* is set to 2.
 
 Values: 0,[1].
 
-  * show_hidden
+  * show-hidden
 
 If enabled, hidden directories are added to the available directories.
 
 Values: 0,[1].
 
-choose_a_file
+choose-a-file
 -------------
 
-        $chosen_file = choose_a_file( { layout => 1, ... } )
+        $chosen_file = choose-a-file( { layout => 1, ... } )
 
-Browse the directory tree like with `choose_a_dir`. Select "`E<gt>F`" to get the files of the current directory; than the chosen file is returned.
+Browse the directory tree like with `choose-a-dir`. Select "`E<gt>F`" to get the files of the current directory; than the chosen file is returned.
 
-The options are passed with a hash. See [#choose_a_dir](#choose_a_dir) for the different options. `choose_a_file` has no option *current*.
+The options are passed with a hash. See [#choose-a-dir](#choose-a-dir) for the different options. `choose-a-file` has no option *current*.
 
-choose_dirs
+choose-dirs
 -----------
 
-        @chosen_directories = choose_dirs( { layout => 1, ... } )
+        @chosen_directories = choose-dirs( { layout => 1, ... } )
 
-`choose_dirs` is similar to `choose_a_dir` but it is possible to return multiple directories.
+`choose-dirs` is similar to `choose-a-dir` but it is possible to return multiple directories.
 
 "`. `" adds the current directory to the list of chosen directories and "`= `" returns the chosen list of directories.
 
-The "back"-menu-entry ( "`E<lt> `" ) resets the list of chosen directories if any. If the list of chosen directories is empty, "`E<lt> `" causes `choose_dirs` to return nothing.
+The "back"-menu-entry ( "`E<lt> `" ) resets the list of chosen directories if any. If the list of chosen directories is empty, "`E<lt> `" causes `choose-dirs` to return nothing.
 
-`choose_dirs` uses the same option as `choose_a_dir`. The option *current* expects as its value an array (directories shown as the current directories).
+`choose-dirs` uses the same option as `choose-a-dir`. The option *current* expects as its value an array (directories shown as the current directories).
 
-choose_a_number
+choose-a-number
 ---------------
 
         for ( 1 .. 5 ) {
             $current = $new
-            $new = choose_a_number( 5, { current => $current, name => 'Testnumber' }  );
+            $new = choose-a-number( 5, { current => $current, name => 'Testnumber' }  );
         }
 
 This function lets you choose/compose a number (unsigned integer) which is returned.
@@ -144,18 +139,18 @@ See the option *mouse* in [Term::Choose](https://github.com/kuerbis/Term-Choose-
 
 Values: [0],1.
 
-  * thsd_sep
+  * thsd-sep
 
 Sets the thousands separator.
 
 Default: comma (,).
 
-choose_a_subset
+choose-a-subset
 ---------------
 
-        $subset = choose_a_subset( @available_items, { current => @current_subset } )
+        $subset = choose-a-subset( @available_items, { current => @current_subset } )
 
-`choose_a_subset` lets you choose a subset from a list.
+`choose-a-subset` lets you choose a subset from a list.
 
 As a first argument it is required an array which provides the available list.
 

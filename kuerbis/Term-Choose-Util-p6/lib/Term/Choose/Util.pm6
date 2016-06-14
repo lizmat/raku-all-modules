@@ -1,21 +1,43 @@
 use v6;
 unit class Term::Choose::Util;
 
-my $VERSION = '0.012';
+my $VERSION = '0.016';
 
 use Term::Choose;
 use Term::Choose::NCurses :all;
 use Term::Choose::LineFold :all;
 
 
+has %.o_global;
+has Term::Choose::NCurses::WINDOW $.g_win;
+has Term::Choose::NCurses::WINDOW $!win;
 
-sub _ncurses_win {
-    my int32 constant LC_ALL = 6; # From locale.h
-    setlocale(LC_ALL, "");
-    my Term::Choose::NCurses::WINDOW $win = initscr();
-    return $win;
+
+method new ( %o_global?, $g_win=Term::Choose::NCurses::WINDOW ) { ##
+    %o_global = _prepare_options( 
+        %o_global,
+        { mouse => '<[ 0 1 ]>' },
+        { mouse => 0 }
+    );
+    self.bless( :%o_global, :$g_win ); ## opt
 }
 
+
+method !_init_term {
+    if $!g_win {
+        $!win = $!g_win;
+    }
+    else {
+        my int32 constant LC_ALL = 6;
+        setlocale( LC_ALL, "" );
+        $!win = initscr;
+    }
+}
+
+method !_end_term {
+    return if $!g_win;
+    endwin();
+}
 
 sub _prepare_options ( %opt, %valid, %defaults ) {
     for %opt.kv -> $key, $value {
@@ -47,7 +69,7 @@ sub _path_valid_opt ( %added_opt? ) {
     my %valid_options = (
         mouse       => '<[ 0 1 ]>',
         order       => '<[ 0 1 ]>',
-        show_hidden => '<[ 0 1 ]>',
+        show-hidden => '<[ 0 1 ]>',
         enchanted   => '<[ 0 1 2 ]>',
         justify     => '<[ 0 1 2 ]>',
         layout      => '<[ 0 1 2 ]>',
@@ -58,11 +80,11 @@ sub _path_valid_opt ( %added_opt? ) {
 };
 
 
-sub _path_defaults ( %added_defaults? ) {
+method !_path_defaults ( %added_defaults? ) {
     my %defaults = (
-        mouse       => 0,
+        mouse       => %!o_global<mouse>,
         order       => 1,
-        show_hidden => 1,
+        show-hidden => 1,
         enchanted   => 1,
         justify     => 0,
         layout      => 1,
@@ -77,11 +99,13 @@ sub _my_array_gist ( @array ) {
 }
 
 
-sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
+sub choose-dirs ( %opt? ) is export( :DEFAULT, :all, :choose-dirs ) { return Term::Choose::Util.new().choose-dirs( %opt ) }
+
+method choose-dirs ( %opt? ) {
     my %o = _prepare_options( 
         %opt,
         _path_valid_opt( { current => 'Array' } ),
-        _path_defaults(  { current => [] } )
+        self!_path_defaults( { current => [] } )
     );
     my @chosen_dirs;
     my IO::Path $dir = %o<dir>.IO;
@@ -92,16 +116,16 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
     my $up      = ' .. ';
     my @pre = ( Any, $confirm, $add_dir, $up );
     my Int $default_idx = %o<enchanted> ?? @pre.end !! 0;
-    my $win = _ncurses_win();
+    self!_init_term();
     my $tc = Term::Choose.new(
         { undef => $back, mouse => %o<mouse>, justify => %o<justify>, layout => %o<layout>, order => %o<order> },
-        $win
+        $!win
     );
 
     loop {
         my IO::Path @dirs;
         try {
-            if %o<show_hidden> {
+            if %o<show-hidden> {
                 @dirs = $dir.dir.grep( { .d } );
             }
             else {
@@ -111,7 +135,7 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
                 my $prompt = $dir.gist ~ ":\n" ~ $_;
                 pause( [ 'Press ENTER to continue.' ], { prompt => $prompt } );
                 if $dir.Str eq '/' {
-                    endwin();
+                    self!_end_term();
                     return Empty;
                 }
                 $dir = $dir.dirname.IO;
@@ -133,8 +157,8 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
             $prompt ~= sprintf "%*s %s\n\n", $len_key, $key_new, _my_array_gist( [ @chosen_dirs.map( { $_.Str } ) ] );
         }
         my Str $key_cwd = 'pwd: ';
-        $prompt  = line_fold( $prompt,              getmaxx( $win ), '', ' ' x $len_key       );
-        $prompt ~= line_fold( $key_cwd ~ $previous, getmaxx( $win ), '', ' ' x $key_cwd.chars );
+        $prompt  = line-fold( $prompt,              getmaxx( $!win ), '', ' ' x $len_key       );
+        $prompt ~= line-fold( $key_cwd ~ $previous, getmaxx( $!win ), '', ' ' x $key_cwd.chars );
         $prompt ~= "\n";
         # Choose
         my $choice = $tc.choose(
@@ -143,7 +167,7 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
         );
         if ! $choice.defined {
             if ! @chosen_dirs.elems {
-                endwin();
+                self!_end_term();
                 return Empty;
             }
             @chosen_dirs = Empty;
@@ -151,11 +175,11 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
         }
         $default_idx = %o<enchanted> ?? @pre.end !! 0;
         if $choice eq $confirm {
-            endwin();
+            self!_end_term();
             return @chosen_dirs;
         }
         elsif $choice eq $add_dir {
-            @chosen_dirs.push( $previous );
+            @chosen_dirs.push: $previous;
             $dir = $dir.dirname.IO;
             $default_idx = 0 if $previous eq $dir;
             $previous = $dir;
@@ -168,19 +192,23 @@ sub choose_dirs ( %opt? ) is export( :MANDATORY ) {
 }
 
 
-sub choose_a_dir ( %opt? --> IO::Path ) is export( :MANDATORY ) {
-    return _choose_a_path( %opt, 0 );
+sub choose-a-dir ( %opt? --> IO::Path ) is export( :DEFAULT, :all, :choose-a-dir ) {
+    Term::Choose::Util.new._choose_a_path( %opt, 0 );
 }
+method choose-a-dir ( %opt? --> IO::Path ) { self!_choose_a_path( %opt, 0 ) }
 
-sub choose_a_file ( %opt? --> IO::Path ) is export( :MANDATORY ) {
-    return _choose_a_path( %opt, 1 );
+
+sub choose-a-file ( %opt? --> IO::Path ) is export( :DEFAULT, :all, :choose-a-file ) { 
+    Term::Choose::Util.new._choose_a_path( %opt, 1 )
 }
+method choose-a-file ( %opt? --> IO::Path ) { self!_choose_a_path( %opt, 1 ) }
 
-sub _choose_a_path ( %opt, Int $is_a_file --> IO::Path ) {
+
+method !_choose_a_path ( %opt, Int $is_a_file --> IO::Path ) {
     my %o = _prepare_options( 
         %opt, 
         _path_valid_opt( $is_a_file ?? {} !! { current => 'Str' } ),
-        _path_defaults(  $is_a_file ?? {} !! { current => '' } ),
+        self!_path_defaults(  $is_a_file ?? {} !! { current => '' } ),
     );
     my $back        = ' < ';
     my $confirm     = ' = ';
@@ -194,16 +222,16 @@ sub _choose_a_path ( %opt, Int $is_a_file --> IO::Path ) {
     my Str $curr        = %o<current> // Str;
     my IO::Path $dir      = %o<dir>.IO;
     my IO::Path $previous = $dir;
-    my $win = _ncurses_win();
+    self!_init_term();
     my $tc = Term::Choose.new(
         { undef => $back, mouse => %o<mouse>, justify => %o<justify>, layout => %o<layout>, order => %o<order> },
-        $win
+        $!win
     );
 
     loop {
         my IO::Path @dirs;
         try {
-            if %o<show_hidden> {
+            if %o<show-hidden> {
                 @dirs = $dir.dir.grep( { .d } );
             }
             else {
@@ -213,7 +241,7 @@ sub _choose_a_path ( %opt, Int $is_a_file --> IO::Path ) {
                 my $prompt = $dir.gist ~ ":\n" ~ $_;
                 pause( [ 'Press ENTER to continue.' ], { prompt => $prompt } );
                 if $dir.Str eq '/' {
-                    endwin();
+                    self!_end_term();
                     return Empty;
                 }
                 $dir = $dir.dirname.IO;
@@ -234,17 +262,17 @@ sub _choose_a_path ( %opt, Int $is_a_file --> IO::Path ) {
             { prompt => $prompt, default => $default_idx }
         );
         if ! $choice.defined {
-            endwin();
+            self!_end_term();
             return;
         }
         elsif $choice eq $confirm {
-            endwin();
+            self!_end_term();
             return $previous;
         }
         elsif $choice eq $select_file {
             my IO::Path $file = _a_file( %o, $dir, $tc ) // IO::Path;
             next if ! $file.defined; ###
-            endwin();
+            self!_end_term();
             return $file;
         }
         if $choice eq $up {
@@ -264,13 +292,13 @@ sub _choose_a_path ( %opt, Int $is_a_file --> IO::Path ) {
 }
 
 sub _a_file ( %o, IO::Path $dir, $tc --> IO::Path ) {
-    my IO::Path @files;
+    my Str @files;
     try {
-        if %o<show_hidden> {
-            @files = $dir.dir.grep( { .IO.f } );
+        if %o<show-hidden> {
+            @files = $dir.dir.grep( { .f } ).map: { .basename };
         }
         else {
-            @files = $dir.dir.grep( { .f && .basename !~~ / ^ \. / } );
+            @files = $dir.dir.grep( { .f } ).map( { .basename } ).grep: { ! / ^ \. / };
         }
         CATCH { #
             my $prompt = $dir.gist ~ ":\n" ~ $_;
@@ -283,44 +311,48 @@ sub _a_file ( %o, IO::Path $dir, $tc --> IO::Path ) {
         pause( [ 'Press ENTER' ], { prompt => $prompt } );
         return;
     }
-    my Str $prompt = sprintf 'Files in %s:', $dir;
+    my Str $prompt = sprintf '"%s":', $dir;
     # Choose
     my $choice = $tc.choose(
         [ Any, |@files.sort ],
-        { prompt => $prompt }
+        { prompt => $prompt, justify => 1 }
     );
     return if ! $choice.defined;
     return $*SPEC.catfile( $dir, $choice ).IO;
 }
 
 
-sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
+sub choose-a-number ( Int $digits, %opt? ) is export( :DEFAULT, :all, :choose-a-number ) {
+    Term::Choose::Util.new.choose-a-number( $digits, %opt );
+}
+
+method choose-a-number ( Int $digits, %opt? ) {
     my %o = _prepare_options(
         %opt,
         {   mouse    => '<[ 0 1 ]>',
             current  => '<[ 0 .. 9 ]>+',
             name     => 'Str',
-            thsd_sep => 'Str',
+            thsd-sep => 'Str',
         },
-        {   mouse    => 0,
+        {   mouse    => %!o_global<mouse>,
             current  => Int,
             name     => '',
-            thsd_sep => ',',
+            thsd-sep => ',',
         }
     );
-    my Str $sep = %o<thsd_sep>;
+    my Str $sep = %o<thsd-sep>;
     my Int $longest = $digits + ( $sep eq '' ?? 0 !! ( $digits - 1 ) div 3 );
     my Str $tab     = '  -  ';
     my Str $confirm = 'CONFIRM';
     my Str $back    = 'BACK';
     my Str @ranges;
-    my $win = _ncurses_win();
+    self!_init_term();
 
-    if $longest * 2 + $tab.chars <= getmaxx( $win ) {
+    if $longest * 2 + $tab.chars <= getmaxx( $!win ) {
         @ranges = ( sprintf " %*s%s%*s", $longest, '0', $tab, $longest, '9' );
         for 1 .. $digits - 1 -> $zeros { #
-            my Str $begin = insert_sep( '1' ~ '0' x $zeros, $sep );
-            my Str $end   = insert_sep( '9' ~ '0' x $zeros, $sep );
+            my Str $begin = insert-sep( '1' ~ '0' x $zeros, $sep );
+            my Str $end   = insert-sep( '9' ~ '0' x $zeros, $sep );
             @ranges.unshift( sprintf " %*s%s%*s", $longest, $begin, $tab, $longest, $end );
         }
         $confirm = sprintf "%-*s", $longest * 2 + $tab.chars, $confirm;
@@ -329,7 +361,7 @@ sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
     else {
         @ranges = ( sprintf "%*s", $longest, '0' );
         for 1 .. $digits - 1 -> $zeros { #
-            my Str $begin = insert_sep( '1' ~ '0' x $zeros, $sep );
+            my Str $begin = insert-sep( '1' ~ '0' x $zeros, $sep );
             @ranges.unshift( sprintf "%*s", $longest, $begin );
         }
     }
@@ -342,25 +374,25 @@ sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
     my $fmt_new = "    New{$name}: %{$longest}s\n";
     my $tc = Term::Choose.new(
         { mouse => %o<mouse> },
-        $win
+        $!win
     );
 
     NUMBER: loop {
         my Str $new_number = $result // $undef;
         my Str $prompt;
         if %o<current>.defined {
-            if print_columns( sprintf $fmt_cur, 1 ) <= getmaxx( $win ) {
-                $prompt  = sprintf $fmt_cur, insert_sep( %o<current>, $sep );
+            if print-columns( sprintf $fmt_cur, 1 ) <= getmaxx( $!win ) {
+                $prompt  = sprintf $fmt_cur, insert-sep( %o<current>, $sep );
                 $prompt ~= sprintf $fmt_new, $new_number;
             }
             else {
-                $prompt  = sprintf "%{$longest}s\n", insert_sep( %o<current>, $sep );
+                $prompt  = sprintf "%{$longest}s\n", insert-sep( %o<current>, $sep );
                 $prompt ~= sprintf "%{$longest}s\n", $new_number;
             }
         }
         else {
             $prompt = sprintf $fmt_new, $new_number;
-            if print_columns( $prompt ) > getmaxx( $win ) {
+            if print-columns( $prompt ) > getmaxx( $!win ) {
                 $prompt = $new_number;
             }
         }
@@ -376,12 +408,12 @@ sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
                 next NUMBER;
             }
             else {
-                endwin();
+                self!_end_term();
                 return;
             }
         }
         elsif $range eq $confirm {
-            endwin();
+            self!_end_term();
             if ! $result.defined {
                 return;
             }
@@ -417,12 +449,16 @@ sub choose_a_number ( Int $digits, %opt? ) is export( :MANDATORY ) {
             %numbers{$zeros} = $num.Int;
         }
         my Int $num_combined = [+] %numbers.values;
-        $result = insert_sep( $num_combined, $sep ).Str;
+        $result = insert-sep( $num_combined, $sep ).Str;
     }
 }
 
 
-sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
+sub choose-a-subset ( @available, %opt? ) is export( :DEFAULT, :all, :choose-a-subset ) {
+    Term::Choose::Util.new().choose-a-subset( @available, %opt );
+}
+
+method choose-a-subset ( @available, %opt? ) {
     my %o = _prepare_options(
         %opt,
         {   index     => '<[ 0 1 ]>',
@@ -435,7 +471,7 @@ sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
             prompt    => 'Str',
         },
         {   index   => 0,
-            mouse   => 0,
+            mouse   => %!o_global<mouse>,
             order   => 1,
             justify => 0,
             layout  => 2,
@@ -457,11 +493,11 @@ sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
     my @new_idx;
     my @new_val;
     my @pre = ( Any, $confirm );
-    my $win = _ncurses_win();
+    self!_init_term();
     my $tc = Term::Choose.new(
         { layout => %o<layout>, mouse => %o<mouse>, justify => %o<justify>, order => %o<order>,
-          no_spacebar => [ 0 .. @pre.end ], undef => $back, lf => [ 0, $len_key ] },
-        $win
+          no-spacebar => [ 0 .. @pre.end ], undef => $back, lf => [ 0, $len_key ] },
+        $!win
     );
 
     loop {
@@ -471,7 +507,7 @@ sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
         $lines ~= %o<prompt>;
         my Str @avail_with_prefix = @available.map( { $prefix ~ $_ } );
         # Choose
-        my Int @idx = $tc.choose_multi(
+        my Int @idx = $tc.choose-multi(
             [ |@pre, |@avail_with_prefix  ],
             { prompt => $lines, index => 1 }
         );
@@ -482,7 +518,7 @@ sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
                 next;
             }
             else {
-                endwin();
+                self!_end_term();
                 return Empty;
             }
         }
@@ -490,11 +526,11 @@ sub choose_a_subset ( @available, %opt? ) is export( :MANDATORY ) {
             @idx.shift;
             @new_val.append( @available[@idx >>->> @pre.elems] );
             @new_idx.append( @idx >>->> @pre.elems );
-            endwin();
+            self!_end_term();
             return %o<index> ?? @new_idx !! @new_val;
         }
-        @new_val.append( @available[@idx >>->> @pre.elems] );
-        @new_idx.append( @idx >>->> @pre.elems );
+        @new_val.append( @available[@idx >>->> @pre.elems] ); #
+        @new_idx.append( @idx >>->> @pre.elems ); #
     }
 }
 
@@ -511,25 +547,30 @@ my %config = (
     'case_sensitive' => 1,
 );
 
-my %tmp_config = settings_menu( @menu, %config, { in_place => 0 } );
+my %tmp_config = settings_menu( @menu, %config, { in-place => 0 } );
 if %tmp_config {
     for %tmp_config.kv -> $key, $value {
         %config{$key} = $value;
     }
 }
 
-my $changed = settings_menu( @menu, %config, { in_place => 1 } );
+my $changed = settings_menu( @menu, %config, { in-place => 1 } );
 >>>
 
-sub settings_menu ( @menu, %setup, %opt? ) is export( :all ) {
+
+sub settings-menu ( @menu, %setup, %opt? ) is export( :all, :settings-menu ) {
+    Term::Choose::Util.new().settings-menu( @menu, %setup, %opt );
+}
+
+method settings-menu ( @menu, %setup, %opt? ) {
     my %o = _prepare_options(
         %opt,
-        {   in_place => '<[ 0 1 ]>',
+        {   in-place => '<[ 0 1 ]>',
             mouse    => '<[ 0 1 ]>',
             prompt   => 'Str',
         },
-        {   in_place => 1,
-            mouse    => 0,
+        {   in-place => 1,
+            mouse    => %!o_global<mouse>,
             prompt   => 'Choose:',
         }
     );
@@ -537,28 +578,29 @@ sub settings_menu ( @menu, %setup, %opt? ) is export( :all ) {
     my Str $back    = '  BACK';
     my Int $name_w = 0;
     my %new_setup;
-    for @menu -> $entry {
-        my ( Str $key, Str $name ) = $entry;
-        my Int $len = print_columns( $name );
+    for @menu -> @entry {
+        my Str $key  = @entry[0];
+        my Str $name = @entry[1];
+        my Int $len = print-columns( $name );
         $name_w = $len if $len > $name_w;
         %setup{$key} //= 0;
         %new_setup{$key} = %setup{$key};
     }
-    my $no_change = %o<in_place> ?? 0 !! {};
+    my $no_change = %o<in-place> ?? 0 !! {};
     my $count = 0;
-    my $win = _ncurses_win();
+    self!_init_term();
     my $tc = Term::Choose.new(
         { prompt => %o<prompt>, layout => 2, justify => 0, 
           mouse => %o<mouse>, undef => $back },
-        $win
+        $!win
     );
 
     loop {
         my Str @print_keys;
-        for @menu -> $entry {
-            my ( Str $key, Str $name, $avail_values ) = $entry;
+        for @menu -> @entry {
+            my ( Str $key, Str $name, $avail_values ) = @entry;
             my @current = $avail_values[%new_setup{$key}];
-            @print_keys.push( sprintf "%-*s [%s]", $name_w, $name, @current );
+            @print_keys.push: sprintf "%-*s [%s]", $name_w, $name, @current;
         }
         my @pre = ( Any, $confirm );
         my @choices = |@pre, |@print_keys;
@@ -568,31 +610,31 @@ sub settings_menu ( @menu, %setup, %opt? ) is export( :all ) {
             { index => 1 }
         );
         if ! $idx.defined {
-            endwin();
+            self!_end_term();
             return $no_change;
         }
         my $choice = @choices[$idx];
         if ! $choice.defined {
-            endwin();
+            self!_end_term();
             return $no_change;
         }
         elsif $choice eq $confirm {
             my Int $change = 0;
             if $count {
-                for @menu -> $entry {
-                    my Str $key = $entry[0];
+                for @menu -> @entry {
+                    my Str $key = @entry[0];
                     if %setup{$key} == %new_setup{$key} {
                         next;
                     }
-                    if %o<in_place> {
+                    if %o<in-place> {
                         %setup{$key} = %new_setup{$key};
                     }
                     $change++;
                 }
             }
-            endwin();
+            self!_end_term();
             return $no_change if ! $change;
-            return 1          if %o<in_place>;
+            return 1          if %o<in-place>;
             return %new_setup;
         }
         my Str   $key          = @menu[$idx-@pre][0];
@@ -604,7 +646,7 @@ sub settings_menu ( @menu, %setup, %opt? ) is export( :all ) {
 }
 
 
-sub term_size ( IO::Handle $handle_out = $*IN ) is export( :all ) { #
+sub term-size ( IO::Handle $handle_out = $*IN ) is export( :all, :term-size ) { #
     my Str $stty = qx[stty -a]; #
     my Int $height = $stty.match( / 'rows '    <( \d+ )>/ ).Int;
     my Int $width  = $stty.match( / 'columns ' <( \d+ )>/ ).Int;
@@ -612,12 +654,12 @@ sub term_size ( IO::Handle $handle_out = $*IN ) is export( :all ) { #
 }
 
 
-sub term_width ( IO::Handle $handle_out = $*IN ) is export( :all ) { #
-    return( ( term_size( $handle_out ) )[0] );
+sub term-width ( IO::Handle $handle_out = $*IN ) is export( :all, :term-width ) { #
+    return( ( term-size( $handle_out ) )[0] );
 }
 
 
-sub insert_sep ( $num, $sep = ' ' ) is export( :all ) {
+sub insert-sep ( $num, $sep = ' ' ) is export( :all, :insert-sep ) {
     return $num if ! $num.defined;
     return $num if $num ~~ /$sep/;
     my token sign { <[+-]> }
@@ -633,38 +675,42 @@ sub insert_sep ( $num, $sep = ' ' ) is export( :all ) {
     return $new;
 }
 
-sub print_hash ( %hash, %opt? ) is export( :all ) {
-    my $win = _ncurses_win();
+
+sub print-hash ( %hash, %opt? ) is export( :all, :print-hash ) {
+    Term::Choose::Util.new().print-hash( %hash, %opt );
+}
+
+method print-hash ( %hash, %opt? ) {
+    self!_init_term();
     my %o = _prepare_options(
         %opt,
         {   mouse        => '<[ 0 1 ]>',
-            len_key      => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
+            len-key      => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
             maxcols      => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
-            left_margin  => '<[ 0 .. 9 ]>+',
-            right_margin => '<[ 0 .. 9 ]>+',
+            left-margin  => '<[ 0 .. 9 ]>+',
+            right-margin => '<[ 0 .. 9 ]>+',
             keys         => 'Array',
             preface      => 'Str',
             prompt       => 'Str',
         },
-        {   mouse        => 0,
-            len_key      => Int,
-            maxcols      => getmaxx( $win ),
-            left_margin  => 0, #
-            right_margin => 0, #
+        {   mouse        => %!o_global<mouse>,
+            len-key      => Int,
+            maxcols      => getmaxx( $!win ),
+            left-margin  => 0, #
+            right-margin => 0, #
             keys         => Array,
             preface      => Str,
             prompt       => Str,
-            
         }
     );
-    my Str @keys    = %o<keys>     // %hash.keys.sort;
-    my Int $key_w   = %o<len_key>  // @keys.map( { print_columns $_ } ).max;
-    my Str $prompt  = %opt<prompt> // ( %o<preface>.defined  ?? '' !! 'Close with ENTER' );
+    my Str @keys    = %o<keys>.list // %hash.keys.sort; # /
+    my Int $key_w   = %o<len-key>   // @keys.map( { print-columns $_ } ).max;
+    my Str $prompt  = %opt<prompt>  // ( %o<preface>.defined  ?? '' !! 'Close with ENTER' );
     my Int $maxcols = %o<maxcols>;
-    if $maxcols > getmaxx( $win ) {
-        $maxcols = getmaxx( $win ) - %o<right_margin>; #
+    if $maxcols > getmaxx( $!win ) {
+        $maxcols = getmaxx( $!win ) - %o<right-margin>; #
     }
-    $key_w += %o<left_margin>;
+    $key_w += %o<left-margin>;
     my Str $sep   = ' : ';
     my Int $sep_w = $sep.chars;
     if $key_w + $sep_w > $maxcols div 3 * 2 {
@@ -672,33 +718,33 @@ sub print_hash ( %hash, %opt? ) is export( :all ) {
     }
     my Str @vals;
     if %o<preface>.defined {
-        @vals.append( line_fold( %o<preface>, $maxcols, '', '' ).lines );
+        @vals.append( line-fold( %o<preface>, $maxcols, '', '' ).lines );
     }
     for @keys -> $key {
         if %hash{$key}:!exists {
             next;
         }
         my Str $entry = sprintf "%*.*s%s%s", $key_w xx 2, $key, $sep, %hash{$key}.gist;
-        my Str $text = line_fold( $entry, $maxcols, '', ' ' x ( $key_w + $sep_w ) );
+        my Str $text = line-fold( $entry, $maxcols, '', ' ' x ( $key_w + $sep_w ) );
         @vals.append( $text.lines );
     }
     #return @vals.join( "\n" ) if return something;
     my $tc = Term::Choose.new(
         {},
-        $win
+        $!win
     );
     $tc.pause(
         @vals,
         { prompt => $prompt, layout => 2, justify => 0, mouse => %o<mouse>, empty => ' ' }
     );
-    endwin();
+    self!_end_term();
 }
 
 
-sub unicode_sprintf ( Str $str, Int $avail_col_w, Int $justify ) is export( :all ) {
-    my Int $str_length = print_columns( $str );
+sub unicode-sprintf ( Str $str, Int $avail_col_w, Int $justify ) is export( :all, :unicode-sprintf ) {
+    my Int $str_length = print-columns( $str );
     if $str_length > $avail_col_w {
-        return cut_to_printwidth( $str, $avail_col_w );
+        return cut-to-printwidth( $str, $avail_col_w );
     }
     elsif $str_length < $avail_col_w {
         if $justify == 0 {
@@ -728,29 +774,25 @@ Term::Choose::Util - CLI related functions.
 
 =head1 VERSION
 
-Version 0.012
-
-=head1 ANNOUNCEMENT
-
-Backwards incompatible changes with the next release (C<-> replaces C<_> in routine and option names).
+Version 0.016
 
 =head1 DESCRIPTION
 
 This module provides some CLI related functions.
 
-=head1 SUBROUTINES
+=head1 ROUTINES
 
 Values in brackets are default values.
 
-=head2 choose_a_dir
+=head2 choose-a-dir
 
 =begin code
 
-    $chosen_directory = choose_a_dir( { layout => 1, ... } )
+    $chosen_directory = choose-a-dir( { layout => 1, ... } )
 
 =end code
 
-With C<choose_a_dir> the user can browse through the directory tree (as far as the granted rights permit it) and
+With C<choose-a-dir> the user can browse through the directory tree (as far as the granted rights permit it) and
 choose a directory which is returned.
 
 To move around in the directory tree:
@@ -761,13 +803,13 @@ To move around in the directory tree:
 
 To return the current working-directory as the chosen directory choose "C< = >".
 
-The "back"-menu-entry ("C< E<lt> >") causes C<choose_a_dir> to return nothing.
+The "back"-menu-entry ("C< E<lt> >") causes C<choose-a-dir> to return nothing.
 
 As an argument it can be passed a hash. With this hash the user can set the different options:
 
 =item1 current
 
-If set, C<choose_a_dir> shows I<current> as the current directory.
+If set, C<choose-a-dir> shows I<current> as the current directory.
 
 =item1 dir
 
@@ -808,52 +850,52 @@ This option has no meaning if I<layout> is set to 2.
 
 Values: 0,[1].
 
-=item1 show_hidden
+=item1 show-hidden
 
 If enabled, hidden directories are added to the available directories.
 
 Values: 0,[1].
 
-=head2 choose_a_file
+=head2 choose-a-file
 
 =begin code
 
-    $chosen_file = choose_a_file( { layout => 1, ... } )
+    $chosen_file = choose-a-file( { layout => 1, ... } )
 
 =end code
 
-Browse the directory tree like with C<choose_a_dir>. Select "C<E<gt>F>" to get the files of the current directory; than
+Browse the directory tree like with C<choose-a-dir>. Select "C<E<gt>F>" to get the files of the current directory; than
 the chosen file is returned.
 
-The options are passed with a hash. See L<#choose_a_dir> for the different options. C<choose_a_file> has no option
+The options are passed with a hash. See L<#choose-a-dir> for the different options. C<choose-a-file> has no option
 I<current>.
 
-=head2 choose_dirs
+=head2 choose-dirs
 
 =begin code
 
-    @chosen_directories = choose_dirs( { layout => 1, ... } )
+    @chosen_directories = choose-dirs( { layout => 1, ... } )
 
 =end code
 
-C<choose_dirs> is similar to C<choose_a_dir> but it is possible to return multiple directories.
+C<choose-dirs> is similar to C<choose-a-dir> but it is possible to return multiple directories.
 
 "C< . >" adds the current directory to the list of chosen directories and "C< = >" returns the chosen list of
 directories.
 
 The "back"-menu-entry ( "C< E<lt> >" ) resets the list of chosen directories if any. If the list of chosen directories
-is empty, "C< E<lt> >" causes C<choose_dirs> to return nothing.
+is empty, "C< E<lt> >" causes C<choose-dirs> to return nothing.
 
-C<choose_dirs> uses the same option as C<choose_a_dir>. The option I<current> expects as its value an array (directories
+C<choose-dirs> uses the same option as C<choose-a-dir>. The option I<current> expects as its value an array (directories
 shown as the current directories).
 
-=head2 choose_a_number
+=head2 choose-a-number
 
 =begin code
 
     for ( 1 .. 5 ) {
         $current = $new
-        $new = choose_a_number( 5, { current => $current, name => 'Testnumber' }  );
+        $new = choose-a-number( 5, { current => $current, name => 'Testnumber' }  );
     }
 
 =end code
@@ -881,21 +923,21 @@ See the option I<mouse> in L<Term::Choose|https://github.com/kuerbis/Term-Choose
 
 Values: [0],1.
 
-=item1 thsd_sep
+=item1 thsd-sep
 
 Sets the thousands separator.
 
 Default: comma (,).
 
-=head2 choose_a_subset
+=head2 choose-a-subset
 
 =begin code
 
-    $subset = choose_a_subset( @available_items, { current => @current_subset } )
+    $subset = choose-a-subset( @available_items, { current => @current_subset } )
 
 =end code
 
-C<choose_a_subset> lets you choose a subset from a list.
+C<choose-a-subset> lets you choose a subset from a list.
 
 As a first argument it is required an array which provides the available list.
 
