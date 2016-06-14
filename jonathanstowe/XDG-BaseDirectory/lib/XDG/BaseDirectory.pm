@@ -34,7 +34,7 @@ methods that return a string path in that module return an L<IO::Path> here.
 
 =end pod
 
-class XDG::BaseDirectory:ver<0.0.4>:auth<github:jonathanstowe> {
+class XDG::BaseDirectory:ver<0.0.5>:auth<github:jonathanstowe> {
 
 =begin pod
 
@@ -119,7 +119,35 @@ over-ridden by the environment variable C<XDG_CACHE_HOME>.
     has IO::Path $.cache-home;
 
     method cache-home() returns IO::Path {
-        $!cache-home //= %*ENV<XDG_CACHE_HOME> || $*HOME.child('.cache');
+        $!cache-home //= (%*ENV<XDG_CACHE_HOME> || $*HOME.child('.cache')).IO;
+    }
+
+=begin pod
+
+=head2 runtime-dir
+
+Returns the directory where user specific, run-time files (and other filesystem objects such as sockets and named pipes,)
+should be placed.  The directory will not persist between logins and reboots of the system. For this to work correctly
+the system should be managing the directory and set the environment variable C<XDG_RUNTIME_DIR>, however if this is not
+the case the behaviour will be emulated in a less secure fashion and a warning will be emitted.
+
+=end pod
+
+    has IO::Path $.runtime-dir;
+
+    method runtime-dir() returns IO::Path {
+        $!runtime-dir //= do {
+            if %*ENV<XDG_RUNTIME_DIR>:exists {
+                %*ENV<XDG_RUNTIME_DIR>.IO
+            }
+            else {
+                warn "XDG_RUNTIME_DIR not set -falling back to insecure method";
+                my $dir = $*SPEC.tmpdir.child($*USER.Int);
+                $dir.mkdir;
+                $dir.chmod(0o700);
+                $dir;
+            }
+        }
     }
 
 =begin pod

@@ -24,6 +24,7 @@ ok($obj.can(Q[save-data-path]), Q[can save-data-path]);
 ok($obj.can(Q[load-config-paths]), Q[can load-config-paths]);
 ok($obj.can(Q[load-first-config]), Q[can load-first-config]);
 ok($obj.can(Q[load-data-paths]), Q[can load-data-paths]);
+ok($obj.can(Q[runtime-dir]), Q[can runtime-dir]);
 
 my $base = $*CWD.child('.test_' ~ $*PID);
 
@@ -31,11 +32,16 @@ $base.mkdir;
 
 %*ENV<XDG_CONFIG_HOME> = $base.child('.config').Str;
 %*ENV<XDG_DATA_HOME> = $base.child($*SPEC.catfile('.local', 'share')).Str;
+%*ENV<XDG_CACHE_HOME> = $base.child('.cache').Str;
 
+isa-ok $obj.cache-home, IO::Path, "cache-home";
 isa-ok($obj.config-home, IO::Path, 'config-home is an IO::Path');
 isa-ok($obj.data-home, IO::Path, 'data-home is an IO::Path');
 is($obj.config-home.Str, $base.child('.config').Str, 'config-home is the right path');
 is($obj.data-home.Str, $base.child($*SPEC.catfile('.local', 'share')).Str, 'data-home is the right path');
+isa-ok($obj.runtime-dir, IO::Path, "runtime-dir is an IO::Path");
+ok $obj.runtime-dir, "it's defined";
+ok $obj.runtime-dir.d, "and it's a directory";
 
 ok(my $scp = $obj.save-config-path('foo', 'bar'), 'save-config-path');
 isa-ok($scp, IO::Path, 'and it is an IO::Path');
