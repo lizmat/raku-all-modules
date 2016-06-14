@@ -16,9 +16,9 @@ is-deeply $g.locate( '8.8.8.8' ), {
     'country' => 'United States',
     'country_code' => 'US',
     'dma_code' => 807,
-    'latitude' => 37.384499,
-    'longitude' => -122.088097,
-    'postal_code' => '94040',
+    'latitude' => 37.386002,
+    'longitude' => -122.083801,
+    'postal_code' => '94035',
     'region' => 'California',
     'region_code' => 'CA',
     'time_zone' => 'America/Los_Angeles'
@@ -30,8 +30,8 @@ is-deeply $g.locate( '2001:4860:4860::8888' ), {
     'country' => 'United States',
     'country_code' => 'US',
     'dma_code' => 0,
-    'latitude' => 38.0,
-    'longitude' => -97.0
+    'latitude' => 37.750999,
+    'longitude' => -97.821999
 }, 'locate by IPv6';
 
 is $g.locate( '0.0.0.0' ), Nil, 'not located';
