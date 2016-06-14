@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/skaji/perl6-tail.git
+	branch = master
+	commit = 25e2e051c7631c9d59bbe1247da287979e18338b
+	parent = 4159eaa9c2dc04b5aa3d874851a74d1221dc62dd
+	cmdver = 0.2.3
