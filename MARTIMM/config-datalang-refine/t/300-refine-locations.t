@@ -1,0 +1,116 @@
+use v6.c;
+use Test;
+use Config::DataLang::Refine;
+
+#-------------------------------------------------------------------------------
+# First config
+mkdir 't/cfg-path';
+spurt( 't/cfg-path/myCfg.cfg', Q:to/EOOPT/);
+  # App control
+  [app]
+    workdir     = '/var/tmp'
+    text        = 'abc def xyz'
+
+  # App control for plugin p1
+  [app.p1]
+    workdir     = '/tmp'
+    host        = 'example.com'
+
+  # Plugin p2
+  [p2]
+    workdir     = '~/p2'
+    times       = [10,11,12]
+    tunnel      = true
+
+  [app.p2]
+    workdir     = '~/p2'
+    tunnel      = true
+    vision      = false
+
+  EOOPT
+
+
+# Second config
+spurt( '.myCfg.cfg', Q:to/EOOPT/);
+  # App control
+  [app]
+    port        = 2345
+
+  # App control for plugin p1
+  [app.p1]
+    workdir     = '/tmp'
+
+  [app.p2]
+    workdir     = '~/p2'
+    tunnel      = false
+    vision      = true
+
+  [p2]
+    perl5lib    = [ 'lib', '.']
+
+  [p2.env]
+    PATH        = [ '/usr/bin', '/bin', '.']
+    perl6lib    = [ 'lib', '.']
+    perl5lib    = false
+
+  EOOPT
+
+#-------------------------------------------------------------------------------
+subtest {
+
+  my Config::DataLang::Refine $c .= new(:config-name<t/cfg-path/myCfg.cfg>);
+  my Hash $o = $c.refine(<app>);
+  ok $o<workdir>:!exists, "app has no workdir";
+  is $o<port>, 2345, "port app $o<port>";
+
+  $o = $c.refine(<app p1>);
+  is $o<workdir>, '/tmp', "workdir p1 is $o<workdir>";
+  is $o<port>, 2345, "port p1 $o<port>";
+
+
+  $c .= new( :config-name<t/cfg-path/myCfg.cfg>, :merge);
+  $o = $c.refine(<app>);
+  is $o<workdir>, '/var/tmp', "workdir app $o<workdir>";
+  is $o<port>, 2345, "port app $o<port>";
+
+  $o = $c.refine(<app p1>);
+  is $o<host>, 'example.com', "host p1 is $o<host>";
+  is $o<port>, 2345, "port p1 $o<port>";
+
+}, 'test config-name as relative path';
+
+#-------------------------------------------------------------------------------
+subtest {
+
+  my Config::DataLang::Refine $c .= new(
+    :config-name<myCfg.cfg>
+    :locations(['t/cfg-path'])
+  );
+  my Hash $o = $c.refine(<app>);
+  ok $o<workdir>:!exists, "app has no workdir";
+  is $o<port>, 2345, "port app $o<port>";
+
+  $o = $c.refine(<app p1>);
+  is $o<workdir>, '/tmp', "workdir p1 is $o<workdir>";
+  is $o<port>, 2345, "port p1 $o<port>";
+
+
+  $c .= new( :config-name<myCfg.cfg>, :merge, :locations(['t/cfg-path']));
+  $o = $c.refine(<app>);
+  is $o<workdir>, '/var/tmp', "workdir app $o<workdir>";
+  is $o<port>, 2345, "port app $o<port>";
+
+  $o = $c.refine(<app p1>);
+  is $o<host>, 'example.com', "host p1 is $o<host>";
+  is $o<port>, 2345, "port p1 $o<port>";
+
+}, 'test locations';
+
+#-------------------------------------------------------------------------------
+# Cleanup
+#
+unlink '.myCfg.cfg';
+unlink 't/cfg-path/myCfg.cfg';
+rmdir 't/cfg-path';
+done-testing();
+exit(0);

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MARTIMM/config-datalang-refine.git
+	branch = master
+	commit = 33fe1581d48278170c8adfd48ba2bb515235fe0e
+	parent = caf9e34f34c2471c60b6f328106f2ac6a1779d3f
+	cmdver = 0.2.3
