@@ -105,7 +105,7 @@ L<#prefix ...> etc. stub operators.
 
 
 Defining custom operators is covered in
-L</language/functions#Defining_Operators>.
+L<Defining Operators functions|/language/functions#Defining_Operators>.
 
 =head1 Meta Operators
 
@@ -120,7 +120,7 @@ different semantics, as explained in detail as follows.
     my $str = 'match string';
     $str ~~ s/match/replacement/;
     say $str; # replacement string
-    
+
     say S/match/replacement/ given 'match string'; # replacement string
 
 The lower-case version (X<s///>) substitutes in-place, while the
@@ -142,7 +142,7 @@ L<.subst method|/routine/subst>, which go between the `s`/`S` and the opening
     $str ~~ s:g/match/replacement/;
     say S:i :g /match/replacement/;
 
-You can also use a different delimeter:
+You can also use a different delimiter:
 
     $str ~~ s!foo!!;
     say S{foo} = {} given 'foobar';
@@ -150,7 +150,7 @@ You can also use a different delimeter:
 Non-matching characters can simply replace the original slashes. Matching
 characters, like braces, require an extra step where you use an
 assignment operator to assign the replacement to the match part.
-    
+
 =head1 Assignment Operators
 
 Infix operators can be combined with the assignment operator to modify a
@@ -394,7 +394,7 @@ being interpreted as a named argument.
 
 Block or L<Hash> constructor.X<|block constructor; hash constructor>
 
-If the contents looks like a list of pairs and does not use L<$_> or other
+If the contents looks like a list of pairs and does not use L<$_|/syntax/$_> or other
 placeholder parameters, returns an itemized L<Hash>.
 
 Otherwise it constructs a L<Block>.
@@ -503,7 +503,7 @@ Technically this is not an operator, but syntax special-cased in the compiler.
 =head2 postfix C«.=»
 
 A X<mutating method call>. C<$invocant.=method> desugars to
-C<$invocant = $invocant.method>, similar to L<C<op=>>.
+C<$invocant = $invocant.method>, similar to L<C<=>>.
 
 Technically this is not an operator, but syntax special-cased in the compiler.
 
@@ -546,7 +546,7 @@ X<Hyper method call operator>. Will call a method on all elements of a C<List> o
     my @b = @a».ord;                  # [97, 98, 99]
     sub foo(Str:D $c){ $c.ord * 2 };  # The first parameter of a method is the invocant.
     say @a».&foo;                     # So we can pretend to have a method call with a sub that got a good first positional argument.
-    say @a».&({ .ord});               # Blocks have an implicit positional arguments that lands in $_. The latter can be obmitted for method calls.
+    say @a».&({ .ord});               # Blocks have an implicit positional arguments that lands in $_. The latter can be omitted for method calls.
 
 =head2 X«postfix C<.postfix>
     |postfix,.postfix;postcircumfix,.( );postcircumfix,.[ ];postcircumfix,.{ };postcircumfix,.< >»
@@ -741,7 +741,8 @@ Flattens objects of type L<Capture>, L<Pair>, L<List> L<Map> and L<Hash>
 into an argument list.
 
 Outside of argument lists, it returns a L<Slip|/type/Slip>, which makes it
-flatten into the outer list.
+flatten into the outer list. Inside L<argument list|/language/list#Argument_List_(Capture)_Context> L<C<Positional>s|/type/Positional> are turned
+into positional arguments and L<C<Associative>s|/type/Associative> are turned into named arguments.
 
 =head2 prefix C«+^»
 
@@ -1349,7 +1350,7 @@ For value types, C<===> behaves like C<eqv>:
     # different types
     say 1 === 1.0;              # False
 
-C<===> uses the L<WHICH> method to obtain the object identity, so all value
+C<===> uses the L<WHICH|/routine/WHICH> method to obtain the object identity, so all value
 types must override method C<WHICH>.
 
 =head2 infix C«=:=»
@@ -1357,7 +1358,7 @@ types must override method C<WHICH>.
     proto sub infix:<=:=>(Mu \a, Mu \b) returns Bool:D is assoc<chain>
     multi sub infix:<=:=>(Mu \a, Mu \b)
 
-X<Container identity operator>. Returns L<True> if both arguments are bound to the same
+X<Container identity operator>. Returns C<True> if both arguments are bound to the same
 container. If it returns C<True>, it generally means that modifying one will
 also modify the other.
 
@@ -1529,7 +1530,7 @@ A comparison:
     say $_ if /A/ ff /C/ for @list;  # prints A, B, and C
     say $_ if /A/ ^ff /C/ for @list; # prints B and C
 
-The sed-like version can be found in L<C<^fff>>.
+The sed-like version can be found in L<C<^fff>|/routine/^fff>.
 
 This operator cannot be overloaded, as it is handled specially by the compiler.
 
@@ -1559,7 +1560,7 @@ the stop or start condition (or both).
     say $_ if /A/ ff /C/ for @list;  # prints A, B, and C
     say $_ if /A/ ^ff^ /C/ for @list; # prints B
 
-The sed-like version can be found in L<C<^fff^>>.
+The sed-like version can be found in L<C<^fff^>|/routine/^fff^>.
 
 This operator cannot be overloaded, as it is handled specially by the compiler.
 
@@ -1595,7 +1596,7 @@ Like L<C<fff>>, except it does not return true for matches to the left argument.
     say $_ if /A/ fff /C/ for @list;  # prints A, B, and C
     say $_ if /A/ ^fff /C/ for @list; # prints B and C
 
-For the non-sed version, see L<C<^ff>>.
+For the non-sed version, see L<C<^ff>|/routine/^ff>.
 
 This operator cannot be overloaded, as it is handled specially by the compiler.
 
@@ -1624,7 +1625,7 @@ right argument.
     say $_ if /A/ fff /C/ for @list;  # prints A, B, and C
     say $_ if /A/ ^fff^ /C/ for @list; # prints B
 
-For the non-sed version, see L<C<^ff^>>.
+For the non-sed version, see L<C<^ff^>|/routine/^ff^>.
 
 This operator cannot be overloaded, as it is handled specially by the compiler.
 

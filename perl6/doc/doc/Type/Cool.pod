@@ -105,7 +105,7 @@ what type they coerce to:
     EVAL            Str
     chomp           Str
     chop            Str
-    codes           Str    
+    codes           Str
 
 =end table
 
@@ -286,7 +286,7 @@ Usage:
     NUMERIC.tan
 
 Coerces the invocant (or in sub form, the argument) to L<Numeric|/type/Numeric>, interprets it as radians,
-returns its L<tangens|https://en.wikipedia.org/wiki/Tangent>.
+returns its L<tangent|https://en.wikipedia.org/wiki/Tangent>.
 
 =head2 routine atan
 
@@ -301,7 +301,7 @@ Usage:
     NUMERIC.atan
 
 Coerces the invocant (or in sub form, the argument) to L<Numeric|/type/Numeric>, and returns its
-L<arc-tangens|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
+L<arc-tangent|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
 =head2 routine atan2
@@ -318,7 +318,7 @@ Usage:
 
 Coerces the arguments (including the invocant in the method form) to L<Numeric|/type/Numeric>,
 and returns their two-argument
-L<arc-tangens|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
+L<arc-tangent|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
 =head2 method sec
@@ -334,7 +334,7 @@ Usage:
     NUMERIC.sec
 
 Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, interprets it as radians,
-returns its L<secans|https://en.wikipedia.org/wiki/Trigonometric_functions#Reciprocal_functions>,
+returns its L<secant|https://en.wikipedia.org/wiki/Trigonometric_functions#Reciprocal_functions>,
 that is, the reciprocal of its cosine.
 
 =head2 routine asec
@@ -350,7 +350,7 @@ Usage:
     NUMERIC.asec
 
 Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns its
-L<arc-secans|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
+L<arc-secant|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
 =head2 routine cosec
@@ -366,7 +366,7 @@ Usage:
     NUMERIC.cosec
 
 Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, interprets it as radians,
-returns its L<cosecans|https://en.wikipedia.org/wiki/Trigonometric_functions#Reciprocal_functions>,
+returns its L<cosecant|https://en.wikipedia.org/wiki/Trigonometric_functions#Reciprocal_functions>,
 that is, the reciprocal of its sine.
 
 =head2 routine acosec
@@ -382,7 +382,7 @@ Usage:
     NUMERIC.acosec
 
 Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns its
-L<arc-cosecans|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
+L<arc-cosecant|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
 =head2 routine cotan
@@ -398,8 +398,8 @@ Usage:
     NUMERIC.cotan
 
 Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, interprets it as radians,
-returns its L<cotangens|https://en.wikipedia.org/wiki/Trigonometric_functions#Reciprocal_functions>,
-that is, the reciprocal of its tangens.
+returns its L<cotangent|https://en.wikipedia.org/wiki/Trigonometric_functions#Reciprocal_functions>,
+that is, the reciprocal of its tangent.
 
 =head2 routine acotan
 
@@ -414,7 +414,7 @@ Usage:
     NUMERIC.acotan
 
 Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns its
-L<arc-cotangens|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
+L<arc-cotangent|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
 =head2 routine sinh
@@ -490,7 +490,7 @@ Usage:
     NUMERIC.tanh
 
 Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns its
-L<Tangens hyperbolicus|https://en.wikipedia.org/wiki/Hyperbolic_function>.
+L<Tangent hyperbolicus|https://en.wikipedia.org/wiki/Hyperbolic_function>.
 
 =head2 routine atanh
 
@@ -505,7 +505,7 @@ Usage:
     NUMERIC.atanh
 
 Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns its
-L<Inverse tangens hyperbolicus|https://en.wikipedia.org/wiki/Inverse_hyperbolic_function>.
+L<Inverse tangent hyperbolicus|https://en.wikipedia.org/wiki/Inverse_hyperbolic_function>.
 
 =head2 routine sech
 
@@ -621,10 +621,10 @@ Usage:
     cis NUMERIC
     NUMERIC.cis
 
-Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns 
-L<cos(argument) + i*sin(argument)|https://en.wikipedia.org/wiki/Cis_%28mathematics%29>. 
+Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns
+L<cos(argument) + i*sin(argument)|https://en.wikipedia.org/wiki/Cis_%28mathematics%29>.
 
-    say cis(pi/4);                  # 0.707106781186548+0.707106781186547i 
+    say cis(pi/4);                  # 0.707106781186548+0.707106781186547i
 
 =head2 routine log
 
@@ -697,7 +697,7 @@ Usage:
     unpolar NUMERIC, NUMERIC
     NUMERIC.unpolar(NUMERIC)
 
-Coerces the arguments (including the invocant in the method form) to L<Numeric|/type/Numeric>, and returns 
+Coerces the arguments (including the invocant in the method form) to L<Numeric|/type/Numeric>, and returns
 a complex number from the given polar coordinates. The invocant (or the first argument in sub form) is the magnitude while
 the argument (i.e. the second argument in sub form) is the angle. The angle is assumed to be in radians.
 
@@ -1039,14 +1039,14 @@ Usage:
     STRING.samecase(PATTERN)
 
 Coerces the invocant (or in sub form, the first argument) to L<Str|/type/Str>, and returns a
-copy of C<$string> with case information for each individual character changed according to C<$pattern>. 
-(The pattern string can contain three types of characters, i.e. uppercase, lowercase and caseless. 
-For a given character in C<$pattern> its case information determines the case of the corresponding 
+copy of C<$string> with case information for each individual character changed according to C<$pattern>.
+(The pattern string can contain three types of characters, i.e. uppercase, lowercase and caseless.
+For a given character in C<$pattern> its case information determines the case of the corresponding
 character in the result.)
-If C<$string> is longer than C<$pattern>, the case information from the last character of 
+If C<$string> is longer than C<$pattern>, the case information from the last character of
 C<$pattern> is applied to the remaining characters of C<$string>.
 
-    say "perL 6".samecase("A__a__"); # Perl 6	
+    say "perL 6".samecase("A__a__"); # Perl 6
     say "pERL 6".samecase("Ab");     # Perl 6
 
 =head2 routine uniname
@@ -1067,7 +1067,7 @@ Usage:
     say (0..0x1FFFF).sort(*.uniname.chars)[*-1].chr.uniname;
     # «ARABIC LIGATURE UIGHUR KIRGHIZ YEH WITH HAMZA ABOVE WITH ALEF MAKSURA INITIAL FORM␤»
 
-Interprets the invocant / first argument as a L</type/Str>, and returns the
+Interprets the invocant / first argument as a L<Str|/type/Str>, and returns the
 Unicode codepoint name of the first character. To convert a whole string use L<uninames|#routine_uninames>.
 
 =head2 routine uninames
@@ -1288,6 +1288,10 @@ my @lines = 'huge-csv'.IO.lines;
 Without any arguments, sub C<lines> operates on
 C<$*ARGFILES>, which defaults to C<$*IN> in the absence of any filenames.
 
+To modify values in place use C<is copy> to force a writeable container.
+
+    for $*IN.lines -> $_ is copy { s/(\w+)/{$0 ~ $0}/; .say }
+
 =head2 method words
 
 Defined as:
@@ -1343,7 +1347,7 @@ to L<Str|/type/Str>, and searches for C<$needle> in the string starting from C<$
 It returns the offset into the string where C<$needle> was found, and an undefined
 value if it was not found.
 
-See L<the documentation in type Str|/type/Str#routine index> for examples.
+See L<the documentation in type Str|/type/Str#routine_index> for examples.
 
 =head2 routine rindex
 
@@ -1362,7 +1366,7 @@ L<Str|/type/Str> and C<$startpos> to L<Int|/type/Int>, and
 returns the last position of C<$needle> in C<$haystack> not after C<$startpos>.
 Returns an undefined value if C<$needle> wasn't found.
 
-See L<the documentation in type Str|/type/Str#routine rindex> for examples.
+See L<the documentation in type Str|/type/Str#routine_rindex> for examples.
 
 =head2 routine roots
 
@@ -1484,7 +1488,7 @@ produced by the final statement in the file.
 
 =begin comment
 
-TODO: 
+TODO:
 unpolar, fmt, substr-rw, trans,
 match, subst, sprintf, printf, samecase
 

@@ -6,7 +6,7 @@
 
     class Baggy does QuantHash { }
 
-A role for collections of weighted objects. See L<Bag>, L<BagHash>, and
+A role for collections of weighted objects.  See L<Bag>, L<BagHash>, and
 L<Mixy>.
 
 =head1 Methods
@@ -29,7 +29,31 @@ L<Mixy>.
 
 =head2 method roll
 
-=comment TODO
+Defined as:
+
+    multi method roll(Baggy:D:) returns Any:D
+    multi method roll(Baggy:D: $count) returns Seq:D
+
+Like an ordinary list L<roll|/type/List#routine_roll>, but returns keys of the invocant weighted
+by their values, as if the keys were replicated the number of times indicated
+by the corresponding value and then list roll used. The underlying
+metaphor for rolling is that you're throwing C<$count> dice that are
+independent of each other, which (in bag terms) is equivalent to picking
+a colored marble out your bag and then putting it back, and doing this
+C<$count> times. In dice terms, the number of marbles corresponds to the
+number of sides, and the number of marbles of the same color corresponds
+to the number of sides with the same color. (For "picking without replacement"
+see L<pick|#method pick> instead).
+
+If C<*> is passed to C<$count>, returns a lazy, infinite sequence of randomly
+chosen elements from the invocant.
+
+    my $breakfast = bag <eggs bacon bacon bacon>;
+    say $breakfast.roll;                                  # bacon
+    say $breakfast.roll(3);                               # (bacon eggs bacon)
+
+    my $random_dishes := $breakfast.roll(*);
+    say $random_dishes[^5];                               # (bacon eggs bacon bacon bacon)
 
 =head2 method classify-list
 
@@ -41,23 +65,92 @@ L<Mixy>.
 
 =head2 method keys
 
-=comment TODO
+Defined as:
+
+    method keys(Baggy:D:) returns List:D
+
+Returns a list of all keys in the C<Baggy> object without taking
+their individual weights into account as opposed to L<kxxv|#method kxxv>.
+
+    my $breakfast = bag <eggs spam spam spam>;
+    say $breakfast.keys.sort;                        # (eggs spam)
+
+    my $n = ("a" => 5, "b" => 2).BagHash;
+    say $n.keys.sort;                                # (a b)
 
 =head2 method values
 
-=comment TODO
+Defined as:
+
+    method values(Baggy:D:) returns List:D
+
+Returns a list of all values, i.e. weights, in the C<Baggy> object.
+
+    my $breakfast = bag <eggs spam spam spam>;
+    say $breakfast.values.sort;                      # (1 3)
+
+    my $n = ("a" => 5, "b" => 2, "a" => 1).BagHash;
+    say $n.values.sort;                              # (2 6)
 
 =head2 method kv
 
-=comment TODO
+Defined as:
+
+    method kv(Baggy:D:) returns List:D
+
+Returns a list of keys and values interleaved.
+
+    my $breakfast = bag <eggs spam spam spam>;
+    say $breakfast.kv;                                # (spam 3 eggs 1)
+
+    my $n = ("a" => 5, "b" => 2, "a" => 1).BagHash;
+    say $n.kv;                                        # (a 6 b 2)
+
+=head2 method kxxv
+
+Defined as:
+
+    method kxxv(Baggy:D:) returns List:D
+
+Returns a list of the keys of the invocant, with each key multiplied by its
+weight. Note that C<kxxv> only works for C<Baggy> types which have integer
+weights, i.e. L<Bag> and L<BagHash>.
+
+    my $breakfast = bag <spam eggs spam spam bacon>;
+    say $breakfast.kxxv.sort;                         # (bacon eggs spam spam spam)
+
+    my $n = ("a" => 0, "b" => 1, "b" => 2).BagHash;
+    say $n.kxxv;                                      # (b b b)
 
 =head2 method elems
 
-=comment TODO
+Defined as:
+
+    method elems(Baggy:D:) returns Int:D
+
+Returns the number of elements in the C<Baggy> object without
+taking the individual elements weight into account.
+
+    my $breakfast = bag <eggs spam spam spam>;
+    say $breakfast.elems;                             # 2
+
+    my $n = ("b" => 9.4, "b" => 2).MixHash;
+    say $n.elems;                                     # 1
 
 =head2 method total
 
-=comment TODO
+Defined as:
+
+    method total(Baggy:D:)
+
+Returns the sum of weights for all elements in the C<Baggy>
+object.
+
+    my $breakfast = bag <eggs spam spam bacon>;
+    say $breakfast.total;                             # 4
+
+    my $n = ("a" => 5, "b" => 1, "b" => 2).BagHash;
+    say $n.total;                                     # 8
 
 =head2 method ACCEPTS
 

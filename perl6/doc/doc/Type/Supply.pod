@@ -199,7 +199,6 @@ Creates an on-demand supply from the values passed to this method.
 
     my $s = Supply.from-list(1, 2, 3);
     $s.tap(&say);           # 1\n2\n3\n
-    $s.done;
 
 =head2 method share
 
@@ -259,7 +258,7 @@ that smart-match against C<$test>.
 Returns a new supply that maps each value of the given supply through
 C<&mapper> and emits it to the new supply.
 
-    my $supplier = Supplier.new
+    my $supplier = Supplier.new;
     my $all      = $supplier.Supply;
     my $double   = $all.map(-> $value { $value * 2 });
     $double.tap(&say);
@@ -337,7 +336,7 @@ the C<Promise>s that were obtained from C<start>ing the Callable.
 If the second positional parameter is a numeric value, it is interpreted as
 the time-unit (in seconds).  If you specify B<.1> as the value, then it makes
 sure you don't exceed the limit for every tenth of a second.
-    
+
 If the limit is exceeded, then incoming messages are buffered until there
 is room to pass on / execute the Callable again.
 
@@ -351,7 +350,7 @@ for the types of messages that you can send to control the throttle.
 
 The :status named parameter optionally specifies a Supply that will receive
 any status messages.  If specified, it will at least send one status message
-after the original Supply is exhausted.  See L<status message> below.
+after the original Supply is exhausted.  See L<status message|#status_message> below.
 
 The :bleed named parameter optionally specifies a Supply that will receive
 any values that were either explicitly bled (with the B<bleed> control
@@ -430,7 +429,7 @@ Have a simple piece of code announce when it starts running asynchronously,
 wait a random amount of time, then announce when it is done.  Do this 6 times,
 but don't let more than 3 of them run simultaneously.
 
-  my $s = Supply.from-list(^6);  # set up supply 
+  my $s = Supply.from-list(^6);  # set up supply
   my $t = $s.throttle: 3,        # only allow 3 at a time
   {                              # code block to run
       say "running $_";          # announce we've started
@@ -574,7 +573,7 @@ supplies are done.  Can also be called as a class method.
     method zip-latest(Supply @*supplies, :&with = &[,], :$initial) returns Supply:D
 
 Creates a supply that emits combined values as soon as there is a new value
-seen on B<any> of the supplies.  By default, C<Lists|/type/List> are
+seen on B<any> of the supplies.  By default, L<Lists|/type/List> are
 created, but this can be changed by specifying your own combiner with the
 :with parameter.  The optional :initial parameter can be used to indicate
 the initial state of the combined values.  By default, all supplies have to

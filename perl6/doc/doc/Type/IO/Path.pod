@@ -43,6 +43,8 @@ basename passed as named arguments.
 
 =head2 method abspath
 
+    method abspath(IO::Path:D: --> Str)
+
 Returns the absolute path as a string.
 
 =head2 method basename
@@ -92,16 +94,19 @@ values the return values of the methods with the same names.
 
 =head2 method path
 
-    method path(IO::Path:D:)
+    method path(IO::Path:D: --> Str)
 
-Returns the invocant.
+Returns the full path as a string.
 
 =head2 method Str
 
     method Str(IO::Path:D:)
 
-Returns the full path as a string. If the path object was constructed from a
-single string, the method Str will return that string.
+Returns the complete text that was used to create the path as a string, whether
+it was given as a single string or as named arguments.
+
+    say IO::Path.new(basename => "foo", dirname => "/bar").Str  # /bar/foo
+    say IO::Path.new("/bar/foo").Str                            # /bar/foo
 
 =head2 method open
 
@@ -140,6 +145,39 @@ Returns a new C<IO::Path> object that is an absolute path, based on C<$base>.
     method relative (IO::Path:D: $base = ~$*CWD --> IO::Path:D)
 
 Returns a new C<IO::Path> object relative to the C<$base> path.
+
+=head2 method parent
+
+    method parent(IO::Path:D: --> IO::Path)
+
+Removes the last portion of the path and returns the result as a new C<IO::Path>.
+
+    my $io = IO::Path.new( "/etc/passwd" );
+    say $io.parent;                          # "/etc".IO
+
+=head2 method child
+
+    method child(IO::Path:D: $childname --> IO::Path)
+
+Appends C<$childname> to the end of the path, adding path separators where
+needed and returns the result as a new C<IO::Path>.
+
+    my $io = IO::Path.new( "/bin" );
+    say $io.child('netstat');                # "/bin/netstat".IO
+
+=head2 method resolve
+
+    method resolve(IO::Path:D: --> IO::Path)
+
+Returns a new C<IO::Path> object with all symbolic links and references to the
+parent directory (C<..>) resolved.  This means that the filesystem is examined
+for each directory in the path, and any symlinks found are followed.
+
+    # bar is a symlink pointing to "/baz"
+    my $io = "foo/./bar/..".IO.resolve;      # now "/" (the parent of "/baz")
+
+NOTE: Currently (May 2016) this method doesn't work correctly on all platforms,
+e.g. Windows, since it assumes POSIX semantics.
 
 =head2 routine dir
 
@@ -188,7 +226,7 @@ A lazy way to find the first three files ending in ".p6" recursively starting fr
         take $current if ($current.IO.f && $current.IO.extension ~~ rx:i/p6$/);
         @stack.append(dir($current)>>.path) if $current.IO.d;
     }
-    
+
     say $perl-files[1..3];
 
 =head2 routine slurp
@@ -231,9 +269,9 @@ L<fail|/routine/fail> with L<X::IO::Chdir>.
     method    mkdir(IO::Path:D: $mode 0o777 --> Bool)
 
 Creates one or more directories with the L<permissions|
-http://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation>
+https://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation>
 specified as an integer (thought still subject to L<umask|
-http://en.wikipedia.org/wiki/Umask>).
+https://en.wikipedia.org/wiki/Umask>).
 
 Throws an exception of type L<X::IO::Mkdir> if the
 directory cannot be created, except for the C<*@dirnames> form which
@@ -263,7 +301,7 @@ mode was successful. The method form returns True on success, and otherwise
 L<fails|/routine/fail> with L<X::IO::Chmod>.
 
 The mode is expected as an integer following the L<standard numeric notation|
-http://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation>, and is
+https://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation>, and is
 best written as an octal number:
 
     chmod 0o755, "myfile1", "myfile2"; # make two files executable by the owner
@@ -348,6 +386,23 @@ deleted. The method form returns C<True> on success, or
 L<fails|/routine/fail> with L<X::IO::Unlink> if the operation could not be
 completed.
 
+=head2 method IO
+
+    method IO(IO::Path:D: --> IO::Path)
+
+Returns the invocant.
+
+=head2 method SPEC
+
+    method SPEC(IO::Path:D: --> IO::Spec)
+
+Returns the L<IO::Spec|/type/IO::Spec> object that was (implicitly) specified at object
+creation time.
+
+    my $io = IO::Path.new("/bin/bash");
+    say $io.SPEC;                            # (Unix)
+    say $io.SPEC.dir-sep;                    # /
+
 =head1 File Test operators
 
 X<-e> X<-f>
@@ -416,15 +471,10 @@ last modified.
 
     say "path/to/file".IO.modified;   #  e.g. Instant:1424089165
 
-To obtain a human-readable form of the timestamp, use a L<DateTime> object:
+To obtain a human-readable form of the timestamp, call C<DateTime> method
+on the returned C<Instant>, to convert it into a L<DateTime> object:
 
-    say DateTime.new("path/to/file".IO.modified);  # e.g. 2015-02-16T12:18:50Z
-
-or more readably:
-
-    my $modification_instant = "path/to/file".IO.modified;
-    my $modification_time = DateTime.new($modification_instant);
-    say $modification_time;         # e.g. 2015-02-16T12:18:50Z
+    say "path/to/file".IO.modified.DateTime;  # e.g. 2015-02-16T12:18:50Z
 
 =head2 method accessed
 
