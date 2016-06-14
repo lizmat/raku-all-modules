@@ -1,6 +1,6 @@
 {   "perl"        : "6",
     "name"        : "Font::AFM",
-    "version"     : "1.23.3",
+    "version"     : "1.23.4",
     "description" : "Interface to Adobe Font Metrics files",
     "depends"     : [ ],
     "source-url"  : "git://github.com/p6-pdf/perl6-Font-AFM.git",

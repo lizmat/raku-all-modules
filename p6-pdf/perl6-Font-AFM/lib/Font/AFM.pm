@@ -1,6 +1,6 @@
 # This -*- perl6 -*-  module is a simple parser for Adobe Font Metrics files.
 
-class Font::AFM
+class Font::AFM:ver<1.23.4>
     is Hash {
 
 =begin pod
@@ -16,7 +16,6 @@ Font::AFM - Interface to Adobe Font Metrics files
  my $copyright = $h.Notice;
  my $w = $h.Wx<aring>;
  $w = $h.stringwidth("Gisle", 10);
- $h.dump;  # for debugging
 
 =head1 DESCRIPTION
 
@@ -222,18 +221,14 @@ it under the same terms as Perl itself.
            $file = $name ~ '.afm';
            unless $*SPEC.is-absolute($file) {
                # not absolute, search the metrics path for the file
-               my @metrics_path = %*ENV<METRICS>:exists
+               my @metrics-path = %*ENV<METRICS>:exists
                  ?? %*ENV<METRICS>.split(/\:/)>>.subst(rx{'/'$},'')
                  !! < /usr/lib/afm  /usr/local/lib/afm
                       /usr/openwin/lib/fonts/afm  . >;
-
-               for @metrics_path {
-                   my $candidate = $*SPEC.catfile( $_, $file);
-                   if $candidate.IO ~~ :f {
-                       $file = $candidate;
-                       last;
-                   }
-               }
+               $file = $_
+                   with @metrics-path\
+                   .map({ $*SPEC.catfile( $_, $file) })\
+                   .first: { .IO ~~ :f };
            }
        }
 
@@ -292,57 +287,58 @@ it under the same terms as Perl itself.
 
     multi method new(Str $name)  { self.bless( :$name ) }
     multi method new(Hash $metrics) { self.bless( :$metrics ) }
-
-    BEGIN our  %ISOLatin1Encoding = "  " => "space", "!"  => "exclam",
-    "\"" => "quotedbl", "#" => "numbersign", "\$" => "dollar", "\%" =>
-    "percent",  "\&"  =>  "ampersand",  "'" =>  "quoteright",  "("  =>
-    "parenleft",  ")"  =>  "parenright",  "*" =>  "asterisk",  "+"  =>
-    "plus", ","  => "comma", "-" =>  "minus", "." =>  "period", "/" =>
-    "slash",  "0"  => "zero",  "1"  => "one",  "2"  =>  "two", "3"  =>
-    "three",  "4" =>  "four",  "5" =>  "five",  "6" =>  "six", "7"  =>
-    "seven", "8"  => "eight",  "9" => "nine",  ":" => "colon",  ";" =>
-    "semicolon", "<" => "less", "="  => "equal", ">" => "greater", "?"
-    => "question",  "\@" => "at", :A("A"),  :B("B"), :C("C"), :D("D"),
-    :E("E"),  :F("F"), :G("G"),  :H("H"),  :I("I"), :J("J"),  :K("K"),
-    :L("L"),  :M("M"), :N("N"),  :O("O"),  :P("P"), :Q("Q"),  :R("R"),
-    :S("S"),  :T("T"), :U("U"),  :V("V"),  :W("W"), :X("X"),  :Y("Y"),
-    :Z("Z"),  "["  =>  "bracketleft",  "\\"  =>  "backslash",  "]"  =>
-    "bracketright",  "^" =>  "asciicircum",  :_("underscore"), "`"  =>
-    "quoteleft", :a("a"), :b("b"), :c("c"), :d("d"), :e("e"), :f("f"),
-    :g("g"),  :h("h"), :i("i"),  :j("j"),  :k("k"), :l("l"),  :m("m"),
-    :n("n"),  :o("o"), :p("p"),  :q("q"),  :r("r"), :s("s"),  :t("t"),
-    :u("u"),  :v("v"),  :w("w"), :x("x"),  :y("y"),  :z("z"), "\{"  =>
-    "braceleft",   "|"  =>   "bar",  "}"   =>  "braceright",   "~"  =>
-    "asciitilde", "" =>  "dotlessi", "" => "grave", ""  => "acute", ""
-    => "circumflex", "" => "tilde",  "" => "macron", "" => "breve", ""
-    => "dotaccent", ""  => "dieresis", "" => "ring",  "" => "cedilla",
-    ""  => "hungarumlaut",  ""  => "ogonek",  ""  => "caron",  " "  =>
-    "space", "¡"  => "exclamdown", "¢"  => "cent", "£"  => "sterling",
-    "¤"  => "currency",  "¥"  =>  "yen", "¦"  =>  "brokenbar", "§"  =>
-    "section",    "¨"    =>    "dieresis",   "©"    =>    "copyright",
-    :ª("ordfeminine"),  "«" =>  "guillemotleft", "¬"  => "logicalnot",
-    "­"  => "hyphen",  "®" =>  "registered", "¯"  => "macron",  "°" =>
-    "degree",  "±"  =>  "plusminus",  "²"  =>  "twosuperior",  "³"  =>
-    "threesuperior", "´" => "acute", :µ("mu"), "¶" => "paragraph", "·"
-    =>  "periodcentered",  "¸"  =>  "cedilla", "¹"  =>  "onesuperior",
-    :º("ordmasculine"), "»" =>  "guillemotright", "¼" => "onequarter",
-    "½" =>  "onehalf", "¾" => "threequarters",  "¿" => "questiondown",
-    :À("Agrave"),   :Á("Aacute"),   :Â("Acircumflex"),   :Ã("Atilde"),
-    :Ä("Adieresis"),     :Å("Aring"),     :Æ("AE"),    :Ç("Ccedilla"),
-    :È("Egrave"),  :É("Eacute"),  :Ê("Ecircumflex"),  :Ë("Edieresis"),
-    :Ì("Igrave"),  :Í("Iacute"),  :Î("Icircumflex"),  :Ï("Idieresis"),
-    :Ð("Eth"),      :Ñ("Ntilde"),      :Ò("Ograve"),     :Ó("Oacute"),
-    :Ô("Ocircumflex"),    :Õ("Otilde"),   :Ö("Odieresis"),    "×"   =>
-    "multiply",      :Ø("Oslash"),     :Ù("Ugrave"),     :Ú("Uacute"),
-    :Û("Ucircumflex"),   :Ü("Udieresis"),  :Ý("Yacute"),  :Þ("Thorn"),
-    :ß("germandbls"),  :à("agrave"),  :á("aacute"), :â("acircumflex"),
-    :ã("atilde"),      :ä("adieresis"),     :å("aring"),     :æ("ae"),
-    :ç("ccedilla"),   :è("egrave"),  :é("eacute"),  :ê("ecircumflex"),
-    :ë("edieresis"),  :ì("igrave"),  :í("iacute"),  :î("icircumflex"),
-    :ï("idieresis"),     :ð("eth"),     :ñ("ntilde"),    :ò("ograve"),
-    :ó("oacute"),  :ô("ocircumflex"),  :õ("otilde"),  :ö("odieresis"),
-    "÷"   =>  "divide",   :ø("oslash"),   :ù("ugrave"),  :ú("uacute"),
-    :û("ucircumflex"),   :ü("udieresis"),  :ý("yacute"),  :þ("thorn"),
+    BEGIN our %ISOLatin1Encoding = " " => "space", "!"  =>
+    "exclam", "\"" => "quotedbl", "#" => "numbersign", "\$" =>
+    "dollar", "\%" => "percent", "\&" => "ampersand", "'" =>
+    "quoteright", "(" => "parenleft", ")" => "parenright", "*" =>
+    "asterisk", "+" => "plus", "," => "comma", "-" => "minus", "."
+    => "period", "/" => "slash", "0" => "zero", "1" => "one", "2" =>
+    "two", "3" => "three", "4" => "four", "5" => "five", "6" =>
+    "six", "7" => "seven", "8" => "eight", "9" => "nine", ":" =>
+    "colon", ";" => "semicolon", "<" => "less", "=" => "equal", ">"
+    => "greater", "?" => "question", "\@" => "at", :A("A"), :B("B"),
+    :C("C"), :D("D"), :E("E"), :F("F"), :G("G"), :H("H"), :I("I"),
+    :J("J"), :K("K"), :L("L"), :M("M"), :N("N"), :O("O"), :P("P"),
+    :Q("Q"), :R("R"), :S("S"), :T("T"), :U("U"), :V("V"), :W("W"),
+    :X("X"), :Y("Y"), :Z("Z"), "[" => "bracketleft", "\\" =>
+    "backslash", "]" => "bracketright", "^" => "asciicircum",
+    :_("underscore"), "`" => "quoteleft", :a("a"), :b("b"), :c("c"),
+    :d("d"), :e("e"), :f("f"), :g("g"), :h("h"), :i("i"), :j("j"),
+    :k("k"), :l("l"), :m("m"), :n("n"), :o("o"), :p("p"), :q("q"),
+    :r("r"), :s("s"), :t("t"), :u("u"), :v("v"), :w("w"), :x("x"),
+    :y("y"), :z("z"), "\{" => "braceleft", "|" => "bar", "}" =>
+    "braceright", "~" => "asciitilde", "\x[90]" => "dotlessi",
+    "\x[91]" => "grave", "\x[92]" => "acute", "\x[93]" =>
+    "circumflex", "\x[94]" => "tilde", "\x[95]" => "macron",
+    "\x[96]" => "breve", "\x[97]" => "dotaccent", "\x[98]" =>
+    "dieresis", "\x[9a]" => "ring", "\x[9b]" => "cedilla", "\x[9d]"
+    => "hungarumlaut", "\x[9e]" => "ogonek", "\x[9f]" => "caron",
+    " " => "space", "¡" => "exclamdown", "¢" => "cent", "£" =>
+    "sterling", "¤" => "currency", "¥" => "yen", "¦" => "brokenbar",
+    "§" => "section", "¨" => "dieresis", "©" => "copyright",
+    :ª("ordfeminine"), "«" => "guillemotleft", "¬" => "logicalnot",
+    "­" => "hyphen", "®" => "registered", "¯" => "macron", "°" =>
+    "degree", "±" => "plusminus", "²" => "twosuperior", "³" =>
+    "threesuperior", "´" => "acute", :µ("mu"), "¶" => "paragraph",
+    "·" => "periodcentered", "¸" => "cedilla", "¹" => "onesuperior",
+    :º("ordmasculine"), "»" => "guillemotright", "¼" =>
+    "onequarter", "½" => "onehalf", "¾" => "threequarters", "¿" =>
+    "questiondown", :À("Agrave"), :Á("Aacute"), :Â("Acircumflex"),
+    :Ã("Atilde"), :Ä("Adieresis"), :Å("Aring"), :Æ("AE"),
+    :Ç("Ccedilla"), :È("Egrave"), :É("Eacute"), :Ê("Ecircumflex"),
+    :Ë("Edieresis"), :Ì("Igrave"), :Í("Iacute"), :Î("Icircumflex"),
+    :Ï("Idieresis"), :Ð("Eth"), :Ñ("Ntilde"), :Ò("Ograve"),
+    :Ó("Oacute"), :Ô("Ocircumflex"), :Õ("Otilde"), :Ö("Odieresis"),
+    "×" => "multiply", :Ø("Oslash"), :Ù("Ugrave"), :Ú("Uacute"),
+    :Û("Ucircumflex"), :Ü("Udieresis"), :Ý("Yacute"), :Þ("Thorn"),
+    :ß("germandbls"), :à("agrave"), :á("aacute"), :â("acircumflex"),
+    :ã("atilde"), :ä("adieresis"), :å("aring"), :æ("ae"),
+    :ç("ccedilla"), :è("egrave"), :é("eacute"), :ê("ecircumflex"),
+    :ë("edieresis"), :ì("igrave"), :í("iacute"), :î("icircumflex"),
+    :ï("idieresis"), :ð("eth"), :ñ("ntilde"), :ò("ograve"),
+    :ó("oacute"), :ô("ocircumflex"), :õ("otilde"), :ö("odieresis"),
+    "÷" => "divide", :ø("oslash"), :ù("ugrave"), :ú("uacute"),
+    :û("ucircumflex"), :ü("udieresis"), :ý("yacute"), :þ("thorn"),
     :ÿ("ydieresis");
 
     #| compute the expected string-width at the given point size for this glyph set
