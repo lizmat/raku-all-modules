@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Altai-man/p6-WWW-DuckDuckGo.git
+	branch = master
+	commit = 4f889a43d231a13c5770eb19b86e1abb2a3a62fe
+	parent = 4ce8ef479400e4ad0a890da9ab8a1a8c740b392c
+	cmdver = 0.2.3

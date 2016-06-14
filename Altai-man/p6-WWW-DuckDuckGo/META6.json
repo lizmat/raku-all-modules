@@ -1,0 +1,16 @@
+{
+    "perl": "6.*",
+    "name" : "WWW::DuckDuckGo",
+    "version" : "0.1.0",
+    "author" : "github:Altai-man",
+    "description" : "Bindings to DuckDuckGo search API",
+    "depends" : [ "URI", "HTTP::UserAgent", "JSON::Fast" ],
+    "provides" : {
+        "WWW::DuckDuckGo::Icon" : "lib/WWW/DuckDuckGo/Icon.pm6",
+        "WWW::DuckDuckGo::Link" : "lib/WWW/DuckDuckGo/Link.pm6",
+        "WWW::DuckDuckGo::ZeroClickInfo" : "lib/WWW/DuckDuckGo/ZeroClickInfo.pm6",
+        "WWW::DuckDuckGo" : "lib/WWW/DuckDuckGo.pm6"
+    },
+    "resources": [],
+    "source-url" : "git://github.com/Altai-man/p6-WWW-DuckDuckGo.git"
+}
