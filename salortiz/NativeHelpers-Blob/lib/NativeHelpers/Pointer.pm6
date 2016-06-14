@@ -1,6 +1,6 @@
 use v6;
 
-unit module NativeHelpers::Pointer:ver<0.1.0>;
+unit module NativeHelpers::Pointer:ver<0.1.1>;
 use NativeCall;
 use nqp;
 
@@ -19,7 +19,6 @@ NativeCall::Types::Pointer.^add_method('pred', method (Pointer:D:) {
     self.add(-1);
 });
 
-# This multi doesn't work, dunno why :-(
-multi sub infix:<+>(Pointer \p, Int $off) {
+multi sub infix:<+>(Pointer \p, Int $off) is export {
     p.add($off);
 }

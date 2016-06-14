@@ -1,6 +1,6 @@
 use v6;
 
-unit module NativeHelpers::CStruct:ver<0.1.0>;
+unit module NativeHelpers::CStruct:ver<0.1.2>;
 use NativeCall;
 use MoarVM::Guts::REPRs;
 #use nqp;
@@ -15,31 +15,35 @@ role LinearArray[::T] does Positional[T] is export {
     has Pointer $!storage;
     has @!cache handles <AT-POS elems shape>;
     has Int $!size;
+    has $.managed;
 
-    submethod BUILD(:$!size!) {
-	sub calloc(size_t, size_t --> Pointer) is native(stdlib) { * }
+    sub calloc(size_t, size_t --> Pointer) is native(stdlib) { * }
+    submethod BUILD(:$!size!, :$!storage!, :$!managed) {
 	@!cache := Array[ty].new(:shape($!size));
-	with calloc($!size, $sol) -> $storage {
-	    $!storage = $storage;
-	    for ^$!size {
-		my Pointer $p .= new(+$storage + $_ * $sol);
-		@!cache[$_] = nativecast(T, $p);
-	    }
-	    self;
+	for ^$!size {
+	    my Pointer $p .= new(+$!storage + $_ * $sol);
+	    @!cache[$_] = nativecast(T, $p);
+	}
+	self;
+    }
+
+    method new(::?CLASS:U: Int $size) {
+	with calloc($size, $sol) -> $storage {
+	    self.bless(:$size, :$storage, :managed);
 	} else {
 	    fail "Can't allocate memory";
 	}
     }
 
-    method new(::?CLASS:U: Int $size) {
-	self.bless(:$size);
+    method new-from-pointer(::?CLASS:U: Int :$size, Pointer :$ptr) {
+	self.bless(:$size, :storage(nativecast(Pointer,$ptr)), :!managed);
     }
 
+    sub free(Pointer) is native(stdlib) { * }
     method dispose(::?CLASS:D:) {
-	sub free(Pointer) is native(stdlib) { * }
 	with $!storage {
 	    @!cache := ();
-	    free($!storage);
+	    free($!storage) if $!managed;
 	    $!storage = Pointer;
 	    True;
 	} else {
@@ -51,10 +55,14 @@ role LinearArray[::T] does Positional[T] is export {
 	$sol * $!size;
     }
 
-    method bare-pointer() {
-	$!storage;
+    multi method Pointer(::?CLASS:D: :$typed) {
+	$typed ?? nativecast(Pointer[ty],$!storage) !! $!storage;
     }
 
+    method base() {
+	@!cache[0];
+    }
+    # Back-compat for DBIish's mysql
     method typed-pointer() {
 	@!cache[0];
     }
@@ -63,7 +71,16 @@ role LinearArray[::T] does Positional[T] is export {
 	BODY_OF(@!cache[$idx]).cstruct;
     }
 
-    method Pointer(::?CLASS:U: T:D $struct) {
+    multi method Pointer(::?CLASS:U: T:D $struct) {
 	BODY_OF($struct).cstruct;
     }
+}
+
+multi sub pointer-to(Mu:D $struct where .REPR eq 'CStruct', :$typed) is export {
+    my \t = $struct.WHAT;
+    my $sb = BODY_OF($struct);
+    note "From ", $sb.perl if $debug;
+    my \ptr = $sb.cstruct;
+    $typed ?? nativecast(Pointer[t], ptr) !! ptr;
+
 }

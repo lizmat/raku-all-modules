@@ -2,10 +2,11 @@ use v6;
 use lib './t';
 use Test;
 use NativeCall;
+use NativeHelpers::Pointer;
 use NativeHelpers::Blob;
 use CompileTestLib;
 
-plan 25;
+plan 35;
 
 compile_test_lib('02-cstruct');
 
@@ -31,16 +32,17 @@ ok LinearArray[Point3D] ~~ Any,                                          'A clas
 
 ok my $la = LinearArray[Point3D].new(10),                        'Can instantiate';
 
+ok $la.managed,                                                          'managed';
 is $la.elems, 10,                                                          'elems';
 is $la.shape, (10,),                                               'Correct shape';
 
 is $la.nativesizeof, $size * 10,                    "Array size is { $size * 10 }";
 
-ok my $bp = $la.bare-pointer,                               'Defined base pointer';
+ok my $bp = $la.Pointer,                                    'Defined base pointer';
 isa-ok $bp, Pointer,                                              'A bare pointer';
 #diag $bp;
 
-ok my $tp = $la.typed-pointer,                              'Defined type pointer';
+ok my $tp = $la.base,                                        'Defined base object';
 isa-ok $tp, Point3D,                        'A typed object, passed by ref to NCs';
 #diag $tp;
 
@@ -87,9 +89,34 @@ for ^10 -> $base {
 ok $ok,                                                 'Elements in blob match';
 #diag $blob.perl;
 
-# Now a real NC tests
-is myaddr($la.typed-pointer).Int, $bp.Int,                              'Indeed';
-is shown($la.typed-pointer, 3), 'x:3, y:30, z:300',                     'Works!';
+# Test via pointer arithmetic
+$tp = $la.Pointer(:typed);
+isa-ok $tp, Pointer[Point3D];
+for ^10 -> $el {
+    with $tp.deref {
+        $ok &&= .x == $el;
+        $ok &&= .y == $el * 10;
+        $ok &&= .z == $el * 100;
+    }
+    $tp++;
+}
+ok $ok,                                                       'Expected values';
 
+# Tests for unmanaged
+my LinearArray[Point3D] $lum .= new-from-pointer(:ptr($la.Pointer), :10size);
+ok $lum ~~ LinearArray[Point3D],                                      'created';
+is $lum.elems,  10,                                                      'size';
+nok $lum.managed,                                                   'unmanaged';
+
+# Now a real NC tests
+is myaddr($la.base).Int, $bp.Int,                                       'Indeed';
+is shown($la.base, 3), 'x:3, y:30, z:300',                              'Works!';
+
+is shown($lum.base, 3), 'x:3, y:30, z:300',                      'The same data';
+is +pointer-to($lum[3]), +$la._Pointer(3),                    'At the same addr';
+
+isnt $lum[3], $la[3],                                      'but no the same obj';
+
+ok $lum.dispose,                                             'Dispose unmanaged';
 ok $la.dispose,                                                    'Can dispose';
 is $la.elems, 0,                                                  'Now is empty';

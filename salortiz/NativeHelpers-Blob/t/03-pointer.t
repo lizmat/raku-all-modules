@@ -24,7 +24,7 @@ ok $np++, 'postfix ++';
 
 is $np.deref, 30, 'expected 30';
 
-$np = $p.add(3);
+$np = $p + 3;
 
 is $np.deref, 40, 'expected 40';
 
