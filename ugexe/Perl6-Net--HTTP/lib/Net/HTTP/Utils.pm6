@@ -13,11 +13,10 @@ role IO::Socket::HTTP {
 
     # Currently assumes these are called in a specific order per request
     method get(Bool :$bin where *.so, Bool :$chomp = True) {
-        my $buf = buf8.new;
+        my $buf = $.recv(1, :bin);
         while (my $byte = $.recv(1, :bin)).DEFINITE {
             $buf ~= $byte;
-            once next();
-            last if $buf.subbuf(*-$CRLF-BYTES) eqv $CRLF;
+            last if $buf.subbuf(*-$CRLF-BYTES) eq $CRLF;
         }
         $ = ?$chomp ?? $buf.subbuf(0, $buf.bytes - $CRLF-BYTES) !! $buf;
     }
@@ -51,7 +50,7 @@ role IO::Socket::HTTP {
                 }
 
                 if ?$chunked and $.recv($CRLF-BYTES, :bin) -> $chunked-crlf {
-                    unless $chunked-crlf eqv $CRLF {
+                    unless $chunked-crlf eq $CRLF {
                         die "Chunked encoding error: expected separator ords "
                         ~   "'{$CRLF.contents}' not found (got: {$chunked-crlf.contents})";
                     }
