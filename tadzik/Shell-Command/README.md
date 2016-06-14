@@ -18,6 +18,9 @@ use Shell::Command;
 # Recursive folder copy
 cp 't/dir1', 't/dir2', :r;
 
+# Remove a file
+rm_f 'to_delete';
+
 # Remove directory
 rmdir 't/dupa/foo/bar';
 
@@ -29,6 +32,9 @@ rm_rf 't/dir2';
 
 # Find perl6 in executable path
 my $perl6_path = which('perl6');
+
+# Concatenate the contents of a file or list of files and print to STDOUT
+cat "file1.txt", "file2.txt";
 ```
 ## See Also
 - [Shell::Command](https://metacpan.org/pod/Shell::Command)
