@@ -9,5 +9,6 @@
       "Hiker::Render": "lib/Hiker/Render.pm6",
       "Hiker::Model": "lib/Hiker/Model.pm6"
   },
+  "auth": "github:tony-o",
   "source-url" : "git://github.com/tony-o/perl6-hiker.git"
 }
