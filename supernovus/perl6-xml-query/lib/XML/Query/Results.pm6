@@ -5,14 +5,26 @@ unit class XML::Query::Results;
 has @.results;        ## The matching elements.
 has $.parent;         ## The Statement that generated these results.
 
-method elem
+method element
 {
   @!results[0];
 }
 
-method elems
+method elem
+{
+  warn ".elem is deprecated, please use .element instead";
+  self.element;
+}
+
+method elements
 {
   @!results;
+}
+
+method elems
+{
+  warn ".elems is deprecated, please use .elements instead";
+  self.elements;
 }
 
 method !spawn (*@results)

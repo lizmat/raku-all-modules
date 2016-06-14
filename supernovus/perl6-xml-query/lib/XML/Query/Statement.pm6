@@ -67,7 +67,7 @@ method apply ($xml)
     if ! $pos.defined { next; }
     if $expand
     {
-      @results.push: $pos.nodes;
+      @results.append: $pos.nodes;
     }
     else
     {

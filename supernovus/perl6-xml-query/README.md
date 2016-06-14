@@ -15,10 +15,10 @@ features inherent to the XML library to manipulate the data.)
 ```perl
   ## Given $xml is an XML::Document or XML::Element object.
   my $xq = XML::Query.new($xml);
-  my @boxes = $xq('input[type="radio"]').not('[disabled="disabled"]').elems;
-  my $first-link = $xq('a').first.elem; 
-  my $by-id = $xq('#header').elem;
-  my $last-decr-class = $xq('.decr').last.elem; 
+  my @boxes = $xq('input[type="radio"]').not('[disabled="disabled"]').elements;
+  my $first-link = $xq('a').first.element; 
+  my $by-id = $xq('#header').element;
+  my $last-decr-class = $xq('.decr').last.element; 
 ```
 
 ## Status

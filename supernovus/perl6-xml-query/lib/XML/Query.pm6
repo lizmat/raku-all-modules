@@ -1,8 +1,7 @@
 use XML;
+use XML::Query::Statement;
 
 unit class XML::Query;
-
-use XML::Query::Statement;
 
 has $.xml;
 has $.class-attr = 'class';
@@ -28,7 +27,7 @@ method apply ($statement)
   self.compile($statement).apply($!xml);
 }
 
-method AT_KEY ($statement)
+method AT-KEY ($statement)
 {
   self.apply($statement.join(' '));
 }
