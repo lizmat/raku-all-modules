@@ -11,7 +11,6 @@ has Str    $.password;
 has Int:D  $.port where 0 <= $_ <= 65535    = 6667;
 has Str:D  $.nick                           = 'EvilBOT';
 has Str:D  $.username                       = 'EvilBOT';
-has Str:D  $.userhost                       = 'localhost';
 has Str:D  $.userreal                       = 'Evil annoying BOT';
 has Str:D  @.channels                       = ['#perl6bot'];
 
