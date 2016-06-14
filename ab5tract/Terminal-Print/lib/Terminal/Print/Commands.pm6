@@ -12,10 +12,9 @@ our %attribute-values;
 
 subset Terminal::Print::MoveCursorProfile is export where * ~~ / ^('ansi' | 'universal' | 'debug')$ /;
 
-# we can add more, but there is a qq:x call so whitelist is the way to go.
-my %valid-terminals = <xterm xterm-256color vt100> Z=> True;
-
 BEGIN {
+    # we can add more, but there is a qq:x call so whitelist is the way to go.
+    my %valid-terminals = <xterm xterm-256color vt100 screen> X=> True;
 
     my sub build-cursor-to-template {
 
@@ -25,11 +24,9 @@ BEGIN {
 
         my $raw;
         if q:x{ which tput } {
-            my $term;
-            if %valid-terminals{ %*ENV<TERM>//'' } -> $t {
-                $term = $t;
-            }
-            $term ||= 'xterm';
+            my $term = %*ENV<TERM> // '';
+            die "Please update %valid-terminals with your desired TERM ('$term', is it?) and submit a PR if it works"
+                unless %valid-terminals{ $term };
 
             $raw = qq:x{ tput -T $term cup 13 13 };
             # Replace the digits with format specifiers used
@@ -44,9 +41,12 @@ BEGIN {
             sprintf($raw, $y + 1, $x + 1)
         }
 
+        my sub debug(Int $x, Int $y) { my $code = ansi($x, $y).comb.join(' '); print $code; $code }
+
         return %(
                     :&ansi,
-                    :&universal
+                    :&universal,
+                    :&debug
                 );
     }
 
@@ -77,22 +77,16 @@ BEGIN {
         %human-commands{$human} = &( %tput-commands{$command} );
     }
 
-    %attributes = %(
-        'columns'       => 'cols',
-        'rows'          => 'lines',
-        'lines'         => 'lines',
-    );
-
-    %attribute-values<columns>  = %*ENV<COLUMNS> //= qq:x{ tput cols };
-    %attribute-values<rows>     = %*ENV<ROWS>    //= qq:x{ tput lines };
+    %attributes<columns>  = %*ENV<COLUMNS> //= qq:x{ tput cols };
+    %attributes<rows>     = %*ENV<ROWS>    //= qq:x{ tput lines };
 }
 
 sub move-cursor-template( Terminal::Print::MoveCursorProfile $profile = 'ansi' ) returns Code is export {
-    %human-commands<move-cursor>{$profile};
+    %human-commands{'move-cursor'}{$profile};
 }
 
 sub move-cursor( Int $x, Int $y, Terminal::Print::MoveCursorProfile $profile = 'ansi' ) is export {
-    %human-commands<move-cursor><$profile>( $x, $y );
+    %human-commands{'move-cursor'}{$profile}( $x, $y );
 }
 
 sub tput( Str $command ) is export {
@@ -100,4 +94,12 @@ sub tput( Str $command ) is export {
         unless %tput-commands{$command};
 
     %tput-commands{$command};
+}
+
+sub print-command($command, Terminal::Print::MoveCursorProfile $profile = 'ansi') is export {
+    if $profile eq 'debug' {
+        return %human-commands{$command}.comb.join(' ');
+    } else {
+        print %human-commands{$command};
+    }
 }

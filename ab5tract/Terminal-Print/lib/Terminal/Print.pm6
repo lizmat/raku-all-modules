@@ -6,7 +6,7 @@ my constant T = Terminal::Print::Commands;
 use Terminal::Print::Grid;
 
 has $!current-buffer;
-has Terminal::Print::Grid $!current-grid;
+has Terminal::Print::Grid $.current-grid;
 
 has @!buffers;
 has Terminal::Print::Grid @.grids;
@@ -20,8 +20,8 @@ has $.max-rows;
 has Terminal::Print::MoveCursorProfile $.move-cursor-profile;
 
 method new( :$move-cursor-profile = 'ansi' ) {
-    my $max-columns   = +%T::attribute-values<columns>;
-    my $max-rows      = +%T::attribute-values<rows>;
+    my $max-columns   = +%T::attributes<columns>;
+    my $max-rows      = +%T::attributes<rows>;
 
     my $grid = Terminal::Print::Grid.new( :$max-columns, :$max-rows, :$move-cursor-profile );
     my @grid-indices = $grid.grid-indices;
@@ -36,7 +36,7 @@ method new( :$move-cursor-profile = 'ansi' ) {
               );
 }
 
-submethod BUILD( :$current-grid, :$current-buffer, :$!max-columns, :$!max-rows, :@grid-indices, :$move-cursor-profile ) {
+submethod BUILD( :$current-grid, :$current-buffer, :$!max-columns, :$!max-rows, :@grid-indices, :$!move-cursor-profile ) {
     push @!buffers, $current-buffer;
     push @!grids, $current-grid;
 
@@ -72,12 +72,12 @@ method blit( $grid-identifier = 0 ) {
 
 # 'clear' will also work through the FALLBACK
 method clear-screen {
-    print %T::human-commands<clear>;
+    print-command <clear>;
 }
 
 method initialize-screen {
-    await $!current-grid.initialize;
-    print %T::human-commands<save-screen>;
+    $!current-grid.initialize;
+    print-command <save-screen>;
     self.hide-cursor;
     self.clear-screen;
 }
@@ -85,8 +85,12 @@ method initialize-screen {
 method shutdown-screen {
     self.clear-screen;
     @!grids>>.shutdown;
-    print %T::human-commands<restore-screen>;
+    print-command <restore-screen>;
     self.show-cursor;
+}
+
+method print-command( $command ) {
+    print-command($command, $!move-cursor-profile);
 }
 
 # AT-POS hands back a Terminal::Print::Column
@@ -119,9 +123,8 @@ method AT-KEY( $grid-identifier ) {
 #    }
 #}
 
-multi method FALLBACK( Str $command-name ) {
-    die "Do not know command $command-name" unless %T::human-command-names{$command-name};
-    print %T::human-commands{$command-name};
+multi method FALLBACK( Str $command-name where { %T::human-command-names{$_} } ) {
+    print-command( $command-name );
 }
 
 
@@ -153,7 +156,7 @@ multi method grid-object( Int $index ) {
 multi method grid-object( Str $name ) {
     die "No grid has been named $name" unless my $grid-index = %!grid-name-map{$name};
     @!grids[$grid-index];
-} 
+}
 
 multi method print-cell( Int $x, Int $y ) {
     $!current-grid.print-cell($x,$y);
@@ -163,10 +166,13 @@ multi method print-cell( Int $x, Int $y ) {
 #   where *.comb == 1 means that you can't add escape chars
 #   of any kind before sending to print-cell. but maybe that's
 #   not such a bad thing?
-multi method print-cell( Int $x, Int $y, Str $char ) {
-    $!current-grid.print-cell($x,$y,$char);
+multi method print-cell( Int $x, Int $y, Str $c ) {
+    $!current-grid.print-cell($x,$y,$c);
 }
 
+method change-cell( Int $x, Int $y, Str $c ) {
+    $!current-grid.change-cell($x,$y,$c);
+}
 #### buffer stuff
 
 multi method buffer( Int $index ) {
@@ -223,6 +229,10 @@ method row-range {
     $!current-grid.row-range;
 }
 
+method Str {
+    ~$!current-grid;
+}
+
 
 =begin pod
 =title Terminal::Print
@@ -242,12 +252,11 @@ objective 'a' is finished, including both named and positional access.
     $t.add-grid('home'); # create a second grid named 'home'
     $t.grid('home');     # or $t.grid(1)
 
-'b', unfortunately, is not fully finished. I think we need to have a scheduled
-print cycle, ticking at a specific framerate.
+'b' is also working! Most of the scripts in C<examples/> run async!
 
 Obvious applications include snake clones, rogue engines and golfed art works :)
 
-Oh, and serious monitoring apps.
+Oh, and Serious Monitoring Apps, of course.
 
 =head1 Usage
 
@@ -276,10 +285,10 @@ screen of hearts?'
 So: async (as mentioned above), testing, and debugging are current pain points.
 Contributions welcome.
 
-=head2 Why not just use L<NativeCall> and C<ncurses>? 
+=head2 Why not just use L<NativeCall> and C<ncurses>?
 
 I tried that first and it wasn't any fun. C<ncurses> unicode support is
-admirable considering the age and complexity of the library, but it 
+admirable considering the age and complexity of the library, but it
 still feels bolted on.
 
 C<ncurses> is not re-entrant, either, which would nix one of the main benefits
@@ -294,4 +303,3 @@ It's not currently in the test suite and I wonder if it is actually necessary.
 If we do keep it we should move it to Terminal::Print::Grid.
 
 =end pod
-
