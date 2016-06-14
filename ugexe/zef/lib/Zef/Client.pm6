@@ -1,3 +1,4 @@
+use Zef;
 use Zef::Config;
 use Zef::Distribution;
 use Zef::Distribution::Local;
@@ -657,7 +658,7 @@ class Zef::Client {
             my @dep-specs = |self.list-dependencies($candi);
 
             # this could probably be done in the topological-sort itself
-            $dist.metainfo<includes> = eager gather DEPSPEC: for @dep-specs -> $spec {
+            my $includes := eager gather DEPSPEC: for @dep-specs -> $spec {
                 for @candidates -> $fcandi {
                     my $fdist := $fcandi.dist;
                     if $fdist.contains-spec($spec) {
@@ -667,16 +668,48 @@ class Zef::Client {
                     }
                 }
             }
+            $dist.metainfo<includes> = $includes.unique.cache;
 
             $candi;
         }
     }
 }
 
-
-# todo: write a real hooking implementation to CU::R::I instead of the current practice
-# of writing an installer specific (literally) Build.pm
+# todo: write a real hooking implementation to CU::R::I
+# this is a giant ball of shit btw. workaround on workarounds
 sub legacy-hook($candi, :$logger) {
+    my $dist := $candi.dist;
+    my $DEBUG = ?%*ENV<ZEF_BUILDPM_DEBUG>;
+
+    my $json-ext = $dist.IO.child('META6.json').e;
+    my Str $comp-version = ~$*PERL.compiler.version;
+    my $meta-name-workaround = $comp-version.substr(5..6) <= 5
+                            && $comp-version.substr(0..3) <= 2016
+                            && $dist.IO.child('META6.json').e;
+
+    my $orig-result = try-legacy-hook($candi, :$logger);
+    my $redo-result = do {
+        # Workaround rakudo CUR::FS bug when distribution has a
+        # Build.pm file, is using META6.json (not META.info), and
+        # the rakudo version is < 2016.05
+        # Retries try-legacy-hook after adding 'Build' => 'Build.pm' to provides
+        my $meta6-path     = $dist.IO.child('META6.json');
+        my $meta6-bak      = $meta6-path.absolute ~ '.bak';
+        my $meta6-contents = $meta6-path.IO.slurp;
+        try move $meta6-path, $meta6-bak;
+        my %meta6 = from-json($meta6-contents);
+        %meta6<provides><Build> = 'Build.pm';
+        "{$meta6-path}".IO.spurt( to-json(%meta6) );
+        my $result = try-legacy-hook($candi, :$logger);
+        try unlink $meta6-path;
+        try move $meta6-bak, $meta6-path;
+        $result;
+    } if !$orig-result && $meta-name-workaround;
+
+    return ?$orig-result || ?$redo-result;
+}
+
+sub try-legacy-hook($candi, :$logger) {
     my $dist := $candi.dist;
     my $DEBUG = ?%*ENV<ZEF_BUILDPM_DEBUG>;
 
@@ -713,15 +746,16 @@ sub legacy-hook($candi, :$logger) {
         try { $builder-path.spurt($legacy-code) } || $builder-path.subst-mutate(/'.zef'$/, '');
     }
 
-
-    my $cmd = "require <{$builder-path.basename}>; ::('Build').new.build('{$dist.IO.absolute}'); exit(0);";
+    # Rakudo bug related to using path instead of module name
+    # my $cmd = "require <{$builder-path.basename}>; ::('Build').new.build('{$dist.IO.absolute}'); exit(0);";
+    my $cmd = "require ::('Build'); ::('Build').new.build('{$dist.IO.absolute}'); exit(0);";
 
     my $result;
     try {
         use Zef::Shell;
         CATCH { default { $result = False; } }
         my @includes = $dist.metainfo<includes>.grep(*.defined).map: { "-I{$_}" }
-        my @exec = |($*EXECUTABLE, '-Ilib/.precomp', '-I.', '-Ilib', |@includes, '-e', "$cmd");
+        my @exec = |($*EXECUTABLE, '-Ilib', '-I.', |@includes, '-e', "$cmd");
 
         $logger.emit({
             level   => DEBUG,

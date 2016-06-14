@@ -11,7 +11,7 @@ my role GitFetcher {
     method fetch-matcher($url) {
         if uri($url) -> $uri {
             return True if $uri.scheme.lc eq 'git';
-            return True if $uri.scheme.lc.starts-with('http') && $uri.path.ends-with('.git' || '.git/');
+            return True if $uri.scheme.lc.starts-with('http' | 'ssh') && $uri.path.ends-with('.git' || '.git/');
         }
         False;
     }
@@ -68,7 +68,10 @@ my role GitExtractor {
     }
 }
 
-class Zef::Shell::git is Zef::Shell does GitFetcher does GitExtractor does Probeable does Messenger {
+class Zef::Service::Shell::git is Zef::Shell does Probeable does Messenger {
+    also does GitFetcher;
+    also does GitExtractor;
+
     method probe {
         state $git-probe = try {
             CATCH {
