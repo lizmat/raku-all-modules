@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Perl6-Noise-Gang/p6-Music-Helpers.git
 	branch = master
-	commit = 30a9506250ff91b5f053984c1fe0afc636fd0894
-	parent = 074f36f47910dd2f64e08530fc2987d9e287a86f
+	commit = c6b87cd817705eaa4afe2bd53b3895f6fa998f13
+	parent = a1b179fd8ea6e6f18ff50ab916afb75074b83c65
 	cmdver = 0.2.3

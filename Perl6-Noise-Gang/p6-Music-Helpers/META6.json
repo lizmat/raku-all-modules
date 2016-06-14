@@ -17,7 +17,7 @@
     "description" : "Abstractions for handling musical content",
     "production" : false,
     "emulates" : {  },
-    "version" : "0.0.2",
+    "version" : "0.0.5",
     "meta6" : "0",
     "supersedes" : {  },
     "authors" : [ "Pepe Schwarz <peschwa@gmail.com>" ] 
