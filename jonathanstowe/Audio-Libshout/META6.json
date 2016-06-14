@@ -27,5 +27,5 @@
     "CheckSocket"
   ],
   "description" : "Binding for libshout - source streaming client library for icecast",
-  "version" : "0.0.8"
+  "version" : "0.0.9"
 }

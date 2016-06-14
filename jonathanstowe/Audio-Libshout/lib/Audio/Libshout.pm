@@ -305,7 +305,7 @@ There is no default.
 
 =end pod
 
-class Audio::Libshout:ver<0.0.8>:auth<github:jonathanstowe> {
+class Audio::Libshout:ver<0.0.9>:auth<github:jonathanstowe> {
     use NativeCall;
     use AccessorFacade;
 
@@ -638,20 +638,21 @@ class Audio::Libshout:ver<0.0.8>:auth<github:jonathanstowe> {
     }
 
     multi method send-channel(Audio::Libshout $self: Channel $channel) returns Channel {
-        $!helper-promise = start {
-            react {
-                whenever $channel -> $item {
+        sub send() {
+            for $channel.list -> $item {
                     CATCH {
                         default {
                             $self.close;
                             X::ChannelError.new(inner => $_).throw;
                         }
                     }
+                    LAST {
+                    }
                     $self.send($item);
                     $self.sync;
-                }
             }
         }
+        $!helper-promise = Promise.start(&send, scheduler => ThreadPoolScheduler.new);
         $channel;
     }
 

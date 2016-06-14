@@ -95,6 +95,6 @@ with your streaming configuration.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+Please see the [LICENCE](LICENCE) file in the distribution
 
-(C) Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016
