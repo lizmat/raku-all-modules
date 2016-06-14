@@ -63,6 +63,7 @@ sensible for the application.
 =end pod
 
 class App::ModuleSnap {
+    use JSON::Fast;
     use META6;
     method get-meta(Str :$name!, Version :$perl-version = $*PERL.version, Version :$version = v0.0.1, :@exclude-auth = <perl private:snapshot>) returns META6 {
         my $meta = self.create-meta(:$name, :$perl-version, :$version);
