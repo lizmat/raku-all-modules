@@ -1,7 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Bailador::Plugin::Static",
-    "version"      : "2.001001",
+    "version"      : "3.001001",
     "description"  : "Automatically serve static files",
     "depends"      : [ "Bailador", "MIME::Types" ],
     "test-depends" : [ "Test" ],

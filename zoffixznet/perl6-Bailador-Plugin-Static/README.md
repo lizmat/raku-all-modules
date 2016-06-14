@@ -8,7 +8,7 @@ Bailador::Plugin::Static - automatically serve static files
 use Bailador;
 use Bailador::Plugin::Static;
 
-Bailador::Plugin::Static.install; # set up the route
+Bailador::Plugin::Static.install: app; # set up the route
 
 ```
 
@@ -34,8 +34,10 @@ file's extension.
 ```perl6
 use Bailador::Plugin::Static;
 
-Bailador::Plugin::Static.install;
+Bailador::Plugin::Static.install: $app;
 ```
+
+Takes one argument: your `Bailador::App` object;
 
 Sets up the Bailador route that handles static files. If you need extra
 functionality at your `/assets/*` path, declare routes for it *before* calling
