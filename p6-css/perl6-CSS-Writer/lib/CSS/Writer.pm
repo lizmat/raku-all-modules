@@ -40,7 +40,7 @@ class CSS::Writer
             $!color-masks //= True;
         }
 
-        if $color-names.defined {
+        with $color-names {
             die ":color-names and :color-values are mutually exclusive options"
                 if $color-values;
 
@@ -53,8 +53,8 @@ class CSS::Writer
                 }
             }
         }
-        elsif $color-values.defined {
-            given $color-values {
+        else {
+            with $color-values {
                 when Bool { %!color-values = %CSS::Grammar::AST::CSS3-Colors
                                 if $_; }
                 when Hash { %!color-values = %$_ }
@@ -67,8 +67,12 @@ class CSS::Writer
     }
 
     method Str {
-        nextsame unless $.ast.defined;
-        $.write( $.ast );
+        with $.ast {
+            $.write( $_ );
+        }
+        else {
+            nextsame;
+        }
     }
 
     proto method write(|c --> Str) {*}

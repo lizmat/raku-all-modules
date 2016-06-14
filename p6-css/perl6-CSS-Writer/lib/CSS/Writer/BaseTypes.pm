@@ -9,7 +9,7 @@ class CSS::Writer::BaseTypes {
 
     multi method write-num( 1, 'em' ) { 'em' }
     multi method write-num( 1, 'ex' ) { 'ex' }
-    multi method write-num( Numeric $num, Str $units ) {
+    multi method write-num( Numeric $num, Str:D $units ) {
 	$.write-num($num) ~ $units.lc;
     }
     multi method write-num( Numeric $num, Mu $units? ) {
