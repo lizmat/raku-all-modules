@@ -60,9 +60,9 @@ Because it is quite simple in both scope and implementation I would
 anticipate that any higher level functionality (such as providing timing,)
 would be implemented in another module.
 
-## License and Copyright
+## Licence and Copyright
 
-This is free software. Please see the LICENSE file in the distribution.
+This is free software. Please see the LICENCE file in the distribution.
 
 © Jonathan Stowe 2016
 
