@@ -3,7 +3,7 @@ use lib 'lib';
 use Test;
 use TXN::Parser;
 
-plan 4;
+plan 5;
 
 subtest
 {
@@ -15,7 +15,7 @@ subtest
         $match-journal.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($document)] - 1 of 8091
+        ♪ [Grammar.parse($document)] - 1 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Parses transaction journal successfully
         ┃   Success   ┃
@@ -28,7 +28,7 @@ subtest
         $match-journal.made.WHAT,
         Array,
         q:to/EOF/
-        ♪ [Is array?] - 2 of 8091
+        ♪ [Is array?] - 2 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made.WHAT ~~ Array
         ┃   Success   ┃
@@ -41,7 +41,7 @@ subtest
         $match-journal.made[0]<header><date>.Date,
         "2014-01-01",
         q:to/EOF/
-        ♪ [Is expected value?] - 3 of 8091
+        ♪ [Is expected value?] - 3 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<header><date>.Date
         ┃   Success   ┃        ~~ "2014-01-01"
@@ -53,7 +53,7 @@ subtest
         $match-journal.made[0]<header><description>,
         'I started the year with $1000 in Bankwest cheque account',
         q:to/EOF/
-        ♪ [Is expected value?] - 4 of 8091
+        ♪ [Is expected value?] - 4 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<header><description>
         ┃   Success   ┃        ~~ '...'
@@ -65,7 +65,7 @@ subtest
         $match-journal.made[0]<header><important>,
         0,
         q:to/EOF/
-        ♪ [Is expected value?] - 5 of 8091
+        ♪ [Is expected value?] - 5 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<header><important>
         ┃   Success   ┃        == 0
@@ -77,7 +77,7 @@ subtest
         $match-journal.made[0]<header><tags>[0],
         'TAG1',
         q:to/EOF/
-        ♪ [Is expected value?] - 6 of 8091
+        ♪ [Is expected value?] - 6 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<header><tags>[0]
         ┃   Success   ┃        ~~ 'TAG1'
@@ -89,7 +89,7 @@ subtest
         $match-journal.made[0]<header><tags>[1],
         'TAG2',
         q:to/EOF/
-        ♪ [Is expected value?] - 7 of 8091
+        ♪ [Is expected value?] - 7 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<header><tags>[1]
         ┃   Success   ┃        ~~ 'TAG2'
@@ -101,7 +101,7 @@ subtest
         $match-journal.made[0]<id><number>,
         0,
         q:to/EOF/
-        ♪ [Is expected value?] - 8 of 8091
+        ♪ [Is expected value?] - 8 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<id><number>
         ┃   Success   ┃        == 0
@@ -113,7 +113,7 @@ subtest
         $match-journal.made[0]<id><text>,
         "2014-01-01 \"I started the year with \$1000 in Bankwest cheque account\" #TAG1 #TAG2 -- EODESC COMMENT\n  -- this is a comment line\n  Assets:Personal:Bankwest:Cheque    \$1000.00 USD\n  -- this is a second comment line\n  Equity:Personal                    \$1000.00 USD -- EOL COMMENT\n  -- this is a third comment line\n-- this is a stray comment\n-- another\n",
         q:to/EOF/
-        ♪ [Is expected value?] - 9 of 8091
+        ♪ [Is expected value?] - 9 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<id><text>
         ┃   Success   ┃        ~~ "..."
@@ -125,7 +125,7 @@ subtest
         $match-journal.made[0]<id><xxhash>,
         3900955553,
         q:to/EOF/
-        ♪ [Is expected value?] - 10 of 8091
+        ♪ [Is expected value?] - 10 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<id><xxhash>
         ┃   Success   ┃        == 3251202721
@@ -137,7 +137,7 @@ subtest
         $match-journal.made[0]<postings>[0]<account><entity>,
         'Personal',
         q:to/EOF/
-        ♪ [Is expected value?] - 11 of 8091
+        ♪ [Is expected value?] - 11 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<account><entity>
         ┃   Success   ┃        ~~ 'Personal'
@@ -149,7 +149,7 @@ subtest
         $match-journal.made[0]<postings>[0]<account><silo>,
         'ASSETS',
         q:to/EOF/
-        ♪ [Is expected value?] - 12 of 8091
+        ♪ [Is expected value?] - 12 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<account><silo>
         ┃   Success   ┃        ~~ 'ASSETS'
@@ -161,7 +161,7 @@ subtest
         $match-journal.made[0]<postings>[0]<account><subaccount>[0],
         'Bankwest',
         q:to/EOF/
-        ♪ [Is expected value?] - 13 of 8091
+        ♪ [Is expected value?] - 13 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<account><subaccount>[0]
         ┃   Success   ┃        ~~ 'Bankwest'
@@ -173,7 +173,7 @@ subtest
         $match-journal.made[0]<postings>[0]<account><subaccount>[1],
         'Cheque',
         q:to/EOF/
-        ♪ [Is expected value?] - 14 of 8091
+        ♪ [Is expected value?] - 14 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<account><subaccount>[1]
         ┃   Success   ┃        ~~ 'Cheque'
@@ -185,7 +185,7 @@ subtest
         $match-journal.made[0]<postings>[0]<amount><asset-code>,
         'USD',
         q:to/EOF/
-        ♪ [Is expected value?] - 15 of 8091
+        ♪ [Is expected value?] - 15 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<amount><asset-code>
         ┃   Success   ┃        ~~ 'USD'
@@ -197,7 +197,7 @@ subtest
         $match-journal.made[0]<postings>[0]<amount><asset-quantity>,
         1000.0,
         q:to/EOF/
-        ♪ [Is expected value?] - 16 of 8091
+        ♪ [Is expected value?] - 16 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<amount><asset-quantity>
         ┃   Success   ┃        == 1000.0
@@ -209,7 +209,7 @@ subtest
         $match-journal.made[0]<postings>[0]<amount><asset-symbol>,
         '$',
         q:to/EOF/
-        ♪ [Is expected value?] - 17 of 8091
+        ♪ [Is expected value?] - 17 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<amount><asset-symbol>
         ┃   Success   ┃        ~~ '$'
@@ -221,7 +221,7 @@ subtest
         $match-journal.made[0]<postings>[0]<amount><exchange-rate>,
         {},
         q:to/EOF/
-        ♪ [Is expected value?] - 18 of 8091
+        ♪ [Is expected value?] - 18 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<amount><exchange-rate>
         ┃   Success   ┃        ~~ {}
@@ -233,7 +233,7 @@ subtest
         $match-journal.made[0]<postings>[0]<amount><plus-or-minus>,
         '',
         q:to/EOF/
-        ♪ [Is expected value?] - 19 of 8091
+        ♪ [Is expected value?] - 19 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<amount><plus-or-minus>
         ┃   Success   ┃        ~~ ''
@@ -245,7 +245,7 @@ subtest
         $match-journal.made[0]<postings>[0]<decinc>,
         'INC',
         q:to/EOF/
-        ♪ [Is expected value?] - 20 of 8091
+        ♪ [Is expected value?] - 20 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<decinc>
         ┃   Success   ┃        ~~ 'INC'
@@ -257,7 +257,7 @@ subtest
         $match-journal.made[0]<postings>[0]<id><number>,
         0,
         q:to/EOF/
-        ♪ [Is expected value?] - 21 of 8091
+        ♪ [Is expected value?] - 21 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<id><number>
         ┃   Success   ┃        == 0
@@ -269,7 +269,7 @@ subtest
         $match-journal.made[0]<postings>[0]<id><text>,
         'Assets:Personal:Bankwest:Cheque    $1000.00 USD',
         q:to/EOF/
-        ♪ [Is expected value?] - 22 of 8091
+        ♪ [Is expected value?] - 22 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<id><text>
         ┃   Success   ┃        ~~ '...'
@@ -281,7 +281,7 @@ subtest
         $match-journal.made[0]<postings>[0]<id><xxhash>,
         352942826,
         q:to/EOF/
-        ♪ [Is expected value?] - 23 of 8091
+        ♪ [Is expected value?] - 23 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<id><xxhash>
         ┃   Success   ┃        == 352942826
@@ -293,7 +293,7 @@ subtest
         $match-journal.made[0]<postings>[0]<id><entry-id><number>,
         0,
         q:to/EOF/
-        ♪ [Is expected value?] - 24 of 8091
+        ♪ [Is expected value?] - 24 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<id><entry-id><number>
         ┃   Success   ┃        == 0
@@ -305,7 +305,7 @@ subtest
         $match-journal.made[0]<postings>[0]<id><entry-id><text>,
         "2014-01-01 \"I started the year with \$1000 in Bankwest cheque account\" #TAG1 #TAG2 -- EODESC COMMENT\n  -- this is a comment line\n  Assets:Personal:Bankwest:Cheque    \$1000.00 USD\n  -- this is a second comment line\n  Equity:Personal                    \$1000.00 USD -- EOL COMMENT\n  -- this is a third comment line\n-- this is a stray comment\n-- another\n",
         q:to/EOF/
-        ♪ [Is expected value?] - 25 of 8091
+        ♪ [Is expected value?] - 25 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<id><entry-id><text>
         ┃   Success   ┃        ~~ "..."
@@ -317,7 +317,7 @@ subtest
         $match-journal.made[0]<postings>[0]<id><entry-id><xxhash>,
         3900955553,
         q:to/EOF/
-        ♪ [Is expected value?] - 26 of 8091
+        ♪ [Is expected value?] - 26 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ $match-journal.made[0]<postings>[0]<id><entry-id><xxhash>
         ┃   Success   ┃        == 3251202721
@@ -327,7 +327,7 @@ subtest
     );
 }
 
-# verify existence of primary and secondary exchange rate
+# verify existence of primary and inherited exchange rate
 subtest
 {
     my Str $txn = q:to/EOF/;
@@ -347,7 +347,7 @@ subtest
         @txn[0]<postings>[0]<amount><asset-code>,
         "BTC",
         q:to/EOF/
-        ♪ [Is expected value?] - 27 of 8091
+        ♪ [Is expected value?] - 27 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ @txn[0]<postings>[0]<amount><asset-code> eq 'BTC'
         ┃   Success   ┃
@@ -359,7 +359,7 @@ subtest
         @txn[0]<postings>[0]<amount><asset-quantity>,
         5,
         q:to/EOF/
-        ♪ [Is expected value?] - 28 of 8091
+        ♪ [Is expected value?] - 28 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ @txn[0]<postings>[0]<amount><asset-quantity> == 5
         ┃   Success   ┃
@@ -371,7 +371,7 @@ subtest
         @txn[0]<postings>[0]<amount><asset-symbol>,
         "฿",
         q:to/EOF/
-        ♪ [Is expected value?] - 29 of 8091
+        ♪ [Is expected value?] - 29 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ @txn[0]<postings>[0]<amount><asset-symbol> eq '฿'
         ┃   Success   ┃
@@ -383,7 +383,7 @@ subtest
         @txn[0]<postings>[0]<amount><exchange-rate><asset-code>,
         "USD",
         q:to/EOF/
-        ♪ [Is expected value?] - 30 of 8091
+        ♪ [Is expected value?] - 30 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><asset-code>
         ┃   Success   ┃         eq 'USD'
@@ -395,7 +395,7 @@ subtest
         @txn[0]<postings>[0]<amount><exchange-rate><asset-quantity>,
         466,
         q:to/EOF/
-        ♪ [Is expected value?] - 31 of 8091
+        ♪ [Is expected value?] - 31 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><asset-quantity>
         ┃   Success   ┃         == 466
@@ -407,7 +407,7 @@ subtest
         @txn[0]<postings>[0]<amount><exchange-rate><asset-symbol>,
         '$',
         q:to/EOF/
-        ♪ [Is expected value?] - 32 of 8091
+        ♪ [Is expected value?] - 32 of 8099
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><asset-symbol>
         ┃   Success   ┃         eq '$'
@@ -416,37 +416,150 @@ subtest
         EOF
     );
     is(
-        @txn[0]<postings>[0]<amount><exchange-rate><xe-secondary><asset-code>,
+        @txn[0]<postings>[0]<amount><exchange-rate><augment><inherited-basis><asset-code>,
         "USD",
         q:to/EOF/
-        ♪ [Is expected value?] - 33 of 8091
+        ♪ [Is expected value?] - 33 of 8099
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><xe-secondary><asset-code>
+        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><augment><inherited-basis><asset-code>
         ┃   Success   ┃         eq 'USD'
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        @txn[0]<postings>[0]<amount><exchange-rate><xe-secondary><asset-quantity>,
+        @txn[0]<postings>[0]<amount><exchange-rate><augment><inherited-basis><asset-quantity>,
         0.04,
         q:to/EOF/
-        ♪ [Is expected value?] - 34 of 8091
+        ♪ [Is expected value?] - 34 of 8099
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><xe-secondary><asset-quantity>
+        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><augment><inherited-basis><asset-quantity>
         ┃   Success   ┃         == 0.04
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
     );
     is(
-        @txn[0]<postings>[0]<amount><exchange-rate><xe-secondary><asset-symbol>,
+        @txn[0]<postings>[0]<amount><exchange-rate><augment><inherited-basis><asset-symbol>,
         '$',
         q:to/EOF/
-        ♪ [Is expected value?] - 35 of 8091
+        ♪ [Is expected value?] - 35 of 8099
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><xe-secondary><asset-symbol>
+        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><augment><inherited-basis><asset-symbol>
         ┃   Success   ┃         eq '$'
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+}
+
+# verify existence of primary exchange rate with lot sales
+subtest
+{
+    my Str $txn = q:to/EOF/;
+    2016-06-25 "I bought bitcoin for a Netflix subscription instapurchase"
+      Assets:Personal:Coinbase           ฿0.1 BTC @ $700 USD → [instapurchase]
+      Assets:Personal:BankWest:Check    -$70 USD
+
+    2016-06-25 "I instapurchased Netflix subscription with bitcoin"
+      Assets:Personal:NetflixPrepaid     $70 USD
+      Assets:Personal:Coinbase          -฿0.1 BTC @ $700 USD ← [instapurchase]
+    EOF
+
+    my @txn = TXN::Parser.parse($txn).made;
+
+    is(
+        @txn[0]<postings>[0]<amount><asset-code>,
+        "BTC",
+        q:to/EOF/
+        ♪ [Is expected value?] - 36 of 8099
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><asset-code> eq 'BTC'
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        @txn[0]<postings>[0]<amount><asset-quantity>,
+        0.1,
+        q:to/EOF/
+        ♪ [Is expected value?] - 37 of 8099
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><asset-quantity> == 0.1
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        @txn[0]<postings>[0]<amount><asset-symbol>,
+        "฿",
+        q:to/EOF/
+        ♪ [Is expected value?] - 38 of 8099
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><asset-symbol> eq '฿'
+        ┃   Success   ┃
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        @txn[0]<postings>[0]<amount><exchange-rate><asset-code>,
+        "USD",
+        q:to/EOF/
+        ♪ [Is expected value?] - 39 of 8099
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><asset-code>
+        ┃   Success   ┃         eq 'USD'
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        @txn[0]<postings>[0]<amount><exchange-rate><asset-quantity>,
+        700,
+        q:to/EOF/
+        ♪ [Is expected value?] - 40 of 8099
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><asset-quantity>
+        ┃   Success   ┃         == 700
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        @txn[0]<postings>[0]<amount><exchange-rate><asset-symbol>,
+        '$',
+        q:to/EOF/
+        ♪ [Is expected value?] - 41 of 8099
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><asset-symbol>
+        ┃   Success   ┃         eq '$'
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        @txn[0]<postings>[0]<amount><exchange-rate><augment><lot-acquisition>,
+        "instapurchase",
+        q:to/EOF/
+        ♪ [Is expected value?] - 42 of 8099
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ @txn[0]<postings>[0]<amount><exchange-rate><augment><lot-acquisition>
+        ┃   Success   ┃         eq 'instapurchase'
+        ┃             ┃
+        ┗━━━━━━━━━━━━━┛
+        EOF
+    );
+    is(
+        @txn[1]<postings>[1]<amount><exchange-rate><augment><lot-disposition>,
+        "instapurchase",
+        q:to/EOF/
+        ♪ [Is expected value?] - 43 of 8099
+        ┏━━━━━━━━━━━━━┓
+        ┃             ┃  ∙ @txn[1]<postings>[1]<amount><exchange-rate><augment><lot-disposition>
+        ┃   Success   ┃         eq 'instapurchase'
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF

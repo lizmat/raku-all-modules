@@ -579,7 +579,7 @@ method asset-quantity:float ($/)
     make $<float-unsigned>.made;
 }
 
-method xe-main($/)
+method xe-primary($/)
 {
     # asset code
     my Str $asset-code = $<asset-code>.made;
@@ -594,15 +594,30 @@ method xe-main($/)
     make %(:$asset-code, :$asset-quantity, :$asset-symbol);
 }
 
-method xe-secondary($/)
+method xe-augment:inherited-basis ($/)
 {
-    make $<sxe>.made;
+    make %(:inherited-basis($<xe-inherited-basis>.made));
+}
+
+method xe-lot($/)
+{
+    make $<var-name>.made;
+}
+
+method xe-augment:lot-acquisition ($/)
+{
+    make %(:lot-acquisition($<xe-lot>.made));
+}
+
+method xe-augment:lot-disposition ($/)
+{
+    make %(:lot-disposition($<xe-lot>.made));
 }
 
 method xe($/)
 {
-    my %xe = $<xe-main>.made;
-    %xe<xe-secondary> = $<xe-secondary>.made if $<xe-secondary>;
+    my %xe = $<xe-primary>.made;
+    %xe<augment> = $<xe-augment>.made if $<xe-augment>;
     make %xe;
 }
 

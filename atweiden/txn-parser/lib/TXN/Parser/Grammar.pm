@@ -626,13 +626,12 @@ token exchange-rate
     '@' \h+ <xe>
 }
 
-# main exchange rate, negative xe not allowed
 token xe
 {
-    <xe-main> [\h+ <xe-secondary>]?
+    <xe-primary> [\h+ <xe-augment>]?
 }
 
-token xe-main
+token xe-primary
 {
     # @ $830.024 USD
     <asset-symbol>? <asset-quantity> \h+ <asset-code>
@@ -643,15 +642,43 @@ token xe-main
     <asset-code> \h+ <asset-symbol>? <asset-quantity>
 }
 
-# secondary exchange rate
-token xe-secondary
+# augmented exchange rate data
+proto token xe-augment {*}
+
+# inherited exchange rate
+token xe-augment:inherited-basis
 {
-    <xe-secondary-symbol> \h+ <sxe=xe-main>
+    <xe-inherited-basis-symbol> \h+ <xe-inherited-basis=xe-primary>
 }
 
-proto token xe-secondary-symbol {*}
-token xe-secondary-symbol:hyper { '«' }
-token xe-secondary-symbol:texas { '<<' }
+proto token xe-inherited-basis-symbol {*}
+token xe-inherited-basis-symbol:texas { '<<' }
+token xe-inherited-basis-symbol:unicode { '«' }
+
+# lot sales (acquisition)
+token xe-augment:lot-acquisition
+{
+    <xe-lot-acquisition-symbol> \h+ <xe-lot>
+}
+
+# lot sales (disposition)
+token xe-augment:lot-disposition
+{
+    <xe-lot-disposition-symbol> \h+ <xe-lot>
+}
+
+proto token xe-lot-acquisition-symbol {*}
+token xe-lot-acquisition-symbol:texas { '->' }
+token xe-lot-acquisition-symbol:unicode { '→' }
+
+proto token xe-lot-disposition-symbol {*}
+token xe-lot-disposition-symbol:texas { '<-' }
+token xe-lot-disposition-symbol:unicode { '←' }
+
+token xe-lot
+{
+    '[' \h* <var-name> \h* ']'
+}
 
 # --- end posting amount grammar }}}
 
