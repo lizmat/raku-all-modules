@@ -10,7 +10,7 @@ use BSON::Regex;
 use BSON::Javascript;
 use BSON::Binary;
 
-unit package BSON:ver<0.9.25>;
+unit package BSON:ver<0.9.26>:auth<MARTIMM>;
 
 #-------------------------------------------------------------------------------
 # BSON type codes
