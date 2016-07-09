@@ -1,0 +1,13 @@
+{
+    "author": "Pawel Pabian",
+    "authority": "bbkr",
+    "depends": [],
+    "description": "Shorten and obfuscate IDs.",
+    "name": "TinyID",
+    "provides": {
+        "TinyID": "lib/TinyID.pm"
+    },
+    "repo-type": "git",
+    "source-url": "git://github.com/bbkr/TinyID.git",
+    "version": "1.0.0"
+}

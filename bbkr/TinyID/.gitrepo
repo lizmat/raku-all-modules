@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bbkr/TinyID.git
+	branch = master
+	commit = a4421663fdb55512a421b68ec307217313515f3c
+	parent = 00808e5af272b4f7f2c020fac9c7b81acc924698
+	cmdver = 0.2.3
