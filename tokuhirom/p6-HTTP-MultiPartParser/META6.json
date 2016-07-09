@@ -1,11 +1,11 @@
 {
   "name" : "HTTP::MultiPartParser",
   "source-url" : "git://github.com/tokuhirom/p6-HTTP-MultiPartParser.git",
-  "perl" : "v6",
+  "perl" : "6",
   "provides" : {
     "HTTP::MultiPartParser" : "lib/HTTP/MultiPartParser.pm6"
   },
-  "depends" : [ ],
+  "depends" : [ "JSON::Fast" ],
   "description" : "",
   "version" : "*",
   "authors" : [

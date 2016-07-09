@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tokuhirom/p6-HTTP-MultiPartParser.git
 	branch = master
-	commit = d7d7066539bb3bf7dff37fa682998da3bb17c2d8
-	parent = aaaa7f8be902cafc8a0289bdc2041897de17d8c0
-	cmdver = 0.2.2
+	commit = 3ea39e3a366033a3c48afd0429abdba0aef2fffa
+	parent = 125cb9e07a09589b594e50244c61071347c4126f
+	cmdver = 0.2.3

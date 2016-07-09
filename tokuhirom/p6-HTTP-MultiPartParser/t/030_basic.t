@@ -1,6 +1,7 @@
 use v6;
 
 use Test;
+use JSON::Fast;
 
 use HTTP::MultiPartParser;
 
