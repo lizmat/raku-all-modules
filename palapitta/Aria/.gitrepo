@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/palapitta/Aria.git
 	branch = master
-	commit = e759d2e6a345b6f4aec770240265f4238a43efd8
-	parent = d252be596761b5c6210759187e640e892a577d68
+	commit = 5ac513894a39beb392dda282afa83114cbbba028
+	parent = 39a2ce0ddebc84e0818d30ad0d3ac3723cd41d48
 	cmdver = 0.2.3

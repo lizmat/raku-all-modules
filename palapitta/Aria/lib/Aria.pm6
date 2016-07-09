@@ -1,5 +1,4 @@
 class Aria {
-
   sub check($var) {
     my $y = substr($var, *-1);
     if $y eq 'k' {
@@ -15,71 +14,63 @@ class Aria {
     }
   }
 
+ sub check-log($text) {
+   my $cont = slurp $text;
+ 		if ($cont ~~ /(OK)/) {
+ 			unlink $text;
+ 			return "OK";
+ 	}
+ 	elsif ($cont ~~ /(ERR)/) {
+ 		unlink $text;
+ 		return "ERR";
+ 	}
+ 	elsif ($cont ~~ /(INPR)/) {
+ 		unlink $text;
+ 		return "INPR";
+ 	}
+ 	else {
+ 		unlink $text;
+ 		return "ERR";
+ 	}
+ }
+
   method get($dir, $link) {
-  	#works for http(s)/ftp links
     unless $dir { mkdir $dir; }
-  	shell("aria2c -d $dir $link > /dev/null");
+    my $log = "log" ~ rand.split(".")[1] ~ ".txt";
+    my $conte = qqx/aria2c -d "$dir" "$link" > $log 2>&1/;
+    return check-log($log);
   }
 
   method get-limit($dir, $link, $speed) {
     unless $dir { mkdir $dir; }
-
+    my $log = "log" ~ rand.split(".")[1] ~ ".txt";
     my $lim = check($speed);
-
-  	shell("aria2c -d $dir --max-download-limit=$lim $link > /dev/null");
+    my $conte = qqx/aria2c -d "$dir" --max-download-limit=$lim "$link" > $log 2>&1/;
+    return check-log($log);
   }
 
-  multi method get-multi($dir, $link1, $link2) {
+ method  get-multi(*@arr) {
+    my $dir = @arr[0];
     unless $dir { mkdir $dir; }
-  	shell("aria2c -d $dir $link1 $link2 > /dev/null");
-  }
-
-  multi method get-multi($dir, $link1, $link2, $link3) {
-    unless $dir { mkdir $dir; }
-  	shell("aria2c -d $dir $link1 $link2 $link3 > /dev/null");
-  }
-
-  multi method  get-multi($dir, $link1, $link2, $link3, $link4) {
-    unless $dir { mkdir $dir; }
-  	shell("aria2c -d $dir $link1 $link2 $link3 $link4 > /dev/null");
+    for 1 .. @arr.elems-1 -> $v {
+      if @arr.WHAT.gist eq "(Any)" {
+        @arr[$v] = "";
+      }
+    }
+    my $log = "log" ~ rand.split(".")[1] ~ ".txt";
+    my $conte = qqx/aria2c -d $dir @arr[1] @arr[2] @arr[3] @arr[4] @arr[5] > $log 2>&1/;
+    return check-log($log);
   }
 
   method get-concurrent($dir, $link, $num) {
     unless $dir { mkdir $dir; }
 
-    if $num > 5 {
-      $num = 5 ;
+    if $num > 7 {
+      $num = 7 ;
      }
     my $n = "-x" ~ $num;
-  	shell("aria2c -d $dir $n $link > /dev/null");
-  }
-
-  method get-magnet($dir, $magnet) {
-    unless $dir { mkdir $dir; }
-    shell("aria2c -d $dir $magnet > /dev/null");
-  }
-
-  method get-torrent($dir, $torrent-file-path) {
-    unless $dir { mkdir $dir; }
-    shell("aria2c -d $dir $torrent-file-path > /dev/null");
-  }
-
-  method get-torrent-limit($dir, $torrent-file-path, $up-limit, $down-limit) {
-    unless $dir { mkdir $dir; }
-
-    my $uplim = check($up-limit);
-    my $downlim = check($down-limit);
-
-    shell("aria2c -d $dir -u $uplim --max-download-limit=$downlim $torrent-file-path > /dev/null");
-  }
-
-  method get-metalink($dir, $metalink) {
-    unless $dir { mkdir $dir; }
-    shell("aria2c -d $dir $metalink > /dev/null");
-  }
-
-  method get-fromfile($dir, $file-path) {
-    unless $dir { mkdir $dir; }
-  	shell("aria2c -i $file-path > /dev/null");
+    my $log = "log" ~ rand.split(".")[1] ~ ".txt";
+    my $conte = qqx/aria2c -d $dir $n $link > $log 2>&1/;
+    return check-log($log);
   }
 }
