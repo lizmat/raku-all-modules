@@ -1,0 +1,13 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Quantum::Collapse",
+    "version"      : "1.001001",
+    "description"  : "Collapse allomophic types into their components",
+    "depends"      : [ ],
+    "test-depends" : [ "Test", "Test::META" ],
+    "provides"     : {
+        "Quantum::Collapse" : "lib/Quantum/Collapse.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "support"      : {"source"   : "git://github.com/zoffixznet/perl6-Quantum-Collapse.git"}
+}

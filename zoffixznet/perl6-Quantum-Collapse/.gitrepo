@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-Quantum-Collapse.git
+	branch = master
+	commit = 8448bb7caacdbebc6ea80aad470a0ae7655854f0
+	parent = d2146f77648e4da296e7d44e2c5be192b91a83f1
+	cmdver = 0.2.3
