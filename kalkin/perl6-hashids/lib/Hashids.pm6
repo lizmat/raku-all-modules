@@ -205,7 +205,7 @@ Hashids — generate short and reversable hashes from numbers.
     my $number = $hashids.decode('Ydx');     # 123
 
     # or a list
-    $hash = $hashids.encode(1, 2, 3);        # 'eGtrS8'
+    $hash = $hashids.encode(1, 2, 3);        # 'laHquq'
     my @numbers = $hashids.decode('laHquq'); # (1, 2, 3)
 
 =end SYNOPSIS
