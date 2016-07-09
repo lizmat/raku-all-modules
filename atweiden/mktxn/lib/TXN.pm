@@ -1,5 +1,6 @@
 use v6;
 use Config::TOML;
+use File::Presence;
 use TXN::Parser;
 unit module TXN;
 
@@ -342,132 +343,35 @@ sub get-entities-seen(@txn) returns Array
 
 # resolve-txn-file-path {{{
 
-multi sub exists-readable-file(
-    Str $file,
-    :@checks! where *.elems == 1
-) returns Array
-{
-    exists-readable-file($file, :checks[|@checks, $file.IO.r]);
-}
-
-multi sub exists-readable-file(
-    Str $file,
-    :@checks! where *.elems == 2
-) returns Array
-{
-    exists-readable-file($file, :checks[|@checks, $file.IO.f]);
-}
-
-multi sub exists-readable-file(
-    Str $file,
-    :@checks! where *.elems == 3
-) returns Array
-{
-    @checks;
-}
-
-# you passed a direct-file-name.txn
-multi sub exists-readable-file(
-    Str $file where *.chars > 0 && *.IO.extension eq 'txn'
-) returns Bool
-{
-    given exists-readable-file($file, :checks[$file.IO.e])
-    {
-        when $_[0] eqv False
-        {
-            die "Sorry, determined path 「$file」 does not exist";
-        }
-        when [True, True, True]
-        {
-            True;
-        }
-        when [True, True, False]
-        {
-            die "Sorry, determined path 「$file」 was not to file";
-        }
-        when [True, False, True]
-        {
-            die "Sorry, determined path 「$file」 was not readable";
-        }
-        when [True, False, False]
-        {
-            die "Sorry, determined path 「$file」 was not readable";
-        }
-    }
-}
-
-# you used a shortcut by leaving off the trailing chars '.txn'
-multi sub exists-readable-file(Str $file where *.chars > 0) returns Bool
-{
-    # append .txn to bare file path
-    given exists-readable-file("$file.txn", :checks["$file.txn".IO.e])
-    {
-        when $_[0] eqv False
-        {
-            die "Sorry, could not find txn file at path 「$file.txn」";
-        }
-        when [True, True, True]
-        {
-            True;
-        }
-        when [True, True, False]
-        {
-            die "Sorry, determined path 「$file.txn」 was not to file";
-        }
-        when [True, False, True]
-        {
-            die "Sorry, determined txn file at 「$file.txn」 was not readable";
-        }
-        when [True, False, False]
-        {
-            die "Sorry, determined path 「$file.txn」 was not readable";
-        }
-    }
-}
-
-# you didn't pass a filename
-multi sub exists-readable-file(Str $file)
-{
-    die "txn file must exist";
-}
-
-sub resolve-txn-file-path(Str $file) returns Str
+multi sub resolve-txn-file-path(
+    Str $file where $file.IO.extension eq 'txn'
+) returns Str
 {
     die unless exists-readable-file($file);
-    $file.IO.extension eq 'txn' ?? $file !! "$file.txn";
+    $file;
+}
+
+multi sub resolve-txn-file-path(Str $file) returns Str
+{
+    die unless exists-readable-file("$file.txn");
+    "$file.txn";
 }
 
 # end resolve-txn-file-path }}}
 
 # has-pkgname-pkgver-pkgrel {{{
 
-multi sub pkgname-pkgver-pkgrel(
-    %txninfo,
-    :@checks! where *.elems == 1
-) returns Array
+sub pkgname-pkgver-pkgrel(%txninfo) returns Array
 {
-    pkgname-pkgver-pkgrel(%txninfo, :checks[|@checks, %txninfo<pkgver>:exists]);
-}
-
-multi sub pkgname-pkgver-pkgrel(
-    %txninfo,
-    :@checks! where *.elems == 2
-) returns Array
-{
-    pkgname-pkgver-pkgrel(%txninfo, :checks[|@checks, %txninfo<pkgrel>:exists]);
-}
-
-multi sub pkgname-pkgver-pkgrel(
-    %txninfo,
-    :@checks! where *.elems == 3
-) returns Array
-{
-    @checks;
+    my Bool @p =
+        %txninfo<pkgname>:exists,
+        %txninfo<pkgver>:exists,
+        %txninfo<pkgrel>:exists;
 }
 
 sub has-pkgname-pkgver-pkgrel(%txninfo) returns Bool
 {
-    given pkgname-pkgver-pkgrel(%txninfo, :checks[%txninfo<pkgname>:exists])
+    given pkgname-pkgver-pkgrel(%txninfo)
     {
         when .grep(*.so).elems == .elems
         {
