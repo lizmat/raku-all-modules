@@ -1,5 +1,4 @@
 use Zef;
-use Zef::Config;
 use Zef::Distribution;
 use Zef::Distribution::Local;
 use Zef::Fetch;
@@ -314,6 +313,7 @@ class Zef::Client {
         Bool :$test  = True,        # run tests
         Bool :$dry,                 # do everything *but* actually install
         Bool :$upgrade,             # NYI
+        Bool :$serial,
         *@candidates ($, *@),
         *%_
         ) {
@@ -421,97 +421,101 @@ class Zef::Client {
         die "Something went terribly wrong linking the distributions" unless +@linked-candidates;
 
 
-        # Build Phase:
-        my @built-candidates = self.build(|@linked-candidates);
-        die "No installable candidates remain after `build` failures" unless +@built-candidates;
+        my $installer = sub (*@_) {
+            # Build Phase:
+            my @built-candidates = self.build(|@_);
+            die "No installable candidates remain after `build` failures" unless +@built-candidates;
 
 
-        # Test Phase:
-        my @tested-candidates = gather for @built-candidates -> $candi {
-            next() R, take($candi) unless ?$test;
+            # Test Phase:
+            my @tested-candidates = gather for @built-candidates -> $candi {
+                next() R, take($candi) unless ?$test;
 
-            my $tested = self.test($candi);
-            my $failed = $tested.map(*.test-results.grep(!*.so).elems).sum;
+                my $tested = self.test($candi);
+                my $failed = $tested.map(*.test-results.grep(!*.so).elems).sum;
 
-            take $candi unless ?$failed && !$!force;
-        }
-        # actually we *do* want to proceed here later so that the Report phase can know about the failed tests/build
-        die "All candidates failed building and/or testing. No reason to proceed" unless +@tested-candidates;
+                take $candi unless ?$failed && !$!force;
+            }
+            # actually we *do* want to proceed here later so that the Report phase can know about the failed tests/build
+            die "All candidates failed building and/or testing. No reason to proceed" unless +@tested-candidates;
 
-        # Install Phase:
-        # Ideally `--dry` uses a special unique CompUnit::Repository that is meant to be deleted entirely
-        # and contain only the modules needed for this specific run/plan
-        my @installed-candidates = eager gather for @tested-candidates -> $candi {
-            self.logger.emit({
-                level   => INFO,
-                stage   => INSTALL,
-                phase   => BEFORE,
-                payload => $candi,
-                message => "Installing: {$candi.dist.?identity // $candi.as}",
-            });
+            # Install Phase:
+            # Ideally `--dry` uses a special unique CompUnit::Repository that is meant to be deleted entirely
+            # and contain only the modules needed for this specific run/plan
+            my @installed-candidates = eager gather for @tested-candidates -> $candi {
+                self.logger.emit({
+                    level   => INFO,
+                    stage   => INSTALL,
+                    phase   => BEFORE,
+                    payload => $candi,
+                    message => "Installing: {$candi.dist.?identity // $candi.as}",
+                });
 
-            my @installed-at = |@curs.grep: -> $cur {
-                # CURI.install is bugged; $dist.provides/files will both get modified and fuck up
-                # any subsequent .install as the fuck up involves changing the data structures
-                my $dist = $candi.dist.clone(provides => $candi.dist.provides, files => $candi.dist.files);
+                my @installed-at = |@curs.grep: -> $cur {
+                    # CURI.install is bugged; $dist.provides/files will both get modified and fuck up
+                    # any subsequent .install as the fuck up involves changing the data structures
+                    my $dist = $candi.dist.clone(provides => $candi.dist.provides, files => $candi.dist.files);
 
-                if ?$dry {
-                    self.logger.emit({
-                        level   => VERBOSE,
-                        stage   => INSTALL,
-                        phase   => AFTER,
-                        payload => $candi,
-                        message => "(dry) Installed: {$candi.dist.?identity // $candi.as}",
-                    });
-                }
-                else {
-                    #$!lock.protect({
-                    try {
-                        CATCH { default {
-                            self.logger.emit({
-                                level   => ERROR,
-                                stage   => INSTALL,
-                                phase   => AFTER,
-                                payload => $candi,
-                                message => "Install [FAIL] for {$candi.dist.?identity // $candi.as}: {$_}",
-                            });
-                            $_.rethrow;
-                        } }
-                        my $install = $cur.install($dist, $dist.sources(:absolute), $dist.scripts, $dist.resources, :$!force);
+                    if ?$dry {
                         self.logger.emit({
                             level   => VERBOSE,
                             stage   => INSTALL,
                             phase   => AFTER,
                             payload => $candi,
-                            message => "Install [OK] for {$candi.dist.?identity // $candi.as}",
-                        }) if ?$install;
-                        $ = ?$install;
+                            message => "(dry) Installed: {$candi.dist.?identity // $candi.as}",
+                        });
                     }
-                    #});
+                    else {
+                        #$!lock.protect({
+                        try {
+                            CATCH { default {
+                                self.logger.emit({
+                                    level   => ERROR,
+                                    stage   => INSTALL,
+                                    phase   => AFTER,
+                                    payload => $candi,
+                                    message => "Install [FAIL] for {$candi.dist.?identity // $candi.as}: {$_}",
+                                });
+                                $_.rethrow;
+                            } }
+                            my $install = $cur.install($dist.compat, $dist.sources(:absolute), $dist.scripts, $dist.resources, :$!force);
+                            self.logger.emit({
+                                level   => VERBOSE,
+                                stage   => INSTALL,
+                                phase   => AFTER,
+                                payload => $candi,
+                                message => "Install [OK] for {$candi.dist.?identity // $candi.as}",
+                            }) if ?$install;
+                            $ = ?$install;
+                        }
+                        #});
+                    }
+                }
+
+                take $candi if +@installed-at;
+            }
+
+            # Report phase:
+            # Handle exit codes for various option permutations like --force
+            # Inform user of what was tested/built/installed and what failed
+            # Optionally report to any cpan testers type service (testers.perl6.org)
+            unless $dry {
+                if @installed-candidates.map(*.dist).flatmap(*.scripts.keys).unique -> @bins {
+                    my $msg = "\n{+@bins} bin/ script{+@bins>1??'s'!!''}{+@bins&&?$!verbose??' ['~@bins~']'!!''} installed to:"
+                    ~ "\n" ~ @curs.map(*.prefix.child('bin')).join("\n");
+                    self.logger.emit({
+                        level   => INFO,
+                        stage   => REPORT,
+                        phase   => LIVE,
+                        message => $msg,
+                    });
                 }
             }
 
-            take $candi if +@installed-at;
-        }
+            @installed-candidates;
+        } # sub installer
 
-        # Report phase:
-        # Handle exit codes for various option permutations like --force
-        # Inform user of what was tested/built/installed and what failed
-        # Optionally report to any cpan testers type service (testers.perl6.org)
-        unless $dry {
-            if @installed-candidates.map(*.dist).flatmap(*.scripts.keys).unique -> @bins {
-                my $msg = "\n{+@bins} bin/ script{+@bins>1??'s'!!''}{+@bins&&?$!verbose??' ['~@bins~']'!!''} installed to:"
-                ~ "\n" ~ @curs.map(*.prefix.child('bin')).join("\n");
-                self.logger.emit({
-                    level   => INFO,
-                    stage   => REPORT,
-                    phase   => LIVE,
-                    message => $msg,
-                });
-            }
-        }
-
-        @installed-candidates;
+        my @installed = ?$serial ?? @linked-candidates.map({ $installer($_) }) !! $installer(|@linked-candidates);
     }
 
     method uninstall(CompUnit::Repository :@from!, *@identities) {
@@ -520,7 +524,7 @@ class Zef::Client {
             my $dist = $candi.dist;
             if @specs.first({ $dist.spec-matcher($_) }) {
                 my $cur = CompUnit::RepositoryRegistry.repository-for-spec("inst#{$candi.from}", :next-repo($*REPO));
-                $cur.uninstall($dist);
+                $cur.uninstall($dist.compat);
                 take $candi;
             }
         }
@@ -742,20 +746,26 @@ sub try-legacy-hook($candi, :$logger) {
 
         $legacy-code.subst-mutate(/'use Panda::' \w+ ';'/, '', :g);
         $legacy-code.subst-mutate('class Build is Panda::Builder {', "{$legacy-fixer-code}\n");
-        $builder-path = "{$builder-path.absolute}.zef".IO;
-        try { $builder-path.spurt($legacy-code) } || $builder-path.subst-mutate(/'.zef'$/, '');
+
+        try {
+            move "{$builder-path}", "{$builder-path}.bak";
+            spurt "{$builder-path}", $legacy-code;
+        }
     }
 
     # Rakudo bug related to using path instead of module name
     # my $cmd = "require <{$builder-path.basename}>; ::('Build').new.build('{$dist.IO.absolute}'); exit(0);";
-    my $cmd = "require ::('Build'); ::('Build').new.build('{$dist.IO.absolute}'); exit(0);";
+    my $cmd = "::('Build').new.build('{$dist.IO.absolute}'); exit(0);";
 
     my $result;
     try {
         use Zef::Shell;
         CATCH { default { $result = False; } }
         my @includes = $dist.metainfo<includes>.grep(*.defined).map: { "-I{$_}" }
-        my @exec = |($*EXECUTABLE, '-Ilib', '-I.', |@includes, '-e', "$cmd");
+
+        # see: https://github.com/ugexe/zef/issues/93
+        # my @exec = |($*EXECUTABLE, '-Ilib', '-I.', |@includes, '-e', "$cmd");
+        my @exec = |($*EXECUTABLE, '-Ilib', '-I.', '-MBuild', |@includes, '-e', "$cmd");
 
         $logger.emit({
             level   => DEBUG,
@@ -766,8 +776,11 @@ sub try-legacy-hook($candi, :$logger) {
         });
 
         my $proc = zrun(|@exec, :cwd($dist.path), :out, :err);
-        my @err = $proc.err.lines;
+
+        # Build phase can freeze up based on the order of these 2 assignments
+        # This is a rakudo bug with an unknown cause, so may still occur based on the process's output
         my @out = $proc.out.lines;
+        my @err = $proc.err.lines;
 
         $ = $proc.out.close unless +@err;
         $ = $proc.err.close;
@@ -790,7 +803,12 @@ sub try-legacy-hook($candi, :$logger) {
         }) if +@err;
     }
 
-    $builder-path.IO.unlink if $builder-path.ends-with('.zef') && "{$builder-path}".IO.e;
+    if my $bak = "{$builder-path}.bak" and $bak.IO.e {
+        try {
+            unlink $builder-path;
+            move $bak, $builder-path;
+        } if $bak.IO.f;
+    }
 
     $ = ?$result;
 }
