@@ -10,8 +10,18 @@ sub colored($text, $how) {
     $text
 }
 
-method render($pod) {
-    pod2html($pod)
+multi method render(Pod::Block $pod, Str :$header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '') {
+    pod2html($pod, :$header, :$footer, :$head, :$default-title)
+}
+
+multi method render(IO::Path $file, Str $header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '') {
+    use MONKEY-SEE-NO-EVAL;
+    pod2html(EVAL($file.slurp ~ "\n\$=pod"), :$header, :$footer, :$head, :$default-title);
+}
+
+multi method render(Str $pod-string, Str $header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '') {
+    use MONKEY-SEE-NO-EVAL;
+    pod2html(EVAL($pod-string ~ "\n\$=pod"), :$header, :$footer, :$head, :$default-title);
 }
 
 # FIXME: this code's a horrible mess. It'd be really helpful to have a module providing a generic
@@ -123,7 +133,9 @@ sub assemble-list-items(:@content, :$node, *% ) {
 
 
 #| Converts a Pod tree to a HTML document.
-sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$footer = '', :$default-title) is export returns Str {
+sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$footer = '', :$default-title, 
+  :$css-url = '//design.perl6.org/perl.css'
+) is export returns Str {
     ($title, $subtitle, @meta, @indexes, @body, @footnotes) = ();
     #| Keep count of how many footnotes we've output.
     my Int $*done-notes = 0;
@@ -157,7 +169,7 @@ sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$foote
             aside, u \{ opacity: 0.7 }
             a[id^="fn-"]:target \{ background: #ff0 }
           </style>
-          <link rel="stylesheet" href="//design.perl6.org/perl.css">
+          <link rel="stylesheet" href="$css-url">
           { do-metadata() // () }
           $head
         </head>
@@ -171,8 +183,8 @@ sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$foote
                          !! () ),
         ( $subtitle.defined  ?? "<p class='subtitle'>{$subtitle}</p>"
                          !! () ),
-        ( do-toc() // () ),
-        @body,
+        ( my $ToC := do-toc($pod) // () ),
+        '<div class="pod-body', ($ToC ?? '' !! ' no-toc'), '">',@body,'</div>',
         do-footnotes(),
         $footer,
         '</body>',
@@ -188,35 +200,43 @@ sub do-metadata returns Str {
 }
 
 #| Turns accumulated headings into a nested-C«<ol>» table of contents
-sub do-toc returns Str {
-    my $r = qq[<nav class="indexgroup">\n];
-
-    my $indent = q{ } x 2;
-    my @opened;
-    for @indexes -> $p {
-        my $lvl  = $p.key;
-        my $head = $p.value;
-        while @opened && @opened[*-1] > $lvl {
-            $r ~= $indent x @opened - 1
-                ~ "</ol>\n";
-            @opened.pop;
-        }
-        my $last = @opened[*-1] // 0;
-        if $last < $lvl {
-            $r ~= $indent x $last
-                ~ qq[<ol class="indexList indexList{$lvl}">\n];
-            @opened.push($lvl);
-        }
-        $r ~= $indent x $lvl
-            ~ qq[<li class="indexItem indexItem{$lvl}">]
-            ~ qq[<a href="#{$head<uri>}">{$head<html>}</a></li>\n];
+sub do-toc($pod) returns Str {
+    my @levels is default(0) = 0;
+    my proto sub find-headings($node, :$inside-heading){*}
+    multi sub find-headings(Str $s is raw, :$inside-heading){ $inside-heading ?? $s.trim !! '' }
+    multi sub find-headings(Pod::FormattingCode $node is raw where *.type eq 'C', :$inside-heading){
+        my $html = $node.contents.map(*.&find-headings(:$inside-heading));
+       $inside-heading ?? qq[<code class="pod-code-inline">{$html}</code>] !! ''
     }
-    for ^@opened {
-        $r ~= $indent x @opened - 1 - $^left
-            ~ "</ol>\n";
+    multi sub find-headings(Pod::Heading $node is raw, :$inside-heading){
+        @levels.splice($node.level) if $node.level < +@levels;
+        @levels[$node.level-1]++;
+        my $level-hierarchy = @levels.join('.'); # e.g. §4.2.12
+        my $text = $node.contents.map(*.&find-headings(inside-heading => True));
+        my $link = escape_id(node2text($node.contents));
+        qq[<tr class="toc-level-{$node.level}"><td class="toc-number">{$level-hierarchy}</td><td class="toc-text"><a href="#$link">{$text}</a></td></tr>\n];
+    }
+    multi sub find-headings(Positional \list, :$inside-heading){
+        list.map(*.&find-headings(:$inside-heading))
+    }
+    multi sub find-headings(Pod::Block $node is raw, :$inside-heading){
+        $node.contents.map(*.&find-headings(:$inside-heading))
+    }
+    multi sub find-headings(Pod::Raw $node is raw, :$inside-heading){
+        $node.contents.map(*.&find-headings(:$inside-heading))
     }
 
-    return $r ~ '</nav>';
+    my $html = find-headings($pod);
+    $html.trim ??
+        qq:to/EOH/
+        <nav class="indexgroup">
+        <table id="TOC">
+        <caption><h2 id="TOC_Title">Table of Contents</h2></caption>
+        {$html}
+        </table>
+        </nav>
+        EOH
+    !! ''
 }
 
 #| Flushes accumulated footnotes since last call. The idea here is that we can stick calls to this
@@ -250,7 +270,7 @@ multi sub node2html(Pod::Block::Declarator $node) {
     given $node.WHEREFORE {
         when Routine {
             "<article>\n"
-                ~ '<code>'
+                ~ '<code class="pod-code-inline">'
                     ~ node2text($node.WHEREFORE.name ~ $node.WHEREFORE.signature.perl)
                 ~ "</code>:\n"
                 ~ node2html($node.contents)
@@ -267,11 +287,11 @@ multi sub node2html(Pod::Block::Code $node) {
     Debug { note colored("Code node2html called for ", "bold") ~ $node.gist };
     if %*POD2HTML-CALLBACKS and %*POD2HTML-CALLBACKS<code> -> &cb {
         return cb :$node, default => sub ($node) {
-            return '<pre>' ~ node2inline($node.contents) ~ "</pre>\n"
+            return '<pre class="pod-block-code">' ~ node2inline($node.contents) ~ "</pre>\n"
         }
     }
     else  {
-        return '<pre>' ~ node2inline($node.contents) ~ "</pre>\n"
+        return '<pre class="pod-block-code">' ~ node2inline($node.contents) ~ "</pre>\n"
     }
 
 }
@@ -288,7 +308,7 @@ multi sub node2html(Pod::Block::Named $node) {
         when 'nested' {
             return qq{<div class="nested">\n} ~ node2html($node.contents) ~ qq{\n</div>\n};
         }
-        when 'output' { return "<pre>\n" ~ node2inline($node.contents) ~ "</pre>\n"; }
+        when 'output' { return qq[<pre class="pod-block-named-outout">\n] ~ node2inline($node.contents) ~ "</pre>\n"; }
         when 'pod'  {
             return qq[<span class="{$node.config<class>}">\n{node2html($node.contents)}</span>\n]
                 if $node.config<class>;
@@ -350,7 +370,7 @@ multi sub node2html(Pod::Block::Para $node) {
 
 multi sub node2html(Pod::Block::Table $node) {
     Debug { note colored("Table node2html called for ", "bold") ~ $node.gist };
-    my @r = '<table>';
+    my @r = '<table class="pod-table">';
 
     if $node.caption {
         @r.push("<caption>{node2inline($node.caption)}</caption>");
@@ -497,13 +517,18 @@ multi sub node2inline(Pod::FormattingCode $node) returns Str {
         }
 
         when 'X' {
-            # TODO do something with the crossrefs
-            my $text = node2inline($node.contents);
+            multi sub recurse-until-str(Str:D $s){ $s }
+            multi sub recurse-until-str(Pod::Block $n){ $n.contents>>.&recurse-until-str().join }
+            
+            my $index-text = recurse-until-str($node).join;
             my @indices = $node.meta;
-            # my @indices = $defns.split(/\s*';'\s*/).map:
-            #     { .split(/\s*','\s*/).join("--") }
+            my $index-name-attr = qq[index-entry{@indices ?? '-' !! ''}{@indices.join('-')}{$index-text ?? '-' !! ''}$index-text].subst('_', '__', :g).subst(' ', '_', :g).subst('%', '%25', :g).subst('#', '%23', :g);
+            
+            my $text = node2inline($node.contents);
             %crossrefs{$_} = $text for @indices;
-            return qq[<span name="@indices[]">$text\</span>];
+            
+            return qq[<a name="$index-name-attr"><span class="index-entry">$text\</span></a>] if $text;
+            return qq[<a name="$index-name-attr"></a>];
         }
 
         # Stuff I haven't figured out yet

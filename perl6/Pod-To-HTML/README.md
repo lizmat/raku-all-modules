@@ -19,6 +19,17 @@ From within Perl 6:
 
 say Pod::To::HTML.render($=pod[0]);
 
+say Pod::To::HTML.render('your/file.pod'.IO, 
+                         $header => "$your-custom-header-inside-body", 
+                         footer => "$your-custom-footer-inside-body", 
+                         head-fields => "$tags-inside-head", 
+                         $default-title = 'No =title was found so we use this');
+
+say Pod::To::HTML.render('=head1 How to render Pod::* from a Str', 
+                         $header => "$your-custom-header-inside-body", 
+                         footer => "$your-custom-footer-inside-body", 
+                         head-fields => "$tags-inside-head", 
+                         $default-title = 'No =title was found so we use this');
 ```
 
 # DESCRIPTION

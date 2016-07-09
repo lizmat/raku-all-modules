@@ -11,7 +11,7 @@ my $r;
 $r = pod2html $=pod[0];
 #say $r.perl;
 ok $r ~~ ms[[
-    '<table>' 
+    '<table class="pod-table">' 
       '<tbody>'
         '<tr>' 
           '<td>' col1 '</td>'
@@ -29,7 +29,7 @@ ok $r ~~ ms[[
 $r = pod2html $=pod[1];
 #say $r.perl;
 ok $r ~~ ms[[
-    '<table>'
+    '<table class="pod-table">'
       '<thead>'
         '<tr>' 
           '<th>' H1 '</th>'
@@ -59,7 +59,7 @@ ok $r ~~ ms[[
 $r = pod2html $=pod[2];
 #say $r.perl;
 ok $r ~~ ms[[
-    '<table>'
+    '<table class="pod-table">'
       '<thead>'
         '<tr>' 
           '<th>' H1 '</th>'
