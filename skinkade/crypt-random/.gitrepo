@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/skinkade/crypt-random.git
 	branch = master
-	commit = 375c12edd76c9e605a84bc9b44a08a3631da9530
-	parent = c4b0a548cac56165639167b78286703933e29368
+	commit = a16fa82c84eeffa9648a88ef7012886965e81bda
+	parent = b377f4371bfaea0d95266f8b94d24489a9215e95
 	cmdver = 0.2.3

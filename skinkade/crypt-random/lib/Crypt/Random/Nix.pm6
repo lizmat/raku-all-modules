@@ -1,18 +1,19 @@
 use v6;
+use nqp;
 use strict;
 
 unit module Crypt::Random::Nix;
 
 
 
-my $urandom = open("/dev/urandom", :bin);
+sub _crypt_random_bytes(uint32 $len) returns Buf is export {
+    my $urandom := nqp::open('/dev/urandom', 'r');
+    my $bytes   := Buf.new;
 
-sub _crypt_random_bytes(uint64 $len) returns Buf is export {
-    my $bytes = $urandom.read($len);
+    nqp::readfh($urandom, $bytes, $len);
+    nqp::closefh($urandom);
 
-    if ($bytes.elems != $len) {
-        die("Failed to read enough bytes from /dev/urandom");
-    }
+    die "Failed to read enough bytes from /dev/urandom" if $bytes.elems != $len;
 
     $bytes;
 }
