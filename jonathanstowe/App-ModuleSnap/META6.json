@@ -21,7 +21,7 @@
      "JSON::Fast"
   ],
   "description": "Take a snapshot of the installed modules for later reinstallation",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "meta6": "0",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"

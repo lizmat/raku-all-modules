@@ -79,7 +79,7 @@ class App::ModuleSnap {
     }
 
     method get-dists(@exclude-auth = <perl private:snapshot>) {
-        my Distribution @dists;
+        my @dists;
         for $*REPO.repo-chain -> $r {
             if $r.can('prefix') {
                 if $r.prefix.child('dist').e {

@@ -11,7 +11,6 @@ my @dists;
 
 lives-ok { @dists = App::ModuleSnap.get-dists },"get-dists";
 ok @dists.elems > 0, "must have some dists";
-ok all(@dists) ~~ Distribution, "and the are all Distributions";
 nok @dists.grep({$_.name eq 'CORE'}), "and we didn't get CORE";
 my $meta;
 lives-ok { $meta = App::ModuleSnap.get-meta(name => 'Foo::Bar') }, "get-meta";
