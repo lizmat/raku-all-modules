@@ -524,15 +524,19 @@ class Perl6Callbacks {
     method run($code) {
         return EVAL $code;
         CONTROL {
-            note $_.gist;
-            $_.resume;
+            when CX::Warn {
+                note $_.gist;
+                $_.resume;
+            }
         }
     }
     method call(Str $name, @args) {
         return &::($name)(|@args);
         CONTROL {
-            note $_.gist;
-            $_.resume;
+            when CX::Warn {
+                note $_.gist;
+                $_.resume;
+            }
         }
     }
     method invoke(Str $package, Str $name, @args) {
@@ -541,8 +545,10 @@ class Perl6Callbacks {
         %named<True> //= [];
         return ::($package)."$name"(|%named<False>, |%(%named<True>));
         CONTROL {
-            note $_.gist;
-            $_.resume;
+            when CX::Warn {
+                note $_.gist;
+                $_.resume;
+            }
         }
     }
     method create_pair(Any $key, Mu $value) {
@@ -909,7 +915,7 @@ method BUILD(*%args) {
     }
     else {
         my @args = @*ARGS;
-        $!p5 = p5_init_perl(@args.elems + 3, CArray[Str].new('', '-e', '0', |@args));
+        $!p5 = p5_init_perl(@args.elems + 4, CArray[Str].new('', '-e', '0', '--', |@args));
     }
     X::Inline::Perl5::NoMultiplicity.new.throw unless $!p5.defined;
 
@@ -919,8 +925,10 @@ method BUILD(*%args) {
         my @retvals = $p6obj."$name"(|self.p5_array_to_p6_array($args));
         return self.p6_to_p5(@retvals);
         CONTROL {
-            note $_.gist;
-            $_.resume;
+            when CX::Warn {
+                note $_.gist;
+                $_.resume;
+            }
         }
         CATCH {
             default {
@@ -936,8 +944,10 @@ method BUILD(*%args) {
         my @retvals = $callable(|self.p5_array_to_p6_array($args));
         return self.p6_to_p5(@retvals);
         CONTROL {
-            note $_.gist;
-            $_.resume;
+            when CX::Warn {
+                note $_.gist;
+                $_.resume;
+            }
         }
         CATCH {
             default {
