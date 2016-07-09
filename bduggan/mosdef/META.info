@@ -1,0 +1,11 @@
+{
+    "name" : "Slang::Mosdef",
+    "author" : "github:bduggan",
+    "version" : "0.0.1",
+    "description" : "Use def and λ as declarators.",
+    "depends" : [ ],
+    "provides" : {
+        "Slang::Mosdef" : "lib/Slang/Mosdef.pm"
+    },
+    "source-url" : "git://github.com/bduggan/mosdef.git"
+}
