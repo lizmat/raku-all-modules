@@ -1,22 +1,30 @@
 use Shell::Command;
 
 class overwatch {
-  has Str    $.execute       = 'perl6';
-  has Bool   $.keep-alive    = True;
-  has Bool   $.exit-on-error = False,
-  has Str    $.filter        = '';
-  has Supply $.events       .=new;
-  has Int    $.git-interval is rw;
-  has Bool   $.dying        is rw;
+  has Str      $.execute       = 'perl6';
+  has Bool     $.keep-alive    = True;
+  has Bool     $.exit-on-error = False,
+  has Str      $.filter        = '';
+  has Supplier $.supplier     is rw;
+  has Supply   $.events       is rw;
+  has Int      $.git-interval is rw;
+  has Bool     $.dying        is rw;
 
   has $.git = -1;
   has @.filters;
   has @.watch;
 
+  method BUILD(:$!execute, :$!keep-alive, :$!exit-on-error, :$!filter, :$!git-interval = Int, :$!git, :@!filters, :@!watch) {
+    $.supplier .=new;
+    $.events = $.supplier.Supply; 
+  }
+
   method go (*@args) {
     my ($prom, $proc, $killer, @filters);
 
     die 'Please provide some arguments' if @args.elems == 0;
+
+    $.events = $.supplier.Supply;
 
     @.filters = $.filter.split(',').map({ .trim }).Slip;
 
@@ -24,7 +32,7 @@ class overwatch {
 
     $.git-interval = 5 if $.git ~~ Bool && $.git:so;
 
-    $.events.emit({
+    $.supplier.emit({
       action       => 'start',
       execute      => $.execute,
       filters      => @.filters,
@@ -45,7 +53,7 @@ class overwatch {
             $proc.kill(SIGQUIT);
             CATCH { 
               default { 
-                $.events.emit({
+                $.supplier.emit({
                   action => 'error',
                   type   => 100,
                   msg    => "Could not kill process: {.message}"
@@ -56,7 +64,7 @@ class overwatch {
           try {
             $killer.keep(True);
           }
-          $.events.emit({
+          $.supplier.emit({
             action    => 'file-changed',
             file-path => "$dir/{$f.path}".IO.relative;
           });
@@ -75,7 +83,7 @@ class overwatch {
           my $remote = qx<git rev-parse @{u}>.chomp; 
           my $base   = qx<git merge-base @{0} @{u}>.chomp;
           if $local ne $remote && $local eq $base {
-            $.events.emit({ action => 'git-pull' });
+            $.supplier.emit({ action => 'git-pull' });
             qx<git pull>;
           }
         }, quit => { $p.keep; });
@@ -86,7 +94,7 @@ class overwatch {
     $.dying = False;
     signal(SIGTERM,SIGINT,SIGHUP,SIGQUIT).tap({
       $.dying = True;
-      $.events.emit({ 
+      $.supplier.emit({ 
         action => 'kill-proc',
         signal => $_,
       });
@@ -103,13 +111,13 @@ class overwatch {
       await Promise.anyof($prom, $killer);
       $killer.break if $killer.status !~~ Kept;
       if ($killer.status !~~ Kept && $prom.result:exists && $prom.result.exitcode != 0 && $.exit-on-error) || $.dying {
-        $.events.emit({
+        $.supplier.emit({
           action => 'proc-died',
           code   => $prom.result.exitcode,
         });
         exit 0;
       }
-      $.events.emit({
+      $.supplier.emit({
         action  => 'restart',
         execute => "$.execute {@args.map({ "'$_'" }).Slip.join(' ')}",
       });

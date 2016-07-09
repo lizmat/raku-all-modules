@@ -1,9 +1,10 @@
 {
   "name"        : "Overwatch",
-  "version"     : "0.1.0",
+  "version"     : "0.1.1",
+  "perl"        : "6",
   "description" : "Utility to help keep a processes running and restart them if they stop.",
   "auth"        : "github:tony-o",
-  "authors"     : [ "Tony O" ],
+  "authors"     : [ "Tony O'Dell" ],
   "depends"     : ["Shell::Command"],
   "provides"    : {
     "overwatch": "lib/overwatch.pm6"
