@@ -15,7 +15,7 @@ use v6;
 # run htmlify, captures the output, and on success, syncs both the generated
 # files and the logs. In case of failure, only the logs are synchronized.
 #
-# The build logs are available at http://doc.perl6.org/build-log/
+# The build logs are available at https://docs.perl6.org/build-log/
 #
 
 BEGIN say 'Initializing ...';
@@ -41,6 +41,7 @@ my @menu =
     ('language',''         ) => (),
     ('type', 'Types'       ) => <basic composite domain-specific exceptions>,
     ('routine', 'Routines' ) => <sub method term operator>,
+    ('programs', ''        ) => (),
 #    ('module', 'Modules'   ) => (),
 #    ('formalities',''      ) => ();
 ;
@@ -104,6 +105,10 @@ sub recursive-dir($dir) {
 
 # --sparse=5: only process 1/5th of the files
 # mostly useful for performance optimizations, profiling etc.
+#
+# --parallel=10: perform some parts in parallel (with width/degree of 10)
+# much faster, but with the current state of async/concurrency
+# in Rakudo you risk segfaults, weird errors, etc.
 sub MAIN(
     Bool :$typegraph = False,
     Int  :$sparse,
@@ -111,9 +116,21 @@ sub MAIN(
     Bool :$search-file = True,
     Bool :$no-highlight = False,
     Bool :$no-inline-python = False,
+    Int  :$parallel = 1,
 ) {
-    say 'Creating html/ subdirectories ...';
-    for flat '', <type language routine images syntax> {
+
+    # TODO: For the moment rakudo doc pod files were copied
+    #       from its repo to subdir doc/Programs and modified to Perl 6 pod.
+    #       The rakudo install needs
+    #       to (1) copy those files to its installation directory (share/pod)
+    #       and (2) use Perl 5's pod2man to convert them to man pages in
+    #       the installation directory (share/man).
+    #
+    #       Then they can be copied to doc/Programs.
+
+    say 'Creating html/subdirectories ...';
+
+    for <programs type language routine images syntax> {
         mkdir "html/$_" unless "html/$_".IO ~~ :e;
     }
 
@@ -122,16 +139,23 @@ sub MAIN(
     say 'Reading type graph ...';
     $type-graph = Perl6::TypeGraph.new-from-file('type-graph.txt');
     my %h = $type-graph.sorted.kv.flat.reverse;
-    write-type-graph-images(:force($typegraph));
+    write-type-graph-images(:force($typegraph), :$parallel);
 
-    process-pod-dir 'Language', :$sparse;
-    process-pod-dir 'Type', :sorted-by{ %h{.key} // -1 }, :$sparse;
+    process-pod-dir 'Programs', :$sparse, :$parallel;
+    process-pod-dir 'Language', :$sparse, :$parallel;
+    process-pod-dir 'Type', :sorted-by{ %h{.key} // -1 }, :$sparse, :$parallel;
 
     highlight-code-blocks(:use-inline-python(!$no-inline-python)) unless $no-highlight;
 
     say 'Composing doc registry ...';
     $*DR.compose;
 
+    for $*DR.lookup("programs", :by<kind>).list -> $doc {
+        say "Writing programs document for {$doc.name} ...";
+        my $pod-path = pod-path-from-url($doc.url);
+        spurt "html{$doc.url}.html",
+            p2h($doc.pod, 'programs', pod-path => $pod-path);
+    }
     for $*DR.lookup("language", :by<kind>).list -> $doc {
         say "Writing language document for {$doc.name} ...";
         my $pod-path = pod-path-from-url($doc.url);
@@ -167,24 +191,26 @@ sub extract-pod(IO() $file) {
 
     if not $handle {
         # precompile it
-        $precomp.precompile($file, $id);
+        $precomp.precompile($file, $id, :force);
         $handle = $precomp.load($id)[0];
     }
 
     return nqp::atkey($handle.unit,'$=pod')[0];
 }
 
-sub process-pod-dir($dir, :&sorted-by = &[cmp], :$sparse) {
+sub process-pod-dir($dir, :&sorted-by = &[cmp], :$sparse, :$parallel) {
     say "Reading doc/$dir ...";
+
     my @pod-sources =
         recursive-dir("doc/$dir/")
-        .grep({.path ~~ / '.pod' $/})
+        .grep({.path ~~ / '.pod6' $/})
         .map({
             .path.subst("doc/$dir/", '')
-                 .subst(rx{\.pod$},  '')
+                 .subst(rx{\.pod6$},  '')
                  .subst(:g,    '/',  '::')
             => $_
         }).sort(&sorted-by);
+
     if $sparse {
         @pod-sources = @pod-sources[^(@pod-sources / $sparse).ceiling];
     }
@@ -193,9 +219,20 @@ sub process-pod-dir($dir, :&sorted-by = &[cmp], :$sparse) {
     my $total = +@pod-sources;
     my $kind  = $dir.lc;
     for @pod-sources.kv -> $num, (:key($filename), :value($file)) {
-        printf "% 4d/%d: % -40s => %s\n", $num+1, $total, $file.path, "$kind/$filename";
-        my $pod = extract-pod($file.path);
-        process-pod-source :$kind, :$pod, :$filename, :pod-is-complete;
+        FIRST my @pod-files;
+
+        push @pod-files, start {
+            printf "% 4d/%d: % -40s => %s\n", $num+1, $total, $file.path, "$kind/$filename";
+            my $pod = extract-pod($file.path);
+            process-pod-source :$kind, :$pod, :$filename, :pod-is-complete;
+        }
+
+        if $num %% $parallel {
+            await(@pod-files);
+            @pod-files = ();
+        }
+
+        LAST await(@pod-files);
     }
 }
 
@@ -228,6 +265,7 @@ sub process-pod-source(:$kind, :$pod, :$filename, :$pod-is-complete) {
             %type-info = :subkinds<class>;
         }
     }
+
     my $origin = $*DR.add-new(
         :$kind,
         :$name,
@@ -266,15 +304,14 @@ multi write-type-source($doc) {
     }
 
     if $type {
-        my $tg-preamble = qq[<h1>Type graph</h1>\n<p>Below you should see a
-        clickable image showing the type relations for $podname that links
-        to the documentation pages for the related types. If not, try the
-        <a href="/images/type-graph-{href_escape $podname}.png">PNG
-        version</a> instead.</p>];
+        my $graph-contents = slurp 'template/type-graph.html';
+        $graph-contents .= subst('ESCAPEDPODNAME', uri_escape($podname), :g);
+        $graph-contents .= subst('PODNAME', $podname);
+        $graph-contents .= subst('INLINESVG', svg-for-file("html/images/type-graph-$podname.svg"));
+
         $pod.contents.append: Pod::Raw.new(
             target => 'html',
-            contents => $tg-preamble ~ svg-for-file("html/images/type-graph-$podname.svg"),
-
+            contents => $graph-contents,
         );
 
         my @mro = $type.mro;
@@ -334,8 +371,19 @@ multi write-type-source($doc) {
 
 sub find-references(:$pod!, :$url, :$origin) {
     if $pod ~~ Pod::FormattingCode && $pod.type eq 'X' {
-        register-reference(:$pod, :$origin, :$url);
-    }
+        multi sub recurse-until-str(Str:D $s){ $s }
+        multi sub recurse-until-str(Pod::Block $n){ $n.contents>>.&recurse-until-str().join }
+
+        my $index-name-attr is default(Failure.new('missing index link'));
+        # this comes from Pod::To::HTML and needs to be moved into a method in said module
+        # TODO use method from Pod::To::HTML
+        my $index-text = recurse-until-str($pod).join;
+        my @indices = $pod.meta;
+        $index-name-attr = qq[index-entry{@indices ?? '-' !! ''}{@indices.join('-')}{$index-text ?? '-' !! ''}$index-text].subst('_', '__', :g).subst(' ', '_', :g).subst('%', '%25', :g).subst('#', '%23', :g);
+
+       register-reference(:$pod, :$origin, url => $url ~ '#' ~ $index-name-attr);
+       # register-reference(:$pod, :$origin, :$url);
+}
     elsif $pod.?contents {
         for $pod.contents -> $sub-pod {
             find-references(:pod($sub-pod), :$url, :$origin) if $sub-pod ~~ Pod::Block;
@@ -444,7 +492,7 @@ sub find-definitions(:$pod, :$origin, :$min-level = -1, :$url) {
                 @definitions = .[0].words[0,1];
             }
             when :(Str $ where {m/^trait\s+(\S+\s\S+)$/}) {
-                # Infix Foo
+                # trait Infix Foo
                 @definitions = .split(/\s+/, 2);
             }
             when :("The ", Pod::FormattingCode $, Str $ where /^\s (\w+)$/) {
@@ -564,7 +612,7 @@ sub find-definitions(:$pod, :$origin, :$min-level = -1, :$url) {
     return $i;
 }
 
-sub write-type-graph-images(:$force) {
+sub write-type-graph-images(:$force, :$parallel) {
     unless $force {
         my $dest = 'html/images/type-graph-Any.svg'.IO;
         if $dest.e && $dest.modified >= 'type-graph.txt'.IO.modified {
@@ -575,12 +623,27 @@ sub write-type-graph-images(:$force) {
             return;
         }
     }
+
     say 'Writing type graph images to html/images/ ...';
     for $type-graph.sorted -> $type {
+        FIRST my @type-graph-images;
+
         my $viz = Perl6::TypeGraph::Viz.new-for-type($type);
-        $viz.to-file("html/images/type-graph-{$type}.svg", format => 'svg');
-        $viz.to-file("html/images/type-graph-{$type}.png", format => 'png', size => '8,3');
+        @type-graph-images.push: $viz.to-file("html/images/type-graph-{$type}.svg", format => 'svg');
+        if @type-graph-images %% $parallel {
+            await(@type-graph-images);
+            @type-graph-images = ();
+        }
+
+        @type-graph-images.push: $viz.to-file("html/images/type-graph-{$type}.png", format => 'png', size => '8,3');
+        if @type-graph-images %% $parallel {
+            await(@type-graph-images);
+            @type-graph-images = ();
+        }
+
         print '.';
+
+        LAST await(@type-graph-images);
     }
     say '';
 
@@ -590,11 +653,24 @@ sub write-type-graph-images(:$force) {
     %by-group<Metamodel>.append: $type-graph.types< Any Mu >;
 
     for %by-group.kv -> $group, @types {
+        FIRST my @specialized-visualizations;
+
         my $viz = Perl6::TypeGraph::Viz.new(:types(@types),
                                             :dot-hints(viz-hints($group)),
                                             :rank-dir('LR'));
-        $viz.to-file("html/images/type-graph-{$group}.svg", format => 'svg');
-        $viz.to-file("html/images/type-graph-{$group}.png", format => 'png', size => '8,3');
+        @specialized-visualizations.push: $viz.to-file("html/images/type-graph-{$group}.svg", format => 'svg');
+        if @specialized-visualizations %% $parallel {
+            await(@specialized-visualizations);
+            @specialized-visualizations = ();
+        }
+
+        @specialized-visualizations.push: $viz.to-file("html/images/type-graph-{$group}.png", format => 'png', size => '8,3');
+        if @specialized-visualizations %% $parallel {
+            await(@specialized-visualizations);
+            @specialized-visualizations = ();
+        }
+
+        LAST await(@specialized-visualizations);
     }
 }
 
@@ -648,7 +724,7 @@ sub write-search-file() {
             .pairs.sort({.key}).map: -> (:key($name), :value(@docs)) {
                 qq[[\{ category: "{
                     ( @docs > 1 ?? $kind !! @docs.[0].subkinds[0] ).wordcase
-                }", value: "$name", url: "{@docs.[0].url}" \}]] #"
+                }", value: "$name", url: "{@docs.[0].url.subst('"', '\"', :g)}" \}]] #"
             }
     }).flat;
 
@@ -660,7 +736,7 @@ sub write-search-file() {
         $_, $url
       );
     });
-    spurt("html/js/search.js", $template.subst("ITEMS", @items.join(",\n") ));
+    spurt("html/js/search.js", $template.subst("ITEMS", @items.join(",\n") ).subst("WARNING", "DO NOT EDIT generated by $?FILE:$?LINE"));
 }
 
 sub write-disambiguation-files() {
@@ -708,10 +784,25 @@ sub write-disambiguation-files() {
 }
 
 sub write-index-files() {
-    say 'Writing html/index.html ...';
+    say 'Writing html/index.html and html/404.html...';
     spurt 'html/index.html',
-        p2h(extract-pod('doc/HomePage.pod'),
-            pod-path => 'HomePage.pod');
+        p2h(extract-pod('doc/HomePage.pod6'),
+            pod-path => 'HomePage.pod6');
+
+    spurt 'html/404.html',
+        p2h(extract-pod('doc/404.pod6'),
+            pod-path => '404.pod6');
+
+    # sort programs index by file name to allow author control of order
+    say 'Writing html/programs.html ...';
+    spurt 'html/programs.html', p2h(pod-with-title(
+        'Perl 6 Programs Documentation',
+        #pod-table($*DR.lookup('programs', :by<kind>).sort(*.name).map({[
+        pod-table($*DR.lookup('programs', :by<kind>).map({[
+            pod-link(.name, .url),
+            .summary
+        ]}))
+    ), 'programs');
 
     say 'Writing html/language.html ...';
     spurt 'html/language.html', p2h(pod-with-title(
@@ -872,14 +963,14 @@ def p6format(code):
             spurt $tmp_fname, $node.contents.join;
             LEAVE try unlink $tmp_fname;
             my $command = "pygmentize -l perl6 -f html < $tmp_fname";
-            return qqx{$command};
+            qqx{$command};
         }
     }
 }
 
 #| Determine path to source POD from the POD object's url attribute
 sub pod-path-from-url($url) {
-    my $pod-path = $url.subst('::', '/', :g) ~ '.pod';
+    my $pod-path = $url.subst('::', '/', :g) ~ '.pod6';
     $pod-path.subst-mutate(/^\//, '');  # trim leading slash from path
     $pod-path = $pod-path.tc;
 

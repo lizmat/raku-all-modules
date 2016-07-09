@@ -1,3 +1,4 @@
+// WARNING
 $(function(){
   $.widget( "custom.catcomplete", $.ui.autocomplete, {
     _create: function() {
@@ -33,7 +34,7 @@ $(function(){
       });
     }
   });
-  $("#query").attr('placeholder', 'Search').catcomplete({
+  $("#query").attr('placeholder', '🔍').catcomplete({
       response: function( e, ui ) {
         if ( ! ui.content.length ) {
             $('#search').addClass('not-found')
