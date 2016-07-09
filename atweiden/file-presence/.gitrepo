@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/atweiden/file-presence.git
+	branch = master
+	commit = dcf283fb88a0dd5bf9665e98e3e8c157e2997649
+	parent = 80dab15ca791306f6fa3149b766af70afe16d93c
+	cmdver = 0.2.3

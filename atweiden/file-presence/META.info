@@ -1,0 +1,16 @@
+{
+    "name"        : "File::Presence",
+    "version"     : "0.0.1",
+    "author"      : "Andy Weidenbaum",
+    "description" : "Check that a file / directory exists and is readable",
+    "license"     : "http://unlicense.org/UNLICENSE",
+    "source-type" : "git",
+    "source-url"  : "git://github.com/atweiden/file-presence.git",
+    "support"     : {
+        "bugtracker" : "https://github.com/atweiden/file-presence/issues",
+        "source"     : "https://github.com/atweiden/file-presence"
+    },
+    "provides" : {
+        "File::Presence" : "lib/File/Presence.pm"
+    }
+}
