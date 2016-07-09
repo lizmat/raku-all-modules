@@ -1,5 +1,6 @@
 use v6;
 use lib 'lib';
+use JSON::Fast;
 use Test;
 use WebService::SOP::V1_1::Util;
 
