@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Altai-man/perl6-Test-NoTabs.git
+	branch = master
+	commit = 43815b4560e0b2a98aa82709d025263aadee2f70
+	parent = b4c27d155e4ef2bb05461f642f38addaaa895830
+	cmdver = 0.2.3

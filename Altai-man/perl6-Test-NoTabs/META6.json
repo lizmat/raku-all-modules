@@ -1,0 +1,14 @@
+{
+    "name"        : "Test::NoTabs",
+    "version"     : "0.1",
+    "description" : "Test module for tabs checking",
+    "provides": {
+        "Test::NoTabs"         : "lib/Test/NoTabs.pm6"
+    },
+    "depends"     : [ ],
+    "author" : "github:Altai-man",
+    "support" : {
+        "bugtracker" : "https://github.com/Altai-man/perl6-Test-NoTabs/issues"
+    },
+    "source-url"  : "git://github.com/Altai-man/perl6-Test-NoTabs.git"
+}
