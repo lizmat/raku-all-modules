@@ -1,0 +1,12 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Text::Tabs",
+    "version"      : "0.1",
+    "description"  : "Perl 6 port of Perl's Text::Tabs",
+    "depends"      : [ ],
+    "provides"     : {
+        "Text::Tabs" : "lib/Text/Tabs.pm6"
+    },
+    "author"       : "github:Altai-man",
+    "support"      : { "source" : "git://github.com/Altai-man/perl6-Text-Tabs.git" }
+}
