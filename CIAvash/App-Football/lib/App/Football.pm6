@@ -3,7 +3,7 @@ use v6.c;
 use WebService::FootballData;
 use Text::Table::Simple;
 
-unit class App::Football:ver(v0.1.1);
+unit class App::Football:ver(v0.1.2);
 
 my $.program_name = 'football';
 
@@ -27,7 +27,10 @@ method team_players ($team_name) {
 
     my @cols = <# Player Position Age Birthdate Nationality Contract Value>;
     my @rows = $players.map: {
-        .number, .name, .position, .age, ~.birth_date, .nationality, .contract_date.year, .market_value
+        my $contract_year = .year with .contract_date;
+        my $birth_date = .Str with .birth_date;
+
+        .number, .name, .position, .age, $birth_date, .nationality, $contract_year, .market_value
     }
 
     self!print_table: @cols, @rows;
@@ -45,7 +48,7 @@ method team_fixtures ($team_name, :$season, :$timeframe, :$venue) {
 method leagues (:$season) {
     my $leagues = $!fd.leagues: :$season;
 
-    self!print_leagues: $leagues;
+    self!print_leagues: $leagues.sort: *.name;
 }
 
 method league ($league_name, :$season) {
@@ -125,9 +128,11 @@ method !print_leagues ($leagues) {
 method !print_fixtures (@fixtures) {
     my @cols = «Day 'Home Team' HG AG 'Away Team' Status 'Date & Time'»;
     my @rows = @fixtures.map: {
+        my $date = self!format_date: .local with .date;
+
         .matchday, .home_team_name, .result.home_team_goals,
         .result.away_team_goals, .away_team_name,
-        .status, self!format_date(.date.local)
+        .status, $date
     }
 
     self!print_table: @cols, @rows;
