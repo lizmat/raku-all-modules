@@ -15,7 +15,7 @@ class Getopt::Type::Constraint {
                 %accepted{$_} = True
             }
         }
-        self.bless(*, :%accepted, :$results);
+        self.bless(:%accepted, :$results);
     }
 
     method ACCEPTS($opts is rw) {
