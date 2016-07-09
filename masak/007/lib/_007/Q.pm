@@ -174,8 +174,8 @@ class Q::Term::Sub does Q::Term does Q::Declaration {
 
     method eval($runtime) {
         my $name = $.identifier ~~ Val::None
-            ?? "(anon)"
-            !! $.identifier.name.value;
+            ?? Val::Str.new(:value("(anon)"))
+            !! $.identifier.name;
         return Val::Sub.new(
             :$name,
             :parameterlist($.block.parameterlist),
@@ -193,7 +193,7 @@ class Q::Block does Q {
 
     method attribute-order { <parameterlist statementlist> }
 
-    method eval($runtime) {
+    method reify($runtime) {
         my Val::Object $outer-frame = $runtime.current-frame;
         Val::Block.new(
             :$.parameterlist,
@@ -285,6 +285,15 @@ class Q::Infix::Or is Q::Infix {
     }
 }
 
+class Q::Infix::DefinedOr is Q::Infix {
+    method eval($runtime) {
+        my $l = $.lhs.eval($runtime);
+        return $l !~~ Val::None
+            ?? $l
+            !! $.rhs.eval($runtime);
+    }
+}
+
 class Q::Infix::And is Q::Infix {
     method eval($runtime) {
         my $l = $.lhs.eval($runtime);
@@ -326,7 +335,7 @@ class Q::Postfix::Index is Q::Postfix {
                     if $index.value < 0;
                 return .elements[$index.value];
             }
-            when Val::Object | Q {
+            when Val::Object | Val::Block | Q {
                 my $property = $.index.eval($runtime);
                 die X::Subscript::NonString.new
                     if $property !~~ Val::Str;
@@ -534,7 +543,7 @@ class Q::Statement::If does Q::Statement {
     method run($runtime) {
         my $expr = $.expr.eval($runtime);
         if $expr.truthy {
-            my $c = $.block.eval($runtime);
+            my $c = $.block.reify($runtime);
             $runtime.enter($c);
             my $paramcount = $c.parameterlist.elems;
             die X::ParameterMismatch.new(
@@ -553,7 +562,7 @@ class Q::Statement::If does Q::Statement {
                     $.else.run($runtime)
                 }
                 when Q::Block {
-                    my $c = $.else.eval($runtime);
+                    my $c = $.else.reify($runtime);
                     $runtime.enter($c);
                     $.else.statementlist.run($runtime);
                     $runtime.leave;
@@ -567,7 +576,7 @@ class Q::Statement::Block does Q::Statement {
     has $.block;
 
     method run($runtime) {
-        $runtime.enter($.block.eval($runtime));
+        $runtime.enter($.block.reify($runtime));
         $.block.statementlist.run($runtime);
         $runtime.leave;
     }
@@ -583,43 +592,23 @@ class Q::Statement::For does Q::Statement {
     method attribute-order { <expr block> }
 
     method run($runtime) {
-        multi split_elements(@array, 1) { return @array }
-        multi split_elements(@array, Int $n) {
-            my $list = @array.list;
-            my @split;
-
-            while True {
-                my @new = $list.splice(0, $n);
-                last unless @new;
-                @split.push: @new.item;
-            }
-
-            @split;
-        }
-
-        my $c = $.block.eval($runtime);
+        my $c = $.block.reify($runtime);
         my $count = $c.parameterlist.parameters.elements.elems;
+        die X::ParameterMismatch.new(
+            :type("For loop"), :paramcount($count), :argcount("0 or 1"))
+            if $count > 1;
 
         my $array = $.expr.eval($runtime);
         die X::TypeCheck.new(:operation("for loop"), :got($array), :expected(Val::Array))
             unless $array ~~ Val::Array;
 
-        if $count == 0 {
-            for $array.elements {
-                $runtime.enter($c);
-                $.block.statementlist.run($runtime);
-                $runtime.leave;
+        for $array.elements -> $arg {
+            $runtime.enter($c);
+            if $count == 1 {
+                $runtime.declare-var($c.parameterlist.parameters.elements[0].identifier, $arg.list[0]);
             }
-        }
-        else {
-            for split_elements($array.elements, $count) -> $arg {
-                $runtime.enter($c);
-                for @($c.parameterlist.parameters.elements) Z $arg.list -> ($param, $real_arg) {
-                    $runtime.declare-var($param.identifier, $real_arg);
-                }
-                $.block.statementlist.run($runtime);
-                $runtime.leave;
-            }
+            $.block.statementlist.run($runtime);
+            $runtime.leave;
         }
     }
 }
@@ -632,7 +621,7 @@ class Q::Statement::While does Q::Statement {
 
     method run($runtime) {
         while (my $expr = $.expr.eval($runtime)).truthy {
-            my $c = $.block.eval($runtime);
+            my $c = $.block.reify($runtime);
             $runtime.enter($c);
             my $paramcount = $c.parameterlist.parameters.elements.elems;
             die X::ParameterMismatch.new(

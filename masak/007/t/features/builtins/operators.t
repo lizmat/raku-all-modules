@@ -92,7 +92,7 @@ use _007::Test;
           (stexpr (postfix:<()> (identifier "say") (argumentlist (infix:<x> (str "hi ") (int 3))))))
         .
 
-    is-result $ast, "hi hi hi \n", "string repeatition works";
+    is-result $ast, "hi hi hi \n", "string repetition works";
 }
 
 {
@@ -101,7 +101,7 @@ use _007::Test;
           (stexpr (postfix:<()> (identifier "say") (argumentlist (infix:<xx> (array (int 1) (int 2)) (int 3))))))
         .
 
-    is-result $ast, "[1, 2, 1, 2, 1, 2]\n", "array repeatition works";
+    is-result $ast, "[1, 2, 1, 2, 1, 2]\n", "array repetition works";
 }
 
 {
@@ -653,6 +653,43 @@ use _007::Test;
         .
 
     outputs $program, "1\n", "typecheck works for Val::Object";
+}
+
+{
+    my $program = q:to/./;
+        say(42 // "oh, James");
+        .
+
+    outputs $program, "42\n", "defined-or with a defined lhs";
+}
+
+{
+    my $program = q:to/./;
+        say(None // "oh, James");
+        .
+
+    outputs $program, "oh, James\n", "defined-or with None as the lhs";
+}
+
+{
+    my $program = q:to/./;
+        say(0 // "oh, James");
+        say("" // "oh, James");
+        say([] // "oh, James");
+        .
+
+    outputs $program, "0\n\n[]\n", "0 and \"\" and [] are not truthy, but they *are* defined";
+}
+
+{
+    my $program = q:to/./;
+        sub f() {
+            say("I never get run, you know");
+        }
+        say(007 // f());
+        .
+
+    outputs $program, "7\n", "short-circuiting: if the lhs is defined, the (thunkish) rhs never runs";
 }
 
 done-testing;

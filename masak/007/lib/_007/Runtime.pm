@@ -42,7 +42,7 @@ class _007::Runtime {
         }
         for $block.statementlist.statements.elements.kv -> $i, $_ {
             when Q::Statement::Sub {
-                my $name = .identifier.name.value;
+                my $name = .identifier.name;
                 my $parameterlist = .block.parameterlist;
                 my $statementlist = .block.statementlist;
                 my $static-lexpad = .block.static-lexpad;
@@ -58,9 +58,8 @@ class _007::Runtime {
             }
         }
         if $block ~~ Val::Sub {
-            my $identifier = Q::Identifier.new(
-                :name(Val::Str.new(:value($block.name))),
-                :$frame);
+            my $name = $block.name;
+            my $identifier = Q::Identifier.new(:$name, :$frame);
             self.declare-var($identifier, $block);
         }
     }
@@ -160,13 +159,6 @@ class _007::Runtime {
         }
     }
 
-    multi method call(Val::Block $c, @arguments) {
-        self.sigbind("Block", $c, @arguments);
-        $c.statementlist.run(self);
-        self.leave;
-        return Val::None.new;
-    }
-
     multi method call(Val::Sub $c, @arguments) {
         self.sigbind("Sub", $c, @arguments);
         self.register-subhandler;
@@ -226,6 +218,10 @@ class _007::Runtime {
 
             sub aname($attr) { $attr.name.substr(2) }
             my %known-properties = $obj.WHAT.attributes.map({ aname($_) => 1 });
+            # XXX: hack
+            if $obj ~~ Q::Block {
+                %known-properties<static-lexpad> = 1;
+            }
 
             die X::Property::NotFound.new(:$propname, :$type)
                 unless %known-properties{$propname};
@@ -391,47 +387,53 @@ class _007::Runtime {
         elsif $obj ~~ Val::Type && $propname eq "name" {
             return Val::Str.new(:value($obj.name));
         }
+        elsif $obj ~~ Val::Block && $propname eq any <outer-frame static-lexpad parameterlist statementlist> {
+            return $obj."$propname"();
+        }
         elsif $obj ~~ (Q | Val::Object) && ($obj.properties{$propname} :exists) {
             return $obj.properties{$propname};
         }
         elsif $propname eq "get" {
             return Val::Sub::Builtin.new("get", sub ($prop) {
-                    return self.property($obj, $prop.value);
-                }
-            );
+                return self.property($obj, $prop.value);
+            });
+        }
+        elsif $propname eq "keys" {
+            return Val::Sub::Builtin.new("keys", sub () {
+                return Val::Array.new(:elements($obj.properties.keys.map({
+                    Val::Str.new(:$^value)
+                })));
+            });
         }
         elsif $propname eq "has" {
             return Val::Sub::Builtin.new("has", sub ($prop) {
-                    # XXX: problem: we're not lying hard enough here. we're missing
-                    #      both Q objects, which are still hard-coded into the
-                    #      substrate, and the special-cased properties
-                    #      <get has extend update id>
-                    my $exists = $obj.properties{$prop.value} :exists ?? 1 !! 0;
-                    return Val::Int.new(:value($exists));
-                }
-            );
+                # XXX: problem: we're not lying hard enough here. we're missing
+                #      both Q objects, which are still hard-coded into the
+                #      substrate, and the special-cased properties
+                #      <get has extend update id>
+                my $exists = $obj.properties{$prop.value} :exists ?? 1 !! 0;
+                return Val::Int.new(:value($exists));
+            });
         }
         elsif $propname eq "update" {
             return Val::Sub::Builtin.new("update", sub ($newprops) {
-                    for $obj.properties.keys {
-                        $obj.properties{$_} = $newprops.properties{$_} // $obj.properties{$_};
-                    }
-                    return $obj;
+                for $obj.properties.keys {
+                    $obj.properties{$_} = $newprops.properties{$_} // $obj.properties{$_};
                 }
-            );
+                return $obj;
+            });
         }
         elsif $propname eq "extend" {
             return Val::Sub::Builtin.new("extend", sub ($newprops) {
-                    for $newprops.properties.keys {
-                        $obj.properties{$_} = $newprops.properties{$_};
-                    }
-                    return $obj;
+                for $newprops.properties.keys {
+                    $obj.properties{$_} = $newprops.properties{$_};
                 }
-            );
+                return $obj;
+            });
         }
         elsif $propname eq "id" {
             # XXX: Make this work for Q-type objects, too.
-            return $obj.id;
+            return Val::Int.new(:value($obj.id));
         }
         else {
             die X::Property::NotFound.new(:$propname, :$type);

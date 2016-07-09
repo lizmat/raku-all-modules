@@ -49,7 +49,8 @@ class _007::Parser::Actions {
         #      in the expression tree
         if $<EXPR>.ast ~~ Q::Block {
             make Q::Statement::Expr.new(:expr(Q::Postfix::Call.new(
-                :operand($<EXPR>.ast),
+                :identifier(Q::Identifier.new(:name(Val::Str.new(:value("postfix:<()>"))))),
+                :operand(Q::Term::Sub.new(:identifier(Val::None.new), :block($<EXPR>.ast))),
                 :argumentlist(Q::ArgumentList.new)
             )));
         }
@@ -116,7 +117,7 @@ class _007::Parser::Actions {
 
     method statement:sub-or-macro ($/) {
         my $identifier = $<identifier>.ast;
-        my $name = ~$<identifier>;
+        my $name = Val::Str.new(:value(~$<identifier>));
         my $parameterlist = $<parameterlist>.ast;
         my $traitlist = $<traitlist>.ast;
         my $statementlist = $<blockoid>.ast;
@@ -516,7 +517,7 @@ class _007::Parser::Actions {
 
         my $block = Q::Block.new(:$parameterlist, :$statementlist);
         if $<identifier> {
-            my $name = ~$<identifier>;
+            my $name = $<identifier>.ast.name;
             my $outer-frame = $*runtime.current-frame.properties<block>.outer-frame;
             my $static-lexpad = $*runtime.current-frame.properties<pad>;
             my $val = Val::Sub.new(:$name, :$parameterlist, :$statementlist, :$outer-frame, :$static-lexpad);

@@ -79,7 +79,7 @@ grammar _007::Parser::Syntax {
         <.newpad>
         '(' ~ ')' <parameterlist>
         <traitlist>
-        <blockoid>:!s
+        [<blockoid>|| <.panic("block")>]:!s
         <.finishpad>
     }
     token statement:return {
@@ -250,9 +250,11 @@ grammar _007::Parser::Syntax {
     rule property:identifier-expr { <identifier> ':' <value=EXPR> }
     rule property:method {
         <identifier>
-        :my $*insub = True;
-        <.newpad>
-        '(' ~ ')' <parameterlist>
+        '(' ~ ')' [
+            :my $*insub = True;
+            <.newpad>
+            <parameterlist>
+        ]
         <trait> *
         <blockoid>:!s
         <.finishpad>

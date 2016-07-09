@@ -12,7 +12,7 @@ use _007::Test;
           (my (identifier "n") (none)))
         .
 
-    parses-to $program, $ast, "assigning a none";
+    parses-to $program, $ast, "assigning a none (#19)";
 }
 
 {
@@ -64,7 +64,7 @@ use _007::Test;
           (stexpr (array (int 1) (int 2) (int 3))))
         .
 
-    parses-to $program, $ast, "trailing comma in array is fine";
+    parses-to $program, $ast, "trailing comma in array is fine (#36)";
 }
 
 {
@@ -77,7 +77,7 @@ use _007::Test;
           (stexpr (array (int 1) (int 2) (int 3))))
         .
 
-    parses-to $program, $ast, "whitespace after trailing comma in array is fine";
+    parses-to $program, $ast, "whitespace after trailing comma in array is fine (#138)";
 }
 
 {
@@ -90,7 +90,7 @@ use _007::Test;
           (stexpr (array)))
         .
 
-    parses-to $program, $ast, "(only) whitespace inside array is fine";
+    parses-to $program, $ast, "(only) whitespace inside array is fine (#138)";
 }
 
 {
@@ -363,24 +363,6 @@ use _007::Test;
         .
 
     parses-to $program, $ast, "for statement with one parameter";
-}
-
-{
-    my $program = q:to/./;
-        for [1, 2, 3, 4] -> i, j {
-            say(i);
-            say(j);
-        }
-        .
-
-    my $ast = q:to/./;
-        (statementlist
-          (for (array (int 1) (int 2) (int 3) (int 4)) (block (parameterlist (param (identifier "i")) (param (identifier "j"))) (statementlist
-            (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "i"))))
-            (stexpr (postfix:<()> (identifier "say") (argumentlist (identifier "j"))))))))
-        .
-
-    parses-to $program, $ast, "for statement with two parameters";
 }
 
 {

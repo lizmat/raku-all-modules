@@ -1,3 +1,9 @@
+class X::Uninstantiable is Exception {
+    has Str $.name;
+
+    method message() { "<type {$.name}> is abstract and uninstantiable"; }
+}
+
 class Helper { ... }
 
 role Val {
@@ -41,10 +47,9 @@ class Val::Array does Val {
     has @.elements;
 
     method quoted-Str {
-        if %*stringification-seen{self.WHICH} {
+        if %*stringification-seen{self.WHICH}++ {
             return "[...]";
         }
-        %*stringification-seen{self.WHICH}++;
         return "[" ~ @.elements>>.quoted-Str.join(', ') ~ "]";
     }
 
@@ -60,10 +65,9 @@ class Val::Object does Val {
     has $.id = $global-object-id++;
 
     method quoted-Str {
-        if %*stringification-seen{self.WHICH} {
+        if %*stringification-seen{self.WHICH}++ {
             return "\{...\}";
         }
-        %*stringification-seen{self.WHICH}++;
         return '{' ~ %.properties.map({
             my $key = .key ~~ /^<!before \d> [\w+]+ % '::'$/
                 ?? .key
@@ -98,6 +102,9 @@ class Val::Type does Val {
             return $.type.new(:type(@properties[0].value.type));
         }
         else {
+            my role R {};
+            die X::Uninstantiable.new(:$.name)
+                if $.type.HOW ~~ R.HOW.WHAT;
             return $.type.new(|%(@properties));
         }
     }
@@ -119,13 +126,13 @@ class Val::Block does Val {
 }
 
 class Val::Sub is Val::Block {
-    has Str $.name;
+    has Val::Str $.name;
 
-    method Str { "<sub {$.name}{$.pretty-parameters}>" }
+    method Str { "<sub {$.name.value}{$.pretty-parameters}>" }
 }
 
 class Val::Macro is Val::Sub {
-    method Str { "<macro {$.name}{$.pretty-parameters}>" }
+    method Str { "<macro {$.name.value}{$.pretty-parameters}>" }
 }
 
 class Val::Exception does Val {

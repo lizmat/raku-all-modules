@@ -126,17 +126,17 @@ sub read(Str $ast) is export {
     )));
 }
 
-class StrOutput {
+my class StrOutput {
     has $.result = "";
 
     method say($s) { $!result ~= $s.gist ~ "\n" }
 }
 
-class UnwantedOutput {
+my class UnwantedOutput {
     method say($s) { die "Program printed '$s'; was not expected to print anything" }
 }
 
-sub check(Q::CompUnit $ast, $runtime) {
+sub check(Q::CompUnit $ast, $runtime) is export {
     my %*assigned;
     handle($ast);
 
@@ -182,7 +182,7 @@ sub check(Q::CompUnit $ast, $runtime) {
     }
 
     multi handle(Q::Statement::Block $block) {
-        $runtime.enter($block.block.eval($runtime));
+        $runtime.enter($block.block.reify($runtime));
         handle($block.block.statementlist);
         $block.block.static-lexpad = $runtime.current-frame.properties<pad>;
         $runtime.leave();
@@ -190,7 +190,7 @@ sub check(Q::CompUnit $ast, $runtime) {
 
     multi handle(Q::Statement::Sub $sub) {
         my $outer-frame = $runtime.current-frame;
-        my $name = $sub.identifier.name.value;
+        my $name = $sub.identifier.name;
         my $val = Val::Sub.new(:$name,
             :parameterlist($sub.block.parameterlist),
             :statementlist($sub.block.statementlist),
@@ -205,7 +205,7 @@ sub check(Q::CompUnit $ast, $runtime) {
 
     multi handle(Q::Statement::Macro $macro) {
         my $outer-frame = $runtime.current-frame;
-        my $name = $macro.identifier.name.value;
+        my $name = $macro.identifier.name;
         my $val = Val::Macro.new(:$name,
             :parameterlist($macro.block.parameterlist),
             :statementlist($macro.block.statementlist),
@@ -344,6 +344,16 @@ sub throws-exception($program, $message, $desc = "MISSING TEST DESCRIPTION") is 
     }
 
     flunk $desc;
+}
+
+sub run-and-collect-output($filepath) is export {
+    my $program = slurp($filepath);
+    my $output = StrOutput.new;
+    my $runtime = _007.runtime(:$output);
+    my $ast = _007.parser(:$runtime).parse($program);
+    $runtime.run($ast);
+
+    return $output.result.lines;
 }
 
 our sub EXPORT(*@things) {
