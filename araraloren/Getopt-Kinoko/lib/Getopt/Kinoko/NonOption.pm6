@@ -17,7 +17,7 @@ role NonOption does DeepClone {
     method perl { "" }
 
     multi method deep-clone() {
-        self.bless(self.CREATE(), callback => &!callback);
+        self.bless(callback => &!callback);
     }
 }
 

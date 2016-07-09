@@ -279,8 +279,8 @@ class OptionSet does DeepClone {
 	}
 
 	multi method deep-clone() {
-		self.bless( self.CREATE(),
-            front 	=> DeepClone.deep-clone($!front),
+		self.bless( 
+			front 	=> DeepClone.deep-clone($!front),
 			radio 	=> DeepClone.deep-clone(@!radio),
 			multi 	=> DeepClone.deep-clone(@!multi),
 			normal 	=> DeepClone.deep-clone($!normal),

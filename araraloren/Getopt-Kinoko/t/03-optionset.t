@@ -105,9 +105,10 @@ lives-ok {
 
     ok $gnu-style-optset.WHICH ne $optset.WHICH, "deep clone ok";
 
+    # NonOption::Front not check argument index
     my @args = [ "-n", "Jam", "--vip", "-l", ":ice-cream<1>",  "-l", "%(chips => 2)", "-d", "95", "some", "other", "noa" ];
 
-    my @gargs = [ "-n=Jam", "--vip", "-l=%('ice-cream' => 1)",  "-l=%(chips => 2)", "-d=95" ];
+    my @gargs = [ "front", "-n=Jam", "--vip", "-l=%('ice-cream' => 1)",  "-l=%(chips => 2)", "-d=95" ];
 
     lives-ok {
         getopt($optset, @args, prefix => 'get-', :generate-method);
