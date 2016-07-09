@@ -13,4 +13,4 @@ nok Compress::Snappy::validate($mangled), 'mangled header';
 @compressed[$_]++ for 40 .. 50;
 nok Compress::Snappy::validate(Buf.new: @compressed), 'mangled content';
 
-done;
+done-testing;

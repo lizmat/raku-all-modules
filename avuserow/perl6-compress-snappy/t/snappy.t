@@ -29,6 +29,6 @@ roundtrip-test '»ö« .oO(æ€!éè)' x 100, '100 strings with unicode charact
 
 roundtrip-test Buf.new(0 .. 9), 'short binary Buf';
 
-roundtrip-test Buf.new((0 .. 9) xx 1000), 'long binary Buf';
+roundtrip-test Buf.new(|(0 .. 9) xx 1000), 'long binary Buf';
 
-done;
+done-testing;
