@@ -1,0 +1,11 @@
+{
+    "name" : "DateTime::DST",
+    "version" : "0.1",
+    "description" : "Make localtime[8] available as is-dst to Perl 6",
+    "author" : "Andrew Sterling Hanenkamp",
+    "provides" : {
+        "ArrayHash": "lib/DateTime/DST.pm6"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/zostay/DateTime-DST.git"
+}
