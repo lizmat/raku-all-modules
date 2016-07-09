@@ -1,0 +1,29 @@
+use Terminal::ANSIColor;
+
+sub MAIN (
+  Str  :$host!, 
+  Str  :$http_proxy, 
+  Str  :$https_proxy, 
+  Str  :$ssh_user, 
+  Int  :$ssh_port = 22, 
+  Bool :$verbose = False, 
+  Bool :$skip_index_update = False,
+)
+{
+
+  say colored('running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
+  
+  # dirty hacks to pass command line parameter into sparrowfile context
+  # sorry for not knowing perl6 idioms ... ));
+  
+  our $Sparrowdo::Host = $host; 
+  our $Sparrowdo::HttpProxy = $http_proxy; 
+  our $Sparrowdo::HttpsProxy = $https_proxy; 
+  our $Sparrowdo::SshPort = $ssh_port; 
+  our $Sparrowdo::SshUser = $ssh_user; 
+  our $Sparrowdo::Verbose = $verbose; 
+  our $Sparrowdo::SkipIndexUpdate = $skip_index_update; 
+  
+  EVALFILE "sparrowfile";
+  
+}

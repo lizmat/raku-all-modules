@@ -1,0 +1,20 @@
+use v6;
+
+use Sparrowdo;
+
+task_run  %(
+  task => 'check disk available space',
+  plugin => 'df-check',
+  parameters => %( threshold => 81 )
+);
+
+task_run  %(
+  task => 'install-psgi-app',
+  plugin => 'perl-app',
+  parameters => %( 
+    'app_source_url' => 'https://github.com/melezhik/web-app.git',
+    'git_branch' => 'master',
+    'http_port' => 3030
+  )
+);
+
