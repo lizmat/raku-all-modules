@@ -27,7 +27,12 @@ This augments the type ```IO::Path``` to provide a ```.mode``` method that allow
 you to get at the file permissions (or mode.)  It follows the POSIX model pf
 user, group and other permissions and consequently may not make a meaningful 
 result on e.g. Windows (although the underlying calls appear to return something
-approximating the correct answer.)
+approximating the correct answer.) 
+
+If you have a more recent rakudo that provides a ```mode``` method, it will replace
+that method with one that returns an ```IO::Path::Mode``` object rather than an
+```IntStr```, this is a transitional arrangement and will be deprecated in a future
+release in favour of a different method name.
 
 It relies on some non-specified functionality in the VM so may probably only work
 with Rakudo on MoarVM.

@@ -25,7 +25,7 @@
    "authors" : [
       "Jonathan Stowe <jns+git@gellyfish.co.uk>"
    ],
-   "version" : "0.0.4",
+   "version" : "0.0.5",
    "license" : "Artistic",
    "description" : "Augment IO::Path with a .mode() method to get the file mode"
 }
