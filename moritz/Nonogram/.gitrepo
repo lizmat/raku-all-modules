@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moritz/Nonogram.git
 	branch = master
-	commit = 214b981df37f2eb47c47713f9bb2396ea4d03637
-	parent = 9967ec6bdb3033a0d7bf2c67de5672dcc645365a
-	cmdver = 0.2.0
+	commit = 53c4a136964d04e258969f107ac682b904ffca8d
+	parent = 510077851be70c0a97a568a901efe46d2213dea2
+	cmdver = 0.2.3
