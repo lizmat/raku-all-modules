@@ -176,7 +176,7 @@ class Audio::Taglib::Simple {
 
 	# Routines we use automatically for the actual API calls
 	sub taglib_file_new(Str) returns OpaquePointer is native(taglib) {...};
-	sub taglib_file_is_valid(OpaquePointer) returns Int is native(taglib) {...};
+	sub taglib_file_is_valid(OpaquePointer) returns int32 is native(taglib) {...};
 	sub taglib_file_free(OpaquePointer) is native(taglib) {...};
 
 	# XXX use this someday when we can represent the enum of the types
@@ -190,24 +190,24 @@ class Audio::Taglib::Simple {
 	sub taglib_tag_album(OpaquePointer) returns Str is native(taglib) {...};
 	sub taglib_tag_comment(OpaquePointer) returns Str is native(taglib) {...};
 	sub taglib_tag_genre(OpaquePointer) returns Str is native(taglib) {...};
-	sub taglib_tag_year(OpaquePointer) returns Int is native(taglib) {...};
-	sub taglib_tag_track(OpaquePointer) returns Int is native(taglib) {...};
+	sub taglib_tag_year(OpaquePointer) returns int32 is native(taglib) {...};
+	sub taglib_tag_track(OpaquePointer) returns int32 is native(taglib) {...};
 
 	# Tag manipulation APIs
-	sub taglib_file_save(OpaquePointer) returns Int is native(taglib) {...};
+	sub taglib_file_save(OpaquePointer) returns int32 is native(taglib) {...};
 	sub taglib_tag_set_title(OpaquePointer, Str) is native(taglib) {...};
 	sub taglib_tag_set_artist(OpaquePointer, Str) is native(taglib) {...};
 	sub taglib_tag_set_album(OpaquePointer, Str) is native(taglib) {...};
 	sub taglib_tag_set_comment(OpaquePointer, Str) is native(taglib) {...};
 	sub taglib_tag_set_genre(OpaquePointer, Str) is native(taglib) {...};
-	sub taglib_tag_set_year(OpaquePointer, Int) is native(taglib) {...};
-	sub taglib_tag_set_track(OpaquePointer, Int) is native(taglib) {...};
+	sub taglib_tag_set_year(OpaquePointer, int32) is native(taglib) {...};
+	sub taglib_tag_set_track(OpaquePointer, int32) is native(taglib) {...};
 
 	# Audio Properties APIs
-	sub taglib_audioproperties_length(OpaquePointer) returns Int is native(taglib) {...};
-	sub taglib_audioproperties_bitrate(OpaquePointer) returns Int is native(taglib) {...};
-	sub taglib_audioproperties_samplerate(OpaquePointer) returns Int is native(taglib) {...};
-	sub taglib_audioproperties_channels(OpaquePointer) returns Int is native(taglib) {...};
+	sub taglib_audioproperties_length(OpaquePointer) returns int32 is native(taglib) {...};
+	sub taglib_audioproperties_bitrate(OpaquePointer) returns int32 is native(taglib) {...};
+	sub taglib_audioproperties_samplerate(OpaquePointer) returns int32 is native(taglib) {...};
+	sub taglib_audioproperties_channels(OpaquePointer) returns int32 is native(taglib) {...};
 }
 
 
