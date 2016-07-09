@@ -6,6 +6,7 @@ class CSS::Specification::Actions {
     # rules or actions.
     has %.prop-refs is rw;
     has %.props is rw;
+    has %.child-props is rw;
 
     method TOP($/) { make $<property-spec>>>.ast };
 
@@ -59,10 +60,10 @@ class CSS::Specification::Actions {
 
     method term-options($/) {
         my @choices = @<term>>>.ast;
-        return make @choices[0]
-            unless @choices > 1;
         
-        make [~] '[ ', @choices.join(' | '), ' ]';
+        make @choices > 1
+            ?? [~] '[ ', @choices.join(' | '), ' ]'
+            !! @choices[0];
     }
 
     method _choose(@choices) {
@@ -72,16 +73,18 @@ class CSS::Specification::Actions {
 
     method term-combo($/) {
         my @choices = @<term>>>.ast;
-        return make @choices[0]
-            unless @choices > 1;
-        make $._choose( @choices ) ~ '+';
+
+        make @choices > 1
+            ?? $._choose( @choices ) ~ '+'
+            !! @choices[0];
     }
 
     method term-required($/) {
         my @choices = $<term>>>.ast;
-        return make @choices[0]
-            unless @choices > 1;
-        make [~] $._choose( @choices ), '**', @choices.Int
+
+        make @choices > 1
+            ?? [~] $._choose( @choices ), '**', @choices.Int
+            !! @choices[0];
     }
 
     method term-values($/) {
@@ -147,9 +150,10 @@ class CSS::Specification::Actions {
         make [~] '[ ', $val, ' ]';
     }
 
-    method value:sym<rule>($/)     {
-        %.prop-refs{ ~$<id>.ast }++;
-        make [~] '<', $<id>.ast, '>'
+    method value:sym<rule>($/) {
+        my $val = ~$<id>.ast;
+        %.prop-refs{ $val }++;
+        make [~] '<', $val, '>'
     }
 
     method value:sym<op>($/)     { make [~] "<op('", $/.trim, "')>" }
@@ -159,6 +163,7 @@ class CSS::Specification::Actions {
     method value:sym<prop-ref>($/)        {
         my $prop-ref = $<property-ref>.ast;
         %.prop-refs{ 'expr-' ~ $prop-ref }++;
+        %.child-props{$_}{$prop-ref}++ for @*PROP-NAMES; 
         make [~] '<expr-', $prop-ref, '>';
     }
 

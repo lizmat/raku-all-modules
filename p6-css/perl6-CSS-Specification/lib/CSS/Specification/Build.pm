@@ -66,6 +66,7 @@ module CSS::Specification::Build {
 
         my $actions = CSS::Specification::Actions.new;
         my @defs = load-props($input-path, $actions);
+        my %child-props = $actions.child-props;
         my @summary;
         my %properties;
 
@@ -93,28 +94,36 @@ module CSS::Specification::Build {
         # match boxed properties with children
         for %properties.pairs {
             my $key = .key;
-            next if $key ~~ / top|right|bottom|left /;
             my $value = .value;
-            # see if the property has any children
-            for <top right bottom left> -> $side {
-                my $prop;
-                # find child. could be xxxx-side (e.g. margin-left)
-                # or xxx-yyy-side (e.g. border-left-width);
-                for $key ~ '-' ~ $side, $key.subst("-", [~] '-', $side, '-') -> $child-prop {
-                    if $child-prop ne $key
-                    && (%properties{$child-prop}:exists) {
-                        $prop = %properties{$child-prop};
-                        $prop<parent> = $key;
-                        $value<children>.push: $child-prop;
-                        $value<box> ||= True;
-                        last;
+            unless  $key ~~ / top|right|bottom|left / {
+                # see if the property has any children
+                for <top right bottom left> -> $side {
+                    # find child. could be xxxx-side (e.g. margin-left)
+                    # or xxx-yyy-side (e.g. border-left-width);
+                    for $key ~ '-' ~ $side, $key.subst("-", [~] '-', $side, '-') -> $child-prop {
+                        if $child-prop ne $key
+                        && (%properties{$child-prop}:exists) {
+                            my $prop = %properties{$child-prop};
+                            $prop<parent> = $key;
+                            $value<children>.push: $child-prop;
+                            $value<box> ||= True;
+                            last;
+                        }
                     }
                 }
             }
             # we can get defaults from the children
             $value<default>:delete if $value<children>:exists;
-
-        } 
+            unless %properties{$key}<box> {
+                with %child-props{$key} {
+                    for .keys.sort -> $child-prop {
+                         my $prop = %properties{$child-prop};
+                         # property has multiple parents
+                         $value<children>.push: $child-prop;
+                    }
+                }
+            }
+        }
         return @summary;
     }
 

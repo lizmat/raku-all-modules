@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-css/perl6-CSS-Specification.git
 	branch = master
-	commit = 6f9a9e3238bf2f1691bbbb5f7d19dde9e3ffad38
-	parent = c4029e2bdddb7e2fcaf6dbaa42feaf8f0f0e9e84
+	commit = 7feb69e3b82dc97f5c62b4f7a130a496af2400d8
+	parent = f37fbe5ce07e9db1b0b9efef9960b5d7e80eeda6
 	cmdver = 0.2.3

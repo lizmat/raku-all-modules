@@ -10,11 +10,11 @@ class CSS::Specification::Terms::Actions {
 
         my %ast;
 
-        %ast<ident> = $0.trim.lc
-            if $0;
+        %ast<ident> = .trim.lc
+            with $0;
 
-        if $<val> {
-            my Hash $val = $<val>.ast;
+        with $<val> {
+            my Hash $val = .ast;
 
             if $val<usage> {
                 my $synopsis := $val<usage>;
@@ -39,9 +39,8 @@ class CSS::Specification::Terms::Actions {
             %ast<usage> = $<usage>.ast;
         }
         elsif $<proforma> {
-            my $expr = $<proforma>.ast;
-            %ast<expr> = [$expr]
-                if $expr;
+            %ast<expr> = [$_]
+                with $<proforma>.ast;
         }
         else {
             my $m = $<rx><expr>;
@@ -127,7 +126,7 @@ class CSS::Specification::Terms::Actions {
         make $.token(0, :type(CSSValue::FrequencyComponent))
     }
 
-    has Hash $.colors = %CSS::Grammar::AST::CSS21-Colors;
+    method colors { state Hash $colors //= %CSS::Grammar::AST::CSS21-Colors };
 
     method color:sym<named>($/) {
         my Str $color-name = $<keyw>.ast.value;

@@ -9,11 +9,13 @@ use CSS::Grammar::CSS3;
 grammar CSS::Specification:ver<000.04> {
     rule TOP { <property-spec> * }
 
-    rule property-spec { <prop-names>
-                         \t <spec>
-                         \t [:i 'n/a' | ua specific | <-[ \t ]>*? properties || $<default>=<-[ \t ]>* ]
-                         [ \t <-[ \t ]>*? # applies to
-                           \t [<inherit=.yes>|<inherit=.no>]? ]?
+    rule property-spec {
+        :my @*PROP-NAMES = [];
+        <prop-names>
+            \t <spec>
+            \t [:i 'n/a' | ua specific | <-[ \t ]>*? properties || $<default>=<-[ \t ]>* ]
+            [ \t <-[ \t ]>*? # applies to
+              \t [<inherit=.yes>|<inherit=.no>]? ]?
     }
     rule spec          { :my $*CHOICE; <terms> }
     # possibly tab delimited. Assume one spec per line.
@@ -23,7 +25,12 @@ grammar CSS::Specification:ver<000.04> {
     rule no          {:i no}
 
     token prop-sep   {<[\x20 \, \*]>+}
-    token prop-names { [ <id=.id-quoted> | <id> ] +%% <.prop-sep> }
+    token prop-names {
+        [
+          [<.quote> <id> <.quote> | <id>]
+          { @*PROP-NAMES.push: ~$<id> }
+        ] +%% <.prop-sep>
+    }
     token id         { <[a..z]>[\w|\-]* }
     token quote      {< ' ‘ ’ >}
     token id-quoted  { <.quote> <id> <.quote> }

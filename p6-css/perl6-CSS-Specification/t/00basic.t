@@ -47,20 +47,22 @@ for (
     ) {
 
     my $rule := .key;
-    my $test := .value;
-    my $input := $test<input>;
+    my $expected := .value;
+    my $input := $expected<input>;
+
+    my @*PROP-NAMES = [];
 
     CSS::Grammar::Test::parse-tests( CSS::Specification, $input,
-                                     :rule($rule),
-                                     :actions($actions),
+                                     :$rule,
+                                     :$actions,
                                      :suite<spec>,
-                                     :expected($test) );
+                                     :$expected );
     my $rule-body := $/.ast;
     $rule-body := $rule-body<perl6>
         if $rule-body.isa('Hash');
 
-    if $rule-body.defined {
-        my $anon-rule := "rule \{ $rule-body \}";
+    with $rule-body {
+        my $anon-rule := "rule \{ $_ \}";
         lives-ok {EVAL $anon-rule}, "$rule compiles"
             or diag "invalid rule: $rule-body";
     }

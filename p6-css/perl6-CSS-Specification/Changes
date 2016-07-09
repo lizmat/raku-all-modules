@@ -1,0 +1,3 @@
+0.02.2 Include subproperties in meta childern.
+- E.g. "cue" now has child properties "cue-before", "cue-after"
+- These are distinguished from "box" properties by not having the :box flag set.
