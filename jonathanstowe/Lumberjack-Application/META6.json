@@ -1,7 +1,7 @@
 {
    "license" : "perl",
    "name" : "Lumberjack::Application",
-   "version" : "0.0.2",
+   "version" : "0.0.3",
    "source-url" : "git@github.com:jonathanstowe/Lumberjack-Application.git",
    "tags" : ["logging", "lumberjack", "websocket", "p6sgi" ],
    "test-depends" : [
