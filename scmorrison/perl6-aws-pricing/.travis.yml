@@ -1,10 +1,10 @@
 language: perl6
 perl6:
-  - 2015.12
+  - 2016.06
 install:
   - rakudobrew build-panda
-  - panda install .
-  - panda installdeps .
+  - panda --notests install .
+  - panda --notests installdeps .
 script:
   - prove -v -e 'perl6 -Ilib' t/
 sudo: false

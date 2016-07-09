@@ -6,6 +6,22 @@ Description
 
 Return current offers from the AWS Price List API.
 
+Usage
+=====
+
+```bash
+Usage:
+
+  aws-pricing list services
+  aws-pricing [--format=json|csv] service offers <service_code>;
+
+Optional arguments:
+  
+  --refresh    - Force cache_dir refresh
+  --cache_dir  - Path to cache_dir service offer files (Default ~/.aws-pricing)
+  --region     - AWS region to pull offer data (Default us-east-1)
+```
+
 Modules and utilities
 =====================
 
@@ -14,15 +30,30 @@ AWS::Pricing
 
 ```perl6
 use AWS::Pricing;
-my $awsp = AWS::Pricing.new(aws_region => 'us-east-1', api_version => 'v1.0');
 
 # List all Service Offer indexes
-say $awsp.list-offers();
+say AWS::Pricing::list-offers();
 	
-# List current offers for specific service
-say $awsp.get-service-offers("AmazonS3");
-# See code for available service codes
+# List current offers for specific service. Valid formats are json or csv.
+say AWS::Pricing::service-offers(service_code => 'AmazonS3', format => 'json');
 ```
+
+### Valid service codes:
+
+* AmazonS3
+* AmazonGlacier
+* AmazonSES
+* AmazonRDS
+* AmazonSimpleDB
+* AmazonDynamoDB
+* AmazonEC2
+* AmazonRoute53
+* AmazonRedshift
+* AmazonElastiCache
+* AmazonCloudFront
+* awskms
+* AmazonVPC
+
 
 Installation
 ============
@@ -50,7 +81,7 @@ $ prove -e "perl6 -Ilib"
 Todo
 ====
 
-* Cache offer files, these are large
+* ~~Cache offer files, these are large~~
 * Search offers (must cache first)
 * Tests
 
