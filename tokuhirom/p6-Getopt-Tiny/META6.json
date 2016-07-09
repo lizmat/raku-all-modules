@@ -1,7 +1,7 @@
 {
   "name" : "Getopt::Tiny",
   "source-url" : "git://github.com/tokuhirom/p6-Getopt-Tiny.git",
-  "perl" : "v6",
+  "perl" : "6",
   "build-depends" : [ ],
   "provides" : {
     "Getopt::Tiny" : "lib/Getopt/Tiny.pm6"

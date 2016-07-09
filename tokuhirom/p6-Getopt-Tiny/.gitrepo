@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tokuhirom/p6-Getopt-Tiny.git
 	branch = master
-	commit = feb4342e1b4d823eb9c4318f8b377a5451e0f739
-	parent = d9336334fc09b24d65575cc8e75a422b3b7b4aec
-	cmdver = 0.2.2
+	commit = c1ff7747128b104aa541bf2037d8e3178e1f33a8
+	parent = 32b597e6bb5a1fa7624db16ac6b4219b56d2d1f8
+	cmdver = 0.2.3
