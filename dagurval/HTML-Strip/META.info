@@ -6,6 +6,7 @@
     "depends"     : [],
     "source-url"  : "git://github.com/dagurval/HTML-Strip.git",
     "provides": {
-        "HTML::Strip": "lib/HTML/Strip.pm6"
+        "HTML::Strip": "lib/HTML/Strip.pm6",
+        "HTML::Strip::Decode": "lib/HTML/Strip/Decode.pm6"
     }
 }
