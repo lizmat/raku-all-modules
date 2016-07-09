@@ -1,0 +1,14 @@
+{
+    "perl"         : "6.c",
+    "name"         : "ווו",
+    "version"      : "1.001001",
+    "description"  : "666th module in the Perl 6 Ecosystem is properly Evil!",
+    "depends"      : [ ],
+    "test-depends" : [ "Test" ],
+    "provides"     : {
+        "ווו" : "lib/ווו.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   :
+        "git://github.com/zoffixznet/perl6-666.git"
+}
