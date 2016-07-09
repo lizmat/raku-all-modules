@@ -122,7 +122,7 @@ Copyright (C) 2011, Kevin Polulak <kpolulak@gmail.com>.
 
 This program is distributed under the terms of the Artistic License 2.0.
 
-For further information, please see LICENSE or visit 
+For further information, please see LICENSE or visit
 <http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt>.
 
 =end pod
@@ -138,7 +138,7 @@ my Test::Builder $TEST_BUILDER;
 
 class Test::Builder:auth<soh_cah_toa>:ver<0.0.1> {
     #= Stack containing results of each test
-    has Test::Builder::Test          @!results;
+    has                              @!results;
 
     #= Sets up number of tests to rune
     has Test::Builder::Plan::Generic $!plan;
@@ -156,7 +156,7 @@ class Test::Builder:auth<soh_cah_toa>:ver<0.0.1> {
 
     #= Returns a new Test::Builder instance
     method create() {
-        return $?CLASS.bless(*);
+        return $?CLASS.bless;
     }
 
     submethod BUILD(Test::Builder::Plan   $!plan?,
@@ -164,9 +164,10 @@ class Test::Builder:auth<soh_cah_toa>:ver<0.0.1> {
 
     #= Declares that no more tests need to be run
     method done() {
-        $.done_testing = Bool::True;
+        $.done_testing = True;
 
-        my $footer = $!plan.footer(+@!results);
+        # "Cannot look up attributes in a type object" error check.
+        my $footer = $!plan.footer(+@!results) if ?$!plan;
         $!output.write($footer) if $footer;
     }
 
@@ -286,4 +287,3 @@ END {
 }
 
 # vim: ft=perl6
-

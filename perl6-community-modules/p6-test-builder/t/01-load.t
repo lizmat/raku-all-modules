@@ -3,10 +3,12 @@ use v6;
 use Test;
 use Test::Builder;
 
-plan 1;
+plan 2;
 
 # Verify that module is loaded properly
 ok 1, 'Load module';
 
-# vim: ft=perl6
+my Test::Builder $tb .= new;
+ok $tb, 'Instance was created';
 
+# vim: ft=perl6
