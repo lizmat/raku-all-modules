@@ -14,9 +14,11 @@ ok(
 );
 
 # a page over 64K would be ideal but a bit slow and not really needed yet
-$html = LWP::Simple.get('http://doc.perl6.org/type.html');
+# beware of this link redirecting to https which will often break the test
+
+$html = LWP::Simple.get('http://examples.perl6.org/categories/99-problems.html');
 ok(
-    $html.match('X::Attribute::Undeclared') &&
+    $html.match('P91-edpratomo.pl') &&
         $html.match('</html>'),
     'make sure we pulled down whole document for some substantial size'
 );

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6/perl6-lwp-simple.git
 	branch = master
-	commit = f422f802ffe1ea5fa760dae859d7aeecc1edc40f
-	parent = 028c6148f194bd3b53cf65098e1751190497a77e
+	commit = 4991a1b72c48452273bc1ea8bdb0cd6c4a634a93
+	parent = 6f27ea3d91827a5bc30bd92e936b8dbe24b6b33d
 	cmdver = 0.2.3
