@@ -77,6 +77,8 @@ METHODS
 
         The value of the attribute is recursively serialized to a hash using the same algorithm.
 
+    Current API available since version 0.1.0.
+
   * method deserialize
 
         method deserialize(%data, Sub :$warn);
@@ -84,6 +86,8 @@ METHODS
     Instantiate a new object of the invocant's type, initializing its attributes with the values from the provided hash. Any attributes of composite or complex types are handled recursively in the reverse manner as the serialization described above.
 
     The optional `$warn` parameter is a handler for warnings about any inconsistencies detected in the data. For the present, the only problem detected is hash keys that do not correspond to class attributes.
+
+    Current API available since version 0.1.0.
 
 FUNCTIONS
 =========
@@ -96,11 +100,15 @@ The `Serialize::Naive` module also exports two functions:
 
     Serialize the specified object just as `$obj.serialize()` would.
 
+    Current API available since version 0.1.0.
+
   * sub deserialize
 
         sub deserialize($type, %data, Sub :$warn)
 
     Deserialize an object of the specified type just as `$type.deserialize(%data, :warn($warn))` would.
+
+    Current API available since version 0.1.0.
 
 SEE ALSO
 ========

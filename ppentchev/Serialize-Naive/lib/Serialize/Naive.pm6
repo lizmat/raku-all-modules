@@ -1,18 +1,24 @@
-unit role Serialize::Naive:ver<0.2.2>:auth<github:ppentchev>;
+unit role Serialize::Naive:ver<0.2.4>:auth<github:ppentchev>;
 
 use v6.c;
-use strict;
 
-my $serialize-basic-types = (Str, Str:D, Bool, Bool:D,
-    Int, Int:D, UInt, UInt:D, Rat, Rat:D, Any, Any:D);
+sub get-type-name($type)
+{
+	($type.HOW ~~ Metamodel::DefiniteHOW) ??
+	    $type.^base_type.^name !!
+	    $type.^name;
+}
+
+sub is-core($type)
+{
+	so CORE::{get-type-name $type}:k;
+}
 
 sub walk-type($type, $value, Sub :$objfunc, :$array-type, :$hash-type, Sub :$warn)
 {
-	for $serialize-basic-types.values -> $basic {
-		next unless $basic === $type;
-
+	if is-core $type {
 		# Ah, weirdness...
-		if $type === Rat || $type === Rat:D {
+		if get-type-name($type) eq 'Rat' {
 			return $value.Rat;
 		} else {
 			return $value;
@@ -200,6 +206,8 @@ Other classes
 The value of the attribute is recursively serialized to a hash using
 the same algorithm.
 =end item2
+
+Current API available since version 0.1.0.
 =end item1
 
 =begin item1
@@ -215,6 +223,8 @@ as the serialization described above.
 The optional C<$warn> parameter is a handler for warnings about any
 inconsistencies detected in the data.  For the present, the only problem
 detected is hash keys that do not correspond to class attributes.
+
+Current API available since version 0.1.0.
 =end item1
 
 =head1 FUNCTIONS
@@ -228,6 +238,7 @@ sub serialize
 
 Serialize the specified object just as C<$obj.serialize()> would.
 
+Current API available since version 0.1.0.
 =end item1
 
 =begin item1
@@ -238,6 +249,7 @@ sub deserialize
 Deserialize an object of the specified type just as
 C<$type.deserialize(%data, :warn($warn))> would.
 
+Current API available since version 0.1.0.
 =end item1
 
 =head1 SEE ALSO
