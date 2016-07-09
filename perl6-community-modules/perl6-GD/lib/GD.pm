@@ -21,7 +21,7 @@ class GD::File is repr('CPointer') {
 	}
 }
 
-sub malloc(int $size) is native(Str) returns OpaquePointer {*};
+sub malloc(int32 $size) is native(Str) returns OpaquePointer {*};
 
 class GD::Image is repr('CPointer') {
 
@@ -36,58 +36,58 @@ class GD::Image is repr('CPointer') {
     }
 
 	sub gdImageGif(GD::Image, GD::File)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageJpeg(GD::Image, GD::File, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImagePng(GD::Image, GD::File)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageCreate(int32, int32)
-		returns GD::Image is native('libgd') { ... };
+		returns GD::Image is native('gd') { ... };
 	
 	sub gdImageColorAllocate(GD::Image, int32, int32, int32)
-		returns int32 is native('libgd') { ... };
+		returns int32 is native('gd') { ... };
 
 	sub gdImageSetPixel(GD::Image, int32, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 		
 	sub gdImageLine(GD::Image, int32, int32, int32, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageFilledRectangle(GD::Image, int32, int32, int32, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageRectangle(GD::Image, int32, int32, int32, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageFilledArc(GD::Image, int32, int32, int32, int32, int32, int32, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageArc(GD::Image, int32, int32, int32, int32, int32, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageEllipse(GD::Image, int32, int32, int32, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageFilledEllipse(GD::Image, int32, int32, int32, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImagePolygon(GD::Image, OpaquePointer, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageOpenPolygon(GD::Image, OpaquePointer, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageFilledPolygon(GD::Image, OpaquePointer, int32, int32)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdFree(OpaquePointer)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	sub gdImageDestroy(GD::Image)
-		is native('libgd') { ... };
+		is native('gd') { ... };
 
 	### METHODS ###
 
