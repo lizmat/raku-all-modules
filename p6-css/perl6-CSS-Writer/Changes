@@ -1,0 +1,4 @@
+0.01.3
+    - Introduced :$declaration-list. For serializing a list of
+      properties without surrounding parenthesis. Typical usage
+      is for generating HTML style attributes.

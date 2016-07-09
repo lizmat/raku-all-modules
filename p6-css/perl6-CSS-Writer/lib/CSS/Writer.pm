@@ -129,17 +129,21 @@ class CSS::Writer
         '.' ~ $.write( :name($class) );
     }
 
-    #| { font-size: 12pt; color: white; } := $.write( :declarations[ { :ident<font-size>, :expr[ :pt(12) ] }, { :ident<color>, :expr[ :ident<white> ] } ] )
-    multi method write( List :$declarations! ) {
-        my @decls-indented =  $declarations.map: {
+    # for example, the body of an HTML style tag
+    #| font-size: 12pt; color: white; := $.write( :declaration-list[ { :ident<font-size>, :expr[ :pt(12) ] }, { :ident<color>, :expr[ :ident<white> ] } ] )
+    multi method write( List :$declaration-list! ) {
+        $declaration-list.map({
             my $prop = .<ident>:exists
                 ?? :property(%$_)
                 !! $_;
 
             $.write-indented( $prop, 2);
-        };
+        }).join: $.nl;
+    }
 
-        (flat '{', @decls-indented, $.indent ~ '}').join: $.nl;
+    #| { font-size: 12pt; color: white; } := $.write( :declarations[ { :ident<font-size>, :expr[ :pt(12) ] }, { :ident<color>, :expr[ :ident<white> ] } ] )
+    multi method write( List :$declarations! ) {
+        (flat '{', $.write( :declaration-list($declarations) ), $.indent ~ '}').join: $.nl;
     }
 
     #| h1 := $.write: :element-name<H1>
