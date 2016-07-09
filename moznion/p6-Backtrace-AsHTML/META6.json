@@ -1,7 +1,7 @@
 {
   "name" : "Backtrace::AsHTML",
   "source-url" : "git://github.com/moznion/p6-Backtrace-AsHTML.git",
-  "perl" : "v6",
+  "perl" : "6",
   "build-depends" : [ ],
   "provides" : {
     "Backtrace::AsHTML" : "lib/Backtrace/AsHTML.pm6"
