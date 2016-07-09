@@ -1,7 +1,7 @@
 
 use v6;
 
-unit module Cardinal:ver<1.0.0>:auth<github:thundergnat>;
+unit module Cardinal:ver<1.0.1>:auth<github:thundergnat>;
 
 # Arrays probably should be constants but constant arrays and pre-comp
 # don't get along very well right now.
@@ -47,7 +47,7 @@ sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export 
 
     # numerator is just a regular cardinal, add a separator if desired
     $s ~= cardinal-int($num) ~ $separator;
-    # now determine the denoiminator
+    # now determine the denominator
     if $denom == 2 { # special case irregular halfs
         if $num == 1 {
             $s ~= 'half';
@@ -137,7 +137,7 @@ sub cardinal-int (Int $int) {
     }
 }
 
-sub cardinal-year ($year where 0 < $year < 10000) is export {
+sub cardinal-year ($year where 99 < $year < 10000) is export {
     if $year %% 1000 {
         return cardinal($year.substr(0,1)) ~ ' thousand';
     } elsif $year %% 100  {

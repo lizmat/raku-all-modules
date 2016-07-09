@@ -124,11 +124,12 @@ in the output, the input number had a fractional portion.
 By default, cardinal reduces fractions to their lowest terms. If you want to
 specify the denominator used to display, pass in an integer to the :commom
 option.
+
 It is probably best to specify a common that IS a common divisor for the
-denominator. cardinal() will work with any common, and will scale the numerator
-to match, but will round off the numerator to the nearest integer after scaling,
-so some error will creep in if common is NOT a common divisor with the
-denominator.
+denominator. cardinal() will work with any integer common, and will scale the
+numerator to match, but will round off the numerator to the nearest integer
+after scaling, so some error will creep in if common is NOT a common divisor
+with the denominator.
 
 cardinal-year() converts integers from 100 to 9999 to the common American
 English convention.
@@ -189,7 +190,7 @@ USAGE
 
     say ordinal(1);               # first
     say ordinal(2);               # second
-    say ordinal(124 );            # one hundred twenty-third
+    say ordinal(123);             # one hundred twenty-third
     say ordinal(1776);            # one thousand, seven hundred seventy-sixth
     say ordinal-digit(1776)       # 1776th
 

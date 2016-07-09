@@ -81,7 +81,7 @@ is ordinal(3040005000), "three billion, forty million, five thousandth", "304000
 is ordinal(1000000000000), "one trillionth", "1000000000000 is one trillionth";
 is ordinal(1000002300000), "one trillion, two million, three hundred thousandth", "1000002300000 is one trillion, two million, three hundred thousandth";
 
-# largest supported number [currently 999,999,999,999,999]
+# larger number
 is ordinal(999999999999999), "nine hundred ninety-nine trillion, nine hundred ninety-nine billion, nine hundred ninety-nine million, nine hundred ninety-nine thousand, nine hundred ninety-ninth", "999999999999999 is nine hundred ninety-nine trillion, nine hundred ninety-nine billion, nine hundred ninety-nine million, nine hundred ninety-nine thousand, nine hundred ninety-ninth";
 
 # what about a number that's big?
