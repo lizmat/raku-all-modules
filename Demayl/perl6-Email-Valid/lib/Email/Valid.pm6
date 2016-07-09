@@ -1,7 +1,7 @@
 use v6;
 unit class Email::Valid;
 
-use Net::DNS;
+use Net::DNS; # Required only when :mx_check( True )
 #use Net::SMTP;
 
 has Bool $.mx_check     = False;
@@ -24,7 +24,6 @@ my Int $mailbox_max_length = 64;
 my Int $max_subd_parts = 4;
 my %domain_mx;                     # Cache MX records for domains, its cached in class, not instance. One instance can handle multiple checks
 
-# TODO separate grammars
 # Multicast & Experimental addresses are excluded
 my grammar IPv4 {
     token octet      { (\d**1..3) <?{ $0 < 256 }> }
@@ -42,7 +41,6 @@ my grammar IPv4 {
 
 # This grammar will ignore anycast addresses ( that ends with :: )
 # In short variant :: can be used only once
-# TODO exclude local variants
 my grammar IPv6 {
     token ipv6-host  { <ipv6-full> || <ipv6-short> || <ipv6-tiny> }
     token ipv6-full  { <ipv6-block> ** 8 % <.ipv6-sep> <!before ':'0+> }
@@ -171,5 +169,3 @@ method mx_validate(Str $email!) {
 
 
 # '0_O';
-
-

@@ -2,16 +2,19 @@
 Email::Valid - WIP module to check validity of email addresses
 ## Synopsis
 ```perl6
-use v6;
+use v6.c;
 use Email::Valid;
 
-my $email = Email::Valid.new(:simple(True));
+my $email = Email::Valid.new(:simple(True)); # By default :simple( True )
 
 if $email.validate("test@domain.tld") {
     say "test@domain.tld is valid";
 }
-say "Mailbox is: " ~ $email.parse('test@domain.tld')[0].Str;
+
+say "Mailbox is: " ~ $email.parse('test@domain.tld')<email><mailbox>;
+say "Domain is: "  ~ $email.parse('test@domain.tld')<email><domain>;
 # Mailbox is: test
+# Domain is: domain.tld
 ```
 
 ## Description
@@ -21,7 +24,7 @@ It allows IDN domains ( 'xn--' ) and IP address domains ( IPv4 + IPv6 ) disabled
 
 ## Methods
 - validate( Str $email! --> Bool )
-- parse( Str $email! --> Match )
+- parse( Str $email! --> Match ); # email => { 'mail@example.com' => { mailbox => 'mail', domain => {'example.com'=> [ example. ], tld => 'com' } } }
 - mx_validate( Str $email! --> Bool ) # Just check if domain has MX record
 - extract( Str $text!, Bool :$matchs = False, Bool :$validate = False --> List )
 
