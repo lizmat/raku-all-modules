@@ -1,22 +1,27 @@
-unit module Prime::Factor:ver<0.0.2>:auth<github:thundergnat>;
+unit module Prime::Factor:ver<0.2.0>:auth<github:thundergnat>;
 use v6;
 
-my @primes := 2, 3, |(flat map( { $^i-1, $i+1 }, (6, 12, 18 ... *))).grep: *.is-prime;
+sub prime-factors ( Int $n where * > 0 ) is export {
+    return $n if $n.is-prime;
+    return [] if $n == 1;
+    my $factor = find-factor( $n );
+    sort flat prime-factors( $factor ), prime-factors( $n div $factor );
+}
 
-multi sub factors(1) is export { 1 }
-multi sub factors(Int $remainder is copy where $remainder > 1) is export {
-    gather for @primes -> $factor {
-
-        # if remainder < factor², we're done
-        if $factor * $factor > $remainder {
-            take $remainder if $remainder > 1;
-            last;
-        }
-
-        # How many times can we divide by this prime?
-        while $remainder %% $factor {
-            take $factor;
-            last if ($remainder div= $factor) === 1;
+# use Pollard's rho algorithm to speed factorization
+# See Wikipedia "Pollard's rho algorithm" and
+# Damian Conways "On the Shoulders of Giants" presentation from YAPC::NA 2016
+sub find-factor ( Int $n, $constant = 1 ) {
+    my ($x, $rho, $factor) = 2, 1, 1;
+    while $factor == 1 {
+        $rho *= 2;
+        my $fixed = $x;
+        for 1 ..^ $rho {
+            $x = ($x² + $constant) % $n;
+            $factor = ($x - $fixed) gcd $n;
+            last if $factor > 1;
         }
     }
+    $factor = find-factor( $n, $constant + 1 ) if $n == $factor;
+    $factor;
 }

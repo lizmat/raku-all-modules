@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Prime::Factor",
-    "version"     : "0.0.2",
+    "version"     : "0.2.0",
     "description" : "Returns all prime factors of an integer.",
     "authors"     : [ "Steve Schulze (thundergnat)" ],
     "provides"    : {
