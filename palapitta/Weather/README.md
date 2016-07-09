@@ -16,23 +16,21 @@ $p.get-weather(' delhi '); # call get-weather() before calling other functions,
 $p.get-weather(' delhi', ' in');   #can pass country code
 
 $p.name;
-$p.temperature;
-$p.humidity;
-$p.pressure;
+$p.temperature;  # in celsius
+$p.humidity;   # %
+$p.pressure;   # at sea level in hPa
 $p.cloudy;     # cloud percentage
-$p.weather-description;
-$p.weather-main;
-$p.latitude;
+$p.weather-description;   # description
+$p.weather-main;  
+$p.latitude;  
 $p.longitude;
 $p.country;
-$p.wind-speed;
-$p.wind-direction;
-$p.sunrise;
-$p.sunset;
-$p.visibility;
-$p.sunrise_time; #works on linux
-$p.sunset_time; #works on linux
+$p.wind-speed;   # in meter/sec
+$p.wind-direction;  # in degree,  north-based azimuths
+$p.sunrise;   # in local time
+$p.sunset;    # in local time
+$p.rain;   # volume in last 3 hrs
 
 my $temp = $p.temparature;
 say $temp;
-$p.sunrise_time;
+say $p.sunrise;

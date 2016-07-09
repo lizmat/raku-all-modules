@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/palapitta/Weather.git
 	branch = master
-	commit = 1ebf4642f45f98807f395d966fc642dfaed60304
-	parent = 905aeebf64ca8db5b7c835244291442705b0a10e
+	commit = ea249042249cc47d506cce2d30e0292b74b85b27
+	parent = 1d00c41c7574de20d28a55cc6530b825346b1b2f
 	cmdver = 0.2.3

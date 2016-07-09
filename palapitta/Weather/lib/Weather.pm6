@@ -46,7 +46,7 @@ method wind-direction() {
 }
 
 method humidity() {
-	 $x<main><humidity>;
+	  $x<main><humidity>;
 }
 
 method pressure() {
@@ -54,48 +54,40 @@ method pressure() {
 }
 
 method temperature() {
-	 $x<main><temp>;
+	  $x<main><temp>;
 }
 
 method longitude() {
-	 $x<coord><lon>;
+	  $x<coord><lon>;
 }
 
 method latitude() {
-	 $x<coord><lat>;
+	  $x<coord><lat>;
 }
 
 method country() {
-	 $x<sys><country>;
+	  $x<sys><country>;
 }
 
 method sunrise() {
-	 $x<sys><sunrise>;
-}
-
-method sunrise_time() {
 	my $d = $x<sys><sunrise>;
-	shell("date -d @$d");
+        DateTime.new($d).local;
 }
 
 method sunset() {
-	 $x<sys><sunset>;
-}
-
-method sunset_time() {
 	my $d = $x<sys><sunset>;
-	shell("date -d @$d");
-}
-
-method visibility() {
-	 $x<visibility>;
+	DateTime.new($d).local;
 }
 
 method cloudy() {
-	 $x<clouds><all>; # maybe cloud percentage;
+	  $x<clouds><all>; # maybe cloud percentage;
 }
 
 method name() {
-	$x<name>;
+	 $x<name>;
+}
+
+method rain() {
+         $x<rain>.values;
 }
 }
