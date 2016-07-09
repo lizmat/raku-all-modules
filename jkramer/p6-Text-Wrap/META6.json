@@ -1,0 +1,14 @@
+{
+  "name" : "Text::Wrap",
+  "version" : "0.0.1",
+  "description" : "Wrap text.",
+  "author" : "Jonas Kramer <jkramer@mark17.net>",
+  "repo-type": "git",
+  "source-url" : "git://github.com/jkramer/p6-Text-Wrap.git",
+  "depends" : [],
+  "build-depends" : [],
+  "test-depends" : [],
+  "provides" : {
+    "Text::Wrap" : "lib/Text/Wrap.pm6"
+  }
+}
