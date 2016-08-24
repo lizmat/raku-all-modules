@@ -1,0 +1,16 @@
+{
+    "perl"         : "6.c",
+    "name"         : "HTTP::HPACK",
+    "version"      : "0.9",
+    "description"  : "Implementation of RFC 7541 HPACK: Header Compression for HTTP/2",
+    "depends"      : [
+    ],
+    "test-depends" : [
+        "Test"
+    ],
+    "provides"     : {
+        "HTTP::HPACK" : "lib/HTTP/HPACK.pm6"
+    },
+    "authors"       : ["Jonathan Worthington"],
+    "support"       : {"source" : "git://github.com/jnthn/p6-http-hpack.git"}
+}
