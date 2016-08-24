@@ -285,8 +285,8 @@ subtest {
 
     CATCH {
       when X::Parse-document {
-        ok .message ~~ ms/'cannot' 'send' 'empty' 'code'/,
-           'Cannot send empty code';
+        cmp-ok .message, '~~', / :s will not process empty javascript code/,
+           'cannot process empty javascript code';
       }
     }
   }

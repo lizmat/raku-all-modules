@@ -10,7 +10,7 @@ use BSON::Regex;
 use BSON::Javascript;
 use BSON::Binary;
 
-unit package BSON:ver<0.9.26>:auth<MARTIMM>;
+unit package BSON:ver<0.9.27>:auth<MARTIMM>;
 
 #-------------------------------------------------------------------------------
 # BSON type codes
@@ -119,8 +119,6 @@ class Document does Associative does Positional {
   #
   multi method new ( |capture ) {
 
-#      unless capture.keys and capture<capture-group>
-#        or capture.elems == 0 {
     if capture.keys {
       die X::Parse-document.new(
         :operation("new: key => value")
@@ -279,22 +277,6 @@ class Document does Associative does Positional {
     $accept-hash = $acch;
   }
 
-
-#`{{
-  #-----------------------------------------------------------------------------
-  submethod DESTROY ( ) {
-
-    @!keys = ();
-    @!values = ();
-
-    $!encoded-document = Nil;
-    @!encoded-entries = ();
-
-#await first?
-    %!promises = ();
-  }
-}}
-
   #-----------------------------------------------------------------------------
   multi method find-key ( Int:D $idx --> Str ) {
 
@@ -386,7 +368,7 @@ class Document does Associative does Positional {
 
   multi method ASSIGN-KEY ( Str:D $key, List:D $new --> Nil ) {
 
-#note "Asign-key($?LINE): $key => ", $new.WHAT, ', ', $new[0].WHAT;
+#say "Asign-key($?LINE): $key => ", $new.WHAT, ', ', $new[0].WHAT;
     my BSON::Document $v .= new;
     for @$new -> $pair {
       if $pair ~~ Pair {
@@ -470,7 +452,7 @@ class Document does Associative does Positional {
   #
   multi method ASSIGN-KEY ( Str:D $key, Array:D $new --> Nil ) {
 
-# TODO Test pushes and pops
+#TODO Test pushes and pops
 
 #say "Asign-key($?LINE): $key => ", $new.WHAT;
 
@@ -492,7 +474,16 @@ class Document does Associative does Positional {
     @!keys[$idx] = $k;
     @!values[$idx] = $v;
 
-    %!promises{$k} = Promise.start({ self!encode-element: ($k => $v); });
+    %!promises{$k} = Promise.start({self!encode-element: ($k => $v);});
+#    %!promises{$k} = Promise.start( {
+#      self!encode-element: ($k => $v);
+#say "E key = $k, val = $v.WHAT()";
+#      CATCH {
+#        default {
+#          say .message;
+#        }
+#      }
+#    });
   }
 
   # All other values are calculated in parallel
@@ -520,6 +511,16 @@ class Document does Associative does Positional {
     @!values[$idx] = $v;
 
     %!promises{$k} = Promise.start({ self!encode-element: ($k => $v); });
+#    %!promises{$k} = Promise.start( {
+#      my Buf $b = self!encode-element: ($k => $v);
+#      CATCH {
+#        default {
+#          .say;
+#          .rethrow;
+#        }
+#      }
+#      $b;
+#    });
   }
 
   #-----------------------------------------------------------------------------
@@ -686,6 +687,7 @@ class Document does Associative does Positional {
 
     my Buf $b;
     if @!encoded-entries.elems {
+
       $!encoded-document = [~] @!encoded-entries;
       $b = [~] encode-int32($!encoded-document.elems + 5),
                $!encoded-document,
@@ -763,19 +765,6 @@ class Document does Associative does Positional {
         $b = [~] Buf.new(BSON::C-BINARY),
                  encode-e-name($p.key),
                  .encode;
-        ;
-#`{{
-        if .has-binary-data {
-          $b ~= encode-int32(.binary-data.elems);
-          $b ~= Buf.new(.binary-type);
-          $b ~= .binary-data;
-        }
-
-        else {
-          $b ~= encode-int32(0);
-          $b ~= Buf.new(.binary-type);
-        }
-}}
       }
 
      when BSON::ObjectId {
@@ -872,7 +861,7 @@ class Document does Associative does Positional {
         else {
           die X::Parse-document.new(
             :operation('encode Javscript'),
-            :error('cannot send empty code')
+            :error('will not process empty javascript code')
           );
         }
       }

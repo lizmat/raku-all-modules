@@ -80,8 +80,12 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable*.
 
+* 0.9.27
+  * Perl6 bug fixed, workarounds removed 
+* 0.9.25.1
+  * Need to reprogram parts in Document caused by bugs/changes in perl6.
 * 0.9.25
-  * Speedup in encoding/decoding double using NativeCall.
+  * Speedup in encoding/decoding double using NativeCall. Tests are also done with int64 numbers but these do not improve when implemented natively. See the benchmark docs and code.
 * 0.9.24
   * Cleanup modules and META
   * Small bugfix in Document.perl()

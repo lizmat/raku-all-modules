@@ -86,9 +86,11 @@ package BSON {
     }
 
     #---------------------------------------------------------------------------
-#TODO Remove duplicate sub into other module
+#TODO Remove duplicate sub into other module. Document has it but then recursive
+#loading loop, 
     sub encode-int32 ( Int:D $i --> Buf ) {
       my int $ni = $i;
+
       return Buf.new(
         $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
         ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF

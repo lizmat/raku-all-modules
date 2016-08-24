@@ -16,10 +16,7 @@ subtest {
   );
 
   my UUID $uuid .= new(:version(4));
-  my BSON::Binary $bin .= new(
-    :data($uuid.Blob),
-    :type(BSON::C-UUID)
-  );
+  my BSON::Binary $bin .= new( :data($uuid.Blob), :type(BSON::C-UUID) );
 
   my BSON::ObjectId $oid .= new;
 
@@ -245,8 +242,8 @@ subtest {
     0x00                                        # End document
   );
 
-  say "\n\nBSON::Document perl() show off: ", $d.perl;
-  print " \n";
+#  say "\n\nBSON::Document perl() show off: ", $d.perl;
+#  print " \n";
 
   # Encode document and compare with handcrafted byte array
   #
