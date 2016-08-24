@@ -25,13 +25,13 @@ subtest
         EOF
     );
     is(
-        $match-toml.made<Entry>[0]<Header><date>.Date,
-        Date.new("2014-01-01"),
+        $match-toml.made<Entry>[0]<Header><date>,
+        Date.new('2014-01-01'),
         q:to/EOF/
         ♪ [Is expected value?] - 2 of 49
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-toml.made<Entry>[0]<Header><date>.Date
-        ┃   Success   ┃        ~~ Date.new("2014-01-01")
+        ┃             ┃  ∙ $match-toml.made<Entry>[0]<Header><date>
+        ┃   Success   ┃        ~~ Date.new('2014-01-01')
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
@@ -622,4 +622,4 @@ subtest
     );
 }
 
-# vim: ft=perl6
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

@@ -15,4 +15,4 @@ method parsefile(Str:D $file, *%opts (Int :$date-local-offset)) returns Match
     Config::TOML::Parser::Grammar.parsefile($file, :$actions);
 }
 
-# vim: ft=perl6
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

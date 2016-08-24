@@ -1581,7 +1581,7 @@ subtest
             '1979-05-27T00:32:00.999999-07:00',
             '1979-05-27T07:32:00Z',
             '1979-05-27T00:32:00.999999Z',
-            '1979-05-27T00:00:00Z'
+            '1979-05-27'
         ],
         q:to/EOF/
         ♪ [Is expected array value?] - 93 of 123
@@ -2230,7 +2230,7 @@ subtest
             '1979-05-27T00:32:00.999999-07:00',
             '1979-05-27T07:32:00Z',
             '1979-05-27T00:32:00.999999Z',
-            '1979-05-27T00:00:00Z'
+            '1979-05-27'
         ],
         q:to/EOF/
         ♪ [Is expected array value?] - 122 of 123
@@ -2273,4 +2273,4 @@ subtest
 
 # end commented array grammar-actions tests }}}
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

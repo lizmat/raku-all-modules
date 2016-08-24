@@ -542,19 +542,19 @@ token keypair-value:table-inline { <table-inline> }
 # blank line
 token blank-line
 {
-    ^^ \h* $$ \n
+    ^^ \h* $$
 }
 
 # comment appearing on its own line
 token comment-line
 {
-    ^^ \h* <.comment> $$ \n
+    ^^ \h* <.comment> $$
 }
 
 # keypair appearing on its own line
 token keypair-line
 {
-    ^^ \h* <keypair> \h* <.comment>? $$ \n
+    ^^ \h* <keypair> \h* <.comment>? $$
 }
 
 proto token table {*}
@@ -562,15 +562,19 @@ proto token table {*}
 # standard TOML table (hash of hashes)
 token table:hoh
 {
-    ^^ \h* <hoh-header> \h* <.comment>? $$ \n
-    [ <keypair-line> | <.comment-line> | <.blank-line> ]*
+    ^^ \h* <hoh-header> \h* <.comment>? $$
+    [
+        \n [ <keypair-line> | <.comment-line> | <.blank-line> ]
+    ]*
 }
 
 # TOML array of tables (array of hashes)
 token table:aoh
 {
-    ^^ \h* <aoh-header> \h* <.comment>? $$ \n
-    [ <keypair-line> | <.comment-line> | <.blank-line> ]*
+    ^^ \h* <aoh-header> \h* <.comment>? $$
+    [
+        \n [ <keypair-line> | <.comment-line> | <.blank-line> ]
+    ]*
 }
 
 # hash of hashes header
@@ -594,22 +598,22 @@ proto token segment {*}
 
 token segment:blank-line
 {
-    <.blank-line>
+    <.blank-line> \n?
 }
 
 token segment:comment-line
 {
-    <.comment-line>
+    <.comment-line> \n?
 }
 
 token segment:keypair-line
 {
-    <keypair-line>
+    <keypair-line> \n?
 }
 
 token segment:table
 {
-    <table>
+    <table> \n?
 }
 
 token document
@@ -624,4 +628,4 @@ token TOP
 
 # end document grammar }}}
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

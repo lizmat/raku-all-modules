@@ -1287,7 +1287,7 @@ subtest
     my Str $date-time3 = Q{1979-05-27T00:32:00.999999-07:00};
     my Str $date-time4 = Q{1979-05-27T07:32:00};
     my Str $date-time5 = Q{1979-05-27T00:32:00.999999};
-    my Str $date-time6 = Q{1979-05-27};
+    my Str $full-date1 = Q{1979-05-27};
 
     # assume UTC when local offset unspecified in TOML dates
     my Config::TOML::Parser::Actions $actions .= new(:date-local-offset(0));
@@ -1316,8 +1316,8 @@ subtest
         :$actions,
         :rule<date>
     );
-    my $match-date-time6 = Config::TOML::Parser::Grammar.parse(
-        $date-time6,
+    my $match-full-date1 = Config::TOML::Parser::Grammar.parse(
+        $full-date1,
         :$actions,
         :rule<date>
     );
@@ -1383,12 +1383,12 @@ subtest
         EOF
     );
     is(
-        $match-date-time6.WHAT,
+        $match-full-date1.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($date-time6, :rule<date>)] - 81 of 93
+        ♪ [Grammar.parse($full-date1, :rule<date>)] - 81 of 93
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ Parses string literal datetime successfully
+        ┃             ┃  ∙ Parses string literal date successfully
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1456,12 +1456,12 @@ subtest
         EOF
     );
     is(
-        $match-date-time6.made.WHAT,
-        DateTime,
+        $match-full-date1.made.WHAT,
+        Date,
         q:to/EOF/
         ♪ [Is datetime?] - 87 of 93
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-date-time6.made.WHAT ~~ DateTime
+        ┃             ┃  ∙ $match-full-date1.made.WHAT ~~ Date
         ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
@@ -1529,13 +1529,13 @@ subtest
         EOF
     );
     is(
-        $match-date-time6.made,
-        '1979-05-27T00:00:00Z',
+        $match-full-date1.made,
+        '1979-05-27',
         q:to/EOF/
-        ♪ [Is expected datetime value?] - 93 of 93
+        ♪ [Is expected full date value?] - 93 of 93
         ┏━━━━━━━━━━━━━┓
-        ┃             ┃  ∙ $match-date-time6.made
-        ┃   Success   ┃        ~~ '1979-05-27T00:00:00Z'
+        ┃             ┃  ∙ $match-full-date1.made ~~ '1979-05-27'
+        ┃   Success   ┃
         ┃             ┃
         ┗━━━━━━━━━━━━━┛
         EOF
@@ -1544,4 +1544,4 @@ subtest
 
 # end datetime grammar-actions tests }}}
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

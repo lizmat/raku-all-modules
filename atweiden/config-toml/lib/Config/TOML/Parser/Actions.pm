@@ -351,7 +351,7 @@ method date-time($/)
 
 method date:full-date ($/)
 {
-    make DateTime.new(|$<full-date>.made, :timezone($.date-local-offset));
+    make Date.new(|$<full-date>.made);
 }
 
 method date:date-time-omit-local-offset ($/)
@@ -768,4 +768,4 @@ multi sub seen(Bool %h, :@path! where *.elems == 0) returns Bool
 
 # end helper functions }}}
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

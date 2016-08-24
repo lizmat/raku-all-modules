@@ -1,17 +1,17 @@
 branches:
-  only:
-    - master
+    only:
+        - master
 
 language: perl6
 
 perl6:
-  - latest
+    - latest
 
 sudo: false
 
 env:
-  - PATH=~/.rakudobrew/bin:~/.rakudobrew/moar-nom/install/share/perl6/site/bin:~/.rakudobrew/moar-nom/panda/bin:$PATH
+    - PATH=~/.rakudobrew/bin:~/.rakudobrew/moar-nom/install/share/perl6/site/bin:~/.rakudobrew/moar-nom/panda/bin:$PATH
 
 install:
-  - rakudobrew build panda
-  - panda --notests installdeps .
+    - rakudobrew build panda
+    - panda --notests installdeps .

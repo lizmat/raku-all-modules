@@ -10,7 +10,7 @@ multi sub from-toml(
 ) is export returns Hash
 {
     Config::TOML::Parser.parse($content, |%opts).made
-        or die X::Config::TOML::ParseFailed.new;
+        or die X::Config::TOML::ParseFailed.new(:$content);
 }
 
 multi sub from-toml(
@@ -19,7 +19,7 @@ multi sub from-toml(
 ) is export returns Hash
 {
     Config::TOML::Parser.parsefile($file, |%opts).made
-        or die X::Config::TOML::ParsefileFailed.new;
+        or die X::Config::TOML::ParsefileFailed.new(:$file);
 }
 
 sub to-toml(
@@ -49,4 +49,4 @@ sub to-toml(
     Config::TOML::Dumper.new.dump($container);
 }
 
-# vim: ft=perl6
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

@@ -267,4 +267,4 @@ multi sub to-toml($value)
     die X::Config::TOML::Dumper::BadValue.new(:$value);
 }
 
-# vim: ft=perl6 fdm=marker fdl=0 nowrap
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:
