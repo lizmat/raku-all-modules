@@ -3,7 +3,7 @@ imports:
 
 git module txn-examples:
     url: git://github.com/atweiden/txn-examples.git
-    rev: f9d4f930dcdec88fceefc70a57f8ac1b3144b3a3
+    rev: 32a124e370d851c4fe93e16deb6fd24d171088c3
     drop:
         - README.md
         - UNLICENSE

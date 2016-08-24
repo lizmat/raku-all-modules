@@ -13,7 +13,7 @@ multi sub emit(
     Str $content,
     Bool :$json,
     *%opts (
-        Str :$txndir,
+        Str :$txn-dir,
         Int :$date-local-offset
     )
 )
@@ -26,7 +26,7 @@ multi sub emit(
     Str :$file!,
     Bool :$json,
     *%opts (
-        Str :$txndir,
+        Str :$txn-dir,
         Int :$date-local-offset
     )
 )
@@ -59,7 +59,7 @@ multi sub from-txn(
     Str $content,
     *%opts (
         Bool :$json,
-        Str :$txndir,
+        Str :$txn-dir,
         Int :$date-local-offset
     )
 ) is export
@@ -71,7 +71,7 @@ multi sub from-txn(
     Str :$file!,
     *%opts (
         Bool :$json,
-        Str :$txndir,
+        Str :$txn-dir,
         Int :$date-local-offset
     )
 ) is export
@@ -91,7 +91,7 @@ multi sub mktxn(
         Str :$pkgver,
         Int :$pkgrel,
         Str :$pkgdesc,
-        Str :$txndir,
+        Str :$txn-dir,
         Int :$date-local-offset,
         Str :$template
     )
@@ -113,7 +113,7 @@ multi sub mktxn(
         Str :$pkgver,
         Int :$pkgrel,
         Str :$pkgdesc,
-        Str :$txndir,
+        Str :$txn-dir,
         Int :$date-local-offset,
         Str :$template
     )
@@ -130,7 +130,7 @@ multi sub mktxn(
         Str :$pkgver,
         Int :$pkgrel,
         Str :$pkgdesc,
-        Str :$txndir,
+        Str :$txn-dir,
         Int :$date-local-offset,
         Str :$template
     )
@@ -149,7 +149,7 @@ sub prepare(
     Str :$pkgver,
     Int :$pkgrel,
     Str :$pkgdesc,
-    Str :$txndir,
+    Str :$txn-dir,
     Int :$date-local-offset,
     Str :$template
 ) returns Hash
@@ -164,13 +164,13 @@ sub prepare(
         %prepare<pkgver> = %template<pkgver> if %template<pkgver>;
         %prepare<pkgrel> = Int(%template<pkgrel>) if %template<pkgrel>;
         %prepare<pkgdesc> = %template<pkgdesc> if %template<pkgdesc>;
-        if %template<txndir>
+        if %template<txn-dir>
         {
-            %prepare<txndir> = %template<txndir>.IO.is-relative
-                # resolve txndir path relative to template file
-                ?? ~join('/', $template.IO.dirname, %template<txndir>).IO.resolve
-                # absolute txndir path given, use it directly
-                !! %template<txndir>;
+            %prepare<txn-dir> = %template<txn-dir>.IO.is-relative
+                # resolve txn-dir path relative to template file
+                ?? ~join('/', $template.IO.dirname, %template<txn-dir>).IO.resolve
+                # absolute txn-dir path given, use it directly
+                !! %template<txn-dir>;
         }
         %prepare<date-local-offset> =
             Int(%template<date-local-offset>) if %template<date-local-offset>;
@@ -181,7 +181,7 @@ sub prepare(
     %prepare<pkgver> = $pkgver if $pkgver;
     %prepare<pkgrel> = Int($pkgrel) if $pkgrel;
     %prepare<pkgdesc> = $pkgdesc if $pkgdesc;
-    %prepare<txndir> = ~$txndir.IO.resolve if $txndir;
+    %prepare<txn-dir> = ~$txn-dir.IO.resolve if $txn-dir;
     %prepare<date-local-offset> = Int($date-local-offset) if $date-local-offset;
 
     # check for existence of pkgname, pkgver, and pkgrel
@@ -197,7 +197,7 @@ sub prepare(
 multi sub build(
     Str $content,
     Str :$dt!,
-    Str :$txndir,
+    Str :$txn-dir,
     Int :$date-local-offset,
     *%opts (
         Str :$pkgname,
@@ -210,7 +210,7 @@ multi sub build(
     my %txninfo = gen-txninfo($dt, |%opts);
 
     my %h;
-    %h<txndir> = $txndir if $txndir;
+    %h<txn-dir> = $txn-dir if $txn-dir;
     %h<date-local-offset> = Int($date-local-offset) if $date-local-offset;
     my @txn = from-txn($content, |%h);
 
@@ -224,7 +224,7 @@ multi sub build(
 multi sub build(
     Str :$file!,
     Str :$dt!,
-    Str :$txndir,
+    Str :$txn-dir,
     Int :$date-local-offset,
     *%opts (
         Str :$pkgname,
@@ -239,7 +239,7 @@ multi sub build(
     my %txninfo = gen-txninfo($dt, |%opts);
 
     my %h;
-    %h<txndir> = $txndir if $txndir;
+    %h<txn-dir> = $txn-dir if $txn-dir;
     %h<date-local-offset> = Int($date-local-offset) if $date-local-offset;
     my @txn = from-txn(:file($f), |%h);
 
@@ -403,4 +403,4 @@ sub has-pkgname-pkgver-pkgrel(%txninfo) returns Bool
 
 # end has-pkgname-pkgver-pkgrel }}}
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

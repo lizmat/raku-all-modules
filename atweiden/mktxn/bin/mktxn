@@ -1,4 +1,4 @@
-#!/usr/bin/perl6
+#!/usr/bin/env perl6
 
 
 
@@ -19,7 +19,7 @@ multi sub MAIN(
     Str :V(:$pkgver),
     Int :R(:$pkgrel),
     Str :D(:$pkgdesc),
-    Str :I(:$txndir),
+    Str :I(:$txn-dir),
     Int :L(:$date-local-offset),
     Str :T(:$template)
 )
@@ -29,7 +29,7 @@ multi sub MAIN(
     %opts<pkgver> = $pkgver if $pkgver;
     %opts<pkgrel> = $pkgrel if $pkgrel;
     %opts<pkgdesc> = $pkgdesc if $pkgdesc;
-    %opts<txndir> = ~$txndir.IO.resolve if $txndir;
+    %opts<txn-dir> = ~$txn-dir.IO.resolve if $txn-dir;
     %opts<date-local-offset> = Int($date-local-offset) if $date-local-offset;
     %opts<template> = $template if $template;
 
@@ -75,7 +75,7 @@ sub USAGE()
             [--pkgver=<version>]
             [--pkgrel=<release>]
             [--pkgdesc=<description>]
-            [--txndir=<dir>]
+            [--txn-dir=<dir>]
             [--date-local-offset=<offset>]
             [--template=<template>]
             <file>                              Make release build from file
@@ -92,7 +92,7 @@ sub USAGE()
         the release number of release build
       -D, --pkgdesc=<description>
         the description of release build
-      -I, --txndir=<dir>
+      -I, --txn-dir=<dir>
         the include directory
       -L, --date-local-offset=<offset>
         the local offset for dates without one
@@ -104,4 +104,4 @@ sub USAGE()
     say $HELP.trim;
 }
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:
