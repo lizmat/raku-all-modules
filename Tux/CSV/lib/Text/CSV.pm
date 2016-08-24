@@ -4,7 +4,7 @@ use v6.c;
 use Slang::Tuxic;
 use File::Temp;
 
-my $VERSION = "0.004";
+my $VERSION = "0.006";
 
 my constant $opt_v = %*ENV<PERL6_VERBOSE> // 1;
 
@@ -73,14 +73,13 @@ my %errors =
 
 sub progress (*@y) {
     my Str $x;
-    @y[0] = @y[0].Str;  # Still a bug
+    my @x = @y.map (*.Str);
     my $line = callframe (1).annotations<line>;
-    for (@y) {
-        #$opt_v > 9 and .say;
-        s{^(\d+)$}   = sprintf "@%3d %3d -", $line, $_;
+    for (@x) {
+        s{^(\d+)$}   = sprintf "%3d -", $_;
         s:g{"True,"} = "True, ";
         s:g{"new("}  = "new (";
-        $x ~= .Str ~ " ";
+        $x ~= $_ ~ " ";
         }
     $x.say;
     } # progress
@@ -262,6 +261,10 @@ class CSV::Field {
         $!text;
         }
 
+    method chars {
+        $!text.chars;
+        }
+
     method Buf {
         Buf.new ($!text.encode ("utf8-c8").list);
         }
@@ -312,10 +315,10 @@ class CSV::Field {
         !$!text.defined || $!text eq "" and
             return; # Default is False for both
 
-        $!text ~~ m{^ <[ \x09, \x20 .. \x7E ]>+ $} or
+        $!text ~~ m:m{^ <[ \x09, \x20 .. \x7E ]>+ $} or
             $!is_binary = True;
 
-        $!text ~~ m{^ <[ \x00       .. \x7F ]>+ $} or
+        $!text ~~ m:m{^ <[ \x00       .. \x7F ]>+ $} or
             $!is_utf8   = True;
         }
 
@@ -334,6 +337,12 @@ class CSV::Field {
         $!is_missing;
         }
 
+    method is-quoted ()  returns Bool { $.is_quoted; }
+    method is-binary ()  returns Bool { self.is_binary; }
+    method is-utf8 ()    returns Bool { self.is_utf8; }
+    method is-missing () returns Bool { self.is_missing; }
+
+    method set-quoted ()              { self.set_quoted; }
     } # CSV::Field
 
 class Text::CSV { ... }
@@ -351,6 +360,9 @@ class CSV::Row does Iterable does Positional does Associative {
     method AT-KEY (Str $k) { %($!csv.column_names Z=> @!fields){$k}; }
     method strings ()      { @!fields».Str; }
     method AT-POS (int $i) { @!fields.AT-POS ($i); }
+    method elems           { @!fields.elems; }
+    method splice (*@args) { @!fields.splice (@args); }
+    method keys ()         { $!csv.column_names; }
 
     multi method push (CSV::Field $f) { @!fields.push: $f; }
     multi method push (Cool       $f) { @!fields.push: CSV::Field.new ($f); }
@@ -647,8 +659,9 @@ class Text::CSV {
     method header (IO     $fh,
                    Array :$sep-set            = [< , ; >],
                    Any   :$munge-column-names = "fc",
-                   Bool  :$set-column-names   = True) {
-        my Str $hdr = $fh.get         or  self!fail (1010);
+                   Bool  :$set-column-names   = True,
+                   Bool  :$detect-bom         = True) { # unused for now
+        my Str $hdr = $fh.get           or  self!fail (1010);
 
         # Determine separator conflicts
         my %sep = $hdr.comb.Bag{$sep-set.list}:kv;
@@ -680,6 +693,13 @@ class Text::CSV {
         @!cnames;
         }
 
+    my %predef-hooks =
+        not_blank => { $^row.elems > 1 or $^row[0].defined && $^row[0] ne "" or $^row[0].is-quoted },
+        not_empty => { $^row.first: { .defined && $_ ne ""   }},
+        filled    => { $^row.first: { .defined && $_ ~~ /\S/ }};
+    %predef-hooks<not-blank> = %predef-hooks<not_blank>;
+    %predef-hooks<not-empty> = %predef-hooks<not_empty>;
+
     method callbacks (*@cb is copy) {
         if (@cb.elems == 1) {
             my $b = @cb[0];
@@ -700,7 +720,11 @@ class Text::CSV {
             }
         if (@cb.elems) {
             my %hooks;
-            for @cb -> $name, $hook {
+            for @cb -> $name, $callback {
+                my $hook = $callback;
+                $hook.defined && $hook ~~ Str && %predef-hooks{$hook}.defined and
+                    $hook = %predef-hooks{$hook};
+
                 $name.defined &&  $name ~~ Str     &&
                 $hook.defined && ($hook ~~ Routine || $hook ~~ Callable) or
                     self!fail (1004);
@@ -722,7 +746,7 @@ class Text::CSV {
     method !rfc7111ranges (Str:D $spec) returns RangeSet {
         $spec eq "" and self!fail (2013);
         my RangeSet $range = RangeSet.new;
-        for $spec.split (/ ";" /) -> $r {
+        for $spec.split (";") -> $r {
             $r ~~ /^ (<[0..9]>+)["-"[(<[0..9]>+)||("*")]]? $/ or self!fail (2013);
             my Int $from = +$0;
                    $from ==  0  and self!fail (2013);
@@ -1073,7 +1097,9 @@ class Text::CSV {
                         # $next ~~ /^ $eol $/ and return parse_done ();
                         if ($!eol.defined
                                 ?? $next eq $!eol
-                                !! $next ~~ /^ \r\n | \n | \r $/) {
+                                !! ( $next eq "\r\n"
+                                  || $next eq "\n"
+                                  || $next eq "\r")) {
                             return parse_done ();
                             }
 
@@ -1150,7 +1176,7 @@ class Text::CSV {
 
                     # ,1,"foo, 3\056",,bar,\r\n
                     #            ^
-                    if ($next ~~ /^ "0"/) {
+                    if ($next.starts-with ("0")) {
                         @ch[$i + 1] ~~ s{^ "0"} = "";
                         $ppos = $ppos + 1;
                         $opt_v > 8 and progress ($i, "Add NIL");
@@ -1186,7 +1212,7 @@ class Text::CSV {
                 #if ($chunk ~~ rx{^ $eol $}) {
                 if ($!eol.defined
                         ?? $chunk eq $!eol
-                        !! $chunk ~~ /^ \r\n | \n | \r $/) {
+                        !! ($chunk eq "\r\n" || $chunk eq "\n" || $chunk eq "\r")) {
                     $opt_v > 5 and progress ($i, "EOL - " ~ $f.gist);
                     if ($f.is_quoted) {     # 1,"2\n3"
                         $!binary or
@@ -1389,7 +1415,7 @@ class Text::CSV {
 
         my CellSet $cs = CellSet.new;
         # cell=1,1-2,2;3,3-4,4;1,4;4,1
-        for $spec.split (/ ";" /) -> $r {
+        for $spec.split (";") -> $r {
             $r ~~ /^     (<[0..9]>+)         ","  (<[0..9]>+)
                    ["-" [(<[0..9]>+)||("*")] "," [(<[0..9]>+)||("*") ]]?
                    $/ or self!fail (2013);
@@ -1499,6 +1525,16 @@ class Text::CSV {
         %args<enc >.defined and $encoding ||= %args<enc>  :delete;
         $fragment //= "";
 
+        # Indirect options to invoke headers
+        if ($encoding.defined && $encoding eq "auto") {
+            %args<detect-bom> = True;
+            $encoding = Str;
+            }
+        if ($headers ~~ Bool && ?$headers) {
+            %args<detect-bom> //= True;
+            $headers = Any;
+            }
+
         my $skip = %args<skip> :delete || 0 and
             self.rowrange (++$skip ~ "-*");
 
@@ -1509,9 +1545,10 @@ class Text::CSV {
         #   filter
         #   error
         #   on_in       on-in
-        my Routine $on-in;
-        my Routine $before-out;
+        my Callable $on-in;
+        my Callable $before-out;
         my %hooks;
+        my %hdrargs;
         if (my $c = %args<callbacks> :delete) {
             if ($c.defined) {
                 $c ~~ Hash or self!fail (1004);
@@ -1546,6 +1583,27 @@ class Text::CSV {
                 %hooks<error>        = %args{$k} :delete;
                 next;
                 }
+
+            if ($k.lc ~~ m{^ [ "detect" <[-_]> ]? "bom"         $}) {
+                %hdrargs<detect-bom>         = %args{$k} :delete;
+                next;
+                }
+            if ($k.lc ~~ m{^ "sep" [ <[-_]> "set" || "s" ]      $}) {
+                %hdrargs<sep-set>            = %args{$k} :delete;
+                next;
+                }
+            if ($k.lc ~~ m{^ "munge" [ <[-_]> "column" <[-_]> "names" ]? $}) {
+                %hdrargs<munge-column-names> = %args{$k} :delete;
+                next;
+                }
+            if ($k.lc ~~ m{^ "set" <[-_]> "column" <[-_]> "names" $}) {
+                %hdrargs<set-column-names>   = %args{$k} :delete;
+                next;
+                }
+            }
+        if ($on-in && !%hooks<after_parse>) {
+            %hooks<after_parse> = $on-in;
+            $on-in = Callable;
             }
         %hooks.keys and self.callbacks (|%hooks.list);
 
@@ -1646,6 +1704,15 @@ class Text::CSV {
                 }
             }
 
+        if (%hdrargs and $io-in) {
+            if ($headers.defined) {
+                %hdrargs<munge-column-names> = "none";
+                %hdrargs<set-column-names>   = False;
+                }
+            self.header ($io-in, |%hdrargs);
+            @!cnames.elems and $headers = @!cnames;
+            }
+
         my IO  $io-out;
         my Str $tmpfn;
         # out
@@ -1687,26 +1754,26 @@ class Text::CSV {
         # Find the correct spots to invoke $on-in and $before-out
 
         given $headers {
-            when Array {
+            when Array:D {
                 self.column_names ($headers.list);
                 }
-            when "auto" {
+            when Callable:D | Hash:D | Str:D {
+                my $hdr;
                 if ($io-in ~~ IO and $io-in.defined) {
-                    my $hdr = self.getline ($io-in, :!meta);
-                    self.column_names ($hdr.list);
+                    $hdr = self.getline ($io-in, :!meta);
                     }
                 elsif (@in.elems) {
-                    my $hdr = @in.shift;
-                    self.column_names ($hdr.list);
+                    $hdr = @in.shift;
                     }
-                $io-out.defined and self.say ($io-out, @!cnames);
-                }
-            when "skip" {
-                if ($io-in ~~ IO and $io-in.defined) {
-                    self.getline ($io-in, :!meta);
-                    }
-                elsif (@in.elems) {
-                    @in.shift;
+                unless ($headers ~~ Str && $headers eq "skip") {
+                    if ($hdr.defined) {
+                           if $headers ~~ Callable { $_  = $headers($_)       for @$hdr }
+                        elsif $headers ~~ Hash     { $_  = $headers{$_} // $_ for @$hdr }
+                        elsif $headers eq "uc"     { $_ .= uc                 for @$hdr }
+                        elsif $headers eq "lc"     { $_ .= lc                 for @$hdr }
+                        self.column_names ($hdr.list);
+                        }
+                    $io-out.defined and self.say ($io-out, @!cnames);
                     }
                 }
             }
@@ -1722,11 +1789,14 @@ class Text::CSV {
             @h = @!cnames.elems ?? @!cnames !! @in.shift.list;
         unless (?$out || ?$tmpfn) {
             if ($out ~~ Hash or @h.elems) {
+                # AOH
                 @h or return [];
-                @in.elems && @in[0] ~~ Hash and
-                    return @in; # Headers already dealt with
-                return [ @in.map (-> @r { $%( @h Z=> @r ) }) ];
+                @in.elems && @in[0] ~~ Hash or @in = @in.map (-> @r { $%( @h Z=> @r ) });
+                $key && @in[0]{$key}.defined and
+                    return $%( @in.map ({ %^h{$key} => %^h }) );
+                return @in;
                 }
+            # AOA
             return @in;
             }
 

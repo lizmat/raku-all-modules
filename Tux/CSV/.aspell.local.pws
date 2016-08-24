@@ -5,6 +5,7 @@ ASV
 attr
 bc
 BOM
+bom
 Buf
 ChangeLog
 colrange
@@ -21,6 +22,7 @@ EHR
 EIF
 EIO
 EIQ
+elems
 eol
 EOL
 ESC
@@ -33,6 +35,7 @@ hashrefs
 IANA
 INI
 jcsv
+Mattijsen
 multi
 munge
 ness
