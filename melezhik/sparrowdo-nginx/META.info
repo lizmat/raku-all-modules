@@ -1,0 +1,19 @@
+{
+  "name"        : "Sparrowdo::Nginx",
+  "version"     : "*",
+  "description" : "Sparrowdo module to install Nginx web server",
+  "authors" : [ "Alexey Melezhik"],
+  "depends"     : [
+                    "Sparrowdo"
+                  ],
+  "source-type" : "git",
+  "support" : {
+        "bugtracker" : "https://github.com/melezhik/sparrowdo-nginx/issues",
+        "source" : "https://github.com/melezhik/sparrowdo-nginx.git"
+    },
+   "provides" : {
+        "Sparrowdo::Nginx" : "lib/Sparrowdo/Nginx.pm6"
+  },
+  "resources" : [ "default.conf" ],
+  "source-url"  : "https://github.com/melezhik/sparrowdo-nginx.git"
+}
