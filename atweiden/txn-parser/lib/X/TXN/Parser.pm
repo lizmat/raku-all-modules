@@ -97,4 +97,4 @@ class TXNLibAbsolute is Exception
 
 # end X::TXN::Parser::TXNLibAbsolute }}}
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

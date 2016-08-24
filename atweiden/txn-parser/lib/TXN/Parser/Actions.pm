@@ -7,7 +7,7 @@ unit class TXN::Parser::Actions;
 # public attributes {{{
 
 # base path for <include> directives
-has Str $.txndir = "%*ENV<HOME>/.config/mktxn/txn";
+has Str $.txn-dir = "$*HOME/.config/mktxn/txn";
 
 # DateTime offset for when the local offset is omitted in dates. if
 # not passed as a parameter during instantiation, use UTC (0)
@@ -414,7 +414,7 @@ method date-time($/)
 
 method date:full-date ($/)
 {
-    make DateTime.new(|$<full-date>.made, :timezone($.date-local-offset));
+    make Date.new(|$<full-date>.made);
 }
 
 method date:date-time-omit-local-offset ($/)
@@ -478,7 +478,7 @@ method description($/)
 method header($/)
 {
     # entry date
-    my DateTime $date = $<date>.made;
+    my Dateish $date = $<date>.made;
 
     # entry description
     my Str $description = $<description> ?? $<description>.made !! '';
@@ -715,7 +715,7 @@ method include:filename ($/ is copy)
 
     my UInt @entry-number = |@.entry-number.deepmap(*.clone), 0;
     my TXN::Parser::Actions $actions .=
-        new(:@entry-number, :$.date-local-offset, :file($filename), :$.txndir);
+        new(:@entry-number, :$.date-local-offset, :file($filename), :$.txn-dir);
     TXN::Parser::Grammar.parsefile($filename, :$actions);
     push @!entries, |$actions.entries;
     @!entry-number[*-1]++;
@@ -728,7 +728,7 @@ method include:txnlib ($/ is copy)
         die X::TXN::Parser::TXNLibAbsolute(:lib($<txnlib>.made));
     }
 
-    my Str $filename = join('/', $.txndir, $<txnlib>.made) ~ '.txn';
+    my Str $filename = join('/', $.txn-dir, $<txnlib>.made) ~ '.txn';
 
     unless $filename.IO.e && $filename.IO.r && $filename.IO.f
     {
@@ -737,7 +737,7 @@ method include:txnlib ($/ is copy)
 
     my UInt @entry-number = |@.entry-number.deepmap(*.clone), 0;
     my TXN::Parser::Actions $actions .=
-        new(:@entry-number, :$.date-local-offset, :file($filename), :$.txndir);
+        new(:@entry-number, :$.date-local-offset, :file($filename), :$.txn-dir);
     TXN::Parser::Grammar.parsefile($filename, :$actions);
     push @!entries, |$actions.entries;
     @!entry-number[*-1]++;
@@ -793,4 +793,4 @@ method TOP($/)
 
 # end journal grammar-actions }}}
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

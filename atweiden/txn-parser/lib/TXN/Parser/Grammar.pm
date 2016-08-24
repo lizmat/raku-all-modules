@@ -6,7 +6,7 @@ unit grammar TXN::Parser::Grammar;
 
 proto token gap {*}
 token gap:spacer { \s }
-token gap:comment { <.comment> \n }
+token gap:comment { <.comment> $$ }
 
 # end disposable grammar }}}
 # comment grammar {{{
@@ -467,22 +467,21 @@ token var-name:bare { <+alnum +[-]>+ }
 token var-name:quoted { <var-name-string> }
 
 # end variable grammar }}}
-# reserved words grammar {{{
+# entry grammar {{{
 
-my Str @reserved-words = qw<assets base-costing base-currency>;
-
-token reserved
+regex entry
 {
-    :i @reserved-words
+    <header>
+    <postings>
 }
 
-# end reserved words grammar }}}
-# header grammar {{{
+# --- header grammar {{{
 
 regex header
 {
-    ^^ \h* <date> <.gap>+ [ <metainfo> <.gap>+ ]?
-    [ <description> <.gap>+ [ <metainfo> <.gap>+ ]? ]?
+    ^^ \h* <date> [ <.gap>+ <metainfo> ]?
+    [ <.gap>+ <description> [ <.gap>+ <metainfo> ]? ]?
+    <.gap>*
 }
 
 token description
@@ -514,12 +513,12 @@ token tag
     '#' <var-name>
 }
 
-# end header grammar }}}
-# posting grammar {{{
+# --- end header grammar }}}
+# --- posting grammar {{{
 
 token postings
 {
-    <posting-line>+
+    [ \n <posting-line> ]+
 }
 
 proto token posting-line {*}
@@ -531,7 +530,7 @@ token posting-line:comment
 
 token posting-line:content
 {
-    ^^ \h* <posting> \h* <.comment>? $$ \n
+    ^^ \h* <posting> \h* <.comment>? $$
 }
 
 token posting
@@ -539,7 +538,7 @@ token posting
     <account> \h+ <amount>
 }
 
-# --- posting account grammar {{{
+# --- --- posting account grammar {{{
 
 token account
 {
@@ -585,8 +584,8 @@ token acct-name
     <var-name> [ <account-delimiter> <var-name> ]*
 }
 
-# --- end posting account grammar }}}
-# --- posting amount grammar {{{
+# --- --- end posting account grammar }}}
+# --- --- posting amount grammar {{{
 
 token amount
 {
@@ -680,14 +679,16 @@ token xe-lot
     '[' \h* <var-name> \h* ']'
 }
 
-# --- end posting amount grammar }}}
+# --- --- end posting amount grammar }}}
 
-# end posting grammar }}}
+# --- end posting grammar }}}
+
+# end entry grammar }}}
 # include grammar {{{
 
 token include-line
 {
-    ^^ \h* <include> \h* <.comment>? $$ \n
+    ^^ \h* <include> \h* <.comment>? $$
 }
 
 proto token include {*}
@@ -722,7 +723,13 @@ token TOP
 
 token journal
 {
-    <segment>*
+    [
+        <segment>
+        [
+            \n <segment>
+        ]*
+    ]?
+    \n?
 }
 
 proto token segment {*}
@@ -733,21 +740,14 @@ token segment:include { <include-line> }
 
 token blank-line
 {
-    ^^ \h* $$ \n
+    ^^ \h* $$
 }
 
 token comment-line
 {
-    ^^ \h* <.comment> $$ \n
-}
-
-regex entry
-{
-    <header>
-    <.gap>*
-    <postings>
+    ^^ \h* <.comment> $$
 }
 
 # end journal grammar }}}
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

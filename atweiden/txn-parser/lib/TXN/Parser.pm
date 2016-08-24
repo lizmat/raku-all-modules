@@ -8,7 +8,7 @@ method parse(
     Str:D $content,
     *%opts (
         Int :$date-local-offset,
-        Str :$txndir
+        Str :$txn-dir
     )
 ) returns Match
 {
@@ -21,7 +21,7 @@ method parsefile(
     Str:D $file,
     *%opts (
         Int :$date-local-offset,
-        Str :$txndir
+        Str :$txn-dir
     )
 ) returns Match
 {
@@ -30,4 +30,4 @@ method parsefile(
         or die X::TXN::Parser::ParsefileFailed.new;
 }
 
-# vim: ft=perl6
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

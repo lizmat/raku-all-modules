@@ -45,7 +45,7 @@ subtest
 
     sub is-valid-include-line(Str:D $include-line) returns Bool:D
     {
-        TXN::Parser::Grammar.parse($include-line, :rule<include-line>).so;
+        TXN::Parser::Grammar.parse($include-line.trim, :rule<include-line>).so;
     }
 
     ok(
@@ -108,7 +108,7 @@ subtest
 
     sub is-valid-entry(Str:D $entry) returns Bool:D
     {
-        TXN::Parser::Grammar.parse($entry, :rule<entry>).so;
+        TXN::Parser::Grammar.parse($entry.trim, :rule<entry>).so;
     }
 
     ok(
@@ -164,4 +164,4 @@ subtest
 
 # end journal grammar tests }}}
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:
