@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://gitlab.com/samcns/uzu.git
+	branch = master
+	commit = 46d2581ad4237b0973c9c6758d23425098aedc27
+	parent = 8763ced8c44a1c40dc03a633b9b98e6698d6ddca
+	cmdver = 0.2.3
