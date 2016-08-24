@@ -1,19 +1,19 @@
 {
-  "name" : "Algorithm::MinMaxHeap",
-  "source-url" : "git://github.com/titsuki/p6-Algorithm-MinMaxHeap.git",
-  "perl" : "6.c",
-  "resources" : [ ],
-  "build-depends" : [ ],
-  "provides" : {
-    "Algorithm::MinMaxHeap::Comparable" : "lib/Algorithm/MinMaxHeap/Comparable.pm6",
-    "Algorithm::MinMaxHeap" : "lib/Algorithm/MinMaxHeap.pm6",
-    "Algorithm::MinMaxHeap::CmpOperator" : "lib/Algorithm/MinMaxHeap/CmpOperator.pm6"
-  },
-  "depends" : [ ],
-  "description" : "double ended priority queue",
-  "test-depends" : [ ],
-  "version" : "0.11",
   "authors" : [
     "titsuki"
-  ]
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "double ended priority queue",
+  "name" : "Algorithm::MinMaxHeap",
+  "perl" : "6.c",
+  "provides" : {
+    "Algorithm::MinMaxHeap" : "lib/Algorithm/MinMaxHeap.pm6",
+    "Algorithm::MinMaxHeap::CmpOperator" : "lib/Algorithm/MinMaxHeap/CmpOperator.pm6",
+    "Algorithm::MinMaxHeap::Comparable" : "lib/Algorithm/MinMaxHeap/Comparable.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/titsuki/p6-Algorithm-MinMaxHeap.git",
+  "test-depends" : [ ],
+  "version" : "0.12"
 }
