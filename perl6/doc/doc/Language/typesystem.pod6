@@ -2,21 +2,150 @@
 
 =TITLE Typesystem
 
-=SUBTITLE Introduction to the type system of Perl 6
+=SUBTITLE Introduction to the type system of Perl 6
 
-=head1 Definition of a Perl 6 Type
+=head1 Definition of a Perl 6 Type
 
-TODO
+A type defines a new object by creating a type object that provides an
+interface to create instances of objects. Any type object is a subclass of
+L<Any|/type/Mu> or L<Mu|/type/Mu>. Introspection methods are provided via
+inheritance from those base classes and the introspection postfix
+L<.^|/language/operators#postfix_.^>. A new type is introduced to the current
+scope by one of the following type declarators at compile time or with the
+L<meta object protocol|/language/mop> at runtime. All type object names must be
+unique in their scope.
+
+=head2 Type objects
+
+To test if an object is a type object, test for definedness and check for
+identity between the object and it's C<.WHAT> pseudo-method. Note that the
+method C<.defined> can be overloaded and may provide false information.
+
+    my $a = Int;
+    say so $a // $a === $a.WHAT;
+    # OUTPUT«True␤»
+
+=head3 Undefinedness
+
+Undefined objects maintain type information in Perl 6. Type objects are used to
+represent both undefinedness and the type of the undefined value. To provide a
+general undefined value use L<Any|/type/Any>. If differentiation from C<Any>,
+the default type for containers and arguments, is required use L<Mu|/type/Mu>.
+
+Instances of objects created by L<.CREATE|/type/Mu#method_CREATE> are by
+convention defined. The method L<.defined|/type/Mu#routine_defined> will return
+C<Bool::True> to indicate definedness. The exceptions to that rule are
+L<Nil|/type/Nil> and L<Failure|/type/Failure>. Please note that any object is
+able to overload C<.defined> and as such can carry additional information.
+Also, Perl 6 makes a clear distinction between definedness and trueness. Many
+values are defined even though they carry the meaning of wrongness or
+emtpyness. Such values are C<0>, L<Bool::False|/type/Bool>,
+L<()|/language/operators#term_(_)> (empty list) and L<NaN|/type/Num#NaN>.
+
+Values can become undefined at runtime via L<mixin|/language/operators#infix_but>.
+
+    my Int $i = 1 but role :: { method defined { False } };
+    say $i // "undefined";
+    # OUTPUT«undefined␤»
+
+To test for definedness call C<.defined>, use
+L<//|/language/operators#infix_//>,
+ L<with/without|/language/control#with,_orwith,_without> and
+L<signatures|/type/Signature#Constraining_Defined_and_Undefined_Values>
 
 =head1 Type Declarators
 
-TODO
+Type declarators introduce a new type into the given scope. Nested scopes can
+be separated by C<::>. New L<packages|/language/packages> are created
+automatically if no such scope exists already.
+
+    class Foo::Bar::C {};
+    put Foo::Bar::.keys;
+    # OUTPUT«C␤»
+
+X«|... (forward declaration)»
+X«Forward declarations» can be provided with a block containing only C<...>. The
+compiler will check at the end of the current scope if the type is defined.
+
+    class C {...}
+    # many lines later
+    class C { has $.attr }
 
 =head2 C<class>
 
 TODO
 
+=head3 Attributes
+
+=head4 Private Attributes
+
+Private L<attribute|/type/Attribute>s are addressed with any of the twigils C<$!>, C<@!> and
+C<%!>. They do not have public accessor methods generated automatically.  As
+such they can not be altered from outside the class they are defined in.
+
+    class C {
+        has $!priv;
+        submethod BUILD { $!priv = 42 }
+    };
+
+    say (.name, .package, .has_accessor) for C.new.^attributes;
+    # OUTPUT«($!priv (C) False)␤»
+
+X«|method (declarator)»
 =head3 Methods
+
+X«|only method»
+=head4 Only Method
+
+To explicitly state that a method is not a multi method use the C<only method> declarator.
+
+=for code :skip-test
+class C {
+    only method m {};
+    multi method m {};
+};
+# OUTPUT«X::Comp::AdHoc: Cannot have a multi candidate for 'm' when an only method is also in the package 'C'␤»
+
+=head4 Submethod BUILD
+
+The L<submethod|/type/Submethod> C<BUILD> is called by C<.BUILDALL> defined in
+L</type/Mu>, which in turn is called by L<.bless|/type/Mu#method_bless>. It is
+meant to set private and public attributes of a class and receives all names
+attributes passed into C<.bless>. Since it is called by C<BUILDALL> it is
+called by the default constructor L<.new|/type/Mu#method_new> defined in C<Mu>.
+Public accessor methods are not available in C<BUILD> use private attribute
+notation instead.
+
+    class C {
+        has $.attr;
+        submethod BUILD (:$attr = 42) {
+            $!attr = $attr
+        };
+        multi method new($positional) {
+            self.bless(:attr($positional), |%_)
+       }
+    };
+
+    C.new.say; C.new('answer').say;
+    # OUTPUT:
+    # C.new(attr => 42)
+    # C.new(attr => "answer")
+
+=head4 Fallback method
+X<|FALLBACK (method)>
+
+A method with the special name C<FALLBACK> will be called when other means to
+resolve the name produce no result. The first agument holds the name and all
+following arguments are forwarded from the original call. Multi methods and
+L«subsignatures|/type/Signature#Subsignatures» are supported.
+
+    class Magic {
+        method FALLBACK ($name, |c(Int, Str)) {
+        put "$name called with parameters {c.perl}"  }
+    };
+    Magic.new.simsalabim(42, "answer");
+
+    # OUTPUT: «simsalabim called with parameters ⌈\(42, "answer")⌋␤»
 
 =head4 Reserved Method Names
 
@@ -33,6 +162,17 @@ methods from foreign objects.
     say A.new.WHAT; # OUTPUT«(A)␤»
     say A.new."WHAT"() # OUTPUT«ain't gonna happen␤»
 
+=head4 Methods in package scope
+
+Any C<our> scoped method will be visible in the package scope of a class.
+
+    class C {
+        our method packaged {};
+        method loose {}
+    };
+    dd C::.keys
+    # OUTPUT«("\&packaged",).Seq␤»
+
 =head4 Setting Attributes with Namesake Variables and Methods
 
 Instead of writing C<< attr => $attr >> or C<:attr($attr)>, you can save some
@@ -47,7 +187,7 @@ shares the name with the attribute:
     my $a = B.new.m;
     say $a.i; # OUTPUT«answer␤»
 
-Since C<$.i> method call is named C<i> and the attribute is named C<i>, Perl 6
+Since C<$.i> method call is named C<i> and the attribute is named C<i>, Perl 6
 lets us shortcut. The same applies to C<:$var>, C<:$!private-attribute>,
 C<:&attr-with-code-in-it>, and so on.
 
@@ -79,8 +219,9 @@ for the object that the call is delegated to can be provided.
 
 Instead of a method name a list of names, a C<Regex> or a C<Whatever> can be
 provided. In the latter case existing methods, both in the class itself and
-it's inheritance chain, will take precedence. If even local C<FALLBACK>s should
-be searched use a C<HyperWhatever>.
+it's inheritance chain, will take precedence. If even local
+X«C<FALLBACK>|FALLBACK (trait handles)»s should be searched use a
+C<HyperWhatever>.
 
     class A {
         method m1(){}
@@ -109,8 +250,8 @@ inheritance the trait can be applied more then once. Adding parents to a class
 will import their methods into the target class. If the same method name occurs
 in multiple parents, the first added parent will win.
 
-If no C<is> trait is provided the default of L<C<Any>|/type/Any)> will be used
-as a parent class. This forces all Perl 6 objects to have the same set of basic
+If no C<is> trait is provided the default of L<C<Any>|/type/Any> will be used
+as a parent class. This forces all Perl 6 objects to have the same set of basic
 methods to provide an interface for introspection and coercion to basic types.
 
     class A {
@@ -128,9 +269,44 @@ methods to provide an interface for introspection and coercion to basic types.
     dd C.new.from-a();
     # OUTPUT«"A::from-a"␤»
 
-=head3 trait C<is required>
+=head3 trait X«C<is rw>|is rw (class)»
 
-TODO
+Defined as:
+
+    sub trait_mod:<is>(Mu:U $type, :$rw!)
+
+The trait C<is rw> on a class will create writeable accessor methods on all
+public attributes of that class.
+
+    class C is rw {
+        has $.a;
+    };
+    my $c = C.new.a = 42;
+    dd $c; # OUTPUT«Int $c = 42␤»
+
+=head3 X«trait C<is required>|is required»
+
+Defined as:
+
+    multi sub trait_mod:<is>(Attribute $attr, :$required!)
+
+Marks a class or roles attribute as required. If the attribute is not
+initialized at object construction time throws
+L<X::Attribute::Required|/type/X::Attribute::Required>.
+
+    class Correct {
+        has $.attr is required;
+        submethod BUILD (:$attr) { $!attr = $attr }
+    }
+    say Correct.new(attr => 42);
+    # OUTPUT«Correct.new(attr => 42)␤»
+
+    class C {
+        has $.attr is required;
+    }
+    C.new;
+    CATCH { default { say .^name => .Str } }
+    # OUTPUT«X::Attribute::Required => The attribute '$!attr' is required, but you did not provide a value for it.␤»
 
 =head3 trait C<does>
 
@@ -142,13 +318,28 @@ TODO
 
 =head3 trait C<trusts>
 
-TODO
+To allow one class to access the private methods of another class use the trait
+C<trusts>. A forward declaration of the trusted class may be required.
 
-=head3 Versioning and Authership
+    class B {...};
+    class A {
+        trusts B;
+        has $!foo;
+        method !foo { return-rw $!foo }
+        method perl { "A.new(foo => $!foo)" }
+    };
+    class B {
+        has A $.a .= new;
+        method change { $!a!A::foo = 42; self }
+    };
+    say B.new.change;
+    # OUTPUT«B.new(a => A.new(foo => 42))␤»
 
-Versioning and authership can be applied via adverbs C«:ver<>» and C«:auth<>.
+=head3 Versioning and Authorship
+
+Versioning and authership can be applied via adverbs C«:ver<>» and C«:auth<>».
 Both take a string as argument, for C<:ver> the string is converted to a
-L<Version|/type/Version> object. To query a class version and auther use
+L<Version|/type/Version> object. To query a class version and author use
 C<.^ver> and C<^.auth>.
 
     class C:ver<4.2.3>:auth<me@here.local> {}
@@ -159,12 +350,26 @@ C<.^ver> and C<^.auth>.
 
 TODO
 
-Versioning and authership can be applied via adverbs C«:ver<>» and C«:auth<>.
+=head3 Role Arguments
+
+Roles can be provided with parameters in-between C<[]> behind a roles name.
+X<|Type Capture (role)>L<Type captures|/type/Signature#Type_Captures> are supported.
+
+    role R[$d] { has $.a = $d };
+    class C does R["default"] { };
+
+    my $c = C.new;
+    dd $c;
+    # OUTPUT«C $c = C.new(a => "default")␤»
+
+=head3 Versioning and Authorship
+
+Versioning and authorship can be applied via adverbs C«:ver<>» and C«:auth<>».
 Both take a string as argument, for C<:ver> the string is converted to a
-L<Version|/type/Version> object. To query a roles version and auther use
+L<Version|/type/Version> object. To query a roles version and author use
 C<.^ver> and C<^.auth>.
 
-    class R:ver<4.2.3>:auth<me@here.local> {}
+    role R:ver<4.2.3>:auth<me@here.local> {}
     say [R.^ver, R.^auth];
     # OUTPUT«[v4.2.3 me@here.local]␤»
 
@@ -186,8 +391,9 @@ Stringification of the symbol will provide the key of the enum-pair.
     say name1.value, ' ', name2.value; # OUTPUT«1 2␤»
 
 Comparing symbols will use type information and the value of the enum-pair. As
-value types C<Numerical> an C<Str> are supported.
+value types C<Numerical> and C<Str> are supported.
 
+    enum Names ( name1 => 1, name2 => 2 );
     sub same(Names $a, Names $b){
        $a eqv $b
     }
@@ -241,44 +447,50 @@ Returns the list of enum-pairs. Works both on the enum type and any key.
 
 Returns the key of an enum-pair.
 
-   say g.key; # OUTPUT«g␤»
+=for code :skip-test
+say g.key; # OUTPUT«g␤»
 
 =head4 method value
 
 Returns the value of an enum-pair.
 
-    say g.value; # OUTPUT«1␤»
+=for code :skip-test
+say g.value; # OUTPUT«1␤»
 
 =head4 method pair
 
 Defined as:
 
-    method pair(::?CLASS:D:)
+=for code :skip-test
+method pair(::?CLASS:D:)
 
 Returns a C<Pair> of the enum-pair.
 
-    say g.pair; # OUTPUT«g => 1␤»
+=for code :skip-test
+say g.pair; # OUTPUT«g => 1␤»
 
 =head4 method kv
 
 Defined as:
 
-    multi method kv(::?CLASS:D:)
+=for code :skip-test
+multi method kv(::?CLASS:D:)
 
 Returns a list with key and value of the enum-pair.
 
-    say g.kv; # OUTPUT«(g 1)␤»
+=for code :skip-test
+say g.kv; # OUTPUT«(g 1)␤»
 
 
 =head2 C<module>
 
 TODO
 
-=head3 Versioning and Authership
+=head3 Versioning and Authorship
 
-Versioning and authership can be applied via adverbs C«:ver<>» and C«:auth<>.
+Versioning and authorship can be applied via adverbs C«:ver<>» and C«:auth<>».
 Both take a string as argument, for C<:ver> the string is converted to a
-L<Version|/type/Version> object. To query a modules version and auther use
+L<Version|/type/Version> object. To query a modules version and author use
 C<.^ver> and C<^.auth>.
 
     module M:ver<4.2.3>:auth<me@here.local> {}
@@ -287,19 +499,17 @@ C<.^ver> and C<^.auth>.
 
 =head2 C<package>
 
-=head3 Versioning and Authership
-
 TODO
 
 =head2 C<grammar>
 
 TODO
 
-=head3 Versioning and Authership
+=head3 Versioning and Authorship
 
-Versioning and authership can be applied via adverbs C«:ver<>» and C«:auth<>.
+Versioning and authorship can be applied via adverbs C«:ver<>» and C«:auth<>».
 Both take a string as argument, for C<:ver> the string is converted to a
-L<Version|/type/Version> object. To query a grammars version and auther use
+L<Version|/type/Version> object. To query a grammars version and author use
 C<.^ver> and C<^.auth>.
 
     grammar G:ver<4.2.3>:auth<me@here.local> {}
@@ -314,6 +524,8 @@ will be checked against the given code object.
 
     subset Positive of Int where * > -1;
     my Positive $i = 1;
-    $i = -42; # OUTPUT«Type check failed in assignment to $i; expected Positive but got Int (-42)␤ …»
+    $i = -42;
+    CATCH { default { put .^name,': ', .Str } }
+    # OUTPUT«X::TypeCheck::Assignment: Type check failed in assignment to $i; expected Positive but got Int (-42)␤ …»
 
 =end pod

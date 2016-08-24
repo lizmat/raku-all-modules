@@ -1,0 +1,31 @@
+=begin pod
+
+=TITLE Experimental Features
+
+=SUBTITLE New features for brave users
+
+During Perl 6 development, new features are often made available for
+users to experimental with before their design is completed. Eventually
+these features may be made part of the Perl 6 specification.  To use these
+features, one uses the C<experimental> pragma in program source code, for
+example, like this:
+
+=begin code
+use experimental :macros;
+=end code
+
+Following is a list of current experimental features and a short
+description of each features's purpose or a link to more details about
+its use.  (Note: Features marked marked "[TBD]" are to be defined
+later.)
+
+=comment The following should be a table but formatting in tables is
+not yet rendered properly.
+
+=item X<B<cache>|cache> [TBD]
+
+=item X<B<macros>|macros> [TBD]
+
+=item X<B<pack>|pack> [TBD]
+
+=end pod

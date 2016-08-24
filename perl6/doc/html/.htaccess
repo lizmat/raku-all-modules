@@ -6,5 +6,16 @@ RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=permanent,L]
 RewriteCond %{HTTP_HOST} ^doc.perl6.org [NC]
 RewriteRule ^(.*)$ https://docs.perl6.org/$1 [R=permanent,L]
 
+RewriteRule ^type/(.*?)::(.*) /type/$1\$COLON\$COLON$2 [N]
+
 Redirect 301 /language/5to6 https://docs.perl6.org/language/5to6-nutshell
+Redirect 301 /examples      http://examples.perl6.org/
+Redirect 301 /examples.html http://examples.perl6.org/
+Redirect 301 /webchat       https://webchat.freenode.net/?channels=#perl6
+Redirect 301 /webchat.html  https://webchat.freenode.net/?channels=#perl6
 ErrorDocument 404 /404.html
+
+<IfModule mod_deflate.c>
+  SetOutputFilter DEFLATE
+  AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css application/x-javascript application/javascript application/json
+</IfModule>

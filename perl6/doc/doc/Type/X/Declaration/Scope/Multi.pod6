@@ -10,7 +10,8 @@ Thrown when a multi is declared with an incompatible scope.
 
 For example C<our multi sub foo() { }> dies with
 
-    ===SORRY!===
-    Cannot use 'our' with individual multi candidates. Please declare an our-scoped proto instead
+=for code :skip-test
+===SORRY!===
+Cannot use 'our' with individual multi candidates. Please declare an our-scoped proto instead
 
 =end pod

@@ -6,23 +6,32 @@
 
 Lists have been a central part of computing since before there
 were computers, during which time many devils have taken up residence in
-their details.  They were actually one of the hardest parts of Perl 6
-to design, but through persistence and patience, Perl 6 has arrived with
+their details. They were actually one of the hardest parts of Perl 6
+to design, but through persistence and patience, Perl 6 has arrived with
 an elegant system for handling them.
 
 =head1 Literal Lists
 
-Literal L<C<List>s|/type/List> are created with commas B<not> with
-parentheses, so:
+Literal L<C<List>s|/type/List> are created with commas and semicolons B<not>
+with parentheses, so:
 
     1, 2        # This is two-element list
-    (1, 2)      # This is also a list, in parentheses
-    (1)         # This is not a list, just a 1 in parentheses
-    (1,)        # This is a one-element list
+    (1, 2)      # This is also a List, in parentheses
+    (1; 2)      # same List
+    (1)         # This is not a List, just a 1 in parentheses
+    (1,)        # This is a one-element List
 
-Parentheses can be used to mark the beginning and end of a list, so:
+Parentheses can be used to mark the beginning and end of a C<List>, so:
 
     (1, 2), (1, 2) # This is a list of two lists.
+
+Multidimensional literal C<List>s are created combining comma and semicolon.
+They can be used in routine argument lists and subscripts.
+
+    say so (1,2; 3,4) eqv ((1,2), (3,4));
+    # OUTPUT«True␤»
+    say('foo';); # a list with one element and the empty list
+    # OUTPUT«(foo)()␤»
 
 Individual elements can be pulled out of a list using a subscript.  The
 first element of a list is at index number zero:
@@ -34,22 +43,33 @@ first element of a list is at index number zero:
 
 =head1 The @ sigil
 
-Variables in Perl 6 whose names bear the C<@> sigil are expected to
-contain some sort of list-like object.  Of course, other variables may
+Variables in Perl 6 whose names bear the C<@> sigil are expected to
+contain some sort of list-like object. Of course, other variables may
 also contain these objects, but C<@>-sigiled variables always do, and
 are expected to act the part.
 
-By default, when you assign a list to an C<@>-sigiled variable, you create
-an C<Array>.  Those are described below.  If, instead you want to put an actual
+By default, when you assign a C<List> to an C<@>-sigiled variable, you create
+an C<Array>. Those are described below. If, instead you want to put an actual
 C<List> into an C<@>-sigiled variable, you can use binding with C<:=> instead.
 
     my @a := 1, 2, 3;
 
+Assigning Lists of Lists to C<@>-sigiled variables does not provide the same
+shortcut. In this case the outer List becomes the first element of the Array.
+
+    my @a = (1,2; 3,4);
+    say @a.flat;
+    # OUTPUT«((1 2) (3 4))␤»
+    @a := (1,2; 3,4);
+    say @a.flat;
+    # OUTPUT«((1 2 3 4)␤»
+
 One of the ways C<@>-sigiled variables act like lists is by always supporting
-L<positional subscripting|/language/subscripts>.  Anything bound to a C<@>-sigiled
+L<positional subscripting|/language/subscripts>. Anything bound to a C<@>-sigiled
 value must support the L<Positional|/type/Positional> role which guarantees this:
 
     my @a := 1; # Type check failed in binding; expected Positional but got Int
+
 
 =head1 Reset a List Container
 
@@ -75,8 +95,8 @@ To test for elements convert the C<List> or C<Array> to a L<C<Set>|/type/Set>
 or use a Set L<operator|/language/setbagmix>.
 
     my @a = <foo bar buzz>;
-    say @a.Set<bar buzz>; # OUTPUT«(True True)␤»
-    say so 'bar' ∈ @a;    # OUTPUT«True␤»
+    say @a.Set<bar buzz>; # (True True)
+    say so 'bar' ∈ @a;    # True
 
 =head2 Sequences
 
@@ -86,9 +106,9 @@ As it so happens, loops return C<Seq>s.
 
     (loop { 42.say })[2] # says 42 three times
 
-So, it is fine to have infinite lists in Perl 6, just so long as you never
+So, it is fine to have infinite lists in Perl 6, just so long as you never
 ask them for all their elements.  In some cases, you may want to avoid
-asking them how long they are too -- Perl 6 will try to return C<Inf> if
+asking them how long they are too -- Perl 6 will try to return C<Inf> if
 it knows a sequence is infinite, but it cannot always know.
 
 =comment TODO link or describe C<...>
@@ -287,11 +307,11 @@ including the bounds. For infinite upper boundaries we agree with
 mathematicians that C<Inf> equals C<Inf-1>.
 
     my @a = 1..5;
-    say @a[0..2]; # OUTPUT«(1 2 3)␤»
-    say @a[0..^2]; # OUTPUT«(1 2)␤»
-    say @a[0..*];  # OUTPUT«(1 2 3 4 5)␤␤»
-    say @a[0..^*]; # OUTPUT«(1 2 3 4 5)␤»
-    say @a[0..Inf-1]; # OUTPUT«(1 2 3 4 5)␤»
+    say @a[0..2];     # (1 2 3)
+    say @a[0..^2];    # (1 2)
+    say @a[0..*];     # (1 2 3 4 5)
+    say @a[0..^*];    # (1 2 3 4 5)
+    say @a[0..Inf-1]; # (1 2 3 4 5)
 
 =head2 Array Constructor Context
 
@@ -379,7 +399,7 @@ good practice to perform additional type checks, where it matters:
 However, as long as you stick to normal assignment operations inside a trusted
 area of code, this will not be a problem, and typecheck errors will happen
 promptly during assignment to the array, if they cannot be caught at compile
-time.  None of the core functions provided in Perl 6 for operating on lists
+time.  None of the core functions provided in Perl 6 for operating on lists
 should ever produce a wonky typed Array.
 
 Nonexistent elements (when indexed), or elements to which C<Nil> has been assigned,
@@ -409,14 +429,22 @@ the C<shape> method.
     say @a.shape;
     # OUTPUT«(2 2)␤»
 
+Assignment to a fixed size Array will promote a List of Lists to an Array of
+Arrays.
+
+    my @a[2;2] = (1,2; 3,4);
+    @a[1;1] = 42;
+    dd @a;
+    # OUTPUT«Array.new(:shape(2, 2), [1, 2], [3, 42])␤»
+
 =head2 Itemization
 
 For most uses, Arrays consist of a number of slots each containing a C<Scalar> of
 the correct type.  Each such C<Scalar>, in turn, contains a value of that type.
-Perl 6 will automatically type-check values and create Scalars to contain them
+Perl 6 will automatically type-check values and create Scalars to contain them
 when Arrays are initialized, assigned to, or constructed.
 
-This is actually one of the trickiest parts of Perl 6 list handling to get a
+This is actually one of the trickiest parts of Perl 6 list handling to get a
 firm understanding of.
 
 First, be aware that because itemization in Arrays is assumed, it essentially
@@ -451,9 +479,9 @@ This can irk users of data you provide if you have deeply nested Arrays
 where they want flat data.  Currently they have to deeply map the structure
 by hand to undo the nesting:
 
-    say gather [0, [(1, 2), [3, 4]], $(5, 6)].deepmap: *.take; # 1 2 3 4 5 6
+    say gather [0, [(1, 2), [3, 4]], $(5, 6)].deepmap: *.take; # (1 2 3 4 5 6)
 
-...future versions of Perl 6 might find a way to make this easier.  However,
+...future versions of Perl 6 might find a way to make this easier.  However,
 not returning Arrays or itemized lists from functions, when non-itemized lists
 are sufficient, is something that one should consider as a courtesy to their
 users:

@@ -11,11 +11,13 @@ is not fully qualified.
 
 For example
 
-    1!priv
+=for code :skip-test
+1!priv
 
 dies with
 
-    Private method call to priv must be fully qualified with the package containing the method
+=for code :skip-test
+Private method call to priv must be fully qualified with the package containing the method
 
 =head1 Methods
 

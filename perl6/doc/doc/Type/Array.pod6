@@ -4,7 +4,7 @@
 
 =SUBTITLE Sequence of itemized values
 
-    class Array is List { ... }
+    class Array is List {}
 
 An C<Array> is a L<List> which forces all its elements to be
 scalar containers, which means you can assign to array elements.
@@ -18,23 +18,16 @@ Defined as:
     multi sub    pop(Array:D )
     multi method pop(Array:D:)
 
-Usage:
-
-    pop ARRAY
-    ARRAY.pop
-
 Removes and returns the last item from the array.  Fails for an empty array.
 
 Example:
 
-    > my @foo = <a b>;
-    a b
-    > @foo.pop;
-    b
-    > pop @foo
-    a
-    > pop @foo
-    Element popped from empty list
+    my @foo = <a b>; # a b
+    @foo.pop;        # b
+    pop @foo;        # a
+    pop @foo;
+    CATCH { default { put .^name, ': ', .Str } };
+    # OUTPUT: «X::Cannot::Empty: Cannot pop from an empty Array␤»
 
 =head2 routine push
 
@@ -43,12 +36,6 @@ Defined as:
     multi sub    push(Array:D, **@values) returns Array:D
     multi method push(Array:D: **@values) returns Array:D
 
-Usage:
-
-    push ARRAY, VALUES
-    ARRAY.push(VALUES)
-    ARRAY.push: VALUES
-
 Adds the C<@values> to the end of the array, and returns the modified list.
 Fails for infinite arrays.
 
@@ -56,7 +43,7 @@ Example:
 
     my @foo = <a b c>;
     @foo.push: 'd';
-    say @foo;                   # a b c d
+    say @foo;                   # [a b c d]
 
 Note that C<push> does not attempt to flatten its argument list.  If you pass
 an array or list as the thing to push, it becomes one additional element:
@@ -83,14 +70,11 @@ values that are stored in a single array.
 
 Defined as
 
-    sub append(\array, elems)
+=begin code :skip-test
+sub append(\array, elems)
+=end code
     multi method append(Array:D: \values)
     multi method append(Array:D: **@values is raw)
-
-Usage:
-
-    ARRAY.append(LIST)
-    append ARRAY, LIST
 
 Appends the argument list to the array passed as the first argument.  This
 modifies the array in-place.  Returns the modified array.
@@ -105,7 +89,7 @@ Example:
     my @b = <d e f>;
     @a.append: @b;
     say @a.elems;               # 6
-    say @a;                     # a b c d e f
+    say @a;                     # [a b c d e f]
 
 =head2 routine shift
 
@@ -114,11 +98,6 @@ Defined as:
     multi sub    shift(Array:D )
     multi method shift(Array:D:)
 
-Usage:
-
-    shift ARRAY
-    ARRAY.shift
-
 Removes and returns the first item from the array.  Fails for an empty arrays.
 
 Example:
@@ -126,7 +105,9 @@ Example:
     my @foo = <a b>;
     say @foo.shift;             # a
     say @foo.shift;             # b
-    say @foo.shift;             # Element shifted from empty list
+    say @foo.shift;
+    CATCH { default { put .^name, ': ', .Str } };
+    # OUTPUT: «X::Cannot::Empty: Cannot shift from an empty Array␤»
 
 =head2 routine unshift
 
@@ -135,12 +116,6 @@ Defined as:
     multi sub    unshift(Array:D, **@values) returns Array:D
     multi method unshift(Array:D: **@values) returns Array:D
 
-Usage:
-
-    unshift ARRAY, VALUES
-    ARRAY.unshift(VALUES)
-    ARRAY.unshift: VALUES
-
 Adds the C<@values> to the start of the array, and returns the modified array.
 Fails if C<@values> is infinite.
 
@@ -148,7 +123,7 @@ Example:
 
     my @foo = <a b c>;
     @foo.unshift: 1, 3 ... 11;
-    say @foo;                   # (1 3 5 7 9 11) a b c
+    say @foo;                   # [(1 3 5 7 9 11) a b c]
 
 The notes in L<the documentation for method push|#method push> apply,
 regarding how many elements are added to the array.
@@ -160,14 +135,11 @@ list or array.
 
 Defined as
 
-    sub prepend(\array, elems)
+=begin code :skip-test
+sub prepend(\array, elems)
+=end code
     multi method prepend(Array:D: \values)
     multi method prepend(Array:D: **@values is raw)
-
-Usage:
-
-    ARRAY.prepend(LIST)
-    prepend ARRAY, LIST
 
 Adds the elements from C<LIST> to the front of the array, modifying it
 in-place.
@@ -176,7 +148,7 @@ Example:
 
     my @foo = <a b c>;
     @foo.prepend: 1, 3 ... 11;
-    say @foo;                   # 1 3 5 7 9 11 a b c
+    say @foo;                   # [1 3 5 7 9 11 a b c]
 
 =head2 routine splice
 
@@ -185,11 +157,6 @@ Defined as:
     multi sub    splice(@list,  $start, $elems?, *@replacement) returns Array
     multi method splice(Array:D $start, $elems?, *@replacement) returns Array
 
-Usage:
-
-    splice(ARRAY, START, ELEMS?, REPLACEMENT?)
-    ARRAY.splice(START, ELEMS?, REPLACEMENT?)
-
 Deletes C<$elems> elements starting from index C<$start> from the C<Array>,
 returns them and replaces them by C<@replacement>.  If C<$elems> is omitted,
 all the elements starting from index C<$start> are deleted.
@@ -197,18 +164,14 @@ all the elements starting from index C<$start> are deleted.
 Example:
 
     my @foo = <a b c d e f g>;
-    say @foo.splice(2, 3, <M N O P>);        # c d e
-    say @foo;                                # a b M N O P f g
+    say @foo.splice(2, 3, <M N O P>);        # [c d e]
+    say @foo;                                # [a b M N O P f g]
 
 =head2 method shape
 
 Defined as:
 
     method shape() { (*,) }
-
-Usage:
-
-    ARRAY.shape
 
 Returns the shape of the array as a list.
 
@@ -224,10 +187,6 @@ Example:
 Defined as:
 
     method default
-
-Usage:
-
-    Array.default
 
 Returns the default value of the invocant, i.e. the value which is returned
 when trying to access an element in the C<Array> which has not been
@@ -252,10 +211,6 @@ Defined as:
 
     method of
 
-Usage:
-
-    Array.of
-
 Returns the type constraint for the values of the invocant. By default,
 i.e. if no type constraint is given during declaration, the method
 returns C<(Mu)>.
@@ -265,6 +220,8 @@ returns C<(Mu)>.
 
     my Int @a2 = 1, 2, 3;                    # (values must be of type Int)
     say @a2.of;                              # (Int)
-    @a2.push: 'd';                           # throws X::TypeCheck::Assignment
+    @a2.push: 'd';
+    CATCH { default { put .^name, ': ', .Str } };
+    # OUTPUT: «X::TypeCheck::Assignment: Type check failed in assignment to @a2; expected Int but got Str ("d")␤»
 
 =end pod

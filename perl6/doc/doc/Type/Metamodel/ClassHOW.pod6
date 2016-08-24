@@ -2,7 +2,7 @@
 
 =TITLE class Metamodel::ClassHOW
 
-=SUBTITLE Metaobject representing a Perl 6 class.
+=SUBTITLE Metaobject representing a Perl 6 class.
 
     class Metamodel::ClassHOW
         does Metamodel::Naming
@@ -32,7 +32,7 @@
 C<Metamodel::ClassHOW> is the meta class behind the C<class> keyword.
 
     say so Int.HOW ~~ Metamodel::ClassHOW;      # True
-    say say Int.^methods(:all).pick.name;       # sin
+    say Int.^methods(:all).pick.name;       # random Int method name
 
 =head1 Methods
 

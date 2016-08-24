@@ -10,13 +10,15 @@ Thrown when trying to augment a type which doesn't exist.
 
 For example
 
-    use MONKEY-TYPING;
-    augment class NoSuch { }
+=for code :skip-test
+use MONKEY-TYPING;
+augment class NoSuch { }
 
 dies with
 
-    ===SORRY!===
-    You tried to augment class NoSuch, but it does not exist
+=for code :skip-test
+===SORRY!===
+You tried to augment class NoSuch, but it does not exist
 
 =head1 Methods
 

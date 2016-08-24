@@ -4,19 +4,21 @@
 
 =SUBTITLE Compilation error due to an unallowed twigil in a signature
 
-    class X::Parameter::Twigil does X::Comp
+    class X::Parameter::Twigil does X::Comp { }
 
 Thrown when a parameter in a signature has a twigil that it may not have.
 Only C<!>, C<.> and C<*> as twigils are allowed.
 
 Example:
 
-    sub f($=foo) { }
+=for code :skip-test
+sub f($=foo) { }
 
 produces
 
-    ===SORRY!===
-    In signature parameter $=foo, it is illegal to use the = twigil
+=for code :skip-test
+===SORRY!===
+In signature parameter $=foo, it is illegal to use the = twigil
 
 =head1 Methods
 

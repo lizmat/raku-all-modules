@@ -4,10 +4,10 @@
 
 =SUBTITLE Documentation for the Perl 6 Documentation Project
 
-This documentation is an attempt to document the Perl 6 programming
+This document collection represents the on-going effort to document the Perl 6 programming
 language with the goals of being comprehensive, easy to use, easy to
 navigate, and useful to both newcomers and experienced Perl 6
-programmers.
+programmers alike.
 
 An HTML version of the documentation is located online at
 L<https://docs.perl6.org>.
@@ -15,10 +15,15 @@ L<https://docs.perl6.org>.
 The official source for this documentation is located at L<perl6/doc on
 GitHub|https://github.com/perl6/doc>.
 
+The information in this particular document is a quick overview of the process
+described in more detail in L<CONTRIBUTING on GitHub|https://github.com/perl6/doc/CONTRIBUTING.md>.
+This document also provides a short introduction to writing the Perl 6
+POD files which produce the rendered pages in HTML or other formats.
+
 =head1 Structure
 
-All of the documentation is written in Pod6 and kept in the C<lib/>
-directory, and the C<lib/Language/> and C<lib/Type/> sub-directories.
+All of the documentation is written in Pod6 and kept in the C<doc/>
+directory, and the C<doc/Language/> and C<doc/Type/> sub-directories.
 These files are processed as collections of definitions or
 "documentables", which are then post-processed and linked together.
 
@@ -28,8 +33,8 @@ Generating this documentation requires:
 
 =item A recent version of the Rakudo Perl 6 compiler
 
-=item The Perl 6 modules Pod::To::HTML and URI::Escape (can be installed
-via L<panda|https://github.com/tadzik/panda>)
+=item The Perl 6 modules Pod::To::HTML, Pod::To::BigPage, and URI::Escape
+(can be installed via L<panda|https://github.com/tadzik/panda>)
 
 =item B<Optional>: L<GraphViz|http://graphviz.org>, for creating graphs
 of the relationships between Perl 6 types
@@ -39,26 +44,30 @@ highlighting
 
 Then, to generate the documentation into the C<html/> folder, run:
 
-    perl6 htmlify.p6
+=begin code :skip-test
+perl6 htmlify.p6
+=end code
 
 Currently, to serve the generated documentation for your browser, Perl 5
 with Mojolicious::Lite must be installed. Then run:
 
-    perl app.pl daemon
+=begin code :skip-test
+perl app.pl daemon
+=end code
 
 =head1 Contributing
 
 =head2 Adding definitions
 
 Documentables can be defined using an C<=headN> Pod directive, where
-C<N> is greater than zero (e.g., C<=head1>, C<=head2>, C<=head3>, …).
+C<N> is greater than zero (e.g., C<=head1>, C<=head2>, …).
 
 All of the paragraphs and blocks following that directive, up until the
 next directive of the same level, will be considered part of the
 documentable. So, in:
 
-=begin code :allow<R>
-=head2 R<My Definition>
+=begin code :allow<R> :skip-test
+d2 R<My Definition>
 
 Some paragraphs, followed by some code:
 
@@ -82,14 +91,55 @@ Documentables may contain other documentables. Class documentables, for
 example, often contain the methods the class implements.
 
 Definitions must be in one of the following forms to be recognized as
-the start of a documentable named, say, Z:
+the start of a documentable named, say, Z.  First the code in the document source:
 
-=item C<X<How to use the Z infix | infix,Z>> (This a special case, which
+=begin code
+
+=item X<C<How to use the Z infix> | infix,Z> (This a special case, which
 is always considered a definition)
+
 =item C<The Z Infix>
-=item C<The C<Z> Infix>
+
+=item B<The C<Z> Infix>
+
 =item C<Infix Z>
-=item C<Infix C<Z>>
+
+=item B<Infix C<Z>>
+
 =item C<trait is cached> (A special case for the L<trait|/language/functions#Traits> documentables)
 
+=end code
+
+Then the results on the rendered page:
+
+=item X<C<How to use the Z infix> | infix,Z> (This a special case, which
+is always considered a definition)
+
+=item C<The Z Infix>
+
+=item B<The C<Z> Infix>
+
+=item C<Infix Z>
+
+=item B<Infix C<Z>>
+
+=item C<trait is cached> (A special case for the L<trait|/language/functions#Traits> documentables)
+
+Note that all the documentable items above should be able to be found by using the search window on
+the docs pages.  In many cases you may want to emphasize the item in bold (B<V< B<> >>) or italicized (B<V< I<> >>)
+font in addition to or in place of the code format (B<V< C<> >>).  Due to current parser limitations,
+one has to take special steps to use the B<V< X<> >> with other formatting codes.  For example:
+
+=begin code
+=item X<B<foo>|foo> a fancy subroutine
+=end code
+
+renders like this
+
+=item X<B<foo>|foo> a fancy subroutine
+
+Notice the text after the pipe ('|') character has no formatting.  Note also that the B<V< C<> >> construct
+used above is special in that all space inside is preserved and all text is treated verbatim.
+
+For full details about Perl 6 POD, see L<Synopsis 26, Documentation|https://design.perl6.org/S26.html>.
 =end pod

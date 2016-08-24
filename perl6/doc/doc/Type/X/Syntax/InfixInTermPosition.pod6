@@ -11,12 +11,14 @@ operator instead.
 
 For example
 
-    1, => 2
+=for code :skip-test
+1, => 2;
 
 dies with
 
-    ===SORRY!===
-    Preceding context expects a term, but found infix => instead
+=for code :skip-test
+===SORRY!===
+Preceding context expects a term, but found infix => instead
 
 =head1 Methods
 

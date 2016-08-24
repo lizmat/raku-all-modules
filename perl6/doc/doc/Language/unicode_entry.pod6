@@ -4,11 +4,11 @@
 
 =SUBTITLE Input methods for unicode characters in editors and the shell
 
-Perl 6 allows the use of unicode characters as variable names.  Many
+Perl 6 allows the use of unicode characters as variable names.  Many
 operators are defined with unicode symbols (in particular the L<set/bag
 operators|/language/setbagmix#Set%2FBag_Operators>) as well as some quoting
 constructs.  Hence it is good to know how to enter these symbols into editors,
-the Perl 6 shell and the command line, especially if the symbols aren't
+the Perl 6 shell and the command line, especially if the symbols aren't
 available as actual characters on a keyboard.
 
 General information about entering unicode under various operating systems
@@ -113,15 +113,28 @@ following key combination (whitespace has been added for clarity):
 This also the method one would use to enter unicode characters into the
 C<perl6> REPL, if one has started the REPL inside a Unix shell.
 
-=head1 Unicode characters useful in Perl 6
+=head2 Screen
+
+L<GNU Screen|https://www.gnu.org/software/screen/> does sport a B<digraph>
+command but with a rather limited digraph table. Thanks to B<bindkey> and
+B<exec> an external program can be used to insert characters to the current
+screen window.
+
+    bindkey ^K exec .! digraphs
+
+This will bind ctrk-k to the shell command digraphs. You can use
+L<digraphs|https://github.com/gfldex/digraphs> if you prefer a Perl 6 friendly
+digraph table over L<RFC 1345|https://tools.ietf.org/html/rfc1345> or change it
+to your needs.
+
+=head1 Unicode characters useful in Perl 6
 
 =head2 L<Guillemets|https://en.wikipedia.org/wiki/Guillemet>
 
-These characters are used in French and German as quotation marks.  In Perl
-6 they are also used as quotation marks (in POD as an alternative to the
-angle brackets and in normal code as an alternative to double quotes) as
-well as to denote the hyperoperators.  The symbols and their unicode hex
-values are as follows:
+These characters are used in French and German as quotation marks. In Perl 6
+they are used as L<interpolation word quotes|/language/quoting#Word_quoting_with_interpolation_and_quote_protection:_qqww>,
+L<hyper operators|/language/operators#Hyper_Operators> and as bracket
+alternative in POD6.
 
 =begin table
     symbol   unicode code point   ascii equivalent
@@ -133,10 +146,10 @@ values are as follows:
 Thus constructs such as these are now possible:
 
     C« fixed-width POD text »
-    say (1, 2) »+« (3, 4);     # 4 6 ; element-wise add
+    say (1, 2) »+« (3, 4);     # (4 6) - element-wise add
     @array »+=» 42;            # add 42 to each element of @array
     say «moo»;                 # moo
-    my $baa = 123; say «$baa»; # 123
+    my $baa = 123; say «$baa»; # (123)
 
 =head2 Set/bag operators
 

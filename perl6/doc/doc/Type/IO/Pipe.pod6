@@ -4,7 +4,7 @@
 
 =SUBTITLE Buffered inter-process string or binary stream
 
-    class IO::Pipe is IO::Handle { ... }
+    class IO::Pipe is IO::Handle {}
 
 An C<IO::Pipe> object closely corresponds to a UNIX pipe. It has one end where
 it consumes string or binary data, and another where it reproduces the same
@@ -14,6 +14,12 @@ block.
 Pipes can be easily constructed with L<sub run and Proc.new|/type/Proc>.
 
 =head1 Methods
+
+=head2 method close
+
+    method close(IO::Pipe:) returns Proc:D
+
+Closes the pipe and returns L<Proc> object from which the pipe originates.
 
 =head2 method proc
 

@@ -56,6 +56,19 @@ if True {say "Hello"}
 
 though you can't leave out any of the remaining whitespace.
 
+=head2 Unspace
+
+In many places where the compiler would not allow a space you can use any
+whitespace that is quoted with a backslash. Unspaces in tokens are not
+supported. Newlines that are unspaced still count when the compiler produces
+line numbers. Usecases for unspace are separation of postfix operators and
+routine argument lists.
+
+    sub alignment(+@l) { +@l };$
+    sub long-name-alignment(+@l) { +@l };$
+    alignment\         (1,2,3,4)>>.say;$
+    long-name-alignment(3,5)\   >>.say;$
+
 =head2 Separating Statements
 
 A Perl 6 program is a list of statements, separated by semicolons C<;>.
@@ -93,7 +106,7 @@ whitespace disambiguates possible parses.
 
 =head3 Single-line comments
 
-The most common form of comments in Perl 6 starts with a single hash character
+The most common form of comments in Perl 6 starts with a single hash character
 C<#> and goes until the end of the line.
 
 =begin code
@@ -165,9 +178,26 @@ Names of constants, types (including classes and modules) and routines (subs
 and methods) are identifiers, and they also appear in variable names (usually
 proceeded by a sigil; see L<variables|/language/variables> for more details.)
 
+Namespaces are provided by L<packages|/language/packages>. By separating
+identifiers with double colons, the right most name is inserted into existing
+or automatically created packages.
+
+    my Int $Foo::Bar::buzz = 42;
+    dd $Foo::Bar::buzz; # OUTPUT«Int $v = 42␤»
+
+Identifiers can contain colon pairs. The entire colon pair becomes part of the
+name of the identifier.
+
+    my $foo:bar = 1;
+    my $foo:bar<2> = 2;
+    dd MY::.keys;
+    # OUTPUT«("\$=pod", "!UNIT_MARKER", "EXPORT", "\$_", "\$!", "::?PACKAGE",
+    # "GLOBALish", "\$¢", "\$=finish", "\$/", "\$foo:bar<1>", "\$foo:bar<2>",
+    # "\$?PACKAGE").Seq␤»
+
 =head1 Statements and Expressions
 
-Perl 6 programs are made of lists of statements. A special case of a statement
+Perl 6 programs are made of lists of statements. A special case of a statement
 is an I<expression>, which returns a value. For example C<if True { say 42 }>
 is syntactically a statement, but not an expression, whereas C<1 + 2> is an
 expression (and thus also a statement).
@@ -249,7 +279,7 @@ See the L<documentation on packages|/language/packages> for more details.
 =head2 Literals
 
 A L<literal|https://en.wikipedia.org/wiki/Literal_%28computer_programming%29>
-is a representation of a constant value in source code. Perl 6 has literals
+is a representation of a constant value in source code. Perl 6 has literals
 for several built-in types, like L<strings|/type/Str>, several numeric types,
 L<pairs|/type/Pair> and more.
 
@@ -263,14 +293,14 @@ String literals are surrounded by quotes:
 
 See L<quoting|/language/quoting> for many more options.
 
-=head3 Number literals
+=head3 X<Number literals|0b (radix form);0d (radix form);0o (radix form);0x (radix form)>
 
 Number literals are generally specified in base ten, unless a prefix like
 C<0x> (heB<x>adecimal, base 16), C<0o> (B<o>ctal, base 8) or C<0b>
 (B<b>inary, base 2) or an explicit base in adverbial notation like
 C<< :16<A0> >> specifies it otherwise. Unlike other programming languages,
 leading zeros do I<not> indicate base 8; instead a compile-time warning is
-issued
+issued.
 
 In all literal formats, you can use underscores to group digits;
 they don't carry any semantic; the following literals all evaluate to the same

@@ -4,7 +4,7 @@
 
 =SUBTITLE Metaobject that can hold attributes
 
-    role Metamodel::AttributeContainer { ... }
+    role Metamodel::AttributeContainer {}
 
 Classes, roles and grammars can have attributes. Storage and introspection of
 attributes is implemented by this role.
@@ -23,7 +23,7 @@ It can for example be of L<type Attribute|/type/Attribute>.
 
     method attributes(Metamodel::AttributeContainer: $obj)
 
-Returns a list of attributes. For most Perl 6 types, these will be objects of
+Returns a list of attributes. For most Perl 6 types, these will be objects of
 L<type Attribute|/type/Attribute>.
 
 =head2 method set_rw
@@ -41,8 +41,10 @@ in
 The C<is rw> trait on the class calls the C<set_rw> method on the meta class,
 making all the attributes implicitly writable, so that you can write;
 
-    my $p = Point.new(x => 1, y => 2);
+=begin code :skip-test
+my $p = Point.new(x => 1, y => 2);
     $p.x = 42;
+=end code
 
 =head2 method rw
 

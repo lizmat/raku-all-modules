@@ -4,19 +4,22 @@
 
 =SUBTITLE Compilation error due to a declaration with an ineligible scope
 
-    class X::Declaration::Scope does X::Comp { }
+=for code :skip-test
+class X::Declaration::Scope does X::Comp { }
 
 Compile time error thrown when a declaration does not harmonize with the
 declared scope.
 
 For example
 
-    has sub f() { }
+=for code :skip-test
+has sub f() { }
 
 dies with
 
-    ===SORRY!===
-    Cannot use 'has' with sub declaration
+=for code :skip-test
+===SORRY!===
+Cannot use 'has' with sub declaration
 
 =head1 Methods
 

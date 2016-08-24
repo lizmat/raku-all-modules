@@ -4,9 +4,9 @@
 
 =SUBTITLE Removal of a task from a Scheduler before normal completion
 
-    my class Cancellation { ... }
+    my class Cancellation {}
 
-A low level part of the Perl 6 L<concurrency|/language/concurrency#Schedulers>
+A low level part of the Perl 6 L<concurrency|/language/concurrency#Schedulers>
 system. Some L<Scheduler> objects return a C<Cancellation> with the
 L<.cue|/type/Scheduler#method_cue> method which can be used to cancel the
 scheduled execution before normal completion.  C<Cancellation.cancelled> is a
@@ -22,7 +22,9 @@ Defined as:
 
 Usage:
 
-    CANCELLATION.cancel
+=begin code :skip-test
+CANCELLATION.cancel
+=end code
 
 Cancels the scheduled execution of a task before normal completion.
 

@@ -4,7 +4,7 @@
 
 =SUBTITLE Asynchronous TCP socket
 
-    class IO::Socket::Async does IO::Socket { ... }
+    class IO::Socket::Async does IO::Socket {}
 
 C<IO::Socket::Async> provides asynchronous TCP sockets, for both the
 server and the client side.
@@ -12,7 +12,7 @@ server and the client side.
 Here is the equivalent example to that in L<IO::Socket::INET> of a simple
 echo server that listens on port 3333:
 
-=begin code
+=begin code :skip-test
 use v6;
 
 react {
@@ -26,13 +26,13 @@ react {
 
 And a client that connects to it, and prints out what the server answers:
 
-=begin code
+=begin code :skip-test
 use v6;
 
 await IO::Socket::Async.connect('localhost', 3333).then( -> $p {
     if $p.status {
         given $p.result {
-            .print('Hello, Perl 6');
+            .print('Hello, Perl 6');
             react {
                 whenever .Supply() -> $v {
                     $v.say;
@@ -48,7 +48,7 @@ await IO::Socket::Async.connect('localhost', 3333).then( -> $p {
 Alternatively L<IO::Socket::Async> can send and receive UDP messages.
 An example server that outputs all the data it receives would be:
 
-=begin code
+=begin code :skip-test
 my $socket = IO::Socket::Async.bind-udp('localhost', 3333);
 
 react {
@@ -62,10 +62,10 @@ react {
 
 And an associated client might be:
 
-=begin code
+=begin code :skip-test
 
 my $socket = IO::Socket::Async.udp();
-await $socket.print-to('localhost', 3333, "Hello, Perl 6!");
+await $socket.print-to('localhost', 3333, "Hello, Perl 6!");
 
 =end code
 

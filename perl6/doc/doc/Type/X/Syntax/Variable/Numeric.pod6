@@ -10,12 +10,14 @@ Syntax error thrown when trying to declare numeric symbols.
 
 For example
 
-    my @101;
+=for code :skip-test
+my @101;
 
 dies with
 
-    ===SORRY!===
-    Cannot declare a numeric variable
+=for code :skip-test
+===SORRY!===
+Cannot declare a numeric variable
 
 =head1 Methods
 

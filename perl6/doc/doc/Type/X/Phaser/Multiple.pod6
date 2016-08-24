@@ -4,19 +4,21 @@
 
 =SUBTITLE Compilation error due to multiple phasers of the same type
 
-    class X::Phaser::Multiple does X::Comp
+    class X::Phaser::Multiple does X::Comp { }
 
 Thrown when multiple phasers of the same type occur in a block, but only one
 is allowed (for example C<CATCH> or C<CONTROL>).
 
 Example
 
-    CATCH { }; CATCH { }
+=for code :skip-test
+CATCH { }; CATCH { }
 
 Produces
 
-    ===SORRY!===
-    Only one CATCH block is allowed
+=for code :skip-test
+===SORRY!===
+Only one CATCH block is allowed
 
 =head1 Methods
 

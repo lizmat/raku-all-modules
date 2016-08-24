@@ -10,43 +10,47 @@
 
 L<Rakudo|http://rakudo.org/> is an implementation of Perl 6. It's currently the most developed, but
 there have been other implementations in the past and should be others in the
-future. Perl 6 is the definition of the language. Many times the two names will
+future. Perl 6 is the definition of the language. Many times the two names will
 be used loosely and interchangeably.
 
-=head2 Is there going to be a Perl 6 version 6.0.0?
+=head2 Is there going to be a Perl 6 version 6.0.0?
 
 The version of the first stable language version is called v6.c, not 6.0.0.
 The different naming scheme makes it unlikely that there'll ever be a release
 of the language with the exact version 6.0.0.
 
-It was first implemented by the Rakudo Perl 6 compiler version 2015.12 and is
+You can check your Rakudo compiler is at least the current release version
+(note this may not be true of vendor binaries) with the following:
+
+    perl6 -e 'say q[too old] if $*PERL.version before Version.new(q[6.c])'
+
+
+It was first implemented by the Rakudo Perl 6 compiler version 2015.12 and is
 likely to be supported by subsequent releases for the foreseeable future by use
-of the 'use 6.c' pragma..
+of the 'use 6.c' pragma. The next language version (no release date) is to be
+v6.d.
 
 =head2 As a Perl 6 beginner what should I install?
 
-Linux or Mac users probably want to download Rakudo Star and
-install via compilation (a simple process) the MoarVM based version available
-from L<http://rakudo.org/downloads/star/>.
+Mac users can use the latest Rakudo Star DMG binary installer at
+L<http://rakudo.org/downloads/star>
 
-Compilation needs a C compiler and Perl 5 installed.
+Windows users can use the Rakudo Star MSI binary installer. You will need
+Windows Git and Strawberry Perl 5 to use panda to install library modules.
 
-Or there is an official rakudo star docker image at
-L<https://hub.docker.com/_/rakudo-star/>
-
-If you are a Windows 32 or 64 bit user then Rakudo Star binaries are also
-available at the rakudo site. You will need Windows Git to use panda.
-
-To use panda (see below) to install library modules you will need git and Perl
-5's Test::Harness.
+Linux users probably want to download Rakudo Star and follow the compilation
+instructions at L<http://www.perl6.org/downloads/>
 
 There should be Linux and Mac binaries available shortly from vendors and third
 parties. Although vendor versions may be outdated.
 
+Or there is an official rakudo star docker image at
+L<https://hub.docker.com/_/rakudo-star/>
+
 =head2 As an intermediate to advanced user I want to track Rakudo development.
 
 Install L<rakudobrew|https://github.com/tadzik/rakudobrew> which resembles
-Perl 5's perlbrew and the equivalent Python and Ruby tools.
+Perl 5's perlbrew and the equivalent Python and Ruby tools.
 
 =head2 Where can I find good documentation on Perl 6?
 
@@ -72,9 +76,14 @@ is the measure of how complete a Perl 6 implementation is.
 
 Yes, see L<glossary|/language/glossary>.
 
-=head2 I'm a Perl 5 programmer. Where is a list of differences between Perl 5 and 6?
+=head2 I'm a Perl 5 programmer. Where is a list of differences between Perl 5 and Perl 6?
 
-See the pod with the 5to6- prefix under L<https://docs.perl6.org/language.html>
+See the '5to6-nutshell' pod under L<https://docs.perl6.org/language/5to6-nutshell>
+and related pages.
+
+=head2 I'm a Ruby programmer looking for quickstart type docs?
+
+See the 'rb-nutshell' pod under L<https://docs.perl6.org/language/rb-nutshell>
 
 =head1 Modules
 
@@ -86,12 +95,12 @@ modules called the "ecosystem" hosted on github, and
 L<panda|https://github.com/tadzik/panda/> can install those that work with
 L<rakudo|http://rakudo.org/>.
 
-Support for installing Perl 6 modules from the Perl 5 CPAN is on its way.
+Support for installing Perl 6 modules from the Perl 5 CPAN is on its way.
 
-=head2 Can I use Perl 5 modules from Perl 6?
+=head2 Can I use Perl 5 modules from Perl 6?
 
 Yes, with L<Inline::Perl5|https://github.com/niner/Inline-Perl5/>, which works
-well with most Perl 5 modules. It can even run Perl 5 Catalyst and DBI.
+well with most Perl 5 modules. It can even run Perl 5 Catalyst and DBI.
 
 =head2 Can I use C and C++ from Perl 6?
 
@@ -124,7 +133,7 @@ compilation unit.
 
 =head1 Language Features
 
-=head2 How can I dump Perl 6 data structures (like Perl 5 Data::Dumper and similar)?
+=head2 How can I dump Perl 6 data structures (like Perl 5 Data::Dumper and similar)?
 
 Examples:
 
@@ -259,7 +268,7 @@ If you want to do it anyway, you can abuse autothreading for that:
 
 =head2 If Str is immutable, how does C<s///> work? if Int is immutable, how does C<$i++> work?
 
-In Perl 6, values of many basic types are immutable, but the variables holding them are
+In Perl 6, values of many basic types are immutable, but the variables holding them are
 not. The C<s///> operator works on a variable, into which it puts a newly
 created string object. Likewise C<$i++> works on the C<$i> variable, not
 just on the value in it.
@@ -270,7 +279,7 @@ information.
 =head2 What's up with array references and automatic dereferencing? Do I still need the C<@> sigil?
 
 In Perl 6, nearly everything is a reference, so talking about taking
-references doesn't make much sense. Unlike Perl 5, scalar variables
+references doesn't make much sense. Unlike Perl 5, scalar variables
 can also contain arrays directly:
 
     my @a = 1, 2, 3;
@@ -322,7 +331,7 @@ You likely tried to mix string interpolation and HTML.
     my $foo = "abc";
     say "$foo<html-tag>";
 
-Perl 6 thinks C<$foo> to be a Hash and C«<html-tag>» to be a string literal
+Perl 6 thinks C<$foo> to be a Hash and C«<html-tag>» to be a string literal
 hash key. Use a closure to help it to understand you.
 
     my $foo = "abc";
@@ -447,7 +456,7 @@ the exception with the C<exception> method.
 
 =head2 Why is C<wantarray> or C<want> gone? Can I return different things in different contexts?
 
-Perl 5 has the L<C<wantarray>|/language/5to6-perlfunc#wantarray> function that
+Perl 5 has the L<C<wantarray>|/language/5to6-perlfunc#wantarray> function that
 tells you whether it is called in void, scalar or list context. Perl 6 has no
 equivalent construct, because context does not flow inwards, i.e. a routine would need
 time travel to know which context it is called in because context is lazy, known
@@ -466,7 +475,7 @@ writers have trouble with.
 
 One way to achieve context sensitivity in Perl 6 is to return an object
 that knows how to respond to method calls that are typical for a context.
-In Perl 6 this is actually a L<lot easier|/language/5to6-perlfunc#wantarray>
+In Perl 6 this is actually a L<lot easier|/language/5to6-perlfunc#wantarray>
 than it may sound, and other features of the language either mitigate the
 need to do so in the first place, or make it possible to cover most of the
 use cases of wantarray.
@@ -479,21 +488,21 @@ string|/type/Match>.
 
 C<OpaquePointer> is deprecated and has been replaced with C<Pointer>.
 
-=head1 Perl 6 Implementation
+=head1 Perl 6 Implementation
 
-=head2 What Perl 6 Implementations are available?
+=head2 What Perl 6 Implementations are available?
 
 Currently the best developed is Rakudo (using multiple Virtual Machine
 backends). Historic implementations include Niecza (.NET) and Pugs (Haskell).
-Others are listed at  L<Perl 6 Compilers|https://www.perl6.org/compilers/>
+Others are listed at  L<Perl 6 Compilers|https://www.perl6.org/compilers/>
 
 =head2 What language is Rakudo written in?
 
-A short answer is that Rakudo is written almost entirely in Perl 6.  A more
-detailed answer is that Rakudo is written in a mixture of Perl 6 and NQP ("Not
-Quite Perl"). NQP is a lightweight Perl 6-like environment for virtual
+A short answer is that Rakudo is written almost entirely in Perl 6.  A more
+detailed answer is that Rakudo is written in a mixture of Perl 6 and NQP ("Not
+Quite Perl"). NQP is a lightweight Perl 6-like environment for virtual
 machines; it's designed to be a high-level way to create compilers and
-libraries for virtual machines (such as MoarVM and JVM) using Perl 6 syntax.
+libraries for virtual machines (such as MoarVM and JVM) using Perl 6 syntax.
 
 =head2 What language is NQP written in?
 
@@ -510,7 +519,7 @@ decision. As they (both the language and the implementations) evolve, they
 grow steadily more usable. Depending on your demands on a programming
 language, Perl 6 and its compilers might or might not be ready for you.
 
-That said, version 6c (Christmas 2015) is the first official release of Perl 6
+That said, version 6.c (Christmas 2015) is the first official release of Perl 6
 as a language, along with a validation suite and a compiler that passes it.
 
 =head2 Why should I learn Perl 6? What's so great about it?
@@ -519,7 +528,7 @@ Perl 6 unifies many great ideas that aren't usually found in other programming
 languages. While several other languages offer some of these features, none of
 them offer all.
 
-=item Perl 6 offers procedural, object-oriented AND functional programming methodologies.
+=item Perl 6 offers procedural, object-oriented AND functional programming methodologies.
 
 =item Easy to use consistent syntax, using invariable sigils for data-structures.
 
@@ -553,9 +562,9 @@ them offer all.
 
 =item Phasers (like BEGIN / END) allow code to be executed at scope entry / exit, loop first / last / next and many more special contexts.
 
-=item High level concurrency model, both for implicit as well as explicit multi-processing, which goes way beyond primitive threads and locks.  Perl 6's concurrency offers a rich set of (composable) tools.
+=item High level concurrency model, both for implicit as well as explicit multi-processing, which goes way beyond primitive threads and locks.  Perl 6's concurrency offers a rich set of (composable) tools.
 
-=item Multiple-core computers are getting used more and more, and with Perl 6 these can be used thanks to parallelism, both implicit (e.g. with the >>. method) and explicit ( start { code } ).  This is important, because Moore's Law is ending.
+=item Multiple-core computers are getting used more and more, and with Perl 6 these can be used thanks to parallelism, both implicit (e.g. with the >>. method) and explicit ( start { code } ).  This is important, because Moore's Law is ending.
 
 =item Structured language support is provided to enable programming for asynchronous execution of code.
 
@@ -569,7 +578,7 @@ them offer all.
 
 =item Interfacing to external libraries in C / C++ are trivially simple with NativeCall.
 
-=item Interfacing with Perl 5 (CPAN) / Python modules trivially simple with Inline::Perl5 and Inline::Python.
+=item Interfacing with Perl 5 (CPAN) / Python modules trivially simple with Inline::Perl5 and Inline::Python.
 
 =item Can have multiple versions of a module installed and loaded simultaneously.
 
@@ -577,9 +586,9 @@ them offer all.
 
 =item Simple numeric computation without precision loss because of Rats (rational numbers).
 
-=item Extensible grammars for parsing data or code (which Perl 6 uses to parse itself).
+=item Extensible grammars for parsing data or code (which Perl 6 uses to parse itself).
 
-=item Perl 6 is a very mutable language (define your own functions, operators, traits and data-types, which modify the parser for you).
+=item Perl 6 is a very mutable language (define your own functions, operators, traits and data-types, which modify the parser for you).
 
 =item Large selection of data-types, plus the possibility to create your own types.
 
@@ -607,7 +616,7 @@ them offer all.
 
 =item Lazy lists defined with a simple iterator interface, which any class can supply by minimally supplying a single method.
 
-=item Perl 6's motto's remain the same as they have been for Perl all along: “Perl is different. In a nutshell, Perl is designed to make the easy jobs easy, without making the hard jobs impossible.” and “There Is More Than One Way To Do It”.  Now with even more -Ofun added.
+=item Perl 6's motto's remain the same as they have been for Perl all along: “Perl is different. In a nutshell, Perl is designed to make the easy jobs easy, without making the hard jobs impossible.” and “There Is More Than One Way To Do It”.  Now with even more -Ofun added.
 
 Please see the L<feature comparison
 matrix|https://perl6.org/compilers/features> for an overview of implemented
@@ -621,15 +630,15 @@ things already but needs work on others.  Since the Christmas 2015 release stabi
 the definition of the language, we're spending much of our effort on optimizing in 2016.
 Since Perl 6 provides lots of clues to the JIT that other dynamic languages don't, we think
 we'll have a lot of headroom for performance improvements.  Some things already
-run faster than Perl 5.
+run faster than Perl 5.
 
-Perl 5 programmers should be aware that Perl 6 comes with more built-in
+Perl 5 programmers should be aware that Perl 6 comes with more built-in
 functionality.  Simple benchmarks will be misleading unless you include
-things like Moose, type checking modules etc. in your Perl 5 script.
+things like Moose, type checking modules etc. in your Perl 5 script.
 
 The following crude benchmarks, with all the usual caveats about such things,
-can show Perl 6 can be faster than Perl 5 for some similar common tasks if
-the big weaponry is included, but at the same time Perl 5 can be much faster
+can show Perl 6 can be faster than Perl 5 for some similar common tasks if
+the big weaponry is included, but at the same time Perl 5 can be much faster
 if only the bare bones are included.
 
 Try it on your system you may be pleasantly surprised!
@@ -646,7 +655,7 @@ Examples:
         $obj.i = $i;
     }
 
-    # Perl 5 version
+    # Perl 5 version
     package Foo;
     use Moose;
 
@@ -661,8 +670,8 @@ Examples:
 
     1;
 
-    # Another Perl 5 version that offers bare-bones set of features
-    # compared to Moose/Perl 6's version but those are not needed in this
+    # Another Perl 5 version that offers bare-bones set of features
+    # compared to Moose/Perl 6's version but those are not needed in this
     # specific, simple program anyway.
     package Foo;
     use Mojo::Base -base;

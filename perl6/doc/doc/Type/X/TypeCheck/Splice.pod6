@@ -11,16 +11,20 @@ quote does not return an L<AST>.
 
 For example
 
-    macro a { 'foo' }
-    say a
+=for code :skip-test
+use experimental :macros;
+macro a { 'foo' };
+say a;
 
 dies with
 
-    ===SORRY!===
-    Type check failed in macro application; expected AST but got Str
+=for code :skip-test
+===SORRY!===
+Type check failed in macro application; expected AST but got Str
 
 To fix, instead write
 
+    use experimental :macros;
     macro a {
         quasi { 'foo' }
     }

@@ -7,7 +7,7 @@
     class Version { }
 
 Version objects identify version of software components (and potentially other
-entities). Perl 6 uses them internally for versioning modules.
+entities). Perl 6 uses them internally for versioning modules.
 
 A version consists of several parts, which are visually represented by joining
 them with a dot. A version part is usually an integer, a string like C<alpha>,
@@ -32,7 +32,7 @@ In comparisons, early parts take precedence over later parts.
 
 =head2 method new
 
-    method new(Str:d $s)
+    method new(Str:D $s)
 
 Creates a Version from a string C<$s>.  The string is combed
 for the numeric, alphabetic, and wildcard components of the version object.

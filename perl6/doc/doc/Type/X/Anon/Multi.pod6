@@ -10,12 +10,14 @@ Compile time error thrown when an anonymous multi is being declared.
 
 For example
 
-    multi method () { }
+=for code :skip-test
+multi method () { }
 
 dies with
 
-    ===SORRY!===
-    Cannot put multi on anonymous method
+=for code :skip-test
+===SORRY!===
+Cannot put multi on anonymous method
 
 =head1 Methods
 

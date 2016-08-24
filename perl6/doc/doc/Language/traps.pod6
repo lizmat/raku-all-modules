@@ -2,7 +2,7 @@
 
 =TITLE Traps to avoid
 
-=SUBTITLE Traps to avoid when getting started with Perl 6
+=SUBTITLE Traps to avoid when getting started with Perl 6
 
 When learning a programming language, possibly with the background of being
 familiar with another programming language, there are always some things
@@ -11,10 +11,10 @@ discovery.
 
 This document aims to show common misconceptions.
 
-During the making of Perl 6 great pains were taken to get rid of warts in
+During the making of Perl 6 great pains were taken to get rid of warts in
 the syntax.  When you whack one wart, though, sometimes another pops up.  So
 a lot of time was spent finding the minimum number of warts or trying to put
-them where they would rarely be seen.  Because of this, Perl 6's warts are
+them where they would rarely be seen.  Because of this, Perl 6's warts are
 in different places than you may expect them to be when coming from another
 language.
 
@@ -123,7 +123,7 @@ C<nextsame> inside C<BUILDALL>, but not inside C<BUILD>).
     False
 
 Whitespace in regexes is, by default, considered an optional filler without
-semantics, just like in the rest of the Perl 6 language.
+semantics, just like in the rest of the Perl 6 language.
 
 Ways to match whitespace:
 
@@ -160,13 +160,13 @@ Instead, use an expression that produces a value when you want a value.
 
 =head2 Referencing the last element of an array
 
-In Perl 5 one could reference the last element of an array by asking for the
+In Perl 5 one could reference the last element of an array by asking for the
 "-1th" element of the array, e.g.:
 
     my @array = qw{victor alice bob charlie eve};
     say @array[-1];    #->  eve
 
-In Perl 6 it is not possible to use negative subscripts, however the same is
+In Perl 6 it is not possible to use negative subscripts, however the same is
 achieved by actually using a function, namely C<*-1>.  Thus accessing the
 last element of an array becomes:
 
@@ -206,11 +206,11 @@ than requiring every element to be checked on every call.
 
 =head2 Capitalizing a string
 
-In Perl 5 one could capitalize a string by using the C<ucfirst> function
+In Perl 5 one could capitalize a string by using the C<ucfirst> function
 
     say ucfirst "alice"; #-> Alice
 
-The C<ucfirst> function does not exist in Perl 6; one needs to use the
+The C<ucfirst> function does not exist in Perl 6; one needs to use the
 C<tc> method:
 
     say "alice".tc;      #-> Alice
@@ -221,6 +221,23 @@ which is equivalent to
 
 Here, C<tc> means "title case".
 
+=head2 Quotes and interpolation
+
+Interpolation in string literals can be too clever for your good.
+
+    "$foo<html></html>" # Perl 6 understands that as:
+    $foo<html> ~ '</html>'
+
+    "$foo(" ~ @args ~ ")" # Perl 6 understands that as:
+    $foo( ~ @args ~ ")"   # and will produce very confusing error messages
+
+You can avoid those problems by surrounding all variables with C<{}>, with or
+without using C<Q:c> as your quoting construct.
+
+    my $a = 1;
+    say Q:c«{$a}()$b()»;
+    OUTPUT«1()$b()␤»
+
 =head2 Strings are not iterable
 
 There are methods that Str inherits from Any that work on iterables like lists. Iterators on Strings contain one element that is the whole string. To use C<sort>, C<reverse> and friends, you need to split the string into a list first.
@@ -230,18 +247,43 @@ There are methods that Str inherits from Any that work on iterables like lists. 
 
 =head1 Operators
 
-Some operators commonly shared among other languages were repurposed in Perl 6 for other, more common, things:
+Some operators commonly shared among other languages were repurposed in Perl 6 for other, more common, things:
 
 =head2 Junctions
 
 The C<^>, C<|>, and C<&> are I<not> bitwise operators, they create L<Junctions|/type/Junction>. The corresponding
-bitwise operators in Perl 6 are: C<+^>, C<+|>, C<+&> for integers and C<?^>, C<?|>, C<?&> for booleans.
+bitwise operators in Perl 6 are: C<+^>, C<+|>, C<+&> for integers and C<?^>, C<?|>, C<?&> for booleans.
+
+=head2 String Ranges/Sequences
+
+In some languages, using strings as range end points, considers the entire string when figuring out what the next string
+should be; loosely treating the strings as numbers in a large base. Here's Perl 5 version:
+
+    say join ", ", "az".."bc"
+    az, ba, bb, bc
+
+Such a range in Perl 6 will produce a different result, where I<each letter> will be ranged to a corresponding letter in the
+end point, producing more complex sequences:
+
+    say join ", ", "az".."bc"'
+    az, ay, ax, aw, av, au, at, as, ar, aq, ap, ao, an, am, al, ak, aj, ai, ah,
+    ag, af, ae, ad, ac, bz, by, bx, bw, bv, bu, bt, bs, br, bq, bp, bo, bn, bm,
+    bl, bk, bj, bi, bh, bg, bf, be, bd, bc
+
+    say join ", ", "r2".."t3"
+    r2, r3, s2, s3, t2, t3
+
+To achieve simpler behaviour, similar to the Perl 5 example above, use a sequence operator that calls C<.succ> method on the
+starting string:
+
+    say join ", ", ("az", *.succ ... "bc")
+    az, ba, bb, bc
 
 =head1 Common Precedence Mistakes
 
 =head2 Adverbs and Precedence
 
-Adverbs do have a precedence that may not follow the order of operators that is displayed on your screen. If two operators of equal precedence are followed by an adverb it will pick the first operator it finds in the abstract syntax tree. Use parentheses to help Perl 6 understand what you mean or use operators with looser precedence.
+Adverbs do have a precedence that may not follow the order of operators that is displayed on your screen. If two operators of equal precedence are followed by an adverb it will pick the first operator it finds in the abstract syntax tree. Use parentheses to help Perl 6 understand what you mean or use operators with looser precedence.
 
     my %x = a => 42;
     say !%x<b>:exists;            # dies with X::AdHoc
@@ -256,6 +298,19 @@ The loose precedence of C<..> can lead to some errors.  It is usually best to pa
 
     1..3.say    # says "3" (and warns about useless "..")
     (1..3).say  # says "1..3"
+
+=head2 Loose boolean operators
+
+The precedence of C<and>, C<or>, etc. is looser then routine calls. This can
+have surprising results for calls to routines that would be operators or
+statements in other languages like C<return>, C<last> and many others.
+
+    sub f {
+        return True and False;
+        # this is actually
+        # (return True) and False;
+    }
+    say f; # OUTPUT«True␤»
 
 =head1 Subroutine and method calls
 
@@ -302,6 +357,71 @@ L<Functions|/language/functions#Functions>.
 Finally, note that, currently, when declaring the functions whitespace
 may be used between a function or method name and the parentheses
 surrounding the parameter list without problems.
+
+=head2 Named Parameters
+
+Many built-in subroutines and method calls accept named parameters and your own
+code may accept them as well, but be sure the arguments you pass when calling
+your routines are actually named parameters:
+
+    sub foo($a, :$b) { ... }
+    foo(1, 'b' => 2); # FAIL: Too many positionals passed; expected 1 argument but got 2
+
+What happened? That second argument is not a named parameter argument, but a
+L<Pair|/type/Pair> passed as a positional argument. If you want a named
+parameter it has to look like a name to Perl:
+
+    foo(1, b => 2); # okay
+    foo(1, :b(2));  # okay
+    foo(1, :b<it>); # okay
+
+    my $b = 2;
+    foo(1, :b($b)); # okay, but redundant
+    foo(1, :$b);    # okay
+
+    # Or even...
+    my %arg = 'b' => 2;
+    foo(1, |%arg);  # okay too
+
+That last one may be confusing, but since it uses the C<|> prefix on a
+L<Hash|/type/Hash>, it means "treat this hash as holding named arguments."
+
+If you really do want to pass them as pairs you should use a L<List|/type/List>
+or L<Capture|/type/Capture> instead:
+
+    my $list = ('b' => 2); # this is a List containing a single Pair
+    foo(|$arg, :$b); # okay: we passed the pair 'b' => 2 to the first argument
+    foo(1, |$arg);   # FAIL: Too many positionals passed; expected 1 argument but got 2
+
+    my $cap = \('b' => 2); # a Capture with a single positional value
+    foo(|$cap, :$b); # okay: we passed the pair 'b' => 2 to the first argument
+    foo(1, |$cap);   # FAIL: Too many positionals passed; expected 1 argument but got 2
+
+A Capture is usually the best option for this as it works exactly like the usual
+capturing of routine arguments during a regular call.
+
+The nice thing about the distinction here is that it gives the developer the
+option of passing pairs as either named or positional arguments, which can be
+handy in various instances.
+
+=head1 Exception Handling
+
+=head2 Sunk C<Proc>
+
+Some methods return a L<Proc> object. If it represents a failed process, C<Proc> itself
+won't be exception-like, but B<sinking it> will cause an L<X::Proc::Unsuccessful>
+exception to be thrown. That means this construct will throw, despite the C<try> in place:
+
+    try run("perl6", "-e", "exit 42");
+    say "still alive";
+    # OUTPUT: The spawned process exited unsuccessfully (exit code: 42)
+
+This is because C<try> receives a C<Proc> and returns it, at which point it sinks and
+throws. Explicitly sinking it inside the C<try> avoids the issue:
+
+    try sink run("perl6", "-e", "exit 42");
+    say "still alive";
+    # OUTPUT: still alive
 
 =end pod
 

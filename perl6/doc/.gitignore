@@ -2,6 +2,7 @@
 index.data
 *~
 html/*.html
+html/perl6.xhtml
 html/routine/
 html/type/
 html/op/
@@ -16,3 +17,4 @@ assets/assetpack.db
 assets/cache
 .sass-cache/
 html/css/style.css.map
+html/links.txt

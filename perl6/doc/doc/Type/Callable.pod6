@@ -14,13 +14,14 @@ of such a container is C<Callable>. A signature object can be used to
 force a check against the signature of the Callable to be stored into the
 container.
 
-    my &a = {};
+    my &a = {;}; # Empty block needs a semicolon
     my &b = -> {};
     my &c = sub () {};
     sub foo() {};
     my &d = &foo;
-    my &f:(Int) = sub bar(Int) {};
-    my &f:(Str) = -> Str {};
+for code :skip-test
+my &f:(Int) = sub bar(Int) {}; # Not yet implemented
+my &f:(Str) = -> Str {};       # Not yet implemented
 
 =head1 Methods
 
@@ -32,18 +33,25 @@ Returns a C<Callable> that implements the same behaviour as the
 original, but has the values passed to .assuming already bound to the
 corresponding parameters.
 
-    sub add(Int $x, Int $y) { $x + $y };
-    my &add_to_5 = &add.assuming(5);
-    say add_to_5(4); #-> 9
+    my sub slow($n){ my $i = 0; $i++ while $i < $n; $i };
+
+    # takes only one parameter and as such wont forward $n
+    sub bench(&c){ c, now - ENTER now };
+
+    say &slow.assuming(10000000).&bench;
+    # OUTPUT«(10000000 7.5508834)␤»
 
 =comment according to design docs it's Callable but in rakudo it's assuming is in Block
 
 =head1 Operators
 
-=head2 C<< infix:<∘> >>
-X<|∘; o; function combinator>
+=head2 C«infix:<∘>»
+X<|∘,function combinator>X<|o,function combinator>
 
-The function combinator C«infix:<∘>» or C«infix:<o>» combines two functions of arity one, so that the left function is called with the return value of the right function.
+The function combinator C«infix:<∘>» or C«infix:<o>» combines two functions, so
+that the left function is called with the return value of the right function.
+The number of return values of the right function has to match the arity of the
+left function.
 
     sub f($p){ say 'f'; $p / 2 }
     sub g($p){ say 'g'; $p * 2 }

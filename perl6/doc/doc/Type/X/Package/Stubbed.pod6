@@ -10,15 +10,17 @@ Thrown at C<CHECK> time when there are packages stubbed but not later defined.
 
 For example
 
-    class A { ... }     # literal ...
-    class B { ... }     # literal ...
+=for code :skip-test
+class A { ... }     # literal ...
+class B { ... }     # literal ...
 
 dies with
 
-    ===SORRY!===
-    The following packages were stubbed but not defined:
-        A
-        B
+=for code :skip-test
+===SORRY!===
+The following packages were stubbed but not defined:
+    A
+    B
 
 =head1 Methods
 

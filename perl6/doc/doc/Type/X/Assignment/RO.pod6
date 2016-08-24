@@ -4,12 +4,14 @@
 
 =SUBTITLE Exception thrown when trying to assign to something read-only
 
-    class X::Assignment::RO is Exception { ... }
+    class X::Assignment::RO is Exception {}
 
 Code like
 
     sub f() { 42 };
     f() = 'new value';  # throws an X::Assignment::RO
+    CATCH { default { put .^name, ': ', .Str } };
+    # OUTPUT: «X::Assignment::RO: Cannot modify an immutable Any␤»
 
 throws an exception of type C<X::Assignment::RO>.
 

@@ -10,13 +10,15 @@ Compile time error thrown when trying to augment an anonymous package.
 
 For example
 
-    use MONKEY-TYPING;
-    augment class { }
+for code :skip-test
+use MONKEY-TYPING;
+augment class { }
 
 Dies with
 
-    ===SORRY!===
-    Cannot augment anonymous class
+for code :skip-test
+===SORRY!===
+Cannot augment anonymous class
 
 =head1 Methods
 

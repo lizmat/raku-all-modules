@@ -4,27 +4,29 @@
 
 =SUBTITLE Compilation error due to a malformed construct (usually a declarator)
 
-    class X::Syntax::Malformed does X::Syntax { ... }
+    class X::Syntax::Malformed does X::Syntax {}
 
-The Perl 6 compiler throws errors of type C<X::Syntax::Malformed> when it
+The Perl 6 compiler throws errors of type C<X::Syntax::Malformed> when it
 knows what kind of declaration it is parsing, and encounters a syntax error,
 but can't give a more specific error message.
 
-    my Int a;   # throws an X::Syntax::Malformed
+=for code :skip-test
+my Int a;   # throws an X::Syntax::Malformed
 
 produces
 
-    ===SORRY!===
-    Malformed my
-    at -e:1
-    ------> my Int ⏏a
+=for code :skip-test
+===SORRY!===
+Malformed my
+at -e:1
+------> my Int ⏏a
 
 
 =head1 Methods
 
 =head2 method what
 
-    method what(X::Syntax::Malformed:D:) returns Str:D:
+    method what(X::Syntax::Malformed:D:) returns Str
 
 Returns a description of the thing that was being parsed.
 

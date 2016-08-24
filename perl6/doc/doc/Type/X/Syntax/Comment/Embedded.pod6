@@ -11,11 +11,13 @@ an opening bracket.
 
 For example
 
-    #`
+=for code :skip-test
+#`
 
 dies with
 
-    ===SORRY!===
-    Opening bracket is required for #` comment
+=for code :skip-test
+===SORRY!===
+Opening bracket is required for #` comment
 
 =end pod

@@ -14,12 +14,14 @@ Reads a single line from the input stream (usually the Standard Input or a file)
 
 Read one line from the standard input:
 
-    $*IN.get;
+=for code :skip-test
+$*IN.get;
 
 Read one line from a file:
 
-    my $fh = open 'filename';
-    my $line = $fh.get;
+=for code :skip-test
+my $fh = open 'filename';
+my $line = $fh.get;
 
 
 =head2 method getc
@@ -38,12 +40,12 @@ Returns C<True> if the read operations have exhausted the content of the file.
 Return a lazy list of the file's lines read via L<get>, limited to C<$limit> lines.
 The new line separator (i.e., C<$*IN.nl-in>) will be excluded.
 
-    =for code :allow<B>
-    my @data;
-    my $data-file = open 'readings.csv';
-    for B<$data-file.lines> -> $line {
-        @data.push($line.split(','))
-    }
+=for code :skip-test
+my @data;
+my $data-file = open 'readings.csv';
+for $data-file.lines -> $line {
+    @data.push($line.split(','))
+}
 
 =head2 method words
 
@@ -52,24 +54,41 @@ The new line separator (i.e., C<$*IN.nl-in>) will be excluded.
 Return a lazy list of the file's words (separated on whitespace), limited
 to C<$count> words.
 
-    =for code :allow<B>
-    my %dict;
-    ++%dict{$_} for $*IN.words;
-    say "Most common words: ", %dict.sort(*.value).reverse.[^5];
+=for code :skip-test
+my %dict;
+++%dict{$_} for $*IN.words;
+say "Most common words: ", %dict.sort(*.value).reverse.[^5];
 
 =head2 method split
 
-    method split(splitter = "")
+    multi method split(IO::Handle:D: :$close = False, :$COMB)
+    multi method split(IO::Handle:D: $splitter, :$close = False, :$COMB)
 
 Returns a lazy list of strings found between the splitter, just like C<split>
 on strings.
 
+=for code :skip-test
+my $fh = open 'path/to/file', :r;
+$fn.split(' ', close => True); # Returns file content splitted by a space and closes file;
+
 =head2 method comb
 
-    method comb(comber = "")
+    multi method comb(IO::Handle:D: :$close = False)
+    multi method comb(IO::Handle:D: Int:D $size, :$close = False)
+    multi method comb(IO::Handle:D: $comber, :$close = False)
 
 Returns a lazy list of strings combed from the handle, just like C<comb>
 on strings.
+
+=for code :skip-test
+my $fh = open 'path/to/file', :r;
+$fn.comb(/A+/); # Comb file contents by a regex.
+
+or
+
+=for code :skip-test
+my $fh = open 'path/to/file', :r;
+$fn.comb(3, close => True); # Comb file contents by 3 characters and close after.
 
 =head2 method print
 
@@ -78,9 +97,10 @@ on strings.
 Text writing; writes the given C<@text> to the filehandle.  See L<write>
 to write bytes.
 
-    my $fh = open 'path/to/file', :w;
-    $fh.print("some text\n");
-    $fh.close;
+=for code :skip-test
+my $fh = open 'path/to/file', :w;
+$fh.print("some text\n");
+$fh.close;
 
 =head2 method print-nl
 
@@ -90,10 +110,39 @@ Writes a newline to the filehandle. The newline marker, which is stored
 in the attribute C<$.nl-out>, defaults to C<\n> unless another marker has
 been specified in the call to L<open>.
 
-    my $fh = open 'path/to/file', :w, nl-out => "\r\n";
-    $fh.print("some text");
-    $fh.print-nl;                                        # \r\n
-    $fh.close;
+=for code :skip-test
+my $fh = open 'path/to/file', :w, nl-out => "\r\n";
+$fh.print("some text");
+$fh.print-nl;                                        # \r\n
+$fh.close;
+
+=head2 method printf
+
+This method is mostly identical to the C library C<printf> and
+sprintf functions.  The only difference between the two functions is
+that C<sprintf> returns a string while the C<printf> function writes
+to a file.  See L<sub sprintf|https://docs.perl6.org/type/Str#sub_sprintf> for details about
+the Perl 6 C<$format> implementation
+
+Note that currently C<printf> is not a method for C<IO::Handle>, but
+its effect may be duplicated with a work-around using C<sub sprintf>
+and methods C<print> or C<say>.  For example:
+
+=for code :skip-test
+my $fh = open 'path/to/file', :w;
+$fh.print(sprintf("%d\n", 32));
+$fh.close;
+
+The C<say> method (see below) may be used for an automatic ending
+newline:
+
+=for code :skip-test
+my $fh = open 'path/to/file', :w;
+$fh.say(sprintf("%d", 32));
+$fh.close;
+
+See L<sub sprintf|https://docs.perl6.org/type/Str#sub_sprintf>
+for details about formatting and more examples.
 
 =head2 method say
 
@@ -104,9 +153,10 @@ that it stringifies its arguments by calling C<.gist> on them and
 auto-appends a newline, with a call to L<print-nl|/type/IO::Handle#method_print-nl>,
 after the final argument.
 
-    my $fh = open 'path/to/file', :w;
-    $fh.say(Complex.new(3, 4));        # 3+4i\n
-    $fh.close;
+=for code :skip-test
+my $fh = open 'path/to/file', :w;
+$fh.say(Complex.new(3, 4));        # 3+4i\n
+$fh.close;
 
 =head2 method read
 
@@ -182,19 +232,22 @@ For a handle opened on a file this returns the L<IO::Path|/type/IO::Path> that r
 the file. For the standard I/O handles C<$*IN>, C<$*OUT> and C<$*ERR> it returns a
 L<IO::Special|/type/IO::Special> object.
 
-    $fh.path;
+=for code :skip-test
+$fh.path;
 
 =head2 method close
 
 Will close a previously opened filehandle.
 
-    $fh.close;
+=for code :skip-test
+$fh.close;
 
 =head2 method flush
 
 Will flush the filehandle to disk.
 
-    $fh.flush;
+=for code :skip-test
+$fh.flush;
 
 =head2 method native-descriptor
 

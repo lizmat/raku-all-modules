@@ -11,11 +11,13 @@ invocant is available.
 
 For example
 
-    self
+=for code :skip-test
+self;
 
 in the mainline dies with
 
-    ===SORRY!===
-    'self' used where no object is available
+=for code :skip-test
+===SORRY!===
+'self' used where no object is available
 
 =end pod

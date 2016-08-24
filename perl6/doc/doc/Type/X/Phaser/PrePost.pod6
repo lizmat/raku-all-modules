@@ -4,19 +4,18 @@
 
 =SUBTITLE Error due to a false return value of a PRE/POST phaser
 
-    class X::Phaser::PrePost is Exception { }
+=for code :skip-test
+class X::Phaser::PrePost is Exception { }
 
 Thrown when the condition inside a C<PRE> or C<POST> phaser evaluate to a
 false value.
 
 For example
 
-    sub f($x) { PRE { $x ~~ Int } }
+    sub f($x) { PRE { $x ~~ Int } };
     f "foo";
-
-Dies with
-
-    Precondition '{ $x ~~ Int }' failed
+    CATCH { default { put .^name, ': ', .Str } };
+    # OUTPUT: X::Phaser::PrePost: Precondition '{ $x ~~ Int }' failed«␤»
 
 =head1 Methods
 

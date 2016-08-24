@@ -4,7 +4,7 @@
 
 =SUBTITLE Unicode symbols and their Texas (ASCII) counterparts
 
-The following unicode symbols can be used in Perl 6 without needing to
+The following unicode symbols can be used in Perl 6 without needing to
 load any additional modules.  Please note that the Since column
 applies to the version of Perl the symbol was known to be available.
 It is only mentioned if it is different from C<6.c>.
@@ -54,13 +54,13 @@ line), or C<Zp> (Separator, paragraph) property.
 =head1 Other acceptable single codepoints
 
 This list contains the single codepoints [and their Texas (ASCII)
-equivalents] that have a special meaning in Perl 6.
+equivalents] that have a special meaning in Perl 6.
 
 =table
   Symbol | Codepoint | Texas      | Since | Remarks
   =======|===========|============|=======|=========================
-  «      |  U+00AB   | <<         | v6.c  | as part of «» or .«
-  »      |  U+00BB   | >>         | v6.c  | as part of «» or .»
+  «      |  U+00AB   | <<         | v6.c  | as part of «» or .« or regex left word boundary
+  »      |  U+00BB   | >>         | v6.c  | as part of «» or .» or regex right word boundary
   ×      |  U+00D7   | *          | v6.c  |
   ÷      |  U+00F7   | /          | v6.c  |
   −      |  U+2212   | -          | v6.c  |
@@ -92,6 +92,7 @@ equivalents] that have a special meaning in Perl 6.
   ⁷      |  U+2077   | **7        | v6.c  | can be combined with ⁰..⁹
   ⁸      |  U+2078   | **8        | v6.c  | can be combined with ⁰..⁹
   ⁹      |  U+2079   | **9        | v6.c  | can be combined with ⁰..⁹
+  ∘      |  U+2218   | o          | v6.c  |
   ∅      |  U+2205   | set()      | v6.c  | (empty set)
   ∈      |  U+2208   | (elem)     | v6.c  |
   ∉      |  U+2209   | !(elem)    | v6.c  |

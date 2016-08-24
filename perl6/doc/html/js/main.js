@@ -53,12 +53,12 @@ function setup_collapsible_TOC() {
                 var el = $(this);
                 if (el.text() == '[hide]') {
                     Cookies.set('toc_state', 'hidden');
-                    el.parents('nav').find('tbody').slideUp();
+                    el.parents('nav').find('tbody').hide();
                     el.text('[show]');
                 }
                 else {
                     Cookies.set('toc_state', 'shown');
-                    el.parents('nav').find('tbody').slideDown();
+                    el.parents('nav').find('tbody').show();
                     el.text('[hide]');
                 }
 
@@ -66,12 +66,23 @@ function setup_collapsible_TOC() {
             });
 }
 
-document.addEventListener("keypress", function(evt){
+document.addEventListener("keyup", function(evt){
     if(evt.key == "Escape"){$('#query').focus()}
 });
 
 function setup_debug_mode(){
-    if ( window.location.href.endsWith('#__debug__') ) {
+    $('footer').children(':first').append('<span id="debug"> [Debug: '+ (window.sessionStorage.getItem("debug")?"on":"off") +']</span>');
+    $('#debug').click(function(){
+        if ( $(this).text().includes('off') ) {
+            window.sessionStorage.setItem("debug", "on");
+            $(this).html('[Debug: on]');
+        }else{
+            window.sessionStorage.removeItem("debug");
+            $(this).html('[Debug: off]');
+        }
+    });
+
+    if ( window.sessionStorage.getItem("debug") ) {
         console.info("checking for duplicated name and id attrs");
 
         var seen_name_or_id = [];
@@ -108,34 +119,55 @@ function setup_debug_mode(){
             html: 'table#TOC td.toc-number { display: inherit; }'
         }));
 
-        console.info("checking for dead links");
-
-        var seen_link = [];
-        $('html').find('a[href]').each( function(i, el) {
-            var url_without_anchor = el.href.split('#')[0];
-            if ( ! seen_link.includes(decodeURIComponent(url_without_anchor)) ) {
-                seen_link.push(decodeURIComponent(url_without_anchor));
+        if(window.localStorage){
+            var sS = window.localStorage;
+            var commit = $('#footer-commit').text();
+            if ( sS.getItem('commit') != commit ) {
+                sS.clear();
+                sS.setItem('commit', commit);
+                console.info("wiping cache");
             }
-        });
 
-        seen_link.forEach( function(url) {
-            var request = new XMLHttpRequest();
+            if ( ! sS.getItem(commit+window.location.pathname) ) {
+                sS.setItem(commit+window.location.pathname, "seen");
+                console.info("checking for dead links");
 
-            request.onreadystatechange = function(){
-                if ( request.readyState === 4 ) {
-                    if ( request.status >= 400 ) {
-                        alert(request.status + " for " + url);
-                    } else {
-                        // console.log(request.status + " for " + url);
-                    }
+                function report_broken_link(url) {
+                    $('html').find('#search').after('<div style="text-align: center;">Broken link: ' + url + ' found. Please report at <a href="https://webchat.freenode.net/?channels=perl6">irc.freenode.net#perl6</a></div>');
                 }
-            }
 
-            try {
-                request.open('HEAD', url);
-                request.send();
-            } catch (e) { /* this will catch errors due to browser security settings for external links */ }
-        });
+                var seen_link = [];
+                var links = [];
+                $('html').find('a[href]').each(function(i,el){ links.push(el.href)});
+                $('svg').find('a').filter(function(i,e){return e.href.baseVal}).each(function(i,el){ links.push(el.href.baseVal) });
+                links.forEach( function(el) {
+                    var url_without_anchor = el.split('#')[0];
+                    if ( ! seen_link.includes(decodeURIComponent(url_without_anchor)) ) {
+                        seen_link.push(decodeURIComponent(url_without_anchor));
+                    }
+                });
+
+                seen_link.forEach( function(url) {
+                    var request = new XMLHttpRequest();
+
+                    request.onreadystatechange = function(){
+                        if ( request.readyState === 4 ) {
+                            if ( request.status >= 400 ) {
+                                report_broken_link(request.status + " for " + url);
+                            } else {
+                                // console.log(request.status + " for " + url);
+                            }
+                        }
+                    }
+
+                    try {
+                        request.open('HEAD', url);
+                        request.send();
+                    } catch (e) { /* this will catch errors due to browser security settings for external links */ }
+                });
+            }
+        }
 
     }
+
 }

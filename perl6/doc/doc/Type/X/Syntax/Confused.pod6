@@ -4,17 +4,20 @@
 
 =SUBTITLE Compilation error due to unrecognized syntax
 
-    class X::Syntax::Confused does X::Syntax { }
+=for code :skip-test
+class X::Syntax::Confused does X::Syntax { }
 
 The most general syntax error, if no more specific error message can be given.
 
 For example
 
-    1∞
+=for code :skip-test
+1∞
 
 dies with
 
-    ===SORRY!===
-    Confused
+=for code :skip-test
+===SORRY!===
+Confused
 
 =end pod

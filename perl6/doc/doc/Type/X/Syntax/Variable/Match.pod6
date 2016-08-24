@@ -10,11 +10,13 @@ Syntax error thrown when a match variable like C<< $<thing> >> was declared.
 
 For example
 
-    my $<thing>;
+=for code :skip-test
+my $<thing>;
 
 dies with
 
-    ===SORRY!===
-    Cannot declare a match variable
+=for code :skip-test
+===SORRY!===
+Cannot declare a match variable
 
 =end pod

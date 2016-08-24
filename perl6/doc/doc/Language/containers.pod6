@@ -2,16 +2,16 @@
 
 =TITLE Containers
 
-=SUBTITLE A low-level explanation of Perl 6 containers
+=SUBTITLE A low-level explanation of Perl 6 containers
 
 This article started as a conversation on IRC explaining the difference
-between the C<Array> and the C<List> type in Perl 6. It explains the levels
+between the C<Array> and the C<List> type in Perl 6. It explains the levels
 of indirection involved in dealing with variables and container elements.
 
 =head1 What is a variable?
 
 Some people like to say "everything is an object", but in fact a variable is
-not a user-exposed object in Perl 6.
+not a user-exposed object in Perl 6.
 
 When the compiler encounters a variable declaration like C<my $x>, it
 registers it in some internal symbol table. This internal symbol table is
@@ -28,7 +28,7 @@ container>.
 
 =head1 Scalar containers
 
-Although objects of type C<Scalar> are everywhere in Perl 6, you rarely
+Although objects of type C<Scalar> are everywhere in Perl 6, you rarely
 see them directly as objects, because most operations
 I<decontainerize>, which means they act on the C<Scalar> container's
 contents instead of the container itself.
@@ -91,11 +91,13 @@ And C<is rw> on a parameter requires the presence of a writable Scalar
 container:
 
     sub f($x is rw) { say $x };
-    f 42;   # Parameter '$x' expected a writable container, but got Int value
+    f 42;
+    CATCH { default { say .^name, ': ', .Str } };
+    # OUTPUT«X::Parameter::RW: Parameter '$x' expected a writable container, but got Int value␤»
 
 =head1 Binding
 
-Next to assignment, Perl 6 also supports I<binding> with the C<:=> operator.
+Next to assignment, Perl 6 also supports I<binding> with the C<:=> operator.
 When binding a value or a container to a variable, the lexpad entry of the
 variable is modified (and not just the container it points to). If you write
 
@@ -104,9 +106,10 @@ variable is modified (and not just the container it points to). If you write
 then the lexpad entry for C<$x> directly points to the C<Int> 42. Which
 means that you cannot assign to it anymore:
 
-    $ perl6 -e 'my $x := 42; $x = 23'
-    Cannot modify an immutable value
-       in block  at -e:1
+    my $x := 42;
+    $x = 23;
+    CATCH { default { say .^name, ': ', .Str } };
+    # OUTPUT«X::AdHoc: Cannot assign to an immutable value␤»
 
 You can also bind variables to other variables:
 
@@ -123,6 +126,7 @@ changes the contents of the other.
 You've seen this situation before: it is exactly what happened with the
 signature parameter marked as C<is rw>.
 
+X<|\ (container binding)>
 Sigilless variables also bind by default and so do parameters with the trait C<is raw>.
 
     my $a = 42;
@@ -137,7 +141,7 @@ Sigilless variables also bind by default and so do parameters with the trait C<i
 =head1 Scalar containers and listy things
 
 There are a number of positional container types with slightly different
-semantics in Perl 6. The most basic one is L<List|/type/List>
+semantics in Perl 6. The most basic one is L<List|/type/List>
 It is created by the comma operator.
 
     say (1, 2, 3).^name;    # List
@@ -150,6 +154,10 @@ you can still assign to it:
     ($x, 1, 2)[0] = 23;
     say $x;                 # 23
     ($x, 1, 2)[1] = 23;     # Error: Cannot modify an immutable value
+    CATCH { default { say .^name, ': ', .Str } };
+    # OUTPUT:
+    # 23
+    # X::Assignment::RO: Cannot modify an immutable Int
 
 So the list doesn't care about whether its elements are values or
 containers, they just store and retrieve whatever was given to them.
@@ -192,7 +200,7 @@ To place a non-C<Array> into an array variable, binding works:
 
 =head1 Binding to array elements
 
-As a curious side note, Perl 6 supports binding to array elements:
+As a curious side note, Perl 6 supports binding to array elements:
 
     my @a = (1, 2, 3);
     @a[0] := my $x;
@@ -219,14 +227,16 @@ counter-intuitive results when the array is used later.
     my $b := 42;
     @a[1] := $b;         # Nor is this.
     @a[2] = $b;          # ...but this is fine.
-    @a[1, 2] := 1, 2;    # This is not allowed and will fail.
+    @a[1, 2] := 1, 2;    # runtime error: X::Bind::Slice
+    CATCH { default { say .^name, ': ', .Str } };
+    # OUTPUT«X::Bind::Slice: Cannot bind to Array slice␤»
 
 Operations that mix Lists and Arrays generally protect against such
 a thing happening accidentally.
 
 =head1 Flattening, items and containers
 
-The C<%> and C<@> sigils in Perl 6 generally indicate multiple values
+The C<%> and C<@> sigils in Perl 6 generally indicate multiple values
 to an iteration construct, whereas the C<$> sigil indicates only one value.
 
     my @a = 1, 2, 3;
@@ -234,7 +244,7 @@ to an iteration construct, whereas the C<$> sigil indicates only one value.
     my $a = (1, 2, 3);
     for $a { };         # 1 iteration
 
-Contrary to earlier versions of Perl 6, and to Perl 5, C<@>-sigiled variables
+Contrary to earlier versions of Perl 6, and to Perl 5, C<@>-sigiled variables
 do not flatten in list context:
 
     my @a = 1, 2, 3;
@@ -254,6 +264,7 @@ container: slurpy parameters (C<*@a>) and explicit calls to C<flat>:
 As hinted above, scalar containers prevent that flattening:
 
     sub f(*@x) { @x.elems };
+    my @a = 1, 2, 3;
     say f $@a, 4, 5;            # 3
 
 The C<@> character can also be used as a prefix to remove a scalar container:
@@ -270,12 +281,12 @@ maps over a list of three elements, not of one.
 
 =head1 Custom containers
 
-To provide custom containers Perl 6 provides the class C<Proxy>. It takes two
+To provide custom containers Perl 6 provides the class C<Proxy>. It takes two
 methods that are called when values are stored or fetched from the container.
 Type checks are not done by the container itself and other restrictions like
 readonlyness can be broken. The returned value must therefore be of the same
 type as the type of the variable it is bound to. We can use type captures to
-work with types in Perl 6.
+work with types in Perl 6.
 
     sub lucky(::T $type) {
         my T $c-value; # closure variable
@@ -293,5 +304,6 @@ work with types in Perl 6.
     say $a = 12;
     say $a = 'FOO'; # X::TypeCheck::Binding
     say $a = 13; # X::OutOfRange
+    CATCH { default { say .^name, ': ', .Str; .resume } };
 
 =end pod

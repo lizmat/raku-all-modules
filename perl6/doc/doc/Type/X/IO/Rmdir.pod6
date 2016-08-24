@@ -4,18 +4,20 @@
 
 =SUBTITLE Error while trying to remove a directory
 
-    my class X::IO::Rmdir does X::IO is Exception
+=for code :skip-test
+my class X::IO::Rmdir does X::IO is Exception { }
 
-Error class for failed L<&rmdir> operations.
+Error class for failed L</routine/rmdir> operations.
 
 A typical error message is
 
-    Failed to remove the directory 'lib': Directory not empty
+=for code :skip-test
+Failed to remove the directory 'lib': Directory not empty
 
 =head1 Methods
 
 =head2 method path
 
-Returns the path L<&rmdir> failed to remove
+Returns the path L</routine/rmdir> failed to remove
 
 =end pod

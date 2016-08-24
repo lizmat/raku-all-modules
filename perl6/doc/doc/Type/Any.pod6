@@ -4,9 +4,9 @@
 
 =SUBTITLE Thing/object
 
-    class Any is Mu { ... }
+    class Any is Mu {}
 
-While L<Mu|/type/Mu> is the root of the Perl 6 class hierarchy, C<Any> is the class
+While L<Mu|/type/Mu> is the root of the Perl 6 class hierarchy, C<Any> is the class
 that serves as a default base class for new classes, and as the base class for
 most built-in classes.
 
@@ -24,7 +24,9 @@ Defined as:
 
 Usage:
 
-    EXPR.ACCEPTS(EXPR);
+=begin code :skip-test
+EXPR.ACCEPTS(EXPR);
+=end code
 
 Returns C<True> if C<$other === self> (i.e. it checks object identity).
 
@@ -35,10 +37,6 @@ Many built-in types override this for more specific comparisons
 Defined as:
 
     method any() returns Junction:D
-
-Usage:
-
-    LIST.any
 
 Interprets the invocant as a list and creates an
 C<any>-L<Junction|/type/Junction> from it.
@@ -52,10 +50,6 @@ Defined as:
 
     method all() returns Junction:D
 
-Usage:
-
-    LIST.all
-
 Interprets the invocant as a list and creates an
 C<all>-L<Junction|/type/Junction> from it.
 
@@ -68,10 +62,6 @@ Defined as:
 
     method one() returns Junction:D
 
-Usage:
-
-    LIST.one
-
 Interprets the invocant as a list and creates a
 C<one>-L<Junction|/type/Junction> from it.
 
@@ -83,10 +73,6 @@ C<one>-L<Junction|/type/Junction> from it.
 Defined as:
 
     method none() returns Junction:D
-
-Usage:
-
-    LIST.none
 
 Interprets the invocant as a list and creates a
 C<none>-L<Junction|/type/Junction> from it.
@@ -111,7 +97,7 @@ into the newly created Array.
     my %h;
     dd %h<a>; # Any (and therefor undefined)
     %h<a>.push(1); # .push on Any
-    dd %h; # «Hash %h = {:a($[1])}␤» # please not the Array
+    dd %h; # «Hash %h = {:a($[1])}␤» # please note the Array
 
 =head2 routine reverse
 
@@ -120,11 +106,6 @@ Defined as:
     multi sub    reverse(*@list ) returns List:D
     multi method reverse(List:D:) returns List:D
 
-Usage:
-
-    reverse(LIST)
-    LIST.reverse
-
 Returns a list with the same elements in reverse order.
 
 Note that C<reverse> always refers to reversing elements of a list;
@@ -132,8 +113,8 @@ to reverse the characters in a string, use L<flip>.
 
 Examples:
 
-    say <hello world!>.reverse      #  world! hello
-    say reverse ^10                 # 9 8 7 6 5 4 3 2 1 0
+    say <hello world!>.reverse;     # (world! hello)
+    say reverse ^10;                # (9 8 7 6 5 4 3 2 1 0)
 
 =head2 method sort
 
@@ -141,7 +122,7 @@ Sorts iterables with C<infix:<cmp>> or given code object and returns a new C<Lis
 
 Examples:
 
-    say <b c a>.sort;                           # a b c
+    say <b c a>.sort;                           # (a b c)
     say 'bca'.comb.sort.join;                   # abc
     say 'bca'.comb.sort({$^b cmp $^a}).join;    # cba
     say '231'.comb.sort(&infix:«<=>»).join;     # 123
@@ -150,7 +131,9 @@ Examples:
 
 Defined as:
 
-    proto method map(|) is nodal { * }
+=begin code :skip-test
+proto method map(|) is nodal { * }
+=end code
     multi method map(\SELF: &block;; :$label, :$item)
     multi method map(HyperIterable:D: &block;; :$label)
 
@@ -171,6 +154,20 @@ For those elements C<deepmap> will descend recursively into the sublist.
     dd [[1,2,3],[[4,5],6,7]].deepmap(*+1);
     # OUTPUT«[[2, 3, 4], [[5, 6], 7, 8]]␤»
 
+=head2 method duckmap
+
+Defined as:
+
+    method duckmap(&block) is rw is nodal
+
+C<duckmap> will apply C<&block> on each element and return a new list with
+defined return values of the block. For undefined return values, C<duckmap>
+will try to descend into the element if that element implements C<Iterable>.
+
+    my @a = [1,[2,3],4];
+    dd @a.duckmap({ $_ ~~ Int ?? $_++ !! Any });
+    # OUTPUT«(1, (2, 3), 4)␤»
+
 =head2 method flat
 
 Interprets the invocant as a list, flattens it, and returns that list.  Please
@@ -181,12 +178,27 @@ in the process.
     say ((1, 2), (3)).elems;        # 2
     say ((1, 2), (3)).flat.elems;   # 3
 
+Please not that C<flat> is not recursing into sub lists. You have to recurse by
+hand or reconsider your data structures. A single level of nesting can often be
+handled with L<destructuring|/type/Signature#Destructuring_Parameters> in
+signatures. For deeper structures you may consider
+L<gather/take|/syntax/gather take> to create a lazy list.
+
+    my @a = [[1,2,3],[[4,5],6,7]];
+    sub deepflat(@a){
+        gather for @a {
+            take ($_ ~~ Iterable ?? deepflat($_).Slip !! $_)
+        }
+    };
+    dd deepflat(@a);
+    # OUTPUT«(1, 2, 3, 4, 5, 6, 7).Seq␤»
+
 =head2 method eager
 
 Interprets the invocant as a list, evaluates it eagerly, and returns that
 list.
 
-    say (1..10).eager;              # 1 2 3 4 5 6 7 8 9 10
+    say (1..10).eager;              # (1 2 3 4 5 6 7 8 9 10)
 
 =head2 method elems
 
@@ -214,7 +226,7 @@ constructs a pair from them, unless the item in the key position already is a
 pair (in which case the pair is passed is passed through, and the next
 list item, if any, is considered to be a key again).
 
-    say (a => 1, 'b', 'c').pairup.perl;     # ("a" => 1, "b" => "c").list
+    say (a => 1, 'b', 'c').pairup.perl;     # (:a(1), :b("c")).Seq
 
 =head2 sub exit
 

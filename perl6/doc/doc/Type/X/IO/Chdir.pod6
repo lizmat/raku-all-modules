@@ -4,13 +4,15 @@
 
 =SUBTITLE Error while trying to change the working directory
 
-    class X::IO::Chdir does X::IO is Exception { }
+=for code :skip-test
+class X::IO::Chdir does X::IO is Exception { }
 
 Error class when a L<chdir> call failed.
 
 A typical error message is
 
-    Failed to change the working directory to '/home/other': permission denied
+=for code :skip-test
+Failed to change the working directory to '/home/other': permission denied
 
 =head1 Methods
 

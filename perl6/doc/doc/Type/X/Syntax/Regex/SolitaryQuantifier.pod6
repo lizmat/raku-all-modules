@@ -11,11 +11,13 @@ to quantify) is encountered in a regular expression.
 
 For example
 
-    / * /
+=for code :skip-test
+/ * /;
 
 dies with
 
-    ===SORRY!=== Error while compiling
-    Quantifier quantifies nothing
+=for code :skip-test
+===SORRY!=== Error while compiling
+Quantifier quantifies nothing
 
 =end pod

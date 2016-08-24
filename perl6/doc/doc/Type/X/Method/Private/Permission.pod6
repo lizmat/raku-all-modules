@@ -12,12 +12,14 @@ relation is defined that permits the private method call.
 
 For example the code
 
-    1!Int::foo
+=for code :skip-test
+1!Int::foo
 
 dies with
 
-    ===SORRY!===
-    Cannot call private method 'foo' on package Int because it does not trust GLOBAL
+=for code :skip-test
+===SORRY!===
+Cannot call private method 'foo' on package Int because it does not trust GLOBAL
 
 =head1 Methods
 

@@ -15,28 +15,33 @@ parameter (C<*@a>), or on explicit calls to C<flat>.
 
 Its important aspect is a method stub for C<iterator>.
 
+    role DNA does Iterable {
+        method iterator(){ self.comb.iterator }
+    };
+
+    my @a does DNA = 'GAATCC';
+    .say for @a; # OUTPUT«G␤G␤A␤T␤C␤C␤»
+
 =head1 Methods
 
 =head2 method iterator
 
 Defined as:
 
-    method iterator() returns Iterator:D { ... }
+    method iterator() returns Iterator:D
 
 Method stub that ensures all classes doing the C<Iterable> role have a method
 C<iterator>.
 
 It is supposed to return an L<Iterator|/type/Iterator>.
 
+    say (1..10).iterator;
+
 =head2 method flat
 
 Defined as:
 
-    method flat() return Iterable
-
-Usage:
-
-    ITERABLE.flat
+    method flat() returns Iterable
 
 Returns another L<Iterable> that flattens out all iterables that the first one
 returns.
@@ -52,7 +57,7 @@ C<< (<a b>, 'c').flat >> returns C<('a', 'b', 'c')>, which has three elems.
 Note that the flattening is recursive, so C<((("a", "b"), "c"), "d").flat>
 returns C<("a", "b", "c", "d")>, but it does not flatten itemized sublists:
 
-    say ($('a', 'b'), 'c').perl;    # ($("a", "b"), "c").Seq
+    say ($('a', 'b'), 'c').perl;    # ($("a", "b"), "c")
 
 =head2 method lazy
 
@@ -60,42 +65,35 @@ Defined as:
 
     method lazy() returns Iterable
 
-Usage:
-
-    ITERABLE.lazy
-
 Returns a lazy iterable wrapping the invocant.
+
+    say (1 ... 1000).is-lazy;      # False
+    say (1 ... 1000).lazy.is-lazy; # True
 
 =head2 method hyper
 
 Defined as:
 
-    method hyper(Int(Cool) :$batch = 64, Int(Cool) :$degree = 4)
-                returns Iterable
-
-Usage:
-
-    ITERABLE.hyper(BATCH?, DEGREE?)
+    method hyper(Int(Cool) :$batch = 64, Int(Cool) :$degree = 4) returns Iterable
 
 Returns another Iterable that is potentially iterated in parallel, with a
 given batch size and degree of parallelism.
 
 The order of elements is preserved.
 
+    say ([1..100].hyper.map({ $_ +1 }).list);
+
 =head2 method race
 
 Defined as:
 
-    method race(Int(Cool) :$batch = 64, Int(Cool) :$degree = 4)
-                returns Iterable
-
-Usage:
-
-    ITERABLE.race(BATCH?, DEGREE?)
+    method race(Int(Cool) :$batch = 64, Int(Cool) :$degree = 4) returns Iterable
 
 Returns another Iterable that is potentially iterated in parallel, with a
 given batch size and degree of parallelism (number of parallel workers).
 
 Unlike C<hyper>, C<race> does not preserve the order of elements.
+
+    say ([1..100].race.map({ $_ +1 }).list);
 
 =end pod

@@ -2,9 +2,9 @@
 
 =TITLE Terms
 
-=SUBTITLE Perl 6 Terms
+=SUBTITLE Perl 6 Terms
 
-Most syntactic constructs in Perl 6 can be categorized in I<terms> and
+Most syntactic constructs in Perl 6 can be categorized in I<terms> and
 L<operators|/language/operators>.
 
 Here you can find an overview of different kinds of terms.
@@ -51,7 +51,7 @@ constructs a L<Num> with value C<3 * 10**8>.
     q|Other delimiters can be used too!|
 
 String literals are most often created with C<'> or C<">, however strings
-are actually a powerful sub-language of Perl 6. See L<Quoting Constructs|/language/quoting>.
+are actually a powerful sub-language of Perl 6. See L<Quoting Constructs|/language/quoting>.
 
 =head2 Regex
 
@@ -108,7 +108,7 @@ more details.
 
 =head1 Identifier terms
 
-There are built-in identifier terms in Perl 6, which are listed below.  In
+There are built-in identifier terms in Perl 6, which are listed below.  In
 addition one can add new identifier terms with the syntax:
 
     sub term:<forty-two> { 42 };
@@ -138,12 +138,20 @@ Returns the current POSIX time as an L<Int>.
 Returns a pseudo-random L<Num> in the range C<0..^1>.
 
 =head2 term π
+
+Returns the number C<π>, i.e., the ratio between circumference and diameter
+of a circle. The Texas (ASCII) equivalent of C<π> is C<pi>.
+
 =head2 term pi
 
 Returns the number C<π>, i.e., the ratio between circumference and diameter
 of a circle. C<pi> is the Texas (ASCII) equivalent of C<π>.
 
 =head2 term τ
+
+Returns the number C<τ>, i.e., the ratio between circumference and radius
+of a circle. The Texas (ASCII) equivalent of C<τ> is C<tau>.
+
 =head2 term tau
 
 Returns the number C<τ>, i.e., the ratio between circumference and radius
@@ -166,6 +174,8 @@ Variables are discussed in the L<variable language docs |/language/variables>.
 X<|constant (Terms)>
 Constants are declared with C<constant> and do not require a sigil. The RHS is evaluated at compile time, what may be too early to make sense.
 
-    constant Pi = 3.123; # if you happen to be Babylonian
+    constant SpeedOfLight = 299792458     # m/s
+    constant PHI          = 1.61803398875 # The golden ratio is everywhere!
+
 
 =end pod

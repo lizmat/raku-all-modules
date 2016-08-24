@@ -1,12 +1,38 @@
-## Contributing
+# Contributing
 
 Your patches to perl6/doc are very welcome.
 
 This document describes how to get started and helps to provide documentation
 that adheres to the common style and formatting guidelines.
 
+Your contributions will be credited in Rakudo release announcement. You name from
+the commit log will be used. If you'd like to be credited under a different name,
+please add it to [CREDITS file](https://github.com/rakudo/rakudo/blob/nom/CREDITS)
+
 If you have any questions regarding contributing to this project, please ask
 in the [#perl6 IRC channel](https://perl6.org/community/irc).
+
+# TABLE OF CONTENTS
+- [General principles](#general-principles)
+- [Documenting types](#documenting-types)
+- [Testing examples](#testing-examples)
+    - [Skipping tests](#skipping-tests)
+- [Debug mode](#debug-mode)
+    - [Invisible index anchors](#invisible-index-anchors)
+    - [Viewport size](#viewport-size)
+    - [Broken links](#broken-links)
+    - [Heading numbering](#heading-numbering)
+- [Reporting bugs](#reporting-bugs)
+- [Website Styles](#website-styles)
+- [Building the documentation](#building-the-documentation)
+    - [Dependency installation](#dependency-installation)
+        - [Rakudo](#rakudo)
+        - [Panda](#panda)
+        - [Pod::To::HTML](#podtohtml)
+        - [Mojolicious / Web Server](#mojolicious--web-server)
+        - [pygmentize](#pygmentize)
+        - [Inline::Python](#inlinepython)
+    - [Build and view the documentation](#build-and-view-the-documentation)
 
 ## General principles
 
@@ -16,7 +42,11 @@ in the [#perl6 IRC channel](https://perl6.org/community/irc).
 * Duplicate small pieces of information rather than rely on linking
 * Be explicit about routine signatures. If a method accepts a `*%args`,
   but treats some of them specially, list them separately.
-* Check out [the styleguide](STYLEGUIDE.md) for further ... guidance
+* Check out [the styleguide](STYLEGUIDE.md) for further guidance
+* For website: we support the current and previous major releases of Chrome, Firefox,
+Internet Explorer (Edge), and Safari. Please test layout changes.
+Lacking actual browsers to test in, you can use [browsershots.org](http://browsershots.org)
+or [browserstack.com](http://browserstack.com). Ensure the layout looks OK on mobile.
 
 ## Documenting types
 
@@ -58,31 +88,62 @@ Fill the documentation file `doc/Type/MyFunnyRole.pod6` like this:
         MyFunnyRole.do-it(2);   # example output
 
 
-When documenting a pair of a sub and a method which both do the same thing,
-the heading should be `=head2 routine do-it`, and the next thing should be two
-or more lines with the signatures. Other allowed words instead of `method`
-are `sub`, `trait`, `infix`, `prefix`, `postfix`, `circumfix`,
-`postcircumfix`, `term`.
+When documenting a pair of a sub and a method which both do the same thing, the
+heading should be `=head2 routine do-it`, and the next thing should be two or
+more lines with the signatures. Other allowed words instead of `method` are
+`sub`, `trait`, `infix`, `prefix`, `postfix`, `circumfix`, `postcircumfix`,
+`term`. If you wish to hide a heading from any index prefix it with the empty
+comment `Z<>`.
 
-## Invisible index anchors
+## Testing examples
+
+To export examples from all .pod6-files use `make extract-examples`. To run
+individual tests pick the right .p6-file from `examples/` as a parameter to
+`perl6`.
+
+### Skipping tests
+
+Some examples fail with compile time exceptions and would interrupt the test
+for a file. Use the pod-config option `skip-test` to skip them.
+
+    =begin code :skip-test
+        your-example-here();
+    =end code
+
+## Testing method completeness
+
+To get a list of methods that are found via introspection but not found in any
+pod6 under `doc/Type/`, use `util/list-missing-methods.p6`. It takes a
+directory or filepath as argument and limits the listing to the given file or
+any pod6-files found. All methods listed in `util/ignored-methods.txt` are
+ignored.
+
+## Debug mode
+
+On the right side of the footer you can find [Debug: off]. Click it and reload
+the page to activate debug mode. The state of debug mode will be remembered by
+`window.sessionStorage` and will not survive a brower restart or opening the
+docs in a new tab.
+
+### Invisible index anchors
 
 You can create index entries and invisible anchors with `X<|somename,some
-category>`. To make them visible as a link in the generated html add
-`#__debug__` to any URL.
+category>`. To make them visible activate debug mode.
 
-## Viewport size
+### Viewport size
 
-If you change the layout please check different screen sizes. The #__debug__
-anchor will display the viewport size in the bottom left corner.
+If you change the layout please check different screen sizes. Debug mode will
+display the viewport size in the bottom left corner.
 
-## Broken links
+### Broken links
 
-To check for broken links use the #__debug__ anchor. Please note that some
-external links may not get checked depending on your browser settings.
+To check for broken links use debug mode. Any spotted broken link will be
+listed under the search input. Please note that some external links may not get
+checked depending on your browser settings.
 
-## Heading numbering
+### Heading numbering
 
-Please check if the heading you add are of sound structure. You can use #__debug__
+Please check if the heading you add are of sound structure. You can use debug mode
 to display heading numbers.
 
 ## Reporting bugs
@@ -165,11 +226,11 @@ Now the `panda` command should be available.
 
 #### Pod::To::HTML
 
-The program which builds the HTML version of the documentation
+The program that builds the HTML version of the documentation
 (`htmlify.p6`) uses `Pod::To::HTML` to convert Pod structures into HTML.
-Install `Pod::To::HTML` like so:
+You'll also need `Pod::To::BigPage`. Install these modules like so:
 
-    $ panda install Pod::To::HTML
+    $ panda install Pod::To::HTML Pod::To::BigPage
 
 #### Mojolicious / Web Server
 
@@ -190,7 +251,7 @@ install this now:
 If you also plan on modifying the SASS stylesheets, install these modules to
 enable SASS processor:
 
-    $ cpanm -vn CSS::Minifier::XS CSS::Sass Mojolicious::Plugin::AssetPack
+    $ cpanm -vn CSS::Sass Mojolicious::Plugin::AssetPack
 
 Alternatively, you can install `sass` program and process SASS using that instead:
 

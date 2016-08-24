@@ -24,11 +24,6 @@ Defined as:
     multi sub    chomp(Str:D ) returns Str:D
     multi method chomp(Str:D:) returns Str:D
 
-Usage:
-
-    chomp($string);
-    $string.chomp;
-
 Returns the string with a logical newline (any codepoint that has the
 C<NEWLINE> property) removed from the end.
 
@@ -44,11 +39,6 @@ Defined as:
 
     multi sub    lc(Str:D ) returns Str:D
     multi method lc(Str:D:) returns Str:D
-
-Usage:
-
-    lc($string);
-    $string.lc;
 
 Returns a lower-case version of the string.
 
@@ -92,22 +82,14 @@ case
 
 =head2 routine wordcase
 
-=for code :allow<L>
+=for code
 multi sub    wordcase(Cool $x)  returns Str
 multi sub    wordcase(Str:D $x) returns Str
-multi method wordcase(Str:D: :&filter = &L<tclc>, Mu :$where = True) returns Str
+multi method wordcase(Str:D: :&filter = &tclc, Mu :$where = True) returns Str
 
 Returns a string in which C<&filter> has been applied to all the words
 that match C<$where>. By default, this means that the first letter of
 every word is capitalized, and all the other letters lowercased.
-
-=head2 method lcfirst
-
-Perl 6 does not have a C<lcfirst> function.
-
-=head2 method ucfirst
-
-Perl 6 does not have a C<ucfirst> function.  See L<tc>.
 
 =head2 method unival
 
@@ -127,12 +109,7 @@ or C<NaN> if it's not numeric.
 Returns a list of numeric values represented by each codepoint in the invocant
 string, and C<NaN> for non-numeric characters.
 
-    say '4a¾".univals;  # 4 NaN 0.75
-
-=head2 method length
-
-Perl 6 does not have a C<length> function.  See L<chars>, L<elems>,
- or L<codes>.
+    say "4a¾".univals;  # (4 NaN 0.75)
 
 =head2 routine chars
 
@@ -146,7 +123,7 @@ currently erroneously returns the number of codepoints instead.
 
 =head2 method encode
 
-    multi method encode(Str:D: $encoding = $?ENC, $nf = $?NF) returns Blob
+    multi method encode(Str:D: $encoding, $nf) returns Blob
 
 Returns a L<Blob> which represents the original string in the given encoding
 and normal form. The actual return type is as specific as possible, so
@@ -174,8 +151,8 @@ Examples:
 
 =head2 routine rindex
 
-    multi sub    rindex(Str:D $haystack, Str:D $needle, Int $startpos = $haystack.chars) returns StrPos
-    multi method rindex(Str:D $haystack: Str:D $needle, Int $startpos = $haystack.chars) returns StrPos
+    multi sub    rindex(Str:D $haystack, Str:D $needle, Int $startpos = $haystack.chars) returns Int
+    multi method rindex(Str:D $haystack: Str:D $needle, Int $startpos = $haystack.chars) returns Int
 
 Returns the last position of C<$needle> in C<$haystack> not after C<$startpos>.
 Returns an undefined value if C<$needle> wasn't found.
@@ -187,27 +164,19 @@ Examples:
 
 =head2 routine split
 
-    multi sub    split(  Str:D $delimiter, Str:D $input, $limit = Inf,
-      :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
-    multi sub    split(Regex:D $delimiter, Str:D $input, $limit = Inf,
-      :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
-    multi sub    split(List:D $delimiters, Str:D $input, $limit = Inf,
-      :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
-    multi method split(Str:D:   Str:D $delimiter, $limit = Inf,
-      :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
-    multi method split(Str:D: Regex:D $delimiter, $limit = Inf,
-      :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
-    multi method split(Str:D: List:D $delimiters, $limit = Inf,
-      :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
-
-Usage:
-
-    split( DELIMITER,  STRING [,LIMIT] [,:v] [,:k] [,:kv] [,:p] [,:skip-empty] )
-    split( /PATTERN/,  STRING [,LIMIT] [,:v] [,:k] [,:kv] [,:p] [,:skip-empty] )
-    split( DELIMITERS, STRING [,LIMIT] [,:v] [,:k] [,:kv] [,:p] [,:skip-empty] )
-    STRING.split( DELIMITER  [,LIMIT] [,:v] [,:k] [,:kv] [,:p] [,:skip-empty] )
-    STRING.split( /PATTERN/  [,LIMIT] [,:v] [,:k] [,:kv] [,:p] [,:skip-empty] )
-    STRING.split( DELIMITERS [,LIMIT] [,:v] [,:k] [,:kv] [,:p] [,:skip-empty] )
+=for code :skip-test
+multi sub    split(  Str:D $delimiter, Str:D $input, $limit = Inf,
+  :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
+multi sub    split(Regex:D $delimiter, Str:D $input, $limit = Inf,
+  :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
+multi sub    split(List:D $delimiters, Str:D $input, $limit = Inf,
+  :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
+multi method split(Str:D:   Str:D $delimiter, $limit = Inf,
+  :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
+multi method split(Str:D: Regex:D $delimiter, $limit = Inf,
+  :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
+multi method split(Str:D: List:D $delimiters, $limit = Inf,
+  :$skip-empty, :$v, :$k, :$kv, :$p) returns Positional
 
 Splits a string up into pieces based on delimiters found in the string.
 
@@ -279,7 +248,6 @@ Examples:
     multi sub    comb(Str:D   $matcher, Str:D $input, $limit = Inf)
     multi sub    comb(Regex:D $matcher, Str:D $input, $limit = Inf, Bool :$match)
     multi sub    comb(Int:D $size, Str:D $input, $limit = Inf)
-
     multi method comb(Str:D $input:)
     multi method comb(Str:D $input: Str:D   $matcher, $limit = Inf)
     multi method comb(Str:D $input: Regex:D $matcher, $limit = Inf, Bool :$match)
@@ -344,104 +312,14 @@ Examples:
     "Perl".flip;  # lreP
     "ABBA".flip;  # ABBA
 
-=head2 sub printf
-
- multi sub printf(Str:D $format, *@args)
-
-This function is mostly identical to the C library printf function.
-
-The C<$format> is scanned for C<%> characters. Any C<%> introduces a
-format token. Format tokens have the following grammar:
-
- grammar Str::PrintfFormat {
-  regex format_token { '%': <index>? <precision>? <modifier>? <directive> }
-  token index { \d+ '$' }
-  token precision { <flags>? <vector>? <precision_count> }
-  token flags { <[ \x20 + 0 \# \- ]>+ }
-  token precision_count { [ <[1..9]>\d* | '*' ]? [ '.' [ \d* | '*' ] ]? }
-  token vector { '*'? v }
-  token modifier { < ll l h V q L > }
-  token directive { < % c s d u o x e f g X E G b p n i D U O F > }
- }
-
-Directives guide the use (if any) of the arguments. When a directive
-(other than C<%>) is used, it indicates how the next argument
-passed is to be formatted into the string to be printed.
-
-The directives are:
-
-=begin table
-
- %   a literal percent sign
- c   a character with the given codepoint
- s   a string
- d   a signed integer, in decimal
- u   an unsigned integer, in decimal
- o   an unsigned integer, in octal
- x   an unsigned integer, in hexadecimal
- e   a floating-point number, in scientific notation
- f   a floating-point number, in fixed decimal notation
- g   a floating-point number, in %e or %f notation
- X   like x, but using uppercase letters
- E   like e, but using an uppercase "E"
- G   like g, but with an uppercase "E" (if applicable)
- b   an unsigned integer, in binary
-
-=end table
-
-Compatibility:
-
-=begin table
-
- i   a synonym for %d
- D   a synonym for %ld
- U   a synonym for %lu
- O   a synonym for %lo
- F   a synonym for %f
-
-=end table
-
-Perl 5 (non-)compatibility:
-
-=begin table
-
- n   produces a runtime exception
- p   produces a runtime exception
-
-=end table
-
-Modifiers change the meaning of format directives, but are largely
-no-ops (the semantics are still being determined).
-
-=begin table
-
- h  interpret integer as native "short" (typically int16)
- l  interpret integer as native "long" (typically int32 or int64)
- ll interpret integer as native "long long" (typically int64)
- L  interpret integer as native "long long" (typically uint64)
- q  interpret integer as native "quads" (typically int64 or larger)
-
-=end table
-
-Examples:
-
- printf('%c', 97);                  # a
- printf("%.2f", 1.969);             # 1.97
- printf("%+.3f", 3.141592);         # +3.142
- printf('%2$d %1$d', 12, 34);       # 34 12
- printf("%x", 255);                 # ff
-
-Special case:  printf("<b>%s</b>\n", "Perl 6")  will not work use either of the following:
-
- printf Q:b "<b>%s</b>\n",  "Perl 6";
- printf     "<b>\%s</b>\n", "Perl 6";
- printf     "<b>%s\</b>\n", "Perl 6";
-
 =head2 sub sprintf
 
  multi sub sprintf( Str:D $format, *@args) returns Str:D
 
-This function is mostly identical to the C library sprintf function.
+This function is mostly identical to the C library C<sprintf> and
+C<printf> functions.  The only difference between the two
+functions is that C<sprintf> returns a string while the C<printf> function
+writes to a file.
 
 The C<$format> is scanned for C<%> characters. Any C<%> introduces a
 format token. Format tokens have the following grammar:
@@ -459,7 +337,7 @@ format token. Format tokens have the following grammar:
 
 Directives guide the use (if any) of the arguments. When a directive
 (other than C<%>) is used, it indicates how the next argument
-passed is to be formatted into the string.
+passed is to be formatted into the string to be created.
 
 The directives are:
 
@@ -494,7 +372,7 @@ Compatibility:
 
 =end table
 
-Perl 5 (non-)compatibility:
+Perl 5 (non-)compatibility:
 
 =begin table
 
@@ -516,15 +394,244 @@ no-ops (the semantics are still being determined).
 
 =end table
 
-Examples:
+Between the C<%> and the format letter, you may specify several
+additional attributes controlling the interpretation of the format. In
+order, these are:
 
- sprintf "%ld a big number, %lld a bigger number\n", 4294967295, 4294967296;
+=head3 format parameter index
 
-Special case:  sprintf("<b>%s</b>\n", "Perl 6")  will not work use either of the following:
+An explicit format parameter index, such as C<2$>. By default,
+C<sprintf> will format the next unused argument in the list, but this
+allows you to take the arguments out of order:
 
- sprintf Q:b "<b>%s</b>\n",  "Perl 6";
- sprintf     "<b>\%s</b>\n", "Perl 6";
- sprintf     "<b>%s\</b>\n", "Perl 6";
+  sprintf '%2$d %1$d', 12, 34;      # "34 12"
+  sprintf '%3$d %d %1$d', 1, 2, 3;  # "3 1 1"
+
+=head3 flags
+
+One or more of:
+
+   space   prefix non-negative number with a space
+   +       prefix non-negative number with a plus sign
+   -       left-justify within the field
+   0       use zeros, not spaces, to right-justify
+   #       ensure the leading "0" for any octal,
+           prefix non-zero hexadecimal with "0x" or "0X",
+           prefix non-zero binary with "0b" or "0B"
+
+For example:
+
+  sprintf '<% d>',  12;   # "< 12>"
+  sprintf '<% d>',   0;   # "< 0>"
+  sprintf '<% d>', -12;   # "<-12>"
+  sprintf '<%+d>',  12;   # "<+12>"
+  sprintf '<%+d>',   0;   # "<+0>"
+  sprintf '<%+d>', -12;   # "<-12>"
+  sprintf '<%6s>',  12;   # "<    12>"
+  sprintf '<%-6s>', 12;   # "<12    >"
+  sprintf '<%06s>', 12;   # "<000012>"
+  sprintf '<%#o>',  12;   # "<014>"
+  sprintf '<%#x>',  12;   # "<0xc>"
+  sprintf '<%#X>',  12;   # "<0XC>"
+  sprintf '<%#b>',  12;   # "<0b1100>"
+  sprintf '<%#B>',  12;   # "<0B1100>"
+
+When a space and a plus sign are given as the flags at once, the space
+is ignored:
+
+  sprintf '<%+ d>', 12;   # "<+12>"
+  sprintf '<% +d>', 12;   # "<+12>"
+
+When the C<#> flag and a precision are given in the C<%o> conversion, the
+precision is incremented if it's necessary for the leading "0":
+
+  sprintf '<%#.5o>', 012;      # "<00012>"
+  sprintf '<%#.5o>', 012345;   # "<012345>"
+  sprintf '<%#.0o>', 0;        # "<0>"
+
+=head3 vector flag
+
+This flag tells Perl 6 to interpret the supplied string as a vector of
+integers, one for each character in the string. Perl 6 applies the
+format to each integer in turn, then joins the resulting strings with
+a separator (a dot, C<'.'>, by default). This can be useful for
+displaying ordinal values of characters in arbitrary strings:
+
+  sprintf "%vd", "AB\x{100}";           # "65.66.256"
+  sprintf "version is v%vd\n", $^V;     # Perl 6's version
+
+You can also explicitly specify the argument number to use for the
+join string using something like C<*2$v>; for example:
+
+  sprintf '%*4$vX %*4$vX %*4$vX',       # 3 IPv6 addresses
+          @addr[1..3], ":";
+
+=head3 (minimum) width
+
+Arguments are usually formatted to be only as wide as required to
+display the given value. You can override the width by putting a
+number here, or get the width from the next argument (with C<*> ) or
+from a specified argument (e.g., with C<*2$>):
+
+ sprintf "<%s>", "a";       # "<a>"
+ sprintf "<%6s>", "a";      # "<     a>"
+ sprintf "<%*s>", 6, "a";   # "<     a>"
+ sprintf '<%*2$s>', "a", 6; # "<     a>"
+ sprintf "<%2s>", "long";   # "<long>" (does not truncate)
+
+If a field width obtained through C<*> is negative, it has the same
+effect as the C<-> flag: left-justification.
+
+=head3 precision, or maximum width
+
+You can specify a precision (for numeric conversions) or a maximum
+width (for string conversions) by specifying a C<.> followed by a
+number. For floating-point formats, except C<g> and C<G>, this
+specifies how many places right of the decimal point to show (the
+default being 6). For example:
+
+  # these examples are subject to system-specific variation
+  sprintf '<%f>', 1;    # "<1.000000>"
+  sprintf '<%.1f>', 1;  # "<1.0>"
+  sprintf '<%.0f>', 1;  # "<1>"
+  sprintf '<%e>', 10;   # "<1.000000e+01>"
+  sprintf '<%.1e>', 10; # "<1.0e+01>"
+
+For "g" and "G", this specifies the maximum number of digits to show,
+including those prior to the decimal point and those after it; for
+example:
+
+  # These examples are subject to system-specific variation.
+  sprintf '<%g>', 1;        # "<1>"
+  sprintf '<%.10g>', 1;     # "<1>"
+  sprintf '<%g>', 100;      # "<100>"
+  sprintf '<%.1g>', 100;    # "<1e+02>"
+  sprintf '<%.2g>', 100.01; # "<1e+02>"
+  sprintf '<%.5g>', 100.01; # "<100.01>"
+  sprintf '<%.4g>', 100.01; # "<100>"
+
+For integer conversions, specifying a precision implies that the
+output of the number itself should be zero-padded to this width, where
+the C<0> flag is ignored:
+
+  sprintf '<%.6d>', 1;      # "<000001>"
+  sprintf '<%+.6d>', 1;     # "<+000001>"
+  sprintf '<%-10.6d>', 1;   # "<000001    >"
+  sprintf '<%10.6d>', 1;    # "<    000001>"
+  sprintf '<%010.6d>', 1;   # "<    000001>"
+  sprintf '<%+10.6d>', 1;   # "<   +000001>"
+  sprintf '<%.6x>', 1;      # "<000001>"
+  sprintf '<%#.6x>', 1;     # "<0x000001>"
+  sprintf '<%-10.6x>', 1;   # "<000001    >"
+  sprintf '<%10.6x>', 1;    # "<    000001>"
+  sprintf '<%010.6x>', 1;   # "<    000001>"
+  sprintf '<%#10.6x>', 1;   # "<  0x000001>"
+
+For string conversions, specifying a precision truncates the string to
+fit the specified width:
+
+  sprintf '<%.5s>', "truncated";   # "<trunc>"
+  sprintf '<%10.5s>', "truncated"; # "<     trunc>"
+
+You can also get the precision from the next argument using C<.*>, or
+from a specified argument (e.g., with C<.*2$>):
+
+  sprintf '<%.6x>', 1;       # "<000001>"
+  sprintf '<%.*x>', 6, 1;    # "<000001>"
+  sprintf '<%.*2$x>', 1, 6;  # "<000001>"
+  sprintf '<%6.*2$x>', 1, 4; # "<  0001>"
+
+If a precision obtained through C<*> is negative, it counts as having
+no precision at all:
+
+  sprintf '<%.*s>',  7, "string";   # "<string>"
+  sprintf '<%.*s>',  3, "string";   # "<str>"
+  sprintf '<%.*s>',  0, "string";   # "<>"
+  sprintf '<%.*s>', -1, "string";   # "<string>"
+  sprintf '<%.*d>',  1, 0;          # "<0>"
+  sprintf '<%.*d>',  0, 0;          # "<>"
+  sprintf '<%.*d>', -1, 0;          # "<0>"
+
+=head3 size
+
+For numeric conversions, you can specify the size to interpret the
+number as using C<l>, C<h>, C<V>, C<q>, C<L>, or C<ll>. For integer
+conversions (C<d> C<u> C<o> C<x> C<X> C<b> C<i> C<D> C<U> C<O>),
+numbers are usually assumed to be whatever the default integer size is
+on your platform (usually 32 or 64 bits), but you can override this to
+use instead one of the standard C types, as supported by the compiler
+used to build Perl 6:
+
+   hh          interpret integer as C type "char" or "unsigned
+                              char"
+   h           interpret integer as C type "short" or
+               "unsigned short"
+   j           interpret integer as C type "intmax_t", only with
+               a C99 compiler (unportable)
+   l           interpret integer as C type "long" or
+               "unsigned long"
+   q, L, or ll interpret integer as C type "long long",
+               "unsigned long long", or "quad" (typically
+               64-bit integers)
+   t           interpret integer as C type "ptrdiff_t"
+   z           interpret integer as C type "size_t"
+
+=head3 order of arguments
+
+Normally, C<sprintf> takes the next unused argument as the value to
+format for each format specification. If the format specification uses
+C<*> to require additional arguments, these are consumed from the
+argument list in the order they appear in the format specification
+before the value to format. Where an argument is specified by an
+explicit index, this does not affect the normal order for the
+arguments, even when the explicitly specified index would have been
+the next argument.
+
+So:
+
+   sprintf "<%*.*s>", $a, $b, $c;
+
+uses C<$a> for the width, C<$b> for the precision, and C<$c> as the value to
+format; while:
+
+  sprintf '<%*1$.*s>', $a, $b;
+
+would use C<$a> for the width and precision and C<$b> as the value to format.
+
+Here are some more examples; be aware that when using an explicit
+index, the C<$> may need escaping:
+
+ sprintf "%2\$d %d\n",      12, 34;     # "34 12\n"
+ sprintf "%2\$d %d %d\n",   12, 34;     # "34 12 34\n"
+ sprintf "%3\$d %d %d\n",   12, 34, 56; # "56 12 34\n"
+ sprintf "%2\$*3\$d %d\n",  12, 34,  3; # " 34 12\n"
+ sprintf "%*1\$.*f\n",       4,  5, 10; # "5.0000\n"
+
+=comment TODO: document effects of locale
+
+
+
+
+
+
+
+Other examples:
+
+=for code :skip-test
+sprintf "%ld a big number, %lld a bigger number\n", 4294967295, 4294967296;
+sprintf('%c', 97);                  # a
+sprintf("%.2f", 1.969);             # 1.97
+sprintf("%+.3f", 3.141592);         # +3.142
+sprintf('%2$d %1$d', 12, 34);       # 34 12
+sprintf("%x", 255);                 # ff
+
+Special case: 'sprintf("<b>%s</b>\n", "Perl 6")' will not work, but
+one of the following will:
+
+=for code :skip-test
+ sprintf Q:b "<b>%s</b>\n",  "Perl 6";
+ sprintf     "<b>\%s</b>\n", "Perl 6";
+ sprintf     "<b>%s\</b>\n", "Perl 6";
 
 =head2 method starts-with
 
@@ -543,16 +650,6 @@ Returns C<True> if the invocant is identical to or ends with C<$needle>.
 
     say "Hello, World".ends-with('Hello');      # False
     say "Hello, World".ends-with('ld');         # True
-
-=head2 method contains
-
-    multi method contains(Str:D: Str(Cool) $needle) returns True:D
-
-Returns C<True> if the invocant contains the C<$needle> at any position within
-the string.
-
-    say "Hello, World".contains('hello');      # False
-    say "Hello, World".contains(',');          # True
 
 =head2 method subst
 
@@ -591,14 +688,14 @@ The following adverbs are supported
 
 =begin table
 
-    short       long        meaning
-    =====       ====        =======
-    :g          :global     tries to match as often as possible
-    :nth(Int)               only substitute the nth's match
-    :ss         :samespace  preserves whitespace on substitution
-    :ii         :samecase   preserves case on substitution
-    :mm         :samemark   preserves character marks (e.g. 'ü' replaces with 'o' will result in 'ö')
-    :x(Int)                 substitute exactly $x matches
+    short              long        meaning
+    =====              ====        =======
+    :g                 :global     tries to match as often as possible
+    :nth(Int|Callable)             only substitute the nth's match
+    :ss                :samespace  preserves whitespace on substitution
+    :ii                :samecase   preserves case on substitution
+    :mm                :samemark   preserves character marks (e.g. 'ü' replaces with 'o' will result in 'ö')
+    :x(Int|Callable)               substitute exactly $x matches
 
 =end table
 
@@ -682,10 +779,10 @@ Also using a different value or an incorrect starting index won't match:
 
     method substr-rw($from, $length?)
 
-A version of C<substr> that returns a writable reference to a part of a
-string variable.  Its first argument, C<$from> specifies the index in the
-string from which a substitution should occur, and its last argument,
-C<$length> specifies how many characters are to be replaced.
+A version of C<substr> that returns a L<Proxy|/type/Proxy> functioning as a
+writable reference to a part of a string variable. Its first argument, C<$from>
+specifies the index in the string from which a substitution should occur, and
+its last argument, C<$length> specifies how many characters are to be replaced.
 
 For example, in its method form, if one wants to take the string C<"abc">
 and replace the second character (at index 1) with the letter C<"z">, then
@@ -709,18 +806,37 @@ for repeated operations:
     $string ~~ /(barney)/;
     my $ref := substr-rw($string, $0.from, $0.to);
     $string.say;
-    #-> A character in the 'Flintstones' is: barney
+    # A character in the 'Flintstones' is: barney
     $ref = "fred";
     $string.say;
-    #-> A character in the 'Flintstones' is: fred
+    # A character in the 'Flintstones' is: fred
     $ref = "wilma";
     $string.say;
-    #-> A character in the 'Flintstones' is: wilma
+    # A character in the 'Flintstones' is: wilma
 
 Notice that the start position and length of string to replace has been
 specified via the C<.from> and C<.to> methods on the C<Match> object, C<$0>.
 It is thus not necessary to count characters in order to replace a
 substring, hence making the code more flexible.
+
+=head2 routine samemark
+
+    multi sub samemark(Str:D $string, Str:D $pattern) returns Str:D
+    method    samemark(Str:D: Str:D $pattern) returns Str:D
+
+Returns a copy of C<$string> with the mark/accent information for each
+character changed such that it matches the mark/accent of the corresponding
+character in C<$pattern>. If C<$string> is longer than C<$pattern>, the
+remaining characters in C<$string> receive the same mark/accent as the last
+character in C<$pattern>. If C<$pattern> is empty no changes will be made.
+
+Examples:
+
+    say 'åäö'.samemark('aäo');                        # aäo
+    say 'åäö'.samemark('a');                          # aao
+
+    say samemark('Pêrl', 'a');                        # Perl
+    say samemark('aöä', '');                          # aöä
 
 =head2 method succ
 
@@ -731,18 +847,18 @@ Returns the string incremented by one.
 String increment is "magical". It searches for the last alphanumeric
 sequence that is not preceded by a dot, and increments it.
 
-    '12.34'.succ      # 13.34
-    'img001.png'.succ # img002.png
+    '12.34'.succ;      # 13.34
+    'img001.png'.succ; # img002.png
 
 The actual increment step works by mapping the last alphanumeric
 character to a character range it belongs to, and choosing the next
 character in that range, carrying to the previous letter on overflow.
 
-    'aa'.succ   # ab
-    'az'.succ   # ba
-    '109'.succ  # 110
-    'α'.succ    # β
-    'a9'.succ   # b0
+    'aa'.succ;   # ab
+    'az'.succ;   # ba
+    '109'.succ;  # 110
+    'α'.succ;    # β
+    'a9'.succ;   # b0
 
 String increment is Unicode-aware, and generally works for scripts where a
 character can be uniquely classified as belonging to one range of characters.
@@ -756,9 +872,10 @@ Returns the string decremented by one.
 String decrementing is "magical" just like string increment (see
 L<succ>). It fails on underflow
 
-    'b0'.pred           # a9
-    'a0'.pred           # Failure
-    'img002.png'.pred   # img001.png
+=for code :skip-test
+'b0'.pred;           # a9
+'a0'.pred;           # Failure
+'img002.png'.pred;   # img001.png
 
 =head2 routine ord
 
@@ -770,8 +887,8 @@ in the string.
 
 Example:
 
-    ord("A") # 65
-    "«".ord  # 171
+    ord("A"); # 65
+    "«".ord;  # 171
 
 =head2 method ords
 
@@ -782,11 +899,11 @@ grapheme in the string.
 
 Example:
 
-    "aå«".ords # (97 229 171)
+    "aå«".ords; # (97 229 171)
 
 =head2 method trans
 
-    proto method trans(|) { $/ := nqp::getlexcaller('$/'); {*} }
+    proto method trans(|)
     multi method trans(Str:D: Pair:D \what, *%n) returns Str
     multi method trans(Str:D: *@changes, :complement(:$c), :squash(:$s), :delete(:$d)) returns Str
 
@@ -822,7 +939,7 @@ Example:
     proto method indent($)
     multi method indent(Int $steps where { $_ == 0 } )
     multi method indent(Int $steps where { $_ > 0  } )
-    multi method indent($steps where { .isa(Whatever) || .isa(Int) && $_ < 0 )
+    multi method indent($steps where { .isa(Whatever) || .isa(Int) && $_ < 0 } )
 
 Indents each line of the string by C<$steps>. If C<$steps> is negative,
 it outdents instead. If C<$steps> is L<C<*>|*>, then the string is
@@ -855,9 +972,13 @@ See also L<trim-trailing> and L<trim-leading>
 
 =head2 method trim-trailing
 
+    method trim-trailing(Str:D:) returns Str
+
 Remove the whitespace characters from the end of a string. See also L<trim>.
 
 =head2 method trim-leading
+
+    method trim-leading(Str:D:) returns Str
 
 Remove the whitespace characters from the beginning of a string. See also L<trim>.
 

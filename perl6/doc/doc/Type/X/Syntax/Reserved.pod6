@@ -11,12 +11,14 @@ expansion.
 
 For example
 
-    my @a();
+=for code :skip-test
+my @a();
 
 dies with
 
-    ===SORRY!===
-    The () shape syntax in array declarations is reserved
+=for code :skip-test
+===SORRY!===
+The () shape syntax in array declarations is reserved
 
 =head1 Methods
 

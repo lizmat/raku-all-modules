@@ -10,25 +10,28 @@ C<Rational> is the common role for numbers that are stored as pairs of
 numerator and denominator. It is parameterized by the types of the numerator
 and denominator.
 
-Built into Perl 6 are L<Rat> and L<FatRat>, which both do the C<Rational> role.
+Built into Perl 6 are L<Rat> and L<FatRat>, which both do the C<Rational> role.
 
 =head1 Methods
 
 =head2 method new
 
-    method new(NuT:D $numerator, DeT:D $denominator) returns Rational:D
+=for code :skip-test
+method new(NuT:D: $numerator, DeT:D: $denominator) returns Rational:D
 
 Creates a new rational object from numerator and denominator.
 
 =head2 method numerator
 
-    method numerator(Rational:D:) returns NuT:D
+=for code :skip-test
+method numerator(Rational:D:) returns NuT:D
 
 Returns the numerator.
 
 =head2 method denominator
 
-    method denominator(Rational:D:) returns DeT:D
+=for code :skip-test
+method denominator(Rational:D:) returns DeT:D
 
 Returns the denominator.
 

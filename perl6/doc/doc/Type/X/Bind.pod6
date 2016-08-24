@@ -4,14 +4,18 @@
 
 =SUBTITLE Error due to binding to something that is not a variable or container
 
-    class X::Bind is Exception { ... }
+    class X::Bind is Exception {}
 
 If you write code like this:
 
-    floor(1.1) := 42;
+=begin code :skip-test
+floor(1.1) := 42;
+=end code
 
 it dies with an C<X::Bind> exception:
 
-    Cannot use bind operator with this left-hand side
+=begin code :skip-test
+Cannot use bind operator with this left-hand side
+=end code
 
 =end pod

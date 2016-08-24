@@ -4,20 +4,22 @@
 
 =SUBTITLE Tagged location in the source code
 
-    class Label { ... }
+    class Label {}
 
-In Perl 6, you can give for example loops a label, and use it to control that
+In Perl 6, you can give for example loops a label, and use it to control that
 loop (instead of the inner-most loop).
 
-    USERS:          # the label
-    for @users -> $u {
-        for $u.pets -> $pet {
-            # usage of a label
-            next USERS if $pet.barks;
-        }
-        say "None of {$u}'s pets barks";
+=begin code :skip-test
+USERS:          # the label
+for @users -> $u {
+    for $u.pets -> $pet {
+        # usage of a label
+        next USERS if $pet.barks;
     }
-    say USERS.^name;        # Label
+    say "None of {$u}'s pets barks";
+}
+say USERS.^name;        # Label
+=end code
 
 Those label are objects of type C<Label>.
 
@@ -29,11 +31,13 @@ Defined as:
 
     method next(Label:)
 
-Usage:
-
-    next LABEL
-
 Begin the next iteration of the loop associated with the label.
+
+    MY-LABEL:
+    for 1..10 {
+        next MY-LABEL if $_ > 5; # does 5 iteration and then 5 empty iteration
+        say $_;
+    }
 
 =head2 method last
 
@@ -41,10 +45,12 @@ Defined as:
 
     method last(Label:)
 
-Usage:
-
-    last LABEL
-
 Terminate the execution of the loop associated with the label.
+
+    MY-LABEL:
+    for 1..10 {
+        last MY-LABEL if $_ > 5; # does only 5 iteration
+        say $_;
+    }
 
 =end pod

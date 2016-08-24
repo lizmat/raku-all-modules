@@ -13,20 +13,24 @@ and with mandatory parameters.
 
 Example:
 
-    sub f($x! = 3) { }
+=for code :skip-test
+sub f($x! = 3) { }
 
 Produces
 
-    ===SORRY!===
-    Cannot put default on required parameter $x
+=for code :skip-test
+===SORRY!===
+Cannot put default on required parameter $x
 
 And
 
-    sub f(*@ = 3) { }
+=for code :skip-test
+sub f(*@ = 3) { }
 
 produces
 
-    Cannot put default on anonymous slurpy parameter
+=for code :skip-test
+Cannot put default on anonymous slurpy parameter
 
 =head1 Methods
 

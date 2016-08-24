@@ -60,15 +60,36 @@ If C<*> is passed as C<$count>, the list is infinite.
 
 =head2 method keys
 
-Returns a list of all elements of the set.
+Defined as:
+
+    multi method keys(Setty:D:) returns Seq:D
+
+Returns a L<Seq|/type/Seq> of all elements of the set.
+
+    my $s = Set.new(1, 2, 3);
+    say $s.keys;                                      # (3 1 2)
 
 =head2 method values
 
-Returns a list containing as many C<True> values as the set has elements.
+Defined as:
+
+    multi method values(Setty:D:) returns Seq:D
+
+Returns a L<Seq|/type/Seq> containing as many C<True> values as the set has elements.
+
+    my $s = Set.new(1, 2, 3);
+    say $s.values;                                    # (True True True)
 
 =head2 method kv
 
-Returns a list of the set's elements and C<True> values interleaved.
+Defined as:
+
+    multi method kv(Setty:D:) returns Seq:D
+
+Returns a L<Seq|/type/Seq> of the set's elements and C<True> values interleaved.
+
+    my $s = Set.new(1, 2, 3);
+    say $s.kv;                                        # (3 True 1 True 2 True)
 
 =head2 method elems
 
@@ -89,6 +110,42 @@ object, this is just the number of elements.
 
 Returns C<True> if C<$other> and C<self> contain all the same elements,
 and no others.
+
+=head2 method Bag
+
+Defined as:
+
+    method Bag(Setty:D:) returns Bag:D
+
+Returns a L<Bag|/type/Bag> containing the elements of the invocant.
+
+    my Bag $b = Set.new(1, 2, 3).Bag;
+    say $b;                                           # bag(3, 1, 2)
+
+=head2 method BagHash
+
+Defined as:
+
+    method BagHash(Setty:D:) returns BagHash:D
+
+Returns a L<BagHash|/type/BagHash> containing the elements of the invocant.
+
+    my BagHash $b = Set.new(1, 2, 3).BagHash;
+    say $b;                                           # BagHash.new(3, 1, 2)
+
+=head2 method Bool
+
+Defined as:
+
+    multi method Bool(Setty:D:) returns Bool:D
+
+Returns C<True> if the invocant contains at least one element.
+
+    my $s1 = Set.new(1, 2, 3);
+    say $s1.Bool;                                     # True
+
+    my $s2 = $s1 ∩ Set.new(4, 5);                     # set intersection operator
+    say $s2.Bool;                                     # False
 
 =head1 See Also
 

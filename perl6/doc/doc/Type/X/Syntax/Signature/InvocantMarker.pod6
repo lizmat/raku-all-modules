@@ -11,12 +11,14 @@ first parameter.
 
 For example
 
-    :($a, $b: $c)
+=for code :skip-test
+:($a, $b: $c);
 
 dies with
 
-    ===SORRY!===
-    Can only use : as invocant marker in a signature after the first parameter
+=for code :skip-test
+===SORRY!===
+Can only use : as invocant marker in a signature after the first parameter
 
 See also: L<Signature>.
 

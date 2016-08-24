@@ -13,15 +13,22 @@ it usually indicates an error and is treated as one.
 
 Examples
 
-    my $x; my $x
+=for code :skip-test
+my $x; my $x;
 
-    ===SORRY!===
-    Redeclaration of symbol $x
+will throw
 
-    sub f() { }
-    sub f() { }
-    ===SORRY!===
-    Redeclaration of routine f
+=for code :skip-test
+===SORRY!===
+Redeclaration of symbol $x
+
+It works with routines too:
+
+=for code :skip-test
+sub f() { }
+sub f() { }
+===SORRY!===
+Redeclaration of routine f
 
 But those are fine
 

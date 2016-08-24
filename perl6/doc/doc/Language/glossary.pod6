@@ -2,13 +2,14 @@
 
 =TITLE Glossary
 
-=SUBTITLE Glossary of Perl 6 terminology
+=SUBTITLE Glossary of Perl 6 terminology
 
 =head1 Abstract Class
+X<|Abstract Class>
 
-The generic Computer Science term "abstract L<class|#Class>" defines the
-L<interface|#Interface> or L<#API> of a class.  In Perl 6, this is
-implemented using L<roles|#Role> with L<stubbed|#Stub> methods.
+The generic Computer Science term "abstract class" defines the
+L<interface|#Interface> or L<#API> of a class.  In Perl 6, this is
+implemented using roles with L<stubbed|#Stub> methods.
 
     role Canine {
         method bark { ... }          # the ... indicates a stub
@@ -18,22 +19,15 @@ implemented using L<roles|#Role> with L<stubbed|#Stub> methods.
         method bark { say "woof" }   # *MUST* be implemented by class
     }
 
-=head1 Actions
-
-Action methods are typically used to perform transformations and
-other actions while parsing a source code program.  Parse grammars
-typically use the special token C< {*} > to indicate the point
-at which an action method is to be invoked.  In addition, a line
-containing C< {*} > may also use C< #= > to specify a "key" that
-is to be passed to the action method.
-
 =head1 Advent Calendar
+X<|Advent Calendar>
 
-In the context of Perl 6, a yearly set of blog posts for each day from
+In the context of Perl 6, a yearly set of blog posts for each day from
 the 1st until the 25th of December, to be found at
 L<https://perl6advent.wordpress.com>.
 
 =head1 Adverb
+X<|Adverb>
 
 Generically, an adverb is a named argument to a function.  There are also
 some specific syntax forms that allow adverbs to be tucked into some
@@ -58,6 +52,7 @@ followed by a name (for the key):
 Also see L<#Colon Pair and Colon List>.
 
 =head1 Adverbial Pair
+X<|Adverbial Pair>
 
 A generalized form of C<pair notation>.  They all start with the colon, like:
 
@@ -73,6 +68,7 @@ A generalized form of C<pair notation>.  They all start with the colon, like:
 Also see L<#Adverb> and L<#Colon Pair and Colon List>.
 
 =head1 Allomorph
+X<|Allomorph>
 
 A type that has two related values which may be used depending on the
 context. The I<allomorph> types L<IntStr|/type/IntStr>, L<NumStr|/type/NumStr>,
@@ -87,6 +83,7 @@ as a result of parsing a quoted string:
 Or they may be created explicitly with differing string and numeric values.
 
 =head1 Anonymous
+X<|Anonymous>
 
 A subroutine, method or submethod is called I<anonymous> if it can't be
 called by name.
@@ -105,17 +102,8 @@ that name:
     say $s.name;        # triple
     say triple(42);     # Undeclared routine: triple
 
-=head1 Any
-
-The L<class|#Class> from which most things derive (inherit), except for
-L<junctions|#Junction>.  C<Any> itself derives from L<#Mu>.
-
-=head1 any()
-
-A function generating a L<junction|#Junction> with "or" semantics (aka,
-L<#True> if any of its values are C<True>.  See also L<any|/routine/any>.
-
 =head1 API
+X<|API>
 
 Application Programming Interface. Ideally, someone using your system or
 library should be able to do so with knowledge only of the API, but not
@@ -124,37 +112,18 @@ necessarily knowing anything about the internals or implementation.
 See also L<#Abstract Class>.
 
 =head1 Apocalypse
+X<|Apocalypse>
 
 A document originally written by L<#TimToady>, in which he processed the
 initial barrage of RFC's that came out of the Perl community.  Now only kept
 as an historical document for reference.  See also L<#Exegesis> and
 L<#Synopsis>.
 
-=head1 Argument
-
-A value that you pass on to a L<subroutine|#Subroutine>, L<method|#Method>
-or a L<callable block|#Callable>.  As opposed to the L<#Parameter> that is
-specified in the definition of a subroutine/method/callable block.
-
-    sub foo($bar) { say $bar }     # $bar is a parameter
-    foo(42);                       # 42 is an argument
-
-=head1 Array
-
-L<Array|/type/Array> is a subclass of L<List|/type/List> that is mutable.
-This means you can e.g. C<.push> and C<.pop> on an array, whereas you cannot
-do that on a list.  This is separate from the type of elements in the array:
-if they are containers, then they are also mutable, but they don't have to
-be.  Arrays are typically recognizable by the L<#@> L<sigil|#Sigil>.
-
-    my @array = 1, 2, 3;
-    say @array;           # [1 2 3]
-
 =head1 Arity
+X<|Arity>
 
-The number of L<positional|#Positional> operands expected by an
-L<operator|#Operator>, L<subroutine|#Subroutine>, L<method|#Method> or
-L<callable block|#Callable>.
+The number of L<positional|/type/Positional> operands expected by an
+L<operator|#Operator>, subroutine, method or callable block.
 
     sub infix:<+>(Foo $a, Foo $b) { $a.Int + $b.Int }  # arity of "+" is 2
     sub frobnicate($x) { ... }                         # arity of 1
@@ -164,29 +133,12 @@ L<callable block|#Callable>.
 The arity of a C<Callable> is one of the main selectors in
 L<multi-dispatch|#Multi-Dispatch>.
 
-=head1 Attribute
-
-A per-object storage slot.  Other programming languages refer to this as
-C<Field>, C<Member>, C<Slot> or C<Property>.
-
-In Perl 6, attributes are defined with the L<#has> keyword inside a
-L<class|#Class>:
-
-    class Dog {
-        has $.name;    # public attribute "name"
-    }
-
-=head1 AST
-
-Acronym for
-L<B<A>bstract B<S>yntax B<T>ree|https://en.wikipedia.org/wiki/Abstract_syntax_tree>.
-Used in many places, including L<actions|#Actions>, L<#PAST>, and L<#QAST>.
-
 =head1 Autothreading
+X<|Autothreading>
 
-Autothreading is what happens if you pass a L<Junction|#Junction> to
-a subroutine that expects a parameter of type L<#Any> or a subtype thereof
-(such as anything L<#Cool>). The call is then executed for each
+Autothreading is what happens if you pass a L<Junction|/type/Junction> to
+a subroutine that expects a parameter of type L<Any|/type/Any> or a subtype thereof
+(such as anything L<Cool|/type/Cool>). The call is then executed for each
 value of the junction. The result of these calls is assembled in a new
 junction of the same type as the original junction.
 
@@ -210,41 +162,24 @@ values in the junction are True.
     }
 
 =head1 block
-
-=head1 Bool
-
-L<#Boolean> type.
+X<|block>
 
 =head1 Boolean
+X<|Boolean>
 
-L<Value|#value> of type L<#Bool>. Apart the class itself, can be either
+L<Value|#value> of type L<Bool|/type/Bool>. Apart the class itself, can be either
 C<True> or C<False>.
 
 =head1 bytecode
-
-=head1 Callable
+X<|bytecode>
 
 =head1 Camelia
+X<|Camelia>
 
-A butterfly image intended primarily to represent Perl 6, The Language.
-
-=head1 camelia
-
-The L<#Bot> on the #perl6 L<#IRC> channel that evaluates code, eg:
-
-  [16:28:27]  <lizmat>  m: say "Hello world"
-  [16:28:28]  <+camelia>    rakudo-moar 812a48: OUTPUT«Hello world␤»
-
-This is a handy tool for showing people if the output is (un)expected.
-
-=head1 Class
-
-A basic software structure in L<#OOP>.
-See the L<Wikipedia entry|https://en.wikipedia.org/wiki/Class_%28computer_programming%29>.
-
-=head1 Code
+A butterfly image intended primarily to represent Perl 6, The Language.
 
 =head1 Colon Pair and Colon List
+X<|Color Pair> X<|Colon List>
 
 A colon pair is a shorthand syntax used to create or visually present
 a Pair object.  The two most common forms are:
@@ -277,100 +212,34 @@ with the appropriate sigil:
 
 See also L<#Adverb>.
 
-=head1 Constraint
-
-Constraints are a restriction placed on acceptable types for a parameter
-or subset type.  They are introduced with the word C<where>.  In the
-following example, a constraint is used to make sure an error occurs if
-anyone ever calls a subroutine named C<abbreviate> with a string which is
-shorter than 10 characters:
-
-    sub abbreviate(Str $thing where { .chars >= 10 }) { ... }
-
-The C<Str> in the above example is also a constraint, but is usually
-referred to as a "type constraint."
-
-Note that you can also differentiate candidates in a
-L<multi-dispatch|#Multi-Dispatch> by using a different constraint:
-
-    multi sub abbreviate(Str $thing where { .chars > 10 }) {
-        "$thing.substr(0, 7)..."
-    }
-    multi sub abbreviate(Str $thing) { $thing }  # no constraint
-
-    say abbreviate("Worthington");   # Worthin...
-    say abbreviate("Mäsak");         # Mäsak
-
-=head1 Container
-
-=head1 Cool
-
-=head1 dalek
-
-The L<#Bot> on the #perl6 L<#IRC> channel that reports changes made to
-various Perl 6 related L<repositories|#Repository>.
-
-  [15:46:40] <+dalek> doc: 2819f25 | lizmat++ | doc/Language/glossary.pod:
-  [15:46:40] <+dalek> doc: Add stubs for stuff inside the glossary already
-  [15:46:40] <+dalek> doc: review: https://github.com/perl6/doc/commit/2819f250
-
 =head1 Damian Conway
 
 Original author of the L<#Exegesis> (among many other things).
 See also L<https://en.wikipedia.org/wiki/Damian_Conway>.
 
-=head1 Enum
-
-Enumerations provide constant key-value-pairs with an associated type.
-See L<Enum|/language/typesystem#enum>.
-
 =head1 Exegesis
+X<|Exegesis>
 
 A document originally written by L<#TheDamian>, in which he tried to explain
 the L<Apocalypses|#Apocalypse> to the common (wo)man.  Now only kept as an
 historical document for reference.  See also L<#Synopsis>.
 
 =head1 False
+X<|False>
 
-The value representing logical C<False> of the L<#Bool> L<enum|#Enum>.
+The value representing logical C<False> of the L<Bool|/type/Bool> enum.
 
 =head1 fiddly
-
-=head1 Field
-
-See L<#Attribute>.
-
-=head1 Grammar
-
-A feature of Perl 6 that uses L<#regex>es to implement a grammar for parsing
-text. Perl 6 implementations use grammars themselves to parse the language.
-The results of parsing with a grammar can be further passed on to
-L<actions|#Actions>.  A grammar is composed of methods introduced by one of the
-three keywords C<rule>, C<L<#token>>, C<regex>. There is L<#backtrack>ing
-only in C<regex> and C<rule> implies L<#whitespace>s between subrules.
-
-Parsing is done conceptually in two phases, L<lexing|#Lexing> and
-L<syntax analysis|#Syntax Analysis>. Lexing breaks the input string in tokens
-that are the input of L<syntax analysis|#Syntax Analysis>. In Perl 6, things
-are not so clear cut and both phases are defined in the L<grammar|#Grammar>.
+X<|fiddly>
 
 =head1 handles
-
-=head1 has
-
-A keyword used to define L<attributes|#Attributes>.
-
-=head1 Hash
-
-A data type, conveniently available in variables starting with the percent
-sign C<%> and provided by types conformant to the C<Associative> role like
-the C<Hash> type.  Often called associative table in other languages.
+X<|handles>
 
 =head1 iffy
-
-=head1 import
+X<|iffy>
 
 =head1 Instance
+X<|instance>
 
 An I<instance> of a class is also called an I<object> in some other
 programming languages. It has storage for attributes and is often the return
@@ -399,240 +268,232 @@ To put things another way, a class contains the blueprints of methods and
 attributes, and an instance carries it into the real world.
 
 =head1 Interface
+X<|Interface>
 
 An interface is an L<abstract class|#Abstract Class>.
 
 =head1 IRC
+X<|IRC>
 
-Internet Relay Chat.  Perl 6 developers and users usually hang out on the
-C<#perl6> channel of C<irc.freenode.org>.
+Internet Relay Chat.  Perl 6 developers and users usually hang out on the
+C<#perl6> channel of C<irc.freenode.org>. Currently available bots are:
+
+=head2 camelia
+X<|camelia>
+
+The L<#Bot> on the #perl6 L<#IRC> channel that evaluates code, eg:
+
+  [16:28:27]  <lizmat>  m: say "Hello world"
+  [16:28:28]  <+camelia>    rakudo-moar 812a48: OUTPUT«Hello world␤»
+
+This is a handy tool for showing people if the output is (un)expected.
+
+=head2 dalek
+X<|dalek>
+
+The L<#Bot> on the #perl6 L<#IRC> channel that reports changes made to
+various Perl 6 related L<repositories|#Repository>.
+
+  [15:46:40] <+dalek> doc: 2819f25 | lizmat++ | doc/Language/glossary.pod:
+  [15:46:40] <+dalek> doc: Add stubs for stuff inside the glossary already
+  [15:46:40] <+dalek> doc: review: https://github.com/perl6/doc/commit/2819f250
+
+=head2 yoleaux
+X<|yoleaux>
+
+The L<#Bot> on the #perl6 L<#IRC> channel that provides various services
+to people logged in.  Commands to yoleax (a pun on YOLO) start with a period.
+Some often used commands are:
+
+=head3 .tell
+
+Leave a message to another user who is currently not logged in.  The message
+will be relayed as soon as the user says anything on the channel.
+
+  .tell lizmat I've read the glossary
+
+=head3 .u
+
+Look up unicode codepoint information from either a codepoint, or the name
+of a codepoint.
+
+ [16:35:44]  <lizmat>   .u empty set
+ [16:35:45]  <yoleaux>  U+2205 EMPTY SET [Sm] (∅)
+ [16:36:29]  <lizmat>   .u ∅
+ [16:36:30]  <yoleaux>  U+2205 EMPTY SET [Sm] (∅)
+
+Some L<#IRC> clients then easily allow you to copy/paste the codepoint in
+question, which can be sometimes be easier than other unicode codepoint
+input methods.
 
 =head1 IRC Lingo
 
-The following terms are often used on the Perl 6 related L<#IRC> channels:
-
-=head2 AFAICS
-
-As Far As I Can See
-
-=head2 AFAICT
-
-As Far As I Can Tell
-
-=head2 AFAIK
-
-As Far As I Know
-
-=head2 AFK
-
-Away From Keyboard, as in logged in, but there's no one looking at the screen.
+The following terms are often used on the Perl 6 related L<#IRC> channels:
 
 =head2 ALAP
+X<|ALAP>
 
 As Late As Possible
 
 =head2 autopun
+X<|autopun>
 
 A self-referencing pun, e.g. "Are you ignorant or apathetic?" - "I don't
 know, and I don't care.
 
 =head2 backlog
+X<|backlog>
 
 That part of a discussion on an L<#IRC> channel that you've missed.  If it
 is not or no longer available in your IRC client, you can go to sites such
 as L<http://irc.perl6.org> to see what has been logged for you.
 
-=head2 BIAB
-
-Back In A Bit.  As in, only L<afk|#AFK> for a little while.
-
 =head2 Bot
+X<|Bot>
 
 A program that does automatic tasks on one or more L<#IRC> channels by
 acting like a regular user (as far as the IRC server is concerned) and
 performing some tasks that may involve answering to users requests.
 Examples are L<#camelia>, L<#dalek> and L<#yoleaux>.
 
-=head2 BRB
-
-Be Right Back
-
-=head2 DIHWIDT
-
-Doctor, It Hurts When I Do This
-
-=head2 DRY
-
-Don't Repeat Yourself
-
 =head2 DWIM
+X<|DWIM>
 
 Do What I Mean.  A programming language designer motto.
 
 =head2 flap
+X<|flap>
 
 Sometimes a test will fail under some conditions, but not others; when this
 test passes some test runs and fails others, it's called flapping.
 
 =head2 fossil
+X<|fossil>
 
 Something in a generally current document that is no longer true but which
 has not yet been fixed by correcting or removing it.
 
 =head2 FSVO
+X<|FSVO>
 
 For Some Value Of...
 
 =head2 FTFY
+X<|FTFY>
 
 Fixed That For You
 
-=head2 IC
-
-I See
-
-=head2 IIRC
-
-If I Remember Correctly
-
-=head2 IIUC
-
-If I Understand Correctly
-
-=head2 ISTR
-
-I Seem To Remember
-
 =head2 IWBN
+X<|IWBN>
 
 It Would Be Nice
 
-=head2 KISS
-
-L<Keep It Simple, Stupid!|https://en.wikipedia.org/wiki/KISS_principle>, a
-famous motto in computer science.
-
-=head2 LGTM
-
-Looks Good To Me
-
 =head2 LHF
+X<|LHF>
 
 Low Hanging Fruit.  Usually used in the context of a (relatively) simple
-task tp be performed by a (relative) newbie.
-
-=head2 LMDDGTFY
-
-Let Me DuckDuckGo That For You.  L<https://lmddgtfy.net>
-
-=head2 LMGTFY
-
-Let Me Google That For You.  L<http://lmgtfy.com/>
+task to be performed by a (relative) newbie.
 
 =head2 LTA
+X<|LTA>
 
 Less Than Awesome.  Usually used in the context of an error message that
 is rather undescriptive or unrelated to the actual error.
 
 =head2 NST
+X<|NST>
 
 No Such Thing
 
 =head2 Opt
+X<|Opt>
 
 Short for "optimization", usually in either the context of L<spesh|#Spesh> or
-L<#JIT>.
+JIT.
 
 =head2 PB
+X<|PB>
 
 Short for "problem".  As in "that's not the pb".
 
 =head2 PBP
+X<|PBP>
 
 "Perl Best Practices".  The book by Damian Conway outlining best practices
-when programming Perl 5.
+when programming Perl 5.
 
 =head2 PR
+X<|PR>
 
 See L<#Pull Request>.
 
 =head2 P5
+X<|P5>
 
-Perl 5
+Perl 5
 
 =head2 P6
+X<|P6>
 
-Perl 6
+Perl 6
 
 =head2 RSN
+X<|RSN>
 
 Real Soon Now
 
 =head2 RT
+X<|RT>
 
 Request Tracker (L<http://rt.perl.org/>).  The place where all the bugs
 related to L<#Rakudo> live.
 
 =head2 Thunk
+X<|Thunk>
 
 A piece of code that isn't immediately executed, but doesn't have an independent scope.
 
 =head2 TIMTOWTDI
+X<|TIMTOWTDI>
 
 An alternative form of L<#TMTOWTDI>, explicitly including the "is" from
 the contraction "There's".
 
 =head2 TMI
+X<|TMI>
 
 Too Much Information.
 
 =head2 TMTOWTDI
+X<|TMTOWTDI>
 
 "There's More Than One Way To Do It", the Perl motto.
 
 =head2 UGT
+X<|UGT>
 
 "Universal Greeting Time" - i.e., it's always "morning".
 
 =head2 WFM
+X<|WFM>
 
 Works For Me
 
 =head2 WIP
+X<|WIP>
 
 Work In Progress
 
 =head2 WP
+X<|WP>
 
 Wikipedia
 
 =head2 WW
+X<|WW>
 
 Short for C<wrong window>.  When on L<#IRC>, someone types something in a
 channel that was intended for another channel, or for a private message.
-
-=head1 Invocant
-
-The object upon which a method is called, is referred to as the I<invocant>
-in Perl 6.  It is what C<self> refers to in a method.
-
-    say 'str'.uc;   # 'str' is the invocant of method uc
-
-    class A { method show { self } }
-    say A.new.show;       # A.new
-
-=head1 JIT
-
-L<Just-in-time compilation|https://en.wikipedia.org/wiki/Just-in-time_compilation>, a technique for improving the performance of virtual machines.
-
-=head1 Junction
-
-A compound type that is transparent to many operations. See
-L<Junction|/type/Junction>.
-
-=head1 JVM
-
-Java Virtual Machine
 
 =head1 Larry Wall
 
@@ -640,10 +501,10 @@ L<Perl's|#Perl> benevolent dictator for life, among many other things.  See
 also L<https://en.wikipedia.org/wiki/Larry_Wall>.
 
 =head1 Lexing
-
-=head1 List
+X<|Lexing>
 
 =head1 Literal
+X<|Literal>
 
 A I<literal> is a piece of code that directly stands for an (often built-in)
 object and also refers to the object itself.
@@ -653,6 +514,7 @@ object and also refers to the object itself.
     my $s = "Foo";  # the "Foo" is a literal, the $s is a variable
 
 =head1 lvalue
+X<|Value>
 
 An I<lvalue>, or a I<left value>, is anything that can appear on the left
 hand side of the assignment operator C<=>.  It is anything you can assign
@@ -681,9 +543,8 @@ Examples of things that are not lvalues:
 
 These are typically called L<rvalues|#rvalue>.
 
-=head1 machine code
-
 =head1 Mainline
+X<|Mainline>
 
 The C<mainline> is the program text that is not part of any kind of block.
 
@@ -694,19 +555,12 @@ The C<mainline> is the program text that is not part of any kind of block.
     f();        # in mainline again
 
 You can also have the mainline of any package-like declarator, such as
-L<class|#Class>, L<module|#Module>, L<grammar|#Grammar>, etc.  These are
+L<class|#Class>, L<module|/language/modules>, L<grammar|/language/grammars>, etc.  These are
 typically run just after the class/module/grammar have been compiled (or
 when loaded from a pre-compiled file).
 
-=head1 Member
-
-See L<#Attribute>.
-
-=head1 Method
-
-Methods are L<subroutine|#Subroutine>s that are called with an L<invocant|#Invocant>.
-
 =head1 MoarVM
+X<|MoarVM>
 
 MoarVM is short for Metamodel On A Runtime Virtual Machine.
 It's a virtual machine designed specifically for L<#NQP> and its L<#MOP>:
@@ -716,54 +570,52 @@ MoarVM has some similarities with the Hotspot VM so you may peruse its
 L<glossary|http://openjdk.java.net/groups/hotspot/docs/HotSpotGlossary.html>
 for entries missing from the present one.
 
-=head1 Module
-
-=head1 Mu
-
-The mystical class from which all other classes are derived (無).
-
 =head1 Multi-Dispatch
+X<|Multi-Dispatch>
 
 =head1 multi-method
+X<|multi-method>
 
 =head1 Niecza
+X<|Niecza>
 
-An implementation of Perl 6 targeting the .NET platform.  No longer actively
+An implementation of Perl 6 targeting the .NET platform.  No longer actively
 maintained.
 
 =head1 Not Quite Perl
+X<|NQP>
 
 See L<#NQP>.
 
 =head1 NQP
+X<|Not Quite Perl>
 
 NQP is a primitive language for writing subroutines and methods using a
-subset of the Perl 6 syntax.  It's not intended to be a full-fledged
+subset of the Perl 6 syntax.  It's not intended to be a full-fledged
 programming language, nor does it provide a runtime environment beyond
 the basic VM primitives.  Compilers (such as L<#Rakudo> typically use
-NQP to compile L<action methods|#Actions> that convert a parse tree
-into its equivalent L<abstract syntax tree|#AST> representation.
+NQP to compile action methods that convert a parse tree
+into its equivalent abstract syntax tree representation.
 
 =head1 NYI
+X<|NYI>
 
 Not Yet Implemented
 
-=head1 OOP
-
-Object Oriented Programming
-
 =head1 opcode
+X<|opcode>
 
 =head1 Operator
+X<|Operator>
 
 An expression is made of operators and operands. More precisely it is made
 of an operator and operands that can be subexpressions or L<#value>s.
 Operators are an alternative syntax for a L<#multi-method>. With that
-syntax, what would be the L<argument|#Argument>s of the function are named
+syntax, what would be the arguments of the function are named
 operands instead. Operators are classified into
 L<categories|https://design.perl6.org/S02.html#Grammatical_Categories> of
 categories.  A category has a precedence, an arity, and can be L<#fiddly>,
-L<#iffy>, L<#diffy>.  Perl 6 is very creative as to what is an operator, so
+L<#iffy>, L<#diffy>.  Perl 6 is very creative as to what is an operator, so
 there are many categories.  Operators are made of many tokens, possibly with
 a subexpression.  For example, C<@a[0]> belongs to the postcircumfix
 category, is broken into the operand C<@a> and the postcircumfix operator
@@ -774,176 +626,150 @@ that completes the information provided by its category.  Below
 C<%conditional> is the category, C<< :reducecheck<ternary> >>, which
 specifies calling C<.ternary> to post-process the L<parse subtree|#Parse Tree>
 and C<< :pasttype<if> >> specifies the NQP L<#opcode> generated in the
-L<#AST> from the parse subtree.
+AST from the parse subtree.
 
         <O('%conditional, :reducecheck<ternary>, :pasttype<if>')>
 
 
-=head1 OS
-
 =head1 Parse Tree
-
-=head1 Package
+X<|Parse Tree>
 
 =head1 Parameter
+X<|Parameter>
 
 L<Parameter|/type/Parameter> is a class to define parameters to
-L<subroutines|#Subroutine>, L<methods|#Method> and a
-L<callable blocks|#Callable>.  As opposed to the L<arguments|#Argument>
-you specify when calling a subroutine/method/callable block.
+subroutines, method and a L<callable blocks|/type/Callable>.
+As opposed to the arguments you specify when calling a
+subroutine/method/callable block.
 
     sub foo($bar) { say $bar }     # $bar is a parameter
     foo(42);                       # 42 is an argument
 
 =head1 Parrot
+X<|Parrot>
 
-A L<virtual machine|#Virtual Machine> designed to run Perl 6 and other
-L<dynamic languages|#Dynamic Language>.  No longer actively maintained.
+A L<virtual machine|#Virtual Machine> designed to run Perl 6 and other
+dynamic languages.  No longer actively maintained.
 
 =head1 PAST
+X<|PAST>
 
-L<#Parrot> L<#AST>.
+L<#Parrot> AST.
 
 =head1 perl
+X<|perl>
 
-Name of the Perl 5 executor.
+Name of the Perl 5 executor.
 
 =head1 Perl
+X<|Perl>
 
 The Perl programming language in its many forms.
 
 =head1 Perl Community
+X<|Perl Community>
 
 =head1 PERL
+X<|REPL>
 
 A way to describe L<Perl|#Perl> as a language, considered to be improper by
 many in the L<#Perl Community>.
 
 =head1 POD
+X<|POD>
 
 B<P>lain B<O>l' B<D>ocumentation, a documentation format understood by Perl
 6. See L<S26|https://design.perl6.org/S26.html> for details.
 
-=head1 Property
-
-See L<#Attribute>.
-
 =head1 Pull Request
+X<|Pull Request>
 
 A feature of L<https://github.com> that allows you to make patches
 to be easily applied using the Github user interface.
 
 =head1 pugs
+X<|pugs>
 
 =head1 QAST
+X<|QAST>
 
-Successor to L<#QAST>.
+Successor to L<#PAST> ('Q' being the next letter after 'P').
 
 =head1 Rakudo
+X<|Rakudo>
 
-Rakudo is the name of a Perl 6 implementation that runs on L<#MoarVM> and
-the L<#JVM>.  It is an abbreviation of "Rakuda-do," which, when translated
+Rakudo is the name of a Perl 6 implementation that runs on L<#MoarVM> and
+the JVM.  It is an abbreviation of "Rakuda-do," which, when translated
 from Japanese, means "The Way of the Camel".  Also, in Japanese, "Rakudo"
 means "Paradise."
 
-=head1 Regular Expression
-
-=head1 regex
-
-L<#Regular Expression>.
-
 =head1 Repository
+X<|Repository>
 
 =head1 roast
+X<|roast>
 
-The Perl 6 L<specification tests|#test suite>, which live here:
+The Perl 6 L<specification tests|#test suite>, which live here:
 L<https://github.com/perl6/roast/>.  Originally developed for L<#pugs>, it
-now serves all Perl 6 implementations.  Why roast? It's the B<r>epository
+now serves all Perl 6 implementations.  Why roast? It's the B<r>epository
 B<o>f B<a>ll B<s>pec B<t>ests.
 
-=head1 Role
-
-A role can be composed with zero or more other roles, then instantiated into
-a L<class|#Class>. The L<sigil|#Sigil> of a variable name indicates that the defined
-value in the container denoted by the variable belongs to a class composed
-from the associated role.  For example, the sigil C<@> denotes the
-C<Positional> role. So a variable C<@a> may contain a value of type C<List>
-because C<List.does(Positional)>.
-
 =head1 rule
+X<|rule>
 
 (Used in regular expressions)
 
 =head1 rvalue
+X<|rvalue>
 
 A value that can be used on the right hand side of an assignment.  See also
 L<#lvalue>.
 
-=head1 Scalar
-
 =head1 Sigil
+X<|Sigil>
 
 In Perl, the sigil is the first character of a variable name.  It must be
-either L<#$>, L<#@>, L<#%>, or L<#&> respectively for a L<scalar|#Scalar>,
-L<array|#Array>, L<hash|#Hash>, or L<code|#Code> variable.  See also
-L<#Twigil> and L<#role>.  Also sigilled variables allow short conventions
+either $, @, %, or & respectively for a L<scalar|/type/Scalar>,
+L<array|/type/Array>, L<hash|/type/Hash>, or L<code|/type/Code> variable.  See also
+Twigil and role.  Also sigilled variables allow short conventions
 for L<variable interpolation|#Variable Interpolation> in a double quoted
-string, or even L<postcircumfix|#Postcircumfix> L<expressions|#Expression>
-starting with such a variable.
+string, or even L<postcircumfix|#Postcircumfix> expressions starting with
+such a variable.
 
 =head1 Sigilless Variable
-
-=head1 Slot
-
-See L<#Attribute>.
-
-=head1 Slurpy
-
-A parameter of a sub or method is said to be I<slurpy> if it can consume an
-arbitrary number of arguments. It is indicated by an asterisk C<*> in front
-of the parameter name.
-
-    sub sum(*@numbers) {
-        return [+] @numbers;
-    }
-
-This can also be used to collect all possible named parameters in a call:
-
-    sub allnameds(*%named) { .say for %named.sort }
-    allnameds a => 42, :666b, :c<foo>;  # a => 42, b => 666, c => foo
+X<|Sigilless Variable>
 
 =head1 Spesh
+X<|Spesh>
 
 A functionality of the L<#MoarVM> platform that uses run-time gathered data
-to improve commonly used pieces of L<#bytecode>. It is much like a L<#JIT>
-compiler, except that those usually output L<#machine code> rather than
+to improve commonly used pieces of L<#bytecode>. It is much like a JIT
+compiler, except that those usually output machine code rather than
 bytecode.
 
 =head1 STD
+X<|STD>
 
-STD.pm is the "standard" Perl 6 grammar definition, see
-L<https://github.com/perl6/std/> that was used to implement Perl 6.
+STD.pm is the "standard" Perl 6 grammar definition, see
+L<https://github.com/perl6/std/> that was used to implement Perl 6.
 STD.pm is no longer really a "specification" in a proscriptive sense:
-it's more of a guideline or model for Perl 6 implementations to follow.
+it's more of a guideline or model for Perl 6 implementations to follow.
 
 =head1 Stub
-
-=head1 Subroutine
-
-A subroutine is like a L<#block>, but its L<#runtime> context is stacked.
-When a subroutine is called, its context is pushed in the context stack
-is popped and the return argument becomes the value of the calling expression.
+X<|Stub>
 
 =head1 Symbol
+X<|Symbol>
 
 Fancy alternative way to denote a name. Generally used in the context of
-L<module|#Module>s linking, be it in the L<#OS> level, or at the Perl 6 L<#VM> level
+L<module|/language/modules>s linking, be it in the L<#OS> level, or at the Perl 6 L<#Virtual Machine> level
 for modules generated from languages targeting these VMs.  The set of
-L<#import>ed or exported symbols is called the symbol table.
+imported or exported symbols is called the symbol table.
 
 =head1 Synopsis
+X<|Synopsis>
 
-The current human-readable description of the Perl 6 language.  Still in
+The current human-readable description of the Perl 6 language.  Still in
 development.  Much more a community effort than the L<Apocalypses|#Apocalypse>
 and L<Exegeses|#Exegesis> were. The current state of the language is reflected
 by L<#roast>, its L<#test suite>, not the synopses where speculative material
@@ -951,12 +777,15 @@ is not always so flagged or more recent additions have not been documented.
 This is even more true of material that has not been yet implemented.
 
 =head1 Syntax Analysis
+X<|Syntax Analysis>
 
 =head1 test suite
+X<|test suite>
 
-The Perl 6 test suite is L<#roast>
+The Perl 6 test suite is L<#roast>
 
 =head1 Texas operator
+X<|Texas operator>
 
 The ASCII variant of a non-ASCII Unicode L<operator|#Operator> or
 L<symbol|#Symbol>.  So described because "Everything's bigger in Texas."
@@ -977,110 +806,35 @@ L<Exegeses|#Exegesis>.
 L<#IRC> screen name for L<#Larry Wall>, creator of Perl. The name comes from
 the pronunciation of L<#TIMTOWTDI> as a word.
 
-=head1 token
-
-
 =head1 True
+X<|True>
 
-The value representing logical C<True> of the L<#Bool> L<enum|#Enum>.
-
-=head1 Twigil
-
-A secondary L<sigil|#Sigil>. For example, %*ENV has a sigil of % and a
-twigil of *.
-See L<Twigils|/language/variables#Twigils>.
-
-=head1 Type Object
-
-A I<type object> is an object representing a L<class|#Class>, L<role|#Role>,
-L<package|#Package>, L<grammar|#Grammar> or L<enum|#Enum>. It is generally
-accessible with the same name as the type.
-
-    class A { };
-    say A;              # A is the type object
-    my $x = A.new();    # same here
-
-    my $x = class {
-        method greet() {
-            say "hi";
-        }
-    }
-
-    # $x now holds a type object returned from the
-    # anonymous class definition
-
-If a variable is declared to be of a certain type, but never defined, then
-it will evaluate to the type object of that type.  As such, type objects can
-often turn up in places where "undefined" or "null" would in other
-languages:
-
-    # perl6 -e 'my Int $a; sub f(Int $x) { $x + 1 }; f($a);'
-    Invocant requires an instance, but a type object was passed
+The value representing logical C<True> of the L<Bool|/type/Bool> enum.
 
 =head1 value
-
+X<|value>
 
 =head1 Variable
+X<|Variable>
 
-A variable is a name for a L<container|#Container>.
+A variable is a name for a L<container|/language/containers>.
 
 =head1 Variable Interpolation
+X<|Variable Interpolation>
 
 =head1 Virtual Machine
+X<|Virtual Machine>
 
 A virtual machine is the Perl compiler entity that executes the
 L<bytecode|#Bytecode>.  It can optimize the bytecode or generate
-L<machine code|#Machine code> L<Just in Time|#JIT>.  Examples are
-L<#MoarVM>, L<#Parrot> (who are intended to run Perl 6) and more
-generic virtual machines such as L<#JVM> and L<#Javascript>.
+machine code Just in Time.  Examples are
+L<#MoarVM>, L<#Parrot> (who are intended to run Perl 6) and more
+generic virtual machines such as L<#JVM> and Javascript.
 
 =head1 whitespace
-
-
-=head1 yoleaux
-
-The L<#Bot> on the #perl6 L<#IRC> channel that provides various services
-to people logged in.  Commands to yoleax (a pun on YOLO) start with a period.
-Some often used commands are:
-
-=head2 .tell
-
-Leave a message to another user who is currently not logged in.  The message
-will be relayed as soon as the user says anything on the channel.
-
-  .tell lizmat I've read the glossary
-
-=head2 .u
-
-Look up unicode codepoint information from either a codepoint, or the name
-of a codepoint.
-
- [16:35:44]  <lizmat>   .u empty set
- [16:35:45]  <yoleaux>  U+2205 EMPTY SET [Sm] (∅)
- [16:36:29]  <lizmat>   .u ∅
- [16:36:30]  <yoleaux>  U+2205 EMPTY SET [Sm] (∅)
-
-Some L<#IRC> clients then easily allow you to copy/paste the codepoint in
-question, which can be sometimes be easier than other unicode codepoint
-input methods.
+X<|whitespace>
 
 =head1 6model
-
-
-=head1 $
-
-L<#Sigil> for L<scalar|#Scalar> L<variables|#Variable>.
-
-=head1 @
-
-L<#Sigil> for L<array|#Array> L<variables|#Variable>.
-
-=head1 %
-
-L<#Sigil> for L<hash|#Hash> L<variables|#Variable>.
-
-=head1 &
-
-L<#Sigil> for L<code|#Code> L<variables|#Variable>.
+X<|6model>
 
 =end pod

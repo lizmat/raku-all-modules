@@ -11,12 +11,14 @@ initialization assignment.
 
 For example
 
-    my \foo
+=for code :skip-test
+my \foo;
 
 dies with
 
-    ===SORRY!===
-    Term definition requires an initializer
+=for code :skip-test
+===SORRY!===
+Term definition requires an initializer
 
 Valid code would be
 

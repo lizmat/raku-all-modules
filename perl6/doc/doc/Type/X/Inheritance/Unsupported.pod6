@@ -11,13 +11,15 @@ not support inheritance (like a package or an enum).
 
 For example
 
-    enum A <Ax Ay>;
-    class B is A { };
+=for code :skip-test
+enum A <Ax Ay>;
+class B is A { };
 
 dies with
 
-    ===SORRY!===
-    A does not support inheritance, so B cannot inherit from it
+=for code :skip-test
+===SORRY!===
+A does not support inheritance, so B cannot inherit from it
 
 =head1 Methods
 
