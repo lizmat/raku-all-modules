@@ -5,7 +5,7 @@ plan 10;
 require ::('Font::Metrics::times-roman');
 my $metrics = ::('Font::Metrics::times-roman').new;
 
-is_approx $metrics.stringwidth("Perl", 1), 1.611;
+is-approx $metrics.stringwidth("Perl", 1), 1.611;
 is-deeply $metrics.BBox<P>, [16, 0, 542, 662], 'BBox data';
 is-deeply $metrics.FontBBox, [-168, -218, 1000, 898], 'FontBBox data';
 is $metrics.KernData<R><V>, -80, 'kern data';
