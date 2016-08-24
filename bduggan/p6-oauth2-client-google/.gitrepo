@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bduggan/p6-oauth2-client-google.git
+	branch = master
+	commit = b415575462cd02616ec47425817bed9630fb8a49
+	parent = 37745ad6f743dad95c19cf52ac17512a2e83af69
+	cmdver = 0.2.3

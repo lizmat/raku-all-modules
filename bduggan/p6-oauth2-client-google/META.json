@@ -1,0 +1,11 @@
+{
+    "name" : "OAuth2::Client::Google",
+    "version" : "0.1.0",
+    "description" : "Authenticate against Google's OAuth2 API.",
+    "depends" : [ "HTTP::UserAgent", "IO::Socket::SSL", "JSON::Fast" ],
+    "provides" : {
+        "OAuth2::Client::Google" : "lib/OAuth2/Client/Google.pm6"
+    },
+    "authors" : [ "Brian Duggan" ],
+    "source-url" : "git://github.com/bduggan/p6-oauth2-client-google.git"
+}
