@@ -11,8 +11,4 @@ grammar CSS::Aural::Grammar
     does CSS::Aural::Spec::Interface {
 
     rule proforma:sym<inherit> { <sym> }
-
-    rule expr-voice-family {:i [ [ <generic-voice> || <specific-voice> ] ] +% ',' }
-    rule generic-voice     {:i [ male | female | child ] & <keyw> }
-    rule specific-voice    {:i <voice=.identifier> | <voice=.string> }
 }

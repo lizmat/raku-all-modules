@@ -16,8 +16,7 @@ class CSS::Specification::Terms::Actions {
         with $<val> {
             my Hash $val = .ast;
 
-            if $val<usage> {
-                my $synopsis := $val<usage>;
+            with $val<usage> -> $synopsis {
                 $.warning( ('usage ' ~ $synopsis, @proforma).flat.join: ' | ');
                 return Any;
             }
@@ -35,24 +34,26 @@ class CSS::Specification::Terms::Actions {
     method val($/) {
         my %ast;
 
-        if $<usage> {
-            %ast<usage> = $<usage>.ast;
-        }
-        elsif $<proforma> {
-            %ast<expr> = [$_]
-                with $<proforma>.ast;
+        with $<usage> {
+            %ast<usage> = .ast;
         }
         else {
-            my $m = $<rx><expr>;
-            unless $m &&
-                ($m.can('caps') && (!$m.caps || $m.caps.grep({! .value.ast.defined}))) {
-                    my $expr-ast = $.list($m);
-
-                    %ast<expr> = $expr-ast;
+            with $<proforma> {
+                %ast<expr> = [.ast]
+            }
+            else {
+                with $<rx><expr> {
+                    %ast<expr> = $.list($_)
+                        unless .can('caps') && (!.caps || .caps.first({! .value.ast.defined}));
+                }
             }
         }
 
         make %ast;
+    }
+
+    method rule($/) {
+        $.node($/).pairs[0];
     }
 
     method usage($/) {
@@ -111,19 +112,19 @@ class CSS::Specification::Terms::Actions {
     #---- Language Extensions ----#
 
     method length:sym<zero>($/) {
-        make $.token(0, :type(CSSValue::LengthComponent))
+        make $.token(0, :type<px>)
     }
 
     method angle:sym<zero>($/) {
-        make $.token(0, :type(CSSValue::AngleComponent))
+        make $.token(0, :type<deg>)
     }
 
     method time:sym<zero>($/) {
-        make $.token(0, :type(CSSValue::TimeComponent))
+        make $.token(0, :type<s>)
     }
 
     method frequency:sym<zero>($/) {
-        make $.token(0, :type(CSSValue::FrequencyComponent))
+        make $.token(0, :type<hz>)
     }
 
     method colors { state Hash $colors //= %CSS::Grammar::AST::CSS21-Colors };

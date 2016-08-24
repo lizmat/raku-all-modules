@@ -17,7 +17,9 @@
 'speak-punctuation'	code | none | inherit	none	 	yes	 	aural
 'speech-rate'	<number> | x-slow | slow | medium | fast | x-fast | faster | slower | inherit	medium	 	yes	 	aural
 'stress'	<number> | inherit	50	 	yes	 	aural
-'voice-family'	[<specific-voice> | <generic-voice> ]# | inherit	depends on user agent	 	yes	 	aural
+'voice-family'	[<generic-voice> | <specific-voice> ]# | inherit	depends on user agent	 	yes	 	aural
+	<generic-voice> := male | female | child
+	<specific-voice> := <identifier> | <string>
 'volume'	<number> | <percentage> | silent | x-soft | soft | medium | loud | x-loud | inherit	medium	 	yes	refer to inherited value	aural
 # snick in a non-aural 'boxed' property
 'border-color'	[ <color> | transparent ]{1,4} | inherit	see individual properties	 	no	 	visual

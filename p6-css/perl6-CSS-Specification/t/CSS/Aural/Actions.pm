@@ -11,7 +11,4 @@ class CSS::Aural::Actions
     does CSS::Aural::Spec::Interface {
 
     method proforma:sym<inherit>($/) { make {'keyw' => ~$<sym>} }
-
-    method generic-voice($/)  { make $<keyw>.ast }
-    method specific-voice($/) { make $<voice>.ast }
 }

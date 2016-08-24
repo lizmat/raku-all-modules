@@ -6,15 +6,14 @@ class CSS::Specification::Actions {
     # rules or actions.
     has %.prop-refs is rw;
     has %.props is rw;
+    has %.rules is rw;
     has %.child-props is rw;
 
-    method TOP($/) { make $<property-spec>>>.ast };
-
-    # condensation eg: 'border-top-style' ... 'border-left-style' 
-    # ==> pfx='border' props=<top right bottom left> sfx='-style'
+    method TOP($/) { make $<def>>>.ast };
 
     method property-spec($/) {
         my @props = @($<prop-names>.ast);
+        %.props{$_}++ for @props;
 
         my $spec = $<spec>.ast;
 
@@ -32,6 +31,20 @@ class CSS::Specification::Actions {
         make %prop-def;
     }
 
+    method rule-spec($/) {
+
+        my $rule = $<rule>.ast,
+        my $perl6 = $<spec>.ast;
+        my $synopsis = ~$<spec>;
+        %.props{$rule}++;
+
+        my %rule-def = (
+            :$rule, :$synopsis, :$perl6
+            );
+
+        make %rule-def;
+    }
+
     method yes($/) { make True }
     method no($/)  { make False }
 
@@ -45,7 +58,6 @@ class CSS::Specification::Actions {
 
     method prop-names($/) {
         my @prop-names = $<id>>>.ast;
-        %.props{$_}++ for @prop-names;
         make @prop-names;
     }
 
@@ -53,6 +65,7 @@ class CSS::Specification::Actions {
     method id-quoted($/) { make $<id>.ast }
     method keyw($/)      { make $<id>.subst(/\-/, '\-'):g }
     method digits($/)    { make $/.Int }
+    method rule($/)      { make $<id>.ast }
 
     method terms($/) {
         make @<term>>>.ast.join(' ');
@@ -62,7 +75,7 @@ class CSS::Specification::Actions {
         my @choices = @<term>>>.ast;
         
         make @choices > 1
-            ?? [~] '[ ', @choices.join(' | '), ' ]'
+            ?? [~] '[ ', @choices.join(' || '), ' ]'
             !! @choices[0];
     }
 
@@ -151,7 +164,7 @@ class CSS::Specification::Actions {
     }
 
     method value:sym<rule>($/) {
-        my $val = ~$<id>.ast;
+        my $val = ~$<rule>.ast;
         %.prop-refs{ $val }++;
         make [~] '<', $val, '>'
     }
@@ -163,7 +176,7 @@ class CSS::Specification::Actions {
     method value:sym<prop-ref>($/)        {
         my $prop-ref = $<property-ref>.ast;
         %.prop-refs{ 'expr-' ~ $prop-ref }++;
-        %.child-props{$_}{$prop-ref}++ for @*PROP-NAMES; 
+        %.child-props{$_}.push: $prop-ref for @*PROP-NAMES; 
         make [~] '<expr-', $prop-ref, '>';
     }
 

@@ -7,7 +7,7 @@
 use CSS::Grammar::CSS3;
 
 grammar CSS::Specification:ver<000.04> {
-    rule TOP { <property-spec> * }
+    rule TOP { [<def=.property-spec> | <def=.rule-spec>] * }
 
     rule property-spec {
         :my @*PROP-NAMES = [];
@@ -16,6 +16,9 @@ grammar CSS::Specification:ver<000.04> {
             \t [:i 'n/a' | ua specific | <-[ \t ]>*? properties || $<default>=<-[ \t ]>* ]
             [ \t <-[ \t ]>*? # applies to
               \t [<inherit=.yes>|<inherit=.no>]? ]?
+    }
+    rule rule-spec {
+        \t? <rule> ':=' <spec>
     }
     rule spec          { :my $*CHOICE; <terms> }
     # possibly tab delimited. Assume one spec per line.
@@ -36,6 +39,7 @@ grammar CSS::Specification:ver<000.04> {
     token id-quoted  { <.quote> <id> <.quote> }
     rule keyw        { <id> }
     rule digits      { \d+ }
+    rule rule   { '<'~'>' <id> }
 
     rule terms         { <term=.term-options>+ }
     rule term-options  { <term=.term-combo>    +% '|'  }
@@ -59,7 +63,7 @@ grammar CSS::Specification:ver<000.04> {
     rule value:sym<keyw-quant>    { <keyw><occurs> }
     rule value:sym<num-quant>     { <digits><occurs> }
     rule value:sym<group>         { '[' ~ ']' <terms> }
-    rule value:sym<rule>          { '<'~'>' <id> }
+    rule value:sym<rule>          { <rule> }
     rule value:sym<op>            { < , / = > }
     rule value:sym<prop-ref>      { <property-ref> }
 

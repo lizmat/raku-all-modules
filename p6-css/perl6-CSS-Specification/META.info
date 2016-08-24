@@ -1,6 +1,6 @@
 {   "perl"        : "6.c",
     "name"        : "CSS::Specification",
-    "version"     : "0.02.2",
+    "version"     : "0.4.1",
     "description" : "CSS Property definition grammar and tools",
     "depends"     : [ "CSS::Grammar" ],
     "source-url"  : "git://github.com/p6-css/perl6-CSS-Specification.git",

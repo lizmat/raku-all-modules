@@ -1,3 +1,22 @@
-0.02.2 Include subproperties in meta childern.
+0.4.1 Output a specific unit for zero quantities.
+- For example the as for length '0' is now :px(0) rather than :length(0).
+0.4.0 Added rule declarations.
+- It's now possible to define rules for sharing between properties. For example
+      <voice-family> := male | female | child
+
+- Choices now have left-precedence
+  for example: 'font-family'	[ <generic-family> | <family-name> ]#
+  will resolve as a generic-family in preference to a family name
+
+0.3.2 Starting adding property checks:
+- If a property has edges, there should be exactly four
+- All children of an edge property, should also be edges
+0.3.1 Preserve declaration order of child properties in metadata
+0.3.0 Distinguish 'edge' and 'child' properties
+- A four sided propert has 'edges'. E.g. 'border' has
+  'border-top', ... 'border-left'
+- A compound property has children. E.g. 'background' has 'background-color',
+  'background-attachment', 'background-image', ...
+0.2.2 Include subproperties in meta childern.
 - E.g. "cue" now has child properties "cue-before", "cue-after"
 - These are distinguished from "box" properties by not having the :box flag set.
