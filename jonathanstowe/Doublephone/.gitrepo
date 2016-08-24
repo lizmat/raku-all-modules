@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/Doublephone.git
+	branch = master
+	commit = b8e2da2f4f2f2720f7634cf045207f669e668c2a
+	parent = bb39d7b5a354e930aece75f3194e21db7a36391d
+	cmdver = 0.2.3

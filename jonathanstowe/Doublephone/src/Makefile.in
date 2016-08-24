@@ -1,0 +1,7 @@
+all: %DESTDIR%/%libdouble_metaphone%
+
+%DESTDIR%/%libdouble_metaphone%: libdouble_metaphone%O%
+	%LD% %LDSHARED% %LDFLAGS% %LIBS% %LDOUT%%DESTDIR%/%libdouble_metaphone% libdouble_metaphone%O%
+
+libdouble_metaphone%O%: double_metaphone.c
+	%CC% -c %CCSHARED% %CCFLAGS% -DVERSION='"0.4.1"' %CCOUT% libdouble_metaphone%O% double_metaphone.c
