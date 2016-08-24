@@ -9,9 +9,14 @@ Create an installable Distribution from common sources.
 But really this serves to provide examples on how to create your own C<Distribution> classes that don't
 rely on a specific file system directory layout before being installed.
 
+=for HTML <a href="https://travis-ci.org/ugexe/Perl6-Distribution--Common"><img src="https://travis-ci.org/ugexe/Perl6-Distribution--Common.svg?branch=master"></a>
+          <a href="https://ci.appveyor.com/project/ugexe/perl6-distribution-common/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/ugexe/Perl6-Distribution--Common?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
+
 =head3 Synopsis
 
-    use Distribution::Common;
+    use Distribution::Common::Git;
+    use Distribution::Common::Tar;
+    use Distribution::Common::Directory;
 
     # a local path with a .git folder
     my $git-dist = Distribution::Common::Git.new($path.IO, :$force);

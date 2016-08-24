@@ -1,5 +1,4 @@
 use Distribution::IO;
-use Distribution::IO::Proc;
 
 BEGIN { die "Need a bleading edge rakudo" if ::("Distribution::Hash") ~~ Failure }
 
@@ -21,7 +20,7 @@ role Distribution::Common does Distribution {
             my $json = $.slurp-rest($meta-basename, :!bin);
             my %hash = %( Rakudo::Internals::JSON.from-json($json) );
             %hash<files> = self.ls-files.grep(*.starts-with('bin/' | 'resources/'))
-                                        .grep(!*.ends-with('/'));
+                                        .grep(!*.ends-with('/')).cache;
             %hash
         }
     }
@@ -31,12 +30,13 @@ role Distribution::Common does Distribution {
             method open(|)  { self }
             method close(|) { True }
             method slurp-rest(|c) { nextwith($name-path, |c) }
+            method e { $name-path ~~ any($.ls-files) }
+            method f { $name-path ~~ any($.ls-files) }
+            method d { False }
+            method r { True  }
+            method w { False }
         }
     }
 
     method prefix { $!prefix }
 }
-
-class Distribution::Common::Tar does Distribution::Common does Distribution::IO::Proc::Tar { }
-class Distribution::Common::Git does Distribution::Common does Distribution::IO::Proc::Git { }
-class Distribution::Common::Directory does Distribution::Common does Distribution::IO::Directory { }
