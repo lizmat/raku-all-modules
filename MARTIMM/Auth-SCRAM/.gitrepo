@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MARTIMM/Auth-SCRAM.git
+	branch = master
+	commit = f27c342f79e14853546c45d2bc9c273008fd4885
+	parent = 657c768b2633f62838211aaa260c0a868124794b
+	cmdver = 0.2.3
