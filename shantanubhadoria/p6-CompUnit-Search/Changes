@@ -1,0 +1,10 @@
+Changelog for Compunit::Search
+
+2.0.0 2016-08-19T08:00:00
+ - Rearranged functions for seperate searching for compunits and provides.
+ - Return a list of Pair(s) to give list of provides for matching compunits and the compunit for each matching provide.
+
+1.0.0 2016-08-17T08:00:00
+ - Initial Commit (Shantanu Bhadoria)
+ - Compunit Pluggable (Shantanu Bhadoria)
+ - Updte Meta6.json
