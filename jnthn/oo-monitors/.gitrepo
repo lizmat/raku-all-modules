@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/oo-monitors.git
 	branch = master
-	commit = dc2143bfc510668d6af3ce2b9907a5b6b2f4f85c
-	parent = 942bc12814458043ff3fb7c2902291249d431ffe
+	commit = b05961683ff7077663894a146cc64326b2487f55
+	parent = bf113ec0460b572ce45e6e4e198de24a604f82f0
 	cmdver = 0.2.3
