@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/shantanubhadoria/p6-Printer-ESCPOS.git
+	branch = master
+	commit = 68499b512fd298d980a485ecfe2cd9b7e5fbf969
+	parent = 75fe1bc1c3d1b5e0c98e917abf9f31ca9d6716ad
+	cmdver = 0.2.3
