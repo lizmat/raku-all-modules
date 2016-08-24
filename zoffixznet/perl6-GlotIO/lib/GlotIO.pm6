@@ -7,7 +7,7 @@ use URI::Escape;
 has Str $.key;
 has $!run-api-url  = 'https://run.glot.io';
 has $!snip-api-url = 'https://snippets.glot.io';
-has $!ua      = HTTP::Tinyish.new(agent => "Perl 6 NASA.pm6");
+has $!ua = HTTP::Tinyish.new: :agent("Perl 6 GlotIO API Implementation");
 
 method !request ($method, $url, $content?, Bool :$add-token) {
     fail 'This operation requires API key specified in `key` argument to .new'
