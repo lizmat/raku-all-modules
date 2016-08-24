@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Demayl/perl6-Email-Valid.git
 	branch = master
-	commit = 5aced068fcb074f0230aaac5dbde1523d7f3a380
-	parent = 671cda4969fa9c28c7382b1cd4ce32b1d0546619
+	commit = 9ab31bec8e81a2b171d8806f3189a456b49c585b
+	parent = f99c84efcb256e103f2fa99ee2dfe982f8c9b4b9
 	cmdver = 0.2.3

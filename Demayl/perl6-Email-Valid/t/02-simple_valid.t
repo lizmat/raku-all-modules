@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 31;
+plan 43;
 use Email::Valid;
 my Email::Valid $validator .= new();
 
@@ -37,3 +37,19 @@ ok $validator.validate('box@xn--c1arf.xn--e1aybc.xn--90ae' ), 'IDN domain with i
 ok $validator.validate('кутия@xn--c1arf.xn--e1aybc.xn--90ae' ), 'IDN domain with idn TLD & cyrillic mailbox';
 ok $validator.validate('кутия@тест.ру' ), 'Cyrillic mailbox & domain';
 
+nok $validator.validate('"wtf is this"@test.ws' ), 'Quoted email';
+nok $validator.validate('" "@test.ws' ), 'Quoted with empty space';
+nok $validator.validate('"a"@test.ws' ), 'Quoted with 1 alpha';
+nok $validator.validate('""@test.ws' ), 'Quoted empty';
+nok $validator.validate('"a=a"@test.ws' ), 'Quoted =';
+nok $validator.validate('"="@test.ws' ), 'Quoted = empty';
+
+
+$validator = Email::Valid.new(:allow-quoted);
+
+ok $validator.validate('"wtf is this"@test.ws' ), 'Quoted email';
+ok $validator.validate('" "@test.ws' ), 'Quoted with empty space';
+ok $validator.validate('"a"@test.ws' ), 'Quoted with 1 alpha';
+nok $validator.validate('""@test.ws' ), 'Quoted empty';
+nok $validator.validate('"a=a"@test.ws' ), 'Quoted =';
+nok $validator.validate('"="@test.ws' ), 'Quoted = empty';

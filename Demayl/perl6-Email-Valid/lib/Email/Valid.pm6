@@ -1,5 +1,5 @@
 use v6;
-unit class Email::Valid;
+unit class Email::Valid:ver<1.0.0>:auth<demayl>;
 
 use Net::DNS; # Required only when :mx_check( True )
 #use Net::SMTP;
@@ -9,6 +9,7 @@ has Bool $.tld_check    = False;
 has Bool $.allow_tags   = False;
 has Bool $.allow-ip     = False;
 has Bool $.allow-local  = False;
+has Bool $.allow-quoted = False; # Not popular quoted mailboxes
 has Bool $.simple       = True; # Try only simple regex validation. Usefull in mose cases. You must explicit set it to False to use other tests
 has Str  $.ns_server    = '8.8.8.8'; # TODO Allow multiple NS servers
 has Int  $.ns_server_timeout where 3 <= * <= 250 = 5;
@@ -56,7 +57,8 @@ my grammar IPv6 {
 my grammar Email::Valid::Tokens is IPv4 is IPv6 {
     token TOP     { ^ <email> $}
     token email   { <mailbox><?{$/<mailbox>.codes <= $mailbox_max_length}> '@' <domain><?{$/<domain>.codes <= $max_length - $mailbox_max_length - 1}>  }
-    token mailbox { <:alpha +digit> [\w|'.'|'%'|'+'|'-']+<!after < . % + - >> } # we can extend allowed characters or allow quoted mailboxes
+    token mailbox { <quoted> | <:alpha +digit> [\w|'.'|'%'|'+'|'-'|"'"]+<!after < . % + - >> } # we can extend allowed characters or allow quoted mailboxes. RFC5322 !#$%&'*+-/=?^_`{|}~
+    regex quoted  { ('"'|"'")  [. <!after '='>]**{1..64} $0 }  #Any printable character ( execept = ) is valid in quoted email .... Add more quotation marks ?
     token tld     { [ 'xn--' <:alpha +digit> ** 2..* | <:alpha> ** 2..15 ] }
     token domain  { 
         ([ <!before '-'> [ 'xn--' <:alpha +digit> ** 2..* | [\w | '-']+ ] <!after '-'> '.' ]) ** {1..$max_subd_parts} <?{ all($0.flat) ~~ /^. ** 2..64$/ }>
@@ -81,6 +83,10 @@ method !parse_regex(Str $email!) {
                 $parsed = False;
             }
             if $.allow-ip && !$.allow-local && so $ip<ipv4-local> { # IP's allowed but without private addresses
+                $parsed = False;
+            }
+
+            if !$.allow-quoted && $parsed<email><mailbox><quoted> {
                 $parsed = False;
             }
         }

@@ -1,7 +1,7 @@
 use v6;
 use Test;
 
-plan 4;
+plan 5;
 
 use Email::Valid;
 my $email = Email::Valid.new();
@@ -52,3 +52,11 @@ my $public = $ipv4.parse('aa@[195.15.15.15]')<email><domain>;
 
 is [ $local.Str, $local<ipv4-host>.Str, $local<ipv4-host><ipv4-local> ], [ '[10.0.0.1]', '10.0.0.1' xx 2 ], 'Parse local IPv4';
 is [ $public.Str, $public<ipv4-host>.Str, $public<ipv4-host><ipv4>.Str], [ '[195.15.15.15]', '195.15.15.15' xx 2 ], 'Parse public IPv4';
+
+my $quote = Email::Valid.new( :allow-quoted );
+
+my $box  = $quote.parse('"test"@omg.bg')<email><mailbox><quoted>;
+my $box2 = $quote.parse('" "@omg.bg')<email><mailbox><quoted>;
+my $box3 = $quote.parse('" ; omg box"@omg.bg')<email><mailbox><quoted>;
+
+is [ $box, $box2, $box3 ], ['"test"', '" "', '" ; omg box"'], 'Parse quoted email';

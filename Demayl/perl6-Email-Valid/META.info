@@ -1,6 +1,6 @@
 {
     "name"        : "Email::Valid",
-    "version"     : "0.3.2",
+    "version"     : "1.0.0",
     "description" : "Email validator for Perl6",
     "provides": {
         "Email::Valid"         : "lib/Email/Valid.pm6"
