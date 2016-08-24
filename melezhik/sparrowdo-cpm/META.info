@@ -1,0 +1,18 @@
+{
+  "name"        : "Sparrowdo::Cpm",
+  "version"     : "*",
+  "description" : "Sparrowdo module to install CPAN modules using App::cpm - a fast CPAN module installer",
+  "authors" : [ "Alexey Melezhik"],
+  "depends"     : [
+                    "Sparrowdo"
+                  ],
+  "source-type" : "git",
+  "support" : {
+        "bugtracker" : "https://github.com/melezhik/sparrowdo-cpm/issues",
+        "source" : "https://github.com/melezhik/sparrowdo-cpm.git"
+    },
+   "provides" : {
+        "Sparrowdo::Cpm" : "lib/Sparrowdo/Cpm.pm6"
+  },
+  "source-url"  : "https://github.com/melezhik/sparrowdo-cpm.git"
+}
