@@ -10,6 +10,7 @@ use Zef::Utils::SystemInfo;
 # Ideally this all ends up back in bin/zef once/if precompilation of scripts is handled in CURI
 package Zef::CLI {
     my $verbosity = preprocess-args-verbosity-mutate(@*ARGS);
+    %*ENV<ZEF_BUILDPM_DEBUG> = $verbosity >= DEBUG;
     my $CONFIG    = preprocess-args-config-mutate(@*ARGS);
 
     #| Download specific distributions
@@ -451,11 +452,21 @@ package Zef::CLI {
         }
         my $chosen-config-file = $config-path-from-args // Zef::Config::guess-path();
 
-        # Mixin the original path so we can show it on the --help usage :-/
-        my $config = Zef::Config::parse-file($chosen-config-file) but role { method IO { $chosen-config-file.IO } };
+        # Keep track of the original path so we can show it on the --help usage :-/
+        my $config = do {
+            # The .Str.IO thing is due to a weird rakudo bug I can't figure out .
+            # A bare .IO will complain that its being called on a type Any (not true)
+            my $path = $config-path-from-args // Zef::Config::guess-path;
+            my $IO   = $path.Str.IO;
+            my %hash = Zef::Config::parse-file($path).hash;
+            class :: {
+                has $.IO;
+                has %.hash handles <AT-KEY EXISTS-KEY DELETE-KEY push append iterator list kv keys values>;
+            }.new(:%hash, :$IO);
+        }
 
         # get/remove --$short-name and --/$short-name where $short-name is a value in the config file
-        my $plugin-lookup := Zef::Config::plugin-lookup($config);
+        my $plugin-lookup := Zef::Config::plugin-lookup($config.hash);
         @*ARGS = eager gather for @*ARGS -> $arg {
             my $arg-as  = $arg.subst(/^ ["--" | "--\/"]/, '');
             my $enabled = $arg.starts-with('--/') ?? 0 !! 1;
