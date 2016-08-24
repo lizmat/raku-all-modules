@@ -89,7 +89,7 @@ role HTTP::Header {
     #| Retrieve all the parameters associated with this header value
     method params {
         my %result;
-        my @pairs = try { self.prepared-values».comb(/ <-[ ; ]>+ /)».grep(/'='/) };
+        my @pairs = try { self.prepared-values».comb(/ <-[ ; ]>+ /)».grep(/'='/).flat };
         for @pairs -> $pair {
             my ($key, $value) = $pair.split('=', 2);
             %result{$key.trim.lc} = $value.trim;
