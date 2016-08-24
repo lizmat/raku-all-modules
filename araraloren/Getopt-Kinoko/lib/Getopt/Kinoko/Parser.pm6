@@ -55,7 +55,7 @@ multi sub kinoko-parser(@args is copy, OptionSet \optset) is export returns Arra
 
         $index++;
     }
-    # has front but not run 
+    # has front but not run
     if $front-check {
         X::Kinoko::Fail.new(msg => ": Need a front Non-Option-Argument.").throw;
     }
@@ -86,12 +86,9 @@ multi sub kinoko-parser(@args is copy, OptionSet \optset, $gnu-style) is export 
             when /^ [<lprefix> || <sprefix>]  <.&optname> \= <optvalue> / {
                 if optset.has-option($optname, long => $<lprefix>.defined, short => $<sprefix>.defined) {
                     $opt := optset.get-option($optname, long => $<lprefix>.defined, short => $<sprefix>.defined);
-                    X::Kinoko.new(msg => $optname ~ ": Need a value.").throw 
+                    X::Kinoko.new(msg => $optname ~ ": Need a value.").throw
                         if !$<optvalue>.defined && !$opt.is-boolean;
                     $opt.set-value-callback($opt.is-boolean ?? True !! $<optvalue>.Str);
-                }
-                elsif $<sprefix>.defined {
-                    @args.unshift: | ( '-' X~ $optname.split("", :skip-empty) );
                 }
                 else {
                     X::Kinoko::Fail.new(msg => "$optname: Invalid option.").throw;
@@ -107,6 +104,9 @@ multi sub kinoko-parser(@args is copy, OptionSet \optset, $gnu-style) is export 
                     else {
                         X::Kinoko.new(msg => $optname ~ ": Need a value.").throw;
                     }
+                }
+                elsif $<sprefix>.defined {
+                    @args.unshift: | ( '-' X~ $optname.split("", :skip-empty) );
                 }
                 else {
                     X::Kinoko::Fail.new(msg => "$optname: Invalid option.").throw;

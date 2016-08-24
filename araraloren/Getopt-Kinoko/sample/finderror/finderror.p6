@@ -24,7 +24,7 @@ my $optset = OptionSet.new();
 
 # common
 $optset.insert-normal("h|help=b;v|version=b;");
-$optset.insert-radio("c|c-errno=b;l|win32-lasterror=b;");
+$optset.insert-radio("s|stdc-errno=b;l|win32-lasterror=b;");
 $optset.insert-multi("socket-error-uri=s;system-error-uri=s;include-directory=s;errno-include=s");
 
 # update
@@ -97,7 +97,6 @@ sub main(@args) {
 				if +@args == 0 {
 					fail("Find operator need condition.");
 				}
-				say @args.WHAT;
 				-> {
 					my Str @columns = [];
 
@@ -114,7 +113,7 @@ sub main(@args) {
 							if matchRegex($errno, @columns, @args) {
 								say $formater.format($errno);
 							}
-						}						
+						}
 					}
 					elsif $optset{'whole-word'} {
 						for @data -> $errno {
@@ -128,14 +127,14 @@ sub main(@args) {
 							if matchWholeWord($errno, @columns, @args) {
 								say $formater.format($errno);
 							}
-						}	
+						}
 					}
 					else {
 						for @data -> $errno {
 							if matchFindpattern($errno, @columns, @args) {
 								say $formater.format($errno);
 							}
-						}	
+						}
 					}
 				}();
 			}
@@ -161,10 +160,10 @@ sub main(@args) {
 
 sub matchRegex(Errno $errno, @columns, @patterns) {
 	for @columns -> $column {
-		my \string := $errno."$column"();
+		my $string := $errno."$column"();
 
 		for @patterns -> $pattern {
-			if string ~~ /{$pattern}/ {
+			if $string ~~ /"{$pattern}"/ {
 				return True;
 			}
 		}
@@ -267,7 +266,7 @@ sub get-downloader(OptionSet \optset) {
 
 # prepare data
 sub get-data(OptionSet \optset) {
-	my ($errno, $win32) = (optset{'c-errno'}, optset{'win32-lasterror'});
+	my ($errno, $win32) = (optset{'stdc-errno'}, optset{'win32-lasterror'});
 
 	if !$errno && !$win32 {
 		$errno = $win32 = True;
@@ -287,7 +286,7 @@ sub get-data(OptionSet \optset) {
 }
 
 sub update-data(OptionSet \optset) {
-	my ($errno, $win32) = (optset{'c-errno'}, optset{'win32-lasterror'});
+	my ($errno, $win32) = (optset{'stdc-errno'}, optset{'win32-lasterror'});
 
 	if !$errno && !$win32 {
 		$errno = $win32 = True;

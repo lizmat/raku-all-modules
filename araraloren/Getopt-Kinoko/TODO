@@ -1,8 +1,9 @@
-+ 公共选项类？ OptionSet 之间可以用公共的选项
-	+ common option class
-+ 单选选项类？ 几个 Option 中一时只有一个选项可以被设置
-	+ multi option behavior like radio button
-+ 深拷贝
-	+ add deep copy
+√ 公共选项类？ OptionSet 之间可以用公共的选项
+	√ common option class
+√ 单选选项类？ 几个 Option 中一时只有一个选项可以被设置
+	√ multi option behavior like radio button
+√ 深拷贝
+	√ add deep copy
 + 浮点型选项类？ 相对于整数型选项，支持小数
 	+ add float option
++ gnu-style not complete
