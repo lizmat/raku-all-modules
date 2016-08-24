@@ -1,0 +1,12 @@
+{
+    "perl"          : "6.c",
+    "name"          : "Acme::Sudoku",
+    "version"       : "0.0.1",
+    "authors"       : [ "github:pierre-vigier" ],
+    "description"   : "Simple Sudoku solver",
+    "depends"       : [ "Terminal::ANSIColor" ],
+    "provides"      : {
+        "Acme::Sudoku"    : "lib/Acme/Sudoku.pm6"
+    },
+    "source-url"    : "git@github.com:pierre-vigier/Perl6-Acme-Sudoku.git"
+}
