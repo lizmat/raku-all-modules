@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/avuserow/perl6-datetime-format-likego.git
 	branch = master
-	commit = 6ce74a22401359cbbe049e6a42f031d7cf34049f
-	parent = 826312c298026a82d573d440c048b03654d6c232
-	cmdver = 0.2.1
+	commit = 6bff661b57e29b466a5496af23a8749ff2099b92
+	parent = 6a590dcccddef2dc90e6d618c8a4b586e81c65a3
+	cmdver = 0.2.3
