@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masterduke17/text-diff-sift4.git
 	branch = master
-	commit = 0f8ecdeddb0876067e4043decbd135850327d72f
-	parent = 825078cf3cb8986849c946fa2093fdf45ae975d5
+	commit = 5b633affe63f8cdd1bb6fd65fa54161aa5c70a49
+	parent = 3296f36cdd0d891075a646c86bbd2b9002b1261f
 	cmdver = 0.2.3
