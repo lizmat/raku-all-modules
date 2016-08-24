@@ -1,8 +1,9 @@
 .PHONY: clean test
-all: %DESTDIR%/resources/libraries/%p5helper%
+CC = %CC%
+all: %p5helper%
 clean:
-	rm %DESTDIR%/resources/libraries/%p5helper%
-%DESTDIR%/resources/libraries/%p5helper%: p5helper.c
-	gcc -Wall p5helper.c `perl -MExtUtils::Embed -e ccopts -e ldopts` -shared -o %DESTDIR%/resources/libraries/%p5helper% -fPIC -g
+	rm "%p5helper%"
+%p5helper%: p5helper.c
+	$(CC) -Wall p5helper.c %perlopts% -shared -o "%p5helper%" -fPIC -g
 test: all
 	prove -e 'perl6 -Ilib' t

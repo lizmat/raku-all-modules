@@ -17,6 +17,8 @@ my $default_perl5;
 
 my constant $p5helper = %?RESOURCES<libraries/p5helper>.Str;
 
+my constant @pass_through_methods = |Any.^methods>>.name.grep(/^\w+$/), |<note print put say split>;
+
 class Perl5Object { ... }
 class Perl5Callable { ... }
 
@@ -195,6 +197,9 @@ sub p5_is_object(Perl5Interpreter, Pointer) is native($p5helper)
 
 sub p5_is_sub_ref(Perl5Interpreter, Pointer) is native($p5helper)
     returns int32 { ... }
+
+sub p5_get_global(Perl5Interpreter, Str) is native($p5helper)
+    returns Pointer { ... }
 
 sub p5_eval_pv(Perl5Interpreter, Str, int32) is native($p5helper)
     returns Pointer { ... }
@@ -514,6 +519,16 @@ method execute(Pointer $code_ref, *@args) {
     self!unpack_return_values($av);
 }
 
+method global(Str $name) {
+    self.p5_to_p6(p5_get_global($!p5, $name))
+}
+
+PROCESS::<%PERL5> := class :: does Associative {
+    multi method AT-KEY($name) {
+        Inline::Perl5.default_perl5.global($name)
+    }
+}.new;
+
 class Perl6Callbacks {
     has $.p5;
     method create($package, $code) {
@@ -759,7 +774,7 @@ role Perl5Package[Inline::Perl5 $p5, Str $module] {
             !! $p5.invoke($module, $name, |@args.list, |%kwargs);
     }
 
-    for Any.^methods>>.name.list, <say> -> $name {
+    for @pass_through_methods -> $name {
         next if $?CLASS.^declares_method($name);
         my $method = method (|args) {
             return self.defined
@@ -785,7 +800,7 @@ method import (Str $module, *@args) {
     return ($after ∖ $before).keys;
 }
 
-my $loaded_modules = SetHash.new;
+my %loaded_modules;
 method require(Str $module, Num $version?) {
     # wrap the load_module call so exceptions can be translated to Perl 6
     if $version {
@@ -796,26 +811,32 @@ method require(Str $module, Num $version?) {
     }
 
     return unless self eq $default_perl5; # Only create Perl 6 packages for the primary interpreter to avoid confusion
-    return if $loaded_modules{$module};
-    $loaded_modules{$module} = True;
 
-    my $p5 := self;
-
-    my $class := Metamodel::ClassHOW.new_type( name => $module );
-    $class.^add_role(Perl5Package[$p5, $module]);
+    my $class;
+    my $first-time = True;
     my $symbols = self.subs_in_module($module);
-
-    # install methods
-    for @$symbols -> $name {
-        next if $name eq 'new';
-        my $method = my method (*@args, *%kwargs) {
-            self.FALLBACK($name, |@args, |%kwargs);
-        }
-        $method.set_name($name);
-        $class.^add_method($name, $method);
+    if %loaded_modules{$module}:exists {
+        $class := %loaded_modules{$module};
+        $first-time = False;
     }
+    else {
+        my $p5 := self;
 
-    $class.^compose;
+        %loaded_modules{$module} := $class := Metamodel::ClassHOW.new_type(name => $module);
+        $class.^add_role(Perl5Package[$p5, $module]);
+
+        # install methods
+        for @$symbols -> $name {
+            next if $name eq 'new';
+            my $method = my method (*@args, *%kwargs) {
+                self.FALLBACK($name, |@args, |%kwargs);
+            }
+            $method.set_name($name);
+            $class.^add_method($name, $method);
+        }
+
+        $class.^compose;
+    }
 
     # register the new class by its name
     my @parts = $module.split('::');
@@ -829,10 +850,12 @@ method require(Str $module, Num $version?) {
     $ns{$inner} := $class;
     $class.WHO{$_.key} := $_.value for @existing;
 
-    # install subs like Test::More::ok
-    for @$symbols -> $name {
-        ::($module).WHO{"&$name"} := sub (*@args) {
-            self.call("{$module}::$name", @args.list);
+    if $first-time {
+        # install subs like Test::More::ok
+        for @$symbols -> $name {
+            ::($module).WHO{"&$name"} := sub (*@args) {
+                self.call("{$module}::$name", @args.list);
+            }
         }
     }
 
@@ -916,8 +939,8 @@ method BUILD(*%args) {
     else {
         my @args = @*ARGS;
         $!p5 = p5_init_perl(@args.elems + 4, CArray[Str].new('', '-e', '0', '--', |@args));
+        X::Inline::Perl5::NoMultiplicity.new.throw unless $!p5.defined;
     }
-    X::Inline::Perl5::NoMultiplicity.new.throw unless $!p5.defined;
 
     &!call_method = sub (Int $index, Str $name, Int $context, Pointer $args, Pointer $err) returns Pointer {
         my $p6obj = $objects.get($index);
@@ -1011,7 +1034,8 @@ BEGIN {
             }
         }
     );
-    for Any.^methods>>.name -> $name {
+    for @pass_through_methods -> $name {
+        next if Perl5Object.^declares_method($name);
         Perl5Object.^add_method(
             $name,
             method (|args) {
