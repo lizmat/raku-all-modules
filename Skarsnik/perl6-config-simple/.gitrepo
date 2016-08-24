@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Skarsnik/perl6-config-simple.git
 	branch = master
-	commit = fee1c3b97d3cb9e146364515fd7eaf204711e794
-	parent = 23660574d3c362828d789d790720aa09abcca01c
+	commit = f0d3893f525cc10d318a45b607058e7b06e105bd
+	parent = 9420c8d85b90dda9eb130de93162a36b9999a3f2
 	cmdver = 0.2.3
