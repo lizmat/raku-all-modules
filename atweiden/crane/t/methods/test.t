@@ -25,4 +25,4 @@ subtest
         'Test operation fails when path not found';
 }
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

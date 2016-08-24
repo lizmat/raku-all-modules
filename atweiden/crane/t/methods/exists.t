@@ -39,4 +39,4 @@ subtest
     is Crane.exists(%h, :path(qw<a alpha foo bar>)), False, 'Does not exist';
 }
 
-# vim: ft=perl6
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

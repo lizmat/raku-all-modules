@@ -30,4 +30,4 @@ subtest
     is at(%data, 'legumes', 3, 'instock'), 8, "It's the value expected";
 }
 
-# vim: ft=perl6
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

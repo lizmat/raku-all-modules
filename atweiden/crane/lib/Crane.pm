@@ -1930,4 +1930,4 @@ sub is-valid-callable-signature(&c) returns Bool
 
 # end helper functions }}}
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:
