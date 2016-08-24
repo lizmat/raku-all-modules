@@ -1,0 +1,28 @@
+=pod
+
+=encoding utf8
+
+=head2 CompUnit::Repository::Tar
+
+Load modules directly from a .tar.gz archive
+
+=for HTML <a href="https://travis-ci.org/ugexe/Perl6-CompUnit--Repository--Tar"><img src="https://travis-ci.org/ugexe/Perl6-CompUnit--Repository--Tar.svg?branch=master"></a>
+          <a href="https://ci.appveyor.com/project/ugexe/perl6-compunit-repository-tar/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/ugexe/Perl6-CompUnit--Repository--Tar?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
+
+=head3 Synopsis
+
+    # some file in this distributions t/ directory
+
+    use CompUnit::Repository::Tar;
+
+    # Archive must contain a META6.json file
+    my $archive = $?FILE.IO.parent.child('data/zef.tar.gz');
+    use lib "CompUnit::Repository::Tar#{~$archive}";
+
+    require <lib/Zef.pm6>  # `require` by relative path
+    require <Zef::Client>; # `require` by name
+    use Zef::CLI;          # `use` by name
+
+See: L<tests|https://github.com/ugexe/Perl6-CompUnit--Repository--Tar/blob/master/t>
+
+=cut
