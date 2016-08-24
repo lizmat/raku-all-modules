@@ -1,0 +1,51 @@
+=pod
+
+=encoding utf8
+
+=head2 Distribution::Common::Remote
+
+Create an installable Distribution from remote sources using the C<Distribution::Common> interface
+
+See L<Distribution::Common|https://github.com/ugexe/Perl6-Distribution--Common> for more information.
+This is kept as a separate repo as it requires additional dependencies.
+
+=for HTML <a href="https://travis-ci.org/ugexe/Perl6-Distribution--Common--Remote"><img src="https://travis-ci.org/ugexe/Perl6-Distribution--Common--Remote.svg?branch=master"></a>
+          <a href="https://ci.appveyor.com/project/ugexe/Perl6-Distribution-Common-Remote/branch/master"><img src="https://ci.appveyor.com/api/projects/status/github/ugexe/Perl6-Distribution--Common--Remote?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true"></a>
+
+=head3 Synopsis
+
+    use Distribution::Common::Remote::Github;
+
+    # Distribution::Common::Remote:auth<github:ugexe>
+    my $dist = Distribution::Common::Remote::Github.new(
+        user    => "ugexe",
+        repo    => "Perl6-Distribution--Common--Remote",
+        branch  => "master"
+    );
+
+    say $dist.meta;
+    say $dist.content('lib/Distribution/Common/Remote.pm6').open.slurp-rest;
+
+=head3 Distribution Implementations
+
+=head4 B<Distribution::Common::Remote::Github>
+
+Installable C<Distribution> from a github repository
+
+=head3 Roles
+
+=head4 B<Distribution::IO::Remote::Github>
+
+Fetch a single raw file from a distribution's github to memory. When C<CompUnitRepository::Installation::Install.install>
+accesses such files they are written directly to their install location instead of first using an intermediate temporary]
+location
+
+=head3 Todo
+
+=over 4
+
+=item * API tokens (otherwise beware the github API rate limiting)
+
+=back
+
+=cut
