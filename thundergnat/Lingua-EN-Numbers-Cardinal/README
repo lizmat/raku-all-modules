@@ -196,10 +196,10 @@ USAGE
 
 BUGS
 
-The cardinal() routine expects rational or integer numbers. All the other expect
-integers. If you feed them something else, they will try to coerce but be
-prepared for non-sensible results. Does some cursory error trapping and coercion
-but the foot cannon is still loaded.
+The cardinal() routine expects rational or integer numbers. All the others
+expect integers. If you feed them something else, they will try to coerce, but
+be prepared for non-sensible results. Does some cursory error trapping and
+coercion but the foot cannon is still loaded.
 
 
 AUTHOR
