@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Test-META.git
 	branch = master
-	commit = 5d3eb43e24cc3e5a222d8e3519fff61a60cf600a
-	parent = 7bc7b4f379210739d658f65f2390b3180e8f7a87
+	commit = 69ab151e194d3ada8e817cf01516a0f861c99ff9
+	parent = 142627092fad6354879ab85808b72a46696e97f3
 	cmdver = 0.2.3
