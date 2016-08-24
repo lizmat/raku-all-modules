@@ -1,0 +1,34 @@
+Revision history for IRC::Client
+
+unreleased
+    - Improve docs by adding tables of contents
+
+3.006002 2016-08-08
+    - Emit irc-started before any connection is made
+
+3.006001 2016-08-07
+    - Add `:alias` feature (#22)
+
+3.005001 2016-08-07
+    - Make addressed regex more restrictive (#21)
+
+3.004004 2016-08-03
+    - Implement .match method on Privmsg/Notice message objects
+
+3.004003 2016-08-02
+    - Make nick grammar looser to match real-world use rather than RFC (#19)
+    - Fix missing user/channel info in debug output for PRIVMSG/NOTICE messages
+    - Add support for channel passwords (#18)
+
+3.003006  2016-07-31
+    - Fix issue with giving multiple values to channels
+
+3.003005  2016-07-30
+    - Fix Privmsg message object match in signature regex
+    - Fix warnings in output
+
+3.003004  2016-07-30
+    - Fix precompilation bug for Terminal::ANSIColor loading (MasterDuke)
+
+3.003003  2016-07-29
+    - Completed "rewrite" API redesign
