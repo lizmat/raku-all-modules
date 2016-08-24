@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Altai-man/perl6-Compress-Bzip2-Raw.git
 	branch = master
-	commit = 2110c492d8542355484e42e6b1dbc23c0fbe3e56
-	parent = 1e391ac7a174f23bd6a50b495a9a9f4044dc3b3c
+	commit = d40ee2eb9b87bb8ca24a5617d38cb16870ea353f
+	parent = 0db29ae65630282a79b313e5e53fcc73c6a6e054
 	cmdver = 0.2.3
