@@ -1,0 +1,17 @@
+{
+  "perl": "6.c",
+  "name": "Getopt::Std",
+  "version": "0.1.1.dev1",
+  "description": "Process single-character options with option clustering",
+  "authors": [ "Peter Pentchev" ],
+  "provides": {
+    "Getopt::Std": "lib/Getopt/Std.pm6"
+  },
+  "depends": [],
+  "test-depends": [
+    "Test::Deeply::Relaxed",
+    "Test::META"
+  ],
+  "resources": [],
+  "source-url": "https://github.com/ppentchev/perl6-Getopt-Std.git"
+}

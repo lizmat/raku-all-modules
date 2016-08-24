@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/ppentchev/perl6-Getopt-Std.git
+	branch = master
+	commit = a037a249badf01c78459c947a9e84722bf36f0bd
+	parent = a4a898f2209dc97f5960ee0037f16d87b097c7ef
+	cmdver = 0.2.3
