@@ -41,7 +41,7 @@ Lazy base64 encoding and decoding routines
 
 =head4 B<routine> L<encode-base64>
 
-B<Args> C<$encode-me where Blob|Str, :$pad, :@alpha, Bool :$str>
+B<Args> C<$encode-me where Blob|Str, :$pad where Bool:D|Str:D, Str:D :@alpha, Bool:D :$str>
 
 B<Returns> C<Seq|Str>
 
@@ -51,7 +51,6 @@ B<Returns> C<Seq|Str>
     encode-base64($encode-me, :pad("*"))       # Alternative padding character
     encode-base64($encode-me, :uri)            # Use '-' and '_' for chars 63 and 64
     encode-base64($encode-me, :alpha(1..64))   # Set the entire alphabet
-    encode-base64($encode-me, :alpha('-','_')) # Same as :uri
 
 Takes a C<Blob> and applies base64 encoding with the requested options. If passed a C<Str> it will be converted to a C<Blob> via C<.ords> first.
 
@@ -66,17 +65,14 @@ Takes a C<Blob> and applies base64 encoding with the requested options. If passe
 
 =head4 B<routine> L<decode-base64> 
 
-B<Args> C<$decode-me where Blob|Str, :$pad, :@alpha, Bool :$bin>
+B<Args> C<$decode-me where Blob:D|Str:D, Str:D :@alpha, Bool:D :$bin, Bool:D :$uri>
 
 B<Returns> C<Seq|Buf>
 
     decode-base64($decode-me)                  # Decodes a base64 encoded string to a Buf for further decoding
     decode-base64($encode-me, :bin)            # Return a buffer from the sequence that would be returned
-    decode-base64($decode-me, :!pad)           # No padding
-    decode-base64($decode-me, :pad("*"))       # Alternative padding character
     decode-base64($decode-me, :uri)            # Use '-' and '_' for chars 63 and 64
     decode-base64($decode-me, :alpha(1..64))   # Set the entire alphabet
-    decode-base64($decode-me, :alpha('-','_')) # Same as :uri
 
 Takes a C<Str> and applies base64 decoding with the requested options. If passed a C<Blob> it will be converted to a C<Str> with C<.decode> first.
 
@@ -93,7 +89,7 @@ Takes a C<Str> and applies base64 decoding with the requested options. If passed
 
 =over 4
 
-=item * Handle line lengths, per requested, transparently for the user
+=item * Handle line lengths transparently for the user
 
 =back
 
