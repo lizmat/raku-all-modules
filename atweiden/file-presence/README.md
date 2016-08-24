@@ -19,8 +19,8 @@ say exists-readable-file($config-file)
     ?? 'readable file exists'
     !! 'readable file dne';
 
-say File::Presence.show($config-dir); # { :exists, :readable, :!file, :dir }
-say File::Presence.show($config-file); # { :exists, :readable, :file, :!dir }
+say File::Presence.show($config-dir); # { :e, :d, :!f, :r, :w, :x }
+say File::Presence.show($config-file); # { :e, :!d, :f, :r, :w, :!x }
 ```
 
 

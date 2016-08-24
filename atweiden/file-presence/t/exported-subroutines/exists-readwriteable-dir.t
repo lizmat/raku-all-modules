@@ -7,9 +7,9 @@ plan 1;
 
 subtest
 {
-    my Str $file = 't/methods/show.t';
-    ok exists-readable-file($file);
-    nok exists-readable-file('bzzt');
+    my Str $dir = 't/methods';
+    ok exists-readwriteable-dir($dir);
+    nok exists-readwriteable-dir('bzzt');
 }
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

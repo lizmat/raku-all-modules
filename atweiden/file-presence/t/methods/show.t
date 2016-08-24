@@ -9,9 +9,9 @@ subtest
 {
     my Str $dir = 't/methods';
     my Str $file = 't/methods/show.t';
-    is-deeply File::Presence.show($dir), { :exists, :readable, :!file, :dir };
-    is-deeply File::Presence.show($file), { :exists, :readable, :file, :!dir };
-    is-deeply File::Presence.show('bzzt'), { :!exists, :!readable, :!file, :!dir };
+    is-deeply File::Presence.show($dir), { :e, :d, :!f, :r, :w, :x };
+    is-deeply File::Presence.show($file), { :e, :!d, :f, :r, :w, :!x }
+    is-deeply File::Presence.show('bzzt'), { :!e, :!d, :!f, :!r, :!w, :!x };
 }
 
-# vim: ft=perl6 fdm=marker fdl=0
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:
