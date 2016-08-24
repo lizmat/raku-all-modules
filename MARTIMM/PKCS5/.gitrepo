@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MARTIMM/PKCS5.git
+	branch = master
+	commit = d68950051870899e966fa6c1b26550d579fbb8c3
+	parent = f6e5dfd6cf1454678e61b80f6c8b14762d52ca34
+	cmdver = 0.2.3

@@ -1,0 +1,97 @@
+#!/usr/bin/env perl6
+
+use v6.c;
+
+# Running the pod file will create a pdf using wkhtmltopdf
+#
+my Str $pod = "$*PROGRAM";
+my Str $pdf = $pod;
+$pdf ~~ s/\. <-[.]>+ $/.pdf/;
+shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
+
+#-------------------------------------------------------------------------------
+
+=begin pod
+
+=begin Xhtml
+<style>
+  pre {
+    border-width:       2px;
+    border-style:       solid;
+    border-color:       #060;
+    padding:            10px 0 3px 10px;
+    color:              #060;
+    background-color:   #eaefea;
+    font-family:        FreeMono;
+  }
+  td {
+    vertical-align:     top;
+  }
+</style>
+=end Xhtml
+
+=TITLE class PKCS5::PBKDF2
+
+=SUBTITLE 
+
+  package PKCS5 { class PBKDF2 { ... } }
+
+=head1 Synopsis
+
+  use PKCS5::PBKDF2;
+
+  my PKCS5::PBKDF2 $p .= new;
+
+  my Str $spw = $p.derive-hex(
+    Buf.new('pencil'.encode),
+    Buf.new( 65, 37, 194, 71, 228, 58, 177, 233, 60, 109, 255, 118),
+    4096,
+  );
+
+  # returns '1d96ee3a529b5a5f9e47c01f229a2cb8a6e15f7d'
+
+
+=head1 Methods
+
+=head2 new
+
+Defined as
+
+  submethod BUILD (
+    Callable :$CGH = &sha1,
+    Int :$dklen,
+  )
+
+Use
+
+  my PKCS5::PBKDF2 $p .= new;
+
+Initialize the derivation function. The cryptographic hash function C<CGH> is
+set to sha1 from the C<openSSL::Digest> by default, Other supported subs are
+sha256 and md5 also from that module. Md5 can also be used from C<Digest::MD5>
+but is very much slower.
+
+C<Dklen> is the number of bytes output from the C<derive()> function. When not
+given, it becomes the size of the output length of the C<CGH>.
+
+
+=head2 derive
+
+Defined as
+
+  method derive ( Buf $pw, Buf $salt, Int $i --> Buf )
+
+Calculate the derived key given the password C<$pw> and a salt C<$salt>. It
+returns a Buf of length dklen specified to C<new()> when initializing.
+
+
+=head2 derive-hex
+
+Defined as
+
+  method derive-hex ( Buf $pw, Buf $salt, Int $i --> Str )
+
+Does the same as C<derive()> but converts the output Buf into a hexadecimal
+string.
+
+=end pod
