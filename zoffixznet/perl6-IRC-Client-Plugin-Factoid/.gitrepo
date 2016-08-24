@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-IRC-Client-Plugin-Factoid.git
 	branch = master
-	commit = 53a8d45c54071198b6acf11736e9ef5572c12c3d
-	parent = 6aa782bacfc9ce227b54343a7ae7c6da5e8cb122
+	commit = 866f7956a990335f657a4806f079b82877812b27
+	parent = 0a15d160c6c9fc673182cb44df2029ab5db33809
 	cmdver = 0.2.3

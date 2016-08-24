@@ -1,6 +1,5 @@
 use lib <lib ../lib>;
 use IRC::Client;
-use IRC::Client::Plugin::Debugger;
 use IRC::Client::Plugin::Factoid;
 
 sub MAIN (
@@ -14,8 +13,7 @@ sub MAIN (
         :channels($channel.comb: /<-[,]>+/),
         :debug,
         plugins => [
-            IRC::Client::Plugin::Debugger.new,
-            IRC::Client::Plugin::Factoid.new,
+          IRC::Client::Plugin::Factoid.new,
         ]
     ).run;
 
