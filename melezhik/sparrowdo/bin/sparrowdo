@@ -1,29 +1,149 @@
 use Terminal::ANSIColor;
+use JSON::Tiny;
+use Sparrowdo;
 
 sub MAIN (
+
   Str  :$host!, 
   Str  :$http_proxy, 
   Str  :$https_proxy, 
   Str  :$ssh_user, 
+  Str  :$ssh_private_key, 
   Int  :$ssh_port = 22, 
   Bool :$verbose = False, 
-  Bool :$skip_index_update = False,
+  Bool :$bootstrap = False, 
+  Str  :$module_run
+
 )
 {
 
-  say colored('running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
   
   # dirty hacks to pass command line parameter into sparrowfile context
   # sorry for not knowing perl6 idioms ... ));
-  
-  our $Sparrowdo::Host = $host; 
-  our $Sparrowdo::HttpProxy = $http_proxy; 
-  our $Sparrowdo::HttpsProxy = $https_proxy; 
-  our $Sparrowdo::SshPort = $ssh_port; 
-  our $Sparrowdo::SshUser = $ssh_user; 
-  our $Sparrowdo::Verbose = $verbose; 
-  our $Sparrowdo::SkipIndexUpdate = $skip_index_update; 
-  
-  EVALFILE "sparrowfile";
-  
+
+  set_input_params %(  
+    Host => $host, 
+    HttpProxy => $http_proxy, 
+    HttpsProxy => $https_proxy, 
+    SshPort => $ssh_port, 
+    SshUser => $ssh_user, 
+    SshPrivateKey => $ssh_private_key, 
+    Verbose => $verbose,
+  );
+
+  bootstrap() if $bootstrap;
+
+  say colored('running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
+
+  ssh_shell "echo print os | perl -MOutthentic  > /tmp/os.txt";
+
+  scp '/tmp/os.txt', '/tmp/target_os', 1; # copy back /tmp/os.txt 
+
+  set_target_os slurp "/tmp/target_os";
+
+  say colored('target OS is - '~ target_os, 'black on_white');
+
+
+  if $module_run {
+    module_run $module_run;
+  } else {
+    EVALFILE "sparrowfile";
+  }
+
+  spurt '/tmp/sparrowdo-box.json', (to-json get_tasks());
+
+  scp '/tmp/sparrowdo-box.json', '/tmp/';
+
+  say colored('set up task box file - /tmp/sparrowdo-box.json - OK', 'bold green on_blue');
+
+
+  if get_spl() {
+
+
+    if input_params('Verbose') {
+      say colored( 'puplating SPL file', 'bold yellow on_cyan' );
+    }
+
+    spurt '/tmp/sparrow.list', get_spl().join: "\n";
+    scp '/tmp/sparrow.list', '/tmp/';
+    ssh_shell 'mkdir -p /opt/sparrow && mv  /tmp/sparrow.list /opt/sparrow';
+    say colored('copied SPL file as /opt/sparrow/sparrow.list - OK', 'bold green on_blue');
+
+  }
+
+  ssh_shell 'sparrow index update';
+  ssh_shell 'sparrow box run /tmp/sparrowdo-box.json --mode quiet';
+
+}
+
+sub ssh_shell ( $cmd ) {
+
+
+  my @bash_commands = ( 'export LC_ALL=en_US.UTF-8' );
+
+
+  @bash_commands.push:  'export http_proxy=' ~ input_params('HttpProxy') if input_params('HttpProxy');
+  @bash_commands.push:  'export https_proxy=' ~ input_params('HttpsProxy') if input_params('HttpsProxy');
+  @bash_commands.push:  'export GIT_PROTOCOL=https';
+  @bash_commands.push:  'export PATH=/sbin/:/usr/local/bin:/usr/sbin/:$PATH';
+  @bash_commands.push:  'export SPARROW_ROOT=/opt/sparrow';
+  @bash_commands.push:  $cmd;
+
+  my $ssh_host_term = input_params('Host');
+
+  $ssh_host_term = input_params('SshUser') ~ '@' ~ $ssh_host_term if input_params('SshUser');
+
+  my $ssh_cmd  =  'ssh -o ConnectionAttempts=1  -o ConnectTimeout=5';
+
+  $ssh_cmd ~= ' -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -tt';
+
+  $ssh_cmd ~= ' -q' unless input_params('Verbose');
+
+  $ssh_cmd ~= ' -p ' ~ input_params('SshPort') ~ ' ' ~ $ssh_host_term;
+
+  $ssh_cmd ~= ' -i ' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
+
+  $ssh_cmd ~= " \"sudo bash -c '" ~ ( join ' ; ', @bash_commands ) ~ "'\"";
+
+  $ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
+
+  say colored($ssh_cmd, 'bold green') if input_params('Verbose');
+
+  shell $ssh_cmd;
+
+}
+
+sub scp ( $file, $dest, $reverse = 0 ) {
+
+  my $ssh_host_term = input_params('Host');
+
+  $ssh_host_term = input_params('SshUser') ~ '@' ~ $ssh_host_term if input_params('SshUser');
+
+  my $scp_params = ' -P ' ~ input_params('SshPort');
+
+  $scp_params ~= ' -i' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
+
+  $scp_params ~= ' -q'  unless input_params('Verbose');
+
+  my $scp_command = 'scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
+
+  if $reverse {
+    $scp_command ~= ' ' ~ $ssh_host_term ~ ':' ~ $file ~ ' ' ~ $dest ;
+  } else {
+    $scp_command ~= ' ' ~ $file ~ ' ' ~ $ssh_host_term ~ ':' ~ $dest;
+  }
+
+  say colored($scp_command, 'bold green') if input_params('Verbose');
+
+  shell $scp_command;
+
+}
+
+sub bootstrap {
+
+  say colored('running Sparrow bootstrap on ' ~ input_params('Host'), 'green on_red');
+  ssh_shell 'if ! which cpanm 2>/dev/null; then curl -kL http://cpanmin.us/ -o /bin/cpanm; chmod a+x /bin/cpanm; fi';
+  ssh_shell 'if ! which sparrow 2>/dev/null; then yum -y install gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge; cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow; fi';
+  ssh_shell 'cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow '; # forcefully upgrade Sparrow
+
 }

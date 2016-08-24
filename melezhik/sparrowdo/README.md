@@ -9,12 +9,8 @@ Simple configuration engine based on [sparrow](https://sparrowhub.org) plugin sy
 # Usage
 
 
-    $ cat << EOF > sparrowfile
+    $ cat sparrowfile
 
-    use v6;
-    
-    use Sparrowdo;
-    
     task_run  %(
       task => 'check disk available space',
       plugin => 'df-check',
@@ -31,14 +27,7 @@ Simple configuration engine based on [sparrow](https://sparrowhub.org) plugin sy
       )
     );
     
-    EOF
-
     $ sparrowdo --host=192.168.0.1
-
-# Screencast! ... :smile:  ...
-
-[![asciicast](https://asciinema.org/a/49078.png)](https://asciinema.org/a/49078)
-
 
 # Schema
 
@@ -80,7 +69,7 @@ Only [public](https://metacpan.org/pod/Sparrow#Public-plugins) sparrow plugins a
 
 Remote hosts are configured by running sparrow client on them and executing sparrow tasks.
 
-A Sparrow CPAN module, version >= 0.1.11 should be installed on remote hosts:
+A Sparrow CPAN module, version >= 0.1.19 should be installed on remote hosts:
 
     $ cpanm Sparrow
 
@@ -109,16 +98,8 @@ You should use `set_spl(%hash)` function to set up priviate plugin index file:
 
     $ cat sparrowfile
 
-    use v6;
-    
-    use Sparrowdo;
-    
-    use v6;
-    
-    use Sparrowdo;
-    
     set_spl %(
-        package-generic-dev => 'https://github.com/melezhik/package-generic.git'
+        package-generic-dev => 'https://github.com/melezhik/package-generic.git',
         df-check-dev => 'https://github.com/melezhik/df-check.git'
     );
     
@@ -152,20 +133,164 @@ Sets https\_proxy environment variable on remote host.
 
 Sets user for ssh connection to remote host.
 
+## --ssh\_private\_key
+
+Selects a file from which the identity (private key) for public key authentication is read. 
+
+Is equal to `ssh -i` parameter.
+
 ## --ssh\_port
 
 Sets shh port for ssh connection to remote host. Default value is `22`.
+
+## --module\_run
+
+Runs a sparrowdo module instead of executing tasks from sparrowfile. For example:
+
+
+    $ sparrowdo --host=127.0.0.1 --module_run=Nginx
+
 
 ## --verbose
 
 Sets verbose mode ( low level information will be printed at console ).
 
-## --skip\_index\_update
 
-Do not call `sparrow index update` on remote host ( this command might be omitted if you want to speed up your deploys  as
-this command could be time consuming ). See also [sparrow index update](https://metacpan.org/pod/Sparrow#Index-API) command reference.
+# Bootstrapping 
+
+One may use `bootstrap` mode to install Sparrow on target host first:
+
+    $ sparrowdo --host=192.168.0.0.1 --bootstrap
+
+Currently only CentOS platform is supported for bootstrap operation. 
+
+# Sparrowdo modules
+
+Sparrowdo modules are collection of sparrow tasks. They are very similar to sparrow task boxes,
+with some differences though:
+
+* They are Perl6 modules.
+
+* They deal with sparrowdo tasks ( relying on sparrowdo API ) rather then with sparrow tasks. 
+
+An example of sparrowdo module:
+
+    use v6;
+    
+    unit module Sparrowdo::Nginx;
+    
+    use Sparrowdo;
+
+    our sub tasks (%args) {
+
+      task_run  %(
+        task => 'install nginx',
+        plugin => 'package-generic',
+        parameters => %( list => 'nginx' )
+      );
+
+      task_run  %(
+        task => 'enable nginx',
+        plugin => 'service',
+        parameters => %( service => 'nginx', action => 'enable' )
+      );
+
+      task_run  %(
+        task => 'start nginx',
+        plugin => 'service',
+        parameters => %( service => 'nginx', action => 'start' )
+      );
+  
+
+    }
+        
+
+Later on, in your sparrowfile you may have this:
 
 
+    $ cat sparrowfile
+
+    module_run 'Nginx';
+
+You may pass parameters to sparrowdo module:
+
+    module_run 'Nginx', port => 80;
+
+In module definition one access parameters as:
+
+    our sub tasks (%args) {
+
+        say %args<port>;
+
+    }
+
+
+A module naming convention is:
+
+    Sparrowdo::Foo::Bar ---> module_run Foo::Bar
+
+`module\_run($module_name)` function loads  module Sparrowdo::$module_name at runtime and calls 
+function `tasks` defined at module global context.
+
+
+## Helper functions
+
+Module developers could rely on some helper function, when creating their modules.
+
+* `target_os()`
+
+This function returns OS name for the target server.
+
+For example:
+
+    if target_os() ~~ m/centos/ {
+    
+      task_run  %(
+        task => 'install epel-release',
+        plugin => 'package-generic',
+        parameters => %( list => 'epel-release' )
+      );
+    
+    }
+    
+
+A list of OS names provided by `target_os()` function:
+
+    centos5
+    centos6
+    centos7
+    ubuntu
+    debian
+
+* `input_params($param)`
+
+Input\_params function returns command line parameter one provides running sparrowdo client. 
+
+For example:
+
+
+    task_run  %(
+      task => 'install great CPAN module',
+      plugin => 'cpan-package',
+      parameters => %( 
+        list => 'Moose',
+        http_proxy => input_params('HttpProxy'), 
+        https_proxy => input_params('HttpsProxy'), 
+      )
+    );
+
+This is the list of arguments valid for input\_params function:
+
+    Host 
+    HttpProxy 
+    HttpsProxy 
+    SshPort 
+    SshUser 
+    SshPrivateKey 
+    Verbose
+
+See also [sparrowdo client command line parameters](#sparrowdo-client-command-line-parameters) section.
+    
 # AUTHOR
 
 [Aleksei Melezhik](mailto:melezhik@gmail.com)
