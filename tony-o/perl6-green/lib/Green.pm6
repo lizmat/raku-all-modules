@@ -9,7 +9,8 @@ my $space         = 3;
 my $tests         = 0;
 my $passing       = 0;
 my $t0            = now;
-my $supply        = Supply.new;
+my $supplier      = Supplier.new;
+my $supply        = $supplier.Supply;
 my $tsets         = 0;
 my $csets         = 0;
 my $completion    = Promise.new;
@@ -122,7 +123,7 @@ start {
         try $output ~= "{' ' x $space*2}{$success ?? $pass !! $fail ~ " #{$err++} -" } {($test<test> // '').Str.trim}\n"; 
       }
       %results{$i} = "{' ' x $space}{$overall ?? $pass !! $fail} $set<description>\n" ~ $output ~ "\n{$errors}{$errors ne '' ?? "\n" !! ''}";
-      $supply.emit($i);
+      $supplier.emit($i);
     });
   }
 };
