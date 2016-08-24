@@ -1,0 +1,14 @@
+.directory
+*.pdf
+*.html
+*/*.html
+Old/*
+Tests/insert*
+Sandbox/*
+Travis-ci/M*
+Travis-ci/m*
+Travis-ci/P6*
+*.log
+.precomp
+*/.procomp
+*.zargo~

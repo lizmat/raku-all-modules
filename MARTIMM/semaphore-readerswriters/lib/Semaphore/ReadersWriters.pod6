@@ -1,0 +1,174 @@
+#!/usr/bin/env perl6
+#
+use v6.c;
+
+# Running the pod file will create a pdf using wkhtmltopdf
+#
+my Str $pod = "$*PROGRAM";
+my Str $pdf = $pod;
+$pdf ~~ s/\. <-[.]>+ $/.pdf/;
+shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
+
+#-------------------------------------------------------------------------------
+
+=begin pod
+
+=begin Xhtml
+<style>
+  pre {
+    border-width:       2px;
+    border-style:       solid;
+    border-color:       #060;
+    padding:            10px 0 3px 10px;
+    color:              #030;
+    background-color:   #ecefec;
+    font-family:        FreeMono;
+  }
+  td {
+    vertical-align:     top;
+  }
+</style>
+=end Xhtml
+
+=TITLE class Semaphore::ReadersWriters
+
+=SUBTITLE Semaphore readers writers pattern
+
+  class Semaphore::ReadersWriters { ... }
+
+
+=head1 Synopsis
+
+  use Semaphore::ReadersWriters;
+
+  my Semaphore::ReadersWriters $rw .= new;
+  $rw.add-mutex-names('shv');
+  my $shared-var = 10;
+
+  # After creating threads ...
+  # Some writer thread
+  $rw.writer( 'shv', {$shared-var += 2});
+
+  # Some reader thread
+  say 'Shared var is ', $rw.reader( 'shv', {$shared-var;});
+
+
+=head1 Description
+
+This readers writers pattern is a pattern describing the behavior of types of
+threads using shared data. In this description it is allowed to have more than
+one thread accessing the shared data for reading and only one thread for
+writing. This means that when there are readers in the critical area the writers
+must wait until all readers left this area. The critical area is a piece of code
+where the shared data is manipulated. Readers and writers have to wait
+when there is a writer in that area. There are several solutions to this
+pattern. This class provides three of them;
+
+=item I<Readers priority>. When readers are in the critical area, the writer has
+to wait until all readers have left. When new readers arive before the last
+reader leaves the area, the area stays occupied and can lead to writers
+starvation where the data in the critical section never gets updated.
+
+=item I<No writer starvation>. This method will block new readers as soon as
+there is a writer. After the writer leaves the critical area, the next reader or
+writer can access the area.
+
+=item I<Writer priority>. In the second method, it is possible that a waiting
+reader is entered first while there might be another writer waiting. It would be
+better for the reader to have to wait until all writers have finished writing
+and read the most up to date data. A possible problem would now be that there
+can be a reader starvation situation.
+
+=head1 Methods
+
+=head2 add-mutex-names
+
+Defined as
+
+  method add-mutex-names (
+    *@snames,
+    RWPatternType :$RWPatternType = C-RW-WRITERPRIO
+  )
+
+With this class it is possible to control several shared areas and uses names to
+separate them. This method sets one or more names. With the name a variation to
+the reader writer theme can be specified in :RWPatternType.
+
+=item C<C-RW-READERPRIO>. Readers have priority, see description above.
+
+=item C<C-RW-NOWRITERSTARVE>. No writer starvation.
+
+=item C<C-RW-WRITERPRIO>, Writers have priority. This is the default.
+
+
+=head2 rm-mutex-names
+
+Defined as
+
+  method rm-mutex-names (*@snames)
+
+Method to remove the name and its structures.
+
+
+=head2 get-mutex-names ( )
+
+Defined as
+
+  method get-mutex-names ()
+
+Return all defined names.
+
+
+=head2 reader
+
+Defined as
+
+  method reader ( Str:D $sname, Block $code)
+
+Method to access the shared data using the provided C<$code>. When the C<$sname>
+is not defined before with L<add-mutex-names>, the method returns a failure
+object. There are no checks to make sure that the shared data is really only
+read and not modified by the provided code.
+
+Example
+
+  my @data = 1..^5;
+  my Semaphore::ReadersWriters $rw .= new;
+  $rw.add-mutex-names( 'data', :RWPatternType(C-RW-WRITERPRIO));
+
+  # Later in a thread ...
+  say "Xyz is ", $rw.reader( 'data', {
+      my $xyz = 10;
+      $xyz *= $_ for @data;
+      $xyz;
+    }
+  );
+
+
+=head2 writer
+
+Defined as
+
+  method writer ( Str:D $sname, Block $code)
+
+Method to access the shared data using the provided C<$code>. When the C<$sname>
+is not defined before with L<add-mutex-names>, the method returns a failure
+object.
+
+Example
+
+  my @data = 1..^5;
+  my Semaphore::ReadersWriters $rw .= new;
+  $rw.add-mutex-names( 'data', :RWPatternType(C-RW-WRITERPRIO));
+
+  # Later in a thread ...
+  say "sum of data is ", $rw.writer( 'data', {
+      for @data -> $d is rw { $d += 2; }
+      [+] @data;
+    }
+  );
+
+
+
+
+=end pod
