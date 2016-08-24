@@ -1,0 +1,6 @@
+This module handles basic arrow notation for Perl 6. It might
+someday be expanded to handle arbitrary versions of arrow
+notation (because you have to be able to specify G, right?)
+
+Why? Well, for a few reasons, but high on the list was that
+someone was wrong on the Internet...

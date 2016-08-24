@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ajs/perl6-Math-Arrow.git
+	branch = master
+	commit = f79677ac5536161256ace9b8f97682259e23ab4c
+	parent = ec2b499a04c4336f62933a2abe3b357a6ace6f8d
+	cmdver = 0.2.3
