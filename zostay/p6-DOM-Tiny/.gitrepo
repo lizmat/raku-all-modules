@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/p6-DOM-Tiny.git
+	branch = master
+	commit = 0aa690f2d0e13bd513d04b4b32916feb1d285862
+	parent = 2f1b960bc83e0b93f2cfdb05f90e63df1c1cacb6
+	cmdver = 0.2.3
