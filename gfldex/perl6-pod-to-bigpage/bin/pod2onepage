@@ -1,0 +1,84 @@
+#! /usr/bin/env perl6
+use v6;
+
+use Pod::To::BigPage;
+use MONKEY-SEE-NO-EVAL;
+
+my &verbose = sub (|c) {};
+
+sub next-part-index () {
+    state $lock = Lock.new;
+    state $global-part-index = -1;
+
+    my $clone;
+    $lock.protect: {
+        $clone = $global-part-index++;
+    }
+    $clone
+}
+
+sub MAIN (Bool :v(:verbose($v)), Str :$source-path, Str :$exclude, Bool :$no-cache = False,
+          Int :$threads = %*ENV<THREADS>.?Int // 1,
+          Str :$precomp-path = (%*ENV<TEMP> // %*ENV<TMP> // '/tmp') ~ '/PodToBigfile-precomp' 
+) {
+    my @exclude = $exclude.defined ?? $exclude.split: ',' !! ();
+    &verbose = &note if $v;
+    
+    PROCESS::<$SCHEDULER> = ThreadPoolScheduler.new(initial_threads => 0, max_threads => $threads);
+    my $precomp-store = CompUnit::PrecompilationStore::File.new(prefix => $precomp-path.IO );
+    my $precomp = CompUnit::PrecompilationRepository::Default.new(store => $precomp-store);
+    
+    setup();
+    my @toc;
+    set-foreign-toc(@toc);
+    put compose-before-content;
+    if $threads > 1 {
+        put await do start { .&parse-pod-file( next-part-index, .substr($source-path.chars), $precomp, $no-cache ) } for sort find-pod-files($source-path, @exclude);
+    }else{
+        put do { .&parse-pod-file( next-part-index, .substr($source-path.chars), $precomp, $no-cache ) } for sort find-pod-files($source-path, @exclude);
+    }
+    put compose-left-side-menu() ~ compose-after-content();
+}
+
+sub find-pod-files ($dir, @exclude) {
+    state $none-exclude = @exclude.none;
+    my sub recurse ($dir) { 
+        gather for dir($dir) {
+            take .Str if .Str.ends-with($none-exclude) && .extension ~~ rx:i/pod6$/;
+            take slip sort recurse $_ if .d && .Str.ends-with($none-exclude);
+        }
+    }($dir)
+}
+
+my $precomp-lock = Lock.new;
+sub parse-pod-file ($f, $part-number, $pod-name is copy, $precomp, $disable-cache) {
+    my $io = $f.IO;
+
+    my $pod is default(Failure.new("could not compile pod"));
+
+    if $disable-cache {
+        $pod = (EVAL ($io.slurp ~ "\n\$=pod"));
+        verbose "processed $f";
+    }else{
+        use nqp;
+        my $id = nqp::sha1(~$f);
+        $precomp-lock.protect: {
+            my $handle = $precomp.load($id, :since($io.modified))[0];
+
+            my $cached = "(cached)";
+
+            without $handle {
+                $precomp.precompile($io, $id, :force);
+                $handle = $precomp.load($id)[0] // fail("Could not precompile $f");
+                $cached = "";
+            }
+
+            verbose "processed $f $cached";
+            $pod = nqp::atkey($handle.unit,'$=pod')[0];
+        }
+    }
+
+    $pod-name = $pod-name.subst('/Language/', '/language/').subst('/Type/', '/type/');
+    my $html = $pod>>.&handle(:$pod-name, part-number => $part-number, toc-counter => TOC-Counter.new.set-part-number($part-number), part-config => {:head1(:numbered(True)),:head2(:numbered(True)),:head3(:numbered(True)),:head4(:numbered(True))});
+    return Q:c[<!-- {$pod-name} --><div class="pod-body"><a id="{$pod-name.subst('/', '_', :g)}"></a>{$html}</div>];
+}
