@@ -45,7 +45,6 @@ module Text::Wrap {
     }
 
     return $result.trim-leading;
-    # return $result;
   }
 }
 
