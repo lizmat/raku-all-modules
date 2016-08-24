@@ -1,0 +1,20 @@
+{
+  "authors" : [
+    "Shoichi Kaji"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "HTTP::Tinyish",
+    "JSON::Tiny"
+  ],
+  "description" : "consume MetaCPAN recent favorite",
+  "name" : "MetaCPAN::Favorite",
+  "perl" : "6.c",
+  "provides" : {
+    "MetaCPAN::Favorite" : "lib/MetaCPAN/Favorite.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/skaji/perl6-MetaCPAN-Favorite.git",
+  "test-depends" : [ ],
+  "version" : "*"
+}
