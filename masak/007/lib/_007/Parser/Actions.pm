@@ -1,6 +1,74 @@
 use _007::Q;
 use _007::Parser::Syntax;
-use _007::Parser::Exceptions;
+
+class X::String::Newline is Exception {
+    method message { "Found a newline inside a string literal" }
+}
+
+class X::PointyBlock::SinkContext is Exception {
+    method message { "Pointy blocks cannot occur on the statement level" }
+}
+
+class X::Trait::Conflict is Exception {
+    has Str $.trait1;
+    has Str $.trait2;
+
+    method message { "Traits '$.trait1' and '$.trait2' cannot coexist on the same routine" }
+}
+
+class X::Trait::Duplicate is Exception {
+    has Str $.trait;
+
+    method message { "Trait '$.trait' is used more than once" }
+}
+
+class X::Trait::IllegalValue is Exception {
+    has Str $.trait;
+    has Str $.value;
+
+    method message { "The value '$.value' is not compatible with the trait '$.trait'" }
+}
+
+class X::Macro::Postdeclared is Exception {
+    has Str $.name;
+
+    method message { "Macro $.name declared after it was called" }
+}
+
+class X::Op::Nonassociative is Exception {
+    has Str $.op1;
+    has Str $.op2;
+
+    method message {
+        my $name1 = $.op1.type.substr(1, *-1);
+        my $name2 = $.op2.type.substr(1, *-1);
+        "'$name1' and '$name2' do not associate -- please use parentheses"
+    }
+}
+
+class X::Precedence::Incompatible is Exception {
+    method message { "Trying to relate a pre/postfix operator with an infix operator" }
+}
+
+class X::Property::NotDeclared is Exception {
+    has Str $.type;
+    has Str $.property;
+
+    method message { "The property '$.property' is not defined on type '$.type'" }
+}
+
+class X::Property::Required is Exception {
+    has Str $.type;
+    has Str $.property;
+
+    method message { "The property '$.property' is required on type '$.type'" }
+}
+
+class X::Property::Duplicate is Exception {
+    has Str $.property;
+
+    method message { "The property '$.property' was declared more than once in a property list" }
+}
 
 class _007::Parser::Actions {
     method finish-block($block) {
@@ -28,7 +96,7 @@ class _007::Parser::Actions {
     method statement:my ($/) {
         make Q::Statement::My.new(
             :identifier($<identifier>.ast),
-            :expr($<EXPR> ?? $<EXPR>.ast !! Val::None.new));
+            :expr($<EXPR> ?? $<EXPR>.ast !! NONE));
     }
 
     method statement:constant ($/) {
@@ -49,8 +117,8 @@ class _007::Parser::Actions {
         #      in the expression tree
         if $<EXPR>.ast ~~ Q::Block {
             make Q::Statement::Expr.new(:expr(Q::Postfix::Call.new(
-                :identifier(Q::Identifier.new(:name(Val::Str.new(:value("postfix:<()>"))))),
-                :operand(Q::Term::Sub.new(:identifier(Val::None.new), :block($<EXPR>.ast))),
+                :identifier(Q::Identifier.new(:name(Val::Str.new(:value("postfix:()"))))),
+                :operand(Q::Term::Sub.new(:identifier(NONE), :block($<EXPR>.ast))),
                 :argumentlist(Q::ArgumentList.new)
             )));
         }
@@ -68,7 +136,7 @@ class _007::Parser::Actions {
     sub maybe-install-operator($identname, @trait) {
         return
             unless $identname ~~ / (< prefix infix postfix >)
-                                    ':<' (<-[>]>+) '>' /;
+                                    ':' (<-[>]>+) /;
 
         my $type = ~$0;
         my $op = ~$1;
@@ -85,7 +153,7 @@ class _007::Parser::Actions {
                     unless $identifier ~~ Q::Identifier;
                 sub check-if-op($s) {
                     die "Unknown thing in '$name' trait"
-                        unless $s ~~ /< pre in post > 'fix:<' (<-[>]>+) '>'/;
+                        unless $s ~~ /< pre in post > 'fix:' (<-[>]>+)/;
                     %precedence{$name} = ~$0;
                     die X::Precedence::Incompatible.new
                         if $type eq ('prefix' | 'postfix') && $s ~~ /^ in/
@@ -117,7 +185,7 @@ class _007::Parser::Actions {
 
     method statement:sub-or-macro ($/) {
         my $identifier = $<identifier>.ast;
-        my $name = Val::Str.new(:value(~$<identifier>));
+        my $name = $<identifier>.ast.name;
         my $parameterlist = $<parameterlist>.ast;
         my $traitlist = $<traitlist>.ast;
         my $statementlist = $<blockoid>.ast;
@@ -146,18 +214,20 @@ class _007::Parser::Actions {
     }
 
     method statement:return ($/) {
-        make Q::Statement::Return.new(:expr($<EXPR> ?? $<EXPR>.ast !! Val::None.new));
+        die X::ControlFlow::Return.new
+            unless $*insub;
+        make Q::Statement::Return.new(:expr($<EXPR> ?? $<EXPR>.ast !! NONE));
     }
 
     method statement:throw ($/) {
-        make Q::Statement::Throw.new(:expr($<EXPR> ?? $<EXPR>.ast !! Val::None.new));
+        make Q::Statement::Throw.new(:expr($<EXPR> ?? $<EXPR>.ast !! NONE));
     }
 
     method statement:if ($/) {
         my %parameters = $<xblock>.ast;
         %parameters<else> = $<else> :exists
             ?? $<else>.ast
-            !! Val::None.new;
+            !! NONE;
 
         make Q::Statement::If.new(|%parameters);
     }
@@ -174,6 +244,17 @@ class _007::Parser::Actions {
         my $block = $<block>.ast;
         make Q::Statement::BEGIN.new(:$block);
         $*runtime.run(Q::CompUnit.new(:$block));
+    }
+
+    method statement:class ($/) {
+        my $identifier = $<identifier>.ast;
+        my $block = $<block>.ast;
+        make Q::Statement::Class.new(:$block);
+        my $val = Val::Type.of(class :: {
+            method attributes { () }
+            method ^name($) { $identifier.name.value }
+        });
+        $identifier.put-value($val, $*runtime);
     }
 
     method traitlist($/) {
@@ -218,7 +299,7 @@ class _007::Parser::Actions {
 
     method EXPR($/) {
         sub name($op) {
-            $op.identifier.name.value.subst(/^ \w+ ":<"/, "").subst(/">" $/, "");
+            $op.identifier.name.value.subst(/^ \w+ ":"/, "");
         }
 
         sub tighter($op1, $op2, $_ = $*parser.oplevel.infixprec) {
@@ -295,7 +376,7 @@ class _007::Parser::Actions {
 
     method termish($/) {
         sub name($op) {
-            $op.identifier.name.value.subst(/^ \w+ ":<"/, "").subst(/">" $/, "");
+            $op.identifier.name.value.subst(/^ \w+ ":"/, "");
         }
 
         sub tighter($op1, $op2, $_ = $*parser.oplevel.prepostfixprec) {
@@ -353,7 +434,7 @@ class _007::Parser::Actions {
                 my $expansion = $*runtime.call($macro, @arguments);
 
                 if $expansion ~~ Q::Statement::My {
-                    _007::Parser::Syntax::declare(Q::Statement::My, ~$expansion.identifier.name);
+                    _007::Parser::Syntax::declare(Q::Statement::My, $expansion.identifier.name.value);
                 }
 
                 if $*unexpanded {
@@ -423,7 +504,7 @@ class _007::Parser::Actions {
     method prefix($/) {
         my $op = ~$/;
         my $identifier = Q::Identifier.new(
-            :name(Val::Str.new(:value("prefix:<$op>"))),
+            :name(Val::Str.new(:value("prefix:$op"))),
             :frame($*runtime.current-frame),
         );
         make $*parser.oplevel.ops<prefix>{$op}.new(:$identifier, :operand(Val::None));
@@ -447,6 +528,14 @@ class _007::Parser::Actions {
         make Q::Literal::None.new;
     }
 
+    method term:false ($/) {
+        make Q::Literal::Bool.new(:value(Val::Bool.new(:value(False))));
+    }
+
+    method term:true ($/) {
+        make Q::Literal::Bool.new(:value(Val::Bool.new(:value(True))));
+    }
+
     method term:int ($/) {
         make Q::Literal::Int.new(:value(Val::Int.new(:value(+$/))));
     }
@@ -463,8 +552,23 @@ class _007::Parser::Actions {
         make $<EXPR>.ast;
     }
 
+    method term:regex ($/) {
+        make Q::Term::Regex.new(:contents($<contents>.ast.value));
+    }
+
     method term:identifier ($/) {
         make $<identifier>.ast;
+        my $name = $<identifier>.ast.name.value;
+        if !$*runtime.declared($name) {
+            my $frame = $*runtime.current-frame;
+            $*parser.postpone: sub checking-postdeclared {
+                my $value = $*runtime.maybe-get-var($name, $frame);
+                die X::Macro::Postdeclared.new(:$name)
+                    if $value ~~ Val::Macro;
+                die X::Undeclared.new(:symbol($name))
+                    unless $value ~~ Val::Sub;
+            };
+        }
     }
 
     method term:block ($/) {
@@ -525,9 +629,10 @@ class _007::Parser::Actions {
         }
         self.finish-block($block);
 
+        my $name = $<identifier>.ast.name;
         my $identifier = $<identifier>
-            ?? Q::Identifier.new(:name(Val::Str.new(:value(~$<identifier>))))
-            !! Val::None.new;
+            ?? Q::Identifier.new(:$name)
+            !! NONE;
         make Q::Term::Sub.new(:$identifier, :$traitlist, :$block);
     }
 
@@ -578,18 +683,20 @@ class _007::Parser::Actions {
     }
 
     method property:identifier-expr ($/) {
-        make Q::Property.new(:key(Val::Str.new(:value(~$<identifier>))), :value($<value>.ast));
+        my $key = $<identifier>.ast.name;
+        make Q::Property.new(:$key, :value($<value>.ast));
     }
 
     method property:identifier ($/) {
-        make Q::Property.new(:key(Val::Str.new(:value(~$<identifier>))), :value($<identifier>.ast));
+        my $key = $<identifier>.ast.name;
+        make Q::Property.new(:$key, :value($<identifier>.ast));
     }
 
     method property:method ($/) {
         my $block = Q::Block.new(
             :parameterlist($<parameterlist>.ast),
             :statementlist($<blockoid>.ast));
-        my $name = Val::Str.new(:value(~$<identifier>));
+        my $name = $<identifier>.ast.name;
         my $identifier = Q::Identifier.new(:$name);
         make Q::Property.new(:key($name), :value(
             Q::Term::Sub.new(:$identifier, :$block)));
@@ -599,10 +706,10 @@ class _007::Parser::Actions {
     method infix($/) {
         my $op = ~$/;
         my $identifier = Q::Identifier.new(
-            :name(Val::Str.new(:value("infix:<$op>"))),
+            :name(Val::Str.new(:value("infix:$op"))),
             :frame($*runtime.current-frame),
         );
-        make $*parser.oplevel.ops<infix>{$op}.new(:$identifier, :lhs(Val::None.new), :rhs(Val::None.new));
+        make $*parser.oplevel.ops<infix>{$op}.new(:$identifier, :lhs(NONE), :rhs(NONE));
     }
 
     method infix-unquote($/) {
@@ -625,27 +732,35 @@ class _007::Parser::Actions {
             $op = ".";
         }
         my $identifier = Q::Identifier.new(
-            :name(Val::Str.new(:value("postfix:<$op>"))),
+            :name(Val::Str.new(:value("postfix:$op"))),
             :frame($*runtime.current-frame),
         );
         # XXX: this can't stay hardcoded forever, but we don't have the machinery yet
         # to do these right enough
         if $<index> {
-            make Q::Postfix::Index.new(index => $<EXPR>.ast, :$identifier, :operand(Val::None.new));
+            make Q::Postfix::Index.new(index => $<EXPR>.ast, :$identifier, :operand(NONE));
         }
         elsif $<call> {
-            make Q::Postfix::Call.new(argumentlist => $<argumentlist>.ast, :$identifier, :operand(Val::None.new));
+            make Q::Postfix::Call.new(argumentlist => $<argumentlist>.ast, :$identifier, :operand(NONE));
         }
         elsif $<prop> {
-            make Q::Postfix::Property.new(property => $<identifier>.ast, :$identifier, :operand(Val::None.new));
+            make Q::Postfix::Property.new(property => $<identifier>.ast, :$identifier, :operand(NONE));
         }
         else {
-            make $*parser.oplevel.ops<postfix>{$op}.new(:$identifier, :operand(Val::None.new));
+            make $*parser.oplevel.ops<postfix>{$op}.new(:$identifier, :operand(NONE));
         }
     }
 
     method identifier($/) {
-        make Q::Identifier.new(:name(Val::Str.new(:value(~$/))));
+        my $value = ~$/;
+        sub () {
+            $value ~~ s[':<' ([ '\\>' | '\\\\' | <-[>]> ]+) '>' $] = ":{$0}";
+            $value ~~ s[':«' ([ '\\»' | '\\\\' | <-[»]> ]+) '»' $] = ":{$0}";
+            $value ~~ s:g['\\>'] = '>';
+            $value ~~ s:g['\\»'] = '»';
+            $value ~~ s:g['\\\\'] = '\\';
+        }();
+        make Q::Identifier.new(:name(Val::Str.new(:$value)));
     }
 
     method argumentlist($/) {

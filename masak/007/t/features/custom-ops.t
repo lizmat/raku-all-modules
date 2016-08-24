@@ -10,7 +10,7 @@ use _007::Test;
 
     my $ast = q:to/./;
         (statementlist
-          (stsub (identifier "infix:<n>") (block (parameterlist (param (identifier "left")) (param (identifier "right"))) (statementlist))))
+          (stsub (identifier "infix:n") (block (parameterlist (param (identifier "left")) (param (identifier "right"))) (statementlist))))
         .
 
     parses-to $program, $ast, "custom operator parses to the right thing";
@@ -33,7 +33,7 @@ use _007::Test;
         say(4 n 5);
         .
 
-    parse-error $program, X::AdHoc, "infix:<n> should not be defined unless we define it";
+    parse-error $program, X::AdHoc, "infix:n should not be defined unless we define it";
 }
 
 {
@@ -46,7 +46,7 @@ use _007::Test;
         say(4 n 5);
         .
 
-    parse-error $program, X::AdHoc, "infix:<n> should not be usable outside of its scope";
+    parse-error $program, X::AdHoc, "infix:n should not be usable outside of its scope";
 }
 
 {
@@ -478,6 +478,30 @@ use _007::Test;
         .
 
     parse-error $program, X::Precedence::Incompatible, "can't cross the infix/prepostfix prec barrier (II)";
+}
+
+{
+    my $program = q:to/./;
+        sub infix:«!»(l, r) {
+            return "Mr. Bond";
+        }
+
+        say(-13 ! None);
+        .
+
+    outputs $program, "Mr. Bond\n", "can declare an operator with infix:«...»";
+}
+
+{
+    my $program = q:to/./;
+        sub infix:<\>>(l, r) {
+            return "James";
+        }
+
+        say(0 > 7);
+        .
+
+    outputs $program, "James\n", "can declare an operator with a backslash in the name";
 }
 
 done-testing;

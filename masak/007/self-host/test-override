@@ -1,9 +1,10 @@
-use _007::Test <&read &check>;
+use _007::Test <&read &check &ensure-feature-flag>;
 
 my class StrOutput {
     has $.result = "";
 
-    method say($s) { $!result ~= $s.gist ~ "\n" }
+    method flush() {}
+    method print($s) { $!result ~= $s.gist }
 }
 
 sub is-result($input, $expected, $desc) {

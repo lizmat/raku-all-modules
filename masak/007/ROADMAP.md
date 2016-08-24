@@ -1,14 +1,14 @@
 # Roadmap
 
-007 is conceptually still a v0.x.x product. That is, we make no particular
-guarantees about backwards compatibility yet, as we're heading towards some
-kind of publicly releasable stable condition.
+007 is still a v0.x.x product. We make no particular guarantees about backwards
+compatibility yet, as we're heading towards some kind of publicly releasable
+stable condition.
 
 Most of the forward-looking and thinking happens in the [issue
 queue](https://github.com/masak/007/issues), and that's still the place to go
 to for all the nitty-gritty details about planning and tradeoffs. But the
-picture given by the issue queue is messy, disjointed, and conveys no sense of
-priorities or ordering. That's what this roadmap is for.
+picture given by the issue queue is conveys no sense of priorities or ordering.
+That's what this roadmap is for.
 
 About versions: we (masak and sergot) are still not convinced that 007 *needs*
 versions. We probably won't do releases of any kind. 007 is not really meant to
@@ -18,7 +18,7 @@ milestones and hang important features off of them.
 
 ## Pre-v1.0.0
 
-Work on 007 will probably always fall into two main tracks:
+Work on 007 falls into two main tracks:
 
 * Features that help explore macro-like things (ultimately for Perl 6)
 * Features for 007 the language (ultimately for 007)
@@ -43,9 +43,6 @@ The first track is still the *raison d'être* for 007. The second track rounds
 * We're planning to [give the web page a big
   facelift](https://github.com/masak/007/issues/67), including more examples
   and interactive Qtrees. The champion on this one is **masak**.
-    * This will require another parsing-related change: [generating a version
-      of the Qtree output for tools](https://github.com/masak/007/issues/64),
-      so that they can see e.g. macros in their unexpanded form.
     * masak would also like to take this opportunity to tie together some kind
       of doc-comments, automated tests, and documentation on the web page.
 
@@ -68,10 +65,10 @@ the next major version. However, from this vantage point, these are the
 expected areas of focus after v1.0.0.
 
 * [imports](https://github.com/masak/007/issues/53)
-* [exceptions](https://github.com/masak/007/issues/65)
-* [class declarations](https://github.com/masak/007/issues/32)
+* [exceptions](https://github.com/masak/007/issues/65) (already underway)
+* [class declarations](https://github.com/masak/007/issues/32) (already underway)
 * [ADTs and pattern matching](https://github.com/masak/007/issues/34)
-* [007 runtime in 007](https://github.com/masak/007/issues/51)
+* [007 runtime in 007](https://github.com/masak/007/issues/51) (already underway)
 * [type checking](https://github.com/masak/007/issues/33)
 * [Qtree visitors](https://github.com/masak/007/issues/26)
 * [007 parser in 007](https://github.com/masak/007/issues/38)

@@ -1,6 +1,7 @@
 use v6;
 use _007;
 use Test;
+use _007::Backend::JavaScript;
 
 sub read(Str $ast) is export {
     sub n($type, $op) {
@@ -13,34 +14,36 @@ sub read(Str $ast) is export {
         str            => Q::Literal::Str,
         array          => Q::Term::Array,
         object         => Q::Term::Object,
+        regex          => Q::Term::Regex,
         sub            => Q::Term::Sub,
         quasi          => Q::Term::Quasi,
 
-        'prefix:<->'   => Q::Prefix::Minus,
-        'prefix:<^>'   => Q::Prefix::Upto,
+        'prefix:-'     => Q::Prefix::Minus,
+        'prefix:^'     => Q::Prefix::Upto,
 
-        'infix:<+>'    => Q::Infix::Addition,
-        'infix:<->'    => Q::Infix::Subtraction,
-        'infix:<*>'    => Q::Infix::Multiplication,
-        'infix:<%>'    => Q::Infix::Modulo,
-        'infix:<%%>'   => Q::Infix::Divisibility,
-        'infix:<~>'    => Q::Infix::Concat,
-        'infix:<x>'    => Q::Infix::Replicate,
-        'infix:<xx>'   => Q::Infix::ArrayReplicate,
-        'infix:<::>'   => Q::Infix::Cons,
-        'infix:<=>'    => Q::Infix::Assignment,
-        'infix:<==>'   => Q::Infix::Eq,
-        'infix:<!=>'   => Q::Infix::Ne,
-        'infix:<~~>'   => Q::Infix::TypeEq,
+        'infix:+'      => Q::Infix::Addition,
+        'infix:-'      => Q::Infix::Subtraction,
+        'infix:*'      => Q::Infix::Multiplication,
+        'infix:%'      => Q::Infix::Modulo,
+        'infix:%%'     => Q::Infix::Divisibility,
+        'infix:~'      => Q::Infix::Concat,
+        'infix:x'      => Q::Infix::Replicate,
+        'infix:xx'     => Q::Infix::ArrayReplicate,
+        'infix:::'     => Q::Infix::Cons,
+        'infix:='      => Q::Infix::Assignment,
+        'infix:=='     => Q::Infix::Eq,
+        'infix:!='     => Q::Infix::Ne,
+        'infix:~~'     => Q::Infix::TypeMatch,
+        'infix:!~'     => Q::Infix::TypeNonMatch,
 
-        'infix:<<=>'   => Q::Infix::Le,
-        'infix:<>=>'   => Q::Infix::Ge,
-        'infix:<<>'    => Q::Infix::Lt,
-        'infix:<>>'    => Q::Infix::Gt,
+        'infix:<='     => Q::Infix::Le,
+        'infix:>='     => Q::Infix::Ge,
+        'infix:<'      => Q::Infix::Lt,
+        'infix:>'      => Q::Infix::Gt,
 
-        'postfix:<()>' => Q::Postfix::Call,
-        'postfix:<[]>' => Q::Postfix::Index,
-        'postfix:<.>'  => Q::Postfix::Property,
+        'postfix:()'   => Q::Postfix::Call,
+        'postfix:[]'   => Q::Postfix::Index,
+        'postfix:.'    => Q::Postfix::Property,
 
         my             => Q::Statement::My,
         stexpr         => Q::Statement::Expr,
@@ -129,11 +132,13 @@ sub read(Str $ast) is export {
 my class StrOutput {
     has $.result = "";
 
-    method say($s) { $!result ~= $s.gist ~ "\n" }
+    method flush() {}
+    method print($s) { $!result ~= $s.gist }
 }
 
 my class UnwantedOutput {
-    method say($s) { die "Program printed '$s'; was not expected to print anything" }
+    method flush() { die "Program flushed; was not expected to print anything" }
+    method print($s) { die "Program printed '$s'; was not expected to print anything" }
 }
 
 sub check(Q::CompUnit $ast, $runtime) is export {
@@ -346,14 +351,50 @@ sub throws-exception($program, $message, $desc = "MISSING TEST DESCRIPTION") is 
     flunk $desc;
 }
 
-sub run-and-collect-output($filepath) is export {
+sub emits-js($program, @expected-builtins, $expected, $desc = "MISSING TEST DESCRIPTION") is export {
+    my $output = UnwantedOutput.new;
+    my $runtime = _007.runtime(:$output);
+    my $parser = _007.parser(:$runtime);
+    my $ast = $parser.parse($program);
+    my $emitted-js = _007::Backend::JavaScript.new.emit($ast);
+    my $actual = $emitted-js ~~ /^^ '(() => { // main program' \n ([<!before '})();'> \N+ [\n|$$]]*)/
+        ?? (~$0).indent(*)
+        !! $emitted-js;
+    my @actual-builtins = $emitted-js.comb(/^^ "function " <(<-[(]>+)>/);
+
+    empty-diff @expected-builtins.sort.join("\n"), @actual-builtins.sort.join("\n"), "$desc (builtins)";
+    empty-diff $expected, $actual, $desc;
+}
+
+sub run-and-collect-output($filepath, :$input = $*IN) is export {
     my $program = slurp($filepath);
     my $output = StrOutput.new;
-    my $runtime = _007.runtime(:$output);
+    my $runtime = _007.runtime(:$input, :$output);
     my $ast = _007.parser(:$runtime).parse($program);
     $runtime.run($ast);
 
     return $output.result.lines;
+}
+
+sub run-and-collect-error-message($filepath) is export {
+    my $program = slurp($filepath);
+    my $output = UnwantedOutput.new;
+    my $runtime = _007.runtime(:$output);
+    my $ast = _007.parser(:$runtime).parse($program);
+    $runtime.run($ast);
+
+    CATCH {
+        return .message;
+    }
+}
+
+sub ensure-feature-flag($flag) is export {
+    my $envvar = "FLAG_007_{$flag}";
+    unless %*ENV{$envvar} {
+        skip("$envvar is not enabled", 1);
+        done-testing;
+        exit 0;
+    }
 }
 
 our sub EXPORT(*@things) {

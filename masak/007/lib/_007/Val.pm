@@ -23,6 +23,16 @@ class Val::None does Val {
     }
 }
 
+constant NONE is export = Val::None.new;
+
+class Val::Bool does Val {
+    has Bool $.value;
+
+    method truthy {
+        $.value;
+    }
+}
+
 class Val::Int does Val {
     has Int $.value;
 
@@ -40,6 +50,14 @@ class Val::Str does Val {
 
     method truthy {
         ?$.value;
+    }
+}
+
+class Val::Regex does Val {
+    has Val::Str $.contents;
+
+    method quoted-Str {
+        "/" ~ $.contents.quoted-Str ~ "/"
     }
 }
 
@@ -88,6 +106,11 @@ class Val::Type does Val {
         self.bless(:$type);
     }
 
+    sub is-role($type) {
+        my role R {};
+        return $type.HOW ~~ R.HOW.WHAT;
+    }
+
     method create(@properties) {
         if $.type ~~ Val::Object {
             return $.type.new(:@properties);
@@ -101,21 +124,21 @@ class Val::Type does Val {
         elsif $.type ~~ Val::Type {
             return $.type.new(:type(@properties[0].value.type));
         }
+        elsif is-role($.type) {
+            die X::Uninstantiable.new(:$.name);
+        }
         else {
-            my role R {};
-            die X::Uninstantiable.new(:$.name)
-                if $.type.HOW ~~ R.HOW.WHAT;
             return $.type.new(|%(@properties));
         }
     }
 
     method name {
-        $.type.^name.subst(/^ "Val::"/, "").subst(/"::Builtin" $/, "");
+        $.type.^name.subst(/^ "Val::"/, "");
     }
 }
 
 class Val::Block does Val {
-    has $.parameterlist is rw;
+    has $.parameterlist;
     has $.statementlist;
     has Val::Object $.static-lexpad is rw = Val::Object.new;
     has Val::Object $.outer-frame;
@@ -127,12 +150,33 @@ class Val::Block does Val {
 
 class Val::Sub is Val::Block {
     has Val::Str $.name;
+    has &.hook = Callable;
 
-    method Str { "<sub {$.name.value}{$.pretty-parameters}>" }
+    method new-builtin(&hook, Str $name, $parameterlist, $statementlist) {
+        self.bless(:name(Val::Str.new(:value($name))), :&hook, :$parameterlist, :$statementlist);
+    }
+
+    method escaped-name {
+        sub escape-backslashes($s) { $s.subst(/\\/, "\\\\", :g) }
+        sub escape-less-thans($s) { $s.subst(/"<"/, "\\<", :g) }
+
+        return $.name.value
+            unless $.name.value ~~ /^ (prefix | infix | postfix) ':' (.+) /;
+
+        return "{$0}:<{escape-less-thans escape-backslashes $1}>"
+            if $1.contains(">") && $1.contains("»");
+
+        return "{$0}:«{escape-backslashes $1}»"
+            if $1.contains(">");
+
+        return "{$0}:<{escape-backslashes $1}>";
+    }
+
+    method Str { "<sub {$.escaped-name}{$.pretty-parameters}>" }
 }
 
 class Val::Macro is Val::Sub {
-    method Str { "<macro {$.name.value}{$.pretty-parameters}>" }
+    method Str { "<macro {$.escaped-name}{$.pretty-parameters}>" }
 }
 
 class Val::Exception does Val {
@@ -142,13 +186,15 @@ class Val::Exception does Val {
 class Helper {
     our sub Str($_) {
         when Val::None { "None" }
+        when Val::Bool { .value.Str }
         when Val::Int { .value.Str }
         when Val::Str { .value }
+        when Val::Regex { .quoted-Str }
         when Val::Array { .quoted-Str }
         when Val::Object { .quoted-Str }
         when Val::Type { "<type {.name}>" }
-        when Val::Macro { "<macro {.name}{.pretty-parameters}>" }
-        when Val::Sub { "<sub {.name}{.pretty-parameters}>" }
+        when Val::Macro { "<macro {.escaped-name}{.pretty-parameters}>" }
+        when Val::Sub { "<sub {.escaped-name}{.pretty-parameters}>" }
         when Val::Block { "<block {.pretty-parameters}>" }
         when Val::Exception { "Exception \{message: {.message.quoted-Str}\}" }
         default {

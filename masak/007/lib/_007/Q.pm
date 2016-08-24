@@ -41,6 +41,10 @@ class X::Associativity::Conflict is Exception {
     method message { "The operator already has a defined associativity" }
 }
 
+class X::Regex::InvalidMatchType is Exception {
+    method message { "A regex can only match strings" }
+}
+
 class X::_007::RuntimeException is Exception {
     has $.msg;
 
@@ -85,7 +89,13 @@ role Q::Literal does Q::Term {
 }
 
 class Q::Literal::None does Q::Literal {
-    method eval($) { Val::None.new }
+    method eval($) { NONE }
+}
+
+class Q::Literal::Bool does Q::Literal {
+    has Val::Bool $.value;
+
+    method eval($) { $.value }
 }
 
 class Q::Literal::Int does Q::Literal {
@@ -102,7 +112,7 @@ class Q::Literal::Str does Q::Literal {
 
 class Q::Identifier does Q::Term {
     has Val::Str $.name;
-    has $.frame = Val::None.new;
+    has $.frame = NONE;
 
     method attribute-order { <name> }
 
@@ -115,6 +125,14 @@ class Q::Identifier does Q::Term {
 
     method put-value($value, $runtime) {
         $runtime.put-var(self, $value);
+    }
+}
+
+class Q::Term::Regex does Q::Term {
+    has Val::Str $.contents;
+
+    method eval($runtime) {
+        Val::Regex.new(:$.contents);
     }
 }
 
@@ -174,7 +192,7 @@ class Q::Term::Sub does Q::Term does Q::Declaration {
 
     method eval($runtime) {
         my $name = $.identifier ~~ Val::None
-            ?? Val::Str.new(:value("(anon)"))
+            ?? Val::Str.new(:value(""))
             !! $.identifier.name;
         return Val::Sub.new(
             :$name,
@@ -303,7 +321,9 @@ class Q::Infix::And is Q::Infix {
     }
 }
 
-class Q::Infix::TypeEq is Q::Infix {}
+class Q::Infix::TypeMatch is Q::Infix {}
+
+class Q::Infix::TypeNonMatch is Q::Infix {}
 
 class Q::Postfix does Q::Expr {
     has $.identifier;
@@ -500,7 +520,7 @@ role Q::Statement does Q {
 
 class Q::Statement::My does Q::Statement does Q::Declaration {
     has $.identifier;
-    has $.expr = Val::None.new;
+    has $.expr = NONE;
 
     method attribute-order { <identifier expr> }
 
@@ -536,7 +556,7 @@ class Q::Statement::Expr does Q::Statement {
 class Q::Statement::If does Q::Statement {
     has $.expr;
     has $.block;
-    has $.else = Val::None.new;
+    has $.else = NONE;
 
     method attribute-order { <expr block else> }
 
@@ -637,7 +657,7 @@ class Q::Statement::While does Q::Statement {
 }
 
 class Q::Statement::Return does Q::Statement {
-    has $.expr = Val::None.new;
+    has $.expr = NONE;
 
     method run($runtime) {
         my $value = $.expr ~~ Val::None ?? $.expr !! $.expr.eval($runtime);
@@ -647,7 +667,7 @@ class Q::Statement::Return does Q::Statement {
 }
 
 class Q::Statement::Throw does Q::Statement {
-    has $.expr = Val::None.new;
+    has $.expr = NONE;
 
     method run($runtime) {
         my $value = $.expr ~~ Val::None
@@ -663,7 +683,7 @@ class Q::Statement::Throw does Q::Statement {
 class Q::Statement::Sub does Q::Statement does Q::Declaration {
     has $.identifier;
     has $.traitlist = Q::TraitList.new;
-    has $.block;
+    has Q::Block $.block;
 
     method attribute-order { <identifier traitlist block> }
 
@@ -690,6 +710,14 @@ class Q::Statement::BEGIN does Q::Statement {
     }
 }
 
+class Q::Statement::Class does Q::Statement does Q::Declaration {
+    has $.block;
+
+    method run($runtime) {
+        # a class block does not run at runtime
+    }
+}
+
 class Q::StatementList does Q {
     # RAKUDO: Can simplify this to `.=` once [RT #126975] is fixed
     has Val::Array $.statements = Val::Array.new;
@@ -701,11 +729,11 @@ class Q::StatementList does Q {
     }
 }
 
-class Q::Expr::StatementListAdapter does Q {
+class Q::Expr::StatementListAdapter does Q::Expr {
     has $.statementlist;
 
     method eval($runtime) {
         $.statementlist.run($runtime);
-        return Val::None.new;
+        return NONE;
     }
 }
