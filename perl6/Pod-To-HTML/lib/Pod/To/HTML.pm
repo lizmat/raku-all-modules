@@ -10,18 +10,26 @@ sub colored($text, $how) {
     $text
 }
 
-multi method render(Pod::Block $pod, Str :$header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '') {
-    pod2html($pod, :$header, :$footer, :$head, :$default-title)
+multi method render($pod) {
+    pod2html($pod)
 }
 
-multi method render(IO::Path $file, Str $header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '') {
-    use MONKEY-SEE-NO-EVAL;
-    pod2html(EVAL($file.slurp ~ "\n\$=pod"), :$header, :$footer, :$head, :$default-title);
+multi method render(Array $pod, Str :$header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '', :$lang = 'en') {
+    pod2html($pod, :$header, :$footer, :$head, :$default-title, :$lang)
 }
 
-multi method render(Str $pod-string, Str $header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '') {
+multi method render(Pod::Block $pod, Str :$header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '', :$lang = 'en') {
+    pod2html($pod, :$header, :$footer, :$head, :$default-title, :$lang)
+}
+
+multi method render(IO::Path $file, Str :$header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '', :$lang = 'en') {
     use MONKEY-SEE-NO-EVAL;
-    pod2html(EVAL($pod-string ~ "\n\$=pod"), :$header, :$footer, :$head, :$default-title);
+    pod2html(EVAL($file.slurp ~ "\n\$=pod"), :$header, :$footer, :$head, :$default-title, :$lang);
+}
+
+multi method render(Str $pod-string, Str :$header = '', Str :$footer = '', Str :head-fields($head) = '', :$default-title = '', :$lang = 'en') {
+    use MONKEY-SEE-NO-EVAL;
+    pod2html(EVAL($pod-string ~ "\n\$=pod"), :$header, :$footer, :$head, :$default-title, :$lang);
 }
 
 # FIXME: this code's a horrible mess. It'd be really helpful to have a module providing a generic
@@ -134,7 +142,7 @@ sub assemble-list-items(:@content, :$node, *% ) {
 
 #| Converts a Pod tree to a HTML document.
 sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$footer = '', :$default-title, 
-  :$css-url = '//design.perl6.org/perl.css'
+  :$css-url = '//design.perl6.org/perl.css', :$lang = 'en',
 ) is export returns Str {
     ($title, $subtitle, @meta, @indexes, @body, @footnotes) = ();
     #| Keep count of how many footnotes we've output.
@@ -147,7 +155,7 @@ sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$foote
 
     my $prelude = qq:to/END/;
         <!doctype html>
-        <html>
+        <html lang="$lang">
         <head>
           <title>{ $title_html }</title>
           <meta charset="UTF-8" />
@@ -221,6 +229,9 @@ sub do-toc($pod) returns Str {
     }
     multi sub find-headings(Pod::Block $node is raw, :$inside-heading){
         $node.contents.map(*.&find-headings(:$inside-heading))
+    }
+    multi sub find-headings(Pod::Config $node, :$inside-heading){
+        ''
     }
     multi sub find-headings(Pod::Raw $node is raw, :$inside-heading){
         $node.contents.map(*.&find-headings(:$inside-heading))
