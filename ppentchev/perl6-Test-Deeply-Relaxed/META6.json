@@ -1,0 +1,16 @@
+{
+  "perl": "6.c",
+  "name": "Test::Deeply::Relaxed",
+  "version": "0.1.1.dev1",
+  "description": "Compare two complex data structures loosely",
+  "authors": [ "Peter Pentchev" ],
+  "provides": {
+    "Test::Deeply::Relaxed": "lib/Test/Deeply/Relaxed.pm6"
+  },
+  "depends": [],
+  "test-depends": [
+    "Test::META"
+  ],
+  "resources": [],
+  "source-url": "https://github.com/ppentchev/perl6-Test-Deeply-Relaxed.git"
+}
