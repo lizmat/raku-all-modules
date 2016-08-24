@@ -1,0 +1,12 @@
+   {
+        "perl" : "6.*",
+        "name" : "python::itertools",
+        "version" : "0.9.0",
+        "description" : "Port of python's itertools to perl6.",
+        "authors" : [ "Armand Halbert" ],
+        "provides" : {
+            "itertools" : "lib/python/itertools.pm"
+        },
+        "source-type" : "git",
+        "source-url" : "https://github.com/ahalbert/perl6-itertools"
+    }
