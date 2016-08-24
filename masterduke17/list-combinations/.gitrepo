@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masterduke17/list-combinations.git
 	branch = master
-	commit = ab2d6295b2a762745cd8323007ed8738bf935c54
-	parent = 4d76660e9e2ed78eeb75dd3fd2f0f240d5ce37c8
+	commit = 1bc910beb5efe25c54a81c8711aaeb93a41b76b5
+	parent = c2111e9f20d8775a95bdcfdd2759ce9789049870
 	cmdver = 0.2.3
