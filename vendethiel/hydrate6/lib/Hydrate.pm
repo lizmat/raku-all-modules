@@ -17,7 +17,7 @@ sub value-for(Mu:U \type, Str $sigil, \value,
     when '$' {
       # Here, we need to work a bit around the language, as any() won't work
       #  due to Mu being in the list.
-      if @language-types.grep(-> \t { t.WHAT =:= type }).elems {
+      if @language-types.grep(-> \t { t<> =:= type }).elems {
         value;
       } else {
         hydrate(type, value, :$error-on-extra);
