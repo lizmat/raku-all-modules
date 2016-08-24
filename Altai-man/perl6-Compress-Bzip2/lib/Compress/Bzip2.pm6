@@ -19,7 +19,7 @@ our class X::Bzip2 is Exception {
 		"Error during $.action: Bzlib2 library was mis-compiled.";
 	    }
 	    when BZ_PARAM_ERROR {
-		if ($!handle == $null) {
+		if ($!handle == Pointer[uint32]) {
 		    "Error during $!action: Filename is incorrect.";
 		} else {
 		    close($!handle);
