@@ -1,34 +1,21 @@
 class Math::PascalTriangle {
-	my $triangle = [[1]];
+	my %cache{Capture:D};
+	my %LRU{Capture:D} = Bag.new;
 
-	method !generate-line(Int \index-nu where * > 0) {
-		my \prev = index-nu - 1;
+	proto method get(Int:D() :$line! where * >= 0, Int:D() :$col! where * >= 0) {{*}}
 
-		self!generate-line(prev) if not $triangle[prev]:exists;
+	multi method get(:$line!, :$col! where * == 0) {1}
 
-		$triangle[index-nu; 0, index-nu] = 1, 1;
-		my \line	= $triangle[index-nu];
-		my \prev-line	= $triangle[prev];
+	multi method get(:$line!, :$col! where $line == *) {1}
 
-		for 1 ..^ index-nu -> $index {
-			line[$index] = [+] prev-line[$index - 1, $index]
+	multi method get(:$line!, :$col! where $line > *) {
+		%LRU{\($line, $col)}++;
+		if %LRU.elems > 9999 {
+			my \min = %LRU.sort(*.value)>>.key.first;
+			%LRU{min}:delete;
+			%cache{min}:delete;
 		}
-	}
-
-	proto method get(Int :$line!, Int :$col!) {
-		{*}
-	}
-
-	multi method get(Int :$line!, Int :$col! where * == 0) {1}
-
-	multi method get(Int :$line!, Int :$col! where $line == *) {1}
-
-	multi method get(Int :$line!, Int :$col! where $line > *) {
-		self!generate-line($line) if $line >= $.cached-lines;
-		$triangle[$line; $col]
-	}
-
-	method cached-lines {
-		$triangle.elems
+		return %cache{\($line, $col)} if %cache{\($line, $col)}:exists;
+		%cache{\($line, $col)} = $.get(:line($line - 1), :$col) + $.get(:line($line - 1), :col($col - 1))
 	}
 }
