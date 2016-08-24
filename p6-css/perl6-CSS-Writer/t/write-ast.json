@@ -14,4 +14,6 @@
 { "ast" : { "at-keyw" : "top-left-center" }, "css" : "@top-left-center" }
 { "ast" : { "property" : { "ident" : "font", "expr" : [ { "expr:font-style" : [ { "keyw" : "normal" }] }, { "expr:font-variant" : [{ "keyw" : "small-caps" } ]  }, { "expr:font-size" : [ { "percent" : 120 } ] }, { "expr:line-height" : [ { "percent" : 120 } ] }, { "comment" : "font-family"}, { "expr:font-family" : [ { "keyw" : "fantasy" } ] } ] } }, "css" : "font: normal small-caps 120% 120% /* font-family */ fantasy;" }
 { "ast" : { "property" : { "ident" : "font", "expr" : [ { "expr:background-image" : [ { "url" : "chess.png" } ] }, { "expr:background-color" : [ { "rgb" : [ { "num" : 128 }, { "num" : 128 }, { "num" : 128 } ] } ] } ] } }, "css" : "font: url('chess.png') rgb(128, 128, 128);", "color-masks" : "font: url('chess.png') #808080;", "color-names" : "font: url('chess.png') gray;" }
-{ "ast" : { "media-rule" : { "media-list" : [ { "media-query" : [ { "ident" : "all" }, { "keyw" : "and" }, { "property" : { "ident" : "color" } } ] } ], "rule-list" : [  ] } }, "css" : "@media all and (color) { }" }
+{ "ast" : { "at-rule" : { "at-keyw" : "media", "media-list" : [ { "media-query" : [ { "ident" : "all" }, { "keyw" : "and" }, { "property" : { "ident" : "color" } } ] } ], "rule-list" : [  ] } }, "css" : "@media all and (color) { }" }
+{ "ast" : { "at-rule": { "at-keyw": "import", "url": "file:///etc/passwd" } }, "css" : "@import url('file:///etc/passwd');" }
+{ "ast" : { "at-rule": { "at-keyw": "import", "string": "/etc/passwd" } }, "css" : "@import '/etc/passwd';" }

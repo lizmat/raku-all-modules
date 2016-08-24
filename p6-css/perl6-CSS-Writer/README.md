@@ -18,7 +18,7 @@ AST writer/serializer module. Compatible with CSS:Module and CSS::Grammar.
                 ],
         });
 
-    # output: h1 { font-size: 12pt; color: #FFF; z-index: -9; }
+    # output: h1 { font-size:12pt; color:#FFF; z-index:-9; }
 
 
 #### Tidy and reduce size of CSS
@@ -40,7 +40,7 @@ AST writer/serializer module. Compatible with CSS:Module and CSS::Grammar.
 
     say $css-writer.write( $stylesheet );
 
-    # output: h1 { color: red; z-index: -3; }
+    # output: h1 { color:red; z-index:-3; }
 
 
 ## Writer Options
@@ -62,9 +62,3 @@ AST writer/serializer module. Compatible with CSS:Module and CSS::Grammar.
 ## Usage Notes
 
 - The initial version CSS::Writer is based on the objects, values and serialization rules described in http://dev.w3.org/csswg/cssom/.
-
-
-
-
-
-

@@ -15,7 +15,7 @@
 [ "expr", "rgba(10,20,30)", { "out" : "rgba(10, 20, 30)" } ]
 [ "expr", "rgba(10,20,30,.5)", { "out" : "rgba(10, 20, 30, 0.5)" } ]
 [ "expr", "rgba(10%,20%,30%,.5)", { "out" : "rgba(10%, 20%, 30%, 0.5)" } ]
-[ "expr", "hsl(120,20%,30%)", { "out" : "hsl(120, 20%, 30%)" } ]
+[ "expr", "hsl(120,0%,30%)", { "out" : "hsl(120, 0%, 30%)" } ]
 [ "expr", "hsla(120,20%,30%,70%)", { "out" : "hsla(120, 20%, 30%, 70%)" } ]
 // <counter> <counters>
 [ "declaration" , "content: counter(section);" ]
@@ -66,10 +66,10 @@
 // outlined in the Unicode specification". So both "grammar" and "module" serializations are legitimate
 [ "declaration", "font-family: MainText;", { "out" : "font-family: maintext;" } ]
 [ "declaration", "font-variant: discretionary-ligatures character-variant(leo-B, leo-M, leo-N, leo-T, leo-U);", { "out" : "font-variant: discretionary-ligatures character-variant(leo-b, leo-m, leo-n, leo-t, leo-u);" } ]
-[ "declarations", "{font-size:0px;z-index: -9;position:absolute;left:-999px}", { "out" : "{\n  font-size: 0px;\n  z-index: -9;\n  position: absolute;\n  left: -999px;\n}" } ]
+[ "declarations", "{font-size:10px;z-index: -9;position:absolute;left:-999px}", { "out" : "{\n  font-size: 10px;\n  z-index: -9;\n  position: absolute;\n  left: -999px;\n}" } ]
 [ "selector", "#my-id ::first-line :lang(fr)" ]
 [ "ruleset", "H1 { font-weight: bold; }", { "out" : "h1 {\n  font-weight: bold;\n}" } ]
 [ "stylesheet", "H1 {font-weight: bold} H2 { font-style: italic ; }", { "out" : "h1 {\n  font-weight: bold;\n}\n\nh2 {\n  font-style: italic;\n}" } ]
 [ "stylesheet", "@media tv { body {\n  margin: 10px;\n}}" ]
 [ "stylesheet", "@import url('bluish.css') projection, tv;" ]
-[ "stylesheet", "@charset 'utf-8';\n\n@page {\n  size: 8.5in 11in;\n  margin: 10%;\n  @top-left {\n    content: 'Hamlet';\n  }\n}\n\nbody {\n  font-family: arial;\n}\n\nh1 {\n  border: 1px solid;\n}", { "terse" : "@charset 'utf-8';\n@page { size: 8.5in 11in; margin: 10%; @top-left { content: 'Hamlet'; } }\nbody { font-family: arial; }\nh1 { border: 1px solid; }" } ]
+[ "stylesheet", "@charset 'utf-8';\n\n@page {\n  size: 8.5in 11in;\n  margin: 10%;\n  @top-left {\n    content: 'Hamlet';\n  }\n}\n\nbody {\n  font-family: arial;\n}\n\nh1 {\n  border: 1px solid;\n}", { "terse" : "@charset 'utf-8';\n@page { size:8.5in 11in; margin:10%; @top-left { content:'Hamlet'; } }\nbody { font-family:arial; }\nh1 { border:1px solid; }" } ]

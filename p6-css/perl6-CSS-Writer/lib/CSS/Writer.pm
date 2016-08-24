@@ -77,62 +77,41 @@ class CSS::Writer
 
     proto method write(|c --> Str) {*}
 
-    #| @top-left { margin: 5px; } :=   $.write( :at-keyw<top-left>, :declarations[ { :ident<margin>, :expr[ :px(5) ] }, ] )
-    multi method write( Str :$at-keyw!, List :$declarations! ) {
-        ($.write( :$at-keyw ),  $.write( :$declarations)).join: ' ';
+    #| @page   := $.write-at-keyw( 'page' )
+    method write-at-keyw( Str $_ ) {
+        '@' ~ $.write-ident( $_ );
     }
 
-    #| 42deg   := $.write( :angle(42), :units<deg>) or $.write( :deg(42) )
-    multi method write( Numeric :$angle!, Str :$units? ) {
-        $.write-num( $angle, $units );
+    #| 'foo', bar, 42 := $.write-args: [ :string<foo>, :ident<bar>, :num(42) ]
+    method write-args( List $_ ) {
+        $.write( $_, :sep(', ') );
     }
 
-    #| @page   := $.write( :at-keyw<page> )
-    multi method write( Str :$at-keyw! ) {
-        '@' ~ $.write( :ident($at-keyw) );
+    #| [foo]   := $.write-attrib: [ :ident<foo> ]
+    method write-attrib( List $_ ) {
+        [~] flat '[', .map({ $.write( $_ ) }), ']';
     }
 
-    #| 'foo', bar, 42 := $.write( :args[ :string<foo>, :ident<bar>, :num(42) ] )
-    multi method write( List :$args! ) {
-        $.write( $args, :sep(', ') );
+    #| /* These are */ /* comments * / */ := $.write-comment: [ "These are", "comments */" ]
+    multi method write-comment( List $_ ) {
+        .map({ $.write-comment( $_ ) }).join: $.nl;
+    }
+    multi method write-comment( Str $_ where /^ <CSS::Grammar::CSS3::comment> $/ ) {
+        $_;
+    }
+    multi method write-comment( Str $_ ) {
+        [~] '/* ', .trim.subst(/'*/'/, '* /'), ' */';
     }
 
-    #| [foo]   := $.write( :attrib[ :ident<foo> ] )
-    multi method write( List :$attrib! ) {
-        [~] flat '[', $attrib.map({ $.write( $_ ) }), ']';
-    }
-
-    #| @charset 'utf-8';   := $.write( :charset-rule<utf-8> )
-    multi method write( Str :$charset-rule! ) {
-        [~] '@charset ', $.write( :string($charset-rule) ), ';'
-    }
-
-    #| rgb(10, 20, 30) := $.write( :color[ :num(10), :num(20), :num(30) ], :units<rgb> )
-    #| or $.write( :rgb[ :num(10), :num(20), :num(30) ] )
-    multi method write( Any :$color!, Str :$units? ) {
-        $.write-color( $color, $units );
-    }
-
-    #| /* These are */ /* comments * / */ := $.write( :comment["These are", "comments */"] )
-    multi method write( List :$comment! ) {
-        $comment.map({ $.write( :comment($_) ) }).join: $.nl;
-    }
-    multi method write( Str :$comment! where /^ <CSS::Grammar::CSS3::comment> $/ ) {
-        $comment;
-    }
-    multi method write( Str :$comment! ) {
-        [~] '/* ', $comment.trim.subst(/'*/'/, '* /'), ' */';
-    }
-
-    #| .my-class := $.write( :class<my-class> )
-    multi method write( Str :$class!) {
-        '.' ~ $.write( :name($class) );
+    #| .my-class := $.write-class( 'my-class' )
+    method write-class( Str $_) {
+        '.' ~ $.write-name( $_ );
     }
 
     # for example, the body of an HTML style tag
-    #| font-size: 12pt; color: white; := $.write( :declaration-list[ { :ident<font-size>, :expr[ :pt(12) ] }, { :ident<color>, :expr[ :ident<white> ] } ] )
-    multi method write( List :$declaration-list! ) {
-        $declaration-list.map({
+    #| font-size:12pt; color:white; := $.write-declaration-list: [ { :ident<font-size>, :expr[ :pt(12) ] }, { :ident<color>, :expr[ :ident<white> ] } ]
+    method write-declaration-list( List $_ ) {
+        .map({
             my $prop = .<ident>:exists
                 ?? :property(%$_)
                 !! $_;
@@ -141,24 +120,22 @@ class CSS::Writer
         }).join: $.nl;
     }
 
-    #| { font-size: 12pt; color: white; } := $.write( :declarations[ { :ident<font-size>, :expr[ :pt(12) ] }, { :ident<color>, :expr[ :ident<white> ] } ] )
-    multi method write( List :$declarations! ) {
-        (flat '{', $.write( :declaration-list($declarations) ), $.indent ~ '}').join: $.nl;
+    #| { font-size:12pt; color:white; } := $.write-declarations: [ { :ident<font-size>, :expr[ :pt(12) ] }, { :ident<color>, :expr[ :ident<white> ] } ]
+    method write-declarations( List $_ ) {
+        (flat '{', $.write-declaration-list( $_ ), $.indent ~ '}').join: $.nl;
     }
 
-    #| h1 := $.write: :element-name<H1>
-    multi method write( Str :$element-name! ) {
-        given $element-name {
-            when '*' {'*'}  # wildcard namespace
-            default  { $.write( :ident( .lc ) ) }
-        }
+    #| h1 := $.write-element-name('H1')
+    method write-element-name( Str $_ ) {
+        when '*' {'*'}  # wildcard namespace
+        default  { $.write-ident( .lc ) }
     }
 
-    #| 'foo', bar+42 := $.write( :expr[ :string<foo>, :op<,>, :ident<bar>, :op<+>, :num(42) ] )
-    multi method write( List :$expr! ) {
+    #| 'foo', bar+42 := $.write-expr: [ :string<foo>, :op<,>, :ident<bar>, :op<+>, :num(42) ]
+    method write-expr( List $_ ) {
         my $sep = '';
 
-        [~] $expr.map( -> $term is copy {
+        [~] .map: -> $term is copy {
 
             $sep = '' if $term<op> && $term<op>;
 
@@ -170,25 +147,33 @@ class CSS::Writer
             my $out = $sep ~ $.write($term);
             $sep = $term<op> && $term<op> ne ',' ?? '' !! ' ';
             $out;
-        });
-    }
-
-    #| @font-face { src: 'foo.ttf'; } := $.write( :fontface-rule{ :declarations[ { :ident<src>, :expr[ :string<foo.ttf> ] }, ] } )
-    multi method write( Hash :$fontface-rule! ) {
-        [~] '@font-face ', $.write( $fontface-rule, :nodes<declarations> );
-    }
-
-    #| 420hz   := $.write( :freq(420), :units<hz>) or $.write( :khz(.42) )
-    multi method write( Numeric :$freq!, Str :$units ) {
-        given $units {
-            when 'hz' {$.write-num( $freq, 'hz' )}
-            when 'khz' {$.write-num( $freq * 1000, 'hz' )}
-            default {die "unhandled frequency unit: $units";}
         }
     }
 
-    #| :lang(klingon) := $.write( :pseudo-func{ :ident<lang>, :args[ :ident<klingon> ] } )
-    multi method write( Hash :$func!) {
+    #| @charset 'utf-8';   := $.write( :at-rule{ :at-keyw<charset>, :string<utf-8> } )
+    #| @import url('example.css') screen and (color); := $.write( :at-rule{ :at-keyw<import>, :url<example.css>, :media-list[ { :media-query[ { :ident<screen> }, { :keyw<and> }, { :property{ :ident<color> } } ] } ] } )
+    #| @font-face { src:'foo.ttf'; } := $.write( :at-rule{ :at-keyw<font-face>, :declarations[ { :ident<src>, :expr[ :string<foo.ttf> ] }, ] } )
+    #| @top-left { margin:5px; } :=   $.write( :at-rule{ :at-keyw<top-left>, :declarations[ { :ident<margin>, :expr[ :px(5) ] }, ] } )
+    #| @media all { body { background:lime; }} := $.write( :at-rule{ :at-keyw<media>, :media-list[ { :media-query[ :ident<all> ] } ], :rule-list[ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<body> } ] } ] ], :declarations[ { :ident<background>, :expr[ :ident<lime> ] }, ] } } ]} )
+    #| @namespace svg url('http://www.w3.org/2000/svg'); := $.write( :at-rule{ :at-keyw<namespace>, :ns-prefix<svg>, :url<http://www.w3.org/2000/svg> } )
+    #| @page :first { margin:5mm; } := $.write( :at-rule{ :at-keyw<page>, :pseudo-class<first>, :declarations[ { :ident<margin>, :expr[ :mm(5) ] }, ] } )
+    method write-at-rule( Hash $at-rule ) {
+        my $at-keyw =  $.write( $at-rule, :nodes<at-keyw> );
+        my $rhs = do given $at-keyw {
+            when '@charset' { $.write($at-rule, :nodes<string>, :punc<;>) }
+            when '@import' { $.write($at-rule, :nodes<url string media-list>, :punc<;>) }
+            when '@media' { $.write($at-rule, :nodes<media-list rule-list>) }
+            when '@namespace' { $.write($at-rule, :nodes<ns-prefix url>, :punc<;>) }
+            when '@page' { $.write($at-rule, :nodes<pseudo-class declarations>) }
+            default {
+                $.write( $at-rule, :nodes<declarations> );
+            }
+        }
+        [ $at-keyw, $rhs ].join: ' ';
+    }
+
+    #| lang(klingon) := $.write-func: { :ident<lang>, :args[ :ident<klingon> ] }
+    method write-func( Hash $func) {
         sprintf '%s(%s)%s', $.write( $func, :node<ident> ), do {
             when $func<args>:exists {$.write( $func, :node<args> )}
             when $func<expr>:exists {$.write( $func, :node<expr> )}
@@ -197,51 +182,36 @@ class CSS::Writer
         $.write-any-comments( $func, ' ' );
     }
 
-    #| #My-id := $.write( :id<My-id> )
-    multi method write( Str :$id!) {
-        '#' ~ $.write( :name($id) );
+    #| #My-id := $.write-id( 'My-id' )
+    method write-id(Str $_) {
+        '#' ~ $.write-name($_);
     }
 
-    #| -Moz-linear-gradient := $.write( :ident<-Moz-linear-gradient> )
-    multi method write( Str :$ident! is copy) {
-        my $pfx = $ident ~~ s/^"-"// ?? '-' !! '';
-        my $minus = $ident ~~ s/^"-"// ?? '\\-' !! '';
-        [~] $pfx, $minus, $.write( :name($ident) )
+    #| -Moz-linear-gradient := $.write-ident('-Moz-linear-gradient' )
+    method write-ident(Str $_ is copy) {
+        my $pfx   = s/^"-"// ?? '-' !! '';
+        my $minus = s/^"-"// ?? '\\-' !! '';
+        [~] $pfx, $minus, $.write-name( $_ )
     }
 
-    #| @import url('example.css') screen and (color); := $.write( :import{ :url<example.css>, :media-list[ { :media-query[ { :ident<screen> }, { :keyw<and> }, { :property{ :ident<color> } } ] } ] } )
-    multi method write( Hash :$import! ) {
-        [~] '@import ', $.write( $import, :nodes<url media-list>, :punc<;> );
+    #| 42 := $.write-int(42)
+    method write-int( Numeric $_ ) {
+        $.write-num( $_ );
     }
 
-    #| 42 := $.write: :num(42)
-    multi method write( Numeric :$int! ) {
-        $.write-num( $int );
+    #| color := $.write-keyw('Color')
+    method write-keyw( Str $_ ) {
+        .lc;
     }
 
-    #| color := $.write: :keyw<Color>
-    multi method write( Str :$keyw! ) {
-        $keyw.lc;
+    #| projection, tv := $.write-media-list: [ :ident<projection>, :ident<tv> ]
+    method write-media-list( List $_ ) {
+        $.write( $_, :sep(', ') );
     }
 
-    #| 42mm   := $.write( :length(42), :units<mm>) or $.write( :mm(42) )
-    multi method write( Numeric :$length!, Str :$units? ) {
-        $.write-num( $length, $units );
-    }
-
-    #| @top-left { margin: 5px; } :=   $.write( :margin-rule{ :at-keyw<top-left>, :declarations[ { :ident<margin>, :expr[ :px(5) ] }, ] } )
-    multi method write( Hash :$margin-rule! ) {
-        $.write( $margin-rule );
-    }
-
-    #| projection, tv := $.write( :media-list[ :ident<projection>, :ident<tv> ] )
-    multi method write( List :$media-list! ) {
-        $.write( $media-list, :sep(', ') );
-    }
-
-    #| screen and (color) := $.write( :media-query[ { :ident<screen> }, { :keyw<and> }, { :property{ :ident<color> } } ] )
-    multi method write( List :$media-query! ) {
-        join(' ', $media-query.map({
+    #| screen and (color) := $.write-media-query: [ { :ident<screen> }, { :keyw<and> }, { :property{ :ident<color> } } ]
+    method write-media-query( List $_ ) {
+        join(' ', .map({
             my $css = $.write( $_ );
 
             if .<property> {
@@ -253,65 +223,46 @@ class CSS::Writer
         }) );
     }
 
-    #| @media all { body { background: lime; }} := $.write( :media-rule{ :media-list[ { :media-query[ :ident<all> ] } ], :rule-list[ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<body> } ] } ] ], :declarations[ { :ident<background>, :expr[ :ident<lime> ] }, ] } } ]} )
-    multi method write( Hash :$media-rule! ) {
-        [~] '@media ', $.write( $media-rule, :nodes<media-list rule-list> );
-    }
-
-    #| hi\! := $.write( :name("hi\x021") )
-    multi method write( Str :$name! ) {
-        [~] $name.comb.map({
+    #| hi\! := $.write-name("hi\x021")
+    method write-name( Str $_ ) {
+        [~] .comb.map({
             when /<CSS::Grammar::CSS3::nmreg>/    { $_ };
             when /<CSS::Grammar::CSS3::regascii>/ { '\\' ~ $_ };
             default                               { .ord.fmt("\\%X ") }
         });
     }
 
-    #| @namespace svg url('http://www.w3.org/2000/svg'); := $.write( :namespace-rule{ :ns-prefix<svg>, :url<http://www.w3.org/2000/svg> } )
-    multi method write( Hash :$namespace-rule! ) {
-        [~] '@namespace ', $.write( $namespace-rule, :nodes<ns-prefix url>, :punc<;> );
-    }
-
-    #| svg := $.write( :ns-prefix<svg> )
-    multi method write( Str :$ns-prefix! ) {
-        given $ns-prefix {
-            when ''  {''}   # no namespace
-            when '*' {'*'}  # wildcard namespace
-            default  { $.write( :ident($_) ) }
-        }
+    #| svg := $.write-ns-prefix( 'svg' )
+    method write-ns-prefix( Str $_) {
+        when ''  {''}   # no namespace
+        when '*' {'*'}  # wildcard namespace
+        default  { $.write-ident($_) }
     }
 
     #| 42 := $.write( :num(42) )
-    multi method write( Numeric :$num!, Any :$units? ) {
-        $.write-num( $num, $units )
-    }
 
     #| ~= := $.write( :op<~=> )
-    multi method write( Str :$op! ) {
-        $op.lc;
+    method write-op( Str $_ ) {
+        .lc;
     }
 
-    #| @page :first { margin: 5mm; } := $.write( :page-rule{ :pseudo-class<first>, :declarations[ { :ident<margin>, :expr[ :mm(5) ] }, ] } )
-    multi method write( Hash :$page-rule! ) {
-    [~] '@page ', $.write( $page-rule, :nodes<pseudo-class declarations> );
+    #| 100% := $.write-percent(100)
+    method write-percent( Numeric $_ ) {
+        $.write-num( $_ ) ~ '%';
     }
 
-    #| 100% := $.write( :percent(100) )
-    multi method write( Numeric :$percent! ) {
-        $.write-num( $percent, '%' );
+    #| !important := $.write-prio('important')
+    method write-prio( Str $_ = 'important' ) {
+        '!' ~ .lc;
     }
 
-    #| !important := $.write( :prio<important> )
-    multi method write( Str :$prio! ) {
-        '!' ~ $prio.lc;
-    }
-
-    #| color: red !important; := $.write( :property{ :ident<color>, :expr[ :ident<red> ], :prio<important> }, )
-    multi method write( Hash :$property! ) {
+    #| color:red!important; := $.write-property: { :ident<color>, :expr[ :ident<red> ], :prio<important> }
+    method write-property( Hash $property ) {
+        my $sp = $!terse ?? '' !! ' ';
         my Str @p = $.write( $property, :node<ident> );
-        @p.push: ': ' ~ $.write($property, :node<expr>)
+        @p.push: ':' ~ $sp ~ $.write($property, :node<expr>)
             if $property<expr>:exists;
-        @p.push: ' ' ~  $.write($property, :node<prio>)
+        @p.push: $sp ~  $.write($property, :node<prio>)
             if $property<prio>:exists;
         @p.push: ';';
         my $comments = $.write-any-comments( $property, ' ' );
@@ -320,83 +271,70 @@ class CSS::Writer
         [~] @p;
     }
 
-    #| :first := $.write: :pseudo-class<first>
-    multi method write( Str :$pseudo-class! ) {
-        ':' ~ $.write( :name($pseudo-class) );
+    #| :first := $.write-pseudo-class('first')
+    method write-pseudo-class(Str $_) {
+        ':' ~ $.write-name($_)
     }
 
-    #| ::first-letter := $.write: :pseudo-elem<first-letter>
-    multi method write( Str :$pseudo-elem! ) {
-        '::' ~ $.write( :name($pseudo-elem) );
+    #| ::first-letter := $.write-pseudo-elem: 'first-letter'
+    method write-pseudo-elem(Str $_) {
+        '::' ~ $.write-name($_)
     }
 
-    #| :lang(klingon) := $.write( :pseudo-func{ :ident<lang>, :args[ :ident<klingon> ] } )
-    multi method write( Hash :$pseudo-func! ) {
-        ':' ~ $.write( :func($pseudo-func) );
+    #| :lang(klingon) := $.write-pseudo-func: { :ident<lang>, :args[ :ident<klingon> ] }
+    method write-pseudo-func( Hash $_ ) {
+        ':' ~ $.write-func($_);
     }
 
-    #| svg|circle := $.write( :qname{ :ns-prefix<svg>, :element-name<circle> } )
-    multi method write( Hash :$qname! ) {
+    #| svg|circle := $.write-qname: { :ns-prefix<svg>, :element-name<circle> }
+    method write-qname(Hash $qname) {
         my $out = $.write($qname, :node<element-name>);
 
         $out = $.write($qname, :node<ns-prefix>) ~ '|' ~ $out
-            if $qname<ns-prefix>:exists;
+            with $qname<ns-prefix>;
 
         $out ~= $.write-any-comments( $qname, ' ' );
 
         $out;
     }
 
-    #| 600dpi   := $.write( :resolution(600), :units<dpi>) or $.write( :dpi(600) )
-    multi method write( Numeric :$resolution!, Str :$units? ) {
-        $.write-num( $resolution, $units );
+    #| { h1 { margin:5pt; } h2 { margin:3pt; color:red; }} := $.write-rule-list: [ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<h1> } ] } ] ], :declarations[ { :ident<margin>, :expr[ :pt(5) ] }, ] } }, { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<h2> } ] } ] ], :declarations[ { :ident<margin>, :expr[ :pt(3) ] }, { :ident<color>, :expr[ :ident<red> ] } ] } } ]
+    method write-rule-list(List $_) {
+        '{ ' ~ $.write( $_, :sep($.nl)) ~ '}';
     }
 
-    #| { h1 { margin: 5pt; } h2 { margin: 3pt; color: red; }} := $.write( :rule-list[ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<h1> } ] } ] ], :declarations[ { :ident<margin>, :expr[ :pt(5) ] }, ] } }, { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<h2> } ] } ] ], :declarations[ { :ident<margin>, :expr[ :pt(3) ] }, { :ident<color>, :expr[ :ident<red> ] } ] } } ])
-    multi method write( List :$rule-list! ) {
-        '{ ' ~ $.write( $rule-list, :sep($.nl)) ~ '}';
+    #| a:hover { color:green; } := $.write-ruleset: { :selectors[ :selector[ { :simple-selector[ { :element-name<a> }, { :pseudo-class<hover> } ] } ] ], :declarations[ { :ident<color>, :expr[ :ident<green> ] }, ] }
+    method write-ruleset(Hash $_) {
+        [~] $.write($_, :nodes<selectors declarations>);
     }
 
-    #| a:hover { color: green; } := $.write( :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<a> }, { :pseudo-class<hover> } ] } ] ], :declarations[ { :ident<color>, :expr[ :ident<green> ] }, ] } )
-    multi method write( Hash :$ruleset! ) {
-        [~] $.write($ruleset, :nodes<selectors declarations>);
+    #| #container * := $.write-selector: [ { :id<container>}, { :element-name<*> } ]
+    method write-selector(List $_) {
+        $.write( $_ );
     }
 
-    #| #container * := $.write( :selector[ { :id<container>}, { :element-name<*> } ] )
-    multi method write( List :$selector! ) {
-        $.write( $selector );
+    #| h1, [lang=en] := $.write-selectors: [ :selector[ { :simple-selector[ { :element-name<h1> } ] } ], :selector[ :simple-selector[ { :attrib[ :ident<lang>, :op<=>, :ident<en> ] } ] ] ]
+    method write-selectors(List $_ ) {
+        $.write( $_, :sep(', ') );
     }
 
-    #| h1, [lang=en] := $.write( :selectors[ :selector[ { :simple-selector[ { :element-name<h1> } ] } ], :selector[ :simple-selector[ { :attrib[ :ident<lang>, :op<=>, :ident<en> ] } ] ] ] )
-    multi method write( List :$selectors! ) {
-        $.write( $selectors, :sep(', ') );
+    #| .foo:bar#baz := $.write-simple-selector: [ :class<foo>, :pseudo-class<bar>, :id<baz> ]
+    method write-simple-selector(List $_) {
+        $.write( $_, :sep("") );
     }
 
-    #| .foo:bar#baz := $.write: :simple-selector[ :class<foo>, :pseudo-class<bar>, :id<baz> ]
-    multi method write( List :$simple-selector! ) {
-        $.write( $simple-selector, :sep("") );
-    }
+    #| 'I\'d like some \BEE f!' := $.write-string("I'd like some \x[bee]f!")
 
-    #| 'I\'d like some \BEE f!' := $.write( :string("I'd like some \x[bee]f!") )
-    multi method write( Str :$string! ) {
-        $.write-string($string);
-    }
-
-    #| h1 { color: blue; } := $.write( :stylesheet[ { :ruleset{ :selectors[ { :selector[ { :simple-selector[ { :qname{ :element-name<h1> } } ] } ] } ], :declarations[ { :ident<color>, :expr[ { :ident<blue> } ] }, ] } } ] )
-    multi method write( List :$stylesheet! ) {
+    #| h1 { color:blue; } := $.write-stylesheet: [ { :ruleset{ :selectors[ { :selector[ { :simple-selector[ { :qname{ :element-name<h1> } } ] } ] } ], :declarations[ { :ident<color>, :expr[ { :ident<blue> } ] }, ] } } ]
+    method write-stylesheet(List $_) {
         my $sep = $.terse ?? "\n" !! "\n\n";
-        $.write( $stylesheet, :$sep);
+        $.write( $_, :$sep);
     }
 
-    #| 20s := $.write( :time(20), :units<s> ) or $.write( :s(20) )
-    multi method write( Numeric :$time!, Str :$units? ) {
-        $.write-num( $time, $units );
-    }
-
-    #| U+A?? := $.write( :unicode-range[0xA00, 0xAFF] )
-    multi method write( List :$unicode-range! ) {
+    #| U+A?? := $.write-unicode-range: [0xA00, 0xAFF]
+    method write-unicode-range(List $_ ) {
         my $range;
-        my ($lo, $hi) = $unicode-range.map: {sprintf("%X", $_)};
+        my ($lo, $hi) = .map: {sprintf("%X", $_)};
 
         if !$lo eq $hi {
             # single value
@@ -417,13 +355,12 @@ class CSS::Writer
         'U+' ~ $range;
     }
 
-    #| url('snoopy.jpg') := $.write( :url<snoopy.jpg> )
-    multi method write( Str :$url! ) {
-        sprintf "url(%s)", $.write-string( $url );
+    #| url('snoopy.jpg') := $.write-url: 'snoopy.jpg'
+    method write-url( Str $_ ) {
+        sprintf "url(%s)", $.write-string( $_ );
     }
 
-    ## generic handling of Lists, Pairs, Hashs and Lists
-
+    #! generic handling of Lists, Pairs, Hashs and Lists
     multi method write(List $ast, Str :$sep=' ') {
         my Array %sifted = classify { .isa(Hash) && (.<comment>:exists) ?? 'comment' !! 'elem' }, $ast.list;
         my Str $out = (%sifted<elem> // []).list.map({ $.write( $_ ) }).join: $sep;
@@ -432,8 +369,9 @@ class CSS::Writer
         $out;
     }
 
-    multi method write(Pair $ast) {
-        $.write( |%$ast );
+    multi method write(Pair $_) {
+        my $node = .key.subst(/':'.*/, '');
+        self."write-$node"( .value );
     }
 
     multi method write(Hash $ast!, :$node! ) {
@@ -455,21 +393,13 @@ class CSS::Writer
         $.write( |%nodes );
     }
 
-    multi method write( *@args, *%opts ) is default {
+    use CSS::Grammar::AST :CSSUnits;
 
-        die "unexpected arguments: {[@args].perl}"
-            if @args;
+    multi method write( *@args, *%opt ) is default {
 
-        use CSS::Grammar::AST :CSSUnits;
-        for %opts.pairs {
-            if my $type = CSSUnits.enums{.key} {
-                # e.g. redispatch $.write( :px(12) ) as $.write( :length(12), :units<px> )
-                my %new-opts = $type => .value, units => .key;
-                return $.write( |%new-opts );
-            }
-        }
-        
-        die "unable to handle {%opts.keys} options: {%opts.perl}"
+        my $key = %opt.keys.sort.first({ $.can("write-$_") || (CSSUnits.enums{$_}:exists) })
+            or die "unable to handle {%opt.keys} struct: {%opt.perl}";
+        self."write-$key"(%opt{$key}, |%opt);
     }
 
     # -- helper methods --
@@ -494,4 +424,26 @@ class CSS::Writer
         $.terse ?? ' ' !! "\n";
     }
 
+    #| 42deg   := $.write-num( 42,  'deg') or $.write( :deg(42) )
+    #| 420hz   := $.write-num( 420, 'hz')  or $.write( :khz(.42) )
+    #| 42mm    := $.write-num( 42,  'mm')  or $.write( :mm(42) ) or $.write-mm(42)
+    #| 600dpi  := $.write-num( 600, 'dpi') or $.write( :dpi(600) )
+    #| 20s     := $.write-num( 20,  's' )  or $.write( :s(20) )
+    #| rgb(10, 20, 30) := $.write-color: [ :num(10), :num(20), :num(30) ], 'rgb' or $.write( :rgb[ :num(10), :num(20), :num(30) ] ) or $.write-rgb: [ :num(10), :num(20), :num(30) ]
+
+    method FALLBACK ($meth-name, $val, |c) {
+        if $meth-name ~~ /^ 'write-' (.+) $/ {
+            my $units = ~$0;
+            with CSSUnits.enums{$units} -> $type {
+                my &meth = do given $type {
+                    when 'color' { method ($v, |p) { $.write-color( $v, $units, |p) } }
+                    default      { method (Numeric $v, |p) { $.write-num( $v, $units, |p) } }
+                }
+                # e.g. redispatch $.write-px( 12 ) as $.write-num( 12, 'px' )
+                self.WHAT.^add_method($meth-name, &meth);
+                return self."$meth-name"($val, |c);
+            }
+        }
+        die "unknown method: $meth-name";
+    }
 }

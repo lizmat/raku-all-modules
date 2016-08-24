@@ -1,4 +1,18 @@
-0.01.3
-    - Introduced :$declaration-list. For serializing a list of
-      properties without surrounding parenthesis. Typical usage
-      is for generating HTML style attributes.
+0.02.2 Added for CSS::Speficiation 0.4.1. No longer need
+       to handle :length(0), :freq(0), etc in AST. But
+       do need to remove units from zero quantities.
+       :px(0) -> '0', etc
+
+0.02.1 Break down large `$.write` multi-method into seperate
+       `$.write-xxx` methods
+
+0.02.0 Adapt 'at-rule from CSS::Grammar 0.3.0. This replaces
+       the now obselete 'margin-rule', 'media-rule' and 'margin-rule'.
+
+0.01.4 Omit more spaces in :terse mode.
+    -- 'color: red !import' is now 'color:red!important'
+
+0.01.3 Introduced :$declaration-list.
+    -- For serializing a list of
+       properties without surrounding parenthesis. Typical usage
+       is for generating HTML style attributes.
