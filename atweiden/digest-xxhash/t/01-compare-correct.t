@@ -32,4 +32,4 @@ unless $file-for-tests.IO ~~ :f
         "digest from uint8 buffer is correct";
 }
 
-# vim: ft=perl6
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:
