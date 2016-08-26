@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/melezhik/sparrowdo-nginx.git
 	branch = master
-	commit = d41e479adc0c950600b0dbfb47dc4105a5deca66
-	parent = dccd9eb8975553932a09143f3fec154bf62fc516
+	commit = 641f826b3eb7b208af9bf2097b4a12103b4b66ae
+	parent = 813413270dd016a1db593eec8b7eb6169b053381
 	cmdver = 0.2.3

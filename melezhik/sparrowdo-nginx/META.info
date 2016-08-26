@@ -14,6 +14,6 @@
    "provides" : {
         "Sparrowdo::Nginx" : "lib/Sparrowdo/Nginx.pm6"
   },
-  "resources" : [ "default.conf" ],
+  "resources" : [ "default.conf", "nginx.conf" ],
   "source-url"  : "https://github.com/melezhik/sparrowdo-nginx.git"
 }
