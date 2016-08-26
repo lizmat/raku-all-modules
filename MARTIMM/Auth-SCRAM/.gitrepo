@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/Auth-SCRAM.git
 	branch = master
-	commit = f27c342f79e14853546c45d2bc9c273008fd4885
-	parent = 657c768b2633f62838211aaa260c0a868124794b
+	commit = 8b997d8de5cfc87dbd390291e0ab85b906dd6f1b
+	parent = e5b1547772a593041d446f3b59a4021b3ccdd643
 	cmdver = 0.2.3

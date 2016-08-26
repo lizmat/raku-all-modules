@@ -9,6 +9,10 @@ use PKCS5::PBKDF2;
 #-------------------------------------------------------------------------------
 unit package Auth;
 
+#TODO Implement server side
+#TODO Keep information when calculated. User requst boolean
+#     and username/password/authzid must be kept the same. This saves time.
+
 #-------------------------------------------------------------------------------
 class SCRAM {
 
@@ -85,20 +89,14 @@ class SCRAM {
           if $server-side.defined;
 
       die 'message object misses some methods'
-          unless self!test-methods(
-            $client-side,
-            <message1 message2 mangle-password clean-up error>
-          );
+        unless self!test-methods( $client-side, <message1 message2 error>);
 
       $!client-side = $client-side;
     }
 
     elsif $server-side.defined {
       die 'Server object misses some methods'
-          unless self!test-methods(
-            $server-side,
-            <message1 message2 clean-up error>
-          );
+        unless self!test-methods( $server-side, <message1 message2 error>);
 
       $!server-side = $server-side;
     }
@@ -129,7 +127,8 @@ class SCRAM {
     my Str $error = self!process-server-first;
     if ?$error {
       $!client-side.error($error);
-      return fail($error);
+      return $error;
+#      return fail($error);
     }
 
     # Prepare for second round ... `doiinggg' :-P
@@ -139,8 +138,11 @@ class SCRAM {
     $error = self!verify-server;
     if ?$error {
       $!client-side.error($error);
-      return fail($error);
+      return $error;
+#      return fail($error);
     }
+
+    $!client-side.clean-up if $!client-side.^can('clean-up');
 
     '';
   }
@@ -192,9 +194,10 @@ class SCRAM {
 
     $!client-first-message-bare ~= "r=$!c-nonce";
 
-    # Not needed anymore, neccesary to reset to prevent reuse by hackers
-    # So when user needs its own nonce again, set it before starting scram.
-    $!c-nonce = Str;
+# Not needed anymore, necessary to reset to prevent reuse by hackers
+# So when user needs its own nonce again, set it before starting scram.
+$!c-nonce = Str;
+#TODO used later to check returned server nonce, so not yet resetting it here!
 
     # Only single character keynames are taken
     my Str $ext = (
@@ -211,22 +214,24 @@ class SCRAM {
 
     # Using named arguments, the clients object doesn't need to
     # support all variables as long as a Buf is returned
-    my Buf $user-mangled-password = $!client-side.mangle-password(
-      :$!username, :$!password, :$!authzid
-    );
+    my Buf $mangled-password;
+    if $!client-side.^can('mangle-password') {
+      $mangled-password = $!client-side.mangle-password(
+        :$!username, :$!password, :$!authzid
+      );
+    }
 
-    $!salted-password = $!pbkdf2.derive(
-      $user-mangled-password,
-      $!s-salt,
-      $!s-iter
-    );
-#say "SP: ", $!salted-password;
+    else {
+      $mangled-password = Buf.new($!password.encode);
+    }
+
+    $!salted-password = $!pbkdf2.derive( $mangled-password, $!s-salt, $!s-iter);
 
     $!client-key = hmac( $!salted-password, 'Client Key', &$!CGH);
     $!stored-key = $!CGH($!client-key);
 
     # biws is from encode-base64( 'n,,', :str)
-    #TODO gs2-header [ cbind-data ]
+#TODO gs2-header [ cbind-data ]
     $!channel-binding = "c=biws";
     $!client-final-without-proof = "$!channel-binding,r=$!s-nonce";
 
@@ -262,6 +267,7 @@ class SCRAM {
     $nonce ~~ s/^ 'r=' //;
     $error = 'no nonce found' if !? $nonce or !?$/; # Check s/// operation too
     return $error if $error;
+#TODO Check if it starts with client nonce
 
     $salt ~~ s/^ 's=' //;
     $error = 'no salt found' if !? $salt or !?$/;

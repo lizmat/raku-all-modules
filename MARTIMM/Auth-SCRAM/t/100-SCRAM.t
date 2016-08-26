@@ -32,11 +32,9 @@ class MyClient {
     'v=rmF9pqV8S7suAoZWja4dJRkFsKQ=';
   }
 
-  method mangle-password ( Str:D :$password --> Buf ) {
+  # method mangle-password() is optional
 
-    Buf.new($password.encode);
-  }
-
+  # method clean-up() is optional
   method clean-up (  ) {
 
     diag 'been here, done that';
