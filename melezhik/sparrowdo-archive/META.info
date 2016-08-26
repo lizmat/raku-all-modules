@@ -1,0 +1,18 @@
+{
+  "name"        : "Sparrowdo::Archive",
+  "version"     : "*",
+  "description" : "Extract various archives using tar/unzip programs",
+  "authors" : [ "Alexey Melezhik"],
+  "depends"     : [
+                    "Sparrowdo"
+                  ],
+  "source-type" : "git",
+  "support" : {
+        "bugtracker" : "https://github.com/melezhik/sparrowdo-archive/issues",
+        "source" : "https://github.com/melezhik/sparrowdo-archive.git"
+    },
+   "provides" : {
+        "Sparrowdo::Archive" : "lib/Sparrowdo/Archive.pm6"
+  },
+  "source-url"  : "https://github.com/melezhik/sparrowdo-archive.git"
+}

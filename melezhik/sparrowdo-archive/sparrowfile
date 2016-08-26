@@ -1,0 +1,50 @@
+task_run  %(
+  task => 'create user',
+  plugin => 'user',
+  parameters => %( name => 'app-user' )
+);
+
+module_run 'RemoteFile', %(
+    url       => 'https://github.com/melezhik/remote-file/archive/master.zip',
+    location  => '/tmp/foo/bar/master.zip'
+);
+
+module_run 'RemoteFile', %(
+    url       => 'http://nginx.org/download/nginx-1.11.3.tar.gz',
+    location  => '/tmp/nginx/nginx-1.11.3.tar.gz'
+);
+
+
+task_run  %(
+  task => 'create directory for extraction',
+  plugin => 'directory',
+  parameters => %( 
+    path => '/home/app-user/apps', 
+    owner => 'app-user' , 
+    group => 'app-user' 
+  )
+);
+
+task_run  %(
+  task => 'create directory for extraction',
+  plugin => 'directory',
+  parameters => %( 
+    path => '/home/app-user/apps/nginx', 
+    owner => 'app-user' , 
+    group => 'app-user' 
+  )
+);
+
+module_run 'Archive', %(
+    source  => '/tmp/foo/bar/master.zip',
+    target  => '/home/app-user/apps/data',
+    user    => 'app-user'
+);
+
+module_run 'Archive', %(
+    source  => '/tmp/nginx/nginx-1.11.3.tar.gz',
+    target  => '/home/app-user/apps/nginx',
+    user    => 'app-user',
+    verbose => 0,
+);
+    
