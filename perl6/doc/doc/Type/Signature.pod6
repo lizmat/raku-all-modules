@@ -17,7 +17,7 @@ X<|signature literal (Signature)>
 X<|:() (Signature)>
 =head1 Signature Literals
 
-Signatures appear in parenthesis after subroutine and method names, on
+Signatures appear inside parentheses after subroutine and method names, on
 blocks after a C<< -> >> or C<< <-> >> arrow, as the input to
 L<variable declarators|/language/variables#Variable_Declarators_and_Scope>
 like L<C<my>|/syntax/my>, or as a separate term starting with a colon.
@@ -71,7 +71,7 @@ When smart matching against a Hash, the signature is assumed to consist of the k
 
 =head2 Parameter Separators
 
-A signature consists of zero or more I<L<parameters|Parameter>>, separated by comma.
+A signature consists of zero or more I<L<parameters|Parameter>>, separated by commas.
 
     my $sig = :($a, @b, %c);
     sub add($a, $b) { $a + $b };
@@ -313,8 +313,8 @@ will be promoted to a list with a single item.
 =head2 Type Captures
 X<|Type Capture (signature)>
 
-Type Captures allow to defer the specification of a type constraint to the time
-the function is called. They allow to refer to a type both in the signature and
+Type Captures allow deferring the specification of a type constraint to the time
+the function is called. They allow referring to a type both in the signature and
 the function body.
 
     sub f(::T $p1, T $p2, ::C){
@@ -353,7 +353,7 @@ mapping arguments to parameters
 
     =for code :allow<L>
     sub named(:$x, :$y) { "x=$x y=$y" }
-    named( y L«=>» 5, x => 4);             # x=4 y=5
+    named( y => 5, x => 4);             # x=4 y=5
 
 It is possible to have a different name for a named parameter than the
 variable name:
