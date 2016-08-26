@@ -26,7 +26,7 @@ multi sub MAIN(Str :$file, Str :$uri, Str :$out-dir = "lib", Str :$class-name!) 
         $infer.infer(:$file, :$class-name);
     }
     else {
-        JSON::Infer::Exception.new(message => "one of file or uri must be supplied").throw;
+        X::Infer.new(message => "one of file or uri must be supplied").throw;
     }
 
     my $out-file = $base-dir.child($class.file-path);
