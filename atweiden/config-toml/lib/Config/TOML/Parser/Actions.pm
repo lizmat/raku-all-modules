@@ -214,6 +214,16 @@ method float($/)
     make +$/;
 }
 
+method plus-or-minus:sym<+>($/)
+{
+    make ~$/;
+}
+
+method plus-or-minus:sym<->($/)
+{
+    make ~$/;
+}
+
 method number($/)
 {
     if $<integer>
@@ -279,7 +289,7 @@ method time-secfrac($/)
 
 method time-numoffset($/)
 {
-    my Int $multiplier = $<plus-or-minus> eq '+' ?? 1 !! -1;
+    my Int $multiplier = $<plus-or-minus>.made eq '+' ?? 1 !! -1;
     make Int(
         (
             ($multiplier * $<time-hour>.made * 60) + $<time-minute>.made
@@ -325,7 +335,7 @@ method full-time($/)
 
 method date-time-omit-local-offset($/)
 {
-    make DateTime.new(
+    make %(
         :year(Int($<full-date>.made<year>)),
         :month(Int($<full-date>.made<month>)),
         :day(Int($<full-date>.made<day>)),
@@ -338,7 +348,7 @@ method date-time-omit-local-offset($/)
 
 method date-time($/)
 {
-    make DateTime.new(
+    make %(
         :year(Int($<full-date>.made<year>)),
         :month(Int($<full-date>.made<month>)),
         :day(Int($<full-date>.made<day>)),
@@ -356,12 +366,12 @@ method date:full-date ($/)
 
 method date:date-time-omit-local-offset ($/)
 {
-    make $<date-time-omit-local-offset>.made;
+    make DateTime.new(|$<date-time-omit-local-offset>.made);
 }
 
 method date:date-time ($/)
 {
-    make $<date-time>.made;
+    make DateTime.new(|$<date-time>.made);
 }
 
 # end datetime grammar-actions }}}
