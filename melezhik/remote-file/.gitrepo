@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/remote-file.git
+	branch = master
+	commit = b8f8090e97cc461927d95408b82a2a3c56fb67a3
+	parent = d0ee1b3fdbacc11e078b8a83e18a6c4949b0ead8
+	cmdver = 0.2.3
