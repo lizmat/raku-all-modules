@@ -8,5 +8,5 @@
             "itertools" : "lib/python/itertools.pm"
         },
         "source-type" : "git",
-        "source-url" : "https://github.com/ahalbert/perl6-itertools"
+        "source-url" : "git://github.com/ahalbert/perl6-itertools"
     }

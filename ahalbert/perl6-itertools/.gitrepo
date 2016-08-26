@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/ahalbert/perl6-itertools
+	remote = git://github.com/ahalbert/perl6-itertools.git
 	branch = master
-	commit = 2d78a2f8d4a68c029d3e2126034689575cb9cae7
-	parent = 2de1ee7cb5d9a45fee5bbe1d06b155d3111346fc
+	commit = 84814e8518a8e75d98c4ab3b625a12de7bbd9397
+	parent = 5e1be5f039265adf2badd2c3c9ad9e6b38a6f90d
 	cmdver = 0.2.3
