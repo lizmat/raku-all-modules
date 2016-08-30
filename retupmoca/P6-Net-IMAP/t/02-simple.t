@@ -15,7 +15,7 @@ class IMAPSocket {
         "aaab LOGOUT";
     has $.host;
     has $.port;
-    has $.input-line-separator is rw = "\n";
+    has $.nl-in is rw = "\n";
     method new(:$host, :$port){
         self.bless(:$host, :$port);
     }

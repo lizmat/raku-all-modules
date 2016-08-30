@@ -24,7 +24,7 @@ method send($stuff) {
 }
 
 method switch-to-ssl() {
-    $!conn = IO::Socket::SSL.new(:client-socket($.conn));
+    $!conn = IO::Socket::SSL.new(:client-socket($.conn), :input-line-separator("\r\n"));
     $!conn.input-line-separator = "\r\n";
 }
 

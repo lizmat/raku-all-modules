@@ -15,7 +15,7 @@ class IMAPSocket {
         "aaab LOGOUT";
     has $.host;
     has $.port;
-    has $.input-line-separator is rw = "\n";
+    has $.nl-in is rw = "\n";
     method new(:$host, :$port){
         self.bless(:$host, :$port);
     }
@@ -37,7 +37,7 @@ my $imap = Net::IMAP.new(:server('foo.com'), :raw, :socket(IMAPSocket));
 
 is $imap.conn.host, 'foo.com', 'Correct server';
 is $imap.conn.port, 143, 'Correct port';
-is $imap.conn.input-line-separator, "\r\n", 'Good line sep';
+is $imap.conn.nl-in, "\r\n", 'Good line sep';
 
 ok $imap ~~ Net::IMAP::Raw, 'Is raw object';
 ok $imap.get-response ~~ /^\*\sOK/, 'Got initial untagged response';

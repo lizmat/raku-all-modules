@@ -17,9 +17,9 @@ method new(:$server, :$port = 143, :$debug, :$raw, :$socket = IO::Socket::INET, 
         }
     };
     if $raw {
-        my $conn = $socket.defined ?? $socket !! $socket.new(:host($server), :$port);
-        $conn.input-line-separator = "\r\n";
+        my $conn = $socket.defined ?? $socket !! $socket.new(:host($server), :$port, :nl-in("\r\n"));
         $conn = $conn but debug-connection if $debug;
+        $conn.nl-in = "\r\n";
         return Net::IMAP::Raw.new(:conn($conn));
     } else {
         return Net::IMAP::Simple.new(:$ssl, :tls($starttls), :$plain, raw => Net::IMAP.new(:$server, :$port, :$debug, :$socket, :raw));
