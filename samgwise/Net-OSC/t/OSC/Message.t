@@ -3,7 +3,7 @@ use Test;
 use lib 'lib';
 use Net::OSC::Message;
 
-plan 19;
+plan 18;
 
 #diag Net::OSC::Message.^methods.map({ $_.perl }).join: "\n";
 
@@ -28,8 +28,6 @@ is $message.type-string, 'sidsid', "build type-string post addition";
 
 
 diag "package tests:";
-
-is $message.pack-float32(12.375).perl, Buf.new(65, 70, 0, 0).perl, "pack 12.375";
 
 my Buf $packed-message;
 lives-ok  { $packed-message = $message.package; },                          "package message";

@@ -1,46 +1,99 @@
-# Net::OSC
+[![Build Status](https://travis-ci.org/samgwise/Net-OSC.svg?branch=master)](https://travis-ci.org/samgwise/Net-OSC)
 
-A perl6 implementation of the Open Sound Control Protocol.
+NAME
+====
 
-## status
-very *WIP*
-v0.001
+Net::OSC - Open Sound Control for Perl6
 
-## Overview
+Currently Net::OSC::Message is implimented You can use it right now to send and receive OSC messages!
+
+SYNOPSIS
+========
+
+    use Net::OSC::Message;
+
+    #Create a message object to unpack OSC Bufs
+    my Net::OSC::Message $osc-message .= new;
+
+    #Create a UDP listener
+    my $udp-listener = IO::Socket::Async.bind-udp('localhost', 7654);
+
+    #tap our udp supply and grep out any empty packets
+    my $listener-cb = $udp-listener.Supply(:bin).grep( *.elems > 0 ).tap: -> $buf {
+      my $message = $osc-message.unpackage($buf);
+      say "message: { $message.path, $message.type-string, $message.args }";
+    }
+
+    #Start up a thread so we can send some OSC messages to ourself
+    my $sender = start {
+      my $udp-sender = IO::Socket::Async.udp;
+
+      for 1..10 {
+        my Net::OSC::Message $message .= new( :path("/testing/$_") :args<Hey 123 45.67> );
+
+        #send it off
+        my $sending = $udp-sender.write-to('localhost', 7654, $message.package);
+        await $sending;
+        sleep 0.5;
+      }
+      sleep 1;
+    }
+
+    await $sender;
+
+    $listener-cb.close;
+
+DESCRIPTION
+===========
+
 Net::OSC is currently planned to consist of the following classes:
-* Net::OSC
-* Net::OSC::Message
-* Net::OSC::Bundle
-* Net::OSC::Client
-* Net::OSC::Server
 
-Net::OSC provides message routing behaviors for the OSC Protocol, an OSC address space, while Net::OSC::Message and Net::OSC::Bundle provide a representation of the data. The Client and Server objects then provide higher level abstractions for the underlying OSC standard.
+  * Net::OSC
 
-## Features
-* Basic Net::OSC::Message implementation partly finished.
-  * Unpackages messages containing the following OSC types:
-    * i - a 32bit signed integer
-    * s - an ascii string (This seems to work but there may be problems I haven't found here with perl6 unicode...)
-    * d - Double precision floating point value (IEE754 - binary64)
-    * f - single precision floating point value (IEE754 - binary32)
-  * Packages messages, maps perl6 types as:
-    * Str - s - encoded as 'ISO-8859-1'
-    * Int - i - int32 (we still need some more intelligence here to handle larger values)
-    * if is64bit switch is True
-      * Rat - d
-    * else
-      * Rat - f
-  * OSC path, make sure it starts with a '/' as the spec says! (Maybe this should be relaxed...)
+  * Net::OSC::Message - Implimented
 
-## To Do
-* Net::OSC::Message pack and unpack methods
-* Net::OSC
-* Net::OSC::Bundle
-* Net::OSC::Client
-* Net::OSC::Server
-* More code examples!
-* More tests...
-* A native message packing and unpacking implementation amd/or bindings
+  * Net::OSC::Bundle
 
-## Examples
-Have a look at the examples folder for some basic udp sender and receiver examples :D
+  * Net::OSC::Client
+
+  * Net::OSC::Server
+
+Net::OSC provides message routing behaviors for the OSC Protocol, an OSC address space. Net::OSC::Message and Net::OSC::Bundle provide a representation and packaing of the data. The Client and Server objects then provide higher level abstractions for network comunication.
+
+For more details about each class, see their doc.
+
+TODO
+====
+
+  * Net::OSC::Bundle
+
+  * Net::OSC::Client
+
+  * Net::OSC::Server
+
+  * Additional OSC types
+
+  * Net::OSC - A simple interface for OSC comunications
+
+CHANGES
+=======
+
+<table>
+  <tr>
+    <td>Updated to use Numeric::Pack</td>
+    <td>Faster and better tested Buf packing</td>
+    <td>2016-08-30</td>
+  </tr>
+</table>
+
+AUTHOR
+======
+
+Sam Gillespie <samgwise@gmail.com>
+
+COPYRIGHT AND LICENSE
+=====================
+
+Copyright 2016 Sam Gillespie
+
+This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
