@@ -1,0 +1,14 @@
+{
+    "perl": "6.c",
+    "name" : "Math::Sequences",
+    "version" : "0.0.2",
+    "description" : "Various mathematical sequences of moderate use",
+    "authors" : [ "Aaron Sherman" ],
+    "provides" : {
+        "Math::Sequences::Integer" : "lib/Math/Sequences/Integer.pm",
+        "Math::Sequences::Real" : "lib/Math/Sequences/Real.pm"
+    },
+    "depends" : [ "Test::META" ],
+    "resources" : [ ],
+    "source-url" : "git@github.com:ajs/perl6-Math-Sequences.git"
+}

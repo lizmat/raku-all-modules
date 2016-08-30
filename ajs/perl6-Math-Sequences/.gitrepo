@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ajs/perl6-Math-Sequences.git
+	branch = master
+	commit = 73819892008d4475353717c75a422386e269009e
+	parent = 7ecda11d8cac78e3b880c2f679b488df32115aa4
+	cmdver = 0.2.3
