@@ -5,14 +5,14 @@ use Test;
 use Test-support;
 use MongoDB;
 use MongoDB::Client;
-use MongoDB::Users;
+use MongoDB::HL::Users;
 use MongoDB::Database;
 use MongoDB::Collection;
 use BSON::Document;
 
 #-------------------------------------------------------------------------------
-#set-logfile($*OUT);
-#set-exception-process-level(MongoDB::Severity::Trace);
+set-logfile($*OUT);
+set-exception-process-level(MongoDB::Severity::Trace);
 info-message("Test $?FILE start");
 
 my MongoDB::Test-support $ts .= new;
@@ -21,7 +21,7 @@ my MongoDB::Client $client = $ts.get-connection();
 my MongoDB::Database $database = $client.database('test');
 my MongoDB::Collection $collection = $database.collection('testf');
 my BSON::Document $doc;
-my MongoDB::Users $users .= new(:$database);
+my MongoDB::HL::Users $users .= new(:$database);
 
 $database.run-command: (dropDatabase => 1,);
 $database.run-command: (dropAllUsersFromDatabase => 1,);
@@ -51,12 +51,11 @@ subtest {
 }, "Test user management";
 
 #-------------------------------------------------------------------------------
-#
 subtest {
   $users.set-pw-security(
     :min-un-length(5),
     :min-pw-length(6),
-    :pw_attribs(MongoDB::C-PW-OTHER-CHARS)
+    :pw_attribs(C-PW-OTHER-CHARS)
   );
 
   try {
@@ -110,9 +109,7 @@ subtest {
     :roles(['readWrite'])
   );
 
-say $doc.perl;
   ok $doc<ok>, 'User mt-and-another-few-chars created';
-
 
   $doc = $database.run-command: (dropUser => 'mt-and-another-few-chars',);
   ok $doc<ok>, 'User mt-and-another-few-chars deleted';
