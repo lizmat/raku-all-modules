@@ -1,21 +1,21 @@
-unit class Shell::Capture:ver<0.1.0>:auth<github:ppentchev>;
+unit class Shell::Capture:ver<0.2.0>:auth<github:ppentchev>;
 
 use v6.c;
 
 has Int $.exitcode;
 has Str @.lines;
 
-method capture(*@cmd) returns Shell::Capture:D
+method capture(*@cmd, Str :$nl, Str :$enc) returns Shell::Capture:D
 {
-	my Proc:D $p = run @cmd, :out;
+	my Proc:D $p = run @cmd, :out, |(:$nl with $nl), |(:$enc with $enc);
 	my Str:D @res = $p.out.lines;
 	my $exit = $p.out.close;
 	return Shell::Capture.new(:exitcode($p.exitcode), :lines(@res));
 }
 
-method capture-check(List :$accept = (0,), Block :$fail, Str :$message, *@cmd) returns Shell::Capture:D
+method capture-check(List :$accept = (0,), Block :$fail, Str :$message, *@cmd, Str :$nl, Str :$enc) returns Shell::Capture:D
 {
-	my Shell::Capture:D $r = self.capture(|@cmd);
+	my Shell::Capture:D $r = self.capture(|@cmd, |(:$nl with $nl), |(:$enc with $enc));
 	if not $r.exitcode (elem) $accept {
 		if defined $fail {
 			$fail($r, @cmd);
@@ -59,6 +59,12 @@ Shell::Capture - capture a command's output and exit code
 
     $c .= capture-check(:accept(0, 3), :&fail, 'sh', '-c', 'date; exit 1');
     say 'not reached, fail() dies';
+
+    $c .= capture-check('git', 'ls-files', '-z', :nl("\0"));
+    say 'Got some unquoted filenames from Git:';
+    $c.lines>>.say;
+
+    $c .= capture-check('env', 'LANG=fr_FR.ISO-8859-1', 'date', :enc('ISO-8859-1'));
 =end code
 
 =head1 DESCRIPTION
@@ -91,18 +97,24 @@ terminator removed.
 =begin item1
 method capture()
 
-    method capture(*@cmd)
+    method capture(*@cmd, Str :$enc, Str :$nl)
 
 Execute the specified command in the same way as C<run()> would, then
 create a new C<Shell::Capture> object with its C<exitcode> and C<lines>
 members set respectively to the exit code of the command and its output
 split into lines, as described above.
+
+The C<$enc> and C<$nl> parameters, if supplied, are passed directly
+to C<run()>, allowing the caller to specify the encoding of the data
+output by the external program and the character (or string) used to
+delimit lines in the output.  See the C<Proc.new()> documentation for
+more information.
 =end item1
 
 =begin item1
 method capture-check()
 
-    method capture-check(:$accept, :$fail, *@cmd)
+    method capture-check(:$accept, :$fail, Str :$enc, Str :$nl, *@cmd)
 
 Execute the specified command and create a C<Shell::Capture> object in
 the same way as C<capture()>, then check the exit code against the
@@ -116,6 +128,9 @@ two arguments: the C<Shell::Capture> object for further examination and
 the command executed; if the fail handler returns, C<capture-check()>
 will return the C<Shell::Capture> object to its caller (useful for
 writing tests).
+
+The C<$enc> and C<$nl> parameters, if specified, are passed directly
+to C<run()> just as in C<capture()>.
 =end item1
 
 =head1 AUTHOR
