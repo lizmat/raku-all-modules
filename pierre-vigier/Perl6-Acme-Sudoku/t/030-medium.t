@@ -31,3 +31,5 @@ END
 
 ok $game ~~ $solution, "Solution is correct";
 
+#say "Elapsed : ";
+#say now - BEGIN { now };

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/pierre-vigier/Perl6-Acme-Sudoku.git
 	branch = master
-	commit = 36998cdaf3f611c88bda5fac03bee8b47371e822
-	parent = 014d9b2cb0774d7a08060f5fbfef1bec2969219a
+	commit = 9aa82b623a64dfbdaac0e1cc4b22c4968c3929d4
+	parent = 805d5601b6f456dfb0d7de3d51cc26acdaef0511
 	cmdver = 0.2.3
