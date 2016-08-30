@@ -1,3 +1,9 @@
+   Release 1.23.5
+   Fixed kerning of Courier, and other fonts without kerning data
+   `$font.stringwidth(..., :kern)` and `$font.kern(...)` both now work.
+   If the font lacks kerning data `:kern` is ignored and `$font.kern`
+   returns a single element.
+
    Release 1.23.4
    Fixed %ISOLatin1Encoding character encoding table
 

@@ -239,12 +239,12 @@ it under the same terms as Perl itself.
 
        for $afm.lines {
 
-           if /^StartKernData/   ff /^EndKernData/ {
+           if /^StartKernData/ ff /^EndKernData/ {
                next unless m:s/ <|w> KPX  $<glyph1>=['.'?\w+] $<glyph2>=['.'?\w+] $<kern>=[< + - >?\d+] /;
                $metrics<KernData>{ $<glyph1> }{ $<glyph2> } = $<kern>.Int;
            }
            next if /^StartComposites/ ff /^EndComposites/; # same for composites
-           if /^StartCharMetrics/    ff /^EndCharMetrics/ {
+           if /^StartCharMetrics/     ff /^EndCharMetrics/ {
                # only lines that start with "C" or "CH" are parsed
                next unless /^ CH? ' ' /;
                my Str $name  = ~ m:s/ <|w> N  <('.'?\w+)> ';' /;
@@ -349,17 +349,22 @@ it under the same terms as Perl itself.
         --> Numeric ) {
         my Numeric $width = 0.0;
         my Str $prev-glyph;
-        my Hash $kern-data = self.KernData if $kern;
+        my Hash $kern-data;
+        if $kern {
+          $kern-data = $_ with self.KernData;
+        }
         my Hash $wx = self.Wx; 
 
         for $string.comb {
             my Str $glyph-name = $glyphs{$_} // next;
             $width += $wx{$glyph-name} // next;
 
-            $width += $kern-data{$prev-glyph}{$glyph-name}
-               if $kern && $prev-glyph && ($kern-data{$prev-glyph}{$glyph-name}:exists);
-
-            $prev-glyph = $glyph-name;
+            with $kern-data {
+                with $prev-glyph && .{$prev-glyph} {
+                    $width += $_ with .{$glyph-name};
+                }
+                $prev-glyph = $glyph-name;
+            }
         }
         if ($pointsize) {
             $width *= $pointsize / 1000;
@@ -373,24 +378,28 @@ it under the same terms as Perl itself.
         my Str $prev-glyph;
         my Str $str = '';
         my @chunks;
-        my Hash $kern-data = self.KernData;
+        my Hash $kern-data = $_
+            with self.KernData;
         my Hash $wx = self.Wx;
 
         for $string.comb {
             my Str $glyph-name = $glyphs{$_} // next;
             my Numeric $glyph-width = $wx{$glyph-name} // next;
 
-            if $prev-glyph && ($kern-data{$prev-glyph}{$glyph-name}:exists) {
-                my Numeric $kerning = $kern-data{$prev-glyph}{$glyph-name};
-                $kerning *= $pointsize / 1000
-                    if $pointsize;
-                @chunks.push: $str;
-                @chunks.push: $kerning;
-                $str = '';
+            with $kern-data {
+                with $prev-glyph && .{$prev-glyph} {
+                    with .{$glyph-name} -> $kerning is copy {
+                        $kerning *= $pointsize / 1000
+                            if $pointsize;
+                        @chunks.push: $str;
+                        @chunks.push: $kerning;
+                        $str = '';
+                    }
+                }
+                $prev-glyph = $glyph-name;
             }
 
             $str ~= $_;
-            $prev-glyph = $glyph-name;
         }
 
         @chunks.push: $str
@@ -404,7 +413,7 @@ it under the same terms as Perl itself.
     }
 
     method !is-prop(Str $prop-name --> Bool) {
-        BEGIN constant KnownProps = set < FontName FullName FamilyName Weight
+        constant KnownProps = set < FontName FullName FamilyName Weight
         ItalicAngle IsFixedPitch FontBBox UnderlinePosition
         UnderlineThickness Version Notice Comment EncodingScheme
         CapHeight XHeight Ascender Descender Wx BBox KernData>;
