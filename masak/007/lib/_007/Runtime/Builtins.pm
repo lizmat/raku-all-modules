@@ -2,13 +2,7 @@ use _007::Val;
 use _007::Q;
 
 sub builtins(:$input!, :$output!, :$opscope!) is export {
-    my &str = sub ($_) {
-        when Val { return Val::Str.new(:value(.Str)) }
-        die X::TypeCheck.new(
-            :operation<str()>,
-            :got($_),
-            :expected("something that can be converted to a string"));
-    };
+    sub str($_) { Val::Str.new(:value(.Str)) }
 
     sub wrap($_) {
         when Val | Q { $_ }
@@ -22,7 +16,7 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
 
     # These multis are used below by infix:<==> and infix:<!=>
     multi equal-value($, $) { False }
-    multi equal-value(Val::None, Val::None) { True }
+    multi equal-value(Val::NoneType, Val::NoneType) { True }
     multi equal-value(Val::Bool $l, Val::Bool $r) { $l.value == $r.value }
     multi equal-value(Val::Int $l, Val::Int $r) { $l.value == $r.value }
     multi equal-value(Val::Str $l, Val::Str $r) { $l.value eq $r.value }
@@ -75,7 +69,7 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
         die X::TypeCheck.new(
             :operation<less>,
             :got($_),
-            :expected("string or integer"));
+            :expected(Val::Int));
     }
     multi less-value(Val::Int $l, Val::Int $r) { $l.value < $r.value }
     multi less-value(Val::Str $l, Val::Str $r) { $l.value le $r.value }
@@ -83,7 +77,7 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
         die X::TypeCheck.new(
             :operation<more>,
             :got($_),
-            :expected("string or integer"));
+            :expected(Val::Int));
     }
     multi more-value(Val::Int $l, Val::Int $r) { $l.value > $r.value }
     multi more-value(Val::Str $l, Val::Str $r) { $l.value ge $r.value }
@@ -108,8 +102,7 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
 
     my @builtins =
         say => -> $arg {
-            my $string = $arg ~~ Val::Array ?? &str($arg).Str !! ~$arg;
-            $output.print($string ~ "\n");
+            $output.print($arg ~ "\n");
             Nil;
         },
         prompt => sub ($arg) {

@@ -353,7 +353,7 @@ use _007::Test;
             return "prefix is looser";
         }
 
-        sub postfix:<!>(term) {
+        sub postfix:<‡>(term) {
             return "postfix is looser";
         }
 
@@ -365,7 +365,7 @@ use _007::Test;
             return "prefix is looser";
         }
 
-        say(?[]!);
+        say(?[]‡);
         say(%[]$);
         .
 
@@ -453,10 +453,10 @@ use _007::Test;
         sub prefix:<?>(left, right) is assoc("non") {
         }
 
-        sub postfix:<!>(left, right) is equal(prefix:<?>) {
+        sub postfix:<±>(left, right) is equal(prefix:<?>) {
         }
 
-        say(?0!);
+        say(?0±);
         .
 
     parse-error $program, X::Op::Nonassociative, "non-associativity inherits through the 'is equal' trait";
