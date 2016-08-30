@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-SPEC-Func.git
+	branch = master
+	commit = 28119df4ec1f0eca23199856377a1eb49728dea5
+	parent = a4d3d5b0c6e5ee29e1b86a50c21792929cc954ad
+	cmdver = 0.2.3

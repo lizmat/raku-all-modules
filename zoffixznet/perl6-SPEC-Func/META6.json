@@ -1,0 +1,16 @@
+{
+    "perl"         : "6.c",
+    "name"         : "SPEC::Func",
+    "version"      : "1.001001",
+    "description"  : "Import $*SPEC methods as functions",
+    "depends"      : [ ],
+    "test-depends" : [
+        "Test",
+        "Test::META"
+    ],
+    "provides"     : {
+        "SPEC::Func" : "lib/SPEC/Func.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source"   : "git://github.com/zoffixznet/perl6-SPEC-Func.git"}
+}
