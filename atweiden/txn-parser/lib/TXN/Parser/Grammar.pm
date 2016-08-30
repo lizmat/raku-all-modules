@@ -535,16 +535,16 @@ token posting-line:content
 
 token posting
 {
-    <account> \h+ <amount>
+    <account> \h+ <amount> [ \h+ <annot> ]?
 }
 
 # --- --- posting account grammar {{{
 
 token account
 {
-    # silo and entity are required, subaccounts are optional
+    # silo and entity are required, path is optional
     <silo> <account-delimiter> <entity=.var-name>
-    [ <account-delimiter> <account-sub=.acct-name> ]?
+    [ <account-delimiter> <account-path=.account-name> ]?
 }
 
 proto token silo {*}
@@ -579,7 +579,7 @@ proto token account-delimiter {*}
 token account-delimiter:sym<:> { <sym> }
 token account-delimiter:sym<.> { <sym> }
 
-token acct-name
+token account-name
 {
     <var-name> [ <account-delimiter> <var-name> ]*
 }
@@ -591,13 +591,11 @@ token amount
 {
     # -$100.00 USD
     <plus-or-minus>? <asset-symbol>? <asset-quantity> \h+ <asset-code>
-        [\h+ <exchange-rate>]?
 
     |
 
     # USD -$100.00
     <asset-code> \h+ <plus-or-minus>? <asset-symbol>? <asset-quantity>
-        [\h+ <exchange-rate>]?
 }
 
 proto token asset-code {*}
@@ -620,66 +618,138 @@ proto token asset-quantity {*}
 token asset-quantity:float { <float-unsigned> }
 token asset-quantity:integer { <integer-unsigned> }
 
-token exchange-rate
+# --- --- end posting amount grammar }}}
+# --- --- posting annotation grammar {{{
+
+token annot
 {
-    '@' \h+ <xe>
+    # xe,inherit,lot
+    [
+        | <xe> \h+ <inherit> \h+ <lot>
+        | <xe> \h+ <lot> \h+ <inherit>
+        | <lot> \h+ <xe> \h+ <inherit>
+    ]
+
+    |
+
+    # xe,inherit
+    [
+        | <xe> \h+ <inherit>
+    ]
+
+    |
+
+    # xe,lot
+    [
+        | <xe> \h+ <lot>
+        | <lot> \h+ <xe>
+    ]
+
+    |
+
+    # inherit,lot
+    [
+        | <inherit> \h+ <lot>
+        | <lot> \h+ <inherit>
+    ]
+
+    |
+
+    # xe
+    [
+        | <xe>
+    ]
+
+    |
+
+    # inherit
+    [
+        | <inherit>
+    ]
+
+    |
+
+    # lot
+    [
+        | <lot>
+    ]
 }
 
+# --- --- --- xe {{{
+
+# exchange rate
 token xe
 {
-    <xe-primary> [\h+ <xe-augment>]?
+    <xe-symbol> \h+ <xe-rate>
 }
 
-token xe-primary
+proto token xe-symbol {*}
+token xe-symbol:per-unit { <xe-symbol-char> }
+token xe-symbol:in-total { <xe-symbol-char> ** 2 }
+
+token xe-symbol-char { '@' }
+
+token xe-rate
 {
-    # @ $830.024 USD
+    # $830.024 USD
     <asset-symbol>? <asset-quantity> \h+ <asset-code>
 
     |
 
-    # @ USD $830.024
+    # USD $830.024
     <asset-code> \h+ <asset-symbol>? <asset-quantity>
 }
 
-# augmented exchange rate data
-proto token xe-augment {*}
+# --- --- --- end xe }}}
+# --- --- --- inherit {{{
 
-# inherited exchange rate
-token xe-augment:inherited-basis
+# inherited basis
+token inherit
 {
-    <xe-inherited-basis-symbol> \h+ <xe-inherited-basis=xe-primary>
+    <inherit-symbol> \h+ <inherit-rate=xe-rate>
 }
 
-proto token xe-inherited-basis-symbol {*}
-token xe-inherited-basis-symbol:texas { '<<' }
-token xe-inherited-basis-symbol:unicode { '«' }
+proto token inherit-symbol {*}
+token inherit-symbol:per-unit { <inherit-symbol-char> }
+token inherit-symbol:in-total { <inherit-symbol-char> ** 2 }
+
+proto token inherit-symbol-char {*}
+token inherit-symbol-char:texas { '<<' }
+token inherit-symbol-char:unicode { '«' }
+
+# --- --- --- end inherit }}}
+# --- --- --- lot {{{
+
+proto token lot {*}
 
 # lot sales (acquisition)
-token xe-augment:lot-acquisition
+token lot:acquisition
 {
-    <xe-lot-acquisition-symbol> \h+ <xe-lot>
+    <lot-acquisition-symbol> \h+ <lot-name>
 }
 
 # lot sales (disposition)
-token xe-augment:lot-disposition
+token lot:disposition
 {
-    <xe-lot-disposition-symbol> \h+ <xe-lot>
+    <lot-disposition-symbol> \h+ <lot-name>
 }
 
-proto token xe-lot-acquisition-symbol {*}
-token xe-lot-acquisition-symbol:texas { '->' }
-token xe-lot-acquisition-symbol:unicode { '→' }
+proto token lot-acquisition-symbol {*}
+token lot-acquisition-symbol:texas { '->' }
+token lot-acquisition-symbol:unicode { '→' }
 
-proto token xe-lot-disposition-symbol {*}
-token xe-lot-disposition-symbol:texas { '<-' }
-token xe-lot-disposition-symbol:unicode { '←' }
+proto token lot-disposition-symbol {*}
+token lot-disposition-symbol:texas { '<-' }
+token lot-disposition-symbol:unicode { '←' }
 
-token xe-lot
+token lot-name
 {
     '[' \h* <var-name> \h* ']'
 }
 
-# --- --- end posting amount grammar }}}
+# --- --- --- end lot }}}
+
+# --- --- end posting annotation grammar }}}
 
 # --- end posting grammar }}}
 
@@ -714,14 +784,14 @@ token txnlib
 }
 
 # end include grammar }}}
-# journal grammar {{{
+# ledger grammar {{{
 
 token TOP
 {
-    <journal>
+    <ledger>
 }
 
-token journal
+token ledger
 {
     [
         <segment>
@@ -748,6 +818,6 @@ token comment-line
     ^^ \h* <.comment> $$
 }
 
-# end journal grammar }}}
+# end ledger grammar }}}
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

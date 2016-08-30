@@ -303,17 +303,14 @@ subtest
 
     sub is-valid-exchange-rate(Str:D $exchange-rate) returns Bool:D
     {
-        TXN::Parser::Grammar.parse(
-            $exchange-rate,
-            :rule<exchange-rate>
-        ).so;
+        TXN::Parser::Grammar.parse($exchange-rate, :rule<xe>).so;
     }
 
     ok(
         @exchange-rates.grep({is-valid-exchange-rate($_)}).elems ==
             @exchange-rates.elems,
         q:to/EOF/
-        ♪ [Grammar.parse($exchange-rate, :rule<exchange-rate>)] - 7 of 9
+        ♪ [Grammar.parse($exchange-rate, :rule<xe>)] - 7 of 9
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Exchange rates validate successfully, as
         ┃   Success   ┃    expected.

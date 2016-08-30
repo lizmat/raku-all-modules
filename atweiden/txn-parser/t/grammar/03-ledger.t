@@ -20,11 +20,11 @@ subtest
     EOF
 
     push @include-lines, Q:to/EOF/;
-    include 'journal includes/file with whitespace'
+    include 'ledger includes/file with whitespace'
     EOF
 
     push @include-lines, Q:to/EOF/;
-    include "journal includes/file with whitespace"
+    include "ledger includes/file with whitespace"
     EOF
 
     push @include-lines, Q:to/EOF/;
@@ -36,7 +36,7 @@ subtest
     EOF
 
     push @include-lines, Q:to/EOF/;
-    include <journal\ includes/lib\ with\ whitespace>
+    include <ledger\ includes/lib\ with\ whitespace>
     EOF
 
     push @include-lines, Q:to/EOF/;
@@ -125,22 +125,22 @@ subtest
 }
 
 # end entry grammar tests }}}
-# journal grammar tests {{{
+# ledger grammar tests {{{
 
 subtest
 {
-    my Str $journal = slurp 't/data/sample/sample.txn';
-    my Str $journal-quoted =
+    my Str $ledger = slurp 't/data/sample/sample.txn';
+    my Str $ledger-quoted =
         slurp 't/data/quoted-asset-codes/quoted-asset-codes.txn';
 
-    my $journal-match = TXN::Parser::Grammar.parse($journal);
-    my $journal-quoted-match = TXN::Parser::Grammar.parse($journal-quoted);
+    my $ledger-match = TXN::Parser::Grammar.parse($ledger);
+    my $ledger-quoted-match = TXN::Parser::Grammar.parse($ledger-quoted);
 
     is(
-        $journal-match.WHAT,
+        $ledger-match.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($journal)] - 3 of 4
+        ♪ [Grammar.parse($ledger)] - 3 of 4
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Journal validates successfully, as expected.
         ┃   Success   ┃
@@ -149,10 +149,10 @@ subtest
         EOF
     );
     is(
-        $journal-quoted-match.WHAT,
+        $ledger-quoted-match.WHAT,
         Match,
         q:to/EOF/
-        ♪ [Grammar.parse($journal-quoted)] - 4 of 4
+        ♪ [Grammar.parse($ledger-quoted)] - 4 of 4
         ┏━━━━━━━━━━━━━┓
         ┃             ┃  ∙ Journal with quoted asset codes validates
         ┃   Success   ┃    successfully, as expected.
@@ -162,6 +162,6 @@ subtest
     );
 }
 
-# end journal grammar tests }}}
+# end ledger grammar tests }}}
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

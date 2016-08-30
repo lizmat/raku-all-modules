@@ -1,6 +1,6 @@
 # TXN::Parser
 
-Double-entry bookkeeping transaction journal parser
+Double-entry accounting ledger parser
 
 
 ## Synopsis
@@ -8,7 +8,7 @@ Double-entry bookkeeping transaction journal parser
 ```perl6
 use TXN::Parser;
 
-# parse transactions from string
+# parse ledger from string
 my $txn = Q:to/EOF/;
 2014-01-01 "I started the year with $1000 in Bankwest"
   Assets:Personal:Bankwest:Cheque    $1000 USD
@@ -16,7 +16,7 @@ my $txn = Q:to/EOF/;
 EOF
 my @txn = TXN::Parser.parse($txn).made;
 
-# parse transactions from file
+# parse ledger from file
 my $file = 'sample.txn';
 my @txn = TXN::Parser.parsefile($file).made;
 ```

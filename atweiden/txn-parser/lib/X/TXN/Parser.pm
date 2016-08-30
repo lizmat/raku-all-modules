@@ -11,7 +11,7 @@ class Entry::MultipleEntities is Exception
     method message() returns Str
     {
         my Str $message = qq:to/EOF/;
-        Sorry, only one entity per journal entry allowed, but found
+        Sorry, only one entity per ledger entry allowed, but found
         $.number-entities entities.
 
         In entry:
@@ -33,11 +33,11 @@ class Include is Exception
     method message() returns Str
     {
         my Str $message = qq:to/EOF/;
-        Sorry, could not load transaction journal to include at
+        Sorry, could not load accounting ledger to include at
 
             「$.filename」
 
-        Transaction journal not found or not readable.
+        Accounting ledger not found or not readable.
         EOF
         $message.trim;
     }
