@@ -1,0 +1,7 @@
+all: resources/lib/libnumpack%SO% %FAKESO%
+
+resources/lib/libnumpack%SO%: libnumpack%O%
+	%LD% %LDSHARED% %LDFLAGS% %LDOUT%resources/lib/libnumpack%SO% libnumpack%O%
+
+libnumpack%O%: libnumpack.c
+	%CC% -c %CCSHARED% %CCFLAGS% %CCOUT%libnumpack%O% libnumpack.c
