@@ -3,9 +3,21 @@ use TXN::Parser::Types;
 use X::TXN::Parser;
 unit class TXN::Parser::AST;
 
+# role ToJSON {{{
+
+role ToJSON
+{
+    method to-json(::?CLASS:D:) returns Str
+    {
+        Rakudo::Internals::JSON.to-json(self.hash);
+    }
+}
+
+# end role ToJSON }}}
+
 # TXN::Parser::AST::Entry::ID {{{
 
-class Entry::ID
+class Entry::ID does ToJSON
 {
     has UInt @.number is required;
     has XXHash $.xxhash is required;
@@ -16,6 +28,11 @@ class Entry::ID
     method canonical(::?CLASS:D:) returns Str
     {
         $.number ~ ':' ~ $.xxhash;
+    }
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        %(:@.number, :$.text, :$.xxhash);
     }
 }
 
@@ -28,69 +45,110 @@ class Entry::Header
     has Str $.description;
     has UInt $.important = 0;
     has VarName @.tag;
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        %(:$.date, :$.description, :$.important, :@.tag);
+    }
+
+    method to-json(::?CLASS:D:) returns Str
+    {
+        my %h = self.hash;
+        %h<date> = ~%h<date>;
+        Rakudo::Internals::JSON.to-json(%h);
+    }
 }
 
 # end TXN::Parser::AST::Entry::Header }}}
 # TXN::Parser::AST::Entry::Posting::Account {{{
 
-class Entry::Posting::Account
+class Entry::Posting::Account does ToJSON
 {
     has Silo $.silo is required;
     has VarName $.entity is required;
     has VarName @.path;
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        %(:$.entity, :@.path, :silo($.silo.gist));
+    }
 }
 
 # end TXN::Parser::AST::Entry::Posting::Account }}}
 # TXN::Parser::AST::Entry::Posting::Amount {{{
 
-class Entry::Posting::Amount
+class Entry::Posting::Amount does ToJSON
 {
     has AssetCode $.asset-code is required;
     has Quantity $.asset-quantity is required;
     has AssetSymbol $.asset-symbol;
     has PlusMinus $.plus-or-minus;
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        %(:$.asset-code, :$.asset-quantity, :$.asset-symbol, :$.plus-or-minus);
+    }
 }
 
 # end TXN::Parser::AST::Entry::Posting::Amount }}}
 # TXN::Parser::AST::Entry::Posting::Annot::XE {{{
 
-class Entry::Posting::Annot::XE
+class Entry::Posting::Annot::XE does ToJSON
 {
     has AssetCode $.asset-code is required;
     has Quantity $.asset-quantity is required;
     has AssetSymbol $.asset-symbol;
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        %(:$.asset-code, :$.asset-quantity, :$.asset-symbol);
+    }
 }
 
 # end TXN::Parser::AST::Entry::Posting::Annot::XE }}}
 # TXN::Parser::AST::Entry::Posting::Annot::Inherit {{{
 
-class Entry::Posting::Annot::Inherit is Entry::Posting::Annot::XE { * }
+class Entry::Posting::Annot::Inherit is Entry::Posting::Annot::XE {*}
 
 # end TXN::Parser::AST::Entry::Posting::Annot::Inherit }}}
 # TXN::Parser::AST::Entry::Posting::Annot::Lot {{{
 
-class Entry::Posting::Annot::Lot
+class Entry::Posting::Annot::Lot does ToJSON
 {
     has VarName $.name is required;
 
     # is this lot being drawn down or filled up?
     has DecInc $.decinc is required;
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        %(:decinc($.decinc.gist), :$.name);
+    }
 }
 
 # end TXN::Parser::AST::Entry::Posting::Annot::Lot }}}
 # TXN::Parser::AST::Entry::Posting::Annot {{{
 
-class Entry::Posting::Annot
+class Entry::Posting::Annot does ToJSON
 {
     has Entry::Posting::Annot::Inherit $.inherit;
     has Entry::Posting::Annot::Lot $.lot;
     has Entry::Posting::Annot::XE $.xe;
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        my %h;
+        %h<inherit> = $.inherit.hash if $.inherit;
+        %h<lot> = $.lot.hash if $.lot;
+        %h<xe> = $.xe.hash if $.xe;
+        %h;
+    }
 }
 
 # end TXN::Parser::AST::Entry::Posting::Annot }}}
 # TXN::Parser::AST::Entry::Posting::ID {{{
 
-class Entry::Posting::ID
+class Entry::Posting::ID does ToJSON
 {
     # parent
     has Entry::ID $.entry-id is required;
@@ -107,12 +165,17 @@ class Entry::Posting::ID
     {
         $.number ~ ':' ~ $.xxhash;
     }
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        %(:entry-id($.entry-id.hash), :$.number, :$.text, :$.xxhash);
+    }
 }
 
 # end TXN::Parser::AST::Entry::Posting::ID }}}
 # TXN::Parser::AST::Entry::Posting {{{
 
-class Entry::Posting
+class Entry::Posting does ToJSON
 {
     has Entry::Posting::ID $.id is required;
     has Entry::Posting::Account $.account is required;
@@ -153,6 +216,23 @@ class Entry::Posting
     }
 
     # end method new }}}
+
+    # method hash {{{
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        my %h;
+        %h<id> = $.id.hash;
+        %h<account> = $.account.hash;
+        %h<amount> = $.amount.hash;
+        %h<decinc> = $.decinc.gist;
+        %h<drcr> = $.drcr.gist;
+        %h<annot> = $.annot.hash if $.annot;
+        %h;
+    }
+
+    # end method hash }}}
+
     # sub determine-debit-or-credit {{{
 
     # assets and expenses increase on the debit side
@@ -225,6 +305,25 @@ class Entry
     }
 
     # end method new }}}
+
+    # method hash {{{
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        %(:header($.header.hash), :id($.id.hash), :posting(@.posting».hash));
+    }
+
+    # end method hash }}}
+    # method to-json {{{
+
+    method to-json(::?CLASS:D:) returns Str
+    {
+        my %h = self.hash;
+        %h<header><date> = ~%h<header><date>;
+        Rakudo::Internals::JSON.to-json(%h);
+    }
+
+    # end method to-json }}}
 }
 
 # end TXN::Parser::AST::Entry }}}
