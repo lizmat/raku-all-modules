@@ -1,8 +1,8 @@
 {
     "name"        : "TXN",
-    "version"     : "0.0.3",
+    "version"     : "0.0.4",
     "author"      : "Andy Weidenbaum",
-    "description" : "Double-entry bookkeeping transaction journal parser and serializer",
+    "description" : "Double-entry accounting ledger parser and serializer",
     "depends"     : ["Config::TOML", "File::Presence", "TXN::Parser"],
     "license"     : "http://unlicense.org/UNLICENSE",
     "source-type" : "git",

@@ -2,86 +2,248 @@ use v6;
 use Config::TOML;
 use File::Presence;
 use TXN::Parser;
+use TXN::Parser::Types;
 unit module TXN;
 
 constant $PROGRAM = 'mktxn';
-constant $VERSION = v0.0.3;
+constant $VERSION = v0.0.4;
 
-# emit {{{
+# TXN::Package {{{
 
-multi sub emit(
-    Str $content,
-    Bool :$json,
-    *%opts (
-        Str :$txn-dir,
-        Int :$date-local-offset
+my class TXN::Package
+{
+    # --- attributes {{{
+
+    # e.g. "mktxn v0.0.2 2016-05-10T10:22:44.054586-07:00"
+    has Str $!compiler is required;
+
+    # accounting ledger AST
+    has TXN::Parser::AST::Entry @!entry is required;
+
+    # number of entries in @!entry
+    has UInt $!count is required;
+
+    # entities seen in @!entry
+    has VarName @!entities-seen is required;
+
+    # package info
+    has Str $!pkgname is required;
+    has Str $!pkgver is required;
+    has UInt $!pkgrel is required;
+    has Str $!pkgdesc;
+
+    # --- end attributes }}}
+
+    # --- submethod BUILD {{{
+
+    submethod BUILD(
+        Str :$content!,
+        :%prepare! (
+            Str :$!pkgname!,
+            Str :$!pkgver!,
+            UInt :$!pkgrel!,
+            Str :$pkgdesc,
+            Int :$date-local-offset,
+            Str :$txn-dir
+        ),
+        Bool :$verbose
     )
-)
-{
-    my @txn = TXN::Parser.parse($content, |%opts).made;
-    emit(:@txn, :$json);
-}
-
-multi sub emit(
-    Str :$file!,
-    Bool :$json,
-    *%opts (
-        Str :$txn-dir,
-        Int :$date-local-offset
-    )
-)
-{
-    my @txn = TXN::Parser.parsefile($file, |%opts).made;
-    emit(:@txn, :$json);
-}
-
-multi sub emit(:@txn!, Bool :$json! where *.so)
-{
-    # stringify DateTimes in preparation for JSON serialization
-    loop (my Int $i = 0; $i < @txn.elems; $i++)
     {
-        @txn[$i]<header><date> = ~@txn[$i]<header><date>;
+        $!pkgdesc = $pkgdesc if $pkgdesc;
+
+        my DateTime $dt = now.DateTime;
+        say "Making txn pkg: $!pkgname $!pkgver-$!pkgrel ($dt)" if $verbose;
+        $!compiler = $PROGRAM ~ ' v' ~ $VERSION ~ " $dt";
+
+        # parse the accounting ledger
+        my %h;
+        %h<date-local-offset> = $date-local-offset if $date-local-offset;
+        %h<txn-dir> = $txn-dir if $txn-dir;
+        @!entry = from-txn($content, |%h);
+
+        # compute basic stats about the accounting ledger
+        $!count = @!entry.elems;
+        @!entities-seen = get-entities-seen(@!entry);
     }
 
-    Rakudo::Internals::JSON.to-json(@txn);
+    # --- end submethod BUILD }}}
+    # --- method new {{{
+
+    method new(
+        Str $content,
+        Bool :$verbose = False,
+        *%opts (
+            Str :$pkgname,
+            Str :$pkgver,
+            UInt :$pkgrel,
+            Str :$pkgdesc,
+            Int :$date-local-offset,
+            Str :$txn-dir,
+            Str :$template
+        )
+    )
+    {
+        my %prepare = prepare(|%opts);
+        self.bless(:$content, :%prepare, :$verbose);
+    }
+
+    # --- end method new }}}
+
+    # --- method hash {{{
+
+    method hash(::?CLASS:D:) returns Hash
+    {
+        %(
+            :@!entry,
+            :txn-info(%(
+                :$!compiler,
+                :$!count,
+                :@!entities-seen,
+                :$!pkgdesc,
+                :$!pkgname,
+                :$!pkgrel,
+                :$!pkgver
+            ))
+        );
+    }
+
+    # --- end method hash }}}
+
+    # --- sub get-entities-seen {{{
+
+    sub get-entities-seen(TXN::Parser::AST::Entry @entry) returns Array
+    {
+        my VarName @entities-seen = @entry.flatmap({
+            .posting.map({ .account.entity })
+        });
+        @entities-seen .= unique;
+        @entities-seen .= sort;
+    }
+
+    # --- end sub get-entities-seen }}}
+    # --- sub has-pkgname-pkgver-pkgrel {{{
+
+    sub pkgname-pkgver-pkgrel(%txn-info) returns Array[Bool]
+    {
+        my Bool @p =
+            %txn-info<pkgname>:exists,
+            %txn-info<pkgver>:exists,
+            %txn-info<pkgrel>:exists;
+    }
+
+    sub has-pkgname-pkgver-pkgrel(%txn-info) returns Bool
+    {
+        given pkgname-pkgver-pkgrel(%txn-info)
+        {
+            when .grep(*.so).elems == .elems
+            {
+                True;
+            }
+            default
+            {
+                my Str $message = 'Sorry, ';
+                my Str @missing;
+                push @missing, 'pkgname' if $_[0].not;
+                push @missing, 'pkgver' if $_[1].not;
+                push @missing, 'pkgrel' if $_[2].not;
+                $message ~= @missing.join(', ');
+                $message ~= ' missing from %txn-info. Got:' ~ "\n";
+                $message ~= %txn-info.perl;
+                die $message;
+            }
+        }
+    }
+
+    # --- end sub has-pkgname-pkgver-pkgrel }}}
+    # --- sub prepare {{{
+
+    # merge build settings from TOML template if one is provided
+    sub prepare(
+        Str :$pkgname,
+        Str :$pkgver,
+        UInt :$pkgrel,
+        Str :$pkgdesc,
+        Int :$date-local-offset,
+        Str :$txn-dir,
+        Str :$template
+    )
+    {
+        my %prepare;
+
+        if $template
+        {
+            my %h;
+            %h<date-local-offset> = $date-local-offset if $date-local-offset;
+            my %template = from-toml(:file($template), |%h);
+
+            %prepare<pkgname> = %template<pkgname> if %template<pkgname>;
+            %prepare<pkgver> = %template<pkgver> if %template<pkgver>;
+            %prepare<pkgrel> = Int(%template<pkgrel>) if %template<pkgrel>;
+            %prepare<pkgdesc> = %template<pkgdesc> if %template<pkgdesc>;
+            if %template<txn-dir>
+            {
+                %prepare<txn-dir> = %template<txn-dir>.IO.is-relative
+                    # resolve txn-dir path relative to template file
+                    ??
+                        ~join(
+                            '/',
+                            $template.IO.dirname,
+                            %template<txn-dir>
+                        ).IO.resolve
+                    # absolute txn-dir path given, use it directly
+                    !! %template<txn-dir>;
+            }
+            %prepare<date-local-offset> = Int(%template<date-local-offset>)
+                if %template<date-local-offset>;
+        }
+
+        # overwrite template options if conflicts arise
+        %prepare<pkgname> = $pkgname if $pkgname;
+        %prepare<pkgver> = $pkgver if $pkgver;
+        %prepare<pkgrel> = $pkgrel if $pkgrel;
+        %prepare<pkgdesc> = $pkgdesc if $pkgdesc;
+        %prepare<date-local-offset> = $date-local-offset if $date-local-offset;
+        %prepare<txn-dir> = ~$txn-dir.IO.resolve if $txn-dir;
+
+        # check for existence of pkgname, pkgver, and pkgrel
+        die unless has-pkgname-pkgver-pkgrel(%prepare);
+
+        %prepare;
+    }
+
+    # --- end sub prepare }}}
 }
 
-multi sub emit(:@txn!, Bool :$json)
-{
-    @txn;
-}
+# end TXN::Package }}}
 
-# end emit }}}
-
-# from-txn {{{
+# sub from-txn {{{
 
 multi sub from-txn(
     Str $content,
     *%opts (
-        Bool :$json,
         Str :$txn-dir,
         Int :$date-local-offset
     )
-) is export
+) is export returns Array
 {
-    emit($content, |%opts);
+    my TXN::Parser::AST::Entry @entry =
+        TXN::Parser.parse($content, |%opts).made;
 }
 
 multi sub from-txn(
     Str :$file!,
     *%opts (
-        Bool :$json,
         Str :$txn-dir,
         Int :$date-local-offset
     )
-) is export
+) is export returns Array
 {
-    emit(:$file, |%opts);
+    my TXN::Parser::AST::Entry @entry =
+        TXN::Parser.parsefile($file, |%opts).made;
 }
 
-# end from-txn }}}
-
-# mktxn {{{
+# end sub from-txn }}}
+# sub mktxn {{{
 
 multi sub mktxn(
     Str :$file!,
@@ -89,7 +251,7 @@ multi sub mktxn(
     *%opts (
         Str :$pkgname,
         Str :$pkgver,
-        Int :$pkgrel,
+        UInt :$pkgrel,
         Str :$pkgdesc,
         Str :$txn-dir,
         Int :$date-local-offset,
@@ -97,254 +259,87 @@ multi sub mktxn(
     )
 ) is export
 {
-    my %prepare = prepare(|%opts);
-
-    say "Making txn pkg: %prepare<pkgname> ",
-        "%prepare<pkgver>-%prepare<pkgrel> (%prepare<dt>)";
-
-    my %build = build(:$file, |%prepare);
-    package(%build);
-}
-
-multi sub mktxn(
-    Str :$file!,
-    *%opts (
-        Str :$pkgname,
-        Str :$pkgver,
-        Int :$pkgrel,
-        Str :$pkgdesc,
-        Str :$txn-dir,
-        Int :$date-local-offset,
-        Str :$template
-    )
-) is export returns Hash
-{
-    my %prepare = prepare(|%opts);
-    my %build = build(:$file, |%prepare);
-}
-
-multi sub mktxn(
-    Str $content,
-    *%opts (
-        Str :$pkgname,
-        Str :$pkgver,
-        Int :$pkgrel,
-        Str :$pkgdesc,
-        Str :$txn-dir,
-        Int :$date-local-offset,
-        Str :$template
-    )
-) is export returns Hash
-{
-    my %prepare = prepare(|%opts);
-    my %build = build($content, |%prepare);
-}
-
-# end mktxn }}}
-
-# prepare {{{
-
-sub prepare(
-    Str :$pkgname,
-    Str :$pkgver,
-    Int :$pkgrel,
-    Str :$pkgdesc,
-    Str :$txn-dir,
-    Int :$date-local-offset,
-    Str :$template
-) returns Hash
-{
-    my %prepare = :dt(~DateTime.now);
-    if $template
-    {
-        my %h; %h<date-local-offset> =
-            Int($date-local-offset) if $date-local-offset;
-        my %template = from-toml(:file($template), |%h);
-        %prepare<pkgname> = %template<pkgname> if %template<pkgname>;
-        %prepare<pkgver> = %template<pkgver> if %template<pkgver>;
-        %prepare<pkgrel> = Int(%template<pkgrel>) if %template<pkgrel>;
-        %prepare<pkgdesc> = %template<pkgdesc> if %template<pkgdesc>;
-        if %template<txn-dir>
-        {
-            %prepare<txn-dir> = %template<txn-dir>.IO.is-relative
-                # resolve txn-dir path relative to template file
-                ?? ~join('/', $template.IO.dirname, %template<txn-dir>).IO.resolve
-                # absolute txn-dir path given, use it directly
-                !! %template<txn-dir>;
-        }
-        %prepare<date-local-offset> =
-            Int(%template<date-local-offset>) if %template<date-local-offset>;
-    }
-
-    # cmdline flags overwrite template options if conflicts arise
-    %prepare<pkgname> = $pkgname if $pkgname;
-    %prepare<pkgver> = $pkgver if $pkgver;
-    %prepare<pkgrel> = Int($pkgrel) if $pkgrel;
-    %prepare<pkgdesc> = $pkgdesc if $pkgdesc;
-    %prepare<txn-dir> = ~$txn-dir.IO.resolve if $txn-dir;
-    %prepare<date-local-offset> = Int($date-local-offset) if $date-local-offset;
-
-    # check for existence of pkgname, pkgver, and pkgrel
-    die unless has-pkgname-pkgver-pkgrel(%prepare);
-
-    %prepare;
-}
-
-# end prepare }}}
-
-# build {{{
-
-multi sub build(
-    Str $content,
-    Str :$dt!,
-    Str :$txn-dir,
-    Int :$date-local-offset,
-    *%opts (
-        Str :$pkgname,
-        Str :$pkgver,
-        Int :$pkgrel,
-        Str :$pkgdesc,
-    )
-) returns Hash
-{
-    my %txninfo = gen-txninfo($dt, |%opts);
-
-    my %h;
-    %h<txn-dir> = $txn-dir if $txn-dir;
-    %h<date-local-offset> = Int($date-local-offset) if $date-local-offset;
-    my @txn = from-txn($content, |%h);
-
-    # compute basic stats about the transaction journal
-    %txninfo<count> = @txn.elems;
-    %txninfo<entities-seen> = get-entities-seen(@txn);
-
-    my %build = :$dt, :@txn, :%txninfo;
-}
-
-multi sub build(
-    Str :$file!,
-    Str :$dt!,
-    Str :$txn-dir,
-    Int :$date-local-offset,
-    *%opts (
-        Str :$pkgname,
-        Str :$pkgver,
-        Int :$pkgrel,
-        Str :$pkgdesc,
-    )
-) returns Hash
-{
     my Str $f = resolve-txn-file-path($file);
-
-    my %txninfo = gen-txninfo($dt, |%opts);
-
-    my %h;
-    %h<txn-dir> = $txn-dir if $txn-dir;
-    %h<date-local-offset> = Int($date-local-offset) if $date-local-offset;
-    my @txn = from-txn(:file($f), |%h);
-
-    # compute basic stats about the transaction journal
-    %txninfo<count> = @txn.elems;
-    %txninfo<entities-seen> = get-entities-seen(@txn);
-
-    my %build = :$dt, :@txn, :%txninfo;
+    my %txn-package = TXN::Package.new(slurp($f), :verbose, |%opts).hash;
+    package(%txn-package);
 }
 
-# end build }}}
-
-# package {{{
-
-sub package(%build (Str :$dt!, :@txn!, :%txninfo!))
+multi sub mktxn(
+    Str :$file!,
+    *%opts (
+        Str :$pkgname,
+        Str :$pkgver,
+        UInt :$pkgrel,
+        Str :$pkgdesc,
+        Str :$txn-dir,
+        Int :$date-local-offset,
+        Str :$template
+    )
+) is export returns Hash
 {
+    mktxn(slurp($file), |%opts);
+}
+
+multi sub mktxn(
+    Str $content,
+    *%opts (
+        Str :$pkgname,
+        Str :$pkgver,
+        UInt :$pkgrel,
+        Str :$pkgdesc,
+        Str :$txn-dir,
+        Int :$date-local-offset,
+        Str :$template
+    )
+) is export returns Hash
+{
+    TXN::Package.new($content, |%opts).hash;
+}
+
+# end sub mktxn }}}
+# sub package {{{
+
+# serialize to JSON files on disk
+sub package(%txn-package (TXN::Parser::AST::Entry :@entry!, :%txn-info!))
+{
+    say "Creating txn pkg \"%txn-info<pkgname>\"…";
+
     # make build directory
     my Str $build-dir = $*CWD ~ '/build';
-    my Str $txninfo-file = "$build-dir/.TXNINFO";
-    my Str $txnjson-file = "$build-dir/txn.json";
+    my Str $txn-info-file = "$build-dir/.TXNINFO";
+    my Str $txn-json-file = "$build-dir/txn.json";
     mkdir $build-dir;
 
     # serialize .TXNINFO to JSON
-    spurt $txninfo-file, Rakudo::Internals::JSON.to-json(%txninfo) ~ "\n";
+    spurt $txn-info-file, Rakudo::Internals::JSON.to-json(%txn-info) ~ "\n";
 
-    say "Creating txn pkg \"%txninfo<pkgname>\"…";
-
-    # stringify DateTimes in preparation for JSON serialization
-    loop (my Int $i = 0; $i < @txn.elems; $i++)
-    {
-        @txn[$i]<header><date> = ~@txn[$i]<header><date>;
-    }
-
-    # serialize transactions to JSON
-    spurt $txnjson-file, Rakudo::Internals::JSON.to-json(@txn) ~ "\n";
+    # serialize ledger AST to JSON
+    spurt $txn-json-file, Rakudo::Internals::JSON.to-json(@entry».to-json) ~ "\n";
 
     # compress
     my Str $tarball =
-        "%txninfo<pkgname>-%txninfo<pkgver>-%txninfo<pkgrel>\.txn.tar.xz";
+        "%txn-info<pkgname>-%txn-info<pkgver>-%txn-info<pkgrel>\.txn.tar.xz";
     shell "tar \\
              -C $build-dir \\
              --xz \\
              -cvf $tarball \\
-             {$txninfo-file.IO.basename} {$txnjson-file.IO.basename}";
+             {$txn-info-file.IO.basename} {$txn-json-file.IO.basename}";
 
-    say "Finished making: %txninfo<pkgname> ",
-        "%txninfo<pkgver>-%txninfo<pkgrel> ($dt)";
-
-    say "Cleaning up…";
+    my Str $dt = %txn-info<compiler>.split(' ')[*-1];
+    say "Finished making: %txn-info<pkgname> ",
+        "%txn-info<pkgver>-%txn-info<pkgrel> ($dt)";
 
     # clean up build directory
+    say "Cleaning up…";
     dir($build-dir)».unlink;
     rmdir $build-dir;
 }
 
-# end package }}}
-
-# gen-txninfo {{{
-
-sub gen-txninfo(
-    Str $dt,
-    Str :$pkgname!,
-    Str :$pkgver!,
-    Int :$pkgrel!,
-    Str :$pkgdesc
-) returns Hash
-{
-    my %txninfo;
-    %txninfo<pkgname> = $pkgname;
-    %txninfo<pkgver> = $pkgver;
-    %txninfo<pkgrel> = Int($pkgrel);
-    %txninfo<pkgdesc> = $pkgdesc if $pkgdesc;
-
-    # note the compiler name and version, and time of compile
-    %txninfo<compiler> = $PROGRAM ~ ' v' ~ $VERSION ~ " $dt";
-
-    %txninfo;
-}
-
-# end gen-txninfo }}}
-
-# get-entities-seen {{{
-
-sub get-entities-seen(@txn) returns Array
-{
-    my Str @entities-seen;
-
-    for @txn -> $entry
-    {
-        for $entry<postings>.Array -> $posting
-        {
-            push @entities-seen, $posting<account><entity>;
-        }
-    }
-
-    @entities-seen .= unique;
-    @entities-seen .= sort;
-}
-
-# end get-entities-seen }}}
-
-# resolve-txn-file-path {{{
+# end sub package }}}
+# sub resolve-txn-file-path {{{
 
 multi sub resolve-txn-file-path(
-    Str $file where $file.IO.extension eq 'txn'
+    Str $file where *.IO.extension eq 'txn'
 ) returns Str
 {
     die unless exists-readable-file($file);
@@ -357,50 +352,6 @@ multi sub resolve-txn-file-path(Str $file) returns Str
     "$file.txn";
 }
 
-# end resolve-txn-file-path }}}
-
-# has-pkgname-pkgver-pkgrel {{{
-
-sub pkgname-pkgver-pkgrel(%txninfo) returns Array
-{
-    my Bool @p =
-        %txninfo<pkgname>:exists,
-        %txninfo<pkgver>:exists,
-        %txninfo<pkgrel>:exists;
-}
-
-sub has-pkgname-pkgver-pkgrel(%txninfo) returns Bool
-{
-    given pkgname-pkgver-pkgrel(%txninfo)
-    {
-        when .grep(*.so).elems == .elems
-        {
-            True;
-        }
-        default
-        {
-            my Str $message = 'Sorry, ';
-            my Str @missing;
-            if $_[0] eqv False
-            {
-                push @missing, 'pkgname';
-            }
-            if $_[1] eqv False
-            {
-                push @missing, 'pkgver';
-            }
-            if $_[2] eqv False
-            {
-                push @missing, 'pkgrel';
-            }
-            $message ~= @missing.join(', ');
-            $message ~= ' missing from %txninfo. Got:' ~ "\n";
-            $message ~= %txninfo.perl;
-            die $message;
-        }
-    }
-}
-
-# end has-pkgname-pkgver-pkgrel }}}
+# end sub resolve-txn-file-path }}}
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

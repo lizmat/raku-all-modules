@@ -1,6 +1,5 @@
 use v6;
 use Panda::Builder;
-use Panda::Common;
 
 # for panda only
 # tests require cloning atweiden/txn-examples into t/data

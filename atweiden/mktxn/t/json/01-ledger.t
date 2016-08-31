@@ -9,9 +9,9 @@ plan 1;
 
 =heading1 Purpose
 
-The purpose of this test is to ensure transaction journals serialized
-to JSON and round tripped back to Perl6 are equivalent to transaction
-journals parsed normally.
+The purpose of this test is to ensure accounting ledgers serialized
+to JSON and round tripped back to Perl6 are equivalent to accounting
+ledgers parsed normally.
 
 =end pod
 
@@ -20,7 +20,7 @@ subtest
     my Str $file = 't/data/sample/sample.txn';
 
     # with TXN::Parser
-    my $match-journal = TXN::Parser.parsefile($file);
+    my $match-ledger = TXN::Parser.parsefile($file);
 
     # with TXN
     my @txn = from-txn(:$file);
@@ -31,7 +31,7 @@ subtest
 
     is-deeply(
         @txn,
-        $match-journal.made,
+        $match-ledger.made,
         q:to/EOF/
         ♪ [Is from-txn equivalent to Match.made?] - 1 of 2
         ┏━━━━━━━━━━━━━┓

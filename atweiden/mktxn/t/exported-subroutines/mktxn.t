@@ -14,13 +14,14 @@ subtest
       Assets:Personal:Bankwest:Cheque    -$5.00 USD
     EOF
 
-    my @txn = from-txn($txn);
-    my @txn-from-txn-parser = TXN::Parser.parse($txn).made;
-    my @txn-from-mktxn =
-        mktxn($txn, :pkgname<catfood>, :pkgver<1.0.0>, :pkgrel(1))<txn>.Array;
+    my TXN::Parser::AST::Entry @entry = from-txn($txn);
+    my TXN::Parser::AST::Entry @entry-from-txn-parser =
+        TXN::Parser.parse($txn).made;
+    my TXN::Parser::AST::Entry @entry-from-mktxn =
+        mktxn($txn, :pkgname<catfood>, :pkgver<1.0.0>, :pkgrel(1))<entry>.Array;
 
-    is-deeply @txn-from-txn-parser, @txn, 'Is expected value';
-    is-deeply @txn-from-txn-parser, @txn-from-mktxn, 'Is expected value';
+    is-deeply @entry-from-txn-parser, @entry, 'Is expected value';
+    is-deeply @entry-from-txn-parser, @entry-from-mktxn, 'Is expected value';
 }
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:

@@ -4,6 +4,7 @@
 
 
 use v6;
+use TXN;
 
 
 
@@ -33,31 +34,7 @@ multi sub MAIN(
     %opts<date-local-offset> = Int($date-local-offset) if $date-local-offset;
     %opts<template> = $template if $template;
 
-    use TXN;
     mktxn(:$file, :release, |%opts);
-}
-
-# serialize
-multi sub MAIN('serialize', Str $file, Str :m(:$mode) = 'perl')
-{
-    use TXN;
-    given $mode
-    {
-        when /:i perl/
-        {
-            say from-txn(:$file).perl;
-        }
-        when /:i json/
-        {
-            say from-txn(:$file, :json);
-        }
-        default
-        {
-            say "Sorry, invalid mode.\n";
-            USAGE();
-            exit 1;
-        }
-    }
 }
 
 
@@ -78,8 +55,7 @@ sub USAGE()
             [--txn-dir=<dir>]
             [--date-local-offset=<offset>]
             [--template=<template>]
-            <file>                              Make release build from file
-      mktxn [--mode=<mode>] serialize <file>    Serialize transaction journal
+            <file>                            Make release build from file
 
     optional arguments:
       -h, --help
@@ -98,8 +74,6 @@ sub USAGE()
         the local offset for dates without one
       -T, --template=<template>
         the location of the config template for release build
-      -m, --mode=<mode>
-        the serialization format
     EOF
     say $HELP.trim;
 }

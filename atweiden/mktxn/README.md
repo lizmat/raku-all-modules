@@ -1,6 +1,6 @@
 # TXN
 
-Double-entry bookkeeping transaction journal parser and serializer (mktxn)
+Double-entry accounting ledger parser and serializer (mktxn)
 
 
 ## Synopsis
@@ -14,13 +14,11 @@ $ mktxn \
     --pkgrel=1 \
     --pkgdesc="My transactions" \
     sample.txn
-
-$ mktxn -m=json serialize path/to/transaction/journal
 ```
 
 **perl6**
 
-Parse transactions from string:
+Parse ledger from string:
 
 ```perl6
 use TXN;
@@ -34,7 +32,7 @@ my @txn = from-txn($txn);
 my $json = from-txn($txn, :json);
 ```
 
-Parse transactions from file:
+Parse ledger from file:
 
 ```perl6
 use TXN;
@@ -47,7 +45,7 @@ my $json = from-txn(:$file, :json);
 
 ## Description
 
-Serializes double-entry transaction journals to JSON or Perlish object
+Serializes double-entry accounting ledgers to JSON or Perlish object
 representation.
 
 ### Release Mode
@@ -57,7 +55,7 @@ In release mode, mktxn produces a tarball comprised of two JSON files:
 #### .TXNINFO
 
 Inspired by Arch Linux `.PKGINFO` files, `.TXNINFO` files contain
-transaction journal metadata useful in simple queries.
+accounting ledger metadata useful in simple queries.
 
 ```json
 {
@@ -77,8 +75,7 @@ transaction journal metadata useful in simple queries.
 
 #### txn.json
 
-txn.json contains the output of serializing the transaction journal
-to JSON.
+txn.json contains the output of serializing the accounting ledger to JSON.
 
 ```json
 [
