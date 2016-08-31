@@ -3,12 +3,11 @@
 # run manually for testing / recompiling without needing to do a 'panda install'
 #
 # The example here is how the 'make' sub generates the makefile in the above Build.pm file
+# and then builds our collection of shared resources
 use v6;
-use LibraryMake;
+use Native::Resources::Build;
 
-my $destdir = '../resources/lib';
+my $destdir = 'resources/lib';
 mkdir $destdir;
-my %vars = get-vars($destdir);
-process-makefile('.', %vars);
 
-say "Configure completed! You can now run '%vars<MAKE>' to build libnumpack.";
+make('.', "$destdir", :libname<numpack>);
