@@ -616,7 +616,11 @@ our @A038568 is export = 1, &NOSEQ ... *;
 # A038569 / fractal
 our @A038569 is export = 1, &NOSEQ ... *;
 # A049310 / Chebyshev
-our @A049310 is export = 1, &NOSEQ ... *;
+our @A049310 is export = 𝕀.triangle.map: -> ($n, $k) {
+    if $n < $k or ($n+$k) !%% 2 { 0 }
+    else { ((-1)**(($n+$k)/2+$k)) * ((($n+$k)/2) choose $k) }
+}
+#T(n, k) := 0 if n<k or n+k odd, else ((-1)^((n+k)/2+k))*binomial((n+k)/2, k)
 # A055512 / lattices
 our @A055512 is export = 1, &NOSEQ ... *;
 # A070939 / binary length
