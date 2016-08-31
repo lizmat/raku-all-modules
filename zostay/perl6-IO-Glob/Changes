@@ -1,5 +1,7 @@
-v0.2    TBD
+v0.2    August 30, 2016
 
+    * Fix: Some patterns did not work. Collecting char-match terms together
+      fixes the problem.
     * Fix: Sort directory results when testing because .dir order is not
       guaranteed. (HT: ppentchev)
 

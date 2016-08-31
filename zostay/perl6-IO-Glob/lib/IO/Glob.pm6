@@ -276,9 +276,39 @@ has $.grammar = BSD.new;
 has Globber $!globber;
 has Globber @!globbers;
 
+my sub simplify(@terms) {
+    my Globber::Match $prev;
+    my @result = gather for @terms {
+        when Globber::Match {
+            if .smart-match ~~ Str {
+                if $prev {
+                    $prev.smart-match ~= .smart-match;
+                }
+                else {
+                    $prev = $_;
+                }
+            }
+            else {
+                take $prev with $prev;
+                take $_;
+                $prev = Nil;
+            }
+        }
+
+        default {
+            take $prev with $prev;
+            take $_;
+            $prev = Nil;
+        }
+    }
+
+    push @result, $prev if $prev;
+    @result;
+}
+
 method !compile-glob() {
     $!globber = Globber.new(
-        terms => $!grammar.parse($!pattern)<term>.map({.made}),
+        terms => simplify($!grammar.parse($!pattern)<term>.map({.made})),
     );
 }
 
@@ -286,7 +316,7 @@ method !compile-globs() {
     my @parts = $.pattern.split($.spec.dir-sep);
     @!globbers = @parts.map({
         Globber.new(
-            terms => $!grammar.parse($^pattern)<term>.map({.made}),
+            terms => simplify($!grammar.parse($^pattern)<term>.map({.made})),
         );
     });
 }

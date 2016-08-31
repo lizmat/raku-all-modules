@@ -33,4 +33,8 @@ ok 't/fixtures/foo.md'.IO ~~ $fixtures-foo;
 ok 't/fixtures/foo.txt'.IO ~~ $fixtures-foo;
 ok 't/fixtures/bar.md'.IO !~~ $fixtures-foo;
 
+my $hyphen-foo = glob('some-other-bits/blah/*.json');
+ok 'some-other-bits/blah/group.getStuff.json' ~~ $hyphen-foo;
+ok 'some-other-bits/blah/group.getStuff.md' !~~ $hyphen-foo;
+
 done-testing;
