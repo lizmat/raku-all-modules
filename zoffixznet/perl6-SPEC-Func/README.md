@@ -7,7 +7,6 @@ SPEC::Func - Import `$*SPEC` methods as functions
 # SYNOPSIS
 
 ```perl6
-    use lib <lib>;
     use SPEC::Func <dir-sep splitdir>;
     say join dir-sep, map &flip, splitdir 'foo/bar/ber';
 
@@ -33,6 +32,8 @@ abs2rel rel2abs split select
 
 At the time of this writing, the above subroutines can be exported, however,
 the actual list is derived directly from the methods provided by `$*SPEC`.
+If you `use SPEC::Func;` without specifying what to import, the error
+message will indicate what functions are available for importation.
 
 ---
 
