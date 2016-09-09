@@ -17,14 +17,11 @@ sub find-dirs (Str:D $p) returns Slip {
   return slip ($p.IO, slip find :dir($p), :type<dir>).grep: { !$seen{$_}++ };
 }
 
-sub templates(Str :@exts, Str :$dir) returns Seq {
-  return $dir.IO.dir(:test(/:i '.' @exts $/));
+sub templates(List :$exts!, Str :$dir!) returns Seq {
+  return $dir.IO.dir(:test(/:i ^ \w+ '.' |$exts $/));
 }
 
 sub build-context(Str :$i18n_dir, Str :$language) returns Hash {
-  my Str %context;
-  %context<language> = $language;
-
   my Str $i18n_file = "$i18n_dir/$language.yml";
   if path-exists(path => $i18n_file) {
     try {
@@ -33,10 +30,10 @@ sub build-context(Str :$i18n_dir, Str :$language) returns Hash {
           note "Invalid i18n yaml file [$i18n_file]";
         }
       }
-      %context.append: load-yaml slurp($i18n_file);
+      return %( %(language => $language), load-yaml slurp($i18n_file) );
     }
   }
-  return %context;
+  return %( error => "i18n yaml file [$i18n_file] could not be loaded" );
 }
 
 sub write-generated-files(Hash $content, Str :$build_dir) {
@@ -46,44 +43,51 @@ sub write-generated-files(Hash $content, Str :$build_dir) {
   };
 }
 
+sub html-file-name(Str :$page_name, Str :$default_language, Str :$language) {
+  return "{$page_name}-{$language}" if $language !~~ $default_language;
+  return $page_name;
+}
+
+sub process-livereload(Str :$content, Bool :$no_livereload) {
+  unless $no_livereload {
+    # Add livejs if live-reload enabled (default)
+    my Str $livejs = '<script src="uzu/js/live.js"></script>';
+    return $content.subst('</body>', "{$livejs}\n</body>");
+  }
+  return $content;
+}
+
 sub prepare-html-output(Hash  $context,
-                        Str   :@template_dirs,
+                        List  :$template_dirs,
                         Str   :$default_language,
                         Str   :$language, 
                         Hash  :$pages,
                         Bool  :$no_livereload) returns Hash {
   use Template6;
   my $t6 = Template6.new;
+  $template_dirs.map( -> $dir { $t6.add-path: $dir } );
 
-  @template_dirs.map( -> $dir { $t6.add-path: $dir } );
-  my %generated_pages = Hash;
+  return $pages.keys.map( -> $page_name {
 
-  $pages.keys.map( -> $page_name {
     # Render the page content
     my Str $page_content = $t6.process($page_name, |$context);
 
     # Append page content to $context
-    $context<content> = $page_content;
-
-    my Str $layout_content = $t6.process('layout', |$context );
-
-    unless $no_livereload {
-      # Add livejs if live-reload enabled (default)
-      my Str $livejs = '<script src="uzu/js/live.js"></script>';
-      $layout_content = $layout_content.subst('</body>', "{$livejs}\n</body>");
-    };
+    my %layout_context = %( |$context, %( content => $page_content ) );
+    my Str $layout_content = $t6.process('layout', |%layout_context );
 
     # Default file_name without prefix
-    my Str $file_name = $page_name;
-    if $language !~~ $default_language {
-      $file_name = "{$page_name}-{$language}";
-    }
+    my Str $file_name = html-file-name(page_name        => $page_name,
+                                        default_language => $default_language, 
+                                        language         => $language);
 
-    # Capture generated HTML
-    %generated_pages{$file_name} = $layout_content;
-  });
+    # Return processed HTML
+    my Str $processed_html = process-livereload(content       => $layout_content,
+                                                 no_livereload => $no_livereload);
 
-  return %generated_pages;
+    %( $file_name => $processed_html );
+
+  }).Hash;
 
 };
 
@@ -104,14 +108,13 @@ our sub render(Hash $config,
   my Str $build_dir  = $config<build_dir>;
 
   # All available pages
-  my Str %pages;
-  my Str @exts = |$config<template_extensions>;
-  my IO::Path @page_templates = templates(exts => @exts,
+  my List $exts = $config<extensions>;
+  my IO::Path @page_templates = templates(exts => $exts,
                                            dir => $config<pages_dir>);
-  @page_templates.map( -> $page { 
+  my Str %pages = @page_templates.map( -> $page { 
     my Str $page_name = IO::Path.new($page).basename.Str.split('.')[0]; 
-    %pages{$page_name} = slurp($page, :r);
-  });
+    %( $page_name => slurp($page, :r) );
+  }).Hash;
 
   # Clear out build
   $config<logger>.emit("Clear old files");
@@ -129,12 +132,11 @@ our sub render(Hash $config,
 
   # Setup compile specific variables
   my Str $default_language = $config<language>[0];
-  my Str @template_dirs = |$config<template_dirs>;
+  my List $template_dirs = $config<template_dirs>;
 
   # One per language
-  my @p;
-  $config<language>.map( -> $language { 
-    push @p, start {
+  await $config<language>.map( -> $language { 
+    start {
       $config<logger>.emit("Compile templates [$language]");
       # Build %context hash
       build-context(
@@ -142,7 +144,7 @@ our sub render(Hash $config,
         language         => $language)
       # Render HTML
       ==> prepare-html-output(
-        template_dirs    => @template_dirs, 
+        template_dirs    => $template_dirs, 
         default_language => $default_language,
         language         => $language,
         pages            => %pages,
@@ -153,7 +155,6 @@ our sub render(Hash $config,
     }
   });
 
-  await @p;
   $config<logger>.emit("Compile complete");
 }
 
@@ -285,10 +286,10 @@ sub watch-it(Str $p) returns Tap {
   }
 }
 
-sub watch-dirs(Str @dirs) returns Supply {
+sub watch-dirs(List $dirs) returns Supply {
   run("stty", "sane");
   supply {
-    watch-it(~$_) for |@dirs.map: { find-dirs($_) };
+    watch-it(~$_) for $dirs.map: { find-dirs($_) };
   }
 }
 
@@ -296,9 +297,9 @@ sub keybinding() {
   use Term::termios;
   my $fd = $*IN.native-descriptor();
   # Save the previous attrs
-  my $saved_termios := Term::termios.new(fd => $fd ).getattr;
+  my $saved_termios = Term::termios.new(fd => $fd ).getattr;
   # Get the existing attrs in order to modify them
-  my $termios := Term::termios.new(fd => $fd ).getattr;
+  my $termios = Term::termios.new(fd => $fd ).getattr;
   # Set the tty to raw mode
   $termios.makeraw;
   # Set the modified atributes, delayed until the buffer is emptied
@@ -317,14 +318,13 @@ sub keybinding() {
 }
 
 sub logger(Hash $config) {
-  my $logger = Thread.start({
+  Thread.start({
     react {
       whenever $config<logger>.Supply -> $e { 
         say $e;
       }
     }
   });
-  return $logger;
 }
 
 our sub watch(Hash $config, Bool :$no_livereload = False) returns Tap {
@@ -361,9 +361,9 @@ our sub watch(Hash $config, Bool :$no_livereload = False) returns Tap {
   # Some editors trigger more than one event per
   # edit. 
   my Instant $last = now;
-  my Str @exts = |$config<template_extensions>;
-  my Str @dirs = |$config<template_dirs>.grep: *.IO.e;
-  @dirs.map: -> $dir {
+  my List $exts = $config<extensions>;
+  my List $dirs = $config<template_dirs>.grep(*.IO.e).List;
+  $dirs.map: -> $dir {
     $config<logger>.emit("Starting watch on {$dir.subst("{$*CWD}/", '')}");
   }
 
@@ -373,9 +373,9 @@ our sub watch(Hash $config, Bool :$no_livereload = False) returns Tap {
   # Spawn thread to watch directories for modifications
   my $thread_watch_dirs = Thread.start({
     react {
-      whenever watch-dirs(@dirs) -> $e {
+      whenever watch-dirs($dirs) -> $e {
         # Make sure the file change is a known extension; don't re-render too fast
-        if $e.path.grep: /'.' @exts $/ and (!$last.defined or now - $last > 4) {
+        if so $e.path.IO.extension ∈ $exts and (!$last.defined or now - $last > 4) {
           $last = now;
           $config<logger>.emit(colored("Change detected [{$e.path()}]", "bold green on_blue"));
           build-and-reload();
@@ -397,12 +397,7 @@ our sub watch(Hash $config, Bool :$no_livereload = False) returns Tap {
 # Config
 sub parse-config(Str :$config_file) returns Hash {
   if path-exists(path => $config_file) {
-    my %config = load-yaml slurp($config_file);
-    # Make sure language is always a list
-    if %config<language> ~~ Str {
-      %config<language> = [%config<language>];
-    }
-    return %config;
+    return load-yaml slurp($config_file);
   } else {
     return {error => "Config file [$config_file] not found. Please run uzu init to generate."};
   }
@@ -411,34 +406,36 @@ sub parse-config(Str :$config_file) returns Hash {
 sub uzu-config(Str :$config_file = 'config.yml') returns Hash is export {
 
   # Parse yaml config
-  my %config       = parse-config(config_file => $config_file);
+  my %config              = parse-config(config_file => $config_file);
 
   # Paths
-  my $project_root = "{%config<project_root>||$*CWD}".subst('~', $*HOME);
-  my $build_dir    = "{$project_root}/build";
-  my $themes_dir   = "{$project_root}/themes";
-  my $assets_dir   = "{$project_root}/themes/{%config<defaults><theme>||'default'}/assets";
-  my $layout_dir   = "{$project_root}/themes/{%config<defaults><theme>||'default'}/layout";
-  my $pages_dir    = "{$project_root}/pages";
-  my $partials_dir = "{$project_root}/partials";
-  my $i18n_dir     = "{$project_root}/i18n";
+  my Str  $project_root   = "{%config<project_root>||$*CWD}".subst('~', $*HOME);
+  my Str  $build_dir      = "{$project_root}/build";
+  my Str  $themes_dir     = "{$project_root}/themes";
+  my Str  $assets_dir     = "{$project_root}/themes/{%config<defaults><theme>||'default'}/assets";
+  my Str  $layout_dir     = "{$project_root}/themes/{%config<defaults><theme>||'default'}/layout";
+  my Str  $pages_dir      = "{$project_root}/pages";
+  my Str  $partials_dir   = "{$project_root}/partials";
+  my Str  $i18n_dir       = "{$project_root}/i18n";
+  my List $template_dirs  = [$layout_dir, $pages_dir, $partials_dir, $i18n_dir];
+  my List $extensions     = ['tt', 'html', 'yml'];
 
-  # Set configuration
-  my %config_plus  = logger               => Supplier.new,
-                     host                 => "{%config<host>||'0.0.0.0'}",
-                     port                 => %config<port>||3000,
-                     project_root         => $project_root,
-                     path                 => $config_file,
-                     build_dir            => $build_dir,
-                     themes_dir           => $themes_dir,
-                     assets_dir           => $assets_dir,
-                     layout_dir           => $layout_dir,
-                     pages_dir            => $pages_dir,
-                     partials_dir         => $partials_dir,
-                     i18n_dir             => $i18n_dir,
-                     template_dirs        => [$layout_dir, $pages_dir, $partials_dir, $i18n_dir],
-                     template_extensions  => ['tt', 'html', 'yml'];
-
+  # Set configuratin
+  my %config_plus  = %( logger         => Supplier.new,
+                        host           => "{%config<host>||'0.0.0.0'}",
+                        port           => %config<port>||3000,
+                        project_root   => $project_root,
+                        path           => $config_file,
+                        build_dir      => $build_dir,
+                        themes_dir     => $themes_dir,
+                        assets_dir     => $assets_dir,
+                        layout_dir     => $layout_dir,
+                        pages_dir      => $pages_dir,
+                        partials_dir   => $partials_dir,
+                        i18n_dir       => $i18n_dir,
+                        template_dirs  => $template_dirs,
+                        extensions     => $extensions );
+                          
   # We want to stop everything if the project root ~~ $*HOME or
   # the build dir ~~ project root. This would have bad side-effects
   if $build_dir.IO ~~ $*HOME.IO|$project_root.IO {
