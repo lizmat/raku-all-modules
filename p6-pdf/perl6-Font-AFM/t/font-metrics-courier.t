@@ -11,5 +11,5 @@ is-deeply $metrics.FontBBox, [-23, -250, 715, 805], 'FontBBox data';
 nok ($metrics.KernData), 'fixed font lacks kern data';
 is $metrics.stringwidth("RVX", :!kern), 1800, 'stringwidth :!kern';
 is $metrics.stringwidth("RVX", :kern), 1800, 'stringwidth :kern';
-is-deeply $metrics.kern("RVX" ), ["RVX"], '.kern(:kern)';
-is-deeply $metrics.kern("RVX", 12), ["RVX"], '.kern(..., $w))';
+is-deeply $metrics.kern("RVX" ), (["RVX"], 1800), '.kern(:kern)';
+is-deeply $metrics.kern("RVX", 12), (["RVX"], 1800 * 12 / 1000), '.kern(..., $w))';

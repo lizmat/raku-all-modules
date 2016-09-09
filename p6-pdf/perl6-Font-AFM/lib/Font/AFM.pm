@@ -44,9 +44,12 @@ string is assumed to be encoded in the iso-8859-1 character
 set. A second argument can be used to scale the width
 according to the font size.
 
-=item $afm.kern($string, $fontsize, :%glyphs)
+=item ($kerned, $width) = $afm.kern($string, $fontsize, :%glyphs?)
 
-Returns an array of kerning pairs for the string.
+Kern the string. Returns an array of string segments, separated
+by numeric kerning distances, and the overall width of the string.
+
+       :%glyphs            - an optional mapping of characters to glyph-names.
 
 =item $afm.FontName
 
@@ -373,10 +376,13 @@ it under the same terms as Perl itself.
     }
 
     #| kern a string. decompose into an array of: ('string1', $kern , ..., 'stringn' )
-    method kern( Str $string, Numeric $pointsize?, Hash :$glyphs = %ISOLatin1Encoding
-        --> Array ) {
+    method kern( Str $string,
+                 Numeric $pointsize?,
+                 Hash :$glyphs = %ISOLatin1Encoding
+        --> List ) {
         my Str $prev-glyph;
         my Str $str = '';
+        my Numeric $stringwidth = 0;
         my @chunks;
         my Hash $kern-data = $_
             with self.KernData;
@@ -384,11 +390,12 @@ it under the same terms as Perl itself.
 
         for $string.comb {
             my Str $glyph-name = $glyphs{$_} // next;
-            my Numeric $glyph-width = $wx{$glyph-name} // next;
+            $stringwidth += $wx{$glyph-name} // next;
 
             with $kern-data {
                 with $prev-glyph && .{$prev-glyph} {
                     with .{$glyph-name} -> $kerning is copy {
+                        $stringwidth += $kerning;
                         $kerning *= $pointsize / 1000
                             if $pointsize;
                         @chunks.push: $str;
@@ -405,7 +412,10 @@ it under the same terms as Perl itself.
         @chunks.push: $str
             if $str.chars;
 
-        @chunks;
+        $stringwidth *= $pointsize / 1000
+            if $pointsize;
+
+        @chunks, $stringwidth;
     }
 
     method FontBBox returns List {

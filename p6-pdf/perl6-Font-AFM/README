@@ -35,10 +35,12 @@ DESCRIPTION
        :%glyphs - is an optional mapping of characters to glyph-names.
                   characters not in the glyph-map are ignored.
 
-    $afm.kern($string, $fontsize, :%glyphs)
-       Returns an array of kerning pairs for the string.
+     $afm.kern($string, $fontsize, :%glyphs)
 
-       %glyphs is an optional mapping of characters to glyph-names.
+         Kern the string. Returns an array of string segments, separated
+         by numeric kerning distances, plus the overall width of the string.
+
+       :%glyphs - an optional mapping of characters to glyph-names.
 
     $afm.FontName
        The name of the font as presented to the PostScript language
