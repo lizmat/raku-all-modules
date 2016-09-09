@@ -17,7 +17,7 @@ package Zef::CLI {
     multi MAIN('fetch', Bool :$force, *@identities ($, *@)) is export {
         my $client = get-client(:config($CONFIG) :$force);
         my @candidates = |$client.find-candidates(|@identities>>.&str2identity);
-        die "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
+        abort "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
         my @fetched    = |$client.fetch(|@candidates);
         my @fail       = |@candidates.grep: {.as !~~ any(@fetched>>.as)}
 
@@ -30,7 +30,7 @@ package Zef::CLI {
     multi MAIN('test', Bool :$force, *@paths ($, *@)) is export {
         my $client     = get-client(:config($CONFIG) :$force);
         my @candidates = |$client.link-candidates( @paths.map(*.&path2candidate) );
-        die "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
+        abort "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
         my @tested = |$client.test(|@candidates);
         my (:@test-pass, :@test-fail) := @tested.classify: {.test-results.grep(*.so) ?? <test-pass> !! <test-fail> }
 
@@ -43,7 +43,7 @@ package Zef::CLI {
     multi MAIN('build', Bool :$force, *@paths ($, *@)) is export {
         my $client = get-client(:config($CONFIG) :$force);
         my @candidates = |$client.link-candidates( @paths.map(*.&path2candidate) );
-        die "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
+        abort "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
 
         my @built = |$client.build(|@candidates);
         my (:@pass, :@fail) := @built.classify: {$_.?build-results !=== False ?? <pass> !! <fail> }
@@ -68,7 +68,7 @@ package Zef::CLI {
         Bool :$depsonly,
         Bool :$serial,
         :$exclude is copy,
-        :to(:$install-to) = ['site'],
+        :to(:$install-to) = $CONFIG<DefaultCUR>,
         *@wants ($, *@)
     ) is export {
 
@@ -77,7 +77,7 @@ package Zef::CLI {
             $wanted ~~ /^[\. | \/]/                                           ?? <paths>
                 !! ?Zef::Identity($wanted)                                    ?? <identities>
                 !! (my $uri = Zef::Utils::URI($wanted) and !$uri.is-relative) ?? <urls>
-                !! die("Don't understand identity: {$wanted}");
+                !! abort("Don't understand identity: {$wanted}");
         }
 
         my @excluded =  $exclude.map(*.&identity2spec);
@@ -90,15 +90,15 @@ package Zef::CLI {
             if ($verbosity >= VERBOSE) && +@skip-identities;
 
         my @path-candidates = @paths.map(*.&path2candidate);
-        die "No candidates found matching: {@paths.join(', ')}" if +@paths && +@path-candidates == 0;
+        abort "No candidates found matching: {@paths.join(', ')}" if +@paths && +@path-candidates == 0;
 
         my @url-candidates  = $client.fetch( |@urls.map({ Candidate.new(:as($_), :uri($_)) }) ) if +@urls;
-        die "No candidates found matching: {@url-candidates.join(', ')}" if +@urls && +@url-candidates == 0;
+        abort "No candidates found matching: {@url-candidates.join(', ')}" if +@urls && +@url-candidates == 0;
 
         my @requested-identities = (?$force ?? @identities !! @wanted-identities)\
             .grep: { $_ ~~ none(@url-candidates.map(*.dist.identity)) }
         my @requested  = |$client.find-candidates(:$upgrade, |@requested-identities) if +@requested-identities;
-        die "No candidates found matching: {@requested-identities.join(', ')}"\
+        abort "No candidates found matching: {@requested-identities.join(', ')}"\
             if +@requested-identities && +@requested == 0;
 
         my @prereqs    = |$client.find-prereq-candidates(|@path-candidates, |@url-candidates, |@requested)\
@@ -108,7 +108,7 @@ package Zef::CLI {
             ??|@prereqs !! (|@path-candidates, |@url-candidates, |@requested, |@prereqs);
         unless +@candidates {
             note("All candidates are currently installed");
-            (?$depsonly || ?$force) ?? exit(0) !! die("No reason to proceed. Use --force to continue anyway");
+            (?$depsonly || ?$force) ?? exit(0) !! abort("No reason to proceed. Use --force to continue anyway");
         }
 
         my (:@local, :@remote) := @candidates.classify: {.dist ~~ Zef::Distribution::Local ?? <local> !! <remote>}
@@ -123,19 +123,31 @@ package Zef::CLI {
     }
 
     #| Uninstall
-    multi MAIN('uninstall', Bool :$force, :from(:$uninstall-from) = ['site'], *@identities ($, *@)) is export {
+    multi MAIN(
+        'uninstall',
+        Bool :$force,
+        :from(:$uninstall-from) = $CONFIG<DefaultCUR>,
+        *@identities ($, *@)
+    ) is export {
         my $client = get-client(:config($CONFIG) :$force);
         my CompUnit::Repository @from = $uninstall-from.map(*.&str2cur);
-        die "`uninstall` command currently requires a bleeding edge version of rakudo"\
+        abort "Uninstall requires rakudo v2016.02 or later"\
             unless any(@from>>.can('uninstall'));
 
-        my %uninstalled = $client.uninstall( :@from, |@identities>>.&str2identity ).classify(*.from);
-        for %uninstalled.kv -> $from, $candidates {
+        my @uninstalled = $client.uninstall( :@from, |@identities>>.&str2identity );
+        my @fail        = @identities.grep(* !~~ any(@uninstalled.map(*.as)));
+        if +@uninstalled == 0 && +@fail {
+            note("!!!> Found no matching candidates to uninstall");
+            exit 1;
+        }
+
+        for @uninstalled.classify(*.from).kv -> $from, $candidates {
             say "===> Uninstalled from $from";
             say "$_" for |$candidates>>.dist>>.identity;
         }
 
-        exit %uninstalled.keys ?? 0 !! 1;
+        say "!!!> Failed to uninstall distributions: {@fail.join('. ')}" if +@fail;
+        exit +@fail ?? 1 !! 0;
     }
 
     #| Get a list of possible distribution candidates for the given terms
@@ -214,11 +226,56 @@ package Zef::CLI {
         exit 0;
     }
 
+    #| Lookup locally installed distributions by short-name, name-path, or sha1 id
+    multi MAIN('locate', $identity, Bool :$sha1) is export {
+        my $client = get-client(:config($CONFIG));
+        if !$sha1 {
+            if $identity ~~ /\.pm6?/ {
+                my $candi = $client.list-installed.first({
+                    my $meta := $_.dist.compat.meta;
+                    so $meta<provides>.first(*.values.first(*.<<$identity>>));
+                });
+
+                if $candi {
+                    my $libs = $candi.dist.compat.meta<provides>;
+                    my $lib  = $libs.first({.value.keys[0] eq $identity});
+                    say "===> From Distribution: {~$candi.dist}";
+                    say "{$lib.keys[0]} => {$candi.from.prefix.child('sources').child($lib.value.values[0]<file>)}";
+                    exit 0;
+                }
+            }
+            else {
+                my $candi = $client.resolve($identity);
+                say "===> From Distribution: {~$candi.dist}";
+                say "{.keys[0]} => {$candi.from.prefix.child('sources').child(.values[0]<file>)}" for $candi.dist.compat.meta<provides>{$identity};
+                exit 0;
+            }
+        }
+        else {
+            my $candi = $client.list-installed.first({
+                my $meta := $_.dist.compat.meta;
+                my @files = $meta<provides>.values.flatmap(*.values.map(*.<file>));
+                so $identity ~~ any(@files);
+            });
+
+            if $candi {
+                say "===> From Distribution: {~$candi.dist}";
+                say "{.keys[0]} => {$candi.from.prefix.child('sources').child(.values[0]<file>)}" for $candi.dist.compat.meta<provides>.values.grep(*.values.first({ .<file> eq $identity })).first(*.so);
+                exit 0;
+            }
+        }
+
+        say "!!!> Nothing located";
+
+        exit 1;
+    }
+
     #| Detailed distribution information
     multi MAIN('info', $identity, Int :$wrap = False) is export {
         my $client = get-client(:config($CONFIG));
-        my $candi  = $client.search($identity, :max-results(1))[0]\
-            or die "Found no candidates matching identity: {$identity}";
+        my $candi  = $client.resolve($identity)
+                ||   $client.search($identity, :max-results(1))[0]\
+                ||   abort "!!!> Found no candidates matching identity: {$identity}";
         my $dist  := $candi.dist;
 
         say "- Info for: $identity";
@@ -228,9 +285,34 @@ package Zef::CLI {
         say "Description:\t {$dist.description}" if $dist.description;
         say "Source-url:\t {$dist.source-url}"   if $dist.source-url;
 
-        my @provides = $dist.provides.keys.sort(*.chars);
+        my @provides = $dist.provides.sort(*.key.chars);
         say "Provides: {@provides.elems} modules";
-        if ?($verbosity >= VERBOSE) { say "#\t$_" for $dist.provides.keys.sort(*.chars).sort }
+        if ?($verbosity >= VERBOSE) {
+
+            my sub parse-value($str-or-kv) {
+                do given $str-or-kv {
+                    when Str  { $_ }
+                    when Hash { $_.keys[0] }
+                    when Pair { $_.key     }
+                }
+            }
+
+            my $meta := $dist.compat.meta;
+            my @rows = eager gather for @provides -> $lib {
+                FIRST {
+                    take $meta<provides>.values[0] ~~ Hash
+                        ?? [<Module Path-Name File-ID>]
+                        !! [<Module Path-Name>]
+                }
+                my $module-name = $lib.key;
+                my $name-path   = parse-value($lib.value);
+                my $real-path   = try { $meta<provides>{$module-name}{$name-path}<file> };
+                take $real-path
+                    ?? [ $module-name, $name-path, $real-path ]
+                    !! [ $module-name, $name-path ];
+            }
+            print-table(@rows, :$wrap);
+        }
 
         if $dist.hash<support> {
             say "Support:";
@@ -257,9 +339,9 @@ package Zef::CLI {
     multi MAIN('look', $identity, Bool :$force) is export {
         my $client     = get-client(:config($CONFIG) :$force);
         my @candidates = |$client.find-candidates( str2identity($identity) );
-        die "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
+        abort "Failed to resolve any candidates. No reason to proceed" unless +@candidates;
         my (:@remote, :@local) := @candidates.classify: {.dist !~~ Zef::Distribution::Local ?? <remote> !! <local>}
-        my $fetched = @local[0] || $client.fetch(@remote[0])[0] || die "Failed to fetch candidate: $identity";
+        my $fetched = @local[0] || $client.fetch(@remote[0])[0] || abort "Failed to fetch candidate: $identity";
         my $dist-path = $fetched.dist.path;
         say "===> Shelling into directory: {$dist-path}";
         exit so shell(%*ENV<SHELL> // %*ENV<ComSpec> // %*ENV<COMSPEC>, :cwd($dist-path)) ?? 0 !! 1;
@@ -278,9 +360,9 @@ package Zef::CLI {
         Bool :$upgrade,
         Bool :$depsonly,
         :$exclude is copy,
-        :to(:$install-to) = ['site'],
+        :to(:$install-to) = $CONFIG<DefaultCUR>,
     ) is export {
-        die "Smoke testing requires rakudo 2016.04 or later" unless try &*EXIT;
+        abort "Smoke testing requires rakudo 2016.04 or later" unless try &*EXIT;
         my @excluded   = $exclude.map(*.&identity2spec);
         my $client     = get-client(:config($CONFIG) :exclude(|@excluded), :$force, :$depends, :$test-depends, :$build-depends);
         my @identities = $client.list-available.map(*.dist.identity).unique;
@@ -318,7 +400,7 @@ package Zef::CLI {
         my $client  = get-client(:config($CONFIG));
         my %results = $client.storage.update(|@names);
         my $rows    = |%results.map: {[.key, .value]};
-        die "An unknown plugin name used" if +@names && (+@names > +$rows);
+        abort "An unknown plugin name used" if +@names && (+@names > +$rows);
 
         print-table( [["Content Storage", "Distribution Count"], |$rows], wrap => True );
 
@@ -380,6 +462,7 @@ package Zef::CLI {
                 info                    Show detailed distribution information
                 list                    List known available distributions, or installed distributions with `--installed`
                 rdepends                List all distributions directly depending on a given identity
+                locate                  Lookup installed module information by short-name, name-path, or sha1 (with --sha1 flag)
                 smoke                   Run smoke testing on available modules
                 nuke                    Delete directory/prefix containing matching configuration path or CURLI name
 
@@ -410,6 +493,8 @@ package Zef::CLI {
 
             END_USAGE
     }
+
+    sub abort(|c) { say(|c); exit 0; }
 
     # Filter/mutate out verbosity flags from @*ARGS and return a verbosity level
     sub preprocess-args-verbosity-mutate(*@_) {
