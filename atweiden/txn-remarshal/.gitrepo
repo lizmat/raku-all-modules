@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/atweiden/txn-remarshal.git
+	branch = master
+	commit = 59ae290d5802bb3688982e1b577c4687541f8b42
+	parent = 1ca628a7a25098935b0ae1a661e9079310eb86ac
+	cmdver = 0.2.3

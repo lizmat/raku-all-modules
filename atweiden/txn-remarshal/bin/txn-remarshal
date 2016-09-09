@@ -1,0 +1,117 @@
+#!/usr/bin/env perl6
+
+
+
+
+use v6;
+use File::Presence;
+use TXN::Parser;
+use TXN::Remarshal;
+
+
+
+
+# -----------------------------------------------------------------------------
+# main
+# -----------------------------------------------------------------------------
+
+# input is from file
+multi sub MAIN(
+    Str:D :i(:$input) where *.chars > 0,
+    Str :o(:$output),
+    Str:D :if(:$input-format) where /:i json/,
+    Str:D :of(:$output-format) where /:i txn/
+)
+{
+    die unless exists-readable-file($input);
+    my @e = remarshal(slurp($input), :if<json>, :of<hash>);
+    my TXN::Parser::AST::Entry @entry = remarshal(@e, :if<hash>, :of<entry>);
+    my Str $txn = remarshal(@entry, :if<entry>, :of<txn>);
+    output($txn, $output);
+}
+
+multi sub MAIN(
+    Str:D :i(:$input) where *.chars > 0,
+    Str :o(:$output),
+    Str:D :if(:$input-format) where /:i txn/,
+    Str:D :of(:$output-format) where /:i json/
+)
+{
+    die unless exists-readable-file($input);
+    my TXN::Parser::AST::Entry @entry = from-txn(:file($input));
+    my @e = remarshal(@entry, :if<entry>, :of<hash>);
+    my Str $json = remarshal(@e, :if<hash>, :of<json>);
+    output($json, $output);
+}
+
+# input is not from file
+multi sub MAIN(
+    Str :i(:$input),
+    Str :o(:$output),
+    Str :if(:$input-format),
+    Str :of(:$output-format)
+)
+{
+    my Str $remarshal =
+        remarshal($*IN.lines.join("\n"), :$input-format, :$output-format);
+    output($remarshal, $output);
+}
+
+multi sub output(Str $remarshal, '-')
+{
+    say $remarshal.trim;
+}
+
+multi sub output(Str $remarshal, Str:D $output where *.chars > 0)
+{
+    $output.IO.spurt($remarshal, :createonly);
+}
+
+multi sub output(Str $remarshal, Str $?)
+{
+    say $remarshal.trim;
+}
+
+
+
+
+# -----------------------------------------------------------------------------
+# usage
+# -----------------------------------------------------------------------------
+
+sub USAGE()
+{
+    constant $HELP = q:to/EOF/;
+    Usage:
+      txn-remarshal [-i=<file>] [-o=<file>] -if=<format> -of=<format>
+
+    Options:
+      -h, --help
+        print this help message
+      -i, --input=<file>
+        the input source
+      -o, --output=<file>
+        the output destination
+      -if, --input-format=<format>
+        the input file format
+      -of, --output-format=<format>
+        the output file format
+
+    Files:
+      /path/to/file
+        absolute path to input/output file
+      path/to/file
+        relative path to input/output file
+      -
+        stdin/stdout
+
+    Formats:
+      json
+        JSON
+      txn
+        TXN
+    EOF
+    say $HELP.trim;
+}
+
+# vim: set filetype=perl6 foldmethod=marker foldlevel=0:

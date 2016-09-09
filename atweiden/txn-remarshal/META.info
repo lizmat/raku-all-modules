@@ -1,0 +1,18 @@
+{
+    "name"        : "TXN::Remarshal",
+    "version"     : "*",
+    "author"      : "Andy Weidenbaum",
+    "description" : "Double-entry accounting ledger file format converter",
+    "depends"     : ["File::Presence", "TXN::Parser"],
+    "license"     : "http://unlicense.org/UNLICENSE",
+    "source-type" : "git",
+    "source-url"  : "git://github.com/atweiden/txn-remarshal.git",
+    "support"     : {
+        "bugtracker" : "https://github.com/atweiden/txn-remarshal/issues",
+        "source"     : "https://github.com/atweiden/txn-remarshal"
+    },
+    "provides" : {
+        "TXN::Remarshal"    : "lib/TXN/Remarshal.pm",
+        "X::TXN::Remarshal" : "lib/X/TXN/Remarshal.pm"
+    }
+}
