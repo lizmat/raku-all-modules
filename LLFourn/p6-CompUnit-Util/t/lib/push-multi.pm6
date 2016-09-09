@@ -7,9 +7,9 @@ BEGIN { push-unit-multi 'EXPORT::DEFAULT::&bar',my proto bar(Numeric) {*} }
 BEGIN { push-unit-multi 'EXPORT::DEFAULT::&bar',my multi bar(Int) { 'barInt' } }
 BEGIN { push-unit-multi 'EXPORT::DEFAULT::&bar',my multi bar(Num) { 'barNum' } }
 
-BEGIN  push-unit-multi 'EXPORT::DEFAULT::&non-multi',sub (Int) { 'nmInt' };
-BEGIN  push-unit-multi 'EXPORT::DEFAULT::&non-multi',sub (Num) { 'nmNum' };
-BEGIN  push-unit-multi 'EXPORT::DEFAULT::&non-multi2',sub (Str) { 'nm2Str' }
+# BEGIN  push-unit-multi 'EXPORT::DEFAULT::&non-multi',sub (Int) { 'nmInt' };
+# BEGIN  push-unit-multi 'EXPORT::DEFAULT::&non-multi',sub (Num) { 'nmNum' };
+# BEGIN  push-unit-multi 'EXPORT::DEFAULT::&non-multi2',sub (Str) { 'nm2Str' }
 
 class Foo { }
 

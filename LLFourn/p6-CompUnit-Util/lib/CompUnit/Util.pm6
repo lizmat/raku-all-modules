@@ -25,8 +25,9 @@ sub set-in-QBlock(Mu \qblock is raw,$path,Mu $value) {
     if @parts {
         my $pkg = vivify-QBlock-pkg(qblock,$first);
         set-in-WHO($pkg.WHO,@parts.join('::'),$value);
-     } else {
+    } else {
         $*W.install_lexical_symbol(qblock,$first,$value);
+        Nil; # needed otherwise the NQPMu from install_lexical_symbol get sunk
     }
     Nil;
 }
@@ -117,6 +118,7 @@ sub set-in-WHO($WHO is copy,$path,$value --> Nil) is export(:who) {
             $WHO = $WHO.{$part}.WHO;
         }
     }
+    Nil;
 }
 
 sub unit-to-hash($handle? is copy) is export(:unit-to-hash) {
@@ -228,11 +230,12 @@ sub push-QBlock-multi(Mu \qblock,$path,$multi is copy) {
             when .multi { .dispatcher }
             when .is_dispatcher { $multi }
             default {
-                # not multi or dispatcher have to create one to attach to
-                # XXX: this results in Missing serialize REPR function for REPR MVMContext
-                my $new_proto = (my proto anon (|) {*}).clone;
-                push-multi($new_proto,$multi);
-                $new_proto;
+                ## not multi or dispatcher have to create one to attach to
+                ## XXX: this results in Missing serialize REPR function for REPR MVMContext
+                # my $new_proto = (my proto anon (|) {*}).clone;
+                # push-multi($new_proto,$multi);
+                # $new_proto;
+                die "can't push a non-multi sub onto a non-existent routine";
             }
         }
         set-in-QBlock(qblock,$path,$install);
@@ -253,6 +256,7 @@ sub push-lexpad-multi(Str:D $path,$multi --> Nil) is export(:push-multi) {
 }
 
 sub push-lexical-multi(Str:D $path, $multi --> Nil) is export(:push-multi) {
+    die "{&?ROUTINE.name} can only be called at BEGIN time" unless $*W;
     if get-lexpad($path) -> $existing {
         push-multi($existing,$multi);
     }

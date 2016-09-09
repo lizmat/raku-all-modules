@@ -329,13 +329,8 @@ marked `$multi` can be any `Routine:D`. If you pass a dispatcher it
 will just use it as the dispatcher or die if you are trying to push
 onto an existing dispatcher.
 
-**warning** pushing a normal routine onto a dispatcher will work but if
-  one doesn't exist, CompUnit::Util will try and vivify one for
-  you. This hits some sort of precompilation bug which looks like:
-
-`Missing serialize REPR function for REPR MVMContext`
-
-So try and avoid doing that.
+If you try and push a non-multi/dispatcher onto an empty slot it will
+not vivify one for you.
 
 ### push-multi
 `(Routine:D $target where { .is_dispatcher },Routine:D $candidate)`
@@ -382,12 +377,16 @@ one doesn't exist it will be created. You can pass a `proto` instead
 of a multi but only when `$path` is empty (ie only the first time). It
 will become the dispatcher for any further calls.
 
+**this routine can only be called at `BEGIN` time**
+
 ### push-lexpad-multi
 
 `(Str:D $path,Routine:D $mutli)`
 
 The same as `push-unit-multi` but pushes onto a symbol in the lexical
 scope currently being compiled.
+
+**this routine can only be called at `BEGIN` time**
 
 ### push-lexical-multi
 
@@ -398,6 +397,8 @@ dispatcher in the current lexpad it will do a lexical lookup for one
 of the same `$name`. If it finds one it clones it, installs it in the
 current lexpad and pushes `$multi` onto it. Like
 [get-lexical](#get-lexical), it can't take a `$name` with `::` in it.
+
+**this routine can only be called at `BEGIN` time**
 
 ## Slangs
 
