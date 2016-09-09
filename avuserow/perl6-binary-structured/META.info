@@ -1,0 +1,12 @@
+{
+	"name" : "Binary::Structured",
+	"version" : "0.0.1",
+	"description" : "Read and write binary formats defined by classes",
+	"authors" : [ "Adrian Kreher" ],
+	"provides" : {
+		"Binary::Structured" : "lib/Binary/Structured.pm6"
+	},
+	"depends" : [],
+	"perl" : "6.c",
+	"source-url" : "git://github.com/avuserow/perl6-binary-structured.git"
+}

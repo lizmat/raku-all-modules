@@ -1,0 +1,10 @@
+- port tests from Python's construct (construct/construct/protocols/application and construct/tests) and P5's Data::ParseBinary
+- remove requirement to Array[Inner].new for arrays
+- polish up `indirect-type` and/or add alternatives?
+- polish up trait naming and return values
+- endianness!
+- int64/uint64 (currently weird in rakudo)
+- custom bigint code for int128 and beyond (Int with user-specified bit-width)
+- use something other than experimental pack to pack/unpack
+- sub-byte data structures?
+- parse from files/streams

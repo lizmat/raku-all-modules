@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/avuserow/perl6-binary-structured.git
+	branch = master
+	commit = 77bb16e9ac6ea117a4d4d38faf1378405fea19db
+	parent = 16c06b90ffcab3c5c5c46ee9aa2efaacc3ebf551
+	cmdver = 0.2.3
