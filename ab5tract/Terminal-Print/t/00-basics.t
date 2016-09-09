@@ -2,7 +2,7 @@ use Test;
 use lib 'lib';
 
 chdir('t');
-plan 10;
+plan 4;
 
 sub slurp-corpus($topic) {
     "corpus/$topic".IO.slurp;
@@ -10,32 +10,17 @@ sub slurp-corpus($topic) {
 
 use Terminal::Print; pass "Import Terminal::Print";
 
-my $b;
+my $b = Terminal::Print.new;
 lives-ok { my $t = Terminal::Print.new; }, "Can create a Terminal::Print object";
 
-lives-ok { my $t = Terminal::Print.new( :move-cursor-profile('universal') ) },
+lives-ok { my $t = Terminal::Print.new( :cursor-profile('universal') ) },
     "Can create Terminal::Print object with print-profile 'universal'";
 
-dies-ok { my $t = Terminal::Print.new( :move-cursor-profile('nonexistent') ) },
+dies-ok { my $t = Terminal::Print.new( :cursor-profile('nonexistent') ) },
     "Cannot create Terminal::Print object with print-profile 'nonexistent'";
 
-lives-ok { $b = Terminal::Print.new( :move-cursor-profile('debug') ) },
-        "Can create Terminal::Print object with print-profile 'debug'";
-
-ok $b.move-cursor-profile eq 'debug', "Our test object has a .move-cursor-profile of 'debug'";
-
-ok $b.print-command('save-screen') eq slurp-corpus('save-screen'), ".save-screen matches corpus";
-ok $b.print-command('restore-screen') eq slurp-corpus('restore-screen'), ".restore-screen matches corpus";
-
-lives-ok {
-    do {
-        for $b.grid-indices -> [$x,$y] {
-            $b.change-cell($x, $y, '♥');
-        }
-    }
-}, "Can .change-cell a grid to be full of hearts, one at a time";
-
-ok ~$b eq slurp-corpus('ansi-hearts'), "Stringifying the grid of hearts matches the corpus file 'ansi-hearts'";
+#ok $b.print-command('save-screen') eq slurp-corpus('save-screen'), ".save-screen matches corpus";
+#ok $b.print-command('restore-screen') eq slurp-corpus('restore-screen'), ".restore-screen matches corpus";
 
 #
 # lives-ok {

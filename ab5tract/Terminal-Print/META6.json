@@ -6,15 +6,17 @@
   "build-depends" : [ ],
   "provides" : {
     "Terminal::Print" : "lib/Terminal/Print.pm6",
-    "Terminal::Print::Grid" : "lib/Terminal/Print/Grid.pm6",
-    "Terminal::Print::Commands" : "lib/Terminal/Print/Commands.pm6"
+    "Terminal::Print::Commands" : "lib/Terminal/Print/Commands.pm6",
+    "Terminal::Print::Dimensions" : "lib/Terminal/Print/Dimensions.pm6",
+    "Terminal::Print::Grid" : "lib/Terminal/Print/Grid.pm6"
   },
   "depends" : [
+    "OO::Monitors",
     "Terminal::ANSIColor"
   ],
-  "description" : "Access terminfo-based console escape sequences in a handy grid interface",
+  "description" : "Asynchronous printing to your terminal -- as a simple grid",
   "test-depends" : [ ],
-  "version" : "0.05",
+  "version" : "0.60",
   "authors" : [
     "John Haltiwanger"
   ]

@@ -1,258 +1,17 @@
+use v6;
+
 unit class Terminal::Print;
-
-use Terminal::Print::Commands;
-my constant T = Terminal::Print::Commands;
-
-use Terminal::Print::Grid;
-
-has $!current-buffer;
-has Terminal::Print::Grid $.current-grid;
-
-has @!buffers;
-has Terminal::Print::Grid @.grids;
-
-has @.grid-indices;
-has %!grid-name-map;
-
-has $.max-columns;
-has $.max-rows;
-
-has Terminal::Print::MoveCursorProfile $.move-cursor-profile;
-
-method new( :$move-cursor-profile = 'ansi' ) {
-    my $max-columns   = +%T::attributes<columns>;
-    my $max-rows      = +%T::attributes<rows>;
-
-    my $grid = Terminal::Print::Grid.new( :$max-columns, :$max-rows, :$move-cursor-profile );
-    my @grid-indices = $grid.grid-indices;
-
-    self!bind-buffer( $grid, my $buffer = [] );
-
-    self.bless(
-                :$max-columns, :$max-rows, :@grid-indices,
-                :$move-cursor-profile,
-                    current-grid    => $grid,
-                    current-buffer  => $buffer
-              );
-}
-
-submethod BUILD( :$current-grid, :$current-buffer, :$!max-columns, :$!max-rows, :@grid-indices, :$!move-cursor-profile ) {
-    push @!buffers, $current-buffer;
-    push @!grids, $current-grid;
-
-    $!current-grid   := @!grids[0];
-    $!current-buffer := @!buffers[0];
-
-    @!grid-indices = @grid-indices;  # TODO: bind this to @!grids[0].grid-indices?
-}
-
-method !bind-buffer( $grid, $new-buffer is rw ) {
-    for $grid.grid-indices -> [$x,$y] {
-        $new-buffer[$x + ($y * $grid.max-rows)] := $grid[$x][$y];
-    }
-}
-
-method add-grid( $name?, :$new-grid = Terminal::Print::Grid.new( :$!max-columns, :$!max-rows ) ) {
-    self!bind-buffer( $new-grid, my $new-buffer = [] );
-
-    push @!grids, $new-grid;
-    push @!buffers, $new-buffer;
-
-    if $name {
-        %!grid-name-map{$name} = +@!grids-1;
-    }
-    $new-grid.initialize;
-    $new-grid;
-}
-
-method blit( $grid-identifier = 0 ) {
-    self.clear-screen;
-    self.print-grid($grid-identifier);
-}
-
-# 'clear' will also work through the FALLBACK
-method clear-screen {
-    print-command <clear>;
-}
-
-method initialize-screen {
-    $!current-grid.initialize;
-    print-command <save-screen>;
-    self.hide-cursor;
-    self.clear-screen;
-}
-
-method shutdown-screen {
-    self.clear-screen;
-    @!grids>>.shutdown;
-    print-command <restore-screen>;
-    self.show-cursor;
-}
-
-method print-command( $command ) {
-    print-command($command, $!move-cursor-profile);
-}
-
-# AT-POS hands back a Terminal::Print::Column
-#   $b[$x]
-# Because we have AT-POS on the column object as well,
-# we get
-#   $b[$x][$y]
-#
-# TODO: implement $!current-grid switching
-method AT-POS( $column-idx ) {
-    $!current-grid.grid[ $column-idx ];
-}
-
-# AT-KEY returns the Terminal::Print::Grid.grid of whichever the key specifies
-#   $b<specific-grid>[$x][$y]
-method AT-KEY( $grid-identifier ) {
-    self.grid( $grid-identifier );
-}
-
-# This is not re-enabled. Needs to be reimplemented via CALL-ME, if it wants to
-# come back.
-#
-#method postcircumfix:<( )> (*@t) {
-#    die "Can only specify x, y, and char" if @t > 3;
-#    my ($x,$y,$char) = @t;
-#    given +@t {
-#        when 3 { $!current-grid[$x][$y] = $char; $!current-grid[$x][$y].print-cell }
-#        when 2 { $!current-grid[$x][$y].print-cell }
-#        when 1 { $!current-grid[$x] }
-#    }
-#}
-
-multi method FALLBACK( Str $command-name where { %T::human-command-names{$_} } ) {
-    print-command( $command-name );
-}
-
-
-
-# multi method sugar:
-#    @!grids and @!buffers can both be accessed by index or name (if it has
-#    one). The name is optionally supplied when calling .add-grid.
-#
-#    In the case of @!grids, we pass back the grid array directly from the
-#    Terminal::Print::Grid object, actually notching both DWIM and DRY in one swoosh.
-#    because you can do things like  $b.grid("background")[42][42] this way.
-multi method grid( Int $index ) {
-    @!grids[$index].grid;
-}
-
-multi method grid( Str $name ) {
-    die "No grid has been named $name" unless my $grid-index = %!grid-name-map{$name};
-    @!grids[$grid-index].grid;
-}
-
-#### grid-object stuff
-
-#   Sometimes you simply want the object back (for stringification, or
-#   introspection on things like column-range)
-multi method grid-object( Int $index ) {
-    @!grids[$index];
-}
-
-multi method grid-object( Str $name ) {
-    die "No grid has been named $name" unless my $grid-index = %!grid-name-map{$name};
-    @!grids[$grid-index];
-}
-
-multi method print-cell( Int $x, Int $y ) {
-    $!current-grid.print-cell($x,$y);
-}
-
-# TODO: provide reasonable constraint?
-#   where *.comb == 1 means that you can't add escape chars
-#   of any kind before sending to print-cell. but maybe that's
-#   not such a bad thing?
-multi method print-cell( Int $x, Int $y, Str $c ) {
-    $!current-grid.print-cell($x,$y,$c);
-}
-
-method change-cell( Int $x, Int $y, Str $c ) {
-    $!current-grid.change-cell($x,$y,$c);
-}
-#### buffer stuff
-
-multi method buffer( Int $index ) {
-    @!buffers[$index];
-}
-
-multi method buffer( Str $name ) {
-    die "No buffer has been named $name" unless my $buffer-index = %!grid-name-map{$name};
-    @!buffers[$buffer-index];
-}
-
-#### print-grid stuff
-
-multi method print-grid( Int $index ) {
-    @!grids[$index].print-grid;
-}
-
-multi method print-grid( Str $name ) {
-    die "No grid has been named $name" unless my $grid-index = %!grid-name-map{$name};
-    @!grids[$grid-index].print-grid;
-}
-
-method !clone-grid-index( $origin, $dest? ) {
-    my $new-grid;
-    if $dest {
-        $new-grid := self.add-grid($dest, new-grid => @!grids[$origin].clone);
-    } else {
-        @!grids.push: @!grids[$origin].clone;
-    }
-    return $new-grid;
-}
-
-#### clone-grid stuff
-
-multi method clone-grid( Int $origin, Str $dest? ) {
-    die "Invalid grid '$origin'" unless @!grids[$origin]:exists;
-    self!clone-grid-index($origin, $dest);
-}
-
-multi method clone-grid( Str $origin, Str $dest? ) {
-    die "Invalid grid '$origin'" unless my $grid-index = %!grid-name-map{$origin};
-    self!clone-grid-index($grid-index, $dest);
-}
-
-#### range stuffs
-#
-# TODO: add hooks to dynamically bind $!current-grid to @!grids
-
-method column-range {
-    $!current-grid.column-range; # TODO: we can make the grids reflect specific subsets of these ranges
-}
-
-method row-range {
-    $!current-grid.row-range;
-}
-
-method Str {
-    ~$!current-grid;
-}
-
 
 =begin pod
 =title Terminal::Print
 
 =head1 Synopsis
 
-L<Terminal::Print> implements an abstraction layer for printing characters to terminal
-screens. The idea is to provide all the necessary mechanical details while leaving the actual
-so called 'TUI' abstractions to higher level libraries.
-
-This is/will be done by achieving two technical goals: a) multiple grid objects
-which may be swapped in place, allowing for behind the sccene and b) allow any
-code at any time to print async to the screen. I say 'is/will be' because
-objective 'a' is finished, including both named and positional access.
-
-    $t.grid(0);  # first grid, comes free
-    $t.add-grid('home'); # create a second grid named 'home'
-    $t.grid('home');     # or $t.grid(1)
-
-'b' is also working! Most of the scripts in C<examples/> run async!
+L<Terminal::Print> implements an abstraction layer for printing characters to
+terminal screens with full Unicode support and -- crucially -- the ability to
+print from concurrent threads. The idea is to provide all the necessary
+mechanical details while leaving the actual so called 'TUI' abstractions to
+higher level libraries.
 
 Obvious applications include snake clones, rogue engines and golfed art works :)
 
@@ -260,13 +19,16 @@ Oh, and Serious Monitoring Apps, of course.
 
 =head1 Usage
 
-In general an application will have only one L<Terminal::Print> object at a
-time. This object can <L|.initialize-screen>, which stores the current state of
-the terminal window and replaces it with a blank canvas.
+L<Terminal::Print> creates you an object for you when you import it, stored in
+C<$Terminal::Print::T>. It also creates a constant C<T> for you in the C<OUR::>
+scope.
 
-TODO: Write more. For now please check out C<examples/show-love.p6> and
-C<examples/zig-zag.p6> for usage examples. C<zig-zag> has an async invocation commented
-out above the current 'main' line of the program.
+Thus common usage would look like this:
+
+=for code
+T.initialize-screen;
+T.print-string(20, 20, DateTime.now);
+T.shutdown-screen;
 
 =head1 Miscellany
 
@@ -294,12 +56,276 @@ still feels bolted on.
 C<ncurses> is not re-entrant, either, which would nix one of the main benefits
 we might be able to get from using Perl 6 -- easy async abstractions.
 
-=head2 A note on buffers
-
-C<buffer> was designed to provide a flat access mechanism: the first cell is
-at 0 and the last cell is at *-1.
-
-It's not currently in the test suite and I wonder if it is actually necessary.
-If we do keep it we should move it to Terminal::Print::Grid.
-
 =end pod
+
+use Terminal::Print::Grid;
+
+has Terminal::Print::Grid $.current-grid;
+
+has Terminal::Print::Grid @.grids;
+
+has @.indices;
+has %!grid-name-map;
+
+has $.columns;
+has $.rows;
+
+my Terminal::Print $PRINTER;    # singleton for golfing and subroutines
+
+use Terminal::Print::Commands;
+
+constant Commands = Terminal::Print::Commands;
+
+subset Valid::X of Int is export where * < %T::attributes<columns>;
+subset Valid::Y of Int is export where * < %T::attributes<rows>;
+subset Valid::Char of Str is export where *.chars == 1;
+
+has Terminal::Print::CursorProfile $.cursor-profile;
+has $.move-cursor;
+
+method new( :$cursor-profile = 'ansi' ) {
+    my $columns   = +%Commands::attributes<columns>;
+    my $rows      = +%Commands::attributes<rows>;
+    my $move-cursor = move-cursor-template($cursor-profile);
+
+    my $grid = Terminal::Print::Grid.new( $columns, $rows, :$move-cursor );
+    my @indices = $grid.indices;
+
+    self.bless(
+                :$columns, :$rows, :@indices,
+                :$cursor-profile, :$move-cursor,
+                    current-grid    => $grid,
+              );
+}
+
+submethod BUILD( :$current-grid, :$!columns, :$!rows, :@indices, :$!cursor-profile, :$!move-cursor ) {
+    push @!grids, $current-grid;
+
+    $!current-grid := @!grids[0];
+
+    @!indices = @indices;  # TODO: bind this to @!grids[0].indices?
+
+    # set up a tap on SIGINT so that we can cleanly shutdown, restoring the previous screen and cursor
+    signal(SIGINT).tap: {
+        @!grids>>.disable;
+        self.shutdown-screen;
+        die "Encountered a SIGINT. Cleaning up the screen and exiting...";
+    }
+}
+
+method add-grid( $name?, :$new-grid = Terminal::Print::Grid.new( :$!columns, :$!rows, :$!move-cursor ) ) {
+    push @!grids, $new-grid;
+    if $name {
+        %!grid-name-map{$name} = +@!grids-1;
+    }
+    $new-grid;
+}
+
+method blit( $grid-identifier = 0 ) {
+    self.clear-screen;
+    self.print-grid($grid-identifier);
+}
+
+# 'clear' will also work through the FALLBACK
+method clear-screen {
+    print-command <clear>;
+}
+
+method initialize-screen {
+    print-command <save-screen>;
+    print-command <hide-cursor>;
+    print-command <clear>;
+}
+
+method shutdown-screen {
+    print-command <clear>;
+    print-command <restore-screen>;
+    print-command <show-cursor>;
+}
+
+method print-command( $command ) {
+    print-command($command, $!cursor-profile);
+}
+
+# AT-POS hands back a Terminal::Print::Column
+#   $b[$x]
+# Because we have AT-POS on the column object as well,
+# we get
+#   $b[$x][$y]
+#
+# TODO: implement $!current-grid switching
+method AT-POS( $column-idx ) {
+    $!current-grid.grid[ $column-idx ];
+}
+
+# AT-KEY returns the Terminal::Print::Grid.grid of whichever the key specifies
+#   $b<specific-grid>[$x][$y]
+method AT-KEY( $grid-identifier ) {
+    self.grid( $grid-identifier );
+}
+
+multi method CALL-ME($x, $y) {
+    $!current-grid.print-cell($x, $y);
+}
+
+multi method CALL-ME($x, $y, $c) {
+    $!current-grid.print-string($x, $y, $c);
+}
+
+multi method FALLBACK( Str $command-name where { %T::human-command-names{$_} } ) {
+    print-command( $command-name );
+}
+
+# multi method sugar:
+#    @!grids and @!buffers can both be accessed by index or name (if it has
+#    one). The name is optionally supplied when calling .add-grid.
+#
+#    In the case of @!grids, we pass back the grid array directly from the
+#    Terminal::Print::Grid object, actually notching both DWIM and DRY in one swoosh.
+#    because you can do things like  $b.grid("background")[42][42] this way.
+
+multi method grid() {
+    $!current-grid.grid;
+}
+
+multi method grid( Int $index ) {
+    @!grids[$index].grid;
+}
+
+multi method grid( Str $name ) {
+    die "No grid has been named $name" unless my $grid-index = %!grid-name-map{$name};
+    @!grids[$grid-index].grid;
+}
+
+#### grid-object stuff
+
+#   Sometimes you simply want the object back (for stringification, or
+#   introspection on things like column-range)
+multi method grid-object( Int $index ) {
+    @!grids[$index];
+}
+
+multi method grid-object( Str $name ) {
+    die "No grid has been named $name" unless my $grid-index = %!grid-name-map{$name};
+    @!grids[$grid-index];
+}
+
+multi method print-cell( $x, $y ) {
+    $!current-grid.print-cell($x, $y);
+}
+
+multi method print-cell( $x, $y, Str $c ) {
+    $!current-grid.print-cell($x, $y, $c);
+}
+multi method print-cell( $x, $y, %c ) {
+    $!current-grid.print-cell($x, $y, %c);
+}
+
+method print-string( $x, $y, Str() $string) {
+    $!current-grid.print-string($x, $y, $string);
+}
+
+method change-cell( $x, $y, Str $c ) {
+    $!current-grid.change-cell($x, $y, $c);
+}
+
+#### print-grid stuff
+
+multi method print-grid( Int $index ) {
+    @!grids[$index].print-grid;
+}
+
+multi method print-grid( Str $name ) {
+    die "No grid has been named $name" unless my $grid-index = %!grid-name-map{$name};
+    @!grids[$grid-index].print-grid;
+}
+
+# method !clone-grid-index( $origin, $dest? ) {
+#     my $new-grid;
+#     if $dest {
+#         $new-grid := self.add-grid($dest, new-grid => @!grids[$origin].clone);
+#     } else {
+#         @!grids.push: @!grids[$origin].clone;
+#     }
+#     return $new-grid;
+# }
+#
+# #### clone-grid stuff
+#
+# multi method clone-grid( Int $origin, Str $dest? ) {
+#     die "Invalid grid '$origin'" unless @!grids[$origin]:exists;
+#     self!clone-grid-index($origin, $dest);
+# }
+#
+# multi method clone-grid( Str $origin, Str $dest? ) {
+#     die "Invalid grid '$origin'" unless my $grid-index = %!grid-name-map{$origin};
+#     self!clone-grid-index($grid-index, $dest);
+# }
+
+method Str {
+    ~$!current-grid;
+}
+
+method gist {
+    "\{ cols: {self.columns} rows: {self.rows} which: {self.WHICH} grid: {self.current-grid.WHICH} \}";
+}
+
+=begin Golfing
+
+The golfing mechanism is minimal. Further golfing functionality may be added via third party modules,
+but the following features seemed to fulfill a 'necessary minimum' set of golfing requirements:
+
+    - Not being subjected to a constructor command, certainly not against the full name of the class
+        + Solved via 'T'
+    - Having a succinct subroutine form which can initialize and shutdown the screen automatically
+        + Solved via 'draw'
+    - Easy access to .print-string, sleep, colorization, and the grid indices list. (Even easier than using T());
+        + Solved via 'd', 'w', 'h', 'p', 'cl', 'ch', 'slp', 'fgc', 'bgc', 'in'
+
+=end Golfing
+
+our $T = Terminal::Print.new;
+
+sub draw(Callable $block) is export {
+    my $drawn-promise = Promise.new;
+    start {
+        my $end-promise = Promise.new;
+        $T.initialize-screen;
+        $block($end-promise);
+        await $end-promise;
+        $T.shutdown-screen;
+        $drawn-promise.keep;
+    }
+    await $drawn-promise;
+}
+
+sub d($block) is export {
+    draw($block);
+}
+
+sub p($x, $y, $string?) is export {
+    $T.current-grid.print-string($x, $y, $string);
+}
+
+sub ch($x, $y, $char, $color?) is export {
+    my $cell = $color ?? %(:$char, :$color) !! $char;
+    $T.current-grid.change-cell($x, $y, $cell);
+}
+
+sub cl($x, $y, $char, $color?) is export {
+    my $cell = $color ?? %(:$char, :$color) !! $char;
+    $T.current-grid.print-cell($x, $y, $cell);
+}
+
+sub slp($seconds) is export {
+    sleep $seconds;
+}
+
+my package EXPORT::DEFAULT {
+    OUR::{ 'T' }   := $Terminal::Print::T;
+    OUR::{ 'w' }   := $Terminal::Print::T.columns;
+    OUR::{ 'h' }   := $Terminal::Print::T.rows;
+    OUR::{ 'in' }  := $Terminal::Print::T.indices;
+    OUR::{ 'fgc' } := @Terminal::Print::Commands::fg_colors;
+    OUR::{ 'bgc' } := @Terminal::Print::Commands::bg_colors;
+}
