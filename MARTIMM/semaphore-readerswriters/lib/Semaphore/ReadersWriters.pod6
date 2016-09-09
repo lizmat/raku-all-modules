@@ -90,9 +90,7 @@ Defined as
     RWPatternType :$RWPatternType = C-RW-WRITERPRIO
   )
 
-With this class it is possible to control several shared areas and uses names to
-separate them. This method sets one or more names. With the name a variation to
-the reader writer theme can be specified in :RWPatternType.
+With this class it is possible to control several shared areas and uses names to separate them. This method sets one or more names. With the name a variation to the reader writer theme can be specified in :RWPatternType. The method throws an exception when a key in the C<@snames> array is already in use.
 
 =item C<C-RW-READERPRIO>. Readers have priority, see description above.
 
@@ -117,6 +115,15 @@ Defined as
   method get-mutex-names ()
 
 Return all defined names.
+
+
+=head2 check-mutex-names
+
+Defined as
+
+  method check-mutex-names ( *@names --> Bool )
+
+Check if a name from @names is in use. Returns C<True> if so, C<False> otherwise.
 
 
 =head2 reader

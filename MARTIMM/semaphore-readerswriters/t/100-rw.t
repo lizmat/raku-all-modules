@@ -16,6 +16,10 @@ subtest {
   cmp-ok 'shv', '~~', any($rw.get-mutex-names), 'shv key set';
   cmp-ok 'def', '~~', any($rw.get-mutex-names), 'def key set';
 
+  ok $rw.check-mutex-names('def'), 'Key def found';
+  ok !$rw.check-mutex-names('xyz'), 'Key xyz not found';
+  ok $rw.check-mutex-names(<def xyz>), 'any of def or xyz is found';
+
   $rw.rm-mutex-names('def');
   cmp-ok 'def', '!~~', any($rw.get-mutex-names), 'def key removed';
 
@@ -37,7 +41,7 @@ subtest {
 subtest {
   my Semaphore::ReadersWriters $rw .= new;
   $rw.debug = $debug;
-  $rw.add-mutex-names('shv');
+  $rw.add-mutex-names('shv 2');
   my $shared-var = 10;
 
   my @p;
@@ -45,8 +49,8 @@ subtest {
     my $i = $_;
 
     @p.push: Promise.start( {
-say "$*THREAD.id() Try reading $i" if $debug;
-        $rw.reader( 'shv', { sleep((rand * 2).Int); $shared-var;});
+#say "$*THREAD.id() Try reading $i" if $debug;
+        $rw.reader( 'shv 2', { sleep((rand * 2).Int); $shared-var;});
       }
     );
   }
@@ -60,7 +64,16 @@ say "$*THREAD.id() Try reading $i" if $debug;
 subtest {
   my Semaphore::ReadersWriters $rw .= new;
   $rw.debug = $debug;
-  $rw.add-mutex-names('shv');
+
+  try {
+    $rw.add-mutex-names('shv');
+    CATCH {
+      default {
+        ok .message ~~ m:s/Key \'shv\' already in use/, .message;
+      }
+    }
+  }
+
   my $shared-var = 10;
 
   my @p;
@@ -68,7 +81,7 @@ subtest {
     my $i = $_;
 
     @p.push: Promise.start( {
-say "$*THREAD.id() Try writing $i" if $debug;
+#say "$*THREAD.id() Try writing $i" if $debug;
         $rw.writer( 'shv', { sleep((rand * 2).Int); ++$shared-var;});
       }
     );
@@ -82,9 +95,9 @@ say "$*THREAD.id() Try writing $i" if $debug;
 #-------------------------------------------------------------------------------
 subtest {
   my Semaphore::ReadersWriters $rw .= new;
-$debug = True;
+#$debug = True;
   $rw.debug = $debug;
-  $rw.add-mutex-names('shv');
+  $rw.add-mutex-names('shv 3');
   my $shared-var = 10;
 
   my @p;
@@ -98,13 +111,13 @@ $debug = True;
         # Only when $i <= 2 then thread becomes a writer.
         # All others become readers
         if $i <= 2 {
-say "$*THREAD.id() Try writing $i" if $debug;
-          $r = $rw.writer( 'shv', {$shared-var += $i});
+#say "$*THREAD.id() Try writing $i" if $debug;
+          $r = $rw.writer( 'shv 3', {$shared-var += $i});
         }
 
         else {
-say "$*THREAD.id() Try reading $i" if $debug;
-          $r = $rw.reader( 'shv', {$shared-var});
+#say "$*THREAD.id() Try reading $i" if $debug;
+          $r = $rw.reader( 'shv 3', {$shared-var});
         }
 
         CATCH {

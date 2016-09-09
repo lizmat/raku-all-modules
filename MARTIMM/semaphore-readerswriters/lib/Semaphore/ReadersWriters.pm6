@@ -44,8 +44,17 @@ class Semaphore::ReadersWriters:ver<0.2.2>:auth<MARTIMM> {
     RWPatternType :$RWPatternType = C-RW-WRITERPRIO
   ) {
 
+    my Bool $throw-exception = False;
+    my Str $used-name;
+
     $s-mutex.acquire;
     for @snames -> $sname {
+
+      if $semaphores{$sname}:exists {
+        $used-name = $sname;
+        $throw-exception = True;
+        last;
+      }
 
       # Make an array of each entry. [0] is a readers semaphore with a readers
       # counter([1]). Second pair is for writers at [2] and [3].
@@ -55,7 +64,12 @@ class Semaphore::ReadersWriters:ver<0.2.2>:auth<MARTIMM> {
         Semaphore.new(1), Semaphore.new(1), 0     # writers semaphores and count
       ] unless $semaphores{$sname}:exists;
     }
+
     $s-mutex.release;
+
+    if $throw-exception {
+      die "Key '$used-name' already in use'";
+    }
   }
 
   #-----------------------------------------------------------------------------
@@ -76,6 +90,20 @@ class Semaphore::ReadersWriters:ver<0.2.2>:auth<MARTIMM> {
     $s-mutex.release;
 
     return @names;
+  }
+
+  #-----------------------------------------------------------------------------
+  method check-mutex-names ( *@names --> Bool ) {
+
+    $s-mutex.acquire;
+    my Bool $in-use;
+    for @names -> $name {
+      $in-use = $semaphores{$name}:exists and $semaphores{$name}.defined;
+      last if $in-use;
+    }
+    $s-mutex.release;
+
+    return $in-use;
   }
 
   #-----------------------------------------------------------------------------
@@ -181,5 +209,3 @@ say "$*THREAD.id() W $sname unlock" if $!debug;
 say "$*THREAD.id() W $sname unlocked" if $!debug;
   }
 }
-
-
