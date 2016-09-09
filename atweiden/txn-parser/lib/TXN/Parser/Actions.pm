@@ -485,7 +485,7 @@ method header($/)
     my Dateish $date = $<date>.made;
     my Str $description = $<description>.made if $<description>;
     my UInt $important = 0;
-    my VarName @tag;
+    my Str @tag;
 
     for @<metainfo>».made -> @metainfo
     {
@@ -540,8 +540,8 @@ method account($/)
     my %account;
 
     my Silo $silo = $<silo>.made;
-    my VarName $entity = $<entity>.made;
-    my VarName @path = $<account-path>.made if $<account-path>;
+    my Str $entity = $<entity>.made;
+    my Str @path = $<account-path>.made if $<account-path>;
 
     %account<silo> = $silo;
     %account<entity> = $entity;
@@ -581,7 +581,7 @@ method amount($/)
 {
     my %amount;
 
-    my AssetCode $asset-code = $<asset-code>.made;
+    my Str $asset-code = $<asset-code>.made;
     my Quantity $asset-quantity = $<asset-quantity>.made;
     my AssetSymbol $asset-symbol = $<asset-symbol>.made if $<asset-symbol>;
     my PlusMinus $plus-or-minus = $<plus-or-minus>.made if $<plus-or-minus>;
@@ -613,7 +613,7 @@ method xe-rate($/)
 {
     my %xe-rate;
 
-    my AssetCode $asset-code = $<asset-code>.made;
+    my Str $asset-code = $<asset-code>.made;
     my Quantity $asset-quantity = $<asset-quantity>.made;
     my AssetSymbol $asset-symbol = $<asset-symbol>.made if $<asset-symbol>;
 
@@ -666,7 +666,7 @@ method lot:acquisition ($/)
 {
     my %lot;
 
-    my VarName $name = $<lot-name>.made;
+    my Str $name = $<lot-name>.made;
     my DecInc $decinc = INC;
 
     %lot<name> = $name;
@@ -679,7 +679,7 @@ method lot:disposition ($/)
 {
     my %lot;
 
-    my VarName $name = $<lot-name>.made;
+    my Str $name = $<lot-name>.made;
     my DecInc $decinc = DEC;
 
     %lot<name> = $name;
@@ -727,7 +727,7 @@ method posting($/)
     make %(:$account, :$amount, :$annot, :$decinc, :$text, :$xxhash);
 }
 
-method posting-line:content ($/)
+method posting-line($/)
 {
     make $<posting>.made;
 }
@@ -898,7 +898,7 @@ sub gen-annot(
 multi sub gen-xe(
     Quantity $amount-asset-quantity,
     :%xe! (
-        AssetCode :$asset-code!,
+        Str :$asset-code!,
         Quantity :$asset-quantity!,
         XERateType :$rate-type!,
         Str :$asset-symbol
@@ -919,7 +919,7 @@ multi sub gen-xe(
 multi sub gen-xe(
     Quantity $amount-asset-quantity,
     :%inherit! (
-        AssetCode :$asset-code!,
+        Str :$asset-code!,
         Quantity :$asset-quantity!,
         XERateType :$rate-type!,
         Str :$asset-symbol

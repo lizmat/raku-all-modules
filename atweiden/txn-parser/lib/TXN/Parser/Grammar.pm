@@ -518,17 +518,10 @@ token tag
 
 token postings
 {
-    [ \n <posting-line> ]+
+    [ \n [<.comment-line> \n]* <posting-line> ]+
 }
 
-proto token posting-line {*}
-
-token posting-line:comment
-{
-    <.comment-line>
-}
-
-token posting-line:content
+token posting-line
 {
     ^^ \h* <posting> \h* <.comment>? $$
 }

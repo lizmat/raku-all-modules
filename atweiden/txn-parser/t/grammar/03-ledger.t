@@ -81,8 +81,6 @@ subtest
       expenses.personal.fuel.shell  $57.00 USD--comment
       -- comment
       liabilities.personal.amex     $57.00 USD--comment
-      -- comment
-      -- comment
     EOF
 
     push @entries, Q:to/EOF/;

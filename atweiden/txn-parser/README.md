@@ -14,11 +14,11 @@ my $txn = Q:to/EOF/;
   Assets:Personal:Bankwest:Cheque    $1000 USD
   Equity:Personal                    $1000 USD
 EOF
-my @txn = TXN::Parser.parse($txn).made;
+my TXN::Parser::AST::Entry @entry = TXN::Parser.parse($txn).made;
 
 # parse ledger from file
 my $file = 'sample.txn';
-my @txn = TXN::Parser.parsefile($file).made;
+my TXN::Parser::AST::Entry @entry = TXN::Parser.parsefile($file).made;
 ```
 
 

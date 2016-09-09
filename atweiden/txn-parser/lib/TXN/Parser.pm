@@ -14,7 +14,7 @@ method parse(
 {
     my TXN::Parser::Actions $actions .= new(|%opts);
     TXN::Parser::Grammar.parse($content, :$actions)
-        or die X::TXN::Parser::ParseFailed.new;
+        or die X::TXN::Parser::ParseFailed.new(:$content);
 }
 
 method parsefile(
@@ -27,7 +27,7 @@ method parsefile(
 {
     my TXN::Parser::Actions $actions .= new(:$file, |%opts);
     TXN::Parser::Grammar.parsefile($file, :$actions)
-        or die X::TXN::Parser::ParsefileFailed.new;
+        or die X::TXN::Parser::ParsefileFailed.new(:$file);
 }
 
 # vim: set filetype=perl6 foldmethod=marker foldlevel=0:
