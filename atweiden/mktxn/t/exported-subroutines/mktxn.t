@@ -1,6 +1,9 @@
 use v6;
 use lib 'lib';
 use TXN;
+use TXN::Parser;
+use TXN::Parser::Types;
+use TXN::Remarshal;
 use Test;
 
 plan 1;

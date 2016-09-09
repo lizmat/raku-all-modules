@@ -1,9 +1,14 @@
 {
     "name"        : "TXN",
-    "version"     : "0.0.4",
+    "version"     : "0.0.5",
     "author"      : "Andy Weidenbaum",
-    "description" : "Double-entry accounting ledger parser and serializer",
-    "depends"     : ["Config::TOML", "File::Presence", "TXN::Parser"],
+    "description" : "Double-entry accounting ledger packager",
+    "depends"     : [
+        "Config::TOML",
+        "File::Presence",
+        "TXN::Parser",
+        "TXN::Remarshal"
+    ],
     "license"     : "http://unlicense.org/UNLICENSE",
     "source-type" : "git",
     "source-url"  : "git://github.com/atweiden/mktxn.git",

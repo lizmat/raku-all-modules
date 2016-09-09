@@ -55,25 +55,25 @@ sub USAGE()
             [--txn-dir=<dir>]
             [--date-local-offset=<offset>]
             [--template=<template>]
-            <file>                            Make release build from file
+            <file>                            Package TXN from file
 
-    optional arguments:
+    Options:
       -h, --help
         print this help message
       -N, --pkgname=<name>
-        the name of release build
+        the name of TXN package
       -V, --pkgver=<version>
-        the version number of release build
+        the version number of TXN package
       -R, --pkgrel=<release>
-        the release number of release build
+        the release number of TXN package
       -D, --pkgdesc=<description>
-        the description of release build
+        the description of TXN package
       -I, --txn-dir=<dir>
         the include directory
       -L, --date-local-offset=<offset>
         the local offset for dates without one
       -T, --template=<template>
-        the location of the config template for release build
+        the location of the config template for TXN package
     EOF
     say $HELP.trim;
 }

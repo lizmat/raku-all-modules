@@ -3,10 +3,11 @@ use Config::TOML;
 use File::Presence;
 use TXN::Parser;
 use TXN::Parser::Types;
+use TXN::Remarshal;
 unit module TXN;
 
 constant $PROGRAM = 'mktxn';
-constant $VERSION = v0.0.4;
+constant $VERSION = v0.0.5;
 
 # TXN::Package {{{
 
@@ -216,33 +217,6 @@ my class TXN::Package
 
 # end TXN::Package }}}
 
-# sub from-txn {{{
-
-multi sub from-txn(
-    Str $content,
-    *%opts (
-        Str :$txn-dir,
-        Int :$date-local-offset
-    )
-) is export returns Array
-{
-    my TXN::Parser::AST::Entry @entry =
-        TXN::Parser.parse($content, |%opts).made;
-}
-
-multi sub from-txn(
-    Str :$file!,
-    *%opts (
-        Str :$txn-dir,
-        Int :$date-local-offset
-    )
-) is export returns Array
-{
-    my TXN::Parser::AST::Entry @entry =
-        TXN::Parser.parsefile($file, |%opts).made;
-}
-
-# end sub from-txn }}}
 # sub mktxn {{{
 
 multi sub mktxn(
@@ -314,7 +288,7 @@ sub package(%txn-package (TXN::Parser::AST::Entry :@entry!, :%txn-info!))
     spurt $txn-info-file, Rakudo::Internals::JSON.to-json(%txn-info) ~ "\n";
 
     # serialize ledger AST to JSON
-    spurt $txn-json-file, Rakudo::Internals::JSON.to-json(@entry».to-json) ~ "\n";
+    spurt $txn-json-file, Rakudo::Internals::JSON.to-json(@entry».hash) ~ "\n";
 
     # compress
     my Str $tarball =
