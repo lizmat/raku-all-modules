@@ -9,6 +9,7 @@ use Panda::Bundler;
 use Panda::Reporter;
 use Shell::Command;
 use JSON::Fast;
+use File::Which :whence;
 
 sub tmpdir {
     state $i = 0;
@@ -126,6 +127,23 @@ class Panda {
                 unless $supported;
         }
     }
+    method uninstall(Panda::Project $bone is copy, :$prefix) {
+        my $bmeta = $bone.metainfo;
+        my $short-name = $bmeta<name>;
+        my $ver = $bmeta<ver> // $bmeta<version> //  '';
+        my $auth = $bmeta<auth> // $bmeta<author> // $bmeta<authority> // '';
+        my $api = $bmeta<api> // ''; 
+
+        my $comp-unit = $*REPO.resolve(CompUnit::DependencySpecification.new(:$short-name, :$ver, :$auth, :$api));
+
+        die "{$short-name} not installed" unless $comp-unit.defined;
+
+        $comp-unit.repo.uninstall($comp-unit.distribution);
+
+        my $s = Panda::Project::State::absent;
+        $.ecosystem.project-set-state($bone, $s);
+
+    }
 
     method install(Panda::Project $bone is copy, $nodeps, $notests,
                    Bool() $isdep, :$rebuild = True, :$prefix, Bool :$force) {
@@ -150,9 +168,19 @@ class Panda {
         }
         unless $notests {
             self.announce('testing', $bone);
-            my %args = %*ENV<PROVE_COMMAND>
-                ??  prove-command => %*ENV<PROVE_COMMAND>
-                !! ();
+
+            my %args =();
+            if whence('prove6') {
+                if $*DISTRO.name eq 'mswin32' {
+                    %args = prove-command => 'prove6.bat';
+                }
+                else {
+                    %args = prove-command => 'prove6';
+                }
+            }
+
+            %args = prove-command => %*ENV<PROVE_COMMAND> if %*ENV<PROVE_COMMAND>;
+
             unless $_ = $.tester.test($dir, :$bone, |%args) {
                 die X::Panda.new($bone.name, 'test', $_, :$bone)
             }
@@ -232,6 +260,9 @@ class Panda {
         given $action {
             when 'install' {
                 self.install($bone, $nodeps, $notests, 0, :$prefix, :$force);
+            }
+            when 'uninstall' {
+                self.uninstall($bone, :$prefix);
             }
             when 'install-deps-only' { }
             when 'look'    { self.look($bone) };
