@@ -1,5 +1,5 @@
 use v6;
-
+use experimental :pack;
 class MessagePack::Unpacker {
     has $!str;
 

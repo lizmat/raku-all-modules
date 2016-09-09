@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/uasi/messagepack-pm6.git
 	branch = master
-	commit = 0a4808ec7c679583c6729ce64f15f9a91810137e
-	parent = 9d199524dd11c757667c764611de3c6630f7f783
-	cmdver = 0.2.1
+	commit = 0c6f62b7ba40e7fd7acdda8682d7602ff6973fa5
+	parent = 68ec6b92859689d15831b0e4ac40fb121db17af4
+	cmdver = 0.2.3
