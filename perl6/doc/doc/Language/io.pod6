@@ -44,13 +44,13 @@ for 'huge-csv'.IO.lines -> $line {
     # Do something with $line
 }
 
-# or if you'll be processing later
-my @lines = 'huge-csv'.IO.lines;
+    # or if you'll be processing later
+    my @lines = 'huge-csv'.IO.lines;
 
 =head1 Writing to files
 
 To write data to a file, again we have the choice of the traditional method
-of calling the C<open> function -- this time with the C<:w> (write) option
+of calling the C<open> function – this time with the C<:w> (write) option
 -- and printing the data to the file:
 
 =for code :skip-test
@@ -126,10 +126,10 @@ if "path/to/file".IO ~~ :e {
     say 'file exists';
 }
 
-my $file = "path/to/file";
-if $file.IO ~~ :e {
-    say 'file exists';
-}
+    my $file = "path/to/file";
+    if $file.IO ~~ :e {
+        say 'file exists';
+    }
 
 Similarly to the file existence check, one can also check to see if a path
 is a directory.  For instance, assuming that the file C<testfile> and the
@@ -172,18 +172,18 @@ To create a new directory, simply call the C<mkdir> function with the
 directory name as its argument:
 
 =for code :skip-test
-    mkdir "newdir";
+mkdir "newdir";
 
 The function returns the name of the created directory on success and C<Nil>
 on failure. Thus the standard Perl idiom works as expected:
 
 =for code :skip-test
-    mkdir "newdir" or die "$!";
+mkdir "newdir" or die "$!";
 
 Use C<rmdir> to remove I<empty> directories:
 
 =for code :skip-test
-    rmdir "newdir" or die "$!";
+rmdir "newdir" or die "$!";
 
 =end pod
 
