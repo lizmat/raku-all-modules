@@ -1,0 +1,12 @@
+{
+    "name" : "Math::FourierTransform",
+    "version" : "0.0.1",
+    "description" : "Discrete Fourier Transform implementation.",
+    "author" : "Matt Oates",
+    "depends" : [],
+    "source-type" : "git",
+    "source-url" : "git://github.com/MattOates/Math--FourierTransform.git",
+    "provides" : {
+        "Math::FourierTransform" : "lib/Math/FourierTransform.pm6"
+    }
+}
