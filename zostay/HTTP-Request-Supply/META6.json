@@ -1,0 +1,25 @@
+{
+   "meta6" : "0",
+   "provides" : {
+      "HTTP::Request::Supply" : "lib/HTTP/Request/Supply.pm6"
+   },
+   "test-depends" : [
+      "Test"
+   ],
+   "support" : {
+      "source" : "git://github.com/zostay/HTTP-Request-Supply.git"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "auth" : "github:zostay",
+   "source-url" : "git://github.com/zostay/HTTP-Request-Supply.git",
+   "depends" : [],
+   "name" : "HTTP-Request-Supply",
+   "authors" : [
+      "Sterling Hanenkamp <hanenkamp@cpan.org>"
+   ],
+   "version" : "0.1",
+   "license" : "Artistic",
+   "description" : "A modern HTTP request parser"
+}
+

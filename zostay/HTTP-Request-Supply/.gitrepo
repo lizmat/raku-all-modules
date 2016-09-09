@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/HTTP-Request-Supply.git
+	branch = master
+	commit = 81c540ecd8b2e4f8e3c6b259ead6727ac46347f0
+	parent = 1edddceed0201269a8f4e388e5046b5331b8bb8f
+	cmdver = 0.2.3
