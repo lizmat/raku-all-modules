@@ -1,11 +1,9 @@
-Config::TOML
-============
+# Config::TOML
 
 TOML file parser and writer.
 
 
-Usage
------
+## Usage
 
 TOML to Perl6:
 
@@ -34,10 +32,9 @@ to-toml(%h);
 ```
 
 
-Advanced Usage
---------------
+## Advanced Usage
 
-#### Specifying a custom local offset for TOML date values
+### Specifying a custom local offset for TOML date values
 
 TOML date values can take three different forms:
 
@@ -80,8 +77,15 @@ To more easily ascertain your host machine's local offset, open a perl6
 repl and print the value of `$*TZ`.
 
 
-Licensing
----------
+## Installation
+
+### Dependencies
+
+- Rakudo Perl6
+- [Crane](https://github.com/atweiden/crane)
+
+
+## Licensing
 
 This is free and unencumbered public domain software. For more
 information, see http://unlicense.org/ or the accompanying UNLICENSE file.
