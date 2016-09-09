@@ -54,7 +54,7 @@ enum SDL_INIT (
     :NOPARACHUTE(0x100000)
 );
 
-sub SDL_Init(int32 $flags) is native($lib) is export {*}
+sub SDL_Init(int32 $flags) is native($lib) is export returns int32 {*}
 sub SDL_Quit() is native($lib) is export {*}
 
 class SDL_Window is repr('CPointer') { }
@@ -137,6 +137,10 @@ class SDL_Renderer is repr('CPointer') { }
 
 class SDL_Texture is repr('CPointer') { }
 
+class SDL_Surface is repr('CPointer') { }
+
+class SDL_GLContext is repr('CPointer') { }
+
 sub SDL_GetNumRenderDrivers()
         returns int32
         is native($lib)
@@ -210,6 +214,12 @@ sub SDL_GetTextureBlendMode(SDL_Texture $tex, Pointer[int32] $blendmode)
         is export
         {*}
 
+sub SDL_CreateTextureFromSurface(SDL_Renderer $renderer, SDL_Surface $surface )
+        returns SDL_Texture
+        is native($lib)
+        is export
+        {*}
+
 sub SDL_RenderSetLogicalSize(SDL_Renderer $renderer, int32 $w, int32 $h)
         returns int32
         is native($lib)
@@ -250,9 +260,6 @@ sub SDL_RenderFillRect(SDL_Renderer $renderer, SDL_Rect $rect) returns int32 is 
 sub SDL_DestroyTexture(SDL_Texture $texture) is native($lib) is export {*}
 sub SDL_DestroyRenderer(SDL_Renderer $renderer) is native($lib) is export {*}
 
-sub SDL_GL_BindTexture(SDL_Texture $texture, Pointer[num32] $texw, Pointer[num32] $texh) returns int32 is native($lib) is export {*}
-sub SDL_GL_UnBindTexture(SDL_Texture $texture) returns int32 is native($lib) is export {*}
-
 sub SDL_VideoInit(Str $drivername) returns int32 is native($lib) is export {*}
 sub SDL_VideoQuit() is native($lib) is export {*}
 
@@ -265,7 +272,8 @@ sub SDL_GetDisplayName(int32 $index) returns Str is native($lib) is export {*}
 sub SDL_GetDisplayBounds(int32 $index, SDL_Rect $rect) returns int32 is native($lib) is export {*}
 
 sub SDL_CreateWindow(Str $title, int32 $x, int32 $y, int32 $w, int32 $h, int32 $flags) returns SDL_Window is native($lib) is export {*}
-sub SDL_SetWindowTitle(SDL_Window $window, Str $title) returns Str is native($lib) is export {*}
+sub SDL_DestroyWindow(SDL_Window $win) is native($lib) is export {*}
+sub SDL_SetWindowTitle(SDL_Window $window, Str $title) is native($lib) is export {*}
 sub SDL_GetWindowTitle(SDL_Window $window) returns Str is native($lib) is export {*}
 
 sub SDL_UpdateWindowSurface(SDL_Window $window) returns int32 is native($lib) is export {*}
@@ -273,6 +281,8 @@ sub SDL_UpdateWindowSurface(SDL_Window $window) returns int32 is native($lib) is
 sub SDL_SetWindowGrab(SDL_Window $window, int32 $grabbed) is native($lib) is export {*}
 sub SDL_GetWindowGrab(SDL_Window $window) returns int32 is native($lib) is export {*}
 
+sub SDL_LoadBMP(Str $path) returns SDL_Surface is native($lib) is export {*}
+sub SDL_SaveBMP(SDL_Surface $surf, Str $file) returns int32 is native($lib) is export {*}
 
 enum SDL_EventType (
    FIRSTEVENT     => 0,
@@ -428,6 +438,8 @@ sub SDL_CastEvent(SDL_Event $event) is export {
         }
     }
 }
+
+sub SDL_GetKeyboardState(int32 $numkeys is rw) returns CArray[uint8] is native($lib) is export {*}
 
 our constant SDL_QUERY   = -1;
 our constant SDL_IGNORE  =  0;
@@ -594,3 +606,47 @@ our %PIXELFORMAT is export = (
             _pxfmt(PIXELTYPE_PACKED32, PACKEDORDER_ARGB,
                                    PACKEDLAYOUT_2101010, 32, 4),
    );
+
+enum SDL_GLAttr is export <
+    RED_SIZE
+    GREEN_SIZE
+    BLUE_SIZE
+    ALPHA_SIZE
+    BUFFER_SIZE
+    DOUBLEBUFFER
+    DEPTH_SIZE
+    STENCIL_SIZE
+    ACCUM_RED_SIZE
+    ACCUM_GREEN_SIZE
+    ACCUM_BLUE_SIZE
+    ACCUM_ALPHA_SIZE
+    STEREO
+    MULTISAMPLEBUFFERS
+    MULTISAMPLESAMPLES
+    ACCELERATED_VISUAL
+    RETAINED_BACKING
+    CONTEXT_MAJOR_VERSION
+    CONTEXT_MINOR_VERSION
+    CONTEXT_EGL
+    CONTEXT_FLAGS
+    CONTEXT_PROFILE_MASK
+    SHARE_WITH_CURRENT_CONTEXT
+    FRAMEBUFFER_SRGB_CAPABLE
+>;
+
+enum SDL_GLProfile (
+    :CONTEXT_PROFILE_CORE(0x0001),
+    :CONTEXT_PROFILE_COMPATIBILITY(0x0002),
+    :CONTEXT_PROFILE_ES(0x0004)
+);
+
+# GL Functions
+sub SDL_GL_BindTexture(SDL_Texture $texture, Pointer[num32] $texw, Pointer[num32] $texh) returns int32 is native($lib) is export {*}
+sub SDL_GL_UnBindTexture(SDL_Texture $texture) returns int32 is native($lib) is export {*}
+
+sub SDL_GL_CreateContext(SDL_Window $window) returns SDL_GLContext is native($lib) is export {*}
+sub SDL_GL_DeleteContext(SDL_GLContext $context) is native($lib) is export {*}
+sub SDL_GL_MakeCurrent(SDL_Window $window, SDL_GLContext $context) returns int32 is native($lib) is export {*}
+
+sub SDL_GL_SetAttribute(int32 $attr, int32 $value) returns int32 is native($lib) is export {*}
+sub SDL_GL_SwapWindow(SDL_Window $window) is native($lib) is export {*}
