@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/hoelzro/p6-native-resources.git
 	branch = master
-	commit = b05fd025d5a3541e88b5acc266446d3814d79cc0
-	parent = 7baa392cd9077ca52cd6cfdbd58d593eef25a0cf
+	commit = 4e59030ae3ef519bf45ad105edbea196b56a570a
+	parent = e2dec6cfebebf10bc5f3142d1b3007dbb35d84cb
 	cmdver = 0.2.3

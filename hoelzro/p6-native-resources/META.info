@@ -1,7 +1,7 @@
 {
     "name" : "Native::Resources",
     "version": "0.1.0",
-    "description" : "Helper library for using resources made of native code",
+    "description" : "(DEPRECATED) Helper library for using resources made of native code",
     "author" : "Rob Hoelz",
     "depends" : ["LibraryMake"],
     "source-url" : "https://github.com/hoelzro/p6-native-resources.git",

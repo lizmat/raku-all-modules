@@ -3,7 +3,7 @@ use v6;
 =head1 TITLE
 Native::Resources
 =head1 ABSTRACT
-Boilerplate helper for bundling native code
+B<DEPRECATED> Boilerplate helper for bundling native code
 =head1 AUTHOR
 Rob Hoelz
 =head1 SYNOPSIS
@@ -43,6 +43,11 @@ Rob Hoelz
 =end code
 =begin head1
 DESCRIPTION
+
+B<Note>: This module has served its purpose, but is no longer necessary; it is
+thus DEPRECATED.  You can achieve the same effect by specifying resources under
+C<resources/libraries> in your C<META6.json> without any C<lib> prefix or
+extension, and by retrieving that resource from C<%?RESOURCES> in your module.
 
 Most of the time when you use NativeCall, you can just refer to libraries that
 your OS has installed by default.  However, sometimes, you want to bundle native
