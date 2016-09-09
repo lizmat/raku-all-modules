@@ -1,6 +1,6 @@
 use v6.c;
 
-unit module PackUnpack:ver<0.06>;
+unit module PackUnpack:ver<0.07>;
 
 my %dispatch;
 {
@@ -191,7 +191,7 @@ multi sub pack(@template, *@items) {
     }
 
     # make sure this has the same order as the %dispatch initialization
-    state @dispatch =
+    my @dispatch =
       -> --> Nil { putabyte() },                                    # a
       -> --> Nil { fill( $pos < $elems ?? ascii() !! (),0x20,0) },  # A
       -> --> Nil { one() },                                         # c
