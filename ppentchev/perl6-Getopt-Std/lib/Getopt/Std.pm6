@@ -2,7 +2,17 @@
 
 use v6.c;
 
-unit module Getopt::Std:ver<0.1.1.dev1>:auth<github:ppentchev>;
+unit module Getopt::Std:ver<1.0.0.dev1>:auth<github:ppentchev>;
+
+class X::Getopt::Std is Exception
+{
+	has Str:D $.message is required;
+}
+
+sub xdie(Str:D $message)
+{
+	fail X::Getopt::Std.new(:$message)
+}
 
 grammar GetoptDefs
 {
@@ -17,7 +27,7 @@ grammar GetoptDefs
 		method TOP($/) {
 			my @opts = $<options>.made;
 			my $dup-check = @opts.map(*.key).Bag.grep(*.value > 1).map(*.key).sort.join(', ');
-			die "Duplicate option(s) defined: $dup-check" if $dup-check;
+			xdie "Duplicate option(s) defined: $dup-check" if $dup-check;
 			make Hash[Bool:D].new(@opts);
 		}
 
@@ -41,14 +51,14 @@ grammar GetoptDefs
 	}
 }
 
-sub getopts-parse-optstring(Str:D $optstr) returns Hash[Bool:D] is export(:util)
+sub getopts-parse-optstring(Str:D $optstr) returns Hash[Bool:D]
 {
 	my $m = GetoptDefs.parse($optstr);
-	die "Could not parse the options string '$optstr'" without $m;
+	xdie "Could not parse the options string '$optstr'" without $m;
 	return $m.made;
 }
 
-sub getopts-collapse-array(Bool:D %defs, %opts) is export(:util)
+sub getopts-collapse-array(Bool:D %defs, %opts)
 {
 	for %opts.kv -> $opt, $value {
 		%opts{$opt} = %defs{$opt} || $opt eq chr(1)
@@ -58,69 +68,59 @@ sub getopts-collapse-array(Bool:D %defs, %opts) is export(:util)
 }
 
 sub getopts(Str:D $optstr, %opts, @args, Bool :$all, Bool :$nonopts,
-    Bool :$permute, Bool :$unknown) returns Bool:D is export
+    Bool :$permute, Bool :$unknown) is export
 {
-	if $optstr eq '' {
-		note 'No options defined';
-		return False;
-	}
+	xdie 'No options defined' if $optstr eq '' && !$nonopts && !$unknown;
 	my Bool:D %defs = getopts-parse-optstring($optstr);
 
 	my Str:D @restore;
 	my Bool:D $result = True;
 	%opts = ();
 	%opts{$_.key}.push($_.value) for gather {
-		try {
-			while @args {
-				my $x = @args.shift;
-				if $x eq '--' {
+		while @args {
+			my $x = @args.shift;
+			if $x eq '--' {
+				last;
+			} elsif $x !~~ /^ '-' $<opts> = [ .+ ] $/ {
+				push @restore, $x;
+				if $permute || $nonopts {
+					next;
+				} else {
 					last;
-				} elsif $x !~~ /^ '-' $<opts> = [ .+ ] $/ {
-					push @restore, $x;
-					if $permute || $nonopts {
-						next;
-					} else {
-						last;
-					}
-				}
-				$x = ~$<opts>;
-	
-				while $x ~~ /^ $<opt> = [ <[a..zA..Z0..9?]> ] $<rest> = [ .* ] $/ {
-					$x = ~$<rest>;
-					my Str:D $opt = ~$<opt>;
-					if not %defs{$opt}:k {
-						die "Invalid option '-$<opt>' specified" unless $unknown;
-						take ':' => $opt;
-					} elsif !%defs{$opt} {
-						take $opt => $opt;
-					} elsif $x ne '' {
-						take $opt => $x;
-						$x = '';
-					} elsif @args.elems == 0 {
-						die "Option '-$<opt>' requires an argument";
-					} else {
-						take $opt => @args.shift;
-					}
-				}
-				if $x ne '' {
-					die "Invalid option string '$x' specified";
 				}
 			}
-		};
-		if $! {
-			note ~$!;
-			$result = False;
+			$x = ~$<opts>;
+
+			while $x ~~ /^ $<opt> = [ <[a..zA..Z0..9?]> ] $<rest> = [ .* ] $/ {
+				$x = ~$<rest>;
+				my Str:D $opt = ~$<opt>;
+				if not %defs{$opt}:k {
+					xdie "Invalid option '-$<opt>' specified" unless $unknown;
+					take ':' => $opt;
+				} elsif !%defs{$opt} {
+					take $opt => $opt;
+				} elsif $x ne '' {
+					take $opt => $x;
+					$x = '';
+				} elsif @args.elems == 0 {
+					xdie "Option '-$<opt>' requires an argument";
+				} else {
+					take $opt => @args.shift;
+				}
+			}
+			if $x ne '' {
+				xdie "Invalid option string '$x' specified";
+			}
 		}
 	};
 
 	if $nonopts {
-		die "getopts() internal error: arguments left with nonopts: @args.perl()" if @args;
+		xdie "getopts() internal error: arguments left with nonopts: @args.perl()" if @args;
 		%opts{chr(1)} = @restore.clone;
 	} else {
 		@args.unshift(|@restore);
 	}
 	getopts-collapse-array %defs, %opts unless $all;
-	return $result;
 }
 
 =begin pod
@@ -139,8 +139,8 @@ Getopt::Std - Process single-character options with option clustering
     # - for options that don't, return a string containing the option
     #   name as many times as the option was specified
 
-    my Str:D %opts;
-    usage() unless getopts('ho:V', %opts, @*ARGS);
+    my Str:D %opts = getopts('ho:V', @*ARGS);
+    CATCH { when X::Getopt::Std { .message.note; usage } };
 
     version() if %opts<V>;
     usage(True) if %opts<h>;
@@ -154,8 +154,7 @@ Getopt::Std - Process single-character options with option clustering
     # - for options that don't, return the option name as many times
     #   as it was specified
 
-    my Array[Str:D] %opts;
-    usage() unless getopts('o:v', %opts, @*ARGS, :all);
+    my Array[Str:D] %opts = getopts('o:v', @*ARGS, :all);
 
     $verbose_level = %opts<v>.elems;
 
@@ -169,7 +168,7 @@ Getopt::Std - Process single-character options with option clustering
     # - stop at an -- argument
 
     my Str:D %opts;
-    usage() unless getopts('ho:V', %opts, @*ARGS, :permute);
+    %opts = getopts('ho:V', @*ARGS, :permute);
 =end code
 
 =head1 DESCRIPTION
@@ -200,7 +199,7 @@ options that do not.
 sub getopts
 
     sub getopts(Str:D $optstr, %opts, @args, Bool :$all, Bool :$nonopts,
-      Bool :$permute, Bool :$unknown) returns Bool:D
+      Bool :$permute, Bool :$unknown)
 
 Look for the command-line options specified in C<$optstr> in the C<@args>
 array.  Record the options found into the C<%opts> hash, leave only
@@ -221,10 +220,10 @@ this case, too.
 
 The C<:unknown> flag controls the handling of unknown options - ones not
 specified in the C<$optstr>, but present in the C<@args>.  If it is
-false (the default), C<getopts()> will output an error message and
-return false; otherwise, the unknown option character will be present in
+false (the default), C<getopts()> will throw an exception;
+otherwise, the unknown option character will be present in
 the result C<%opts> as an argument to a C<:> option and C<getopts()> will
-still return true.  This is similar to the behavior of some C<getopt(3)>
+still succeed.  This is similar to the behavior of some C<getopt(3)>
 implementations if C<$optstr> starts with a C<:> character.
 
 The C<:nonopts> flag makes C<getopts()> treat each non-option argument as
@@ -234,41 +233,10 @@ with a C<-> character.  The C<:permute> flag is redundant if C<:nonopts>
 is specified since the processing will not stop until the arguments array
 has been exhausted.
 
-Return true on success, false if an invalid option string has been
+Throws an C<X::Getopt::Std> exception if an invalid option string has been
 specified or an unknown option has been found in the arguments array.
 
-Current API available since version 0.1.0.
-=end item1
-
-=begin item1
-sub getopts-collapse-array
-
-    sub getopts-collapse-array(Bool:D %defs, %opts)
-
-This function is only available with a C<:util> import.
-
-Collapse a hash of option arrays as returned by C<getopts(:all)> into 
-a hash of option strings as returned by C<getopts(:!all)>.  Replace
-the value of non-argument-taking options with a string containing
-the option name as many times as it was specified, and the value of
-argument-taking options with the last value supplied on the command line.
-Intended for C<getopts()> internal use and testing.
-
-Current API available since version 0.1.0.
-=end item1
-
-=begin item1
-sub getopts-parse-optstring
-
-    sub getopts-parse-optstring(Str:D $optstr) returns Hash[Bool:D]
-
-This function is only available with a C<:util> import.
-
-Parse a C<getopts()> option string and return a hash with the options
-as keys and whether the respective option expects an argument as values.
-Intended for C<getopts()> internal use and testing.
-
-Current API available since version 0.1.0.
+Current API available since version 1.0.0.
 =end item1
 
 =head1 AUTHOR
