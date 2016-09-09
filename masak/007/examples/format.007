@@ -24,24 +24,29 @@ macro format(fmt, args) {
             return -1;
         }
 
-        my index = int(input.substr(openBracePos + 1, closeBracePos - 1));
+        my index = +input.substr(openBracePos + 1, closeBracePos - 1);
 
-        return max(index, findHighestIndex(
-            input.suffix(openBracePos + closeBracePos + 1)));
+        my h = findHighestIndex(input.suffix(openBracePos + closeBracePos + 1));
+        if h > index {
+            return h;
+        }
+        else {
+            return index;
+        }
     }
 
     if fmt ~~ Q::Literal::Str && args ~~ Q::Term::Array {
         my highestUsedIndex = findHighestIndex(fmt.value);
         my argCount = args.elements.elems();
         if argCount <= highestUsedIndex {
-            throw new Exception { message: "Highest index was " ~ str(highestUsedIndex)
-                ~ " but got only " ~ str(argCount) ~ " arguments." };
+            throw new Exception { message: "Highest index was " ~ ~highestUsedIndex
+                ~ " but got only " ~ ~argCount ~ " arguments." };
         }
     }
 
     return quasi {
         replaceAll({{{fmt}}}, "", sub transform(arg) {
-            return {{{args}}}[int(arg)];
+            return {{{args}}}[+arg];
         });
     }
 }

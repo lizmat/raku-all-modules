@@ -14,26 +14,6 @@ use _007::Test;
 {
     my $ast = q:to/./;
         (statementlist
-          (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "min") (argumentlist (prefix:- (int 1)) (int 2))))))
-          (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "min") (argumentlist (int 2) (prefix:- (int 1))))))))
-        .
-
-    is-result $ast, "-1\n-1\n", "min() works";
-}
-
-{
-    my $ast = q:to/./;
-        (statementlist
-          (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "max") (argumentlist (prefix:- (int 1)) (int 2))))))
-          (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "max") (argumentlist (int 2) (prefix:- (int 1))))))))
-        .
-
-    is-result $ast, "2\n2\n", "max() works";
-}
-
-{
-    my $ast = q:to/./;
-        (statementlist
           (my (identifier "n"))
           (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "type") (argumentlist (identifier "n")))))))
         .
@@ -88,58 +68,6 @@ use _007::Test;
         .
 
     is-result $ast, "<type Sub>\n", "builtin sub type() returns the same as ordinary sub";
-}
-
-{
-     my $ast = q:to/./;
-         (statementlist
-          (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "type") (argumentlist (postfix:() (identifier "int") (argumentlist (str "6"))))))))
-          (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "type") (argumentlist (postfix:() (identifier "int") (argumentlist (str "-6")))))))))
-        .
-
-    is-result $ast, "<type Int>\n<type Int>\n", "int() works";
-}
-
-{
-    my $ast = q:to/./;
-        (statementlist
-          (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "type") (argumentlist (postfix:() (identifier "str") (argumentlist (int 6)))))))))
-        .
-
-    is-result $ast, "<type Str>\n", "str() works";
-}
-
-{
-    my $program = q:to/./;
-        say( int(7) ~~ Int );
-        .
-
-    outputs
-        $program,
-        "True\n",
-        "int(Val::Int) outputs a Val::Int (regression)";
-}
-
-{
-    my $program = q:to/./;
-        say( int("007") ~~ Int );
-        .
-
-    outputs
-        $program,
-        "True\n",
-        "int(Val::Str) outputs a Val::Int (regression)";
-}
-
-{
-    my $program = q:to/./;
-        say( max(1, 2) ~~ Int );
-        .
-
-    outputs
-        $program,
-        "True\n",
-        "max(Val::Int, Val::Int) outputs a Val::Int (regression)";
 }
 
 done-testing;

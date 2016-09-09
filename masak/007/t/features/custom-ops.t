@@ -353,7 +353,7 @@ use _007::Test;
             return "prefix is looser";
         }
 
-        sub postfix:<‡>(term) {
+        sub postfix:<!>(term) {
             return "postfix is looser";
         }
 
@@ -365,7 +365,7 @@ use _007::Test;
             return "prefix is looser";
         }
 
-        say(?[]‡);
+        say(?[]!);
         say(%[]$);
         .
 
@@ -453,10 +453,10 @@ use _007::Test;
         sub prefix:<?>(left, right) is assoc("non") {
         }
 
-        sub postfix:<±>(left, right) is equal(prefix:<?>) {
+        sub postfix:<!>(left, right) is equal(prefix:<?>) {
         }
 
-        say(?0±);
+        say(?0!);
         .
 
     parse-error $program, X::Op::Nonassociative, "non-associativity inherits through the 'is equal' trait";
@@ -502,6 +502,81 @@ use _007::Test;
         .
 
     outputs $program, "James\n", "can declare an operator with a backslash in the name";
+}
+
+{
+    my $program = q:to/./;
+        sub postfix:<‡>(x) is looser(prefix:<^>) {
+            return [];
+        }
+
+        sub prefix:<$>(x) {
+            return x.elems();
+        }
+
+        say($^5‡);
+        .
+
+    outputs $program, "[]\n", "Prepostfix boundaries are respected";
+}
+
+{
+    my $program = q:to/./;
+        sub prefix:<&>(x) {
+            return x ~ " prefix:<&>";
+        }
+
+        sub postfix:<‡>(x) is looser(prefix:<&>) {
+            return x ~ " postfix:<‡>";
+        }
+
+        {
+            sub prefix:<$>(x) {
+                return x ~ " prefix:<$>";
+            }
+
+            say($&"application order:"‡);
+        }
+        .
+
+    outputs $program, "application order: prefix:<&> prefix:<\$> postfix:<‡>\n", "Prepostfix boundaries are respected, #2";
+}
+
+{
+    my $program = q:to/./;
+        sub postfix:<&>(x) {
+            return 1;
+        }
+
+        sub prefix:<&>(x) {
+            return 2;
+        }
+
+        sub prefix:<@>(x) {
+            return 3;
+        }
+
+        # "I'm reminded of the day my daughter came in, looked over my
+        # shoulder at some Perl 4 code, and said, 'What is that, swearing?'"
+        #                                   -- Larry Wall, Usenet article
+        say(@0&);
+        .
+
+    outputs $program, "3\n",
+        "a postfix is looser than a prefix, even when it has a prefix of the same name (#190)";
+}
+
+{
+    my $program = q:to/./;
+        sub infix:«->»(lhs, rhs) {
+            return "Bond";
+        }
+
+        say(1 -> 2);
+        .
+
+    outputs $program, "Bond\n",
+        "defining infix:«->» correctly installs a -> operator (#175)";
 }
 
 done-testing;

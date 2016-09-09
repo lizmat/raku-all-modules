@@ -2,8 +2,6 @@ use _007::Val;
 use _007::Q;
 
 sub builtins(:$input!, :$output!, :$opscope!) is export {
-    sub str($_) { Val::Str.new(:value(.Str)) }
-
     sub wrap($_) {
         when Val | Q { $_ }
         when Nil  { NONE }
@@ -111,23 +109,6 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
             return wrap($input.get());
         },
         type => -> $arg { Val::Type.of($arg.WHAT) },
-        str => &str,
-        int => sub ($_) {
-            when Val::Str {
-                return wrap(.value.Int)
-                    if .value ~~ /^ '-'? \d+ $/;
-                proceed;
-            }
-            when Val::Int {
-                return $_;
-            }
-            die X::TypeCheck.new(
-                :operation<int()>,
-                :got($_),
-                :expected(Val::Int));
-        },
-        min => -> $a, $b { wrap(min($a.value, $b.value)) },
-        max => -> $a, $b { wrap(max($a.value, $b.value)) },
 
         # OPERATORS (from loosest to tightest within each category)
 
@@ -143,7 +124,7 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
         ),
         'infix://' => macro-op(
             :qtype(Q::Infix::DefinedOr),
-            :precedence{ equal => "||" },
+            :precedence{ equal => "infix:||" },
         ),
 
         # conjunctive precedence
@@ -165,14 +146,14 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
                 return wrap(!equal-value($lhs, $rhs))
             },
             :qtype(Q::Infix::Ne),
-            :precedence{ equal => "==" },
+            :precedence{ equal => "infix:==" },
         ),
         'infix:<' => op(
             sub ($lhs, $rhs) {
                 return wrap(less-value($lhs, $rhs))
             },
             :qtype(Q::Infix::Lt),
-            :precedence{ equal => "==" },
+            :precedence{ equal => "infix:==" },
         ),
         'infix:<=' => op(
             sub ($lhs, $rhs) {
@@ -180,14 +161,14 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
                 return wrap(less-value($lhs, $rhs) || equal-value($lhs, $rhs))
             },
             :qtype(Q::Infix::Le),
-            :precedence{ equal => "==" },
+            :precedence{ equal => "infix:==" },
         ),
         'infix:>' => op(
             sub ($lhs, $rhs) {
                 return wrap(more-value($lhs, $rhs) )
             },
             :qtype(Q::Infix::Gt),
-            :precedence{ equal => "==" },
+            :precedence{ equal => "infix:==" },
         ),
         'infix:>=' => op(
             sub ($lhs, $rhs) {
@@ -195,7 +176,7 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
                 return wrap(more-value($lhs, $rhs) || equal-value($lhs, $rhs))
             },
             :qtype(Q::Infix::Ge),
-            :precedence{ equal => "==" },
+            :precedence{ equal => "infix:==" },
         ),
         'infix:~~' => op(
             sub ($lhs, $rhs) {
@@ -205,7 +186,7 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
                 return wrap($lhs ~~ $rhs.type);
             },
             :qtype(Q::Infix::TypeMatch),
-            :precedence{ equal => "==" },
+            :precedence{ equal => "infix:==" },
         ),
         'infix:!~~' => op(
             sub ($lhs, $rhs) {
@@ -215,7 +196,7 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
                 return wrap($lhs !~~ $rhs.type);
             },
             :qtype(Q::Infix::TypeNonMatch),
-            :precedence{ equal => "==" },
+            :precedence{ equal => "infix:==" },
         ),
 
         # cons precedence
@@ -249,7 +230,7 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
                 return wrap($lhs.value ~ $rhs.value);
             },
             :qtype(Q::Infix::Concat),
-            :precedence{ equal => "+" },
+            :precedence{ equal => "infix:+" },
         ),
         'infix:-' => op(
             sub ($lhs, $rhs) {
@@ -306,7 +287,7 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
                 return wrap($lhs.value x $rhs.value);
             },
             :qtype(Q::Infix::Replicate),
-            :precedence{ equal => "*" },
+            :precedence{ equal => "infix:*" },
         ),
         'infix:xx' => op(
             sub ($lhs, $rhs) {
@@ -317,15 +298,47 @@ sub builtins(:$input!, :$output!, :$opscope!) is export {
                 return wrap(| $lhs.elements xx $rhs.value);
             },
             :qtype(Q::Infix::ArrayReplicate),
-            :precedence{ equal => "*" },
+            :precedence{ equal => "infix:*" },
         ),
 
         # prefixes
+        'prefix:~' => op(
+            sub prefix-str($expr) {
+                Val::Str.new(:value($expr.Str));
+            },
+            :qtype(Q::Prefix::Str),
+        ),
+        'prefix:+' => op(
+            sub prefix-plus($_) {
+                when Val::Str {
+                    return wrap(.value.Int)
+                        if .value ~~ /^ '-'? \d+ $/;
+                    proceed;
+                }
+                when Val::Int {
+                    return $_;
+                }
+                die X::TypeCheck.new(
+                    :operation("prefix:<+>"),
+                    :got($_),
+                    :expected(Val::Int));
+            },
+            :qtype(Q::Prefix::Plus),
+        ),
         'prefix:-' => op(
-            sub ($expr) {
-                die X::TypeCheck.new(:operation<->, :got($expr), :expected(Val::Int))
-                    unless $expr ~~ Val::Int;
-                return wrap(-$expr.value);
+            sub prefix-minus($_) {
+                when Val::Str {
+                    return wrap(-.value.Int)
+                        if .value ~~ /^ '-'? \d+ $/;
+                    proceed;
+                }
+                when Val::Int {
+                    return wrap(-.value);
+                }
+                die X::TypeCheck.new(
+                    :operation("prefix:<->"),
+                    :got($_),
+                    :expected(Val::Int));
             },
             :qtype(Q::Prefix::Minus),
         ),

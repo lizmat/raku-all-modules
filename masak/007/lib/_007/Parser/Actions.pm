@@ -135,8 +135,8 @@ class _007::Parser::Actions {
 
     sub maybe-install-operator($identname, @trait) {
         return
-            unless $identname ~~ / (< prefix infix postfix >)
-                                    ':' (<-[>]>+) /;
+            unless $identname ~~ /^ (< prefix infix postfix >)
+                                    ':' (.+) /;
 
         my $type = ~$0;
         my $op = ~$1;
@@ -153,11 +153,11 @@ class _007::Parser::Actions {
                     unless $identifier ~~ Q::Identifier;
                 sub check-if-op($s) {
                     die "Unknown thing in '$name' trait"
-                        unless $s ~~ /< pre in post > 'fix:' (<-[>]>+)/;
-                    %precedence{$name} = ~$0;
+                        unless $s ~~ /^ < pre in post > 'fix:' /;
                     die X::Precedence::Incompatible.new
                         if $type eq ('prefix' | 'postfix') && $s ~~ /^ in/
                         || $type eq 'infix' && $s ~~ /^ < pre post >/;
+                    %precedence{$name} = $s;
                 }($identifier.name);
             }
             elsif $name eq "assoc" {
@@ -299,7 +299,7 @@ class _007::Parser::Actions {
 
     method EXPR($/) {
         sub name($op) {
-            $op.identifier.name.value.subst(/^ \w+ ":"/, "");
+            $op.identifier.name.value;
         }
 
         sub tighter($op1, $op2, $_ = $*parser.opscope.infixprec) {
@@ -376,7 +376,7 @@ class _007::Parser::Actions {
 
     method termish($/) {
         sub name($op) {
-            $op.identifier.name.value.subst(/^ \w+ ":"/, "");
+            $op.identifier.name.value;
         }
 
         sub tighter($op1, $op2, $_ = $*parser.opscope.prepostfixprec) {
@@ -487,7 +487,7 @@ class _007::Parser::Actions {
             else {
                 my $prefix = @prefixes[0].ast;
                 my $postfix = @postfixes[0].ast;
-                die X::Op::Nonassociative.new(:op1($prefix.identifier.name.value), :op2($postfix.identifier.name.value))
+                die X::Op::Nonassociative.new(:op1(name($prefix)), :op2(name($postfix)))
                     if equal($prefix, $postfix) && non-associative($prefix);
                 if tighter($prefix, $postfix)
                     || equal($prefix, $postfix) && left-associative($prefix) {
@@ -579,7 +579,6 @@ class _007::Parser::Actions {
         my $qtype = Val::Str.new(:value(~($<qtype> // "")));
 
         if $<block> -> $block {
-
             # If the quasi consists of a block with a single expression statement, it's very
             # likely that what we want to inject is the expression, not the block.
             #
@@ -590,7 +589,18 @@ class _007::Parser::Actions {
             # to the troubled musings in <https://github.com/masak/007/issues/7>, which aren't
             # completely solved yet.
 
-            if $qtype.value ne "Q::Block"
+            if $qtype.value eq "Q::Statement" {
+                # XXX: make sure there's only one statement (suboptimal; should parse-error sooner)
+                my $contents = $block.ast.statementlist.statements.elements[0];
+                make Q::Term::Quasi.new(:$contents, :$qtype);
+                return;
+            }
+            elsif $qtype.value eq "Q::StatementList" {
+                my $contents = $block.ast.statementlist;
+                make Q::Term::Quasi.new(:$contents, :$qtype);
+                return;
+            }
+            elsif $qtype.value ne "Q::Block"
                 && $block.ast ~~ Q::Block
                 && $block.ast.statementlist.statements.elements.elems == 1
                 && $block.ast.statementlist.statements.elements[0] ~~ Q::Statement::Expr {
@@ -606,7 +616,8 @@ class _007::Parser::Actions {
             term trait traitlist unquote> -> $subrule {
 
             if $/{$subrule} -> $submatch {
-                make Q::Term::Quasi.new(:contents($submatch.ast), :$qtype);
+                my $contents = $submatch.ast;
+                make Q::Term::Quasi.new(:$contents, :$qtype);
                 return;
             }
         }
@@ -640,8 +651,8 @@ class _007::Parser::Actions {
         make Q::Unquote.new(:expr($<EXPR>.ast));
     }
 
-    method term:object ($/) {
-        my $type = ~($<identifier> // "Object");
+    method term:new-object ($/) {
+        my $type = $<identifier>.ast.name.value;
         my $type-obj = $*runtime.get-var($type).type;
 
         if $type-obj !=== Val::Object {
@@ -664,6 +675,15 @@ class _007::Parser::Actions {
 
         make Q::Term::Object.new(
             :type(Q::Identifier.new(:name(Val::Str.new(:value($type))))),
+            :propertylist($<propertylist>.ast));
+    }
+
+    method term:object ($/) {
+        my $type = "Object";
+        my $name = Val::Str.new(:value($type));
+
+        make Q::Term::Object.new(
+            :type(Q::Identifier.new(:$name)),
             :propertylist($<propertylist>.ast));
     }
 

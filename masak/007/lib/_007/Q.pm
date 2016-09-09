@@ -117,10 +117,7 @@ class Q::Identifier does Q::Term {
     method attribute-order { <name> }
 
     method eval($runtime) {
-        return $runtime.get-var(
-            $.name.value,
-            $.frame ~~ Val::NoneType ?? $runtime.current-frame !! $.frame
-        );
+        return $runtime.get-var($.name.value, $.frame);
     }
 
     method put-value($value, $runtime) {
@@ -149,7 +146,7 @@ class Q::Term::Object does Q::Term {
     has $.propertylist;
 
     method eval($runtime) {
-        return $runtime.get-var($.type.name.value).create(
+        return $runtime.get-var($.type.name.value, $.type.frame).create(
             $.propertylist.properties.elements.map({.key.value => .value.eval($runtime)})
         );
     }
@@ -234,6 +231,10 @@ class Q::Prefix does Q::Expr {
         return $runtime.call($c, [$e]);
     }
 }
+
+class Q::Prefix::Str is Q::Prefix {}
+
+class Q::Prefix::Plus is Q::Prefix {}
 
 class Q::Prefix::Minus is Q::Prefix {}
 

@@ -361,7 +361,7 @@ use _007::Test;
         "distinct subs are unequal";
     outputs 'macro foo() {}; macro bar() {}; say(foo == bar)', "False\n",
         "distinct macros are unequal";
-    outputs 'say(say == min)', "False\n", "distinct built-in subs are unequal";
+    outputs 'say(say == type)', "False\n", "distinct built-in subs are unequal";
     outputs 'say(infix:<+> == prefix:<->)', "False\n",
         "distinct built-in operators are unequal";
     outputs 'sub foo(y) {}; my x = foo; { sub foo(x) {}; say(x == foo) }', "False\n",
@@ -601,7 +601,7 @@ use _007::Test;
         my q = quasi @ Q::Infix { + }; say(q ~~ Q::Infix)
         .
 
-    outputs $program, "True\n", "typecheck returns 1 on success";
+    outputs $program, "True\n", "successful typecheck";
 }
 
 {
@@ -609,7 +609,7 @@ use _007::Test;
         my q = quasi @ Q::Infix { + }; say(q ~~ Q::Prefix)
         .
 
-    outputs $program, "False\n", "typecheck returns 0 on failure";
+    outputs $program, "False\n", "unsuccessful typecheck";
 }
 
 {
@@ -695,6 +695,55 @@ use _007::Test;
         .
 
     outputs $program, "True\nTrue\n", "infix:<~~> has the tightness of a comparison operator";
+}
+
+{
+    my $program = q:to/./;
+        say(-"42");
+        .
+
+    outputs $program, "-42\n", "the prefix negation operator also numifies strings";
+}
+
+{
+     my $ast = q:to/./;
+         (statementlist
+          (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "type") (argumentlist (prefix:+ (str "6")))))))
+          (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "type") (argumentlist (prefix:+ (str "-6"))))))))
+        .
+
+    is-result $ast, "<type Int>\n<type Int>\n", "prefix:<+> works";
+}
+
+{
+    my $ast = q:to/./;
+        (statementlist
+          (stexpr (postfix:() (identifier "say") (argumentlist (postfix:() (identifier "type") (argumentlist (prefix:~ (int 6))))))))
+        .
+
+    is-result $ast, "<type Str>\n", "prefix:<~> works";
+}
+
+{
+    my $program = q:to/./;
+        say( +7 ~~ Int );
+        .
+
+    outputs
+        $program,
+        "True\n",
+        "+Val::Int outputs a Val::Int (regression)";
+}
+
+{
+    my $program = q:to/./;
+        say( +"007" ~~ Int );
+        .
+
+    outputs
+        $program,
+        "True\n",
+        "+Val::Str outputs a Val::Int (regression)";
 }
 
 done-testing;
