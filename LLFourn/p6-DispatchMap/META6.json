@@ -1,0 +1,13 @@
+{
+    "name" : "DispatchMap",
+    "perl" : "6.*",
+    "version" : "0.0.2",
+    "description" : "A map that uses Perl 6 multi dispatch to link keys to values",
+    "authors"     : ["Lloyd Fournier"],
+    "provides"    : {
+        "DispatchMap" : "lib/DispatchMap.pm6"
+    },
+    "depends" : [],
+    "resources" : [],
+    "source-url" : "git://github.com/LLFourn/p6-DispatchMap.git"
+}
