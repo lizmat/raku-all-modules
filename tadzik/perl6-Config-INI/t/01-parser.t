@@ -65,7 +65,7 @@ is %fo<more><optimized>, 'fun', '4.5 ok';
 is %fo<more><dragon>, 'storm', '4.6 ok';
 
 my $fifth = Q {
-    emptykey = 
+    emptykey =
     another = withvalue
 
     [section with space]
@@ -160,9 +160,10 @@ my %te = Config::INI::parse_file($tenth);
 pass 'tenth config (file) parsed';
 is-deeply %te, {
     '_' => {
-        foo => 'comma, separated, values',
-        ano => 'ther',
-        ki  => 'waliu',
-        asd => 'esd'
+        foo         => 'comma, separated, values',
+        ano         => 'ther',
+        ki          => 'waliu',
+        asd         => 'esd',
+        hashcomment => 'before'
     }
 };

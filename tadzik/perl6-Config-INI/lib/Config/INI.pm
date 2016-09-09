@@ -3,11 +3,11 @@ use v6;
 unit module Config::INI;
 
 grammar INI {
-    token TOP      { 
+    token TOP      {
                         ^
                         <.eol>*
                         <toplevel>?
-                        <sections>* 
+                        <sections>*
                         <.eol>*
                         $
                    }
@@ -15,14 +15,14 @@ grammar INI {
     token sections { <header> <keyval>* }
     token header   { ^^ \h* '[' ~ ']' $<text>=<-[ \] \n ]>+ \h* <.eol>+ }
     token keyval   { ^^ \h* <key> \h* '=' \h* <value>? \h* <.eol>+ }
-    regex key      { <![\[]> <-[;=]>+ }
-    regex value    { [ <![;]> \N ]+ }
+    regex key      { <![#\[]> <-[;=]>+ }
+    regex value    { [ <![#;]> \N ]+ }
     # TODO: This should be just overriden \n once Rakudo implements it
-    token eol      { [ ';' \N+ ]? \n }
+    token eol      { [ <[#;]> \N+ ]? \n }
 }
 
 class INI::Actions {
-    method TOP ($/) { 
+    method TOP ($/) {
         my %hash = $<sections>».ast;
         %hash<_> = $<toplevel>.ast.hash if $<toplevel>.?ast;
         make %hash;
