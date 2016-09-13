@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jsimonet/IRC-Client-Plugin-UserPoints.git
+	branch = master
+	commit = b0b7fc71999b0ff1ff2a661585ab72c94561f4af
+	parent = d6e0b8cf87333db0e5588c03d84d83be81a71c45
+	cmdver = 0.2.3
