@@ -4,7 +4,7 @@ unit module List::Combinations;
 
 my %subs;
 
-multi sub combos(@array, Int $of --> Array) is export {
+multi sub combos(@array, Int $of --> Array) is export is DEPRECATED("the Rakudo builtin combinations, it's now much faster (and also lazy if you want). This module will be removed from the ecosystem in the near future.") {
 	return [] if $of < 0;
 	my int $size = @array.elems;
 	return [(),] if $size < 1 || $of < 1;
@@ -27,11 +27,11 @@ multi sub combos(@array, Int $of --> Array) is export {
 	%subs{$of}(@array);
 }
 
-multi sub combos(Int $n, Int $k --> Array) is export {
+multi sub combos(Int $n, Int $k --> Array) is export is DEPRECATED("the Rakudo builtin combinations, it's now much faster (and also lazy if you want). This module will be removed from the ecosystem in the near future.") {
 	combos(^$n, $k);
 }
 
-multi sub perms (@array --> Array) is export {
+multi sub perms (@array --> Array) is export is DEPRECATED("the Rakudo builtin permutations, it's now much faster (and also lazy if you want). This module will be removed from the ecosystem in the near future.") {
 	my int $size = @array.elems;
 	return [(),] if $size < 1;
 
@@ -56,6 +56,6 @@ multi sub perms (@array --> Array) is export {
 	@results;
 }
 
-multi sub perms(Int $n --> Array) is export {
+multi sub perms(Int $n --> Array) is export is DEPRECATED("the Rakudo builtin permutations, it's now much faster (and also lazy if you want). This module will be removed from the ecosystem in the near future.") {
 	perms(^$n);
 }
