@@ -15,36 +15,67 @@ use TXN::Remarshal;
 # main
 # -----------------------------------------------------------------------------
 
-# input is from file
+# input is from JSON stdin
 multi sub MAIN(
-    Str:D :i(:$input) where *.chars > 0,
+    Str:D :i(:$input) where '-',
     Str :o(:$output),
     Str:D :if(:$input-format) where /:i json/,
     Str:D :of(:$output-format) where /:i txn/
 )
 {
-    die unless exists-readable-file($input);
-    my @e = remarshal(slurp($input), :if<json>, :of<hash>);
+    my @e = remarshal($*IN.lines.join("\n"), :if<json>, :of<hash>);
     my TXN::Parser::AST::Entry @entry = remarshal(@e, :if<hash>, :of<entry>);
     my Str $txn = remarshal(@entry, :if<entry>, :of<txn>);
     output($txn, $output);
 }
 
+# input is from JSON file
 multi sub MAIN(
-    Str:D :i(:$input) where *.chars > 0,
+    Str:D :i(:$input) where *.so,
+    Str :o(:$output),
+    Str:D :if(:$input-format) where /:i json/,
+    Str:D :of(:$output-format) where /:i txn/
+)
+{
+    my Str $file = resolve-path($input);
+    die unless exists-readable-file($file);
+    my @e = remarshal(slurp($file), :if<json>, :of<hash>);
+    my TXN::Parser::AST::Entry @entry = remarshal(@e, :if<hash>, :of<entry>);
+    my Str $txn = remarshal(@entry, :if<entry>, :of<txn>);
+    output($txn, $output);
+}
+
+# input is from TXN stdin
+multi sub MAIN(
+    Str:D :i(:$input) where '-',
     Str :o(:$output),
     Str:D :if(:$input-format) where /:i txn/,
     Str:D :of(:$output-format) where /:i json/
 )
 {
-    die unless exists-readable-file($input);
-    my TXN::Parser::AST::Entry @entry = from-txn(:file($input));
+    my TXN::Parser::AST::Entry @entry = from-txn($*IN.lines.join("\n"));
     my @e = remarshal(@entry, :if<entry>, :of<hash>);
     my Str $json = remarshal(@e, :if<hash>, :of<json>);
     output($json, $output);
 }
 
-# input is not from file
+# input is from TXN file
+multi sub MAIN(
+    Str:D :i(:$input) where *.so,
+    Str :o(:$output),
+    Str:D :if(:$input-format) where /:i txn/,
+    Str:D :of(:$output-format) where /:i json/
+)
+{
+    my Str $file = resolve-path($input);
+    die unless exists-readable-file($file);
+    my TXN::Parser::AST::Entry @entry = from-txn(:$file);
+    my @e = remarshal(@entry, :if<entry>, :of<hash>);
+    my Str $json = remarshal(@e, :if<hash>, :of<json>);
+    output($json, $output);
+}
+
+# input is from stdin
 multi sub MAIN(
     Str :i(:$input),
     Str :o(:$output),
@@ -57,19 +88,27 @@ multi sub MAIN(
     output($remarshal, $output);
 }
 
+# output is to stdout
 multi sub output(Str $remarshal, '-')
 {
     say $remarshal.trim;
 }
 
-multi sub output(Str $remarshal, Str:D $output where *.chars > 0)
+# output is to file
+multi sub output(Str $remarshal, Str:D $output where *.so)
 {
     $output.IO.spurt($remarshal, :createonly);
 }
 
+# output is to stdout (default)
 multi sub output(Str $remarshal, Str $?)
 {
     say $remarshal.trim;
+}
+
+sub resolve-path(Str $path) returns Str
+{
+    ~$path.subst(/^'~/'/, $*HOME ~ '/').IO.resolve;
 }
 
 
@@ -83,7 +122,7 @@ sub USAGE()
 {
     constant $HELP = q:to/EOF/;
     Usage:
-      txn-remarshal [-i=<file>] [-o=<file>] -if=<format> -of=<format>
+      txn-remarshal [-h] [-i=<file>] [-o=<file>] -if=<format> -of=<format>
 
     Options:
       -h, --help

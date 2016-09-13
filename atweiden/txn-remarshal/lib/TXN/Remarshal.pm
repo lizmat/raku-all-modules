@@ -209,10 +209,10 @@ multi sub to-txn(TXN::Parser::AST::Entry::Header $header) returns Str
     my Dateish $date = $header.date;
     my Str $description = $header.description if $header.description;
     my UInt $important = $header.important;
-    my Str @tag = $header.tag if $header.tag;
+    my VarName @tag = $header.tag if $header.tag;
 
     my Str $s = ~$date;
-    $s ~= "\n" ~ to-txn(:@tag) if @tag;
+    $s ~= "\n" ~ @tag.map({ '#' ~ $_ }).join(' ') if @tag;
     $s ~= ' ' ~ '!' x $important if $important > 0;
 
     if $description
@@ -272,11 +272,11 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting $posting) returns Str
 multi sub to-txn(TXN::Parser::AST::Entry::Posting::Account $account) returns Str
 {
     my Silo $silo = $account.silo;
-    my Str $entity = $account.entity;
-    my Str @path = $account.path if $account.path;
+    my VarName $entity = $account.entity;
+    my VarName @path = $account.path if $account.path;
 
-    my Str $s = $silo.gist.tclc ~ ':' ~ to-txn(:$entity);
-    $s ~= ':' ~ to-txn(:@path) if @path;
+    my Str $s = $silo.gist.tclc ~ ':' ~ $entity;
+    $s ~= ':' ~ @path.join(':') if @path;
     $s;
 }
 
@@ -285,7 +285,7 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting::Account $account) returns Str
 
 multi sub to-txn(TXN::Parser::AST::Entry::Posting::Amount $amount) returns Str
 {
-    my Str $asset-code = $amount.asset-code;
+    my AssetCode $asset-code = $amount.asset-code;
     my Quantity $asset-quantity = $amount.asset-quantity;
     my AssetSymbol $asset-symbol = $amount.asset-symbol if $amount.asset-symbol;
     my PlusMinus $plus-or-minus = $amount.plus-or-minus if $amount.plus-or-minus;
@@ -294,7 +294,7 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting::Amount $amount) returns Str
     $s ~= $plus-or-minus if $plus-or-minus;
     $s ~= $asset-symbol if $asset-symbol;
     $s ~= $asset-quantity;
-    $s ~= ' ' ~ to-txn(:$asset-code);
+    $s ~= ' ' ~ $asset-code;
     $s;
 }
 
@@ -325,14 +325,14 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot $annot) returns Str
 
 multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot::Inherit $inherit) returns Str
 {
-    my Str $asset-code = $inherit.asset-code;
+    my AssetCode $asset-code = $inherit.asset-code;
     my Quantity $asset-quantity = $inherit.asset-quantity;
     my AssetSymbol $asset-symbol = $inherit.asset-symbol if $inherit.asset-symbol;
 
     my Str $s = '« ';
     $s ~= $asset-symbol if $asset-symbol;
     $s ~= $asset-quantity;
-    $s ~= ' ' ~ to-txn(:$asset-code);
+    $s ~= ' ' ~ $asset-code;
     $s;
 }
 
@@ -341,7 +341,7 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot::Inherit $inherit) retu
 
 multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot::Lot $lot) returns Str
 {
-    my Str $name = $lot.name;
+    my VarName $name = $lot.name;
     my DecInc $decinc = $lot.decinc;
 
     my Str $s = do given $decinc
@@ -355,7 +355,7 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot::Lot $lot) returns Str
             '→';
         }
     }
-    $s ~= ' [' ~ to-txn(:$name) ~ ']';
+    $s ~= ' [' ~ $name ~ ']';
     $s;
 }
 
@@ -364,94 +364,18 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot::Lot $lot) returns Str
 
 multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot::XE $xe) returns Str
 {
-    my Str $asset-code = $xe.asset-code;
+    my AssetCode $asset-code = $xe.asset-code;
     my Quantity $asset-quantity = $xe.asset-quantity;
     my AssetSymbol $asset-symbol = $xe.asset-symbol if $xe.asset-symbol;
 
     my Str $s = '@ ';
     $s ~= $asset-symbol if $asset-symbol;
     $s ~= $asset-quantity;
-    $s ~= ' ' ~ to-txn(:$asset-code);
+    $s ~= ' ' ~ $asset-code;
     $s;
 }
 
 # --- end Entry::Posting::Annot::XE }}}
-
-# --- asset-code {{{
-
-multi sub to-txn(AssetCode :$asset-code!) returns Str
-{
-    $asset-code;
-}
-
-multi sub to-txn(Str :$asset-code!) returns Str
-{
-    $asset-code.perl;
-}
-
-# --- end asset-code }}}
-# --- entity {{{
-
-multi sub to-txn(VarName :$entity!) returns Str
-{
-    $entity;
-}
-
-multi sub to-txn(Str :$entity!) returns Str
-{
-    $entity.perl;
-}
-
-# --- end entity }}}
-# --- name {{{
-
-multi sub to-txn(VarName :$name!) returns Str
-{
-    $name;
-}
-
-multi sub to-txn(Str :$name!) returns Str
-{
-    $name.perl;
-}
-
-# --- end name }}}
-# --- path {{{
-
-multi sub to-txn(Str :@path!) returns Str
-{
-    @path.map({ to-txn(:path($_)) }).join(':');
-}
-
-multi sub to-txn(VarName :$path!) returns Str
-{
-    $path;
-}
-
-multi sub to-txn(Str :$path!) returns Str
-{
-    $path.perl;
-}
-
-# --- end path }}}
-# --- tag {{{
-
-multi sub to-txn(Str :@tag!) returns Str
-{
-    @tag.map({ '#' ~ to-txn(:tag($_)) }).join(' ');
-}
-
-multi sub to-txn(VarName :$tag!) returns Str
-{
-    $tag;
-}
-
-multi sub to-txn(Str :$tag!) returns Str
-{
-    $tag.perl;
-}
-
-# --- end tag }}}
 
 # end sub to-txn }}}
 
