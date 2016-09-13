@@ -808,6 +808,10 @@ Outside of argument lists, it returns a L<Slip|/type/Slip>, which makes it
 flatten into the outer list. Inside L<argument list|/language/list#Argument_List_(Capture)_Context> L<C<Positional>s|/type/Positional> are turned
 into positional arguments and L<C<Associative>s|/type/Associative> are turned into named arguments.
 
+=head2 prefix C«||»
+
+TODO
+
 =head2 prefix C«+^»
 
 =begin code :skip-test
@@ -818,6 +822,13 @@ X<Integer bitwise negation operator>.
 
 Coerces the argument to L<Int> and does a bitwise negation on the result,
 assuming L<two's complement|https://en.wikipedia.org/wiki/Two%27s_complement>.
+
+=head2 prefix C«~^»
+
+Coerces the argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+and then flips each bit in that buffer.
+
+Please note that this has not yet been implemented.
 
 =head2 prefix C«?^»
 
@@ -931,6 +942,26 @@ multi sub infix:<< +> >>($a, $b) returns Int:D
 
 Integer bit shift to the right.X<|integer bit shift operator,right>
 
+=head2 infix C«~&»
+
+Coerces each argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+and then performs a numeric bitwise AND on corresponding integers of the two buffers, padding the
+shorter buffer with zeroes.
+
+=head2 infix C«~<»
+
+Coerces the left argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+and then performs a numeric bitwise left shift on the bits of the buffer.
+
+Please note that this has not yet been implemented.
+
+=head2 infix C«~>»
+
+Coerces the left argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+and then performs a numeric bitwise right shift on the bits of the buffer.
+
+Please note that this has not yet been implemented.
+
 =head2 infix C«gcd»
 
 =begin code :skip-test
@@ -992,6 +1023,18 @@ X<Integer bitwise XOR operator>.
 
 Coerces both arguments to L<Int> and does a bitwise I<XOR> (exclusive OR)
 operation.
+
+=head2 infix C«~|»
+
+Coerces each argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+and then performs a numeric bitwise OR on corresponding integers of the two buffers, padding the
+shorter buffer with zeroes.
+
+=head2 infix C«~^»
+
+Coerces each argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+and then performs a numeric bitwise XOR on corresponding integers of the two buffers, padding the
+shorter buffer with zeroes.
 
 =head2 infix C«?|»
 
@@ -1480,16 +1523,17 @@ the same, i.e. from the same type and (recursively) contain the same values.
     say 1 eqv 2;                        # False
     say 1 eqv 1.0;                      # False
 
-For arbitrary objects this is not possible with the default C<eqv> operator.
-E.g., C<eqv> will not consider two instances of the same object as being
-structurally equivalent:
+The default C<eqv> operator even works with arbitrary objects. E.g., C<eqv>
+will consider two instances of the same object as being structurally
+equivalent:
 
     my class A {
         has $.a;
     }
-    say A.new(a => 5) eqv A.new(a => 5);  #=> False
+    say A.new(a => 5) eqv A.new(a => 5);  #=> True
 
-To get C<eqv> semantics for objects of this class, one would need to
+Although the above example works as intended the C<eqv> code has to fall back
+to a slower code path in in order to do its job. One way to avoid this is to
 implement an appropriate infix C<eqv> operator:
 
     my class A {
