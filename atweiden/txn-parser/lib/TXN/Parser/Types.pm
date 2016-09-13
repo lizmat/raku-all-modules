@@ -4,10 +4,29 @@ unit module TXN::Parser::Types;
 
 # AssetCode {{{
 
-subset AssetCode of Str is export where
+subset AssetCode of Str is export where { is-asset-code($_) }
+
+# --- sub is-asset-code {{{
+
+multi sub is-asset-code(
+    Str $s where { TXN::Parser::Grammar.parse($_, :rule<asset-code>).so }
+) returns Bool
 {
-    TXN::Parser::Grammar.parse($_, :rule<asset-code>);
+    True;
 }
+
+multi sub is-asset-code(
+    Str $s where { TXN::Parser::Grammar.parse(.perl, :rule<asset-code>).so }
+) returns Bool
+{
+    True;
+}
+
+multi sub is-asset-code($s) returns Bool {
+    False;
+}
+
+# --- end sub is-asset-code }}}
 
 # end AssetCode }}}
 # AssetSymbol {{{
@@ -48,10 +67,29 @@ enum Silo is export <ASSETS EXPENSES INCOME LIABILITIES EQUITY>;
 # end Silo }}}
 # VarName {{{
 
-subset VarName of Str is export where
+subset VarName of Str is export where { is-var-name($_) }
+
+# --- sub is-var-name {{{
+
+multi sub is-var-name(
+    Str $s where { TXN::Parser::Grammar.parse($_, :rule<var-name>).so }
+) returns Bool
 {
-    TXN::Parser::Grammar.parse($_, :rule<var-name>);
+    True;
 }
+
+multi sub is-var-name(
+    Str $s where { TXN::Parser::Grammar.parse(.perl, :rule<var-name>).so }
+) returns Bool
+{
+    True;
+}
+
+multi sub is-var-name($s) returns Bool {
+    False;
+}
+
+# --- end sub is-var-name }}}
 
 # end VarName }}}
 # XXHash {{{

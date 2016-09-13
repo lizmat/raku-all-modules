@@ -32,7 +32,7 @@ class Entry::Header
     has Dateish $.date is required;
     has Str $.description;
     has UInt $.important = 0;
-    has Str @.tag;
+    has VarName @.tag;
 
     method hash(::?CLASS:D:) returns Hash
     {
@@ -46,8 +46,8 @@ class Entry::Header
 class Entry::Posting::Account
 {
     has Silo $.silo is required;
-    has Str $.entity is required;
-    has Str @.path;
+    has VarName $.entity is required;
+    has VarName @.path;
 
     method hash(::?CLASS:D:) returns Hash
     {
@@ -60,7 +60,7 @@ class Entry::Posting::Account
 
 class Entry::Posting::Amount
 {
-    has Str $.asset-code is required;
+    has AssetCode $.asset-code is required;
     has Quantity $.asset-quantity is required;
     has AssetSymbol $.asset-symbol;
     has PlusMinus $.plus-or-minus;
@@ -76,7 +76,7 @@ class Entry::Posting::Amount
 
 class Entry::Posting::Annot::XE
 {
-    has Str $.asset-code is required;
+    has AssetCode $.asset-code is required;
     has Quantity $.asset-quantity is required;
     has AssetSymbol $.asset-symbol;
 
@@ -96,7 +96,7 @@ class Entry::Posting::Annot::Inherit is Entry::Posting::Annot::XE {*}
 
 class Entry::Posting::Annot::Lot
 {
-    has Str $.name is required;
+    has VarName $.name is required;
 
     # is this lot being drawn down or filled up?
     has DecInc $.decinc is required;

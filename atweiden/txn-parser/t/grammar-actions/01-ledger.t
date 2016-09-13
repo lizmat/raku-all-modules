@@ -617,7 +617,7 @@ subtest
     ok @entry[0].id.xxhash == 839297870;
     ok @entry[0].posting[0].account.entity eqv "FooCorp";
     ok @entry[0].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[0].posting[0].account.path eqv Array[Str].new("Bankwest", "Cheque");
+    ok @entry[0].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Bankwest", "Cheque");
     ok @entry[0].posting[0].amount.asset-code eqv "USD";
     ok @entry[0].posting[0].amount.asset-quantity == 1000;
     ok @entry[0].posting[0].amount.asset-symbol eqv "\$";
@@ -654,7 +654,7 @@ subtest
     ok @entry[1].id.xxhash == 3127303444;
     ok @entry[1].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[1].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[1].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[1].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[1].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[1].posting[0].amount.asset-quantity == 1;
     ok @entry[1].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -691,7 +691,7 @@ subtest
     ok @entry[2].id.xxhash == 4018141641;
     ok @entry[2].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[2].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[2].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[2].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[2].posting[0].amount.asset-code eqv "USD";
     ok @entry[2].posting[0].amount.asset-quantity == 2011.0116;
     ok @entry[2].posting[0].amount.asset-symbol eqv "\$";
@@ -728,7 +728,7 @@ subtest
     ok @entry[3].id.xxhash == 2478358144;
     ok @entry[3].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[3].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[3].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[3].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[3].posting[0].amount.asset-code eqv "USD";
     ok @entry[3].posting[0].amount.asset-quantity == 1.01;
     ok @entry[3].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -765,7 +765,7 @@ subtest
     ok @entry[4].id.xxhash == 2320468031;
     ok @entry[4].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[4].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[4].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[4].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[4].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[4].posting[0].amount.asset-quantity == 1;
     ok @entry[4].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -802,7 +802,7 @@ subtest
     ok @entry[5].id.xxhash == 1177608739;
     ok @entry[5].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[5].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[5].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[5].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[5].posting[0].amount.asset-code eqv "USD";
     ok @entry[5].posting[0].amount.asset-quantity == 2011.0216;
     ok @entry[5].posting[0].amount.asset-symbol eqv "\$";
@@ -839,7 +839,7 @@ subtest
     ok @entry[6].id.xxhash == 3178583936;
     ok @entry[6].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[6].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[6].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[6].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[6].posting[0].amount.asset-code eqv "USD";
     ok @entry[6].posting[0].amount.asset-quantity == 1.02;
     ok @entry[6].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -876,7 +876,7 @@ subtest
     ok @entry[7].id.xxhash == 1567632724;
     ok @entry[7].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[7].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[7].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[7].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[7].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[7].posting[0].amount.asset-quantity == 1;
     ok @entry[7].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -913,7 +913,7 @@ subtest
     ok @entry[8].id.xxhash == 3569777874;
     ok @entry[8].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[8].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[8].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[8].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[8].posting[0].amount.asset-code eqv "USD";
     ok @entry[8].posting[0].amount.asset-quantity == 2011.0316;
     ok @entry[8].posting[0].amount.asset-symbol eqv "\$";
@@ -950,7 +950,7 @@ subtest
     ok @entry[9].id.xxhash == 521313438;
     ok @entry[9].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[9].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[9].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[9].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[9].posting[0].amount.asset-code eqv "USD";
     ok @entry[9].posting[0].amount.asset-quantity == 1.03;
     ok @entry[9].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -987,7 +987,7 @@ subtest
     ok @entry[10].id.xxhash == 234894800;
     ok @entry[10].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[10].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[10].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[10].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[10].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[10].posting[0].amount.asset-quantity == 1;
     ok @entry[10].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1024,7 +1024,7 @@ subtest
     ok @entry[11].id.xxhash == 2888576925;
     ok @entry[11].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[11].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[11].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[11].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[11].posting[0].amount.asset-code eqv "USD";
     ok @entry[11].posting[0].amount.asset-quantity == 2011.0416;
     ok @entry[11].posting[0].amount.asset-symbol eqv "\$";
@@ -1061,7 +1061,7 @@ subtest
     ok @entry[12].id.xxhash == 801753479;
     ok @entry[12].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[12].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[12].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[12].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[12].posting[0].amount.asset-code eqv "USD";
     ok @entry[12].posting[0].amount.asset-quantity == 1.04;
     ok @entry[12].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1098,7 +1098,7 @@ subtest
     ok @entry[13].id.xxhash == 2708781669;
     ok @entry[13].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[13].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[13].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[13].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[13].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[13].posting[0].amount.asset-quantity == 1;
     ok @entry[13].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1135,7 +1135,7 @@ subtest
     ok @entry[14].id.xxhash == 2585914;
     ok @entry[14].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[14].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[14].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[14].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[14].posting[0].amount.asset-code eqv "USD";
     ok @entry[14].posting[0].amount.asset-quantity == 2011.0516;
     ok @entry[14].posting[0].amount.asset-symbol eqv "\$";
@@ -1172,7 +1172,7 @@ subtest
     ok @entry[15].id.xxhash == 793767881;
     ok @entry[15].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[15].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[15].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[15].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[15].posting[0].amount.asset-code eqv "USD";
     ok @entry[15].posting[0].amount.asset-quantity == 1.05;
     ok @entry[15].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1209,7 +1209,7 @@ subtest
     ok @entry[16].id.xxhash == 1054837725;
     ok @entry[16].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[16].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[16].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[16].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[16].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[16].posting[0].amount.asset-quantity == 1;
     ok @entry[16].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1246,7 +1246,7 @@ subtest
     ok @entry[17].id.xxhash == 2233477133;
     ok @entry[17].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[17].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[17].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[17].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[17].posting[0].amount.asset-code eqv "USD";
     ok @entry[17].posting[0].amount.asset-quantity == 2011.0616;
     ok @entry[17].posting[0].amount.asset-symbol eqv "\$";
@@ -1283,7 +1283,7 @@ subtest
     ok @entry[18].id.xxhash == 2726916770;
     ok @entry[18].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[18].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[18].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[18].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[18].posting[0].amount.asset-code eqv "USD";
     ok @entry[18].posting[0].amount.asset-quantity == 1.06;
     ok @entry[18].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1320,7 +1320,7 @@ subtest
     ok @entry[19].id.xxhash == 2522748302;
     ok @entry[19].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[19].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[19].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[19].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[19].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[19].posting[0].amount.asset-quantity == 1;
     ok @entry[19].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1357,7 +1357,7 @@ subtest
     ok @entry[20].id.xxhash == 66189993;
     ok @entry[20].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[20].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[20].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[20].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[20].posting[0].amount.asset-code eqv "USD";
     ok @entry[20].posting[0].amount.asset-quantity == 2011.0716;
     ok @entry[20].posting[0].amount.asset-symbol eqv "\$";
@@ -1394,7 +1394,7 @@ subtest
     ok @entry[21].id.xxhash == 992681704;
     ok @entry[21].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[21].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[21].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[21].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[21].posting[0].amount.asset-code eqv "USD";
     ok @entry[21].posting[0].amount.asset-quantity == 1.07;
     ok @entry[21].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1431,7 +1431,7 @@ subtest
     ok @entry[22].id.xxhash == 2932388883;
     ok @entry[22].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[22].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[22].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[22].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[22].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[22].posting[0].amount.asset-quantity == 1;
     ok @entry[22].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1468,7 +1468,7 @@ subtest
     ok @entry[23].id.xxhash == 165262646;
     ok @entry[23].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[23].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[23].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[23].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[23].posting[0].amount.asset-code eqv "USD";
     ok @entry[23].posting[0].amount.asset-quantity == 2011.0816;
     ok @entry[23].posting[0].amount.asset-symbol eqv "\$";
@@ -1505,7 +1505,7 @@ subtest
     ok @entry[24].id.xxhash == 2421394429;
     ok @entry[24].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[24].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[24].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[24].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[24].posting[0].amount.asset-code eqv "USD";
     ok @entry[24].posting[0].amount.asset-quantity == 1.08;
     ok @entry[24].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1542,7 +1542,7 @@ subtest
     ok @entry[25].id.xxhash == 3100476228;
     ok @entry[25].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[25].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[25].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[25].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[25].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[25].posting[0].amount.asset-quantity == 1;
     ok @entry[25].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1579,7 +1579,7 @@ subtest
     ok @entry[26].id.xxhash == 1591575233;
     ok @entry[26].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[26].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[26].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[26].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[26].posting[0].amount.asset-code eqv "USD";
     ok @entry[26].posting[0].amount.asset-quantity == 2011.0916;
     ok @entry[26].posting[0].amount.asset-symbol eqv "\$";
@@ -1616,7 +1616,7 @@ subtest
     ok @entry[27].id.xxhash == 1027238853;
     ok @entry[27].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[27].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[27].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[27].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[27].posting[0].amount.asset-code eqv "USD";
     ok @entry[27].posting[0].amount.asset-quantity == 1.09;
     ok @entry[27].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1653,7 +1653,7 @@ subtest
     ok @entry[28].id.xxhash == 2088813850;
     ok @entry[28].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[28].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[28].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[28].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[28].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[28].posting[0].amount.asset-quantity == 1;
     ok @entry[28].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1690,7 +1690,7 @@ subtest
     ok @entry[29].id.xxhash == 1630761716;
     ok @entry[29].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[29].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[29].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[29].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[29].posting[0].amount.asset-code eqv "USD";
     ok @entry[29].posting[0].amount.asset-quantity == 2011.1016;
     ok @entry[29].posting[0].amount.asset-symbol eqv "\$";
@@ -1727,7 +1727,7 @@ subtest
     ok @entry[30].id.xxhash == 3547803812;
     ok @entry[30].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[30].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[30].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[30].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[30].posting[0].amount.asset-code eqv "USD";
     ok @entry[30].posting[0].amount.asset-quantity == 1.1;
     ok @entry[30].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1764,7 +1764,7 @@ subtest
     ok @entry[31].id.xxhash == 3153707624;
     ok @entry[31].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[31].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[31].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[31].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[31].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[31].posting[0].amount.asset-quantity == 1;
     ok @entry[31].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1801,7 +1801,7 @@ subtest
     ok @entry[32].id.xxhash == 784831183;
     ok @entry[32].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[32].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[32].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[32].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[32].posting[0].amount.asset-code eqv "USD";
     ok @entry[32].posting[0].amount.asset-quantity == 2011.1116;
     ok @entry[32].posting[0].amount.asset-symbol eqv "\$";
@@ -1838,7 +1838,7 @@ subtest
     ok @entry[33].id.xxhash == 3036041749;
     ok @entry[33].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[33].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[33].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[33].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[33].posting[0].amount.asset-code eqv "USD";
     ok @entry[33].posting[0].amount.asset-quantity == 1.11;
     ok @entry[33].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1875,7 +1875,7 @@ subtest
     ok @entry[34].id.xxhash == 3901453053;
     ok @entry[34].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[34].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[34].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[34].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[34].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[34].posting[0].amount.asset-quantity == 1;
     ok @entry[34].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1912,7 +1912,7 @@ subtest
     ok @entry[35].id.xxhash == 2743061682;
     ok @entry[35].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[35].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[35].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[35].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[35].posting[0].amount.asset-code eqv "USD";
     ok @entry[35].posting[0].amount.asset-quantity == 2011.1216;
     ok @entry[35].posting[0].amount.asset-symbol eqv "\$";
@@ -1949,7 +1949,7 @@ subtest
     ok @entry[36].id.xxhash == 3355735851;
     ok @entry[36].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[36].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[36].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[36].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[36].posting[0].amount.asset-code eqv "USD";
     ok @entry[36].posting[0].amount.asset-quantity == 1.12;
     ok @entry[36].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -1986,7 +1986,7 @@ subtest
     ok @entry[37].id.xxhash == 581231782;
     ok @entry[37].posting[0].account.entity eqv "FooCorp";
     ok @entry[37].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[37].posting[0].account.path eqv Array[Str].new("Bankwest", "Cheque");
+    ok @entry[37].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Bankwest", "Cheque");
     ok @entry[37].posting[0].amount.asset-code eqv "USD";
     ok @entry[37].posting[0].amount.asset-quantity == 1000;
     ok @entry[37].posting[0].amount.asset-symbol eqv "\$";
@@ -2023,7 +2023,7 @@ subtest
     ok @entry[38].id.xxhash == 2118065854;
     ok @entry[38].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[38].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[38].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[38].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[38].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[38].posting[0].amount.asset-quantity == 1;
     ok @entry[38].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2060,7 +2060,7 @@ subtest
     ok @entry[39].id.xxhash == 822843219;
     ok @entry[39].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[39].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[39].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[39].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[39].posting[0].amount.asset-code eqv "USD";
     ok @entry[39].posting[0].amount.asset-quantity == 2012.0116;
     ok @entry[39].posting[0].amount.asset-symbol eqv "\$";
@@ -2097,7 +2097,7 @@ subtest
     ok @entry[40].id.xxhash == 1801463403;
     ok @entry[40].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[40].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[40].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[40].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[40].posting[0].amount.asset-code eqv "USD";
     ok @entry[40].posting[0].amount.asset-quantity == 2.01;
     ok @entry[40].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2134,7 +2134,7 @@ subtest
     ok @entry[41].id.xxhash == 1339543688;
     ok @entry[41].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[41].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[41].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[41].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[41].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[41].posting[0].amount.asset-quantity == 1;
     ok @entry[41].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2171,7 +2171,7 @@ subtest
     ok @entry[42].id.xxhash == 230490045;
     ok @entry[42].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[42].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[42].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[42].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[42].posting[0].amount.asset-code eqv "USD";
     ok @entry[42].posting[0].amount.asset-quantity == 2012.0216;
     ok @entry[42].posting[0].amount.asset-symbol eqv "\$";
@@ -2208,7 +2208,7 @@ subtest
     ok @entry[43].id.xxhash == 2961867692;
     ok @entry[43].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[43].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[43].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[43].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[43].posting[0].amount.asset-code eqv "USD";
     ok @entry[43].posting[0].amount.asset-quantity == 2.02;
     ok @entry[43].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2245,7 +2245,7 @@ subtest
     ok @entry[44].id.xxhash == 462880268;
     ok @entry[44].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[44].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[44].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[44].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[44].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[44].posting[0].amount.asset-quantity == 1;
     ok @entry[44].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2282,7 +2282,7 @@ subtest
     ok @entry[45].id.xxhash == 1496080492;
     ok @entry[45].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[45].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[45].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[45].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[45].posting[0].amount.asset-code eqv "USD";
     ok @entry[45].posting[0].amount.asset-quantity == 2012.0316;
     ok @entry[45].posting[0].amount.asset-symbol eqv "\$";
@@ -2319,7 +2319,7 @@ subtest
     ok @entry[46].id.xxhash == 1725880199;
     ok @entry[46].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[46].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[46].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[46].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[46].posting[0].amount.asset-code eqv "USD";
     ok @entry[46].posting[0].amount.asset-quantity == 2.03;
     ok @entry[46].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2356,7 +2356,7 @@ subtest
     ok @entry[47].id.xxhash == 4013949028;
     ok @entry[47].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[47].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[47].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[47].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[47].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[47].posting[0].amount.asset-quantity == 1;
     ok @entry[47].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2393,7 +2393,7 @@ subtest
     ok @entry[48].id.xxhash == 2366118516;
     ok @entry[48].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[48].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[48].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[48].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[48].posting[0].amount.asset-code eqv "USD";
     ok @entry[48].posting[0].amount.asset-quantity == 2012.0416;
     ok @entry[48].posting[0].amount.asset-symbol eqv "\$";
@@ -2430,7 +2430,7 @@ subtest
     ok @entry[49].id.xxhash == 534726936;
     ok @entry[49].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[49].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[49].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[49].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[49].posting[0].amount.asset-code eqv "USD";
     ok @entry[49].posting[0].amount.asset-quantity == 2.04;
     ok @entry[49].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2467,7 +2467,7 @@ subtest
     ok @entry[50].id.xxhash == 3245023882;
     ok @entry[50].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[50].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[50].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[50].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[50].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[50].posting[0].amount.asset-quantity == 1;
     ok @entry[50].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2504,7 +2504,7 @@ subtest
     ok @entry[51].id.xxhash == 2131847179;
     ok @entry[51].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[51].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[51].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[51].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[51].posting[0].amount.asset-code eqv "USD";
     ok @entry[51].posting[0].amount.asset-quantity == 2012.0516;
     ok @entry[51].posting[0].amount.asset-symbol eqv "\$";
@@ -2541,7 +2541,7 @@ subtest
     ok @entry[52].id.xxhash == 3774317231;
     ok @entry[52].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[52].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[52].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[52].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[52].posting[0].amount.asset-code eqv "USD";
     ok @entry[52].posting[0].amount.asset-quantity == 2.05;
     ok @entry[52].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2578,7 +2578,7 @@ subtest
     ok @entry[53].id.xxhash == 1722267067;
     ok @entry[53].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[53].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[53].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[53].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[53].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[53].posting[0].amount.asset-quantity == 1;
     ok @entry[53].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2615,7 +2615,7 @@ subtest
     ok @entry[54].id.xxhash == 3942872006;
     ok @entry[54].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[54].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[54].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[54].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[54].posting[0].amount.asset-code eqv "USD";
     ok @entry[54].posting[0].amount.asset-quantity == 2012.0616;
     ok @entry[54].posting[0].amount.asset-symbol eqv "\$";
@@ -2652,7 +2652,7 @@ subtest
     ok @entry[55].id.xxhash == 4168296451;
     ok @entry[55].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[55].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[55].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[55].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[55].posting[0].amount.asset-code eqv "USD";
     ok @entry[55].posting[0].amount.asset-quantity == 2.06;
     ok @entry[55].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2689,7 +2689,7 @@ subtest
     ok @entry[56].id.xxhash == 220833898;
     ok @entry[56].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[56].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[56].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[56].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[56].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[56].posting[0].amount.asset-quantity == 1;
     ok @entry[56].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2726,7 +2726,7 @@ subtest
     ok @entry[57].id.xxhash == 2173105363;
     ok @entry[57].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[57].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[57].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[57].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[57].posting[0].amount.asset-code eqv "USD";
     ok @entry[57].posting[0].amount.asset-quantity == 2012.0716;
     ok @entry[57].posting[0].amount.asset-symbol eqv "\$";
@@ -2763,7 +2763,7 @@ subtest
     ok @entry[58].id.xxhash == 2998128583;
     ok @entry[58].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[58].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[58].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[58].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[58].posting[0].amount.asset-code eqv "USD";
     ok @entry[58].posting[0].amount.asset-quantity == 2.07;
     ok @entry[58].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2800,7 +2800,7 @@ subtest
     ok @entry[59].id.xxhash == 752691327;
     ok @entry[59].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[59].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[59].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[59].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[59].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[59].posting[0].amount.asset-quantity == 1;
     ok @entry[59].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2837,7 +2837,7 @@ subtest
     ok @entry[60].id.xxhash == 1870601986;
     ok @entry[60].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[60].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[60].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[60].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[60].posting[0].amount.asset-code eqv "USD";
     ok @entry[60].posting[0].amount.asset-quantity == 2012.0816;
     ok @entry[60].posting[0].amount.asset-symbol eqv "\$";
@@ -2874,7 +2874,7 @@ subtest
     ok @entry[61].id.xxhash == 3036777254;
     ok @entry[61].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[61].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[61].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[61].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[61].posting[0].amount.asset-code eqv "USD";
     ok @entry[61].posting[0].amount.asset-quantity == 2.08;
     ok @entry[61].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2911,7 +2911,7 @@ subtest
     ok @entry[62].id.xxhash == 3451152685;
     ok @entry[62].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[62].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[62].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[62].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[62].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[62].posting[0].amount.asset-quantity == 1;
     ok @entry[62].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -2948,7 +2948,7 @@ subtest
     ok @entry[63].id.xxhash == 3511177135;
     ok @entry[63].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[63].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[63].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[63].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[63].posting[0].amount.asset-code eqv "USD";
     ok @entry[63].posting[0].amount.asset-quantity == 2012.0916;
     ok @entry[63].posting[0].amount.asset-symbol eqv "\$";
@@ -2985,7 +2985,7 @@ subtest
     ok @entry[64].id.xxhash == 1903824288;
     ok @entry[64].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[64].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[64].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[64].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[64].posting[0].amount.asset-code eqv "USD";
     ok @entry[64].posting[0].amount.asset-quantity == 2.09;
     ok @entry[64].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3022,7 +3022,7 @@ subtest
     ok @entry[65].id.xxhash == 3197209626;
     ok @entry[65].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[65].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[65].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[65].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[65].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[65].posting[0].amount.asset-quantity == 1;
     ok @entry[65].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3059,7 +3059,7 @@ subtest
     ok @entry[66].id.xxhash == 518309921;
     ok @entry[66].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[66].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[66].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[66].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[66].posting[0].amount.asset-code eqv "USD";
     ok @entry[66].posting[0].amount.asset-quantity == 2012.1016;
     ok @entry[66].posting[0].amount.asset-symbol eqv "\$";
@@ -3096,7 +3096,7 @@ subtest
     ok @entry[67].id.xxhash == 2477064034;
     ok @entry[67].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[67].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[67].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[67].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[67].posting[0].amount.asset-code eqv "USD";
     ok @entry[67].posting[0].amount.asset-quantity == 2.1;
     ok @entry[67].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3133,7 +3133,7 @@ subtest
     ok @entry[68].id.xxhash == 729373328;
     ok @entry[68].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[68].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[68].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[68].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[68].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[68].posting[0].amount.asset-quantity == 1;
     ok @entry[68].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3170,7 +3170,7 @@ subtest
     ok @entry[69].id.xxhash == 2908538066;
     ok @entry[69].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[69].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[69].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[69].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[69].posting[0].amount.asset-code eqv "USD";
     ok @entry[69].posting[0].amount.asset-quantity == 2012.1116;
     ok @entry[69].posting[0].amount.asset-symbol eqv "\$";
@@ -3207,7 +3207,7 @@ subtest
     ok @entry[70].id.xxhash == 228106705;
     ok @entry[70].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[70].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[70].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[70].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[70].posting[0].amount.asset-code eqv "USD";
     ok @entry[70].posting[0].amount.asset-quantity == 2.11;
     ok @entry[70].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3244,7 +3244,7 @@ subtest
     ok @entry[71].id.xxhash == 118051768;
     ok @entry[71].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[71].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[71].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[71].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[71].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[71].posting[0].amount.asset-quantity == 1;
     ok @entry[71].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3281,7 +3281,7 @@ subtest
     ok @entry[72].id.xxhash == 3874590774;
     ok @entry[72].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[72].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[72].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[72].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[72].posting[0].amount.asset-code eqv "USD";
     ok @entry[72].posting[0].amount.asset-quantity == 2012.1216;
     ok @entry[72].posting[0].amount.asset-symbol eqv "\$";
@@ -3318,7 +3318,7 @@ subtest
     ok @entry[73].id.xxhash == 2276583731;
     ok @entry[73].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[73].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[73].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[73].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[73].posting[0].amount.asset-code eqv "USD";
     ok @entry[73].posting[0].amount.asset-quantity == 2.12;
     ok @entry[73].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3355,7 +3355,7 @@ subtest
     ok @entry[74].id.xxhash == 2316435396;
     ok @entry[74].posting[0].account.entity eqv "FooCorp";
     ok @entry[74].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[74].posting[0].account.path eqv Array[Str].new("Bankwest", "Cheque");
+    ok @entry[74].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Bankwest", "Cheque");
     ok @entry[74].posting[0].amount.asset-code eqv "USD";
     ok @entry[74].posting[0].amount.asset-quantity == 1000;
     ok @entry[74].posting[0].amount.asset-symbol eqv "\$";
@@ -3392,7 +3392,7 @@ subtest
     ok @entry[75].id.xxhash == 265230743;
     ok @entry[75].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[75].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[75].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[75].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[75].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[75].posting[0].amount.asset-quantity == 1;
     ok @entry[75].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3429,7 +3429,7 @@ subtest
     ok @entry[76].id.xxhash == 1201569906;
     ok @entry[76].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[76].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[76].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[76].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[76].posting[0].amount.asset-code eqv "USD";
     ok @entry[76].posting[0].amount.asset-quantity == 2013.0116;
     ok @entry[76].posting[0].amount.asset-symbol eqv "\$";
@@ -3466,7 +3466,7 @@ subtest
     ok @entry[77].id.xxhash == 3717945709;
     ok @entry[77].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[77].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[77].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[77].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[77].posting[0].amount.asset-code eqv "USD";
     ok @entry[77].posting[0].amount.asset-quantity == 3.01;
     ok @entry[77].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3503,7 +3503,7 @@ subtest
     ok @entry[78].id.xxhash == 4024926956;
     ok @entry[78].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[78].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[78].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[78].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[78].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[78].posting[0].amount.asset-quantity == 1;
     ok @entry[78].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3540,7 +3540,7 @@ subtest
     ok @entry[79].id.xxhash == 2203509452;
     ok @entry[79].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[79].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[79].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[79].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[79].posting[0].amount.asset-code eqv "USD";
     ok @entry[79].posting[0].amount.asset-quantity == 2013.0216;
     ok @entry[79].posting[0].amount.asset-symbol eqv "\$";
@@ -3577,7 +3577,7 @@ subtest
     ok @entry[80].id.xxhash == 1337772394;
     ok @entry[80].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[80].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[80].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[80].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[80].posting[0].amount.asset-code eqv "USD";
     ok @entry[80].posting[0].amount.asset-quantity == 3.02;
     ok @entry[80].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3614,7 +3614,7 @@ subtest
     ok @entry[81].id.xxhash == 3993675371;
     ok @entry[81].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[81].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[81].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[81].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[81].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[81].posting[0].amount.asset-quantity == 1;
     ok @entry[81].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3651,7 +3651,7 @@ subtest
     ok @entry[82].id.xxhash == 1562886410;
     ok @entry[82].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[82].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[82].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[82].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[82].posting[0].amount.asset-code eqv "USD";
     ok @entry[82].posting[0].amount.asset-quantity == 2013.0316;
     ok @entry[82].posting[0].amount.asset-symbol eqv "\$";
@@ -3688,7 +3688,7 @@ subtest
     ok @entry[83].id.xxhash == 1634210627;
     ok @entry[83].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[83].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[83].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[83].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[83].posting[0].amount.asset-code eqv "USD";
     ok @entry[83].posting[0].amount.asset-quantity == 3.03;
     ok @entry[83].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3725,7 +3725,7 @@ subtest
     ok @entry[84].id.xxhash == 713752082;
     ok @entry[84].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[84].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[84].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[84].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[84].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[84].posting[0].amount.asset-quantity == 1;
     ok @entry[84].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3762,7 +3762,7 @@ subtest
     ok @entry[85].id.xxhash == 2573101041;
     ok @entry[85].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[85].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[85].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[85].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[85].posting[0].amount.asset-code eqv "USD";
     ok @entry[85].posting[0].amount.asset-quantity == 2013.0416;
     ok @entry[85].posting[0].amount.asset-symbol eqv "\$";
@@ -3799,7 +3799,7 @@ subtest
     ok @entry[86].id.xxhash == 2698432083;
     ok @entry[86].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[86].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[86].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[86].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[86].posting[0].amount.asset-code eqv "USD";
     ok @entry[86].posting[0].amount.asset-quantity == 3.04;
     ok @entry[86].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3836,7 +3836,7 @@ subtest
     ok @entry[87].id.xxhash == 607841021;
     ok @entry[87].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[87].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[87].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[87].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[87].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[87].posting[0].amount.asset-quantity == 1;
     ok @entry[87].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3873,7 +3873,7 @@ subtest
     ok @entry[88].id.xxhash == 3814087496;
     ok @entry[88].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[88].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[88].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[88].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[88].posting[0].amount.asset-code eqv "USD";
     ok @entry[88].posting[0].amount.asset-quantity == 2013.0516;
     ok @entry[88].posting[0].amount.asset-symbol eqv "\$";
@@ -3910,7 +3910,7 @@ subtest
     ok @entry[89].id.xxhash == 3166921593;
     ok @entry[89].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[89].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[89].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[89].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[89].posting[0].amount.asset-code eqv "USD";
     ok @entry[89].posting[0].amount.asset-quantity == 3.05;
     ok @entry[89].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3947,7 +3947,7 @@ subtest
     ok @entry[90].id.xxhash == 927323051;
     ok @entry[90].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[90].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[90].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[90].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[90].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[90].posting[0].amount.asset-quantity == 1;
     ok @entry[90].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -3984,7 +3984,7 @@ subtest
     ok @entry[91].id.xxhash == 2504499649;
     ok @entry[91].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[91].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[91].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[91].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[91].posting[0].amount.asset-code eqv "USD";
     ok @entry[91].posting[0].amount.asset-quantity == 2013.0616;
     ok @entry[91].posting[0].amount.asset-symbol eqv "\$";
@@ -4021,7 +4021,7 @@ subtest
     ok @entry[92].id.xxhash == 1870422416;
     ok @entry[92].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[92].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[92].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[92].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[92].posting[0].amount.asset-code eqv "USD";
     ok @entry[92].posting[0].amount.asset-quantity == 3.06;
     ok @entry[92].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4058,7 +4058,7 @@ subtest
     ok @entry[93].id.xxhash == 4095708493;
     ok @entry[93].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[93].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[93].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[93].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[93].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[93].posting[0].amount.asset-quantity == 1;
     ok @entry[93].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4095,7 +4095,7 @@ subtest
     ok @entry[94].id.xxhash == 1271983877;
     ok @entry[94].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[94].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[94].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[94].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[94].posting[0].amount.asset-code eqv "USD";
     ok @entry[94].posting[0].amount.asset-quantity == 2013.0716;
     ok @entry[94].posting[0].amount.asset-symbol eqv "\$";
@@ -4132,7 +4132,7 @@ subtest
     ok @entry[95].id.xxhash == 585905153;
     ok @entry[95].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[95].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[95].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[95].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[95].posting[0].amount.asset-code eqv "USD";
     ok @entry[95].posting[0].amount.asset-quantity == 3.07;
     ok @entry[95].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4169,7 +4169,7 @@ subtest
     ok @entry[96].id.xxhash == 444744934;
     ok @entry[96].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[96].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[96].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[96].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[96].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[96].posting[0].amount.asset-quantity == 1;
     ok @entry[96].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4206,7 +4206,7 @@ subtest
     ok @entry[97].id.xxhash == 796956488;
     ok @entry[97].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[97].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[97].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[97].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[97].posting[0].amount.asset-code eqv "USD";
     ok @entry[97].posting[0].amount.asset-quantity == 2013.0816;
     ok @entry[97].posting[0].amount.asset-symbol eqv "\$";
@@ -4243,7 +4243,7 @@ subtest
     ok @entry[98].id.xxhash == 1033193703;
     ok @entry[98].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[98].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[98].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[98].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[98].posting[0].amount.asset-code eqv "USD";
     ok @entry[98].posting[0].amount.asset-quantity == 3.08;
     ok @entry[98].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4280,7 +4280,7 @@ subtest
     ok @entry[99].id.xxhash == 2081861311;
     ok @entry[99].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[99].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[99].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[99].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[99].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[99].posting[0].amount.asset-quantity == 1;
     ok @entry[99].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4317,7 +4317,7 @@ subtest
     ok @entry[100].id.xxhash == 705777824;
     ok @entry[100].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[100].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[100].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[100].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[100].posting[0].amount.asset-code eqv "USD";
     ok @entry[100].posting[0].amount.asset-quantity == 2013.0916;
     ok @entry[100].posting[0].amount.asset-symbol eqv "\$";
@@ -4354,7 +4354,7 @@ subtest
     ok @entry[101].id.xxhash == 2792675818;
     ok @entry[101].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[101].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[101].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[101].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[101].posting[0].amount.asset-code eqv "USD";
     ok @entry[101].posting[0].amount.asset-quantity == 3.09;
     ok @entry[101].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4391,7 +4391,7 @@ subtest
     ok @entry[102].id.xxhash == 574545503;
     ok @entry[102].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[102].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[102].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[102].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[102].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[102].posting[0].amount.asset-quantity == 1;
     ok @entry[102].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4428,7 +4428,7 @@ subtest
     ok @entry[103].id.xxhash == 1123984249;
     ok @entry[103].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[103].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[103].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[103].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[103].posting[0].amount.asset-code eqv "USD";
     ok @entry[103].posting[0].amount.asset-quantity == 2013.1016;
     ok @entry[103].posting[0].amount.asset-symbol eqv "\$";
@@ -4465,7 +4465,7 @@ subtest
     ok @entry[104].id.xxhash == 1605620712;
     ok @entry[104].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[104].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[104].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[104].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[104].posting[0].amount.asset-code eqv "USD";
     ok @entry[104].posting[0].amount.asset-quantity == 3.1;
     ok @entry[104].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4502,7 +4502,7 @@ subtest
     ok @entry[105].id.xxhash == 3963180771;
     ok @entry[105].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[105].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[105].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[105].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[105].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[105].posting[0].amount.asset-quantity == 1;
     ok @entry[105].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4539,7 +4539,7 @@ subtest
     ok @entry[106].id.xxhash == 3185930480;
     ok @entry[106].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[106].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[106].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[106].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[106].posting[0].amount.asset-code eqv "USD";
     ok @entry[106].posting[0].amount.asset-quantity == 2013.1116;
     ok @entry[106].posting[0].amount.asset-symbol eqv "\$";
@@ -4576,7 +4576,7 @@ subtest
     ok @entry[107].id.xxhash == 2315332478;
     ok @entry[107].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[107].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[107].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[107].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[107].posting[0].amount.asset-code eqv "USD";
     ok @entry[107].posting[0].amount.asset-quantity == 3.11;
     ok @entry[107].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4613,7 +4613,7 @@ subtest
     ok @entry[108].id.xxhash == 646922698;
     ok @entry[108].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[108].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[108].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[108].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[108].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[108].posting[0].amount.asset-quantity == 1;
     ok @entry[108].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4650,7 +4650,7 @@ subtest
     ok @entry[109].id.xxhash == 2042360109;
     ok @entry[109].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[109].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[109].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[109].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[109].posting[0].amount.asset-code eqv "USD";
     ok @entry[109].posting[0].amount.asset-quantity == 2013.1216;
     ok @entry[109].posting[0].amount.asset-symbol eqv "\$";
@@ -4687,7 +4687,7 @@ subtest
     ok @entry[110].id.xxhash == 1933516675;
     ok @entry[110].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[110].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[110].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[110].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[110].posting[0].amount.asset-code eqv "USD";
     ok @entry[110].posting[0].amount.asset-quantity == 3.12;
     ok @entry[110].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4724,7 +4724,7 @@ subtest
     ok @entry[111].id.xxhash == 1468523538;
     ok @entry[111].posting[0].account.entity eqv "Personal";
     ok @entry[111].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[111].posting[0].account.path eqv Array[Str].new("Bankwest", "Cheque");
+    ok @entry[111].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Bankwest", "Cheque");
     ok @entry[111].posting[0].amount.asset-code eqv "USD";
     ok @entry[111].posting[0].amount.asset-quantity == 1000;
     ok @entry[111].posting[0].amount.asset-symbol eqv "\$";
@@ -4772,7 +4772,7 @@ subtest
     ok @entry[0].id.xxhash == 839297870;
     ok @entry[0].posting[0].account.entity eqv "FooCorp";
     ok @entry[0].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[0].posting[0].account.path eqv Array[Str].new("Bankwest", "Cheque");
+    ok @entry[0].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Bankwest", "Cheque");
     ok @entry[0].posting[0].amount.asset-code eqv "USD";
     ok @entry[0].posting[0].amount.asset-quantity == 1000;
     ok @entry[0].posting[0].amount.asset-symbol eqv "\$";
@@ -4809,7 +4809,7 @@ subtest
     ok @entry[1].id.xxhash == 3127303444;
     ok @entry[1].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[1].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[1].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[1].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[1].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[1].posting[0].amount.asset-quantity == 1;
     ok @entry[1].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4846,7 +4846,7 @@ subtest
     ok @entry[2].id.xxhash == 4018141641;
     ok @entry[2].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[2].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[2].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[2].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[2].posting[0].amount.asset-code eqv "USD";
     ok @entry[2].posting[0].amount.asset-quantity == 2011.0116;
     ok @entry[2].posting[0].amount.asset-symbol eqv "\$";
@@ -4883,7 +4883,7 @@ subtest
     ok @entry[3].id.xxhash == 2478358144;
     ok @entry[3].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[3].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[3].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[3].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[3].posting[0].amount.asset-code eqv "USD";
     ok @entry[3].posting[0].amount.asset-quantity == 1.01;
     ok @entry[3].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4920,7 +4920,7 @@ subtest
     ok @entry[4].id.xxhash == 2320468031;
     ok @entry[4].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[4].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[4].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[4].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[4].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[4].posting[0].amount.asset-quantity == 1;
     ok @entry[4].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -4957,7 +4957,7 @@ subtest
     ok @entry[5].id.xxhash == 1177608739;
     ok @entry[5].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[5].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[5].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[5].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[5].posting[0].amount.asset-code eqv "USD";
     ok @entry[5].posting[0].amount.asset-quantity == 2011.0216;
     ok @entry[5].posting[0].amount.asset-symbol eqv "\$";
@@ -4994,7 +4994,7 @@ subtest
     ok @entry[6].id.xxhash == 3178583936;
     ok @entry[6].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[6].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[6].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[6].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[6].posting[0].amount.asset-code eqv "USD";
     ok @entry[6].posting[0].amount.asset-quantity == 1.02;
     ok @entry[6].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5031,7 +5031,7 @@ subtest
     ok @entry[7].id.xxhash == 1567632724;
     ok @entry[7].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[7].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[7].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[7].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[7].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[7].posting[0].amount.asset-quantity == 1;
     ok @entry[7].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5068,7 +5068,7 @@ subtest
     ok @entry[8].id.xxhash == 3569777874;
     ok @entry[8].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[8].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[8].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[8].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[8].posting[0].amount.asset-code eqv "USD";
     ok @entry[8].posting[0].amount.asset-quantity == 2011.0316;
     ok @entry[8].posting[0].amount.asset-symbol eqv "\$";
@@ -5105,7 +5105,7 @@ subtest
     ok @entry[9].id.xxhash == 521313438;
     ok @entry[9].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[9].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[9].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[9].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[9].posting[0].amount.asset-code eqv "USD";
     ok @entry[9].posting[0].amount.asset-quantity == 1.03;
     ok @entry[9].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5142,7 +5142,7 @@ subtest
     ok @entry[10].id.xxhash == 234894800;
     ok @entry[10].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[10].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[10].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[10].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[10].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[10].posting[0].amount.asset-quantity == 1;
     ok @entry[10].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5179,7 +5179,7 @@ subtest
     ok @entry[11].id.xxhash == 2888576925;
     ok @entry[11].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[11].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[11].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[11].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[11].posting[0].amount.asset-code eqv "USD";
     ok @entry[11].posting[0].amount.asset-quantity == 2011.0416;
     ok @entry[11].posting[0].amount.asset-symbol eqv "\$";
@@ -5216,7 +5216,7 @@ subtest
     ok @entry[12].id.xxhash == 801753479;
     ok @entry[12].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[12].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[12].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[12].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[12].posting[0].amount.asset-code eqv "USD";
     ok @entry[12].posting[0].amount.asset-quantity == 1.04;
     ok @entry[12].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5253,7 +5253,7 @@ subtest
     ok @entry[13].id.xxhash == 2708781669;
     ok @entry[13].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[13].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[13].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[13].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[13].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[13].posting[0].amount.asset-quantity == 1;
     ok @entry[13].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5290,7 +5290,7 @@ subtest
     ok @entry[14].id.xxhash == 2585914;
     ok @entry[14].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[14].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[14].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[14].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[14].posting[0].amount.asset-code eqv "USD";
     ok @entry[14].posting[0].amount.asset-quantity == 2011.0516;
     ok @entry[14].posting[0].amount.asset-symbol eqv "\$";
@@ -5327,7 +5327,7 @@ subtest
     ok @entry[15].id.xxhash == 793767881;
     ok @entry[15].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[15].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[15].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[15].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[15].posting[0].amount.asset-code eqv "USD";
     ok @entry[15].posting[0].amount.asset-quantity == 1.05;
     ok @entry[15].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5364,7 +5364,7 @@ subtest
     ok @entry[16].id.xxhash == 1054837725;
     ok @entry[16].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[16].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[16].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[16].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[16].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[16].posting[0].amount.asset-quantity == 1;
     ok @entry[16].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5401,7 +5401,7 @@ subtest
     ok @entry[17].id.xxhash == 2233477133;
     ok @entry[17].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[17].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[17].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[17].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[17].posting[0].amount.asset-code eqv "USD";
     ok @entry[17].posting[0].amount.asset-quantity == 2011.0616;
     ok @entry[17].posting[0].amount.asset-symbol eqv "\$";
@@ -5438,7 +5438,7 @@ subtest
     ok @entry[18].id.xxhash == 2726916770;
     ok @entry[18].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[18].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[18].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[18].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[18].posting[0].amount.asset-code eqv "USD";
     ok @entry[18].posting[0].amount.asset-quantity == 1.06;
     ok @entry[18].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5475,7 +5475,7 @@ subtest
     ok @entry[19].id.xxhash == 2522748302;
     ok @entry[19].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[19].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[19].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[19].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[19].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[19].posting[0].amount.asset-quantity == 1;
     ok @entry[19].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5512,7 +5512,7 @@ subtest
     ok @entry[20].id.xxhash == 66189993;
     ok @entry[20].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[20].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[20].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[20].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[20].posting[0].amount.asset-code eqv "USD";
     ok @entry[20].posting[0].amount.asset-quantity == 2011.0716;
     ok @entry[20].posting[0].amount.asset-symbol eqv "\$";
@@ -5549,7 +5549,7 @@ subtest
     ok @entry[21].id.xxhash == 992681704;
     ok @entry[21].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[21].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[21].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[21].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[21].posting[0].amount.asset-code eqv "USD";
     ok @entry[21].posting[0].amount.asset-quantity == 1.07;
     ok @entry[21].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5586,7 +5586,7 @@ subtest
     ok @entry[22].id.xxhash == 2932388883;
     ok @entry[22].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[22].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[22].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[22].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[22].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[22].posting[0].amount.asset-quantity == 1;
     ok @entry[22].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5623,7 +5623,7 @@ subtest
     ok @entry[23].id.xxhash == 165262646;
     ok @entry[23].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[23].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[23].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[23].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[23].posting[0].amount.asset-code eqv "USD";
     ok @entry[23].posting[0].amount.asset-quantity == 2011.0816;
     ok @entry[23].posting[0].amount.asset-symbol eqv "\$";
@@ -5660,7 +5660,7 @@ subtest
     ok @entry[24].id.xxhash == 2421394429;
     ok @entry[24].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[24].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[24].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[24].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[24].posting[0].amount.asset-code eqv "USD";
     ok @entry[24].posting[0].amount.asset-quantity == 1.08;
     ok @entry[24].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5697,7 +5697,7 @@ subtest
     ok @entry[25].id.xxhash == 3100476228;
     ok @entry[25].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[25].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[25].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[25].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[25].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[25].posting[0].amount.asset-quantity == 1;
     ok @entry[25].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5734,7 +5734,7 @@ subtest
     ok @entry[26].id.xxhash == 1591575233;
     ok @entry[26].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[26].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[26].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[26].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[26].posting[0].amount.asset-code eqv "USD";
     ok @entry[26].posting[0].amount.asset-quantity == 2011.0916;
     ok @entry[26].posting[0].amount.asset-symbol eqv "\$";
@@ -5771,7 +5771,7 @@ subtest
     ok @entry[27].id.xxhash == 1027238853;
     ok @entry[27].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[27].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[27].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[27].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[27].posting[0].amount.asset-code eqv "USD";
     ok @entry[27].posting[0].amount.asset-quantity == 1.09;
     ok @entry[27].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5808,7 +5808,7 @@ subtest
     ok @entry[28].id.xxhash == 2088813850;
     ok @entry[28].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[28].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[28].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[28].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[28].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[28].posting[0].amount.asset-quantity == 1;
     ok @entry[28].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5845,7 +5845,7 @@ subtest
     ok @entry[29].id.xxhash == 1630761716;
     ok @entry[29].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[29].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[29].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[29].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[29].posting[0].amount.asset-code eqv "USD";
     ok @entry[29].posting[0].amount.asset-quantity == 2011.1016;
     ok @entry[29].posting[0].amount.asset-symbol eqv "\$";
@@ -5882,7 +5882,7 @@ subtest
     ok @entry[30].id.xxhash == 3547803812;
     ok @entry[30].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[30].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[30].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[30].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[30].posting[0].amount.asset-code eqv "USD";
     ok @entry[30].posting[0].amount.asset-quantity == 1.1;
     ok @entry[30].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5919,7 +5919,7 @@ subtest
     ok @entry[31].id.xxhash == 3153707624;
     ok @entry[31].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[31].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[31].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[31].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[31].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[31].posting[0].amount.asset-quantity == 1;
     ok @entry[31].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -5956,7 +5956,7 @@ subtest
     ok @entry[32].id.xxhash == 784831183;
     ok @entry[32].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[32].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[32].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[32].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[32].posting[0].amount.asset-code eqv "USD";
     ok @entry[32].posting[0].amount.asset-quantity == 2011.1116;
     ok @entry[32].posting[0].amount.asset-symbol eqv "\$";
@@ -5993,7 +5993,7 @@ subtest
     ok @entry[33].id.xxhash == 3036041749;
     ok @entry[33].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[33].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[33].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[33].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[33].posting[0].amount.asset-code eqv "USD";
     ok @entry[33].posting[0].amount.asset-quantity == 1.11;
     ok @entry[33].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6030,7 +6030,7 @@ subtest
     ok @entry[34].id.xxhash == 3901453053;
     ok @entry[34].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[34].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[34].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[34].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[34].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[34].posting[0].amount.asset-quantity == 1;
     ok @entry[34].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6067,7 +6067,7 @@ subtest
     ok @entry[35].id.xxhash == 2743061682;
     ok @entry[35].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[35].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[35].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[35].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[35].posting[0].amount.asset-code eqv "USD";
     ok @entry[35].posting[0].amount.asset-quantity == 2011.1216;
     ok @entry[35].posting[0].amount.asset-symbol eqv "\$";
@@ -6104,7 +6104,7 @@ subtest
     ok @entry[36].id.xxhash == 3355735851;
     ok @entry[36].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[36].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[36].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[36].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[36].posting[0].amount.asset-code eqv "USD";
     ok @entry[36].posting[0].amount.asset-quantity == 1.12;
     ok @entry[36].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6141,7 +6141,7 @@ subtest
     ok @entry[37].id.xxhash == 581231782;
     ok @entry[37].posting[0].account.entity eqv "FooCorp";
     ok @entry[37].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[37].posting[0].account.path eqv Array[Str].new("Bankwest", "Cheque");
+    ok @entry[37].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Bankwest", "Cheque");
     ok @entry[37].posting[0].amount.asset-code eqv "USD";
     ok @entry[37].posting[0].amount.asset-quantity == 1000;
     ok @entry[37].posting[0].amount.asset-symbol eqv "\$";
@@ -6178,7 +6178,7 @@ subtest
     ok @entry[38].id.xxhash == 2118065854;
     ok @entry[38].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[38].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[38].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[38].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[38].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[38].posting[0].amount.asset-quantity == 1;
     ok @entry[38].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6215,7 +6215,7 @@ subtest
     ok @entry[39].id.xxhash == 822843219;
     ok @entry[39].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[39].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[39].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[39].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[39].posting[0].amount.asset-code eqv "USD";
     ok @entry[39].posting[0].amount.asset-quantity == 2012.0116;
     ok @entry[39].posting[0].amount.asset-symbol eqv "\$";
@@ -6252,7 +6252,7 @@ subtest
     ok @entry[40].id.xxhash == 1801463403;
     ok @entry[40].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[40].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[40].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[40].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[40].posting[0].amount.asset-code eqv "USD";
     ok @entry[40].posting[0].amount.asset-quantity == 2.01;
     ok @entry[40].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6289,7 +6289,7 @@ subtest
     ok @entry[41].id.xxhash == 1339543688;
     ok @entry[41].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[41].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[41].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[41].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[41].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[41].posting[0].amount.asset-quantity == 1;
     ok @entry[41].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6326,7 +6326,7 @@ subtest
     ok @entry[42].id.xxhash == 230490045;
     ok @entry[42].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[42].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[42].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[42].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[42].posting[0].amount.asset-code eqv "USD";
     ok @entry[42].posting[0].amount.asset-quantity == 2012.0216;
     ok @entry[42].posting[0].amount.asset-symbol eqv "\$";
@@ -6363,7 +6363,7 @@ subtest
     ok @entry[43].id.xxhash == 2961867692;
     ok @entry[43].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[43].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[43].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[43].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[43].posting[0].amount.asset-code eqv "USD";
     ok @entry[43].posting[0].amount.asset-quantity == 2.02;
     ok @entry[43].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6400,7 +6400,7 @@ subtest
     ok @entry[44].id.xxhash == 462880268;
     ok @entry[44].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[44].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[44].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[44].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[44].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[44].posting[0].amount.asset-quantity == 1;
     ok @entry[44].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6437,7 +6437,7 @@ subtest
     ok @entry[45].id.xxhash == 1496080492;
     ok @entry[45].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[45].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[45].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[45].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[45].posting[0].amount.asset-code eqv "USD";
     ok @entry[45].posting[0].amount.asset-quantity == 2012.0316;
     ok @entry[45].posting[0].amount.asset-symbol eqv "\$";
@@ -6474,7 +6474,7 @@ subtest
     ok @entry[46].id.xxhash == 1725880199;
     ok @entry[46].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[46].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[46].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[46].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[46].posting[0].amount.asset-code eqv "USD";
     ok @entry[46].posting[0].amount.asset-quantity == 2.03;
     ok @entry[46].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6511,7 +6511,7 @@ subtest
     ok @entry[47].id.xxhash == 4013949028;
     ok @entry[47].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[47].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[47].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[47].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[47].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[47].posting[0].amount.asset-quantity == 1;
     ok @entry[47].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6548,7 +6548,7 @@ subtest
     ok @entry[48].id.xxhash == 2366118516;
     ok @entry[48].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[48].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[48].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[48].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[48].posting[0].amount.asset-code eqv "USD";
     ok @entry[48].posting[0].amount.asset-quantity == 2012.0416;
     ok @entry[48].posting[0].amount.asset-symbol eqv "\$";
@@ -6585,7 +6585,7 @@ subtest
     ok @entry[49].id.xxhash == 534726936;
     ok @entry[49].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[49].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[49].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[49].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[49].posting[0].amount.asset-code eqv "USD";
     ok @entry[49].posting[0].amount.asset-quantity == 2.04;
     ok @entry[49].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6622,7 +6622,7 @@ subtest
     ok @entry[50].id.xxhash == 3245023882;
     ok @entry[50].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[50].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[50].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[50].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[50].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[50].posting[0].amount.asset-quantity == 1;
     ok @entry[50].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6659,7 +6659,7 @@ subtest
     ok @entry[51].id.xxhash == 2131847179;
     ok @entry[51].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[51].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[51].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[51].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[51].posting[0].amount.asset-code eqv "USD";
     ok @entry[51].posting[0].amount.asset-quantity == 2012.0516;
     ok @entry[51].posting[0].amount.asset-symbol eqv "\$";
@@ -6696,7 +6696,7 @@ subtest
     ok @entry[52].id.xxhash == 3774317231;
     ok @entry[52].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[52].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[52].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[52].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[52].posting[0].amount.asset-code eqv "USD";
     ok @entry[52].posting[0].amount.asset-quantity == 2.05;
     ok @entry[52].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6733,7 +6733,7 @@ subtest
     ok @entry[53].id.xxhash == 1722267067;
     ok @entry[53].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[53].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[53].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[53].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[53].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[53].posting[0].amount.asset-quantity == 1;
     ok @entry[53].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6770,7 +6770,7 @@ subtest
     ok @entry[54].id.xxhash == 3942872006;
     ok @entry[54].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[54].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[54].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[54].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[54].posting[0].amount.asset-code eqv "USD";
     ok @entry[54].posting[0].amount.asset-quantity == 2012.0616;
     ok @entry[54].posting[0].amount.asset-symbol eqv "\$";
@@ -6807,7 +6807,7 @@ subtest
     ok @entry[55].id.xxhash == 4168296451;
     ok @entry[55].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[55].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[55].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[55].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[55].posting[0].amount.asset-code eqv "USD";
     ok @entry[55].posting[0].amount.asset-quantity == 2.06;
     ok @entry[55].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6844,7 +6844,7 @@ subtest
     ok @entry[56].id.xxhash == 220833898;
     ok @entry[56].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[56].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[56].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[56].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[56].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[56].posting[0].amount.asset-quantity == 1;
     ok @entry[56].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6881,7 +6881,7 @@ subtest
     ok @entry[57].id.xxhash == 2173105363;
     ok @entry[57].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[57].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[57].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[57].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[57].posting[0].amount.asset-code eqv "USD";
     ok @entry[57].posting[0].amount.asset-quantity == 2012.0716;
     ok @entry[57].posting[0].amount.asset-symbol eqv "\$";
@@ -6918,7 +6918,7 @@ subtest
     ok @entry[58].id.xxhash == 2998128583;
     ok @entry[58].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[58].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[58].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[58].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[58].posting[0].amount.asset-code eqv "USD";
     ok @entry[58].posting[0].amount.asset-quantity == 2.07;
     ok @entry[58].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6955,7 +6955,7 @@ subtest
     ok @entry[59].id.xxhash == 752691327;
     ok @entry[59].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[59].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[59].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[59].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[59].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[59].posting[0].amount.asset-quantity == 1;
     ok @entry[59].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -6992,7 +6992,7 @@ subtest
     ok @entry[60].id.xxhash == 1870601986;
     ok @entry[60].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[60].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[60].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[60].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[60].posting[0].amount.asset-code eqv "USD";
     ok @entry[60].posting[0].amount.asset-quantity == 2012.0816;
     ok @entry[60].posting[0].amount.asset-symbol eqv "\$";
@@ -7029,7 +7029,7 @@ subtest
     ok @entry[61].id.xxhash == 3036777254;
     ok @entry[61].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[61].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[61].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[61].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[61].posting[0].amount.asset-code eqv "USD";
     ok @entry[61].posting[0].amount.asset-quantity == 2.08;
     ok @entry[61].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7066,7 +7066,7 @@ subtest
     ok @entry[62].id.xxhash == 3451152685;
     ok @entry[62].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[62].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[62].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[62].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[62].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[62].posting[0].amount.asset-quantity == 1;
     ok @entry[62].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7103,7 +7103,7 @@ subtest
     ok @entry[63].id.xxhash == 3511177135;
     ok @entry[63].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[63].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[63].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[63].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[63].posting[0].amount.asset-code eqv "USD";
     ok @entry[63].posting[0].amount.asset-quantity == 2012.0916;
     ok @entry[63].posting[0].amount.asset-symbol eqv "\$";
@@ -7140,7 +7140,7 @@ subtest
     ok @entry[64].id.xxhash == 1903824288;
     ok @entry[64].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[64].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[64].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[64].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[64].posting[0].amount.asset-code eqv "USD";
     ok @entry[64].posting[0].amount.asset-quantity == 2.09;
     ok @entry[64].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7177,7 +7177,7 @@ subtest
     ok @entry[65].id.xxhash == 3197209626;
     ok @entry[65].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[65].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[65].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[65].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[65].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[65].posting[0].amount.asset-quantity == 1;
     ok @entry[65].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7214,7 +7214,7 @@ subtest
     ok @entry[66].id.xxhash == 518309921;
     ok @entry[66].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[66].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[66].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[66].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[66].posting[0].amount.asset-code eqv "USD";
     ok @entry[66].posting[0].amount.asset-quantity == 2012.1016;
     ok @entry[66].posting[0].amount.asset-symbol eqv "\$";
@@ -7251,7 +7251,7 @@ subtest
     ok @entry[67].id.xxhash == 2477064034;
     ok @entry[67].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[67].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[67].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[67].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[67].posting[0].amount.asset-code eqv "USD";
     ok @entry[67].posting[0].amount.asset-quantity == 2.1;
     ok @entry[67].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7288,7 +7288,7 @@ subtest
     ok @entry[68].id.xxhash == 729373328;
     ok @entry[68].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[68].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[68].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[68].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[68].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[68].posting[0].amount.asset-quantity == 1;
     ok @entry[68].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7325,7 +7325,7 @@ subtest
     ok @entry[69].id.xxhash == 2908538066;
     ok @entry[69].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[69].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[69].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[69].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[69].posting[0].amount.asset-code eqv "USD";
     ok @entry[69].posting[0].amount.asset-quantity == 2012.1116;
     ok @entry[69].posting[0].amount.asset-symbol eqv "\$";
@@ -7362,7 +7362,7 @@ subtest
     ok @entry[70].id.xxhash == 228106705;
     ok @entry[70].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[70].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[70].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[70].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[70].posting[0].amount.asset-code eqv "USD";
     ok @entry[70].posting[0].amount.asset-quantity == 2.11;
     ok @entry[70].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7399,7 +7399,7 @@ subtest
     ok @entry[71].id.xxhash == 118051768;
     ok @entry[71].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[71].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[71].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[71].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[71].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[71].posting[0].amount.asset-quantity == 1;
     ok @entry[71].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7436,7 +7436,7 @@ subtest
     ok @entry[72].id.xxhash == 3874590774;
     ok @entry[72].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[72].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[72].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[72].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[72].posting[0].amount.asset-code eqv "USD";
     ok @entry[72].posting[0].amount.asset-quantity == 2012.1216;
     ok @entry[72].posting[0].amount.asset-symbol eqv "\$";
@@ -7473,7 +7473,7 @@ subtest
     ok @entry[73].id.xxhash == 2276583731;
     ok @entry[73].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[73].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[73].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[73].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[73].posting[0].amount.asset-code eqv "USD";
     ok @entry[73].posting[0].amount.asset-quantity == 2.12;
     ok @entry[73].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7510,7 +7510,7 @@ subtest
     ok @entry[74].id.xxhash == 2316435396;
     ok @entry[74].posting[0].account.entity eqv "FooCorp";
     ok @entry[74].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[74].posting[0].account.path eqv Array[Str].new("Bankwest", "Cheque");
+    ok @entry[74].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Bankwest", "Cheque");
     ok @entry[74].posting[0].amount.asset-code eqv "USD";
     ok @entry[74].posting[0].amount.asset-quantity == 1000;
     ok @entry[74].posting[0].amount.asset-symbol eqv "\$";
@@ -7547,7 +7547,7 @@ subtest
     ok @entry[75].id.xxhash == 265230743;
     ok @entry[75].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[75].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[75].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[75].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[75].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[75].posting[0].amount.asset-quantity == 1;
     ok @entry[75].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7584,7 +7584,7 @@ subtest
     ok @entry[76].id.xxhash == 1201569906;
     ok @entry[76].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[76].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[76].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[76].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[76].posting[0].amount.asset-code eqv "USD";
     ok @entry[76].posting[0].amount.asset-quantity == 2013.0116;
     ok @entry[76].posting[0].amount.asset-symbol eqv "\$";
@@ -7621,7 +7621,7 @@ subtest
     ok @entry[77].id.xxhash == 3717945709;
     ok @entry[77].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[77].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[77].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[77].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[77].posting[0].amount.asset-code eqv "USD";
     ok @entry[77].posting[0].amount.asset-quantity == 3.01;
     ok @entry[77].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7658,7 +7658,7 @@ subtest
     ok @entry[78].id.xxhash == 4024926956;
     ok @entry[78].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[78].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[78].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[78].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[78].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[78].posting[0].amount.asset-quantity == 1;
     ok @entry[78].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7695,7 +7695,7 @@ subtest
     ok @entry[79].id.xxhash == 2203509452;
     ok @entry[79].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[79].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[79].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[79].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[79].posting[0].amount.asset-code eqv "USD";
     ok @entry[79].posting[0].amount.asset-quantity == 2013.0216;
     ok @entry[79].posting[0].amount.asset-symbol eqv "\$";
@@ -7732,7 +7732,7 @@ subtest
     ok @entry[80].id.xxhash == 1337772394;
     ok @entry[80].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[80].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[80].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[80].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[80].posting[0].amount.asset-code eqv "USD";
     ok @entry[80].posting[0].amount.asset-quantity == 3.02;
     ok @entry[80].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7769,7 +7769,7 @@ subtest
     ok @entry[81].id.xxhash == 3993675371;
     ok @entry[81].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[81].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[81].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[81].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[81].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[81].posting[0].amount.asset-quantity == 1;
     ok @entry[81].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7806,7 +7806,7 @@ subtest
     ok @entry[82].id.xxhash == 1562886410;
     ok @entry[82].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[82].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[82].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[82].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[82].posting[0].amount.asset-code eqv "USD";
     ok @entry[82].posting[0].amount.asset-quantity == 2013.0316;
     ok @entry[82].posting[0].amount.asset-symbol eqv "\$";
@@ -7843,7 +7843,7 @@ subtest
     ok @entry[83].id.xxhash == 1634210627;
     ok @entry[83].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[83].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[83].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[83].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[83].posting[0].amount.asset-code eqv "USD";
     ok @entry[83].posting[0].amount.asset-quantity == 3.03;
     ok @entry[83].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7880,7 +7880,7 @@ subtest
     ok @entry[84].id.xxhash == 713752082;
     ok @entry[84].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[84].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[84].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[84].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[84].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[84].posting[0].amount.asset-quantity == 1;
     ok @entry[84].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7917,7 +7917,7 @@ subtest
     ok @entry[85].id.xxhash == 2573101041;
     ok @entry[85].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[85].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[85].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[85].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[85].posting[0].amount.asset-code eqv "USD";
     ok @entry[85].posting[0].amount.asset-quantity == 2013.0416;
     ok @entry[85].posting[0].amount.asset-symbol eqv "\$";
@@ -7954,7 +7954,7 @@ subtest
     ok @entry[86].id.xxhash == 2698432083;
     ok @entry[86].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[86].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[86].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[86].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[86].posting[0].amount.asset-code eqv "USD";
     ok @entry[86].posting[0].amount.asset-quantity == 3.04;
     ok @entry[86].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -7991,7 +7991,7 @@ subtest
     ok @entry[87].id.xxhash == 607841021;
     ok @entry[87].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[87].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[87].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[87].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[87].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[87].posting[0].amount.asset-quantity == 1;
     ok @entry[87].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8028,7 +8028,7 @@ subtest
     ok @entry[88].id.xxhash == 3814087496;
     ok @entry[88].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[88].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[88].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[88].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[88].posting[0].amount.asset-code eqv "USD";
     ok @entry[88].posting[0].amount.asset-quantity == 2013.0516;
     ok @entry[88].posting[0].amount.asset-symbol eqv "\$";
@@ -8065,7 +8065,7 @@ subtest
     ok @entry[89].id.xxhash == 3166921593;
     ok @entry[89].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[89].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[89].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[89].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[89].posting[0].amount.asset-code eqv "USD";
     ok @entry[89].posting[0].amount.asset-quantity == 3.05;
     ok @entry[89].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8102,7 +8102,7 @@ subtest
     ok @entry[90].id.xxhash == 927323051;
     ok @entry[90].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[90].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[90].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[90].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[90].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[90].posting[0].amount.asset-quantity == 1;
     ok @entry[90].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8139,7 +8139,7 @@ subtest
     ok @entry[91].id.xxhash == 2504499649;
     ok @entry[91].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[91].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[91].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[91].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[91].posting[0].amount.asset-code eqv "USD";
     ok @entry[91].posting[0].amount.asset-quantity == 2013.0616;
     ok @entry[91].posting[0].amount.asset-symbol eqv "\$";
@@ -8176,7 +8176,7 @@ subtest
     ok @entry[92].id.xxhash == 1870422416;
     ok @entry[92].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[92].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[92].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[92].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[92].posting[0].amount.asset-code eqv "USD";
     ok @entry[92].posting[0].amount.asset-quantity == 3.06;
     ok @entry[92].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8213,7 +8213,7 @@ subtest
     ok @entry[93].id.xxhash == 4095708493;
     ok @entry[93].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[93].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[93].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[93].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[93].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[93].posting[0].amount.asset-quantity == 1;
     ok @entry[93].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8250,7 +8250,7 @@ subtest
     ok @entry[94].id.xxhash == 1271983877;
     ok @entry[94].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[94].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[94].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[94].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[94].posting[0].amount.asset-code eqv "USD";
     ok @entry[94].posting[0].amount.asset-quantity == 2013.0716;
     ok @entry[94].posting[0].amount.asset-symbol eqv "\$";
@@ -8287,7 +8287,7 @@ subtest
     ok @entry[95].id.xxhash == 585905153;
     ok @entry[95].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[95].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[95].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[95].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[95].posting[0].amount.asset-code eqv "USD";
     ok @entry[95].posting[0].amount.asset-quantity == 3.07;
     ok @entry[95].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8324,7 +8324,7 @@ subtest
     ok @entry[96].id.xxhash == 444744934;
     ok @entry[96].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[96].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[96].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[96].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[96].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[96].posting[0].amount.asset-quantity == 1;
     ok @entry[96].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8361,7 +8361,7 @@ subtest
     ok @entry[97].id.xxhash == 796956488;
     ok @entry[97].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[97].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[97].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[97].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[97].posting[0].amount.asset-code eqv "USD";
     ok @entry[97].posting[0].amount.asset-quantity == 2013.0816;
     ok @entry[97].posting[0].amount.asset-symbol eqv "\$";
@@ -8398,7 +8398,7 @@ subtest
     ok @entry[98].id.xxhash == 1033193703;
     ok @entry[98].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[98].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[98].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[98].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[98].posting[0].amount.asset-code eqv "USD";
     ok @entry[98].posting[0].amount.asset-quantity == 3.08;
     ok @entry[98].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8435,7 +8435,7 @@ subtest
     ok @entry[99].id.xxhash == 2081861311;
     ok @entry[99].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[99].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[99].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[99].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[99].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[99].posting[0].amount.asset-quantity == 1;
     ok @entry[99].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8472,7 +8472,7 @@ subtest
     ok @entry[100].id.xxhash == 705777824;
     ok @entry[100].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[100].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[100].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[100].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[100].posting[0].amount.asset-code eqv "USD";
     ok @entry[100].posting[0].amount.asset-quantity == 2013.0916;
     ok @entry[100].posting[0].amount.asset-symbol eqv "\$";
@@ -8509,7 +8509,7 @@ subtest
     ok @entry[101].id.xxhash == 2792675818;
     ok @entry[101].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[101].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[101].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[101].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[101].posting[0].amount.asset-code eqv "USD";
     ok @entry[101].posting[0].amount.asset-quantity == 3.09;
     ok @entry[101].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8546,7 +8546,7 @@ subtest
     ok @entry[102].id.xxhash == 574545503;
     ok @entry[102].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[102].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[102].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[102].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[102].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[102].posting[0].amount.asset-quantity == 1;
     ok @entry[102].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8583,7 +8583,7 @@ subtest
     ok @entry[103].id.xxhash == 1123984249;
     ok @entry[103].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[103].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[103].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[103].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[103].posting[0].amount.asset-code eqv "USD";
     ok @entry[103].posting[0].amount.asset-quantity == 2013.1016;
     ok @entry[103].posting[0].amount.asset-symbol eqv "\$";
@@ -8620,7 +8620,7 @@ subtest
     ok @entry[104].id.xxhash == 1605620712;
     ok @entry[104].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[104].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[104].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[104].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[104].posting[0].amount.asset-code eqv "USD";
     ok @entry[104].posting[0].amount.asset-quantity == 3.1;
     ok @entry[104].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8657,7 +8657,7 @@ subtest
     ok @entry[105].id.xxhash == 3963180771;
     ok @entry[105].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[105].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[105].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[105].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[105].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[105].posting[0].amount.asset-quantity == 1;
     ok @entry[105].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8694,7 +8694,7 @@ subtest
     ok @entry[106].id.xxhash == 3185930480;
     ok @entry[106].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[106].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[106].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[106].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[106].posting[0].amount.asset-code eqv "USD";
     ok @entry[106].posting[0].amount.asset-quantity == 2013.1116;
     ok @entry[106].posting[0].amount.asset-symbol eqv "\$";
@@ -8731,7 +8731,7 @@ subtest
     ok @entry[107].id.xxhash == 2315332478;
     ok @entry[107].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[107].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[107].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[107].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[107].posting[0].amount.asset-code eqv "USD";
     ok @entry[107].posting[0].amount.asset-quantity == 3.11;
     ok @entry[107].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8768,7 +8768,7 @@ subtest
     ok @entry[108].id.xxhash == 646922698;
     ok @entry[108].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[108].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[108].posting[0].account.path eqv Array[Str].new("Inventory", "Wigwams");
+    ok @entry[108].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Inventory", "Wigwams");
     ok @entry[108].posting[0].amount.asset-code eqv "Wigwam";
     ok @entry[108].posting[0].amount.asset-quantity == 1;
     ok @entry[108].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8805,7 +8805,7 @@ subtest
     ok @entry[109].id.xxhash == 2042360109;
     ok @entry[109].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[109].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[109].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[109].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[109].posting[0].amount.asset-code eqv "USD";
     ok @entry[109].posting[0].amount.asset-quantity == 2013.1216;
     ok @entry[109].posting[0].amount.asset-symbol eqv "\$";
@@ -8842,7 +8842,7 @@ subtest
     ok @entry[110].id.xxhash == 1933516675;
     ok @entry[110].posting[0].account.entity eqv "WigwamLLC";
     ok @entry[110].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[110].posting[0].account.path eqv Array[Str].new("KoopaTroopaBank");
+    ok @entry[110].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("KoopaTroopaBank");
     ok @entry[110].posting[0].amount.asset-code eqv "USD";
     ok @entry[110].posting[0].amount.asset-quantity == 3.12;
     ok @entry[110].posting[0].amount.asset-symbol eqv TXN::Parser::Types::AssetSymbol;
@@ -8879,7 +8879,7 @@ subtest
     ok @entry[111].id.xxhash == 1468523538;
     ok @entry[111].posting[0].account.entity eqv "Personal";
     ok @entry[111].posting[0].account.silo eqv Silo::ASSETS;
-    ok @entry[111].posting[0].account.path eqv Array[Str].new("Bankwest", "Cheque");
+    ok @entry[111].posting[0].account.path eqv Array[TXN::Parser::Types::VarName].new("Bankwest", "Cheque");
     ok @entry[111].posting[0].amount.asset-code eqv "USD";
     ok @entry[111].posting[0].amount.asset-quantity == 1000;
     ok @entry[111].posting[0].amount.asset-symbol eqv "\$";
