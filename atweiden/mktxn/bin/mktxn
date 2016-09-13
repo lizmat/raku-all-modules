@@ -30,11 +30,16 @@ multi sub MAIN(
     %opts<pkgver> = $pkgver if $pkgver;
     %opts<pkgrel> = $pkgrel if $pkgrel;
     %opts<pkgdesc> = $pkgdesc if $pkgdesc;
-    %opts<txn-dir> = ~$txn-dir.IO.resolve if $txn-dir;
+    %opts<txn-dir> = resolve-path($txn-dir) if $txn-dir;
     %opts<date-local-offset> = Int($date-local-offset) if $date-local-offset;
-    %opts<template> = $template if $template;
+    %opts<template> = resolve-path($template) if $template;
 
-    mktxn(:$file, :release, |%opts);
+    mktxn(:file(resolve-path($file)), :release, |%opts);
+}
+
+sub resolve-path(Str $path) returns Str
+{
+    ~$path.subst(/^'~/'/, $*HOME ~ '/').IO.resolve;
 }
 
 
