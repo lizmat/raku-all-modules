@@ -109,9 +109,9 @@ role SCRAM::Client {
     # check state of strings
     unless $!strings-are-prepped {
 
-      $!username = self.saslPrep($!username);
-      $!password = self.saslPrep($!password);
-      $!authzid = self.saslPrep($!authzid) if ?$!authzid;
+      $!username = self.sasl-prep($!username);
+      $!password = self.sasl-prep($!password);
+      $!authzid = self.sasl-prep($!authzid) if ?$!authzid;
       $!strings-are-prepped = True;
     }
 

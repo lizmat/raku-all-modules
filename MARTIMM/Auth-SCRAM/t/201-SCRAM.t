@@ -29,14 +29,13 @@ class Credentials {
   #-----------------------------------------------------------------------------
   method add-user ( $username is copy, $password is copy ) {
 
-    $username = $!scram.saslPrep($username);
-    $password = $!scram.saslPrep($password);
-
-    $!credentials-db{$username} = $!scram.generate-user-credentials(
-      :$username, :$password, :$!salt, :$!iter, :helper-object(self)
-    );
-
-#say "Creds: ", $!credentials-db{$username};
+    for $!scram.generate-user-credentials(
+      :$username, :$password,
+      :$!salt, :$!iter,
+      :helper-object(self)
+    ) -> $u, %h {
+      $!credentials-db{$u} = %h;
+    }
   }
 
   #-----------------------------------------------------------------------------
@@ -52,12 +51,10 @@ class Credentials {
   method server-first ( Str:D $server-first-message --> Str ) {
 
     my Str $s = encode-base64( $!salt, :str);
-    like $server-first-message,
-         /^ 'r=' $<cs-nonce>=(<-[,]>+) ",s=$s"/,
+    ok $server-first-message ~~ m/^ 'r=' <-[,]>+ ",s=$s"/,
          $server-first-message;
 
     $server-first-message ~~ m/^ 'r=' $<cs-nonce>=(<-[,]>+) /;
-#say "Nonce: ", $/<cs-nonce>.Str;
 
     # Send wrong proof
     my Str $rs = (
@@ -65,7 +62,7 @@ class Credentials {
       "r=" ~ $/<cs-nonce>.Str,
       "p=v0X8v3Bz2T0CJGbJQyF0X+HI4Ts="
     ).join(',');
-#say "return string: $rs";
+
     $rs;
   }
 

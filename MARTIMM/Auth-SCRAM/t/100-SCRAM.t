@@ -28,7 +28,7 @@ class MyClient {
 
   #-----------------------------------------------------------------------------
   method client-final ( Str:D $client-final-message --> Str ) {
-  
+
     is $client-final-message,
        < c=biws r=fyko+d2lbbFgONRv9qkxdawL3rfcNHYJY1ZVvWVs7j
          p=v0X8v3Bz2T0CJGbJQyF0X+HI4Ts=

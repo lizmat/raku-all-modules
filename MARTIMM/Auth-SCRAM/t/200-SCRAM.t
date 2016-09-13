@@ -32,16 +32,14 @@ class Credentials {
   #-----------------------------------------------------------------------------
   method add-user ( $username is copy, $password is copy ) {
 
-    $username = $!scram.saslPrep($username);
-    $password = $!scram.saslPrep($password);
-
-    $!credentials-db{$username} = $!scram.generate-user-credentials(
+    for $!scram.generate-user-credentials(
       :$username, :$password,
       :salt(Buf.new( 65, 37, 194, 71, 228, 58, 177, 233, 60, 109, 255, 118)),
       :iter(4096),
       :helper-object(self)
-    );
-
+    ) -> $u, %h {
+      $!credentials-db{$u} = %h;
+    }
 #say '-' x 80, "\n", $!credentials-db<user> if $username eq 'user';
   }
 
@@ -107,6 +105,10 @@ subtest {
   $crd.add-user( $test-user, 'pencil');
   $crd.add-user( 'gebruiker', 'potlood');
   $crd.add-user( 'utilisateur', 'crayon');
+  $crd.add-user( '\x9ed2\x6fa4 \x660e', 'Akira Kurosawa');
+
+say "Credentials of \x9ed2\x6fa4 \x660e are ",
+    $crd.credentials('\x9ed2\x6fa4 \x660e', '');
 
   # - command autenticate as 'user'/'pencil'
   my Str $c-nonce = encode-base64(
@@ -115,7 +117,7 @@ subtest {
     ),
     :str
   );
-  
+
   my Str $client-first-message = "n,,n=$test-user,r=$c-nonce";
   $crd.s-nonce = '3rfcNHYJY1ZVvWVs7j';
 

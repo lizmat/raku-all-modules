@@ -79,6 +79,9 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable.*
 
+* 0.3.2
+  * Refactoring code to have hidden methods. In current setup it was not possible. This failed because of role usage, so keep it the same.
+  * documentation.
 * 0.3.1
   * Bugfixes
   * Some server errors can be detected and returned
