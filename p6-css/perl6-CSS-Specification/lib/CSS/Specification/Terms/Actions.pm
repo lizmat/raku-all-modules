@@ -115,6 +115,10 @@ class CSS::Specification::Terms::Actions {
         make $.token(0, :type<px>)
     }
 
+    method length:sym<percent>($/) {
+        make $<percentage>.ast;
+    }
+
     method angle:sym<zero>($/) {
         make $.token(0, :type<deg>)
     }

@@ -58,7 +58,7 @@ module CSS::Specification::Build {
         my %prop-refs = $actions.prop-refs;
         my %props = $actions.props;
         my %rules = $actions.rules;
-        generate-perl6-interface(@defs, %prop-refs, %props, %rules);
+        generate-perl6-interface(%prop-refs, %props, %rules);
 
         say '}';
     }
@@ -234,7 +234,7 @@ module CSS::Specification::Build {
     }
 
     #= generate an interface class for all unresolved terms.
-    sub generate-perl6-interface(@defs, %references, %prop-names, %rule-names) {
+    sub generate-perl6-interface(%references, %prop-names, %rule-names) {
 
         my %unresolved = %references;
         %unresolved{'expr-' ~ $_}:delete

@@ -21,6 +21,7 @@ grammar CSS::Specification::Terms {
     proto rule decl {*}
 
     token length:sym<zero>    {<number> <?{ +$<number> == 0 }> }
+    token length:sym<percent> {<percentage>}
     token angle:sym<zero>     {<number> <?{ +$<number> == 0 }> }
     token time:sym<zero>      {<number> <?{ +$<number> == 0 }> }
     token frequency:sym<zero> {<number> <?{ +$<number> == 0 }> }
