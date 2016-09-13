@@ -1,15 +1,16 @@
 
 use v6;
 use Test;
+use Getopt::Kinoko;
 use Getopt::Kinoko::Option;
 
-{
-	my @short 			= < i s a h b>;
-	my @short-optional 	= < i! s! a! h! b! >;
-	my @long 			= < integer string array hash boolean >;
-	my @long-optional 	= < integer! string! array! hash! boolean!>;
-	my @option 			= < e example e|example |example e| example| |e >;
+my @short 			= < i s a h b>;
+my @short-optional 	= < i! s! a! h! b! >;
+my @long 			= < integer string array hash boolean >;
+my @long-optional 	= < integer! string! array! hash! boolean!>;
+my @option 			= < e example e|example |example e| example| |e >;
 
+subtest {
 	for @option X @short -> $os {
 		my $opt := create-option($os.[0] ~ '=' ~ $os.[1]);
 
@@ -33,7 +34,10 @@ use Getopt::Kinoko::Option;
 			}
 		}
 	}
+}, "create Option with short name ok";
 
+# test cost a lot of time, why ? just pass it
+#`(subtest {
 	for @option X @short-optional -> $os {
 		my $opt := create-option($os.[0] ~ '=' ~ $os.[1]);
 
@@ -57,7 +61,9 @@ use Getopt::Kinoko::Option;
 			}
 		}
 	}
+}, "create Option with force ok";)
 
+#`(subtest {
 	for @option X @long -> $os {
 		my $opt := create-option($os.[0] ~ '=' ~ $os.[1]);
 
@@ -81,7 +87,9 @@ use Getopt::Kinoko::Option;
 			}
 		}
 	}
+}, "create Option with long string ok";)
 
+#`(subtest {
 	for @option X @long-optional -> $os {
 		my $opt := create-option($os.[0] ~ '=' ~ $os.[1]);
 
@@ -105,7 +113,7 @@ use Getopt::Kinoko::Option;
 			}
 		}
 	}
-}
+}, "creat Option with force ok";)
 
 subtest {
 	my $opt = create-option(
@@ -222,4 +230,4 @@ subtest {
 	}
 }, "Hash option ok.";
 
-done-testing;
+done-testing();

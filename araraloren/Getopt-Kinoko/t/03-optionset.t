@@ -4,6 +4,8 @@ use Test;
 use Getopt::Kinoko;
 use Getopt::Kinoko::OptionSet;
 
+plan 24;
+
 #   -n|--name=[customer name] -i|--id=[customer id] -v|--vip
 #   -d|--discount=[discount]
 #   -l|--shopping-list=[good and price]
@@ -93,7 +95,7 @@ lives-ok {
 
     $optset.insert-front(
         -> $arg {
-            # do something 
+            # do something
         }
     );
     ok $optset.has-front, "check noa callback ok";
@@ -122,4 +124,4 @@ lives-ok {
     can-ok $optset, "get-shopping-list";
 }
 
-done-testing;
+done-testing();

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/araraloren/Getopt-Kinoko.git
 	branch = master
-	commit = fe869535c91b4595f4d6cd8afa060ee6477b3b1d
-	parent = 1cdd4dc82e941420b856be0a381176149076e9cb
+	commit = 9b9329b17ee77c9cc20fdeff818cb46fbac4436e
+	parent = 21848abbc2f4badbe2316b4c05fb7ad4f415093b
 	cmdver = 0.2.3

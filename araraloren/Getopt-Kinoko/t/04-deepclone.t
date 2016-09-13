@@ -1,9 +1,12 @@
 
 use v6;
 use Test;
+use Getopt::Kinoko;
 use Getopt::Kinoko::Option;
 use Getopt::Kinoko::OptionSet;
 use Getopt::Kinoko::NonOption;
+
+plan 5;
 
 {
     my Option $opt = create-option("s=s");
@@ -32,5 +35,7 @@ use Getopt::Kinoko::NonOption;
 
 	$a-radio.append("s|string=s;d|diff=i");
 	ok $a-radio.has-option("s", :short), "a-radio has option s";
-	nok $o-radio.has-option("s", :short), "o-radio has no option s";		
+	nok $o-radio.has-option("s", :short), "o-radio has no option s";
 }
+
+done-testing();
