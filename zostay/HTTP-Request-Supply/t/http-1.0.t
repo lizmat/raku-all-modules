@@ -93,5 +93,6 @@ my @tests =
 ;
 
 run-tests @tests;
+run-tests @tests, :reader(&socket-reader);
 
 done-testing;

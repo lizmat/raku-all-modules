@@ -4,7 +4,8 @@
       "HTTP::Request::Supply" : "lib/HTTP/Request/Supply.pm6"
    },
    "test-depends" : [
-      "Test"
+      "Test",
+      "Test::META"
    ],
    "support" : {
       "source" : "git://github.com/zostay/HTTP-Request-Supply.git"
@@ -14,7 +15,7 @@
    "auth" : "github:zostay",
    "source-url" : "git://github.com/zostay/HTTP-Request-Supply.git",
    "depends" : [],
-   "name" : "HTTP-Request-Supply",
+   "name" : "HTTP::Request::Supply",
    "authors" : [
       "Sterling Hanenkamp <hanenkamp@cpan.org>"
    ],

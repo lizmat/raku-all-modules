@@ -192,7 +192,7 @@ my sub scan-for-header-end(:$scan-start, :$buf) {
     for $scan-start .. $buf.bytes - 4 -> $i {
         # note $buf[$i..$i+3].map(*.fmt("%02X")) ~ " " ~ buf8.new($buf[$i..$i+3]).decode.subst(/\r?\n/, '||', :g);
         next unless $buf[$i..$i+3] eqv (CR,LF,CR,LF);
-        #note "BREAK";
+        # note "BREAK";
 
         return $i;
     }
@@ -286,6 +286,7 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
         my Bool $has-closed = False;
 
         whenever $parser-event.Supply {
+            # note "MODE $mode";
             given $mode {
                 when Error {
                     # We are in a bad state at this point, ignore any
@@ -299,7 +300,10 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                     }
                 }
                 when Header {
+                    # note "buf = ", $buf;
+                    # note "scan-start = $scan-start";
                     my $header-end = scan-for-header-end(:$scan-start, :$buf);
+                    # note "header-end = $header-end";
 
                     # Found the end of headers, let's get parsing
                     if $header-end > 0 {
@@ -348,7 +352,7 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                     # Don't scan from the very start next time to save some
                     # effort
                     else {
-                        $scan-start = $buf.bytes;
+                        $scan-start = 0 max $buf.bytes - 3;
                     }
 
                     # We have searched for the end of this header and
@@ -546,8 +550,12 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                 $no-more-input++;
                 $parser-event.emit(True);
             }
-            QUIT { .rethrow }
+            QUIT {
+                # note "ERROR ", $_;
+                .rethrow;
+            }
 
+            # note "READ ", $chunk;
             $buf ~= $chunk;
 
             $parser-event.emit(True);
