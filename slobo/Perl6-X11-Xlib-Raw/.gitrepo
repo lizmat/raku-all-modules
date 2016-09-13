@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/slobo/Perl6-X11-Xlib-Raw.git
+	branch = master
+	commit = 3a328ced3b315d26a4f8eadfbb505cd56a8b6cb1
+	parent = f355267ebd28702cea1254776176d97e96dbf8de
+	cmdver = 0.2.3

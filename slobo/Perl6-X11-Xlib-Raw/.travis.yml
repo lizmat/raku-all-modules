@@ -1,0 +1,15 @@
+language: perl6
+
+os:
+  - linux
+  - osx
+
+perl6:
+  - 2016.05
+  - latest
+
+install:
+  - rakudobrew build panda
+  - panda installdeps .
+
+script: prove -v -e "perl6 -Ilib" t/ && panda install .
