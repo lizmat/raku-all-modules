@@ -2,7 +2,7 @@
     "name"          : "GTK::Scintilla",
     "version"       : "0.0.1",
     "perl"          : "6.c",
-    "description"   : "A simpler and more efficient API for GTK::Simple",
+    "description"   : "GTK Scintilla widget for source code editing",
     "depends"       : [ "GTK::Simple" ],
     "build-depends" : [ "panda" ],
     "provides"      : {
