@@ -7,15 +7,9 @@ use Terminal::ANSIColor;
 
 unit module Uzu:ver<0.1.2>:auth<gitlab:samcns>;
 
-# Utils
-sub path-exists(Str :$path) returns Bool {
-  return $path.IO ~~ :f|:d;
-}
-
-sub find-dirs (Str:D $p) returns Slip {
-  state $seen = {};
-  return slip ($p.IO, slip find :dir($p), :type<dir>).grep: { !$seen{$_}++ };
-}
+#
+# HTML Rendering
+#
 
 sub templates(List :$exts!, Str :$dir!) returns Seq {
   return $dir.IO.dir(:test(/:i ^ \w+ '.' |$exts $/));
@@ -23,7 +17,7 @@ sub templates(List :$exts!, Str :$dir!) returns Seq {
 
 sub build-context(Str :$i18n_dir, Str :$language) returns Hash {
   my Str $i18n_file = "$i18n_dir/$language.yml";
-  if path-exists(path => $i18n_file) {
+  if $i18n_file.IO.f {
     try {
       CATCH {
         default {
@@ -78,12 +72,12 @@ sub prepare-html-output(Hash  $context,
 
     # Default file_name without prefix
     my Str $file_name = html-file-name(page_name        => $page_name,
-                                        default_language => $default_language, 
-                                        language         => $language);
+                                       default_language => $default_language, 
+                                       language         => $language);
 
     # Return processed HTML
     my Str $processed_html = process-livereload(content       => $layout_content,
-                                                 no_livereload => $no_livereload);
+                                                no_livereload => $no_livereload);
 
     %( $file_name => $processed_html );
 
@@ -91,16 +85,9 @@ sub prepare-html-output(Hash  $context,
 
 };
 
-our sub build(Hash $config,
-              Bool :$no_livereload = False) {
-  # Set up logger
-  $config ==> logger();
-  $config ==> render(no_livereload => $no_livereload);
-  exit;
-}
-
-our sub render(Hash $config,
-               Bool :$no_livereload = False) {
+our sub render(Map      $config,
+               Bool     :$no_livereload = False,
+               Supplier :$log = Supplier.new) {
 
   my Str $themes_dir = $config<themes_dir>;
   my Str $layout_dir = $config<layout_dir>;
@@ -117,27 +104,28 @@ our sub render(Hash $config,
   }).Hash;
 
   # Clear out build
-  $config<logger>.emit("Clear old files");
+  $log.emit("Clear old files");
   run(«rm "-rf" "$build_dir"»);
 
   # Create build dir
-  if !path-exists(path => $build_dir) { 
-    $config<logger>.emit("Create build directory");
+  if !$build_dir.IO.d { 
+    $log.emit("Create build directory");
     mkdir $build_dir;
   }
 
   # Copy assets
-  $config<logger>.emit("Copy asset files");
+  $log.emit("Copy asset files");
   run(«cp "-rf" "$assets_dir/." "$build_dir/"»);
 
   # Setup compile specific variables
-  my Str $default_language = $config<language>[0];
-  my List $template_dirs = $config<template_dirs>;
+  my Str  $default_language = $config<language>[0];
+  my List $template_dirs    = $config<template_dirs>;
+  my List $languages        = $config<language>;
 
   # One per language
-  await $config<language>.map( -> $language { 
+  await $languages.map( -> $language { 
     start {
-      $config<logger>.emit("Compile templates [$language]");
+      $log.emit("Compile templates [$language]");
       # Build %context hash
       build-context(
         i18n_dir         => $config<i18n_dir>,
@@ -155,15 +143,33 @@ our sub render(Hash $config,
     }
   });
 
-  $config<logger>.emit("Compile complete");
+  $log.emit("Compile complete");
 }
+
+our sub build(Map  $config,
+              Bool :$no_livereload = False) {
+
+  # Create a new logger
+  my $log = Supplier.new;
+
+  # Start logger
+  logger($log);
+
+  $config ==> render(no_livereload => $no_livereload,
+                               log => $log);
+  exit;
+}
+
+#
+# Web Server
+#
 
 our sub serve(Str :$config_file) returns Proc::Async {
   my Proc::Async $p;
   my @args = ("--config={$config_file}", "webserver");
 
   # Use the library path if running from test
-  if path-exists(path => "bin/uzu") {
+  if "bin/uzu".IO.d {
     my IO::Path $lib_path = $?FILE.IO.parent;
     $p .= new: "perl6", "-I{$lib_path}", "bin/uzu", @args;
   } else {
@@ -190,18 +196,18 @@ our sub serve(Str :$config_file) returns Proc::Async {
   return $p;
 }
 
-our sub web-server(Hash $config) {
+our sub web-server(Map $config) {
   use Bailador;
   use Bailador::App;
   my Bailador::ContentTypes $content-types = Bailador::ContentTypes.new;
   my $build_dir = $config<build_dir>;
 
   # Use for triggering reload staging when reload is triggered
-  my Bool $reload = False;
+  my $channel = Channel.new;
   
   # When accessed, sets $reload to True
   get '/reload' => sub () {
-    $reload = True;
+    $channel.send(True);
     header("Content-Type", "application/json");
     return [ '{ "reload": "Staged" }' ];
   }
@@ -210,15 +216,9 @@ our sub web-server(Hash $config) {
   # instructing uzu/js/live.js to reload the
   # browser.
   get '/live' => sub () {
-    my Str $response;
-    if $reload {
-      $reload = False;
-      $response = '{ "reload": "True" }';
-    } else {
-      $response = '{ "reload": "False" }';
-    }
     header("Content-Type", "application/json");
-    return [ $response ];
+    return ['{ "reload": "True"  }'] if $channel.poll;
+    return ['{ "reload": "False" }'];
   }
 
   # Include live.js that starts polling /live
@@ -276,7 +276,15 @@ our sub web-server(Hash $config) {
   baile($config<port>||3000);
 }
 
-# Watchers
+#
+# Event triggers
+#
+
+sub find-dirs (Str:D $p) returns Slip {
+  state $seen = {};
+  return slip ($p.IO, slip find :dir($p), :type<dir>).grep: { !$seen{$_}++ };
+}
+
 sub watch-it(Str $p) returns Tap {
   whenever IO::Notification.watch-path($p) -> $e {
     if $e.event ~~ FileRenamed && $e.path.IO ~~ :d {
@@ -317,30 +325,53 @@ sub keybinding() {
   };
 }
 
-sub logger(Hash $config) {
+sub logger(Supplier $log) {
   Thread.start({
     react {
-      whenever $config<logger>.Supply -> $e { 
+      whenever $log.Supply -> $e { 
         say $e;
       }
     }
   });
 }
 
-our sub watch(Hash $config, Bool :$no_livereload = False) returns Tap {
-  use HTTP::Tinyish;
+# Some editors, vim for example, make multiple
+# file IO modifications when a file is saved
+# that result in firing FileModified events in
+# our file watcher. render-throttle allows us to
+# prevent a render from triggering more than once
+# within a designated time frame. 2 seconds seems
+# resonable from testing.
+sub render-throttle(Channel $ch) returns Bool {
+  my ($time, $until) = $ch.poll;
+  if (now - $time) < $until {
+    $ch.send(($time, $until));
+    return False;
+  }
+  return True;
+}
 
+our sub watch(Map $config, Bool :$no_livereload = False) returns Tap {
+
+  # Create a new logger
+  my Supplier $log = Supplier.new;
+
+  # Start logger
+  logger($log);
+  
   unless 'partials'.IO.e {
     note "No project files available";
     exit(1);
   }
 
   sub build() {
-    $config  ==> render(no_livereload => $no_livereload);
+    $config  ==> render(no_livereload => $no_livereload,
+                                  log => $log);
   }
 
   sub reload-browser() {
     unless $no_livereload {
+      use HTTP::Tinyish;
       HTTP::Tinyish.new().get("http://{$config<host>}:{$config<port>}/reload");
     }
   }
@@ -350,100 +381,111 @@ our sub watch(Hash $config, Bool :$no_livereload = False) returns Tap {
     reload-browser();
   }
 
-  # Set up logger
-  $config ==> logger();
-
   # Initialize build
-  $config<logger>.emit("Initial build");
+  $log.emit("Initial build");
   build();
   
   # Track time delta between FileChange events. 
   # Some editors trigger more than one event per
   # edit. 
-  my Instant $last = now;
+  #my Instant $last = now;
   my List $exts = $config<extensions>;
   my List $dirs = $config<template_dirs>.grep(*.IO.e).List;
   $dirs.map: -> $dir {
-    $config<logger>.emit("Starting watch on {$dir.subst("{$*CWD}/", '')}");
+    $log.emit("Starting watch on {$dir.subst("{$*CWD}/", '')}");
   }
 
   # Start server
   my Proc::Async $app = serve(config_file => $config<path>);
+
+  # Keep track of the last render timestamp
+  my $ch_throttle = Channel.new;
+  $ch_throttle.send((now, 0));
 
   # Spawn thread to watch directories for modifications
   my $thread_watch_dirs = Thread.start({
     react {
       whenever watch-dirs($dirs) -> $e {
         # Make sure the file change is a known extension; don't re-render too fast
-        if so $e.path.IO.extension ∈ $exts and (!$last.defined or now - $last > 4) {
-          $last = now;
-          $config<logger>.emit(colored("Change detected [{$e.path()}]", "bold green on_blue"));
+        if so $e.path.IO.extension ∈ $exts and render-throttle($ch_throttle) {
+          $log.emit(colored("Change detected [{$e.path()}]", "bold green on_blue"));
           build-and-reload();
+          $ch_throttle.send((now, 2));
         }
       }
     }
   });
 
   # Listen for keyboard input
-  $config<logger>.emit(colored("Press `r enter` to [rebuild]", "bold green on_blue"));
+  $log.emit(colored("Press `r enter` to [rebuild]", "bold green on_blue"));
   keybinding().tap( -> $e { 
     if $e ~~ 'rebuild' {
-      $config<logger>.emit(colored("Rebuild triggered", "bold green on_blue"));
+      $log.emit(colored("Rebuild triggered", "bold green on_blue"));
       build-and-reload();
     }
   });
 }
 
+#
 # Config
-sub parse-config(Str :$config_file) returns Hash {
-  if path-exists(path => $config_file) {
-    return load-yaml slurp($config_file);
+#
+
+sub parse-config(Str :$config_file) returns Map {
+  if $config_file.IO.f {
+    return load-yaml(slurp($config_file)).Map;
   } else {
-    return {error => "Config file [$config_file] not found. Please run uzu init to generate."};
+    return Map.new( :error("Config file [$config_file] not found. Please run uzu init to generate.") );
   }
 }
 
-sub uzu-config(Str :$config_file = 'config.yml') returns Hash is export {
+sub uzu-config(Str :$config_file = 'config.yml') returns Map is export {
 
   # Parse yaml config
-  my %config              = parse-config(config_file => $config_file);
+  my $config              = parse-config(config_file => $config_file);
+
+  # Network
+  my Str  $host           = $config<host>||'0.0.0.0';
+  my Int  $port           = $config<port>||3000;
 
   # Paths
-  my Str  $project_root   = "{%config<project_root>||$*CWD}".subst('~', $*HOME);
+  my Str  $project_root   = "{$config<project_root>||$*CWD}".subst('~', $*HOME);
   my Str  $build_dir      = "{$project_root}/build";
   my Str  $themes_dir     = "{$project_root}/themes";
-  my Str  $assets_dir     = "{$project_root}/themes/{%config<defaults><theme>||'default'}/assets";
-  my Str  $layout_dir     = "{$project_root}/themes/{%config<defaults><theme>||'default'}/layout";
+  my Str  $assets_dir     = "{$project_root}/themes/{$config<defaults><theme>||'default'}/assets";
+  my Str  $layout_dir     = "{$project_root}/themes/{$config<defaults><theme>||'default'}/layout";
   my Str  $pages_dir      = "{$project_root}/pages";
   my Str  $partials_dir   = "{$project_root}/partials";
   my Str  $i18n_dir       = "{$project_root}/i18n";
   my List $template_dirs  = [$layout_dir, $pages_dir, $partials_dir, $i18n_dir];
   my List $extensions     = ['tt', 'html', 'yml'];
-
-  # Set configuratin
-  my %config_plus  = %( logger         => Supplier.new,
-                        host           => "{%config<host>||'0.0.0.0'}",
-                        port           => %config<port>||3000,
-                        project_root   => $project_root,
-                        path           => $config_file,
-                        build_dir      => $build_dir,
-                        themes_dir     => $themes_dir,
-                        assets_dir     => $assets_dir,
-                        layout_dir     => $layout_dir,
-                        pages_dir      => $pages_dir,
-                        partials_dir   => $partials_dir,
-                        i18n_dir       => $i18n_dir,
-                        template_dirs  => $template_dirs,
-                        extensions     => $extensions );
                           
+  my $config_plus  = ( :host($host),
+                       :port($port),
+                       :project_root($project_root),
+                       :path($config_file),
+                       :build_dir($build_dir),
+                       :themes_dir($themes_dir),
+                       :assets_dir($assets_dir),
+                       :layout_dir($layout_dir),
+                       :pages_dir($pages_dir),
+                       :partials_dir($partials_dir),
+                       :i18n_dir($i18n_dir),
+                       :template_dirs($template_dirs),
+                       :extensions($extensions) ).Map;
+
   # We want to stop everything if the project root ~~ $*HOME or
   # the build dir ~~ project root. This would have bad side-effects
   if $build_dir.IO ~~ $*HOME.IO|$project_root.IO {
     return { error => "Build directory [{$build_dir}] cannot be {$*HOME} or project root [{$project_root}]."}
   }
 
-  return %(%config, %config_plus);
+  # Merged config as output
+  return Map.new($config.pairs, $config_plus.pairs);
 }
+
+#
+# Init
+#
 
 our sub init( Str   :$config_file  = 'config.yml', 
               Str   :$project_name = 'New Uzu Project',
@@ -497,12 +539,12 @@ Uzu is a static site generator with built-in web server,
 file modification watcher, i18n, themes, and multi-page
 support.
 
-=head3 C<render(Hash %config)>
+=head3 C<render(Map $config)>
 
 Render all template files to ./build. This is destructive and replaces
 all content in ./build with the new rendered content.
 
-=head3 C<web-server(Hash %config)>
+=head3 C<web-server(Map $config)>
 
 Start a development web server on port 3000 that serves the contents
 of ./build. Web server port can be overriden in config.yml
