@@ -9,5 +9,5 @@
 	},
 	"depends" : [ "PerlStore::FileStore", "IRC::Client" ],
 	"resources" : [ ],
-	"source-url" : "git@github.com:jsimonet/IRC-Client-Plugin-UserPoints.git"
+	"source-url" : "https://github.com/jsimonet/IRC-Client-Plugin-UserPoints.git"
 }

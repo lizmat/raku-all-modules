@@ -4,8 +4,8 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = git://github.com/jsimonet/IRC-Client-Plugin-UserPoints.git
+	remote = https://github.com/jsimonet/IRC-Client-Plugin-UserPoints.git
 	branch = master
-	commit = b0b7fc71999b0ff1ff2a661585ab72c94561f4af
-	parent = d6e0b8cf87333db0e5588c03d84d83be81a71c45
+	commit = 0713612cff81c73f3d1a8813c3b5a0114fd0389c
+	parent = 0293dd7b6bd0ef8a6c616badc468a766b25b2489
 	cmdver = 0.2.3
