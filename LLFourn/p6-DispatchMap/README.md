@@ -8,24 +8,24 @@ A map that uses Perl 6 multi dispatch to link keys to values
 need DispatchMap;
 
 my $map = DispatchMap.new:
-             (Int) =>  "an Int!",
-             (subset :: of Int:D where * > 5) => "Wow, an Int greater than 5",
-             ("foo")           => "A literal foo",
-             (π)               => "pi",
-             (Str)             => "one string",
-             (Stringy)         => "something stringy",
-             (Str,Str)         => "two strings",
-             (Any:U) => { "Some tyoe object: {.gist}" };
+         foo => (
+           (Int) =>  "an Int!",
+           (subset :: of Int:D where * > 5) => "Wow, an Int greater than 5",
+           ("literal text")           => "The text 'literal text'",
+           (π)               => "pi",
+           (Str)             => "one string",
+           (Stringy)         => "something stringy",
+           (Str,Str)         => "two strings";
+         ),
+         bar => ( (τ) => "Tau > pi" );
 
-
-say $map.get(2); #-> an Int!
-say $map.get(6); #-> Wow, an Int greater than 5
-say $map.get("foo"); #-> A literal foo;
-say $map.get-all("foo"); #-> ("A literal foo","one string","something stringy");
-say $map.get(π); #-> pi
-say $map.get("foo","bar"); #-> two strings
-say $map.get(Perl); # get the Block as a value -> ;; $_? is raw {  }
-say $map.dispatch(Perl); # Not sure what this is: (Perl)
+say $map.get("foo",2); #-> an Int!
+say $map.get("foo",6); #-> Wow, an Int greater than 5
+say $map.get("foo","literal text"); #-> A literal foo;
+say $map.get-all("foo","literal text"); #-> ("The text 'literal text'","one string","something stringy");
+say $map.get("foo",π); #-> pi
+say $map.get("foo","one","two"); #-> two strings
+say $map.get("bar",τ); # Tau > pi
 ```
 
 ## Description
@@ -40,139 +40,192 @@ narrowly. Unfortunately there is no way (yet) to make use of the
 dispatching logic outside of routine calls. This module exposes that
 logic in a map like interface.
 
-The following do the same sort of thing. The main difference is that
-the DispatchMap can be defined at runtime.
+The following are different ways of achieving the same result:
 
 ``` perl6
-    multi foo(Str:D $str) { "a string: $str" }
-    multi foo(Int:D $int) { "an int: $int"   }
-    multi foo(42)         { "a special int"  }
+# Using builtin dispatchers
+class Stuff {
+    multi method foo(Str:D $str) { "a string: $str" }
+    multi method foo(Int:D $int) { "an int: $int"   }
+    multi method foo(42)         { "a special int"  }
+}
 
-    say foo("lorem");
-    say foo(42);
-    my $sub = &foo.cando(\("lorem"))[0];
+say Stuff.foo("lorem");
+say Stuff.foo(42);
+my $meth = Stuff.find_method("foo").cando(\("lorem"))[0];
 ```
 
 
 ```perl6
-    use DispatchMap;
-    my $map = DispatchMap.new(
+# Using DispatchMap
+use DispatchMap;
+my $map = DispatchMap.new(
+    foo => (
         (Str:D) => -> $str { "a string: $str" },
         (Int:D) => -> $int { "an int: $int" },
-        (42)    => -> $int { "a special int" }
-    );
-    say $map.dispatch("lorem");
-    say $map.dispatch(42);
-    my $block = $map.get("lorem");
+        (21 + 21)    => -> $int { "a special int" }
+    )
+);
+say $map.dispatch("foo","lorem");
+say $map.dispatch("foo",42);
+my $block = $map.get("foo","lorem");
 ```
 
-Presently, the psudo-signatures you pass to `.new` and `.set` are limited to
+The main use of a DispatchMap is to create method signatures at
+runtime that dispatch in the same order as normal methods. Internally,
+DispatchMap creates new meta-objects at runtime and attaches methods to them with
+signatures created from the keys with nqp.
+
+## Methods
+
+### new(*%namespaces)
+
+```perl6
+my $map = DispatchMap.new(
+  foo => ((Int,Array) => "Foo", (Cool) => "Bar") ),
+  bar => ((Str) => "Baz")
+);
+#or
+my $map = DispatchMap.new(
+  foo => ((Int,Array),"Foo",(Cool),"Bar"),
+  bar => ( (Str), "Baz" )
+);
+#or
+my $map = DispatchMap.new(
+  foo => [(Int,Array),"Foo",(Cool),"Bar"],
+  bar => [ (Str),"Baz" ]
+);
+```
+
+Makes a new DispatchMap where the keys are the namespaces and the
+values are signature-value pairs.
+
+Presently, the psudo-signatures you pass to `.new` and `.append` are limited to
 non-slurpy positional parameters. If it's passed a type object that
 will be used as the nominal type of the parameter. If a literal is
 passed the `.WHAT` of the object is used as the nominal type and the
 literal is used as a `where` constraint.
 
-
-
-``` perl6
-
-```
-
-## Methods
-
-### new(**@args)
-
-```perl6
-my $map = DispatchMap.new( (Int,Array) => "Foo", (Cool) => "Bar" );
-#or
-my $map = DispatchMap.new( (Int,Array),"Foo",(Cool),"Bar" );
-#or
-my $map = DispatchMap.new( [(Int,Array),"Foo",(Cool),"Bar"] );
-```
-
-Makes a new DispatchMap from args in the same way.
-
-### keys
-
-```perl6
-my $map = DispatchMap.new( (Int,Array) => "Foo", (Cool) => "Bar" );
-say $map.keys; #-> (Int,Array),(Cool)
-```
-
-Gets the keys as a list of lists (each key is a list).
-
-### values
-
-```perl6
-my $map = DispatchMap.new( (Int,Array) => "Foo", (Cool) => "Bar" );
-say $map.values; #-> (Int,Array),(Cool)
-```
-
-Gets the values in the map as a list.
-
-### pairs
-
-```perl6
-my $map = DispatchMap.new( (Int,Array) => "Foo", (Cool) => "Bar" );
-say $map.pairs; #-> (Int,Array) => "Foo",(Cool) => "Bar"
-```
-
-Returns the map as a list of pairs.
-
-### list
-
-```perl6
-my $map = DispatchMap.new( (Int,Array) => "Foo", (Cool) => "Bar" );
-say $map.list; #-> (Int,Array),"Foo",(Cool),"Bar"
-```
-
-Returns the map a list of keys and values.
-
-### get(|c)
-
-``` perl6
-my $map = DispatchMap.new( (Int,Array) => "Foo", (Cool) => "Bar" );
-say $map.get(1,["one","two"]); #-> Foo
-```
-
-Gets a single value from the map. The Capture of the arguments to get
-are used as the key.
-
-### get-all(|c)
-
-``` perl6
-my $map = DispatchMap.new( Numeric => "A number",
-                           Real => "A real number",
-                           Int => "An int",
-                           (π)  => "pi" );
-say $map.get-all(π); # "pi", "Real", "Numeric";
-```
-
-Gets all the values that match the argument in order of narrowness
-(internally uses [cando](https://docs.perl6.org/type/Routine#method_cando))
-
-### append(**@args)
-``` perl6
-my $map = DispatchMap.new( (Int,Array) => "Foo", (Cool) => "Bar" );
-$map.append((Real,Real) => "Super Real!");
-say $map.get(π,τ); #-> Super Real!
-```
-
-Sets some values of maps. Takes the arguments in the same format as `.new`.
-
-### dispatch(|c)
+### namespaces
 
 ``` perl6
 my $map = DispatchMap.new(
-        (Str:D,Str:D) => { $^a ~ $^b },
-        (Iterable:D,Iterable:D) => { |$^a,|$^b },
-        (Numeric:D,Numeric:D) => { $^a + $^b }
+  foo => ((Int,Array) => "Foo", (Cool) => "Bar") ),
+  bar => ((Str) => "Baz")
+);
+say $map.namespaces; #-> foo, bar
+```
+
+Gets the all the namespaces in the DispatchMap.
+
+### keys(Str:D $ns)
+
+```perl6
+my $map = DispatchMap.new( foo => ((Int,Array) => "Foo", (Cool) => "Bar") );
+say $map.keys('foo'); #-> (Int,Array),(Cool)
+```
+
+Gets the keys for a namepsace as a list of lists
+
+### values(Str:D $ns)
+
+```perl6
+my $map = DispatchMap.new( foo => ((Int,Array) => "Foo", (Cool) => "Bar") );
+say $map.values('foo'); #-> (Int,Array),(Cool)
+```
+
+Gets the values for a namepace.
+
+### pairs(Str:D $ns)
+
+```perl6
+my $map = DispatchMap.new( foo => ((Int,Array) => "Foo", (Cool) => "Bar") );
+say $map.pairs('foo'); #-> (Int,Array) => "Foo",(Cool) => "Bar"
+```
+
+Gets the key-value pairs for a namespace.
+
+### list(Str:D $ns)
+
+```perl6
+my $map = DispatchMap.new( foo => ((Int,Array) => "Foo", (Cool) => "Bar") );
+say $map.list('foo'); #-> (Int,Array),"Foo",(Cool),"Bar"
+```
+
+Returns a list of keys and values for a namespace.
+
+### get(Str:D $ns,|c)
+
+``` perl6
+my $map = DispatchMap.new( foo => ((Int,Array) => "Foo", (Cool) => "Bar") );
+say $map.get(1,["one","two"]); #-> Foo
+```
+
+Dispatches to a namespace, returning the associated value. The capture
+of the arguments after the namespace is used as the key.
+
+### get-all(Str:D $ns,|c)
+
+``` perl6
+my $map = DispatchMap.new(
+  number-types => (
+    Numeric => "A number",
+    Real => "A real number",
+    Int => "An int",
+    (π)  => "pi"
+  )
+);
+say $map.get-all('number-types',π); # "pi", "Real", "Numeric";
+```
+
+
+Dispatches to a namespace, returning the values that match the capture in order of narrowness
+(internally uses [cando](https://docs.perl6.org/type/Routine#method_cando)). The capture
+of the arguments after the namespace is used as the key.
+
+### append(*%namespaces)
+``` perl6
+my $map = DispatchMap.new( my-namespace => ((Int,Array) => "Foo", (Cool) => "Bar") );
+$map.append(my-namespace => ((Real,Real) => "Super Real!"));
+say $map.get('my-namespace',π,τ); #-> Super Real!
+```
+
+Appends the values to the corresponding namespaces. Takes the arguments in the same format as `.new`.
+
+### dispatch(Str:D $ns,|c)
+
+``` perl6
+my $map = DispatchMap.new(
+        abstract-join => (
+          (Str:D,Str:D) => { $^a ~ $^b },
+          (Iterable:D,Iterable:D) => { |$^a,|$^b },
+          (Numeric:D,Numeric:D) => { $^a + $^b }
+        )
     );
 
-say $map.dispatch("foo","bar"),"foobar"; #-> foobar
-say $map.dispatch(<one two>,<three four>); #-> one two three four
-say $map.dispatch(1,2); #-> 3
+say $map.dispatch('abstract-join',"foo","bar"),"foobar"; #-> foobar
+say $map.dispatch('abstract-join',<one two>,<three four>); #-> one two three four
+say $map.dispatch('abstract-join',1,2); #-> 3
 ```
 
 `.dispatch` works like `.get` except the if the result is a `Callable`
 it will invoke it with the arguments you pass to `.dispatch`.
+
+### make-child(*%namespaces)
+
+``` perl6
+my $parent = DispatchMap.new(
+  number-types => (
+    (Numeric) => "A number",
+    (Int) => "An int",
+  )
+);
+
+my $child = $parent.make-child(
+  number-types => ( (π) => "pi" ),
+);
+
+say $child.get('number-types',3.14); #-> A number
+say $parent.get('number-types',π); #-> A number
+say $child.get('number-types',π); #-> pi
+```

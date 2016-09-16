@@ -1,37 +1,42 @@
 use DispatchMap;
 use Test;
 
-plan 15;
+plan 17;
 
 
-my @init := ((Real,Str),"foo",
-             (Int,Str),"baz",
-             (Str,Real),"bar",
-            );
-my @init-pairs = @init.map: { $^k => $^v };
+my %init = (
+    things => (
+        (Real,Str),"foo",
+        (Int,Str),"baz",
+        (Str,Real),"bar",
+    ),
+    foo => (
+        (Real,Str),"foo",
+    )
+);
 
-my $map := DispatchMap.new(|@init);
-is-deeply $map.keys, DispatchMap.new(@init).keys,"SAR works with constructor";
-is-deeply $map.keys, DispatchMap.new(@init-pairs).keys,"Pair arguments work";
-is-deeply $map.keys,( (Real,Str),(Int,Str),(Str,Real) ),".keys";
-is-deeply $map.values,("foo","baz","bar"),".values";
+my %init-pairs = things => %init<things>.map: { $^k => $^v };
+my $map := DispatchMap.new(|%init);
+is-deeply $map.keys('things'), DispatchMap.new(|%init).keys('things'),"SAR works with constructor";
+is-deeply $map.keys('things'), DispatchMap.new(|%init-pairs).keys('things'),"Pair arguments work";
+is-deeply $map.keys('things'),( (Real,Str),(Int,Str),(Str,Real) ),".keys";
+is-deeply $map.values('things'),("foo","baz","bar"),".values";
+is-deeply $map.list('things'),  %init<things>,".list";
 
+is $map.get('things',Real,Str),"foo","1. correct";
+is $map.get('things',Str,Real),"bar","2. correct";
+is $map.get('things',Int,Str),"baz","3. correct";
+is $map.get('things',Int,Int),Nil,"key that doesn't exist returns Nil";
 
+is $map.get-all('things',Int,Str).elems,2,"get-all returns both matching";
+is $map.get-all('things',Int,Str)[0],"baz","get-all[0] is correct";
+is $map.get-all('things',Int,Str)[1],"foo","get-all[1] is correct";
 
+ok $map.exists('things',Real,Str),"exists works with something that exists";
+nok $map.exists('things',Int,Int),"exists works with something that doesn't exists";
 
-is-deeply $map.list,@init,".list";
+$map.append(things => ((Cool,Perl) => "squirtle") );
+is $map.get('things',Cool,Perl),"squirtle",".append works";
 
-is $map.get(Real,Str),"foo","1. correct";
-is $map.get(Str,Real),"bar","2. correct";
-is $map.get(Int,Str),"baz","3. correct";
-is $map.get(Int,Int),Nil,"key that doesn't exist returns Nil";
-
-is $map.get-all(Int,Str).elems,2,"get-all returns both matching";
-is $map.get-all(Int,Str)[0],"baz","get-all[0] is correct";
-is $map.get-all(Int,Str)[1],"foo","get-all[1] is correct";
-
-ok $map.exists(Real,Str),"exists works with something that exists";
-nok $map.exists(Int,Int),"exists works with something that doesn't exists";
-
-$map.append((Cool,Perl),"squirtle");
-is $map.get(Cool,Perl),"squirtle",".set works";
+is $map.get('not-exist',(Int,Str)),Nil,"namespace that doesn't exist returns Nil";
+ok $map.namespaces ~~ <things foo>.Set,".namespaces works";

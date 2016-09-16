@@ -2,11 +2,11 @@ unit class DispatchMap does Associative;
 
 has $.disp-obj = Metamodel::ClassHOW.new_type();
 has $!dispatcher;
-has @!pairs;
 
-method !add-dispatch(@key,$value) {
+method !add-dispatch($ns,@key,$value) {
     use nqp;
     my role Candidate {
+        has $.key is rw;
         has $.value is rw;
     }
 
@@ -25,7 +25,6 @@ method !add-dispatch(@key,$value) {
         nqp::bindattr_i($param,Parameter,'$!flags',128);
         nqp::push($params,$param);
         $i := $i + 1;
-
     }
     my $method := anon sub {};
     my $sig := $method.signature.clone;
@@ -33,59 +32,62 @@ method !add-dispatch(@key,$value) {
     nqp::bindattr($sig,Signature,'$!count',$i);
     nqp::bindattr($sig,Signature,'$!arity',$i);
     $method does Candidate;
+    $method.key   = @key;
     $method.value = $value;
     nqp::bindattr($method,Code,'$!signature',$sig);
-    $!disp-obj.^add_multi_method("_dispatch",nqp::decont($method));
-    @!pairs.push(Pair.new(:@key,:$value));
+    $!disp-obj.^add_multi_method("__$ns",nqp::decont($method));
     $value;
 }
 
-method keys   { @!pairs.map(*.key)   }
-method values { @!pairs.map(*.value) }
+method keys(Str:D $ns)   { self.dispatcher($ns).candidates.map(*.key)   }
+method values(Str:D $ns) { self.dispatcher($ns).candidates.map(*.value) }
+method pairs(Str:D $ns)  { self.dispatcher($ns).candidates.map( { .key => .value } ) }
 
-method !compose(){
-    self.disp-obj.^compose;
-}
+method !compose(){ self.disp-obj.^compose }
 
-method new(**@args) {
+method new(|c) {
     my $new = self.bless;
-    $new.append(|@args);
+    $new.append(|c);
     $new;
 }
 
-method dispatcher {
-    $!disp-obj.^find_method("_dispatch");
+method make-child(|c) {
+    my $new = self.bless;
+    $new.disp-obj.^add_parent(self.disp-obj);
+    $new.append(|c);
+    $new;
 }
 
-method dispatch(|c) {
-    with self.get(|c) {
+method dispatcher(Str:D $ns) { $!disp-obj.^find_method("__$ns"); }
+
+method dispatch(Str:D $ns,|c) {
+    with self.get($ns,|c) {
         when Callable:D { $_.(|c) }
         default { $_ }
     }
 }
 
-method get(|c)     {
-    self.dispatcher.cando(c)[0].?value
-}
-method get-all(|c) { self.dispatcher.cando(c).map(*.value) }
-method exists(|c)  { self.dispatcher.cando(c)[0]:exists }
+method get(Str:D $ns,|c)     { self.dispatcher($ns).?cando(c)[0].?value }
+method get-all(Str:D $ns,|c) { self.dispatcher($ns).?cando(c).map(*.value) }
+method exists(Str:D $ns,|c)  { self.dispatcher($ns).?cando(c)[0]:exists }
 
-method append(**@args) {
-    @args = |@args[0] if @args == 1;
-    my $i = @args.iterator;
-    until (my $k := $i.pull-one) =:= IterationEnd {
-        my $v;
-        if $k ~~ Pair {
-            $v := $k.value;
-            $k := $k.key;
-        } else {
-            $v := $i.pull-one;
+method append(*%ns) {
+    for %ns.kv -> $ns, $args {
+        my $i = $args.iterator;
+        until (my $k := $i.pull-one) =:= IterationEnd {
+            my $v;
+            if $k ~~ Pair:D {
+                $v := $k.value;
+                $k := $k.key;
+            } else {
+                $v := $i.pull-one;
+            }
+            $k := List.new($k) if not ($k.defined and $k ~~ Iterable);
+            self!add-dispatch($ns,$k,$v);
         }
-        $k := List.new($k) if not ($k.defined and $k ~~ Iterable);
-        self!add-dispatch($k,$v);
     }
     self!compose;
 }
 
-method pairs { @!pairs.list }
-method list  { @!pairs.map: {slip .key,.value } }
+method list(Str:D $ns)  { self.pairs($ns).map({slip .key,.value }).list }
+method namespaces { $!disp-obj.^method_table.keys.grep(/^'__'/).map(*.subst(/^'__'/,'')) }
