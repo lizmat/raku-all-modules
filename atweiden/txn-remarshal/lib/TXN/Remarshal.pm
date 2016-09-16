@@ -509,8 +509,8 @@ multi sub from-hash(
     my %a;
 
     my Silo $s = ::($silo);
-    my Str $e = $entity;
-    my Str @p = @path if @path;
+    my VarName $e = $entity;
+    my VarName @p = @path if @path;
 
     %a<silo> = $s;
     %a<entity> = $e;
@@ -532,10 +532,10 @@ multi sub from-hash(
 {
     my %a;
 
-    my Str $c = $asset-code;
+    my AssetCode $c = $asset-code;
     my Quantity $q = FatRat($asset-quantity);
-    my Str $s = $asset-symbol if $asset-symbol;
-    my Str $p = $plus-or-minus if $plus-or-minus;
+    my AssetSymbol $s = $asset-symbol if $asset-symbol;
+    my PlusMinus $p = $plus-or-minus if $plus-or-minus;
 
     %a<asset-code> = $c;
     %a<asset-quantity> = $q;
@@ -579,9 +579,9 @@ multi sub from-hash(
 {
     my %i;
 
-    my Str $c = $asset-code;
+    my AssetCode $c = $asset-code;
     my Quantity $q = FatRat($asset-quantity);
-    my Str $s = $asset-symbol if $asset-symbol;
+    my AssetSymbol $s = $asset-symbol if $asset-symbol;
 
     %i<asset-code> = $c;
     %i<asset-quantity> = $q;
@@ -603,7 +603,7 @@ multi sub from-hash(
     my %l;
 
     my DecInc $d = ::($decinc);
-    my Str $n = $name;
+    my VarName $n = $name;
 
     %l<decinc> = $d;
     %l<name> = $n;
@@ -624,9 +624,9 @@ multi sub from-hash(
 {
     my %x;
 
-    my Str $c = $asset-code;
+    my AssetCode $c = $asset-code;
     my Quantity $q = FatRat($asset-quantity);
-    my Str $s = $asset-symbol if $asset-symbol;
+    my AssetSymbol $s = $asset-symbol if $asset-symbol;
 
     %x<asset-code> = $c;
     %x<asset-quantity> = $q;
