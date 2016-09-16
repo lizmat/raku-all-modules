@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/FCO/Heap.git
+	branch = master
+	commit = 45541db8da7b1bbe4d7fe50eb1591342dfb1bbea
+	parent = cdd87281543518e230f4fccf5048d4ba5aca6c12
+	cmdver = 0.2.3
