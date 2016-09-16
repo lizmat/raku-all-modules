@@ -7,8 +7,95 @@ use TXN::Remarshal;
 unit module TXN;
 
 constant $PROGRAM = 'mktxn';
-constant $VERSION = v0.0.6;
+constant $VERSION = v0.0.7;
 
+# TXN::Package::Prepare {{{
+
+my class TXN::Package::Prepare
+{
+    # --- class attributes {{{
+
+    has VarNameBare $.pkgname is required;
+    has Version $.pkgver is required;
+    has UInt $.pkgrel = 1;
+    has Str $.pkgdesc;
+    has Int $.date-local-offset;
+    has Str $.txn-dir;
+
+    # --- end class attributes }}}
+
+    # --- submethod BUILD {{{
+
+    submethod BUILD(
+        Str :$pkgname!,
+        Str :$pkgver!,
+        Int :$pkgrel,
+        Str :$pkgdesc,
+        Int :$date-local-offset,
+        Str :$txn-dir
+    )
+    {
+        $!pkgname = $pkgname;
+        $!pkgver = Version.new($pkgver);
+        $!pkgrel = $pkgrel.UInt if $pkgrel;
+        $!pkgdesc = $pkgdesc if $pkgdesc;
+        $!date-local-offset = $date-local-offset if $date-local-offset;
+        $!txn-dir = $txn-dir if $txn-dir;
+    }
+
+    # --- end submethod BUILD }}}
+    # --- method new {{{
+
+    method new(
+        Str :$pkgname,
+        Str :$pkgver,
+        Int :$pkgrel,
+        Str :$pkgdesc,
+        Int :$date-local-offset,
+        Str :$txn-dir,
+        Str :$template
+    )
+    {
+        my %prepare;
+
+        # merge build settings from TOML template if one is provided
+        if $template
+        {
+            my %h;
+            %h<date-local-offset> = $date-local-offset if $date-local-offset;
+            my %template = from-toml(:file($template), |%h);
+
+            %prepare<pkgname> = %template<pkgname> if %template<pkgname>;
+            %prepare<pkgver> = %template<pkgver> if %template<pkgver>;
+            %prepare<pkgrel> = %template<pkgrel>.UInt if %template<pkgrel>;
+            %prepare<pkgdesc> = %template<pkgdesc> if %template<pkgdesc>;
+            if %template<txn-dir>
+            {
+                %prepare<txn-dir> = %template<txn-dir>.IO.is-relative
+                    # resolve C<txn-dir> path relative to template file
+                    ?? join('/', $template.IO.dirname, %template<txn-dir>)
+                    # absolute path for C<txn-dir> given, use it directly
+                    !! %template<txn-dir>;
+            }
+            %prepare<date-local-offset> = Int(%template<date-local-offset>)
+                if %template<date-local-offset>;
+        }
+
+        # overwrite template options if conflicts arise
+        %prepare<pkgname> = $pkgname if $pkgname;
+        %prepare<pkgver> = $pkgver if $pkgver;
+        %prepare<pkgrel> = $pkgrel.UInt if $pkgrel;
+        %prepare<pkgdesc> = $pkgdesc if $pkgdesc;
+        %prepare<date-local-offset> = $date-local-offset if $date-local-offset;
+        %prepare<txn-dir> = $txn-dir if $txn-dir;
+
+        self.bless(|%prepare);
+    }
+
+    # --- end method new }}}
+}
+
+# end TXN::Package::Prepare }}}
 # TXN::Package {{{
 
 my class TXN::Package
@@ -28,7 +115,7 @@ my class TXN::Package
     has VarName @!entities-seen is required;
 
     # package info
-    has Str $!pkgname is required;
+    has VarNameBare $!pkgname is required;
     has Version $!pkgver is required;
     has UInt $!pkgrel is required;
     has Str $!pkgdesc;
@@ -41,9 +128,8 @@ my class TXN::Package
         Str :$!compiler!,
         TXN::Parser::AST::Entry :@!entry!,
         UInt :$!count!,
-        # XXX C<@entities-seen> param is typed Str to make compiler happy
         Str :@!entities-seen!,
-        Str :$!pkgname!,
+        VarNameBare :$!pkgname!,
         Version :$!pkgver!,
         UInt :$!pkgrel!,
         Str :$pkgdesc
@@ -71,7 +157,7 @@ my class TXN::Package
         *%opts (
             Str :pkgname($),
             Str :pkgver($),
-            UInt :pkgrel($),
+            Int :pkgrel($),
             Str :pkgdesc($),
             Int :date-local-offset($),
             Str :txn-dir($),
@@ -81,12 +167,12 @@ my class TXN::Package
     {
         my %bless;
 
-        my %prepare = prepare(|%opts);
+        my TXN::Package::Prepare $prepare .= new(|%opts);
 
-        my Str $pkgname = %prepare<pkgname>;
-        my Version $pkgver .= new(%prepare<pkgver>);
-        my UInt $pkgrel = %prepare<pkgrel>;
-        my Str $pkgdesc = %prepare<pkgdesc> if %prepare<pkgdesc>;
+        my VarNameBare $pkgname = $prepare.pkgname;
+        my Version $pkgver = $prepare.pkgver;
+        my UInt $pkgrel = $prepare.pkgrel;
+        my Str $pkgdesc = $prepare.pkgdesc if $prepare.pkgdesc;
 
         my DateTime $dt = now.DateTime;
 
@@ -96,9 +182,9 @@ my class TXN::Package
 
         # parse the accounting ledger
         my %h;
-        %h<date-local-offset> =
-            %prepare<date-local-offset> if %prepare<date-local-offset>;
-        %h<txn-dir> = %prepare<txn-dir> if %prepare<txn-dir>;
+        %h<date-local-offset> = $prepare.date-local-offset
+            if $prepare.date-local-offset.defined;
+        %h<txn-dir> = $prepare.txn-dir if $prepare.txn-dir;
         my TXN::Parser::AST::Entry @entry = do given $content-or-file
         {
             when 'CONTENT' { from-txn($cf, |%h) }
@@ -149,103 +235,10 @@ my class TXN::Package
     {
         my VarName @entities-seen = @entry.flatmap({
             .posting.map({ .account.entity })
-        });
-        @entities-seen .= unique;
-        @entities-seen .= sort;
+        }).unique.sort;
     }
 
     # --- end sub get-entities-seen }}}
-    # --- sub has-pkgname-pkgver-pkgrel {{{
-
-    sub pkgname-pkgver-pkgrel(%txn-info) returns Array[Bool]
-    {
-        my Bool @p =
-            %txn-info<pkgname>:exists,
-            %txn-info<pkgver>:exists,
-            %txn-info<pkgrel>:exists;
-    }
-
-    sub has-pkgname-pkgver-pkgrel(%txn-info) returns Bool
-    {
-        given pkgname-pkgver-pkgrel(%txn-info)
-        {
-            when .grep(*.so).elems == .elems
-            {
-                True;
-            }
-            default
-            {
-                my Str $message = 'Sorry, ';
-                my Str @missing;
-                push @missing, 'pkgname' if $_[0].not;
-                push @missing, 'pkgver' if $_[1].not;
-                push @missing, 'pkgrel' if $_[2].not;
-                $message ~= @missing.join(', ');
-                $message ~= ' missing from %txn-info. Got:' ~ "\n";
-                $message ~= %txn-info.perl;
-                die $message;
-            }
-        }
-    }
-
-    # --- end sub has-pkgname-pkgver-pkgrel }}}
-    # --- sub prepare {{{
-
-    # merge build settings from TOML template if one is provided
-    sub prepare(
-        Str :$pkgname,
-        Str :$pkgver,
-        UInt :$pkgrel,
-        Str :$pkgdesc,
-        Int :$date-local-offset,
-        Str :$txn-dir,
-        Str :$template
-    )
-    {
-        my %prepare;
-
-        if $template
-        {
-            my %h;
-            %h<date-local-offset> = $date-local-offset if $date-local-offset;
-            my %template = from-toml(:file($template), |%h);
-
-            %prepare<pkgname> = %template<pkgname> if %template<pkgname>;
-            %prepare<pkgver> = %template<pkgver> if %template<pkgver>;
-            %prepare<pkgrel> = Int(%template<pkgrel>) if %template<pkgrel>;
-            %prepare<pkgdesc> = %template<pkgdesc> if %template<pkgdesc>;
-            if %template<txn-dir>
-            {
-                %prepare<txn-dir> = %template<txn-dir>.IO.is-relative
-                    # resolve txn-dir path relative to template file
-                    ??
-                        ~join(
-                            '/',
-                            $template.IO.dirname,
-                            %template<txn-dir>
-                        ).IO.resolve
-                    # absolute txn-dir path given, use it directly
-                    !! %template<txn-dir>;
-            }
-            %prepare<date-local-offset> = Int(%template<date-local-offset>)
-                if %template<date-local-offset>;
-        }
-
-        # overwrite template options if conflicts arise
-        %prepare<pkgname> = $pkgname if $pkgname;
-        %prepare<pkgver> = $pkgver if $pkgver;
-        %prepare<pkgrel> = $pkgrel if $pkgrel;
-        %prepare<pkgdesc> = $pkgdesc if $pkgdesc;
-        %prepare<date-local-offset> = $date-local-offset if $date-local-offset;
-        %prepare<txn-dir> = ~$txn-dir.IO.resolve if $txn-dir;
-
-        # check for existence of pkgname, pkgver, and pkgrel
-        die unless has-pkgname-pkgver-pkgrel(%prepare);
-
-        %prepare;
-    }
-
-    # --- end sub prepare }}}
 }
 
 # end TXN::Package }}}
@@ -258,7 +251,7 @@ multi sub mktxn(
     *%opts (
         Str :$pkgname,
         Str :$pkgver,
-        UInt :$pkgrel,
+        Int :$pkgrel,
         Str :$pkgdesc,
         Str :$txn-dir,
         Int :$date-local-offset,
@@ -277,7 +270,7 @@ multi sub mktxn(
     *%opts (
         Str :$pkgname,
         Str :$pkgver,
-        UInt :$pkgrel,
+        Int :$pkgrel,
         Str :$pkgdesc,
         Str :$txn-dir,
         Int :$date-local-offset,
@@ -295,7 +288,7 @@ multi sub mktxn(
     *%opts (
         Str :$pkgname,
         Str :$pkgver,
-        UInt :$pkgrel,
+        Int :$pkgrel,
         Str :$pkgdesc,
         Str :$txn-dir,
         Int :$date-local-offset,
@@ -311,7 +304,7 @@ multi sub mktxn(
     *%opts (
         Str :$pkgname,
         Str :$pkgver,
-        UInt :$pkgrel,
+        Int :$pkgrel,
         Str :$pkgdesc,
         Str :$txn-dir,
         Int :$date-local-offset,
@@ -331,16 +324,21 @@ sub package(%txn-package (TXN::Parser::AST::Entry :@entry!, :%txn-info!))
     say "Creating txn pkg \"%txn-info<pkgname>\"…";
 
     # make build directory
-    my Str $build-dir = $*CWD ~ '/build';
+    my Str $build-dir = "$*CWD/build";
     my Str $txn-info-file = "$build-dir/.TXNINFO";
     my Str $txn-json-file = "$build-dir/txn.json";
-    mkdir $build-dir;
+    $build-dir.IO.mkdir;
 
     # serialize .TXNINFO to JSON
-    spurt $txn-info-file, Rakudo::Internals::JSON.to-json(%txn-info) ~ "\n";
+    $txn-info-file.IO.spurt(Rakudo::Internals::JSON.to-json(%txn-info) ~ "\n");
 
     # serialize ledger AST to JSON
-    spurt $txn-json-file, Rakudo::Internals::JSON.to-json(@entry».hash) ~ "\n";
+    $txn-json-file.IO.spurt(
+        Rakudo::Internals::JSON.to-json(
+            remarshal(@entry, :if<entry>, :of<hash>)
+        )
+        ~ "\n"
+    );
 
     # compress
     my Str $tarball =
@@ -356,9 +354,9 @@ sub package(%txn-package (TXN::Parser::AST::Entry :@entry!, :%txn-info!))
         "%txn-info<pkgver>-%txn-info<pkgrel> ($dt)";
 
     # clean up build directory
-    say "Cleaning up…";
-    dir($build-dir)».unlink;
-    rmdir $build-dir;
+    say 'Cleaning up…';
+    $build-dir.IO.dir».unlink;
+    $build-dir.IO.rmdir;
 }
 
 # end sub package }}}
