@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FROGGS/p6-IDNA-Punycode.git
 	branch = master
-	commit = fe7dbfaa8578777cede0ac706c91304a662d72bd
-	parent = 4d7198e77077ae049d67dde237b8f6489d72af6b
-	cmdver = 0.2.2
+	commit = 6d173e50acf91e67b4ea7d4e6fa3aa3d1fd06dc7
+	parent = 68d60115255e8d463c38f624c60a2d85d40415f7
+	cmdver = 0.4.0

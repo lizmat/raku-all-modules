@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "IDNA::Punycode",
     "author" : "github:FROGGS",
     "version" : "1.0.0",
