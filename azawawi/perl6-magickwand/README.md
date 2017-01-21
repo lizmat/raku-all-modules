@@ -47,7 +47,7 @@ Please follow the instructions below based on your platform:
 
 - To install ImageMagick libraries, please run:
 ```
-$ sudo apt-get install libmagickwand-dev
+$ sudo apt install libmagickwand-dev
 ```
 
 ### MacOSX (Darwin)
@@ -67,9 +67,9 @@ $ sudo port install ImageMagick
 ### Windows
 
 For 64-bit Windows, please install the [`64-bit`](
-http://www.imagemagick.org/download/binaries/ImageMagick-6.9.3-2-Q16-x64-dll.exe)
+https://www.imagemagick.org/download/binaries/ImageMagick-6.9.7-3-Q16-x64-dll.exe)
 DLL installer. Otherwise, use the [`32-bit`](
-http://www.imagemagick.org/download/binaries/ImageMagick-6.9.3-2-Q16-x86-dll.exe)
+https://www.imagemagick.org/download/binaries/ImageMagick-6.9.7-3-Q16-x64-dll.exe)
 version.
 
 Also please remember to enable **"Add to PATH"** option.

@@ -12,30 +12,32 @@ sub library is export {
   return "CORE_RL_wand_.dll" if $*DISTRO.is-win;
 
   # On MacOS X using howbrew
-  return "libMagickWand-6.Q16.2.dylib" if $*KERNEL.name eq 'darwin';
+  return "libMagickWand-6.Q16.dylib" if $*KERNEL.name eq 'darwin';
 
   # Linux/UNIX
   if library-exists(LIB, v4) {
     return sprintf("lib%s.so.4", LIB);
   } elsif library-exists(LIB, v5) {
     return sprintf("lib%s.so.5", LIB);
+  } elsif library-exists("libMagickWand-6.Q16.so") {
+    return "libMagickWand-6.Q16.so";
   }
 
   # Fallback
   return sprintf("lib%s.so", LIB);
 }
 
-class KernelInfo is repr('CStruct') {
-  #TODO implement KernelInfo http://www.imagemagick.org/api/MagickCore/structKernelInfo.html
-}
+#class KernelInfo is repr('CStruct') {
+#  #TODO implement KernelInfo http://www.imagemagick.org/api/MagickCore/structKernelInfo.html
+#}
 
-class RectangeInfo is repr('CStruct') {
+#class RectangeInfo is repr('CStruct') {
   #TODO implement RectangeInfo
-}
+#}
 
-class PointInfo is repr('CStruct') {
+#class PointInfo is repr('CStruct') {
   #TODO implement PointInfo
-}
+#}
 
 #TODO ImageInfo
 #TODO ExceptionInfo
