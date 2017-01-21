@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6-community-modules/testml-pm6.git
 	branch = master
-	commit = eb76fff45b04752056378fe94882dde923e5f346
-	parent = 85953663cbf1127433e458f3371718a17b9f229a
-	cmdver = 0.2.3
+	commit = d10dffa3eeb4dd96e2826ddc6644e9525381bfd0
+	parent = 25738bf09258186bf49e71bb09d484b1135652c7
+	cmdver = 0.4.0
