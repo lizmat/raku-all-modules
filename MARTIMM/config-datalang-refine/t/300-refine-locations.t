@@ -107,6 +107,31 @@ subtest {
 }, 'test locations';
 
 #-------------------------------------------------------------------------------
+subtest {
+  try {
+    my Config::DataLang::Refine $rc .= new: :locations(['']);
+
+    CATCH {
+      when X::Config::DataLang::Refine {
+        like .message, / :s Config files derived from '300-refine-locations.toml' /,
+             .message;
+      }
+    }
+  }
+
+  try {
+    my Config::DataLang::Refine $rc .= new: :locations(['foo/bar/baz']);
+
+    CATCH {
+      when X::Config::DataLang::Refine {
+        like .message, / :s Config files derived from '300-refine-locations.toml' /,
+             .message;
+      }
+    }
+  }
+}, 'location with wrong entries';
+
+#-------------------------------------------------------------------------------
 # Cleanup
 #
 unlink '.myCfg.cfg';

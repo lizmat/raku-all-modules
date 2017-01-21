@@ -1,34 +1,8 @@
-#!/usr/bin/env perl6
-#
 use v6.c;
-
-# Running the pod file will create a pdf using wkhtmltopdf
-#
-my Str $pod = "$*PROGRAM";
-my Str $pdf = $pod;
-$pdf ~~ s/\. <-[.]>+ $/.pdf/;
-shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
 
 #-------------------------------------------------------------------------------
 
 =begin pod
-
-=begin Xhtml
-<style>
-  pre {
-    border-width:       2px;
-    border-style:       solid;
-    border-color:       #060;
-    padding:            10px 0 3px 10px;
-    color:              #060;
-    background-color:   #ecefec;
-    font-family:        FreeMono;
-  }
-  td {
-    vertical-align:     top;
-  }
-</style>
-=end Xhtml
 
 =TITLE class Config::DataLang::Refine
 
@@ -39,7 +13,7 @@ shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
 
 =head1 Synopsis
 
-The following piece of code
+With the following piece of code
 
   use Config::DataLang::Refine;
 
@@ -50,7 +24,7 @@ The following piece of code
   my Array $ap3 = $c.refine-str( <options plugin1 deploy>, :filter);
   my Array $ap4 = $c.refine-str( <options plugin2 deploy>, :filter);
 
-With the following config file in myConfig.toml
+And the following config file in myConfig.toml
 
   [options]
     key1 = 'val1'
@@ -152,27 +126,28 @@ Defined as
     Str :$config-name,
     Bool :$merge = False,
     Array :$locations = [],
-    Str :$data-module = 'Config::TOML'
+    Str :$data-module = 'Config::TOML',
+    Hash :$other-config = {}
   )
 
-Reads configuration text from a file pointed to by B<:config-name>. The file
+Reads configuration text from a file pointed to by C<:config-name>. The file
 will first be searched for in the current directory. Then, if not found, tries
 to read the hidden variant (on unixes) which is the name with a dot ('.')
 prefixed to the file. If that fails too it tries yet another file (also hidden)
 located in the home directory of the user. At last the method throws an
-exception if no files are found. If B<:config-name> is not defined the program
+exception if no files are found. If C<:config-name> is not defined the program
 name is taken where the extension is substituted by the proper name for the
 configuration language.
 
-When B<:locations> is defined the array will be used as extra paths to search
+When C<:locations> is defined the array will be used as extra paths to search
 for the config file. Example paths to add are C</etc> on unixes or C<C:/Program
 Files/MyApp> on windows.
 
-When B<:config-name> is a relative or absolute path to a config file, then the
-basename is taken and the path to the file is pushed on the B<:locations> array.
+When C<:config-name> is a relative or absolute path to a config file, then the
+basename is taken and the path to the file is pushed on the C<:locations> array.
 
-B<:merge> is used to merge all the files together starting with the file in the
-users first and following paths from B<:locations>, Then the one from the home
+C<:merge> is used to merge all the files together starting with the file in the
+users first and following paths from C<:locations>, Then the one from the home
 directory if found. Then the options from the hidden local file if found and
 finishing with the visible local file found. An exception will be thrown when
 the resulting config has no elements.
@@ -180,36 +155,42 @@ the resulting config has no elements.
 The data languages such as C<Config::TOML> might throw exceptions when it
 fails to parse the configuration text.
 
-  Setup                         Search
-  ============================= ==============================================  
-  Nothing set                   :config-name set to program name. Say p.pl6 so
-                                config will be p.toml because :data-module is
-                                by default C<Config::TOML>.
-                                Search;
-                                p.toml, .p.toml, <home-dir>/.p.toml
+=begin table :capture('')
 
-  :data-module = JSON::Fast     Same as above except extension is .json.
-                                Search;
-                                p.json, .p.json, <home-dir>/.p.json
+  Setup                         | Search
+  ==============================|==============================================  
+  Nothing set                   | :config-name set to program name. Say p.pl6 so
+                                | config will be p.toml because :data-module is
+                                | by default Config::TOML.
+                                | Search;
+                                | p.toml, .p.toml, <home-dir>/.p.toml
 
-  :config-name = x.cfg          Search;
-                                x.cfg, .x.cfg, <home-dir>/.x.cfg
+  :data-module=JSON::Fast       | Same as above except extension is .json.
+                                | Search;
+                                | p.json, .p.json, <home-dir>/.p.json
 
-  :config-name = ../pqr/x.cfg   While shown in the search still as a relative
-                                path, the path will be made absolute.
-                                Search;
-                                x.cfg, .x.cfg, <home-dir>/.x.cfg, ../pqr/x.cfg
+  :config-name=x.cfg            | Search;
+                                | x.cfg, .x.cfg, <home-dir>/.x.cfg
 
-  :config-name = x.cfg          Search;
-  :locations = [/etc, /opt/etc] x.cfg, .x.cfg, <home-dir>/.x.cfg, /etc/x.cfg
-                                /opt/etc/x.cfg
+  :config-name=../pqr/x.cfg     | While shown here as a relative
+                                | path, the path will be made absolute.
+                                | Search;
+                                | x.cfg, .x.cfg, <home-dir>/.x.cfg, ../pqr/x.cfg
 
+  :config-name=x.cfg            | Search;
+  :locations=[/etc, /opt/etc]   | x.cfg, .x.cfg, <home-dir>/.x.cfg, /etc/x.cfg
+                                | /opt/etc/x.cfg
+=end table
 
-When B<:merge> is used the search is started at the end of the list ending at
+When C<:merge> is used the search is started at the end of the list ending at
 the first file.
 
-For B<:data-module> the modules C<Config::TOML> and C<JSON::Fast> are recognized.
+For C<:data-module> the modules C<Config::TOML> and C<JSON::Fast> are recognized.
 
+C<:other-config> can be used when the caller has already a config of its own.
+This will be modified by subsequent config loads. The C<:merge> is flipped to
+True. With this, it is possible to repeat the config loads with configs from
+previous loads.
 
 =head2 refine
 
@@ -225,15 +206,18 @@ the list and gathers all pairs ignoring pairs of which the value is a Hash.
 Then it descends in the config using the second key. This goes on until the last
 key is used. The process stops when a key does not exist on some level.
 
-A simple filter is used on the results if B<:filter> is set. All key/value pairs
+A simple filter is used on the results if C<:filter> is set. All key/value pairs
 are removed from the result where the value is a C<Bool> and is C<False>.
 
-  type          :!filter        :filter
-  ============= =============== ================
-  Bool          :k              :k
-                :!k             <removed>
-  Any           :k => v         :k => v
+=begin table
 
+  type         | :!filter       | :filter
+  =============|================|=================
+  Bool         | :k             | :k
+               | :!k            | <removed>
+  Any          | :k => v        | :k => v
+
+=end table
 
 =head2 refine-str
 
@@ -247,44 +231,63 @@ Defined as
     --> Array
   )
 
-Each string is pushed on the array which is returned. The B<:glue> is the
+Each string is pushed on the array which is returned. The C<:glue> is the
 string used to join elements of an array, this is a ',' by default.
 
-  :str-mode = C-URI-OPTS-T1 which is the default
-  type          :!filter        :filter
-  ============= =============== ================
-  Bool          k=True          k=True
-                k=False         <removed>
-  Array         k=1,2,3         k=1,2,3
-  special text  k='v'           k='v'
-  Any           k=v             k=v
+=begin table :caption(':str-mode = C-URI-OPTS-T1 which is the default')
 
-Simple results
+  type          | :!filter       | :filter
+  ==============|================|================
+  Bool          | k=True         | k=True
+                | k=False        | <removed>
+  Array         | k=1,2,3        | k=1,2,3
+  spaced text   | k='v'          | k='v'
+  Any           | k=v            | k=v
 
-  :str-mode = C-URI-OPTS-T2
-  type          :!filter        :filter
-  ============= =============== ================
-  Bool          k=True          k=True
-                k=False         <removed>
-  Array         k=1,2,3         k=1,2,3
-  Any           k=v             k=v
+=end table
+
+=begin table :caption(':str-mode = C-URI-OPTS-T2')
+
+  type         | :!filter      | :filter
+  =============|===============|================
+  Bool         | k=True        | k=True
+               | k=False       | <removed>
+  Array        | k=1,2,3       | k=1,2,3
+  Any          | k=v           | k=v
+
+=end table
 
 The results from C-URI-OPTS-T2 can be used to form uri strings when joined
 together with a '&' character. All strings will be encoded for the first
 128 characters of the ascii table.
 
-  :str-mode = C-UNIX-OPTS-T1
-  type          :!filter        :filter
-  ============= =============== ================
-  Bool          --k             --k
-                --nok           <removed>
-  Array         --k=1,2,3       --k=1,2,3
-  spaced text   --k='v'         --k='v'
-  Any           --k=v           --k=v
+=begin table :caption(':str-mode = C-UNIX-OPTS-T1')
+  type          | :!filter     | :filter
+  ==============|==============|================
+  Bool          |  --k         | --k
+                |  --nok       | <removed>
+  Array         |  --k=1,2,3   | --k=1,2,3
+  text with '`' | --k=v        | --k=v
+  spaced text   | --k='v'      | --k='v'
+  Any           | --k=v        | --k=v
 
-All single letter keys get only one dash on front like -k or -k=v. The
-mode C-UNIX-OPTS-T2 does the same but gathers all single character keys without
-values together prefixed with a dash. E.g. --key, -l, -m, -t=1 becomes --key,
--lm, -t=1
+=end table
+
+B<Note 1>: The values are also checked for backticks(`) because in Unix these
+can hold other commands. However, a command can contain spaces which will then
+be quoted. To prevent that, the value is checked for an even number of
+backticks. When there are spaces in the value outside these backticks the user
+must add the quotes manually if necessary.
+
+B<Note 2>: All single letter keys get only one dash in front of the option key
+like -k or -k=v.
+
+B<Note 3> Mode C<C-UNIX-OPTS-T2> does the same as C<C-UNIX-OPTS-T1> but gathers
+all single character keys without values together prefixed with a dash. E.g.
+--key, -l, -m, -t=1 becomes --key, -lm, -t=1
+
+B<Note 4> Mode C<C-UNIX-OPTS-T3> also does the same as C<C-UNIX-OPTS-T1> but
+ignores the filter option. The result of False booleans will then be --/$k
+instead of --no$k. This is recognized by perl6 as input to the MAIN sub.
 
 =end pod

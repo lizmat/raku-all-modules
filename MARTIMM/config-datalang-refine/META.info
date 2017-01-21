@@ -1,20 +1,16 @@
 {
-  "author": "Marcel Timmerman",
   "authors": "Marcel Timmerman",
   "depends": [
     "Config::TOML",
-    "JSON::Fast",
-    "File::HomeDir"
+    "JSON::Fast"
   ],
   "description": "Refinements on use of configurations loaded with parsers such as found in Config::TOML",
   "license": "The Artistic License 2.0",
   "name": "Config::DataLang::Refine",
   "perl": "6.c",
   "provides": {
-    "Config::DataLang::Refine":     "lib/Config/DataLang/Refine.pm6",
-
-    "Refine.pod":                   "doc/Refine.pod"
+    "Config::DataLang::Refine":     "lib/Config/DataLang/Refine.pm6"
   },
   "source-url": "git://github.com/MARTIMM/config-datalang-refine.git",
-  "version": "0.3.4"
+  "version": "0.5.0"
 }

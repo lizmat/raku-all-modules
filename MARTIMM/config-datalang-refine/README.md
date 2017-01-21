@@ -1,5 +1,7 @@
 # Configuration refinements
 [![Build Status](https://travis-ci.org/MARTIMM/config-datalang-refine.svg?branch=master)](https://travis-ci.org/MARTIMM/config-datalang-refine)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MARTIMM/config-datalang-refine?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true)](https://ci.appveyor.com/project/MARTIMM/config-datalang-refine/branch/master)
+[![License](http://martimm.github.io/label/License-label.svg)](http://www.perlfoundation.org/artistic_license_2_0)
 
 # Synopsis
 
@@ -76,23 +78,11 @@ my Proc $proc = shell(('/usr/bin/mongod', |@$opts).join(' '));
 
 # Description
 
-The **Config::DataLang::Refine** class adds facilities to use a configuration file and gather the key value pairs by searching top down a list of keys thereby refining the resulting set of keys. Boolean values are used to add a key without a value when True or to cancel a previously found key out when False. For details see the pod file or [pdf](https://github.com/MARTIMM/config-datalang-refine/blob/master/doc/Refine.pdf).
+The **Config::DataLang::Refine** class adds facilities to use a configuration file and gather the key value pairs by searching top down a list of keys thereby refining the resulting set of keys. Boolean values are used to add a key without a value when True or to cancel a previously found key out when False.
 
-* 0.3.4
-  * Panda problems
-* 0.3.3
-  * Added modes used to create strings with refine-str.
-* 0.3.2
-  * Removed **refine-filter()** and added named argument **:filter** to **refine()**.
-  * Renamed **refine-filter-str()** to **refine-str()** and added named argument **:filter**.
-* 0.3.1
-  * Bugfix in use of **:locations** array and relative/absolute path usage in **:config-name**.
-* 0.3.0
-  * Use **:data-module** to select other modules to load other types of config files. Possible configuration data languages are Config::TOML and JSON::Fast.
-* 0.2.0
-  * methods **refine()**, **refine-filter()**. **refine-filter-str()** added
-* 0.1.0
-  * setup using config language **Config::TOML**
-  * method **new()** to read config files and **:merge**
-  * method refine to get key value pairs
-* 0.0.1 Start of the project
+# Documentation
+
+Look for documentation and other information at
+* [Config::DataLang::Refine](https://github.com/MARTIMM/config-datalang-refine/blob/master/doc/Refine.pdf)
+* [Release notes](https://github.com/MARTIMM/config-datalang-refine/blob/master/doc/CHANGES.md)
+* [Todo and Bugs](https://github.com/MARTIMM/config-datalang-refine/blob/master/doc/TODO.md)
