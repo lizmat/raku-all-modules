@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6-community-modules/p6-irc-utils.git
 	branch = master
-	commit = 9fdf7f628ff48dc1c83f93c008bae1cf36369926
-	parent = 923d0048015662a857b187629a8dbe5bb83af6a8
-	cmdver = 0.2.3
+	commit = 13652bb485186bb8b42f878f5e91c9b797222b8b
+	parent = ca4ea1dc2253fc17dce554adf148a279c20607a6
+	cmdver = 0.4.0
