@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "JSON::Path",
     "version" : "*",
     "description" : "Implementation of the JSONPath data structure query language.",
