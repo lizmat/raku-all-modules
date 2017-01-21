@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Pod::Parser",
     "version"     : "*",
     "description" : "Naive parser for Perl 6 style POD documents",
