@@ -1,7 +1,8 @@
 use v6;
-unit sub MAIN(Bool :$delete);
+unit sub MAIN(Bool :$delete=True, Bool :$fetch=True);
 
-run 'wget', '-O', 'projects.json', 'http://ecosystem-api.p6c.org/projects.json';
+run 'wget', '-O', 'projects.json', 'http://ecosystem-api.p6c.org/projects.json'
+    if $fetch;
 my $json = slurp 'projects.json';
 my @projects = from-json($json).list;
 my %local-seen;
