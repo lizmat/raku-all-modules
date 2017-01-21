@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-mime-types.git
 	branch = master
-	commit = dadf37aabafb67b880ba2fc27b38a2fe3d0e7f5b
-	parent = a11bbdbf26ea621ef9e67f53e9413d06a7d318b1
-	cmdver = 0.2.3
+	commit = c5deae4379068e14554169a5f259ae26feb53491
+	parent = d1900234c379adce614c3bf04672966dd3eddcc5
+	cmdver = 0.4.0

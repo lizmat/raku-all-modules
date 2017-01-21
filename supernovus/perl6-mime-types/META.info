@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "MIME::Types",
   "version"     : "*",
   "description" : "Parse a mime.types file, and query the results",
