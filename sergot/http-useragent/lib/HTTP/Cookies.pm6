@@ -1,8 +1,8 @@
 unit class HTTP::Cookies;
 
 use HTTP::Cookie;
-use HTTP::Response;
-use HTTP::Request;
+use HTTP::Response:auth<github:sergot>;
+use HTTP::Request:auth<github:sergot>;
 use DateTime::Parse;
 
 has @.cookies;
@@ -17,7 +17,8 @@ my grammar HTTP::Cookies::Grammar {
     token cookie   {
         <name> '=' <value> ';'? \s* [<arg> \s*]* <secure>? ';'? \s* <httponly>? ';'?
     }
-    token name     { \w+ }
+    token separator { <[()<>@,;:\"/\[\]?={}\s\t]> }
+    token name     { <[\S] - [()<>@,;:\"/\[\]?={}]>+ }
     token value    { <-[;]>+ }
     token arg      { <name> '=' <value> ';'? }
     token secure   { Secure }
