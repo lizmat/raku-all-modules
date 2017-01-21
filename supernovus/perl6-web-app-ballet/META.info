@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "Web::App::Ballet",
   "version"     : "*",
   "description" : "A Dancer-like interface to Web::App",

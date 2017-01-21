@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-web-app-ballet.git
 	branch = master
-	commit = 841e3fc0e0de71404b9c5bc818ed9d0c1c46bf02
-	parent = 3a48ab0db630b6f93551634cd395bbd4ac698b9f
-	cmdver = 0.2.1
+	commit = 59aa35f1f8af41656d601bd05d42566f02ae9e15
+	parent = 712f1ef04b097f4359f1378ee63fdc330c42fda9
+	cmdver = 0.4.0
