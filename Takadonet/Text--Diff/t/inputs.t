@@ -3,7 +3,7 @@ use Test;
 plan 11;
 use lib <blib lib>;
 
-eval_lives_ok 'use Text::Diff', 'Can use Text::Diff';
+eval-lives-ok 'use Text::Diff', 'Can use Text::Diff';
 use Text::Diff;
 
 my @A = map {"$_\n"}, < 1 2 3 4 >;
