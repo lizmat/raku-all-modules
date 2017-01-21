@@ -47,7 +47,7 @@ plan 33;
     my $cp = Math::ChebyshevPolynomial.approximate(-1..1, 10, &cos).derivative;
     isa-ok $cp, Math::ChebyshevPolynomial, ".derivative makes a proper object";
     say $cp.c;
-    is-approx $cp.evaluate(0), -sin(0), abs_tol => 1e-6, desc => "Quadratic 0 is correct";
+    is-approx $cp.evaluate(0), -sin(0), 1e-6, "Quadratic 0 is correct";
     is-approx $cp.evaluate(1/2), -sin(1/2), "Quadratic 1/2 is correct";
     is-approx $cp.evaluate(-1/2), -sin(-1/2), "Quadratic -1/2 is correct";
 }

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/Math-ChebyshevPolynomial.git
 	branch = master
-	commit = 73c34ad7edde714699cbdf4454dc50d0abc4f522
-	parent = c83d600a4c4a755cb717f5c3b7a7d59af636d5c9
-	cmdver = 0.2.2
+	commit = 29c3ff50360da2b9bc1c010ebc6d7464cd816eee
+	parent = a04633b74f0b7d870629b81f1dd7a95e4656fa41
+	cmdver = 0.4.0
