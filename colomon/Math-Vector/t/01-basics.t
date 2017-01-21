@@ -41,7 +41,7 @@ is($v1.Dim, 3, "Dim works for 3D Math::Vector");
 is($v5.Dim, 5, "Dim works for 5D Math::Vector");
 is($v7.Dim, 7, "Dim works for 7D Math::Vector");
 
-is_approx($v7 ⋅ $v8, 0, "Perpendicular Math::Vectors have 0 dot product");
+is-approx($v7 ⋅ $v8, 0, "Perpendicular Math::Vectors have 0 dot product");
 
 #basic math tests
 is(~($v1 + $v2), "(4, 6, 3)", "Basic sum works");
@@ -75,40 +75,40 @@ is($v8.Length, 1, "Simple length calculation");
 
 for @vectors -> $v
 {
-    # is_approx($v.Length ** 2, ⎡$v ⎤ * ⎡$v ⎤, "v.Length squared equals ⎡v ⎤ squared");
-    is_approx($v.Length ** 2, $v dot $v.conj, "v.Length squared equals v ⋅ v.conj");
-    is_approx($v.abs ** 2, $v ⋅ $v.conj, "v.abs squared equals v ⋅ v.conj");
+    # is-approx($v.Length ** 2, ⎡$v ⎤ * ⎡$v ⎤, "v.Length squared equals ⎡v ⎤ squared");
+    is-approx($v.Length ** 2, $v dot $v.conj, "v.Length squared equals v ⋅ v.conj");
+    is-approx($v.abs ** 2, $v ⋅ $v.conj, "v.abs squared equals v ⋅ v.conj");
 }
 
 for @vectors -> $v
 {
     my Math::Vector $vn = $v * 4.5;
-    is_approx($vn.Length, $v.Length * 4.5, "Scalar by Math::Vector multiply gets proper length");
-    is_approx_vector($vn.Unitize, $v.Unitize, "Scalar by Math::Vector multiply gets proper direction");
-    is_approx_vector($vn, 4.5 * $v, "Scalar by Math::Vector multiply is commutative");
+    is-approx($vn.Length, $v.Length * 4.5, "Scalar by Math::Vector multiply gets proper length");
+    is-approx-vector($vn.Unitize, $v.Unitize, "Scalar by Math::Vector multiply gets proper direction");
+    is-approx-vector($vn, 4.5 * $v, "Scalar by Math::Vector multiply is commutative");
 }
 
 for @vectors -> $v
 {
     my Math::Vector $vn = $v / 4.5;
-    is_approx($vn.Length, $v.Length / 4.5, "Math::Vector by Scalar divide gets proper length");
-    is_approx_vector($vn.Unitize, $v.Unitize, "Math::Vector by Scalar divide gets proper direction");
-    is_approx_vector($vn, $v * (1.0 / 4.5), "Math::Vector by Scalar divide is equal to multiplication by reciprocal");
+    is-approx($vn.Length, $v.Length / 4.5, "Math::Vector by Scalar divide gets proper length");
+    is-approx-vector($vn.Unitize, $v.Unitize, "Math::Vector by Scalar divide gets proper direction");
+    is-approx-vector($vn, $v * (1.0 / 4.5), "Math::Vector by Scalar divide is equal to multiplication by reciprocal");
 }
 
 #dot product tests
-is_approx($v7 dot $v8, 0, "Perpendicular Math::Vectors have 0 dot product");
+is-approx($v7 dot $v8, 0, "Perpendicular Math::Vectors have 0 dot product");
 
 for flat ($v1, $v2, $v3) X ($v1, $v2, $v3) -> $x, $y
 {
-    is_approx($x ⋅ $y, $y ⋅ $x, "x ⋅ y = y ⋅ x");
-    is_approx($x ⋅ ($y + $v3), ($x ⋅ $y) + ($x ⋅ $v3), "x ⋅ (y + v3) = x ⋅ y + x ⋅ v3");
+    is-approx($x ⋅ $y, $y ⋅ $x, "x ⋅ y = y ⋅ x");
+    is-approx($x ⋅ ($y + $v3), ($x ⋅ $y) + ($x ⋅ $v3), "x ⋅ (y + v3) = x ⋅ y + x ⋅ v3");
 }
 
 for flat ($v5, $v6) X ($v5, $v6) -> $x, $y
 {
-    is_approx($x ⋅ $y, $y ⋅ $x, "x ⋅ y = y ⋅ x");
-    is_approx($x ⋅ ($y + $v6), ($x ⋅ $y) + ($x ⋅ $v6), "x ⋅ (y + v6) = x ⋅ y + x ⋅ v3");
+    is-approx($x ⋅ $y, $y ⋅ $x, "x ⋅ y = y ⋅ x");
+    is-approx($x ⋅ ($y + $v6), ($x ⋅ $y) + ($x ⋅ $v6), "x ⋅ (y + v6) = x ⋅ y + x ⋅ v3");
 }
 
 dies-ok( { $v5 ⋅ $v7 }, "You can't do dot products of different dimensions");
@@ -117,7 +117,7 @@ dies-ok( { $v7 dot $v5 }, "You can't do dot products of different dimensions");
 {
     my $a = $v1;
     $a ⋅= $v2;
-    is_approx($v1 ⋅ $v2, $a, "⋅= works");
+    is-approx($v1 ⋅ $v2, $a, "⋅= works");
 }
 
 {
@@ -131,20 +131,20 @@ is(~($v1 × $v2), "(-12, 9, -2)", "Basic cross product works");
 for flat ($v1, $v2, $v3) X ($v1, $v2, $v3) -> $x, $y
 {
     my $cross = $x × $y;
-    is_approx($cross ⋅ $x, 0, "(x × y) ⋅ x = 0");
-    is_approx($cross ⋅ $y, 0, "(x × y) ⋅ y = 0");
-    is_approx_vector($cross, -($y × $x), "x × y = -y × x");
-    is_approx($cross.Length ** 2, $x.Length ** 2 * $y.Length ** 2 - ($x ⋅ $y) ** 2, 
+    is-approx($cross ⋅ $x, 0, "(x × y) ⋅ x = 0");
+    is-approx($cross ⋅ $y, 0, "(x × y) ⋅ y = 0");
+    is-approx-vector($cross, -($y × $x), "x × y = -y × x");
+    is-approx($cross.Length ** 2, $x.Length ** 2 * $y.Length ** 2 - ($x ⋅ $y) ** 2, 
               "|x × y|^2 = |x|^2 * |y|^2 - (x ⋅ y)^2");
 }
 
 for flat ($v7, $v8, $v9, $v10) X ($v7, $v8, $v9, $v10) -> $x, $y
 {
     my $cross = $x × $y;
-    is_approx($cross ⋅ $x, 0, "(x × y) ⋅ x = 0");
-    is_approx($cross ⋅ $y, 0, "(x × y) ⋅ y = 0");
-    is_approx_vector($cross, -($y × $x), "x × y = -y × x");
-    is_approx($cross.Length ** 2, $x.Length ** 2 * $y.Length ** 2 - ($x ⋅ $y) ** 2, 
+    is-approx($cross ⋅ $x, 0, "(x × y) ⋅ x = 0");
+    is-approx($cross ⋅ $y, 0, "(x × y) ⋅ y = 0");
+    is-approx-vector($cross, -($y × $x), "x × y = -y × x");
+    is-approx($cross.Length ** 2, $x.Length ** 2 * $y.Length ** 2 - ($x ⋅ $y) ** 2, 
               "|x × y|^2 = |x|^2 * |y|^2 - (x ⋅ y)^2");
 }
 
@@ -157,7 +157,7 @@ dies-ok( { $v5 cross $v6 }, "You can't do 5D cross products");
 {
     my $a = $v1;
     $a ×= $v2;
-    is_approx_vector($v1 × $v2, $a, "×= works");
+    is-approx-vector($v1 × $v2, $a, "×= works");
 }
 
 # Math::UnitVector tests
@@ -170,7 +170,7 @@ dies-ok( { $v5 cross $v6 }, "You can't do 5D cross products");
     my Math::UnitVector $a = Math::Vector.new(1, 0, 0);
     my $b = $a;
     $b += $v2;
-    is_approx_vector($a + $v2, $b, "+= works on Math::UnitVector");
+    is-approx-vector($a + $v2, $b, "+= works on Math::UnitVector");
 }
 
 {

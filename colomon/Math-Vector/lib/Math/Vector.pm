@@ -1,6 +1,6 @@
 use v6;
 
-use Test;  # so we can define is_approx_vector
+use Test;  # so we can define is-approx-vector
 
 class Math::Vector
 {
@@ -146,7 +146,7 @@ class Math::Vector
         $a.Length;
     }
 
-    sub is_approx_vector(Math::Vector $a, Math::Vector $b, $desc) is export
+    sub is-approx-vector(Math::Vector $a, Math::Vector $b, $desc) is export
     {
         ok(($a - $b).Length < 0.00001, $desc);
     }

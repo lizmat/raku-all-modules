@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/Math-Vector.git
 	branch = master
-	commit = a31eed0671406b9953868f8db25cbef6db891320
-	parent = 6b632e675a08e86384a440180ece1822db9ea69e
-	cmdver = 0.2.2
+	commit = 9c7a8ba3d371ab851a59912c1e6104d5390f4e29
+	parent = 2ba7315d1753ff090a9793222523b5e5345109e1
+	cmdver = 0.4.0
