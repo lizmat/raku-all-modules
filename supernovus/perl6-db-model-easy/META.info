@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "DB::Model::Easy",
   "version"     : "*",
   "description" : "Build database models in Perl 6, easily.",
