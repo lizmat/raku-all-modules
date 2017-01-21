@@ -54,7 +54,7 @@ diag "Testing Workdate class, using $FILE_CAL_CORRECT";
 my Workdate $w_date = Workdate.new('2011-12-09', $calendar);
 
 ok (
-    $w_date.WHAT eq 'Workdate()',
+    $w_date.WHAT.^name eq 'Workdate()',
     'Type "Workdate" correct'
 );
 say $w_date.^attributes.list;
@@ -76,7 +76,7 @@ is( #--- Friday to Wednesday (Thursday is holiday)
 );
 is( #--- method workdays-to with one parameter
     $w_date.workdays-to( Date.new('2011-12-07') ), -1,
-    "Workdate class: workdays-to method" 
+    "Workdate class: workdays-to method"
 );
 is( #--- method networkdays with one parameter
     $w_date.networkdays( Date.new('2011-12-07') ), -2,
@@ -84,7 +84,7 @@ is( #--- method networkdays with one parameter
 );
 
 my $w_date2 = Workdate.new('2011-12-09');
-$calendar.clear; 
+$calendar.clear;
 is( #--- No holidays specified
     $w_date2.pred, Date.new('2011-12-08'),
     "Workdate class: 'Clear' calendar with no holidays"
@@ -95,3 +95,4 @@ is( #--- Friday to Monday, no holidays
     "Workdate class: Using default calendar with no holidays and default workweek"
 );
 
+# vim: ft=perl6

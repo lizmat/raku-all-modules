@@ -71,7 +71,7 @@ $calendar.read($FILE_CAL_CORRECT);
 ok(
     $calendar.file eq $FILE_CAL_CORRECT,
     "Reading calendar file"
-); 
+);
 is(
     $calendar.holidays.elems, 13,
     "Counting well defined holidays"
@@ -186,3 +186,4 @@ is(
     "Calendar has fallen back to the default weekdays"
 );
 
+# vim: ft=perl6

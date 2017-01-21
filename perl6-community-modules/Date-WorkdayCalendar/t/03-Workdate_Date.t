@@ -8,10 +8,10 @@ my $FILE_CAL_CORRECT = 't/res/CORRECT.cal';
 diag "Testing the creation of a Workdate from a Date";
 my Date $d .= new('2000-06-20');
 my Workdate $wd .= new($d);
-ok(    
+ok(
     ($wd.year == $d.year) & ($wd.month == $d.month) & ($wd.day == $d.day),
     'Workdate based on a Date'
-);    
+);
 
 diag "Testing Date and Workdate operators";
 my $d1  = Date.new('2011-09-15'); #Thursday
@@ -45,3 +45,5 @@ is( #--- Minus operator; two Workdates
     ($wd2 - $wd1), 2,
     "Workdate - Workdate"
 );
+
+# vim: ft=perl6

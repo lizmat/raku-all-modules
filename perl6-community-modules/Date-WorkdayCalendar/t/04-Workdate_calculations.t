@@ -10,9 +10,9 @@ diag "Testing workdays-to v/s net-workdays, using $FILE_CAL_CORRECT";
 my WorkdayCalendar $calendar .= new($FILE_CAL_CORRECT);
 
 #--- These are the expected values for the functions
-#                    Spreadsheet's 
-#                     NETWORKDAYS  workdays-to   networkdays	
-#                  Left-Right R-L    L-R R-L	   L-R R-L   
+#                    Spreadsheet's
+#                     NETWORKDAYS  workdays-to   networkdays
+#                  Left-Right R-L    L-R R-L	   L-R R-L
 my $test_list =
 '2011-07-07 2011-07-14   6  -6        5  -5         6  -6
 2011-07-07 2011-07-07    1   1        0   0         1   1
@@ -59,3 +59,5 @@ for (@tests) -> $line {
         "Workdate calculations : networkdays($d2, $d1) == $NW2"
     );
 };
+
+# vim: ft=perl6
