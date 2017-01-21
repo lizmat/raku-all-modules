@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-psgi.git
 	branch = master
-	commit = 402cd1cb06c4803b12b2623f738e717187d22aff
-	parent = b5a887a0dd73eb15514dad0d9e69ced45d279bff
-	cmdver = 0.2.3
+	commit = b0994eec13af608082b98d98653f26b720a4b5c3
+	parent = 4272857b0c1750ce717a8fc983481c76a3cbffac
+	cmdver = 0.4.0
