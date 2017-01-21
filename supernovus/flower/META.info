@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "Flower",
   "version"     : "*",
   "description" : "XML Application Languages, including TAL.",
