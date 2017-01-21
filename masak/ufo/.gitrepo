@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/ufo.git
 	branch = master
-	commit = 425ba45fed64644788fdf6b0997ef1c4a807e3b6
-	parent = 2589a8fa3c17288a7642aa483e90045d35df0a23
-	cmdver = 0.2.2
+	commit = 76a0682dc342e6e52242c9901daba7d3fc338024
+	parent = 3b417e3e640dce928b40370ae39db975370a0101
+	cmdver = 0.4.0
