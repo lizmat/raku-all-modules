@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "Method::Modifiers",
   "version"     : "*",
   "description" : "Adds before, after and around functions to make wrapping method calls easier.",

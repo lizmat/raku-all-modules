@@ -1,6 +1,6 @@
 use Method::Modifiers;
 
-use MONKEY_TYPING;
+use MONKEY-TYPING;
 
 augment class Any
 {

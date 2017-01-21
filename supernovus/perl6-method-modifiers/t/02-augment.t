@@ -9,7 +9,7 @@ use Method::Modifiers::Augment;
 
 plan 10;
 
-skip_rest('currently not working in rakudo due to rakudobug');
+skip-rest('currently not working in rakudo due to rakudobug');
 exit;
 
 my $called-chars = False;
