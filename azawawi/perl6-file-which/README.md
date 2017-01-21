@@ -29,19 +29,24 @@ say whence('perl6');
 
 ## Installation
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
+To install it using zef (a module management tool bundled with Rakudo Star):
 
 ```
-$ panda update
-$ panda install File::Which
+$ zef install File::Which
 ```
 
 ## Testing
 
-To run tests:
-
+- To run tests:
 ```
-$ prove -e "perl6 -Ilib"
+$ prove -ve "perl6 -Ilib"
+```
+
+- To run all tests including author tests (Please make sure
+[Test::Meta](https://github.com/jonathanstowe/Test-META) is installed):
+$ zef install Test::META
+```
+$ TEST_AUTHOR=1 prove -ve "perl6 -Ilib"
 ```
 
 ## Author
