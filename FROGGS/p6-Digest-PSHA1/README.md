@@ -10,7 +10,7 @@ http://schemas.xmlsoap.org/ws/2005/02/trust/CK/PSHA1.
 
 Thanks to Leandro Boffi (http://leandrob.com/) for the nodejs version and a great blog.
 
-## Example Usage ##
+## Usage ##
 
 ```perl6
     use Digest::PSHA1;

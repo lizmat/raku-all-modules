@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Digest::PSHA1",
     "version" : "1.0.0",
     "author" : "github:FROGGS",
