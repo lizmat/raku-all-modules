@@ -41,6 +41,12 @@ sub color (Str $what) is export {
 	for @a -> $attr {
 		if %attrs{$attr}:exists {
 			@res.push: %attrs{$attr}
+		} elsif $attr ~~ /^ ('on_'?) (\d+ [ ',' \d+ ',' \d+ ]?) $/ {
+			@res.push: ~$0 ?? '48' !! '38';
+			my @nums = $1.split(',');
+			die("Invalid color value $_") unless +$_ <= 255 for @nums;
+			@res.push: @nums == 3 ?? '2' !! '5';
+			@res.append: @nums;
 		} else {
 			die("Invalid attribute name '$attr'")
 		}
@@ -55,6 +61,8 @@ sub colored (Str $what, Str $how) is export {
 sub colorvalid (*@a) is export {
 	for @a -> $el {
 		return False unless %attrs{$el}:exists
+			|| $el ~~ /^ 'on_'? (\d+ [ ',' \d+ ',' \d+ ]?) $/
+				&& all($0.split(',')) <= 255;
 	}
 	return True;
 }
@@ -70,9 +78,17 @@ sub colorstrip (*@a) is export {
 sub uncolor (Str $what) is export {
 	my @res;
 	my @list = $what.comb(/\d+/);
-	for @list -> $elem {
-		if %attrs.reverse{$elem}:exists {
-			@res.push: %attrs.reverse{$elem}
+	my %inv = %attrs.invert;
+	while @list {
+		my $elem = @list.shift;
+		if %inv{$elem}:exists {
+			@res.push: %inv{$elem}
+		} elsif $elem eq '38'|'48' {
+			my $type = @list.shift;
+			die("Bad extended color type $type") unless $type eq '5'|'2';
+			my @nums = @list.splice(0, $type eq '5' ?? 1 !! 3);
+			die("Invalid color value $_") unless +$_ <= 255 for @nums;
+			@res.push: ('on_' if $elem eq '48') ~ @nums.join(',')
 		} else {
 			die("Bad escape sequence: {'\e[' ~ $elem ~ 'm'}")
 		}
@@ -111,14 +127,21 @@ as specified. The following color names are recognised:
 	magenta cyan white default on_black on_red on_green on_yellow
 	on_blue on_magenta on_cyan on_white on_default
 
-The on_* family of colors correspond to the background colors.
+The on_* family of colors correspond to the background colors.	One or
+three numeric color values in the range 0..255 may also be specified:
+
+	N	  # 256-color map: 8 default + 8 bright + 216 rgb cube + 24 gray
+	on_N	  # Same, but background
+
+	N,N,N	  # 24-bit r,g,b foreground color
+	on_N,N,N  # 24-bit r,g,b background color
 
 =head2 C<colored()>
 
 C<colored()> is similar to C<color()>. It takes two Str arguments,
 where the first is the string to be colored, and the second is the
-colors to be used. The C<reset> sequence is automagically placed after
-the string.
+(space-separated) colors to be used. The C<reset> sequence is
+automagically placed after the string.
 
 =head2 C<colorvalid()>
 
@@ -128,8 +151,8 @@ false otherwise.
 
 =head2 C<colorstrip()>
 
-C<colorstrip>, given a string, removes all the escape sequences
-in it, leaving the plain text without effects.
+C<colorstrip>, given a string, removes all the color escape sequences
+in it, leaving the plain text without color effects.
 
 =head2 C<uncolor()>
 
