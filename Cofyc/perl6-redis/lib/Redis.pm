@@ -102,7 +102,7 @@ method new(Str $server?, Str :$encoding?, Bool :$decode_response?) {
     if $decode_response.defined {
         %config<decode_response> = $decode_response;
     }
-    my $obj = self.bless(*, |%config);
+    my $obj = self.bless(|%config);
     $obj.reconnect;
     return $obj;
 }
@@ -187,11 +187,11 @@ method !read_response returns Any {
 }
 
 method !decode_response($response) {
-    if $response.WHAT === Buf[uint8] {
+    if $response~~ Buf[uint8] {
         return $response.decode(self.encoding);
-    } elsif $response.WHAT === Array {
+    } elsif $response ~~ Array {
         return $response.map( { self!decode_response($_) } ).Array;
-    } elsif $response.WHAT === Hash {
+    } elsif $response ~~ Hash {
         my %h = Hash.new;
         for $response.pairs {
             %h{.key} = self!decode_response(.value);
@@ -671,7 +671,7 @@ method zadd(Str $key, *@args, *%named) returns Int {
     my @newargs = Array.new;
     @args = @args.reverse;
     for @args {
-        if $_.WHAT === Pair {
+        if $_ ~~ Pair {
             @newargs.push(.value);
             @newargs.push(.key);
         } else {

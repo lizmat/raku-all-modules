@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Redis",
     "version" : "0.1.0",
     "description" : "A Perl6 binding for Redis",
