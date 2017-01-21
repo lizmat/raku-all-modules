@@ -1,3 +1,5 @@
+use v6;
+use nqp;
 
 sub EXPORT(*@handlers) {
     my %handlers = @handlers.map({$_.name => $_});
