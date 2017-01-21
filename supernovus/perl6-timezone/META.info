@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "DateTime::TimeZone",
   "version"     : "*",
   "description" : "A library for working with Time Zones in Perl 6",
