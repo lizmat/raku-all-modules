@@ -29,6 +29,17 @@
 #define SC_INDICATOR_CONVERTED INDIC_IME+2
 #define SC_INDICATOR_UNKNOWN INDIC_IME_MAX
 
+// Q_WS_MAC and Q_WS_X11 aren't defined in Qt5
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#ifdef Q_OS_MAC
+#define Q_WS_MAC 1
+#endif
+
+#if !defined(Q_OS_MAC) && !defined(Q_OS_WIN)
+#define Q_WS_X11 1
+#endif
+#endif // QT_VERSION >= 5.0.0
+
 #ifdef SCI_NAMESPACE
 using namespace Scintilla;
 #endif
@@ -289,9 +300,7 @@ void ScintillaEditBase::mousePressEvent(QMouseEvent *event)
 		return;
 	}
 
-	bool button = event->button() == Qt::LeftButton;
-
-	if (button) {
+	if (event->button() == Qt::LeftButton) {
 		bool shift = QApplication::keyboardModifiers() & Qt::ShiftModifier;
 		bool ctrl  = QApplication::keyboardModifiers() & Qt::ControlModifier;
 #ifdef Q_WS_X11
@@ -303,6 +312,14 @@ void ScintillaEditBase::mousePressEvent(QMouseEvent *event)
 #endif
 
 		sqt->ButtonDown(pos, time.elapsed(), shift, ctrl, alt);
+	}
+
+	if (event->button() == Qt::RightButton) {
+		bool shift = QApplication::keyboardModifiers() & Qt::ShiftModifier;
+		bool ctrl  = QApplication::keyboardModifiers() & Qt::ControlModifier;
+		bool alt   = QApplication::keyboardModifiers() & Qt::AltModifier;
+
+		sqt->RightButtonDownWithModifiers(pos, time.elapsed(), ScintillaQt::ModifierFlags(shift, ctrl, alt));
 	}
 }
 
@@ -350,9 +367,12 @@ void ScintillaEditBase::contextMenuEvent(QContextMenuEvent *event)
 {
 	Point pos = PointFromQPoint(event->globalPos());
 	Point pt = PointFromQPoint(event->pos());
-	if (!sqt->PointInSelection(pt))
+	if (!sqt->PointInSelection(pt)) {
 		sqt->SetEmptySelection(sqt->PositionFromLocation(pt));
-	sqt->ContextMenu(pos);
+	}
+	if (sqt->ShouldDisplayPopup(pt)) {
+		sqt->ContextMenu(pos);
+	}
 }
 
 void ScintillaEditBase::dragEnterEvent(QDragEnterEvent *event)

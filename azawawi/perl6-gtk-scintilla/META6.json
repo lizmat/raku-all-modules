@@ -1,10 +1,12 @@
 {
     "name"          : "GTK::Scintilla",
-    "version"       : "0.0.1",
+    "version"       : "0.0.5",
     "perl"          : "6.c",
     "description"   : "GTK Scintilla widget for source code editing",
-    "depends"       : [ "GTK::Simple" ],
-    "build-depends" : [ "panda" ],
+    "test-depends"  : [
+        "GTK::Simple",
+        "Test"
+    ],
     "provides"      : {
         "GTK::Scintilla"         : "lib/GTK/Scintilla.pm6",
         "GTK::Scintilla::Raw"    : "lib/GTK/Scintilla/Raw.pm6",

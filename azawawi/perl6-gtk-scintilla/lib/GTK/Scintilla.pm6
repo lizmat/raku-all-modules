@@ -1,27 +1,21 @@
 
 use v6;
 
-unit module GTK::Scintilla;
+unit class GTK::Scintilla;
 
-# Scintilla.h
-constant SCI_INSERTTEXT is export    = 2003;
-constant SCI_STYLECLEARALL is export = 2050;
-constant SCI_STYLESETFORE is export  = 2051;
-constant SCI_STYLESETBOLD is export  = 2053;
-constant SCI_GETTEXTLENGTH is export = 2183;
-constant SCI_ZOOMIN is export        = 2333;
-constant SCI_ZOOMOUT is export       = 2334;
-constant SCI_GETEDGECOLUMN is export = 2360;
-constant SCI_SETEDGECOLUMN is export = 2361;
-constant SCI_GETEDGEMODE is export   = 2362;
-constant SCI_SETEDGEMODE is export   = 2363;
-constant SCI_GETEDGECOLOUR is export = 2364;
-constant SCI_SETEDGECOLOUR is export = 2365;
-constant SCI_SETZOOM is export       = 2373;
-constant SCI_GETZOOM is export       = 2374;
-constant SCI_SETLEXER is export      = 4001;
-constant SCI_SETKEYWORDS is export   = 4005;
+enum CursorType is export (
+    Normal       => -1,
+    Arrow        => 2,
+    Wait         => 4,
+    ReverseArrow => 7
+);
 
+enum EdgeMode is export (
+    None         => 0,
+    Line         => 1,
+    Background   => 2,
+    MultiLine    => 3
+);
 
 # SciLexer.h
 constant SCLEX_PERL is export = 6;
@@ -72,6 +66,11 @@ constant SCE_PL_STRING_QQ_VAR is export = 64;
 constant SCE_PL_STRING_QX_VAR is export = 65;
 constant SCE_PL_STRING_QR_VAR is export = 66;
 
-constant EDGE_NONE is export       = 0;
-constant EDGE_LINE is export       = 1;
-constant EDGE_BACKGROUND is export = 2;
+method version {
+    return {
+        major  => 3,
+        minor  => 7,
+        patch  => 2,
+        string => "3.7.2"
+    }
+}

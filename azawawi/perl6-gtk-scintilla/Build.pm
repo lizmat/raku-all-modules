@@ -1,16 +1,18 @@
 
 use v6;
 
-use Panda::Common;
-use Panda::Builder;
+unit class Build;
 
+method build($work-dir) {
+    my $make-file-dir = "$work-dir/src";
+    my $dest-dir = "$work-dir/resources";
+    $dest-dir.IO.mkdir;
 
-class Build is Panda::Builder {
-    method build($workdir) {
-        my $makefiledir = "$workdir/src";
-        my $destdir = "$workdir/resources";
-        $destdir.IO.mkdir;
+    shell("cd $make-file-dir && make clean && make");
+}
 
-        shell("cd $makefiledir && make");
-    }
+# only needed for older versions of panda
+method isa($what) {
+    return True if $what.^name eq 'Panda::Builder';
+    callsame;
 }

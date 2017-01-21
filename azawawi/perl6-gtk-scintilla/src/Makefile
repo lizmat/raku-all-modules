@@ -31,3 +31,4 @@ $(LIB_SO): widget.o $(LEXEROBJS) $(LIB_SCINTILLA)
 clean:
 	rm -f *.o
 	rm -rf ../resources
+	(cd scintilla/gtk && GTK3=1 $(MAKE) clean)
