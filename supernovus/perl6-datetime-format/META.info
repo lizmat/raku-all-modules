@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "DateTime::Format",
   "version"     : "*",
   "description" : "strftime and other DateTime formatting libraries",
