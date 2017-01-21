@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Sum",
     "version" : "v0.1.0",
     "description" : "Perl6 modules for computing hashes and checksums.",
