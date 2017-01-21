@@ -1,0 +1,15 @@
+{	"perl" : "6.c",
+    "name" : "Mofixes",
+    "version" : "0.2.3",
+    "description" : "A collection of ready to use (whatever)fix for Perl 6",
+    "authors" : "faraco",
+    "source-url" : "git://github.com/faraco/Mofixes.git",
+	"test-depends" : [
+		"Test::META"
+	],
+    "depends" : [ ],
+    "provides" : {
+      "Mofixes" : "lib/Mofixes.pm6"
+    }
+}
+

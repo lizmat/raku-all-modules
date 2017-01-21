@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/faraco/Mofixes.git
+	branch = master
+	commit = dee44b9b7072a200596a3cd73ebc2877955c51c4
+	parent = a01aa25782264d4562d62224141df85e1cc7ba44
+	cmdver = 0.4.0
