@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moritz/Math-RungeKutta.git
 	branch = master
-	commit = dce668b53e446ef2cedd7e37242501a9b62b800f
-	parent = f2a0c7ee168be7eca1f71a9f4ea26ee2c81ba419
-	cmdver = 0.2.2
+	commit = fe5e1e867c13224628e893d0416f45ba278aa603
+	parent = bde160a8fa9cdb9e59fd1d6137a8fe24aa6d9fbb
+	cmdver = 0.4.0
