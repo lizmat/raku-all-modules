@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Takadonet/Algorithm--Diff.git
 	branch = master
-	commit = ccd948df57d38be2545f4a2bdc219f9942abdae4
-	parent = b726b0a0511c370a85471cda81ab02c0509aad81
-	cmdver = 0.2.3
+	commit = 764fa05515f322990fe7d2fd6253d3a9f90a3738
+	parent = ac837c6e68ced324d71d66e1bc6df96e897ff7a5
+	cmdver = 0.4.0

@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Algorithm::Diff",
     "version" : "*",
     "description" : "Contains several interfaces for which computing the differences between two lists.",
