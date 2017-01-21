@@ -43,9 +43,9 @@ class Test::Mock::Log {
 };
 
 module Test::Mock {
-    sub mocked($type, :%returning = {}) is export {
+    sub mocked($type, :%returning, :%computing, :%overriding) is export {
         # Generate a subclass that logs each method call.
-        my %already-seen = :new;
+        my %already-seen;
         my $mocker := Metamodel::ClassHOW.new_type();
         $mocker.HOW.add_parent($mocker, $type.WHAT);
         for $type.^mro() -> $p {
@@ -54,9 +54,18 @@ module Test::Mock {
                 unless %already-seen{$m.name} {
                     $mocker.HOW.add_method($mocker, $m.name, method (|c) {
                         self.'!mock-log'().log-method-call($m.name, c);
-                        %returning{$m.name} ~~ Iterable ??
-                            @(%returning{$m.name}) !!
+                        if %overriding{$m.name} -> $override {
+                            $override(|c)
+                        }
+                        elsif %computing{$m.name} -> $compute {
+                            $compute()
+                        }
+                        elsif %returning{$m.name} ~~ Iterable {
+                            @(%returning{$m.name})
+                        }
+                        else {
                             %returning{$m.name}
+                        }
                     });
                     %already-seen{$m.name} = True;
                 }
@@ -67,9 +76,10 @@ module Test::Mock {
         my $log := Test::Mock::Log.new();
         $mocker.HOW.add_method($mocker, '!mock-log', method { $log });
 
-        # Return a mock object, setting the logger.
+        # Return a mock object; use use CREATE to bypass construction logic
+        # of the real object, since we won't use any of its state anyway
         my $mocked = $mocker.HOW.compose($mocker);
-        $mocked.new()
+        $mocked.CREATE
     }
 
     sub check-mock($mock, *@checker) is export {

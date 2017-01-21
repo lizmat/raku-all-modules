@@ -1,4 +1,4 @@
-# Synopsis
+# Synopsis [![Build Status](https://travis-ci.org/jnthn/test-mock.svg?branch=master)](https://travis-ci.org/jnthn/test-mock)
 
     use Test;
     use Test::Mock;
@@ -198,6 +198,27 @@ testing any of the actual real code. Of course, being able to do this easily
 somewhat depends on good de-coupled code design, where objects are given
 instances of other objects to work on rather than directly instantiating
 objects of other classes.
+
+Sometimes, it would be nice to fake an exception or do some other computation
+rather than return a literal value. For that, use `computing` instead of using
+`returning`. Our previous example would look like this:
+
+    my $store = mocked(YakStore, computing => {
+        get-all-yaks => { Yak.new(:!shaved), Yak.new(:shaved), Yak.new(:!shaved) }
+    });
+
+However, unlike with `returning`, it's possible to instead do:
+
+    my $store = mocked(YakStore, computing => {
+        get-all-yaks => { die "Could not connect to yak-db" }
+    });
+
+Occasionally, it is also desirable to have access to the arguments passed to
+method. In this case, use `overriding`:
+
+    my $shaver = mocked(Shaver, overriding => {
+        shave => -> $yak { die 'Already shaven' if $yak.shaved }
+    });
 
 Feature requests, bug reports and patches on this module are welcome; use
 the GitHub issues tracker.
