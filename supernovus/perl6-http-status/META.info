@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "HTTP::Status",
   "version"     : "*",
   "description" : "Get the text message associated with an HTTP status code",
