@@ -14,7 +14,7 @@ has Str $!dll;
 
 my @to-delete;
 
-method postcircumfix:<( )>(|args) {
+method CALL-ME(|args) {
     unless $!setup {
         $!setup      = 1;
         my $c_line;
