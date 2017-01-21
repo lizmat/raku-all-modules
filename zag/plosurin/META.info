@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Plosurin",
     "version"     : "0.02",
     "description" : "Perl 6 implementation of Closure Templates",

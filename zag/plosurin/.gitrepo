@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zag/plosurin.git
 	branch = master
-	commit = 8c55c5c43e28d4322a0a365c3aee18a053222f64
-	parent = f14f21e5dcc6b0c83bb4cfd0018ef9e316ec2607
-	cmdver = 0.2.0
+	commit = c14992a233e5e2e681346d2f86b115d995c3160c
+	parent = f5a0335a650f25f3619bde2f9f1b9b1c4b7d4292
+	cmdver = 0.4.0
