@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Acme::Meow",
     "version"     : "*",
     "description" : "The kitty you always wanted, now in Perl 6",

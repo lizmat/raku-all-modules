@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/perl6-Acme-Meow.git
 	branch = master
-	commit = 35286b14447d22516fbf68767c4d7e18b7396971
-	parent = 1938f68af763f2738226a9a1c05e1cf8e2ac216b
-	cmdver = 0.2.3
+	commit = d1ade6b221212ba18996d1dc3a7d4be0b0042aad
+	parent = 6f8eb654cba11f1c2a09c8f57987ab737a296030
+	cmdver = 0.4.0
