@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "CGI::Application",
     "version"     : "*",
     "description" : "incomplete Perl 6 port of the Perl 5 CGI::Application module",

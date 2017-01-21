@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moritz/CGI-Application.git
 	branch = master
-	commit = 59e1060999c70a28cd40cde0a77a7e55d53de3e4
-	parent = f04480e444efe67bef0566b26feddfcdce2c2361
-	cmdver = 0.2.3
+	commit = 7d447d5a9a3bfa5dcdf395f0233338edfbced96e
+	parent = 526eb9885bf916eaceae431d87e50ceef3ef64e1
+	cmdver = 0.4.0
