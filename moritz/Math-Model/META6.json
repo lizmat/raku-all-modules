@@ -1,0 +1,10 @@
+{
+    "name"        : "Math::Model",
+    "version"     : "*",
+    "description" : "Automagic integrator for models (first order ODEs)",
+    "provides"    : {
+        "Math::Model" : "lib/Math/Model.pm"
+    },
+    "depends"     : [ "Math::RungeKutta", "SVG", "SVG::Plot" ],
+    "source-url"  : "git://github.com/moritz/Math-Model.git"
+}
