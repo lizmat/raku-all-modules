@@ -1,4 +1,5 @@
 {
+    "perl"      : "6.*",
     "name"      : "bamboo",
     "version"   : "0.0.3",
     "author"   : "github:sergot",
