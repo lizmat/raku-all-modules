@@ -66,5 +66,5 @@ ok($w3c.format(DateTime.new('2012-04-05T06:07:08+1234')) eq '2012-04-05T06:07:08
 ok($w3c.format(DateTime.new('2012-04-05T06:07:08-1234')) eq '2012-04-05T06:07:08-12:34');
 ok($w3c.format(DateTime.new('2012-04-05T06:07:08+0000')) eq '2012-04-05T06:07:08Z');
 
-done;
+done-testing;
 
