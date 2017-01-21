@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Algorithm::Soundex",
     "version"     : "*",
     "description" : "Soundex Algorithm in Perl 6",
