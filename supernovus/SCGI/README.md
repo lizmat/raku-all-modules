@@ -45,7 +45,7 @@ or using a raw HTTP output instead of PSGI. Here's an example doing both:
 ```perl
   use SCGI;
 
-  my $scgi = SCGI.new( :port(8118), :!PSGI );
+  my $scgi = SCGI.new( :port(8118), :!PSGI, :!P6SGI );
   while (my $connection = $scgi.accept())
   {
     my $request = $connection.request;

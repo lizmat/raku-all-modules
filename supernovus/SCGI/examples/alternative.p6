@@ -6,7 +6,7 @@
 ###############################################################################
 use SCGI;
 
-my $scgi = SCGI.new( :port(8118), :!PSGI );
+my $scgi = SCGI.new( :port(8118), :!PSGI, :!P6SGI );
 
 say "Starting raw SCGI server.";
 

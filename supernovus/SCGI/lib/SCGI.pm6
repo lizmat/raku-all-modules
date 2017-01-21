@@ -17,6 +17,8 @@ has $.P6SGI = True;   ## Include default P6SGI Headers.
 has $.debug  = False; ## Set to true to debug stuff.
 has $.strict = True;  ## If set to false, don't ensure proper SCGI.
 
+has $.multithread = False; ## Set to true for asynchronous concurrent requests.
+
 method connect (:$port=$.port, :$addr=$.addr)
 {
   $!socket = IO::Socket::INET.new(
@@ -46,7 +48,7 @@ method accept ()
   SCGI::Connection.new(:socket($connection), :parent(self));
 }
 
-method handle (&closure) 
+method handle (&closure)
 {
   if ($.debug) {
     if $!socket
@@ -61,16 +63,36 @@ method handle (&closure)
     }
   }
   $*ERR.say: "[{time}] SCGI is ready and waiting ($!addr:$!port)";
-  while (my $connection = self.accept) 
+  loop
   {
+    my $connection = self.accept or last;
     if ($.debug) { $*ERR.say: "Doing the loop"; }
     my $request = $connection.request;
     if $request.success {
       my %env = $request.env;
-      my $return = closure(%env);
-      $connection.send($return);
+      if $!multithread {
+        my $s = Supplier.new;
+
+        start {
+          $s.emit: closure(%env);
+          $s.done;
+        };
+
+        $s.Supply.tap: -> $return {
+          $connection.send: $return;
+          $connection.close;
+        }
+
+      } else {
+        my $return = closure(%env);
+        $connection.send: $return;
+        $connection.close;
+      }
     }
-    $connection.close;
+    else
+    {
+      $connection.close;
+    }
   }
 }
 

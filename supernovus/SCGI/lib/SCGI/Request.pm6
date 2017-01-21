@@ -52,7 +52,8 @@ method parse ()
     populate-psgi-env(%.env, :input($.input), :errors($.connection.err), 
         :psgi-classic($.connection.parent.PSGI), 
         :p6sgi($.connection.parent.P6SGI),
-        :url-scheme($scheme)
+        :url-scheme($scheme),
+        :multithread($.connection.parent.multithread)
     );
   }
 
