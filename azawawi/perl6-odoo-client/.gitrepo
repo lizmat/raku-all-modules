@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/perl6-odoo-client.git
+	branch = master
+	commit = a67840b261c525752c810e3a6eb87b85d67d7e0c
+	parent = ee0d3b17b98932d86b1268516a01adef110adf94
+	cmdver = 0.4.0
