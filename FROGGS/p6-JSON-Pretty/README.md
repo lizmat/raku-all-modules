@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/FROGGS/p6-JSON-Pretty.svg?branch=master)](https://travis-ci.org/FROGGS/p6-JSON-Pretty)
+
 A simple Perl 6 module for serializing and deserializing JSON.
 This is actually a fork of JSON::Tiny [1], with the difference that produced
 JSON is indented. Its goal is to be readable especially for debugging
