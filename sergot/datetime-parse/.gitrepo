@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sergot/datetime-parse.git
 	branch = master
-	commit = 54f84565ada9a313ed71c8f6db994f8c74d96b72
-	parent = 725a432b8ea99d36ce42ebeba5e11dad586fcaff
-	cmdver = 0.2.1
+	commit = 9f91cbd66db714d1d33ae997a0124736bfb253cd
+	parent = 92c2674ffc9d37b5241b5f3766e8dc681d832635
+	cmdver = 0.4.0

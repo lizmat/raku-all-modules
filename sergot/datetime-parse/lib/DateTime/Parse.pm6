@@ -1,4 +1,3 @@
-
 my class X::DateTime::CannotParse is Exception {
     has $.invalid-str;
     method message() { "Unable to parse {$!invalid-str}" }
@@ -7,7 +6,7 @@ my class X::DateTime::CannotParse is Exception {
 class DateTime::Parse is DateTime {
     grammar DateTime::Parse::Grammar {
         token TOP {
-            <dt=rfc1123-date> | <dt=rfc850-date> | <dt=asctime-date>
+            <dt=rfc1123-date> | <dt=rfc850-date> | <dt=rfc850-var-date> | <dt=asctime-date>
         }
 
         token rfc1123-date {
@@ -16,6 +15,10 @@ class DateTime::Parse is DateTime {
 
         token rfc850-date {
             <.weekday> ',' <.SP> <date=.date2> <.SP> <time> <.SP> 'GMT'
+        }
+
+        token rfc850-var-date {
+            <.wkday> ','? <.SP> <date=.date4> <.SP> <time> <.SP> 'GMT'
         }
 
         token asctime-date {
@@ -32,6 +35,10 @@ class DateTime::Parse is DateTime {
 
         token date3 { # e.g., Jun  2
             <month> <.SP> (<day=.D2> | <.SP> <day=.D1>)
+        }
+
+        token date4 { # e.g., 02-Jun-1982 
+            <day=.D2> '-' <month> '-' <year=.D4-year>
         }
 
         token time {
@@ -84,20 +91,32 @@ class DateTime::Parse is DateTime {
             make DateTime.new(|$<date>.made, |$<time>.made)
         }
 
+        method rfc850-var-date($/) {
+            make DateTime.new(|$<date>.made, |$<time>.made)
+        }
+
         method asctime-date($/) {
             make DateTime.new(:year($<year>.made), |$<date>.made, |$<time>.made)
         }
 
-        method date1($/) { # e.g., 02 Jun 1982
+        method !genericDate($/) {
             make { year => $<year>.made, month => $<month>.made, day => $<day>.made }
+        }
+
+        method date1($/) { # e.g., 02 Jun 1982
+            self!genericDate($/);
         }
 
         method date2($/) { # e.g., 02-Jun-82
-            make { year => $<year>.made, month => $<month>.made, day => $<day>.made }
+            self!genericDate($/);
         }
 
         method date3($/) { # e.g., Jun  2
-            make { year => $<year>.made, month => $<month>.made, day => $<day>.made }
+            self!genericDate($/);
+        }
+
+        method date4($/) { # e.g., 02-Jun-1982
+            self!genericDate($/);
         }
 
         method time($/) {

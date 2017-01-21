@@ -1,4 +1,5 @@
 {
+    "perl"      : "6.*",
     "name"      : "DateTime::Parse",
     "version"   : "0.0.1",
     "description"   : "DateTime parser",
