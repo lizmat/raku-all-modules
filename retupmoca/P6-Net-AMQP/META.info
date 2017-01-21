@@ -1,8 +1,8 @@
 {
-	 "perl" : "6.c",
+    "perl" : "6.c",
     "name" : "Net::AMQP",
-    "version" : "0.1.4",
-	 "authors" : [ "Andrew Egeler" ],
+    "version" : "0.1.5",
+    "authors" : [ "Andrew Egeler" ],
     "auth" : "github:retupmoca",
     "description" : "AMQP (RabbitMQ) 0.9.1 client",
     "depends" : [],

@@ -1,8 +1,8 @@
-use v6;
+use v6.c;
 
 use Test;
 
-plan 6;
+plan 10;
 
 use Net::AMQP;
 
@@ -31,7 +31,17 @@ is $queue-delete-promise.status, Kept, "Can delete queue";
 $queue-promise = $channel.declare-queue("");
 await $queue-promise;
 is $queue-promise.status, Kept, "Can declare new queue without an explicit name";
-ok $queue-promise.result.name, "and it has the auto-generated name now";
+ok $queue-promise.result.name, "and it has the auto-generated name now ({ $queue-promise.result.name })";
+
+$queue-delete-promise = $queue-promise.result.delete;
+await $queue-delete-promise;
+is $queue-delete-promise.status, Kept, "Can delete that queue";
+
+# declare-queue with no name
+lives-ok { $queue-promise = $channel.declare-queue() }, "declare-queue with no name";
+await $queue-promise;
+is $queue-promise.status, Kept, "Can declare new queue without an explicit name";
+ok $queue-promise.result.name, "and it has the auto-generated name now ({ $queue-promise.result.name })";
 
 $queue-delete-promise = $queue-promise.result.delete;
 await $queue-delete-promise;
@@ -41,3 +51,6 @@ my $chan-close-promise = $channel.close("", "");
 await $chan-close-promise;
 
 await $n.close("", "");
+
+
+# vim: expandtab shiftwidth=4 ft=perl6

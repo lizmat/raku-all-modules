@@ -131,7 +131,13 @@ method exchange($name = "") {
     return $p;
 }
 
-method declare-queue($name, :$passive, :$durable, :$exclusive, :$auto-delete, *%arguments) {
+proto method declare-queue(|c) { * }
+
+multi method declare-queue(*%args) {
+    self.declare-queue('', |%args);
+}
+
+multi method declare-queue($name, :$passive, :$durable, :$exclusive, :$auto-delete, *%arguments) {
     return Net::AMQP::Queue.new(:$name,
                                 :$passive,
                                 :$durable,

@@ -7,6 +7,8 @@ use Net::AMQP;
 
 plan 2;
 
+my $queue-name = "hello" ~ ((2**32 .. 2**64).pick + ($*PID +< 32) + time).base(16);
+
 {
     my $n = Net::AMQP.new;
     my $initial-promise = $n.connect;
@@ -30,7 +32,7 @@ my $p = start {
     my Str $ret = "FAIL";
     react {
         whenever $n.open-channel(1) -> $channel {
-            whenever $channel.declare-queue("hello") -> $q {
+            whenever $channel.declare-queue($queue-name) -> $q {
                 $q.consume;
                 $start-promise.keep([$n, $connection]);
                 whenever $q.message-supply.map( -> $v { $v.body.decode }) -> $message {
@@ -48,13 +50,13 @@ my ( $receiver, $receiver-promise) =  await $start-promise;
 my $n = Net::AMQP.new;
 my $con =  await $n.connect;
 my $channel = $n.open-channel(1).result;
-$channel.exchange.result.publish(routing-key => "hello", body => "Hello, World".encode);
+$channel.exchange.result.publish(routing-key => $queue-name, body => "Hello, World".encode);
 
 await $p;
 is $p.status, Kept, "receiver status Kept";
 is $p.result, "Hello, World", "and it got our message";
 
-my $queue = $channel.declare-queue("hello").result;
+my $queue = $channel.declare-queue($queue-name).result;
 await $queue.delete;
 
 await $n.close("", "");
