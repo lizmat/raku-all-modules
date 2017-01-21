@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/xfix/perl6-Text-Abbrev.git
 	branch = master
-	commit = 224079443a54e041941c6b9bc90ce9764a10e278
-	parent = 679f2c4824318e2cd602b036e8055e7eef3556ec
-	cmdver = 0.2.3
+	commit = 7c00ec9b76a5aacb9b7e63ec56a630e7f67fc48e
+	parent = 2b6ee6d3f46174a6b4b55272a1f4b00633c4ba27
+	cmdver = 0.4.0
