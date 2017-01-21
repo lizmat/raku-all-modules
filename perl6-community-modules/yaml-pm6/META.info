@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "YAML",
     "version"     : "*",
     "author"      : "Ingy döt Net <ingy@cpan.org>",
