@@ -1,4 +1,5 @@
 # Copyright (C) 2011, Kevin Polulak <kpolulak@gmail.com>.
+# Copyright (C) 2015-2016 The Perl6 Community.
 
 role Test::Builder::Test::Generic {
     has      $.passed;

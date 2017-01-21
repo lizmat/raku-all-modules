@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Test::Builder",
     "version"     : "0.0.1",
     "description" : "Flexible framework for building TAP test libraries",

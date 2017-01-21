@@ -1,4 +1,5 @@
 # Copyright (C) 2011, Kevin Polulak <kpolulak@gmail.com>.
+# Copyright (C) 2015-2016 The Perl6 Community.
 
 # TODO Define Test::Builder::Exception
 # TODO Replace die() with fail()
@@ -55,7 +56,7 @@ Returns a new C<Test::Builder> instance.
 
 The C<create()> method should only be used under certain circumstances. For
 instance, when testing C<Test::Builder>-based modules. In all other cases, it
-is recommened that you stick to using C<new()> instead.
+is recommended that you stick to using C<new()> instead.
 
 =back
 
@@ -76,13 +77,13 @@ to call C<done()> when all tests have been run.
 
 =item B<ok(Mu $test, Str $description)>
 
-Evalutes C<$test> in a boolean context. The test will pass if the expression
-evalutes to C<Bool::True> and fail otherwise.
+Evaluates C<$test> in a boolean context. The test will pass if the expression
+evaluates to C<Bool::True> and fail otherwise.
 
 =item B<nok(Mu $test, Str $description)>
 
-The antithesis of C<ok()>. Evalutes C<$test> in a boolean context. The test
-will pass if the expression evalutes to C<Bool::False> and fail otherwise.
+The antithesis of C<ok()>. Evaluates C<$test> in a boolean context. The test
+will pass if the expression evaluates to C<Bool::False> and fail otherwise.
 
 =back
 
@@ -119,6 +120,7 @@ also written by chromatic <chromatic@wgz.org> and Michael G. Schwern
 =head1 COPYRIGHT
 
 Copyright (C) 2011, Kevin Polulak <kpolulak@gmail.com>.
+Copyright (C) 2015-2016 The Perl6 Community.
 
 This program is distributed under the terms of the Artistic License 2.0.
 
@@ -140,7 +142,7 @@ class Test::Builder:auth<soh_cah_toa>:ver<0.0.1> {
     #= Stack containing results of each test
     has                              @!results;
 
-    #= Sets up number of tests to rune
+    #= Sets up number of tests to run
     has Test::Builder::Plan::Generic $!plan;
 
     #= Handles all output operations

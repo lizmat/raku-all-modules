@@ -1,4 +1,5 @@
 # Copyright (C) 2011, Kevin Polulak <kpolulak@gmail.com>.
+# Copyright (C) 2015-2016 The Perl6 Community.
 
 =begin pod
 
@@ -73,10 +74,11 @@ also written by chromatic <chromatic@wgz.org> and Michael G. Schwern
 =head1 COPYRIGHT
 
 Copyright (C) 2011, Kevin Polulak <kpolulak@gmail.com>.
+Copyright (C) 2015-2016 The Perl6 Community.
 
 This program is distributed under the terms of the Artistic License 2.0.
 
-For further information, please see LICENSE or visit 
+For further information, please see LICENSE or visit
 <http://www.perlfoundation.org/attachment/legal/artistic-2_0.txt>.
 
 =end pod
