@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-SAML.git
 	branch = master
-	commit = 90a34112d901ca407940582b21c9b2700306de18
-	parent = b3ff3d285c4814c80176e3959cd19a21b030d1a0
-	cmdver = 0.2.1
+	commit = 0a790cccb29fcb5225565c42612cb9cca476c9e3
+	parent = 0e39b9012d08129666d5a9f74cd68d1137b54979
+	cmdver = 0.4.0
