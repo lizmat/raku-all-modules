@@ -1,4 +1,5 @@
 {
+    "perl": "6.*",
     "name": "Parse::Selenese",
     "version": "*",
     "description": "A Parser for Selenium Test Cases and Suites",
