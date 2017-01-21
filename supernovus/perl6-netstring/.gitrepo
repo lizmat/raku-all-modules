@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-netstring.git
 	branch = master
-	commit = 79add8b0384c48970e0d2383ab6180cc0d53bfc3
-	parent = 98dbf8529fc643deabb67595a64d62b36944ba57
-	cmdver = 0.2.3
+	commit = 2104c2e6b081feb704bf5f14ff8815bae478ceab
+	parent = 7ad16b6f1d4cb88f9c12625efafffad802dbbd63
+	cmdver = 0.4.0
