@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Config::INI",
     "version"     : "*",
     "description" : ".ini file parser and writer module for Perl 6",

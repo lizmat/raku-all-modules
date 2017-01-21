@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/perl6-Config-INI.git
 	branch = master
-	commit = 884314a338502c86aa8ceb2429f07bdf2a76eedd
-	parent = 5fa55445e18029f8b5b659aedd1d2aaa8e51fe81
-	cmdver = 0.2.3
+	commit = ba48437ddb5d63dbf06067d0a68d1fde8ff2d6df
+	parent = 7ec5ef125148d8bf53970145480c56d085b64c59
+	cmdver = 0.4.0
