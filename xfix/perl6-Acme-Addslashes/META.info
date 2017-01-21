@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Acme::Addslashes",
     "version"     : "0.1.2",
     "description" : "PHP security. Now in Perl 6.",
