@@ -1,7 +1,7 @@
 use Test;
 use Pod::To::HTML;
 
-plan 3;
+plan 4;
 
 my $r;
 
@@ -11,13 +11,13 @@ my $r;
 $r = pod2html $=pod[0];
 #say $r.perl;
 ok $r ~~ ms[[
-    '<table class="pod-table">' 
+    '<table class="pod-table">'
       '<tbody>'
-        '<tr>' 
+        '<tr>'
           '<td>' col1 '</td>'
           '<td>' col2 '</td>'
         '</tr>'
-      '</tbody>' 
+      '</tbody>'
     '</table>'
 ]];
 
@@ -31,17 +31,17 @@ $r = pod2html $=pod[1];
 ok $r ~~ ms[[
     '<table class="pod-table">'
       '<thead>'
-        '<tr>' 
+        '<tr>'
           '<th>' H1 '</th>'
           '<th>' H2 '</th>'
         '</tr>'
-      '</thead>' 
+      '</thead>'
       '<tbody>'
-        '<tr>' 
+        '<tr>'
           '<td>' col1 '</td>'
           '<td>' col2 '</td>'
         '</tr>'
-      '</tbody>' 
+      '</tbody>'
     '</table>'
 ]];
 
@@ -61,21 +61,48 @@ $r = pod2html $=pod[2];
 ok $r ~~ ms[[
     '<table class="pod-table">'
       '<thead>'
-        '<tr>' 
+        '<tr>'
           '<th>' H1 '</th>'
           '<th>' H2 '</th>'
         '</tr>'
-      '</thead>' 
+      '</thead>'
       '<tbody>'
-        '<tr>' 
+        '<tr>'
           '<td>' col1 '</td>'
           '<td>' col2 '</td>'
         '</tr>'
-        '<tr>' 
+        '<tr>'
           '<td>' col1 '</td>'
           '<td>' col2 '</td>'
         '</tr>'
-      '</tbody>' 
+      '</tbody>'
     '</table>'
 ]];
 
+=begin table :caption<Test Caption>
+
+  H1    H2
+  --    --
+  col1  col2
+
+=end table
+
+$r = pod2html $=pod[3];
+# say $r;
+ok $r ~~ ms[[
+    '<table class="pod-table">'
+      '<caption>' 'Test Caption' '</caption>'
+      '<thead>'
+        '<tr>'
+          '<th>' H1 '</th>'
+          '<th>' H2 '</th>'
+        '</tr>'
+      '</thead>'
+      '<tbody>'
+        '<tr>'
+          '<td>' col1 '</td>'
+          '<td>' col2 '</td>'
+        '</tr>'
+      '</tbody>'
+    '</table>'
+]];

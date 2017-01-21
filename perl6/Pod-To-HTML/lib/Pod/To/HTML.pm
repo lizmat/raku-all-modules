@@ -64,17 +64,17 @@ sub escape_id ($id) {
     $id.trim.subst(/\s+/, '_', :g).subst('"', '&quot;', :g);
 }
 
-multi visit(Nil, |a) { 
+multi visit(Nil, |a) {
     Debug { note colored("visit called for Nil", "bold") }
-} 
+}
 multi visit($root, :&pre, :&post, :&assemble = -> *% { Nil }) {
     Debug { note colored("visit called for ", "bold") ~ $root.perl }
     my ($pre, $post);
     $pre = pre($root) if defined &pre;
-    
+
     my @content = $root.?contents.map: {visit $_, :&pre, :&post, :&assemble};
     $post = post($root, :@content) if defined &post;
-    
+
     return assemble(:$pre, :$post, :@content, :node($root));
 }
 
@@ -141,14 +141,14 @@ sub assemble-list-items(:@content, :$node, *% ) {
 
 
 #| Converts a Pod tree to a HTML document.
-sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$footer = '', :$default-title, 
+sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$footer = '', :$default-title,
   :$css-url = '//design.perl6.org/perl.css', :$lang = 'en',
 ) is export returns Str {
     ($title, $subtitle, @meta, @indexes, @body, @footnotes) = ();
     #| Keep count of how many footnotes we've output.
     my Int $*done-notes = 0;
     &OUTER::url = &url;
-    
+
     @body.push: node2html($pod.map: { visit $_, :assemble(&assemble-list-items) });
 
     my $title_html = $title // $default-title // '';
@@ -181,7 +181,8 @@ sub pod2html($pod, :&url = -> $url { $url }, :$head = '', :$header = '', :$foote
           { do-metadata() // () }
           $head
         </head>
-        <body class="pod" id="___top">
+        <body class="pod">
+        <div id="___top"></div>
         $header
         END
 
@@ -289,7 +290,7 @@ multi sub node2html(Pod::Block::Declarator $node) {
         }
         default {
             Debug { note "I don't know what {$node.WHEREFORE.WHAT.perl} is. Assuming class..." };
-	    "<h1>"~ node2html([$node.WHEREFORE.perl, q{: }, $node.contents])~ "</h1>";            
+	    "<h1>"~ node2html([$node.WHEREFORE.perl, q{: }, $node.contents])~ "</h1>";
         }
     }
 }
@@ -383,8 +384,8 @@ multi sub node2html(Pod::Block::Table $node) {
     Debug { note colored("Table node2html called for ", "bold") ~ $node.gist };
     my @r = '<table class="pod-table">';
 
-    if $node.caption {
-        @r.push("<caption>{node2inline($node.caption)}</caption>");
+    if $node.config<caption> -> $c {
+        @r.push("<caption>{node2inline($c)}</caption>");
     }
 
     if $node.headers {
@@ -530,14 +531,14 @@ multi sub node2inline(Pod::FormattingCode $node) returns Str {
         when 'X' {
             multi sub recurse-until-str(Str:D $s){ $s }
             multi sub recurse-until-str(Pod::Block $n){ $n.contents>>.&recurse-until-str().join }
-            
+
             my $index-text = recurse-until-str($node).join;
             my @indices = $node.meta;
             my $index-name-attr = qq[index-entry{@indices ?? '-' !! ''}{@indices.join('-')}{$index-text ?? '-' !! ''}$index-text].subst('_', '__', :g).subst(' ', '_', :g).subst('%', '%25', :g).subst('#', '%23', :g);
-            
+
             my $text = node2inline($node.contents);
             %crossrefs{$_} = $text for @indices;
-            
+
             return qq[<a name="$index-name-attr"><span class="index-entry">$text\</span></a>] if $text;
             return qq[<a name="$index-name-attr"></a>];
         }

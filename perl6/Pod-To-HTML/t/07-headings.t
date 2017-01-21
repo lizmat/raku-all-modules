@@ -28,7 +28,7 @@ plan 3;
 
 my $html = pod2html $=pod;
 
-put $html;
+# put $html;
 
 ($html ~~ m:g/ ('2.2.2') /);
 
@@ -41,4 +41,3 @@ is so $0, True, 'link down to heading';
 ($html ~~ m:g/ ('name="index-entry-Heading"') /);
 
 is so ($0 || $1), True, 'no X<> anchors in ToC';
-
