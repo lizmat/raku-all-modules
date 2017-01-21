@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "DateTime::Utils",
   "version"     : "*",
   "description" : "A meta project for DateTime related libraries.",

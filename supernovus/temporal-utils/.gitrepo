@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/temporal-utils.git
 	branch = master
-	commit = d252041a07115b0a7e7d9998aa6cf6233bbda65b
-	parent = 22f90385718819db12dd057a74c6dee022b49a63
-	cmdver = 0.2.0
+	commit = 90d76bc350b13ad43a1614847a05e92c5dc6cfd9
+	parent = 5d71f965189fbd9a29abf235dbb6ff2f96cc8873
+	cmdver = 0.4.0
