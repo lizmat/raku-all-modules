@@ -148,7 +148,7 @@ method host {
 }
 
 method default-port {
-    URI::DefaultPort::scheme-port($.scheme)
+    URI::DefaultPort.scheme-port($.scheme)
 }
 method default_port { $.default-port() } # artifact form
 

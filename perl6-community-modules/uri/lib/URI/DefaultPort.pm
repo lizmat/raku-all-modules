@@ -3,7 +3,7 @@ use v6;
 # This logic seems to belong somewhere related to URI but not in the URI
 # module itself.
 
-unit package URI::DefaultPort;
+unit class URI::DefaultPort;
 
 my Int %default_port = (
     ftp     =>      21,
@@ -33,8 +33,8 @@ my Int %default_port = (
     git     =>      9418
 );
     
-our sub scheme-port(Str $scheme) {
-    return %default_port{$scheme};
+method scheme-port(Str $scheme) {
+    %default_port{$scheme};
 }
 
 # vim:ft=perl6
