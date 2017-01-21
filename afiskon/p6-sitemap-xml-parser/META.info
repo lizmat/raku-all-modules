@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Sitemap::XML::Parser",
     "version"     : "*",
     "description" : "Module for parsing sitemap.xml files",
