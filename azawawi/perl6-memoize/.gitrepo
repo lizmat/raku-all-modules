@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-memoize.git
 	branch = master
-	commit = e106e82d6ea2b8ad25f95848ca55085193626cd5
-	parent = 5d970b795907ebc1c70fc1c2bf5123d41c8f2346
-	cmdver = 0.2.3
+	commit = a6d570db6e408be976aac99e9747d0f5da8df13c
+	parent = 620b0cb736d79cb61035fafd9f3f038e98c4f4cc
+	cmdver = 0.4.0
