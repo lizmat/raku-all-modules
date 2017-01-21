@@ -1,6 +1,6 @@
-unit class GeoIP::City;
+unit class GeoIP::City:auth<github:bbkr>:ver<1.0.0>;
 
-use GeoIP;
+use GeoIP:auth<github:bbkr>:ver<1.0.0>;
 
 has GeoIP %!db;
 

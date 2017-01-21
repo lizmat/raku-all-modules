@@ -1,0 +1,13 @@
+{
+    "perl" : "6.c",
+    "name" : "GeoIP::City",
+    "version" : "1.0.0",
+    "description" : "MaxMind GeoIP City library interface.",
+    "authors" : [ "Paweł bbkr Pabian" ],
+    "provides" : {
+        "GeoIP" : "lib/GeoIP.pm",
+        "GeoIP::City" : "lib/GeoIP/City.pm"
+    },
+    "license" : "http://www.perlfoundation.org/artistic_license_2_0",
+    "source-url" : "git://github.com/bbkr/GeoIPerl6.git"
+}
