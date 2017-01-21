@@ -19,6 +19,28 @@ role Driver does DBDish::ErrorHandling {
     #method new() { nextsame; }
 }
 
+role TypeConverter does Associative {
+    has Callable %!Conversions{Mu:U} handles <AT-KEY EXISTS-KEY>;
+
+    # The role implements the conversion
+    method convert (::?CLASS:D: Str $datum, Mu:U $type) {
+        with %!Conversions{$type} -> &converter {
+	    &converter.signature.params.any ~~ .named
+		?? converter($datum, :$type)
+		!! converter($datum);
+        } else { # Common case
+            Str.can($type.^name) ?? $type($datum) !! $type.new($datum);
+        }
+    }
+    method STORE(::?CLASS:D: \to_store) {
+	for @(to_store) {
+	    when Callable { %!Conversions{$_.signature.returns} = $_ }
+	    when Pair { %!Conversions{::($_.key)} = $_.value }
+	}
+    }
+
+}
+
 =begin pod
 =head1 DESCRIPTION
 The DBDish module loads the generic code needed by every DBDish driver of the
@@ -58,6 +80,10 @@ The minimal declaration of a driver Foo typically start like:
 - See L<DBDish::Connection>
 
 - See L<DBDish::StatementHandle>
+
+=head2 DBDish::TypeConverter
+
+This role defines the API for dynamic handling of the types of a DB system
 
 =head1 SEE ALSO
 

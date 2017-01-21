@@ -5,7 +5,7 @@ unit class DBDish::Pg::Connection does DBDish::Connection;
 use DBDish::Pg::Native;
 need DBDish::Pg::StatementHandle;
 need DBDish::TestMock;
-constant SQLType = DBIish::SQLType;
+use DBIish::Common;
 
 has PGconn $!pg_conn is required handles <
     pg-notifies pg-socket pg-parameter-status
@@ -13,8 +13,15 @@ has PGconn $!pg_conn is required handles <
     pg-port pg-options quote>;
 has $.AutoCommit is rw = True;
 has $.in_transaction is rw = False;
+has %.Converter is DBDish::TypeConverter;
+has %.dynamic-types = %oid-to-type;
 
-submethod BUILD(:$!pg_conn, :$!parent!, :$!AutoCommit) { }
+submethod BUILD(:$!pg_conn, :$!parent!, :$!AutoCommit) {
+    %!Converter =
+       method (--> Bool) { self eq 't' },
+       method (--> DateTime) { DateTime.new(self.split(' ').join('T')) },
+       :Buf(&str-to-blob);
+}
 
 method prepare(Str $statement, *%args) {
     state $statement_postfix = 0;
