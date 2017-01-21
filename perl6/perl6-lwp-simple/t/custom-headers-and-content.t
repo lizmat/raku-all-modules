@@ -5,6 +5,12 @@ use LWP::Simple;
 
 plan 1;
 
+if %*ENV<NO_NETWORK_TESTING> {
+    diag "NO_NETWORK_TESTING was set";
+    skip-rest("NO_NETWORK_TESTING was set");
+    exit;
+}
+
 my $host    = 'http://froggs.de/cgi-bin/test/test.cgi';
 my %headers = ( 'Content-Type' => 'application/json' );
 my $content = '{"method":"echo","params":["Hello from Perl6"],"id":1}';

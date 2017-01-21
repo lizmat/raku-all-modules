@@ -9,6 +9,12 @@ use LWP::Simple;
 
 plan 25;
 
+if %*ENV<NO_NETWORK_TESTING> {
+    diag "NO_NETWORK_TESTING was set";
+    skip-rest("NO_NETWORK_TESTING was set");
+    exit;
+}
+
 my @test = (
     'Simple URL without path',
         'http://www.rakudo.org',

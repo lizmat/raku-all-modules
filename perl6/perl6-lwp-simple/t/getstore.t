@@ -5,6 +5,12 @@ use LWP::Simple;
 
 plan 4;
 
+if %*ENV<NO_NETWORK_TESTING> {
+    diag "NO_NETWORK_TESTING was set";
+    skip-rest("NO_NETWORK_TESTING was set");
+    exit;
+}
+
 my $fname = $*SPEC.catdir($*TMPDIR, "./tmp-getstore-$*PID");
 try unlink $fname;
 

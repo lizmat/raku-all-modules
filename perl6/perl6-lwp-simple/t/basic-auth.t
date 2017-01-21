@@ -9,6 +9,12 @@ use LWP::Simple;
 
 plan 9;
 
+if %*ENV<NO_NETWORK_TESTING> {
+    diag "NO_NETWORK_TESTING was set";
+    skip-rest("NO_NETWORK_TESTING was set");
+    exit;
+}
+
 my $basic-auth-url = 'https://ron:Camelia@www.software-path.com/p6-lwp-simple/basic-auth/';
 my @url = LWP::Simple.parse_url($basic-auth-url);
 

@@ -5,6 +5,12 @@ use LWP::Simple;
 
 plan 1;
 
+if %*ENV<NO_NETWORK_TESTING> {
+    diag "NO_NETWORK_TESTING was set";
+    skip-rest("NO_NETWORK_TESTING was set");
+    exit;
+}
+
 # would really be nice to verify in headers that it's really chunked
 # but, for now, this is "Simple"
 my $html = LWP::Simple.get('http://strangelyconsistent.org/blog/youre-in-a-space-of-twisty-little-mazes-all-alike/');

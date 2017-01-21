@@ -5,8 +5,14 @@ use LWP::Simple;
 
 plan 2;
 
+if %*ENV<NO_NETWORK_TESTING> {
+    diag "NO_NETWORK_TESTING was set";
+    skip-rest("NO_NETWORK_TESTING was set");
+    exit;
+}
+
 # don't use rakudo.org anymore, it has proven to be rather unreliable :(
-my $html = LWP::Simple.get('http://www.perl6.org');
+my $html = LWP::Simple.get('http://http.perl6.org');
 
 ok(
     $html.match('Perl'),

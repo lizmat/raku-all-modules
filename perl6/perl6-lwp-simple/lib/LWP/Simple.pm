@@ -5,7 +5,6 @@ use v6;
 use MIME::Base64;
 use URI;
 use URI::Escape;
-try require IO::Socket::SSL;
 
 unit class LWP::Simple:auth<cosimo>:ver<0.090>;
 
@@ -14,6 +13,8 @@ our $VERSION = '0.090';
 enum RequestType <GET POST PUT HEAD DELETE>;
 
 has Str $.default_encoding = 'utf-8';
+our $.force_encoding;
+our $.force_no_encode;
 our $.class_default_encoding = 'utf-8';
 
 # these were intended to be constant but that hit pre-compilation issue
@@ -49,6 +50,7 @@ method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
     die "400 URL must be absolute <URL:$url>\n" unless $url ~~ m/^https*\:\/\//;
     my $ssl;
     if $url ~~ m/^https\:\/\// {
+        try require IO::Socket::SSL;
         die "501 Protocol scheme 'https' is only supported if IO::Socket::SSL is installed <URL:$url>\n" if ::('IO::Socket::SSL') ~~ Failure;
         $ssl = True;
     }
@@ -101,7 +103,10 @@ method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
         when / 20 <[0..9]> / {
 
             # should be fancier about charset decoding application - someday
-            if  $resp_headers<Content-Type> &&
+            if ($.force_encoding) {
+                return $resp_content.decode($.force_encoding);
+            }
+            elsif (not $.force_no_encode) && $resp_headers<Content-Type> &&
                 $resp_headers<Content-Type> ~~
                     /   $<media-type>=[<-[/;]>+]
                         [ <[/]> $<media-subtype>=[<-[;]>+] ]? /  &&
@@ -237,7 +242,11 @@ method make_request (
 
     $sock.print($req_str);
 
-    my Blob $resp = $sock.read($default_stream_read_len);
+    my Blob $resp = Buf.new;
+    
+    while !self.got-header($resp) {
+        $resp ~= $sock.read($default_stream_read_len);
+    }
 
     my ($status, $resp_headers, $resp_content) = self.parse_response($resp);
 
@@ -276,15 +285,33 @@ method make_request (
     return ($status, $resp_headers, $resp_content);
 }
 
-method parse_response (Blob $resp) {
-
-    my %header;
-
+multi method get-header-end-pos(Blob:D $resp) returns Int {
     my Int $header_end_pos = 0;
     while ( $header_end_pos < $resp.bytes &&
             $http_header_end_marker ne $resp.subbuf($header_end_pos, 4)  ) {
         $header_end_pos++;
     }
+    $header_end_pos;
+}
+
+multi method get-header-end-pos(Blob:U $resp) returns Int {
+    0;
+}
+
+multi method got-header(Blob:D $resp) returns Bool {
+    my Int $header_end_pos = self.get-header-end-pos($resp);
+    return $header_end_pos > 0 && $header_end_pos < $resp.bytes
+}
+
+multi method got-header(Blob:U $resp) returns Bool {
+    return False;
+}
+
+method parse_response (Blob $resp) {
+
+    my %header;
+
+    my Int $header_end_pos = self.get-header-end-pos($resp);
 
     if ($header_end_pos < $resp.bytes) {
         my @header_lines = $resp.subbuf(

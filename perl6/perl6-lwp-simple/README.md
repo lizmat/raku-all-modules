@@ -1,7 +1,9 @@
 Perl6 LWP::Simple
 =================
 
-http://github.com/cosimo/perl6-lwp-simple/
+[![Build Status](https://travis-ci.org/perl6/perl6-lwp-simple.svg?branch=master)](https://travis-ci.org/perl6/perl6-lwp-simple)
+
+http://github.com/perl6/perl6-lwp-simple/
 
 This is a quick & dirty  implementation
 of a LWP::Simple clone for Rakudo Perl 6.

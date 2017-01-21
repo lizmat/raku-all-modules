@@ -3,6 +3,12 @@ use Test;
 
 plan 2;
 
+if %*ENV<NO_NETWORK_TESTING> {
+    diag "NO_NETWORK_TESTING was set";
+    skip-rest("NO_NETWORK_TESTING was set");
+    exit;
+}
+
 my $s = IO::Socket::INET.new(:host('www.opera.com'), :port(80));
 ok($s, 'Socket object created');
 
