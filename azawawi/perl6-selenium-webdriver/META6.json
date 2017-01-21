@@ -1,4 +1,5 @@
 {
+  "perl": "6.*",
   "name": "Selenium::WebDriver",
   "version": "*",
   "description": "Perl 6 Bindings for Selenium WebDriver",
@@ -10,6 +11,9 @@
     "JSON::Tiny",
     "MIME::Base64",
     "URI::Encode"
+  ],
+  "test-depends": [
+    "Test"
   ],
   "resources": [
     "firefox_extension/prefs.json",
