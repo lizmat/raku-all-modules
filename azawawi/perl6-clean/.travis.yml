@@ -7,12 +7,17 @@ os:
   - osx
 
 perl6:
-  - 2016.04
+  - 2016.12
   - latest
 
 install:
   - echo $TRAVIS_OS_NAME
-  - rakudobrew build panda
-  - panda installdeps .
+  - rakudobrew build zef
+  - zef --depsonly install .
+  - zef install Test::META
+  - zef build .
 
-script: prove -v -e "perl6 -Ilib" t/
+script:
+    - prove -ve "perl6 -Ilib" t
+    - TEST_AUTHOR=1 prove -ve "perl6 -Ilib" t
+    - zef install Clean

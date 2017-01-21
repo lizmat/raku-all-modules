@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-clean.git
 	branch = master
-	commit = 15cee9d62fc2f106c752ca80f2b8ddbfd4b7c7f5
-	parent = b1c0da0ea79ee0fcd490ad22cc40114500d1e83d
-	cmdver = 0.2.3
+	commit = c391377232b9431f0df6ab6e1401e18bbb74d512
+	parent = 81bd5c03e2a69b3757f59497bf38e875ae7306f2
+	cmdver = 0.4.0

@@ -33,11 +33,10 @@ clean(
 
 ## Installation
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
+To install it using zef (a module management tool bundled with Rakudo Star):
 
 ```
-$ panda update
-$ panda install Clean
+$ zef install Clean
 ```
 
 ## Testing
@@ -52,7 +51,7 @@ To run author tests, you need to manually install [Test::META](
 https://github.com/jonathanstowe/Test-META):
 
 ```
-$ panda install Test::META
+$ zef install Test::META
 $ TEST_AUTHOR=1 prove -e "perl6 -Ilib"
 ```
 
