@@ -23,11 +23,12 @@ token value:sym<array>   { <array>  };
 token value:sym<string>  { <string> }
 
 token string {
-    \" ~ \" [ <str> | \\ <str=.str_escape> ]*
+    # see https://github.com/moritz/json/issues/25
+    (:ignoremark '"') ~ \" [ <str> | \\ <str=.str_escape> ]*
 }
 
 token str {
-    <-["\\\t\n]>+
+    <-["\\\t\x[0A]]>+
 }
 
 token str_escape {
