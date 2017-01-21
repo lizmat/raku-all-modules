@@ -1,3 +1,6 @@
+use v6;
+use nqp;
+
 sub EXPORT(|) {
     my role Piersing {
         token identifier {

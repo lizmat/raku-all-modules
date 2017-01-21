@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Slang::Piersing",
     "author" : "github:FROGGS",
     "version" : "0.0.1",
