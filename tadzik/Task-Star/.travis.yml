@@ -1,0 +1,15 @@
+branches:
+  except:
+    - gh-pages
+language: perl6
+sudo: false
+perl6:
+  - latest
+install:
+  - rakudobrew build-panda
+  - panda installdeps .
+script:
+  - perl6 -e 'say "1..1\nok 1"'
+branches:
+  only:
+  - master
