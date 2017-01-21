@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sergot/IO-Capture-Simple.git
 	branch = master
-	commit = 21fa7a7cdc3aaa36429269701144a09ed4c2da9f
-	parent = 59d2eb75dd686a8bb9024fa2ece5ba1ce1669e64
-	cmdver = 0.2.3
+	commit = cdbe43ed040adfd6a2abbc1a1e5b9f022ec210ab
+	parent = 7c68c1237e167f245ffa3bda68ae09a3d3c2c63f
+	cmdver = 0.4.0

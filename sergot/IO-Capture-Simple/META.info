@@ -1,4 +1,5 @@
 {
+	"perl"		: "6.*",
 	"name"		: "IO::Capture::Simple",
 	"version"	: "*",
 	"description"	: "IO can be captured",
