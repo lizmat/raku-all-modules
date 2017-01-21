@@ -1,4 +1,5 @@
 {
+    "perl": "6.*",
     "name": "BreakDancer",
     "version": "*",
     "description": "Framework for generating static webpages.",
