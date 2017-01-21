@@ -11,7 +11,7 @@
 =head1 DESCRIPTION
 
 With no arguments, enters a REPL. With a C<[programfile]> or the C<-e>
-option, compiles the given program and by default also executes the
+option, compiles the given program and, by default, also executes the
 compiled code.
 
 =begin code
@@ -26,20 +26,37 @@ compiled code.
   -p                   same as -n, but also print $_ at the end of lines
   -I path              adds the path to the module search path
   -M module            loads the module prior to running the program
-  --target=[stage]     specify compilation stage to emit
-  --optimize=[level]   use the given level of optimization (0..3)
-  --encoding=[mode]    specify string encoding mode
-  -o, --output=[name]  specify name of output file
+  --target=stage       specify compilation stage to emit
+  --optimize=level     use the given level of optimization (0..3)
+  --encoding=mode      specify string encoding mode
+  -o, --output=name    specify name of output file
   -v, --version        display version information
   --stagestats         display time spent in the compilation stages
   --ll-exception       display a low level backtrace on errors
-  --profile            write profile information as HTML file (MoarVM)
-  --profile-filename   provide a different filename (also allows .json)
-  --doc=[module]       Use Pod::To::[module] to render inline documentation.
+  --profile[=kind]     write profile information to an HTML file (MoarVM)
+                         instrumented - performance measurements (default)
+                         heap - record heap snapshots after every
+                                garbage collector run
+  --profile-filename=name
+                       provide a different filename for profile. Extension
+                       controls format:
+                            .json outputs in JSON
+                            .sql  outputs in SQL
+                            any other extension outputs in HTML
+  --doc=module         use Pod::To::[module] to render inline documentation
+
+=end code
 
 Note that only boolean single-letter options may be bundled.
 
+To modify the include path, you can set the PERL6LIB environment variable:
+=begin code
+PERL6LIB="lib" perl6 example.pl
 =end code
+
+The include path will be searched recursively for any modules when Rakudo is
+started. Directories that start with a dot are ignored and symlinks are
+followed.
 
 The supported values for C<--target> are:
 
@@ -56,10 +73,12 @@ The supported values for C<--target> are:
 For C<--profile-filename>, specifying a name ending in C<.json> will write a raw JSON profile dump.
 The default if this is omitted is C<profile-I<[timestamp]>.html>.
 
-=head1 ENVIRONMENT VARIABLES
+=head1 X<Environment Variables|Environment Variables>
 
 Rakudo's behavior can be tweaked by a (growing) number of environment variables; this section
 attempts to document all those currently in use.
+
+Other variables are listed in Rakudo's github wiki: L<https://github.com/rakudo/rakudo/wiki/dev-env-vars>.
 
 =head2 Module Loading
 
@@ -72,6 +91,14 @@ Causes the module loader to print debugging information to standard error.
 
 
 =head2 Error Message Verbosity and Strictness
+
+=defn C<RAKUDO_EXCEPTIONS_HANDLER> (I<Str>; C<src/core/Exception.pm>)
+Specifies the name of a custom exceptions handler. For example, to load and use
+C<Exceptions::JSON> class that comes with Rakudo, set this env var to C<JSON>.
+The exception handling class needs to implement method C<process> that takes
+a single positional argument: the exception object. If that method returns
+a truthy value, the exception will also be printed to the terminal, as if
+the exception handler was not specified.
 
 =defn C<RAKUDO_NO_DEPRECATIONS> (I<Bool>; C<src/core/Deprecations.pm>)
 If true, suppresses deprecation warnings triggered by the C<is DEPRECATED> trait.
@@ -109,7 +136,7 @@ Controls whether to emit ANSI codes for error highlighting. Defaults to true if 
 Win32.
 
 =defn C<RAKUDO_MAX_THREADS> (I<UInt>; C<src/core/ThreadPoolScheduler.pm>)
-Override the default maximum number of threads used by a thread pool.
+Override the default maximum number of threads used by a thread pool. Defaults to C<16>.
 
 =defn C<RAKUDO_JDB_PORT> (I<Str>; C< src/core/CompUnit/PrecompilationRepository.pm>)
 In C<perl6-jdb-server> for setting the jdb port
@@ -161,5 +188,10 @@ When set to a true value will cause the test suite to abort on first failure,
 even if there are more tests to be run:
 
     $ PERL6_TEST_DIE_ON_FAIL=1 perl6 t/test-filename.t
+
+=defn C<RAKUDO_OPTIMIZER_DEBUG>, (I<Bool>; C<src/Perl6/Optimizer.nqp>)
+
+When set to a true value, causes to produce extra debugging output, useful for
+debugging Rakudo's static optimizer.
 
 =end pod

@@ -14,6 +14,9 @@ Indexes into lists and arrays start at 0 by default.
 You can assign to list elements if they are containers. Use
 Arrays to have every value of the list stored in a container.
 
+C<List> implements C<Positional> and as such provides support for
+L<subscripts|/language/subscripts>.
+
 =head1 Items, Flattening and Sigils
 
 In Perl 6, assigning a C<List> to a scalar variable does not lose
@@ -61,14 +64,33 @@ Slurpy parameters (C<*@a>) flatten non-itemized sublists:
     say fe(<a b>, <d e>);           # 4
     say fe(<a b>, <d e>.item);      # 3
 
+X<|(),empty list>
+The empty list is created with C<()>. Smartmatching against the empty list will
+check for the absence of elements.
+
+    my @a;
+    for @a, @a.list, @a.Seq -> \listoid {
+        say listoid ~~ ()
+    }
+    # OUTPUT«True␤True␤True␤»
+
+Coercion to Bool also indicates if the List got any elements.
+
+    my @a;
+    say [@a.elems, @a.Bool, ?@a];
+    @a.push: 42;
+    say [@a.elems, @a.Bool, ?@a];
+    say 'empty' unless @a;
+    # OUTPUT«[0 False False]␤[1 True True]␤»
+
 =head1 Methods
 
 =head2 routine elems
 
 Defined as:
 
-    multi sub    elems($list)  returns Int:D
-    multi method elems(List:D:) returns Int:D
+    multi sub    elems($list --> Int:D)
+    multi method elems(List:D: --> Int:D)
 
 Returns the number of elements in the list.
 
@@ -78,8 +100,8 @@ Returns the number of elements in the list.
 
 Defined as:
 
-    multi sub    end($list)  returns Int:D
-    multi method end(List:D:) returns Int:D
+    multi sub    end($list --> Int:D)
+    multi method end(List:D: --> Int:D)
 
 Returns the index of the last element.
 
@@ -89,8 +111,8 @@ Returns the index of the last element.
 
 Defined as:
 
-    multi sub    keys($list)  returns Seq:D
-    multi method keys(List:D:) returns Seq:D
+    multi sub    keys($list --> Seq:D)
+    multi method keys(List:D: --> Seq:D)
 
 Returns a sequence of indexes into the list (e.g., 0..(@list.elems-1)).
 
@@ -100,8 +122,8 @@ Returns a sequence of indexes into the list (e.g., 0..(@list.elems-1)).
 
 Defined as:
 
-    multi sub    values($list)  returns Seq:D
-    multi method values(List:D:) returns Seq:D
+    multi sub    values($list --> Seq:D)
+    multi method values(List:D: --> Seq:D)
 
 Returns a sequence of the list elements, in order.
 
@@ -112,8 +134,8 @@ Returns a sequence of the list elements, in order.
 
 Defined as:
 
-    multi sub    kv($list)  returns Seq:D
-    multi method kv(List:D:) returns Seq:D
+    multi sub    kv($list --> Seq:D)
+    multi method kv(List:D: --> Seq:D)
 
 Returns an interleaved sequence of indexes and values. For example
 
@@ -123,8 +145,8 @@ Returns an interleaved sequence of indexes and values. For example
 
 Defined as:
 
-    multi sub    pairs($list)   returns Seq:D
-    multi method pairs(List:D:) returns Seq:D
+    multi sub    pairs($list --> Seq:D)
+    multi method pairs(List:D: --> Seq:D)
 
 Returns a sequence of pairs, with the indexes as keys and the list values as
 values.
@@ -135,7 +157,7 @@ values.
 
 Defined as:
 
-    multi method antipairs(List:D:) returns Seq:D
+    multi method antipairs(List:D: --> Seq:D)
 
 Returns a L<Seq|/type/Seq> of pairs, with the values as keys and the indexes as
 values, i.e. the direct opposite to L<pairs|/type/List#routine_pairs>.
@@ -146,8 +168,8 @@ values, i.e. the direct opposite to L<pairs|/type/List#routine_pairs>.
 
 Defined as:
 
-    multi sub    join($separator, *@list) returns Str:D
-    multi method join(List:D: $separator) returns Str:D
+    multi sub    join($separator, *@list --> Str:D)
+    multi method join(List:D: $separator --> Str:D)
 
 Treats the elements of the list as strings, interleaves them with
 C<$separator> and concatenates everything into a single string.
@@ -164,14 +186,12 @@ Note that the method form does not flatten sublists:
 
 Defined as:
 
-    multi sub    map(&code, *@elems) returns Seq:D
-    multi method map(List:D: &code) returns Seq:D
+    multi sub    map(&code, *@elems --> Seq:D)
+    multi method map(List:D: &code --> Seq:D)
 
-Invokes C<&code> for each element and gathers the return values in
-a sequence and returns it. This happens lazily, i.e. C<&code> is only invoked when
-the return values are accessed.
-
-Examples:
+Invokes C<&code> for each element and gathers the return values in a sequence
+    and returns it. This happens lazily, i.e. C<&code> is only invoked when the
+return values are accessed.Examples:
 
     say ('hello', 1, 22/7, 42, 'world').map: { .WHAT.perl } # (Str Int Rat Int Str)
     say map *.Str.chars, 'hello', 1, 22/7, 42, 'world';     # (5 1 8 2 5)
@@ -192,6 +212,25 @@ passes C<(1, 2)> and C<< <a b> >> in turn to the block, leading to a total
 of two iterations and the result sequence C<"1,2", "a,b">.
 See L<method flatmap|/type/List#method_flatmap> for an alternative that flattens.
 
+If C<&code> is a L<Block|/type/Block> loop phasers will be executed and loop
+control statements will be treated as in loop control flow. Please note that
+C<return> is executed in the context of its definition. It is not the return
+statement of the block but the surrounding Routine. Using a
+L<Routine|/type/Routine> will also handle loop control statements and loop
+phasers. Any C<Routine> specific control statement or phaser will be handled in
+the context of that C<Routine>.
+
+    sub s {
+        my &loop-block = {
+            return # return from sub s
+        };
+        say 'hi';
+        (1..3).map: &loop-block;
+        say 'oi‽' # dead code
+    };
+    s
+    # OUTPUT«hi␤»
+
 =head2 sub flat
 
 Defined as:
@@ -208,7 +247,7 @@ from C<Any>|/type/Any#method_flat>) on that list:
 
 Defined as:
 
-    method flatmap(List:D: &code) returns Seq:D
+    method flatmap(List:D: &code --> Seq:D)
 
 Like C<map> iterates over the elements of the invocant list, feeding each
 element in turn to the code reference, and assembling the return values from
@@ -224,8 +263,8 @@ invokes L<uc|/type/Str#routine_uc> four times.
 
 Defined as:
 
-    multi sub    grep(Mu $matcher, *@elems, :$k, :$kv, :$p, :$v) returns Seq:D
-    multi method grep(List:D:  Mu $matcher, :$k, :$kv, :$p, :$v) returns Seq:D
+    multi sub    grep(Mu $matcher, *@elems, :$k, :$kv, :$p, :$v --> Seq:D)
+    multi method grep(List:D:  Mu $matcher, :$k, :$kv, :$p, :$v --> Seq:D)
 
 Returns a sequence of elements against which C<$matcher> smart-matches.
 The elements are returned in the order in which they appear in the original
@@ -267,7 +306,7 @@ Examples:
 Defined as:
 
     multi sub    first(Mu $matcher, *@elems, :$k, :$kv, :$p, :$end)
-    multi method first(List:D:  Mu $matcher, :$k, :$kv, :$p, :$end)
+    multi method first(List:D:  Mu $matcher?, :$k, :$kv, :$p, :$end)
 
 Returns the first item of the list which smart-matches against C<$matcher>,
 returns Nil when no values match.  The optional named parameter C<:end>
@@ -303,11 +342,15 @@ Examples:
     say (1, 22/7, 42, 300).first: * > 5, :p;        # 2 => 42
     say (1, 22/7, 42, 300).first: * > 5, :kv, :end; # (3 300)
 
+In method form, the C<$matcher> can be omitted, in which case the first
+available item (or last if C<:end> is set) will be returned. See also
+L«C<head>|/routine/head» and L«C<tail>|/routine/tail» methods.
+
 =head2 method head
 
 Defined as:
 
-    multi method head(List:D: Int(Cool) $number = 1) returns Seq:D
+    multi method head(List:D: Int(Cool) $number = 1 --> Seq:D)
 
 Returns the B<first> NUMBER items of the list.  Returns an empty list if
 NUMBER <= 0.  Defaults to the first element seen if no NUMBER specified.
@@ -323,7 +366,7 @@ Examples:
 
 Defined as:
 
-    multi method tail(List:D: Int(Cool) $number = 1) returns Seq:D
+    multi method tail(List:D: Int(Cool) $number = 1 --> Seq:D)
 
 Returns a L<Seq> containing the B<last> NUMBER items of the list.  Returns an empty Seq if
 NUMBER <= 0.  Defaults to the last element if no NUMBER is specified.
@@ -341,8 +384,8 @@ say ^Inf .tail        # Cannot tail a lazy list
 
 Defined as:
 
-    multi sub    categorize(&mapper, *@values) returns Hash:D
-    multi method categorize(List:D: &mapper)   returns Hash:D
+    multi sub    categorize(&mapper, *@values --> Hash:D)
+    multi method categorize(List:D: &mapper   --> Hash:D)
 
 Transforms a list of values into a hash representing the categorizations
 of those values according to a mapper; each hash key represents one possible
@@ -368,8 +411,8 @@ Example:
 
 Defined as:
 
-    multi sub    classify(&mapper, *@values) returns Hash:D
-    multi method classify(List:D: &mapper)   returns Hash:D
+    multi sub    classify(&mapper, *@values --> Hash:D)
+    multi method classify(List:D: &mapper   --> Hash:D)
 
 Transforms a list of values into a hash
 representing the classification of those values according to a mapper;
@@ -389,7 +432,7 @@ Example:
 
 Defined as:
 
-    multi method Bool(List:D:) returns Bool:D
+    multi method Bool(List:D: --> Bool:D)
 
 Returns C<True> if the list has at least one element, and C<False>
 for the empty list.
@@ -401,7 +444,7 @@ for the empty list.
 
 Defined as:
 
-    multi method Str(List:D:) returns Str:D
+    multi method Str(List:D: --> Str:D)
 
 Stringifies the elements of the list and joins them with spaces
 (same as C<.join(' ')>).
@@ -412,7 +455,7 @@ Stringifies the elements of the list and joins them with spaces
 
 Defined as:
 
-    multi method Int(List:D:) returns Int:D
+    multi method Int(List:D: --> Int:D)
 
 Returns the number of elements in the list (same as C<.elems>).
 
@@ -422,7 +465,7 @@ Returns the number of elements in the list (same as C<.elems>).
 
 Defined as:
 
-    multi method Numeric(List:D:) returns Int:D
+    multi method Numeric(List:D: --> Int:D)
 
 Returns the number of elements in the list (same as C<.elems>).
 
@@ -432,7 +475,7 @@ Returns the number of elements in the list (same as C<.elems>).
 
 Defined as:
 
-    method Capture() returns Capture:D
+    method Capture(--> Capture:D)
 
 Returns a L<Capture|/type/Capture> where each L<Pair|/type/Pair>, if any, in
 the C<List> has been converted to a named argument. All other elements in the
@@ -463,9 +506,9 @@ against a L<Signature|/type/Signature>.
 
 Defined as:
 
-    multi sub    pick($count, *@list) returns Seq:D
-    multi method pick(List:D: $count) returns Seq:D
-    multi method pick(List:D:) returns Mu
+    multi sub    pick($count, *@list --> Seq:D)
+    multi method pick(List:D: $count --> Seq:D)
+    multi method pick(List:D: --> Mu)
 
 If C<$count> is supplied: Returns C<$count> elements chosen at random
 and without repetition from the invocant. If C<*> is passed as C<$count>,
@@ -485,9 +528,9 @@ Examples:
 
 Defined as:
 
-    multi sub    roll($count, *@list) returns Seq:D
-    multi method roll(List:D: $count) returns Seq:D
-    multi method roll(List:D:) returns Mu
+    multi sub    roll($count, *@list --> Seq:D)
+    multi method roll(List:D: $count --> Seq:D)
+    multi method roll(List:D: --> Mu)
 
 If C<$count> is supplied: Returns a sequence of C<$count> elements, each randomly
 selected from the list. Each random choice is made independently, like a separate
@@ -510,8 +553,8 @@ Examples:
 
 Defined as:
 
-    multi method eager(List:D:) returns List:D
-    sub eager(*@elems) returns List:D
+    multi method eager(List:D: --> List:D)
+    sub eager(*@elems --> List:D)
 
 Evaluates all elements in the list eagerly, and returns them as a list.
 
@@ -521,8 +564,8 @@ Evaluates all elements in the list eagerly, and returns them as a list.
 
 Defined as:
 
-    multi sub    reverse(*@list ) returns List:D
-    multi method reverse(List:D:) returns List:D
+    multi sub    reverse(*@list  --> List:D)
+    multi method reverse(List:D: --> List:D)
 
 Returns a list with the same elements in reverse order.
 
@@ -538,8 +581,8 @@ Examples:
 
 Defined as:
 
-    multi sub    rotate(@list,  Int:D $n = 1) returns List:D
-    multi method rotate(List:D: Int:D $n = 1) returns List:D
+    multi sub    rotate(@list,  Int:D $n = 1 --> List:D)
+    multi method rotate(List:D: Int:D $n = 1 --> List:D)
 
 Returns the list rotated by C<$n> elements.
 
@@ -552,17 +595,17 @@ Examples:
 
 Defined as:
 
-    multi sub    sort(*@elems)      returns Seq:D
-    multi sub    sort(&by, *@elems) returns Seq:D
-    multi method sort(List:D:)      returns Seq:D
-    multi method sort(List:D: &by) returns Seq:D
+    multi sub    sort(*@elems      --> Seq:D)
+    multi sub    sort(&by, *@elems --> Seq:D)
+    multi method sort(List:D:      --> Seq:D)
+    multi method sort(List:D: &by  --> Seq:D)
 
 Sorts the list, smallest element first. By default C<< infix:<cmp> >>
 is used for comparing list elements.
 
 If C<&by> is provided, and it accepts two arguments,
 it is invoked for pairs of list elements, and should return
-C<Order::Increase>, C<Order::Same> or C<Order::Decrease>.
+C<Order::Less>, C<Order::Same> or C<Order::More>.
 
 If C<&by> accepts only one argument, the list elements are sorted
 according to C<< by($a) cmp by($b) >>. The return values of C<&by> are
@@ -578,8 +621,8 @@ Examples:
 
 Defined as:
 
-    multi sub    unique(*@values, :&as, :&with) returns Seq:D
-    multi method unique(List:D:  :&as, :&with) returns Seq:D
+    multi sub    unique(*@values, :&as, :&with --> Seq:D)
+    multi method unique(List:D:  :&as, :&with --> Seq:D)
 
 Returns a sequence of B<unique> values from the invocant/argument list, such
 that only the first occurrence of each duplicated value remains in the
@@ -617,8 +660,8 @@ Example:
 
 Defined as:
 
-    multi sub    repeated(*@values, :&as, :&with) returns Seq:D
-    multi method repeated(List:D:  :&as, :&with) returns Seq:D
+    multi sub    repeated(*@values, :&as, :&with --> Seq:D)
+    multi method repeated(List:D:  :&as, :&with --> Seq:D)
 
 Returns a sequence of B<repeated> values from the invocant/argument list.
 It takes the same parameters as L<C<unique>>, but instead of passing through
@@ -638,8 +681,8 @@ Examples:
 
 Defined as:
 
-    multi sub    squish(*@values, :&as) returns Seq:D
-    multi method squish(List:D:  :&as) returns Seq:D
+    multi sub    squish(*@values, :&as --> Seq:D)
+    multi method squish(List:D:  :&as --> Seq:D)
 
 Returns a sequence of values from the invocant/argument list where runs
 of more than one value are replaced with only the first instance.
@@ -706,7 +749,7 @@ meta-operator provides a syntactic shortcut:
 Since C<reduce> is an implicit loop, it responds to C<next>, C<last> and
 C<redo> statements inside C<&with>:
 
-    say (2,3,4,5).reduce: { last if $^a > 7; $a + $^b }; # says 9
+    say (2,3,4,5).reduce: { last if $^a > 7; $^a + $^b }; # says 9
 
 Practical example:
 
@@ -725,13 +768,70 @@ https://en.wikipedia.org/wiki/Fold_%28higher-order_function%29#Folds_on_lists>.
 With a right-associative operator it is a right fold, otherwise (and usually)
 it is a left fold.
 
+=head2 routine produce
+
+Defined as:
+
+    multi sub    produce(&with, *@values)
+    multi method produce(List:D: &with)
+
+Generates a list of all intermediate "combined" values along with the final
+result by iteratively applying a function which knows how to combine I<two>
+values.
+
+If C<@values> contains just a single element, a list containing that element
+is returned immediately. If it contains no elements, an exception is thrown,
+unless C<&with> is an I<operator> with a known identity value.
+
+If C<&with> is the function object of an I<operator>, its
+inherent identity value and associativity is respected - in other words,
+C<(VAL1, VAL2, VAL3).produce(&[OP])> is the same as C<VAL1 OP VAL2 OP VAL3> even
+for operators which aren't left-associative:
+
+    # Raise 2 to the 81st power, because 3 to the 4th power is 81
+    [2,3,4].produce(&[**]).say;        # (4 81 2417851639229258349412352)
+    say produce &[**], (2,3,4);        # (4 81 2417851639229258349412352)
+    say [\**] (2,3,4);                 # (4 81 2417851639229258349412352)
+
+    # Subtract 4 from -1, because 2 minus 3 is -1
+    [2,3,4].produce(&[-]).say;         # (2 -1 -5)
+    say produce &[-], (2,3,4);         # (2 -1 -5)
+    say [\-] (2,3,4);                  # (2 -1 -5)
+
+A triangle meta-operator C<[\ ]> provides a syntactic shortcut for
+producing with an infix operator:
+
+    # The following all do the same thing...
+    my @numbers = (1,2,3,4,5);
+    say produce { $^a + $^b }, @numbers;
+    say produce * + *, @numbers;
+    say produce &[+], @numbers; # operator does not need explicit identity
+    say [\+] @numbers;          # most people write it this way
+
+The visual picture of a triangle C<[\> is not accidental. To produce a
+triangular list of of lists, you can use a "triangular comma":
+
+    [\,] 1..5;
+    # (
+    # (1)
+    # (1 2)
+    # (1 2 3)
+    # (1 2 3 4)
+    # (1 2 3 4 5)
+    # )
+
+Since C<produce> is an implicit loop, it responds to C<next>, C<last> and
+C<redo> statements inside C<&with>:
+
+    say (2,3,4,5).produce: { last if $^a > 7; $^a + $^b }; # says (2 5 9)
+
 =head2 routine combinations
 
 Defined as:
 
-    multi sub    combinations($n, $k)                     returns Seq:D
-    multi method combinations(List:D: Int:D $of)          returns Seq:D
-    multi method combinations(List:D: Range:D $of = 0..*) returns Seq:D
+    multi sub    combinations($n, $k                     --> Seq:D)
+    multi method combinations(List:D: Int:D $of          --> Seq:D)
+    multi method combinations(List:D: Range:D $of = 0..* --> Seq:D)
 
 The C<Int> variant returns all C<$of>-combinations of the invocant list.
 For example
@@ -766,12 +866,19 @@ C<(^$n).combinations($k)>, so
     # 1 3
     # 2 3
 
+If C<$k> is negative or is larger than there are items in the given list, an
+empty list will be returned. If C<$k> is zero, a 1-item list containing an empty
+list will be returned (there's exactly 1 way to pick no items).
+
+B<Note:> some implementations may limit the maximum C<$n>. On Rakudo, 64-bit
+systems have a limit of C<2³¹-1> and 32-bit systems have a limit of C<2²⁸-1>.
+
 =head2 routine permutations
 
 Defined as:
 
-    multi sub    permutations($n)      returns Seq:D
-    multi method permutations(List:D:) returns Seq:D
+    multi sub    permutations($n      --> Seq:D)
+    multi method permutations(List:D: --> Seq:D)
 
 Returns all possible permutations of a list as a sequence of lists. So
 
@@ -802,7 +909,7 @@ C<(^$n).permutations>, so
 
 Defined as:
 
-    method rotor(*@cycle, Bool() :$partial) returns Seq:D
+    method rotor(*@cycle, Bool() :$partial --> Seq:D)
 
 Returns a sequence of lists, where each sublist is made up of elements of the
 invocant.
@@ -835,59 +942,132 @@ Combining multiple cycles and C<:partial> also works:
 
 See L<this blog post for more elaboration on rotor|http://perl6.party/post/Perl-6-.rotor-The-King-of-List-Manipulation>.
 
+=head2 routine cross
+
+    sub cross(+@e, :&with --> Seq:D)
+
+Computes the cross-product of two or more lists or L<iterables|/type/Iterable>.
+This returns a sequence of lists where the first item in each list is an item
+from the first iterable, the second is from the second given iterable, etc.
+Every item will be paired with every other item in all the other lists.
+
+    say cross(<a b c>, <d e f>).map(*.join).join(",")
+    # ad,ae,af,bd,be,bf,cd,ce,cf
+
+The C<cross> routine has an infix synonym as well, named C<X>.
+
+    say (<a b c> X <d e f>).map(*.join).join(",")
+    # output is the same as the previous example
+
+If the optional C<with> parameter is passed, it is used as a reduction operation
+to apply to each of the cross product items.
+
+    say cross([1, 2, 3], [4, 5, 6], :with(&infix:<*>)).join(",");
+    # 4,5,6,8,10,12,12,15,18
+
+The C<X> operator can be combined with another operator as a meta-operator to perform a reduction as well:
+
+    say ([1, 2, 3] X* [4, 5, 6]).join(",")
+    # same output as the previous example
+
 =head2 routine zip
 
 Defined as:
 
-    sub zip(**@e) returns Seq:D
+    sub zip(+@e, :&with --> Seq:D)
 
-Zips two or more lists or other L<iterables|/type/Iterable> together by
-returning a sequence made of a list of all first elements of all lists, then a
-list of all second elements of a list etc.
+Builds a 'list of lists', returned as a sequence, from multiple input lists or
+other L<iterables|/type/Iterable>.
 
-    say .join for zip  <a b c>, <d e f>;
-    # ad
-    # be
-    # cf
+C<zip> iterates through each of the input lists synchronously, 'Zipping' them
+together, so that elements are grouped according to their input list index, in
+the order that the lists are provided.
+
+    say zip(<a b c>, <d e f>, <g h i>);
+    # ((a d g) (b e h) (c f i))
 
 C<zip> has an infix synonym, the C<Z> operator.
 
-    say .join for <a b c> Z <d e f>;    # same output as above
+    say <a b c> Z <d e f> Z <g h i>;                   # same output
 
-When the first input list is exhausted, no more elements are returned; so
-trailing elements from longer input lists are discarded.
+C<zip> can provide input to a for loop :
 
-If you just wish to skip missing entries in shorter sublists,
-use L<roundrobin|/type/List#sub_roundrobin> instead:
+    for <a b c> Z <d e f> Z <g h i> -> [$x,$y,$z] {say ($x,$y,$z).join(",")}
+    # a,d,g
+    # b,e,h
+    # c,f,i
 
-=for code :skip-test
-for roundrobin(@queue1, @queue2, @queue3) -> $next {
-    ...
-}
+, or more succinctly :
+
+    say .join(",") for zip <a b c>, <d e f>, <g h i>;  # same output
+
+Note, that if the input lists have an unequal number of elements, then
+C<zip> terminates once the shortest input list is exhausted, and trailing
+elements from longer input lists are discarded.
+
+    say <a b c> Z <d e f m n o p> Z <g h i>;
+    # ((a d g) (b e h) (c f i))
+
+In cases where data clipping is possible, but undesired, then consider using
+L<roundrobin|/type/List#sub_roundrobin> instead of C<zip>.
+
+The optional C<with> parameter will additionally reduce the zipped lists. For
+example, the following multiplies corresponding elements together to return a
+single list of products.
+
+    .say for zip <1 2 3>, [1, 2, 3], (1, 2, 3), :with(&infix:<*>);
+    # 1
+    # 8
+    # 27
+
+The C<Z> form can also be used to perform reduction by implicitly setting the
+C<with> parameter with a meta-operator :
+
+    .say for <1 2 3> Z* [1, 2, 3] Z* (1, 2, 3);        # same output
 
 =head2 sub roundrobin
 
 Defined as:
 
-    method roundrobin(List:D:) returns Seq
+    method roundrobin(List:D: --> Seq)
 
-C<roundrobin> is very similar to L<zip|/type/List#routine_zip>.  The
-difference is that C<roundrobin> will not stop on lists that run out of
-elements but simply skip any undefined value:
+Builds a 'list of lists', returned as a sequence, from multiple input lists or
+other L<iterables|/type/Iterable>. C<roundrobin> returns an identical result to
+that of L<zip|/type/List#routine_zip>, except when the input lists have an
+unequal number of elements.
 
-    my @a = 1;
-    my @b = 1..2;
-    my @c = 1..3;
-    for flat roundrobin(@a, @b, @c) -> $x { $x.say }
+    say roundrobin <a b c>, <d e f>, <g h i>;
+    # ((a d g) (b e h) (c f i))
 
-will display the following values: C<1, 1, 1, 2, 2, 3>
+    say .join(",") for roundrobin([1, 2], [2, 3], [3, 4]);
+    # 1,2,3
+    # 2,3,4
+
+C<roundrobin> does not terminate once one or more of the input lists become
+exhausted, but proceeds until all elements from all lists have been processed.
+
+    say roundrobin <a b c>, <d e f m n o p>, <g h i j>;
+    # ((a d g) (b e h) (c f i) (m j) (n) (o) (p))
+
+    say .join(",") for roundrobin([1, 2], [2, 3, 57, 77], [3, 4, 102]);
+    # 1,2,3
+    # 2,3,4
+    # 57,102
+    # 77
+
+Therefore no data values are lost due in the 'zipping' operation. A record of
+which input list provided which element cannot be gleaned from the resulting
+sequence, however.
+
+C<roundrobin> can be useful in combining messy data to the point where a manual
+post-processing step can then be undertaken.
 
 =head2 routine sum
 
 Defined as:
 
-    multi sub    sum($list)  returns Numeric:D
-    multi method sum(List:D:) returns Numeric:D
+    multi sub    sum($list   --> Numeric:D)
+    multi method sum(List:D: --> Numeric:D)
 
 Returns the sum of all elements in the list or 0 if the list is empty.
 Throws an exception if an element can not be coerced into Numeric.
@@ -900,7 +1080,7 @@ Throws an exception if an element can not be coerced into Numeric.
 
 Defined as:
 
-    method fmt($format = '%s', $separator = ' ') returns Str:D
+    method fmt($format = '%s', $separator = ' ' --> Str:D)
 
 Returns a string where each element in the list has been formatted according
 to C<$format> and where each element is separated by C<$separator>.
@@ -908,7 +1088,27 @@ to C<$format> and where each element is separated by C<$separator>.
 For more information about formats strings, see L<sprintf|/routine/sprintf>.
 
     my @a = 8..11;
-    say @a.fmt('%03d', ',');                          # 008,009,010,011
+    say @a.fmt('%03d', ',');  # 008,009,010,011
+
+=head2 method from
+
+Assumes the list contains L«C<Match> objects|/type/Match» and returns the
+value of C<.from> called on the first element of the list.
+
+    'abcdefg' ~~ /(c)(d)/;
+    say $/.list.from;         # 2
+
+    "abc123def" ~~ m:g/\d/;
+    say $/.list.from;         # 3
+
+=head2 method to
+
+    "abc123def" ~~ m:g/\d/;
+    say $/.to; # 6
+
+Assumes the C<List> contains L«C<Match> objects|/type/Match», such as the
+C<$/> variable being a C<List>, when using C<:g> modifier in regexes. Returns the
+value of C<.to> called on the last element of the list.
 
 =end pod
 

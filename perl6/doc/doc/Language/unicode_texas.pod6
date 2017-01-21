@@ -34,14 +34,14 @@ be used as a digit in any number.  For example:
 
 =head1 Numeric values
 
-Any codepoint that has the C<No> (Number, other) property can be used
-standalone as a numeric value, such as ½ and ⅓.  (These aren't
-decimal digit characters, so can't be combined.)  For example:
+Any codepoint that has the C<No> (Number, other) or C<Nl> (Number, letter)
+property can be used standalone as a numeric value, such as ½ and ⅓. (These
+aren't decimal digit characters, so can't be combined.) For example:
 
 =begin code
 
-  my $var = ⅒ + 2;
-  say $var; # 2.1
+  my $var = ⅒ + 2 + Ⅻ; # here ⅒ is No and Rat and Ⅻ is Nl and Int
+  say $var;              # 14.1
 
 =end code
 
@@ -83,9 +83,9 @@ equivalents] that have a special meaning in Perl 6.
   ⁻      |  U+207B   | -          | v6.c  | (must use explicit number) as part of exponentiation
   ¯      |  U+00AF   | -          | v6.c  | (must use explicit number) as part of exponentiation (macron is an alternative way of writing a minus)
   ⁰      |  U+2070   | **0        | v6.c  | can be combined with ⁰..⁹
-  ¹      |  U+2071   | **1        | v6.c  | can be combined with ⁰..⁹
-  ²      |  U+2072   | **2        | v6.c  | can be combined with ⁰..⁹
-  ³      |  U+2073   | **3        | v6.c  | can be combined with ⁰..⁹
+  ¹      |  U+00B9   | **1        | v6.c  | can be combined with ⁰..⁹
+  ²      |  U+00B2   | **2        | v6.c  | can be combined with ⁰..⁹
+  ³      |  U+00B3   | **3        | v6.c  | can be combined with ⁰..⁹
   ⁴      |  U+2074   | **4        | v6.c  | can be combined with ⁰..⁹
   ⁵      |  U+2075   | **5        | v6.c  | can be combined with ⁰..⁹
   ⁶      |  U+2076   | **6        | v6.c  | can be combined with ⁰..⁹
@@ -126,5 +126,6 @@ when used.
   Symbol | Codepoints       | Texas   | Since | Remarks
   =======|==================|=========|=======|=========================
   »=»    | U+00BB = U+00BB  | >>[=]>> | v6.c  | uses ASCII '='
+  «=»    | U+00AB = U+00BB  | <<[=]>> | v6.c  | uses ASCII '='
 
 =end pod

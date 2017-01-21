@@ -192,9 +192,6 @@ class Lock
 class Proc::Async
 class Thread
 
-[Domain-specific]
-enum Order                      is Int
-
 ### COLLECTIONS
 
 [Composite]
@@ -217,7 +214,7 @@ class Slip                          is List
 # Collections: Stringy
 role  Blob[::T = uint8]             does Positional[T] does Stringy
 role  Buf[::T = uint8]  does Blob[T]
-class Uni                           does Positional[uin32] does Stringy
+class Uni                           does Positional[uint32] does Stringy
 class NFD               is Uni
 class NFC               is Uni
 class NFKD              is Uni
@@ -277,6 +274,7 @@ class X::StubCode                   is Exception
 class X::Eval::NoSuchLang           is Exception
 class X::Seq::Consumed              is Exception
 class X::Caller::NotDynamic         is Exception
+class X::Proc::Unsuccessful         is Exception
 
 [Exceptions]
 # Exceptions: Numbers
@@ -432,7 +430,6 @@ class X::Syntax::Regex::Unspace                    does X::Syntax
 class X::Syntax::Regex::Unterminated               does X::Syntax
 class X::Syntax::AddCategorical::TooFewParts       does X::Syntax
 class X::Syntax::AddCategorical::TooManyParts      does X::Syntax
-class X::Augment::NoSuchType                       does X::Syntax
 class X::Syntax::Augment::WithoutMonkeyTyping      does X::Syntax
 class X::Syntax::Comment::Embedded                 does X::Syntax
 class X::Syntax::Confused                          does X::Syntax

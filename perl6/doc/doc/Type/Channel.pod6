@@ -108,11 +108,15 @@ C<@()> or by the C<.list> method will not terminate until this has been done.
     CATCH { default { put .^name, ': ', .Str } };
     # OUTPUT: «X::Channel::SendOnClosed: Cannot send a message on a closed channel␤»
 
+Please note that any exception thrown may prevent C<.close> from being called,
+this may hang the receiving thread. Use a L<LEAVE|/language/phasers#LEAVE>
+phaser to enforce the C<.close> call in this case.
+
 =head2 method list
 
 Defined as:
 
-    method list(Channel:D:) returns List:D
+    method list(Channel:D: --> List:D)
 
 Returns a C<Seq> which will iterate items in the queue and removes each item
 from the queue as it iterates. This can only terminate once the C<close> method
@@ -126,7 +130,7 @@ has been called.
 
 Defined as:
 
-    method closed(Channel:D:) returns Promise:D
+    method closed(Channel:D: --> Promise:D)
 
 Returns a promise that will be kept once the channel is closed by a call to
 method C<close>.

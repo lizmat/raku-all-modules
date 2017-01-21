@@ -5,9 +5,9 @@
 =SUBTITLE Functions and Functional Programming in Perl 6
 
 Routines are the smallest means of code reuse in Perl 6. They come in several
-forms, most notably methods, which belong in classes and roles and are
+forms, most notably L<methods|/type/Method>, which belong in classes and roles and are
 associated with an object, and functions, also called I<subroutines> or short
-I<sub>s, which exist independently of objects.
+L<sub|/type/Sub>s, which can be called independently of objects.
 
 Subroutines default to lexical (C<my>) scoping, and calls to them are
 generally resolved at compile time.
@@ -112,13 +112,12 @@ generated. Both automatic variables can be used that the same time.
 =head2 Arguments
 X<|Argument>
 
-Arguments are supplied as a comma separated list. To disambiguate nested calls
-parentheses or adverbial form can be used.
+Arguments are supplied as a comma separated list. To disambiguate nested calls,
+use parentheses:
 
     sub f(&c){ c() * 2 }; # call the function reference c with empty parameter list
     sub g($p){ $p - 2 };
-    say(g(42)); # nest call to g in call to say
-    f: { say g(666) }; # call f with a block
+    say(g(42), 45); # pass only 42 to g()
 
 When calling a function, positional arguments should be supplied
 in the same order as the function's signature.  Named arguments
@@ -148,7 +147,7 @@ one to skip commas between named arguments.
 
 =head2 Return values
 
-Any C<Block> or C<Routine> will provide it's last expression as a return value
+Any C<Block> or C<Routine> will provide its last expression as a return value
 to the caller. If L<return|/language/control#return> or
 L<return-rw|/language/control#return-rw> are called their parameter, if any,
 will become the return value. The default return value is L<Nil|/type/Nil>.
@@ -176,22 +175,25 @@ values.
 
 =head2 Return Type Constraints
 
-Perl 6 has many ways to specify a function's return type:
+Perl 6 has many ways to specify a function's return type:
 
-    sub foo(--> Int)      {}; say &foo.returns # (Int)
-    sub foo() returns Int {}; say &foo.returns # (Int)
-    sub foo() of Int      {}; say &foo.returns # (Int)
-    my Int sub foo()      {}; say &foo.returns # (Int)
+=for code :skip-test
+sub foo(--> Int)      {}; say &foo.returns; # (Int)
+sub foo() returns Int {}; say &foo.returns; # (Int)
+sub foo() of Int      {}; say &foo.returns; # (Int)
+my Int sub foo()      {}; say &foo.returns; # (Int)
 
 Attempting to return values of another type will cause a compilation error.
 
-    sub foo() returns Int { "a"; }; foo; # Type check fails
+=for code :catch-all
+sub foo() returns Int { "a"; }; foo; # Type check fails
 
-Note that C<Nil> and C<Failure> are excempt from return type constraints and
+Note that C<Nil> and C<Failure> are exempt from return type constraints and
 can be returned from any routine, regardless of its constraint:
 
-    sub foo() returns Int { fail   }; foo; # Failure returned
-    sub foo() returns Int { return }; foo; # Nil returned
+=for code :catch-all
+sub foo() returns Int { fail   }; foo; # Failure returned
+sub bar() returns Int { return }; bar; # Nil returned
 
 =head2 X<Multi-dispatch|declarator,multi>
 
@@ -370,8 +372,9 @@ variable at the point of declaration:
     # and then use it:
     say $square(6);    # 36
 
-Or you can reference an existing named function by using the C<&> in front of
-it.
+X<|prefix &>
+Or you can reference an existing named function by using the C<&>-sigil in
+front of it.
 
     sub square($x) { $x * $x };
 
@@ -451,6 +454,7 @@ Here C<return> does not just leave the block inside which it was called, but
 the whole routine. In general, blocks are transparent to C<return>, they
 attach to the outer routine.
 
+X<|use soft (pragma)>
 Routines can be inlined and as such provide an obstacle for wrapping. Use the
 pragma C<use soft;> to prevent inlining to allow wrapping at runtime.
 
@@ -643,7 +647,7 @@ section.
 
 Traits are subs of the form C<< trait_mod<VERB> >>, where C<VERB> stands for the
 name like C<is>, C<does> or C<handles>. It receives the modified thing as
-argument, and the name as a named argument.
+argument, and the name as a named argument. See L<Sub|/type/Sub#Traits> for details.
 
 =begin code
 multi sub trait_mod:<is>(Routine $r, :$doubles!) {
@@ -684,11 +688,7 @@ For example
         say "Back in Int with $res";
     }
 
-    # OUTPUT:
-    # a 1;
-    # Int 1
-    # Any 2
-    # Back in Int with 5
+    a 1;        # Int 1\n Any 2\n Back in Int with 5
 
 Here C<a 1> calls the most specific C<Int> candidate first, and C<callwith>
 re-dispatches to the less specific C<Any> candidate.
@@ -777,19 +777,33 @@ sub run-it-again-and-again($x) {
 say power-it(5);    # 625
 =end code
 
+X<|nextcallee>
+Redispatch may be required to call a block that is not the current scope what
+provides C<nextsame> and friends with the problem to referring to the wrong
+scope. Use C<nextcallee> to capture the right candidate and call it at the
+desired time.
+
+    my \IOL = Lock.new;
+    &say.wrap( -> |c {
+        my &wrappee = nextcallee;
+        IOL.protect: { &wrappee(|c) }
+    });
+    for ^100 { say "oops" }
+
 =head1 Coercion Types
 
 Coercion types can help you to have a specific type inside a routine, but
 accept wider input. When the routine is called, the argument is automatically
 converted to the narrower type.
 
-=for code :skip-test
+=begin code :skip-test
 sub double(Int(Cool) $x) {
     2 * $x
 }
 
 say double '21';    # 42
 say double Any;     # Type check failed in binding $x; expected 'Cool' but got 'Any'
+=end code
 
 Here the C<Int> is the target type to which the argument will be coerced, and
 C<Cool> is the type that the routine accepts as input.
@@ -854,7 +868,7 @@ call L<exit|https://docs.perl6.org/routine/exit>.
 =head1 C<sub USAGE>
 X<|USAGE>
 
-If the no multi candidate of C<MAIN> is found for the given command line
+If no multi candidate of C<MAIN> is found for the given command line
 parameters, the sub C<USAGE> is called. If no such method is found, output a
 generated usage message.
 

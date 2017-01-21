@@ -4,6 +4,8 @@
 
 =SUBTITLE Common Perl 6 infixes, prefixes, postfixes, and more!
 
+See L<Sub> on how to define operators.
+
 =head1 Operator Precedence
 
 In an expression like C<1 + 2 * 3>, the C<2 * 3> is evaluated first
@@ -118,7 +120,7 @@ L<Defining Operators functions|/language/functions#Defining_Operators>.
 
 Meta operators can be parameterized with other operators or subroutines in the
 same way as functions can take functions as parameters. To use a subroutine as
-a parameter prefix it's name with a C<&>. Perl 6 will generate the actual
+a parameter prefix its name with a C<&>. Perl 6 will generate the actual
 combined operator in the background, allowing the mechanism to be applied to
 user defined operators. There are quite a few Meta operators with different
 semantics, as explained in detail as follows.
@@ -141,7 +143,7 @@ it's a mistake to use it with uppercase `S///`, because you can't
 retrieve the modified string. The correct way is to alias the given
 string by some other method, such as a `for` loop or, as is shown in the
 example above, with a `given` block (in this case, it's a postfix form
-of it, without curlies).
+of it, without curly braces).
 
 Both operators can take the same adverbs as the
 L<.subst method|/routine/subst>, which go between the `s`/`S` and the opening
@@ -165,16 +167,18 @@ assignment operator to assign the replacement to the match part.
 
 Infix operators can be combined with the assignment operator to modify a
 value and apply the result to a container in one go. Containers will be
-autovivified if possible.
+autovivified if possible.  Some examples:
 
     my $a = 32;
     $a += 10;  # 42
+    $a -= 2;   # 40
 
     $a = 3;
     $a min= 5; # still 3
     $a min= 2; # 2
 
-Z<blocked by #63642 my @a = 1,2; @a ,= 3,4;>
+    my $s = 'a';
+    $s ~= 'b'; # 'ab'
 
 This behavior is automatically extended to include custom-defined infix operators.
 
@@ -297,14 +301,22 @@ Hyper operators can take user defined operators as its operator argument.
 
     # OUTPUT: «10 EB 4 EB 2 PB 5 PB 0.5 PB 4 TB 300 GB 4.5 GB 50 MB 200 MB 9 KB 0.6 MB»
 
-Hyper operators do not descend into child lists. You can chain hyper operators
-to destructure a List of Lists.
+Whether hyperoperators descend into child lists depends on the
+L<nodality|/language/typesystem#trait_is_nodal> of the inner operator of a
+chain. For the hyper method call operator (».) the nodality of the target
+method is significant.
+
+    say (<a b>, <c d e>)».elems        # (2 3)
+    say (<a b>, <c d e>)».&{ .elems }  # ((1 1) (1 1 1))
+
+You can chain hyper operators to destructure a List of Lists.
 
     my $neighbors = ((-1, 0), (0, -1), (0, 1), (1, 0));
     my $p = (2, 3);
     say $neighbors »>>+<<» ($p, *); # ((1 3) (2 2) (2 4) (3 3))
 
 =head1 Reduction Operators
+X<|[] (reduction meta operators)>X<|[+] (reduction meta operators)>
 
 The reduction metaoperator, C<[ ]>, reduces a list with the given infix
 operator. It gives the same result as the L<reduce> routine - see there for
@@ -335,6 +347,7 @@ quote it with C<[]> (e.g. C<[\[\x]]>).
     say @n[^5];  # (1 12 123 1234 12345)
 
 =head1 Cross Operators
+X<|X (cross meta operator)>
 
 The cross metaoperator, C<X>, will apply a given infix operator in order of
 cross product to all lists, such that the rightmost operator varies most
@@ -344,9 +357,11 @@ quickly.
     # produces <1a, 1b, 2a, 2b, 3a, 3b>
 
 =head1 Zip Operators
+X<|Z (zip meta operator)>
 
-The zip metaoperator, C<Z>, will apply a given infix operator to pairs taken
-one left, one right, from its arguments. The resulting list is returned.
+The zip metaoperator, (which is not the same thing as L<Z|#infix_Z>), will
+apply a given infix operator to pairs taken one left, one right, from its
+arguments. The resulting list is returned.
 
     my @l = <a b c> Z~ 1, 2, 3; # [a1 b2 c3]
 
@@ -394,9 +409,8 @@ appropriate number.
 
 The X<grouping operator>.
 
-X<|(),empty list>
-An empty group C<()> creates an empty L<List> .
-Parens around non-empty expressions simply structure the expression, but
+An empty group C<()> creates an L<empty list|/type/List#index-entry-()_empty_list>.
+Parentheses around non-empty expressions simply structure the expression, but
 not have additional semantics.
 
 In an argument list, putting parenthesis around an argument prevents it from
@@ -471,15 +485,15 @@ Universal interface for associative access to zero or more elements of a
     %color{"cherry"}:delete;
     say %color;  #-> banana => yellowish, kiwi => green, lime => green
 
-See L«C«postcircumfix < >»|/routine/[ ]#postcircumfix_<_>» and
-L<C<postcircumfix « »>|/routine/[ ]#postcircumfix_«_»> for convenient
+See L«C«postcircumfix < >»|/routine/< >#(Operators)_postcircumfix_<_>» and
+L<C<postcircumfix « »>|/routine/« »#(Operators)_postcircumfix_«_»> for convenient
 shortcuts, and L<Subscripts|/language/subscripts> for a more detailed
 explanation of this operator's behavior, and how to implement support for it
 in custom types.
 
 =head2 postcircumfix C«< >»
 
-Shortcut for L<C<postcircumfix { }>|/routine/[ ]#postcircumfix_{_}> that quotes
+Shortcut for L<C<postcircumfix { }>|/routine/{ }#(Operators)_postcircumfix_{_}> that quotes
 its argument using the same rules as the L«quote-words operator|
 /routine/< >#circumfix_<_>» of the same name.
 
@@ -493,7 +507,7 @@ C<{ }> postcircumfix operator at compile-time.
 
 =head2 postcircumfix C<« »>
 
-Shortcut for L<C<postcircumfix { }>|/routine/[ ]#postcircumfix_{_}> that quotes
+Shortcut for L<C<postcircumfix { }>|/routine/{ }#(Operators)_postcircumfix_{_}> that quotes
 its argument using the same rules as the L<interpolating quote-words operator|
 /routine/« »#circumfix_«_»> of the same name.
 
@@ -507,9 +521,9 @@ C<{ }> postcircumfix operator at compile-time.
 =head2 postcircumfix C«( )»
 
 The X<call operator>. Treats the invocant as a L<Callable> and invokes it,
-using the expression between the parens as arguments.
+using the expression between the parentheses as arguments.
 
-Note that an identifier followed by a pair of parens is always parsed as a
+Note that an identifier followed by a pair of parentheses is always parsed as a
 subroutine call.
 
 If you want your objects to respond to the call operator, you need to
@@ -577,17 +591,21 @@ L<List> is returned.
 
 Technically this is not an operator, but syntax special-cased in the compiler.
 
-X<|postfix ».>
+X<|postfix ».>X«|postfix >>.»
 =head2 postfix C<».> / postfix C«>>.»
 
 X<Hyper method call operator>. Will call a method on all elements of a C<List> out of order and return the list of return values in order.
 
     my @a = <a b c>;
-    @a».say;                          # a␤b␤c␤
     my @b = @a».ord;                  # [97, 98, 99]
     sub foo(Str:D $c){ $c.ord * 2 };  # The first parameter of a method is the invocant.
     say @a».&foo;                     # So we can pretend to have a method call with a sub that got a good first positional argument.
-    say @a».&({ .ord});               # Blocks have an implicit positional arguments that lands in $_. The latter can be omitted for method calls.
+    say @a».&{ .ord};                 # Blocks have an implicit positional arguments that lands in $_. The latter can be omitted for method calls.
+
+Take care to avoid a common mistake of expecting side-effects to occur in order. The following
+C<say> is B<not> guaranteed to produce the output in order:
+
+    @a».say;  # WRONG! Could produce a␤b␤c␤ or c␤b␤a␤ or any other order
 
 =head2 postfix C<.postfix> / C<.postcircumfix>
 X<|.( )>X<|.[ ]>X<|.{ }>
@@ -649,13 +667,13 @@ class or role, even after it has been redefined in the child class.
 
 =head1 Autoincrement Precedence
 
-=head2 prefix C«++»
+=head2 prefix X<C«++»|++>
 
 =begin code :skip-test
 multi sub prefix:<++>($x is rw) is assoc<non>
 =end code
 
-Increments its argument by one, and returns the incremented value.X<|increment operator>
+Increments its argument by one, and returns the updated value.X<|increment operator>
 
     my $x = 3;
     say ++$x;       # 4
@@ -665,13 +683,13 @@ It works by calling the L<succ> method (for I<successor>) on its argument,
 which gives custom types the freedom to implement their own increment
 semantics.
 
-=head2 prefix C«--»
+=head2 prefix X<C«--»|-->
 
 =begin code :skip-test
 multi sub prefix:<-->($x is rw) is assoc<non>
 =end code
 
-Decrements its argument by one, and returns the decremented value.X<|decrement operator>
+Decrements its argument by one, and returns the updated value.X<|decrement operator>
 
     my $x = 3;
     say --$x;       # 2
@@ -682,20 +700,20 @@ which gives custom types the freedom to implement their own decrement
 semantics.
 
 
-=head2 postfix C«++»
+=head2 postfix X<C«++»|++>
 
 =begin code :skip-test
 multi sub postfix:<++>($x is rw) is assoc<non>
 =end code
 
-Increments its argument by one, and returns the unincremented value.X<|increment operator>
+Increments its argument by one, and returns the original value.X<|increment operator>
 
     my $x = 3;
     say $x++;       # 3
     say $x;         # 4
 
 It works by calling the L<succ> method (for I<successor>) on its argument,
-which gives custom types the freedom to implement their own incrementation
+which gives custom types the freedom to implement their own increment
 semantics.
 
 Note that this does not necessarily return its argument. For example for
@@ -705,20 +723,27 @@ undefined values, it returns 0:
     say $x++;       # 0
     say $x;         # 1
 
+Increment on L<Str|/type/Str> will increment the number part of a string and
+assign the resulting string to the container. A C<is rw>-container is required.
+
+    my $filename = "somefile-001.txt";
+    say $filename++ for 1..3;
+    # OUTPUT«somefile-001.txt␤somefile-002.txt␤somefile-003.txt␤»
+
 =head2 postfix C«--»
 
 =begin code :skip-test
 multi sub postfix:<-->($x is rw) is assoc<non>
 =end code
 
-Decrements its argument by one, and returns the undecremented value.X<|decrement operator>
+Decrements its argument by one, and returns the original value.X<|decrement operator>
 
     my $x = 3;
     say $x--;       # 3
     say $x;         # 2
 
 It works by calling the L<pred> method (for I<predecessor>) on its argument,
-which gives custom types the freedom to implement their own decrementation
+which gives custom types the freedom to implement their own decrement
 semantics.
 
 Note that this does not necessarily return its argument. For example for
@@ -727,6 +752,14 @@ undefined values, it returns 0:
     my $x;
     say $x--;       # 0
     say $x;         # -1
+
+Decrement on L<Str|/type/Str> will decrement the number part of a string and
+assign the resulting string to the container. A C<is rw>-container is required.
+Crossing 0 is prohibited and throws C<X::AdHoc>.
+
+    my $filename = "somefile-003.txt";
+    say $filename-- for 1..3;
+    # OUTPUT«somefile-003.txt␤somefile-002.txt␤somefile-001.txt␤»
 
 =head1 Exponentiation Precedence
 
@@ -801,7 +834,7 @@ Coerces the argument to L<Str> by calling the C<Str> method on it.
 
 =head2 prefix C«|»
 
-Flattens objects of type L<Capture>, L<Pair>, L<List> L<Map> and L<Hash>
+Flattens objects of type L<Capture>, L<Pair>, L<List>, L<Map> and L<Hash>
 into an argument list.
 
 Outside of argument lists, it returns a L<Slip|/type/Slip>, which makes it
@@ -825,7 +858,7 @@ assuming L<two's complement|https://en.wikipedia.org/wiki/Two%27s_complement>.
 
 =head2 prefix C«~^»
 
-Coerces the argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+Coerces the argument to a non-variable-encoding string buffer type (e.g. C<buf8>, C<buf16>, C<buf32>)
 and then flips each bit in that buffer.
 
 Please note that this has not yet been implemented.
@@ -944,20 +977,20 @@ Integer bit shift to the right.X<|integer bit shift operator,right>
 
 =head2 infix C«~&»
 
-Coerces each argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+Coerces each argument to a non-variable-encoding string buffer type (e.g. C<buf8>, C<buf16>, C<buf32>)
 and then performs a numeric bitwise AND on corresponding integers of the two buffers, padding the
 shorter buffer with zeroes.
 
 =head2 infix C«~<»
 
-Coerces the left argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+Coerces the left argument to a non-variable-encoding string buffer type (e.g. C<buf8>, C<buf16>, C<buf32>)
 and then performs a numeric bitwise left shift on the bits of the buffer.
 
 Please note that this has not yet been implemented.
 
 =head2 infix C«~>»
 
-Coerces the left argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+Coerces the left argument to a non-variable-encoding string buffer type (e.g. C<buf8>, C<buf16>, C<buf32>)
 and then performs a numeric bitwise right shift on the bits of the buffer.
 
 Please note that this has not yet been implemented.
@@ -1026,13 +1059,13 @@ operation.
 
 =head2 infix C«~|»
 
-Coerces each argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+Coerces each argument to a non-variable-encoding string buffer type (e.g. C<buf8>, C<buf16>, C<buf32>)
 and then performs a numeric bitwise OR on corresponding integers of the two buffers, padding the
 shorter buffer with zeroes.
 
 =head2 infix C«~^»
 
-Coerces each argument to a non-variable-encoding string buffer type (eg. C<buf8>, C<buf16>, C<buf32>)
+Coerces each argument to a non-variable-encoding string buffer type (e.g. C<buf8>, C<buf16>, C<buf32>)
 and then performs a numeric bitwise XOR on corresponding integers of the two buffers, padding the
 shorter buffer with zeroes.
 
@@ -1052,18 +1085,19 @@ operation.
 =head2 infix C«x»
 
 =begin code :skip-test
-proto sub infix:<x>(Any, Any) returns Str:D
-multi sub infix:<x>(Any, Any)
-multi sub infix:<x>(Str:D, Int:D)
+sub infix:<x>($a, $b) returns Str:D
 =end code
 
 X<String repetition operator>.
 
-Coerces C<$a> to L<Str> and C<$b> to L<Int> and repeats the string C<$b>
-times. Return the empty string if C<< $b <= 0 >>.
+Repeats the string C<$a> C<$b> times, if necessary coercing C<$a> to L«C<Str>|/type/Str»
+and C<$b> L«C<Int>|/type/Int». Returns an empty string if C<< $b <= 0 >>.
 
-    say 'ab' x 3;       # ababab
-    say 42 x 3;         # 424242
+    say 'ab' x 3;           # ababab
+    say 42 x 3;             # 424242
+
+    my $a = 'a'.IO; my $b = 3.5;
+    say $a x $b;            # aaa
 
 =head2 infix C«xx»
 
@@ -1151,10 +1185,24 @@ details.
 sub prefix:<temp>(Mu $a is rw)
 =end code
 
-"temporizes" the variable passed as the argument, which means it is reset
-to its old value on scope exit. (This is similar to the
-L<local|http://perldoc.perl.org/functions/local.html> operator in Perl 5,
-except that C<temp> does not reset the value).
+"temporizes" the variable passed as the argument. The variable begins
+with the same value as it had in the outer scope, but can be assigned
+new values in this scope. Upon exiting the scope, the variable will be
+restored to its original value.
+
+    my $a = "three";
+    say $a; # three
+    {
+        temp $a;
+        say $a; # three
+        $a = "four";
+        say $a; # four
+    }
+    say $a; # three
+
+Note that you can also assign immediately as part of the call to temp:
+
+    temp $a = "five";
 
 =head2 prefix C«let»
 
@@ -1198,17 +1246,32 @@ Mixes C<$role> into C<$obj> at run time. Requires C<$obj> to be mutable.
 C<$role> doesn't need to a be a role, it can be something that knows how
 to act like a role, for example enum values.
 
+If methods of the same name are present already, the last mixed in role takes
+precedence.
+
 =head2 infix C«but»
 
 =begin code :skip-test
-sub infix:<but>(Mu $obj, Mu $role) is assoc<non>
+sub infix:<but>(Mu $obj, Mu  $role) is assoc<non>
+sub infix:<but>(Mu $obj, Mu:D $obj) is assoc<non>
 =end code
 
 Creates a copy of C<$obj> with C<$role> mixed in. Since C<$obj> is not
 modified, C<but> can be used to created immutable values with mixins.
 
-C<$role> doesn't need to a be a role, it can be something that knows how
-to act like a role, for example enum values.
+Instead of a role, you can provide an instantiated object. In this case,
+the operator will create a role for you automatically. The role will contain
+a single method named the same as C<$obj.^name> and that returns C<$obj>:
+
+    say 42 but 'forty two'; # 'forty two'
+
+    my $s = 12 but class Warbles { method hi { 'hello' } }.new;
+    say $s.Warbles.hi; # hello
+    say $s + 42;       # 54
+
+If methods of the same name are present already, the last mixed in role takes
+precedence. A list of methods can be provided in parentheses separated by
+comma. In this case conflicts will be reported at runtime.
 
 =head2 infix C«cmp»
 
@@ -1383,7 +1446,7 @@ multi sub infix:«>=»(Num:D, Num:D)
 multi sub infix:«>=»(Real:D, Real:D)
 =end code
 
-X<Numeric less than or equal to operator>.
+X<Numeric greater than or equal to operator>.
 
 Coerces both arguments to L<Real> (if necessary), and returns C<True> if
 the first argument is larger than or equal to the second.
@@ -1622,7 +1685,7 @@ multi sub infix:<=~=>(Complex:D, Complex:D)
 multi sub infix:<=~=>(Numeric:D, Numeric:D)
 =end code
 
-The X<approximately-equal operator>. Calculates the relative difference between
+The X<approximately-equal operator|infix, ≅>. Calculates the relative difference between
 the left-hand and right-hand sides and returns C<True> if the difference is
 less than $*TOLERANCE (which defaults to 1e-15). However, if either side is zero
 then it checks that the absolute difference between the sides is less than $*TOLERANCE.
@@ -1687,11 +1750,16 @@ true value, the arguments to the right of are never evaluated.
 
 =head2 infix C«^^»
 
-Returns the first true argument if there is only one, and L<Nil> otherwise.
-Short-circuits as soon as two true arguments are found.
+X<Short-circuit exclusive-or>. Returns the true argument if there
+is one (and only one).  Returns the last argument if all arguments are false.
+Returns C<Nil> otherwise (when more than one argument is true).
+
+This operator short-circuits in the sense that it does not evaluate
+any arguments after a 2nd true result.
 
     say 0 ^^ 42;                # 42
-    say 0 ^^ 42 ^^ 1 ^^ die 8;  # (empty line)
+    say '' ^^ 0;                # 0
+    say 0 ^^ 42 ^^ 1 ^^ die "never called";  # (empty line)
 
 Note that the semantics of this operator may not be what you assume: infix C«^^»
 flips to first true value it finds, and then flips to Nil I<forever> after the
@@ -2002,18 +2070,23 @@ other positions it is a syntax error.
 =head2 infix C«Z»
 
 =begin code :skip-test
-sub infix:<Z>(**@lists) returns List:D is assoc<chain>
+sub infix:<Z>(**@lists) returns Seq:D is assoc<chain>
 =end code
 
 X<Zip operator>.
 
-Interleaves the lists passed to C<Z> like a zipper, stopping as soon as
-the first input list is exhausted:
+Interleaves the lists passed to C<Z> like a zipper, stopping as soon as the
+first input list is exhausted. The returned C<Seq> contains a nested list with
+values for all C<Z> operators in a chain.
 
     say (1, 2 Z <a b c> Z <+ ->).perl;  #=> ((1, "a", "+"), (2, "b", "-")).Seq
+    for <a b c> Z <1 2 3> -> [$l, $r] {
+        say "$l:$r"
+    }
+    OUTPUT«a:1␤b:2␤c:3␤»
 
 The C<Z> operator also exists as a meta operator, in which case the inner
-lists are replaced by the value from applying the meta'ed operator to the
+lists are replaced by the value from applying the operator to the
 list:
 
     say 100, 200 Z+ 42, 23;             #=> (142 223)
@@ -2034,7 +2107,7 @@ elements vary most rapidly:X<|cross product operator>
     #           (3 a 9) (3 b 9) (3 c 9))
 
 The C<X> operator also exists as a meta operator, in which case the inner
-lists are replaced by the value from applying the meta'ed operator to the
+lists are replaced by the value from applying the operator to the
 list:
 
     1..3 X~ <a b c> X~ 9
@@ -2147,6 +2220,7 @@ X<Read-only binding operator>. See L<C<infix :=>|:=>.
 
 =head2 listop C«...»
 
+X<|stub operator>
 The I<yada, yada, yada> operator or I<stub> operator. If it is the only
 statement in a routine or type, it marks that routine or type as a stub
 (which is significant in the context of pre-declaring types and composing
@@ -2210,10 +2284,11 @@ to misuse, see L<traps|/language/traps#Loose_boolean_operators>.
 
 =head2 infix C«andthen»
 
-Returns the first undefined argument, otherwise the last argument.
+Returns L«C<Empty>|/type/Slip#index-entry-Empty-Empty» upon encountering
+the first undefined argument, otherwise the last argument.
 Short-circuits.  The result of the left side is bound to $_ for the
-right side, or passed as arguments if the right side is a block or
-pointy block.
+right side, or passed as arguments if the right side is a
+L«C<Callable>|/type/Callable».
 
 =head1 Loose OR Precedence
 
@@ -2228,10 +2303,10 @@ to misuse, see L<traps|/language/traps#Loose_boolean_operators>.
 
 =head2 infix C«orelse»
 
-Same as C<infix //>, except with looser precedence.
-
-Returns the first defined argument, or else the last argument.
-Short-circuits.
+Similar to C<infix //>. Returns the first defined argument, or else the
+last argument. Short-circuits. The result of the left side is bound to $_ for the
+right side, or passed as arguments if the right side is a
+L«C<Callable>|/type/Callable».
 
 =head1 Sequencer Precedence
 
@@ -2254,7 +2329,7 @@ is not required for the very last routine/method).
         <people of earth>; # (1) Start with the input
 
     # Feed (left-to-right) with parentheses, read top-to-bottom
-    @result = (
+    my @result = (
         <people of earth>  # (1) Start with the input
         ==> map({ .tc })   # (2) Capitalize the words
         ==> grep /<[PE]>/  # (3) Look for P or E
@@ -2262,14 +2337,15 @@ is not required for the very last routine/method).
     );
 
     # For illustration, method chaining equivalent, read top-to-bottom
-    @result =
+    my @result =
         <people of earth>  # (1) Start with the input
         .map({ .tc })      # (2) Capitalize the words
         .grep(/<[PE]>/)    # (3) Look for P or E
         .sort;             # (4) Sort, result is <Earth People>
 
     # To assign without the need of parentheses use another feed operator
-    <people of earth>
+    my @result =
+        <people of earth>
         ==> map({ .tc })
         ==> grep /<[PE]>/
         ==> sort()
@@ -2277,7 +2353,8 @@ is not required for the very last routine/method).
 
     # It can be useful to capture a partial result, however, unlike
     # the leftward feed operator, it does require parentheses or a semicolon
-    <people of earth>
+    my @result =
+        <people of earth>
         ==> map({ .tc })
         ==> my @caps; @caps # also could wrap in parentheses instead
         ==> grep /<[PE]>/
@@ -2311,7 +2388,7 @@ functions.
         <people of earth>;     # (1) Start with the input
 
     # Feed (right-to-left) with parentheses, read bottom-to-top
-    @result = (
+    my @result = (
         sort()                 # (4) Sort, result is <Earth People>
         <== grep({ /<[PE]>/ }) # (3) Look for P or E
         <== map({ .tc })       # (2) Capitalize the words
@@ -2319,14 +2396,14 @@ functions.
     );
 
     # To assign without parentheses, use another feed operator
-    @result
+    my @result
         <== sort()             # (4) Sort, result is <Earth People>
         <== grep({ /<[PE]>/ }) # (3) Look for P or E
         <== map({ .tc })       # (2) Capitalize the words
         <== <people of earth>; # (1) Start with the input
 
     # It can be useful to capture a partial result
-    @result
+    my @result
         <== sort()
         <== grep({ /<[PE]>/ })
         <== my @caps # unlike ==>, there is no need for additional statement

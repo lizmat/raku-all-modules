@@ -52,7 +52,7 @@ multi method new(Date :$date!,
                  Int :$timezone = 0, :&formatter)
 multi method new(Int() $year, Int() $month, Int() $day,
                  Int() $hour, Int $minute, $second,
-                 Int() :$timezone = 0, :&formatter)       # since 6.d
+                 Int() :$timezone = 0, :&formatter)
 multi method new(Instant:D $i,  :$timezone=0, :&formatter)
 multi method new(Int:D $posix,  :$timezone=0, :&formatter)
 multi method new(Str:D $format, :$timezone=0, :&formatter)
@@ -98,7 +98,7 @@ L<X::DateTime::TimezoneClash> is thrown.
 
 Defined as:
 
-    method now(:$timezone=$*TZ, :&formatter) returns DateTime:D
+    method now(:$timezone=$*TZ, :&formatter --> DateTime:D)
 
 Creates a new C<DateTime> object from the current system time, optionally with
 a different timezone than the default attached.
@@ -123,11 +123,22 @@ Note that this can lead to invalid dates in some circumstances:
     CATCH { default { put .^name, ': ', .Str } };
     # OUTPUT: «X::OutOfRange: Day out of range. Is: 29, should be in 1..28␤»
 
+=head2 method hh-mm-ss
+
+Defined as:
+
+    method hh-mm-ss(DateTime:D: --> Str:D)
+
+Returns the time represented by the object as a string in 24-hour HH:MM:SS format:
+
+    say DateTime.new("2052-02-29T22:34:56Z").hh-mm-ss;
+    # OUTPUT: «22:34:56␤»
+
 =head2 method hour
 
 Defined as:
 
-    method hour(DateTime:D:) returns Int:D
+    method hour(DateTime:D: --> Int:D)
 
 Returns the hour component.
 
@@ -137,7 +148,7 @@ Returns the hour component.
 
 Defined as:
 
-    method minute(DateTime:D:) returns Int:D
+    method minute(DateTime:D: --> Int:D)
 
 Returns the minute component.
 
@@ -169,7 +180,7 @@ Returns the second component, rounded down to an L<Int|/type/Int>.
 
 Defined as:
 
-    method timezone(DateTime:D:) returns Int:D
+    method timezone(DateTime:D: --> Int:D)
 
 Returns the time zone in seconds as an offset from UTC.
 
@@ -179,7 +190,7 @@ Returns the time zone in seconds as an offset from UTC.
 
 Defined as:
 
-    method offset(DateTime:D:) returns Int:D
+    method offset(DateTime:D: --> Int:D)
 
 Returns the time zone in seconds as an offset from UTC. This is an alias for
 L<#method timezone>.
@@ -190,7 +201,7 @@ L<#method timezone>.
 
 Defined as:
 
-    method offset-in-minutes(DateTime:D:) returns Real:D
+    method offset-in-minutes(DateTime:D: --> Real:D)
 
 Returns the time zone in minutes as an offset from UTC.
 
@@ -200,7 +211,7 @@ Returns the time zone in minutes as an offset from UTC.
 
 Defined as:
 
-    method offset-in-hours(DateTime:D:) returns Real:D
+    method offset-in-hours(DateTime:D: --> Real:D)
 
 Returns the time zone in hours as an offset from UTC.
 
@@ -210,7 +221,7 @@ Returns the time zone in hours as an offset from UTC.
 
 Defined as:
 
-    method Str(DateTime:D:) returns Str:D
+    method Str(DateTime:D: --> Str:D)
 
 Returns a string representation of the invocant, as done by
 L<the formatter|#method formatter>.  If no formatter was specified, an
@@ -222,7 +233,7 @@ ISO 8601 timestamp will be returned.
 
 Defined as:
 
-    method Instant(DateTime:D:) returns Instant:D
+    method Instant(DateTime:D: --> Instant:D)
 
 Returns an L<Instant|/type/Instant> object based on the invocant.
 
@@ -232,7 +243,7 @@ Returns an L<Instant|/type/Instant> object based on the invocant.
 
 Defined as:
 
-    method posix(DateTime:D: $ignore-timezone = False) returns Int:D
+    method posix(DateTime:D: $ignore-timezone = False --> Int:D)
 
 Returns the date and time as a POSIX/UNIX timestamp (seconds since the Epoch,
 1st January 1970 UTC).
@@ -307,20 +318,31 @@ C<.truncated-to('second')>.
 
 Defined as:
 
-    method Date(DateTime:D:) returns Date:D
+    multi method Date(DateTime:U --> Date:U)
+    multi method Date(DateTime:D --> Date:D)
 
+Converts the invocant to L«C<Date>|/type/Date».
 
-Returns a L<Date|/type/Date> object for this DateTime object. Which obviously
-lacks the time component.
+    say DateTime.new("2012-02-29T12:34:56.946314Z").Date; # 2012-02-29
+    say DateTime.Date;                                    # (Date)
 
-    my $d = DateTime.new("2012-02-29T12:34:56.946314Z");
-    say $d.Date; # 2012-02-29
+=head2 method DateTime
+
+Defined as:
+
+    method DateTime(--> DateTime)
+
+Returns the invocant.
+
+    say DateTime.new("2012-02-29T12:34:56.946314Z")
+            .DateTime;      # 2012-02-29T12:34:56.946314Z
+    say DateTime.DateTime;  # (DateTime)
 
 =head2 method utc
 
 Defined as:
 
-    method utc(DateTime:D:) returns DateTime:D
+    method utc(DateTime:D: --> DateTime:D)
 
 Returns a DateTime object for the same time, but in time zone UTC.
 
@@ -330,7 +352,7 @@ Returns a DateTime object for the same time, but in time zone UTC.
 
 Defined as:
 
-    method in-timezone(DateTime:D: $timezone = 0) returns DateTime:D
+    method in-timezone(DateTime:D: $timezone = 0 --> DateTime:D)
 
 Returns a DateTime object for the same time, but in the specified time zone.
 
@@ -341,7 +363,7 @@ Returns a DateTime object for the same time, but in the specified time zone.
 
 Defined as:
 
-    method local(DateTime:D:) returns DateTime:D
+    method local(DateTime:D: --> DateTime:D)
 
 Returns a DateTime object for the same time, but in the local time zone
 (C<$*TZ>).
@@ -349,4 +371,36 @@ Returns a DateTime object for the same time, but in the local time zone
     my $*TZ = -3600;
     say DateTime.new('2015-12-24T12:23:00+0200').local;
             # 2015-12-24T09:23:00-0100
+
+=head2 sub infix:<->
+
+    sub infix:<-> (DateTime:D, Duration:D --> DateTime:D)
+    sub infix:<-> (DateTime:D, DateTime:D --> Duration:D)
+
+Takes a L«C<DateTime>|/type/DateTime» to subtract from and either a
+L«C<Duration>|/type/Duration» or another C<DateTime> object. Returns a new
+C<DateTime> object or the C<Duration> between the two dates, respectively. When
+subtracting C<Duration>, timezone of the original C<DateTime> is preserved
+in the returned C<DateTime> object.
+
+    say perl DateTime.new(:2016year) - DateTime.new(:2015year):;
+    # Duration.new(31536001.0)
+
+    say DateTime.new(:2016year, :3600timezone) - Duration.new(31536001.0);
+    # 2015-01-01T00:00:00+01:00
+
+=head2 sub infix:<+>
+
+    sub infix:<+> (DateTime:D, Duration:D --> DateTime:D)
+    sub infix:<+> (Duration:D, DateTime:D --> DateTime:D)
+
+Takes a L«C<DateTime>|/type/DateTime» and increases it by the given
+L«C<Duration>|/type/Duration», preserving the timezone.
+
+    say DateTime.new(:2015year) + Duration.new(31536001.0);
+    # 2016-01-01T00:00:00Z
+
+    say Duration.new(42) + DateTime.new(:2015year, :3600timezone);
+    # 2015-01-01T00:00:42+01:00
+
 =end pod

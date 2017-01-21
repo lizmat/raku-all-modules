@@ -49,7 +49,7 @@ say @words.L<join>: '--';
 # Abe--Lincoln--said--Fourscore--and--seven--years--ago
 
 Since you have to put a C<:> after the method if you want to pass arguments
-without parentheses, a method call without a colon or parens is
+without parentheses, a method call without a colon or parentheses is
 unambiguously a method call without an argument list:
 
     say 4.log:   ; # 1.38629436111989 ( natural logarithm of 4 )
@@ -89,7 +89,8 @@ You can ask any object for its type object by calling the C<WHAT> method
 Type objects (other than L<Mu>) can be compared for equality with the
 L<C<===>|===> identity operator:
 
-=for code :allow<B L>
+=begin code :allow<B L>
+
 sub f(Int $x) {
     if $x.WHAT B<L<===>> Int {
         say 'you passed an Int';
@@ -98,16 +99,20 @@ sub f(Int $x) {
         say 'you passed a subtype of Int';
     }
 }
+=end code
 
 Although, in most cases, the L<C<.isa>|isa> method will suffice:
 
-=for code :allow<B L>
+=begin code :allow<B L>
+
 sub f($x) {
     if $xB<.L<isa>>(Int) {
         ...
     }
     ...
 }
+
+=end code
 
 Subtype checking is done by smart-matching:
 
@@ -145,7 +150,7 @@ They are typically declared using the C<has> declarator and the C<!> twigil.
     class Journey {
         has $!origin;
         has $!destination;
-        has @!travellers;
+        has @!travelers;
         has $!notes;
     }
 
@@ -157,7 +162,7 @@ call).
     class Journey {
         has $.origin;
         has $.destination;
-        has @!travellers;
+        has @!travelers;
         has $.notes;
     }
 
@@ -167,7 +172,7 @@ to the attribute, add the L<is rw> trait:
     class Journey {
         has $.origin;
         has $.destination;
-        has @!travellers;
+        has @!travelers;
         has $.notes is rw;
     }
 
@@ -184,7 +189,7 @@ sure that it is provided by marking it with L<is required>.
         has $.origin is required;
         # set the destination to Orlando as default (unless that is the origin!)
         has $.destination = self.origin eq 'Orlando' ?? 'Kampala' !! 'Orlando';
-        has @!travellers;
+        has @!travelers;
         has $.notes is rw;
     }
 
@@ -218,12 +223,12 @@ Methods are declared with the C<method> keyword inside a class body.
     class Journey {
         has $.origin;
         has $.destination;
-        has @!travellers;
+        has @!travelers;
         has $.notes is rw;
 
-        B<method> add_traveller($name) {
-            if $name L<ne> L<any>(@!travellers) {
-                L<push> @!travellers, $name;
+        B<method> add_traveler($name) {
+            if $name L<ne> L<any>(@!travelers) {
+                L<push> @!travelers, $name;
             }
             else {
                 L<warn> "$name is already going on the journey!";
@@ -268,11 +273,29 @@ used to call further methods on the invocant. Within methods, something like
 C<$.origin> is the same thing as C<self.origin>, however the colon-syntax for
 method arguments is only supported for method calls using self, not the shortcut.
 
+Please note that if the relevant methods C<bless>, C<CREATE>, C<BUILDALL> of
+L<Mu> are not overloaded C<self> will point to the type object in those
+methods.
+
+Since user defined constructors are called on type objects, C<self> will point
+to the type object in constructors and the submethod BUILD. Initializers are
+also called before object construction time. This can be used to access class
+attributes in initializers.
+
+    class C {
+        my $.local = 42;
+        has $.x = self.local
+    };
+    say C.new.x
+    # OUTPUT«42␤»
+
 =head2 Private Methods
 
-Methods strictly for use inside the class and that are not to be called from
-anywhere else are declared with an exclamation mark C<!> before the method
-name. They are called with an exclamation mark instead of a dot:
+Methods that are not going to be called or callable from anywhere outside
+the defining class are declared with an exclamation mark C<!> before the method
+name; such methods are called private in the sense they are not visible
+from outside the class that declares them.
+Private methods are invoked with an exclamation mark instead of a dot:
 
     method !do-something-private($x) {
         ...
@@ -283,7 +306,7 @@ name. They are called with an exclamation mark instead of a dot:
         }
     }
 
-Private methods are not inherited to subclasses.
+Private methods are not inherited by subclasses.
 
 =head2 Submethods
 
@@ -424,6 +447,11 @@ name. In either case, if neither C<BUILD> nor the default mechanism has
 initialized the attribute, default values are applied (the C<2 * $!x> in the
 example above).
 
+X<TWEAK>
+After the C<BUILD> methods have been called, methods named C<TWEAK> are
+called, if they exist, again with all the named arguments that were passed
+to C<new>.
+
 Due to the nature of the default behavior of C<BUILDALL> and custom C<BUILD>
 submethods, named arguments to the constructor C<new> derived from C<Mu> can
 correspond directly to public attributes of any of the classes in the method
@@ -460,6 +488,11 @@ submethod BUILD(:encoding(:$B<!>enc), :$B<!>data) {
     # nothing to do here anymore, the signature binding
     # does all the work for us.
 }
+
+However, be careful when using this auto-binding of attributes when the attribute may
+have special type requirements, such as an :$!id that must be a positive integer. Remember,
+default values will be assigned unless you specifically take care of this attribute, and that
+default value will be Any, which would cause a type error.
 
 The third implication is that if you want a constructor that accepts
 positional arguments, you must write your own C<new> method:
@@ -498,7 +531,21 @@ class MyClass {
 }
 =end code
 
-=comment TODO: better example for BUILDALL overriding
+If all you need to do is checking things after the actual construction,
+or modify attributes after the object construction, writing a submethod
+C<TWEAK> is a good approach (available in v6.d / Rakudo 2016.11):
+
+=begin code
+class RectangleWithCachedArea {
+    has ($.x1, $.x2, $.y1, $.y2);
+    has $.area;
+    submethod TWEAK() {
+        $!area = abs( ($!x2 - $!x1) * ( $!y2 - $!y1) );
+    }
+}
+
+say RectangleWithCachedArea.new( x2 => 5, x1 => 1, y2 => 1, y1 => 0).area;
+=end code
 
 =head2 Object Cloning
 
@@ -726,8 +773,8 @@ multi-method.
 
 =head2 Automatic Role Punning
 
-Any attempt to instantiate (and many other kinds of usage) a role will
-automatically create a class with the same name as the role, making it
+Any attempt to directly instantiate a role, as well as many other operations on it,
+will automatically create an instance of a class with the same name as the role, making it
 possible to transparently use a role as if it were a class.
 
 =begin code

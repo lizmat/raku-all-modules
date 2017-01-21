@@ -34,14 +34,11 @@ an object the current day according to the system clock.
 
 Defined as:
 
-=begin code :skip-test
-proto method new() {*}
-=end code
-    multi method new($year, $month, $day, :&formatter) returns Date:D
-    multi method new(:$year!, :$month = 1, :$day = 1)  returns Date:D
-    multi method new(Str $date)                        returns Date:D
-    multi method new(Instant:D $dt)                    returns Date:D
-    multi method new(DateTime:D $dt)                   returns Date:D
+    multi method new($year, $month, $day, :&formatter --> Date:D)
+    multi method new(:$year!, :$month = 1, :$day = 1  --> Date:D)
+    multi method new(Str $date                        --> Date:D)
+    multi method new(Instant:D $dt                    --> Date:D)
+    multi method new(DateTime:D $dt                   --> Date:D)
 
 Creates a new C<Date> object, either from a triple of (year, month, day)
 that can be coerced to integers, or from a string of the form C<YYYY-MM-DD>
@@ -51,14 +48,14 @@ or DateTime object.  Optionally accepts a formatter as a named parameter.
     my $date = Date.new(2042, 1, 1);
     $date = Date.new(year => 2042, month => 1, day => 1);
     $date = Date.new("2042-01-01");
-    $date = Date.new(now);
+    $date = Date.new(Instant.from-posix: 1482155532);
     $date = Date.new(DateTime.now);
 
 =head2 method new-from-daycount
 
 Defined as:
 
-    method new-from-daycount($daycount,:&formatter) returns Date:D
+    method new-from-daycount($daycount,:&formatter --> Date:D)
 
 Creates a new C<Date> object given C<$daycount> which is the number
 of days from epoch Nov. 17, 1858, i.e. the
@@ -82,7 +79,7 @@ arguments overriding the values from the invocant.
 
 Defined as:
 
-    method today(:&formatter) returns Date:D
+    method today(:&formatter --> Date:D)
 
 Returns a C<Date> object for the current day.  Optionally accepts a
 formatter named parameter.
@@ -149,7 +146,7 @@ For example
 
 Defined as:
 
-    method succ(Date:D:) returns Date:D
+    method succ(Date:D: --> Date:D)
 
 Returns a C<Date> of the following day. "succ" is short for "successor".
 
@@ -159,7 +156,7 @@ Returns a C<Date> of the following day. "succ" is short for "successor".
 
 Defined as:
 
-    method pred(Date:D:) returns Date:D
+    method pred(Date:D: --> Date:D)
 
 Returns a C<Date> of the previous day. "pred" is short for "predecessor".
 
@@ -169,7 +166,7 @@ Returns a C<Date> of the previous day. "pred" is short for "predecessor".
 
 Defined as:
 
-    multi method Str(Date:D:) returns Str:D
+    multi method Str(Date:D: --> Str:D)
 
 Returns a string representation of the invocant, as specified by the
 L<the formatter|/type/Dateish#method_formatter>. If no formatter was
@@ -185,11 +182,34 @@ will be returned.
 
 Defined as:
 
-    multi method gist(Date:D:) returns Str:D
+    multi method gist(Date:D: --> Str:D)
 
 Returns the date in C<YYYY-MM-DD> format (L<ISO 8601|https://en.wikipedia.org/wiki/ISO_8601>)
 
     say Date.new('2015-12-24').gist;                    # 2015-12-24
+
+=head2 method Date
+
+Defined as:
+
+    method Date(--> Date)
+
+Returns the invocant.
+
+    say Date.new('2015-12-24').Date;  # 2015-12-24
+    say Date.Date;                    # (Date)
+
+=head2 method DateTime
+
+Defined as:
+
+    multi method DateTime(Date:U --> DateTime:U)
+    multi method DateTime(Date:D --> DateTime:D)
+
+Converts the invocant to L«C<DateTime>|/type/DateTime»
+
+    say Date.new('2015-12-24').DateTime; # 2015-12-24T00:00:00Z
+    say Date.DateTime;                   # (DateTime)
 
 =head1 Functions
 
@@ -291,5 +311,30 @@ my $instant = DateTime.new(
 ).Instant;
 sleep-until $instant;
 qqx{mplayer wake-me-up.mp3};
+
+=head2 sub infix:<->
+
+    sub infix:<-> (Date:D, Int:D --> Date:D)
+    sub infix:<-> (Date:D, Date:D --> Int:D)
+
+Takes a date to subtract from and either an L«C<Int>|/type/Int», representing
+the number of days to subtract, or another L«C<Date>|/type/Date» object.
+Returns a new L«C<Date>|/type/Date» object or the number of days between the
+two dates, respectively.
+
+    say Date.new('2016-12-25') - Date.new('2016-12-24') # 1
+    say Date.new('2015-12-25') - Date.new('2016-11-21') # -332
+    say Date.new('2016-11-21') - 332                    # 2015-12-25
+
+=head2 sub infix:<+>
+
+    sub infix:<+> (Date:D, Int:D --> Date:D)
+    sub infix:<+> (Int:D, Date:D --> Date:D)
+
+Takes an L«C<Int>|/type/Int» and adds that many days to the given
+L«C<Date>|/type/Date» object.
+
+    say Date.new('2015-12-25') + 332 # 2016-11-21
+    say 1 + Date.new('2015-12-25')   # 2015-12-26
 
 =end pod

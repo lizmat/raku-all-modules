@@ -90,7 +90,7 @@ of the default C<Hash>.  Not all types of hashes or collections
 do so:
 
     my %h := MixHash.new;
-    $h{pi} = 1; %h.perl.say;         #-> (3.14159265358979e0=>1).MixHash
+    %h{pi} = 1; %h.perl.say;         #-> (3.14159265358979e0=>1).MixHash
 
 (Any name that C<< => >> would convert to a string can also be used to build
 a pair using "adverbial notation" and will appear that way when viewed
@@ -321,6 +321,16 @@ Multidimensional subscripts can be used to flatten nested lists.
     dd @toomany[*;*];
     # OUTPUT«("a", "b", 1, 2)␤»
 
+You can use L<Whatever|/type/Whatever> to select ranges or "rows" in
+multidimensional subscripts.
+
+    my @a = [[1,2], [3,4]];
+    say @a[*;1]; # 2nd element of each sub list
+    # OUTPUT«(2 4)␤»
+    my @a = (<1 c 6>, <2 a 4>, <5 b 3>);
+    say @a.sort(*[1]); # sort by 2nd column
+    # OUTPUT«((2 a 4) (5 b 3) (1 c 6))␤»
+
 =head1 Modifying elements
 
 =comment TODO
@@ -386,7 +396,7 @@ The return value and possible side-effect of a subscripting operation can be
 controlled using adverbs.
 
 Beware of the relatively loose precedence of operator adverbs, which may
-require you to add parens in compound expressions:
+require you to add parentheses in compound expressions:
 
     if $foo || %hash<key>:exists { ... }    # WRONG, tries to adverb the || op
     if $foo || (%hash<key>:exists) { ... }  # correct
@@ -641,7 +651,7 @@ However, we may prefer to be less strict about user input and instead take
 care of sanitizing the field values ourselves. In that case, we can remove
 the C<StrOrArrayOfStr> type constraint on C<%!fields>, and replace our
 C<AT-KEY> implementation with one that returns a custom C<Proxy> container
-which takes care of sanitising values on assignment:
+which takes care of sanitizing values on assignment:
 
     multi method AT-KEY (::?CLASS:D: $key) is rw {
         my $element := %!fields{normalize-key $key};

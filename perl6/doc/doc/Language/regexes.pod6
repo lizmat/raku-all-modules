@@ -74,7 +74,7 @@ otherwise it is L<Nil|/type/Nil>.
 
 =head1 Wildcards and character classes
 
-=head2 X<Dot to match any character|regex,.>
+=head2 X<Dot to match any character: C<.>|regex,.>
 
 An unescaped dot C<.> in a regex matches any single character.
 
@@ -87,7 +87,7 @@ So these all match:
 
 This doesn't match:
 
-    'perl' ~~ /. per /
+    'perl' ~~ /. per /;
 
 because there is no character to match before C<per> in the target string.
 
@@ -160,8 +160,10 @@ Examples for vertical whitespace characters:
 
     U+000A LINE FEED
     U+000B VERTICAL TABULATION
-    U+000C CARRIAGE RETURN
+    U+000C FORM FEED
+    U+000D CARRIAGE RETURN
     U+0085 NEXT LINE
+    U+2028 LINE SEPARATOR
     U+2029 PARAGRAPH SEPARATOR
 
 Use C<\s> to match any kind of whitespace, not just vertical whitespace.
@@ -180,14 +182,38 @@ Examples of word characters:
     03F3 ϳ GREEK LETTER YOT
     0409 Љ CYRILLIC CAPITAL LETTER LJE
 
+Predefined subrules:
+
+    <alnum>   \w       'alpha' plus 'digit'
+    <alpha>   <:L>     Alphabetic characters
+    <blank>   \h       Horizontal whitespace
+    <cntrl>            Control characters
+    <digit>   \d       Decimal digits
+    <graph>            'alnum' plus 'punct'
+    <lower>   <:Ll>    Lowercase characters
+    <print>            'graph' plus 'space', but no 'cntrl'
+    <punct>            Punctuation and Symbols (only Punct beyond ASCII)
+    <space>   \s       Whitespace
+    <upper>   <:Lu>    Uppercase characters
+    <|wb>               Word Boundary (zero-width assertion)
+    <ww>               Within Word (zero-width assertion)
+    <xdigit>           Hexadecimal digit [0-9A-Fa-f]
+
 =head2 X«Unicode properties|regex,<:property>»
 
 The character classes so far are mostly for convenience; a more systematic
 approach is the use of Unicode properties. They are called in the form C<<
-<:property> >>, where C<property> can be a short or long Unicode property
-name.
+<:property> >>, where C<property> can be a short or long Unicode General
+Category name. These use pair syntax.
 
-The following list is stolen from the Perl 5
+To match against a specific value for a Unicode Property:
+
+    "a".uniprop('Script') # Latin
+    "a" ~~ / <:Script<Latin>> /
+    "a".uniprop('Block') # Basic Latin
+    "a" ~~ / <:Block('Basic Latin')> /
+
+The following list of Unicode General Categories is stolen from the Perl 5
 L<perlunicode|http://perldoc.perl.org/perlunicode.html> documentation:
 
 =begin table
@@ -272,14 +298,18 @@ can put any number of single characters and ranges of characters (expressed
 with two dots between the end points), with or without whitespace.
 
     "abacabadabacaba" ~~ / <[ a .. c 1 2 3 ]> /
+    # Unicode hex codepoint range
+    "ÀÁÂÃÄÅÆ" ~~ / <[ \x[00C0] .. \x[00C6] ]> /
+    # Unicode named codepoint range
+    "ÀÁÂÃÄÅÆ" ~~ / <[ \c[LATIN CAPITAL LETTER A WITH GRAVE] .. \c[LATIN CAPITAL LETTER AE] ]> /
 
-Between the C<< < > >> you can also use the same operators for categories
-(C<+>, C<|>, C<&>, C<->, C<^>) to combine multiple range definitions and
+Between the C<< < > >> you can also use C<+> and C<-> to add or
+remove multiple range definitions and
 even mix in some of the unicode categories above. You are also allowed to
 write the backslashed forms for character classes between the C< [ ] >.
 
     / <[\d] - [13579]> /
-    # not quite the same as
+    # starts with \d and removes odd ASCII digits, but not quite the same as
     / <[02468]> /
     # because the first one also contains "weird" unicodey digits
 
@@ -311,7 +341,7 @@ Quantifiers bind tighter than concatenation, so C<ab+> matches one C<a>
 followed by one or more C<b>s. This is different for quotes, so C<'ab'+>
 matches the strings C<ab>, C<abab>, C<ababab> etc.
 
-=head2 X<One or more: +|regex,+>
+=head2 X<One or more: C<+>|regex,+>
 
 The C<+> quantifier makes the preceding atom match one or more times, with
 no upper limit.
@@ -321,7 +351,7 @@ like this:
 
     / \w+ '=' \w+ /
 
-=head2 X<Zero or more: *|regex,*>
+=head2 X<Zero or more: C<*>|regex,*>
 
 The C<*> quantifier makes the preceding atom match zero or more times, with
 no upper limit.
@@ -330,11 +360,11 @@ For example to allow optional whitespace between C<a> and C<b> you can write
 
     / a \s* b /
 
-=head2 X<Zero or one match: ?|regex,?>
+=head2 X<Zero or one match: C<?>|regex,?>
 
 The C<?> quantifier makes the preceding atom match zero or once.
 
-=head2 X<General quantifier: ** min..max|regex quantifier,**>
+=head2 X<General quantifier: C<** min..max>|regex quantifier,**>
 
 To quantify an atom an arbitrary number of times, you can write e.g.
 C<a ** 2..5> to match the character C<a> at least twice and at most 5 times.
@@ -370,7 +400,7 @@ or a Whatever operator for an infinite range with a non inclusive minimum:
 say so 'aaaa' ~~ /a ** 1^..*/;    # True
 =end code
 
-=head2 X<Modified quantifier: %|regex,%;regex,%%>
+=head2 X<Modified quantifier: C<%>|regex,%;regex,%%>
 
 To more easily match things like comma separated values, you can tack on a
 C<%> modifier to any of the above quantifiers to specify a separator that must
@@ -378,7 +408,7 @@ occur between each of the matches.  So, for example C<a+ % ','> will match
 C<a> or C<a,a> or C<a,a,a> or so on, but it will not match C<a,> or C<a,a,>.
 To match those as well, you may use C<%%> instead of C<%>.
 
-=head2 X<Greedy versus frugal quantifiers: ?|regex,?>
+=head2 X<Greedy versus frugal quantifiers: C<?>|regex,?>
 
 By default, quantifiers request a greedy match:
 
@@ -395,17 +425,17 @@ matching:
 
 You can also explicitly request greedy matching with the C<!> modifier.
 
-=head2 X<Preventing backtracking: :|regex,:>
+=head2 X<Preventing backtracking: C<:>|regex,:>
 
 You can prevent backtracking in regexes by attaching a C<:> modifier
 to the quantifier:
 
 =begin code
-say so 'abababa' ~~ /a .* aba/   # True
-say so 'abababa' ~~ /a .*: aba/  # False
+say so 'abababa' ~~ /a .* aba/;   # True
+say so 'abababa' ~~ /a .*: aba/;  # False
 =end code
 
-=head1 X<Alternation|regex,||>
+=head1 X<Alternation: C<||>|regex,||>
 
 To match one of several possible alternatives, separate them by C<||>; the
 first matching alternative wins.
@@ -426,7 +456,7 @@ non-whitespace characters, followed by zero or more spaces, followed by the
 equals sign C<=>, followed again by optional whitespace, followed by another
 string of non-whitespace characters.
 
-=head1 X<Longest Alternation|regex,|>
+=head1 X<Longest Alternation: C<|>|regex,|>
 
 In regexes branches separated by C<|>, the longest match wins, independent of
 the lexical ordering in the regexes.
@@ -476,10 +506,10 @@ Keep in mind, these anchors match end of B<string>, not line:
        and keep it safe
        EOS
 
-    say so $s ~~ /safe   $/;          # True
-    say so $s ~~ /secret $/;          # False
-    say so $s ~~ /^Keep   /;          # True
-    say so $s ~~ /^and    /;          # False
+    say so $str ~~ /safe   $/;        # True
+    say so $str ~~ /secret $/;        # False
+    say so $str ~~ /^Keep   /;        # True
+    say so $str ~~ /^and    /;        # False
 
 =head2 X«C<^^>, Start of Line and C<$$>, End of Line|regex,^^;regex,$$»
 
@@ -515,6 +545,14 @@ say so $str ~~ / scan $$/;        # False (there is a . between "scan"
                                       #        and the end of line)
 say so $str ~~ / '."' $$/;        # True  (at the last line)
 =end code
+
+
+=head2 X«C«<|w>» and C«<!|w>», word boundary|regex, <|w>;regex, <!|w>»
+
+If you want to match any word boundary you can use C«<|w>». This is similar to other
+languages’ X«C<\b>|regex deprecated,\b».
+To match not a word boundary, use <!|w>, similar to other languages X<C<\B>|regex deprecated, \B >.
+These are both zero width assertions.
 
 =head2 X<<<<C<<< << >>> and C<<< >> >>>, left and right word boundary|regex,<<;regex,>>;regex,«;regex,»>>>>
 
@@ -663,8 +701,8 @@ the match object as a hash, in other words: C<$/{ 'myname' }> or C<< $/<myname> 
 Named captures can also be nested using regular capture group syntax:
 
     if 'abc-abc-abc' ~~ / $<string>=( [ $<part>=[abc] ]* % '-' ) / {
-        say ~$<string>       # abc-abc-abc
-        say ~$<string><part> # [abc, abc, abc]
+        say ~$<string>;       # abc-abc-abc
+        say ~$<string><part>; # [abc, abc, abc]
     }
 
 Coercing the match object to a hash gives you easy programmatic access to
@@ -684,6 +722,11 @@ all named captures:
 
 There is a more convenient way to get named captures which is discussed in
 the section on Subrules.
+=head2 X«Capture markers: C«<( )>»|regex,<( )>»
+
+A C«<(» token indicates the start of the match's overall capture, while the corresponding C«)>»
+token indicates its endpoint. The C«<(» is similar to other languages X<\K|regex deprecated,\K> to discard any matches
+found before the C<\K>.
 
 =head1 Substitution
 
@@ -790,7 +833,7 @@ you can reformat the time from C<HH:MM> to C<h:MM {AM,PM}> like so:
 
 Using the modulo C<%> operator above keeps the sample code under 80 characters,
 but is otherwise the same as C« $0 < 12 ?? $0 !! $0 - 12 ».  When combined with
-the power of the Parser Expression Grammars that B<really> underly what you're
+the power of the Parser Expression Grammars that B<really> underlies what you're
 seeing here, you can use "regular expressions" to parse pretty much any
 language out there.
 
@@ -955,8 +998,8 @@ Whereas these two are not:
 
 Brackets and parentheses limit the scope of an adverb:
 
-    / (:i a b) c /          # matches 'ABc' but not 'ABC'
-    / [:i a b] c /          # matches 'ABc' but not 'ABC'
+    / (:i a b) c /;         # matches 'ABc' but not 'ABC'
+    / [:i a b] c /;         # matches 'ABc' but not 'ABC'
 
 =head3 X<Ratchet|regex adverb,:ratchet;regex adverb,:r>
 
@@ -1105,7 +1148,13 @@ case it defaults to C<$/.to>.
         say ~m:c(2)/a./;    # a2
     }
 
-=head3 Exhaustive
+I<Note:> unlike C<:pos>, a match with :continue() will attempt to
+match further in the string, instead of failing:
+
+    say "abcdefg" ~~ m:c(3)/e.+/; # OUTPUT«｢efg｣␤»
+    say "abcdefg" ~~ m:p(3)/e.+/; # OUTPUT«False␤»
+
+=head3 X<Exhaustive|matching adverb,:exhaustive;matching adverb,:ex>
 
 To find all possible matches of a regex – including overlapping ones – and
 several ones that start at the same position, use the C<:exhaustive> (short
@@ -1159,7 +1208,13 @@ Anchor the match at a specific position in the string:
 
 C<:p> is shorthand for C<:pos>.
 
-=head3 Overlap
+I<Note:> unlike C<:continue>, a match anchored with :pos() will fail,
+instead of attempting to match further down the string:
+
+    say "abcdefg" ~~ m:c(3)/e.+/; # OUTPUT«｢efg｣␤»
+    say "abcdefg" ~~ m:p(3)/e.+/; # OUTPUT«False␤»
+
+=head3 X<Overlap|regex adverb,:overlap;regex adverb,:ov>
 
 To get several matches, including overlapping matches, but only one (the
 longest) from each starting position, specify the C<:overlap> (short C<:ov>)
@@ -1182,7 +1237,7 @@ abracadabra
 
 =head1 Look-around assertions
 
-=head2 Lookahead assertions
+=head2 X<Lookahead assertions|regex,before;regex,after>
 
 To check that a pattern appears before another pattern, one can use a
 lookahead assertion via the C<before> assertion.  This has the form:

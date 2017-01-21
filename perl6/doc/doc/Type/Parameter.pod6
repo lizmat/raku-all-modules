@@ -25,13 +25,17 @@ on what most of the concepts related to parameters mean.
 Returns the variable name, which includes all sigils and twigils.
 This name is used internally when applied to code, or in a declaration
 determines the name declared.  This name is not necessarily
-useable by a caller – if it is, it will also appear as an
+usable by a caller – if it is, it will also appear as an
 L<alias|#method named_names>.  Often, the name will chosen descriptively
 as a form of self-documentation.
 
 If the parameter is anonymous, C<Nil> will be returned.
 
 =head2 method sigil
+
+Defined as:
+
+    method sigil(Parameter:D: --> Str:D)
 
 Returns a string containing the parameter's sigil, for a looser
 definition of "sigil" than what is considered part of
@@ -66,33 +70,65 @@ parameter (usually as an C<all>-Junction).
 
 =head2 method named
 
+Defined as:
+
+    method named(Parameter:D: --> Bool:D)
+
 Returns C<True> if it's a L<named parameter|/type/Signature#Positional_vs._Named>.
 
+    my Signature $sig = :(Str $x, Bool :$is-named);
+    say $sig.params[0].named;                          # False
+    say $sig.params[1].named;                          # True
+
 =head2 method named_names
+
+Defined as:
+
+    method named_names(Parameter:D: --> List:D)
 
 Returns the list of externally usable names/aliases for a
 L<named parameter|/type/Signature#Positional_vs._Named>.
 
 =head2 method positional
 
+Defined as:
+
+    method positional(Parameter:D: --> Bool:D)
+
 Returns C<True> if the parameter is
 L<positional|/type/Signature#Positional_vs._Named>.
 
 =head2 method slurpy
+
+Defined as:
+
+    method slurpy(Parameter:D: --> Bool:D)
 
 Returns C<True> for
 L<slurpy parameters|/type/Signature#Slurpy_(A.K.A._Variadic)_Parameters>.
 
 =head2 method twigil
 
+Defined as:
+
+    method twigil(Parameter:D: --> Str:D)
+
 Returns a string containing the twigil part of the parameter's name.
 
 =head2 method optional
+
+Defined as:
+
+    method optional(Parameter:D: --> Bool:D)
 
 Returns C<True> for
 L<optional parameters|/type/Signature#Optional_and_Mandatory_Parameters>.
 
 =head2 method raw
+
+Defined as:
+
+    method raw(Parameter:D: --> Bool:D)
 
 Returns C<True> for raw parameters.
 
@@ -122,6 +158,10 @@ their sigil in code.
 
 =head2 method capture
 
+Defined as:
+
+    method capture(Parameter:D: --> Bool:D)
+
 Returns C<True> for parameters that capture the rest of the argument list into
 a single L<Capture|/type/Capture> object.
 
@@ -135,19 +175,35 @@ declarations.
 
 =head2 method rw
 
+Defined as:
+
+    method rw(Parameter:D: --> Bool:D)
+
 Returns C<True> for L<C<is rw>|/type/Signature#Parameter_Traits_and_Modifiers>
 parameters.
 
 =head2 method copy
+
+Defined as:
+
+    method copy(Parameter:D: --> Bool:D)
 
 Returns C<True> for L<C<is copy>|/type/Signature#Parameter_Traits_and_Modifiers>
 parameters.
 
 =head2 method readonly
 
+Defined as:
+
+    method readonly(Parameter:D: --> Bool:D)
+
 Returns C<True> for read-only parameters (the default).
 
 =head2 method invocant
+
+Defined as:
+
+    method invocant(Parameter:D: --> Bool:D)
 
 Returns C<True> if the parameter is the
 L<invocant parameter|/type/Signature#Parameter_Separators>.
@@ -159,6 +215,10 @@ L<default value|/type/Signature#Optional_and_Mandatory_Parameters> for
 this parameter, or C<Any> if no default was provided.
 
 =head2 method type_captures
+
+Defined as:
+
+    method type_captures(Parameter:D: --> List:D)
 
 Returns a list of variable names of type captures associated with this
 parameter.  Type captures define a type name within the attached code,

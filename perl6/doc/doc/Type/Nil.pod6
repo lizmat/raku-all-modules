@@ -36,7 +36,7 @@ that use a bare C<return> statement.
 In a list, C<Nil> takes the space of one value.  Iterating a C<Nil>
 behaves like iteration of any non-iterable value, producing a sequence
 of one C<Nil>. (When you need the other meaning, the special value
-C<Empty|/type/Slip#Empty> is available to take no spaces when inserted into
+L<Empty|/type/Slip#Empty> is available to take no spaces when inserted into
 list, and to return no values when iterated.)
 
     (1, Nil, 3).elems.say;      # 3
@@ -50,20 +50,23 @@ C<Nil>.
     say (Nil)[100];                  # Nil
     say (Nil){100};                  # Nil
 
-When assigned to a container, the C<Nil> value (but not any subclass of
+X<|Nil assignment>
+When assigned to a L<container|/language/containers>, the C<Nil> value (but not any subclass of
 C<Nil>) will attempt to revert the container to its default value; if no
 such default is declared, Perl 6 assumes C<Any>. However, if the container
 type is constrained with C<:D>, assigning C<Nil> to it will immediately throw
 an exception.  (In contrast, an instantiated C<Failure> matches C<:D>
 because it's a definite value, but will fail to match the actual nominal
-type unless it happens to be a parent class of C<Failure>.)
+type unless it happens to be a parent class of C<Failure>.) Native types can
+not have default values nor hold a type object. Assigning C<Nil> to a native
+type container will fail with a runtime error.
 
     my Int $x = 42;
     $x = Nil;
     $x.say;                     # (Int)
 
     sub f( --> Int:D ){ Nil }; # this definedness constraint is ignored
-    my Int:D $i = f; # this definedness contraint is not ignored, so throws
+    my Int:D $i = f; # this definedness constraint is not ignored, so throws
     CATCH { default { put .^name, ': ', .Str } };
     # OUTPUT: «X::TypeCheck::Assignment: Type check failed in assignment to $y; expected Int but got Any (Any)»
 
@@ -118,7 +121,7 @@ Warns the user that they tried to append onto a C<Nil>.
 
 =head2 method gist
 
-    method gist() returns Str:D
+    method gist(--> Str:D)
 
 Returns C<"Nil">.
 

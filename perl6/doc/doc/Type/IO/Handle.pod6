@@ -26,12 +26,95 @@ my $line = $fh.get;
 
 =head2 method getc
 
-Read a single character from the input stream or return Nil. The operation is blocking
-and the stream may be buffered.
+Read a single character from the input stream or return Nil. The operation will block
+for at least one character to be available, but there are a few caveats for this:
+
+=head3 Buffering terminals
+
+Using getc to get a single keypress from a terminal will only work properly if
+you've set the terminal to "unbuffered". Otherwise the terminal will wait for
+the return key to be struck or the buffer to be filled up before perl6 gets
+even a single byte of data.
+
+=head3 Waiting for potential combiners
+
+If your handler's encoding allows combining characters to be read, perl6 will
+wait for more data to be available before it provides a character. This means
+that inputting an "e" followed by a combining acute will give you an e with an
+acute rather than giving an "e" and letting the next reading function give you
+a dangling combiner. However, it also means that when the user inputs just an
+"e" and has no intention to also input a combining acute, your program will be
+waiting for another keypress before the initial "e" is returned.
 
 =head2 method eof
 
 Returns C<True> if the read operations have exhausted the content of the file.
+
+=head2 method e
+
+    method e(--> Bool)
+
+Returns C<Bool::True> if the invocant is a valid path that exists.
+
+=head2 method d
+
+    method d(--> Bool)
+
+Returns C<Bool::True> if the invocant is a path and the directory exists.
+
+=head2 method f
+
+    method f(--> Bool)
+
+Returns C<Bool::True> if the invocant is a path and the file exists.
+
+=head2 method s
+
+    method s(--> Bool)
+
+Returns C<Bool::True> if the invocant is a path and the size is bigger then 0.
+
+=head2 method l
+
+    method l(--> Bool)
+
+Returns C<Bool::True> if the invocant is a path and a symlink.
+
+=head2 method r
+
+    method r(--> Bool)
+
+Returns C<Bool::True> if the invocant is a path and accessible.
+
+=head2 method w
+
+    method w(--> Bool)
+
+Returns C<Bool::True> if the invocant is a path and writable.
+
+=head2 method rw
+
+    method rw(--> Bool)
+
+Returns C<Bool::True> if the invocant is a path, read and writable.
+
+=head2 method x
+
+    method x(--> Bool)
+
+Returns C<Bool::True> if the invocant is a path and executable.
+
+=head2 method rwx
+
+    method rwx(--> Bool)
+
+Returns C<Bool::True> if the invocant is a path, executable, read and writable.
+
+=head2 method z
+
+    method z(--> Bool)
+
+Returns C<Bool::True> if the invocant is a path and the size is 0.
 
 =head2 method lines
 
@@ -69,7 +152,7 @@ on strings.
 
 =for code :skip-test
 my $fh = open 'path/to/file', :r;
-$fn.split(' ', close => True); # Returns file content splitted by a space and closes file;
+$fn.split(' ', close => True); # Returns file content split by a space and closes file;
 
 =head2 method comb
 
@@ -118,31 +201,17 @@ $fh.close;
 
 =head2 method printf
 
-This method is mostly identical to the C library C<printf> and
-sprintf functions.  The only difference between the two functions is
-that C<sprintf> returns a string while the C<printf> function writes
-to a file.  See L<sub sprintf|https://docs.perl6.org/type/Str#sub_sprintf> for details about
-the Perl 6 C<$format> implementation
+    method printf(IO::Handle:D: Cool $format, *@args)
 
-Note that currently C<printf> is not a method for C<IO::Handle>, but
-its effect may be duplicated with a work-around using C<sub sprintf>
-and methods C<print> or C<say>.  For example:
+Formats a string based on the given format and arguments and C<.print>s the
+result into the filehandle.
+See L<sub sprintf|https://docs.perl6.org/type/Str#sub_sprintf> for details
+on acceptable format directives.
 
 =for code :skip-test
 my $fh = open 'path/to/file', :w;
-$fh.print(sprintf("%d\n", 32));
+$fh.printf: "The value is %d\n", 32;
 $fh.close;
-
-The C<say> method (see below) may be used for an automatic ending
-newline:
-
-=for code :skip-test
-my $fh = open 'path/to/file', :w;
-$fh.say(sprintf("%d", 32));
-$fh.close;
-
-See L<sub sprintf|https://docs.perl6.org/type/Str#sub_sprintf>
-for details about formatting and more examples.
 
 =head2 method say
 
@@ -183,7 +252,7 @@ characters.
      method seek(IO::Handle:D: Int:D $offset, SeekType:D $whence --> True)
 
 Move the file pointer (that is, the position at which any subsequent read
-or write operations will begin,) to the byte position specified by
+or write operations will begin) to the byte position specified by
 C<$offset> relative to the location specified by C<$whence> which may be
 one of:
 

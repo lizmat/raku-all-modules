@@ -9,6 +9,9 @@
 An C<Array> is a L<List> which forces all its elements to be
 scalar containers, which means you can assign to array elements.
 
+C<Array> implements C<Positional> and as such provides support for
+L<subscripts|/language/subscripts>.
+
 =head1 Methods
 
 =head2 routine pop
@@ -33,8 +36,8 @@ Example:
 
 Defined as:
 
-    multi sub    push(Array:D, **@values) returns Array:D
-    multi method push(Array:D: **@values) returns Array:D
+    multi sub    push(Array:D, **@values --> Array:D)
+    multi method push(Array:D: **@values --> Array:D)
 
 Adds the C<@values> to the end of the array, and returns the modified list.
 Fails for infinite arrays.
@@ -113,8 +116,8 @@ Example:
 
 Defined as:
 
-    multi sub    unshift(Array:D, **@values) returns Array:D
-    multi method unshift(Array:D: **@values) returns Array:D
+    multi sub    unshift(Array:D, **@values --> Array:D)
+    multi method unshift(Array:D: **@values --> Array:D)
 
 Adds the C<@values> to the start of the array, and returns the modified array.
 Fails if C<@values> is infinite.
@@ -154,12 +157,26 @@ Example:
 
 Defined as:
 
-    multi sub    splice(@list,  $start, $elems?, *@replacement) returns Array
-    multi method splice(Array:D $start, $elems?, *@replacement) returns Array
+    multi sub    splice(@list,  $start, $elems?, *@replacement --> Array)
+    multi method splice(Array:D $start, $elems?, *@replacement --> Array)
 
 Deletes C<$elems> elements starting from index C<$start> from the C<Array>,
-returns them and replaces them by C<@replacement>.  If C<$elems> is omitted,
+returns them and replaces them by C<@replacement>. If C<$elems> is omitted,
 all the elements starting from index C<$start> are deleted.
+
+Each of C<$start> and C<$elems> can be specified as a
+L<Whatever|/type/Whatever> or as a L<Callable|/type/Callable> that returns an
+C<int>-compatible value.
+
+A C<Whatever> C<$start> uses the number of elements
+of C<@list> (or invocant). A C<Callable> C<$start> is called with one
+argument—the number of elements in C<@list>—and its return value is used
+as C<$start>.
+
+A C<Whatever> C<$elems> deletes from C<$start> to end of
+C<@list> (same as no C<$elems>). A C<Callable> C<$elements> is called with
+just one argument—the number of elements in C<@list> minus the value of
+C<$start>—and its return value is used the value of C<$elems>.
 
 Example:
 

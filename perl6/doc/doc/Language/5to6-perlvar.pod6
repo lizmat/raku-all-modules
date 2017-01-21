@@ -19,15 +19,16 @@ variables.
 
 =head1 SPECIAL VARIABLES
 
+X<|Special Variables (Perl 5)>
+
 =head2 General Variables
 
 =item $ARG
 
 =item $_
 
-
 Thankfully, C<$_> is the general default variable as in Perl 5. The
-main difference in Perl 6 seems to be that you can now call methods on
+main difference in Perl 6 is that you can now call methods on
 it. For instance, Perl 5's C<say $_> can be rendered in Perl 6 as
 C<$_.say>. Furthermore, as it is the default variable, you don't even
 need to use the variable name. The previous example can also be
@@ -140,14 +141,13 @@ $^z)>. Ergo:
     # 312
 
 =end code
-
 For more on placeholder variables, see
-L<this page|/language/variables#The_%5E_Twigil>
+L<this page|/language/variables#The_^_Twigil>
 =item %ENV
 
 %ENV has been replaced by %*ENV in Perl 6. Note that the keys of this hash may
-not be exactly the same between Perl 5 and Perl 6. As of this writing, the
-only difference seems to be that OLDPWD is missing from Perl 6's %ENV.
+not be exactly the same between Perl 5 and Perl 6. For example,
+C<OLDPWD> is missing from Perl 6's %ENV.
 
 =item $OLD_PERL_VERSION
 
@@ -182,6 +182,7 @@ because of the precompilation capabilities of Perl 6.
      .say for $*REPO.repo-chain;
 
 =item %INC
+X<|%INC (Perl 5)>
 
 No longer exists in Perl 6.  Because each Repository is responsible for
 remembering which modules have been loaded already. You can get a list
@@ -195,11 +196,11 @@ of all loaded modules (compilation units) like so:
 
 =item $^I
 
-S28 suggests $*INPLACE_EDIT, but it does not yet seem to exist.
+S28 suggests $*INPLACE_EDIT, but it does not yet exist.
 
 =item $^M
 
-S28 suggests $*EMERGENCY_MEMORY, but it does not yet seem to exist.
+S28 suggests $*EMERGENCY_MEMORY, but it does not yet exist.
 
 =item $OSNAME
 
@@ -242,17 +243,15 @@ As with C<$]> this has been replaced with C<$*PERL.version>.
 
 =item ${^WIN32_SLOPPY_STAT}
 
-There does not seem to be any analog to this in Perl 6.
+There is no analog to this in Perl 6.
 
 =item $EXECUTABLE_NAME
 
 =item $^X
 
-This has been replaced by C<$*EXECUTABLE-NAME>. Confusingly, the Perl 6
-Variables doc says "Favor $*EXECUTABLE because it is not guaranteed that
-the perl executable is in PATH." Confusingly because C<$*EXECUTABLE> is
-an C<IO> object, which does not seem to be what you would want here.
-C<$*EXECUTABLE.Str> would give the desired result, though.
+This has been replaced by C<$*EXECUTABLE-NAME>. Note that this is an
+C<IO> object in Perl 6, so use C<~$*EXECUTABLE-NAME> to get a C<Str>
+to be closer to Perl 5.
 
 =head2 Variables related to regular expressions
 
@@ -275,7 +274,7 @@ to C<$/[0]>, C<$1> is equivalent to C<$/[1]>, etc.
 
 C<$/> now contains the match object, so the Perl 5 behavior of C<$&> can
 be obtained by stringifying it, i. e. C<~$/>. C<$/.Str> also should
-work, but C<~$/> seems to be the consensus preference.
+work, but C<~$/> is the currently more common idiom.
 
 =item ${^MATCH}
 
@@ -368,8 +367,7 @@ Much like C<%+>, a use of C<%-{$match}> would be replaced with C<$/{$match}>.
 
 =item $^R
 
-S28 suggests C<$*LAST_REGEXP_CODE_RESULT>, but no variable seems to actually
-exist yet.
+No equivalent.
 
 =item ${^RE_DEBUG_FLAGS}
 

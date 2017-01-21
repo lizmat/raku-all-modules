@@ -31,8 +31,6 @@ V<'|'>, and V<'='>.
 
 4. Consecutive row separator lines are illegal.
 
-5. Having unequal numbers of columns in table rows is illegal.
-
 =head1 Best Practices
 
 1. Use of WS for column separators is fragile, and they should only be
@@ -216,15 +214,6 @@ r1c0    r0c1   r0c3
 =end table
 =end code
 
-=item  Different numbers of columns in two or more rows are not allowed:
-
-=begin code
-=begin table
-r0c0 |  r0c1
-r1c0 |  r1c1 |  r1c3
-=end table
-=end code
-
 =item Two consecutive row separators are not allowed:
 
 =begin code
@@ -239,10 +228,8 @@ r1c0 |  r1c1
 =head1 Ugly Tables
 
 Following are examples of valid tables that are probably intended to
-be two columns, but the columns are not aligned well so the tables
-will either parse as a single-column table or trigger an exception
-depending on whether the table uses WS column separators or visible
-column separators.
+be two columns, but the columns are not aligned well so each
+will parse as a single-column table.
 
 =item  Unaligned columns with WS column separators:
 
@@ -262,10 +249,11 @@ r0c0    r0c1
 
 Notice the second row has the two words separated by a visible
 character (V<'|'>) but the character is not recognized as a column
-separator because it doen't have an adjacent WS character on both
-sides of it.  B<This is an invalid table because the first row has two
-columns while the second row has only one column, and it will trigger
-an exception.>.
+separator because it doesn't have an adjacent WS character on both
+sides of it.  Although this is a legal table, the result will not
+be what the user intended because the first row has two
+columns while the second row has only one column, and it will thus have
+an empty second column.
 
 =begin code
 =begin table

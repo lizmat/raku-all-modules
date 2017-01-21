@@ -19,11 +19,7 @@ example routines like C<&die> are hidden by default.
 
 Defined as:
 
-=begin code :skip-test
-proto method new(*@, *%) {*}
-multi method new()
-=end code
-
+    multi method new(--> Backtrace:D)
 
 Creates a new backtrace, using its calling location as the origin of the
 backtrace.
@@ -38,7 +34,7 @@ Defined as:
 
 Returns a concise string representation of the backtrace, omitting
 routines marked as C<is hidden-from-backtrace>, and at the discretion of
-the implementor, also some routines from the setting.
+the implementation, also some routines from the setting.
 
     my $backtrace = Backtrace.new;
     say $backtrace.Str;

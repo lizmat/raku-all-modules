@@ -173,6 +173,12 @@ last element of an array becomes:
     my @array = qw{victor alice bob charlie eve};
     say @array[*-1];   #->  eve
 
+Yet another way is to utilize the array's tail method:
+
+    my @array = qw{victor alice bob charlie eve};
+    say @array.tail;      #-> eve
+    say @array.tail(2);   #-> (charlie eve)
+
 =head2 Typed Array parameters
 
 Quite often new users will happen to write something like:
@@ -203,23 +209,6 @@ on what is assigned to C<@b> to where the assignment happens, rather
 than requiring every element to be checked on every call.
 
 =head1 Strings
-
-=head2 Capitalizing a string
-
-In Perl 5 one could capitalize a string by using the C<ucfirst> function
-
-    say ucfirst "alice"; #-> Alice
-
-The C<ucfirst> function does not exist in Perl 6; one needs to use the
-C<tc> method:
-
-    say "alice".tc;      #-> Alice
-
-which is equivalent to
-
-    say tc "alice";      #-> Alice
-
-Here, C<tc> means "title case".
 
 =head2 Quotes and interpolation
 
@@ -279,6 +268,28 @@ starting string:
     say join ", ", ("az", *.succ ... "bc")
     az, ba, bb, bc
 
+=head2 Topicalizing Operators
+
+The smart match operator C<~~> and C<andthen> set the topic C<$_> to their LHS.
+In conjunction with implicit method calls on the topic this can lead to
+surprising results.
+
+    my &method = { note $_; $_ };
+    $_ = 'object';
+    say .&method;
+    # OUTPUT«object␤object␤»
+    say 'topic' ~~ .&method;
+    # OUTPUT«topic␤True␤»
+
+In many cases flipping the method call to the LHS will work.
+
+    my &method = { note $_; $_ };
+    $_ = 'object';
+    say .&method;
+    # OUTPUT«object␤object␤»
+    say .&method ~~ 'topic';
+    # OUTPUT«object␤True␤»
+
 =head1 Common Precedence Mistakes
 
 =head2 Adverbs and Precedence
@@ -311,6 +322,30 @@ statements in other languages like C<return>, C<last> and many others.
         # (return True) and False;
     }
     say f; # OUTPUT«True␤»
+
+=head2 Exponentiation Operator and Prefix Minus
+
+    say -1²;   # -1
+    say -1**2; # -1
+
+When performing a
+L<regular mathematical calculation|http://www.wolframalpha.com/input/?i=-1%C2%B2>,
+the power takes precedence over the minus; so C<-1²> can be written as C<-(1²)>.
+Perl 6 matches these rules of mathematics and the precedence of C<**> operator is
+tighter than that of the prefix C<->. If you wish to raise a negative number
+to a power, use parentheses:
+
+    say (-1)²;   # 1
+    say (-1)**2; # 1
+
+The operator infix:<but> is narrower then the list constructor. When providing
+a list of roles to mix in, always use parentheses.
+
+    role R1 { method m {} }
+    role R2 { method n {} }
+    my $a = 1 but R1,R2; # R2 is in sink context
+    say $a.^name;
+    # OUTPUT«Int+{R1}␤»
 
 =head1 Subroutine and method calls
 
@@ -390,8 +425,8 @@ If you really do want to pass them as pairs you should use a L<List|/type/List>
 or L<Capture|/type/Capture> instead:
 
     my $list = ('b' => 2); # this is a List containing a single Pair
-    foo(|$arg, :$b); # okay: we passed the pair 'b' => 2 to the first argument
-    foo(1, |$arg);   # FAIL: Too many positionals passed; expected 1 argument but got 2
+    foo(|$list, :$b); # okay: we passed the pair 'b' => 2 to the first argument
+    foo(1, |$list);   # FAIL: Too many positionals passed; expected 1 argument but got 2
 
     my $cap = \('b' => 2); # a Capture with a single positional value
     foo(|$cap, :$b); # okay: we passed the pair 'b' => 2 to the first argument
@@ -422,6 +457,78 @@ throws. Explicitly sinking it inside the C<try> avoids the issue:
     try sink run("perl6", "-e", "exit 42");
     say "still alive";
     # OUTPUT: still alive
+
+=head1 Using Shortcuts
+
+=head2 The ^ twigil
+
+Using the C<^> twigil can save a fair amount of time and space when writing out small blocks of code. As an example:
+
+    for 1..8 -> $a, $b { say $a + $b; }
+
+can be shortened to just
+
+    for 1..8 { say $^a + $^b; }
+
+The trouble arises when a person wants to use more complex names for the variables, instead of just one letter. The C<^> twigil is able to have the positional variables be out of order and named whatever you want, but assigns values based on the variable's Unicode ordering. In the above example, we can have C<$^a> and C<$^b> switch places, and those variables will keep their positional values. This is because the Unicode character 'a' comes before the character 'b'. For example:
+
+    #In order
+    sub f1 { say "$^first $^second"; }
+    f1 "Hello", "there";    #"Hello There"
+
+    #Out of order
+    sub f2 { say "$^second $^first"; }
+    f2 "Hello", "there";    #"there Hello"
+
+Due to the variables allowed to be called anything, this can cause some problems if you are not accustomed to how Perl 6 handles these variables.
+
+    for 1..4 { say "$^one $^two $^three $^four"; }    # 2 4 3 1
+
+=head1 Scope
+
+=head2 Using a C<once> block
+
+The C<once> block is a block of code that will only run once when it's parent block is run. As an example:
+
+    my $var = 0;
+    for 1..10 {
+        once { $var++; }
+    }
+    say "Variable = $var";    # "Variable = 1"
+
+This functionality also applies to other code blocks like C<sub> and C<while>, not just C<for> loops. Problems arise though, when trying to nest C<once> blocks inside of other code blocks:
+
+    my $var = 0;
+    for 1..10 {
+        do { once { $var++; } }
+    }
+    say "Variable = $var";    # "Variable = 10"
+
+In the above example, the C<once> block was nested inside of a code block which was inside of a C<for> loop code block. This causes the C<once> block to run multiple times, because the C<once> block uses state variables to determine whether it has run previously. This means that if the parent code block goes out of scope, then the state variable the C<once> block uses to keep track of if it has run previously, goes out of scope as well. This is why C<once> blocks and C<state> variables can cause some unwanted behaviour when buried within more than one code block.
+
+If you want to have something that will emulate the functionality of a once block, but still work when buried a few code blocks deep, we can manually build the functionality of a C<once> block. Using the above example, we can change it so that it will only run once, even when inside the C<do> block by changing the scope of the C<state> variable.
+
+    my $var = 0;
+    for 1..10 {
+        state $run-code = True;
+        do { if ($run-code) { $run-code = False; $var++; } }
+    }
+    say "Variable = $var";    # "Variable = 1"
+
+In this example, we essentially manually build a C<once> block by making a C<state> variable called C<$run-code> at the highest level that will be run more than once, then checking to see if C<$run-code> is C<True> using a regular C<if>. If the variable C<$run-code> is C<True>, then make the variable C<False> and continue with the code that should only be completed once.
+
+The main difference between using a C<state> variable like the above example and using a regular C<once> block is what scope the C<state> variable is in. The scope for the C<state> variable created by the C<once> block, is the same as where you put the block (imagine that the word 'C<once>' is replaced with a state variable and an C<if> to look at the variable). The example above using C<state> variables works because the variable is at the highest scope that will be repeated; whereas the example that has a C<once> block inside of a C<do>, made the variable within the C<do> block which is not the highest scope that is repeated.
+
+Using a C<once> block inside a class method will cause the once state to carry across all instances of that class.
+For example:
+
+    class A {
+        method sayit() { once say 'hi' }
+    }
+    my $a = A.new;
+    $a.sayit;      # says 'hi'
+    my $b = A.new;
+    $b.sayit;      # nothing
 
 =end pod
 

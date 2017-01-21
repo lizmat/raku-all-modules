@@ -36,7 +36,7 @@ Many built-in types override this for more specific comparisons
 
 Defined as:
 
-    method any() returns Junction:D
+    method any(--> Junction:D)
 
 Interprets the invocant as a list and creates an
 C<any>-L<Junction|/type/Junction> from it.
@@ -48,7 +48,7 @@ C<any>-L<Junction|/type/Junction> from it.
 
 Defined as:
 
-    method all() returns Junction:D
+    method all(--> Junction:D)
 
 Interprets the invocant as a list and creates an
 C<all>-L<Junction|/type/Junction> from it.
@@ -60,7 +60,7 @@ C<all>-L<Junction|/type/Junction> from it.
 
 Defined as:
 
-    method one() returns Junction:D
+    method one(--> Junction:D)
 
 Interprets the invocant as a list and creates a
 C<one>-L<Junction|/type/Junction> from it.
@@ -72,7 +72,7 @@ C<one>-L<Junction|/type/Junction> from it.
 
 Defined as:
 
-    method none() returns Junction:D
+    method none(--> Junction:D)
 
 Interprets the invocant as a list and creates a
 C<none>-L<Junction|/type/Junction> from it.
@@ -103,8 +103,8 @@ into the newly created Array.
 
 Defined as:
 
-    multi sub    reverse(*@list ) returns List:D
-    multi method reverse(List:D:) returns List:D
+    multi sub    reverse(*@list  --> List:D)
+    multi method reverse(List:D: --> List:D)
 
 Returns a list with the same elements in reverse order.
 
@@ -131,9 +131,6 @@ Examples:
 
 Defined as:
 
-=begin code :skip-test
-proto method map(|) is nodal { * }
-=end code
     multi method map(\SELF: &block;; :$label, :$item)
     multi method map(HyperIterable:D: &block;; :$label)
 
@@ -141,11 +138,16 @@ C<map> will iterate over the invocant and apply the number of positional
 parameters of the code object from the invocant per call.  The returned values
 of the code object will become elements of the returned C<Seq>.
 
+The C<:$label> and C<:$item> are useful only internally, since C<for> loops
+get converted to C<map>s. The C<:$label> takes an existing C<Label> to label
+the C<.map>'s loop with and C<:$item> controls whether the iteration will
+occur over C<(SELF,)> (if C<:$item> is set) or C<SELF>.
+
 =head2 method deepmap
 
 Defined as:
 
-    method deepmap(&block -->List) is nodal
+    method deepmap(&block --> List) is nodal
 
 C<deepmap> will apply C<&block> to each element and return a new C<List> with
 the return values of C<&block>, unless the element does the C<Iterable> role.
@@ -179,20 +181,15 @@ all your RAM in the process.
     say ((1, 2), (3)).elems;        # 2
     say ((1, 2), (3)).flat.elems;   # 3
 
-Please not that C<flat> is not recursing into sub lists. You have to recurse by
+Please not that C<flat> does not recurse into sub lists. You have to recurse by
 hand or reconsider your data structures. A single level of nesting can often be
 handled with L<destructuring|/type/Signature#Destructuring_Parameters> in
 signatures. For deeper structures you may consider
 L<gather/take|/syntax/gather take> to create a lazy list.
 
     my @a = [[1,2,3],[[4,5],6,7]];
-    sub deepflat(@a){
-        gather for @a {
-            take ($_ ~~ Iterable ?? deepflat($_).Slip !! $_)
-        }
-    };
-    dd deepflat(@a);
-    # OUTPUT«(1, 2, 3, 4, 5, 6, 7).Seq␤»
+    say gather deepmap *.take, @a;
+    # (1 2 3 4 5 6 7)
 
 =head2 method eager
 
@@ -218,7 +215,7 @@ Interprets the invocant as a list, and returns the last index of that list.
 
 =head2 method pairup
 
-    method pairup() returns List
+    method pairup(--> List)
 
 Interprets the invocant as a list, and constructs a list of
 L<pairs|/type/Pair> from it, in the same way that assignment to a
@@ -236,6 +233,28 @@ list item, if any, is considered to be a key again).
 Exits the current process with return code C<$status>.
 
 =comment TODO maybe find a better place to document &exit
+
+=head2 sub item
+
+X<|$ (item contextualizer)>
+
+Defined as:
+
+    proto sub item(|) is pure
+    multi sub item(\x)
+    multi sub item(|c)
+    multi sub item(Mu $a)
+
+Forces given object to be evaluated in item context and returns the value of it.
+
+    say item([1,2,3]).perl;              # $[1, 2, 3]
+    say item({ apple => 10 }).perl;      # ${:apple(10)}
+    say item("abc").perl;                # "abc"
+
+You can also use C<$> as item contextualizer.
+
+    say $[1,2,3].perl;                   # $[1, 2, 3]
+    say $("abc").perl;                   # "abc"
 
 =end pod
 

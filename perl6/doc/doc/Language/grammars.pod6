@@ -23,7 +23,7 @@ methods of regular code.
 The main ingredient of grammars is named L<regexes|/language/regexes>.
 While the syntax of L<Perl 6 Regexes|/language/regexes> is outside the scope
 of this document, I<named> regexes have a special syntax, similar to
-subroutine definitions:N<In fact, named regexes can even take extra
+subroutine definitions: N<In fact, named regexes can even take extra
 arguments, using the same syntax as subroutine parameter lists>
 
     =begin code :allow<B>
@@ -37,8 +37,8 @@ Being named gives us the advantage of being able to easily reuse the regex
 elsewhere:
 
     =begin code :allow<B>
-    say "32.51" ~~ B<&number>;
-    say "15 + 4.5" ~~ /B<< <number> >>\s* '+' \s*B<< <number> >>/
+    say so "32.51" ~~ B<&number>;                                    # True
+    say so "15 + 4.5" ~~ /B<< <number> >>\s* '+' \s*B<< <number> >>/ # True
     =end code
 
 B<C<regex>> isn't the only declarator for named regexes – in fact, it's the
@@ -62,8 +62,8 @@ into effect for the Regex:
     =begin code :allow<B>
     my token non-space-y { 'once' 'upon' 'a' 'time' }
     my rule space-y { 'once' 'upon' 'a' 'time' }
-    say 'onceuponatime'    ~~ &non-space-y;
-    say 'once upon a time' ~~ &space-y;
+    say so 'onceuponatime'    ~~ &non-space-y; # True
+    say so 'once upon a time' ~~ &space-y;     # True
     =end code
 
 =head1 X<Creating Grammars|class,Grammar;declarator,grammar>
@@ -136,8 +136,8 @@ name of the alternation is attached with C<< :sym<> >> adverb.
 
 In the actions class, we now got rid of the ternary operator and simply take
 the C<.made> value from the C<< $<calc-op> >> match object. And the actions for
-individual alternations now follow the name naming pattern as in the grammar:
-C<< method calc-op:sym<add> >> and C<method calc-op:sym<sub> >>.
+individual alternations now follow the same naming pattern as in the grammar:
+C<< method calc-op:sym<add> >> and C<<method calc-op:sym<sub> >>.
 
 The real beauty of this method can be seen when you subclass that grammar
 and actions class. Let's say we want to add a multiplication feature to the
@@ -214,7 +214,7 @@ token, it can be used to trigger an Action class method. In the following
 grammar we look for Arabic digits and define a C<succ> token with the always
 succeed assertion.
 
-In the action class, we use calles to the C<succ> method to do set up (in this
+In the action class, we use calls to the C<succ> method to do set up (in this
 case, we prepare a new element in C<@!numbers>). In the C<digit> method,
 we convert an Arabic digit into a Devanagari digit and add it to the last
 element of C<@!numbers>. Thanks to C<succ>, the last element will always be

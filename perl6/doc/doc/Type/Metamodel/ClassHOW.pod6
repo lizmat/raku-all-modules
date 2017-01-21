@@ -62,7 +62,7 @@ method C<FALLBACK> instead.
 
     method can(Metamodel::ClassHOW:D: $obj, $method-name)
 
-Given a method names, it returns a L<List> of methods that are available
+Given a method name, it returns a L<List> of methods that are available
 with this name.
 
     class A      { method x($a) {} };
@@ -77,6 +77,17 @@ In this example, class C<B> has two possible methods available with name C<x>
 directly). The one in C<B> has arity 1 (i.e. it expects one argument, the
 invocant (C<self>)), and the one in C<A> expects 2 arguments (C<self> and
 C<$a>).
+
+=head2 method lookup
+
+    method lookup(Metamodel::ClassHOW:D: $obj, $method-name --> Method)
+
+Returns the first matching L<Method|/type/Method> with the provided name or
+Nil. It is faster than C<.^can> but does not provide a full list of all
+candidates.
+
+    say Str.^lookup('Int').perl
+    # OUTPUT«method Int (Str:D $: *%_) { #`(Method|39910024) ... }␤»
 
 =head2 method compose
 

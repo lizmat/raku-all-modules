@@ -32,7 +32,7 @@ iterator API. Any other behavior is undefined and implementation dependent.
 
 Defined as:
 
-    method pull-one(Iterator:D:) returns Mu { }
+    method pull-one(Iterator:D: --> Mu)
 
 This method stub ensures that classes implementing the C<Iterator> role
 provide a method named C<pull-one>.
@@ -40,13 +40,17 @@ provide a method named C<pull-one>.
 The C<pull-one> method is supposed to return the next value if available, or
 the sentinel value C<IterationEnd> if no more elements are available.
 
-    (1 .. Inf).iterator.pull-one; # 1
+    my $i = (1 .. 3).iterator;
+    say $i.pull-one; # 1
+    say $i.pull-one; # 2
+    say $i.pull-one; # 3
+    dd $i.pull-one;  # IterationEnd
 
 =head2 method push-exactly
 
 Defined as:
 
-    method push-exactly(Iterator:D: $target, int $count) returns Mu
+    method push-exactly(Iterator:D: $target, int $count --> Mu)
 
 Produces C<$count> elements, and for each of them, calls
 C<$target.push($value)>.
@@ -63,7 +67,7 @@ C<$count>.
 
 Defined as:
 
-    method push-at-least(Iterator:D: $target, int $count) returns Mu
+    method push-at-least(Iterator:D: $target, int $count --> Mu)
 
 Produces at least C<$count> elements, and for each of them, calls
 C<$target.push($value)>.
@@ -98,7 +102,7 @@ C<$count>.
 
 Defined as:
 
-    method push-until-lazy(Iterator:D: $target) returns Mu
+    method push-until-lazy(Iterator:D: $target --> Mu)
 
 Produces values until it considers itself to be lazy, and pushes them onto
 C<$target>.
@@ -110,7 +114,7 @@ which might be lazy, while others aren't.
 
 Defined as:
 
-    method is-lazy(Iterator:D:) returns Bool:D
+    method is-lazy(Iterator:D: --> Bool:D)
 
 Returns C<True> for iterators that consider themselves lazy, and C<False>
 otherwise.
@@ -120,18 +124,6 @@ return C<True> here, for example C<(1..6).roll(*)>.
 
     say (1 .. 100).is-lazy; # False
     say (1 .. Inf).is-lazy; # True
-
-=head2 method count-only
-
-Defined as:
-
-    method count-only(Iterator:D:) returns int
-
-Produces and discards all elements until it returns the end of the iteration,
-and returns the number of elements produced. This is useful to reduce memory
-usage in scenarios such as C<open($file).lines.elems>.
-
-    say (1 .. 1000).iterator.count-only; # 1000
 
 =head2 method sink-all
 
@@ -143,5 +135,45 @@ Exhausts the iterator (while discarding generated elements) purely for the
 side effects of the iteration.
 
     say (1 .. 1000).iterator.sink-all;
+
+=head2 method skip-one
+
+Defined as:
+
+    method skip-one(Iterator:D: $target --> Mu)
+
+Skips one value. The return value is truthy if skip was successful and falsy if
+there were no values to skip:
+
+    my $i = <a b>.iterator;
+    say $i.skip-one; say $i.pull-one; say $i.skip-one
+    # OUTPUT«1␤b␤0␤»
+
+=head2 method skip-at-least
+
+Defined as:
+
+    method skip-at-least(Iterator:D: $target, int $to-skip --> Mu)
+
+Skips C<$to-skip> values. The return value is truthy if skip was successful and falsy if
+there were not enough values to skip:
+
+    my $i = <a b c>.iterator;
+    say $i.skip-at-least(2); say $i.pull-one; say $i.skip-at-least(20);
+    # OUTPUT«1␤c␤0␤»
+
+=head2 method skip-at-least-pull-one
+
+Defined as:
+
+    method skip-at-least-pull-one(Iterator:D: $target, int $to-skip --> Mu)
+
+Skips C<$to-skip> values and pulls the next value. The returns the pulled value
+or C<IterationEnd> if there were not enough values:
+
+    my $i = <a b c>.iterator;
+    say $i.skip-at-least-pull-one(2);
+    say $i.skip-at-least-pull-one(20) =:= IterationEnd;
+    # OUTPUT«c␤True␤»
 
 =end pod

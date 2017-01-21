@@ -32,7 +32,7 @@ the denominator quickly:
     say approx-sqrt(2, 10).WHAT;    # (Num)
 
 If you want arbitrary precision arithmetic with rational numbers, use the
-C<FatRat> type instead.
+L<FatRat|/type/FatRat> type instead.
 
 C<Rat> objects are immutable.
 
@@ -40,7 +40,7 @@ C<Rat> objects are immutable.
 
 =head2 method perl
 
-    multi method perl(Rat:D:) returns Str:D
+    multi method perl(Rat:D: --> Str:D)
 
 Returns a string representation corresponding to the unambiguous
 C<val()>-based representation of rational literals.  If the

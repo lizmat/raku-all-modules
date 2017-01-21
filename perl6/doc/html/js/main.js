@@ -1,7 +1,6 @@
 $(function(){
     setup_search_box();
     setup_auto_title_anchors();
-    setup_collapsible_TOC();
     setup_debug_mode();
     $(window).resize(setup_search_box);
 });
@@ -28,46 +27,10 @@ function setup_auto_title_anchors() {
     });
 }
 
-function setup_collapsible_TOC() {
-    var state;
-    if ( ! $('nav.indexgroup') ) { return; }
-
-    // fix for jumpy .slideDown() effect
-    $('nav.indexgroup > ol').each( function(){
-        $(this).css( 'height', $(this).height() );
-    });
-
-    state = Cookies.get('toc_state') || 'shown';
-    if ( state == 'hidden' ) {
-        $('nav.indexgroup > ol').hide();
-    }
-
-    $('nav.indexgroup').find('#TOC_Title')
-        .append(
-            '<a id="TOC_toggle_button" href="#">['
-            + ( state == 'hidden' ? 'show' : 'hide')
-            + ']</a></h2>'
-        )
-        .find('#TOC_toggle_button')
-            .click(function() {
-                var el = $(this);
-                if (el.text() == '[hide]') {
-                    Cookies.set('toc_state', 'hidden');
-                    el.parents('nav').find('tbody').hide();
-                    el.text('[show]');
-                }
-                else {
-                    Cookies.set('toc_state', 'shown');
-                    el.parents('nav').find('tbody').show();
-                    el.text('[hide]');
-                }
-
-                return false;
-            });
-}
-
 document.addEventListener("keyup", function(evt){
-    if(evt.key == "Escape"){$('#query').focus()}
+    if(evt.key == "Escape" && $('body').scrollTop() == 0) {
+        $('#query').focus();
+    }
 });
 
 function setup_debug_mode(){
@@ -169,5 +132,4 @@ function setup_debug_mode(){
         }
 
     }
-
 }

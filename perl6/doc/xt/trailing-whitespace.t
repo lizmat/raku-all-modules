@@ -10,6 +10,7 @@ for qx<git ls-files>.lines -> $file {
     next if $file ~~ / 'jquery'/;
     next if $file ~~ / '.png' $/;
     next if $file ~~ / '.ico' $/;
+    next if $file ~~ / 'util/trigger-rebuild.txt' /;
 
     push @files, $file;
 }
@@ -20,8 +21,8 @@ for @files -> $file {
     my $ok = True;
     my $row = 0;
     for $file.IO.lines -> $line {
-    ++$row;
-    if $line ~~ / \s $/ {
+        ++$row;
+        if $line ~~ / \s $/ {
            $ok = False; last;
         }
     }

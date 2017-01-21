@@ -14,12 +14,11 @@ moment.
 C<Proc::Async> allows you to run external commands asynchronously, capturing
 standard output and error handles, and optionally write to its standard input.
 
-=begin code
     # command with arguments
     my $proc = Proc::Async.new('echo', 'foo', 'bar');
 
     # subscribe to new output from out and err handles:
-    $proc.stdout.tap(-> $v { print "Output: $v" });
+    $proc.stdout.tap(-> $v { print "Output: $v" }, quit => { say 'caught exception ' ~ .^name });
     $proc.stderr.tap(-> $v { print "Error:  $v" });
 
     say "Starting...";
@@ -28,7 +27,6 @@ standard output and error handles, and optionally write to its standard input.
     # wait for the external program to terminate
     await $promise;
     say "Done.";
-=end code
 
 This produces the following output:
 
@@ -51,7 +49,7 @@ An example that opens an external program for writing:
 
 =head2 method new
 
-    method new(:$path, *@args, :$w) returns Proc::Async:D
+    method new(:$path, *@args, :$w, :$r --> Proc::Async:D)
 
 Creates a new C<Proc::Async> object with external program name or path C<$path>
 and the command line arguments C<@args>.
@@ -59,10 +57,11 @@ and the command line arguments C<@args>.
 If C<:w> is passed to C<new>, then a pipe to the external program's standard
 input stream (stdin) is opened, to which you can write with C<write> and
 C<say>.
+If C<:r> is present then you can tap the processes stdout and stderr.
 
 =head2 method stdout
 
-    method stdout(Proc::Async:D: :$bin) returns Supply:D
+    method stdout(Proc::Async:D: :$bin --> Supply:D)
 
 Returns the L<Supply|/type/Supply> for the external program's standard output
 stream. If C<:bin> is passed, the standard output is passed along in  binary as
@@ -73,6 +72,8 @@ along as L<Str|/type/Str>.
     $proc.stdout.tap( -> $str {
         say "Got output '$str' from the external program";
     });
+    my $promise = $proc.start;
+    await $promise;
 
 You must call C<stdout> before you call L<#method start>. Otherwise an
 exception of class L<X::Proc::Async::TapBeforeSpawn|/type/X::Proc::Async::TapBeforeSpawn> is
@@ -87,7 +88,7 @@ you try.
 
 =head2 method stderr
 
-    method stderr(Proc::Async:D: :$bin) returns Supply:D
+    method stderr(Proc::Async:D: :$bin --> Supply:D)
 
 Returns the L<Supply|/type/Supply> for the external program's standard error
 stream. If C<:bin> is passed, the standard error is passed along in  binary as
@@ -98,6 +99,8 @@ along as L<Str|/type/Str>.
     $proc.stderr.tap( -> $str {
         say "Got error '$str' from the external program";
     });
+    my $promise = $proc.start;
+    await $promise;
 
 You must call C<stderr> before you call L<#method start>. Otherwise an
 exception of class L<X::Proc::Async::TapBeforeSpawn|/type/X::Proc::Async::TapBeforeSpawn> is
@@ -120,7 +123,7 @@ the program through the C<.print>, C<.say> and C<.write> methods.
 
 =head2 method start
 
-    method start(Proc::Async:D: :$scheduler = $*SCHEDULER, :$cwd = $*CWD) returns Promise:D
+    method start(Proc::Async:D: :$scheduler = $*SCHEDULER, :$cwd = $*CWD --> Promise:D)
 
 Initiates spawning of the external program. Returns a promise that will be
 kept with a L<Proc|/type/Proc> object once the external
@@ -148,7 +151,7 @@ try sink await $p.start;
 
 =head2 method started
 
-    method started(Proc::Async:D:) returns Bool:D
+    method started(Proc::Async:D: --> Bool:D)
 
 Returns C<False> before C<.start> has been called, and C<True> afterwards.
 
@@ -161,7 +164,7 @@ C<new> method as first argument.
 
 =head2 method args
 
-    method args(Proc::Async:D:) returns Positional:D
+    method args(Proc::Async:D: --> Positional:D)
 
 Returns the command line arguments for the external programs, as passed to the
 C<new> method.

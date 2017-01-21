@@ -90,6 +90,7 @@ what type they coerce to:
     tclc            Str
     flip            Str
     trans           Str
+    contains        Str
     index           Str
     rindex          Str
     ords            Str
@@ -234,6 +235,9 @@ Coerces the invocant (or in sub form, the argument) to L<Numeric|/type/Numeric>,
 L<arc-cosine|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
+    say 1.acos;                 # 0
+    say acos(-1);               # 3.14159265358979
+
 =head2 routine tan
 
 Defined as:
@@ -301,8 +305,8 @@ Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>,
 L<arc-secant|https://en.wikipedia.org/wiki/Inverse_trigonometric_functions> in
 radians.
 
-    say 0.45.sec;               # 1.11055940697373
-    say sec(0.45);              # 1.11055940697373
+    say 1.asec;                 # 0
+    say sqrt(2).asec;           # 0.785398163397448
 
 =head2 routine cosec
 
@@ -417,10 +421,11 @@ Defined as:
     sub tanh(Numeric(Cool))
     method tanh()
 
-Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns its
-L<Tangent hyperbolicus|https://en.wikipedia.org/wiki/Hyperbolic_function>.
+Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, interprets it as
+radians and returns its L<Tangent hyperbolicus|https://en.wikipedia.org/wiki/Hyperbolic_function>.
 
-    say tanh(30);               # 30
+    say tanh(0.5);              # 0.46211715726001
+    say tanh(atanh(0.5));       # 0.5
 
 =head2 routine atanh
 
@@ -432,7 +437,7 @@ Defined as:
 Coerces the invocant (or in sub form, its argument) to L<Numeric|/type/Numeric>, and returns its
 L<Inverse tangent hyperbolicus|https://en.wikipedia.org/wiki/Inverse_hyperbolic_function>.
 
-    say atanh(0.5);              # 0.549306144334055
+    say atanh(0.5);             # 0.549306144334055
 
 =head2 routine sech
 
@@ -529,7 +534,8 @@ Coerces the arguments (including the invocant in the method form) to
 L<Numeric|/type/Numeric>, and returns its
 L<Logarithm|https://en.wikipedia.org/wiki/Logarithm> to base C<$base>, or to
 base C<e> (Euler's Number) if no base was supplied
-(L<Natural logarithm|https://en.wikipedia.org/wiki/Natural_logarithm>.
+(L<Natural logarithm|https://en.wikipedia.org/wiki/Natural_logarithm>).
+Returns C<NaN> if C<$base> is negative. Throws an exception if C<$base> is C<1>.
 
     say (e*e).log;              # 2
 
@@ -544,7 +550,7 @@ Coerces the invocant (or in the sub form, the invocant) to
 L<Numeric|/type/Numeric>, and returns its
 L<Logarithm|https://en.wikipedia.org/wiki/Logarithm> to base 10, that is, a
 number that approximately produces the original number when raised to the power
-of 10.
+of 10. Returns C<NaN> for negative arguments and C<-Inf> for C<0>.
 
     say log10(1001);            # 3.00043407747932
 
@@ -588,6 +594,13 @@ C<$unit>. If C<$unit> is 1, rounds to the nearest integer.
     say 1.7.round;          # 2
     say 1.07.round(0.1);    # 1.1
     say 21.round(10);       # 20
+
+Always rounds B<up> if the number is at mid-point:
+
+    say (−.5 ).round;       # 0
+    say ( .5 ).round;       # 1
+    say (−.55).round(.1);   # -0.5
+    say ( .55).round(.1);   # 0.6
 
 =head2 routine floor
 
@@ -845,38 +858,92 @@ C<$pattern> is applied to the remaining characters of C<$string>.
     say "perL 6".samecase("A__a__"); # Perl 6
     say "pERL 6".samecase("Ab");     # Perl 6
 
-=head2 routine uniname
+=head2 method uniprop
 
 Defined as:
 
-    sub uniname(Str(Cool)) returns Str
-    method uniname() returns Str
+    sub uniprop(Str(Cool), |c)
+    sub uniprop(Int:D $code, Stringy:D $propname)
+    sub uniprop(Str, $propname, Stringy:D $propname)
+    method uniprop(|c) { uniprop(self, |c)
+
+Interprets the invocant as a L<Str|/type/Str>, and returns the
+L<unicode property|http://userguide.icu-project.org/strings/properties> of the first
+character. If no property is specified returns the
+L<General Category|https://en.wikipedia.org/wiki/Unicode_character_property#General_Category>.
+Returns a Bool for Boolean properties.
+
+    say 'a'.uniprop; # Ll
+    say '1'.uniprop; # Nd
+    say 'a'.uniprop('Alphabetic'); # True
+    say '1'.uniprop('Alphabetic'); # False
+
+=head2 method uniprops
+
+Defined as:
+
+    sub uniprops(Str:D $str, Stringy:D $propname = "General_Category")
+
+Interprets the invocant as a L<Str|/type/Str>, and returns the
+L<unicode property|http://userguide.icu-project.org/strings/properties> for each character
+as a Seq. If no property is specified returns the
+L<General Category|https://en.wikipedia.org/wiki/Unicode_character_property#General_Category>.
+Returns a Bool for Boolean properties. Similar to L<uniprop|/routine/uniprop>
+
+
+=head2 method uniname
+
+Defined as:
+
+    sub uniname(Str(Cool) --> Str)
+    method uniname(--> Str)
 
 Interprets the invocant / first argument as a L<Str|/type/Str>, and returns the
-Unicode codepoint name of the first character. To convert a whole string use L<uninames|#routine_uninames>.
+Unicode codepoint name of the first codepoint of the first character. See
+L<uninames|#routine_uninames> for a routine that works with multiple codepoints.
 
     # Camelia in Unicode
-    say ‘»ö«’.comb».uniname;
-    # «("RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK",
-    #   "LATIN SMALL LETTER O WITH DIAERESIS", "LEFT-POINTING DOUBLE ANGLE QUOTATION MARK")␤»
+    say ‘»ö«’.uniname;
+    # "RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK"
+    say "Ḍ̇".uniname; # Note, doesn't show "COMBINING DOT ABOVE"
+    # "LATIN CAPITAL LETTER D WITH DOT BELOW"
 
     # Find the char with the longest Unicode name.
     say (0..0x1FFFF).sort(*.uniname.chars)[*-1].chr.uniname;
     # «ARABIC LIGATURE UIGHUR KIRGHIZ YEH WITH HAMZA ABOVE WITH ALEF MAKSURA INITIAL FORM␤»
 
-=head2 routine uninames
+=head2 method uninames
 
 Defined as:
 
     sub uninames(Str:D)
     method uninames()
 
-Returns of a Seq of unicode names for the Str provided.
+Returns of a Seq of Unicode names for the all the codepoints in the Str provided.
 
-    dd ‘»ö«’.comb».uniname;
-    # «("RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK",
-    #  "LATIN SMALL LETTER O WITH DIAERESIS",
-    #  "LEFT-POINTING DOUBLE ANGLE QUOTATION MARK").Seq␤»
+    say ‘»ö«’.uninames.perl;
+    # ("RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK", "LATIN SMALL LETTER O WITH DIAERESIS", "LEFT-POINTING DOUBLE ANGLE QUOTATION MARK").Seq
+
+Note this example, which gets a Seq where each element is a Seq of all the
+codepoints in that character.
+
+    say "Ḍ̇'oh".comb>>.uninames.perl;
+    # (("LATIN CAPITAL LETTER D WITH DOT BELOW", "COMBINING DOT ABOVE").Seq, ("APOSTROPHE",).Seq, ("LATIN SMALL LETTER O",).Seq, ("LATIN SMALL LETTER H",).Seq)
+
+=head2 method unimatch
+
+Defined as:
+
+    sub unimatch(Str:D $str, |c)
+    unimatch(Int:D $code, Stringy:D $pvalname, Stringy:D $propname = $pvalname)
+
+Checks if the given integer codepoint or the first letter of the string given have a unicode property
+equal to the value you give. If you supply the Unicode property to be checked it will only return True
+if that property matches the given value.
+
+    say unimatch 'A', 'Latin'; # True
+    say unimatch 'A', 'Latin', 'Script'; # True
+    say unimatch 'A', 'Ll'; # True
 
 =head2 routine chop
 
@@ -939,8 +1006,8 @@ Defined as:
 Coerces the invocant (or in the sub form, the first argument) to
 L<Str|/type/Str>, and returns a list of Unicode codepoints for each character.
 
-    say "Perl 6".ords;              # 80 101 114 108 160 54
-    say ords 10;                    # 49 48
+    say "Camelia".ords;              # 67 97 109 101 108 105 97
+    say ords 10;                     # 49 48
 
 This is the list-returning version of L<ord>. The inverse operation in
 L<chrs>.
@@ -949,14 +1016,14 @@ L<chrs>.
 
 Defined as:
 
-    sub chrs(*@codepoints) returns Str:D
+    sub chrs(*@codepoints --> Str:D)
     method chrs()
 
 Coerces the invocant (or in the sub form, the argument list) to a list of
 integers, and returns the string created by interpreting each integer as a
 Unicode codepoint, and joining the characters.
 
-    say <80 101 114 108 160 54>.chrs;   # Perl 6
+    say <67 97 109 101 108 105 97>.chrs;   # Camelia
 
 This is the list-input version of L<chr>. The inverse operation is L<ords>.
 
@@ -1014,8 +1081,8 @@ C<:kv> adds both indexes and matches:
 and C<:p> adds them as L<Pairs|/type/Pair>, using the same types for
 values as C<:v> does:
 
-    say 'abc'.split(/b/, :p)                # (a 0 => ｢b｣ c)
-    say 'abc'.split('b', :p)                # (a 0 => b c)
+    say 'abc'.split(/b/, :p);               # (a 0 => ｢b｣ c)
+    say 'abc'.split('b', :p);               # (a 0 => b c)
 
 You can only use one of the C<:k, :v, :kv, :p> adverbs in a single call
 to C<split>.
@@ -1047,7 +1114,7 @@ This method can be used as part of an C<IO::Path> to process a file
 line-by-line, since C<IO::Path> objects inherit from C<Cool>, e.g.:
 
 =begin code :skip-test
-'huge-csv'.IO.lines -> $line {
+for 'huge-csv'.IO.lines -> $line {
     # Do something with $line
 }
 
@@ -1058,7 +1125,7 @@ my @lines = 'huge-csv'.IO.lines;
 Without any arguments, sub C<lines> operates on
 C<$*ARGFILES>, which defaults to C<$*IN> in the absence of any filenames.
 
-To modify values in place use C<is copy> to force a writeable container.
+To modify values in place use C<is copy> to force a writable container.
 
 =for code :skip-test
 for $*IN.lines -> $_ is copy { s/(\w+)/{$0 ~ $0}/; .say }
@@ -1083,8 +1150,8 @@ Only whitespace counts as word boundaries
 
 Defined as:
 
-    multi sub comb(Regex $matcher, Str(Cool) $input, $limit = *) returns List:D
-    multi method comb(Regex $matcher, $limit = *) returns List:D
+    multi sub comb(Regex $matcher, Str(Cool) $input, $limit = * --> List:D)
+    multi method comb(Regex $matcher, $limit = * --> List:D)
 
 Returns all (or if supplied, at most C<$limit>) matches of the invocant
 (method form) or the second argument (sub form) against the
@@ -1094,7 +1161,7 @@ L<Regex|/type/Regex> as a list of strings.
 
 =head2 method contains
 
-    multi method contains(Cool:D: Str(Cool) $needle, Cool $start?) returns Bool:D
+    multi method contains(Cool:D: Str(Cool) $needle, Cool $start? --> Bool:D)
 
 Returns C<True> if the invocant contains the C<$needle> at any position within
 the string. If $start is provided skip as many characters.
@@ -1106,8 +1173,8 @@ the string. If $start is provided skip as many characters.
 
 Defined as:
 
-    multi sub    index(Str(Cool) $s, Str:D $needle, Int(Cool) $startpos = 0) returns Int
-    multi method index(Str(Cool) $needle, Int(Cool) $startpos = 0) returns Int
+    multi sub    index(Str(Cool) $s, Str:D $needle, Int(Cool) $startpos = 0 --> Int)
+    multi method index(Str(Cool) $needle, Int(Cool) $startpos = 0 --> Int)
 
 Coerces the first two arguments (in method form, also counting the invocant)
 to L<Str|/type/Str>, and searches for C<$needle> in the string starting from C<$startpos>.
@@ -1130,11 +1197,19 @@ Returns an undefined value if C<$needle> wasn't found.
 
 See L<the documentation in type Str|/type/Str#routine_rindex> for examples.
 
+=head2 routine match
+
+Defined as:
+
+    multi method match(Cool:D: $target, *%adverbs)
+
+Coerces the invocant to L<Str|/type/Str> and calls the method L<match|/type/Str#method_match> on it.
+
 =head2 method fmt
 
 Defined as:
 
-    method fmt($format = '%s') returns Str:D
+    method fmt($format = '%s' --> Str:D)
 
 Uses C<$format> to return a formatted representation of the invocant.
 
@@ -1181,7 +1256,7 @@ produces this output:
 
 Defined as:
 
-    method IO() returns IO::Path:D
+    method IO(--> IO::Path:D)
 
 Coerces the invocant to L<IO::Path>.
 
@@ -1196,11 +1271,15 @@ Defined as:
 
 Coerces the invocant to L<Str>.
 
-This works as-is with a literal string parameter. If you have a more complex
-input, such as a variable or string with embedded code, you must enable the
-C<MONKEY-SEE-NO-EVAL> pragma:
+This works as-is with a literal string parameter. More complex input, such as
+a variable or string with embedded code, is illegal by default. This can be
+overridden in any of several ways:
 
     use MONKEY-SEE-NO-EVAL;
+    use MONKEY;  # shortcut that turns on all MONKEY pragmas
+    use Test;
+
+    # any of the above allows:
     EVAL "say { 5 + 5 }";   # says 10
 
 Symbols in the current lexical scope are visible to code in an C<EVAL>.

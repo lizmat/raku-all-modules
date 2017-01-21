@@ -22,7 +22,7 @@ grammar IntegralParser does AlgebraParser { ... };
 Roles may only be runtime-mixed into defined object instances:
 
 =for code :skip-test
-GrassmanNumber.new does AlgebraDebugger;
+GrassmannNumber.new does AlgebraDebugger;
 
 (This restriction may be worked around by using
 L<augment or supersede|/language/variables#The_augment_Declarator>, or
@@ -33,7 +33,7 @@ significant performance penalty.)
 
 =head2 method type
 
-    method type(X::Does::TypeObject:D:) returns Mu:U
+    method type(X::Does::TypeObject:D: --> Mu:U)
 
 Returns the type object into which the code tried to mix in a role.
 

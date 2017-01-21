@@ -54,16 +54,6 @@ C<List> into an C<@>-sigiled variable, you can use binding with C<:=> instead.
 
     my @a := 1, 2, 3;
 
-Assigning Lists of Lists to C<@>-sigiled variables does not provide the same
-shortcut. In this case the outer List becomes the first element of the Array.
-
-    my @a = (1,2; 3,4);
-    say @a.flat;
-    # OUTPUT«((1 2) (3 4))␤»
-    @a := (1,2; 3,4);
-    say @a.flat;
-    # OUTPUT«((1 2 3 4)␤»
-
 One of the ways C<@>-sigiled variables act like lists is by always supporting
 L<positional subscripting|/language/subscripts>. Anything bound to a C<@>-sigiled
 value must support the L<Positional|/type/Positional> role which guarantees this:
@@ -151,7 +141,7 @@ for details.
 =head2 Slips
 
 Sometimes you want to insert the elements of a list into another list.
-This can be done with a special type of list called a C<Slip>.
+This can be done with a special type of list called a L<Slip|/type/Slip>.
 
     say (1, (2, 3), 4) eqv (1, 2, 3, 4);         # says False
     say (1, Slip.new(2, 3), 4) eqv (1, 2, 3, 4); # says True
@@ -339,6 +329,7 @@ can sometimes be harder to maintain laziness or work with infinite sequences.
 
 =head2 Typing
 
+X<|typed array>X<|[ ] (typed array)>
 Arrays may be typed such that their slots perform a typecheck whenever
 they are assigned to.  An Array that only allows C<Int> values to be assigned
 is of type C<Array[Int]> and one can create one with C<Array[Int].new>.  If

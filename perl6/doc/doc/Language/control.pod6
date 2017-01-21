@@ -305,7 +305,7 @@ There are also C<with> and C<without> statement modifiers:
 
 =head1 X<for|control flow>
 
-The C<for> loop iterates over a list, running the statements inside a block
+The C<for> loop iterates over a list, running the statements inside a L<block|/type/Block>
 once on each iteration.  If the block takes parameters, the elements of the
 list are provided as arguments.
 
@@ -329,6 +329,15 @@ as many elements from the list as needed before running the block.
     my %hash = <a b c> Z=> 1,2,3;
     for %hash.kv -> $key, $val { say "$key => $val" }
     for 1, 1.1, 2, 2.1 { say "$^x < $^y" }  # says "1 < 1.1" then says "2 < 2.1"
+
+Parameters of a pointy block can have default values, allowing to handle lists
+with missing elements.
+
+    my @list = 1,2,3,4;
+    for @list -> $a, $b = 'N/A', $c = 'N/A' {
+        say "$a $b $c"
+    }
+    # OUTPUT«1 2 3␤4 N/A N/A␤»
 
 A C<for> may be used on lazy lists – it will only take elements from the
 list when they are needed, so to read a file line by line, you could
@@ -358,7 +367,8 @@ assign them to an array:
 X<|lazy list,gather>X<|lazy list,take>
 
 C<gather> is a statement or block prefix that returns a L<sequence|/type/Seq>
-of values. The values come from calls to C<take> in the dynamic scope of the C<gather> block.
+of values. The values come from calls to L<take|/type/Mu#routine_take> in the
+dynamic scope of the C<gather> block.
 
     my $a = gather {
         take 1;
@@ -402,6 +412,8 @@ from within C<gather>:
     }
 
     say weird(<a b c>, :direction<backward> );          # (c b a)
+
+If values need to be mutable on the caller side, use L<take-rw|/type/Mu#routine_take-rw>.
 
 
 =head1 X<given|control flow>
@@ -481,7 +493,8 @@ be in the same "switch" just so long as you do not open a new block:
 
 C<when> statements can smart match against L<Signatures|/language/syntax#Signature_literals>.
 
-=head2 X<proceed and succeed|control flow,proceed succeed>
+=head2 X<proceed|control flow>
+=head2 X<succeed|control flow>
 
 Both C<proceed> and C<succeed> are meant to be used only from inside C<when>
 or C<default> blocks.
@@ -529,7 +542,7 @@ the C<given> value once more, consider this code:
 C<42> since this is the next positive match, but doesn't enter the
 C<default> block since the C<when 42> block doesn't contain a C<proceed>.
 
-By contrast, the C<succeed> keyword shortcircuits execution and exits the
+By contrast, the C<succeed> keyword short-circuits execution and exits the
 entire C<given> block at that point.  It may also take an argument to
 specify a final value for the block.
 
@@ -580,7 +593,7 @@ The C<loop> statement takes three statements in parentheses separated by C<;>
 that take the role of initializer, conditional and incrementer. The initializer
 is execute once and any variable declaration will spill into the surrounding
 block. The conditional is executed once per iteration and coerced to C<Bool>,
-if C<False> the loop is stopped. The incrementor is executed once per
+if C<False> the loop is stopped. The incrementer is executed once per
 iteration.
 
     loop (my $i = 0; $i < 10; $i++) {
@@ -649,24 +662,55 @@ All these forms may produce a return value the same way C<loop> does.
 =head1 X<repeat/while, repeat/until|control flow,repeat>
 
 Executes the block I<at least once> and, if the condition allows, repeats
-that execution.
+that execution.  This differs from C<while>/C<until> in that the condition
+is evaluated at the end of the loop, even if it appears at the front.
 
     my $x = -42;
     repeat {
         $x++;
-        # Execute this block. Then, execute it again and again, until $x >= 10
-    } while $x < 10;
+    } while $x < 5;
+    $x.say; # 5
 
     repeat {
         $x++;
-        # Execute this block. Then, execute it again and again, while $x < 10
-    } until $x >= 10;
+    } while $x < 5;
+    $x.say; # 6
+
+    repeat while $x < 10 {
+        $x++;
+    }
+    $x.say; # 10
+
+    repeat while $x < 10 {
+        $x++;
+    }
+    $x.say; # 11
+
+    repeat {
+        $x++;
+    } until $x >= 15;
+    $x.say; # 15
+
+    repeat {
+        $x++;
+    } until $x >= 15;
+    $x.say; # 16
+
+    repeat until $x >= 20 {
+        $x++;
+    }
+    $x.say; # 20
+
+    repeat until $x >= 20 {
+        $x++;
+    }
+    $x.say; # 21
 
 All these forms may produce a return value the same way C<loop> does.
 
 =head1 X<return|control flow>
 
-The routine C<return> will stop execution of a subroutine or method, run all
+The sub C<return> will stop execution of a subroutine or method, run all
 relevant L<phasers|/language/phasers#Block_Phasers> and provide the given
 return value to the caller. The default return value is C<Nil>. If a return
 L<type constraint|/type/Signature#Constraining_Return_Types> is provided it
@@ -675,11 +719,18 @@ exception L<X::TypeCheck::Return|/type/X::TypeCheck::Return> is thrown. If it
 passes a control exception is raised and can be caught with
 L<CONTROL|/language/phasers#CONTROL>.
 
+Any C<return> in a block is tied to the first C<Routine> in the outer lexical scope of
+that block, no matter how deeply nested.  Please note that a C<return> in the
+root of a package will fail at runtime. A C<return> in a block that is
+evaluated lazily (e.g. inside C<map>) may find the outer lexical routine gone
+by the time the block is executed. In almost any case C<last> is the better
+alternative.
+
 =comment TODO add link to section in /language/function that shows how return values are produces/handled
 
 =head1 X<return-rw|control flow>
 
-The routine C<return> will return values, not containers. Those are immutable
+The sub C<return> will return values, not containers. Those are immutable
 and will lead to runtime errors when attempted to be mutated.
 
     sub s(){ my $a = 41; return $a };

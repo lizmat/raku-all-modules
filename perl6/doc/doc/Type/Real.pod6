@@ -18,8 +18,8 @@ Converts the number to a C<Rat> with the precision C<$epsilon>.
 
 =head2 routine rand
 
-    sub term:<rand> returns Num:D
-    method rand(Real:D:) returns Real:D
+    sub term:<rand> (--> Num:D)
+    method rand(Real:D: --> Real:D)
 
 Returns a pseudo-random number between zero and the number.
 
@@ -41,25 +41,25 @@ integer. If scale is C<0.1>, rounds to one digit after the comma etc.
 
 =head2 method floor
 
-    method floor(Real:D) returns Int:D
+    method floor(Real:D --> Int:D)
 
 Return the largest integer not greater than the number.
 
 =head2 method ceiling
 
-    method ceiling(Real:D) returns Int:D
+    method ceiling(Real:D --> Int:D)
 
 Returns the smallest integer not less than the number.
 
 =head2 method truncate
 
-    method truncate(Real:D) returns Int:D
+    method truncate(Real:D --> Int:D)
 
 Rounds the number towards zero.
 
 =head2 method base
 
-    method base(Real:D: Int:D $base where 2..36, $digits?) returns Str:D
+    method base(Real:D: Int:D $base where 2..36, $digits? --> Str:D)
 
 Converts the number to a string, using C<$base> as base. For C<$base> larger
 than ten, capital Latin letters are used.
@@ -67,19 +67,28 @@ than ten, capital Latin letters are used.
     255.base(16);            # 'FF'
 
 The optional C<$digits> argument asks for that many digits of fraction
-(which may not be negative).  If omitted, a reasonable default is chosen
-based on type.  For Int this default is 0.  For L<Num|/type/Num>, the default is 8.
+(which may not be negative). If omitted, a reasonable default is chosen
+based on type.  For Int this default is 0. For L<Num|/type/Num>, the default is 8.
 For L<Rational|/type/Rational>, the number of places is scaled to the size of the denominator,
 with a minimum of 6.
 
+A special value of L«C<Whatever>|/type/Whatever» (C<*>)
+can be given as C<$digits>, which functions the same as when C<$digits> is not specified for
+all C<Real> types except the C<Rationals>. For C<Rationals>, the C<Whatever>
+indicates that you wish all of the possible digits of the fractional part,
+but use caution: since there's no detection of repeating
+fractional parts (the algorithm will eventually stop after generating 2**63
+digits).
+
 The final digit produced is always rounded.
 
-    say pi.base(10, 5);     # 3.14159
+    say pi.base(10, 3);      # 3.142
+    say (1/128).base(10, *); # 0.0078125
+    say (1/100).base(10, *); # 0.01
+=begin code :skip-test
+    say (1/3)  .base(10, *); # WRONG: endlessly repeating fractional part
+=end code
 
-To convert a string to a number use the C<:16($string)> notation where 16 is
-the base:
-
-    say :16("FF");           # 255
-    say :23("FF");           # 360
+For reverse operation, see L«C<parse-base>|/routine/parse-base»
 
 =end pod

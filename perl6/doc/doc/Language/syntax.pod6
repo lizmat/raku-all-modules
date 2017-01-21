@@ -20,6 +20,8 @@ errors and give good error messages.
 Perl 6 code is Unicode text, current implementations support UTF-8 as the
 input encoding.
 
+See also L<Unicode versus Texas symbols|/language/unicode_texas>.
+
 =head2 Free Form
 
 It is free-form, in the sense that you are mostly free to
@@ -61,13 +63,13 @@ though you can't leave out any of the remaining whitespace.
 In many places where the compiler would not allow a space you can use any
 whitespace that is quoted with a backslash. Unspaces in tokens are not
 supported. Newlines that are unspaced still count when the compiler produces
-line numbers. Usecases for unspace are separation of postfix operators and
+line numbers. Use cases for unspace are separation of postfix operators and
 routine argument lists.
 
     sub alignment(+@l) { +@l };
     sub long-name-alignment(+@l) { +@l };
-    alignment\         (1,2,3,4)>>.say;
-    long-name-alignment(3,5)\   >>.say;
+    alignment\         (1,2,3,4).say;
+    long-name-alignment(3,5)\   .say;
 
 =head2 Separating Statements
 
@@ -101,7 +103,7 @@ if True { say "Hello" }; say "world";
 Comments are parts of the program text only intended for human readers, and
 the Perl 6 compilers does not evaluate them as program text.
 
-Comments count as whitespace in places where the absence of presence of
+Comments count as whitespace in places where the absence or presence of
 whitespace disambiguates possible parses.
 
 =head3 Single-line comments
@@ -167,6 +169,7 @@ alphabetic character.
     with-numbers1234
     don't
     fish-food
+    π
 
     # not valid identifiers:
     with-numbers1234-5
@@ -194,6 +197,9 @@ name of the identifier.
     # OUTPUT«("\$=pod", "!UNIT_MARKER", "EXPORT", "\$_", "\$!", "::?PACKAGE",
     # "GLOBALish", "\$¢", "\$=finish", "\$/", "\$foo:bar<1>", "\$foo:bar<2>",
     # "\$?PACKAGE").Seq␤»
+
+Unicode superscript numerals are exponents and not part of an identifier;
+e.g. C<$x²> does the square of variable C<$x>.  Subscript numerals are TBD.
 
 =head1 Statements and Expressions
 
@@ -242,7 +248,7 @@ See the L<documentation on variables|/language/variables> for more details.
 
 Pre-declared identifiers can be terms on their own. Those are typically type
 names or constants, but also the term C<self> which refers to an object that
-a method was called on (see L<objects|/language/objects>), and sigiless
+a method was called on (see L<objects|/language/objects>), and sigilless
 variables:
 
     say Int;                # (Int)
@@ -303,7 +309,7 @@ leading zeros do I<not> indicate base 8; instead a compile-time warning is
 issued.
 
 In all literal formats, you can use underscores to group digits;
-they don't carry any semantic; the following literals all evaluate to the same
+they don't carry any semantic information; the following literals all evaluate to the same
 number:
 
     1000000
@@ -316,7 +322,7 @@ number:
 Integers default to signed base-10, but you can use other bases. For details,
 see L<Int|/type/Int>.
 
-    -2
+    -2          # actually not a literal, but unary - operator applied to numeric literal 2
     12345
     0xBEEF      # base 16
     0o755       # base 8
@@ -328,19 +334,21 @@ L<Rat|/type/Rat> literals (rationals) are very common, and take the place of dec
 
     1.0
     3.14159
-    -2.5
+    -2.5        # Not actually a literal, but still a Rat
     :3<21.0012> # Base 3 rational
+    ⅔
     2/3         # Not actually a literal, but still a Rat
 
 =head4 Num literals
 
-Scientific notation with an exponent to base ten after an C<e> produces
+Scientific notation with an integer exponent to base ten after an C<e> produces
 L<floating point number|/type/Num>:
 
     1e0
     6.022e23
     1e-9
     -2e48
+    2e2.5       # error
 
 =head4 Complex literals
 
@@ -349,7 +357,7 @@ L<Complex|/type/Complex> numbers are written either as an imaginary number
 a real and an imaginary number:
 
     1+2i
-    6.123e5i
+    6.123e5i    # note that this is 6.123e5 * i and not 6.123 * 10 ** (5i)
 
 
 =head3 Pair literals

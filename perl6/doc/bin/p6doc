@@ -70,18 +70,19 @@ sub show-docs(Str $path, :$section, :$no-pager) {
     shell $doc-command-str;
 }
 
-multi sub MAIN() {
-
+sub USAGE() {
     say 'What documentation do you want to read?';
     say "Examples: $PROGRAM-NAME Str";
     say "          $PROGRAM-NAME Str.split";
     say "          $PROGRAM-NAME faq";
+    say "          $PROGRAM-NAME path/to/file";
 
     say "\nYou can list some top level documents:";
     say "          $PROGRAM-NAME -l";
 
     say "\nYou can also look up specific method/routine definitions:";
-    say "          $PROGRAM-NAME -f push";
+    say "          $PROGRAM-NAME -f hyper";
+    say "          $PROGRAM-NAME -f Type::Array.push";
 
     say "\nYou can bypass the pager and print straight to stdout:";
     say "          $PROGRAM-NAME -n Str"
@@ -143,7 +144,7 @@ sub disambiguate-f-search($docee, %data) {
             my @types = %data{$ndocee}.values>>.Str.grep({ $^v ~~ /^ 'Type' / });
             @types = [gather @types.deepmap(*.take)].unique.list;
             @types.=grep({!/$pref/});
-            %found{$ndocee}.push: @types X~ "." ~ $docee;
+            %found{$ndocee}.push: @types X~ $docee;
         }
     }
 

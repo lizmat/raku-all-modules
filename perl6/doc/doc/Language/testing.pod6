@@ -180,6 +180,37 @@ Specify that testing has finished.  Use this function when you do not as yet
 have a C<plan> for the number of tests to run.  A C<plan> is thus not
 required when using C<done-testing>.
 
+It is recommended that the C<done-testing> function be removed and replaced
+with a valid C<plan> function when all tests are finalized. Use of C<plan> can help
+detect test failures otherwise not reported because tests were accidentally skipped
+due to bugs in the tests or bugs in the compiler.  For example:
+
+    sub do-stuff {@};
+    use Test;
+    ok .is-prime for do-stuff;
+    done-testing;
+
+    # output:
+    1..0
+
+The above example is where a naive C<done-testing> fails. C<do-stuff()> returned
+nothing and tested nothing, even though it should've returned results to test. But
+the test suite doesn't know how many tests were meant to be run, so it passes.
+
+Adding C<plan> gives a true picture of the test:
+
+    sub do-stuff {@};
+    use Test;
+    plan 1;
+    ok .is-prime for do-stuff;
+
+    # output:
+    1..1
+    # Looks like you planned 1 test, but ran 0
+
+Note that leaving the C<done-testing> in place will have no effect on the new test
+results, but it should be removed for clarity.
+
 =head1 Testing return values
 
 The C<Test> module exports various functions that check the return value of a
@@ -188,7 +219,7 @@ given expression, and produce standardized test output accordingly.
 In practice, the expression will often be a call to a function or method that
 you want to unit-test.
 
-=head2 By truthiness
+=head2 By C<Bool> value
 
 =item X<ok($value, $description?), nok($condition, $description?)|ok,nok>
 
@@ -215,17 +246,26 @@ X<|is,testing>
 =item is($value, $expected, $description?)
 
 Marks a test as passed if C<$value> and C<$expected> compare positively with
-the L<eq operator|/routine/eq>. The function accepts an optional
-C<$description> of the test.
+the L<eq operator|/routine/eq>, unless C<$expected> is a type object, in which
+case C<===> operator will be used instead; accepts an optional C<$description> of the test.
+
+B<NOTE:> C<eq> operator the C<is()> uses stringifies,
+which means C<is()> is not a good function for testing more complex things, such
+as lists: C<is (1, (2, (3,))), [1, 2, 3]> passes the test, even though the operands
+are vastly different. For those cases, use
+L«C<is-deeply> routine|/language/testing#index-entry-is-deeply-is-deeply($value,_$expected,_$description?)»
 
     is $pdf-document.author, "Joe", 'Retrieving the author field';
     is factorial(6),         720,   'Factorial - small integer';
-
-As a special case, if C<$expected> is a type object, the comparison uses the
-C<===> operator instead:
-
     my Int $a;
     is $a, Int, 'The variable $a is an unassigned Int';
+
+B<Note:> if I<only> whitespace differs between the values, C<is()> will output failure
+message differently, to show the whitespace in each values. For example, in the
+output below, the second test shows the literal C<\t> in the C<got:> line:
+
+    is "foo\tbar", "foo\tbaz";   # expected: 'foo     baz'␤#      got: 'foo   bar'
+    is "foo\tbar", "foo    bar"; # expected: "foo    bar"␤#      got: "foo\tbar"
 
 =item X<isnt($value, $expected, $description?)|isnt>
 
@@ -248,7 +288,9 @@ are approximately equal to each other. The subroutine can be called in numerous
 ways that let you test using relative tolerance (C<$rel-tol>) or
 absolute tolerance (C<$abs-tol>) of different values.
 
-If no tolerance is set, it will default to an absolute tolerance of C<1e-5>.
+If no tolerance is set, the function will base the tolerance on the I<absolute>
+value of C<$expected>: if it's smaller than C<1e-6>, use absolute tolerance of C<1e-5>;
+if it's larger, use relative tolerance of C<1e-6>.
 
     my Numeric ($value, $expected, $abs-tol, $rel-tol) = ...
 
@@ -319,10 +361,10 @@ tested independently, and the C<is-approx> test will succeed only if both pass.
 
 =item X<is-deeply($value, $expected, $description?)|is-deeply>
 
-Marks a test as passed if C<$value> and C<$expected> compare positively with
-the L<eqv operator|/routine/eqv>. This is the best way to check for equality of
-(deep) data structures. The function accepts an optional C<$description> of
-the test.
+Marks a test as passed if C<$value> and C<$expected> are equivalent, using the
+same semantics as the L<eqv operator|/routine/eqv>. This is the best way to
+check for equality of (deep) data structures. The function accepts an optional
+C<$description> of the test.
 
 =begin code
 use v6;

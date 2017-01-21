@@ -25,7 +25,7 @@ sigil). This includes:
     $Foo::Bar::baz      # compound identifiers separated by ::
     $Foo::($bar)::baz   # compound identifiers that perform interpolations
     $42                 # numeric names
-    $!                  # certain punctuational variables
+    $!                  # certain punctuation variables
 
 X<|::,package>
 C<::> is used to separate nested package names.
@@ -62,7 +62,7 @@ The following pseudo-package names are reserved at the front of a name:
     PROCESS     # Process-related globals (superglobals)
     COMPILING   # Lexical symbols in the scope being compiled
 
-X«|CALLER (package)»X«|CALLERS (package)»X«|DYNAMIC (package)»X«|OUTER (package)»X«|OUTERS (package)»X«|LEXICAL (package)»X«|UNIT (package)»X«|SETTING (package)»X«|PARENT (package)»X«|CIENT (package)»
+X«|CALLER (package)»X«|CALLERS (package)»X«|DYNAMIC (package)»X«|OUTER (package)»X«|OUTERS (package)»X«|LEXICAL (package)»X«|UNIT (package)»X«|SETTING (package)»X«|PARENT (package)»X«|CLIENT (package)»
 The following relative names are also reserved but may be used
 anywhere in a name:
 
@@ -98,7 +98,7 @@ C<::($expr)> where you'd ordinarily put a package or variable name. The
 string is allowed to contain additional instances of C<::>, which will be
 interpreted as package nesting. You may only interpolate entire names,
 since the construct starts with C<::>, and either ends immediately or is
-continued with another C<::> outside the parens. Most symbolic references
+continued with another C<::> outside the parentheses. Most symbolic references
 are done with this notation:
 
     $foo = "Bar";

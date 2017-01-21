@@ -37,7 +37,10 @@ user code should, where possible, avoid the lower level concurrency APIs
 A L<Promise|/type/Promise> (also called I<future> in other programming
 environments) encapsulates the result of a computation that may not
 have completed or even started at the time the promise is obtained.
-It provides much of the functionality that user code needs to operate
+A C<Promise> starts from a C<Planned> status and can result in either a
+C<Kept> status, meaning the promise has been successfully completed, or
+a C<Broken> status meaning that the promise has failed.
+Usually this is much of the functionality that user code needs to operate
 in a concurrent or asynchronous manner.
 
 =begin code
@@ -46,19 +49,20 @@ say $p1.status;         # Planned;
 $p1.keep('result');
 say $p1.status;         # Kept
 say $p1.result;         # result
+                        # (since it has been kept, a result is available!)
 
 my $p2 = Promise.new;
 $p2.break('oh no');
 say $p2.status;         # Broken
-say $p2.result;         # dies with "oh no"
+say $p2.result;         # dies with "oh no", because the promise has been broken
 =end code
 
 Promises gain much of their power by being composable, for example by
-chaining:
+chaining, usually by the L<then|/type/Promise#method_then> method:
 
     my $promise1 = Promise.new();
     my $promise2 = $promise1.then(
-        -> $v { say $v.result; "Second Result"}
+        -> $v { say $v.result; "Second Result" }
     );
     $promise1.keep("First Result");
     say $promise2.result;   # First Result \n Second Result
@@ -194,7 +198,7 @@ otherwise.
 
 If you are creating a promise that you intend to keep or break yourself
 then you probably don't want any code that might receive the promise to
-inadvertently (or otherwise,) keep or break the promise before you do.
+inadvertently (or otherwise) keep or break the promise before you do.
 For this purpose there is the L<method vow|/type/Promise#method_vow>, which
 returns a L<Vow> object which becomes the only mechanism by which the promise
 can be kept or broken.  If an attempt to keep or break the Promise is made
@@ -481,7 +485,7 @@ channel must be checked to determine whether it is closed:
     # Doing some unrelated things...
 
 The L<method closed|/type/Channel#method_closed> returns a L<Promise> that
-will be kept (and consequently will evaluate to True in a boolean context,)
+will be kept (and consequently will evaluate to True in a boolean context)
 when the channel is closed.
 
 The C<.poll> method can be used in combination with C<.receive> method, as a
@@ -641,7 +645,7 @@ the thread completes:
     $thread.finish;
 
 Beyond that there are  no further facilities for synchronization or resource
-sharing which is largely why it should be emphasised that threads are unlikely
+sharing which is largely why it should be emphasized that threads are unlikely
 to be useful directly in user code.
 
 =head2 Schedulers
@@ -723,12 +727,12 @@ The class L<Lock> provides the low level mechanism that protects
 shared data in a concurrent environment and is thus key to supporting
 thread-safety in the high level API, this is sometimes known as a
 "Mutex" in other programming languages.  Because the higher level classes
-(L<Promise>, L<Supply> and L<Channel>,) use a L<Lock> where required it
+(L<Promise>, L<Supply> and L<Channel>) use a L<Lock> where required it
 is unlikely that user code will need to use a L<Lock> directly.
 
 The primary interface to L<Lock> is the method
 L<protect|/type/Lock#method_protect> which ensures that a block of code
-(commonly called a "critical section",) is only executed in one thread
+(commonly called a "critical section") is only executed in one thread
 at a time:
 
     my $lock = Lock.new;

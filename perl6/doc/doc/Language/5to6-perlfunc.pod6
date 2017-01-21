@@ -102,7 +102,7 @@ C<abs>.
 
 =head2 accept
 
-=item accept NEWSOCKET,GENERICSOCKET
+=item accept NEWSOCKET, GENERICSOCKET
 
 C<accept> is a method you can call on a server, e. g.
 C<$server.accept()>. Instead of returning a packed address, it returns a
@@ -119,7 +119,7 @@ find a true analog.
 
 =head2 atan2
 
-=item atan2 Y,X
+=item atan2 Y, X
 
 Available as a function as well as being able to be used as a method.
 For instance, these are equivalent:
@@ -129,7 +129,7 @@ For instance, these are equivalent:
 
 =head2 bind
 
-=item bind SOCKET,NAME
+=item bind SOCKET, NAME
 
 [NEEDS FURTHER RESEARCH] No sign of a socket-related C<bind()> in Perl 6. At a
 guess, whatever socket binding is needed happens when you create a new socket
@@ -144,7 +144,7 @@ socket. E. g. C<my $fh = open("path/to/file", :bin);>
 
 =head2 bless
 
-=item bless REF,CLASSNAME
+=item bless REF, CLASSNAME
 
 With the changes in class creation in Perl 6, this may find less use
 than in Perl 5, and is a method as well as a function. The Perl 6 docs
@@ -161,7 +161,7 @@ still be useful.
 
 Not in Perl 6. For breaking out of C<given> blocks, you should probably take a
 look at C<proceed> and C<succeed>
-L<here|/language/control#proceed_and_succeed>.
+L<here|/language/control#proceed>.
 
 =head2 caller
 
@@ -194,7 +194,7 @@ way to browse through the call stack.
 
 =item chdir EXPR
 
-Seems to work as it does in Perl 5.
+Works as it does in Perl 5.
 
 =head2 chmod
 
@@ -261,10 +261,11 @@ well be a method in the IO::Dir class.
 
 =head2 connect
 
-=item connect SOCKET,NAME
+=item connect SOCKET, NAME
 
-Not clearly documented, but it appears that C<connect> will be a method
-you would call on some variety of IO::Socket object.
+Use L<connect|/routine/connect> from L<IO::Socket::Async|/type/IO::Socket::Async> for
+an asynchronous socket or create a L<IO::Socket::INET|/type/IO::Socket::INET> socket
+for a synchronous one.
 
 =head2 continue
 
@@ -285,7 +286,7 @@ C<(1/60000).cos>.
 
 =head2 crypt
 
-=item crypt PLAINTEXT,SALT
+=item crypt PLAINTEXT, SALT
 
 This appears not to have made it into Perl 6.
 
@@ -293,7 +294,7 @@ This appears not to have made it into Perl 6.
 
 =item dbmclose HASH
 
-=item dbmopen HASH,DBNAME,MASK
+=item dbmopen HASH, DBNAME, MASK
 
 These functions have largely been superseded in Perl 5, and are unlikely to
 ever turn up in Perl 6 (although any assumptions about the Perl 6 database
@@ -381,7 +382,7 @@ Replaced by C<EVAL>. Note that C<EVAL> does not do any exception handling!
 
 =item evalbytes EXPR
 
-No longer seems to exist.
+No equivalent.
 
 =head2 exec
 
@@ -422,7 +423,7 @@ Looks like it does the same thing as in Perl 5.
 
 =head2 fcntl
 
-=item fcntl FILEHANDLE,FUNCTION,SCALAR
+=item fcntl FILEHANDLE, FUNCTION, SCALAR
 
 Appears not to be in Perl 6.
 
@@ -441,7 +442,7 @@ unimplemented.
 
 =head2 flock
 
-=item flock FILEHANDLE,OPERATION
+=item flock FILEHANDLE, OPERATION
 
 Currently unimplemented.
 
@@ -457,7 +458,7 @@ native { * }; say fork;>.
 
 =item format
 
-=item formline PICTURE,LIST
+=item formline PICTURE, LIST
 
 Perl 6 does not have built-in formats.
 
@@ -489,7 +490,7 @@ Does not appear to be implemented.
 
 =head2 getpriority
 
-=item getpriority WHICH,WHO
+=item getpriority WHICH, WHO
 
 Does not appear to be implemented.
 
@@ -509,15 +510,15 @@ Does not appear to be implemented.
 
 =item getgrgid GID
 
-=item getservbyname NAME,PROTO
+=item getservbyname NAME, PROTO
 
-=item gethostbyaddr ADDR,ADDRTYPE
+=item gethostbyaddr ADDR, ADDRTYPE
 
-=item getnetbyaddr ADDR,ADDRTYPE
+=item getnetbyaddr ADDR, ADDRTYPE
 
 =item getprotobynumber NUMBER
 
-=item getservbyport PORT,PROTO
+=item getservbyport PORT, PROTO
 
 =item getpwent
 
@@ -562,7 +563,7 @@ by roles like User, Group, etc.
 
 =item getsockname SOCKET
 
-=item getsockopt SOCKET,LEVEL,OPTNAME
+=item getsockopt SOCKET, LEVEL, OPTNAME
 
 [NEEDS FURTHER RESEARCH] These are likely implemented by some kind of
 IO::Socket object, but details are unclear.
@@ -596,7 +597,7 @@ C<DateTime> object for the current time, for instance, use C<my $gmtime
 
 =item grep BLOCK LIST
 
-=item grep EXPR,LIST
+=item grep EXPR, LIST
 
 Still in Perl 6, with the caveat that the block form now requires a
 comma after the block. I.e. C<@foo = grep { $_ = "bars" }, @baz>. Can
@@ -627,7 +628,7 @@ L<this section|/language/5to6-nutshell#Importing_specific_functions_from_a_modul
 
 =head2 index
 
-=item index STR,SUBSTR,POSITION
+=item index STR, SUBSTR, POSITION
 
 Works as in Perl 5. Can also now be used as a method:
 C<"howdy!".index("how"); # 0>
@@ -644,13 +645,13 @@ are equivalent.
 
 =head2 ioctl
 
-=item ioctl FILEHANDLE,FUNCTION,SCALAR
+=item ioctl FILEHANDLE, FUNCTION, SCALAR
 
 Currently unimplemented in Perl 6.
 
 =head2 join
 
-=item join EXPR,LIST
+=item join EXPR, LIST
 
 Works as in Perl 5, and also works as a method: C<@x.join(",")>
 
@@ -705,7 +706,7 @@ Replaced by C<$?LINE>.
 
 =head2 link
 
-=item link OLDFILE,NEWFILE
+=item link OLDFILE, NEWFILE
 
 In Perl 6, part of the IO::Path class. The only difference between Perl
 5 and Perl 6 is that the argument order has changed. It's now
@@ -713,7 +714,7 @@ C<link($original, $linked_file)>.
 
 =head2 listen
 
-=item listen SOCKET,QUEUESIZE
+=item listen SOCKET, QUEUESIZE
 
 Not clearly documented, but it appears that C<listen> will be a method
 you would call on some variety of IO::Socket object.
@@ -722,7 +723,9 @@ you would call on some variety of IO::Socket object.
 
 =item local EXPR
 
-The Perl 6 equivalent is C<temp>.
+The Perl 6 equivalent is C<temp>. Unlike C<local>, however, the value of
+the given variable is not immediately unset: it retains its original value
+until assigned to.
 
 =head2 localtime
 
@@ -794,7 +797,7 @@ L<Adverbs|/language/regexes#Adverbs>
 
 =item map BLOCK LIST
 
-=item map EXPR,LIST
+=item map EXPR, LIST
 
 As a function, the only difference between Perl 5 and Perl 6 is that, if
 you're using a block, the block must be followed by a comma. Can also be
@@ -802,7 +805,7 @@ used as a method: C<@new = @old.map: { $_ * 2 }>
 
 =head2 mkdir
 
-=item mkdir FILENAME,MASK
+=item mkdir FILENAME, MASK
 
 =item mkdir FILENAME
 
@@ -814,13 +817,13 @@ The zero argument (implicit C<$_>) version is not permitted in Perl 6.
 
 =head2 msg*
 
-=item msgctl ID,CMD,ARG
+=item msgctl ID, CMD, ARG
 
-=item msgget KEY,FLAGS
+=item msgget KEY, FLAGS
 
-=item msgrcv ID,VAR,SIZE,TYPE,FLAGS
+=item msgrcv ID, VAR, SIZE, TYPE, FLAGS
 
-=item msgsnd ID,MSG,FLAGS
+=item msgsnd ID, MSG, FLAGS
 
 Not builtins in Perl 6. May appear in an external module at some point. Maybe.
 
@@ -866,15 +869,18 @@ that's currently something of a moot point, I would guess not.
 
 Replaced by the adverbial form C<:8>. E. g. C<:8("100")> returns 64.
 
+If you want to deal with strings that start in C<0x>, C<0o>, or C<0b>,
+you can just use the C«prefix:<+>» operator.
+
 =head2 open
 
-=item open FILEHANDLE,EXPR
+=item open FILEHANDLE, EXPR
 
-=item open FILEHANDLE,MODE,EXPR
+=item open FILEHANDLE, MODE, EXPR
 
-=item open FILEHANDLE,MODE,EXPR,LIST
+=item open FILEHANDLE, MODE, EXPR, LIST
 
-=item open FILEHANDLE,MODE,REFERENCE
+=item open FILEHANDLE, MODE, REFERENCE
 
 =item open FILEHANDLE
 
@@ -886,7 +892,7 @@ deals with newlines. Details L<here|/routine/open>.
 
 =head2 opendir
 
-=item opendir DIRHANDLE,EXPR
+=item opendir DIRHANDLE, EXPR
 
 Not a builtin function in Perl 6. You would use the IO::Path class:
 
@@ -914,7 +920,7 @@ The same in Perl 6.
 
 =head2 pack
 
-=item pack TEMPLATE,LIST
+=item pack TEMPLATE, LIST
 
 Available in Perl 6. The template options are currently more restricted
 than they are in Perl 5. The current documented list can be found at
@@ -947,7 +953,7 @@ Replaced by C<$?PACKAGE>.
 
 =head2 pipe
 
-=item pipe READHANDLE,WRITEHANDLE
+=item pipe READHANDLE, WRITEHANDLE
 
 Probably replaced by something in the C<IO::Pipe> class, but this is not
 clearly documented.
@@ -988,25 +994,22 @@ standard out, you can use a method call: C<$fh.print("howdy!")>
 
 =item printf
 
-Works in Perl 6, but only as a function writing to standard out.  To
-use for a file handle, one must create a formatted string using function C<sprintf>
-and then pass the string to C<IO::Handle> method C<.say> or C<.print> as desired.
-For the formats, see the documentation for C<sprintf>.  For example:
-
-  my $fh = open "tmp.txt", :w;
-  $fh.say(sprintf("%d", 2));
+Perl 6 version is similar; see
+L<sprintf|https://docs.perl6.org/type/Str#sub_sprintf> for details
+on acceptable format directives. To print to a filehandle other than
+STDOUT, use the L«C<.printf>|/type/printf» method on that filehandle.
 
 =head2 prototype
 
 =item prototype FUNCTION
 
-No available in Perl 6. The closest equivalent seems to be
+Not available in Perl 6. The closest equivalent is
 C<.signature>. E. g. C<say &sprintf.signature> results in "(Cool
 $format, *@args)".
 
 =head2 push
 
-=item push ARRAY,LIST
+=item push ARRAY, LIST
 
 Works as in Perl 5, as well as being available as a method:
 C<@a.push("foo");>. I<Note:> the flattening behaviour is different in Perl 6:
@@ -1060,7 +1063,7 @@ L<pick|/routine/pick>.
 
 =head2 read
 
-=item read FILEHANDLE,SCALAR,LENGTH,OFFSET
+=item read FILEHANDLE, SCALAR, LENGTH, OFFSET
 
 C<read> is found in C<IO::Handle> and C<IO::Socket> in Perl 6. It reads
 the specified number of bytes (rather than characters) from the relevant
@@ -1099,7 +1102,7 @@ be lurking around in some class that isn't obvious.
 
 =head2 recv
 
-=item recv SOCKET,SCALAR,LENGTH,FLAGS
+=item recv SOCKET, SCALAR, LENGTH, FLAGS
 
 Appears to be in IO::Socket. Not extensively documented at this time.
 
@@ -1124,7 +1127,7 @@ currently exist...
 
 =head2 rename
 
-=item rename OLDNAME,NEWNAME
+=item rename OLDNAME, NEWNAME
 
 Still available in Perl 6.
 
@@ -1132,15 +1135,13 @@ Still available in Perl 6.
 
 =item require VERSION
 
-Seems that C<require> may work for modules in Perl 6, but unclear if it
-will work with version numbers.
+No equivalent.
 
 =head2 reset
 
 =item reset EXPR
 
-Seeing no evidence of this in Perl 6 and, in fact, S29 asks if there was a
-good use for this. I'm guessing it's probably gone.
+No equivalent.
 
 =head2 return
 
@@ -1166,7 +1167,7 @@ it's not clear what it would be.
 
 =head2 rindex
 
-=item rindex STR,SUBSTR,POSITION
+=item rindex STR, SUBSTR, POSITION
 
 Works as in Perl 5, and may also be used as a method. E. g. C<$x =
 "babaganush";say $x.rindex("a");say $x.rindex("a", 3); # 5, 3>
@@ -1212,14 +1213,14 @@ Gone. Apparently "very" gone.
 
 =head2 seek
 
-=item seek FILEHANDLE,POSITION,WHENCE
+=item seek FILEHANDLE, POSITION, WHENCE
 
 Not documented in a any real way yet, but listed under the C<IO::Handle>
 class.
 
 =head2 seekdir
 
-=item seekdir DIRHANDLE,POS
+=item seekdir DIRHANDLE, POS
 
 Not currently documented, but looks to be something that would be implemented
 in one of the C<IO> classes, likely C<IO::Path>.
@@ -1233,37 +1234,45 @@ was told that $*OUT and such are overridable in dynamic scope, and that
 C<IO::Capture::Simple> (at L<https://github.com/sergot/IO-Capture-Simple>) may
 be of use for something you might be doing with the value of C<select>.
 
-=head2 sem*
+=head2 semctl
 
-=item semctl ID,SEMNUM,CMD,ARG
+=item semctl ID, SEMNUM, CMD, ARG
 
-=item semget KEY,NSEMS,FLAGS
+No longer in core.
 
-=item semop KEY,OPSTRING
+=head2 semget
 
-Gone from the core. May turn up in a module somewhere.
+=item semget KEY, NSEMS, FLAGS
+
+No longer in core.
+
+=head2 semop
+
+=item semop KEY, OPSTRING
+
+No longer in core.
 
 =head2 send
 
-=item send SOCKET,MSG,FLAGS,TO
+=item send SOCKET, MSG, FLAGS, TO
 
 Can be found in the C<IO::Socket> class.
 
 =head2 setpgrp
 
-=item setpgrp PID,PGRP
+=item setpgrp PID, PGRP
 
 No longer in core. Will probably wind up in a POSIX module.
 
 =head2 setpriority
 
-=item setpriority WHICH,WHO,PRIORITY
+=item setpriority WHICH, WHO, PRIORITY
 
 No longer in core. Will probably wind up in a POSIX module.
 
 =head2 setsockopt
 
-=item setsockopt SOCKET,LEVEL,OPTNAME,OPTVAL
+=item setsockopt SOCKET, LEVEL, OPTNAME, OPTVAL
 
 Not documented, but probably hiding in an C<IO> class somewhere.
 
@@ -1280,19 +1289,19 @@ equivalent.
 
 =head2 shm*
 
-=item shmctl ID,CMD,ARG
+=item shmctl ID, CMD, ARG
 
-=item shmget KEY,SIZE,FLAGS
+=item shmget KEY, SIZE, FLAGS
 
-=item shmread ID,VAR,POS,SIZE
+=item shmread ID, VAR, POS, SIZE
 
-=item shmwrite ID,STRING,POS,SIZE
+=item shmwrite ID, STRING, POS, SIZE
 
 Gone from the core. May turn up in a module somewhere.
 
 =head2 shutdown
 
-=item shutdown SOCKET,HOW
+=item shutdown SOCKET, HOW
 
 Not documented, but likely moved into C<IO::Socket>.
 
@@ -1312,9 +1321,9 @@ that is deprecated and will be removed soon.
 
 =head2 sockets
 
-=item socket SOCKET,DOMAIN,TYPE,PROTOCOL
+=item socket SOCKET, DOMAIN, TYPE, PROTOCOL
 
-=item socketpair SOCKET1,SOCKET2,DOMAIN,TYPE,PROTOCOL
+=item socketpair SOCKET1, SOCKET2, DOMAIN, TYPE, PROTOCOL
 
 Not currently documented, but will likely wind up in C<IO::Socket>.
 
@@ -1325,23 +1334,23 @@ Not currently documented, but will likely wind up in C<IO::Socket>.
 C<sort> exists in Perl 6, but is somewhat different. C<$a> and C<$b> are
 no longer special (See L<5to6-perlvar>) and sort routines no
 longer return positive integers, negative integers, or 0, but rather
-C<Order::Increase>, C<Order::Same>, or C<Order::Decrease> objects. See
+C<Order::Less>, C<Order::Same>, or C<Order::More> objects. See
 L<sort|/routine/sort> for details. May also be used as a
 method I. e. C<sort(@a)> is equivalent to C<@a.sort>.
 
 =head2 splice
 
-=item splice ARRAY,OFFSET,LENGTH
+=item splice ARRAY, OFFSET, LENGTH
 
-=item splice ARRAY,OFFSET
+=item splice ARRAY, OFFSET
 
 =item splice ARRAY
 
-=item splice EXPR,OFFSET,LENGTH,LIST
+=item splice EXPR, OFFSET, LENGTH, LIST
 
-=item splice EXPR,OFFSET,LENGTH
+=item splice EXPR, OFFSET, LENGTH
 
-=item splice EXPR,OFFSET
+=item splice EXPR, OFFSET
 
 =item splice EXPR
 
@@ -1350,9 +1359,9 @@ Available in Perl 6. Can also be used as a method. C<< splice(@foo, 2, 3,
 
 =head2 split
 
-=item split /PATTERN/,EXPR,LIMIT
+=item split /PATTERN/, EXPR, LIMIT
 
-=item split /PATTERN/,EXPR
+=item split /PATTERN/, EXPR
 
 =item split /PATTERN/
 
@@ -1490,18 +1499,18 @@ Replaced by C<&?ROUTINE>.
 
 =head2 substr
 
-=item substr EXPR,OFFSET,LENGTH,REPLACEMENT
+=item substr EXPR, OFFSET, LENGTH, REPLACEMENT
 
-=item substr EXPR,OFFSET,LENGTH
+=item substr EXPR, OFFSET, LENGTH
 
-=item substr EXPR,OFFSET
+=item substr EXPR, OFFSET
 
 Can be used as a function or a method. C<substr("hola!", 1, 3)> and
 C<"hola!".substr(1, 3)> both return "ola".
 
 =head2 symlink
 
-=item symlink OLDFILE,NEWFILE
+=item symlink OLDFILE, NEWFILE
 
 Part of IO::Path in Perl 6. The only difference between Perl 5 and Perl
 6 is that the argument order has changed. It's now C<link($original,
@@ -1516,15 +1525,15 @@ currently unclear where.
 
 =head2 sys*
 
-=item sysopen FILEHANDLE,FILENAME,MODE
+=item sysopen FILEHANDLE, FILENAME, MODE
 
-=item sysopen FILEHANDLE,FILENAME,MODE,PERMS
+=item sysopen FILEHANDLE, FILENAME, MODE, PERMS
 
-=item sysread FILEHANDLE,SCALAR,LENGTH,OFFSET
+=item sysread FILEHANDLE, SCALAR, LENGTH, OFFSET
 
-=item sysread FILEHANDLE,SCALAR,LENGTH
+=item sysread FILEHANDLE, SCALAR, LENGTH
 
-=item sysseek FILEHANDLE,POSITION,WHENCE
+=item sysseek FILEHANDLE, POSITION, WHENCE
 
 As with the non-sys versions of these functions, are probably lurking in the
 C<IO> classes somewhere.
@@ -1540,11 +1549,11 @@ or (L<shell routine|/routine/shell>).
 
 =head2 syswrite
 
-=item syswrite FILEHANDLE,SCALAR,LENGTH,OFFSET
+=item syswrite FILEHANDLE, SCALAR, LENGTH, OFFSET
 
-=item syswrite FILEHANDLE,SCALAR,LENGTH
+=item syswrite FILEHANDLE, SCALAR, LENGTH
 
-=item syswrite FILEHANDLE,SCALAR
+=item syswrite FILEHANDLE, SCALAR
 
 As with C<sysopen> and friends, this has moved into the C<IO> classes.
 
@@ -1562,7 +1571,7 @@ Possibly in C<IO::Path>, but not yet documented.
 
 =head2 tie
 
-=item tie VARIABLE,CLASSNAME,LIST
+=item tie VARIABLE, CLASSNAME, LIST
 
 =item tied VARIABLE
 
@@ -1600,9 +1609,9 @@ equivalent has been done away with.
 
 =head2 truncate
 
-=item truncate FILEHANDLE,LENGTH
+=item truncate FILEHANDLE, LENGTH
 
-=item truncate EXPR,LENGTH
+=item truncate EXPR, LENGTH
 
 Most likely somewhere in C<IO::Handle>, but not currently documented.
 
@@ -1652,7 +1661,7 @@ The zero argument (implicit C<$_>) version of unlink is not available in Perl
 
 =head2 unpack
 
-=item unpack TEMPLATE,EXPR
+=item unpack TEMPLATE, EXPR
 
 =item unpack TEMPLATE
 
@@ -1663,9 +1672,9 @@ L<here|/routine/unpack>.
 
 =head2 unshift
 
-=item unshift ARRAY,LIST
+=item unshift ARRAY, LIST
 
-=item unshift EXPR,LIST
+=item unshift EXPR, LIST
 
 Available in Perl 6. Can be used as a method. C<unshift(@a, "blah")> is
 equivalent to C<@a.unshift("blah")>.
@@ -1698,9 +1707,7 @@ order to run. In Perl 6, this requires a version of the specification,
 
 =item utime LIST
 
-S32 says this is gone, and refers you to C<Path.times>. Unfortunately, there
-seems to be no sign of C<Path.times>. Perhaps there will be something in
-C<IO::Path>, but it is not currently evident.
+No equivalent.
 
 =head2 values
 
@@ -1716,7 +1723,7 @@ equivalent to C<%hash.values>.
 
 =head2 vec
 
-=item vec EXPR,OFFSET,BITS
+=item vec EXPR, OFFSET, BITS
 
 S29 says "Should replace C<vec> with declared buffer/array of C<bit>,
 C<uint2>, C<uint4>, etc." It is unclear, however, that this has actually
@@ -1733,7 +1740,7 @@ Perl 5's C<wait> is unclear.
 
 =head2 waitpid
 
-=item waitpid PID,FLAGS
+=item waitpid PID, FLAGS
 
 As with C<wait>, the disposition of this is unclear.
 

@@ -9,6 +9,9 @@
 The IO role provides no functionality itself; it simply marks that a
 particular object relates to input/output.
 
+Please note that coercion via L<Cool.IO|/type/Cool#method_IO> leads to
+L<IO::Path|/type/IO::Path>. This is the exception from the rule.
+
 =head1 Routines
 
 =head2 sub print
@@ -95,34 +98,6 @@ will report (on the standard output stream) that treasure has been found if
 it exists or will note on the error stream that it couldn't be found if it
 doesn't exist.
 
-=head2 sub dd
-
-The Tiny Data Dumper.  This function takes the input list of variables and
-C<note>s them (on C<$*ERR>) in an easy to read format, along with the
-C<name> of the variable.  Thus,
-
-    my $a = 42;
-    my %hash = "a" => 1, "b" => 2, "c" => 3;
-    dd %hash, $a;
-    # %hash = ("a" => 1, "c" => 3, "b" => 2).hash, $a = 42
-
-to the standard error stream.
-
-This is in spirit similar to Perl 5's L<Data::Dumper
-module|http://perldoc.perl.org/Data/Dumper.html>.
-
-Please note that C<dd> will ignore named parameters. You can use a capture to
-force it to dump everything passed to it.
-
-    dd \((:a(1), :b(2)), :c(3));
-
-If you don't specify any parameters at all, it will just print the type and
-name of the current subroutine / method to the standard error stream:
-
-    sub a { dd }; a    # sub a
-
-This can be handy as a cheap trace function.
-
 =head2 sub prompt
 
     sub prompt($msg)
@@ -138,7 +113,7 @@ my $name = prompt("Hi, what's your name? ");
 
 =for code :skip-test
 my $fh = open(IO::Path() $path, :$r, :$w, :$a, :$rw,
-              :$bin, :$enc, :$nl, :$chomp)
+              :$bin, :$enc, :$nl-in, :$nl-out, :$chomp)
 
 Opens the C<$path> (by default in text mode) with the given options,
 returning an L<IO::Handle> object.
@@ -215,28 +190,18 @@ The encoding to use if opened in text mode.
     # open with latin1 encoding
     my $fh = open("path-to-file", enc => "latin1");
 
-Defaults to "Unicode", which implies figuring out which actual UTF is in
-use, either from a BOM or other heuristics.  If heuristics are inconclusive,
-UTF-8 will be assumed.  (No 8-bit encoding will ever be picked implicitly.)
-There exists no valid option with the name "Unicode", so the following will
-result in an error:
-
-    my $fh = open("path-to-file", enc => "UTF-8");
-
-This is because one needs to specify a specific unicode encoding, e.g.
-"utf8".
+Defaults to "utf8".
 
 =head3 Newline options
 
-=item end-of-line (EOL) marker, C<:nl>
+=item end-of-line (EOL) marker, C<:nl-in>, C<:nl-out>
 
-The marker used to indicate the end of a line of text.  Only used in text
-mode.  Defaults to "EOL", which implies accepting any combination of C<"\n">,
-C<"\r\n"> or C<"\r"> or any other Unicode character that has the C<Zl>
-(Separator, Line) property.
+C<nl-in> is the marker used to indicate the end of a line of
+text. Only used in text mode. Defaults to C<["\n", "\r\n"]> and does
+not include C<"\r">. C<nl-out> defaults to C<"\n">.
 
     # explicitly use CR-LF as EOL character
-    my $fh = open("path-to-file", nl => "\r\n");
+    my $fh = open("path-to-file", nl-in => "\r\n");
 
 =item chomp mode, C<:chomp>
 
@@ -264,7 +229,8 @@ written equivalently like so:
     close $fh;
 
 When a file was opened for writing, closing it is important to ensure that all
-contents are actually written to the file.
+contents are actually written to the file. You may want to consider using a
+L<LEAVE|/language/phasers#LEAVE> phaser to guard against exceptions.
 
 =head2 sub slurp
 
@@ -289,8 +255,8 @@ sub spurt($where, $what,
     Str  :$enc        = 'utf8',
     Bool :$bin        = False,
     Bool :$append      = False,
-    Bool :$createonly = False,
-    --> Bool ) is export
+    Bool :$createonly = False
+    --> Bool )
 
 Writes the indicated contents (2nd positional parameter, C<$what>) to the
 location indicated by the first positional parameter, C<$where> (which can
@@ -343,7 +309,7 @@ C<False>.
 
 =head2 sub run
 
-    sub run(*@args ($, *@)) returns Proc
+    sub run(*@args ($, *@) --> Proc)
 
 Runs an external command without involving a shell (if possible).
 
@@ -352,7 +318,7 @@ output.
 
 =head2 sub shell
 
-    sub shell($cmd) returns Proc
+    sub shell($cmd --> Proc)
 
 Runs a command through the system shell. All shell meta characters are
 interpreted by the shell, including pipes, redirects, environment variable

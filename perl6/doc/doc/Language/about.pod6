@@ -16,7 +16,7 @@ The official source for this documentation is located at L<perl6/doc on
 GitHub|https://github.com/perl6/doc>.
 
 The information in this particular document is a quick overview of the process
-described in more detail in L<CONTRIBUTING on GitHub|https://github.com/perl6/doc/CONTRIBUTING.md>.
+described in more detail in L<CONTRIBUTING on GitHub|https://github.com/perl6/doc/blob/master/CONTRIBUTING.md>.
 This document also provides a short introduction to writing the Perl 6
 POD files which produce the rendered pages in HTML or other formats.
 
@@ -34,7 +34,7 @@ Generating this documentation requires:
 =item A recent version of the Rakudo Perl 6 compiler
 
 =item The Perl 6 modules Pod::To::HTML, Pod::To::BigPage, and URI::Escape
-(can be installed via L<panda|https://github.com/tadzik/panda>)
+(can be installed via L<zef|https://github.com/ugexe/zef>).
 
 =item B<Optional>: L<GraphViz|http://graphviz.org>, for creating graphs
 of the relationships between Perl 6 types
@@ -67,7 +67,7 @@ next directive of the same level, will be considered part of the
 documentable. So, in:
 
 =begin code :allow<R> :skip-test
-d2 R<My Definition>
+=head2 R<My Definition>
 
 Some paragraphs, followed by some code:
 
@@ -112,7 +112,7 @@ is always considered a definition)
 
 Then the results on the rendered page:
 
-=item X<C<How to use the Z infix> | infix,Z> (This a special case, which
+=item X<C<How to use the Z infix> | infix,Z> (This is a special case, which
 is always considered a definition)
 
 =item C<The Z Infix>

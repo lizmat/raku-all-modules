@@ -13,22 +13,24 @@ there have been other implementations in the past and should be others in the
 future. Perl 6 is the definition of the language. Many times the two names will
 be used loosely and interchangeably.
 
-=head2 Is there going to be a Perl 6 version 6.0.0?
+=head2 Is there a Perl 6 version 6.0.0?
 
-The version of the first stable language version is called v6.c, not 6.0.0.
-The different naming scheme makes it unlikely that there'll ever be a release
-of the language with the exact version 6.0.0.
+No. The first stable language specification version is v6.c ("Christmas"). Future
+versions of the spec may have point releases (e.g. v6.c.2), or major releases
+(e.g. v6.d)
 
 You can check your Rakudo compiler is at least the current release version
 (note this may not be true of vendor binaries) with the following:
 
     perl6 -e 'say q[too old] if $*PERL.version before Version.new(q[6.c])'
 
-
 It was first implemented by the Rakudo Perl 6 compiler version 2015.12 and is
 likely to be supported by subsequent releases for the foreseeable future by use
-of the 'use 6.c' pragma. The next language version (no release date) is to be
-v6.d.
+of the 'use 6.c' pragma.
+
+=head2 When is v6.d likely to be released?
+
+Not for some time since a lot of work is needed.
 
 =head2 As a Perl 6 beginner what should I install?
 X<|Rakudo Star (FAQ)>
@@ -37,7 +39,7 @@ Mac users can use the latest Rakudo Star DMG binary installer at
 L<http://rakudo.org/downloads/star>
 
 Windows users can use the Rakudo Star MSI binary installer. You will need
-Windows Git and Strawberry Perl 5 to use panda to install library modules.
+Windows Git and Strawberry Perl 5 to use zef to install library modules.
 
 Linux users probably want to download Rakudo Star and follow the compilation
 instructions at L<http://www.perl6.org/downloads/>
@@ -68,11 +70,16 @@ Google is often outdated.
 You could also try searching the Freenode #perl6 IRC channel log via
 L<Google|https://www.google.co.uk/search?q=site:irclog.perlgeek.de+inurl:perl6>
 
-=head2 What is the Perl 6 spec?
+=head2 What is the Perl 6 specification?
 
-The "spec" refers to the official test suite for Perl 6.  It's called
-roast and L<hosted on github|https://github.com/perl6/roast>. It
-is the measure of how complete a Perl 6 implementation is.
+The specification refers to the official test suite for Perl 6.  It's called
+roast and is L<hosted on github|https://github.com/perl6/roast>. Any compiler
+that passes the tests is considered to implement that version of the Perl 6
+specification.
+
+Roast's master branch corresponds to the latest development that isn't
+necessarily part of any specification yet, and has other branches that
+correspond to specific versions, e.g. "6c.errata".
 
 =head2 Is there a glossary of Perl 6 related terms?
 
@@ -91,12 +98,12 @@ See the 'rb-nutshell' pod under L<https://docs.perl6.org/language/rb-nutshell>
 =head1 Modules
 
 =head2 Is there a CPAN for Perl 6?
-X<|CPAN (FAQ)>
+X<|CPAN (FAQ)>X<|ecosystem>
 
 There isn't yet a module repository for Perl 6 as sophisticated as CPAN. But
 L<modules.perl6.org|https://modules.perl6.org/> has a list of known Perl 6
 modules called the "ecosystem" hosted on github, and
-L<panda|https://github.com/tadzik/panda/> can install those that work with
+L<zef|https://github.com/ugexe/zef/> can install those that work with
 L<rakudo|http://rakudo.org/>.
 
 Support for installing Perl 6 modules from the Perl 5 CPAN is on its way.
@@ -184,7 +191,7 @@ languages.
 Example:
 
     my $foo
-    say $foo # (Any) note the parens indicate type object
+    say $foo # (Any) note the parentheses indicate type object
     say $foo.^name # Any
 
 (Any) shouldn't be used to check for definedness. In Perl 6, definedness is a
@@ -237,7 +244,8 @@ To explicitly allow either type objects or instances, you can use C<:_>.
 
 =head2 What is the C<< --> >> thing in the signature?
 
-C<< --> >> is a return constraint, either a type or a definite value.
+L«-->|/type/Signature#Constraining_Return_Types» is a return constraint, either
+a type or a definite value.
 
 Example of a type constraint:
 
@@ -524,7 +532,24 @@ NQP is a mixture of (1) NQP code, (2) whatever language the underlying virtual
 machine is using, (3) some third-party C and Java libraries, and (4) some
 bootstrapping files created by earlier runs of the build process.
 
+=head2 Is Perl 6 Lisp?
+
+    (not (not Nil))
+
 =head1 Meta Questions and Advocacy
+
+=head2 Why is Perl 6 called Perl?
+
+… As opposed to some other name that didn't imply all the things
+that the higher number might indicate on other languages.
+
+The short answer is that it was Larry's choice under
+L<Rule 1|http://perldoc.perl.org/5.12.4/perlhack.html#DESCRIPTION>.
+
+The community considers Perl 5 and Perl 6 sister languages - they have
+a lot in common, address many of the same problem spaces, but Perl 6 is not
+intended to replace Perl 5. In fact, both languages interoperate with
+each other.
 
 =head2 When will Perl 6 be ready? Is it ready now?
 
@@ -664,7 +689,7 @@ Examples:
 
     class Foo { has $.i is rw };
 
-    for (1..1_000_000) -> $i {
+    for 1..1_000_000 -> $i {
         my $obj = Foo.new;
         $obj.i = $i;
     }
