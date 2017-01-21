@@ -1,12 +1,15 @@
 {
-    "name"        : "GTK::Simpler",
-    "version"     : "0.0.2",
-    "perl"        : "6.c",
-    "description" : "A simpler and more efficient API for GTK::Simple",
-    "depends"     : [ "GTK::Simple" ],
-    "provides"    : {
+    "name"         : "GTK::Simpler",
+    "version"      : "0.0.5",
+    "perl"         : "6.c",
+    "description"  : "A simpler and more efficient API for GTK::Simple",
+    "test-depends" : [
+        "GTK::Simple",
+        "Test"
+    ],
+    "repo-type"    : "git",
+    "source-url"   : "git://github.com/azawawi/perl6-gtk-simpler.git",
+    "provides"     : {
         "GTK::Simpler"   : "lib/GTK/Simpler.pm6"
-    },
-    "repo-type"  : "git",
-    "source-url" : "git://github.com/azawawi/perl6-gtk-simpler.git"
+    }
 }

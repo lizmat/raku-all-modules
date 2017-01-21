@@ -1,6 +1,3 @@
-doc
-===
-
 Name
 ====
 
@@ -58,10 +55,9 @@ Installation
 
 Please check [GTK::Simple prerequisites](https://github.com/perl6/gtk-simple/blob/master/README.md#prerequisites) section for more information.
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
+To install it using zef (a module management tool bundled with Rakudo Star):
 
-    $ panda update
-    $ panda install GTK::Simpler
+    $ zef install GTK::Simpler
 
 Subroutines
 ===========
@@ -203,6 +199,61 @@ spinner
 
 Returns a GTK::Simple::Spinner object.
 
+toolbar
+-------
+
+Returns a GTK::Simple::Toolbar object.
+
+menu-tool-button
+----------------
+
+Returns a GTK::Simple::MenuToolButton object.
+
+menu-item
+---------
+
+Returns a GTK::Simple::MenuToolButton object.
+
+menu
+----
+
+Returns a GTK::Simple::Menu object.
+
+menu-bar
+--------
+
+Returns a GTK::Simple::MenuBar object.
+
+file-chooser-button
+-------------------
+
+Returns a GTK::Simple::FileChooserButton object.
+
+places-sidebar
+--------------
+
+Returns a GTK::Simple::PlacesSidebar object.
+
+radio-button
+------------
+
+Returns a GTK::Simple::RadioButton object.
+
+link-button
+-----------
+
+Returns a GTK::Simple::LinkButton object.
+
+level-bar
+---------
+
+Returns a GTK::Simple::LevelBar object.
+
+scrolled-window
+---------------
+
+Returns a GTK::Simple::ScrolledWindow object.
+
 See also
 ========
 
@@ -216,4 +267,4 @@ Ahmad M. Zawawi, [azawawi](https://github.com/azawawi) on #perl6
 Copyright and license
 =====================
 
-Copyright 2016 Ahmad M. Zawawi under the MIT License
+Copyright 2016-2017 Ahmad M. Zawawi under the MIT License

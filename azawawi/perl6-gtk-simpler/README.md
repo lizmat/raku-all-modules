@@ -63,19 +63,24 @@ Please check [GTK::Simple prerequisites](
 https://github.com/perl6/gtk-simple/blob/master/README.md#prerequisites) section
 for more information.
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
+To install it using zef (a module management tool bundled with Rakudo Star):
 
 ```
-$ panda update
-$ panda install GTK::Simpler
+$ zef install GTK::Simpler
 ```
 
 ## Testing
 
-To run tests:
-
+- To run tests:
 ```
 $ prove -e "perl6 -Ilib"
+```
+
+- To run all tests including author tests (Please make sure
+[Test::Meta](https://github.com/jonathanstowe/Test-META) is installed):
+```
+$ zef install Test::META
+$ AUTHOR_TESTING=1 prove -ve "perl6 -Ilib"
 ```
 
 ## Author
