@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Facter",
     "version"     : "0.04",
     "description" : "A port of puppetlabs facter to Perl 6",
