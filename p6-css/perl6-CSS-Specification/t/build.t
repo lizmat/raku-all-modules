@@ -1,14 +1,12 @@
 #!/usr/bin/env perl6
 
-use lib 't';
 use Test;
 use CSS::Grammar::Test;
 use CSS::Specification::Build;
 
-sub pipe($input-path, $code, $output-path?) {
+sub capture($code, $output-path?) {
     my $output;
 
-    my $*IN = open $input-path, :r;
     my $*OUT = $output-path
         ?? open $output-path, :w
         !! class {
@@ -23,7 +21,7 @@ sub pipe($input-path, $code, $output-path?) {
     return $output-path // $output;
 }
 
-my $base-name = 'CSS::Aural::Spec';
+my $base-name = 't::CSS::Aural::Spec';
 my $grammar-name = $base-name ~ '::Grammar';
 my $actions-name = $base-name ~ '::Actions';
 my $interface-name = $base-name ~ '::Interface';
@@ -33,30 +31,30 @@ my @summary = CSS::Specification::Build::summary( :$input-path );
 is +@summary, 25, 'number of summary items';
 is-deeply [@summary.grep({ .<box> })], [{:box, :!inherit, :name<border-color>, :edges["border-top-color", "border-right-color", "border-bottom-color", "border-left-color"], :synopsis("[ <color> | transparent ]\{1,4}")},], 'summary item';
 
-pipe( $input-path, {
-    CSS::Specification::Build::generate( 'grammar', $grammar-name );
-}, 't/CSS/Aural/Spec/Grammar.pm');
+capture({
+    CSS::Specification::Build::generate( 'grammar', $grammar-name, :$input-path );
+}, 'lib/t/CSS/Aural/Spec/Grammar.pm');
 lives-ok {require ::($grammar-name)}, "$grammar-name compilation";
 
-pipe( $input-path, {
-    CSS::Specification::Build::generate( 'actions', $actions-name );
-}, 't/CSS/Aural/Spec/Actions.pm');
+capture({
+    CSS::Specification::Build::generate( 'actions', $actions-name, :$input-path );
+}, 'lib/t/CSS/Aural/Spec/Actions.pm');
 lives-ok {require ::($actions-name)}, "$actions-name compilation";
 
-my $aural-interface-code = pipe( $input-path, {
-    CSS::Specification::Build::generate( 'interface', $interface-name );
-}, 't/CSS/Aural/Spec/Interface.pm');
+capture({
+    CSS::Specification::Build::generate( 'interface', $interface-name, :$input-path );
+}, 'lib/t/CSS/Aural/Spec/Interface.pm');
 lives-ok {require ::($interface-name)}, "$interface-name compilation";
 
-dies-ok {require ::("CSS::Aural::BadGrammar")}, 'grammar composition, unimplemented interface - dies';
+dies-ok {require ::("t::CSS::Aural::BadGrammar")}, 'grammar composition, unimplemented interface - dies';
 
 my $aural-class;
-lives-ok {require ::("CSS::Aural::Grammar"); $aural-class = ::("CSS::Aural::Grammar")}, 'grammar composition - lives';
-isa-ok $aural-class, ::("CSS::Aural::Grammar");
+lives-ok {require ::("t::CSS::Aural::Grammar"); $aural-class = ::("t::CSS::Aural::Grammar")}, 'grammar composition - lives';
+isa-ok $aural-class, ::("t::CSS::Aural::Grammar");
 
 my $actions;
-lives-ok {require ::("CSS::Aural::Actions"); $actions = ::("CSS::Aural::Actions").new}, 'class composition - lives';
-ok $actions.defined, '::("CSS::Aural::Actions").new';
+lives-ok {require ::("t::CSS::Aural::Actions"); $actions = ::("t::CSS::Aural::Actions").new}, 'class composition - lives';
+ok $actions.defined, '::("t::CSS::Aural::Actions").new';
 
 for ('.aural-test { stress: 42; speech-rate: fast; volume: inherit; voice-family: female; }' =>
      {ast => { :stylesheet[

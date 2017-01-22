@@ -29,4 +29,4 @@ This module provides `css-gen-properties`. A program for translating property de
 to grammars, actions or interface classes.
 
 ## See Also
-See [Build.pm](https://github.com/p6-css/perl6-CSS-Module/blob/master/Build.pm) in [CSS::Module](https://github.com/p6-css/perl6-CSS-Module).
+See [make-modules.pl](https://github.com/p6-css/perl6-CSS-Module/blob/master/make-modules.pl) in [CSS::Module](https://github.com/p6-css/perl6-CSS-Module).

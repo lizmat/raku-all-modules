@@ -79,7 +79,7 @@ class CSS::Specification::Actions {
             !! @choices[0];
     }
 
-    method _choose(@choices) {
+    method !choose(@choices) {
         my $choices := @choices.map({[~] ($_, ' <!seen(', $*CHOICE++, ')>')}).join(' | ');
         return [~] '[ ', $choices, ' ]';
     }
@@ -88,7 +88,7 @@ class CSS::Specification::Actions {
         my @choices = @<term>>>.ast;
 
         make @choices > 1
-            ?? $._choose( @choices ) ~ '+'
+            ?? self!choose( @choices ) ~ '+'
             !! @choices[0];
     }
 
@@ -96,7 +96,7 @@ class CSS::Specification::Actions {
         my @choices = $<term>>>.ast;
 
         make @choices > 1
-            ?? [~] $._choose( @choices ), '**', @choices.Int
+            ?? [~] self!choose( @choices ), '**', @choices.Int
             !! @choices[0];
     }
 
@@ -117,11 +117,11 @@ class CSS::Specification::Actions {
     method occurs:sym<zero-plus>($/) { make '*' }
     method occurs:sym<list>($/)      {
         my $quant = $<range> ?? $<range>.ast !! '+';
-        make " {$quant}% <op(',')>"
+        make "{$quant}% <op(',')>"
     }
     method occurs:sym<range>($/)     { make $<range>.ast }
     method range($/) {
-        my $range = '**' ~ $<min>.ast;
+        my $range = ' ** ' ~ $<min>.ast;
         $range ~= '..' ~ $<max>.ast
             if $<max>;
 

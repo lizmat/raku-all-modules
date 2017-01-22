@@ -130,7 +130,7 @@ module CSS::Specification::Build {
             with $def<props> -> @props {
                 my $perl6 = $def<perl6>;
                 my $synopsis = $def<synopsis>;
-                my $box = $perl6 ~~ / '**1..4' $/;
+                my $box = $perl6 ~~ /:s '**' '1..4' $/;
             
                 for @props -> $name {
                     my %details = :$name, :$synopsis;
@@ -184,13 +184,13 @@ module CSS::Specification::Build {
                 my $synopsis = $def<synopsis>;
 
                 # boxed repeating property. repeat the expr
-                my $box = $perl6 ~~ / '**1..4' $/
+                my $box = $perl6 ~~ /:s '**' '1..4' $/
                     ?? ', :box'
                     !! '';
                 my $repeats = '';
                 if $box {
-                    $perl6 ~~ s/ '**1..4' $//;
-                    $repeats = '**1..4';
+                    $perl6 ~~ s/:s '**' '1..4' $//;
+                    $repeats = ' ** 1..4';
                 }
 
                 for @props -> $prop {

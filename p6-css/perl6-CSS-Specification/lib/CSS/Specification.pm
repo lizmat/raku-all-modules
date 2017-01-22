@@ -39,7 +39,7 @@ grammar CSS::Specification:ver<000.04> {
     token id-quoted  { <.quote> <id> <.quote> }
     rule keyw        { <id> }
     rule digits      { \d+ }
-    rule rule   { '<'~'>' <id> }
+    rule rule        { '<'~'>' <id> }
 
     rule terms         { <term=.term-options>+ }
     rule term-options  { <term=.term-combo>    +% '|'  }

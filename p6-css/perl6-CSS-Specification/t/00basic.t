@@ -20,10 +20,10 @@ for (
                 ast => "<rule-ref> [ <op(',')> [ [ <expr-css21-prop-ref> || <expr-css3-prop-ref> ] ] ]*",
     },
     'spec' => {input => '<length>{4}',
-               ast => '<length>**4',
+               ast => '<length> ** 4',
     },
     'spec' => {input => '<length>#{1,4}',
-               ast => "<length> **1..4% <op(',')>",
+               ast => "<length> ** 1..4% <op(',')>",
     },
     # precedence tests taken from: https://developer.mozilla.org/en-US/docs/CSS/Value_definition_syntax
     'spec' => {input => 'bold thin && <length>',
