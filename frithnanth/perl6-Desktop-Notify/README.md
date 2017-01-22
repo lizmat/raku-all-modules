@@ -2,6 +2,12 @@
 
 Desktop::Notify is a set of simple bindings to libnotify using NativeCall.
 
+## Build Status
+
+| Operating System  |   Build Status  | CI Provider |
+| ----------------- | --------------- | ----------- |
+| Linux             | [![Build Status](https://travis-ci.org/frithnanth/perl6-Desktop-Notify.svg?branch=master)](https://travis-ci.org/frithnanth/perl6-Desktop-Notify)  | Travis CI |
+
 ## Example
 
 ```Perl6
@@ -109,7 +115,7 @@ returned as the value of the `return` key of the hash.
 ## Threading safety
 
 Desktop::Notify offers a simple interface which provides an `error` class member,
-which is automatically used by the functions which need it.
+which is automatically used by the functions that need it.
 Since `error` is a shared class member, if a program makes use of threading, its value
 might be written by another thread before it's been read.
 In this case one can declare their own GError variables:
