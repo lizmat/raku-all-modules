@@ -75,7 +75,7 @@ lives-ok {
 
 lives-ok {
     my $v4 = WebService::AWS::Auth::V4.new(method => $get, body => '', uri => 'https://iam.amazonaws.com/home/documents+and+settings?a/z=b&C=d', headers => @headers, region => $region, service => $service, secret => $secret, access_key => $access_key);
-    is $v4.canonical_uri(), '%2Fhome%2Fdocuments%2Band%2Bsettings', 'canonicalizes nonempty URI path';
+    is $v4.canonical_uri(), '/home/documents%2Band%2Bsettings', 'canonicalizes nonempty URI path';
     is $v4.canonical_query(), 'C=d&a%2Fz=b', 'canonicalizes nonempty query';
 }, 'correctly canonicalized nonempty query';
 

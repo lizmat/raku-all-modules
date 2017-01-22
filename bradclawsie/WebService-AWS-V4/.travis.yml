@@ -1,10 +1,20 @@
----
 sudo: false
+
 language: perl6
+
 perl6:
   - latest
+
+branches:
+  only:
+    - master
+
 install:
-  - rakudobrew build-panda
-  - panda install URI
-  - panda install Digest
-  - panda install Digest::HMAC;
+  - rakudobrew build zef
+
+before_script:
+  - zef --/test --/test-depends install Digest;
+  - zef --/test --/test-depends install Digest::HMAC;
+  - zef --/test --/test-depends install URI;
+
+

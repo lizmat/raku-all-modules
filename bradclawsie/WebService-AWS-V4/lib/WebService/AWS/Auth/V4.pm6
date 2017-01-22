@@ -65,7 +65,7 @@ https://b7j0c.org/stuff/license.txt
 
 =end pod
 
-unit module WebService::AWS::Auth::V4:auth<bradclawsie>:ver<0.0.1>;
+unit module WebService::AWS::Auth::V4:auth<bradclawsie>:ver<0.0.2>;
 
 use Digest::SHA;
 use Digest::HMAC;
@@ -82,7 +82,7 @@ class X::WebService::AWS::Auth::V4::ParseError is Exception is export {
 
 class X::WebService::AWS::Auth::V4::MethodError is Exception is export {
     has $.input;
-    method messae() { "With $.input, missing http method. Only GET POST HEAD are supported"; }
+    method message() { "With $.input, missing http method. Only GET POST HEAD are supported"; }
 }
 
 # These are the methods that can be used with AWS services.
@@ -148,7 +148,7 @@ class WebService::AWS::Auth::V4 {
     }
 
     # Transform the Str array of headers into a hash where lc keys are mapped to normalized vals.
-    my sub map_headers(Str:D @headers) returns Hash:D {
+    my sub map_headers(Str:D @headers --> Hash:D) {
         my %header_map = ();
         for @headers -> $header {
             if $header ~~ /^(\S+)\:(.*)$/ {
@@ -171,13 +171,13 @@ class WebService::AWS::Auth::V4 {
     }
 
     # Get the SHA256 for a given string.
-    our sub sha256_base16(Str:D $s) returns Str:D is export {
+    our sub sha256_base16(Str:D $s --> Str:D) is export {
         my $sha256 = sha256 $s.encode: 'ascii';
         [~] $sha256.list».fmt: "%02x";
     }
 
     # Use this as a 'formatter' method for a DateTime object to get the X-Amz-Date format.
-    our sub amz_date_formatter(DateTime:D $dt) returns Str:D is export {
+    our sub amz_date_formatter(DateTime:D $dt --> Str:D) is export {
         sprintf "%04d%02d%02dT%02d%02d%02dZ",
         $dt.utc.year,
         $dt.utc.month,
@@ -188,11 +188,11 @@ class WebService::AWS::Auth::V4 {
     }
 
     # Use this to get the yyyymmdd for a DateTime for use in various signing contexts.
-    our sub amz_date_yyyymmdd(DateTime:D $dt) returns Str:D is export {
+    our sub amz_date_yyyymmdd(DateTime:D $dt --> Str:D) is export {
         sprintf "%04d%02d%02d", $dt.utc.year, $dt.utc.month, $dt.utc.day;    
     }
     
-    our sub parse_amz_date(Str:D $s) returns DateTime:D is export {
+    our sub parse_amz_date(Str:D $s --> DateTime:D) is export {
         if $s ~~ / ^(\d ** 4)(\d ** 2)(\d ** 2)T(\d ** 2)(\d ** 2)(\d ** 2)Z$ / {
             return DateTime.new(year=>$0,
                                 month=>$1,
@@ -208,13 +208,13 @@ class WebService::AWS::Auth::V4 {
 
     # STEP 1 CANONICAL REQUEST
     
-    method canonical_uri() returns Str:D is export {
+    method canonical_uri(--> Str:D) is export {
         my Str $path = $!uri.path;
         return '/' if $path.chars == 0 || $path eq '/';
-        uri_escape($path);
+        $path.split("/").map({uri_escape($_)}).join("/");
     }
 
-    method canonical_query() returns Str:D is export {
+    method canonical_query(--> Str:D) is export {
         my Str $query = $!uri.query;
         return '' if $query.chars == 0;
         my Str @pairs = $query.split('&');
@@ -230,15 +230,15 @@ class WebService::AWS::Auth::V4 {
         @escaped_pairs.sort().join('&');
     }
 
-    method canonical_headers() returns Str:D is export {
+    method canonical_headers(--> Str:D) is export {
         %!header_map.keys.sort.map( -> $k { $k ~ ':' ~ %!header_map{$k}} ).join("\n") ~ "\n";
     }
     
-    method signed_headers() returns Str:D is export {
+    method signed_headers(--> Str:D) is export {
         %!header_map.keys.sort.join(';');
     }
     
-    method canonical_request() returns Str:D is export {
+    method canonical_request(--> Str:D) is export {
         ($!method,
          self.canonical_uri(),
          self.canonical_query(),
@@ -249,7 +249,7 @@ class WebService::AWS::Auth::V4 {
     
     # STEP 2 STRING TO SIGN
 
-    method string_to_sign() returns Str:D is export {
+    method string_to_sign(--> Str:D) is export {
         ($HMAC_name,
          $!amz_date.Str,
          (amz_date_yyyymmdd($!amz_date),
@@ -261,7 +261,7 @@ class WebService::AWS::Auth::V4 {
 
     # STEP 3 CALCULATE THE AWS SIGNATURE
 
-    method signature() returns Str:D is export {
+    method signature(--> Str:D) is export {
         my $kdate    = hmac($Auth_version ~ $!secret,amz_date_yyyymmdd($!amz_date),&sha256);
         my $kregion  = hmac($kdate,$!region,&sha256);
         my $kservice = hmac($kregion,$!service,&sha256);
@@ -271,7 +271,7 @@ class WebService::AWS::Auth::V4 {
 
     # STEP 4 GENERATE THE SIGNING HEADER
 
-    method signing_header() returns Str:D is export {
+    method signing_header(--> Str:D) is export {
         my $credential = $!access_key ~ '/' ~ amz_date_yyyymmdd($!amz_date) ~ '/' ~ $!region ~ '/' ~
         $!service ~ '/' ~ $AWS4_request;
         'Authorization: ' ~ $HMAC_name ~ ' Credential=' ~ $credential ~

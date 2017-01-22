@@ -1,6 +1,10 @@
 [![Build Status](https://travis-ci.org/bradclawsie/WebService-AWS-Auth-V4.png)](https://travis-ci.org/bradclawsie/WebService-AWS-V4)
 
-# Description
+# WebService::AWS::Auth::V4 
+
+A library for AWS Auth V4 methods.
+
+## DESCRIPTION
 
 AWS employs a set of signing processes in order to create authorized requests. This
 library provides an implementation of the v4 signing requirements as described here:
@@ -17,9 +21,7 @@ for using AWS services, although v4 signing is a requirement for any
 toolkit that provides an AWS API, so this library may be useful
 as a foundation for an AWS API.                                                                     
 
-# Synopsis
-
-The best synopsis comes from the unit test:
+## SYNOPSIS
 
     use v6;
     use Test;
@@ -47,3 +49,10 @@ The best synopsis comes from the unit test:
 
     is $v4.signing_header(), 'Authorization: AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/iam/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7', 'authorization header';
 
+## AUTHOR 
+
+Brad Clawsie (PAUSE:bradclawsie, email:brad@b7j0c.org) 
+
+## LICENSE 
+
+This module is licensed under the BSD license, see: https://b7j0c.org/stuff/license.txt
