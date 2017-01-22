@@ -12,7 +12,7 @@ sub at($container, *@steps) is rw is export
 
 # Associative handling {{{
 
-multi sub _at(Associative $container, @steps where *.elems > 1) is rw
+multi sub _at(Associative:D $container, @steps where *.elems > 1) is rw
 {
     my $root := $container;
     if $root{@steps[0]}:exists
@@ -26,7 +26,7 @@ multi sub _at(Associative $container, @steps where *.elems > 1) is rw
     return-rw _at($root, @steps[1..*]);
 }
 
-multi sub _at(Associative $container, @steps where *.elems == 1) is rw
+multi sub _at(Associative:D $container, @steps where *.elems == 1) is rw
 {
     my $root := $container;
     if $root{@steps[0]}:exists
@@ -40,12 +40,12 @@ multi sub _at(Associative $container, @steps where *.elems == 1) is rw
     return-rw $root;
 }
 
-multi sub _at(Associative $container, @steps where *.elems == 0) is rw
+multi sub _at(Associative:D $container, @steps where *.elems == 0) is rw
 {
     return-rw $container;
 }
 
-multi sub _at(Associative $container) is rw
+multi sub _at(Associative:D $container) is rw
 {
     return-rw $container;
 }
@@ -54,7 +54,7 @@ multi sub _at(Associative $container) is rw
 
 # Positional handling {{{
 
-multi sub _at(Positional $container, @steps where *.elems > 1) is rw
+multi sub _at(Positional:D $container, @steps where *.elems > 1) is rw
 {
     my $root := $container;
     validate-positional-index(@steps[0]);
@@ -69,7 +69,7 @@ multi sub _at(Positional $container, @steps where *.elems > 1) is rw
     return-rw _at($root, @steps[1..*]);
 }
 
-multi sub _at(Positional $container, @steps where *.elems == 1) is rw
+multi sub _at(Positional:D $container, @steps where *.elems == 1) is rw
 {
     my $root := $container;
     validate-positional-index(@steps[0]);
@@ -84,13 +84,13 @@ multi sub _at(Positional $container, @steps where *.elems == 1) is rw
     return-rw $root;
 }
 
-multi sub _at(Positional $container, @steps where *.elems == 0) is rw
+multi sub _at(Positional:D $container, @steps where *.elems == 0) is rw
 {
     return-rw $container;
 }
 
 
-multi sub _at(Positional $container) is rw
+multi sub _at(Positional:D $container) is rw
 {
     return-rw $container;
 }
@@ -108,22 +108,22 @@ sub in(\container, *@steps) is rw is export
 
 # Associative handling {{{
 
-multi sub _in(Associative \container, @steps where *.elems > 1) is rw
+multi sub _in(Associative:D \container, @steps where *.elems > 1) is rw
 {
     return-rw _in(container{@steps[0]}, @steps[1..*]);
 }
 
-multi sub _in(Associative \container, @steps where *.elems == 1) is rw
+multi sub _in(Associative:D \container, @steps where *.elems == 1) is rw
 {
     return-rw container{@steps[0]};
 }
 
-multi sub _in(Associative \container, @steps where *.elems == 0) is rw
+multi sub _in(Associative:D \container, @steps where *.elems == 0) is rw
 {
     return-rw container;
 }
 
-multi sub _in(Associative \container) is rw
+multi sub _in(Associative:D \container) is rw
 {
     return-rw container;
 }
@@ -132,25 +132,25 @@ multi sub _in(Associative \container) is rw
 
 # Positional handling {{{
 
-multi sub _in(Positional \container, @steps where *.elems > 1) is rw
+multi sub _in(Positional:D \container, @steps where *.elems > 1) is rw
 {
     validate-positional-index(@steps[0]);
     return-rw _in(container[@steps[0]], @steps[1..*]);
 }
 
-multi sub _in(Positional \container, @steps where *.elems == 1) is rw
+multi sub _in(Positional:D \container, @steps where *.elems == 1) is rw
 {
     validate-positional-index(@steps[0]);
     return-rw container[@steps[0]];
 }
 
-multi sub _in(Positional \container, @steps where *.elems == 0) is rw
+multi sub _in(Positional:D \container, @steps where *.elems == 0) is rw
 {
     return-rw container;
 }
 
 
-multi sub _in(Positional \container) is rw
+multi sub _in(Positional:D \container) is rw
 {
     return-rw container;
 }
@@ -213,14 +213,14 @@ multi sub _in(\container) is rw
 
 # exists {{{
 
-method exists($container, :@path!, Bool :$k = True, Bool :$v) returns Bool
+method exists($container, :@path!, Bool :k($) = True, Bool :$v) returns Bool:D
 {
     $v.so ?? exists-value($container, @path) !! exists-key($container, @path);
 }
 
 # exists-key {{{
 
-multi sub exists-key($container, @path where *.elems > 1) returns Bool
+multi sub exists-key($container, @path where *.elems > 1) returns Bool:D
 {
     exists-key($container, [@path[0]])
         ?? exists-key(at($container, @path[0]), @path[1..*])
@@ -228,39 +228,33 @@ multi sub exists-key($container, @path where *.elems > 1) returns Bool
 }
 
 multi sub exists-key(
-    Associative $container,
+    Associative:D $container,
     @path where *.elems == 1
-) returns Bool
+) returns Bool:D
 {
     $container{@path[0]}:exists;
 }
 
-multi sub exists-key(
-    Associative $container,
-    @path where *.elems == 0
-) returns Bool
+multi sub exists-key(Associative:D $container, @path where *.elems == 0)
 {
     die X::Crane::ExistsRootContainerKey.new;
 }
 
 multi sub exists-key(
-    Positional $container,
+    Positional:D $container,
     @path where *.elems == 1
-) returns Bool
+) returns Bool:D
 {
     validate-positional-index(@path[0]);
     $container[@path[0]]:exists;
 }
 
-multi sub exists-key(
-    Positional $container,
-    @path where *.elems == 0
-) returns Bool
+multi sub exists-key(Positional:D $container, @path where *.elems == 0)
 {
     die X::Crane::ExistsRootContainerKey.new;
 }
 
-multi sub exists-key($container, @path where *.elems > 0) returns Bool
+multi sub exists-key($container, @path where *.elems > 0) returns Bool:D
 {
     False;
 }
@@ -269,7 +263,7 @@ multi sub exists-key($container, @path where *.elems > 0) returns Bool
 
 # exists-value {{{
 
-multi sub exists-value($container, @path where *.elems > 1) returns Bool
+multi sub exists-value($container, @path where *.elems > 1) returns Bool:D
 {
     exists-value($container, [@path[0]])
         ?? exists-value(at($container, @path[0]), @path[1..*])
@@ -277,39 +271,39 @@ multi sub exists-value($container, @path where *.elems > 1) returns Bool
 }
 
 multi sub exists-value(
-    Associative $container,
+    Associative:D $container,
     @path where *.elems == 1
-) returns Bool
+) returns Bool:D
 {
     $container{@path[0]}.defined;
 }
 
 multi sub exists-value(
-    Associative $container,
+    Associative:D $container,
     @path where *.elems == 0
-) returns Bool
+) returns Bool:D
 {
     $container.defined;
 }
 
 multi sub exists-value(
-    Positional $container,
+    Positional:D $container,
     @path where *.elems == 1
-) returns Bool
+) returns Bool:D
 {
     validate-positional-index(@path[0]);
     $container[@path[0]].defined;
 }
 
 multi sub exists-value(
-    Positional $container,
+    Positional:D $container,
     @path where *.elems == 0
-) returns Bool
+) returns Bool:D
 {
     $container.defined;
 }
 
-multi sub exists-value($container, @path where *.elems > 0) returns Bool
+multi sub exists-value($container, @path where *.elems > 0) returns Bool:D
 {
     False;
 }
@@ -323,10 +317,10 @@ multi sub exists-value($container, @path where *.elems > 0) returns Bool
 multi method get(
     $container,
     :@path!,
-    Bool :$k! where *.so,
-    Bool :$v where *.not,
-    Bool :$p where *.not
-) returns Any
+    Bool:D :k($)! where *.so,
+    Bool :v($) where *.not,
+    Bool :p($) where *.not
+) returns Any:D
 {
     get-key($container, @path);
 }
@@ -334,10 +328,10 @@ multi method get(
 multi method get(
     $container,
     :@path!,
-    Bool :$k where *.not,
-    Bool :$v = True,
-    Bool :$p where *.not
-) returns Any
+    Bool :k($) where *.not,
+    Bool:D :v($) = True,
+    Bool :p($) where *.not
+) returns Any:D
 {
     get-value($container, @path);
 }
@@ -345,36 +339,42 @@ multi method get(
 multi method get(
     $container,
     :@path!,
-    Bool :$k where *.not,
-    Bool :$v where *.not,
-    Bool :$p! where *.so
-) returns Any
+    Bool :k($) where *.not,
+    Bool :v($) where *.not,
+    Bool:D :p($)! where *.so
+) returns Any:D
 {
     get-pair($container, @path);
 }
 
 # get-key {{{
 
-multi sub get-key($container, @path where *.elems > 1) returns Any
+multi sub get-key($container, @path where *.elems > 1) returns Any:D
 {
     exists-key($container, [@path[0]])
         ?? get-key(at($container, @path[0]), @path[1..*])
         !! die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-key(Associative $container, @path where *.elems == 1) returns Any
+multi sub get-key(
+    Associative:D $container,
+    @path where *.elems == 1
+) returns Any:D
 {
     exists-key($container, [@path[0]])
         ?? ($container{@path[0]}:!k)
         !! die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-key(Associative $container, @path where *.elems == 0) returns Any
+multi sub get-key(Associative:D $container, @path where *.elems == 0)
 {
     die X::Crane::GetRootContainerKey.new;
 }
 
-multi sub get-key(Positional $container, @path where *.elems == 1) returns Any
+multi sub get-key(
+    Positional:D $container,
+    @path where *.elems == 1
+) returns Any:D
 {
     validate-positional-index(@path[0]);
     exists-key($container, [@path[0]])
@@ -382,17 +382,17 @@ multi sub get-key(Positional $container, @path where *.elems == 1) returns Any
         !! die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-key(Positional $container, @path where *.elems == 0) returns Any
+multi sub get-key(Positional:D $container, @path where *.elems == 0)
 {
     die X::Crane::GetRootContainerKey.new;
 }
 
-multi sub get-key($container, @path where *.elems > 0) returns Any
+multi sub get-key($container, @path where *.elems > 0)
 {
     die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-key($container, @path where *.elems == 0) returns Any
+multi sub get-key($container, @path where *.elems == 0)
 {
     die X::Crane::GetRootContainerKey.new;
 }
@@ -401,26 +401,35 @@ multi sub get-key($container, @path where *.elems == 0) returns Any
 
 # get-value {{{
 
-multi sub get-value($container, @path where *.elems > 1) returns Any
+multi sub get-value($container, @path where *.elems > 1) returns Any:D
 {
     exists-key($container, [@path[0]])
         ?? get-value(at($container, @path[0]), @path[1..*])
         !! die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-value(Associative $container, @path where *.elems == 1) returns Any
+multi sub get-value(
+    Associative:D $container,
+    @path where *.elems == 1
+) returns Any:D
 {
     exists-key($container, [@path[0]])
         ?? ($container{@path[0]}:!v)
         !! die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-value(Associative $container, @path where *.elems == 0) returns Any
+multi sub get-value(
+    Associative:D $container,
+    @path where *.elems == 0
+) returns Any:D
 {
     $container;
 }
 
-multi sub get-value(Positional $container, @path where *.elems == 1) returns Any
+multi sub get-value(
+    Positional:D $container,
+    @path where *.elems == 1
+) returns Any:D
 {
     validate-positional-index(@path[0]);
     exists-key($container, [@path[0]])
@@ -428,17 +437,20 @@ multi sub get-value(Positional $container, @path where *.elems == 1) returns Any
         !! die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-value(Positional $container, @path where *.elems == 0) returns Any
+multi sub get-value(
+    Positional:D $container,
+    @path where *.elems == 0
+) returns Any:D
 {
     $container;
 }
 
-multi sub get-value($container, @path where *.elems > 0) returns Any
+multi sub get-value($container, @path where *.elems > 0)
 {
     die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-value($container, @path where *.elems == 0) returns Any
+multi sub get-value($container, @path where *.elems == 0) returns Any:D
 {
     $container;
 }
@@ -447,26 +459,32 @@ multi sub get-value($container, @path where *.elems == 0) returns Any
 
 # get-pair {{{
 
-multi sub get-pair($container, @path where *.elems > 1) returns Any
+multi sub get-pair($container, @path where *.elems > 1) returns Any:D
 {
     exists-key($container, [@path[0]])
         ?? get-pair(at($container, @path[0]), @path[1..*])
         !! die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-pair(Associative $container, @path where *.elems == 1) returns Any
+multi sub get-pair(
+    Associative:D $container,
+    @path where *.elems == 1
+) returns Any:D
 {
     exists-key($container, [@path[0]])
         ?? ($container{@path[0]}:!p)
         !! die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-pair(Associative $container, @path where *.elems == 0) returns Any
+multi sub get-pair(Associative:D $container, @path where *.elems == 0)
 {
     die X::Crane::GetRootContainerKey.new;
 }
 
-multi sub get-pair(Positional $container, @path where *.elems == 1) returns Any
+multi sub get-pair(
+    Positional:D $container,
+    @path where *.elems == 1
+) returns Any:D
 {
     validate-positional-index(@path[0]);
     exists-key($container, [@path[0]])
@@ -474,17 +492,17 @@ multi sub get-pair(Positional $container, @path where *.elems == 1) returns Any
         !! die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-pair(Positional $container, @path where *.elems == 0) returns Any
+multi sub get-pair(Positional:D $container, @path where *.elems == 0)
 {
     die X::Crane::GetRootContainerKey.new;
 }
 
-multi sub get-pair($container, @path where *.elems > 0) returns Any
+multi sub get-pair($container, @path where *.elems > 0)
 {
     die X::Crane::GetPathNotFound.new;
 }
 
-multi sub get-pair($container, @path where *.elems == 0) returns Any
+multi sub get-pair($container, @path where *.elems == 0)
 {
     die X::Crane::GetRootContainerKey.new;
 }
@@ -495,7 +513,7 @@ multi sub get-pair($container, @path where *.elems == 0) returns Any
 
 # set {{{
 
-method set(\container, :@path!, :$value!) returns Any
+method set(\container, :@path!, :$value!) returns Any:D
 {
     # the Crane.set operation will fail when @path[*-1] is invalid for
     # the container type according to Crane syntax rules:
@@ -522,7 +540,7 @@ method set(\container, :@path!, :$value!) returns Any
 
 # add {{{
 
-method add(\container, :@path!, :$value!, Bool :$in-place = False) returns Any
+method add(\container, :@path!, :$value!, Bool :$in-place = False) returns Any:D
 {
     # the Crane.add operation will fail when @path DNE in $container
     # with rules similar to JSON Patch (X::Crane::AddPathNotFound,
@@ -572,7 +590,7 @@ multi sub add(
     :@path! where *.elems > 1,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     unless Crane.exists(container, :path(@path[0..^*-1]), :v)
     {
@@ -627,7 +645,7 @@ multi sub add(
     :@path! where *.elems == 1,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     unless Crane.exists(container, :path(), :v)
     {
@@ -680,7 +698,7 @@ multi sub add(
     :@path! where *.elems == 0,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     given container.WHAT
     {
@@ -707,11 +725,13 @@ multi sub add-to-associative(
     :$step!,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
-    at($root, @path){$step} = $value.WHAT ~~ Positional ?? $value.clone !! $value;
+    at($root, @path){$step} = $value.WHAT ~~ Positional
+        ?? $value.clone
+        !! $value;
     $root;
 }
 
@@ -720,7 +740,7 @@ multi sub add-to-associative(
     :$step!,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -731,8 +751,8 @@ multi sub add-to-associative(
 multi sub add-to-associative(
     \container,
     :$value!,
-    Bool :$in-place where *.not
-) returns Any
+    Bool :in-place($) where *.not
+) returns Any:D
 {
     my $root = container.deepmap(*.clone);
     $root = $value;
@@ -742,8 +762,8 @@ multi sub add-to-associative(
 multi sub add-to-associative(
     \container,
     :$value!,
-    Bool :$in-place where *.so
-) returns Any
+    Bool:D :in-place($) where *.so
+) returns Any:D
 {
     container = $value;
     container;
@@ -759,7 +779,7 @@ multi sub add-to-positional(
     :$step!,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -786,7 +806,7 @@ multi sub add-to-positional(
     :$step!,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -805,8 +825,8 @@ multi sub add-to-positional(
 multi sub add-to-positional(
     \container,
     :$value!,
-    Bool :$in-place where *.not
-) returns Any
+    Bool :in-place($) where *.not
+) returns Any:D
 {
     my $root = container.deepmap(*.clone);
     $root = $value;
@@ -816,8 +836,8 @@ multi sub add-to-positional(
 multi sub add-to-positional(
     \container,
     :$value!,
-    Bool :$in-place where *.so
-) returns Any
+    Bool:D :in-place($) where *.so
+) returns Any:D
 {
     container = $value.WHAT ~~ Positional ?? $value.clone !! $value;
     |container;
@@ -830,8 +850,8 @@ multi sub add-to-positional(
 multi sub add-to-any(
     \container,
     :$value!,
-    Bool :$in-place where *.not
-) returns Any
+    Bool :in-place($) where *.not
+) returns Any:D
 {
     my $root = container.deepmap(*.clone);
     $root = $value;
@@ -841,8 +861,8 @@ multi sub add-to-any(
 multi sub add-to-any(
     \container,
     :$value!,
-    Bool :$in-place where *.so
-) returns Any
+    Bool:D :in-place($) where *.so
+) returns Any:D
 {
     container = $value;
     container;
@@ -902,7 +922,7 @@ multi sub remove(
     \container,
     :@path! where *.elems > 1,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     unless Crane.exists(container, :@path)
     {
@@ -954,7 +974,7 @@ multi sub remove(
     \container,
     :@path! where *.elems == 1,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     unless Crane.exists(container, :@path)
     {
@@ -1022,7 +1042,7 @@ multi sub remove-from-associative(
     :@path!,
     :$step!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -1034,7 +1054,7 @@ multi sub remove-from-associative(
     \container,
     :$step!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -1044,8 +1064,8 @@ multi sub remove-from-associative(
 
 multi sub remove-from-associative(
     \container,
-    Bool :$in-place where *.not
-) returns Any
+    Bool :in-place($) where *.not
+) returns Any:D
 {
     my $root = container.deepmap(*.clone);
     $root = Empty;
@@ -1054,8 +1074,8 @@ multi sub remove-from-associative(
 
 multi sub remove-from-associative(
     \container,
-    Bool :$in-place where *.so
-) returns Any
+    Bool:D :in-place($) where *.so
+) returns Any:D
 {
     container = Empty;
     container;
@@ -1070,7 +1090,7 @@ multi sub remove-from-positional(
     :@path!,
     :$step!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -1082,7 +1102,7 @@ multi sub remove-from-positional(
     \container,
     :$step!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -1092,8 +1112,8 @@ multi sub remove-from-positional(
 
 multi sub remove-from-positional(
     \container,
-    Bool :$in-place where *.not
-) returns Any
+    Bool :in-place($) where *.not
+) returns Any:D
 {
     my $root = container.deepmap(*.clone);
     $root = Empty;
@@ -1102,8 +1122,8 @@ multi sub remove-from-positional(
 
 multi sub remove-from-positional(
     \container,
-    Bool :$in-place where *.so
-) returns Any
+    Bool:D :in-place($) where *.so
+) returns Any:D
 {
     container = Empty;
     |container;
@@ -1113,14 +1133,17 @@ multi sub remove-from-positional(
 
 # Any handling {{{
 
-multi sub remove-from-any(\container, Bool :$in-place where *.not) returns Any
+multi sub remove-from-any(\container, Bool :in-place($) where *.not) returns Any
 {
     my $root = container.deepmap(*.clone);
     $root = Nil;
     $root;
 }
 
-multi sub remove-from-any(\container, Bool :$in-place where *.so) returns Any
+multi sub remove-from-any(
+    \container,
+    Bool:D :in-place($) where *.so
+) returns Any:D
 {
     container = Nil;
     container;
@@ -1132,7 +1155,12 @@ multi sub remove-from-any(\container, Bool :$in-place where *.so) returns Any
 
 # replace {{{
 
-method replace(\container, :@path!, :$value!, Bool :$in-place = False) returns Any
+method replace(
+    \container,
+    :@path!,
+    :$value!,
+    Bool :$in-place = False
+) returns Any:D
 {
     # the Crane.replace operation will fail when @path DNE in $container
     # with rules similar to JSON Patch (X::Crane::ReplacePathNotFound)
@@ -1174,7 +1202,7 @@ multi sub replace(
     :@path! where *.elems > 1,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     unless Crane.exists(container, :@path)
     {
@@ -1229,7 +1257,7 @@ multi sub replace(
     :@path! where *.elems == 1,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     unless Crane.exists(container, :@path)
     {
@@ -1282,7 +1310,7 @@ multi sub replace(
     :@path! where *.elems == 0,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     given container.WHAT
     {
@@ -1309,11 +1337,13 @@ multi sub replace-in-associative(
     :$step!,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
-    at($root, @path){$step} = $value.WHAT ~~ Positional ?? $value.clone !! $value;
+    at($root, @path){$step} = $value.WHAT ~~ Positional
+        ?? $value.clone
+        !! $value;
     $root;
 }
 
@@ -1322,7 +1352,7 @@ multi sub replace-in-associative(
     :$step!,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -1333,8 +1363,8 @@ multi sub replace-in-associative(
 multi sub replace-in-associative(
     \container,
     :$value!,
-    Bool :$in-place where *.not
-) returns Any
+    Bool :in-place($) where *.not
+) returns Any:D
 {
     my $root = container.deepmap(*.clone);
     $root = $value;
@@ -1344,8 +1374,8 @@ multi sub replace-in-associative(
 multi sub replace-in-associative(
     \container,
     :$value!,
-    Bool :$in-place where *.so
-) returns Any
+    Bool:D :in-place($) where *.so
+) returns Any:D
 {
     container = $value;
     container;
@@ -1361,7 +1391,7 @@ multi sub replace-in-positional(
     :$step!,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -1382,7 +1412,7 @@ multi sub replace-in-positional(
     :$step!,
     :$value!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -1401,8 +1431,8 @@ multi sub replace-in-positional(
 multi sub replace-in-positional(
     \container,
     :$value!,
-    Bool :$in-place where *.not
-) returns Any
+    Bool :in-place($) where *.not
+) returns Any:D
 {
     my $root = container.deepmap(*.clone);
     $root = $value;
@@ -1412,8 +1442,8 @@ multi sub replace-in-positional(
 multi sub replace-in-positional(
     \container,
     :$value!,
-    Bool :$in-place where *.so
-) returns Any
+    Bool:D :in-place($) where *.so
+) returns Any:D
 {
     container = $value.WHAT ~~ Positional ?? $value.clone !! $value;
     |container;
@@ -1426,8 +1456,8 @@ multi sub replace-in-positional(
 multi sub replace-in-any(
     \container,
     :$value!,
-    Bool :$in-place where *.not
-) returns Any
+    Bool :in-place($) where *.not
+) returns Any:D
 {
     my $root = container.deepmap(*.clone);
     $root = $value;
@@ -1437,8 +1467,8 @@ multi sub replace-in-any(
 multi sub replace-in-any(
     \container,
     :$value!,
-    Bool :$in-place where *.so
-) returns Any
+    Bool:D :in-place($) where *.so
+) returns Any:D
 {
     container = $value;
     container;
@@ -1450,7 +1480,7 @@ multi sub replace-in-any(
 
 # move {{{
 
-method move(\container, :@from!, :@path!, Bool :$in-place = False) returns Any
+method move(\container, :@from!, :@path!, Bool :$in-place = False) returns Any:D
 {
     # the Crane.move operation will fail when @from or @path DNE in
     # $container with rules similar to JSON Patch
@@ -1522,7 +1552,7 @@ method move(\container, :@from!, :@path!, Bool :$in-place = False) returns Any
 
 # copy {{{
 
-method copy(\container, :@from!, :@path!, Bool :$in-place = False) returns Any
+method copy(\container, :@from!, :@path!, Bool :$in-place = False) returns Any:D
 {
     # the Crane.copy operation will fail when @from or @path DNE in
     # $container with rules similar to JSON Patch
@@ -1585,7 +1615,7 @@ method copy(\container, :@from!, :@path!, Bool :$in-place = False) returns Any
 
 # test {{{
 
-method test($container, :@path!, :$value!) returns Bool
+method test($container, :@path!, :$value!) returns Bool:D
 {
     unless Crane.exists($container, :@path)
     {
@@ -1598,25 +1628,25 @@ method test($container, :@path!, :$value!) returns Bool
 
 # list {{{
 
-multi method list(Associative $container, :@path) returns List
+multi method list(Associative:D $container, :@path) returns List:D
 {
     list(at($container, @path));
 }
 
-multi method list(Positional $container, :@path) returns List
+multi method list(Positional:D $container, :@path) returns List:D
 {
     list(at($container, @path));
 }
 
-multi method list($container) returns List
+multi method list($container) returns List:D
 {
     list($container);
 }
 
 multi sub list(
-    Associative $container where *.elems > 0,
+    Associative:D $container where *.elems > 0,
     :@carry = ()
-) returns List
+) returns List:D
 {
     my @tree;
     for $container.keys -> $toplevel
@@ -1628,9 +1658,9 @@ multi sub list(
 }
 
 multi sub list(
-    Positional $container where *.elems > 0,
+    Positional:D $container where *.elems > 0,
     :@carry = ()
-) returns List
+) returns List:D
 {
     my @tree;
     for $container.keys -> $toplevel
@@ -1641,7 +1671,7 @@ multi sub list(
     @tree.sort.List;
 }
 
-multi sub list($container, :@carry = ()) returns List
+multi sub list($container, :@carry = ()) returns List:D
 {
     List({:path(@carry), :value($container)});
 }
@@ -1650,9 +1680,10 @@ multi sub list($container, :@carry = ()) returns List
 
 # flatten {{{
 
-method flatten($container, :@path) returns Hash[Any,List]
+method flatten($container, :@path) returns Hash[Any:D,List:D]
 {
-    my %tree{List} = Crane.list($container,:@path).map({$_<path> => $_<value>});
+    my Any:D %tree{List:D} =
+        Crane.list($container,:@path).map({ $_<path> => $_<value> });
 }
 
 # end flatten }}}
@@ -1664,7 +1695,7 @@ method transform(
     :@path!,
     :&with!,
     Bool :$in-place = False
-) returns Any
+) returns Any:D
 {
     unless is-valid-callable-signature(&with)
     {
@@ -1718,7 +1749,7 @@ method transform(
 
 # patch {{{
 
-method patch(\container, @patch, Bool :$in-place = False) returns Any
+method patch(\container, @patch, Bool :$in-place = False) returns Any:D
 {
     my $root;
     $in-place ?? ($root := container) !! ($root = container.deepmap(*.clone));
@@ -1766,7 +1797,7 @@ method patch(\container, @patch, Bool :$in-place = False) returns Any
 # add
 multi sub patch(
     \container,
-    %patch (:$op! where $_ eq 'add', :@path!, :$value!)
+    %patch (:op($)! where {$_ eq 'add'}, :@path!, :$value!)
 )
 {
     CATCH
@@ -1782,7 +1813,7 @@ multi sub patch(
 # remove
 multi sub patch(
     \container,
-    %patch (:$op! where $_ eq 'remove', :@path!)
+    %patch (:op($)! where {$_ eq 'remove'}, :@path!)
 )
 {
     CATCH
@@ -1798,7 +1829,7 @@ multi sub patch(
 # replace
 multi sub patch(
     \container,
-    %patch (:$op! where $_ eq 'replace', :@path!, :$value!)
+    %patch (:op($)! where {$_ eq 'replace'}, :@path!, :$value!)
 )
 {
     CATCH
@@ -1814,7 +1845,7 @@ multi sub patch(
 # move
 multi sub patch(
     \container,
-    %patch (:$op! where $_ eq 'move', :@from!, :@path!)
+    %patch (:op($)! where {$_ eq 'move'}, :@from!, :@path!)
 )
 {
     CATCH
@@ -1830,7 +1861,7 @@ multi sub patch(
 # copy
 multi sub patch(
     \container,
-    %patch (:$op! where $_ eq 'copy', :@from!, :@path!)
+    %patch (:op($)! where {$_ eq 'copy'}, :@from!, :@path!)
 )
 {
     CATCH
@@ -1846,7 +1877,7 @@ multi sub patch(
 # test
 multi sub patch(
     \container,
-    %patch (:$op! where $_ eq 'test', :@path!, :$value!)
+    %patch (:op($)! where {$_ eq 'test'}, :@path!, :$value!)
 )
 {
     Crane.test(container, :@path, :$value)
@@ -1864,19 +1895,23 @@ multi sub patch(
 enum Classifier <INT0P INTM OTHER WEC>;
 
 # classify positional index requests for better error messages
-multi sub get-positional-index-classifier(Int $ where * >= 0) returns Classifier
+multi sub get-positional-index-classifier(
+    Int:D $ where * >= 0
+) returns Classifier:D
 {
     INT0P;
 }
-multi sub get-positional-index-classifier(Int $ where * < 0) returns Classifier
+multi sub get-positional-index-classifier(
+    Int:D $ where * < 0
+) returns Classifier:D
 {
     INTM;
 }
-multi sub get-positional-index-classifier(WhateverCode $) returns Classifier
+multi sub get-positional-index-classifier(WhateverCode:D $) returns Classifier:D
 {
     WEC;
 }
-multi sub get-positional-index-classifier($) returns Classifier
+multi sub get-positional-index-classifier($) returns Classifier:D
 {
     OTHER;
 }
@@ -1900,7 +1935,7 @@ sub validate-positional-index($step)
 multi sub path-is-child-of-from(
     @from,
     @path where *.elems == @from.elems
-) returns Bool
+) returns Bool:D
 {
     # @path can't be child of @from if both are at the same depth
     False;
@@ -1909,7 +1944,7 @@ multi sub path-is-child-of-from(
 multi sub path-is-child-of-from(
     @from,
     @path where *.elems < @from.elems
-) returns Bool
+) returns Bool:D
 {
     # @path can't be child of @from if @path is shallower than @from
     False;
@@ -1917,12 +1952,12 @@ multi sub path-is-child-of-from(
 
 # @path is at deeper level than @from
 # verify @from[$_] !eqv @path[$_] for 0..@from.end
-multi sub path-is-child-of-from(@from, @path) returns Bool
+multi sub path-is-child-of-from(@from, @path) returns Bool:D
 {
     (@from[$_] eqv @path[$_] for 0..@from.end).grep(*.so).elems == @from.elems;
 }
 
-sub is-valid-callable-signature(&c) returns Bool
+sub is-valid-callable-signature(&c) returns Bool:D
 {
     &c.signature.params.elems == 1
         && &c.signature.params.grep(*.positional).elems == 1;
