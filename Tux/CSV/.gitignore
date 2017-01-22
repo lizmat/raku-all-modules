@@ -1,0 +1,30 @@
+CSV_XS*
+xx*
+test-x.pl
+tmp/
+sandbox/cover_db*
+sandbox/i-ttt*
+sandbox/parse-*.png
+sandbox/print-*.png
+sandbox/rfc7111.odt
+sandbox/test.*
+profile*.html
+
+# And for CSV6
+t-old/*
+xt/??_*
+?.pl
+?.csv
+logotype/comma*
+.precomp
+lib/.precomp
+*.class
+*.jar
+csv-c
+csv-cc
+csv-go
+rust*/target
+
+# Re-enable parts later
+sandbox/
+files/
