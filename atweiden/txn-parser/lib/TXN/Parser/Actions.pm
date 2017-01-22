@@ -9,18 +9,18 @@ unit class TXN::Parser::Actions;
 # public attributes {{{
 
 # base path for <include> directives
-has Str $.txn-dir = "$*HOME/.config/mktxn/txn";
+has Str:D $.txn-dir = "$*HOME/.config/mktxn/txn";
 
 # DateTime offset for when the local offset is omitted in dates. if
 # not passed as a parameter during instantiation, use UTC (0)
-has Int $.date-local-offset = 0;
+has Int:D $.date-local-offset = 0;
 
 # increments on each entry (0+)
 # each element in list represents an include level deep (0+)
-has UInt @.entry-number = 0;
+has UInt:D @.entry-number = 0;
 
 # the file currently being parsed
-has Str $.file = '.';
+has Str:D $.file = '.';
 
 # end public attributes }}}
 # private types {{{
@@ -81,12 +81,12 @@ method escape:sym<backslash>($/)
 
 method escape:sym<u>($/)
 {
-    make chr :16(@<hex>.join);
+    make chr(:16(@<hex>.join));
 }
 
 method escape:sym<U>($/)
 {
-    make chr :16(@<hex>.join);
+    make chr(:16(@<hex>.join));
 }
 
 method string-basic-char:escape-sequence ($/)
@@ -345,7 +345,7 @@ method time-secfrac($/)
 
 method time-numoffset($/)
 {
-    my Int $multiplier = $<plus-or-minus>.made eq '+' ?? 1 !! -1;
+    my Int:D $multiplier = $<plus-or-minus>.made eq '+' ?? 1 !! -1;
     make Int(
         (
             ($multiplier * $<time-hour>.made * 60) + $<time-minute>.made
@@ -361,7 +361,7 @@ method time-offset($/)
 
 method partial-time($/)
 {
-    my Rat $second = Rat($<time-second>.made);
+    my Rat:D $second = Rat($<time-second>.made);
     $second += Rat($<time-secfrac>.made) if $<time-secfrac>;
     make %(
         :hour(Int($<time-hour>.made)),
@@ -482,15 +482,15 @@ method header($/)
 {
     my %header;
 
-    my Dateish $date = $<date>.made;
-    my Str $description = $<description>.made if $<description>;
-    my UInt $important = 0;
-    my VarName @tag;
+    my Dateish:D $date = $<date>.made;
+    my Str:D $description = $<description>.made if $<description>;
+    my UInt:D $important = 0;
+    my VarName:D @tag;
 
     for @<metainfo>».made -> @metainfo
     {
-        $important += [+] @metainfo.grep({ .keys eq 'important' })».values.flat;
-        push @tag, |@metainfo.grep({ .keys eq 'tag' })».values.flat.unique;
+        $important += [+] @metainfo.grep(*.keys eq 'important')».values.flat;
+        push @tag, |@metainfo.grep(*.keys eq 'tag')».values.flat.unique;
     }
 
     %header<date> = $date;
@@ -539,9 +539,9 @@ method account($/)
 {
     my %account;
 
-    my Silo $silo = $<silo>.made;
-    my VarName $entity = $<entity>.made;
-    my VarName @path = $<account-path>.made if $<account-path>;
+    my Silo:D $silo = $<silo>.made;
+    my VarName:D $entity = $<entity>.made;
+    my VarName:D @path = $<account-path>.made if $<account-path>;
 
     %account<silo> = $silo;
     %account<entity> = $entity;
@@ -577,14 +577,24 @@ method asset-quantity:float ($/)
     make $<float-unsigned>.made;
 }
 
+method asset-price:integer ($/)
+{
+    make $<integer-unsigned>.made;
+}
+
+method asset-price:float ($/)
+{
+    make $<float-unsigned>.made;
+}
+
 method amount($/)
 {
     my %amount;
 
-    my AssetCode $asset-code = $<asset-code>.made;
-    my Quantity $asset-quantity = $<asset-quantity>.made;
-    my AssetSymbol $asset-symbol = $<asset-symbol>.made if $<asset-symbol>;
-    my PlusMinus $plus-or-minus = $<plus-or-minus>.made if $<plus-or-minus>;
+    my AssetCode:D $asset-code = $<asset-code>.made;
+    my Quantity:D $asset-quantity = $<asset-quantity>.made;
+    my AssetSymbol:D $asset-symbol = $<asset-symbol>.made if $<asset-symbol>;
+    my PlusMinus:D $plus-or-minus = $<plus-or-minus>.made if $<plus-or-minus>;
 
     %amount<asset-code> = $asset-code;
     %amount<asset-quantity> = $asset-quantity;
@@ -613,12 +623,12 @@ method xe-rate($/)
 {
     my %xe-rate;
 
-    my AssetCode $asset-code = $<asset-code>.made;
-    my Quantity $asset-quantity = $<asset-quantity>.made;
-    my AssetSymbol $asset-symbol = $<asset-symbol>.made if $<asset-symbol>;
+    my AssetCode:D $asset-code = $<asset-code>.made;
+    my Price:D $asset-price = $<asset-price>.made;
+    my AssetSymbol:D $asset-symbol = $<asset-symbol>.made if $<asset-symbol>;
 
     %xe-rate<asset-code> = $asset-code;
-    %xe-rate<asset-quantity> = $asset-quantity;
+    %xe-rate<asset-price> = $asset-price;
     %xe-rate<asset-symbol> = $asset-symbol if $asset-symbol;
 
     make %xe-rate;
@@ -627,7 +637,7 @@ method xe-rate($/)
 method xe($/)
 {
     my %xe-rate = $<xe-rate>.made;
-    my XERateType $rate-type = $<xe-symbol>.made;
+    my XERateType:D $rate-type = $<xe-symbol>.made;
     %xe-rate<rate-type> = $rate-type;
     make %xe-rate;
 }
@@ -649,7 +659,7 @@ method inherit($/)
 {
     # a grammar alias, C<$<inherit-rate> comes from C<xe-rate>
     my %inherit-rate = $<inherit-rate>.made;
-    my XERateType $rate-type = $<inherit-symbol>.made;
+    my XERateType:D $rate-type = $<inherit-symbol>.made;
     %inherit-rate<rate-type> = $rate-type;
     make %inherit-rate;
 }
@@ -666,8 +676,8 @@ method lot:acquisition ($/)
 {
     my %lot;
 
-    my VarName $name = $<lot-name>.made;
-    my DecInc $decinc = INC;
+    my VarName:D $name = $<lot-name>.made;
+    my DecInc:D $decinc = INC;
 
     %lot<name> = $name;
     %lot<decinc> = $decinc;
@@ -679,8 +689,8 @@ method lot:disposition ($/)
 {
     my %lot;
 
-    my VarName $name = $<lot-name>.made;
-    my DecInc $decinc = DEC;
+    my VarName:D $name = $<lot-name>.made;
+    my DecInc:D $decinc = DEC;
 
     %lot<name> = $name;
     %lot<decinc> = $decinc;
@@ -696,7 +706,8 @@ method annot($/)
 
     my %xe = $<xe>.made if $<xe>;
     my %inherit = $<inherit>.made if $<inherit>;
-    my TXN::Parser::AST::Entry::Posting::Annot::Lot $lot = $<lot>.made if $<lot>;
+    my TXN::Parser::AST::Entry::Posting::Annot::Lot:D $lot =
+        $<lot>.made if $<lot>;
 
     %annot<xe> = %xe if %xe;
     %annot<inherit> = %inherit if %inherit;
@@ -709,18 +720,19 @@ method annot($/)
 
 method posting($/)
 {
-    my Str $text = ~$/;
-    my XXHash $xxhash = xxHash32($text);
+    my Str:D $text = ~$/;
+    my XXHash:D $xxhash = xxHash32($text);
 
-    my TXN::Parser::AST::Entry::Posting::Account $account = $<account>.made;
-    my TXN::Parser::AST::Entry::Posting::Amount $amount = $<amount>.made;
-    my TXN::Parser::AST::Entry::Posting::Annot $annot = gen-annot(
+    my TXN::Parser::AST::Entry::Posting::Account:D $account = $<account>.made;
+    my TXN::Parser::AST::Entry::Posting::Amount:D $amount = $<amount>.made;
+    my TXN::Parser::AST::Entry::Posting::Annot:D $annot = gen-annot(
         $amount.asset-quantity,
         $<annot>.made
     ) if $<annot>;
 
-    my PlusMinus $plus-or-minus = $amount.plus-or-minus if $amount.plus-or-minus;
-    my DecInc $decinc = $plus-or-minus.defined && $plus-or-minus eq '-'
+    my PlusMinus:D $plus-or-minus = $amount.plus-or-minus
+        if $amount.plus-or-minus;
+    my DecInc:D $decinc = $plus-or-minus.defined && $plus-or-minus eq '-'
         ?? DEC
         !! INC;
 
@@ -734,7 +746,7 @@ method posting-line($/)
 
 method postings($/)
 {
-    make @<posting-line>».made.grep(Hash);
+    make @<posting-line>».made.grep(Hash:D);
 }
 
 # end posting grammar-actions }}}
@@ -742,23 +754,28 @@ method postings($/)
 
 method entry($/)
 {
-    my Str $text = ~$/;
-    my Hash @postings = $<postings>.made;
+    my Str:D $text = ~$/;
+    my Hash:D @postings = $<postings>.made;
 
     # Entry::ID
-    my XXHash $xxhash = xxHash32($text);
-    my TXN::Parser::AST::Entry::ID $entry-id .=
-        new(:number(@.entry-number.deepmap(*.clone)), :$xxhash, :$text);
+    my XXHash:D $xxhash = xxHash32($text);
+    my TXN::Parser::AST::Entry::ID:D $entry-id =
+        TXN::Parser::AST::Entry::ID.new(
+            :number(@.entry-number.deepmap(*.clone)),
+            :$xxhash,
+            :$text
+        );
 
     # insert Posting::ID derived from Entry::ID
-    my UInt $posting-number = 0;
-    my TXN::Parser::AST::Entry::Posting @posting = @postings.map({
-        my TXN::Parser::AST::Entry::Posting::ID $posting-id .= new(
-            :$entry-id,
-            :number($posting-number++),
-            :xxhash($_<xxhash>),
-            :text($_<text>)
-        );
+    my UInt:D $posting-number = 0;
+    my TXN::Parser::AST::Entry::Posting:D @posting = @postings.map({
+        my TXN::Parser::AST::Entry::Posting::ID:D $posting-id =
+            TXN::Parser::AST::Entry::Posting::ID.new(
+                :$entry-id,
+                :number($posting-number++),
+                :xxhash($_<xxhash>),
+                :text($_<text>)
+            );
         TXN::Parser::AST::Entry::Posting.new(
             :account($_<account>),
             :amount($_<amount>),
@@ -792,7 +809,7 @@ method txnlib($/)
 
 method include:filename ($match)
 {
-    my Str $filename = $match<filename>.made.IO.is-relative
+    my Str:D $filename = $match<filename>.made.IO.is-relative
         # if relative path given, resolve path relative to current txn
         # file being parsed and append '.txn' extension
         ?? join('/', $.file.IO.dirname, $match<filename>.made) ~ '.txn'
@@ -804,10 +821,14 @@ method include:filename ($match)
         die X::TXN::Parser::Include.new(:$filename);
     }
 
-    my UInt @entry-number = |@.entry-number.deepmap(*.clone), 0;
-    my TXN::Parser::Actions $actions .=
-        new(:@entry-number, :$.date-local-offset, :file($filename), :$.txn-dir);
-    my TXN::Parser::AST::Entry @entry =
+    my UInt:D @entry-number = |@.entry-number.deepmap(*.clone), 0;
+    my TXN::Parser::Actions:D $actions = TXN::Parser::Actions.new(
+        :@entry-number,
+        :$.date-local-offset,
+        :file($filename),
+        :$.txn-dir
+    );
+    my TXN::Parser::AST::Entry:D @entry =
         TXN::Parser::Grammar.parsefile($filename, :$actions).made;
     @!entry-number[*-1]++;
 
@@ -821,17 +842,21 @@ method include:txnlib ($match)
         die X::TXN::Parser::TXNLibAbsolute(:lib($match<txnlib>.made));
     }
 
-    my Str $filename = join('/', $.txn-dir, $match<txnlib>.made) ~ '.txn';
+    my Str:D $filename = join('/', $.txn-dir, $match<txnlib>.made) ~ '.txn';
 
     unless $filename.IO.e && $filename.IO.r && $filename.IO.f
     {
         die X::TXN::Parser::Include.new(:$filename);
     }
 
-    my UInt @entry-number = |@.entry-number.deepmap(*.clone), 0;
-    my TXN::Parser::Actions $actions .=
-        new(:@entry-number, :$.date-local-offset, :file($filename), :$.txn-dir);
-    my TXN::Parser::AST::Entry @entry =
+    my UInt:D @entry-number = |@.entry-number.deepmap(*.clone), 0;
+    my TXN::Parser::Actions:D $actions = TXN::Parser::Actions.new(
+        :@entry-number,
+        :$.date-local-offset,
+        :file($filename),
+        :$.txn-dir
+    );
+    my TXN::Parser::AST::Entry:D @entry =
         TXN::Parser::Grammar.parsefile($filename, :$actions).made;
     @!entry-number[*-1]++;
 
@@ -858,8 +883,8 @@ method segment:include ($/)
 
 method ledger($/)
 {
-    my TXN::Parser::AST::Entry @entry =
-        @<segment>».made.flatmap({ .grep(TXN::Parser::AST::Entry) });
+    my TXN::Parser::AST::Entry:D @entry =
+        @<segment>».made.flatmap(*.grep(TXN::Parser::AST::Entry:D));
     make @entry;
 }
 
@@ -879,63 +904,65 @@ sub gen-annot(
         :%inherit,
         TXN::Parser::AST::Entry::Posting::Annot::Lot :$lot
     )
-) returns TXN::Parser::AST::Entry::Posting::Annot
+) returns TXN::Parser::AST::Entry::Posting::Annot:D
 {
     my %annot;
 
-    my TXN::Parser::AST::Entry::Posting::Annot::XE $xe =
+    my TXN::Parser::AST::Entry::Posting::Annot::XE:D $xe =
         gen-xe($asset-quantity, :%xe) if %xe;
-    my TXN::Parser::AST::Entry::Posting::Annot::Inherit $inherit =
+    my TXN::Parser::AST::Entry::Posting::Annot::Inherit:D $inherit =
         gen-xe($asset-quantity, :%inherit) if %inherit;
 
     %annot<xe> = $xe if $xe;
     %annot<inherit> = $inherit if $inherit;
     %annot<lot> = $lot if $lot;
 
-    my TXN::Parser::AST::Entry::Posting::Annot $annot .= new(|%annot);
+    my TXN::Parser::AST::Entry::Posting::Annot:D $annot =
+        TXN::Parser::AST::Entry::Posting::Annot.new(|%annot);
 }
 
 multi sub gen-xe(
-    Quantity $amount-asset-quantity,
+    Quantity:D $amount-asset-quantity,
     :%xe! (
-        AssetCode :$asset-code!,
-        Quantity :$asset-quantity!,
-        XERateType :$rate-type!,
+        AssetCode:D :$asset-code!,
+        Price:D :$asset-price!,
+        XERateType:D :$rate-type!,
         Str :$asset-symbol
     )
-) returns TXN::Parser::AST::Entry::Posting::Annot::XE
+) returns TXN::Parser::AST::Entry::Posting::Annot::XE:D
 {
     my %xe-rate;
 
     %xe-rate<asset-code> = $asset-code;
-    %xe-rate<asset-quantity> = $rate-type ~~ IN-TOTAL
-        ?? ($asset-quantity / $amount-asset-quantity)
-        !! $asset-quantity;
+    %xe-rate<asset-price> = $rate-type ~~ IN-TOTAL
+        ?? ($asset-price / $amount-asset-quantity)
+        !! $asset-price;
     %xe-rate<asset-symbol> = $asset-symbol if $asset-symbol;
 
-    my TXN::Parser::AST::Entry::Posting::Annot::XE $xe .= new(|%xe-rate);
+    my TXN::Parser::AST::Entry::Posting::Annot::XE:D $xe =
+        TXN::Parser::AST::Entry::Posting::Annot::XE.new(|%xe-rate);
 }
 
 multi sub gen-xe(
-    Quantity $amount-asset-quantity,
+    Quantity:D $amount-asset-quantity,
     :%inherit! (
-        AssetCode :$asset-code!,
-        Quantity :$asset-quantity!,
-        XERateType :$rate-type!,
+        AssetCode:D :$asset-code!,
+        Price:D :$asset-price!,
+        XERateType:D :$rate-type!,
         Str :$asset-symbol
     )
-) returns TXN::Parser::AST::Entry::Posting::Annot::Inherit
+) returns TXN::Parser::AST::Entry::Posting::Annot::Inherit:D
 {
     my %inherit-rate;
 
     %inherit-rate<asset-code> = $asset-code;
-    %inherit-rate<asset-quantity> = $rate-type ~~ IN-TOTAL
-        ?? ($asset-quantity / $amount-asset-quantity)
-        !! $asset-quantity;
+    %inherit-rate<asset-price> = $rate-type ~~ IN-TOTAL
+        ?? ($asset-price / $amount-asset-quantity)
+        !! $asset-price;
     %inherit-rate<asset-symbol> = $asset-symbol if $asset-symbol;
 
-    my TXN::Parser::AST::Entry::Posting::Annot::Inherit $inherit .=
-        new(|%inherit-rate);
+    my TXN::Parser::AST::Entry::Posting::Annot::Inherit:D $inherit =
+        TXN::Parser::AST::Entry::Posting::Annot::Inherit.new(|%inherit-rate);
 }
 
 # end helper functions }}}

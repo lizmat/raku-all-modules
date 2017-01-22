@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "TXN::Parser",
     "version"     : "*",
     "author"      : "Andy Weidenbaum",

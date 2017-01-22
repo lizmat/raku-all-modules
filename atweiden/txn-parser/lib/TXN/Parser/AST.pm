@@ -7,18 +7,18 @@ unit class TXN::Parser::AST;
 
 class Entry::ID
 {
-    has UInt @.number is required;
-    has XXHash $.xxhash is required;
+    has UInt:D @.number is required;
+    has XXHash:D $.xxhash is required;
 
     # causal text from accounting ledger
-    has Str $.text is required;
+    has Str:D $.text is required;
 
-    method canonical(::?CLASS:D:) returns Str
+    method canonical(::?CLASS:D:) returns Str:D
     {
         $.number ~ ':' ~ $.xxhash;
     }
 
-    method hash(::?CLASS:D:) returns Hash
+    method hash(::?CLASS:D:) returns Hash:D
     {
         %(:@.number, :$.text, :$.xxhash);
     }
@@ -29,12 +29,12 @@ class Entry::ID
 
 class Entry::Header
 {
-    has Dateish $.date is required;
+    has Dateish:D $.date is required;
     has Str $.description;
-    has UInt $.important = 0;
-    has VarName @.tag;
+    has UInt:D $.important = 0;
+    has VarName:D @.tag;
 
-    method hash(::?CLASS:D:) returns Hash
+    method hash(::?CLASS:D:) returns Hash:D
     {
         %(:date(~$.date), :$.description, :$.important, :@.tag);
     }
@@ -45,11 +45,11 @@ class Entry::Header
 
 class Entry::Posting::Account
 {
-    has Silo $.silo is required;
-    has VarName $.entity is required;
-    has VarName @.path;
+    has Silo:D $.silo is required;
+    has VarName:D $.entity is required;
+    has VarName:D @.path;
 
-    method hash(::?CLASS:D:) returns Hash
+    method hash(::?CLASS:D:) returns Hash:D
     {
         %(:$.entity, :@.path, :silo($.silo.gist));
     }
@@ -60,12 +60,12 @@ class Entry::Posting::Account
 
 class Entry::Posting::Amount
 {
-    has AssetCode $.asset-code is required;
-    has Quantity $.asset-quantity is required;
+    has AssetCode:D $.asset-code is required;
+    has Quantity:D $.asset-quantity is required;
     has AssetSymbol $.asset-symbol;
     has PlusMinus $.plus-or-minus;
 
-    method hash(::?CLASS:D:) returns Hash
+    method hash(::?CLASS:D:) returns Hash:D
     {
         %(:$.asset-code, :$.asset-quantity, :$.asset-symbol, :$.plus-or-minus);
     }
@@ -76,13 +76,13 @@ class Entry::Posting::Amount
 
 class Entry::Posting::Annot::XE
 {
-    has AssetCode $.asset-code is required;
-    has Quantity $.asset-quantity is required;
+    has AssetCode:D $.asset-code is required;
+    has Price:D $.asset-price is required;
     has AssetSymbol $.asset-symbol;
 
-    method hash(::?CLASS:D:) returns Hash
+    method hash(::?CLASS:D:) returns Hash:D
     {
-        %(:$.asset-code, :$.asset-quantity, :$.asset-symbol);
+        %(:$.asset-code, :$.asset-price, :$.asset-symbol);
     }
 }
 
@@ -96,12 +96,12 @@ class Entry::Posting::Annot::Inherit is Entry::Posting::Annot::XE {*}
 
 class Entry::Posting::Annot::Lot
 {
-    has VarName $.name is required;
+    has VarName:D $.name is required;
 
     # is this lot being drawn down or filled up?
-    has DecInc $.decinc is required;
+    has DecInc:D $.decinc is required;
 
-    method hash(::?CLASS:D:) returns Hash
+    method hash(::?CLASS:D:) returns Hash:D
     {
         %(:decinc($.decinc.gist), :$.name);
     }
@@ -116,7 +116,7 @@ class Entry::Posting::Annot
     has Entry::Posting::Annot::Lot $.lot;
     has Entry::Posting::Annot::XE $.xe;
 
-    method hash(::?CLASS:D:) returns Hash
+    method hash(::?CLASS:D:) returns Hash:D
     {
         my %h;
         %h<inherit> = $.inherit ?? $.inherit.hash !! Nil;
@@ -132,22 +132,22 @@ class Entry::Posting::Annot
 class Entry::Posting::ID
 {
     # parent
-    has Entry::ID $.entry-id is required;
+    has Entry::ID:D $.entry-id is required;
 
     # scalar, because C<include>'d postings are forbidden
-    has UInt $.number is required;
+    has UInt:D $.number is required;
 
-    has XXHash $.xxhash is required;
+    has XXHash:D $.xxhash is required;
 
     # causal text from accounting ledger
-    has Str $.text is required;
+    has Str:D $.text is required;
 
-    method canonical(::?CLASS:D:) returns Str
+    method canonical(::?CLASS:D:) returns Str:D
     {
         $.number ~ ':' ~ $.xxhash;
     }
 
-    method hash(::?CLASS:D:) returns Hash
+    method hash(::?CLASS:D:) returns Hash:D
     {
         %(:entry-id($.entry-id.hash), :$.number, :$.text, :$.xxhash);
     }
@@ -158,21 +158,21 @@ class Entry::Posting::ID
 
 class Entry::Posting
 {
-    has Entry::Posting::ID $.id is required;
-    has Entry::Posting::Account $.account is required;
-    has Entry::Posting::Amount $.amount is required;
-    has DecInc $.decinc is required;
-    has DrCr $.drcr is required;
+    has Entry::Posting::ID:D $.id is required;
+    has Entry::Posting::Account:D $.account is required;
+    has Entry::Posting::Amount:D $.amount is required;
+    has DecInc:D $.decinc is required;
+    has DrCr:D $.drcr is required;
 
     has Entry::Posting::Annot $.annot;
 
     # submethod BUILD {{{
 
     submethod BUILD(
-        Entry::Posting::Account :$!account!,
-        Entry::Posting::Amount :$!amount!,
-        Entry::Posting::ID :$!id!,
-        DecInc :$!decinc!,
+        Entry::Posting::Account:D :$!account!,
+        Entry::Posting::Amount:D :$!amount!,
+        Entry::Posting::ID:D :$!id!,
+        DecInc:D :$!decinc!,
         Entry::Posting::Annot :$annot
     )
     {
@@ -185,10 +185,10 @@ class Entry::Posting
 
     method new(
         *%opts (
-            Entry::Posting::Account :$account!,
-            Entry::Posting::Amount :$amount!,
-            Entry::Posting::ID :$id!,
-            DecInc :$decinc!,
+            Entry::Posting::Account:D :$account!,
+            Entry::Posting::Amount:D :$amount!,
+            Entry::Posting::ID:D :$id!,
+            DecInc:D :$decinc!,
             Entry::Posting::Annot :$annot
         )
     )
@@ -200,7 +200,7 @@ class Entry::Posting
 
     # method hash {{{
 
-    method hash(::?CLASS:D:) returns Hash
+    method hash(::?CLASS:D:) returns Hash:D
     {
         my %h;
         %h<id> = $.id.hash;
@@ -219,22 +219,22 @@ class Entry::Posting
     # assets and expenses increase on the debit side
 
     # +assets/expenses
-    multi sub determine-debit-or-credit(ASSETS, INC) returns DrCr { DEBIT }
-    multi sub determine-debit-or-credit(EXPENSES, INC) returns DrCr { DEBIT }
+    multi sub determine-debit-or-credit(ASSETS, INC) returns DrCr:D { DEBIT }
+    multi sub determine-debit-or-credit(EXPENSES, INC) returns DrCr:D { DEBIT }
     # -assets/expenses
-    multi sub determine-debit-or-credit(ASSETS, DEC) returns DrCr { CREDIT }
-    multi sub determine-debit-or-credit(EXPENSES, DEC) returns DrCr { CREDIT }
+    multi sub determine-debit-or-credit(ASSETS, DEC) returns DrCr:D { CREDIT }
+    multi sub determine-debit-or-credit(EXPENSES, DEC) returns DrCr:D { CREDIT }
 
     # income, liabilities and equity increase on the credit side
 
     # +income/liabilities/equity
-    multi sub determine-debit-or-credit(INCOME, INC) returns DrCr { CREDIT }
-    multi sub determine-debit-or-credit(LIABILITIES, INC) returns DrCr { CREDIT }
-    multi sub determine-debit-or-credit(EQUITY, INC) returns DrCr { CREDIT }
+    multi sub determine-debit-or-credit(INCOME, INC) returns DrCr:D { CREDIT }
+    multi sub determine-debit-or-credit(LIABILITIES, INC) returns DrCr:D { CREDIT }
+    multi sub determine-debit-or-credit(EQUITY, INC) returns DrCr:D { CREDIT }
     # -income/liabilities/equity
-    multi sub determine-debit-or-credit(INCOME, DEC) returns DrCr { DEBIT }
-    multi sub determine-debit-or-credit(LIABILITIES, DEC) returns DrCr { DEBIT }
-    multi sub determine-debit-or-credit(EQUITY, DEC) returns DrCr { DEBIT }
+    multi sub determine-debit-or-credit(INCOME, DEC) returns DrCr:D { DEBIT }
+    multi sub determine-debit-or-credit(LIABILITIES, DEC) returns DrCr:D { DEBIT }
+    multi sub determine-debit-or-credit(EQUITY, DEC) returns DrCr:D { DEBIT }
 
     # end sub determine-debit-or-credit }}}
 }
@@ -245,16 +245,16 @@ class Entry::Posting
 class Entry
 {
 
-    has Entry::ID $.id is required;
-    has Entry::Header $.header is required;
-    has Entry::Posting @.posting is required;
+    has Entry::ID:D $.id is required;
+    has Entry::Header:D $.header is required;
+    has Entry::Posting:D @.posting is required;
 
     # submethod BUILD {{{
 
     submethod BUILD(
-        Entry::ID :$!id!,
-        Entry::Header :$!header!,
-        Entry::Posting :@!posting!
+        Entry::ID:D :$!id!,
+        Entry::Header:D :$!header!,
+        Entry::Posting:D :@!posting!
     )
     {
 
@@ -265,14 +265,14 @@ class Entry
 
     method new(
         *%opts (
-            Entry::ID :$id!,
-            Entry::Header :$header!,
-            Entry::Posting :@posting!
+            Entry::ID:D :$id!,
+            Entry::Header:D :$header!,
+            Entry::Posting:D :@posting!
         )
     )
     {
         # verify entry is limited to one entity
-        my UInt $number-entities =
+        my UInt:D $number-entities =
             @posting.map({ .account.entity }).unique.elems;
         unless $number-entities == 1
         {
@@ -289,7 +289,7 @@ class Entry
 
     # method hash {{{
 
-    method hash(::?CLASS:D:) returns Hash
+    method hash(::?CLASS:D:) returns Hash:D
     {
         %(:header($.header.hash), :id($.id.hash), :posting(@.posting».hash));
     }

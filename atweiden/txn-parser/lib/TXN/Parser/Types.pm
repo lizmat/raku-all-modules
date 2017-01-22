@@ -9,20 +9,20 @@ subset AssetCode of Str is export where { is-asset-code($_) }
 # --- sub is-asset-code {{{
 
 multi sub is-asset-code(
-    Str $s where { TXN::Parser::Grammar.parse($_, :rule<asset-code>).so }
-) returns Bool
+    Str $s where { TXN::Parser::Grammar.parse($_, :rule<asset-code>) }
+) returns Bool:D
 {
     True;
 }
 
 multi sub is-asset-code(
-    Str $s where { TXN::Parser::Grammar.parse(.perl, :rule<asset-code>).so }
-) returns Bool
+    Str $s where { TXN::Parser::Grammar.parse(.perl, :rule<asset-code>) }
+) returns Bool:D
 {
     True;
 }
 
-multi sub is-asset-code($s) returns Bool
+multi sub is-asset-code($s) returns Bool:D
 {
     False;
 }
@@ -56,9 +56,14 @@ subset PlusMinus of Str is export where
 }
 
 # end PlusMinus }}}
+# Price {{{
+
+subset Price of FatRat is export where * >= 0;
+
+# end Price }}}
 # Quantity {{{
 
-subset Quantity of FatRat is export where * >= 0;
+subset Quantity of FatRat is export where * > 0;
 
 # end Quantity }}}
 # Silo {{{
@@ -73,20 +78,20 @@ subset VarName of Str is export where { is-var-name($_) }
 # --- sub is-var-name {{{
 
 multi sub is-var-name(
-    Str $s where { TXN::Parser::Grammar.parse($_, :rule<var-name>).so }
-) returns Bool
+    Str $s where { TXN::Parser::Grammar.parse($_, :rule<var-name>) }
+) returns Bool:D
 {
     True;
 }
 
 multi sub is-var-name(
-    Str $s where { TXN::Parser::Grammar.parse(.perl, :rule<var-name>).so }
-) returns Bool
+    Str $s where { TXN::Parser::Grammar.parse(.perl, :rule<var-name>) }
+) returns Bool:D
 {
     True;
 }
 
-multi sub is-var-name($s) returns Bool
+multi sub is-var-name($s) returns Bool:D
 {
     False;
 }

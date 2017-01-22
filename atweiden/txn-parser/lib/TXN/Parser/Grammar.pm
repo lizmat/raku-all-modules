@@ -2,6 +2,10 @@ use v6;
 use X::TXN::Parser;
 unit grammar TXN::Parser::Grammar;
 
+# track silo
+my enum Silo <ASSETS EXPENSES INCOME LIABILITIES EQUITY>;
+my Silo $silo;
+
 # disposable grammar {{{
 
 proto token gap {*}
@@ -545,26 +549,31 @@ proto token silo {*}
 token silo:assets
 {
     :i asset[s]?
+    { $silo = ASSETS }
 }
 
 token silo:expenses
 {
     :i expense[s]?
+    { $silo = EXPENSES }
 }
 
 token silo:income
 {
     :i income | revenue[s]?
+    { $silo = INCOME }
 }
 
 token silo:liabilities
 {
     :i liabilit[y|ies]
+    { $silo = LIABILITIES }
 }
 
 token silo:equity
 {
     :i equit[y|ies]
+    { $silo = EQUITY }
 }
 
 # accounts can be separated by a colon (:) or period (.)
@@ -608,8 +617,18 @@ token asset-symbol
 }
 
 proto token asset-quantity {*}
-token asset-quantity:float { <float-unsigned> }
-token asset-quantity:integer { <integer-unsigned> }
+
+token asset-quantity:float
+{
+    <float-unsigned>
+    { +$/ !== 0 or die X::TXN::Parser::AssetQuantityIsZero.new(:text(~$/)) }
+}
+
+token asset-quantity:integer
+{
+    <integer-unsigned>
+    { +$/ !== 0 or die X::TXN::Parser::AssetQuantityIsZero.new(:text(~$/)) }
+}
 
 # --- --- end posting amount grammar }}}
 # --- --- posting annotation grammar {{{
@@ -685,13 +704,17 @@ token xe-symbol-char { '@' }
 token xe-rate
 {
     # $830.024 USD
-    <asset-symbol>? <asset-quantity> \h+ <asset-code>
+    <asset-symbol>? <asset-price> \h+ <asset-code>
 
     |
 
     # USD $830.024
-    <asset-code> \h+ <asset-symbol>? <asset-quantity>
+    <asset-code> \h+ <asset-symbol>? <asset-price>
 }
+
+proto token asset-price {*}
+token asset-price:float { <float-unsigned> }
+token asset-price:integer { <integer-unsigned> }
 
 # --- --- --- end xe }}}
 # --- --- --- inherit {{{
@@ -700,6 +723,9 @@ token xe-rate
 token inherit
 {
     <inherit-symbol> \h+ <inherit-rate=xe-rate>
+    {
+        die X::TXN::Parser::Annot::Inherit::BadSilo.new unless $silo == ASSETS
+    }
 }
 
 proto token inherit-symbol {*}
@@ -719,12 +745,18 @@ proto token lot {*}
 token lot:acquisition
 {
     <lot-acquisition-symbol> \h+ <lot-name>
+    {
+        die X::TXN::Parser::Annot::Lot::BadSilo.new unless $silo == ASSETS
+    }
 }
 
 # lot sales (disposition)
 token lot:disposition
 {
     <lot-disposition-symbol> \h+ <lot-name>
+    {
+        die X::TXN::Parser::Annot::Lot::BadSilo.new unless $silo == ASSETS
+    }
 }
 
 proto token lot-acquisition-symbol {*}

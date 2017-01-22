@@ -1,16 +1,56 @@
 use v6;
 unit module X::TXN::Parser;
 
+# X::TXN::Parser::Annot::Inherit::BadSilo {{{
+
+class Annot::Inherit::BadSilo is Exception
+{
+    method message() returns Str:D
+    {
+        "Sorry, inherit annotation is only allowed from assets silo.";
+    }
+}
+
+# end X::TXN::Parser::Annot::Inherit::BadSilo }}}
+
+# X::TXN::Parser::Annot::Lot::BadSilo {{{
+
+class Annot::Lot::BadSilo is Exception
+{
+    method message() returns Str:D
+    {
+        "Sorry, lot sales annotation is only allowed from assets silo.";
+    }
+}
+
+# end X::TXN::Parser::Annot::Lot::BadSilo }}}
+
+# X::TXN::Parser::AssetQuantityIsZero {{{
+
+class AssetQuantityIsZero is Exception
+{
+    has Str:D $.text is required;
+
+    method message() returns Str:D
+    {
+        qq:to/EOF/.trim;
+        Sorry, asset quantity can't be zero. Got 「$.text」
+        EOF
+    }
+}
+
+# end X::TXN::Parser::AssetQuantityIsZero }}}
+
 # X::TXN::Parser::Entry::MultipleEntities {{{
 
 class Entry::MultipleEntities is Exception
 {
-    has Str $.entry-text is required;
-    has UInt $.number-entities is required;
+    has Str:D $.entry-text is required;
+    has UInt:D $.number-entities is required;
 
-    method message() returns Str
+    method message() returns Str:D
     {
-        my Str $message = qq:to/EOF/;
+        qq:to/EOF/.trim;
         Sorry, only one entity per ledger entry allowed, but found
         $.number-entities entities.
 
@@ -18,7 +58,6 @@ class Entry::MultipleEntities is Exception
 
         「$.entry-text」
         EOF
-        $message.trim;
     }
 }
 
@@ -28,18 +67,17 @@ class Entry::MultipleEntities is Exception
 
 class Include is Exception
 {
-    has Str $.filename is required;
+    has Str:D $.filename is required;
 
-    method message() returns Str
+    method message() returns Str:D
     {
-        my Str $message = qq:to/EOF/;
+        qq:to/EOF/.trim;
         Sorry, could not load accounting ledger to include at
 
             「$.filename」
 
         Accounting ledger not found or not readable.
         EOF
-        $message.trim;
     }
 }
 
@@ -49,10 +87,10 @@ class Include is Exception
 
 class ParseFailed is Exception
 {
-    has Str $.content is required;
-    method message() returns Str
+    has Str:D $.content is required;
+    method message() returns Str:D
     {
-        my Str $message = "Invalid TXN:\n「$.content」";
+        "Invalid TXN:\n「$.content」";
     }
 }
 
@@ -62,10 +100,10 @@ class ParseFailed is Exception
 
 class ParsefileFailed is Exception
 {
-    has Str $.file is required;
-    method message() returns Str
+    has Str:D $.file is required;
+    method message() returns Str:D
     {
-        my Str $message = "Invalid TXN in file 「$.file」";
+        "Invalid TXN in file 「$.file」";
     }
 }
 
@@ -75,11 +113,11 @@ class ParsefileFailed is Exception
 
 class String::EscapeSequence is Exception
 {
-    has Str $.esc is required;
+    has Str:D $.esc is required;
 
-    method message() returns Str
+    method message() returns Str:D
     {
-        my Str $message = "Sorry, found bad string escape sequence 「$.esc」";
+        "Sorry, found bad string escape sequence 「$.esc」";
     }
 }
 
@@ -89,11 +127,11 @@ class String::EscapeSequence is Exception
 
 class TXNLibAbsolute is Exception
 {
-    has Str $.lib is required;
+    has Str:D $.lib is required;
 
-    method message() returns Str
+    method message() returns Str:D
     {
-        my Str $message = "Sorry, txnlib path can't be absolute. Got:「$.lib」";
+        "Sorry, txnlib path can't be absolute. Got:「$.lib」";
     }
 }
 
