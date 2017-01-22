@@ -1,0 +1,22 @@
+{
+    "name" : "Digest::SHA1::Native",
+    "source-url" : "git://github.com/bduggan/p6-digest-sha1-native.git",
+    "perl" : "6.c",
+    "resources" : [
+        "libraries/sha1"
+    ],
+    "build-depends" : [ ],
+    "provides" : {
+        "Digest::SHA1::Native" : "lib/Digest/SHA1/Native.pm6"
+    },
+    "depends" : [
+        "LibraryMake"
+    ],
+    "description" : "p6 bindings to C implementation of SHA1",
+    "test-depends" : [ ],
+    "version" : "0.01",
+    "license" : "Perl",
+    "authors" : [
+        "Brian Duggan"
+    ]
+}

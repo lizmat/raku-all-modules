@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bduggan/p6-digest-sha1-native.git
+	branch = master
+	commit = de02fc5c6f98c841f1aac707d41de23d4d36eee8
+	parent = 8c5c4a15521a325eef6d60af926103eca6eb2c5f
+	cmdver = 0.4.0
