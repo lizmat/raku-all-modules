@@ -1,12 +1,10 @@
-Digest::xxHash
-==============
+# Digest::xxHash
 
 Perl6 bindings for xxHash. 32 bit functions recommended pending unsigned
 long long support in NativeCall.
 
 
-Usage
------
+## Usage
 
 ```perl6
 # 32 or 64 bit xxHash from string, depending on architecture
@@ -26,15 +24,16 @@ say xxHash(buf-u8 => Buf[uint8].new(0x64, 0x75, 0x70, 0x61))
 ```
 
 
-Dependencies
-------------
+## Dependencies
 
 - Rakudo Perl6
-- [libxxhash](https://aur.archlinux.org/packages/libxxhash)
+- libxxhash ([mac][mac], [pac][pac])
 
 
-Licensing
----------
+## Licensing
 
 This is free and unencumbered public domain software. For more
 information, see http://unlicense.org/ or the accompanying UNLICENSE file.
+
+[mac]: https://github.com/atweiden/homebrew-formulae/blob/master/libxxhash/libxxhash.rb
+[pac]: https://aur.archlinux.org/packages/libxxhash/

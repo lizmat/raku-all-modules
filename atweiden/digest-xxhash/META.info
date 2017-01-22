@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Digest::xxHash",
     "version"     : "*",
     "authors"     : [ "Bartłomiej Palmowski", "Andy Weidenbaum" ],
