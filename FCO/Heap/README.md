@@ -5,7 +5,7 @@
 A simple perl6 module implementing the heap data structure.
 
 ```perl6
-my Heap $heap .= new: 9 7 5 3 1;
+my Heap $heap .= new: 9, 7, 5, 3, 1;
 $heap.push: 8;
 say $heap.pop;		# 1
 say $heap.pop;		# 3
@@ -16,7 +16,7 @@ say $heap.all		# (7, 8, 9)
 ```
 
 ```perl6
-my Heap[-*] $heap .= new: 9 7 5 3 1;
+my Heap[-*] $heap .= new: <9 7 5 3 1>;
 $heap.push: 8;
 say $heap.pop;		# 9
 say $heap.pop;		# 8
@@ -25,7 +25,7 @@ say $heap.pop;		# 7
 ```
 
 ```perl6
-my Heap[{$^b <=> $^a}] $heap .= new: 9 7 5 3 1;
+my Heap[{$^b <=> $^a}] $heap .= new: <9 7 5 3 1>;
 $heap.push: 8;
 say $heap.pop;		# 9
 say $heap.pop;		# 8

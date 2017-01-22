@@ -11,7 +11,7 @@ role Heap[$heap_cmp = * cmp *] {
 
 	method !cmp($a, $b) {
 		do if &!cmp.signature.params.elems == 1 {
-			&!cmp($a) <=> &!cmp($b)
+			&!cmp($a) cmp &!cmp($b)
 		} else {
 			&!cmp($a, $b)
 		}
