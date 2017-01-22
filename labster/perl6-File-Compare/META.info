@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "File::Compare",
   "version"     : "*",
   "description" : "Compare files to check for equality/difference",
