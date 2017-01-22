@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Crypt::Argon2",
     "version" : "0.2.0",
     "author" : "github:skinkade",
