@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-ruby-bundler.git
+	branch = master
+	commit = 49c824619a1a7982bdc8172fa6636d4d9e26f911
+	parent = f310d178a2b28467874cb86c1afea7bb2c1b5d23
+	cmdver = 0.4.0
