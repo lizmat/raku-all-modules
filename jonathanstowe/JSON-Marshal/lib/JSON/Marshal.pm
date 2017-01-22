@@ -32,7 +32,7 @@ using L<JSON::Unmarshal|https://github.com/tadzik/JSON-Unmarshal>.
 
 It only outputs the "public" attributes (that is those with accessors
 created by declaring them with the '.' twigil. Attributes without acccessors
-are ignored.  
+are ignored.
 
 If you want to ignore any attributes without a value you can use the
 :skip-null adverb to C<marshal>, which will supress the marshalling of
@@ -42,7 +42,7 @@ will cause the specific attribute to be skipped if it isn't defined irrespective
 of the C<skip-null>.
 
 To allow a finer degree of control of how an attribute is marshalled an
-attribute trait C<is marshalled-by> is provided, this can take either 
+attribute trait C<is marshalled-by> is provided, this can take either
 a Code object (an anonymous subroutine,) which should take as an argument
 the value to be marshalled and should return a value that can be completely
 represented as JSON, that is to say a string, number or boolean or a Hash
@@ -55,7 +55,7 @@ above.
 
 use JSON::Name;
 
-module JSON::Marshal:ver<0.0.10>:auth<github:jonathanstowe> {
+module JSON::Marshal:ver<0.0.11>:auth<github:jonathanstowe> {
 
     use JSON::Fast:ver(v0.4..*);
 
@@ -100,7 +100,7 @@ module JSON::Marshal:ver<0.0.10>:auth<github:jonathanstowe> {
     multi sub trait_mod:<is> (Attribute $attr, :$json-skip-null!) is export {
         $attr does SkipNull;
     }
-    
+
     multi sub _marshal(Cool $value, Bool :$skip-null) {
         $value;
     }
@@ -123,10 +123,14 @@ module JSON::Marshal:ver<0.0.10>:auth<github:jonathanstowe> {
         }
         @ret;
     }
-    
+
     multi sub _marshal(Mu $obj, Bool :$skip-null) returns Hash {
         my %ret;
+        my %local-attrs =  $obj.^attributes(:local).map({ $_.name => $_.package });
         for $obj.^attributes -> $attr {
+            if %local-attrs{$attr.name}:exists && !(%local-attrs{$attr.name} === $attr.package ) {
+                next;
+            }
             if $attr.has_accessor {
                 my $name = do if $attr ~~ JSON::Name::NamedAttribute {
                     $attr.json-name;

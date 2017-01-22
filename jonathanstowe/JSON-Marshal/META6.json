@@ -19,5 +19,5 @@
 	 "JSON::Fast"
   ],
   "description" : "Simple serialisation of objects to JSON",
-  "version" : "0.0.10"
+  "version" : "0.0.11"
 }
