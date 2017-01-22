@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/gfldex/perl6-concurrent-file-find.git
+	branch = master
+	commit = f9d94b2176767129983fd98b5a86bb7a450495a5
+	parent = ce404749e247c50ab93da496a25831cd91f069d6
+	cmdver = 0.4.0

@@ -1,0 +1,16 @@
+{
+  "name" : "Concurrent::File::Find",
+  "source-url" : "git://github.com/gfldex/perl6-concurrent-file-find.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "Concurrent::File::Find" : "lib/Concurrent/File/Find.pm6"
+  },
+  "depends" : [ ],
+  "description" : "Concurrently recurse into directories to find files, directories or symlinks",
+  "test-depends" : [ ],
+  "version" : "0.1.2",
+  "authors" : [
+    "Wenzel P. P. Peppmeyer"
+  ]
+}
