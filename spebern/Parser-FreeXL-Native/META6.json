@@ -1,0 +1,19 @@
+{
+  "authors" : [
+    "spebern"
+  ],
+  "build-depends" : [
+    "LibraryMake"
+  ],
+  "depends" : [ ],
+  "description" : "wrapper for freexl parsing .xls files",
+  "name" : "Parser::FreeXL::Native",
+  "perl" : "6.c",
+  "provides" : {
+    "Parser::FreeXL::Native" : "lib/Parser/FreeXL/Native.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/spebern/Parser-FreeXL-Native.git",
+  "test-depends" : [ ],
+  "version" : "*"
+}
