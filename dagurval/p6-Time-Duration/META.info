@@ -1,4 +1,5 @@
 {
+	"perl" : "6.*",
 	"name" : "Time::Duration",
 	"version" : "2.00",
 	"description" : "Rounded or exact English expression of durations",
