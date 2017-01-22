@@ -1,0 +1,12 @@
+{
+    "perl"          : "6.*",
+    "name"          : "File::Ignore",
+    "version"       : "1.0",
+    "description"   : "Parsing and application of .gitignore-style ignore files.",
+    "author"        : "Jonathan Worthington <jnthn@jnthn.net>",
+    "depends"       : [],
+    "provides"      : {
+		"File::Ignore" : "lib/File/Ignore.pm6"
+    },
+    "source-url"    : "https://github.com/jnthn/p6-file-ignore.git"
+}
