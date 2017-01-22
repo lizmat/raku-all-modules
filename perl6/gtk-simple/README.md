@@ -32,11 +32,12 @@ VBox, HBox        | Widget containers which enable window layout design
 
 ## Example
 
-```Perl6
-use v6;
+```perl6
+use v6.c;
 use GTK::Simple;
+use GTK::Simple::App;
 
-my $app = GTK::Simple::App.new(title => "Hello GTK!");
+my $app = GTK::Simple::App.new( title => "Hello GTK!" );
 
 $app.set-content(
     GTK::Simple::VBox.new(
@@ -84,19 +85,25 @@ Precompiled GTK3 DLLs are installed automatically with module installation.
 
 ## Installation
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
+To install it using [zef](https://github.com/ugexe/zef) (a module management
+tool bundled with Rakudo Star):
 
 ```
-$ panda update
-$ panda install GTK::Simple
+$ zef install GTK::Simple
 ```
 
 ## Testing
 
-To run tests:
-
+- To run tests:
 ```
 $ prove -e "perl6 -Ilib"
+```
+
+- To run all tests including author tests (Please make sure
+[Test::Meta](https://github.com/jonathanstowe/Test-META) is installed):
+```
+$ zef install Test::META
+$ AUTHOR_TESTING=1 prove -e "perl6 -Ilib"
 ```
 
 ## Author
