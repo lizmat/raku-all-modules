@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "WebService::Justcoin",
     "version"     : "0.0.1",
     "description" : "Access to Justcoin trading API (Norwegian Bitcoin marketplace)",
