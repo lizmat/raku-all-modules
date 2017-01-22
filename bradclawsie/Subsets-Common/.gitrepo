@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bradclawsie/Subsets-Common.git
 	branch = master
-	commit = 98464da4ea208da5eccc343b5a1d214bb9b58596
-	parent = 42ad65f9c814b302c6df96c8a23e10c2fef3c5a1
-	cmdver = 0.2.3
+	commit = 26072976461eb2a1e9273103d046f86571636cea
+	parent = d8461b5cea7b42bcc6fa299585359c55ce0912a3
+	cmdver = 0.4.0
