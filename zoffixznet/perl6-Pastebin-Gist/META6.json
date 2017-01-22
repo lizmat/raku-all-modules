@@ -1,9 +1,9 @@
 {
     "perl"         : "6.c",
     "name"         : "Pastebin::Gist",
-    "version"      : "1.001001",
+    "version"      : "1.001002",
     "description"  : "Use https://gist.github.com/ as a pastebin",
-    "depends"      : [ "HTTP::Tinyish", "JSON::Fast" ],
+    "depends"      : [ "HTTP::Tinyish", "JSON::Tiny" ],
     "test-depends" : [ "Test" ],
     "provides"     : {
         "Pastebin::Gist" : "lib/Pastebin/Gist.pm6"
