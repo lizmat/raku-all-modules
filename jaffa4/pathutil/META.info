@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Path::Util",
     "version" : "*",
     "description" : "decompose file path",
