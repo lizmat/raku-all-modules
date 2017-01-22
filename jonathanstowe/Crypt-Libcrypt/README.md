@@ -28,17 +28,7 @@ Currently there is no dedicated test to determine whether your platform is
 supported, the unit tests may simply fail horribly.
 
 Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+install this with *panda* :
 
     # From the source directory
    
@@ -48,13 +38,13 @@ Or you can install directly with "panda":
 
     panda install Crypt::Libcrypt
 
-Other install mechanisms may be become available in the future.
+This should work equally well with *zef* but I haven't tested it.
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/Crypt-Libcrypt
+https://github.com/jonathanstowe/Crypt-Libcrypt
 
 I'm not able to test on a wide variety of platforms so any help there would be 
 appreciated. Also help with the documentation of which platforms support
@@ -62,6 +52,8 @@ which encryption algorithms is probably required.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015, 2016
+Please see the [LICENCE](LICENCE) file in the distribution
+
+© Jonathan Stowe 2015, 2016, 2017
