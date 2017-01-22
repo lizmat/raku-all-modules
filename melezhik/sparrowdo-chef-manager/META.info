@@ -1,0 +1,19 @@
+{
+  "perl"        : "6.*",
+  "name"        : "Sparrowdo::Chef::Manager",
+  "version"     : "*",
+  "description" : "Sparrowdo module to manage chef users",
+  "authors" : [ "Alexey Melezhik"],
+  "depends"     : [
+                    "Sparrowdo"
+                  ],
+  "source-type" : "git",
+  "support" : {
+        "bugtracker" : "https://github.com/melezhik/sparrowdo-chef-manager/issues",
+        "source" : "https://github.com/melezhik/sparrowdo-chef-manager.git"
+    },
+   "provides" : {
+        "Sparrowdo::Chef::Manager" : "lib/Sparrowdo/Chef/Manager.pm6"
+  },
+  "source-url"  : "https://github.com/melezhik/sparrowdo-chef-manager.git"
+}
