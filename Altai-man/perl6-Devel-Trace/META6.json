@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Devel::Trace",
     "version"     : "0.1",
     "description" : "Perl6 code tracer.",
