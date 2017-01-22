@@ -1,0 +1,13 @@
+{
+	"perl" : "6.c",
+	"name" : "Geo::IP2Location::Lite",
+	"version" : "0.9.0",
+	"description" : "Lightweight lookup of IPv4 address details using BIN files from http://www.ip2location.com",
+	"authors" : [ "github:leejo" ],
+	"provides" : {
+		"Geo::IP2Location::Lite" : "lib/Geo/IP2Location/Lite.pm"
+	},
+	"depends" : [ "NativeCall" ],
+	"resources" : [ ],
+	"source-url" : "git://github.com/leejo/geo-ip2location-lite-p6"
+}

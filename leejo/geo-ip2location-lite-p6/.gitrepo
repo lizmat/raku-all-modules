@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/leejo/geo-ip2location-lite-p6.git
+	branch = master
+	commit = c563f42cac0ad00ce2861218a20086756a8a854e
+	parent = e2ab0110897eea93cafe47a19252e447d0a63a2b
+	cmdver = 0.4.0
