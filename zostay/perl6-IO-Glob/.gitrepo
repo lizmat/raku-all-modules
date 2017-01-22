@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/perl6-IO-Glob.git
 	branch = master
-	commit = b60790db5d7ac8666d5b589d9cbd0d885ea5c036
-	parent = 115b13fc8b14cc63ac1cf32a6b7df6626f69ab18
-	cmdver = 0.2.3
+	commit = 8ad30754a4693a206e4a4fa15b5b2cd885a9b9fb
+	parent = 8f6741dfc8491972381a42dd1731b8c71dd86d28
+	cmdver = 0.4.0

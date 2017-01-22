@@ -1,3 +1,11 @@
+v0.3    December 11, 2016
+
+    * Fix #4: The API of IO::Path changed, breaking tests. Better
+      checks to make sure we stringify the filename prior to using it in both
+      places.
+    * PR #5: Updated a spot in the docs making a similar fix to make sure to
+      stringify explicitly to get the filename back. (HT: @JJ)
+     
 v0.2    August 30, 2016
 
     * Fix: Some patterns did not work. Collecting char-match terms together

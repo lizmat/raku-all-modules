@@ -2,7 +2,7 @@
     "perl" : "6",
     "name" : "IO::Glob",
     "auth" : "github:zostay",
-    "version" : "v0.2",
+    "version" : "v0.3",
     "description" : "Glob matching for paths & strings and listing files",
     "authors" : [
         "Andrew Sterling Hanenkamp <hanenkamp@cpan.org>",
@@ -20,7 +20,7 @@
         "IO::Glob::BSD": "lib/IO/Glob.pm6",
         "IO::Glob::SQL": "lib/IO/Glob.pm6"
     },
-    "depends" : [],
+    "depends" : [ "Test", "Test::META" ],
     "source-url" : "git://github.com/zostay/perl6-IO-Glob.git",
     "support" : {
         "bugtracker" : "https://github.com/zostay/perl6-IO-Glob/issues",

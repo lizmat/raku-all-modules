@@ -9,7 +9,7 @@ SYNOPSIS
     use IO::Glob;
 
     # Need a list of files somewhere?
-    for glob("src/core/*.pm") -> $file { say $file }
+    for glob("src/core/*.pm") -> $file { say ~$file }
 
     # Or apply the glob to a chosen directory
     with glob("*.log") {
