@@ -1,4 +1,5 @@
 {
+    "perl"          : "6.*",
     "name"          : "Cache::LRU",
     "version"       : "0.1.0",
     "authors"       : [ "github:fayland" ],
