@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/JSON-Unmarshal.git
 	branch = master
-	commit = 97e3115683e82f44947506c172f73064126e2529
-	parent = 114bd49d258ac7051dae6ceb3484280c7609f030
-	cmdver = 0.2.3
+	commit = 9279de98ba3b528bde2e4056b693cf6d2dbec14b
+	parent = 3db98937f7e9a321885b4b385aeac11cab5c7e9d
+	cmdver = 0.4.0

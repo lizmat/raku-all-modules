@@ -84,7 +84,11 @@ multi _unmarshal($json, Bool) {
 
 multi _unmarshal($json, Any $x) {
     my %args;
+    my %local-attrs =  $x.^attributes(:local).map({ $_.name => $_.package });
     for $x.^attributes -> $attr {
+        if %local-attrs{$attr.name}:exists && !(%local-attrs{$attr.name} === $attr.package ) {
+            next;
+        }
         my $attr-name = $attr.name.substr(2);
         my $json-name = do if  $attr ~~ JSON::Name::NamedAttribute {
             $attr.json-name;
@@ -126,7 +130,27 @@ multi _unmarshal($json, Mu) {
     return $json
 }
 
-sub unmarshal($json, $obj) is export {
+multi unmarshal($json, Positional $obj) is export {
+    my Any \data = from-json($json);
+    if data ~~ Positional {
+        return @(_unmarshal($_, $obj.of) for @(data));
+    } else {
+        fail "Unmarshaling to type $obj.^name() requires the json data to be a list of objects.";
+    }
+}
+
+multi unmarshal($json, Associative $obj) is export {
+    my \data = from-json($json);
+    if data ~~ Associative {
+        return %(for data.kv -> $key, $value {
+            $key => _unmarshal($value, $obj.of)
+        })
+    } else {
+        fail "Unmarshaling to type $obj.^name() requires the json data to be an object.";
+    };
+}
+
+multi unmarshal($json, $obj) is export {
     _unmarshal(from-json($json), $obj)
 }
 # vim: expandtab shiftwidth=4 ft=perl6
