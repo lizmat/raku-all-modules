@@ -2,6 +2,7 @@
 
 Get audio fingerprint using the chromaprint / AcoustID library
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Audio-Fingerprint-Chromaprint.svg?branch=master)](https://travis-ci.org/jonathanstowe/Audio-Fingerprint-Chromaprint)
 ## Synopsis
 
 ```perl6
