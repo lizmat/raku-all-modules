@@ -3,11 +3,12 @@ use nqp;
 unit module JSON::Fast;
 
 sub str-escape(str $text) {
-  return $text.subst(/'\\'/, '\\\\', :g)\ 
-              .subst(/"\n"/, '\\n',  :g)\
-              .subst(/"\r"/, '\\r',  :g)\
-              .subst(/"\t"/, '\\t',  :g)\
-              .subst(/'"'/,  '\\"',  :g);  
+    return $text.subst('\\', '\\\\',    :g)\
+                .subst("\n", '\\n',     :g)\
+                .subst("\r", '\\r',     :g)\
+                .subst("\t", '\\t',     :g)\
+                .subst('"',  '\\"',     :g)\
+                .subst("\0", '\\u0000', :g);
 }
 
 sub to-json($obj is copy, Bool :$pretty = True, Int :$level = 0, Int :$spacing = 2) is export {
@@ -50,14 +51,15 @@ sub to-json($obj is copy, Bool :$pretty = True, Int :$level = 0, Int :$spacing =
 
 my sub nom-ws(str $text, int $pos is rw) {
     my int $wsord;
-    STATEMENT_LIST(
-        $wsord = nqp::ordat($text, $pos);
-        last unless $wsord == 32 || $wsord == 10 || $wsord == 13 || $wsord == 9;
-        $pos = $pos + 1;
-    ) while True;
-    CATCH {
-        die "at $pos: reached the end of the string while looking for things";
-    }
+    nqp::handle(
+        nqp::while(1,
+            nqp::stmts(
+                ($wsord = nqp::ordat($text, $pos)),
+                (last unless $wsord == 32 || $wsord == 10 || $wsord == 13 || $wsord == 9),
+                ($pos = $pos + 1)
+            )),
+            'CATCH',
+            (die "reached end of string when looking for something"));
 }
 
 my sub parse-string(str $text, int $pos is rw) {
@@ -66,8 +68,12 @@ my sub parse-string(str $text, int $pos is rw) {
 
     my str $result;
 
+    my int $ord;
+
+    my @pieces;
+
     loop {
-        my int $ord = nqp::ordat($text, $pos);
+        $ord = nqp::ordat($text, $pos);
         $pos = $pos + 1;
         die "reached end of string while looking for end of quoted string." if $pos > nqp::chars($text);
 
@@ -75,8 +81,6 @@ my sub parse-string(str $text, int $pos is rw) {
             $result = nqp::substr($text, $startpos, $pos - 1 - $startpos);
             last;
         } elsif $ord == 92 { # \
-            my @pieces;
-
             $result = substr($text, $startpos, $pos - 1 - $startpos);
             @pieces.push: $result;
 
@@ -139,7 +143,7 @@ my sub parse-numeric(str $text, int $pos is rw) {
 
         $residual := nqp::substr($text, $pos, 1);
     }
-    
+
     if $residual eq 'e' || $residual eq 'E' {
         $pos = $pos + 1;
 
@@ -165,10 +169,11 @@ my sub parse-obj(str $text, int $pos is rw) {
         $pos = $pos + 1;
         %();
     } else {
+        my $thing;
         loop {
-            my $thing;
+            $thing = Any;
 
-            if defined $key {
+            if $key.DEFINITE {
                 $thing = parse-thing($text, $pos)
             } else {
                 nom-ws($text, $pos);
@@ -185,16 +190,16 @@ my sub parse-obj(str $text, int $pos is rw) {
 
             #my str $partitioner = nqp::substr($text, $pos, 1);
 
-            if nqp::eqat($text, ':', $pos)      and not defined $key and not defined $value {
+            if nqp::eqat($text, ':', $pos)      and !($key.DEFINITE or $value.DEFINITE) {
                 $key = $thing;
-            } elsif nqp::eqat($text, ',', $pos) and     defined $key and not defined $value {
+            } elsif nqp::eqat($text, ',', $pos) and     $key.DEFINITE and not $value.DEFINITE {
                 $value = $thing;
 
                 %result{$key} = $value;
 
-                $key   = Nil;
-                $value = Nil;
-            } elsif nqp::eqat($text, '}', $pos) and     defined $key and not defined $value {
+                $key   = Any;
+                $value = Any;
+            } elsif nqp::eqat($text, '}', $pos) and     $key.DEFINITE and not $value.DEFINITE {
                 $value = $thing;
 
                 %result{$key} = $value;
@@ -221,11 +226,13 @@ my sub parse-array(str $text, int $pos is rw) {
         $pos = $pos + 1;
         [];
     } else {
+        my $thing;
+        my str $partitioner;
         loop {
-            my $thing = parse-thing($text, $pos);
+            $thing = parse-thing($text, $pos);
             nom-ws($text, $pos);
 
-            my str $partitioner = nqp::substr($text, $pos, 1);
+            $partitioner = nqp::substr($text, $pos, 1);
             $pos = $pos + 1;
 
             if $partitioner eq ']' {
@@ -289,21 +296,7 @@ sub from-json(Str() $text) is export {
 
     my int $pos = 0;
 
-    nom-ws($text, $pos);
-
-    my str $initial = nqp::substr($text, $pos, 1);
-
-    $pos = $pos + 1;
-
-    my $result;
-
-    if $initial eq '{' {
-        $result = parse-obj($ntext, $pos);
-    } elsif $initial eq '[' {
-        $result = parse-array($ntext, $pos);
-    } else {
-        die "a JSON string ought to be a list or an object";
-    }
+    my $result = parse-thing($text, $pos);
 
     try nom-ws($text, $pos);
 
