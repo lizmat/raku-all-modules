@@ -1,12 +1,14 @@
-use HTTP::Server;
+use HTTP::Server:auth<github:tony-o>;
 use HTTP::Server::Async::Request;
 use HTTP::Server::Async::Response;
 
 class HTTP::Server::Async does HTTP::Server {
-  has Int     $.port          = 1666;
-  has Str     $.ip            = '0.0.0.0';
-  has Channel $.requests     .= new;
-  has Int     $.timeout is rw = 8;
+  has Int      $.port          = 1666;
+  has Str      $.ip            = '0.0.0.0';
+  has Channel  $.requests     .= new;
+  has Int      $.timeout is rw = 8;
+  has Supplier $!timeout-supplier;
+  has Supply   $!timeout-supply;
 
   has Supply $.socket  is rw;
 
@@ -34,7 +36,8 @@ class HTTP::Server::Async does HTTP::Server {
         CATCH { default { .say; } }
         for @!connects.grep({ now - $_<last-active> >= $.timeout }) {
           CATCH { default { .say; } }
-          try $_<connection>.close;
+          #try $_<connection>.close; 
+          try $!timeout-supplier.emit($_<connection>);
         }
       };
     };
@@ -53,6 +56,12 @@ class HTTP::Server::Async does HTTP::Server {
     self!responder;
     self!timeout;
 
+    $!timeout-supplier .=new unless $!timeout-supplier.defined;
+    $!timeout-supply    = $!timeout-supplier.Supply;
+    $!timeout-supply.tap(-> $conn {
+      try $conn.close;
+    });
+
     $.socket = IO::Socket::Async.listen($.ip, $.port) or die "Failed to listen on $.ip:$.port";
     $.socket.tap(-> $conn {
       my Buf $data .=new;
@@ -64,8 +73,8 @@ class HTTP::Server::Async does HTTP::Server {
       });
       
       $conn.Supply(:bin).tap(-> $bytes {
-        $data = $data ~ $bytes;
-		self!reset-time($conn);
+        $data ~= $bytes;
+        self!reset-time($conn);
         while $index++ < $data.elems - 3 {
           $index--, last if $data[$index]   == $rn[0] &&
                             $data[$index+1] == $rn[1] &&
@@ -122,7 +131,22 @@ class HTTP::Server::Async does HTTP::Server {
     if $req ~~ Nil || !( $req.^can('headers') && $req.headers.keys.elems ) {
       my @lines       = Buf.new($data[0..$index]).decode.lines;
       my ($m, $u, $v) = @lines.shift.match(/^(.+?)\s(.+)\s(HTTP\/.+)$/).list.map({ .Str });
-      my %h           = %(@lines.map({ .split(':', 2).map({.trim}).Slip }).Slip);
+      my %h;
+      my $last-key = '';
+      for @lines -> $line {
+        if $line ~~ /^\s/ && $last-key {
+          %h{$last-key} ~= $line.trim;
+        } else { 
+          my ($k,$v) = $line.split(':', 2).map({.trim});
+          $last-key = $k;
+          if %h{$k}:exists {
+            %h{$k} = [%h{$k},] if %h{$k} !~~ Array;
+            %h{$k}.push($v);
+          } else {
+            %h{$k} = $v;
+          }
+        }
+      }
 
       $req    = HTTP::Server::Async::Request.new(
                   :method($m), 
