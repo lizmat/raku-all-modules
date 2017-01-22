@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/melezhik/remote-file.git
 	branch = master
-	commit = b8f8090e97cc461927d95408b82a2a3c56fb67a3
-	parent = d0ee1b3fdbacc11e078b8a83e18a6c4949b0ead8
-	cmdver = 0.2.3
+	commit = c3023d034852b121dc9357046c8b7d5e28f77c12
+	parent = c4c2cbdb6cf7cb9d841f86b1238584267e9ab2b3
+	cmdver = 0.4.0

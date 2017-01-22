@@ -18,14 +18,18 @@ our sub tasks (%args) {
     parameters  => %( path =>  %args<location>.IO.dirname )
   );
 
+  my $cmd = 'curl '  ~ %args<url> ~ ' -w \'%{url_effective} ==> <%{http_code}> \'' 
+  ~ ' -L -s -k -f -o ' ~ %args<location>; 
+
+  $cmd ~= ' -u' ~ %args<user> if %args<user>.defined;
+  $cmd ~= ':' ~ %args<password> if %args<password>.defined;
+
+  $cmd ~= ' && echo && ls -lh ' ~ %args<location>;
+
   task_run %(
     task    => "download remote file",
     plugin  => "bash",
-    parameters => %(
-      command => 'curl '  ~ %args<url> ~ ' -w \'%{url_effective} ==> <%{http_code}> \'' 
-      ~ ' -L -s -k -f -o ' ~ %args<location> ~ ' && echo && ls -lh ' ~ %args<location> ,
-      debug => 0,
-    )
+    parameters => %( command => $cmd, debug => 0 );
   );
 
 }

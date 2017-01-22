@@ -25,7 +25,17 @@ Remote file url. No default value. Obligatory.
 ## location
 
 A local file path where to store a downloaded file. No default value. Obligatory.
-  
+
+## user
+
+Sets user name for resources with access restricted by http basic authentication. Optional,
+no default value.
+
+## password
+
+Sets password for resources with access restricted by http basic authentication. Optional,
+no default value.
+
 # Author
 
 [Alexey Melezhik](melezhik@gmail.com)

@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "Sparrowdo::RemoteFile",
   "version"     : "*",
   "description" : "Fetch remote file using http",
