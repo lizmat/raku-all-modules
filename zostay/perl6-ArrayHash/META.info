@@ -1,8 +1,11 @@
 {
     "name" : "ArrayHash",
-    "version" : "0.1",
+    "version" : "0.2",
     "description" : "An array in a hash in an array... like a turducken",
-    "author" : "Andrew Sterling Hanenkamp",
+    "authors" : [
+        "Sterling Hanenkamp <hanenkamp@cpan.org>"
+    ],
+    "perl" : "6.c",
     "provides" : {
         "ArrayHash": "lib/ArrayHash.pm6"
     },

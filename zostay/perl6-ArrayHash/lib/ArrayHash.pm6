@@ -1,4 +1,4 @@
-unit class ArrayHash does Associative does Positional;
+unit class ArrayHash:ver<0.2>:auth<Sterling Hanenkamp (hanenkamp@cpan.org)> does Associative does Positional;
 
 use v6;
 
@@ -16,7 +16,7 @@ use v6;
     @array[1].say; #> "b" => 3;
 
     # The order of the keys is preserved
-    for %hash.kv -> $k, $v { 
+    for %hash.kv -> $k, $v {
         say "$k: $v";
     }
 
@@ -33,7 +33,7 @@ use v6;
 
 B<Experimental:> The API here is experimental. Some important aspects of the API may change without warning.
 
-You can think of this as a L<Hash> that always iterates in insertion order or you can think of this as an L<Array> of L<Pair>s with fast lookups by key. Both are correct, though it really is more hashish than arrayish because of the Pairs, which is why it's an ArrayHash and not a HashArray. 
+You can think of this as a L<Hash> that always iterates in insertion order or you can think of this as an L<Array> of L<Pair>s with fast lookups by key. Both are correct, though it really is more hashish than arrayish because of the Pairs, which is why it's an ArrayHash and not a HashArray.
 
 An ArrayHash is both Associative and Positional. This means you can use either a C<@> sigil or a C<%> sigil safely. However, there is some amount of conflicting tension between a L<Positional> and L<Assocative> data structure. An Associative object in Perl requires unique keys and has no set order. A Positional, on the othe rhand, is a set order, but no inherent uniqueness invariant. The primary way this tension is resolved depends on whether the operations you are performing are hashish or arrayish.
 
@@ -63,11 +63,11 @@ What happened? Why didn't the values changed and where did this extra L<Pair> co
 
 Since an L<ArrayHash> maintains its order, this rule always applies. A value added near the end will win over a value at the beginning. Adding a value near the beginning will lose to a value nearer the end.
 
-So, returning to the C<unshift> example above, the arrayish value with key C<"a"> gets unshifted to the front of the array, but immediately nullified because of the later value. The hashish value with key C<"b"> sees an existing value for the same key and the existing value wins since it would come after it. 
+So, returning to the C<unshift> example above, the arrayish value with key C<"a"> gets unshifted to the front of the array, but immediately nullified because of the later value. The hashish value with key C<"b"> sees an existing value for the same key and the existing value wins since it would come after it.
 
 The same rule holds for all operations: If the key already exists, but before the position the value is being added, the new value wins. If the key already exists, but after the position we are inserting, the old value wins.
 
-For a regular ArrayHash, the losing value will either be replaced, if the operation is hashish, or will be nullified, if the operation is arrayish. 
+For a regular ArrayHash, the losing value will either be replaced, if the operation is hashish, or will be nullified, if the operation is arrayish.
 
 This might not always be the desired behavior so this module also provides a multi-valued ArrayHash, or multi-hash interface:
 
@@ -161,8 +161,8 @@ This provides the usual value lookup by key. You can use this to retrieve a valu
 
 =end pod
 
-method AT-KEY(ArrayHash:D: $key) { 
-    %!hash{$key} 
+method AT-KEY(ArrayHash:D: $key) {
+    %!hash{$key}
 }
 
 =begin pod
@@ -179,7 +179,7 @@ method AT-POS(ArrayHash:D: $pos) returns Pair {
     @!array[$pos];
 }
 
-method ASSIGN-KEY(ArrayHash:D: $key, $value is copy) { 
+method ASSIGN-KEY(ArrayHash:D: $key, $value is copy) {
     POST { %!hash{$key} =:= @!array[ @!array.first(want($key), :k, :end) ].value }
 
     if %!hash{$key} :exists {
@@ -241,7 +241,7 @@ method ASSIGN-POS(ArrayHash:D: $pos, Pair:D $pair) {
     $pair;
 }
 
-method BIND-KEY(ArrayHash:D: $key, $value is rw) is rw { 
+method BIND-KEY(ArrayHash:D: $key, $value is rw) is rw {
     POST { %!hash{$key} =:= @!array.reverse.first(want($key)).value }
 
     if %!hash{$key} :exists {
@@ -307,7 +307,7 @@ method DELETE-POS(ArrayHash:D: $pos) returns Pair {
     my Pair $pair;
 
     POST { @!array[$pos] ~~ Pair:U }
-    POST { 
+    POST {
         $pair.defined && !$!multivalued ??
             @!array.first(want($pair.key), :k) ~~ Nil
         !! True
@@ -338,12 +338,12 @@ Adds the given values onto the end of the ArrayHash. These values will replace a
 
     my @a := array-hash('a' => 1, 'b' => 2);
     @a.push: 'a' => 3, b => 4, 'c' => 5;
-    @a.perl.say; 
+    @a.perl.say;
     #> array-hash("b" => 4, "a" => 3, "c" => 5);
 
     my @m := multi-hash('a' => 1, 'b' => 2);
     @m.push: 'a' => 3, b => 4, 'c' => 5;
-    @m.perl.say; 
+    @m.perl.say;
     #> multi-hash("a" => 1, "b" => 4, "a" => 3, "b" => 4, "c" => 5);
 
 =end pod
@@ -364,12 +364,12 @@ Adds the given values onto the front of the ArrayHash. These values will never r
 
     my @a := array-hash('a' => 1, 'b' => 2);
     @a.unshift 'a' => 3, b => 4, 'c' => 5;
-    @a.perl.say; 
+    @a.perl.say;
     #> array-hash("c" => 5, "a" => 1, "b" => 2);
 
     my @m := multi-hash('a' => 1, 'b' => 2);
     @m.push: 'a' => 3, b => 4, 'c' => 5;
-    @m.perl.say; 
+    @m.perl.say;
     #> multi-hash("a" => 3, "b" => 4, "c" => 5, "a" => 1, "b" => 2);
 
 =end pod
@@ -461,7 +461,7 @@ multi method splice(ArrayHash:D: Int(Cool) $offset = 0, Int(Cool) $size?, *@valu
     unless 0 <= $offset <= self.elems {
         X::OutOfRange.new(
             what  => 'offset argument to ArrayHash.splice',
-            got   => $offset, 
+            got   => $offset,
             range => ^self.elems,
         ).fail;
     }
@@ -503,14 +503,14 @@ multi method splice(ArrayHash:D: Int(Cool) $offset = 0, Int(Cool) $size?, *@valu
 
     # Replace hash elements with new values
     for @repl -> $p {
-        %!hash{ $p.key } := $p.value 
+        %!hash{ $p.key } := $p.value
             if $p.defined && !self!found-after($offset + @repl.elems - 1, $p.key);
     }
 
     # Nullify earlier values that have just been replaced
     unless $!multivalued {
         for @!array[0 .. $offset - 1].kv -> $i, $p {
-            @!array[$i] :delete 
+            @!array[$i] :delete
                 if $p.defined && @repl.first(want($p.key)).defined;
         }
     }
@@ -530,7 +530,7 @@ This is not yet implemented.
 =end pod
 
 method sort(ArrayHash:D: $by = &infix:<cmp>) returns ArrayHash:D {
-    die "not yet implemented";    
+    die "not yet implemented";
 }
 
 =begin pod
@@ -539,16 +539,16 @@ method sort(ArrayHash:D: $by = &infix:<cmp>) returns ArrayHash:D {
 
     method unique(ArrayHash:D:) returns ArrayHash:D
 
-For a multivalued hash, this returns the same hash as a non-multivalued hash. Otherwise, it returns itself.    
+For a multivalued hash, this returns the same hash as a non-multivalued hash. Otherwise, it returns itself.
 
 =end pod
 
-method unique(ArrayHash:D:) returns ArrayHash:D { 
+method unique(ArrayHash:D:) returns ArrayHash:D {
     if $!multivalued {
         array-hash(self.pairs)
     }
     else {
-        self 
+        self
     }
 }
 
@@ -574,7 +574,7 @@ Not yet implemented.
 
 =end pod
 
-method rotor(ArrayHash:D:) { 
+method rotor(ArrayHash:D:) {
     die "not yet implemented";
 }
 
@@ -660,7 +660,7 @@ method keys() returns List:D { @!array».key.List }
 method indexes() returns List:D { @!array.keys }
 method kv() returns List:D { @!array».kv.List }
 method ip() returns List:D { @!array.kv }
-method ikv() returns List:D { 
+method ikv() returns List:D {
     @!array.kv.flatmap({ .defined && Pair ?? .kv !! $_ })
 }
 method pairs() returns List:D { @!array }
@@ -720,7 +720,7 @@ multi method perl(ArrayHash:D:) returns Str:D {
 
 multi method gist(ArrayHash:D:) returns Str:D {
     my $type = $!multivalued ?? 'multi-hash' !! 'array-hash';
-    $type ~ '(' ~ do for @!array -> $elem { 
+    $type ~ '(' ~ do for @!array -> $elem {
         given ++$ {
             when 101 { '...' }
             when 102 { last }
@@ -774,12 +774,12 @@ method rotate(ArrayHash:D: Int $n = 1) returns ArrayHash:D {
 }
 
 # my role TypedArrayHash[::TValue] does Associative[TValue] does Positional[Pair] {
-# 
+#
 # }
-# 
+#
 # my role TypedArrayHash[::TValue, ::TKey] does Associative[TValue] does Positional[Pair] {
 # }
-# 
+#
 # # Taken from Hash.pm
 # method ^parameterize(Mu:U \hash, Mu:U \t, |c) {
 #     if c.elems == 0 {
