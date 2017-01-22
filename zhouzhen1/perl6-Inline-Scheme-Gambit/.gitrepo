@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zhouzhen1/perl6-Inline-Scheme-Gambit.git
 	branch = master
-	commit = 4bc12d1d8d9e74b54c7fc0b8f56fd74f066ce18f
-	parent = 03fdc78c3e3a711faf5ee6b95d320924b15209ff
-	cmdver = 0.2.3
+	commit = 8e011df48df85b8a7fe8161c1407597188d3071e
+	parent = b02a3c13771e5cde316ef0240bb0a2834b0509b5
+	cmdver = 0.4.0

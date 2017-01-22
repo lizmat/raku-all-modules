@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Inline::Scheme::Gambit",
     "version" : "0.01",
     "author" : "github:zhouzhen1",
