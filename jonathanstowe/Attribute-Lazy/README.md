@@ -6,7 +6,7 @@ Lazy attribute initialisation for Perl 6 classes
 
 ## Synopsis
 
-```
+```perl6
 
 use Attribute::Lazy;
 
@@ -28,18 +28,8 @@ to calculate (or various other reasons that haven't been thought of.)
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -49,18 +39,26 @@ Or you can install directly with "panda":
 
     panda install Attribute::Lazy
 
+Or *zef*:
+
+    # From the source directory
+   
+    zef install .
+
+    # Remote installation
+
+    zef install Attribute::Lazy
+
 Other install mechanisms may be become available in the future.
 
 ## Support
 
-Suggestions/patches are welcomed via github at
-
-   https://github.com/jonathanstowe/Attribute-Lazy
+Suggestions/patches are welcomed via github at https://github.com/jonathanstowe/Attribute-Lazy
 
 ## Licence
 
 Please see the LICENCE file in the distribution
 
-(C) Rakudo Contributors 2015
-(C) Jonathan Stowe 2016
+© Rakudo Contributors 2015
+© Jonathan Stowe 2016
 
