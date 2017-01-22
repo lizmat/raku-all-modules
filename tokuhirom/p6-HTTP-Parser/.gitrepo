@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tokuhirom/p6-HTTP-Parser.git
 	branch = master
-	commit = b1f2d84c9b611f20cef8a77cdc12344249ef6737
-	parent = ab2cfc3abc1b62412e4c4f789fa4c846d95d6050
-	cmdver = 0.2.3
+	commit = 7751b763d1a406d078c2763bc5098d1ee89f31f1
+	parent = 147bbcf742a12394b002779ceee5fae0de66374b
+	cmdver = 0.4.0
