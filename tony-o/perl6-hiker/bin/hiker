@@ -17,11 +17,11 @@ use Hiker::Route;
 
 class MyApp::Route1 does Hiker::Route \{
   has \$.path     = '/';
-  has \$.template = 'Route1.pt';
+  has \$.template = 'Route1.mustache';
   has \$.model    = 'MyApp::Model1';
 
   method handler(\$req, \$res) \{
-    True;
+    \$res.headers<Content-Type> = 'text/plain';
   \}
 \}  
   ");
@@ -32,14 +32,14 @@ use Hiker::Model;
 
 class MyApp::Model1 does Hiker::Model \{
   method bind(\$req, \$res) \{
-    \$res.data<who> = 'world!';
+    \$res.data<who> = 'web!';
   \}
 \}  
   ");
 
-  "==> Creating template {$*SPEC.catpath('', $templates, 'Route1.pt')}".say;
-  $*SPEC.catpath('', $templates, 'Route1.pt').IO.spurt("
-Hello <% print \$data<who> %>
+  "==> Creating template {$*SPEC.catpath('', $templates, 'Route1.mustache')}".say;
+  $*SPEC.catpath('', $templates, 'Route1.mustache').IO.spurt("
+Hello \{\{who\}\}
   ");
 
   '==> Creating app.pl6'.say;
@@ -51,7 +51,7 @@ my \$app = Hiker.new(
   templates => '$templates',
 );
 
-\$app.listen;
+\$app.listen(:block);
   ");
 
 }

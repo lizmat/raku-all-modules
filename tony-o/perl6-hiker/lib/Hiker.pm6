@@ -29,8 +29,14 @@ class Hiker {
     my $recurse = sub (*@m) {
       my @r;
       for @m -> $m {
-        @r.append($m) unless @ignore.grep($m) || ::($m.^name) !~~ any(Hiker::Route, Hiker::Model);
-        try @r.append($recurse($m.WHO.values)) if $m.WHO.values.elems;
+        @r.append($m) 
+          unless @ignore.grep($m) 
+              || (
+                try { require ::($m.^name); True; }.so
+                && ::($m.^name) !~~ any(Hiker::Route, Hiker::Model)
+              );
+        try @r.append($recurse($m.WHO.values)) 
+          if $m.WHO.values.elems;
       }
       return @r.flat;
     };
@@ -69,8 +75,11 @@ class Hiker {
         "==> Binding {$module.perl} ...".say;
         my $obj = $module.new;
         if $obj ~~ Hiker::Route {
-          die "{$module.perl} does not contain .path" unless $obj.path.defined;
-          die "{$module.perl} requests model {$obj.model}" if $obj.^attributes.grep(.gist eq 'model') && ::($obj.model) ~~ Failure;
+          die "{$module.perl} does not contain .path" 
+            unless $obj.path.defined;
+          die "{$module.perl} requests model {$obj.model}" 
+            if $obj.^attributes.grep({ .gist eq 'model' }) 
+            && ::($obj.model) ~~ Failure;
           "==> Setting up route {$obj.path ~~ Regex ?? $obj.path.gist !! $obj.path} ($f)".say;
           my $template = $obj.template;
           my $model;

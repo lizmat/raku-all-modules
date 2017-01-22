@@ -1,2 +1,6 @@
 *.swp
+<<<<<<< HEAD
+=======
 blib/*
+>>>>>>> d0c73dac29caace941f6b861973664295447d5a5
+.precomp

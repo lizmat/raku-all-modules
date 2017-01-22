@@ -9,7 +9,7 @@ role Hiker::Render {
   has %.data;
 
   method render(:$file? = $.template) {
-    if !$file:defined || $file.IO !~~ :f {
+    if !$file.defined || $file.IO !~~ :f {
       $.close('404');
     }
     $.close($renderer.render($file.IO.slurp, %.data));
