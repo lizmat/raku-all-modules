@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "HTTP::Server::Router",
   "version"     : "0.1.0",
   "description" : "Router for HTTP::Server based servers",
