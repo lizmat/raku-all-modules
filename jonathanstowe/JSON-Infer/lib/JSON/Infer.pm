@@ -216,7 +216,7 @@ This returns a suitable string representation of the attribute for Perl.
 use JSON::Fast;
 use HTTP::UserAgent;
 
-class JSON::Infer:ver<0.0.12>:auth<github:jonathanstowe> {
+class JSON::Infer:ver<0.0.14>:auth<github:jonathanstowe> {
 
     
     role Classes        { ... }
@@ -470,7 +470,7 @@ class JSON::Infer:ver<0.0.12>:auth<github:jonathanstowe> {
         my $resp =  self.get($uri);
         if $resp.is-success() {
             my $json = $resp.decoded-content();
-            $ret = samewith(:$json, :$class-name);
+            $ret = self.infer(:$json, :$class-name);
         }
         else {
             X::Infer.new(:$uri, message => "Couldn't retrieve URI $uri").throw;
@@ -481,7 +481,7 @@ class JSON::Infer:ver<0.0.12>:auth<github:jonathanstowe> {
     multi method infer(Str:D :$file!, :$class-name = 'My::JSON') returns Class {
         my $io = $file.IO;
         if $io.e {
-            samewith(file => $io, :$class-name);
+            self.infer(file => $io, :$class-name);
         }
         else {
             X::Infer.new(uri => $file, message => "File $file does not exist").throw;
@@ -490,7 +490,7 @@ class JSON::Infer:ver<0.0.12>:auth<github:jonathanstowe> {
 
     multi method infer(IO::Path:D :$file!, :$class-name = 'My::JSON') returns Class {
         my $json = $file.slurp();
-        samewith(:$json, :$class-name);
+        self.infer(:$json, :$class-name);
     }
 
     multi method infer(Str:D :$json!, Str :$class-name = 'My::JSON') returns Class {

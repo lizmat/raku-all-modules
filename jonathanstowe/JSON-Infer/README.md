@@ -42,17 +42,7 @@ consistency of the data.
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+install this with *panda* :
 
     # From the source directory
    
@@ -61,6 +51,17 @@ Or you can install directly with "panda":
     # Remote installation
 
     panda install JSON::Infer
+
+Or with *zef* :
+
+    # From the source directory
+   
+    zef install .
+
+    # Remote installation
+
+    zef install JSON::Infer
+
 
 Other install mechanisms may be become available in the future.
 
@@ -73,6 +74,8 @@ Suggestions/patches are welcomed via github at
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015, 2016
+Please see the LICENCE file in the distribution for details.
+
+© Jonathan Stowe 2015, 2016
