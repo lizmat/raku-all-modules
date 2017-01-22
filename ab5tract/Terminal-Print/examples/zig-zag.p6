@@ -1,7 +1,8 @@
-use fatal;
+# ABSTRACT: Asynchronously zigzagging worms
 
-use lib './lib';
+use v6;
 use Terminal::Print;
+
 
 #my $b = Terminal::Print.new(move-cursor-profile => 'debug');   # TODO: take named parameter for grid name of default grid
 my $b = Terminal::Print.new;   # TODO: take named parameter for grid name of default grid
@@ -29,7 +30,7 @@ my sub zig-zag( Int $start_y? ) {
             $b.print-cell($x-1, $cur_y-1, ' ');
             $b.print-cell($x-2, $cur_y-1, ' ');
         }
-        sleep (^0.9).roll;
+        sleep 0.3.rand;
     }
 }
 

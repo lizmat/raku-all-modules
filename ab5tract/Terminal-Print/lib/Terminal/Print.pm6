@@ -59,22 +59,18 @@ we might be able to get from using Perl 6 -- easy async abstractions.
 =end pod
 
 use Terminal::Print::Grid;
+use Terminal::Print::Widget;
 
-has Terminal::Print::Grid $.current-grid;
-
+has Terminal::Print::Grid $.current-grid handles 'indices';
 has Terminal::Print::Grid @.grids;
 
-has @.indices;
 has %!grid-name-map;
+has %!root-widget-map{Terminal::Print::Grid};
 
 has $.columns;
 has $.rows;
 
-my Terminal::Print $PRINTER;    # singleton for golfing and subroutines
-
 use Terminal::Print::Commands;
-
-constant Commands = Terminal::Print::Commands;
 
 subset Valid::X of Int is export where * < %T::attributes<columns>;
 subset Valid::Y of Int is export where * < %T::attributes<rows>;
@@ -84,26 +80,17 @@ has Terminal::Print::CursorProfile $.cursor-profile;
 has $.move-cursor;
 
 method new( :$cursor-profile = 'ansi' ) {
-    my $columns   = +%Commands::attributes<columns>;
-    my $rows      = +%Commands::attributes<rows>;
-    my $move-cursor = move-cursor-template($cursor-profile);
+    my $columns      = Terminal::Print::Commands::columns;
+    my $rows         = Terminal::Print::Commands::rows;
+    my $move-cursor  = move-cursor-template($cursor-profile);
+    my $current-grid = Terminal::Print::Grid.new( $columns, $rows, :$move-cursor );
 
-    my $grid = Terminal::Print::Grid.new( $columns, $rows, :$move-cursor );
-    my @indices = $grid.indices;
-
-    self.bless(
-                :$columns, :$rows, :@indices,
-                :$cursor-profile, :$move-cursor,
-                    current-grid    => $grid,
-              );
+    self.bless( :$columns, :$rows, :$current-grid,
+                :$cursor-profile,  :$move-cursor );
 }
 
-submethod BUILD( :$current-grid, :$!columns, :$!rows, :@indices, :$!cursor-profile, :$!move-cursor ) {
-    push @!grids, $current-grid;
-
-    $!current-grid := @!grids[0];
-
-    @!indices = @indices;  # TODO: bind this to @!grids[0].indices?
+submethod BUILD( :$!current-grid, :$!columns, :$!rows, :$!cursor-profile, :$!move-cursor ) {
+    push @!grids, $!current-grid;
 
     # set up a tap on SIGINT so that we can cleanly shutdown, restoring the previous screen and cursor
     signal(SIGINT).tap: {
@@ -113,12 +100,29 @@ submethod BUILD( :$current-grid, :$!columns, :$!rows, :@indices, :$!cursor-profi
     }
 }
 
-method add-grid( $name?, :$new-grid = Terminal::Print::Grid.new( :$!columns, :$!rows, :$!move-cursor ) ) {
+method root-widget() {
+    my $grid = self.current-grid;
+    %!root-widget-map{$grid} ||= Terminal::Print::Widget.new-from-grid($grid);
+}
+
+method add-grid( $name?, :$new-grid = Terminal::Print::Grid.new( $!columns, $!rows, :$!move-cursor ) ) {
     push @!grids, $new-grid;
     if $name {
         %!grid-name-map{$name} = +@!grids-1;
     }
     $new-grid;
+}
+
+multi method switch-grid( Int $index, :$blit ) {
+    die "Grid index $index does not exist" unless @!grids[$index]:exists;
+    self.blit($index) if $blit;
+    $!current-grid = @!grids[$index];
+}
+
+multi method switch-grid( Str $name, :$blit ) {
+    die "No grid has been named $name" unless my $index = %!grid-name-map{$name};
+    self.blit($index) if $blit;
+    $!current-grid = @!grids[$index];
 }
 
 method blit( $grid-identifier = 0 ) {
@@ -152,8 +156,6 @@ method print-command( $command ) {
 # Because we have AT-POS on the column object as well,
 # we get
 #   $b[$x][$y]
-#
-# TODO: implement $!current-grid switching
 method AT-POS( $column-idx ) {
     $!current-grid.grid[ $column-idx ];
 }
@@ -166,6 +168,10 @@ method AT-KEY( $grid-identifier ) {
 
 multi method CALL-ME($x, $y) {
     $!current-grid.print-cell($x, $y);
+}
+
+multi method CALL-ME($x, $y, %c) {
+    $!current-grid.print-cell($x, $y, %c);
 }
 
 multi method CALL-ME($x, $y, $c) {
@@ -221,8 +227,12 @@ multi method print-cell( $x, $y, %c ) {
     $!current-grid.print-cell($x, $y, %c);
 }
 
-method print-string( $x, $y, Str() $string) {
+multi method print-string( $x, $y, Str() $string) {
     $!current-grid.print-string($x, $y, $string);
+}
+
+multi method print-string( $x, $y, Str() $string, $color) {
+    $!current-grid.print-string($x, $y, $string, $color);
 }
 
 method change-cell( $x, $y, Str $c ) {
@@ -232,12 +242,13 @@ method change-cell( $x, $y, Str $c ) {
 #### print-grid stuff
 
 multi method print-grid( Int $index ) {
-    @!grids[$index].print-grid;
+    die "Grid index $index does not exist" unless @!grids[$index]:exists;
+    print @!grids[$index];
 }
 
 multi method print-grid( Str $name ) {
-    die "No grid has been named $name" unless my $grid-index = %!grid-name-map{$name};
-    @!grids[$grid-index].print-grid;
+    die "No grid has been named $name" unless my $index = %!grid-name-map{$name};
+    print @!grids[$index];
 }
 
 # method !clone-grid-index( $origin, $dest? ) {
@@ -284,7 +295,7 @@ but the following features seemed to fulfill a 'necessary minimum' set of golfin
 
 =end Golfing
 
-our $T = Terminal::Print.new;
+our $T = PROCESS::<$TERMINAL> = Terminal::Print.new;
 
 sub draw(Callable $block) is export {
     my $drawn-promise = Promise.new;
@@ -303,18 +314,32 @@ sub d($block) is export {
     draw($block);
 }
 
-sub p($x, $y, $string?) is export {
+multi sub p($x, $y) is export {
+    $T.current-grid.print-string($x, $y);
+}
+
+multi sub p($x, $y, $string) is export {
     $T.current-grid.print-string($x, $y, $string);
 }
 
-sub ch($x, $y, $char, $color?) is export {
-    my $cell = $color ?? %(:$char, :$color) !! $char;
-    $T.current-grid.change-cell($x, $y, $cell);
+multi sub p($x, $y, $string, $color) is export {
+    $T.current-grid.print-string($x, $y, $string, $color);
 }
 
-sub cl($x, $y, $char, $color?) is export {
-    my $cell = $color ?? %(:$char, :$color) !! $char;
-    $T.current-grid.print-cell($x, $y, $cell);
+multi sub ch($x, $y, $char) is export {
+    $T.current-grid.change-cell($x, $y, $char);
+}
+
+multi sub ch($x, $y, $char, $color) is export {
+    $T.current-grid.change-cell($x, $y, %(:$char, :$color) );
+}
+
+multi sub cl($x, $y, $char) is export {
+    $T.current-grid.print-cell($x, $y, $char);
+}
+
+multi sub cl($x, $y, $char, $color) is export {
+    $T.current-grid.print-cell($x, $y, %(:$char, :$color) );
 }
 
 sub slp($seconds) is export {

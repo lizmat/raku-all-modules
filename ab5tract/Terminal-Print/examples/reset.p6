@@ -1,6 +1,8 @@
+# ABSTRACT: Initialize and then shutdown the screen
 
-my $t = Terminal::Print.new;
+use v6;
+use Terminal::Print;
 
-$t.initialize-screen;
 
-$t.shutdown-screen;
+T.initialize-screen;
+T.shutdown-screen;
