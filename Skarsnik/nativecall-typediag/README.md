@@ -1,4 +1,4 @@
-# Name NativeCall::Typediag
+# Name NativeCall::TypeDiag
 
 # Synopsis
 
