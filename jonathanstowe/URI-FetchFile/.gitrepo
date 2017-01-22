@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/URI-FetchFile.git
+	branch = master
+	commit = 2212cbd9b31993548f3f85fed9d734210bca6534
+	parent = db5d2d2dddc67a77d5bf395b5d207de90bfb4bfd
+	cmdver = 0.4.0

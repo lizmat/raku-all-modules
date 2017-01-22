@@ -1,0 +1,29 @@
+{
+  "name": "URI::FetchFile",
+  "source-url": "git://github.com/jonathanstowe/URI-FetchFile.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/URI-FetchFile.git"
+  },
+  "perl": "6.c",
+  "resources": [
+  ],
+  "build-depends": [
+  ],
+  "auth": "github:jonathanstowe",
+  "provides": {
+     "URI::FetchFile" : "lib/URI/FetchFile.pm"
+  },
+  "depends": [
+  ],
+  "tags": [ "download", "utility", "http" ],
+  "license": "perl",
+  "test-depends": [
+     "Test"
+  ],
+  "description": "retrieve a file from the internet by the best available method",
+  "version": "0.0.1",
+  "meta6": "0",
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+  ]
+}
