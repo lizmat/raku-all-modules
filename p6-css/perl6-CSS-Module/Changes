@@ -1,0 +1,19 @@
+0.4.7 - remove Panda dependency from make-properties.pl
+      - work-around for issue #6 - background-position
+0.4.6 $module.parse-property now returns explicit Nil and warns
+      on parse failure. New :!warn option to silence warnings.
+0.4.5 Fix make-modules.pl for latest Rakudo
+0.4.4 Implemented $module.parse-property method. Performs a property
+      specific parse, e.g. my $ast = $.module-parse('azimuth', 'center-left behind')
+0.4.3 Removed erroneous default-value from font-family meta-data
+0.4.2 Adjustments for CSS::Grammar 0.03.0 at-rule AST consolidation,
+      and CSS::Specification 0.4.2 handling of zero quantities
+0.4.1 Factor out @font-face as a distinct sub-module, add class
+      CSS::Module::CSS3::Fonts::AtFontFace::Metadata
+0.4.0 Convert to CSS::Specification 0.4.0
+    -- General rules can now be defined.  E.g. from etc/css21-properties.txt
+            <generic-voice>  := male | female | child
+            <specific-voice> := <identifier> | <string>
+0.3.3 Fix definitions and AST production for border-top ... border-left
+0.3.2 CSS3 'transparent' color AST now compatible with CSS2.1
+   -- returned as :keyw<transparent> (was :color<transparent>)
