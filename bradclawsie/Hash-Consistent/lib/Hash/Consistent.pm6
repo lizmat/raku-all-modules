@@ -29,7 +29,7 @@ http://www.tomkleinpeter.com/2008/03/17/programmers-toolbox-part-3-consistent-ha
 
     use v6;
     use Hash::Consistent;
-    use Subsets::Common;
+    use String::CRC32;
     use Test;
 
     my $ch = Hash::Consistent.new(mult=>2);
@@ -64,10 +64,9 @@ https://b7j0c.org/stuff/license.txt
 
 =end pod
 
-unit module Hash::Consistent:auth<bradclawsie>:ver<0.0.1>;
+unit module Hash::Consistent:auth<bradclawsie>:ver<0.0.3>;
 
 use String::CRC32;
-use Subsets::Common;
 
 class X::Hash::Consistent::Collision is Exception is export {
     has $.input;
@@ -80,25 +79,42 @@ class X::Hash::Consistent::Corrupt is Exception is export {
     method message() { "With token $.input, consistent hash is corrupt" }
 }
 
-class X::Hash::Consistent::InsertFailure is Exception is export {}
-class X::Hash::Consistent::RemoveFailure is Exception is export {}
-class X::Hash::Consistent::IsEmpty is Exception is export {}
+class X::Hash::Consistent::ConstructionError is Exception is export {
+    has $.input;
+    method message() { "Construction failure: $.input" }
+}
+
+class X::Hash::Consistent::InsertFailure is Exception is export {
+    has $.input;
+    method message() { "Insert failure: $.input" }
+}
+
+class X::Hash::Consistent::RemoveFailure is Exception is export {
+    has $.input;
+    method message() { "Remove failure: $.input" }
+}
+
+class X::Hash::Consistent::IsEmpty is Exception is export {
+    has $.input;
+    method message() { "Empty Hash failure: $.input" }
+}
 
 class Hash::Consistent is export {
     
-    has PosInt $.mult is required;  # The number of times to multiply each entry in the consistent hash.
-    has PosInt @.sum_list;          # The list of crc32 hashes, maintained in sorted order.
-    has NonEmptyStr %!mult_source;  # The mapping of crc32 hash values to the corresponding "mult" string.
-    has NonEmptyStr %!source;       # The mapping of the mult_source string to the original input string.
-    has Lock $!lock;                # Lock operations that examine or change the state of the consistent hash.
-    has PosInt %!hashed;            # A cache of previously computed crc32 hashes.
+    has UInt $.mult is required; # Number of times to multiply each entry in the consistent hash.
+    has UInt @.sum_list;   # The list of crc32 hashes, maintained in sorted order.
+    has Str %!mult_source; # The mapping of crc32 hash values to the corresponding "mult" string.
+    has Str %!source;      # The mapping of the mult_source string to the original input string.
+    has Lock $!lock;       # Lock the state of the consistent hash.
+    has UInt %!hashed;     # A cache of previously computed crc32 hashes.
 
-    submethod BUILD(PosInt:D :$mult) {
+    submethod BUILD(UInt:D :$mult) {
+        X::Hash::Consistent::ConstructionError.new(input => "mult 0").throw if $mult == 0;
         $!mult := $mult;
         $!lock = Lock.new;
     }
 
-    multi method print() returns Bool:D {
+    multi method print(--> Bool:D) {
         $!lock.protect(
             {
                 my $j = 0;
@@ -110,7 +126,7 @@ class Hash::Consistent is export {
         );            
     }
 
-    my sub mult_elt(NonEmptyStr:D $s,Cool:D $i) {
+    my sub mult_elt(Str:D $s,Cool:D $i) {
         return $s ~ '.' ~ Str($i);
     }
 
@@ -119,14 +135,14 @@ class Hash::Consistent is export {
     }
 
     # Cache CRC32 hashes.
-    method !getCRC32(NonEmptyStr:D $s) {
+    method !getCRC32(Str:D $s) {
         return %!hashed{$s} if %!hashed{$s}:exists;
-        my PosInt $crc32 = String::CRC32::crc32($s);
+        my UInt $crc32 = String::CRC32::crc32($s);
         %!hashed{$s} = $crc32;
         return $crc32;
     }
     
-    method find(NonEmptyStr:D $s) returns NonEmptyStr:D {
+    method find(Str:D $s --> Str:D) {
         $!lock.protect(
             {
                 my Int $mult_source_crc32 = 0; 
@@ -135,9 +151,9 @@ class Hash::Consistent is export {
                     X::Hash::Consistent::Corrupt.new(input => $s).throw;
                 }
                 if $n == 0 {
-                    X::Hash::Consistent::IsEmpty.new(payload => 'Cannot find in empty consistent hash').throw;
+                    X::Hash::Consistent::IsEmpty.new(input => 'hash empty').throw;
                 }
-                my PosInt $crc32 = self!getCRC32($s);
+                my UInt $crc32 = self!getCRC32($s);
                 if ($n == 1) || ($crc32 >= @!sum_list[$n-1]) {
                     # If there is only one element in sum_list, or, if given crc32 is greater than the last
                     # element in the list, then return the 0th element. 
@@ -159,8 +175,8 @@ class Hash::Consistent is export {
         );
     }
 
-   method !remove_one(NonEmptyStr:D $s) {
-       my PosInt $crc32 = self!getCRC32($s);
+   method !remove_one(Str:D $s) {
+       my UInt $crc32 = self!getCRC32($s);
        my $in_list = ($crc32 == @!sum_list.any);
        my $in_mult_source = %!mult_source{$crc32}:exists;
        return if (!$in_list && !$in_mult_source); # Not in the consistent hash.
@@ -174,7 +190,8 @@ class Hash::Consistent is export {
        }
    }
    
-   method remove(NonEmptyStr:D $s) {
+   method remove(Str:D $s) {
+       X::Hash::Consistent::RemoveFailure.new(input => 'empty str').throw if $s eq '';
        $!lock.protect(
            {
                for ^$!mult -> $i {
@@ -182,7 +199,7 @@ class Hash::Consistent is export {
                        self!remove_one(mult_elt($s,$i));
                        CATCH {
                            default {
-                               X::Hash::Consistent::RemoveFailure.new(payload => $!.message()).throw;
+                               X::Hash::Consistent::RemoveFailure.new(input => $!.message()).throw;
                            }
                        }
                    }
@@ -191,8 +208,8 @@ class Hash::Consistent is export {
        );
     }
 
-    method !insert_one(NonEmptyStr:D $mult_s,$s) {
-        my PosInt $crc32 = self!getCRC32($mult_s);
+    method !insert_one(Str:D $mult_s,$s) {
+        my UInt $crc32 = self!getCRC32($mult_s);
         if $crc32 == @!sum_list.any {
             if %!mult_source{$crc32}:exists {
                 # Just return, the string is already in the consistent hash.
@@ -209,8 +226,9 @@ class Hash::Consistent is export {
         return;
     }
     
-    method insert(NonEmptyStr:D $s) {
-       $!lock.protect(
+    method insert(Str:D $s) {
+        X::Hash::Consistent::InsertFailure.new(input => 'empty str').throw if $s eq '';
+        $!lock.protect(
            {
                for ^$!mult -> $i {
                    try {
@@ -219,7 +237,7 @@ class Hash::Consistent is export {
                            default {
                                # If any insert failed, we must remove any insertions made for $s.
                                self.remove($s);
-                               X::Hash::Consistent::InsertFailure.new(payload => $!.message()).throw;
+                               X::Hash::Consistent::InsertFailure.new(input => $!.message()).throw;
                            }
                        }
                    }
