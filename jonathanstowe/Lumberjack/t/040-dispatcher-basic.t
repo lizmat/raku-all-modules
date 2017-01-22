@@ -9,7 +9,7 @@ use Lumberjack;
 class Client does Lumberjack::Logger {
 }
 
-class Dispatcher does Lumberjack::Dispatcher {
+class DispatcherX does Lumberjack::Dispatcher {
     has Lumberjack::Message @.messages;
     method log(Lumberjack::Message $message) {
         @!messages.append: $message;
@@ -18,10 +18,10 @@ class Dispatcher does Lumberjack::Dispatcher {
 
 Client.log-level = Lumberjack::All;
 
-my Dispatcher %dispatchers{Lumberjack::Level};
+my DispatcherX %dispatchers{Lumberjack::Level};
 
 for Lumberjack::Level.enums.values.sort.reverse.map({Lumberjack::Level($_)}) -> $level {
-    my $dispatcher = Dispatcher.new(levels => $level);
+    my $dispatcher = DispatcherX.new(levels => $level);
     Lumberjack.dispatchers.append: $dispatcher;
     %dispatchers{$level} = $dispatcher;
 }

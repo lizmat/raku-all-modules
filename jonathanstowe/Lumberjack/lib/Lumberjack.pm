@@ -707,7 +707,7 @@ class Lumberjack {
             my @backtrace = Backtrace.new.list;
             my $class = $?CLASS;
             my $mess = Message.new(:$level, :$message, :@backtrace, :$class);
-            samewith $mess;
+            self.log($mess);
         }
 
         method log-trace(Str() $message) is hidden-from-backtrace {
