@@ -64,7 +64,7 @@ Chronic.supply.wait;
 
 This module provides a low-level scheduling mechanism, that be used to
 create cron-like schedules, the specifications can be provided as cron
-expression strings, lists of integer values or L<Junctions> of values.
+expression strings, lists of integer values or [Junctions](https://docs.perl6.org/type/Junction) of values.
 
 There is a class method ```every``` that takes a schedule specification
 and returns a ```Supply``` that will emit a value (a ```DateTime```) on

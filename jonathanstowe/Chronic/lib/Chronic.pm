@@ -189,7 +189,7 @@ The day of the week (starting on Monday) in the range 1 .. 7
 
 =end pod
 
-class Chronic:ver<0.0.4>:auth<github:jonathanstowe> {
+class Chronic:ver<0.0.5>:auth<github:jonathanstowe> {
     class Description {
 
         sub expand-expression(Str $exp, Range $r) returns Array[Int] {
@@ -393,13 +393,13 @@ class Chronic:ver<0.0.4>:auth<github:jonathanstowe> {
     }
 
     multi method at(Int $i) returns Promise {
-        samewith(DateTime.new($i));
+        self.at(DateTime.new($i));
     }
     multi method at(Instant:D $i) returns Promise {
-        samewith(DateTime.new($i));
+        self.at(DateTime.new($i));
     }
     multi method at(Str:D $d) returns Promise {
-        samewith(DateTime.new($d));
+        self.at(DateTime.new($d));
     }
     multi method at(DateTime $d) returns Promise {
         my $datetime = $d.truncated-to('second');
