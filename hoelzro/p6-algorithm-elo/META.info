@@ -1,4 +1,5 @@
 {
+    "perl": "6.*",
     "name": "Algorithm::Elo",
     "version": "0.1.0",
     "description": "Implementation of the Elo chess rating system",

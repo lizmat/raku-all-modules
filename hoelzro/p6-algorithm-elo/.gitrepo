@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/hoelzro/p6-algorithm-elo.git
 	branch = master
-	commit = 5a6959f39b83e7c741fa3111c2bdede31208b2d1
-	parent = 1eabe3c8eeb486ab3db4c58b18f998c2f290ff27
-	cmdver = 0.2.3
+	commit = 2b75070116f581f71cac0472e57d96289b0f500c
+	parent = e3e27dfb2b061b3a033b52f440575642c2ebc027
+	cmdver = 0.4.0
