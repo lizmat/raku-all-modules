@@ -1,0 +1,42 @@
+#!/usr/bin/env perl6
+
+use v6.c;
+
+use Chronic;
+use Manifesto;
+
+role Scheduled {
+    has DateTime $.when;
+    has Promise $!promise;
+
+    # the add-promise method of Manifesto will coerce
+    # an object that has a Promise method
+    method Promise() returns Promise {
+        # Chronic.at returns a promise that is kept at
+        # the specified time
+        $!promise //= Chronic.at($!when).then({ self });
+    }
+}
+
+
+class Thing does Scheduled {
+    method gist() {
+        "Thing for { self.when }";
+    }
+}
+
+my $manifesto = Manifesto.new;
+
+for ( 1 .. 10 ) -> $in {
+    $manifesto.add-promise(Thing.new(when => DateTime.now.later(minutes => $in)));
+}
+
+react {
+    whenever $manifesto -> $thing {
+        say $thing;
+    }
+    whenever $manifesto.empty {
+        say "out of things";
+        done;
+    }
+}

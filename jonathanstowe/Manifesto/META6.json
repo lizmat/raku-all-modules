@@ -1,0 +1,30 @@
+{
+   "auth" : "github:jonathanstowe",
+   "meta6" : "0",
+   "test-depends" : [
+      "Test"
+   ],
+   "authors" : [
+      "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+   ],
+   "description" : "Make a supply of the results of Promises",
+   "provides" : {
+      "Manifesto" : "lib/Manifesto.pm"
+   },
+   "source-url" : "https://github.com/jonathanstowe/Manifesto.git",
+   "depends" : [],
+   "perl" : "6.c",
+   "resources" : [],
+   "build-depends" : [],
+   "tags" : [
+      "async",
+      "util",
+      "promise"
+   ],
+   "support" : {
+      "source" : "https://github.com/jonathanstowe/Manifesto.git"
+   },
+   "license" : "perl",
+   "name" : "Manifesto",
+   "version" : "0.0.1"
+}

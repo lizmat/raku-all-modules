@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/Manifesto.git
+	branch = master
+	commit = a8830895699f8f2673cf47553c88dacc0979bd8a
+	parent = e280f060f9118b8fd5659020b7cfd2077480e6f5
+	cmdver = 0.4.0
