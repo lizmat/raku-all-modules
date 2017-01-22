@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-MeCab.git
+	branch = master
+	commit = 1969cd48916d1d65306691a1e089b0cbec5096d0
+	parent = 989aeef38e13501cd86e78401b616482398b840b
+	cmdver = 0.4.0
