@@ -8,11 +8,17 @@ HTTP::Server::Tiny - a simple HTTP server for Perl6
 SYNOPSIS
 ========
 
+```perl6
     use HTTP::Server::Tiny;
 
     my $port = 8080;
 
-    HTTP::Server::Tiny.new(host => '127.0.0.1', port => $port).run(sub ($env) {
+    # Only listen for connections from the local host
+    # if you want this to be accessible from another
+    # host then change this to '0.0.0.0'
+    my $host = '127.0.0.1'; 
+
+    HTTP::Server::Tiny.new(:$host , :$port).run(sub ($env) {
         my $channel = Channel.new;
         start {
             for 1..100 {
@@ -22,6 +28,7 @@ SYNOPSIS
         };
         return 200, ['Content-Type' => 'text/plain'], $channel
     });
+```
 
 DESCRIPTION
 ===========
@@ -35,9 +42,12 @@ METHODS
 
 Create new instance.
 
-  * `$server.run(Callable $app)`
+  * `$server.run(Callable $app, Promise :$control-promise)`
 
-Run http server with P6SGI app.
+Run http server with P6SGI app. The named parameter ```control-promise```
+if provided, can be _kept_ to quit the server loop, which may be useful
+if the server is run asynchronously to the main thread of execution in
+an application.
 
 TODO
 ====
@@ -47,6 +57,6 @@ TODO
 COPYRIGHT AND LICENSE
 =====================
 
-Copyright 2015 Tokuhiro Matsuno <tokuhirom@gmail.com>
+Copyright 2015, 2016 Tokuhiro Matsuno <tokuhirom@gmail.com>
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.

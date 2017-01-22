@@ -85,7 +85,9 @@ my class HTTP::Server::Tiny::Handler {
         unless $!header-parsed {
             self!parse-header();
         }
-        self!parse-body();
+        if $!header-parsed {
+            self!parse-body();
+        }
     }
 
     method next-request() {
@@ -93,17 +95,20 @@ my class HTTP::Server::Tiny::Handler {
 
         my $use-keepalive = $.request-count < $.max-keepalive-reqs
             && $!buf.defined && $!buf.elems > 0;
-        HTTP::Server::Tiny::Handler.new(
+        my $handler = HTTP::Server::Tiny::Handler.new(
             use-keepalive      => $!max-keepalive-reqs < $!request-count,
             request-count      => $!request-count+1,
             max-keepalive-reqs => $!max-keepalive-reqs,
             server-software    => $!server-software,
             app                => $!app,
             conn               => $!conn,
-            buf                => $!buf,
             host               => $!host,
             port               => $!port,
         );
+        if $!buf.elems > 0 {
+            $handler.handle($!buf);
+        }
+        $handler;
     }
 
     method !parse-header() {
@@ -257,6 +262,13 @@ my class HTTP::Server::Tiny::Handler {
     }
 
     method !send-response($status, $headers, $body) {
+
+        CATCH {
+            when /"broken pipe"/ {
+                debug("client close sending response");
+                return;
+            }
+        }
         debug "sending response $status";
 
         my $resp_string = "$!protocol $status {get_http_status_msg $status}\r\n";
@@ -293,9 +305,24 @@ my class HTTP::Server::Tiny::Handler {
         my $use-chunked = False;
         if $!protocol eq 'HTTP/1.0' {
             if $!use-keepalive {
+                # Plack::Util::content_length
+                my sub content-length($body) {
+                    return Nil unless defined $body;
+                    if $body ~~ Array {
+                        my $cl = 0;
+                        for @($body) {
+                            $cl += ($_ ~~ Str ?? .encode() !! $_).bytes;
+                        }
+                        return $cl;
+                    } elsif $body ~~ IO::Handle {
+                        return $body.s;
+                    }
+                }
+
                 if %send_headers<content-length>.defined && %send_headers<transfer-encoding>.defined {
                     # ok
                 } elsif !status-with-no-entity-body($status) && (my $cl = content-length($body)) {
+                    debug "calcurated content-length: $cl" if DEBUGGING;
                     $resp_string ~= "content-length: $cl\x0d\x0a";
                 } else {
                     $!use-keepalive = False;
@@ -316,7 +343,7 @@ my class HTTP::Server::Tiny::Handler {
             }
         }
         $resp_string ~= "\r\n";
-        
+
         # TODO combine response header and small request body
 
         my $resp = $resp_string.encode('ascii');
@@ -381,7 +408,7 @@ my sub debug($message) {
 }
 
 my multi sub error(Exception $err) {
-    say "[ERROR] [{$*PID}] [{$*THREAD.id}] $err {$err.backtrace.full}";
+    say "[ERROR] [{$*PID}] [{$*THREAD.id}] $err {$err.backtrace}";
 }
 
 my multi sub error(Str $err) {
@@ -455,18 +482,26 @@ my sub scan-psgi-body($body) {
 }
 
 
-method run(HTTP::Server::Tiny:D: Callable $app) {
+method run(HTTP::Server::Tiny:D: Callable $app, Promise :$control-promise = Promise.new) {
     # moarvm doesn't handle SIGPIPE correctly. Without this,
     # perl6 exit without any message.
     # -- tokuhirom@20151003
     signal(SIGPIPE).tap({ debug("Got SIGPIPE") }) unless $*DISTRO.is-win;
 
     # TODO: I want to use IO::Socket::Async#port method to use port 0.
-    say "http server is ready: http://$.host:$.port/ (pid:$*PID)";
+    say "http server is ready: http://$.host:$.port/ (pid:$*PID, keepalive: $.max-keepalive-reqs)";
 
     react {
         whenever IO::Socket::Async.listen($.host, $.port) -> $conn {
             self!handler($conn, $app);
+            QUIT {
+                error($_);
+                done;
+            }
+        }
+        whenever $control-promise {
+            debug("Exiting on control promise");
+            done;
         }
     }
 }
@@ -495,7 +530,7 @@ method !handler(IO::Socket::Async $conn, Callable $app) {
         app                => $app,
         host               => $.host,
         port               => $.port,
-    );                  
+    );
     $bs.tap(
         -> $got {
             debug "got chunk";
@@ -538,11 +573,17 @@ HTTP::Server::Tiny - a simple HTTP server for Perl6
 
 =head1 SYNOPSIS
 
+
     use HTTP::Server::Tiny;
 
     my $port = 8080;
 
-    HTTP::Server::Tiny.new(host => '127.0.0.1', port => $port).run(sub ($env) {
+    # Only listen for connections from the local host
+    # if you want this to be accessible from another
+    # host then change this to '0.0.0.0'
+    my $host = '127.0.0.1';
+
+    HTTP::Server::Tiny.new(:$host , :$port).run(sub ($env) {
         my $channel = Channel.new;
         start {
             for 1..100 {
@@ -552,6 +593,7 @@ HTTP::Server::Tiny - a simple HTTP server for Perl6
         };
         return 200, ['Content-Type' => 'text/plain'], $channel
     });
+
 
 =head1 DESCRIPTION
 
@@ -563,9 +605,12 @@ HTTP::Server::Tiny is a standalone HTTP/1.1 web server for perl6.
 
 Create new instance.
 
-=item C<$server.run(Callable $app)>
+=item C<$server.run(Callable $app, Promise :$control-promise)>
 
-Run http server with P6SGI app.
+Run http server with P6SGI app C<$app>.
+
+If the optional named parameter C<control-promise> is provided with a
+C<Promise> then the server loop will be quit when the promise is kept.
 
 =head1 TODO
 
@@ -573,7 +618,7 @@ Run http server with P6SGI app.
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2015 Tokuhiro Matsuno <tokuhirom@gmail.com>
+Copyright 2015, 2016 Tokuhiro Matsuno <tokuhirom@gmail.com>
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
