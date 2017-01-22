@@ -4,6 +4,7 @@ set("log.stdout", true)
 set("server.telnet", true)
 set("server.telnet.bind_addr","127.0.0.1")
 set("harbor.bind_addr","127.0.0.1")
+set("scheduler.fast_queues",2)
 
 instring = interactive.string("instring", "default")
 inbool   = interactive.bool("inbool", true)

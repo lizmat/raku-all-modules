@@ -615,7 +615,7 @@ takes care of providing the namespace for the object.
 =end pod
 
 
-class Audio::Liquidsoap:ver<0.0.4>:auth<github:jonathanstowe> {
+class Audio::Liquidsoap:ver<0.0.5>:auth<github:jonathanstowe> {
 
     class X::NoServer is Exception {
         has $.port;
@@ -901,13 +901,13 @@ class Audio::Liquidsoap:ver<0.0.4>:auth<github:jonathanstowe> {
         }
 
         multi sub meta-value('on-air', Str:D $value) {
-            DateTime.new(samewith(Str,$value).trans('/' => '-', ' ' => 'T'))
+            DateTime.new(meta-value(Str,$value).trans('/' => '-', ' ' => 'T'))
         }
         multi sub meta-value('temporary', Str:D $value) {
-            samewith(Str, $value) eq 'true';
+            meta-value(Str, $value) eq 'true';
         }
         multi sub meta-value('rid', Str:D $value ) {
-            Int(samewith(Str, $value));
+            Int(meta-value(Str, $value));
         }
 
         multi sub meta-key(Str $key) {
@@ -933,7 +933,7 @@ class Audio::Liquidsoap:ver<0.0.4>:auth<github:jonathanstowe> {
                     }
                 }
             }
-            samewith(|%meta);
+            self.new(|%meta);
         }
     }
 

@@ -2,9 +2,11 @@
 
 Interact with the Liquidsoap telnet interface.
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Audio-Liquidsoap.svg?branch=master)](https://travis-ci.org/jonathanstowe/Audio-Liquidsoap)
+
 ## Synopsis
 
-```
+```perl6
 
 use Audio::Liquidsoap;
 
@@ -62,18 +64,8 @@ environment variable ```LIQUIDSOAP``` to the full path of the binary
 before running the tests.
 
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -83,7 +75,7 @@ Or you can install directly with "panda":
 
     panda install Audio::Liquidsoap
 
-Other install mechanisms may be become available in the future.
+This should work equally well with *zef* but I haven't tested it.
 
 ## Support
 
@@ -93,7 +85,7 @@ every possibility in the interface, but if you really need
 something I have omitted or have other suggestions please raise
 an issue at:
 
-	https://github.com/jonathanstowe/Audio-Liquidsoap
+https://github.com/jonathanstowe/Audio-Liquidsoap
 
 And I'll see what I can do.
 
@@ -104,7 +96,9 @@ probably be raised via the liquidsoap website.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2016
+Please see the [LICENCE](LICENCE) file in the distribution
+
+© Jonathan Stowe 2016, 2017
 
