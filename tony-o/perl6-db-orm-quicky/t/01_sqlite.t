@@ -1,11 +1,10 @@
 #!/usr/bin/env perl6
 
-use lib 'lib';
 use Test;
 use DB::ORM::Quicky;
 
 
-my $orm = DB::ORM::Quicky.new;
+my $orm = DB::ORM::Quicky.new(debug => True);
 
 my $optout = 0;
 
@@ -96,3 +95,5 @@ ok 0 < $orm.search('nickl', { }).first.id, 'Empty search OK';
 
 $orm.search('nickl', { }).delete;
 ok $orm.search('nickl', { }).count == 0, 'Empty table after delete';
+
+# vim:syntax=perl6

@@ -7,9 +7,11 @@ class DB::ORM::Quicky::Model {
   has %!data;
   has @!changed;
   has $.id is rw = -1;
+  has $.debug = False;
+  has @.fields;
   has $!quote;
 
-  submethod BUILD (:$!dbtype, :$!db, :$!table, :$!quote = '', :$skipcreate = False) {
+  submethod BUILD (:$!dbtype, :$!debug, :$!db, :$!table, :$!quote = '', :$skipcreate = False) {
     %!statictypes = 
         Pg => {
           In => {
@@ -73,13 +75,22 @@ class DB::ORM::Quicky::Model {
     $!quote = '"' if $!quote eq '';
     
     if ! $skipcreate {
-      $!db.do("CREATE TABLE {self!fquote($!table)} ( DBORMID integer );") if $!dbtype eq 'Pg' && ! self!pgtableexists;
+      my $sql;
+      if $!dbtype eq 'Pg' && !self!pgtableexists {
+        $sql = "CREATE TABLE {self!fquote($!table)} ( DBORMID integer );"; 
+        self!do($sql) 
+      }
       if $!dbtype eq 'mysql' && !so self!mysqltableexists {
-        my $s = $!db.prepare("CREATE TABLE {self!fquote($!table)} ( {self!fquote("DBORMID")} integer );");
+        $sql = "CREATE TABLE {self!fquote($!table)} ( {self!fquote("DBORMID")} integer );";
+        my $s = self!prepare($sql);
         $s.execute;
         $s.finish if $s.^can('finish');
       }
-      $!db.do("CREATE TABLE {self!fquote($!table)} ( DBORMID integer );") if $!dbtype eq 'SQLite' && ! self!sqlitetableexists;
+      if $!dbtype eq 'SQLite' && ! self!sqlitetableexists {
+        $sql = "CREATE TABLE {self!fquote($!table)} ( DBORMID integer );";
+        self!do($sql) 
+      }
+      $sql.say if $!debug && $sql;
     }
   }
   
@@ -95,13 +106,15 @@ class DB::ORM::Quicky::Model {
       @!changed.push("$k");
       %!data{"$k"} = %data{$k};
     }
+    @.fields.push(|%data.keys.sort);
   }
 
   method delete {
     my $sql = "DELETE FROM {self!fquote($!table)} WHERE {self!fquote('DBORMID')} = ?";
-    my $sth = $!db.prepare($sql);
+    my $sth = self!prepare($sql);
     $sth.execute($!id);
     $sth.finish if $sth.^can('finish');
+    $sql.say if $.debug;
     $!id = -1;
     for %!data.keys -> $k {
       next if "$k".uc eq 'DBORMID';
@@ -150,7 +163,8 @@ class DB::ORM::Quicky::Model {
     if $!dbtype ne 'SQLite' || %modcols.keys.elems ==  0 + $offset {
       for @changes -> $sql {
         try {
-          $!db.do($sql);
+          self!do($sql);
+          $sql.say if $.debug;
           CATCH { .say; }
         };
       }
@@ -160,30 +174,45 @@ class DB::ORM::Quicky::Model {
     #build insert
     if !defined($!id) || $.id == -1 {
       try {
-        $!db.do("ALTER TABLE {self!fquote($!table)} ADD COLUMN {self!fquote('DBORMID')} integer;");
+        my $sql = "ALTER TABLE {self!fquote($!table)} ADD COLUMN {self!fquote('DBORMID')} integer;";
+        $sql.say if $.debug;
+        self!do($sql);
       };
       my $idsql = "SELECT MAX({self!fquote('DBORMID')}) DBORMID FROM {self!fquote($!table)} LIMIT 1;";
-      my $idsth = $!db.prepare($idsql);
+      my $idsth = self!prepare($idsql);
       $idsth.execute();
+      $idsql.say if $.debug;
       my @a = $idsth.fetchrow_array;
       $idsth.finish if $idsth.^can('finish');
       $!id   = (@a.elems > 0 && "{@a[0] || ''}".chars > 0 ?? @a[0].Int !! 0) + 1; 
       $idsql = "INSERT INTO {self!fquote($!table)} ({self!fquote('DBORMID')}) VALUES (?)";
-      $idsth = $!db.do($idsql, $!id); 
+      $idsth = self!do($idsql, $!id); 
+      $idsql.say if $.debug;
     }
     my @insert = map { %!data{"$_"} }, @!changed;
     my @column = map { "{self!fquote($_)}"     }, @!changed;
     #save data
     my $sql = "UPDATE {self!fquote($!table)} SET {@column.join(' = ?, ')} = ? WHERE {self!fquote('DBORMID')} = ?;";
-    my $sth = $!db.prepare($sql);
+    my $sth = self!prepare($sql);
     my $r   = $sth.execute(@(@insert, $!id));
     $sth.finish if $sth.^can('finish');
+    $sql.say if $.debug;
     
     @!changed = ();
   }
 
+  method !prepare($sql) {
+    $sql.say if $.debug;
+    return $!db.prepare($sql);
+  }
+
+  method !do($sql, *@args) {
+    $sql.say if $.debug;
+    return $!db.do($sql, |@args);
+  }
+
   method !pgtableexists {
-    my $s = $!db.prepare('select count(*) c from pg_tables where schemaname = ? and tablename = ?');
+    my $s = self!prepare('select count(*) c from pg_tables where schemaname = ? and tablename = ?');
     $s.execute(('public', $!table));
     my $c = ($s.fetchrow_hashref)<c>;
     $s.finish if $s.^can('finish');
@@ -192,12 +221,7 @@ class DB::ORM::Quicky::Model {
   
   method !pggetcols {
     my %types;
-    my $sth = $!db.prepare('select 
-                              column_name as n, data_type as t, 
-                              character_maximum_length as l
-                            from 
-                              INFORMATION_SCHEMA.COLUMNS 
-                            where table_name = ?');
+    my $sth = self!prepare('select column_name as n, data_type as t, character_maximum_length as l from INFORMATION_SCHEMA.COLUMNS where table_name = ?');
     $sth.execute($!table);
     my %columns;
     while (my $row = $sth.fetchrow_hashref) {
@@ -212,7 +236,7 @@ class DB::ORM::Quicky::Model {
   }
 
   method !sqlitetableexists {
-    my $s = $!db.prepare('select count(sql) c from sqlite_master where tbl_name = ? and type = ?;');
+    my $s = self!prepare('select count(sql) c from sqlite_master where tbl_name = ? and type = ?;');
     $s.execute(($!table, 'table'));
     my $c = ($s.fetchrow_hashref)<c>;
     $s.finish if $s.^can('finish');
@@ -221,20 +245,14 @@ class DB::ORM::Quicky::Model {
 
   method !sqlitegetcols {
     my %types;
-    my $sth = $!db.prepare('select
-                              sql
-                            from
-                              sqlite_master
-                            where 
-                              tbl_name = ? 
-                              and type = ?;');
+    my $sth = self!prepare('select sql from sqlite_master where tbl_name = ? and type = ?;');
     $sth.execute(($!table, 'table'));
     my $cols = $sth.fetchrow_hashref<sql>;
     $cols ~~ s/ ^ .*? '(' (.*) ')' .*? $ /$<>[0]/;
     my @column = $cols.split(/ \s* ',' \s* /);
     my %columns;
     for @column -> $c {
-      my @d = $c.trim.split(/\s+/, 2);
+      my @d = $c.trim.reverse.split($c.ords[0] == 34 ?? '" ' !! ' ', 2);
       my $len = -1;
       if @d[1] ~~ / ^ 'varchar' / {
         @d[1].match(/ \d+ /);
@@ -274,12 +292,12 @@ class DB::ORM::Quicky::Model {
     @cmd.push("ALTER TABLE {self!fquote("tmp_$!table")} RENAME TO {self!fquote($!table)};");
 
     for @cmd -> $cmd {
-      $!db.do($cmd);
+      self!do($cmd);
     }
   }
 
   method !mysqltableexists {
-    my $s = $!db.prepare('select count(*) c from information_schema.tables where table_name = ?');
+    my $s = self!prepare('select count(*) c from information_schema.tables where table_name = ?');
     $s.execute(($!table));
     my $c = ($s.fetchrow_hashref)<c>;
     $s.finish if $s.^can('finish');
@@ -289,12 +307,7 @@ class DB::ORM::Quicky::Model {
 
   method !mysqlgetcols {
     my %types;
-    my $sth = $!db.prepare('select 
-                              column_name as n, data_type as t, 
-                              character_maximum_length as l
-                            from 
-                              INFORMATION_SCHEMA.COLUMNS 
-                            where table_name = ?');
+    my $sth = self!prepare('select column_name as n, data_type as t, character_maximum_length as l from INFORMATION_SCHEMA.COLUMNS  where table_name = ?');
     $sth.execute($!table);
     my %columns;
     while (my $row = $sth.fetchrow_hashref) {

@@ -1,6 +1,7 @@
 {
+  "perl" : "6.*",
   "name" : "DB::ORM::Quicky",
-  "version" : "*",
+  "version" : "0.0.2",
   "description" : "Easy Prototyping ORM for Perl 6",
   "auth" : "github:tony-o",
   "depends" : ["DBIish"],

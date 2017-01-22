@@ -7,6 +7,7 @@ class DB::ORM::Quicky::Search {
   has $.db;
   has $.dbtype;
   has $.error is rw = Any;
+  has $.debug = False;
   has $!quote = '';
   has $!cursor = 0;
 
@@ -56,20 +57,23 @@ class DB::ORM::Quicky::Search {
     return $c;
   }
 
-  method !fquote($str) { return $!quote ~ $str ~ $!quote; }
+  method !fquote($str) {
+    my $quote = $str.starts-with($!quote) ?? '' !! $!quote; 
+    return $quote ~ $str ~ $quote; 
+  }
 
   method search($index? = False, $method? = 'SELECT *', @sort? = (DBORMID => 'asc',) ) {
     $!quote = '`' if $!quote eq '' && $!dbtype eq 'mysql';
     $!quote = '"' if $!quote eq '';
     my $sql = '';
     my @val;
-    for %!params.keys -> $key {
-      if $sql eq '' {
+    for %!params.keys.sort({ $^b eq '-join' && $^a ne '-join' ?? More !! $^a eq '-join' ?? Less !! $^a cmp $^b }) -> $key {
+      my %ret = %(self!processtosql($key));
+      if %ret<sql> ne '' && $sql eq '' && $key ne '-join' {
         $sql ~= 'WHERE ';
-      } else {
+      } elsif %ret<sql> ne '' && $key ne '-join' {
         $sql ~= ' AND ';
       }
-      my %ret = %(self!processtosql($key));
       $sql ~= %ret<sql>;
       @val.push($_) for @(%ret<val>); 
     }
@@ -88,6 +92,7 @@ class DB::ORM::Quicky::Search {
     DB::ORM::Quicky::Model.new(:$.table, :$.db, :$.dbtype);
     my $rval = False;
     try {
+      $sql.say if $!debug;
       $.sth = $.db.prepare($sql);
       $.sth.execute(@val);
       $rval = True;
@@ -98,7 +103,7 @@ class DB::ORM::Quicky::Search {
     return $rval;
   }
 
-  method !processtosql($key, %params = %.params) {
+  method !processtosql($key, %params = %.params, :$in-join = Nil) {
     my $str = '';
     my @val;
     if $key.lc eq '-and' || $key.lc eq '-or' {
@@ -106,20 +111,29 @@ class DB::ORM::Quicky::Search {
       $str ~= '(';
       for @(%params{$key}) -> $next {
         if $next.value ~~ Hash|Array {
-          my %t = %(self!processtosql($next.key, $next));
+          my %t = %(self!processtosql($next.key, $next, :$in-join));
           $str ~= %t<sql> ~ " $ao";
           @val.push($_) for @(%t<val>);
         } elsif $next ~~ Pair {
-          my %t = %(self!processtosql($next.key, %($next)));
+          my %t = %(self!processtosql($next.key, %($next), :$in-join));
           $str ~= %t<sql> ~ " $ao";
           @val.push($_) for @(%t<val>);
         } elsif $next ~~ Hash {
-          my %t = %(self!processtosql($next, %params{$key}));
+          my %t = %(self!processtosql($next, %params{$key}, :$in-join));
           $str ~= %t<sql> ~ " $ao";
           @val.push($_) for @(%t<val>);
         } 
       }
       $str ~~ s/[ 'OR ' | 'AND ']$/)/;
+    } elsif $key.lc eq '-join' { 
+      $str ~= %params{$key}<-type> // 'left outer';
+      $str ~= ' join ' ~ %params{$key}<-table>;
+      $str ~= ' on ';
+      for @(%params{$key}<-on>) -> $next {
+        my %ret = %(self!processtosql($next.key, $next, in-join => %params{$key}<-table>));
+        $str ~= %ret<sql>;
+        @val.push($_) for @(%ret<val>);
+      }
     } elsif %params{$key} ~~ Array {
       $str ~= '(';
       for @(%params{$key}) -> $v {
@@ -142,11 +156,11 @@ class DB::ORM::Quicky::Search {
       } elsif %params{$key} ~~ Pair && %params{$key}.key.lc eq ('-gt','-lt','-eq', '-like').any {
         my $op = %params{$key}.key.lc;
         $op = $op eq '-gt' ?? '>' !! $op eq '-lt' ?? '<' !! $op eq '-like' ?? 'like' !! '=';
-        $str ~= "{self!fquote($key)} $op ?"; 
-        @val.push(%params{$key}.value);
+        $str ~= "{($in-join ?? self!fquote($in-join) ~ '.' !! '') ~ self!fquote($key)} $op {$in-join ?? self!fquote($!table) ~ '.' ~ self!fquote(%params{$key}.value) !! '?'}"; 
+        @val.push(%params{$key}.value) unless $in-join;
       } else { 
-        $str ~= "{self!fquote($key)} = ? ";
-        @val.push(%params{$key});
+        $str ~= "{($in-join ?? self!fquote($in-join) ~ '.' !! '') ~ self!fquote($key)} = {$in-join ?? self!fquote($!table) ~ '.' ~ self!fquote(%params{$key}) !! '?'} ";
+        @val.push(%params{$key}) unless $in-join;
       }
     }
     return { sql => $str, val => @val };
