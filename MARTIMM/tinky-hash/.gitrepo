@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MARTIMM/tinky-hash.git
+	branch = master
+	commit = 1ce69a484f3ea7f94e5e7347d93d4c60949e2d90
+	parent = cab17989e46f347fbba7239d012824e938a26f14
+	cmdver = 0.4.0
