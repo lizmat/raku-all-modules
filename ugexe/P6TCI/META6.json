@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "P6TCI",
     "version"     : "0.0.4",
     "auth"        : "github:ugexe",

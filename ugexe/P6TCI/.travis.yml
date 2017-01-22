@@ -1,31 +1,43 @@
 language: perl
-perl:
-    # -shrplib in case of a dependency on Inline::Perl5
-    - '5.20-shrplib'
+
+os:
+    - linux
+    - osx
+
 env:
     - BACKEND=moar
     - BACKEND=jvm
+
 matrix:
     allow_failures:
         - env: BACKEND=jvm
+    fast_finish: true
+
 sudo: false
+
 before_install:
-    # helpers $(test-jobs) and $(test-files)
-    - git clone git://github.com/travis-perl/helpers ~/travis-perl-helpers
-    - source ~/travis-perl-helpers/init
-    - git clone https://github.com/tadzik/rakudobrew ~/.rakudobrew
-    - export PATH=~/.rakudobrew/bin:$PATH
-    - rakudobrew build $BACKEND
-    - perl6 -v
+    # Install Rakudo
+    - 'if [[ $BACKEND == "moar" ]]; then export VM_OPTS="--gen-moar"; fi'
+    - git clone https://github.com/rakudo/rakudo.git $HOME/rakudo
+    - cd $HOME/rakudo
+    - perl Configure.pl $VM_OPTS --gen-nqp --backends=$BACKEND
+    - make install
+    - export PATH=$HOME/rakudo/install/bin:$PATH
+    - export PATH=$HOME/rakudo/install/share/perl6/site/bin:$PATH
+    - cd $TRAVIS_BUILD_DIR
+
+    # No need to actually install the module installer
+    - git clone https://github.com/ugexe/zef $HOME/zef
+    - export MODULE_INSTALLER="-I $HOME/zef/lib $HOME/zef/bin/zef"
+
 install:
-    # must do *something* in the install phase
-    - rakudobrew build-panda
+    # Install prereqs
+    - perl6 $MODULE_INSTALLER --depsonly install .
+
 script:
-    # Pull in the dependencies before running tests
-    - panda installdeps .
-    # tests that module passes tests *before* compile
-    - prove -v -j$(test-jobs) -e "perl6 --ll-exception -Ilib" $(test-files)
-    # runs tests again, but catches some heisenbugs (mostly with precompiled modules)
-    - PANDA_SUBMIT_TESTREPORTS=1 panda install .
+    # The actual testing
+    - prove -v -e 'perl6 -Ilib' t/
+
 after_success:
-    - panda list --installed --verbose
+    # List all installed modules for debugging for brevity
+    - perl6 $MODULE_INSTALLER --installed list
