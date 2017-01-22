@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Geo::Region",
     "version"     : "*",
     "author"      : "Nick Patch",
