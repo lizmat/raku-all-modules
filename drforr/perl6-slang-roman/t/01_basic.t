@@ -30,6 +30,10 @@ subtest sub {
   subtest sub {
     is 0rIV, 4, q{Roman numeral 4 subtractive};
     is 0rXIV, 14, q{Roman numeral 14 subtractive};
+    is 0rXIX, 19, q{Roman numeral 19 subtractive};
+    is 0rXLIV, 44, q{Roman numeral 44 subtractive};
+    is 0rIC, 99, q{Roman numeral 99 subtractive};
+    is 0rMIM, 1999, q{Roman numeral 1999 subtractive};
   }, 'subtractive';
 
   is 0rMMXVI, 2016, q{Year of module release};

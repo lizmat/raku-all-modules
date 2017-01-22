@@ -38,6 +38,37 @@ While it handles both additive and subtractive Roman numerals, it doesn't check 
 #
 # Roman::Actions is where the fun starts, read that code for more explanation.
 #
+
+sub to-roman (Int $val) is export
+  {
+  my $current = $val;
+  my $roman = '';
+  my %num-map =
+    (
+    1 => 'I',
+    5 => 'V',
+    10 => 'X',
+    50 => 'L',
+    100 => 'C',
+    500  => 'D',
+    1_000 => 'M',
+    5_000 => '\c[0x2181]',
+    10_000 => '\c[0x2182]',
+    50_000 => '\c[0x2187]',
+    100_000 => '\c[0x2188]'
+    );
+
+  for %num-map.keys.sort: { $^b <=> $^a } -> $value
+    {
+    while ($value <= $current)
+      {
+      $current -= $value;
+      $roman ~= %num-map{$value};
+      }
+    }
+  return $roman;
+  }
+
 sub Slang::Roman::to-number(Str $value) is export
   {
   my %char-map =
@@ -69,23 +100,42 @@ sub Slang::Roman::to-number(Str $value) is export
   my $num = $value;
   $num ~~ s/^0r//;
 
-  # Just do it the simple way...
+  # Find subtractives and convert them to additives
   #
   # IV => IIII ( 5 - 1 == 4 )
   # IX => VIIII ( 10 - 1 == 9 )
   # XL => XXXX ( 50 - 10 == 40 )
+  # IL => XXXXVIIII ( 50 - 1 == 49 )
   # XC => LXXXX ( 100 - 10 == 90 )
   # CD => CCCC ( 500 - 100 == 400 )
   # CM => DCCCC ( 1000 - 100 == 900 )
 
-  $num ~~ s:g/ <[ I \c[0x2160] ]> <[ V \c[0x2164] ]> /IIII/;
-  $num ~~ s:g/ <[ I \c[0x2160] ]> <[ X \c[0x2169] ]> /VIIII/;
-
-  $num ~~ s:g/ <[ X \c[0x2169] ]> <[ L \c[0x216c] ]> /XXXX/;
-  $num ~~ s:g/ <[ X \c[0x2169] ]> <[ C \c[0x216d] ]> /LXXXX/;
-
-  $num ~~ s:g/ <[ C \c[0x216d] ]> <[ D \c[0x216e] ]> /CCCC/;
-  $num ~~ s:g/ <[ C \c[0x216d] ]> <[ M \c[0x216f] ]> /DCCCC/;
+  $num ~~ s:g/
+    (<[
+    I \c[0x2160]
+    X \c[0x2169]
+    C \c[0x216d]
+    M \c[0x216f]
+      \c[0x2182]
+    ]>)
+    (<[
+    V \c[0x2164]
+    X \c[0x2169]
+    L \c[0x216c]
+    C \c[0x216d]
+    D \c[0x216e]
+    M \c[0x216f]
+      \c[0x2181]
+      \c[0x2182]
+      \c[0x2187]
+      \c[0x2188]
+    ]>)
+    / {
+      my $x = ( %char-map{$0} < %char-map{$1} )
+      ?? to-roman ( %char-map{$1} - %char-map{$0} )
+      !! ( $0 ~ $1 );
+      $x;
+    } /;
 
   my @chars = $num.split('');
 
@@ -135,8 +185,8 @@ sub EXPORT(|)
       {
       my $number   := lk($/, 'romanint');
       my $block := QAST::Op.new(
-                     :op<call>, 
-                     :name<&Slang::Roman::to-number>, 
+                     :op<call>,
+                     :name<&Slang::Roman::to-number>,
                      QAST::SVal.new(:value($number.Str))
                    );
       $/.'!make'($block);
