@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Juerd/p6-mqtt.git
 	branch = master
-	commit = 3facf9960bddc3d8c7cd6c304d904c5d135ebb8f
-	parent = 7417594a0f989fd8068d2c32afe5902a04257982
-	cmdver = 0.2.3
+	commit = bc981f728ff878bf5d72d335401b5bcd1bb2be90
+	parent = fbf7c62fa8bd851b325790df8ff15a15149cd461
+	cmdver = 0.4.0
