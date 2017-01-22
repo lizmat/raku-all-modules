@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "HTTP::Router::Blind",
   "version"     : "2.0.0",
   "description" : "A framework-agnostic HTTP Router",

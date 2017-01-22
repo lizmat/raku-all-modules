@@ -32,8 +32,6 @@ method anymethod ($path, **@handlers) {
 method !keyword-match ($path, $uri) {
     my @p = $path.split('/');
     my @u =  $uri.split('/');
-    say @p.perl;
-    say @u.perl;
     if @p.elems != @u.elems {
         return;
     }
@@ -45,7 +43,9 @@ method !keyword-match ($path, $uri) {
         if $p ne $u && !$p.starts-with(":") {
             return;
         }
-        %params{$p.substr(1)} = $u;
+        if $p ne "" && $u ne "" {
+            %params{$p.substr(1)} = $u;
+        }
     }
     return %params;
 }
