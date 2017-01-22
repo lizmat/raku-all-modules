@@ -7,7 +7,7 @@
    ],
    "test-depends" : [ "Test" ],
    "auth" : "github:jonathanstowe",
-   "version" : "0.0.2",
+   "version" : "0.0.3",
    "description" : "Role to Serialize/De-Serialize a Perl 6 class to/from XML",
    "superseded-by" : {},
    "emulates" : {},
