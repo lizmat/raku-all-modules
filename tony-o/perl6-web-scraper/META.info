@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "Web::Scraper",
   "version"     : "0.1.0",
   "description" : "Similar to Web::Scraper for Perl5 with some other cool stuff, duh",
