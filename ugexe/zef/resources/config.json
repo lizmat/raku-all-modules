@@ -3,37 +3,37 @@
     "RootDir"  : "$*HOME/.zef",
     "StoreDir" : "$*HOME/.zef/store",
     "TempDir"  : "$*HOME/.zef/tmp",
-    "DefaultCUR" : ["site"],
+    "DefaultCUR" : ["auto"],
     "License" : {
         "whitelist" : "*",
         "blacklist" : []
     },
-    "ContentStorage" : [
+    "Repository" : [
         { 
             "short-name" : "cached",
             "enabled" : 1,
-            "module" : "Zef::ContentStorage::LocalCache",
+            "module" : "Zef::Repository::LocalCache",
             "default" : 1,
             "options" : { }
         },
         {
             "short-name" : "p6c",
             "enabled" : 1,
-            "module" : "Zef::ContentStorage::Ecosystems",
+            "module" : "Zef::Repository::Ecosystems",
             "default" : 1,
             "options" : {
                 "name" : "p6c",
                 "auto-update" : 1,
                 "mirrors" : [
-                    "git://github.com/ugexe/Perl6-ecosystems.git",
-                    "http://ecosystem-api.p6c.org/projects.json"
+                    "http://ecosystem-api.p6c.org/projects.json",
+                    "git://github.com/ugexe/Perl6-ecosystems.git"
                 ]
             }
         },
         {
             "short-name" : "cpan",
             "enabled" : 0,
-            "module" : "Zef::ContentStorage::Ecosystems",
+            "module" : "Zef::Repository::Ecosystems",
             "default" : 1,
             "options" : {
                 "name" : "cpan",
@@ -47,7 +47,7 @@
         {
             "short-name" : "metacpan",
             "enabled" : 0,
-            "module" : "Zef::ContentStorage::MetaCPAN",
+            "module" : "Zef::Repository::MetaCPAN",
             "options" : {
                 "mirrors" : ["http://hack.p6c.org:5000/v0/release/"]
             }
@@ -114,17 +114,17 @@
     ],
     "Test" : [
         {
+            "short-name" : "tap-harness",
+            "module" : "Zef::Service::TAP",
+            "comment" : "Perl6 TAP::Harness adapter"
+        },
+        {
             "short-name" : "prove",
             "module" : "Zef::Service::Shell::prove"
         },
         {
-            "short-name" : "default-tester",
+            "short-name" : "perl6-test",
             "module" : "Zef::Service::Shell::Test"
-        },
-        {
-            "short-name" : "tap-harness",
-            "module" : "Zef::Service::TAP",
-            "comment" : "Buggy; Seems to not like dynamic module loading? (ex: HTTP::UserAgent t/090-ua-ssl.t)"
         }
     ]
 }

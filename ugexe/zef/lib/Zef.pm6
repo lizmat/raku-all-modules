@@ -75,20 +75,25 @@ role Candidate {
     has Bool $.is-dependency is rw;
 }
 
-role ContentStorage {
+role Repository {
+    # An identifier like .^name but intended to differentiate between instances of the same class
+    # For instance: ::Ecosystems<p6c> and ::Ecosystems<cpan> which would otherwise share the
+    # same .^name of ::Ecosystems
+    method id { $?CLASS.^name.split('+', 2)[0] }
+
     # max-results is meant so we can :max-results(1) when we are interested in using it like
     # `.candidates` (i.e. 1 match per identity) so we can stop iterating search plugins earlier
     method search(:$max-results, *@identities, *%fields --> Array of Candidate) { ... }
 
     # Optional method currently being called after a search/fetch
-    # to assist ::ContentStorage::LocalCache in updating its MANIFEST path cache.
-    # The concept needs more thought, but for instance a GitHub related storage
+    # to assist ::Repository::LocalCache in updating its MANIFEST path cache.
+    # The concept needs more thought, but for instance a GitHub related repositories
     # could commit changes or push to a remote branch, and (as is now) the cs
     # ::LocalCache to update MANIFEST so we don't *have* to do a recursive folder search
     #
     # method store(*@dists) { }
 
-    # Optional method for listing available packages. For p6c style storages
+    # Optional method for listing available packages. For p6c style repositories
     # where we have an index file this is easy. For metacpan style where we
     # make a remote query not so much (maybe it could list the most recent X
     # modules... or maybe it just doesn't implement it at all)
@@ -129,7 +134,7 @@ role Pluggable {
 
             DEBUG($plugin, "\t(OK) Plugin loaded successful");
 
-            if ::($ = $module).^can("probe") {
+            if ::($ = $module).^find_method('probe') {
                 ::($ = $module).probe
                     ?? DEBUG($plugin, "\t(OK) Probing successful")
                     !! (next() R, DEBUG($plugin, "\t(SKIP) Probing failed"))

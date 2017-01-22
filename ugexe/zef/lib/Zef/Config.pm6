@@ -3,8 +3,15 @@ unit module Zef::Config;
 
 our sub parse-file($path) {
     my %config = %(from-json( $path.IO.slurp ));
+
     %config{$_.key} = $_.value.subst(/'{$*HOME}' || '$*HOME'/, $*HOME // $*TMP, :g)\
         for %config.grep(*.key.ends-with('Dir'));
+
+    %config<DefaultCUR> //= 'auto';
+
+    # XXX: config upgrade - just remove this in future when no one is looking
+    %config<Repository> //= %config<ContentStorage>:delete;
+
     %config;
 }
 

@@ -8,8 +8,11 @@ class Zef::Service::TAP does Tester does Messenger {
 
     method test($path, :@includes) {
         die "path does not exist: {$path}" unless $path.IO.e;
+
+        my $test-path = $path.IO.child('t');
+        return True unless $test-path.e;
         my @test-files = grep *.extension eq 't',
-            list-paths($path.IO.child('t').absolute, :f, :!d, :r).sort;
+            list-paths($test-path.absolute, :f, :!d, :r).sort;
         return True unless +@test-files;
 
         my $cwd = $*CWD;
@@ -23,8 +26,6 @@ class Zef::Service::TAP does Tester does Messenger {
         }
         chdir($cwd);
 
-        # $.stdout.emit($_);
-        # $.stderr.emit($_);
-        $ = $result.failed == 0;
+        $result.failed == 0 && not $result.errors ?? True !! False;
     }
 }

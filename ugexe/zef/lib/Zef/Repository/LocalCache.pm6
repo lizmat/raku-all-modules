@@ -1,5 +1,6 @@
 use Zef;
 use Zef::Distribution::Local;
+use Zef::Distribution::DependencySpecification;
 
 # Intended to:
 # 1) Keep track of contents of a directory using a manifest.
@@ -8,9 +9,9 @@ use Zef::Distribution::Local;
 #       the single entry to be added to the manifest without having to search
 # 2) If a requested identity matches anything found in the manifest already
 #    then it will return *that* instead of necessarily making net requests
-#    for other ContentStorage like p6c or CPAN (although such choices are
-#    made inside Zef::ContentStorage itself)
-class Zef::ContentStorage::LocalCache does ContentStorage {
+#    for other Repository like p6c or CPAN (although such choices are
+#    made inside Zef::Repository itself)
+class Zef::Repository::LocalCache does Repository {
     state $lock = Lock.new;
     has $.mirrors;
     has $.auto-update;
@@ -45,7 +46,7 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
             take Candidate.new(
                 dist => $dist,
                 uri  => ($dist.source-url || $dist.hash<support><source>),
-                from => $?CLASS.^name,
+                from => self.id,
                 as   => $dist.identity,
             );
         }
@@ -91,33 +92,34 @@ class Zef::ContentStorage::LocalCache does ContentStorage {
     # todo: handle %fields
     # note this doesn't apply the $max-results per identity searched, and always returns a 1 dist
     # max for a single identity (todo: update to handle $max-results for each @identities)
-    method search(:$max-results = 5, *@identities, *%fields) {
+    method search(:$max-results = 5, Bool :$strict, *@identities, *%fields) {
         return () unless @identities || %fields;
         my @wanted = |@identities;
         my %specs  = @wanted.map: { $_ => Zef::Distribution::DependencySpecification.new($_) }
 
         # identities that are cached in the localcache manifest
-        my $resolved-dists := gather RDIST: for |self!gather-dists -> $dist {
+        gather RDIST: for |self!gather-dists -> $dist {
             for @identities.grep(* ~~ any(@wanted)) -> $wants {
-                if ?$dist.contains-spec( %specs{$wants} ) {
+                if ?$dist.contains-spec( %specs{$wants}, :$strict ) {
                     my $candidate = Candidate.new(
                         dist => $dist,
                         uri  => $dist.IO.absolute,
                         as   => $wants,
-                        from => $?CLASS.^name,
+                        from => self.id,
                     );
                     take $candidate;
-                    @wanted.splice(@wanted.first(/$wants/, :k), 1);
-                    last RDIST unless +@wanted;
+
+                    # These are a short circuit that can be used again if the manifest format
+                    # is changed such that its saved in order from highest version to lowest version
+                    #@wanted.splice(@wanted.first(/$wants/, :k), 1);
+                    #last RDIST unless +@wanted;
                 }
             }
         }
-
-        my $sorted := $resolved-dists.sort({ $^b.dist cmp $^a.dist });
     }
 
-    # After the `fetch` phase an app can call `.store` on any ContentStorage that
-    # provides it, allowing each ContentStorage to do things like keep a simple list of
+    # After the `fetch` phase an app can call `.store` on any Repository that
+    # provides it, allowing each Repository to do things like keep a simple list of
     # identities installed, keep a cache of anything installed (how its used here), etc
     method store(*@new) {
         $lock.protect({

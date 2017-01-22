@@ -1,3 +1,4 @@
+use Zef;
 use Zef::Client;
 use Zef::Config;
 use Zef::Utils::FileSystem;
@@ -61,6 +62,7 @@ package Zef::CLI {
         Bool :$build-depends = True,
         Bool :$test          = True,
         Bool :$fetch         = True,
+        Bool :$build         = True,
         Bool :$force,
         Bool :$dry,
         Bool :$update,
@@ -84,8 +86,10 @@ package Zef::CLI {
 
         my $client   = get-client(:config($CONFIG) :exclude(|@excluded), :$force, :$depends, :$test-depends, :$build-depends);
 
+        # Check if installed *to the given --install-to target(s)* but only for requested modules.
+        # Dependencies are still later checked if installed against all known $*REPOs.
         my (:@wanted-identities, :@skip-identities) := @identities\
-            .classify: {$client.is-installed($_) ?? <skip-identities> !! <wanted-identities>}
+            .classify: {$client.is-installed($_, :at($install-to.map(*.&str2cur))) ?? <skip-identities> !! <wanted-identities>}
         say "The following candidates are already installed: {@skip-identities.join(', ')}"\
             if ($verbosity >= VERBOSE) && +@skip-identities;
 
@@ -106,6 +110,7 @@ package Zef::CLI {
 
         my @candidates = grep *.defined, ?$depsonly
             ??|@prereqs !! (|@path-candidates, |@url-candidates, |@requested, |@prereqs);
+
         unless +@candidates {
             note("All candidates are currently installed");
             (?$depsonly || ?$force) ?? exit(0) !! abort("No reason to proceed. Use --force to continue anyway");
@@ -115,7 +120,7 @@ package Zef::CLI {
         my @fetched = grep *.so, |@local, ($client.fetch(|@remote).Slip if +@remote);
 
         my CompUnit::Repository @to = $install-to.map(*.&str2cur);
-        my @installed  = |$client.install( :@to, :$test, :$upgrade, :$update, :$dry, :$serial, |@fetched );
+        my @installed  = |$client.install( :@to, :$test, :$build, :$upgrade, :$update, :$dry, :$serial, |@fetched );
         my @fail       = |@candidates.grep: {.as !~~ any(@installed>>.as)}
 
         say "!!!> Install failures: {@fail.map(*.dist.identity).join(', ')}" if +@fail;
@@ -166,7 +171,7 @@ package Zef::CLI {
         exit 0;
     }
 
-    #| A list of available modules from enabled content storages
+    #| A list of available modules from enabled repositories
     multi MAIN('list', Int :$max?, Bool :i(:$installed), *@at) is export {
         my $client = get-client(:config($CONFIG));
 
@@ -188,35 +193,43 @@ package Zef::CLI {
     }
 
     #| Upgrade installed distributions (BETA)
-    multi MAIN('upgrade', *@at) is export {
+    multi MAIN('upgrade', :to(:$install-to) = $CONFIG<DefaultCUR>, *@identities) is export {
+        abort "Upgrading requires rakudo 2016.04 or later" unless try &*EXIT;
+
         # XXX: This is a very inefficient prototype inefficient
         my $client = get-client(:config($CONFIG));
 
-        my @installed = $client.list-installed(|@at.map(*.&str2cur)).map(*.dist);
-        my @requested = |$client.find-candidates(|@installed.map({ .clone(ver => "*") }).map(*.identity)) if +@installed;
-        my @to-install = gather for @requested -> $latest {
-            my $latest-dist = $latest.dist;
-            my $dist = @installed.first({
-                    .name         eq $latest-dist.name
-                &&  .auth-matcher eq $latest-dist.auth-matcher
+        my @missing = @identities.grep: { not $client.is-installed($_) };
+        abort "Can't upgrade identities that aren't installed: {@missing.join(', ')}" if +@missing;
+
+        my @installed = $client.list-installed(|$install-to.map(*.&str2cur))
+            .sort({Version.new($^b.dist.ver) > Version.new($^a.dist.ver)})
+            .unique(:as({"{.dist.name}:ver<{.dist.auth-matcher}>"}));
+        my @requested = +@identities
+            ?? |$client.find-candidates(|@identities.map(*.&str2identity))
+            !! |$client.find-candidates(|@installed.map(*.dist.clone(ver => "*")).map(*.identity).unique);
+        my (:@upgradable, :@current) := @requested.classify: -> $candi {
+            my $latest-installed = @installed.first({
+                    .dist.name         eq $candi.dist.name
+                &&  .dist.auth-matcher eq $candi.dist.auth-matcher
             });
-
-            take $latest-dist if $latest-dist cmp $dist === Order::More;
+            (($latest-installed.dist.ver cmp $candi.dist.ver) === Order::Less) ?? <upgradable> !! <current>;
         }
+        abort "The following distributions are already at their latest versions: {@current.map(*.dist.identity).join(', ')}" if +@current;
+        abort "All requested distributions are already at their latest versions" unless +@upgradable;
 
-        if +@to-install {
-            say "===> Updating: " ~ @to-install.join(', ');
-            # Ideally we don't need to call MAIN('install'), as it will search for the identities *again*.
-            # This requires factoring out the part of the install process that comes after the search.
-            for @to-install.map(*.identity) -> $identity {
-                try &MAIN('install', $identity);
-            }
+        # Sort these ahead of time so they can be installed individually by passing
+        # the .uri instead of the identities (which would require another search)
+        my @sorted-candidates = $client.sort-candidates(@upgradable);
+        say "===> Updating: " ~ @sorted-candidates.map(*.dist.identity).join(', ');
+        my (:@upgraded, :@failed) := @sorted-candidates.map(*.uri).classify: -> $uri {
+            my &*EXIT = sub ($code) { return $code == 0 ?? True !! False };
+            try &MAIN('install', $uri) ?? <upgraded> !! <failed>;
         }
-        else {
-            say "!!!> Nothing to update";
-        }
+        abort "!!!> Failed upgrading *all* modules" unless +@upgraded;
 
-        exit 0;
+        say "!!!> Some modules failed to update: {@failed.map(*.dist.identity).join(', ')}" if +@failed;
+        exit +@upgraded < +@upgradable ?? 1 !! 0;
     }
 
     #| View reverse dependencies of a distribution
@@ -230,10 +243,10 @@ package Zef::CLI {
     multi MAIN('locate', $identity, Bool :$sha1) is export {
         my $client = get-client(:config($CONFIG));
         if !$sha1 {
-            if $identity ~~ /\.pm6?/ {
+            if $identity.ends-with('.pm' | '.pm6') {
                 my $candi = $client.list-installed.first({
                     my $meta := $_.dist.compat.meta;
-                    so $meta<provides>.first(*.values.first(*.<<$identity>>));
+                    so $meta<provides>.values.grep({.keys[0] eq $identity});
                 });
 
                 if $candi {
@@ -241,6 +254,20 @@ package Zef::CLI {
                     my $lib  = $libs.first({.value.keys[0] eq $identity});
                     say "===> From Distribution: {~$candi.dist}";
                     say "{$lib.keys[0]} => {$candi.from.prefix.child('sources').child($lib.value.values[0]<file>)}";
+                    exit 0;
+                }
+            }
+            elsif $identity.starts-with('bin/' | 'resources/') {
+                my $candi = $client.list-installed.first({
+                    my $meta := $_.dist.compat.meta;
+                    so $meta<files>.first({.key eq $identity});
+                });
+
+                if $candi {
+                    my $libs = $candi.dist.compat.meta<files>;
+                    my $lib  = $libs.first({.key eq $identity});
+                    say "===> From Distribution: {~$candi.dist}";
+                    say "{$identity} => {$candi.from.prefix.child('resources').child($lib.value)}";
                     exit 0;
                 }
             }
@@ -254,13 +281,17 @@ package Zef::CLI {
         else {
             my $candi = $client.list-installed.first({
                 my $meta := $_.dist.compat.meta;
-                my @files = $meta<provides>.values.flatmap(*.values.map(*.<file>));
-                so $identity ~~ any(@files);
+                my @source_files   = $meta<provides>.values.flatmap(*.values.map(*.<file>));
+                my @resource_files = $meta<files>.values.first({$_ eq $identity});
+                $identity ~~ any(grep *.defined, flat @source_files, @resource_files);
             });
 
             if $candi {
                 say "===> From Distribution: {~$candi.dist}";
-                say "{.keys[0]} => {$candi.from.prefix.child('sources').child(.values[0]<file>)}" for $candi.dist.compat.meta<provides>.values.grep(*.values.first({ .<file> eq $identity })).first(*.so);
+                $identity ~~ any($candi.dist.compat.meta<provides>.values.flatmap(*.values.map(*.<file>)))
+                    ?? (say "{.keys[0]} => {$candi.from.prefix.child('sources').child(.values[0]<file>)}" for $candi.dist.compat.meta<provides>.values.grep(*.values.first({ .<file> eq $identity })).first(*.so))
+                    !! (say "{.key} => {.value}" for $candi.dist.compat.meta<files>.first({.value eq $identity}));
+
                 exit 0;
             }
         }
@@ -274,7 +305,7 @@ package Zef::CLI {
     multi MAIN('info', $identity, Int :$wrap = False) is export {
         my $client = get-client(:config($CONFIG));
         my $candi  = $client.resolve($identity)
-                ||   $client.search($identity, :max-results(1))[0]\
+                ||   $client.search($identity, :strict, :max-results(1))[0]\
                 ||   abort "!!!> Found no candidates matching identity: {$identity}";
         my $dist  := $candi.dist;
 
@@ -355,6 +386,7 @@ package Zef::CLI {
         Bool :$build-depends = True,
         Bool :$test          = True,
         Bool :$fetch         = True,
+        Bool :$build         = True,
         Bool :$force,
         Bool :$update,
         Bool :$upgrade,
@@ -376,6 +408,7 @@ package Zef::CLI {
             :$build-depends,
             :$test,
             :$fetch,
+            :$build,
             :$force,
             :$update,
             :$upgrade,
@@ -398,7 +431,7 @@ package Zef::CLI {
     #| Update package indexes
     multi MAIN('update', *@names) is export {
         my $client  = get-client(:config($CONFIG));
-        my %results = $client.storage.update(|@names);
+        my %results = $client.recommendation-manager.update(|@names);
         my $rows    = |%results.map: {[.key, .value]};
         abort "An unknown plugin name used" if +@names && (+@names > +$rows);
 
@@ -407,7 +440,7 @@ package Zef::CLI {
         exit 0;
     }
 
-    #| Nuke module installations (site, home) and storages from config (RootDir, StoreDir, TempDir)
+    #| Nuke module installations (site, home) and repositories from config (RootDir, StoreDir, TempDir)
     multi MAIN('nuke', Bool :$confirm, *@names ($, *@)) {
         my sub dir-delete($dir) {
             my @deleted = grep *.defined, try delete-paths($dir, :f, :d, :r);
@@ -456,8 +489,8 @@ package Zef::CLI {
                 fetch                   Fetch and extract module's source
                 build                   Run the Build.pm in a given module's path
                 look                    Fetch followed by shelling into the module's path
-                update                  Update package indexes for content storages
-                upgrade (BETA)          Upgrade all installed distributions
+                update                  Update package indexes for repositories
+                upgrade (BETA)          Upgrade specific distributions (or all if no arguments)
                 search                  Show a list of possible distribution candidates for the given terms
                 info                    Show detailed distribution information
                 list                    List known available distributions, or installed distributions with `--installed`
@@ -481,6 +514,8 @@ package Zef::CLI {
                 --serial                Install each dependency after passing testing and before building/testing the next dependency
 
                 --/test                 Skip the testing phase
+                --/build                Skip the building phase
+
                 --/depends              Do not fetch runtime dependencies
                 --/test-depends         Do not fetch test dependencies
                 --/build-depends        Do not fetch build dependencies
@@ -550,16 +585,22 @@ package Zef::CLI {
             }.new(:%hash, :$IO);
         }
 
-        # get/remove --$short-name and --/$short-name where $short-name is a value in the config file
+        # - Move named options to start of @*ARGS so the git familiar style of options after positionals works
+        # - get/remove --$short-name and --/$short-name where $short-name is a value in the config file
         my $plugin-lookup := Zef::Config::plugin-lookup($config.hash);
-        @*ARGS = eager gather for @*ARGS -> $arg {
-            my $arg-as  = $arg.subst(/^ ["--" | "--\/"]/, '');
-            my $enabled = $arg.starts-with('--/') ?? 0 !! 1;
-            $arg-as ~~ any($plugin-lookup.keys)
-                ?? (for |$plugin-lookup{$arg-as} -> $p { $p<enabled> = $enabled })
-                !! take($arg);
-        }
+        for @*ARGS -> $arg {
+            state @positional;
+            state @named;
+            LAST { @*ARGS = flat @named, @positional; }
 
+            my $arg-as  = $arg.subst(/^["--" | "--\/"]/, '');
+            my $enabled = $arg.starts-with('--/') ?? 0 !! 1;
+            $arg.starts-with('-')
+                ?? $arg-as ~~ any($plugin-lookup.keys)
+                    ?? (for |$plugin-lookup{$arg-as} -> $p { $p<enabled> = $enabled })
+                    !! @named.append($arg)
+                !! @positional.append($arg);
+        }
         $config;
     }
 
@@ -579,8 +620,28 @@ package Zef::CLI {
 
     # maybe its a name, maybe its a spec/path. either way  Zef::App methods take a CURs, not strings
     sub str2cur($target) {
-        $ = CompUnit::RepositoryRegistry.repository-for-name($target)
-        || CompUnit::RepositoryRegistry.repository-for-spec(~$target, :next-repo($*REPO));
+        my $named-repo = CompUnit::RepositoryRegistry.repository-for-name($target);
+        return $named-repo if $named-repo;
+
+        # first try 'site', then try 'home'
+        if $target eq 'auto' {
+            state $cur =
+                first { .can-install() },
+                map   { CompUnit::RepositoryRegistry.repository-for-name($_) },
+                <site home>;
+            return $cur if $cur;
+        }
+
+        # Technically a path without any short-id# is a CURFS, but now it needs to be explicitly declared file#
+        # so that the more common case can be used without the prefix (inst#). This only applies when the path
+        # exists, so that short-names (site, home) that don't exist still throw errors instead of creating a directory.
+        my $spec-target = $target ~~ m/^\w+\#.*?[\. | \/]/
+            ?? $target
+            !! $target.IO.e
+                ?? "inst#{$target}"
+                !! $target;
+
+        return CompUnit::RepositoryRegistry.repository-for-spec(~$spec-target, :next-repo($*REPO));
     }
 
     sub path2candidate($path) {

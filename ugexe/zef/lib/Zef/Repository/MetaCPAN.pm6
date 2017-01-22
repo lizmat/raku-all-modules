@@ -3,7 +3,7 @@ use Zef::Distribution;
 use Zef::Distribution::DependencySpecification;
 
 # todo: clear search json files
-class Zef::ContentStorage::MetaCPAN does ContentStorage {
+class Zef::Repository::MetaCPAN does Repository {
     has $.mirrors;
     has $.fetcher is rw;
     has $.cache is rw;
@@ -86,7 +86,7 @@ class Zef::ContentStorage::MetaCPAN does ContentStorage {
                         dist  => $dist,
                         uri   => $dist.source-url,
                         as    => $wants,
-                        from  => $?CLASS.^name,
+                        from  => self.id,
                     );
 
                     take $candidate;
