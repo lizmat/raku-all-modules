@@ -1,4 +1,11 @@
-0.02.2 Added for CSS::Speficiation 0.4.1. No longer need
+0.02.4
+    - Remove class CSS::Writer::BaseTypes
+    - Use rakudo TWEAK object initialization phaser
+
+0.02.3 Output rgba and hsla colors as 'transparent' when
+       the alpha channel is 0 and :named-colors are enabled
+
+0.02.2 Adjusted for CSS::Specification 0.4.1. No longer need
        to handle :length(0), :freq(0), etc in AST. But
        do need to remove units from zero quantities.
        :px(0) -> '0', etc
@@ -10,9 +17,9 @@
        the now obselete 'margin-rule', 'media-rule' and 'margin-rule'.
 
 0.01.4 Omit more spaces in :terse mode.
-    -- 'color: red !import' is now 'color:red!important'
+    - 'color: red !import' is now 'color:red!important'
 
 0.01.3 Introduced :$declaration-list.
-    -- For serializing a list of
-       properties without surrounding parenthesis. Typical usage
-       is for generating HTML style attributes.
+    - For serializing a list of
+      properties without surrounding parenthesis. Typical usage
+      is for generating HTML style attributes.

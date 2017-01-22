@@ -1,44 +1,28 @@
 use v6;
 
-use CSS::Writer::BaseTypes;
-
-class CSS::Writer
-    is CSS::Writer::BaseTypes {
+class CSS::Writer {
 
     use CSS::Grammar::AST;
     use CSS::Grammar::CSS3;
 
-    has Str $.indent is rw;
-    has Bool $.terse is rw;
-    has Bool $.color-masks is rw;
-    has %.color-values is rw;   #- maps color names to rgb values
-    has %.color-names is rw;    #- maps rgb hex codes to named colors
+    has Str $.indent is rw = '';
+    has Bool $.terse is rw = False;
+    has Bool $.color-masks is rw = $!terse;
+    has %!color-values;   #- maps color names to rgb values
+    has %!color-names;    #- maps rgb hex codes to named colors
     has $.ast is rw;
 
-    submethod BUILD(:$!indent='',
-                    :$!terse=False,
-                    :$!color-masks=False,
-                    :$color-names, :$color-values,
-                    :$!ast,
-        ) {
-
-        sub build-color-names(%colors) {
-            my %color-names;
-
-            for %colors {
-                my ($name, $rgb) = .kv;
-                # output as ...gray not ...grey
-                next if $name ~~ /grey/;
+    sub build-color-names(%colors) {
+        %(
+            %colors.grep({.key !~~ /grey/}).map: {
+                my (Str $name, List $rgb) = .kv;
                 my $hex = 256 * (256 * $rgb[0]  +  $rgb[1])  +  $rgb[2];
-                %color-names{ $hex } = $name;
+                $hex => $name;
             }
+        )
+    }
 
-            return %color-names;
-        }
-
-        if $!terse {
-            $!color-masks //= True;
-        }
+    submethod TWEAK(:$color-names, :$color-values) {
 
         with $color-names {
             die ":color-names and :color-values are mutually exclusive options"
@@ -139,7 +123,7 @@ class CSS::Writer
 
             $sep = '' if $term<op> && $term<op>;
 
-            if %.color-values && $term<ident> && my $rgb = %.color-values{ $term<ident>.lc } {
+            if %!color-values && $term<ident> && my $rgb = %!color-values{ $term<ident>.lc } {
                 # substitute a named color with it's rgb value
                 $term = {rgb => [ $rgb.map({ num => $_}) ]};
             }
@@ -324,6 +308,15 @@ class CSS::Writer
     }
 
     #| 'I\'d like some \BEE f!' := $.write-string("I'd like some \x[bee]f!")
+    method write-string( Str(Any) $str --> Str) {
+        [~] flat ("'",
+             $str.comb.map({
+                 when /<CSS::Grammar::CSS3::stringchar-regular>|\"/ {$_}
+                 when /<CSS::Grammar::CSS3::regascii>/ {'\\' ~ $_}
+                 default { .ord.fmt("\\%X ") }
+             }),
+             "'");
+    }
 
     #| h1 { color:blue; } := $.write-stylesheet: [ { :ruleset{ :selectors[ { :selector[ { :simple-selector[ { :qname{ :element-name<h1> } } ] } ] } ], :declarations[ { :ident<color>, :expr[ { :ident<blue> } ] }, ] } } ]
     method write-stylesheet(List $_) {
@@ -356,7 +349,7 @@ class CSS::Writer
     }
 
     #| url('snoopy.jpg') := $.write-url: 'snoopy.jpg'
-    method write-url( Str $_ ) {
+    method write-url( $_ ) {
         sprintf "url(%s)", $.write-string( $_ );
     }
 
@@ -424,12 +417,116 @@ class CSS::Writer
         $.terse ?? ' ' !! "\n";
     }
 
+        # -- colors -- #
+    multi method coerce-color(Int :$int!)         {$int}
+    multi method coerce-color(Numeric :$num!)     {+sprintf "%d", $num}
+    multi method coerce-color(Numeric :$percent!) {+sprintf "%d", $percent * 2.55}
+    multi method coerce-color is default          {Any}
+
+    method color-channel($node) {
+        my $num = $.coerce-color(|%$node)
+            // return;
+        $num = 0   if $num < 0 ;
+        $num = 255 if $num > 255;
+        $num;
+    }
+
+    method !write-rgb-mask( @mask ) {
+        # can we reduce to the three hex digit form?
+        # #aa77ff => #a7f
+        my $reducable = [&&] @mask.map: { $_ %% 17 };
+        my @hex-digits = $reducable
+            ?? @mask.map: {sprintf "%X", $_ / 17}
+            !! @mask.map: {sprintf "%02X", $_ };
+
+        [~] flat '#', @hex-digits;
+    }
+
+    #| rgb(10, 20, 30) := $.write-color: [ :num(10), :num(20), :num(30) ], 'rgb' or $.write( :rgb[ :num(10), :num(20), :num(30) ] ) or $.write-rgb: [ :num(10), :num(20), :num(30) ]
+    proto write-color(List $ast, Str $units --> Str) {*}
+
+    multi method write-color(List $ast, 'rgb') {
+
+        my @mask = $ast.map: { $.color-channel($_) };
+
+        return if +@mask != 3 || @mask.first: {!.defined}
+
+        if %!color-names {
+            # map to a color name, if possible
+            my $idx = 256 * (256 * @mask[0]  +  @mask[1])  + @mask[2];
+            return %!color-names{ $idx}
+                if %!color-names{ $idx }:exists;
+        }
+
+        my $out = self!write-rgb-mask(@mask)
+            if $!color-masks;
+
+        $out // sprintf 'rgb(%s, %s, %s)', $ast.map: { $.write( $_ )};
+    }
+
+    multi method write-color( List $ast, 'rgba' ) {
+
+        my \alpha = $ast[3]<num> // $ast[3]<percent> / 100.0;
+
+        if alpha =~= 0.0 && %!color-names {
+            'transparent'
+        }
+        elsif alpha =~= 1.0 {
+            # drop the alpha channel
+            $.write-color( [ $ast[0..2] ], 'rgb' )
+        }
+        else {
+            sprintf 'rgba(%s, %s, %s, %s)', $ast.map: {$.write( $_ )};
+        }
+    }
+
+    multi method write-color(List $ast, 'hsl') {
+        sprintf 'hsl(%s, %s, %s)', $ast.map: {$.write( $_ )};
+    }
+
+    multi method write-color(List $ast, 'hsla') {
+        my \alpha = $ast[3]<num> // $ast[3]<percent> / 100.0;
+
+        alpha =~= 0.0 && %!color-names
+            ?? 'transparent'
+            !! sprintf 'hsla(%s, %s, %s, %s)', $ast.map: {$.write( $_ )};
+    }
+
+    multi method write-color(Str $ast, Any $) {
+        # e.g. 'currentcolor'
+        $ast.lc;
+    }
+
+    multi method write-color( Any $color, Any $units ) is default {
+        die "unable to handle color: {$color.perl}, units: {$units.perl}"
+    }
+
+
+    # -- numbers -- #
+    proto method write-num( Numeric $, $? --> Str) {*};
+
+    multi method write-num( 1, 'em' ) { 'em' }
+    multi method write-num( 1, 'ex' ) { 'ex' }
+    multi method write-num( $freq, 'khz' ) {
+        $.write-num( $freq * 1000, 'hz' )
+    }
+    multi method write-num( Numeric $num, Str:D $units ) {
+	$.write-num($num) ~ ($num == 0 ?? '' !! $units.lc)
+    }
+    multi method write-num( Numeric $num, Mu $units? ) {
+        my $int = $num.Int;
+        $int == $num ?? $int !! $num;
+    }
+
+    multi method write-num( *@args) is default {
+        die "unable to .write-num({@args.perl})";
+    }
+
     #| 42deg   := $.write-num( 42,  'deg') or $.write( :deg(42) )
     #| 420hz   := $.write-num( 420, 'hz')  or $.write( :khz(.42) )
     #| 42mm    := $.write-num( 42,  'mm')  or $.write( :mm(42) ) or $.write-mm(42)
     #| 600dpi  := $.write-num( 600, 'dpi') or $.write( :dpi(600) )
     #| 20s     := $.write-num( 20,  's' )  or $.write( :s(20) )
-    #| rgb(10, 20, 30) := $.write-color: [ :num(10), :num(20), :num(30) ], 'rgb' or $.write( :rgb[ :num(10), :num(20), :num(30) ] ) or $.write-rgb: [ :num(10), :num(20), :num(30) ]
 
     method FALLBACK ($meth-name, $val, |c) {
         if $meth-name ~~ /^ 'write-' (.+) $/ {

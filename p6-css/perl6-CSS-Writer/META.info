@@ -1,12 +1,12 @@
 {
+    "perl"        : "6.*",
     "name"        : "CSS::Writer",
-    "version"     : "0.02.2",
+    "version"     : "0.02.4",
     "description" : "AST Serializer; compatible with CSS::Grammar and CSS::Module",
     "depends"     : [ "CSS::Grammar", "JSON::Fast"  ],
     "source-url"  : "git://github.com/p6-css/perl6-CSS-Writer.git",
     "provides"    : {
-        "CSS::Writer" : "lib/CSS/Writer.pm",
-        "CSS::Writer::BaseTypes" : "lib/CSS/Writer/BaseTypes.pm"
+        "CSS::Writer" : "lib/CSS/Writer.pm"
      }
 }
 

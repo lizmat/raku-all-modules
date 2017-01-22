@@ -1,6 +1,11 @@
 { "ast" : { "expr" : [ { "ident" : "_aBc0" }, { "ident" : "0abc" }, { "ident" : "-x-\"-'-\\" }, {"ident" : "--y" }, {"ident" : "temp@15°C" } ] }, "css" : "_aBc0 0abc -x-\\\"-\\'-\\\\ -\\-y temp\\@15\\B0 C" }
 { "ast" : { "expr" : [ { "string" : "_aBc0" }, { "string" : "0abc" }, { "string" : "-x-\"-'-\\" }, {"string" : "--y" }, {"string" : "temp@15°C" } ] }, "css" : "'_aBc0' '0abc' '-x-\"-\\'-\\\\' '--y' 'temp@15\\B0 C'" }
 {  "ast" : { "rgb" : [ { "num" : 0 }, { "num" : 133 }, { "num" : 255 } ] }, "css" : "rgb(0, 133, 255)" }
+{  "ast" : { "rgba" : [ { "num" : 255 }, { "num" : 0 }, { "num" : 0 }, { "num" : 1.0 } ] }, "css" : "rgb(255, 0, 0)", "color-names": "red" }
+{  "ast" : { "rgba" : [ { "num" : 255 }, { "num" : 0 }, { "num" : 0 }, { "num" : 0.5 } ] }, "css" : "rgba(255, 0, 0, 0.5)", "color-names" : "rgba(255, 0, 0, 0.5)" }
+{  "ast" : { "rgba" : [ { "num" : 255 }, { "num" : 0 }, { "num" : 0 }, { "num" : 0 } ] }, "css" : "rgba(255, 0, 0, 0)", "color-names" : "transparent" }
+{  "ast" : { "hsla" : [ { "num" : 120 }, { "percent" : 20.0 }, { "percent" : 30.0 }, { "num" : 0.7 } ] }, "css" : "hsla(120, 20%, 30%, 0.7)", "color-names" : "hsla(120, 20%, 30%, 0.7)" }
+{  "ast" : { "hsla" : [ { "num" : 120 }, { "percent" : 20.0 }, { "percent" : 30.0 }, { "num" : 0.0 } ] }, "css" : "hsla(120, 20%, 30%, 0)", "color-names" : "transparent" }
 {  "ast" : { "expr" : [ { "ident" : "Blue"}, { "rgb" : [ { "num" : 256 }, { "num" : 165 }, { "num" : -1 } ] }, { "rgb" : [ { "percent" : 10 }, { "percent" : 20 }, { "percent" : 30 } ] }, { "rgb" : [ { "num" : 119 }, { "num" : 170 }, { "num" : 255 } ] } ] }, "css" : "Blue rgb(256, 165, -1) rgb(10%, 20%, 30%) rgb(119, 170, 255)", "color-masks" : "Blue #FFA500 #19334C #7AF", "color-names" : "Blue orange rgb(10%, 20%, 30%) rgb(119, 170, 255)", "color-values" : "rgb(0, 0, 255) rgb(256, 165, -1) rgb(10%, 20%, 30%) rgb(119, 170, 255)" }
 // gray vs grey
 {  "ast" : { "expr" : [ { "ident" : "lightgray"}, { "ident" : "lightgrey" }, { "ident" : "grey" } ] }, "css" : "lightgray lightgrey grey", "color-values" : "rgb(211, 211, 211) rgb(211, 211, 211) rgb(128, 128, 128)" }
