@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/akiym/JSON-Hjson.git
+	branch = master
+	commit = 9c8e55b1fc30304539736ebb3f8df5db5d9e26dd
+	parent = 8177c2dcb3e56a7153a9a283d6ee83d792060b15
+	cmdver = 0.4.0
