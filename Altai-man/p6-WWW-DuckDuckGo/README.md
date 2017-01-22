@@ -1,7 +1,7 @@
 NAME
 ====
 
-WWW::DuckDuckGo - API bindings for DuckDuckGo searcn engine.
+WWW::DuckDuckGo - API bindings for DuckDuckGo search engine.
 
 SYNOPSIS
 ========
