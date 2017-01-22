@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://gitlab.com/CIAvash/WebService-FootballData.git
 	branch = master
-	commit = 9329b9eeda319b9bd9437c1b38980dfa80132f53
-	parent = 9067f5068bc2d79508b54000e7142a8b40c6ec48
-	cmdver = 0.2.3
+	commit = 7f923f72730a734b43a6e59e7d5307185640eb63
+	parent = 3631e21ff7c32c3e9be3cb5a83b9965803bfeaba
+	cmdver = 0.4.0

@@ -1,7 +1,7 @@
 {
     "perl": "6.c",
     "name": "WebService::FootballData",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "An interface to football-data.org API",
     "authors": ["Siavash Askari Nasr"],
     "provides": {
