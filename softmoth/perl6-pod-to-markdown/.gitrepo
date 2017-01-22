@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/softmoth/perl6-pod-to-markdown.git
 	branch = master
-	commit = e55d50d21c8e4644368e6cb23115a667e57f107e
-	parent = 36ab1093d7b01d0e3e6e3d533805442dafd56e6c
-	cmdver = 0.2.3
+	commit = 1e1c6b05b63d90f6e283f09028b9b25a6df1ed77
+	parent = ab8806c2eef61b0dacde1d9f99becc7324b4ea4b
+	cmdver = 0.4.0
