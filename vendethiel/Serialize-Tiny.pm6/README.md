@@ -14,5 +14,5 @@ class A {
 
 use Serialize::Tiny;
 say serialize(A.new(:5pub));
-#=> {:a(5)}<>
+#=> {pub => 5}
 ```

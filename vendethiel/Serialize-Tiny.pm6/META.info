@@ -1,4 +1,5 @@
 {
+  "perl": "6.*",
   "name": "Serialize::Tiny",
   "version": "1",
   "description": "A very simple `serialize` sub to get public attribute values",
