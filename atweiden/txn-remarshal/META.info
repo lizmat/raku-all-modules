@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "TXN::Remarshal",
     "version"     : "*",
     "author"      : "Andy Weidenbaum",
