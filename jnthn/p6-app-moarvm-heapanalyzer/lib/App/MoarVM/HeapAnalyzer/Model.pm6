@@ -390,7 +390,7 @@ submethod BUILD(IO::Path :$file = die "Must construct model with a file") {
     }
 
     # Set off background parsing of the headers, and stash unparsed snapshots.
-    $!strings-promise = start from-json(%top-level<strings>).list;
+    $!strings-promise = start Rakudo::Internals::JSON.from-json(%top-level<strings>).list;
     $!types-promise = start self!parse-types(%top-level<types>);
     $!static-frames-promise = start self!parse-static-frames(%top-level<static_frames>);
     @!unparsed-snapshots = @snapshots;

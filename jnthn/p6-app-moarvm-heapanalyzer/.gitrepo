@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/p6-app-moarvm-heapanalyzer.git
 	branch = master
-	commit = 367a0ad8829890675429345549f547536f3ccbd0
-	parent = 792332dcc8d5658f0d89149a1df4835d6a9e72fc
-	cmdver = 0.2.3
+	commit = 5685a8e30549bdff8252ffee0d08a5b34ec1cc1e
+	parent = 579e39f3e4ac52c5c1e1b167aa134dc3e13a5710
+	cmdver = 0.4.0

@@ -1,4 +1,5 @@
 {
+    "perl"          : "6.*",
     "name"          : "App::MoarVM::HeapAnalyzer",
     "version"       : "0.1",
     "description"   : "MoarVM heap snapshot analysis tool",
