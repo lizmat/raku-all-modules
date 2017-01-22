@@ -2,9 +2,9 @@ unit class Template::Protone;
 
 use MONKEY-SEE-NO-EVAL;
 
-has Str $.open  = '<%';
-has Str $.close = '%>';
-has Bool $.trim = True;
+has Str $.open     = '<%';
+has Str $.close    = '%>';
+has Bool $.trim    = True;
 
 has %.cache;
 
@@ -16,12 +16,17 @@ method parse(:$template is copy, :$name?) {
   my (Int $from, Int $to, Str $code);
 
   $code = '';
-  while ($from = $template.index($.open)) {
+  while ($template.index($.open) !~~ Nil) {
+    $from = $template.index($.open);
     $code ~= ' print \'' ~ $template.substr(0, $from).subst('\'', '\\\'') ~ '\'; ' if ! $.trim || $template.substr(0, $from).trim.chars > 0;
     $to = $template.index($.close, $from + $.open.chars);
     $code ~= "\n" ~ $template.substr($from + $.open.chars, $to - $from - $.close.chars - $.open.chars + 1);
     $template .=substr($to + $.close.chars);
   }
+  if $template.chars.trim > 0 {
+    $code ~= '; print \'' ~ $template.subst('\'', '\\\'') ~ '\'; ';
+  }
+
 
   my $sub = EVAL " sub (\$data?) \{ $code \}";
 

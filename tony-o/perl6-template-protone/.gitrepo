@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-template-protone.git
 	branch = master
-	commit = 9df8db988dfb1953cdf306000df2fbd477111158
-	parent = fc1cf624221601abbdeb937348757a6c3b1ff9fd
-	cmdver = 0.2.3
+	commit = 5add4d81f38c77c0e73a67f8813d465da8a6d18f
+	parent = 80145d7a6bd04d86a3479ec1fde919956458bc88
+	cmdver = 0.4.0
