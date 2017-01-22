@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/oo-actors.git
 	branch = master
-	commit = aff6cd2350962490049711be495d69fd38f7d53e
-	parent = 2b17a96ed120e639a246eea7a4bf0a4752f7643c
-	cmdver = 0.2.3
+	commit = 18059c8e7517ef940ef29ff3b3dcd1ced4777716
+	parent = 1fc67feeb7c042c985928c0cf265e3c4d6009af3
+	cmdver = 0.4.0
