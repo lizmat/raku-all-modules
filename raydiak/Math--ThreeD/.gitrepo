@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/raydiak/Math--ThreeD.git
 	branch = master
-	commit = 96f453c32cb5b837e4e9197522d34b6336ec3907
-	parent = 088e70ea554b45ecc933ef05a384ba18db324412
-	cmdver = 0.2.2
+	commit = ed7cfa08cf9bb10ff3866d4ad04310c2cd395018
+	parent = ccac3944ff6095f36936420fb148a6beb0ea30b6
+	cmdver = 0.4.0

@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Math::ThreeD",
     "version" : "*",
     "description" : "A simple 3D library for Perl 6.",
