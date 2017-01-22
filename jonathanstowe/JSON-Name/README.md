@@ -5,7 +5,7 @@ the JSON names aren't Perl identifiers
 
 ## Synopsis
 
-```
+```perl6
 use JSON::Name;
 
 class MyClass {
@@ -32,18 +32,8 @@ Of course it could be used in other modules for a similar purpose.
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -53,16 +43,18 @@ Or you can install directly with "panda":
 
     panda install JSON::Name
 
-Other install mechanisms may be become available in the future.
+This should work equally well with *zef* but I haven't tested it.
 
 ## Support
 
-However suggestions/patches are welcomed via github at
+Suggestions/patches are welcomed via github at
 
-   https://github.com/jonathanstowe/JSON-Name
+https://github.com/jonathanstowe/JSON-Name
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015, 2016
+Please see the [LICENCE](LICENCE) file in the distribution
+
+© Jonathan Stowe 2015, 2016, 2017

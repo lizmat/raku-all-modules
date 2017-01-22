@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/JSON-Name.git
 	branch = master
-	commit = 888a6cb7b9e711d6b6f30cdc95c8f6a1a787ab03
-	parent = c9c2fc2f3878ec9265b236dfa810df1bc3a27443
-	cmdver = 0.2.3
+	commit = 62ab52aeec5da4c41c0bf3aa3f14995d2bda5765
+	parent = 39e64facd7884db22816acdca59aacb217a47263
+	cmdver = 0.4.0
