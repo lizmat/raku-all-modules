@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "DateTime::DST",
     "version" : "0.1",
     "description" : "Make localtime[8] available as is-dst to Perl 6",
