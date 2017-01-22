@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/Leont/build-graph6.git
 	branch = master
-	commit = 2c29c77ca1a12de419fa34458047414d0b508f9b
-	parent = cdf73bf229127500033435b829d984c89debcb5a
-	cmdver = 0.2.3
+	commit = 030050459fa4636f903a14ba50a643417afaed37
+	parent = f2325127cd031d1da7f3b643bcac250c024ffaba
+	cmdver = 0.4.0
