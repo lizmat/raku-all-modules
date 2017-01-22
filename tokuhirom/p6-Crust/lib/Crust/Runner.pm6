@@ -76,7 +76,9 @@ method !setup() {
     CompUnit::RepositoryRegistry.use-repository(CompUnit::RepositoryRegistry.repository-for-spec($_))
         for @!inc;
     for @!modules {
-        require ::($_)
+        # FIXME: workaround for Bug RT #130535
+        # ref: https://github.com/tokuhirom/p6-Crust/pull/86
+        EVAL "use $_";
     }
 }
 
@@ -112,7 +114,9 @@ multi method run() {
     }
 
     my $handler = "Crust::Handler::{$!server}";
-    require ::($handler);
+    # FIXME: workaround for Bug RT #130535
+    # ref: https://github.com/tokuhirom/p6-Crust/pull/85
+    EVAL "use $handler";
     my $httpd = ::($handler).new(|%!options);
     $httpd.run(&app);
 }
