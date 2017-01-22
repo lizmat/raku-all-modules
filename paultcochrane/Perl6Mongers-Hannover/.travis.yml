@@ -1,19 +1,11 @@
 language: perl6
 
+env:
+    AUTHOR_TESTING=1
+
 perl6:
     - latest
-    - 2016.02
-    - 2016.01
-    - 2015.12
-    - 2015.11
-    - "2015.10"
-    - 2015.09
 
 install:
-    rakudobrew build-panda $([ "$TRAVIS_PERL6_VERSION" == "latest" ] && echo "" || echo $TRAVIS_PERL6_VERSION)
-
-before_script:
-    panda install IO::Capture::Simple
-
-script:
-    panda-test
+    - rakudobrew build-panda
+    - panda installdeps .
