@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "Sparrowdo::Sparrow::Update",
   "version"     : "*",
   "description" : "Sparrowdo module to install/update Sparrow toolchain on target host",
