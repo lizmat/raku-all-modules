@@ -2,9 +2,12 @@
 
 Audio silence detection using silan (https://github.com/x42/silan)
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Audio-Silan.svg?branch=master)](https://travis-ci.org/jonathanstowe/Audio-Silan)
+
 ## Synopsis
 
-```
+```perl6
+
 use Audio::Silan;
 
 my $silan = Audio::Silan.new;
@@ -40,18 +43,8 @@ on Unix-like systems and you can use the appropriate package manager to
 install it.  If it is not available as a package then it should be possible
 to install it from source.
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo perl6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -67,7 +60,7 @@ Other install mechanisms may be become available in the future.
 
 Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/Audio-Silan
+   https://github.com/jonathanstowe/Audio-Silan/issues
 
 It should be borne in mind before reporting an issue that this depends
 on the behaviour of silan itself and that is likely that any mis-reporting
@@ -84,4 +77,4 @@ have an impact.
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016

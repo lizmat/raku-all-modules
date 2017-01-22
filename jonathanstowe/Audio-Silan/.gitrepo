@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Audio-Silan.git
 	branch = master
-	commit = 3c7c2fca63f6d7f1b8b43c0510ba1ca6f39b447d
-	parent = 70b07a52a142929d8fa2f3fb6a7efadd287a8bd1
-	cmdver = 0.2.3
+	commit = e712832452ea813b0d6f7a4d803b386df92c4261
+	parent = 55be355d574293413c2a283dfdbd9307c72d9f33
+	cmdver = 0.4.0
