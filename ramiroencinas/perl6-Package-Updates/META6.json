@@ -1,0 +1,12 @@
+{
+  "perl" : "6.c",
+  "name" : "Package::Updates",
+  "version" : "*",
+  "description" : "Provides package updates information.",
+  "authors" : [ "Ramiro Encinas Alarza" ],
+  "provides" : {
+    "Package::Updates" : "lib/Package/Updates.pm6"
+  },
+  "depends" : [ ],
+  "source-url" : "git@github.com:ramiroencinas/perl6-Package-Updates.git"
+}

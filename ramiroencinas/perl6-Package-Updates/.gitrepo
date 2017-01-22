@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ramiroencinas/perl6-Package-Updates.git
+	branch = master
+	commit = 0578447560aa567c03a3705478d7911621103df0
+	parent = a959df0eb95ae8b54847374a8e26f071161a8d17
+	cmdver = 0.4.0
