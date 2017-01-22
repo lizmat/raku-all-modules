@@ -1,6 +1,6 @@
-#Common mathematical sequences for Perl 6
+# Common mathematical sequences for Perl 6
 
-##Included components
+## Included components
 
 * `Math::Sequences::Integer` - Integer sequences
   * `class Integers` - generic Integer sequences class

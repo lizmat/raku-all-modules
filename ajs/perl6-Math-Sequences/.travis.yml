@@ -1,17 +1,13 @@
-language: perl6
+sudo: required
+
+language: c
+
+services:
+  - docker
 
 install:
+  - docker pull jjmerelo/test-perl6
+  - docker images
 
-  - rakudobrew build-panda
+script: docker run -t -v /home/travis/build/JJ/perl6-Math-Sequences:/test jjmerelo/test-perl6 
 
-  - panda installdeps .
-
-script:
-
-  - prove -v -e "perl6 --ll-exception -Ilib" t
-
-  - PANDA_SUBMIT_TESTREPORTS=1 panda install .
-
-after_success:
-
-  - panda list --installed --verbose

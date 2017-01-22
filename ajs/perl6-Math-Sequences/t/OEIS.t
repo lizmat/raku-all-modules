@@ -1,4 +1,4 @@
-# Test OEIS sequences
+# Test OEIS sequences  -*- mode: perl6 -*-
 #
 
 use Test;

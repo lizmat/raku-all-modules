@@ -1,9 +1,9 @@
 {
     "perl": "6.c",
     "name" : "Math::Sequences",
-    "version" : "0.0.2",
+    "version" : "0.0.3",
     "description" : "Various mathematical sequences of moderate use",
-    "authors" : [ "Aaron Sherman" ],
+    "authors" : [ "Aaron Sherman", "JJ Merelo" ],
     "provides" : {
         "Math::Sequences::Integer" : "lib/Math/Sequences/Integer.pm",
         "Math::Sequences::Real" : "lib/Math/Sequences/Real.pm"

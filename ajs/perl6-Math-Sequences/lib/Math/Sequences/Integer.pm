@@ -225,8 +225,14 @@ sub Pi-digits is export(:support) {
 
 # May as well, while we're here...
 sub FatPi($digits=100) is export {
-    FatRat.new(+([~] Pi-digits[^($digits)]), 10**($digits-1));
+  FatRat.new(+([~] Pi-digits[^($digits)]), 10**($digits-1));
 }
+
+sub Horadam( Int $p, Int $q, Int $r, Int $s ) {
+  my @horadam = $p, $q, {$^n1 × $r + $^n2 × $s} … ∞;
+  return @horadam;
+}
+
 
 # If we don't yet have a formula for a given sequence, we use &NOSEQ in a
 # range to define where our canned data ends. Because we use "fail", the
@@ -272,6 +278,7 @@ our @A000029 is export = 1, 2, 3, 4, 6, 8, 13, 18, 30, 46, 78, &NOSEQ ... *;
 our @A000031 is export = 1, 2, 3, 4, 6, 8, 14, 20, 36, 60, 108, &NOSEQ ... *;
 # A000032 / Lucas
 our @A000032 is export = 2, 1, * + * ... *;
+our @sequence-Lucas is export =  @A000032;
 # A000035 / 0101...
 our @A000035 is export = |(0,1) xx *;
 # A000040 / primes
@@ -282,6 +289,7 @@ our @A000041 is export = 1, 1, 2, 3, 5, 7, 11, 15, 22, 30, 42, &NOSEQ ... *;
 our @A000043 is export = lazy 𝕀.grep: { .is-prime and (2**$_-1).is-prime };
 # A000045 / Fibonacci
 our @A000045 is export = 0, 1, * + * ... *;
+our @sequence-Fibonacci is export =  @A000045;
 # A000048 / necklaces
 our @A000048 is export = 1, 1, 1, 1, 2, 3, 5, 9, 16, 28, 51, &NOSEQ ... *;
 # A000055 / trees
@@ -318,6 +326,7 @@ our @A000123 is export = lazy 𝕀.map: &binpart;
 our @A000124 is export = lazy 𝕀.map: -> $n {($n * ($n+1)) / 2 + 1};
 # A000129 / Pell
 our @A000129 is export = 0, 1, * + 2 * * ... *;
+our @Pell-sequence is export = @A000129;
 # A000140 / Kendall-Mann
 our @A000140 is export = 1, &NOSEQ ... *;
 # A000142 / n!
@@ -634,6 +643,16 @@ our @A226898 is export = 1, &NOSEQ ... *;
 # A246655 / prime powers
 our @A246655 is export = 1, &NOSEQ ... *;
 
+#Horadam sequences. Just the first 10
+our @A085939 is export = Horadam( 0, 1, 6, 4);
+our @A085449 is export = Horadam( 0, 1, 4, 2);
+our @A085504 is export = Horadam( 0, 1, 9, 3);
+our @A001076 is export = Horadam( 0, 1, 1, 4);
 
+#Hofstadter sequences
+our @A005206 is export = 0, {++$ - @A005206[@A005206[$++]]} … ∞;
+our @Hofstadters-G is export = @A005206;
+our @A005374 is export = 0, {++$ - @A005374[@A005374[@A005374[$++]]]} … ∞;
+our @Hofstadters-H is export = @A005374;
 
 # vim: sw=4 softtabstop=4 expandtab ai ft=perl6
