@@ -1,4 +1,5 @@
 {
+    "perl"          : "6.*",
     "name"          : "App::Pray",
     "version"       : "*",
     "description"   : "Perl 6 Ray Tracing Engine",
