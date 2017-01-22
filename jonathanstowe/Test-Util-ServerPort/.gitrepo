@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Test-Util-ServerPort.git
 	branch = master
-	commit = eeee2c77048e7f3dc5da6e9f4f9e83f4dac5169f
-	parent = f9005827e2f2644b26b5650e97a011d0ff1a6768
-	cmdver = 0.2.3
+	commit = 94187f71b274feaa4ae055b1ab48a6da480c88d0
+	parent = e45c9017581cceb0094b4aa942a410131e5dc157
+	cmdver = 0.4.0
