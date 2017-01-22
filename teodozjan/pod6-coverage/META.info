@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Pod::Coverage",
     "version"     : "v0.1.0",
     "authors"	  : ["github:teodozjan"],
