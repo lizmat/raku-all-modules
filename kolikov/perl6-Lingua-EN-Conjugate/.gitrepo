@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/kolikov/perl6-Lingua-EN-Conjugate.git
 	branch = master
-	commit = 88f9ae00eddcb347188f5134514691f118f0c95c
-	parent = 8b1518308f23b855b107bb472f6fa20373fa3cf2
-	cmdver = 0.2.3
+	commit = bc42e998535fd8eecd928934db74e5a62586f8d2
+	parent = fa0fdff49af8cf8106aa37563676a48705f47253
+	cmdver = 0.4.0

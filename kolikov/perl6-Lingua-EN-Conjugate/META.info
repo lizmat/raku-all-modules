@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Lingua::EN::Conjugate",
     "version" : "0.2",
     "description" : "A module that conjugates English verbs",
