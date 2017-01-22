@@ -1,0 +1,45 @@
+    Release 0.0.7
+    - Optimized stream and image tokens
+    - Added PDF::Grammar::Content::Fast. A faster, more forgiving
+      alternative to PDF::Grammar::Content
+
+    Release 0.0.6
+    - Make META.info version consistent with PDF::Grammar:ver<...>
+    - Declare "perl6" : "6" in META.info
+    - new <xref-first> rule. A variation of <xref> that assumes we've
+      hopped over the first few bytes. Needed by PDF::Reader to (gulp)
+      handle the /T offset entry in linearization dictionary.
+    - minor optimisations to <ws> and <name> rules
+    - replaced a couple of regex with rules/tokens
+    - <xref-section> - allow zero <xref-entry>'s
+      As observed in some real-world PDF's
+
+    Release 0.0.5
+    - Replaced JSON::Tiny with JSON::Fast
+    - Removed PDF::Grammar::Stream
+    - Slightly relax trailer parse. Don't require a \n before trailer dictionary
+    - Fixed whitespace handling in <PDF::Grammar::Doc::ind-obj-nibble> rule
+
+    Release 0.0.4
+    - Added `AST Reference` section to README.
+    - Renamed a couple of token tags for consistency:
+         -- object-first-num => obj-first-num
+         -- object-count => obj-count
+
+    Release 0.0.3
+    - Reworked 'stream' AST to return :encoded stream content. Rather
+      than :start and :end positions of the stream.
+
+      This was originally intended as a optimization. In practice the reader
+      only uses this rule in :repair mode, in which case it always extracts
+      the stream data anyway.
+
+    - tweaked ind-obj-nibble rule to use .codes rather than .chars to compute
+      offset of stream start - safer in a post-NFG world. Latin encoding now
+      has "\n\r" as a combining newline character.
+
+    Release 0.0.2
+    - General fixes for the 2015 Rakudo GLR
+
+    Release 0.0.1
+    - Initial development
