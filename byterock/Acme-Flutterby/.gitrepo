@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/byterock/Acme-Flutterby.git
 	branch = master
-	commit = 588ebad5e8beb0553ebb7da199379b140d75e9a6
-	parent = cb79fa426bbb9ecfe8853d9beab4b9eac4a24cfe
-	cmdver = 0.2.2
+	commit = ca86656b4910f863c5d9e1ec6a54c2824ffce7b2
+	parent = d43ebbd510cc7ff7ffeafa145ff522e664bafc7e
+	cmdver = 0.4.0

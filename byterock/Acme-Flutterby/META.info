@@ -1,4 +1,5 @@
 {
+        "perl" : "6.*",
         "name" : "Acme::Flutterby",
         "version" : "0.01",
         "description" : "Acme::Flutterby - An object-oriented interface to a butterfly.  In what else but Perl 6...",
