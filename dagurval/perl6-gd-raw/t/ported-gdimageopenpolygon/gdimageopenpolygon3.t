@@ -1,5 +1,5 @@
-BEGIN { @*INC.unshift('t') }
 use GD::Raw;
+use lib <t>;
 use gdtest;
 use Test;
 

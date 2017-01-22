@@ -1,11 +1,10 @@
 ---
-sudo: true
+sudo: required
+dist: trusty
 language: perl6
 perl6:
     - latest
 before_install:
     - sudo apt-get update -qq
-    - sudo apt-get install -y libgd2-noxpm
+    - sudo apt-get install -y libgd3
 install:
-    - rakudobrew build-panda
-    - panda --notests installdeps .

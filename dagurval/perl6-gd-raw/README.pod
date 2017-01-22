@@ -6,6 +6,8 @@ GD::Raw - Low level language bindings to GD Graphics Library
 
 =head1 SYNOPSIS
 
+=begin code
+
     use GD::Raw;
     
     my $fh = fopen("my-image.png", "rb");
@@ -14,6 +16,8 @@ GD::Raw - Low level language bindings to GD Graphics Library
     say "Image resolution is ", gdImageSX($img), "x", gdImageSX($img);
     
     gdImageDestroy($img);
+
+=end code
 
 =head1 DESCRIPTION
 
@@ -24,3 +28,4 @@ origin as possible.
 LibGD is large and this module far from covers it all. Feel free to add anything
 your missing and submit a pull request!
 
+=end pod

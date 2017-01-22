@@ -1,5 +1,5 @@
-BEGIN { @*INC.unshift('t') }
 use GD::Raw;
+use lib <t>;
 use gdtest;
 use Test;
 
@@ -15,4 +15,4 @@ gdImagePolygon($im, (), 0, $black); # no effect
 gdImagePolygon($im, (), -1, $black); # no effect
 ok gdAssertImageEqualsToFile("t/ported-gdimagepolygon/gdimagepolygon0.png", $im);
 
-done;
+done-testing;

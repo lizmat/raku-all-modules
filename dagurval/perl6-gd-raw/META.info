@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "GD::Raw",
     "version"     : "0.2",
     "description" : "Low level language bindings to GD Graphics Library",

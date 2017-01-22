@@ -1,20 +1,6 @@
 use NativeCall;
 
-sub LIB {
-    #return "/home/dagurval/libgd/src/.libs/libgd";
-    given $*VM.name {
-       when 'parrot' {
-           given $*VM.config<load_ext> {
-               when '.so' { return 'libgd.so' }	# Linux
-	            when '.bundle' { return 'libgd.dylib' }	# Mac OS
-	            default { return 'libgd' }
-           }
-       }
-       default {
-          return 'libgd';
-       }
-    }
-}
+constant LIB = [ 'gd', v3 ];
 
 constant gdAlphaMax is export = 127;
 constant gdAlphaOpaque is export = 0;
@@ -134,15 +120,19 @@ sub gdImageSY($img) is export {
 
 sub gdImageColorsTotal($im) { $im.colorsTotal }
 sub gdImageRed($im, Int $c) is export {
+    use MONKEY-SEE-NO-EVAL;
     $im.trueColor ?? gdTrueColorGetRed($c) !! EVAL "\$im.red$c"
 }
 sub gdImageGreen($im, Int $c) is export {
+    use MONKEY-SEE-NO-EVAL;
     $im.trueColor ?? gdTrueColorGetGreen($c) !! EVAL "\$im.green$c"
 }
 sub gdImageBlue($im, Int $c) is export {
+    use MONKEY-SEE-NO-EVAL;
     $im.trueColor ?? gdTrueColorGetBlue($c) !! EVAL "\$im.blue$c"
 }
 sub gdImageAlpha($im, Int $c) is export {
+    use MONKEY-SEE-NO-EVAL;
     $im.trueColor ?? gdTrueColorGetAlpha($c) !! EVAL "\$im.alpha$c"
 }
 
@@ -183,7 +173,7 @@ sub gdFree(OpaquePointer $m)
     # returns void
     is native(LIB) is export { * }
 
-sub gdImageJpeg(gdImageStruct $image, OpaquePointer $file, Int $quality where { $_ <= 95 })
+sub gdImageJpeg(gdImageStruct $image, OpaquePointer $file, int32 $quality where { $_ <= 95 })
     is native(LIB) is export { ... }
 
 sub gdImagePng(gdImageStruct $image, OpaquePointer $file)
@@ -212,7 +202,7 @@ sub gdImageCopyResized(gdImageStruct $dst, gdImageStruct $src,
     is native(LIB) is export { ... }
 
 sub gdImageCopyResampled(gdImageStruct $dst, gdImageStruct $src,
-    Int $dstX, Int $dstY, Int $srcX, Int $srcY, Int $dstW, Int $dstH, Int $srcW, Int $srcH)
+    int32 $dstX, int32 $dstY, int32 $srcX, int32 $srcY, int32 $dstW, int32 $dstH, int32 $srcW, int32 $srcH)
     is native(LIB) is export { ... }
 
 sub gdImageSetAntiAliased (gdImagePtr $im, int32 $c) is export
@@ -236,7 +226,7 @@ sub gdImageDestroy(gdImageStruct)
     is native(LIB) is export { ... }
 
 sub gdImageGetTrueColorPixel(gdImagePtr $im, int32 $x, int32 $y)
-    returns int
+    returns int32
     is native(LIB) is export { * }
 
 sub gdImageSetPixel(gdImagePtr $im, int32 $x, int32 $y, int32 $color)
@@ -263,7 +253,7 @@ sub gdImageColorAllocate(gdImagePtr $im, int32 $r, int32 $g, int32 $b)
     returns int32
     is native(LIB) is export { * }
 
-sub gdImageFilledRectangle(gdImagePtr $im, int32 $x1, int32 $y1, int32 $x2, int32 $y2, int $color)
+sub gdImageFilledRectangle(gdImagePtr $im, int32 $x1, int32 $y1, int32 $x2, int32 $y2, int32 $color)
     #returns void
     is native(LIB) is export { * }
 
@@ -456,22 +446,22 @@ sub gdImageRotateInterpolated(gdImagePtr $src, num32 $angle, int32 $bgcolor)
 
 # Need GD 2.2 for these.
 sub gdMajorVersion()
-    returns int
+    returns int32
     is native(LIB) is export { * }
 
 sub gdMinorVersion()
-    returns int
+    returns int32
     is native(LIB) is export { * }
 
 sub gdReleaseVersion()
-    returns int
+    returns int32
     is native(LIB) is export { * }
 sub gdExtraVersion(void)
     returns Str
     is native(LIB) is export { * }
 
 sub gdVersionString()
-    returns int
+    returns Str
     is native(LIB) is export { * }
 
 sub gdImageCopyGaussianBlurred(gdImagePtr $src, int32 $radius, num64 $sigma)

@@ -1,8 +1,8 @@
 # Exercise all scaling with all interpolation modes and ensure that
 # at least, something comes back.
 
-BEGIN { @*INC.unshift('t') }
 use GD::Raw;
+use lib <t>;
 use gdtest;
 use Test;
 

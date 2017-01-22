@@ -34,6 +34,6 @@ my $tmp-path = $*TMPDIR.child("gd-raw-tmpimg");
         gdImageDestroy($img);
 }
 
-done;
+done-testing;
 
 try { unlink $tmp-path.Str }

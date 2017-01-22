@@ -1,5 +1,5 @@
-BEGIN { @*INC.unshift('t') }
 use GD::Raw;
+use lib <t>;
 use gdtest;
 use Test;
 use NativeCall;
@@ -25,4 +25,4 @@ my $r = gdAssertImageEqualsToFile("t/ported-gdimagepolygon/gdimagepolygon2.png",
 gdImageDestroy($im);
 ok $r, "gdAssertImageEqualsToFile";
 
-done;
+done-testing;
