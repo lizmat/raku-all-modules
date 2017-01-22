@@ -11,7 +11,7 @@ SYNOPSIS
     use Algorithm::Treap;
 
     # store Int key
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0, 0);
     $treap.insert(1, 10);
     $treap.insert(2, 20);
@@ -25,7 +25,7 @@ SYNOPSIS
     $treap.delete(4);
 
     # store Str key
-    my $treap = Algorithm::Treap.new(key-type => Str);
+    my $treap = Algorithm::Treap[Str].new;
     $treap.insert('a', 0);
     $treap.insert('b', 10);
     $treap.insert('c', 20);
@@ -48,17 +48,15 @@ CONSTRUCTOR
 
 ### new
 
-    my $treap = Algorithm::Treap.new(%options);
+    my $treap = Algorithm::Treap[::KeyT].new(%options);
+
+Sets either one of the type objects(Int or Str) for `::KeyT` and some `%options`, where `::KeyT` is a type of insertion items to the treap.
 
 #### OPTIONS
 
-  * `key-type => Int|Str`
+  * `order-by => TOrder::ASC|TOrder::DESC`
 
-Sets either one of the type objects(Int or Str) for keys which you use to insert items to the treap.
-
-  * `order-by => 'asc'|'desc'`
-
-Sets key order 'asc' or 'desc' in the treap. Default is 'asc'.
+Sets key order `TOrder::ASC` or `TOrder::DESC` in the treap. Default is `TOrder::ASC`.
 
 METHODS
 -------

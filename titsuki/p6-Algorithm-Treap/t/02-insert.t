@@ -3,13 +3,13 @@ use Test;
 use Algorithm::Treap;
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Str);
+    my $treap = Algorithm::Treap[Str].new;
     dies-ok { $treap.insert(0, 99); }, "It should quit insertion and die when it violates type constraints";
 
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0, 99);
     my $actual = $treap.root.value;
     my $expected = 99;
@@ -17,7 +17,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Str);
+    my $treap = Algorithm::Treap[Str].new;
     $treap.insert('aho-corasick', 99);
     my $actual = $treap.root.value;
     my $expected = 99;
@@ -25,7 +25,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0, 99);
     $treap.insert(0, 101);
     my $actual = $treap.root.value;
@@ -34,7 +34,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0, 0, Num(0.51));
     $treap.insert(1, 1, Num(1.0));
     $treap.insert(2, 2, Num(0.28));
@@ -49,7 +49,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0, 0, Num(1.0));
     $treap.insert(1, 1, Num(0.9));
     $treap.insert(2, 2, Num(0.8));

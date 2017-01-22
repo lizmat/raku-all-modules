@@ -1,18 +1,18 @@
 {
-  "name" : "Algorithm::Treap",
-  "source-url" : "git://github.com/titsuki/p6-Algorithm-Treap.git",
-  "perl" : "6.c",
-  "resources" : [ ],
+  "authors" : [
+    "titsuki"
+  ],
   "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "randomized search tree",
+  "name" : "Algorithm::Treap",
+  "perl" : "6.c",
   "provides" : {
     "Algorithm::Treap" : "lib/Algorithm/Treap.pm6",
     "Algorithm::Treap::Node" : "lib/Algorithm/Treap/Node.pm"
   },
-  "depends" : [ ],
-  "description" : "randomized search tree",
+  "resources" : [ ],
+  "source-url" : "git://github.com/titsuki/p6-Algorithm-Treap.git",
   "test-depends" : [ ],
-  "version" : "0.08",
-  "authors" : [
-    "titsuki"
-  ]
+  "version" : "0.10.0"
 }

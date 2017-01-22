@@ -1,126 +1,124 @@
 use v6;
 use Algorithm::Treap::Node;
 
-unit class Algorithm::Treap;
+unit role Algorithm::Treap[::KeyT];
+
+my enum TOrder is export <DESC ASC>;
 
 has $.root;
-has Str $!order-by;
-has Mu $!key-type is required;
+has TOrder $!order-by;
 has Code $.gt;
 has Code $.lt;
 has Code $.eq;
 
-submethod BUILD(Str :$!order-by,Mu :$!key-type) {
-    if ($!order-by.defined && $!order-by ne ('desc'|'asc')) {
-	die "Error: order-by option must be desc or asc (default: asc)"
+submethod BUILD(TOrder :$!order-by) {
+    if (not $!order-by.defined) {
+	    $!order-by = TOrder::ASC;
     }
-    elsif (not $!order-by.defined) {
-	$!order-by = 'asc';
+    if (none KeyT ~~ Str|Int) {
+	    die "Error: key is Str or Int"
     }
-    if ((not ($!key-type === Str)) && (not ($!key-type === Int))) {
-	die "Error: key-type is Str or Int"
-    }
-    if ($!key-type === Str) {
-	$!gt = sub (Str $lhs, Str $rhs) {
-	    return $lhs gt $rhs;
-	}
-	$!lt = sub (Str $lhs, Str $rhs) {
-	    return $lhs lt $rhs;
-	}
-	$!eq = sub (Str $lhs, Str $rhs) {
-	    return $lhs eq $rhs;
-	}
-	if ($!order-by eq 'desc') {
+    if (KeyT ~~ Str) {
 	    $!gt = sub (Str $lhs, Str $rhs) {
-		return $lhs lt $rhs;
+	        return $lhs gt $rhs;
 	    }
 	    $!lt = sub (Str $lhs, Str $rhs) {
-		return $lhs gt $rhs;
+	        return $lhs lt $rhs;
 	    }
-	}
+	    $!eq = sub (Str $lhs, Str $rhs) {
+	        return $lhs eq $rhs;
+	    }
+	    if ($!order-by == TOrder::DESC) {
+	        $!gt = sub (Str $lhs, Str $rhs) {
+		        return $lhs lt $rhs;
+	        }
+	        $!lt = sub (Str $lhs, Str $rhs) {
+		        return $lhs gt $rhs;
+	        }
+	    }
     }
-    elsif ($!key-type === Int) {
-	$!gt = sub (Int $lhs, Int $rhs) {
-	    return $lhs > $rhs;
-	}
-	$!lt = sub (Int $lhs, Int $rhs) {
-	    return $lhs < $rhs;
-	}
-	$!eq = sub (Int $lhs, Int $rhs) {
-	    return $lhs == $rhs;
-	}
-	if ($!order-by eq 'desc') {
+    elsif (KeyT ~~ Int) {
 	    $!gt = sub (Int $lhs, Int $rhs) {
-		return $lhs < $rhs;
+	        return $lhs > $rhs;
 	    }
 	    $!lt = sub (Int $lhs, Int $rhs) {
-		return $lhs > $rhs;
+	        return $lhs < $rhs;
 	    }
-	}
+	    $!eq = sub (Int $lhs, Int $rhs) {
+	        return $lhs == $rhs;
+	    }
+	    if ($!order-by == TOrder::DESC) {
+	        $!gt = sub (Int $lhs, Int $rhs) {
+		        return $lhs < $rhs;
+	        }
+	        $!lt = sub (Int $lhs, Int $rhs) {
+		        return $lhs > $rhs;
+	        }
+	    }
     }
 }
 
 method !insert($current is rw, $k, $v, Num $priority) {
     if (not $current.defined) {
-	$current = Algorithm::Treap::Node.new(key => $k, value => $v, priority => $priority);
-	return $current;
+	    $current = Algorithm::Treap::Node.new(key => $k, value => $v, priority => $priority);
+	    return $current;
     }
 
     if ($.eq.($k,$current.key)) {
-	die "Error: keys are duplicated";
+	    die "Error: keys are duplicated";
     }
     elsif ($.lt.($k,$current.key)) {
-	$current.left-child = self!insert($current.left-child, $k, $v, $priority);
+	    $current.left-child = self!insert($current.left-child, $k, $v, $priority);
 
-	if ($current.left-child.priority > $current.priority) {
-	    $current = self!right-rotate($current);
-	}
+	    if ($current.left-child.priority > $current.priority) {
+	        $current = self!right-rotate($current);
+	    }
     }
     else {
-	$current.right-child = self!insert($current.right-child, $k, $v, $priority);
+	    $current.right-child = self!insert($current.right-child, $k, $v, $priority);
 
-	if ($current.right-child.priority > $current.priority) {
-	    $current = self!left-rotate($current);
-	}
+	    if ($current.right-child.priority > $current.priority) {
+	        $current = self!left-rotate($current);
+	    }
     }
     return $current;
 }
 
 method !delete($current is rw, $k) {
     if (not $current.defined) {
-	return $current;
+	    return $current;
     }
     
     if ($.lt.($k,$current.key)) {
-	$current.left-child = self!delete($current.left-child, $k);
-	return $current;
+	    $current.left-child = self!delete($current.left-child, $k);
+	    return $current;
     }
     elsif ($.gt.($k,$current.key)) {
-	$current.right-child = self!delete($current.right-child, $k);
-	return $current;
+	    $current.right-child = self!delete($current.right-child, $k);
+	    return $current;
     }
 
     else {
-	if (not $current.left-child.defined) {
-	    return $current.right-child;
-	}
-	
-	elsif (not $current.right-child.defined) {
-	    return $current.left-child;
-	}
-	
-	else {
-	    if ($current.left-child.priority > $current.right-child.priority) {
-		$current = self!right-rotate($current);
-		$current.right-child = self!delete($current.right-child, $k);
-		return $current;
+	    if (not $current.left-child.defined) {
+	        return $current.right-child;
 	    }
+	    
+	    elsif (not $current.right-child.defined) {
+	        return $current.left-child;
+	    }
+	    
 	    else {
-		$current = self!left-rotate($current);
-		$current.left-child = self!delete($current.left-child, $k);
-		return $current;
+	        if ($current.left-child.priority > $current.right-child.priority) {
+		        $current = self!right-rotate($current);
+		        $current.right-child = self!delete($current.right-child, $k);
+		        return $current;
+	        }
+	        else {
+		        $current = self!left-rotate($current);
+		        $current.left-child = self!delete($current.left-child, $k);
+		        return $current;
+	        }
 	    }
-	}
     }
 }
 
@@ -144,13 +142,13 @@ method !find($current, $k) {
     return Any if (not $current.defined);
 
     if ($.lt.($k,$current.key)) {
-	return self!find($current.left-child, $k);
+	    return self!find($current.left-child, $k);
     }
     elsif ($.eq.($k,$current.key)) {
-	return $current;
+	    return $current;
     }
     else {
-	return self!find($current.right-child, $k);
+	    return self!find($current.right-child, $k);
     }
 }
 
@@ -158,7 +156,7 @@ method !find-first-key($root) {
     return Any if (not $root.defined);
     my $current = $root;
     while ($current.left-child.defined) {
-	$current = $current.left-child;
+	    $current = $current.left-child;
     }
     return $current.key;
 }
@@ -167,7 +165,7 @@ method !find-last-key($root) {
     return Any if (not $root.defined);
     my $current = $root;
     while ($current.right-child.defined) {
-	$current = $current.right-child;
+	    $current = $current.right-child;
     }
     return $current.key;
 }
@@ -180,23 +178,17 @@ method find-last-key() {
     return self!find-last-key($!root);
 }
 
-multi method insert($k, $v) {
-    if (not ($k.WHAT === $!key-type)) {
-	die "Error: key type violation";
-    }
+multi method insert(KeyT $k, $v) {
     if (self!find($!root, $k).defined) {
-	$!root = self!delete($!root, $k);
+	    $!root = self!delete($!root, $k);
     }
 
     $!root = self!insert($!root, $k, $v, rand);
 }
 
-multi method insert($k, $v, $priority) {
-    if (not ($k.WHAT === $!key-type)) {
-	die "Error: key type violation";
-    }
+multi method insert(KeyT $k, $v, $priority) {
     if (self!find($!root, $k).defined) {
-	$!root = self!delete($!root, $k);
+	    $!root = self!delete($!root, $k);
     }
 
     $!root = self!insert($!root, $k, $v, $priority);
@@ -209,7 +201,7 @@ method delete($k) {
 method find-value($k) {
     my $node = self!find($!root,$k);
     if ($node.defined) {
-	return $node.value;
+	    return $node.value;
     }
     return Any;
 }
@@ -229,7 +221,7 @@ Algorithm::Treap - randomized search tree
   use Algorithm::Treap;
 
   # store Int key
-  my $treap = Algorithm::Treap.new(key-type => Int);
+  my $treap = Algorithm::Treap[Int].new;
   $treap.insert(0, 0);
   $treap.insert(1, 10);
   $treap.insert(2, 20);
@@ -243,7 +235,7 @@ Algorithm::Treap - randomized search tree
   $treap.delete(4);
 
   # store Str key
-  my $treap = Algorithm::Treap.new(key-type => Str);
+  my $treap = Algorithm::Treap[Str].new;
   $treap.insert('a', 0);
   $treap.insert('b', 10);
   $treap.insert('c', 20);
@@ -265,18 +257,16 @@ Algorithm::Treap is a implementation of the Treap algorithm. Treap is the one of
 
 =head3 new
 
-       my $treap = Algorithm::Treap.new(%options);
+       my $treap = Algorithm::Treap[::KeyT].new(%options);
+
+Sets either one of the type objects(Int or Str) for C<::KeyT> and some C<%options>, where C<::KeyT> is a type of insertion items to the treap.
 
 =head4 OPTIONS
 
-=item C<<key-type => Int|Str>>
+=item C<<order-by => TOrder::ASC|TOrder::DESC>>
 
-Sets either one of the type objects(Int or Str) for keys which you use to insert items to the treap.
-
-=item C<<order-by => 'asc'|'desc'>>
-
-Sets key order 'asc' or 'desc' in the treap.
-Default is 'asc'.
+Sets key order C<TOrder::ASC> or C<TOrder::DESC> in the treap.
+Default is C<TOrder::ASC>.
 
 =head2 METHODS
 

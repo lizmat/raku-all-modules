@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-Treap.git
 	branch = master
-	commit = 33871ab492d11676b693e520460f5059db62c5ec
-	parent = 30a559fca8e8706f830c22f8bb7e7597c2bc14ed
-	cmdver = 0.2.3
+	commit = d966df11d8de338cd88987f7451e81f062fd6f6f
+	parent = c79cb1d8b9229cac85061d3f333f19e485859d8e
+	cmdver = 0.4.0

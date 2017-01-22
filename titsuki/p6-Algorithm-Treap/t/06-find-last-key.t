@@ -3,7 +3,7 @@ use Test;
 use Algorithm::Treap;
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0,1);
     $treap.insert(9,2);
     $treap.insert(20,3);
@@ -15,7 +15,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int, order-by => 'desc');
+    my $treap = Algorithm::Treap[Int].new(order-by => TOrder::DESC);
     $treap.insert(0,1);
     $treap.insert(9,2);
     $treap.insert(20,3);
@@ -27,7 +27,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Str);
+    my $treap = Algorithm::Treap[Str].new;
     $treap.insert('0',1);
     $treap.insert('9',2);
     $treap.insert('20',3);
@@ -39,7 +39,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Str, order-by => 'desc');
+    my $treap = Algorithm::Treap[Str].new(order-by => TOrder::DESC);
     $treap.insert('0',1);
     $treap.insert('9',2);
     $treap.insert('20',3);
@@ -51,7 +51,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     my $actual = $treap.find-last-key();
     my $expected = Any;
     is $actual, $expected, "It should return Any when it doesn't hit any keys";

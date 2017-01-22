@@ -3,7 +3,7 @@ use Test;
 use Algorithm::Treap;
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0,99);
     $treap.delete(0);
 
@@ -13,7 +13,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0, 0, Num(0.51));
     $treap.insert(1, 1, Num(1.0));
     $treap.insert(2, 2, Num(0.28));
@@ -28,7 +28,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0, 0, Num(0.51));
     $treap.insert(1, 1, Num(1.0));
     $treap.insert(2, 2, Num(0.28));
@@ -43,7 +43,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0, 0, Num(0.51));
     $treap.insert(1, 1, Num(1.0));
     $treap.insert(2, 2, Num(0.28));
@@ -58,7 +58,7 @@ use Algorithm::Treap;
 }
 
 {
-    my $treap = Algorithm::Treap.new(key-type => Int);
+    my $treap = Algorithm::Treap[Int].new;
     $treap.insert(0, 0, Num(1.0));
     $treap.insert(1, 1, Num(0.9));
     $treap.insert(2, 2, Num(0.8));
