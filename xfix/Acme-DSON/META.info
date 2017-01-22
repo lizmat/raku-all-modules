@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Acme::DSON",
     "version" : "0.2.1",
     "author" : "Konrad Borowski <x.fix@o2.pl>",
