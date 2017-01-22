@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "RPi::Wiring::Pi",
     "version"     : "2.25.0",
     "authors"     : [ "Aurelio Sanabria (Sufrostico) <sufrostico at gmail dot com>" ],
