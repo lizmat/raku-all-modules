@@ -1,0 +1,14 @@
+{
+    "perl" : "6.*",
+    "name" : "Net::IP::Parse",
+    "version" : "0.0.2",
+    "description" : "Types for IP addresses and manipulation methods.",
+    "author" : "Brad Clawsie",
+    "provides" : {
+        "Net::IP::Parse" : "lib/Net/IP/Parse.pm6"
+    },
+    "depends" : [ "Subsets::Common" ],
+    "test-depends" : [ "Subsets::Common" ],
+    "build-depends" : [ "Subsets::Common" ],
+    "source-url" : "git://github.com/bradclawsie/Net-IP-Parse.git"
+}
