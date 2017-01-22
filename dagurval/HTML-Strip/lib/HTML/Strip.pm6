@@ -178,7 +178,7 @@ differs. This module is implemented using Perl6 grammars rather than XS.
 Note that this module does no XML/HTML validation. Garbage in might 
 give you garbage out.
 
-=head2 C<html_strip(Str)>
+=head2 C<strip_html(Str)>
 
 Removes HTML tags and comments from given text. 
 
