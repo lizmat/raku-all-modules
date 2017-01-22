@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jaffa4/perl6parsing.git
 	branch = master
-	commit = 52f46d38dc478a8651f4a0e7f9f08590f736d042
-	parent = f9b9427c782c88f6b4f05c3f3df97f3006f4060c
-	cmdver = 0.2.2
+	commit = c036263ac75de77c8068d8dc0105cfb0f1ee6987
+	parent = a6b6fbf3ba4a28088f3b35d5c70a8596b325bc21
+	cmdver = 0.4.0
