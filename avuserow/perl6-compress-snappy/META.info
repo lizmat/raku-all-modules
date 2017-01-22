@@ -1,4 +1,5 @@
 {
+	"perl" : "6.*",
 	"name" : "Compress::Snappy",
 	"version" : "0.0.3",
 	"description" : "(de)compress data in Google's Snappy compression format",
