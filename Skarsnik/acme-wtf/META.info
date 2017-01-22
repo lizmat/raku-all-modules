@@ -3,10 +3,10 @@
         "name" : "Acme::WTF",
         "version" : "*",
         "description" : "Seriously, WTF?",
-        "author" : "Sylvain Colinet <scolinet@gmail.com>",
+        "authors" : ["Sylvain Colinet <scolinet@gmail.com>"],
         "provides" : {
             "Acme::WTF" : "lib/Acme/WTF.pm6"
         },
-	"depends" : [ "Test::META" ],
+	"depends" : [ "Test::META", "Test::Output" ],
         "source-url" : "git://github.com/Skarsnik/acme-wtf.git"
 }

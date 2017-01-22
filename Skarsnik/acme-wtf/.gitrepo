@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Skarsnik/acme-wtf.git
 	branch = master
-	commit = 04992c516de8749d8cef6f28c13688ca6f74b4bb
-	parent = 27014e23be1b848a9e19636c62fef8b0255e63c9
-	cmdver = 0.2.3
+	commit = 6c125eb95ce772caff6e89a64b73408a37ae2f35
+	parent = 465a37e374cd8e499dedc8f4cc798be67a7e8d04
+	cmdver = 0.4.0
