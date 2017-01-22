@@ -8,6 +8,8 @@ read/write object attribute.
 This module was initially designed to reduce the boiler plate code in
 a native library binding that became something like:
 
+```perl6
+
     class Shout is repr('CPointer') {
 
         sub shout_set_host(Shout, Str) returns int32 is native('libshout') { * }
@@ -29,6 +31,8 @@ a native library binding that became something like:
 
     }
 
+```
+
 That is the library API provides a sort of "object oriented" mechanism to
 set and get attributes on an opaque object instance that was returned
 by another "constructor" function. Because the object is an opaque
@@ -37,6 +41,8 @@ attributes. The intent of the code is to provide fake "attributes" with
 rw methods (which is similar to how public rw attributes are provided.)
 
 The above code will be reduced with the use of AccessorFacade to:
+
+```perl6
 
     class Shout is repr('CPointer') {
 
@@ -47,10 +53,13 @@ The above code will be reduced with the use of AccessorFacade to:
 
         ...
     }
+```
 
 The named argument style is also support so the method could be written as:
 
+```perl6
     method host() is rw is accessor-facade(getter => &shout_get_host, setter => &shout_set_host) { }
+```
 
 if that proves more suitable.
 
@@ -70,18 +79,8 @@ is handled is descibed in the documentation.)
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -91,20 +90,18 @@ Or you can install directly with "panda":
 
     panda install AccessorFacade
 
-Other install mechanisms may be become available in the future.
+It should work equally well with *zef* but I may not have tested it.
 
 ## Support
 
-However suggestions/patches are welcomed via github at:
+Suggestions/patches are welcomed via github at:
 
 https://github.com/jonathanstowe/AccessorFacade
 
-It may use features and behaviour of Perl 6 that aren't present in even
-slightly older builds (and which are anticipated to be in a release,)
-please check with a new build before reporting a bug.
-
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015, 2016
+Please see the [LICENCE](LICENCE) file in the distribution
+
+© Jonathan Stowe 2015, 2016, 2017
