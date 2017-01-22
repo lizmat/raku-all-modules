@@ -1,5 +1,5 @@
 # Text::Diff::Sift4
-A Perl 6 implementation of the Sift4 string distance algorithm (http://siderite.blogspot.com/2014/11/super-fast-and-accurate-string-distance.html).
+A Perl 6 implementation of the common version of the Sift4 string distance algorithm (http://siderite.blogspot.com/2014/11/super-fast-and-accurate-string-distance.html).
 
 ## Synopsis
 ```
