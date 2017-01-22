@@ -25,6 +25,10 @@ our sub tasks (%args) {
     $command = %args<verbose> ?? 
       'unzip -v -o -u ' ~ %args<source> ~ ' -d ' ~ %args<target> !!
       'unzip -o -u ' ~ %args<source> ~ ' -d ' ~ %args<target>;
+  } elsif $ext eq 'gem'  {
+    $command = %args<verbose> ?? 
+      'gem unpack ' ~ %args<source> ~ ' -V --target ' ~ %args<target> !!
+      'gem unpack ' ~ %args<source> ~ ' --target ' ~ %args<target>;
   }else {
     die 'unknown file extension ' ~   %args<source>.IO.extension
   }

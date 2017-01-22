@@ -1,6 +1,6 @@
 # SYNOPSIS
 
-Extract various archives using tar/unzip programs.
+Extract archived files with the help of various archivers programs.
 
 Archive formats supported:
 
@@ -10,6 +10,7 @@ Archive formats supported:
     | *.zip     | unzip                     |
     | *.tar     | tar                       |
     | *.tar.gz  | tar                       |
+    | *.gem     | gem                       |
     +-----------+---------------------------+
 
 # INSTALL
