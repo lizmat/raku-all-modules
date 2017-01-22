@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "HTTP::Server::Async::Plugins::Router::Simple",
   "version"     : "0.1.0",
   "description" : "Basic routing for http server",
