@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/frithnanth/perl6-Archive-Libarchive-Raw.git
+	branch = master
+	commit = 6f775dc3b88cce0d0970af8b990abc9db0de5cd5
+	parent = d5cd77d4df92ca37aeeaba5b39541f6d0f4b1e4a
+	cmdver = 0.4.0
