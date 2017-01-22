@@ -9,6 +9,12 @@ my %register;
 
 constant NL = "\n";
 
+my &verbose = &note;
+
+sub set-verbose(&new-verbose) is export {
+    &verbose = &new-verbose
+}
+
 class TOC-Counter is export { 
     has Int @!counters is default(0);
     method Str () { @!counters>>.Str.join: '.' }
@@ -160,7 +166,7 @@ sub compose-toc (:$toc = @toc) is export {
 
 sub compose-index (:$register = %register) is export {
     my @dupes = $register.grep(*.value.elems > 1);
-    note "found duplicate index entry {.key} at {.value.map: {'#i' ~ .Str}}" for @dupes;
+    verbose "found duplicate index entry {.key} at {.value.map: {'#i' ~ .Str}}" for @dupes;
     '<div id="index"><ul class="index">' ~ NL ~
     $register.sort(*.key.lc).map({ 
         '<li>' ~ .key.Str.subst('&', '&amp;', :g).subst('<', '&lt;', :g).subst('>', '&gt;', :g) ~ '&emsp;' ~ .value.map({ '<a href="#i' ~ .Str ~ '">' ~ .Str ~ '</a>' }) ~ '</li>' 
