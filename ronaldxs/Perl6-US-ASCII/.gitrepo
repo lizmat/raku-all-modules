@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ronaldxs/Perl6-US-ASCII.git
+	branch = master
+	commit = 3ac53622aea743c39c8afd0dba3fad13cae85416
+	parent = 9817e382f6bfc31c9edf553fdc2240eed9cab8e1
+	cmdver = 0.4.0
