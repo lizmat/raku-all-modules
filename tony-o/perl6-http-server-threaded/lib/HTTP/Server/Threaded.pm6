@@ -6,7 +6,7 @@ class HTTP::Server::Threaded does HTTP::Server {
 
   has Int              $.port         = 8091;
   has Str              $.ip           = '0.0.0.0';
-  has Supply           $!connections .=new; 
+  has Supplier         $!connections .=new; 
   has IO::Socket::INET $.server;     
 
   has @.mws;
@@ -49,7 +49,7 @@ class HTTP::Server::Threaded does HTTP::Server {
 
   method !conn {
     start {
-      $!connections.tap( -> $conn {
+      $!connections.Supply.tap( -> $conn {
         my Buf  $data .=new;
         my Blob $sep   = "\r\n\r\n".encode;
         my ($stop, $buf);
