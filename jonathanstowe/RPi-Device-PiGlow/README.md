@@ -5,7 +5,7 @@ Interface for the [PiGlow](https://shop.pimoroni.com/products/piglow) device on 
 
 ## Synopsis
 
-```
+```perl6
 
     use RPi::Device::PiGlow;
     my $pg = RPi::Device::PiGlow.new();
@@ -19,7 +19,7 @@ Interface for the [PiGlow](https://shop.pimoroni.com/products/piglow) device on 
 
 ```
 
-See the ```examples``` directory for more ways of using this.
+See the [examples](examples) directory for more ways of using this.
 
 ## Description
 
@@ -48,18 +48,8 @@ most of that will work for other versions.
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -69,21 +59,21 @@ Or you can install directly with "panda":
 
     panda install RPi::Device::PiGlow
 
-Other install mechanisms may be become available in the future.
+This should work equally well with *zef* but I may not have tested it.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/RPi-Device-PiGlow
+https://github.com/jonathanstowe/RPi-Device-PiGlow
 
 Because there are limited ways to test this automatically without
 physically observing the device, there may be untested bugs.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2016
+Please see the [LICENCE](LICENCE) file in the distribution
+
+© Jonathan Stowe 2016, 2017
