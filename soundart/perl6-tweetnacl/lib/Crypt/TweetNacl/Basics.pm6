@@ -18,8 +18,26 @@ sub remove_leading_elems($return_type!, $buf!, Int $num_elems) is export
     return $data;
 }
 
+# int crypto_hash(u8 *out,const u8 *m,u64 n)
+sub crypto_hash(CArray[uint8], CArray[uint8], ulonglong) is symbol('crypto_hash')
+    is native(TWEETNACL) is export returns int { * }
 
-
+class CryptoHash is export {
+    has $!buf;
+    has $.bytes;
+    submethod BUILD(:$!buf) {
+        my $tmp = CArray[uint8].new;
+        $tmp[CRYPTO_HASH_BYTES - 1] = 0;
+        my $mlen = $!buf.elems;
+        my $msg = CArray[uint8].new($mlen);
+        $msg[$_] = $!buf[$_] for 0..$mlen-1;
+        crypto_hash($tmp,$msg,$mlen);
+        $!bytes = Buf.new($tmp);
+    }
+    method hex {
+        return $!bytes.map({.fmt('%02x')}).join;
+    }
+}
 
 # void randombytes(unsigned char *x,unsigned long long xlen)
 
@@ -38,7 +56,6 @@ sub nonce() is export
 {
     return randombytes(CRYPTO_BOX_NONCEBYTES);
 }
-
 
 sub prepend_zeros($buf!, Int $num_zeros!) is export
 {

@@ -18,7 +18,7 @@
     ],
     "description" : "tweetnacl p6 bindings - public/secret key encryption and signatures",
     "test-depends" : [ ],
-    "version" : "0.0.2",
+    "version" : "0.0.3",
     "license"       : "Public Domain",
     "authors" : [
         "Frank Hartmann"
