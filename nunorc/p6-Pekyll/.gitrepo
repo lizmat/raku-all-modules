@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/nunorc/p6-Pekyll.git
 	branch = master
-	commit = 55661a1eddd7ff8e238db3a9c20474764b6f423e
-	parent = 97eb886ccee6dda85874502872ed412fa2e2f77d
-	cmdver = 0.2.3
+	commit = 2dcbcc0a664ded49d4b041631595d17ff970b522
+	parent = 3e137f9e5d508bc3f8a4d054477d187d6e0287f3
+	cmdver = 0.4.0
