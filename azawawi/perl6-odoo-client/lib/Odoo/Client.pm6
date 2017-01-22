@@ -25,6 +25,7 @@ Odoo::Client - A simple Odoo ERP client that uses JSON RPC
         username => '<email>',
         password => "<password>"
     );
+
     printf("Logged on with user id '%d'\n", $uid);
 
 =head1 Description
