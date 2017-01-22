@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Lingua::EN::Syllable",
     "version" : "*",
     "author" : "Will “Coke” Coleda",
