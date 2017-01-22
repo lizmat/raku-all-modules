@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "CLDR::List",
     "version"     : "*",
     "author"      : "Nova Patch",

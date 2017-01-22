@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/patch/cldr-list-pm6.git
 	branch = master
-	commit = e165a22e4d1d6257347104dc6fe5b493a6a8854d
-	parent = 6f5d76d20974198f0357b93bd5a276ed118ef157
-	cmdver = 0.2.2
+	commit = 34e210ecaac7b8e789134dcabb841d4d5f5d54b1
+	parent = 709b81040322c84547d27d91dbce9c14daa6bcd0
+	cmdver = 0.4.0
