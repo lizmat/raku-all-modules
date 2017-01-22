@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/melezhik/sparrowdo-cpm.git
 	branch = master
-	commit = 14dd1ed337c752614fac287e27f5694b61dde8c1
-	parent = a5fbcc93eb7ed127398b389d2beab8d4f452db92
-	cmdver = 0.2.3
+	commit = 231444c0d127ed6e29f98a5b3dad3dccbecda51b
+	parent = b8f6c7b772bf5f37bfcb99e567176266cdde8a2c
+	cmdver = 0.4.0
