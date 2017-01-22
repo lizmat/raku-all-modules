@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/0racle/p6-Pod-To-Markdown-Fenced.git
+	branch = master
+	commit = 2893e8a1e7ffc0441025d48fbe13247e57b18128
+	parent = 89a0efc9c7ff7f1bc83c598f17ff41ee2aeb5de8
+	cmdver = 0.4.0

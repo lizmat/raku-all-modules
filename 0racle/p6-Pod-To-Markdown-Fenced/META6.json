@@ -1,0 +1,18 @@
+{
+   "name" : "Pod::To::Markdown::Fenced",
+   "version" : "0.1.0",
+   "description" : "Render POD code blocks as fenced code blocks",
+   "perl" : "6.c",
+   "authors" : [
+       "Joshua Yeshouroun"
+   ],
+   "provides" : {
+      "Pod::To::Markdown::Fenced" : "lib/Pod/To/Markdown/Fenced.pm6"
+   },
+   "depends" : [
+       "Pod::To::Markdown"
+   ],
+   "source-url" : "git://github.com/0racle/p6-Pod-To-Markdown-Fenced.git",
+   "license" : "Artistic"
+}
+
