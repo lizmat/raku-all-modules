@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "File::Spec::Case",
   "version"     : "*",
   "description" : "Check if your filesystem is case sensitive or case tolerant (insensitive)",
