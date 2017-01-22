@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Uni63",
     "version" : "0.2.0",
     "description" : "A Unicode encoding scheme suitable for name mangling",
