@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/scmorrison/JS-Minify.git
+	branch = master
+	commit = 0e1756ff163b560a562c746d64121838ac9013b9
+	parent = 681d36df5b7959041a01d63e184abb9107fac69d
+	cmdver = 0.4.0

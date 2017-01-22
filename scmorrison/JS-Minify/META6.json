@@ -1,0 +1,13 @@
+{
+    "perl" : "6.*",
+    "name" : "JS::Minify",
+    "version"  : "0.0.2",
+    "description" : "Perl 6 JavaScript minifier",
+    "provides" : {
+      "JS::Minify" : "lib/JS/Minify.pm6"
+    },
+    "author" : "Sam Morrison <sam@samcm.com>",
+    "depends" : [],
+    "test-depends" : [ "Test::Output" ],
+    "source-url" : "https://github.com/scmorrison/JS-Minify.git"
+}
