@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Encode",
     "version" : "0.0.2",
     "author" : "github:sergot",
