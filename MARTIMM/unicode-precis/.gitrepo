@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MARTIMM/unicode-precis.git
+	branch = master
+	commit = 18ebb3e34373e740528664f621e9f692e5094ae7
+	parent = dc0159502d29e26d578149cff74c18174fd483a6
+	cmdver = 0.4.0

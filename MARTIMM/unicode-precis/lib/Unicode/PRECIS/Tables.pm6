@@ -1,0 +1,10625 @@
+use v6.c;
+
+# Place file Tables.pm6 in directory ./Unicode/PRECIS
+# Load with 'use Unicode::PRECIS::Tables'
+
+unit package Unicode;
+
+module PRECIS::Tables::NonCharCodepoint {
+
+  # Use e.g. as '0x200C (elem) $Unicode::PRECIS::Tables::NonCharCodepoint::set;
+  our $set = Set.new: (
+    0x10FFFE..0x10FFFF, 0x1FFFE..0x1FFFF, 0x2FFFE..0x2FFFF, 0x3FFFE..0x3FFFF, 0x4FFFE..0x4FFFF, 0x5FFFE..0x5FFFF, 0x6FFFE..0x6FFFF, 0x7FFFE..0x7FFFF, 
+    0x8FFFE..0x8FFFF, 0x9FFFE..0x9FFFF, 0xAFFFE..0xAFFFF, 0xBFFFE..0xBFFFF, 0xCFFFE..0xCFFFF, 0xDFFFE..0xDFFFF, 0xEFFFE..0xEFFFF, 0xFDD0..0xFDEF, 
+    0xFFFE..0xFFFF, 0xFFFFE..0xFFFFF, 
+  ).flat;
+};
+
+module PRECIS::Tables::Bidi {
+
+  # Use e.g. as '0x200C (elem) $Unicode::PRECIS::Tables::Bidi::set;
+  our $set = Set.new: (
+    0x0000..0x0008, 0x0009, 0x000A, 0x000B, 0x000C, 0x000D, 0x000E..0x001B, 0x001C..0x001E, 
+    0x001F, 0x0020, 0x0021..0x0022, 0x0023, 0x0024, 0x0025, 0x0026..0x0027, 0x0028, 
+    0x0029, 0x002A, 0x002B, 0x002C, 0x002D, 0x002E..0x002F, 0x0030..0x0039, 0x003A, 
+    0x003B, 0x003C..0x003E, 0x003F..0x0040, 0x0041..0x005A, 0x005B, 0x005C, 0x005D, 0x005E, 
+    0x005F, 0x0060, 0x0061..0x007A, 0x007B, 0x007C, 0x007D, 0x007E, 0x007F..0x0084, 
+    0x0085, 0x0086..0x009F, 0x00A0, 0x00A1, 0x00A2..0x00A5, 0x00A6, 0x00A7, 0x00A8, 
+    0x00A9, 0x00AA, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x00AF, 0x00B0, 
+    0x00B1, 0x00B2..0x00B3, 0x00B4, 0x00B5, 0x00B6..0x00B7, 0x00B8, 0x00B9, 0x00BA, 
+    0x00BB, 0x00BC..0x00BE, 0x00BF, 0x00C0..0x00D6, 0x00D7, 0x00D8..0x00F6, 0x00F7, 0x00F8..0x01BA, 
+    0x01BB, 0x01BC..0x01BF, 0x01C0..0x01C3, 0x01C4..0x0293, 0x0294, 0x0295..0x02AF, 0x02B0..0x02B8, 0x02B9..0x02BA, 
+    0x02BB..0x02C1, 0x02C2..0x02C5, 0x02C6..0x02CF, 0x02D0..0x02D1, 0x02D2..0x02DF, 0x02E0..0x02E4, 0x02E5..0x02EB, 0x02EC, 
+    0x02ED, 0x02EE, 0x02EF..0x02FF, 0x0300..0x036F, 0x0370..0x0373, 0x0374, 0x0375, 0x0376..0x0377, 
+    0x037A, 0x037B..0x037D, 0x037E, 0x037F, 0x0384..0x0385, 0x0386, 0x0387, 0x0388..0x038A, 
+    0x038C, 0x038E..0x03A1, 0x03A3..0x03F5, 0x03F6, 0x03F7..0x0481, 0x0482, 0x0483..0x0487, 0x0488..0x0489, 
+    0x048A..0x052F, 0x0531..0x0556, 0x0559, 0x055A..0x055F, 0x0561..0x0587, 0x0589, 0x058A, 0x058D..0x058E, 
+    0x058F, 0x0590, 0x0591..0x05BD, 0x05BE, 0x05BF, 0x05C0, 0x05C1..0x05C2, 0x05C3, 
+    0x05C4..0x05C5, 0x05C6, 0x05C7, 0x05C8..0x05CF, 0x05D0..0x05EA, 0x05EB..0x05EF, 0x05F0..0x05F2, 0x05F3..0x05F4, 
+    0x05F5..0x05FF, 0x0600..0x0605, 0x0606..0x0607, 0x0608, 0x0609..0x060A, 0x060B, 0x060C, 0x060D, 
+    0x060E..0x060F, 0x0610..0x061A, 0x061B, 0x061C, 0x061D, 0x061E..0x061F, 0x0620..0x063F, 0x0640, 
+    0x0641..0x064A, 0x064B..0x065F, 0x0660..0x0669, 0x066A, 0x066B..0x066C, 0x066D, 0x066E..0x066F, 0x0670, 
+    0x0671..0x06D3, 0x06D4, 0x06D5, 0x06D6..0x06DC, 0x06DD, 0x06DE, 0x06DF..0x06E4, 0x06E5..0x06E6, 
+    0x06E7..0x06E8, 0x06E9, 0x06EA..0x06ED, 0x06EE..0x06EF, 0x06F0..0x06F9, 0x06FA..0x06FC, 0x06FD..0x06FE, 0x06FF, 
+    0x0700..0x070D, 0x070E, 0x070F, 0x0710, 0x0711, 0x0712..0x072F, 0x0730..0x074A, 0x074B..0x074C, 
+    0x074D..0x07A5, 0x07A6..0x07B0, 0x07B1, 0x07B2..0x07BF, 0x07C0..0x07C9, 0x07CA..0x07EA, 0x07EB..0x07F3, 0x07F4..0x07F5, 
+    0x07F6, 0x07F7..0x07F9, 0x07FA, 0x07FB..0x07FF, 0x0800..0x0815, 0x0816..0x0819, 0x081A, 0x081B..0x0823, 
+    0x0824, 0x0825..0x0827, 0x0828, 0x0829..0x082D, 0x082E..0x082F, 0x0830..0x083E, 0x083F, 0x0840..0x0858, 
+    0x0859..0x085B, 0x085C..0x085D, 0x085E, 0x085F..0x089F, 0x08A0..0x08B4, 0x08B5, 0x08B6..0x08BD, 0x08BE..0x08D3, 
+    0x08D4..0x08E1, 0x08E2, 0x08E3..0x0902, 0x0903, 0x0904..0x0939, 0x093A, 0x093B, 0x093C, 
+    0x093D, 0x093E..0x0940, 0x0941..0x0948, 0x0949..0x094C, 0x094D, 0x094E..0x094F, 0x0950, 0x0951..0x0957, 
+    0x0958..0x0961, 0x0962..0x0963, 0x0964..0x0965, 0x0966..0x096F, 0x0970, 0x0971, 0x0972..0x0980, 0x0981, 
+    0x0982..0x0983, 0x0985..0x098C, 0x098F..0x0990, 0x0993..0x09A8, 0x09AA..0x09B0, 0x09B2, 0x09B6..0x09B9, 0x09BC, 
+    0x09BD, 0x09BE..0x09C0, 0x09C1..0x09C4, 0x09C7..0x09C8, 0x09CB..0x09CC, 0x09CD, 0x09CE, 0x09D7, 
+    0x09DC..0x09DD, 0x09DF..0x09E1, 0x09E2..0x09E3, 0x09E6..0x09EF, 0x09F0..0x09F1, 0x09F2..0x09F3, 0x09F4..0x09F9, 0x09FA, 
+    0x09FB, 0x0A01..0x0A02, 0x0A03, 0x0A05..0x0A0A, 0x0A0F..0x0A10, 0x0A13..0x0A28, 0x0A2A..0x0A30, 0x0A32..0x0A33, 
+    0x0A35..0x0A36, 0x0A38..0x0A39, 0x0A3C, 0x0A3E..0x0A40, 0x0A41..0x0A42, 0x0A47..0x0A48, 0x0A4B..0x0A4D, 0x0A51, 
+    0x0A59..0x0A5C, 0x0A5E, 0x0A66..0x0A6F, 0x0A70..0x0A71, 0x0A72..0x0A74, 0x0A75, 0x0A81..0x0A82, 0x0A83, 
+    0x0A85..0x0A8D, 0x0A8F..0x0A91, 0x0A93..0x0AA8, 0x0AAA..0x0AB0, 0x0AB2..0x0AB3, 0x0AB5..0x0AB9, 0x0ABC, 0x0ABD, 
+    0x0ABE..0x0AC0, 0x0AC1..0x0AC5, 0x0AC7..0x0AC8, 0x0AC9, 0x0ACB..0x0ACC, 0x0ACD, 0x0AD0, 0x0AE0..0x0AE1, 
+    0x0AE2..0x0AE3, 0x0AE6..0x0AEF, 0x0AF0, 0x0AF1, 0x0AF9, 0x0B01, 0x0B02..0x0B03, 0x0B05..0x0B0C, 
+    0x0B0F..0x0B10, 0x0B13..0x0B28, 0x0B2A..0x0B30, 0x0B32..0x0B33, 0x0B35..0x0B39, 0x0B3C, 0x0B3D, 0x0B3E, 
+    0x0B3F, 0x0B40, 0x0B41..0x0B44, 0x0B47..0x0B48, 0x0B4B..0x0B4C, 0x0B4D, 0x0B56, 0x0B57, 
+    0x0B5C..0x0B5D, 0x0B5F..0x0B61, 0x0B62..0x0B63, 0x0B66..0x0B6F, 0x0B70, 0x0B71, 0x0B72..0x0B77, 0x0B82, 
+    0x0B83, 0x0B85..0x0B8A, 0x0B8E..0x0B90, 0x0B92..0x0B95, 0x0B99..0x0B9A, 0x0B9C, 0x0B9E..0x0B9F, 0x0BA3..0x0BA4, 
+    0x0BA8..0x0BAA, 0x0BAE..0x0BB9, 0x0BBE..0x0BBF, 0x0BC0, 0x0BC1..0x0BC2, 0x0BC6..0x0BC8, 0x0BCA..0x0BCC, 0x0BCD, 
+    0x0BD0, 0x0BD7, 0x0BE6..0x0BEF, 0x0BF0..0x0BF2, 0x0BF3..0x0BF8, 0x0BF9, 0x0BFA, 0x0C00, 
+    0x0C01..0x0C03, 0x0C05..0x0C0C, 0x0C0E..0x0C10, 0x0C12..0x0C28, 0x0C2A..0x0C39, 0x0C3D, 0x0C3E..0x0C40, 0x0C41..0x0C44, 
+    0x0C46..0x0C48, 0x0C4A..0x0C4D, 0x0C55..0x0C56, 0x0C58..0x0C5A, 0x0C60..0x0C61, 0x0C62..0x0C63, 0x0C66..0x0C6F, 0x0C78..0x0C7E, 
+    0x0C7F, 0x0C80, 0x0C81, 0x0C82..0x0C83, 0x0C85..0x0C8C, 0x0C8E..0x0C90, 0x0C92..0x0CA8, 0x0CAA..0x0CB3, 
+    0x0CB5..0x0CB9, 0x0CBC, 0x0CBD, 0x0CBE, 0x0CBF, 0x0CC0..0x0CC4, 0x0CC6, 0x0CC7..0x0CC8, 
+    0x0CCA..0x0CCB, 0x0CCC..0x0CCD, 0x0CD5..0x0CD6, 0x0CDE, 0x0CE0..0x0CE1, 0x0CE2..0x0CE3, 0x0CE6..0x0CEF, 0x0CF1..0x0CF2, 
+    0x0D01, 0x0D02..0x0D03, 0x0D05..0x0D0C, 0x0D0E..0x0D10, 0x0D12..0x0D3A, 0x0D3D, 0x0D3E..0x0D40, 0x0D41..0x0D44, 
+    0x0D46..0x0D48, 0x0D4A..0x0D4C, 0x0D4D, 0x0D4E, 0x0D4F, 0x0D54..0x0D56, 0x0D57, 0x0D58..0x0D5E, 
+    0x0D5F..0x0D61, 0x0D62..0x0D63, 0x0D66..0x0D6F, 0x0D70..0x0D78, 0x0D79, 0x0D7A..0x0D7F, 0x0D82..0x0D83, 0x0D85..0x0D96, 
+    0x0D9A..0x0DB1, 0x0DB3..0x0DBB, 0x0DBD, 0x0DC0..0x0DC6, 0x0DCA, 0x0DCF..0x0DD1, 0x0DD2..0x0DD4, 0x0DD6, 
+    0x0DD8..0x0DDF, 0x0DE6..0x0DEF, 0x0DF2..0x0DF3, 0x0DF4, 0x0E01..0x0E30, 0x0E31, 0x0E32..0x0E33, 0x0E34..0x0E3A, 
+    0x0E3F, 0x0E40..0x0E45, 0x0E46, 0x0E47..0x0E4E, 0x0E4F, 0x0E50..0x0E59, 0x0E5A..0x0E5B, 0x0E81..0x0E82, 
+    0x0E84, 0x0E87..0x0E88, 0x0E8A, 0x0E8D, 0x0E94..0x0E97, 0x0E99..0x0E9F, 0x0EA1..0x0EA3, 0x0EA5, 
+    0x0EA7, 0x0EAA..0x0EAB, 0x0EAD..0x0EB0, 0x0EB1, 0x0EB2..0x0EB3, 0x0EB4..0x0EB9, 0x0EBB..0x0EBC, 0x0EBD, 
+    0x0EC0..0x0EC4, 0x0EC6, 0x0EC8..0x0ECD, 0x0ED0..0x0ED9, 0x0EDC..0x0EDF, 0x0F00, 0x0F01..0x0F03, 0x0F04..0x0F12, 
+    0x0F13, 0x0F14, 0x0F15..0x0F17, 0x0F18..0x0F19, 0x0F1A..0x0F1F, 0x0F20..0x0F29, 0x0F2A..0x0F33, 0x0F34, 
+    0x0F35, 0x0F36, 0x0F37, 0x0F38, 0x0F39, 0x0F3A, 0x0F3B, 0x0F3C, 
+    0x0F3D, 0x0F3E..0x0F3F, 0x0F40..0x0F47, 0x0F49..0x0F6C, 0x0F71..0x0F7E, 0x0F7F, 0x0F80..0x0F84, 0x0F85, 
+    0x0F86..0x0F87, 0x0F88..0x0F8C, 0x0F8D..0x0F97, 0x0F99..0x0FBC, 0x0FBE..0x0FC5, 0x0FC6, 0x0FC7..0x0FCC, 0x0FCE..0x0FCF, 
+    0x0FD0..0x0FD4, 0x0FD5..0x0FD8, 0x0FD9..0x0FDA, 0x1000..0x102A, 0x10000..0x1000B, 0x100000..0x10FFFD, 0x1000D..0x10026, 0x10028..0x1003A, 
+    0x1003C..0x1003D, 0x1003F..0x1004D, 0x10050..0x1005D, 0x10080..0x100FA, 0x10100, 0x10101, 0x10102, 0x10107..0x10133, 
+    0x10137..0x1013F, 0x10140..0x10174, 0x10175..0x10178, 0x10179..0x10189, 0x1018A..0x1018B, 0x1018C, 0x1018D..0x1018E, 0x10190..0x1019B, 
+    0x101A0, 0x101D0..0x101FC, 0x101FD, 0x10280..0x1029C, 0x102A0..0x102D0, 0x102B..0x102C, 0x102D..0x1030, 0x102E0, 
+    0x102E1..0x102FB, 0x10300..0x1031F, 0x1031, 0x1032..0x1037, 0x10320..0x10323, 0x10330..0x10340, 0x10341, 0x10342..0x10349, 
+    0x1034A, 0x10350..0x10375, 0x10376..0x1037A, 0x1038, 0x10380..0x1039D, 0x1039..0x103A, 0x1039F, 0x103A0..0x103C3, 
+    0x103B..0x103C, 0x103C8..0x103CF, 0x103D..0x103E, 0x103D0, 0x103D1..0x103D5, 0x103F, 0x1040..0x1049, 0x10400..0x1044F, 
+    0x10450..0x1049D, 0x104A..0x104F, 0x104A0..0x104A9, 0x104B0..0x104D3, 0x104D8..0x104FB, 0x1050..0x1055, 0x10500..0x10527, 0x10530..0x10563, 
+    0x1056..0x1057, 0x1056F, 0x1058..0x1059, 0x105A..0x105D, 0x105E..0x1060, 0x10600..0x10736, 0x1061, 0x1062..0x1064, 
+    0x1065..0x1066, 0x1067..0x106D, 0x106E..0x1070, 0x1071..0x1074, 0x10740..0x10755, 0x1075..0x1081, 0x10760..0x10767, 0x10800..0x10805, 
+    0x10806..0x10807, 0x10808, 0x10809, 0x1080A..0x10835, 0x1082, 0x1083..0x1084, 0x10836, 0x10837..0x10838, 
+    0x10839..0x1083B, 0x1083C, 0x1083D..0x1083E, 0x1083F..0x10855, 0x1085..0x1086, 0x10856, 0x10857, 0x10858..0x1085F, 
+    0x10860..0x10876, 0x1087..0x108C, 0x10877..0x10878, 0x10879..0x1087F, 0x10880..0x1089E, 0x1089F..0x108A6, 0x108A7..0x108AF, 0x108B0..0x108DF, 
+    0x108D, 0x108E, 0x108E0..0x108F2, 0x108F, 0x108F3, 0x108F4..0x108F5, 0x108F6..0x108FA, 0x108FB..0x108FF, 
+    0x1090..0x1099, 0x10900..0x10915, 0x10916..0x1091B, 0x1091C..0x1091E, 0x1091F, 0x10920..0x10939, 0x1093A..0x1093E, 0x1093F, 
+    0x10940..0x1097F, 0x10980..0x109B7, 0x109A..0x109C, 0x109B8..0x109BB, 0x109BC..0x109BD, 0x109BE..0x109BF, 0x109C0..0x109CF, 0x109D, 
+    0x109D0..0x109D1, 0x109D2..0x109FF, 0x109E..0x109F, 0x10A0..0x10C5, 0x10A00, 0x10A01..0x10A03, 0x10A04, 0x10A05..0x10A06, 
+    0x10A07..0x10A0B, 0x10A0C..0x10A0F, 0x10A10..0x10A13, 0x10A14, 0x10A15..0x10A17, 0x10A18, 0x10A19..0x10A33, 0x10A34..0x10A37, 
+    0x10A38..0x10A3A, 0x10A3B..0x10A3E, 0x10A3F, 0x10A40..0x10A47, 0x10A48..0x10A4F, 0x10A50..0x10A58, 0x10A59..0x10A5F, 0x10A60..0x10A7C, 
+    0x10A7D..0x10A7E, 0x10A7F, 0x10A80..0x10A9C, 0x10A9D..0x10A9F, 0x10AA0..0x10ABF, 0x10AC0..0x10AC7, 0x10AC8, 0x10AC9..0x10AE4, 
+    0x10AE5..0x10AE6, 0x10AE7..0x10AEA, 0x10AEB..0x10AEF, 0x10AF0..0x10AF6, 0x10AF7..0x10AFF, 0x10B00..0x10B35, 0x10B36..0x10B38, 0x10B39..0x10B3F, 
+    0x10B40..0x10B55, 0x10B56..0x10B57, 0x10B58..0x10B5F, 0x10B60..0x10B72, 0x10B73..0x10B77, 0x10B78..0x10B7F, 0x10B80..0x10B91, 0x10B92..0x10B98, 
+    0x10B99..0x10B9C, 0x10B9D..0x10BA8, 0x10BA9..0x10BAF, 0x10BB0..0x10BFF, 0x10C00..0x10C48, 0x10C49..0x10C7F, 0x10C7, 0x10C80..0x10CB2, 
+    0x10CB3..0x10CBF, 0x10CC0..0x10CF2, 0x10CD, 0x10CF3..0x10CF9, 0x10CFA..0x10CFF, 0x10D0..0x10FA, 0x10D00..0x10E5F, 0x10E60..0x10E7E, 
+    0x10E7F..0x10FFF, 0x10FB, 0x10FC, 0x10FD..0x1248, 0x10FFFE..0x10FFFF, 0x11000, 0x11001, 0x11002, 
+    0x11003..0x11037, 0x11038..0x11046, 0x11047..0x1104D, 0x11052..0x11065, 0x11066..0x1106F, 0x1107F..0x11081, 0x11082, 0x11083..0x110AF, 
+    0x110B0..0x110B2, 0x110B3..0x110B6, 0x110B7..0x110B8, 0x110B9..0x110BA, 0x110BB..0x110BC, 0x110BD, 0x110BE..0x110C1, 0x110D0..0x110E8, 
+    0x110F0..0x110F9, 0x11100..0x11102, 0x11103..0x11126, 0x11127..0x1112B, 0x1112C, 0x1112D..0x11134, 0x11136..0x1113F, 0x11140..0x11143, 
+    0x11150..0x11172, 0x11173, 0x11174..0x11175, 0x11176, 0x11180..0x11181, 0x11182, 0x11183..0x111B2, 0x111B3..0x111B5, 
+    0x111B6..0x111BE, 0x111BF..0x111C0, 0x111C1..0x111C4, 0x111C5..0x111C9, 0x111CA..0x111CC, 0x111CD, 0x111D0..0x111D9, 0x111DA, 
+    0x111DB, 0x111DC, 0x111DD..0x111DF, 0x111E1..0x111F4, 0x11200..0x11211, 0x11213..0x1122B, 0x1122C..0x1122E, 0x1122F..0x11231, 
+    0x11232..0x11233, 0x11234, 0x11235, 0x11236..0x11237, 0x11238..0x1123D, 0x1123E, 0x11280..0x11286, 0x11288, 
+    0x1128A..0x1128D, 0x1128F..0x1129D, 0x1129F..0x112A8, 0x112A9, 0x112B0..0x112DE, 0x112DF, 0x112E0..0x112E2, 0x112E3..0x112EA, 
+    0x112F0..0x112F9, 0x11300..0x11301, 0x11302..0x11303, 0x11305..0x1130C, 0x1130F..0x11310, 0x11313..0x11328, 0x1132A..0x11330, 0x11332..0x11333, 
+    0x11335..0x11339, 0x1133C, 0x1133D, 0x1133E..0x1133F, 0x11340, 0x11341..0x11344, 0x11347..0x11348, 0x1134B..0x1134D, 
+    0x11350, 0x11357, 0x1135D..0x11361, 0x11362..0x11363, 0x11366..0x1136C, 0x11370..0x11374, 0x11400..0x11434, 0x11435..0x11437, 
+    0x11438..0x1143F, 0x11440..0x11441, 0x11442..0x11444, 0x11445, 0x11446, 0x11447..0x1144A, 0x1144B..0x1144F, 0x11450..0x11459, 
+    0x1145B, 0x1145D, 0x11480..0x114AF, 0x114B0..0x114B2, 0x114B3..0x114B8, 0x114B9, 0x114BA, 0x114BB..0x114BE, 
+    0x114BF..0x114C0, 0x114C1, 0x114C2..0x114C3, 0x114C4..0x114C5, 0x114C6, 0x114C7, 0x114D0..0x114D9, 0x11580..0x115AE, 
+    0x115AF..0x115B1, 0x115B2..0x115B5, 0x115B8..0x115BB, 0x115BC..0x115BD, 0x115BE, 0x115BF..0x115C0, 0x115C1..0x115D7, 0x115D8..0x115DB, 
+    0x115DC..0x115DD, 0x11600..0x1162F, 0x11630..0x11632, 0x11633..0x1163A, 0x1163B..0x1163C, 0x1163D, 0x1163E, 0x1163F..0x11640, 
+    0x11641..0x11643, 0x11644, 0x11650..0x11659, 0x11660..0x1166C, 0x11680..0x116AA, 0x116AB, 0x116AC, 0x116AD, 
+    0x116AE..0x116AF, 0x116B0..0x116B5, 0x116B6, 0x116B7, 0x116C0..0x116C9, 0x11700..0x11719, 0x1171D..0x1171F, 0x11720..0x11721, 
+    0x11722..0x11725, 0x11726, 0x11727..0x1172B, 0x11730..0x11739, 0x1173A..0x1173B, 0x1173C..0x1173E, 0x1173F, 0x118A0..0x118DF, 
+    0x118E0..0x118E9, 0x118EA..0x118F2, 0x118FF, 0x11AC0..0x11AF8, 0x11C00..0x11C08, 0x11C0A..0x11C2E, 0x11C2F, 0x11C30..0x11C36, 
+    0x11C38..0x11C3D, 0x11C3E, 0x11C3F, 0x11C40, 0x11C41..0x11C45, 0x11C50..0x11C59, 0x11C5A..0x11C6C, 0x11C70..0x11C71, 
+    0x11C72..0x11C8F, 0x11C92..0x11CA7, 0x11CA9, 0x11CAA..0x11CB0, 0x11CB1, 0x11CB2..0x11CB3, 0x11CB4, 0x11CB5..0x11CB6, 
+    0x12000..0x12399, 0x12400..0x1246E, 0x12470..0x12474, 0x12480..0x12543, 0x124A..0x124D, 0x1250..0x1256, 0x1258, 0x125A..0x125D, 
+    0x1260..0x1288, 0x128A..0x128D, 0x1290..0x12B0, 0x12B2..0x12B5, 0x12B8..0x12BE, 0x12C0, 0x12C2..0x12C5, 0x12C8..0x12D6, 
+    0x12D8..0x1310, 0x13000..0x1342E, 0x1312..0x1315, 0x1318..0x135A, 0x135D..0x135F, 0x1360..0x1368, 0x1369..0x137C, 0x1380..0x138F, 
+    0x1390..0x1399, 0x13A0..0x13F5, 0x13F8..0x13FD, 0x1400, 0x1401..0x166C, 0x14400..0x14646, 0x166D..0x166E, 0x166F..0x167F, 
+    0x1680, 0x16800..0x16A38, 0x1681..0x169A, 0x169B, 0x169C, 0x16A0..0x16EA, 0x16A40..0x16A5E, 0x16A60..0x16A69, 
+    0x16A6E..0x16A6F, 0x16AD0..0x16AED, 0x16AF0..0x16AF4, 0x16AF5, 0x16B00..0x16B2F, 0x16B30..0x16B36, 0x16B37..0x16B3B, 0x16B3C..0x16B3F, 
+    0x16B40..0x16B43, 0x16B44, 0x16B45, 0x16B50..0x16B59, 0x16B5B..0x16B61, 0x16B63..0x16B77, 0x16B7D..0x16B8F, 0x16EB..0x16ED, 
+    0x16EE..0x16F0, 0x16F00..0x16F44, 0x16F1..0x16F8, 0x16F50, 0x16F51..0x16F7E, 0x16F8F..0x16F92, 0x16F93..0x16F9F, 0x16FE0, 
+    0x1700..0x170C, 0x17000..0x187EC, 0x170E..0x1711, 0x1712..0x1714, 0x1720..0x1731, 0x1732..0x1734, 0x1735..0x1736, 0x1740..0x1751, 
+    0x1752..0x1753, 0x1760..0x176C, 0x176E..0x1770, 0x1772..0x1773, 0x1780..0x17B3, 0x17B4..0x17B5, 0x17B6, 0x17B7..0x17BD, 
+    0x17BE..0x17C5, 0x17C6, 0x17C7..0x17C8, 0x17C9..0x17D3, 0x17D4..0x17D6, 0x17D7, 0x17D8..0x17DA, 0x17DB, 
+    0x17DC, 0x17DD, 0x17E0..0x17E9, 0x17F0..0x17F9, 0x1800..0x1805, 0x1806, 0x1807..0x180A, 0x180B..0x180D, 
+    0x180E, 0x1810..0x1819, 0x1820..0x1842, 0x1843, 0x1844..0x1877, 0x1880..0x1884, 0x18800..0x18AF2, 0x1885..0x1886, 
+    0x1887..0x18A8, 0x18A9, 0x18AA, 0x18B0..0x18F5, 0x1900..0x191E, 0x1920..0x1922, 0x1923..0x1926, 0x1927..0x1928, 
+    0x1929..0x192B, 0x1930..0x1931, 0x1932, 0x1933..0x1938, 0x1939..0x193B, 0x1940, 0x1944..0x1945, 0x1946..0x194F, 
+    0x1950..0x196D, 0x1970..0x1974, 0x1980..0x19AB, 0x19B0..0x19C9, 0x19D0..0x19D9, 0x19DA, 0x19DE..0x19FF, 0x1A00..0x1A16, 
+    0x1A17..0x1A18, 0x1A19..0x1A1A, 0x1A1B, 0x1A1E..0x1A1F, 0x1A20..0x1A54, 0x1A55, 0x1A56, 0x1A57, 
+    0x1A58..0x1A5E, 0x1A60, 0x1A61, 0x1A62, 0x1A63..0x1A64, 0x1A65..0x1A6C, 0x1A6D..0x1A72, 0x1A73..0x1A7C, 
+    0x1A7F, 0x1A80..0x1A89, 0x1A90..0x1A99, 0x1AA0..0x1AA6, 0x1AA7, 0x1AA8..0x1AAD, 0x1AB0..0x1ABD, 0x1ABE, 
+    0x1B00..0x1B03, 0x1B000..0x1B001, 0x1B04, 0x1B05..0x1B33, 0x1B34, 0x1B35, 0x1B36..0x1B3A, 0x1B3B, 
+    0x1B3C, 0x1B3D..0x1B41, 0x1B42, 0x1B43..0x1B44, 0x1B45..0x1B4B, 0x1B50..0x1B59, 0x1B5A..0x1B60, 0x1B61..0x1B6A, 
+    0x1B6B..0x1B73, 0x1B74..0x1B7C, 0x1B80..0x1B81, 0x1B82, 0x1B83..0x1BA0, 0x1BA1, 0x1BA2..0x1BA5, 0x1BA6..0x1BA7, 
+    0x1BA8..0x1BA9, 0x1BAA, 0x1BAB..0x1BAD, 0x1BAE..0x1BAF, 0x1BB0..0x1BB9, 0x1BBA..0x1BE5, 0x1BC00..0x1BC6A, 0x1BC70..0x1BC7C, 
+    0x1BC80..0x1BC88, 0x1BC90..0x1BC99, 0x1BC9C, 0x1BC9D..0x1BC9E, 0x1BC9F, 0x1BCA0..0x1BCA3, 0x1BE6, 0x1BE7, 
+    0x1BE8..0x1BE9, 0x1BEA..0x1BEC, 0x1BED, 0x1BEE, 0x1BEF..0x1BF1, 0x1BF2..0x1BF3, 0x1BFC..0x1BFF, 0x1C00..0x1C23, 
+    0x1C24..0x1C2B, 0x1C2C..0x1C33, 0x1C34..0x1C35, 0x1C36..0x1C37, 0x1C3B..0x1C3F, 0x1C40..0x1C49, 0x1C4D..0x1C4F, 0x1C50..0x1C59, 
+    0x1C5A..0x1C77, 0x1C78..0x1C7D, 0x1C7E..0x1C7F, 0x1C80..0x1C88, 0x1CC0..0x1CC7, 0x1CD0..0x1CD2, 0x1CD3, 0x1CD4..0x1CE0, 
+    0x1CE1, 0x1CE2..0x1CE8, 0x1CE9..0x1CEC, 0x1CED, 0x1CEE..0x1CF1, 0x1CF2..0x1CF3, 0x1CF4, 0x1CF5..0x1CF6, 
+    0x1CF8..0x1CF9, 0x1D00..0x1D2B, 0x1D000..0x1D0F5, 0x1D100..0x1D126, 0x1D129..0x1D164, 0x1D165..0x1D166, 0x1D167..0x1D169, 0x1D16A..0x1D16C, 
+    0x1D16D..0x1D172, 0x1D173..0x1D17A, 0x1D17B..0x1D182, 0x1D183..0x1D184, 0x1D185..0x1D18B, 0x1D18C..0x1D1A9, 0x1D1AA..0x1D1AD, 0x1D1AE..0x1D1E8, 
+    0x1D200..0x1D241, 0x1D242..0x1D244, 0x1D245, 0x1D2C..0x1D6A, 0x1D300..0x1D356, 0x1D360..0x1D371, 0x1D400..0x1D454, 0x1D456..0x1D49C, 
+    0x1D49E..0x1D49F, 0x1D4A2, 0x1D4A5..0x1D4A6, 0x1D4A9..0x1D4AC, 0x1D4AE..0x1D4B9, 0x1D4BB, 0x1D4BD..0x1D4C3, 0x1D4C5..0x1D505, 
+    0x1D507..0x1D50A, 0x1D50D..0x1D514, 0x1D516..0x1D51C, 0x1D51E..0x1D539, 0x1D53B..0x1D53E, 0x1D540..0x1D544, 0x1D546, 0x1D54A..0x1D550, 
+    0x1D552..0x1D6A5, 0x1D6A8..0x1D6C0, 0x1D6B..0x1D77, 0x1D6C1, 0x1D6C2..0x1D6DA, 0x1D6DB, 0x1D6DC..0x1D6FA, 0x1D6FB, 
+    0x1D6FC..0x1D714, 0x1D715, 0x1D716..0x1D734, 0x1D735, 0x1D736..0x1D74E, 0x1D74F, 0x1D750..0x1D76E, 0x1D76F, 
+    0x1D770..0x1D788, 0x1D78, 0x1D789, 0x1D78A..0x1D7A8, 0x1D79..0x1D9A, 0x1D7A9, 0x1D7AA..0x1D7C2, 0x1D7C3, 
+    0x1D7C4..0x1D7CB, 0x1D7CE..0x1D7FF, 0x1D800..0x1D9FF, 0x1D9B..0x1DBF, 0x1DA00..0x1DA36, 0x1DA37..0x1DA3A, 0x1DA3B..0x1DA6C, 0x1DA6D..0x1DA74, 
+    0x1DA75, 0x1DA76..0x1DA83, 0x1DA84, 0x1DA85..0x1DA86, 0x1DA87..0x1DA8B, 0x1DA9B..0x1DA9F, 0x1DAA1..0x1DAAF, 0x1DC0..0x1DF5, 
+    0x1DFB..0x1DFF, 0x1E00..0x1F15, 0x1E000..0x1E006, 0x1E008..0x1E018, 0x1E01B..0x1E021, 0x1E023..0x1E024, 0x1E026..0x1E02A, 0x1E800..0x1E8C4, 
+    0x1E8C5..0x1E8C6, 0x1E8C7..0x1E8CF, 0x1E8D0..0x1E8D6, 0x1E8D7..0x1E8FF, 0x1E900..0x1E943, 0x1E944..0x1E94A, 0x1E94B..0x1E94F, 0x1E950..0x1E959, 
+    0x1E95A..0x1E95D, 0x1E95E..0x1E95F, 0x1E960..0x1EDFF, 0x1EE00..0x1EE03, 0x1EE04, 0x1EE05..0x1EE1F, 0x1EE20, 0x1EE21..0x1EE22, 
+    0x1EE23, 0x1EE24, 0x1EE25..0x1EE26, 0x1EE27, 0x1EE28, 0x1EE29..0x1EE32, 0x1EE33, 0x1EE34..0x1EE37, 
+    0x1EE38, 0x1EE39, 0x1EE3A, 0x1EE3B, 0x1EE3C..0x1EE41, 0x1EE42, 0x1EE43..0x1EE46, 0x1EE47, 
+    0x1EE48, 0x1EE49, 0x1EE4A, 0x1EE4B, 0x1EE4C, 0x1EE4D..0x1EE4F, 0x1EE50, 0x1EE51..0x1EE52, 
+    0x1EE53, 0x1EE54, 0x1EE55..0x1EE56, 0x1EE57, 0x1EE58, 0x1EE59, 0x1EE5A, 0x1EE5B, 
+    0x1EE5C, 0x1EE5D, 0x1EE5E, 0x1EE5F, 0x1EE60, 0x1EE61..0x1EE62, 0x1EE63, 0x1EE64, 
+    0x1EE65..0x1EE66, 0x1EE67..0x1EE6A, 0x1EE6B, 0x1EE6C..0x1EE72, 0x1EE73, 0x1EE74..0x1EE77, 0x1EE78, 0x1EE79..0x1EE7C, 
+    0x1EE7D, 0x1EE7E, 0x1EE7F, 0x1EE80..0x1EE89, 0x1EE8A, 0x1EE8B..0x1EE9B, 0x1EE9C..0x1EEA0, 0x1EEA1..0x1EEA3, 
+    0x1EEA4, 0x1EEA5..0x1EEA9, 0x1EEAA, 0x1EEAB..0x1EEBB, 0x1EEBC..0x1EEEF, 0x1EEF0..0x1EEF1, 0x1EEF2..0x1EEFF, 0x1EF00..0x1EFFF, 
+    0x1F000..0x1F02B, 0x1F030..0x1F093, 0x1F0A0..0x1F0AE, 0x1F0B1..0x1F0BF, 0x1F0C1..0x1F0CF, 0x1F0D1..0x1F0F5, 0x1F100..0x1F10A, 0x1F10B..0x1F10C, 
+    0x1F110..0x1F12E, 0x1F130..0x1F169, 0x1F16A..0x1F16B, 0x1F170..0x1F1AC, 0x1F18..0x1F1D, 0x1F1E6..0x1F202, 0x1F20..0x1F45, 0x1F210..0x1F23B, 
+    0x1F240..0x1F248, 0x1F250..0x1F251, 0x1F300..0x1F3FA, 0x1F3FB..0x1F3FF, 0x1F400..0x1F6D2, 0x1F48..0x1F4D, 0x1F50..0x1F57, 0x1F59, 
+    0x1F5B, 0x1F5D, 0x1F5F..0x1F7D, 0x1F6E0..0x1F6EC, 0x1F6F0..0x1F6F6, 0x1F700..0x1F773, 0x1F780..0x1F7D4, 0x1F80..0x1FB4, 
+    0x1F800..0x1F80B, 0x1F810..0x1F847, 0x1F850..0x1F859, 0x1F860..0x1F887, 0x1F890..0x1F8AD, 0x1F910..0x1F91E, 0x1F920..0x1F927, 0x1F930, 
+    0x1F933..0x1F93E, 0x1F940..0x1F94B, 0x1F950..0x1F95E, 0x1F980..0x1F991, 0x1F9C0, 0x1FB6..0x1FBC, 0x1FBD, 0x1FBE, 
+    0x1FBF..0x1FC1, 0x1FC2..0x1FC4, 0x1FC6..0x1FCC, 0x1FCD..0x1FCF, 0x1FD0..0x1FD3, 0x1FD6..0x1FDB, 0x1FDD..0x1FDF, 0x1FE0..0x1FEC, 
+    0x1FED..0x1FEF, 0x1FF2..0x1FF4, 0x1FF6..0x1FFC, 0x1FFD..0x1FFE, 0x1FFFE..0x1FFFF, 0x2000..0x200A, 0x20000..0x2A6D6, 0x200B..0x200D, 
+    0x200E, 0x200F, 0x2010..0x2015, 0x2016..0x2017, 0x2018, 0x2019, 0x201A, 0x201B..0x201C, 
+    0x201D, 0x201E, 0x201F, 0x2020..0x2027, 0x2028, 0x2029, 0x202A, 0x202B, 
+    0x202C, 0x202D, 0x202E, 0x202F, 0x2030..0x2034, 0x2035..0x2038, 0x2039, 0x203A, 
+    0x203B..0x203E, 0x203F..0x2040, 0x2041..0x2043, 0x2044, 0x2045, 0x2046, 0x2047..0x2051, 0x2052, 
+    0x2053, 0x2054, 0x2055..0x205E, 0x205F, 0x2060..0x2064, 0x2065, 0x2066, 0x2067, 
+    0x2068, 0x2069, 0x206A..0x206F, 0x2070, 0x2071, 0x2074..0x2079, 0x207A..0x207B, 0x207C, 
+    0x207D, 0x207E, 0x207F, 0x2080..0x2089, 0x208A..0x208B, 0x208C, 0x208D, 0x208E, 
+    0x2090..0x209C, 0x20A0..0x20BE, 0x20BF..0x20CF, 0x20D0..0x20DC, 0x20DD..0x20E0, 0x20E1, 0x20E2..0x20E4, 0x20E5..0x20F0, 
+    0x2100..0x2101, 0x2102, 0x2103..0x2106, 0x2107, 0x2108..0x2109, 0x210A..0x2113, 0x2114, 0x2115, 
+    0x2116..0x2117, 0x2118, 0x2119..0x211D, 0x211E..0x2123, 0x2124, 0x2125, 0x2126, 0x2127, 
+    0x2128, 0x2129, 0x212A..0x212D, 0x212E, 0x212F..0x2134, 0x2135..0x2138, 0x2139, 0x213A..0x213B, 
+    0x213C..0x213F, 0x2140..0x2144, 0x2145..0x2149, 0x214A, 0x214B, 0x214C..0x214D, 0x214E, 0x214F, 
+    0x2150..0x215F, 0x2160..0x2182, 0x2183..0x2184, 0x2185..0x2188, 0x2189, 0x218A..0x218B, 0x2190..0x2194, 0x2195..0x2199, 
+    0x219A..0x219B, 0x219C..0x219F, 0x21A0, 0x21A1..0x21A2, 0x21A3, 0x21A4..0x21A5, 0x21A6, 0x21A7..0x21AD, 
+    0x21AE, 0x21AF..0x21CD, 0x21CE..0x21CF, 0x21D0..0x21D1, 0x21D2, 0x21D3, 0x21D4, 0x21D5..0x21F3, 
+    0x21F4..0x2211, 0x2212, 0x2213, 0x2214..0x22FF, 0x2300..0x2307, 0x2308, 0x2309, 0x230A, 
+    0x230B, 0x230C..0x231F, 0x2320..0x2321, 0x2322..0x2328, 0x2329, 0x232A, 0x232B..0x2335, 0x2336..0x237A, 
+    0x237B, 0x237C, 0x237D..0x2394, 0x2395, 0x2396..0x239A, 0x239B..0x23B3, 0x23B4..0x23DB, 0x23DC..0x23E1, 
+    0x23E2..0x23FE, 0x2400..0x2426, 0x2440..0x244A, 0x2460..0x2487, 0x2488..0x249B, 0x249C..0x24E9, 0x24EA..0x24FF, 0x2500..0x25B6, 
+    0x25B7, 0x25B8..0x25C0, 0x25C1, 0x25C2..0x25F7, 0x25F8..0x25FF, 0x2600..0x266E, 0x266F, 0x2670..0x26AB, 
+    0x26AC, 0x26AD..0x2767, 0x2768, 0x2769, 0x276A, 0x276B, 0x276C, 0x276D, 
+    0x276E, 0x276F, 0x2770, 0x2771, 0x2772, 0x2773, 0x2774, 0x2775, 
+    0x2776..0x2793, 0x2794..0x27BF, 0x27C0..0x27C4, 0x27C5, 0x27C6, 0x27C7..0x27E5, 0x27E6, 0x27E7, 
+    0x27E8, 0x27E9, 0x27EA, 0x27EB, 0x27EC, 0x27ED, 0x27EE, 0x27EF, 
+    0x27F0..0x27FF, 0x2800..0x28FF, 0x2900..0x2982, 0x2983, 0x2984, 0x2985, 0x2986, 0x2987, 
+    0x2988, 0x2989, 0x298A, 0x298B, 0x298C, 0x298D, 0x298E, 0x298F, 
+    0x2990, 0x2991, 0x2992, 0x2993, 0x2994, 0x2995, 0x2996, 0x2997, 
+    0x2998, 0x2999..0x29D7, 0x29D8, 0x29D9, 0x29DA, 0x29DB, 0x29DC..0x29FB, 0x29FC, 
+    0x29FD, 0x29FE..0x2AFF, 0x2A700..0x2B734, 0x2B00..0x2B2F, 0x2B30..0x2B44, 0x2B45..0x2B46, 0x2B47..0x2B4C, 0x2B4D..0x2B73, 
+    0x2B740..0x2B81D, 0x2B76..0x2B95, 0x2B820..0x2CEA1, 0x2B98..0x2BB9, 0x2BBD..0x2BC8, 0x2BCA..0x2BD1, 0x2BEC..0x2BEF, 0x2C00..0x2C2E, 
+    0x2C30..0x2C5E, 0x2C60..0x2C7B, 0x2C7C..0x2C7D, 0x2C7E..0x2CE4, 0x2CE5..0x2CEA, 0x2CEB..0x2CEE, 0x2CEF..0x2CF1, 0x2CF2..0x2CF3, 
+    0x2CF9..0x2CFC, 0x2CFD, 0x2CFE..0x2CFF, 0x2D00..0x2D25, 0x2D27, 0x2D2D, 0x2D30..0x2D67, 0x2D6F, 
+    0x2D70, 0x2D7F, 0x2D80..0x2D96, 0x2DA0..0x2DA6, 0x2DA8..0x2DAE, 0x2DB0..0x2DB6, 0x2DB8..0x2DBE, 0x2DC0..0x2DC6, 
+    0x2DC8..0x2DCE, 0x2DD0..0x2DD6, 0x2DD8..0x2DDE, 0x2DE0..0x2DFF, 0x2E00..0x2E01, 0x2E02, 0x2E03, 0x2E04, 
+    0x2E05, 0x2E06..0x2E08, 0x2E09, 0x2E0A, 0x2E0B, 0x2E0C, 0x2E0D, 0x2E0E..0x2E16, 
+    0x2E17, 0x2E18..0x2E19, 0x2E1A, 0x2E1B, 0x2E1C, 0x2E1D, 0x2E1E..0x2E1F, 0x2E20, 
+    0x2E21, 0x2E22, 0x2E23, 0x2E24, 0x2E25, 0x2E26, 0x2E27, 0x2E28, 
+    0x2E29, 0x2E2A..0x2E2E, 0x2E2F, 0x2E30..0x2E39, 0x2E3A..0x2E3B, 0x2E3C..0x2E3F, 0x2E40, 0x2E41, 
+    0x2E42, 0x2E43..0x2E44, 0x2E80..0x2E99, 0x2E9B..0x2EF3, 0x2F00..0x2FD5, 0x2F800..0x2FA1D, 0x2FF0..0x2FFB, 0x2FFFE..0x2FFFF, 
+    0x3000, 0x3001..0x3003, 0x3004, 0x3005, 0x3006, 0x3007, 0x3008, 0x3009, 
+    0x300A, 0x300B, 0x300C, 0x300D, 0x300E, 0x300F, 0x3010, 0x3011, 
+    0x3012..0x3013, 0x3014, 0x3015, 0x3016, 0x3017, 0x3018, 0x3019, 0x301A, 
+    0x301B, 0x301C, 0x301D, 0x301E..0x301F, 0x3020, 0x3021..0x3029, 0x302A..0x302D, 0x302E..0x302F, 
+    0x3030, 0x3031..0x3035, 0x3036..0x3037, 0x3038..0x303A, 0x303B, 0x303C, 0x303D, 0x303E..0x303F, 
+    0x3041..0x3096, 0x3099..0x309A, 0x309B..0x309C, 0x309D..0x309E, 0x309F, 0x30A0, 0x30A1..0x30FA, 0x30FB, 
+    0x30FC..0x30FE, 0x30FF, 0x3105..0x312D, 0x3131..0x318E, 0x3190..0x3191, 0x3192..0x3195, 0x3196..0x319F, 0x31A0..0x31BA, 
+    0x31C0..0x31E3, 0x31F0..0x31FF, 0x3200..0x321C, 0x321D..0x321E, 0x3220..0x3229, 0x322A..0x3247, 0x3248..0x324F, 0x3250, 
+    0x3251..0x325F, 0x3260..0x327B, 0x327C..0x327E, 0x327F, 0x3280..0x3289, 0x328A..0x32B0, 0x32B1..0x32BF, 0x32C0..0x32CB, 
+    0x32CC..0x32CF, 0x32D0..0x32FE, 0x3300..0x3376, 0x3377..0x337A, 0x337B..0x33DD, 0x33DE..0x33DF, 0x33E0..0x33FE, 0x33FF, 
+    0x3400..0x4DB5, 0x3FFFE..0x3FFFF, 0x4DC0..0x4DFF, 0x4E00..0x9FD5, 0x4FFFE..0x4FFFF, 0x5FFFE..0x5FFFF, 0x6FFFE..0x6FFFF, 0x7FFFE..0x7FFFF, 
+    0x8FFFE..0x8FFFF, 0x9FFFE..0x9FFFF, 0xA000..0xA014, 0xA015, 0xA016..0xA48C, 0xA490..0xA4C6, 0xA4D0..0xA4F7, 0xA4F8..0xA4FD, 
+    0xA4FE..0xA4FF, 0xA500..0xA60B, 0xA60C, 0xA60D..0xA60F, 0xA610..0xA61F, 0xA620..0xA629, 0xA62A..0xA62B, 0xA640..0xA66D, 
+    0xA66E, 0xA66F, 0xA670..0xA672, 0xA673, 0xA674..0xA67D, 0xA67E, 0xA67F, 0xA680..0xA69B, 
+    0xA69C..0xA69D, 0xA69E..0xA69F, 0xA6A0..0xA6E5, 0xA6E6..0xA6EF, 0xA6F0..0xA6F1, 0xA6F2..0xA6F7, 0xA700..0xA716, 0xA717..0xA71F, 
+    0xA720..0xA721, 0xA722..0xA76F, 0xA770, 0xA771..0xA787, 0xA788, 0xA789..0xA78A, 0xA78B..0xA78E, 0xA78F, 
+    0xA790..0xA7AE, 0xA7B0..0xA7B7, 0xA7F7, 0xA7F8..0xA7F9, 0xA7FA, 0xA7FB..0xA801, 0xA802, 0xA803..0xA805, 
+    0xA806, 0xA807..0xA80A, 0xA80B, 0xA80C..0xA822, 0xA823..0xA824, 0xA825..0xA826, 0xA827, 0xA828..0xA82B, 
+    0xA830..0xA835, 0xA836..0xA837, 0xA838, 0xA839, 0xA840..0xA873, 0xA874..0xA877, 0xA880..0xA881, 0xA882..0xA8B3, 
+    0xA8B4..0xA8C3, 0xA8C4..0xA8C5, 0xA8CE..0xA8CF, 0xA8D0..0xA8D9, 0xA8E0..0xA8F1, 0xA8F2..0xA8F7, 0xA8F8..0xA8FA, 0xA8FB, 
+    0xA8FC, 0xA8FD, 0xA900..0xA909, 0xA90A..0xA925, 0xA926..0xA92D, 0xA92E..0xA92F, 0xA930..0xA946, 0xA947..0xA951, 
+    0xA952..0xA953, 0xA95F, 0xA960..0xA97C, 0xA980..0xA982, 0xA983, 0xA984..0xA9B2, 0xA9B3, 0xA9B4..0xA9B5, 
+    0xA9B6..0xA9B9, 0xA9BA..0xA9BB, 0xA9BC, 0xA9BD..0xA9C0, 0xA9C1..0xA9CD, 0xA9CF, 0xA9D0..0xA9D9, 0xA9DE..0xA9DF, 
+    0xA9E0..0xA9E4, 0xA9E5, 0xA9E6, 0xA9E7..0xA9EF, 0xA9F0..0xA9F9, 0xA9FA..0xA9FE, 0xAA00..0xAA28, 0xAA29..0xAA2E, 
+    0xAA2F..0xAA30, 0xAA31..0xAA32, 0xAA33..0xAA34, 0xAA35..0xAA36, 0xAA40..0xAA42, 0xAA43, 0xAA44..0xAA4B, 0xAA4C, 
+    0xAA4D, 0xAA50..0xAA59, 0xAA5C..0xAA5F, 0xAA60..0xAA6F, 0xAA70, 0xAA71..0xAA76, 0xAA77..0xAA79, 0xAA7A, 
+    0xAA7B, 0xAA7C, 0xAA7D, 0xAA7E..0xAAAF, 0xAAB0, 0xAAB1, 0xAAB2..0xAAB4, 0xAAB5..0xAAB6, 
+    0xAAB7..0xAAB8, 0xAAB9..0xAABD, 0xAABE..0xAABF, 0xAAC0, 0xAAC1, 0xAAC2, 0xAADB..0xAADC, 0xAADD, 
+    0xAADE..0xAADF, 0xAAE0..0xAAEA, 0xAAEB, 0xAAEC..0xAAED, 0xAAEE..0xAAEF, 0xAAF0..0xAAF1, 0xAAF2, 0xAAF3..0xAAF4, 
+    0xAAF5, 0xAAF6, 0xAB01..0xAB06, 0xAB09..0xAB0E, 0xAB11..0xAB16, 0xAB20..0xAB26, 0xAB28..0xAB2E, 0xAB30..0xAB5A, 
+    0xAB5B, 0xAB5C..0xAB5F, 0xAB60..0xAB65, 0xAB70..0xABBF, 0xABC0..0xABE2, 0xABE3..0xABE4, 0xABE5, 0xABE6..0xABE7, 
+    0xABE8, 0xABE9..0xABEA, 0xABEB, 0xABEC, 0xABED, 0xABF0..0xABF9, 0xAC00..0xD7A3, 0xAFFFE..0xAFFFF, 
+    0xBFFFE..0xBFFFF, 0xCFFFE..0xCFFFF, 0xD7B0..0xD7C6, 0xD7CB..0xD7FB, 0xDFFFE..0xE0000, 0xE000..0xF8FF, 0xE0001, 0xE0002..0xE001F, 
+    0xE0020..0xE007F, 0xE0080..0xE00FF, 0xE0100..0xE01EF, 0xE01F0..0xE0FFF, 0xEFFFE..0xEFFFF, 0xF0000..0xFFFFD, 0xF900..0xFA6D, 0xFA70..0xFAD9, 
+    0xFB00..0xFB06, 0xFB13..0xFB17, 0xFB1D, 0xFB1E, 0xFB1F..0xFB28, 0xFB29, 0xFB2A..0xFB36, 0xFB37, 
+    0xFB38..0xFB3C, 0xFB3D, 0xFB3E, 0xFB3F, 0xFB40..0xFB41, 0xFB42, 0xFB43..0xFB44, 0xFB45, 
+    0xFB46..0xFB4F, 0xFB50..0xFBB1, 0xFBB2..0xFBC1, 0xFBC2..0xFBD2, 0xFBD3..0xFD3D, 0xFD3E, 0xFD3F, 0xFD40..0xFD4F, 
+    0xFD50..0xFD8F, 0xFD90..0xFD91, 0xFD92..0xFDC7, 0xFDC8..0xFDCF, 0xFDD0..0xFDEF, 0xFDF0..0xFDFB, 0xFDFC, 0xFDFD, 
+    0xFDFE..0xFDFF, 0xFE00..0xFE0F, 0xFE10..0xFE16, 0xFE17, 0xFE18, 0xFE19, 0xFE20..0xFE2F, 0xFE30, 
+    0xFE31..0xFE32, 0xFE33..0xFE34, 0xFE35, 0xFE36, 0xFE37, 0xFE38, 0xFE39, 0xFE3A, 
+    0xFE3B, 0xFE3C, 0xFE3D, 0xFE3E, 0xFE3F, 0xFE40, 0xFE41, 0xFE42, 
+    0xFE43, 0xFE44, 0xFE45..0xFE46, 0xFE47, 0xFE48, 0xFE49..0xFE4C, 0xFE4D..0xFE4F, 0xFE50, 
+    0xFE51, 0xFE52, 0xFE54, 0xFE55, 0xFE56..0xFE57, 0xFE58, 0xFE59, 0xFE5A, 
+    0xFE5B, 0xFE5C, 0xFE5D, 0xFE5E, 0xFE5F, 0xFE60..0xFE61, 0xFE62, 0xFE63, 
+    0xFE64..0xFE66, 0xFE68, 0xFE69, 0xFE6A, 0xFE6B, 0xFE70..0xFE74, 0xFE75, 0xFE76..0xFEFC, 
+    0xFEFD..0xFEFE, 0xFEFF, 0xFF01..0xFF02, 0xFF03, 0xFF04, 0xFF05, 0xFF06..0xFF07, 0xFF08, 
+    0xFF09, 0xFF0A, 0xFF0B, 0xFF0C, 0xFF0D, 0xFF0E..0xFF0F, 0xFF10..0xFF19, 0xFF1A, 
+    0xFF1B, 0xFF1C..0xFF1E, 0xFF1F..0xFF20, 0xFF21..0xFF3A, 0xFF3B, 0xFF3C, 0xFF3D, 0xFF3E, 
+    0xFF3F, 0xFF40, 0xFF41..0xFF5A, 0xFF5B, 0xFF5C, 0xFF5D, 0xFF5E, 0xFF5F, 
+    0xFF60, 0xFF61, 0xFF62, 0xFF63, 0xFF64..0xFF65, 0xFF66..0xFF6F, 0xFF70, 0xFF71..0xFF9D, 
+    0xFF9E..0xFF9F, 0xFFA0..0xFFBE, 0xFFC2..0xFFC7, 0xFFCA..0xFFCF, 0xFFD2..0xFFD7, 0xFFDA..0xFFDC, 0xFFE0..0xFFE1, 0xFFE2, 
+    0xFFE3, 0xFFE4, 0xFFE5..0xFFE6, 0xFFE8, 0xFFE9..0xFFEC, 0xFFED..0xFFEE, 0xFFF0..0xFFF8, 0xFFF9..0xFFFB, 
+    0xFFFC..0xFFFD, 0xFFFE..0xFFFF, 0xFFFFE..0xFFFFF, 
+  ).flat;
+
+  # Use e.g. as '$Unicode::PRECIS::Tables::Bidi::table{0x200C}<codepoint>;
+  our $table = %(
+    '0x0000..0x0008' => %(
+      codepoint => 0x0000..0x0008,
+      property => 'BN',
+    ),
+
+    '0x0009' => %(
+      codepoint => 0x0009,
+      property => 'S',
+    ),
+
+    '0x000A' => %(
+      codepoint => 0x000A,
+      property => 0xB,
+    ),
+
+    '0x000B' => %(
+      codepoint => 0x000B,
+      property => 'S',
+    ),
+
+    '0x000C' => %(
+      codepoint => 0x000C,
+      property => 'WS',
+    ),
+
+    '0x000D' => %(
+      codepoint => 0x000D,
+      property => 0xB,
+    ),
+
+    '0x000E..0x001B' => %(
+      codepoint => 0x000E..0x001B,
+      property => 'BN',
+    ),
+
+    '0x001C..0x001E' => %(
+      codepoint => 0x001C..0x001E,
+      property => 0xB,
+    ),
+
+    '0x001F' => %(
+      codepoint => 0x001F,
+      property => 'S',
+    ),
+
+    '0x0020' => %(
+      codepoint => 0x0020,
+      property => 'WS',
+    ),
+
+    '0x0021..0x0022' => %(
+      codepoint => 0x0021..0x0022,
+      property => 'ON',
+    ),
+
+    '0x0023' => %(
+      codepoint => 0x0023,
+      property => 'ET',
+    ),
+
+    '0x0024' => %(
+      codepoint => 0x0024,
+      property => 'ET',
+    ),
+
+    '0x0025' => %(
+      codepoint => 0x0025,
+      property => 'ET',
+    ),
+
+    '0x0026..0x0027' => %(
+      codepoint => 0x0026..0x0027,
+      property => 'ON',
+    ),
+
+    '0x0028' => %(
+      codepoint => 0x0028,
+      property => 'ON',
+    ),
+
+    '0x0029' => %(
+      codepoint => 0x0029,
+      property => 'ON',
+    ),
+
+    '0x002A' => %(
+      codepoint => 0x002A,
+      property => 'ON',
+    ),
+
+    '0x002B' => %(
+      codepoint => 0x002B,
+      property => 'ES',
+    ),
+
+    '0x002C' => %(
+      codepoint => 0x002C,
+      property => 'CS',
+    ),
+
+    '0x002D' => %(
+      codepoint => 0x002D,
+      property => 'ES',
+    ),
+
+    '0x002E..0x002F' => %(
+      codepoint => 0x002E..0x002F,
+      property => 'CS',
+    ),
+
+    '0x0030..0x0039' => %(
+      codepoint => 0x0030..0x0039,
+      property => 'EN',
+    ),
+
+    '0x003A' => %(
+      codepoint => 0x003A,
+      property => 'CS',
+    ),
+
+    '0x003B' => %(
+      codepoint => 0x003B,
+      property => 'ON',
+    ),
+
+    '0x003C..0x003E' => %(
+      codepoint => 0x003C..0x003E,
+      property => 'ON',
+    ),
+
+    '0x003F..0x0040' => %(
+      codepoint => 0x003F..0x0040,
+      property => 'ON',
+    ),
+
+    '0x0041..0x005A' => %(
+      codepoint => 0x0041..0x005A,
+      property => 'L',
+    ),
+
+    '0x005B' => %(
+      codepoint => 0x005B,
+      property => 'ON',
+    ),
+
+    '0x005C' => %(
+      codepoint => 0x005C,
+      property => 'ON',
+    ),
+
+    '0x005D' => %(
+      codepoint => 0x005D,
+      property => 'ON',
+    ),
+
+    '0x005E' => %(
+      codepoint => 0x005E,
+      property => 'ON',
+    ),
+
+    '0x005F' => %(
+      codepoint => 0x005F,
+      property => 'ON',
+    ),
+
+    '0x0060' => %(
+      codepoint => 0x0060,
+      property => 'ON',
+    ),
+
+    '0x0061..0x007A' => %(
+      codepoint => 0x0061..0x007A,
+      property => 'L',
+    ),
+
+    '0x007B' => %(
+      codepoint => 0x007B,
+      property => 'ON',
+    ),
+
+    '0x007C' => %(
+      codepoint => 0x007C,
+      property => 'ON',
+    ),
+
+    '0x007D' => %(
+      codepoint => 0x007D,
+      property => 'ON',
+    ),
+
+    '0x007E' => %(
+      codepoint => 0x007E,
+      property => 'ON',
+    ),
+
+    '0x007F..0x0084' => %(
+      codepoint => 0x007F..0x0084,
+      property => 'BN',
+    ),
+
+    '0x0085' => %(
+      codepoint => 0x0085,
+      property => 0xB,
+    ),
+
+    '0x0086..0x009F' => %(
+      codepoint => 0x0086..0x009F,
+      property => 'BN',
+    ),
+
+    '0x00A0' => %(
+      codepoint => 0x00A0,
+      property => 'CS',
+    ),
+
+    '0x00A1' => %(
+      codepoint => 0x00A1,
+      property => 'ON',
+    ),
+
+    '0x00A2..0x00A5' => %(
+      codepoint => 0x00A2..0x00A5,
+      property => 'ET',
+    ),
+
+    '0x00A6' => %(
+      codepoint => 0x00A6,
+      property => 'ON',
+    ),
+
+    '0x00A7' => %(
+      codepoint => 0x00A7,
+      property => 'ON',
+    ),
+
+    '0x00A8' => %(
+      codepoint => 0x00A8,
+      property => 'ON',
+    ),
+
+    '0x00A9' => %(
+      codepoint => 0x00A9,
+      property => 'ON',
+    ),
+
+    '0x00AA' => %(
+      codepoint => 0x00AA,
+      property => 'L',
+    ),
+
+    '0x00AB' => %(
+      codepoint => 0x00AB,
+      property => 'ON',
+    ),
+
+    '0x00AC' => %(
+      codepoint => 0x00AC,
+      property => 'ON',
+    ),
+
+    '0x00AD' => %(
+      codepoint => 0x00AD,
+      property => 'BN',
+    ),
+
+    '0x00AE' => %(
+      codepoint => 0x00AE,
+      property => 'ON',
+    ),
+
+    '0x00AF' => %(
+      codepoint => 0x00AF,
+      property => 'ON',
+    ),
+
+    '0x00B0' => %(
+      codepoint => 0x00B0,
+      property => 'ET',
+    ),
+
+    '0x00B1' => %(
+      codepoint => 0x00B1,
+      property => 'ET',
+    ),
+
+    '0x00B2..0x00B3' => %(
+      codepoint => 0x00B2..0x00B3,
+      property => 'EN',
+    ),
+
+    '0x00B4' => %(
+      codepoint => 0x00B4,
+      property => 'ON',
+    ),
+
+    '0x00B5' => %(
+      codepoint => 0x00B5,
+      property => 'L',
+    ),
+
+    '0x00B6..0x00B7' => %(
+      codepoint => 0x00B6..0x00B7,
+      property => 'ON',
+    ),
+
+    '0x00B8' => %(
+      codepoint => 0x00B8,
+      property => 'ON',
+    ),
+
+    '0x00B9' => %(
+      codepoint => 0x00B9,
+      property => 'EN',
+    ),
+
+    '0x00BA' => %(
+      codepoint => 0x00BA,
+      property => 'L',
+    ),
+
+    '0x00BB' => %(
+      codepoint => 0x00BB,
+      property => 'ON',
+    ),
+
+    '0x00BC..0x00BE' => %(
+      codepoint => 0x00BC..0x00BE,
+      property => 'ON',
+    ),
+
+    '0x00BF' => %(
+      codepoint => 0x00BF,
+      property => 'ON',
+    ),
+
+    '0x00C0..0x00D6' => %(
+      codepoint => 0x00C0..0x00D6,
+      property => 'L',
+    ),
+
+    '0x00D7' => %(
+      codepoint => 0x00D7,
+      property => 'ON',
+    ),
+
+    '0x00D8..0x00F6' => %(
+      codepoint => 0x00D8..0x00F6,
+      property => 'L',
+    ),
+
+    '0x00F7' => %(
+      codepoint => 0x00F7,
+      property => 'ON',
+    ),
+
+    '0x00F8..0x01BA' => %(
+      codepoint => 0x00F8..0x01BA,
+      property => 'L',
+    ),
+
+    '0x01BB' => %(
+      codepoint => 0x01BB,
+      property => 'L',
+    ),
+
+    '0x01BC..0x01BF' => %(
+      codepoint => 0x01BC..0x01BF,
+      property => 'L',
+    ),
+
+    '0x01C0..0x01C3' => %(
+      codepoint => 0x01C0..0x01C3,
+      property => 'L',
+    ),
+
+    '0x01C4..0x0293' => %(
+      codepoint => 0x01C4..0x0293,
+      property => 'L',
+    ),
+
+    '0x0294' => %(
+      codepoint => 0x0294,
+      property => 'L',
+    ),
+
+    '0x0295..0x02AF' => %(
+      codepoint => 0x0295..0x02AF,
+      property => 'L',
+    ),
+
+    '0x02B0..0x02B8' => %(
+      codepoint => 0x02B0..0x02B8,
+      property => 'L',
+    ),
+
+    '0x02B9..0x02BA' => %(
+      codepoint => 0x02B9..0x02BA,
+      property => 'ON',
+    ),
+
+    '0x02BB..0x02C1' => %(
+      codepoint => 0x02BB..0x02C1,
+      property => 'L',
+    ),
+
+    '0x02C2..0x02C5' => %(
+      codepoint => 0x02C2..0x02C5,
+      property => 'ON',
+    ),
+
+    '0x02C6..0x02CF' => %(
+      codepoint => 0x02C6..0x02CF,
+      property => 'ON',
+    ),
+
+    '0x02D0..0x02D1' => %(
+      codepoint => 0x02D0..0x02D1,
+      property => 'L',
+    ),
+
+    '0x02D2..0x02DF' => %(
+      codepoint => 0x02D2..0x02DF,
+      property => 'ON',
+    ),
+
+    '0x02E0..0x02E4' => %(
+      codepoint => 0x02E0..0x02E4,
+      property => 'L',
+    ),
+
+    '0x02E5..0x02EB' => %(
+      codepoint => 0x02E5..0x02EB,
+      property => 'ON',
+    ),
+
+    '0x02EC' => %(
+      codepoint => 0x02EC,
+      property => 'ON',
+    ),
+
+    '0x02ED' => %(
+      codepoint => 0x02ED,
+      property => 'ON',
+    ),
+
+    '0x02EE' => %(
+      codepoint => 0x02EE,
+      property => 'L',
+    ),
+
+    '0x02EF..0x02FF' => %(
+      codepoint => 0x02EF..0x02FF,
+      property => 'ON',
+    ),
+
+    '0x0300..0x036F' => %(
+      codepoint => 0x0300..0x036F,
+      property => 'NSM',
+    ),
+
+    '0x0370..0x0373' => %(
+      codepoint => 0x0370..0x0373,
+      property => 'L',
+    ),
+
+    '0x0374' => %(
+      codepoint => 0x0374,
+      property => 'ON',
+    ),
+
+    '0x0375' => %(
+      codepoint => 0x0375,
+      property => 'ON',
+    ),
+
+    '0x0376..0x0377' => %(
+      codepoint => 0x0376..0x0377,
+      property => 'L',
+    ),
+
+    '0x037A' => %(
+      codepoint => 0x037A,
+      property => 'L',
+    ),
+
+    '0x037B..0x037D' => %(
+      codepoint => 0x037B..0x037D,
+      property => 'L',
+    ),
+
+    '0x037E' => %(
+      codepoint => 0x037E,
+      property => 'ON',
+    ),
+
+    '0x037F' => %(
+      codepoint => 0x037F,
+      property => 'L',
+    ),
+
+    '0x0384..0x0385' => %(
+      codepoint => 0x0384..0x0385,
+      property => 'ON',
+    ),
+
+    '0x0386' => %(
+      codepoint => 0x0386,
+      property => 'L',
+    ),
+
+    '0x0387' => %(
+      codepoint => 0x0387,
+      property => 'ON',
+    ),
+
+    '0x0388..0x038A' => %(
+      codepoint => 0x0388..0x038A,
+      property => 'L',
+    ),
+
+    '0x038C' => %(
+      codepoint => 0x038C,
+      property => 'L',
+    ),
+
+    '0x038E..0x03A1' => %(
+      codepoint => 0x038E..0x03A1,
+      property => 'L',
+    ),
+
+    '0x03A3..0x03F5' => %(
+      codepoint => 0x03A3..0x03F5,
+      property => 'L',
+    ),
+
+    '0x03F6' => %(
+      codepoint => 0x03F6,
+      property => 'ON',
+    ),
+
+    '0x03F7..0x0481' => %(
+      codepoint => 0x03F7..0x0481,
+      property => 'L',
+    ),
+
+    '0x0482' => %(
+      codepoint => 0x0482,
+      property => 'L',
+    ),
+
+    '0x0483..0x0487' => %(
+      codepoint => 0x0483..0x0487,
+      property => 'NSM',
+    ),
+
+    '0x0488..0x0489' => %(
+      codepoint => 0x0488..0x0489,
+      property => 'NSM',
+    ),
+
+    '0x048A..0x052F' => %(
+      codepoint => 0x048A..0x052F,
+      property => 'L',
+    ),
+
+    '0x0531..0x0556' => %(
+      codepoint => 0x0531..0x0556,
+      property => 'L',
+    ),
+
+    '0x0559' => %(
+      codepoint => 0x0559,
+      property => 'L',
+    ),
+
+    '0x055A..0x055F' => %(
+      codepoint => 0x055A..0x055F,
+      property => 'L',
+    ),
+
+    '0x0561..0x0587' => %(
+      codepoint => 0x0561..0x0587,
+      property => 'L',
+    ),
+
+    '0x0589' => %(
+      codepoint => 0x0589,
+      property => 'L',
+    ),
+
+    '0x058A' => %(
+      codepoint => 0x058A,
+      property => 'ON',
+    ),
+
+    '0x058D..0x058E' => %(
+      codepoint => 0x058D..0x058E,
+      property => 'ON',
+    ),
+
+    '0x058F' => %(
+      codepoint => 0x058F,
+      property => 'ET',
+    ),
+
+    '0x0590' => %(
+      codepoint => 0x0590,
+      property => 'R',
+    ),
+
+    '0x0591..0x05BD' => %(
+      codepoint => 0x0591..0x05BD,
+      property => 'NSM',
+    ),
+
+    '0x05BE' => %(
+      codepoint => 0x05BE,
+      property => 'R',
+    ),
+
+    '0x05BF' => %(
+      codepoint => 0x05BF,
+      property => 'NSM',
+    ),
+
+    '0x05C0' => %(
+      codepoint => 0x05C0,
+      property => 'R',
+    ),
+
+    '0x05C1..0x05C2' => %(
+      codepoint => 0x05C1..0x05C2,
+      property => 'NSM',
+    ),
+
+    '0x05C3' => %(
+      codepoint => 0x05C3,
+      property => 'R',
+    ),
+
+    '0x05C4..0x05C5' => %(
+      codepoint => 0x05C4..0x05C5,
+      property => 'NSM',
+    ),
+
+    '0x05C6' => %(
+      codepoint => 0x05C6,
+      property => 'R',
+    ),
+
+    '0x05C7' => %(
+      codepoint => 0x05C7,
+      property => 'NSM',
+    ),
+
+    '0x05C8..0x05CF' => %(
+      codepoint => 0x05C8..0x05CF,
+      property => 'R',
+    ),
+
+    '0x05D0..0x05EA' => %(
+      codepoint => 0x05D0..0x05EA,
+      property => 'R',
+    ),
+
+    '0x05EB..0x05EF' => %(
+      codepoint => 0x05EB..0x05EF,
+      property => 'R',
+    ),
+
+    '0x05F0..0x05F2' => %(
+      codepoint => 0x05F0..0x05F2,
+      property => 'R',
+    ),
+
+    '0x05F3..0x05F4' => %(
+      codepoint => 0x05F3..0x05F4,
+      property => 'R',
+    ),
+
+    '0x05F5..0x05FF' => %(
+      codepoint => 0x05F5..0x05FF,
+      property => 'R',
+    ),
+
+    '0x0600..0x0605' => %(
+      codepoint => 0x0600..0x0605,
+      property => 'AN',
+    ),
+
+    '0x0606..0x0607' => %(
+      codepoint => 0x0606..0x0607,
+      property => 'ON',
+    ),
+
+    '0x0608' => %(
+      codepoint => 0x0608,
+      property => 'AL',
+    ),
+
+    '0x0609..0x060A' => %(
+      codepoint => 0x0609..0x060A,
+      property => 'ET',
+    ),
+
+    '0x060B' => %(
+      codepoint => 0x060B,
+      property => 'AL',
+    ),
+
+    '0x060C' => %(
+      codepoint => 0x060C,
+      property => 'CS',
+    ),
+
+    '0x060D' => %(
+      codepoint => 0x060D,
+      property => 'AL',
+    ),
+
+    '0x060E..0x060F' => %(
+      codepoint => 0x060E..0x060F,
+      property => 'ON',
+    ),
+
+    '0x0610..0x061A' => %(
+      codepoint => 0x0610..0x061A,
+      property => 'NSM',
+    ),
+
+    '0x061B' => %(
+      codepoint => 0x061B,
+      property => 'AL',
+    ),
+
+    '0x061C' => %(
+      codepoint => 0x061C,
+      property => 'AL',
+    ),
+
+    '0x061D' => %(
+      codepoint => 0x061D,
+      property => 'AL',
+    ),
+
+    '0x061E..0x061F' => %(
+      codepoint => 0x061E..0x061F,
+      property => 'AL',
+    ),
+
+    '0x0620..0x063F' => %(
+      codepoint => 0x0620..0x063F,
+      property => 'AL',
+    ),
+
+    '0x0640' => %(
+      codepoint => 0x0640,
+      property => 'AL',
+    ),
+
+    '0x0641..0x064A' => %(
+      codepoint => 0x0641..0x064A,
+      property => 'AL',
+    ),
+
+    '0x064B..0x065F' => %(
+      codepoint => 0x064B..0x065F,
+      property => 'NSM',
+    ),
+
+    '0x0660..0x0669' => %(
+      codepoint => 0x0660..0x0669,
+      property => 'AN',
+    ),
+
+    '0x066A' => %(
+      codepoint => 0x066A,
+      property => 'ET',
+    ),
+
+    '0x066B..0x066C' => %(
+      codepoint => 0x066B..0x066C,
+      property => 'AN',
+    ),
+
+    '0x066D' => %(
+      codepoint => 0x066D,
+      property => 'AL',
+    ),
+
+    '0x066E..0x066F' => %(
+      codepoint => 0x066E..0x066F,
+      property => 'AL',
+    ),
+
+    '0x0670' => %(
+      codepoint => 0x0670,
+      property => 'NSM',
+    ),
+
+    '0x0671..0x06D3' => %(
+      codepoint => 0x0671..0x06D3,
+      property => 'AL',
+    ),
+
+    '0x06D4' => %(
+      codepoint => 0x06D4,
+      property => 'AL',
+    ),
+
+    '0x06D5' => %(
+      codepoint => 0x06D5,
+      property => 'AL',
+    ),
+
+    '0x06D6..0x06DC' => %(
+      codepoint => 0x06D6..0x06DC,
+      property => 'NSM',
+    ),
+
+    '0x06DD' => %(
+      codepoint => 0x06DD,
+      property => 'AN',
+    ),
+
+    '0x06DE' => %(
+      codepoint => 0x06DE,
+      property => 'ON',
+    ),
+
+    '0x06DF..0x06E4' => %(
+      codepoint => 0x06DF..0x06E4,
+      property => 'NSM',
+    ),
+
+    '0x06E5..0x06E6' => %(
+      codepoint => 0x06E5..0x06E6,
+      property => 'AL',
+    ),
+
+    '0x06E7..0x06E8' => %(
+      codepoint => 0x06E7..0x06E8,
+      property => 'NSM',
+    ),
+
+    '0x06E9' => %(
+      codepoint => 0x06E9,
+      property => 'ON',
+    ),
+
+    '0x06EA..0x06ED' => %(
+      codepoint => 0x06EA..0x06ED,
+      property => 'NSM',
+    ),
+
+    '0x06EE..0x06EF' => %(
+      codepoint => 0x06EE..0x06EF,
+      property => 'AL',
+    ),
+
+    '0x06F0..0x06F9' => %(
+      codepoint => 0x06F0..0x06F9,
+      property => 'EN',
+    ),
+
+    '0x06FA..0x06FC' => %(
+      codepoint => 0x06FA..0x06FC,
+      property => 'AL',
+    ),
+
+    '0x06FD..0x06FE' => %(
+      codepoint => 0x06FD..0x06FE,
+      property => 'AL',
+    ),
+
+    '0x06FF' => %(
+      codepoint => 0x06FF,
+      property => 'AL',
+    ),
+
+    '0x0700..0x070D' => %(
+      codepoint => 0x0700..0x070D,
+      property => 'AL',
+    ),
+
+    '0x070E' => %(
+      codepoint => 0x070E,
+      property => 'AL',
+    ),
+
+    '0x070F' => %(
+      codepoint => 0x070F,
+      property => 'AL',
+    ),
+
+    '0x0710' => %(
+      codepoint => 0x0710,
+      property => 'AL',
+    ),
+
+    '0x0711' => %(
+      codepoint => 0x0711,
+      property => 'NSM',
+    ),
+
+    '0x0712..0x072F' => %(
+      codepoint => 0x0712..0x072F,
+      property => 'AL',
+    ),
+
+    '0x0730..0x074A' => %(
+      codepoint => 0x0730..0x074A,
+      property => 'NSM',
+    ),
+
+    '0x074B..0x074C' => %(
+      codepoint => 0x074B..0x074C,
+      property => 'AL',
+    ),
+
+    '0x074D..0x07A5' => %(
+      codepoint => 0x074D..0x07A5,
+      property => 'AL',
+    ),
+
+    '0x07A6..0x07B0' => %(
+      codepoint => 0x07A6..0x07B0,
+      property => 'NSM',
+    ),
+
+    '0x07B1' => %(
+      codepoint => 0x07B1,
+      property => 'AL',
+    ),
+
+    '0x07B2..0x07BF' => %(
+      codepoint => 0x07B2..0x07BF,
+      property => 'AL',
+    ),
+
+    '0x07C0..0x07C9' => %(
+      codepoint => 0x07C0..0x07C9,
+      property => 'R',
+    ),
+
+    '0x07CA..0x07EA' => %(
+      codepoint => 0x07CA..0x07EA,
+      property => 'R',
+    ),
+
+    '0x07EB..0x07F3' => %(
+      codepoint => 0x07EB..0x07F3,
+      property => 'NSM',
+    ),
+
+    '0x07F4..0x07F5' => %(
+      codepoint => 0x07F4..0x07F5,
+      property => 'R',
+    ),
+
+    '0x07F6' => %(
+      codepoint => 0x07F6,
+      property => 'ON',
+    ),
+
+    '0x07F7..0x07F9' => %(
+      codepoint => 0x07F7..0x07F9,
+      property => 'ON',
+    ),
+
+    '0x07FA' => %(
+      codepoint => 0x07FA,
+      property => 'R',
+    ),
+
+    '0x07FB..0x07FF' => %(
+      codepoint => 0x07FB..0x07FF,
+      property => 'R',
+    ),
+
+    '0x0800..0x0815' => %(
+      codepoint => 0x0800..0x0815,
+      property => 'R',
+    ),
+
+    '0x0816..0x0819' => %(
+      codepoint => 0x0816..0x0819,
+      property => 'NSM',
+    ),
+
+    '0x081A' => %(
+      codepoint => 0x081A,
+      property => 'R',
+    ),
+
+    '0x081B..0x0823' => %(
+      codepoint => 0x081B..0x0823,
+      property => 'NSM',
+    ),
+
+    '0x0824' => %(
+      codepoint => 0x0824,
+      property => 'R',
+    ),
+
+    '0x0825..0x0827' => %(
+      codepoint => 0x0825..0x0827,
+      property => 'NSM',
+    ),
+
+    '0x0828' => %(
+      codepoint => 0x0828,
+      property => 'R',
+    ),
+
+    '0x0829..0x082D' => %(
+      codepoint => 0x0829..0x082D,
+      property => 'NSM',
+    ),
+
+    '0x082E..0x082F' => %(
+      codepoint => 0x082E..0x082F,
+      property => 'R',
+    ),
+
+    '0x0830..0x083E' => %(
+      codepoint => 0x0830..0x083E,
+      property => 'R',
+    ),
+
+    '0x083F' => %(
+      codepoint => 0x083F,
+      property => 'R',
+    ),
+
+    '0x0840..0x0858' => %(
+      codepoint => 0x0840..0x0858,
+      property => 'R',
+    ),
+
+    '0x0859..0x085B' => %(
+      codepoint => 0x0859..0x085B,
+      property => 'NSM',
+    ),
+
+    '0x085C..0x085D' => %(
+      codepoint => 0x085C..0x085D,
+      property => 'R',
+    ),
+
+    '0x085E' => %(
+      codepoint => 0x085E,
+      property => 'R',
+    ),
+
+    '0x085F..0x089F' => %(
+      codepoint => 0x085F..0x089F,
+      property => 'R',
+    ),
+
+    '0x08A0..0x08B4' => %(
+      codepoint => 0x08A0..0x08B4,
+      property => 'AL',
+    ),
+
+    '0x08B5' => %(
+      codepoint => 0x08B5,
+      property => 'AL',
+    ),
+
+    '0x08B6..0x08BD' => %(
+      codepoint => 0x08B6..0x08BD,
+      property => 'AL',
+    ),
+
+    '0x08BE..0x08D3' => %(
+      codepoint => 0x08BE..0x08D3,
+      property => 'AL',
+    ),
+
+    '0x08D4..0x08E1' => %(
+      codepoint => 0x08D4..0x08E1,
+      property => 'NSM',
+    ),
+
+    '0x08E2' => %(
+      codepoint => 0x08E2,
+      property => 'AN',
+    ),
+
+    '0x08E3..0x0902' => %(
+      codepoint => 0x08E3..0x0902,
+      property => 'NSM',
+    ),
+
+    '0x0903' => %(
+      codepoint => 0x0903,
+      property => 'L',
+    ),
+
+    '0x0904..0x0939' => %(
+      codepoint => 0x0904..0x0939,
+      property => 'L',
+    ),
+
+    '0x093A' => %(
+      codepoint => 0x093A,
+      property => 'NSM',
+    ),
+
+    '0x093B' => %(
+      codepoint => 0x093B,
+      property => 'L',
+    ),
+
+    '0x093C' => %(
+      codepoint => 0x093C,
+      property => 'NSM',
+    ),
+
+    '0x093D' => %(
+      codepoint => 0x093D,
+      property => 'L',
+    ),
+
+    '0x093E..0x0940' => %(
+      codepoint => 0x093E..0x0940,
+      property => 'L',
+    ),
+
+    '0x0941..0x0948' => %(
+      codepoint => 0x0941..0x0948,
+      property => 'NSM',
+    ),
+
+    '0x0949..0x094C' => %(
+      codepoint => 0x0949..0x094C,
+      property => 'L',
+    ),
+
+    '0x094D' => %(
+      codepoint => 0x094D,
+      property => 'NSM',
+    ),
+
+    '0x094E..0x094F' => %(
+      codepoint => 0x094E..0x094F,
+      property => 'L',
+    ),
+
+    '0x0950' => %(
+      codepoint => 0x0950,
+      property => 'L',
+    ),
+
+    '0x0951..0x0957' => %(
+      codepoint => 0x0951..0x0957,
+      property => 'NSM',
+    ),
+
+    '0x0958..0x0961' => %(
+      codepoint => 0x0958..0x0961,
+      property => 'L',
+    ),
+
+    '0x0962..0x0963' => %(
+      codepoint => 0x0962..0x0963,
+      property => 'NSM',
+    ),
+
+    '0x0964..0x0965' => %(
+      codepoint => 0x0964..0x0965,
+      property => 'L',
+    ),
+
+    '0x0966..0x096F' => %(
+      codepoint => 0x0966..0x096F,
+      property => 'L',
+    ),
+
+    '0x0970' => %(
+      codepoint => 0x0970,
+      property => 'L',
+    ),
+
+    '0x0971' => %(
+      codepoint => 0x0971,
+      property => 'L',
+    ),
+
+    '0x0972..0x0980' => %(
+      codepoint => 0x0972..0x0980,
+      property => 'L',
+    ),
+
+    '0x0981' => %(
+      codepoint => 0x0981,
+      property => 'NSM',
+    ),
+
+    '0x0982..0x0983' => %(
+      codepoint => 0x0982..0x0983,
+      property => 'L',
+    ),
+
+    '0x0985..0x098C' => %(
+      codepoint => 0x0985..0x098C,
+      property => 'L',
+    ),
+
+    '0x098F..0x0990' => %(
+      codepoint => 0x098F..0x0990,
+      property => 'L',
+    ),
+
+    '0x0993..0x09A8' => %(
+      codepoint => 0x0993..0x09A8,
+      property => 'L',
+    ),
+
+    '0x09AA..0x09B0' => %(
+      codepoint => 0x09AA..0x09B0,
+      property => 'L',
+    ),
+
+    '0x09B2' => %(
+      codepoint => 0x09B2,
+      property => 'L',
+    ),
+
+    '0x09B6..0x09B9' => %(
+      codepoint => 0x09B6..0x09B9,
+      property => 'L',
+    ),
+
+    '0x09BC' => %(
+      codepoint => 0x09BC,
+      property => 'NSM',
+    ),
+
+    '0x09BD' => %(
+      codepoint => 0x09BD,
+      property => 'L',
+    ),
+
+    '0x09BE..0x09C0' => %(
+      codepoint => 0x09BE..0x09C0,
+      property => 'L',
+    ),
+
+    '0x09C1..0x09C4' => %(
+      codepoint => 0x09C1..0x09C4,
+      property => 'NSM',
+    ),
+
+    '0x09C7..0x09C8' => %(
+      codepoint => 0x09C7..0x09C8,
+      property => 'L',
+    ),
+
+    '0x09CB..0x09CC' => %(
+      codepoint => 0x09CB..0x09CC,
+      property => 'L',
+    ),
+
+    '0x09CD' => %(
+      codepoint => 0x09CD,
+      property => 'NSM',
+    ),
+
+    '0x09CE' => %(
+      codepoint => 0x09CE,
+      property => 'L',
+    ),
+
+    '0x09D7' => %(
+      codepoint => 0x09D7,
+      property => 'L',
+    ),
+
+    '0x09DC..0x09DD' => %(
+      codepoint => 0x09DC..0x09DD,
+      property => 'L',
+    ),
+
+    '0x09DF..0x09E1' => %(
+      codepoint => 0x09DF..0x09E1,
+      property => 'L',
+    ),
+
+    '0x09E2..0x09E3' => %(
+      codepoint => 0x09E2..0x09E3,
+      property => 'NSM',
+    ),
+
+    '0x09E6..0x09EF' => %(
+      codepoint => 0x09E6..0x09EF,
+      property => 'L',
+    ),
+
+    '0x09F0..0x09F1' => %(
+      codepoint => 0x09F0..0x09F1,
+      property => 'L',
+    ),
+
+    '0x09F2..0x09F3' => %(
+      codepoint => 0x09F2..0x09F3,
+      property => 'ET',
+    ),
+
+    '0x09F4..0x09F9' => %(
+      codepoint => 0x09F4..0x09F9,
+      property => 'L',
+    ),
+
+    '0x09FA' => %(
+      codepoint => 0x09FA,
+      property => 'L',
+    ),
+
+    '0x09FB' => %(
+      codepoint => 0x09FB,
+      property => 'ET',
+    ),
+
+    '0x0A01..0x0A02' => %(
+      codepoint => 0x0A01..0x0A02,
+      property => 'NSM',
+    ),
+
+    '0x0A03' => %(
+      codepoint => 0x0A03,
+      property => 'L',
+    ),
+
+    '0x0A05..0x0A0A' => %(
+      codepoint => 0x0A05..0x0A0A,
+      property => 'L',
+    ),
+
+    '0x0A0F..0x0A10' => %(
+      codepoint => 0x0A0F..0x0A10,
+      property => 'L',
+    ),
+
+    '0x0A13..0x0A28' => %(
+      codepoint => 0x0A13..0x0A28,
+      property => 'L',
+    ),
+
+    '0x0A2A..0x0A30' => %(
+      codepoint => 0x0A2A..0x0A30,
+      property => 'L',
+    ),
+
+    '0x0A32..0x0A33' => %(
+      codepoint => 0x0A32..0x0A33,
+      property => 'L',
+    ),
+
+    '0x0A35..0x0A36' => %(
+      codepoint => 0x0A35..0x0A36,
+      property => 'L',
+    ),
+
+    '0x0A38..0x0A39' => %(
+      codepoint => 0x0A38..0x0A39,
+      property => 'L',
+    ),
+
+    '0x0A3C' => %(
+      codepoint => 0x0A3C,
+      property => 'NSM',
+    ),
+
+    '0x0A3E..0x0A40' => %(
+      codepoint => 0x0A3E..0x0A40,
+      property => 'L',
+    ),
+
+    '0x0A41..0x0A42' => %(
+      codepoint => 0x0A41..0x0A42,
+      property => 'NSM',
+    ),
+
+    '0x0A47..0x0A48' => %(
+      codepoint => 0x0A47..0x0A48,
+      property => 'NSM',
+    ),
+
+    '0x0A4B..0x0A4D' => %(
+      codepoint => 0x0A4B..0x0A4D,
+      property => 'NSM',
+    ),
+
+    '0x0A51' => %(
+      codepoint => 0x0A51,
+      property => 'NSM',
+    ),
+
+    '0x0A59..0x0A5C' => %(
+      codepoint => 0x0A59..0x0A5C,
+      property => 'L',
+    ),
+
+    '0x0A5E' => %(
+      codepoint => 0x0A5E,
+      property => 'L',
+    ),
+
+    '0x0A66..0x0A6F' => %(
+      codepoint => 0x0A66..0x0A6F,
+      property => 'L',
+    ),
+
+    '0x0A70..0x0A71' => %(
+      codepoint => 0x0A70..0x0A71,
+      property => 'NSM',
+    ),
+
+    '0x0A72..0x0A74' => %(
+      codepoint => 0x0A72..0x0A74,
+      property => 'L',
+    ),
+
+    '0x0A75' => %(
+      codepoint => 0x0A75,
+      property => 'NSM',
+    ),
+
+    '0x0A81..0x0A82' => %(
+      codepoint => 0x0A81..0x0A82,
+      property => 'NSM',
+    ),
+
+    '0x0A83' => %(
+      codepoint => 0x0A83,
+      property => 'L',
+    ),
+
+    '0x0A85..0x0A8D' => %(
+      codepoint => 0x0A85..0x0A8D,
+      property => 'L',
+    ),
+
+    '0x0A8F..0x0A91' => %(
+      codepoint => 0x0A8F..0x0A91,
+      property => 'L',
+    ),
+
+    '0x0A93..0x0AA8' => %(
+      codepoint => 0x0A93..0x0AA8,
+      property => 'L',
+    ),
+
+    '0x0AAA..0x0AB0' => %(
+      codepoint => 0x0AAA..0x0AB0,
+      property => 'L',
+    ),
+
+    '0x0AB2..0x0AB3' => %(
+      codepoint => 0x0AB2..0x0AB3,
+      property => 'L',
+    ),
+
+    '0x0AB5..0x0AB9' => %(
+      codepoint => 0x0AB5..0x0AB9,
+      property => 'L',
+    ),
+
+    '0x0ABC' => %(
+      codepoint => 0x0ABC,
+      property => 'NSM',
+    ),
+
+    '0x0ABD' => %(
+      codepoint => 0x0ABD,
+      property => 'L',
+    ),
+
+    '0x0ABE..0x0AC0' => %(
+      codepoint => 0x0ABE..0x0AC0,
+      property => 'L',
+    ),
+
+    '0x0AC1..0x0AC5' => %(
+      codepoint => 0x0AC1..0x0AC5,
+      property => 'NSM',
+    ),
+
+    '0x0AC7..0x0AC8' => %(
+      codepoint => 0x0AC7..0x0AC8,
+      property => 'NSM',
+    ),
+
+    '0x0AC9' => %(
+      codepoint => 0x0AC9,
+      property => 'L',
+    ),
+
+    '0x0ACB..0x0ACC' => %(
+      codepoint => 0x0ACB..0x0ACC,
+      property => 'L',
+    ),
+
+    '0x0ACD' => %(
+      codepoint => 0x0ACD,
+      property => 'NSM',
+    ),
+
+    '0x0AD0' => %(
+      codepoint => 0x0AD0,
+      property => 'L',
+    ),
+
+    '0x0AE0..0x0AE1' => %(
+      codepoint => 0x0AE0..0x0AE1,
+      property => 'L',
+    ),
+
+    '0x0AE2..0x0AE3' => %(
+      codepoint => 0x0AE2..0x0AE3,
+      property => 'NSM',
+    ),
+
+    '0x0AE6..0x0AEF' => %(
+      codepoint => 0x0AE6..0x0AEF,
+      property => 'L',
+    ),
+
+    '0x0AF0' => %(
+      codepoint => 0x0AF0,
+      property => 'L',
+    ),
+
+    '0x0AF1' => %(
+      codepoint => 0x0AF1,
+      property => 'ET',
+    ),
+
+    '0x0AF9' => %(
+      codepoint => 0x0AF9,
+      property => 'L',
+    ),
+
+    '0x0B01' => %(
+      codepoint => 0x0B01,
+      property => 'NSM',
+    ),
+
+    '0x0B02..0x0B03' => %(
+      codepoint => 0x0B02..0x0B03,
+      property => 'L',
+    ),
+
+    '0x0B05..0x0B0C' => %(
+      codepoint => 0x0B05..0x0B0C,
+      property => 'L',
+    ),
+
+    '0x0B0F..0x0B10' => %(
+      codepoint => 0x0B0F..0x0B10,
+      property => 'L',
+    ),
+
+    '0x0B13..0x0B28' => %(
+      codepoint => 0x0B13..0x0B28,
+      property => 'L',
+    ),
+
+    '0x0B2A..0x0B30' => %(
+      codepoint => 0x0B2A..0x0B30,
+      property => 'L',
+    ),
+
+    '0x0B32..0x0B33' => %(
+      codepoint => 0x0B32..0x0B33,
+      property => 'L',
+    ),
+
+    '0x0B35..0x0B39' => %(
+      codepoint => 0x0B35..0x0B39,
+      property => 'L',
+    ),
+
+    '0x0B3C' => %(
+      codepoint => 0x0B3C,
+      property => 'NSM',
+    ),
+
+    '0x0B3D' => %(
+      codepoint => 0x0B3D,
+      property => 'L',
+    ),
+
+    '0x0B3E' => %(
+      codepoint => 0x0B3E,
+      property => 'L',
+    ),
+
+    '0x0B3F' => %(
+      codepoint => 0x0B3F,
+      property => 'NSM',
+    ),
+
+    '0x0B40' => %(
+      codepoint => 0x0B40,
+      property => 'L',
+    ),
+
+    '0x0B41..0x0B44' => %(
+      codepoint => 0x0B41..0x0B44,
+      property => 'NSM',
+    ),
+
+    '0x0B47..0x0B48' => %(
+      codepoint => 0x0B47..0x0B48,
+      property => 'L',
+    ),
+
+    '0x0B4B..0x0B4C' => %(
+      codepoint => 0x0B4B..0x0B4C,
+      property => 'L',
+    ),
+
+    '0x0B4D' => %(
+      codepoint => 0x0B4D,
+      property => 'NSM',
+    ),
+
+    '0x0B56' => %(
+      codepoint => 0x0B56,
+      property => 'NSM',
+    ),
+
+    '0x0B57' => %(
+      codepoint => 0x0B57,
+      property => 'L',
+    ),
+
+    '0x0B5C..0x0B5D' => %(
+      codepoint => 0x0B5C..0x0B5D,
+      property => 'L',
+    ),
+
+    '0x0B5F..0x0B61' => %(
+      codepoint => 0x0B5F..0x0B61,
+      property => 'L',
+    ),
+
+    '0x0B62..0x0B63' => %(
+      codepoint => 0x0B62..0x0B63,
+      property => 'NSM',
+    ),
+
+    '0x0B66..0x0B6F' => %(
+      codepoint => 0x0B66..0x0B6F,
+      property => 'L',
+    ),
+
+    '0x0B70' => %(
+      codepoint => 0x0B70,
+      property => 'L',
+    ),
+
+    '0x0B71' => %(
+      codepoint => 0x0B71,
+      property => 'L',
+    ),
+
+    '0x0B72..0x0B77' => %(
+      codepoint => 0x0B72..0x0B77,
+      property => 'L',
+    ),
+
+    '0x0B82' => %(
+      codepoint => 0x0B82,
+      property => 'NSM',
+    ),
+
+    '0x0B83' => %(
+      codepoint => 0x0B83,
+      property => 'L',
+    ),
+
+    '0x0B85..0x0B8A' => %(
+      codepoint => 0x0B85..0x0B8A,
+      property => 'L',
+    ),
+
+    '0x0B8E..0x0B90' => %(
+      codepoint => 0x0B8E..0x0B90,
+      property => 'L',
+    ),
+
+    '0x0B92..0x0B95' => %(
+      codepoint => 0x0B92..0x0B95,
+      property => 'L',
+    ),
+
+    '0x0B99..0x0B9A' => %(
+      codepoint => 0x0B99..0x0B9A,
+      property => 'L',
+    ),
+
+    '0x0B9C' => %(
+      codepoint => 0x0B9C,
+      property => 'L',
+    ),
+
+    '0x0B9E..0x0B9F' => %(
+      codepoint => 0x0B9E..0x0B9F,
+      property => 'L',
+    ),
+
+    '0x0BA3..0x0BA4' => %(
+      codepoint => 0x0BA3..0x0BA4,
+      property => 'L',
+    ),
+
+    '0x0BA8..0x0BAA' => %(
+      codepoint => 0x0BA8..0x0BAA,
+      property => 'L',
+    ),
+
+    '0x0BAE..0x0BB9' => %(
+      codepoint => 0x0BAE..0x0BB9,
+      property => 'L',
+    ),
+
+    '0x0BBE..0x0BBF' => %(
+      codepoint => 0x0BBE..0x0BBF,
+      property => 'L',
+    ),
+
+    '0x0BC0' => %(
+      codepoint => 0x0BC0,
+      property => 'NSM',
+    ),
+
+    '0x0BC1..0x0BC2' => %(
+      codepoint => 0x0BC1..0x0BC2,
+      property => 'L',
+    ),
+
+    '0x0BC6..0x0BC8' => %(
+      codepoint => 0x0BC6..0x0BC8,
+      property => 'L',
+    ),
+
+    '0x0BCA..0x0BCC' => %(
+      codepoint => 0x0BCA..0x0BCC,
+      property => 'L',
+    ),
+
+    '0x0BCD' => %(
+      codepoint => 0x0BCD,
+      property => 'NSM',
+    ),
+
+    '0x0BD0' => %(
+      codepoint => 0x0BD0,
+      property => 'L',
+    ),
+
+    '0x0BD7' => %(
+      codepoint => 0x0BD7,
+      property => 'L',
+    ),
+
+    '0x0BE6..0x0BEF' => %(
+      codepoint => 0x0BE6..0x0BEF,
+      property => 'L',
+    ),
+
+    '0x0BF0..0x0BF2' => %(
+      codepoint => 0x0BF0..0x0BF2,
+      property => 'L',
+    ),
+
+    '0x0BF3..0x0BF8' => %(
+      codepoint => 0x0BF3..0x0BF8,
+      property => 'ON',
+    ),
+
+    '0x0BF9' => %(
+      codepoint => 0x0BF9,
+      property => 'ET',
+    ),
+
+    '0x0BFA' => %(
+      codepoint => 0x0BFA,
+      property => 'ON',
+    ),
+
+    '0x0C00' => %(
+      codepoint => 0x0C00,
+      property => 'NSM',
+    ),
+
+    '0x0C01..0x0C03' => %(
+      codepoint => 0x0C01..0x0C03,
+      property => 'L',
+    ),
+
+    '0x0C05..0x0C0C' => %(
+      codepoint => 0x0C05..0x0C0C,
+      property => 'L',
+    ),
+
+    '0x0C0E..0x0C10' => %(
+      codepoint => 0x0C0E..0x0C10,
+      property => 'L',
+    ),
+
+    '0x0C12..0x0C28' => %(
+      codepoint => 0x0C12..0x0C28,
+      property => 'L',
+    ),
+
+    '0x0C2A..0x0C39' => %(
+      codepoint => 0x0C2A..0x0C39,
+      property => 'L',
+    ),
+
+    '0x0C3D' => %(
+      codepoint => 0x0C3D,
+      property => 'L',
+    ),
+
+    '0x0C3E..0x0C40' => %(
+      codepoint => 0x0C3E..0x0C40,
+      property => 'NSM',
+    ),
+
+    '0x0C41..0x0C44' => %(
+      codepoint => 0x0C41..0x0C44,
+      property => 'L',
+    ),
+
+    '0x0C46..0x0C48' => %(
+      codepoint => 0x0C46..0x0C48,
+      property => 'NSM',
+    ),
+
+    '0x0C4A..0x0C4D' => %(
+      codepoint => 0x0C4A..0x0C4D,
+      property => 'NSM',
+    ),
+
+    '0x0C55..0x0C56' => %(
+      codepoint => 0x0C55..0x0C56,
+      property => 'NSM',
+    ),
+
+    '0x0C58..0x0C5A' => %(
+      codepoint => 0x0C58..0x0C5A,
+      property => 'L',
+    ),
+
+    '0x0C60..0x0C61' => %(
+      codepoint => 0x0C60..0x0C61,
+      property => 'L',
+    ),
+
+    '0x0C62..0x0C63' => %(
+      codepoint => 0x0C62..0x0C63,
+      property => 'NSM',
+    ),
+
+    '0x0C66..0x0C6F' => %(
+      codepoint => 0x0C66..0x0C6F,
+      property => 'L',
+    ),
+
+    '0x0C78..0x0C7E' => %(
+      codepoint => 0x0C78..0x0C7E,
+      property => 'ON',
+    ),
+
+    '0x0C7F' => %(
+      codepoint => 0x0C7F,
+      property => 'L',
+    ),
+
+    '0x0C80' => %(
+      codepoint => 0x0C80,
+      property => 'L',
+    ),
+
+    '0x0C81' => %(
+      codepoint => 0x0C81,
+      property => 'NSM',
+    ),
+
+    '0x0C82..0x0C83' => %(
+      codepoint => 0x0C82..0x0C83,
+      property => 'L',
+    ),
+
+    '0x0C85..0x0C8C' => %(
+      codepoint => 0x0C85..0x0C8C,
+      property => 'L',
+    ),
+
+    '0x0C8E..0x0C90' => %(
+      codepoint => 0x0C8E..0x0C90,
+      property => 'L',
+    ),
+
+    '0x0C92..0x0CA8' => %(
+      codepoint => 0x0C92..0x0CA8,
+      property => 'L',
+    ),
+
+    '0x0CAA..0x0CB3' => %(
+      codepoint => 0x0CAA..0x0CB3,
+      property => 'L',
+    ),
+
+    '0x0CB5..0x0CB9' => %(
+      codepoint => 0x0CB5..0x0CB9,
+      property => 'L',
+    ),
+
+    '0x0CBC' => %(
+      codepoint => 0x0CBC,
+      property => 'NSM',
+    ),
+
+    '0x0CBD' => %(
+      codepoint => 0x0CBD,
+      property => 'L',
+    ),
+
+    '0x0CBE' => %(
+      codepoint => 0x0CBE,
+      property => 'L',
+    ),
+
+    '0x0CBF' => %(
+      codepoint => 0x0CBF,
+      property => 'L',
+    ),
+
+    '0x0CC0..0x0CC4' => %(
+      codepoint => 0x0CC0..0x0CC4,
+      property => 'L',
+    ),
+
+    '0x0CC6' => %(
+      codepoint => 0x0CC6,
+      property => 'L',
+    ),
+
+    '0x0CC7..0x0CC8' => %(
+      codepoint => 0x0CC7..0x0CC8,
+      property => 'L',
+    ),
+
+    '0x0CCA..0x0CCB' => %(
+      codepoint => 0x0CCA..0x0CCB,
+      property => 'L',
+    ),
+
+    '0x0CCC..0x0CCD' => %(
+      codepoint => 0x0CCC..0x0CCD,
+      property => 'NSM',
+    ),
+
+    '0x0CD5..0x0CD6' => %(
+      codepoint => 0x0CD5..0x0CD6,
+      property => 'L',
+    ),
+
+    '0x0CDE' => %(
+      codepoint => 0x0CDE,
+      property => 'L',
+    ),
+
+    '0x0CE0..0x0CE1' => %(
+      codepoint => 0x0CE0..0x0CE1,
+      property => 'L',
+    ),
+
+    '0x0CE2..0x0CE3' => %(
+      codepoint => 0x0CE2..0x0CE3,
+      property => 'NSM',
+    ),
+
+    '0x0CE6..0x0CEF' => %(
+      codepoint => 0x0CE6..0x0CEF,
+      property => 'L',
+    ),
+
+    '0x0CF1..0x0CF2' => %(
+      codepoint => 0x0CF1..0x0CF2,
+      property => 'L',
+    ),
+
+    '0x0D01' => %(
+      codepoint => 0x0D01,
+      property => 'NSM',
+    ),
+
+    '0x0D02..0x0D03' => %(
+      codepoint => 0x0D02..0x0D03,
+      property => 'L',
+    ),
+
+    '0x0D05..0x0D0C' => %(
+      codepoint => 0x0D05..0x0D0C,
+      property => 'L',
+    ),
+
+    '0x0D0E..0x0D10' => %(
+      codepoint => 0x0D0E..0x0D10,
+      property => 'L',
+    ),
+
+    '0x0D12..0x0D3A' => %(
+      codepoint => 0x0D12..0x0D3A,
+      property => 'L',
+    ),
+
+    '0x0D3D' => %(
+      codepoint => 0x0D3D,
+      property => 'L',
+    ),
+
+    '0x0D3E..0x0D40' => %(
+      codepoint => 0x0D3E..0x0D40,
+      property => 'L',
+    ),
+
+    '0x0D41..0x0D44' => %(
+      codepoint => 0x0D41..0x0D44,
+      property => 'NSM',
+    ),
+
+    '0x0D46..0x0D48' => %(
+      codepoint => 0x0D46..0x0D48,
+      property => 'L',
+    ),
+
+    '0x0D4A..0x0D4C' => %(
+      codepoint => 0x0D4A..0x0D4C,
+      property => 'L',
+    ),
+
+    '0x0D4D' => %(
+      codepoint => 0x0D4D,
+      property => 'NSM',
+    ),
+
+    '0x0D4E' => %(
+      codepoint => 0x0D4E,
+      property => 'L',
+    ),
+
+    '0x0D4F' => %(
+      codepoint => 0x0D4F,
+      property => 'L',
+    ),
+
+    '0x0D54..0x0D56' => %(
+      codepoint => 0x0D54..0x0D56,
+      property => 'L',
+    ),
+
+    '0x0D57' => %(
+      codepoint => 0x0D57,
+      property => 'L',
+    ),
+
+    '0x0D58..0x0D5E' => %(
+      codepoint => 0x0D58..0x0D5E,
+      property => 'L',
+    ),
+
+    '0x0D5F..0x0D61' => %(
+      codepoint => 0x0D5F..0x0D61,
+      property => 'L',
+    ),
+
+    '0x0D62..0x0D63' => %(
+      codepoint => 0x0D62..0x0D63,
+      property => 'NSM',
+    ),
+
+    '0x0D66..0x0D6F' => %(
+      codepoint => 0x0D66..0x0D6F,
+      property => 'L',
+    ),
+
+    '0x0D70..0x0D78' => %(
+      codepoint => 0x0D70..0x0D78,
+      property => 'L',
+    ),
+
+    '0x0D79' => %(
+      codepoint => 0x0D79,
+      property => 'L',
+    ),
+
+    '0x0D7A..0x0D7F' => %(
+      codepoint => 0x0D7A..0x0D7F,
+      property => 'L',
+    ),
+
+    '0x0D82..0x0D83' => %(
+      codepoint => 0x0D82..0x0D83,
+      property => 'L',
+    ),
+
+    '0x0D85..0x0D96' => %(
+      codepoint => 0x0D85..0x0D96,
+      property => 'L',
+    ),
+
+    '0x0D9A..0x0DB1' => %(
+      codepoint => 0x0D9A..0x0DB1,
+      property => 'L',
+    ),
+
+    '0x0DB3..0x0DBB' => %(
+      codepoint => 0x0DB3..0x0DBB,
+      property => 'L',
+    ),
+
+    '0x0DBD' => %(
+      codepoint => 0x0DBD,
+      property => 'L',
+    ),
+
+    '0x0DC0..0x0DC6' => %(
+      codepoint => 0x0DC0..0x0DC6,
+      property => 'L',
+    ),
+
+    '0x0DCA' => %(
+      codepoint => 0x0DCA,
+      property => 'NSM',
+    ),
+
+    '0x0DCF..0x0DD1' => %(
+      codepoint => 0x0DCF..0x0DD1,
+      property => 'L',
+    ),
+
+    '0x0DD2..0x0DD4' => %(
+      codepoint => 0x0DD2..0x0DD4,
+      property => 'NSM',
+    ),
+
+    '0x0DD6' => %(
+      codepoint => 0x0DD6,
+      property => 'NSM',
+    ),
+
+    '0x0DD8..0x0DDF' => %(
+      codepoint => 0x0DD8..0x0DDF,
+      property => 'L',
+    ),
+
+    '0x0DE6..0x0DEF' => %(
+      codepoint => 0x0DE6..0x0DEF,
+      property => 'L',
+    ),
+
+    '0x0DF2..0x0DF3' => %(
+      codepoint => 0x0DF2..0x0DF3,
+      property => 'L',
+    ),
+
+    '0x0DF4' => %(
+      codepoint => 0x0DF4,
+      property => 'L',
+    ),
+
+    '0x0E01..0x0E30' => %(
+      codepoint => 0x0E01..0x0E30,
+      property => 'L',
+    ),
+
+    '0x0E31' => %(
+      codepoint => 0x0E31,
+      property => 'NSM',
+    ),
+
+    '0x0E32..0x0E33' => %(
+      codepoint => 0x0E32..0x0E33,
+      property => 'L',
+    ),
+
+    '0x0E34..0x0E3A' => %(
+      codepoint => 0x0E34..0x0E3A,
+      property => 'NSM',
+    ),
+
+    '0x0E3F' => %(
+      codepoint => 0x0E3F,
+      property => 'ET',
+    ),
+
+    '0x0E40..0x0E45' => %(
+      codepoint => 0x0E40..0x0E45,
+      property => 'L',
+    ),
+
+    '0x0E46' => %(
+      codepoint => 0x0E46,
+      property => 'L',
+    ),
+
+    '0x0E47..0x0E4E' => %(
+      codepoint => 0x0E47..0x0E4E,
+      property => 'NSM',
+    ),
+
+    '0x0E4F' => %(
+      codepoint => 0x0E4F,
+      property => 'L',
+    ),
+
+    '0x0E50..0x0E59' => %(
+      codepoint => 0x0E50..0x0E59,
+      property => 'L',
+    ),
+
+    '0x0E5A..0x0E5B' => %(
+      codepoint => 0x0E5A..0x0E5B,
+      property => 'L',
+    ),
+
+    '0x0E81..0x0E82' => %(
+      codepoint => 0x0E81..0x0E82,
+      property => 'L',
+    ),
+
+    '0x0E84' => %(
+      codepoint => 0x0E84,
+      property => 'L',
+    ),
+
+    '0x0E87..0x0E88' => %(
+      codepoint => 0x0E87..0x0E88,
+      property => 'L',
+    ),
+
+    '0x0E8A' => %(
+      codepoint => 0x0E8A,
+      property => 'L',
+    ),
+
+    '0x0E8D' => %(
+      codepoint => 0x0E8D,
+      property => 'L',
+    ),
+
+    '0x0E94..0x0E97' => %(
+      codepoint => 0x0E94..0x0E97,
+      property => 'L',
+    ),
+
+    '0x0E99..0x0E9F' => %(
+      codepoint => 0x0E99..0x0E9F,
+      property => 'L',
+    ),
+
+    '0x0EA1..0x0EA3' => %(
+      codepoint => 0x0EA1..0x0EA3,
+      property => 'L',
+    ),
+
+    '0x0EA5' => %(
+      codepoint => 0x0EA5,
+      property => 'L',
+    ),
+
+    '0x0EA7' => %(
+      codepoint => 0x0EA7,
+      property => 'L',
+    ),
+
+    '0x0EAA..0x0EAB' => %(
+      codepoint => 0x0EAA..0x0EAB,
+      property => 'L',
+    ),
+
+    '0x0EAD..0x0EB0' => %(
+      codepoint => 0x0EAD..0x0EB0,
+      property => 'L',
+    ),
+
+    '0x0EB1' => %(
+      codepoint => 0x0EB1,
+      property => 'NSM',
+    ),
+
+    '0x0EB2..0x0EB3' => %(
+      codepoint => 0x0EB2..0x0EB3,
+      property => 'L',
+    ),
+
+    '0x0EB4..0x0EB9' => %(
+      codepoint => 0x0EB4..0x0EB9,
+      property => 'NSM',
+    ),
+
+    '0x0EBB..0x0EBC' => %(
+      codepoint => 0x0EBB..0x0EBC,
+      property => 'NSM',
+    ),
+
+    '0x0EBD' => %(
+      codepoint => 0x0EBD,
+      property => 'L',
+    ),
+
+    '0x0EC0..0x0EC4' => %(
+      codepoint => 0x0EC0..0x0EC4,
+      property => 'L',
+    ),
+
+    '0x0EC6' => %(
+      codepoint => 0x0EC6,
+      property => 'L',
+    ),
+
+    '0x0EC8..0x0ECD' => %(
+      codepoint => 0x0EC8..0x0ECD,
+      property => 'NSM',
+    ),
+
+    '0x0ED0..0x0ED9' => %(
+      codepoint => 0x0ED0..0x0ED9,
+      property => 'L',
+    ),
+
+    '0x0EDC..0x0EDF' => %(
+      codepoint => 0x0EDC..0x0EDF,
+      property => 'L',
+    ),
+
+    '0x0F00' => %(
+      codepoint => 0x0F00,
+      property => 'L',
+    ),
+
+    '0x0F01..0x0F03' => %(
+      codepoint => 0x0F01..0x0F03,
+      property => 'L',
+    ),
+
+    '0x0F04..0x0F12' => %(
+      codepoint => 0x0F04..0x0F12,
+      property => 'L',
+    ),
+
+    '0x0F13' => %(
+      codepoint => 0x0F13,
+      property => 'L',
+    ),
+
+    '0x0F14' => %(
+      codepoint => 0x0F14,
+      property => 'L',
+    ),
+
+    '0x0F15..0x0F17' => %(
+      codepoint => 0x0F15..0x0F17,
+      property => 'L',
+    ),
+
+    '0x0F18..0x0F19' => %(
+      codepoint => 0x0F18..0x0F19,
+      property => 'NSM',
+    ),
+
+    '0x0F1A..0x0F1F' => %(
+      codepoint => 0x0F1A..0x0F1F,
+      property => 'L',
+    ),
+
+    '0x0F20..0x0F29' => %(
+      codepoint => 0x0F20..0x0F29,
+      property => 'L',
+    ),
+
+    '0x0F2A..0x0F33' => %(
+      codepoint => 0x0F2A..0x0F33,
+      property => 'L',
+    ),
+
+    '0x0F34' => %(
+      codepoint => 0x0F34,
+      property => 'L',
+    ),
+
+    '0x0F35' => %(
+      codepoint => 0x0F35,
+      property => 'NSM',
+    ),
+
+    '0x0F36' => %(
+      codepoint => 0x0F36,
+      property => 'L',
+    ),
+
+    '0x0F37' => %(
+      codepoint => 0x0F37,
+      property => 'NSM',
+    ),
+
+    '0x0F38' => %(
+      codepoint => 0x0F38,
+      property => 'L',
+    ),
+
+    '0x0F39' => %(
+      codepoint => 0x0F39,
+      property => 'NSM',
+    ),
+
+    '0x0F3A' => %(
+      codepoint => 0x0F3A,
+      property => 'ON',
+    ),
+
+    '0x0F3B' => %(
+      codepoint => 0x0F3B,
+      property => 'ON',
+    ),
+
+    '0x0F3C' => %(
+      codepoint => 0x0F3C,
+      property => 'ON',
+    ),
+
+    '0x0F3D' => %(
+      codepoint => 0x0F3D,
+      property => 'ON',
+    ),
+
+    '0x0F3E..0x0F3F' => %(
+      codepoint => 0x0F3E..0x0F3F,
+      property => 'L',
+    ),
+
+    '0x0F40..0x0F47' => %(
+      codepoint => 0x0F40..0x0F47,
+      property => 'L',
+    ),
+
+    '0x0F49..0x0F6C' => %(
+      codepoint => 0x0F49..0x0F6C,
+      property => 'L',
+    ),
+
+    '0x0F71..0x0F7E' => %(
+      codepoint => 0x0F71..0x0F7E,
+      property => 'NSM',
+    ),
+
+    '0x0F7F' => %(
+      codepoint => 0x0F7F,
+      property => 'L',
+    ),
+
+    '0x0F80..0x0F84' => %(
+      codepoint => 0x0F80..0x0F84,
+      property => 'NSM',
+    ),
+
+    '0x0F85' => %(
+      codepoint => 0x0F85,
+      property => 'L',
+    ),
+
+    '0x0F86..0x0F87' => %(
+      codepoint => 0x0F86..0x0F87,
+      property => 'NSM',
+    ),
+
+    '0x0F88..0x0F8C' => %(
+      codepoint => 0x0F88..0x0F8C,
+      property => 'L',
+    ),
+
+    '0x0F8D..0x0F97' => %(
+      codepoint => 0x0F8D..0x0F97,
+      property => 'NSM',
+    ),
+
+    '0x0F99..0x0FBC' => %(
+      codepoint => 0x0F99..0x0FBC,
+      property => 'NSM',
+    ),
+
+    '0x0FBE..0x0FC5' => %(
+      codepoint => 0x0FBE..0x0FC5,
+      property => 'L',
+    ),
+
+    '0x0FC6' => %(
+      codepoint => 0x0FC6,
+      property => 'NSM',
+    ),
+
+    '0x0FC7..0x0FCC' => %(
+      codepoint => 0x0FC7..0x0FCC,
+      property => 'L',
+    ),
+
+    '0x0FCE..0x0FCF' => %(
+      codepoint => 0x0FCE..0x0FCF,
+      property => 'L',
+    ),
+
+    '0x0FD0..0x0FD4' => %(
+      codepoint => 0x0FD0..0x0FD4,
+      property => 'L',
+    ),
+
+    '0x0FD5..0x0FD8' => %(
+      codepoint => 0x0FD5..0x0FD8,
+      property => 'L',
+    ),
+
+    '0x0FD9..0x0FDA' => %(
+      codepoint => 0x0FD9..0x0FDA,
+      property => 'L',
+    ),
+
+    '0x1000..0x102A' => %(
+      codepoint => 0x1000..0x102A,
+      property => 'L',
+    ),
+
+    '0x10000..0x1000B' => %(
+      codepoint => 0x10000..0x1000B,
+      property => 'L',
+    ),
+
+    '0x100000..0x10FFFD' => %(
+      codepoint => 0x100000..0x10FFFD,
+      property => 'L',
+    ),
+
+    '0x1000D..0x10026' => %(
+      codepoint => 0x1000D..0x10026,
+      property => 'L',
+    ),
+
+    '0x10028..0x1003A' => %(
+      codepoint => 0x10028..0x1003A,
+      property => 'L',
+    ),
+
+    '0x1003C..0x1003D' => %(
+      codepoint => 0x1003C..0x1003D,
+      property => 'L',
+    ),
+
+    '0x1003F..0x1004D' => %(
+      codepoint => 0x1003F..0x1004D,
+      property => 'L',
+    ),
+
+    '0x10050..0x1005D' => %(
+      codepoint => 0x10050..0x1005D,
+      property => 'L',
+    ),
+
+    '0x10080..0x100FA' => %(
+      codepoint => 0x10080..0x100FA,
+      property => 'L',
+    ),
+
+    '0x10100' => %(
+      codepoint => 0x10100,
+      property => 'L',
+    ),
+
+    '0x10101' => %(
+      codepoint => 0x10101,
+      property => 'ON',
+    ),
+
+    '0x10102' => %(
+      codepoint => 0x10102,
+      property => 'L',
+    ),
+
+    '0x10107..0x10133' => %(
+      codepoint => 0x10107..0x10133,
+      property => 'L',
+    ),
+
+    '0x10137..0x1013F' => %(
+      codepoint => 0x10137..0x1013F,
+      property => 'L',
+    ),
+
+    '0x10140..0x10174' => %(
+      codepoint => 0x10140..0x10174,
+      property => 'ON',
+    ),
+
+    '0x10175..0x10178' => %(
+      codepoint => 0x10175..0x10178,
+      property => 'ON',
+    ),
+
+    '0x10179..0x10189' => %(
+      codepoint => 0x10179..0x10189,
+      property => 'ON',
+    ),
+
+    '0x1018A..0x1018B' => %(
+      codepoint => 0x1018A..0x1018B,
+      property => 'ON',
+    ),
+
+    '0x1018C' => %(
+      codepoint => 0x1018C,
+      property => 'ON',
+    ),
+
+    '0x1018D..0x1018E' => %(
+      codepoint => 0x1018D..0x1018E,
+      property => 'L',
+    ),
+
+    '0x10190..0x1019B' => %(
+      codepoint => 0x10190..0x1019B,
+      property => 'ON',
+    ),
+
+    '0x101A0' => %(
+      codepoint => 0x101A0,
+      property => 'ON',
+    ),
+
+    '0x101D0..0x101FC' => %(
+      codepoint => 0x101D0..0x101FC,
+      property => 'L',
+    ),
+
+    '0x101FD' => %(
+      codepoint => 0x101FD,
+      property => 'NSM',
+    ),
+
+    '0x10280..0x1029C' => %(
+      codepoint => 0x10280..0x1029C,
+      property => 'L',
+    ),
+
+    '0x102A0..0x102D0' => %(
+      codepoint => 0x102A0..0x102D0,
+      property => 'L',
+    ),
+
+    '0x102B..0x102C' => %(
+      codepoint => 0x102B..0x102C,
+      property => 'L',
+    ),
+
+    '0x102D..0x1030' => %(
+      codepoint => 0x102D..0x1030,
+      property => 'NSM',
+    ),
+
+    '0x102E0' => %(
+      codepoint => 0x102E0,
+      property => 'NSM',
+    ),
+
+    '0x102E1..0x102FB' => %(
+      codepoint => 0x102E1..0x102FB,
+      property => 'EN',
+    ),
+
+    '0x10300..0x1031F' => %(
+      codepoint => 0x10300..0x1031F,
+      property => 'L',
+    ),
+
+    '0x1031' => %(
+      codepoint => 0x1031,
+      property => 'L',
+    ),
+
+    '0x1032..0x1037' => %(
+      codepoint => 0x1032..0x1037,
+      property => 'NSM',
+    ),
+
+    '0x10320..0x10323' => %(
+      codepoint => 0x10320..0x10323,
+      property => 'L',
+    ),
+
+    '0x10330..0x10340' => %(
+      codepoint => 0x10330..0x10340,
+      property => 'L',
+    ),
+
+    '0x10341' => %(
+      codepoint => 0x10341,
+      property => 'L',
+    ),
+
+    '0x10342..0x10349' => %(
+      codepoint => 0x10342..0x10349,
+      property => 'L',
+    ),
+
+    '0x1034A' => %(
+      codepoint => 0x1034A,
+      property => 'L',
+    ),
+
+    '0x10350..0x10375' => %(
+      codepoint => 0x10350..0x10375,
+      property => 'L',
+    ),
+
+    '0x10376..0x1037A' => %(
+      codepoint => 0x10376..0x1037A,
+      property => 'NSM',
+    ),
+
+    '0x1038' => %(
+      codepoint => 0x1038,
+      property => 'L',
+    ),
+
+    '0x10380..0x1039D' => %(
+      codepoint => 0x10380..0x1039D,
+      property => 'L',
+    ),
+
+    '0x1039..0x103A' => %(
+      codepoint => 0x1039..0x103A,
+      property => 'NSM',
+    ),
+
+    '0x1039F' => %(
+      codepoint => 0x1039F,
+      property => 'L',
+    ),
+
+    '0x103A0..0x103C3' => %(
+      codepoint => 0x103A0..0x103C3,
+      property => 'L',
+    ),
+
+    '0x103B..0x103C' => %(
+      codepoint => 0x103B..0x103C,
+      property => 'L',
+    ),
+
+    '0x103C8..0x103CF' => %(
+      codepoint => 0x103C8..0x103CF,
+      property => 'L',
+    ),
+
+    '0x103D..0x103E' => %(
+      codepoint => 0x103D..0x103E,
+      property => 'NSM',
+    ),
+
+    '0x103D0' => %(
+      codepoint => 0x103D0,
+      property => 'L',
+    ),
+
+    '0x103D1..0x103D5' => %(
+      codepoint => 0x103D1..0x103D5,
+      property => 'L',
+    ),
+
+    '0x103F' => %(
+      codepoint => 0x103F,
+      property => 'L',
+    ),
+
+    '0x1040..0x1049' => %(
+      codepoint => 0x1040..0x1049,
+      property => 'L',
+    ),
+
+    '0x10400..0x1044F' => %(
+      codepoint => 0x10400..0x1044F,
+      property => 'L',
+    ),
+
+    '0x10450..0x1049D' => %(
+      codepoint => 0x10450..0x1049D,
+      property => 'L',
+    ),
+
+    '0x104A..0x104F' => %(
+      codepoint => 0x104A..0x104F,
+      property => 'L',
+    ),
+
+    '0x104A0..0x104A9' => %(
+      codepoint => 0x104A0..0x104A9,
+      property => 'L',
+    ),
+
+    '0x104B0..0x104D3' => %(
+      codepoint => 0x104B0..0x104D3,
+      property => 'L',
+    ),
+
+    '0x104D8..0x104FB' => %(
+      codepoint => 0x104D8..0x104FB,
+      property => 'L',
+    ),
+
+    '0x1050..0x1055' => %(
+      codepoint => 0x1050..0x1055,
+      property => 'L',
+    ),
+
+    '0x10500..0x10527' => %(
+      codepoint => 0x10500..0x10527,
+      property => 'L',
+    ),
+
+    '0x10530..0x10563' => %(
+      codepoint => 0x10530..0x10563,
+      property => 'L',
+    ),
+
+    '0x1056..0x1057' => %(
+      codepoint => 0x1056..0x1057,
+      property => 'L',
+    ),
+
+    '0x1056F' => %(
+      codepoint => 0x1056F,
+      property => 'L',
+    ),
+
+    '0x1058..0x1059' => %(
+      codepoint => 0x1058..0x1059,
+      property => 'NSM',
+    ),
+
+    '0x105A..0x105D' => %(
+      codepoint => 0x105A..0x105D,
+      property => 'L',
+    ),
+
+    '0x105E..0x1060' => %(
+      codepoint => 0x105E..0x1060,
+      property => 'NSM',
+    ),
+
+    '0x10600..0x10736' => %(
+      codepoint => 0x10600..0x10736,
+      property => 'L',
+    ),
+
+    '0x1061' => %(
+      codepoint => 0x1061,
+      property => 'L',
+    ),
+
+    '0x1062..0x1064' => %(
+      codepoint => 0x1062..0x1064,
+      property => 'L',
+    ),
+
+    '0x1065..0x1066' => %(
+      codepoint => 0x1065..0x1066,
+      property => 'L',
+    ),
+
+    '0x1067..0x106D' => %(
+      codepoint => 0x1067..0x106D,
+      property => 'L',
+    ),
+
+    '0x106E..0x1070' => %(
+      codepoint => 0x106E..0x1070,
+      property => 'L',
+    ),
+
+    '0x1071..0x1074' => %(
+      codepoint => 0x1071..0x1074,
+      property => 'NSM',
+    ),
+
+    '0x10740..0x10755' => %(
+      codepoint => 0x10740..0x10755,
+      property => 'L',
+    ),
+
+    '0x1075..0x1081' => %(
+      codepoint => 0x1075..0x1081,
+      property => 'L',
+    ),
+
+    '0x10760..0x10767' => %(
+      codepoint => 0x10760..0x10767,
+      property => 'L',
+    ),
+
+    '0x10800..0x10805' => %(
+      codepoint => 0x10800..0x10805,
+      property => 'R',
+    ),
+
+    '0x10806..0x10807' => %(
+      codepoint => 0x10806..0x10807,
+      property => 'R',
+    ),
+
+    '0x10808' => %(
+      codepoint => 0x10808,
+      property => 'R',
+    ),
+
+    '0x10809' => %(
+      codepoint => 0x10809,
+      property => 'R',
+    ),
+
+    '0x1080A..0x10835' => %(
+      codepoint => 0x1080A..0x10835,
+      property => 'R',
+    ),
+
+    '0x1082' => %(
+      codepoint => 0x1082,
+      property => 'NSM',
+    ),
+
+    '0x1083..0x1084' => %(
+      codepoint => 0x1083..0x1084,
+      property => 'L',
+    ),
+
+    '0x10836' => %(
+      codepoint => 0x10836,
+      property => 'R',
+    ),
+
+    '0x10837..0x10838' => %(
+      codepoint => 0x10837..0x10838,
+      property => 'R',
+    ),
+
+    '0x10839..0x1083B' => %(
+      codepoint => 0x10839..0x1083B,
+      property => 'R',
+    ),
+
+    '0x1083C' => %(
+      codepoint => 0x1083C,
+      property => 'R',
+    ),
+
+    '0x1083D..0x1083E' => %(
+      codepoint => 0x1083D..0x1083E,
+      property => 'R',
+    ),
+
+    '0x1083F..0x10855' => %(
+      codepoint => 0x1083F..0x10855,
+      property => 'R',
+    ),
+
+    '0x1085..0x1086' => %(
+      codepoint => 0x1085..0x1086,
+      property => 'NSM',
+    ),
+
+    '0x10856' => %(
+      codepoint => 0x10856,
+      property => 'R',
+    ),
+
+    '0x10857' => %(
+      codepoint => 0x10857,
+      property => 'R',
+    ),
+
+    '0x10858..0x1085F' => %(
+      codepoint => 0x10858..0x1085F,
+      property => 'R',
+    ),
+
+    '0x10860..0x10876' => %(
+      codepoint => 0x10860..0x10876,
+      property => 'R',
+    ),
+
+    '0x1087..0x108C' => %(
+      codepoint => 0x1087..0x108C,
+      property => 'L',
+    ),
+
+    '0x10877..0x10878' => %(
+      codepoint => 0x10877..0x10878,
+      property => 'R',
+    ),
+
+    '0x10879..0x1087F' => %(
+      codepoint => 0x10879..0x1087F,
+      property => 'R',
+    ),
+
+    '0x10880..0x1089E' => %(
+      codepoint => 0x10880..0x1089E,
+      property => 'R',
+    ),
+
+    '0x1089F..0x108A6' => %(
+      codepoint => 0x1089F..0x108A6,
+      property => 'R',
+    ),
+
+    '0x108A7..0x108AF' => %(
+      codepoint => 0x108A7..0x108AF,
+      property => 'R',
+    ),
+
+    '0x108B0..0x108DF' => %(
+      codepoint => 0x108B0..0x108DF,
+      property => 'R',
+    ),
+
+    '0x108D' => %(
+      codepoint => 0x108D,
+      property => 'NSM',
+    ),
+
+    '0x108E' => %(
+      codepoint => 0x108E,
+      property => 'L',
+    ),
+
+    '0x108E0..0x108F2' => %(
+      codepoint => 0x108E0..0x108F2,
+      property => 'R',
+    ),
+
+    '0x108F' => %(
+      codepoint => 0x108F,
+      property => 'L',
+    ),
+
+    '0x108F3' => %(
+      codepoint => 0x108F3,
+      property => 'R',
+    ),
+
+    '0x108F4..0x108F5' => %(
+      codepoint => 0x108F4..0x108F5,
+      property => 'R',
+    ),
+
+    '0x108F6..0x108FA' => %(
+      codepoint => 0x108F6..0x108FA,
+      property => 'R',
+    ),
+
+    '0x108FB..0x108FF' => %(
+      codepoint => 0x108FB..0x108FF,
+      property => 'R',
+    ),
+
+    '0x1090..0x1099' => %(
+      codepoint => 0x1090..0x1099,
+      property => 'L',
+    ),
+
+    '0x10900..0x10915' => %(
+      codepoint => 0x10900..0x10915,
+      property => 'R',
+    ),
+
+    '0x10916..0x1091B' => %(
+      codepoint => 0x10916..0x1091B,
+      property => 'R',
+    ),
+
+    '0x1091C..0x1091E' => %(
+      codepoint => 0x1091C..0x1091E,
+      property => 'R',
+    ),
+
+    '0x1091F' => %(
+      codepoint => 0x1091F,
+      property => 'ON',
+    ),
+
+    '0x10920..0x10939' => %(
+      codepoint => 0x10920..0x10939,
+      property => 'R',
+    ),
+
+    '0x1093A..0x1093E' => %(
+      codepoint => 0x1093A..0x1093E,
+      property => 'R',
+    ),
+
+    '0x1093F' => %(
+      codepoint => 0x1093F,
+      property => 'R',
+    ),
+
+    '0x10940..0x1097F' => %(
+      codepoint => 0x10940..0x1097F,
+      property => 'R',
+    ),
+
+    '0x10980..0x109B7' => %(
+      codepoint => 0x10980..0x109B7,
+      property => 'R',
+    ),
+
+    '0x109A..0x109C' => %(
+      codepoint => 0x109A..0x109C,
+      property => 'L',
+    ),
+
+    '0x109B8..0x109BB' => %(
+      codepoint => 0x109B8..0x109BB,
+      property => 'R',
+    ),
+
+    '0x109BC..0x109BD' => %(
+      codepoint => 0x109BC..0x109BD,
+      property => 'R',
+    ),
+
+    '0x109BE..0x109BF' => %(
+      codepoint => 0x109BE..0x109BF,
+      property => 'R',
+    ),
+
+    '0x109C0..0x109CF' => %(
+      codepoint => 0x109C0..0x109CF,
+      property => 'R',
+    ),
+
+    '0x109D' => %(
+      codepoint => 0x109D,
+      property => 'NSM',
+    ),
+
+    '0x109D0..0x109D1' => %(
+      codepoint => 0x109D0..0x109D1,
+      property => 'R',
+    ),
+
+    '0x109D2..0x109FF' => %(
+      codepoint => 0x109D2..0x109FF,
+      property => 'R',
+    ),
+
+    '0x109E..0x109F' => %(
+      codepoint => 0x109E..0x109F,
+      property => 'L',
+    ),
+
+    '0x10A0..0x10C5' => %(
+      codepoint => 0x10A0..0x10C5,
+      property => 'L',
+    ),
+
+    '0x10A00' => %(
+      codepoint => 0x10A00,
+      property => 'R',
+    ),
+
+    '0x10A01..0x10A03' => %(
+      codepoint => 0x10A01..0x10A03,
+      property => 'NSM',
+    ),
+
+    '0x10A04' => %(
+      codepoint => 0x10A04,
+      property => 'R',
+    ),
+
+    '0x10A05..0x10A06' => %(
+      codepoint => 0x10A05..0x10A06,
+      property => 'NSM',
+    ),
+
+    '0x10A07..0x10A0B' => %(
+      codepoint => 0x10A07..0x10A0B,
+      property => 'R',
+    ),
+
+    '0x10A0C..0x10A0F' => %(
+      codepoint => 0x10A0C..0x10A0F,
+      property => 'NSM',
+    ),
+
+    '0x10A10..0x10A13' => %(
+      codepoint => 0x10A10..0x10A13,
+      property => 'R',
+    ),
+
+    '0x10A14' => %(
+      codepoint => 0x10A14,
+      property => 'R',
+    ),
+
+    '0x10A15..0x10A17' => %(
+      codepoint => 0x10A15..0x10A17,
+      property => 'R',
+    ),
+
+    '0x10A18' => %(
+      codepoint => 0x10A18,
+      property => 'R',
+    ),
+
+    '0x10A19..0x10A33' => %(
+      codepoint => 0x10A19..0x10A33,
+      property => 'R',
+    ),
+
+    '0x10A34..0x10A37' => %(
+      codepoint => 0x10A34..0x10A37,
+      property => 'R',
+    ),
+
+    '0x10A38..0x10A3A' => %(
+      codepoint => 0x10A38..0x10A3A,
+      property => 'NSM',
+    ),
+
+    '0x10A3B..0x10A3E' => %(
+      codepoint => 0x10A3B..0x10A3E,
+      property => 'R',
+    ),
+
+    '0x10A3F' => %(
+      codepoint => 0x10A3F,
+      property => 'NSM',
+    ),
+
+    '0x10A40..0x10A47' => %(
+      codepoint => 0x10A40..0x10A47,
+      property => 'R',
+    ),
+
+    '0x10A48..0x10A4F' => %(
+      codepoint => 0x10A48..0x10A4F,
+      property => 'R',
+    ),
+
+    '0x10A50..0x10A58' => %(
+      codepoint => 0x10A50..0x10A58,
+      property => 'R',
+    ),
+
+    '0x10A59..0x10A5F' => %(
+      codepoint => 0x10A59..0x10A5F,
+      property => 'R',
+    ),
+
+    '0x10A60..0x10A7C' => %(
+      codepoint => 0x10A60..0x10A7C,
+      property => 'R',
+    ),
+
+    '0x10A7D..0x10A7E' => %(
+      codepoint => 0x10A7D..0x10A7E,
+      property => 'R',
+    ),
+
+    '0x10A7F' => %(
+      codepoint => 0x10A7F,
+      property => 'R',
+    ),
+
+    '0x10A80..0x10A9C' => %(
+      codepoint => 0x10A80..0x10A9C,
+      property => 'R',
+    ),
+
+    '0x10A9D..0x10A9F' => %(
+      codepoint => 0x10A9D..0x10A9F,
+      property => 'R',
+    ),
+
+    '0x10AA0..0x10ABF' => %(
+      codepoint => 0x10AA0..0x10ABF,
+      property => 'R',
+    ),
+
+    '0x10AC0..0x10AC7' => %(
+      codepoint => 0x10AC0..0x10AC7,
+      property => 'R',
+    ),
+
+    '0x10AC8' => %(
+      codepoint => 0x10AC8,
+      property => 'R',
+    ),
+
+    '0x10AC9..0x10AE4' => %(
+      codepoint => 0x10AC9..0x10AE4,
+      property => 'R',
+    ),
+
+    '0x10AE5..0x10AE6' => %(
+      codepoint => 0x10AE5..0x10AE6,
+      property => 'NSM',
+    ),
+
+    '0x10AE7..0x10AEA' => %(
+      codepoint => 0x10AE7..0x10AEA,
+      property => 'R',
+    ),
+
+    '0x10AEB..0x10AEF' => %(
+      codepoint => 0x10AEB..0x10AEF,
+      property => 'R',
+    ),
+
+    '0x10AF0..0x10AF6' => %(
+      codepoint => 0x10AF0..0x10AF6,
+      property => 'R',
+    ),
+
+    '0x10AF7..0x10AFF' => %(
+      codepoint => 0x10AF7..0x10AFF,
+      property => 'R',
+    ),
+
+    '0x10B00..0x10B35' => %(
+      codepoint => 0x10B00..0x10B35,
+      property => 'R',
+    ),
+
+    '0x10B36..0x10B38' => %(
+      codepoint => 0x10B36..0x10B38,
+      property => 'R',
+    ),
+
+    '0x10B39..0x10B3F' => %(
+      codepoint => 0x10B39..0x10B3F,
+      property => 'ON',
+    ),
+
+    '0x10B40..0x10B55' => %(
+      codepoint => 0x10B40..0x10B55,
+      property => 'R',
+    ),
+
+    '0x10B56..0x10B57' => %(
+      codepoint => 0x10B56..0x10B57,
+      property => 'R',
+    ),
+
+    '0x10B58..0x10B5F' => %(
+      codepoint => 0x10B58..0x10B5F,
+      property => 'R',
+    ),
+
+    '0x10B60..0x10B72' => %(
+      codepoint => 0x10B60..0x10B72,
+      property => 'R',
+    ),
+
+    '0x10B73..0x10B77' => %(
+      codepoint => 0x10B73..0x10B77,
+      property => 'R',
+    ),
+
+    '0x10B78..0x10B7F' => %(
+      codepoint => 0x10B78..0x10B7F,
+      property => 'R',
+    ),
+
+    '0x10B80..0x10B91' => %(
+      codepoint => 0x10B80..0x10B91,
+      property => 'R',
+    ),
+
+    '0x10B92..0x10B98' => %(
+      codepoint => 0x10B92..0x10B98,
+      property => 'R',
+    ),
+
+    '0x10B99..0x10B9C' => %(
+      codepoint => 0x10B99..0x10B9C,
+      property => 'R',
+    ),
+
+    '0x10B9D..0x10BA8' => %(
+      codepoint => 0x10B9D..0x10BA8,
+      property => 'R',
+    ),
+
+    '0x10BA9..0x10BAF' => %(
+      codepoint => 0x10BA9..0x10BAF,
+      property => 'R',
+    ),
+
+    '0x10BB0..0x10BFF' => %(
+      codepoint => 0x10BB0..0x10BFF,
+      property => 'R',
+    ),
+
+    '0x10C00..0x10C48' => %(
+      codepoint => 0x10C00..0x10C48,
+      property => 'R',
+    ),
+
+    '0x10C49..0x10C7F' => %(
+      codepoint => 0x10C49..0x10C7F,
+      property => 'R',
+    ),
+
+    '0x10C7' => %(
+      codepoint => 0x10C7,
+      property => 'L',
+    ),
+
+    '0x10C80..0x10CB2' => %(
+      codepoint => 0x10C80..0x10CB2,
+      property => 'R',
+    ),
+
+    '0x10CB3..0x10CBF' => %(
+      codepoint => 0x10CB3..0x10CBF,
+      property => 'R',
+    ),
+
+    '0x10CC0..0x10CF2' => %(
+      codepoint => 0x10CC0..0x10CF2,
+      property => 'R',
+    ),
+
+    '0x10CD' => %(
+      codepoint => 0x10CD,
+      property => 'L',
+    ),
+
+    '0x10CF3..0x10CF9' => %(
+      codepoint => 0x10CF3..0x10CF9,
+      property => 'R',
+    ),
+
+    '0x10CFA..0x10CFF' => %(
+      codepoint => 0x10CFA..0x10CFF,
+      property => 'R',
+    ),
+
+    '0x10D0..0x10FA' => %(
+      codepoint => 0x10D0..0x10FA,
+      property => 'L',
+    ),
+
+    '0x10D00..0x10E5F' => %(
+      codepoint => 0x10D00..0x10E5F,
+      property => 'R',
+    ),
+
+    '0x10E60..0x10E7E' => %(
+      codepoint => 0x10E60..0x10E7E,
+      property => 'AN',
+    ),
+
+    '0x10E7F..0x10FFF' => %(
+      codepoint => 0x10E7F..0x10FFF,
+      property => 'R',
+    ),
+
+    '0x10FB' => %(
+      codepoint => 0x10FB,
+      property => 'L',
+    ),
+
+    '0x10FC' => %(
+      codepoint => 0x10FC,
+      property => 'L',
+    ),
+
+    '0x10FD..0x1248' => %(
+      codepoint => 0x10FD..0x1248,
+      property => 'L',
+    ),
+
+    '0x10FFFE..0x10FFFF' => %(
+      codepoint => 0x10FFFE..0x10FFFF,
+      property => 'BN',
+    ),
+
+    '0x11000' => %(
+      codepoint => 0x11000,
+      property => 'L',
+    ),
+
+    '0x11001' => %(
+      codepoint => 0x11001,
+      property => 'NSM',
+    ),
+
+    '0x11002' => %(
+      codepoint => 0x11002,
+      property => 'L',
+    ),
+
+    '0x11003..0x11037' => %(
+      codepoint => 0x11003..0x11037,
+      property => 'L',
+    ),
+
+    '0x11038..0x11046' => %(
+      codepoint => 0x11038..0x11046,
+      property => 'NSM',
+    ),
+
+    '0x11047..0x1104D' => %(
+      codepoint => 0x11047..0x1104D,
+      property => 'L',
+    ),
+
+    '0x11052..0x11065' => %(
+      codepoint => 0x11052..0x11065,
+      property => 'ON',
+    ),
+
+    '0x11066..0x1106F' => %(
+      codepoint => 0x11066..0x1106F,
+      property => 'L',
+    ),
+
+    '0x1107F..0x11081' => %(
+      codepoint => 0x1107F..0x11081,
+      property => 'NSM',
+    ),
+
+    '0x11082' => %(
+      codepoint => 0x11082,
+      property => 'L',
+    ),
+
+    '0x11083..0x110AF' => %(
+      codepoint => 0x11083..0x110AF,
+      property => 'L',
+    ),
+
+    '0x110B0..0x110B2' => %(
+      codepoint => 0x110B0..0x110B2,
+      property => 'L',
+    ),
+
+    '0x110B3..0x110B6' => %(
+      codepoint => 0x110B3..0x110B6,
+      property => 'NSM',
+    ),
+
+    '0x110B7..0x110B8' => %(
+      codepoint => 0x110B7..0x110B8,
+      property => 'L',
+    ),
+
+    '0x110B9..0x110BA' => %(
+      codepoint => 0x110B9..0x110BA,
+      property => 'NSM',
+    ),
+
+    '0x110BB..0x110BC' => %(
+      codepoint => 0x110BB..0x110BC,
+      property => 'L',
+    ),
+
+    '0x110BD' => %(
+      codepoint => 0x110BD,
+      property => 'L',
+    ),
+
+    '0x110BE..0x110C1' => %(
+      codepoint => 0x110BE..0x110C1,
+      property => 'L',
+    ),
+
+    '0x110D0..0x110E8' => %(
+      codepoint => 0x110D0..0x110E8,
+      property => 'L',
+    ),
+
+    '0x110F0..0x110F9' => %(
+      codepoint => 0x110F0..0x110F9,
+      property => 'L',
+    ),
+
+    '0x11100..0x11102' => %(
+      codepoint => 0x11100..0x11102,
+      property => 'NSM',
+    ),
+
+    '0x11103..0x11126' => %(
+      codepoint => 0x11103..0x11126,
+      property => 'L',
+    ),
+
+    '0x11127..0x1112B' => %(
+      codepoint => 0x11127..0x1112B,
+      property => 'NSM',
+    ),
+
+    '0x1112C' => %(
+      codepoint => 0x1112C,
+      property => 'L',
+    ),
+
+    '0x1112D..0x11134' => %(
+      codepoint => 0x1112D..0x11134,
+      property => 'NSM',
+    ),
+
+    '0x11136..0x1113F' => %(
+      codepoint => 0x11136..0x1113F,
+      property => 'L',
+    ),
+
+    '0x11140..0x11143' => %(
+      codepoint => 0x11140..0x11143,
+      property => 'L',
+    ),
+
+    '0x11150..0x11172' => %(
+      codepoint => 0x11150..0x11172,
+      property => 'L',
+    ),
+
+    '0x11173' => %(
+      codepoint => 0x11173,
+      property => 'NSM',
+    ),
+
+    '0x11174..0x11175' => %(
+      codepoint => 0x11174..0x11175,
+      property => 'L',
+    ),
+
+    '0x11176' => %(
+      codepoint => 0x11176,
+      property => 'L',
+    ),
+
+    '0x11180..0x11181' => %(
+      codepoint => 0x11180..0x11181,
+      property => 'NSM',
+    ),
+
+    '0x11182' => %(
+      codepoint => 0x11182,
+      property => 'L',
+    ),
+
+    '0x11183..0x111B2' => %(
+      codepoint => 0x11183..0x111B2,
+      property => 'L',
+    ),
+
+    '0x111B3..0x111B5' => %(
+      codepoint => 0x111B3..0x111B5,
+      property => 'L',
+    ),
+
+    '0x111B6..0x111BE' => %(
+      codepoint => 0x111B6..0x111BE,
+      property => 'NSM',
+    ),
+
+    '0x111BF..0x111C0' => %(
+      codepoint => 0x111BF..0x111C0,
+      property => 'L',
+    ),
+
+    '0x111C1..0x111C4' => %(
+      codepoint => 0x111C1..0x111C4,
+      property => 'L',
+    ),
+
+    '0x111C5..0x111C9' => %(
+      codepoint => 0x111C5..0x111C9,
+      property => 'L',
+    ),
+
+    '0x111CA..0x111CC' => %(
+      codepoint => 0x111CA..0x111CC,
+      property => 'NSM',
+    ),
+
+    '0x111CD' => %(
+      codepoint => 0x111CD,
+      property => 'L',
+    ),
+
+    '0x111D0..0x111D9' => %(
+      codepoint => 0x111D0..0x111D9,
+      property => 'L',
+    ),
+
+    '0x111DA' => %(
+      codepoint => 0x111DA,
+      property => 'L',
+    ),
+
+    '0x111DB' => %(
+      codepoint => 0x111DB,
+      property => 'L',
+    ),
+
+    '0x111DC' => %(
+      codepoint => 0x111DC,
+      property => 'L',
+    ),
+
+    '0x111DD..0x111DF' => %(
+      codepoint => 0x111DD..0x111DF,
+      property => 'L',
+    ),
+
+    '0x111E1..0x111F4' => %(
+      codepoint => 0x111E1..0x111F4,
+      property => 'L',
+    ),
+
+    '0x11200..0x11211' => %(
+      codepoint => 0x11200..0x11211,
+      property => 'L',
+    ),
+
+    '0x11213..0x1122B' => %(
+      codepoint => 0x11213..0x1122B,
+      property => 'L',
+    ),
+
+    '0x1122C..0x1122E' => %(
+      codepoint => 0x1122C..0x1122E,
+      property => 'L',
+    ),
+
+    '0x1122F..0x11231' => %(
+      codepoint => 0x1122F..0x11231,
+      property => 'NSM',
+    ),
+
+    '0x11232..0x11233' => %(
+      codepoint => 0x11232..0x11233,
+      property => 'L',
+    ),
+
+    '0x11234' => %(
+      codepoint => 0x11234,
+      property => 'NSM',
+    ),
+
+    '0x11235' => %(
+      codepoint => 0x11235,
+      property => 'L',
+    ),
+
+    '0x11236..0x11237' => %(
+      codepoint => 0x11236..0x11237,
+      property => 'NSM',
+    ),
+
+    '0x11238..0x1123D' => %(
+      codepoint => 0x11238..0x1123D,
+      property => 'L',
+    ),
+
+    '0x1123E' => %(
+      codepoint => 0x1123E,
+      property => 'NSM',
+    ),
+
+    '0x11280..0x11286' => %(
+      codepoint => 0x11280..0x11286,
+      property => 'L',
+    ),
+
+    '0x11288' => %(
+      codepoint => 0x11288,
+      property => 'L',
+    ),
+
+    '0x1128A..0x1128D' => %(
+      codepoint => 0x1128A..0x1128D,
+      property => 'L',
+    ),
+
+    '0x1128F..0x1129D' => %(
+      codepoint => 0x1128F..0x1129D,
+      property => 'L',
+    ),
+
+    '0x1129F..0x112A8' => %(
+      codepoint => 0x1129F..0x112A8,
+      property => 'L',
+    ),
+
+    '0x112A9' => %(
+      codepoint => 0x112A9,
+      property => 'L',
+    ),
+
+    '0x112B0..0x112DE' => %(
+      codepoint => 0x112B0..0x112DE,
+      property => 'L',
+    ),
+
+    '0x112DF' => %(
+      codepoint => 0x112DF,
+      property => 'NSM',
+    ),
+
+    '0x112E0..0x112E2' => %(
+      codepoint => 0x112E0..0x112E2,
+      property => 'L',
+    ),
+
+    '0x112E3..0x112EA' => %(
+      codepoint => 0x112E3..0x112EA,
+      property => 'NSM',
+    ),
+
+    '0x112F0..0x112F9' => %(
+      codepoint => 0x112F0..0x112F9,
+      property => 'L',
+    ),
+
+    '0x11300..0x11301' => %(
+      codepoint => 0x11300..0x11301,
+      property => 'NSM',
+    ),
+
+    '0x11302..0x11303' => %(
+      codepoint => 0x11302..0x11303,
+      property => 'L',
+    ),
+
+    '0x11305..0x1130C' => %(
+      codepoint => 0x11305..0x1130C,
+      property => 'L',
+    ),
+
+    '0x1130F..0x11310' => %(
+      codepoint => 0x1130F..0x11310,
+      property => 'L',
+    ),
+
+    '0x11313..0x11328' => %(
+      codepoint => 0x11313..0x11328,
+      property => 'L',
+    ),
+
+    '0x1132A..0x11330' => %(
+      codepoint => 0x1132A..0x11330,
+      property => 'L',
+    ),
+
+    '0x11332..0x11333' => %(
+      codepoint => 0x11332..0x11333,
+      property => 'L',
+    ),
+
+    '0x11335..0x11339' => %(
+      codepoint => 0x11335..0x11339,
+      property => 'L',
+    ),
+
+    '0x1133C' => %(
+      codepoint => 0x1133C,
+      property => 'NSM',
+    ),
+
+    '0x1133D' => %(
+      codepoint => 0x1133D,
+      property => 'L',
+    ),
+
+    '0x1133E..0x1133F' => %(
+      codepoint => 0x1133E..0x1133F,
+      property => 'L',
+    ),
+
+    '0x11340' => %(
+      codepoint => 0x11340,
+      property => 'NSM',
+    ),
+
+    '0x11341..0x11344' => %(
+      codepoint => 0x11341..0x11344,
+      property => 'L',
+    ),
+
+    '0x11347..0x11348' => %(
+      codepoint => 0x11347..0x11348,
+      property => 'L',
+    ),
+
+    '0x1134B..0x1134D' => %(
+      codepoint => 0x1134B..0x1134D,
+      property => 'L',
+    ),
+
+    '0x11350' => %(
+      codepoint => 0x11350,
+      property => 'L',
+    ),
+
+    '0x11357' => %(
+      codepoint => 0x11357,
+      property => 'L',
+    ),
+
+    '0x1135D..0x11361' => %(
+      codepoint => 0x1135D..0x11361,
+      property => 'L',
+    ),
+
+    '0x11362..0x11363' => %(
+      codepoint => 0x11362..0x11363,
+      property => 'L',
+    ),
+
+    '0x11366..0x1136C' => %(
+      codepoint => 0x11366..0x1136C,
+      property => 'NSM',
+    ),
+
+    '0x11370..0x11374' => %(
+      codepoint => 0x11370..0x11374,
+      property => 'NSM',
+    ),
+
+    '0x11400..0x11434' => %(
+      codepoint => 0x11400..0x11434,
+      property => 'L',
+    ),
+
+    '0x11435..0x11437' => %(
+      codepoint => 0x11435..0x11437,
+      property => 'L',
+    ),
+
+    '0x11438..0x1143F' => %(
+      codepoint => 0x11438..0x1143F,
+      property => 'NSM',
+    ),
+
+    '0x11440..0x11441' => %(
+      codepoint => 0x11440..0x11441,
+      property => 'L',
+    ),
+
+    '0x11442..0x11444' => %(
+      codepoint => 0x11442..0x11444,
+      property => 'NSM',
+    ),
+
+    '0x11445' => %(
+      codepoint => 0x11445,
+      property => 'L',
+    ),
+
+    '0x11446' => %(
+      codepoint => 0x11446,
+      property => 'NSM',
+    ),
+
+    '0x11447..0x1144A' => %(
+      codepoint => 0x11447..0x1144A,
+      property => 'L',
+    ),
+
+    '0x1144B..0x1144F' => %(
+      codepoint => 0x1144B..0x1144F,
+      property => 'L',
+    ),
+
+    '0x11450..0x11459' => %(
+      codepoint => 0x11450..0x11459,
+      property => 'L',
+    ),
+
+    '0x1145B' => %(
+      codepoint => 0x1145B,
+      property => 'L',
+    ),
+
+    '0x1145D' => %(
+      codepoint => 0x1145D,
+      property => 'L',
+    ),
+
+    '0x11480..0x114AF' => %(
+      codepoint => 0x11480..0x114AF,
+      property => 'L',
+    ),
+
+    '0x114B0..0x114B2' => %(
+      codepoint => 0x114B0..0x114B2,
+      property => 'L',
+    ),
+
+    '0x114B3..0x114B8' => %(
+      codepoint => 0x114B3..0x114B8,
+      property => 'NSM',
+    ),
+
+    '0x114B9' => %(
+      codepoint => 0x114B9,
+      property => 'L',
+    ),
+
+    '0x114BA' => %(
+      codepoint => 0x114BA,
+      property => 'NSM',
+    ),
+
+    '0x114BB..0x114BE' => %(
+      codepoint => 0x114BB..0x114BE,
+      property => 'L',
+    ),
+
+    '0x114BF..0x114C0' => %(
+      codepoint => 0x114BF..0x114C0,
+      property => 'NSM',
+    ),
+
+    '0x114C1' => %(
+      codepoint => 0x114C1,
+      property => 'L',
+    ),
+
+    '0x114C2..0x114C3' => %(
+      codepoint => 0x114C2..0x114C3,
+      property => 'NSM',
+    ),
+
+    '0x114C4..0x114C5' => %(
+      codepoint => 0x114C4..0x114C5,
+      property => 'L',
+    ),
+
+    '0x114C6' => %(
+      codepoint => 0x114C6,
+      property => 'L',
+    ),
+
+    '0x114C7' => %(
+      codepoint => 0x114C7,
+      property => 'L',
+    ),
+
+    '0x114D0..0x114D9' => %(
+      codepoint => 0x114D0..0x114D9,
+      property => 'L',
+    ),
+
+    '0x11580..0x115AE' => %(
+      codepoint => 0x11580..0x115AE,
+      property => 'L',
+    ),
+
+    '0x115AF..0x115B1' => %(
+      codepoint => 0x115AF..0x115B1,
+      property => 'L',
+    ),
+
+    '0x115B2..0x115B5' => %(
+      codepoint => 0x115B2..0x115B5,
+      property => 'NSM',
+    ),
+
+    '0x115B8..0x115BB' => %(
+      codepoint => 0x115B8..0x115BB,
+      property => 'L',
+    ),
+
+    '0x115BC..0x115BD' => %(
+      codepoint => 0x115BC..0x115BD,
+      property => 'NSM',
+    ),
+
+    '0x115BE' => %(
+      codepoint => 0x115BE,
+      property => 'L',
+    ),
+
+    '0x115BF..0x115C0' => %(
+      codepoint => 0x115BF..0x115C0,
+      property => 'NSM',
+    ),
+
+    '0x115C1..0x115D7' => %(
+      codepoint => 0x115C1..0x115D7,
+      property => 'L',
+    ),
+
+    '0x115D8..0x115DB' => %(
+      codepoint => 0x115D8..0x115DB,
+      property => 'L',
+    ),
+
+    '0x115DC..0x115DD' => %(
+      codepoint => 0x115DC..0x115DD,
+      property => 'NSM',
+    ),
+
+    '0x11600..0x1162F' => %(
+      codepoint => 0x11600..0x1162F,
+      property => 'L',
+    ),
+
+    '0x11630..0x11632' => %(
+      codepoint => 0x11630..0x11632,
+      property => 'L',
+    ),
+
+    '0x11633..0x1163A' => %(
+      codepoint => 0x11633..0x1163A,
+      property => 'NSM',
+    ),
+
+    '0x1163B..0x1163C' => %(
+      codepoint => 0x1163B..0x1163C,
+      property => 'L',
+    ),
+
+    '0x1163D' => %(
+      codepoint => 0x1163D,
+      property => 'NSM',
+    ),
+
+    '0x1163E' => %(
+      codepoint => 0x1163E,
+      property => 'L',
+    ),
+
+    '0x1163F..0x11640' => %(
+      codepoint => 0x1163F..0x11640,
+      property => 'NSM',
+    ),
+
+    '0x11641..0x11643' => %(
+      codepoint => 0x11641..0x11643,
+      property => 'L',
+    ),
+
+    '0x11644' => %(
+      codepoint => 0x11644,
+      property => 'L',
+    ),
+
+    '0x11650..0x11659' => %(
+      codepoint => 0x11650..0x11659,
+      property => 'L',
+    ),
+
+    '0x11660..0x1166C' => %(
+      codepoint => 0x11660..0x1166C,
+      property => 'ON',
+    ),
+
+    '0x11680..0x116AA' => %(
+      codepoint => 0x11680..0x116AA,
+      property => 'L',
+    ),
+
+    '0x116AB' => %(
+      codepoint => 0x116AB,
+      property => 'NSM',
+    ),
+
+    '0x116AC' => %(
+      codepoint => 0x116AC,
+      property => 'L',
+    ),
+
+    '0x116AD' => %(
+      codepoint => 0x116AD,
+      property => 'NSM',
+    ),
+
+    '0x116AE..0x116AF' => %(
+      codepoint => 0x116AE..0x116AF,
+      property => 'L',
+    ),
+
+    '0x116B0..0x116B5' => %(
+      codepoint => 0x116B0..0x116B5,
+      property => 'NSM',
+    ),
+
+    '0x116B6' => %(
+      codepoint => 0x116B6,
+      property => 'L',
+    ),
+
+    '0x116B7' => %(
+      codepoint => 0x116B7,
+      property => 'NSM',
+    ),
+
+    '0x116C0..0x116C9' => %(
+      codepoint => 0x116C0..0x116C9,
+      property => 'L',
+    ),
+
+    '0x11700..0x11719' => %(
+      codepoint => 0x11700..0x11719,
+      property => 'L',
+    ),
+
+    '0x1171D..0x1171F' => %(
+      codepoint => 0x1171D..0x1171F,
+      property => 'NSM',
+    ),
+
+    '0x11720..0x11721' => %(
+      codepoint => 0x11720..0x11721,
+      property => 'L',
+    ),
+
+    '0x11722..0x11725' => %(
+      codepoint => 0x11722..0x11725,
+      property => 'NSM',
+    ),
+
+    '0x11726' => %(
+      codepoint => 0x11726,
+      property => 'L',
+    ),
+
+    '0x11727..0x1172B' => %(
+      codepoint => 0x11727..0x1172B,
+      property => 'NSM',
+    ),
+
+    '0x11730..0x11739' => %(
+      codepoint => 0x11730..0x11739,
+      property => 'L',
+    ),
+
+    '0x1173A..0x1173B' => %(
+      codepoint => 0x1173A..0x1173B,
+      property => 'L',
+    ),
+
+    '0x1173C..0x1173E' => %(
+      codepoint => 0x1173C..0x1173E,
+      property => 'L',
+    ),
+
+    '0x1173F' => %(
+      codepoint => 0x1173F,
+      property => 'L',
+    ),
+
+    '0x118A0..0x118DF' => %(
+      codepoint => 0x118A0..0x118DF,
+      property => 'L',
+    ),
+
+    '0x118E0..0x118E9' => %(
+      codepoint => 0x118E0..0x118E9,
+      property => 'L',
+    ),
+
+    '0x118EA..0x118F2' => %(
+      codepoint => 0x118EA..0x118F2,
+      property => 'L',
+    ),
+
+    '0x118FF' => %(
+      codepoint => 0x118FF,
+      property => 'L',
+    ),
+
+    '0x11AC0..0x11AF8' => %(
+      codepoint => 0x11AC0..0x11AF8,
+      property => 'L',
+    ),
+
+    '0x11C00..0x11C08' => %(
+      codepoint => 0x11C00..0x11C08,
+      property => 'L',
+    ),
+
+    '0x11C0A..0x11C2E' => %(
+      codepoint => 0x11C0A..0x11C2E,
+      property => 'L',
+    ),
+
+    '0x11C2F' => %(
+      codepoint => 0x11C2F,
+      property => 'L',
+    ),
+
+    '0x11C30..0x11C36' => %(
+      codepoint => 0x11C30..0x11C36,
+      property => 'NSM',
+    ),
+
+    '0x11C38..0x11C3D' => %(
+      codepoint => 0x11C38..0x11C3D,
+      property => 'NSM',
+    ),
+
+    '0x11C3E' => %(
+      codepoint => 0x11C3E,
+      property => 'L',
+    ),
+
+    '0x11C3F' => %(
+      codepoint => 0x11C3F,
+      property => 'L',
+    ),
+
+    '0x11C40' => %(
+      codepoint => 0x11C40,
+      property => 'L',
+    ),
+
+    '0x11C41..0x11C45' => %(
+      codepoint => 0x11C41..0x11C45,
+      property => 'L',
+    ),
+
+    '0x11C50..0x11C59' => %(
+      codepoint => 0x11C50..0x11C59,
+      property => 'L',
+    ),
+
+    '0x11C5A..0x11C6C' => %(
+      codepoint => 0x11C5A..0x11C6C,
+      property => 'L',
+    ),
+
+    '0x11C70..0x11C71' => %(
+      codepoint => 0x11C70..0x11C71,
+      property => 'L',
+    ),
+
+    '0x11C72..0x11C8F' => %(
+      codepoint => 0x11C72..0x11C8F,
+      property => 'L',
+    ),
+
+    '0x11C92..0x11CA7' => %(
+      codepoint => 0x11C92..0x11CA7,
+      property => 'NSM',
+    ),
+
+    '0x11CA9' => %(
+      codepoint => 0x11CA9,
+      property => 'L',
+    ),
+
+    '0x11CAA..0x11CB0' => %(
+      codepoint => 0x11CAA..0x11CB0,
+      property => 'NSM',
+    ),
+
+    '0x11CB1' => %(
+      codepoint => 0x11CB1,
+      property => 'L',
+    ),
+
+    '0x11CB2..0x11CB3' => %(
+      codepoint => 0x11CB2..0x11CB3,
+      property => 'NSM',
+    ),
+
+    '0x11CB4' => %(
+      codepoint => 0x11CB4,
+      property => 'L',
+    ),
+
+    '0x11CB5..0x11CB6' => %(
+      codepoint => 0x11CB5..0x11CB6,
+      property => 'NSM',
+    ),
+
+    '0x12000..0x12399' => %(
+      codepoint => 0x12000..0x12399,
+      property => 'L',
+    ),
+
+    '0x12400..0x1246E' => %(
+      codepoint => 0x12400..0x1246E,
+      property => 'L',
+    ),
+
+    '0x12470..0x12474' => %(
+      codepoint => 0x12470..0x12474,
+      property => 'L',
+    ),
+
+    '0x12480..0x12543' => %(
+      codepoint => 0x12480..0x12543,
+      property => 'L',
+    ),
+
+    '0x124A..0x124D' => %(
+      codepoint => 0x124A..0x124D,
+      property => 'L',
+    ),
+
+    '0x1250..0x1256' => %(
+      codepoint => 0x1250..0x1256,
+      property => 'L',
+    ),
+
+    '0x1258' => %(
+      codepoint => 0x1258,
+      property => 'L',
+    ),
+
+    '0x125A..0x125D' => %(
+      codepoint => 0x125A..0x125D,
+      property => 'L',
+    ),
+
+    '0x1260..0x1288' => %(
+      codepoint => 0x1260..0x1288,
+      property => 'L',
+    ),
+
+    '0x128A..0x128D' => %(
+      codepoint => 0x128A..0x128D,
+      property => 'L',
+    ),
+
+    '0x1290..0x12B0' => %(
+      codepoint => 0x1290..0x12B0,
+      property => 'L',
+    ),
+
+    '0x12B2..0x12B5' => %(
+      codepoint => 0x12B2..0x12B5,
+      property => 'L',
+    ),
+
+    '0x12B8..0x12BE' => %(
+      codepoint => 0x12B8..0x12BE,
+      property => 'L',
+    ),
+
+    '0x12C0' => %(
+      codepoint => 0x12C0,
+      property => 'L',
+    ),
+
+    '0x12C2..0x12C5' => %(
+      codepoint => 0x12C2..0x12C5,
+      property => 'L',
+    ),
+
+    '0x12C8..0x12D6' => %(
+      codepoint => 0x12C8..0x12D6,
+      property => 'L',
+    ),
+
+    '0x12D8..0x1310' => %(
+      codepoint => 0x12D8..0x1310,
+      property => 'L',
+    ),
+
+    '0x13000..0x1342E' => %(
+      codepoint => 0x13000..0x1342E,
+      property => 'L',
+    ),
+
+    '0x1312..0x1315' => %(
+      codepoint => 0x1312..0x1315,
+      property => 'L',
+    ),
+
+    '0x1318..0x135A' => %(
+      codepoint => 0x1318..0x135A,
+      property => 'L',
+    ),
+
+    '0x135D..0x135F' => %(
+      codepoint => 0x135D..0x135F,
+      property => 'NSM',
+    ),
+
+    '0x1360..0x1368' => %(
+      codepoint => 0x1360..0x1368,
+      property => 'L',
+    ),
+
+    '0x1369..0x137C' => %(
+      codepoint => 0x1369..0x137C,
+      property => 'L',
+    ),
+
+    '0x1380..0x138F' => %(
+      codepoint => 0x1380..0x138F,
+      property => 'L',
+    ),
+
+    '0x1390..0x1399' => %(
+      codepoint => 0x1390..0x1399,
+      property => 'ON',
+    ),
+
+    '0x13A0..0x13F5' => %(
+      codepoint => 0x13A0..0x13F5,
+      property => 'L',
+    ),
+
+    '0x13F8..0x13FD' => %(
+      codepoint => 0x13F8..0x13FD,
+      property => 'L',
+    ),
+
+    '0x1400' => %(
+      codepoint => 0x1400,
+      property => 'ON',
+    ),
+
+    '0x1401..0x166C' => %(
+      codepoint => 0x1401..0x166C,
+      property => 'L',
+    ),
+
+    '0x14400..0x14646' => %(
+      codepoint => 0x14400..0x14646,
+      property => 'L',
+    ),
+
+    '0x166D..0x166E' => %(
+      codepoint => 0x166D..0x166E,
+      property => 'L',
+    ),
+
+    '0x166F..0x167F' => %(
+      codepoint => 0x166F..0x167F,
+      property => 'L',
+    ),
+
+    '0x1680' => %(
+      codepoint => 0x1680,
+      property => 'WS',
+    ),
+
+    '0x16800..0x16A38' => %(
+      codepoint => 0x16800..0x16A38,
+      property => 'L',
+    ),
+
+    '0x1681..0x169A' => %(
+      codepoint => 0x1681..0x169A,
+      property => 'L',
+    ),
+
+    '0x169B' => %(
+      codepoint => 0x169B,
+      property => 'ON',
+    ),
+
+    '0x169C' => %(
+      codepoint => 0x169C,
+      property => 'ON',
+    ),
+
+    '0x16A0..0x16EA' => %(
+      codepoint => 0x16A0..0x16EA,
+      property => 'L',
+    ),
+
+    '0x16A40..0x16A5E' => %(
+      codepoint => 0x16A40..0x16A5E,
+      property => 'L',
+    ),
+
+    '0x16A60..0x16A69' => %(
+      codepoint => 0x16A60..0x16A69,
+      property => 'L',
+    ),
+
+    '0x16A6E..0x16A6F' => %(
+      codepoint => 0x16A6E..0x16A6F,
+      property => 'L',
+    ),
+
+    '0x16AD0..0x16AED' => %(
+      codepoint => 0x16AD0..0x16AED,
+      property => 'L',
+    ),
+
+    '0x16AF0..0x16AF4' => %(
+      codepoint => 0x16AF0..0x16AF4,
+      property => 'NSM',
+    ),
+
+    '0x16AF5' => %(
+      codepoint => 0x16AF5,
+      property => 'L',
+    ),
+
+    '0x16B00..0x16B2F' => %(
+      codepoint => 0x16B00..0x16B2F,
+      property => 'L',
+    ),
+
+    '0x16B30..0x16B36' => %(
+      codepoint => 0x16B30..0x16B36,
+      property => 'NSM',
+    ),
+
+    '0x16B37..0x16B3B' => %(
+      codepoint => 0x16B37..0x16B3B,
+      property => 'L',
+    ),
+
+    '0x16B3C..0x16B3F' => %(
+      codepoint => 0x16B3C..0x16B3F,
+      property => 'L',
+    ),
+
+    '0x16B40..0x16B43' => %(
+      codepoint => 0x16B40..0x16B43,
+      property => 'L',
+    ),
+
+    '0x16B44' => %(
+      codepoint => 0x16B44,
+      property => 'L',
+    ),
+
+    '0x16B45' => %(
+      codepoint => 0x16B45,
+      property => 'L',
+    ),
+
+    '0x16B50..0x16B59' => %(
+      codepoint => 0x16B50..0x16B59,
+      property => 'L',
+    ),
+
+    '0x16B5B..0x16B61' => %(
+      codepoint => 0x16B5B..0x16B61,
+      property => 'L',
+    ),
+
+    '0x16B63..0x16B77' => %(
+      codepoint => 0x16B63..0x16B77,
+      property => 'L',
+    ),
+
+    '0x16B7D..0x16B8F' => %(
+      codepoint => 0x16B7D..0x16B8F,
+      property => 'L',
+    ),
+
+    '0x16EB..0x16ED' => %(
+      codepoint => 0x16EB..0x16ED,
+      property => 'L',
+    ),
+
+    '0x16EE..0x16F0' => %(
+      codepoint => 0x16EE..0x16F0,
+      property => 'L',
+    ),
+
+    '0x16F00..0x16F44' => %(
+      codepoint => 0x16F00..0x16F44,
+      property => 'L',
+    ),
+
+    '0x16F1..0x16F8' => %(
+      codepoint => 0x16F1..0x16F8,
+      property => 'L',
+    ),
+
+    '0x16F50' => %(
+      codepoint => 0x16F50,
+      property => 'L',
+    ),
+
+    '0x16F51..0x16F7E' => %(
+      codepoint => 0x16F51..0x16F7E,
+      property => 'L',
+    ),
+
+    '0x16F8F..0x16F92' => %(
+      codepoint => 0x16F8F..0x16F92,
+      property => 'NSM',
+    ),
+
+    '0x16F93..0x16F9F' => %(
+      codepoint => 0x16F93..0x16F9F,
+      property => 'L',
+    ),
+
+    '0x16FE0' => %(
+      codepoint => 0x16FE0,
+      property => 'L',
+    ),
+
+    '0x1700..0x170C' => %(
+      codepoint => 0x1700..0x170C,
+      property => 'L',
+    ),
+
+    '0x17000..0x187EC' => %(
+      codepoint => 0x17000..0x187EC,
+      property => 'L',
+    ),
+
+    '0x170E..0x1711' => %(
+      codepoint => 0x170E..0x1711,
+      property => 'L',
+    ),
+
+    '0x1712..0x1714' => %(
+      codepoint => 0x1712..0x1714,
+      property => 'NSM',
+    ),
+
+    '0x1720..0x1731' => %(
+      codepoint => 0x1720..0x1731,
+      property => 'L',
+    ),
+
+    '0x1732..0x1734' => %(
+      codepoint => 0x1732..0x1734,
+      property => 'NSM',
+    ),
+
+    '0x1735..0x1736' => %(
+      codepoint => 0x1735..0x1736,
+      property => 'L',
+    ),
+
+    '0x1740..0x1751' => %(
+      codepoint => 0x1740..0x1751,
+      property => 'L',
+    ),
+
+    '0x1752..0x1753' => %(
+      codepoint => 0x1752..0x1753,
+      property => 'NSM',
+    ),
+
+    '0x1760..0x176C' => %(
+      codepoint => 0x1760..0x176C,
+      property => 'L',
+    ),
+
+    '0x176E..0x1770' => %(
+      codepoint => 0x176E..0x1770,
+      property => 'L',
+    ),
+
+    '0x1772..0x1773' => %(
+      codepoint => 0x1772..0x1773,
+      property => 'NSM',
+    ),
+
+    '0x1780..0x17B3' => %(
+      codepoint => 0x1780..0x17B3,
+      property => 'L',
+    ),
+
+    '0x17B4..0x17B5' => %(
+      codepoint => 0x17B4..0x17B5,
+      property => 'NSM',
+    ),
+
+    '0x17B6' => %(
+      codepoint => 0x17B6,
+      property => 'L',
+    ),
+
+    '0x17B7..0x17BD' => %(
+      codepoint => 0x17B7..0x17BD,
+      property => 'NSM',
+    ),
+
+    '0x17BE..0x17C5' => %(
+      codepoint => 0x17BE..0x17C5,
+      property => 'L',
+    ),
+
+    '0x17C6' => %(
+      codepoint => 0x17C6,
+      property => 'NSM',
+    ),
+
+    '0x17C7..0x17C8' => %(
+      codepoint => 0x17C7..0x17C8,
+      property => 'L',
+    ),
+
+    '0x17C9..0x17D3' => %(
+      codepoint => 0x17C9..0x17D3,
+      property => 'NSM',
+    ),
+
+    '0x17D4..0x17D6' => %(
+      codepoint => 0x17D4..0x17D6,
+      property => 'L',
+    ),
+
+    '0x17D7' => %(
+      codepoint => 0x17D7,
+      property => 'L',
+    ),
+
+    '0x17D8..0x17DA' => %(
+      codepoint => 0x17D8..0x17DA,
+      property => 'L',
+    ),
+
+    '0x17DB' => %(
+      codepoint => 0x17DB,
+      property => 'ET',
+    ),
+
+    '0x17DC' => %(
+      codepoint => 0x17DC,
+      property => 'L',
+    ),
+
+    '0x17DD' => %(
+      codepoint => 0x17DD,
+      property => 'NSM',
+    ),
+
+    '0x17E0..0x17E9' => %(
+      codepoint => 0x17E0..0x17E9,
+      property => 'L',
+    ),
+
+    '0x17F0..0x17F9' => %(
+      codepoint => 0x17F0..0x17F9,
+      property => 'ON',
+    ),
+
+    '0x1800..0x1805' => %(
+      codepoint => 0x1800..0x1805,
+      property => 'ON',
+    ),
+
+    '0x1806' => %(
+      codepoint => 0x1806,
+      property => 'ON',
+    ),
+
+    '0x1807..0x180A' => %(
+      codepoint => 0x1807..0x180A,
+      property => 'ON',
+    ),
+
+    '0x180B..0x180D' => %(
+      codepoint => 0x180B..0x180D,
+      property => 'NSM',
+    ),
+
+    '0x180E' => %(
+      codepoint => 0x180E,
+      property => 'BN',
+    ),
+
+    '0x1810..0x1819' => %(
+      codepoint => 0x1810..0x1819,
+      property => 'L',
+    ),
+
+    '0x1820..0x1842' => %(
+      codepoint => 0x1820..0x1842,
+      property => 'L',
+    ),
+
+    '0x1843' => %(
+      codepoint => 0x1843,
+      property => 'L',
+    ),
+
+    '0x1844..0x1877' => %(
+      codepoint => 0x1844..0x1877,
+      property => 'L',
+    ),
+
+    '0x1880..0x1884' => %(
+      codepoint => 0x1880..0x1884,
+      property => 'L',
+    ),
+
+    '0x18800..0x18AF2' => %(
+      codepoint => 0x18800..0x18AF2,
+      property => 'L',
+    ),
+
+    '0x1885..0x1886' => %(
+      codepoint => 0x1885..0x1886,
+      property => 'NSM',
+    ),
+
+    '0x1887..0x18A8' => %(
+      codepoint => 0x1887..0x18A8,
+      property => 'L',
+    ),
+
+    '0x18A9' => %(
+      codepoint => 0x18A9,
+      property => 'NSM',
+    ),
+
+    '0x18AA' => %(
+      codepoint => 0x18AA,
+      property => 'L',
+    ),
+
+    '0x18B0..0x18F5' => %(
+      codepoint => 0x18B0..0x18F5,
+      property => 'L',
+    ),
+
+    '0x1900..0x191E' => %(
+      codepoint => 0x1900..0x191E,
+      property => 'L',
+    ),
+
+    '0x1920..0x1922' => %(
+      codepoint => 0x1920..0x1922,
+      property => 'NSM',
+    ),
+
+    '0x1923..0x1926' => %(
+      codepoint => 0x1923..0x1926,
+      property => 'L',
+    ),
+
+    '0x1927..0x1928' => %(
+      codepoint => 0x1927..0x1928,
+      property => 'NSM',
+    ),
+
+    '0x1929..0x192B' => %(
+      codepoint => 0x1929..0x192B,
+      property => 'L',
+    ),
+
+    '0x1930..0x1931' => %(
+      codepoint => 0x1930..0x1931,
+      property => 'L',
+    ),
+
+    '0x1932' => %(
+      codepoint => 0x1932,
+      property => 'NSM',
+    ),
+
+    '0x1933..0x1938' => %(
+      codepoint => 0x1933..0x1938,
+      property => 'L',
+    ),
+
+    '0x1939..0x193B' => %(
+      codepoint => 0x1939..0x193B,
+      property => 'NSM',
+    ),
+
+    '0x1940' => %(
+      codepoint => 0x1940,
+      property => 'ON',
+    ),
+
+    '0x1944..0x1945' => %(
+      codepoint => 0x1944..0x1945,
+      property => 'ON',
+    ),
+
+    '0x1946..0x194F' => %(
+      codepoint => 0x1946..0x194F,
+      property => 'L',
+    ),
+
+    '0x1950..0x196D' => %(
+      codepoint => 0x1950..0x196D,
+      property => 'L',
+    ),
+
+    '0x1970..0x1974' => %(
+      codepoint => 0x1970..0x1974,
+      property => 'L',
+    ),
+
+    '0x1980..0x19AB' => %(
+      codepoint => 0x1980..0x19AB,
+      property => 'L',
+    ),
+
+    '0x19B0..0x19C9' => %(
+      codepoint => 0x19B0..0x19C9,
+      property => 'L',
+    ),
+
+    '0x19D0..0x19D9' => %(
+      codepoint => 0x19D0..0x19D9,
+      property => 'L',
+    ),
+
+    '0x19DA' => %(
+      codepoint => 0x19DA,
+      property => 'L',
+    ),
+
+    '0x19DE..0x19FF' => %(
+      codepoint => 0x19DE..0x19FF,
+      property => 'ON',
+    ),
+
+    '0x1A00..0x1A16' => %(
+      codepoint => 0x1A00..0x1A16,
+      property => 'L',
+    ),
+
+    '0x1A17..0x1A18' => %(
+      codepoint => 0x1A17..0x1A18,
+      property => 'NSM',
+    ),
+
+    '0x1A19..0x1A1A' => %(
+      codepoint => 0x1A19..0x1A1A,
+      property => 'L',
+    ),
+
+    '0x1A1B' => %(
+      codepoint => 0x1A1B,
+      property => 'NSM',
+    ),
+
+    '0x1A1E..0x1A1F' => %(
+      codepoint => 0x1A1E..0x1A1F,
+      property => 'L',
+    ),
+
+    '0x1A20..0x1A54' => %(
+      codepoint => 0x1A20..0x1A54,
+      property => 'L',
+    ),
+
+    '0x1A55' => %(
+      codepoint => 0x1A55,
+      property => 'L',
+    ),
+
+    '0x1A56' => %(
+      codepoint => 0x1A56,
+      property => 'NSM',
+    ),
+
+    '0x1A57' => %(
+      codepoint => 0x1A57,
+      property => 'L',
+    ),
+
+    '0x1A58..0x1A5E' => %(
+      codepoint => 0x1A58..0x1A5E,
+      property => 'NSM',
+    ),
+
+    '0x1A60' => %(
+      codepoint => 0x1A60,
+      property => 'NSM',
+    ),
+
+    '0x1A61' => %(
+      codepoint => 0x1A61,
+      property => 'L',
+    ),
+
+    '0x1A62' => %(
+      codepoint => 0x1A62,
+      property => 'NSM',
+    ),
+
+    '0x1A63..0x1A64' => %(
+      codepoint => 0x1A63..0x1A64,
+      property => 'L',
+    ),
+
+    '0x1A65..0x1A6C' => %(
+      codepoint => 0x1A65..0x1A6C,
+      property => 'NSM',
+    ),
+
+    '0x1A6D..0x1A72' => %(
+      codepoint => 0x1A6D..0x1A72,
+      property => 'L',
+    ),
+
+    '0x1A73..0x1A7C' => %(
+      codepoint => 0x1A73..0x1A7C,
+      property => 'NSM',
+    ),
+
+    '0x1A7F' => %(
+      codepoint => 0x1A7F,
+      property => 'NSM',
+    ),
+
+    '0x1A80..0x1A89' => %(
+      codepoint => 0x1A80..0x1A89,
+      property => 'L',
+    ),
+
+    '0x1A90..0x1A99' => %(
+      codepoint => 0x1A90..0x1A99,
+      property => 'L',
+    ),
+
+    '0x1AA0..0x1AA6' => %(
+      codepoint => 0x1AA0..0x1AA6,
+      property => 'L',
+    ),
+
+    '0x1AA7' => %(
+      codepoint => 0x1AA7,
+      property => 'L',
+    ),
+
+    '0x1AA8..0x1AAD' => %(
+      codepoint => 0x1AA8..0x1AAD,
+      property => 'L',
+    ),
+
+    '0x1AB0..0x1ABD' => %(
+      codepoint => 0x1AB0..0x1ABD,
+      property => 'NSM',
+    ),
+
+    '0x1ABE' => %(
+      codepoint => 0x1ABE,
+      property => 'NSM',
+    ),
+
+    '0x1B00..0x1B03' => %(
+      codepoint => 0x1B00..0x1B03,
+      property => 'NSM',
+    ),
+
+    '0x1B000..0x1B001' => %(
+      codepoint => 0x1B000..0x1B001,
+      property => 'L',
+    ),
+
+    '0x1B04' => %(
+      codepoint => 0x1B04,
+      property => 'L',
+    ),
+
+    '0x1B05..0x1B33' => %(
+      codepoint => 0x1B05..0x1B33,
+      property => 'L',
+    ),
+
+    '0x1B34' => %(
+      codepoint => 0x1B34,
+      property => 'NSM',
+    ),
+
+    '0x1B35' => %(
+      codepoint => 0x1B35,
+      property => 'L',
+    ),
+
+    '0x1B36..0x1B3A' => %(
+      codepoint => 0x1B36..0x1B3A,
+      property => 'NSM',
+    ),
+
+    '0x1B3B' => %(
+      codepoint => 0x1B3B,
+      property => 'L',
+    ),
+
+    '0x1B3C' => %(
+      codepoint => 0x1B3C,
+      property => 'NSM',
+    ),
+
+    '0x1B3D..0x1B41' => %(
+      codepoint => 0x1B3D..0x1B41,
+      property => 'L',
+    ),
+
+    '0x1B42' => %(
+      codepoint => 0x1B42,
+      property => 'NSM',
+    ),
+
+    '0x1B43..0x1B44' => %(
+      codepoint => 0x1B43..0x1B44,
+      property => 'L',
+    ),
+
+    '0x1B45..0x1B4B' => %(
+      codepoint => 0x1B45..0x1B4B,
+      property => 'L',
+    ),
+
+    '0x1B50..0x1B59' => %(
+      codepoint => 0x1B50..0x1B59,
+      property => 'L',
+    ),
+
+    '0x1B5A..0x1B60' => %(
+      codepoint => 0x1B5A..0x1B60,
+      property => 'L',
+    ),
+
+    '0x1B61..0x1B6A' => %(
+      codepoint => 0x1B61..0x1B6A,
+      property => 'L',
+    ),
+
+    '0x1B6B..0x1B73' => %(
+      codepoint => 0x1B6B..0x1B73,
+      property => 'NSM',
+    ),
+
+    '0x1B74..0x1B7C' => %(
+      codepoint => 0x1B74..0x1B7C,
+      property => 'L',
+    ),
+
+    '0x1B80..0x1B81' => %(
+      codepoint => 0x1B80..0x1B81,
+      property => 'NSM',
+    ),
+
+    '0x1B82' => %(
+      codepoint => 0x1B82,
+      property => 'L',
+    ),
+
+    '0x1B83..0x1BA0' => %(
+      codepoint => 0x1B83..0x1BA0,
+      property => 'L',
+    ),
+
+    '0x1BA1' => %(
+      codepoint => 0x1BA1,
+      property => 'L',
+    ),
+
+    '0x1BA2..0x1BA5' => %(
+      codepoint => 0x1BA2..0x1BA5,
+      property => 'NSM',
+    ),
+
+    '0x1BA6..0x1BA7' => %(
+      codepoint => 0x1BA6..0x1BA7,
+      property => 'L',
+    ),
+
+    '0x1BA8..0x1BA9' => %(
+      codepoint => 0x1BA8..0x1BA9,
+      property => 'NSM',
+    ),
+
+    '0x1BAA' => %(
+      codepoint => 0x1BAA,
+      property => 'L',
+    ),
+
+    '0x1BAB..0x1BAD' => %(
+      codepoint => 0x1BAB..0x1BAD,
+      property => 'NSM',
+    ),
+
+    '0x1BAE..0x1BAF' => %(
+      codepoint => 0x1BAE..0x1BAF,
+      property => 'L',
+    ),
+
+    '0x1BB0..0x1BB9' => %(
+      codepoint => 0x1BB0..0x1BB9,
+      property => 'L',
+    ),
+
+    '0x1BBA..0x1BE5' => %(
+      codepoint => 0x1BBA..0x1BE5,
+      property => 'L',
+    ),
+
+    '0x1BC00..0x1BC6A' => %(
+      codepoint => 0x1BC00..0x1BC6A,
+      property => 'L',
+    ),
+
+    '0x1BC70..0x1BC7C' => %(
+      codepoint => 0x1BC70..0x1BC7C,
+      property => 'L',
+    ),
+
+    '0x1BC80..0x1BC88' => %(
+      codepoint => 0x1BC80..0x1BC88,
+      property => 'L',
+    ),
+
+    '0x1BC90..0x1BC99' => %(
+      codepoint => 0x1BC90..0x1BC99,
+      property => 'L',
+    ),
+
+    '0x1BC9C' => %(
+      codepoint => 0x1BC9C,
+      property => 'L',
+    ),
+
+    '0x1BC9D..0x1BC9E' => %(
+      codepoint => 0x1BC9D..0x1BC9E,
+      property => 'NSM',
+    ),
+
+    '0x1BC9F' => %(
+      codepoint => 0x1BC9F,
+      property => 'L',
+    ),
+
+    '0x1BCA0..0x1BCA3' => %(
+      codepoint => 0x1BCA0..0x1BCA3,
+      property => 'BN',
+    ),
+
+    '0x1BE6' => %(
+      codepoint => 0x1BE6,
+      property => 'NSM',
+    ),
+
+    '0x1BE7' => %(
+      codepoint => 0x1BE7,
+      property => 'L',
+    ),
+
+    '0x1BE8..0x1BE9' => %(
+      codepoint => 0x1BE8..0x1BE9,
+      property => 'NSM',
+    ),
+
+    '0x1BEA..0x1BEC' => %(
+      codepoint => 0x1BEA..0x1BEC,
+      property => 'L',
+    ),
+
+    '0x1BED' => %(
+      codepoint => 0x1BED,
+      property => 'NSM',
+    ),
+
+    '0x1BEE' => %(
+      codepoint => 0x1BEE,
+      property => 'L',
+    ),
+
+    '0x1BEF..0x1BF1' => %(
+      codepoint => 0x1BEF..0x1BF1,
+      property => 'NSM',
+    ),
+
+    '0x1BF2..0x1BF3' => %(
+      codepoint => 0x1BF2..0x1BF3,
+      property => 'L',
+    ),
+
+    '0x1BFC..0x1BFF' => %(
+      codepoint => 0x1BFC..0x1BFF,
+      property => 'L',
+    ),
+
+    '0x1C00..0x1C23' => %(
+      codepoint => 0x1C00..0x1C23,
+      property => 'L',
+    ),
+
+    '0x1C24..0x1C2B' => %(
+      codepoint => 0x1C24..0x1C2B,
+      property => 'L',
+    ),
+
+    '0x1C2C..0x1C33' => %(
+      codepoint => 0x1C2C..0x1C33,
+      property => 'NSM',
+    ),
+
+    '0x1C34..0x1C35' => %(
+      codepoint => 0x1C34..0x1C35,
+      property => 'L',
+    ),
+
+    '0x1C36..0x1C37' => %(
+      codepoint => 0x1C36..0x1C37,
+      property => 'NSM',
+    ),
+
+    '0x1C3B..0x1C3F' => %(
+      codepoint => 0x1C3B..0x1C3F,
+      property => 'L',
+    ),
+
+    '0x1C40..0x1C49' => %(
+      codepoint => 0x1C40..0x1C49,
+      property => 'L',
+    ),
+
+    '0x1C4D..0x1C4F' => %(
+      codepoint => 0x1C4D..0x1C4F,
+      property => 'L',
+    ),
+
+    '0x1C50..0x1C59' => %(
+      codepoint => 0x1C50..0x1C59,
+      property => 'L',
+    ),
+
+    '0x1C5A..0x1C77' => %(
+      codepoint => 0x1C5A..0x1C77,
+      property => 'L',
+    ),
+
+    '0x1C78..0x1C7D' => %(
+      codepoint => 0x1C78..0x1C7D,
+      property => 'L',
+    ),
+
+    '0x1C7E..0x1C7F' => %(
+      codepoint => 0x1C7E..0x1C7F,
+      property => 'L',
+    ),
+
+    '0x1C80..0x1C88' => %(
+      codepoint => 0x1C80..0x1C88,
+      property => 'L',
+    ),
+
+    '0x1CC0..0x1CC7' => %(
+      codepoint => 0x1CC0..0x1CC7,
+      property => 'L',
+    ),
+
+    '0x1CD0..0x1CD2' => %(
+      codepoint => 0x1CD0..0x1CD2,
+      property => 'NSM',
+    ),
+
+    '0x1CD3' => %(
+      codepoint => 0x1CD3,
+      property => 'L',
+    ),
+
+    '0x1CD4..0x1CE0' => %(
+      codepoint => 0x1CD4..0x1CE0,
+      property => 'NSM',
+    ),
+
+    '0x1CE1' => %(
+      codepoint => 0x1CE1,
+      property => 'L',
+    ),
+
+    '0x1CE2..0x1CE8' => %(
+      codepoint => 0x1CE2..0x1CE8,
+      property => 'NSM',
+    ),
+
+    '0x1CE9..0x1CEC' => %(
+      codepoint => 0x1CE9..0x1CEC,
+      property => 'L',
+    ),
+
+    '0x1CED' => %(
+      codepoint => 0x1CED,
+      property => 'NSM',
+    ),
+
+    '0x1CEE..0x1CF1' => %(
+      codepoint => 0x1CEE..0x1CF1,
+      property => 'L',
+    ),
+
+    '0x1CF2..0x1CF3' => %(
+      codepoint => 0x1CF2..0x1CF3,
+      property => 'L',
+    ),
+
+    '0x1CF4' => %(
+      codepoint => 0x1CF4,
+      property => 'NSM',
+    ),
+
+    '0x1CF5..0x1CF6' => %(
+      codepoint => 0x1CF5..0x1CF6,
+      property => 'L',
+    ),
+
+    '0x1CF8..0x1CF9' => %(
+      codepoint => 0x1CF8..0x1CF9,
+      property => 'NSM',
+    ),
+
+    '0x1D00..0x1D2B' => %(
+      codepoint => 0x1D00..0x1D2B,
+      property => 'L',
+    ),
+
+    '0x1D000..0x1D0F5' => %(
+      codepoint => 0x1D000..0x1D0F5,
+      property => 'L',
+    ),
+
+    '0x1D100..0x1D126' => %(
+      codepoint => 0x1D100..0x1D126,
+      property => 'L',
+    ),
+
+    '0x1D129..0x1D164' => %(
+      codepoint => 0x1D129..0x1D164,
+      property => 'L',
+    ),
+
+    '0x1D165..0x1D166' => %(
+      codepoint => 0x1D165..0x1D166,
+      property => 'L',
+    ),
+
+    '0x1D167..0x1D169' => %(
+      codepoint => 0x1D167..0x1D169,
+      property => 'NSM',
+    ),
+
+    '0x1D16A..0x1D16C' => %(
+      codepoint => 0x1D16A..0x1D16C,
+      property => 'L',
+    ),
+
+    '0x1D16D..0x1D172' => %(
+      codepoint => 0x1D16D..0x1D172,
+      property => 'L',
+    ),
+
+    '0x1D173..0x1D17A' => %(
+      codepoint => 0x1D173..0x1D17A,
+      property => 'BN',
+    ),
+
+    '0x1D17B..0x1D182' => %(
+      codepoint => 0x1D17B..0x1D182,
+      property => 'NSM',
+    ),
+
+    '0x1D183..0x1D184' => %(
+      codepoint => 0x1D183..0x1D184,
+      property => 'L',
+    ),
+
+    '0x1D185..0x1D18B' => %(
+      codepoint => 0x1D185..0x1D18B,
+      property => 'NSM',
+    ),
+
+    '0x1D18C..0x1D1A9' => %(
+      codepoint => 0x1D18C..0x1D1A9,
+      property => 'L',
+    ),
+
+    '0x1D1AA..0x1D1AD' => %(
+      codepoint => 0x1D1AA..0x1D1AD,
+      property => 'NSM',
+    ),
+
+    '0x1D1AE..0x1D1E8' => %(
+      codepoint => 0x1D1AE..0x1D1E8,
+      property => 'L',
+    ),
+
+    '0x1D200..0x1D241' => %(
+      codepoint => 0x1D200..0x1D241,
+      property => 'ON',
+    ),
+
+    '0x1D242..0x1D244' => %(
+      codepoint => 0x1D242..0x1D244,
+      property => 'NSM',
+    ),
+
+    '0x1D245' => %(
+      codepoint => 0x1D245,
+      property => 'ON',
+    ),
+
+    '0x1D2C..0x1D6A' => %(
+      codepoint => 0x1D2C..0x1D6A,
+      property => 'L',
+    ),
+
+    '0x1D300..0x1D356' => %(
+      codepoint => 0x1D300..0x1D356,
+      property => 'ON',
+    ),
+
+    '0x1D360..0x1D371' => %(
+      codepoint => 0x1D360..0x1D371,
+      property => 'L',
+    ),
+
+    '0x1D400..0x1D454' => %(
+      codepoint => 0x1D400..0x1D454,
+      property => 'L',
+    ),
+
+    '0x1D456..0x1D49C' => %(
+      codepoint => 0x1D456..0x1D49C,
+      property => 'L',
+    ),
+
+    '0x1D49E..0x1D49F' => %(
+      codepoint => 0x1D49E..0x1D49F,
+      property => 'L',
+    ),
+
+    '0x1D4A2' => %(
+      codepoint => 0x1D4A2,
+      property => 'L',
+    ),
+
+    '0x1D4A5..0x1D4A6' => %(
+      codepoint => 0x1D4A5..0x1D4A6,
+      property => 'L',
+    ),
+
+    '0x1D4A9..0x1D4AC' => %(
+      codepoint => 0x1D4A9..0x1D4AC,
+      property => 'L',
+    ),
+
+    '0x1D4AE..0x1D4B9' => %(
+      codepoint => 0x1D4AE..0x1D4B9,
+      property => 'L',
+    ),
+
+    '0x1D4BB' => %(
+      codepoint => 0x1D4BB,
+      property => 'L',
+    ),
+
+    '0x1D4BD..0x1D4C3' => %(
+      codepoint => 0x1D4BD..0x1D4C3,
+      property => 'L',
+    ),
+
+    '0x1D4C5..0x1D505' => %(
+      codepoint => 0x1D4C5..0x1D505,
+      property => 'L',
+    ),
+
+    '0x1D507..0x1D50A' => %(
+      codepoint => 0x1D507..0x1D50A,
+      property => 'L',
+    ),
+
+    '0x1D50D..0x1D514' => %(
+      codepoint => 0x1D50D..0x1D514,
+      property => 'L',
+    ),
+
+    '0x1D516..0x1D51C' => %(
+      codepoint => 0x1D516..0x1D51C,
+      property => 'L',
+    ),
+
+    '0x1D51E..0x1D539' => %(
+      codepoint => 0x1D51E..0x1D539,
+      property => 'L',
+    ),
+
+    '0x1D53B..0x1D53E' => %(
+      codepoint => 0x1D53B..0x1D53E,
+      property => 'L',
+    ),
+
+    '0x1D540..0x1D544' => %(
+      codepoint => 0x1D540..0x1D544,
+      property => 'L',
+    ),
+
+    '0x1D546' => %(
+      codepoint => 0x1D546,
+      property => 'L',
+    ),
+
+    '0x1D54A..0x1D550' => %(
+      codepoint => 0x1D54A..0x1D550,
+      property => 'L',
+    ),
+
+    '0x1D552..0x1D6A5' => %(
+      codepoint => 0x1D552..0x1D6A5,
+      property => 'L',
+    ),
+
+    '0x1D6A8..0x1D6C0' => %(
+      codepoint => 0x1D6A8..0x1D6C0,
+      property => 'L',
+    ),
+
+    '0x1D6B..0x1D77' => %(
+      codepoint => 0x1D6B..0x1D77,
+      property => 'L',
+    ),
+
+    '0x1D6C1' => %(
+      codepoint => 0x1D6C1,
+      property => 'L',
+    ),
+
+    '0x1D6C2..0x1D6DA' => %(
+      codepoint => 0x1D6C2..0x1D6DA,
+      property => 'L',
+    ),
+
+    '0x1D6DB' => %(
+      codepoint => 0x1D6DB,
+      property => 'ON',
+    ),
+
+    '0x1D6DC..0x1D6FA' => %(
+      codepoint => 0x1D6DC..0x1D6FA,
+      property => 'L',
+    ),
+
+    '0x1D6FB' => %(
+      codepoint => 0x1D6FB,
+      property => 'L',
+    ),
+
+    '0x1D6FC..0x1D714' => %(
+      codepoint => 0x1D6FC..0x1D714,
+      property => 'L',
+    ),
+
+    '0x1D715' => %(
+      codepoint => 0x1D715,
+      property => 'ON',
+    ),
+
+    '0x1D716..0x1D734' => %(
+      codepoint => 0x1D716..0x1D734,
+      property => 'L',
+    ),
+
+    '0x1D735' => %(
+      codepoint => 0x1D735,
+      property => 'L',
+    ),
+
+    '0x1D736..0x1D74E' => %(
+      codepoint => 0x1D736..0x1D74E,
+      property => 'L',
+    ),
+
+    '0x1D74F' => %(
+      codepoint => 0x1D74F,
+      property => 'ON',
+    ),
+
+    '0x1D750..0x1D76E' => %(
+      codepoint => 0x1D750..0x1D76E,
+      property => 'L',
+    ),
+
+    '0x1D76F' => %(
+      codepoint => 0x1D76F,
+      property => 'L',
+    ),
+
+    '0x1D770..0x1D788' => %(
+      codepoint => 0x1D770..0x1D788,
+      property => 'L',
+    ),
+
+    '0x1D78' => %(
+      codepoint => 0x1D78,
+      property => 'L',
+    ),
+
+    '0x1D789' => %(
+      codepoint => 0x1D789,
+      property => 'ON',
+    ),
+
+    '0x1D78A..0x1D7A8' => %(
+      codepoint => 0x1D78A..0x1D7A8,
+      property => 'L',
+    ),
+
+    '0x1D79..0x1D9A' => %(
+      codepoint => 0x1D79..0x1D9A,
+      property => 'L',
+    ),
+
+    '0x1D7A9' => %(
+      codepoint => 0x1D7A9,
+      property => 'L',
+    ),
+
+    '0x1D7AA..0x1D7C2' => %(
+      codepoint => 0x1D7AA..0x1D7C2,
+      property => 'L',
+    ),
+
+    '0x1D7C3' => %(
+      codepoint => 0x1D7C3,
+      property => 'ON',
+    ),
+
+    '0x1D7C4..0x1D7CB' => %(
+      codepoint => 0x1D7C4..0x1D7CB,
+      property => 'L',
+    ),
+
+    '0x1D7CE..0x1D7FF' => %(
+      codepoint => 0x1D7CE..0x1D7FF,
+      property => 'EN',
+    ),
+
+    '0x1D800..0x1D9FF' => %(
+      codepoint => 0x1D800..0x1D9FF,
+      property => 'L',
+    ),
+
+    '0x1D9B..0x1DBF' => %(
+      codepoint => 0x1D9B..0x1DBF,
+      property => 'L',
+    ),
+
+    '0x1DA00..0x1DA36' => %(
+      codepoint => 0x1DA00..0x1DA36,
+      property => 'NSM',
+    ),
+
+    '0x1DA37..0x1DA3A' => %(
+      codepoint => 0x1DA37..0x1DA3A,
+      property => 'L',
+    ),
+
+    '0x1DA3B..0x1DA6C' => %(
+      codepoint => 0x1DA3B..0x1DA6C,
+      property => 'NSM',
+    ),
+
+    '0x1DA6D..0x1DA74' => %(
+      codepoint => 0x1DA6D..0x1DA74,
+      property => 'L',
+    ),
+
+    '0x1DA75' => %(
+      codepoint => 0x1DA75,
+      property => 'NSM',
+    ),
+
+    '0x1DA76..0x1DA83' => %(
+      codepoint => 0x1DA76..0x1DA83,
+      property => 'L',
+    ),
+
+    '0x1DA84' => %(
+      codepoint => 0x1DA84,
+      property => 'NSM',
+    ),
+
+    '0x1DA85..0x1DA86' => %(
+      codepoint => 0x1DA85..0x1DA86,
+      property => 'L',
+    ),
+
+    '0x1DA87..0x1DA8B' => %(
+      codepoint => 0x1DA87..0x1DA8B,
+      property => 'L',
+    ),
+
+    '0x1DA9B..0x1DA9F' => %(
+      codepoint => 0x1DA9B..0x1DA9F,
+      property => 'NSM',
+    ),
+
+    '0x1DAA1..0x1DAAF' => %(
+      codepoint => 0x1DAA1..0x1DAAF,
+      property => 'NSM',
+    ),
+
+    '0x1DC0..0x1DF5' => %(
+      codepoint => 0x1DC0..0x1DF5,
+      property => 'NSM',
+    ),
+
+    '0x1DFB..0x1DFF' => %(
+      codepoint => 0x1DFB..0x1DFF,
+      property => 'NSM',
+    ),
+
+    '0x1E00..0x1F15' => %(
+      codepoint => 0x1E00..0x1F15,
+      property => 'L',
+    ),
+
+    '0x1E000..0x1E006' => %(
+      codepoint => 0x1E000..0x1E006,
+      property => 'NSM',
+    ),
+
+    '0x1E008..0x1E018' => %(
+      codepoint => 0x1E008..0x1E018,
+      property => 'NSM',
+    ),
+
+    '0x1E01B..0x1E021' => %(
+      codepoint => 0x1E01B..0x1E021,
+      property => 'NSM',
+    ),
+
+    '0x1E023..0x1E024' => %(
+      codepoint => 0x1E023..0x1E024,
+      property => 'NSM',
+    ),
+
+    '0x1E026..0x1E02A' => %(
+      codepoint => 0x1E026..0x1E02A,
+      property => 'NSM',
+    ),
+
+    '0x1E800..0x1E8C4' => %(
+      codepoint => 0x1E800..0x1E8C4,
+      property => 'R',
+    ),
+
+    '0x1E8C5..0x1E8C6' => %(
+      codepoint => 0x1E8C5..0x1E8C6,
+      property => 'R',
+    ),
+
+    '0x1E8C7..0x1E8CF' => %(
+      codepoint => 0x1E8C7..0x1E8CF,
+      property => 'R',
+    ),
+
+    '0x1E8D0..0x1E8D6' => %(
+      codepoint => 0x1E8D0..0x1E8D6,
+      property => 'NSM',
+    ),
+
+    '0x1E8D7..0x1E8FF' => %(
+      codepoint => 0x1E8D7..0x1E8FF,
+      property => 'R',
+    ),
+
+    '0x1E900..0x1E943' => %(
+      codepoint => 0x1E900..0x1E943,
+      property => 'R',
+    ),
+
+    '0x1E944..0x1E94A' => %(
+      codepoint => 0x1E944..0x1E94A,
+      property => 'NSM',
+    ),
+
+    '0x1E94B..0x1E94F' => %(
+      codepoint => 0x1E94B..0x1E94F,
+      property => 'R',
+    ),
+
+    '0x1E950..0x1E959' => %(
+      codepoint => 0x1E950..0x1E959,
+      property => 'R',
+    ),
+
+    '0x1E95A..0x1E95D' => %(
+      codepoint => 0x1E95A..0x1E95D,
+      property => 'R',
+    ),
+
+    '0x1E95E..0x1E95F' => %(
+      codepoint => 0x1E95E..0x1E95F,
+      property => 'R',
+    ),
+
+    '0x1E960..0x1EDFF' => %(
+      codepoint => 0x1E960..0x1EDFF,
+      property => 'R',
+    ),
+
+    '0x1EE00..0x1EE03' => %(
+      codepoint => 0x1EE00..0x1EE03,
+      property => 'AL',
+    ),
+
+    '0x1EE04' => %(
+      codepoint => 0x1EE04,
+      property => 'AL',
+    ),
+
+    '0x1EE05..0x1EE1F' => %(
+      codepoint => 0x1EE05..0x1EE1F,
+      property => 'AL',
+    ),
+
+    '0x1EE20' => %(
+      codepoint => 0x1EE20,
+      property => 'AL',
+    ),
+
+    '0x1EE21..0x1EE22' => %(
+      codepoint => 0x1EE21..0x1EE22,
+      property => 'AL',
+    ),
+
+    '0x1EE23' => %(
+      codepoint => 0x1EE23,
+      property => 'AL',
+    ),
+
+    '0x1EE24' => %(
+      codepoint => 0x1EE24,
+      property => 'AL',
+    ),
+
+    '0x1EE25..0x1EE26' => %(
+      codepoint => 0x1EE25..0x1EE26,
+      property => 'AL',
+    ),
+
+    '0x1EE27' => %(
+      codepoint => 0x1EE27,
+      property => 'AL',
+    ),
+
+    '0x1EE28' => %(
+      codepoint => 0x1EE28,
+      property => 'AL',
+    ),
+
+    '0x1EE29..0x1EE32' => %(
+      codepoint => 0x1EE29..0x1EE32,
+      property => 'AL',
+    ),
+
+    '0x1EE33' => %(
+      codepoint => 0x1EE33,
+      property => 'AL',
+    ),
+
+    '0x1EE34..0x1EE37' => %(
+      codepoint => 0x1EE34..0x1EE37,
+      property => 'AL',
+    ),
+
+    '0x1EE38' => %(
+      codepoint => 0x1EE38,
+      property => 'AL',
+    ),
+
+    '0x1EE39' => %(
+      codepoint => 0x1EE39,
+      property => 'AL',
+    ),
+
+    '0x1EE3A' => %(
+      codepoint => 0x1EE3A,
+      property => 'AL',
+    ),
+
+    '0x1EE3B' => %(
+      codepoint => 0x1EE3B,
+      property => 'AL',
+    ),
+
+    '0x1EE3C..0x1EE41' => %(
+      codepoint => 0x1EE3C..0x1EE41,
+      property => 'AL',
+    ),
+
+    '0x1EE42' => %(
+      codepoint => 0x1EE42,
+      property => 'AL',
+    ),
+
+    '0x1EE43..0x1EE46' => %(
+      codepoint => 0x1EE43..0x1EE46,
+      property => 'AL',
+    ),
+
+    '0x1EE47' => %(
+      codepoint => 0x1EE47,
+      property => 'AL',
+    ),
+
+    '0x1EE48' => %(
+      codepoint => 0x1EE48,
+      property => 'AL',
+    ),
+
+    '0x1EE49' => %(
+      codepoint => 0x1EE49,
+      property => 'AL',
+    ),
+
+    '0x1EE4A' => %(
+      codepoint => 0x1EE4A,
+      property => 'AL',
+    ),
+
+    '0x1EE4B' => %(
+      codepoint => 0x1EE4B,
+      property => 'AL',
+    ),
+
+    '0x1EE4C' => %(
+      codepoint => 0x1EE4C,
+      property => 'AL',
+    ),
+
+    '0x1EE4D..0x1EE4F' => %(
+      codepoint => 0x1EE4D..0x1EE4F,
+      property => 'AL',
+    ),
+
+    '0x1EE50' => %(
+      codepoint => 0x1EE50,
+      property => 'AL',
+    ),
+
+    '0x1EE51..0x1EE52' => %(
+      codepoint => 0x1EE51..0x1EE52,
+      property => 'AL',
+    ),
+
+    '0x1EE53' => %(
+      codepoint => 0x1EE53,
+      property => 'AL',
+    ),
+
+    '0x1EE54' => %(
+      codepoint => 0x1EE54,
+      property => 'AL',
+    ),
+
+    '0x1EE55..0x1EE56' => %(
+      codepoint => 0x1EE55..0x1EE56,
+      property => 'AL',
+    ),
+
+    '0x1EE57' => %(
+      codepoint => 0x1EE57,
+      property => 'AL',
+    ),
+
+    '0x1EE58' => %(
+      codepoint => 0x1EE58,
+      property => 'AL',
+    ),
+
+    '0x1EE59' => %(
+      codepoint => 0x1EE59,
+      property => 'AL',
+    ),
+
+    '0x1EE5A' => %(
+      codepoint => 0x1EE5A,
+      property => 'AL',
+    ),
+
+    '0x1EE5B' => %(
+      codepoint => 0x1EE5B,
+      property => 'AL',
+    ),
+
+    '0x1EE5C' => %(
+      codepoint => 0x1EE5C,
+      property => 'AL',
+    ),
+
+    '0x1EE5D' => %(
+      codepoint => 0x1EE5D,
+      property => 'AL',
+    ),
+
+    '0x1EE5E' => %(
+      codepoint => 0x1EE5E,
+      property => 'AL',
+    ),
+
+    '0x1EE5F' => %(
+      codepoint => 0x1EE5F,
+      property => 'AL',
+    ),
+
+    '0x1EE60' => %(
+      codepoint => 0x1EE60,
+      property => 'AL',
+    ),
+
+    '0x1EE61..0x1EE62' => %(
+      codepoint => 0x1EE61..0x1EE62,
+      property => 'AL',
+    ),
+
+    '0x1EE63' => %(
+      codepoint => 0x1EE63,
+      property => 'AL',
+    ),
+
+    '0x1EE64' => %(
+      codepoint => 0x1EE64,
+      property => 'AL',
+    ),
+
+    '0x1EE65..0x1EE66' => %(
+      codepoint => 0x1EE65..0x1EE66,
+      property => 'AL',
+    ),
+
+    '0x1EE67..0x1EE6A' => %(
+      codepoint => 0x1EE67..0x1EE6A,
+      property => 'AL',
+    ),
+
+    '0x1EE6B' => %(
+      codepoint => 0x1EE6B,
+      property => 'AL',
+    ),
+
+    '0x1EE6C..0x1EE72' => %(
+      codepoint => 0x1EE6C..0x1EE72,
+      property => 'AL',
+    ),
+
+    '0x1EE73' => %(
+      codepoint => 0x1EE73,
+      property => 'AL',
+    ),
+
+    '0x1EE74..0x1EE77' => %(
+      codepoint => 0x1EE74..0x1EE77,
+      property => 'AL',
+    ),
+
+    '0x1EE78' => %(
+      codepoint => 0x1EE78,
+      property => 'AL',
+    ),
+
+    '0x1EE79..0x1EE7C' => %(
+      codepoint => 0x1EE79..0x1EE7C,
+      property => 'AL',
+    ),
+
+    '0x1EE7D' => %(
+      codepoint => 0x1EE7D,
+      property => 'AL',
+    ),
+
+    '0x1EE7E' => %(
+      codepoint => 0x1EE7E,
+      property => 'AL',
+    ),
+
+    '0x1EE7F' => %(
+      codepoint => 0x1EE7F,
+      property => 'AL',
+    ),
+
+    '0x1EE80..0x1EE89' => %(
+      codepoint => 0x1EE80..0x1EE89,
+      property => 'AL',
+    ),
+
+    '0x1EE8A' => %(
+      codepoint => 0x1EE8A,
+      property => 'AL',
+    ),
+
+    '0x1EE8B..0x1EE9B' => %(
+      codepoint => 0x1EE8B..0x1EE9B,
+      property => 'AL',
+    ),
+
+    '0x1EE9C..0x1EEA0' => %(
+      codepoint => 0x1EE9C..0x1EEA0,
+      property => 'AL',
+    ),
+
+    '0x1EEA1..0x1EEA3' => %(
+      codepoint => 0x1EEA1..0x1EEA3,
+      property => 'AL',
+    ),
+
+    '0x1EEA4' => %(
+      codepoint => 0x1EEA4,
+      property => 'AL',
+    ),
+
+    '0x1EEA5..0x1EEA9' => %(
+      codepoint => 0x1EEA5..0x1EEA9,
+      property => 'AL',
+    ),
+
+    '0x1EEAA' => %(
+      codepoint => 0x1EEAA,
+      property => 'AL',
+    ),
+
+    '0x1EEAB..0x1EEBB' => %(
+      codepoint => 0x1EEAB..0x1EEBB,
+      property => 'AL',
+    ),
+
+    '0x1EEBC..0x1EEEF' => %(
+      codepoint => 0x1EEBC..0x1EEEF,
+      property => 'AL',
+    ),
+
+    '0x1EEF0..0x1EEF1' => %(
+      codepoint => 0x1EEF0..0x1EEF1,
+      property => 'ON',
+    ),
+
+    '0x1EEF2..0x1EEFF' => %(
+      codepoint => 0x1EEF2..0x1EEFF,
+      property => 'AL',
+    ),
+
+    '0x1EF00..0x1EFFF' => %(
+      codepoint => 0x1EF00..0x1EFFF,
+      property => 'R',
+    ),
+
+    '0x1F000..0x1F02B' => %(
+      codepoint => 0x1F000..0x1F02B,
+      property => 'ON',
+    ),
+
+    '0x1F030..0x1F093' => %(
+      codepoint => 0x1F030..0x1F093,
+      property => 'ON',
+    ),
+
+    '0x1F0A0..0x1F0AE' => %(
+      codepoint => 0x1F0A0..0x1F0AE,
+      property => 'ON',
+    ),
+
+    '0x1F0B1..0x1F0BF' => %(
+      codepoint => 0x1F0B1..0x1F0BF,
+      property => 'ON',
+    ),
+
+    '0x1F0C1..0x1F0CF' => %(
+      codepoint => 0x1F0C1..0x1F0CF,
+      property => 'ON',
+    ),
+
+    '0x1F0D1..0x1F0F5' => %(
+      codepoint => 0x1F0D1..0x1F0F5,
+      property => 'ON',
+    ),
+
+    '0x1F100..0x1F10A' => %(
+      codepoint => 0x1F100..0x1F10A,
+      property => 'EN',
+    ),
+
+    '0x1F10B..0x1F10C' => %(
+      codepoint => 0x1F10B..0x1F10C,
+      property => 'ON',
+    ),
+
+    '0x1F110..0x1F12E' => %(
+      codepoint => 0x1F110..0x1F12E,
+      property => 'L',
+    ),
+
+    '0x1F130..0x1F169' => %(
+      codepoint => 0x1F130..0x1F169,
+      property => 'L',
+    ),
+
+    '0x1F16A..0x1F16B' => %(
+      codepoint => 0x1F16A..0x1F16B,
+      property => 'ON',
+    ),
+
+    '0x1F170..0x1F1AC' => %(
+      codepoint => 0x1F170..0x1F1AC,
+      property => 'L',
+    ),
+
+    '0x1F18..0x1F1D' => %(
+      codepoint => 0x1F18..0x1F1D,
+      property => 'L',
+    ),
+
+    '0x1F1E6..0x1F202' => %(
+      codepoint => 0x1F1E6..0x1F202,
+      property => 'L',
+    ),
+
+    '0x1F20..0x1F45' => %(
+      codepoint => 0x1F20..0x1F45,
+      property => 'L',
+    ),
+
+    '0x1F210..0x1F23B' => %(
+      codepoint => 0x1F210..0x1F23B,
+      property => 'L',
+    ),
+
+    '0x1F240..0x1F248' => %(
+      codepoint => 0x1F240..0x1F248,
+      property => 'L',
+    ),
+
+    '0x1F250..0x1F251' => %(
+      codepoint => 0x1F250..0x1F251,
+      property => 'L',
+    ),
+
+    '0x1F300..0x1F3FA' => %(
+      codepoint => 0x1F300..0x1F3FA,
+      property => 'ON',
+    ),
+
+    '0x1F3FB..0x1F3FF' => %(
+      codepoint => 0x1F3FB..0x1F3FF,
+      property => 'ON',
+    ),
+
+    '0x1F400..0x1F6D2' => %(
+      codepoint => 0x1F400..0x1F6D2,
+      property => 'ON',
+    ),
+
+    '0x1F48..0x1F4D' => %(
+      codepoint => 0x1F48..0x1F4D,
+      property => 'L',
+    ),
+
+    '0x1F50..0x1F57' => %(
+      codepoint => 0x1F50..0x1F57,
+      property => 'L',
+    ),
+
+    '0x1F59' => %(
+      codepoint => 0x1F59,
+      property => 'L',
+    ),
+
+    '0x1F5B' => %(
+      codepoint => 0x1F5B,
+      property => 'L',
+    ),
+
+    '0x1F5D' => %(
+      codepoint => 0x1F5D,
+      property => 'L',
+    ),
+
+    '0x1F5F..0x1F7D' => %(
+      codepoint => 0x1F5F..0x1F7D,
+      property => 'L',
+    ),
+
+    '0x1F6E0..0x1F6EC' => %(
+      codepoint => 0x1F6E0..0x1F6EC,
+      property => 'ON',
+    ),
+
+    '0x1F6F0..0x1F6F6' => %(
+      codepoint => 0x1F6F0..0x1F6F6,
+      property => 'ON',
+    ),
+
+    '0x1F700..0x1F773' => %(
+      codepoint => 0x1F700..0x1F773,
+      property => 'ON',
+    ),
+
+    '0x1F780..0x1F7D4' => %(
+      codepoint => 0x1F780..0x1F7D4,
+      property => 'ON',
+    ),
+
+    '0x1F80..0x1FB4' => %(
+      codepoint => 0x1F80..0x1FB4,
+      property => 'L',
+    ),
+
+    '0x1F800..0x1F80B' => %(
+      codepoint => 0x1F800..0x1F80B,
+      property => 'ON',
+    ),
+
+    '0x1F810..0x1F847' => %(
+      codepoint => 0x1F810..0x1F847,
+      property => 'ON',
+    ),
+
+    '0x1F850..0x1F859' => %(
+      codepoint => 0x1F850..0x1F859,
+      property => 'ON',
+    ),
+
+    '0x1F860..0x1F887' => %(
+      codepoint => 0x1F860..0x1F887,
+      property => 'ON',
+    ),
+
+    '0x1F890..0x1F8AD' => %(
+      codepoint => 0x1F890..0x1F8AD,
+      property => 'ON',
+    ),
+
+    '0x1F910..0x1F91E' => %(
+      codepoint => 0x1F910..0x1F91E,
+      property => 'ON',
+    ),
+
+    '0x1F920..0x1F927' => %(
+      codepoint => 0x1F920..0x1F927,
+      property => 'ON',
+    ),
+
+    '0x1F930' => %(
+      codepoint => 0x1F930,
+      property => 'ON',
+    ),
+
+    '0x1F933..0x1F93E' => %(
+      codepoint => 0x1F933..0x1F93E,
+      property => 'ON',
+    ),
+
+    '0x1F940..0x1F94B' => %(
+      codepoint => 0x1F940..0x1F94B,
+      property => 'ON',
+    ),
+
+    '0x1F950..0x1F95E' => %(
+      codepoint => 0x1F950..0x1F95E,
+      property => 'ON',
+    ),
+
+    '0x1F980..0x1F991' => %(
+      codepoint => 0x1F980..0x1F991,
+      property => 'ON',
+    ),
+
+    '0x1F9C0' => %(
+      codepoint => 0x1F9C0,
+      property => 'ON',
+    ),
+
+    '0x1FB6..0x1FBC' => %(
+      codepoint => 0x1FB6..0x1FBC,
+      property => 'L',
+    ),
+
+    '0x1FBD' => %(
+      codepoint => 0x1FBD,
+      property => 'ON',
+    ),
+
+    '0x1FBE' => %(
+      codepoint => 0x1FBE,
+      property => 'L',
+    ),
+
+    '0x1FBF..0x1FC1' => %(
+      codepoint => 0x1FBF..0x1FC1,
+      property => 'ON',
+    ),
+
+    '0x1FC2..0x1FC4' => %(
+      codepoint => 0x1FC2..0x1FC4,
+      property => 'L',
+    ),
+
+    '0x1FC6..0x1FCC' => %(
+      codepoint => 0x1FC6..0x1FCC,
+      property => 'L',
+    ),
+
+    '0x1FCD..0x1FCF' => %(
+      codepoint => 0x1FCD..0x1FCF,
+      property => 'ON',
+    ),
+
+    '0x1FD0..0x1FD3' => %(
+      codepoint => 0x1FD0..0x1FD3,
+      property => 'L',
+    ),
+
+    '0x1FD6..0x1FDB' => %(
+      codepoint => 0x1FD6..0x1FDB,
+      property => 'L',
+    ),
+
+    '0x1FDD..0x1FDF' => %(
+      codepoint => 0x1FDD..0x1FDF,
+      property => 'ON',
+    ),
+
+    '0x1FE0..0x1FEC' => %(
+      codepoint => 0x1FE0..0x1FEC,
+      property => 'L',
+    ),
+
+    '0x1FED..0x1FEF' => %(
+      codepoint => 0x1FED..0x1FEF,
+      property => 'ON',
+    ),
+
+    '0x1FF2..0x1FF4' => %(
+      codepoint => 0x1FF2..0x1FF4,
+      property => 'L',
+    ),
+
+    '0x1FF6..0x1FFC' => %(
+      codepoint => 0x1FF6..0x1FFC,
+      property => 'L',
+    ),
+
+    '0x1FFD..0x1FFE' => %(
+      codepoint => 0x1FFD..0x1FFE,
+      property => 'ON',
+    ),
+
+    '0x1FFFE..0x1FFFF' => %(
+      codepoint => 0x1FFFE..0x1FFFF,
+      property => 'BN',
+    ),
+
+    '0x2000..0x200A' => %(
+      codepoint => 0x2000..0x200A,
+      property => 'WS',
+    ),
+
+    '0x20000..0x2A6D6' => %(
+      codepoint => 0x20000..0x2A6D6,
+      property => 'L',
+    ),
+
+    '0x200B..0x200D' => %(
+      codepoint => 0x200B..0x200D,
+      property => 'BN',
+    ),
+
+    '0x200E' => %(
+      codepoint => 0x200E,
+      property => 'L',
+    ),
+
+    '0x200F' => %(
+      codepoint => 0x200F,
+      property => 'R',
+    ),
+
+    '0x2010..0x2015' => %(
+      codepoint => 0x2010..0x2015,
+      property => 'ON',
+    ),
+
+    '0x2016..0x2017' => %(
+      codepoint => 0x2016..0x2017,
+      property => 'ON',
+    ),
+
+    '0x2018' => %(
+      codepoint => 0x2018,
+      property => 'ON',
+    ),
+
+    '0x2019' => %(
+      codepoint => 0x2019,
+      property => 'ON',
+    ),
+
+    '0x201A' => %(
+      codepoint => 0x201A,
+      property => 'ON',
+    ),
+
+    '0x201B..0x201C' => %(
+      codepoint => 0x201B..0x201C,
+      property => 'ON',
+    ),
+
+    '0x201D' => %(
+      codepoint => 0x201D,
+      property => 'ON',
+    ),
+
+    '0x201E' => %(
+      codepoint => 0x201E,
+      property => 'ON',
+    ),
+
+    '0x201F' => %(
+      codepoint => 0x201F,
+      property => 'ON',
+    ),
+
+    '0x2020..0x2027' => %(
+      codepoint => 0x2020..0x2027,
+      property => 'ON',
+    ),
+
+    '0x2028' => %(
+      codepoint => 0x2028,
+      property => 'WS',
+    ),
+
+    '0x2029' => %(
+      codepoint => 0x2029,
+      property => 0xB,
+    ),
+
+    '0x202A' => %(
+      codepoint => 0x202A,
+      property => 'LRE',
+    ),
+
+    '0x202B' => %(
+      codepoint => 0x202B,
+      property => 'RLE',
+    ),
+
+    '0x202C' => %(
+      codepoint => 0x202C,
+      property => 'PDF',
+    ),
+
+    '0x202D' => %(
+      codepoint => 0x202D,
+      property => 'LRO',
+    ),
+
+    '0x202E' => %(
+      codepoint => 0x202E,
+      property => 'RLO',
+    ),
+
+    '0x202F' => %(
+      codepoint => 0x202F,
+      property => 'CS',
+    ),
+
+    '0x2030..0x2034' => %(
+      codepoint => 0x2030..0x2034,
+      property => 'ET',
+    ),
+
+    '0x2035..0x2038' => %(
+      codepoint => 0x2035..0x2038,
+      property => 'ON',
+    ),
+
+    '0x2039' => %(
+      codepoint => 0x2039,
+      property => 'ON',
+    ),
+
+    '0x203A' => %(
+      codepoint => 0x203A,
+      property => 'ON',
+    ),
+
+    '0x203B..0x203E' => %(
+      codepoint => 0x203B..0x203E,
+      property => 'ON',
+    ),
+
+    '0x203F..0x2040' => %(
+      codepoint => 0x203F..0x2040,
+      property => 'ON',
+    ),
+
+    '0x2041..0x2043' => %(
+      codepoint => 0x2041..0x2043,
+      property => 'ON',
+    ),
+
+    '0x2044' => %(
+      codepoint => 0x2044,
+      property => 'CS',
+    ),
+
+    '0x2045' => %(
+      codepoint => 0x2045,
+      property => 'ON',
+    ),
+
+    '0x2046' => %(
+      codepoint => 0x2046,
+      property => 'ON',
+    ),
+
+    '0x2047..0x2051' => %(
+      codepoint => 0x2047..0x2051,
+      property => 'ON',
+    ),
+
+    '0x2052' => %(
+      codepoint => 0x2052,
+      property => 'ON',
+    ),
+
+    '0x2053' => %(
+      codepoint => 0x2053,
+      property => 'ON',
+    ),
+
+    '0x2054' => %(
+      codepoint => 0x2054,
+      property => 'ON',
+    ),
+
+    '0x2055..0x205E' => %(
+      codepoint => 0x2055..0x205E,
+      property => 'ON',
+    ),
+
+    '0x205F' => %(
+      codepoint => 0x205F,
+      property => 'WS',
+    ),
+
+    '0x2060..0x2064' => %(
+      codepoint => 0x2060..0x2064,
+      property => 'BN',
+    ),
+
+    '0x2065' => %(
+      codepoint => 0x2065,
+      property => 'BN',
+    ),
+
+    '0x2066' => %(
+      codepoint => 0x2066,
+      property => 'LRI',
+    ),
+
+    '0x2067' => %(
+      codepoint => 0x2067,
+      property => 'RLI',
+    ),
+
+    '0x2068' => %(
+      codepoint => 0x2068,
+      property => 'FSI',
+    ),
+
+    '0x2069' => %(
+      codepoint => 0x2069,
+      property => 'PDI',
+    ),
+
+    '0x206A..0x206F' => %(
+      codepoint => 0x206A..0x206F,
+      property => 'BN',
+    ),
+
+    '0x2070' => %(
+      codepoint => 0x2070,
+      property => 'EN',
+    ),
+
+    '0x2071' => %(
+      codepoint => 0x2071,
+      property => 'L',
+    ),
+
+    '0x2074..0x2079' => %(
+      codepoint => 0x2074..0x2079,
+      property => 'EN',
+    ),
+
+    '0x207A..0x207B' => %(
+      codepoint => 0x207A..0x207B,
+      property => 'ES',
+    ),
+
+    '0x207C' => %(
+      codepoint => 0x207C,
+      property => 'ON',
+    ),
+
+    '0x207D' => %(
+      codepoint => 0x207D,
+      property => 'ON',
+    ),
+
+    '0x207E' => %(
+      codepoint => 0x207E,
+      property => 'ON',
+    ),
+
+    '0x207F' => %(
+      codepoint => 0x207F,
+      property => 'L',
+    ),
+
+    '0x2080..0x2089' => %(
+      codepoint => 0x2080..0x2089,
+      property => 'EN',
+    ),
+
+    '0x208A..0x208B' => %(
+      codepoint => 0x208A..0x208B,
+      property => 'ES',
+    ),
+
+    '0x208C' => %(
+      codepoint => 0x208C,
+      property => 'ON',
+    ),
+
+    '0x208D' => %(
+      codepoint => 0x208D,
+      property => 'ON',
+    ),
+
+    '0x208E' => %(
+      codepoint => 0x208E,
+      property => 'ON',
+    ),
+
+    '0x2090..0x209C' => %(
+      codepoint => 0x2090..0x209C,
+      property => 'L',
+    ),
+
+    '0x20A0..0x20BE' => %(
+      codepoint => 0x20A0..0x20BE,
+      property => 'ET',
+    ),
+
+    '0x20BF..0x20CF' => %(
+      codepoint => 0x20BF..0x20CF,
+      property => 'ET',
+    ),
+
+    '0x20D0..0x20DC' => %(
+      codepoint => 0x20D0..0x20DC,
+      property => 'NSM',
+    ),
+
+    '0x20DD..0x20E0' => %(
+      codepoint => 0x20DD..0x20E0,
+      property => 'NSM',
+    ),
+
+    '0x20E1' => %(
+      codepoint => 0x20E1,
+      property => 'NSM',
+    ),
+
+    '0x20E2..0x20E4' => %(
+      codepoint => 0x20E2..0x20E4,
+      property => 'NSM',
+    ),
+
+    '0x20E5..0x20F0' => %(
+      codepoint => 0x20E5..0x20F0,
+      property => 'NSM',
+    ),
+
+    '0x2100..0x2101' => %(
+      codepoint => 0x2100..0x2101,
+      property => 'ON',
+    ),
+
+    '0x2102' => %(
+      codepoint => 0x2102,
+      property => 'L',
+    ),
+
+    '0x2103..0x2106' => %(
+      codepoint => 0x2103..0x2106,
+      property => 'ON',
+    ),
+
+    '0x2107' => %(
+      codepoint => 0x2107,
+      property => 'L',
+    ),
+
+    '0x2108..0x2109' => %(
+      codepoint => 0x2108..0x2109,
+      property => 'ON',
+    ),
+
+    '0x210A..0x2113' => %(
+      codepoint => 0x210A..0x2113,
+      property => 'L',
+    ),
+
+    '0x2114' => %(
+      codepoint => 0x2114,
+      property => 'ON',
+    ),
+
+    '0x2115' => %(
+      codepoint => 0x2115,
+      property => 'L',
+    ),
+
+    '0x2116..0x2117' => %(
+      codepoint => 0x2116..0x2117,
+      property => 'ON',
+    ),
+
+    '0x2118' => %(
+      codepoint => 0x2118,
+      property => 'ON',
+    ),
+
+    '0x2119..0x211D' => %(
+      codepoint => 0x2119..0x211D,
+      property => 'L',
+    ),
+
+    '0x211E..0x2123' => %(
+      codepoint => 0x211E..0x2123,
+      property => 'ON',
+    ),
+
+    '0x2124' => %(
+      codepoint => 0x2124,
+      property => 'L',
+    ),
+
+    '0x2125' => %(
+      codepoint => 0x2125,
+      property => 'ON',
+    ),
+
+    '0x2126' => %(
+      codepoint => 0x2126,
+      property => 'L',
+    ),
+
+    '0x2127' => %(
+      codepoint => 0x2127,
+      property => 'ON',
+    ),
+
+    '0x2128' => %(
+      codepoint => 0x2128,
+      property => 'L',
+    ),
+
+    '0x2129' => %(
+      codepoint => 0x2129,
+      property => 'ON',
+    ),
+
+    '0x212A..0x212D' => %(
+      codepoint => 0x212A..0x212D,
+      property => 'L',
+    ),
+
+    '0x212E' => %(
+      codepoint => 0x212E,
+      property => 'ET',
+    ),
+
+    '0x212F..0x2134' => %(
+      codepoint => 0x212F..0x2134,
+      property => 'L',
+    ),
+
+    '0x2135..0x2138' => %(
+      codepoint => 0x2135..0x2138,
+      property => 'L',
+    ),
+
+    '0x2139' => %(
+      codepoint => 0x2139,
+      property => 'L',
+    ),
+
+    '0x213A..0x213B' => %(
+      codepoint => 0x213A..0x213B,
+      property => 'ON',
+    ),
+
+    '0x213C..0x213F' => %(
+      codepoint => 0x213C..0x213F,
+      property => 'L',
+    ),
+
+    '0x2140..0x2144' => %(
+      codepoint => 0x2140..0x2144,
+      property => 'ON',
+    ),
+
+    '0x2145..0x2149' => %(
+      codepoint => 0x2145..0x2149,
+      property => 'L',
+    ),
+
+    '0x214A' => %(
+      codepoint => 0x214A,
+      property => 'ON',
+    ),
+
+    '0x214B' => %(
+      codepoint => 0x214B,
+      property => 'ON',
+    ),
+
+    '0x214C..0x214D' => %(
+      codepoint => 0x214C..0x214D,
+      property => 'ON',
+    ),
+
+    '0x214E' => %(
+      codepoint => 0x214E,
+      property => 'L',
+    ),
+
+    '0x214F' => %(
+      codepoint => 0x214F,
+      property => 'L',
+    ),
+
+    '0x2150..0x215F' => %(
+      codepoint => 0x2150..0x215F,
+      property => 'ON',
+    ),
+
+    '0x2160..0x2182' => %(
+      codepoint => 0x2160..0x2182,
+      property => 'L',
+    ),
+
+    '0x2183..0x2184' => %(
+      codepoint => 0x2183..0x2184,
+      property => 'L',
+    ),
+
+    '0x2185..0x2188' => %(
+      codepoint => 0x2185..0x2188,
+      property => 'L',
+    ),
+
+    '0x2189' => %(
+      codepoint => 0x2189,
+      property => 'ON',
+    ),
+
+    '0x218A..0x218B' => %(
+      codepoint => 0x218A..0x218B,
+      property => 'ON',
+    ),
+
+    '0x2190..0x2194' => %(
+      codepoint => 0x2190..0x2194,
+      property => 'ON',
+    ),
+
+    '0x2195..0x2199' => %(
+      codepoint => 0x2195..0x2199,
+      property => 'ON',
+    ),
+
+    '0x219A..0x219B' => %(
+      codepoint => 0x219A..0x219B,
+      property => 'ON',
+    ),
+
+    '0x219C..0x219F' => %(
+      codepoint => 0x219C..0x219F,
+      property => 'ON',
+    ),
+
+    '0x21A0' => %(
+      codepoint => 0x21A0,
+      property => 'ON',
+    ),
+
+    '0x21A1..0x21A2' => %(
+      codepoint => 0x21A1..0x21A2,
+      property => 'ON',
+    ),
+
+    '0x21A3' => %(
+      codepoint => 0x21A3,
+      property => 'ON',
+    ),
+
+    '0x21A4..0x21A5' => %(
+      codepoint => 0x21A4..0x21A5,
+      property => 'ON',
+    ),
+
+    '0x21A6' => %(
+      codepoint => 0x21A6,
+      property => 'ON',
+    ),
+
+    '0x21A7..0x21AD' => %(
+      codepoint => 0x21A7..0x21AD,
+      property => 'ON',
+    ),
+
+    '0x21AE' => %(
+      codepoint => 0x21AE,
+      property => 'ON',
+    ),
+
+    '0x21AF..0x21CD' => %(
+      codepoint => 0x21AF..0x21CD,
+      property => 'ON',
+    ),
+
+    '0x21CE..0x21CF' => %(
+      codepoint => 0x21CE..0x21CF,
+      property => 'ON',
+    ),
+
+    '0x21D0..0x21D1' => %(
+      codepoint => 0x21D0..0x21D1,
+      property => 'ON',
+    ),
+
+    '0x21D2' => %(
+      codepoint => 0x21D2,
+      property => 'ON',
+    ),
+
+    '0x21D3' => %(
+      codepoint => 0x21D3,
+      property => 'ON',
+    ),
+
+    '0x21D4' => %(
+      codepoint => 0x21D4,
+      property => 'ON',
+    ),
+
+    '0x21D5..0x21F3' => %(
+      codepoint => 0x21D5..0x21F3,
+      property => 'ON',
+    ),
+
+    '0x21F4..0x2211' => %(
+      codepoint => 0x21F4..0x2211,
+      property => 'ON',
+    ),
+
+    '0x2212' => %(
+      codepoint => 0x2212,
+      property => 'ES',
+    ),
+
+    '0x2213' => %(
+      codepoint => 0x2213,
+      property => 'ET',
+    ),
+
+    '0x2214..0x22FF' => %(
+      codepoint => 0x2214..0x22FF,
+      property => 'ON',
+    ),
+
+    '0x2300..0x2307' => %(
+      codepoint => 0x2300..0x2307,
+      property => 'ON',
+    ),
+
+    '0x2308' => %(
+      codepoint => 0x2308,
+      property => 'ON',
+    ),
+
+    '0x2309' => %(
+      codepoint => 0x2309,
+      property => 'ON',
+    ),
+
+    '0x230A' => %(
+      codepoint => 0x230A,
+      property => 'ON',
+    ),
+
+    '0x230B' => %(
+      codepoint => 0x230B,
+      property => 'ON',
+    ),
+
+    '0x230C..0x231F' => %(
+      codepoint => 0x230C..0x231F,
+      property => 'ON',
+    ),
+
+    '0x2320..0x2321' => %(
+      codepoint => 0x2320..0x2321,
+      property => 'ON',
+    ),
+
+    '0x2322..0x2328' => %(
+      codepoint => 0x2322..0x2328,
+      property => 'ON',
+    ),
+
+    '0x2329' => %(
+      codepoint => 0x2329,
+      property => 'ON',
+    ),
+
+    '0x232A' => %(
+      codepoint => 0x232A,
+      property => 'ON',
+    ),
+
+    '0x232B..0x2335' => %(
+      codepoint => 0x232B..0x2335,
+      property => 'ON',
+    ),
+
+    '0x2336..0x237A' => %(
+      codepoint => 0x2336..0x237A,
+      property => 'L',
+    ),
+
+    '0x237B' => %(
+      codepoint => 0x237B,
+      property => 'ON',
+    ),
+
+    '0x237C' => %(
+      codepoint => 0x237C,
+      property => 'ON',
+    ),
+
+    '0x237D..0x2394' => %(
+      codepoint => 0x237D..0x2394,
+      property => 'ON',
+    ),
+
+    '0x2395' => %(
+      codepoint => 0x2395,
+      property => 'L',
+    ),
+
+    '0x2396..0x239A' => %(
+      codepoint => 0x2396..0x239A,
+      property => 'ON',
+    ),
+
+    '0x239B..0x23B3' => %(
+      codepoint => 0x239B..0x23B3,
+      property => 'ON',
+    ),
+
+    '0x23B4..0x23DB' => %(
+      codepoint => 0x23B4..0x23DB,
+      property => 'ON',
+    ),
+
+    '0x23DC..0x23E1' => %(
+      codepoint => 0x23DC..0x23E1,
+      property => 'ON',
+    ),
+
+    '0x23E2..0x23FE' => %(
+      codepoint => 0x23E2..0x23FE,
+      property => 'ON',
+    ),
+
+    '0x2400..0x2426' => %(
+      codepoint => 0x2400..0x2426,
+      property => 'ON',
+    ),
+
+    '0x2440..0x244A' => %(
+      codepoint => 0x2440..0x244A,
+      property => 'ON',
+    ),
+
+    '0x2460..0x2487' => %(
+      codepoint => 0x2460..0x2487,
+      property => 'ON',
+    ),
+
+    '0x2488..0x249B' => %(
+      codepoint => 0x2488..0x249B,
+      property => 'EN',
+    ),
+
+    '0x249C..0x24E9' => %(
+      codepoint => 0x249C..0x24E9,
+      property => 'L',
+    ),
+
+    '0x24EA..0x24FF' => %(
+      codepoint => 0x24EA..0x24FF,
+      property => 'ON',
+    ),
+
+    '0x2500..0x25B6' => %(
+      codepoint => 0x2500..0x25B6,
+      property => 'ON',
+    ),
+
+    '0x25B7' => %(
+      codepoint => 0x25B7,
+      property => 'ON',
+    ),
+
+    '0x25B8..0x25C0' => %(
+      codepoint => 0x25B8..0x25C0,
+      property => 'ON',
+    ),
+
+    '0x25C1' => %(
+      codepoint => 0x25C1,
+      property => 'ON',
+    ),
+
+    '0x25C2..0x25F7' => %(
+      codepoint => 0x25C2..0x25F7,
+      property => 'ON',
+    ),
+
+    '0x25F8..0x25FF' => %(
+      codepoint => 0x25F8..0x25FF,
+      property => 'ON',
+    ),
+
+    '0x2600..0x266E' => %(
+      codepoint => 0x2600..0x266E,
+      property => 'ON',
+    ),
+
+    '0x266F' => %(
+      codepoint => 0x266F,
+      property => 'ON',
+    ),
+
+    '0x2670..0x26AB' => %(
+      codepoint => 0x2670..0x26AB,
+      property => 'ON',
+    ),
+
+    '0x26AC' => %(
+      codepoint => 0x26AC,
+      property => 'L',
+    ),
+
+    '0x26AD..0x2767' => %(
+      codepoint => 0x26AD..0x2767,
+      property => 'ON',
+    ),
+
+    '0x2768' => %(
+      codepoint => 0x2768,
+      property => 'ON',
+    ),
+
+    '0x2769' => %(
+      codepoint => 0x2769,
+      property => 'ON',
+    ),
+
+    '0x276A' => %(
+      codepoint => 0x276A,
+      property => 'ON',
+    ),
+
+    '0x276B' => %(
+      codepoint => 0x276B,
+      property => 'ON',
+    ),
+
+    '0x276C' => %(
+      codepoint => 0x276C,
+      property => 'ON',
+    ),
+
+    '0x276D' => %(
+      codepoint => 0x276D,
+      property => 'ON',
+    ),
+
+    '0x276E' => %(
+      codepoint => 0x276E,
+      property => 'ON',
+    ),
+
+    '0x276F' => %(
+      codepoint => 0x276F,
+      property => 'ON',
+    ),
+
+    '0x2770' => %(
+      codepoint => 0x2770,
+      property => 'ON',
+    ),
+
+    '0x2771' => %(
+      codepoint => 0x2771,
+      property => 'ON',
+    ),
+
+    '0x2772' => %(
+      codepoint => 0x2772,
+      property => 'ON',
+    ),
+
+    '0x2773' => %(
+      codepoint => 0x2773,
+      property => 'ON',
+    ),
+
+    '0x2774' => %(
+      codepoint => 0x2774,
+      property => 'ON',
+    ),
+
+    '0x2775' => %(
+      codepoint => 0x2775,
+      property => 'ON',
+    ),
+
+    '0x2776..0x2793' => %(
+      codepoint => 0x2776..0x2793,
+      property => 'ON',
+    ),
+
+    '0x2794..0x27BF' => %(
+      codepoint => 0x2794..0x27BF,
+      property => 'ON',
+    ),
+
+    '0x27C0..0x27C4' => %(
+      codepoint => 0x27C0..0x27C4,
+      property => 'ON',
+    ),
+
+    '0x27C5' => %(
+      codepoint => 0x27C5,
+      property => 'ON',
+    ),
+
+    '0x27C6' => %(
+      codepoint => 0x27C6,
+      property => 'ON',
+    ),
+
+    '0x27C7..0x27E5' => %(
+      codepoint => 0x27C7..0x27E5,
+      property => 'ON',
+    ),
+
+    '0x27E6' => %(
+      codepoint => 0x27E6,
+      property => 'ON',
+    ),
+
+    '0x27E7' => %(
+      codepoint => 0x27E7,
+      property => 'ON',
+    ),
+
+    '0x27E8' => %(
+      codepoint => 0x27E8,
+      property => 'ON',
+    ),
+
+    '0x27E9' => %(
+      codepoint => 0x27E9,
+      property => 'ON',
+    ),
+
+    '0x27EA' => %(
+      codepoint => 0x27EA,
+      property => 'ON',
+    ),
+
+    '0x27EB' => %(
+      codepoint => 0x27EB,
+      property => 'ON',
+    ),
+
+    '0x27EC' => %(
+      codepoint => 0x27EC,
+      property => 'ON',
+    ),
+
+    '0x27ED' => %(
+      codepoint => 0x27ED,
+      property => 'ON',
+    ),
+
+    '0x27EE' => %(
+      codepoint => 0x27EE,
+      property => 'ON',
+    ),
+
+    '0x27EF' => %(
+      codepoint => 0x27EF,
+      property => 'ON',
+    ),
+
+    '0x27F0..0x27FF' => %(
+      codepoint => 0x27F0..0x27FF,
+      property => 'ON',
+    ),
+
+    '0x2800..0x28FF' => %(
+      codepoint => 0x2800..0x28FF,
+      property => 'L',
+    ),
+
+    '0x2900..0x2982' => %(
+      codepoint => 0x2900..0x2982,
+      property => 'ON',
+    ),
+
+    '0x2983' => %(
+      codepoint => 0x2983,
+      property => 'ON',
+    ),
+
+    '0x2984' => %(
+      codepoint => 0x2984,
+      property => 'ON',
+    ),
+
+    '0x2985' => %(
+      codepoint => 0x2985,
+      property => 'ON',
+    ),
+
+    '0x2986' => %(
+      codepoint => 0x2986,
+      property => 'ON',
+    ),
+
+    '0x2987' => %(
+      codepoint => 0x2987,
+      property => 'ON',
+    ),
+
+    '0x2988' => %(
+      codepoint => 0x2988,
+      property => 'ON',
+    ),
+
+    '0x2989' => %(
+      codepoint => 0x2989,
+      property => 'ON',
+    ),
+
+    '0x298A' => %(
+      codepoint => 0x298A,
+      property => 'ON',
+    ),
+
+    '0x298B' => %(
+      codepoint => 0x298B,
+      property => 'ON',
+    ),
+
+    '0x298C' => %(
+      codepoint => 0x298C,
+      property => 'ON',
+    ),
+
+    '0x298D' => %(
+      codepoint => 0x298D,
+      property => 'ON',
+    ),
+
+    '0x298E' => %(
+      codepoint => 0x298E,
+      property => 'ON',
+    ),
+
+    '0x298F' => %(
+      codepoint => 0x298F,
+      property => 'ON',
+    ),
+
+    '0x2990' => %(
+      codepoint => 0x2990,
+      property => 'ON',
+    ),
+
+    '0x2991' => %(
+      codepoint => 0x2991,
+      property => 'ON',
+    ),
+
+    '0x2992' => %(
+      codepoint => 0x2992,
+      property => 'ON',
+    ),
+
+    '0x2993' => %(
+      codepoint => 0x2993,
+      property => 'ON',
+    ),
+
+    '0x2994' => %(
+      codepoint => 0x2994,
+      property => 'ON',
+    ),
+
+    '0x2995' => %(
+      codepoint => 0x2995,
+      property => 'ON',
+    ),
+
+    '0x2996' => %(
+      codepoint => 0x2996,
+      property => 'ON',
+    ),
+
+    '0x2997' => %(
+      codepoint => 0x2997,
+      property => 'ON',
+    ),
+
+    '0x2998' => %(
+      codepoint => 0x2998,
+      property => 'ON',
+    ),
+
+    '0x2999..0x29D7' => %(
+      codepoint => 0x2999..0x29D7,
+      property => 'ON',
+    ),
+
+    '0x29D8' => %(
+      codepoint => 0x29D8,
+      property => 'ON',
+    ),
+
+    '0x29D9' => %(
+      codepoint => 0x29D9,
+      property => 'ON',
+    ),
+
+    '0x29DA' => %(
+      codepoint => 0x29DA,
+      property => 'ON',
+    ),
+
+    '0x29DB' => %(
+      codepoint => 0x29DB,
+      property => 'ON',
+    ),
+
+    '0x29DC..0x29FB' => %(
+      codepoint => 0x29DC..0x29FB,
+      property => 'ON',
+    ),
+
+    '0x29FC' => %(
+      codepoint => 0x29FC,
+      property => 'ON',
+    ),
+
+    '0x29FD' => %(
+      codepoint => 0x29FD,
+      property => 'ON',
+    ),
+
+    '0x29FE..0x2AFF' => %(
+      codepoint => 0x29FE..0x2AFF,
+      property => 'ON',
+    ),
+
+    '0x2A700..0x2B734' => %(
+      codepoint => 0x2A700..0x2B734,
+      property => 'L',
+    ),
+
+    '0x2B00..0x2B2F' => %(
+      codepoint => 0x2B00..0x2B2F,
+      property => 'ON',
+    ),
+
+    '0x2B30..0x2B44' => %(
+      codepoint => 0x2B30..0x2B44,
+      property => 'ON',
+    ),
+
+    '0x2B45..0x2B46' => %(
+      codepoint => 0x2B45..0x2B46,
+      property => 'ON',
+    ),
+
+    '0x2B47..0x2B4C' => %(
+      codepoint => 0x2B47..0x2B4C,
+      property => 'ON',
+    ),
+
+    '0x2B4D..0x2B73' => %(
+      codepoint => 0x2B4D..0x2B73,
+      property => 'ON',
+    ),
+
+    '0x2B740..0x2B81D' => %(
+      codepoint => 0x2B740..0x2B81D,
+      property => 'L',
+    ),
+
+    '0x2B76..0x2B95' => %(
+      codepoint => 0x2B76..0x2B95,
+      property => 'ON',
+    ),
+
+    '0x2B820..0x2CEA1' => %(
+      codepoint => 0x2B820..0x2CEA1,
+      property => 'L',
+    ),
+
+    '0x2B98..0x2BB9' => %(
+      codepoint => 0x2B98..0x2BB9,
+      property => 'ON',
+    ),
+
+    '0x2BBD..0x2BC8' => %(
+      codepoint => 0x2BBD..0x2BC8,
+      property => 'ON',
+    ),
+
+    '0x2BCA..0x2BD1' => %(
+      codepoint => 0x2BCA..0x2BD1,
+      property => 'ON',
+    ),
+
+    '0x2BEC..0x2BEF' => %(
+      codepoint => 0x2BEC..0x2BEF,
+      property => 'ON',
+    ),
+
+    '0x2C00..0x2C2E' => %(
+      codepoint => 0x2C00..0x2C2E,
+      property => 'L',
+    ),
+
+    '0x2C30..0x2C5E' => %(
+      codepoint => 0x2C30..0x2C5E,
+      property => 'L',
+    ),
+
+    '0x2C60..0x2C7B' => %(
+      codepoint => 0x2C60..0x2C7B,
+      property => 'L',
+    ),
+
+    '0x2C7C..0x2C7D' => %(
+      codepoint => 0x2C7C..0x2C7D,
+      property => 'L',
+    ),
+
+    '0x2C7E..0x2CE4' => %(
+      codepoint => 0x2C7E..0x2CE4,
+      property => 'L',
+    ),
+
+    '0x2CE5..0x2CEA' => %(
+      codepoint => 0x2CE5..0x2CEA,
+      property => 'ON',
+    ),
+
+    '0x2CEB..0x2CEE' => %(
+      codepoint => 0x2CEB..0x2CEE,
+      property => 'L',
+    ),
+
+    '0x2CEF..0x2CF1' => %(
+      codepoint => 0x2CEF..0x2CF1,
+      property => 'NSM',
+    ),
+
+    '0x2CF2..0x2CF3' => %(
+      codepoint => 0x2CF2..0x2CF3,
+      property => 'L',
+    ),
+
+    '0x2CF9..0x2CFC' => %(
+      codepoint => 0x2CF9..0x2CFC,
+      property => 'ON',
+    ),
+
+    '0x2CFD' => %(
+      codepoint => 0x2CFD,
+      property => 'ON',
+    ),
+
+    '0x2CFE..0x2CFF' => %(
+      codepoint => 0x2CFE..0x2CFF,
+      property => 'ON',
+    ),
+
+    '0x2D00..0x2D25' => %(
+      codepoint => 0x2D00..0x2D25,
+      property => 'L',
+    ),
+
+    '0x2D27' => %(
+      codepoint => 0x2D27,
+      property => 'L',
+    ),
+
+    '0x2D2D' => %(
+      codepoint => 0x2D2D,
+      property => 'L',
+    ),
+
+    '0x2D30..0x2D67' => %(
+      codepoint => 0x2D30..0x2D67,
+      property => 'L',
+    ),
+
+    '0x2D6F' => %(
+      codepoint => 0x2D6F,
+      property => 'L',
+    ),
+
+    '0x2D70' => %(
+      codepoint => 0x2D70,
+      property => 'L',
+    ),
+
+    '0x2D7F' => %(
+      codepoint => 0x2D7F,
+      property => 'NSM',
+    ),
+
+    '0x2D80..0x2D96' => %(
+      codepoint => 0x2D80..0x2D96,
+      property => 'L',
+    ),
+
+    '0x2DA0..0x2DA6' => %(
+      codepoint => 0x2DA0..0x2DA6,
+      property => 'L',
+    ),
+
+    '0x2DA8..0x2DAE' => %(
+      codepoint => 0x2DA8..0x2DAE,
+      property => 'L',
+    ),
+
+    '0x2DB0..0x2DB6' => %(
+      codepoint => 0x2DB0..0x2DB6,
+      property => 'L',
+    ),
+
+    '0x2DB8..0x2DBE' => %(
+      codepoint => 0x2DB8..0x2DBE,
+      property => 'L',
+    ),
+
+    '0x2DC0..0x2DC6' => %(
+      codepoint => 0x2DC0..0x2DC6,
+      property => 'L',
+    ),
+
+    '0x2DC8..0x2DCE' => %(
+      codepoint => 0x2DC8..0x2DCE,
+      property => 'L',
+    ),
+
+    '0x2DD0..0x2DD6' => %(
+      codepoint => 0x2DD0..0x2DD6,
+      property => 'L',
+    ),
+
+    '0x2DD8..0x2DDE' => %(
+      codepoint => 0x2DD8..0x2DDE,
+      property => 'L',
+    ),
+
+    '0x2DE0..0x2DFF' => %(
+      codepoint => 0x2DE0..0x2DFF,
+      property => 'NSM',
+    ),
+
+    '0x2E00..0x2E01' => %(
+      codepoint => 0x2E00..0x2E01,
+      property => 'ON',
+    ),
+
+    '0x2E02' => %(
+      codepoint => 0x2E02,
+      property => 'ON',
+    ),
+
+    '0x2E03' => %(
+      codepoint => 0x2E03,
+      property => 'ON',
+    ),
+
+    '0x2E04' => %(
+      codepoint => 0x2E04,
+      property => 'ON',
+    ),
+
+    '0x2E05' => %(
+      codepoint => 0x2E05,
+      property => 'ON',
+    ),
+
+    '0x2E06..0x2E08' => %(
+      codepoint => 0x2E06..0x2E08,
+      property => 'ON',
+    ),
+
+    '0x2E09' => %(
+      codepoint => 0x2E09,
+      property => 'ON',
+    ),
+
+    '0x2E0A' => %(
+      codepoint => 0x2E0A,
+      property => 'ON',
+    ),
+
+    '0x2E0B' => %(
+      codepoint => 0x2E0B,
+      property => 'ON',
+    ),
+
+    '0x2E0C' => %(
+      codepoint => 0x2E0C,
+      property => 'ON',
+    ),
+
+    '0x2E0D' => %(
+      codepoint => 0x2E0D,
+      property => 'ON',
+    ),
+
+    '0x2E0E..0x2E16' => %(
+      codepoint => 0x2E0E..0x2E16,
+      property => 'ON',
+    ),
+
+    '0x2E17' => %(
+      codepoint => 0x2E17,
+      property => 'ON',
+    ),
+
+    '0x2E18..0x2E19' => %(
+      codepoint => 0x2E18..0x2E19,
+      property => 'ON',
+    ),
+
+    '0x2E1A' => %(
+      codepoint => 0x2E1A,
+      property => 'ON',
+    ),
+
+    '0x2E1B' => %(
+      codepoint => 0x2E1B,
+      property => 'ON',
+    ),
+
+    '0x2E1C' => %(
+      codepoint => 0x2E1C,
+      property => 'ON',
+    ),
+
+    '0x2E1D' => %(
+      codepoint => 0x2E1D,
+      property => 'ON',
+    ),
+
+    '0x2E1E..0x2E1F' => %(
+      codepoint => 0x2E1E..0x2E1F,
+      property => 'ON',
+    ),
+
+    '0x2E20' => %(
+      codepoint => 0x2E20,
+      property => 'ON',
+    ),
+
+    '0x2E21' => %(
+      codepoint => 0x2E21,
+      property => 'ON',
+    ),
+
+    '0x2E22' => %(
+      codepoint => 0x2E22,
+      property => 'ON',
+    ),
+
+    '0x2E23' => %(
+      codepoint => 0x2E23,
+      property => 'ON',
+    ),
+
+    '0x2E24' => %(
+      codepoint => 0x2E24,
+      property => 'ON',
+    ),
+
+    '0x2E25' => %(
+      codepoint => 0x2E25,
+      property => 'ON',
+    ),
+
+    '0x2E26' => %(
+      codepoint => 0x2E26,
+      property => 'ON',
+    ),
+
+    '0x2E27' => %(
+      codepoint => 0x2E27,
+      property => 'ON',
+    ),
+
+    '0x2E28' => %(
+      codepoint => 0x2E28,
+      property => 'ON',
+    ),
+
+    '0x2E29' => %(
+      codepoint => 0x2E29,
+      property => 'ON',
+    ),
+
+    '0x2E2A..0x2E2E' => %(
+      codepoint => 0x2E2A..0x2E2E,
+      property => 'ON',
+    ),
+
+    '0x2E2F' => %(
+      codepoint => 0x2E2F,
+      property => 'ON',
+    ),
+
+    '0x2E30..0x2E39' => %(
+      codepoint => 0x2E30..0x2E39,
+      property => 'ON',
+    ),
+
+    '0x2E3A..0x2E3B' => %(
+      codepoint => 0x2E3A..0x2E3B,
+      property => 'ON',
+    ),
+
+    '0x2E3C..0x2E3F' => %(
+      codepoint => 0x2E3C..0x2E3F,
+      property => 'ON',
+    ),
+
+    '0x2E40' => %(
+      codepoint => 0x2E40,
+      property => 'ON',
+    ),
+
+    '0x2E41' => %(
+      codepoint => 0x2E41,
+      property => 'ON',
+    ),
+
+    '0x2E42' => %(
+      codepoint => 0x2E42,
+      property => 'ON',
+    ),
+
+    '0x2E43..0x2E44' => %(
+      codepoint => 0x2E43..0x2E44,
+      property => 'ON',
+    ),
+
+    '0x2E80..0x2E99' => %(
+      codepoint => 0x2E80..0x2E99,
+      property => 'ON',
+    ),
+
+    '0x2E9B..0x2EF3' => %(
+      codepoint => 0x2E9B..0x2EF3,
+      property => 'ON',
+    ),
+
+    '0x2F00..0x2FD5' => %(
+      codepoint => 0x2F00..0x2FD5,
+      property => 'ON',
+    ),
+
+    '0x2F800..0x2FA1D' => %(
+      codepoint => 0x2F800..0x2FA1D,
+      property => 'L',
+    ),
+
+    '0x2FF0..0x2FFB' => %(
+      codepoint => 0x2FF0..0x2FFB,
+      property => 'ON',
+    ),
+
+    '0x2FFFE..0x2FFFF' => %(
+      codepoint => 0x2FFFE..0x2FFFF,
+      property => 'BN',
+    ),
+
+    '0x3000' => %(
+      codepoint => 0x3000,
+      property => 'WS',
+    ),
+
+    '0x3001..0x3003' => %(
+      codepoint => 0x3001..0x3003,
+      property => 'ON',
+    ),
+
+    '0x3004' => %(
+      codepoint => 0x3004,
+      property => 'ON',
+    ),
+
+    '0x3005' => %(
+      codepoint => 0x3005,
+      property => 'L',
+    ),
+
+    '0x3006' => %(
+      codepoint => 0x3006,
+      property => 'L',
+    ),
+
+    '0x3007' => %(
+      codepoint => 0x3007,
+      property => 'L',
+    ),
+
+    '0x3008' => %(
+      codepoint => 0x3008,
+      property => 'ON',
+    ),
+
+    '0x3009' => %(
+      codepoint => 0x3009,
+      property => 'ON',
+    ),
+
+    '0x300A' => %(
+      codepoint => 0x300A,
+      property => 'ON',
+    ),
+
+    '0x300B' => %(
+      codepoint => 0x300B,
+      property => 'ON',
+    ),
+
+    '0x300C' => %(
+      codepoint => 0x300C,
+      property => 'ON',
+    ),
+
+    '0x300D' => %(
+      codepoint => 0x300D,
+      property => 'ON',
+    ),
+
+    '0x300E' => %(
+      codepoint => 0x300E,
+      property => 'ON',
+    ),
+
+    '0x300F' => %(
+      codepoint => 0x300F,
+      property => 'ON',
+    ),
+
+    '0x3010' => %(
+      codepoint => 0x3010,
+      property => 'ON',
+    ),
+
+    '0x3011' => %(
+      codepoint => 0x3011,
+      property => 'ON',
+    ),
+
+    '0x3012..0x3013' => %(
+      codepoint => 0x3012..0x3013,
+      property => 'ON',
+    ),
+
+    '0x3014' => %(
+      codepoint => 0x3014,
+      property => 'ON',
+    ),
+
+    '0x3015' => %(
+      codepoint => 0x3015,
+      property => 'ON',
+    ),
+
+    '0x3016' => %(
+      codepoint => 0x3016,
+      property => 'ON',
+    ),
+
+    '0x3017' => %(
+      codepoint => 0x3017,
+      property => 'ON',
+    ),
+
+    '0x3018' => %(
+      codepoint => 0x3018,
+      property => 'ON',
+    ),
+
+    '0x3019' => %(
+      codepoint => 0x3019,
+      property => 'ON',
+    ),
+
+    '0x301A' => %(
+      codepoint => 0x301A,
+      property => 'ON',
+    ),
+
+    '0x301B' => %(
+      codepoint => 0x301B,
+      property => 'ON',
+    ),
+
+    '0x301C' => %(
+      codepoint => 0x301C,
+      property => 'ON',
+    ),
+
+    '0x301D' => %(
+      codepoint => 0x301D,
+      property => 'ON',
+    ),
+
+    '0x301E..0x301F' => %(
+      codepoint => 0x301E..0x301F,
+      property => 'ON',
+    ),
+
+    '0x3020' => %(
+      codepoint => 0x3020,
+      property => 'ON',
+    ),
+
+    '0x3021..0x3029' => %(
+      codepoint => 0x3021..0x3029,
+      property => 'L',
+    ),
+
+    '0x302A..0x302D' => %(
+      codepoint => 0x302A..0x302D,
+      property => 'NSM',
+    ),
+
+    '0x302E..0x302F' => %(
+      codepoint => 0x302E..0x302F,
+      property => 'L',
+    ),
+
+    '0x3030' => %(
+      codepoint => 0x3030,
+      property => 'ON',
+    ),
+
+    '0x3031..0x3035' => %(
+      codepoint => 0x3031..0x3035,
+      property => 'L',
+    ),
+
+    '0x3036..0x3037' => %(
+      codepoint => 0x3036..0x3037,
+      property => 'ON',
+    ),
+
+    '0x3038..0x303A' => %(
+      codepoint => 0x3038..0x303A,
+      property => 'L',
+    ),
+
+    '0x303B' => %(
+      codepoint => 0x303B,
+      property => 'L',
+    ),
+
+    '0x303C' => %(
+      codepoint => 0x303C,
+      property => 'L',
+    ),
+
+    '0x303D' => %(
+      codepoint => 0x303D,
+      property => 'ON',
+    ),
+
+    '0x303E..0x303F' => %(
+      codepoint => 0x303E..0x303F,
+      property => 'ON',
+    ),
+
+    '0x3041..0x3096' => %(
+      codepoint => 0x3041..0x3096,
+      property => 'L',
+    ),
+
+    '0x3099..0x309A' => %(
+      codepoint => 0x3099..0x309A,
+      property => 'NSM',
+    ),
+
+    '0x309B..0x309C' => %(
+      codepoint => 0x309B..0x309C,
+      property => 'ON',
+    ),
+
+    '0x309D..0x309E' => %(
+      codepoint => 0x309D..0x309E,
+      property => 'L',
+    ),
+
+    '0x309F' => %(
+      codepoint => 0x309F,
+      property => 'L',
+    ),
+
+    '0x30A0' => %(
+      codepoint => 0x30A0,
+      property => 'ON',
+    ),
+
+    '0x30A1..0x30FA' => %(
+      codepoint => 0x30A1..0x30FA,
+      property => 'L',
+    ),
+
+    '0x30FB' => %(
+      codepoint => 0x30FB,
+      property => 'ON',
+    ),
+
+    '0x30FC..0x30FE' => %(
+      codepoint => 0x30FC..0x30FE,
+      property => 'L',
+    ),
+
+    '0x30FF' => %(
+      codepoint => 0x30FF,
+      property => 'L',
+    ),
+
+    '0x3105..0x312D' => %(
+      codepoint => 0x3105..0x312D,
+      property => 'L',
+    ),
+
+    '0x3131..0x318E' => %(
+      codepoint => 0x3131..0x318E,
+      property => 'L',
+    ),
+
+    '0x3190..0x3191' => %(
+      codepoint => 0x3190..0x3191,
+      property => 'L',
+    ),
+
+    '0x3192..0x3195' => %(
+      codepoint => 0x3192..0x3195,
+      property => 'L',
+    ),
+
+    '0x3196..0x319F' => %(
+      codepoint => 0x3196..0x319F,
+      property => 'L',
+    ),
+
+    '0x31A0..0x31BA' => %(
+      codepoint => 0x31A0..0x31BA,
+      property => 'L',
+    ),
+
+    '0x31C0..0x31E3' => %(
+      codepoint => 0x31C0..0x31E3,
+      property => 'ON',
+    ),
+
+    '0x31F0..0x31FF' => %(
+      codepoint => 0x31F0..0x31FF,
+      property => 'L',
+    ),
+
+    '0x3200..0x321C' => %(
+      codepoint => 0x3200..0x321C,
+      property => 'L',
+    ),
+
+    '0x321D..0x321E' => %(
+      codepoint => 0x321D..0x321E,
+      property => 'ON',
+    ),
+
+    '0x3220..0x3229' => %(
+      codepoint => 0x3220..0x3229,
+      property => 'L',
+    ),
+
+    '0x322A..0x3247' => %(
+      codepoint => 0x322A..0x3247,
+      property => 'L',
+    ),
+
+    '0x3248..0x324F' => %(
+      codepoint => 0x3248..0x324F,
+      property => 'L',
+    ),
+
+    '0x3250' => %(
+      codepoint => 0x3250,
+      property => 'ON',
+    ),
+
+    '0x3251..0x325F' => %(
+      codepoint => 0x3251..0x325F,
+      property => 'ON',
+    ),
+
+    '0x3260..0x327B' => %(
+      codepoint => 0x3260..0x327B,
+      property => 'L',
+    ),
+
+    '0x327C..0x327E' => %(
+      codepoint => 0x327C..0x327E,
+      property => 'ON',
+    ),
+
+    '0x327F' => %(
+      codepoint => 0x327F,
+      property => 'L',
+    ),
+
+    '0x3280..0x3289' => %(
+      codepoint => 0x3280..0x3289,
+      property => 'L',
+    ),
+
+    '0x328A..0x32B0' => %(
+      codepoint => 0x328A..0x32B0,
+      property => 'L',
+    ),
+
+    '0x32B1..0x32BF' => %(
+      codepoint => 0x32B1..0x32BF,
+      property => 'ON',
+    ),
+
+    '0x32C0..0x32CB' => %(
+      codepoint => 0x32C0..0x32CB,
+      property => 'L',
+    ),
+
+    '0x32CC..0x32CF' => %(
+      codepoint => 0x32CC..0x32CF,
+      property => 'ON',
+    ),
+
+    '0x32D0..0x32FE' => %(
+      codepoint => 0x32D0..0x32FE,
+      property => 'L',
+    ),
+
+    '0x3300..0x3376' => %(
+      codepoint => 0x3300..0x3376,
+      property => 'L',
+    ),
+
+    '0x3377..0x337A' => %(
+      codepoint => 0x3377..0x337A,
+      property => 'ON',
+    ),
+
+    '0x337B..0x33DD' => %(
+      codepoint => 0x337B..0x33DD,
+      property => 'L',
+    ),
+
+    '0x33DE..0x33DF' => %(
+      codepoint => 0x33DE..0x33DF,
+      property => 'ON',
+    ),
+
+    '0x33E0..0x33FE' => %(
+      codepoint => 0x33E0..0x33FE,
+      property => 'L',
+    ),
+
+    '0x33FF' => %(
+      codepoint => 0x33FF,
+      property => 'ON',
+    ),
+
+    '0x3400..0x4DB5' => %(
+      codepoint => 0x3400..0x4DB5,
+      property => 'L',
+    ),
+
+    '0x3FFFE..0x3FFFF' => %(
+      codepoint => 0x3FFFE..0x3FFFF,
+      property => 'BN',
+    ),
+
+    '0x4DC0..0x4DFF' => %(
+      codepoint => 0x4DC0..0x4DFF,
+      property => 'ON',
+    ),
+
+    '0x4E00..0x9FD5' => %(
+      codepoint => 0x4E00..0x9FD5,
+      property => 'L',
+    ),
+
+    '0x4FFFE..0x4FFFF' => %(
+      codepoint => 0x4FFFE..0x4FFFF,
+      property => 'BN',
+    ),
+
+    '0x5FFFE..0x5FFFF' => %(
+      codepoint => 0x5FFFE..0x5FFFF,
+      property => 'BN',
+    ),
+
+    '0x6FFFE..0x6FFFF' => %(
+      codepoint => 0x6FFFE..0x6FFFF,
+      property => 'BN',
+    ),
+
+    '0x7FFFE..0x7FFFF' => %(
+      codepoint => 0x7FFFE..0x7FFFF,
+      property => 'BN',
+    ),
+
+    '0x8FFFE..0x8FFFF' => %(
+      codepoint => 0x8FFFE..0x8FFFF,
+      property => 'BN',
+    ),
+
+    '0x9FFFE..0x9FFFF' => %(
+      codepoint => 0x9FFFE..0x9FFFF,
+      property => 'BN',
+    ),
+
+    '0xA000..0xA014' => %(
+      codepoint => 0xA000..0xA014,
+      property => 'L',
+    ),
+
+    '0xA015' => %(
+      codepoint => 0xA015,
+      property => 'L',
+    ),
+
+    '0xA016..0xA48C' => %(
+      codepoint => 0xA016..0xA48C,
+      property => 'L',
+    ),
+
+    '0xA490..0xA4C6' => %(
+      codepoint => 0xA490..0xA4C6,
+      property => 'ON',
+    ),
+
+    '0xA4D0..0xA4F7' => %(
+      codepoint => 0xA4D0..0xA4F7,
+      property => 'L',
+    ),
+
+    '0xA4F8..0xA4FD' => %(
+      codepoint => 0xA4F8..0xA4FD,
+      property => 'L',
+    ),
+
+    '0xA4FE..0xA4FF' => %(
+      codepoint => 0xA4FE..0xA4FF,
+      property => 'L',
+    ),
+
+    '0xA500..0xA60B' => %(
+      codepoint => 0xA500..0xA60B,
+      property => 'L',
+    ),
+
+    '0xA60C' => %(
+      codepoint => 0xA60C,
+      property => 'L',
+    ),
+
+    '0xA60D..0xA60F' => %(
+      codepoint => 0xA60D..0xA60F,
+      property => 'ON',
+    ),
+
+    '0xA610..0xA61F' => %(
+      codepoint => 0xA610..0xA61F,
+      property => 'L',
+    ),
+
+    '0xA620..0xA629' => %(
+      codepoint => 0xA620..0xA629,
+      property => 'L',
+    ),
+
+    '0xA62A..0xA62B' => %(
+      codepoint => 0xA62A..0xA62B,
+      property => 'L',
+    ),
+
+    '0xA640..0xA66D' => %(
+      codepoint => 0xA640..0xA66D,
+      property => 'L',
+    ),
+
+    '0xA66E' => %(
+      codepoint => 0xA66E,
+      property => 'L',
+    ),
+
+    '0xA66F' => %(
+      codepoint => 0xA66F,
+      property => 'NSM',
+    ),
+
+    '0xA670..0xA672' => %(
+      codepoint => 0xA670..0xA672,
+      property => 'NSM',
+    ),
+
+    '0xA673' => %(
+      codepoint => 0xA673,
+      property => 'ON',
+    ),
+
+    '0xA674..0xA67D' => %(
+      codepoint => 0xA674..0xA67D,
+      property => 'NSM',
+    ),
+
+    '0xA67E' => %(
+      codepoint => 0xA67E,
+      property => 'ON',
+    ),
+
+    '0xA67F' => %(
+      codepoint => 0xA67F,
+      property => 'ON',
+    ),
+
+    '0xA680..0xA69B' => %(
+      codepoint => 0xA680..0xA69B,
+      property => 'L',
+    ),
+
+    '0xA69C..0xA69D' => %(
+      codepoint => 0xA69C..0xA69D,
+      property => 'L',
+    ),
+
+    '0xA69E..0xA69F' => %(
+      codepoint => 0xA69E..0xA69F,
+      property => 'NSM',
+    ),
+
+    '0xA6A0..0xA6E5' => %(
+      codepoint => 0xA6A0..0xA6E5,
+      property => 'L',
+    ),
+
+    '0xA6E6..0xA6EF' => %(
+      codepoint => 0xA6E6..0xA6EF,
+      property => 'L',
+    ),
+
+    '0xA6F0..0xA6F1' => %(
+      codepoint => 0xA6F0..0xA6F1,
+      property => 'NSM',
+    ),
+
+    '0xA6F2..0xA6F7' => %(
+      codepoint => 0xA6F2..0xA6F7,
+      property => 'L',
+    ),
+
+    '0xA700..0xA716' => %(
+      codepoint => 0xA700..0xA716,
+      property => 'ON',
+    ),
+
+    '0xA717..0xA71F' => %(
+      codepoint => 0xA717..0xA71F,
+      property => 'ON',
+    ),
+
+    '0xA720..0xA721' => %(
+      codepoint => 0xA720..0xA721,
+      property => 'ON',
+    ),
+
+    '0xA722..0xA76F' => %(
+      codepoint => 0xA722..0xA76F,
+      property => 'L',
+    ),
+
+    '0xA770' => %(
+      codepoint => 0xA770,
+      property => 'L',
+    ),
+
+    '0xA771..0xA787' => %(
+      codepoint => 0xA771..0xA787,
+      property => 'L',
+    ),
+
+    '0xA788' => %(
+      codepoint => 0xA788,
+      property => 'ON',
+    ),
+
+    '0xA789..0xA78A' => %(
+      codepoint => 0xA789..0xA78A,
+      property => 'L',
+    ),
+
+    '0xA78B..0xA78E' => %(
+      codepoint => 0xA78B..0xA78E,
+      property => 'L',
+    ),
+
+    '0xA78F' => %(
+      codepoint => 0xA78F,
+      property => 'L',
+    ),
+
+    '0xA790..0xA7AE' => %(
+      codepoint => 0xA790..0xA7AE,
+      property => 'L',
+    ),
+
+    '0xA7B0..0xA7B7' => %(
+      codepoint => 0xA7B0..0xA7B7,
+      property => 'L',
+    ),
+
+    '0xA7F7' => %(
+      codepoint => 0xA7F7,
+      property => 'L',
+    ),
+
+    '0xA7F8..0xA7F9' => %(
+      codepoint => 0xA7F8..0xA7F9,
+      property => 'L',
+    ),
+
+    '0xA7FA' => %(
+      codepoint => 0xA7FA,
+      property => 'L',
+    ),
+
+    '0xA7FB..0xA801' => %(
+      codepoint => 0xA7FB..0xA801,
+      property => 'L',
+    ),
+
+    '0xA802' => %(
+      codepoint => 0xA802,
+      property => 'NSM',
+    ),
+
+    '0xA803..0xA805' => %(
+      codepoint => 0xA803..0xA805,
+      property => 'L',
+    ),
+
+    '0xA806' => %(
+      codepoint => 0xA806,
+      property => 'NSM',
+    ),
+
+    '0xA807..0xA80A' => %(
+      codepoint => 0xA807..0xA80A,
+      property => 'L',
+    ),
+
+    '0xA80B' => %(
+      codepoint => 0xA80B,
+      property => 'NSM',
+    ),
+
+    '0xA80C..0xA822' => %(
+      codepoint => 0xA80C..0xA822,
+      property => 'L',
+    ),
+
+    '0xA823..0xA824' => %(
+      codepoint => 0xA823..0xA824,
+      property => 'L',
+    ),
+
+    '0xA825..0xA826' => %(
+      codepoint => 0xA825..0xA826,
+      property => 'NSM',
+    ),
+
+    '0xA827' => %(
+      codepoint => 0xA827,
+      property => 'L',
+    ),
+
+    '0xA828..0xA82B' => %(
+      codepoint => 0xA828..0xA82B,
+      property => 'ON',
+    ),
+
+    '0xA830..0xA835' => %(
+      codepoint => 0xA830..0xA835,
+      property => 'L',
+    ),
+
+    '0xA836..0xA837' => %(
+      codepoint => 0xA836..0xA837,
+      property => 'L',
+    ),
+
+    '0xA838' => %(
+      codepoint => 0xA838,
+      property => 'ET',
+    ),
+
+    '0xA839' => %(
+      codepoint => 0xA839,
+      property => 'ET',
+    ),
+
+    '0xA840..0xA873' => %(
+      codepoint => 0xA840..0xA873,
+      property => 'L',
+    ),
+
+    '0xA874..0xA877' => %(
+      codepoint => 0xA874..0xA877,
+      property => 'ON',
+    ),
+
+    '0xA880..0xA881' => %(
+      codepoint => 0xA880..0xA881,
+      property => 'L',
+    ),
+
+    '0xA882..0xA8B3' => %(
+      codepoint => 0xA882..0xA8B3,
+      property => 'L',
+    ),
+
+    '0xA8B4..0xA8C3' => %(
+      codepoint => 0xA8B4..0xA8C3,
+      property => 'L',
+    ),
+
+    '0xA8C4..0xA8C5' => %(
+      codepoint => 0xA8C4..0xA8C5,
+      property => 'NSM',
+    ),
+
+    '0xA8CE..0xA8CF' => %(
+      codepoint => 0xA8CE..0xA8CF,
+      property => 'L',
+    ),
+
+    '0xA8D0..0xA8D9' => %(
+      codepoint => 0xA8D0..0xA8D9,
+      property => 'L',
+    ),
+
+    '0xA8E0..0xA8F1' => %(
+      codepoint => 0xA8E0..0xA8F1,
+      property => 'NSM',
+    ),
+
+    '0xA8F2..0xA8F7' => %(
+      codepoint => 0xA8F2..0xA8F7,
+      property => 'L',
+    ),
+
+    '0xA8F8..0xA8FA' => %(
+      codepoint => 0xA8F8..0xA8FA,
+      property => 'L',
+    ),
+
+    '0xA8FB' => %(
+      codepoint => 0xA8FB,
+      property => 'L',
+    ),
+
+    '0xA8FC' => %(
+      codepoint => 0xA8FC,
+      property => 'L',
+    ),
+
+    '0xA8FD' => %(
+      codepoint => 0xA8FD,
+      property => 'L',
+    ),
+
+    '0xA900..0xA909' => %(
+      codepoint => 0xA900..0xA909,
+      property => 'L',
+    ),
+
+    '0xA90A..0xA925' => %(
+      codepoint => 0xA90A..0xA925,
+      property => 'L',
+    ),
+
+    '0xA926..0xA92D' => %(
+      codepoint => 0xA926..0xA92D,
+      property => 'NSM',
+    ),
+
+    '0xA92E..0xA92F' => %(
+      codepoint => 0xA92E..0xA92F,
+      property => 'L',
+    ),
+
+    '0xA930..0xA946' => %(
+      codepoint => 0xA930..0xA946,
+      property => 'L',
+    ),
+
+    '0xA947..0xA951' => %(
+      codepoint => 0xA947..0xA951,
+      property => 'NSM',
+    ),
+
+    '0xA952..0xA953' => %(
+      codepoint => 0xA952..0xA953,
+      property => 'L',
+    ),
+
+    '0xA95F' => %(
+      codepoint => 0xA95F,
+      property => 'L',
+    ),
+
+    '0xA960..0xA97C' => %(
+      codepoint => 0xA960..0xA97C,
+      property => 'L',
+    ),
+
+    '0xA980..0xA982' => %(
+      codepoint => 0xA980..0xA982,
+      property => 'NSM',
+    ),
+
+    '0xA983' => %(
+      codepoint => 0xA983,
+      property => 'L',
+    ),
+
+    '0xA984..0xA9B2' => %(
+      codepoint => 0xA984..0xA9B2,
+      property => 'L',
+    ),
+
+    '0xA9B3' => %(
+      codepoint => 0xA9B3,
+      property => 'NSM',
+    ),
+
+    '0xA9B4..0xA9B5' => %(
+      codepoint => 0xA9B4..0xA9B5,
+      property => 'L',
+    ),
+
+    '0xA9B6..0xA9B9' => %(
+      codepoint => 0xA9B6..0xA9B9,
+      property => 'NSM',
+    ),
+
+    '0xA9BA..0xA9BB' => %(
+      codepoint => 0xA9BA..0xA9BB,
+      property => 'L',
+    ),
+
+    '0xA9BC' => %(
+      codepoint => 0xA9BC,
+      property => 'NSM',
+    ),
+
+    '0xA9BD..0xA9C0' => %(
+      codepoint => 0xA9BD..0xA9C0,
+      property => 'L',
+    ),
+
+    '0xA9C1..0xA9CD' => %(
+      codepoint => 0xA9C1..0xA9CD,
+      property => 'L',
+    ),
+
+    '0xA9CF' => %(
+      codepoint => 0xA9CF,
+      property => 'L',
+    ),
+
+    '0xA9D0..0xA9D9' => %(
+      codepoint => 0xA9D0..0xA9D9,
+      property => 'L',
+    ),
+
+    '0xA9DE..0xA9DF' => %(
+      codepoint => 0xA9DE..0xA9DF,
+      property => 'L',
+    ),
+
+    '0xA9E0..0xA9E4' => %(
+      codepoint => 0xA9E0..0xA9E4,
+      property => 'L',
+    ),
+
+    '0xA9E5' => %(
+      codepoint => 0xA9E5,
+      property => 'NSM',
+    ),
+
+    '0xA9E6' => %(
+      codepoint => 0xA9E6,
+      property => 'L',
+    ),
+
+    '0xA9E7..0xA9EF' => %(
+      codepoint => 0xA9E7..0xA9EF,
+      property => 'L',
+    ),
+
+    '0xA9F0..0xA9F9' => %(
+      codepoint => 0xA9F0..0xA9F9,
+      property => 'L',
+    ),
+
+    '0xA9FA..0xA9FE' => %(
+      codepoint => 0xA9FA..0xA9FE,
+      property => 'L',
+    ),
+
+    '0xAA00..0xAA28' => %(
+      codepoint => 0xAA00..0xAA28,
+      property => 'L',
+    ),
+
+    '0xAA29..0xAA2E' => %(
+      codepoint => 0xAA29..0xAA2E,
+      property => 'NSM',
+    ),
+
+    '0xAA2F..0xAA30' => %(
+      codepoint => 0xAA2F..0xAA30,
+      property => 'L',
+    ),
+
+    '0xAA31..0xAA32' => %(
+      codepoint => 0xAA31..0xAA32,
+      property => 'NSM',
+    ),
+
+    '0xAA33..0xAA34' => %(
+      codepoint => 0xAA33..0xAA34,
+      property => 'L',
+    ),
+
+    '0xAA35..0xAA36' => %(
+      codepoint => 0xAA35..0xAA36,
+      property => 'NSM',
+    ),
+
+    '0xAA40..0xAA42' => %(
+      codepoint => 0xAA40..0xAA42,
+      property => 'L',
+    ),
+
+    '0xAA43' => %(
+      codepoint => 0xAA43,
+      property => 'NSM',
+    ),
+
+    '0xAA44..0xAA4B' => %(
+      codepoint => 0xAA44..0xAA4B,
+      property => 'L',
+    ),
+
+    '0xAA4C' => %(
+      codepoint => 0xAA4C,
+      property => 'NSM',
+    ),
+
+    '0xAA4D' => %(
+      codepoint => 0xAA4D,
+      property => 'L',
+    ),
+
+    '0xAA50..0xAA59' => %(
+      codepoint => 0xAA50..0xAA59,
+      property => 'L',
+    ),
+
+    '0xAA5C..0xAA5F' => %(
+      codepoint => 0xAA5C..0xAA5F,
+      property => 'L',
+    ),
+
+    '0xAA60..0xAA6F' => %(
+      codepoint => 0xAA60..0xAA6F,
+      property => 'L',
+    ),
+
+    '0xAA70' => %(
+      codepoint => 0xAA70,
+      property => 'L',
+    ),
+
+    '0xAA71..0xAA76' => %(
+      codepoint => 0xAA71..0xAA76,
+      property => 'L',
+    ),
+
+    '0xAA77..0xAA79' => %(
+      codepoint => 0xAA77..0xAA79,
+      property => 'L',
+    ),
+
+    '0xAA7A' => %(
+      codepoint => 0xAA7A,
+      property => 'L',
+    ),
+
+    '0xAA7B' => %(
+      codepoint => 0xAA7B,
+      property => 'L',
+    ),
+
+    '0xAA7C' => %(
+      codepoint => 0xAA7C,
+      property => 'NSM',
+    ),
+
+    '0xAA7D' => %(
+      codepoint => 0xAA7D,
+      property => 'L',
+    ),
+
+    '0xAA7E..0xAAAF' => %(
+      codepoint => 0xAA7E..0xAAAF,
+      property => 'L',
+    ),
+
+    '0xAAB0' => %(
+      codepoint => 0xAAB0,
+      property => 'NSM',
+    ),
+
+    '0xAAB1' => %(
+      codepoint => 0xAAB1,
+      property => 'L',
+    ),
+
+    '0xAAB2..0xAAB4' => %(
+      codepoint => 0xAAB2..0xAAB4,
+      property => 'NSM',
+    ),
+
+    '0xAAB5..0xAAB6' => %(
+      codepoint => 0xAAB5..0xAAB6,
+      property => 'L',
+    ),
+
+    '0xAAB7..0xAAB8' => %(
+      codepoint => 0xAAB7..0xAAB8,
+      property => 'NSM',
+    ),
+
+    '0xAAB9..0xAABD' => %(
+      codepoint => 0xAAB9..0xAABD,
+      property => 'L',
+    ),
+
+    '0xAABE..0xAABF' => %(
+      codepoint => 0xAABE..0xAABF,
+      property => 'NSM',
+    ),
+
+    '0xAAC0' => %(
+      codepoint => 0xAAC0,
+      property => 'L',
+    ),
+
+    '0xAAC1' => %(
+      codepoint => 0xAAC1,
+      property => 'NSM',
+    ),
+
+    '0xAAC2' => %(
+      codepoint => 0xAAC2,
+      property => 'L',
+    ),
+
+    '0xAADB..0xAADC' => %(
+      codepoint => 0xAADB..0xAADC,
+      property => 'L',
+    ),
+
+    '0xAADD' => %(
+      codepoint => 0xAADD,
+      property => 'L',
+    ),
+
+    '0xAADE..0xAADF' => %(
+      codepoint => 0xAADE..0xAADF,
+      property => 'L',
+    ),
+
+    '0xAAE0..0xAAEA' => %(
+      codepoint => 0xAAE0..0xAAEA,
+      property => 'L',
+    ),
+
+    '0xAAEB' => %(
+      codepoint => 0xAAEB,
+      property => 'L',
+    ),
+
+    '0xAAEC..0xAAED' => %(
+      codepoint => 0xAAEC..0xAAED,
+      property => 'NSM',
+    ),
+
+    '0xAAEE..0xAAEF' => %(
+      codepoint => 0xAAEE..0xAAEF,
+      property => 'L',
+    ),
+
+    '0xAAF0..0xAAF1' => %(
+      codepoint => 0xAAF0..0xAAF1,
+      property => 'L',
+    ),
+
+    '0xAAF2' => %(
+      codepoint => 0xAAF2,
+      property => 'L',
+    ),
+
+    '0xAAF3..0xAAF4' => %(
+      codepoint => 0xAAF3..0xAAF4,
+      property => 'L',
+    ),
+
+    '0xAAF5' => %(
+      codepoint => 0xAAF5,
+      property => 'L',
+    ),
+
+    '0xAAF6' => %(
+      codepoint => 0xAAF6,
+      property => 'NSM',
+    ),
+
+    '0xAB01..0xAB06' => %(
+      codepoint => 0xAB01..0xAB06,
+      property => 'L',
+    ),
+
+    '0xAB09..0xAB0E' => %(
+      codepoint => 0xAB09..0xAB0E,
+      property => 'L',
+    ),
+
+    '0xAB11..0xAB16' => %(
+      codepoint => 0xAB11..0xAB16,
+      property => 'L',
+    ),
+
+    '0xAB20..0xAB26' => %(
+      codepoint => 0xAB20..0xAB26,
+      property => 'L',
+    ),
+
+    '0xAB28..0xAB2E' => %(
+      codepoint => 0xAB28..0xAB2E,
+      property => 'L',
+    ),
+
+    '0xAB30..0xAB5A' => %(
+      codepoint => 0xAB30..0xAB5A,
+      property => 'L',
+    ),
+
+    '0xAB5B' => %(
+      codepoint => 0xAB5B,
+      property => 'L',
+    ),
+
+    '0xAB5C..0xAB5F' => %(
+      codepoint => 0xAB5C..0xAB5F,
+      property => 'L',
+    ),
+
+    '0xAB60..0xAB65' => %(
+      codepoint => 0xAB60..0xAB65,
+      property => 'L',
+    ),
+
+    '0xAB70..0xABBF' => %(
+      codepoint => 0xAB70..0xABBF,
+      property => 'L',
+    ),
+
+    '0xABC0..0xABE2' => %(
+      codepoint => 0xABC0..0xABE2,
+      property => 'L',
+    ),
+
+    '0xABE3..0xABE4' => %(
+      codepoint => 0xABE3..0xABE4,
+      property => 'L',
+    ),
+
+    '0xABE5' => %(
+      codepoint => 0xABE5,
+      property => 'NSM',
+    ),
+
+    '0xABE6..0xABE7' => %(
+      codepoint => 0xABE6..0xABE7,
+      property => 'L',
+    ),
+
+    '0xABE8' => %(
+      codepoint => 0xABE8,
+      property => 'NSM',
+    ),
+
+    '0xABE9..0xABEA' => %(
+      codepoint => 0xABE9..0xABEA,
+      property => 'L',
+    ),
+
+    '0xABEB' => %(
+      codepoint => 0xABEB,
+      property => 'L',
+    ),
+
+    '0xABEC' => %(
+      codepoint => 0xABEC,
+      property => 'L',
+    ),
+
+    '0xABED' => %(
+      codepoint => 0xABED,
+      property => 'NSM',
+    ),
+
+    '0xABF0..0xABF9' => %(
+      codepoint => 0xABF0..0xABF9,
+      property => 'L',
+    ),
+
+    '0xAC00..0xD7A3' => %(
+      codepoint => 0xAC00..0xD7A3,
+      property => 'L',
+    ),
+
+    '0xAFFFE..0xAFFFF' => %(
+      codepoint => 0xAFFFE..0xAFFFF,
+      property => 'BN',
+    ),
+
+    '0xBFFFE..0xBFFFF' => %(
+      codepoint => 0xBFFFE..0xBFFFF,
+      property => 'BN',
+    ),
+
+    '0xCFFFE..0xCFFFF' => %(
+      codepoint => 0xCFFFE..0xCFFFF,
+      property => 'BN',
+    ),
+
+    '0xD7B0..0xD7C6' => %(
+      codepoint => 0xD7B0..0xD7C6,
+      property => 'L',
+    ),
+
+    '0xD7CB..0xD7FB' => %(
+      codepoint => 0xD7CB..0xD7FB,
+      property => 'L',
+    ),
+
+    '0xDFFFE..0xE0000' => %(
+      codepoint => 0xDFFFE..0xE0000,
+      property => 'BN',
+    ),
+
+    '0xE000..0xF8FF' => %(
+      codepoint => 0xE000..0xF8FF,
+      property => 'L',
+    ),
+
+    '0xE0001' => %(
+      codepoint => 0xE0001,
+      property => 'BN',
+    ),
+
+    '0xE0002..0xE001F' => %(
+      codepoint => 0xE0002..0xE001F,
+      property => 'BN',
+    ),
+
+    '0xE0020..0xE007F' => %(
+      codepoint => 0xE0020..0xE007F,
+      property => 'BN',
+    ),
+
+    '0xE0080..0xE00FF' => %(
+      codepoint => 0xE0080..0xE00FF,
+      property => 'BN',
+    ),
+
+    '0xE0100..0xE01EF' => %(
+      codepoint => 0xE0100..0xE01EF,
+      property => 'NSM',
+    ),
+
+    '0xE01F0..0xE0FFF' => %(
+      codepoint => 0xE01F0..0xE0FFF,
+      property => 'BN',
+    ),
+
+    '0xEFFFE..0xEFFFF' => %(
+      codepoint => 0xEFFFE..0xEFFFF,
+      property => 'BN',
+    ),
+
+    '0xF0000..0xFFFFD' => %(
+      codepoint => 0xF0000..0xFFFFD,
+      property => 'L',
+    ),
+
+    '0xF900..0xFA6D' => %(
+      codepoint => 0xF900..0xFA6D,
+      property => 'L',
+    ),
+
+    '0xFA70..0xFAD9' => %(
+      codepoint => 0xFA70..0xFAD9,
+      property => 'L',
+    ),
+
+    '0xFB00..0xFB06' => %(
+      codepoint => 0xFB00..0xFB06,
+      property => 'L',
+    ),
+
+    '0xFB13..0xFB17' => %(
+      codepoint => 0xFB13..0xFB17,
+      property => 'L',
+    ),
+
+    '0xFB1D' => %(
+      codepoint => 0xFB1D,
+      property => 'R',
+    ),
+
+    '0xFB1E' => %(
+      codepoint => 0xFB1E,
+      property => 'NSM',
+    ),
+
+    '0xFB1F..0xFB28' => %(
+      codepoint => 0xFB1F..0xFB28,
+      property => 'R',
+    ),
+
+    '0xFB29' => %(
+      codepoint => 0xFB29,
+      property => 'ES',
+    ),
+
+    '0xFB2A..0xFB36' => %(
+      codepoint => 0xFB2A..0xFB36,
+      property => 'R',
+    ),
+
+    '0xFB37' => %(
+      codepoint => 0xFB37,
+      property => 'R',
+    ),
+
+    '0xFB38..0xFB3C' => %(
+      codepoint => 0xFB38..0xFB3C,
+      property => 'R',
+    ),
+
+    '0xFB3D' => %(
+      codepoint => 0xFB3D,
+      property => 'R',
+    ),
+
+    '0xFB3E' => %(
+      codepoint => 0xFB3E,
+      property => 'R',
+    ),
+
+    '0xFB3F' => %(
+      codepoint => 0xFB3F,
+      property => 'R',
+    ),
+
+    '0xFB40..0xFB41' => %(
+      codepoint => 0xFB40..0xFB41,
+      property => 'R',
+    ),
+
+    '0xFB42' => %(
+      codepoint => 0xFB42,
+      property => 'R',
+    ),
+
+    '0xFB43..0xFB44' => %(
+      codepoint => 0xFB43..0xFB44,
+      property => 'R',
+    ),
+
+    '0xFB45' => %(
+      codepoint => 0xFB45,
+      property => 'R',
+    ),
+
+    '0xFB46..0xFB4F' => %(
+      codepoint => 0xFB46..0xFB4F,
+      property => 'R',
+    ),
+
+    '0xFB50..0xFBB1' => %(
+      codepoint => 0xFB50..0xFBB1,
+      property => 'AL',
+    ),
+
+    '0xFBB2..0xFBC1' => %(
+      codepoint => 0xFBB2..0xFBC1,
+      property => 'AL',
+    ),
+
+    '0xFBC2..0xFBD2' => %(
+      codepoint => 0xFBC2..0xFBD2,
+      property => 'AL',
+    ),
+
+    '0xFBD3..0xFD3D' => %(
+      codepoint => 0xFBD3..0xFD3D,
+      property => 'AL',
+    ),
+
+    '0xFD3E' => %(
+      codepoint => 0xFD3E,
+      property => 'ON',
+    ),
+
+    '0xFD3F' => %(
+      codepoint => 0xFD3F,
+      property => 'ON',
+    ),
+
+    '0xFD40..0xFD4F' => %(
+      codepoint => 0xFD40..0xFD4F,
+      property => 'AL',
+    ),
+
+    '0xFD50..0xFD8F' => %(
+      codepoint => 0xFD50..0xFD8F,
+      property => 'AL',
+    ),
+
+    '0xFD90..0xFD91' => %(
+      codepoint => 0xFD90..0xFD91,
+      property => 'AL',
+    ),
+
+    '0xFD92..0xFDC7' => %(
+      codepoint => 0xFD92..0xFDC7,
+      property => 'AL',
+    ),
+
+    '0xFDC8..0xFDCF' => %(
+      codepoint => 0xFDC8..0xFDCF,
+      property => 'AL',
+    ),
+
+    '0xFDD0..0xFDEF' => %(
+      codepoint => 0xFDD0..0xFDEF,
+      property => 'BN',
+    ),
+
+    '0xFDF0..0xFDFB' => %(
+      codepoint => 0xFDF0..0xFDFB,
+      property => 'AL',
+    ),
+
+    '0xFDFC' => %(
+      codepoint => 0xFDFC,
+      property => 'AL',
+    ),
+
+    '0xFDFD' => %(
+      codepoint => 0xFDFD,
+      property => 'ON',
+    ),
+
+    '0xFDFE..0xFDFF' => %(
+      codepoint => 0xFDFE..0xFDFF,
+      property => 'AL',
+    ),
+
+    '0xFE00..0xFE0F' => %(
+      codepoint => 0xFE00..0xFE0F,
+      property => 'NSM',
+    ),
+
+    '0xFE10..0xFE16' => %(
+      codepoint => 0xFE10..0xFE16,
+      property => 'ON',
+    ),
+
+    '0xFE17' => %(
+      codepoint => 0xFE17,
+      property => 'ON',
+    ),
+
+    '0xFE18' => %(
+      codepoint => 0xFE18,
+      property => 'ON',
+    ),
+
+    '0xFE19' => %(
+      codepoint => 0xFE19,
+      property => 'ON',
+    ),
+
+    '0xFE20..0xFE2F' => %(
+      codepoint => 0xFE20..0xFE2F,
+      property => 'NSM',
+    ),
+
+    '0xFE30' => %(
+      codepoint => 0xFE30,
+      property => 'ON',
+    ),
+
+    '0xFE31..0xFE32' => %(
+      codepoint => 0xFE31..0xFE32,
+      property => 'ON',
+    ),
+
+    '0xFE33..0xFE34' => %(
+      codepoint => 0xFE33..0xFE34,
+      property => 'ON',
+    ),
+
+    '0xFE35' => %(
+      codepoint => 0xFE35,
+      property => 'ON',
+    ),
+
+    '0xFE36' => %(
+      codepoint => 0xFE36,
+      property => 'ON',
+    ),
+
+    '0xFE37' => %(
+      codepoint => 0xFE37,
+      property => 'ON',
+    ),
+
+    '0xFE38' => %(
+      codepoint => 0xFE38,
+      property => 'ON',
+    ),
+
+    '0xFE39' => %(
+      codepoint => 0xFE39,
+      property => 'ON',
+    ),
+
+    '0xFE3A' => %(
+      codepoint => 0xFE3A,
+      property => 'ON',
+    ),
+
+    '0xFE3B' => %(
+      codepoint => 0xFE3B,
+      property => 'ON',
+    ),
+
+    '0xFE3C' => %(
+      codepoint => 0xFE3C,
+      property => 'ON',
+    ),
+
+    '0xFE3D' => %(
+      codepoint => 0xFE3D,
+      property => 'ON',
+    ),
+
+    '0xFE3E' => %(
+      codepoint => 0xFE3E,
+      property => 'ON',
+    ),
+
+    '0xFE3F' => %(
+      codepoint => 0xFE3F,
+      property => 'ON',
+    ),
+
+    '0xFE40' => %(
+      codepoint => 0xFE40,
+      property => 'ON',
+    ),
+
+    '0xFE41' => %(
+      codepoint => 0xFE41,
+      property => 'ON',
+    ),
+
+    '0xFE42' => %(
+      codepoint => 0xFE42,
+      property => 'ON',
+    ),
+
+    '0xFE43' => %(
+      codepoint => 0xFE43,
+      property => 'ON',
+    ),
+
+    '0xFE44' => %(
+      codepoint => 0xFE44,
+      property => 'ON',
+    ),
+
+    '0xFE45..0xFE46' => %(
+      codepoint => 0xFE45..0xFE46,
+      property => 'ON',
+    ),
+
+    '0xFE47' => %(
+      codepoint => 0xFE47,
+      property => 'ON',
+    ),
+
+    '0xFE48' => %(
+      codepoint => 0xFE48,
+      property => 'ON',
+    ),
+
+    '0xFE49..0xFE4C' => %(
+      codepoint => 0xFE49..0xFE4C,
+      property => 'ON',
+    ),
+
+    '0xFE4D..0xFE4F' => %(
+      codepoint => 0xFE4D..0xFE4F,
+      property => 'ON',
+    ),
+
+    '0xFE50' => %(
+      codepoint => 0xFE50,
+      property => 'CS',
+    ),
+
+    '0xFE51' => %(
+      codepoint => 0xFE51,
+      property => 'ON',
+    ),
+
+    '0xFE52' => %(
+      codepoint => 0xFE52,
+      property => 'CS',
+    ),
+
+    '0xFE54' => %(
+      codepoint => 0xFE54,
+      property => 'ON',
+    ),
+
+    '0xFE55' => %(
+      codepoint => 0xFE55,
+      property => 'CS',
+    ),
+
+    '0xFE56..0xFE57' => %(
+      codepoint => 0xFE56..0xFE57,
+      property => 'ON',
+    ),
+
+    '0xFE58' => %(
+      codepoint => 0xFE58,
+      property => 'ON',
+    ),
+
+    '0xFE59' => %(
+      codepoint => 0xFE59,
+      property => 'ON',
+    ),
+
+    '0xFE5A' => %(
+      codepoint => 0xFE5A,
+      property => 'ON',
+    ),
+
+    '0xFE5B' => %(
+      codepoint => 0xFE5B,
+      property => 'ON',
+    ),
+
+    '0xFE5C' => %(
+      codepoint => 0xFE5C,
+      property => 'ON',
+    ),
+
+    '0xFE5D' => %(
+      codepoint => 0xFE5D,
+      property => 'ON',
+    ),
+
+    '0xFE5E' => %(
+      codepoint => 0xFE5E,
+      property => 'ON',
+    ),
+
+    '0xFE5F' => %(
+      codepoint => 0xFE5F,
+      property => 'ET',
+    ),
+
+    '0xFE60..0xFE61' => %(
+      codepoint => 0xFE60..0xFE61,
+      property => 'ON',
+    ),
+
+    '0xFE62' => %(
+      codepoint => 0xFE62,
+      property => 'ES',
+    ),
+
+    '0xFE63' => %(
+      codepoint => 0xFE63,
+      property => 'ES',
+    ),
+
+    '0xFE64..0xFE66' => %(
+      codepoint => 0xFE64..0xFE66,
+      property => 'ON',
+    ),
+
+    '0xFE68' => %(
+      codepoint => 0xFE68,
+      property => 'ON',
+    ),
+
+    '0xFE69' => %(
+      codepoint => 0xFE69,
+      property => 'ET',
+    ),
+
+    '0xFE6A' => %(
+      codepoint => 0xFE6A,
+      property => 'ET',
+    ),
+
+    '0xFE6B' => %(
+      codepoint => 0xFE6B,
+      property => 'ON',
+    ),
+
+    '0xFE70..0xFE74' => %(
+      codepoint => 0xFE70..0xFE74,
+      property => 'AL',
+    ),
+
+    '0xFE75' => %(
+      codepoint => 0xFE75,
+      property => 'AL',
+    ),
+
+    '0xFE76..0xFEFC' => %(
+      codepoint => 0xFE76..0xFEFC,
+      property => 'AL',
+    ),
+
+    '0xFEFD..0xFEFE' => %(
+      codepoint => 0xFEFD..0xFEFE,
+      property => 'AL',
+    ),
+
+    '0xFEFF' => %(
+      codepoint => 0xFEFF,
+      property => 'BN',
+    ),
+
+    '0xFF01..0xFF02' => %(
+      codepoint => 0xFF01..0xFF02,
+      property => 'ON',
+    ),
+
+    '0xFF03' => %(
+      codepoint => 0xFF03,
+      property => 'ET',
+    ),
+
+    '0xFF04' => %(
+      codepoint => 0xFF04,
+      property => 'ET',
+    ),
+
+    '0xFF05' => %(
+      codepoint => 0xFF05,
+      property => 'ET',
+    ),
+
+    '0xFF06..0xFF07' => %(
+      codepoint => 0xFF06..0xFF07,
+      property => 'ON',
+    ),
+
+    '0xFF08' => %(
+      codepoint => 0xFF08,
+      property => 'ON',
+    ),
+
+    '0xFF09' => %(
+      codepoint => 0xFF09,
+      property => 'ON',
+    ),
+
+    '0xFF0A' => %(
+      codepoint => 0xFF0A,
+      property => 'ON',
+    ),
+
+    '0xFF0B' => %(
+      codepoint => 0xFF0B,
+      property => 'ES',
+    ),
+
+    '0xFF0C' => %(
+      codepoint => 0xFF0C,
+      property => 'CS',
+    ),
+
+    '0xFF0D' => %(
+      codepoint => 0xFF0D,
+      property => 'ES',
+    ),
+
+    '0xFF0E..0xFF0F' => %(
+      codepoint => 0xFF0E..0xFF0F,
+      property => 'CS',
+    ),
+
+    '0xFF10..0xFF19' => %(
+      codepoint => 0xFF10..0xFF19,
+      property => 'EN',
+    ),
+
+    '0xFF1A' => %(
+      codepoint => 0xFF1A,
+      property => 'CS',
+    ),
+
+    '0xFF1B' => %(
+      codepoint => 0xFF1B,
+      property => 'ON',
+    ),
+
+    '0xFF1C..0xFF1E' => %(
+      codepoint => 0xFF1C..0xFF1E,
+      property => 'ON',
+    ),
+
+    '0xFF1F..0xFF20' => %(
+      codepoint => 0xFF1F..0xFF20,
+      property => 'ON',
+    ),
+
+    '0xFF21..0xFF3A' => %(
+      codepoint => 0xFF21..0xFF3A,
+      property => 'L',
+    ),
+
+    '0xFF3B' => %(
+      codepoint => 0xFF3B,
+      property => 'ON',
+    ),
+
+    '0xFF3C' => %(
+      codepoint => 0xFF3C,
+      property => 'ON',
+    ),
+
+    '0xFF3D' => %(
+      codepoint => 0xFF3D,
+      property => 'ON',
+    ),
+
+    '0xFF3E' => %(
+      codepoint => 0xFF3E,
+      property => 'ON',
+    ),
+
+    '0xFF3F' => %(
+      codepoint => 0xFF3F,
+      property => 'ON',
+    ),
+
+    '0xFF40' => %(
+      codepoint => 0xFF40,
+      property => 'ON',
+    ),
+
+    '0xFF41..0xFF5A' => %(
+      codepoint => 0xFF41..0xFF5A,
+      property => 'L',
+    ),
+
+    '0xFF5B' => %(
+      codepoint => 0xFF5B,
+      property => 'ON',
+    ),
+
+    '0xFF5C' => %(
+      codepoint => 0xFF5C,
+      property => 'ON',
+    ),
+
+    '0xFF5D' => %(
+      codepoint => 0xFF5D,
+      property => 'ON',
+    ),
+
+    '0xFF5E' => %(
+      codepoint => 0xFF5E,
+      property => 'ON',
+    ),
+
+    '0xFF5F' => %(
+      codepoint => 0xFF5F,
+      property => 'ON',
+    ),
+
+    '0xFF60' => %(
+      codepoint => 0xFF60,
+      property => 'ON',
+    ),
+
+    '0xFF61' => %(
+      codepoint => 0xFF61,
+      property => 'ON',
+    ),
+
+    '0xFF62' => %(
+      codepoint => 0xFF62,
+      property => 'ON',
+    ),
+
+    '0xFF63' => %(
+      codepoint => 0xFF63,
+      property => 'ON',
+    ),
+
+    '0xFF64..0xFF65' => %(
+      codepoint => 0xFF64..0xFF65,
+      property => 'ON',
+    ),
+
+    '0xFF66..0xFF6F' => %(
+      codepoint => 0xFF66..0xFF6F,
+      property => 'L',
+    ),
+
+    '0xFF70' => %(
+      codepoint => 0xFF70,
+      property => 'L',
+    ),
+
+    '0xFF71..0xFF9D' => %(
+      codepoint => 0xFF71..0xFF9D,
+      property => 'L',
+    ),
+
+    '0xFF9E..0xFF9F' => %(
+      codepoint => 0xFF9E..0xFF9F,
+      property => 'L',
+    ),
+
+    '0xFFA0..0xFFBE' => %(
+      codepoint => 0xFFA0..0xFFBE,
+      property => 'L',
+    ),
+
+    '0xFFC2..0xFFC7' => %(
+      codepoint => 0xFFC2..0xFFC7,
+      property => 'L',
+    ),
+
+    '0xFFCA..0xFFCF' => %(
+      codepoint => 0xFFCA..0xFFCF,
+      property => 'L',
+    ),
+
+    '0xFFD2..0xFFD7' => %(
+      codepoint => 0xFFD2..0xFFD7,
+      property => 'L',
+    ),
+
+    '0xFFDA..0xFFDC' => %(
+      codepoint => 0xFFDA..0xFFDC,
+      property => 'L',
+    ),
+
+    '0xFFE0..0xFFE1' => %(
+      codepoint => 0xFFE0..0xFFE1,
+      property => 'ET',
+    ),
+
+    '0xFFE2' => %(
+      codepoint => 0xFFE2,
+      property => 'ON',
+    ),
+
+    '0xFFE3' => %(
+      codepoint => 0xFFE3,
+      property => 'ON',
+    ),
+
+    '0xFFE4' => %(
+      codepoint => 0xFFE4,
+      property => 'ON',
+    ),
+
+    '0xFFE5..0xFFE6' => %(
+      codepoint => 0xFFE5..0xFFE6,
+      property => 'ET',
+    ),
+
+    '0xFFE8' => %(
+      codepoint => 0xFFE8,
+      property => 'ON',
+    ),
+
+    '0xFFE9..0xFFEC' => %(
+      codepoint => 0xFFE9..0xFFEC,
+      property => 'ON',
+    ),
+
+    '0xFFED..0xFFEE' => %(
+      codepoint => 0xFFED..0xFFEE,
+      property => 'ON',
+    ),
+
+    '0xFFF0..0xFFF8' => %(
+      codepoint => 0xFFF0..0xFFF8,
+      property => 'BN',
+    ),
+
+    '0xFFF9..0xFFFB' => %(
+      codepoint => 0xFFF9..0xFFFB,
+      property => 'ON',
+    ),
+
+    '0xFFFC..0xFFFD' => %(
+      codepoint => 0xFFFC..0xFFFD,
+      property => 'ON',
+    ),
+
+    '0xFFFE..0xFFFF' => %(
+      codepoint => 0xFFFE..0xFFFF,
+      property => 'BN',
+    ),
+
+    '0xFFFFE..0xFFFFF' => %(
+      codepoint => 0xFFFFE..0xFFFFF,
+      property => 'BN',
+    ),
+
+
+  );
+};
+
+### NEW DATA ###
+
