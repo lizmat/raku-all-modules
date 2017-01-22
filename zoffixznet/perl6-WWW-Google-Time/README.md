@@ -23,6 +23,7 @@ WWW::Google::Time - Perl 6 module to get time for various locations using Google
         Day of the month: %time<month-day>
         Year:             %time<year>
         Full time string: %time<str>
+        DateTime object:  %time<DateTime>
     END
 
     # Prints:
@@ -34,6 +35,7 @@ WWW::Google::Time - Perl 6 module to get time for various locations using Google
     #    Day of the month: 7
     #    Year:             2015
     #    Full time string: 9:31 AM EST, Monday, December 7, 2015
+    #    DateTime object:  2016-12-22T09:31:48.651773-05:00
 ```
 
 # DESCRIPTION
@@ -118,6 +120,23 @@ The year.
 ```
 Convenience key that combines most of the above keys into a single
 human-readable string.
+
+### `DateTime`
+
+```perl6
+    # DateTime object:  2016-12-22T09:31:48.651773-05:00
+    say "DateTime object:  %time<DateTime>";
+```
+
+Contains a [`DateTime`](https://docs.perl6.org/type/DateTime) object,
+representing the time. Since seconds are not available from Google, the seconds
+in the object are set via `59.999 min DateTime.now.utc.second` and thus depend
+on the local time of the machine the code is running on.
+
+*Note*: the timezone offset is derived from a hardcoded map of timezone
+abbreviation-to-offset and if the abbreviation cannot be decoded, offset of
+0 is used. I have no guarantees that map includes every possible timezone
+abbreviation Google may return.
 
 # SEE ALSO
 

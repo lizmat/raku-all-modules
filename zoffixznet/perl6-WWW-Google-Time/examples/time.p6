@@ -17,6 +17,7 @@ say qq:to/END/
     Day of the month: %time<month-day>
     Year:             %time<year>
     Full time string: %time<str>
+    DateTime object:  %time<DateTime>
 END
 
 # Prints:
@@ -28,3 +29,4 @@ END
 #    Day of the month: 7
 #    Year:             2015
 #    Full time string: 9:31 AM EST, Monday, December 7, 2015
+#    DateTime object:  2015-12-07T09:31:13.182417Z
