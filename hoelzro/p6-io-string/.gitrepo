@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/hoelzro/p6-io-string.git
 	branch = master
-	commit = 92da2b1a6693292fdc127492debd017dd874d191
-	parent = 33ab57a3deb462c78daaf5d4be30ebcf978e06bc
-	cmdver = 0.2.3
+	commit = 8a21f6ffbf32ec820b5fedd8cee5776eb44015fc
+	parent = 99379ad3c05d2253a1f19fc86527645ec5dab7f3
+	cmdver = 0.4.0

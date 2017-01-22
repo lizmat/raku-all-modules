@@ -1,4 +1,5 @@
 {
+    "perl": "6.*",
     "name": "IO::String",
     "version": "0.1.0",
     "description": "Emulate file interface for strings",
