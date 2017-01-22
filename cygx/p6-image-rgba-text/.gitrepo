@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cygx/p6-image-rgba-text.git
 	branch = master
-	commit = 914034ec7167cb100d1599fa6e9c9ebb85ce5145
-	parent = 731fcac8c3ed3fc38f61ab73275535f9733f12ed
-	cmdver = 0.2.2
+	commit = fbd0760c36e8b9170fdb4b740a49613e8bd4c4a8
+	parent = 9e50a669d1a4a55d643d56113898873b8bfab2ab
+	cmdver = 0.4.0

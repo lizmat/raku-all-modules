@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Image::RGBA::Text",
     "version"     : "*",
     "description" : "Reads RGBA image data from text files",
