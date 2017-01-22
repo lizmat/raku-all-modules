@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "CSV::Parser",
   "version"     : "0.1.2",
   "description" : "Parses CSV files, duh",
