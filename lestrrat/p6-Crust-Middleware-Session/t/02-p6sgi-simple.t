@@ -13,21 +13,21 @@ CATCH { default { $_.say } }
         if my $username = %env<p6sgix.session>.get('username') {
             $body = "TOP: Hello $username";
         }
-        return 200, [], [$body];
+        [200, [], [$body]];
     };
     mount '/login', -> %env {
         %env<p6sgix.session>.set('username', 'foo');
-        return 200, [], ["LOGIN"];
+        [200, [], ["LOGIN"]];
     };
     mount '/counter', -> %env {
         my $counter = %env<p6sgix.session>.get('counter') // 0;
         $counter++;
         %env<p6sgix.session>.set('counter', $counter);
-        return 200,[],["COUNTER=>" ~ $counter];
+        [200,[],["COUNTER=>" ~ $counter]];
     };
     mount '/logout', -> %env {
         %env<p6sgix.session>.expired = True;
-        return 200,[],["LOGOUT"];
+        [200,[],["LOGOUT"]];
     };
 };
 
