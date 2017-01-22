@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Config::TOML",
     "version"     : "*",
     "author"      : "Andy Weidenbaum",

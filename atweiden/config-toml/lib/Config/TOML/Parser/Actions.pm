@@ -7,19 +7,19 @@ unit class Config::TOML::Parser::Actions;
 has %!toml;
 
 # TOML arraytable tracker, records arraytables seen
-has Bool %!aoh-seen{Array};
+has Bool:D %!aoh-seen{Array:D};
 
 # TOML table tracker, records tables seen
-has Bool %!hoh-seen{Array};
+has Bool:D %!hoh-seen{Array:D};
 
 # TOML key tracker, records keypair keys seen
-has Bool %!keys-seen{Array};
+has Bool:D %!keys-seen{Array:D};
 
 # DateTime offset for when the local offset is omitted in TOML dates,
 # see: https://github.com/toml-lang/toml#datetime
 # if not passed as a parameter during instantiation, use host machine's
 # local offset
-has Int $.date-local-offset = $*TZ;
+has Int:D $.date-local-offset = $*TZ;
 
 # string grammar-actions {{{
 
@@ -72,12 +72,12 @@ method escape:sym<backslash>($/)
 
 method escape:sym<u>($/)
 {
-    make chr :16(@<hex>.join);
+    make chr(:16(@<hex>.join));
 }
 
 method escape:sym<U>($/)
 {
-    make chr :16(@<hex>.join);
+    make chr(:16(@<hex>.join));
 }
 
 method string-basic-char:escape-sequence ($/)
@@ -289,7 +289,7 @@ method time-secfrac($/)
 
 method time-numoffset($/)
 {
-    my Int $multiplier = $<plus-or-minus>.made eq '+' ?? 1 !! -1;
+    my Int:D $multiplier = $<plus-or-minus>.made eq '+' ?? 1 !! -1;
     make Int(
         (
             ($multiplier * $<time-hour>.made * 60) + $<time-minute>.made
@@ -305,7 +305,7 @@ method time-offset($/)
 
 method partial-time($/)
 {
-    my Rat $second = Rat($<time-second>.made);
+    my Rat:D $second = Rat($<time-second>.made);
     $second += Rat($<time-secfrac>.made) if $<time-secfrac>;
     make %(
         :hour(Int($<time-hour>.made)),
@@ -483,7 +483,7 @@ method table-inline-keypairs($/)
     # method being assigned in a hash and are at risk of being overwritten
     # by duplicate keys
     {
-        my Str @keys-seen = |@<keypair>».made».keys.flat;
+        my Str:D @keys-seen = |@<keypair>».made».keys.flat;
         unless @keys-seen.elems == @keys-seen.unique.elems
         {
             die X::Config::TOML::InlineTable::DuplicateKeys.new(
@@ -559,7 +559,7 @@ method hoh-header($/)
 method table:hoh ($/)
 {
     my @base-path = pwd(%!toml, :steps($<hoh-header>.made));
-    my Str $hoh-text = ~$/; # for error messages
+    my Str:D $hoh-text = ~$/;
 
     if seen(%!keys-seen, :path(@base-path))
     {
@@ -608,7 +608,7 @@ method table:hoh ($/)
         {
             # verify keypairs do not contain duplicate keys
             {
-                my Str @keys-seen = |@keypairs».keys.flat;
+                my Str:D @keys-seen = |@keypairs».keys.flat;
                 unless @keys-seen.elems == @keys-seen.unique.elems
                 {
                     die X::Config::TOML::HOH::DuplicateKeys.new(
@@ -656,8 +656,8 @@ method aoh-header($/)
 method table:aoh ($/)
 {
     my @path = pwd(%!toml, :steps($<aoh-header>.made));
-    my Str $aoh-header-text = ~$<aoh-header>;
-    my Str $aoh-text = ~$/;
+    my Str:D $aoh-header-text = ~$<aoh-header>;
+    my Str:D $aoh-text = ~$/;
 
     if seen(%!keys-seen, :@path)
     {
@@ -690,7 +690,7 @@ method table:aoh ($/)
     {
         # verify keypair lines do not contain duplicate keys
         {
-            my Str @keys-seen = |@keypairs».keys.flat;
+            my Str:D @keys-seen = |@keypairs».keys.flat;
             unless @keys-seen.elems == @keys-seen.unique.elems
             {
                 die X::Config::TOML::AOH::DuplicateKeys.new(
@@ -717,7 +717,7 @@ method TOP($/)
 
 # given TOML hash and keypath, print working directory including
 # arraytable indices
-multi sub pwd(Associative $container, :@steps where *.elems > 0) returns Array
+multi sub pwd(Associative:D $container, :@steps where *.elems > 0) returns Array:D
 {
     my @steps-taken;
     my $root := $container;
@@ -726,27 +726,27 @@ multi sub pwd(Associative $container, :@steps where *.elems > 0) returns Array
     @steps-taken;
 }
 
-multi sub pwd(Associative $container, :@steps where *.elems == 0) returns Array
+multi sub pwd(Associative:D $container, :@steps where *.elems == 0) returns Array:D
 {
     my @steps-taken;
 }
 
-multi sub pwd(Positional $container, :@steps where *.elems > 0) returns Array
+multi sub pwd(Positional:D $container, :@steps where *.elems > 0) returns Array:D
 {
     my @steps-taken;
     my $root := $container;
-    my Int $index = $container.end;
+    my Int:D $index = $container.end;
     $root := $root[$index];
     push @steps-taken, $index, |pwd($root, :@steps);
     @steps-taken;
 }
 
-multi sub pwd(Positional $container, :@steps where *.elems == 0) returns Array
+multi sub pwd(Positional:D $container, :@steps where *.elems == 0) returns Array:D
 {
     my @steps-taken;
 }
 
-multi sub pwd($container, :@steps where *.elems > 0) returns Array
+multi sub pwd($container, :@steps where *.elems > 0) returns Array:D
 {
     my @steps-taken;
     my $root := $container;
@@ -755,23 +755,23 @@ multi sub pwd($container, :@steps where *.elems > 0) returns Array
     @steps-taken;
 }
 
-multi sub pwd($container, :@steps where *.elems == 0) returns Array
+multi sub pwd($container, :@steps where *.elems == 0) returns Array:D
 {
     my @steps-taken;
 }
 
-multi sub seen(Bool %h, :@path! where *.elems > 1) returns Bool
+multi sub seen(Bool:D %h, :@path! where *.elems > 1) returns Bool:D
 {
     %h.grep({.keys[0] eqv $@path}).elems > 0
         || seen(%h, :path(@path[0..^*-1].Array));
 }
 
-multi sub seen(Bool %h, :@path! where *.elems > 0) returns Bool
+multi sub seen(Bool:D %h, :@path! where *.elems > 0) returns Bool:D
 {
     %h.grep({.keys[0] eqv $@path}).elems > 0;
 }
 
-multi sub seen(Bool %h, :@path! where *.elems == 0) returns Bool
+multi sub seen(Bool:D %h, :@path! where *.elems == 0) returns Bool:D
 {
     False;
 }

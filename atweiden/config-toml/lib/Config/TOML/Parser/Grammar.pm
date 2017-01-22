@@ -6,7 +6,7 @@ unit grammar Config::TOML::Parser::Grammar;
 
 proto token gap {*}
 token gap:spacer { \s }
-token gap:comment { <.comment> \n }
+token gap:comment { <.comment> $$ }
 
 # end disposable grammar }}}
 # comment grammar {{{
@@ -598,27 +598,33 @@ proto token segment {*}
 
 token segment:blank-line
 {
-    <.blank-line> \n?
+    <.blank-line>
 }
 
 token segment:comment-line
 {
-    <.comment-line> \n?
+    <.comment-line>
 }
 
 token segment:keypair-line
 {
-    <keypair-line> \n?
+    <keypair-line>
 }
 
 token segment:table
 {
-    <table> \n?
+    <table>
 }
 
 token document
 {
-    <segment>*
+    [
+        <segment>
+        [
+            \n <segment>
+        ]*
+    ]?
+    \n?
 }
 
 token TOP

@@ -3,9 +3,9 @@ use Config::TOML::Parser::Grammar;
 use X::Config::TOML;
 unit class Config::TOML::Dumper;
 
-has Str $!toml = '';
+has Str:D $!toml = '';
 
-method dump(%h) returns Str
+method dump(%h) returns Str:D
 {
     self!visit(%h);
     $!toml.trim;
@@ -14,7 +14,8 @@ method dump(%h) returns Str
 # credit: https://github.com/emancu/toml-rb
 method !visit(%h, :@prefix, Bool :$extra-brackets)
 {
-    my List ($simple-pairs, $nested-pairs, $table-array-pairs) = sort-pairs(%h);
+    my List:D ($simple-pairs, $nested-pairs, $table-array-pairs) =
+        sort-pairs(%h);
 
     self!print-prefix(@prefix, :$extra-brackets)
         if @prefix && ($simple-pairs || %h.elems == 0);
@@ -27,9 +28,9 @@ method !visit(%h, :@prefix, Bool :$extra-brackets)
     );
 }
 
-sub sort-pairs(%h) returns List
+sub sort-pairs(%h) returns List:D
 {
-    my Hash (@simple-pairs, @nested-pairs, @table-array-pairs);
+    my Hash:D (@simple-pairs, @nested-pairs, @table-array-pairs);
 
     for %h.kv -> $key, $val
     {
@@ -64,9 +65,9 @@ sub sort-pairs(%h) returns List
 }
 
 method !dump-pairs(
-    Hash :@simple-pairs!,
-    Hash :@nested-pairs!,
-    Hash :@table-array-pairs!,
+    Hash:D :@simple-pairs!,
+    Hash:D :@nested-pairs!,
+    Hash:D :@table-array-pairs!,
     :@prefix = ()
 )
 {
@@ -76,27 +77,27 @@ method !dump-pairs(
 }
 
 
-method !dump-simple-pairs(Hash @simple-pairs)
+method !dump-simple-pairs(Hash:D @simple-pairs)
 {
     @simple-pairs.map({
-        my Str $key = is-bare-key(.keys[0]) ?? .keys[0] !! .keys[0].perl;
+        my Str:D $key = is-bare-key(.keys[0]) ?? .keys[0] !! .keys[0].perl;
         $!toml ~= "$key = {to-toml(.values[0])}\n";
     });
 }
 
-method !dump-nested-pairs(Hash @nested-pairs, @prefix)
+method !dump-nested-pairs(Hash:D @nested-pairs, @prefix)
 {
     @nested-pairs.map({
-        my Str $key = is-bare-key(.keys[0]) ?? .keys[0] !! .keys[0].perl;
+        my Str:D $key = is-bare-key(.keys[0]) ?? .keys[0] !! .keys[0].perl;
         self!visit(.values[0], :prefix(|@prefix, $key), :!extra-brackets);
     });
 }
 
-method !dump-table-array-pairs(Hash @table-array-pairs, @prefix)
+method !dump-table-array-pairs(Hash:D @table-array-pairs, @prefix)
 {
     for @table-array-pairs -> %table-array-pair
     {
-        my Str $key = is-bare-key(%table-array-pair.keys[0])
+        my Str:D $key = is-bare-key(%table-array-pair.keys[0])
             ?? %table-array-pair.keys[0]
             !! %table-array-pair.keys[0].perl;
 
@@ -105,7 +106,7 @@ method !dump-table-array-pairs(Hash @table-array-pairs, @prefix)
         for %table-array-pair.values[0].flat -> %p
         {
             self!print-prefix(@aux-prefix, :extra-brackets);
-            my List ($simple-pairs, $nested-pairs, $table-array-pairs) =
+            my List:D ($simple-pairs, $nested-pairs, $table-array-pairs) =
                 sort-pairs(%p);
             self!dump-pairs(
                 :$simple-pairs,
@@ -119,33 +120,33 @@ method !dump-table-array-pairs(Hash @table-array-pairs, @prefix)
 
 method !print-prefix(@prefix, Bool :$extra-brackets)
 {
-    my Str $new-prefix = @prefix.join('.');
+    my Str:D $new-prefix = @prefix.join('.');
     $new-prefix = '[' ~ $new-prefix ~ ']' if $extra-brackets;
     $!toml ~= '[' ~ $new-prefix ~ "]\n";
 }
 
-sub is-bare-key($key) returns Bool
+sub is-bare-key($key) returns Bool:D
 {
     Config::TOML::Parser::Grammar.parse($key, :rule<keypair-key:bare>).so;
 }
 
-multi sub is-valid-key(Str:D $key) returns Bool
+multi sub is-valid-key(Str:D $key) returns Bool:D
 {
     is-bare-key($key)
         || Config::TOML::Parser::Grammar.parse($key.perl, :rule<keypair-key>).so;
 }
 
-multi sub is-valid-key($key) returns Bool
+multi sub is-valid-key($key) returns Bool:D
 {
     False;
 }
 
-multi sub is-valid-array(@ where {.grep(Str:D).elems == .elems}) returns Bool
+multi sub is-valid-array(@ where {.grep(Str:D).elems == .elems}) returns Bool:D
 {
     True;
 }
 
-multi sub is-valid-array(@ where {.grep(Int:D).elems == .elems}) returns Bool
+multi sub is-valid-array(@ where {.grep(Int:D).elems == .elems}) returns Bool:D
 {
     True;
 }
@@ -154,83 +155,83 @@ multi sub is-valid-array(@ where {.grep(Int:D).elems == .elems}) returns Bool
 # element against Real. Int ~~ Real, so we grep for Ints
 multi sub is-valid-array(
     @ where {.grep(Int).not && .grep(Real:D).elems == .elems}
-) returns Bool
+) returns Bool:D
 {
     True;
 }
 
-multi sub is-valid-array(@ where {.grep(Bool:D).elems == .elems}) returns Bool
+multi sub is-valid-array(@ where {.grep(Bool:D).elems == .elems}) returns Bool:D
 {
     True;
 }
 
 multi sub is-valid-array(
     @ where {.grep(Dateish:D).elems == .elems}
-) returns Bool
+) returns Bool:D
 {
     True;
 }
 
-multi sub is-valid-array(@ where {.grep(List:D).elems == .elems}) returns Bool
+multi sub is-valid-array(@ where {.grep(List:D).elems == .elems}) returns Bool:D
 {
     True;
 }
 
 multi sub is-valid-array(
     @ where {.grep(Associative:D).elems == .elems}
-) returns Bool
+) returns Bool:D
 {
     True;
 }
 
-multi sub is-valid-array(@) returns Bool
+multi sub is-valid-array(@) returns Bool:D
 {
     False;
 }
 
-multi sub to-toml(Str:D $s) returns Str
+multi sub to-toml(Str:D $s) returns Str:D
 {
     $s.perl;
 }
 
-multi sub to-toml(Str:U $s) returns Str
+multi sub to-toml(Str:U $s)
 {
     die X::Config::TOML::Dumper::BadValue.new(:value($s));
 }
 
-multi sub to-toml(Real:D $r) returns Str
+multi sub to-toml(Real:D $r) returns Str:D
 {
     ~$r;
 }
 
-multi sub to-toml(Real:U $r) returns Str
+multi sub to-toml(Real:U $r)
 {
     die X::Config::TOML::Dumper::BadValue.new(:value($r));
 }
 
-multi sub to-toml(Bool:D $b) returns Str
+multi sub to-toml(Bool:D $b) returns Str:D
 {
     ~$b.lc;
 }
 
-multi sub to-toml(Bool:U $b) returns Str
+multi sub to-toml(Bool:U $b)
 {
     die X::Config::TOML::Dumper::BadValue.new(:value($b));
 }
 
-multi sub to-toml(Dateish:D $d) returns Str
+multi sub to-toml(Dateish:D $d) returns Str:D
 {
     ~$d;
 }
 
-multi sub to-toml(Dateish:U $d) returns Str
+multi sub to-toml(Dateish:U $d)
 {
     die X::Config::TOML::Dumper::BadValue.new(:value($d));
 }
 
-multi sub to-toml(Associative:D $a) returns Str
+multi sub to-toml(Associative:D $a) returns Str:D
 {
-    my Str @keypairs;
+    my Str:D @keypairs;
     $a.map({
         push @keypairs,
             is-bare-key(.key) ?? .key !! .key.perl
@@ -240,24 +241,24 @@ multi sub to-toml(Associative:D $a) returns Str
     '{ ' ~ @keypairs.join(', ') ~ ' }';
 }
 
-multi sub to-toml(Associative:U $a) returns Str
+multi sub to-toml(Associative:U $a)
 {
     die X::Config::TOML::Dumper::BadValue.new(:value($a));
 }
 
-multi sub to-toml(List:D $l) returns Str
+multi sub to-toml(List:D $l) returns Str:D
 {
     unless is-valid-array($l)
     {
         die X::Config::TOML::Dumper::BadArray.new(:array($l));
     }
 
-    my Str @elements;
+    my Str:D @elements;
     $l.map({ push @elements, to-toml($_) });
     '[ ' ~ @elements.join(', ') ~ ' ]';
 }
 
-multi sub to-toml(List:U $l) returns Str
+multi sub to-toml(List:U $l)
 {
     die X::Config::TOML::Dumper::BadValue.new(:value($l));
 }
