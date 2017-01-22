@@ -2,6 +2,20 @@
 
 Determine whether a shared library is available to be loaded by Perl 6
 
+[![Build Status](https://travis-ci.org/jonathanstowe/LibraryCheck.svg?branch=master)](https://travis-ci.org/jonathanstowe/LibraryCheck)
+
+## Synopsis
+
+```perl6
+
+     use LibraryCheck;
+
+     if !library-exists('sndfile', v1) {
+         die "Cannot load sndfile";
+     }
+
+```
+
 ## Description
 
 This module provides a mechanism that will determine whether a named
@@ -32,39 +46,37 @@ be taken as an example of nice Perl 6 code.
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo perl6 installation you should be able to
+install this with either *zef* or *panda* :
 
     # From the source directory
    
     panda install .
 
+    # or
+
+    zef install .
+
     # Remote installation
 
     panda install LibraryCheck
+
+    # or
+
+    zef install LibraryCheck
 
 Other install mechanisms may be become available in the future.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at
+https://github.com/jonathanstowe/LibraryCheck/issues
 
-   https://github.com/jonathanstowe/LibraryCheck
+I'd be particularly interested in having it work properly on all the
+platforms that rakudo will work on.
 
 ## Licence
 
 Please see the LICENCE file in the distribution
 
-(C) Jonathan Stowe 2015
+© Jonathan Stowe 2015, 2016
