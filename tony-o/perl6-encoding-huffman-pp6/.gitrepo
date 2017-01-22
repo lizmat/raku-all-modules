@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-encoding-huffman-pp6.git
 	branch = master
-	commit = f203edf44c27c104be183e0c7fe9ba82edf3eb63
-	parent = 9187f202100ffddba419b4bf37c4c775026899f0
-	cmdver = 0.2.3
+	commit = b2ad6157dcef34f7dd9cd00fe99d13d100635ff8
+	parent = 8f8d2509eac64437a24e5d91e78cd5ee3a289eb2
+	cmdver = 0.4.0
