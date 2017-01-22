@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/hoelzro/p6-algorithm-lcs.git
 	branch = master
-	commit = 8e78aa766287cdb56ef8474e7647bcac2c30a189
-	parent = ca657bb30fa76c1f3fd03398411f32136e73192b
-	cmdver = 0.2.2
+	commit = 4cc472e28afe2ca19df65e090069c1e411097eca
+	parent = 9f186ab2f6c480c9dd5b9d4c36a92b0e5a42c3c2
+	cmdver = 0.4.0
