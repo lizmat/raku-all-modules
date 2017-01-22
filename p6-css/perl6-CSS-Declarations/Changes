@@ -1,0 +1,13 @@
+0.0.4 CSS::Declarations:
+     - allow list assignment. E.g.: $css.new: :background-position<top left>;
+       shortcut for: $css.new: :background-position("top left");
+0.0.3 CSS::Declarations::Units
+    - Use 'but' for role application, not global 'does'.
+0.0.2
+    - Warn, but otherwise ignore illegal assignments:
+      $css.azimuth = 'over-yonder'; # has no affect
+    - handle default dependencies:
+      -- border-color defaults to color
+      -- text-align is 'left' or 'right' depending on direction
+      (See README.md Properties appendix)
+0.0.1 Initial release
