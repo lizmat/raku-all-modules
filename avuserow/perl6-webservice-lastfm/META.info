@@ -1,4 +1,5 @@
 {
+	"perl" : "6.*",
 	"name" : "WebService::Lastfm",
 	"version" : "0.0.2",
 	"description" : "interact with the Last.fm API",
