@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MARTIMM/pod-render.git
+	branch = master
+	commit = 9bd4ce712cfe17372c8c082d3871b3763150e3ec
+	parent = 68af831ffcf649cd5fc3bfcdd5ba879eaf1d15a2
+	cmdver = 0.4.0
