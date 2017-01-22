@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/awwaiid/p6-Inline-Ruby.git
 	branch = master
-	commit = ee1c38103c06d789398c772cde414cf6fa42e766
-	parent = dd1f12c8b59f9eaec4a20f1fe30c7e61b2b7a603
-	cmdver = 0.2.3
+	commit = bcaaded515335df2423d5e451160210b2b5b9001
+	parent = ed3bad214976a2e8c6be4115c1d5f4f9e9fde0a0
+	cmdver = 0.4.0
