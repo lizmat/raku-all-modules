@@ -3,7 +3,7 @@ use Test;
 use Algorithm::MinMaxHeap;
 
 {
-    my $heap = Algorithm::MinMaxHeap.new();
+    my $heap = Algorithm::MinMaxHeap[Int].new;
     $heap.insert(0);
     $heap.insert(1);
     $heap.insert(2);
@@ -20,29 +20,28 @@ use Algorithm::MinMaxHeap;
     is $clone-heap.nodes, $heap.nodes;
     $heap.clear();
     is $clone-heap.nodes.elems, 9;
-    is $clone-heap.type === Int, True;
 }
 
 {
     my class State {
-	also does Algorithm::MinMaxHeap::Comparable[State];
-	has Int $.value;
-	has $.payload;
-	submethod BUILD(:$!value) { }
-	method compare-to(State $s) {
-    	    if (self.value == $s.value) {
-    		return Order::Same;
-    	    }
-    	    if (self.value > $s.value) {
-    		return Order::More;
-    	    }
-    	    if (self.value < $s.value) {
-    		return Order::Less;
-    	    }
-    	}
+        also does Algorithm::MinMaxHeap::Comparable[State];
+        has Int $.value;
+        has $.payload;
+        submethod BUILD(:$!value) { }
+        method compare-to(State $s) {
+            if (self.value == $s.value) {
+                return Order::Same;
+            }
+            if (self.value > $s.value) {
+                return Order::More;
+            }
+            if (self.value < $s.value) {
+                return Order::Less;
+            }
+        }
     }
     
-    my $heap = Algorithm::MinMaxHeap.new(type => Algorithm::MinMaxHeap::Comparable);
+    my $heap = Algorithm::MinMaxHeap[Algorithm::MinMaxHeap::Comparable].new;
 
     $heap.insert(State.new(value => 0));
     $heap.insert(State.new(value => 1));
@@ -60,7 +59,6 @@ use Algorithm::MinMaxHeap;
     is $clone-heap.nodes, $heap.nodes;
     $heap.clear();
     is $clone-heap.nodes.elems, 9;
-    is $clone-heap.type === Algorithm::MinMaxHeap::Comparable, True;
 }
 
 

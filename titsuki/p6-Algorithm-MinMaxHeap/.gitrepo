@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-MinMaxHeap.git
 	branch = master
-	commit = 8023e7b7feb8c00de89ebbd8469e9cf634dfa113
-	parent = ac02417601f40a643610618264b1fe35e3bd38ae
-	cmdver = 0.2.3
+	commit = 7dca2f35a5f9dd609ac8662b644266b7928121fc
+	parent = 0adf68c5ea6346516e2af0a64bd1055b6d07c6f4
+	cmdver = 0.4.0

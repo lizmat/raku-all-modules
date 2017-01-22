@@ -4,7 +4,7 @@ unit module Algorithm::MinMaxHeap::CmpOperator;
 
 use Algorithm::MinMaxHeap::Comparable;
 
-multi sub infix:<minmaxheap-cmp>(Cool $lhs, Cool $rhs) is export {
+multi sub infix:<minmaxheap-cmp>(Mu $lhs, Mu $rhs) is export {
     return $lhs cmp $rhs;
 }
 

@@ -3,7 +3,7 @@ use Test;
 use Algorithm::MinMaxHeap;
 
 {
-    my $heap = Algorithm::MinMaxHeap.new();
+    my $heap = Algorithm::MinMaxHeap[Int].new;
     $heap.insert(0);
     $heap.insert(1);
     $heap.insert(2);
