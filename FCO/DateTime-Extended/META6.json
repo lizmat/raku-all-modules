@@ -1,0 +1,16 @@
+{
+    "perl" : "6.*",
+    "name" : "DateTime::Extended",
+    "version" : "0.1.0",
+    "description" : "Extends Date/DateTime features",
+    "authors" : [ "Fernando Corrêa de Oliveira" ],
+    "provides" : {
+        "DateTime::Extended":			"lib/DateTime/Extended.pm6"
+    },
+    "depends" : [ ],
+    "test-depends" : [
+        "Test",
+        "Test::META"
+    ],
+    "source-url" : "git@github.com:FCO/DateTime-Extended.git"
+}
