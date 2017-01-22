@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cygx/p6-image-png-inflated.git
 	branch = master
-	commit = fa20dbd9a1753c8fa2e5e885401124311324214f
-	parent = 5f3f084bb78a47272bc641c61df90defb0b1b5a8
-	cmdver = 0.2.2
+	commit = 40637daab19aa3aa7a9c44199168c42cdd68cb74
+	parent = 3e66d05a650cfe2de3ce48d12c3e909d15841767
+	cmdver = 0.4.0

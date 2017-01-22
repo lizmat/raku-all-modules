@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Image::PNG::Inflated",
     "version"     : "*",
     "description" : "Creates uncompressed PNG images",
