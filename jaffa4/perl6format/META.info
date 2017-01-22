@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Rakudo::Perl6::Format",
     "version" : "0.1",
     "description" : "format Perl6",
