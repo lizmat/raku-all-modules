@@ -1,6 +1,15 @@
 Revision history for Term::Choose
 
 
+0.118   2016-12-16
+        - Import subroutines by their names
+
+0.117   2016-12-10
+        - Constructor: named parameters
+
+0.116   2016-10-13
+        - Subroutines: use the default export
+
 0.115   2016-05-28
         - Fixed option 'mouse'
 

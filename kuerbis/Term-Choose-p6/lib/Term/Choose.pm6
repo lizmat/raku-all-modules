@@ -1,10 +1,10 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.115';
+my $VERSION = '0.118';
 
-use Term::Choose::NCurses :all;
-use Term::Choose::LineFold :all;
+use Term::Choose::NCurses;
+use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
 
 
 constant R  = 0;
@@ -30,11 +30,11 @@ constant KEY_q         = 0x71;
 has @!orig_list;
 has @!list;
 
-has %.o_global;
+has %.defaults;
 has %!o;
 
-has Term::Choose::NCurses::WINDOW $.g_win;
-has Term::Choose::NCurses::WINDOW $!win;
+has Term::Choose::NCurses::WINDOW $.win;
+has Term::Choose::NCurses::WINDOW $!win_local;
 
 has Int   $!multiselect;
 has Int   $!term_w;
@@ -45,7 +45,7 @@ has Int   $!col_w;
 has Int   @!length;
 has Int   $!layout;
 has Int   $!rest;
-has Int   $!pp_row;
+has Int   $!print_pp_row;
 has Str   $!pp_line_fmt;
 has Int   $!nr_prompt_lines;
 has Str   $!prompt_copy;
@@ -58,10 +58,10 @@ has Int   $!cursor_row;
 has Array $!marked;
 
 
-method new ( %o_global?, $g_win=Term::Choose::NCurses::WINDOW ) { ##
-    _validate_options( %o_global );
-    _set_defaults( %o_global );
-    self.bless( :%o_global, :$g_win ); ## opt
+method new ( :%defaults, :$win=Term::Choose::NCurses::WINDOW ) {
+    _validate_options( %defaults );
+    _set_defaults( %defaults );
+    self.bless( :%defaults, :$win );
 }
 
 
@@ -113,10 +113,10 @@ sub _valid_options {
     };
 };
 
-sub _validate_options ( %opt, Int $list_end? ) {
+sub _validate_options ( %opt, Int $list_last_index? ) {
     my $valid = _valid_options();
     for %opt.kv -> $key, $value {
-        when $valid{$key}:!exists { #
+        when $valid{$key}:!exists {
             die "'$key' is not a valid option name";
         }
         when ! $value.defined {
@@ -129,7 +129,7 @@ sub _validate_options ( %opt, Int $list_end? ) {
                 die "$key => too many array elemnts." if $value.elems > 2;
             }
             else {
-                die "$key => value out of range."     if $list_end.defined && $value.any > $list_end;
+                die "$key => value out of range."     if $list_last_index.defined && $value.any > $list_last_index;
             }
         }
         when $valid{$key} eq 'Str' {
@@ -152,7 +152,7 @@ method !_prepare_new_copy_of_list {
     if %!o<ll> {
         if %!o<ll> > $!avail_w {
             for @!list {
-                $_ = cut-to-printwidth( $_, $!avail_w - $dots_w ) ~ $dots;
+                $_ = to-printwidth( $_, $!avail_w - $dots_w ) ~ $dots;
             }
             $!col_w = $!avail_w;
         }
@@ -170,10 +170,10 @@ method !_prepare_new_copy_of_list {
             }
             @!list[$i].=subst(   / \s /, ' ', :g );  # replace, but don't squash sequences of spaces
             @!list[$i].=subst( / <:C> /, '',  :g );
-            @!list[$i] = @!list[$i].gist; 
+            @!list[$i] = @!list[$i].gist;
             my Int $length = print-columns( @!list[$i] );
             if $length > $!avail_w {
-                @!list[$i] = cut-to-printwidth( @!list[$i], $!avail_w - $dots_w ) ~ $dots;
+                @!list[$i] = to-printwidth( @!list[$i], $!avail_w - $dots_w ) ~ $dots;
                 @!length[$i] = $!avail_w;
             }
             else {
@@ -186,9 +186,8 @@ method !_prepare_new_copy_of_list {
 }
 
 
-
 sub choose       ( @list, %opt? ) is export( :DEFAULT, :choose )       { return Term::Choose.new().choose(       @list, %opt ) }
-sub choose-multi ( @list, %opt? ) is export( :DEFAULT, :choose-mulit ) { return Term::Choose.new().choose-multi( @list, %opt ) }
+sub choose-multi ( @list, %opt? ) is export( :DEFAULT, :choose-multi ) { return Term::Choose.new().choose-multi( @list, %opt ) }
 sub pause        ( @list, %opt? ) is export( :DEFAULT, :pause )        { return Term::Choose.new().pause(        @list, %opt ) }
 
 method choose       ( @list, %opt? ) { return self!_choose( @list, %opt, 0   ) }
@@ -198,17 +197,17 @@ method pause        ( @list, %opt? ) { return self!_choose( @list, %opt, Int ) }
 
 
 method !_init_term {
-    if $!g_win {
-        $!win = $!g_win;
+    if $!win {
+        $!win_local = $!win;
     }
     else {
         my int32 constant LC_ALL = 6;
         setlocale( LC_ALL, "" );
-        $!win = initscr;
+        $!win_local = initscr;
     }
     noecho();
     cbreak;
-    keypad( $!win, True );
+    keypad( $!win_local, True );
     if %!o<mouse> {
         my Array[int32] $old;
         my $s = mousemask( ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION, $old );
@@ -217,7 +216,7 @@ method !_init_term {
 }
 
 method !_end_term {
-    return if $!g_win;
+    return if $!win;
     endwin();
 }
 
@@ -227,7 +226,7 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
         return;
     }
     _validate_options( %!o, @!orig_list.end );
-    for %!o_global.kv -> $key, $value {
+    for %!defaults.kv -> $key, $value {
         %!o{$key} //= $value;
     }
     if ! %!o<prompt>.defined {
@@ -241,14 +240,14 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
         my $key;
         WAIT: loop {
             $key = getch();
-            if $key == -1 { # ERR {
+            if $key == ERR {
                 sleep 0.01;
                 next WAIT;
             }
             last WAIT;
         }
-        my Int $new_term_w = getmaxx( $!win );
-        my Int $new_term_h = getmaxy( $!win );
+        my Int $new_term_w = getmaxx( $!win_local );
+        my Int $new_term_h = getmaxy( $!win_local );
         if $new_term_w != $!term_w || $new_term_h != $!term_h {
             if %!o<ll> {
                 return -1;
@@ -549,7 +548,7 @@ method !_choose ( @!orig_list, %!o, Int $!multiselect ) {
             }
             when KEY_MOUSE {
                 my Term::Choose::NCurses::MEVENT $event .= new;
-                if getmouse( $event ) == 0 { # OK {
+                if getmouse( $event ) == OK {
                     if $event.bstate == BUTTON1_CLICKED | BUTTON1_PRESSED {
                         my $ret = self!_curr_pos_to_mouse_xy( $event.x, $event.y );
                         if $ret {
@@ -675,8 +674,8 @@ method !_set_default_cell {
 
 
 method !_wr_first_screen {
-    $!term_w = getmaxx( $!win );
-    $!term_h = getmaxy( $!win );
+    $!term_w = getmaxx( $!win_local );
+    $!term_h = getmaxy( $!win_local );
 
     ( $!avail_w, $!avail_h ) = ( $!term_w, $!term_h );
     if %!o<max-width> && $!avail_w > %!o<max-width> {
@@ -691,9 +690,9 @@ method !_wr_first_screen {
     self!_prepare_prompt;
     $!avail_h -= $!nr_prompt_lines;
 
-    $!pp_row = %!o<page> ?? 1 !! 0;
+    $!print_pp_row = %!o<page> ?? 1 !! 0;
 
-    my $keep = %!o<keep> + $!pp_row;
+    my $keep = %!o<keep> + $!print_pp_row;
     if $!avail_h < $keep {
         $!avail_h = $!term_h > $keep ?? $keep !! $!term_h;
     }
@@ -735,7 +734,7 @@ method !_wr_first_screen {
 
 method !_set_page_nr_print_fmt {
     if $!rc2idx.end / $!avail_h > 1 {
-        $!avail_h -= $!pp_row;
+        $!avail_h -= $!print_pp_row;
         my $last_p_nr = $!rc2idx.end div $!avail_h + 1;
         my $p_nr_w = $last_p_nr.chars;
         $!pp_line_fmt = '--- Page %0' ~ $p_nr_w ~ 'd/' ~ $last_p_nr ~ ' ---';
@@ -748,14 +747,14 @@ method !_set_page_nr_print_fmt {
         }
     }
     else {
-        $!pp_row = 0;
+        $!print_pp_row = 0;
     }
 }
 
 method !_wr_screen {
     move( $!nr_prompt_lines, 0 );
     clrtobot();
-    if $!pp_row {
+    if $!print_pp_row {
         my Str $pp_line = sprintf $!pp_line_fmt, $!row_on_top div $!avail_h + 1;
         mvaddstr(
             $!avail_h + $!nr_prompt_lines,
@@ -785,7 +784,7 @@ method !_wr_cell ( Int $row, Int $col ) {
         }
         attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
         attron( A_REVERSE )             if $is_current_pos;
-        mvaddstr( 
+        mvaddstr(
             $row - $!row_on_top + $!nr_prompt_lines,
             $lngth,
             @!list[$idx]
@@ -794,7 +793,7 @@ method !_wr_cell ( Int $row, Int $col ) {
     else {
         attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
         attron( A_REVERSE )             if $is_current_pos;
-        mvaddstr( 
+        mvaddstr(
             $row - $!row_on_top + $!nr_prompt_lines,
             ( $!col_w + %!o<pad> ) * $col,
             self!_pad_str_to_colwidth: $idx
@@ -821,7 +820,7 @@ method !_pad_str_to_colwidth ( Int $idx ) {
         }
     }
     else {
-        return @!list[$idx];
+        return @!list[$idx] ~ "";
     }
 }
 
@@ -970,11 +969,11 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.115
+Version 0.118
 
 =head1 SYNOPSIS
 
-    use Term::Choose;
+    use Term::Choose :choose;
 
     my @array = <one two three four five>;
 
@@ -1004,6 +1003,11 @@ With the optional second argument (Hash) it can be passed the different options.
 
 The return values are described in L<#Routines>
 
+=head1 FUNCTIONAL INTERFACE
+
+Importing the subroutines explicitly (C<:name_of_the_subroutine>) might become compulsory (optional for now) with the
+next release.
+
 =head1 USAGE
 
 To browse through the available list-elements use the keys described below.
@@ -1031,7 +1035,22 @@ L<#pause>.
 
 With I<mouse> enabled (and if supported by the terminal) use the the left mouse key instead the C<Return> key and
 the right mouse key instead of the C<SpaceBar> key. Instead of C<PageUp> and C<PageDown> it can be used the mouse wheel.
-- Mouse wheel not yet suppoerted! 
+- Mouse wheel not yet suppoerted!
+
+=head1 CONSTRUCTOR
+
+The constructor method C<new> can be called with optional named arguments:
+
+=item defaults
+
+Expects as its value a hash. Sets the defaults for the instance. See L<#OPTIONS>.
+
+=item win
+
+Expects as its value a window object created by ncurses C<initscr>.
+
+If set, C<choose>, C<choose-multi> and C<pause> use this global window instead of creating their own without calling
+C<endwin> to restores the terminal before returning.
 
 =head1 ROUTINES
 

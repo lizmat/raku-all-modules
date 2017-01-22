@@ -1,13 +1,13 @@
 use v6;
 unit class Term::Choose::LineFold;
 
-my $VERSION = '0.115';
+my $VERSION = '0.118';
 
 use Terminal::WCWidth;
 
 
 
-sub cut-to-printwidth ( $str, Int $avail_w, Int $rest = 0 ) is export( :all, :cut-to-printwidth ) {
+sub to-printwidth ( $str, Int $avail_w, Int $rest = 0 ) is export( :to-printwidth ) {
     #my $str_w = wcswidth( $str );
     #die "String with control charakter!" if $str_w == -1;
     #if $str_w <= $avail_w {
@@ -65,13 +65,13 @@ sub cut-to-printwidth ( $str, Int $avail_w, Int $rest = 0 ) is export( :all, :cu
 }
 
 
-sub line-fold ( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is copy ) returns Str is export( :all, :line-fold ) {
+sub line-fold ( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is copy ) returns Str is export( :line-fold ) {
     for $init_tab, $subseq_tab {
         if $_ {
             $_.=subst( / \s /,  ' ', :g );
             $_.=subst( / <:C> /, '', :g );
             if $_.chars > $avail_w / 4 {
-                $_ = cut-to-printwidth( $_, $avail_w div 2 );
+                $_ = to-printwidth( $_, $avail_w div 2 );
             }
         }
         else {
@@ -102,10 +102,10 @@ sub line-fold ( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is co
                 if $i != 0 {
                     @lines.push( $line );
                 }
-                my ( Str $tab_and_cut_word, Str $rest ) = cut-to-printwidth( $tab_and_word, $avail_w, 1 );
+                my ( Str $tab_and_cut_word, Str $rest ) = to-printwidth( $tab_and_word, $avail_w, 1 );
                 while ( $rest.chars ) {
                     @lines.push( $tab_and_cut_word );
-                    ( $tab_and_cut_word, $rest ) = cut-to-printwidth( $subseq_tab ~ $rest, $avail_w, 1 );
+                    ( $tab_and_cut_word, $rest ) = to-printwidth( $subseq_tab ~ $rest, $avail_w, 1 );
                 }
                 if $i == @words.end {
                     @lines.push( $tab_and_cut_word );
@@ -133,7 +133,7 @@ sub line-fold ( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is co
 }
 
 
-sub print-columns ( $str ) returns Int is export( :all, :print-columns ) {
+sub print-columns ( $str ) returns Int is export( :print-columns ) {
     wcswidth( $str );
 }
 

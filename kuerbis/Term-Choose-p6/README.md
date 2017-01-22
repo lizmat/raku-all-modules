@@ -8,12 +8,12 @@ Term::Choose - Choose items from a list interactively.
 VERSION
 =======
 
-Version 0.115
+Version 0.118
 
 SYNOPSIS
 ========
 
-    use Term::Choose;
+    use Term::Choose :choose;
 
     my @array = <one two three four five>;
 
@@ -44,6 +44,11 @@ With the optional second argument (Hash) it can be passed the different options.
 
 The return values are described in [#Routines](#Routines)
 
+FUNCTIONAL INTERFACE
+====================
+
+Importing the subroutines explicitly (`:name_of_the_subroutine`) might become compulsory (optional for now) with the next release.
+
 USAGE
 =====
 
@@ -68,7 +73,22 @@ Keys
 
 For the usage of `SpaceBar`, `Ctrl-SpaceBar`, `Return` and the `q`-key see [#choose](#choose), [#choose-multi](#choose-multi) and [#pause](#pause).
 
-With *mouse* enabled (and if supported by the terminal) use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel. - Mouse wheel not yet suppoerted! 
+With *mouse* enabled (and if supported by the terminal) use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel. - Mouse wheel not yet suppoerted!
+
+CONSTRUCTOR
+===========
+
+The constructor method `new` can be called with optional named arguments:
+
+  * defaults
+
+Expects as its value a hash. Sets the defaults for the instance. See [#OPTIONS](#OPTIONS).
+
+  * win
+
+Expects as its value a window object created by ncurses `initscr`.
+
+If set, `choose`, `choose-multi` and `pause` use this global window instead of creating their own without calling `endwin` to restores the terminal before returning.
 
 ROUTINES
 ========
