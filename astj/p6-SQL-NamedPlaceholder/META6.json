@@ -1,0 +1,19 @@
+{
+  "authors" : [
+    "astj"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "extension of placeholder",
+  "name" : "SQL::NamedPlaceholder",
+  "perl" : "6",
+  "provides" : {
+    "SQL::NamedPlaceholder" : "lib/SQL/NamedPlaceholder.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/astj/p6-SQL-NamedPlaceholder.git",
+  "test-depends" : [
+    "Test::META"
+  ],
+  "version" : "0.1.0"
+}
