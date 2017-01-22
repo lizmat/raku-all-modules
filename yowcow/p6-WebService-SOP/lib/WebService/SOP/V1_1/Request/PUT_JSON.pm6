@@ -1,6 +1,7 @@
 use v6;
 use HTTP::Request::Common;
 use JSON::Fast;
+use URI;
 use WebService::SOP::V1_1::Util;
 
 unit class WebService::SOP::V1_1::Request::PUT_JSON;

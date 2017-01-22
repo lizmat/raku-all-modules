@@ -1,4 +1,5 @@
 use v6;
+use HTTP::Request;
 use URI;
 use WebService::SOP::V1_1::Request::DELETE;
 use WebService::SOP::V1_1::Request::GET;

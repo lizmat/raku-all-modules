@@ -1,5 +1,6 @@
 use v6;
 use lib 'lib';
+use HTTP::Request;
 use JSON::Fast;
 use Test;
 use URI;

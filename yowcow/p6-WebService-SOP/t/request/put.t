@@ -1,5 +1,6 @@
 use v6;
 use lib 'lib';
+use HTTP::Request;
 use Test;
 use URI;
 use WebService::SOP::V1_1::Request::PUT;

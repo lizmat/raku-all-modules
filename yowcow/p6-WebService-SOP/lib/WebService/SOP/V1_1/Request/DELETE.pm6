@@ -1,5 +1,6 @@
 use v6;
 use HTTP::Request::Common;
+use URI;
 use URI::Escape;
 use WebService::SOP::V1_1::Util;
 

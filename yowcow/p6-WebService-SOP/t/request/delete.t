@@ -1,5 +1,6 @@
 use v6;
 use lib 'lib';
+use HTTP::Request;
 use URI;
 use Test;
 use WebService::SOP::V1_1::Request::DELETE;

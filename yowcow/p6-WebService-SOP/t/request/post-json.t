@@ -1,7 +1,9 @@
 use v6;
 use lib 'lib';
+use HTTP::Request;
 use JSON::Fast;
 use Test;
+use URI;
 use WebService::SOP::V1_1::Request::POST_JSON;
 
 my Str $class = 'WebService::SOP::V1_1::Request::POST_JSON';
