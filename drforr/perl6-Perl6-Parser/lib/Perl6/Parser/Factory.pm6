@@ -2379,7 +2379,9 @@ class Perl6::Parser::Factory {
 			@child.append(
 				self._identifier( $p.hash.<identifier> )
 			);
-			@child.append( self._args( $p.hash.<args> ) );
+			if $p.hash.<args>.Str {
+				@child.append( self._args( $p.hash.<args> ) );
+			}
 		}
 		elsif self.assert-hash( $p, [< sym args >] ) {
 			# XXX _sym(...) falls back to Bareword because it's used
@@ -5621,6 +5623,18 @@ say $_.dump;
 				@child.append(
 					self._EXPR( $_.hash.<EXPR> )
 				);
+				my Str $right-edge = $_.Str.substr(
+					$_.hash.<EXPR>.to - $_.from
+				);
+				if $right-edge ~~ m{ ( '\\' ) ( \s* ) $ } {
+					@child.append(
+						Perl6::Bareword.from-int(
+							$_.hash.<EXPR>.to -
+							$0.Str.chars - $1.Str.chars,
+							$0.Str
+						)
+					);
+				}
 			}
 			default {
 				debug-match( $_ ) if $*DEBUG;
