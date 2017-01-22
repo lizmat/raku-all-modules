@@ -24,10 +24,7 @@ Text::Wrap provides a single function `wrap-text` that takes arbitrary text and 
 
   * `:paragraph(rx/\n ** 2..*/)` takes a `Regex` object which is used find paragraphs in the source text in order to retain them in the result. The default is `\n ** 2..*` (two or more consecutive linebreaks). To discard any paragraphs from the source text, you can set this to `Regex:U`.
 
-tem
-===
-
-`:prefix('')` takes a string that's inserted in front of every line of the wrapped text. The length of the prefix string counts into the total line width, meaning it's subtracted from the given `:width`.
+  * `:prefix('')` takes a string that's inserted in front of every line of the wrapped text. The length of the prefix string counts into the total line width, meaning it's subtracted from the given `:width`.
 
 AUTHOR
 ======

@@ -1,4 +1,5 @@
 {
+  "perl" : "6.*",
   "name" : "Text::Wrap",
   "version" : "0.0.1",
   "description" : "Wrap text.",
