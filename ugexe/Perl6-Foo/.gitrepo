@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ugexe/Perl6-Foo.git
 	branch = master
-	commit = 7138ce1181a5c9c6761fe7029b2c58100f0ecd4b
-	parent = 97fe2579cf6a44120bbffa725fb117532e9ea37f
-	cmdver = 0.2.3
+	commit = 2bcb8f885fc62decf142e359ccf90a1e2f39d28c
+	parent = ceb092ae0b3ef559f3c8d2071c0b8d89f8705f7b
+	cmdver = 0.4.0
