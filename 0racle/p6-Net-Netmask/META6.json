@@ -1,0 +1,14 @@
+{
+   "name" : "Net::Netmask",
+   "version" : "0.1.0",
+   "description" : "Parse, manipulate and lookup IP network blocks",
+   "perl" : "6.c",
+   "authors" : [ "Joshua Yeshouroun" ],
+   "provides" : {
+      "Net::Netmask" : "lib/Net/Netmask.pm"
+   },
+   "depends" : [ ],
+   "source-url" : "git://github.com/0racle/p6-Net-Netmask.git",
+   "license" : "Artistic"
+}
+
