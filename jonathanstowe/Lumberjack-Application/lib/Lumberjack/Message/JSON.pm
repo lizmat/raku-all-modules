@@ -107,7 +107,9 @@ role Lumberjack::Message::JSON does JSON::Class {
 
     sub unmarshal-class($v) {
         my $class = (try require ::($v<name>));
-        if ::($v<name>) ~~ Failure {
+
+        my $t = ::($v<name>);
+        if !$t && $t ~~ Failure {
             $class := Metamodel::ClassHOW.new_type(name => $v<name>);
             $class.^add_parent(Any);
             if $v<is-logger> {

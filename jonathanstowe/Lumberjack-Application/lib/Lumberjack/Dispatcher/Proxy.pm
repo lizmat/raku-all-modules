@@ -72,7 +72,7 @@ class Lumberjack::Dispatcher::Proxy does Lumberjack::Dispatcher {
 
         $message does Lumberjack::Message::JSON;
 
-        my $req = POST($!url, content => $message.to-json, Content-Type => "application/json");
+        my $req = POST($!url, content => $message.to-json, Content-Type => "application/json; charset=utf-8");
 
         my $res = try $!ua.request($req);
 
