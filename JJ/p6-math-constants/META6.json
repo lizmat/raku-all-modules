@@ -1,0 +1,17 @@
+{
+  "authors" : [
+    "JJ Merelo"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "A few math and Physics constants",
+  "name" : "Math::Constants",
+  "perl" : "6.c",
+  "provides" : {
+    "Math::Constants" : "lib/Math/Constants.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/JJ/p6-math-constants",
+  "test-depends" : [ ],
+  "version" : "0.0.3"
+}

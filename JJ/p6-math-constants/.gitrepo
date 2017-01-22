@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/JJ/p6-math-constants
+	branch = master
+	commit = 361b41f3f45b5fec1892dece550648bbfaf435bd
+	parent = 9f78784159e912e9e2ec14d4fb312bd82677231b
+	cmdver = 0.4.0

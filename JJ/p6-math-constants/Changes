@@ -1,0 +1,8 @@
+2016-12-31  JJ Merelo  <jmerelo@flash>
+
+	* META6.json: 0.0.3 is version with speed of light.
+
+	* lib/Math/Constants.pm6 (Math): Adds the speed of light as a postfix operator, or unit. 
+
+	* META6.json: Adds a few more constants for version 0.0.2
+
