@@ -4,7 +4,7 @@ i²c on Raspberry Pi fo Perl6
 
 ## Synopsis
 
-```
+```perl6
 
     use RPi::Device::SMBus;
 
@@ -57,18 +57,8 @@ be delighted to receive patches for any issues found.
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -78,15 +68,13 @@ Or you can install directly with "panda":
 
     panda install RPi::Device::SMBus
 
-Other install mechanisms may be become available in the future.
+This should work equally well with *zef* but I haven't tested it.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/RPi-Device-SMBus
+https://github.com/jonathanstowe/RPi-Device-SMBus
 
 I won't be surprised if there are problems with some devices as I am
 only able to test against a limited number which do not use all the
@@ -94,6 +82,8 @@ API.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015
+Please see the [LICENCE](LICENCE) file in the distribution
+
+© Jonathan Stowe 2015, 2016, 2017
