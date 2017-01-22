@@ -1,6 +1,20 @@
 Revision history for Term::Form
 
 
+0.015   2016-12-16
+        - Import subroutines by their names
+
+0.014   2016-12-10
+        - Constructor: named parameters
+        - Bugfix: header
+
+0.013   2016-10-13
+        - Subroutines: use the default export
+
+0.012   2016-10-13
+        - Bugfix in fill-form: don't change the passed array
+        - Subroutines: use the default export
+
 0.011   2016-05-28
         - Remove deprecated option 'prompt'
         - Disable mouse

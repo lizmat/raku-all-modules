@@ -8,12 +8,12 @@ Term::Form - Read lines from STDIN.
 VERSION
 =======
 
-Version 0.011
+Version 0.015
 
 SYNOPSIS
 ========
 
-    use Term::Form;
+    use Term::Form :readline, :fillform;
 
     my @aoa = (
         [ 'name'           ],
@@ -36,7 +36,12 @@ SYNOPSIS
 
     $line = $new.readline( 'Prompt: ', { default => 'abc' } );
 
-    $filled_form = $new.fillform( @aoa, { auto-up => 0 } );
+    @filled_form = $new.fillform( @aoa, { auto-up => 0 } );
+
+FUNCTIONAL INTERFACE
+====================
+
+Importing the subroutines explicitly (`:name_of_the_subroutine`) might become compulsory (optional for now) with the next release.
 
 DESCRIPTION
 ===========
@@ -73,6 +78,21 @@ Only in `fillform`:
 `Page-Up` or `Strg-B`: Move back one page.
 
 `Page-Down` or `Strg-F`: Move forward one page.
+
+CONSTRUCTOR
+===========
+
+The constructor method `new` can be called with optional named arguments:
+
+  * defaults
+
+Expects as its value a hash. Sets the defaults for the instance. See [#OPTIONS](#OPTIONS).
+
+  * win
+
+Expects as its value a window object created by ncurses `initscr`.
+
+If set, `readline` and `fillform` use this global window instead of creating their own without calling `endwin` to restores the terminal before returning.
 
 ROUTINES
 ========

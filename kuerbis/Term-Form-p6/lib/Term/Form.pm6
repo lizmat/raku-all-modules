@@ -1,10 +1,10 @@
 use v6;
 unit class Term::Form;
 
-my $VERSION = '0.011';
+my $VERSION = '0.015';
 
-use Term::Choose::NCurses :all;
-use Term::Choose::LineFold :all;
+use Term::Choose::NCurses;
+use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
 
 
 constant CONTROL_A  = -0x01;
@@ -20,11 +20,11 @@ constant CONTROL_U  = -0x15;
 constant KEY_ESC    = -0x1b;
 
 
-has %.o_global;
+has %.defaults;
 has %!o;
 
-has Term::Choose::NCurses::WINDOW $.g_win;
-has Term::Choose::NCurses::WINDOW $!win;
+has Term::Choose::NCurses::WINDOW $.win;
+has Term::Choose::NCurses::WINDOW $!win_local;
 
 has @!pre;
 has @!list;
@@ -52,7 +52,7 @@ has Int $!pages;
 
 
 
-method new ( %o_global?, $g_win=Term::Choose::NCurses::WINDOW ) {
+method new ( :%defaults, :$win=Term::Choose::NCurses::WINDOW ) {
     my %valid = (
         mark-curr => '<[ 0 1 ]>', #
         auto-up   => '<[ 0 1 2 ]>',
@@ -63,9 +63,9 @@ method new ( %o_global?, $g_win=Term::Choose::NCurses::WINDOW ) {
         header    => 'Str',
         ro        => 'Array',
     );
-    _validate_options( %o_global, %valid );
-    _set_defaults( %o_global );
-    self.bless( :%o_global, :$g_win );
+    _validate_options( %defaults, %valid );
+    _set_defaults( %defaults );
+    self.bless( :%defaults, :$win );
 }
 
 sub _set_defaults ( %opt ) {
@@ -105,40 +105,42 @@ sub _validate_options ( %opt, %valid, Int $list_end? ) {
 
 
 method !_init_term {
-    if $!g_win {
-        $!win = $!g_win;
+    if $!win {
+        $!win_local = $!win;
     }
     else {
         my int32 constant LC_ALL = 6;
         setlocale( LC_ALL, "" );
-        $!win = initscr;
+        $!win_local = initscr;
     }
     noecho();
     cbreak;
-    keypad( $!win, True );
+    keypad( $!win_local, True );
     curs_set( 1 );
     # disable mouse:
     my Array[int32] $old;
     my $s = mousemask( 0, $old );
 }
 
+
 method !_end_term {
-    return if $!g_win;
+    return if $!win;
     endwin();
 }
+
 
 submethod DESTROY () {
     self!_end_term;
 }
 
 
-multi readline ( $key, $default ) is export( :DEFAULT, :readline ) { return Term::Form.new().readline( $key, $default ) }
-multi readline ( $key, %opt? )    is export( :DEFAULT, :readline ) { return Term::Form.new().readline( $key, %opt ) }
+multi readline ( Str $prompt, Str $default ) is export( :DEFAULT, :readline ) { return Term::Form.new().readline( $prompt, $default ) }
+multi readline ( Str $prompt, %opt? )        is export( :DEFAULT, :readline ) { return Term::Form.new().readline( $prompt, %opt ) }
 
-multi method readline ( $key, $default ) { return self!_readline( $key, { default => $default } ) }
-multi method readline ( $key, %opt? )    { return self!_readline( $key, %opt ) }
+multi method readline ( Str $prompt, Str $default ) { return self!_readline( $prompt, { default => $default } ) }
+multi method readline ( Str $prompt, %opt? )        { return self!_readline( $prompt, %opt ) }
 
-method !_readline ( $key = ': ', %!o? ) {
+method !_readline ( $f-key = ': ', %!o? ) {
     my %valid = (
         no-echo => '<[ 0 1 2 ]>',
         default => 'Str',
@@ -146,21 +148,21 @@ method !_readline ( $key = ': ', %!o? ) {
     );
     _validate_options( %!o, %valid );
     for %valid.keys -> $key {
-        %!o{$key} //= %!o_global{$key};
+        %!o{$key} //= %!defaults{$key};
     }
     %!o<ro> = ();
     #$!nr_header_lines = 0;
     $!sep = '';
     $!sep_w = print-columns( $!sep );
     $!idx = 0;
-    @!len_keys[0] = print-columns( $key );
+    @!len_keys[0] = print-columns( $f-key );
     $!key_w = @!len_keys[0];
     my Str $str = %!o<default>;
-    @!list = ( [ $key, $str ] );
+    @!list = ( [ $f-key, $str ] );
     my Int $pos = $str.chars;
     self!_init_term();
-    my $term_w = getmaxx( $!win );
-    my $term_h = getmaxy( $!win );
+    my $term_w = getmaxx( $!win_local );
+    my $term_h = getmaxy( $!win_local );
     $!avail_w = $term_w - 1; #
     $!val_w = $!avail_w - ( $!key_w + $!sep_w );
     self!_nr_header_lines();
@@ -179,20 +181,20 @@ method !_readline ( $key = ': ', %!o? ) {
         $!val_w = $!avail_w - ( $!key_w + $!sep_w );
         self!_print_readline( $str, $!nr_header_lines, $pos );
         nc_refresh();
-        my int32 $key;
+        my int32 $c-key;
         WAIT: loop {
-            my Int $ct = get_wch( $key );
+            my Int $ct = get_wch( $c-key );
             if $ct == ERR {
                 sleep 0.01;
                 next WAIT;
             }
             elsif $ct != KEY_CODE_YES {
-                $key = -$key;
+                $c-key = -$c-key;
             }
             last WAIT;
         }
-        my $tmp_term_w = getmaxx( $!win );
-        my $tmp_term_h = getmaxy( $!win );
+        my $tmp_term_w = getmaxx( $!win_local );
+        my $tmp_term_h = getmaxy( $!win_local );
         if $tmp_term_w != $term_w || $tmp_term_h != $term_h {
             ( $term_w, $term_h ) = ( $tmp_term_w, $tmp_term_h );
             $!avail_w = $term_w - 1; #
@@ -205,8 +207,8 @@ method !_readline ( $key = ': ', %!o? ) {
             next GET_KEY;
         }
 
-        given $key {
-            #when ! $key.defined {
+        given $c-key {
+            #when ! $c-key.defined {
             #    self!_end_term();
             #    die "EOT: $!";#
             #}
@@ -293,12 +295,15 @@ method !_readline ( $key = ': ', %!o? ) {
                 return $str;
             }
             default {
-                $str.substr-rw( $pos, 0 ) = $key.abs.chr;
+                $str.substr-rw( $pos, 0 ) = $c-key.abs.chr;
                 $pos++;
             }
         }
     }
 }
+
+
+
 
 
 method !_print_readline ( Str $str is copy, Int $row, Int $pos is copy ) {
@@ -325,14 +330,14 @@ method !_print_readline ( Str $str is copy, Int $row, Int $pos is copy ) {
         $str.substr-rw( $str.chars, 1 ) = '>'; ##
     }
 
-    my $key = self!_prepare_key( $!idx );
+    my $f-key = self!_prepare_key( $!idx );
     if %!o<mark-curr> {
         attron( A_UNDERLINE );
-        mvaddstr( $row, 0, $key );
+        mvaddstr( $row, 0, $f-key );
         attroff( A_UNDERLINE );
     }
     else {
-        mvaddstr( $row, 0, $key );
+        mvaddstr( $row, 0, $f-key );
     }
     my $sep = $!sep;
     if %!o<ro>.any == $!idx - @!pre.elems {
@@ -357,18 +362,18 @@ method !_print_readline ( Str $str is copy, Int $row, Int $pos is copy ) {
 
 
 method !_prepare_key ( Int $idx ) {
-    my Int $key_len = @!len_keys[$idx];
-    my Str $key = @!list[$idx][0];
-    $key.=subst(   / \s /, ' ', :g );
-    $key.=subst( / <:C> /, '',  :g );
-    if $key_len > $!key_w {
-        return cut-to-printwidth( $key, $!key_w );
+    my Int $f-key_len = @!len_keys[$idx];
+    my Str $f-key = @!list[$idx][0];
+    $f-key.=subst(   / \s /, ' ', :g );
+    $f-key.=subst( / <:C> /, '',  :g );
+    if $f-key_len > $!key_w {
+        return to-printwidth( $f-key, $!key_w );
     }
-    elsif $key_len < $!key_w {
-        return " " x ( $!key_w - $key_len ) ~ $key;
+    elsif $f-key_len < $!key_w {
+        return " " x ( $!key_w - $f-key_len ) ~ $f-key;
     }
     else {
-        return $key;
+        return $f-key;
     }
 }
 
@@ -418,6 +423,7 @@ method !_prepare_size ( Int $term_w, Int $term_h ) {
 
 method !_nr_header_lines {
     if ! %!o<header>.defined || %!o<header> eq '' {
+        $!header = Str;
         $!nr_header_lines = 0;
         return;
     }
@@ -465,7 +471,7 @@ method !_get_print_row ( Int $idx ) {
             $sep = $!sep_ro;
         }
         return
-            self!_prepare_key( $idx ) ~ $sep ~ cut-to-printwidth( $val, $!val_w );
+            self!_prepare_key( $idx ) ~ $sep ~ to-printwidth( $val, $!val_w );
     }
 }
 
@@ -545,10 +551,10 @@ method fillform ( @orig_list, %!o? ) {
         header    => 'Str',
         ro        => 'Array',
     );
-    @!list = @orig_list;
+    @!list = @orig_list.deepmap( -> $e is copy { $e } );
     _validate_options( %!o, %valid, @!list.end ); # 
     for %valid.keys -> $key {
-        %!o{$key} //= %!o_global{$key};
+        %!o{$key} //= %!defaults{$key};
     }
 
     $!sep    = ': ';
@@ -567,8 +573,8 @@ method fillform ( @orig_list, %!o? ) {
     self!_length_longest_key();
     self!_init_term();
 
-    my $term_w = getmaxx( $!win );
-    my $term_h = getmaxy( $!win );
+    my $term_w = getmaxx( $!win_local );
+    my $term_h = getmaxy( $!win_local );
     self!_prepare_size( $term_w, $term_h );
     self!_write_first_screen( 0 );
 
@@ -590,20 +596,20 @@ method fillform ( @orig_list, %!o? ) {
             self!_print_current_row( $str, $pos );
         }
         nc_refresh();
-        my int32 $key;
+        my int32 $c-key;
         WAIT: loop {
-            my Int $ct = get_wch( $key );
+            my Int $ct = get_wch( $c-key );
             if $ct == ERR {
                 sleep 0.01;
                 next WAIT;
             }
             elsif $ct != KEY_CODE_YES {
-                $key = -$key;
+                $c-key = -$c-key;
             }
             last WAIT;
         }
-        my $tmp_term_w = getmaxx( $!win );
-        my $tmp_term_h = getmaxy( $!win );
+        my $tmp_term_w = getmaxx( $!win_local );
+        my $tmp_term_h = getmaxy( $!win_local );
         if $tmp_term_w != $term_w || $tmp_term_h != $term_h && $tmp_term_h {
             ( $term_w, $term_h ) = ( $tmp_term_w, $tmp_term_h );
             self!_prepare_size( $term_w, $term_h );
@@ -611,8 +617,8 @@ method fillform ( @orig_list, %!o? ) {
             ( $str, $pos ) = self!_str_and_pos();
             next LINE; #
         }
-        given $key {
-            #when ! $key.defined {
+        given $c-key {
+            #when ! $c-key.defined {
             #    self!_end_term();
             #    die "EOT: $!";#
             #}
@@ -820,7 +826,7 @@ method fillform ( @orig_list, %!o? ) {
                     $beep = 1;
                 }
                 else {
-                    $str.substr-rw( $pos, 0 ) = $key.abs.chr;
+                    $str.substr-rw( $pos, 0 ) = $c-key.abs.chr;
                     $pos++;
                 }
             }
@@ -838,11 +844,11 @@ Term::Form - Read lines from STDIN.
 
 =head1 VERSION
 
-Version 0.011
+Version 0.015
 
 =head1 SYNOPSIS
 
-    use Term::Form;
+    use Term::Form :readline, :fillform;
 
     my @aoa = (
         [ 'name'           ],
@@ -865,7 +871,12 @@ Version 0.011
 
     $line = $new.readline( 'Prompt: ', { default => 'abc' } );
 
-    $filled_form = $new.fillform( @aoa, { auto-up => 0 } );
+    @filled_form = $new.fillform( @aoa, { auto-up => 0 } );
+
+=head1 FUNCTIONAL INTERFACE
+
+Importing the subroutines explicitly (C<:name_of_the_subroutine>) might become compulsory (optional for now) with the
+next release.
 
 =head1 DESCRIPTION
 
@@ -901,6 +912,21 @@ C<Down-Arrow>: Move down one row.
 C<Page-Up> or C<Strg-B>: Move back one page.
 
 C<Page-Down> or C<Strg-F>: Move forward one page.
+
+=head1 CONSTRUCTOR
+
+The constructor method C<new> can be called with optional named arguments:
+
+=item defaults
+
+Expects as its value a hash. Sets the defaults for the instance. See L<#OPTIONS>.
+
+=item win
+
+Expects as its value a window object created by ncurses C<initscr>.
+
+If set, C<readline> and C<fillform> use this global window instead of creating their own without calling C<endwin> to
+restores the terminal before returning.
 
 =head1 ROUTINES
 
