@@ -6,6 +6,7 @@ use Test;
 use JSON::Fast;
 
 use App::ModuleSnap;
+use META6;
 
 my @dists;
 

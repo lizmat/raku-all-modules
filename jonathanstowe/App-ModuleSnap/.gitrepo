@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/App-ModuleSnap.git
 	branch = master
-	commit = 2e27fc0d939f868b28dec3821908599b87045b0b
-	parent = afa8567772abe0cc3cc75671efc8d1a8e20d10dc
-	cmdver = 0.2.3
+	commit = ced9ee2605fc5e35f90bf2cb4e960dc788658a07
+	parent = 05721b16f204bf023bdd74ad9dc444fea330d073
+	cmdver = 0.4.0
