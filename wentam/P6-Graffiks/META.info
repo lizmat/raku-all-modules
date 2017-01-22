@@ -1,4 +1,5 @@
 {
+  "perl" : "6.*",
   "name" : "Graffiks",
   "version" : "0.1.0",
   "description" : "Bindings to the graphics engine Graffiks",
