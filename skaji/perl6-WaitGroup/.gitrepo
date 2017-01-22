@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/skaji/perl6-WaitGroup.git
+	branch = master
+	commit = 1313575928b134fdee0f9cc57e1a7591a9626dda
+	parent = 128c849d3080ca911fdf4cf77e46d9831bda5575
+	cmdver = 0.4.0
