@@ -27,7 +27,7 @@ our sub decamelize(Str $given is copy, Str $expr = '-') is export(:DEFAULT) retu
 our sub wordsplit(Str $given) is export(:DEFAULT) returns List {
     $given.split(/
         <[_ \- \s]>+
-        | \b
+        | "\b"
         | <?after <-[A ..Z]>> <?before <:Lu>>
         | <?after <:Lu>> <?before <:Lu> <:Ll>>
     /, :skip-empty);

@@ -1,5 +1,9 @@
 Revision history for String::CamelCase
 
+0.0.5 2016-01-16T19:32:00+0900
+
+    - Fix regex \b where it should be "\b"
+
 0.0.4 2015-01-03T18:04:00+0900
 
     - Fix email in POD and README
