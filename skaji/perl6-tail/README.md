@@ -8,20 +8,22 @@ IO::TailFile - emulation of tail -f
 SYNOPSIS
 ========
 
-    use IO::TailFile;
+```perl6
+use IO::TailFile;
 
-    # (a) reactive way
-    react {
-      whenever IO::TailFile.watch("access.log", :chomp) -> $line {
-        say $line;
-      };
-    };
+# (a) reactive way
+react {
+  whenever IO::TailFile.watch("access.log", :chomp) -> $line {
+    say $line;
+  };
+};
 
-    # (b) use lazy list
-    my @line = IO::TailFile.watch("access.log", :chomp).list.lazy;
-    for @line -> $line {
-      say $line;
-    };
+# (b) use lazy list
+my @line = IO::TailFile.watch("access.log", :chomp).list.lazy;
+for @line -> $line {
+  say $line;
+};
+```
 
 DESCRIPTION
 ===========
