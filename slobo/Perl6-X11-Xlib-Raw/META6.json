@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "X11::Xlib::Raw",
     "version" : "*",
     "description" : "Xlib binding using NativeCall",
