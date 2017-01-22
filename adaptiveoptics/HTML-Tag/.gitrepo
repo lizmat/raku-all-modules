@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/adaptiveoptics/HTML-Tag.git
+	branch = master
+	commit = f45dcf8a3d28b487416c056d861e637b48ac905f
+	parent = 6b7b87908d9d1e1f8514ce16ea6c6dab76005745
+	cmdver = 0.4.0

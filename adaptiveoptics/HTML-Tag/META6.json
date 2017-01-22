@@ -1,0 +1,18 @@
+{
+    "perl" : "6.c",
+    "name" : "HTML::Tag",
+    "version" : "0.0.1",
+    "description" : "Generate simple, interleafable, HTML tags.",
+    "authors" : [ "Mark Rushing" ],
+    "provides" : {
+	"HTML::Tag"               : "lib/HTML/Tag.pm6",
+	"HTML::Tag::Tags"         : "lib/HTML/Tag/Tags.pm6",
+	"HTML::Tag::Macro"        : "lib/HTML/Tag/Macro.pm6",
+	"HTML::Tag::Macro::Form"  : "lib/HTML/Tag/Macro/Form.pm6",
+	"HTML::Tag::Macro::List"  : "lib/HTML/Tag/Macro/List.pm6",
+	"HTML::Tag::Macro::Table" : "lib/HTML/Tag/Macro/Table.pm6"
+    },
+    "depends" : [ "HTML::Entity" ],
+    "resources" : [ ],
+    "source-url" : "git://github.com/adaptiveoptics/HTML-Tag.git"
+}
