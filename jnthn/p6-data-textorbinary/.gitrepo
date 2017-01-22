@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jnthn/p6-data-textorbinary.git
+	branch = master
+	commit = aa6e64b0fb868dfcf09b925f1f238ca0bf61314d
+	parent = 0f868a37999d2f5db2898f1319e05faea5fbf3af
+	cmdver = 0.4.0
