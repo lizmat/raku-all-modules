@@ -1,0 +1,20 @@
+{
+  "perl" : "6.c",
+  "name" : "Git::Wrapper",
+  "authors" : [ "PerlPilot", "nicqrocks" ],
+  "description" : "simple, hacky way to use git from Perl 6",
+  "version" : "v0.0.3",
+  "build-depends" : [ ],
+  "test-depends" : [ ],
+  "depends" : [ ],
+  "provides" : {
+    "Git::Wrapper" : "lib/Git/Wrapper.pm",
+    "Git::Wrapper::Log" : "lib/Git/Log/Parser.pm",
+    "Git::Log::Parser" : "lib/Git/Log/Parser.pm",
+    "Git::Log::Actions": "lib/Git/Log/Parser.pm"
+  },
+  "support" : {
+    "source" : "git://github.com/nicqrocks/p6-Git-Wrapper.git"
+  },
+  "source-url": "git://github.com/nicqrocks/p6-Git-Wrapper.git"
+}

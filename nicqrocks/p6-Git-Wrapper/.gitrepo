@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/nicqrocks/p6-Git-Wrapper.git
+	branch = master
+	commit = f83f70e9b98b5d4d925d59995afe23976011dceb
+	parent = d658c12b70bb76cdeb05b7a620694897728fb3d8
+	cmdver = 0.4.0
