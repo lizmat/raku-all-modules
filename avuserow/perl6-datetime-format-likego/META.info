@@ -1,4 +1,5 @@
 {
+	"perl" : "6.*",
 	"name" : "DateTime::Format::LikeGo",
 	"version" : "0.0.2",
 	"description" : "Format dates using Go's reference format",
