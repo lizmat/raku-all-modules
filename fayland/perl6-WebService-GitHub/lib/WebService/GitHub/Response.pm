@@ -2,7 +2,7 @@ use v6;
 
 use JSON::Fast; # from-json
 
-class WebServices::GitHub::Response {
+class WebService::GitHub::Response {
     has $.raw;
 
     method data {

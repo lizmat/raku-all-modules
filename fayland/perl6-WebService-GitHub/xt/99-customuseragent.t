@@ -1,10 +1,10 @@
 use Test;
-use WebServices::GitHub;
-use WebServices::GitHub::Role::CustomUserAgent;
+use WebService::GitHub;
+use WebService::GitHub::Role::CustomUserAgent;
 
-my $gh = WebServices::GitHub.new();
+my $gh = WebService::GitHub.new();
 
-$gh does WebServices::GitHub::Role::CustomUserAgent;
+$gh does WebService::GitHub::Role::CustomUserAgent;
 $gh.set-custom-useragent('perl6-WG-test/0.1');
 
 my $res = $gh.request('/users/fayland');

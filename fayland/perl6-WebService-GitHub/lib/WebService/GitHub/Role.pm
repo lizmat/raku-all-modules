@@ -7,9 +7,9 @@ use JSON::Fast; # from-json
 use Cache::LRU;
 use HTTP::Request;
 use HTTP::UserAgent;
-use WebServices::GitHub::Response;
+use WebService::GitHub::Response;
 
-class X::WebServices::GitHub is Exception {
+class X::WebService::GitHub is Exception {
   has $.reason;
   method message()
   {
@@ -17,7 +17,7 @@ class X::WebServices::GitHub is Exception {
   }
 }
 
-role WebServices::GitHub::Role {
+role WebService::GitHub::Role {
     has $.endpoint = 'https://api.github.com';
     has $.access-token;
     has $.auth_login;
@@ -43,7 +43,7 @@ role WebServices::GitHub::Role {
     submethod BUILD(*%args) {
         if %args<with>:exists {
             for %args<with> -> $n {
-                my $class = "WebServices::GitHub::Role::$n";
+                my $class = "WebService::GitHub::Role::$n";
                 require ::($class);
                 self does ::($class);
             }
@@ -96,7 +96,7 @@ role WebServices::GitHub::Role {
         my $res = self._make_request($request);
         $res = $.handle_response($res);
 
-        my $ghres = WebServices::GitHub::Response.new(
+        my $ghres = WebService::GitHub::Response.new(
           raw => $res,
           auto_pagination => $.auto_pagination,
         );
@@ -107,7 +107,7 @@ role WebServices::GitHub::Role {
           if ($errors[0]{"message"}) {
             $message = $message ~ ' - ' ~ $errors[0]{"message"};
           }
-          X::WebServices::GitHub.new(reason => $message).throw;
+          X::WebService::GitHub.new(reason => $message).throw;
         }
 
         return $ghres;

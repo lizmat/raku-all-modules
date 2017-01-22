@@ -1,9 +1,9 @@
 use v6;
 
-use WebServices::Github::Role;
+use WebService::Github::Role;
 
-class WebServices::GitHub::Users does WebServices::GitHub::Role {
-    
+class WebService::GitHub::Users does WebService::GitHub::Role {
+
     method show($user?) {
       self.request($user ?? '/users/' ~ $user !! '/user')
     }
@@ -28,15 +28,15 @@ class WebServices::GitHub::Users does WebServices::GitHub::Role {
       self.request($user ?? "/users/" ~ $user ~ '/following' !! '/user/following');
     }
 
-    method emails { 
-      self.request('/user/emails'); 
+    method emails {
+      self.request('/user/emails');
     }
 
-    method is_following($id) { 
+    method is_following($id) {
       self.request('/user/following/' ~ $id);
     }
 
-    method follow($id) { 
+    method follow($id) {
       self.request('/user/following/' ~ $id, 'PUT');
     }
 
@@ -44,15 +44,15 @@ class WebServices::GitHub::Users does WebServices::GitHub::Role {
       self.request('/user/following/' ~ $id, 'DELETE');
     }
 
-    method keys { 
+    method keys {
       self.request('/user/keys')
     }
 
     method key($id) {
-      self.request('/user/keys/' ~ $id) 
+      self.request('/user/keys/' ~ $id)
     }
 
-    method create_key(%data) { 
+    method create_key(%data) {
       self.request('/user/keys', 'POST', :data(%data))
     }
 
@@ -60,7 +60,7 @@ class WebServices::GitHub::Users does WebServices::GitHub::Role {
       self.request('/user/keys/' ~ $id, 'PATCH', :data(%data))
     }
 
-    method delete_key($id){ 
+    method delete_key($id){
       self.request('/user/keys/' ~ $id, 'DELETE')
     }
 }

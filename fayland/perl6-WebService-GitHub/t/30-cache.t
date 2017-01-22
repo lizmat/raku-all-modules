@@ -1,11 +1,11 @@
 use Test;
-use WebServices::GitHub;
+use WebService::GitHub;
 
 ok(1);
 
 if (%*ENV<TRAVIS>) {
     diag "running on travis";
-    my $gh = WebServices::GitHub.new;
+    my $gh = WebService::GitHub.new;
     my $res = $gh.request('/users/fayland');
     my $user = $res.data;
     is $user<login>, 'fayland', 'login ok';

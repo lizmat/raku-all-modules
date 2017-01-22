@@ -1,11 +1,11 @@
 use Test;
-use WebServices::GitHub::Search;
+use WebService::GitHub::Search;
 
-my $search = WebServices::GitHub::Search.new;
+my $search = WebService::GitHub::Search.new;
 
 # enable debug
-use WebServices::GitHub::Role::Debug;
-$search does WebServices::GitHub::Role::Debug;
+use WebService::GitHub::Role::Debug;
+$search does WebService::GitHub::Role::Debug;
 
 my $data = $search.repositories({
     :q<perl6>,

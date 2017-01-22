@@ -2,14 +2,14 @@ use Test;
 
 die 'export GITHUB_ACCESS_TOKEN' unless %*ENV<GITHUB_ACCESS_TOKEN>;
 
-use WebServices::GitHub::Gist;
+use WebService::GitHub::Gist;
 
-my $gist = WebServices::GitHub::Gist.new(
+my $gist = WebService::GitHub::Gist.new(
     access-token => %*ENV<GITHUB_ACCESS_TOKEN>
 );
 
 my $res = $gist.create_gist({
-    description => 'Test from perl6 WebServices::GitHub::Gist',
+    description => 'Test from perl6 WebService::GitHub::Gist',
     public => True,
     files => {
         'test.txt' => {

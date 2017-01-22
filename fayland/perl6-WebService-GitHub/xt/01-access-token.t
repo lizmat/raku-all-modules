@@ -2,9 +2,9 @@ use Test;
 
 die 'export GITHUB_ACCESS_TOKEN' unless %*ENV<GITHUB_ACCESS_TOKEN>;
 
-use WebServices::GitHub;
+use WebService::GitHub;
 
-my $gh = WebServices::GitHub.new(
+my $gh = WebService::GitHub.new(
     access-token => %*ENV<GITHUB_ACCESS_TOKEN>
 );
 

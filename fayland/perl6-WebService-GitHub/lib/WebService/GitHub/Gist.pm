@@ -1,8 +1,8 @@
 use v6;
 
-use WebServices::GitHub::Role;
+use WebService::GitHub::Role;
 
-class WebServices::GitHub::Gist does WebServices::GitHub::Role {
+class WebService::GitHub::Gist does WebService::GitHub::Role {
     method public_gists {
         self.request('/gists/public')
     }

@@ -1,6 +1,6 @@
 use v6;
 
-role WebServices::GitHub::Role::Debug {
+role WebService::GitHub::Role::Debug {
     method prepare_request($request) {
         $*ERR.say(
             map(

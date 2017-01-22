@@ -1,4 +1,5 @@
 {
+    "perl"          : "6.*",
     "name"          : "WebService::GitHub",
     "version"       : "0.1.0",
     "author"        : "github:fayland",

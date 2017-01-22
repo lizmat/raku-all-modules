@@ -1,13 +1,13 @@
 use Test;
-use WebServices::GitHub;
+use WebService::GitHub;
 
-my $gh = WebServices::GitHub.new(
+my $gh = WebService::GitHub.new(
     with => ('Debug')
 );
 
 # # enable debug
-# use WebServices::GitHub::Role::Debug;
-# $gh does WebServices::GitHub::Role::Debug;
+# use WebService::GitHub::Role::Debug;
+# $gh does WebService::GitHub::Role::Debug;
 
 my $res = $gh.request('/users/fayland');
 my $data = $res.data;

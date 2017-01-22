@@ -1,8 +1,8 @@
 use Test;
-use WebServices::GitHub::Users;
+use WebService::GitHub::Users;
 die 'export GITHUB_ACCESS_TOKEN' unless %*ENV<GITHUB_ACCESS_TOKEN>;
 
-my $users = WebServices::GitHub::Users.new(
+my $users = WebService::GitHub::Users.new(
   access-token => %*ENV<GITHUB_ACCESS_TOKEN>
 );
 

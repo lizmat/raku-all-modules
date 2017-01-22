@@ -1,5 +1,5 @@
 use Test;
-use WebServices::GitHub::Response;
+use WebService::GitHub::Response;
 use HTTP::Response;
 
 my $search_json_file = $?FILE.IO.dirname ~ '/test_data/search.response';
@@ -8,7 +8,7 @@ $content ~~ s:g/\r?\n/\r\n/; # dummy hack
 my $raw = HTTP::Response.new;
 $raw.parse($content);
 
-my $response = WebServices::GitHub::Response.new(raw => $raw);
+my $response = WebService::GitHub::Response.new(raw => $raw);
 is $response.header('X-GitHub-Request-Id'), '3CB4420C:151E8:2C08375:5620F57C', 'X-GitHub-Request-Id';
 ok $response.is-success;
 is $response.next-page-url, 'https://api.github.com/search/repositories?q=perl&page=2', 'next-page-url';

@@ -1,8 +1,8 @@
 use v6;
 
-use WebServices::GitHub::Role;
+use WebService::GitHub::Role;
 
-class WebServices::GitHub::OAuth does WebServices::GitHub::Role {
+class WebService::GitHub::OAuth does WebService::GitHub::Role {
     method authorizations {
         self.request('/authorizations')
     }

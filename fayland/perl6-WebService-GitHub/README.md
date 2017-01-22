@@ -6,9 +6,9 @@
 
 ## SYNOPSIS
 
-    use WebServices::GitHub;
+    use WebService::GitHub;
 
-    my $gh = WebServices::GitHub.new(
+    my $gh = WebService::GitHub.new(
         access-token => 'my-access-token'
     );
 
@@ -57,7 +57,7 @@ UTC by default, [Doc](https://developer.github.com/v3/#timezones)
  does the roles
 
 ```
-my $gh = WebServices::GitHub.new(
+my $gh = WebService::GitHub.new(
     with => ('Debug')
 );
 ```
@@ -91,7 +91,7 @@ Parsed from Link header, [Doc](https://developer.github.com/v3/#pagination)
 #### get user info
 
 ```
-my $gh = WebServices::GitHub.new;
+my $gh = WebService::GitHub.new;
 my $user = $gh.request('/users/fayland').data;
 say $user<name>;
 ```
@@ -99,9 +99,9 @@ say $user<name>;
 #### search repositories
 
 ```
-use WebServices::GitHub::Search;
+use WebService::GitHub::Search;
 
-my $search = WebServices::GitHub::Search.new;
+my $search = WebService::GitHub::Search.new;
 my $data = $search.repositories({
     :q<perl6>,
     :sort<stars>,
@@ -116,9 +116,9 @@ my $data = $search.repositories({
 [examples/create_access_token.pl](examples/create_access_token.pl)
 
 ```perl6
-use WebServices::GitHub::OAuth;
+use WebService::GitHub::OAuth;
 
-my $gh = WebServices::GitHub::OAuth.new(
+my $gh = WebService::GitHub::OAuth.new(
     auth_login => 'username',
     auth_password => 'password'
 );
@@ -135,14 +135,14 @@ say $auth<token>;
 #### create a gist
 
 ```
-use WebServices::GitHub::Gist;
+use WebService::GitHub::Gist;
 
-my $gist = WebServices::GitHub::Gist.new(
+my $gist = WebService::GitHub::Gist.new(
     access-token => %*ENV<GITHUB_ACCESS_TOKEN>
 );
 
 my $data = $gist.create_gist({
-    description => 'Test from perl6 WebServices::GitHub::Gist',
+    description => 'Test from perl6 WebService::GitHub::Gist',
     public => True,
     files => {
         'test.txt' => {

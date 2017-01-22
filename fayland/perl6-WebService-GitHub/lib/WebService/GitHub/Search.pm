@@ -1,8 +1,8 @@
 use v6;
 
-use WebServices::GitHub::Role;
+use WebService::GitHub::Role;
 
-class WebServices::GitHub::Search does WebServices::GitHub::Role {
+class WebService::GitHub::Search does WebService::GitHub::Role {
     method repositories(%data) {
         self.request('/search/repositories', :data(%data))
     }
