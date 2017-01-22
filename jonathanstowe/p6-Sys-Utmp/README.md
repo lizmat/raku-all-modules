@@ -27,18 +27,8 @@ It is entirely possible that the assumptions that I have made in the C
 part aren't correct for your system and that this will not install or
 work properly, if this is the case please see the "Support" section below.
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -48,13 +38,13 @@ Or you can install directly with "panda":
 
     panda install Sys::Utmp
 
-Other install mechanisms may be become available in the future.
+This should work with *zef* I just haven't tested it.
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/Sys-Utmp
+https://github.com/jonathanstowe/Sys-Utmp
 
 I'm not able to test on a wide variety of platforms so any help there would be 
 appreciated. Also the assumptions in the C library are based on those used
@@ -67,6 +57,8 @@ welcome.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015, 2016
+Please see the [LICENCE](LICENCE) file in the distribution
+
+© Jonathan Stowe 2015, 2016, 2017
