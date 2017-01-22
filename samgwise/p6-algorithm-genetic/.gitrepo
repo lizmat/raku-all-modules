@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/samgwise/p6-algorithm-genetic.git
+	branch = master
+	commit = e3feb211d08f4fc7fb98f650869307481e26a99b
+	parent = 4ad9b933b82560dafc23d2c5c67b13ffe3af62e7
+	cmdver = 0.4.0
