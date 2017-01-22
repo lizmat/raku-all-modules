@@ -19,14 +19,10 @@ for @projects {
     $local ~~ s/ '.git' $ //;
     %local-seen{$local} = True;
     if $ignore-errors {
-        try {
-            use fatal;
-            run 'git', 'subrepo', 'clone', '-f', $url, $local;
-            CATCH {
-                warn $_;
-                run 'git', 'reset', 'HEAD';
-                run 'git', 'checkout', '.';
-            }
+       my $proc = run 'git', 'subrepo', 'clone', '-f', $url, $local;
+       if $proc.exitcode {
+            run 'git', 'reset', 'HEAD';
+            run 'git', 'checkout', '.';
         }
     }
     else {
