@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Mortgage",
     "version"     : "*",
     "author"	  : "github:teodozjan",

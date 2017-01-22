@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/teodozjan/mortage6.git
 	branch = master
-	commit = b500ef87f5bd1327eadaaa061d01f503e7e9473d
-	parent = dba7dc1188a8f369f19a97931165f48d4d03ca9d
-	cmdver = 0.2.2
+	commit = 093cfa74c116c0cfb2466059471ca084bc6a9d16
+	parent = 55ede214e9e5ca826398846b5d9920ca7fae79c5
+	cmdver = 0.4.0
