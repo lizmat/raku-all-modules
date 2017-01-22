@@ -1,26 +1,18 @@
-use lib <lib ../lib /var/www/tmp/perl6-IRC-Client/lib>;
+use lib <
+    /home/zoffix/CPANPRC/IRC-Client/lib
+    /home/zoffix/services/lib/IRC-Client/lib
+    /home/zoffix/services/lib/WWW-Google-Time/lib
+    lib
+>;
 use IRC::Client;
-use IRC::Client::Plugin::Debugger;
 use IRC::Client::Plugin::HNY;
 
-sub MAIN (
-            :$host    = 'localhost',
-            :$channel = '#zofbot',
-            :$nick    = 'HNYBot',
-    Numeric :$time
-) {
-
-    $time.defined and %*ENV<CUSTOM-NOW-TIME> = $time;
-
-    IRC::Client.new(
-        :$host,
-        :$nick,
-        :channels($channel),
-        :debug,
-        plugins => [
-            # IRC::Client::Plugin::Debugger.new,
-            IRC::Client::Plugin::HNY.new,
-        ]
-    ).run;
-
-}
+.run with IRC::Client.new:
+    :host(%*ENV<HNY_HOST> // 'irc.freenode.net')
+    :password('secret.txt'.IO.slurp.trim)
+    :nick<HNYBot>
+    :channels<#perl6 #zofbot #freenode-newyears>
+    :debug
+    :plugins[
+        IRC::Client::Plugin::HNY.new,
+    ];

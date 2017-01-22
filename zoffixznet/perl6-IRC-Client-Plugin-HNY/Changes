@@ -1,4 +1,8 @@
 Revision History for 'IRC::Client::Plugin::HNY' Perl 6 Distribution
 
+2.001001  2016-12-21
+  - Port to new IRC::Client's API
+  - Fix all the bugs (hopefully?)
+
 1.001001  2015-12-20
   - First version released on an unsuspecting world

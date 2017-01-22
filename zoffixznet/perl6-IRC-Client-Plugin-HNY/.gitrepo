@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-IRC-Client-Plugin-HNY.git
 	branch = master
-	commit = 6dbf62b3aa499c95ec23e973a94dbba5fb3c5228
-	parent = 59f7743d64f3fc898d07e01259708f1eed7f06ee
-	cmdver = 0.2.3
+	commit = 4364c3e0e8331562ce1b40647be241e159d84a4d
+	parent = 3cb7b7408a613fa3c9fd2dd47a1e35cfb8052e58
+	cmdver = 0.4.0
