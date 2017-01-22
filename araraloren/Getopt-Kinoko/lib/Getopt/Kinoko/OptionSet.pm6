@@ -27,7 +27,7 @@ class OptionSet does DeepClone {
 	)
 	{}
 
-	#| for traversal 
+	#| for traversal
 	method !allgroup() {
 		($!normal, @!multi, @!radio).flat
 	}
@@ -63,6 +63,13 @@ class OptionSet does DeepClone {
 	method set-callback(Str $name, &callback, :$long, :$short) {
 		for self!allgroup -> $group {
 			return True if $group.set-callback($name, &callback, :$long, :$short);
+		}
+		False;
+	}
+
+	method set-comment(Str $name, $comment, :$long, :$short) {
+		for self!allgroup -> $group {
+			return True if $group.set-comment($name, $comment, :$long, :$short);
 		}
 		False;
 	}
@@ -201,13 +208,13 @@ class OptionSet does DeepClone {
         self;
 	}
 
-	multi method push-option(Str $opt, :&callback, :$normal) {
-		$!normal.push($opt, :&callback);
+	multi method push-option(Str $opt, :&callback, :$comment, :$normal) {
+		$!normal.push($opt, :&callback, :$comment);
 		self;
 	}
 
-	multi method push-option(Str $opt, $value, :&callback, :$normal) {
-		$!normal.push($opt, $value, :&callback);
+	multi method push-option(Str $opt, $value, :&callback, :$comment, :$normal) {
+		$!normal.push($opt, $value, :&callback, :$comment);
 		self;
 	}
 
@@ -256,6 +263,60 @@ class OptionSet does DeepClone {
         $usage;
 	}
 
+	multi method comment() {
+		my @comment = [];
+
+		for @(self.values()) -> $opt {
+			@comment.push(do {
+				my @column;
+				@column.push($opt.is-long ?? ("--" ~ $opt.long-name) !! "");
+				@column.push($opt.is-short ?? ("-" ~ $opt.short-name) !! "");
+				@column.push($opt.comment);
+				@column;
+			});
+		}
+		@comment;
+	}
+
+	multi method comment($indent #`( generate a table format Array)) {
+		require Terminal::WCWidth <&wcswidth>;
+		my @comment = [];
+		my @width	= [];
+		my @max 	= [0, 0];
+		my @table	= [];
+		for @(self.values()) -> $opt {
+			@comment.push([
+				do {
+					my $str = "";
+					$str ~= '-'  ~ $opt.short-name if $opt.is-short;
+					$str ~= "|" if $opt.is-short && $opt.is-long;
+					$str ~= '--' ~ $opt.long-name  if $opt.is-long;
+					$str ;
+				},
+				$opt.comment
+			]);
+		}
+		for @comment -> $line {
+			@width.push(@$line.map({wcswidth($_)}));
+		}
+		for @width -> $line {
+			for ^+@$line -> \col_i {
+				@max[col_i] = $line.[col_i]
+					if $line.[col_i] > @max[col_i];
+			}
+		}
+		@max = @max.map: { $_ + $indent };
+		for @width Z @comment -> ($line-width, $line) {
+			my @t;
+			for ^(+@$line - 1) Z @max[0 .. * - 2] -> (\col_i, \width) {
+				@t.push($line.[col_i] ~ (" " x (width - $line-width.[col_i])));
+			}
+			@t.push($line.[* - 1]);
+			@table.push(@t);
+		}
+		@table;
+	}
+
 	method perl {
 		unless self.defined {
 			return "(OptionSet)";
@@ -279,7 +340,7 @@ class OptionSet does DeepClone {
 	}
 
 	multi method deep-clone() {
-		self.bless( 
+		self.bless(
 			front 	=> DeepClone.deep-clone($!front),
 			radio 	=> DeepClone.deep-clone(@!radio),
 			multi 	=> DeepClone.deep-clone(@!multi),

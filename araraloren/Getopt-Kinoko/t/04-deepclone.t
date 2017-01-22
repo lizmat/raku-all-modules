@@ -2,6 +2,7 @@
 use v6;
 use Test;
 use Getopt::Kinoko;
+use Getopt::Kinoko::Group;
 use Getopt::Kinoko::Option;
 use Getopt::Kinoko::OptionSet;
 use Getopt::Kinoko::NonOption;

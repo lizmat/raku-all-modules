@@ -1,13 +1,11 @@
 #!/usr/bin/env perl6
 
 use v6;
-use lib "../";
-
 use Getopt::Kinoko;
 
 class LineInfo {
     has $.path is rw;     # path
-    has $.line is rw;     # non-white-line count 
+    has $.line is rw;     # non-white-line count
     has $.white is rw;    # white-line count
 }
 
@@ -51,7 +49,7 @@ sub main(@arguments) {
     else {
         if (+@infos > 1) && $optset.get-option("sort", :long).value {
             @infos = @infos.sort: {
-                $$optset<desc> ?? 
+                $$optset<desc> ??
                     ($^a.count < $^b.count) !! ($^a.count > $^b.count);
             };
         }
@@ -69,7 +67,7 @@ multi sub get-line-info(Str $path, :$abspath) {
 
 multi sub get-line-info(IO::Path $filep where $filep ~~ :f && $filep ~~ :r, :$abspath) {
     my LineInfo $li .= new(
-        path => $abspath ?? $filep.abspath !! $filep.path, 
+        path => $abspath ?? $filep.abspath !! $filep.path,
         line => 0, white => 0
     );
 
@@ -82,7 +80,7 @@ multi sub get-line-info(IO::Path $filep where $filep ~~ :f && $filep ~~ :r, :$ab
 
 multi sub get-line-info(IO::Path $dirp where $dirp ~~ :d && $dirp ~~ :x, :$abspath) {
     my LineInfo $li .= new(
-        path => $abspath ?? $dirp.path.abspath !! $dirp.path, 
+        path => $abspath ?? $dirp.path.abspath !! $dirp.path,
         line => 0, white => 0
     );
 

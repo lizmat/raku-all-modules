@@ -9,9 +9,10 @@ role Option {
     has $!ln;       #= option short name
     has &!cb;       #= option callback signature(Option -->)
     has $!force;    #= option optional
+    has $!cm;      #= option usage comment
 
     #| public initialize method
-    method !initialize(:$sn, :$ln, :$force, :&cb) {
+    method !initialize(:$sn, :$ln, :$force, :&cb, :$cm) {
         unless $sn.defined || $ln.defined {
             X::Kinoko.new(msg => 'Need option name.').throw();
         }
@@ -21,12 +22,13 @@ role Option {
         %build<sn>      = $sn       if $sn;
         %build<ln>      = $ln       if $ln;
         %build<cb>      = &cb       if &cb;
+        %build<cm>      = $cm       if $cm;
         %build<force>   = ?$force;
 
         return self.bless(|%build);
     }
 
-    submethod BUILD(:$!sn, :$!ln, :&!cb, :$!force) { }
+    submethod BUILD(:$!sn, :$!ln, :&!cb, :$!force, :$!cm) { }
 
     #| has short name
     method is-short {
@@ -90,9 +92,19 @@ role Option {
         &!cb;
     }
 
+    #| get usage comment
+    method comment {
+        $!cm // "";
+    }
+
     #| set callback
     method set-callback(&cb) {
         &!cb = &cb;
+    }
+
+    #| set comment
+    method set-comment(Str $cm) {
+        $!cm = $cm;
     }
 
     #| match with short or long name
@@ -160,8 +172,8 @@ role Option {
 class Option::Integer does Option does DeepClone {
     has Int $!value;
 
-    method new(:$sn, :$ln, :$force, :&cb, :$value) {
-        self!initialize(:$sn, :$ln, :$force, :&cb)!initialize-value($value);
+    method new(:$sn, :$ln, :$force, :&cb, :$value, :$cm) {
+        self!initialize(:$sn, :$ln, :$force, :&cb, :$cm)!initialize-value($value);
     }
 
     method !initialize-value($value, :$use-default = True, :$callcb = False) {
@@ -228,15 +240,15 @@ class Option::Integer does Option does DeepClone {
 
     multi method deep-clone() {
         #| call initialize-value !!!
-        self.bless(:$!sn, :$!ln, :&!cb, :$!force)!initialize-value(DeepClone.deep-clone($!value));
+        self.bless(:$!sn, :$!ln, :&!cb, :$!force, :$!cm)!initialize-value(DeepClone.deep-clone($!value));
     }
 }
 
 class Option::String does Option does DeepClone {
     has Str $!value ;
 
-    method new(:$sn, :$ln, :$force, :&cb, :$value) {
-        self!initialize(:$sn, :$ln, :$force, :&cb)!initialize-value($value);
+    method new(:$sn, :$ln, :$force, :&cb, :$value, :$cm) {
+        self!initialize(:$sn, :$ln, :$force, :&cb, :$cm)!initialize-value($value);
     }
 
     method !initialize-value($value, :$use-default = True, :$callcb = False) {
@@ -302,15 +314,15 @@ class Option::String does Option does DeepClone {
     }
 
     multi method deep-clone() {
-        self.bless(:$!sn, :$!ln, :&!cb, :$!force)!initialize-value(DeepClone.deep-clone($!value));
+        self.bless(:$!sn, :$!ln, :&!cb, :$!force, :$!cm)!initialize-value(DeepClone.deep-clone($!value));
     }
 }
 
 class Option::Array does Option does DeepClone {
     has @!value;
 
-    method new(:$sn, :$ln, :$force, :&cb, :$value) {
-        self!initialize(:$sn, :$ln, :$force, :&cb)!initialize-value($value);
+    method new(:$sn, :$ln, :$force, :&cb, :$value, :$cm) {
+        self!initialize(:$sn, :$ln, :$force, :&cb, :$cm)!initialize-value($value);
     }
 
     method !initialize-value($value, :$use-default = True, :$callcb = False) {
@@ -376,15 +388,15 @@ class Option::Array does Option does DeepClone {
     }
 
     multi method deep-clone() {
-        self.bless(:$!sn, :$!ln, :&!cb, :$!force)!initialize-value(DeepClone.deep-clone(@!value));;
+        self.bless(:$!sn, :$!ln, :&!cb, :$!force, :$!cm)!initialize-value(DeepClone.deep-clone(@!value));;
     }
 }
 
 class Option::Hash does Option does DeepClone {
     has %!value;
 
-    method new(:$sn, :$ln, :$force, :&cb, :$value) {
-        self!initialize(:$sn, :$ln, :$force, :&cb)!initialize-value($value);
+    method new(:$sn, :$ln, :$force, :&cb, :$value, :$cm) {
+        self!initialize(:$sn, :$ln, :$force, :&cb, :$cm)!initialize-value($value);
     }
 
     method !initialize-value($value, :$use-default = True, :$callcb = False) {
@@ -465,7 +477,7 @@ class Option::Hash does Option does DeepClone {
     }
 
     multi method deep-clone() {
-        self.bless(:$!sn, :$!ln, :&!cb, :$!force)!initialize-value(DeepClone.deep-clone(%!value));;
+        self.bless(:$!sn, :$!ln, :&!cb, :$!force, :$!cm)!initialize-value(DeepClone.deep-clone(%!value));;
     }
 }
 
@@ -475,8 +487,8 @@ class Option::Hash does Option does DeepClone {
 class Option::Boolean does Option does DeepClone {
     has Bool $!value;
 
-    method new(:$sn, :$ln, :$force, :&cb, :$value) {
-        self!initialize(:$sn, :$ln, :$force, :&cb)!initialize-value($value);
+    method new(:$sn, :$ln, :$force, :&cb, :$value, :$cm) {
+        self!initialize(:$sn, :$ln, :$force, :&cb, :$cm)!initialize-value($value);
     }
 
     method !initialize-value($value, :$use-default = True, :$callcb = False) {
@@ -542,7 +554,7 @@ class Option::Boolean does Option does DeepClone {
     }
 
     multi method deep-clone() {
-        self.bless(:$!sn, :$!ln, :&!cb, :$!force)!initialize-value(DeepClone.deep-clone($!value));
+        self.bless(:$!sn, :$!ln, :&!cb, :$!force, :$!cm)!initialize-value(DeepClone.deep-clone($!value));
     }
 }
 
@@ -594,7 +606,7 @@ multi sub option-class-factory('h') {
         "password=s!", password will be determine as [long-name]
         "p=s!",p(password) will be determine as [short-name]
 ]
-multi sub create-option(Str:D $option, :$value, :&cb) is export {
+multi sub create-option(Str:D $option, :$value, :&cb, :$cm) is export {
     my Str $ln;
     my Str $sn;
     my Str $mt;
@@ -647,7 +659,7 @@ multi sub create-option(Str:D $option, :$value, :&cb) is export {
     my $opt-str = &process($option);
 
     if $opt-str ~~ /<option>/ {
-        return option-class-factory($mt).new(:$ln, :$sn, :force($r), :$value, :&cb);
+        return option-class-factory($mt).new(:$ln, :$sn, :force($r), :$value, :&cb, :$cm);
     }
 
     X::Kinoko.new(msg => "$option: not a valid option string.").throw();

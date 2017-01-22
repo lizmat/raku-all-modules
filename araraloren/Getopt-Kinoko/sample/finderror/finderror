@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-SCRIPT_PATH=`dirname $0`;
-
-cd ${SCRIPT_PATH};
-
-/usr/bin/env perl6 finderror.p6 $@

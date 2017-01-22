@@ -21,13 +21,13 @@ role Group does DeepClone {
         self;
     }
 
-    multi method push(Str $option, :&callback) {
-        @!options.push: create-option($option, cb => &callback);
+    multi method push(Str $option, :&callback, :$comment) {
+        @!options.push: create-option($option, cb => &callback, cm => $comment);
         self;
     }
 
-    multi method push(Str $option, $value, :&callback, ) {
-        @!options.push: create-option($option, cb => &callback, :$value);
+    multi method push(Str $option, $value, :&callback, :$comment) {
+        @!options.push: create-option($option, cb => &callback, :$value, cm => $comment);
         self;
     }
 
@@ -70,6 +70,12 @@ role Group does DeepClone {
         }
     }
 
+    method get-comment(Str $name, :$long, :$short) {
+        for @!options -> $opt {
+            return $opt.comment if $opt.match-name($name, :$long, :$short);
+        }
+    }
+
     method set-value(Str $name, $value, :$long, :$short) {
         for @!options -> $opt {
             if $opt.match-name($name, :$long, :$short) {
@@ -94,6 +100,16 @@ role Group does DeepClone {
         for @!options -> $opt {
             if $opt.match-name($name, :$long, :$short) {
                 $opt.set-callback(&callback);
+                return True;
+            }
+        }
+        False;
+    }
+
+    method set-comment(Str $name, Str $comment, :$long, :$short) {
+        for @!options -> $opt {
+            if $opt.match-name($name, :$long, :$short) {
+                $opt.set-comment($comment);
                 return True;
             }
         }

@@ -1,8 +1,6 @@
 #!/usr/bin/env perl6
 
 use v6;
-use lib "../";
-
 use Getopt::Kinoko;
 
 my $VERSIONS = "version 0.1.1, create by Loren.";

@@ -1,0 +1,557 @@
+= Getopt-Kinoko
+:toc-title: contents
+
+A command line parsing tool which written in Perl6 .
+
+image:https://travis-ci.org/araraloren/Getopt-Kinoko.svg?branch=master["Build Status", link="https://travis-ci.org/araraloren/Getopt-Kinoko"]
+
+== Description
+
+`Getopt::Kinoko` is a powerful command line parsing module, support function style
+interface getopt can handle a single `OptionSet` and OO style interface which can
+handle multi `OptionSet` at same time(just as overload the MAIN routine).
+`OptionSet` is a class used to describe a set of `Option`, It support group the
+Options together with `Group::Normal` `Group::Radio` `Group::Multi` Group, and
+you can also set a `NonOption::Front` `NonOption::All` NonOption handle user input
+ non-option parameters.
+The option of OptionSet can be one kind of `Option::String` `Option::Integer`
+`Option::Boolean` etc.
+They use a simple string such as "h|help=b;" describe basic configuration,
+and you can through OptionSet's interface set their default value and callback funtion.
+
+`Getopt::Kinoko`是一个强大的命令行解析模块，支持使用函数式接口处理单个`OptionSet`以及
+面向对象接口处理多个`OptionSet`(就如同重载的MAIN函数).
+`OptionSet`是用来描述一组选项的类，`OptionSet`支持以`normal`(普通选项)、`radio`(单一选项)、
+`multi`(多选选项)等方式把选项组合在一起，并且还可以设置OptionSet的front(第一个非选项参
+数处理设施)、all(所有非选项参数处理设施)处理用户输入的非选项参数。
+`Getopt::Kinoko`，`OptionSet`中的选项可以是`string`(字符串)、`integer`(整数)、`boolean`(布尔)
+等选项中的一种，选项使用字符串来描述基本配置，你可以通过`OptionSet`的接口设置它们的默认
+值以及当选项被用户设置时的回调函数。
+
+== Installation
+
+* install with panda
+
+	panda install Getopt::Kinoko
+
+* install with zef
+
+	zef install Getopt::Kinoko
+
+* install
+
+	git clone https://github.com/araraloren/Getopt-Kinoko.git
+
+	cd Getopt-Kinoko && zef install .
+
+
+If `zef install Getopt::Kinoko` not working, please run `zef update` first.
+
+== License
+
+The MIT License (MIT).
+
+== Find File
+
+[source, perl6]
+-----------------------------
+#!/usr/bin/env perl6
+
+use Getopt::Kinoko;
+
+my OptionSet $opts .= new();
+
+$opts.insert-normal("h|help=b;v|version=b;");
+$opts.insert-multi("w=b;");
+$opts.insert-radio("d|directory=b;f|file=b;l|link=b;", :force);
+$opts.push-option(
+  "size-limit=i",
+  callback => -> \value {
+    die "Invalid integer value."
+      if value !~~ Int;
+  },
+  comment => "the min size limit of file"
+);
+$opts.set-comment('help',       "print this help message");
+$opts.set-comment('version',    "print the version");
+$opts.set-comment('w',          "match whole file name");
+$opts.set-comment('d',          "specify search file type to directory");
+$opts.set-comment('f',          "specify search file type to normal file");
+$opts.set-comment('l',          "specify search file type to link");
+&main(getopt($opts, :gnu-style));
+
+sub main(@noa) {
+  note "Version 0.0.1"
+    if $opts{'v'};
+
+  if $opts{'h'} || $opts{'v'} {
+    note "{$*PROGRAM-NAME} " ~ $opts.usage ~ "\n";
+    note(.join("") ~ "\n") for $opts.comment(4);
+    exit 0;
+  }
+
+  die "Not support multi keyword"
+    if +@noa > 2;
+
+  die "Need more arguments"
+    if +@noa < 2;
+
+  my ($dir, $key) = @noa;
+
+  die "Invalid directory {$dir}"
+    if $dir.IO !~~ :d;
+
+  &search($opts, $dir, $key, -> $file { say $file.path(); });
+}
+
+sub search(OptionSet $opts, Str $dir, Str $key, &callback) {
+  for $dir.IO.dir(:all) -> $file {
+    my $name = $file.basename;
+
+    next if $opts{'w'} && $name ne $key;
+    next if $opts{'d'} && !$file.d;
+    next if $opts{'f'} && (!$file.f || $file.s < $opts{'size-limit'}.Int);
+    next if $opts{'l'} && !$file.l;
+
+    &callback($file);
+  }
+}
+-----------------------------
+
+== Usage
+
+=== Option
+
+Currently support option type are `integer`、`boolean`、`string`、`array`、`hash`.
+You can use string create them:
+
+.option type
+[cols=">h,^.^m,^.^,^.^m,^.^m,^.^m,^.^2l",options="header",width="100%"]
+|==================================
+
+| type | string | integer | boolean | array | hash | mark
+
+| short-option 5.1+^.^| s=s; x=i; z=b; e=a; | only accept one letter
+
+| long-option 5.1+^.^| long=s; size=i; | long name
+
+| short & long 5.1+^.^| l\|long=s; h\|help=b; |  both short and long
+
+| omit-option 5.1+^.^| \|version=b; help\|=b; | help is short option
+
+| force-option 5.1+^.^| f\|force=b!;x=s!; | force option must be set
+
+|==================================
+
+=== Option Group
+
+There are three kinds of Option-Group: `normal`, `multi` and `radio`.
+You can use method of `OptionSet` insert a group.
+The `radio` group's option can only set one at the same time, and `normal` or `multi`
+group can set multi.
+One `OptionSet` only have one `normal` group, meanwhile, `multi` and `radio` can have multi.
+
+=== Non-Option
+
+User input may be has some Non-Option-Argument(NOA), which not be option argument or option.
+The `front` processer handle the first NOA, these can let user chose the mode of our program;
+and `all` processer wait `parser` parse all command line argument over, it process all NOA;
+as well `each` processer process each NOA when `parser` parsing command line argument,
+this may be rarely used.
+
+=== use module
+
+Fisrt, you should write a use pragma import Getopt::Kinoko: `use Getopt::Kinoko;`.
+
+=== Construct OptionSet
+
+Use a **new** method construct a `OptionSet` instance which can manager multi Options:
+
+[source, perl6]
+-----------------------------
+my OptionSet $opts .= new();
+-----------------------------
+
+By now, there nothing inside `$opts`, so we insert a `normal` group next:
+
+[source, perl6]
+-----------------------------
+$opts.insert-normal("h|help=b;v|version=b;?=b;");
+-----------------------------
+
+Like this, we insert a normal group into `$opts`, which has three options inside.
+
+NOTE: Every `OptionSet` must has one **normal** group, while it not automatic insert
+when it constructing.
+
+After, we can insert a `multi` or `radio` group.
+I recommend you put the options those are similar use and can be set multi at the
+same time in one `multi` group; and the options that can only set one at the same time
+in a `radio` group.
+The `radio` can be marked as **:force**, so user must provides that value:
+
+[source, perl6]
+-----------------------------
+$opts.insert-multi("l|length=i;w|width=i;t|thickness=i;");
+$opts.insert-radio("d|directory=b;f|file=b;l|link=b;", :force);
+-----------------------------
+
+NOTE: The `multi` group just for the convenience of organization code, there nothing
+different from `normal` group, and only `normal` group can insert option after creating.
+It also illustrate other group purpose. The `radio` group's force mode will cause
+program not print help message when user ask for these, we can capture **exception**
+which `parser` throwed, and print help message.
+
+Next, we can use method `push-option` or `append-options` insert some option into
+`normal` group:
+
+[source, perl6]
+-----------------------------
+$opts.push-option(
+  "size-limit=i",   # option string
+  42,               # default value
+  callback => -> \value{ # will call when option be seted
+    die "Invalid integer value."
+      if value !~~ Int;
+  },
+  comment => "the min size limit of file" # comment
+);
+# append multi options
+$opts.append-options("time-beg=s;time-end=s;")
+-----------------------------
+
+With the options which use method `insert-*` and `append-options`, We can use
+method `set-comment` add these comment. Besides, we can also set **callback** or
+**default value** of options, for more information please check document.
+
+Below is about NOA processer, i. e. usage of `front`、`all`、`each`:
+
+[source, perl6]
+-----------------------------
+$opts.insert-front(-> $arg { X::Kinoko::Fail.new().throw if ~$arg.value ne "find"; } );
+$opts.insert-all(
+    -> @args {
+        # process @args
+    }
+);
+$opts.insert-all( # will support in next version
+    -> @args, $opts {
+        # process @args
+    }
+);
+-----------------------------
+
+Our front let user can use find like `findfile find **options**`, but user can put
+`find` and options in any order, so you may be make sure **$arg.index** is equal 0.
+`all` is similar with `front`, except it's callback accept an Array of all NOA.
+
+NOTE: The parameters of NOA processer is `Argument`, it has an value attribute `$.value`
+and an attribute `$.index` store the NOA's index. And in future vesion (may be next) I will add another
+callback version support, it's signature is **(Argument $arg, OptionSet $opt)**.
+Parser will pass matched `OptionSet` to the NOA processer.
+
+So, after the above steps, we got a useable `OptionSet` instance.
+We can use call `getopt` function parser our command line argument.
+Also,  we can use the `OptionSet's` method `deep-clone` construct more `OptionSet`,
+and use class `Getopt` manager these instance.
+Here we only introduce usgae of `getopt` function. More about of `Getopt`, please
+refer to **./sample/finderror**.
+
+=== getopt usage
+
+The function `getopt` use a given parser parsing command line argument and set
+`OptionSet` value.
+The default parser will throw and exception `X::Kinoko::Fail` When parsing failed.
+By default, it parse **@*ARGS**, use built-in parser `&kinoko-parser` , can support
+**gnu-style** and can generate options' **get-method**, more information about this
+please refer to **./lib/Getopt/Kinoko.pm6** .
+
+[source, perl6]
+-----------------------------
+&main(getopt($opts, :gnu-style));
+-----------------------------
+
+=== OptionSet usage
+
+After parsing command line argument over, we can access options of `OptionSet` instance,
+and determind what our program should do:
+
+* in a hash way
++
+[source, perl6]
+-----------------------------
+note "Version 0.0.1" if $opts<v>;
+note "Version 0.0.1" if $opts{'v'};
+note "Version 0.0.1" if $opts{'version'};
+-----------------------------
+
+* use `get-option` method
++
+[source, perl6]
+-----------------------------
+note "Version 0.0.1" if $opts.get-option('v').value();
+-----------------------------
+
+* judge wether has value
++
+[source, perl6]
+-----------------------------
+note "Version 0.0.1" if $opts.has-value('v');
+-----------------------------
+
+=== Sample
+
+*   errno.p6
+
+    A tool parse system include header and find standard c errno.
+
+*   finderror.p6
+
+    A errno find tool, support standard c errno and win32's getlasterror errno，
+    and WASGetlasterror errno.
+
+*   line-count.p6
+
+    Simple sample, count file lines.
+
+*   snippet.p6
+
+    Run **gcc** or **clang** execute simple c/c++ code.
+
+*   snippetv2.p6
+
+    Refactor the code of last version, not make a temp file and more helpful message.
+*   find-file.p6
+
+    Simple sample, find file.
+
+*   fetch-picture.p6
+
+    Use `wget` fetch picture of **BAIDU tieba**、**acfun** and one of my favorite sites.
+
+== more
+
+More information please refer pod inside `./lib/Getopt/Kinoko.pm6` and sample.
+
+== 用法
+
+=== 选项
+
+目前支持`integer`、`boolean`、`string`、`array`、`hash`五种选项，它们使用字符串的方式来构建：
+
+.选项类型
+[cols=">h,^.^m,^.^,^.^m,^.^m,^.^m,^.^l",options="header",width="100%"]
+|==================================
+
+| 类型 | string | integer | boolean | array | hash | 备注
+
+| 短选项 5.1+^.^| s=s; x=i; z=b; e=a; | 只接受一个字母
+
+| 长选项 5.1+^.^| long=s; size=i; | 长名字可用
+
+| 长短选项 5.1+^.^| l\|long=s; h\|help=b; |  长短都可用
+
+| 省略选项 5.1+^.^| \|version=b; short\|=b; | short为短选项
+
+| 强制选项 5.1+^.^| f\|force=b!;x=s!; | 强制选项必须设置
+
+|==================================
+
+=== 选项组
+
+选项组目前有`normal`，`multi`，`radio`三种，你可以使用`OptionSet`的接口增加
+一个选项组。
+`radio`选项组中的选项同一时间只能被设置一个，`normal`和`multi`组中的选项则可以
+同时设置多个。
+一个`OptionSet`只有一个`normal`组，`multi`和`radio`可以有多个。
+
+=== 非选项
+
+用户的输入可能存在多个非选项参数，这些可以使用`NonOption`设施处理。
+`front`处理参数列表中的第一个非选项参数，这通常可以用来让程序以不同模式运行；
+`all`等待选项解析器解析完所有的选项时工作，它处理所有的非选项参数；
+`each`处理在解析器工作时处理每一个非选项参数，这可能很少用到。
+
+=== 导入模块
+
+使用`use Getopt::Kinoko`导入模块。
+
+=== 构建OptionSet
+
+`OptionSet`可以管理多个选项，使用**new**方法创建它的实例，`new`方法没有额外的参数。
+
+[source, perl6]
+-----------------------------
+my OptionSet $opts .= new();
+-----------------------------
+
+这时`OptionSet`里面没有任何东西，所以下一步我们需要插入一个`normal`组。
+
+[source, perl6]
+-----------------------------
+$opts.insert-normal("h|help=b;v|version=b;?=b;");
+-----------------------------
+
+这样我们就插入了一个`normal`，它里面现在有3个选项。
+
+NOTE: 每一个`OptionSet`必须有一个`normal`组，而它在创建的时候不会自动插入。
+
+之后我们可以选择插入`multi`组或者`radio`组，建议将用途相近的且支持同时设置多个的选项放
+进同一个`multi`中，那些在同一时间只能设置一个的一组选项则放在一个`radio`组中，`radio`组
+还可以设置为强制选项以便用户必须提供选项的值，示例如下：
+
+[source, perl6]
+-----------------------------
+$opts.insert-multi("l|length=i;w|width=i;t|thickness=i;");
+$opts.insert-radio("d|directory=b;f|file=b;l|link=b;", :force);
+-----------------------------
+
+NOTE: `multi`组只是为了方便代码组织，和把选项放在`normal`并没有什么不同，并且只有`normal`组
+可以在创建之后添加选项，这也说明了其他组的用途。 +
+`radio`组的强制选项模式会导致不设置该选项将不会打印用户要求的帮助信息，可以使用手动捕获
+选项解析器抛出的异常，然后打印帮助信息。
+
+接下来，我们可以使用`push-option`或者`append-options`方法向`normal`组里添加一些选项：
+
+[source, perl6]
+-----------------------------
+$opts.push-option(
+  "size-limit=i",   # 选项
+  42,               # 默认值， 可以**省略**
+  callback => -> \value{ # 选项被设置时调用的回调
+    die "Invalid integer value."
+      if value !~~ Int;
+  },
+  comment => "the min size limit of file" # 注释
+);
+# append适合添加多个选项
+$opts.append-options("time-beg=s;time-end=s;")
+-----------------------------
+
+对于使用`insert-*`方法以及使用`append-options`方法添加的选项，我们可以使用`set-comment`
+接口添加它们的注释，具体使用方法，请参考上面的代码。此外还可以设置回调函数以及默认值，请参
+考文档。
+
+下面是对于非选项组也就是`front`、`all`、`each`的使用：
+
+[source, perl6]
+-----------------------------
+$opts.insert-front(-> $arg { X::Kinoko::Fail.new().throw if ~$arg.value ne "find"; } );
+$opts.insert-all(
+    -> @args {
+        # 对 @args的处理
+    }
+);
+$opts.insert-all( # 将在下个版本支持
+    -> @args, $opts {
+        # 同上
+    }
+);
+-----------------------------
+
+像上面这样就可以让用户像`findfile find **选项**`来使用，不过这样用户可以把`find`放在任何地方，
+所以你可能还需要检查`$arg.index`的值。
+`all`与`front`类似，不过它的回调接受的参数是所有非选项参数的数组。
+
+NOTE: 非选项组的参数传入回调的参数类型是`Argument`，它有两个成员值`$.value`以及从零开始的命令行
+参数下标`$.index`。
+对于所有非选项的参数下个版本将增加一个签名为`(Argument $a, OptionSet $opts)的版本`，以便
+在匹配到相应的`OptionSet`之后将其传入供函数使用。
+
+经过了上面的步骤之后，我们基本构造好了我们的`OptionSet`，此外，我们还可以使用`deep-clone`
+接口复制更多的基于一些公共选项的`OptionSet`，然后使用`Getopt`来管理`OptionSet`。
+这里我们只介绍`getopt`函数接口的使用方法，关于`Getopt`类的使用请参考样例**./sample/finderror**。
+
+### 使用getopt接口
+
+`getopt`使用提供的命令行参数解析器设置`OptionSet`的值，失败则抛出异常`X::Kinoko::Fail`，
+它默认解析`@*ARGS`，使用内置的`&kinoko-parser`，并且支持`gnu-style`以及`generate-method`
+接口生成选项的快捷访问方法，具体请参考文档**./lib/Getopt/Kinoko.pm6**。示例代码如下：
+
+* 使用getopt
++
+[source, perl6]
+-----------------------------
+&main(getopt($opts, :gnu-style));
+
+sub main(Argument @args) { ... }
+-----------------------------
+
+* 捕获getopt的异常
++
+[source, perl6]
+-----------------------------
+try {
+    getopt($opts #`( ... 其他参数));
+    CATCH {
+        # 其实此时抛出的异常类型为 X::Kinoko::Fail
+        # X::Kinoko 即Getopt::Kinoko所有类抛出异常的基类
+        when X::Kinoko {
+            note $opts.usage();
+            #`( 打印其他信息 )
+        }
+    }
+}
+-----------------------------
+
+=== 使用OptionSet
+
+在解析完命令行参数之后，我们就可以访问`OptionSet`中的值来决定要做到事情了。
+
+* 使用哈希的方式访问
++
+[source, perl6]
+-----------------------------
+note "Version 0.0.1" if $opts<v>;
+note "Version 0.0.1" if $opts{'v'};
+note "Version 0.0.1" if $opts{'version'};
+-----------------------------
+
+* 使用`get-option`接口
++
+[source, perl6]
+-----------------------------
+note "Version 0.0.1" if $opts.get-option('v').value();
+-----------------------------
+
+* 判断是否有值
++
+[source, perl6]
+-----------------------------
+note "Version 0.0.1" if $opts.has-value('v');
+-----------------------------
+
+=== 样例
+
+*   errno.p6
+
+    一个查找解析系统头文件来查找标准c中的错误码的工具。
+
+*   finderror.p6
+
+    一个查找错误码的工具，支持c错误码以及win32的getlasterror错误码，
+    以及WASGetlasterror的错误码。
+
+*   line-count.p6
+
+    简单的示例，计算文件的行数。
+
+*   snippet.p6
+
+    运行**gcc**或者**clang**来执行简单的c代码
+
+*   snippetv2.p6
+
+    重构了初版的代码，不再生成临时的文件，以及更良好的帮助信息。
+
+*   find-file.p6
+
+    简单的示例，查找文件。
+
+*   fetch-picture.p6
+
+    使用`wget`等工具爬取百度贴吧、acfun以及我喜欢的一个图站的表情。
+
+== 更多
+
+更多信息请参考文档以及样例。

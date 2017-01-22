@@ -6,4 +6,7 @@
 	√ add deep copy
 + 浮点型选项类？ 相对于整数型选项，支持小数
 	+ add float option
-+ gnu-style not complete
+√ gnu-style not complete
+√ Option comment
+√ pass OptionSet when NonOption::All callback called
++ save/restore config value

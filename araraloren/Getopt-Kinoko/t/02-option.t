@@ -118,7 +118,8 @@ subtest {
 subtest {
 	my $opt = create-option(
 			"c|count=i", value 	=> 2,
-			cb 		=> -> $value { ok 5 == $value, "callback called."; }
+			cb 		=> -> $value { ok 5 == $value, "callback called."; },
+			cm		=> "the count option"
 		);
 	{
 		ok $opt.is-short, "short option check ok.";
@@ -136,12 +137,16 @@ subtest {
 		$opt.set-value-callback(5);
 		ok $opt.value eq 5, "option set value ok.";
 	}
+	{
+		ok $opt.comment eq "the count option", "option comment set ok";
+	}
 }, "Integer option ok.";
 
 subtest {
 	my $opt = create-option(
 			"n|name=s", value 	=> 'Jim',
-			cb 		=> -> $value { ok $value eq 'Jim Green', "callback called."; }
+			cb 		=> -> $value { ok $value eq 'Jim Green', "callback called."; },
+			cm		=> "the name option"
 		);
 	{
 		ok $opt.is-short, "short option check ok.";
@@ -159,12 +164,16 @@ subtest {
 		$opt.set-value-callback('Jim Green');
 		ok $opt.value eq 'Jim Green', "option set value ok.";
 	}
+	{
+		ok $opt.comment eq "the name option", "option comment set ok";
+	}
 }, "String option ok.";
 
 subtest {
 	my $opt = create-option(
 			"a|animal=a", value 	=> 'Cock',
-			cb 		=> -> $value { ok $value eq ["Cock", "Rabbit"], "callback called."; }
+			cb 		=> -> $value { ok $value eq ["Cock", "Rabbit"], "callback called."; },
+			cm 		=> "array option"
 		);
 	{
 		ok $opt.is-short, "short option check ok.";
@@ -182,12 +191,16 @@ subtest {
 		$opt.set-value-callback('Rabbit');
 		ok $opt.value eq ["Cock", "Rabbit"], "option set value ok.";
 	}
+	{
+		ok $opt.comment eq "array option", "option comment set ok";
+	}
 }, "Array option ok.";
 
 subtest {
 	my $opt = create-option(
 			"l|shopping-list=h", value => %{ dish => 5 },
-			cb 		=> -> $value { ok $value eq %{ dish => 5, bowl => 2 }, "callback called."; }
+			cb 		=> -> $value { ok $value eq %{ dish => 5, bowl => 2 }, "callback called."; },
+			cm		=> "hash option"
 		);
 	{
 		ok $opt.is-short, "short option check ok.";
@@ -205,12 +218,16 @@ subtest {
 		$opt.set-value-callback(%{ bowl => 2 });
 		ok $opt.value eq %{ dish => 5, bowl => 2 }, "option set value ok.";
 	}
+	{
+		ok $opt.comment eq "hash option", "option comment set ok";
+	}
 }, "Hash option ok.";
 
 subtest {
 	my $opt = create-option(
 			"f|formated=b", value => False,
-			cb 		=> -> $value { ok $value , "callback called."; }
+			cb 		=> -> $value { ok $value , "callback called."; },
+			cm		=> "boolean option"
 		);
 	{
 		ok $opt.is-short, "short option check ok.";
@@ -228,6 +245,9 @@ subtest {
 		$opt.set-value-callback(True);
 		ok $opt.value , "option set value ok.";
 	}
-}, "Hash option ok.";
+	{
+		ok $opt.comment eq "boolean option", "option comment set ok";
+	}
+}, "Boolean option ok.";
 
 done-testing();

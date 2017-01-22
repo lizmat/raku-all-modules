@@ -27,8 +27,18 @@ class NonOption::Front does NonOption {
         "NonOption::Front.new(callback => " ~ (&!callback.defined ?? &!callback.perl !! "Any") ~ ')';
     }
 
-    method process(Argument $arg) {
-        &!callback($arg);
+    method process(Argument $arg, $opts) {
+        given &!callback.signature.count {
+            when 2 {
+                &!callback($arg, $opts);
+            }
+            when 1 {
+                &!callback($arg);
+            }
+            default {
+                X::Kinoko.new(msg => "process signature error!").throw;
+            }
+        }
     }
 }
 
@@ -38,8 +48,18 @@ class NonOption::All does NonOption {
         "NonOption::All.new(callback => " ~ (&!callback.defined ?? &!callback.perl !! "Any") ~ ')';
     }
 
-    method process(Argument @arg) {
-        &!callback(@arg);
+    method process(Argument @arg, $opts) {
+        given &!callback.signature.count {
+            when 2 {
+                &!callback(@arg, $opts);
+            }
+            when 1 {
+                &!callback(@arg);
+            }
+            default {
+                X::Kinoko.new(msg => "process signature error!").throw;
+            }
+        }
     }
 }
 
@@ -49,8 +69,18 @@ class NonOption::Each does NonOption {
         "NonOption::Each.new(callback => " ~ (&!callback.defined ?? &!callback.perl !! "Any") ~ ')';
     }
 
-    method process(Argument $arg) {
-        &!callback($arg);
+    method process(Argument $arg, $opts) {
+        given &!callback.signature.count {
+            when 2 {
+                &!callback($arg, $opts);
+            }
+            when 1 {
+                &!callback($arg);
+            }
+            default {
+                X::Kinoko.new(msg => "process signature error!").throw;
+            }
+        }
     }
 }
 

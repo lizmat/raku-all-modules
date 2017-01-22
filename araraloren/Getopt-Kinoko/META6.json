@@ -1,9 +1,9 @@
 {
     "perl"        : "6",
     "name"        : "Getopt::Kinoko",
-    "version"     : "0.1.1",
+    "version"     : "0.2.6",
     "description" : "A command line parsing tool which written in Perl6",
-    "depends"     : [ ],
+    "depends"     : ["Terminal::WCWidth"],
     "provides"    : {
         "Getopt::Kinoko"				    : "lib/Getopt/Kinoko.pm6",
         "Getopt::Kinoko::Exception"		    : "lib/Getopt/Kinoko/Exception.pm6",

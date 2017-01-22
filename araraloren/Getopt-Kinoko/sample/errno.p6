@@ -1,8 +1,6 @@
 #!/usr/bin/env perl6
 
 use v6;
-use lib "../";
-
 use Getopt::Kinoko;
 
 state $VERSION = "0.0.1";
@@ -138,7 +136,7 @@ $opts.insert-multi("h|help=b;v|version=b;?=b;");
 $opts.insert-radio("e|errno=b;c|comment=b;n|number=b");
 #$opts.push("f|format=s");
 $opts.push-option(
-	"p|path=s", 
+	"p|path=s",
 	"/usr/include",
 	callback => -> $path {
 		my \io = $path.IO;

@@ -15,7 +15,7 @@ multi sub kinoko-parser(@args is copy, OptionSet \optset) is export returns Arra
 
     my regex lprefix { '--' }
     my regex sprefix { '-'  }
-    my regex optname { .*   { $optname = ~$/; } }
+    my regex optname { .+   { $optname = ~$/; } }
 
     while +@args > 0 {
         my \arg = @args.shift;
@@ -42,12 +42,12 @@ multi sub kinoko-parser(@args is copy, OptionSet \optset) is export returns Arra
                 if +@noa > 0 {
                     # front callback should be run only once
                     if $front-check {
-                        optset.get-front().process(@noa[0]);
+                        optset.get-front().process(@noa[0], optset);
                         $front-check = False;
                     }
                     # use index avoid repeat
                     if +@noa > $each-check-index {
-                        optset.get-each().process(@noa[$each-check-index++]);
+                        optset.get-each().process(@noa[$each-check-index++], optset);
                     }
                 }
             }
@@ -60,7 +60,7 @@ multi sub kinoko-parser(@args is copy, OptionSet \optset) is export returns Arra
         X::Kinoko::Fail.new(msg => ": Need a front Non-Option-Argument.").throw;
     }
     if optset.has-all {
-        optset.get-all().process(@noa);
+        optset.get-all().process(@noa, optset);
     }
     to-noa(@noa);
 }
@@ -76,7 +76,7 @@ multi sub kinoko-parser(@args is copy, OptionSet \optset, $gnu-style) is export 
 
     my regex lprefix    { '--' }
     my regex sprefix    { '-'  }
-    my regex optname    { <-[\=]>* { $optname = ~$/; } }
+    my regex optname    { <-[\=]>+ { $optname = ~$/; } }
     my regex optvalue   { .*   }
 
     while +@args > 0 {
@@ -119,11 +119,11 @@ multi sub kinoko-parser(@args is copy, OptionSet \optset, $gnu-style) is export 
 
                 if +@noa > 0 {
                     if $front-check {
-                        optset.get-front().process(@noa[0]);
+                        optset.get-front().process(@noa[0], optset);
                         $front-check = False;
                     }
                     if +@noa > $each-check-index {
-                        optset.get-each().process(@noa[$each-check-index++]);
+                        optset.get-each().process(@noa[$each-check-index++], optset);
                     }
                 }
             }
@@ -135,7 +135,7 @@ multi sub kinoko-parser(@args is copy, OptionSet \optset, $gnu-style) is export 
         X::Kinoko::Fail.new(msg => ": Need a front Non-Option-Argument.").throw;
     }
     if optset.has-all {
-        optset.get-all().process(@noa);
+        optset.get-all().process(@noa, optset);
     }
     to-noa(@noa);
 }
