@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Math::Random",
     "version" : "0.1.0",
     "description" : "Random numbers à la java.util.Random.",

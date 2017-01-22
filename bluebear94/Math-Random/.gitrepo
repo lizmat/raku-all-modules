@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bluebear94/Math-Random.git
 	branch = master
-	commit = 645b763e1c2359974422b123c74e7c847c6a284b
-	parent = dc7249d553ce8c713033913ec18a5e36f70ee3f4
-	cmdver = 0.2.3
+	commit = 714b462053fcbb36c653128ce87571f86fbbac74
+	parent = b8c7c48a72c5c6d2715d54d71d4d21ea505b5045
+	cmdver = 0.4.0
