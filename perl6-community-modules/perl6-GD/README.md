@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/perl6-community-modules/perl6-GD.svg)](https://travis-ci.org/perl6-community-modules/perl6-GD)
+
 perl6-GD
 ========
 
