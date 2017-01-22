@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/gfldex/perl6-concurrent-channelify.git
+	branch = master
+	commit = 16ce59a3d5c948f258d12ed217872d21ea3ae7f7
+	parent = affc2afcad792f98609c2460275a9989b8cd29e2
+	cmdver = 0.4.0

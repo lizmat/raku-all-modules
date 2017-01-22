@@ -1,0 +1,16 @@
+{
+  "name" : "Concurrent::Channelify",
+  "source-url" : "git://github.com/gfldex/perl6-concurrent-channelify.git",
+  "perl" : "v6",
+  "build-depends" : [ ],
+  "provides" : {
+    "Concurrent::Channelify" : "lib/Concurrent/Channelify.pm6"
+  },
+  "depends" : [ ],
+  "description" : "turn a lazy list into an auto-threading lazy list",
+  "test-depends" : [ ],
+  "version" : "0.0.1",
+  "authors" : [
+    "Wenzel P. P. Peppmeyer"
+  ]
+}
