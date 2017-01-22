@@ -1,0 +1,20 @@
+{
+  "perl"        : "6.*",
+  "name"        : "Sparrowdo::Chef::Client",
+  "version"     : "*",
+  "description" : "Sparrowdo module to manage chef users",
+  "authors" : [ "Alexey Melezhik" ],
+  "depends"     : [
+                    "Sparrowdo",
+                    "JSON::Tiny"  
+                  ],
+  "source-type" : "git",
+  "support" : {
+        "bugtracker" : "https://github.com/melezhik/sparrowdo-chef-client/issues",
+        "source" : "https://github.com/melezhik/sparrowdo-chef-client.git"
+    },
+   "provides" : {
+        "Sparrowdo::Chef::Client" : "lib/Sparrowdo/Chef/Client.pm6"
+  },
+  "source-url"  : "https://github.com/melezhik/sparrowdo-chef-client.git"
+}
