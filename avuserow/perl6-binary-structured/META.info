@@ -1,6 +1,6 @@
 {
 	"name" : "Binary::Structured",
-	"version" : "0.0.1",
+	"version" : "0.0.2",
 	"description" : "Read and write binary formats defined by classes",
 	"authors" : [ "Adrian Kreher" ],
 	"provides" : {

@@ -1,10 +1,34 @@
+Some time later:
+- position ($!pos) improvements
+--- convert to optional named parameter for readers/writers
+--- returned from parse
+- encapsulation improvements for parse (one of the following)
+--- make parse a multi method so docs can hide primarily recursive parameters
+--- make parse have a private variant and have Binary::Structured trust itself and recursively call the private method
+- more endianness
+--- native endianness
+--- class-wide endianness
 - port tests from Python's construct (construct/construct/protocols/application and construct/tests) and P5's Data::ParseBinary
-- remove requirement to Array[Inner].new for arrays
-- polish up `indirect-type` and/or add alternatives?
-- polish up trait naming and return values
-- endianness!
-- int64/uint64 (currently weird in rakudo)
-- custom bigint code for int128 and beyond (Int with user-specified bit-width)
-- use something other than experimental pack to pack/unpack
+- Array improvements:
+--- remove requirement to Array[Inner].new for arrays
+--- handle positional attributes (`has Inner @.foo` instead of `has Array[Inner] $.foo`)
+- Associative / Map / Hash for attributes:
+--- allow attributes to be used as hashes?
+- postprocessing?
+--- allow attributes to convert their representations up to something higher level at a later point
+- add native type Arrays (e.g. Array[uint32])
+- reimplement `indirect-type`?
+- implement duck typing? (custom reader tells how to read, building uses native types or writer)
+- more native types
+--- int64/uint64 (currently weird in rakudo)
+--- custom bigint code for int128 and beyond (Int with user-specified bit-width)
 - sub-byte data structures?
 - parse from files/streams
+--- parse as needed to avoid slurping
+- use something other than experimental pack to pack/unpack
+--- contenders: custom code, Numeric::Pack, PackUnpack
+- add more typed exceptions
+- figure out how to subclass Blob/Buf properly for StaticData
+- need to rethink and standardize the useful parameters to readers, writers, defer-until and defer-triggers,
+- at some point, optimize and sanity check all attributes
+- somehow lock down $.pos, $.data, $.parent etc so they're only visible when parsing/building (maybe reset to defaults when done with parsing/building)
