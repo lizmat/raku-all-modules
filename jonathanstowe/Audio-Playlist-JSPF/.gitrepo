@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Audio-Playlist-JSPF.git
 	branch = master
-	commit = 255a517d5fed6c75b02989b22c62e00fa4946a48
-	parent = d8c05f1181e3e35b50c4ee4707c66c0fa0bc3b61
-	cmdver = 0.2.3
+	commit = fddf8d76a4fe8fa7dc5a39cf0730cfa80fcc7b88
+	parent = 1b0c82b66b0ef5c799fc35d84c02d3728e236212
+	cmdver = 0.4.0
