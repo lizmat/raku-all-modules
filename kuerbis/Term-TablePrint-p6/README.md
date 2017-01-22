@@ -8,18 +8,19 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 VERSION
 =======
 
-Version 0.013
+Version 0.016
 
 SYNOPSIS
 ========
+
+        use Term::TablePrint :print-table;
+
 
         my @table = ( [ 'id', 'name' ],
                       [    1, 'Ruth' ],
                       [    2, 'John' ],
                       [    3, 'Mark' ],
                       [    4, 'Nena' ], );
-
-        use Term::TablePrint;
 
 
         # Functional style:
@@ -32,6 +33,11 @@ SYNOPSIS
         my $pt = Term::TablePrint.new();
 
         $pt.print-table( @table );
+
+FUNCTIONAL INTERFACE
+====================
+
+Importing the subroutine explicitly (`:print-table`) might become compulsory (optional for now) with the next release.
 
 DESCRIPTION
 ===========
@@ -89,6 +95,21 @@ If the cursor is not on the first row:
 If the width of the window is changed and the option *table-expand* is enabled, the user can rewrite the screen by choosing a row.
 
 If the option *choose-columns* is enabled, the `SpaceBar` key (or the right mouse key) can be used to select columns - see option [/choose-columns](/choose-columns).
+
+CONSTRUCTOR
+===========
+
+The constructor method `new` can be called with optional named arguments:
+
+  * defaults
+
+Expects as its value a hash. Sets the defaults for the instance. See [#OPTIONS](#OPTIONS).
+
+  * win
+
+Expects as its value a window object created by ncurses `initscr`.
+
+If set, `print-table` uses this global window instead of creating their own without calling `endwin` to restores the terminal before returning.
 
 ROUTINES
 ========

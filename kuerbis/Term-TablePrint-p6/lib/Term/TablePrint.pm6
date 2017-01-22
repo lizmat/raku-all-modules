@@ -1,19 +1,19 @@
 use v6;
 unit class Term::TablePrint;
 
-my $VERSION = '0.013';
+my $VERSION = '0.016';
 
-use Term::Choose;
-use Term::Choose::NCurses   :all;
-use Term::Choose::LineFold  :all;
-use Term::Choose::Util      :all;
+use Term::Choose           :choose, :choose-multi, :pause;
+use Term::Choose::NCurses;
+use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
+use Term::Choose::Util     :insert-sep, :unicode-sprintf;
 
 
-has %.o_global; #
-has Term::Choose::NCurses::WINDOW $.g_win;
-
-has Term::Choose::NCurses::WINDOW $!win;
+has %.defaults; #
 has %!o;
+
+has Term::Choose::NCurses::WINDOW $.win;
+has Term::Choose::NCurses::WINDOW $!win_local;
 
 has List $!a_ref;
 has Int  @!cols_w;
@@ -28,11 +28,12 @@ has Int $!bar_w;
 has Str $!progressbar_fmt;
 
 
-method new ( %o_global?, $g_win=Term::Choose::NCurses::WINDOW ) {
-    _validate_options( %o_global );
-    _set_defaults( %o_global );
-    self.bless( :%o_global, :$g_win );
+method new ( :%defaults, :$win=Term::Choose::NCurses::WINDOW ) {
+    _validate_options( %defaults );
+    _set_defaults( %defaults );
+    self.bless( :%defaults, :$win );
 }
+
 
 submethod DESTROY () { #
     self!_end_term();
@@ -95,8 +96,8 @@ method !_choose_cols_with_order ( @avail_cols ) {
     my Str @pre = ( $ok );
     my @col_idxs;
     my $tc = Term::Choose.new(
-        { lf => [ 0, $subseq_tab ], no-spacebar => [ 0 .. @pre.end ], mouse => %!o<mouse> },
-        $!win
+        :defautls( { lf => [ 0, $subseq_tab ], no-spacebar => [ 0 .. @pre.end ], mouse => %!o<mouse> } ),
+        :win( $!win_local )
     );
  
     loop {
@@ -130,8 +131,8 @@ method !_choose_cols_with_order ( @avail_cols ) {
 
 method !_choose_cols_simple ( @avail_cols ) {
     my $tc = Term::Choose.new(
-        { mouse => %!o<mouse> },
-        $!win
+        :defaults( { mouse => %!o<mouse> } ),
+        :win( $!win_local )
     );
     my Str $all = '-*-';
     my Str @pre = ( $all );
@@ -150,40 +151,38 @@ method !_choose_cols_simple ( @avail_cols ) {
 }
 
 
-
 method !_init_term {
-    if $!g_win {
-        $!win = $!g_win;
+    if $!win {
+        $!win_local = $!win;
     }
     else {
         my int32 constant LC_ALL = 6;
         setlocale( LC_ALL, "" );
-        $!win = initscr;
+        $!win_local = initscr;
     }
 }
 
 method !_end_term {
-    return if $!g_win;
+    return if $!win;
     endwin();
 }
 
 
-
-sub print-table ( @table, %opt? ) is export {
+sub print-table ( @table, %opt? ) is export( :DEFAULT, :print-table ) {
     return Term::TablePrint.new().print-table( @table, %opt );
 }
 
 method print-table ( @table, %!o? ) { # ###
     if ! @table.elems {
         my $tc = Term::Choose.new(
-            { mouse => %!o<mouse>},
-            $!win
+            :defaults( { mouse => %!o<mouse>} ),
+            :win( $!win_local )
         );
         $tc.pause( [ 'Close with ENTER' ], { prompt => "'print-table': Empty table!" } );
         return;
     }
     _validate_options( %!o );
-    for %!o_global.kv -> $key, $value {
+    for %!defaults.kv -> $key, $value {
         %!o{$key} //= $value;
     }
     if %!o<add-header> {
@@ -228,7 +227,7 @@ method print-table ( @table, %!o? ) { # ###
 
 
 method !_inner_print_tbl {
-    my Int $term_w = getmaxx( $!win );
+    my Int $term_w = getmaxx( $!win_local );
     my Bool $term_w_ok = self!_calc_avail_width( $term_w );
     if ! $term_w_ok {
         return;
@@ -248,13 +247,13 @@ method !_inner_print_tbl {
     my Int $auto_jumped_to_first_row = 2;
     my Int $expanded = 0;
     my $tc = Term::Choose.new(
-        { ll => $len, layout => 2, mouse => %!o<mouse> },
-        $!win
+        :defaults( { ll => $len, layout => 2, mouse => %!o<mouse> } ),
+        :win( $!win_local )
     );
 
     loop {
-        if getmaxx( $!win ) != $term_w {
-            $term_w = getmaxx( $!win );
+        if getmaxx( $!win_local ) != $term_w {
+            $term_w = getmaxx( $!win_local );
             self!_inner_print_tbl();
             return;
         }
@@ -318,7 +317,7 @@ method !_inner_print_tbl {
 
 
 method !_print_single_row ( Int $row ) {
-    my Int $term_w = getmaxx( $!win );
+    my Int $term_w = getmaxx( $!win_local );
     my Int $key_w = @!heads_w.max + 1; #
     if $key_w > $term_w div 100 * 33 {
         $key_w = $term_w div 100 * 33;
@@ -328,7 +327,7 @@ method !_print_single_row ( Int $row ) {
     my $col_w = $term_w - ( $key_w + $sep_w + 1 ); #
     my @lines = ' Close with ENTER';
     for 0 .. $!a_ref[$row].end -> $col {
-        my Str $key = cut-to-printwidth( # 
+        my Str $key = to-printwidth( # 
             _sanitized_string( $!a_ref[0][$col] // %!o<undef> ),
             $key_w
         );
@@ -346,8 +345,8 @@ method !_print_single_row ( Int $row ) {
         }
     }
     my $tc = Term::Choose.new(
-        { mouse => %!o<mouse>},
-        $!win
+        :defauts( { mouse => %!o<mouse>} ),
+        :win( $!win_local )
     );
     $tc.pause(
         @lines,
@@ -374,7 +373,7 @@ method !_calc_col_width {
     my Int $step;
     my Int $c = 0;
     if $!show_progress >= 2 {
-        $!bar_w = getmaxx( $!win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
+        $!bar_w = getmaxx( $!win_local ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
         $step = $!total div $!bar_w || 1;    #
     }
     my Int $undef_w = print-columns( %!o<undef> );
@@ -441,8 +440,8 @@ method !_calc_avail_width ( Int $term_w ) {
         my Int $mininum_w = %!o<min-col-width> || 1;
         if @!heads_w.elems > $avail_w {
             my $tc = Term::Choose.new(
-                { mouse => %!o<mouse>},
-                $!win
+                :defaults( { mouse => %!o<mouse>} ),
+                :win( $!win_local )
             );
             my $prompt1 = 'Terminal window is not wide enough to print this table.';
             $tc.pause(
@@ -509,7 +508,7 @@ method !_cols_to_avail_width {
     my Int $step;
     my Int $c = 0;
     if $!show_progress {
-        $!bar_w = getmaxx( $!win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
+        $!bar_w = getmaxx( $!win_local ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
         $step = $!total div $!bar_w || 1;    #
     }
     my Int @col_idx = 0 .. @!new_cols_w.end;
@@ -547,19 +546,20 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
 =head1 VERSION
 
-Version 0.013
+Version 0.016
 
 =head1 SYNOPSIS
 
 =begin code
+
+    use Term::TablePrint :print-table;
+
 
     my @table = ( [ 'id', 'name' ],
                   [    1, 'Ruth' ],
                   [    2, 'John' ],
                   [    3, 'Mark' ],
                   [    4, 'Nena' ], );
-
-    use Term::TablePrint;
 
 
     # Functional style:
@@ -574,6 +574,11 @@ Version 0.013
     $pt.print-table( @table );
 
 =end code
+
+=head1 FUNCTIONAL INTERFACE
+
+Importing the subroutine explicitly (C<:print-table>) might become compulsory (optional for now) with the
+next release.
 
 =head1 DESCRIPTION
 
@@ -654,6 +659,21 @@ choosing a row.
 
 If the option I<choose-columns> is enabled, the C<SpaceBar> key (or the right mouse key) can be used to select columns -
 see option L</choose-columns>.
+
+=head1 CONSTRUCTOR
+
+The constructor method C<new> can be called with optional named arguments:
+
+=item defaults
+
+Expects as its value a hash. Sets the defaults for the instance. See L<#OPTIONS>.
+
+=item win
+
+Expects as its value a window object created by ncurses C<initscr>.
+
+If set, C<print-table> uses this global window instead of creating their own without calling C<endwin> to restores the
+terminal before returning.
 
 =head1 ROUTINES
 
