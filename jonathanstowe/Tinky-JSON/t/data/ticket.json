@@ -1,0 +1,62 @@
+{
+    "name" : "Test Workflow",
+    "initial-state" : "new",
+    "states" : [ "new", "open", "rejected", "in-progress", "stalled", "complete" ],
+    "transitions" : [
+        {
+            "name" : "open",
+            "from" : "new",
+            "to"   : "open"
+        },
+        {
+            "name" : "reject",
+            "from" : "new",
+            "to"   : "rejected"
+        },
+        {
+            "name" : "reject",
+            "from" : "open",
+            "to"   : "rejected"
+        },
+        {
+            "name" : "reject",
+            "from" : "stalled",
+            "to"   : "rejected"
+        },
+        {
+            "name" : "stall",
+            "from" : "open",
+            "to"   : "stalled"
+        },
+        {
+            "name" : "stall",
+            "from" : "in-progress",
+            "to"   : "stalled"
+        },
+        {
+            "name" : "unstall",
+            "to"   : "in-progress",
+            "from" : "stalled"
+        },
+        {
+            "name" : "take",
+            "from" : "open",
+            "to"   : "in-progress"
+        },
+        {
+            "name" : "complete",
+            "from" : "open",
+            "to"   : "complete"
+        },
+        {
+            "name" : "complete",
+            "from" : "open",
+            "to"   : "complete"
+        },
+        {
+            "name" : "complete",
+            "from" : "in-progress",
+            "to"   : "complete"
+        }
+    ]
+}

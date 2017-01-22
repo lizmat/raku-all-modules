@@ -1,0 +1,36 @@
+{
+    "states" : [ "new", "ready", "copied", "done", "failed", "rejected" ],
+    "transitions" : [
+        {
+            "name" : "ready",
+            "from" : "new",
+            "to"   : "ready"
+        },
+        {
+            "name" : "reject",
+            "from" : "new",
+            "to"   : "rejected"
+        },
+        {
+            "name" : "copied",
+            "from" : "ready",
+            "to"   : "copied"
+        },
+        {
+            "name" : "fail",
+            "from" : "ready",
+            "to"   : "failed"
+        },
+        {
+            "name" : "done",
+            "from" : "copied",
+            "to"   : "done"
+        },
+        {
+            "name" : "fail",
+            "from" : "copied",
+            "to"   : "failed"
+        }
+    ],
+    "initial-state" : "new"
+}

@@ -1,0 +1,36 @@
+{
+   "description" : "Describe Tinky Workflows in JSON",
+   "name" : "Tinky::JSON",
+   "license" : "Artistic",
+   "perl" : "6.c",
+   "build-depends" : [],
+   "test-depends" : [
+      "Test"
+   ],
+   "version" : "0.0.1",
+   "auth" : "github:jonathanstowe",
+   "meta6" : "0",
+   "authors" : [
+      "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+   ],
+   "support" : {
+      "source" : "git://github.com/jonathanstowe/Tinky-JSON.git",
+      "bugtracker" : "https://github.com/jonathanstowe/Tinky-JSON/issues"
+   },
+   "provides" : {
+      "Tinky::JSON" : "lib/Tinky/JSON.pm"
+   },
+   "source-url" : "git://github.com/jonathanstowe/Tinky-JSON.git",
+   "tags" : [
+      "Workflow",
+      "toolkit",
+      "state machine",
+      "JSON"
+   ],
+   "depends" : [
+       "Tinky",
+       "JSON::Name",
+       "JSON::Unmarshal",
+       "JSON::Class"
+   ]
+}
