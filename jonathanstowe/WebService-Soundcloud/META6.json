@@ -29,5 +29,5 @@
     "Test::META"
   ],
   "description" : "Provide a Perl 6 interface to the Soundcloud REST API",
-  "version" : "0.0.3"
+  "version" : "0.0.4"
 }

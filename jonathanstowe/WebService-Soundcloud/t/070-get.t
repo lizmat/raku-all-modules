@@ -65,7 +65,9 @@ for $track-list.list -> $track {
     my $track-one;
     ok(my $id = $track<id>, "and we got a track ID");
     lives-ok { $track-one = $scloud.get-object("/tracks/$id") }, "get-object on track";
-    is-deeply $track-one, $track, "and they compare the same";
+    is $track-one.keys.elems, $track.keys.elems, "got the same number keys";
+    is-deeply $track-one.keys.sort, $track.keys.sort, "got the same actual keys";
+    is $track-one<id>, $track<id> , "and they compare the same";
     my $file = $id ~ '.' ~ ( $track{'original-format'} || 'wav');
     
     skip("downloads not working yet", 2);

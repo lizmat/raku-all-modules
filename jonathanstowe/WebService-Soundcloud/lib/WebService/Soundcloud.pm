@@ -279,7 +279,7 @@ value.
 
 =end pod
 
-class WebService::Soundcloud:ver<0.0.3>:auth<github:jonathanstowe> {
+class WebService::Soundcloud:ver<0.0.4>:auth<github:jonathanstowe> {
 
     use HTTP::UserAgent;
     use URI;
