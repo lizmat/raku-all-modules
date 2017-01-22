@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Unix-Groups.git
 	branch = master
-	commit = fef98a11aeac712600bc338c12ce034b26fc0af3
-	parent = 8b70dca426dbecdc617de40fd47e255ff1ab9113
-	cmdver = 0.2.3
+	commit = 3032a30fec4e6019739cdfca79b6e78c6116f6a3
+	parent = 773fca33cb25ba2e816c813a2925edf3d43137ab
+	cmdver = 0.4.0

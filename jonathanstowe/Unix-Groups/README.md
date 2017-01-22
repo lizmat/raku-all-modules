@@ -4,7 +4,7 @@ Access to the Unix group file in Perl 6
 
 ## Synopsis
 
-```
+```perl6
 use Unix::Groups;
 
 my $groups = Unix::Groups.new;
@@ -31,18 +31,8 @@ may not necessarily reflect all the groups present, just the local ones.
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -52,17 +42,19 @@ Or you can install directly with "panda":
 
     panda install User::Groups
 
-Other install mechanisms may be become available in the future.
+This should work equally well with *zef* but I may not have tested it.
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/User-Groups
+https://github.com/jonathanstowe/User-Groups
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015, 2016
+Please see the [LICENCE](LICENCE) file in the distribution
+
+© Jonathan Stowe 2015, 2016, 2017
 
