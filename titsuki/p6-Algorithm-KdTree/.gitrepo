@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-KdTree.git
 	branch = master
-	commit = e29ea7f1e6aa018a15177aa3e2cdd60adf5aded6
-	parent = 64d3d2cbd5d2670450958c6715a9f77289d88115
-	cmdver = 0.2.3
+	commit = b2328650e81f781670c89984d2a43a94b6dce93c
+	parent = 3912d60eb5afeab8c1dda59eff60b8be49c0d60f
+	cmdver = 0.4.0

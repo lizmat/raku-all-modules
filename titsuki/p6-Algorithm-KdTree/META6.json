@@ -20,5 +20,5 @@
   ],
   "source-url" : "git://github.com/titsuki/p6-Algorithm-KdTree.git",
   "test-depends" : [ ],
-  "version" : "0.04"
+  "version" : "0.05"
 }

@@ -1,5 +1,5 @@
 use v6;
-unit class Algorithm::KdTree::Response is export is repr('CStruct');
+unit class Algorithm::KdTree::Response is export is repr('CPointer');
 
 use NativeCall;
 use NativeHelpers::Array;
