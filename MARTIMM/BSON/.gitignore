@@ -1,0 +1,9 @@
+.directory
+*.html
+benchmarks/*
+Old/*
+*.mbc
+*/*.mbc
+.precomp
+*/.precomp
+*.log
