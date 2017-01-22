@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/finanalyst/p6-inform.git
+	branch = master
+	commit = ca9d9f265083034eb636b23356b2123ee347aabf
+	parent = d4e2c826641ccec517974c5439256bf189ee8bd6
+	cmdver = 0.4.0
