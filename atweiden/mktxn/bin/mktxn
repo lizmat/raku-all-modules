@@ -15,7 +15,7 @@ use TXN;
 
 # release
 multi sub MAIN(
-    Str $file,
+    Str:D $file where *.so,
     Str :N(:$pkgname),
     Str :V(:$pkgver),
     Int :R(:$pkgrel),
@@ -37,7 +37,7 @@ multi sub MAIN(
     mktxn(:file(resolve-path($file)), :release, |%opts);
 }
 
-sub resolve-path(Str $path) returns Str
+sub resolve-path(Str:D $path where *.so) returns Str:D
 {
     ~$path.subst(/^'~/'/, $*HOME ~ '/').IO.resolve;
 }
