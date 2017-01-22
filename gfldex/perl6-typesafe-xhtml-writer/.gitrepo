@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/gfldex/perl6-typesafe-xhtml-writer.git
 	branch = master
-	commit = 7253521690f26efa94c6d3625ac6c4f28052488c
-	parent = 7f0eab146e109e168704eb5f601e91b8e470fd68
-	cmdver = 0.2.3
+	commit = f534127581c4de2589de0fef342e60702f346570
+	parent = a8604b87d1c1a4280d8b956b7e693a1c2ec02f0d
+	cmdver = 0.4.0
