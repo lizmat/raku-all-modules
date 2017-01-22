@@ -1,0 +1,35 @@
+v0.4.0
+
+    * COMPATABILITY BREAKING CHANGE: Formats are now specified using a class
+      name, such as DOM, HTML, and XML. Using a format name like "html" or "xml"
+      will no longer work.
+    * COMPATIBILITY  BREAKING CHANGE: Custom formats are built using format
+      classes rather than using a custom multi sub, which worked poorly in some
+      circumstances.
+
+v0.3.2
+    
+    * Corrected problems documentation on custom format extensions.
+    * Fixed minor bugs related to custom extensions.
+
+v0.3.1
+
+    * Experimental change to make the modified DOM and formatter available for
+      subclassing.
+
+v0.3
+
+    * Previously, template objects were reused as-is every time. This meant that
+      each subsequent run built on previous modifications to the original.
+      Not cool.
+
+v0.2
+
+    * Complete rewrite.
+    * Uses DOM::Tiny now rather than XML.
+    * Structures the templates into libraries of templates.
+    * Provides some basic facilities for locating original source files.
+
+v0.1
+
+    * Initial experimental release.

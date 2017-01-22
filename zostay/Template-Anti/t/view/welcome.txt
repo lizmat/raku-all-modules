@@ -1,0 +1,9 @@
+Subject: Welcome _name_ to the Dark Side
+
+_name_
+
+Welcome to the Dark Side. Enclosed you will find instructions on how
+to reach the Sith planet to begin your training.
+
+Love,
+_dark-lord_
