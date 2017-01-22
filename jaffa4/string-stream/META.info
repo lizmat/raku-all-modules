@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "String::Stream",
     "version" : "0.8",
     "description" : "Stream into a string and from a string",
