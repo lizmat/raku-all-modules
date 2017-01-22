@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/gfldex/perl6-typesafe-html.git
 	branch = master
-	commit = 26620308d7c5df6bdb128a7de3c29be9b8ce0c6e
-	parent = 003812a0cc26124a794a33eb8eae0ba1161ac713
-	cmdver = 0.2.3
+	commit = 2a0933e6a8ce1969a5d73eaa1352a64b87e18cbb
+	parent = 699bf07aef1a0c803f6ecb1f8640bdd44ae5e7b7
+	cmdver = 0.4.0

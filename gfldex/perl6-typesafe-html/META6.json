@@ -1,0 +1,12 @@
+{
+    "perl" : "6.*",
+    "name" : "Typesafe::HTML",
+    "version" : "0.1.0",
+    "description" : "Typesafe HTML Class",
+    "authors" : [ "Wenzel P. P. Peppmeyer" ],
+    "provides" : {
+        "Typesafe::HTML" : "lib/Typesafe/HTML.pm6"
+    },
+    "depends" : [ "XML" ],
+    "source-url" : "git://github.com/gfldex/perl6-typesafe-html.git"
+}
