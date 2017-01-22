@@ -400,7 +400,7 @@ class Audio::Icecast {
     proto method listeners(|c) { * }
 
     multi method listeners(Source $source) {
-        samewith $source.mount;
+        self.listeners($source.mount);
     }
 
     multi method listeners(Str $mount) {
@@ -414,7 +414,7 @@ class Audio::Icecast {
     proto method update-metadata(|c) { * }
 
     multi method update-metadata(Source $source, Str $meta) {
-        samewith $source.mount, $meta;
+        self.update-metadata($source.mount, $meta);
     }
 
     multi method update-metadata(Str $mount, Str $song) {
@@ -430,7 +430,7 @@ class Audio::Icecast {
     proto method set-fallback(|c) { * }
 
     multi method set-fallback(Source $source, Source $fallback) {
-        samewith $source.mount, $fallback.mount;
+        self.set-fallback($source.mount, $fallback.mount);
     }
 
     multi method set-fallback(Str $mount, Str $fallback) {
@@ -446,7 +446,7 @@ class Audio::Icecast {
     proto method move-clients(|c) { * }
 
     multi method move-clients(Source $source, Source $destination) {
-        samewith $source.mount, $destination.mount;
+        self.move-clients($source.mount, $destination.mount);
     }
 
     multi method move-clients(Str $mount, Str $destination) {
@@ -462,7 +462,7 @@ class Audio::Icecast {
     proto method kill-client(|c) { * }
 
     multi method kill-client(Source $source, Listener $client) {
-        samewith $source.mount, $client.id;
+        self.kill-client( $source.mount, $client.id);
     }
 
     multi method kill-client(Str $mount, Str() $id) {
@@ -478,7 +478,7 @@ class Audio::Icecast {
     proto method kill-source(|c) { * }
 
     multi method kill-source(Source $source) {
-        samewith $source.mount;
+        self.kill-source($source.mount);
     }
 
     multi method kill-source(Str $mount) {

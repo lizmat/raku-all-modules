@@ -2,6 +2,8 @@
 
 Administrative helpers for an icecast server
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Audio-Icecast.svg?branch=master)](https://travis-ci.org/jonathanstowe/Audio-Icecast)
+
 ## Synopsis
 
 ```perl6
