@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/skids/perl6-Proc-Screen.git
 	branch = master
-	commit = de1c17fb51661b157bfaa4ef33e4a4cd27aa0262
-	parent = b05635947506400031aac31d05abd5d44ee7a2c8
-	cmdver = 0.2.3
+	commit = 36d07c65b677ec12b42764889877546acd57755e
+	parent = 82887512435641408af9ecb2677cb3df73cac394
+	cmdver = 0.4.0

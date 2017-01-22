@@ -94,10 +94,15 @@ has @.shell;
 # who uses telnet anymore.
 
 #| Plan a new screen session.  This does not start it.
-#| Except for C<:path> and C<:args> all C<Proc::Async> attributes are accepted
-method new(::?CLASS:U: *%iv is copy) {
-  die ":args is not user-settable in Proc::Screen" if %iv<args>:exists;
-  %iv<path> = "screen" unless %iv<path>:exists;
+#| Except for C<:path> and C<*@args>, all C<Proc::Async> attribute
+#| initializers are accepted.
+method new(::?CLASS:U: *@pathandargs, *%iv is copy) {
+  die ":args is deprecated in Proc::Async, also not settable in Proc::Screen"
+      if %iv<args>:exists;
+  die ":path is deprecated in Proc::Async, also not settable in Proc::Screen"
+      if %iv<path>:exists;
+  die "Path and/or arguments not settable on Proc::Screen, use .command"
+      if +@pathandargs;
   %iv<sessionname> //= "Proc::Screen";
 
   # Set up files to trampoline the screenrc and to receive the PID
@@ -110,9 +115,8 @@ method new(::?CLASS:U: *%iv is copy) {
     eval 'register . "[$PID]"' 'writebuf %s' 'register . ""'
     %s
     EORC
-  %iv<args> := [ '-q', '-c', %iv<rcfn>, '-S', %iv<sessionname>,
-                 '-d', '-m', |(%iv<shell> with %iv<shell>) ];
-  nextwith(|%iv);
+  nextwith('screen', '-q', '-c', %iv<rcfn>, '-S', %iv<sessionname>,
+           '-d', '-m', |(%iv<shell> with %iv<shell>), |%iv);
 }
 
 #| Starts the command to start the planned screen session.  Does not wait.
@@ -122,13 +126,14 @@ method start (::?CLASS:D:) {
   # Begin to watch the file where the PID will get dumped.
   $!screen-pid = $!pidfh.watch.head(1).Promise.then: -> $res {
     if $res.result.WHAT === IO::Notification::Change {
-      $!screen-pid = $!pidfh.slurp-rest;
+      my $pidstr = $!pidfh.slurp-rest;
       self.clean-old-files;
-      if $!screen-pid ~~ /\[(\d+)\]/ {
-        $!screen-pid = ~$/[0];
+      if $pidstr ~~ /\[(\d+)\]/ {
+        $pidstr = ~$/[0];
         $tokill_lock.protect: {
-          %tokill{"$!screen-pid.$.sessionname"} = ( $.path, $.remain );
+          %tokill{"$pidstr.$.sessionname"} = ( $.path, $.remain );
         }
+        $!screen-pid = $pidstr;
       }
     }
     else {
@@ -235,8 +240,8 @@ method DESTROY (::?CLASS:D:) {
 #| is returned, or use await-ready to wait.
 method command(::?CLASS:D: $command, *@args) {
   self.await-ready;
-  my $cmd = Proc::Async.new(:$.path,
-    :args['-q', '-S', "$!screen-pid.$.sessionname", '-X', $command, |@args]);
+  my $cmd = Proc::Async.new($.path,
+    '-q', '-S', "$!screen-pid.$.sessionname", '-X', $command, |@args);
   $!pro = $cmd.start();
 }
 
@@ -250,8 +255,8 @@ method attach(::?CLASS:U: $match) {
 #| or use await-ready to wait before looking at the contents of C<:out>.
 multi method query (::?CLASS:D: $command, *@args, :$out! is rw) {
   self.await-ready;
-  my $cmd = Proc::Async.new(:$.path,
-    :args['-S', "$!screen-pid.$.sessionname", '-Q', $command, |@args], :$out);
+  my $cmd = Proc::Async.new($.path,
+    '-S', "$!screen-pid.$.sessionname", '-Q', $command, |@args, :$out);
   $cmd.stdout(:bin).tap(-> $s { $out ~= $s.decode('ascii') });
   $!pro = $cmd.start();
 }
@@ -260,8 +265,8 @@ multi method query (::?CLASS:D: $command, *@args, :$out! is rw) {
 #| C<Str> containing the result.
 multi method query (::?CLASS:D: $command, *@args) returns Str {
   self.await-ready;
-  my $cmd = Proc::Async.new(:$.path,
-    :args['-S', "$!screen-pid.$.sessionname", '-Q', $command, |@args]);
+  my $cmd = Proc::Async.new($.path,
+    '-S', "$!screen-pid.$.sessionname", '-Q', $command, |@args);
   # Probably overwrought but will refactor eveything once File::Temp has pipes
   my $c = Channel.new;
   (supply {
