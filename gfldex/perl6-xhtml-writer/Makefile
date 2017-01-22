@@ -16,5 +16,7 @@ test: t/basic.t
 
 lib: lib/XHTML/Writer.pm6
 
-
 all: lib test benchmark
+
+push: test
+	git push
