@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/fayland/perl6-Business-CreditCard.git
 	branch = master
-	commit = e057bb1a5e05e2b259e2e21715c442a4d7f55b44
-	parent = 4d5f9de38079f9c09a59a6a3b94696312e77001b
-	cmdver = 0.2.2
+	commit = bfaec627da2bb51d2ffaceaffbda87e7df8598e5
+	parent = 39aadef4dbf36d33d85abb1b2f069c9bd9b7cf6b
+	cmdver = 0.4.0

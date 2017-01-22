@@ -1,4 +1,5 @@
 {
+    "perl"          : "6.*",
     "name"          : "Business::CreditCard",
     "version"       : "0.1.0",
     "author"        : "github:fayland",
