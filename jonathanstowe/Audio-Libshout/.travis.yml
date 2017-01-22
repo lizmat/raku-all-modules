@@ -1,0 +1,14 @@
+sudo: required
+
+language: perl6
+
+perl6:
+    - latest
+
+install:
+    - sudo apt-get install icecast2
+    - sudo sed -i -e 's/ENABLE=false/ENABLE=true/' /etc/default/icecast2
+    - sudo service icecast2 start
+    - sudo apt-get install libshout3
+    - rakudobrew build-panda
+    - panda installdeps .
