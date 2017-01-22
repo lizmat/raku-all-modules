@@ -1,9 +1,9 @@
 #!perl6
 
-use v6;
-use lib 'lib';
+use v6.c;
 use Test;
 
+use Unix::Groups;
 use Object::Permission::Group;
 
 isa-ok $*AUTH-USER, Object::Permission::Group, '$*AUTH-USER is set correctly';

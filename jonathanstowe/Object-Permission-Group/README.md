@@ -4,7 +4,7 @@ Object helper for [Object::Permission](https://github.com/jonathanstowe/Object-P
 
 ## Synopsis
 
-```
+```perl6
 	use Object::Permission::Group; # $*AUTH-USER is derived from $*USER
 
    # Or:
@@ -28,18 +28,8 @@ of an arbitrary user (as in the second example above.)
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -49,17 +39,19 @@ Or you can install directly with "panda":
 
     panda install Object::Permission::Group
 
-Other install mechanisms may be become available in the future.
+There is no reason to believe this shouldn't work with *zef* as well.
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/Object-Permission-Group
+https://github.com/jonathanstowe/Object-Permission-Group
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2015, 2016
+Please see the [LICENCE](LICENCE) file in the distribution
+
+© Jonathan Stowe 2015, 2016, 2017
 
