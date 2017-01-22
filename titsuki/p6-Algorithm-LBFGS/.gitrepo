@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Algorithm-LBFGS.git
+	branch = master
+	commit = df1b89650a6d39ab13fe855ca3f1865bce9c27ae
+	parent = 60fdd3b2b2b404e4d9471dfe0628f2f3e4747f03
+	cmdver = 0.4.0
