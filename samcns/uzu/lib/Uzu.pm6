@@ -5,7 +5,7 @@ use File::Find;
 use YAMLish;
 use Terminal::ANSIColor;
 
-unit module Uzu:ver<0.1.2>:auth<gitlab:samcns>;
+unit module Uzu:ver<0.1.3>:auth<gitlab:samcns>;
 
 #
 # HTML Rendering
@@ -155,8 +155,7 @@ our sub build(Map  $config,
   # Start logger
   logger($log);
 
-  $config ==> render(no_livereload => $no_livereload,
-                               log => $log);
+  render($config, no_livereload => $no_livereload, log => $log);
   exit;
 }
 
@@ -335,22 +334,6 @@ sub logger(Supplier $log) {
   });
 }
 
-# Some editors, vim for example, make multiple
-# file IO modifications when a file is saved
-# that result in firing FileModified events in
-# our file watcher. render-throttle allows us to
-# prevent a render from triggering more than once
-# within a designated time frame. 2 seconds seems
-# resonable from testing.
-sub render-throttle(Channel $ch) returns Bool {
-  my ($time, $until) = $ch.poll;
-  if (now - $time) < $until {
-    $ch.send(($time, $until));
-    return False;
-  }
-  return True;
-}
-
 our sub watch(Map $config, Bool :$no_livereload = False) returns Tap {
 
   # Create a new logger
@@ -359,14 +342,8 @@ our sub watch(Map $config, Bool :$no_livereload = False) returns Tap {
   # Start logger
   logger($log);
   
-  unless 'partials'.IO.e {
-    note "No project files available";
-    exit(1);
-  }
-
-  sub build() {
-    $config  ==> render(no_livereload => $no_livereload,
-                                  log => $log);
+  sub trigger-build() {
+    render($config, no_livereload => $no_livereload, log => $log);
   }
 
   sub reload-browser() {
@@ -377,13 +354,13 @@ our sub watch(Map $config, Bool :$no_livereload = False) returns Tap {
   }
 
   sub build-and-reload() {
-    build();
+    trigger-build();
     reload-browser();
   }
 
   # Initialize build
   $log.emit("Initial build");
-  build();
+  trigger-build();
   
   # Track time delta between FileChange events. 
   # Some editors trigger more than one event per
@@ -399,18 +376,17 @@ our sub watch(Map $config, Bool :$no_livereload = False) returns Tap {
   my Proc::Async $app = serve(config_file => $config<path>);
 
   # Keep track of the last render timestamp
-  my $ch_throttle = Channel.new;
-  $ch_throttle.send((now, 0));
+  my Instant $last_run = now;
 
   # Spawn thread to watch directories for modifications
   my $thread_watch_dirs = Thread.start({
     react {
       whenever watch-dirs($dirs) -> $e {
         # Make sure the file change is a known extension; don't re-render too fast
-        if so $e.path.IO.extension ∈ $exts and render-throttle($ch_throttle) {
+        if so $e.path.IO.extension ∈ $exts and (now - $last_run) > 2 {
           $log.emit(colored("Change detected [{$e.path()}]", "bold green on_blue"));
           build-and-reload();
-          $ch_throttle.send((now, 2));
+          $last_run = now;
         }
       }
     }
@@ -430,18 +406,30 @@ our sub watch(Map $config, Bool :$no_livereload = False) returns Tap {
 # Config
 #
 
+sub valid-project-folder-structure(List $template_dirs) returns Bool {
+  $template_dirs.map: -> $dir {
+    if !$dir.IO.e {
+      note "Project directory missing [{$dir}]";
+      exit(1);
+    }
+  }
+  return True;
+}
+
 sub parse-config(Str :$config_file) returns Map {
   if $config_file.IO.f {
     return load-yaml(slurp($config_file)).Map;
   } else {
-    return Map.new( :error("Config file [$config_file] not found. Please run uzu init to generate.") );
+    note "Config file [$config_file] not found. Please run uzu init to generate.";
+    exit(1);
   }
 }
 
 sub uzu-config(Str :$config_file = 'config.yml') returns Map is export {
 
   # Parse yaml config
-  my $config              = parse-config(config_file => $config_file);
+  my Map $config          = parse-config(config_file => $config_file);
+  my List $language       = [$config<language>];
 
   # Network
   my Str  $host           = $config<host>||'0.0.0.0';
@@ -459,24 +447,30 @@ sub uzu-config(Str :$config_file = 'config.yml') returns Map is export {
   my List $template_dirs  = [$layout_dir, $pages_dir, $partials_dir, $i18n_dir];
   my List $extensions     = ['tt', 'html', 'yml'];
                           
-  my $config_plus  = ( :host($host),
-                       :port($port),
-                       :project_root($project_root),
-                       :path($config_file),
-                       :build_dir($build_dir),
-                       :themes_dir($themes_dir),
-                       :assets_dir($assets_dir),
-                       :layout_dir($layout_dir),
-                       :pages_dir($pages_dir),
-                       :partials_dir($partials_dir),
-                       :i18n_dir($i18n_dir),
-                       :template_dirs($template_dirs),
-                       :extensions($extensions) ).Map;
+  # Confirm all template directories exist
+  # before continuing.
+  valid-project-folder-structure($template_dirs);
+
+  my Map $config_plus = ( :host($host),
+                          :port($port),
+                          :language($language),
+                          :project_root($project_root),
+                          :path($config_file),
+                          :build_dir($build_dir),
+                          :themes_dir($themes_dir),
+                          :assets_dir($assets_dir),
+                          :layout_dir($layout_dir),
+                          :pages_dir($pages_dir),
+                          :partials_dir($partials_dir),
+                          :i18n_dir($i18n_dir),
+                          :template_dirs($template_dirs),
+                          :extensions($extensions) ).Map;
 
   # We want to stop everything if the project root ~~ $*HOME or
   # the build dir ~~ project root. This would have bad side-effects
   if $build_dir.IO ~~ $*HOME.IO|$project_root.IO {
-    return { error => "Build directory [{$build_dir}] cannot be {$*HOME} or project root [{$project_root}]."}
+    note "Build directory [{$build_dir}] cannot be {$*HOME} or project root [{$project_root}].";
+    exit(1);
   }
 
   # Merged config as output
@@ -487,20 +481,30 @@ sub uzu-config(Str :$config_file = 'config.yml') returns Map is export {
 # Init
 #
 
-our sub init( Str   :$config_file  = 'config.yml', 
-              Str   :$project_name = 'New Uzu Project',
-              Str   :$url          = 'http://example.com',
-              Str   :$language     = 'en',
-              Str   :$theme        = 'default') returns Bool {
+our sub init( Str  :$config_file  = 'config.yml', 
+              Str  :$project_name = 'New Uzu Project',
+              Str  :$url          = 'http://example.com',
+              Str  :$language     = 'en',
+              Str  :$theme        = 'default') returns Bool {
 
-  my Hash %config = name     => $project_name,
-                    url      => $url,
-                    language => [$language],
-                    theme    => $theme;
+  my Map $config = ( :name($project_name),
+                     :url($url),
+                     :language($language),
+                     :theme($theme) ).Map;
+
+  my Str $theme_dir = "themes/$theme";
+  my List $template_dirs = ("i18n", 
+                            "pages",
+                            "partials",
+                            "$theme_dir/layout",
+                            "$theme_dir/assets");
+
+  # Create project directories
+  $template_dirs.map: -> $dir { mkdir $dir };
 
   # Write config file
-  my Str $config_yaml = save-yaml(%config).subst('...', '');
-  return spurt $config_file.subst('~', $*HOME), $config_yaml;
+  my Str $config_yaml = save-yaml($config).subst('...', '');
+  return spurt( $config_file.subst('~', $*HOME), $config_yaml );
 }
 
 =begin pod
@@ -519,7 +523,7 @@ Uzu - Static site generator with built-in web server, file modification watcher,
 
         # Render all templates to ./build/
         uzu-config(config_file => $config)
-        ==> Uzu::render();
+        ==> Uzu::build();
 
         # Watch template files for modification
         # and spawn development web server for testing
