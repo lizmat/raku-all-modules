@@ -16,9 +16,9 @@ my %init = (
 );
 
 my %init-pairs = things => %init<things>.map: { $^k => $^v };
-my $map := DispatchMap.new(|%init);
-is-deeply $map.keys('things'), DispatchMap.new(|%init).keys('things'),"SAR works with constructor";
-is-deeply $map.keys('things'), DispatchMap.new(|%init-pairs).keys('things'),"Pair arguments work";
+my $map := DispatchMap.new(|%init).compose;
+is-deeply $map.keys('things'), DispatchMap.new(|%init).compose.keys('things'),"SAR works with constructor";
+is-deeply $map.keys('things'), DispatchMap.new(|%init-pairs).compose.keys('things'),"Pair arguments work";
 is-deeply $map.keys('things'),( (Real,Str),(Int,Str),(Str,Real) ),".keys";
 is-deeply $map.values('things'),("foo","baz","bar"),".values";
 is-deeply $map.list('things'),  %init<things>,".list";
@@ -35,8 +35,8 @@ is $map.get-all('things',Int,Str)[1],"foo","get-all[1] is correct";
 ok $map.exists('things',Real,Str),"exists works with something that exists";
 nok $map.exists('things',Int,Int),"exists works with something that doesn't exists";
 
-$map.append(things => ((Cool,Perl) => "squirtle") );
+$map.append(things => ((Cool,Perl) => "squirtle") ).compose;
 is $map.get('things',Cool,Perl),"squirtle",".append works";
 
-is $map.get('not-exist',(Int,Str)),Nil,"namespace that doesn't exist returns Nil";
+is $map.get('not-exist',(Int,Str)),Nil,"namespace that does't exist returns Nil";
 ok $map.namespaces ~~ <things foo>.Set,".namespaces works";
