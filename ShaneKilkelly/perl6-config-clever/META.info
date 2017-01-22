@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "Config::Clever",
   "version"     : "1.0.0",
   "description" : "A clever, heirarchical config loader",
