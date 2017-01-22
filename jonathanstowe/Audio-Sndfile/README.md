@@ -78,6 +78,6 @@ want to consider making a new module.
 
 This is free software.
 
-Please see the [LICENCE](LICENSE) file in the distribution.
+Please see the [LICENCE](LICENCE) file in the distribution.
 
 © Jonathan Stowe 2015, 2016
