@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Hash::MultiValue",
     "version" : "0.1",
     "description" : "Store multiple values per key, but act like a regular hash",
