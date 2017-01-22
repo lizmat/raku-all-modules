@@ -69,7 +69,7 @@ multi method cmd('release') {
     self.cmd('build');
     my ($module, $module-file) = guess-main-module();
     my ($user, $repo) = guess-user-and-repo();
-    die "Cannot find user and repository settting" unless $repo;
+    die "Cannot find user and repository setting" unless $repo;
     my $meta-file = <META6.json META.info>.grep({.IO ~~ :f & :!l})[0];
     print "\n" ~ qq:to/EOF/ ~ "\n";
       Are you ready to release your module? Congrats!
@@ -297,7 +297,11 @@ App::Mi6 - minimal authoring tool for Perl6
 
 =head1 INSTALLATION
 
+  # with panda
   > panda install App::Mi6
+
+  # or, with zef
+  > zef install App::Mi6
 
 =head1 DESCRIPTION
 

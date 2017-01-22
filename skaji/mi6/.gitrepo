@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/skaji/mi6.git
 	branch = master
-	commit = 24a70fb5ed7e44d302d18fe935a2d2bda2513cba
-	parent = 7cd2e51e4f143ace239c47676dde690e6b9e93f4
-	cmdver = 0.2.3
+	commit = 0c01504f70c92f2e9249f88e05814b86746fbed7
+	parent = 0fb3682118990f0ddc7ffb550dc9a481879bfcc9
+	cmdver = 0.4.0
