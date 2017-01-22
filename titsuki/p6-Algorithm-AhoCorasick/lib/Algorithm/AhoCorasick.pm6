@@ -2,43 +2,43 @@ use v6;
 use Algorithm::AhoCorasick::Node;
 unit class Algorithm::AhoCorasick;
 
-has $!root;
-has $.keywords is required;
+has Algorithm::AhoCorasick::Node $!root;
+has @.keywords is required;
 
 method !build-automata() {
-    $!root = Algorithm::AhoCorasick::Node.new();
-    for @$!keywords -> $keyword {
-    	my $current-node = $!root;
-    	loop (my $i = 0; $i < $keyword.chars; $i++) {
-    	    my $edge-character = $keyword.substr($i,1);
-    	    if not ($current-node.transitions{$edge-character}:exists) {
-    		$current-node.transitions{$edge-character} = Algorithm::AhoCorasick::Node.new();
-    	    }
-    	    $current-node = $current-node.transitions{$edge-character};
-    	}
-    	$current-node.matched-string = set($keyword);
+    $!root .= new;
+    for @!keywords -> $keyword {
+        my $current-node = $!root;
+        for ^$keyword.chars -> $i {
+            my $edge-character = $keyword.substr($i,1);
+            if not $current-node.transitions{$edge-character}:exists {
+                $current-node.transitions{$edge-character} .= new;
+            }
+            $current-node = $current-node.transitions{$edge-character};
+        }
+        $current-node.matched-string = set($keyword);
     }
     my @queue;
     @queue.push: $!root;
-    while (@queue.elems > 0) {
-	my $current-node = @queue.shift;
-	for $current-node.transitions.keys -> $edge-character {
-	    my $next-node = $current-node.transitions{$edge-character};
-	    @queue.push($next-node);
+    while @queue.elems > 0 {
+        my $current-node = @queue.shift;
+        for $current-node.transitions.keys -> $edge-character {
+            my $next-node = $current-node.transitions{$edge-character};
+            @queue.push($next-node);
 
-	    my $r = $current-node.failure;
-	    while (defined($r) && not $r.transitions{$edge-character}:exists) {
-		$r = $r.failure;
-	    }
+            my $r = $current-node.failure;
+            while $r.defined && not $r.transitions{$edge-character}:exists {
+                $r = $r.failure;
+            }
 
-	    if (not defined($r)) {
-		$next-node.failure = $!root;
-	    }
-	    else {
-		$next-node.failure = $r.transitions{$edge-character};
-		$next-node.matched-string = $next-node.matched-string (|) $next-node.failure.matched-string;
-	    }
-	}
+            if not $r.defined {
+                $next-node.failure = $!root;
+            }
+            else {
+                $next-node.failure = $r.transitions{$edge-character};
+                $next-node.matched-string = $next-node.matched-string (|) $next-node.failure.matched-string;
+            }
+        }
     }
     $!root.failure = $!root;
 }
@@ -47,7 +47,7 @@ method match($text) {
     my $all = self.locate($text);
     my Set $matched;
     for $all.keys -> $keyword {
-	$matched = $matched (|) $keyword;
+        $matched = $matched (|) $keyword;
     }
     return $matched;
 }
@@ -55,29 +55,29 @@ method match($text) {
 method locate($text) {
     my $matched;
     my $state = $!root;
-    loop (my $i = 0; $i < $text.chars; $i++) {
-	my $trans = Mu;
-	my $edge-character = $text.substr($i,1);
-	while (defined($state)) {
-	    $trans = $state.transitions{$edge-character};
-	    if ($state === $!root || defined($trans)) {
-		last;
-	    }
-	    $state = $state.failure;
-	}
+    for ^$text.chars -> $i {
+        my $trans = Mu;
+        my $edge-character = $text.substr($i,1);
+        while $state.defined {
+            $trans = $state.transitions{$edge-character};
+            if $state === $!root || $trans.defined {
+                last;
+            }
+            $state = $state.failure;
+        }
 
-	if (defined($trans)) {
-	    $state = $trans;
-	}
-	for $state.matched-string.keys -> $string {
-	    $matched{$string}.push($i - $string.chars + 1);
-	}
+        if $trans.defined {
+            $state = $trans;
+        }
+        for $state.matched-string.keys -> $string {
+            $matched{$string}.push($i - $string.chars + 1);
+        }
     }
     return $matched;
 }
 
-submethod BUILD (:$keywords) {
-    $!keywords := $keywords;
+submethod BUILD (:@keywords) {
+    @!keywords := @keywords;
     self!build-automata();
 }
 
@@ -90,7 +90,7 @@ Algorithm::AhoCorasick - efficient search for multiple strings
 =head1 SYNOPSIS
 
        use Algorithm::AhoCorasick;
-       my $aho-corasick = Algorithm::AhoCorasick.new(keywords => ['corasick','sick','algorithm','happy']);
+       my Algorithm::AhoCorasick $aho-corasick .= new(keywords => ['corasick','sick','algorithm','happy']);
        my $matched = $aho-corasick.match('aho-corasick was invented in 1975'); # set("corasick","sick")
        my $located = $aho-corasick.locate('aho-corasick was invented in 1975'); # {"corasick" => [4], "sick" => [8]}
 
@@ -104,7 +104,7 @@ After the above preparation, it locate elements of a finite set of strings withi
 
 =head3 new
 
-      my $aho-corasick = Algorithm::AhoCorasick.new(keywords => @keyword-list);
+      my Algorithm::AhoCorasick $aho-corasick .= new(keywords => @keyword-list);
 
 Constructs a new finite state machine from a list of keywords.
 

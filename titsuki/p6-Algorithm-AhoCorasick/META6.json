@@ -1,18 +1,18 @@
 {
-  "name" : "Algorithm::AhoCorasick",
-  "source-url" : "git://github.com/titsuki/p6-Algorithm-AhoCorasick.git",
-  "perl" : "6.c",
-  "resources" : [ ],
+  "authors" : [
+    "titsuki"
+  ],
   "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "efficient search for multiple strings",
+  "name" : "Algorithm::AhoCorasick",
+  "perl" : "6.c",
   "provides" : {
     "Algorithm::AhoCorasick" : "lib/Algorithm/AhoCorasick.pm6",
     "Algorithm::AhoCorasick::Node" : "lib/Algorithm/AhoCorasick/Node.pm6"
   },
-  "depends" : [ ],
-  "description" : "efficient search for multiple strings",
+  "resources" : [ ],
+  "source-url" : "git://github.com/titsuki/p6-Algorithm-AhoCorasick.git",
   "test-depends" : [ ],
-  "version" : "0.06",
-  "authors" : [
-    "titsuki"
-  ]
+  "version" : "0.06"
 }

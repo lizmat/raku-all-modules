@@ -9,7 +9,7 @@ SYNOPSIS
 ========
 
     use Algorithm::AhoCorasick;
-    my $aho-corasick = Algorithm::AhoCorasick.new(keywords => ['corasick','sick','algorithm','happy']);
+    my Algorithm::AhoCorasick $aho-corasick .= new(keywords => ['corasick','sick','algorithm','happy']);
     my $matched = $aho-corasick.match('aho-corasick was invented in 1975'); # set("corasick","sick")
     my $located = $aho-corasick.locate('aho-corasick was invented in 1975'); # {"corasick" => [4], "sick" => [8]}
 
@@ -23,7 +23,7 @@ CONSTRUCTOR
 
 ### new
 
-    my $aho-corasick = Algorithm::AhoCorasick.new(keywords => @keyword-list);
+    my Algorithm::AhoCorasick $aho-corasick .= new(keywords => @keyword-list);
 
 Constructs a new finite state machine from a list of keywords.
 
