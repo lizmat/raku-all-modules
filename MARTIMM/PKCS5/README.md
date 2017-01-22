@@ -1,8 +1,10 @@
 # Public Key Cryptography Standards \#5 (PKCS 5)
 
 [![Build Status](https://travis-ci.org/MARTIMM/PKCS5.svg?branch=master)](https://travis-ci.org/MARTIMM/PKCS5)
+[![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/MARTIMM/pkcs5?branch=master&passingText=Windows%20-%20OK&failingText=Windows%20-%20FAIL&pendingText=Windows%20-%20pending&svg=true)](https://ci.appveyor.com/project/MARTIMM/pkcs5/branch/master)
+[![License](http://martimm.github.io/label/License-label.svg)](http://www.perlfoundation.org/artistic_license_2_0)
 
-This package implements part of PKCS 5 which is, according to the ![wiki](https://en.wikipedia.org/wiki/PKCS), a Password-based Encryption Standard. The derivation algorithm PBKDF2 is implemented as a class in this package.
+This package implements part of PKCS 5 which is, according to the [wikipedia](https://en.wikipedia.org/wiki/PKCS), a Password-based Encryption Standard. The derivation algorithm PBKDF2 is implemented as a class in this package.
 
 ## Synopsis
 
@@ -22,38 +24,15 @@ This package implements part of PKCS 5 which is, according to the ![wiki](https:
 
 ## DOCUMENTATION
 
-## INSTALLING THE MODULES
+See documentation at
 
-Use panda to install the package like so.
-```
-$ panda install PKCS5
-```
+* [PKCS5::PBKDF2](https://github.com/MARTIMM/PKCS5/blob/master/doc/PBKDF2.pdf)
+
+* [Release notes](https://github.com/MARTIMM/PKCS5/blob/master/doc/CHANGES.md)
 
 ## Versions of PERL, MOARVM and MongoDB
 
 This project is tested with latest Rakudo built on MoarVM implementing Perl v6.c.
-
-## BUGS, KNOWN LIMITATIONS AND TODO
-
-## CHANGELOG
-
-See [semantic versioning](http://semver.org/). Please note point 4. on
-that page: *Major version zero (0.y.z) is for initial development. Anything may
-change at any time. The public API should not be considered stable.*
-
-* 0.1.4
-  * Added tests from rfc6070
-* 0.1.3
-  * Changed terminology. PRF into CGH for cryptographic hash
-* 0.1.1
-  * Added pod doc.
-* 0.1.0
-  * Implemented derive() and derive-hex()
-* 0.0.1 Setup
-
-## LICENSE
-
-Released under [Artistic License 2.0](http://www.perlfoundation.org/artistic_license_2_0).
 
 ## AUTHORS
 

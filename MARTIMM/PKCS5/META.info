@@ -1,11 +1,10 @@
 {
-  "author": "Marcel Timmerman",
   "authors": [
     "Marcel Timmerman"
   ],
   "depends": [
     "Digest::HMAC",
-    "OpenSSL::Digest"
+    "OpenSSL"
   ],
   "description": "PKCS #5 with PBKDF2",
   "license": "The Artistic License 2.0",
@@ -15,5 +14,5 @@
     "PKCS5::PBKDF2":            "lib/PKCS5/PBKDF2.pm6"
   },
   "source-url": "git://github.com/MARTIMM/PKCS5",
-  "version": "v0.1.4"
+  "version": "v0.1.6"
 }
