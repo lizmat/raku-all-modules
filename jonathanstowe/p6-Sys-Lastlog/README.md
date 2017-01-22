@@ -2,6 +2,8 @@
 
 Get access to the last login information on Unix-like systems
 
+[![Build Status](https://travis-ci.org/jonathanstowe/p6-Sys-Lastlog.svg?branch=master)](https://travis-ci.org/jonathanstowe/p6-Sys-Lastlog)
+
 ## Description
 
 This module is designed to provided an Object Oriented API to the lastlog
@@ -14,18 +16,8 @@ so this module will not be of much use on those systems.
 Currently there is no dedicated test to determine whether your platform is
 supported, the unit tests will simply fail horribly.
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
 
@@ -35,13 +27,17 @@ Or you can install directly with "panda":
 
     panda install Sys::Lastlog
 
-Other install mechanisms may be become available in the future.
+I have no reason to believe *zef* wouldn't work equally well, I just
+haven't tested it.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/Sys-Lastlog
+https://github.com/jonathanstowe/Sys-Lastlog
 
+## Copyright and Licence
+
+This is free software, please see the [LICENCE](LICENCE) file.
+
+© Jonathan Stowe 2015-2017

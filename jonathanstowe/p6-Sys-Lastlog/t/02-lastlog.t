@@ -8,6 +8,7 @@ use Test;
 plan 16;
 
 use Sys::Lastlog;
+use System::Passwd::User;
 
 my $uid;
 my $logname;
@@ -45,6 +46,7 @@ isa-ok $ret, Sys::Lastlog::Entry, "and that returns the right thing";
 
 isa-ok $ret.timestamp(), DateTime, "timestamp is a DateTime";
 
+todo "won't be logged in on travis", 1 if %*ENV<TRAVIS>;
 ok $ret.has-logged-in, "has-logged-in";
 
 
