@@ -1,0 +1,26 @@
+{
+   "meta6" : "0",
+   "provides" : {
+      "Getopt::ForClass" : "lib/Getopt/ForClass.pm6"
+   },
+   "test-depends" : [
+      "Test",
+      "Test::META"
+   ],
+   "support" : {
+      "source" : "git://github.com/zostay/p6-Getopt-ForClass.git"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "auth" : "github:zostay",
+   "source-url" : "git://github.com/zostay/p6-Getopt-ForClass.git",
+   "depends" : [],
+   "name" : "Getopt::ForClass",
+   "authors" : [
+      "Sterling Hanenkamp <hanenkamp@cpan.org>"
+   ],
+   "version" : "0.1",
+   "license" : "Artistic",
+   "description" : "Use MAIN to dispatch to a class."
+}
+
