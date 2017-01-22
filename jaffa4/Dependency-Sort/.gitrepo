@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jaffa4/Dependency-Sort.git
 	branch = master
-	commit = 4b7c8e3848eb7d5e59457a0c42bfce85723027e5
-	parent = ad637d39477697b2b0aa4c6be5e3a7e61094e04b
-	cmdver = 0.2.2
+	commit = 129b1c18fcbbaecc33a217d856aa78f87efe5958
+	parent = 2d6e3c253cd0754a40dbfbd4b2f297a89179a770
+	cmdver = 0.4.0
