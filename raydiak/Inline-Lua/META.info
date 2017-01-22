@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Inline::Lua",
     "version" : "*",
     "description" : "Embedded Lua for Perl 6",
