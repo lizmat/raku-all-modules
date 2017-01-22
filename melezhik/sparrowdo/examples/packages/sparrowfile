@@ -1,0 +1,3 @@
+package-install ('nano', 'tree', 'mc');
+package-install 'gzip tar';
+package-install 'ncdu';

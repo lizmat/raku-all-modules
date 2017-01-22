@@ -1,0 +1,4 @@
+group-create 'sparrows';
+group-delete 'sparrows';
+group 'sparrows';
+group 'sparrows' , %( action => 'delete' );

@@ -1,0 +1,15 @@
+package-install 'nginx';
+
+service-enable 'nginx';
+
+service-start 'nginx';
+
+service-stop 'nginx';
+
+service-restart 'nginx';
+
+service 'nginx', %( action => 'stop' );
+
+service 'nginx', %( action => 'disable' );
+
+service-disable 'nginx';

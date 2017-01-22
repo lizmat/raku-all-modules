@@ -1,11 +1,24 @@
 language: perl6
+
 perl6:
   - latest
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y cpanminus
+  - sudo cpanm -q --notest install Sparrow
+  - cat /dev/zero | ssh-keygen -q -N ""
+  - cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+  - chmod og-wx ~/.ssh/authorized_keys
+
 install:
   - rakudobrew build-panda
   - panda --notests installdeps .
+
 script:
   - perl6 -Ilib -c bin/sparrowdo
   - prove -vr -e 'perl6 -Ilib' t/
-sudo: false
-
+  - panda install .
+  - panda install Sparrowdo::Sparrow::Update
+  - perl6 -Ilib bin/sparrowdo --module_run=Sparrow::Update --bootstrap --host=127.0.0.1
+  - strun --root examples/

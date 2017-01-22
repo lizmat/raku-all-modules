@@ -1,0 +1,27 @@
+bash(q:to/HERE/);
+  set -e;
+  touch /tmp/sparrow123.txt
+  echo one
+  echo two
+  echo three
+HERE
+
+bash('echo hello world');
+
+user 'foo';
+
+bash('pwd', 'foo');
+
+bash 'pwd', %(
+  user => 'foo',
+  expect_stdout => '/home/foo'
+);
+
+bash 'echo $FOO; echo $BAR', %( 
+  envvars => %(
+    FOO => 'the-foo',
+    BAR => 'the-bar',
+  ) 
+);
+
+bash "pwd", %( description => "use this description for bash command" );

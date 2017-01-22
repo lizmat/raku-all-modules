@@ -1,10 +1,20 @@
 use Terminal::ANSIColor;
 use JSON::Tiny;
 use Sparrowdo;
+use Sparrowdo::Core::DSL::User;
+use Sparrowdo::Core::DSL::Group;
+use Sparrowdo::Core::DSL::File;
+use Sparrowdo::Core::DSL::Directory;
+use Sparrowdo::Core::DSL::Template;
+use Sparrowdo::Core::DSL::Package;
+use Sparrowdo::Core::DSL::CPAN::Package;
+use Sparrowdo::Core::DSL::Service;
+use Sparrowdo::Core::DSL::Bash;
 
 sub MAIN (
 
   Str  :$host!, 
+  Str  :$sparrowfile, 
   Str  :$http_proxy, 
   Str  :$https_proxy, 
   Str  :$ssh_user, 
@@ -12,8 +22,11 @@ sub MAIN (
   Int  :$ssh_port = 22, 
   Bool :$verbose = False, 
   Bool :$bootstrap = False, 
-  Str  :$module_run
-
+  Bool :$check_syntax = False, 
+  Str  :$module_run, 
+  Bool :$no_sudo = False,
+  Bool :$no_color = False,
+  Bool :$no_index_update = False,
 )
 {
 
@@ -23,12 +36,16 @@ sub MAIN (
 
   set_input_params %(  
     Host => $host, 
+    Sparrowfile => $sparrowfile, 
     HttpProxy => $http_proxy, 
     HttpsProxy => $https_proxy, 
     SshPort => $ssh_port, 
     SshUser => $ssh_user, 
     SshPrivateKey => $ssh_private_key, 
     Verbose => $verbose,
+    NoSudo => $no_sudo,
+    NoColor => $no_color,
+    NoIndexUpdate => $no_index_update
   );
 
   bootstrap() if $bootstrap;
@@ -43,12 +60,19 @@ sub MAIN (
 
   say colored('target OS is - '~ target_os, 'black on_white');
 
+  if 'config.pl6'.IO.e {
+    say colored('load configuration from config.pl6 ...', 'blue on_green');
+    config_set(EVALFILE 'config.pl6'); 
+  }
+
 
   if $module_run {
     module_run $module_run;
   } else {
-    EVALFILE "sparrowfile";
+    EVALFILE $sparrowfile||'sparrowfile';
   }
+
+  exit if $check_syntax;
 
   spurt '/tmp/sparrowdo-box.json', (to-json get_tasks());
 
@@ -71,8 +95,9 @@ sub MAIN (
 
   }
 
-  ssh_shell 'sparrow index update';
-  ssh_shell 'sparrow box run /tmp/sparrowdo-box.json --mode quiet';
+  ssh_shell 'sparrow index update' unless input_params('NoIndexUpdate');
+
+  ssh_shell 'sparrow box run /tmp/sparrowdo-box.json --mode quiet --purge-cache';
 
 }
 
@@ -87,6 +112,7 @@ sub ssh_shell ( $cmd ) {
   @bash_commands.push:  'export GIT_PROTOCOL=https';
   @bash_commands.push:  'export PATH=/sbin/:/usr/local/bin:/usr/sbin/:$PATH';
   @bash_commands.push:  'export SPARROW_ROOT=/opt/sparrow';
+  @bash_commands.push:  'export SPARROW_NO_COLOR=1' if input_params('NoColor');
   @bash_commands.push:  $cmd;
 
   my $ssh_host_term = input_params('Host');
@@ -103,7 +129,9 @@ sub ssh_shell ( $cmd ) {
 
   $ssh_cmd ~= ' -i ' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
 
-  $ssh_cmd ~= " \"sudo bash -c '" ~ ( join ' ; ', @bash_commands ) ~ "'\"";
+  $ssh_cmd ~= ( input_params('NoSudo') ) ?? " \"bash -c '" !! " \"sudo bash -c '"; 
+
+  $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'\"";
 
   $ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
 
@@ -142,8 +170,9 @@ sub scp ( $file, $dest, $reverse = 0 ) {
 sub bootstrap {
 
   say colored('running Sparrow bootstrap on ' ~ input_params('Host'), 'green on_red');
+  ssh_shell 'if ! which perl 2>/dev/null; then yum -y install perl; fi';
   ssh_shell 'if ! which cpanm 2>/dev/null; then curl -kL http://cpanmin.us/ -o /bin/cpanm; chmod a+x /bin/cpanm; fi';
   ssh_shell 'if ! which sparrow 2>/dev/null; then yum -y install gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge; cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow; fi';
-  ssh_shell 'cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow '; # forcefully upgrade Sparrow
+  ssh_shell 'cpanm -q Outthentic Sparrow || cpanm --notest -q Outthentic Sparrow'; # forcefully upgrade Sparrow
 
 }

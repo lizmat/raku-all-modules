@@ -8,6 +8,7 @@ my %input_params = Hash.new;
 my $target_os;
 my @tasks = Array.new;
 my @spl = Array.new;
+my %config = Hash.new;
 
 sub push_task (%data){
 
@@ -61,7 +62,16 @@ sub set_spl(%args) is export {
   }
 }
 
-sub task_run(%args) is export { 
+
+multi sub task_run($task_desc, $plugin_name, %parameters?) is export { 
+    task_run %(
+      task          => $task_desc,
+      plugin        => $plugin_name,
+      parameters    => %parameters
+    );
+}
+
+multi sub task_run(%args) is export { 
 
   my %task_data = %( 
       task => %args<task>,
@@ -73,6 +83,13 @@ sub task_run(%args) is export {
 
 }
  
+multi sub task-run(%args) is export { 
+  task_run %args
+}
+
+multi sub task-run($task_desc, $plugin_name, %parameters?) is export { 
+  task_run $task_desc, $plugin_name, %parameters
+}
 
 sub module_run($name, %args = %()) is export {
 
@@ -84,3 +101,10 @@ sub module_run($name, %args = %()) is export {
 
 }
 
+sub config() is export { 
+  %config 
+}
+
+sub config_set( %data = %()) is export { 
+  %config = %data
+}

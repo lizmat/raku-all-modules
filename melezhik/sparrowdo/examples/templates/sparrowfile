@@ -1,0 +1,29 @@
+group 'animals';
+user  'zookeeper';
+
+directory '/var/data';
+
+template '/var/data/animals.txt', %( 
+  source => slurp 'examples/templates/empty.tmpl' 
+);
+
+template-create '/var/data/animals.txt', %( 
+  source => slurp 'examples/templates/empty.tmpl' 
+);
+
+
+template-create '/var/data/animals.txt', %(
+  source => ( slurp 'examples/templates/animals.tmpl' ),
+  owner => 'zookeeper',
+  group => 'animals' ,
+  mode => '644',
+  variables => %(
+    name => 'red fox',
+    language => 'English'
+  ),
+);
+
+
+file-delete '/var/data/animals.txt';
+group-delete 'animals';
+user-delete  'zookeeper';
