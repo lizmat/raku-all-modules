@@ -1,0 +1,104 @@
+prettl 1233 in txt pre ttl
+prettl txt pre ttl 2
+
+$TtL    1234
+$origin example.com.
+
+presoa in txt pre soa
+presoa2 8888 txt pre soa 2
+presoa3 txt pre soa 2
+
+$ttl 3600
+
+example.com.    in              SOA     ns1.example.com. hostmaster.example.com. (
+                                        1234567890      ; Serial
+                                        86400           ; Refresh
+                                        3600            ; Retry
+                                        3600000         ; Expire
+                                        14400  )        ; Negative Cache TTL
+
+i a 10.0.0.1
+  a 11.0.0.2 ; minimalist definition
+
+
+test-class         IN              A       127.0.0.1
+test-ttl                   400     A       127.0.0.1
+test-ttlclass      400     IN      A       127.0.0.1
+test-ttlclass-rev  IN      400     A       127.0.0.1
+
+; These are max values for a TTL
+ttl1 in 2147483647   a 10.0.0.1
+ttl2 in 2147483647s  a 10.0.0.2
+ttl3 in 35791394m    a 10.0.0.3
+ttl4 in 596523h      a 10.0.0.4
+ttl5 in 24855d       a 10.0.0.5
+ttl6 in 3550w        a 10.0.0.6
+
+; some parentheses valid lines
+()
+(
+)
+(;comment
+)
+()a A 127.0.0.1
+()()b A 9.9.9.9
+(c A 1.2.3.4)
+( d A 255.255.255.255)
+(
+e A 127.0.0.1)
+(
+    f
+    A
+    127.0.0.1
+)
+(
+    g
+    (
+    ; another comment
+        A
+        (
+            127.0.0.1 ; the mount everest !
+        ) ; zzZZZZzz
+    ) ; wow
+    ; tooooooo much comment !
+) ; the end, at least...
+(h (in) (a) (1.0.0.1))
+
+
+; Some text tests
+txttest   txt oneword
+txttest2  TXt multi word !
+multilang tXt &é'-è_çà='…./§«»©↓¬¿×÷
+qw        txT "bo\"uh"
+qw2       TXt "bouh""hou" "houh"
+qw3       tXT "bouh" "hou"
+qw4       TXT "bo uh" hou'
+qwml      txt "bouh" ahhhhhhhh !
+pw1       txt "a()b"
+
+; SPF entry (like TXT)
+example.com. IN SPF ( ;ahaha
+"v=spf1 +mx a:colo.example.com/28 -all")
+
+; NS records
+@                               ns        ns1
+ns1                             A       127.0.0.1
+ns1                             AaAa    ::1
+
+abc                             PTR       127.0.0.1
+ns2                             A       127.0.0.2
+
+; IPv6
+mini                            AAAA    ::1
+
+; CNAME
+test-cname                      CNAME   test-a
+test-reccname                   CNAME   test-cname
+
+$ttl 9999
+
+; DNAME
+test-dname                      DNAME   test-cname
+test-recdname                   DNAME   test-dname
+
+; $INCLUDE db.include

@@ -1,0 +1,15 @@
+$TtL    3600
+$origin example.com.
+
+example.com.    in              SOA     ns1.example.com. hostmaster.example.com. (
+                                        1234567890      ; Serial
+                                        86400           ; Refresh
+                                        3600            ; Retry
+                                        3600000         ; Expire
+                                        14400  )        ; Negative Cache TTL
+
+first in a 10.0.0.1
+third in a 10.0.0.3
+
+@ in ns ns0
+ns0 in a 10.0.0.1

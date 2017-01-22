@@ -1,0 +1,23 @@
+                 in a 10.0.0.1
+name             in a 10.0.0.1
+name.example.com in a 10.0.0.1
+
+; cname rdata cannot be empty
+                 in cname name
+name2            in cname name
+name2            in cname name.example.com
+
+ in ptr other
+name2 in ptr other
+name2 in ptr other.example.com
+
+; domain cannot be empty, but can be non-FQDN
+@ in soa domain
+@ in soa domain.example.com mail.example.com. [...]
+@ in soa domain             mail              [...]
+@ in soa @                  mail              [...]
+@ in soa @                  @                 [...]
+
+$ORIGIN @
+$ORIGIN domain
+$ORIGIN domain.example.com.

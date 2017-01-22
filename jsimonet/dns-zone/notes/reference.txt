@@ -1,0 +1,73 @@
+# References
+
+# RFCs
+
+RFC 1035 :
+    DNS zone file
+    Type A
+    Type AXFR
+    Type CNAME
+    Type NS
+    Type PTR
+    Type SOA
+RFC 1035 & 7505
+    type MX
+RFC 3596 :
+    Type AAAA
+RFC 1183 :
+    Type AFSDB
+RFC 3123 :
+    Type APL
+RFC 6844 :
+    type CAA
+RFC 7344 :
+    type CDNSKEY
+    type CDS
+RFC 4701
+    type DHCID
+RFC 4431
+    type DLV
+RFC 6672 (2672 is obsolete since June 2012)
+    type DNAME
+RFC 4034
+    type DNSKEY
+    type DS
+RFC 4025
+    type IPSECKEY
+RFC 5205
+    type HIP
+RFC 2535 & 2930
+    type KEY
+RFC 2260
+    type KX
+RFC 1876
+    type LOC
+RFC 3403
+    type NAPTR
+RFC 4034
+    type NSEC
+    type RRSIG
+RFC 5155
+    type NSEC3
+    type NSEC3PARAM
+RFC 1183
+    type RP
+RFC 2535
+    type SIG
+RFC 2782
+    type SRV
+RFC 4255
+    type SSHFP
+RFC 2930
+    type TKEY
+RFC 6698
+    type TLSA
+RFC 2845
+    type TSIG
+RFC 1996
+    type IXFR
+RFC 6891
+    type OPT
+
+Unspecified
+    type TA

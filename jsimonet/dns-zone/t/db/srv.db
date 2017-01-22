@@ -1,0 +1,8 @@
+; perl6 t/00_gram.t --testFile=t/db/srv.db
+$ttl 3600
+$origin example.com
+
+_sip._tcp.com in srv 0 5 5060 sipserver.example.com.
+sip.com in srv 0 5 5060 sipserver.example.com.
+adr in A 10.0.0.1
+;_adr in a 10.0.0.1 ; Must fails

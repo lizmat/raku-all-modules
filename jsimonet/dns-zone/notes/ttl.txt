@@ -1,0 +1,14 @@
+$ttl 123
+# all ok
+
+__END__
+
+;$ttl 123     # no default ttl
+@ in soa [...]
+# all ok, because ttl set from soa min ttl
+
+__END__
+
+;ttl 123        # no default ttl
+;@ in soa [...] # no soa (yet)
+# ttl not set from $ttl nor SOA ==> failure

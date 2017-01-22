@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jsimonet/dns-zone.git
+	branch = master
+	commit = e7476cbea01eeae708725a7e0440513ea84f3eea
+	parent = 8f5c9b252111dcf75405cc236c584edb91a0a7d4
+	cmdver = 0.4.0
