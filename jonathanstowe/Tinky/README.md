@@ -62,7 +62,7 @@ my $complete-progress = Tinky::Transition.new(name => 'complete', from => $state
 my @transitions = $open, $reject-new, $reject-open, $reject-stalled, $stall-open, $stall-progress, $unstall, $take, $complete-open, $complete-progress;
 
 # The Workflow object allows the relation between states and transitions to be calculate
-# and generates the methods that will be applied to the ticket object.  The initual-state
+# and generates the methods that will be applied to the ticket object.  The initial-state
 # will be applied to the object if there is no existing state on the state.
 my $workflow = Tinky::Workflow.new(:@transitions, name => 'ticket-workflow', initial-state => $state-new );
 

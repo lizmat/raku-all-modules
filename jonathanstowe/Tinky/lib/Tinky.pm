@@ -1023,21 +1023,21 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
         }
 
         has Supply $!enter-supply;
-        method enter-supply() returns Supply {
+        multi method enter-supply() returns Supply {
             $!enter-supply //= do {
                 my @supplies = self.states.map(-> $state { $state.enter-supply.map(-> $value { $state, $value }) });
                 Supply.merge(@supplies);
             }
             $!enter-supply;
         }
-        
+
         has Supply $!final-supply;
-        method final-supply() returns Supply {
+        multi method final-supply() returns Supply {
             $!final-supply //= self.enter-supply.grep( -> $ ($state, $object) { !?self.transitions-for-state($state) } );
         }
 
         has Supply $!leave-supply;
-        method leave-supply() returns Supply {
+        multi method leave-supply() returns Supply {
             $!leave-supply //= do {
                 my @supplies = self.states.map(-> $state { $state.leave-supply.map(-> $value { $state, $value }) });
                 Supply.merge(@supplies);
@@ -1054,7 +1054,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
             $!transition-supply;
         }
 
-        method transitions-for-state(State:D $state ) {
+        multi method transitions-for-state(State:D $state ) {
             @!transitions.grep($state);
         }
 

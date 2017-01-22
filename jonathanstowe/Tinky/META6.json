@@ -1,5 +1,5 @@
 {
-	"meta6" : "0",
+   "meta6" : "0",
    "tags" : [
       "Workflow",
       "toolkit",
@@ -24,7 +24,7 @@
    "authors" : [
       "Jonathan Stowe <jns+git@gellyfish.co.uk>"
    ],
-   "version" : "0.0.3",
+   "version" : "0.0.4",
    "license" : "Artistic",
    "description" : "An Experimental Workflow / State Management toolit"
 }
