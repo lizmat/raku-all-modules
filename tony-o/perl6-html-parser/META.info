@@ -1,4 +1,5 @@
 {
+  "perl" : "6.*",
   "name" : "HTML::Parser",
   "version" : "0.1",
   "description" : "role for HTML parsing",
