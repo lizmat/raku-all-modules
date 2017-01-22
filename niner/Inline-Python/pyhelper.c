@@ -25,7 +25,7 @@ void py_init_python(PyObject *(*call_object)(int, PyObject *, PyObject **), PyOb
 
 PyObject *perl6object;
 
-void py_init_perl6object() {
+void py_init_perl6object(void) {
     PyObject *main_module = PyImport_AddModule("__main__");
     PyObject *globals = PyModule_GetDict(main_module);
     perl6object = PyDict_GetItemString(globals, "Perl6Object");
@@ -160,7 +160,7 @@ void py_list_set_item(PyObject *list, int i, PyObject *item) {
     PyList_SetItem(list, i, item);
 }
 
-PyObject *py_dict_new() {
+PyObject *py_dict_new(void) {
     return PyDict_New();
 }
 
@@ -168,7 +168,7 @@ void py_dict_set_item(PyObject *dict, PyObject *key, PyObject *item) {
     PyDict_SetItem(dict, key, item);
 }
 
-PyObject *py_none() {
+PyObject *py_none(void) {
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -205,6 +205,27 @@ PyObject *py_call_function(char *pkg, char *name, PyObject *args) {
     return py_retval;
 }
 
+PyObject *py_call_function_kw(char *pkg, char *name, PyObject *args, PyObject *kw) {
+    PyObject * const mod       = PyImport_AddModule(pkg);
+    PyObject * const dict      = PyModule_GetDict(mod);
+    PyObject * const func      = PyMapping_GetItemString(dict, name);
+    PyObject *py_retval = NULL;
+
+    if (func == NULL) {
+        PyErr_Format(PyExc_NameError, "name '%s' is not defined", name);
+        goto cleanup;
+    }
+
+    py_retval = PyObject_Call(func, args, kw);
+
+    Py_DECREF(func);
+    cleanup:
+    Py_DECREF(args);
+    Py_DECREF(kw);
+
+    return py_retval;
+}
+
 void py_fetch_error(PyObject **exception) {
     /* ex_type, ex_value, ex_trace, ex_message */
     PyErr_Fetch(&exception[0], &exception[1], &exception[2]);
@@ -226,6 +247,25 @@ void py_raise_missing_method(PyObject *obj, char *name) {
     else {
         PyErr_Format(PyExc_NameError, "instance has no attribute '%s'", name);
     }
+}
+
+PyObject *py_call_static_method_kw(char *pkg, char *class, char *name, PyObject *args, PyObject *kw) {
+    PyObject * const mod  = PyImport_AddModule(pkg);
+    PyObject * const dict = PyModule_GetDict(mod);
+    PyObject * const obj  = PyMapping_GetItemString(dict, class);
+    PyObject *method = PyObject_GetAttrString(obj, name);
+    if (method == NULL) {
+        py_raise_missing_method(obj, name);
+        goto cleanup;
+    }
+    PyObject *py_retval = PyObject_Call(method, args, kw);
+    Py_DECREF(method);
+
+    cleanup:
+    Py_DECREF(args);
+    Py_DECREF(kw);
+
+    return py_retval;
 }
 
 PyObject *py_call_static_method(char *pkg, char *class, char *name, PyObject *args) {
@@ -253,6 +293,21 @@ PyObject *py_call_method(PyObject *obj, char *name, PyObject *args) {
         goto cleanup;
     }
     PyObject *py_retval = PyObject_CallObject(method, args);
+    Py_DECREF(method);
+
+    cleanup:
+    Py_DECREF(args);
+
+    return py_retval;
+}
+
+PyObject *py_call_method_kw(PyObject *obj, char *name, PyObject *args, PyObject *kw) {
+    PyObject *method = PyObject_GetAttrString(obj, name);
+    if (method == NULL) {
+        py_raise_missing_method(obj, name);
+        goto cleanup;
+    }
+    PyObject *py_retval = PyObject_Call(method, args, kw);
     Py_DECREF(method);
 
     cleanup:
