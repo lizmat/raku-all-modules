@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/fjwhittle/p6-Path-Map.git
 	branch = master
-	commit = af60897887664b1351b6a8154820620e95648e82
-	parent = b31c0899207ed7f2faea4fb94a60d419164e37f6
-	cmdver = 0.2.3
+	commit = f06ac7a94522545893a5e6e3c163d7e6b53d17bc
+	parent = 23b561be251151fb1c2847b258b74a361f3e49f1
+	cmdver = 0.4.0

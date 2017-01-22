@@ -58,9 +58,9 @@ class Path::Map::Match does Callable {
   has @.values; # Path segment values and leftover segments
   has %.variables; # Variables resolved by the lookup.
 
-  method CALL-ME {
+  method CALL-ME (*@in, *%in) {
     $!mapper.target ~~ Callable or die 'handler is not Callable';
-    $!mapper.target.(|%_, |%!variables);
+    $!mapper.target.(|@in, |@!values[%!variables.elems..*], |%in, |%!variables);
   }
 
   # Returns the target handler
@@ -124,7 +124,7 @@ class Path::Map does Associative {
       my $p = $<path>.Str;
       if $<var>:exists {
         push @vars, $p;
-        $p = ($/.Str => %constraints{$<path>} // { True });
+        $p = ($/ ~ '|' ~ $/.WHERE => %constraints{$<path>} // { True });
       }
       $mapper{$p} = Path::Map.new unless $mapper{$p}:exists;
       $mapper{$p}.key = $<path>.Str if $<var>:exists;
@@ -286,14 +286,14 @@ C<variables> will be passed to the handler.
   # Resolves and Validates named keys.
   method !dynamic($key) {
     @!resolv.grep( -> $p {
-      %!dyncache{$p.WHERE}{$key} //= ($p.value.(%!vcache{%!map{$p.gist}}{$key} = $key) || False);
-    })».gist;
+      %!dyncache{$p.key}{$key} //= ($p.value.(%!vcache{%!map{$p.key}}{$key} = $key) || False);
+    })».key;
   }
 
   # Associative callbacks.
 
   multi method EXISTS-KEY(Pair $key) {
-    %!map{$key.gist}:exists;
+    %!map{$key.key}:exists;
   }
 
   multi method EXISTS-KEY($key) {
@@ -301,7 +301,7 @@ C<variables> will be passed to the handler.
   }
 
   multi method AT-KEY(Path::Map:D: Pair $key) {
-    %!map{$key.gist};
+    %!map{$key.key};
   }
 
   method CALL-ME(Str $path) {
@@ -314,7 +314,7 @@ C<variables> will be passed to the handler.
 
   multi method ASSIGN-KEY(Pair $key, $new) {
     @!resolv.push: $key;
-    %!map{$key.gist} = $new;
+    %!map{$key.key} = $new;
   }
 
   multi method ASSIGN-KEY($key, $new) {
@@ -323,7 +323,7 @@ C<variables> will be passed to the handler.
 
   multi method BIND-KEY(Pair $key, \new) {
     @!resolv.push: $key;
-    %!map{$key.gist} := new;
+    %!map{$key.key} := new;
   }
 
   multi method BIND-KEY($key, \new) {
@@ -334,11 +334,9 @@ C<variables> will be passed to the handler.
     %!map{$key}:delete;
   }
 
-  my Path::Map %pool;
-
   # Associative lookup on Path::Map class returns a mapper from the pool
   multi method AT-KEY(Path::Map:U: $key) {
-    %pool{$key};
+    %Path::Map::pool{$key};
   }
 
   # Trait mod for allowing code definitions with is Path::Map(:type<path/to/map>)
@@ -353,7 +351,7 @@ C<variables> will be passed to the handler.
       }
     };
 
-    (%pool{$binding.key} //= Path::Map.new()).add_handler($binding.value, $handler, |%constraints);
+    (%Path::Map::pool{$binding.key} //= Path::Map.new()).add_handler($binding.value, $handler, |%constraints);
   }
 
 =begin pod
