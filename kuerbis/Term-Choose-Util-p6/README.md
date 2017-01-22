@@ -8,12 +8,32 @@ Term::Choose::Util - CLI related functions.
 VERSION
 =======
 
-Version 0.016
+Version 0.019
 
 DESCRIPTION
 ===========
 
 This module provides some CLI related functions.
+
+FUNCTIONAL INTERFACE
+====================
+
+Importing the subroutines explicitly (`:name_of_the_subroutine`) might become compulsory (optional for now) with the next release.
+
+CONSTRUCTOR
+===========
+
+The constructor method `new` can be called with optional named arguments:
+
+  * defaults
+
+Expects as its value a hash. Sets the defaults for the instance. Valid options: `mouse`.
+
+  * win
+
+Expects as its value a window object created by ncurses `initscr`.
+
+If set, the following routines use this global window instead of creating their own without calling `endwin` to restores the terminal before returning.
 
 ROUTINES
 ========
@@ -112,9 +132,9 @@ The "back"-menu-entry ( "`E<lt> `" ) resets the list of chosen directories if an
 choose-a-number
 ---------------
 
-        for ( 1 .. 5 ) {
-            $current = $new
-            $new = choose-a-number( 5, { current => $current, name => 'Testnumber' }  );
+        my $current = 139;
+        for ( 1 .. 3 ) {
+            $current = choose-a-number( 5, { current => $current, name => 'Testnumber' } );
         }
 
 This function lets you choose/compose a number (unsigned integer) which is returned.

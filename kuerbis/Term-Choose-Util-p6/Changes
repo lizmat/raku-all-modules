@@ -1,6 +1,15 @@
 Revision history for Term::Choose::Util
 
 
+0.019   2016-12-16
+        - Import subroutines by their names
+
+0.018   2016-12-10
+        - Constructor: named parameters
+
+0.017   2016-10-13
+        - Bugfix export subroutines
+
 0.016   2016-05-28
         - Removed OO-interface (docu)
 
