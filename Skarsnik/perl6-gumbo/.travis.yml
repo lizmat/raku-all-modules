@@ -1,10 +1,6 @@
 language: perl6
 perl6:
   - latest
-addons:
-  apt:
-    packages:
-      - libgumbo1
 
 install:
   - git clone https://github.com/google/gumbo-parser.git

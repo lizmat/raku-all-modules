@@ -1,4 +1,5 @@
 {
+	"perl" : "6.*",
         "name" : "Gumbo",
         "version" : "*",
         "description" : "Binding of the gumbo C library, a html parser lib",

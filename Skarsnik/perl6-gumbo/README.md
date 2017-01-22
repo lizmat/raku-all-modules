@@ -59,6 +59,12 @@ $gumbo_last_c_parse_duration && $gumbo_last_xml_creation_duration
 
 These two variables hold the time (`Duration`) spend in the two steps of the work parse-html does.
 
+PERL6_GUMBOLIB
+--------------
+
+Set this environment variable to specify where the module can find the gumbo library if it's not in the usual system library path.
+
+
 Example
 =======
 

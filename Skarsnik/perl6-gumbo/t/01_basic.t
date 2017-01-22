@@ -1,4 +1,5 @@
 use v6;
+use XML;
 use Gumbo;
 use Test;
 
