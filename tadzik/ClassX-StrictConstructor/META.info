@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "ClassX::StrictConstructor",
     "version"     : "0.1",
     "description" : "Make your object constructors blow up on unknown attributes",
