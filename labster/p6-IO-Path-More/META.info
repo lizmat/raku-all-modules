@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "IO::Path::More",
   "version"     : "*",
   "description" : "Extends IO::Path to make it more like p5's Path::Class",
