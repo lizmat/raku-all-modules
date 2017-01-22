@@ -207,16 +207,6 @@ class Q::Block does Q {
     has Val::Object $.static-lexpad is rw = Val::Object.new;
 
     method attribute-order { <parameterlist statementlist> }
-
-    method reify($runtime) {
-        my Val::Object $outer-frame = $runtime.current-frame;
-        Val::Block.new(
-            :$.parameterlist,
-            :$.statementlist,
-            :$.static-lexpad,
-            :$outer-frame
-        );
-    }
 }
 
 class Q::Prefix does Q::Expr {
@@ -356,7 +346,7 @@ class Q::Postfix::Index is Q::Postfix {
                     if $index.value < 0;
                 return .elements[$index.value];
             }
-            when Val::Object | Val::Block | Q {
+            when Val::Object | Val::Sub | Q {
                 my $property = $.index.eval($runtime);
                 die X::Subscript::NonString.new
                     if $property !~~ Val::Str;
@@ -401,7 +391,7 @@ class Q::Postfix::Call is Q::Postfix {
         die "macro is called at runtime"
             if $c ~~ Val::Macro;
         die "Trying to invoke a {$c.^name.subst(/^'Val::'/, '')}" # XXX: make this into an X::
-            unless $c ~~ Val::Block;
+            unless $c ~~ Val::Sub;
         my @arguments = $.argumentlist.arguments.elements.map(*.eval($runtime));
         return $runtime.call($c, @arguments);
     }
@@ -430,6 +420,7 @@ class Q::Postfix::Property is Q::Postfix {
 }
 
 class Q::Unquote does Q {
+    has $.qtype;
     has $.expr;
 
     method eval($runtime) {
@@ -564,13 +555,12 @@ class Q::Statement::If does Q::Statement {
     method run($runtime) {
         my $expr = $.expr.eval($runtime);
         if $expr.truthy {
-            my $c = $.block.reify($runtime);
-            $runtime.enter($c);
-            my $paramcount = $c.parameterlist.elems;
+            my $paramcount = $.block.parameterlist.elems;
             die X::ParameterMismatch.new(
                 :type("If statement"), :$paramcount, :argcount("0 or 1"))
                 if $paramcount > 1;
-            for @($c.parameterlist.parameters.elements) Z $expr -> ($param, $arg) {
+            $runtime.enter($runtime.current-frame, $.block.static-lexpad, $.block.statementlist);
+            for @($.block.parameterlist.parameters.elements) Z $expr -> ($param, $arg) {
                 $runtime.declare-var($param.identifier, $arg);
             }
             $.block.statementlist.run($runtime);
@@ -582,8 +572,7 @@ class Q::Statement::If does Q::Statement {
                     $.else.run($runtime)
                 }
                 when Q::Block {
-                    my $c = $.else.reify($runtime);
-                    $runtime.enter($c);
+                    $runtime.enter($runtime.current-frame, $.else.static-lexpad, $.else.statementlist);
                     $.else.statementlist.run($runtime);
                     $runtime.leave;
                 }
@@ -596,7 +585,7 @@ class Q::Statement::Block does Q::Statement {
     has $.block;
 
     method run($runtime) {
-        $runtime.enter($.block.reify($runtime));
+        $runtime.enter($runtime.current-frame, $.block.static-lexpad, $.block.statementlist);
         $.block.statementlist.run($runtime);
         $runtime.leave;
     }
@@ -612,8 +601,7 @@ class Q::Statement::For does Q::Statement {
     method attribute-order { <expr block> }
 
     method run($runtime) {
-        my $c = $.block.reify($runtime);
-        my $count = $c.parameterlist.parameters.elements.elems;
+        my $count = $.block.parameterlist.parameters.elements.elems;
         die X::ParameterMismatch.new(
             :type("For loop"), :paramcount($count), :argcount("0 or 1"))
             if $count > 1;
@@ -623,9 +611,9 @@ class Q::Statement::For does Q::Statement {
             unless $array ~~ Val::Array;
 
         for $array.elements -> $arg {
-            $runtime.enter($c);
+            $runtime.enter($runtime.current-frame, $.block.static-lexpad, $.block.statementlist);
             if $count == 1 {
-                $runtime.declare-var($c.parameterlist.parameters.elements[0].identifier, $arg.list[0]);
+                $runtime.declare-var($.block.parameterlist.parameters.elements[0].identifier, $arg.list[0]);
             }
             $.block.statementlist.run($runtime);
             $runtime.leave;
@@ -641,13 +629,12 @@ class Q::Statement::While does Q::Statement {
 
     method run($runtime) {
         while (my $expr = $.expr.eval($runtime)).truthy {
-            my $c = $.block.reify($runtime);
-            $runtime.enter($c);
-            my $paramcount = $c.parameterlist.parameters.elements.elems;
+            my $paramcount = $.block.parameterlist.parameters.elements.elems;
             die X::ParameterMismatch.new(
                 :type("While loop"), :$paramcount, :argcount("0 or 1"))
                 if $paramcount > 1;
-            for @($c.parameterlist.parameters.elements) Z $expr -> ($param, $arg) {
+            $runtime.enter($runtime.current-frame, $.block.static-lexpad, $.block.statementlist);
+            for @($.block.parameterlist.parameters.elements) Z $expr -> ($param, $arg) {
                 $runtime.declare-var($param.identifier, $arg);
             }
             $.block.statementlist.run($runtime);

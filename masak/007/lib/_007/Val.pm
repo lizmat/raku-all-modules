@@ -137,20 +137,13 @@ class Val::Type does Val {
     }
 }
 
-class Val::Block does Val {
+class Val::Sub is Val {
+    has Val::Str $.name;
+    has &.hook = Callable;
     has $.parameterlist;
     has $.statementlist;
     has Val::Object $.static-lexpad is rw = Val::Object.new;
     has Val::Object $.outer-frame;
-
-    method pretty-parameters {
-        sprintf "(%s)", $.parameterlist.parameters.elements».identifier».name.join(", ");
-    }
-}
-
-class Val::Sub is Val::Block {
-    has Val::Str $.name;
-    has &.hook = Callable;
 
     method new-builtin(&hook, Str $name, $parameterlist, $statementlist) {
         self.bless(:name(Val::Str.new(:value($name))), :&hook, :$parameterlist, :$statementlist);
@@ -170,6 +163,10 @@ class Val::Sub is Val::Block {
             if $1.contains(">");
 
         return "{$0}:<{escape-backslashes $1}>";
+    }
+
+    method pretty-parameters {
+        sprintf "(%s)", $.parameterlist.parameters.elements».identifier».name.join(", ");
     }
 
     method Str { "<sub {$.escaped-name}{$.pretty-parameters}>" }
@@ -195,7 +192,6 @@ class Helper {
         when Val::Type { "<type {.name}>" }
         when Val::Macro { "<macro {.escaped-name}{.pretty-parameters}>" }
         when Val::Sub { "<sub {.escaped-name}{.pretty-parameters}>" }
-        when Val::Block { "<block {.pretty-parameters}>" }
         when Val::Exception { "Exception \{message: {.message.quoted-Str}\}" }
         default {
             my $self = $_;

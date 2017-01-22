@@ -1,5 +1,6 @@
 use _007::Q;
 use _007::Parser::Syntax;
+use MONKEY-SEE-NO-EVAL;
 
 class X::String::Newline is Exception {
     method message { "Found a newline inside a string literal" }
@@ -250,10 +251,10 @@ class _007::Parser::Actions {
         my $identifier = $<identifier>.ast;
         my $block = $<block>.ast;
         make Q::Statement::Class.new(:$block);
-        my $val = Val::Type.of(class :: {
-            method attributes { () }
-            method ^name($) { $identifier.name.value }
-        });
+        my $val = Val::Type.of(EVAL qq[class :: \{
+            method attributes \{ () \}
+            method ^name(\$) \{ "{$identifier.name.value}" \}
+        \}]);
         $identifier.put-value($val, $*runtime);
     }
 
@@ -326,7 +327,7 @@ class _007::Parser::Actions {
             my $t1 = @termstack.pop;
 
             if $infix ~~ Q::Unquote {
-                @termstack.push(Q::Unquote::Infix.new(:expr($infix.expr), :lhs($t1), :rhs($t2)));
+                @termstack.push(Q::Unquote::Infix.new(:qtype($infix.qtype), :expr($infix.expr), :lhs($t1), :rhs($t2)));
                 return;
             }
 
@@ -404,7 +405,7 @@ class _007::Parser::Actions {
             my $prefix = @prefixes.shift.ast;
 
             if $prefix ~~ Q::Unquote {
-                make Q::Unquote::Prefix.new(:expr($prefix.expr), :operand($/.ast));
+                make Q::Unquote::Prefix.new(:qtype($prefix.qtype), :expr($prefix.expr), :operand($/.ast));
                 return;
             }
 
@@ -633,7 +634,7 @@ class _007::Parser::Actions {
         my $block = Q::Block.new(:$parameterlist, :$statementlist);
         if $<identifier> {
             my $name = $<identifier>.ast.name;
-            my $outer-frame = $*runtime.current-frame.properties<block>.outer-frame;
+            my $outer-frame = $*runtime.current-frame.properties<outer-frame>;
             my $static-lexpad = $*runtime.current-frame.properties<pad>;
             my $val = Val::Sub.new(:$name, :$parameterlist, :$statementlist, :$outer-frame, :$static-lexpad);
             $<identifier>.ast.put-value($val, $*runtime);
@@ -648,7 +649,10 @@ class _007::Parser::Actions {
     }
 
     method unquote ($/) {
-        make Q::Unquote.new(:expr($<EXPR>.ast));
+        my $qtype = $<identifier>
+            ?? $*runtime.get-var($<identifier>.ast.name.value).type
+            !! Q::Term;
+        make Q::Unquote.new(:$qtype, :expr($<EXPR>.ast));
     }
 
     method term:new-object ($/) {
@@ -681,9 +685,10 @@ class _007::Parser::Actions {
     method term:object ($/) {
         my $type = "Object";
         my $name = Val::Str.new(:value($type));
+        my $frame = $*runtime.builtin-frame;
 
         make Q::Term::Object.new(
-            :type(Q::Identifier.new(:$name)),
+            :type(Q::Identifier.new(:$name, :$frame)),
             :propertylist($<propertylist>.ast));
     }
 
