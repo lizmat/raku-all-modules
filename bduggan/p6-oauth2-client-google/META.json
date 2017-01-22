@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "OAuth2::Client::Google",
     "version" : "0.1.0",
     "description" : "Authenticate against Google's OAuth2 API.",
