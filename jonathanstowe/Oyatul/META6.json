@@ -25,7 +25,7 @@
    "authors" : [
       "Jonathan Stowe <jns+git@gellyfish.co.uk>"
    ],
-   "version" : "0.0.3",
+   "version" : "0.0.4",
    "license" : "Artistic",
    "description" : "Abstract representation of a filesystem layout"
 }

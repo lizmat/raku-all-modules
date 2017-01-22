@@ -514,7 +514,7 @@ layout.
 
 use JSON::Fast;
 
-module Oyatul:ver<0.0.3>:auth<github:jonathanstowe> {
+module Oyatul:ver<0.0.4>:auth<github:jonathanstowe> {
 
     my Regex $exclude = /^<-[.]>/;
 
@@ -796,7 +796,7 @@ module Oyatul:ver<0.0.3>:auth<github:jonathanstowe> {
         proto method generate(|c) { * }
 
         multi method generate(Str :$root = '.') returns Layout {
-            samewith(root => $root.IO);
+            self.generate(root => $root.IO);
         }
 
         multi method generate(IO::Path:D :$root!) {

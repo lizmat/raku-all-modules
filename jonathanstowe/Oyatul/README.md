@@ -10,7 +10,7 @@ This runs the tests identified by 'purpose' test which can be in any
 location in the layout with the library directory identified by the
 purpose 'lib' :
 
-```
+```perl6
 use Oyatul;
 
 my $description = q:to/LAY/;
@@ -86,18 +86,8 @@ hopefully it will be useful in other applications.
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -107,18 +97,19 @@ Or you can install directly with "panda":
 
     panda install Oyatul
 
-Other install mechanisms may be become available in the future.
+This will undoubtedly work equally well with *zef* I just haven't tested it.
 
 ## Support
 
 Suggestions and patches that may make it more useful in your software
 are welcomed via github at:
 
-   https://github.com/jonathanstowe/Oyatul
-
+https://github.com/jonathanstowe/Oyatul
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-(C) Jonathan Stowe 2016
+Please see the [LICENCE](LICENCE) file in the distribution
+
+© Jonathan Stowe 2016, 2017
