@@ -1,0 +1,15 @@
+notifications:
+  email: false
+branches:
+  except:
+    - gh-pages
+language: perl6
+sudo: false
+perl6:
+  - latest
+install:
+  - cd ~/build
+  - rakudobrew build-panda
+  - panda install cygx/p6-unicode-gcb
+script:
+  - perl6 -MUnicode::GCB -e 'say GCB.clusters("äöü".NFD)'
