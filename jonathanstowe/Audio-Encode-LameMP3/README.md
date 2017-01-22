@@ -2,6 +2,8 @@
 
 Encode PCM Audio data to MP3 in Perl 6 using a binding to liblame
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Audio-Encode-LameMP3.svg?branch=master)](https://travis-ci.org/jonathanstowe/Audio-Encode-LameMP3)
+
 ## Description
 
 This module provides a simple bind to "lame" an MP3 encoding library.
@@ -46,18 +48,8 @@ I am however unlikely to be able to offer help with installing it this
 way, also bear in mind that if you install a newer version than I have
 to test with then this may not work.
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -67,7 +59,7 @@ Or you can install directly with "panda":
 
     panda install Audio::Encode-LameMP3
 
-Other install mechanisms may be become available in the future.
+This should work equally well with *zef* but I may not have tested it.
 
 The tests take a little longer than I would like largely because there's
 quite a lot of file I/O involved.
@@ -87,10 +79,12 @@ able to comment on the perceived quality or otherwise of the results.
 
 ## Licence
 
-This library only binds to a "lame" installation you may have on your system, any
-licensing issues regarding the MP3 codec relate to the implementation of the codec
-and I cannot answer questions related to the licensing of that library.
+This library only binds to a "lame" installation you may have on your
+system, any licensing issues regarding the MP3 codec relate to the
+implementation of the codec and I cannot answer questions related to
+the licensing of that library.
 
-Please see the LICENCE file in the distribution regarding the licence for this library module.
+Please see the [LICENCE](LICENCE) file in the distribution regarding
+the licence for this library module.
 
-(C) Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017
