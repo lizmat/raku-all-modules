@@ -3,7 +3,7 @@ use v6.c;
 use WebService::FootballData;
 use Text::Table::Simple;
 
-unit class App::Football:ver(v0.1.2);
+unit class App::Football:ver(v0.1.3);
 
 my $.program_name = 'football';
 

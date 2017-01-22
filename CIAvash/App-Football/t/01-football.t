@@ -3,6 +3,7 @@ use Test;
 use Test::Output;
 use lib 't/lib';
 use FakeFootballData;
+use WebService::FootballData;
 use App::Football;
 
 plan 26;
