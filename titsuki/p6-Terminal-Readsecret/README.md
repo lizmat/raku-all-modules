@@ -19,7 +19,7 @@ EXAMPLE2
 --------
 
     use Terminal::Readsecret;
-    my timespec $timeout .= new(tv_sec => 5, tv_nsec => 0); # set timeout to 5 sec
+    my Timespec $timeout .= new(tv-sec => 5, tv-nsec => 0); # set timeout to 5 sec
     my $password = getsecret("password:", $timeout);
     say "your password is: " ~ $password;
 
@@ -35,9 +35,11 @@ METHODS
 
     proto getsecret(Str:D, |) returns Str
     multi sub getsecret(Str:D) returns Str
-    multi sub getsecret(Str:D, timespec) returns Str
+    multi sub getsecret(Str:D, Timespec) returns Str
 
 Reads secrets or passwords from a command line and returns its input.
+
+NOTE: `timespec` class has been removed since version `0.0.2`. Use `Timespec` class instead of `timespec` class.
 
 AUTHOR
 ======

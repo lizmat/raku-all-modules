@@ -22,49 +22,53 @@ my Int enum rsecret_error_ty (
 my constant max-secret-length = 1024;
 my constant time_t = int64;
 
-class timespec is repr('CStruct') is export {
-    has time_t $.tv_sec;
-    has int64 $.tv_nsec;
+class Timespec is repr('CStruct') is export {
+    has time_t $!tv_sec;
+    has int64 $!tv_nsec;
+
+    method tv-sec {
+        $!tv_sec
+    }
+
+    method tv-nsec {
+        $!tv_nsec
+    }
+
+    submethod BUILD(Int :$tv-sec, Int :$tv-nsec) {
+        $!tv_sec = $tv-sec;
+        $!tv_nsec = $tv-nsec;
+    }
 }
 
-my sub rsecret_get_secret_from_tty(CArray[int8], size_t, Str) returns int32 is native($library) is export { * }
-my sub rsecret_get_secret_from_tty_timed(CArray[int8], size_t, Str, timespec) returns int32 is native($library) is export { * }
+my sub rsecret_get_secret_from_tty(CArray[uint8], size_t, Str) returns int32 is native($library) is export { * }
+my sub rsecret_get_secret_from_tty_timed(CArray[uint8], size_t, Str, Timespec) returns int32 is native($library) is export { * }
 my sub rsecret_strerror(int32) returns Str is native($library) is export { * }
 
 proto getsecret(Str:D $msg, |) { * }
 
-multi sub getsecret(Str:D $msg, timespec $timeout) returns Str is export {
-    my $buf = CArray[int8].new;
+multi sub getsecret(Str:D $msg, Timespec $timeout) returns Str is export {
+    my $buf = CArray[uint8].new;
     $buf[max-secret-length] = 0;
-    my size_t $size = nativesizeof(int8) * max-secret-length;
+    my size_t $size = nativesizeof(uint8) * max-secret-length;
     my $status = rsecret_get_secret_from_tty_timed($buf, $size, $msg, $timeout);
     validate-response($status);
-    buf2secret($buf);
+    nativecast(Str, $buf)
 }
 
 multi sub getsecret(Str:D $msg) returns Str is export {
-    my $buf = CArray[int8].new;
+    my $buf = CArray[uint8].new;
     $buf[max-secret-length] = 0;
-    my size_t $size = nativesizeof(int8) * max-secret-length;
+    my size_t $size = nativesizeof(uint8) * max-secret-length;
     my $status = rsecret_get_secret_from_tty($buf, $size, $msg);
     validate-response($status);
-    buf2secret($buf);
+    nativecast(Str, $buf)
 }
 
 my sub validate-response(Int $status) returns Bool {
     if ($status != RSECRET_SUCCESS) {
-	die rsecret_strerror($status);
+        die rsecret_strerror($status);
     }
     return True;
-}
-
-my sub buf2secret(CArray[int8] $buf) {
-    my Str $secret = "";
-    loop (my $i = 0; $i < max-secret-length; $i++) {
-	last if Int.new($buf[$i]) == 0;
-	$secret = $secret ~ Int.new($buf[$i]).chr;
-    }
-    return $secret;
 }
 
 =begin pod
@@ -84,7 +88,7 @@ Terminal::Readsecret - A perl6 binding of readsecret ( https://github.com/dmeran
 =head2 EXAMPLE2
 
        use Terminal::Readsecret;
-       my timespec $timeout .= new(tv_sec => 5, tv_nsec => 0); # set timeout to 5 sec
+       my Timespec $timeout .= new(tv-sec => 5, tv-nsec => 0); # set timeout to 5 sec
        my $password = getsecret("password:", $timeout);
        say "your password is: " ~ $password;
 
@@ -99,9 +103,11 @@ Readsecret is a simple self-contained C (or C++) library intended to be used on 
 
        proto getsecret(Str:D, |) returns Str
        multi sub getsecret(Str:D) returns Str
-       multi sub getsecret(Str:D, timespec) returns Str
+       multi sub getsecret(Str:D, Timespec) returns Str
 
 Reads secrets or passwords from a command line and returns its input.
+
+NOTE: C<timespec> class has been removed since version C<0.0.2>. Use C<Timespec> class instead of C<timespec> class.
 
 =head1 AUTHOR
 

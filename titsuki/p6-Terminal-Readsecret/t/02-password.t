@@ -3,7 +3,7 @@ use Test;
 use Terminal::Readsecret;
 
 subtest {
-    my $timeout = timespec.new(tv_sec => 1, tv_nsec => 0);
+    my Timespec $timeout .= new(tv-sec => 1, tv-nsec => 0);
     throws-like { getsecret("password", $timeout) }, Exception, message => 'timeout waiting for user';
 }, 'timeout';
 
