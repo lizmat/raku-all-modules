@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Config::Netrc",
     "version"     : "*",
     "description" : ".netrc file parser module for Perl 6",
