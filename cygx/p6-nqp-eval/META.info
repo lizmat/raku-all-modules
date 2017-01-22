@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "NQP::Eval",
     "version" : "*",
     "description" : "Enables EVAL :lang<nqp>",

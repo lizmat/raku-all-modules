@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cygx/p6-nqp-eval.git
 	branch = master
-	commit = 1166799b99444dbe49ae899281dd6e44caefbebb
-	parent = 4517a687f76f9a79a749bcdc3778aab0ef120d49
-	cmdver = 0.2.3
+	commit = 2ceb2f757a03306d259191dcddab0526f2dc48f2
+	parent = 0f55baea5899cf81a09f7a1b5e1355a943c8a856
+	cmdver = 0.4.0
