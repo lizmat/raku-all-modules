@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zostay/p6-CompUnit-DynamicLib.git
+	branch = master
+	commit = 082411a0307ba6d1e16ceead409b4f6f86f01718
+	parent = 003274061370ba7aa8a4ba7114a8c69c4ac29265
+	cmdver = 0.4.0
