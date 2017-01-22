@@ -24,8 +24,7 @@ class Credentials {
   #-----------------------------------------------------------------------------
   submethod BUILD ( ) {
 
-#    $!scram .= new( :server-side(self), :basic-use);
-    $!scram .= new(:server-side(self));
+    $!scram .= new( :server-object(self));
     isa-ok $!scram, Auth::SCRAM;
   }
 
@@ -36,15 +35,15 @@ class Credentials {
       :$username, :$password,
       :salt(Buf.new( 65, 37, 194, 71, 228, 58, 177, 233, 60, 109, 255, 118)),
       :iter(4096),
-      :helper-object(self)
+      :server-object(self)
     ) -> $u, %h {
       $!credentials-db{$u} = %h;
     }
-#say '-' x 80, "\n", $!credentials-db<user> if $username eq 'user';
   }
 
   #-----------------------------------------------------------------------------
-  method credentials ( Str $username, Str $authzid --> Hash ) {
+#TODO needed?, $!authzid
+  method credentials ( Str $username --> Hash ) {
 
 #TODO what to do with authzid
     return $!credentials-db{$username};
@@ -105,10 +104,11 @@ subtest {
   $crd.add-user( $test-user, 'pencil');
   $crd.add-user( 'gebruiker', 'potlood');
   $crd.add-user( 'utilisateur', 'crayon');
-  $crd.add-user( '\x9ed2\x6fa4 \x660e', 'Akira Kurosawa');
+  $crd.add-user( "\x9ed2\x6fa4-\x660e", 'Akira Kurosawa');
 
-say "Credentials of \x9ed2\x6fa4 \x660e are ",
-    $crd.credentials('\x9ed2\x6fa4 \x660e', '');
+  my Hash $creds = $crd.credentials( "\x9ed2\x6fa4-\x660e");
+  is $creds<iter>, 4096, "Number of iterations";
+  is $creds<salt>, 'QSXCR+Q6sek8bf92', "Salt in creds from \x9ed2\x6fa4-\x660e";
 
   # - command autenticate as 'user'/'pencil'
   my Str $c-nonce = encode-base64(
@@ -123,7 +123,6 @@ say "Credentials of \x9ed2\x6fa4 \x660e are ",
 
   is '', $crd.start-scram(:$client-first-message),
      'server side authentication of user ok';
-
 
 }, 'SCRAM tests';
 

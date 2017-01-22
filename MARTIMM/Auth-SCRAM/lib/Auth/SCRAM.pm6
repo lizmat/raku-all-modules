@@ -1,53 +1,49 @@
-use v6c;
+use v6.c;
 
 use Digest::HMAC;
 use OpenSSL::Digest;
 use PKCS5::PBKDF2;
+use Unicode::PRECIS;
+use Unicode::PRECIS::Identifier::UsernameCaseMapped;
+use Unicode::PRECIS::Identifier::UsernameCasePreserved;
+use Unicode::PRECIS::FreeForm::OpaqueString;
 
 #-------------------------------------------------------------------------------
 unit package Auth;
 
-#TODO Implement server side
-#TODO Keep information when calculated. User requst boolean
+#TODO Keep information when calculated. User request boolean
 #     and username/password/authzid must be kept the same. This saves time.
 
 #-------------------------------------------------------------------------------
-#class SCRAM::Client { ... }
-#class SCRAM::Server { ... }
-
 class SCRAM {
-
-#  trusts Auth::SCRAM::Client;
-#  trusts Auth::SCRAM::Server;
 
   has Bool $!role-imported = False;
   has PKCS5::PBKDF2 $!pbkdf2;
   has Callable $!CGH;
-  has Bool $!skip-sasl-prep = False;
+  has Bool $!case-preserved-profile;
 
+#`{{
   #-----------------------------------------------------------------------------
   submethod BUILD (
 
     Str :$username,
     Str :$password,
     Str :$authzid,
+    Bool :$case-preserved-profile = True,
 
     Callable :$CGH = &sha1,
-    :$client-side,
-    :$server-side,
+    :$helper-object,
+    Bool :$client-helper = True,
   ) {
 
     $!CGH = $CGH;
     $!pbkdf2 .= new(:$CGH);
+    $!case-preserved-profile = $case-preserved-profile;
 
     # Check client or server object capabilities
-    if $client-side.defined {
+    if $client-helper {
       die 'No username and/or password provided'
         unless ? $username and ? $password;
-
-      die 'Only a client or server object must be chosen'
-        if $server-side.defined;
-
 
       if not $!role-imported {
         need Auth::SCRAM::Client;
@@ -55,10 +51,10 @@ class SCRAM {
         $!role-imported = True;
       }
       self does Auth::SCRAM::Client;
-      self.init( :$username, :$password, :$authzid, :$client-side);
+      self.init( :$username, :$password, :$authzid, :client-object($helper-object));
     }
 
-    elsif $server-side.defined {
+    else {
 
       if not $!role-imported {
         need Auth::SCRAM::Server;
@@ -66,27 +62,75 @@ class SCRAM {
         $!role-imported = True;
       }
       self does Auth::SCRAM::Server;
-      self.init(:$server-side);
+      self.init(:server-object($helper-object));
+    }
+  }
+}}
+
+  #-----------------------------------------------------------------------------
+  # Client interface init
+  multi submethod BUILD (
+
+    Str :$username!,
+    Str :$password!,
+    Str :$authzid,
+    Bool :$case-preserved-profile = True,
+
+    Callable :$CGH = &sha1,
+    :$client-object!,
+  ) {
+
+    $!CGH = $CGH;
+    $!pbkdf2 .= new(:$CGH);
+    $!case-preserved-profile = $case-preserved-profile;
+
+    if not $!role-imported {
+      need Auth::SCRAM::Client;
+      import Auth::SCRAM::Client;
+      $!role-imported = True;
     }
 
-    else {
-      die 'At least a client or server object must be chosen';
-    }
+    self does Auth::SCRAM::Client;
+    self.init(
+      :$username, :$password, :$authzid, :$client-object
+    );
   }
 
   #-----------------------------------------------------------------------------
-  method skip-sasl-prep ( Bool:D :$skip ) {
+  # Server interface init
+  multi submethod BUILD (
 
-    $!skip-sasl-prep = $skip;
+    Bool :$case-preserved-profile = True,
+    Callable :$CGH = &sha1,
+    :$server-object!,
+  ) {
+
+    $!CGH = $CGH;
+    $!pbkdf2 .= new(:$CGH);
+    $!case-preserved-profile = $case-preserved-profile;
+
+    if not $!role-imported {
+      need Auth::SCRAM::Server;
+      import Auth::SCRAM::Server;
+      $!role-imported = True;
+    }
+
+    self does Auth::SCRAM::Server;
+    self.init(:$server-object);
   }
 
   #-----------------------------------------------------------------------------
   method derive-key (
-    Str :$username, Str:D :$password, Str :$authzid,
+    Str:D :$username is copy, Str:D :$password is copy,
+    Str :$authzid, Bool :$enforce = False,
     Buf:D :$salt, Int:D :$iter,
     Any:D :$helper-object
     --> Buf
   ) {
+
+#TODO normalize authzid?
+    $username = self.normalize( $username, :prep-username, :$enforce);
+    $password = self.normalize( $password, :!prep-username, :$enforce);
 
     # Using named arguments, the clients object doesn't need to
     # support all variables as long as a Buf is returned
@@ -146,24 +190,59 @@ class SCRAM {
   }
 
   #-----------------------------------------------------------------------------
-  method sasl-prep ( Str:D $text --> Str ) {
+  method normalize (
+    Str:D $text, Bool:D :$prep-username!, :$enforce = False
+    --> Str
+  ) {
 
-    my Str $prepped-text = $text;
+    my TestValue $prepped-text;
+    my $operation = $enforce ?? 'enforce' !! 'prepare';
 
-    unless $!skip-sasl-prep {
-#TODO prep string
+    # Normalize username
+    if $prep-username {
 
+#      # Some character protection changes
+#      $prepped-text = self.encode-name($prepped-text);
+
+      # Case preserved profile
+      if $!case-preserved-profile {
+         my Unicode::PRECIS::Identifier::UsernameCasePreserved $upi-ucp .= new;
+         $prepped-text = $upi-ucp."$operation"($text);
+         die "Username $text not accepted" if $prepped-text ~~ Bool;
+      }
+
+      # Case mapped profile
+      else {
+         my Unicode::PRECIS::Identifier::UsernameCaseMapped $upi-ucp .= new;
+         $prepped-text = $upi-ucp."$operation"($text);
+         die "Username $text not accepted" if $prepped-text ~~ Bool;
+      }
     }
 
-    # Some character protection changes
-    $prepped-text = self!encode-name($prepped-text);
+    # Normalize password
+    else {
+      my Unicode::PRECIS::FreeForm::OpaqueString $upf-os .= new;
+      $prepped-text = $upf-os."$operation"($text);
+      die "Password not accepted" if $prepped-text ~~ Bool;
+    }
+
+    $prepped-text;
   }
 
   #-----------------------------------------------------------------------------
-  method !encode-name ( Str $name is copy --> Str ) {
+  method encode-name ( Str $name is copy --> Str ) {
 
     $name ~~ s:g/ '=' /=3d/;
     $name ~~ s:g/ ',' /=2c/;
+
+    $name;
+  }
+
+  #-----------------------------------------------------------------------------
+  method decode-name ( Str $name is copy --> Str ) {
+
+    $name ~~ s:g:i/ '=2c' /,/;
+    $name ~~ s:g:i/ '=3d' /=/;
 
     $name;
   }

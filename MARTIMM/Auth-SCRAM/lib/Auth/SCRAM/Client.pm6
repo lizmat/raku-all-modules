@@ -1,4 +1,4 @@
-use v6c;
+use v6.c;
 
 use Base64;
 
@@ -15,10 +15,9 @@ role SCRAM::Client {
   has Str $!username;
   has Str $!password;
   has Str $!authzid = '';
-  has Bool $!strings-are-prepped = False;
 
   # Client side and server side communication. Pick one or the other.
-  has $!client-side;
+  has $!client-object;
 
   # Set these values before creating the messages
   # Nonce size in bytes
@@ -55,21 +54,30 @@ role SCRAM::Client {
   has Buf $!server-signature;
 
   #-----------------------------------------------------------------------------
+  # Need to install BUILD method to comply with the does operator in Auth::SCRAM
+  submethod BUILD (
+
+    Str :$username, Str :$password, Str :$authzid,
+    Bool :$case-preserved-profile = True,
+    Callable :$CGH, :$client-object,
+  ) { }
+
+  #-----------------------------------------------------------------------------
   method init (
     Str:D :$username!,
     Str:D :$password!,
     Str :$authzid,
-    :$client-side!
+    :$client-object!
   ) {
 
     $!username = $username;
     $!password = $password;
     $!authzid = $authzid;
-    $!client-side = $client-side;
+    $!client-object = $client-object;
 
     die 'message object misses some methods'
       unless self.test-methods(
-        $client-side,
+        $client-object,
         < client-first client-final error >
       );
   }
@@ -80,53 +88,40 @@ role SCRAM::Client {
     # Prepare message which must go to the server. Server returns a
     # its first server message.
     self!client-first-message;
-    $!server-first-message = $!client-side.client-first($!client-first-message);
+    $!server-first-message = $!client-object.client-first($!client-first-message);
 #say "server first message: ", $!server-first-message;
 
     my Str $error = self!process-server-first;
     if ?$error {
-      $!client-side.error($error);
+      $!client-object.error($error);
       return $error;
     }
 
     # Prepare the second and final message. Server returns its final message
     self!client-final-message;
-    $!server-final-message = $!client-side.client-final($!client-final-message);
-#say "server final message: ", $!server-final-message;
+    $!server-final-message = $!client-object.client-final($!client-final-message);
     $error = self!verify-server;
     if ?$error {
-      $!client-side.error($error);
+      $!client-object.error($error);
       return $error;
     }
 
-    $!client-side.cleanup if $!client-side.^can('cleanup');
+    $!client-object.cleanup if $!client-object.^can('cleanup');
     '';
   }
 
   #-----------------------------------------------------------------------------
   method !client-first-message ( ) {
 
-    # check state of strings
-    unless $!strings-are-prepped {
-
-      $!username = self.sasl-prep($!username);
-      $!password = self.sasl-prep($!password);
-      $!authzid = self.sasl-prep($!authzid) if ?$!authzid;
-      $!strings-are-prepped = True;
-    }
-
     self!set-gs2header;
-#say "gs2 header: ", $!gs2-header;
-
     self!set-client-first;
-#say "client first message bare: ", $!client-first-message-bare;
-#say "client first message: ", $!client-first-message-bare;
-
   }
 
   #-----------------------------------------------------------------------------
   method !set-gs2header ( ) {
 
+#TODO extensions
+#TODO normalize authzid?
     my $aid = ($!authzid.defined and $!authzid.chars) ?? "a=$!authzid" !! '';
 
     $!gs2-bind-flag = 'n';
@@ -141,7 +136,9 @@ role SCRAM::Client {
         ?? "m=$!reserved-mext,"
         !! '';
 
-    $!client-first-message-bare ~= "n=$!username,";
+    my Str $uname = self.encode-name($!username);
+    $uname = self.normalize( $uname, :prep-username, :!enforce);
+    $!client-first-message-bare ~= "n=$uname,";
 
     $!c-nonce = encode-base64(
       Buf.new((for ^$!c-nonce-size { (rand * 256).Int })),
@@ -150,10 +147,10 @@ role SCRAM::Client {
 
     $!client-first-message-bare ~= "r=$!c-nonce";
 
-# Not needed anymore, necessary to reset to prevent reuse by hackers
-# So when user needs its own nonce again, set it before starting scram.
-$!c-nonce = Str;
-#TODO used later to check returned server nonce, so not yet resetting it here!
+    # Not needed anymore, necessary to reset to prevent reuse by hackers
+    # So when user needs its own nonce again, set it before starting scram.
+    $!c-nonce = Str;
+#TODO used later to check returned server nonce, so not yet resetting it here?!
 
     # Only single character keynames are taken
     my Str $ext = (
@@ -169,9 +166,9 @@ $!c-nonce = Str;
   method !client-final-message ( ) {
 
     $!salted-password = self.derive-key(
-      :$!username, :$!password, :$!authzid,
+      :$!username, :$!password, :$!authzid, :!enforce
       :salt($!s-salt), :iter($!s-iter),
-      :helper-object($!client-side)
+      :helper-object($!client-object)
     );
 
     $!client-key = self.client-key($!salted-password);

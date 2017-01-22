@@ -1,34 +1,6 @@
-#!/usr/bin/env perl6
-#
 use v6.c;
 
-# Running the pod file will create a pdf using wkhtmltopdf
-#
-my Str $pod = "$*PROGRAM";
-my Str $pdf = $pod;
-$pdf ~~ s/\. <-[.]>+ $/.pdf/;
-shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
-
-#-------------------------------------------------------------------------------
-
 =begin pod
-
-=begin Xhtml
-<style>
-  pre {
-    border-width:       2px;
-    border-style:       solid;
-    border-color:       #060;
-    padding:            10px 0 3px 10px;
-    color:              #060;
-    background-color:   #eaefea;
-    font-family:        FreeMono;
-  }
-  td {
-    vertical-align:     top;
-  }
-</style>
-=end Xhtml
 
 =TITLE class Auth::SCRAM
 
@@ -39,82 +11,175 @@ shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
 
 =head1 Synopsis
 
-  class MyClient {
-
-    method client-first ( Str:D $client-first-message --> Str ) {
-
-      # Send $client-first-message to server;
-
-      # Return server response as server first message
-    }
-
-    method client-final ( Str:D $client-final-message --> Str ) {
-
-      # Send $client-final-message to server.
-
-      # Return server response as server final message
-    }
-
-    method error ( Str:D $message --> Str ) {
-      # Errors? nah ... (Famous last words!)
-    }
-  }
-
-  my Auth::SCRAM $sc .= new(
-    :username<user>,
-    :password<pencil>,
-    :client-side(MyClient.new),
-  );
-
-  $sc.skip-sasl-prep(:skip);
-  my Str $error = $sc.start-scram;
-
-While a client authentication is shown above Auth::SCRAM itself does not do any
-of this. The user of the Auth::SCRAM class provides a client-side or a
-server-side object with which the initialization phase will upgrade the object
-to a Auth::SCRAM object with a C<Auth::SCRAM::Client> or C<Auth::SCRAM::Server>
-role.
-
-Specific details are shown in the pods for these role modules.
-
+See documentation of C<Auth::SCRAM::Client> and C<Auth::SCRAM::Server>.
 
 =head1 Methods
 
 Auth::SCRAM has some methods which are mostly used by the client or server roles
 and have not much use by the caller directly and are therefore not explained.
 
+
 =head2 new
 
-Defined as
+Client side BUILD is defined as
 
-  submethod BUILD (
-    Str :$username,
-    Str :$password,
+  multi submethod BUILD (
+    Str :$username!,
+    Str :$password!,
     Str :$authzid,
+    Bool :$case-preserved-profile = True,
 
     Callable :$CGH = &sha1,
-    :$client-side,
-    :$server-side,
+    :$client-object!,
   )
 
 Initialize the process. The Cryptographic Hash function C<$CGH> is by default
-set to C<SHA1>. The authorization id(C<$authzid>) is needed when you want things done
-with the privileges of someone else. The client-side and server-side are objects
-with methods called by the SCRAM methods. Only one of the client or server
-objects can be defined.
+set to C<&sha1> from the C<OpenSSL::Digest> module. The authorization
+id(C<$authzid>) is needed when you want things done using the privileges of
+someone else. The C<$client-object> object is an object performing client side
+tasks. The methods in this object are called by the methods in the
+C<SCRAM::Client> Role.
+
+Usernames and password (and maybe the authorization id) must be normalized.
+Older versions of the scram process made use of SASLprep. This module will use
+the PRECIS framework defined by rfc7564 and crystalized in module
+C<Unicode::PRECIS>. There are several classes and profiles in that framework.
+For usernames there is a profile to map case to lowercase and one to preserve
+it. This is controlled by the boolean C<$case-preserved-profile> and by default
+set to True. There is only one type of profile for passwords so no control
+needed there.
+
+Server side BUILD is defined as
+
+  multi submethod BUILD (
+
+    Bool :$case-preserved-profile = True,
+    Callable :$CGH = &sha1,
+    :$server-object!,
+  )
+
+The C<$server-object> object is an object performing server side tasks. The
+methods in this object are called by the methods in the C<SCRAM::Server> Role.
+Username, password and authorization id are not needed when a server side object
+is given because it will be provided by the client via an account registration
+mechanism and the clients first message will provide the username and
+authorization id to work with.
+
+For specific client and server information look for the roles C<SCRAM::Client>
+and C<SCRAM::Server>.
+
+=end pod
+#===============================================================================
+=finish
+
+The rest of the methods are explained here but are only to
+be used by the afore mentioned roles.
 
 
-=head2 skip-sasl-prep
+=head2 derive-key
 
-Defined as
+  method derive-key (
+    Str:D :$username is copy, Str:D :$password is copy,
+    Str :$authzid, Bool :$enforce = False,
+    Buf:D :$salt, Int:D :$iter,
+    Any:D :$helper-object
+    --> Buf
+  )
 
-  method skip-sasl-prep ( Bool:D :$skip )
+Calculate the derived key from the password, salt and number of iterations. The
+cryptographic hash function is selected or provided at the instantiation phase.
 
-Call this before starting authentication with C<start-scram>. C<start-scram> is
-explained in the other modules. The username, authorization id and password must
-be processed before authention is started. When old fashion ASCII letters and
-digits are used, no conversion is needed but it is when utf characters are used.
-The preparation is performed by default.
+The username and password are normalized using the PRECIS framework described
+above before calculating. Furthermore there are two procedures which can be
+followed. a) preparation and b) enforcement. Preparation is mostly done at the
+client side and may modify the original string The enforcement does the same but
+add some extra tests before accepting the string. Enforcement mostly takes place
+at the server. This is selectable with C<$enforce> which is by default False.
 
+When the method C<mangle-password> is defined in the user provided helper
+object, that method will then be called. The signature can be something like the
+following;
+
+  method mangle-password (
+    Str :$username,
+    Str :$password,
+    Str :$authzid
+    --> Buf
+  )
+
+When the method is not defined, the following default action takes place;
+
+  my Buf $mangled-password .= new($password.encode);
+
+
+=head2 client-key
+
+  method client-key ( Buf $salted-password --> Buf ) {
+
+See rfc5802
+
+
+=head2 stored-key
+
+  method stored-key ( Buf $client-key --> Buf ) {
+
+See rfc5802
+
+
+=head2 client-signature
+
+  method client-signature ( Buf $stored-key, Str $auth-message --> Buf ) {
+
+See rfc5802
+
+
+=head2 server-key
+
+  method server-signature ( Buf $server-key, Str $auth-message --> Buf ) {
+
+See rfc5802
+
+
+=head2 XOR
+
+  method XOR ( Buf $x1, Buf $x2 --> Buf ) {
+
+Perform XOR operation on two buffers returning the result of it.
+
+
+=head2 normalize
+
+  method normalize (
+    Str:D $text, Bool:D :$prep-username!, :$enforce = False
+    --> Str
+  )
+
+Normalize C<$text> using C<$case-preserved-profile> boolean (described with new()),
+C<$prep-username> and C<$enforce>. C<$prep-username> boolean decides if a
+username or password profile is choosen. C<$case-preserved-profile> selects
+between one of two username profiles if C<$prep-username> is True. C<$enforce>
+selects the normalization procedure prepare or enforce.
+
+
+=head2 encode-name
+
+  method encode-name ( Str $name is copy --> Str ) {
+
+Usernames must be encoded to protect the string format against use of some characters.
+These are ',' and '='. They must be translated to '=2C' and '=3D' resp.
+
+
+=head2 decode-name
+
+  method decode-name ( Str $name is copy --> Str ) {
+
+This is the reversed process of encode-name.
+
+
+=head2 test-methods
+
+  method test-methods ( $obj, @methods --> Bool ) {
+
+Method to check the provided user helper object for required methods
 
 =end pod
