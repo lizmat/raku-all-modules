@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/kalkin/Ddt.git
+	branch = master
+	commit = bbd0a47e11df9f956760109b2210504faa471055
+	parent = 485a96e4b09c3f9c19c9edc57c6ebfdf75b01174
+	cmdver = 0.4.0

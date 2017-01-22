@@ -1,0 +1,34 @@
+{
+  "name" : "Ddt",
+  "source-url" : "https://github.com/kalkin/Ddt.git",
+  "support" : {
+    "source" : null
+  },
+  "perl" : "6.c",
+  "auth" : "kalkin",
+  "provides" : {
+    "Ddt::Template" : "lib/Ddt/Template.pm6",
+    "Ddt::Distribution" : "lib/Ddt/Distribution.pm6",
+    "Ddt" : "lib/Ddt.pm6"
+  },
+  "depends" : [
+    "File::Find",
+    "JSON::Pretty",
+    "Pod::To::Markdown",
+    "Shell::Command",
+    "License::Software",
+    "Zef::CLI"
+  ],
+  "test-depends" : [
+    "File::Temp",
+    "META6",
+    "Test::META"
+  ],
+  "description" : "Distribution Development Tool a replacement for mi6",
+  "version" : "0.3.2",
+  "meta6" : "0",
+  "authors" : [
+    "Shoichi Kaji",
+    "Bahtiar `kalkin-` Gadimov"
+  ]
+}
