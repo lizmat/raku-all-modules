@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/0racle/p6-wig.git
 	branch = master
-	commit = f026ca5c1513f80bcb9411976e60c6a65dca9aa2
-	parent = fa30e9c9f8a4d474fb35d286dd7d9f29829d40bd
-	cmdver = 0.2.3
+	commit = 93de32526ec09d71c467325f23014e54845c3f7a
+	parent = 8edb13570918f9571e5f874740243f8bf50caeb6
+	cmdver = 0.4.0

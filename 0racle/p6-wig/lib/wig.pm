@@ -5,11 +5,8 @@ augment class Any {
 
     # Method
     proto method where(|) is nodal { * }
-    multi method where(Mu $t, *%a) {
-        self.grep($t,|%a)
-    }
-    multi method where(Bool:D $t) {
-        fail X::Match::Bool.new( type => '.where' );
+    multi method where(|c) {
+        self.grep(|c)
     }
 
     # Function
@@ -36,8 +33,8 @@ most frequently. Feel free to modify this list of types to suit your needs.
 # Supply's grep is it's own thing ( not Any's ) so we augment it here
 
 augment class Supply {
-    method where(Supply:D: Mu $t) {
-        self.grep($t);
+    method where(|c) {
+        self.grep(|c);
     }
 } 
 

@@ -1,6 +1,6 @@
 {
    "name" : "wig",
-   "version" : "0.1.0",
+   "version" : "0.2.0",
    "description" : "where is grep: Make grep prettier, put a wig on it!",
    "perl" : "6.c",
    "authors" : [ "Joshua Yeshouroun" ],
