@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Geo::Coder::OpenCage",
     "version"     : "1.0",
     "description" : "Client library for the OpenCage Geocoder",
