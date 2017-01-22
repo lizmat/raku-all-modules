@@ -1,0 +1,17 @@
+sudo: required
+
+language: perl6
+
+perl6:
+    - latest
+
+env:
+    PATH=$PATH:$HOME/silan/bin
+
+install:
+    - rakudobrew build-panda
+    - panda --notests installdeps .
+    - sudo apt-get install monit
+    - sudo sed -i -e '$ a \set httpd port 2812 and use address 0.0.0.0 allow admin:monit' /etc/monit/monitrc
+    - sudo service monit restart
+    - sudo monit status

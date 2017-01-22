@@ -1,0 +1,31 @@
+{
+  "name": "Monitor::Monit",
+  "source-url": "git://github.com/jonathanstowe/Monitor-Monit.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/Monitor-Monit.git"
+  },
+  "perl": "6.c",
+  "resources": [ ],
+  "build-depends": [ ],
+  "auth": "github:jonathanstowe",
+  "provides": {
+     "Monitor::Monit" : "lib/Monitor/Monit.pm"
+  },
+  "depends": [
+     "HTTP::UserAgent",
+     "URI::Template",
+     "XML::Class"
+  ],
+  "tags": [ "monitor", "api", "system" ],
+  "license": "perl",
+  "test-depends": [
+     "Test",
+     "CheckSocket"
+  ],
+  "description": "Provide an interface to the monit monitoring daemon",
+  "version": "0.0.1",
+  "meta6": "0",
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+  ]
+}
