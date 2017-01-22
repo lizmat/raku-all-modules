@@ -4,7 +4,7 @@ use v6;
 use Test;
 use Inline::Perl5;
 
-plan 19;
+plan 20;
 
 BEGIN my $p5 = Inline::Perl5.new();
 $p5.run(q:heredoc/PERL5/);
@@ -22,7 +22,7 @@ for (
     Buf.new('äbc'.encode('latin-1')),
     24,
     2.4.Num,
-    [1, 2],
+#    [1, 2], #TODO - will return as Perl5Array
     { a => 1, b => 2},
     Any,
     \('foo'),
@@ -78,6 +78,15 @@ $p5.run(q/
 ok($p5.call('is_string_ref', \('foo')));
 
 $p5.run(q/
+    sub is_hash_ref {
+        my ($ref) = @_;
+        return (ref $ref eq 'HASH' and %$ref == 1 and $ref->{a} == 1);
+    }
+/);
+
+ok($p5.call('is_hash_ref', Map.new((a => 1)).item), 'Map arrives as a HashRef');
+
+$p5.run(q/
     use warnings;
     sub test_named {
         my (%params) = @_;
@@ -95,12 +104,13 @@ $p5.run(q/
 
 is($p5.call('test_named', a => 1, b => 2), 3);
 is($p5.invoke('Foo', 'test_named', a => 1, b => 2), 3);
-is($p5.invoke('Foo', 'new').test_named(a => 1, b => 2), 3);
+is($p5.invoke('Foo', 'new').test_named('a', 1, 'b', 2), 3, 'positional args on object method');
+is($p5.invoke('Foo', 'new').test_named(a => 1, b => 2), 3, 'named args on object method');
 
 class Bar does Inline::Perl5::Perl5Parent['Foo', $p5] {
 }
 
-is(Bar.new.test_named(a => 1, b => 2), 3);
+is(Bar.new.test_named(a => 1, b => 2), 3, 'named args on parent object method');
 
 $p5.DESTROY;
 

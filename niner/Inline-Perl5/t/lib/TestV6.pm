@@ -1,8 +1,26 @@
+use strict;
+use warnings;
+
 package Foo::Bar::TestV6Base;
+
+our $counter = 0;
+
+my @objects;
 
 sub create {
     my ($class, %args) = @_;
-    return $class->new($args{foo});
+    $counter++;
+    my $self = $class->new($args{foo});
+    #push @objects, $self;
+    $self;
+}
+
+our $destructor_runs = 0;
+
+sub DESTROY {
+    my ($self) = @_;
+    $counter--;
+    $destructor_runs++;
 }
 
 package Foo::Bar::TestV6;
@@ -14,7 +32,9 @@ use base qw(Foo::Bar::TestV6Base);
 
 sub new {
     my ($class, $foo) = @_;
-    return bless {foo => $foo};
+    $Foo::Bar::TestV6Base::counter++;
+    my $self = {foo => $foo};
+    return bless $self, $class;
 }
 
 sub foo {
@@ -98,13 +118,38 @@ sub test_breaking_encapsulation {
     return $obj->{foo};
 }
 
+my @attributes;
+sub MODIFY_CODE_ATTRIBUTES {
+    my ($class, $code, @attrs) = @_;
 
-use v6::inline constructors => [qw(create)];
+    my @bad = grep { $_ ne 'Test1' and $_ ne 'Test2' } @attrs;
+    push @attributes, @attrs;
+
+    return @bad;
+}
+
+sub FETCH_CODE_ATTRIBUTES {
+    return @attributes;
+}
+
+sub check_attrs {
+    my ($self) = @_;
+
+    use attributes();
+    return attributes::get(\&hasattrs);
+}
+
+use v6-inline;
 
 has $.name;
 
 our sub greet($me) {
     return "hello $me";
+}
+
+method set_name($name) {
+    $!name = $name;
+    self
 }
 
 method hello {
@@ -121,4 +166,15 @@ method fetch_foo() {
 
 method return_2() {
     return 2;
+}
+
+multi trait_mod:<is>(Routine $declarand, :@p5attrs!) {
+    unless $declarand.does(Inline::Perl5::Perl5Attributes) {
+        $declarand does Inline::Perl5::Perl5Attributes;
+    }
+    $declarand.attributes.append(@p5attrs);
+}
+
+method hasattrs() is p5attrs['Test1', 'Test2'] {
+    return 1;
 }
