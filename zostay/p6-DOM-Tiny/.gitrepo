@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/p6-DOM-Tiny.git
 	branch = master
-	commit = 68f5023198fd9c0ec27c7e3a62c6f005a91d7a9b
-	parent = 4f050ce49082fa25cf657b6aece84901991868ac
-	cmdver = 0.2.3
+	commit = 35c48a0d40ab4842880a30d93444b419fad689a2
+	parent = d2256c03ca68d9db4d85b92f6ec58c1b6b609f2f
+	cmdver = 0.4.0

@@ -1,0 +1,22 @@
+v0.3.2
+
+    * Slightly more permissive acceptance of stringifiable values being sent to
+      some modification methods.
+
+v0.3.1
+
+    * Fix the deep-clone method for extensibility.
+
+v0.3
+
+    * Added the deep-clone method.
+
+v0.2
+
+    * Removed internal references to DOM::Tiny to allow easier subclassing and
+      customization.
+    * Fixed problems with META6.json
+
+v0.1
+
+    * Initial release.

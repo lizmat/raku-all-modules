@@ -7,7 +7,7 @@
       "DOM::Tiny::HTML" : "lib/DOM/Tiny/HTML.pm6"
    },
    "test-depends" : [
-      "Test"
+      "Test", "Test::META"
    ],
    "support" : {
       "source" : "git://github.com/zostay/p6-DOM-Tiny.git"
@@ -17,11 +17,11 @@
    "auth" : "github:zostay",
    "source-url" : "git://github.com/zostay/p6-DOM-Tiny.git",
    "depends" : [],
-   "name" : "DOM-Tiny",
+   "name" : "DOM::Tiny",
    "authors" : [
       "Sterling Hanenkamp <hanenkamp@cpan.org>"
    ],
-   "version" : "0.1",
+   "version" : "0.3.2",
    "license" : "Artistic",
    "description" : "Very small, self-sufficient DOM parser manipulator"
 }
