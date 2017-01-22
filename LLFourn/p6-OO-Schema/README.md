@@ -62,9 +62,9 @@ multi install-package(RHEL $userland,$pkg) {
 
 # Now at runtime you load particular real class from a node ( or via require )
 # The routines will accept them.
-my $ubuntu =  Userland.load-class; # Userland::Ubuntu
+my $ubuntu =  Ubuntu.load-class; # Userland::Ubuntu
 # or
-my $fedora =  Userland.new; # Userland::Fedora.new
+my $fedora =  Fedora.new; # Userland::Fedora.new
 # or
 my $centos    =  ( require Userland::CentOS );
 
