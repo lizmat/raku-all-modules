@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Phaser::ATEXIT",
     "version"     : "*",
     "description" : "Simple implementation of ATEXIT for Perl 6",

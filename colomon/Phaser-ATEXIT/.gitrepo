@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/Phaser-ATEXIT.git
 	branch = master
-	commit = 569a76d4062c074cba0d85f0ee4ff01c274cc960
-	parent = 89d9bd8ec54dae75e826b70c1618f2f413aac8e9
-	cmdver = 0.2.2
+	commit = 48ac3c547bee8e5c10dcdad3dd2d622e3748b3e1
+	parent = 0926f98eb40f5e72f2a95e9cd85e8bd5186ee527
+	cmdver = 0.4.0
