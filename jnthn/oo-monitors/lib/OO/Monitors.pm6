@@ -1,5 +1,4 @@
 use experimental :macros;
-no precompilation;
 
 class MetamodelX::MonitorHOW is Metamodel::ClassHOW {
     has $!lock-attr;
@@ -21,18 +20,15 @@ class MetamodelX::MonitorHOW is Metamodel::ClassHOW {
     }
 
     method add_method(Mu \type, $name, $meth) {
+        my &callsame := CORE::<&callsame>; # Workaround for RT #127858
         $name ne 'BUILDALL' && $meth.wrap(-> \SELF, | {
             if SELF.DEFINITE {
                 # Instance method call; acquire lock.
                 my $*MONITOR := SELF;
                 my $lock = $!lock-attr.get_value(SELF);
                 $lock.lock();
-                try {
-                    my \result = callsame;
-                    $lock.unlock();
-                    CATCH { $lock.unlock(); }
-                    result;
-                }
+                LEAVE $lock.unlock();
+                callsame
             }
             else {
                 # Type object method call; delegate (presumably .new or some
@@ -63,6 +59,7 @@ class MetamodelX::MonitorHOW is Metamodel::ClassHOW {
     }
 
     method compose(Mu \type) {
+        my &callsame := CORE::<&callsame>; # Workaround for RT #127858
         if self.method_table(type)<BUILDALL>:exists {
             self.method_table(type)<BUILDALL>.wrap: -> \SELF, | {
                 $!lock-attr.set_value(SELF, Lock.new);
