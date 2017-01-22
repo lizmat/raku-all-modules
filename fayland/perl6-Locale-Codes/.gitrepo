@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/fayland/perl6-Locale-Codes.git
 	branch = master
-	commit = bae43c255f449e16ad27794a90e369318d511288
-	parent = d9200baa99d314e27342c2ca9a52c9d5595a8374
-	cmdver = 0.2.2
+	commit = ce58e288a48fbb1ea062acea7653bd88132252ff
+	parent = df3f2a1f9f8b6a001a78d68d7947ffa028b695a1
+	cmdver = 0.4.0
