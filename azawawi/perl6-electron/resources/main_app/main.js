@@ -1,8 +1,5 @@
 // Module to control application life.
-var app           = require('app');
-
-// Module to create native browser window.
-var BrowserWindow = require('browser-window');
+const {app}           = require('electron');
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function() {
@@ -15,17 +12,20 @@ app.on('window-all-closed', function() {
 // initialization and ready for creating browser windows.
 app.on('ready', function() {
 
+  // Module to create and control browser windows
+  var BrowserWindow = require('electron').BrowserWindow;
+
   // Module for desktop integration
-  var Shell         = require('shell');
+  var Shell         = require('electron').shell;
 
   // Module for clipboard copy/paste integration
-  var Clipboard     = require('clipboard');
+  var Clipboard     = require('electron').clipboard;
 
   // Module for native system dialogs
-  var Dialog = require('dialog');
+  var Dialog = require('electron').dialog;
 
   // Module for screens
-  var Screen = require('screen');
+  var Screen = require('electron').screen;
 
   // Create a JSON::RPC server object
   var rpc = require('./node_modules/node-json-rpc');
@@ -96,7 +96,7 @@ app.on('ready', function() {
     if(handle) {
       var win = handleStore[handle];
       if(win) {
-        win.loadUrl(url);
+        win.loadURL(url);
       } else {
         // Invalid handle id
       }
@@ -187,29 +187,38 @@ app.on('ready', function() {
   });
 
   server.addMethod("Dialog-show-open-dialog", function(param, callback) {
-    param = param || {};
-    var handle  = param.handle   || -1;
-    var win     = handleStore[handle];
-    var options = param.options || {};
-    var result = { "selected": Dialog.showOpenDialog(win, options) };
+    param        = param || {};
+    var handle   = param.handle   || -1;
+    var win      = handleStore[handle];
+    var options  = param.options || {};
+    var selected =  win
+        ? Dialog.showOpenDialog(win, options)
+        : Dialog.showOpenDialog(options)
+    var result   = { "selected": selected };
     callback(0, result);
   });
 
   server.addMethod("Dialog-show-save-dialog", function(param, callback) {
-    param = param || {};
-    var handle  = param.handle   || -1;
-    var win     = handleStore[handle];
-    var options = param.options || {};
-    var result = { "selected": Dialog.showSaveDialog(win, options) };
+    param        = param || {};
+    var handle   = param.handle   || -1;
+    var win      = handleStore[handle];
+    var options  = param.options || {};
+    var selected =  win
+        ? Dialog.showSaveDialog(win, options)
+        : Dialog.showSaveDialog(options)
+    var result   = { "selected": selected };
     callback(0, result);
   });
 
   server.addMethod("Dialog-show-message-box", function(param, callback) {
-    param = param || {};
-    var handle  = param.handle   || -1;
-    var win     = handleStore[handle];
-    var options = param.options || {};
-    var result = { "selected": Dialog.showMessageBox(win, options) };
+    param        = param || {};
+    var handle   = param.handle   || -1;
+    var win      = handleStore[handle];
+    var options  = param.options || {};
+    var selected =  win
+        ? Dialog.showMessageBox(win, options)
+        : Dialog.showMessageBox(options)
+    var result = { "selected": selected };
     callback(0, result);
   });
 

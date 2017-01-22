@@ -6,11 +6,10 @@ JavaScript, HTML and CSS on top of the [Electron](https://github.com/atom/electr
 
 ## Installation
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
+To install it using zef (a module management tool bundled with Rakudo Star):
 
 ```
-$ panda update
-$ panda install Electron
+$ zef install Electron
 ```
 
 ### Dependencies
@@ -26,7 +25,7 @@ $ sudo apt-get install nodejs
 - Install pre-built electron for your platform using the following command
   line:
 ```
-$ sudo npm install electron-prebuilt -g
+$ sudo npm install electron -g
 ```
 
 After a successful installation, electron should be installed in
@@ -42,7 +41,7 @@ can be called from the command line.
 - Install pre-built electron for your platform using the following command
   line:
 ```
-$ npm install electron-prebuilt -g
+$ npm install electron -g
 ```
 
 After a success installation, electron should be installed in

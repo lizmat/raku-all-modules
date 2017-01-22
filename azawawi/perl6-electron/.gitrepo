@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-electron.git
 	branch = master
-	commit = 1d21370692c902a15a11bef703e59d9d7dd36468
-	parent = ba6f36ac8bacb34217458458ca5f2fc7bda167a4
-	cmdver = 0.2.3
+	commit = 7e54dfc1ac954de7a8f739cad8dffad3cacd66eb
+	parent = 79b47e49845d622a91281aa871914aa2f4ca9c1a
+	cmdver = 0.4.0
