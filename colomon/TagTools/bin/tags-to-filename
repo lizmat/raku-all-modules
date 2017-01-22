@@ -30,9 +30,9 @@ sub MAIN(*@files) {
         $title .= subst(/"&"/, "and", :global);
         $title .= subst(rx{'/'}, "-", :global);
         $title .= subst(/ <:!ASCII> /, "_", :global);
-        $title .= subst(":", "-", :global);
-        $title .= subst(";", "-", :global);
-        $title .= subst(",", "-", :global);
+        $title .= subst(":", "_-", :global);
+        $title .= subst(";", "_-", :global);
+        $title .= subst(",", "_-", :global);
 
         my $new-filename = sprintf($track-number-template, $tags.track) ~ $title ~ ".mp3";
 
