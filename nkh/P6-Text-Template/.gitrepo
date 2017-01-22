@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/nkh/P6-Text-Template.git
 	branch = master
-	commit = 5e1752c08ddb064e366be862fd500c4de0c4b833
-	parent = 1577080cb875ed709c95927dd20db4d447217fbb
-	cmdver = 0.2.3
+	commit = d7721c8dca484297cfae5fc70494dd5d038f830b
+	parent = 6fd3d843296107e7e8afba0946784e8d094799b5
+	cmdver = 0.4.0
