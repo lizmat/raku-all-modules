@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Lingua::EN::Sentence",
     "version" : "0.1.2",
     "description" : "Module for splitting text into sentences",
