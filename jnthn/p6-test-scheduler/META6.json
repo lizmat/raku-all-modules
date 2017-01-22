@@ -1,0 +1,11 @@
+{
+    "perl" : "6.c",
+    "name" : "Test::Scheduler",
+    "version" : "1.0",
+    "description" : "An implementation of the Perl 6 Scheduler role with virtualized time.",
+    "provides" : {
+        "Test::Scheduler" : "lib/Test/Scheduler.pm6"
+    },
+    "depends" : [ ],
+    "source-url" : "git://github.com/jnthn/p6-test-scheduler.git"
+}
