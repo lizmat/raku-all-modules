@@ -1,5 +1,5 @@
 use v6;
-unit sub MAIN(Bool :$delete=True, Bool :$fetch=True);
+unit sub MAIN(Bool :$delete=True, Bool :$fetch=True, Bool :$ignore-errors);
 
 run 'wget', '-O', 'projects.json', 'http://ecosystem-api.p6c.org/projects.json'
     if $fetch;
@@ -18,7 +18,17 @@ for @projects {
     my $local = join '/', @chunks[*-2, *-1];
     $local ~~ s/ '.git' $ //;
     %local-seen{$local} = True;
-    run 'git', 'subrepo', 'clone', '-f', $url, $local;
+    if $ignore-errors {
+        run 'git', 'subrepo', 'clone', '-f', $url, $local;
+        CATCH {
+            warn $_;
+            run 'git', 'reset', 'HEAD';
+            run 'git', 'checkout', '.';
+        }
+    }
+    else {
+        run 'git', 'subrepo', 'clone', '-f', $url, $local;
+    }
     sleep 0.5;
 }
 
