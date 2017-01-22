@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jaffa4/logd.git
 	branch = master
-	commit = beac7bd83707a5dd221b1bdc6beb392da1bd6aa2
-	parent = c2778a0f9f74ead2a8d59a60562fd769ff33af17
-	cmdver = 0.2.3
+	commit = da6e4bad33ec61b3749035764fca78e8423b23de
+	parent = 47ca3695db7655b170604886758b126f9fad4635
+	cmdver = 0.4.0
