@@ -1,0 +1,14 @@
+{
+    "perl"          : "6.c",
+    "name"          : "Data::MessagePack",
+    "version"       : "0.1.0",
+    "authors"       : [ "github:pierre-vigier" ],
+    "description"   : "Data::MessagePack",
+    "depends"       : [],
+    "provides" : {
+        "Data::MessagePack"    : "lib/Data/MessagePack.pm6",
+        "Data::MessagePack::Packer"    : "lib/Data/MessagePack/Packer.pm6",
+        "Data::MessagePack::Unpacker"    : "lib/Data/MessagePack/Unpacker.pm6"
+    },
+    "source-url"    : "git@github.com:pierre-vigier/Perl6-Data-MessagePack.git"
+}
