@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cygx/p6-native-libc.git
 	branch = master
-	commit = 9c8b0f634cc9b60477eed05bc69cf6fda4257698
-	parent = 233cbf83f66c80e4b1ff93ae14aced85e5a7c69f
-	cmdver = 0.2.2
+	commit = c3b825394ef7d5c015954c76f8b54b1f70891d30
+	parent = ce70364eecaf6a1026d844b2c29d86e4422184b0
+	cmdver = 0.4.0
