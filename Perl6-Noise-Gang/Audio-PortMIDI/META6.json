@@ -17,7 +17,7 @@
    "description" : "Perl6 MIDI access using the portmidi library",
    "source-url" : "git://github.com/Perl6-Noise-Gang/Audio-PortMIDI.git",
    "resource" : {},
-   "version" : "0.0.7",
+   "version" : "0.0.8",
    "name" : "Audio::PortMIDI",
    "support" : {
       "source" : "git://github.com/Perl6-Noise-Gang/Audio-PortMIDI.git",

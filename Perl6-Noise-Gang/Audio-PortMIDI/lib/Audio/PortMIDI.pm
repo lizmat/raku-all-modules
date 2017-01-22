@@ -1090,7 +1090,7 @@ class Audio::PortMIDI {
 
     multi method open-input(DeviceInfo:D $dev, Int $buffer-size) returns Stream {
         if $dev.input {
-            samewith $dev.device-id, $buffer-size;
+            self.open-input($dev.device-id, $buffer-size);
         }
         else {
             X::PortMIDI.new(code => -9999, message => "not an input device", what => "opening input stream").throw;
@@ -1114,7 +1114,7 @@ class Audio::PortMIDI {
 
     multi method open-output(DeviceInfo:D $dev, Int $buffer-size, Int $latency = 0 ) returns Stream {
         if $dev.output {
-            samewith $dev.device-id, $buffer-size, $latency;
+            self.open-output($dev.device-id, $buffer-size, $latency);
         }
         else {
             X::PortMIDI.new(code => -9999, message => "not an output device", what => "opening output stream").throw;

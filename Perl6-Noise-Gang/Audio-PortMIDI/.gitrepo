@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Perl6-Noise-Gang/Audio-PortMIDI.git
 	branch = master
-	commit = 6a6c3de106b632421bd3a184d2e13187cc1cf5d2
-	parent = 576117b0e6de397d0728191ea7c65c3f94b515bf
-	cmdver = 0.2.3
+	commit = 110c59ce932aa0aac1648f9e84ab8f7c0c3d58a0
+	parent = 115c43db8f2e0d349a6357d1a356c8ba355bf488
+	cmdver = 0.4.0
