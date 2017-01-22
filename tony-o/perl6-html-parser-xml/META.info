@@ -1,4 +1,5 @@
 {
+  "perl"        : "6.*",
   "name"        : "HTML::Parser::XML",
   "version"     : "0.1.0",
   "description" : "Parses HTML to produce an XML::Document",
