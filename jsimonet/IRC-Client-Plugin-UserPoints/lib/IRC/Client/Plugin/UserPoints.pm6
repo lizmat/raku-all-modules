@@ -10,9 +10,8 @@ class IRC::Client::Plugin::UserPoints {
 		= 'userPoints.txt';
 
 	# Load the hash from $db-file-name if it is readable and writable
-	# TODO Check &from-file returns
 	has %!user-points
-		= $!db-file-name.IO.rw
+		=  ( $!db-file-name.IO.r && $!db-file-name.IO.w )
 			?? from_file( $!db-file-name )
 			!! Hash.new;
 
@@ -21,17 +20,21 @@ class IRC::Client::Plugin::UserPoints {
 		where .chars > 0 && .chars <=1
 		= '!';
 
+	has Int $.target-points where * > 0 = 42;
+
 	# TODO Overflow check : -1 point if overflow
-	# TODO user check : cannot add a point to itself
 	# TODO Reduce message because spamming
-	# TODO Congratulates a user when he reaches 42 points in a category
 	# TODO Save the current channel when adding a point
-	multi method irc-all( $e where /^ (\w+) ([\+\+ | \-\-]) [\s+ (\w+) ]? $/ ) {
-		my $user-name = $0;
-		my $operation = $1;
-		my $category = $2
+	multi method irc-all( $e where /^ (\w+) ([\+\+ | \-\-]) [\s+ (<[ \w \s ]>+) ]? $/ ) {
+		my Str $user-name = $0.Str;
+		my Str $operation = $1.Str;
+		my $category =  $2.Str
 			?? $2
 			!! 'main';
+
+		# Check if $user-name is different from message sender
+		return "Influencing points of himself is not possible."
+			if $e.nick() ~~ $user-name;
 
 		my $operation-name = '';
 
@@ -57,24 +60,55 @@ class IRC::Client::Plugin::UserPoints {
 		# Save scores
 		to_file( $!db-file-name, %!user-points );
 
-		"$operation-name one point to $user-name in « $category » category"
+		return %!user-points{$user-name}{$category} == $!target-points
+			?? "Congratulations, $user-name reached $!target-points in $category!"
+			!! "$operation-name one point to $user-name in « $category » category";
 	}
 
 	# TODO Total for !scores
-	# TODO Detailed for !scores <nick>
-	multi method irc-all( $e where { my $p = $!command-prefix; $e ~~ /^ $p "scores" / } ) {
+	multi method irc-all( $e where { my $p = $!command-prefix; $e ~~ /^ $p "scores" [ \h+ $<nicks> = \w+]* $/ } ) {
+
 		unless keys %!user-points {
 			return "No attributed points, yet!"
 		}
 
-		for keys %!user-points -> $user-name {
+		my @nicks = $<nicks>
+			?? $<nicks>».Str
+			!! keys %!user-points;
+
+		for @nicks -> $user-name {
 			my @rep;
+			unless %!user-points{$user-name}:exists {
+				$e.reply: "« $user-name » does not have any points yet.";
+				next;
+			}
 			for %!user-points{$user-name} -> %cat {
 				for kv %cat -> $k, $v {
-					push @rep, "$v for $k";
+					push @rep, "$v in $k";
 				}
 			}
 			$e.reply: "« $user-name » has some points : { join( ', ', @rep ) }";
 		}
 	}
+
+	multi method irc-all( $e where { my $p = $!command-prefix; $e ~~ /^ $p "sum" [ \h+ $<nicks> = \w+]* $/ } ) {
+		my $sum;
+
+		my @nicks = $<nicks>
+			?? $<nicks>».Str
+			!! keys %!user-points;
+
+		for @nicks -> $user-name {
+			next unless %!user-points{$user-name}:exists;
+
+			for %!user-points{$user-name} -> %cat {
+				for kv %cat -> $k, $v {
+					$sum += $v;
+				}
+			}
+		}
+
+		return "Total points : $sum";
+	}
+
 }
