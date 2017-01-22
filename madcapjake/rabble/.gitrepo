@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/madcapjake/rabble.git
 	branch = master
-	commit = 9b2f8cc97e2f2ab113ea4ed6420772e12c679c6f
-	parent = 81587bf5a8adc1d3cc4e1665ad65b330cc00a94a
-	cmdver = 0.2.3
+	commit = b65b895e60604421936f2a63ae3f5da0b5207182
+	parent = 24441d6a66a6a55d5c837683358856383096fe1f
+	cmdver = 0.4.0
