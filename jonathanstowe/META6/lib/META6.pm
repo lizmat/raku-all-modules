@@ -39,6 +39,10 @@ my $m = META6.new(   name        => 'META6',
 
 print $m.to-json;
 
+my $m = META6.new('./META6.json');
+$m<version description> = v0.0.2, 'Work with Perl 6 META files even better';
+spurt('./META6.json', $m.to-json);
+
 =end code
 
 =head1 DESCRIPTION
@@ -91,6 +95,18 @@ This is provided by L<JSON::Class>. It will return the JSON string
 representation of the META info. The class should prevent there being
 anything that can't be represented as JSON so it shouldn't throw an
 exception.
+
+=head2 method AT-KEY
+
+    method AT-KEY($key)
+
+Support method to allow subscripts on META6 objects.
+
+=head2 method EXISTS-KEY
+
+    method EXISTS-KEY($key)
+
+Support method to allow subscripts on META6 objects.
 
 =end pod
 
@@ -161,6 +177,25 @@ class META6:ver<0.0.10>:auth<github:jonathanstowe> does JSON::Class {
         self.bless(|%items);
     }
 
+    method AT-KEY($key){
+        self!json-name-to-attibute($key).?get_value(self);
+    }
+
+    method EXISTS-KEY($key){
+        so self!json-name-to-attibute($key)
+    }
+
+    method ASSIGN-KEY($key, \value){
+        self!json-name-to-attibute($key).set_value(self, value)
+    }
+
+    method !json-name-to-attibute($json-name){
+        state %lookup = do for self.^attributes(:local) {
+            (.?json-name ?? .json-name !! .name).subst(/^ '$!' | '%!' | '@!' /, '') => $_
+        }
+        %lookup{$json-name}
+    }
+
     class Support {
         has Str $.source is rw      is specification(Optional);
         has Str $.bugtracker is rw  is specification(Optional) is json-skip-null;
@@ -207,5 +242,7 @@ class META6:ver<0.0.10>:auth<github:jonathanstowe> does JSON::Class {
     has Str         $.source-url    is rw is customary;
     has Str         $.auth          is rw is customary;
 }
+
+multi sub postcircumfix:<{ }>(META6 \SELF, Iterable \key, Mu \ASSIGN) is raw {}
 
 # vim: expandtab shiftwidth=4 ft=perl6

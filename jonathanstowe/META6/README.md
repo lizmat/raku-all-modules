@@ -1,5 +1,7 @@
 # META6
 
+[![Build Status](https://travis-ci.org/jonathanstowe/META6.svg?branch=master)](https://travis-ci.org/jonathanstowe/META6)
+
 Do things with Perl 6 [META files](http://design.perl6.org/S22.html#META6.json)
 
 ## Synopsis
@@ -32,6 +34,9 @@ my $m = META6.new(   name        => 'META6',
 
 print $m.to-json;
 
+my $m = META6.new('./META6.json');
+$m<version description> = v0.0.2, 'Work with Perl 6 META files even better';
+spurt('./META6.json', $m.to-json);
 ```
 ## Description
 
@@ -51,18 +56,8 @@ attributes are used,
 
 ## Installation
 
-Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
-
-    ufo
-    make test
-    make install
-
-*ufo* can be installed with *panda* for rakudo:
-
-    panda install ufo
-
-Or you can install directly with "panda":
+Assuming you have a working Rakudo Perl 6 installation you should be able to
+install this with *panda* :
 
     # From the source directory
    
@@ -72,13 +67,13 @@ Or you can install directly with "panda":
 
     panda install META6
 
-Other install mechanisms may be become available in the future.
+This should work equally well with *zef* but I have not tested it.
 
 ## Support
 
 Suggestions/patches are welcomed via github at
 
-   https://github.com/jonathanstowe/META6
+https://github.com/jonathanstowe/META6
 
 I'm particulary interested in knowing about "customary" (i.e. non-spec)
 fields that are being used in the wild and in what software so I can
@@ -86,7 +81,7 @@ add them if necessary.
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+Please see the [LICENCE](LICENCE) file in the distribution
 
-(C) Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017
 
