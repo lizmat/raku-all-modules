@@ -2,7 +2,10 @@
     "name" : "Path::Router",
     "version" : "0.1",
     "description" : "A tool for routing paths",
-    "author" : "Andrew Sterling Hanenkamp",
+    "perl" : "6.c",
+    "authors" : [
+        "Sterling Hanenkamp (hanenkamp@cpan.org)"
+    ],
     "provides" : {
         "Path::Router": "lib/Path/Router.pm6",
         "Path::Router::Route": "lib/Path/Router/Route.pm6",
