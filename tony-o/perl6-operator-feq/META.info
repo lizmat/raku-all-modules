@@ -1,4 +1,5 @@
 {
+  "perl" : "6.*",
   "name" : "Operator::feq",
   "version" : "0.1",
   "description" : "Adds a fuzzy matching operator for clean and fuzzy string matching in 'if' statements",
