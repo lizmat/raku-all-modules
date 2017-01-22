@@ -25,7 +25,7 @@ method normal  (IO::Handle $handle is rw) {
     $handle = self.bless: :$handle :mode<normal>;
 }
 
-method !process (OutputMethods $meth , *@what) returns Bool {
+method !process (OutputMethods $meth , *@what is copy) returns Bool {
     @what       = @what».gist if $meth eq 'say';
     @what[*-1] ~= $.nl-out    if $meth eq any <put say>;
     given $.mode {

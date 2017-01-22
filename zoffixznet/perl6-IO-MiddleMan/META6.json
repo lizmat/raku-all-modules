@@ -1,7 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "IO::MiddleMan",
-    "version"      : "1.001001",
+    "version"      : "1.001002",
     "description"  : "hijack, capture, or mute writes to an IO::Handle",
     "depends"      : [ ],
     "test-depends" : [ "Test" ],
