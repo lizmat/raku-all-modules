@@ -1,9 +1,12 @@
+#! /usr/bin/env per6
 use v6;
 use Test;
-use lib 'lib';
+
+plan 19;
+
+use-ok 'Net::OSC::Message';
 use Net::OSC::Message;
 
-plan 18;
 
 #diag Net::OSC::Message.^methods.map({ $_.perl }).join: "\n";
 

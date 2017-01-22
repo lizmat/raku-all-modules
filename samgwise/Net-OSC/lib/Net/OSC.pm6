@@ -1,6 +1,8 @@
 use v6;
 
-unit class Net::OSC ;
+unit module Net::OSC;
+use Net::OSC::Server::UDP;
+use Net::OSC::Types;
 
 =begin pod
 
@@ -8,76 +10,83 @@ unit class Net::OSC ;
 
 Net::OSC - Open Sound Control for Perl6
 
-Currently Net::OSC::Message is implimented
-You can use it right now to send and receive OSC messages!
+Use the Net::OSC module to communicate with OSC applications and devices!
 
 =head1 SYNOPSIS
 
-=begin code
+=begin code :info<perl6>
 
-use Net::OSC::Message;
+use Net::OSC;
 
-#Create a message object to unpack OSC Bufs
-my Net::OSC::Message $osc-message .= new;
+my Net::OSC::Server::UDP $server .= new(
+  :listening-address<localhost>
+  :listening-port(7658)
+  :send-to-address<localhost> # ← Optional but makes sending to a single host very easy!
+  :send-to-port(7658)         # ↲
+  :actions(
+    action(
+      "/hello",
+      sub ($msg, $match) {
+        if $msg.type-string eq 's' {
+          say "Hello { $msg.args[0] }!";
+        }
+        else {
+          say "Hello?";
+        }
+      }
+    ),
+  )
+);
 
-#Create a UDP listener
-my $udp-listener = IO::Socket::Async.bind-udp('localhost', 7654);
+# Send some messages!
+$server.send: '/hello', :args('world', );
+$server.send: '/hello', :args('lamp', );
+$server.send: '/hello';
 
-#tap our udp supply and grep out any empty packets
-my $listener-cb = $udp-listener.Supply(:bin).grep( *.elems > 0 ).tap: -> $buf {
-  my $message = $osc-message.unpackage($buf);
-  say "message: { $message.path, $message.type-string, $message.args }";
-}
+# Our routing will ignore this message:
+$server.send: '/hello/not-really';
 
-#Start up a thread so we can send some OSC messages to ourself
-my $sender = start {
-  my $udp-sender = IO::Socket::Async.udp;
+# Send a message to someone else?
+$server.send: '/hello', :args('out there', ), :address<192.168.1.1>, :port(54321);
 
-  for 1..10 {
-    my Net::OSC::Message $message .= new( :path("/testing/$_") :args<Hey 123 45.67> );
+#Allow some time for our messages to arrive
+sleep 0.5;
 
-    #send it off
-    my $sending = $udp-sender.write-to('localhost', 7654, $message.package);
-    await $sending;
-    sleep 0.5;
-  }
-  sleep 1;
-}
-
-await $sender;
-
-$listener-cb.close;
+# Give our server a chance to say good bye if it needs too.
+$server.close;
 
 =end code
 
 =head1 DESCRIPTION
 
-Net::OSC is currently planned to consist of the following classes:
+Net::OSC distribution currently provides the following classes:
 
 =item Net::OSC
-=item Net::OSC::Message - Implimented
-=item Net::OSC::Bundle
-=item Net::OSC::Client
+=item Net::OSC::Message
 =item Net::OSC::Server
+=item Net::OSC::Server::UDP
 
-Net::OSC provides message routing behaviors for the OSC Protocol, an OSC address space.
-Net::OSC::Message and Net::OSC::Bundle provide a representation  and packaing of the data.
-The Client and Server objects then provide higher level abstractions for network comunication.
+Classes planned for future releases include:
 
-For more details about each class, see their doc.
+=item Net::OSC::Bundle
+=item Net::OSC::Server::TCP
+
+Net::OSC imports Net::OSC::Server::UDP and the action sub to the using name space.
+Net::OSC::Message provide a representation for osc messages.
+
+See reference section below for usage details.
 
 =head1 TODO
 
   =item Net::OSC::Bundle
-  =item Net::OSC::Client
-  =item Net::OSC::Server
+  =item Net::OSC::Server::TCP
   =item Additional OSC types
-  =item Net::OSC - A simple interface for OSC comunications
 
 =head1 CHANGES
 
 =begin table
-      Updated to use Numeric::Pack  | Faster and better tested Buf packing | 2016-08-30
+      Added Server role and UDP server  | Sugar for sending, receiving and routing messages | 2016-12-08
+      Updated to use Numeric::Pack      | Faster and better tested Buf packing | 2016-08-30
 =end table
 
 =head1 AUTHOR
@@ -90,12 +99,30 @@ Copyright 2016 Sam Gillespie
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
+=head1 Reference
+
+=head2 Net::OSC subroutines 
+
 =end pod
 
-method pack-message(*@args) returns Buf {
-
+sub EXPORT {
+    {
+     'Net::OSC::Server::UDP' => Net::OSC::Server::UDP,
+    }
 }
 
-method unpack-message(Blob:D $message) returns List:D {
-
+multi sub action(Regex $path, Callable $call-back --> ActionTuple) is export
+#= Creates an action tuple for use in a server's actions list.
+#= The first argument is the path, which is checked when an OSC message is received.
+#= If the path of the message matches then the call back is executed.
+#= The call back is passed the Net::OSC::Message object and the match object from the regular expression comparison.
+{
+  $($path, $call-back)
+}
+multi sub action(OSCPath $path, Callable $call-back --> ActionTuple) is export
+#= Creates an action tuple for use in a server's actions list.
+#= The string must be a valid OSC path (currently we only check for a beginning '/' character).
+#=  In the future this subroutine may translate OSC path meta characters to Perl6 regular expressions.
+{
+  $(regex { ^ $path $ }, $call-back)
 }

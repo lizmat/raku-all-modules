@@ -1,4 +1,10 @@
 #! /usr/bin/env perl6
+
+#
+# This example shows a simple strategy for listening for messages.
+#  The approach here does not utilise the structure of the Net::OSC::Server role.
+#
+
 use v6;
 use Net::OSC::Message;
 

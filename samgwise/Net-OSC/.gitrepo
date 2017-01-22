@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/samgwise/Net-OSC.git
 	branch = master
-	commit = b760150bcbda3baa3b36a98ddb0058187e1c7b7f
-	parent = 4dc67aa3bb89e856f5a9edb9acda9cc1264fd83c
-	cmdver = 0.2.3
+	commit = d437bcacd9f60f1df7be54ee93659e1f060b03da
+	parent = d328f1cc9112917cd251f0f08ecc0d6766b6543c
+	cmdver = 0.4.0
