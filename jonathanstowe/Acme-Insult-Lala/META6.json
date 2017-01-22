@@ -16,7 +16,7 @@
   "tags": [ "insult", "acme", "fun" ],
   "license": "perl",
   "description": "Construct an insulting epithet in the manner of an old IRC bot",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "meta6": "0",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"

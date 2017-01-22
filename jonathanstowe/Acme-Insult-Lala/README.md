@@ -2,6 +2,8 @@
 
 Construct an insulting epithet in the manner of an old IRC bot
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Acme-Insult-Lala.svg?branch=master)](https://travis-ci.org/jonathanstowe/Acme-Insult-Lala)
+
 ## Synopsis
 
 ```perl6
