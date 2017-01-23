@@ -1,0 +1,16 @@
+{
+    "name" : "Rakudo::Slippy::Semilist",
+    "version" : "0.0.1",
+    "author" : "Wenzel P. P. Peppmeyer",
+    "description" : "Implement postcircumfix:<{|| }> to allow coercion of Array to semilist.",
+    "license" : "https://opensource.org/licenses/Artistic-2.0",
+    "provides" : {
+        "Rakudo::Slippy::Semilist" : "lib/Rakudo/Slippy/Semilist.pm6"
+    },
+    "support" : {
+        "source"     : "https://github.com/gfldex/gfldex/perl6-rakudo-slippy-semilists"
+    },
+    "depends" : [ ],
+    "source-type" : "git",
+    "source-url" : "git://github.com/gfldex/perl6-rakudo-slippy-semilists.git"
+}
