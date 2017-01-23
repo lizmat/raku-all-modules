@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-selenium-webdriver.git
 	branch = master
-	commit = ce960eb738de50a0b58be0c265cf95a1ed326983
-	parent = 3bba0f4e21aac379ab06ccc600e17e9607e0f2a2
+	commit = dab0ca3d9c4905b2bae5e6d47ba5e39088c664e4
+	parent = e4ee22fe891729746461781c244918620d23132e
 	cmdver = 0.4.0
