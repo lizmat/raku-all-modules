@@ -12,6 +12,7 @@ my $odoo = Odoo::Client.new(
     hostname => "localhost",
     port     => 8069
 );
+
 my $uid = $odoo.login(
     database => "<database>",
     username => '<email>',

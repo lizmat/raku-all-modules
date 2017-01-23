@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-odoo-client.git
 	branch = master
-	commit = f505267daec9e119a8855e983a6a264e1a79379d
-	parent = 8113ad5f3e7f87d35ef87a3a5b322a7c85877ccb
+	commit = 4ddb0a9cb3d88e499df9f3bfc0f5f71fec320b4e
+	parent = fa7bfe84ece1155edd3991f90bfd98bd07fcb471
 	cmdver = 0.4.0

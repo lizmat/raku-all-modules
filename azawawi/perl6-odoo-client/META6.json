@@ -1,6 +1,6 @@
 {
     "name"          : "Odoo::Client",
-    "version"       : "0.0.1",
+    "version"       : "0.0.2",
     "perl"          : "6.c",
     "description"   : "A simple Odoo ERP client that uses JSON RPC",
     "test-depends"  : [
