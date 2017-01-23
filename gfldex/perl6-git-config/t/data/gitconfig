@@ -1,0 +1,9 @@
+[user]
+    name = Hans H. Hansen
+
+    email = hans@hansen.net
+
+[remote "origin"]
+    url = https://github.com/perl6/ecosystem.git
+    fetch = +refs/heads/*:refs/remotes/origin/*
+
