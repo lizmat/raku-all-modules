@@ -962,11 +962,18 @@ sub write-qualified-method-call(:$name!, :$pod!, :$type!) {
     return if $name ~~ / '/' /;
     spurt "html/routine/{escape-filename $type}.{escape-filename $name}.html", p2h($p, 'routine');
 }
-
+sub get-temp-filename {
+    state %seen-temps;
+    my $temp = join '-', %*ENV<USER> // 'u', (^1_000_000).pick, 'pod_to_pyg.pod';
+    while %seen-temps{$temp} {
+        $temp = join '-', %*ENV<USER> // 'u', (^1_000_000).pick, 'pod_to_pyg.pod';
+    }
+    %seen-temps{$temp}++;
+    $temp;
+}
 sub highlight-code-blocks(:$no-proc-async = False) {
-    if !$proc.started {
-        say "Starting highlights worker thread";
-        $proc-prom = $proc.start;
+    unless $no-proc-async {
+        $proc-prom = $proc.start andthen say "Starting highlights worker thread" unless $proc.started;
     }
     %*POD2HTML-CALLBACKS = code => sub (:$node, :&default) {
         for @($node.contents) -> $c {
@@ -975,7 +982,7 @@ sub highlight-code-blocks(:$no-proc-async = False) {
                 return default($node);
             }
         }
-        my $basename = join '-', %*ENV<USER> // 'u', (^100_000).pick, 'pod_to_pyg.pod';
+        my $basename = get-temp-filename();
         my $tmp_fname = "$*TMPDIR/$basename";
         spurt $tmp_fname, $node.contents.join;
         LEAVE try unlink $tmp_fname;
