@@ -8,7 +8,7 @@ use v6;
 
 use CSS::Grammar::CSS3;
 
-grammar CSS::Module::CSS3::Selectors:ver<20110929.000>
+grammar CSS::Module::CSS3::Selectors #:api<css3-selectors-20110929>
     is CSS::Grammar::CSS3 {
 
     # extensions:
@@ -24,7 +24,7 @@ grammar CSS::Module::CSS3::Selectors:ver<20110929.000>
     # - see http://www.w3.org/TR/2008/CR-css3-namespace-20080523/#css-qnames
     rule qname     {<namespace-prefix>? <element-name>}
     rule universal {<namespace-prefix>? <element-name=.wildcard>}
-    rule simple-selector { [<qname><!before '|'>|<universal>][<id>|<class>|<attrib>|<pseudo>]*
+    rule simple-selector { [<qname><!before '|'> | <universal>][<id> | <class> | <attrib> | <pseudo>]*
                          | [<id>|<class>|<attrib>|<pseudo>]+ }
 
     rule attrib    {'[' <Ident> [ <op=.attribute-selector> [<Ident>|<string>] ]? ']'}

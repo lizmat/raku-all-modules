@@ -1,7 +1,9 @@
 {
     "perl"        : "6.*",
     "name"        : "CSS::Module::CSS3::Selectors",
-    "version"     : "0.00.1",
+    "version"     : "0.0.1",
+    "api"         : "css3-selectors-20110929",
+    "auth"        : "github:p6-css",
     "description" : "CSS3 Module Level 3 Selectors",
     "depends"     : [ "CSS::Grammar", "JSON::Fast" ],
     "source-url"  : "git://github.com/p6-css/perl6-CSS-Module-CSS3-Selectors.git",
