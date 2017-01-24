@@ -1,6 +1,6 @@
 enum Loglevels <<:TRACE(1) DEBUG INFO WARNING ERROR FATAL>>;
 
-class Log::Async:ver<0.0.1>:auth<github:bduggan> {
+class Log::Async:ver<0.0.2>:auth<github:bduggan> {
     has $.source = Supplier.new;
     has Tap @.taps;
     has Supply $.messages;
@@ -69,10 +69,12 @@ sub warning($msg) is export { logger.log( :$msg, :level(WARNING) ); }
 sub fatal($msg)   is export { logger.log( :$msg, :level(FATAL) ); }
 
 sub EXPORT {
-   set-logger(Log::Async.new) unless logger;
    return { }
 }
 
+INIT {
+    set-logger(Log::Async.new) unless logger;
+}
 END {
-    Log::Async.instance.done;
+    Log::Async.instance.done if Log::Async.instance;
 }
