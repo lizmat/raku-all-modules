@@ -6,7 +6,7 @@
 
 use CSS::Grammar::CSS3;
 
-grammar CSS::Specification:ver<000.04> {
+grammar CSS::Specification:ver<0.4.4> {
     rule TOP { [<def=.property-spec> | <def=.rule-spec>] * }
 
     rule property-spec {
