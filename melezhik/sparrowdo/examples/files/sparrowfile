@@ -22,7 +22,17 @@ file '/var/data/animals.txt', %(
   content => 'I am read fox!'
 );
 
+file '/var/data/animals.txt', %(content => 'hello owl');
+
+file '/var/data/animals2.txt', %(source => '/var/data/animals.txt');
+
+bash 'cat /var/data/animals2.txt', %(
+  expect_stdout => 'hello owl'
+);
+
 file-delete '/var/data/animals.txt';
+
+file-delete '/var/data/animals2.txt';
 
 file '/var/data/animals.txt', %( action => 'delete');
 

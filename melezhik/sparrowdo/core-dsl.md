@@ -155,17 +155,24 @@ Examples:
 
 Examples:
 
-    file '/var/data/animals.txt';
-
+    # just create (touch) an empty file
     file-create '/var/data/animals.txt';
 
-    file-create '/var/data/animals.txt', %(
+    # shortcut for file-create
+    file '/var/data/animals.txt';
+
+    # copy file from source
+    file '/var/data/animals.txt', %( source => '/var/data/backup/animals.txt' );
+
+    # sets file attributes
+    file '/var/data/animals.txt', %(
       owner => 'zookeeper',
       group => 'animals' ,
       mode => '644',
       content => 'I am read fox!'
     );
 
+    # sets file content explicitly
     file '/var/data/animals.txt', %(
       action  => 'create',
       owner   => 'zookeeper',
@@ -176,7 +183,8 @@ Examples:
     
     file-delete '/var/data/animals.txt';
 
-    file '/var/data/animals.txt', %( action => 'delete');
+    # the same as above
+    file '/var/data/animals.txt', %( action => 'delete' );
 
 ## Templates
 

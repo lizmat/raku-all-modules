@@ -11,6 +11,10 @@ sub file-create ( $target, %opts = %() ) is export {
     %params<target> = $target;
     %params<action> = 'create';
 
+    if %params<source>:exists and %params<content>:exists {
+      die "can't use both source and content parameters"
+    }
+
     task_run  %(
       task        => "create file $target",
       plugin      => 'file',
