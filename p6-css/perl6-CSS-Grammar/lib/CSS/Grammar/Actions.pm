@@ -19,11 +19,11 @@ class X::CSS::Ignored { #is Exception { ## issue 4
 ##            };
     }
 
-    has Str $!message is required;
+    has Str $.message is required;
     has Str $!str;
     has Str $!explanation;
     has UInt $.line-no;
-    submethod BUILD( :$!message!, :$str, :$explanation, :$!line-no ) {
+    submethod TWEAK(:$str, :$explanation ) {
         $!str = display-string($_) with $str;
         $!explanation = display-string($_) with $explanation;
     }

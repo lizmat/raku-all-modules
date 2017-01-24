@@ -4,7 +4,7 @@ use CSS::Grammar::CSS21;
 
 # specification: http://www.w3.org/TR/2014/CR-css-syntax-3-20140220/
 
-grammar CSS::Grammar::CSS3:ver<20140220.000>
+grammar CSS::Grammar::CSS3 #:api<css-syntax-3-20140220>
     is CSS::Grammar::CSS21 {
  
     rule TOP {^ <stylesheet> $}

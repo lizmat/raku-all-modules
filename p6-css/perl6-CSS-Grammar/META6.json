@@ -1,6 +1,7 @@
 {   "perl"        : "6c",
     "name"        : "CSS::Grammar",
-    "version"     : "0.03.0",
+    "version"     : "0.3.0",
+    "auth"        : "github:p6-css",
     "description" : "Perl 6 core CSS grammars",
     "depends"     : [ "JSON::Fast" ],
     "provides"    : {

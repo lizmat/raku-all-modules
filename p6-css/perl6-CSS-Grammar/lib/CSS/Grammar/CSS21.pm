@@ -3,7 +3,7 @@ use v6;
 use CSS::Grammar;
 # specification: http://www.w3.org/TR/2011/REC-CSS2-20110607/
 
-grammar CSS::Grammar::CSS21:ver<20110607.001>
+grammar CSS::Grammar::CSS21 #:api<css2-20110607>
     is CSS::Grammar {
 
     rule TOP {^ <stylesheet> $}
