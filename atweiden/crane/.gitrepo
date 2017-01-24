@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/atweiden/crane.git
 	branch = master
-	commit = 563d30d42157813bcba02571de6ed23e9027ccb0
-	parent = 0faf367aa6b8411dcbfd8adeeee767cda7f991ca
+	commit = 03a514af2b884b8ff7834926f09cf4c6a4291c6a
+	parent = 20fa1619fc42a20e592aa56723daf2513d872607
 	cmdver = 0.4.0

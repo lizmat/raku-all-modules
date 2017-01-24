@@ -39,18 +39,18 @@ subtest
     my %i;
     in(%i, qw<a b c>, *-0, *-0, *-0, *-0, *-0) = 'five';
     in(%i, qw<a b c>, *-0, *-0, *-0, *-0, *-0) = 'five again';
-    is %i<a><b><c>[1][1][1][1][1], 'five', 'Is expected value';
-    is %i<a><b><c>[2][1][1][1][1], 'five again', 'Is expected value';
+    is %i<a><b><c>[0][0][0][0][0], 'five', 'Is expected value';
+    is %i<a><b><c>[1][0][0][0][0], 'five again', 'Is expected value';
 
     my %j;
     in(%j, 'a', 0, 1, *-0, 'b', 0, 'a', 2, qw<8 9 10>, *-0, 1) = 9999999;
-    is %j<a>[0][1][1]<b>[0]<a>[2]<8><9><10>[1][1], 9999999, 'Is expected value';
+    is %j<a>[0][1][0]<b>[0]<a>[2]<8><9><10>[0][1], 9999999, 'Is expected value';
 
     throws-like {in(my @a, 'a')}, X::Crane::PositionalIndexInvalid,
         'In fails when Positional index invalid';
 
     my %data = %TestCrane::data;
-    my %legume = :instock(43), :name<black beans>, :unit<lbs>;
+    my %legume = :instock(43), :name("black beans"), :unit<lbs>;
     in(%data, 'legumes', *-0) = %legume;
     is %data<legumes>[0]<instock>, 4, 'Is expected value';
     is %data<legumes>[1]<instock>, 21, 'Is expected value';
