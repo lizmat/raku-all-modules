@@ -3,13 +3,15 @@ use v6;
 #| management class for a set of CSS::Declarations
 class CSS::Declarations {
 
+    use CSS::Module:ver(v0.4.6..*);
+    use CSS::Module::CSS3;
+    use CSS::Writer:ver(v0.2.4..*);
+    use Color;
+
     use CSS::Declarations::Property;
     use CSS::Declarations::Edges;
     use CSS::Declarations::Units;
-    use CSS::Module;
-    use CSS::Module::CSS3;
-    use CSS::Writer;
-    use Color;
+
     my %module-metadata{CSS::Module};     # per-module metadata
     my %module-properties{CSS::Module};   # per-module property attributes
 
