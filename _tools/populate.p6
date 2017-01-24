@@ -28,7 +28,6 @@ for @projects {
     else {
         run 'git', 'subrepo', 'clone', '-f', $url, $local;
     }
-    sleep 0.5;
 }
 
 # find all dirs of the form author/module and potentially remove them
