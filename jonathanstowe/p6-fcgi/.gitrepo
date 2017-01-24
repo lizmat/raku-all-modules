@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jonathanstowe/p6-fcgi.git
+	branch = master
+	commit = 915ccddf52146bc53e32bfc47742a3156d1296a4
+	parent = 91dcd4d6ef944428ccb70ca9b028c802df2fc357
+	cmdver = 0.4.0

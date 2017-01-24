@@ -1,0 +1,7 @@
+*.so
+ext/fcgi_config.h
+ext/config.log
+ext/config.status
+blib/
+Makefile
+.precomp
