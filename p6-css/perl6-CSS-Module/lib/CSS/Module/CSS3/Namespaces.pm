@@ -5,7 +5,7 @@ use v6;
 #
 class CSS::Module::CSS3::Namespaces::Actions {...}
 
-class CSS::Module::CSS3::Namespaces:ver<20110929.000> {
+class CSS::Module::CSS3::Namespaces { #:api<css3-namespace-20110929>
 
     rule at-decl:sym<namespace> {'@'(:i'namespace') <ns-prefix=.Ident>? [<url=.url-string>|<url>] ';' }
 }

@@ -17,7 +17,7 @@ use CSS::Module::CSS3::Fonts::Spec::Actions;
 use CSS::Module::CSS3::Fonts::AtFontFace::Spec::Interface;
 use CSS::Module::CSS3::Fonts::AtFontFace::Spec::Actions;
 
-grammar CSS::Module::CSS3::Fonts:ver<20130212.000> 
+grammar CSS::Module::CSS3::Fonts #:api<css3-fonts-20130212> 
     is CSS::Module::CSS3::Fonts::Variants
     is CSS::Module::CSS3::Fonts::Spec::Grammar
     is CSS::Module::CSS3::_Base

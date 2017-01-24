@@ -6,12 +6,11 @@ use CSS::Module::CSS3::_Base::Actions;
 # - reference: http://www.w3.org/TR/2006/WD-css3-page-20061010/
 #
 
-# BUILD.pl targets
 use CSS::Module::CSS3::PagedMedia::Spec::Interface;
 use CSS::Module::CSS3::PagedMedia::Spec::Grammar;
 use CSS::Module::CSS3::PagedMedia::Spec::Actions;
 
-grammar CSS::Module::CSS3::PagedMedia:ver<20061010.000>
+grammar CSS::Module::CSS3::PagedMedia  # :api<css3-page-20061010>
     is CSS::Module::CSS3::_Base
     is CSS::Module::CSS3::PagedMedia::Spec::Grammar
     does CSS::Module::CSS3::PagedMedia::Spec::Interface {

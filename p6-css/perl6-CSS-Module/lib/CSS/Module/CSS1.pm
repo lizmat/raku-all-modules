@@ -7,11 +7,11 @@ use v6;
 use CSS::Module;
 use CSS::Specification::Terms;
 use CSS::Grammar::CSS1;
-# BUILD.pl targets
+# make-modules.pl targets
 use CSS::Module::CSS1::Spec::Interface;
 use CSS::Module::CSS1::Spec::Grammar;
 
-grammar CSS::Module::CSS1:ver<0.0.1> #:api<20080411>
+grammar CSS::Module::CSS1 #:api<css1-20080411>
     is CSS::Specification::Terms
     is CSS::Grammar::CSS1
     is CSS::Module::CSS1::Spec::Grammar

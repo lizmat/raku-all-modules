@@ -3,7 +3,7 @@ use v6;
 # CSS3 Color Module Extensions
 # specification: http://www.w3.org/TR/2011/REC-css3-color-20110607/
 
-grammar CSS::Module::CSS3::Colors:ver<20110607.000> {
+grammar CSS::Module::CSS3::Colors { #:api<css3-color-20110607>
 
 # extensions for CSS3 Color Module
 

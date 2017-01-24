@@ -10,7 +10,7 @@ use v6;
 #    to load the Paged Media extension module in your class structure.
 class CSS::Module::CSS3::MediaQueries::Actions {...}
 
-class CSS::Module::CSS3::MediaQueries:ver<20120619.000> {
+class CSS::Module::CSS3::MediaQueries { #:api<css3-mediaqueries-20120619>
 
     use CSS::Grammar;
 
