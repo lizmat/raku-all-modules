@@ -1,0 +1,7 @@
+ssh q:to/HERE/, %( host => "127.0.0.1" );
+  echo one
+  echo two
+  echo three
+HERE
+
+ssh 'uptime', %( host => "127.0.0.1" )

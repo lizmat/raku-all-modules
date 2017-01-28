@@ -1,7 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "Sparrowdo",
-  "version"     : "0.0.2",
+  "version"     : "0.0.4",
   "description" : "Configuration management tool based on sparrow plugins system",
   "authors" : [ "Alexey Melezhik"],
   "depends"     : [
@@ -23,7 +23,8 @@
         "Sparrowdo::Core::DSL::Package" : "lib/Sparrowdo/Core/DSL/Package.pm6",
         "Sparrowdo::Core::DSL::CPAN::Package" : "lib/Sparrowdo/Core/DSL/CPAN/Package.pm6",
         "Sparrowdo::Core::DSL::Service" : "lib/Sparrowdo/Core/DSL/Service.pm6",
-        "Sparrowdo::Core::DSL::Bash" : "lib/Sparrowdo/Core/DSL/Bash.pm6"
+        "Sparrowdo::Core::DSL::Bash" : "lib/Sparrowdo/Core/DSL/Bash.pm6",
+        "Sparrowdo::Core::DSL::Ssh"  : "lib/Sparrowdo/Core/DSL/Ssh.pm6"
   },
   "source-url"  : "https://github.com/melezhik/sparrowdo.git"
 }

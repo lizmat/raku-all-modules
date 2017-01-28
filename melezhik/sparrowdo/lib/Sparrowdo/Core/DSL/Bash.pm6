@@ -10,7 +10,7 @@ multi sub bash ( $command, $user ) is export { bash $command, %( user => $user )
 
 multi sub bash ( $command, %opts = () ) is export {
 
-    my $task_name = %opts<description> || "execute bash command";
+    my $task_name = %opts<description> || ( ~ 'run bash: '  ~ $command.substr(0, 20) ~ ' ...');
 
     my %params = Hash.new;
 

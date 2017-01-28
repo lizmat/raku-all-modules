@@ -10,6 +10,7 @@ use Sparrowdo::Core::DSL::Package;
 use Sparrowdo::Core::DSL::CPAN::Package;
 use Sparrowdo::Core::DSL::Service;
 use Sparrowdo::Core::DSL::Bash;
+use Sparrowdo::Core::DSL::Ssh;
 
 sub MAIN (
 

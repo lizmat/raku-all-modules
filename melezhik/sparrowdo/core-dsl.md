@@ -12,6 +12,7 @@ Sparrowdo core-dsl functions spec.
 * [Files](#files)
 * [Templates](#templates)
 * [Bash commands](#bash)
+* [Ssh commands](#ssh)
 
 ## User accounts
 
@@ -267,3 +268,40 @@ Examples:
     bash "ls -l", %( 
       description => "use this description for bash command" 
     );    
+
+
+
+## Ssh
+
+This function executes ssh commands.
+
+| function | description | usage |
+| -------- | ----------- | ----- |
+| ssh | execute ssh commands | ssh($command,%args)
+
+Examples:
+
+    # ssh to 192.168.0.1 and execute 'uptime'
+    # a shortest form, only obligatory parameters are set:
+    ssh 'uptime', %( remote_host => '192.168.0.1' )
+
+    # you also may set a user:
+    ssh 'uptime', %(
+      remote_host => '192.168.0.1',
+      user        => 'old_dog'
+    );
+
+    # and ssh_key
+    ssh 'uptime', %(
+      remote_host => '192.168.0.1',
+      user        => 'old_dog',
+      ssh-key     => '/home/old_dog/.ssh/id_rsa'
+    );
+
+
+    # an example for multiline command
+    ssh q:to/CMD/, %( remote_host => '192.168.0.1', user => 'old_dog');
+      set -e
+      apt-get update
+      DEBIAN_FRONTEND=noninteractive apt-get install -y -qq curl
+    CMD
