@@ -14,7 +14,7 @@ use META6;
 my $m = META6.new(   name        => 'META6',
                      description => 'Work with Perl 6 META files',
                      version     => Version.new('0.0.1'),
-                     perl        => Version.new('6'),
+                     perl-version   => Version.new('6.*'),
                      depends     => <JSON::Class>,
                      test-depends   => <Test>,
                      tags        => <devel meta utils>,
