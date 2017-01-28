@@ -8,7 +8,7 @@
   "source-url" : "git://github.com/jonathanstowe/p6-Sys-Utmp.git",
   "perl" : "6.c",
   "build-depends" : [
-    "panda",
+	"Shell::Command",
     "LibraryMake"
   ],
   "provides" : {
@@ -26,5 +26,5 @@
   "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
   "description" : "Perl 6 access to Utmp entries on Unix-like systems",
   "tags" : [ "unix", "users", "utility" ],
-  "version" : "0.0.8"
+  "version" : "0.0.9"
 }
