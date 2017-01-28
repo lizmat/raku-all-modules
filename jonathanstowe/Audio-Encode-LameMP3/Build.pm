@@ -1,15 +1,17 @@
-use v6;
+use v6.c;
 
-use Panda::Common;
-use Panda::Builder;
 use LibraryCheck;
 
-class Build is Panda::Builder {
+class Build {
     method build($workdir) {
         if !library-exists('mp3lame', v0) {
             say "Won't build because no libmp3lame";
             die "You need to have libmp3lame installed";
         }
         True;
+    }
+    method isa($what) {
+        return True if $what.^name eq 'Panda::Builder';
+        callsame;
     }
 }
