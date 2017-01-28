@@ -1,8 +1,10 @@
 {
-    "name" : "Git::Config",
-    "version" : "0.0.1",
-    "description" : "Read and provide interface to git config.",
-    "author" : "Wenzel P. P. Peppmeyer",
-    "depends" : [ ],
-    "source-url" : "git://github.com/gfldex/perl6-git-config.git"
+    "name"         : "Git::Config",
+    "version"      : "0.0.1",
+    "perl"         : "6",
+    "description"  : "Read and provide interface to git config.",
+    "authors"      : [ "Wenzel P. P. Peppmeyer <wenzel.peppmeyer@gmx.de>" ],
+    "auth"         : "github:gfldex",
+    "depends"      : [ ],
+    "source-url"   : "https://github.com/gfldex/perl6-git-config.git"
 }
