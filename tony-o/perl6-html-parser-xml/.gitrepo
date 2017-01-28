@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-html-parser-xml.git
 	branch = master
-	commit = 30617a90f69794ae72a112b2433f29476ef7aa32
-	parent = 921f039e13362d26efd2cb727a8bcbda82e0c520
+	commit = bc7a57360fc729282edbb050684a9eb22a51a314
+	parent = eeda2ff4793f7e980c886e8755d467250b0265ca
 	cmdver = 0.4.0

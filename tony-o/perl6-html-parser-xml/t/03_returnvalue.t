@@ -2,6 +2,7 @@
 
 use lib 'lib';
 use HTML::Parser::XML;
+use XML::Document;
 use Test;
 
 my $html = slurp 't/data/S05.mini.html';

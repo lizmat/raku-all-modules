@@ -1,4 +1,5 @@
 use HTML::Parser::XML;
+use XML::Element;
 use Test;
 use lib 'lib';
 
@@ -35,7 +36,7 @@ sub traverse($doc) {
 
 my $doc = HTML::Parser::XML.new.parse($html);
 for traverse($doc) -> $node {
-    if $node ~~ XML::Element {
+    if ($node ~~ XML::Element) {
         if $node.name eq 'table' {
             my %tag-count;
             for traverse($node) -> $subnode {

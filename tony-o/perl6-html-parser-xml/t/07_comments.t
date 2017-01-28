@@ -1,4 +1,5 @@
 use HTML::Parser::XML;
+use XML::Comment;
 use Test;
 use lib 'lib';
 
