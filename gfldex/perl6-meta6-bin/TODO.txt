@@ -1,0 +1,13 @@
+- check if a project of the same name exists in the ecosystem
+- create local git repo
+- create github repo and push to it
+- when done, check URLs in META6.json
+- setup travis and add travis build status icon to README.md
+- maybe use btrfs subvolume for repo and snapshots for each individual step
+  (may depend on sudo)
+- run zef --depsonly install .
+- create Makefile
+- copy default license file
+- add copy right to README.md
+- copy default .gitignore
+

@@ -1,0 +1,53 @@
+#! /usr/bin/env perl6
+
+use v6;
+use META6;
+use HTTP::Client;
+use Git::Config;
+
+my @path = «%*ENV<HOME>/.meta6»».IO;
+my $cfg-dir = %*ENV<HOME>.IO.child('.meta6');
+my $github-user = git-config<credential><username>;
+my $github-realname = git-config<user><name>;
+my $github-email = git-config<user><email>;
+
+if $cfg-dir.e & !$cfg-dir.d {
+    note "WARN: ⟨$cfg-dir⟩ is not a directory.";
+}
+
+sub first-hit($basename){
+    @path».child($basename).grep(*.e & *.r).first
+}
+
+sub MAIN(Bool :$create-cfg-dir, Bool :$check, IO(Str) :$meta6-file = 'META6.json',
+         Bool :$create, Bool :$force,
+         Str :$name, Str :$description = '',
+         Str :$version = (v0.0.1).Str, Str :$perl = (v6.c).Str,
+         Str :$author =  "$github-realname <$github-email>",
+         Str :$auth = "github:$github-user")
+{
+    if $create-cfg-dir {
+        die "⟨$cfg-dir⟩ already exists" if $cfg-dir.e;
+        mkdir $cfg-dir and say "Created ⟨$cfg-dir⟩."
+    }
+
+    if $create {
+        die "Wont create ⟨$meta6-file⟩, file already exists" if $meta6-file.e && !$force;
+        die "To create a META6.json --name=<project-name-here> is required." unless $name;
+
+        my $meta6 = META6.new(:$name, :$description, version => Version.new($version), perl-version => Version.new($perl), authors => [$author], :$auth,
+                              source-url => "https://github.com/$github-user/$name",
+                              provides => {}, license => 'Artistic 2.0', production => False);
+        $meta6-file.spurt($meta6.to-json);
+    }
+
+    if $check {
+        my $meta6 = META6.new(file => $meta6-file) or die "Failed to process ⟨$meta6-file⟩.";
+        
+        with $meta6<source-url> {
+            if $meta6<source-url> ~~ /^ 'git://' / {
+                note „WARN: Schema git:// used in source-url. Use https:// to avoid logins and issues thanks to dependence on git.“;
+            }
+        }
+    }
+}

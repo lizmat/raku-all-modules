@@ -1,0 +1,9 @@
+{
+    "name" : "META6::bin",
+    "version" : "0.0.1",
+    "perl" : "6.c",
+    "description" : "Provide a binary to work with META6.json-files.",
+    "author" : "Wenzel P. P. Peppmeyer",
+    "depends" : [ "META6", "HTTP::Client", "Git::Config" ],
+    "source-url" : "git://github.com/gfldex/perl6-meta6-bin.git"
+}
