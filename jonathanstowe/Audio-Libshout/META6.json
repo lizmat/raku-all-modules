@@ -10,7 +10,6 @@
   "source-url" : "git://github.com/jonathanstowe/Audio-Libshout.git",
   "perl" : "6.c",
   "build-depends" : [
-	   "panda",
 		"LibraryCheck"
   ],
   "provides" : {
@@ -21,11 +20,11 @@
   ],
   "test-depends" : [
     "Test",
-	 "Test::META",
+	"Test::META",
     "File::Find",
     "Shell::Command",
     "CheckSocket"
   ],
   "description" : "Binding for libshout - source streaming client library for icecast",
-  "version" : "0.0.9"
+  "version" : "0.0.10"
 }
