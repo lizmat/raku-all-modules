@@ -6,7 +6,6 @@
   "source-url" : "git://github.com/jonathanstowe/Crypt-Libcrypt.git",
   "perl" : "6.c",
   "build-depends" : [
-     "panda"
   ],
   "provides" : {
     "Crypt::Libcrypt" : "lib/Crypt/Libcrypt.pm"
@@ -18,7 +17,7 @@
   ],
   "tags" : [ "crypt", "password" ],
   "description" : "Simple binding to crypt(3) from unix-like systems",
-  "version" : "0.0.6",
+  "version" : "0.0.7",
   "auth" : "github:jonathanstowe",
   "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
   "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ]

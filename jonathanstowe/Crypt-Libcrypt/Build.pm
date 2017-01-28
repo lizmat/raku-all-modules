@@ -1,8 +1,6 @@
-use v6;
+use v6.c;
 
-use Panda::Common;
-use Panda::Builder;
-class Build is Panda::Builder {
+class Build {
     method build($workdir) {
         if $*DISTRO.is-win {
             die "Crypt::Libcrypt is not supported on Windows";
@@ -11,5 +9,9 @@ class Build is Panda::Builder {
             die "Unable to determine how to get crypt(3) on macosx";
         }
         True;
+    }
+    method isa($what) {
+        return True if $what.^name eq 'Panda::Builder';
+        callsame;
     }
 }
