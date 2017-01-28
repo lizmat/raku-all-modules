@@ -9,16 +9,10 @@
      "libraries/double_metaphone"
   ],
   "build-depends": [
-      "panda",
+      "Shell::Command",
       "LibraryMake"
   ],
-  "excludes": {
-    
-  },
   "auth": "github:jonathanstowe",
-  "superseded-by": {
-    
-  },
   "provides": {
      "Doublephone" : "lib/Doublephone.pm"
   },
@@ -30,17 +24,10 @@
   ],
   "license": "perl",
   "test-depends": [
-    
   ],
   "description": "Implementation of the Double Metaphone phonetic encoding algorithm",
-  "emulates": {
-    
-  },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "meta6": "0",
-  "supersedes": {
-    
-  },
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
   ]
