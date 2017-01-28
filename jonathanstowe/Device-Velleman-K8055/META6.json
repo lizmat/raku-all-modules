@@ -16,7 +16,6 @@
    },
    "build-depends" : [
       "LibraryMake",
-      "panda",
       "Shell::Command"
    ],
    "description" : "A Perl 6 interface to the Velleman USB Experiment Kit",
@@ -28,7 +27,7 @@
    ],
    "name" : "Device::Velleman::K8055",
    "auth" : "github:jonathanstowe",
-   "version" : "0.0.1",
+   "version" : "0.0.2",
    "source-url" : "git://github.com/jonathanstowe/Device-Velleman-K8055.git",
    "depends" : []
 }

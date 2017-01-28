@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Device-Velleman-K8055.git
 	branch = master
-	commit = 5fe70db3a68333a82c2cf5bbfbb14367253c752c
-	parent = d90f165664849fb171d762fe95e57ccdfceb29e2
-	cmdver = 0.2.3
+	commit = 5c5790191097104651366f0d07d148df42aaada4
+	parent = d78b033b13c8792b8a7ec95f1429573f3709c072
+	cmdver = 0.4.0
