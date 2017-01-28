@@ -73,10 +73,13 @@ this method:
 
 Creates a new Promise that will be kept in C<$seconds> seconds, or later.
 
-    my $p = Promise.in(2).then({ say "2 seconds later" });
-    # do other stuff here
-
-    await $p;   # wait here until the 2 seconds are over
+    my $proc = Proc::Async.new('perl6', '-e', 'sleep 10; warn "end"');
+    
+    my $result = await Promise.anyof(
+        my $promise = $proc.start,
+        Promise.in(5).then: { note 'timeout'; $proc.kill }
+    ).then: {$promise.result};
+    # OUTPUT«timeout␤»
 
 =head2 method at
 
@@ -170,12 +173,12 @@ taken. See method C<vow> for more information.
 =head2 method break
 
     multi method break(Promise:D:)
-    multi method break(Promise:D: \result)
+    multi method break(Promise:D: \cause)
 
-Breaks a promise, optionally setting the result. If no result is passed, the
-result will be C<False>.
+Breaks a promise, optionally setting the cause. If no cause is passed, the
+cause will be C<False>.
 
-Throws an exception  of type X::Promise::Vowed if a vow has already been
+Throws an exception of type X::Promise::Vowed if a vow has already been
 taken. See method C<vow> for more information.
 
     my $p = Promise.new;
