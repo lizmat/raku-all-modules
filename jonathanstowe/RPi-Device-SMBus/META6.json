@@ -1,5 +1,5 @@
 {
-	"meta6" : "0",
+   "meta6" : "0",
    "tags" : [
       "RPi",
       "Rapberry Pi",
@@ -15,8 +15,11 @@
    "support" : {
       "source" : "git://github.com/jonathanstowe/RPi-Device-SMBus.git"
    },
-   "perl" : "6",
-   "build-depends" : [ "LibraryMake" ],
+   "perl" : "6.c",
+   "build-depends" : [ 
+		"Shell::Command",
+		"LibraryMake" 
+   ],
    "auth" : "github:jonathanstowe",
    "source-url" : "git://github.com/jonathanstowe/RPi-Device-SMBus.git",
    "depends" : [
@@ -26,8 +29,8 @@
    "authors" : [
       "Jonathan Stowe <jns+git@gellyfish.co.uk>"
    ],
-	"resources" : [ "libraries/i2chelper" ],
-   "version" : "0.0.1",
+   "resources" : [ "libraries/i2chelper" ],
+   "version" : "0.0.2",
    "license" : "Artistic",
    "description" : "SMBus/i2c interface on the Raspberry Pi"
 }

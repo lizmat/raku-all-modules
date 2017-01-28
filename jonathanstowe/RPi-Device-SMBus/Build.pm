@@ -1,14 +1,12 @@
 #!perl6
 
-use v6;
+use v6.c;
 
-use Panda::Common;
-use Panda::Builder;
 use LibraryMake;
 use Shell::Command;
 
-class Build is Panda::Builder {
-   method build($workdir) {
+class Build {
+   	method build($workdir) {
          my $srcdir = $workdir.IO.child('src').Str;
          my Str $destdir = "$workdir/lib/../resources/libraries";
          mkpath $destdir;
@@ -19,6 +17,10 @@ class Build is Panda::Builder {
          chdir($srcdir);
          shell(%vars<MAKE>);
          chdir($goback);
-   }
+   	}
+    method isa($what) {
+        return True if $what.^name eq 'Panda::Builder';
+        callsame;
+    }
 }
 # vim: ft=perl6 expandtab sw=4
