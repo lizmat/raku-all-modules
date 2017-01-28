@@ -10,7 +10,6 @@
   "author" : "Jonathan Stowe <jns+git@gellyfish.com>",
   "perl" : "6",
   "build-depends" : [
-    "panda",
     "LibraryMake",
     "Shell::Command"
   ],
@@ -26,7 +25,7 @@
     "Test"
   ],
   "description" : "Perl 6 access to Lastlog information on Unix-like systems",
-  "version" : "0.0.7",
+  "version" : "0.0.8",
   "tags" : [ "unix", "audit", "lastlog" ],
   "auth" : "github:jonathanstowe"
 }

@@ -1,13 +1,11 @@
 #!perl6
 
-use v6;
+use v6.c;
 
-use Panda::Common;
-use Panda::Builder;
 use LibraryMake;
 use Shell::Command;
 
-class Build is Panda::Builder {
+class Build {
     method build($workdir) {
         if $*DISTRO.is-win {
             die "Sys::Lastlog will not work on Windows - sorry";
@@ -28,6 +26,10 @@ class Build is Panda::Builder {
          chdir($srcdir);
          shell(%vars<MAKE>);
          chdir($goback);
+    }
+    method isa($what) {
+        return True if $what.^name eq 'Panda::Builder';
+        callsame;
     }
 }
 # vim: expandtab shiftwidth=4 ft=perl6 ts=4 sts=4
