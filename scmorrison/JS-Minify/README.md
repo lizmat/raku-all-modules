@@ -15,7 +15,26 @@ Minify a JavaScript file and have the output written directly to another file:
 use JS::Minify;
 
 my $js = slurp 'myScript.js';
-spurt 'myScript-min.js', js-minify(input => $js);
+spurt 'myScript.min.js', js-minify(input => $js);
+```
+
+Stream output via client consumer Channel:
+
+```perl6
+my $js = slurp 'myScript.js';
+my $stream = Channel.new;
+
+js-minify(input => $js, stream => $stream);
+
+my $out = open "myScript.min.js", :rw;
+react {
+  whenever $stream -> $chr {
+    # Client supplied $stream is auto-closed
+    # when minification has completed.
+    $out.print($chr);
+  }
+}
+$out.close;
 ```
 
 Minify a JavaScript string literal:
@@ -37,7 +56,7 @@ js-minify(input => "var x = 2;\n;;;alert('hi');\nvar x = 2;", stripDebug => 1)
 # output: 'var x=2;var x=2;'
 ```
 
-The `input` parameter is mandatory. The `copyright` and `strip_debug` parameters are optional and can be used in any combination.
+The `input` parameter is mandatory. The `copyright`, `strip_debug`, and `stream` parameters are optional and can be used in any combination.
 
 # Description
 

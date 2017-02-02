@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/scmorrison/JS-Minify.git
 	branch = master
-	commit = 0e1756ff163b560a562c746d64121838ac9013b9
-	parent = 681d36df5b7959041a01d63e184abb9107fac69d
+	commit = 493e51f4c01515d32d229b674c33518ca0c870fe
+	parent = b28a01c6d5f85ba80674181130ee927833786b59
 	cmdver = 0.4.0
