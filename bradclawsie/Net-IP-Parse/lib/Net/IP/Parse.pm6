@@ -75,7 +75,7 @@ Brad Clawsie (PAUSE:bradclawsie, email:brad@b7j0c.org)
 
 =end pod
 
-unit module Net::IP::Parse:auth<bradclawsie>:ver<0.0.2>;
+unit module Net::IP::Parse:auth<bradclawsie>:ver<0.0.3>;
 
 my package EXPORT::DEFAULT {
     
@@ -88,11 +88,11 @@ my package EXPORT::DEFAULT {
     
     subset IPVersion of Int where * == 4|6;
 
-    my sub word_bytes(UInt16:D $word --> List:D[UInt8]) {
+    my sub word-bytes(UInt16:D $word --> List:D[UInt8]) {
         return (($word +> 8) +& 0xff),($word +& 0xff); 
     }
     
-    my sub bytes_word(UInt8:D $left_byte, UInt8:D $right_byte --> UInt16:D) {
+    my sub bytes-word(UInt8:D $left_byte, UInt8:D $right_byte --> UInt16:D) {
         return (($left_byte +& 0xff ) +< 8) +| ($right_byte +& 0xff);
     }
 
@@ -141,11 +141,11 @@ my package EXPORT::DEFAULT {
                 my ($i,$j) = (0,15);
                 for @left_words_strs -> $word_str {
                     my UInt16 $word = $word_str.parse-base: 16;
-                    (@bytes[$i++],@bytes[$i++]) = word_bytes $word;
+                    (@bytes[$i++],@bytes[$i++]) = word-bytes $word;
                 }
                 for @right_words_strs.reverse -> $word_str {
                     my UInt16 $word = $word_str.parse-base: 16;
-                    my ($l,$r) = word_bytes $word;
+                    my ($l,$r) = word-bytes $word;
                     (@bytes[$j--],@bytes[$j--]) = ($r,$l);
                 }                
                 self.BUILD(octets=>@bytes)
@@ -163,16 +163,19 @@ my package EXPORT::DEFAULT {
             for @($octets) -> $octet { @!octets[$i++] := $octet; }            
             $!version := $l == 4 ?? 4 !! 6;
         }
-        
+
+        # Convert the IP address to its string representation.
         method str(--> Str:D) {
             if $!version == 4 {
                 return @!octets.join: '.';
             } else {
-                return (@!octets.map: {sprintf("%x", bytes_word($^a,$^b))}).join: ':';
+                return (@!octets.map: {sprintf("%x", bytes-word($^a,$^b))}).join: ':';
             }
         }
 
-        method compress_str(--> Str:D) {
+        # IPv6 addresses can be compressed as strings to replace continuous sequences
+        # of zeroes with '::'.
+        method compress-str(--> Str:D) {
             if $!version == 4 {
                 return self.str;
             } else {
@@ -192,7 +195,7 @@ my package EXPORT::DEFAULT {
                     ($max_start,$max_end,$max_len) = ($start,7,$len) if $len > $max_len;
                 }
 
-                my @print_words = @!octets.map: {sprintf("%x", bytes_word($^a,$^b))};
+                my @print_words = @!octets.map: {sprintf("%x", bytes-word($^a,$^b))};
                 if $max_len != 0 {                    
                     my ($pre,$post) = ('','');
                     $pre = @print_words[0..($max_start-1)].join: ':' if $max_start > 0;
@@ -202,6 +205,11 @@ my package EXPORT::DEFAULT {
                     return @print_words.join: ':';
                 }
             }
+        }
+
+        # Old name for compress-str; support old api.
+        method compress_str(--> Str:D) {
+            self.compress-str;
         }
     }
     
@@ -276,6 +284,12 @@ my package EXPORT::DEFAULT {
         }
     }
 
+    # in-cidr returns true if an IP address is in a subnet.
+    our sub infix:<< in-cidr >> (IP:D $ip, CIDR:D $cidr where $ip.version == $cidr.addr.version --> Bool:D) {
+        return $ip ip>= $cidr.network_addr && $ip ip<= $cidr.broadcast_addr;
+    }
+
+    # in_cidr returns true if an IP address is in a subnet. Old api preserved.
     our sub infix:<< in_cidr >> (IP:D $ip, CIDR:D $cidr where $ip.version == $cidr.addr.version --> Bool:D) {
         return $ip ip>= $cidr.network_addr && $ip ip<= $cidr.broadcast_addr;
     }

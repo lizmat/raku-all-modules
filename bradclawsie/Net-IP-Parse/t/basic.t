@@ -116,18 +116,11 @@ lives-ok {
     is ($ip.version == 6), True, 'is ipv6';
 }, 'valid';
 
-sub array_eq(@a, @b) {
-    return False if @a.elems != @b.elems;
-    for 0..^@a.elems -> $i {
-        return False if @a[$i] != @b[$i];
-    }
-    return True;
-}
-
 lives-ok {
     my IP $ip = IP.new(addr=><1::>);
     my @octets = 0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
-    is (($ip.version == 6) && (array_eq $ip.octets, @octets)), True, 'is ipv6';
+    my @obj_octets = $ip.octets;
+    is (($ip.version == 6) && (@obj_octets eqv @octets)), True, 'is ipv6';
 }, 'valid';
 
 lives-ok {
@@ -139,7 +132,8 @@ lives-ok {
 lives-ok {
     my IP $ip = IP.new(addr=><1:2:3:4:5:6:7:8>);
     my @octets = 0,1,0,2,0,3,0,4,0,5,0,6,0,7,0,8;
-    is (($ip.version == 6) && (array_eq $ip.octets, @octets)), True, 'is ipv6';
+    my @obj_octets = $ip.octets;
+    is (($ip.version == 6) && (@obj_octets eqv @octets)), True, 'is ipv6';
 }, 'valid';
 
 dies-ok {
@@ -224,8 +218,7 @@ lives-ok {
     my IP $ref = IP.new(addr=>'0:0:ffff:ffff:ffff:ffff:ffff:ffff');
     is ($ip ip== $ref), True, 'equivalent with reference';
     my $compressed = $ip.compress_str;
-    is ($compressed eq $s), True, 'compressed';
-    
+    is ($compressed eq $s), True, 'compressed';    
 }, 'valid compress';
 
 lives-ok {
@@ -259,45 +252,45 @@ lives-ok {
 lives-ok {
     my CIDR $cidr = CIDR.new(cidr=>'8.8.8.8/16');
     my IP $addr = IP.new(addr=>'8.8.0.0');
-    is ($addr in_cidr $cidr), True, 'ip in cidr';
+    is ($addr in-cidr $cidr), True, 'ip in cidr';
     $addr = IP.new(addr=>'8.8.2.2');
-    is ($addr in_cidr $cidr), True, 'ip in cidr';
+    is ($addr in-cidr $cidr), True, 'ip in cidr';
     $addr = IP.new(addr=>'8.8.255.255');
-    is ($addr in_cidr $cidr), True, 'ip in cidr';
+    is ($addr in-cidr $cidr), True, 'ip in cidr';
 }, 'valid "in cidr"';
 
 lives-ok {
     my CIDR $cidr = CIDR.new(cidr=>'2001:db8::/32');
     my IP $addr = IP.new(addr=>'2001:0db8:0000:0000:0000:0000:0000:0000');
-    is ($addr in_cidr $cidr), True, 'ip in cidr';
+    is ($addr in-cidr $cidr), True, 'ip in cidr';
     $addr = IP.new(addr=>'2001:db8:ffff:ffff:ffff:ffff:ffff:0001');
-    is ($addr in_cidr $cidr), True, 'ip in cidr';
+    is ($addr in-cidr $cidr), True, 'ip in cidr';
     $addr = IP.new(addr=>'2001:db8:ffff:ffff:ffff:ffff:ffff:ffff');
-    is ($addr in_cidr $cidr), True, 'ip in cidr';
+    is ($addr in-cidr $cidr), True, 'ip in cidr';
 }, 'valid "in cidr"';
 
 lives-ok {
     my CIDR $cidr = CIDR.new(cidr=>'8.8.8.8/16');
     my IP $addr = IP.new(addr=>'8.9.0.0');
-    is ($addr in_cidr $cidr), False, 'ip not in cidr';
+    is ($addr in-cidr $cidr), False, 'ip not in cidr';
 }, 'valid not "in cidr"';
 
 lives-ok {
     my CIDR $cidr = CIDR.new(cidr=>'2001:db8::/32');
     my IP $addr = IP.new(addr=>'2001:0db9:0000:0000:0000:0000:0000:0000');
-    is ($addr in_cidr $cidr), False, 'ip not in cidr';
+    is ($addr in-cidr $cidr), False, 'ip not in cidr';
 }, 'valid not "in cidr"';
 
 dies-ok {
     my CIDR $cidr = CIDR.new(cidr=>'2001:db8::/32');
     my IP $addr = IP.new(addr=>'8.8.0.0');
-    is ($addr in_cidr $cidr), True, 'ip in cidr';
+    is ($addr in-cidr $cidr), True, 'ip in cidr';
 }, 'detected version mismatch';
 
 dies-ok {
     my CIDR $cidr = CIDR.new(cidr=>'8.8.8.8/16');
     my IP $addr = IP.new(addr=>'2001:0db8:0000:0000:0000:0000:0000:0000');
-    is ($addr in_cidr $cidr), True, 'ip in cidr';
+    is ($addr in-cidr $cidr), True, 'ip in cidr';
 }, 'detected version mismatch';
 
 done-testing;

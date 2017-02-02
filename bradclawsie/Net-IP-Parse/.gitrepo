@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bradclawsie/Net-IP-Parse.git
 	branch = master
-	commit = c9afced3a0dbf80e8af9f49f13e6fae0728e381f
-	parent = dcf2ee6e1f02b51e4e360b5cde705b837ba50d30
+	commit = ad9b79879a032dbc510ac1b75b09cbc896e54b1d
+	parent = 44fa9ccdcf363d36d799adc43617ac3fc65972bd
 	cmdver = 0.4.0

@@ -1,7 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Net::IP::Parse",
-    "version" : "0.0.2",
+    "version" : "0.0.3",
     "description" : "Types for IP addresses and manipulation methods.",
     "author" : "Brad Clawsie",
     "provides" : {
