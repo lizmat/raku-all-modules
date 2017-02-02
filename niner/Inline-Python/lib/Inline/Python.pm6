@@ -7,13 +7,7 @@ has &!call_method;
 
 use NativeCall;
 
-sub native(Sub $sub) {
-    my Str $path = %?RESOURCES<libraries/pyhelper>.Str;
-    unless $path {
-        die "unable to find pyhelper library";
-    }
-    trait_mod:<is>($sub, :native($path));
-}
+my constant $pyhelper = %?RESOURCES<libraries/pyhelper>.Str;
 
 class PythonObject { ... }
 role PythonParent { ... }
@@ -46,131 +40,141 @@ class ObjectKeeper {
 }
 
 sub py_init_python(&call_object (int32, Pointer, Pointer --> Pointer), &call_method (int32, Str, Pointer, Pointer --> Pointer))
+    is native($pyhelper)
     { ... }
-    native(&py_init_python);
 sub py_init_perl6object()
+    is native($pyhelper)
     { ... }
-    native(&py_init_perl6object);
 sub py_eval(Str, int32)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_eval);
+sub py_import(Str)
+    returns Pointer
+    is native($pyhelper)
+    { ... }
 sub py_instance_check(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_instance_check);
 sub py_is_instance(Pointer, Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_is_instance);
 sub py_int_check(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_int_check);
 sub py_float_check(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_float_check);
 sub py_unicode_check(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_unicode_check);
+sub py_ascii_string_check(Pointer)
+    is native($pyhelper)
+    returns int32 { ... }
 sub py_string_check(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_string_check);
 sub py_sequence_check(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_sequence_check);
 sub py_mapping_check(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_mapping_check);
 sub py_callable_check(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_callable_check);
 sub py_is_none(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_is_none);
 sub py_int_as_long(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_int_as_long);
 sub py_int_to_py(int32)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_int_to_py);
 sub py_float_as_double(Pointer)
+    is native($pyhelper)
     returns num64 { ... }
-    native(&py_float_as_double);
 sub py_float_to_py(num64)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_float_to_py);
 sub py_unicode_as_utf8_string(Pointer)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_unicode_as_utf8_string);
 sub py_string_as_string(Pointer)
+    is native($pyhelper)
     returns Str { ... }
-    native(&py_string_as_string);
 sub py_string_to_buf(Pointer, CArray[CArray[int8]])
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_string_to_buf);
 sub py_str_to_py(int32, Str)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_str_to_py);
 sub py_buf_to_py(int32, Blob)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_buf_to_py);
 sub py_tuple_new(int32)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_tuple_new);
 sub py_tuple_set_item(Pointer, int32, Pointer)
+    is native($pyhelper)
     { ... }
-    native(&py_tuple_set_item);
 sub py_list_new(int32)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_list_new);
 sub py_list_set_item(Pointer, int32, Pointer)
+    is native($pyhelper)
     { ... }
-    native(&py_list_set_item);
 sub py_dict_new()
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_dict_new);
 sub py_dict_set_item(Pointer, Pointer, Pointer)
+    is native($pyhelper)
     { ... }
-    native(&py_dict_set_item);
 sub py_call_function(Str, Str, Pointer)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_call_function);
 sub py_call_function_kw(Str, Str, Pointer, Pointer)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_call_function_kw);
 sub py_call_static_method(Str, Str, Str, Pointer)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_call_static_method);
 sub py_call_static_method_kw(Str, Str, Str, Pointer, Pointer)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_call_static_method_kw);
 sub py_call_method(Pointer, Str, Pointer)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_call_method);
 sub py_call_method_kw(Pointer, Str, Pointer, Pointer)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_call_method_kw);
 sub py_sequence_length(Pointer)
+    is native($pyhelper)
     returns int32 { ... }
-    native(&py_sequence_length);
 sub py_sequence_get_item(Pointer, int32)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_sequence_get_item);
 sub py_mapping_items(Pointer)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_mapping_items);
 sub py_none()
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_none);
 sub py_dec_ref(Pointer)
+    is native($pyhelper)
     { ... }
-    native(&py_dec_ref);
 sub py_inc_ref(Pointer)
+    is native($pyhelper)
     { ... }
-    native(&py_inc_ref);
 sub py_getattr(Pointer, Str)
+    is native($pyhelper)
     returns Pointer { ... }
-    native(&py_getattr);
+sub py_dir(Pointer)
+    is native($pyhelper)
+    returns Pointer { ... }
 sub py_fetch_error(CArray[Pointer])
+    is native($pyhelper)
     { ... }
-    native(&py_fetch_error);
 
 method py_dec_ref(Pointer $obj) {
     py_dec_ref($obj);
@@ -183,14 +187,14 @@ sub free_p6_object(Int $index) {
 }
 
 method py_array_to_array(Pointer $py_array) {
-    my $array = [];
+    my @array;
     my $len = py_sequence_length($py_array);
     for 0..^$len {
         my $item = py_sequence_get_item($py_array, $_);
-        $array[$_] = self.py_to_p6($item);
+        @array[$_] = self.py_to_p6($item);
         py_dec_ref($item);
     }
-    return $array;
+    return @array;
 }
 
 method py_dict_to_hash(Pointer $py_dict) {
@@ -394,8 +398,35 @@ multi method invoke(PythonParent $p6obj, Pointer $obj, Str $method, *@args) {
     return retval;
 }
 
-method py_getattr(Pointer $obj, Str $name) {
-    return py_getattr($obj, $name);
+method import(Str $name) {
+    my $py_module = py_import($name);
+    my $module    = self.py_to_p6($py_module);
+
+    my $class := Metamodel::ClassHOW.new_type(name => $name);
+
+    my @parts = $name.split('.');
+    my $inner = @parts.pop;
+    my $stash := Stash.new;
+    my $ns := $stash;
+    for @parts {
+        $ns{$_} := Metamodel::PackageHOW.new_type(name => $_);
+        $ns := $ns{$_}.WHO;
+    }
+    $ns{$inner} := $class;
+
+    my @attrs     = self.py_to_p6(py_dir($py_module));
+    for @attrs -> $attr {
+        my $attr_name = $attr ~~ Blob ?? $attr.decode('latin-1') !! $attr;
+        my $value = py_getattr($py_module, $attr_name);
+        if py_callable_check($value) {
+            # create wrapper function in package
+            $class.WHO{"&$attr_name"} := sub (*@args) {
+                self.call($name, $attr_name, @args.list);
+            }
+        }
+    }
+
+    return CompUnit::Handle.from-unit($stash);
 }
 
 method create_subclass(Str $package, Str $class, Str $subclass_name) {
@@ -576,3 +607,48 @@ multi sub EVAL(
     CATCH { note $_ }
     $py.run($code, |($mode eq 'eval' ?? :eval !! :file));
 }
+
+CompUnit::RepositoryRegistry.use-repository(
+    class :: does CompUnit::Repository {
+        method need(
+            CompUnit::DependencySpecification $spec,
+            CompUnit::PrecompilationRepository $precomp?,
+        )
+            returns CompUnit:D
+        {
+            if $spec.from eq 'Python' {
+                my $python = Inline::Python.default_python;
+
+                if $*RAKUDO_MODULE_DEBUG -> $RMD {
+                    $RMD("Loading {$spec.short-name} via Inline::Python");
+                }
+                my $handle := $python.import(
+                    $spec.short-name,
+                );
+                return CompUnit.new(
+                    :short-name($spec.short-name),
+                    :$handle,
+                    :repo(self),
+                    :repo-id($spec.short-name),
+                    :from($spec.from),
+                );
+            }
+
+            return self.next-repo.need($spec, |($precomp ?? $precomp !! ())) if self.next-repo;
+            X::CompUnit::UnsatisfiedDependency.new(:specification($spec)).throw;
+        }
+
+        method loaded() {
+            []
+        }
+
+        method id() {
+            'Python'
+        }
+
+        method path-spec() {
+            'python#'
+        }
+    }.new(),
+    :current($*REPO),
+)
