@@ -118,7 +118,7 @@ class Hash::Consistent is export {
         $!lock.protect(
             {
                 my $j = 0;
-                for self!sorted_hashes() -> $i {
+                for self!sorted-hashes() -> $i {
                     say "$j: $i [crc32 of %!mult_source{$i} derived from %!source{%!mult_source{$i}}]";
                     $j++;
                 }
@@ -126,16 +126,16 @@ class Hash::Consistent is export {
         );            
     }
 
-    my sub mult_elt(Str:D $s,Cool:D $i) {
+    my sub mult-elt(Str:D $s,Cool:D $i) {
         return $s ~ '.' ~ Str($i);
     }
 
-    method !sorted_hashes() {
+    method !sorted-hashes() {
         return %!mult_source.keys.map( { Int($_) } ).sort;    
     }
 
     # Cache CRC32 hashes.
-    method !getCRC32(Str:D $s) {
+    method !get-CRC32(Str:D $s) {
         return %!hashed{$s} if %!hashed{$s}:exists;
         my UInt $crc32 = String::CRC32::crc32($s);
         %!hashed{$s} = $crc32;
@@ -153,7 +153,7 @@ class Hash::Consistent is export {
                 if $n == 0 {
                     X::Hash::Consistent::IsEmpty.new(input => 'hash empty').throw;
                 }
-                my UInt $crc32 = self!getCRC32($s);
+                my UInt $crc32 = self!get-CRC32($s);
                 if ($n == 1) || ($crc32 >= @!sum_list[$n-1]) {
                     # If there is only one element in sum_list, or, if given crc32 is greater than the last
                     # element in the list, then return the 0th element. 
@@ -175,14 +175,14 @@ class Hash::Consistent is export {
         );
     }
 
-   method !remove_one(Str:D $s) {
-       my UInt $crc32 = self!getCRC32($s);
+   method !remove-one(Str:D $s) {
+       my UInt $crc32 = self!get-CRC32($s);
        my $in_list = ($crc32 == @!sum_list.any);
        my $in_mult_source = %!mult_source{$crc32}:exists;
        return if (!$in_list && !$in_mult_source); # Not in the consistent hash.
        if ($in_list && $in_mult_source) {
            %!mult_source{$crc32}:delete;
-           @!sum_list = self!sorted_hashes();
+           @!sum_list = self!sorted-hashes();
            return;
        } else {
            # The instance is corrupt, the string is in only one of the structures.
@@ -196,7 +196,7 @@ class Hash::Consistent is export {
            {
                for ^$!mult -> $i {
                    try {
-                       self!remove_one(mult_elt($s,$i));
+                       self!remove-one(mult-elt($s,$i));
                        CATCH {
                            default {
                                X::Hash::Consistent::RemoveFailure.new(input => $!.message()).throw;
@@ -208,8 +208,8 @@ class Hash::Consistent is export {
        );
     }
 
-    method !insert_one(Str:D $mult_s,$s) {
-        my UInt $crc32 = self!getCRC32($mult_s);
+    method !insert-one(Str:D $mult_s,$s) {
+        my UInt $crc32 = self!get-CRC32($mult_s);
         if $crc32 == @!sum_list.any {
             if %!mult_source{$crc32}:exists {
                 # Just return, the string is already in the consistent hash.
@@ -221,7 +221,7 @@ class Hash::Consistent is export {
             }
         }
         %!mult_source{$crc32} = $mult_s;
-        @!sum_list = self!sorted_hashes();
+        @!sum_list = self!sorted-hashes();
         %!source{$mult_s} = $s;
         return;
     }
@@ -232,7 +232,7 @@ class Hash::Consistent is export {
            {
                for ^$!mult -> $i {
                    try {
-                       self!insert_one(mult_elt($s,$i),$s);
+                       self!insert-one(mult-elt($s,$i),$s);
                        CATCH {
                            default {
                                # If any insert failed, we must remove any insertions made for $s.

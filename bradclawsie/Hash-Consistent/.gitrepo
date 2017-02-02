@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bradclawsie/Hash-Consistent.git
 	branch = master
-	commit = b3f5c9d0b7df2077d01c81b080593ecf92b78ba6
-	parent = 47c916042fdf22338c41618b23a801c0478af013
+	commit = 422635275367a4c2bc99239a300130110be6bab9
+	parent = b7e41491e816cbf46aff8d04a4bff44b30f9625c
 	cmdver = 0.4.0
