@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bradclawsie/WebService-AWS-V4.git
 	branch = master
-	commit = 269cc2663fcfb217cb1029bff39bceed028e60c1
-	parent = bf9a8d1e41474b4f1ec32e2e35b649c61bcfb98d
+	commit = c4a6f44c3a37d01c513bda1514f74d8f8f29eda5
+	parent = 3621d0cebb9409491611a7190f26110a4ded045c
 	cmdver = 0.4.0
