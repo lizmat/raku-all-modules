@@ -1,0 +1,54 @@
+// Portions of the code are licensed under the BSD 3-Clause License:
+// Copyright (c) 2000-2017 Chih-Chung Chang and Chih-Jen Lin
+// All rights reserved.
+
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+
+// 1. Redistributions of source code must retain the above copyright
+// notice, this list of conditions and the following disclaimer.
+
+// 2. Redistributions in binary form must reproduce the above copyright
+// notice, this list of conditions and the following disclaimer in the
+// documentation and/or other materials provided with the distribution.
+
+// 3. Neither name of copyright holders nor the names of its contributors
+// may be used to endorse or promote products derived from this software
+// without specific prior written permission.
+
+
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+// Relicensed under the MIT:
+// Algorithm::LibSVM -- A Perl 6 bindings for libsvm
+//  Copyright(C) 2017 titsuki <titsuki@cpan.org>
+// For more details, see the "LICENSE" file.
+--- libsvm-3.22/svm.h	2016-12-22 02:58:58.000000000 +0900
++++ libsvm-3.22-new/svm.h	2017-01-09 19:57:43.582976818 +0900
+@@ -13,6 +13,7 @@
+ {
+ 	int index;
+ 	double value;
++	svm_node *next;
+ };
+ 
+ struct svm_problem
+@@ -96,6 +97,7 @@
+ int svm_check_probability_model(const struct svm_model *model);
+ 
+ void svm_set_print_string_function(void (*print_func)(const char *));
++void svm_set_srand(int seed);
+ 
+ #ifdef __cplusplus
+ }
