@@ -33,7 +33,8 @@ The first track is still the *raison d'être* for 007. The second track rounds
   is **masak**.
 * Also want to close [a philosophical
   issue](https://github.com/masak/007/issues/7) about the statement/expression
-  discrepancy that's exhibited in quasi blocks.
+  discrepancy that's exhibited in quasi blocks. We're quite near to being able
+  to resolve this one now.
 * Make unhygienic declarations that are injected into code [actually declare
   stuff](https://github.com/masak/007/issues/88). We can cheat majorly at this
   one at first, as long as it works.
@@ -77,3 +78,20 @@ expected areas of focus after v1.0.0.
 Two things would be worthy enough to produce a v2.0.0 version. Either 007 being
 bootstrapping enough to have both a runtime and a parser written in itself; or
 007 having all three of regular macros, syntax macros, and visitor macros.
+
+## Various protocols
+
+XXX Will have to describe these protocols more in detail later. All the information
+is currently scattered in the issue queue, which is what this roadmap is meant to
+counteract.
+
+Suffice it to say for now that "protocols" seem to be a fruitful approach to making
+a language both extensible, introspectable, and bootstrappable all at once.
+
+* boolification protocol
+* equality protocol
+* assignment protocol
+* iterator protocol
+* declaration protocol
+* signature binder protocol
+* control flow protocol
