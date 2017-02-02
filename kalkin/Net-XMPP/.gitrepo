@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/kalkin/Net-XMPP.git
+	branch = master
+	commit = e808189831f8b7aee0f13343358475175912f166
+	parent = 293a60de91e9aa18b0a6dd05d46fa0870ff142f3
+	cmdver = 0.4.0
