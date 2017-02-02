@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/drforr/perl6-readline.git
 	branch = master
-	commit = 181fdda785ff50e9812b44b43b58ec4bc715fdc3
-	parent = 3076305a3a6c9213f013b670030f8a28c70e35ed
+	commit = d08f84c7ff66181135cf3659019eb7121ca81a21
+	parent = 33dce1f55ae8bab28543e060ec80e485f4166899
 	cmdver = 0.4.0
