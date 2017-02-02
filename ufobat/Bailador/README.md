@@ -15,7 +15,7 @@ A light-weight route-based web application framework for Perl 6
             - [`post(Pair $x)`](#postpair-x)
             - [`put(Pair $x)`](#putpair-x)
             - [`delete(Pair $x)`](#deletepair-x)
-            - [`prefix(Str $prefix, Callable $code)`](#prefixstr-prefix-callable-code)
+            - [`prefix(Pair $x)`](#prefixstr-prefix-callable-code)
             - [`prefix-enter(Callable $code)`](#prefix-entercallable-code)
             - [`redirect(Str $location)`](#redirectstr-location)
             - [`renderer(Bailador::Template $renderer)`](#rendererbailadortemplate-renderer)
@@ -25,6 +25,7 @@ A light-weight route-based web application framework for Perl 6
         - [Subroutines that sould only be used inside the Code block of a Route](#subroutines-that-sould-only-be-used-inside-the-code-block-of-a-route)
             - [`content_type(Str $type)`](#content_typestr-type)
             - [`request()`](#request)
+            - [`uri-for(Str $path)`](#uri-forstr-path)
             - [`header(Str $name, Cool $value)`](#headerstr-name-cool-value)
             - [`cookie(Str $name, Str $value, Str :$domain, Str :$path, DateTime :$expires, Bool :$http-only; Bool :$secure)`](#cookiestr-name-str-value-str-domain-str-path-datetime-expires-bool-http-only-bool-secure)
             - [`status(Int $code)`](#statusint-code)
@@ -98,7 +99,7 @@ Adds a route for get, post, put or delete requests. The key of the `Pair` is eit
 The prefix sets up a [Nested Route](#nested-routes). All other routes that will be added within the $code will in fact be added to this nested route. With prefix-enter you can define code that will called whenever the prefix matches your HTTP request. Only if this code returns True the routes within the prefix can be reached during request dispatching. Without using prefix-enter the routes in the prefix are reachable - this means the default code for a prefix route is ``` sub { True } ```.
 
 ```Perl6
-    prefix "/foo", sub {
+    prefix "/foo" => sub {
         prefix-enter sub {
             ... something that returns True or False ...
         }
@@ -136,6 +137,10 @@ Sets the Content Type for the response to $type.
 ##### `request()`
 
 Gets current the Request.
+
+##### `uri-for(Str $path)`
+
+Constructs a URI String from the base and the passed $path.
 
 ##### `header(Str $name, Cool $value)`
 
