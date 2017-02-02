@@ -53,9 +53,9 @@ sub MAIN (
 
   say colored('running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
 
-  ssh_shell "echo print os | perl -MOutthentic  > /tmp/os.txt";
+  ssh_shell 'mkdir -m 777 -p /tmp/sparrow-cache && echo print os | perl -MOutthentic  > /tmp/sparrow-cache/os.txt';
 
-  scp '/tmp/os.txt', '/tmp/target_os', 1; # copy back /tmp/os.txt 
+  _scp "/tmp/sparrow-cache/os.txt", "/tmp/target_os", 1; # copy back /tmp/os.txt 
 
   set_target_os slurp "/tmp/target_os";
 
@@ -75,11 +75,13 @@ sub MAIN (
 
   exit if $check_syntax;
 
-  spurt '/tmp/sparrowdo-box.json', (to-json get_tasks());
+  mkdir '/tmp/sparrowdo/';
 
-  scp '/tmp/sparrowdo-box.json', '/tmp/';
+  spurt "/tmp/sparrowdo/task-box$*PID.json", (to-json get_tasks());
 
-  say colored('set up task box file - /tmp/sparrowdo-box.json - OK', 'bold green on_blue');
+  _scp "/tmp/sparrowdo/task-box$*PID.json", "/tmp/sparrow-cache/";
+
+  say colored("set up task box file - /tmp/sparrowdo/task-box$*PID.json - OK", 'bold green on_blue');
 
 
   if get_spl() {
@@ -89,16 +91,16 @@ sub MAIN (
       say colored( 'puplating SPL file', 'bold yellow on_cyan' );
     }
 
-    spurt '/tmp/sparrow.list', get_spl().join: "\n";
-    scp '/tmp/sparrow.list', '/tmp/';
-    ssh_shell 'mkdir -p /opt/sparrow && mv  /tmp/sparrow.list /opt/sparrow';
+    spurt '/tmp/sparrowdo/sparrow.list', get_spl().join: "\n";
+    _scp '/tmp/sparrowdo/sparrow.list', '/tmp/sparrow-cache/';
+    ssh_shell 'mkdir -p /opt/sparrow && mv  /tmp/sparrow-cache/sparrow.list /opt/sparrow';
     say colored('copied SPL file as /opt/sparrow/sparrow.list - OK', 'bold green on_blue');
 
   }
 
   ssh_shell 'sparrow index update' unless input_params('NoIndexUpdate');
 
-  ssh_shell 'sparrow box run /tmp/sparrowdo-box.json --mode quiet --purge-cache';
+  ssh_shell "sparrow box run /tmp/sparrow-cache/task-box$*PID.json --mode quiet --purge-cache";
 
 }
 
@@ -142,7 +144,7 @@ sub ssh_shell ( $cmd ) {
 
 }
 
-sub scp ( $file, $dest, $reverse = 0 ) {
+sub _scp ( $file, $dest, $reverse = 0 ) {
 
   my $ssh_host_term = input_params('Host');
 

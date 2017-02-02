@@ -1,11 +1,25 @@
+# 0.0.7
+
+2017-02-01
+
+* a lot of improvements for bash/ssh/scp core dsl functions
+
+# 0.0.6
+
+* core-dsl/ssh - refactoring
+
+# 0.0.5
+
+* core-dsl/ssh - fix documentation issues / add `create` parameter
+
 # 0.0.4
 
-* ssh core-dsl - explicit exit at the end of ssh command
+* core-dsl/ssh - explicit exit at the end of ssh command
 
 # 0.0.3
 
-* bash core-dsl - generated a proper description for command ( if not set ) instead of dummy "execute bash command"
-* ssh core-dsl function added
+* core-dsl/bash - generated a proper description for command ( if not set ) instead of dummy "execute bash command"
+* core-dsl/ssh function added
 
 # 0.0.2
 

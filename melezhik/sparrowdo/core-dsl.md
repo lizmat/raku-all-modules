@@ -13,6 +13,7 @@ Sparrowdo core-dsl functions spec.
 * [Templates](#templates)
 * [Bash commands](#bash)
 * [Ssh commands](#ssh)
+* [Scp command](#scp)
 
 ## User accounts
 
@@ -278,30 +279,87 @@ This function executes ssh commands.
 | function | description | usage |
 | -------- | ----------- | ----- |
 | ssh | execute ssh commands | ssh($command,%args)
+| ssh | alias for `ssh` with command set via %args | ssh(%args)
 
 Examples:
 
     # ssh to 192.168.0.1 and execute 'uptime'
     # a shortest form, only obligatory parameters are set:
-    ssh 'uptime', %( remote_host => '192.168.0.1' )
+    ssh 'uptime', %( host => '192.168.0.1' )
+OOB
+    # the same but add description for command:
+    ssh 'uptime', %( host => '192.168.0.1' , description => "how old are you?" );
 
     # you also may set a user:
     ssh 'uptime', %(
-      remote_host => '192.168.0.1',
-      user        => 'old_dog'
+      host  => '192.168.0.1',
+      user  => 'old_dog'
     );
 
     # and ssh_key
     ssh 'uptime', %(
-      remote_host => '192.168.0.1',
-      user        => 'old_dog',
-      ssh-key     => '/home/old_dog/.ssh/id_rsa'
+      host    => '192.168.0.1',
+      user    => 'old-dog',
+      ssh-key => 'keys/id_rsa'
     );
 
 
     # an example for multiline command
-    ssh q:to/CMD/, %( remote_host => '192.168.0.1', user => 'old_dog');
+    ssh q:to/CMD/, %( host => '192.168.0.1', user => 'old_dog');
       set -e
       apt-get update
       DEBIAN_FRONTEND=noninteractive apt-get install -y -qq curl
     CMD
+  
+    # create $create file upon successful execution
+    # prevent from running ssh command next time if file $create exist:
+    ssh "run-me", %(  host => '192.168.0.1' , create => '/do/not/run/twice' )
+
+
+## Scp
+
+This function copies files from/to target host from/to remote host
+
+| function | description | usage |
+| -------- | ----------- | ----- |
+| scp | copy files remotely by scp | scp(%args)
+
+Example:
+
+    # copy files dir1/file1 dir2/file2 dir3/file3 to target server to 192.168.0.1
+    scp %( 
+      data    => "dir1/file1 dir2/file2 dir3/file3",
+      host    => "192.168.0.1", 
+    );
+
+
+    # copy files dir1/file1 dir2/file2 dir3/file3 to target server to 192.168.0.1
+    # set ssh private key and user id 
+    scp %( 
+      data    => "dir1/file1 dir2/file2 dir3/file3",
+      host    => "192.168.0.1", 
+      user    => 'old-dog',
+      ssh-key => 'keys/id_rsa'
+    );
+
+
+    # copy file dir1/file1 from target server to 192.168.0.1, destination dir2
+    scp %( 
+      data    => "dir2/",
+      host    => "192.168.0.1:dir1/file1", 
+      user    => "Me",
+      pull    => 1, 
+    );
+
+
+    # copy files dir1/file1 dir2/file2 dir3/file3 to target server to 192.168.0.1
+    # do not copy if /tmp/do/not/copy/twice exists at target server
+    scp %( 
+      data    => "dir1/file1 dir2/file2 dir3/file3",
+      host    => "192.168.0.1", 
+      create  => "/tmp/do/not/copy/twice"
+    );
+
+
+
+
