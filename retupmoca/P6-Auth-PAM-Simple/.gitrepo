@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Auth-PAM-Simple.git
 	branch = master
-	commit = 5816528e48534ee097b1edd41adc74cddd6e17e2
-	parent = b70a0b3d6cec59925529ed274fdc950b85cfb0e7
-	cmdver = 0.2.3
+	commit = 4901f79a077d1573c6d89dac3451ae79ee138727
+	parent = c57fd1359b317034088d978e1f0daea6331bcc3e
+	cmdver = 0.4.0
