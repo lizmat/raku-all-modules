@@ -25,16 +25,34 @@ sub uri-escape($s, Bool :$no-utf8 = False) is export {
 # see http://www.w3.org/International/questions/qa-forms-utf-8
 #     find first sequence of %[89ABCDEF]<.xdigit>
 #         use algorithm from url to determine if it's valid UTF-8
-sub uri-unescape(*@to_unesc, Bool :$no-utf8 = False) is export {
-    my @rc = @to_unesc.flatmap: {
-        .trans('+' => ' ')\
-        .subst(:g, / [ '%' (<.xdigit> ** 2 ) ]+ /, -> $/ {
-            $no-utf8
-                ?? $0.flatmap({ :16(~$_).chr }).join
-                !! Buf.new($0.flatmap({ :16(~$_) })).decode('UTF-8')
-        })
-    };
-
+sub uri-unescape(*@to_unesc, Bool :$no-utf8 = False, Str :$enc = 'UTF-8') is export {
+    my @rc;
+    if $no-utf8 or $enc eq 'UTF-8' {
+        @rc = @to_unesc.flatmap: {
+            .trans('+' => ' ')\
+            .subst(:g, / [ '%' (<.xdigit> ** 2 ) ]+ /, -> $/ {
+                $no-utf8
+                    ?? $0.flatmap({ :16(~$_).chr }).join
+                    !! Buf.new($0.flatmap({ :16(~$_) })).decode('UTF-8')
+            });
+        }
+    }
+    else {
+        my $Buf = Buf.new;
+        for @to_unesc -> $uri is copy {
+            $uri .= trans('+' => ' ');
+            my $index = 0;
+            while $uri.index('%', $index) {
+                my $new-index = $uri.index('%', $index);
+                $Buf.push($uri.substr($index, $new-index - $index).encode($enc));
+                $Buf.push(:16(~$0)) if $uri.substr($new-index + 1, 2) ~~ / ( <:AHex> ** 2 ) /;
+                $index = $new-index + 3;
+            }
+            $Buf.push( $uri.substr($index, $uri.chars - $index).encode($enc))
+                if $index < $uri.chars;
+            @rc.push($Buf.decode($enc));
+        }
+    }
     return |@rc;
 }
 
