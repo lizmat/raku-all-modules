@@ -1,6 +1,6 @@
 {
     "name" : "Compress::Zlib::Raw",
-    "version" : "1.0.0",
+    "version" : "1.0.1",
     "perl"    : "6.c",
     "author" : "github:retupmoca",
     "description" : "Low-level bindings to zlib",

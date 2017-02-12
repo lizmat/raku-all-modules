@@ -156,9 +156,11 @@ our sub deflatePrime(z_stream, int32, int32) returns int32 is native(&find-lib) 
 our sub deflateSetHeader(z_stream, gz_header) returns int32 is native(&find-lib) is export { * }
 
 our sub inflateInit2_(z_stream, int32, Str is encoded('ascii'), int32) returns int32 is native(&find-lib) { * }
+
 our sub inflateInit2(z_stream $strm, int32 $windowbits) is export {
-    return inflateInit2_($strm, $windowbits, ZLIB_VERSION, z_stream_sizeof);
+    inflateInit2_($strm, $windowbits, ZLIB_VERSION, z_stream_sizeof);
 }
+
 our sub inflateSetDictionary(z_stream, CArray[int8], int32) returns int32 is native(&find-lib) is export { * }
 our sub inflateGetDictionary(z_stream, CArray[int8], CArray[int32]) returns int32 is native(&find-lib) is export { * }
 our sub inflateSync(z_stream) returns int32 is native(&find-lib) is export { * }
