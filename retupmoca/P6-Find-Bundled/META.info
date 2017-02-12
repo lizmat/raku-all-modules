@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Find::Bundled",
     "version" : "1.0.0",
     "author" : "github:retupmoca",
