@@ -133,6 +133,13 @@ enum SDL_RendererFlip <
     VERTICAL
 >;
 
+enum SDL_BlendMode <
+    BLENDMODE_NONE
+    BLENDMODE_BLEND
+    BLENDMODE_ADD
+    BLENDMODE_MOD
+>;
+
 class SDL_Renderer is repr('CPointer') { }
 
 class SDL_Texture is repr('CPointer') { }
@@ -242,6 +249,7 @@ sub SDL_GetRenderDrawColor(SDL_Renderer $renderer, Pointer[uint8] $r, Pointer[ui
 
 sub SDL_SetRenderDrawBlendMode(SDL_Renderer $renderer, int32 $blendmode)
         is native($lib)
+        returns int32
         is export
         {*}
 
