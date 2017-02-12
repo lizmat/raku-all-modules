@@ -45,6 +45,12 @@ consistency of the data.
 
 =head3 infer
 
+    multi method infer(Str:D :$uri!, Str :$class-name = 'My::JSON', Bool :$kebab = False) returns Class
+    multi method infer(Str:D :$file!, :$class-name = 'My::JSON', Bool :$kebab = False) returns Class
+    multi method infer(IO::Path:D :$file!, :$class-name = 'My::JSON', Bool :$kebab = False) returns Class
+    multi method infer(Str:D :$json!, Str :$class-name = 'My::JSON', Bool :$kebab = False) returns Class 
+
+
 This accepts a single path and returns a L<JSON::Infer::Class>
 object, if there is an error retrieving the data or parsing the response
 it will throw an exception.
@@ -63,6 +69,11 @@ This is the name that will be used for the generated class, any child
 classes that are discovered will parsing the attributes will have a name
 based on this and the name of the attribute. If it is not supplied the
 default is C<My::JSON> will be used.
+
+=head4 kebab
+
+If this is provided then the names of the attributes will be turned into the
+more popular Perl 6 style with underscores replaced with hyphens.
 
 =head3 ua
 
@@ -104,11 +115,12 @@ add any preamble that might be required.
 
 =head3 method new-from-data
 
-    multi method new-from-data(:$class-name, :$content) returns JSON::Infer::Class
-    multi method new-from-data(Str $name, $data ) returns JSON::Infer::Class
+    multi method new-from-data(:$class-name, :$content, :kebab) returns JSON::Infer::Class
+    multi method new-from-data(Str $name, $data, :kebab ) returns JSON::Infer::Class
 
 This returns a L<JSON::Infer::Class> constructed from the provided
-reference.
+reference.  If the adverb C<kebab> is provided then this will be
+applied to the attributes, causing the names to be adjusted accordingly.
 
 =head3 method populate-from-data
 
@@ -158,6 +170,10 @@ on the name and attributes infered from the valie.
 
 The third argument is the name of the class the attribute was found in
 this will be used to generate the names of any new classes found.
+
+If the adverb C<kebab> is provided then the name of the attribute will
+be adjusted to be in the more popular style with hyphens instead of
+underscores.
 
 =head3 infer-from-value
 
@@ -216,7 +232,7 @@ This returns a suitable string representation of the attribute for Perl.
 use JSON::Fast;
 use HTTP::UserAgent;
 
-class JSON::Infer:ver<0.0.14>:auth<github:jonathanstowe> {
+class JSON::Infer:ver<0.0.15>:auth<github:jonathanstowe> {
 
     
     role Classes        { ... }
@@ -278,14 +294,15 @@ class JSON::Infer:ver<0.0.14>:auth<github:jonathanstowe> {
 
     class Class does Classes does Types {
 
-        has Bool $.inner-class = False;
+        has Bool $.inner-class  = False;
+        has Bool $.kebab        = False;
 
-        multi method new-from-data(:$class-name, :$content, Bool :$inner-class = False) returns Class {
-            self.new-from-data($class-name, $content, $inner-class);
+        multi method new-from-data(:$class-name, :$content, Bool :$inner-class = False, Bool :$kebab = False) returns Class {
+            self.new-from-data($class-name, $content, $inner-class, :$kebab);
         }
 
-        multi method new-from-data(Str $name, $data, $inner-class = False ) returns Class {
-            my $obj = self.new(:$name, :$inner-class);
+        multi method new-from-data(Str $name, $data, $inner-class = False, Bool :$kebab = False ) returns Class {
+            my $obj = self.new(:$name, :$inner-class, :$kebab);
 
             my @data;
 
@@ -317,7 +334,7 @@ class JSON::Infer:ver<0.0.14>:auth<github:jonathanstowe> {
 
         method new-attribute(Str $name, $value) returns Attribute {
 
-            my $new = Attribute.new-from-value($name, $value, $!name, $!inner-class);
+            my $new = Attribute.new-from-value($name, $value, $!name, $!inner-class, :$!kebab);
             self.add-attribute($new);
             $new;
         }
@@ -367,8 +384,8 @@ class JSON::Infer:ver<0.0.14>:auth<github:jonathanstowe> {
 
     class Attribute does Classes does Types {
 
-        method  new-from-value(Str $name, $value, $class, Bool $inner-class = False) returns Attribute {
-            my $obj = self.new(:$name, :$class, :$inner-class );
+        method  new-from-value(Str $name, $value, $class, Bool $inner-class = False, Bool :$kebab = False) returns Attribute {
+            my $obj = self.new(:$name, :$class, :$inner-class, :$kebab );
             $obj.infer-from-value($value);
             $obj;
         }
@@ -400,7 +417,7 @@ class JSON::Infer:ver<0.0.14>:auth<github:jonathanstowe> {
         }
 
         method process-object($value) {
-            my $obj = Class.new-from-data(self.child-class-name(), $value, True);
+            my $obj = Class.new-from-data(self.child-class-name(), $value, True, :$!kebab);
             self.add-classes($obj);
             self.add-types($obj);
             $obj;
@@ -410,24 +427,32 @@ class JSON::Infer:ver<0.0.14>:auth<github:jonathanstowe> {
         has Str $.name is rw;
         has Str $.perl-name is rw;
 
-        has Bool $.is-array = False;
-        has Bool $.inner-class = False;
+        has Bool $.is-array     = False;
+        has Bool $.inner-class  = False;
+        has Bool $.kebab        = False;
 
         method sigil() {
             $!is-array ?? '@' !! '$';
         }
 
-        method perl-name() returns Str is rw {
-            if not $!perl-name.defined {
-                $!perl-name = do if $!name !~~ /^<.ident>$/ {
-                    my $prefix = $!class.split('::')[*-1].lc;
-                    $prefix ~ $!name;
-                }
-                else {
-                    $!name;
-                }
+        method !kebab(Str $name) returns Str {
+            if $!kebab {
+                $name.subst(/_/, '-', :g);
             }
-            $!perl-name;
+            else {
+                $name;
+            }
+        }
+
+        method perl-name() returns Str is rw {
+            $!perl-name //= do {
+                my $name = $!name;
+                if $name !~~ /^<.ident>$/ {
+                    my $prefix = $!class.split('::')[*-1].lc;
+                    $name = $prefix ~ $name;
+                }
+                self!kebab($name);
+            }
         }
 
         method has-alternate-name() returns Bool {
@@ -465,12 +490,12 @@ class JSON::Infer:ver<0.0.14>:auth<github:jonathanstowe> {
 
     proto method infer(|c) { * }
 
-    multi method infer(Str:D :$uri!, Str :$class-name = 'My::JSON') returns Class {
+    multi method infer(Str:D :$uri!, Str :$class-name = 'My::JSON', Bool :$kebab = False) returns Class {
         my $ret;
         my $resp =  self.get($uri);
         if $resp.is-success() {
             my $json = $resp.decoded-content();
-            $ret = self.infer(:$json, :$class-name);
+            $ret = self.infer(:$json, :$class-name, :$kebab);
         }
         else {
             X::Infer.new(:$uri, message => "Couldn't retrieve URI $uri").throw;
@@ -478,24 +503,24 @@ class JSON::Infer:ver<0.0.14>:auth<github:jonathanstowe> {
         $ret;
     }
 
-    multi method infer(Str:D :$file!, :$class-name = 'My::JSON') returns Class {
+    multi method infer(Str:D :$file!, :$class-name = 'My::JSON', Bool :$kebab = False) returns Class {
         my $io = $file.IO;
         if $io.e {
-            self.infer(file => $io, :$class-name);
+            self.infer(file => $io, :$class-name, :$kebab);
         }
         else {
             X::Infer.new(uri => $file, message => "File $file does not exist").throw;
         }
     }
 
-    multi method infer(IO::Path:D :$file!, :$class-name = 'My::JSON') returns Class {
+    multi method infer(IO::Path:D :$file!, :$class-name = 'My::JSON', Bool :$kebab = False) returns Class {
         my $json = $file.slurp();
-        self.infer(:$json, :$class-name);
+        self.infer(:$json, :$class-name, :$kebab);
     }
 
-    multi method infer(Str:D :$json!, Str :$class-name = 'My::JSON') returns Class {
+    multi method infer(Str:D :$json!, Str :$class-name = 'My::JSON', Bool :$kebab = False) returns Class {
         my $content = self.decode-json($json);
-        my $ret = Class.new-from-data(:$class-name, :$content);
+        my $ret = Class.new-from-data(:$class-name, :$content, :$kebab);
         $ret.top-level = True;
         $ret;
     }

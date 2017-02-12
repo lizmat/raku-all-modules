@@ -7,7 +7,8 @@
   "support" : {
     "source"     : "git://github.com/jonathanstowe/JSON-Infer.git",
     "irc"        : "irc:// irc.freenode.net/#perl6",
-    "bugtracker" : "https://github.com/jonathanstowe/JSON-Infer/issues"
+    "bugtracker" : "https://github.com/jonathanstowe/JSON-Infer/issues",
+	"email"		 : "jns+git@gellyfish.co.uk"
   },
   "source-url" : "git://github.com/jonathanstowe/JSON-Infer.git",
   "perl" : "6.c",
@@ -27,5 +28,5 @@
     "Test::META"
   ],
   "description" : "Infer Perl 6 Classes from JSON input",
-  "version" : "0.0.14"
+  "version" : "0.0.15"
 }

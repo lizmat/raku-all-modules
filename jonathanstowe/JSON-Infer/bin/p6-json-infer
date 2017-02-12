@@ -2,7 +2,7 @@
 
 use JSON::Infer;
 
-multi sub MAIN(Str :$file, Str :$uri, Str :$out-dir = "lib", Str :$class-name!) {
+multi sub MAIN(Str :$file, Str :$uri, Str :$out-dir = "lib", Str :$class-name!, Bool :$kebab = False) {
 
     CATCH {
         when X::Infer {
@@ -20,10 +20,10 @@ multi sub MAIN(Str :$file, Str :$uri, Str :$out-dir = "lib", Str :$class-name!) 
     my $infer = JSON::Infer.new;
 
     my $class = do if $uri.defined {
-        $infer.infer(:$uri, :$class-name);
+        $infer.infer(:$uri, :$class-name, :$kebab);
     }
     elsif $file.defined {
-        $infer.infer(:$file, :$class-name);
+        $infer.infer(:$file, :$class-name, :$kebab);
     }
     else {
         X::Infer.new(message => "one of file or uri must be supplied").throw;

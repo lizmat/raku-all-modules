@@ -97,14 +97,21 @@ my @tests = (
 
 
 for @tests -> $test {
-   ok(my $object = JSON::Infer::Attribute.new-from-value( $test<attr_name>, $test<value>, $test<class>), "new-from-value " ~ $test<description>);
+    ok(my $object = JSON::Infer::Attribute.new-from-value( $test<attr_name>, $test<value>, $test<class>), "new-from-value " ~ $test<description>);
 
-   isa-ok($object, JSON::Infer::Attribute);
-   is( $object.name, $test<attr_name>, "got the right name" );
-   is($object.is-array, $test<is_array>, "now it's multiplicity right");
-   is($object.sigil, $test<is_array> ?? '@' !! '$', "and the right sigil");
-   is( $object.type-constraint, $test<type_constraint>, "got the right type constraint" );
-   is( $object.classes.elems , $test<classes>, "and " ~ ( $test<classes> > 0 ?? $test<classes> !! 'no' ) ~ ' classes' );
+    isa-ok($object, JSON::Infer::Attribute);
+    is( $object.name, $test<attr_name>, "got the right name" );
+    is( $object.perl-name, $test<attr_name>, "got the right perl-name too" );
+    is($object.is-array, $test<is_array>, "now it's multiplicity right");
+    is($object.sigil, $test<is_array> ?? '@' !! '$', "and the right sigil");
+    is( $object.type-constraint, $test<type_constraint>, "got the right type constraint" );
+    is( $object.classes.elems , $test<classes>, "and " ~ ( $test<classes> > 0 ?? $test<classes> !! 'no' ) ~ ' classes' );
+
+    subtest {
+        ok(my $object = JSON::Infer::Attribute.new-from-value( $test<attr_name>, $test<value>, $test<class>, :kebab), "new-from-value with kebab" );
+        is( $object.perl-name, $test<attr_name>.subst(/_/,'-', :g), "got the kebabed perl-name too" );
+
+   }, "with kebab";
 }
 
 

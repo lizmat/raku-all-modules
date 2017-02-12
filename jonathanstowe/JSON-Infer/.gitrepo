@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/JSON-Infer.git
 	branch = master
-	commit = 8ad5cd647f7df81b2fa9536b6f9b0adb78636c4e
-	parent = ae47a43dd19d1765beec533015c75c2cad7d2041
+	commit = 5b84ef8b758643d0f5d845966f06ae0b7787d3df
+	parent = eae959bf9b57737c20e06efe9cfd42d8fcce23f3
 	cmdver = 0.4.0
