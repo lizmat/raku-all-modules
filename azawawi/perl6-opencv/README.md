@@ -32,7 +32,16 @@ Please follow the instructions below based on your platform:
 
 - To install OpenCV 2.4 development libraries, please run:
 ```
-    $ sudo apt-get install libopencv-dev g++
+$ sudo apt-get install libopencv-dev g++
+```
+
+## macOS
+
+- To install OpenCV 2.4 development libraries, please run:
+```
+$ brew update
+$ brew tap homebrew/science
+$ brew install opencv
 ```
 
 ## Windows
@@ -42,23 +51,32 @@ on 64-bit windows operating systems.
 
 ## Installation
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
+To install it using zef (a module management tool bundled with Rakudo Star):
 
-    panda update
-    panda install OpenCV
+```
+$ zef install OpenCV
+```
 
 ## Testing
 
-To run tests:
+- To run tests:
+```
+$ prove -ve "perl6 -Ilib"
+```
 
-    prove -ve "perl6 -Ilib"
+- To run all tests including author tests (Please make sure
+[Test::Meta](https://github.com/jonathanstowe/Test-META) is installed):
+```
+$ zef install Test::META
+$ AUTHOR_TESTING=1 prove -ve "perl6 -Ilib"
+```
 
 ## Development Notes
 
 If you need to change the C++ to C library wrapper without doing a
-`panda install .`, please run:
+`zef install .`, please run:
 ```
-$ panda-build
+$ zef build .
 ```
 
 ## Author

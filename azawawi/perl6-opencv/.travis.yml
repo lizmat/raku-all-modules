@@ -1,15 +1,36 @@
+language: perl6
+
+# Needed to get OpenCV 2.4 libraries
 dist: trusty
 sudo: required
 
-language: perl6
+os:
+  - linux
+  - osx
 
 perl6:
-    - 2016.03
-    - latest
+  - 2017.01
+  - latest
+
+before_install:
+  - echo $TRAVIS_OS_NAME
+
+  # Install OpenCV development libraries (Linux)
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get -qq update           ; fi
+  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install libopencv-dev ; fi
+
+  # Install OpenCV development libraries (macOS)
+  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then brew update                       ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then pip uninstall -y numpy            ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then brew tap homebrew/science         ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then brew install opencv               ; fi
 
 install:
-    - sudo apt-get -qq update
-    - sudo apt-get install -y libopencv-dev
-    - rakudobrew build-panda
+  - rakudobrew build zef
+  - zef --depsonly install .
+  - zef install Test::META
+  - zef build .
 
-script: panda-build && prove -e perl6 t
+script:
+  - AUTHOR_TESTING=1 prove -ve "perl6 -Ilib"
+  - zef install .

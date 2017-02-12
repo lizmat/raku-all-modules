@@ -7,7 +7,6 @@ use NativeCall;
 # Find our compiled library.
 sub library {
     my $lib-name = sprintf($*VM.config<dll>, "opencv-perl6");
-    say $lib-name;
     return ~(%?RESOURCES{$lib-name});
 }
 

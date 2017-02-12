@@ -1,12 +1,11 @@
 {
   "name"          : "OpenCV",
-  "version"       : "0.0.2",
+  "version"       : "0.0.5",
   "perl"          : "6.c",
   "description"   : "OpenCV Bindings using NativeCall",
-  "build-depends" : [ ],
-  "depends"       : [ ],
   "auth"          : "github:azawawi",
   "authors"       : [ "Ahmad M. Zawawi" ],
+  "test-depends"  : [ "Test" ],
   "provides"      : {
     "OpenCV"             : "lib/OpenCV.pm6",
     "OpenCV::NativeCall" : "lib/OpenCV/NativeCall.pm6",
@@ -15,8 +14,9 @@
     "OpenCV::Photo"      : "lib/OpenCV/Photo.pm6"
   },
   "resources"     : [
-    "libopencv-perl6.so",
-    "opencv-perl6.dll"
+    "libopencv-perl6.dll",
+    "libopencv-perl6.dylib",
+    "libopencv-perl6.so"
   ],
   "source-url"    : "git://github.com/azawawi/perl6-opencv.git"
 }
