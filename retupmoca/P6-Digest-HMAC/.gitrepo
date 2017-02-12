@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Digest-HMAC.git
 	branch = master
-	commit = 60ce11b32a84b3f17f31c08bc7f1ee8bbf84954c
-	parent = d2a07f09b5d2c8b97621b19881cb86464abdd334
-	cmdver = 0.2.1
+	commit = de353de80fb692d3e4cd1eadc270a1fd96030e1d
+	parent = 2c33b8e37faab2bbfd07450fa3de3bd569e4a0b7
+	cmdver = 0.4.0
