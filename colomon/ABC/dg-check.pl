@@ -33,6 +33,6 @@ for @matches {
 
     my %key_signature = key_signature(%header<K>);
 
-    my @trouble = @notes.for({apply_key_signature(%key_signature, .<pitch>)}).grep({!%dg_notes{lc($_)}:exists});
+    my @trouble = @notes.map({apply_key_signature(%key_signature, .<pitch>)}).grep({!%dg_notes{lc($_)}:exists});
     say @trouble.perl;
 }

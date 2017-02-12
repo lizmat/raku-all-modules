@@ -126,17 +126,32 @@ class LilypondContext {
     }
 }
 
+sub get-field-if-there($header, $field) {
+    my @things = $header.get($field)>>.value;
+    ?@things ?? @things[0] !! "";
+}
+
 sub HeaderToLilypond(ABC::Header $header, $out) {
     $out.say: "\\header \{";
     
     my $title = $header.get-first-value("T") // "Untitled";
     $title .=subst('"', "'", :g);
     $out.say: "    title = \" $title \"";
-    my @composers = $header.get("C")>>.value;
-    $out.say: "    composer = \"{ @composers[0] }\"" if ?@composers;
-    my @origins = $header.get("O")>>.value;
-    $out.say: "    dedication = \"{ @origins[0] }\"" if ?@origins && @origins[0] ~~ m:i/^for/;
-    
+    my $composer = get-field-if-there($header, "C");
+    my $origin = get-field-if-there($header, "O");
+    if $origin {
+        if $origin ~~ m:i/^for/ {
+            $out.say: qq/    dedication = "$origin"/;
+        } else {
+            if $composer {
+                $composer ~= " ($origin)";
+            } else {
+                $composer = $origin;
+            }
+        }
+    }
+    $out.say: qq/    composer = "$composer"/ if $composer;
+
     $out.say: "}";
 }
 
@@ -159,7 +174,7 @@ class TuneConvertor {
             }
 
             when ABC::Stem {
-                "<" ~ $stem.notes.for({ $.context.get-Lilypond-pitch($_) }).join(' ') ~ ">"
+                "<" ~ $stem.notes.map({ $.context.get-Lilypond-pitch($_) }).join(' ') ~ ">"
             }
 
             die "Unrecognized alleged stem: " ~ $stem.perl;
@@ -214,8 +229,13 @@ class TuneConvertor {
                     $lilypond ~=  " r{ $.context.get-Lilypond-duration($element.value) }$suffix "; 
                     $suffix = ""; 
                 }
-                when "tuplet" { 
-                    $lilypond ~= " \\times 2/{ $element.value.tuple } \{";
+                when "tuplet" {
+                    given $element.value.tuple {
+                        when 2 { $lilypond ~= " \\times 3/2 \{"; }
+                        when 3 { $lilypond ~= " \\times 2/3 \{"; }
+                        when 4 { $lilypond ~= " \\times 3/4 \{"; }
+                        $lilypond ~= " \\times 2/{ $element.value.tuple } \{";
+                    }
                     $lilypond ~= self.StemToLilypond($element.value.notes[0], "[");
                     for 1..($element.value.notes - 2) -> $i {
                         $lilypond ~= self.StemToLilypond($element.value.notes[$i]);
@@ -454,7 +474,32 @@ sub TuneStreamToLilypondStream($in, $out, $filter = *, :$fancy?) {
         $convertor.BodyToLilypond($tune.music, $out);
         HeaderToLilypond($tune.header, $out);
 
-        $out.say: "}\n\n";    
+        $out.say: "}\n\n";
+        
+        if $tune.header.get-first-value("N") {
+            $out.say: "\\markuplist \{";
+            $out.say: "    \\wordwrap-lines \{";
+            for $tune.header.get("N") -> $note {
+                if $note.value ~~ / ^ \s* $ / {
+                    $out.say: '    } \wordwrap-lines {';
+                } else {
+                    my $text = $note.value;
+                    # this is some goofy magic to make sure quotation marks come out correctly.
+                    $text .= subst(/ (\S*) '"' (\S*)/, 
+                                   {
+                                       my $prefix = $0;
+                                       my $postfix = $1;
+                                       $prefix .= subst('"', '" \\char #34 "', :global);
+                                       "\\concat \{ \"$prefix\" \\char #34 \"$postfix\" \} "
+                                   }, 
+                                   :global);
+                    $out.say: "        $text";
+                }
+            }
+            $out.say: '    }';
+            $out.say: "    \\vspace #2";
+            $out.say: "}\n\n";
+        }
     }
 }
 

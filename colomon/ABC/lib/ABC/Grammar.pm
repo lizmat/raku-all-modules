@@ -1,6 +1,8 @@
 use v6;
 # use Grammar::Tracer;
 
+# Originally based on https://web.archive.org/web/20120201072612/http://www.norbeck.nu/abc/bnf/abc20bnf.htm
+
 grammar ABC::Grammar
 {
     regex comment { \h* '%' \N* $$ }
@@ -37,7 +39,7 @@ grammar ABC::Grammar
     
     token long_gracing_text { [<alpha> | '.' | ')' | '(']+ }
     token long_gracing { '+' <long_gracing_text> '+' }
-    token gracing { '.' | '~' | 'T' | <long_gracing> }
+    token gracing { '.' | '~' | <[ H .. Y ]> | <[ h .. w ]> | <long_gracing> }
     
     token spacing { \h+ }
     
@@ -68,7 +70,7 @@ grammar ABC::Grammar
     token chord { <mainnote=basenote> <mainaccidental=chord_accidental>? <maintype=chord_type>? 
                   [ '/' <bassnote=basenote> <bass_accidental=chord_accidental>? ]? <non_quote>* } 
     token non_quote { <-["]> }
-    token text_expression { [ '^' | '<' | '>' | '_' | '@' ] <non_quote>+ }
+    token text_expression { [ '^' | '<' | '>' | '_' | '@' ]? <non_quote>+ }
     token chord_or_text { '"' [ <chord> | <text_expression> ] [ <chord_newline> [ <chord> | <text_expression> ] ]* '"' }
     
     token element { <broken_rhythm> | <stem> | <rest> | <tuplet> | <slur_begin> | <slur_end> 
@@ -82,7 +84,7 @@ grammar ABC::Grammar
         
     token line_of_music { <barline>? <bar>+ '\\'? <comment>? $$ }
     
-    token interior_header_field_name { < K M L w > }
+    token interior_header_field_name { < K M L w P > }
     token interior_header_field_data { <-[ % \v ]>* }
     token interior_header_field { ^^ <interior_header_field_name> ':' \h* <interior_header_field_data> <comment>? $$ }
 

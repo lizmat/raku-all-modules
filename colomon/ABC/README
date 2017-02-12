@@ -2,22 +2,17 @@ This module is the beginning of a set of tools for dealing with ABC music
 files in Perl 6.
 
 The most useful standalone tool here is the abc2ly script, which converts ABC
-files to Lilypond format, allowing you to create beautiful PDF sheet music.
-
-    env PERL6LIB=/Users/colomon/tools/ABC/lib: perl6 bin/abc2ly wedding.abc
-
-or
-
-    mono /Users/colomon/tools/niecza/run/Niecza.exe -Ilib bin/abc2ly wedding.abc
-
-This will generate the a wedding.ly file which can be fed to Lilypond.
-
-If you install the module using panda and your paths are correctly set up, you
-should be able to simply say
+files to Lilypond format, allowing you to create beautiful PDF sheet music. If
+you install ABC using panda (or presumably zef, though I haven't tried that),
+you should just be able to say
 
     abc2ly wedding.abc
 
-As of 5/24/2012, the module works on 5/12 (or later) Niecza. It recently worked on
-the 2/12 Rakudo, but I have made significant changes since then and do not
-have a copy handy to test it on. It definitely does not work on more recent
-Rakudos due to a module handling bug.
+to convert wedding.abc to wedding.ly and then invoke Lilypond to convert it to
+wedding.pdf.
+
+NOTE: Lilypond also has an abc2ly script; last time I tried it it produced
+hideous looking output from Lilypond.  If you've got both installed, you will
+have to make sure the perl 6 bin of abc2ly appears first in your PATH.
+
+As of 2/6/2017, it works on Rakudo 2017.01.

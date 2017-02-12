@@ -16,6 +16,6 @@ class ABC::Tune {
                                                              !! $element.value;
         }
         
-        ABC::Tune.new($.header, @.music.for({ transpose-element($_); }));
+        ABC::Tune.new($.header, @.music.map({ transpose-element($_); }));
     }
 }

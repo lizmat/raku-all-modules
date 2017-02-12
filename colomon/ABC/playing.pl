@@ -33,4 +33,6 @@ my @notes = gather for $match<ABC::tune><music><line_of_music> -> $line
 my %header = header_hash($match<ABC::tune><header>);
 my %key_signature = key_signature(%header<K>);
 
-@notes.for({say .<pitch> ~ " => " ~ apply_key_signature(%key_signature, .<pitch>)});
+for @notes {
+    say .<pitch> ~ " => " ~ apply_key_signature(%key_signature, .<pitch>);
+}

@@ -12,6 +12,13 @@ use ABC::Grammar;
 }
 
 {
+    my $match = ABC::Grammar.parse('"1"', :rule<chord_or_text>);
+    isa-ok $match, Match, 'Got a match';
+    ok $match,  '"1" is a chord or text';
+    is $match<text_expression>, "1", '"1" is text 1';
+}
+
+{
     my $match = ABC::Grammar.parse("^A,", :rule<pitch>);
     isa-ok $match, Match, 'Got a match';
     ok $match,  '"^A," is a pitch';
@@ -106,6 +113,20 @@ use ABC::Grammar;
     ok $match, '"x" is a rest';
     is $match<rest_type>, "x", '"x" has base rest x';
     is $match<note_length>, "", '"x" has no note length';
+}
+
+{
+    my $match = ABC::Grammar.parse("v", :rule<element>);
+    isa-ok $match, Match, 'Got a match';
+    ok $match, '"v" is an element';
+    is $match<gracing>, "v", '"v" gracing is v';
+}
+
+{
+    my $match = ABC::Grammar.parse("T", :rule<element>);
+    isa-ok $match, Match, 'Got a match';
+    ok $match, '"T" is an element';
+    is $match<gracing>, "T", '"T" gracing is T';
 }
 
 {

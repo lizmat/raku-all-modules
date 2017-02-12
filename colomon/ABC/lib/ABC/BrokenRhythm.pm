@@ -34,7 +34,7 @@ class ABC::BrokenRhythm does ABC::Duration does ABC::Pitched {
                               ABC::Duration.new(:$ticks), 
                               $note.is-tie); 
             }
-            when ABC::Stem { ABC::Stem.new($note.notes.for({ new-rhythm($_, $ticks); })); }
+            when ABC::Stem { ABC::Stem.new($note.notes.map({ new-rhythm($_, $ticks); })); }
         }
     }
 
