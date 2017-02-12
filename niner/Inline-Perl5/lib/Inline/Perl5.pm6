@@ -238,6 +238,9 @@ sub p5_is_sub_ref(Perl5Interpreter, Pointer) is native($p5helper)
 sub p5_get_global(Perl5Interpreter, Str) is native($p5helper)
     returns Pointer { ... }
 
+sub p5_set_global(Perl5Interpreter, Str, Pointer) is native($p5helper)
+    { ... }
+
 sub p5_eval_pv(Perl5Interpreter, Str, int32) is native($p5helper)
     returns Pointer { ... }
 
@@ -912,6 +915,10 @@ method global(Str $name) {
     self.p5_to_p6(p5_get_global($!p5, $name))
 }
 
+method set_global(Str $name, $value) {
+    p5_set_global($!p5, $name, self.p6_to_p5($value));
+}
+
 PROCESS::<%PERL5> := class :: does Associative {
     multi method AT-KEY($name) {
         Inline::Perl5.default_perl5.global($name)
@@ -1072,6 +1079,12 @@ method init_callbacks {
 
         sub init {
             ($p6) = @_;
+        }
+
+        sub init_data {
+            my ($data) = @_;
+            no strict;
+            open *{main::DATA}, '<', \$data;
         }
 
         sub uninit {
@@ -1248,6 +1261,10 @@ method subs_in_module(Str $module) {
     return self.run('[ grep { *{"' ~ $module ~ '::$_"}{CODE} } keys %' ~ $module ~ ':: ]');
 }
 
+method variables_in_module(Str $module) {
+    return self.run('[ grep { *{"' ~ $module ~ '::$_"}{SCALAR} } keys %' ~ $module ~ ':: ]');
+}
+
 method import (Str $module, *@args) {
     my $before = set self.subs_in_module('main').list;
     self.invoke($module, 'import', @args.list);
@@ -1275,6 +1292,7 @@ method require(Str $module, Num $version?, Bool :$handle) {
     my $class;
     my $first-time = True;
     my $symbols = self.subs_in_module($module);
+    my $variables = self.variables_in_module($module);
     if %loaded_modules{$module}:exists {
         $class := %loaded_modules{$module};
         $first-time = False;
@@ -1319,6 +1337,16 @@ method require(Str $module, Num $version?, Bool :$handle) {
             $class.WHO{"&$name"} := sub (*@args) {
                 self.call("{$module}::$name", @args.list);
             }
+        }
+        for @$variables -> $name {
+            $class.WHO{'$' ~ $name} := Proxy.new(
+                FETCH => {
+                    Inline::Perl5.default_perl5.global('$' ~ $module ~ '::' ~ $name);
+                },
+                STORE => -> $, $val {
+                    Inline::Perl5.default_perl5.set_global('$' ~ $module ~ '::' ~ $name, $val);
+                },
+            );
         }
     }
 
@@ -1429,6 +1457,10 @@ class X::Inline::Perl5::NoMultiplicity is Exception {
     }
 }
 
+method init_data($data) {
+    self.call('v6::init_data', $data);
+}
+
 method BUILD(*%args) {
     my &call_method = sub (Int $index, Str $name, Int $context, Pointer $args, Pointer $err) returns Pointer {
         my $p6obj = $objects.get($index);
@@ -1486,6 +1518,12 @@ method BUILD(*%args) {
                 $_.resume;
             }
         }
+    }
+
+    if ($*W) {
+        my $block := { self.init_data(CALLER::<$=finish>) if CALLER::<$=finish> };
+        $*W.add_object($block);
+        my $op := $*W.add_phaser(Mu, 'INIT', $block, class :: { method cuid { (^2**128).pick }});
     }
 
     $!external_p5 = %args<p5>:exists;
