@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Net-POP3.git
 	branch = master
-	commit = 0cd55ce6d509cdea3ebf83a91229cdf09579bb64
-	parent = ddad2303c67538ec3c235a2dd854523cdbf0336b
-	cmdver = 0.2.2
+	commit = b7bf9ae01f9a496cd4d3c70293c3ea418e668fcb
+	parent = d2e33788c956f5f22e2ee50b29a17d5d3ebcf6a0
+	cmdver = 0.4.0
