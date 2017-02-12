@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Crust::Handler::SCGI",
     "version" : "1.0.0",
     "author" : "github:retupmoca",

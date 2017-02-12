@@ -13,6 +13,10 @@ submethod BUILD(:$host, :$port) {
 
 method run($app) {
     my $fixed = -> %env {
+        # To satisfy Crust's Lint "middleware" paranoia and fascism
+        %env{'HTTP_CONTENT_TYPE'}:delete   if %env{'HTTP_CONTENT_TYPE'}:exists;
+        %env{'HTTP_CONTENT_LENGTH'}:delete if %env{'HTTP_CONTENT_LENGTH'}:exists;
+
         my $input = %env<p6sgi.input>;
         $input = IO::Blob.new($input) if $input && $input ~~ Blob;
         %env<p6sgi.input> = $input;
