@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Net::DNS",
     "version" : "1.0.1",
     "author" : "github:retupmoca",

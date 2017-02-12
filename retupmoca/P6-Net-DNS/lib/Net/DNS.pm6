@@ -28,7 +28,7 @@ method lookup($type is copy, $host is copy){
     my @host = $host.split('.');
     my $message = Net::DNS::Message.new;
     $message.header = Net::DNS::Message::Header.new;
-    $message.header.id = ++$.request-id;
+    $message.header.id = (1..65535).pick;
     $message.header.rd = 1;
     $message.header.qdcount = 1;
     my $q = Net::DNS::Message::Question.new;
