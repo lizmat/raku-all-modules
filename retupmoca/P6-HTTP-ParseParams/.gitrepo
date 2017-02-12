@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-HTTP-ParseParams.git
 	branch = master
-	commit = 2a4a14083f9f183ba0ee27e5e0f572d531fccca9
-	parent = 0bd385506bf725c99b876db393be64bda3fc1596
-	cmdver = 0.2.2
+	commit = 43fa66d01c51075b15f39a7f38be2758bb77877a
+	parent = c3bce18454852a15477f66a180ce0bef43705df1
+	cmdver = 0.4.0
