@@ -2,6 +2,7 @@
 
 use v6;
 use Getopt::Kinoko;
+use Getopt::Kinoko::OptionSet;
 
 state $VERSION = "0.0.1";
 

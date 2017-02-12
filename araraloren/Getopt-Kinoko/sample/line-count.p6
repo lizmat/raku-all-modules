@@ -2,6 +2,7 @@
 
 use v6;
 use Getopt::Kinoko;
+use Getopt::Kinoko::OptionSet;
 
 class LineInfo {
     has $.path is rw;     # path

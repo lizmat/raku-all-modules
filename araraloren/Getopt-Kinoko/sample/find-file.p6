@@ -1,6 +1,7 @@
 #!/usr/bin/env perl6
 
 use Getopt::Kinoko;
+use Getopt::Kinoko::OptionSet;
 
 my OptionSet $opts .= new();
 

@@ -2,6 +2,7 @@
 
 use v6;
 use Getopt::Kinoko;
+use Getopt::Kinoko::OptionSet;
 use Readline;
 use Terminal::WCWidth;
 

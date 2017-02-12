@@ -2,6 +2,8 @@
 
 use v6;
 use Getopt::Kinoko;
+use Getopt::Kinoko::OptionSet;
+use Getopt::Kinoko::DeepClone;
 
 constant $VERSIONS = "version 0.1.1, create by Loren.";
 constant $TEMPFILE = "snippet";

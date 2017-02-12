@@ -2,6 +2,7 @@
 
 use LWP::Simple;
 use Getopt::Kinoko;
+use Getopt::Kinoko::OptionSet;
 
 constant $TIEBA_URI_PREFIX = "http://tieba.baidu.com/p/";
 constant $ACFUN_URI_PREFIX = "http://www.acfun.tv/a/";

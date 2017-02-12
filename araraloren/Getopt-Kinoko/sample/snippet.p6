@@ -2,6 +2,8 @@
 
 use v6;
 use Getopt::Kinoko;
+use Getopt::Kinoko::OptionSet;
+use Getopt::Kinoko::DeepClone;
 
 my $VERSIONS = "version 0.1.1, create by Loren.";
 
