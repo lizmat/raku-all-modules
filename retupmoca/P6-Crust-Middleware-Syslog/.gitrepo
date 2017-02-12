@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Crust-Middleware-Syslog.git
 	branch = master
-	commit = c2b3b9a57b88d757a3891da8393dbd9c29269b39
-	parent = a2cf8a9848b110531df8d801d4ddd589d4f8d56c
-	cmdver = 0.2.2
+	commit = 598e563ab87ceda46f05ae34ce286c9cbf73120f
+	parent = 8858d938f73a728ff22853003e4fb1fc23801b5b
+	cmdver = 0.4.0
