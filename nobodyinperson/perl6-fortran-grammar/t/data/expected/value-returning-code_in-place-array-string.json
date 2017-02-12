@@ -1,0 +1,13 @@
+{
+  "in-place": {
+    "in-place-array": {
+      "strings": {
+        "string": [
+          "\"first\"",
+          "\"second\"",
+          "\"third\" "
+        ]
+      }
+    }
+  }
+}

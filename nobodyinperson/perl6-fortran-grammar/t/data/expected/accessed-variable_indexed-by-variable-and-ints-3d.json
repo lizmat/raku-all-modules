@@ -1,0 +1,20 @@
+{
+  "indexed-array": {
+    "name": "var",
+    "array-indices": {
+      "array-index": [
+        {
+          "name": "n"
+        },
+        {
+          "name": "q"
+        },
+        {
+          "integer": {
+            "digits": "1"
+          }
+        }
+      ]
+    }
+  }
+}

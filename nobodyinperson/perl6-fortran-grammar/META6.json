@@ -1,0 +1,21 @@
+{
+    "perl" : "6",
+    "name" : "Fortran::Grammar",
+    "version" : "0.0.4",
+    "description" : "grammar to parse FORTRAN source code",
+    "authors" : [ "Yann Büchau" ],
+    "provides" : {
+        "Fortran::Grammar" : "lib/Fortran/Grammar.pm6",
+        "Fortran::Grammar::Test" : "lib/Fortran/Grammar/Test.pm6"
+    },
+    "test-depends" : [ 
+        "Test",
+        "Test::META",
+        "JSON::Fast",
+        "IO::Glob"
+        ],
+    "depends" : [ 
+        ],
+    "resources" : [ ],
+    "source-url" : "git://github.com/nobodyinperson/perl6-fortran-grammar.git"
+}

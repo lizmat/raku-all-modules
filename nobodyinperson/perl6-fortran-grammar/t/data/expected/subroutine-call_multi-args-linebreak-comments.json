@@ -1,0 +1,46 @@
+{
+  "name": "sub",
+  "arguments": {
+    "argument": [
+      {
+        "value-returning-code": {
+          "in-place": {
+            "atomic": {
+              "number": {
+                "integer": {
+                  "digits": "1"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "value-returning-code": {
+          "in-place": {
+            "atomic": {
+              "number": {
+                "integer": {
+                  "digits": "2"
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "value-returning-code": {
+          "in-place": {
+            "atomic": {
+              "number": {
+                "integer": {
+                  "digits": "3"
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

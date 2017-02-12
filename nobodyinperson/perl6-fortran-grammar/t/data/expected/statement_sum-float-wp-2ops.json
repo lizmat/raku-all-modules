@@ -1,0 +1,41 @@
+{
+  "value-returning-code": [
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "float": {
+              "digits": [
+                "1",
+                "23"
+              ],
+              "precision-spec": {
+                "name": "wp"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "float": {
+              "digits": [
+                "3",
+                "456"
+              ],
+              "precision-spec": {
+                "name": "wp"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "operator": [
+    "+"
+  ]
+}

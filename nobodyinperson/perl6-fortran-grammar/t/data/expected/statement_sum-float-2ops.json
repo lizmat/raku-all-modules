@@ -1,0 +1,35 @@
+{
+  "value-returning-code": [
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "float": {
+              "digits": [
+                "1",
+                "23"
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "float": {
+              "digits": [
+                "3",
+                "456"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "operator": [
+    "+"
+  ]
+}

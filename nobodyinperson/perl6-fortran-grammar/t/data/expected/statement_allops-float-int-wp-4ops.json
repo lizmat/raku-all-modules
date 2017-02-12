@@ -1,0 +1,80 @@
+{
+  "value-returning-code": [
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "integer": {
+              "digits": "1"
+            }
+          }
+        }
+      }
+    },
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "float": {
+              "digits": [
+                "1",
+                "234"
+              ],
+              "precision-spec": {
+                "name": "wp"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "integer": {
+              "digits": "12",
+              "precision-spec": {
+                "name": "wp"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "float": {
+              "digits": [
+                "3",
+                "456"
+              ],
+              "precision-spec": {
+                "name": "sp"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "in-place": {
+        "atomic": {
+          "number": {
+            "integer": {
+              "digits": "42"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "operator": [
+    "+",
+    "*",
+    "/",
+    "-"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "in-place": {
+    "in-place-array": {
+      "numbers": {
+        "number": [
+          {
+            "float": {
+              "digits": [
+                "1",
+                "34"
+              ]
+            }
+          },
+          {
+            "float": {
+              "digits": [
+                "2",
+                "45"
+              ]
+            }
+          },
+          {
+            "float": {
+              "digits": [
+                "3",
+                "45"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "in-place": {
+    "atomic": {
+      "number": {
+        "sign": "- ",
+        "integer": {
+          "digits": "1234"
+        }
+      }
+    }
+  }
+}

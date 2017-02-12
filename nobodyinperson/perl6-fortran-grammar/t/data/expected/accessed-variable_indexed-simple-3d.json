@@ -1,0 +1,24 @@
+{
+  "indexed-array": {
+    "name": "var",
+    "array-indices": {
+      "array-index": [
+        {
+          "integer": {
+            "digits": "1"
+          }
+        },
+        {
+          "integer": {
+            "digits": "2"
+          }
+        },
+        {
+          "integer": {
+            "digits": "3"
+          }
+        }
+      ]
+    }
+  }
+}
