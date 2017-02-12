@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/kalkin/Net-XMPP.git
 	branch = master
-	commit = e808189831f8b7aee0f13343358475175912f166
-	parent = 293a60de91e9aa18b0a6dd05d46fa0870ff142f3
+	commit = 855e6ae2606bfed6fc60a9c71a52ae27716015d9
+	parent = 70adb72ab18f953554fe4375cb8bbda49be55d45
 	cmdver = 0.4.0

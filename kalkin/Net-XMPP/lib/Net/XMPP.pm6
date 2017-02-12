@@ -14,9 +14,12 @@ has $.jid-local;
 has $.jid-domain;
 has $.jid-resource;
 
+has @.features = [];
+
 method new(:$jid!, :$login, :$password, :$server, :$port = 5222, :$socket) {
     self.bless(:$jid, :$login, :$password, :$server, :$port, :$socket);
 }
+
 
 method get-stanza {
     my $xml = self!get-raw-stanza;
@@ -69,57 +72,55 @@ submethod BUILD(:$!jid, :$login is copy, :$password, :$server, :$port, :$!socket
     self!do-negotiation($login, $password);
 }
 
-method !do-negotiation($login, $password) {
-    my $done = False;
-    until $done {
-        self!start-streams;
-        my $xml = self!get-raw-stanza;
-        unless $xml.root.name eq 'stream:features' {
-            die "confused";
-        }
-
-        my $action = False;
-        for $xml.root.nodes -> $feature {
-            if $feature.name eq 'mechanisms' {
-                my $success = False;
-                for $feature.nodes {
-                    if .contents.join ~~ /^\s*PLAIN\s*$/ {
-                        my $encoded = MIME::Base64.encode-str("\0$login\0$password");
-                        $!socket.print("<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl'"
-                                     ~" mechanism='PLAIN'>{$encoded}</auth>");
-                        my $resp = self!get-raw-stanza;
-                        unless $resp.root.name eq 'success' {
-                            die "Auth failed.";
-                        }
-                        $success = True;
-                    }
-                }
-                die "Can't do any server-supported mechanisms" unless $success;
-                $action = True;
-                last;
-            } elsif $feature.name eq 'bind' {
-                self.send-stanza(Net::XMPP::IQ.new(:type('set'),
-                                                   :id(1),
-                                                   :body("<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/>")));
-                my $response = self.get-stanza;
-                if $response ~~ Net::XMPP::IQ
-                   && $response.body[0].name eq 'bind'
-                   && $response.body[0].nodes[0].name eq 'jid' {
-                    $!jid = $response.body[0].nodes[0].contents.join.trim;
-                    ($!jid-local, $!jid-domain, $!jid-resource) = $!jid.split(/\@|\//);
-                } else {
-                    die "Bind failed."
-                }
-
-                $done = True;
-                $action = True;
-                last;
-            } elsif $feature.nodes[0] && $feature.nodes[0].name eq 'required' {
-                die "Can't do feature '{$feature.name}', yet it is required";
-            }
-        }
-        last unless $action;
+method !auth($login, $password) {
+    self!start-streams;
+    my $xml = self!get-raw-stanza;
+    unless $xml.root.name eq 'stream:features' {
+        die "confused";
     }
+    my $mechs = $xml.root.nodes.grep(*.name eq 'mechanisms')[0];
+    unless $mechs.nodes.grep( {.contents.join ~~ /^\s*PLAIN\s*$/}) {
+        die "Can't do any server-supported mechanisms $mechs.nodes.grep(*.contents)";
+    }
+
+    my $encoded = MIME::Base64.encode-str("\0$login\0$password");
+    $!socket.print("<auth xmlns='urn:ietf:params:xml:ns:xmpp-sasl'"
+                    ~" mechanism='PLAIN'>{$encoded}</auth>");
+    my $resp = self!get-raw-stanza;
+    unless $resp.root.name eq 'success' {
+        die "Auth failed.";
+    }
+}
+
+method !bind {
+    self!start-streams;
+    my $xml = self!get-raw-stanza;
+    unless $xml.root.name eq 'stream:features' {
+        die "confused";
+    }
+
+    for $xml.nodes { $.features.push: $_ };
+
+    unless $xml.root.nodes.grep(*.name eq 'bind') {
+        die "Server doesn't offer the bind stream:feature"
+    }
+    self.send-stanza(Net::XMPP::IQ.new(:type('set'),
+                                       :id(1),
+                                       :body("<bind xmlns='urn:ietf:params:xml:ns:xmpp-bind'/>")));
+    my $response = self.get-stanza;
+    if $response ~~ Net::XMPP::IQ
+    && $response.body[0].name eq 'bind'
+    && $response.body[0].nodes[0].name eq 'jid' {
+        $!jid = $response.body[0].nodes[0].contents.join.trim;
+        ($!jid-local, $!jid-domain, $!jid-resource) = $!jid.split(/\@|\//);
+    } else {
+        die "Bind failed."
+    }
+}
+
+method !do-negotiation($login, $password) {
+    self!auth($login, $password);
+    self!bind;
 }
 
 method !start-streams {
@@ -138,7 +139,7 @@ method !start-streams {
     my $check2 ="<?xml version=\"1.0\"?>";
     my $xmlv = $!socket.recv($check.chars);
     unless $xmlv eq $check|$check2 {
-        die "...";
+        die "$xmlv";
     }
 
     my $buffer;
