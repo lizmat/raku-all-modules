@@ -11,7 +11,7 @@ use Git::Wrapper;
 my $git = Git::Wrapper.new: gitdir => "{$*PROGRAM.dirname}/..";
 
 
-plan 3;
+plan 4;
 
 unless $git.is-repo {
     skip-rest "Not in a git repo";
@@ -29,6 +29,9 @@ subtest {
     isa-ok $gist, "Str", "The gist gives a string.";
     ok $gist ~~ / [\w+ ':' \s+ \w+ % \s+]+ % \n /, "Gist looks ok";
 }
+
+#Make sure that it can take arguments properly.
+isa-ok $git.log(:max-count(3)).first, "Git::Wrapper::Log", "Can use named args";
 
 
 done-testing;

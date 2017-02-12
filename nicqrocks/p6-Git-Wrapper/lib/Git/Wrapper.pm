@@ -15,8 +15,12 @@ class Git::Wrapper {
     method run($subcommand, *@positionals, *%named) {
         my $old-dir = $*CWD;
         chdir($.gitdir);
-        my $optstr = join " ", map -> $k,$v { $v eqv Bool::True ??  "-$k" !! "--$k=$v" }, %named.kv;
-        @positionals.unshift($optstr) if ?$optstr;
+        my @optstr = map -> $k,$v {
+            $v eqv Bool::True
+                ?? do { $k.chars > 1 ?? "--$k" !! "-$k" }
+                !! "--$k=$v"
+        }, %named.kv;
+        @positionals.unshift(|@optstr) if ?@optstr;
         my $p = run :out, :err, $.git-executable, $subcommand, |@positionals;
         my @out = $p.out.slurp-rest;
         chdir($old-dir);
