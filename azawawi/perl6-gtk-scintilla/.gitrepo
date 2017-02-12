@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-gtk-scintilla.git
 	branch = master
-	commit = 0fd1bf97f8f36fbbcb0dd56a59a90e5442e3e7ba
-	parent = fd0793192750739e5edbf28b46b1b093893cc145
+	commit = 6e17d455679c799eae5c04d29cd9b2c2d3fa964c
+	parent = 59e526a64d328b4a4ffa633124459d367fccf1d1
 	cmdver = 0.4.0
