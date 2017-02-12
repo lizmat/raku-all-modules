@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-SOAP.git
 	branch = master
-	commit = 2a3b2cc14cba117293566b0504bec8907684c60e
-	parent = dc935b232c2872729a06abe0408ba8b4136a5dcb
-	cmdver = 0.2.1
+	commit = 10738bcdc24890ba6ee21165d90a0794c0e51f7f
+	parent = 91f63bcb5f045db39de4a99725f40a0f1137477a
+	cmdver = 0.4.0
