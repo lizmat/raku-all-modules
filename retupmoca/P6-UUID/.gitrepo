@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-UUID.git
 	branch = master
-	commit = 818f5bbdb245bc8be79773269bf7bce7d47cb528
-	parent = 5f9e46b34c6ccd4c9babe57f203ec5667fd83233
-	cmdver = 0.2.3
+	commit = 76f052d85aa72ce8fa9a5869aeb6f6666bfc7bae
+	parent = 2593e5113d1ca34c15c4d4616b0f2f6fd92e4d84
+	cmdver = 0.4.0
