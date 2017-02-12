@@ -134,8 +134,6 @@ grammar CSS::Grammar {
     rule any-args  {<any-arg>*}
     # - <badstring>               - for unclosed strings
     rule badstring {<CSS::Grammar::Core::_badstring>}
-    rule unclosed-paren-square {<?>}
-    rule unclosed-paren-round  {<?>}
 
     # failed declaration parse - analyse and drop
     rule dropped-decl  { 
@@ -217,8 +215,8 @@ grammar CSS::Grammar::Core #api<css2-20110607>
     rule _any:sym<class>  { <.class> }
     rule _any:sym<at-keyw>{ '@'<.Ident> }
     rule _any:sym<op>     { <._op> }
-    rule _any:sym<attrib> { '[' <._arg>* [ ']' || <.unclosed-paren-square> ] }
-    rule _any:sym<args>   { '(' <._arg>* [ ')' || <.unclosed-paren-round> ] }
+    rule _any:sym<attrib> { '[' <._arg>* ']'? }
+    rule _any:sym<args>   { '(' <._arg>* ')'? }
 
     rule _arg {[ <_any> | <_block> | <_badstring> ]}
 }

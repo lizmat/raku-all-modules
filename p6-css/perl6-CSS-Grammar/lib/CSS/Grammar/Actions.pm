@@ -22,7 +22,7 @@ class X::CSS::Ignored { #is Exception { ## issue 4
     has Str $.message is required;
     has Str $!str;
     has Str $!explanation;
-    has UInt $.line-no;
+
     submethod TWEAK(:$str, :$explanation ) {
         $!str = display-string($_) with $str;
         $!explanation = display-string($_) with $explanation;
@@ -39,8 +39,6 @@ class X::CSS::Ignored { #is Exception { ## issue 4
 class CSS::Grammar::Actions
     is CSS::Grammar::AST {
 
-    has Int $.line-no is rw = 1;
-    has Int $!eol-rachet = 0;
     # variable encoding - not yet supported
     has Str $.encoding is rw = 'UTF-8';
     has Bool $.lax is rw = False;
@@ -50,8 +48,6 @@ class CSS::Grammar::Actions
 
     method reset {
         @.warnings = [];
-        $.line-no = 1;
-        $!eol-rachet = 0;
     }
 
     method at-rule($/, :$type) {
@@ -80,18 +76,10 @@ class CSS::Grammar::Actions
     }
 
     method warning($message, $str?, $explanation?) {
-        @.warnings.push: X::CSS::Ignored.new( :$message, :$str, :$explanation, :$.line-no);
+        @.warnings.push: X::CSS::Ignored.new( :$message, :$str, :$explanation);
     }
 
-    method eol($/) {
-        my $pos = $/.from;
-
-        return
-            if my $_backtracking = $pos <= $!eol-rachet;
-
-        $!eol-rachet = $pos;
-        $.line-no++;
-    }
+    method eol($/) { }
 
     method element-name($/)           { make $.token( $<Ident>.ast, :type(CSSValue::ElementNameComponent)) }
 

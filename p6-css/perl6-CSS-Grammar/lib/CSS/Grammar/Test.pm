@@ -52,7 +52,7 @@ module CSS::Grammar::Test {
         if $input.defined && $expected-parse.defined {
             my @input-lines = $input.lines;
             my $input-display = @input-lines >= 3
-                ?? [~] @input-lines[0], '... ', @input-lines[*-1]
+                ?? [~] @input-lines[0], '... ', @input-lines.tail
                 !! $input;
             my $got = $parse.defined ?? (~$parse).trim !! '';
             # partial matches bit iffy at the moment

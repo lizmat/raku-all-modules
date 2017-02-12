@@ -24,8 +24,6 @@ for css1 => CSS::Grammar::CSS1,
     my $p1 = $class.parse( $css-sample, :$actions);
     ok $p1, $test ~ ' parse';
 
-    is $actions.line-no, @lines + 1, 'line count';
-
     my $expected-warnings = %level-warnings{$test};
     my $actual-warnings = ~$actions.warnings;
     todo "issue #4";
