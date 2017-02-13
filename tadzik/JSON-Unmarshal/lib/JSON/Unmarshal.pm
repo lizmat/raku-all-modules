@@ -41,14 +41,18 @@ sub panic($json, $type) {
     die "Cannot unmarshal {$json.perl} to type {$type.perl}"
 }
 
-multi _unmarshal($json, Int) {
+multi _unmarshal(Any:U, Mu $type) {
+    $type;
+}
+
+multi _unmarshal(Any:D $json, Int) {
     if $json ~~ Int {
         return Int($json)
     }
     panic($json, Int)
 }
 
-multi _unmarshal($json, Rat) {
+multi _unmarshal(Any:D $json, Rat) {
    CATCH {
       default {
          panic($json, Rat);
@@ -57,7 +61,7 @@ multi _unmarshal($json, Rat) {
    return Rat($json);
 }
 
-multi _unmarshal($json, Numeric) {
+multi _unmarshal(Any:D $json, Numeric) {
     if $json ~~ Numeric {
         return Num($json)
     }
@@ -73,7 +77,7 @@ multi _unmarshal($json, Str) {
     }
 }
 
-multi _unmarshal($json, Bool) {
+multi _unmarshal(Any:D $json, Bool) {
    CATCH {
       default {
          panic($json, Bool);
@@ -82,7 +86,7 @@ multi _unmarshal($json, Bool) {
    return Bool($json);
 }
 
-multi _unmarshal($json, Any $x) {
+multi _unmarshal(Any:D $json, Any $x) {
     my %args;
     my %local-attrs =  $x.^attributes(:local).map({ $_.name => $_.package });
     for $x.^attributes -> $attr {
@@ -126,7 +130,7 @@ multi _unmarshal($json, %x) {
    return %ret;
 }
 
-multi _unmarshal($json, Mu) {
+multi _unmarshal(Any:D $json, Mu) {
     return $json
 }
 

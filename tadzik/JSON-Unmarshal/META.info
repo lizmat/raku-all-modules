@@ -1,7 +1,7 @@
 {
-	 "perl"        : "6",
+	"perl"        : "6.c",
     "name"        : "JSON::Unmarshal",
-    "version"     : "0.07",
+    "version"     : "0.08",
     "description" : "Turn JSON into objects",
     "provides"    : {
         "JSON::Unmarshal" : "lib/JSON/Unmarshal.pm"
