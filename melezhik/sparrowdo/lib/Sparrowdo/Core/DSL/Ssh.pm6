@@ -75,7 +75,7 @@ sub scp ( %args ) is export {
 
   $scp-run-cmd ~= ' -i /opt/sparrow/.cache/ssh-key' if %args<ssh-key>:exists;
 
-  $scp-run-cmd ~= %args<pull> ??  "$ssh-host-term %args<data>" !! " %args<data> $ssh-host-term";
+  $scp-run-cmd ~= %args<pull> ??  " $ssh-host-term %args<data>" !! " %args<data> $ssh-host-term";
 
   my $bash-cmd;
 
