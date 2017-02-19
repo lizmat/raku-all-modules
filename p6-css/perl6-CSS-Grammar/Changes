@@ -1,4 +1,7 @@
-    Release 0.03.0
+    Release 0.3.1
+    - dropped "unclosed '('" warning.
+    - dropped <eol> tokebn and (inaccurate) line-no reporting in warnings
+    Release 0.3.0
     - Consolidated AST for at-rules. @margin-rule, @media-rule, @charset, @import, @margin
       now all return nodes of type 'at-rule'. Each contains an 'at-keyw' sub-node, which
       can be used to determine the at-rule type.

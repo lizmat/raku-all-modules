@@ -12,14 +12,11 @@ grammar CSS::Grammar {
 
     # Comments and whitespace
 
-    token eol { \n }
-
-    # comments: nb trigger <eol> for accurate line counting
-    token comment {('<!--') [<.eol>|.]*? ['-->' || <unclosed-comment>]
-                  |('/*')   [<.eol>|.]*? ['*/'  || <unclosed-comment>]}
+    token comment {('<!--') .*? ['-->' || <unclosed-comment>]
+                  |('/*')   .*? ['*/'  || <unclosed-comment>]}
     token unclosed-comment {$}
 
-    token wc { <.eol> | "\t"  | " " }
+    token wc { \n | "\t"  | " " }
     token ws { <!ww>[ <.wc> | <.comment> ]* }
 
     # "lexer"
@@ -42,7 +39,7 @@ grammar CSS::Grammar {
 
     token stringchar-regular {<[ \x20 \! \# \$ \% \& \(..\[ \]..\~ ]>+ }
     proto token stringchar {*}
-    token stringchar:sym<cont>     { \\<.eol> }
+    token stringchar:sym<cont>     { \\ \n }
     token stringchar:sym<escape>   { <escape> }
     token stringchar:sym<nonascii> { <nonascii> }
     token stringchar:sym<ascii>    { <stringchar-regular>+ }
@@ -202,8 +199,8 @@ grammar CSS::Grammar::Core #api<css2-20110607>
     token _delim       {<[ \( \) \[ \] \{ \} \; \" \' \\ ]>}
     token _op          {[<._ascii-punct> & <- _delim>]+}
 
-    token _badstring   {\"[<.stringchar>|\']*[<.eol>|$]
-                       |\'[<.stringchar>|\"]*[<.eol>|$]}
+    token _badstring   {\"[<.stringchar>|\']*[\n|$]
+                       |\'[<.stringchar>|\"]*[\n|$]}
 
     proto rule _any {*}
     rule _any:sym<string> { <.string> }
