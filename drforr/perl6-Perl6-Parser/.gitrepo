@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/drforr/perl6-Perl6-Parser.git
 	branch = master
-	commit = 8c1ceaafa26ff2f7c7d61b598ce8683978463082
-	parent = 446564947fb045e331385e9590fe52c2c841868f
+	commit = 682b4e79a17b8133649d5cde49828436ccad0583
+	parent = 28aa0d14865d4cf3a2c985874fef34c51aac74ad
 	cmdver = 0.4.0

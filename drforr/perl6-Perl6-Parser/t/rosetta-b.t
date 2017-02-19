@@ -6,9 +6,8 @@ use Perl6::Parser;
 plan 27;
 
 my $pt = Perl6::Parser.new;
-my $*VALIDATION-FAILURE-FATAL = True;
-my $*FACTORY-FAILURE-FATAL = True;
-my $*DEBUG = True;
+my $*CONSISTENCY-CHECK = True;
+my $*GRAMMAR-CHECK = True;
 
 subtest {
 	my $source = Q:to[_END_];
@@ -22,7 +21,6 @@ for 1 .. Inf -> $integer {
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -87,7 +85,6 @@ say reveal $steganography;
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -116,7 +113,6 @@ say "$s {balanced($s) ?? "is" !! "is not"} well-balanced"
 _END_
 		my $p = $pt.parse( $source );
 		my $tree = $pt.build-tree( $p );
-		ok $pt.validate( $p ), Q{valid};
 		is $pt.to-string( $tree ), $source, Q{formatted};
 
 		done-testing;
@@ -135,7 +131,6 @@ say "$s { balanced($s) ?? "is" !! "is not" } well-balanced"
 _END_
 		my $p = $pt.parse( $source );
 		my $tree = $pt.build-tree( $p );
-		ok $pt.validate( $p ), Q{valid};
 		is $pt.to-string( $tree ), $source, Q{formatted};
 
 		done-testing;
@@ -154,7 +149,6 @@ say "$s is", ' not' x not balanced($s), " well-balanced";
 _END_
 		my $p = $pt.parse( $source );
 		my $tree = $pt.build-tree( $p );
-		ok $pt.validate( $p ), Q{valid};
 		is $pt.to-string( $tree ), $source, Q{formatted};
 
 		done-testing;
@@ -170,7 +164,6 @@ say "$s { BalBrack.parse($s) ?? "is" !! "is not" } well-balanced";
 _END_
 		my $p = $pt.parse( $source );
 		my $tree = $pt.build-tree( $p );
-		ok $pt.validate( $p ), Q{valid};
 		is $pt.to-string( $tree ), $source, Q{formatted};
 
 		done-testing;
@@ -247,7 +240,6 @@ say "a × (b − c) == ", ~$x, ' == ', $x.Int;
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -280,7 +272,6 @@ $png.write: 'Barnsley-fern-perl6.png';
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -314,7 +305,6 @@ sub buf-to-Base64($buf) {
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -339,7 +329,6 @@ multi MAIN() { show benford ( 1, 1, 2, *+* ... * )[^1000] }
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -368,7 +357,6 @@ printf $form, .key, .value.nude for @bpairs;
 _END_
 		my $p = $pt.parse( $source );
 		my $tree = $pt.build-tree( $p );
-		ok $pt.validate( $p ), Q{valid};
 		is $pt.to-string( $tree ), $source, Q{formatted};
 
 		done-testing;
@@ -397,14 +385,12 @@ printf $form, .key, .value.nude for @bpairs;
 _END_
 		my $p = $pt.parse( $source );
 		my $tree = $pt.build-tree( $p );
-		ok $pt.validate( $p ), Q{valid};
 		is $pt.to-string( $tree ), $source, Q{formatted};
 
 		done-testing;
 	}, Q{version 2};
 
 	subtest {
-#`[
 		my $source = Q:to[_END_];
 my sub infix:<bop>(\prev,\this) { this.key => this.key * (this.value - prev.value) }
  
@@ -416,9 +402,7 @@ constant bernoulli = grep *.value, map { (.key => .value.[*-1]) }, do
 _END_
 		my $p = $pt.parse( $source );
 		my $tree = $pt.build-tree( $p );
-		ok $pt.validate( $p ), Q{valid};
 		is $pt.to-string( $tree ), $source, Q{formatted};
-]
 
 		done-testing;
 	}, Q{version 3};
@@ -455,7 +439,6 @@ printf "%s, %s, (%d)\n", $_, best-shuffle $_
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -467,7 +450,6 @@ say .fmt("%b") for 5, 50, 9000;
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -495,7 +477,6 @@ sub binary_search (&p, Int $lo is copy, Int $hi is copy --> Int) {
 _END_
 		my $p = $pt.parse( $source );
 		my $tree = $pt.build-tree( $p );
-		ok $pt.validate( $p ), Q{valid};
 		is $pt.to-string( $tree ), $source, Q{formatted};
 ]
 
@@ -517,7 +498,6 @@ sub binary_search (&p, Int $lo, Int $hi --> Int) {
 _END_
 		my $p = $pt.parse( $source );
 		my $tree = $pt.build-tree( $p );
-		ok $pt.validate( $p ), Q{valid};
 		is $pt.to-string( $tree ), $source, Q{formatted};
 ]
 
@@ -615,7 +595,6 @@ say 'joined = ', $b3;
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -645,7 +624,6 @@ say "Here is a bitcoin address: 1AGNa15ZQXAZUgFiqJ2i7Z2DPU2J6hW62i" ~~ $bitcoin-
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -684,7 +662,6 @@ say public_point_to_address
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -725,7 +702,6 @@ say $b.perl;
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 ]
 
@@ -770,7 +746,6 @@ sub line(Bitmap $bitmap, $x0 is copy, $x1 is copy, $y0 is copy, $y1 is copy) {
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -821,7 +796,6 @@ augment class Bitmap {
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 ]
 
@@ -864,7 +838,6 @@ $*OUT.write: $b.P6;
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 ]
 
@@ -890,7 +863,6 @@ say decode-ascii $encode;
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -930,7 +902,6 @@ sub say_bit ($message, $value) {
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 ]
 
@@ -944,7 +915,6 @@ my $val = 0 but True;
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -977,7 +947,6 @@ for 0 .. 32 -> $ix {
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -1033,7 +1002,6 @@ bxtest Q:to/END/.lines;
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 ]
 
@@ -1051,14 +1019,12 @@ say $foo.^attributes.first('$!shyguy').get_value($foo);
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
 }, Q{Break OO privacy};
 
 subtest {
-#`[
 	my $source = Q:to[_END_];
 constant size = 100;
 constant particlenum = 1_000;
@@ -1135,9 +1101,7 @@ say "";
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
-]
 
 	done-testing;
 }, Q{Brownian tree};
@@ -1168,14 +1132,12 @@ say 'A winner is you!';
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
 }, Q{Bulls and cows};
 
 subtest {
-#`[
 	my $source = Q:to[_END_];
 # we use the [] reduction meta operator along with the Cartesian Product
 # operator X to create the Cartesian Product of four times [1..9] and then get
@@ -1225,9 +1187,7 @@ say @candidates
 _END_
 	my $p = $pt.parse( $source );
 	my $tree = $pt.build-tree( $p );
-	ok $pt.validate( $p ), Q{valid};
 	is $pt.to-string( $tree ), $source, Q{formatted};
-]
 
 	done-testing;
 }, Q{Bulls and cows / player};
