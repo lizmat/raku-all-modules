@@ -1,6 +1,7 @@
 #!/usr/bin/env perl6
 
 use v6;
+use Readline;
 use Getopt::Kinoko;
 use Getopt::Kinoko::OptionSet;
 use Getopt::Kinoko::DeepClone;
@@ -280,16 +281,16 @@ class Compiler {
 
     method readFromUser {
         @!incode = [];
-        my $end := $!optset<end>;
-        say "Please input your code, make sure your code correct.";
+        my ($readline, $end) = (Readline.new(), $!optset<end>);
+
+		say "Please input your code, make sure your code correct.";
         say "Enter " ,  $end ~ " end input.";
-        my \stdin = $*IN;
+		$readline.using-history;
         loop {
-            my $code = stdin.get().chomp;
-
-            last if $code ~~ /^ $end $/;
-
-            @!incode.push: $code;
+            my $code = $readline.readline("");
+			$readline.add-history($code);
+			last if $code ~~ /^ $end $/;
+			@!incode.push: $code;
         }
     }
 

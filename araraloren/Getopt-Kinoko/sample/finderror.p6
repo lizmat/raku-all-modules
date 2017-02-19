@@ -3,6 +3,7 @@
 use Getopt::Kinoko;
 use Getopt::Kinoko::OptionSet;
 use Getopt::Kinoko::Exception;
+use Getopt::Kinoko::Argument;
 
 class ErrnoInfo   { ... }
 class LocalCache  { ... }
