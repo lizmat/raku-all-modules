@@ -24,7 +24,7 @@ class CSS::Writer {
 
     submethod TWEAK(:$color-names, :$color-values) {
 
-        with $color-names {
+        if $color-names {
             die ":color-names and :color-values are mutually exclusive options"
                 if $color-values;
 
@@ -77,15 +77,16 @@ class CSS::Writer {
     }
 
     #| /* These are */ /* comments * / */ := $.write-comment: [ "These are", "comments */" ]
-    multi method write-comment( List $_ ) {
+    multi method write-comment( List:D $_ ) {
         .map({ $.write-comment( $_ ) }).join: $.nl;
     }
-    multi method write-comment( Str $_ where /^ <CSS::Grammar::CSS3::comment> $/ ) {
+    multi method write-comment( Str:D $_ where /^ <CSS::Grammar::CSS3::comment> $/ ) {
         $_;
     }
-    multi method write-comment( Str $_ ) {
+    multi method write-comment( Str:D $_ ) {
         [~] '/* ', .trim.subst(/'*/'/, '* /'), ' */';
     }
+    multi method write-comment($) {''}
 
     #| .my-class := $.write-class( 'my-class' )
     method write-class( Str $_) {
@@ -97,7 +98,7 @@ class CSS::Writer {
     method write-declaration-list( List $_ ) {
         .map({
             my $prop = .<ident>:exists
-                ?? :property(%$_)
+                ?? :property($_)
                 !! $_;
 
             $.write-indented( $prop, 2);
@@ -141,29 +142,36 @@ class CSS::Writer {
     #| @media all { body { background:lime; }} := $.write( :at-rule{ :at-keyw<media>, :media-list[ { :media-query[ :ident<all> ] } ], :rule-list[ { :ruleset{ :selectors[ :selector[ { :simple-selector[ { :element-name<body> } ] } ] ], :declarations[ { :ident<background>, :expr[ :ident<lime> ] }, ] } } ]} )
     #| @namespace svg url('http://www.w3.org/2000/svg'); := $.write( :at-rule{ :at-keyw<namespace>, :ns-prefix<svg>, :url<http://www.w3.org/2000/svg> } )
     #| @page :first { margin:5mm; } := $.write( :at-rule{ :at-keyw<page>, :pseudo-class<first>, :declarations[ { :ident<margin>, :expr[ :mm(5) ] }, ] } )
-    method write-at-rule( Hash $at-rule ) {
-        my $at-keyw =  $.write( $at-rule, :nodes<at-keyw> );
-        my $rhs = do given $at-keyw {
-            when '@charset' { $.write($at-rule, :nodes<string>, :punc<;>) }
-            when '@import' { $.write($at-rule, :nodes<url string media-list>, :punc<;>) }
-            when '@media' { $.write($at-rule, :nodes<media-list rule-list>) }
-            when '@namespace' { $.write($at-rule, :nodes<ns-prefix url>, :punc<;>) }
-            when '@page' { $.write($at-rule, :nodes<pseudo-class declarations>) }
-            default {
-                $.write( $at-rule, :nodes<declarations> );
-            }
-        }
-        [ $at-keyw, $rhs ].join: ' ';
+    multi method write-at-rule(% (:$at-keyw where 'charset', :$string!) ) {
+        $.write-nodes( (:$at-keyw), (:$string) ) ~ ';'
+    }
+    multi method write-at-rule(% (:$at-keyw where 'import', :$url, :$string, :$media-list) ) {
+        $.write-nodes( (:$at-keyw), (:$url), (:$string), (:$media-list) ) ~ ';'
+    }
+    multi method write-at-rule(% (:$at-keyw where 'media', :$media-list, :$rule-list) ) {
+        $.write-nodes( (:$at-keyw), (:$media-list), (:$rule-list) )
+    }
+    multi method write-at-rule(% (:$at-keyw where 'namespace', :$ns-prefix, :$url) ) {
+        $.write-nodes( (:$at-keyw), (:$ns-prefix), (:$url) ) ~ ';'
+    }
+    multi method write-at-rule(% (:$at-keyw where 'page', :$pseudo-class, :$declarations) ) {
+        $.write-nodes( (:$at-keyw), (:$pseudo-class), (:$declarations) )
+    }
+    multi method write-at-rule(% (:$at-keyw!, :$declarations!)) is default {
+        $.write-nodes( (:$at-keyw), (:$declarations) )
     }
 
     #| lang(klingon) := $.write-func: { :ident<lang>, :args[ :ident<klingon> ] }
-    method write-func( Hash $func) {
-        sprintf '%s(%s)%s', $.write( $func, :node<ident> ), do {
-            when $func<args>:exists {$.write( $func, :node<args> )}
-            when $func<expr>:exists {$.write( $func, :node<expr> )}
-            default {''};
-        },
-        $.write-any-comments( $func, ' ' );
+    method write-func(% (:$ident!, :$args, :$expr, :$comment)) {
+        '%s(%s)%s'.sprintf(
+            $.write-ident( $ident ),
+            do with $args {$.write-args( $_ )}
+            else {
+                with $expr {$.write-expr( $_ )}
+                else {''}
+            },
+            $.write-comment( $comment );
+        );
     }
 
     #| #My-id := $.write-id( 'My-id' )
@@ -241,16 +249,15 @@ class CSS::Writer {
     }
 
     #| color:red!important; := $.write-property: { :ident<color>, :expr[ :ident<red> ], :prio<important> }
-    method write-property( Hash $property ) {
-        my $sp = $!terse ?? '' !! ' ';
-        my Str @p = $.write( $property, :node<ident> );
-        @p.push: ':' ~ $sp ~ $.write($property, :node<expr>)
-            if $property<expr>:exists;
-        @p.push: $sp ~  $.write($property, :node<prio>)
-            if $property<prio>:exists;
+    method write-property(% (:$ident!, :$expr, :$prio, :$comment)) {
+        my \sp = $!terse ?? '' !! ' ';
+        my Str @p = $.write-ident( $ident );
+        @p.push: ':' ~ sp ~ $.write-expr($_)
+            with $expr;
+        @p.push: sp ~$.write-prio($_)
+            with $prio;
         @p.push: ';';
-        my $comments = $.write-any-comments( $property, ' ' );
-        @p.push: $comments if $comments;
+        @p.push: sp ~ $.write-comment($_) with $comment;
 
         [~] @p;
     }
@@ -271,13 +278,13 @@ class CSS::Writer {
     }
 
     #| svg|circle := $.write-qname: { :ns-prefix<svg>, :element-name<circle> }
-    method write-qname(Hash $qname) {
-        my $out = $.write($qname, :node<element-name>);
+    method write-qname(% (:$element-name!, :$ns-prefix, :$comment)) {
+        my $out = $.write-element-name($element-name);
 
-        $out = $.write($qname, :node<ns-prefix>) ~ '|' ~ $out
-            with $qname<ns-prefix>;
+        $out = $.write-ns-prefix($_) ~ '|' ~ $out
+            with $ns-prefix;
 
-        $out ~= $.write-any-comments( $qname, ' ' );
+        $out ~= $.write-comment( $_ ) with $comment;
 
         $out;
     }
@@ -288,8 +295,8 @@ class CSS::Writer {
     }
 
     #| a:hover { color:green; } := $.write-ruleset: { :selectors[ :selector[ { :simple-selector[ { :element-name<a> }, { :pseudo-class<hover> } ] } ] ], :declarations[ { :ident<color>, :expr[ :ident<green> ] }, ] }
-    method write-ruleset(Hash $_) {
-        [~] $.write($_, :nodes<selectors declarations>);
+    method write-ruleset(% (:$selectors, :$declarations), |c) {
+        [~] $.write-nodes((:$selectors), (:$declarations), |c);
     }
 
     #| #container * := $.write-selector: [ { :id<container>}, { :element-name<*> } ]
@@ -371,12 +378,12 @@ class CSS::Writer {
         $.write( |($node => $ast{$node} ) );
     }
 
-    multi method write(Hash $ast!, :$nodes!, Str :$punc='', Str :$sep=' ')  {
-        my Str $str = $nodes.grep({ $ast{$_}:exists}).map({
-                          $.write( |( .subst(/':'.*/, '') => $ast{$_}) )
+    method write-nodes(*@nodes, Str :$punc='', Str :$sep=' ', :$comments)  {
+        my Str $str = @nodes.grep(*.value.defined).map({
+                          $.write( |( .key.subst(/':'.*/, '') => .value) )
                          }).join($sep)  ~  $punc;
 
-        $str ~= $.write-any-comments( $ast, ' ' );
+        $str ~= $.write-comment( $_ ) with $comments;
 
         $str;
     }
@@ -396,13 +403,6 @@ class CSS::Writer {
     }
 
     # -- helper methods --
-
-    #| write comments, if applicable
-    method write-any-comments( Hash $ast, $padding='' --> Str) {
-        $ast<comment>:exists && ! $.terse
-            ?? $padding ~ $.write($ast, :node<comment>)
-            !! ''
-    }
 
     #| handle indentation.
     method write-indented( Any $ast, Int $indent! --> Str) {
