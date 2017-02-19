@@ -4,6 +4,9 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: ***Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable.***
 
+* 0.6.0
+  * Added a perl method to show the current data structure in a pretty print format. A Hash can be provided to show that instead. Nice to see the results of a refine call.
+  * Added a :trace argument to BUILD (new). When True, the files loaded are shown. This comes in handy when the search for files gets complex. Also good to see when there are any unexpected files are found and read into the configuration.
 * 0.5.0
   * Added type C-UNIX-OPTS-T3 to handle negated options specially used on perl6 command line when MAIN sub is defined. :filter is ignored in this case because tis filters out false booleans.
 * 0.4.7

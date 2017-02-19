@@ -58,22 +58,34 @@ spurt( '.myCfg.cfg', Q:to/EOOPT/);
 #-------------------------------------------------------------------------------
 subtest {
 
+  # First file to encounter is .myCfg.cfg and stops there because :!merge
   my Config::DataLang::Refine $c .= new(:config-name<t/cfg-path/myCfg.cfg>);
+  diag "Configuration: " ~ $c.perl;
+
   my Hash $o = $c.refine(<app>);
+  diag "Refined using <app>: " ~ $c.perl(:h($o));
+
   ok $o<workdir>:!exists, "app has no workdir";
   is $o<port>, 2345, "port app $o<port>";
 
   $o = $c.refine(<app p1>);
+  diag "Refined using <app p1>: " ~ $c.perl(:h($o));
   is $o<workdir>, '/tmp', "workdir p1 is $o<workdir>";
   is $o<port>, 2345, "port p1 $o<port>";
 
 
+
+  # Merge file t/cfg-path/myCfg.cfg followed by file .myCfg.cfg
   $c .= new( :config-name<t/cfg-path/myCfg.cfg>, :merge);
+  diag "Configuration: " ~ $c.perl;
   $o = $c.refine(<app>);
+  diag "Refined using <app>: " ~ $c.perl(:h($o));
+
   is $o<workdir>, '/var/tmp', "workdir app $o<workdir>";
   is $o<port>, 2345, "port app $o<port>";
 
   $o = $c.refine(<app p1>);
+  diag "Refined using <app p1>: " ~ $c.perl(:h($o));
   is $o<host>, 'example.com', "host p1 is $o<host>";
   is $o<port>, 2345, "port p1 $o<port>";
 

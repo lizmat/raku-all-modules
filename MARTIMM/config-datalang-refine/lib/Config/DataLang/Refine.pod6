@@ -85,7 +85,7 @@ A sample config from the MongoDB project to test several server setups is
 Now, to get run options to start server 1 one does the following;
 
   my Array $opts = $c.refine-str( <mongod s1 replicate1>, :C-UNIX-OPTS-T2);
-  
+
   # Output
   # --nojournal, --fork, --smallfiles, --oplogSize=128, --logappend,
   # --logpath='./Sandbox/Server1/m.log', --pidfilepath='./Sandbox/Server1/m.pid',
@@ -106,8 +106,6 @@ configuration should always be a Hash (at this moment).
 
 =head2 config
 
-Defined as
-
   has Hash $.config;
 
 Stored configuration. Can be retrieved directly from object.
@@ -120,14 +118,13 @@ Stored configuration. Can be retrieved directly from object.
 
 =head2 new
 
-Defined as
-
   submethod BUILD (
     Str :$config-name,
     Bool :$merge = False,
     Array :$locations = [],
     Str :$data-module = 'Config::TOML',
-    Hash :$other-config = {}
+    Hash :$other-config = {},
+    Bool :$trace = False
   )
 
 Reads configuration text from a file pointed to by C<:config-name>. The file
@@ -152,13 +149,15 @@ directory if found. Then the options from the hidden local file if found and
 finishing with the visible local file found. An exception will be thrown when
 the resulting config has no elements.
 
+C<:trace>. When True, the search will show what files are loaded.
+
 The data languages such as C<Config::TOML> might throw exceptions when it
 fails to parse the configuration text.
 
 =begin table :capture('')
 
   Setup                         | Search
-  ==============================|==============================================  
+  ==============================|==============================================
   Nothing set                   | :config-name set to program name. Say p.pl6 so
                                 | config will be p.toml because :data-module is
                                 | by default Config::TOML.
@@ -194,8 +193,6 @@ previous loads.
 
 =head2 refine
 
-Defined as
-
   method refine ( *@key-list, Bool :$filter = False --> Hash )
 
 Processes data in the config using the keys from the @key-list. The method
@@ -220,8 +217,6 @@ are removed from the result where the value is a C<Bool> and is C<False>.
 =end table
 
 =head2 refine-str
-
-Defined as
 
   method refine-str (
     *@key-list,
@@ -289,5 +284,13 @@ all single character keys without values together prefixed with a dash. E.g.
 B<Note 4> Mode C<C-UNIX-OPTS-T3> also does the same as C<C-UNIX-OPTS-T1> but
 ignores the filter option. The result of False booleans will then be --/$k
 instead of --no$k. This is recognized by perl6 as input to the MAIN sub.
+
+=head2 perl
+
+  method perl ( Hash :$h --> Str )
+
+Show the configuration stored in this class or, when defined, $h, given as a
+named attribute.
+
 
 =end pod

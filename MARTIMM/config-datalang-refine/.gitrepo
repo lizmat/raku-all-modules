@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/config-datalang-refine.git
 	branch = master
-	commit = 3c2f5b4d726f1661a26a0f53ad661d9a66088ed4
-	parent = 792087121910b9ffafb44d325a52562abe9652ff
+	commit = 89e9261d3b5b50a5ae445d0c6931344732fcdb77
+	parent = ea0f56dbc6522b2dcb22d60107ea07854245c8ea
 	cmdver = 0.4.0

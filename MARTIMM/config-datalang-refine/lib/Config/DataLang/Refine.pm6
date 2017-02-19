@@ -18,18 +18,21 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
   has Str $!config-content = '';
   has Hash $.config;
 
+  has Str $!p-out;
+  has Int $!p-lvl;
+
+  has Bool $!trace = False;
+
   enum StrMode is export <
     C-URI-OPTS-T1 C-URI-OPTS-T2 C-UNIX-OPTS-T1 C-UNIX-OPTS-T2 C-UNIX-OPTS-T3
   >;
 
   #-----------------------------------------------------------------------------
   submethod BUILD (
-    Str :$config-name = '', Bool :$merge = False, Array :$locations = [],
-    Str :$data-module = 'Config::TOML', Hash :$other-config = {}
+    Str :$config-name = '', Bool :$!merge = False, Array :$!locations = [],
+    Str :$data-module = 'Config::TOML', Hash :$other-config = {},
+    Bool :$!trace = False
   ) {
-
-    $!merge = $merge;
-    $!locations = $locations;
 
     # When the caller provides a configuration as a base, set that as a
     # starting point and set merge to True
@@ -117,6 +120,8 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
   #-----------------------------------------------------------------------------
   method read-config ( Str $config-name ) {
 
+    note "\nSearch using name $config-name" if $!trace;
+
     $!config-content = '';
 
     # Get all locations and push the path when config is found and readable
@@ -153,7 +158,13 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
 
       # Start with the last entry from the locations
       for @$locs.reverse -> $cfg-name {
-#say "CN: $cfg-name";
+
+        if $!trace {
+          my $p = $cfg-name;
+          $p ~~ s/ $*CWD '/'? //;
+          $p ~~ s/ $*HOME '/'? /~\//;
+          note "Merge file $p";
+        }
 
         $!config-content = slurp($cfg-name) ~ "\n";
 
@@ -162,7 +173,6 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
           $!config,
           $!read-from-text($!config-content)
         );
-#say "CFG: $!config.elems()";
       }
     }
 
@@ -170,7 +180,13 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
     else {
 
       if ?$locs[0] {
-#say "l0: $locs[0]";
+        if $!trace {
+          my $p = $locs[0];
+          $p ~~ s/ $*CWD '/'? //;
+          $p ~~ s/ $*HOME '/'? /~\//;
+          note "Use only file $p";
+        }
+
         $!config-content = slurp($locs[0]);
         $!config = $!read-from-text($!config-content);
       }
@@ -422,5 +438,35 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
     }
 
     $h3 // {};
+  }
+
+  #-----------------------------------------------------------------------------
+  method perl ( Hash :$h --> Str ) {
+
+    $!p-out = '';
+    $!p-lvl = 0;
+
+    self!dd($h // $!config);
+    $!p-out;
+  }
+
+  #-----------------------------------------------------------------------------
+  method !dd ( Hash $h ) {
+
+    $!p-out ~= "\n";
+
+    for $h.keys.sort -> $k {
+      if $h{$k} ~~ Hash {
+        $!p-out ~= (' ' x $!p-lvl) ~ "$k => \{";
+        $!p-lvl += 2;
+        self!dd($h{$k});
+        $!p-lvl -= 2;
+        $!p-out ~= (' ' x $!p-lvl) ~ "},\n";
+      }
+
+      else {
+        $!p-out ~= (' ' x $!p-lvl) ~ "$k => $h{$k},\n";
+      }
+    }
   }
 }
