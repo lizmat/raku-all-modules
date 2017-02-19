@@ -46,7 +46,7 @@ die "Duplicate user id" if $user.elems > 1;
 die "User not found!"   if $user.elems == 0;
 say "user: " ~ $user[0].perl;
 
-# Create a product (needs the CRM and sale app to be install)
+# Create a product (needs the CRM and sale app to be installed)
 sub create-product($name, $type, $list-price, $image) {
     my $product-model = $odoo.model('product.product');
     my $base64-image  = MIME::Base64.encode($image);
@@ -60,5 +60,6 @@ sub create-product($name, $type, $list-price, $image) {
 
 # Create a product to be sold :)
 my $perl6-book-image = "logotype/logo_32x32.png".IO.slurp(:bin);
-my $product = create-product('Perl 6 and Odoo', 'consu', 29.99, $perl6-book-image);
+my $product          = create-product('Perl 6 and Odoo', 'consu', 29.99,
+    $perl6-book-image);
 say $product.perl;
