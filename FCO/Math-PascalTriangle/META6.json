@@ -3,7 +3,7 @@
     "name" : "Math::PascalTriangle",
     "version" : "0.1.0",
     "description" : "Simple Pascal's Triangle",
-    "authors" : [ "Fernando Corrêa de Oliveira" ],
+    "authors" : ["Fernando Correa de Oliveira"],
     "provides" : {
         "Math::PascalTriangle" : "lib/Math/PascalTriangle.pm6"
     },

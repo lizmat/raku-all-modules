@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FCO/Math-PascalTriangle.git
 	branch = master
-	commit = a24763e77012a3d154123a6fef6b52a5ea400acb
-	parent = 5a8662c89ca37a20d5b6aac6a46235029b157fb0
-	cmdver = 0.2.3
+	commit = f72f0d951294e9b9d667163bb6c82abca04a95a5
+	parent = ea4751e373d4b3a71a83e475e794c22216d1a600
+	cmdver = 0.4.0
