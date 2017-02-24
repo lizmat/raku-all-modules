@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dnmfarrell/Module-Minter.git
 	branch = master
-	commit = 615c6c99d493fb5e429cb5cbd31cebe158bec68f
-	parent = ac305cf5ccf009f5b22528130ee30fdacae19dda
-	cmdver = 0.2.3
+	commit = e16464945b73deeca0690a9e882f77133dd56016
+	parent = b0175bdb6179af0889535fa2c7ca2b94584b4456
+	cmdver = 0.4.0

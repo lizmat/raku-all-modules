@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Module::Minter",
     "version" : "0.04",
     "description" : "a Perl 6 module for creating new modules",
