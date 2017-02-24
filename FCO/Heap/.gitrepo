@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FCO/Heap.git
 	branch = master
-	commit = be4cb4418f1b38c5036a3d24c7d9cadc0566113d
-	parent = 2e95c85ce262f9b384404bdfd60bfbe1b48bb8fc
+	commit = 76895c3dd1fee6d8df081cf53fef6c63cfad5544
+	parent = 2429b54d033a72b2c69953b839ad909c196c8d45
 	cmdver = 0.4.0

@@ -3,7 +3,7 @@
     "name" : "Heap",
     "version" : "0.0.1",
     "description" : "Simple Heap implementation",
-    "authors" : [ "Fernando Corrêa de Oliveira" ],
+    "authors" : ["Fernando Correa de Oliveira"],
     "provides" : {
         "Heap" : "lib/Heap.pm6"
     },
