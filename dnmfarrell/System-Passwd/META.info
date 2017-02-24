@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "System::Passwd",
     "version" : "0.04",
     "description" : "easily search for system users in Unix-based systems",
