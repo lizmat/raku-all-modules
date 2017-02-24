@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bradclawsie/DB-Rscs.git
+	branch = master
+	commit = 0e95366747a70b96751ccecefb5350c315902deb
+	parent = 71f1b1531f2852bba71f129549cb6a42c1467750
+	cmdver = 0.4.0
