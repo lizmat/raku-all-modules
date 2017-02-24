@@ -25,7 +25,7 @@ class IRC::Client::Plugin::UserPoints {
 	# TODO Overflow check : -1 point if overflow
 	# TODO Reduce message because spamming
 	# TODO Save the current channel when adding a point
-	multi method irc-all( $e where /^ (\w+) ([\+\+ | \-\-]) [\s+ (<[ \w \s ]>+) ]? $/ ) {
+	multi method irc-all( $e where /^ (\w+) ([\+\+ | \-\-]) [\s+ (<[ \w \s ]>+) ]? \s* $/ ) {
 		my Str $user-name = $0.Str;
 		my Str $operation = $1.Str;
 		my $category =  $2.Str
@@ -66,7 +66,10 @@ class IRC::Client::Plugin::UserPoints {
 	}
 
 	# TODO Total for !scores
-	multi method irc-all( $e where { my $p = $!command-prefix; $e ~~ /^ $p "scores" [ \h+ $<nicks> = \w+]* $/ } ) {
+	multi method irc-all( $e where { my $p = $!command-prefix; $e ~~ /^ $p "scores" [ \h+ $<nicks> = \w+]* \s* $/ } ) {
+		unless $e.?channel {
+			return;
+		}
 
 		unless keys %!user-points {
 			return "No attributed points, yet!"
@@ -91,7 +94,7 @@ class IRC::Client::Plugin::UserPoints {
 		}
 	}
 
-	multi method irc-all( $e where { my $p = $!command-prefix; $e ~~ /^ $p "sum" [ \h+ $<nicks> = \w+]* $/ } ) {
+	multi method irc-all( $e where { my $p = $!command-prefix; $e ~~ /^ $p "sum" [ \h+ $<nicks> = \w+]* \s* $/ } ) {
 		my $sum;
 
 		my @nicks = $<nicks>
