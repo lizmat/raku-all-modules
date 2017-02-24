@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Software::License",
     "version" : "0.05",
     "description" : "a Perl 6 module for creating free software license texts",
