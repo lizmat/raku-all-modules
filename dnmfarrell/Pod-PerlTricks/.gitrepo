@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dnmfarrell/Pod-PerlTricks.git
 	branch = master
-	commit = 0b520c2fa6f0945b89026e8f9233acc25cd89bb3
-	parent = 03dfa63fdef2366e4b6b839be685b8bfdbc9b570
-	cmdver = 0.2.2
+	commit = b9318e7c3f413ed0b22a2ab949bc0bc229909898
+	parent = 4c4b0fdd95ffa94cb824eaa60843fb40962119d9
+	cmdver = 0.4.0
