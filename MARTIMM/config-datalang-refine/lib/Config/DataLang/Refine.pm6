@@ -16,7 +16,7 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
 
   has Bool $!merge = False;
   has Str $!config-content = '';
-  has Hash $.config;
+  has Hash:D $.config is rw = {};
 
   has Str $!p-out;
   has Int $!p-lvl;
@@ -39,18 +39,18 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
     $!merge = True if $other-config.elems;
 
     # Import proper routine and select read routine
-    self.init-config-type(:$data-module);
+    self!init-config-type(:$data-module);
     $!config = $other-config;
 
     # Read and deserialize text from file
     my Str $config-content;
 
-    self.init-config(:$config-name);
+    self!init-config(:$config-name);
   }
 
   #-----------------------------------------------------------------------------
   # Import module and select proper read routine and extension
-  method init-config-type ( Str :$data-module = 'Config::TOML' ) {
+  method !init-config-type ( Str :$data-module = 'Config::TOML' ) {
 
     given $data-module {
       when 'Config::TOML' {
@@ -74,7 +74,7 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
   }
 
   #-----------------------------------------------------------------------------
-  method init-config ( Str :$config-name is copy ) {
+  method !init-config ( Str :$config-name is copy ) {
 
     my Str $basename = (
       ?$config-name ?? $config-name !! $*PROGRAM.Str
@@ -113,12 +113,12 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
       $!config-names.push: $config-name;
 
 #say "cfgn: $config-name";
-      self.read-config($config-name);
+      self!read-config($config-name);
     }
   }
 
   #-----------------------------------------------------------------------------
-  method read-config ( Str $config-name ) {
+  method !read-config ( Str $config-name ) {
 
     note "\nSearch using name $config-name" if $!trace;
 
@@ -216,7 +216,8 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
 
         # Looks like too much but it isn't. It must be able to remove
         # previously set entries.
-        $refined-list{$k}:delete if $filter and $s{$k} ~~ Bool and !$s{$k};
+        $refined-list{$k}:delete
+          if $filter and ( $s{$k} ~~ Bool and !$s{$k} or not $s{$k}.defined );
       }
     }
 

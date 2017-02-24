@@ -106,9 +106,9 @@ configuration should always be a Hash (at this moment).
 
 =head2 config
 
-  has Hash $.config;
+  has Hash:D $.config is rw = {};
 
-Stored configuration. Can be retrieved directly from object.
+Stored configuration. Can be set and retrieved directly from object.
 
   my $c = Config::DataLang::Refine.new;
   $c.config<some-key><other-key>;
@@ -204,7 +204,8 @@ Then it descends in the config using the second key. This goes on until the last
 key is used. The process stops when a key does not exist on some level.
 
 A simple filter is used on the results if C<:filter> is set. All key/value pairs
-are removed from the result where the value is a C<Bool> and is C<False>.
+are removed from the result where the value is a C<Bool> and is C<False> or any
+value that is undefined.
 
 =begin table
 
@@ -284,6 +285,16 @@ all single character keys without values together prefixed with a dash. E.g.
 B<Note 4> Mode C<C-UNIX-OPTS-T3> also does the same as C<C-UNIX-OPTS-T1> but
 ignores the filter option. The result of False booleans will then be --/$k
 instead of --no$k. This is recognized by perl6 as input to the MAIN sub.
+
+=head2 merge-hash
+
+  multi method merge-hash ( Hash:D $h1, Hash:D $h2 --> Hash )
+
+Returns a hash which is a merge from $h1 and $h2.
+
+  multi method merge-hash ( Hash:D $h2 --> Hash )
+
+Same as above but the merge will be with the internal config of the object.
 
 =head2 perl
 
