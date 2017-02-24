@@ -3,7 +3,7 @@
     "name" : "DateTime::Extended",
     "version" : "0.1.0",
     "description" : "Extends Date/DateTime features",
-    "authors" : [ "Fernando Corrêa de Oliveira" ],
+    "authors" : ["Fernando Correa de Oliveira"],
     "provides" : {
         "DateTime::Extended":			"lib/DateTime/Extended.pm6"
     },

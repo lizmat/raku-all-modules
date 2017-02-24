@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FCO/DateTime-Extended.git
 	branch = master
-	commit = 4002bbbad29813e18467970ca49c50aba36fb00d
-	parent = 3d4511284527e7f60eb9b047dfe0185617bbf831
+	commit = e26887efa4e98907c864fc8be15ff50621763ef3
+	parent = a62184c7953bb4f1d5931051b9420c772950127d
 	cmdver = 0.4.0
