@@ -3,7 +3,7 @@
     "name" : "ProblemSolver",
     "version" : "0.0.1",
     "description" : "Simple Constraint Programming Problem Solver",
-    "authors" : [ "Fernando Corrêa de Oliveira" ],
+    "authors" : ["Fernando Correa de Oliveira"],
     "provides" : {
 		"ProblemSolver": "lib/ProblemSolver.pm6",
 		"Domain": "lib/ProblemSolver/Domain.pm6",
