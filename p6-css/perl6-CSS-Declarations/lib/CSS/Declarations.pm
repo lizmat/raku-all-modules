@@ -276,7 +276,7 @@ class CSS::Declarations {
         my @channels = $v.value.map: {self.from-ast: $_};
         my Color $color;
         my $type = $v.key;
-        @channels[*-1] *= 256
+        @channels.tail *= 256
             if $type eq 'rgba'|'hsla';
         if $type eq 'hsla' {
             my Numeric \a = @channels.pop;
@@ -463,6 +463,19 @@ class CSS::Declarations {
         @children >= 2;
     }
 
+    method optimize( @ast ) {
+        my %prop-ast;
+        for @ast {
+            next unless .key eq 'property';
+            my %v = .value;
+            my $prop = %v<ident>:delete;
+            %prop-ast{$_} = %v with $prop;
+        }
+
+        self!optimize-ast(%prop-ast);
+        assemble-ast(%prop-ast);
+    }
+
     method !optimize-ast( %prop-ast ) {
         my \metadata = self!metadata;
         my @compound-properties = metadata.keys.sort.grep: { metadata{$_}<children> };
@@ -471,6 +484,7 @@ class CSS::Declarations {
         for %prop-ast.keys -> \prop {
             # delete properties that match the default value
             my \info = self.info(prop);
+
             with %prop-ast{prop}<expr> {
                 my \val = .[0];
                 my \default = self.to-ast: self!default(prop);
@@ -485,17 +499,34 @@ class CSS::Declarations {
 
         # consolidate box properties with common values
         # margin-right: 1pt; ... margin-bottom: 1pt -> margin: 1pt
-        for %edges.keys -> \prop {
+        for %edges.keys -> $prop {
             # bottom up aggregation of edges. e.g. border-top-width, border-right-width ... => border-width
-            my \info = self.info(prop);
+            my \info = self.info($prop);
             next unless info.box;
-            my @edges = info.edges;
-            my @asts = @edges.map: { %prop-ast{$_} };
-            # we just handle the simplest case at the moment. Consolidate,
-            # if all four properties are present, and have the same value
-            if [[&same]] @asts {
+            my @edges;
+            my @asts;
+            for info.edges -> \side {
+                with %prop-ast{side} {
+                    @edges.push: side;
+                    @asts.push: $_;
+                }
+                else {
+                    last;
+                }
+            }
+
+            if @asts > 1 && @asts.map( *<prio> ).unique == 1 {
+                # consecutive edges present at the same priority; consolidate
                 %prop-ast{$_}:delete for @edges;
-                %prop-ast{prop} = @asts[0];
+
+                my constant DefaultIdx = [Mu, Mu, 0, 0, 1];
+                @asts.pop
+                while +@asts > 1
+                && same( @asts.tail, @asts[ DefaultIdx[+@asts] ] );
+
+                %prop-ast{$prop} = { :expr[ @asts.map: *<expr> ] };
+                %prop-ast{$prop}<prio> = $_
+                    with @asts[0]<prio>;
             }
         }
         for @compound-properties -> \prop {
@@ -538,12 +569,32 @@ class CSS::Declarations {
                             'expr:'~$_ => sub-prop<expr>;
                         } ];
                         %ast<prio> = $_
-                            when $_ ~~ 'important';
+                            when 'important';
                         %prop-ast{prop} = %ast;
                     }
                 }
             }
         }
+        %prop-ast;
+    }
+
+    sub assemble-ast(%prop-ast) {
+        with %prop-ast<font> {
+            # reinsert font '/' operator if needed...
+            with .<expr> {
+                # e.g.: font: italic bold 10pt/12pt times-roman;
+                $_ = [ flat .map: { .key eq 'expr:line-height' ?? [ :op('/'), $_, ] !! $_ } ];
+            }
+        }
+
+        #| assemble property list
+        my @declaration-list = %prop-ast.keys.sort.map: -> \prop {
+            my %property = %prop-ast{prop};
+            %property.push: 'ident' => prop;
+            %property;
+        };
+        
+        :@declaration-list;
     }
 
     #| return an AST for the declarations.
@@ -569,25 +620,10 @@ class CSS::Declarations {
             }
         }
 
-        self!optimize-ast: %prop-ast
+        self!optimize-ast(%prop-ast)
             if $optimize;
 
-        with %prop-ast<font> {
-            # reinsert font '/' operator if needed...
-            with .<expr> {
-                # e.g.: font: italic bold 10pt/12pt times-roman;
-                $_ = [ flat .map: { .key eq 'expr:line-height' ?? [ :op('/'), $_, ] !! $_ } ];
-            }
-        }
-
-        #| assemble property list
-        my @declaration-list = %prop-ast.keys.sort.map: -> \prop {
-            my %property = %prop-ast{prop};
-            %property.push: 'ident' => prop;
-            %property;
-        };
-        
-        :@declaration-list;
+        assemble-ast(%prop-ast);
     }
 
     #| write a set of declarations. By default, it is formatted as a single-line,

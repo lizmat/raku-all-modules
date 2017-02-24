@@ -1,3 +1,8 @@
+0.1.1 Added `.optimize` method. For direct optimization of ASTs, without
+      the need to create intermediate objects
+0.1.0 Improved write optmizations
+      For example now rewrites style: margin-top: 1pt; margin-right: 2pt;
+      as "margin:1pt 2pt"
 0.0.4 CSS::Declarations:
      - allow list assignment. E.g.: $css.new: :background-position<top left>;
        shortcut for: $css.new: :background-position("top left");

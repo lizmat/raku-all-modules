@@ -146,7 +146,7 @@ say $css.handling("margin-left");   # inherit
 say $css.margin-left; # 15pt
 ```
 
-## Serialization
+## Optimization and Serialization
 
 The `.write` or `.Str` methods can be used to produce CSS. Properties are optimized and normalized:
 
@@ -178,6 +178,22 @@ because all four borders had the common value `2pt`
 - `:!terse` - enable multi-line output
 
 - `:!color-names` - don't translate RGB values to color-names
+
+The optimizer can also be invoked directly to optimize ASTS via the `.optimize` method:
+```
+use CSS::Declarations;
+use CSS::Module::CSS3;
+use CSS::Writer;
+
+my $css = CSS::Declarations.new;
+my $module = CSS::Module::CSS3.module;
+my $actions = $module.actions.new;
+my $writer = CSS::Writer.new: :color-names, :terse;
+my $declarations = "border-bottom-color:red; border-bottom-style:solid; border-bottom-width:1px; border-left-color:red; border-left-style:solid; border-left-width:1px; border-right-color:red; border-right-style:solid; border-right-width:1px; border-top-color:red; border-top-style:solid; border-top-width:1px;";
+my $p = $module.grammar.parse($declarations, :$actions, :rule<declaration-list>);
+my $ast = $css.optimize($p.ast);
+say $writer.write(|$ast); # border:1px solid red;
+```
 
 ## Property Meta-data
 
