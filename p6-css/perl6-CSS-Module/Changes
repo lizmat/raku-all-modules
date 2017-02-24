@@ -1,5 +1,5 @@
 0.4.7 - remove Panda dependency from make-properties.pl
-      - work-around for issue #6 - background-position
+      - work-around for issue #8 - background-position
 0.4.6 $module.parse-property now returns explicit Nil and warns
       on parse failure. New :!warn option to silence warnings.
 0.4.5 Fix make-modules.pl for latest Rakudo

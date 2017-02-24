@@ -13,7 +13,7 @@ my $css1  = CSS::Module::CSS1.module;
 my $css21 = CSS::Module::CSS21.module;
 my $css3x = CSS::Module::CSS3.module;
 
-my $css-writer = CSS::Writer.new;
+my $writer = CSS::Writer.new;
 
 my %seen;
 
@@ -21,30 +21,29 @@ for 't/css1-properties.json'.IO.lines {
 
     next if .substr(0,2) eq '//';
 
-    my %expected = %( from-json($_) );
+    my %expected = from-json($_);
     my $prop = %expected<prop>.lc;
     my $input = sprintf '{%s: %s}', $prop, %expected<decl>;
     my $expr = %expected<expr>;
 
     %expected<ast> = $expr ?? { :declarations[{ :property{ :ident($prop), :$expr } }] } !! Any;
 
-    for css1  => {module => $css1, proforma => qw<>},
-       	css21 => {module => $css21, proforma => qw<inherit>},	
-       	css3x => {module => $css3x, proforma => qw<inherit initial>, writer => $css-writer} {
+    for { :module($css1), :proforma[]},
+       	{ :module($css21), :proforma<inherit>},	
+       	{ :module($css3x), :proforma<inherit initial>, :$writer}
+    ->  % ( :$module!, :$proforma!, *%etc) {
 
-        my ($level, $opt) = .kv;
-        my $module = $opt<module>;
+        my $level = $module.name;
         my $grammar = $module.grammar;
         my $actions = $module.actions.new;
-        my $proforma = $opt<proforma>;
-        my $writer = $opt<writer>;
 
 	CSS::Grammar::Test::parse-tests($grammar, $input,
 					:rule<declarations>,
 					:suite($level),
 					:$actions,
-                                        :$writer,
-					:%expected );
+					:%expected,
+                                        |%etc,
+                                       );
 
 	unless %seen{$prop}{$level}++ {
 	    # usage and inheritence  tests
@@ -67,7 +66,7 @@ for 't/css1-properties.json'.IO.lines {
 						:rule<declarations>,
 						:$actions,
 						:suite($level),
-						:expected({ :$ast }) );
+						:expected{ :$ast } );
 
             }
         }

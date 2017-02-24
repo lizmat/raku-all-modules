@@ -24,17 +24,15 @@ for 't/css21-properties.json'.IO.lines {
     %expected<ast> = $expr ?? { :declarations[{ :property{ :ident($prop), :$expr } }] } !! Any;
 
     my $input = sprintf '{%s: %s}', $prop, %expected<decl>;
-    my $css-writer = CSS::Writer.new;
+    my $writer = CSS::Writer.new;
 
-    for css21 => {module => $css21, proforma => qw<inherit>},
-       	css3x => {module => $css3x, proforma => qw<inherit initial>, writer => $css-writer} {
+    for { :module($css21), :proforma<inherit>},
+        { :module($css3x), :proforma<inherit initial>, :$writer}
+    -> % ( :$module!, :$proforma!, :$writer=Any) {
 
-        my ($level, $opt) = .kv;
-        my $module = $opt<module>;
+        my $level = $module.name;
 	my $grammar = $module.grammar;
         my $actions = $module.actions.new;
-        my $proforma = $opt<proforma>;
-        my $writer = $opt<writer>;
 
 	CSS::Grammar::Test::parse-tests($grammar, $input,
 					:rule<declarations>,

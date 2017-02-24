@@ -15,14 +15,16 @@
 'background-image'	<uri> | none	none	all elements	no	N/A	5.3.3
 'background-repeat'	repeat | repeat-x | repeat-y | no-repeat	repeat	all elements	no	N/A	5.3.4
 'background-attachment'	scroll | fixed	scroll	all elements	no	N/A	5.3.5
-'background-position'	[<percentage> | <length>]{1,2} | [top | center | bottom] || [left | center | right]	0% 0%	block-level and replaced elements	no	refer to the size of the element itself	5.3.6
+'background-position'	[<percentage> | <length> | <align> ] [ <percentage> | <length> | <valign> ]? | [ <valign> || <align> ]	0% 0%	block-level and replaced elements	no	refer to the size of the element itself	5.3.6
+    <align> := left | center | right
+    <valign> := top | center | bottom
 'background'	'background-color' || 'background-image' || 'background-repeat' || 'background-attachment' || 'background-position'	not defined for shorthand properties	all elements	no	allowed on <background-position>	5.3.7
 'word-spacing'	normal | <length>	normal	all elements	yes	N/A	5.4.1
 'letter-spacing'	normal | <length>	normal	all elements	yes	N/A	5.4.2
 'text-decoration'	none | [ underline || overline || line-through || blink ]	none	all elements	no **	N/A	5.4.3
 'vertical-align'	baseline | sub | super | top | text-top | middle | bottom | text-bottom | <percentage>	baseline	inline elements	no	refer to the 'line-height' of the element itself	5.4.4
 'text-transform'	capitalize | uppercase | lowercase | none	none	all elements	yes	N/A	5.4.5
-'text-align'	left | right | center | justify	UA specific	block-level elements	yes	N/A	5.4.6
+'text-align'	<align> | justify	UA specific	block-level elements	yes	N/A	5.4.6
 'text-indent'	<length> | <percentage>	0	block-level elements	yes	refer to parent element's width	5.4.7
 'line-height'	normal | <number> | <length> | <percentage>	normal	all elements	yes	relative to the font size of the element itself	5.4.8
 'margin-top'	<length> | <percentage> | auto	0	all elements	no	refer to parent element's width	5.5.1

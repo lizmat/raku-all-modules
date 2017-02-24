@@ -11,62 +11,59 @@ my $actions = CSS::Module::CSS3.module.actions.new;
 my $writer = CSS::Writer.new;
 
 for (
-    term   => {input => 'rgb(70%, 50%, 10%)',
+    { :rule<term>, input => 'rgb(70%, 50%, 10%)',
                ast =>   :rgb[ :num(179), :num(128), :num(26) ],
     },
-    term   => {input => 'rgba(100%, 128, 0%, 0.1)',
+    { :rule<term>, input => 'rgba(100%, 128, 0%, 0.1)',
                ast => :rgba[ :num(255), :num(128), :num(0), :num(.1) ],
     },
-    term   => {input => 'hsl(120, 100%, 50%)',
+    { :rule<term>, input => 'hsl(120, 100%, 50%)',
                ast => :hsl[ :num(120), :percent(100), :percent(50) ],
     },
-    term   => {input => 'hsla( 180, 100%, 50%, .75 )',
+    { :rule<term>, input => 'hsla( 180, 100%, 50%, .75 )',
                ast => :hsla[ :num(180), :percent(100), :percent(50), :num(.75) ],
     },
     # clipping of out-of-range values
-    term   => {input => 'rgba(101%, 50%, -5%, +1.1)',
+    { :rule<term>, input => 'rgba(101%, 50%, -5%, +1.1)',
                ast => :rgba[ :num(255), :num(128), :num(0), :num(1) ],
-               writer => {
+               :writer{
                    # writer converts rgba(...,1) to rgb(...)
                    ast => :rgb[ :num(255), :num(128), :num(0) ],
-                   token => {type => 'color', units => 'rgb'},
+                   { :rule<token>, type => 'color', units => 'rgb'},
                },
     },
-    term   => {input => 'hsl(120, 110%, -50%)',
+    { :rule<term>, input => 'hsl(120, 110%, -50%)',
                ast => :hsl[ :num(120), :percent(100), :percent(0) ],
     },
-    term   => {input => 'hsla( 180, -100%, 150%, 1.75 )',
+    { :rule<term>, input => 'hsla( 180, -100%, 150%, 1.75 )',
                ast => :hsla[ :num(180), :percent(0), :percent(100), :num(1) ],
     },
     # a few invalid cases
-    term  => {input => 'rgba(10%,20%,30%)',
+    { :rule<term>, input => 'rgba(10%,20%,30%)',
               ast => Mu,
               warnings => rx{^usage\: \s rgba\(},
     },
-    term  => {input => 'hsl(junk)',
+    { :rule<term>, input => 'hsl(junk)',
               ast => Mu,
               warnings => rx{^usage\: \s hsl\(},
     },
-    term  => {input => 'hsla()',
+    { :rule<term>, input => 'hsla()',
               ast => Mu,
               warnings => rx{^usage\: \s hsla\(},
     },
-    color => {input => 'orange', ast => :rgb[ :num(255), :num(165), :num(0) ]},
-    color => {input => 'hotpink', ast => :rgb[ :num(255), :num(105), :num(180) ]},
-    color => {input => 'lavenderblush', ast => :rgb[ :num(255), :num(240), :num(245) ]},
-    color => {input => 'currentcolor', ast => :keyw<currentcolor>},
-    color => {input => 'transparent', ast => :keyw<transparent>},
+    { :rule<color>, input => 'orange', ast => :rgb[ :num(255), :num(165), :num(0) ]},
+    { :rule<color>, input => 'hotpink', ast => :rgb[ :num(255), :num(105), :num(180) ]},
+    { :rule<color>, input => 'lavenderblush', ast => :rgb[ :num(255), :num(240), :num(245) ]},
+    { :rule<color>, input => 'currentcolor', ast => :keyw<currentcolor>},
+    { :rule<color>, input => 'transparent', ast => :keyw<transparent>},
 # http://www.w3.org/TR/2011/REC-css3-color-20110607
 # @color-profile is in the process of being dropped
-##    at-rule => {input => '@color-profile { name: acme_cmyk; src: url(http://printers.example.com/acmecorp/model1234); }',
+##    { :rule<at-rule>, input => '@color-profile { name: acme_cmyk; src: url(http://printers.example.com/acmecorp/model1234); }',
 ##                ast => {"declarations" => [{"ident" => "name", "expr" => ["keyw" => "acme_cmyk"]},
 ##                                           {"ident" => "src", "expr" => ["term" => "http://printers.example.com/acmecorp/model1234"]}}],
 ##                        '@' => "color-profile"},
 ##    },
-    ) {
-    my $rule = .key;
-    my %expected = @( .value );
-    my $input = %expected<input>;
+    ) -> % ( :$rule!, :$input!, *%expected) {
 
     CSS::Grammar::Test::parse-tests($grammar, $input,
 				    :$rule,

@@ -17,6 +17,8 @@ class CSS::Module::CSS1::Spec::Actions {
     method expr-background-repeat($/) { make $.list($/) }
     method expr-background-attachment($/) { make $.list($/) }
     method expr-background-position($/) { make $.list($/) }
+    method align($/) { make $.rule($/) }
+    method valign($/) { make $.rule($/) }
     method expr-line-height($/) { make $.list($/) }
     method expr-border-top-width($/) { make $.list($/) }
     method expr-border-right-width($/) { make $.list($/) }

@@ -26,7 +26,7 @@ for '' {
 my $css1  = CSS::Module::CSS1.module;
 my $css21 = CSS::Module::CSS21.module;
 my $css3  = CSS::Module::CSS3.module;
-my $css-writer = CSS::Writer.new( :terse, :color-names );
+my $writer = CSS::Writer.new( :terse, :color-names );
 
 for 't/00basic.json'.IO.lines.map({ from-json($_).pairs[0] }) {
 
@@ -34,23 +34,22 @@ for 't/00basic.json'.IO.lines.map({ from-json($_).pairs[0] }) {
     my %expected = .value;
     my $input = %expected<input>;
 
-    for css1  => {module => $css1,  writer => $css-writer},
-       	css21 => {module => $css21, writer => $css-writer},	
-       	css3  => {module => $css3,  writer => $css-writer},
-       	lax   => {module => $css3,  writer => $css-writer, :lax} {
+    for { :module($css1), },
+       	{ :module($css21),},	
+       	{ :module($css3), },
+       	{ :module($css3), :lax}
+    -> % ( :$module!, :$lax=False ) {
 
-	    my ($level, $opt) = .kv;
-            my $module = $opt<module>;
-	    my Bool $lax = ? $opt<lax>;
-	    my $grammar = $module.grammar;
-            my $actions = $module.actions.new(:$lax);
-            my $writer = $opt<writer>;
-            my %level-tests = %( %expected{$level} // () );
-            my %level-expected = %expected, %level-tests;
+        my $suite = $module.name;
+        $suite ~= '(lax)' if $lax;
+	my $grammar = $module.grammar;
+        my $actions = $module.actions.new(:$lax);
+        my %level-tests = %( %expected{$suite} // () );
+        my %level-expected = %expected, %level-tests;
 
 	    CSS::Grammar::Test::parse-tests($grammar, $input,
 					    :$rule,
-					    :suite($level),
+					    :$suite,
 					    :$actions,
                                             :$writer,
 					    :expected(%level-expected) );

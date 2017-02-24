@@ -1,8 +1,9 @@
 use v6;
-class CSS::Module:ver<0.4.6> {
+class CSS::Module {
     #= a lightweight class for bundling resources associated with a particular CSS Syntax
     has $.name;
-    has $.grammar is required;  #| grammar
+    has $.grammar is required  #| grammar
+                  handles <parse subparse parsefile>;
     has $.actions is required   #| actions class
                   handles <colors>;
     has %.property-metadata;

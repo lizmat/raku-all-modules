@@ -60,9 +60,15 @@ grammar CSS::Module::CSS1::Spec::Grammar {
     rule decl:sym<background-attachment> {:i (background\-attachment) ':' <val( rx{ <expr=.expr-background-attachment> }, &?ROUTINE.WHY)> }
     rule expr-background-attachment {:i [ scroll | fixed ] & <keyw> }
 
-    #| background-position: [<percentage> | <length>]{1,2} | [top | center | bottom] || [left | center | right]
+    #| background-position: [<percentage> | <length> | <align> ] [ <percentage> | <length> | <valign> ]? | [ <valign> || <align> ]
     rule decl:sym<background-position> {:i (background\-position) ':' <val( rx{ <expr=.expr-background-position> }, &?ROUTINE.WHY)> }
-    rule expr-background-position {:i :my @*SEEN; [ [ [ <percentage> || <length> ] ] ** 1..2 || [ [ [ top | center | bottom ] & <keyw> ] <!seen(0)> | [ [ left | center | right ] & <keyw> ] <!seen(1)> ]+ ] }
+    rule expr-background-position {:i :my @*SEEN; [ [ [ <percentage> || <length> || <align> ] ] [ [ <percentage> || <length> || <valign> ] ]? || [ [ <valign> <!seen(0)> | <align> <!seen(1)> ]+ ] ] }
+
+    #| align: left | center | right
+    rule align {:i [ left | center | right ] & <keyw> }
+
+    #| valign: top | center | bottom
+    rule valign {:i [ top | center | bottom ] & <keyw> }
 
     #| background: 'background-color' || 'background-image' || 'background-repeat' || 'background-attachment' || 'background-position'
     rule decl:sym<background> {:i (background) ':' <val( rx{ <expr=.expr-background> }, &?ROUTINE.WHY)> }
@@ -88,9 +94,9 @@ grammar CSS::Module::CSS1::Spec::Grammar {
     rule decl:sym<text-transform> {:i (text\-transform) ':' <val( rx{ <expr=.expr-text-transform> }, &?ROUTINE.WHY)> }
     rule expr-text-transform {:i [ capitalize | uppercase | lowercase | none ] & <keyw> }
 
-    #| text-align: left | right | center | justify
+    #| text-align: <align> | justify
     rule decl:sym<text-align> {:i (text\-align) ':' <val( rx{ <expr=.expr-text-align> }, &?ROUTINE.WHY)> }
-    rule expr-text-align {:i [ left | right | center | justify ] & <keyw> }
+    rule expr-text-align {:i [ <align> || justify & <keyw> ] }
 
     #| text-indent: <length> | <percentage>
     rule decl:sym<text-indent> {:i (text\-indent) ':' <val( rx{ <expr=.expr-text-indent> }, &?ROUTINE.WHY)> }
