@@ -3,7 +3,7 @@
     "name" : "Test::Fuzz",
     "version" : "0.2.0",
     "description" : "Generative Testing",
-    "authors" : [ "Fernando Corrêa de Oliveira" ],
+    "authors" : ["Fernando Correa de Oliveira"],
     "provides" : {
         "Test::Fuzz":					"lib/Test/Fuzz.pm6",
         "Test::Fuzz::Fuzzed":			"lib/Test/Fuzz/Fuzzed.pm6",
