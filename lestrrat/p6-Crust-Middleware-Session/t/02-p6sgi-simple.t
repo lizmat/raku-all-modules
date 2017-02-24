@@ -3,6 +3,7 @@ use Test;
 use Crust::Builder;
 use Crust::Middleware::Session;
 use Crust::Test;
+use HTTP::Request;
 
 my $store = Crust::Middleware::Session::Store::Memory.new();
 my &app = builder {
