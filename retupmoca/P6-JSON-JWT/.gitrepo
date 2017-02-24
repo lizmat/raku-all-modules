@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/retupmoca/P6-JSON-JWT.git
+	branch = master
+	commit = 0d251313fdf1a3c6c410e6b970a6d204acb59511
+	parent = c4961d1cbdb9cd665e7f8daa28109897adace3b9
+	cmdver = 0.4.0

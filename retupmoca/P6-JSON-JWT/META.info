@@ -1,0 +1,13 @@
+{
+    "perl"        : "6.*",
+    "name"        : "JSON::JWT",
+    "version"     : "1.0",
+    "author"      : "github:retupmoca",
+    "description" : "JWT Signing and Verifying using openssl",
+    "depends"     : [ "JSON::Fast", "MIME::Base64", "OpenSSL", "Digest::HMAC" ],
+    "provides"    : {
+        "JSON::JWT" : "lib/JSON/JWT.pm6"
+    },
+    "source-url"    : "git://github.com/retupmoca/P6-JSON-JWT.git",
+    "source-type"   : "git"
+}
