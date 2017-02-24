@@ -42,7 +42,13 @@ sub EXPORT(|) {
         }
     }
     my Mu $MAIN-grammar := nqp::atkey(%*LANG, 'MAIN');
-    nqp::bindkey(%*LANG, 'MAIN', $MAIN-grammar.HOW.mixin($MAIN-grammar, Tuxic));
+    my $grammar := $MAIN-grammar.HOW.mixin($MAIN-grammar, Tuxic);
+
+
+    # old way
+    try nqp::bindkey(%*LANG, 'MAIN', $grammar);
+    # new way
+    try $*LANG.define_slang('MAIN', $grammar, $*LANG.actions);
 
     {}
 }
