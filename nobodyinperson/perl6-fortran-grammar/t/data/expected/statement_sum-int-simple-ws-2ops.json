@@ -1,4 +1,7 @@
 {
+  "arithmetic-operator": [
+    "+"
+  ],
   "value-returning-code": [
     {
       "in-place": {
@@ -22,8 +25,5 @@
         }
       }
     }
-  ],
-  "operator": [
-    "+"
   ]
 }

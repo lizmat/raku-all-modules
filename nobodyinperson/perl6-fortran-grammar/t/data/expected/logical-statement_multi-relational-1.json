@@ -1,0 +1,93 @@
+{
+  "logical-operator": [
+    ".and."
+  ],
+  "logical-value-returning-code": [
+    {
+      "relational-statement": {
+        "relational-operator": "==",
+        "arithmetic-statement": [
+          {
+            "arithmetic-operator": [
+              
+            ],
+            "value-returning-code": [
+              {
+                "in-place": {
+                  "atomic": {
+                    "number": {
+                      "integer": {
+                        "digits": "1"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "arithmetic-operator": [
+              
+            ],
+            "value-returning-code": [
+              {
+                "in-place": {
+                  "atomic": {
+                    "number": {
+                      "integer": {
+                        "digits": "1"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "relational-statement": {
+        "relational-operator": "/=",
+        "arithmetic-statement": [
+          {
+            "arithmetic-operator": [
+              
+            ],
+            "value-returning-code": [
+              {
+                "in-place": {
+                  "atomic": {
+                    "number": {
+                      "integer": {
+                        "digits": "2"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "arithmetic-operator": [
+              
+            ],
+            "value-returning-code": [
+              {
+                "in-place": {
+                  "atomic": {
+                    "number": {
+                      "integer": {
+                        "digits": "3"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

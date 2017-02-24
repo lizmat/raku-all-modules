@@ -1,0 +1,41 @@
+{
+  "relational-operator": "==",
+  "arithmetic-statement": [
+    {
+      "arithmetic-operator": [
+        
+      ],
+      "value-returning-code": [
+        {
+          "in-place": {
+            "atomic": {
+              "number": {
+                "integer": {
+                  "digits": "1"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "arithmetic-operator": [
+        
+      ],
+      "value-returning-code": [
+        {
+          "in-place": {
+            "atomic": {
+              "number": {
+                "integer": {
+                  "digits": "1"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

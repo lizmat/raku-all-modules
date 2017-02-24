@@ -1,0 +1,19 @@
+{
+  "logical-operator": [
+    ".and.",
+    ".or."
+  ],
+  "logical-value-returning-code": [
+    {
+      "boolean": ".true. "
+    },
+    {
+      "boolean": ".false. "
+    },
+    {
+      "boolean": {
+        "logical-prefix-operator": ".not."
+      }
+    }
+  ]
+}

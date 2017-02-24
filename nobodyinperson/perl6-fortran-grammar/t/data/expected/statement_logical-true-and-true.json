@@ -1,0 +1,21 @@
+{
+  "logical-operator": [
+    ".and."
+  ],
+  "value-returning-code": [
+    {
+      "in-place": {
+        "atomic": {
+          "boolean": ".true."
+        }
+      }
+    },
+    {
+      "in-place": {
+        "atomic": {
+          "boolean": ".true."
+        }
+      }
+    }
+  ]
+}

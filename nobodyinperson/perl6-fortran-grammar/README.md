@@ -56,9 +56,12 @@ Output:
 
 ```perl6
 ### input ###
+```
+```fortran
 call sub( array(1:2), sin(1.234_prec), & ! Fortran-style linebreak / comment
     & (/ 1.23, 3.45, 6.78 /), "Hello World!" )
-
+```
+```perl6
 ### parsed ###
 ｢call sub( array(1:2), sin(1.234_prec), & ! Fortran-style linebreak / comment
     & (/ 1.23, 3.45, 6.78 /), "Hello World!" )｣

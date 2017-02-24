@@ -1,0 +1,1 @@
+.TRUE. .AND. .FALSE. .OR. .NOT. .TRUE.
