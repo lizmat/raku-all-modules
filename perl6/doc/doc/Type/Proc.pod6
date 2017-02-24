@@ -36,7 +36,7 @@ to C<True>, which will make the pipe available via C<.in> method on the C<Proc>:
 
 =head2 method new
 
-=for code :skip-test
+=begin code :skip-test
 method new(Proc:U:
         :$in = '-',
         :$out = '-',
@@ -48,6 +48,7 @@ method new(Proc:U:
         Str:D :$nl = "\n",
     --> Proc:D)
 sub run(
+        *@args ($, *@),
         :$in = '-',
         :$out = '-',
         :$err = '-',
@@ -57,12 +58,25 @@ sub run(
         Str:D :$enc = 'UTF-8',
         Str:D :$nl = "\n",
         :$cwd = $*CWD,
-        Hash() :$env = %*ENV,
-        *@args
+        Hash() :$env = %*ENV
     --> Proc:D)
+sub shell(
+        $cmd,
+        :$in = '-',
+        :$out = '-',
+        :$err = '-',
+        Bool :$bin = False,
+        Bool :$chomp = True,
+        Bool :$merge = False,
+        Str:D :$enc = 'UTF-8',
+        Str:D :$nl = "\n",
+        :$cwd = $*CWD,
+        Hash() :$env = %*ENV
+    --> Proc:D)
+=end code
 
-C<new> creates a new C<Proc> object, whereas C<run> creates one, and spawns it
-with the command and arguments provided in C<@args>.
+C<new> creates a new C<Proc> object, whereas C<run> or C<shell> create one and spawn it
+with the command and arguments provided in C<@args> or C<$cmd>, respectively.
 
 C<$in>, C<$out> and C<$err> are the three
 standard streams of the to-be-launched program, and default to C<"-">, which
@@ -85,6 +99,7 @@ of a newline is.
 If C<$merge> is set to True, the standard output and error stream end up
 merged in C<$proc.out>.
 
+
 =head2 method sink
 
 When sunk, the C<Proc> object will throw L<X::Proc::Unsuccessful>
@@ -94,15 +109,15 @@ if the process it ran exited unsuccessfully.
 
     method spawn(*@args ($, *@), :$cwd = $*CWD, Hash() :$env = %*ENV --> Bool:D)
 
-Runs the C<Proc> object with the given command, argument list, working directory
+Runs the C<Proc> object with the given command, argument list, working directory,
 and environment.
 
 =head2 method shell
 
     method shell($cmd, :$cwd = $*CWD, :$env --> Bool:D)
 
-Runs the C<Proc> object with the given command, which is passed through to the
-shell for parsing and execution.
+Runs the C<Proc> object with the given command and environment which are passed
+through to the shell for parsing and execution.
 
 =head2 method command
 

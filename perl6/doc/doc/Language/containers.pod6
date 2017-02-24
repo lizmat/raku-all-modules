@@ -1,4 +1,4 @@
-=begin pod
+=begin pod :tag<perl6>
 
 =TITLE Containers
 
@@ -174,9 +174,6 @@ C<@a> actually stores three scalar containers. C<@a[0]> returns one of
 them, and the assignment operator replaces the integer value stored in that
 container with the new one, C<42>.
 
-An L<Array> also has methods that can change the number of elements, notably
-C<push>, C<pop>, C<shift>, C<unshift> and C<splice>.
-
 =head1 Assigning and binding to array variables
 
 Assigning to a scalar variable and to an array variable both do basically
@@ -242,8 +239,7 @@ to an iteration construct, whereas the C<$> sigil indicates only one value.
     my $a = (1, 2, 3);
     for $a { };         # 1 iteration
 
-Contrary to earlier versions of Perl 6, and to Perl 5, C<@>-sigiled variables
-do not flatten in list context:
+C<@>-sigiled variables do not flatten in list context:
 
     my @a = 1, 2, 3;
     my @b = @a, 4, 5;
