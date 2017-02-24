@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Miniconf/App-jsonv.git
 	branch = master
-	commit = b82fbcf51fa84d02fb3cd7355a85e474832da358
-	parent = 0928744dd96b4512020a71fec8804c684ad34975
-	cmdver = 0.2.1
+	commit = 40c3e255e82770f07d39ce0bfe7668a3692cb66d
+	parent = 656fd0e5b0a8f848e8a4b59f69f30302208935b2
+	cmdver = 0.4.0

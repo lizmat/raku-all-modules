@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "App::jsonv",
     "version" : "0.01",
     "description" : "A command line JSON validator app",
