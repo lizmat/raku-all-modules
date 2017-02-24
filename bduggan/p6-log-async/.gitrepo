@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bduggan/p6-log-async.git
 	branch = master
-	commit = b45144f97971c1dacf27bcdfeb9d362c069edc79
-	parent = ffa70bc4367f1c2222b49868fa61e8d6f62e33e9
+	commit = 48a6601d1920b6adf12d26e0fad259a64fef5a41
+	parent = a5db9be36501235e247357fb225d9fb1de528e5c
 	cmdver = 0.4.0
