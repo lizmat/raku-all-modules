@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "URI::Encode",
     "version" : "0.05",
     "description" : "Encode and decode URIs according to RFC 3986",
