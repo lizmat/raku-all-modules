@@ -4,6 +4,10 @@ use v6;
 use lib './Tests';
 use Bench;
 use BSON::Document;
+use BSON::Javascript;
+use BSON::Binary;
+use BSON::Regex;
+use BSON::ObjectId;
 use UUID;
 
 my BSON::Javascript $js .= new(

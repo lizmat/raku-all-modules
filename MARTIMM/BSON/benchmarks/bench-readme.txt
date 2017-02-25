@@ -13,7 +13,8 @@ Timing 50 iterations of 32 inserts... (* is current BSON::Document use)
  D9     Bugfixes and improvements
  D10    Native encoding/decoding for doubles
  D11    version 2016.06-178-gf7c6e60 built on MoarVM version 2016.06-9-g8fc21d5
- D12    2016-11-8, 2016.10-204-g824b29f built on MoarVM version 2016.10-37-gf769569
+ D12    2016-11-08, 2016.10-204-g824b29f built on MoarVM version 2016.10-37-gf769569
+ D13    2017-02-25. 017.02-56-g9f10434 built on MoarVM version 2017.02-7-g3d85900
 
  H      Original BSON methods with hashes
 
@@ -28,8 +29,10 @@ Timing 50 iterations of 32 inserts... (* is current BSON::Document use)
  D8    10.0837 wallclock secs @ 4.9585/s (n=50) Doen't help much
  D9     7.8202 wallclock secs @ 6.3937/s (n=50) Perl 2015 12 24
  D10    6.4880 wallclock secs @ 7.7066/s (n=50) again a bit better
- D11*   2.7751 wallclock secs @ 18.0171/s (n=50) big improvement
- D12*   2.5247 wallclock secs @ 19.8041/s (n=50)
+ D11    2.7751 wallclock secs @ 18.0171/s (n=50) big improvement
+ D12    2.5247 wallclock secs @ 19.8041/s (n=50)
+ D13*   2.3827 wallclock secs @ 20.9844/s (n=50)
+
 
  H      3.1644 wallclock secs @ 15.8006/s (n=50)
 
