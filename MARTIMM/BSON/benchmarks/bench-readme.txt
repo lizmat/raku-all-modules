@@ -15,8 +15,8 @@ Timing 50 iterations of 32 inserts... (* is current BSON::Document use)
  D11    version 2016.06-178-gf7c6e60 built on MoarVM version 2016.06-9-g8fc21d5
  D12    2016-11-08, 2016.10-204-g824b29f built on MoarVM version 2016.10-37-gf769569
  D13    2017-02-25. 017.02-56-g9f10434 built on MoarVM version 2017.02-7-g3d85900
+ D14    2017-02-25. Dropped positional role from BSON::Document..
 
- H      Original BSON methods with hashes
 
 
  D1     8.0726 wallclock secs @ 6.1938/s (n=50)
@@ -30,16 +30,21 @@ Timing 50 iterations of 32 inserts... (* is current BSON::Document use)
  D9     7.8202 wallclock secs @ 6.3937/s (n=50) Perl 2015 12 24
  D10    6.4880 wallclock secs @ 7.7066/s (n=50) again a bit better
  D11    2.7751 wallclock secs @ 18.0171/s (n=50) big improvement
- D12    2.5247 wallclock secs @ 19.8041/s (n=50)
- D13*   2.3827 wallclock secs @ 20.9844/s (n=50)
+ D12    2.5247 wallclock secs @ 19.8041/s (n=50) +
+ D13    2.3827 wallclock secs @ 20.9844/s (n=50) +
+ D14*   2.3011 wallclock secs @ 21.7285/s (n=50) +
 
 
- H      3.1644 wallclock secs @ 15.8006/s (n=50)
+
+
+ H      Original BSON methods with hashes. I think this was about 2015 06 or so.
+        In the mean time Hashing should be faster too!
+        3.1644 wallclock secs @ 15.8006/s (n=50)
 
 
 
 Worries;
-D5 and D6 sometimes crashes with coredumps. Is it Bench or BSON::Document??
+D14 sometimes crashes with coredumps. Is it Bench or BSON::Document??
 Segmentation fault (core dumped)
 
 

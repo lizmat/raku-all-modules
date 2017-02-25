@@ -25,15 +25,9 @@ subtest "Extending array", {
 
   my Buf $encoded = $d.encode;
   is-deeply $encoded, $hand-made, 'Document encoded ok';
-
-#$d.perl.say;
-#say "E: ", $encoded;
-
 }
-
 
 #-------------------------------------------------------------------------------
 # Cleanup
-#
 done-testing;
 exit(0);

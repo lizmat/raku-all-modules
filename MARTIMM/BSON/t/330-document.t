@@ -3,7 +3,7 @@ use Test;
 use BSON::Document;
 
 #-------------------------------------------------------------------------------
-subtest {
+subtest "Autovivication", {
 
   my BSON::Document $d .= new;
   $d.autovivify(True);
@@ -149,28 +149,14 @@ subtest {
   my BSON::Document $d2 .= new;
   $d2.decode($b);
 
-#  is $d2<a><b><c><d><e><f1><g><h><i><j><h><i><j><c>,
-#     122,
-#     "Very deep ...<j><c> = $d<a><b><c><d><e><f1><g><h><i><j><h><i><j><c>";
-#  is $d2<a><b><c><d><e><f2><g><h><i><j><h><i><j><c>,
-#     122,
-#     "Very deep ...<j><c> = $d<a><b><c><d><e><f2><g><h><i><j><h><i><j><c>";
-
-#say "D2: ", $d2.WHAT;
-#say "D: ", $d.perl;
-
   is-deeply $d, $d2, 'structures are equal';
 
   my Buf $b2 = $d2.encode;
   is-deeply $etst, $b2, 'Buf compare of encoded decode';
-
-
-}, "Autovivication";
-
+}
 
 #-------------------------------------------------------------------------------
 # Cleanup
-#
 done-testing;
 exit(0);
 

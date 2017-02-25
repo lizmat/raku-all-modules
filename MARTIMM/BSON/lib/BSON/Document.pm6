@@ -1,7 +1,7 @@
 use v6.c;
 
-# There are some *-native() and *-emulated() subs kept for later benchmarks when
-# perl evolves.
+#TODO There are some *-native() and *-emulated() subs kept for later benchmarks
+# when perl evolves.
 
 use BSON;
 use BSON::ObjectId;
@@ -9,11 +9,11 @@ use BSON::Regex;
 use BSON::Javascript;
 use BSON::Binary;
 
+#-------------------------------------------------------------------------------
 unit package BSON:auth<https://github.com/MARTIMM>;
 
 #-------------------------------------------------------------------------------
 # BSON type codes
-#
 constant C-DOUBLE             = 0x01;
 constant C-STRING             = 0x02;
 constant C-DOCUMENT           = 0x03;
@@ -38,13 +38,12 @@ constant C-MAX-KEY            = 0x7F;
 
 #-------------------------------------------------------------------------------
 # Fixed sizes
-#
 constant C-INT32-SIZE         = 4;
 constant C-INT64-SIZE         = 8;
 constant C-DOUBLE-SIZE        = 8;
 
 #-------------------------------------------------------------------------------
-class Document does Associative does Positional {
+class Document does Associative {
 
   subset Index of Int where $_ >= 0;
 
@@ -65,7 +64,6 @@ class Document does Associative does Positional {
 
   #-----------------------------------------------------------------------------
   # Make new document and initialize with a list of pairs
-  #
 #TODO better type checking:  List $pairs where all($_) ~~ Pair
 #TODO better API
   multi method new ( List $pairs, *%h ) {
@@ -240,11 +238,6 @@ class Document does Associative does Positional {
   }
 
   #-----------------------------------------------------------------------------
-#  submethod WHAT ( --> BSON::Document ) {
-#    BSON::Document;
-#  }
-
-  #-----------------------------------------------------------------------------
   submethod Str ( --> Str ) {
     self.perl;
   }
@@ -279,6 +272,7 @@ class Document does Associative does Positional {
 
     $idx;
   }
+
 
   #-----------------------------------------------------------------------------
   # Associative role methods
@@ -528,53 +522,6 @@ class Document does Associative does Positional {
 
     die X::BSON::Parse-document.new(
       :operation("\$d<$key> := {new}")
-      :error("Cannot use binding")
-    );
-  }
-
-
-  #-----------------------------------------------------------------------------
-  # Positional role methods
-  #-----------------------------------------------------------------------------
-  #-----------------------------------------------------------------------------
-  method AT-POS ( Index $idx --> Any ) {
-
-    $idx < @!keys.elems ?? @!values[$idx] !! Any;
-  }
-
-  #-----------------------------------------------------------------------------
-  method EXISTS-POS ( Index $idx --> Bool ) {
-
-    $idx < @!keys.elems;
-  }
-
-  #-----------------------------------------------------------------------------
-  method DELETE-POS ( Index $idx --> Any ) {
-
-    $idx < @!keys.elems ?? (self{@!keys[$idx]}:delete) !! Nil;
-  }
-
-  #-----------------------------------------------------------------------------
-  method ASSIGN-POS ( Index $idx, $new! --> Nil ) {
-
-    # If index is at a higher position then the last one then only extend
-    # one place (like a push) with a generated key name such as key21 when
-    # [21] was used. Furthermore when a key like key21 has been used
-    # before the array is not extended but the key location is used
-    # instead.
-    #
-    my $key = $idx >= @!keys.elems ?? 'key' ~ $idx !! @!keys[$idx];
-    self{$key} = $new;
-  }
-
-  #-----------------------------------------------------------------------------
-  # Cannot use binding because when value changes the object cannot know that
-  # the location is changed. This is nessesary to encode the key, value pair.
-  #
-  method BIND-POS ( Index $idx, \new ) {
-
-    die X::BSON::Parse-document.new(
-      :operation("\$d[$idx] := {new}")
       :error("Cannot use binding")
     );
   }

@@ -3,7 +3,7 @@ use Test;
 use BSON::Document;
 
 #-------------------------------------------------------------------------------
-subtest {
+subtest "Empty document", {
 
   my BSON::Document $d .= new;
   is $d.^name, 'BSON::Document', 'Isa ok';
@@ -14,11 +14,10 @@ subtest {
   $d .= new;
   $d.decode($b);
   is $d.elems, 0, "Zero elements/keys in decoded document";
-
-}, "Empty document";
+}
 
 #-------------------------------------------------------------------------------
-subtest {
+subtest "Initialize document", {
 
   # Init via Seq
   #
@@ -54,11 +53,10 @@ subtest {
       }
     }
   }
-
-}, "Initialize document";
+}
 
 #-------------------------------------------------------------------------------
-subtest {
+subtest "Ban the hash", {
 
   my BSON::Document $d .= new;
   try {
@@ -88,11 +86,10 @@ subtest {
 
   $d<e><f><g> = {b => 30};
   is $d<e><f><g><b>, 30, "Autovivified hash value $d<e><f><g><b>";
-
-}, "Ban the hash";
+}
 
 #-------------------------------------------------------------------------------
-subtest {
+subtest "Test document, associative", {
 
   my BSON::Document $d .= new;
 
@@ -126,61 +123,10 @@ subtest {
       }
     }
   }
-
-}, "Test document, associative";
-
-#-------------------------------------------------------------------------------
-subtest {
-
-  my BSON::Document $d .= new: ('a' ... 'z') Z=> 120..145;
-
-  is $d[0], 120, "\$d[0] = $d[0]";
-  is $d[1], 121, "\$d[1] = $d[1]";
-
-  $d[1] = 2000;
-  is $d[1], 2000, "assign \$d[1] = $d[1]";
-  is $d<b>, 2000, "assign \$<b> = \$d[1] = $d[1]";
-
-  is $d<b>, $d[$d.find-key('b')],
-     "Same values on key 'b'($d<b>) and found index {$d.find-key('b')}($d[1])";
-
-  ok $d[0]:exists, "First pair $d[0] exists";
-
-  $d[1000] = 'text';
-  is $d[26], 'text', "assign \$d[1000] = \$d[26] = '$d[26]'";
-  is $d<key1000>, 'text', "assign \$d<key1000> = \$d[26] = '$d[26]'";
-  is $d.find-key(1000), 'key1000', "Get key from index 1000";
-
-  is $d[2000], Any, "Any undefined field returns 'Any'";
-  ok $d[26]:exists, '$d[26] exists';
-  ok ! ($d[27]:exists), '$d[27] does not exist';
-
-  is $d[25]:delete, 145, '$d[25] deleted was 145';
-  ok $d[25]:exists, '$d[25] does still exist, shifted from \$d[26]';
-  is $d[25], 'text', "\$d[25] = '$d[25]'";
-  ok ! ($d[26]:exists), '$d[26] does not exist anymore';
-
-  try {
-    is $d[4], 124, "Pre binding: \$d[4] = $d[4]";
-    my $x = 10;
-    $d[4] := $x;
-    is $d[4], 10, "Bound: \$d[4] = $d[4] == \$x = $x";
-    $x = 11;
-    is $d[4], 11, "Bound: \$d[4] = $d[4] == \$x = $x";
-
-    CATCH {
-      when X::BSON::Parse-document {
-        my $s = ~$_;
-        $s ~~ s:g/\n//;
-        ok .message ~~ ms/'Cannot' 'use' 'binding'/, $s;
-      }
-    }
-  }
-
-}, "Test document, positional";
+}
 
 #-------------------------------------------------------------------------------
-subtest {
+subtest "Test document, other", {
 
   my BSON::Document $d .= new: ('a' ... 'z') Z=> 120..145;
 
@@ -191,11 +137,10 @@ subtest {
   is ($d.values)[*-1], 145, "Last value is 145";
   is ($d.keys)[3], 'd', "4th key is 'd'";
   is ($d.values)[3], 123, '4th value is 123';
-
-}, "Test document, other";
+}
 
 #-------------------------------------------------------------------------------
-subtest {
+subtest "Document nesting 1", {
 
   # Try nesting with BSON::Document
   #
@@ -208,40 +153,10 @@ subtest {
 
   is $d<c><b>, 110, "\$d<c><b> = $d<c><b>";
   is $d<c><p>, 1, "\$d<c><p> = $d<c><p>";
-
-  is $d<c>[1], 2, "\$d<c>[1] = $d<c>[1]";
-  is $d<c>[3], 110, "\$d<c>[3] = $d<c>[3]";
-
-  is $d[2][2], 100, "\$d[2][2] = $d[2][2]";
-  is $d[2][3], 110, "\$d[2][3] = $d[2][3]";
-
-  is $d[1][0], 11, "\$d[1][0] = $d[1][0]";
-  is $d[1][0][0], 11, "\$d[1][0][0] = $d[1][0][0]";
-
-  try {
-    say $d[1][2];
-    CATCH {
-      when X::OutOfRange {
-        ok .message ~~ m/'Index out of range. Is: 2, should be in 0..0'/,
-           '$d[1][2]: ' ~ $_;
-      }
-    }
-  }
-
-  try {
-    is $d[2][5], Any, '$d[2][5]: not out of range but not defined';
-    CATCH {
-      when X::OutOfRange {
-        ok .message ~~ m/'Index out of range. Is: 2, should be in 0..0'/,
-           '$d[2][5]: ' ~ $_;
-      }
-    }
-  }
-
-}, "Document nesting 1";
+}
 
 #-------------------------------------------------------------------------------
-subtest {
+subtest "Document nesting 2", {
 
   # Try nesting with k => v
   #
@@ -268,11 +183,10 @@ subtest {
 
 #$d .= new: ('a' ... 'z') Z=> 120..145;
 #say $d.kv;
-
-}, "Document nesting 2";
+}
 
 #-------------------------------------------------------------------------------
-subtest {
+subtest "Exception tests", {
 
   # Hash tests done above
   # Bind keys done above
@@ -284,8 +198,6 @@ subtest {
     $d.encode;
 
     CATCH {
-#say .WHAT;
-#.say;
       when X::BSON::Parse-document {
         my $m = .message;
         $m ~~ s:g/\n//;
@@ -300,8 +212,6 @@ subtest {
     $d.encode;
 
     CATCH {
-#say .WHAT;
-#.say;
       when X::BSON::Parse-document {
         my $m = .message;
         $m ~~ s:g/\n//;
@@ -383,7 +293,6 @@ subtest {
     $d.encode;
 
     CATCH {
-#.say;
       when X::BSON::NYS {
         my $m = .message;
         $m ~~ s:g/\n//;
@@ -429,13 +338,7 @@ subtest {
       }
     }
   }
-
-
-
-#  my BSON::Document $d .= new;
-#  $d( 1, 2, 'test', ( ('a' ... 'd') Z=> 20 .. 13), :w<fd>);
-
-}, "Exception tests";
+}
 
 #-------------------------------------------------------------------------------
 # Cleanup

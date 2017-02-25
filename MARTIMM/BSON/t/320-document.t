@@ -243,9 +243,6 @@ subtest {
     0x00                                        # End document
   );
 
-#  say "\n\nBSON::Document perl() show off: ", $d.perl;
-#  print " \n";
-
   # Encode document and compare with handcrafted byte array
   #
   my Buf $edoc = $d.encode;
@@ -290,34 +287,7 @@ subtest {
 
   is $d<rex>.regex, 'abc|def', 'Regex ok';
   is $d<rex>.options, 'is', 'Regex options ok';
-
-  # Test sequence
-  #
-#  diag "Sequence of index";
-
-  is $d[0], -203.345.Num, "0: $d[0], double";
-  is $d[1], 1234, "1: $d[1], int32";
-  is $d[2], 4295392664, "2: $d[2], int64";
-  is $d[3].^name, 'BSON::Javascript', '3:Javascript code on $d<w>';
-  is $d[4][0], 10, "4: nest 10";
-  is $d[4][1], 11, "4: nest 11";
-  is $d[4][2][0], 255, "4: subnest 255";
-  is $d[5].javascript, 'function(x){return x;}', "5: '{$d[5].javascript}'";
-  is $d[6].binary-type, BSON::C-UUID, "6: Binary type is UUID";
-  ok !?$d[7], "7: Boolean False";
-  ok ?$d[8], "8: Boolean True";
-  is $d[9], 'String text', '9: Text ok';
-  is $d[10][[1]], 'abc', '10: A[[1]] = abc';
-  is $d[10][[2]], 345, '10: A[[2]] = 345';
-  is $d[11].oid.elems, 12, '11: Length of object id ok';
-  is $d[12].Str, $datetime.Str, '12: Date and time ok';
-  nok $d[13].defined, '13: Null not defined';
-  is $d[14].regex, 'abc|def', '14: Regex ok';
-  is $d[14].options, 'is', '14: Regex options ok';
-
 }, "Document encoding decoding types";
-
-#-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 # Cleanup
