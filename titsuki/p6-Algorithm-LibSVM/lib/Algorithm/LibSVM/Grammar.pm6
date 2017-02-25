@@ -3,11 +3,11 @@ unit grammar Algorithm::LibSVM::Grammar;
 
 token TOP { <bodylist> }
 token number { '-'* \d+ [ \. \d+ ]? }
-token decimal { \d+ }
-rule bodylist { [ <body> | [ <body> \n+ ] ]+ }
+token integer { \d+ }
+rule bodylist { [ <body> \n? ]+ }
 rule body { <number> <ws> <pairlist> }
-rule pairlist { [ <pair> | [ <pair> <ws> ] ]+ }
-rule pair { <key=.decimal> ':' <value=.number> }
+rule pairlist { [ <pair> <ws>? ]+ }
+rule pair { <key=.integer> ':' <value=.number> }
 
 =begin pod
 
