@@ -1,0 +1,14 @@
+{
+    "perl"         : "6.c",
+    "name"         : "M",
+    "version"      : "1.001001",
+    "description"
+        : "M, the 1-character Map: non-nodal, non-autothreading .map(*.some-method)",
+    "depends"      : [ ],
+    "test-depends" : [ "Test", "Test::Meta" ],
+    "provides"     : {
+        "M" : "lib/M.pm6"
+    },
+    "authors"      : ["Zoffix Znet"],
+    "support"      : { "source" : "git://github.com/zoffixznet/perl6-M.git" }
+}
