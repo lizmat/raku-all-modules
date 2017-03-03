@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jnthn/p6-file-ignore.git
 	branch = master
-	commit = d9f11efa762042533bb0734799cdb3fbe98b0112
-	parent = 698c02b2ba9f4eb85eb0e54650e53259f9d6f293
+	commit = aed6d64a193d4206f11ded96f863b27a3ccebd99
+	parent = 23cb8d66dcb90e88043bdb934e297f1ee5e54ee1
 	cmdver = 0.4.0
