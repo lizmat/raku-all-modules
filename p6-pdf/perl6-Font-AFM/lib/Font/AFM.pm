@@ -1,6 +1,6 @@
 # This -*- perl6 -*-  module is a simple parser for Adobe Font Metrics files.
 
-class Font::AFM:ver<1.23.4>
+class Font::AFM
     is Hash {
 
 =begin pod
@@ -193,24 +193,23 @@ it under the same terms as Perl itself.
     #    $h = Font::AFM.new("Helvetica");
     #
 
-    method class-name(Str $font-name --> Str) {
+    method !class-name(Str $font-name --> Str) {
         [~] "Font::Metrics::", $font-name.lc.subst( /['.afm'$]/, '');
     }
 
     #| autoloads the appropriate delegate for the named font. A subclass of Font::AFM
-    method metrics-class(Str $font-name --> Font::AFM:U) {
-        my $class-name = $.class-name($font-name);
+    method !metrics-class(Str $font-name --> Font::AFM:U) {
+        my $class-name = self!class-name($font-name);
         require ::($class-name);
-        ::($class-name);
     }
 
     #| creates a delegate object for the named font.
     method core-font(Str $font-name --> Font::AFM:D) {
-        my $class = self.metrics-class($font-name);
+        my $class = self!metrics-class($font-name);
         $class.new;
     }
 
-    multi method build( Str :$name! is copy) {
+    multi method TWEAK( Str :$name! is copy) {
 
        my $metrics = {};
 
@@ -224,14 +223,17 @@ it under the same terms as Perl itself.
            $file = $name ~ '.afm';
            unless $*SPEC.is-absolute($file) {
                # not absolute, search the metrics path for the file
-               my @metrics-path = %*ENV<METRICS>:exists
-                 ?? %*ENV<METRICS>.split(/\:/)>>.subst(rx{'/'$},'')
-                 !! < /usr/lib/afm  /usr/local/lib/afm
+               my @metrics-path = do with %*ENV<METRICS> {
+                   .split(/\:/)>>.subst(rx{'/'$},'')
+               }
+               else {
+                   < /usr/lib/afm  /usr/local/lib/afm
                       /usr/openwin/lib/fonts/afm  . >;
+               }
                $file = $_
-                   with @metrics-path\
-                   .map({ $*SPEC.catfile( $_, $file) })\
-                   .first: { .IO ~~ :f };
+                   with (@metrics-path\
+                         .map({ $*SPEC.catfile( $_, $file) })\
+                         .first: { .IO ~~ :f });
            }
        }
 
@@ -279,17 +281,16 @@ it under the same terms as Perl itself.
            $metrics<BBox><.notdef> = [ 0, 0, 0, 0];
        }
 
-       self.BUILD(:$metrics);
+       self.TWEAK(:$metrics);
     }
 
-    multi method build( Hash :$metrics! ) {
+    multi method TWEAK( Hash :$metrics! ) {
         self{.key} = .value for $metrics.pairs;
     }
 
-    submethod BUILD(|c) { self.build( |c ) }
-
     multi method new(Str $name)  { self.bless( :$name ) }
     multi method new(Hash $metrics) { self.bless( :$metrics ) }
+    multi method new(*%a) is default { self.bless( |%a ) }
     BEGIN our %ISOLatin1Encoding = " " => "space", "!"  =>
     "exclam", "\"" => "quotedbl", "#" => "numbersign", "\$" =>
     "dollar", "\%" => "percent", "\&" => "ampersand", "'" =>
