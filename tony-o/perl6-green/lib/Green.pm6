@@ -86,12 +86,23 @@ start {
       $pass = color('green') ~ '✓' ~ color('reset');
       $fail = color('red') ~ '✗' ~ color('reset');
     };
-
+    CATCH { .say; default { .say; } };
     my $i = @promises.elems;
     @promises.append(start {
+
+      CATCH { .say; default { .say; } };
       my Str  $output  = '';
       my Str  $errors  = '';
       my Bool $overall = True;
+      my Callable $err = sub ($_, $success is rw) is hidden-from-backtrace {
+        CATCH { .say; default { .say; } };
+        $overall = False;
+        $success = False; 
+        $errors ~= (' ' x $space*2) ~ $_.Str ~ "\n";
+        $errors ~= try $_.backtrace.Str.lines.map({ 
+          .subst(/ ^ \s+ /, ' ' x ($space*3)) 
+        }).join("\n") ~ "\n"; 
+      };
       my $ti = 1;
       for @($set<tests>) -> $test {
         my Bool $success;
@@ -103,6 +114,7 @@ start {
             ($test<sub>.signature.count == 1 && $test<sub>.signature.params[0].name ne '$_') || ($test<sub>.signature.count > 1);
           } // False;
           await Promise.anyof($promise, start {
+            CATCH { default { $err($_, $success); $promise.keep(False); } };
             $test<sub>($done)           if  $donf;
             await $promise              if  $donf;
             $promise.keep($test<sub>() || True) unless $donf;
@@ -111,12 +123,7 @@ start {
           $passing++ if $success;
           CATCH { 
             default {
-              $overall = False;
-              $success = False; 
-              $errors ~= "{' ' x $space*2}#$err - " ~ $_.Str ~ "\n";
-              $errors ~= try $_.backtrace.Str.lines.map({ 
-                .subst(/ ^ \s+ /, ' ' x ($space*3)) 
-              }).join("\n") ~ "\n"; 
+              $err($_, $success);
             }
           }
         };
