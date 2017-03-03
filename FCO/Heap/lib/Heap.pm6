@@ -86,11 +86,15 @@ role Heap[$heap_cmp = * cmp *] {
 	}
 
 	multi method ACCEPTS(@other) {
-		self.Array.sort(&!cmp) ~~ @other
+		self.Array.sort(&!cmp) == @other
+	}
+
+	multi method ACCEPTS(::?CLASS $other) {
+		self.Array.sort(&!cmp) == $other.Array.sort(&!cmp)
 	}
 
 	multi method ACCEPTS($other where *.can("Array")) {
-		self.Array.sort(&!cmp) ~~ $other.Array.sort(&!cmp)
+		self.Array.sort(&!cmp) == $other.Array.sort(&!cmp)
 	}
 
 	#| Add a ney value on the Heap
@@ -108,6 +112,12 @@ role Heap[$heap_cmp = * cmp *] {
 			self!down: 0;
 		}
 		ret
+	}
+
+	#| Returns the first element of the heap
+	method peek {
+		return Any unless @!data;
+		@!data.head
 	}
 
 	#| Pops the Heap until its empty
