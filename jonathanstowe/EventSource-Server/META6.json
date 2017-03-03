@@ -1,0 +1,30 @@
+{
+   "auth" : "github:jonathanstowe",
+   "meta6" : "0",
+   "test-depends" : [
+      "Test"
+   ],
+   "authors" : [
+      "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+   ],
+   "description" : "A simple handler to provide Server Sent Events from a PSGI app",
+   "provides" : {
+      "EventSource::Server" : "lib/EventSource/Server.pm"
+   },
+   "source-url" : "https://github.com/jonathanstowe/EventSource-Server.git",
+   "depends" : [],
+   "perl" : "6.c",
+   "resources" : [],
+   "build-depends" : [],
+   "tags" : [
+      "async",
+      "event",
+      "web"
+   ],
+   "support" : {
+      "source" : "https://github.com/jonathanstowe/EventSource-Server.git"
+   },
+   "license" : "perl",
+   "name" : "EventSource::Server",
+   "version" : "0.0.2"
+}

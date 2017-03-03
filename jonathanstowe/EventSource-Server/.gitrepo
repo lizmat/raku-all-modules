@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/EventSource-Server.git
+	branch = master
+	commit = fb02efe3664c8de4dec03cb513d7a52d5578ecf3
+	parent = 55a9692ed6de5e2f91030a873ba10ac04167c53a
+	cmdver = 0.4.0

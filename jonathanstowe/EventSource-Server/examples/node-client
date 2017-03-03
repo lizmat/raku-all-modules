@@ -1,0 +1,12 @@
+var EventSource = require('eventsource');
+
+var event = process.argv[2] || 'message';
+
+console.info(event);
+var v = new EventSource(' http://127.0.0.1:7798');
+
+v.addEventListener(event, function(e) {
+    console.info(e);
+
+}, false);
+

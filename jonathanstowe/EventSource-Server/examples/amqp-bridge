@@ -1,0 +1,27 @@
+#!/usr/bin/env perl6
+
+use EventSource::Server;
+use HTTP::Server::Tiny;
+use Net::AMQP;
+
+my $supply = supply { 
+    my $n = Net::AMQP.new;
+    my $connection = $n.connect.result;
+    whenever $n.open-channel(1) -> $channel {
+        whenever $channel.declare-queue("hello") -> $queue {
+            $queue.consume;
+            whenever $queue.message-supply.map( -> $v { $v.body.decode }) -> $data {
+                emit EventSource::Server::Event.new(type => 'hello', :$data);
+            }
+        }
+    }
+};
+
+my &es = EventSource::Server.new(:$supply);
+
+
+
+HTTP::Server::Tiny.new(port => 7798).run(&es)
+
+
+# vim: ft=perl6

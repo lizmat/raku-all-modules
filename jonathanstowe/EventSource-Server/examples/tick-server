@@ -1,0 +1,15 @@
+#!/usr/bin/env perl6
+
+use EventSource::Server;
+use HTTP::Server::Tiny;
+
+my $supply = Supply.interval(1).map( { EventSource::Server::Event.new(type => 'tick', data => DateTime.now.Str) } );
+
+my &es = EventSource::Server.new(:$supply);
+
+
+
+HTTP::Server::Tiny.new(port => 7798).run(&es)
+
+
+# vim: ft=perl6
