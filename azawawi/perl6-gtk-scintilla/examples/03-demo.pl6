@@ -2,7 +2,7 @@
 
 use v6;
 
-use lib 'lib';
+use lib $*PROGRAM.parent.parent.child("lib").Str;
 use GTK::Simple::App;
 use GTK::Simple::Menu;
 use GTK::Simple::MenuBar;

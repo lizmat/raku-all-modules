@@ -357,7 +357,8 @@ const CGFloat paddingHighlightY = 2;
  */
 - (void) timerFired: (NSTimer*) timer
 {
-  reinterpret_cast<ScintillaCocoa*>(mTarget)->TimerFired(timer);
+  if (mTarget)
+    static_cast<ScintillaCocoa*>(mTarget)->TimerFired(timer);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -388,7 +389,8 @@ const CGFloat paddingHighlightY = 2;
 - (void) idleTriggered: (NSNotification*) notification
 {
 #pragma unused(notification)
-  reinterpret_cast<ScintillaCocoa*>(mTarget)->IdleTimerFired();
+  if (mTarget)
+    static_cast<ScintillaCocoa*>(mTarget)->IdleTimerFired();
 }
 
 @end
@@ -471,7 +473,7 @@ void ScintillaCocoa::Finalise()
 //--------------------------------------------------------------------------------------------------
 
 void ScintillaCocoa::UpdateObserver(CFRunLoopObserverRef /* observer */, CFRunLoopActivity /* activity */, void *info) {
-  ScintillaCocoa* sci = reinterpret_cast<ScintillaCocoa*>(info);
+  ScintillaCocoa* sci = static_cast<ScintillaCocoa*>(info);
   sci->IdleWork();
 }
 
@@ -841,7 +843,7 @@ sptr_t ScintillaCocoa::DirectFunction(sptr_t ptr, unsigned int iMessage, uptr_t 
  */
 sptr_t scintilla_send_message(void* sci, unsigned int iMessage, uptr_t wParam, sptr_t lParam)
 {
-  ScintillaView *control = reinterpret_cast<ScintillaView*>(sci);
+  ScintillaView *control = static_cast<ScintillaView*>(sci);
   return [control message:iMessage wParam:wParam lParam:lParam];
 }
 
@@ -1017,12 +1019,12 @@ bool ScintillaCocoa::SetIdle(bool on)
                                                           userInfo: nil
                                                            repeats: YES];
       [NSRunLoop.currentRunLoop addTimer: idleTimer forMode: NSModalPanelRunLoopMode];
-      idler.idlerID = reinterpret_cast<IdlerID>(idleTimer);
+      idler.idlerID = idleTimer;
     }
     else
       if (idler.idlerID != NULL)
       {
-        [reinterpret_cast<NSTimer*>(idler.idlerID) invalidate];
+        [static_cast<NSTimer*>(idler.idlerID) invalidate];
         idler.idlerID = 0;
       }
   }
@@ -1198,7 +1200,7 @@ void ScintillaCocoa::CreateCallTipWindow(PRectangle rc) {
 void ScintillaCocoa::AddToPopUp(const char *label, int cmd, bool enabled)
 {
   NSMenuItem* item;
-  ScintillaContextMenu *menu= reinterpret_cast<ScintillaContextMenu*>(popup.GetID());
+  ScintillaContextMenu *menu = static_cast<ScintillaContextMenu*>(popup.GetID());
   [menu setOwner: this];
   [menu setAutoenablesItems: NO];
 
@@ -2562,7 +2564,7 @@ NSMenu* ScintillaCocoa::CreateContextMenu(NSEvent* /* event */)
   // Call ScintillaBase to create the context menu.
   ContextMenu(Point(0, 0));
 
-  return reinterpret_cast<NSMenu*>(popup.GetID());
+  return static_cast<NSMenu*>(popup.GetID());
 }
 
 //--------------------------------------------------------------------------------------------------
