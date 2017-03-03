@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://gitlab.com/samcns/uzu.git
 	branch = master
-	commit = 626cd99a174c7cf3a6862d3eecb1e7f71d53ffeb
-	parent = d68c65b3080f9238474268db5e08d33047dcf63b
+	commit = 8cc41024c1246345aaafdadd641107bd0fb675e3
+	parent = 4086764fe07e229d777b23947b297d0ac14fb42a
 	cmdver = 0.4.0
