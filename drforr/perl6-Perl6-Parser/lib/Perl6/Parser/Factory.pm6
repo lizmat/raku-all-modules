@@ -32,17 +32,52 @@ L<Perl6::Element>
 	    L<Perl6::Variable::Array>
 	    L<Perl6::Variable::Callable>
 
+
 =end DESCRIPTION
+
+=begin GENERAL_NOTES
+
+The L<Perl6::Variable> classes all have a required C<.sigil> method which returns the sigil associated with that variable (and an C<.twigil> method should that be needed.) These are methods rather than attributes to keep the clutter down when using C<.dump> or C<.perl> debugging methods.
+
+Keeping in mind that clients of the L<Perl6::Element> hierarchy may want to create or edit these subclasses, I'm restricting constant methods to just those things that users shouldn't need to change, for instance you shouldn't need to create a L<Perl6::Number::Binary> with a base of 3.
+
+=end GENERAL_NOTES
 
 =begin CLASSES
 
 =item L<Perl6::Element>
 
-The root of the object hierarchy.
+Please see the module's documentation for the full scoop, but here's a terse summary of what's available.
 
-This hierarchy is mostly for the clients' convenience, so that they can safely ignore the fact that an object is actually a L<Perl6::Number::Complex::Radix::FloatingPoint> when all they really want to know is that it's a L<Perl6::Number>.
+=item C<is-root>
 
-It'll eventually have a bunch of useful methods attached to it, but for the moment ... well, it doesn't actually exist.
+Is the element the root? Usually this is a L<Perl6::Document>.
+
+=cut
+
+=item C<is-start>, C<is-end>
+
+Are we at the start or end of the stream?
+
+=cut
+
+=item C<is-leaf>, C<is-twig>
+
+Is the element a leaf (a single token) or a composite of multiple tokens? (a twig)
+
+Tokens are things like C<12,3>, C<'foo'> or C<+>. Everything else is a C<twig>, which is a list of multiple tokens surrounded by some sort of delimiter, whether it be a statement boundary or a here-doc.
+
+=cut
+
+=item C<next>, C<previous>, C<parent>, C<child($n)>
+
+Go from one element to the next in sequence. There are no "end of stream" or "beginning of stream" markers, for that please use the C<is-end> and C<is-start> methods. This is mainly so that I can keep the guts statically-typed to help catch developer errors. Otherwise I'd have to use a compound type or constraints, and I want to keep the guts as simple as possible.
+
+=cut
+
+=item C<remove-node>, C<insert-node-before>, C<insert-node-after>
+
+Remove the node and children, insert a node before the element, or after.
 
 =cut
 
@@ -73,7 +108,7 @@ There likely won't be a L<Perl6::Number::Complex>. While it's relatively easy to
 
 The catch-all for Perl 6 variable types.
 
-Scalar, Hash, Array and Callable subtypes have C<$.headless> attributes with the variable's name minus the sigil and optional twigil. They also all have C<$.sigil> which keeps the sigil C<$> etc., and C<$.twigil> optionally for the classes that have twigils.
+Scalar, Hash, Array and Callable subtypes have C<$.headless> attributes with the variable's name minus the sigil and optional twigil. They also have the C<.sigil> method, and C<.twigil> optional method for classes that have them.
 
 L<Perl6::Variable>
     L<Perl6::Variable::Scalar>
@@ -186,8 +221,8 @@ Should you brave the internals in search of a missing term, the first thing you 
 =end pod
 
 class Perl6::Element {
-	has Int $.from is required;
-	has Int $.to is required;
+	has Int $.from is required is rw;
+	has Int $.to is required is rw;
 	has $.factory-line-number; # Purely a debugging aid.
 
 	has Perl6::Element $.next is rw;
@@ -195,28 +230,78 @@ class Perl6::Element {
 
 	has Perl6::Element $.parent is rw;
 
+	method _dump returns Str {
+		my $node = self;
+		$node.child = () if self.is-twig;
+		$node.next = $node;
+		$node.previous = $node;
+		$node.parent = $node;
+		$node.perl
+	}
+
 	# Should only be run only flattened element lists.
 	# This is because it does nothing WRT .child.
 	# And by design, it has no access to that anyway.
 	#
 
+	method _add-offset( Perl6::Element $node, Int $delta ) {
+		my $head = $node;
+		while !$head.is-end {
+			$head.to += $delta;
+			$head.from += $delta;
+			$head = $head.next;
+		}
+	}
+
 	# Remove just this node.
 	#
 	method remove-node {
-		if self.is-start {
-		}
-		elsif self.is-end {
+		self._add-offset( self.next, -( $.to - $.from ) ) if
+			$*UPDATE-RANGES;
+		if self.is-end {
+			my $previous = $.previous;
+			$.previous.next = $previous;
 		}
 		else {
 			my $next = $.next;
 			my $previous = $.previous;
 			$.next.previous = $previous;
 			$.previous.next = $next;
-			$.next = self;
-			$.previous = self;
+		}
+		$.next = self;
+		$.previous = self;
+		return self;
+	}
+
+	method insert-node-before( Perl6::Element $node ) {
+		self._add-offset( self, $.to - $.from ) if
+			$*UPDATE-RANGES;
+		if self.is-start {
+			$node.next = self;
+			$node.previous = $node;
+			$node.parent = $node;
+			$.previous = $node;
+		}
+		else {
 		}
 	}
-	method remove {
+
+	method insert-node-after( Perl6::Element $node ) {
+		self._add-offset( self.next, $.to - $.from ) if
+			$*UPDATE-RANGES;
+		if self.is-end {
+			$node.next = $node;
+			$node.parent = $.parent;
+			$node.previous = self;
+			$.next = $node;
+		}
+		else {
+			$node.next = $.next;
+			$node.parent = $.parent;
+			$node.previous = self;
+			$.next.previous = $node;
+			$.next = $node;
+		}
 	}
 }
 
@@ -328,8 +413,9 @@ class Perl6::Structural {
 # So they're only generated in the _statement handler.
 #
 class Perl6::Semicolon does Token {
-	also does Leaf;
 	also is Perl6::Structural;
+
+	also does Leaf;
 	also does Matchable;
 }
 
@@ -347,12 +433,14 @@ class Perl6::Balanced {
 	}
 }
 class Perl6::Balanced::Enter does Token {
-	also does Leaf;
 	also is Perl6::Balanced;
+
+	also does Leaf;
 }
 class Perl6::Balanced::Exit does Token {
-	also does Leaf;
 	also is Perl6::Balanced;
+
+	also does Leaf;
 }
 
 role MatchingBalanced {
@@ -411,6 +499,40 @@ role MatchingBalanced {
 		)
 	}
 
+	method from-outer-int( Mu $p, Int $from, Str $str,
+			Perl6::Element-List $child )
+			returns Perl6::Element {
+		my $to = $from + $str.chars;
+		my $_child = Perl6::Element-List.new;
+		my $x = $p.orig.substr( 0, $from );
+		$x ~~ m{ (.) ( \s* ) $ };
+		my $left-edge = $0.Str;
+		my $left-margin = $1.Str.chars;
+		$x = $p.orig.substr( $to );
+		$x ~~ m{ ^ ( \s* ) (.) };
+		my $right-edge = $1.Str;
+		my $right-margin = $0.Str.chars;
+		$_child.append(
+			Perl6::Balanced::Enter.from-int(
+				$from - $left-margin - $left-edge.chars,
+				$left-edge
+			)
+		);
+		$_child.append( $child );
+		$_child.append(
+			Perl6::Balanced::Exit.from-int(
+				$to + $right-margin,
+				$right-edge
+			)
+		);
+		self.bless(
+			:factory-line-number( callframe(1).line ),
+			:from( $from - $left-margin - $left-edge.chars ),
+			:to( $to + $right-margin + $right-edge.chars ),
+			:child( $_child.child )
+		)
+	}
+
 	method from-int( Int $from, Str $str, Perl6::Element-List $child )
 			returns Perl6::Element {
 		my $_child = Perl6::Element-List.new;
@@ -460,51 +582,60 @@ class Perl6::Operator {
 	also is Perl6::Element;
 }
 class Perl6::Operator::Hyper does Branching {
-	also does Twig;
 	also is Perl6::Operator;
+
+	also does Twig;
 	also does MatchingBalanced;
 }
 class Perl6::Operator::Prefix does Token {
-	also does Leaf;
 	also is Perl6::Operator;
+
+	also does Leaf;
 	also does Matchable;
 }
 class Perl6::Operator::Infix does Token {
-	also does Leaf;
 	also is Perl6::Operator;
+
+	also does Leaf;
 	also does Matchable;
 }
 class Perl6::Operator::Postfix does Token {
-	also does Leaf;
 	also is Perl6::Operator;
+
+	also does Leaf;
 	also does Matchable;
 }
 class Perl6::Operator::Circumfix does Branching {
-	also does Twig;
 	also is Perl6::Operator;
+
+	also does Twig;
 	also does MatchingBalanced;
 }
 class Perl6::Operator::PostCircumfix does Branching {
-	also does Twig;
 	also is Perl6::Operator;
+
+	also does Twig;
 	also does MatchingBalanced;
 }
 
 class Perl6::WS does Token {
-	also does Leaf;
 	also is Perl6::Element;
+
+	also does Leaf;
 	also does Matchable;
 }
 
 class Perl6::Comment does Token {
-	also does Leaf;
 	also is Perl6::Element;
+
+	also does Leaf;
 	also does Matchable;
 }
 
 class Perl6::Document does Branching {
-	also does Twig;
 	also is Perl6::Element;
+
+	also does Twig;
 
 	method from-list( Perl6::Element-List $child ) returns Perl6::Element {
 		if $child.child {
@@ -529,8 +660,9 @@ class Perl6::Document does Branching {
 # and if so, I'm glad.
 #
 class Perl6::Sir-Not-Appearing-In-This-Statement {
-	also does Leaf;
 	also is Perl6::Element;
+
+	also does Leaf;
 	has $.content; # XXX because it's not quite a token.
 
 	method to-string returns Str {
@@ -539,8 +671,9 @@ class Perl6::Sir-Not-Appearing-In-This-Statement {
 }
 
 class Perl6::Statement does Branching {
-	also does Twig;
 	also is Perl6::Element;
+
+	also does Twig;
 
 	method from-list( Perl6::Element-List $child ) returns Perl6::Element {
 		self.bless(
@@ -555,52 +688,79 @@ class Perl6::Statement does Branching {
 # And now for the most basic tokens...
 #
 class Perl6::Number does Token {
-	also does Leaf;
 	also is Perl6::Element;
+
+	also does Leaf;
 	also does Matchable;
+
+	method base { ... }
 }
-class Perl6::Number::Binary is Perl6::Number { }
-class Perl6::Number::Octal is Perl6::Number { }
-class Perl6::Number::Decimal is Perl6::Number { }
+class Perl6::Number::Binary is Perl6::Number {
+	method base { 2 }
+}
+class Perl6::Number::Octal is Perl6::Number {
+	method base { 8 }
+}
+class Perl6::Number::Decimal is Perl6::Number {
+	method base { 10 }
+}
 class Perl6::Number::Decimal::Explicit is Perl6::Number::Decimal { }
-class Perl6::Number::Hexadecimal is Perl6::Number { }
+class Perl6::Number::Hexadecimal is Perl6::Number {
+	method base { 16 }
+}
 class Perl6::Number::Radix is Perl6::Number { }
-class Perl6::Number::FloatingPoint is Perl6::Number { }
-
-class Perl6::NotANumber is Token {
-	also does Leaf;
-	also is Perl6::Element;
-	also does Matchable;
-}
-class Perl6::Infinity is Token {
-	also does Leaf;
-	also is Perl6::Element;
-	also does Matchable;
+class Perl6::Number::FloatingPoint is Perl6::Number {
+	method base { 10 }
 }
 
-class Perl6::String does Branching {
+class Perl6::NotANumber does Token {
 	also is Perl6::Element;
-	also does MatchingBalanced;
 
+	also does Leaf;
+	also does Matchable;
+}
+class Perl6::Infinity does Token {
+	also is Perl6::Element;
+
+	also does Leaf;
+	also does Matchable;
+}
+
+class Perl6::String {
+	also is Perl6::Element;
+}
+class Perl6::StringList::Body does Token {
+	also is Perl6::String;
+
+	also does Leaf;
+	also does Matchable;
+}
+class Perl6::String::WordQuoting does Token {
+	also is Perl6::String;
+
+	also does Leaf;
+	also does Matchable;
+
+	has Str $.quote;
+	has Str $.delimiter-start;
+	has Str $.delimiter-end;
 	has Str @.adverb;
 	has Str $.here-doc;
 }
-class Perl6::String::Body does Token {
-	also does Leaf;
-	also is Perl6::String;
-	also does Matchable;
-}
-class Perl6::String::WordQuoting {
-	also does Twig;
-	also is Perl6::String;
-	also does MatchingBalanced;
-}
-class Perl6::String::WordQuoting::QuoteProtection {
+class Perl6::String::WordQuoting::QuoteProtection does Token {
 	also is Perl6::String::WordQuoting;
 }
-class Perl6::String::Interpolation {
-	also does Twig;
+class Perl6::String::Interpolation does Token {
 	also is Perl6::String;
+
+	also does Leaf;
+	also does Matchable;
+
+	has Str $.quote;
+	has Str $.delimiter-start;
+	has Str $.delimiter-end;
+	has Str @.adverb;
+	has Str $.here-doc;
 }
 class Perl6::String::Interpolation::Shell {
 	also is Perl6::String::Interpolation;
@@ -611,228 +771,323 @@ class Perl6::String::Interpolation::WordQuoting {
 class Perl6::String::Interpolation::WordQuoting::QuoteProtection {
 	also is Perl6::String::Interpolation::WordQuoting;
 }
-class Perl6::String::Shell {
-	also does Twig;
+class Perl6::String::Shell does Token {
 	also is Perl6::String;
+
+	also does Leaf;
+	also does Matchable;
+
+	has Bool $.is-here-doc = False;
+
+	has Str $.quote;
+	has Str $.delimiter-start;
+	has Str $.delimiter-end;
+	has Str @.adverb;
+	has Str $.here-doc;
 }
-class Perl6::String::Escaping {
-	also does Twig;
+class Perl6::String::Escaping does Token {
 	also is Perl6::String;
+
+	also does Leaf;
+	also does Matchable;
+
+	has Bool $.is-here-doc = False;
+
+	has Str $.quote;
+	has Str $.delimiter-start;
+	has Str $.delimiter-end;
+	has Str @.adverb;
+	has Str $.here-doc;
 }
-class Perl6::String::Literal {
-	also does Twig;
+class Perl6::StringList::Literal does Token {
 	also is Perl6::String;
+
+	also does Leaf;
+	also does Matchable;
+
+	has Bool $.is-here-doc = False;
+
+	has Str $.quote;
+	has Str $.delimiter-start;
+	has Str $.delimiter-end;
+	has Str @.adverb;
+	has Str $.here-doc;
 }
-class Perl6::String::Literal::WordQuoting {
+class Perl6::String::Literal does Token {
+	also is Perl6::String;
+
+	also does Leaf;
+	also does Matchable;
+
+	has Bool $.is-here-doc = False;
+
+	has Str $.quote;
+	has Str $.delimiter-start;
+	has Str $.delimiter-end;
+	has Str @.adverb;
+	has Str $.here-doc;
+}
+class Perl6::String::Literal::WordQuoting does Token {
 	also is Perl6::String::Literal;
 }
-class Perl6::String::Literal::Shell {
+class Perl6::String::Literal::Shell does Token {
 	also is Perl6::String::Literal;
 }
 
 class Perl6::Regex does Branching {
-	also does Twig;
 	also is Perl6::Element;
+
+	also does Twig;
 	also does MatchingBalanced;
 
 	has Str @.adverb;
 }
 
 class Perl6::Bareword does Token {
-	also does Leaf;
 	also is Perl6::Element;
+
+	also does Leaf;
 	also does Matchable;
 }
 class Perl6::Adverb does Token {
-	also does Leaf;
 	also is Perl6::Element;
+
+	also does Leaf;
 	also does Matchable;
 }
 class Perl6::PackageName does Token {
-	also does Leaf;
 	also is Perl6::Element;
+
+	also does Leaf;
 	also does Matchable;
 }
 class Perl6::ColonBareword does Token {
 	also is Perl6::Bareword;
 }
 class Perl6::Block does Branching {
-	also does Twig;
 	also is Perl6::Element;
+
+	also does Twig;
 	also does MatchingBalanced;
 }
 
 class Perl6::Variable {
 	also is Perl6::Element;
+
 	also does Matchable;
 }
 class Perl6::Variable::Scalar does Token {
-	also does Leaf;
 	also is Perl6::Variable;
-	has Str $.sigil = Q{$};
+
+	also does Leaf;
+
+	method sigil { Q{$} }
 }
 class Perl6::Variable::Scalar::Contextualizer does Token does Child {
 	also is Perl6::Variable;
-	has Str $.sigil = Q{$};
+
+	method sigil { Q{$} }
 }
 class Perl6::Variable::Scalar::Dynamic {
 	also is Perl6::Variable::Scalar;
-	has Str $.twigil = Q{*};
+
+	method twigil { Q{*} }
 }
 class Perl6::Variable::Scalar::Attribute {
 	also is Perl6::Variable::Scalar;
-	has Str $.twigil = Q{!};
+
+	method twigil { Q{!} }
 }
 class Perl6::Variable::Scalar::Accessor {
 	also is Perl6::Variable::Scalar;
-	has Str $.twigil = Q{.};
+
+	method twigil { Q{.} }
 }
 class Perl6::Variable::Scalar::CompileTime {
 	also is Perl6::Variable::Scalar;
-	has Str $.twigil = Q{?};
+
+	method twigil { Q{?} }
 }
 class Perl6::Variable::Scalar::MatchIndex {
 	also is Perl6::Variable::Scalar;
-	has Str $.twigil = Q{<};
+
+	method twigil { Q{<} }
 }
 class Perl6::Variable::Scalar::Positional {
 	also is Perl6::Variable::Scalar;
-	has Str $.twigil = Q{^};
+
+	method twigil { Q{^} }
 }
 class Perl6::Variable::Scalar::Named {
 	also is Perl6::Variable::Scalar;
-	has Str $.twigil = Q{:};
+
+	method twigil { Q{:} }
 }
 class Perl6::Variable::Scalar::Pod {
 	also is Perl6::Variable::Scalar;
-	has Str $.twigil = Q{=};
+
+	method twigil { Q{=} }
 }
 class Perl6::Variable::Scalar::SubLanguage {
 	also is Perl6::Variable::Scalar;
-	has Str $.twigil = Q{~};
+
+	method twigil { Q{~} }
 }
 class Perl6::Variable::Array does Token {
-	also does Leaf;
 	also is Perl6::Variable;
-	has Str $.sigil = Q{@};
+
+	also does Leaf;
+
+	method sigil { Q{@} }
 }
 class Perl6::Variable::Array::Dynamic {
 	also is Perl6::Variable::Array;
-	has Str $.twigil = Q{*};
+
+	method twigil { Q{*} }
 }
 class Perl6::Variable::Array::Attribute {
 	also is Perl6::Variable::Array;
-	has Str $.twigil = Q{!};
+
+	method twigil { Q{!} }
 }
 class Perl6::Variable::Array::Accessor {
 	also is Perl6::Variable::Array;
-	has Str $.twigil = Q{.};
+
+	method twigil { Q{.} }
 }
 class Perl6::Variable::Array::CompileTime {
 	also is Perl6::Variable::Array;
-	has Str $.twigil = Q{?};
+
+	method twigil { Q{?} }
 }
 class Perl6::Variable::Array::MatchIndex {
 	also is Perl6::Variable::Array;
-	has Str $.twigil = Q{<};
+
+	method twigil { Q{<} }
 }
 class Perl6::Variable::Array::Positional {
 	also is Perl6::Variable::Array;
-	has Str $.twigil = Q{^};
+
+	method twigil { Q{^} }
 }
 class Perl6::Variable::Array::Named {
 	also is Perl6::Variable::Array;
-	has Str $.twigil = Q{:};
+
+	method twigil { Q{:} }
 }
 class Perl6::Variable::Array::Pod {
 	also is Perl6::Variable::Array;
-	has Str $.twigil = Q{=};
+
+	method twigil { Q{=} }
 }
 class Perl6::Variable::Array::SubLanguage {
 	also is Perl6::Variable::Array;
-	has Str $.twigil = Q{~};
+
+	method twigil { Q{~} }
 }
 class Perl6::Variable::Hash does Token {
-	also does Leaf;
 	also is Perl6::Variable;
-	has Str $.sigil = Q{%};
+
+	also does Leaf;
+
+	method sigil { Q{%} }
 }
 class Perl6::Variable::Hash::Dynamic {
 	also is Perl6::Variable::Hash;
-	has Str $.twigil = Q{*};
+
+	method twigil { Q{*} }
 }
 class Perl6::Variable::Hash::Attribute {
 	also is Perl6::Variable::Hash;
-	has Str $.twigil = Q{!};
+
+	method twigil { Q{!} }
 }
 class Perl6::Variable::Hash::Accessor {
 	also is Perl6::Variable::Hash;
-	has Str $.twigil = Q{.};
+
+	method twigil { Q{.} }
 }
 class Perl6::Variable::Hash::CompileTime {
 	also is Perl6::Variable::Hash;
-	has Str $.twigil = Q{?};
+
+	method twigil { Q{?} }
 }
 class Perl6::Variable::Hash::MatchIndex {
 	also is Perl6::Variable::Hash;
-	has Str $.twigil = Q{<};
+
+	method twigil { Q{<} }
 }
 class Perl6::Variable::Hash::Positional {
 	also is Perl6::Variable::Hash;
-	has Str $.twigil = Q{^};
+
+	method twigil { Q{^} }
 }
 class Perl6::Variable::Hash::Named {
 	also is Perl6::Variable::Hash;
-	has Str $.twigil = Q{:};
+
+	method twigil { Q{:} }
 }
 class Perl6::Variable::Hash::Pod {
 	also is Perl6::Variable::Hash;
-	has Str $.twigil = Q{=};
+
+	method twigil { Q{=} }
 }
 class Perl6::Variable::Hash::SubLanguage {
 	also is Perl6::Variable::Hash;
-	has Str $.twigil = Q{~};
+
+	method twigil { Q{~} }
 }
 class Perl6::Variable::Callable does Token {
-	also does Leaf;
 	also is Perl6::Variable;
-	has Str $.sigil = Q{&};
+
+	also does Leaf;
+
+	method sigil { Q{&} }
 }
 class Perl6::Variable::Callable::Dynamic {
 	also is Perl6::Variable::Callable;
-	has Str $.twigil = Q{*};
+
+	method twigil { Q{*} }
 }
 class Perl6::Variable::Callable::Attribute {
 	also is Perl6::Variable::Callable;
-	has Str $.twigil = Q{!};
+
+	method twigil { Q{!} }
 }
 class Perl6::Variable::Callable::Accessor {
 	also is Perl6::Variable::Callable;
-	has Str $.twigil = Q{.};
+
+	method twigil { Q{.} }
 }
 class Perl6::Variable::Callable::CompileTime {
 	also is Perl6::Variable::Callable;
-	has Str $.twigil = Q{?};
+
+	method twigil { Q{?} }
 }
 class Perl6::Variable::Callable::MatchIndex {
 	also is Perl6::Variable::Callable;
-	has Str $.twigil = Q{<};
+
+	method twigil { Q{<} }
 }
 class Perl6::Variable::Callable::Positional {
 	also is Perl6::Variable::Callable;
-	has Str $.twigil = Q{^};
+
+	method twigil { Q{^} }
 }
 class Perl6::Variable::Callable::Named {
 	also is Perl6::Variable::Callable;
-	has Str $.twigil = Q{:};
+
+	method twigil { Q{:} }
 }
 class Perl6::Variable::Callable::Pod {
 	also is Perl6::Variable::Callable;
-	has Str $.twigil = Q{=};
+
+	method twigil { Q{=} }
 }
 class Perl6::Variable::Callable::SubLanguage {
 	also is Perl6::Variable::Callable;
-	has Str $.twigil = Q{~};
+
+	method twigil { Q{~} }
 }
 
 my role Assertions {
@@ -890,18 +1145,27 @@ my role Assertions {
 	}
 }
 
+my role Options {
+	method __Optional_where( Mu $p ) {
+		if $p.Str ~~ m{ << (where) >> } {
+			my Int $left-margin = $0.from;
+			return
+				Perl6::Bareword.from-int(
+					$left-margin + $p.from,
+					$0.Str
+				)
+		}
+	}
+}
+
 class Perl6::Parser::Factory {
 	also does Assertions;
+	also does Options;
 
 	has Int %.here-doc;
 
 	constant VERSION-STR = Q{v};
-	constant PAREN-OPEN = Q'(';
 	constant PAREN-CLOSE = Q')';
-	constant BRACE-OPEN = Q'{';
-	constant BRACE-CLOSE = Q'}';
-	constant REDUCE-OPEN = Q'[';
-	constant REDUCE-CLOSE = Q']';
 
 	constant COLON = Q{:};
 	constant COMMA = Q{,};
@@ -1482,13 +1746,14 @@ class Perl6::Parser::Factory {
 				when self.assert-hash( $_, [< nibble >] ) {
 					my $_child = Perl6::Element-List.new;
 					$_child.append(
-						Perl6::String::Body.from-match(
+						Perl6::StringList::Body.from-match(
 							$_.hash.<nibble>
 						)
 					);
+					# XXX probably needs work.
 					$child.append(
 						Perl6::String::WordQuoting.from-match(
-							$_, $_child
+							$_
 						)
 					);
 				}
@@ -2088,7 +2353,7 @@ class Perl6::Parser::Factory {
 	method _dottyopish( Mu $p ) returns Perl6::Element-List {
 		my $child = Perl6::Element-List.new;
 		given $p {
-			when self.assert-hash( $p, [< term >] ) {
+			when self.assert-hash( $_, [< term >] ) {
 				$child.append( self._term( $_.hash.<term> ) );
 			}
 			default {
@@ -2136,9 +2401,9 @@ class Perl6::Parser::Factory {
 			when self.assert-hash( $_,
 					[< postfix OPER >],
 					[< postfix_prefix_meta_operator >] ) {
-				$child.append( self._EXPR( $p.list.[0] ) );
+				$child.append( self._EXPR( $_.list.[0] ) );
 				$child.append(
-					self._postfix( $p.hash.<postfix> )
+					self._postfix( $_.hash.<postfix> )
 				);
 			}
 			default {
@@ -2225,8 +2490,12 @@ class Perl6::Parser::Factory {
 		}
 		elsif self.assert-hash( $p,
 				[< OPER infix_circumfix_meta_operator >] ) {
-			# XXXinfix_circumfix_meta_operator unused?
 			$child.append( self._EXPR( $p.list.[0] ) );
+			$child.append(
+				self._infix_circumfix_meta_operator(
+					$p.hash.<infix_circumfix_meta_operator>
+				)
+			);
 			$child.append( self._EXPR( $p.list.[1] ) );
 		}
 		elsif self.assert-hash( $p,
@@ -2343,7 +2612,11 @@ class Perl6::Parser::Factory {
 				# XXX what's been parsed beforehand.
 				#
 				for $p.list.kv -> $k, $v {
-					$child.append( self._EXPR( $v ) );
+					if $v.Str {
+						$child.append(
+							self._EXPR( $v )
+						);
+					}
 					if $k < $end {
 						my Str $x = $p.orig.Str.substr(
 							$child.child.[*-1].to,
@@ -2490,6 +2763,189 @@ class Perl6::Parser::Factory {
 		elsif self.assert-hash( $p, [< pblock >] ) {
 			$child.append( self._pblock( $p.hash.<pblock> ) );
 		}
+		elsif $p.Str ~~ m{ << (where) >> } {
+			$child.append( self.__Optional_where( $p ) );
+			$child.append( self._EXPR( $p.hash.<EXPR> ) );
+		}
+		# XXX Here begin some more ugly hacks.
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>, [< value >] ) {
+			$child.append(
+				self._value( $p.hash.<EXPR>.hash.<value> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>, [< variable >] ) {
+			$child.append(
+				self._variable(
+					$p.hash.<EXPR>.hash.<variable>
+				)
+			);
+		}
+		elsif self.assert-hash( $p, [< args op triangle >] ) {
+			my $_child = Perl6::Element-List.new;
+			# XXX Merge triangle and op?
+			if $p.hash.<triangle>.Str {
+				$_child.append(
+					Perl6::Operator::Prefix.from-int(
+						$p.hash.<triangle>.from,
+						$p.hash.<triangle>.Str ~
+						$p.hash.<op>,
+					)
+				);
+			}
+			else {
+				$_child.append(
+					Perl6::Operator::Prefix.from-match(
+						$p.hash.<op>
+					)
+				);
+			}
+			$child.append(
+				Perl6::Operator::Hyper.from-outer-int(
+					$p,
+					$p.hash.<triangle>.from,
+					$p.hash.<triangle>.Str ~
+					$p.hash.<op>.Str,
+					$_child
+				)
+			);
+			$child.append( self._args( $p.hash.<args> ) );
+		}
+		# XXX _infix is a bit broken, apparently.
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>, [< infix OPER >] ) {
+			$child.append(
+				self._EXPR( $p.hash.<EXPR> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>,
+				[< prefix OPER >],
+				[< prefix_postfix_meta_operator >] ) {
+			$child.append(
+				self._EXPR( $p.hash.<EXPR> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>, [< sym >] ) {
+			$child.append(
+				self._sym( $p.hash.<EXPR>.hash.<sym> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>,
+				[< longname args >] ) {
+			$child.append(
+				self._EXPR( $p.hash.<EXPR> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>, [< longname >] ) {
+			$child.append(
+				self._longname( $p.hash.<EXPR>.hash.<longname> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>, [< dotty >] ) {
+			$child.append(
+				self._dotty( $p.hash.<EXPR>.hash.<dotty> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>, [< args op >] ) {
+			$child.append(
+				self._EXPR( $p.hash.<EXPR> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>,
+				[< routine_declarator >] ) {
+			$child.append(
+				self._routine_declarator(
+					$p.hash.<EXPR>.hash.<routine_declarator>
+				)
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>,
+				[< dotty OPER >],
+				[< postfix_prefix_meta_operator >] ) {
+			$child.append(
+				self._EXPR( $p.hash.<EXPR> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>,
+				[< infix_prefix_meta_operator OPER >] ) {
+			$child.append(
+				self._EXPR( $p.hash.<EXPR> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>,
+				[< infix_postfix_meta_operator infix OPER >] ) {
+			$child.append(
+				self._EXPR( $p.hash.<EXPR> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			self.assert-hash( $p.hash.<EXPR>,
+				[< infix_circumfix_meta_operator OPER >] ) {
+			$child.append(
+				self._EXPR( $p.hash.<EXPR> )
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			 self.assert-hash( $p.hash.<EXPR>,
+				[< fake_infix OPER colonpair >] ) {
+			$child.append( self._EXPR( $p.hash.<EXPR> ) );
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			 self.assert-hash( $p.hash.<EXPR>,
+				[< fake_infix OPER colonpair >] ) {
+			$child.append( self._EXPR( $p.hash.<EXPR> ) );
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			 self.assert-hash( $p.hash.<EXPR>,
+				[< postcircumfix OPER >],
+				[< postfix_prefix_meta_operator >] ) {
+			$child.append( self._EXPR( $p.hash.<EXPR> ) );
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			 self.assert-hash( $p.hash.<EXPR>, [< circumfix >] ) {
+			$child.append(
+				self._circumfix(
+					$p.hash.<EXPR>.hash.<circumfix>
+				)
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR >] ) and
+			 self.assert-hash( $p.hash.<EXPR>,
+				[< scope_declarator >] ) {
+			$child.append(
+				self._scope_declarator(
+					$p.hash.<EXPR>.hash.<scope_declarator>
+				)
+			);
+		}
+		elsif self.assert-hash( $p, [< EXPR statement_mod_loop >] ) {
+			$child.append( self._EXPR( $p.hash.<EXPR> ) );
+			$child.append(
+				self._statement_mod_loop(
+					$p.hash.<statement_mod_loop>
+				)
+			);
+		}
+		elsif self.assert-hash( $p, [< statement_control >] ) {
+			$child.append(
+				self._statement_control(
+					$p.hash.<statement_control>
+				)
+			);
+		}
+		elsif $p.Str and $p.Str ~~ / ^ \s+ $ / {
+		}
 		elsif $p.Str {
 			$child.append( Perl6::Bareword.from-match( $p ) );
 		}
@@ -2591,16 +3047,22 @@ class Perl6::Parser::Factory {
 	# << >>
 	# « »
 	#
-#	method _infix_circumfix_meta_operator( Mu $p )
-#			returns Perl6::Element-List {
-#		my $child = Perl6::Element-List.new;
-#		given $p {
-#			default {
-#				display-unhandled-match( $_ );
-#			}
-#		}
-#		$child;
-#	}
+	method _infix_circumfix_meta_operator( Mu $p )
+			returns Perl6::Element-List {
+		my $child = Perl6::Element-List.new;
+		given $p {
+			when self.assert-hash( $_,
+				[< closing infixish opening >], [< O >] ) {
+				$child.append(
+					Perl6::Operator::Infix.from-match( $_ )
+				);
+			}
+			default {
+				display-unhandled-match( $_ );
+			}
+		}
+		$child;
+	}
 
 	# « »
 	#
@@ -2653,9 +3115,7 @@ class Perl6::Parser::Factory {
 						$_.hash.<sym>
 					)
 				);
-				$child.append(
-					self._EXPR( $_.hash.<EXPR> )
-				);
+				$child.append( self._EXPR( $_.hash.<EXPR> ) );
 			}
 			default {
 				display-unhandled-match( $_ );
@@ -3084,20 +3544,13 @@ class Perl6::Parser::Factory {
 		if self.assert-hash( $p, [< termseq >] ) {
 			$child.append( self._termseq( $p.hash.<termseq> ) );
 		}
-		elsif $p.Str {
-			if $p.Str ~~ m{ ^ ( .+? ) \s+ $ } {
-				$child.append(
-					Perl6::String::Body.from-int(
-						$p.from,
-						$0.Str
-					)
-				);
-			}
-			else {
-				$child.append(
-					Perl6::String::Body.from-match( $p )
-				);
-			}
+		elsif $p.Str and $p.Str ~~ m{ ^ ( .+? ) \s+ $ } {
+			$child.append(
+				Perl6::StringList::Body.from-int(
+					$p.from,
+					$0.Str
+				)
+			);
 		}
 		else {
 			display-unhandled-match( $_ );
@@ -3557,8 +4010,6 @@ class Perl6::Parser::Factory {
 				[< default_value modifier trait >] ) {
 				# Synthesize the 'from' and 'to' markers for
 				# 'where'
-				$p.Str ~~ m{ << (where) >> };
-				my Int $left-margin = $0.from;
 				$child.append(
 					self._type_constraint(
 						$_.hash.<type_constraint>
@@ -3568,10 +4019,7 @@ class Perl6::Parser::Factory {
 					self._param_var( $_.hash.<param_var> )
 				);
 				$child.append(
-					Perl6::Bareword.from-int(
-						$left-margin + $p.from,
-						$0.Str
-					)
+					self.__Optional_where( $p )
 				);
 				$child.append(
 					self._post_constraint(
@@ -3751,7 +4199,7 @@ class Perl6::Parser::Factory {
 			}
 			when self.assert-hash( $_, [< blockoid >] ) {
 				$child.append(
-					self._blockoid( $p.hash.<blockoid> )
+					self._blockoid( $_.hash.<blockoid> )
 				);
 			}
 			default {
@@ -3850,7 +4298,12 @@ class Perl6::Parser::Factory {
 		if $p.list {
 			for $p.list {
 				if self.assert-hash( $_, [< EXPR >] ) {
-					$child.append( self._EXPR( $_ ) );
+					$child.append(
+						self.__Optional_where( $_ )
+					);
+					$child.append(
+						self._EXPR( $_.hash.<EXPR> )
+					);
 				}
 				else {
 					display-unhandled-match( $_ );
@@ -4014,7 +4467,12 @@ class Perl6::Parser::Factory {
 
 	method _quant( Mu $p ) returns Perl6::Element-List {
 		my $child = Perl6::Element-List.new;
-		if $p.Str {
+		if $p.Str and $p.Str ~~ /\s/ {
+			$child.append(
+				Perl6::Bareword.from-match( $p )
+			);
+		}
+		elsif $p.Str {
 			# XXX Need to propagate this back upwards.
 			if $p.Str ne BACKSLASH {
 				$child.append(
@@ -4076,11 +4534,12 @@ class Perl6::Parser::Factory {
 #	}
 
 	my %delimiter-map =
-		Q{/} => Perl6::Regex,
 		Q{'} => Perl6::String::Escaping,
 		Q{"} => Perl6::String::Interpolation,
 		Q{｢} => Perl6::String::Literal;
 
+	# XXX Any word-quoting should probably be broken into barewords
+	# XXX for later.
 	my %q-map =
 		Q{qqww} => Perl6::String::Interpolation::WordQuoting::QuoteProtection,
 		Q{qqw} => Perl6::String::Interpolation::WordQuoting,
@@ -4120,12 +4579,12 @@ class Perl6::Parser::Factory {
 		given $p {
 			when self.assert-hash( $_,
 					[< sym rx_adverbs sibble >] ) {
-				$child.append( self._sym( $p.hash.<sym> ) );
+				$child.append( self._sym( $_.hash.<sym> ) );
 				$child.append(
-					self._rx_adverbs( $p.hash.<rx_adverbs> )
+					self._rx_adverbs( $_.hash.<rx_adverbs> )
 				);
 				$child.append(
-					self._sibble( $p.hash.<sibble> )
+					self._sibble( $_.hash.<sibble> )
 				);
 			}
 			when self.assert-hash( $_,
@@ -4140,7 +4599,7 @@ class Perl6::Parser::Factory {
 					);
 				}
 				$_child.append(
-					Perl6::String::Body.from-match(
+					Perl6::StringList::Body.from-match(
 						$_.hash.<quibble>.hash.<nibble>
 					)
 				);
@@ -4167,7 +4626,7 @@ class Perl6::Parser::Factory {
 					)
 				);
 				$_child.append(
-					Perl6::String::Body.from-match(
+					Perl6::StringList::Body.from-match(
 						$_.hash.<quibble>.hash.<nibble>
 					)
 				);
@@ -4193,51 +4652,16 @@ class Perl6::Parser::Factory {
 				);
 			}
 			when self.assert-hash( $_, [< quibble quote_mod >] ) {
-				my $_child = Perl6::Element-List.new;
 				$_.Str ~~ m{ ^ ( \w+ ) };
 				my Str $q-map-name = $0.Str;
 				my Str @q-adverb;
 				my Str $here-doc-body = '';
-				$_child.append(
-					Perl6::Bareword.from-int(
-						$p.from,
-						$0.Str
-					)
-				);
+
 				if $_.hash.<quibble>.hash.<babble>.Str {
-					$_child.append(
-						Perl6::Adverb.from-match-trimmed(
-							$_.hash.<quibble>.hash.<babble>
-						)
-					);
 					if $_.hash.<quibble>.hash.<babble>.Str ~~ m{ ( .+? ) \s* $ } {
 						@q-adverb.append( $0.Str );
 					}
 				}
-				# XXX The first place negative indices are used
-				$_child.append(
-					Perl6::Balanced::Enter.from-int(
-						$_.hash.<quibble>.hash.<nibble>.from - 1,
-						$_.hash.<quibble>.Str.substr(
-							*-($_.hash.<quibble>.hash.<nibble>.chars + 2),
-							1
-						)
-					)
-				);
-				$_child.append(
-					Perl6::String::Body.from-match(
-						$_.hash.<quibble>.hash.<nibble>
-					)
-				);
-				$_child.append(
-					Perl6::Balanced::Exit.from-int(
-						$p.hash.<quibble>.hash.<nibble>.to,
-						$p.hash.<quibble>.Str.substr(
-							$p.hash.<quibble>.chars - 1,
-							1
-						)
-					)
-				);
 
 				# We could be in a here-doc.
 				if @q-adverb ~~ ':to' {
@@ -4263,58 +4687,37 @@ class Perl6::Parser::Factory {
 						),
 						:from( $_.from ),
 						:to( $_.to ),
-						:child( $_child.child ),
+						:quote( $q-map-name ),
+						:content( $_.Str ),
 						:adverb( @q-adverb ),
-						:here-doc( $here-doc-body )
+						:here-doc( $here-doc-body ),
+						:delimiter-start(
+							$_.hash.<quibble>.Str.substr(
+								*-($_.hash.<quibble>.hash.<nibble>.chars + 2),
+								1
+							)
+						),
+						:delimiter-end(
+							$_.hash.<quibble>.Str.substr(
+								$_.hash.<quibble>.chars - 1,
+								1
+							)
+						),
 					)
 				);
 			}
 			when self.assert-hash( $_, [< quibble >] ) {
-				my $_child = Perl6::Element-List.new;
 				$_.Str ~~ m{ ^ ( \w+ ) };
 				my Str $q-map-name = $0.Str;
 				my Str @q-adverb;
 				my Str $here-doc-body = '';
-				$_child.append(
-					Perl6::Bareword.from-int(
-						$p.from,
-						$0.Str
-					)
-				);
+
 				if $_.hash.<quibble>.hash.<babble>.Str {
-					$_child.append(
-						Perl6::Adverb.from-match-trimmed(
-							$_.hash.<quibble>.hash.<babble>
-						)
-					);
 					$_.hash.<quibble>.hash.<babble>.Str ~~
 						m{ ( .+? ) \s* $ };
 					@q-adverb.append( $0.Str );
 				}
-				# XXX The first place negative indices are used
-				$_child.append(
-					Perl6::Balanced::Enter.from-int(
-						$_.hash.<quibble>.hash.<nibble>.from - 1,
-						$_.hash.<quibble>.Str.substr(
-							*-($_.hash.<quibble>.hash.<nibble>.chars + 2),
-							1
-						)
-					)
-				);
-				$_child.append(
-					Perl6::String::Body.from-match(
-						$p.hash.<quibble>.hash.<nibble>
-					)
-				);
-				$_child.append(
-					Perl6::Balanced::Exit.from-int(
-						$p.hash.<quibble>.hash.<nibble>.to,
-						$p.hash.<quibble>.Str.substr(
-							$p.hash.<quibble>.chars - 1,
-							1
-						)
-					)
-				);
+
 				# We could be in a here-doc.
 				if @q-adverb ~~ ':to' {
 					my Str $x = $_.orig.Str.substr(
@@ -4340,33 +4743,65 @@ class Perl6::Parser::Factory {
 						:factory-line-number(
 							callframe(1).line
 						),
-						:from( $p.from ),
-						:to( $p.to ),
-						:child( $_child.child ),
+						:from( $_.from ),
+						:to( $_.to ),
+						:content( $_.Str ),
 						:adverb( @q-adverb ),
-						:here-doc( $here-doc-body )
+						:here-doc( $here-doc-body ),
+						:delimiter-start(
+							$_.hash.<quibble>.Str.substr(
+								*-($_.hash.<quibble>.hash.<nibble>.chars + 2),
+								1
+							)
+						),
+						:delimiter-end(
+							$_.hash.<quibble>.Str.substr(
+								$_.hash.<quibble>.chars - 1,
+								1
+							)
+						),
 					)
 				);
 			}
-			when self.assert-hash( $p, [< nibble >] ) {
-				my $_child = Perl6::Element-List.new;
-				$p.Str ~~ m{ ^ (.) };
-				if $p.hash.<nibble>.Str {
-					$_child.append(
-						self._nibble(
-							$p.hash.<nibble>
-							
+			when self.assert-hash( $_, [< nibble >] ) {
+				$_.Str ~~ m{ ^ (.) .* (.) $ };
+				if $0.Str eq Q{/} {
+					my $_child = Perl6::Element-List.new;
+					if $_.hash.<nibble>.Str {
+						$_child.append(
+							self._nibble(
+								$_.hash.<nibble>
+								
+							)
+						);
+					}
+					$child.append(
+						Perl6::Regex.from-match(
+							$_, $_child
 						)
 					);
 				}
-				$child.append(
-					%delimiter-map{$0.Str}.from-match(
-						$p, $_child
-					)
-				);
+				else {
+					$child.append(
+						%delimiter-map{$0.Str}.new(
+							:factory-line-number(
+								callframe(1).line
+							),
+							:from( $_.from ),
+							:to( $_.to ),
+							:content( $_.Str ),
+							:delimiter-start(
+								$0.Str
+							),
+							:delimiter-end(
+								$1.Str
+							)
+						)
+					);
+				}
 			}
 			default {
-				display-unhandled-match( $p );
+				display-unhandled-match( $_ );
 			}
 		}
 		$child;
@@ -4472,23 +4907,29 @@ class Perl6::Parser::Factory {
 		#	deflongname = 'Foo'
 		#	nibble = 'token '
 		#
-		if self.assert-hash( $p,
-				[< deflongname nibble >],
-				[< signature trait >] ) {
-			my $_child = Perl6::Element-List.new;
-			$_child.append( self._nibble( $p.hash.<nibble> ) );
-			$child.append(
-				self._deflongname( $p.hash.<deflongname> )
-			);
-			$child.append(
-				Perl6::Block.from-outer-match(
-					$p.hash.<nibble>,
-					$_child
-				)
-			);
-		}
-		else {
-			display-unhandled-match( $p );
+		given $p {
+			when self.assert-hash( $_,
+					[< deflongname nibble >],
+					[< signature trait >] ) {
+				my $_child = Perl6::Element-List.new;
+				$_child.append(
+					self._nibble( $_.hash.<nibble> )
+				);
+				$child.append(
+					self._deflongname(
+						$_.hash.<deflongname>
+					)
+				);
+				$child.append(
+					Perl6::Block.from-outer-match(
+						$_.hash.<nibble>,
+						$_child
+					)
+				);
+			}
+			default {
+				display-unhandled-match( $_ );
+			}
 		}
 		$child;
 	}
@@ -4497,7 +4938,7 @@ class Perl6::Parser::Factory {
 #		my $child = Perl6::Element-List.new;
 #		given $p {
 #			default {
-#				display-unhandled-match( $p );
+#				display-unhandled-match( $_ );
 #			}
 #		}
 #		$child;
@@ -4541,7 +4982,7 @@ class Perl6::Parser::Factory {
 				$left-edge ~~ m{ ('(') ( \s* ) $ };
 				$_child.append(
 					Perl6::Balanced::Enter.from-int(
-						$p.hash.<multisig>.from -
+						$_.hash.<multisig>.from -
 						$0.Str.chars - $1.Str.chars,
 						$0.Str
 					)
@@ -4823,7 +5264,7 @@ class Perl6::Parser::Factory {
 						);
 					}
 					if $k < $end {
-						my Str $x = $p.orig.Str.substr(
+						my Str $x = $_.orig.Str.substr(
 							$q.list.[$k].to,
 							$q.list.[$k+1].from -
 								$q.list.[$k].to
@@ -4941,7 +5382,7 @@ class Perl6::Parser::Factory {
 		$child;
 	}
 
-#	method _shape( Mu $p ) returns Perl6::Element-LIst {
+#	method _shape( Mu $p ) returns Perl6::Element-List {
 #		my $child = Perl6::Element-List.new;
 #		given $p {
 #			default {
@@ -5116,16 +5557,16 @@ class Perl6::Parser::Factory {
 					self._param_var( $_.hash.<param_var> )
 				);
 				$child.append( self._trait( $_.hash.<trait> ) );
-				if $p.hash.<default_value> {
+				if $_.hash.<default_value> {
 					if $_.Str ~~ m{ ('=') } {
 						$child.append(
 							Perl6::Operator::Infix.from-sample(
-								$p,
+								$_,
 								$0.Str
 							)
 						);
 						$child.append(
-							self._EXPR( $p.hash.<default_value>.list.[0].hash.<EXPR> )
+							self._default_value( $_.hash.<default_value> )
 						);
 					}
 				}
@@ -5142,16 +5583,16 @@ class Perl6::Parser::Factory {
 				$child.append(
 					self._param_var( $_.hash.<param_var> )
 				);
-				if $p.hash.<default_value> {
+				if $_.hash.<default_value> {
 					if $_.Str ~~ m{ ('=') } {
 						$child.append(
 							Perl6::Operator::Infix.from-sample(
-								$p,
+								$_,
 								$0.Str
 							)
 						);
 						$child.append(
-							self._EXPR( $p.hash.<default_value>.list.[0].hash.<EXPR> )
+							self._default_value( $_.hash.<default_value> )
 						);
 					}
 				}
@@ -5201,7 +5642,7 @@ class Perl6::Parser::Factory {
 				$child.append(
 					self._param_var( $_.hash.<param_var> )
 				);
-				if $p.hash.<trait> {
+				if $_.hash.<trait> {
 					$child.append(
 						self._trait( $_.hash.<trait> )
 					);
@@ -5302,12 +5743,12 @@ class Perl6::Parser::Factory {
 					if $k > 1 {
 						$child.append(
 							Perl6::Operator::Infix.from-sample(
-								$p, COMMA
+								$_, COMMA
 							)
 						);
 					}
 				}
-				my Str $x = $p.orig.Str.substr(
+				my Str $x = $_.orig.Str.substr(
 					$_.hash.<parameter>.to,
 					$_.hash.<typename>.from -
 						$_.hash.<parameter>.to
@@ -5523,7 +5964,7 @@ class Perl6::Parser::Factory {
 				if $x ~~ m{ << (else) >> } {
 					$child.append(
 						Perl6::Bareword.from-int(
-							$p.from + $0.from,
+							$_.from + $0.from,
 							$0.Str
 						)
 					);
@@ -5822,6 +6263,9 @@ class Perl6::Parser::Factory {
 				display-unhandled-match( $_ );
 			}
 		}
+		elsif $p.Str and $p.Str ~~ /\s/ {
+			$child.append( Perl6::Bareword.from-match( $p ) );
+		}
 		elsif $p.Str {
 			$child.append( Perl6::Bareword.from-match( $p ) );
 		}
@@ -6105,6 +6549,28 @@ class Perl6::Parser::Factory {
 		$child;
 	}
 
+	method _triangle( Mu $p ) returns Perl6::Element-List {
+		my $child = Perl6::Element-List.new;
+		if $p.list {
+			for $p.list {
+				if self.assert-hash( $_, [< trait_mod >] ) {
+					$child.append(
+						self._trait_mod(
+							$_.hash.<trait_mod>
+						)
+					);
+				}
+				else {
+					display-unhandled-match( $_ );
+				}
+			}
+		}
+		else {
+			display-unhandled-match( $p );
+		}
+		$child;
+	}
+
 #	method _twigil( Mu $p ) returns Perl6::Element-List {
 #		my $child = Perl6::Element-List.new;
 #		given $p {
@@ -6253,7 +6719,7 @@ class Perl6::Parser::Factory {
 					)
 				);
 			}
-			when self.assert-hash( $p,
+			when self.assert-hash( $_,
 					[< prefix OPER >],
 					[< prefix_postfix_meta_operator >] ) {
 				$child.append(
@@ -6489,13 +6955,21 @@ class Perl6::Parser::Factory {
 					[< semilist variable shape >],
 					[< postcircumfix signature trait
 					   post_constraint >] ) {
-				$child.append(
-					self._semilist( $_.hash.<semilist> )
-				);
+				# XXX shape is redundant
 				$child.append(
 					self._variable( $_.hash.<variable> )
 				);
-				# XXX Need to restore shape?
+				my $_child = Perl6::Element-List.new;
+				$_child.append(
+					self._semilist( $_.hash.<semilist> )
+				);
+				if $_.hash.<shape>.Str {
+					$child.append(
+						Perl6::Block.from-match(
+							$_.hash.<shape>, $_child
+						)
+					);
+				}
 			}
 			when self.assert-hash( $_,
 					[< variable post_constraint >],

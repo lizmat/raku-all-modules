@@ -48,9 +48,14 @@ END};
 			my $tree = $pt.build-tree( $parsed );
 			is $pt.to-string( $tree ), $source,
 				Q{formatted};
-			ok (grep { $_ ~~ Perl6::String::Interpolation::WordQuoting::QuoteProtection },
-					$tree.child.[0].child),
-				Q{found string};
+			ok $tree.child.[0].child.[0] ~~
+				Perl6::String::Interpolation::WordQuoting::QuoteProtection;
+			is $tree.child.[0].child.[0].quote, Q{qqww},
+				Q{quote name};
+			is $tree.child.[0].child.[0].delimiter-start, Q{<},
+				Q{start delimiter};
+			is $tree.child.[0].child.[0].delimiter-end, Q{>},
+				Q{end delimiter};
 
 			done-testing;
 		}, Q{all intervening ws};
@@ -2452,9 +2457,9 @@ subtest {
 	my $parsed = $pt.parse( $source );
 	my $tree = $pt.build-tree( $parsed );
 	is $pt.to-string( $tree ), $source, Q{formatted};
-	ok (grep { $_ ~~ Perl6::String::Literal },
-			$tree.child.[0].child),
-		Q{found string};
+	ok $tree.child.[0].child.[0] ~~ Perl6::String::Literal;
+	is $tree.child.[0].child.[0].delimiter-start, Q{｢}, Q{start delimiter};
+	is $tree.child.[0].child.[0].delimiter-end, Q{｣}, Q{end delimiter};
 
 	done-testing;
 }, Q{｢｣};
@@ -2464,24 +2469,24 @@ subtest {
 	my $parsed = $pt.parse( $source );
 	my $tree = $pt.build-tree( $parsed );
 	is $pt.to-string( $tree ), $source, Q{formatted};
-	ok (grep { $_ ~~ Perl6::String::Interpolation },
-			$tree.child.[0].child),
-		Q{found string};
+	ok $tree.child.[0].child.[0] ~~ Perl6::String::Interpolation;
+	is $tree.child.[0].child.[0].delimiter-start, Q{"}, Q{start delimiter};
+	is $tree.child.[0].child.[0].delimiter-end, Q{"}, Q{end delimiter};
 
 	done-testing;
-}, Q{""};
+}, Q{"" (double-quote)};
 
 subtest {
 	my $source = Q{'pi'};
 	my $parsed = $pt.parse( $source );
 	my $tree = $pt.build-tree( $parsed );
 	is $pt.to-string( $tree ), $source, Q{formatted};
-	ok (grep { $_ ~~ Perl6::String::Escaping },
-			$tree.child.[0].child),
-		Q{found string};
+	ok $tree.child.[0].child.[0] ~~ Perl6::String::Escaping;
+	is $tree.child.[0].child.[0].delimiter-start, Q{'}, Q{start delimiter};
+	is $tree.child.[0].child.[0].delimiter-end, Q{'}, Q{end delimiter};
 
 	done-testing;
-}, Q{''};
+}, Q{'' (single-quote)};
 
 subtest {
 #`[
@@ -2519,6 +2524,6 @@ END
 ]
 
 	done-testing;
-}, Q{''};
+}, Q{here-doc torture test};
 
 # vim: ft=perl6

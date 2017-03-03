@@ -521,6 +521,29 @@ _END_
 	done-testing;
 }, Q{regex with adverb};
 
+subtest {
+	my $source = Q:to[_END_];
+my %hash{Any};
+_END_
+	my $p = $pt.parse( $source );
+	my $tree = $pt.build-tree( $p );
+	is $pt.to-string( $tree ), $source, Q{formatted};
+
+	done-testing;
+}, Q{shaped hash};
+
+subtest {
+	my $source = Q:to[_END_];
+my $s;
+1 given [\+] '\\' «leg« $s.comb;
+_END_
+	my $p = $pt.parse( $source );
+	my $tree = $pt.build-tree( $p );
+	is $pt.to-string( $tree ), $source, Q{formatted};
+
+	done-testing;
+}, Q{hyper triangle};
+
 done-testing;
 
 # vim: ft=perl6
