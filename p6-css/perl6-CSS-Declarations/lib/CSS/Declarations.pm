@@ -95,7 +95,7 @@ class CSS::Declarations {
         }
     }
 
-    method !build-style(Str $style) {
+    method !parse-style(Str $style) {
         my $rule = "declaration-list";
         my $actions = $!module.actions.new;
         $!module.grammar.parse($style, :$rule, :$actions)
@@ -104,28 +104,24 @@ class CSS::Declarations {
         if $!warn {
             note .message for @!warnings;
         }
-        my @declarations = $/.ast.list;
+        $/.ast.list
+    }
+    method !build-declarations(@declarations) {
 
         for @declarations {
-            my \decl = .value;
-            given .key {
-                when 'property' {
-                    with decl<expr> -> \expr {
-                        my $important = True
-                            if decl<prio> ~~ 'important';
+            with .<property> -> \decl {
+                with decl<expr> -> \expr {
+                    my $important = True
+                        if decl<prio> ~~ 'important';
 
-                        self!build-property( .key, .value, :$important)
-                            for self!get-props(decl<ident>, expr).list;
-                    }
-                }
-                default {
-                    die "ignoring: $_ declaration";
+                    self!build-property( .key, .value, :$important)
+                    for self!get-props(decl<ident>, expr).list;
                 }
             }
         }
     }
 
-    submethod TWEAK( Str :$style, :$inherit = [], :$copy, :$module, :$tweak, :$warn, *%props, ) {
+    submethod TWEAK( Str :$style, :$inherit = [], :$copy, :$module, :$tweak, :$warn, :$declarations, *%props, ) {
         %module-metadata{$!module} //= do with $!module.property-metadata {
             $_
         }
@@ -133,7 +129,9 @@ class CSS::Declarations {
             die "module {$!module.name} lacks meta-data"
         };
 
-        self!build-style($_) with $style;
+        my @declarations = .list with $declarations;
+        @declarations.append: self!parse-style($_) with $style;
+        self!build-declarations(@declarations);
         self.inherit($_) for $inherit.list;
         self!copy($_) with $copy;
         self.set-properties(|%props);

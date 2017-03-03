@@ -1,7 +1,7 @@
 {
     "perl"        : "6c",
     "name"        : "CSS::Declarations",
-    "version"     : "0.1.1",
+    "version"     : "0.1.2",
     "auth"        : "github:p6-css",
     "description" : "CSS property-list manipulation library",
     "depends"     : [ "CSS::Module", "CSS::Writer", "Color" ],

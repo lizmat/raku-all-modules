@@ -1,3 +1,5 @@
+0.1.2 - Add :declarations constructor option. to enable construction from
+        CSS declarations AST node.
 0.1.1 Added `.optimize` method. For direct optimization of ASTs, without
       the need to create intermediate objects
 0.1.0 Improved write optmizations
