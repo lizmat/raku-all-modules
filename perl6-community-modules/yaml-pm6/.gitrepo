@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6-community-modules/yaml-pm6.git
 	branch = master
-	commit = 69c454f2f0c95cabf2f18df8759a2c8b29d1cdb3
-	parent = 859de990bbd1f2191ec0f80254afa6817c09f9d3
+	commit = 224b49627f55aaba3131934996ddbe620aa644db
+	parent = 6286ef43e8b2ac760e530f0630b0361c2dfc8c4a
 	cmdver = 0.4.0

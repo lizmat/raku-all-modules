@@ -1,7 +1,7 @@
 use v6;
 
 unit module t::Bridge;
-
+use MONKEY-SEE-NO-EVAL;
 use YAML;
 
 our sub eval_perl($this) {
