@@ -3,7 +3,6 @@ use XML::XPath::Expr;
 use XML::XPath::Step;
 use XML::XPath::Predicates;
 use XML::XPath::FunctionCall;
-use Data::Dump;
 
 class XML::XPath::Actions {
     method mymake($/, $made, Int :$level = 1) {

@@ -2,7 +2,6 @@ use v6.c;
 
 use Test;
 use XML::XPath;
-use Data::Dump;
 
 plan 7;
 
