@@ -1,7 +1,6 @@
 language: perl6
 perl6:
     - latest
-    - v6.c
 install:
     - rakudobrew build-panda
     - panda --notests installdeps .
