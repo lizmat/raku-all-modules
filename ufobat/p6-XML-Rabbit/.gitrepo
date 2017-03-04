@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ufobat/p6-XML-Rabbit.git
+	branch = master
+	commit = 448a461387394d53c16cc55104f319782f08a857
+	parent = e6c4c37eef918e5565f8dd8cd23a7da496546aa8
+	cmdver = 0.4.0

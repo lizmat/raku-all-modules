@@ -1,0 +1,17 @@
+{
+  "authors" : [
+    "Martin Barth"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ "XML", "XML::XPath", "Test::META" ],
+  "description" : "XML::Rabbit builds your Attributes from xml files with xpath expressions",
+  "name" : "XML::Rabbit",
+  "perl" : "6.c",
+  "provides" : {
+    "XML::Rabbit" : "lib/XML/Rabbit.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/ufobat/p6-XML-Rabbit.git",
+  "test-depends" : [ ],
+  "version" : "0.1.0"
+}
