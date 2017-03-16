@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-SPEC-Func.git
 	branch = master
-	commit = f5d73678ab9343541f050b31612c33403c2b6ead
-	parent = e2e9814fe3fd14f47f593da0a9c0af39d268876c
-	cmdver = 0.2.3
+	commit = 4b11c8ce744279d77afc4513646ebb6bbc30604b
+	parent = 4fc4cdf388c00bf4673a7051d1624ff627db0ef3
+	cmdver = 0.4.0

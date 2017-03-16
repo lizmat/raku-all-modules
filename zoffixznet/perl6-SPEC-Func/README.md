@@ -1,5 +1,11 @@
 [![Build Status](https://travis-ci.org/zoffixznet/perl6-SPEC-Func.svg)](https://travis-ci.org/zoffixznet/perl6-SPEC-Func)
 
+# ⚠️⚠️⚠️ **STOP** ⚠️⚠️⚠️ ---READ--- ⚠️⚠️⚠️ **STOP** ⚠️⚠️⚠️
+
+If you've reached for this module, it's very likely you're not using Perl 6's IO routines correctly.
+You're not *meant* to use `$*SPEC` directly. It merely contains the OS-specific type used by
+IO routines. Use `.parent`, `.child`, and other methods on `IO::Path` objects instead.
+
 # NAME
 
 SPEC::Func - Import `$*SPEC` methods as functions
