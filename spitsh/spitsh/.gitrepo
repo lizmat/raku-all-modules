@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/spitsh/spitsh.git
+	branch = master
+	commit = 143bd556a8bf781ba9b1aa74924007ee422c6a74
+	parent = 66939533450114adef6c57b81c4ca716f162b1ba
+	cmdver = 0.4.0

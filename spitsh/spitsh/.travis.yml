@@ -1,0 +1,17 @@
+language: perl6
+perl6:
+  - latest
+
+services:
+  - docker
+
+install:
+  - rakudobrew build zef
+
+env:
+  - PATH="/home/travis/.rakudobrew/moar-nom/install/share/perl6/site/bin:$PATH"
+
+script:
+  - zef install . && spit eval 'say "hello world"'
+  - spit --in-docker=alpine compile spec/base/sanity.t
+  - prove -v -r -e 'spit --in-docker=alpine compile' spec/
