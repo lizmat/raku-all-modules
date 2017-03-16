@@ -1,6 +1,6 @@
 use Test;
 
-plan 18;
+plan 23;
 {
     my @a = <one two three>;
 
@@ -59,5 +59,30 @@ for 4,5 {
     }
 }
 
+{
+    my $a = <one two three>;
+    for $a {
+        is $_,$a,'for $a iterates once';
+    }
+    for $a,$a {
+        is $_,$a,'for $a,$a iterates twice with the same value';
+    }
+}
+
+{
+    my $j = 0;
+    for <one two three>,<four five six>,<seven eight nine> {
+        $j++;
+    }
+    is $j, 9, 'for <...>,<...> iterates over all elements';
+}
+
+{
+    my $k = 0;
+    for $(<one two three>),<four five six>,<seven eight nine> {
+        $k++;
+    }
+    is $k, 7, '$(...) in for'
+}
 
 pass "statement-mod for $_" for ^3;

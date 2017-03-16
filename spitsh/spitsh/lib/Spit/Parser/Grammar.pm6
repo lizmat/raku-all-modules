@@ -11,6 +11,8 @@ constant @brackets := "<>[]()\{}\x[0028]\x[0029]\x[003C]\x[003E]\x[005B]\x[005D]
 
 constant @openers = eager @brackets.map: -> $o,$ { $o };
 
+constant $lt-comma = 'i<';
+
 grammar Spit::Grammar is Spit::Lang {
     token TOP {
         :my $*CURPAD;
@@ -309,20 +311,22 @@ grammar Spit::Grammar is Spit::Lang {
         ||
         <?before
             $<check>=<.infix>
-            <?{ not $<check> or $<check>.&derive-precedence($term.ast)[0] gt $preclim }>
+            {}
+            <?{ not $<check> or $<check>.&derive-precedence($term)[0] ge $preclim }>
         >
     }
     # preclim is a word stolen from rakudo. It means precedence limit :^).
     rule EXPR($preclim?) {
         <termish>
         [
-            <.check-prec($preclim,$<termish>[*-1])>
+            {}
+            <.check-prec($preclim,$<termish>[*-1].ast)>
             <infix>
             [ <termish>  || {}<.expected("term after infix {$<infix>[*-1]<sym>.Str}")>  ]
         ]*
     }
 
-    rule list { <EXPR> }
+    rule list { <EXPR($lt-comma)>* % ',' }
     rule args { <list> }
 
     token termish {
@@ -362,7 +366,7 @@ grammar Spit::Grammar is Spit::Lang {
             )?
             ||
             $<call-args>=(
-                | '('<.ws><args>?<.ws>')'
+                | '('<.ws><args><.ws>')'
                 | \s+ <args>
             )?
         ]
@@ -387,11 +391,11 @@ grammar Spit::Grammar is Spit::Lang {
     token term:fatarrow {
         $<key>=<.identifier>
         \h*'=>'<.ws>
-        $<value>=<.EXPR('i<=')>
+        $<value>=<.EXPR($lt-comma)>
     }
 
-    rule term:parens {
-        '(' <statement> [')' | <.expected("closing )")>]
+    token term:parens {
+       '(' <.ws> <statement> <.ws> [')' | <.expected("closing )")>]
     }
 
     rule term:cmd { <cmd> }
@@ -438,7 +442,7 @@ grammar Spit::Grammar is Spit::Lang {
     token infix:sym<..>  { [$<exclude-start>='^']? <sym> [$<exclude-end>='^']? }
 
     rule  infix:sym<?? !!> {
-        $<sym>='??' <EXPR('i=')> ['!!' || <.expected('!! to finish ternary')> ]
+        $<sym>='??' <EXPR($lt-comma)> ['!!' || <.expected('!! to finish ternary')> ]
     }
 
     proto token postfix {*}
@@ -460,6 +464,7 @@ grammar Spit::Grammar is Spit::Lang {
 
     proto token prefix {*}
     token prefix:sym<++> { <sym> }
+    token prefix:sym<--> { <sym> }
     token prefix:sym<~>  { <sym> }
     token prefix:sym<+>  { <sym> }
     token prefix:sym<->  { <sym> }
@@ -467,6 +472,7 @@ grammar Spit::Grammar is Spit::Lang {
     token prefix:sym<!>  { <sym> }
     token prefix:sym<|>  { <sym> }
     token prefix:sym<^>  { <sym> }
+    token prefix:i-sigil { <sigil> <?before <.sigil>|'('> }
 
     proto token sigil {*}
     token sigil:sym<$> { <sym> }
@@ -516,7 +522,9 @@ grammar Spit::Grammar is Spit::Lang {
     }
 
     token cmd-term {
-        (<var> |'(' <EXPR> ')' <![<>]> |<quote>) <postfix>*
+        $<i-sigil>=<::('prefix:i-sigil')>*
+        (<var> | $<parens>=<::("term:parens")> <![<>]> |<quote>)
+        <postfix>*
     }
 
     token output-redir {

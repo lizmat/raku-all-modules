@@ -102,7 +102,7 @@ role SAST is rw {
     method gist { self.node-name }
     method spit-gist { self.gist }
     method node-name { self.^name.subst(/^'SAST::'/,'') }
-    method flatten { }
+    method itemize { True }
     method depends { Empty }
     method all-deps { self.depends }
     method type {...} # The type for type checking
@@ -205,15 +205,10 @@ sub derive-type(Spit::Type $_) {
     default { $_ }
 }
 
-sub check-call(:%named-args,:@pos-args,:$signature,:$call-name,:$match) {
-
-}
-
 sub type-from-sigil(Str:D $sigil --> Spit::Type) {
     do given $sigil {
         when '$' { tStr() }
         when '@' { tList() }
-        #when '&' { tCode() }
         default { die "got bogus sigil '$sigil'" }
     };
 }
@@ -222,6 +217,11 @@ sub symbol-type-from-sigil(Str:D $_ --> SymbolType) {
     when '$' { SCALAR }
     when '@' { ARRAY  }
     default { die "got boigus sigil '$_'" }
+}
+
+sub itemize-from-sigil(Str:D $_ --> Bool:D) {
+    when '@' { False }
+    default { True }
 }
 
 # XXX: why are there two? This can be done better.
@@ -380,6 +380,8 @@ class SAST::Var is SAST::Children does SAST::Assignable {
     }
 
     method desc { "Assignment to $.spit-gist" }
+
+    method itemize { itemize-from-sigil($!sigil) }
 }
 
 class SAST::VarDecl is SAST::Var does SAST::Declarable is rw {
@@ -895,6 +897,7 @@ class SAST::Invocant does SAST does SAST::Declarable {
     method type { $!class-type }
     method dont-depend { True }
     method stage2 ($) { self }
+    method itemize { itemize-from-sigil($!sigil) }
 }
 
 class SAST::Param does SAST does SAST::Declarable {
@@ -903,17 +906,11 @@ class SAST::Param does SAST does SAST::Declarable {
     has $.signature is rw;
     has $.type is rw = type-from-sigil(self.sigil);
     method stage2 ($) { self }
-    method symbol-type {
-        given $!sigil {
-            when '$' { SCALAR }
-            when '@' { ARRAY  }
-            when '&' { SUB    }
-        }
-    }
+    method symbol-type { symbol-type-from-sigil($!sigil) }
     method dont-depend { True }
 
     method gist { $.node-name ~ "($.spit-gist)" }
-
+    method itemize { itemize-from-sigil($!sigil) }
 }
 
 class SAST::PosParam is SAST::Param {
@@ -1021,6 +1018,8 @@ class SAST::Increment is SAST::MutableChildren {
     }
 
     method type { tInt }
+
+    method gist { $.node-name ~ "({$!decrement ?? '-' !! '+' }=$!amount)" ~ $.gist-children }
 }
 
 enum JunctionContext <NEVER-RETURN RETURN-WHEN-FALSE RETURN-WHEN-TRUE JUST-RETURN>;
@@ -1194,7 +1193,7 @@ class SAST::List is SAST::MutableChildren {
             $_;
         }
     }
-
+    method itemize { False }
 }
 
 
@@ -1423,16 +1422,6 @@ class SAST::Stmts is SAST::MutableChildren {
     method type { @.children[*-1] }
 }
 
-class SAST::Slip is SAST::MutableChildren {
-
-    method stage2 ($) {
-        self[0].do-stage2(tList);
-        self;
-    }
-
-    method type { tList }
-}
-
 class SAST::Range is SAST::MutableChildren {
     has $.exclude-end;
     has $.exclude-start;
@@ -1443,6 +1432,8 @@ class SAST::Range is SAST::MutableChildren {
 
     method gist { $.node-name ~ "({'^' if $.exclude-start}..{'^' if $.exclude-end})" ~ $.gist-children }
     method type { tList(tInt) }
+
+    method itemize { False }
 }
 
 class SAST::Accepts is SAST::MutableChildren {
@@ -1569,4 +1560,19 @@ class SAST::Doom does SAST {
     has SX $.exception is required;
 
     method type { tAny }
+}
+
+class SAST::Itemize is SAST::MutableChildren {
+    has Sigil:D $.sigil is required;
+
+    method itemize { itemize-from-sigil($!sigil) }
+
+    method stage2($ctx) {
+        self[0] .= do-stage2(type-from-sigil($!sigil));
+        self;
+    }
+
+    method gist { $.node-name ~ "($!sigil)" ~ $.gist-children }
+
+    method type { self[0].type }
 }
