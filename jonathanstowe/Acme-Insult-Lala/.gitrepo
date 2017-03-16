@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Acme-Insult-Lala.git
 	branch = master
-	commit = dd05ee94c3b18c948d0d36ea3aab45da3217b2a6
-	parent = 3a8d711d96dca1cce131296bbcc1a296e8048fce
+	commit = f72142d347149c0205427ed26653ebd2b46ce6d4
+	parent = 5edbaa774777097b95e7affa98974a122211169a
 	cmdver = 0.4.0

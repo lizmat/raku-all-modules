@@ -64,7 +64,7 @@ class Acme::Insult::Lala {
     has @!adjective-two;
 
     submethod BUILD() {
-        my %h = %?RESOURCES<lala.txt>.lines>>.split(/\s+/).map( -> ($a, $b, $c) { a => $a, b => $b, c => $c }).flat.classify(*.key, as => *.value);
+        my %h = %?RESOURCES<lala.txt>.lines>>.split(/\s+/).map( -> [$a, $b, $c] { a => $a, b => $b, c => $c }).flat.classify(*.key, as => *.value);
         @!adjective-one = %h<a>.list;
         @!adjective-two = %h<b>.list;
         @!noun          = %h<c>.list;
