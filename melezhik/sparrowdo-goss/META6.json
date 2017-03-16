@@ -1,0 +1,20 @@
+{
+  "perl"        : "6.*",
+  "name"        : "Sparrowdo::Goss",
+  "version"     : "*",
+  "description" : "Sparrowdo module to run goss scenarios",
+  "authors" : [ "Alexey Melezhik" ],
+  "depends"     : [
+                    "Sparrowdo"
+                  ],
+  "source-type" : "git",
+  "support" : {
+        "bugtracker" : "https://github.com/melezhik/sparrowdo-goss/issues",
+        "source" : "https://github.com/melezhik/sparrowdo-goss.git"
+    },
+   "provides" : {
+        "Sparrowdo::Goss" : "lib/Sparrowdo/Goss.pm6"
+  },
+  "source-url"  : "https://github.com/melezhik/sparrowdo-goss.git"
+}
+
