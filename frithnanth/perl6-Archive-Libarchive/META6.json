@@ -1,5 +1,6 @@
 {
   "perl" : "6.c",
+  "tags" : [ "archive", "libarchive", "compression" ],
   "name" : "Archive::Libarchive",
   "version" : "0.0.7",
   "description" : "High-level bindings to libarchive",

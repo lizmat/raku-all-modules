@@ -36,7 +36,7 @@ class Entry
     if $operation ~~ LibarchiveWrite|LibarchiveOverwrite {
       $!entry = archive_entry_new;
       $!safe = True;
-      if $path.defined {
+      with $path {
         self.pathname: $path;
         self.size: $size // $path.IO.s;
         self.filetype: $filetype // AE_IFREG;
@@ -209,7 +209,7 @@ submethod BUILD(LibarchiveOp :$operation!, Any :$file?, Int :$flags?, Str :$form
   $!operation = $operation;
   if $!operation ~~ LibarchiveRead|LibarchiveExtract {
     $!archive = archive_read_new;
-    if ! $!archive.defined {
+    without $!archive {
       fail X::Libarchive.new: errno => ARCHIVE_CREATE, error => 'Error creating libarchive C struct';
     }
     my $res = archive_read_support_format_all $!archive;
@@ -222,7 +222,7 @@ submethod BUILD(LibarchiveOp :$operation!, Any :$file?, Int :$flags?, Str :$form
     }
   } elsif $!operation ~~ LibarchiveWrite|LibarchiveOverwrite {
     $!archive = archive_write_new;
-    if ! $!archive.defined {
+    without $!archive {
       fail X::Libarchive.new: errno => ARCHIVE_CREATE, error => 'Error creating libarchive C struct';
     }
   } else {
@@ -230,14 +230,14 @@ submethod BUILD(LibarchiveOp :$operation!, Any :$file?, Int :$flags?, Str :$form
   }
   if $!operation == LibarchiveExtract {
     $!ext = archive_write_disk_new;
-    if ! $!ext.defined {
+    without $!ext {
       fail X::Libarchive.new: errno => ARCHIVE_CREATE, error => 'Error creating libarchive C struct';
     }
-    if $flags.defined {
+    with $flags {
       self.extract-opts: $flags;
     }
   }
-  if $file.defined {
+  with $file {
     self.open: $file, format => $format, filters => @filters;
   }
 }
@@ -246,7 +246,7 @@ multi method open(Str $filename! where ! .IO.f, Int :$size? = 10240, Str :$forma
 {
   if $!operation ~~ LibarchiveWrite|LibarchiveOverwrite {
     my $res;
-    if defined ($format, @filters[0]).all {
+    with ($format, @filters[0]).all {
       $res = archive_write_set_format_by_name $!archive, $format;
       fail X::Libarchive.new: errno => $res, error => archive_error_string($!archive) unless $res == ARCHIVE_OK;
       for @filters -> $filter {
@@ -254,7 +254,7 @@ multi method open(Str $filename! where ! .IO.f, Int :$size? = 10240, Str :$forma
         $res = archive_write_add_filter_by_name $!archive, $filter;
         fail X::Libarchive.new: errno => $res, error => archive_error_string($!archive) unless $res == ARCHIVE_OK;
       }
-    } elsif defined ($format, @filters[0]).any {
+    } orwith ($format, @filters[0]).any {
       fail X::Libarchive.new: errno => ARCHIVE_OPEN, error => 'Both format and filter must be defined.';
     } else {
       $res = archive_write_set_format_filter_by_ext $!archive, $filename;
@@ -278,14 +278,14 @@ multi method open(Str $filename! where .IO.f, Int :$size? = 10240, Str :$format?
     fail X::Libarchive.new: errno => ARCHIVE_FILE_FOUND, error => 'File already present';
   } elsif $!operation == LibarchiveOverwrite {
     my $res;
-    if defined ($format, @filters[0]).all {
+    with ($format, @filters[0]).all {
       $res = archive_write_set_format_by_name $!archive, $format;
       fail X::Libarchive.new: errno => $res, error => archive_error_string($!archive) unless $res == ARCHIVE_OK;
       for @filters -> $filter {
         $res = archive_write_add_filter_by_name $!archive, $filter;
         fail X::Libarchive.new: errno => $res, error => archive_error_string($!archive) unless $res == ARCHIVE_OK;
       }
-    } elsif defined ($format, @filters[0]).any {
+    } orwith ($format, @filters[0]).any {
       fail X::Libarchive.new: errno => ARCHIVE_OPEN, error => 'Both format and filter must be defined.';
     } else {
       $res = archive_write_set_format_filter_by_ext $!archive, $filename;
@@ -306,7 +306,7 @@ multi method open(Buf $data!)
 
 method close
 {
-  if $!archive.defined {
+  with $!archive {
     if $!operation == LibarchiveRead|LibarchiveExtract {
       my $res = archive_read_close $!archive;
       fail X::Libarchive.new: errno => $res, error => archive_error_string($!archive) unless $res == ARCHIVE_OK;
@@ -370,11 +370,11 @@ method write-header(Str $file,
   $e.atime($atime);
   $e.ctime($ctime);
   $e.mtime($mtime);
-  $e.birthtime($birthtime) if $birthtime.defined;
-  $e.uid($uid) if $uid.defined;
-  $e.gid($gid) if $gid.defined;
-  $e.uname($uname) if $uname.defined;
-  $e.gname($gname) if $gname.defined;
+  $e.birthtime($birthtime) with $birthtime;
+  $e.uid($uid) with $uid;
+  $e.gid($gid) with $gid;
+  $e.uname($uname) with $uname;
+  $e.gname($gname) with $gname;
   my $res = archive_write_header $!archive, $e.entry;
   if $res != ARCHIVE_OK {
     fail X::Libarchive.new: errno => $res, error => archive_error_string($!archive);
