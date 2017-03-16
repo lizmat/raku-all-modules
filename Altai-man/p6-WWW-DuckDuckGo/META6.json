@@ -1,6 +1,7 @@
 {
     "perl": "6.*",
     "name" : "WWW::DuckDuckGo",
+    "tags": ["Web", "API"],
     "version" : "0.1.0",
     "author" : "github:Altai-man",
     "description" : "Bindings to DuckDuckGo search API",
