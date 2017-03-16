@@ -1,4 +1,5 @@
 {
+    "perl"        : "6.*",
     "name"        : "Coro::Simple",
     "version"     : "*",
     "description" : "Simple coroutines for Perl 6, inspired by the Lua coroutines.",
