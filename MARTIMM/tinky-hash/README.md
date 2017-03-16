@@ -33,7 +33,7 @@ class MyStateEngine is Tinky::Hash {
   }
 
   method tr-zq ( $object, Tinky::Transition $trans, Str :$transit ) {
-    say "specifig transition $transit '", $object.^name,
+    say "specific transition $transit '", $object.^name,
         "' '$trans.from.name()' ===>> '$trans.to.name()'";
     is $trans.from.name, 'z', "Comes from 'z'";
     is $trans.to.name, 'q', "Goes to 'q'";
@@ -56,7 +56,7 @@ $th.go-state('z');
 say $th.state.name;             # 'z'
 say $th.next-states>>.name;     # (<a q>)
 
-# specifig transition zq 'MyStateEngine' 'z' ===>> 'q'
+# specific transition zq 'MyStateEngine' 'z' ===>> 'q'
 # state enter event: enter q in MyStateEngine
 
 $th.go-state('q');
@@ -81,4 +81,4 @@ Documentation about this class and other information at
 
 # Author
 
-```Marcel Timmerman: MIRTIMM on github```
+```Marcel Timmerman: MARTIMM on github```

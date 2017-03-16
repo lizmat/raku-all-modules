@@ -14,17 +14,16 @@ install:
   - choco install strawberryperl
   - SET PATH=C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
   - appveyor DownloadFile "http://rakudo.org/downloads/star/rakudo-star-latest-x86_64 (JIT).msi" -FileName "%APPVEYOR_BUILD_FOLDER%\rakudo.msi"
-#  - appveyor DownloadFile "http://rakudo.org/downloads/star/rakudo-star-2016.11-x86_64 (JIT).msi" -FileName "%APPVEYOR_BUILD_FOLDER%\rakudo.msi"
   - msiexec /i rakudo.msi /quiet /qn /norestart /log install.log
   - SET PATH=C:\rakudo\bin;C:\rakudo\share\perl6\site\bin;%PATH%
-  - panda update
-  - panda installdeps .
-#  - panda install Tinky
+  - zef update
+  - zef --/test install Tinky
+  - zef --depsonly install .
 
 build: off
 
 test_script:
-  - prove -v --merge --exec "perl6 -Ilib" t
+  - prove -v --exec "perl6 -Ilib" t
 
 # fetch repository as zip archive
 shallow_clone: true
@@ -32,6 +31,6 @@ shallow_clone: true
 # set clone depth
 clone_depth: 4
 
-environment:
-  PANDA_SUBMIT_TESTREPORTS: 1
+#environment:
+#  PANDA_SUBMIT_TESTREPORTS: 1
   
