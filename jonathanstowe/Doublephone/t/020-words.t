@@ -14,7 +14,7 @@ for $*PROGRAM.parent.child("words.txt").lines -> $line {
 
 plan @lines.elems;
 
-for @lines -> ($in, $one, $two? ) {
+for @lines -> [$in, $one, $two? ] {
     my ( $out-one, $out-two ) = double-metaphone($in);
     is $out-one, $one, "$in is rendered to $one";
 }

@@ -2,7 +2,9 @@
   "name": "Doublephone",
   "source-url": "git://github.com/jonathanstowe/Doublephone.git",
   "support": {
-    "source": "git://github.com/jonathanstowe/Doublephone.git"
+    "source": "git://github.com/jonathanstowe/Doublephone.git",
+	"email" : "jns+gh@gellyfish.co.uk",
+    "bugtracker" : "https://github.com/jonathanstowe/Doublephone/issues"
   },
   "perl": "6.c",
   "resources": [
@@ -26,7 +28,7 @@
   "test-depends": [
   ],
   "description": "Implementation of the Double Metaphone phonetic encoding algorithm",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "meta6": "0",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
