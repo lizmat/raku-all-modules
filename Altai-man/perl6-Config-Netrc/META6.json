@@ -2,6 +2,7 @@
     "perl"        : "6.*",
     "name"        : "Config::Netrc",
     "version"     : "*",
+    "tags"        : ["Grammar", "Config"],
     "description" : ".netrc file parser module for Perl 6",
     "provides": {
         "Config::Netrc"         : "lib/Config/Netrc.pm6",
