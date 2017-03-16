@@ -1,17 +1,18 @@
 {
-    "perl" : "6.*",
-    "name" : "Heap",
-    "version" : "0.0.1",
-    "description" : "Simple Heap implementation",
-    "authors" : ["Fernando Correa de Oliveira"],
+    "perl"          : "6.*",
+    "name"          : "Heap",
+    "version"       : "0.0.1",
+    "description"   : "Simple Heap implementation",
+    "authors"       : ["Fernando Correa de Oliveira"],
+    "tags"          : ["heap", "struct", "data"],
     "provides" : {
         "Heap" : "lib/Heap.pm6"
     },
-    "depends" : [ ],
-    "test-depends" : [
+    "depends"       : [ ],
+    "test-depends"  : [
         "Test",
         "Test::META"
    ],
-    "resources" : [ ],
-    "source-url" : "git://github.com/FCO/Heap.git"
+    "resources"     : [ ],
+    "source-url"    : "git://github.com/FCO/Heap.git"
 }
