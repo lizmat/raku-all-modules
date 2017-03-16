@@ -14,15 +14,14 @@ grammar CSS::Module::CSS3::Fonts::AtFontFace
     # declare ourselves as a distinct submodule
     method module {
         use CSS::Module;
-        # we share the actions class
-        require ::('CSS::Module::CSS3');
-        my $actions = ::('CSS::Module::CSS3::Actions');
+        use CSS::Module::CSS3::Actions;
         use CSS::Module::CSS3::Fonts::AtFontFace::Metadata;
+        # we share the actions class
         my %property-metadata = %$CSS::Module::CSS3::Fonts::AtFontFace::Metadata::property;
         state $this //= CSS::Module.new(
             :name<@font-face>,
             :grammar($?CLASS),
-	    :$actions,
+	    :actions(CSS::Module::CSS3::Actions),
 	    :%property-metadata,
 	    );
     }

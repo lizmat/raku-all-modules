@@ -2,7 +2,7 @@
     "name"        : "CSS::Module",
     "api"         : "css-snapshot-2010",
     "auth"        : "github:p6-css",
-    "version"     : "0.4.7",
+    "version"     : "0.4.8",
     "description" : "Perl 6 CSS extended and property-specific grammars",
     "depends"     : [ "CSS::Grammar", "CSS::Module::CSS3::Selectors", "CSS::Specification", "CSS::Writer", "JSON::Fast" ],
     "source-url"  : "git://github.com/p6-css/perl6-CSS-Module.git",
@@ -24,6 +24,7 @@
         "CSS::Module::CSS21::Spec::Interface" : "lib/CSS/Module/CSS21/Spec/Interface.pm",
 
         "CSS::Module::CSS3" : "lib/CSS/Module/CSS3.pm",
+        "CSS::Module::CSS3::Actions" : "lib/CSS/Module/CSS3/Actions.pm",
 
         "CSS::Module::CSS3::_Base" : "lib/CSS/Module/CSS3/_Base.pm",
         "CSS::Module::CSS3::_Base::Actions" : "lib/CSS/Module/CSS3/_Base/Actions.pm",
@@ -32,7 +33,7 @@
         "CSS::Module::CSS3::Colors::Actions" : "lib/CSS/Module/CSS3/Colors.pm",
 
         "CSS::Module::CSS3::Fonts" : "lib/CSS/Module/CSS3/Fonts.pm",
-        "CSS::Module::CSS3::Fonts::Actions" : "lib/CSS/Module/CSS3/Fonts.pm",
+        "CSS::Module::CSS3::Fonts::Actions" : "lib/CSS/Module/CSS3/Fonts/Actions.pm",
         "CSS::Module::CSS3::Fonts::Spec::Actions" : "lib/CSS/Module/CSS3/Fonts/Spec/Actions.pm",
         "CSS::Module::CSS3::Fonts::Spec::Grammar" : "lib/CSS/Module/CSS3/Fonts/Spec/Grammar.pm",
         "CSS::Module::CSS3::Fonts::Spec::Interface" : "lib/CSS/Module/CSS3/Fonts/Spec/Interface.pm",

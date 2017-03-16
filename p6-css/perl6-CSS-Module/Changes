@@ -1,3 +1,7 @@
+0.4.8 Break circular '@font-face' depdendency
+      - Add CSS/Module/CSS3/Actions.pm
+      - Add CSS/Module/CSS3/Fonts/AtFontFace.pm
+      - Remove dynamic loading from CSS3 and AtFontFace modules 
 0.4.7 - remove Panda dependency from make-properties.pl
       - work-around for issue #8 - background-position
 0.4.6 $module.parse-property now returns explicit Nil and warns
