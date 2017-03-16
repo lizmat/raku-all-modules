@@ -1,0 +1,21 @@
+{
+    "name"          : "Powerline::Prompt",
+    "version"       : "0.0.4",
+    "perl"          : "6",
+    "description"   : "Make a useful prompt for your shell",
+    "authors"       : [ "Jarkko Haapalainen <jarkko@viidakko.fi>" ],
+    "auth"          : "github:7ojo",
+    "provides"      : {
+        "Powerline::Prompt"                     : "lib/Powerline/Prompt.pm",
+        "Powerline::Prompt::Segment"            : "lib/Powerline/Prompt/Segment.pm",
+        "Powerline::Prompt::Segment::Git"       : "lib/Powerline/Prompt/Segment/Git.pm",
+        "Powerline::Prompt::Segment::Root"      : "lib/Powerline/Prompt/Segment/Root.pm",
+        "Powerline::Prompt::Segment::Path"      : "lib/Powerline/Prompt/Segment/Path.pm",
+        "Powerline::Prompt::Segment::Readonly"  : "lib/Powerline/Prompt/Segment/Readonly.pm",
+        "Powerline::Prompt::Shell::Bash"        : "lib/Powerline/Prompt/Shell/Bash.pm"
+    },
+    "depends"       : [
+        "Git::Simple"
+    ],
+    "source-url"    : "https://github.com/7ojo/perl6-powerline-prompt.git"
+}

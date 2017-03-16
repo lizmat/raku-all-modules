@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/7ojo/perl6-powerline-prompt.git
+	branch = master
+	commit = 8cca0fe4e60ecf03c7376986b8454373b3c5b3b3
+	parent = 9eb5c4e7f961d8daadafa1a4e3f17f5e490c14df
+	cmdver = 0.4.0
