@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/colomon/ABC.git
 	branch = master
-	commit = a7850a4ce8fef1eb7b5a13084f510b04b1ea4d9e
-	parent = c4b4388a4266c272025b6c58046130e673687f76
+	commit = 4b1191e691828e4c820a61e59591ba7d3be0028d
+	parent = 267e60b3fa9b93fd2d2bc4b400bcf24f78ec7a46
 	cmdver = 0.4.0

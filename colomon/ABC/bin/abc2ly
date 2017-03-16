@@ -29,6 +29,8 @@ my %octave-map = ( -3 => ",,",
                     2 => "'''" );
 
 my %unrecognized_gracings;
+
+my $spacing-comment = '%{ spacing %}';
                 
 class LilypondContext {
     has ABC::Context $.context;
@@ -72,7 +74,8 @@ class LilypondContext {
     
     method meter-to-string() {
         given $.context.meter {
-            when "C"  { "\\time 4/4" }
+            when "none" { "" }
+            when "C" { "\\time 4/4" }
             when "C|" { "\\time 2/2" }
             "\\time { $.context.meter } ";
         }
@@ -81,6 +84,7 @@ class LilypondContext {
     method ticks-in-measure() {
         given $.context.meter {
             when "C" | "C|" { 1 / $.context.length; }
+            when "none" { Inf }
             $.context.meter / $.context.length;
         }
     }
@@ -192,21 +196,38 @@ class TuneConvertor {
     method WrapBar($lilypond-bar, $duration, :$beginning?) {
         my $ticks-in-measure = $.context.ticks-in-measure;
         my $result = "";
-        if $beginning && $duration % $ticks-in-measure != 0 {
-            my $note-length = 1 / $.context.context.length;
-            my $count = $duration % $ticks-in-measure;
-            if $count ~~ Rat {
-                die "Strange partial measure found: $lilypond-bar" unless is-a-power-of-two($count.denominator);
-                
-                while $count.denominator > 1 {
-                    $note-length *= 2; # makes twice as short
-                    $count *= 2;       # makes twice as long
+
+        if $ticks-in-measure == Inf {
+            $result ~= "\\cadenzaOn ";
+            
+            my @chunks = $lilypond-bar.split($spacing-comment);
+            for @chunks -> $chunk {
+                if $chunk !~~ /"["/ && $chunk.comb(/\d+/).grep(* > 4) > 1 {
+                    $result ~= $chunk.subst(/<?after \S> \s/, { "[ " }) ~ "]";
+                } else {
+                    $result ~= $chunk;
                 }
             }
-            $result = "\\partial { $note-length }*{ $count } ";
+            
+            $result ~= " \\cadenzaOff";
+        } else {
+            if $beginning && $duration % $ticks-in-measure != 0 {
+                my $note-length = 1 / $.context.context.length;
+                my $count = $duration % $ticks-in-measure;
+                if $count ~~ Rat {
+                    die "Strange partial measure found: $lilypond-bar" unless is-a-power-of-two($count.denominator);
+
+                    while $count.denominator > 1 {
+                        $note-length *= 2; # makes twice as short
+                        $count *= 2;       # makes twice as long
+                    }
+                }
+                $result = "\\partial { $note-length }*{ $count } ";
+            }
+            $result ~= $lilypond-bar;
         }
-        
-        $result ~ $lilypond-bar; 
+
+        $result; 
     }
     
     method SectionToLilypond(@elements, $out, :$beginning?) {
@@ -276,8 +297,9 @@ class TuneConvertor {
                     if $element.value eq "||" {
                         $notes ~= ' \\bar "||"';
                     } else {
-                        $notes ~= " |\n"; 
+                        $notes ~= ' \\bar "|"';
                     }
+                    $notes ~= "\n";
                     $lilypond = "";
                     $duration = 0;
                     $.context.bar-line;
@@ -348,6 +370,7 @@ class TuneConvertor {
                     
                     $suffix = "";
                 }
+                when "spacing" { $lilypond ~= $spacing-comment }
                 # .say;
             }
         }
@@ -361,6 +384,12 @@ class TuneConvertor {
     
     method BodyToLilypond(@elements, $out) {
         $out.say: "\{";
+
+        # if tune contains M: none sections, turn off barnumber display
+        if @elements.grep({ $_.key eq "inline_field" && $_.value.key eq "M" && $_.value.value eq "none" }) {
+            $out.say: "\\override Score.BarNumber.break-visibility = ##(#f #f #f)";
+        }
+
         $out.print: $.context.key-to-string;
         $out.say: "\\accidentalStyle modern-cautionary";
         $out.print: $.context.clef-to-string;
