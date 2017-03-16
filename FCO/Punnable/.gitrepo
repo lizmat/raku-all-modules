@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/FCO/Punnable.git
 	branch = master
-	commit = 39cfb96655b9d5701e8451a090ff853731f030a2
-	parent = 436e495a5a5d93cbf7ea156c22c851cea1bfd3ea
+	commit = 12c7654041150f2f38ea451bf7165fa8eead51c7
+	parent = ff3256e378cbc86b261d2b8c011d35fc3eaa3493
 	cmdver = 0.4.0

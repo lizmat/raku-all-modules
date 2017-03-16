@@ -1,14 +1,15 @@
 {
-    "perl" : "6.*",
-    "name" : "Punnable",
-    "version" : "0.1.0",
-    "description" : "Make roles with stub-methods punnable",
-    "authors" : [ "Fernando Corrêa de Oliveira" ],
-    "provides" : { },
-    "depends" : [ ],
-    "test-depends" : [
+    "perl"          : "6.*",
+    "name"          : "Punnable",
+    "version"       : "0.1.0",
+    "description"   : "Make roles with stub-methods punnable",
+    "authors"       : [ "Fernando Corrêa de Oliveira" ],
+    "tags"          : ["pun", "role", "stub"],
+    "provides"      : { },
+    "depends"       : [ ],
+    "test-depends"  : [
         "Test",
         "Test::META"
    ],
-    "source-url" : "https://github.com/FCO/Punnable.git"
+    "source-url"    : "https://github.com/FCO/Punnable.git"
 }
