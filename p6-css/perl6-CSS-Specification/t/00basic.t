@@ -7,6 +7,8 @@ use CSS::Grammar::Test;
 use CSS::Specification;
 use CSS::Specification::Actions;
 
+lives-ok {require CSS::Grammar:ver(v0.3.0..*) }, "CSS::Grammar version";
+
 my $actions = CSS::Specification::Actions.new;
 
 for (
