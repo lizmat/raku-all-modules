@@ -1,5 +1,5 @@
 # perl6-CSS-Declarations
-CSS::Declarations is a class for managing CSS property lists, including parsing, inheritance, default handling and serialization.
+CSS::Declarations is a class for parsing and generation of CSS property lists, including box-model, parsing, inheritance, and defaults.
 
 
 ## Basic Construction
@@ -54,8 +54,9 @@ say $css.font<font-family>; # 'Helvetica;
 The simplest ways of setting a property is to assign a string value.  The value will be parsed as CSS. This works for both simple and container properties. Unit values are also recognized. Also the type and value can be assigned as a pair.
 
 ```
+use CSS::Declarations;
 use CSS::Declarations::Units;
-my $css = (require CSS::Declarations).new;
+my CSS::Declarations $css .= new;
 
 # assign to container
 $css.font = "14pt Helvetica";
@@ -126,7 +127,7 @@ Most properties have a default value. If a property is reset to its default valu
 
 A child class can inherit from one or more parent classes. This follows CSS standards:
 
-- Note all properties are inherited by default; for example `color` is inherited, but `margin` is not.
+- all properties are inherited by default; for example `color` is inherited, but `margin` is not.
 
 - the `inherit` keyword can be used in the child property to ensure inheritance.
 
@@ -134,14 +135,20 @@ A child class can inherit from one or more parent classes. This follows CSS stan
 
 - the `!important` modifier can be used in parent properties to force the parent value to override the child. The property becomes 'important' in the child and will be passed on to any CSS::Declarations objects that inherit from it.
 
+To inherit a css object or style string:
+
+- pass it as a `:inherit` option, when constructing the object, or
+
+- use the `inherit` method
+
 ```
-my $parent-css = CSS::Declarations.new: :style("margin-top:5pt; margin-left: 15pt; color:rgb(0,0,255) !important");
+use CSS::Declarations;
 
-my $css = CSS::Declarations.new: :style("margin-top:25pt; margin-right: initial; margin-left: inherit; color:purple"), :inherit($parent-css);
+my $inherit = "margin-top:5pt; margin-left: 15pt; color:rgb(0,0,255) !important";
 
-say $parent-css.important("color"); # True
+my $css = CSS::Declarations.new: :style("margin-top:25pt; margin-right: initial; margin-left: inherit; color:purple"), :$inherit;
+
 say $css.color; # #FF0000 (red)
-
 say $css.handling("margin-left");   # inherit
 say $css.margin-left; # 15pt
 ```
@@ -246,6 +253,52 @@ my $css = (require CSS::Declarations).new: :margin[5pt, 10px, .1in, 2mm];
 # display margins in millimeters
 say "%.2f mm".sprintf(0mm + $_) for $css.margin.list;
 ```
+
+## Box Model
+
+`CSS::Declarations::Box` is an abstract class for modelling Box elements.
+
+```
+use CSS::Declarations;
+use CSS::Declarations::Box;
+use CSS::Declarations::Units;
+
+my $style = q:to"END";
+    width:   300px;
+    border:  25px solid green;
+    padding: 25px;
+    margin:  25px;
+    font:    italic bold 10pt/12pt times-roman;
+    END
+
+my CSS::Declarations $css .= new: :$style;
+my $top    = 80pt;
+my $right  = 50pt;
+my $bottom = 10pt;
+my $left   = 10pt;
+
+my $box = CSS::Declarations::Box.new( :$top, :$left, :$bottom, :$right, :$css );
+say $box.padding;           # dimensions of padding box;
+say $box.margin;            # dimensions of margin box;
+say $box.border-right;      # vertical position of right border
+say $box.border-width;      # border-right - border-left
+say $box.width("border");   # border-width
+say $box.height("content"); # height of content box
+
+say $box.font.family;        # 'times-roman'
+# calculate some relative font lengths
+say $box.font-length(1.5em);    # 15
+say $box.font-length(200%);     # 20
+say $box.font-length('larger'); # 12
+```
+
+- The box `new` constructor accepts:
+
+  -- any two of `:top`, `:bottom` or `:height`,
+
+  -- and any two of `:left`, `:right` or `:width`.
+
+- The '.font' accessor returns an object of type `CSS::Declarations::Font`, with accessor methods: `em`, `ex`, `weight`, `family`, `style` and `leading`.
 
 ## Appendix : CSS3 Properties
 

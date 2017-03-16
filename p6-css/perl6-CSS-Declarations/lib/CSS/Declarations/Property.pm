@@ -1,7 +1,6 @@
 use v6;
 
 use CSS::Module;
-use CSS::Module::CSS3;
 
 class CSS::Declarations::Property {
 
@@ -26,7 +25,7 @@ class CSS::Declarations::Property {
          }
     }
 
-    multi method build(Str :$name!, CSS::Module :$module = CSS::Module::CSS3.module) is default {
+    multi method build(Str :$name!, CSS::Module :$module = (require CSS::Module::CSS3).module) is default {
         my %metadata = $module.property-metadata;
         die "unknown property: $name"
             unless %metadata{$name}:exists;

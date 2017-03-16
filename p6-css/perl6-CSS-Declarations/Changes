@@ -1,5 +1,13 @@
+0.2.1
+    CSS::Declarations::Box:
+    - Remove rendering-specific 'build-box' method
+    - Add 'font-length' method
+    CSS::Declarations::Units:
+    - Add 'em', 'ex' and '%' postfix operators
+0.2.0 Add CSS::Declarations::Box, CSS::Declarations::Font
 0.1.2 - Add :declarations constructor option. to enable construction from
         CSS declarations AST node.
+      - Allow inheritance from objects or style strings
 0.1.1 Added `.optimize` method. For direct optimization of ASTs, without
       the need to create intermediate objects
 0.1.0 Improved write optmizations

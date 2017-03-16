@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 16;
+plan 17;
 use CSS::Declarations;
 
 my $inherit = CSS::Declarations.new: :style("margin-top:5pt; margin-right: 10pt; margin-left: 15pt; margin-bottom: 20pt; color:rgb(0,0,255)!important");
@@ -31,6 +31,11 @@ is $css.margin-top, 0, "initial box value";
 is $css.color, '#0000FF', "inheritable !important property";
 ok $css.important("color"), 'inherited !important stickyness';
 
-is ~$css, 'color:blue!important; margin-bottom:initial; margin-left:initial; margin-right:initial;';
+# inherit from css object
+is ~$css, 'color:blue!important; margin-bottom:initial; margin-left:initial; margin-right:initial;', 'inherit from object';
+
+# inherit from style string
+$css = CSS::Declarations.new( :inherit(~$inherit));
+is ~$css, 'color:blue!important;', 'inherit from object';
 
 done-testing;

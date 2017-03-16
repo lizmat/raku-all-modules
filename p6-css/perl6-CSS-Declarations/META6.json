@@ -1,14 +1,17 @@
 {
-    "perl"        : "6c",
+    "perl"        : "6.*",
     "name"        : "CSS::Declarations",
-    "version"     : "0.1.2",
+    "tags"        : ["css"],
+    "version"     : "0.2.1",
     "auth"        : "github:p6-css",
-    "description" : "CSS property-list manipulation library",
+    "description" : "CSS property manipulation library",
     "depends"     : [ "CSS::Module", "CSS::Writer", "Color" ],
     "source-url"  : "git://github.com/p6-css/perl6-CSS-Declarations.git",
     "provides"    : {
         "CSS::Declarations" : "lib/CSS/Declarations.pm",
+        "CSS::Declarations::Box" : "lib/CSS/Declarations/Box.pm",
         "CSS::Declarations::Edges" : "lib/CSS/Declarations/Edges.pm",
+        "CSS::Declarations::Font" : "lib/CSS/Declarations/Font.pm",
         "CSS::Declarations::Property" : "lib/CSS/Declarations/Property.pm",
         "CSS::Declarations::Units" : "lib/CSS/Declarations/Units.pm"
      }

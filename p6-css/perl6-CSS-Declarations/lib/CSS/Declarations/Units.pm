@@ -14,6 +14,9 @@ module CSS::Declarations::Units {
     sub postfix:<mm>(Numeric $v) is rw is export { $v but Type['mm']  };
     sub postfix:<cm>(Numeric $v) is rw is export { $v but Type['cm']  };
     sub postfix:<in>(Numeric $v) is rw is export { $v but Type['in']  };
+    sub postfix:<em>(Numeric $v) is rw is export { $v but Type['em']  };
+    sub postfix:<ex>(Numeric $v) is rw is export { $v but Type['ex']  };
+    sub postfix:<%>(Numeric $v) is rw is export { $v but Type['percent']  };
     constant &Add = &infix:<+>;
     constant &Sub = &infix:<->;
     multi sub infix:<+>(Length $v, Length $n) is export {

@@ -115,7 +115,7 @@ class CSS::Declarations {
                         if decl<prio> ~~ 'important';
 
                     self!build-property( .key, .value, :$important)
-                    for self!get-props(decl<ident>, expr).list;
+                        for self!get-props(decl<ident>, expr).list;
                 }
             }
         }
@@ -385,7 +385,11 @@ class CSS::Declarations {
     #| - handling of 'initial' and 'inherit' in the child declarations
     #| - !important override properties in parent
     #| - not all properties are inherited. e.g. color is, margin isn't
-    method inherit(CSS::Declarations $css) {
+    multi method inherit(Str $style) {
+        my $css = $.new( :$.module, :$style);
+        $.inherit($css);
+    }
+    multi method inherit(CSS::Declarations $css) {
         for $css.properties -> \name {
             my \info = self.info(name);
             unless info.box {
