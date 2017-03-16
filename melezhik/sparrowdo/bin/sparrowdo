@@ -28,6 +28,7 @@ sub MAIN (
   Bool :$no_sudo = False,
   Bool :$no_color = False,
   Bool :$no_index_update = False,
+  Str  :$sparrow_root, 
 )
 {
 
@@ -46,7 +47,8 @@ sub MAIN (
     Verbose => $verbose,
     NoSudo => $no_sudo,
     NoColor => $no_color,
-    NoIndexUpdate => $no_index_update
+    NoIndexUpdate => $no_index_update,
+    SparrowRoot => $sparrow_root
   );
 
   bootstrap() if $bootstrap;
@@ -114,7 +116,7 @@ sub ssh_shell ( $cmd ) {
   @bash_commands.push:  'export https_proxy=' ~ input_params('HttpsProxy') if input_params('HttpsProxy');
   @bash_commands.push:  'export GIT_PROTOCOL=https';
   @bash_commands.push:  'export PATH=/sbin/:/usr/local/bin:/usr/sbin/:$PATH';
-  @bash_commands.push:  'export SPARROW_ROOT=/opt/sparrow';
+  @bash_commands.push:  'export SPARROW_ROOT=' ~ ( input_params('SparrowRoot') || '/opt/sparrow' );
   @bash_commands.push:  'export SPARROW_NO_COLOR=1' if input_params('NoColor');
   @bash_commands.push:  $cmd;
 
