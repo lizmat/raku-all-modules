@@ -3,10 +3,12 @@
     "name"        : "Email::Valid",
     "version"     : "1.0.0",
     "description" : "Email validator for Perl6",
+    "tags"        : ["Email", "Valid", "Validator"],
     "provides": {
         "Email::Valid"         : "lib/Email/Valid.pm6"
     },
     "depends"     : ["Net::DNS"],
+    "auth" : "github:demayl",
     "authors" : [
         "Denis Kanchev - demayl"
     ],
