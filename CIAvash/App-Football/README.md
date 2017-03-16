@@ -3,7 +3,7 @@
 NAME
 ====
 
-football - Command line program for accessing football data
+football - Command line program for accessing football(soccer) data
 
 SYNOPSIS
 ========
@@ -164,9 +164,9 @@ To print fixtures of "Premier League", "1. Bundesliga" and "Champions League":
 INSTALLATION
 ============
 
-You need to have [Perl 6](https://perl6.org/downloads/) and [Panda](https://github.com/tadzik/panda) installed on your computer. Then you can run:
+You need to have [Perl 6](https://perl6.org/downloads/) and a Perl 6 module manager like [Zef](https://github.com/ugexe/zef) installed on your computer. Then you can run:
 
-    panda install App::Football
+    zef install App::Football
 
 to install `App::Football`.
 

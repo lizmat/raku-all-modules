@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://gitlab.com/CIAvash/App-Football.git
 	branch = master
-	commit = cc98c2a04d36564d10cdede036f9450675232a9b
-	parent = 52e6b1218e2f5dbc288094d9fa9ca9569da64d06
+	commit = 9cd99bad6d63a830c0d31e48777936f8af123e79
+	parent = 04df05ca4f74d3d9d94eec97c7f80c384a66b95c
 	cmdver = 0.4.0

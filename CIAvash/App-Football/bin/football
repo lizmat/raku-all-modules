@@ -126,7 +126,7 @@ sub USAGE {
 
 =head1 NAME
 
-football - Command line program for accessing football data
+football - Command line program for accessing football(soccer) data
 
 =head1 SYNOPSIS
 
