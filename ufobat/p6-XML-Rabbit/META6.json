@@ -3,6 +3,7 @@
     "Martin Barth"
   ],
   "build-depends" : [ ],
+  "tags" : ["XML", "XPath", "Attribute", "Builder", "Lazy Builder"],
   "depends" : [ "XML", "XML::XPath", "Test::META" ],
   "description" : "XML::Rabbit builds your Attributes from xml files with xpath expressions",
   "name" : "XML::Rabbit",
