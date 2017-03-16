@@ -7,7 +7,7 @@
    ],
    "test-depends" : [ "Test" ],
    "auth" : "github:jonathanstowe",
-   "version" : "0.0.3",
+   "version" : "0.0.4",
    "description" : "Role to Serialize/De-Serialize a Perl 6 class to/from XML",
    "superseded-by" : {},
    "emulates" : {},
@@ -21,7 +21,9 @@
    "depends" : [ "XML" ],
    "license" : "perl",
    "support" : {
-      "source" : "git://github.com/jonathanstowe/XML-Class.git"
+      "source" : "git://github.com/jonathanstowe/XML-Class.git",
+	  "email" :  "jns+gh@gellyfish.co.uk",
+      "bugtracker" : "https://github.com/jonathanstowe/XML-Class/issues"
    },
    "resource" : {},
    "name" : "XML::Class"
