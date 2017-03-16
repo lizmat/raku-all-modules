@@ -4,12 +4,13 @@ use Test;
 use Perl6::Parser;
 use Perl6::Parser::Factory;
 
-plan 9;
+plan 10;
 
 my $pt = Perl6::Parser.new;
 my $ppf = Perl6::Parser::Factory.new;
 my $*CONSISTENCY-CHECK = True;
 my $*GRAMMAR-CHECK = True;
+my $*FALL-THROUGH = True;
 
 sub make-decimal( Str $value ) {
 	Perl6::Number::Decimal.new( :from(0), :to(2), :content($value) );
@@ -22,7 +23,6 @@ sub make-list {
 subtest {
 	my $tree = make-decimal( '27' );
 	$ppf.thread( $tree );
-#say $pt.dump-tree( $tree );
 
 	is $tree.parent,
 		$tree;
@@ -41,7 +41,6 @@ subtest {
 subtest {
 	my $tree = make-list();
 	$ppf.thread( $tree );
-#say $pt.dump-tree( $tree );
 
 	is $tree.parent,
 		$tree;
@@ -66,7 +65,6 @@ subtest {
 		)
 	);
 	$ppf.thread( $tree );
-#say $pt.dump-tree( $tree );
 
 	is $tree.parent,
 		$tree;
@@ -99,7 +97,6 @@ subtest {
 			)
 		);
 	$ppf.thread( $tree );
-#say $pt.dump-tree( $tree );
 
 	is $tree.parent,
 		$tree;
@@ -145,7 +142,6 @@ subtest {
 			)
 		);
 	$ppf.thread( $tree );
-#say $pt.dump-tree( $tree );
 
 	is $tree.parent,
 		$tree;
@@ -194,7 +190,6 @@ subtest {
 			)
 		);
 	$ppf.thread( $tree );
-#say $pt.dump-tree( $tree );
 
 	is $tree.parent,
 		$tree;
@@ -229,10 +224,8 @@ subtest {
 
 subtest {
 	my $source = Q{(1);2;1};
-	my $p = $pt.parse( $source );
-	my $tree = $pt.build-tree( $p );
+	my $tree = $pt.to-tree( $source );
 	$ppf.thread( $tree );
-#say $pt.dump-tree( $tree );
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	is $tree.parent,
@@ -319,10 +312,8 @@ subtest {
 subtest {
 	my $source = Q{(1);2;1};
 	my $ecruos = Q{1;2;)1(};
-	my $p = $pt.parse( $source );
-	my $tree = $pt.build-tree( $p );
+	my $tree = $pt.to-tree( $source );
 	$ppf.thread( $tree );
-#say $pt.dump-tree( $tree );
 
 	my $head = $tree;
 	my $iterated = '';
@@ -347,10 +338,8 @@ subtest {
 subtest {
 	my $source = Q{(3);2;1};
 	my $ecruos = Q{1;2;(3)};
-	my $p = $pt.parse( $source );
-	my $tree = $pt.build-tree( $p );
+	my $tree = $pt.to-tree( $source );
 	$ppf.thread( $tree );
-#say $pt.dump-tree( $tree );
 	my $head = $ppf.flatten( $tree );
 
 	ok $head.parent ~~ Perl6::Document;
@@ -377,5 +366,32 @@ subtest {
 
 	done-testing;
 }, Q{check flattened data};
+
+subtest {
+	my $source = Q{();2;1;};
+	my $iter = $pt.iterator( $source );
+	my $iterated = '';
+
+	for Seq.new( $iter ) {
+		$iterated ~= $_.is-leaf ?? $_.content !! '';
+	}
+	is $iterated, $source, Q{pull-one returns complete list};
+
+	done-testing;
+}, Q{iterator pull-one};
+
+#subtest {
+#	my $source = Q{();2;1;};
+#	my $iter = $pt.iterator( $source );
+#	my $iterated = '';
+#	my $target = (1..Inf).iterator;
+#
+#	my @element;
+#
+#	$iter.push-exactly( $target, 3 );
+#	ok $target.[0] ~~ Perl6::Document;
+#
+#	done-testing;
+#}, Q{iterator push-exactly};
 
 # vim: ft=perl6

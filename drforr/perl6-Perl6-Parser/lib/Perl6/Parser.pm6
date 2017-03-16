@@ -141,7 +141,7 @@ Now we turn to the rather bewildering array of methods on the C<Perl6::WS> class
 
 =begin METHODS
 
-=item roundtrip( Str $perl-code ) returns Perl6::Parser::Root
+=item _roundtrip( Str $perl-code ) returns Perl6::Parser::Root
 
 Given a string containing valid Perl 6 code ... well, return that code. This
 is mostly a shortcut for testing purposes, and wil probably be moved out of the
@@ -323,7 +323,7 @@ my role Debugging {
 
 my role Testing {
 
-	method roundtrip( Str $source ) {
+	method _roundtrip( Str $source ) {
 		my $parsed    = self.parse( $source );
 		my $valid     = self.validate( $parsed );
 		my $tree      = self.build-tree( $parsed );
@@ -460,9 +460,56 @@ class Perl6::Parser {
 		$tree
 	}
 
+	method to-tree( Str $source ) {
+		my $parsed = self.parse( $source );
+		self.build-tree( $parsed );
+	}
+
 	method to-string( Perl6::Element $tree ) {
 		my $str = $tree.to-string;
 
 		$str
+	}
+
+	class ElementIterator {
+		also does Iterator;
+
+		has Perl6::Element $.head;
+		has Bool $.is-done = False;
+
+		method pull-one {
+			if $.head.is-end {
+				if $.is-done {
+					return IterationEnd;
+				}
+				else {
+					$!is-done = True;
+					return $.head;
+				}
+			}
+			else {
+				my $elem = $.head;
+				$!head = $.head.next;
+				$elem;
+			}
+		}
+
+		method push-exactly( Iterator:D $target, int $count ) {
+			my $_count = $count;
+			while $_count-- >= 0 {
+				$target.push( self.pull-one );
+			}
+		}
+
+		method is-lazy { False }
+	}
+
+	method iterator( Str $source ) {
+		my $p = self.parse( $source );
+		my $tree = self.build-tree( $p );
+		$.factory.thread( $tree );
+		my $head = $.factory.flatten( $tree );
+
+		ElementIterator.new( :head( $head ) );
 	}
 }

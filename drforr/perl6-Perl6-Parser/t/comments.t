@@ -8,13 +8,13 @@ plan 3;
 my $pt = Perl6::Parser.new;
 my $*CONSISTENCY-CHECK = True;
 my $*GRAMMAR-CHECK = True;
+my $*FALL-THROUGH = True;
 
 subtest {
 	my $source = Q:to[_END_];
 #!/usr/bin/env perl6
 _END_
-	my $parsed = $pt.parse( $source );
-	my $tree = $pt.build-tree( $parsed );
+	my $tree = $pt.to-tree( $source );
 	is $pt.to-string( $tree ), $source, Q{formatted};
 
 	done-testing;
@@ -27,8 +27,7 @@ subtest {
 		my $source = Q:to[_END_];
 # comment to end of line
 _END_
-		my $parsed = $pt.parse( $source );
-		my $tree = $pt.build-tree( $parsed );
+		my $tree = $pt.to-tree( $source );
 		is $pt.to-string( $tree ), $source, Q{formatted};
 
 		done-testing;
@@ -39,8 +38,7 @@ _END_
 # comment to end of line
 # comment to end of line
 _END_
-		my $parsed = $pt.parse( $source );
-		my $tree = $pt.build-tree( $parsed );
+		my $tree = $pt.to-tree( $source );
 		is $pt.to-string( $tree ), $source, Q{formatted};
 
 		done-testing;
@@ -54,8 +52,7 @@ subtest {
 		my $source = Q:to[_END_];
 #`( comment on single line )
 _END_
-		my $parsed = $pt.parse( $source );
-		my $tree = $pt.build-tree( $parsed );
+		my $tree = $pt.to-tree( $source );
 		is $pt.to-string( $tree ), $source, Q{formatted};
 
 		done-testing;
@@ -68,8 +65,7 @@ spanning
 multiple
 lines )
 _END_
-		my $parsed = $pt.parse( $source );
-		my $tree = $pt.build-tree( $parsed );
+		my $tree = $pt.to-tree( $source );
 		is $pt.to-string( $tree ), $source, Q{formatted};
 
 		done-testing;
