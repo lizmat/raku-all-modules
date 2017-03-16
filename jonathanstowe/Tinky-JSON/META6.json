@@ -7,7 +7,7 @@
    "test-depends" : [
       "Test"
    ],
-   "version" : "0.0.1",
+   "version" : "0.0.2",
    "auth" : "github:jonathanstowe",
    "meta6" : "0",
    "authors" : [
@@ -15,7 +15,8 @@
    ],
    "support" : {
       "source" : "git://github.com/jonathanstowe/Tinky-JSON.git",
-      "bugtracker" : "https://github.com/jonathanstowe/Tinky-JSON/issues"
+      "bugtracker" : "https://github.com/jonathanstowe/Tinky-JSON/issues",
+	  "email" : "jns+gh@gellyfish.co.uk"
    },
    "provides" : {
       "Tinky::JSON" : "lib/Tinky/JSON.pm"

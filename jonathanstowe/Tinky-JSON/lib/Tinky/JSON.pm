@@ -1,7 +1,6 @@
-use v6;
+use v6.c;
 
 use Tinky;
-use JSON::Unmarshal:ver(v0.07);
 use JSON::Class;
 use JSON::Name;
 

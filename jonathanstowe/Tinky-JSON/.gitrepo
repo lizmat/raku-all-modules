@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Tinky-JSON.git
 	branch = master
-	commit = c3a4553a26962811b57df6290078fe424a8ae984
-	parent = 9a8263055bcafbd75a51b8245c47f5356ff6c750
+	commit = 8fcd8de02717512061f73adc1e7656d4f5468872
+	parent = 3f990c2c5e3cd750041827923a102f3029cfe7f6
 	cmdver = 0.4.0
