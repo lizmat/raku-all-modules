@@ -94,7 +94,7 @@ subtest {
         }
 
         start {
-            sleep 1;
+            sleep 0.5;
             $cancel();
         }
         await $p;
@@ -102,5 +102,45 @@ subtest {
         is ($t == 1), True, 'val match';
     }
 }, 'context cancel';
+
+subtest {
+    lives-ok {
+        my $c = Context.new();
+        my $timeout = $c.timeout(1);
+        my Int $t = 0;
+        
+        my $p = start {
+            sub (Context $ctx) {
+                my $supply = $ctx.supplier.Supply;
+                my $pf = start {
+                    react {
+                        whenever $supply -> $v { 
+                            if $v eq $CONTEXT_CANCEL {
+                                $t = 1;
+                                done;                    
+                            }
+                        }
+                    }
+                }
+                await $pf;
+            }($c);
+        }
+
+        my ($before,$after);
+        
+        my $x = start {
+            $before = now.to-posix()[0];
+            $timeout();
+            $after = now.to-posix()[0];
+        }
+        await $p;
+        await $x;
+
+        my $duration = $after - $before;
+        
+        is ($t == 1), True, 'val match';
+        is (($duration >= 1.0) && ($duration <= 1.1)), True, 'timeout duration';
+    }
+}, 'timeout cancel';
 
 done-testing;

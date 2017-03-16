@@ -38,7 +38,7 @@ development.
 
 =head1 SYNOPSIS
 
-See `examples`.
+See `examples`. See the file `t/basic.t` also.
 
 =head1 AUTHOR
 
@@ -59,7 +59,7 @@ class X::Context::KeyNotFound is Exception is export {
 # when you want to cancel a context.
 constant $CONTEXT_CANCEL is export = 'context-cancel';
 
-class Context:auth<bradclawsie>:ver<0.0.1> is export {
+class Context:auth<bradclawsie>:ver<0.0.2> is export {
     has Hash[Mu,Any] $!kv;
     has Lock $!lock;
     has Supplier $.supplier;
@@ -104,5 +104,14 @@ class Context:auth<bradclawsie>:ver<0.0.1> is export {
         }
     }
 
-    # Potential future support could include timed cancelers...
+    # `timeout` returns a sub that will cancel the context after a timeout
+    # period has expired. Calling the function begins the countdown. Callers
+    # will want to put this in a `start` block since the `sleep` will block.
+    method timeout(Real:D $timeout where $timeout > 0.0 --> Sub) {
+        my $cancel = $.canceler;
+        return sub {
+            sleep $timeout;
+            $cancel();
+        }
+    }
 }
