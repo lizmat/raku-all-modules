@@ -1,6 +1,7 @@
 {
     "perl": "6.*",
     "name" : "Compress::Bzip2",
+    "tags": ["Compression"],
     "version" : "0.3.0",
     "author" : "github:Altai-man",
     "description" : "High-level bindings to libbzip2",
