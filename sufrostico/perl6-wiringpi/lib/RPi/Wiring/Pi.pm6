@@ -2,7 +2,6 @@ use v6;
 
 unit module RPi::Wiring::Pi;
 
-use strict;
 use NativeCall;
 
 constant LIB = 'libwiringPi.so';
@@ -10,9 +9,6 @@ constant LIB = 'libwiringPi.so';
 #`[ Constants section ]
 constant COLOR_BLACK is export = 0;
 # Handy defines
-
-# Deprecated
-constant NUM_PINS is export = 17;
 
 constant WPI_MODE_PINS is export =  0;
 constant WPI_MODE_GPIO is export =  1;
@@ -55,25 +51,28 @@ constant INT_EDGE_BOTH is export = 3;
 # Pi model types and version numbers is Intended for the GPIO program.
 # Use at your own risk.
 
-constant PI_MODEL_UNKNOWN is export = 0;
-constant PI_MODEL_A is export = 1;
-constant PI_MODEL_B is export = 2;
+constant PI_MODEL_A  is export = 0;
+constant PI_MODEL_B is export = 1;
+constant PI_MODEL_AP is export = 2;
 constant PI_MODEL_BP is export = 3;
-constant PI_MODEL_CM is export = 4;
-constant PI_MODEL_AP is export = 5;
-constant PI_MODEL_2 is export = 6;
+constant PI_MODEL_2 is export = 4;
+constant PI_ALPHA is export = 5;
+constant PI_MODEL_CM is export = 6;
+constant PI_MODEL_07 is export = 7;
+constant PI_MODEL_3 is export = 8;
+constant PI_MODEL_ZERO is export = 9;
+constant PI_MODEL_CM3 is export = 10;
 
-constant PI_VERSION_UNKNOWN is export = 0;
-constant PI_VERSION_1 is export = 1;
-constant PI_VERSION_1_1 is export = 2;
-constant PI_VERSION_1_2 is export = 3;
-constant PI_VERSION_2 is export = 4;
 
-constant PI_MAKER_UNKNOWN is export = 0;
+constant PI_VERSION_1 is export = 0;
+constant PI_VERSION_1_1 is export = 1;
+constant PI_VERSION_1_2 is export = 2;
+constant PI_VERSION_2 is export = 3;
+
+constant PI_MAKER_SONY is export = 0;
 constant PI_MAKER_EGOMAN is export = 1;
-constant PI_MAKER_SONY is export = 2;
-constant PI_MAKER_QISDA is export = 3;
-constant PI_MAKER_MBEST is export = 4;
+constant PI_MAKER_EMBEST is export = 2;
+constant PI_MAKER_UNKNOWN is export = 3;
 
 
 #`[ These functions work directly on the Raspberry Pi and also with external GPIO

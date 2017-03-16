@@ -13,21 +13,19 @@ From the [WiringPI site](http://wiringpi.com):
  1. This module requires the wiringpi library to installed manually following
     [this guide](http://wiringpi.com/download-and-install/)
 
- 1. Install this module by using panda
+ 1. Installation using zef
 
     - From sources:
         ```
-            panda install .
+            zef install .
         ```
-
 
 ## Current status
 
- - Only the main functions of the library has been mapped using the NativeCall
-   library.
- - The files needed for the other parts of the library are already created and
-   present in the **next** branch but I'm unable to testit due to hardware/time
-   constraints.
+ - Tested with WiringPi version 2.39.
+ - Only the main functions of the library have been mapped using NativeCall.
+ - SPI works.
+ - I2C, Serial, Shift and SoftTone are there but untested.
 
 ## Testing
 
@@ -44,3 +42,4 @@ Aurelio Sanabria, sufrostico on #perl6 and github (https://github.com/sufrostico
 ## License
 
 GPL - General Public License
+
