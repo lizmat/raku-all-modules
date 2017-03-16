@@ -1,5 +1,5 @@
 use HTTP::Tinyish;
-use JSON::Tiny;
+use JSON::Fast;
 unit class Pastebin::Gist:ver<1.001001>;
 
 constant API-URL   = 'https://api.github.com/';
