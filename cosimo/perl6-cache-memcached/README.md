@@ -31,17 +31,17 @@ external modules.)
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to
-install this with *ufo* :
+install this with *zef* :
 
-    ufo
-    make test
-    make install
+    # From the source directory
+   
+    zef install .
 
-*ufo* can be installed with *panda* for rakudo:
+    # Remote installation
 
-    panda install ufo
+    zef install Cache::Memcached
 
-Or you can install directly with "panda":
+Or *panda* if you prefer :
 
     # From the source directory
    
@@ -51,12 +51,13 @@ Or you can install directly with "panda":
 
     panda install Cache::Memcached
 
-Other install mechanisms may be become available in the future.
+There should be no reason that it won't work with any new installer
+that may come along in the future.
 
 ## Support
 
-This should be considered experimental software until such time that
-Perl 6 reaches an official release.  However suggestions/patches are
-welcomed via github at
+Suggestions/patches are welcomed via github at
 
-   https://github.com/cosimo/perl6-cache-memcached
+https://github.com/cosimo/perl6-cache-memcached/issues
+
+

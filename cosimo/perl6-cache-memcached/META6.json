@@ -1,0 +1,23 @@
+{
+    "perl": "6.c",
+    "name": "Cache::Memcached",
+    "version": "0.0.7",
+    "description": "Interface to memcached service",
+    "provides": {
+        "Cache::Memcached": "lib/Cache/Memcached.pm"
+    },
+    "depends": [
+        "String::CRC32"
+    ],
+    "test-depends": [
+        "CheckSocket"
+    ],
+    "authors": [ "Cosimo Streppone" ],
+    "auth": "cosimo",
+	"support" : {
+    	"source": "git://github.com/cosimo/perl6-cache-memcached.git",
+		"bugtracker": "https://github.com/cosimo/perl6-cache-memcached/issues"
+	},
+	"tags" : [ "cache", "memcached" ],
+    "source-url": "git://github.com/cosimo/perl6-cache-memcached.git"
+}
