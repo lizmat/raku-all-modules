@@ -1,19 +1,20 @@
 {
-    "perl" : "6.*",
-    "name" : "ProblemSolver",
-    "version" : "0.0.1",
-    "description" : "Simple Constraint Programming Problem Solver",
-    "authors" : ["Fernando Correa de Oliveira"],
-    "provides" : {
-		"ProblemSolver": "lib/ProblemSolver.pm6",
-		"Domain": "lib/ProblemSolver/Domain.pm6",
-		"State": "lib/ProblemSolver/State.pm6"
+    "perl"          : "6.*",
+    "name"          : "ProblemSolver",
+    "version"       : "0.0.1",
+    "description"   : "Simple Constraint Programming Problem Solver",
+    "authors"       : ["Fernando Correa de Oliveira"],
+    "tags"          : ["solver", "constraint", "problem"],
+    "provides"      : {
+        "ProblemSolver" : "lib/ProblemSolver.pm6",
+        "Domain"        : "lib/ProblemSolver/Domain.pm6",
+        "State"         : "lib/ProblemSolver/State.pm6"
     },
-    "depends" : [ ],
-    "test-depends" : [
+    "depends"       : [ ],
+    "test-depends"  : [
         "Test",
         "Test::META"
-   ],
-    "resources" : [ ],
-    "source-url" : "git://github.com/FCO/ProblemSolver.git"
+    ],
+    "resources"     : [ ],
+    "source-url"    : "git://github.com/FCO/ProblemSolver.git"
 }

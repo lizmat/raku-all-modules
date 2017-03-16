@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FCO/ProblemSolver.git
 	branch = master
-	commit = 3f85a6b7e8fbc645976076e3a3635f4ed314927a
-	parent = 6b793ba85a6a62139e76d9670b587689389c41d2
+	commit = c2d07b187f6f0dd647f3afd728d6fbb0290c3009
+	parent = 36348765cc09c839215aae0b7a5223f30557b9b1
 	cmdver = 0.4.0
