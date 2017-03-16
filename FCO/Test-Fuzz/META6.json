@@ -1,23 +1,24 @@
 {
-    "perl" : "6.*",
-    "name" : "Test::Fuzz",
-    "version" : "0.2.0",
-    "description" : "Generative Testing",
-    "authors" : ["Fernando Correa de Oliveira"],
-    "provides" : {
-        "Test::Fuzz":					"lib/Test/Fuzz.pm6",
-        "Test::Fuzz::Fuzzed":			"lib/Test/Fuzz/Fuzzed.pm6",
-        "Test::Fuzz::Generator":		"lib/Test/Fuzz/Generator.pm6",
-        "Test::Fuzz::Generators":		"lib/Test/Fuzz/Generators.pm6",
-        "Test::Fuzz::AggGenerators":	"lib/Test/Fuzz/AggGenerators.pm6"
+    "perl"          : "6.*",
+    "name"          : "Test::Fuzz",
+    "version"       : "0.2.0",
+    "description"   : "Generative Testing",
+    "authors"       : ["Fernando Correa de Oliveira"],
+    "tags"          : ["test", "fuzz", "generative"],
+    "provides"      : {
+        "Test::Fuzz"                :   "lib/Test/Fuzz.pm6",
+        "Test::Fuzz::Fuzzed"        :   "lib/Test/Fuzz/Fuzzed.pm6",
+        "Test::Fuzz::Generator"     :   "lib/Test/Fuzz/Generator.pm6",
+        "Test::Fuzz::Generators"    :   "lib/Test/Fuzz/Generators.pm6",
+        "Test::Fuzz::AggGenerators" :   "lib/Test/Fuzz/AggGenerators.pm6"
     },
-    "depends" : [ ],
-    "test-depends" : [
+    "depends"       : [ ],
+    "test-depends"  : [
         "Test",
         "Test::META"
-   ],
-    "resources" : [
-		"classes"
-	],
-    "source-url" : "git://github.com/FCO/Test-Fuzz.git"
+    ],
+    "resources"     : [
+        "classes"
+    ],
+    "source-url"    : "git://github.com/FCO/Test-Fuzz.git"
 }

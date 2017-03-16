@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FCO/Test-Fuzz.git
 	branch = master
-	commit = c9e2fc50a182733b06e3540969a13f7ba667e830
-	parent = 7a22a25921e20757a74ac5d2b822a8a8bc511121
+	commit = a7e921ebca3e49eb5d6146502cd649f37a5b8c3f
+	parent = 4122cca93928206fa97e6aa6cc97465fd7b812bc
 	cmdver = 0.4.0
