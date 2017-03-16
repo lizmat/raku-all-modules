@@ -165,6 +165,7 @@ kbar
 keyvaluepairs
 keyvaluepairsactions
 lastname
+laquo
 lenticular
 libfoo
 libmysql
@@ -238,6 +239,7 @@ pwstruct
 pêrl
 quietlevel
 quux
+raquo
 rawheader
 rectanglewithcachedarea
 regexname
@@ -288,6 +290,7 @@ thereifixedit
 tobermory
 toomany
 totalperspective
+traceback
 tri
 trin
 tring
@@ -298,6 +301,7 @@ twly
 twodim
 txt
 typehouse
+uares
 ull
 unitish
 userblock
@@ -311,7 +315,9 @@ withoutlinenumber
 wraphandler
 wrappee
 xa
+xab
 xaf
+xbb
 xbeef
 xc
 xff

@@ -22,6 +22,8 @@ if @*ARGS {
             doc/Language/nativecall.pod6
             doc/Language/packages.pod6
             doc/Language/phasers.pod6
+            doc/Language/pod.pod6
+            doc/Language/py-nutshell.pod6
             doc/Language/rb-nutshell.pod6
             doc/Language/tables.pod6
             doc/Language/testing.pod6

@@ -64,8 +64,10 @@ X<|∘,function combinator>X<|o,function combinator>
 
 The function composition operator C«infix:<∘>» or C«infix:<o>» combines two functions, so
 that the left function is called with the return value of the right function.
-If the L«C<.count>|/routine/count» of the left function is more than 1, the return
+If the L«C<.count>|/routine/count» of the left function is greater than 1, the return
 value of the right function will be L<slipped|/type/Slip> into the left function.
+
+Both C<.count> and C<.arity> of the RHS will be maintained.
 
     sub f($p){ say 'f'; $p / 2 }
     sub g($p){ say 'g'; $p * 2 }
