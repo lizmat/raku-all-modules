@@ -2,6 +2,7 @@
     "perl"         : "6.c",
     "name"         : "Pastebin::Shadowcat",
     "version"      : "2.001002",
+    "tags"         : ["pastebin"],
     "description"  : "Use http://fpaste.scsys.co.uk/ pastebin from Perl 6",
     "depends"      : [ "LWP::Simple", "URI::Encode", "HTML::Entity" ],
     "test-depends" : [ "Test" ],
