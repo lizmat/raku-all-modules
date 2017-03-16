@@ -13,9 +13,9 @@ sub run-test-for(Time::Crontab::Set::Type $type, Int $min, Int $max) {
         my $set = Time::Crontab::Set.new(type => $type);
         nok($set.will-ever-execute(), "a new set for $type, with initial values, will-never-execute()");
         nok($set.all-enabled(), "a new set for $type, with initial values, will not have all-enabled()");
-        my $list;
-        $list{$_} = False for ($min..$max);
-        is-deeply($set.hash, $list, 'everything is false');
+        my Bool %list;
+        %list{$_} = False for ($min..$max);
+        is-deeply($set.hash, %list, 'everything is false');
         $set.enable(5);
         ok($set.contains(5), 'element 5 is enabled');
         ok($set.will-ever-execute(), "but it will execute after 5 is enabled");
@@ -31,9 +31,8 @@ sub run-test-for(Time::Crontab::Set::Type $type, Int $min, Int $max) {
         my $expected-distance = ($max - $min - (6-5)) + 1; # 6 := start, 5 := expected
         is($distance, $expected-distance, "which is $expected-distance ahead");
 
-        $list{5} = True;
-        is-deeply($set.hash, $list, '5th element of the list is true');
-        
+        %list{5} = True;
+        is-deeply($set.hash, %list, '5th element of the list is true');
         dies-ok(sub {$set.enable($min-1) }, "enabling element smaller than possible fails");
         dies-ok(sub {$set.enable($max+1) }, "enabling element higher than possible fails");
         lives-ok(sub {$set.enable($min) }, "enabling minimal element");

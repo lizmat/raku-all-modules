@@ -4,6 +4,7 @@
         "version" : "0.1.0",
         "description" : "Time::Crontab for Perl6 - Parses Crontab Specifications",
         "authors" : ["Martin Barth <martin@senfdax.de>"],
+	"tags"    : ["Cron", "Crontab", "Time", "Parsing", "Linux", "Unix", "Date"],
         "provides" : {
             "Time::Crontab" : "lib/Time/Crontab.pm6",
             "Time::Crontab::Actions" : "lib/Time/Crontab/Actions.pm6",

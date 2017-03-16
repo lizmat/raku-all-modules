@@ -128,7 +128,7 @@ class Time::Crontab {
                         # e.g. for $crontab = '0 10 31 * *'    - next to 2016-03-31T11:00:00Z is 2016-05-31T10:00:00Z => there is no 31th of April
                         # e.g. for $crontab = '* * * * *'      - next to 2016-04-30T23:59:00Z is 2016-05-01T00:00:00Z => there is still no 31th of April
                         # e.g. for $crontab = '0 10 10,31 * 2' - next to 2016-04-29T14:11:00Z is 2016-05-03T10:00:00Z => 1st would be 31th april, since its closer then the dow, but then eeeks!
-                    } until $day <= Dateish.days-in-month($year, $month);
+                    } until $day <= Date.new(:$year, :$month).days-in-month;
                 }
             }
             return DateTime.new(:seconds(0), :$minute, :$hour, :$day, :$month, :$year, :$.timezone);
@@ -156,7 +156,7 @@ class Time::Crontab {
         Int :$year!,
         Int :$next-dow!
     ) {
-        my $max_days = Dateish.days-in-month($year, $month);
+        my $max_days = Date.new(:$year, :$month).days-in-month();
         $old-day     = $day;
         $day         = $day + $distance-next-dow;
         $day         = $day > $max_days ?? $day - $max_days !! $day;
