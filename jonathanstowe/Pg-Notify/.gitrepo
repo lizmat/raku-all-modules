@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/Pg-Notify.git
+	branch = master
+	commit = 136ba3fcb1f172e9190d39d88bfff10f7c6a69d6
+	parent = 52cb10fa2db9c72bb04c79e3e5a6c20c6fdff237
+	cmdver = 0.4.0

@@ -1,0 +1,17 @@
+use Pg::Notify;
+use DBIish;
+
+my $db = DBIish.connect('Pg', database => "dbdishtest");
+my $channel = "test";
+
+my $notify = Pg::Notify.new(:$db, :$channel );
+
+react {
+    whenever $notify -> $notification {
+        say $notification.extra;
+    }
+    whenever Supply.interval(1) -> $v {
+        say $db.do("NOTIFY $channel, '$v'");
+    }
+}
+
