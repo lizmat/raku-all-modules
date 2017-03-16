@@ -1,6 +1,7 @@
 {
     "perl": "6.*",
     "name" : "App::Whiff",
+    "tags": ["Utils", "Admin"],
     "version" : "0.1.0",
     "author" : "github:Altai-man",
     "description" : "Port of perl whiff",
