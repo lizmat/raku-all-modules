@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/frithnanth/perl6-Archive-Libarchive-Raw.git
 	branch = master
-	commit = 6f775dc3b88cce0d0970af8b990abc9db0de5cd5
-	parent = d5cd77d4df92ca37aeeaba5b39541f6d0f4b1e4a
+	commit = 077515fbfc82c4859db6d4ae11cb74a4c4c223dc
+	parent = 134623df05ea3fddf67593f9839b63891fe55d02
 	cmdver = 0.4.0
