@@ -7,3 +7,5 @@ before_script:
 test:
   script:
     - prove -ve 'perl6 -Ilib'
+  only:
+    - master

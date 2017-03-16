@@ -15,7 +15,7 @@ method get (Str $url, *%headers) returns Str {
         when X::HTTP::Response {
             my Str $error;
             if .response.content -> $content {
-                require JSON::Fast;
+                require JSON::Fast <&from-json>;
                 my $data = from-json($content);
                 $error = $data<error> if $data<error>:exists;
             }
