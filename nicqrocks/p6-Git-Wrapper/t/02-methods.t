@@ -13,12 +13,18 @@ my $git = Git::Wrapper.new: gitdir => "{$*PROGRAM.dirname}/..";
 plan 3;
 
 #Test if Git::Wrapper can detect if this is a git repo.
-isa-ok $git.is-repo, "Bool", "Can check if the dir is already a repo.";
+isa-ok $git.is-repo, "Bool", "Checking for a git repo returns Bool.";
 
 #Check the version.
 subtest {
     isa-ok $git.version, "Str", "Can get the version.";
     ok $git.version ~~ / 'git version ' /, "Version output looks right.";
+}
+
+#Make sure we are in an actual git repo before proceeding.
+unless $git.is-repo {
+    skip-rest "Not in a git repo";
+    exit;
 }
 
 #Check for arguments with two dashes.
