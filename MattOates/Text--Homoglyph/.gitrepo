@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MattOates/Text--Homoglyph.git
 	branch = master
-	commit = 2e6843d694fde6db8b01a9fb01fc134279e82195
-	parent = ba10cbdcc7f4109401a6d0717047a599335d21b5
-	cmdver = 0.2.2
+	commit = bf97c832da81addaa138b28884e902669668c50f
+	parent = 7aae04dd037c79b263d4d79bad283a03d40905ea
+	cmdver = 0.4.0
