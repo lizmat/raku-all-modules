@@ -1,9 +1,9 @@
-image: rakudo-star:2016.07
+image: rakudo-star:latest
 
 before_script:
-  - panda update
-  - panda --notests installdeps .
-  - panda --notests install .
+  - zef update
+  - zef install --depsonly --/test .
+  - zef --/test install .
 test:
   script:
     - prove -ve 'perl6 -Ilib'
