@@ -5,7 +5,7 @@ constant $VERSION = v0.0.3;
 
 subset PresenceHash of Hash where { .keys.sort ~~ <d e f r w x> }
 
-method show(Str:D $file where *.so) returns PresenceHash:D
+method show(Str:D $file where *.so --> PresenceHash:D)
 {
     my Bool:D $e = $file.IO.e;
     my Bool:D $d = False;
@@ -26,25 +26,25 @@ method show(Str:D $file where *.so) returns PresenceHash:D
     my PresenceHash:D $p = %(:$d, :$e, :$f, :$r, :$w, :$x);
 }
 
-sub exists-readable-dir(Str:D $dir where *.so) is export returns Bool:D
+sub exists-readable-dir(Str:D $dir where *.so --> Bool:D) is export
 {
     my PresenceHash:D $p = File::Presence.show($dir);
     $p<e> && $p<r> && $p<d>;
 }
 
-sub exists-readwriteable-dir(Str:D $dir where *.so) is export returns Bool:D
+sub exists-readwriteable-dir(Str:D $dir where *.so --> Bool:D) is export
 {
     my PresenceHash:D $p = File::Presence.show($dir);
     $p<e> && $p<r> && $p<w> && $p<d>;
 }
 
-sub exists-readable-file(Str:D $file) is export returns Bool:D
+sub exists-readable-file(Str:D $file --> Bool:D) is export
 {
     my PresenceHash:D $p = File::Presence.show($file);
     $p<e> && $p<r> && $p<f>;
 }
 
-sub exists-readwriteable-file(Str:D $file) is export returns Bool:D
+sub exists-readwriteable-file(Str:D $file --> Bool:D) is export
 {
     my PresenceHash:D $p = File::Presence.show($file);
     $p<e> && $p<r> && $p<w> && $p<f>;
