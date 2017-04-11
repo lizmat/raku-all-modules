@@ -3,10 +3,16 @@
 use Data::Dump::Tree ;
 use Data::Dump::Tree::Enums ;
 
+# -------------------------------------------------------
+# example with different types of elements and some roles
+# -------------------------------------------------------
+
 class Strings
 {
+# a class that defines DDT specific methods
 
 method ddt_get_header { "say something about this class\nmultiline", '.' ~ self.^name ~ "\n multiline classes" }
+
 method ddt_get_elements 
 { 
 	('', '', 'has no name'), 
@@ -23,8 +29,10 @@ method ddt_get_elements
 #class
 }
 
+# class with elements and methods but has not type handler nor DDT specific methods
 class GenericClass { has $.x ; has $!z ; method zz {} }
 
+# class with role that can be added to DDT
 class Dog { has $.name; }
 role DescribeDog
 {
@@ -38,18 +46,26 @@ multi method get_elements (Dog $d) { (q/the dog's name is/, ': ', $d.name), }
 
 }
 
+
+# class with inheritance and with 2 different roles that can be added to DDT
 class Hermit {}
 class LivesUnderRock {}
-
 class Shy is Hermit is LivesUnderRock { has $.in_object }
-role DescribeShy { multi method get_elements (Shy $d) { ('Role{DescribeShy} ', '', 1), } }
+
+# hide all internals
+role DescribeShy { multi method get_elements (Shy $d) { } }
+
+#hide itself behind a scalar
 role DescribeShyFinal { multi method get_header (Shy $d) { 'Role{DescribeShyFinal} ', '.' ~ $d.^name, DDT_FINAL } }
 
+
+# class which returns computed "internal" representation 
 class Mangled
 {
 method ddt_get_elements { ('inner structure', ' => ', [123, 456]),  }
 }
 
+# class which returns a text representation, in the form of a table if Text::Table::Simple is installed
 class Table
 {
 
@@ -79,20 +95,14 @@ $! ?? (('DDT exception', ': ', "$!"),)  !! @e ;
 
 # ------------- test --------------
 
-my $d = Data::Dump::Tree.new ;
-$d does DescribeDog ;
-$d does DescribeShyFinal ;
-
-my $dump = $d.get_dump(
-		get_test_structure(),
-		title =>'test data',
-		caller => True,
-		max_depth => 3,
-		display_perl_address => True,
-		width => 75,
-		);
-
-$dump.say ;
+dump
+	get_test_structure(),
+	title =>'test data',
+	caller => True,
+	display_perl_address => True,
+	width => 75,
+	does => (DescribeDog, DescribeShyFinal),
+	max_depth => 3 ;
 
 # ------------- helpers  -------------
 
@@ -104,7 +114,7 @@ my $b = [< a >] ;
 my $list = < a b > ;
 my $sub = sub (Int $a, Str $string) {}
 my Routine $routine ;
-use Data::Dump ;
+
 my $s = [
 	'text',
 	Str,

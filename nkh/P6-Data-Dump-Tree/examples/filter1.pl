@@ -1,81 +1,102 @@
+
 use Data::Dump::Tree ;
 use Data::Dump::Tree::Enums ;
-use Data::Dump::Tree::DescribeBaseObjects ;
-use Data::Dump::Tree::ExtraRoles ;
+
 use Terminal::ANSIColor ;
 
-my $s =
-	[
-	123,
-	{
-		first => [ < a b c > ],
-		second => < a b c >,
-		third => { a => 1, b => 2,},
-	},
-	Int,
-	1.234,
-	] ;
+# -------------------------------------------------------------------
+# display a data structure after passing through user defined filters
+# -------------------------------------------------------------------
+
+
+# the data structure to dump
 
 class Tomatoe{}
 class Potatoe{}
 
 my $s2 =
 	[
-	Tomatoe,
 	123,
 	Tomatoe,
 	Potatoe,
 	{
 		third => { a => 1},
 	},
-	0.5,
-	Tomatoe,
 	] ;
 
+# dump unfiltered
+dump $s2 ;
 
-my $d = Data::Dump::Tree.new ;
-$d does DDTR::QuotedString ;
+# dump filtered
+dump $s2, header_filters => (&my_filter,), elements_filters => (&my_filter,), footer_filters => (&my_filter,) ;
 
-multi sub my_filter(\s_replacement, Int $s, ($depth, $path, $glyph, @renderings), (\k, \b, \v, \f, \final, \want_address))
+
+# -----------
+# the filters
+# -----------
+
+# everything is put in the same multi sub but different subs could have been used
+# filters match on their signatures too
+
+
+# HEADER FILTER
+multi sub my_filter(\r, Int $s, ($depth, $path, $glyph, @renderings), (\k, \b, \v, \f, \final, \want_address))
 {
-#@renderings.append: $glyph ~ color('bold white on_yellow') ~ "Int HEADER " ~ $depth ;
+# add text in the rendering
+@renderings.append: $glyph ~ color('bold white on_yellow') ~ "Int HEADER filter" ;
 
-if $depth < 3 
-	{
-	s_replacement = { a => 'str', nothing => Data::Dump::Tree::Type::Nothing, b => 1 }  ;
+# can replace ourselves with something else, do not forget to update k, b, v, accordingly
+# r = < abc def > ;
 
-	k = k ~ ' wil be replaced by Hash ' ;
-	#b = '' ;
-	#v = '' ;
-	#f = '' ;
-	final = DDT_NOT_FINAL ;
-	want_address = True ;
-	}
+k = '<Int> ' ;
+b = '<b>' ;
+v = '<v>' ;
+f = '<f>' ;
+final = DDT_NOT_FINAL ;
+want_address = True ;
 }
 
+
+# HEADER FILTER
+# called for every element in the data structure as $s, in the signature, is not typed
 multi sub my_filter($r, $s, ($depth, $path, $glyph, @renderings), ($k, $b, $v, $f, $final, $want_address))
 {
-#@renderings.append: $glyph ~ "HEADER " ~ $k ~ $b ~ " - " ~ ($v // $v.^name) ~ " - " ~ $f ~ ' - @depth' ~ $depth ;
+# add text in the rendering
+@renderings.append: $glyph ~ "<" ~ $s.^name ~ '> @depth ' ~ $depth ;
 }
 
+
+# HEADER FILTER
+# replacement filter, matches Tomatoes, removes them from the dump
 multi sub my_filter(\r, Tomatoe $s, ($depth, $path, $glyph, @renderings), $)
 {
+# add text in the rendering
 @renderings.append: $glyph ~ color('red') ~ 'removing tomatoe' ;
+
+# remove tomatoe
 r = Data::Dump::Tree::Type::Nothing ;
 }
 
+
+# ELEMENTS FILTER
+# Match Hashes and replace their elements
 multi sub my_filter(Hash $s, ($depth, $glyph, @renderings), @sub_elements)
 {
-#@renderings.append: $glyph ~ "SUB ELEMENTS" ;
-@sub_elements = (('key', ': ', 'value'), ('other_key', ': ', 1)) ; 
+# add text in the rendering
+@renderings.append: $glyph ~ "Changing elements of the Hash" ;
+
+# new elements
+@sub_elements = (('new element 1', ': ', 2/3), ('new element 2', ': ', 2), ('new element 3', ': ', 3)) ; 
 }
 
+
+
+# FOOTER FILTER
+# called for every element in the data structure as $s, in the signature, is not typed
 multi sub my_filter($s, ($depth, $filter_glyph, @renderings))
 {
-@renderings.append: $filter_glyph ~ "FOOTER for {$s.^name}" ;
+# add text in the rendering
+@renderings.append: $filter_glyph ~ "</{$s.^name}>" ;
 }
-
-$d.dump($s2) ;
-$d.dump($s2, header_filters => (&my_filter,), elements_filters => (&my_filter,), footer_filters => (&my_filter,)) ;
 
 

@@ -14,9 +14,9 @@ has $.caller is rw = False ;
 has $.color is rw = True ;
 has %.colors =
 	<
-	ddt_address blue     perl_address yellow     link  green
-	header      magenta  key         cyan        value reset
-	wrap        yellow
+	ddt_address blue     perl_address yellow     link   green
+	header      magenta  key         cyan        binder cyan 
+	value       reset    wrap        yellow
 
 	glyph_0 yellow   glyph_1 reset   glyph_2 green   glyph_3 red
 	> ;
@@ -30,10 +30,14 @@ has @.elements_filters ;
 has @.footer_filters ;
 
 has %!rendered ;
+has %!element_names ;
+
 has $!address ;
+
+has DDT_Address_Display $.display_address is rw = DDT_Address_Display::DDT_DISPLAY_CONTAINER ;
+
 has $.display_info is rw = True ;
 has $.display_type is rw = True ;
-has $.display_address is rw = True ;
 has $.display_perl_address is rw = False ; 
 
 has %.paths ;
@@ -55,7 +59,11 @@ else
 
 for @does // () -> $role { $object does $role }
 
-if $object.display_info == False { $object.display_type = $object.display_address = False ; };
+if $object.display_info == False 
+	{
+	$object.display_type = False ;
+	$object.display_address = DDT_DISPLAY_NONE ;
+	}
 
 $object 
 }
@@ -80,7 +88,11 @@ my $clone = self.clone(|%options) ;
 
 for %options<does> // () -> $role { $clone does $role } 
 
-if %options<display_info>.defined && %options<display_info> == False { $clone.display_type = $clone.display_address = False ; };
+if %options<display_info>.defined && %options<display_info> == False 
+	{
+	$clone.display_type = False ;
+	$clone.display_address = DDT_DISPLAY_NONE ; 
+	}
 
 $clone.render_root($s)
 }
@@ -154,19 +166,31 @@ my ($v, $f, $final, $want_address) ;
 		!! self.get_element_header($s) ;
 
 $f ~= ':U' unless $s.defined ;
-
 $f = '' unless $.display_type ; 
  
 $final //= DDT_NOT_FINAL ;
-$want_address //= $final ?? False !! True ;
+
+
+if $.display_address == DDT_DISPLAY_NONE | DDT_DISPLAY_ALL 
+	{
+	$want_address = True ;
+	}
+elsif $.display_address == DDT_DISPLAY_CONTAINER 
+	{
+	$want_address //= ! $final ;
+	}
+
 
 my ($address, $rendered) =
 	$s.WHAT !=:= Mu
-		?? $want_address ?? self!get_address($s) !! (Nil, True)
-		!! (('', '', ''), True) ;
+		?? $want_address ?? self!get_address($s) !! (Nil, False)
+		!! (Nil, True) ;
+
+
+$address = Nil if $.display_address == DDT_DISPLAY_NONE ;
+
 
 my $s_replacement ;
-
 @!header_filters and $s.WHAT !=:= Mu and  
 	$.filter_header($s_replacement, $s, ($current_depth, $path, $filter_glyph, @renderings), ($k, $b, $v, $f, $final, $want_address)) ;
 
@@ -178,7 +202,7 @@ if $final { $multi_line_glyph = $empty_glyph }
 # perl stringy $v if role is on
 ($v, $, $) = self.get_header($v) if $s !~~ Str ;
 
-my ($kvf, @ks, @vs, @fs) := self!split_entry($width, $k~$b, $glyph_width, $v, $f, $address) ;
+my ($kvf, @ks, @vs, @fs) := self!split_entry($width, $k, $b, $glyph_width, $v, $f, $address) ;
 
 if $kvf.defined
 	{
@@ -300,7 +324,7 @@ method !get_element_subs($s)
 		!! $.get_elements($s) ;  # generic handler
 }
 
-method !split_entry($width, Cool $k, Int $glyph_width, Cool $v, Cool $f is copy, $address)
+method !split_entry($width, Cool $k, Cool $b, Int $glyph_width, Cool $v, Cool $f is copy, $address)
 {
 my @ks = self.split_text($k, $width + $glyph_width) ; # $k has a bit extra space
 my @vs = self.split_text($v, $width) ; 
@@ -314,9 +338,10 @@ my ($ddt_address, $perl_address, $link) =
 my $kvf ;
 
 if +@ks < 2 && +@vs < 2 && +@fs < 2
-	&& (@ks.join ~ @vs.join ~ @fs.join ~ $ddt_address ~ $perl_address ~ $link).chars <= $width 
+	&& (@ks.join ~ $b  ~ @vs.join ~ @fs.join ~ $ddt_address ~ $perl_address ~ $link).chars <= $width 
 	{
 	$kvf = $!colorizer.color(@ks.join, 'key') 
+		~ $!colorizer.color($b, 'binder') 
 		~ $!colorizer.color(@vs.join, 'value') 
 		~ $!colorizer.color(@fs.join, 'header')
 		~ ' ' ~ $!colorizer.color($ddt_address, 'ddt_address')
@@ -326,6 +351,8 @@ if +@ks < 2 && +@vs < 2 && +@fs < 2
 else
 	{
 	@ks = $!colorizer.color(@ks, 'key') ; 
+	@ks[*-1] ~= $!colorizer.color($b, 'binder') if @ks ; 
+
 	@vs = $!colorizer.color(@vs, 'value') ; 
 
 	@fs.append: '' unless @fs ;
@@ -389,6 +416,21 @@ method superscribe($text) { $text }
 method superscribe_type($text) { $text }
 method superscribe_address($text) { $text }
 
+method set_element_name($e, $name)
+{
+my $perl_address = $e.WHICH ;
+
+if ! $e.defined 
+	{
+	$perl_address ~= ':DDT:TYPE_OBJECT' ;
+	}
+else
+	{
+	$perl_address ~= ':DDT:' ~ $e.WHICH unless $perl_address ~~ /\d ** 4/ ;
+	%!element_names{$perl_address} = $name ;
+	}
+}
+
 method !get_address($e)
 {
 my $ddt_address = $!address++ ;
@@ -400,7 +442,7 @@ if ! $e.defined
 	}
 else
 	{
-	$perl_address ~= ':DDT:' ~ $e.WHERE unless $perl_address ~~ /\d ** 4/ ;
+	$perl_address ~= ':DDT:' ~ $e.WHICH unless $perl_address ~~ /\d ** 4/ ;
 	}
 
 my ($link, $rendered) = ('', False) ;
@@ -409,10 +451,12 @@ if %!rendered{$perl_address}:exists
 	{
 	$rendered++ ;
 	$link = ' = @' ~ %!rendered{$perl_address} ;
+	$link ~= ' ' ~ %!element_names{$perl_address} if %!element_names{$perl_address}:exists
 	}
 else
 	{
 	%!rendered{$perl_address} = $ddt_address ;
+	$ddt_address ~= ' ' ~ %!element_names{$perl_address} if %!element_names{$perl_address}:exists
 	}
 
 my $address = 
@@ -423,7 +467,6 @@ my $address =
 		$link, 
 		) 
 	!!	('', '', '',) ;
-
 
 $address, $rendered
 }
@@ -510,5 +553,4 @@ $t
 
 #class
 }
-
 
