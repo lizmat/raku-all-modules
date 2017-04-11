@@ -1,7 +1,7 @@
 {
     "perl"          : "6.*",
     "name"          : "File::Ignore",
-    "version"       : "1.0",
+    "version"       : "1.1",
     "description"   : "Parsing and application of .gitignore-style ignore files.",
     "author"        : "Jonathan Worthington <jnthn@jnthn.net>",
     "depends"       : [],

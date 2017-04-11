@@ -4,6 +4,7 @@ class File::Ignore {
     class Rule {
         grammar Parser {
             token TOP {
+                [ $<negated>='!' ]?
                 [ $<leading>='/' ]?
                 <path-part>+ % '/'
                 [ $<trailing>='/' ]?
@@ -31,6 +32,7 @@ class File::Ignore {
                                     ($<leading> ?? '^' !! '') ~
                                     $<path-part>.map(*.ast).join(' ')  ~
                                     '<?before "/" | $> /'),
+                    negated => ?$<negated>,
                     directory-only => ?$<trailing>
                 );
             }
@@ -66,6 +68,7 @@ class File::Ignore {
 
         has Regex $.pattern;
         has Bool $.directory-only;
+        has Bool $.negated;
 
         method parse(Str() $rule) {
             with Parser.parse($rule, :actions(RuleCompiler)) {
@@ -88,18 +91,33 @@ class File::Ignore {
     }
 
     method ignore-file(Str() $path) {
+        my $seeking-negation = False;
         for @!rules {
-            next if .directory-only;
-            return True if .pattern.ACCEPTS($path);
+            if $seeking-negation {
+                next unless .negated;
+                $seeking-negation = False if .pattern.ACCEPTS($path);
+            }
+            else {
+                next if .directory-only | .negated;
+                $seeking-negation = True if .pattern.ACCEPTS($path);
+            }
         }
-        False
+        $seeking-negation
     }
 
     method ignore-directory(Str() $path) {
+        my $seeking-negation = False;
         for @!rules {
-            return True if .pattern.ACCEPTS($path);
+            if $seeking-negation {
+                next unless .negated;
+                $seeking-negation = False if .pattern.ACCEPTS($path);
+            }
+            else {
+                next if .negated;
+                $seeking-negation = True if .pattern.ACCEPTS($path);
+            }
         }
-        False
+        $seeking-negation
     }
 
     method ignore-path(Str() $path) {

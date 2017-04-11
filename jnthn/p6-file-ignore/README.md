@@ -33,6 +33,7 @@ The following pattern syntax is supported for matching within a path segment
     *       Matches zero or more characters in a path segment
     [abc]   Character class; matches a, b, or c
     [!0]    Negated character class; matches anything but 0
+    [a-z]   Character ranges inside of character classes
 
 Additionally, `**` is supported to match zero or more path segments. Thus, the
 rule ` a/**/b` will match `a/b`, `a/x/b`, `a/x/y/b`, etc.
@@ -101,6 +102,31 @@ scenario.
     my $ignores = File::Ignore.new(rules => ['bin/']);
     say $ignores.ignore-file('bin/x');  # False
     say $ignores.ignore-path('bin/x');  # True
+
+## Negation
+
+A rule can be negated by placing a `!` before it. Negative rules are ignored
+until a file or directory matches a positive rule. Then, only negative rules
+are considered, to see if it is then un-ignored. If a matching negative rule
+is found, positive rules continue to be searched.
+
+Therefore, these two rules:
+
+    foo/bar/*
+    !foo/bar/ok
+
+Would ignore everything in `foo/bar/` except `ok`. However:
+
+    !foo/bar/ok
+    foo/bar/*
+
+Would not work because the negation comes before the ignore. Further, negated
+file ignores cannot override directory ignores, so:
+
+    foo/bar/
+    !foo/bar/ok
+
+Would also not work; the trailing `*` is required.
 
 ## Thread safety
 
