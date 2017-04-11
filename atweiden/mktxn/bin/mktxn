@@ -37,7 +37,7 @@ multi sub MAIN(
     mktxn(:file(resolve-path($file)), :release, |%opts);
 }
 
-sub resolve-path(Str:D $path where *.so) returns Str:D
+sub resolve-path(Str:D $path where *.so --> Str:D)
 {
     ~$path.subst(/^'~/'/, $*HOME ~ '/').IO.resolve;
 }

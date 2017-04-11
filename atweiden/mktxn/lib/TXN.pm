@@ -211,7 +211,7 @@ my class TXN::Package
 
     # --- method hash {{{
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         %(
             :@!entry,
@@ -231,7 +231,7 @@ my class TXN::Package
 
     # --- sub get-entities-seen {{{
 
-    sub get-entities-seen(TXN::Parser::AST::Entry:D @entry) returns Array:D
+    sub get-entities-seen(TXN::Parser::AST::Entry:D @entry --> Array:D)
     {
         my VarName:D @entities-seen = @entry.flatmap({
             .posting.map({ .account.entity })
@@ -294,7 +294,8 @@ multi sub mktxn(
         Int :date-local-offset($),
         Str :template($)
     )
-) is export returns Hash:D
+    --> Hash:D
+) is export
 {
     TXN::Package.new('FILE', $file, |%opts).hash;
 }
@@ -310,7 +311,8 @@ multi sub mktxn(
         Int :date-local-offset($),
         Str :template($)
     )
-) is export returns Hash:D
+    --> Hash:D
+) is export
 {
     TXN::Package.new('CONTENT', $content, |%opts).hash;
 }
@@ -364,13 +366,14 @@ sub package(% (TXN::Parser::AST::Entry :@entry!, :%txn-info!))
 
 multi sub resolve-txn-file-path(
     Str:D $file where *.IO.extension eq 'txn'
-) returns Str:D
+    --> Str:D
+)
 {
     die unless exists-readable-file($file);
     $file;
 }
 
-multi sub resolve-txn-file-path(Str:D $file where *.so) returns Str:D
+multi sub resolve-txn-file-path(Str:D $file where *.so --> Str:D)
 {
     die unless exists-readable-file("$file.txn");
     "$file.txn";
