@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/melezhik/sparrowdo.git
 	branch = master
-	commit = a6f1a41fc3d0854a9fe7b01cd53274ffd0f89cc8
-	parent = e0eee02a16af34143cc9016b62e9951b3d312eaf
+	commit = b1f3a2f314ca975c742640a5d7351b288384c385
+	parent = 515e025c65476db9994c8ba89f58868f3cc61b39
 	cmdver = 0.4.0

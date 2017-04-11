@@ -24,7 +24,8 @@ sub MAIN (
   Bool :$verbose = False, 
   Bool :$bootstrap = False, 
   Bool :$check_syntax = False, 
-  Str  :$module_run, 
+  Str  :$module_run,
+       :$task_run, 
   Bool :$no_sudo = False,
   Bool :$no_color = False,
   Bool :$no_index_update = False,
@@ -35,7 +36,7 @@ sub MAIN (
   
   # dirty hacks to pass command line parameter into sparrowfile context
   # sorry for not knowing perl6 idioms ... ));
-
+  
   set_input_params %(  
     Host => $host, 
     Sparrowfile => $sparrowfile, 
@@ -55,7 +56,7 @@ sub MAIN (
 
   say colored('running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
 
-  ssh_shell 'mkdir -m 777 -p /tmp/sparrow-cache && echo print os | perl -MOutthentic  > /tmp/sparrow-cache/os.txt';
+  ssh_shell 'mkdir -m 777 -p /tmp/sparrow-cache/ && mkdir -m 777 -p /tmp/sparrow-cache/plugins && echo print os | perl -MOutthentic  > /tmp/sparrow-cache/os.txt';
 
   _scp "/tmp/sparrow-cache/os.txt", "/tmp/target_os", 1; # copy back /tmp/os.txt 
 
@@ -71,23 +72,15 @@ sub MAIN (
 
   if $module_run {
     module_run $module_run;
+  } elsif $task_run {
+    plg-run($task_run);
   } else {
     EVALFILE $sparrowfile||'sparrowfile';
   }
 
   exit if $check_syntax;
 
-  mkdir '/tmp/sparrowdo/';
-
-  spurt "/tmp/sparrowdo/task-box$*PID.json", (to-json get_tasks());
-
-  _scp "/tmp/sparrowdo/task-box$*PID.json", "/tmp/sparrow-cache/";
-
-  say colored("set up task box file - /tmp/sparrowdo/task-box$*PID.json - OK", 'bold green on_blue');
-
-
   if get_spl() {
-
 
     if input_params('Verbose') {
       say colored( 'puplating SPL file', 'bold yellow on_cyan' );
@@ -102,7 +95,28 @@ sub MAIN (
 
   ssh_shell 'sparrow index update' unless input_params('NoIndexUpdate');
 
-  ssh_shell "sparrow box run /tmp/sparrow-cache/task-box$*PID.json --mode quiet --purge-cache";
+  # plugins mode
+  if ($task_run) {
+    mkdir '/tmp/sparrowdo/';
+    mkdir '/tmp/sparrowdo/plugins';
+    for plg-list() -> @p {
+      ssh_shell "sparrow plg install " ~ @p[0];
+      if @p[1] {
+        spurt "/tmp/sparrowdo/plugins/@p[0].args", @p[1].join: "\n";
+        _scp "/tmp/sparrowdo/plugins/@p[0].args", '/tmp/sparrow-cache/plugins';
+        ssh_shell "sparrow plg run " ~ @p[0] ~ ' --args-file ' ~ '/tmp/sparrow-cache/plugins/' ~ "@p[0].args";
+      } else {
+        ssh_shell "sparrow plg run " ~ @p[0];
+      }
+    } 
+    # task box mode  
+  } else {
+    mkdir '/tmp/sparrowdo/';
+    spurt "/tmp/sparrowdo/task-box$*PID.json", (to-json get_tasks());
+    _scp "/tmp/sparrowdo/task-box$*PID.json", "/tmp/sparrow-cache/";
+    say colored("set up task box file - /tmp/sparrowdo/task-box$*PID.json - OK", 'bold green on_blue');
+    ssh_shell "sparrow box run /tmp/sparrow-cache/task-box$*PID.json --mode quiet --purge-cache";
+  }
 
 }
 
@@ -178,6 +192,6 @@ sub bootstrap {
   ssh_shell 'if ! which perl 2>/dev/null; then yum -y install perl; fi';
   ssh_shell 'if ! which cpanm 2>/dev/null; then curl -kL http://cpanmin.us/ -o /bin/cpanm; chmod a+x /bin/cpanm; fi';
   ssh_shell 'if ! which sparrow 2>/dev/null; then yum -y install gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge; cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow; fi';
-  ssh_shell 'cpanm -q Outthentic Sparrow || cpanm --notest -q Outthentic Sparrow'; # forcefully upgrade Sparrow
+  ssh_shell 'cpanm -q --notest Outthentic Sparrow || cpanm --notest -q Outthentic Sparrow'; # forcefully upgrade Sparrow
 
 }

@@ -1,24 +1,19 @@
-language: perl6
-
-perl6:
-  - latest
+language: perl
 
 before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y cpanminus
-  - sudo cpanm -q --notest install Sparrow
   - cat /dev/zero | ssh-keygen -q -N ""
   - cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
   - chmod og-wx ~/.ssh/authorized_keys
 
 install:
-  - rakudobrew build-panda
-  - panda --notests installdeps .
-
+    - export PATH=/opt/rakudo/bin:~/.perl6/bin:$PATH
+    - wget https://github.com/nxadm/rakudo-pkg/releases/download/2017.03_02/perl6-rakudo-moarvm-ubuntu16.04_20170300-02_amd64.deb
+    - sudo dpkg -i *.deb
+    - install_zef_as_user.sh
+    - zef install .
+    - zef install Sparrowdo::Sparrow::Update
 script:
-  - perl6 -Ilib -c bin/sparrowdo
-  - prove -vr -e 'perl6 -Ilib' t/
-  - panda install .
-  - panda install Sparrowdo::Sparrow::Update
-  - perl6 -Ilib bin/sparrowdo --module_run=Sparrow::Update --bootstrap --host=127.0.0.1
+  - sparrowdo --module_run=Sparrow::Update --bootstrap --host=127.0.0.1
+  - sparrowdo --task_run=df-check --host=127.0.0.1
   - strun --root examples/
+  - sparrowdo --host=127.0.0.1 --no_index_update --task_run=user@name=foo --task_run=bash@command='id && cd ~/ && pwd && uptime && ls -l && ps uax|grep ssh|grep -v grep',user=foo --task_run=df-check@therhold=54

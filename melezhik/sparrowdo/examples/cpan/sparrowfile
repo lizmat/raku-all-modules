@@ -1,27 +1,28 @@
-user-create 'foo';
+user-create 'travis';
+directory '/home/travis/cpan-test', %( owner => 'travis' );
 
 cpan-package-install ('CGI', 'Config::Tiny', 'HTTP::Tiny'), %( 
-    user =>'foo',
-    install-base => '/home/foo/',
+    user =>'travis',
+    install-base => '/home/travis/cpan-test',
   );
 
 cpan-package-install 'CGI Config::Tiny HTTP::Tiny', %( 
-    user =>'foo',
-    install-base => '/home/foo/',
+    user =>'travis',
+    install-base => '/home/travis/cpan-test',
 );
 
 cpan-package-install 'CGI', %( 
-    user =>'foo',
-    install-base => '/home/foo/',
+    user =>'travis',
+    install-base => '/home/travis/cpan-test',
 );
 
 cpan-package 'CGI', %( 
-    user =>'foo',
-    install-base => '/home/foo/',
+    user =>'travis',
+    install-base => '/home/travis/cpan-test',
 );
 
 cpan-package ('CGI','Config::Tiny'), %( 
-    user =>'foo',
-    install-base => '/home/foo/',
+    user =>'travis',
+    install-base => '/home/travis/cpan-test',
 );
 

@@ -286,7 +286,7 @@ Examples:
     # ssh to 192.168.0.1 and execute 'uptime'
     # a shortest form, only obligatory parameters are set:
     ssh 'uptime', %( host => '192.168.0.1' )
-OOB
+
     # the same but add description for command:
     ssh 'uptime', %( host => '192.168.0.1' , description => "how old are you?" );
 

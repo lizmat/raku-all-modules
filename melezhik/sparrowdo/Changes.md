@@ -1,6 +1,24 @@
-# 0.0.7
+# 0.0.12 2017-04-11
 
-2017-02-01
+A minor fixes for Travis and bootstrap
+
+# 0.0.11 2017-04-11
+
+Final version for: running multiple tasks (plugins) with multiples parameters via command line
+
+# 0.0.10 2017-04-10
+
+Running multiple tasks from command line
+
+# 0.0.9 2017-04-04
+
+Changing reports layout
+
+# 0.0.8 2017-03-17
+
+* Add SparrowRoot input parameter
+
+# 0.0.7 2017-02-01
 
 * a lot of improvements for bash/ssh/scp core dsl functions
 

@@ -7,6 +7,7 @@ use Terminal::ANSIColor;
 my %input_params = Hash.new;
 my $target_os;
 my @tasks = Array.new;
+my @plugins = Array.new;
 my @spl = Array.new;
 my %config = Hash.new;
 
@@ -14,7 +15,7 @@ sub push_task (%data){
 
   @tasks.push: %data;
 
-  say colored('push task <' ~ %data<task> ~ '> plg <' ~ %data<plugin> ~ '> OK', 'bold green on_blue');
+  say colored('push [task] ' ~ %data<task> ~  ' OK', 'bold green on_blue');
 
 }
 
@@ -65,7 +66,7 @@ sub set_spl(%args) is export {
 
 multi sub task_run($task_desc, $plugin_name, %parameters?) is export { 
     task_run %(
-      task          => $task_desc,
+      task          => "$task_desc" ~ " [plg] " ~ $plugin_name,
       plugin        => $plugin_name,
       parameters    => %parameters
     );
@@ -74,7 +75,7 @@ multi sub task_run($task_desc, $plugin_name, %parameters?) is export {
 multi sub task_run(%args) is export { 
 
   my %task_data = %( 
-      task => %args<task>,
+      task => %args<task> ~ " [plg] " ~ %args<plugin>,
       plugin => %args<plugin>,
       data => %args<parameters>
   );
@@ -89,6 +90,29 @@ multi sub task-run(%args) is export {
 
 multi sub task-run($task_desc, $plugin_name, %parameters?) is export { 
   task_run $task_desc, $plugin_name, %parameters
+}
+
+sub plg-list() is export {
+  @plugins;
+}
+
+multi sub plg-run($plg) is export {
+  plg-run([$plg])
+}
+
+multi sub plg-run(@plg-list) is export {
+
+  for @plg-list -> $p {
+    if $p ~~ /(\S+)\@(.*)/ {
+      my $name = $0; my $params = $1;
+      my @args = split(/\,/,$params);
+      @plugins.push: [ $name,  @args ];
+      say colored('push [plugin] ' ~ $name ~  ~ ' ' ~ @args ~ ' OK', 'bold green on_blue');
+    } else {
+      @plugins.push: [ $p ];
+      say colored('push [plugin] ' ~ $p ~  ' OK', 'bold green on_blue');
+    }
+  }
 }
 
 sub module_run($name, %args = %()) is export {
