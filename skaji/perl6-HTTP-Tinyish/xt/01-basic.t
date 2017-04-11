@@ -12,6 +12,11 @@ like %res<content>, rx/Comprehensive/;
 is %res<status>, 200;
 like %res<content>, rx:i/github/;
 
+# for status line like HTTP/2
+%res = HTTP::Tinyish.new(verify-ssl => True).get("https://www.youtube.com/");
+is %res<status>, 200;
+like %res<content>, rx:i/google.com/;
+
 %res = HTTP::Tinyish.new(verify-ssl => False).get("https://cpan.metacpan.org/");
 is %res<status>, 200;
 like %res<content>, rx:i/Comprehensive/;

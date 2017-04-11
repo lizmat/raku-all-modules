@@ -11,7 +11,7 @@ BEGIN {
 
 method parse-http-header($header is copy, %res) {
     # it might have multiple headers in it because of redirects
-    $header ~~ s/.*^^(HTTP\/\d\.\d )/$/[0]/;
+    $header ~~ s/.*^^(HTTP\/\d[\.\d]? )/$/[0]/;
 
     # grab the first chunk until the line break
     if $header ~~ /^(.*?\x0d?\x0a\x0d?\x0a)/ {
@@ -34,12 +34,13 @@ method parse-http-header($header is copy, %res) {
     }
 
     my ($proto, $status, $reason) = split /' '/, $status_line, 3;
-    return unless $proto and $proto ~~ /:i ^ HTTP \/ \d+ \. \d+ $/;
+    return unless $proto and $proto ~~ /:i ^ HTTP \/ \d+ [ \. \d+ ]? $/;
 
     %res<status> = $status.Int;
     %res<reason> = $reason;
     %res<success> = so $status ~~ /^[2|304]/;
     %res<headers> //= {};
+    %res<protocol> = $proto;
 
     # import headers
     my $token = rx:P5/[^][\x00-\x1f\x7f()<>@,;:\\"\/?={} \t]+/; # 
@@ -74,5 +75,5 @@ method internal-error($url, $message) {
         success => False,
         url     => $url,
     ;
-    |%res;
+    %res;
 }
