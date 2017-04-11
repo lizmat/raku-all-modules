@@ -2,17 +2,129 @@
 
 =TITLE role IO
 
-=SUBTITLE Input/output related object
-
-    role IO { }
-
-The IO role provides no functionality itself; it simply marks that a
-particular object relates to input/output.
+=SUBTITLE Input/output related routines
 
 Please note that coercion via L<Cool.IO|/type/Cool#method_IO> leads to
 L<IO::Path|/type/IO::Path>. This is the exception from the rule.
 
 =head1 Routines
+
+=head2 sub chdir
+
+Defined as:
+
+    sub chdir(IO() $path, :$d = True, :$r, :$w, :$x --> IO::Path:D)
+
+Changes value of C<$*CWD> variable to the provided C<$path>, optionally ensuring
+the new path passes several file tests. B<NOTE:> that this routine does I<NOT>
+alter the process's current directory (see
+L«C<&*chdir>|/routine/&*chdir»).
+
+Returns L«C<IO::Path>|/type/IO::Path»
+representing new C<$*CWD> on success. On failure, returns
+L«C<Failure>|/type/Failure» and leaves C<$*CWD> untouched.
+The C<$path> can be any object with an IO method that returns an
+L«C<IO::Path>|/type/IO::Path» object. The available file tests are:
+
+=item C<:d> — check L«C<.d>|/routine/d» returns C<True>
+
+=item C<:r> — check L«C<.r>|/routine/d» returns C<True>
+
+=item C<:w> — check L«C<.w>|/routine/d» returns C<True>
+
+=item C<:x> — check L«C<.x>|/routine/d» returns C<True>
+
+By default, only C<:d> test is performed.
+
+    chdir        '/tmp'; # change $*CWD to '/tmp' and check its .d is True
+    chdir :r, :w '/tmp'; # … check its .r and .w are True
+    chdir '/not-there';  # returns Failure
+
+Note that the following construct is a mistake:
+
+    # WRONG! DO NOT DO THIS!
+    my $*CWD = chdir '/tmp/';
+
+Use L«C<indir>|/routine/indir» instead.
+
+=head2 sub &*chdir
+
+Defined as:
+
+    PROCESS:<&chdir> = sub (IO() $path --> IO::Path:D)
+
+Changes value of C<$*CWD> variable to the provided C<$path> and sets
+the process's current directory to the value of
+L«C<$path.absolute>|/routine/absolute». B<NOTE:> that in most cases,
+you want to use L«C<chdir>|/routine/chdir» routine instead.
+
+Returns L«C<IO::Path>|/type/IO::Path»
+representing new C<$*CWD> on success. On failure, returns
+L«C<Failure>|/type/Failure» and leaves C<$*CWD> untouched.
+The C<$path> can be any object with an IO method that returns an
+L«C<IO::Path>|/type/IO::Path» object.
+
+Note that unlike regular L«C<chdir>|/routine/chdir», there are no arguments
+to specify which file tests to perform.
+
+    &*chdir('/tmp');  # change $*CWD and process's current directory to '/tmp'
+    &*chdir('/not-there'); # returns Failure
+
+Note that the following construct is a mistake:
+
+    # WRONG! DO NOT DO THIS!
+    my $*CWD = &*chdir('/tmp');
+
+Use the following, instead; or see L«C<indir>|/routine/indir» if
+you do not need to change process's current directory:
+
+    temp $*CWD;
+    &*chdir('/tmp');
+
+=head2 sub chmod
+
+    sub chmod(Int() $mode, *@filenames --> List)
+
+Coerces all C<@filenames> to L«C<IO::Path>|/type/IO::Path» and calls
+L«C<IO::Path.chmod>|/type/IO::Path#method_chmod» with C<$mode> on them.
+Returns a L«C<List>|/type/List» containing a subset of C<@filenames> for which
+C<chmod> was successfully executed.
+
+    chmod 0o755, <myfile1  myfile2>; # make two files executable by the owner
+
+=head2 sub indir
+
+Defined as:
+
+    sub indir(IO() $path, &code, :$d = True, :$r, :$w, :$x --> Mu)
+
+Takes L«C<Callable>|/type/Callable» C<&code> and executes it after locally (to
+C<&code>) changing C<$*CWD> variable to C<$path>, optionally ensuring
+the new path passes several file tests. B<NOTE:> that this routine does I<NOT>
+alter the process's current directory (see
+L«C<&*chdir>|/routine/$AMPERSAND*chdir»). The C<$*CWD> outside of the C<&code>
+is not affected, even if C<&code> explicitly assignes a new value to C<$*CWD>.
+
+Returns the return value of C<&code> on success. On failure to successfully
+change C<$*CWD>, returns L«C<Failure>|/type/Failure».
+The C<$path> can be any object with an IO method that returns an
+L«C<IO::Path>|/type/IO::Path» object. The available file tests are:
+
+=item C<:d> — check L«C<.d>|/routine/d» returns C<True>
+
+=item C<:r> — check L«C<.r>|/routine/d» returns C<True>
+
+=item C<:w> — check L«C<.w>|/routine/d» returns C<True>
+
+=item C<:x> — check L«C<.x>|/routine/d» returns C<True>
+
+By default, only C<:d> test is performed.
+
+    say $*CWD;                   # OUTPUT: «"/home/camelia".IO␤»
+    indir '/tmp', { say $*CWD }; # OUTPUT: «"/tmp".IO␤»
+    say $*CWD;                   # OUTPUT: «"/home/camelia".IO␤»
+
+    indir '/not-there', {;};     # returns Failure; path does not exist
 
 =head2 sub print
 
@@ -252,24 +364,13 @@ exist, or is a directory.
 
 =head2 sub spurt
 
-=for code :skip-test
-sub spurt($where, $what,
-    Str  :$enc        = 'utf8',
-    Bool :$bin        = False,
-    Bool :$append      = False,
-    Bool :$createonly = False
-    --> Bool )
+Defined as:
 
-Writes the indicated contents (2nd positional parameter, C<$what>) to the
-location indicated by the first positional parameter, C<$where> (which can
-either be a string or an C<IO::Path> object).  To write to an C<IO::Handle>,
-use the L<print> method.
+    multi spurt(IO() $path, |c)
 
-If a file needs to be opened for writing, it will also be C<close>d.  Returns
-C<True> on success, or the appropriate C<Failure> if something went wrong.
-
-These named parameters are optional and only have meaning if the first
-positional parameter was B<not> an C<IO::Handle>:
+The C<$path> can be any object with an IO method that returns an
+L«C<IO::Path>|/type/IO::Path» object. Calls L«C<IO::Path.spurt>|/routine/spurt»
+on the C<$path>, forwarding any of the remaining arguments.
 
 =head3 Options
 

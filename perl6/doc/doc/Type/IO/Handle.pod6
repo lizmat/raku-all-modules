@@ -50,72 +50,6 @@ waiting for another keypress before the initial "e" is returned.
 
 Returns C<True> if the read operations have exhausted the content of the file.
 
-=head2 method e
-
-    method e(--> Bool)
-
-Returns C<Bool::True> if the invocant is a valid path that exists.
-
-=head2 method d
-
-    method d(--> Bool)
-
-Returns C<Bool::True> if the invocant is a path and the directory exists.
-
-=head2 method f
-
-    method f(--> Bool)
-
-Returns C<Bool::True> if the invocant is a path and the file exists.
-
-=head2 method s
-
-    method s(--> Bool)
-
-Returns C<Bool::True> if the invocant is a path and the size is bigger then 0.
-
-=head2 method l
-
-    method l(--> Bool)
-
-Returns C<Bool::True> if the invocant is a path and a symlink.
-
-=head2 method r
-
-    method r(--> Bool)
-
-Returns C<Bool::True> if the invocant is a path and accessible.
-
-=head2 method w
-
-    method w(--> Bool)
-
-Returns C<Bool::True> if the invocant is a path and writable.
-
-=head2 method rw
-
-    method rw(--> Bool)
-
-Returns C<Bool::True> if the invocant is a path, read and writable.
-
-=head2 method x
-
-    method x(--> Bool)
-
-Returns C<Bool::True> if the invocant is a path and executable.
-
-=head2 method rwx
-
-    method rwx(--> Bool)
-
-Returns C<Bool::True> if the invocant is a path, executable, read and writable.
-
-=head2 method z
-
-    method z(--> Bool)
-
-Returns C<Bool::True> if the invocant is a path and the size is 0.
-
 =head2 method lines
 
     method lines($limit = Inf)
@@ -153,6 +87,20 @@ on strings.
 =for code :skip-test
 my $fh = open 'path/to/file', :r;
 $fn.split(' ', close => True); # Returns file content split by a space and closes file;
+
+=head2 method spurt
+
+    multi method spurt(IO::Handle:D: Blob $data, :$close = False)
+    multi method spurt(IO::Handle:D: Cool $data, :$close = False)
+
+Writes all of the C<$data> into the filehandle, closing it when finished,
+if C<$close> is C<True>. For L«C<Cool>|/type/Cool» C<$data>, will use the
+encoding the handle is set to use (L«C<IO::Handle.open>|/routine/open»
+or L«C<IO::Handle.encoding>|/routine/encoding»).
+
+Behaviour for spurting a L«C<Cool>|/type/Cool» when the handle is in binary
+mode or spurting a L«C<Blob>|/type/Blob» when the handle is NOT in binary
+mode is undefined.
 
 =head2 method comb
 
