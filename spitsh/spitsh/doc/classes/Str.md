@@ -61,6 +61,24 @@ for @urls {
 
 
  Returns an lowercase version of the string
+## match
+>method match([Regex](./Regex.md) **$r** ⟶ [Bool](./Bool.md))
+
+
+ Returns true if the the string matches the regex and sets the `@/` match variable to the match and its capture groups (one per line).
+```perl6
+my $regex = rx‘^(.+)://([^/]+)/?(.*)$’;
+if 'https://github.com/spitsh/spitsh'.match($regex) {
+    say @/[0]; #-> https://github.com/spitsh/spitsh
+    say @/[1]; #-> https
+    say @/[2]; #-> github.com
+    say @/[3]; #-> spitsh/spitsh
+}
+```
+
+|Parameter|Description|
+|---------|-----------|
+|**$r**| The regular expression to match against|
 ## note
 >method note()
 

@@ -1,6 +1,7 @@
 use Test;
 
-plan 12;
+plan 18;
+
 {
     my $a = "foo";
     given $a {
@@ -19,6 +20,14 @@ plan 12;
         default { flunk 'numeric cmp given' }
     }
 }
+
+{
+    my $y = 3;
+    when $y > 3  { flunk 'when without $_' }
+    when $y < 3  { flunk 'when without $_' }
+    when $y == 3 { pass  'when without $_' }
+}
+
 {
     my $b = "NOPE";
     given $b {
@@ -44,6 +53,14 @@ plan 12;
 }
 
 {
+    my $x = given "foo" {
+        when "bar" { "lose"}
+        when "foo" { "win" }
+    };
+    is $x, "win", "= assignment to given";
+}
+
+{
     my $c = "foo";
 
     given $c {
@@ -65,8 +82,18 @@ plan 12;
         when /^foo$/ { pass 'anchor regex' }
     }
     given $c {
-        when /^oo$|^fo$/ { flunk 'alternationa and anchor' }
-        when /^foo$|^bar$/ { pass 'alternationa and anchor' }
+        when /^oo$|^fo$/ { flunk 'alternation and anchor' }
+        when /^foo$|^bar$/ { pass 'alternation and anchor' }
+    }
+
+    given $c {
+        when /[asd]oo/  { flunk 'character class' }
+        when /[asdf]oo/ { pass 'character class' }
+    }
+
+    given $c {
+        when /[^asdf]oo/ { flunk 'negated character class' }
+        when /[^asd]oo/  { pass  'negated character class' }
     }
 
     given $c {
@@ -78,6 +105,21 @@ plan 12;
     given $c {
         when /fo\so/ { flunk 'non-caseable regex' }
         when /fo(p|o)/ { pass 'non-caseable regex' }
+    }
+}
+
+{
+    my $d = '[foo]';
+    given $d {
+        when /^[foo]oo/    { flunk 'character class with []]' }
+        when /[[z]foo[]z]/ { pass  'character class with []]' }
+        default            { flunk 'character class with []]' }
+    }
+
+    given $d {
+        when /^[foo]oo/   { flunk 'pass escaped \\[' }
+        when /\[foo\]/    { pass 'pass escaped \\['  }
+        default           { flunk 'character class with []]' }
     }
 }
 

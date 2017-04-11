@@ -28,8 +28,9 @@ sub tStr is export { state $ = class-by-name('Str')   }
 sub tBool is export { state $ = class-by-name('Bool') }
 multi tList is export { state $ = class-by-name('List') }
 multi tList(Spit::Type \param) {
-    my $glist = tList();
-    $glist.^parameterize(param);
+    my $list := tList();
+    return param if param ~~ $list;
+    $list.^parameterize(param);
 }
 sub tRegex is export { state $ = class-by-name('Regex') }
 sub tOS is export { state $ = class-by-name('OS') }
@@ -41,7 +42,7 @@ class SAST::IntExpr   {...}
 class SAST::Var       {...}
 class SAST::Block     {...}
 class SAST::Param     {...}
-class SAST::Nop       {...}
+class SAST::Empty       {...}
 class SAST::Return    {...}
 class SAST::Signature {...}
 class SAST::MethodCall {...}
@@ -59,6 +60,7 @@ class SAST::Type {...}
 class SAST::RoutineDeclare { ... }
 class SAST::CmpRegex {...}
 class SAST::Cmd {...}
+class SAST::Accepts {...}
 
 role SAST is rw {
     has Match:D $.match is required is rw;
@@ -66,18 +68,22 @@ role SAST is rw {
     has $.stage2-done is rw;
     has $.stage3-done is rw;
     has $.cloned is rw;
-    has Spit::Type $.ctx; # The type context the object was put in in stage2
+    has Spit::Type $.ctx is rw; # The type context the object was put in in stage2
     has $.included is rw;
     has @.extra-depends;
 
     method do-stage2(Spit::Type \ctx,:$desc,|args){
-        X::AdHoc.new(
-            payload => "node {self.WHICH} ({self.gist}) re-stage2. First stage2 at:\n $!stage2-done",
+        SX::BugTrace.new(
+            desc => "do-stage2 called on {self.WHICH} twice",
+            node => self,
+            bt => Backtrace.new
         ). throw if $.stage2-done;
-        X::AdHoc.new(
-            payload => "node of type {self.^name} stage2 with Spit::Type type object",
+        SX::BugTrace.new(
+            desc => "node of type {self.^name} has stage2 called with Spit::Type as context",
+            node => self,
+            bt => Backtrace.new
         ).throw if ctx === Spit::Type;
-        $.stage2-done = Backtrace.new;
+        $!stage2-done = True;
         $!ctx = ctx;
         my SAST:D $res = self.stage2(ctx,|args);
         $res = coerce $res,ctx,:$desc;
@@ -180,10 +186,9 @@ sub coerce(SAST:D $node,Spit::Type $type,:$desc) {
             if $type ~~ tList() and $node.type !~~ tList() {
                 my $elem-type := derive-type($type);
                 my $list-type = $type === tList() ?? tList($elem-type) !! $type;
-                SAST::Blessed.new(
+                $node.stage2-node(
+                    SAST::Blessed,
                     class-type => $list-type,
-                    match => $node.match,
-                    :stage2-done,
                     coerce($node,$elem-type,:desc<coercing to a list>),
                 );
             }
@@ -238,10 +243,9 @@ role SAST::Declarable does SAST::Dependable {
 }
 
 role SAST::OSMutant {
+    has $.mutated is rw;
     method mutate-for-os($os) {...}
 }
-
-subset Blockish of SAST where SAST::Block|SAST::Nop;
 
 class SAST::Children does SAST {
 
@@ -304,7 +308,7 @@ class SAST::MutableChildren  is SAST::Children {
 }
 
 class SAST::CompUnit is SAST::Children {
-    has Blockish:D $.block is required is rw;
+    has SAST::Block:D $.block is required is rw;
     has $.depends-on is rw; # A Spit::DependencyList
     has @.phasers;
     has @.exported;
@@ -312,7 +316,7 @@ class SAST::CompUnit is SAST::Children {
 
     method do-stage2 {
         my $*CU = self;
-        $!block .= do-stage2(tAny());
+        $!block .= do-stage2(tAny(),:!auto-inline);
         self.stage2-done = True;
         self;
     }
@@ -423,7 +427,7 @@ class SAST::MaybeReplace is SAST::VarDecl {
 
     method replace-with {
         given $.assign {
-            when *.compile-time.defined { $_ }
+            when .compile-time !~~ Nil { $_ }
             when SAST::Var|SAST::Param|SAST::Invocant { $_ }
             default { Nil }
         }
@@ -432,14 +436,67 @@ class SAST::MaybeReplace is SAST::VarDecl {
 
 class SAST::ConstantDecl is SAST::VarDecl {
     method inline-value {
-        self.assign if self.assign andthen .compile-time;
+        self.assign if self.assign andthen .compile-time !~~ Nil;
     }
     method assign-type { IMMUTABLE }
 }
 
-class SAST::Block is SAST::MutableChildren does SAST::Dependable {
+class SAST::Stmts is SAST::MutableChildren {
+    has Bool:D $.auto-inline is rw = True;
+
+    method stage2($ctx,:$desc,:$loop,:$!auto-inline = True) is default {
+        my $last-stmt := self.last-stmt;
+        for @.children {
+            $_ .= do-stage2(tAny) unless $_ =:= $last-stmt;
+        }
+        if $last-stmt {
+            if $ctx !=== tAny() {
+                $last-stmt = SAST::Return.new(val => $last-stmt,match => $last-stmt.match,:$loop)
+            }
+            $last-stmt .= do-stage2($ctx,:desc<return value of block>);
+        }
+        self;
+    }
+
+    method returns is rw {
+        with self.last-stmt {
+            when SAST::Return { $_ }
+            default { Nil}
+        }
+    }
+
+    method last-stmt is rw {
+         @.children.reverse.first({ $_ !~~ SAST::PhaserBlock });
+    }
+
+    method one-stmt is rw {
+        if @.children == 1 {
+            given @.children[0] {
+                when SAST::Return { .val }
+                default { $_ }
+            }
+        } else {
+            Nil
+        }
+    }
+
+    method type {
+        if self.returns -> $_ {
+            .type
+        } else {
+            tAny;
+        }
+    }
+}
+
+class SAST::Block is SAST::Stmts does SAST::Dependable {
     has @.symbols;
     has $.outer is rw;
+
+    method stage2($ctx,|c) {
+        my $*CURPAD = self;
+        callsame;
+    }
 
     multi method lookup(SymbolType $type,Str:D $name,Match :$match) {
         @!symbols[$type]{$name}
@@ -474,45 +531,13 @@ class SAST::Block is SAST::MutableChildren does SAST::Dependable {
         @!symbols[$type]{$name};
     }
 
-    method stage2($ctx,:$desc) is default {
-        my $*CURPAD = self;
-        my $returns := self.last-stmt;
-        for @.children {
-            $_ .= do-stage2(tAny) unless $_ =:= $returns;
-        }
-        if $returns {
-            $returns = SAST::Return.new(val => $returns,match => $returns.match) if $ctx !=== tAny;
-            $returns .= do-stage2($ctx,:desc<return value of block>);
-        }
-        self;
-    }
-
-    method returns is rw {
-        with self.last-stmt {
-            when SAST::Return { $_ }
-            default { Nil}
-        }
-    }
-
-    method last-stmt is rw {
-         @.children.reverse.first({ $_ !~~ SAST::PhaserBlock });
-    }
-
-    method one-stmt {
-        @.children[0] if @.children == 1;
+    method gist {
+        $.node-name ~ " --> {$.type.^name}" ~ $.gist-children;
     }
 
     method type {
         my $*CURPAD = self;
-        if self.returns -> $_ {
-            .type
-        } else {
-            tAny;
-        }
-    }
-
-    method gist {
-        $.node-name ~ " --> {$.type.^name}" ~ $.gist-children;
+        callsame;
     }
 }
 
@@ -520,7 +545,7 @@ class SAST::PhaserBlock is SAST::Children {
     has $.block is required;
     has Spit-Phaser $.stage is required;
 
-    method stage2 ($) { $!block .= do-stage2(tAny); self }
+    method stage2 ($) { $!block .= do-stage2(tAny,:!auto-inline); self }
     method children { $!block, }
     method type { tAny() }
 }
@@ -528,8 +553,9 @@ class SAST::PhaserBlock is SAST::Children {
 class SAST::Return is SAST::Children {
     has $.val is rw;
     has $.impure is rw;
+    has $.loop is rw;
     method stage2($ctx) is default {
-        self.val .= do-stage2($ctx,:desc("Return value didn't match block's return type"));
+        self.val .= do-stage2($ctx,:desc("return value didn't match block's return type"));
         self;
     }
     method type { $!val.type }
@@ -559,45 +585,31 @@ class SAST::Elem is SAST::MutableChildren does SAST::Assignable {
     method spit-gist { $.elem-of.spit-gist ~ '[' ~ $!index.spit-gist ~ ']' }
 }
 
-class SAST::WriteToFile is SAST::Children is rw {
-    has SAST @.write;
-    has SAST @.append;
-    has SAST $.in;
-
-    method stage2($ctx) is rw {
-        $_ .= do-stage2(tStr) for @.children;
-        self;
-    }
-
-    method children { (|@!append,|@!write,$!in).grep(*.defined) }
-
-    method clone(|c) { callwith(|c,:@!write,:@!append) }
-
-    method type { tAny }
-}
-
 class SAST::Cmd is SAST::MutableChildren is rw {
-    has SAST $.cmd;
-    has SAST $.in;
+    has SAST $.pipe-in;
+    has SAST @.in;
     has SAST @.write;
     has SAST @.append;
     has SAST %.set-env;
 
     method stage2($ctx) is default {
-        $_ .= do-stage2(tStr) for ($!cmd,$!in,|@.nodes,|%!set-env.values).grep(*.defined);
+        $_ .= do-stage2(tStr) for ($!pipe-in,|@.nodes,|%!set-env.values).grep(*.defined);
 
-        for |@!write,|@!append <-> $in,$out {
-            $in  .= do-stage2(tFD, :desc<Output redirection source>);
-            $out .= do-stage2(tStr,:desc<Output redirection destination>);
+        for |@!write,|@!append,|@!in <-> $lhs, $rhs {
+            $lhs  .= do-stage2(tFD, :desc<redirection left-hand-side>);
+            $rhs  .= do-stage2(tStr,:desc<redirection right-hand-side>);
+        }
+        if not ($!pipe-in and (@!write || @!append) or @.nodes) {
+            self.make-new(SX,message => ‘command can't be empty’).throw;
         }
         self;
     }
 
     method children {
-        ($!cmd,|@.nodes,$!in,|@!write,|@!append,|%!set-env.values).grep(*.defined)
+        ($!pipe-in,|@.nodes,|@!in,|@!write,|@!append,|%!set-env.values).grep(*.defined)
     }
 
-    method clone(|c) { callwith(|c,:@!write,:@!append,:%!set-env) }
+    method clone(|c) { callwith(|c,:@!write,:@!append,:@!in,:%!set-env) }
 
     method type { $.ctx }
 }
@@ -657,7 +669,9 @@ class SAST::RoutineDeclare is SAST::Children does SAST::Declarable does SAST::OS
 
     method symbol-type { SUB }
 
-    method gist { "sub {$!name}\(" ~ $!signature.gist ~ '){ ... }' }
+    method gist {
+        $.node-name ~ "($!name)" ~ $.gist-children;
+    }
     method spit-gist { "sub {$.name}\({$.signature.spit-gist})" }
 
     method stage2($) {
@@ -666,12 +680,10 @@ class SAST::RoutineDeclare is SAST::Children does SAST::Declarable does SAST::OS
         @!os-candidates .= flatmap: -> $os,$block { cont-pair $os,$block };
         for @.os-candidates {
             .value .= do-stage2(
-                $!is-native ?? tAny()
-                !! $.return-type,
-                :desc("Return value of block didn't match return type of $!name"));
-            with .value.returns {
-                .impure = $!impure;
-            }
+                $!is-native ?? tAny() !! $.return-type,
+                :!auto-inline,
+                :desc("return value of $.spit-gist didn't match return type of $!name"));
+            .impure = $!impure with .value.returns;
         }
         self;
     }
@@ -683,7 +695,7 @@ class SAST::RoutineDeclare is SAST::Children does SAST::Declarable does SAST::OS
     }
 
     method children {
-        ($!chosen-block // |@!os-candidates.map(*.value) || Empty),$!signature;
+        $!signature, ($!chosen-block // |@!os-candidates.map(*.value) || Empty);
     }
 }
 
@@ -754,7 +766,7 @@ class SAST::Call  is SAST::Children {
                 until (my $arg := $pos-args.pull-one) =:= IterationEnd {
                     $arg .= do-stage2(
                         $elem-type,
-                        :desc("Argument slurped by {$param.spit-gist} " ~
+                        :desc("argument slurped by {$param.spit-gist} " ~
                               "in {$.declaration.spit-gist} doesn't match its type")
                     );
                 }
@@ -762,24 +774,26 @@ class SAST::Call  is SAST::Children {
                 if (my $arg := $pos-args.pull-one) !=:= IterationEnd {
                     $arg .= do-stage2(
                         $param.type,
-                        :desc("Argument {$i + 1} to {$.declaration.spit-gist} doesn't match its type")
+                        :desc("argument {$i + 1} to {$.declaration.spit-gist} doesn't match its type")
                     );
                     $last-valid := $arg;
                 } else {
-                    SX::BadCall.new(
+                    SX::BadCall::WrongNumber.new(
                         :$.declaration,
-                        reason => "Not enough positional arguments. Expected {@pos-params.elems}, got {@!pos.elems}.",
+                        expected => +@pos-params,
+                        got => +@!pos,
                         match => ($last-valid andthen .match or $.match),
-                        after => ?$last-valid,
+                        arg-hints => @pos-params[+@!pos..*]».spit-gist,
                     ).throw;
                 }
             }
         }
 
         if (my $extra-arg := $pos-args.pull-one) !=:= IterationEnd {
-            SX::BadCall.new(
+            SX::BadCall::WrongNumber.new(
                 :$.declaration,
-                reason => "Too many positional arguments. Expected {@pos-params.elems}, got {@!pos.elems}.",
+                expected => +@pos-params,
+                got => +@!pos,
                 match => $extra-arg.match,
             ).throw;
         }
@@ -788,7 +802,7 @@ class SAST::Call  is SAST::Children {
             if %named-params{$name} -> $param {
                 $arg .= do-stage2(
                     $param.type,
-                    :desc("Named argument {$param.spit-gist} to $!name doesn't match its type")
+                    :desc("named argument {$param.spit-gist} to $!name doesn't match its type")
                 );
             } else {
                 SX::BadCall.new(
@@ -941,7 +955,7 @@ class SAST::Signature is SAST::Children {
     }
 
     method children { |@!pos,|%.named.values }
-    method gist{ self.children».gist.join(', ') }
+    method gist { $.node-name ~ '(' ~ $.spit-gist ~ ')' }
     method type { tAny }
     method clone(|c) {
         callwith(|c,:@!pos,:%!named);
@@ -955,14 +969,14 @@ class SAST::Signature is SAST::Children {
 
 class SAST::ClassDeclaration does SAST::Declarable is SAST::Children {
     has Spit::Type $.class is required;
-    has Blockish $.block is rw;
+    has SAST::Block $.block is rw;
 
     method symbol-type { CLASS }
     method name { self.class.^name }
     method type { tAny }
     method children { ($!block // Empty),  }
     method stage2 ($) {
-        $_ .= do-stage2(tAny) for self.children;
+        $_ .= do-stage2(tAny,:!auto-inline) for self.children;
         self;
     }
 }
@@ -1188,7 +1202,7 @@ class SAST::List is SAST::MutableChildren {
     }
 
     method compile-time {
-        list @.children.map: {
+        list do for @.children {
             return Nil unless .compile-time.defined;
             $_;
         }
@@ -1228,7 +1242,7 @@ class SAST::Concat is SAST::MutableChildren {
     method type { tStr }
     method gist { @.children».gist.join(' ~ ') }
     method compile-time {
-        @.children.all.compile-time ?? @.children».compile-time.join !! Nil;
+        @.children.all.compile-time.defined ?? @.children».compile-time.join !! Nil;
     }
     method stage2($) {
         $_ .= do-stage2(tStr) for @.children;
@@ -1254,53 +1268,73 @@ sub generate-topic-var(:$var! is rw,:$cond! is rw,:@blocks!) {
         $var.assign = $topic-val;
         .declare($var) for @blocks;
     } elsif $var {
-        SX.new(message => "Invalid declaration of topic variable {$var.gist}. Condition has no topic.",node => $var).throw;
+        SX.new(message => "Illegal declaration of topic variable {$var.spit-gist}. " ~
+                          "Condition has no topic.", node => $var).throw;
     }
 }
 
 class SAST::If is SAST::Children is rw {
     has SAST:D $.cond is required is rw;
-    has Blockish $.then is rw;
+    has SAST::Block $.then is rw;
     has SAST $.else is rw;
     has SAST::VarDecl $.topic-var;
     has $.when;
 
     method stage2($ctx) is default {
-        $!cond .= do-stage2(($!when ?? tAny() !! tBool()),:desc<If/unless condition>);
-        if not $!when {
+        my $desc;
+        if $!when {
+            $!cond .= do-stage2(tStr,:desc<when condition>);
+            if $!cond.type !~~ tBool() {
+                $!cond = self.stage2-node(
+                    SAST::Accepts,
+                    SAST::Var.new(sigil => '$',name => '_', match => $!cond.match).do-stage2(tAny),
+                    $!cond,
+                )
+            }
+            $desc = 'when block return value';
+        } else {
+            $!cond .= do-stage2(tBool,:desc<If/unless condition>);
             generate-topic-var(
                var => $!topic-var,
                blocks => ($!then, ($!else if $!else ~~ SAST::Block:D)),
                :$!cond
-            )
+            );
+            $desc = 'if/unless block return value';
         }
-        $_ .= do-stage2($ctx,:desc<if/unless block return value>) for $!then,($!else // Empty);
+        $_ .= do-stage2($ctx,:$desc,:!auto-inline) for $!then,($!else // Empty);
         self;
     }
 
-    method children { $!cond,$!then,($!else // Empty),($!topic-var // Empty) }
+    method children {
+        $!cond,$!then,($!topic-var // Empty),
+        # Hide else from composer initially. Ifs need to be walked from top to bottom.
+        ($!else // Empty if $.stage3-done)
+    }
     method type { derive-common-parent($!then.type, ($!else.type if $!else)) }
+
+    method itemize { False }
 }
 
 class SAST::While is SAST::Children {
     has SAST:D $.cond is required is rw;
-    has Blockish $.block is rw;
+    has SAST::Block $.block is rw;
     has $.until;
     has SAST::VarDecl $.topic-var;
+    has $!type;
 
     method stage2($ctx) {
         $!cond .= do-stage2(tBool,:desc<while conditional>);
         generate-topic-var(var => $!topic-var,:$!cond,blocks => ($!block,));
-        $!block .= do-stage2($ctx,:desc<while block return value>);
+        $!block .= do-stage2($ctx,:desc<while block return value>,:loop,:!auto-inline);
         self;
     }
     method children { $!cond,$!block,($!topic-var // Empty) }
-    method type { tAny }
+    method type { $!type ||= tList($!block.type) }
 }
 
 class SAST::Given is SAST::Children is rw {
     has SAST:D $.given is required;
-    has Blockish:D $.block is required;
+    has SAST $.block is required;
     has SAST::VarDecl $.topic-var;
 
     method stage2($ctx) {
@@ -1313,13 +1347,14 @@ class SAST::Given is SAST::Children is rw {
 
     method children { $!block,$!topic-var }
 
-    method type {$!block.type }
+    method type { $!block.type }
 }
 
 class SAST::For is SAST::Children {
-    has Blockish $.block is rw;
+    has SAST::Block $.block is rw;
     has SAST:D $.list is required;
     has SAST::VarDecl $.iter-var;
+    has $!type;
 
     method stage2($ctx) {
         $!list .= do-stage2(tList);
@@ -1335,17 +1370,18 @@ class SAST::For is SAST::Children {
         }
         $!iter-var.do-stage2(tAny);
         $!block.declare: $!iter-var;
-        $!block .= do-stage2($ctx);
+        $!block .= do-stage2($ctx.&derive-type,:loop,:!auto-inline);
         self;
     }
 
     method children { $!list,$!block,$!iter-var }
-    method type { $!block.type }
+    method type { $!type ||= tList($!block.type) }
 }
 
-class SAST::Nop does SAST {
+class SAST::Empty does SAST {
     method type { tAny }
     method stage2 ($) { self }
+    method itemize { False }
 }
 
 class SAST::Type does SAST {
@@ -1365,7 +1401,7 @@ class SAST::Type does SAST {
     method ostensible-type { self.class-type }
 
     method stage2($ctx) {
-        if self.class-type ~~ $ctx and $ctx.enum-type  {
+        if self.class-type.enum-type  {
             self;
         } elsif $ctx ~~ tStr() {
             SAST::SVal.new(val => self.class-type.^name,:$.match).do-stage2($ctx);
@@ -1395,10 +1431,10 @@ class SAST::Blessed is SAST::MutableChildren is SAST::Type {
                 if self.class-type.^lookup-by-str($str) -> $lookup {
                     SAST::Type.new(class-type => $lookup, match => self[0].match).do-stage2($ctx);
                 } else {
-                    SX.new(message => "'$str' is not part of the {self.class-type.name}").throw;
+                    self.make-new(SX, message => "'$str' is not part of the {self.class-type.name}").throw;
                 }
             } else {
-                SX.new(message => "Can't lookup a {self.class-type.name} with a runtime value").throw;
+                self.make-new(SX, message => message => "Can't lookup a {self.class-type.name} with a runtime value").throw;
             }
         } else {
             self[0] .= do-stage2(self.type,:desc("didn't match primitive"));
@@ -1410,16 +1446,6 @@ class SAST::Blessed is SAST::MutableChildren is SAST::Type {
     method compile-time { self[0].?compile-time }
 
     method gist { self.SAST::Type::gist ~  $.gist-children }
-}
-
-class SAST::Stmts is SAST::MutableChildren {
-    method stage2($ctx) {
-        $_ .= do-stage2(tAny) for @.children[^(*-1)];
-        @.children[0] .= do-stage2($ctx);
-        self;
-    }
-
-    method type { @.children[*-1] }
 }
 
 class SAST::Range is SAST::MutableChildren {
@@ -1441,6 +1467,15 @@ class SAST::Accepts is SAST::MutableChildren {
     method stage2($) {
         $_ .= do-stage2(tAny) for @.children;
         self;
+    }
+}
+
+class SAST::PRIMITIVE is SAST::MutableChildren {
+    method type { tStr }
+    method stage2($ctx) {
+        self[0] .= do-stage2(tAny);
+        my $type = self[0].ostensible-type;
+        SAST::SVal.new(val => $type.primitive.name,:$.match).do-stage2(tStr);
     }
 }
 
@@ -1469,6 +1504,15 @@ class SAST::WHY is SAST::MutableChildren {
     }
 }
 
+class SAST::NAME is SAST::MutableChildren {
+    method type { tStr() }
+
+    method stage2($) {
+        self[0] .= do-stage2(tAny);
+        self;
+    }
+}
+
 class SAST::Eval is SAST::Children   {
     has %.opts;
     has SAST::SVal:D $.src is required;
@@ -1485,7 +1529,7 @@ class SAST::Eval is SAST::Children   {
     method children { $!src, }
 }
 
-sub make-rx($a){ rx/<$a>/ }
+sub make-rx($a){ rx｢<$a>｣ }
 class SAST::Regex is SAST::Children is rw {
     has SAST:D $.src is required;
     has SAST %.patterns;
@@ -1509,6 +1553,8 @@ class SAST::Regex is SAST::Children is rw {
     method compile-time {
         if $!src.compile-time -> $p5src {
             make-rx($p5src);
+        } else {
+            Nil
         }
     }
 }
@@ -1528,23 +1574,12 @@ class SAST::CmpRegex is SAST::Children is rw {
     }
 }
 
-class SAST::FileContent is SAST::Children {
-    has SAST:D $.file is required;
-
-    method stage2($ctx) {
-        $!file .= do-stage2(tStr);
-        self;
-    }
-    method type { tList }
-    method children { $!file,}
-}
-
 class SAST::Quietly is SAST::Children {
-    has Blockish:D $.block is required;
+    has SAST::Block:D $.block is required;
     has SAST $.null is rw;
 
     method stage2($ctx) {
-        $!block .= do-stage2($ctx);
+        $!block .= do-stage2($ctx,:!auto-inline);
         $!null = $*SETTING.lookup(SCALAR,'*NULL')
                           .gen-reference(match => $!block.match)
                           .do-stage2(tFD);
@@ -1575,4 +1610,38 @@ class SAST::Itemize is SAST::MutableChildren {
     method gist { $.node-name ~ "($!sigil)" ~ $.gist-children }
 
     method type { self[0].type }
+}
+
+class SAST::OnBlock is SAST::Children does SAST::OSMutant {
+    has @.os-candidates;
+    has $.chosen-block is rw;
+    has $!dispatcher;
+
+    method stage2($ctx) {
+        @!os-candidates .= map( -> $os, $block {
+            cont-pair $os, $block.do-stage2($ctx)
+        }).flat;
+        self;
+    }
+
+    method mutate-for-os(Spit::Type $os) {
+        $!chosen-block = $.dispatcher.get('anon', $os);
+    }
+
+    method dispatcher {
+        $!dispatcher //= DispatchMap.new(anon => @.os-candidates).compose;
+    }
+
+    method children {
+        ($!chosen-block // |@!os-candidates.map(*.value) || Empty),
+    }
+
+    method type {
+        ($!chosen-block andthen .type) or
+        derive-common-parent @!os-candidates.map(*.value.type);
+    }
+}
+
+class SAST::LastExitStatus does SAST {
+    method type { $.ctx ~~ tBool() ?? tBool() !! tInt() }
 }

@@ -1,17 +1,16 @@
-use Spit::SAST;
-
+need Spit::Parser::Lang;
 # A lot of this copied from NQP p5 regex.
 # Lots of p5 regex stuff not parsed properly.
 # The purpose of this is to see if we can 'downgrade' the regex
 # to a shell pattern or extended grep like regex.
 
-grammar Spit::P5Regex {
-    token TOP(:$*stopper = '/') {
+grammar Spit::P5Regex is Spit::Lang {
+    token TOP {
         :my %*RX;
         :my $*INTERPOLATE := 1;
         <nibbler>
     }
-    token rxstopper { $*stopper }
+
     token nibbler {
         :my $OLDRX := CALLERS::<%*RX>;
         :my %*RX;
@@ -29,9 +28,8 @@ grammar Spit::P5Regex {
     }
     token quantified_atom {
         <![|)]>
-        <!rxstopper>
         <atom>
-        [ <.ws> <!before <rxstopper> > <quantifier=p5quantifier> ]?
+        [ <.ws> <quantifier=p5quantifier> ]?
         <.ws>
     }
     token atom {
@@ -69,9 +67,9 @@ grammar Spit::P5Regex {
         <?[$]> [$<backref>=\d+]
     }
     token cclass {
-        :my $astfirst := 0;
+        :my $astfirst = 0;
         '['
-        $<sign>=['^'|<?>]
+        $<sign>='^'?
         [
         || $<charspec>=(
                ( '\\' <backslash=p5backslash> || (<?{ $astfirst == 0 }> <-[\\]> || <-[\]\\]>) )
@@ -269,20 +267,25 @@ class Spit::P5Regex-Actions {
     }
     method p5metachar:sym<quant>($/) { make $<quantifier>.ast }
     method p5metachar:sym<bs>($/){
-        make do given $<p5backslash><sym> {
-            when 'd' {
-                atom bre => '[[:digit:]]',ere => '[[:digit:]]';
-            }
-            when 's' {
-                atom bre => '[[:space:]]',ere => '[[:space:]]';
-            }
-            default { Empty }
-        };
+         $<p5backslash>.ast andthen make($_);
+    }
+
+    method p5backslash:sym<d> ($/) {
+        make atom bre => '[[:digit:]]',ere => '[[:digit:]]';
+    };
+    method p5backslash:sym<s>($/) {
+        make atom bre => '[[:space:]]',ere => '[[:space:]]';
+    }
+    my $case_special = <( ) [ ] * ?>;
+    method p5backslash:sym<misc> ($/) {
+        my $c := $/.Str;
+        make atom ere => "\\$c",bre => "\\$c",
+             case => $case_special.first($c) ?? "\\$c" !! $c;
     }
 
     method p5metachar:sym<.>($/) { make atom(bre => '.',ere => '.',case => '?') }
     method p5metachar:sym<^>($/) {
-        $*prev-atom andthen .case andthen ($_ = '' when '*');
+        $*prev-atom andthen .<case> andthen ($_ = '' when '*');
         make atom(:bre,:ere,:case(''));
     }
     method p5metachar:sym<$>($/) { make atom(:bre,:ere,:case('')) }
@@ -292,7 +295,12 @@ class Spit::P5Regex-Actions {
             |(bre => ('\\(' ~ $_ ~ '\\)') with $<nibbler>.ast<bre>)
         );
     }
-    method p5metachar:sym<[ ]>($/) { make atom(:all) }
+    method p5metachar:sym<[ ]>($/) {
+        if $<cclass><sign>.Str eq '^' {
+            make atom(:ere,:bre, case => '[!' ~ $<cclass><charspec>.join ~ ']')
+        } else {
+            make atom(:all) }
+        }
     method p5metachar:sym<var>($/) {
         with $<backref> {
             make atom (

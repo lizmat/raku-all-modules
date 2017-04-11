@@ -1,6 +1,6 @@
 use Test;
 
-plan 134;
+plan 138;
 
 my $true = True;
 my $false = False;
@@ -41,15 +41,34 @@ my $false = False;
 }
 
 {
-    my $a;
-    $a ||= "foo";
-    $a ||= "bar";
-    is $a,'foo','||=';
-    $a &&= "bar";
-    is $a,'bar','&&=';
-    $a = False;
-    $a &&= 'bar';
-    nok $a,'$x &&= "string", still false when $a is false';
+    my $x;
+    $x ||= "foo";
+    $x ||= "bar";
+    is $x,'foo','||=';
+    $x &&= "bar";
+    is $x,'bar','&&=';
+    $x = False;
+    $x &&= 'bar';
+    nok $x,'$x &&= "string", still false when $x is false';
+
+    my $y;
+    my $glarb = "woot";
+    $y ||= 'foo}';
+    is $y,'foo}', '||= with } in value';
+    $y = False;
+    $y ||= "foo$glarb\$glarb}";
+    is $y, 'foowoot$glarb}','||= with \\} in value';
+    $y = False;
+    $y ||= 'foo{';
+    is $y, 'foo{', '||= with { in value';
+
+
+    my $z;
+    # Super weird situation where on bash's /bin/sh where you do
+    # "${a:='...'}" it will include the single quotes in a but if
+    # you do ${a:=...} outside of "" it won't (!?)
+    ($z ||= "\n") || flunk "shouldn't have got here";
+    is $z, "\n", '||= \\n}';
 }
 
 {

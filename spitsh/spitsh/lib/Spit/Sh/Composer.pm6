@@ -7,6 +7,18 @@ need Spit::DependencyList;
 need Spit::Metamodel;
 need Spit::OptsParser;
 
+multi reduce-block(SAST::Stmts:D $block) {
+    if $block.children.all ~~ SAST::Empty {
+        $block.stage3-node(SAST::Empty);
+    } elsif $block.one-stmt -> $one-stmt {
+        $one-stmt;
+    } else {
+        $block;
+    }
+}
+
+multi reduce-block(SAST:D $non-block) { $non-block }
+
 has $!deps = Spit::DependencyList.new;
 has @.scaffolding;
 has %.opts;
@@ -36,12 +48,16 @@ method clone-node($node is rw) {
     } else {
         $node = $_ = $node.clone(:cloned($node));
     }
-
-    $node.mutate-for-os($.os) if $node ~~ SAST::OSMutant;
 }
 
 proto method walk(SAST:D $sast is rw,|) {
     self.clone-node($sast);
+    return if $sast.stage3-done;
+
+    if $sast ~~ SAST::OSMutant and not $sast.mutated {
+        $sast.mutate-for-os($.os);
+        $sast.mutated = True;
+    }
 
     if not $sast ~~ SAST::ClassDeclaration and $sast ~~ SAST::Children {
         for $sast.children {
@@ -49,11 +65,9 @@ proto method walk(SAST:D $sast is rw,|) {
         }
     }
 
-    if not $sast.stage3-done {
-        my $save = $sast;
-        {*}
-        $save.stage3-done = True;
-    }
+    my $save = $sast;
+    {*}
+    $save.stage3-done = True;
 }
 
 multi method walk(SAST:D $ is rw) {}
@@ -66,37 +80,32 @@ multi method walk(SAST::CompUnit:D $THIS is rw) {
 }
 
 multi method walk(SAST::ClassDeclaration:D $THIS is rw) {
-    $THIS .= stage3-node(SAST::Nop);
-}
-
-multi method walk(SAST::Block:D $THIS is rw) {
-    if $THIS.children == 0 || $THIS.children.all ~~ SAST::Nop {
-        $THIS .= stage3-node(SAST::Nop);
-    } elsif $THIS.children === 1 {
-
-    }
+    $THIS .= stage3-node(SAST::Empty);
 }
 
 multi method walk(SAST::While:D $THIS is rw) {
     with $THIS.cond.compile-time -> $cond {
         if not $cond {
-            $THIS .= stage3-node(SAST::Nop);
+            $THIS .= stage3-node(SAST::Empty);
             return;
         }
     }
 }
 
-multi method walk(SAST::If:D $THIS is rw) {
+multi method walk(SAST::If:D $THIS is rw,:$sub-if) {
     with $THIS.cond.compile-time -> $cond {
         if ?$cond {
-            $THIS .= then;
+            $THIS = $sub-if ?? $THIS.then !! reduce-block($THIS.then);
         } else {
-            if $THIS.else -> $else {
+            if $THIS.else <-> $else {
                 $THIS = $else;
+                self.walk($THIS);
             } else {
-                $THIS .= stage3-node(SAST::Nop);
+                $THIS .= stage3-node(SAST::Empty);
             }
         }
+    } else {
+        $THIS.else andthen self.walk($_,:sub-if);
     }
 }
 
@@ -156,7 +165,7 @@ multi method walk(SAST::Var:D $THIS is rw where { $_ !~~ SAST::VarDecl }) {
     if $decl ~~ SAST::ConstantDecl {
         self.walk($decl); # Walk the declaration early so we can inspect it for inlining
 
-        if $decl ~~ SAST::Block {
+        if $decl ~~ SAST::Stmts {
             $THIS.extra-depends.push($decl);
             $decl .= last-stmt;
         }
@@ -168,8 +177,9 @@ multi method walk(SAST::Var:D $THIS is rw where { $_ !~~ SAST::VarDecl }) {
     } elsif $decl ~~ SAST::MaybeReplace and $decl.replace-with -> $val {
         $THIS = do given $val {
             when SAST::Var {$val.gen-reference(match => $THIS.match,:stage2-done) }
-            default { $val.clone } # XXX: this needs to clone deeply
+            default { $val.deep-clone() }
         }
+        $THIS.stage3-done = False;
         self.walk($THIS);
     }
 
@@ -177,7 +187,7 @@ multi method walk(SAST::Var:D $THIS is rw where { $_ !~~ SAST::VarDecl }) {
 
 multi method walk(SAST::ConstantDecl:D $THIS is rw) {
     callsame;
-    if (my $block = $THIS.assign) ~~ SAST::Block:D {
+    if (my $block = $THIS.assign) ~~ SAST::Stmts:D {
         # Constant tucking:
         # constant $x = { side_effects(); get_value(); }
         # Can be changed to:
@@ -193,7 +203,7 @@ multi method walk(SAST::ConstantDecl:D $THIS is rw) {
 }
 
 multi method walk(SAST::Given:D $THIS is rw) {
-    if $THIS.topic-var.replace-with -> $val {
+    if $THIS.topic-var.replace-with {
         $THIS .= block;
     }
 }
@@ -268,7 +278,7 @@ multi method walk(SAST::Eval:D $THIS is rw) {
         }
     }
 
-    require Spit::Compile <&compile>;
+    $ = (require Spit::Compile <&compile>);
     $THIS .= stage3-node(
         SAST::SVal,
         val => compile(
@@ -348,10 +358,15 @@ multi method walk(SAST::Accepts:D $THIS is rw) {
 
 multi method walk(SAST::Regex:D $THIS is rw) {
     with $THIS.src.compile-time {
-        my $match = Spit::P5Regex.parse($_,:actions(Spit::P5Regex-Actions));
-        $THIS.patterns = $match.made.grep(*.value.defined).map: {
-            .key => $THIS.stage3-node(SAST::SVal,val => .value)
-        };
+        if Spit::P5Regex.parse($_,:actions(Spit::P5Regex-Actions)) -> $match {
+            $THIS.patterns = $match.made.grep(*.value.defined).map: {
+                .key => $THIS.stage3-node(SAST::SVal,val => .value)
+            };
+        } else {
+            SX.new(message => "Spit regex parser wasn't able to parse ‘$_’" ~
+                  "(Maybe you can just use '' quotes if you're sure it's right).",
+                   match => $THIS.match).throw;
+        }
     } else {
         $THIS.patterns<pre> = $THIS.src;
     }
@@ -372,7 +387,7 @@ multi method walk(SAST::CmpRegex:D $THIS is rw) {
 # as their original. See 'ef' and 'et' for why.
 sub acceptable-in-cond-return($_,$original) {
     when SAST::Cmd {
-        (not .write || .append || .in) and
+        (not .write || .append || .pipe-in || .in) and
         (.nodes[*-1] andthen .cloned === $original);
     }
     when SAST::MethodCall {
@@ -402,16 +417,40 @@ multi method walk(SAST::CondReturn:D $THIS is rw) {
     }
 }
 
+multi method walk(SAST::OnBlock:D $THIS is rw) {
+    with $THIS.chosen-block {
+        $THIS = $_
+    } else {
+        $THIS .= stage3-node(
+            SAST::Doom,
+            exception => $THIS.make-new(
+                SX::OnBlockNotDefOnOS,
+                candidates => $THIS.os-candidates.map(*.key),
+                :$.os,
+            )
+        )
+    }
+}
+
+
+multi method walk(SAST::Stmts:D $THIS is rw) {
+    if $THIS.returns -> $top-ret is raw {
+        if (my $child-stmts = $top-ret.val) ~~ SAST::Stmts {
+            use Spit::Util :remove;
+            if $THIS.nodes.&remove(* =:= $top-ret) {
+                $child-stmts.returns.ctx = $top-ret.ctx;
+                $THIS.nodes.append($child-stmts.nodes);
+            }
+        }
+    }
+
+    $THIS .= &reduce-block if $THIS.auto-inline;
+}
+
 multi method walk(SAST::MethodCall:D $THIS is rw) {
     if $THIS.declaration === tStr.^find-spit-method('Bool')
        and (my $ct = $THIS.invocant.compile-time).defined {
         $THIS .= stage3-node(SAST::BVal,val => ?$ct);
-    }
-
-    elsif $THIS.declaration === tFile.^find-spit-method('read') or
-          $THIS.declaration === tFD.^find-spit-method('read')
-    {
-        $THIS .= stage3-node(SAST::FileContent,file => $THIS.invocant);
     }
 
     elsif $THIS.declaration === tEnumClass.^find-spit-method('name')
@@ -432,7 +471,7 @@ multi  method walk(SAST::Call:D $THIS is rw, $accept = True) {
     if $THIS.declaration.chosen-block -> $block {
         if $block ~~ SAST::Block and not $block.ann<cant-inline> {
             # only inline routines with one child for now
-            if $block.children == 1  && ($block.returns.?val || $block.last-stmt) <-> $last-stmt {
+            if $block.one-stmt <-> $last-stmt {
                 if self.inline-call($THIS,$last-stmt) -> $replacement {
                     if $replacement ~~ $accept {
                         $THIS = $replacement;
@@ -478,7 +517,7 @@ method inline-value($inner,$outer,$_ is raw) {
         }
     }
     # if arg inside inner is a blessed value, try inlining the value
-    when SAST::Blessed|SAST::FileContent|SAST::Neg {
+    when SAST::Blessed|SAST::Neg {
         if self.inline-value($inner,$outer,.children[0]) -> $val {
             .children[0] = $val;
             # because we're changing child of a rather than the node itself
@@ -498,8 +537,7 @@ method inline-value($inner,$outer,$_ is raw) {
 }
 
 subset ChildSwapInline of SAST:D
-       where SAST::Call|SAST::Cmd|SAST::Increment|
-             SAST::WriteToFile|SAST::Neg;
+       where SAST::Call|SAST::Cmd|SAST::Increment|SAST::Neg;
 
 # CONSIDER:
 #   {
@@ -535,10 +573,11 @@ multi method inline-call(SAST::Call:D $outer,SAST::CompileTimeVal:D $_) { $_ }
 multi method inline-call(SAST::Call:D $outer,$) { Nil }
 
 method add-scaffolding(SAST::Dependable:D $dep is rw)  {
+    my $before = $dep;
     self.walk($dep);
-    $!deps.add-scaffolding($dep);
+    $!deps.add-scaffolding($dep, name => $before.?name);
     for $dep.all-deps {
-        self.add-scaffolding($_)
+        self.add-scaffolding($_);
     }
 }
 
@@ -565,10 +604,5 @@ multi method include(SAST:D $sast) {
 multi method include(SAST::PhaserBlock:D $phaser-block is rw) {
     self.include($phaser-block.block);
     $*CU.phasers[$phaser-block.stage].push($phaser-block.block);
-    $phaser-block .= stage3-node(SAST::Nop,:included);
-}
-
-# If we include a Doom we're doomed.
-multi method include(SAST::Doom:D $doom is rw)  {
-    $doom.exception.throw;
+    $phaser-block .= stage3-node(SAST::Empty,:included);
 }

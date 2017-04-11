@@ -1,6 +1,14 @@
 use Test;
 
-plan 23;
+plan 36;
+
+for <one two three> {
+
+}
+
+pass "empty for loop";
+
+
 {
     my @a = <one two three>;
 
@@ -84,5 +92,57 @@ for 4,5 {
     }
     is $k, 7, '$(...) in for'
 }
+
+{
+    my $l = 0;
+
+    for ("one","two" if ${true}), "three" {
+        $l++;
+    }
+
+    is $l, 3, "if statements in loop list don't itemize";
+
+    for ("one","two" if False) {
+        $l++
+    }
+    is $l, 3, "a compile-time empty loop list doesn't iterate";
+
+    for ("one","two" if ${false}) {
+        $l++
+    }
+    is $l, 3, "a run-time empty loop doesn't iterate";
+}
+
+{
+    my @m = for <one two three> { "foo$_" }
+    is @m, <fooone footwo foothree>, "for loop as a value";
+}
+
+{
+    my @n = for <one two three> { "foo",$_ }
+    is @n, <foo one foo two foo three>, "block returns a list";
+}
+
+{
+    for Cmd<echo printf> {
+        is .WHAT, 'Cmd', 'for Cmd<...> { .WHAT }';
+        ok .exists, 'for Cmd<...> { .exists }';
+    }
+}
+
+{
+    my @o = for <foo bar> { .chars }
+    is @o.WHAT, 'List[Int]',
+       'becomes List[whatever block returned] when assigning';
+
+    is ( @(for <foo bar> { .chars,.chars }) ).WHAT, 'List[Int]',
+       "block that returns List[Int] doesn't make expr return List[List[Int]]";
+}
+
+{
+    is (for <one two three> { .uc }).${ sed 's/E/z/g' }, <ONz TWO THRzz>,
+       "piping into command";
+}
+
 
 pass "statement-mod for $_" for ^3;

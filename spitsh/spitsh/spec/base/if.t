@@ -1,5 +1,5 @@
 use Test;
-plan 40;
+plan 46;
 
 if True {
    pass "basic if works";
@@ -207,6 +207,18 @@ if $true and $false {
 
     is $_,"true",'$_ is set in statement mod' if Cmd<true>;
     is .WHAT,'Cmd','$_ type is right in statement mod' if Cmd<true>;
+
+    is ${printf "%s-%s" ("one" if $true) ("two" if $false) ("three" if $true) },
+       "one-three", '${printf (X if true)} flattens out in cmd';
+
+    is ${printf "%s-%s-%s" ("one" if $true) $("two" if $false) ("three" if $true) },
+       "one--three", '$(X if false) itemizes';
+
+    is ${printf "%s-%s" ("one" if True) ("two" if False) ("three" if True) },
+       "one-three", '${printf (X if true)} flattens out in cmd (compile time)';
+
+    is ${printf "%s-%s-%s" ("one" if True) $("two" if False) ("three" if True) },
+       "one--three", '$(X if false) itemizes (compile time)';
 }
 
 {
@@ -245,5 +257,24 @@ if $true and $false {
 }
 
 {
-    is (if $true { "foo" } else { "bar" }).${cat},'foo','piping result of if';
+    is (if $true { "foo" } else { "bar" }).
+        ${cat}, 'foo', 'piping result of if';
+}
+
+{
+    my @cmd = 'awk','/lose/{ print "lose"; exit 1; } { print "win" }';
+
+    my $res;
+
+    if ($res ~= "winner".${@cmd}; $?) {
+        is $res, "win", '$? command (true)';
+    } else {
+        flunk '$? command (false)';
+    }
+
+    if ($res ~= "loser".${@cmd}; $?) {
+        flunk '$? command (false)'
+    } else {
+        is $res,"winlose", '$? command (true)';
+    }
 }

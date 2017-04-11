@@ -14,7 +14,7 @@ my %native = (
         deps => (),
     )),
     list  => Map.new((
-        body => q|printf %s "$*"|,
+        body => q|printf "%s\n" "$*"|,
         deps => ('IFS'),
     )),
     starts-with => Map.new((
@@ -31,7 +31,7 @@ sub nnq { NoNeedQuote.new: bits => @_ }
 sub dq  { DoubleQuote.new: bits => @_ }
 sub escape { Escaped.new: bits => @_  }
 sub cs { DoubleQuote.new: bits => ('$(',|@_,')')}
-sub var { DoubleQuote::Var.new: name => $^a }
+sub var { DoubleQuote::Var.new: name => $^a, :$:is-int }
 
 sub lookup-method($class,$name) {
     $*SETTING.lookup(CLASS,$class).class.^find-spit-method($name);
@@ -41,7 +41,7 @@ my subset ShellStatus of SAST where {
     # 'or' and 'and' don't work here for some reason
     ($_ ~~ SAST::Neg|SAST::Cmp|SAST::EnumCmp|SAST::CmpRegex) ||
     ((.type ~~ tBool) && $_ ~~
-      SAST::Block|SAST::Cmd|SAST::Call|SAST::If|SAST::Quietly
+      SAST::Stmts|SAST::Cmd|SAST::Call|SAST::If|SAST::Quietly|SAST::LastExitStatus
     )
 }
 
@@ -94,12 +94,17 @@ method check-stage3($node) {
 
 multi method gen-name(SAST::Declarable:D $decl,:$name is copy = $decl.name,:$fallback)  {
     self.check-stage3($decl);
+    $name = do given $name {
+        when '/' { 'M' }
+        when '~' { 'B' }
+        default { $_ }
+    };
 
     do with $decl.ann<shell_name> {
         $_;
     } else {
         # haven't given this varible its shellname yet
-        $_ = self!avoid-name-collision($decl,:$fallback);
+        $_ = self!avoid-name-collision($decl,$name,:$fallback);
     }
 }
 
@@ -118,7 +123,7 @@ multi method gen-name(SAST::MethodDeclare:D $method) {
 }
 method !avoid-name-collision($decl,$name is copy = $decl.name,:$fallback) {
     $name ~~ s/^['*'|'?']//;
-    $name ~~ s:g/'-'/_/;
+    $name ~~ s:g/\W/_/;
     my $st = $decl.symbol-type;
     $st = SCALAR if $st == ARRAY;
     my $existing := @!names[$st]{$name};
@@ -135,6 +140,20 @@ method scaf($name) {
     my $scaf = $*depends.require-scaffolding($name);
     $scaf.depended = True;
     self.gen-name($scaf);
+}
+
+# gets a late reference to variable that's in the scaffolding.
+# At the time of commiting this is just needed for $*NULL.
+method scaf-ref($name,:$match) {
+    my $scaf = $*depends.require-scaffolding($name);
+    if $scaf ~~ SAST::Stmts {
+        $scaf .= last-stmt;
+    }
+    if $scaf.inline-value -> $inline {
+        $inline;
+    } else {
+        $scaf.gen-reference(:stage3,:$match);
+    }
 }
 
 method comp-depend($_){
@@ -173,29 +192,18 @@ method compile(SAST::CompUnit:D $CU --> ShellElement:D) {
     @compiled.join("");
 }
 
-proto method node($node) {
-    #note "node: {$node.^name}";
-    self.check-stage3($node);
-    {*};
+method maybe-oneline-block(@compiled) {
+    if @compiled.first(/\n/) {
+        "\{\n",|@compiled,"\n$*pad\}";
+    } else {
+        while @compiled and @compiled[0] ~~ /^\s*$/ {
+            @compiled.shift;
+        }
+        '{ ', |@compiled,'; }';
+    }
 }
 
-proto method arg($node) {
-    #note "arg: {$node.^name}";
-    self.check-stage3($node);
-    {*};
-}
-
-proto method cond($node) {
-    #note "cond: {$node.^name}";
-    self.check-stage3($node);
-    {*};
-}
-
-multi method node(SAST::CompUnit:D $*CU) {
-    |self.node($*CU.block,|%_).grep(*.defined);
-}
-
-method compile-nodes(@sast,:$one-line,:$indent) {
+method compile-nodes(@sast,:$one-line,:$indent,:$no-empty) {
     my ShellElement:D @chunk;
     my $*indent = CALLERS::<$*indent> || 0;
     $*indent++ if $indent;
@@ -212,14 +220,69 @@ method compile-nodes(@sast,:$one-line,:$indent) {
             @chunk.append: @node;
         }
     }
-    # unless @chunk {
-    #     @chunk.append: $*pad,': nop';
-    # }
+    if $no-empty and not @chunk {
+        @chunk.push("$*pad:");
+    }
     return @chunk;
 }
 
-multi method node(SAST::Param:D $p) { Empty }
+method space-then-arg(SAST:D $_) {
+    if $_ !~~ SAST::Empty or .itemize {
+        ' ', self.arg($_).itemize(.itemize)
+    }
+}
 
+proto method node($node) {
+    #note "node: {$node.^name}";
+    self.check-stage3($node);
+    {*};
+}
+
+proto method arg($node) {
+    #note "arg: {$node.^name}";
+    self.check-stage3($node);
+    {*}.itemize(True)
+}
+
+proto method cond($node) {
+    #note "cond: {$node.^name}";
+    self.check-stage3($node);
+    {*};
+}
+
+#!SAST
+multi method node(SAST::CompUnit:D $*CU) {
+    |self.node($*CU.block,|%_).grep(*.defined);
+}
+
+multi method node(SAST:D $_) { ': ',|self.arg($_) }
+
+multi method arg(SAST:D $_) { cs(self.cap-stdout($_)) }
+
+multi method cap-stdout(SAST:D $_) {
+    self.scaf('e'),' ',|self.arg($_)
+}
+
+multi method loop-return(SAST:D $_) {
+    self.scaf('list'),' ',|self.arg($_);
+}
+
+multi method cond(SAST:D $_) {
+    if .type === tInt() {
+        'test ',|self.arg($_), ' -ne 0';
+    } else {
+        'test ',|self.arg($_);
+    }
+}
+
+multi method int-expr(SAST:D $_) { '$(',|self.cap-stdout($_),')' }
+
+#!ShellStatus
+multi method cond(ShellStatus:D $_) is default { self.node($_) }
+multi method cap-stdout(ShellStatus $_) {
+    |self.cond($_),' && ',self.scaf('e'),' 1';
+}
+#!Var
 multi method node(SAST::Var:D $var) {
     my $name = self.gen-name($var);
     return Empty if $var ~~ SAST::ConstantDecl and not $var.depended;
@@ -236,8 +299,18 @@ multi method node(SAST::Var:D $var) {
     }
 }
 
-multi method node(SAST::Coerce:D $node) {
-    self.node($node[0]);
+multi method arg(SAST::Var:D $var) {
+    my $name = self.gen-name($var);
+    my $assign = $var.assign;
+    with $assign {
+        if $assign ~~ SAST::Junction:D and $assign.dis {
+            dq self.compile-assign($var,$assign);
+        } else {
+            SX::NYI.new(feature => 'Non declaration assignment as an argument',node => $var).throw
+        }
+    } else {
+        var $name, is-int => ($var.type ~~ tInt());
+    }
 }
 
 multi method compile-assign($var,SAST:D $_) { self.gen-name($var),'=',|self.arg($_) }
@@ -251,7 +324,7 @@ multi method compile-assign($var,SAST::Junction:D $j) {
     }
     if $or-equals and $var.type ~~ tStr() {
         my $name = self.gen-name($var);
-        '${',$name,':=',|self.arg($j[1]),'}';
+        '${',$name,':=', |self.arg($j[1]).in-or-equals,'}';
     } else {
         nextsame;
     }
@@ -259,9 +332,57 @@ multi method compile-assign($var,SAST::Junction:D $j) {
 
 multi method compile-assign($var,SAST::Call:D $call) {
     if $call.declaration.impure {
-        |self.node($call),'; ',self.gen-name($var),'="$R"';
+        |self.node($call),'; ',self.gen-name($var),'=$R';
     } else {
         nextsame;
+    }
+}
+
+multi method int-expr(SAST::Var:D $_) {
+    my $name = self.gen-name(.declaration);
+    if $name.Int {
+        '$',$name;
+    } else {
+        $name;
+    }
+}
+#!If
+multi method node(SAST::If:D $_,:$else) {
+    self.try-case($_) andthen .return;
+
+    substitute-cond-topic(.topic-var,.cond);
+
+    ($else ?? 'elif' !! 'if'),' ',
+    |(|self.node(.topic-var),'; ' if .topic-var andthen .depended),
+    |self.cond(.cond),"; then\n",
+    |self.node(.then,:indent,:no-empty),
+    |(with .else {
+         when SAST::Empty   { Empty }
+         when SAST::If    { "\n{$*pad}",|self.node($_,:else) }
+         when SAST::Stmts { "\n{$*pad}else\n",|self.node($_,:indent,:no-empty) }
+     } elsif .type ~~ tBool() {
+          # if false; then false; fi; actually exits 0 (?!)
+          # So we have to make sure it exits 1 if the cond is false
+          "\n{$*pad}else\n{$*pad}  false"
+     }),
+    ( "\n{$*pad}fi" unless $else );
+}
+
+# turns stuff like:
+# if test "$(cat $file)"; do ...
+# into:
+# if _1="$(cat $file)"; if test "$_1"; do ...
+sub substitute-cond-topic($topic-var,$cond is rw) {
+    if $topic-var andthen .depended {
+        my $target := $topic-var.assign;
+        $cond.descend: {
+            if $_ === $target {
+                $_ = $topic-var.gen-reference(
+                    match => $cond.match,
+                    :stage3-done,
+                );
+            }
+        }
     }
 }
 
@@ -272,8 +393,8 @@ method try-case($if is copy) {
     my $i = 0;
     while $if and $can {
         my ($topic,$pattern);
-        if $if ~~ SAST::Block {
-            @res.append: "\n$*pad  *) ", |self.node($if,:inline,:one-line),';;';
+        if $if !~~ SAST::If {
+            @res.append: "\n$*pad  *) ", |self.node($if,:one-line),';;';
             $if = Nil;
         } elsif (
             (my \cond = $if.cond) ~~ SAST::Cmp && cond.sym eq 'eq'
@@ -316,267 +437,42 @@ method try-case($if is copy) {
     $can && @res;
 }
 
-# turns stuff like:
-# if test "$(cat $file)"; do ...
-# into:
-# if _1="$(cat $file)"; if test "$_1"; do ...
-
-sub substitute-cond-topic($topic-var,$cond is rw) {
-    if $topic-var andthen .depended {
-        my $target := $topic-var.assign;
-        $cond.descend: {
-            if $_ === $target {
-                $_ = $topic-var.gen-reference(
-                    match => $cond.match,
-                    :stage3-done,
-                );
-            }
-        }
-    }
+multi method cap-stdout(SAST::If:D $_) {
+    nextsame when ShellStatus;
+    self.node($_);
 }
-
-multi method node(SAST::If:D $_,:$else) {
-    self.try-case($_) andthen .return;
-
-    substitute-cond-topic(.topic-var,.cond);
-
-    ($else ?? 'elif' !! 'if'),' ',
-    |(|self.node(.topic-var),'; ' if .topic-var andthen .depended),
-    |self.cond(.cond),"; then\n",
-    |self.node(.then,:indent,:no-empty),
-    |(with .else {
-         when SAST::Nop   { Empty }
-         when SAST::Block { "\n{$*pad}else\n",|self.node($_,:indent) }
-         default { "\n{$*pad}",|self.node($_,:else) }
-     } elsif .type ~~ tBool() {
-          # if false; then false; fi; actually exits 0 (?!)
-          # So we have to make sure it exits 1 if the cond is false
-          "\n{$*pad}else\n{$*pad}  false"
-     }),
-    ( "\n{$*pad}fi" unless $else );
-}
-
+#!While
 multi method node(SAST::While:D $_) {
     substitute-cond-topic(.topic-var,.cond);
 
     .until ?? 'until' !! 'while',' ',
     |(|self.node(.topic-var),'; ' if .topic-var andthen .depended),
     |self.cond(.cond),"; do \n",
-    |self.node(.block,:indent),
+    |self.node(.block,:indent,:no-empty),
     "\n{$*pad}done";
 }
-
+multi method cap-stdout(SAST::While:D $_) { self.node($_) }
+#!Given
 multi method node(SAST::Given:D $_) {
     |(|self.node(.topic-var),'; ' if .topic-var.depended),
     |self.node(.block,:curlies)
 }
 
+multi method cond(SAST::Given:D $_) { self.node($_) }
+
+multi method arg(SAST::Given:D $_) { cs self.node($_) }
+#!For
 multi method node(SAST::For:D $_) {
     self.scaf('IFS');
-    'for ', self.gen-name(.iter-var), ' in', |.list.children.flatmap({ ' ',self.arg($_) })
+    'for ', self.gen-name(.iter-var), ' in', |.list.children.map({ self.space-then-arg($_) }).flat
     ,"; do\n",
-    |self.node(.block,:indent),
+    |self.node(.block,:indent,:no-empty),
     "\n{$*pad}done"
 }
-
-
+multi method cap-stdout(SAST::For:D $_) { self.node($_) }
+#!Junction
 multi method node(SAST::Junction:D $_) {
     |self.cond($_[0]), (.dis ?? ' || ' !! ' && '),|self.node($_[1])
-}
-
-multi method node(SAST::Ternary:D $_,:$tight) {
-    # shouldn't this also be checking for Boo
-    ('{ ' if $tight),
-    |self.cond(.cond),' && ',|self.compile-in-ctx(.on-true,:tight),' || ',|self.compile-in-ctx(.on-false,:tight),
-    ('; }' if $tight);
-}
-
-multi method node(SAST::Block:D $block,:$indent is copy,:$curlies,:$one-line) {
-    $indent ||= True if $curlies;
-    my @compiled = self.compile-nodes($block.children,:$indent,:$one-line);
-    if $curlies {
-        self.maybe-oneline-block(@compiled);
-    } else {
-        |@compiled;
-    }
-}
-
-multi method node(SAST:D $_ where SAST::Increment|SAST::IntExpr) { ': ',|self.arg($_,:sink) }
-
-method maybe-oneline-block(@compiled) {
-    if @compiled.first(/\n/) {
-        "\{\n",|@compiled,"\n$*pad\}";
-    } else {
-        while @compiled and @compiled[0] ~~ /^\s*$/ {
-            @compiled.shift;
-        }
-        '{ ', |@compiled,'; }';
-    }
-}
-
-multi method node(SAST::RoutineDeclare:D $_) {
-    return if not .depended or .ann<compiled-already>;
-    # because subs can be post-declared, weirdness can happen where
-    # they get compiled twice, once in BEGIN and once in MAIN we have
-    # to keeep track of them. TODO just get rid of subs declarations
-    # in MAIN alltogether?
-    .ann<compiled-already> = True;
-    my $name = self.gen-name($_);
-    my $*LATE-INIT = {};
-    my @compiled = do if .is-native {
-        self.require-native(.name);
-    } else {
-        self.node(.chosen-block,:indent,:no-empty);
-    }
-    if $*LATE-INIT {
-        @compiled.prepend: "  $*pad",$*LATE-INIT.keys.map({ "$_=\"\"" }).join(" "),"\n";
-    }
-    $name,'()',|self.maybe-oneline-block(@compiled)
-}
-
-method call($name,@named-param-pairs,@pos) {
-    |@named-param-pairs.\ # Errr rakudo, why do I need \ here?
-       grep({.value.compile-time !=== False }).\
-       map({ self.gen-name(.key),"=",|self.arg(.value).itemize(True),' '} ).flat,
-    $name,
-    |@pos.map({ ' ',|self.arg($_).itemize(True) }).flat;
-}
-
-multi method node(SAST::SubCall:D $_)  {
-    self.call(self.gen-name(.declaration),.param-arg-pairs,.pos);
-}
-
-multi method node(SAST::MethodCall:D $_) {
-    my $call := |self.call: self.gen-name(.declaration),
-                .param-arg-pairs,
-                (( .declaration.static ?? Empty !! .invocant),|.pos);
-    if .declaration.rw and .invocant.assignable {
-        |self.gen-name(.invocant),'=$(',$call,')';
-    } else {
-        $call;
-    }
-}
-
-method compile-cmd(@cmd-body,@write,@append,:$stdin) {
-    my @redir;
-    my $eval;
-    for '>', @write,'>>',@append -> $sym,@list {
-        for @list -> $in,$out {
-            my $in-ct := $in.compile-time;
-            $eval = True unless $in-ct;
-            @redir.push: list ($in-ct ~~ 1 ?? '' !! self.arg($in));
-            @redir.push($sym);
-            @redir.push: list ('&' if $out.type ~~ tFD()),($out.compile-time ~~ -1 ?? '-' !! |self.arg($out));
-        }
-    }
-    if $stdin {
-        @redir.append: '',q{<}; #>;
-        @redir.push: list ('&' if $stdin.type ~~ tFD()),self.arg($stdin);
-    }
-    if $eval {
-        'eval ',escape(|@cmd-body," "),
-        |@redir.map(-> $in ,$sym,$out { |$in,escape($sym, $out.flat)}).flat;
-    } else {
-        |@cmd-body,|(@redir.map(-> $a,$b,$c {' ',|$a,|$b,|$c}).flat if @redir) ;
-    }
-}
-
-multi method node(SAST::Cmd:D $cmd,:$silence) {
-    my ($stdin,$pipe-in);
-
-    if $cmd.in ~~ SAST::FileContent {
-        $stdin = $cmd.in.file;
-    } elsif $cmd.in.defined {
-        $pipe-in = $cmd.in;
-    }
-
-    my @cmd-body = |(self.arg($cmd.cmd),|$cmd.nodes.map({(' ',self.arg($_)) })).flat;
-    my $full-cmd := |self.compile-cmd(@cmd-body,$cmd.write,$cmd.append,:$stdin);
-    my $pipe := |(|self.cap-stdout($_),'|' with $pipe-in);
-    |$pipe,
-    ("\n{$*pad}" if $pipe and $pipe.chars + $full-cmd.chars > $.chars-per-line-cap),
-    |$cmd.set-env.map({"{.key.subst('-','_',:g)}=",|self.arg(.value)," "}).flat,
-    |$full-cmd;
-}
-
-multi method node(SAST::WriteToFile:D $wtf) {
-    self.compile-cmd(self.cap-stdout($wtf.in),$wtf.write,$wtf.append);
-}
-
-multi method node(SAST::Return:D $ret) {
-    if $ret.impure {
-        'R=',self.arg($ret.val);
-    } else {
-        self.compile-in-ctx($ret.val,|%_);
-    }
-}
-
-method compile-in-ctx($node,*%_) {
-    given $node.ctx {
-        when tBool() { self.cond($node,|%_)       }
-        when tStr()  { self.cap-stdout($node,|%_) }
-        when tAny()  { self.node($node,|%_) }
-        default {
-            SX::Bug.new(:$node,desc => "Node's type context {.gist} is invalid").throw
-        }
-    }
-}
-
-multi method node(SAST:D $_) {
-    ': ',|self.arg($_);
-}
-
-multi method node(SAST::Nop:D $_,:$indent,:$no-empty) {
-    if $no-empty {
-        $*pad,'  :nop';
-    } else {
-        Empty
-    }
-}
-
-multi method node(SAST::Quietly:D $_) {
-    |self.node(.block,:curlies),' 2>',('&' if .null.type ~~ tFD()),self.arg(.null);
-}
-
-multi method cond(SAST:D $_) {
-    if .type === tInt() {
-        'test ',|self.arg($_), ' -ne 0';
-    } else {
-        'test ',|self.arg($_);
-    }
-}
-
-multi method cond(SAST::Neg:D $_) {
-    '! ',|self.cond(.children[0],:tight);
-}
-
-multi method cond(SAST::Cmp:D $cmp) {
-    my $shell-sym = do given $cmp.sym {
-        when '==' { '-eq' }
-        when 'eq' {  '=' }
-        when '!=' { '-ne' }
-        when '<'  { '-lt' }
-        when '>'  { '-gt' }
-        when '<=' { '-le' }
-        when '>=' { '-ge' }
-        when 'ne' {  '!=' }
-        when 'lt' {  '<'  }
-        when 'gt' {  '>'  }
-        when 'le' {  '<=' }
-        when 'ge' {  '>=' }
-        default { "'$_' comparison NYI" }
-    }
-
-    '[ ',|self.arg($cmp[0])," $shell-sym ",|self.arg($cmp[1]),' ]';
-}
-
-multi method cond(SAST::EnumCmp:D $cmp) {
-    my $check := do if $cmp.check ~~ SAST::Type {
-        escape $cmp.check.class-type.^name;
-    }  else {
-        self.arg($cmp.check);
-    }
-    self.scaf('has-member'),' ',|self.arg($cmp.enum),' ',|$check;
 }
 
 multi method cond(SAST::Junction:D $_,:$tight) {
@@ -584,141 +480,7 @@ multi method cond(SAST::Junction:D $_,:$tight) {
     |self.cond($_[0]), (.dis ?? ' || ' !! ' && '),|self.cond($_[1],:tight),
     ('; }' if $tight );
 }
-multi method cond(SAST::CondReturn:D $_,|c) {
-    self.cond(.val,|c);
-}
 
-multi method cond(SAST::CmpRegex:D $_) {
-    if .re ~~ SAST::Regex {
-        if .re.patterns<ere> -> $ere  {
-            self.scaf('re-match'),' ',|self.arg(.thing),' ',|self.arg($ere);
-        } else {
-            self.scaf('pre-match'),' ',|self.arg(.thing),' ',|self.arg(.re.patterns<pre>);
-        }
-    } else {
-        self.scaf('pre-match'),' ',|self.arg(.thing),' ',|self.arg(.re);
-    }
-}
-
-multi method cond(ShellStatus:D $_) is default {
-    self.node($_);
-}
-
-multi method cond(SAST::BVal:D $_) {
-    .val ?? 'true' !! 'false';
-}
-
-multi method arg(SAST::SVal:D $_) { escape .val }
-multi method arg(SAST::IVal:D $_) { .val.Str }
-multi method arg(SAST::BVal:D $_) { .val ?? '1' !! '""' }
-
-multi method arg(SAST::Eval:D $_) { self.arg(.compiled) }
-multi method arg(SAST::Var:D $var) {
-    my $name = self.gen-name($var);
-    my $assign = $var.assign;
-    (with $assign {
-        if $assign ~~ SAST::Junction:D and $assign.dis {
-            dq self.compile-assign($var,$assign);
-        } elsif $var ~~ SAST::VarDecl {
-            $*LATE-INIT{$name} = True if $*LATE-INIT.defined;
-            dq '${',$name,':=',|self.arg($assign),'}';
-        } else {
-            SX::NYI.new(feature => 'Non declaration assignment as an argument',node => $var).throw
-        }
-    } else {
-        var $name
-     }).itemize($var.itemize);
-}
-
-multi method arg(SAST::Regex:D $_) {
-    self.arg(.src);
-}
-
-multi method arg(SAST::IntExpr:D $_) { nnq '$((', |self.int-expr($_),'))' }
-multi method arg(SAST::Increment:D $_,:$sink) {
-    nnq do if .[0] ~~ SAST::Var {
-        my $decl = .[0].declaration;
-        my @inc = self.gen-name($decl),(.decrement ?? '-' !! '+'),'=1';
-        if .pre or $sink {
-            '$((',|@inc,'))';
-        } else {
-            '$(((',|@inc,')',(.decrement ?? '+' !! '-'),'1))';
-        }
-    } else {
-        die "tried to increment something that isn't a variable";
-    }
-}
-multi method arg(SAST::Range:D $_) {
-    cs('seq ',
-       |(.exclude-start
-         ?? ('$((',|self.int-expr($_[0]),'+1))')
-         !! |self.arg($_[0])
-        )
-       ,' ',
-       |(.exclude-end
-         ?? ('$((',|self.int-expr($_[1]),'-1))')
-         !! |self.arg($_[1])
-        );
-      ).itemize(.itemize);
-}
-
-multi method arg(SAST::Blessed:D $_) {
-    with $_[0] {
-        self.arg($_);
-    }
-}
-
-multi method arg(SAST::Elem:D $_) { die 'SAST::Elem made it to compiler' }
-
-multi method arg(SAST::FileContent:D $_) {
-    dq '$(cat ',('<&' if .file.type ~~ tFD),|self.arg(.file),')' #'>'
-}
-
-multi method arg(SAST::Concat:D $_) {
-    return '""' unless .children;
-    my @compiled = .children.flatmap({ self.arg($_).itemize(True) });
-    my $str = dq();
-
-    my $last-var;
-    for @compiled {
-        $str.bits.append(.in-DQ);
-    }
-
-    $str;
-}
-
-multi method arg(SAST::Type $_) {
-    if .class-type.enum-type {
-        dq (.class-type.^types-in-enum».name).join('|')
-    } else {
-        dq .gist
-    }
-}
-
-multi method arg(SAST::Negative:D $_) {
-    self.arg(.as-string);
-}
-
-multi method arg(SAST::Block:D $_) {
-    if .one-stmt -> $return {
-        self.arg($return.val);
-    } else {
-        cs self.node($_,:one-line);
-    }
-}
-
-multi method arg(SAST::Given:D $_) {
-    cs self.node($_)
-}
-
-multi method arg(SAST::Call:D $_) is default {
-    SX::Sh::ImpureCallAsArg.new(call-name => .name,node => $_).throw if .declaration.impure;
-    nextsame;
-}
-
-multi method arg(SAST:D $_) {
-    cs(self.cap-stdout($_)).itemize(.itemize)
-}
 multi method arg(SAST::Junction:D $_) {
     with self.try-param-substitution($_) {
         .return;
@@ -727,48 +489,22 @@ multi method arg(SAST::Junction:D $_) {
     }
 }
 
-multi method arg(SAST::Itemize:D $_) {
-    self.arg($_[0]).itemize(.itemize);
-}
-
-multi method cap-stdout(ShellStatus $_) {
-    |self.cond($_),' && ',self.scaf('e'),' 1';
-}
-
-multi method cap-stdout(SAST::If:D $_) {
-    nextsame when ShellStatus;
-    self.node($_);
-}
-
-multi method cap-stdout(SAST:D $_) {
-    self.scaf('e'),' ',|self.arg($_).itemize(True);
-}
-
-multi method cap-stdout(SAST::Call:D $_) is default {
-    nextsame when ShellStatus;
-    self.node($_)
-}
-
-multi method cap-stdout(SAST::Cmd:D $_) {
-    nextsame when ShellStatus;
-    self.node($_);
-}
-
-multi method cap-stdout(SAST::List:D $_) {
-    if .children > 1 {
-        self.make-list(.children);
-    } else {
-        self.cap-stdout(.children[0]);
+method try-param-substitution(SAST::Junction:D $junct) {
+    my \LHS = $junct[0];
+    my \RHS = $junct[1];
+    if LHS ~~ SAST::CondReturn and LHS.val ~~ SAST::Var and LHS.val.uses-Str-Bool {
+        dq '${',
+        self.gen-name(LHS.val),
+        (LHS.when ?? ':-' !! ':+'),
+        |self.arg(RHS),
+        '}';
     }
 }
 
-multi method cap-stdout(SAST::Regex:D $_) {
-    self.cap-stdout(.pre);
-}
-
-
+multi method cap-stdout(SAST::Junction:D $_) { self.compile-junction($_) }
 
 # Mimicking perl-like junctions in a stringy context (|| &&) in shell is tricky.
+# This:
 #     my $a = $foo || $bar;
 # becomes:
 #     a="$( test "$foo" && echo "$foo" || echo "$bar"; )"
@@ -800,23 +536,7 @@ multi method compile-junction($node,:$junct-ctx) {
         default { |self.cap-stdout($node) }
     }
 }
-
-multi method cap-stdout(SAST::Junction:D $_) {
-    self.compile-junction($_);
-}
-
-method try-param-substitution(SAST::Junction:D $junct) {
-    my \LHS = $junct[0];
-    my \RHS = $junct[1];
-    if LHS ~~ SAST::CondReturn and LHS.val ~~ SAST::Var and LHS.val.uses-Str-Bool {
-        dq '${',
-        self.gen-name(LHS.val),
-        (LHS.when ?? ':-' !! ':+'),
-        |self.arg(RHS),
-        '}';
-    }
-}
-
+#!CondReturn
 multi method cap-stdout(SAST::CondReturn:D $_) {
     if .when === True  and !.Bool-call {
         '{ ',self.cond(.val), ' && ',self.scaf('e'), ' 1;',' }';
@@ -826,47 +546,341 @@ multi method cap-stdout(SAST::CondReturn:D $_) {
         # can be reduced-to: (test "$foo" || echo "$bar")
         self.cond(.val);
     } else {
-        self.junct-helper(.Bool-call,.when);
+        self.scaf(.when ?? 'et' !! 'ef'),' ',|self.cond(.Bool-call);
     }
+}
+
+multi method cond(SAST::CondReturn:D $_,|c) { self.cond(.val,|c) }
+#!Ternary
+multi method node(SAST::Ternary:D $_,:$tight) {
+    # shouldn't this also be checking for Boo
+    ('{ ' if $tight),
+    |self.cond(.cond),' && ',|self.compile-in-ctx(.on-true,:tight),' || ',|self.compile-in-ctx(.on-false,:tight),
+    ('; }' if $tight);
 }
 
 multi method cap-stdout(SAST::Ternary:D $_,:$tight) {
     self.node($_,:$tight);
 }
 
-multi method int-expr(SAST:D $_) { '$(',|self.cap-stdout($_),')' }
+multi method cond(SAST::Ternary:D $_,|c)  {
+    self.node($_,|c);
+}
+#!Block
+#!Stmts
+multi method node(SAST::Stmts:D $block,:$indent is copy,:$curlies,:$one-line,:$no-empty) {
+    $indent ||= True if $curlies;
+    my @compiled = self.compile-nodes($block.children,:$indent,:$one-line,:$no-empty);
+    if $curlies {
+        self.maybe-oneline-block(@compiled);
+    } else {
+        |@compiled;
+    }
+}
+
+multi method arg(SAST::Stmts:D $_) {
+    cs self.node($_,:one-line);
+}
+
+#!LastExitStatus
+multi method cond(SAST::LastExitStatus:D $_) {
+    'expr $? = 0 >', '&',self.arg(self.scaf-ref('*NULL',match => .match));
+}
+
+multi method arg(SAST::LastExitStatus:D $_) { '$?' }
+
+multi method node(SAST:D $_ where SAST::Increment|SAST::IntExpr) { ': ',|self.arg($_,:sink) }
+#!Increment
+multi method arg(SAST::IntExpr:D $_) { nnq '$((', |self.int-expr($_),'))' }
+#!IntExpr
+multi method arg(SAST::Increment:D $_,:$sink) {
+    nnq do if .[0] ~~ SAST::Var {
+        my $decl = .[0].declaration;
+        my @inc = self.gen-name($decl),(.decrement ?? '-' !! '+'),'=1';
+        if .pre or $sink {
+            '$((',|@inc,'))';
+        } else {
+            '$(((',|@inc,')',(.decrement ?? '+' !! '-'),'1))';
+        }
+    } else {
+        die "tried to increment something that isn't a variable";
+    }
+}
 multi method int-expr(SAST::IntExpr:D $_,:$tight) {
     ('(' if $tight),|self.int-expr(.[0]),.sym,|self.int-expr(.[1],:tight),(')' if $tight);
 }
-multi method int-expr(SAST::Var:D $_) {
-    my $name = self.gen-name(.declaration);
-    if $name.Int {
-        '$',$name;
-    } else {
-        $name;
-    }
-}
-multi method int-expr(SAST::Ternary:D $_) {
-    # XXX: atm we will never get here
-    self.int-expr(.cond), ' ? ',self.int-expr(.on-true),' : ',self.int-expr(.on-false);
-}
-multi method int-expr(SAST::BVal $ where { .val === False } ) { '0' }
+#!Negative
+multi method arg(SAST::Negative:D $_) { self.arg(.as-string) }
 multi method int-expr(SAST::Negative:D $_) {
     '-',|self.int-expr($_[0],:tight);
 }
-multi method int-expr(SAST::IVal:D $_) { .val.Str }
-
-method comment(Str:D $_) { '# ',$_ }
-
-method junct-helper($Bool-call is copy,$when is copy) {
-    my $name = $when ?? 'et' !! 'ef';
-    self.scaf($name),' ',self.cond($Bool-call);
+#!RoutineDeclare
+multi method node(SAST::RoutineDeclare:D $_) {
+    return if not .depended or .ann<compiled-already>;
+    # because subs can be post-declared, weirdness can happen where
+    # they get compiled twice, once in BEGIN and once in MAIN. We have
+    # to keep track of them. TODO just get rid of subs declarations
+    # in MAIN altogether?
+    .ann<compiled-already> = True;
+    my $name = self.gen-name($_);
+    my @compiled = do if .is-native {
+        self.require-native(.name);
+    } else {
+        self.node(.chosen-block,:indent,:no-empty);
+    }
+    $name,'()',|self.maybe-oneline-block(@compiled)
 }
 
-method make-list(*@args){
-    if @args > 1 {
-        self.scaf('list'),|@args.flatmap({ ' ', |self.arg($_) });
+method call($name,@named-param-pairs,@pos) {
+    |@named-param-pairs.\ # Errr rakudo, why do I need \ here?
+       grep({.value.compile-time !=== False }).\
+       map({ self.gen-name(.key),"=",|self.arg(.value),' '} ).flat,
+    $name,
+    |@pos.map({ ' ',|self.arg($_) }).flat;
+}
+#!Call
+multi method node(SAST::SubCall:D $_)  {
+    self.call(self.gen-name(.declaration),.param-arg-pairs,.pos);
+}
+
+multi method node(SAST::MethodCall:D $_) {
+    my $call := |self.call: self.gen-name(.declaration),
+                .param-arg-pairs,
+                (( .declaration.static ?? Empty !! .invocant),|.pos);
+    if .declaration.rw and .invocant.assignable {
+        |self.gen-name(.invocant),'=$(',$call,')';
     } else {
-        return self.arg(@args[0]);
+        $call;
+    }
+}
+
+multi method arg(SAST::Call:D $_) is default {
+    SX::Sh::ImpureCallAsArg.new(call-name => .name,node => $_).throw if .declaration.impure;
+    nextsame;
+}
+
+multi method cap-stdout(SAST::Call:D $_) is default {
+    nextsame when ShellStatus;
+    self.node($_)
+}
+#!Cmd
+multi method node(SAST::Cmd:D $cmd,:$silence) {
+
+    if $cmd.nodes == 0 {
+        my @cmd-body = self.cap-stdout($cmd.pipe-in);
+        self.compile-cmd(@cmd-body,$cmd.write,$cmd.append,());
+    } else {
+        my @in = $cmd.in;
+        my @cmd-body  = |$cmd.nodes.map({ $++
+                                          ?? self.space-then-arg($_)
+                                          !! self.arg($_).itemize(.itemize) }
+                                       ).flat;
+
+        my $full-cmd := |self.compile-cmd(@cmd-body,$cmd.write,$cmd.append,@in);
+        my $pipe     := |(|self.cap-stdout($_),'|' with $cmd.pipe-in);
+        |$pipe,
+        ("\n{$*pad}" if $pipe and $pipe.chars + $full-cmd.chars > $.chars-per-line-cap),
+        |$cmd.set-env.map({"{.key.subst('-','_',:g)}=",|self.arg(.value)," "}).flat,
+        |$full-cmd;
+    }
+}
+
+method compile-cmd(@cmd-body,@out-write,@out-append,@in) {
+    my @redir;
+    my $eval;
+
+    my @redirs := 1,'>' ,@out-write,
+                  1,'>>',@out-append,
+                  0,«<» ,@in;
+
+    for @redirs -> $default-lhs, $sym, @list {
+        for @list -> $lhs,$rhs {
+            my $lhs-ct := $lhs.compile-time;
+            $eval = True without $lhs-ct;
+            @redir.push: list ($lhs-ct ~~ $default-lhs ?? '' !! self.arg($lhs));
+            @redir.push($sym);
+            @redir.push: list ('&' if $rhs.type ~~ tFD()),
+                              ($rhs.compile-time ~~ -1 ?? '-' !! |self.arg($rhs));
+        }
+    }
+    if $eval {
+        'eval ',escape(|@cmd-body," "),
+        |@redir.map(-> $in,$sym,$out { |$in,escape($sym, $out.flat) }).flat;
+    } else {
+        |@cmd-body,|(@redir.map(-> $a,$b,$c {' ',|$a,|$b,|$c}).flat if @redir) ;
+    }
+}
+
+
+multi method cap-stdout(SAST::Cmd:D $_) {
+    nextsame when ShellStatus;
+    self.node($_);
+}
+
+#!Return
+multi method node(SAST::Return:D $ret) {
+    if $ret.impure {
+        'R=',self.arg($ret.val);
+    } elsif $ret.loop {
+        self.loop-return($ret.val);
+    } else {
+        # If we're returning the exit status of the last cmd we can just do nothing
+        # because that's what will be retuned if we do.
+        if $ret.val ~~ SAST::LastExitStatus and $ret.ctx ~~ tBool() {
+            Empty;
+        }
+        elsif $ret.val.compile-time ~~ '' {
+            Empty;
+        }
+        else {
+            self.compile-in-ctx($ret.val,|%_);
+        }
+    }
+}
+
+method compile-in-ctx($node,*%_) {
+    given $node.ctx {
+        when tBool() { self.cond($node,|%_)       }
+        when tStr()  { self.cap-stdout($node,|%_) }
+        when tAny()  { self.node($node,|%_) }
+        default {
+            SX::Bug.new(:$node,desc => "{$node.^name}'s type context {.gist} is invalid").throw
+        }
+    }
+}
+#!Empty
+multi method node(SAST::Empty:D $_) { Empty }
+multi method  arg(SAST::Empty:D $_) { dq '' }
+
+#!Quietly
+multi method node(SAST::Quietly:D $_) {
+    |self.node(.block,:curlies),' 2>',('&' if .null.type ~~ tFD()),self.arg(.null);
+}
+
+#!Neg
+multi method cond(SAST::Neg:D $_) { '! ',|self.cond(.children[0],:tight) }
+
+#!Cmp
+multi method cond(SAST::Cmp:D $cmp) {
+    my $shell-sym = do given $cmp.sym {
+        when '==' { '-eq' }
+        when 'eq' {  '=' }
+        when '!=' { '-ne' }
+        when '<'  { '-lt' }
+        when '>'  { '-gt' }
+        when '<=' { '-le' }
+        when '>=' { '-ge' }
+        when 'ne' {  '!=' }
+        when 'lt' {  '<'  }
+        when 'gt' {  '>'  }
+        when 'le' {  '<=' }
+        when 'ge' {  '>=' }
+        default { "'$_' comparison NYI" }
+    }
+
+    '[ ',|self.arg($cmp[0])," $shell-sym ",|self.arg($cmp[1]),' ]';
+}
+
+#!EnumCmp
+multi method cond(SAST::EnumCmp:D $cmp) {
+    my $check := do if $cmp.check ~~ SAST::Type {
+        escape $cmp.check.class-type.^name;
+    }  else {
+        self.arg($cmp.check);
+    }
+    self.scaf('has-member'),' ',|self.arg($cmp.enum),' ',|$check;
+}
+
+#!BVal
+multi method arg (SAST::BVal:D $_) { .val ?? '1' !! '""' }
+multi method cond(SAST::BVal:D $_) { .val ?? 'true' !! 'false' }
+multi method int-expr(SAST::BVal $ where { .val === False } ) { '0' }
+#!SVal
+multi method arg(SAST::SVal:D $_) { escape .val }
+#!IVal
+multi method arg(SAST::IVal:D $_) { .val.Str }
+multi method int-expr(SAST::IVal:D $_) { .val.Str }
+#!Eval
+multi method arg(SAST::Eval:D $_) { self.arg(.compiled) }
+#!Regex
+multi method arg(SAST::Regex:D $_) { self.arg(.src) }
+multi method cap-stdout(SAST::Regex:D $_) { self.cap-stdout(.pre) }
+#!CmpRegex
+multi method cond(SAST::CmpRegex:D $_) {
+    if .re ~~ SAST::Regex {
+        if .re.patterns<ere> -> $ere  {
+            self.scaf('re-match'),' ',|self.arg(.thing),' ',|self.arg($ere);
+        } else {
+            self.scaf('pre-match'),' ',|self.arg(.thing),' ',|self.arg(.re.patterns<pre>);
+        }
+    } else {
+        self.scaf('pre-match'),' ',|self.arg(.thing),' ',|self.arg(.re);
+    }
+}
+#!Range
+multi method arg(SAST::Range:D $_) {
+    cs 'seq ',
+    |(.exclude-start
+      ?? ('$((',|self.int-expr($_[0]),'+1))')
+      !! |self.arg($_[0])
+     )
+    ,' ',
+    |(.exclude-end
+      ?? ('$((',|self.int-expr($_[1]),'-1))')
+      !! |self.arg($_[1])
+     )
+}
+#!Blessed
+multi method arg(SAST::Blessed:D $_) { self.arg($_[0]) }
+
+#!Concat
+multi method arg(SAST::Concat:D $_) {
+    return '""' unless .children;
+    my @compiled = .children.flatmap({ self.arg($_) });
+    my $str = dq();
+
+    my $last-var;
+    for @compiled.reverse.kv -> $i,$_ {
+        $str.bits.prepend(.in-DQ(next => $str.bits.head));
+    }
+    $str;
+}
+#!Type
+multi method arg(SAST::Type $_) {
+    if .class-type.enum-type {
+        escape .class-type.^types-in-enum».name.join('|')
+    } else {
+        escape .gist
+    }
+}
+#!Itemize
+multi method arg(SAST::Itemize:D $_) { self.arg($_[0]) }
+multi method cap-stdout(SAST::Itemize:D $_) { self.cap-stdout($_[0]) }
+#!List
+multi method cap-stdout(SAST::List:D $_) {
+    if .children > 1 {
+        self.scaf('list'),|.children.map({ ' ', |self.arg($_) }).flat;
+    } else {
+        self.cap-stdout(.children[0]);
+    }
+}
+
+multi method loop-return(SAST::List:D $_) {
+    if .children > 1 {
+        self.cap-stdout($_);
+    } else {
+        self.loop-return(.children[0]);
+    }
+}
+#!Doom
+# If we try and compile Doom we're doomed
+multi method arg(SAST::Doom:D $_)  { .exception.throw }
+
+multi method arg(SAST::NAME:D $_) {
+    if try self.gen-name($_[0]) -> $name {
+        escape $name;
+    } else {
+        SX.new(message => ‘value doesn't have name’, node => $_[0]).throw;
+
     }
 }

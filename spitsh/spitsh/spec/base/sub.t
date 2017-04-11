@@ -1,6 +1,6 @@
 use Test;
 
-plan 30;
+plan 31;
 
 {
     sub foo() {
@@ -111,11 +111,21 @@ plan 30;
 {
     my $canary = 0;
     sub +check-re-enter is impure {
-        $*NULL.write(my $foo = ++$canary);
+        my $foo = ++$canary;
+        $*NULL.write($foo);
         $foo;
     }
 
     my $a = check-re-enter();
     my $b = check-re-enter();
     nok $a == $b,'my $foo = ... as arg works more than once';
+}
+
+{
+    sub dolla($_) {
+        when 'foo' { pass  '$_ as parameter' }
+        default    { flunk '$_ as parameter' }
+    }
+
+    dolla("foo");
 }

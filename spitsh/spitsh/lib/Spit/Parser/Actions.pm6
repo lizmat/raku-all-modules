@@ -80,38 +80,34 @@ method EXPR-and-mod ($/) {
 method pragma:sym<use>($/) {
     my $spec = $<EXPR>.ast;
     my $match = $/; # BUG? $/ is being reset inside CATCH
-    if $<lib-type> {
-        die "lib NYI";
-    } else {
-        my %use = ($<identifier> andthen id => .Str)
-                   || (repo-type => $<repo-type>.Str,
-                       id => $<angle-quote>.ast.val);
-        my $CU;
-        for @*repos -> $repo {
 
-            ($CU = $repo.load(|%use,:$.debug)) && last;
-            CATCH {
-                SX::ModuleLoad.new(
-                    :$repo,
-                    exception => $_,
-                    |%use,
-                    :$match,
-                ).throw;
-            }
-        }
-        if $CU {
-            my @exported := $CU.exported;
-            for SymbolType::.values -> $symbol-type {
-                for @exported[$symbol-type].?values {
-                    $*CURPAD.declare($_);
-                }
-            }
-        } else {
-            SX::ModuleNotFound.new(|%use,:@*reps).throw;
-        }
+    my %use = ($<identifier> andthen id => .Str)
+    || (repo-type => $<repo-type>.Str,
+        id => $<angle-quote>.ast.val);
+    my $CU;
 
+    for @*repos -> $repo {
+        ($CU = $repo.load(|%use,:$.debug)) && last;
+        CATCH {
+            SX::ModuleLoad.new(
+                :$repo,
+                exception => $_,
+                |%use,
+                :$match,
+            ).throw;
+        }
     }
-    make SAST::Nop.new;
+    if $CU {
+        my @exported := $CU.exported;
+        for SymbolType::.values -> $symbol-type {
+            for @exported[$symbol-type].?values {
+                $*CURPAD.declare($_);
+            }
+        }
+    } else {
+        SX::ModuleNotFound.new(|%use,:@*reps).throw;
+    }
+    make SAST::Empty.new;
 }
 
 method statement-prefix:sym<END> ($/) {
@@ -202,14 +198,7 @@ method statement-control:sym<when> ($/) {
     my ($if,$last,$this);
     for $/[0] {
         $this = SAST::If.new(
-            cond => ($_<EXPR>
-                     ?? SAST::Accepts.new(
-                            SAST::Var.new(sigil => '$',name => '_', match => $_<EXPR>),
-                            $_<EXPR>.ast,
-                            match => $_<EXPR>
-                        )
-                     !! SAST::BVal.new(val => True,match => $_<block>)
-                    ),
+            cond => ($_<EXPR> andthen .ast or SAST::BVal.new(val => True,match => $_<block>)),
             then => $_<block>.ast,
             :when,
         );
@@ -218,6 +207,10 @@ method statement-control:sym<when> ($/) {
         $last = $this;
     }
     make $if;
+}
+
+method statement-control:sym<on> ($/) {
+    make SAST::OnBlock.new: os-candidates => $<on-switch>.ast;
 }
 
 sub declare-new-type($/,$name,\MetaType) {
@@ -248,13 +241,13 @@ method declaration:sym<class> ($/){
 
 method declare-class-params ($/) {
     for $*CLASS.class.^placeholder-params -> $type {
-        $*CURPAD.declare: SAST::ClassDeclaration.new(class => $type,block => SAST::Nop.new);
+        $*CURPAD.declare: SAST::ClassDeclaration.new(class => $type);
     }
 }
 
 method new-class ($/) {
     my $class = declare-new-type($/,$<type-name>.Str,Spit::Metamodel::Type);
-    with $<class-params> {
+    with $<class-params><params><thing> {
         for $_<type-name>.map(*.Str).kv -> $i,$name {
             my $placeholder-type := Spit::Metamodel::Placeholder.new_type(:$name);
             set-primitive($placeholder-type);
@@ -267,9 +260,9 @@ method new-class ($/) {
 }
 
 method class-params ($/) {
-    make $<type-name>.map({
+    make cache  $<params><thing><type-name>.map: {
         $*CURPAD.lookup(CLASS,.Str,match => $_);
-    }).List;
+    };
 }
 
 method declaration:sym<augment> ($/) {
@@ -313,8 +306,7 @@ method trait:sym<is> ($/){
     } elsif $<impure> {
         $*ROUTINE.impure = True;
     } else {
-        my $parent := $*CURPAD.lookup(CLASS,$<type-name>.Str,match => $<type-name>).class;
-        $*CLASS.class.^add_parent($parent);
+        $*CLASS.class.^add_parent($<type>.ast);
     }
 }
 
@@ -339,10 +331,10 @@ method routine-declaration ($/) {
 }
 
 method new-routine($/) {
-    my (:@pos,:%named) := $<paramlist>.ast;
+    my (:@pos,:%named) := $<param-def>.ast<paramlist>.ast;
     my $r = $*ROUTINE;
     $r.signature = SAST::Signature.new(:@pos,:%named);
-    $r.return-type = .ast with $<return-type> || $<return-type-sigil>;
+    $r.return-type = .ast with $<param-def>.ast<return-type> || $<return-type-sigil>;
     make $r;
 }
 
@@ -364,19 +356,13 @@ method make-routine ($/,$type,:$static) {
 
 method on-switch ($/) {
     # XXX: BUG in rakudo. Value from seq disappears so assign to array first.
-    my @tmp = $/[0].flatmap({ $_<os>.ast, $_<block>.ast });
+    my @tmp = $/<candidates>.ast[0].map({  $_<os>.ast, $_<block>.ast }).flat;
     make @tmp;
 }
 
-method declaration:sym<constant> ($/) {
-    my $constant = $<var-and-type>.ast;
-    $constant.assign = $<EXPR>.ast;
-    make $*CURPAD.declare: $constant;
-}
-
-method declaration:sym<my> ($/) {
+method declaration:var ($/) {
     my $var = $<var-and-type>.ast;
-    $var.assign = $<EXPR>.ast;
+    $var.assign = $<statement>.ast;
     make $*CURPAD.declare: $var;
 }
 
@@ -384,8 +370,6 @@ method return-type-sigil:sym<~>($/) { make tStr() }
 method return-type-sigil:sym<+>($/) { make tInt() }
 method return-type-sigil:sym<?>($/) { make tBool() }
 method return-type-sigil:sym<@>($/) { make tList() }
-
-
 
 method paramlist ($/) {
     my @params = $<params>.map(*<param>.ast);
@@ -499,9 +483,6 @@ method var-create($/,$decl-type) {
 
 method term:block ($/) { make $<block>.ast }
 method term:quote ($/)   { make $<quote>.ast  }
-method term:regex ($/) {
-    make SAST::Regex.new(src => $<p5regex>.ast);
-}
 method term:angle-quote ($/) { make $<angle-quote>.ast }
 method term:int ($/)   { make $<int>.ast    }
 method int ($/) { make SAST::IVal.new: val => $/.Int }
@@ -514,18 +495,32 @@ method var ($/)   {
     );
 }
 
+method term:special-var ($/) { make $<special-var>.ast }
+method special-var:sym<$?> ($/) { make SAST::LastExitStatus.new }
+
 method term:name ($/) {
-    # Match moved to a sub to avoid clobbering $/
     my $name = $<name>.Str;
     make do if $<is-type> {
         my @params = $<class-params>.ast || Empty;
         do with $<object> {
-            my $definite = .values[0].ast;
-            SAST::Blessed.new(
-                class-name => $name,
-                :@params,
-                $definite,
-            )
+            if $_<angle-quote> andthen (my $list = .ast) ~~ SAST::List {
+                for $list.children {
+                    $_ = SAST::Blessed.new(
+                        class-name => $name,
+                        :@params,
+                        $_,
+                        match => .match,
+                    );
+                }
+                $list;
+            } else {
+                my $definite = $list || $_<EXPR>.ast;
+                SAST::Blessed.new(
+                    class-name => $name,
+                    :@params,
+                    $definite,
+                )
+            }
         } else {
             SAST::Type.new(
                 class-name => $name,
@@ -546,10 +541,13 @@ method term:sast ($/) {
 }
 
 method term:parens ($/) {
-    with $<itemizer> {
-        make SAST::Itemize.new(sigil => .Str, $<statement>.ast);
+    my @stmts = $<statementlist>.ast;
+    make do if not @stmts {
+        SAST::Empty.new;
+    } elsif @stmts == 1 {
+        @stmts[0];
     } else {
-        make $<statement>.ast
+        SAST::Stmts.new(|@stmts)
     }
 }
 
@@ -560,8 +558,12 @@ method term:cmd ($/) {
 sub gen-method-call($/) {
     my (:@pos,:%named) := $<args>.ast;
     my $name = $<name>.Str;
-    return SAST::WHAT.new if $name eq 'WHAT';
-    return SAST::WHY.new if $name eq 'WHY';
+    given $name {
+        when 'WHAT' { return SAST::WHAT.new }
+        when 'WHY'  { return SAST::WHY.new }
+        when 'PRIMITIVE' { return SAST::PRIMITIVE.new }
+        when 'NAME' { return SAST::NAME.new }
+    }
 
     SAST::MethodCall.new(
         :$name,
@@ -620,7 +622,32 @@ method infix:sym<=> ($/) {
         $var;
     }
 }
-
+method infix:sym<.=> ($/) {
+    make -> $var,$_ {
+        unless $var ~~ SAST::Assignable && $var.assign-type {
+            SX::Assignment-Readonly.new.throw
+        }
+        when SAST::Call {
+            $var.assign = .make-new(
+                SAST::MethodCall,
+                :name(.name),
+                :named(.named),
+                :pos(.pos),
+                $var.gen-reference(match => $var.match),
+            );
+            $var;
+        }
+        when SAST::Cmd {
+            proceed if .pipe-in;
+            .pipe-in = $var.gen-reference(match => $var.match);
+            $var.assign = $_;
+            $var;
+        }
+        default {
+            SX::Invalid.new(invalid => 'RHS for ‘.=’').throw;
+        }
+    }
+}
 method infix:sym<,>  ($/) {
     make -> $lhs,$rhs {
         if $lhs ~~ SAST::List && $rhs !~~ SAST::List {
@@ -669,9 +696,9 @@ method args ($/,|) {
 method postfix:cmd-call ($/) {
     my $first = $<cmd>.ast;
     my $last = $first;
-    $last = $last.in while $last.in;
+    $last = $last.pipe-in while $last.pipe-in;
     make -> $called-on {
-        $last.in = $called-on;
+        $last.pipe-in = $called-on;
         $first;
     };
 }
@@ -709,11 +736,7 @@ method pblock($/) {
 
 method blockoid($/) {
     my $pad = $*CURPAD;
-    with $<when-chain> {
-        $pad.append(.ast);
-    } else {
-        $pad.append($<statementlist>.ast);
-    }
+    $pad.append($<statementlist>.ast);
     make $pad;
 }
 
@@ -731,21 +754,19 @@ method type ($/) {
 }
 method os   ($/) { make $*CURPAD.lookup(CLASS,$/.Str,match => $/).class }
 
-method p5regex ($/) { make $<src>.ast }
+method cmd ($/) { make $<cmd-pipe-chain>.ast }
 
-method cmd ($/) {
+method cmd-pipe-chain ($/) {
     my $cmd;
-
     for $<cmd-body>.map(*.ast) -> $next {
-        $next.in = $cmd with $cmd;
+        $next.pipe-in = $cmd with $cmd;
         $cmd = $next;
     }
-
     make $cmd;
 }
 
 method cmd-body ($/) {
-    my (SAST:D @pos,SAST:D %set-env,SAST:D @write,SAST:D @append);
+    my (SAST:D @pos,SAST:D %set-env,SAST:D @write,SAST:D @append,SAST:D @in);
     for $<cmd-arg> {
         with $_<cmd-term> {
             @pos.push: .ast;
@@ -759,17 +780,15 @@ method cmd-body ($/) {
         orwith $_<pair>.ast {
             %set-env{.key.compile-time} = .value;
         }
-        orwith $_<output-redir> {
-            my (@add-write,@add-append) := .ast;
+        orwith $_<redirection> {
+            my (@add-write,@add-append,@add-in) := .ast;
             @write.append(@add-write);
             @append.append(@add-append);
+            @in.append(@add-in);
         }
     }
 
-    my $cmd = @pos ?? SAST::Cmd.new(cmd => @pos.shift,|@pos,:%set-env) !! SAST::WriteToFile.new;
-    $cmd.write = @write;
-    $cmd.append = @append;
-    make $cmd;
+    make SAST::Cmd.new(|@pos,:%set-env,:@write,:@append,:@in);
 }
 
 method cmd-term ($/) {
@@ -777,14 +796,14 @@ method cmd-term ($/) {
 }
 
 
-method output-redir($/) {
+method redirection($/) {
     my &make-fd =  { SAST::Blessed.new(class-name => 'FD',SAST::IVal.new(val => $_),match => $/) }
     my $src = $<src>;
     my @src-fd = (
         ($src<all> andthen (make-fd(1),make-fd(2)))
         or $src<fd> andthen .ast
         or ($src<err> && make-fd(2))
-        or make-fd(1);
+        or ($<in> ?? make-fd(0) !! make-fd(1) )
     );
 
     my $dst = $<dst>;
@@ -796,22 +815,29 @@ method output-redir($/) {
     ?? { $*SETTING.lookup(SCALAR,'*ERR').gen-reference(match => $dst<err>) }
     !! { $dst<fd>.ast.deep-clone };
 
-    my (@write,@append);
+    my (@write,@append,@in);
     for @src-fd -> $src-fd {
         if $<write> {
             @write.append: $src-fd,$gen-dst();
-        } else {
+        } elsif $<append> {
             @append.append: $src-fd,$gen-dst();
+        } else {
+            @in.append: $src-fd,$gen-dst();
         }
     }
-    make (@write,@append);
+    make (@write,@append,@in);
 }
 
-method quote:double-quote ($/) { make $<str>.ast andthen .match = $/;  }
-method quote:single-quote ($/) { make $<str>.ast andthen .match = $/; }
-method quote:sym<qq>      ($/) { make $<str>.ast andthen .match = $/; }
-method quote:sym<q>       ($/) { make $<str>.ast andthen .match = $/; }
-method balanced-quote ($/)     { make $<str>.ast andthen .match = $/; }
+sub make-quote($/) { make $<str>.ast andthen .match = $/ }
+method quote:double-quote       ($/) { make-quote($/) }
+method quote:curly-double-quote ($/) { make-quote($/) }
+method quote:single-quote       ($/) { make-quote($/) }
+method quote:curly-single-quote ($/) { make-quote($/) }
+method quote:sym<qq>            ($/) { make-quote($/) }
+method quote:sym<q>             ($/) { make-quote($/) }
+method balanced-quote           ($/) { make-quote($/) }
+method quote:regex        ($/) { make SAST::Regex.new(src => $<str>.ast) andthen .match = $/; }
+
 
 method angle-quote ($/) {
     my $val = $<str>.Str;
@@ -833,3 +859,13 @@ method quote:sym<eval> ($/) {
     my %opts = $<args>.ast.<named> || Empty;
     make SAST::Eval.new(:%opts,:$src,outer => $*CURPAD);
 }
+
+method wrap ($/) {
+    with $<thing><R> {
+        make .ast;
+    } else {
+        make $<thing>;
+    }
+}
+
+method r-wrap ($/) { self.wrap($/)}
