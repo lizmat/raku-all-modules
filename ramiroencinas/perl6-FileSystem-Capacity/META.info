@@ -7,6 +7,7 @@
   "provides" : {
     "FileSystem::Capacity::VolumesInfo" : "lib/FileSystem/Capacity/VolumesInfo.pm6","FileSystem::Capacity::DirSize":"lib/FileSystem/Capacity/DirSize.pm6"
   },
+  "tags" : [ "filesystem", "utils" , "capacity"],
   "depends" : [ ],
   "source-url" : "git@github.com:ramiroencinas/perl6-FileSystem-Capacity.git"
 }
