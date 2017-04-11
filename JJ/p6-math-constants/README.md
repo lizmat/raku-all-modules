@@ -11,11 +11,12 @@ SYNOPSIS
 	use v6;
     use Math::Constants;
 
-	say "We have ", phi, " ", plancks-h, " ",  plancks-reduced-h, " ", c
-	, " ", G, " and ", fine-structure-constant, " plus ",
-	elementary-charge, " and ", vacuum-permittivity ;
+	say "We have ", phi, " ", plancks-h, " ",  plancks-reduced-h, " ", 
+	    c, " ", G, " and ", fine-structure-constant, " plus ",
+	    elementary-charge, " and ", vacuum-permittivity ;
+		
 	say "And also  φ ", φ, " α ", α,  " ℎ ",  ℎ, " and ℏ ", ℏ,
-	" with e ", e, " and ε0 ", ε0;
+	    " with e ", e, " and ε0 ", ε0;
 
 	say "We are flying at speed ", .1c;
 
@@ -28,7 +29,7 @@ will save you the trouble of defining them.
 ## Constants included
 
 * [Gravitational constant](https://en.wikipedia.org/wiki/Gravitational_constant) as `G`.
-* [Speed of light](https://en.wikipedia.org/wiki/Speed_of_light) as `c`.
+* [Speed of light](https://en.wikipedia.org/wiki/Speed_of_light) as `c`. It works also as a suffix for expressing speeds, as in `3c` for 3 times the speed of light. 
 * [Planck constant and reduced constant](https://en.wikipedia.org/wiki/Planck_constant)
 in J/s
 as `plancks-h` or `ℎ` and `plancks-reduced-h` or `ℏ`.
