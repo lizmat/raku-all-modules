@@ -1,4 +1,4 @@
-unit class DOM::Tiny:ver<0.3.2>:auth<Sterling Hanenkamp (hanenkamp@cpan.org)>;
+unit class DOM::Tiny:ver<0.3.3>:auth<Sterling Hanenkamp (hanenkamp@cpan.org)>;
 use v6;
 
 use DOM::Tiny::CSS;
@@ -1184,7 +1184,7 @@ method !siblings(:$tags-only = False, :$pos) {
         $!tree.split-siblings(:$tags-only);
     }
     else {
-        { before => [], after => [] },
+        { before => (), after => () },
     }
 
     with $pos {
