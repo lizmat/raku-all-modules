@@ -1,6 +1,28 @@
 use SSH::LibSSH::Raw;
 use NativeCall :types;
 
+# This streaming decoder will be replaced with some Perl 6 streaming encoding
+# object once that exists.
+my class StreamingDecoder is repr('Decoder') {
+    use nqp;
+
+    method new(str $encoding) {
+        nqp::decoderconfigure(nqp::create(self), $encoding, nqp::hash())
+    }
+
+    method add-bytes(Blob:D $bytes --> Nil) {
+        nqp::decoderaddbytes(self, nqp::decont($bytes));
+    }
+
+    method consume-available-chars() returns Str {
+        nqp::decodertakeavailablechars(self)
+    }
+
+    method consume-all-chars() returns Str {
+        nqp::decodertakeallchars(self)
+    }
+}
+
 class X::SSH::LibSSH::Error is Exception {
     has Str $.message;
 }
@@ -39,6 +61,7 @@ class SSH::LibSSH {
         has SSHEvent $!loop;
         has int $!active-sessions;
         has @!pollers;
+        has Hash %!session-forward-port-map{SSHSession};
 
         submethod BUILD() {
             $!todo = Channel.new;
@@ -82,12 +105,37 @@ class SSH::LibSSH {
             self!assert-loop-thread();
             error-check('remove session from event loop',
                 ssh_event_remove_session($!loop, $session));
+            %!session-forward-port-map{$session}:delete;
             $!active-sessions--;
         }
 
         method add-poller(&poller --> Nil) {
             self!assert-loop-thread();
             @!pollers.push: &poller;
+        }
+
+        method add-forward-port-callback(SSHSession $session, Int $port, &callback --> Nil) {
+            self!assert-loop-thread();
+            unless %!session-forward-port-map{$session}:exists {
+                # We aren't listening for incoming forward requests yet; add
+                # a poller to do so. We only need one per session.
+                self.add-poller: -> $remove is rw {
+                    if %!session-forward-port-map{$session}:exists {
+                        my $port-num = CArray[int32].new(0);
+                        my $channel = ssh_channel_accept_forward($session, 0, $port-num);
+                        with $channel {
+                            with %!session-forward-port-map{$session}{$port-num[0]} {
+                                .($channel);
+                            }
+                        }
+                    }
+                    else {
+                        $remove = True;
+                    }
+                }
+                %!session-forward-port-map{$session} = {};
+            }
+            %!session-forward-port-map{$session}{$port} = &callback;
         }
 
         method !assert-loop-thread() {
@@ -109,6 +157,7 @@ class SSH::LibSSH {
 
     class Session { ... }
     class Channel { ... }
+    class ForwardingChannel { ... }
 
     class HostAuthorizationAction {
         enum Outcome <Decline Accept AcceptAndSave>;
@@ -138,6 +187,7 @@ class SSH::LibSSH {
         has Str $.host;
         has Int $.port;
         has Str $.user;
+        has Str $!password;
         has Str $.private-key-file;
         has LogLevel $!log-level;
         has &.on-server-unknown;
@@ -146,7 +196,7 @@ class SSH::LibSSH {
         has SSHSession $.session-handle;
 
         submethod BUILD(Str :$!host!, Int :$!port = 22, Str :$!user = $*USER.Str,
-                        Str :$!private-key-file = Str, LogLevel :$!log-level = None,
+                        Str :$!private-key-file = Str, Str :$!password = Str, LogLevel :$!log-level = None,
                         :&!on-server-unknown = &default-server-unknown,
                         :&!on-server-known-changed = &default-server-known-changed,
                         :&!on-server-found-other = &default-server-found-other) {}
@@ -350,13 +400,50 @@ class SSH::LibSSH {
             }
         }
 
-        method !process-auth-outcome($outcome, $v) {
+        method !process-auth-outcome($outcome, $v, :$method = "key") {
             if $outcome == SSH_AUTH_SUCCESS {
                 $v.keep(self);
             }
             else {
-                self!teardown-session();
-                $v.break(X::SSH::LibSSH::Error.new(message => 'Authentication failed'));
+                if $method eq "key" and defined $!password {
+                    # Public Key authentication failed. We'll try using a password now.
+                    self!connect-auth-user-password($v);
+                } else {
+                    self!teardown-session();
+                    $v.break(X::SSH::LibSSH::Error.new(message => 'Authentication failed'));
+                }
+            }
+        }
+
+        method !connect-auth-user-password($v) {
+            given $!session-handle -> $s {
+                my &auth-function = { ssh_userauth_password($s, Str, $!password) }
+                my $auth-outcome = SSHAuth(error-check($s, auth-function()));
+                if $auth-outcome != SSH_AUTH_AGAIN {
+                    self!process-auth-outcome($auth-outcome, $v, :method<password>);
+                } else {
+                    # Poll until result available.
+                    get-event-loop().add-poller: -> $remove is rw {
+                        my $auth-outcome = SSHAuth(error-check($s, auth-function()));
+                        if $auth-outcome != SSH_AUTH_AGAIN {
+                            $remove = True;
+                            self!process-auth-outcome($auth-outcome, $v, :method<password>);
+                        }
+                        CATCH {
+                            default {
+                                $remove = True;
+                                self!teardown-session();
+                                $v.break($_);
+                            }
+                        }
+                    }
+                }
+            }
+            CATCH {
+                default {
+                    self!teardown-session();
+                    $v.break($_);
+                }
             }
         }
 
@@ -429,6 +516,98 @@ class SSH::LibSSH {
                     $v.break($_);
                 }
             }
+        }
+
+        method forward(Str() $remote-host, Int() $remote-port, Str() $source-host,
+                       Int() $local-port  --> Promise) {
+            my $p = Promise.new;
+            my $v = $p.vow;
+            given get-event-loop() -> $loop {
+                $loop.run-on-loop: {
+                    my $channel = ssh_channel_new($!session-handle);
+                    with $channel {
+                        my $forward = error-check($!session-handle,
+                            ssh_channel_open_forward($channel, $remote-host, $remote-port,
+                                $source-host, $local-port));
+                        if $forward == 0 {
+                            $v.keep(self!make-forward-channel($channel));
+                        }
+                        else {
+                            $loop.add-poller: -> $remove is rw {
+                                my $forward = error-check($!session-handle,
+                                    ssh_channel_open_forward($channel, $remote-host, $remote-port,
+                                        $source-host, $local-port));
+                                if $forward == 0 {
+                                    $remove = True;
+                                    $v.keep(self!make-forward-channel($channel));
+                                }
+                                CATCH {
+                                    default {
+                                        $remove = True;
+                                        $v.break($_);
+                                    }
+                                }
+                            }
+                        }
+                        CATCH {
+                            default {
+                                $v.break($_);
+                            }
+                        }
+                    }
+                    else {
+                        $v.break(X::SSH::LibSSH::Error.new(message => 'Could not allocate channel'));
+                    }
+                }
+            }
+            $p
+        }
+
+        method reverse-forward(Int() $remote-port, Cool $address-to-bind? --> Supply) {
+            my Supplier::Preserving $connections .= new;
+            given get-event-loop() -> $loop {
+                $loop.run-on-loop: {
+                    my $bind = $address-to-bind.defined ?? $address-to-bind.Str !! Str;
+                    my &callback = -> SSHChannel $channel {
+                        $connections.emit(self!make-forward-channel($channel));
+                    }
+                    my $result = error-check($!session-handle,
+                        ssh_channel_listen_forward($!session-handle, $bind, $remote-port,
+                            CArray[int32]));
+                    if $result == 0 {
+                        $loop.add-forward-port-callback($!session-handle,
+                            $remote-port, &callback);
+                    }
+                    else {
+                        $loop.add-poller: -> $remove is rw {
+                            my $result = error-check($!session-handle,
+                                ssh_channel_listen_forward($!session-handle, $bind, $remote-port,
+                                    CArray[int32]));
+                            if $result == 0 {
+                                $remove = True;
+                                $loop.add-forward-port-callback($!session-handle,
+                                    $remote-port, &callback);
+                            }
+                            CATCH {
+                                default {
+                                    $remove = True;
+                                    $connections.quit($_);
+                                }
+                            }
+                        }
+                    }
+                    CATCH {
+                        default {
+                            $connections.quit($_);
+                        }
+                    }
+                }
+            }
+            $connections.Supply
+        }
+
+        method !make-forward-channel(SSHChannel $channel --> ForwardingChannel) {
+            ForwardingChannel.new(channel => Channel.from-raw-handle($channel, self))
         }
 
         # For SCP, the libssh async interface unfortunately does not work.
@@ -591,19 +770,34 @@ class SSH::LibSSH {
             my Supplier::Preserving $s .= new;
             given get-event-loop() -> $loop {
                 $loop.run-on-loop: {
+                    my $decoder = $bin
+                        ?? Nil
+                        !! StreamingDecoder.new(Rakudo::Internals.NORMALIZE_ENCODING(
+                                $enc // 'utf-8'));
                     $loop.add-poller: -> $remove is rw {
                         my $buf = Buf.allocate(32768);
-                        my $nread = error-check($!session.session-handle,
-                            ssh_channel_read_nonblocking($!channel-handle, $buf, 32768, $is-stderr));
+                        my $nread = ssh_channel_read_nonblocking($!channel-handle, $buf,
+                            32768, $is-stderr);
                         if $nread > 0 {
                             $buf .= subbuf(0, $nread);
-                            # TODO Use streaming decoder here
-                            $s.emit($bin ?? $buf !! $buf.decode($enc // 'ascii'));
+                            if $bin {
+                                $s.emit($buf);
+                            }
+                            else {
+                                $decoder.add-bytes($buf);
+                                $s.emit($decoder.consume-available-chars());
+                            }
                         }
                         elsif ssh_channel_is_eof($!channel-handle) {
                             $remove = True;
+                            unless $bin {
+                                $s.emit($decoder.consume-all-chars());
+                            }
                             $s.done();
                             ($is-stderr ?? $!stderr-eof !! $!stdout-eof) = True;
+                        }
+                        else {
+                            error-check($!session.session-handle, $nread);
                         }
                         CATCH {
                             default {
@@ -713,6 +907,15 @@ class SSH::LibSSH {
                 }
             }
             await $p;
+        }
+    }
+
+    # Wraps around Channel and provides an API more relevant to forwarding.
+    class ForwardingChannel {
+        has Channel $.channel handles <write print say close>;
+
+        method Supply(*%options) {
+            $!channel.stdout(|%options)
         }
     }
 

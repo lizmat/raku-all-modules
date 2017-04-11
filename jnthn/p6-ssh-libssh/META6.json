@@ -1,7 +1,7 @@
 {
     "perl"          : "6.*",
     "name"          : "SSH::LibSSH",
-    "version"       : "0.2",
+    "version"       : "0.6",
     "description"   : "Asynchronous binding for libssh; client-only and limited functionality so far.",
     "author"        : "Jonathan Worthington <jnthn@jnthn.net>",
     "build-depends" : [ "LWP::Simple", "panda", "Shell::Command" ],
@@ -10,6 +10,6 @@
 		"SSH::LibSSH"      : "lib/SSH/LibSSH.pm6",
 		"SSH::LibSSH::Raw" : "lib/SSH/LibSSH/Raw.pm6"
     },
-    "resources"     : [ "ssh.dll" ],
+    "resources"     : [ "ssh.dll", "libeay32.dll", "msvcr110.dll" ],
     "source-url"    : "https://github.com/jnthn/p6-ssh-libssh.git"
 }

@@ -1,7 +1,7 @@
 use SSH::LibSSH;
 
-sub MAIN(Str $host, Str $user, Str :$private-key-file, *@command) {
-    my $session = await SSH::LibSSH.connect(:$host, :$user, :$private-key-file);
+sub MAIN(Str $host, Str $user, Int :$port = 22, Str :$password, Str :$private-key-file, *@command) {
+    my $session = await SSH::LibSSH.connect(:$host, :$user, :$port, :$private-key-file, :$password);
     my $channel = await $session.execute(@command.join(' '));
     my $exit-code;
     react {
@@ -10,10 +10,10 @@ sub MAIN(Str $host, Str $user, Str :$private-key-file, *@command) {
                 $channel.close-stdin;
             }
         }
-        whenever $channel.stdout -> $chars {
+        whenever $channel.stdout(:enc<utf8>) -> $chars {
             $*OUT.print: $chars;
         }
-        whenever $channel.stderr -> $chars {
+        whenever $channel.stderr(:enc<utf8>) -> $chars {
             $*ERR.print: $chars;
         }
         whenever $channel.exit -> $code {

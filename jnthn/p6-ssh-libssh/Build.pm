@@ -10,8 +10,11 @@ class Build is Panda::Builder {
         # to have a libssh already.
         return unless $*DISTRO.is-win;
 
-        my constant $file = "ssh.dll";
-        my constant $hash = "E95FC7DD3F1B12B9A54B4141D4D63FB05455913660FA7EC367C560B9C244C84A";
+        my constant @files = "ssh.dll", "libeay32.dll", "msvcr110.dll";
+        my constant @hashes =
+            "E95FC7DD3F1B12B9A54B4141D4D63FB05455913660FA7EC367C560B9C244C84A",
+            "193378775279F0F3101AA35FD552B7657694CF15C755FA13941DD8B82A5A0AD2",
+            "AE996EDB9B050677C4F82D56092EFDC75F0ADDC97A14E2C46753E2DB3F6BD732";
 
         # to avoid a dependency (and because Digest::SHA is too slow), we do a hacked up powershell hash
         # this should work all the way back to powershell v1
@@ -24,15 +27,17 @@ class Build is Panda::Builder {
 
         my $basedir = $workdir ~ '\resources';
 
-        say "Fetching $file";
-        my $blob = LWP::Simple.get("http://www.p6c.org/~jnthn/libssh/$file");
-        say "Writing $file";
-        spurt("$basedir\\$file", $blob);
+        for flat @files Z @hashes -> $file, $hash {
+            say "Fetching $file";
+            my $blob = LWP::Simple.get("http://www.p6c.org/~jnthn/libssh/$file");
+            say "Writing $file";
+            spurt("$basedir\\$file", $blob);
 
-        say "Verifying $file";
-        my $got-hash = ps-hash("$basedir\\$file");
-        if ($got-hash ne $hash) {
-            die "Bad download of $file (got: $got-hash; expected: $hash)";
+            say "Verifying $file";
+            my $got-hash = ps-hash("$basedir\\$file");
+            if ($got-hash ne $hash) {
+                die "Bad download of $file (got: $got-hash; expected: $hash)";
+            }
         }
     }
 }
