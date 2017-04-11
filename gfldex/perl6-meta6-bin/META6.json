@@ -1,9 +1,53 @@
 {
-    "name" : "META6::bin",
-    "version" : "0.0.1",
-    "perl" : "6.c",
-    "description" : "Provide a binary to work with META6.json-files.",
-    "author" : "Wenzel P. P. Peppmeyer",
-    "depends" : [ "META6", "HTTP::Client", "Git::Config" ],
-    "source-url" : "git://github.com/gfldex/perl6-meta6-bin.git"
+  "name": "META6::bin",
+  "source-url": "https://github.com/gfldex/perl6-meta6-bin.git",
+  "support": {
+    "source": null
+  },
+  "emulates": {
+    
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "auth": "github:gfldex",
+  "excludes": {
+    
+  },
+  "superseded-by": {
+    
+  },
+  "depends": [
+    "META6",
+    "HTTP::Client",
+    "Git::Config",
+    "JSON::Tiny",
+    "Test::META",
+    "Git::Config",
+    "Slippy::Semilist",
+    "MIME::Base64"
+  ],
+  "tags": [
+    
+  ],
+  "license": "Artistic 2.0",
+  "test-depends": [
+    
+  ],
+  "provides": {
+    "META6::bin": "lib/META6/bin.pm6"
+  },
+  "version": "0.8.1",
+  "supersedes": {
+    
+  },
+  "authors": [
+    "Wenzel P. P. Peppmeyer"
+  ],
+  "description": "Provide a binary to work with META6.json-files.",
+  "meta6": "0"
 }
