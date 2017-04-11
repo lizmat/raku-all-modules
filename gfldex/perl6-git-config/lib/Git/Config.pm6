@@ -1,5 +1,4 @@
-use v6;
-# use Grammar::Tracer;
+use v6.c;
 
 grammar Config is export {
     token TOP { ^ <section>+ $ }
@@ -11,7 +10,7 @@ grammar Config is export {
     token identifier { \w+ }
 }
 
-multi sub git-config(IO::Path $file = "$*HOME/.gitconfig".IO --> Hash) is export {
+sub git-config(IO::Path $file = "$*HOME/.gitconfig".IO --> Hash) is export {
     my %ret;
 
     my $parsed = Config.parse($file.slurp) or fail 'Failed to parse „~/.gitconfig“.';

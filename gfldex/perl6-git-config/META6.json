@@ -1,7 +1,8 @@
 {
     "name"         : "Git::Config",
-    "version"      : "0.0.1",
+    "version"      : "0.0.2",
     "perl"         : "6",
+    "provides"     : { "Git::Config" : "lib/Git/Config.pm6" },
     "description"  : "Read and provide interface to git config.",
     "authors"      : [ "Wenzel P. P. Peppmeyer <wenzel.peppmeyer@gmx.de>" ],
     "auth"         : "github:gfldex",
