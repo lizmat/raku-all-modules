@@ -2,6 +2,7 @@
     CSS::Declarations::Box:
     - Remove rendering-specific 'build-box' method
     - Add 'font-length' method
+    - Removed $!width & $!height - now handled as TWEAK options
     CSS::Declarations::Units:
     - Add 'em', 'ex' and '%' postfix operators
 0.2.0 Add CSS::Declarations::Box, CSS::Declarations::Font

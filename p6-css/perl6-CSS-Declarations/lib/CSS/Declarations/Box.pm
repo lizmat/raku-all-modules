@@ -8,8 +8,6 @@ class CSS::Declarations::Box {
     has Numeric $.right;
     has Numeric $.bottom;
     has Numeric $.left = 0;
-    has Numeric $.width = 595pt;
-    has Numeric $.height = 842pt;
 
     has Array $!padding;
     has Array $!border;
@@ -24,9 +22,11 @@ class CSS::Declarations::Box {
     my subset BoundingBox of Str where 'content'|'border'|'margin'|'padding';
 
     submethod TWEAK(
-        Numeric :$!top = $!height,
-        Numeric :$!bottom = $!top - $!height,
-        Numeric :$!right = $!left + $!width,
+        Numeric :$width = 595pt,
+        Numeric :$height = 842pt,
+        Numeric :$!top = $height,
+        Numeric :$!bottom = $!top - $height,
+        Numeric :$!right = $!left + $width,
         Str :$style = '',
         Numeric :$em = 12pt,
         Numeric :$ex = 0.75 * $em,
@@ -55,13 +55,13 @@ class CSS::Declarations::Box {
         self."$box"()[Left]
     }
 
-    multi method width { $!width }
+    multi method width { $!right - $!left }
     multi method width(BoundingBox $box) {
         my \box = self."$box"();
         box[Right] - box[Left]
     }
 
-    multi method height { $!height }
+    multi method height { $!top - $!bottom }
     multi method height(BoundingBox $box) {
         my \box = self."$box"();
         box[Top] - box[Bottom]
@@ -147,7 +147,7 @@ class CSS::Declarations::Box {
 
     method save {
         @!save.push: {
-            :$!width, :$!height, :$!font,
+            :$!font,
         }
         $!font = $!font.clone;
     }
@@ -155,8 +155,6 @@ class CSS::Declarations::Box {
     method restore {
         if @!save {
             with @!save.pop {
-                $!width    = .<width>;
-                $!height   = .<height>;
                 $!font     = .<font>;
             }
         }

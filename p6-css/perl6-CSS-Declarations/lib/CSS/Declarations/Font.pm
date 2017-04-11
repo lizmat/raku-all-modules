@@ -5,7 +5,7 @@ class CSS::Declarations::Font {
 
     has Numeric $.em is rw = 10;;
     has Numeric $.ex is rw = $!em * 0.75;
-    my subset FontWeight of Numeric where { 100 .. 900 && $_ %% 100 }
+    my subset FontWeight of Numeric where { $_ ~~ 100 .. 900 && $_ %% 100 }
     has FontWeight $.weight is rw = 400;
     has Str $.family = 'times-roman';
     has Str $.style = 'normal';
