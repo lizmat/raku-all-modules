@@ -33,7 +33,7 @@ min-test('s16'); # newline-at-end-of-file
                  # -> it's there so leave it alone
  
 is js-minify(input => 'var x = 2;'), "var x=2;", 'string literal input and ouput';
-is js-minify(input => "var x = 2;\n;;;alert('hi');\nvar x = 2;", strip_debug => 1), 'var x=2;var x=2;', 'script_debug option';
+is js-minify(input => "var x = 2;\n;;;alert('hi');\nvar x = 2;", :strip_debug), 'var x=2;var x=2;', 'script_debug option';
 is js-minify(input => 'var x = 2;', copyright => "BSD"), '/* BSD */var x=2;', 'copyright option';
 is js-minify(input => 'function test(s) { return /\d{1,2}/.test(s); }'), 'function test(s){return/\d{1,2}/.test(s);}', 'non-parened regex1 ';
 is js-minify(input => 'function(s) { return /\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}/.test(s); }'), 'function(s){return/\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}/.test(s);}', 'non-parened regex2 ';

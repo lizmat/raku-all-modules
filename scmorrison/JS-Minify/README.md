@@ -52,7 +52,7 @@ js-minify(input => 'var x = 2;', copyright => 'BSD License');
 Treat ';;;' as '//' so that debugging code can be removed. This is a common JavaScript convention for minification:
 
 ```perl6
-js-minify(input => "var x = 2;\n;;;alert('hi');\nvar x = 2;", stripDebug => 1)
+js-minify(input => "var x = 2;\n;;;alert('hi');\nvar x = 2;", :strip_debug)
 # output: 'var x=2;var x=2;'
 ```
 

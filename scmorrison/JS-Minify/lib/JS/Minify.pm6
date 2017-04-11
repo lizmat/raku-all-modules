@@ -271,9 +271,8 @@ multi sub process-comments(%s is copy where {%s<a> eq '/' and %s<b> eq '.' }) re
 }
 
 multi sub process-comments(%s is copy) returns Hash {
-
   %s
-  ==>put-literal()
+  ==> put-literal()
   ==> collapse-whitespace()
   # we don't want closing delimiter to
   # become a slash-slash comment with
@@ -325,6 +324,7 @@ multi sub process-char(%s is copy) returns Hash {
 # Either send output to a client
 # provided Channel, or to a fully
 # minified string.
+
 #
 # Output to Stream
 #
@@ -366,7 +366,7 @@ multi sub output-manager(Channel $output) returns Promise {
 #
 # js-minify
 #
-sub js-minify(:$input!, Str :$copyright = '', :$stream, Int :$strip_debug = 0) is export {
+sub js-minify(:$input!, Str :$copyright = '', :$stream, Bool :$strip_debug = False) is export {
 
   # Immediately turn hash into a hash reference so that notation is the same in this function
   # as others. Easier refactoring.
@@ -382,7 +382,6 @@ sub js-minify(:$input!, Str :$copyright = '', :$stream, Int :$strip_debug = 0) i
 
   # hash reference for "state"
   my %s = input          => @input_list,
-          strip_debug    => $strip_debug,
           last_read_char => 0,
           input_pos      => 0,
           output         => Channel.new,
