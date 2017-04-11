@@ -45,7 +45,7 @@ class Pod::Render:auth<https://github.com/MARTIMM> {
   #-----------------------------------------------------------------------------
   multi method render ( 'html', Str:D $pod-file, Str :$style ) {
 
-    my Str $html = self!html( $pod-file.IO.abspath, :$style);
+    my Str $html = self!html( $pod-file.IO.absolute, :$style);
 
     my Str $html-file;
     if 'doc'.IO ~~ :d {
@@ -63,7 +63,7 @@ class Pod::Render:auth<https://github.com/MARTIMM> {
   #-----------------------------------------------------------------------------
   multi method render ( 'pdf', Str:D $pod-file, Str :$style ) {
 
-    my Str $html = self!html( $pod-file.IO.abspath, :$style);
+    my Str $html = self!html( $pod-file.IO.absolute, :$style);
     $!involved ~= ', wkhtmltopdf';
 
     my Str $pdf-file;
@@ -106,7 +106,7 @@ class Pod::Render:auth<https://github.com/MARTIMM> {
 
     $md-file ~~ s/\. <-[.]>+ $/.md/;
 
-    shell "perl6 --doc=Markdown " ~ $pod-file.IO.abspath ~ " > $md-file";
+    shell "perl6 --doc=Markdown " ~ $pod-file.IO.absolute ~ " > $md-file";
   }
 
   #-----------------------------------------------------------------------------
