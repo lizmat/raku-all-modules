@@ -43,7 +43,7 @@ subtest
     include <includes\\/\>・ï\/©ㄦﬁ>
     EOF
 
-    sub is-valid-include-line(Str:D $include-line) returns Bool:D
+    sub is-valid-include-line(Str:D $include-line --> Bool:D)
     {
         TXN::Parser::Grammar.parse($include-line.trim, :rule<include-line>).so;
     }
@@ -104,7 +104,7 @@ subtest
     Expenses:Business:Cats      $1200.00 USD
     EOF
 
-    sub is-valid-entry(Str:D $entry) returns Bool:D
+    sub is-valid-entry(Str:D $entry --> Bool:D)
     {
         TXN::Parser::Grammar.parse($entry.trim, :rule<entry>).so;
     }

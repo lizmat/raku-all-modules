@@ -26,7 +26,7 @@ subtest
         Q{EqUItY:"Moon Crow"},
         Q{EQUITY.Business};
 
-    sub is-valid-account(Str:D $account) returns Bool:D
+    sub is-valid-account(Str:D $account --> Bool:D)
     {
         TXN::Parser::Grammar.parse($account, :rule<account>).so;
     }
@@ -53,7 +53,7 @@ subtest
 {
     my Str @plus-or-minus = Q{+}, Q{-};
 
-    sub is-valid-plus-or-minus(Str:D $plus-or-minus) returns Bool:D
+    sub is-valid-plus-or-minus(Str:D $plus-or-minus --> Bool:D)
     {
         TXN::Parser::Grammar.parse(
             $plus-or-minus,
@@ -160,12 +160,12 @@ subtest
         Q{"The House at 178 Blue Kodiak Trail"},
         Q{"Widget:Bobblehead #88"};
 
-    sub is-valid-asset-code(Str:D $asset-code) returns Bool:D
+    sub is-valid-asset-code(Str:D $asset-code --> Bool:D)
     {
         TXN::Parser::Grammar.parse($asset-code, :rule<asset-code>).so;
     }
 
-    sub is-valid-asset-symbol(Str:D $asset-symbol) returns Bool:D
+    sub is-valid-asset-symbol(Str:D $asset-symbol --> Bool:D)
     {
         TXN::Parser::Grammar.parse(
             $asset-symbol,
@@ -224,7 +224,7 @@ subtest
         Q{10_000.00},
         Q{9_8_7_6_5.4_3_2_1_0};
 
-    sub is-valid-asset-quantity(Str:D $asset-quantity) returns Bool:D
+    sub is-valid-asset-quantity(Str:D $asset-quantity --> Bool:D)
     {
         TXN::Parser::Grammar.parse(
             $asset-quantity,
@@ -301,7 +301,7 @@ subtest
         Q{@ د.ع5000.99 IQD},
         Q{@ IQD د.ع5000.99};
 
-    sub is-valid-exchange-rate(Str:D $exchange-rate) returns Bool:D
+    sub is-valid-exchange-rate(Str:D $exchange-rate --> Bool:D)
     {
         TXN::Parser::Grammar.parse($exchange-rate, :rule<xe>).so;
     }
@@ -363,7 +363,7 @@ subtest
         Q{BTC +฿100.00},
         Q{BTC +฿1_0_0.0_0};
 
-    sub is-valid-amount(Str:D $amount) returns Bool:D
+    sub is-valid-amount(Str:D $amount --> Bool:D)
     {
         TXN::Parser::Grammar.parse($amount, :rule<amount>).so;
     }
@@ -393,7 +393,7 @@ subtest
         Q{Assets:Personal:FirstBank +฿1_000_000.00 USD},
         Q{Expenses:Business:Cats:Food      Ł5.99 LTC};
 
-    sub is-valid-posting(Str:D $posting) returns Bool:D
+    sub is-valid-posting(Str:D $posting --> Bool:D)
     {
         TXN::Parser::Grammar.parse($posting, :rule<posting>).so;
     }

@@ -13,12 +13,12 @@ class Entry::ID
     # causal text from accounting ledger
     has Str:D $.text is required;
 
-    method canonical(::?CLASS:D:) returns Str:D
+    method canonical(::?CLASS:D: --> Str:D)
     {
         $.number ~ ':' ~ $.xxhash;
     }
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         %(:@.number, :$.text, :$.xxhash);
     }
@@ -34,7 +34,7 @@ class Entry::Header
     has UInt:D $.important = 0;
     has VarName:D @.tag;
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         %(:date(~$.date), :$.description, :$.important, :@.tag);
     }
@@ -49,7 +49,7 @@ class Entry::Posting::Account
     has VarName:D $.entity is required;
     has VarName:D @.path;
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         %(:$.entity, :@.path, :silo($.silo.gist));
     }
@@ -65,7 +65,7 @@ class Entry::Posting::Amount
     has AssetSymbol $.asset-symbol;
     has PlusMinus $.plus-or-minus;
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         %(:$.asset-code, :$.asset-quantity, :$.asset-symbol, :$.plus-or-minus);
     }
@@ -80,7 +80,7 @@ class Entry::Posting::Annot::XE
     has Price:D $.asset-price is required;
     has AssetSymbol $.asset-symbol;
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         %(:$.asset-code, :$.asset-price, :$.asset-symbol);
     }
@@ -101,7 +101,7 @@ class Entry::Posting::Annot::Lot
     # is this lot being drawn down or filled up?
     has DecInc:D $.decinc is required;
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         %(:decinc($.decinc.gist), :$.name);
     }
@@ -116,7 +116,7 @@ class Entry::Posting::Annot
     has Entry::Posting::Annot::Lot $.lot;
     has Entry::Posting::Annot::XE $.xe;
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         my %h;
         %h<inherit> = $.inherit ?? $.inherit.hash !! Nil;
@@ -142,12 +142,12 @@ class Entry::Posting::ID
     # causal text from accounting ledger
     has Str:D $.text is required;
 
-    method canonical(::?CLASS:D:) returns Str:D
+    method canonical(::?CLASS:D: --> Str:D)
     {
         $.number ~ ':' ~ $.xxhash;
     }
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         %(:entry-id($.entry-id.hash), :$.number, :$.text, :$.xxhash);
     }
@@ -200,7 +200,7 @@ class Entry::Posting
 
     # method hash {{{
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         my %h;
         %h<id> = $.id.hash;
@@ -219,22 +219,22 @@ class Entry::Posting
     # assets and expenses increase on the debit side
 
     # +assets/expenses
-    multi sub determine-debit-or-credit(ASSETS, INC) returns DrCr:D { DEBIT }
-    multi sub determine-debit-or-credit(EXPENSES, INC) returns DrCr:D { DEBIT }
+    multi sub determine-debit-or-credit(ASSETS, INC      --> DrCr:D) { DEBIT }
+    multi sub determine-debit-or-credit(EXPENSES, INC    --> DrCr:D) { DEBIT }
     # -assets/expenses
-    multi sub determine-debit-or-credit(ASSETS, DEC) returns DrCr:D { CREDIT }
-    multi sub determine-debit-or-credit(EXPENSES, DEC) returns DrCr:D { CREDIT }
+    multi sub determine-debit-or-credit(ASSETS, DEC      --> DrCr:D) { CREDIT }
+    multi sub determine-debit-or-credit(EXPENSES, DEC    --> DrCr:D) { CREDIT }
 
     # income, liabilities and equity increase on the credit side
 
     # +income/liabilities/equity
-    multi sub determine-debit-or-credit(INCOME, INC) returns DrCr:D { CREDIT }
-    multi sub determine-debit-or-credit(LIABILITIES, INC) returns DrCr:D { CREDIT }
-    multi sub determine-debit-or-credit(EQUITY, INC) returns DrCr:D { CREDIT }
+    multi sub determine-debit-or-credit(INCOME, INC      --> DrCr:D) { CREDIT }
+    multi sub determine-debit-or-credit(LIABILITIES, INC --> DrCr:D) { CREDIT }
+    multi sub determine-debit-or-credit(EQUITY, INC      --> DrCr:D) { CREDIT }
     # -income/liabilities/equity
-    multi sub determine-debit-or-credit(INCOME, DEC) returns DrCr:D { DEBIT }
-    multi sub determine-debit-or-credit(LIABILITIES, DEC) returns DrCr:D { DEBIT }
-    multi sub determine-debit-or-credit(EQUITY, DEC) returns DrCr:D { DEBIT }
+    multi sub determine-debit-or-credit(INCOME, DEC      --> DrCr:D) { DEBIT }
+    multi sub determine-debit-or-credit(LIABILITIES, DEC --> DrCr:D) { DEBIT }
+    multi sub determine-debit-or-credit(EQUITY, DEC      --> DrCr:D) { DEBIT }
 
     # end sub determine-debit-or-credit }}}
 }
@@ -289,7 +289,7 @@ class Entry
 
     # method hash {{{
 
-    method hash(::?CLASS:D:) returns Hash:D
+    method hash(::?CLASS:D: --> Hash:D)
     {
         %(:header($.header.hash), :id($.id.hash), :posting(@.posting».hash));
     }

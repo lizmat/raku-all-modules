@@ -10,7 +10,8 @@ method parse(
         Int :date-local-offset($),
         Str :txn-dir($)
     )
-) returns Match:D
+    --> Match:D
+)
 {
     my TXN::Parser::Actions:D $actions = TXN::Parser::Actions.new(|%opts);
     TXN::Parser::Grammar.parse($content, :$actions)
@@ -23,7 +24,8 @@ method parsefile(
         Int :date-local-offset($),
         Str :txn-dir($)
     )
-) returns Match:D
+    --> Match:D
+)
 {
     my TXN::Parser::Actions:D $actions =
         TXN::Parser::Actions.new(:$file, |%opts);

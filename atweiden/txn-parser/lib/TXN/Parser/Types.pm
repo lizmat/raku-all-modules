@@ -10,19 +10,21 @@ subset AssetCode of Str is export where { is-asset-code($_) }
 
 multi sub is-asset-code(
     Str $s where { TXN::Parser::Grammar.parse($_, :rule<asset-code>) }
-) returns Bool:D
+    --> Bool:D
+)
 {
     True;
 }
 
 multi sub is-asset-code(
     Str $s where { TXN::Parser::Grammar.parse(.perl, :rule<asset-code>) }
-) returns Bool:D
+    --> Bool:D
+)
 {
     True;
 }
 
-multi sub is-asset-code($s) returns Bool:D
+multi sub is-asset-code($s --> Bool:D)
 {
     False;
 }
@@ -79,19 +81,21 @@ subset VarName of Str is export where { is-var-name($_) }
 
 multi sub is-var-name(
     Str $s where { TXN::Parser::Grammar.parse($_, :rule<var-name>) }
-) returns Bool:D
+    --> Bool:D
+)
 {
     True;
 }
 
 multi sub is-var-name(
     Str $s where { TXN::Parser::Grammar.parse(.perl, :rule<var-name>) }
-) returns Bool:D
+    --> Bool:D
+)
 {
     True;
 }
 
-multi sub is-var-name($s) returns Bool:D
+multi sub is-var-name($s --> Bool:D)
 {
     False;
 }

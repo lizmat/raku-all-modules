@@ -904,7 +904,8 @@ sub gen-annot(
         :%inherit,
         TXN::Parser::AST::Entry::Posting::Annot::Lot :$lot
     )
-) returns TXN::Parser::AST::Entry::Posting::Annot:D
+    --> TXN::Parser::AST::Entry::Posting::Annot:D
+)
 {
     my %annot;
 
@@ -929,7 +930,8 @@ multi sub gen-xe(
         XERateType:D :$rate-type!,
         Str :$asset-symbol
     )
-) returns TXN::Parser::AST::Entry::Posting::Annot::XE:D
+    --> TXN::Parser::AST::Entry::Posting::Annot::XE:D
+)
 {
     my %xe-rate;
 
@@ -951,7 +953,8 @@ multi sub gen-xe(
         XERateType:D :$rate-type!,
         Str :$asset-symbol
     )
-) returns TXN::Parser::AST::Entry::Posting::Annot::Inherit:D
+    --> TXN::Parser::AST::Entry::Posting::Annot::Inherit:D
+)
 {
     my %inherit-rate;
 

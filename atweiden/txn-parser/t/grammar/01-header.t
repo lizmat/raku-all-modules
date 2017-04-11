@@ -18,7 +18,7 @@ subtest
         Q{2014-01-01T08:48:00.99999-07:00};
         Q{2014-01-01T08:48:00.99999};
 
-    sub is-valid-date(Str:D $date) returns Bool:D
+    sub is-valid-date(Str:D $date --> Bool:D)
     {
         TXN::Parser::Grammar.parse($date, :rule<date>).so;
     }
@@ -55,7 +55,7 @@ subtest
     EOF
     push @metainfo, $metainfo-multiline.trim;
 
-    sub is-valid-metainfo(Str:D $metainfo) returns Bool:D
+    sub is-valid-metainfo(Str:D $metainfo --> Bool:D)
     {
         TXN::Parser::Grammar.parse($metainfo, :rule<metainfo>).so;
     }
@@ -91,7 +91,7 @@ subtest
     EOF
     push @descriptions, $description-multiline.trim;
 
-    sub is-valid-description(Str:D $description) returns Bool:D
+    sub is-valid-description(Str:D $description --> Bool:D)
     {
         TXN::Parser::Grammar.parse($description, :rule<description>).so;
     }

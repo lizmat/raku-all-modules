@@ -5,7 +5,7 @@ unit module X::TXN::Parser;
 
 class Annot::Inherit::BadSilo is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "Sorry, inherit annotation is only allowed from assets silo.";
     }
@@ -17,7 +17,7 @@ class Annot::Inherit::BadSilo is Exception
 
 class Annot::Lot::BadSilo is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "Sorry, lot sales annotation is only allowed from assets silo.";
     }
@@ -31,7 +31,7 @@ class AssetQuantityIsZero is Exception
 {
     has Str:D $.text is required;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, asset quantity can't be zero. Got 「$.text」
@@ -48,7 +48,7 @@ class Entry::MultipleEntities is Exception
     has Str:D $.entry-text is required;
     has UInt:D $.number-entities is required;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, only one entity per ledger entry allowed, but found
@@ -69,7 +69,7 @@ class Include is Exception
 {
     has Str:D $.filename is required;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, could not load accounting ledger to include at
@@ -88,7 +88,7 @@ class Include is Exception
 class ParseFailed is Exception
 {
     has Str:D $.content is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "Invalid TXN:\n「$.content」";
     }
@@ -101,7 +101,7 @@ class ParseFailed is Exception
 class ParsefileFailed is Exception
 {
     has Str:D $.file is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "Invalid TXN in file 「$.file」";
     }
@@ -115,7 +115,7 @@ class String::EscapeSequence is Exception
 {
     has Str:D $.esc is required;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "Sorry, found bad string escape sequence 「$.esc」";
     }
@@ -129,7 +129,7 @@ class TXNLibAbsolute is Exception
 {
     has Str:D $.lib is required;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "Sorry, txnlib path can't be absolute. Got:「$.lib」";
     }
