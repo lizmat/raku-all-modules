@@ -1,7 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Test::When",
-    "version"      : "1.001001",
+    "version"      : "1.001005",
     "description"  : "Selectively run tests based on the environment and installed modules and libs",
     "depends"      : [ ],
     "test-depends" : [ "Test" ],

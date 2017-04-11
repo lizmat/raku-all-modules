@@ -5,7 +5,7 @@ sub EXPORT (*@args, *%args) {
 
     $testing ⊆ $valid-env-keywords
         or die "Positional arguments to Test::When can only be "
-            ~ $valid-env-keywords;
+            ~ $valid-env-keywords.keys.sort;
 
     %args ⊆ <libs modules>
         or die "Only `libs` and `modules` named arguments are supported";

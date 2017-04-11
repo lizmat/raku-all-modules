@@ -127,12 +127,12 @@ subtest {
     my $test = 't/tests/08-env-invalid-keyword.txt';
     is run-test("perl6 $test"),
         " STDERR: ===SORRY!===\nPositional arguments to Test::When can only"
-        ~ " be smoke extended interactive release author online\n",
+        ~ " be author extended interactive online release smoke\n",
         'without env vars';
 
     is run-test("ALL_TESTING=1 perl6 $test"),
         " STDERR: ===SORRY!===\nPositional arguments to Test::When can only"
-        ~ " be smoke extended interactive release author online\n",
+        ~ " be author extended interactive online release smoke\n",
         "with ALL_TESTING";
 }, 'running with invalid keyword for testing';
 
