@@ -7,7 +7,7 @@ role Heap[$heap_cmp = * cmp *] {
 		default			{ -> $ {$heap_cmp}	}
 	};
 	#| The array with the heap data
-	has Any @!data;
+	has Any @.data;
 
 	method !cmp($a, $b) {
 		do if &!cmp.signature.params.elems == 1 {
@@ -18,27 +18,27 @@ role Heap[$heap_cmp = * cmp *] {
 	}
 
 	#| Receives a array and transforms that array in a Heap (O(n))
-	method new(+@arr) {
-		my $obj = self.bless;
-		$obj!build(@arr);
+	method new(+@arr is copy) {
+		my $obj = self.bless: :data(@arr);
+		$obj.rebuild;
 		$obj
 	}
 
-	method !build(@!data) {
-		for self!get-parent(+@!data) ... 0 -> Int \i {
+	method rebuild {
+		for reverse 0 .. self!get-parent(+@!data) -> UInt \i {
 			self!down(i);
 		}
 	}
 
-	method !get-parent(Int \node)    {  (node - 1) div 2 }
-	method !get-left(Int \node)      {  (node * 2) + 1 }
-	method !get-right(Int \node)     {  (node * 2) + 2 }
+	method !get-parent(UInt \node)    {  (node - 1) div 2 }
+	method !get-left(UInt \node)      {  (node * 2) + 1 }
+	method !get-right(UInt \node)     {  (node * 2) + 2 }
 
-	method !swap(Int \i, Int \j) {
+	method !swap(UInt \i, UInt \j) {
 		@!data[i, j] = @!data[j, i]
 	}
 
-	method !up(Int \i where 0 < * < @!data) {
+	method !up(UInt \i where 0 < * < @!data) {
 		my \parent = self!get-parent:	i;
 		if self!cmp(@!data[i], @!data[parent]) < 0 {
 			self!swap:	i, parent;
@@ -46,7 +46,7 @@ role Heap[$heap_cmp = * cmp *] {
 		}
 	}
 
-	method !down(Int \i where -1 < * < @!data) {
+	method !down(UInt \i where * < @!data) {
 		my \left	= self!get-left:	i;
 		my \right	= self!get-right:	i;
 
@@ -67,6 +67,10 @@ role Heap[$heap_cmp = * cmp *] {
 
 	method gist {
 		::?CLASS.^name ~ ".new: {@!data.gist}";
+	}
+
+	method Numeric {
+		+@!data
 	}
 
 	method Array {
@@ -100,7 +104,7 @@ role Heap[$heap_cmp = * cmp *] {
 	#| Add a ney value on the Heap
 	method push($new) {
 		@!data.push: $new;
-		self!up: @!data.elems - 1
+		self!up: @!data.elems - 1 if @!data.elems > 1
 	}
 
 	#| Removes and returns the first element of the heap
