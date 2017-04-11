@@ -331,4 +331,36 @@ use _007::Test;
     parse-error $program, X::Undeclared, "Q::Statement quasis don't leak (II)";
 }
 
+{
+    my $program = q:to/./;
+        macro moo() {
+            return quasi {
+                say(1);
+                say(2);
+            }
+        };
+
+        sub ignore(x) {}
+
+        ignore(moo());
+        .
+
+    outputs $program, "1\n2\n", "the value of an injected quasi can be passed around the program";
+}
+
+{
+    my $program = q:to/./;
+        macro moo() {
+            return quasi {
+                say(1);
+                "Bond";
+            }
+        };
+
+        say(moo());
+        .
+
+    outputs $program, "1\nBond\n", "the last statement of a quasi becomes the value of the quasi";
+}
+
 done-testing;
