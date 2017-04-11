@@ -26,12 +26,12 @@ submethod BUILD(:$!code, :$!problem-number, :$!user, :$!lesson-id, :$!language) 
     $!send-uri = URI.new('http://judge.u-aizu.ac.jp/onlinejudge/webservice/submit');
     $!activity-uri = URI.new("http://judge.u-aizu.ac.jp/onlinejudge/webservice/lesson_submission_log?user_id=$!user&lesson_id=$!lesson-id");
     %!form := {
-	userID => $!user,
-	password => self.get-password,
-	problemNO => $!problem-number,
-	lessonID => $!lesson-id,
-	language => $!language,
-	sourceCode => $!code.IO.slurp
+        userID => $!user,
+        password => self.get-password,
+        problemNO => $!problem-number,
+        lessonID => $!lesson-id,
+        language => $!language,
+        sourceCode => $!code.IO.slurp
     };
 }
 
@@ -49,18 +49,18 @@ method send-code(%form) returns DateTime {
 method ask-result($user, $lesson-id, $send-time) returns Str {
     my Bool $success = False;
     loop (my $try-count = 1; $try-count <= 5; $try-count++){
-	self.wait($try-count);
-	my $status-response = $!ua.get($!activity-uri);
-	next if not $status-response.is-success;
-	
-	my %latest = self.get-latest-activity($status-response.content);
-	if %latest<submission-date> >= $send-time {
-	    return sprintf("%s %.2f sec", [%latest<status>, %latest<cputime> / 100]);
-	}
+        self.wait($try-count);
+        my $status-response = $!ua.get($!activity-uri);
+        next if not $status-response.is-success;
+        
+        my %latest = self.get-latest-activity($status-response.content);
+        if %latest<submission-date> >= $send-time {
+            return sprintf("%s %.2f sec", [%latest<status>, %latest<cputime> / 100]);
+        }
     }
     
     if not $success {
-	die "ERROR: Timeout";
+        die "ERROR: Timeout";
     }
 }
 
@@ -80,10 +80,10 @@ method get-latest-activity(Str $xml-text is copy) returns Hash {
 
 method validate-problem-number($problem-number) returns Bool {
     if $problem-number.chars != 1 {
-	die "ERROR: Invalid problem-number was specified";
+        die "ERROR: Invalid problem-number was specified";
     }
     if not $problem-number ~~ m/<[A .. Z]> ** 1/ {
-	die "ERROR: Invalid problem-number was specified";
+        die "ERROR: Invalid problem-number was specified";
     }
     return True;
 }

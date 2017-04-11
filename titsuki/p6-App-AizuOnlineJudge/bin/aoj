@@ -1,8 +1,5 @@
 use v6;
 
-use Shell::Command;
-use HTTP::UserAgent;
-use XML;
 use App::AizuOnlineJudge::BasicCourse;
 use App::AizuOnlineJudge::IntroductionCourse;;
 

@@ -25,11 +25,11 @@ submethod BUILD(:$!code, :$!problem-number, :$!user, :$!language) {
     $!send-uri = URI.new('http://judge.u-aizu.ac.jp/onlinejudge/webservice/submit');
     $!activity-uri = URI.new("http://judge.u-aizu.ac.jp/onlinejudge/webservice/status_log?user_id=$!user");
     %!form := {
-	userID => $!user,
-	password => self.get-password,
-	problemNO => $!problem-number,
-	language => $!language,
-	sourceCode => $!code.IO.slurp
+        userID => $!user,
+        password => self.get-password,
+        problemNO => $!problem-number,
+        language => $!language,
+        sourceCode => $!code.IO.slurp
     };
 }
 
@@ -46,19 +46,19 @@ method send-code(%form) returns DateTime {
 
 method ask-result($user, $send-time) returns Str {
     my Bool $success = False;
-    loop (my $try-count = 1; $try-count <= 5; $try-count++){
-	self.wait($try-count);
-	my $status-response = $!ua.get($!activity-uri);
-	next if not $status-response.is-success;
+    loop (my $try-count = 1; $try-count <= 5; $try-count++) {
+        self.wait($try-count);
+        my $status-response = $!ua.get($!activity-uri);
+        next if not $status-response.is-success;
 
-	my %latest = self.get-latest-activity($status-response);
-	if %latest<submission-date> >= $send-time {
-	    return sprintf("%s %.2f sec", [%latest<status>, %latest<cputime> / 100]);
-	}
+        my %latest = self.get-latest-activity($status-response.content);
+        if %latest<submission-date> >= $send-time {
+            return sprintf("%s %.2f sec", [%latest<status>, %latest<cputime> / 100]);
+        }
     }
-    
+
     if not $success {
-	die "ERROR: Timeout";
+        die "ERROR: Timeout";
     }
 }
 
@@ -77,10 +77,10 @@ method get-latest-activity(Str $xml-text is copy) returns Hash {
 
 method validate-problem-number($problem-number) returns Bool {
     if $problem-number.chars != 4 {
-	die "ERROR: Invalid problem-number was specified";
+        die "ERROR: Invalid problem-number was specified";
     }
     if not $problem-number ~~ m/\d ** 4/ {
-	die "ERROR: Invalid problem-number was specified";
+        die "ERROR: Invalid problem-number was specified";
     }
     return True;
 }
