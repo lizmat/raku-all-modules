@@ -9,12 +9,23 @@ Perl6::Parser - Extract a Perl 6 AST from the NQP Perl 6 Parser
 =begin SYNOPSIS
 
     my $pt = Perl6::Parser.new;
-    my $parsed = $pt.parse( Q:to[_END_] );
+    my $source = Q:to[_END_];
        code-goes-here();
        that you( $want-to, $parse );
     _END_
-    my $tree = $pt.build-tree( $parsed );
+
+    # Get a fully-parsed data tree
+    #
+    my $tree = $pt.to-tree( $source );
     say $pt.dump-tree( $tree );
+
+    # Return only the displayed tokens (including whitespace) in the document
+    #
+    my @token = $pt.to-tokens-only( $source );
+
+    # Return all tokens and structures in the document
+    #
+    my @everything = $pt.to-list( $source );
 
     # This *will* execute phasers such as BEGIN in your existing code.
     # This may constitute a security hole, at least until the author figures
@@ -55,7 +66,7 @@ The first thing is to break the offending bit of code out so it's easier to debu
     _END_
     my $p = $pt.parse( $source );
     say $p.dump;
-    my $tree = $pt.build-tree( $p );
+    my $tree = $pt._build-tree( $p );
     say $pt.dump-tree($tree);
     is $pt.to-string( $tree ), $source, Q{formatted};
 
@@ -65,7 +76,7 @@ Second, I'm not doing anything that you as a user of the class would do. As a us
 
 (side note - This will probably have changed in detail since I wrote this text - Consult your nearest test file for examples of current usage.)
 
-Internally, the library takes sevaral steps to get to the nicely objectified tree that you see on your output. The two important steps in our case are the C<.parse( 'text goes here' )> method call, and C<.build-tree( $parse-tree )>.
+Internally, the library takes sevaral steps to get to the nicely objectified tree that you see on your output. The two important steps in our case are the C<.parse( 'text goes here' )> method call, and C<._build-tree( $parse-tree )>.
 
 The C<.parse()> call returns a very raw L<NQPMatch> object, which is the Perl 6 internal we're trying to reparse into a more useful form. Most of the time you can call C<.dump()> on this object and get back a semi-useful object tree. On occasion this B<will> lock up, most often because you're trying to C<.dump()> a L<list> accessor, and that hasn't been implemented for NQPMatch. The actual C<list> accessor works, but the C<.dump()> call will not. A simple workaround is to call C<$p.list.[0].dump> on one of the list elements inside, and hope there is one.
 
@@ -147,15 +158,15 @@ Given a string containing valid Perl 6 code ... well, return that code. This
 is mostly a shortcut for testing purposes, and wil probably be moved out of the
 main file.
 
+=item to-tree( Str $source )
+
+This is normally what you want, it returns the Perl 6 parsed tree corresponding to your source code.
+
 =item parse( Str $source )
 
-Returns the underlying NQPMatch object. This is what gets passed on to C<validate()>, C<build-tree()> and every other important method in this module. It does some minor wizardry to call the Perl 6 reentrant compiler to compile the string you pass it, and return a match object. Please note that it B<has> to compile the string in order to validate things like custom operators, so this step is B<not> optional.
+Returns the underlying NQPMatch object. This is what gets passed on to C<_build-tree()> and every other important method in this module. It does some minor wizardry to call the Perl 6 reentrant compiler to compile the string you pass it, and return a match object. Please note that it B<has> to compile the string in order to validate things like custom operators, so this step is B<not> optional.
 
-=item validate( Mu $parsed )
-
-Makes certain that the NQPMatch object looks like a valid NQPMatch object to the current version of this Perl 6 module. This is because, while it's highly unlikely at this point, the grammar internals of Perl 6 B<could> change at some later date, and this rather extensive method (it doesn't look it, but to see what it does, look at L<Perl6::Parser::Validator>) checks to see that a given input (say, a large RosettaCode sample) returns the match object we're expecting.
-
-=item build-tree( Mu $parsed )
+=item _build-tree( Mu $parsed )
 
 Build the Perl6::Element tree from the NQPMatch object. This is the core, and runs the factory which silly-walks the match tree and returns one or more tokens for every single match entry it finds, and B<more>.
 
@@ -185,57 +196,98 @@ For further information, there's a L<DEBUGGING.pod> file detailing how to go abo
 
 =end pod
 
-use Perl6::Parser::Validator;
 use Perl6::Parser::Factory;
 
 my role Debugging {
+
+	method _interrogate-element( Perl6::Element $node ) {
+		my @problem;
+		if $node.WHAT.perl eq 'Perl6::Element' {
+			@problem.push( Q{raw element} );
+			return @problem;
+		}
+		unless $node.^can('is-leaf') {
+			@problem.push( Q{no leaf test} );
+			return @problem;
+		}
+		unless $node.^can('is-twig') {
+			@problem.push( Q{no twig test} );
+			return @problem;
+		}
+		unless $node.^can('from') {
+			@problem.push( Q{no from} );
+			return @problem;
+		}
+		unless $node.^can('to') {
+			@problem.push( Q{no to} );
+			return @problem;
+		}
+
+		@problem.push( Q{from} ) if $node.from < 0;
+		@problem.push( Q{to} ) if $node.to < 0;
+		@problem.push( Q{cross} ) if $node.from > $node.to;
+
+		if $node.is-twig {
+			given $node {
+				when Perl6::Block {
+					@problem.push( Q{structure start} ) if
+						$node.child[0] !~~
+							Perl6::Balanced::Enter;
+					@problem.push( Q{structure end} ) if
+						$node.child[*-1] !~~
+							Perl6::Balanced::Exit;
+				}
+			}
+		}
+		elsif $node.is-leaf {
+			@problem.push( Q{empty} ) if $node.from == $node.to;
+
+			@problem.push( Q{short} ) if
+				$node.to - $node.from < $node.content.chars;
+			@problem.push( Q{long} ) if
+				$node.to - $node.from > $node.content.chars;
+
+			given $node {
+				when Perl6::Comment | Perl6::String | Perl6::Sir-Not-Appearing-In-This-Statement { }
+				when Perl6::WS | Perl6::Newline {
+					@problem.push( Q{WS} ) if
+						$node.content ~~ /\S/;
+				}
+				default {
+					@problem.push( Q{WS} ) if
+						$node.content ~~ /\s/;
+					@problem.push( Q{EMPTY} ) if
+						$node.content eq Q{};
+				}
+			}
+		}
+		else {
+			@problem.push( Q{not tree member} );
+		}
+		@problem;
+	}
 
 	#constant indent = "\t";
 	my constant indent = ' ';
 	method _dump-tree( Perl6::Element $root,
 			  Bool $display-ws = True,
 			  Int $depth = 0 ) {
-		return '' if $root ~~ Perl6::WS and !$display-ws;
 		my $str = ( indent xx $depth ) ~ self.dump-term( $root ) ~ "\n";
 		if $root.is-twig {
 			for ^$root.child {
 				my @problem;
-				if $root.child.[$_].from < 0 {
-					@problem.push( '-' )
-				}
-				if $root.child.[$_].to < 0 {
-					@problem.push( '-' )
-				}
+				@problem.append(
+					self._interrogate-element(
+						$root.child.[$_]
+					)
+				);
+
 				# Mark the tokens that don't overlap.
 				#
 				if $root.child.[$_+1].defined and
 					$root.child.[$_].to !=
 					$root.child.[$_+1].from {
 					@problem.push( 'G' )
-				}
-				if $root.child.[$_].is-leaf {
-					if $root.child.[$_].from ==
-					   $root.child.[$_].to {
-						@problem.push( Q{''} )
-					}
-					if $root.child.[$_].to -
-					   $root.child.[$_].from != $root.child.[$_].content.chars {
-						@problem.push( Q{''} )
-					}
-					if $root.child.[$_] ~~ Perl6::WS and
-					   $root.child.[$_].content ~~ / \S / {
-						@problem.push( 'WS' )
-					}
-					if $root.child.[$_] !~~ Perl6::WS and
-					   $root.child.[$_] !~~ Perl6::Comment and
-					   $root.child.[$_] !~~ Perl6::String and
-					   $root.child.[$_].content ~~ / \s / {
-						@problem.push( 'WS' )
-					}
-					if $root.child.[$_].is-leaf and
-					   $root.child.[$_].content eq '' {
-						@problem.push( 'WS' )
-					}
 				}
 				$str ~= @problem.join( ' ' ) if @problem;
 				$str ~= self._dump-tree(
@@ -291,15 +343,15 @@ my role Debugging {
 
 		$line ~= " (line {$term.factory-line-number})" if
 			$term.factory-line-number;
-		if $term.next {
+		if $term.is-end or !$term.next {
+			$line ~= " -> END";
+		}
+		else {
 			my $next = $term.next;
 			my $name = $next.WHAT.perl;
 			$name ~~ s/'Perl6::'//;
 			my $next-bounds = "{$next.from}-{$next.to}";
 			$line ~= " -> $name ($next-bounds)";
-		}
-		else {
-			$line ~= " -> END";
 		}
 		$line;
 	}
@@ -324,9 +376,7 @@ my role Debugging {
 my role Testing {
 
 	method _roundtrip( Str $source ) {
-		my $parsed    = self.parse( $source );
-		my $valid     = self.validate( $parsed );
-		my $tree      = self.build-tree( $parsed );
+		my $tree      = self.to-tree( $source );
 		my $formatted = self.to-string( $tree );
 
 		$formatted
@@ -335,91 +385,36 @@ my role Testing {
 
 my role Validating {
 
-	method _consistency-check( Perl6::Element $root ) {
-		if !$root.^can('is-leaf') {
-			$*ERR.say(
-				"Element is missing is-leaf: " ~ $root.perl
-			);
-		}
-		if !$root.^can('is-twig') {
-			$*ERR.say(
-				"Element is missing is-twig: " ~ $root.perl
-			);
+	method _consistency-check( Perl6::Element $node ) {
+		my @problems = self._interrogate-element( $node );
+		if @problems {
+			$*ERR.say( @problems ~ ": " ~ $node.perl );
 		}
 
+		if $node.is-twig {
+			if $node.child.elems > 1 {
+				for $node.child.kv -> $index, $_ {
+					self._consistency-check( $_ );
 
-		if $root ~~ Perl6::Block {
-			unless $root.child.[0] ~~ Perl6::Structural {
-				$*ERR.say(
-					"First element not structural: " ~
-					$root.perl
-				);
-			}
-			unless $root.child.[*-1] ~~ Perl6::Structural {
-				$*ERR.say(
-					"Last element not structural: " ~
-					$root.perl
-				);
-			}
-		}
-		if $root.is-twig {
-			for $root.child {
-				self._consistency-check( $_ );
-				if $_.WHAT.perl eq 'Perl6::Element' {
-					$*ERR.say( "Raw Perl6::Element in: " ~ $root.perl );
-				}
-				unless $_.^can('from') {
-					$*ERR.say( "Missing 'from': " ~ $_.perl );
-				}
-			}
-			if $root.child.elems > 1 {
-				for $root.child.kv -> $index, $_ {
 					next if $index == 0;
-					next unless $root.child.[$index-1].^can('to');
-					next unless $root.child.[$index].^can('from');
-					if $root.child.[$index-1] ~~ Perl6::WS and
-					   $root.child.[$index] ~~ Perl6::WS {
+					if $node.child.[$index-1] ~~ Perl6::WS and
+					   $node.child.[$index] ~~ Perl6::WS {
 						$*ERR.say( "Two WS entries in a row" );
 					}
-					if $root.child.[$index-1].to !=
-						$root.child.[$index].from {
+					if $node.child.[$index-1].to !=
+						$node.child.[$index].from {
 						$*ERR.say( "Gap between two items" );
 					}
 				}
 			}
 		}
-		if $root.is-leaf {
-			if $root.content.chars < $root.to - $root.from {
-				$*ERR.say( "Not enough chars: " ~ $root.perl );
-			}
-			if $root.content.chars > $root.to - $root.from {
-				$*ERR.say( "Too many chars: " ~ $root.perl );
-			}
-			if $root !~~ Perl6::WS and
-					$root !~~ Perl6::StringList::Body and
-					$root !~~ Perl6::Sir-Not-Appearing-In-This-Statement and
-					$root.content ~~ m{ ^ (\s+) } {
-				$*ERR.say( "Leading whitespace: " ~ $root.perl );
-			}
-			if $root !~~ Perl6::WS and
-					$root !~~ Perl6::Comment and
-					$root !~~ Perl6::StringList::Body and
-					$root.content ~~ m{ (\s+) $ } {
-				$*ERR.say( "Trailing whitespace: " ~ $root.perl );
-			}
-		}
 	}
 
+	# Just in case we need to pass in parameters later on...
+	# sigh.
+	#
 	method consistency-check( Perl6::Element $root ) {
 		self._consistency-check( $root );
-	}
-
-	method validate( Mu $parsed ) {
-		my $validator = Perl6::Parser::Validator.new;
-		my $res       = $validator.validate( $parsed );
-
-		$*ERR.say( "Validation failed!" ) if !$res;
-		$res
 	}
 }
 
@@ -447,31 +442,17 @@ class Perl6::Parser {
 			:actions( $a )
 		);
 
-		return $parsed
+		$parsed;
 	}
 
-	method build-tree( Mu $parsed ) {
-		self.validate( $parsed ) if
-			$*GRAMMAR-CHECK and %*ENV<AUTHOR>;
-
+	method _build-tree( Mu $parsed ) {
 		my $tree = $.factory.build( $parsed );
 		self.consistency-check( $tree ) if
 			$*CONSISTENCY-CHECK and %*ENV<AUTHOR>;
 		$tree
 	}
 
-	method to-tree( Str $source ) {
-		my $parsed = self.parse( $source );
-		self.build-tree( $parsed );
-	}
-
-	method to-string( Perl6::Element $tree ) {
-		my $str = $tree.to-string;
-
-		$str
-	}
-
-	class ElementIterator {
+	my class CompleteIterator {
 		also does Iterator;
 
 		has Perl6::Element $.head;
@@ -494,22 +475,61 @@ class Perl6::Parser {
 			}
 		}
 
-		method push-exactly( Iterator:D $target, int $count ) {
-			my $_count = $count;
-			while $_count-- >= 0 {
-				$target.push( self.pull-one );
+		method is-lazy { False }
+	}
+
+	my class TokenIterator {
+		also does Iterator;
+
+		has Perl6::Element $.head;
+		has Bool $.is-done = False;
+
+		method pull-one {
+			if $.head.is-end-leaf {
+				if $.is-done {
+					return IterationEnd;
+				}
+				else {
+					$!is-done = True;
+					return $.head;
+				}
+			}
+			else {
+				my $elem = $.head;
+				$!head = $.head.next;
+				$!head = $!head.next while !$.head.is-leaf;
+				$elem;
 			}
 		}
 
 		method is-lazy { False }
 	}
 
-	method iterator( Str $source ) {
-		my $p = self.parse( $source );
-		my $tree = self.build-tree( $p );
+	method to-tree( Str $source ) {
+		my $parsed = self.parse( $source );
+		self._build-tree( $parsed );
+	}
+
+	method to-string( Perl6::Element $tree ) {
+		my $str = $tree.to-string;
+
+		$str;
+	}
+
+	method to-tokens-only( Str $source ) {
+		my $tree = self.to-tree( $source );
+		$.factory.thread( $tree );
+		my $head = $.factory.flatten( $tree );
+		$head = $head.next while !$head.is-leaf and !$head.is-end-leaf;
+
+		Seq.new( TokenIterator.new( :head( $head ) ) );
+	}
+
+	method to-list( Str $source ) {
+		my $tree = self.to-tree( $source );
 		$.factory.thread( $tree );
 		my $head = $.factory.flatten( $tree );
 
-		ElementIterator.new( :head( $head ) );
+		Seq.new( CompleteIterator.new( :head( $head ) ) );
 	}
 }

@@ -4,12 +4,11 @@ use Test;
 use Perl6::Parser;
 use Perl6::Parser::Factory;
 
-plan 10;
+plan 12;
 
 my $pt = Perl6::Parser.new;
 my $ppf = Perl6::Parser::Factory.new;
 my $*CONSISTENCY-CHECK = True;
-my $*GRAMMAR-CHECK = True;
 my $*FALL-THROUGH = True;
 
 sub make-decimal( Str $value ) {
@@ -368,30 +367,88 @@ subtest {
 }, Q{check flattened data};
 
 subtest {
+	my $source = Q{(3);2;1};
+	my $tree = $pt.to-tree( $source );
+	$ppf.thread( $tree );
+	my $head = $ppf.flatten( $tree );
+	$head = $head.next(3); # XXX Need to fix this for the iterator.
+
+#	ok $head.parent ~~ Perl6::Document;
+#	ok $head ~~ Perl6::Document; $head = $head.next-leaf;
+#	ok $head.parent ~~ Perl6::Document;
+#	ok $head ~~ Perl6::Statement; $head = $head.next-leaf;
+#	ok $head.parent ~~ Perl6::Statement;
+#	ok $head ~~ Perl6::Operator::Circumfix; $head = $head.next-leaf;
+	ok $head.parent ~~ Perl6::Operator::Circumfix;
+	ok $head ~~ Perl6::Balanced::Enter; $head = $head.next-leaf;
+	ok $head.parent ~~ Perl6::Operator::Circumfix;
+	ok $head ~~ Perl6::Number::Decimal; $head = $head.next-leaf;
+	ok $head.parent ~~ Perl6::Operator::Circumfix;
+	ok $head ~~ Perl6::Balanced::Exit; $head = $head.next-leaf;
+	ok $head.parent ~~ Perl6::Statement;
+	ok $head ~~ Perl6::Semicolon; $head = $head.next-leaf;
+#	ok $head.parent ~~ Perl6::Document;
+#	ok $head ~~ Perl6::Statement; $head = $head.next-leaf;
+	ok $head.parent ~~ Perl6::Statement;
+	ok $head ~~ Perl6::Number::Decimal; $head = $head.next-leaf;
+	ok $head.parent ~~ Perl6::Statement;
+	ok $head ~~ Perl6::Semicolon; $head = $head.next-leaf;
+	ok $head.parent ~~ Perl6::Statement;
+#	ok $head ~~ Perl6::Statement; $head = $head.next-leaf;
+	ok $head ~~ Perl6::Number::Decimal; $head = $head.next-leaf;
+	ok $head.is-end;
+
+	ok $head ~~ Perl6::Number::Decimal; $head = $head.previous-leaf;
+#	ok $head ~~ Perl6::Statement; $head = $head.previous-leaf;
+	ok $head.parent ~~ Perl6::Statement;
+	ok $head ~~ Perl6::Semicolon; $head = $head.previous-leaf;
+	ok $head.parent ~~ Perl6::Statement;
+	ok $head ~~ Perl6::Number::Decimal; $head = $head.previous-leaf;
+	ok $head.parent ~~ Perl6::Statement;
+#	ok $head ~~ Perl6::Statement; $head = $head.previous-leaf;
+#	ok $head.parent ~~ Perl6::Document;
+	ok $head ~~ Perl6::Semicolon; $head = $head.previous-leaf;
+	ok $head.parent ~~ Perl6::Operator::Circumfix;
+	ok $head ~~ Perl6::Balanced::Exit; $head = $head.previous-leaf;
+	ok $head.parent ~~ Perl6::Operator::Circumfix;
+	ok $head ~~ Perl6::Number::Decimal; $head = $head.previous-leaf;
+	ok $head.parent ~~ Perl6::Operator::Circumfix;
+	ok $head ~~ Perl6::Balanced::Enter; $head = $head.previous-leaf;
+#	ok $head.parent ~~ Perl6::Document;
+#	ok $head ~~ Perl6::Operator::Circumfix; $head = $head.previous-leaf;
+#	ok $head.parent ~~ Perl6::Statement;
+#	ok $head ~~ Perl6::Statement; $head = $head.previous-leaf;
+#	ok $head.parent ~~ Perl6::Document;
+#	ok $head ~~ Perl6::Document; $head = $head.previous-leaf;
+#	ok $head.parent ~~ Perl6::Document;
+
+	done-testing;
+}, Q{check flattened leaves only};
+
+subtest {
 	my $source = Q{();2;1;};
-	my $iter = $pt.iterator( $source );
+	my @token = $pt.to-list( $source );
 	my $iterated = '';
 
-	for Seq.new( $iter ) {
-		$iterated ~= $_.is-leaf ?? $_.content !! '';
+	for grep { .textual }, @token {
+		$iterated ~= $_.content;
 	}
 	is $iterated, $source, Q{pull-one returns complete list};
 
 	done-testing;
-}, Q{iterator pull-one};
+}, Q{default iterator pull-one};
 
-#subtest {
-#	my $source = Q{();2;1;};
-#	my $iter = $pt.iterator( $source );
-#	my $iterated = '';
-#	my $target = (1..Inf).iterator;
-#
-#	my @element;
-#
-#	$iter.push-exactly( $target, 3 );
-#	ok $target.[0] ~~ Perl6::Document;
-#
-#	done-testing;
-#}, Q{iterator push-exactly};
+subtest {
+	my $source = Q{();2;1;};
+	my @token = $pt.to-tokens-only( $source );
+	my $iterated = '';
+
+	for @token {
+		$iterated ~= $_.content;
+	}
+	is $iterated, $source, Q{tokens only display cleanly};
+
+	done-testing;
+}, Q{token-only iterator}
 
 # vim: ft=perl6
