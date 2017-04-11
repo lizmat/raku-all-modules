@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-Failer.git
+	branch = master
+	commit = 63aa24806f08282792869aeca9d9196b6efbb48a
+	parent = 2a657f5b1849d64461687caffd655c25eacc7cf9
+	cmdver = 0.4.0

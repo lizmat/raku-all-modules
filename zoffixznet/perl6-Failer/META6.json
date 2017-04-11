@@ -1,0 +1,17 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Failer",
+    "version"      : "1.001001",
+    "description"  : "Handle Failures like a Pro",
+    "tags"         : [ "Failure" ],
+    "depends"      : [ ],
+    "test-depends" : [
+        "Test",
+        "Test::META"
+    ],
+    "provides"     : {
+        "Failer" : "lib/Failer.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source"   : "git://github.com/zoffixznet/perl6-Failer.git"}
+}
