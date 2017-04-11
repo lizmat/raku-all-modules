@@ -1,11 +1,11 @@
 use v6;
-unit module Archive::Libarchive::Raw:ver<0.0.1>;
+unit module Archive::Libarchive::Raw:ver<0.0.3>;
 
 use NativeCall;
 
 constant LIB = %*ENV<PERL6_LIBARCHIVE_LIB> || (
     $*DISTRO.is-win
-        ?? %?RESOURCES<libarchive.dll>.abspath
+        ?? %?RESOURCES<libarchive.dll>.absolute
         !! 'libarchive.so.13'
 );
 
