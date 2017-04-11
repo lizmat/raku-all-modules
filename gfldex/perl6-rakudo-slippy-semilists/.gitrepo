@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/gfldex/perl6-rakudo-slippy-semilists.git
 	branch = master
-	commit = 46715f258437c688c197004f6b34702806492bb4
-	parent = d523aa8edb719b683d567697b12893eff20c9dbd
+	commit = c6ad9b16c9080ef7a01b4e403cd1f75c5d2cdc2c
+	parent = a39e87a0781d26672c0c0a0db1b3121ee88fc130
 	cmdver = 0.4.0
