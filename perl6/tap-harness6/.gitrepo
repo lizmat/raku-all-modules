@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/perl6/tap-harness6.git
+	branch = master
+	commit = 8175fbc042b8e7791cbe3994fd93d330cb4faf8d
+	parent = 834f40320728342b1e38dcf3531a6d0bc2b6d483
+	cmdver = 0.4.0
