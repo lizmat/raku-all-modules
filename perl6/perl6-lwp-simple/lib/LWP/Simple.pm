@@ -47,14 +47,17 @@ method put (Str $url, %headers = {}, Any $content?) {
 method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
 
     return unless $url;
-    die "400 URL must be absolute <URL:$url>\n" unless $url ~~ m/^https*\:\/\//;
-    my $ssl;
-    if $url ~~ m/^https\:\/\// {
-        try require IO::Socket::SSL;
-        die "501 Protocol scheme 'https' is only supported if IO::Socket::SSL is installed <URL:$url>\n" if ::('IO::Socket::SSL') ~~ Failure;
-        $ssl = True;
-    }
-    
+    die "400 URL must be absolute <URL:$url>\n"
+        unless $url.starts-with('https://') or $url.starts-with('http://');
+
+    # The `require` must not be inside a block; because we need its symbols
+    # later in the code and it exports them lexically.
+    my $ssl = $url.starts-with('https://') and (
+        (try require IO::Socket::SSL) !=== Nil
+        or die "501 Protocol scheme 'https' is only supported if "
+            ~ "IO::Socket::SSL is installed <URL:$url>\n"
+    );
+
     my ($scheme, $hostname, $port, $path, $auth) = self.parse_url($url);
 
     %headers{'Connection'} = 'close';
@@ -116,7 +119,7 @@ method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
                     )
                 )
             {
-                my $charset = 
+                my $charset =
                     ($resp_headers<Content-Type> ~~ /charset\=(<-[;]>*)/)[0];
                 $charset = $charset ?? $charset.Str !!
                     self ?? $.default_encoding !! $.class_default_encoding;
@@ -125,7 +128,7 @@ method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
             else {
                 return $resp_content;
             }
-            
+
         }
 
         # Response failed
@@ -151,7 +154,7 @@ method parse_chunks(Blob $b is rw, $sock) {
         if  $line_end_pos +4 <= $b.bytes &&
             $b.subbuf(
                 $chunk_start, $line_end_pos + 2 - $chunk_start
-            ).decode('ascii') ~~ /^(<.xdigit>+)[";"|\r?\n]/ 
+            ).decode('ascii') ~~ /^(<.xdigit>+)[";"|\r?\n]/
         {
 
             # deal with case of chunk_len is 0
@@ -183,7 +186,7 @@ method parse_chunks(Blob $b is rw, $sock) {
 #                say 'last chunk';
                 # remaining chunk part len is chunk_len with CRLF
                 # minus the length of the chunk piece at end of buffer
-                my $last_chunk_end_len = 
+                my $last_chunk_end_len =
                     $chunk_len +2 - ($b.bytes - $line_end_pos -2);
                 $content ~= $b.subbuf($line_end_pos +2);
                 if $last_chunk_end_len > 2  {
@@ -221,7 +224,7 @@ method make_request (
         my ($proxy, $proxy-port) = %*ENV<http_proxy>.split('/').[2].split(':');
 
         $sock = IO::Socket::INET.new(:host($proxy), :port(+($proxy-port)));
-        
+
         $req_str = $rt.Stringy ~ " http://{$host}:{$port}{$path} HTTP/1.1\r\n"
         ~ $headers
         ~ "\r\n";
@@ -229,11 +232,11 @@ method make_request (
     }
     else {
         $sock = $ssl ?? ::('IO::Socket::SSL').new(:$host, :$port) !! IO::Socket::INET.new(:$host, :$port);
-        
+
         $req_str = $rt.Stringy ~ " {$path} HTTP/1.1\r\n"
         ~ $headers
         ~ "\r\n";
-        
+
     }
 
     # attach $content if given
@@ -243,7 +246,7 @@ method make_request (
     $sock.print($req_str);
 
     my Blob $resp = Buf.new;
-    
+
     while !self.got-header($resp) {
         $resp ~= $sock.read($default_stream_read_len);
     }
@@ -354,25 +357,25 @@ method getstore (Str $url, Str $filename) {
         $fh.print($content)
     }
 
-    $fh.close; 
+    $fh.close;
 }
 
 method parse_url (Str $url) {
     my URI $u .= new($url);
     my $path = $u.path_query;
     my $user_info = $u.userinfo;
-    
+
     return (
-        $u.scheme, 
-        $user_info ?? "{$user_info}\@{$u.host}" !! $u.host, 
-        $u.port, 
+        $u.scheme,
+        $user_info ?? "{$user_info}\@{$u.host}" !! $u.host,
+        $u.port,
         $path eq '' ?? '/' !! $path,
         $user_info ?? {
             host => $u.host,
             user => uri_unescape($user_info.split(':')[0]),
             password => uri_unescape($user_info.split(':')[1] || '')
         } !! Nil
-    );    
+    );
 }
 
 method stringify_headers (%headers) {
@@ -382,4 +385,3 @@ method stringify_headers (%headers) {
     }
     return $str;
 }
-
