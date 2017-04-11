@@ -198,14 +198,14 @@ it under the same terms as Perl itself.
     }
 
     #| autoloads the appropriate delegate for the named font. A subclass of Font::AFM
-    method !metrics-class(Str $font-name --> Font::AFM:U) {
+    method metrics-class(Str $font-name --> Font::AFM:U) {
         my $class-name = self!class-name($font-name);
         require ::($class-name);
     }
 
     #| creates a delegate object for the named font.
     method core-font(Str $font-name --> Font::AFM:D) {
-        my $class = self!metrics-class($font-name);
+        my $class = self.metrics-class($font-name);
         $class.new;
     }
 

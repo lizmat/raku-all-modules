@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-pdf/perl6-Font-AFM.git
 	branch = master
-	commit = 51d84e13dab5fceae99c47d62f65d97325a1915a
-	parent = c869a5c3b7d6d0cb18a8103439f01f41b1f846b4
+	commit = 32dd26b0e2513fd19c817b2e1ea7e1b74cfc6292
+	parent = ba6c347076d179314d4275a72be86354b8337012
 	cmdver = 0.4.0
