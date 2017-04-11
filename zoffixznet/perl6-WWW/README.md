@@ -23,7 +23,7 @@ WWW - No-nonsense, simple HTTPS client with JSON decoder
         :some<form>, :42args;
 
     # Same POST as above + decode response as JSON
-    say jpost('https://httpbin.org/post', :some<form>)<args><some>;
+    say jpost('https://httpbin.org/post', :some<form-arg>)<form><some>;
 ```
 
 # DESCRIPTION
@@ -100,7 +100,7 @@ be rejected; you have to ensure it's proper manually. Patches welcome.
 - [`LWP::Simple`](https://modules.perl6.org/repo/LWP::Simple)
 - [`HTTP::UserAgent`](https://modules.perl6.org/repo/HTTP::UserAgent)
 
----
+----
 
 #### REPOSITORY
 
