@@ -14,9 +14,7 @@ start {
 
   route '/:named/whatever', sub ($req, $res) {
     my $str = $req.params<named> // '';
-    $res.perl.say;
     $res.close($str); 
-    'here'.say;
   };
 
   route '/poboy', sub ($req, $res) {
