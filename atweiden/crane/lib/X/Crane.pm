@@ -41,7 +41,7 @@ class PathOutOfRange is Exception
         }
     }
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         my Int:D $got = $.out-of-range.got;
         my RangeStrActions:D $actions = RangeStrActions.new;
@@ -61,7 +61,7 @@ class PathOutOfRange is Exception
 
 class AddPathNotFound is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: add operation failed, path not found in container';
     }
@@ -80,7 +80,7 @@ class AddPathOutOfRange is PathOutOfRange {*}
 class Add::RO is Exception
 {
     has Str:D $.typename is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "✗ Crane error: add requested modifying an immutable $.typename";
     }
@@ -92,7 +92,7 @@ class Add::RO is Exception
 
 class AssociativeKeyDNE is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: associative key does not exist';
     }
@@ -104,7 +104,7 @@ class AssociativeKeyDNE is Exception
 
 class CopyFromNotFound is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: copy operation failed, from location nonexistent';
     }
@@ -116,7 +116,7 @@ class CopyFromNotFound is Exception
 
 class CopyParentToChild is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: a location cannot be copied into one of its children';
     }
@@ -128,7 +128,7 @@ class CopyParentToChild is Exception
 
 class CopyPathNotFound is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: copy operation failed, path nonexistent';
     }
@@ -141,7 +141,7 @@ class CopyPathNotFound is Exception
 class CopyPathOutOfRange is Exception
 {
     has Str:D $.add-path-out-of-range is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         $.add-path-out-of-range.subst(/'add operation'/, 'copy operation');
     }
@@ -154,7 +154,7 @@ class CopyPathOutOfRange is Exception
 class CopyPath::RO is Exception
 {
     has Str:D $.typename is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "✗ Crane error: requested copy path is immutable $.typename";
     }
@@ -166,7 +166,7 @@ class CopyPath::RO is Exception
 
 class GetPathNotFound is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: get operation failed, path nonexistent';
     }
@@ -178,7 +178,7 @@ class GetPathNotFound is Exception
 
 class GetRootContainerKey is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: cannot request key operations on container root';
     }
@@ -190,7 +190,7 @@ class GetRootContainerKey is Exception
 
 class ExistsRootContainerKey is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: cannot request key operations on container root';
     }
@@ -202,7 +202,7 @@ class ExistsRootContainerKey is Exception
 
 class MoveFromNotFound is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: move operation failed, from location nonexistent';
     }
@@ -215,7 +215,7 @@ class MoveFromNotFound is Exception
 class MoveFrom::RO is Exception
 {
     has Str:D $.typename is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "✗ Crane error: requested move from immutable $.typename";
     }
@@ -227,7 +227,7 @@ class MoveFrom::RO is Exception
 
 class MoveParentToChild is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: a location cannot be moved into one of its children';
     }
@@ -239,7 +239,7 @@ class MoveParentToChild is Exception
 
 class MovePathNotFound is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: move operation failed, path nonexistent';
     }
@@ -252,7 +252,7 @@ class MovePathNotFound is Exception
 class MovePathOutOfRange is Exception
 {
     has Str:D $.add-path-out-of-range is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         $.add-path-out-of-range.subst(/'add operation'/, 'move operation');
     }
@@ -265,7 +265,7 @@ class MovePathOutOfRange is Exception
 class MovePath::RO is Exception
 {
     has Str:D $.typename is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "✗ Crane error: requested move path is immutable $.typename";
     }
@@ -278,7 +278,7 @@ class MovePath::RO is Exception
 class Patch is Exception
 {
     has Str:D $.help-text is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         $.help-text;
     }
@@ -290,7 +290,7 @@ class Patch is Exception
 
 class PatchAddFailed is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: patch operation failed, add failed';
     }
@@ -302,7 +302,7 @@ class PatchAddFailed is Exception
 
 class PatchCopyFailed is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: patch operation failed, copy failed';
     }
@@ -314,7 +314,7 @@ class PatchCopyFailed is Exception
 
 class PatchMoveFailed is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: patch operation failed, move failed';
     }
@@ -326,7 +326,7 @@ class PatchMoveFailed is Exception
 
 class PatchRemoveFailed is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: patch operation failed, remove failed';
     }
@@ -338,7 +338,7 @@ class PatchRemoveFailed is Exception
 
 class PatchReplaceFailed is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: patch operation failed, replace failed';
     }
@@ -350,7 +350,7 @@ class PatchReplaceFailed is Exception
 
 class PatchTestFailed is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: patch operation failed, test failed';
     }
@@ -362,7 +362,7 @@ class PatchTestFailed is Exception
 
 class PositionalIndexDNE is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: positional index does not exist';
     }
@@ -375,7 +375,7 @@ class PositionalIndexDNE is Exception
 class PositionalIndexInvalid is Exception
 {
     has Str:D $.classifier is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         my Str:D $error-message-intm =
             'unsupported use of negative subscript to index Positional';
@@ -396,7 +396,7 @@ class PositionalIndexInvalid is Exception
 
 class RemovePathNotFound is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: remove operation failed, path not found in container';
     }
@@ -409,7 +409,7 @@ class RemovePathNotFound is Exception
 class Remove::RO is Exception
 {
     has Str:D $.typename is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "✗ Crane error: requested remove operation on immutable $.typename";
     }
@@ -421,7 +421,7 @@ class Remove::RO is Exception
 
 class ReplacePathNotFound is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: replace operation failed, path not found in container';
     }
@@ -434,7 +434,7 @@ class ReplacePathNotFound is Exception
 class Replace::RO is Exception
 {
     has Str:D $.typename is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "✗ Crane error: replace requested modifying an immutable $.typename";
     }
@@ -447,7 +447,7 @@ class Replace::RO is Exception
 class OpSet::RO is Exception
 {
     has Str:D $.typename is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "✗ Crane error: set requested modifying an immutable $.typename";
     }
@@ -459,7 +459,7 @@ class OpSet::RO is Exception
 
 class TestPathNotFound is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: test operation failed, path nonexistent';
     }
@@ -471,7 +471,7 @@ class TestPathNotFound is Exception
 
 class TransformCallableRaisedException is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: transform operation failed, callable raised exception';
     }
@@ -483,7 +483,7 @@ class TransformCallableRaisedException is Exception
 
 class TransformCallableSignatureParams is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: transform operation failed, faulty callable signature';
     }
@@ -495,7 +495,7 @@ class TransformCallableSignatureParams is Exception
 
 class TransformPathNotFound is Exception
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         '✗ Crane error: transform operation failed, path nonexistent';
     }
@@ -508,7 +508,7 @@ class TransformPathNotFound is Exception
 class Transform::RO is Exception
 {
     has Str:D $.typename is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "✗ Crane error: transform requested modifying an immutable $.typename";
     }
