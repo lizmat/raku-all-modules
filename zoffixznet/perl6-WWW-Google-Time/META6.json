@@ -1,7 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "WWW::Google::Time",
-    "version"      : "1.002002",
+    "version"      : "1.002003",
     "description"  : "Get time for various locations using Google",
     "depends"      : [ "HTTP::Tinyish", "URI::Escape" ],
     "test-depends" : [ "Test" ],

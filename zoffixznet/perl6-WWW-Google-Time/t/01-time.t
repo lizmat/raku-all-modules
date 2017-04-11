@@ -20,7 +20,7 @@ like %time<month>, /^[January|February|March|April|May|June|July|August|
 cmp-ok %time<month-day>, &infix:['>='],  1, 'month day is >= 1';
 cmp-ok %time<month-day>, &infix:['<='], 31, 'month day is <= 31';
 like   %time<time>,  /^ \d\d? ':' \d**2 ' ' [AM | PM] $/, 'time looks right';
-like   %time<tz>,    /^ [EST | EDT] $/,     'timezone looks right';
+like   %time<tz>,    /^ [EST | EDT | 'GMT-4' | 'GMT-5'] $/, 'timezone looks rightish';
 like   %time<where>, /'Toronto, ON'/,       'where looks right';
 like   %time<year>,  /^20 \d**2 $/,         'year looks right';
 isa-ok %time<DateTime>, DateTime,           'DateTime key is a DateTime object';
