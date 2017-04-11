@@ -116,13 +116,14 @@ my $map = DispatchMap.new(
 ```
 
 Makes a new DispatchMap where the keys are the namespaces and the
-values are signature-value pairs.
+values are signature-value pairs. You can think of a namespace as a
+dispatchter method and the signature-value pairs as multi candidates.
 
-Presently, the psudo-signatures you pass to `.new` and `.append` are limited to
-non-slurpy positional parameters. If it's passed a type object that
-will be used as the nominal type of the parameter. If a literal is
-passed the `.WHAT` of the object is used as the nominal type and the
-literal is used as a `where` constraint.
+Presently, the psudo-signatures you pass to `.new` and `.append` are
+limited to non-slurpy positional parameters. If it's passed a type
+object that will be used as the nominal type of the parameter. If a
+literal is passed the `.WHAT` of the object is used as the nominal
+type and the literal is used as a `where` constraint.
 
 **note** you won't be able to use the map until you've called `compose`.
 
@@ -147,8 +148,9 @@ my $map = DispatchMap.new(
 say $map.namespaces; #-> foo, bar
 ```
 
-Gets the all the namespaces in the DispatchMap. Won't work until
-`.compose` has been called.
+Gets the all the namespaces in the DispatchMap.
+
+**note** this method won't dispatch properly until `.compose` has been called
 
 ### keys(Str:D $ns)
 
@@ -157,8 +159,9 @@ my $map = DispatchMap.new( foo => ((Int,Array) => "Foo", (Cool) => "Bar") ).comp
 say $map.keys('foo'); #-> (Int,Array),(Cool)
 ```
 
-Gets the keys for a namepsace as a list of lists. Won't work until
-`.compose` has been called.
+Gets the keys for a namepsace as a list of lists.
+
+**note** this method won't work properly until `.compose` has been called
 
 ### values(Str:D $ns)
 
@@ -167,7 +170,9 @@ my $map = DispatchMap.new( foo => ((Int,Array) => "Foo", (Cool) => "Bar") ).comp
 say $map.values('foo'); #-> (Int,Array),(Cool)
 ```
 
-Gets the values for a name pace. Won't work until `.compose` has been called.
+Gets the values for a name pace.
+
+**note** this method won't work properly until `.compose` has been called
 
 ### pairs(Str:D $ns)
 
@@ -176,7 +181,9 @@ my $map = DispatchMap.new( foo => ((Int,Array) => "Foo", (Cool) => "Bar") ).comp
 say $map.pairs('foo'); #-> (Int,Array) => "Foo",(Cool) => "Bar"
 ```
 
-Gets the key-value pairs for a namespace. Won't work until `.compose` has been called.
+Gets the key-value pairs for a namespace.
+
+**note** this method won't work properly until `.compose` has been called
 
 ### list(Str:D $ns)
 
@@ -185,23 +192,22 @@ my $map = DispatchMap.new( foo => ((Int,Array) => "Foo", (Cool) => "Bar") ).comp
 say $map.list('foo'); #-> (Int,Array),"Foo",(Cool),"Bar"
 ```
 
-Returns a list of keys and values for a namespace. Won't work until `.compose` has been called.
+Returns a list of keys and values for a namespace.
 
-### get(Str:D $ns,|c)
+**note** this method won't work properly until `.compose` has been called
+
+### get(Str:D $ns,|key)
 
 ``` perl6
 my $map = DispatchMap.new( foo => ((Int,Array) => "Foo", (Cool) => "Bar") ).compose;
 say $map.get('foo',1,["one","two"]); #-> Foo
 ```
 
-Dispatches to a namespace, returning the associated value. The capture
-of the arguments after the namespace is used as the key.
+Dispatches to a namespace, returning the associated value.
 
-Won't work until `.compose` has been called.
+**note** this method won't dispatch properly until `.compose` has been called
 
-**note** this method won't dispatch properly until after `.compose` has been called
-
-### get-all(Str:D $ns,|c)
+### get-all(Str:D $ns,|key)
 
 ``` perl6
 my $map = DispatchMap.new(
@@ -216,12 +222,11 @@ say $map.get-all('number-types',π); # "pi", "Real", "Numeric";
 ```
 
 Dispatches to a namespace, returning the values that match the capture in order of narrowness
-(internally uses [cando](https://docs.perl6.org/type/Routine#method_cando)). The capture
-of the arguments after the namespace is used as the key.
+(internally uses [cando](https://docs.perl6.org/type/Routine#method_cando)).
 
 **note** this method won't dispatch properly until after `.compose` has been called
 
-### dispatch(Str:D $ns,|c)
+### dispatch(Str:D $ns,|key)
 
 ``` perl6
 my $map = DispatchMap.new(
@@ -237,7 +242,10 @@ say $map.dispatch('abstract-join',<one two>,<three four>); #-> one two three fou
 say $map.dispatch('abstract-join',1,2); #-> 3
 ```
 
-**note** this method won't dispatch properly until after `.compose` has been called
+`.dispatch` works like `.get` except the if the result is a `Callable`
+it will invoke it with the arguments you pass to `.dispatch` and return the result.
+
+**note** this method won't dispatch properly until `.compose` has been called
 
 ### append(*%namespaces)
 ``` perl6
@@ -250,10 +258,6 @@ Appends the values to the corresponding namespaces. Takes the
 arguments in the same format as `.new`.
 
 **note** this method won't affect dispatching until `.compose` is called
-
-`.dispatch` works like `.get` except the if the result is a `Callable`
-it will invoke it with the arguments you pass to `.dispatch` and return the result.
-
 
 ### ns-meta(Str:D $ns) is rw
 
@@ -324,6 +328,6 @@ say $child.get('number-types',π); #-> pi
 ```
 
 Overrides the dispatcher for a namepsace rather than adding to
-it. Overridden namespaces also have their `.ns-meta` cleared.
+it. Overridden namespaces get their own `.ns-meta`.
 
 **note** this method won't affect dispatching until `.compose` is called

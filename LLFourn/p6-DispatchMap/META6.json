@@ -1,7 +1,7 @@
 {
     "name" : "DispatchMap",
     "perl" : "6.*",
-    "version" : "0.2.2",
+    "version" : "0.2.3",
     "description" : "A map that uses Perl 6 multi dispatch to link keys to values",
     "authors"     : ["Lloyd Fournier"],
     "provides"    : {

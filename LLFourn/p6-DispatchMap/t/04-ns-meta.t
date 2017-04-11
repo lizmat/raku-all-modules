@@ -1,6 +1,6 @@
 use DispatchMap;
 use Test;
-plan 9;
+plan 11;
 
 {
     my $parent = DispatchMap.new(
@@ -20,6 +20,9 @@ plan 9;
     is $parent.get("foo",1,"str"),"int str","dispatcher still works after ns-meta";
     is $parent.ns-meta('foo'),"foo meta","ns-meta can be stored before compose";
     is $parent.ns-meta('bar'),"bar meta","ns-meta can be stored after compose";
+
+    nok $parent.ns-meta('BLERG'),"there shouldn't be a ns-meta for a candidate that doesn't exist";
+    nok $parent.namespaces.first('BLERG'),"calling .ns-meta shouldn't create a namespace";
 
     my $child =
     DispatchMap.new()

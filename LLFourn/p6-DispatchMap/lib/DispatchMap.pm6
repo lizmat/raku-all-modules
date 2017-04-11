@@ -92,12 +92,15 @@ method append(*%ns) {
 }
 
 method ns-meta(Str:D $ns) is rw {
-    my $d = self!vivify-dispatcher($ns);
-    $ = ($d does Dispatcher if $d !~~ Dispatcher);
-    return-rw $d.meta;
+    my $dispatcher = $!disp-obj.^find_method("__$ns");
+    if $dispatcher ~~ Dispatcher {
+        return-rw $dispatcher.meta;
+    } else {
+        Nil;
+    }
 }
 
-method !make-dispatcher { (my proto anon (|) {*}).derive_dispatcher }
+method !make-dispatcher { (my proto anon (|) {*}).derive_dispatcher does Dispatcher }
 
 method !vivify-dispatcher(Str:D $ns) {
     my $dispatcher = $!disp-obj.^find_method("__$ns");

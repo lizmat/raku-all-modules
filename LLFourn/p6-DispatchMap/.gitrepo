@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/LLFourn/p6-DispatchMap.git
 	branch = master
-	commit = 6c23d959fb11598acce690ad6c578d74eee4d21a
-	parent = 461daa3a2ff0eefe50390b45351572c50303c984
+	commit = 3372d5300e15a1a13fe46013c718c9e30859aa3a
+	parent = b379069803833f1665bd107132463e11a7e5ec04
 	cmdver = 0.4.0
