@@ -1,7 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "Sparrowdo::Sparrow::Update",
-  "version"     : "*",
+  "version"     : "0.0.1",
   "description" : "Sparrowdo module to install/update Sparrow toolchain on target host",
   "authors" : [ "Alexey Melezhik"],
   "depends"     : [
