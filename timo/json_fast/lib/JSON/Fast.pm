@@ -10,7 +10,8 @@ sub str-escape(str $text is copy) {
             $text .= subst($chr, '\\u' ~ $ord.fmt("%04x"), :g);
         }
     }
-    return $text.subst("\n", '\\n',     :g)\
+    return $text.subst("\r\n", '\\r\\n',:g)\
+                .subst("\n", '\\n',     :g)\
                 .subst("\r", '\\r',     :g)\
                 .subst("\t", '\\t',     :g)\
                 .subst('"',  '\\"',     :g);
@@ -86,77 +87,149 @@ my sub tear-off-combiners(str $text, int $pos) {
     return $parts[1..*].map({$^ord.chr()}).join()
 }
 
-my sub parse-string(str $text, int $pos is rw) {
-    # fast-path a search through the string for the first "special" character ...
-    my int $startpos = $pos;
+my Mu $hexdigits := nqp::hash(
+    '97', 1, '98', 1, '99', 1, '100', 1, '101', 1, '102', 1,
+    '48', 1, '49', 1, '50', 1, '51', 1, '52', 1, '53', 1, '54', 1, '55', 1, '56', 1, '57', 1,
+    '65', 1, '66', 1, '67', 1, '68', 1, '69', 1, '70', 1);
 
-    my str $result;
+my Mu $escapees := nqp::hash(
+    '34', '"', '47', '/', '92', '\\', '98', 'b', '102', 'f', '110', 'n', '114', 'r', '116', 't');
+
+my sub parse-string(str $text, int $pos is rw) {
+    # first we gallop until the end of the string
+    my int $startpos = $pos;
+    my int $endpos;
+    my int $textlength = nqp::chars($text);
 
     my int $ord;
-
-    my @pieces;
+    my int $has_hexcodes;
+    my int $has_treacherous;
+    my str $startcombiner = "";
+    my Mu $treacherous;
+    my Mu $escape_counts := nqp::hash();
 
     unless nqp::eqat($text, '"', $startpos - 1) {
-        # If the ord matches, but it doesn't eq, then we have lone
-        # combining characters at the start of the string.
-        $result = tear-off-combiners($text, $startpos - 1);
+        $startcombiner = tear-off-combiners($text, $startpos - 1);
     }
 
     loop {
         $ord = nqp::ordat($text, $pos);
         $pos = $pos + 1;
-        die "reached end of string while looking for end of quoted string." if $pos > nqp::chars($text);
 
-        if $ord == 34 { # "
-            $result = $result ~ nqp::substr($text, $startpos, $pos - 1 - $startpos);
+        if $pos > $textlength {
+            die "unexpected end of document in string";
+        }
+
+        if nqp::eqat($text, '"', $pos - 1) {
+            $endpos = $pos - 1;
             last;
-        } elsif $ord == 92 { # \
-            $result = $result ~ substr($text, $startpos, $pos - 1 - $startpos);
-            @pieces.push: $result;
-
-            if nqp::eqat($text, '"', $pos) {
-                @pieces.push: '"';
-            } elsif nqp::eqat($text, '\\', $pos) {
-                @pieces.push: '\\';
-            } elsif nqp::eqat($text, '/', $pos) {
-                @pieces.push: '/';
-            } elsif nqp::eqat($text, 'b', $pos) {
-                @pieces.push: "\b";
-            } elsif nqp::eqat($text, 'f', $pos) {
-                @pieces.push: chr(0x0c);
-            } elsif nqp::eqat($text, 'n', $pos) {
-                @pieces.push: "\n";
-            } elsif nqp::eqat($text, 'r', $pos) {
-                @pieces.push: "\r";
-            } elsif nqp::eqat($text, 't', $pos) {
-                @pieces.push: "\t";
-            } elsif nqp::eqat($text, 'u', $pos) {
-                my $hexstr := nqp::substr($text, $pos + 1, 4);
-                if nqp::chars($hexstr) != 4 {
-                    die "expected exactly four alnum digits after \\u";
+        } elsif $ord == 92 {
+            if nqp::eqat($text, '"', $pos) or nqp::eqat($text, '\\', $pos) or nqp::eqat($text, 'b', $pos)
+                or nqp::eqat($text, 'f', $pos) or nqp::eqat($text, 'n', $pos) or nqp::eqat($text, 'r', $pos)
+                or nqp::eqat($text, 't', $pos) or nqp::eqat($text, '/', $pos) {
+                my str $character = nqp::substr($text, $pos, 1);
+                if nqp::existskey($escape_counts, $character) {
+                    nqp::bindkey($escape_counts, $character, nqp::atkey($escape_counts, $character) + 1);
+                } else {
+                    nqp::bindkey($escape_counts, $character, 1);
                 }
-                @pieces.push: chr(:16($hexstr));
-                $pos = $pos + 4;
-            } else {
-                die "at $pos: I don't understand the escape sequence \\{ nqp::substr($text, $pos, 1) }";
-            }
-
-            if nqp::eqat($text, '"', $pos + 1) {
-                $result = $result ~ @pieces[1];
-                $pos = $pos + 2;
-                last;
-            } else {
                 $pos = $pos + 1;
-                @pieces.push: parse-string($text, $pos);
-                $result = @pieces.join("");
-                last;
+            } elsif nqp::eqat($text, 'u', $pos) {
+                die "unexpected end of document; was looking for four hexdigits." if $textlength - $pos < 5;
+                if nqp::existskey($hexdigits, nqp::ordat($text, $pos + 1))
+                    and nqp::existskey($hexdigits, nqp::ordat($text, $pos + 2))
+                    and nqp::existskey($hexdigits, nqp::ordat($text, $pos + 3))
+                    and nqp::existskey($hexdigits, nqp::ordat($text, $pos + 4)) {
+                    $pos = $pos + 4;
+                    $has_hexcodes++;
+                } else {
+                    die "expected hexadecimals after \\u, but got \"{ nqp::substr($text, $pos - 1, 6) }\" at $pos";
+                }
+            } elsif nqp::existskey($escapees, nqp::ordat($text, $pos)) {
+                # treacherous!
+                $has_treacherous++;
+                $treacherous := nqp::hash() unless $treacherous;
+                my int $treach_ord = nqp::ordat($text, $pos);
+                if nqp::existskey($treacherous, $treach_ord) {
+                    nqp::bindkey($treacherous, $treach_ord, nqp::atkey($treacherous, $treach_ord) + 1)
+                } else {
+                    nqp::bindkey($treacherous, $treach_ord, 1)
+                }
+            } else {
+                die "don't understand escape sequence '\\{ nqp::substr($text, $pos, 1) }' at $pos";
             }
-        } elsif $ord < 14 && ($ord == 10 || $ord == 13 || $ord == 9) {
-            die "at $pos: the only whitespace allowed in json strings are spaces";
+        } elsif $ord == 9 or $ord == 10 {
+            die "this kind of whitespace is not allowed in a string: { nqp::substr($text, $pos, 1).perl } at $pos";
         }
     }
 
-    $result;
+    $pos = $pos + 1;
+
+    my str $raw = nqp::substr($text, $startpos, $endpos - $startpos);
+    if $startcombiner {
+        $raw = $startcombiner ~ $raw
+    }
+    if not $has_treacherous {
+        my (@a, @b);
+        if nqp::existskey($escape_counts, "n") and nqp::existskey($escape_counts, "r") {
+            @a.push("\\r\\n"); @b.push("\r\n");
+        }
+        if nqp::existskey($escape_counts, "n") {
+            @a.push("\\n"); @b.push("\n");
+        }
+        if nqp::existskey($escape_counts, "r") {
+            @a.push("\\r"); @b.push("\r");
+        }
+        if nqp::existskey($escape_counts, "t") {
+            @a.push("\\t"); @b.push("\t");
+        }
+        if nqp::existskey($escape_counts, '"') {
+            @a.push('\\"'); @b.push('"');
+        }
+        if nqp::existskey($escape_counts, "/") {
+            @a.push("\\/"); @b.push("/");
+        }
+        if nqp::existskey($escape_counts, "\\") {
+            @a.push("\\\\"); @b.push("\\");
+        }
+
+        $raw .= trans(@a => @b) if @a;
+    } else {
+        $raw = $raw.subst(/ \\ (<-[uU]>) /,
+            -> $/ {
+                if nqp::ordat($0.Str, 0) == 117 || nqp::ordat($0.Str, 0) == 85 {
+                    $has_hexcodes++;
+                    "\\u" # to be replaced in the next step.
+                } elsif nqp::existskey($escapees, nqp::ordat($0.Str, 0)) {
+                    my str $replacement = nqp::atkey($escapees, nqp::ordat($0.Str, 0));
+                    $replacement ~ tear-off-combiners($0.Str, 0);
+                } else {
+                    die "stumbled over unexpected escape code \\{ chr(nqp::ordat($0.Str, 0)) } at { $startpos + $/.from }";
+                }
+            }, :g);
+    }
+    if $has_hexcodes {
+        $raw = $raw.subst(/ \\ <[uU]> (<[a..z 0..9 A..Z]> ** 3) (.) /,
+            -> $/ {
+                my $lastchar = nqp::chr(nqp::ord($1.Str));
+                my str $hexstr = $0.Str ~ $lastchar;
+                my str $result;
+
+                try {
+                    if $lastchar eq $1.Str {
+                        $result = chr(:16($hexstr))
+                    } else {
+                        $result = chr(:16($hexstr)) ~ tear-off-combiners($1.Str, 0)
+                    }
+                }
+                die "Invalid hex string: $hexstr.perl()" without $result;
+                $result
+            }, :x($has_hexcodes));
+    }
+
+    $pos = $pos - 1;
+
+    $raw;
 }
 
 my sub parse-numeric(str $text, int $pos is rw) {
