@@ -1,0 +1,68 @@
+{
+  "name": "Sparrowdo::Cpanm::GitHub",
+
+  "description" : "Installs CPAN modules fetched from remote GitHub repositories",
+
+  "source-url": "https://github.com/melezhik/sparrowdo-cpanm-github.git",
+
+  "support": {
+    "source": null
+  },
+
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+
+  "build-depends": [
+    
+  ],
+
+  "excludes": {
+    
+  },
+
+  "auth": "github:",
+
+  "superseded-by": {
+    
+  },
+   "provides" : {
+        "Sparrowdo::Cpanm::GitHub" : "lib/Sparrowdo/Cpanm/GitHub.pm6"
+  },
+
+  "depends": [
+    "Test::META",
+    "Sparrowdo",
+    "Sparrowdo::RemoteFile",
+    "Sparrowdo::Archive"
+  ],
+
+  "tags": [
+    
+  ],
+
+  "license": "Artistic 2.0",
+
+  "test-depends": [
+    
+  ],
+
+  "production": false,
+
+  "emulates": {
+    
+  },
+
+  "version": "0.0.2",
+
+  "meta6": "0",
+
+  "supersedes": {
+    
+  },
+
+  "authors": [
+    "'Alexey Melezhik' <melezhik@gmail.com>"
+  ]
+}

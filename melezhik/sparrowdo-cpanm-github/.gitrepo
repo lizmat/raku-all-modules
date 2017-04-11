@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/sparrowdo-cpanm-github.git
+	branch = master
+	commit = 9b45ea31fa8c3f7035b93e83971eabccb3a7737d
+	parent = 03bd36c92e68bea0044a2e7971292ca4b15b55b7
+	cmdver = 0.4.0
