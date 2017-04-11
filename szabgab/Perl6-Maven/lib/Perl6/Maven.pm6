@@ -5,52 +5,50 @@ use Perl6::Maven::Tools;
 use Perl6::Maven::Collector;
 use Perl6::Maven::Authors;
 use Perl6::Maven::Page;
+use JSON::Tiny;
 
 # The web application
 
 has $.source;
 has $.meta;
-has $.limit;
 
 method run () {
-	my $counter = $.limit;
-
 	read_config($.source);
 	my $authors = Perl6::Maven::Authors.new( source_dir => $.source);
 	$authors.read_authors;
 
 
 	get '/' => sub {
-		$counter--;
-		my $json = "$.meta/main.json".IO.slurp;
+		my $json = slurp("$.meta/main.json");
 		return Perl6::Maven::Collector.create_main_page( $json );
 	}
 
-	get any('/atom', '/sitemap.xml', '/index.json') => sub {
-		$counter--;
-		free-memory() if $counter <= 0;
-		#return request.path;
+	get '/atom' => sub {
 		my $path = $.meta ~ request.path;
-		if $path.IO.e {
-			return open($path).slurp-rest;
-		}
-	}
+		return slurp($path);
+    }
+	get '/sitemap.xml' => sub {
+		my $path = $.meta ~ request.path;
+		return slurp($path);
+    }
+	get '/index.json' => sub {
+		my $path = $.meta ~ request.path;
+		return slurp($path);
+    }
+
 
 	get '/index' => sub {
-		$counter--;
-		my $json = "$.meta/index.json".IO.slurp;
+		my $json = slurp("$.meta/index.json");
 		return Perl6::Maven::Collector.create_index_page( $json );
 	}
 
 	get '/archive' => sub {
-		$counter--;
-		my $json = "$.meta/archive.json".IO.slurp;
+		my $json = slurp("$.meta/archive.json");
 		return Perl6::Maven::Collector.create_archive_page( $json );
 	}
 
 	get '/tutorial/toc' => sub {
-		$counter--;
-		my $json = "$.meta/tutorial/slides.json".IO.slurp;
+		my $json = slurp("$.meta/tutorial/slides.json");
 		return Perl6::Maven::Collector.create_toc_page( $json );
 	}
 
@@ -63,12 +61,11 @@ method run () {
 	my $include_dir = "$.source/files/";
 
 	get / '/' (.+) / => sub ($file is copy) {
-		$counter--;
 		my $start = now;
 		if $file ~~ /\/$/ {
 			$file ~= 'main';
 		}
-		my $lookup = from-json open("$.meta/tutorial/lookup.json").slurp-rest;
+		my $lookup = from-json slurp("$.meta/tutorial/lookup.json");
 		#return $lookup.perl;
 
 		my $txt_file = "$.source/pages/$file.txt";
@@ -92,7 +89,7 @@ method run () {
 
 		if $file ~~ /tutorial\/(.*)/ {
 			my $page = $/[0];
-			my $json = "$.meta/tutorial/slides.json".IO.slurp;
+			my $json = slurp("$.meta/tutorial/slides.json");
 			my $slides_data = from-json $json;
 			if $slides_data{$page} {
 				return Perl6::Maven::Collector.create_chapters_page( $slides_data{$page} );
@@ -101,18 +98,11 @@ method run () {
 
 		warning("Path to '$file' not found");
 
-		free-memory() if $counter <= 0;
 		status 404;
 		return 'Not found';
 	}
 
 	baile;
-}
-
-sub free-memory {
-	# A temporary solution till Rakudo learns how to free memory itself
-	debug('Viva la memoria!');
-	exit;
 }
 
 # vim: ft=perl6

@@ -4,8 +4,10 @@ branches:
 language: perl6
 sudo: false
 perl6:
+  - '2017.01'
   - latest
-#  - 2015.09
 install:
   - rakudobrew build-panda
   - panda installdeps .
+  #- zef install Bailador
+  # "JSON::Tiny", "LWP::Simple" ],
