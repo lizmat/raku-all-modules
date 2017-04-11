@@ -1,7 +1,8 @@
 {
   "perl" : "6.*",
   "name" : "Hiker",
-  "version" : "0.1.1",
+  "version" : "0.1.2",
+  "authors"     : [ "tony-o" ],
   "description" : "MVC Framework built on HTTP::Server HTTP::Server::Router",
   "depends" : ["HTTP::Server::Async", "HTTP::Server::Router", "Template::Mustache"],
   "provides" : {

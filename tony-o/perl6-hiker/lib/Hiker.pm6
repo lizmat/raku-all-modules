@@ -26,39 +26,45 @@ class Hiker {
   method bind {
     my @ignore;
     my @routes;
+    my @models;
     my $recurse = sub (*@m) {
       my @r;
       for @m -> $m {
-        @r.append($m) 
-          unless @ignore.grep($m) 
+        next unless $m ~~ Pair;
+        CATCH { default { warn $_; } }
+        @r.append($m.value) 
+          unless @ignore.grep($m.key) 
               || (
-                try { require ::($m.^name); True; }.so
-                && ::($m.^name) !~~ any(Hiker::Route, Hiker::Model)
+                $m.value !~~ any(Hiker::Route, Hiker::Model)
               );
-        try @r.append($recurse($m.WHO.values)) 
-          if $m.WHO.values.elems;
+        try @r.append($recurse($m.value.WHO)) 
+          if $m.value.WHO.values.elems;
       }
       return @r.flat;
     };
-    for @($recurse(GLOBAL::.values)) {
-      @ignore.append($_);
+    for @($recurse(DYNAMIC::.values)) {
+      @ignore.append($_.key) if $_ ~~ Pair;
     }
+    my @globmods;
     for @!hikes -> $d {
       try {
         for $d.IO.dir.grep(/ ('.pm6' || '.pl6') $$ /).Slip -> $f {
           try {
-            require "{$f.absolute}";
-            my @globmods = $recurse(GLOBAL::.values);
-            for @globmods -> $module {  
-              @ignore.append($module);
-              try {
-                next if ::($module.^name) ~~ Failure;
-                @routes.append($f.Str => $module) if $module.^can('path');
-              }
-            }
+            (try require "{$f.absolute}") === Nil and die "could not load {$f.absolute}";
+            @globmods.push( $f => $recurse(DYNAMIC::.values).flat );
             CATCH { default { warn $_; } }
           }
         }
+      }
+    }
+    for @globmods -> $module {  
+      try {
+        next if ::($module.^name) ~~ Failure;
+        for $module.value.cache -> $mod {
+          @routes.append($module.key => $mod) if $mod ~~ Hiker::Route;
+          @models.append($module.key => $mod) if $mod ~~ Hiker::Model;
+        }
+        CATCH { default { warn $_; } }
       }
     }
     my $weight = sub ($_) {
@@ -84,7 +90,9 @@ class Hiker {
           my $template = $obj.template;
           my $model;
           try {
-            $model = ::($obj.model).new;
+            CATCH { default { warn $_; } }
+            $model = .values.grep({ .^name eq ( $obj.^can('model') ?? $obj.model !! '' ) })[0].new 
+              for @models;
           }
           route $obj.path, sub ($req, $res) {
             "==> Serving {$req.uri} with {$f} :: {$module.^name}[{$obj.path ~~ Regex ?? $obj.path.gist !! $obj.path}]".say;

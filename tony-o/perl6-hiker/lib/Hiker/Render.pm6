@@ -6,7 +6,7 @@ role Hiker::Render {
   has Bool $!rendered = False;
   has Str  $.template is rw;
   has $.req is rw;
-  has %.data;
+  has %.data is rw;
 
   method render(:$file? = $.template) {
     if !$file.defined || $file.IO !~~ :f {
