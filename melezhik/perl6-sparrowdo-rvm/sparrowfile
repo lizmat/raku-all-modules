@@ -1,0 +1,3 @@
+module_run 'Rvm';
+module_run 'Rvm', %( version => '2.2.0');
+

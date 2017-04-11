@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/melezhik/perl6-sparrowdo-rvm.git
+	branch = master
+	commit = ea814b93c810c615defced53bee03b0d80cc4156
+	parent = 1289dab0a4db023c5faf180e13dcbc27b6bcdacf
+	cmdver = 0.4.0
