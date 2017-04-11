@@ -30,11 +30,15 @@ our sub tasks (%args) {
   
   my $log-level = %args<log-level> || 'info';
 
+  my $chef-run-command = "chef-client --color --json /tmp/chef.json -l $log-level";
+
+  $chef-run-command ~= " --force-formatter"  if %args<force-formatter>;
+
   task_run %(
     task => "run chef-client",
     plugin => "bash",
     parameters => %(
-      command => "chef-client --color --json /tmp/chef.json -l $log-level"
+      command => $chef-run-command
     ),
   );
   

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/melezhik/sparrowdo-chef-client.git
 	branch = master
-	commit = 10012cd8f2274cb19b9c6a1540ee0303b87ee9a1
-	parent = 90206d6ecc102bf3de48d078e5c74e26ef6e5fa6
+	commit = 16bcaa408e6969a4222640f19677f55952250406
+	parent = 0e8be763d61adcade05dcdc1b5af35cfeb8658ce
 	cmdver = 0.4.0

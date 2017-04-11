@@ -21,7 +21,12 @@ Run chef client on remote host using Sparrowdo.
         "recipe[foo::bar]",
         "role[baz]"
       ],
-      log-level => 'info'
+      log-level => 'info',
+      attributes => %(
+        foo => %(
+          bar => [ 1, 2 , 3]
+        )
+      ),
     );
     
 
@@ -50,6 +55,12 @@ For example:
 
 
 Optional. Default value is empty Hash.
+
+## force-formatter
+
+If set to True then chef-client gets called with --force-formatter flag. Optional.
+Default value is False.
+
 
 # Author
 
