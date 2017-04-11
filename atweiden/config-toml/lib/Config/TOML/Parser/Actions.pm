@@ -717,7 +717,7 @@ method TOP($/)
 
 # given TOML hash and keypath, print working directory including
 # arraytable indices
-multi sub pwd(Associative:D $container, :@steps where *.elems > 0) returns Array:D
+multi sub pwd(Associative:D $container, :@steps where *.elems > 0 --> Array:D)
 {
     my @steps-taken;
     my $root := $container;
@@ -726,12 +726,12 @@ multi sub pwd(Associative:D $container, :@steps where *.elems > 0) returns Array
     @steps-taken;
 }
 
-multi sub pwd(Associative:D $container, :@steps where *.elems == 0) returns Array:D
+multi sub pwd(Associative:D $container, :@steps where *.elems == 0 --> Array:D)
 {
     my @steps-taken;
 }
 
-multi sub pwd(Positional:D $container, :@steps where *.elems > 0) returns Array:D
+multi sub pwd(Positional:D $container, :@steps where *.elems > 0 --> Array:D)
 {
     my @steps-taken;
     my $root := $container;
@@ -741,12 +741,12 @@ multi sub pwd(Positional:D $container, :@steps where *.elems > 0) returns Array:
     @steps-taken;
 }
 
-multi sub pwd(Positional:D $container, :@steps where *.elems == 0) returns Array:D
+multi sub pwd(Positional:D $container, :@steps where *.elems == 0 --> Array:D)
 {
     my @steps-taken;
 }
 
-multi sub pwd($container, :@steps where *.elems > 0) returns Array:D
+multi sub pwd($container, :@steps where *.elems > 0 --> Array:D)
 {
     my @steps-taken;
     my $root := $container;
@@ -755,23 +755,23 @@ multi sub pwd($container, :@steps where *.elems > 0) returns Array:D
     @steps-taken;
 }
 
-multi sub pwd($container, :@steps where *.elems == 0) returns Array:D
+multi sub pwd($container, :@steps where *.elems == 0 --> Array:D)
 {
     my @steps-taken;
 }
 
-multi sub seen(Bool:D %h, :@path! where *.elems > 1) returns Bool:D
+multi sub seen(Bool:D %h, :@path! where *.elems > 1 --> Bool:D)
 {
     %h.grep({.keys[0] eqv $@path}).elems > 0
         || seen(%h, :path(@path[0..^*-1].Array));
 }
 
-multi sub seen(Bool:D %h, :@path! where *.elems > 0) returns Bool:D
+multi sub seen(Bool:D %h, :@path! where *.elems > 0 --> Bool:D)
 {
     %h.grep({.keys[0] eqv $@path}).elems > 0;
 }
 
-multi sub seen(Bool:D %h, :@path! where *.elems == 0) returns Bool:D
+multi sub seen(Bool:D %h, :@path! where *.elems == 0 --> Bool:D)
 {
     False;
 }

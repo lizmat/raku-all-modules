@@ -5,7 +5,7 @@ unit class Config::TOML::Dumper;
 
 has Str:D $!toml = '';
 
-method dump(%h) returns Str:D
+method dump(%h --> Str:D)
 {
     self!visit(%h);
     $!toml.trim;
@@ -28,7 +28,7 @@ method !visit(%h, :@prefix, Bool :$extra-brackets)
     );
 }
 
-sub sort-pairs(%h) returns List:D
+sub sort-pairs(%h --> List:D)
 {
     my Hash:D (@simple-pairs, @nested-pairs, @table-array-pairs);
 
@@ -125,28 +125,28 @@ method !print-prefix(@prefix, Bool :$extra-brackets)
     $!toml ~= '[' ~ $new-prefix ~ "]\n";
 }
 
-sub is-bare-key($key) returns Bool:D
+sub is-bare-key($key --> Bool:D)
 {
     Config::TOML::Parser::Grammar.parse($key, :rule<keypair-key:bare>).so;
 }
 
-multi sub is-valid-key(Str:D $key) returns Bool:D
+multi sub is-valid-key(Str:D $key --> Bool:D)
 {
     is-bare-key($key)
         || Config::TOML::Parser::Grammar.parse($key.perl, :rule<keypair-key>).so;
 }
 
-multi sub is-valid-key($key) returns Bool:D
+multi sub is-valid-key($key --> Bool:D)
 {
     False;
 }
 
-multi sub is-valid-array(@ where {.grep(Str:D).elems == .elems}) returns Bool:D
+multi sub is-valid-array(@ where {.grep(Str:D).elems == .elems} --> Bool:D)
 {
     True;
 }
 
-multi sub is-valid-array(@ where {.grep(Int:D).elems == .elems}) returns Bool:D
+multi sub is-valid-array(@ where {.grep(Int:D).elems == .elems} --> Bool:D)
 {
     True;
 }
@@ -155,41 +155,44 @@ multi sub is-valid-array(@ where {.grep(Int:D).elems == .elems}) returns Bool:D
 # element against Real. Int ~~ Real, so we grep for Ints
 multi sub is-valid-array(
     @ where {.grep(Int).not && .grep(Real:D).elems == .elems}
-) returns Bool:D
+    --> Bool:D
+)
 {
     True;
 }
 
-multi sub is-valid-array(@ where {.grep(Bool:D).elems == .elems}) returns Bool:D
+multi sub is-valid-array(@ where {.grep(Bool:D).elems == .elems} --> Bool:D)
 {
     True;
 }
 
 multi sub is-valid-array(
     @ where {.grep(Dateish:D).elems == .elems}
-) returns Bool:D
+    --> Bool:D
+)
 {
     True;
 }
 
-multi sub is-valid-array(@ where {.grep(List:D).elems == .elems}) returns Bool:D
+multi sub is-valid-array(@ where {.grep(List:D).elems == .elems} --> Bool:D)
 {
     True;
 }
 
 multi sub is-valid-array(
     @ where {.grep(Associative:D).elems == .elems}
-) returns Bool:D
+    --> Bool:D
+)
 {
     True;
 }
 
-multi sub is-valid-array(@) returns Bool:D
+multi sub is-valid-array(@ --> Bool:D)
 {
     False;
 }
 
-multi sub to-toml(Str:D $s) returns Str:D
+multi sub to-toml(Str:D $s --> Str:D)
 {
     $s.perl;
 }
@@ -199,7 +202,7 @@ multi sub to-toml(Str:U $s)
     die X::Config::TOML::Dumper::BadValue.new(:value($s));
 }
 
-multi sub to-toml(Real:D $r) returns Str:D
+multi sub to-toml(Real:D $r --> Str:D)
 {
     ~$r;
 }
@@ -209,7 +212,7 @@ multi sub to-toml(Real:U $r)
     die X::Config::TOML::Dumper::BadValue.new(:value($r));
 }
 
-multi sub to-toml(Bool:D $b) returns Str:D
+multi sub to-toml(Bool:D $b --> Str:D)
 {
     ~$b.lc;
 }
@@ -219,7 +222,7 @@ multi sub to-toml(Bool:U $b)
     die X::Config::TOML::Dumper::BadValue.new(:value($b));
 }
 
-multi sub to-toml(Dateish:D $d) returns Str:D
+multi sub to-toml(Dateish:D $d --> Str:D)
 {
     ~$d;
 }
@@ -229,7 +232,7 @@ multi sub to-toml(Dateish:U $d)
     die X::Config::TOML::Dumper::BadValue.new(:value($d));
 }
 
-multi sub to-toml(Associative:D $a) returns Str:D
+multi sub to-toml(Associative:D $a --> Str:D)
 {
     my Str:D @keypairs;
     $a.map({
@@ -246,7 +249,7 @@ multi sub to-toml(Associative:U $a)
     die X::Config::TOML::Dumper::BadValue.new(:value($a));
 }
 
-multi sub to-toml(List:D $l) returns Str:D
+multi sub to-toml(List:D $l --> Str:D)
 {
     unless is-valid-array($l)
     {

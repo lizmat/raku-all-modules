@@ -9,7 +9,7 @@ class DuplicateKeys is Exception
     has Str:D $.subject is required;
     has Str:D $.text is required;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, $.subject contains duplicate keys.
@@ -75,7 +75,7 @@ class KeypairLine::DuplicateKeys is Exception
     has Str $.keypair-line-text;
     has @.path;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, keypair line contains duplicate key.
@@ -97,7 +97,7 @@ class AOH is Exception
     has Str $.aoh-text;
     has @.path;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, arraytable keypath 「{@.path.join(', ')}」 trodden.
@@ -117,7 +117,7 @@ class AOH::OverwritesHOH is AOH
 {
     has Str $.aoh-header-text;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, arraytable 「$.aoh-header-text」 has been declared previously
@@ -138,7 +138,7 @@ class AOH::OverwritesKey is AOH
 {
     has Str $.aoh-header-text;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, arraytable 「$.aoh-header-text」 overwrites existing key in
@@ -160,7 +160,7 @@ class HOH is Exception
     has Str $.hoh-text;
     has @.path;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, table keypath 「{@.path.join(', ')}」 trodden.
@@ -180,7 +180,7 @@ class HOH::Seen is HOH
 {
     has Str $.hoh-header-text;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, table 「$.hoh-header-text」 has been declared previously in TOML document.
@@ -204,7 +204,7 @@ class HOH::Seen::AOH is HOH::Seen {*}
 
 class HOH::Seen::Key is HOH
 {
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, table keypath 「{@.path.join(', ')}」 overwrites existing key.
@@ -224,7 +224,7 @@ class Keypath is Exception
 {
     has @.path;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         「{@.path.join(', ')}」
@@ -257,7 +257,7 @@ class BadKeypath::ArrayNotAOH is Exception {*}
 class ParseFailed is Exception
 {
     has Str:D $.content is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "Invalid TOML:\n「$.content」";
     }
@@ -270,7 +270,7 @@ class ParseFailed is Exception
 class ParsefileFailed is Exception
 {
     has Str:D $.file is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "Invalid TOML in file 「$.file」";
     }
@@ -283,7 +283,7 @@ class ParsefileFailed is Exception
 class Dumper::BadKey is Exception
 {
     has $.key is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         'Sorry, '
             ~ $.key.^name
@@ -298,7 +298,7 @@ class Dumper::BadKey is Exception
 class Dumper::BadValue is Exception
 {
     has $.value is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         my Str:D $message = 'Sorry, ';
         $message ~= 'undefined ' unless $.value.defined;
@@ -315,7 +315,7 @@ class Dumper::BadValue is Exception
 class Dumper::BadArray is Exception
 {
     has Positional:D $.array is required;
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         qq:to/EOF/.trim;
         Sorry, invalid TOML array.
@@ -333,7 +333,7 @@ class String::EscapeSequence is Exception
 {
     has Str:D $.esc is required;
 
-    method message() returns Str:D
+    method message(--> Str:D)
     {
         "Sorry, found bad string escape sequence 「$.esc」";
     }

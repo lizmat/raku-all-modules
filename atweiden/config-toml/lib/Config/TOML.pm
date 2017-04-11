@@ -7,7 +7,8 @@ unit module Config::TOML;
 multi sub from-toml(
     Str:D $content,
     *%opts (Int :date-local-offset($))
-) is export returns Hash:D
+    --> Hash:D
+) is export
 {
     Config::TOML::Parser.parse($content, |%opts).made
         or die X::Config::TOML::ParseFailed.new(:$content);
@@ -16,7 +17,8 @@ multi sub from-toml(
 multi sub from-toml(
     Str:D :$file! where *.so,
     *%opts (Int :date-local-offset($))
-) is export returns Hash
+    --> Hash
+) is export
 {
     Config::TOML::Parser.parsefile($file, |%opts).made
         or die X::Config::TOML::ParsefileFailed.new(:$file);
@@ -44,7 +46,8 @@ sub to-toml(
         # the threshold # digits at which to intersperse underlines in numbers
         UInt :threshold-underlines-in-numbers($) = 5
     )
-) is export returns Str:D
+    --> Str:D
+) is export
 {
     Config::TOML::Dumper.new.dump($container);
 }
