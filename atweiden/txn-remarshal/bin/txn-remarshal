@@ -106,7 +106,7 @@ multi sub output(Str:D $remarshal, Str $?)
     say $remarshal.trim;
 }
 
-sub resolve-path(Str:D $path where *.so) returns Str:D
+sub resolve-path(Str:D $path where *.so --> Str:D)
 {
     ~$path.subst(/^'~/'/, $*HOME ~ '/').IO.resolve;
 }

@@ -8,10 +8,10 @@ unit module TXN::Remarshal;
 # --- format {{{
 
 subset Format of Str where /ENTRY|HASH|JSON|TXN/;
-multi sub gen-format('entry') returns Format:D { 'ENTRY' }
-multi sub gen-format('hash') returns Format:D { 'HASH' }
-multi sub gen-format('json') returns Format:D { 'JSON' }
-multi sub gen-format('txn') returns Format:D { 'TXN' }
+multi sub gen-format('entry' --> Format:D) { 'ENTRY' }
+multi sub gen-format('hash'  --> Format:D) { 'HASH' }
+multi sub gen-format('json'  --> Format:D) { 'JSON' }
+multi sub gen-format('txn'   --> Format:D) { 'TXN' }
 
 # --- end format }}}
 
@@ -38,7 +38,7 @@ multi sub remarshal($input, 'TXN', 'TXN') { $input }
 # ------------------------------------------------------------------------------
 # --- txn ↔ entry {{{
 
-multi sub remarshal(Str:D $txn, 'TXN', 'ENTRY') returns Array:D
+multi sub remarshal(Str:D $txn, 'TXN', 'ENTRY' --> Array:D)
 {
     my TXN::Parser::AST::Entry:D @entry = from-txn($txn);
 }
@@ -47,7 +47,8 @@ multi sub remarshal(
     TXN::Parser::AST::Entry:D @entry,
     'ENTRY',
     'TXN'
-) returns Str:D
+    --> Str:D
+)
 {
     my Str:D $txn = to-txn(@entry);
 }
@@ -56,7 +57,8 @@ multi sub remarshal(
     TXN::Parser::AST::Entry:D $entry,
     'ENTRY',
     'TXN'
-) returns Str:D
+    --> Str:D
+)
 {
     my Str:D $txn = to-txn($entry);
 }
@@ -68,7 +70,8 @@ multi sub remarshal(
     TXN::Parser::AST::Entry:D @entry,
     'ENTRY',
     'HASH'
-) returns Array:D
+    --> Array:D
+)
 {
     my @e = to-hash(@entry);
 }
@@ -77,17 +80,18 @@ multi sub remarshal(
     TXN::Parser::AST::Entry:D $entry,
     'ENTRY',
     'HASH'
-) returns Hash:D
+    --> Hash:D
+)
 {
     my %e = to-hash($entry);
 }
 
-multi sub remarshal(@e, 'HASH', 'ENTRY') returns Array:D
+multi sub remarshal(@e, 'HASH', 'ENTRY' --> Array:D)
 {
     my TXN::Parser::AST::Entry:D @entry = from-hash(:entry(@e));
 }
 
-multi sub remarshal(%e, 'HASH', 'ENTRY') returns TXN::Parser::AST::Entry:D
+multi sub remarshal(%e, 'HASH', 'ENTRY' --> TXN::Parser::AST::Entry:D)
 {
     my TXN::Parser::AST::Entry:D $entry = from-hash(:entry(%e));
 }
@@ -95,17 +99,17 @@ multi sub remarshal(%e, 'HASH', 'ENTRY') returns TXN::Parser::AST::Entry:D
 # --- end entry ↔ hash }}}
 # --- hash ↔ json {{{
 
-multi sub remarshal(@e, 'HASH', 'JSON') returns Str:D
+multi sub remarshal(@e, 'HASH', 'JSON' --> Str:D)
 {
     my Str:D $json = to-json(@e);
 }
 
-multi sub remarshal(%e, 'HASH', 'JSON') returns Str:D
+multi sub remarshal(%e, 'HASH', 'JSON' --> Str:D)
 {
     my Str:D $json = to-json(%e);
 }
 
-multi sub remarshal(Str:D $json, 'JSON', 'HASH') returns Array:D
+multi sub remarshal(Str:D $json, 'JSON', 'HASH' --> Array:D)
 {
     my @e = from-json($json);
 }
@@ -114,13 +118,13 @@ multi sub remarshal(Str:D $json, 'JSON', 'HASH') returns Array:D
 # ------------------------------------------------------------------------------
 # --- txn ↔ hash {{{
 
-multi sub remarshal(Str:D $txn, 'TXN', 'HASH') returns Array:D
+multi sub remarshal(Str:D $txn, 'TXN', 'HASH' --> Array:D)
 {
     my TXN::Parser::AST::Entry:D @entry = remarshal($txn, 'TXN', 'ENTRY');
     my @e = remarshal(@entry, 'ENTRY', 'HASH');
 }
 
-multi sub remarshal(@e, 'HASH', 'TXN') returns Str:D
+multi sub remarshal(@e, 'HASH', 'TXN' --> Str:D)
 {
     my TXN::Parser::AST::Entry:D @entry = remarshal(@e, 'HASH', 'ENTRY');
     my Str:D $txn = remarshal(@entry, 'ENTRY', 'TXN');
@@ -129,14 +133,14 @@ multi sub remarshal(@e, 'HASH', 'TXN') returns Str:D
 # --- end txn ↔ hash }}}
 # --- txn ↔ json {{{
 
-multi sub remarshal(Str:D $txn, 'TXN', 'JSON') returns Str:D
+multi sub remarshal(Str:D $txn, 'TXN', 'JSON' --> Str:D)
 {
     my TXN::Parser::AST::Entry:D @entry = remarshal($txn, 'TXN', 'ENTRY');
     my @e = remarshal(@entry, 'ENTRY', 'HASH');
     my Str:D $json = remarshal(@e, 'HASH', 'JSON');
 }
 
-multi sub remarshal(Str:D $json, 'JSON', 'TXN') returns Str:D
+multi sub remarshal(Str:D $json, 'JSON', 'TXN' --> Str:D)
 {
     my @e = remarshal($json, 'JSON', 'HASH');
     my TXN::Parser::AST::Entry:D @entry = remarshal(@e, 'HASH', 'ENTRY');
@@ -151,7 +155,8 @@ multi sub remarshal(
     TXN::Parser::AST::Entry:D @entry,
     'ENTRY',
     'JSON'
-) returns Str:D
+    --> Str:D
+)
 {
     my @e = remarshal(@entry, 'ENTRY', 'HASH');
     my Str:D $json = remarshal(@e, 'HASH', 'JSON');
@@ -161,7 +166,8 @@ multi sub remarshal(
     TXN::Parser::AST::Entry:D $entry,
     'ENTRY',
     'JSON'
-) returns Str:D
+    --> Str:D
+)
 {
     my %e = remarshal($entry, 'ENTRY', 'HASH');
     my Str:D $json = remarshal(%e, 'HASH', 'JSON');
@@ -181,7 +187,8 @@ multi sub from-txn(
         Str :txn-dir($),
         Int :date-local-offset($)
     )
-) is export returns Array:D
+    --> Array:D
+) is export
 {
     my TXN::Parser::AST::Entry:D @entry =
         TXN::Parser.parse($content, |%opts).made;
@@ -193,7 +200,8 @@ multi sub from-txn(
         Str :txn-dir($),
         Int :date-local-offset($)
     )
-) is export returns Array:D
+    --> Array:D
+) is export
 {
     my TXN::Parser::AST::Entry:D @entry =
         TXN::Parser.parsefile($file, |%opts).made;
@@ -204,12 +212,12 @@ multi sub from-txn(
 
 # --- Entry {{{
 
-multi sub to-txn(TXN::Parser::AST::Entry:D @entry) is export returns Str:D
+multi sub to-txn(TXN::Parser::AST::Entry:D @entry --> Str:D) is export
 {
     @entry.map({ to-txn($_) }).join("\n" x 2);
 }
 
-multi sub to-txn(TXN::Parser::AST::Entry:D $entry) is export returns Str:D
+multi sub to-txn(TXN::Parser::AST::Entry:D $entry --> Str:D) is export
 {
     my TXN::Parser::AST::Entry::Header:D $header = $entry.header;
     my TXN::Parser::AST::Entry::Posting:D @posting = $entry.posting;
@@ -220,7 +228,7 @@ multi sub to-txn(TXN::Parser::AST::Entry:D $entry) is export returns Str:D
 # --- end Entry }}}
 # --- Entry::Header {{{
 
-multi sub to-txn(TXN::Parser::AST::Entry::Header:D $header) returns Str:D
+multi sub to-txn(TXN::Parser::AST::Entry::Header:D $header --> Str:D)
 {
     my Dateish:D $date = $header.date;
     my Str:D $description = $header.description if $header.description;
@@ -247,12 +255,12 @@ multi sub to-txn(TXN::Parser::AST::Entry::Header:D $header) returns Str:D
 # --- end Entry::Header }}}
 # --- Entry::Posting {{{
 
-multi sub to-txn(TXN::Parser::AST::Entry::Posting:D @posting) returns Str:D
+multi sub to-txn(TXN::Parser::AST::Entry::Posting:D @posting --> Str:D)
 {
     @posting.map({ to-txn($_) }).join("\n");
 }
 
-multi sub to-txn(TXN::Parser::AST::Entry::Posting:D $posting) returns Str:D
+multi sub to-txn(TXN::Parser::AST::Entry::Posting:D $posting --> Str:D)
 {
     my TXN::Parser::AST::Entry::Posting::Account:D $account = $posting.account;
     my TXN::Parser::AST::Entry::Posting::Amount:D $amount = $posting.amount;
@@ -287,7 +295,8 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting:D $posting) returns Str:D
 
 multi sub to-txn(
     TXN::Parser::AST::Entry::Posting::Account:D $account
-) returns Str:D
+    --> Str:D
+)
 {
     my Silo:D $silo = $account.silo;
     my VarName:D $entity = $account.entity;
@@ -303,7 +312,8 @@ multi sub to-txn(
 
 multi sub to-txn(
     TXN::Parser::AST::Entry::Posting::Amount:D $amount
-) returns Str:D
+    --> Str:D
+)
 {
     my AssetCode:D $asset-code = $amount.asset-code;
     my Quantity:D $asset-quantity = $amount.asset-quantity;
@@ -323,7 +333,7 @@ multi sub to-txn(
 # --- Entry::Posting::Amount }}}
 # --- Entry::Posting::Annot {{{
 
-multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot:D $annot) returns Str:D
+multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot:D $annot --> Str:D)
 {
     my TXN::Parser::AST::Entry::Posting::Annot::Inherit:D $inherit =
         $annot.inherit if $annot.inherit;
@@ -347,7 +357,8 @@ multi sub to-txn(TXN::Parser::AST::Entry::Posting::Annot:D $annot) returns Str:D
 
 multi sub to-txn(
     TXN::Parser::AST::Entry::Posting::Annot::Inherit:D $inherit
-) returns Str:D
+    --> Str:D
+)
 {
     my AssetCode:D $asset-code = $inherit.asset-code;
     my Price:D $asset-price = $inherit.asset-price;
@@ -366,7 +377,8 @@ multi sub to-txn(
 
 multi sub to-txn(
     TXN::Parser::AST::Entry::Posting::Annot::Lot:D $lot
-) returns Str:D
+    --> Str:D
+)
 {
     my VarName:D $name = $lot.name;
     my DecInc:D $decinc = $lot.decinc;
@@ -391,7 +403,8 @@ multi sub to-txn(
 
 multi sub to-txn(
     TXN::Parser::AST::Entry::Posting::Annot::XE:D $xe
-) returns Str:D
+    --> Str:D
+)
 {
     my AssetCode:D $asset-code = $xe.asset-code;
     my Price:D $asset-price = $xe.asset-price;
@@ -413,7 +426,7 @@ multi sub to-txn(
 
 # --- Entry {{{
 
-multi sub from-hash(:@entry!) returns Array:D
+multi sub from-hash(:@entry! --> Array:D)
 {
     my TXN::Parser::AST::Entry:D @e = @entry.map({ from-hash(:entry($_)) });
 }
@@ -424,7 +437,8 @@ multi sub from-hash(
         :%id!,
         :@posting!
     )
-) returns TXN::Parser::AST::Entry:D
+    --> TXN::Parser::AST::Entry:D
+)
 {
     my %e;
 
@@ -449,7 +463,8 @@ multi sub from-hash(
         :$important,
         :@tag
     )
-) returns TXN::Parser::AST::Entry::Header:D
+    --> TXN::Parser::AST::Entry::Header:D
+)
 {
     my %h;
 
@@ -476,7 +491,8 @@ multi sub from-hash(
         :$text!,
         :$xxhash!
     )
-) returns TXN::Parser::AST::Entry::ID:D
+    --> TXN::Parser::AST::Entry::ID:D
+)
 {
     my %e;
 
@@ -494,13 +510,13 @@ multi sub from-hash(
 # --- end Entry::ID }}}
 # --- Entry::Posting {{{
 
-multi sub from-hash(:@posting!) returns Array:D
+multi sub from-hash(:@posting! --> Array:D)
 {
     my TXN::Parser::AST::Entry::Posting:D @p =
         @posting.map({ from-hash(:posting($_)) });
 }
 
-multi sub from-hash(:%posting!) returns TXN::Parser::AST::Entry::Posting:D
+multi sub from-hash(:%posting! --> TXN::Parser::AST::Entry::Posting:D)
 {
     my %p;
 
@@ -533,7 +549,8 @@ multi sub from-hash(
         :$entity!,
         :@path
     )
-) returns TXN::Parser::AST::Entry::Posting::Account:D
+    --> TXN::Parser::AST::Entry::Posting::Account:D
+)
 {
     my %a;
 
@@ -557,7 +574,8 @@ multi sub from-hash(
         :$asset-symbol,
         :$plus-or-minus
     )
-) returns TXN::Parser::AST::Entry::Posting::Amount:D
+    --> TXN::Parser::AST::Entry::Posting::Amount:D
+)
 {
     my %a;
 
@@ -577,7 +595,7 @@ multi sub from-hash(
 # --- end Entry::Posting::Amount }}}
 # --- Entry::Posting::Annot {{{
 
-multi sub from-hash(:%annot!) returns TXN::Parser::AST::Entry::Posting::Annot:D
+multi sub from-hash(:%annot! --> TXN::Parser::AST::Entry::Posting::Annot:D)
 {
     my %a;
 
@@ -604,7 +622,8 @@ multi sub from-hash(
         :$asset-price!,
         :$asset-symbol
     )
-) returns TXN::Parser::AST::Entry::Posting::Annot::Inherit:D
+    --> TXN::Parser::AST::Entry::Posting::Annot::Inherit:D
+)
 {
     my %i;
 
@@ -627,7 +646,8 @@ multi sub from-hash(
         :$decinc!,
         :$name!
     )
-) returns TXN::Parser::AST::Entry::Posting::Annot::Lot:D
+    --> TXN::Parser::AST::Entry::Posting::Annot::Lot:D
+)
 {
     my %l;
 
@@ -649,7 +669,8 @@ multi sub from-hash(
         :$asset-price!,
         :$asset-symbol
     )
-) returns TXN::Parser::AST::Entry::Posting::Annot::XE:D
+    --> TXN::Parser::AST::Entry::Posting::Annot::XE:D
+)
 {
     my %x;
 
@@ -674,7 +695,8 @@ multi sub from-hash(
         :$text!,
         :$xxhash!
     )
-) returns TXN::Parser::AST::Entry::Posting::ID:D
+    --> TXN::Parser::AST::Entry::Posting::ID:D
+)
 {
     my %p;
 
@@ -699,12 +721,12 @@ multi sub from-hash(
 
 # --- Entry {{{
 
-multi sub to-hash(TXN::Parser::AST::Entry:D @entry) returns Array:D
+multi sub to-hash(TXN::Parser::AST::Entry:D @entry --> Array:D)
 {
     my @a = @entry.map({ to-hash($_) });
 }
 
-multi sub to-hash(TXN::Parser::AST::Entry:D $entry) returns Hash:D
+multi sub to-hash(TXN::Parser::AST::Entry:D $entry --> Hash:D)
 {
     $entry.hash;
 }
@@ -716,7 +738,7 @@ multi sub to-hash(TXN::Parser::AST::Entry:D $entry) returns Hash:D
 # hash ↔ json
 # sub from-json {{{
 
-sub from-json(Str:D $json) returns Array:D
+sub from-json(Str:D $json --> Array:D)
 {
     Rakudo::Internals::JSON.from-json($json).Array;
 }
@@ -724,12 +746,12 @@ sub from-json(Str:D $json) returns Array:D
 # end sub from-json }}}
 # sub to-json {{{
 
-multi sub to-json(@entry) returns Str:D
+multi sub to-json(@entry --> Str:D)
 {
     Rakudo::Internals::JSON.to-json(@entry);
 }
 
-multi sub to-json(%entry) returns Str:D
+multi sub to-json(%entry --> Str:D)
 {
     Rakudo::Internals::JSON.to-json(%entry);
 }
