@@ -15,18 +15,18 @@ sub set-verbose(&new-verbose) is export {
     &verbose = &new-verbose
 }
 
-class TOC-Counter is export { 
+class TOC-Counter is export {
     has Int @!counters is default(0);
     method Str () { @!counters>>.Str.join: '.' }
-    method inc ($level) { 
+    method inc ($level) {
         @!counters[$level - 1]++;
         @!counters.splice($level);
 #       dd @!counters;
         self
     }
-    method set-part-number ($part-number) { 
-        @!counters[0] = $part-number; 
-        self 
+    method set-part-number ($part-number) {
+        @!counters[0] = $part-number;
+        self
     }
 }
 
@@ -72,9 +72,9 @@ sub setup () is export {
             ul.toc li.toc-level-8 { padding-left: 1em; }
             ul.toc li.toc-level-9 { padding-left: 1em; }
             ul.toc li.toc-level-10{ padding-left: 1em; }
-            #left-side-menu { 
-                width: 20em; margin-left: -22em; 
-                float: left; 
+            #left-side-menu {
+                width: 20em; margin-left: -22em;
+                float: left;
                 position: fixed;
                 top: 0;
                 overflow: scroll;
@@ -82,8 +82,8 @@ sub setup () is export {
                 padding: 0;
                 white-space: nowrap;
             }
-            #left-side-menu-header { 
-                transform: rotate(90deg); 
+            #left-side-menu-header {
+                transform: rotate(90deg);
                 transform-origin: left bottom 0;
                 z-index: 1;
                 position: fixed;
@@ -106,10 +106,10 @@ sub setup () is export {
             @media print {
                 div.pod-content { padding-left: 0; width: 100% }
                 div.pod-body { width: 90%; }
-                #left-side-menu { 
+                #left-side-menu {
                     width: unset;
-                    margin-left: unset; 
-                    float: unset; 
+                    margin-left: unset;
+                    float: unset;
                     position: unset;
                     top: unset;
                     overflow: unset;
@@ -168,8 +168,8 @@ sub compose-index (:$register = %register) is export {
     my @dupes = $register.grep(*.value.elems > 1);
     verbose "found duplicate index entry {.key} at {.value.map: {'#i' ~ .Str}}" for @dupes;
     '<div id="index"><ul class="index">' ~ NL ~
-    $register.sort(*.key.lc).map({ 
-        '<li>' ~ .key.Str.subst('&', '&amp;', :g).subst('<', '&lt;', :g).subst('>', '&gt;', :g) ~ '&emsp;' ~ .value.map({ '<a href="#i' ~ .Str ~ '">' ~ .Str ~ '</a>' }) ~ '</li>' 
+    $register.sort(*.key.lc).map({
+        '<li>' ~ .key.Str.subst('&', '&amp;', :g).subst('<', '&lt;', :g).subst('>', '&gt;', :g) ~ '&emsp;' ~ .value.map({ '<a href="#i' ~ .Str ~ '">' ~ .Str ~ '</a>' }) ~ '</li>'
     }) ~
     '</ul></div>'
 }
@@ -197,7 +197,7 @@ sub compose-after-content () is export {
 
 method render ($pod:) is export {
     setup();
-    
+
     compose-before-content ~
     await do start { handle($_) } for $pod.flat ~
     compose-toc() ~ compose-after-content
@@ -232,13 +232,13 @@ multi sub handle (Pod::Block::Named $node where $node.name eq 'TITLE', :$pod-nam
     my $additional-class = ($node.config && $node.config<class> ?? ' ' ~ $node.config<class> !! '').subst('"', '&quot;');
     my $text = $node.contents[0].contents[0].Str;
     my $anchor = register-toc-entry(0, $text, $toc-counter);
-    Q:c (<a name="t{$anchor}"><h1 class="title{$additional-class}">{$anchor} {$text}</h1></a>) 
+    Q:c (<a name="t{$anchor}"><h1 class="title{$additional-class}">{$anchor} {$text}</h1></a>)
 }
 
 multi sub handle (Pod::Block::Named $node where $node.name eq 'SUBTITLE', :$pod-name?, :$part-number?, :$toc-counter?, :%part-config) is export {
     my $additional-class = ($node.config && $node.config<class> ?? ' ' ~ $node.config<class> !! '').subst('"', '&quot;');
     my $text = $node.contents[0].contents[0].Str;
-    Q:c (<p class="subtitle{$additional-class}">{$text}</p>) 
+    Q:c (<p class="subtitle{$additional-class}">{$text}</p>)
 }
 
 multi sub handle (Pod::Block::Named $node where $node.name eq 'Html', :$pod-name?, :$part-number?, :$toc-counter?, :%part-config) is export {
@@ -267,9 +267,9 @@ multi sub handle (Pod::Block::Table $node, :$pod-name?, :$part-number?, :$toc-co
     "<table$class>" ~ NL ~
     ($node.caption ?? '<caption>' ~ $node.caption.&handle() ~ '</caption>>' !! '' ) ~
     ($node.headers ?? '<tr>' ~ do for $node.headers -> $cell { '<th>' ~ $cell.&handle() ~ '</th>' } ~ '</tr>' ~ NL !! '' ) ~
-    do for $node.contents -> @row { 
-        '<tr>' ~ do for @row -> $cell { '<td>' ~ $cell.&handle() ~ '</td>' } ~ '</tr>' ~ NL 
-    } ~ 
+    do for $node.contents -> @row {
+        '<tr>' ~ do for @row -> $cell { '<td>' ~ $cell.&handle() ~ '</td>' } ~ '</tr>' ~ NL
+    } ~
     '</table>'
 }
 
@@ -297,7 +297,7 @@ multi sub handle (Pod::FormattingCode $node where .type eq 'C', $context where *
 }
 
 multi sub handle (Pod::FormattingCode $node where .type eq 'E', $context = None, :$pod-name?, :$part-number?, :$toc-counter?) is export {
-    $node.meta.fmt('&%s;').join 
+    $node.meta.map({ when Int { "&#$_;" }; when Str { "&$_;" }; $_ }).join 
 }
 
 multi sub handle (Pod::FormattingCode $node where .type eq 'F', $context = None, :$pod-name?, :$part-number?, :$toc-counter?) is export {
@@ -311,7 +311,7 @@ sub rewrite-link($link-target is copy, :$part-number!){
         when .starts-with('#')           { $link-target = '#' ~ $part-number ~ '-' ~ $link-target.substr(1) }
         when .starts-with(any('a'..'z')) { $link-target = "/routine/$link-target"; proceed }
         when .starts-with(any('A'..'Z')) { $link-target = "/type/$link-target"; proceed }
-        when .starts-with('/')           { 
+        when .starts-with('/')           {
             my @parts = $link-target.split('#');
             @parts[0] = '#' ~ @parts[0].subst('/', '_', :g) ~ '.pod6';
             $link-target = @parts.join('-');
@@ -343,12 +343,12 @@ multi sub handle (Pod::FormattingCode $node where .type eq 'N', $context = None,
 multi sub handle (Pod::FormattingCode $node where .type eq 'P', $context = None, :$pod-name?, :$part-number?, :$toc-counter?) is export {
     my $content = $node.contents>>.&handle($context).Str;
     my $link = $node.meta eqv [] | [""] ?? $content !! $node.meta;
-    
+
     use LWP::Simple;
     my @url = LWP::Simple.parse_url($link);
     my $doc;
     given @url[0] {
-        when 'http' | 'https' { 
+        when 'http' | 'https' {
             $doc = LWP::Simple.get($link);
         }
         when 'file' {
@@ -362,7 +362,7 @@ multi sub handle (Pod::FormattingCode $node where .type eq 'P', $context = None,
         given @url[3].split('.')[*-1] {
             when 'txt' { return '<pre>' ~ $doc.subst('<', '&lt;').subst('&', '&amp;') ~ '</pre>'; }
             when 'html' | 'xhtml' { return $doc }
-        } 
+        }
     }
     warn "did not inline $link";
     q:c{<a href="{$link}">{$content}</a>}
@@ -406,7 +406,7 @@ multi sub handle (Pod::Heading $node, :$pod-name?, :$part-number?, :$toc-counter
         my $anchor = register-toc-entry($l, $text, $toc-counter);
         return Q:c (<a name="t{$anchor}"{$class}></a><h{$l} id="{$id}">{$anchor} {$text}</h{$l}>) ~ NL
     } else {
-        my $anchor = register-toc-entry($l, $text, $toc-counter, :hide);    
+        my $anchor = register-toc-entry($l, $text, $toc-counter, :hide);
         return Q:c (<a name="t{$anchor}"{$class}></a><h{$l} id="{$id}">{$text}</h{$l}>) ~ NL
     }
 }
@@ -417,11 +417,11 @@ multi sub handle (Pod::Item $node, :$pod-name?, :$part-number?, :$toc-counter?, 
 }
 
 multi sub handle (Pod::Item $node where so $node.config<:numbered>, :$part-number, :$toc-counter?, :%part-config?) is export {
-    %list-item-counter = () if %list-item-counter{$node.level}:exists && %list-item-counter.keys.max > $node.level || $last-part-number != $part-number; 
+    %list-item-counter = () if %list-item-counter{$node.level}:exists && %list-item-counter.keys.max > $node.level || $last-part-number != $part-number;
     %list-item-counter{$node.level}++;
     $last-part-number = $part-number;
     my $class = $node.config && $node.config<class> ?? ' class = "' ~ $node.config<class>.subst('"', '&quot;') ~ '"' !! '';
-    %list-item-counter.keys.sort.map({ "<ul class=\"numbered\"><li$class><span class=\"numbered-prefix\">{%list-item-counter{$_} ~ (%list-item-counter{$_+1}:exists ?? '.' !! '') }</span>"}) 
+    %list-item-counter.keys.sort.map({ "<ul class=\"numbered\"><li$class><span class=\"numbered-prefix\">{%list-item-counter{$_} ~ (%list-item-counter{$_+1}:exists ?? '.' !! '') }</span>"})
     ~ $node.contents>>.&handle()
     ~ "</li></ul>" x %list-item-counter.keys.elems + 1
     ~ NL;
@@ -448,4 +448,3 @@ multi sub handle (Str $node, Context $context where * == HTML, :$pod-name?, :$pa
 multi sub handle (Nil, :$pod-name?, :$part-number?, :$toc-counter?) is export {
     die 'Nil';
 }
-
