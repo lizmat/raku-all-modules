@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-green.git
 	branch = master
-	commit = 33ffe6007e60593a7befd9248805d6e3e0a2c58e
-	parent = 14ddc00116ada5736ee39ab8c1cc4ddd257e1f5d
+	commit = c3c4dffda80acc3d302879cb79d50287dca33b37
+	parent = ce3757401046bb9e928511503da840a17b3fb8c5
 	cmdver = 0.4.0

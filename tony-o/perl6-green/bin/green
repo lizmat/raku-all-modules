@@ -18,7 +18,7 @@ multi sub MAIN(Str $testdir?) {
   my $START = time;
   
   for @testfiles -> $file {
-    my Proc::Async $proc .=new('perl6', '-Iblib', '-Ilib', $file.IO.abspath);
+    my Proc::Async $proc .=new('perl6', '-Iblib', '-Ilib', $file.IO.absolute);
     my $stdout = '';
     my $stderr = '';
     $proc.stdout.tap(-> $v { $stdout ~= $v; });
