@@ -8,13 +8,6 @@
     say @/[2]; #-> txt
 }
 my @/;
-#| **internal** matches a perl regex
-sub ?pre-match($str,$r) {
-    $str.${perl -e '$_ = join("",<STDIN>); /@ARGV[0]/ or exit 1' $r};
-}
-#| **internal** matches a ERE
-sub ?re-match($str,$r) { $str.${grep -Eq $r} }
-
 #| The Str class is the base primitive class of Spit-sh. It represents
 #| a string in the shell. Since all shell constructs are made out of
 #| strings all types inherits from this class.
@@ -47,14 +40,6 @@ augment Str {
     #| Returns true if the string isn't empty
     method ?Bool { ${test $self} }
 
-    constant $subst-awk = '
-    BEGIN { RS="^$"; r=ENVIRON["R"]; t=ENVIRON["T"] }
-    {
-     while( (g || !i) && (i = index($0,t)) )
-       $0 = substr($0,1,i-1) r substr($0,i + length(t));
-     print;
-    }';
-
     #| Returns the string with the target string replaced by a replacement string.
     #| Does not modify the original string.
     #|{
@@ -66,6 +51,13 @@ augment Str {
     method ~subst(#|[The string to be replaced]$target,
                   #|[The string to replace it with]$replacement,
                   #|[Turns on global matching]Bool :$g){
+        constant $subst-awk = '
+        BEGIN { RS="^$"; r=ENVIRON["R"]; t=ENVIRON["T"] }
+        {
+          while( (g || !i) && (i = index($0,t)) )
+          $0 = substr($0,1,i-1) r substr($0,i + length(t));
+          print;
+        }';
         $self.${awk -v "g=$g" $subst-awk :T($target) :R($replacement)};
     }
     #| Returns true if the string contains `$needle`.
@@ -104,8 +96,6 @@ augment Str {
     }
     method ?ends-with(#|[True if the string ends-with this]$ends-with) is native {  }
 
-    constant $awk-match = '! match($0,ENVIRON["r"]) { exit 1 }';
-
     #| Returns true if the the string matches the regex and sets the
     #| `@/` match variable to the match and its capture groups (one per line).
     #|{
@@ -135,7 +125,7 @@ augment Str {
         GNU {
             @/ = '';
             # note: GNU doesn't mean it has gawk
-            if $self.${awk -v 'RS=^$' :$r $awk-match} {
+            if $self.matches($r) {
                 my $RE = $r.subst('!','\\!');
                 @/ = {
                     my $i = 0;
@@ -157,7 +147,7 @@ augment Str {
         }
         BusyBox {
             @/ = "";
-            if $self.${awk -v 'RS=^$' :$r $awk-match} {
+            if $self.matches($r) {
                 @/ = {
                     my $i = 0;
                     $i++ while $i < 10 and $self.${
@@ -175,5 +165,28 @@ augment Str {
         }
     }
 
+    #| Returns true if the string matches the regex and **doesn't**
+    #| set or modify `@/` match variable.
+    #|{
+        my $regex = rx‘^(.+)://([^/]+)/?(.*)$’;
+        my $url = 'https://github.com/spitsh/spitsh';
+        if $url.match($regex) {
+            my $host = @/[2];
+            if $host.matches(/(www\.)?github.com/) {
+                # @/ is preserved.
+                my @user-repo = @/[3].split('/');
+                say "The owner is @user-repo[0]. The repo is @user-repo[1]";
+            } else {
+                say "it's not github";
+            }
+        }
+    }
+    method ?matches(Regex $r) {
+        $self.${awk :$r -v 'RS=^$' '! match($0,ENVIRON["r"]) { exit 1 }'};
+    }
+
     method ~gist { $self }
+
+    #| Returns True if the invocant and argument string are equal.
+    method ?ACCEPTS($b) { $b eq $self }
 }

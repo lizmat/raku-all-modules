@@ -36,12 +36,13 @@ ok Kangaroo ~~ Biological-Class,'Kangaroo ~~ Biological-Class';
     my Biological-Class $sauropsida  = Sauropsida;
 
     ok Kangaroo ~~ $mamals,'Kangaroo ~~ $mamals';
-    ok 'Kangaroo' ~~ $mamals,'"Kangaroo" ~~ $mamals';
-    nok 'Kangaroot' ~~ $mamals,'"Kangaroot" !~~ $mamals';
+    # These two used to be ~~ but that will have to wait unitl multi methods
+    ok $mamals.has-member('Kangaroo'),'"Kangaroo" ~~ $mamals';
+    nok $mamals.has-member('Kangaroot'),'"Kangaroot" !~~ $mamals';
     nok $mamals ~~ $kangaroos,'$mamals !~~ $kangaroos';
     ok $kangaroos ~~ $mamals,'$kangaroos ~~ $mamals';
     ok $marsupials ~~ $mamals,'$marsupials ~~ $mamals';
-    nok $mamals ~~ $marsupials,'$marsupials !~~ $mamals';
+    nok $mamals ~~ $marsupials,'$mamals !~~ $marsupials';
     nok $kangaroos ~~ $copepods, '$kangaroos !~~ $copepods';
     nok $copepods ~~ $mamals, '$copepods !~~ $mamals';
     is $mamals.name,"Mamalia",'.name';

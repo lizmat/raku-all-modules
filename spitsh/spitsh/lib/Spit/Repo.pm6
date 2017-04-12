@@ -1,7 +1,6 @@
 use Spit::Compile;
-use Spit::PRECOMP;
-need Spit::SAST;
 need Spit::Exceptions;
+use Spit::Util :light-load;
 
 role Spit::Repo {
 
@@ -9,7 +8,7 @@ role Spit::Repo {
         my $name = ($_ ~ '<' with $repo-type) ~ $id ~ ('>' if $repo-type);
         with self.resolve(|c) {
             when Str { compile($_,:target<stage2>,:$name,:$debug) }
-            when SAST::CompUnit {
+            when *.isa('SAST::CompUnit') {
                 proceed unless .stage2-done;
                 $_;
             }
@@ -39,16 +38,16 @@ class Spit::Repo::File does Spit::Repo {
 }
 
 class Spit::Repo::Core does Spit::Repo {
-    sub get-core-module($id) {
-        %core-lib{$id} andthen .return;
+
+    sub get-CORE-lib($name) {
+        (once light-load 'Spit::PRECOMP', export-target => '&get-CORE-lib')($name);
     }
 
     multi method resolve(:$repo-type!,:$id!) {
         if $repo-type eq 'core' {
-            get-core-module($id);
+            get-CORE-lib($id) andthen .return;
         }
-
     }
 
-    multi method resolve(:$id!) { get-core-module($id) }
+    multi method resolve(:$id!) { get-CORE-lib($id) andthen .return }
 }

@@ -58,9 +58,8 @@ class SAST::PhaserBlock {...}
 class SAST::Invocant {...}
 class SAST::Type {...}
 class SAST::RoutineDeclare { ... }
-class SAST::CmpRegex {...}
 class SAST::Cmd {...}
-class SAST::Accepts {...}
+class SAST::ACCEPTS {...}
 
 role SAST is rw {
     has Match:D $.match is required is rw;
@@ -83,9 +82,9 @@ role SAST is rw {
             node => self,
             bt => Backtrace.new
         ).throw if ctx === Spit::Type;
-        $!stage2-done = True;
         $!ctx = ctx;
         my SAST:D $res = self.stage2(ctx,|args);
+        $!stage2-done = True;
         $res = coerce $res,ctx,:$desc;
         $res;
     }
@@ -844,13 +843,16 @@ class SAST::Call  is SAST::Children {
 class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
     has $!gen-sig;
     has $!type;
+    has $.topic;
 
     method invocant is rw { self[0] }
-    method type { $!type ||= self.declaration.reified-return-type(:reify($.invocant.type)) }
+    method type {
+        $!type ||= self.declaration.reified-return-type(:reify($.invocant.ostensible-type));
+    }
     method gen-sig {
         $!gen-sig //= do {
             my $sig = self.declaration.signature;
-            if $.invocant.type.parameterized {
+            if $.invocant.ostensible-type.parameterized {
                 $sig := $sig.clone;
                 for $sig.children {
                     $_ .= clone;
@@ -880,7 +882,7 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
     method children { $.invocant,|@.pos,|%.named.values }
 
     method topic {
-        if $.type ~~ tBool() {
+        $!topic //= do if $.type ~~ tBool() {
             $.invocant.topic
         } else {
             self;
@@ -1009,15 +1011,6 @@ class SAST::Cmp is SAST::MutableChildren {
     }
 
     method type { tBool }
-}
-
-class SAST::EnumCmp is SAST::Children is rw {
-    has SAST:D $.enum is required;
-    has SAST:D $.check is required;
-
-    method type { tBool }
-
-    method children { $!enum,$!check }
 }
 
 class SAST::Increment is SAST::MutableChildren {
@@ -1283,14 +1276,17 @@ class SAST::If is SAST::Children is rw {
     method stage2($ctx) is default {
         my $desc;
         if $!when {
-            $!cond .= do-stage2(tStr,:desc<when condition>);
-            if $!cond.type !~~ tBool() {
-                $!cond = self.stage2-node(
-                    SAST::Accepts,
-                    SAST::Var.new(sigil => '$',name => '_', match => $!cond.match).do-stage2(tAny),
-                    $!cond,
-                )
-            }
+            $!cond = self.make-new(
+                SAST::ACCEPTS,
+                (
+                    $*CURPAD.lookup(SCALAR,'_') ??
+                    # It's valid to use 'when' when $_ doesn't
+                    # exist. So just set it to False by default.
+                    SAST::Var.new(sigil => '$',name => '_', match => $!cond.match) !!
+                    SAST::BVal.new(val => False, match => $!cond.match)
+                ),
+                $!cond,
+            ).do-stage2(tBool);
             $desc = 'when block return value';
         } else {
             $!cond .= do-stage2(tBool,:desc<If/unless condition>);
@@ -1462,11 +1458,24 @@ class SAST::Range is SAST::MutableChildren {
     method itemize { False }
 }
 
-class SAST::Accepts is SAST::MutableChildren {
+class SAST::ACCEPTS is SAST::MutableChildren {
     method type { tBool }
-    method stage2($) {
-        $_ .= do-stage2(tAny) for @.children;
-        self;
+    method stage2($ctx) {
+        if self[1] ~~ SAST::Type and not self[1].class-type.enum-type {
+            $_ .= do-stage2(tAny) for @.children;
+            self.stage2-node(
+                SAST::BVal,
+                val => so(self[0].ostensible-type ~~ self[1].class-type)
+            );
+        } else {
+            SAST::MethodCall.new(
+                self[1],
+                name => 'ACCEPTS',
+                pos => self[0],
+                topic => self[0],
+                :$.match,
+            ).do-stage2($ctx);
+        }
     }
 }
 
@@ -1529,49 +1538,25 @@ class SAST::Eval is SAST::Children   {
     method children { $!src, }
 }
 
-sub make-rx($a){ rx｢<$a>｣ }
 class SAST::Regex is SAST::Children is rw {
     has SAST:D $.src is required;
     has SAST %.patterns;
 
     method type { $.ctx ~~ tBool() ?? $.ctx !! tRegex() }
     method stage2($ctx){
-        $!src .= do-stage2(tAny);
         if $ctx ~~ tBool() {
-            self.stage2-node(
-                SAST::CmpRegex,
-                thing => SAST::Var.new(name => '_',:$.match,:sigil<$>).do-stage2(tAny),
-                re => self,
-            );
+            self.make-new(
+                SAST::ACCEPTS,
+                SAST::Var.new(sigil => '$',name => '_', :$.match),
+                self
+            ).do-stage2(tBool);
         } else {
+            $!src .= do-stage2(tAny);
             self;
         }
     }
 
     method children { $!src, }
-
-    method compile-time {
-        if $!src.compile-time -> $p5src {
-            make-rx($p5src);
-        } else {
-            Nil
-        }
-    }
-}
-
-class SAST::CmpRegex is SAST::Children is rw {
-    has SAST $.re;
-    has SAST $.thing;
-
-    method children { $!re,$!thing }
-
-    method type { tBool }
-
-    method stage2($)  {
-        $!thing .= do-stage2(tStr);
-        $!re .= do-stage2(tRegex);
-        self;
-    }
 }
 
 class SAST::Quietly is SAST::Children {

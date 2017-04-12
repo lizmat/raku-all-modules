@@ -311,51 +311,6 @@ multi method walk(SAST::Cmp:D $THIS is rw) {
     compile-time-infix($THIS,SAST::BVal);
 }
 
-multi method walk(SAST::EnumCmp:D $THIS is rw) {
-    if $THIS.check.compile-time -> $a {
-        if $THIS.enum.compile-time -> Spit::Type $b {
-            my $val = do given $a {
-                when Str { so $b.^types-in-enum».name.first($a) }
-                when Spit::Type { $a ~~ $b }
-            };
-            $THIS .= stage3-node(SAST::BVal,:$val);
-        }
-    } elsif $THIS.check.ostensible-type.enum-type {
-        $THIS.check = $THIS.stage3-node(SAST::MethodCall, name => 'name', $THIS.check);
-        self.walk($THIS.check);
-    }
-}
-
-multi method walk(SAST::Accepts:D $THIS is rw) {
-    my $thing   = $THIS[0];
-    my $against =  $THIS[1];
-
-    given $against {
-        when .type ~~ tBool() { $THIS = $against }
-
-        when *.ostensible-type.enum-type {
-            $THIS .= stage2-node(SAST::EnumCmp,enum => $against,check => $thing);
-            self.walk($THIS);
-        }
-        when SAST::Type {
-            $THIS .= stage3-node(SAST::BVal,val => so($thing.ostensible-type ~~ $against.class-type));
-        }
-        when .type ~~ tRegex() {
-            $THIS .= stage2-node(SAST::CmpRegex,:$thing,re => $against);
-            self.walk($THIS);
-        }
-        when .type ~~ tStr()  {
-            $THIS .= stage2-node(
-                SAST::Cmp,
-                sym => 'eq',
-                $thing,
-                $against,
-            );
-            self.walk($THIS);
-        }
-    }
-}
-
 multi method walk(SAST::Regex:D $THIS is rw) {
     with $THIS.src.compile-time {
         if Spit::P5Regex.parse($_,:actions(Spit::P5Regex-Actions)) -> $match {
@@ -369,15 +324,6 @@ multi method walk(SAST::Regex:D $THIS is rw) {
         }
     } else {
         $THIS.patterns<pre> = $THIS.src;
-    }
-}
-
-multi method walk(SAST::CmpRegex:D $THIS is rw) {
-    if $THIS.thing.compile-time -> $thing {
-        my $p5regex := $THIS.re.compile-time;
-        if $p5regex.defined {
-            $THIS .= stage3-node(SAST::BVal,val => $thing.match($p5regex).so);
-        }
     }
 }
 
@@ -448,17 +394,34 @@ multi method walk(SAST::Stmts:D $THIS is rw) {
 }
 
 multi method walk(SAST::MethodCall:D $THIS is rw) {
-    if $THIS.declaration === tStr.^find-spit-method('Bool')
-       and (my $ct = $THIS.invocant.compile-time).defined {
-        $THIS .= stage3-node(SAST::BVal,val => ?$ct);
+    my \ENUMC_NAME = once tEnumClass.^find-spit-method('name');
+
+    if $THIS.declaration === (once tStr.^find-spit-method('Bool'))
+       and (my $ct = $THIS.invocant.compile-time).defined
+    {
+       $THIS .= stage3-node(SAST::BVal, val => ?$ct);
     }
 
-    elsif $THIS.declaration === tEnumClass.^find-spit-method('name')
+    elsif $THIS.declaration === ENUMC_NAME
           and $THIS.invocant.compile-time -> $ct
     {
         $THIS .= stage3-node(SAST::SVal,val => $ct.name);
     }
 
+    elsif $THIS.declaration === (once tEnumClass.^find-spit-method('ACCEPTS')) {
+        my $enum := $THIS[0];
+        my $candidate := $THIS.pos[0];
+
+        if $candidate.compile-time -> $a {
+            if $enum.compile-time -> Spit::Type $b {
+                my $val = do given $a {
+                    when Str { so $b.^types-in-enum».name.first($a) }
+                    when Spit::Type { $a ~~ $b }
+                };
+                $THIS .= stage3-node(SAST::BVal,:$val);
+            }
+        }
+    }
     else {
         callsame;
     }
@@ -521,7 +484,7 @@ method inline-value($inner,$outer,$_ is raw) {
         if self.inline-value($inner,$outer,.children[0]) -> $val {
             .children[0] = $val;
             # because we're changing child of a rather than the node itself
-            # we'll need to re-walk to it has a chance to re-optimize itself.
+            # we'll need to re-walk it so it has a chance to re-optimize itself.
             .stage3-done = False;
             self.walk($_);
             $_;
@@ -537,7 +500,7 @@ method inline-value($inner,$outer,$_ is raw) {
 }
 
 subset ChildSwapInline of SAST:D
-       where SAST::Call|SAST::Cmd|SAST::Increment|SAST::Neg;
+       where SAST::Call|SAST::Cmd|SAST::Increment|SAST::Neg|SAST::Cmp;
 
 # CONSIDER:
 #   {
@@ -560,17 +523,27 @@ multi method inline-call(SAST::Call:D $outer,ChildSwapInline $inner) {
             return if $*char-count > $max;
             $try-switch.switch: $switch;
         } else {
-            # Nodes without children are probably ok just to leave where they are but
-            # give up if we have a node with children
             return
         }
     }
+    # Re-walk replacement. It's possible after inlining further optimizations
+    # can be done.
+    $replacement.stage3-done = False;
+    self.walk($replacement);
     $replacement;
 }
 
 multi method inline-call(SAST::Call:D $outer,SAST::CompileTimeVal:D $_) { $_ }
 
 multi method inline-call(SAST::Call:D $outer,$) { Nil }
+multi method inline-call(SAST::Call:D $outer,SAST::Var:D $inner) {
+    given $inner.declaration {
+        when SAST::Invocant   { $outer[0] }
+        when SAST::PosParam   { $outer.pos[.ord] }
+        when SAST::NamedParam { $outer.named{.name} || $outer.stage3-node(SAST::BVal, val => False) }
+        default { $inner }
+    }
+}
 
 method add-scaffolding(SAST::Dependable:D $dep is rw)  {
     my $before = $dep;
