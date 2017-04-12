@@ -258,6 +258,16 @@ Runs a sparrowdo module instead of executing tasks from sparrowfile. For example
 
     $ sparrowdo --host=127.0.0.1 --module_run=Nginx
 
+You can use task_run notation to pass parameter to modules:
+
+    --module_run=module-name@p1=v1,p2=v2\;plg@p1=v1,p2=v2 ...
+
+Where `module-name` - module name. `p1, p2 ...` - module parameters (separated by `,`) 
+
+For example:
+
+    $ sparrowdo --host=127.0.0.1 --module_run=Cpanm::GitHub@user=leejo,project=CGI.pm,branch=master
+
 ## --task\_run
 
 Runs a sparrow plugin instead of executing tasks from sparrowfile. 
@@ -266,18 +276,18 @@ For example:
 
     $ sparrowdo --host=127.0.0.1 --task_run=df-check
 
-You can multiple tasks (plugins) with parameters as well:
+You can run multiple tasks (plugins) with parameters as well:
 
-    $ sparrowdo --host=127.0.0.1 --task_run=plg@p1=v1,p2=v2\;plg@p1=v1,p2=v2 ...
+    --task_run=plg-name@p1=v1,p2=v2\;plg-name@p1=v1,p2=v2 ...
 
-Where `plg` - plugin-name, p1,p2 - plugins parameters (separated by `,`) 
+Where `plg-name` - plugin name. `p1, p2 ...` - plugins parameters (separated by `,`) 
 
 For example:
 
     $ sparrowdo --host=127.0.0.1 \
     --task_run=user@name=foo \
     --task_run=bash@command='id &&  pwd && uptime && ls -l && ps uax|grep nginx|grep -v grep',user=foo \
-    --task_run=df-check@therhold=54
+    --task_run=df-check@threshold=54
 
 ## --verbose
 

@@ -12,8 +12,10 @@ install:
     - install_zef_as_user.sh
     - zef install .
     - zef install Sparrowdo::Sparrow::Update
+    - zef install Sparrowdo::Cpanm::GitHub
 script:
   - sparrowdo --module_run=Sparrow::Update --bootstrap --host=127.0.0.1
   - sparrowdo --task_run=df-check --host=127.0.0.1
   - strun --root examples/
   - sparrowdo --host=127.0.0.1 --no_index_update --task_run=user@name=foo --task_run=bash@command='id && cd ~/ && pwd && uptime && ls -l && ps uax|grep ssh|grep -v grep',user=foo --task_run=df-check@therhold=54
+  - sparrowdo --host=127.0.0.1 --no_index_update --module_run=Cpanm::GitHub@user=leejo,project=CGI.pm,branch=master

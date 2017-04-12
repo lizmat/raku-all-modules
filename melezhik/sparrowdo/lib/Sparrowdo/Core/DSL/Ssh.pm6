@@ -65,7 +65,6 @@ sub scp ( %args ) is export {
     );
   }
 
-  my $ssh-host-term = %args<user>:exists ?? %args<user> ~ '@' ~ %args<host> !! %args<host>;
 
   my $scp-run-cmd  =  'scp -o ConnectionAttempts=1  -o ConnectTimeout=10';
 
@@ -75,7 +74,25 @@ sub scp ( %args ) is export {
 
   $scp-run-cmd ~= ' -i /opt/sparrow/.cache/ssh-key' if %args<ssh-key>:exists;
 
-  $scp-run-cmd ~= %args<pull> ??  " $ssh-host-term %args<data>" !! " %args<data> $ssh-host-term";
+  my $ssh-host-term;
+
+  if  %args<pull> {
+    if %args<user> {
+      for %args<host>.words -> $w {  $ssh-host-term ~= ' ' ~ %args<user> ~ '@' ~ $w }
+    } else {
+      $ssh-host-term = %args<host>
+    }
+
+    $scp-run-cmd ~= " $ssh-host-term %args<data>";
+    
+  } else {
+
+    $ssh-host-term = %args<user>:exists ?? %args<user> ~ '@' ~ %args<host> !! %args<host>;
+
+    $scp-run-cmd ~= " %args<data> $ssh-host-term";
+
+  }
+
 
   my $bash-cmd;
 

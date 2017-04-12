@@ -1,7 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "Sparrowdo",
-  "version"     : "0.0.13",
+  "version"     : "0.0.15",
   "description" : "Configuration management tool based on sparrow plugins system",
   "authors" : [ "Alexey Melezhik"],
   "depends"     : [

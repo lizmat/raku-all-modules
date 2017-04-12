@@ -1,0 +1,81 @@
+my $user = input_params('SshUser');
+my $ssh-key =  "/home/$user/.ssh/id_rsa";
+
+ssh 'rm -rf  /tmp/test-ssh-scp && mkdir -p /tmp/test-ssh-scp', %( 
+  host => '127.0.0.1',
+  user    => $user,
+  ssh-key => $ssh-key
+);
+
+scp %( 
+  data    => $*CWD ~ "/data/hello.txt",
+  host    => "127.0.0.1:/tmp/test-ssh-scp", 
+  user    => $user,
+  ssh-key => $ssh-key
+);
+
+bash 'cat /tmp/test-ssh-scp/hello.txt', %(
+  expect_stdout => '<hello txt file>'
+);
+
+scp %( 
+  data    => $*CWD ~ "/data/hello2.txt",
+  host    => "127.0.0.1:/tmp/test-ssh-scp", 
+  user    => $user,
+  ssh-key => $ssh-key
+);
+
+bash 'cat /tmp/test-ssh-scp/hello2.txt', %(
+  expect_stdout => '<hello2 txt file>'
+);
+
+directory-delete '/tmp/test-ssh-scp-pull';
+directory-create '/tmp/test-ssh-scp-pull';
+
+scp %( 
+  data    => '/tmp/test-ssh-scp-pull',
+  host    => "127.0.0.1:/tmp/test-ssh-scp/hello.txt",
+  pull    => True, 
+  user    => $user,
+  ssh-key => $ssh-key
+);
+
+bash 'cat /tmp/test-ssh-scp-pull/hello.txt', %(
+  expect_stdout => '<hello txt file>'
+);
+
+bash 'rm -rf tmp/test-ssh-scp-pull/*.txt';
+
+scp %( 
+  data    => '/tmp/test-ssh-scp-pull',
+  host    => "127.0.0.1:/tmp/test-ssh-scp/hello.txt 127.0.0.1:/tmp/test-ssh-scp/hello2.txt",
+  pull    => True, 
+  user    => $user,
+  ssh-key => $ssh-key
+);
+
+bash 'cat /tmp/test-ssh-scp-pull/hello.txt', %(
+  expect_stdout => '<hello txt file>'
+);
+
+bash 'cat /tmp/test-ssh-scp-pull/hello2.txt', %(
+  expect_stdout => '<hello2 txt file>'
+);
+
+bash 'rm -rf tmp/test-ssh-scp-pull/*.txt';
+
+scp %( 
+  data    => '/tmp/test-ssh-scp-pull',
+  host    => "127.0.0.1:/tmp/test-ssh-scp/hello.txt 127.0.0.1:/tmp/test-ssh-scp/hello2.txt",
+  pull    => True,
+  user    => $user,
+  ssh-key => $ssh-key
+);
+
+bash 'cat /tmp/test-ssh-scp-pull/hello.txt', %(
+  expect_stdout => '<hello txt file>'
+);
+
+bash 'cat /tmp/test-ssh-scp-pull/hello2.txt', %(
+  expect_stdout => '<hello2 txt file>'
+);

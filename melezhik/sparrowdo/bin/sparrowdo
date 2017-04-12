@@ -89,7 +89,7 @@ sub MAIN (
     spurt '/tmp/sparrowdo/sparrow.list', get_spl().join: "\n";
     _scp '/tmp/sparrowdo/sparrow.list', '/tmp/sparrow-cache/';
     ssh_shell 'mkdir -p /opt/sparrow && mv  /tmp/sparrow-cache/sparrow.list /opt/sparrow';
-    say colored('copied SPL file as /opt/sparrow/sparrow.list - OK', 'bold green on_blue');
+    say colored('copied SPL file as /opt/sparrow/sparrow.list - OK', 'bold green on_black');
 
   }
 
@@ -114,7 +114,7 @@ sub MAIN (
     mkdir '/tmp/sparrowdo/';
     spurt "/tmp/sparrowdo/task-box$*PID.json", (to-json get_tasks());
     _scp "/tmp/sparrowdo/task-box$*PID.json", "/tmp/sparrow-cache/";
-    say colored("set up task box file - /tmp/sparrowdo/task-box$*PID.json - OK", 'bold green on_blue');
+    say colored("set up task box file - /tmp/sparrowdo/task-box$*PID.json - OK", 'bold green on_black');
     ssh_shell "sparrow box run /tmp/sparrow-cache/task-box$*PID.json --mode quiet --purge-cache";
   }
 

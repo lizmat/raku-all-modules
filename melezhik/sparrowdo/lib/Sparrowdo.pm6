@@ -15,7 +15,7 @@ sub push_task (%data){
 
   @tasks.push: %data;
 
-  say colored('push [task] ' ~ %data<task> ~  ' OK', 'bold green on_blue');
+  say colored('push [task] ' ~ %data<task> ~  ' OK', 'bold green on_black');
 
 }
 
@@ -75,7 +75,7 @@ multi sub task_run($task_desc, $plugin_name, %parameters?) is export {
 multi sub task_run(%args) is export { 
 
   my %task_data = %( 
-      task => %args<task> ~ " [plg] " ~ %args<plugin>,
+      task => %args<task>,
       plugin => %args<plugin>,
       data => %args<parameters>
   );
@@ -107,20 +107,28 @@ multi sub plg-run(@plg-list) is export {
       my $name = $0; my $params = $1;
       my @args = split(/\,/,$params);
       @plugins.push: [ $name,  @args ];
-      say colored('push [plugin] ' ~ $name ~  ~ ' ' ~ @args ~ ' OK', 'bold green on_blue');
+      say colored('push [plugin] ' ~ $name ~  ~ ' ' ~ @args ~ ' OK', 'bold green on_black');
     } else {
       @plugins.push: [ $p ];
-      say colored('push [plugin] ' ~ $p ~  ' OK', 'bold green on_blue');
+      say colored('push [plugin] ' ~ $p ~  ' OK', 'bold green on_black');
     }
   }
 }
 
 sub module_run($name, %args = %()) is export {
 
-  say colored('enter module <' ~ $name ~ '> ... ', 'bold cyan on_blue');
+  say colored('enter module <' ~ $name ~ '> ... ', 'bold cyan on_black');
 
-  require ::('Sparrowdo::' ~ $name); 
-  ::('Sparrowdo::' ~ $name ~ '::&tasks')(%args);
+  if ( $name ~~ /(\S+)\@(.*)/ ) {
+      my $mod-name = $0; my $params = $1;
+      my %mod-args;
+      for split(/\,/,$params) -> $p { %mod-args{$0.Str} = $1.Str if $p ~~ /(\S+?)\=(.*)/ };
+      require ::('Sparrowdo::' ~ $mod-name); 
+      ::('Sparrowdo::' ~ $mod-name ~ '::&tasks')(%mod-args);
+  } else {
+      require ::('Sparrowdo::' ~ $name); 
+      ::('Sparrowdo::' ~ $name ~ '::&tasks')(%args);
+  }
 
 
 }
