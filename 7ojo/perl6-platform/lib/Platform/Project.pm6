@@ -1,6 +1,7 @@
 use v6;
 use Platform::Container;
 use YAMLish;
+use Terminal::ANSIColor;
 
 class Platform::Project {
 
@@ -9,7 +10,7 @@ class Platform::Project {
     has Str $.network = 'acme';
     has Str $.domain = 'localhost';
     has Str $.data-path is rw;
-    has Hash %.override;
+    has %.override;
 
     has %.defaults =
         command => '/bin/bash',
@@ -20,17 +21,35 @@ class Platform::Project {
         my ($config, $projectyml-path);
         $projectyml-path = "$_/project.yml" if not $projectyml-path and "$_/project.yml".IO.e for self.project ~ "/docker", self.project;
         $config = $projectyml-path ?? load-yaml $projectyml-path.IO.slurp !! item(%.defaults);
-        for %.override.kv -> $key, $val { $config{$key} = $val }
-
+        for %.override.kv -> $key, $val {
+            if $config{$key} ~~ Array {
+                $config{$key} = flat($config{$key}.Array, $val.Array).Array;
+            } elsif $config{$key} ~~ Hash {
+                for $val.Hash.kv -> $inskey, $insval {
+                    $config{$key}{$inskey} = $insval;
+                }
+            } else {
+                $config{$key} = $val
+            }
+        }
         my $cont = self.load-cont(
             config-data => $config
             );
+        for <Build Users Dirs Files> {
+            put color('yellow'), "» {$_}", color('reset');
+            $cont."{$_.lc}"();
+        }
+        my $res = $cont.last-command: $cont.run;
 
-        $cont.build;
-        $cont.users;
-        $cont.dirs;
-        $cont.files;
-        $cont.last-command: $cont.run;
+        put color('yellow'), "» Exec", color('reset'), ' (waiting for services)';
+        for <. . . . .> {
+            print $_;
+            sleep 1;
+        }
+        say '';
+        $cont.exec;
+
+        $res;
     }
 
     method start { self.load-cont.start.last-command }

@@ -1,8 +1,8 @@
 {
     "perl"          : "6",
     "name"          : "Platform",
-    "version"       : "0.0.2",
-    "description"   : "Tool for managing and running single projects or tightly coupled projects via Docker environment",
+    "version"       : "0.0.3",
+    "description"   : "Tool for making development environments with docker",
     "authors"       : [ "Jarkko Haapalainen <jarkko@viidakko.fi>" ],
     "auth"          : "github:7ojo",
     "tags"          : [ "Platform", "Docker", "Tool", "Development" ],
@@ -18,7 +18,8 @@
     "depends"       : [
         "Text::Wrap",
         "YAMLish",
-        "JSON::Tiny"
+        "JSON::Tiny",
+        "Terminal::ANSIColor"
     ],
     "source-url"    : "https://github.com/7ojo/perl6-platform.git"
 }

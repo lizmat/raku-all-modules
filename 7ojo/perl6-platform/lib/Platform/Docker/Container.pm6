@@ -28,11 +28,7 @@ class Platform::Docker::Container is Platform::Container {
                 @args.push($value) if $value.chars > 0;
             }
         }
-        my $proc = run <docker build -t>, self.name, @args, <.>, :cwd«$.dockerfile-loc», :out;
-        my $out = $proc.out.slurp-rest;
-
-        my $last-line = $out.lines[*-1];
-        put $out if not $last-line ~~ / Successfully \s built /;
+        run <docker build -t>, self.name, @args, <.>, :cwd«$.dockerfile-loc»;
     }
 
     method users {
@@ -98,7 +94,8 @@ class Platform::Docker::Container is Platform::Container {
         }
         my $proc = run <docker run -d -it --name>, self.name, self.name, self.shell, :out;
         my $out = $proc.out.slurp-rest;
-        my $path = self.data-path ~ '/' ~ self.domain ~ "/files";
+        my $domain_path = self.data-path ~ '/' ~ self.domain;
+        my $path = $domain_path ~ '/files';
         for $config<files>.Hash.kv -> $target, $content is rw {
             my ($owner, $group, $mode);
             if $content ~~ Hash {
@@ -106,10 +103,13 @@ class Platform::Docker::Container is Platform::Container {
                     my Str $flags = '';
                     $flags ~= ':ro' if $content<readonly>;
                     $content = $content<content>;
+                    $content = "$domain_path/$content".IO.slurp if "$domain_path/$content".IO.e;
                     $content = "$path/$content".IO.slurp if "$path/$content".IO.e;
-                    mkdir "$path/{self.name}/" ~ $target.IO.dirname;
-                    spurt "$path/{self.name}/{$target}", $content;
-                    @.volumes.push: "--volume $path/{self.name}/{$target}:{$target}{$flags}";
+                    my $local_target = $target;
+                    $local_target ~~ s'^\/'';
+                    mkdir "$path/{self.name}/" ~ $local_target.IO.dirname;
+                    spurt "$path/{self.name}/{$local_target}", $content;
+                    @.volumes.push: "--volume $path/{self.name}/{$local_target}:{$target}{$flags}";
                     next;
                 } else {
                     $owner   = $content<owner> if $content<owner>;
@@ -128,12 +128,17 @@ class Platform::Docker::Container is Platform::Container {
             run <docker exec>, self.name, 'chown', "$owner:$group", $target if $owner and $group;
             run <docker exec>, self.name, 'chmod', $mode, $target if $mode;
         }
-        $proc = run <docker stop -t 0>, self.name, :out; 
-        $out = $proc.out.slurp-rest;
-        $proc = run <docker commit>, self.name, self.name, :out;
-        $out = $proc.out.slurp-rest;
-        $proc = run <docker rm>, self.name, :out;
-        $out = $proc.out.slurp-rest;
+        $proc = run <docker stop -t 0>, self.name, :out; $out = $proc.out.slurp-rest;
+        $proc = run <docker commit>, self.name, self.name, :out; $out = $proc.out.slurp-rest;
+        $proc = run <docker rm>, self.name, :out; $out = $proc.out.slurp-rest;
+    }
+
+    method exec {
+        return if not self.config-data<exec>;
+        for self.config-data<exec>.Array {
+            put "- {$_}";
+            shell "docker exec {self.name} $_";
+        }
     }
 
     method run {

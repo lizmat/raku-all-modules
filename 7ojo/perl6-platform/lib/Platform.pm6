@@ -22,7 +22,7 @@ class Platform is Platform::Container {
         my $proc = run <openssl genrsa -out>, "$ssl-dir/server-key.key", <4096>, :out, :err;
         my $out = $proc.out.slurp-rest;
         my $err = $proc.err.slurp-rest;
-        run <openssl rsa -in>, "$ssl-dir/server-key.key", <-out>, "$ssl-dir/server-key.crt";
+        run <openssl rsa -in>, "$ssl-dir/server-key.key", <-pubout -out>, "$ssl-dir/server-key.crt";
     }
 
     method ssh('keygen') {

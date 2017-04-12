@@ -4,9 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.0.3] - 2017-04-12
 ### Added
+- Running commands after container is started
 - [--network=acme] option to platform command
+
+### Changed
+- Be verbose on docker build phase
+- Don't wait so much on docker stop
+
+### Fixed
+- File creation fixes and finding correct path
+- "platform ssl genrsa" wasn't producing public crt
+- Replace ~ from path to HOME
 
 ## [0.0.2] - 2017-04-05
 ### Added
