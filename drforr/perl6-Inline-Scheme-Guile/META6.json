@@ -1,0 +1,32 @@
+{
+   "meta6" : "0",
+   "tags" : [
+       "scheme",
+       "guile",
+       "guile scheme"
+   ],
+   "provides" : {
+      "Inline::Scheme::Guile" : "lib/Inline/Scheme/Guile.pm6"
+   },
+   "test-depends" : [
+      "Test"
+   ],
+   "support" : {
+      "source" : "https://github.com/drforr/perl6-Inline-Scheme-Guile"
+   },
+   "perl" : "6.c",
+   "build-depends" : [],
+   "auth" : "github:drforr",
+   "source-url" : "https://github.com/drforr/perl6-Inline-Scheme-Guile.git",
+   "resources" : [ "libraries/guile-helper" ],
+   "depends" : [
+      "LibraryMake"
+   ],
+   "name" : "Inline::Scheme::Guile",
+   "authors" : [
+      "Jeffrey Goff <drforr@pobox.com>"
+   ],
+   "version" : "0.1",
+   "license" : "Artistic",
+   "description" : "Use Guile Scheme code and libraries in your Perl 6 code"
+}

@@ -1,0 +1,12 @@
+.PHONY: clean test
+
+all: %DESTDIR%/resources/libraries/%guile-helper%
+
+clean:
+	rm -f %DESTDIR%/resources/libraries/%guile-helper%
+
+%DESTDIR%/resources/libraries/%guile-helper%: guile-helper.c
+	%CC% guile-helper.c -Wall -pthread -I. -I"%INCLUDE-GUILE%" -l%LIBRARY-GUILE% -shared -o %DESTDIR%/resources/libraries/%guile-helper% %CCSHARED% -g
+
+test: all
+	prove -e 'perl6 -Ilib' t
