@@ -4,7 +4,7 @@ use Test;
 subtest {
 
   say 'Resolve: ', '.'.IO.resolve.Str;
-  say 'Abspath: ', '.'.IO.abspath;
+  say 'Abspath: ', '.'.IO.absolute;
   say 'Volume1: ', '.'.IO.volume;
   say 'Volume2: ', '.'.IO.resolve.volume;
 
