@@ -1,0 +1,48 @@
+{
+  "name": "Sparrowdo::Rakudo",
+  "source-url": "https://github.com/melezhik/perl6-sparrowdo-rakudo.git",
+  "support": {
+    "source": null
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "excludes": {
+    
+  },
+  "auth": "github:melezhik",
+  "superseded-by": {
+    
+  },
+  "provides": {
+        "Sparrowdo::Rakudo" : "lib/Sparrowdo/Rakudo.pm6"
+  },
+  "depends": [
+    "Test::META",
+    "Sparrowdo"
+  ],
+  "tags": [
+    
+  ],
+  "license": "Artistic 2.0",
+  "test-depends": [
+    
+  ],
+  "description": "Install Rakudo as system package",
+  "production": false,
+  "emulates": {
+    
+  },
+  "version": "0.0.1",
+  "meta6": "0",
+  "supersedes": {
+    
+  },
+  "authors": [
+    "'Alexey Melezhik' <melezhik@gmail.com>"
+  ]
+}
