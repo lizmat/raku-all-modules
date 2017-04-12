@@ -133,7 +133,7 @@ sub pid-from-pidfile(Str $pid-file --> Int ) is export(:ALL) {
 }
 
 sub lockfile-valid($pid-file) is export(:ALL) {
-    return False unless $pid-file.IO.abspath.IO.e;
+    return False unless $pid-file.IO.e;
     my $pid = pid-from-pidfile($pid-file);
     return is-alive($pid);
 }
