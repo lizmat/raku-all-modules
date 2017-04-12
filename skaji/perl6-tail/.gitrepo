@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/skaji/perl6-tail.git
 	branch = master
-	commit = be8615e2b40fa41ae4c710847de0bc9c5472cc0b
-	parent = e13592458cb95b961fc1d79989e6357a14113ad7
+	commit = afaf2a105665d8ff04da8e6f5a1b756bd1a685d6
+	parent = 33bb5304dd9bc9c88143ddae2815da54d5742b28
 	cmdver = 0.4.0

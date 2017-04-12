@@ -58,7 +58,7 @@ my class Impl {
 method new(|) { die "call watch() method instead" }
 
 method watch(::?CLASS:U: $filename, Bool :$chomp = False) {
-    my $file = File.new($filename.IO.abspath);
+    my $file = File.new($filename.IO.absolute);
     Impl.new(:$file, :$chomp).Supply;
 }
 
