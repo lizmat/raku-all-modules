@@ -95,9 +95,7 @@ sub put-literal(%s is copy) returns Hash {
   %s = step-chr-a %s;
   repeat {
     while (%s<a> eq '\\') { # escape character only escapes the next one character
-      %s = (%s
-            ==> step-chr-a()
-            ==> step-chr-a());
+      %s = %s.&step-chr-a.&step-chr-a;
     }
     %s = step-chr-a %s;
   } until (%s<last> eq $delimiter || !%s<a>);
@@ -190,9 +188,8 @@ multi sub process-comments(%s is copy where {%s<b> eq '/'}) returns Hash { # a d
   # Return %s
   (given $cc_flag {
      when $_ { # True
-       (%s
-        ==> step-chr-a() # cannot use preserve-endspace(%s) here because it might not print the new line
-        ==> skip-whitespace());
+       # cannot use preserve-endspace(%s) here because it might not print the new line
+       %s.&step-chr-a.&skip-whitespace;
      }
      when %s<last> && !is-endspace(%s<last>) && !is-prefix(%s<last>) {
        return preserve-endspace %s;
@@ -216,17 +213,15 @@ multi sub process-comments(%s is copy where {%s<b> eq '*'}) returns Hash { # sla
   # Return %s
   (given $cc_flag {
      when $_ { # True
-       (%s
-        ==> send-chr-out() # the *
-        ==> send-chr-out() # the /
-        # inside the conditional comment there may be a missing terminal semi-colon
-        ==> preserve-endspace());
+       #  the *           the /
+       %s.&send-chr-out.&send-chr-out.&preserve-endspace;
+       # inside the conditional comment there may be a missing terminal semi-colon
      }
      default { # the comment is being removed
 
-      %s = delete-chr-a %s; # the *
+      %s    = delete-chr-a %s; # the *
       %s<a> = ' ';  # the /
-      %s = collapse-whitespace %s;
+      %s    = collapse-whitespace %s;
 
       if (%s<last> && %s<b> &&
           ((is-alphanum(%s<last>) && ( is-alphanum(%s<b>) || %s<b> eq '.')) ||
@@ -254,30 +249,23 @@ multi sub process-comments(%s is copy where {%s<b> eq '*'}) returns Hash { # sla
 multi sub process-comments(%s is copy where {%s<lastnws> && 
                            (')].'.contains(%s<lastnws>) ||
                            is-alphanum(%s<lastnws>))}) returns Hash {  # division
-  %s
-  ==> step-chr-a()
-  ==> collapse-whitespace()
+
   # don't want closing delimiter to
   # become a slash-slash comment with
   # following conditional comment
-  ==> process-conditional-comment();
+  %s.&step-chr-a.&collapse-whitespace.&process-conditional-comment;
 }
 
 
 multi sub process-comments(%s is copy where {%s<a> eq '/' and %s<b> eq '.' }) returns Hash {
-  %s
-  ==> collapse-whitespace()
-  ==> step-chr-a();
+  %s.&collapse-whitespace.&step-chr-a;
 }
 
 multi sub process-comments(%s is copy) returns Hash {
-  %s
-  ==> put-literal()
-  ==> collapse-whitespace()
   # we don't want closing delimiter to
   # become a slash-slash comment with
   # following conditional comment
-  ==> process-conditional-comment();
+  %s.&put-literal.&collapse-whitespace.&process-conditional-comment;
 }
 
 #
@@ -288,36 +276,24 @@ multi sub process-char(%s where {%s<a> eq '/'}) returns Hash { # a division, com
 }
 
 multi sub process-char(%s where { "'\"".contains(%s<a>) }) returns Hash { # string literal
-  %s
-  ==> put-literal()
-  ==> preserve-endspace();
+  %s.&put-literal.&preserve-endspace;
 
 }
 
 multi sub process-char(%s where { '+-'.contains(%s<a>) }) returns Hash { # careful with + + and - -
-  %s
-  ==> step-chr-a()
-  ==> collapse-whitespace()
-  ==> process-double-plus-minus();
+  %s.&step-chr-a.&collapse-whitespace.&process-double-plus-minus;
 }
 
 multi sub process-char(%s where { is-alphanum(%s<a>) }) returns Hash { # keyword, identifiers, numbers
-  %s
-  ==> step-chr-a()
-  ==> collapse-whitespace()
-  ==> process-property-invocation();
+  %s.&step-chr-a.&collapse-whitespace.&process-property-invocation;
 }
 
 multi sub process-char(%s where { ']})'.contains(%s<a>) }) returns Hash {
-  %s
-  ==> step-chr-a()
-  ==> preserve-endspace();
+  %s.&step-chr-a.&preserve-endspace;
 }
 
 multi sub process-char(%s is copy) returns Hash {
-  %s
-  ==> step-chr-a()
-  ==> skip-whitespace();
+  %s.&step-chr-a.&skip-whitespace;
 }
 
 # Decouple the output processing.
