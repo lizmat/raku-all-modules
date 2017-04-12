@@ -1,7 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "DateTime::TimeZone",
-  "version"     : "*",
+  "version"     : "0.10.0",
   "description" : "A library for working with Time Zones in Perl 6",
   "depends"     : [ ],
   "provides"    : {

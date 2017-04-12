@@ -4,7 +4,7 @@ use File::Find;
 
 sub MAIN {
     my @zone-files = find(dir => '../lib/DateTime/TimeZone/Zone', name => /.*pm6$/);
-    my @zone-path-strings = @zone-files>>.abspath;
+    my @zone-path-strings = @zone-files>>.absolute;
     @zone-path-strings>>.subst-mutate(/ .* '../lib/' /, '');
     my @module-names = @zone-path-strings>>.subst(/ \/ /, '::', :g);
     @module-names>>.subst-mutate(/ \.pm6$ /, '');

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-timezone.git
 	branch = master
-	commit = a715001b9b84604600581db2df4aef0ae75d6ba5
-	parent = a74de93cf93cb9cabee7d85ee4656bfbe0cf31b2
+	commit = fac81e5d29f89a610cb786c9d1e89105b3f6dbf5
+	parent = 60cd2c915d837d77547153d63bee96d14196ec7e
 	cmdver = 0.4.0
