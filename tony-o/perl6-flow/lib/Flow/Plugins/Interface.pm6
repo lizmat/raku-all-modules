@@ -16,7 +16,7 @@ multi MAIN('test', *@dirs, :$depth = 1) is export {
 
   my $ending-out = '';
   my $index      = 0;
-  my $str-r      = '.'.IO.abspath;
+  my $str-r      = $*CWD.absolute;
 
   "    # | Plan // Pass | File Name".say;
   $app.supply.act(-> $test {
@@ -32,7 +32,7 @@ multi MAIN('test', *@dirs, :$depth = 1) is export {
     }
   });
 
-  $app.test-dir(@dirs.map({ $_.IO.abspath }), :DIR-RECURSION($depth));
+  $app.test-dir(@dirs.map({ $_.IO.absolute }), :DIR-RECURSION($depth));
 
   $app.wait;
   "\n$ending-out".say if $ending-out.trim ne '';

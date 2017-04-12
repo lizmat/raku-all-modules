@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-flow.git
 	branch = master
-	commit = da411cdf54aa0ac3b7d32b960769526723b1375b
-	parent = de9cd35fad68df65fbbc26b88adba91a172aa280
-	cmdver = 0.2.3
+	commit = 16c9a39ec92a1349342e319085f60b30f86993fe
+	parent = 8f906ce8db9660f8bf5877fd4d9d3aa2fa33ac35
+	cmdver = 0.4.0

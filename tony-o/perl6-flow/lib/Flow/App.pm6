@@ -26,7 +26,7 @@ class Flow::App {
   }
 
   multi method test-dir(*@paths, :$DIR-RECURSION) {
-    self!perform-test($_.IO.abspath, :DIR-RECURSION($DIR-RECURSION // 1)) for @paths; 
+    self!perform-test($_.IO.absolute, :DIR-RECURSION($DIR-RECURSION // 1)) for @paths; 
   }
 
   method supply { 
@@ -35,10 +35,10 @@ class Flow::App {
 
   method !perform-test(Str $dir, @extensions = ['t', 'pm6', 'pm'], :$DIR-RECURSION) {
     return if $DIR-RECURSION < 0;
-    if $dir.IO.e && $dir.IO.f && $dir.IO.abspath ~~ /'.' $<ext>=\w+? $/ {
+    if $dir.IO.e && $dir.IO.f && $dir.IO.absolute ~~ /'.' $<ext>=\w+? $/ {
       next unless $/<ext> eq any @extensions;
       @!ongoing.append: start { 
-        my $path = $dir.IO.abspath;
+        my $path = $dir.IO.absolute;
         my $data = self!test-file($path);
         $!result-receiver.send({
           msg  => 'tested',
@@ -52,8 +52,8 @@ class Flow::App {
     } else {
       $!result-receiver.send: %(
         msg    => 'failure',
-        reason => "$dir.IO.abspath not found",
-        path   => $dir.IO.abspath,
+        reason => "$dir.IO.absolute not found",
+        path   => $dir.IO.absolute,
       );
     } 
   }
