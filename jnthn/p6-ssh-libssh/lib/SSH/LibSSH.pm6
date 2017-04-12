@@ -816,21 +816,22 @@ class SSH::LibSSH {
             my $v = $p.vow;
             given get-event-loop() -> $loop {
                 $loop.run-on-loop: {
-                    my $remaining = $data;
+                    my int $left-to-send = $data.elems;
                     sub maybe-send-something-now() {
                         my uint $ws = ssh_channel_window_size($!channel-handle);
-                        my $send = [min] $ws, 0x1FFFF, $remaining.elems;
+                        my $send = [min] $ws, 0xFFFFF, $left-to-send;
                         if $send {
+                            my $send-buf = $data.subbuf($data.elems - $left-to-send, $send);
                             my $rv = error-check($!session.session-handle,
-                                ssh_channel_write($!channel-handle, $remaining, $send));
-                            $remaining = $remaining.subbuf($send);
+                                ssh_channel_write($!channel-handle, $send-buf, $send));
+                            $left-to-send -= $send;
                             CATCH {
                                 default {
                                     $v.break($_);
                                     return True;
                                 }
                             }
-                            if $remaining.elems == 0 {
+                            if $left-to-send == 0 {
                                 $v.keep(True);
                                 return True;
                             }
