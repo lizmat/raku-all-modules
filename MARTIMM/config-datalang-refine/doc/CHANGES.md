@@ -1,9 +1,10 @@
 ## Release notes
 
 See [semantic versioning](http://semver.org/). Please note point 4. on
-that page: ***Major version zero (0.y.z) is for initial development. Anything may
-change at any time. The public API should not be considered stable.***
+that page: ***Major version zero (0.y.z) is for initial development. Anything may change at any time. The public API should not be considered stable.***
 
+* 0.6.2
+  Changes introduced by Zoffix for IO::Path grant
 * 0.6.1
   * The config in the class is made writable.
   * A few undocumented methods are made private.
