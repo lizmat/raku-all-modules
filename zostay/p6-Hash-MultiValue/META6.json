@@ -1,0 +1,24 @@
+{
+  "name": "Hash::MultiValue",
+  "source-url": "git://github.com/zostay/p6-Hash-MultiValue.git",
+  "support": {
+    "source": "git://github.com/zostay/p6-Hash-MultiValue.git"
+  },
+  "perl": "6.c",
+  "build-depends": [ ],
+  "depends": [ ],
+  "test-depends": [ "Test", "Test::META" ],
+  "author": "Andrew Sterling Hanenkamp",
+  "auth": "github:zostay",
+  "tags": [ "hash", "data structure", "array" ],
+  "license": "Artistic",
+  "provides": {
+    "Hash::MultiValue": "lib/Hash/MultiValue.pm6"
+  },
+  "version": "0.3",
+  "authors": [
+    "Sterling Hanenkamp <hanenkap@cpan.org>"
+  ],
+  "description": "Store multiple values per key, but act like a regular hash",
+  "meta6": "0"
+}

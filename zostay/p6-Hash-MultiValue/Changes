@@ -1,0 +1,21 @@
+v0.3    2017-04-13
+
+    * Adds a set of .new() constructors.
+    * Adds a .from-kv() constructor.
+    * Provides configuration for customizing how from-mixed construction works.
+    * Adds support for binding as Pairs have provided binding support for
+      binding for a long time now.
+    * Bugfix: Fixes a bug where some operations failed to preserve the order of
+      newly added items.
+    * Compatibility Issues: The signature for from-pairs() has changed to +
+      slurpy from * slurpy.
+
+v0.2    2017-04-13
+
+    * Renamed META.info to META6.json
+    * Adds a meta.t test
+    * Adds :auth and :ver declarations to Hash::MultiValue
+
+v0.1
+
+    * Initial relase.

@@ -1,25 +1,51 @@
-#!perl6
+#!/usr/bin/env perl6
 
 use v6;
 
 use Test;
 use Hash::MultiValue;
 
+my @kv = 'a', 1, 'b', 2, 'c', 3, 'a', 4;
 my @pairs = a => 1, b => 2, c => 3, a => 4;
 my %hash = a => [1, 4], b => 2, c => 3;
 
 my @tests = (
-    from-pairs-array  => { Hash::MultiValue.from-pairs(@pairs) }, 
+    from-kv-array     => { Hash::MultiValue.from-kv(@kv) },
+    from-pairs-array  => { Hash::MultiValue.from-pairs(@pairs) },
     from-mixed-hash   => { Hash::MultiValue.from-mixed-hash(%hash) },
-    from-pairs-slurpy => { Hash::MultiValue.from-pairs(|@pairs) }, 
+    from-kv-slurpy    => { Hash::MultiValue.from-kv(|@kv) },
+    from-pairs-slurpy => { Hash::MultiValue.from-pairs(|@pairs) },
     from-mixed-slurpy => { Hash::MultiValue.from-mixed-hash(|%hash) },
+    new-kv-array      => { Hash::MultiValue.new(:@kv) },
+    new-pairs-array   => { Hash::MultiValue.new(:@pairs) },
+    new-mixed-hash    => { Hash::MultiValue.new(:mixed-hash(%hash)) },
 );
 
 for @tests -> $test {
-    my ($name, $t) = $test.kv;
+    my ($name, &construct) = $test.kv;
 
     subtest {
-        my %t := $t.();
+        my %t := construct();
+
+        my $a = 10;
+        %t<a> := $a;
+        is %t<a>, 10, 'correct value after bind';
+        $a = 42;
+        is %t<a>, 42, 'correct value after change elsewhere';
+
+        my $b1 = 11;
+        my $b2 = 12;
+        %t<b> :delete;
+        %t.push('b' => $b1, 'b' => $b2);
+        is %t('b'), (11, 12), 'b = 11, 12';
+        $b1 = 13;
+        is %t('b'), (13, 12), 'b = 13, 12';
+        $b2 = 14;
+        is %t('b'), (13, 14), 'b = 13, 14';
+    }
+
+    subtest {
+        my %t := construct();
 
         is %t<a>, 4, 'a = 4';
         is %t<b>, 2, 'b = 2';
@@ -135,7 +161,7 @@ for @tests -> $test {
             # We don't care what order the keys are in, but the order of the
             # values within the keys relative to one another is very important.
 
-            my sub expected { 
+            my sub expected {
                 my %expected = (
                     a => [a => 7],
                     b => [b => 8, b => 9],
@@ -144,7 +170,7 @@ for @tests -> $test {
                     e => [e => 11, e => 12],
                     f => [f => 13],
                 );
-                for %expected.kv -> $k, $v { 
+                for %expected.kv -> $k, $v {
                     %expected{$k} = [];
                     for @($v) -> $e  {
                         %expected{$k}.append: $e
@@ -178,7 +204,7 @@ for @tests -> $test {
             subtest {
                 my %expected = expected();
 
-                diag %t.all-antipairs.perl;
+                # diag %t.all-antipairs.perl;
                 for %t.all-antipairs -> $p {
                     my $exp-p = %expected{$p.value}.shift;
                     is $p.value, $exp-p.key, "expected value matched to {$p.key}";
@@ -190,7 +216,7 @@ for @tests -> $test {
             subtest {
                 my %expected = expected();
 
-                diag %t.all-invert.perl;
+                # diag %t.all-invert.perl;
                 for %t.all-invert -> $p {
                     my $exp-p = %expected{$p.value}.shift;
                     is $p.value, $exp-p.key, "expected value matched to {$p.key}";
@@ -209,8 +235,8 @@ for @tests -> $test {
             }, '.all-keys and .all-values';
         }, 'all-pairs list methods';
 
-        is %t.perl, 'Hash::MultiValue.from-pairs(:a(7), :b(8), :b(9), :c(10), :d(6), :e(11), :e(12), :f(13))', ".perl"; 
-        is %t.gist, 'Hash::MultiValue.from-pairs(a => 7, b => 8, b => 9, c => 10, d => 6, e => 11, e => 12, f => 13)', ".gist"; 
+        is %t.perl, 'Hash::MultiValue.from-pairs(:a(7), :b(8), :b(9), :c(10), :d(6), :e(11), :e(12), :f(13))', ".perl";
+        is %t.gist, 'Hash::MultiValue.from-pairs(a => 7, b => 8, b => 9, c => 10, d => 6, e => 11, e => 12, f => 13)', ".gist";
 
         %t.push: a => 14, 'c', 15, 'e' => 16;
 

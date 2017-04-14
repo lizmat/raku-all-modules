@@ -1,4 +1,4 @@
-unit class Hash::MultiValue is Associative;
+unit class Hash::MultiValue:ver<0.3>:auth<github:zostay> is Associative;
 
 use v6;
 
@@ -7,7 +7,7 @@ use v6;
 =begin SYNOPSIS
 
     my %mv := Hash::MultiValue.from-pairs: (a => 1, b => 2, c => 3, a => 4);
-    
+
     say %mv<a>; # 4
     say %mv<b>; # 2
 
@@ -35,6 +35,8 @@ This class is useful in cases where a program needs to have a hash that may or m
 
 If some code is handed this object where a common L<Associative> object (like a L<Hash>) is expected, it will work as expected. Each value will only have a single value available. However, when one of these objects is used as function or using the various C<.all-*> alternative methods, the full multi-valued contents of the keys can be fetched, modified, and iterated.
 
+This class makes no guarantees to preserve the order of keys. However, the order of the multiple values stored within a key is guaranteed to be preserved. If you require key order to be preserved, you may want to look into L<ArrayHash> instead.
+
 =end DESCRIPTION
 
 =head1 Methods
@@ -42,10 +44,27 @@ If some code is handed this object where a common L<Associative> object (like a 
 has @.all-pairs; #= Stores all keys and values for the hash
 has %.singles = @!all-pairs.hash; #= Stores a simplified version of the hash with all keys, but only the last value
 
+# Internal method that fills in wholes with new pairs and appends the rest to
+# the list of pairs.
 multi method add-pairs(@new is copy) {
+    # Helps to preserve order
+    my %exists := bag(
+        @new.grep({
+            %!singles{ .key } :exists
+        }).map({ .key })
+    );
+    my %encountered := BagHash.new;
+
     for @!all-pairs.kv -> $i, $v {
-        next if $v.defined;
+        with $v {
+            %encountered{ .key }++;
+            next;
+        }
+
+        next if %exists{ @new[0].key } && !%encountered{ @new[0].key } == %exists{ @new[0].key };
+
         @!all-pairs[$i] = @new.shift;
+
         last unless @new;
     }
 
@@ -57,71 +76,157 @@ multi method add-pairs(*@new) {
 }
 
 =begin pod
-=head2 method from-pairs
 
-    multi method from-pairs(@pairs) returns Hash::MultiValue
-    multi method from-pairs(*@pairs) returns Hash::MultiValue
+=head2 method new
 
-This takes a list of pairs and constructs a L<Hash::MultiValue> object from it. Use this method or L</method from-mixed-hash> instead of L</new>. Multiple pairs with the same key may be included in this list and all values will be associated with that key. 
+    multi method new(Hash::MultiValue:U:) returns Hash::MultiValue:D
+    multi method new(Hash::MultiValue:U: :@pairs!) returns Hash::MultiValue:D
+    multi method new(Hash::MultiValue:U: :@kv!) returns Hash::MultiValue:D
+    multi method new(Hash::MultiValue:U: :%mixed-hash!, :$iterate = Iterable, :&iterator) returns Hash::MultiValue:D
 
-Please note, that because of the way Perl 6 handles pairs in slurpy context, you may need to wrap them in a list for this to work:
+This method constructs a multi-value hash. If called with no arguments, an empty hash will be constructed.
 
-    # THIS
-    my %h := Hash::MultiValue.from-pairs: (a => 1, b => 2);
-    # NOT this
-    my %h := Hash::MultiValue.from-pairs(a => 1, b => 2);
+    my %empty := Hash::MultiValue.new;
+
+If called with the named C<pairs> argument, then the given pairs will be used to instantiate the list. This is similar to calling C<from-pairs> with the given list..
+
+    my %from-pairs := Hash::MultiValue.new(
+        pairs => (a => 1, b => 2, a => 3),
+    );
+
+If called with the named C<kv> argument, then the given list must have an even number of elements. The even-indexed items will be treated as keys, and the following odd-indexed items will be treated as the value for the preceding key. This is similar to calling C<from-kv>.
+
+    my %from-kv = Hash::MultiValue.new(
+        kv => ('a', 1, 'b', 2, 'a', 3),
+    );
+
+If called with the named C<mixed-hash> argument, then the given hash will be treated as a mixed value hash. A mixed value hash is complicated, so using it to initialize this data structure is not ideal.
+
+In order to initialize from such a structure, every value in the given hash must be evaluted by type. If the type of the value matches the one found in C<$iterator> (L<Iterable> by default), then the key will be inserted multiple times, one for each item iterated. The iteration will be handled by just looping over the values using a C<map> operation. You can provide your own C<&iterator> as well, which will be called for each value matching C<$iterator>. The first argument will be key to return and the second will be the value that needs to be iterated. The C<&terator> should return a C<Seq> of C<Pair>s.
+
+    my %from-mixed := Hash::MultiValue.new(
+        mixed-hash => {
+            a => [ 1, 3 ],
+            b => 2,
+        },
+    );
 
 =end pod
 
-#| Construct a Hash::MultiValue object from an list of pairs
-multi method from-pairs(@pairs) returns Hash::MultiValue {
-    self.bless(all-pairs => @pairs);
+multi method new(:@pairs!) {
+    self.new(all-pairs => @pairs);
 }
 
-#| Construct a Hash::MultiValue object from a list of pairs
-multi method from-pairs(*@pairs) returns Hash::MultiValue {
-    self.bless(all-pairs => @pairs);
+multi method new(:@kv!) {
+    fail "an even number of items is required" unless @kv.elems %% 2;
+    self.new(all-pairs => @kv.map({ $^k => $^v }));
 }
+
+sub iterate-iterable($k, $v) { |$v.map($k => *) }
+
+multi method new(:%mixed-hash!, :$iterate = Iterable, :&iterator = &iterate-iterable) {
+    self.new(all-pairs => do for %mixed-hash.kv -> $k, $v {
+        given $v {
+            when $iterate { iterator($k, $v) }
+            default       { $k => $v }
+        }
+    });
+}
+
+=begin pod
+
+=head2 method from-pairs
+
+    method from-pairs(Hash::MultiValue:U: +@pairs) returns Hash::MultiValue:D
+
+This takes a list of pairs and constructs a L<Hash::MultiValue> object from it. Multiple pairs with the same key may be included in this list and all values will be associated with that key.
+
+It should be noted that you may need to be a little careful with how you pass your pairs into this method. Perl 6 treats anything that looks like a named argument as a named argument. Here's a quick example of what works and what doesn't:
+
+    # THIS
+    my %h := Hash::MultiValue.from-pairs: (a => 1, b => 2, a => 3);
+    # OR THIS
+    my %h := Hash::MultiValue.from-pairs((a => 1, b => 2, a => 3));
+    # OR THIS
+    my %h := Hash::MultiValue.from-pairs('a' => 1, 'b' => 2, 'a' => 3);
+    # OR THIS
+    my @a := (a => 1, b => 2, a => 3);
+    my %h := Hash::MultiValue.from-pairs(@a);
+
+    # BUT NOT
+    my %h := Hash::MultiValue.from-pairs(a => 1, b => 2, a => 3);
+    # ALSO NOT
+    my %h := Hash::MultiValue.from-pairs(|@a);
+
+To protect from accidentally passing these as named arguments, the method will fail if any named arguments are detected.
+
+=end pod
+
+#| Construct a Hash::MultiValue object from a list of pairs
+method from-pairs(+@pairs, *%badness) returns Hash::MultiValue:D {
+    fail "named arguments passed to from-pairs, only a list argument is permitted"
+        if %badness;
+
+    self.new(all-pairs => @pairs);
+}
+
+=begin pod
+=head2 method from-kv
+
+    method from-kv(Hash::MultiValue:U: +@kv) returns Hash::MultiValue:D
+
+This takes a list of keys and values in a single list and turns them into pairs. The given list of items must have an even number of elements or the method will fail.
+
+The even-indexed items will be treated as keys, and the following odd-indexed items will be treated as the value for the preceding key. This is similar to calling C<from-kv>.
+
+=end pod
+
+method from-kv(+@kv) { self.new(:@kv) }
 
 =begin pod
 =head2 method from-mixed-hash
 
-    multi method from-mixed-hash(%hash)
-    multi method from-mixed-hash(*%hash)
+    multi method from-mixed-hash(Hash::MultiValue:U: %hash, :$iterate = Iterable, :&iterate) returns Hash::MultiValue:D
+    multi method from-mixed-hash(Hash::MultiValue:U: *%hash) returns Hash::MultiValue:D
 
-This takes a hash and constructs a new L<Hash::MultiValue> from it. If any value in the hash is L<Positional>, it will be interpreted as a multi-valued key. If you need Positional objects preserved as values, then you'll have to use L</method from-pairs> instead and build your own list of pairs for construction. That method is more precise.
+This takes a hash and constructs a new L<Hash::MultiValue> from it as a mixed-value hash. A mixed value hash is complicated, so using it to initialize this data structure is not ideal.
+
+In order to initialize from such a structure, every value in the given hash must be evaluted by type. If the type of the value matches the one found in C<$iterator> (L<Iterable> by default), then the key will be inserted multiple times, one for each item iterated. The iteration will be handled by just looping over the values using a C<map> operation. You can provide your own C<&iterator> as well, which will be called for each value matching C<$iterator>. The first argument will be key to return and the second will be the value that needs to be iterated. The C<&terator> should return a C<Seq> of C<Pair>s.
+
+    my %from-mixed := Hash::MultiValue.from-mixed-hash(
+        a => [ 1, 3 ],
+        b => 2,
+    );
+
+    # The above is basically identical to:
+    # Hash::MultiValue.from-pairs: (a => 1, a => 3, b => 2);
+
+B<Caution:> If you use the slurpy version of this method, you have no additional named options. Passing C<iterate> or C<iterator> will just result in those being put into the data structure.
 
 =end pod
 
 #| Construct a Hash::MultiValue object from a mixed value hash
-multi method from-mixed-hash(%hash) returns Hash::MultiValue {
-    my @pairs = do for %hash.kv -> $k, $v {
-        given $v {
-            when Positional { .map($k => *).Slip }
-            default         { $k => $v }
-        }
-    }
-    self.bless(all-pairs => @pairs);
+multi method from-mixed-hash(%mixed-hash, :$iterate = Iterable, :&iterator = &iterate-iterable) returns Hash::MultiValue:D {
+    self.new(:%mixed-hash, :$iterate, :&iterator);
 }
 
 #| Construct a Hash::MultiValue object from a mixed value hash
-multi method from-mixed-hash(*%hash) returns Hash::MultiValue {
-    my $x = self.from-mixed-hash(%hash); # CALLWITH Y U NO WORK???
-    return $x;
+multi method from-mixed-hash(*%mixed-hash) returns Hash::MultiValue:D {
+    self.new(:%mixed-hash);
 }
 
 =begin pod
 =head2 method postcircumfix:<{ }>
 
-    method postcircumfix:<{ }> (%key) is rw
+    method postcircumfix:<{ }> (Hash::MultiValue:D: %key) is rw
 
-Whenever reading or writing keys using the C<{ }> operator, the hash will behave as a regular built-in L<Hash>. Any write will overwrite all values that have been set on the multi-value hash with a single value. 
+Whenever reading or writing keys using the C<{ }> operator, the hash will behave as a regular built-in L<Hash>. Any write will overwrite all values that have been set on the multi-value hash with a single value.
 
     my %mv := Hash::MultiValue.from-pairs(a => 1, b => 2, a => 3);
     %mv<a> = 4;
     say %mv('a').join(', '); # 4
 
-Any read will only read a single value, even if multiple values are stored for that key. 
+Any read will only read a single value, even if multiple values are stored for that key.
 
     my %mv := Hash::MultiValue.from-pairs(a => 1, b => 2, a => 3);
     say %mv<a>; # 3
@@ -134,48 +239,45 @@ You may also use the C<:delete> and C<:exists> adverbs with these objects.
     say %mv<a> :delete; # 3 (both 1 and 3 are gone)
     say %mv<b> :exists; # True
 
-One operation that is B<not> supported by L<Hash::MultiValue> is binding. For example,
+Binding is also supported. For example,
 
     my $a = 4;
     %mv<a> := $a;
     $a = 5;
     say %mv<a>; # 4
 
-Binding is not supported at this time, but might be in the future.
-
 =end pod
 
-method AT-KEY($key) { 
-    %!singles{$key} 
+method AT-KEY(Hash::MultiValue:D: $key) {
+    %!singles{$key}
 }
 
-method ASSIGN-KEY($key, $value) { 
+method ASSIGN-KEY(Hash::MultiValue:D: $key, $value) {
     @!all-pairs[ @!all-pairs.grep({ .defined && .key eqv $key }, :k) ] :delete;
     self.add-pairs(($key => $value).list);
     %!singles{$key} = $value;
     $value;
 }
 
-# Not supported yet
-# method BIND-KEY($key, $value is rw) { 
-#     @!all-pairs = @!all-pairs.grep(*.key !eqv $key);
-#     @!all-pairs.push: $key => $value;
-#     %!singles{$key} := $value;
-# }
+method BIND-KEY($key, $value is rw) {
+    @!all-pairs[ @!all-pairs.grep({ .defined && .key eqv $key }, :k) ] :delete;
+    self.add-pairs(($key => $value,));
+    %!singles{$key} := $value;
+}
 
-method DELETE-KEY($key) {
+method DELETE-KEY(Hash::MultiValue:D: $key) {
     @!all-pairs[ @!all-pairs.grep({ .defined && .key eqv $key }, :k) ] :delete;
     %!singles{$key} :delete;
 }
 
-method EXISTS-KEY($key) {
+method EXISTS-KEY(Hash::MultiValue:D: $key) {
     %!singles{$key} :exists;
 }
 
 =begin pod
 =head2 method postcircumfix:<( )>
 
-    method postcircumfix:<( )> ($key) is rw
+    method postcircumfix:<( )> (Hash::MultiValue:D: $key) is rw
 
 The C<( )> operator may be used in a fashion very similar to C<{ }>, but in that it always works with multiple values. You may use it to read multiple values from the object:
 
@@ -199,7 +301,7 @@ method CALL-ME($key) is rw {
     my $self = self;
     my @all-pairs := @!all-pairs;
     Proxy.new(
-        FETCH => method () { 
+        FETCH => method () {
             @(@all-pairs.grep({ .defined && .key eqv $key })».value)
         },
         STORE => method (*@new) {
@@ -295,14 +397,14 @@ method push(*@values, *%values) {
     my ($previous, Bool $has-previous);
     for flat @values, %values.pairs -> $v {
         if $has-previous {
-            self.add-pairs: $previous => $v;
+            self.add-pairs: ($previous => $v,);
             %new-singles{ $previous } = $v;
 
             $has-previous--;
         }
         elsif $v ~~ Pair {
-            self.add-pairs: $v.key => $v.value;
-            %new-singles{ $v.key } = $v.value;
+            self.add-pairs: ($v,);
+            %new-singles.push: $v;
         }
         else {
             $has-previous++;
@@ -327,9 +429,9 @@ method push(*@values, *%values) {
 Returns code as a string that can be evaluated with C<EVAL> to recreate the object.
 =end pod
 
-multi method perl(Hash::MultiValue:D:) returns Str { 
-    "Hash::MultiValue.from-pairs(" 
-        ~ @!all-pairs.grep(*.defined).sort(*.key cmp *.key).map(*.perl).join(", ") 
+multi method perl(Hash::MultiValue:D:) returns Str {
+    "Hash::MultiValue.from-pairs("
+        ~ @!all-pairs.grep(*.defined).sort(*.key cmp *.key).map(*.perl).join(", ")
         ~ ")"
 }
 
@@ -341,7 +443,7 @@ Like L</method perl>, but only includes up to the first 100 keys.
 =end pod
 
 multi method gist(Hash::MultiValue:D:) {
-    "Hash::MultiValue.from-pairs(" ~ 
+    "Hash::MultiValue.from-pairs(" ~
         @!all-pairs.grep(*.defined).sort(*.key cmp *.key).map(-> $elem {
             given ++$ {
                 when 101 { '...' }
