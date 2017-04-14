@@ -188,11 +188,11 @@ class GLOBAL::X::HTTP::Request::Supply::ServerError is Exception {
 my constant CR = 0x0d;
 my constant LF = 0x0a;
 
-my sub scan-for-header-end(:$scan-start, :$buf) {
+my sub scan-for-header-end(:$scan-start, :$buf, :&debug!) {
     for $scan-start .. $buf.bytes - 4 -> $i {
-        # note $buf[$i..$i+3].map(*.fmt("%02X")) ~ " " ~ buf8.new($buf[$i..$i+3]).decode.subst(/\r?\n/, '||', :g);
+        debug $buf[$i..$i+3].map(*.fmt("%02X")) ~ " " ~ buf8.new($buf[$i..$i+3]).decode.subst(/\r?\n/, '||', :g);
         next unless $buf[$i..$i+3] eqv (CR,LF,CR,LF);
-        # note "BREAK";
+        debug "BREAK";
 
         return $i;
     }
@@ -200,9 +200,9 @@ my sub scan-for-header-end(:$scan-start, :$buf) {
     return -1;
 }
 
-my sub parse-header($header-buf, Bool :$include-request-line = True, :&other-sink) {
+my sub parse-header($header-buf, Bool :$include-request-line = True, :&other-sink, :&debug!) {
 
-    # note "[{$header-buf.decode}]";
+    debug "[{$header-buf.decode}]";
 
     my @headers = $header-buf.decode('iso-8859-1').split("\r\n");
 
@@ -239,7 +239,7 @@ my sub parse-header($header-buf, Bool :$include-request-line = True, :&other-sin
             $name = "HTTP_" ~ $name.uc;
 
             if %env{ $name } :exists {
-                %env{ $name } ~= ',', $value;
+                %env{ $name } ~= ',' ~ $value;
             }
             else {
                 %env{ $name } = $value;
@@ -260,7 +260,11 @@ my sub parse-header($header-buf, Bool :$include-request-line = True, :&other-sin
     return %env;
 }
 
-multi method parse-http(Supply:D() $conn) returns Supply:D {
+multi method parse-http(Supply:D() $conn, Bool :$debug = False) returns Supply:D {
+    sub debug(*@msg) {
+        note "# [{now.Rat.fmt("%.5f")}] (#$*THREAD.id()) ", |@msg if $debug
+    }
+
     supply {
         my buf8 $buf .= new;
 
@@ -286,7 +290,7 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
         my Bool $has-closed = False;
 
         whenever $parser-event.Supply {
-            # note "MODE $mode";
+            debug "MODE $mode";
             given $mode {
                 when Error {
                     # We are in a bad state at this point, ignore any
@@ -295,15 +299,15 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                 }
                 when Closed {
                     unless $has-closed++ {
-                        # note "HTTP DONE";
+                        debug "HTTP DONE";
                         done;
                     }
                 }
                 when Header {
-                    # note "buf = ", $buf;
-                    # note "scan-start = $scan-start";
-                    my $header-end = scan-for-header-end(:$scan-start, :$buf);
-                    # note "header-end = $header-end";
+                    debug "buf = ", $buf;
+                    debug "scan-start = $scan-start";
+                    my $header-end = scan-for-header-end(:$scan-start, :$buf, :&debug);
+                    debug "header-end = $header-end";
 
                     # Found the end of headers, let's get parsing
                     if $header-end > 0 {
@@ -313,11 +317,12 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                                 $other-sink.emit($header-buf);
                                 $other-sink.Supply
                             }),
+                            :&debug,
                         );
                         $buf          .= subbuf($header-end + 4);
 
                         $body-sink = Supplier::Preserving.new;
-                        # note "body-sink = ", $body-sink.WHICH;
+                        debug "body-sink = ", $body-sink.WHICH;
                         %env<p6w.input> = $body-sink.Supply;
 
                         # dd %env;
@@ -331,7 +336,7 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                             $close = True if $http-connection eq 'close';
                         }
 
-                        # note "SWITCH TO BODY";
+                        debug "SWITCH TO BODY";
                         $mode = Body;
                         $emitted-bytes = 0;
                         $parser-event.emit(True);
@@ -359,7 +364,7 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                     # didn't find it. We are getting no more input from the
                     # input stream, so time to give up.
                     if $mode === Header && $no-more-input {
-                        # note "SWITCH TO Closed";
+                        debug "SWITCH TO Closed";
                         $mode = Closed;
                         $parser-event.emit(True);
                     }
@@ -367,43 +372,61 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                 when Body {
                     my $finished-body = False;
 
-                    # note "READING BODY";
+                    debug "READING BODY";
                     if %env<HTTP_TRANSFER_ENCODING>.defined && %env<HTTP_TRANSFER_ENCODING> eq 'chunked' {
                         my enum <Size Chunk Trailers Done>;
                         my $state = Size;
                         my $size = 0;
                         while $state !=== Done {
-                            # note "state = $state";
+                            debug "state = $state";
                             given $state {
                                 when Size {
                                     my $size-end;
-                                    for 0..$buf.bytes - 2 -> $i {
-                                        next unless $buf[$i..$i+1] eqv (CR,LF);
+
+                                    debug "Scanning for size: ", $buf;
+
+                                    # We need more bytes
+                                    unless $buf.bytes > 2 {
+                                        $state = Done;
+                                        next;
+                                    }
+
+                                    BYTE: for 1..$buf.bytes - 2 -> $i {
+                                        next BYTE unless $buf[$i..$i+1] eqv (CR,LF);
 
                                         $size-end = $i;
-                                        # note "size-end = $size-end";
-                                        last;
+                                        debug "size-end = $size-end";
+                                        last BYTE;
+                                    }
+
+                                    # We still need more bytes
+                                    without $size-end {
+                                        $state = Done;
+                                        next;
                                     }
 
                                     if $size-end -> $i {
                                         $size = $buf.subbuf(0, $i).decode('ascii');
-                                        # note "size originally = $size";
+                                        debug "size originally = $size";
 
                                         # throw away extension details, if any
                                         $size .= subst(/';' .*/, '');
-                                        # note "size so far = $size";
+
+                                        # TODO This feels slightly icky, is it?
+                                        $size .= subst(/^\n/, '');
+                                        debug "size so far = $size";
                                         $size  = :16($size);
-                                        # note "size = $size";
+                                        debug "size = $size";
 
                                         $state = Chunk;
                                         $buf.=subbuf($i+2);
-                                        # note "buf = {$buf.decode}";
+                                        debug "buf = [{$buf.decode}]";
                                     }
                                 }
                                 when Chunk {
-                                    # note "Chunk size = $size";
-                                    # note "buf.bytes = {$buf.bytes}";
-                                    # note "no-more-input = $no-more-input";
+                                    debug "Chunk size = $size";
+                                    debug "buf.bytes = {$buf.bytes}";
+                                    debug "no-more-input = $no-more-input";
                                     # Last chunk, consume empty chunk and handle
                                     # trailers
                                     if $size == 0 {
@@ -413,9 +436,9 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                                     # Emit the current chunk, go back to look
                                     # for size again
                                     elsif $buf.bytes >= $size {
-                                        # note "emit {$buf.subbuf(0, $size).decode}";
+                                        debug "emit {$buf.subbuf(0, $size).decode}";
                                         $body-sink.emit($buf.subbuf(0, $size));
-                                        $buf.=subbuf($size+2);
+                                        $buf.=subbuf($buf.bytes min $size+2);
                                         $state = Size;
                                     }
 
@@ -429,13 +452,15 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                                     # We don't have the whole chunk yet, we'll
                                     # come back for it later.
                                     else {
-                                        $buf = $size.fmt("%X").encode('ascii')
-                                             ~ CR ~ LF ~ $buf;
+                                        subbuf-rw($buf)
+                                            = $size.fmt("%X").encode('ascii')
+                                            ~ buf8.new(CR, LF)
+                                            ~ $buf;
                                         $state = Done;
                                     }
                                 }
                                 when Trailers {
-                                    my $header-end = scan-for-header-end(:0scan-start, :$buf);
+                                    my $header-end = scan-for-header-end(:0scan-start, :$buf, :&debug);
 
                                     # 0 or more trailing headers found, chunking
                                     # is now complete.
@@ -444,10 +469,11 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                                             my %trailers = parse-header(
                                                 $buf.subbuf(0, $header-end),
                                                 :!include-request-line,
+                                                :&debug,
                                             );
                                             $buf .= subbuf($header-end + 4);
 
-                                            # note "body emit {%trailers.perl}";
+                                            debug "body emit {%trailers.perl}";
                                             $body-sink.emit(%trailers);
                                         }
 
@@ -467,8 +493,9 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                                     # Failed to find the last trailer, quit and
                                     # come back later
                                     else {
-                                        $buf = "0".encode('ascii')
-                                            ~ CR ~ LF ~ $buf;
+                                        subbuf-rw($buf)
+                                            = buf8.new('0'.ord, CR, LF)
+                                            ~ $buf;
                                         $state = Done;
                                     }
                                 }
@@ -477,19 +504,19 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                     }
 
                     elsif %env<CONTENT_LENGTH> -> $content-length {
-                        # note "content-length: $content-length";
+                        debug "content-length: $content-length";
 
                         # Do we expect more bytes?
                         my $need-bytes = $content-length - $emitted-bytes;
-                        # note "need-bytes = $need-bytes";
-                        # note "buf.bytes = {$buf.bytes}";
-                        # note "GOING TO OUTPUT? {$need-bytes > 0 && $buf.bytes > 0}";
+                        debug "need-bytes = $need-bytes";
+                        debug "buf.bytes = {$buf.bytes}";
+                        debug "GOING TO OUTPUT? {$need-bytes > 0 && $buf.bytes > 0}";
                         if $need-bytes > 0 && $buf.bytes > 0 {
 
                             # Emit as many bytes as we can, but not more than we expect.
                             my $output-bytes = $buf.bytes min $need-bytes;
-                            # note "body-sink = ", $body-sink.WHICH;
-                            # note "<{$buf.subbuf(0, $output-bytes).decode}>";
+                            debug "body-sink = ", $body-sink.WHICH;
+                            debug "<{$buf.subbuf(0, $output-bytes).decode}>";
                             $body-sink.emit($buf.subbuf(0, $output-bytes));
                             $emitted-bytes += $output-bytes;
 
@@ -499,7 +526,7 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                         }
 
                         $finished-body = $need-bytes == 0;
-                        # note "finished-body = $finished-body";
+                        debug "finished-body = $finished-body";
                     }
 
                     else {
@@ -516,18 +543,18 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
 
                     # If we see that No more input is coming and we are out of
                     # bytes to parse, we need to stop here.
-                    # note "buf.bytes = {$buf.bytes}";
-                    # note "no-more-input = {$no-more-input}";
+                    debug "buf.bytes = $buf.bytes()";
+                    debug "no-more-input = {$no-more-input}";
                     $finished-body = True
                         if $buf.bytes == 0 && $no-more-input;
 
                     # Finish the body when we meet expectations.
                     if $finished-body {
-                        # note "BODY DONE ", $body-sink.WHICH;
+                        debug "BODY DONE ", $body-sink.WHICH;
                         $body-sink.done;
                         $close = True if $buf.bytes == 0 && $no-more-input;
                         $mode = $close ?? Closed !! Header;
-                        # note "SWITCHING TO $mode";
+                        debug "SWITCHING TO $mode";
                         $scan-start = 0;
                         $parser-event.emit(True);
                     }
@@ -536,7 +563,7 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
                     $other-sink.emit($buf) if $buf.bytes > 0;
                     $buf = buf8.new;
                     if $no-more-input {
-                        # note "OTHER DONE";
+                        debug "OTHER DONE";
                         done;
                     }
                 }
@@ -546,17 +573,17 @@ multi method parse-http(Supply:D() $conn) returns Supply:D {
 
         whenever $conn -> $chunk {
             LAST {
-                # note "NO MORE INPUT";
+                debug "NO MORE INPUT";
                 $no-more-input++;
                 $parser-event.emit(True);
             }
             QUIT {
-                # note "ERROR ", $_;
+                debug "ERROR ", $_;
                 .rethrow;
             }
 
-            # note "READ ", $chunk;
-            $buf ~= $chunk;
+            debug "READ ", $chunk;
+            $buf = $buf ~ $chunk;
 
             $parser-event.emit(True);
         }
