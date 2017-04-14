@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bduggan/p6-digest-sha1-native.git
 	branch = master
-	commit = 27aa1f71cace2764324ff8e74431128a582c7f00
-	parent = ee3fba287a4b9e3b17848853b233bab0594a9347
+	commit = 8cd6ad24968497a7d0c30fb79393fc975031b193
+	parent = 47248bb027733261995dd011b2fd1f8844052106
 	cmdver = 0.4.0
