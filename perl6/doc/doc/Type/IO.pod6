@@ -296,13 +296,23 @@ is C<False>, implying text semantics.
 
 The encoding to use if opened in text mode.
 
-    # open explicitly as utf8
-    my $fh = open("path-to-file", enc => "utf8");
-    my $fh = open("path-to-file", enc => "utf-8");  # this form also works
-    # open with latin1 encoding
-    my $fh = open("path-to-file", enc => "latin1");
+    my $fh1 = open 'path-to-file';                # default, utf-8
+    my $fh2 = open 'path-to-file', :enc<latin-1>; # explicit, latin-1
 
-Defaults to "utf8".
+Defaults to C<utf8>. The values are case-insensitive. The available encodings
+vary by implementation and backend. On Rakudo MoarVM the following are
+supported:
+
+  utf8
+  utf16
+  utf8-c8
+  iso-8859-1
+  windows-1252
+  ascii
+
+Implementation may choose to also provide support for aliases, e.g. Rakudo
+allows aliases C<latin-1> for C<iso-8859-1> encoding and dashed utf versions:
+C<utf-8> and C<utf-16>.
 
 =head3 Newline options
 
