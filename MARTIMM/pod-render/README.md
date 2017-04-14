@@ -21,7 +21,7 @@ See pod documentation in pdf format at
 
 ## INSTALLING THE MODULES
 
-Use panda or zef to install the package.
+Use zef to install the package.
 
 ## Versions of PERL, MOARVM
 
