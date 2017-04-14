@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/jsimonet/log-any.git
+	branch = master
+	commit = 458f934293086c3aa38bdcc4c99328807b8e95aa
+	parent = fc72c1cac54c9f6df1dd5c6cb0886057e8b808e6
+	cmdver = 0.4.0

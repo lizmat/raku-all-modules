@@ -1,0 +1,34 @@
+{
+	"perl" : "6.c",
+	"name" : "Log::Any",
+	"version" : "0.9.0",
+	"description" : "Generate and handle logs with pipelines, filters and formatters.",
+	"tags" : [
+		"log", "logging", "logger",
+		"async", "asynchronous"
+	],
+	"authors" : [ "Julien Simonet" ],
+	"provides" : {
+		"Log::Any" : "lib/Log/Any.pm6",
+		"Log::Any::Pipeline" : "lib/Log/Any/Pipeline.pm6",
+		"Log::Any::Adapter" : "lib/Log/Any/Adapter.pm6",
+		"Log::Any::Adapter::BlackHole" : "lib/Log/Any/Adapter.pm6",
+		"Log::Any::Adapter::File" : "lib/Log/Any/Adapter/File.pm6",
+		"Log::Any::Adapter::Stdout" : "lib/Log/Any/Adapter/Stdout.pm6",
+		"Log::Any::Adapter::Stderr" : "lib/Log/Any/Adapter/Stderr.pm6",
+		"Log::Any::Definitions" : "lib/Log/Any/Definitions.pm6",
+		"Log::Any::Filter" : "lib/Log/Any/Filter.pm6",
+		"Log::Any::FilterBuiltIN" : "lib/Log/Any/Filter.pm6",
+		"Log::Any::Formatter" : "lib/Log/Any/Filter.pm6",
+		"Log::Any::FormatterBuiltIN" : "lib/Log/Any/Filter.pm6"
+	},
+	"depends" : [
+	],
+	"test-depends" : [
+		"Test",
+		"Test::META"
+	],
+	"resources" : [ ],
+	"license" : "Artistic-2.0",
+	"source-url" : "git://github.com/jsimonet/log-any.git"
+}
