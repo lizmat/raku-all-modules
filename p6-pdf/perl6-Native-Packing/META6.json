@@ -1,0 +1,15 @@
+{
+    "perl"        : "6.c",
+    "name"        : "Native::Packing",
+    "tags"        : ["binary", "endian", "native", "struct" ], 
+    "version"     : "0.0.1",
+    "auth"        : "github:p6-pdf",
+    "description" : "Endian safe Binary Struct packing and unpacking",
+    "depends"     : [ ],
+    "source-url"  : "git://github.com/p6-pdf/perl6-Native-Packing.git",
+    "provides"    : {
+
+        "Native::Packing" : "lib/Native/Packing.pm"
+
+     }
+}
