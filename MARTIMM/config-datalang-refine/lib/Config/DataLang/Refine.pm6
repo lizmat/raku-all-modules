@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 #-------------------------------------------------------------------------------
 class X::Config::DataLang::Refine is Exception {
@@ -6,7 +6,7 @@ class X::Config::DataLang::Refine is Exception {
 }
 
 #-------------------------------------------------------------------------------
-class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
+class Config::DataLang::Refine:auth<github:MARTIMM> {
 
   has Array $!config-names = [];
   has Array $!locations = [];
@@ -54,13 +54,15 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
 
     given $data-module {
       when 'Config::TOML' {
-        require ::($data-module) <&from-toml>;
+        (try require ::($data-module) <&from-toml>) === Nil
+             and die "Failed to load $data-module";
         $!read-from-text = &from-toml;
         $!extension = '.toml';
       }
 
       when 'JSON::Fast' {
-        require ::($data-module) <&from-json>;
+        (try require ::($data-module) <&from-json>) === Nil
+             and die "Failed to load $data-module";
         $!read-from-text = &from-json;
         $!extension = '.json';
       }
@@ -357,7 +359,7 @@ class Config::DataLang::Refine:auth<https://github.com/MARTIMM> {
   method !encode-uri-t2 ( Str $entry --> Str ) {
 
     my Str $new-entry = '';
-    for ($entry ~~ /(.)+/).flat -> $c is copy { 
+    for ($entry ~~ /(.)+/).flat -> $c is copy {
       $c = $c.Str;
       my int $c-ord = $c.ord;
 
