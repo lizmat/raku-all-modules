@@ -1,0 +1,11 @@
+{
+  "name"        : "NCurses6",
+  "version"     : "0.0.1",
+  "perl"        : "6.c",
+  "description" : "Perl 6 interface to NCurses6, the text-based interface libary",
+  "depends"     : [ ],
+  "provides"    : {
+    "NCurses6"	  : "lib/NCurses6.pm6"
+  },
+  "source-url"  : "git://github.com/blippy/perl6-ncurses6.git"
+}
