@@ -11,7 +11,7 @@ use Net::ZMQ::Util;
 use Net::ZMQ::Poll;
 
 # ZMQ_EXPORT int zmq_device (int device, void * insocket, void* outsocket);
-my sub zmq_device(int, Net::ZMQ::Socket, Net::ZMQ::Socket --> int) is native('libzmq') { * }
+my sub zmq_device(int32, Net::ZMQ::Socket, Net::ZMQ::Socket --> int32) is native('zmq',v5) { * }
 
 multi sub device(Net::ZMQ::Socket $in, Net::ZMQ::Socket $out, Bool :queue($)) is export {
     # TODO: Check for errors and turn them into exceptions.

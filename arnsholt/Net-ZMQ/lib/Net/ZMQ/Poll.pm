@@ -5,7 +5,7 @@ use NativeCall;
 unit module Net::ZMQ::Poll;
 
 # ZMQ_EXPORT int zmq_poll (zmq_pollitem_t *items, int nitems, long timeout);
-my sub zmq_poll(Net::ZMQ::Pollitem, int32, int64 --> int32) is native('libzmq') { * }
+my sub zmq_poll(Net::ZMQ::Pollitem, int32, int64 --> int32) is native('zmq',v5) { * }
 
 # This is a temporary function. Ideally, we'd like to allow the user to poll
 # several sockets at the same time (obviously). But the zmq_poll function

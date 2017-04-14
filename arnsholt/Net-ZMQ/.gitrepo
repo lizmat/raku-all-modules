@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/arnsholt/Net-ZMQ.git
 	branch = master
-	commit = d89c744c23c952f2be88d2978a7545c142facf63
-	parent = 3245a1c13a052384d10934e466c50dc96127e744
+	commit = fa19e477569e8010220592023fdf5fdb3e953cf8
+	parent = bc438541acd415d199aca574a869fdbc39d9a497
 	cmdver = 0.4.0

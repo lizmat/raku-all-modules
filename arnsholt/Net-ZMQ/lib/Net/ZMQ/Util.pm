@@ -3,11 +3,11 @@ unit module Net::ZMQ::Util;
 use NativeCall;
 
 # ZMQ_EXPORT void zmq_version (int *major, int *minor, int *patch);
-sub zmq_version(CArray[int], CArray[int], CArray[int]) is native('libzmq') { * }
+sub zmq_version(CArray[int32], CArray[int32], CArray[int32]) is native('zmq',v5) { * }
 # ZMQ_EXPORT int zmq_errno (void);
-sub zmq_errno(--> int) is native('libzmq') { * }
+sub zmq_errno(--> int32) is native('zmq',v5) { * }
 # ZMQ_EXPORT const char *zmq_strerror (int errnum);
-sub zmq_strerror(int --> Str) is native('libzmq') { * }
+sub zmq_strerror(int32 --> Str) is native('zmq',v5) { * }
 
 class X::ZMQ is Exception {
     has Int $.errno;

@@ -9,7 +9,7 @@ has int32            $!fd;
 has int16            $!events;
 has int16            $.revents;
 
-submethod BUILD(Net::ZMQ::Socket :$socket, :$in as Bool, :$out as Bool, :$err as Bool) {
+submethod BUILD(Net::ZMQ::Socket :$socket, Bool :$in , Bool :$out , Bool :$err) {
     $!socket := $socket;
     $!events = 0;
     $!events +|= ZMQ_POLLIN  if $in;
@@ -23,7 +23,7 @@ submethod BUILD(Net::ZMQ::Socket :$socket, :$in as Bool, :$out as Bool, :$err as
 method !flag_proxy(int16 $flag) {
     Proxy.new(
         FETCH    => anon sub ($) { $!events +& $flag },
-        STORE    => anon sub ($, $val as Bool) {
+        STORE    => anon sub ($, Bool $val) {
                         if $val {
                             $!events +| $flag
                         } else {
