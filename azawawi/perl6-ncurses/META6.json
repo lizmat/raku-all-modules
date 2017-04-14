@@ -1,11 +1,22 @@
 {
-  "name"        : "NCurses",
-  "version"     : "*",
-  "perl"        : "6.c",
-  "description" : "Perl 6 interface to NCurses, the text-based interface libary",
-  "depends"     : [ ],
-  "provides"    : {
-    "NCurses"	  : "lib/NCurses.pm6"
-  },
-  "source-url"  : "git://github.com/azawawi/perl6-ncurses.git"
+    "auth"          : "github:azawawi",
+    "authors"       : [ "Ahmad M. Zawawi" ],
+    "description"   : "Perl 6 interface to NCurses, the text-based interface library",
+    "name"          : "NCurses",
+    "perl"          : "6.c",
+    "provides"      : {
+        "NCurses"	  : "lib/NCurses.pm6"
+    },
+    "repo-type"     : "git",
+    "source-url"    : "git://github.com/azawawi/perl6-ncurses.git",
+    "tags"          : [
+        "CLI",
+        "Terminal",
+        "NativeCall"
+    ],
+    "test-depends"  : [
+        "LibraryCheck",
+        "Test"
+    ],
+    "version"       : "0.0.1"
 }
