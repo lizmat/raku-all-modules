@@ -2,7 +2,11 @@ language: perl6
 
 perl6:
     - latest
-    - 2016.01
+    - 2017.03
+
+install:
+    - rakudobrew build-panda
+    - panda --notests installdeps .
 
 script:
     - PERL6LIB=lib prove -v -r --exec=perl6 t/
