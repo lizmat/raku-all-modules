@@ -1,9 +1,10 @@
-my $user = input_params('SshUser');
+my $user = $*USER;
+my $key = "/home/$user/.ssh/id_rsa";
 
-ssh q:to/HERE/, %( host => "127.0.0.1" , user => $user, ssh-key =>  "/home/$user/.ssh/id_rsa" );
+ssh q:to/HERE/, %( host => "127.0.0.1" , user => $user, ssh-key =>  $key );
   echo one
   echo two
   echo three
 HERE
 
-ssh 'uptime', %( host => "127.0.0.1" , user => $user, ssh-key =>  "/home/$user/.ssh/id_rsa" );
+ssh 'uptime', %( host => "127.0.0.1" , user => $user, ssh-key =>  $key );

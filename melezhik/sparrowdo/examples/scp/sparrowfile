@@ -1,5 +1,5 @@
-my $user = input_params('SshUser');
-my $ssh-key =  "/home/$user/.ssh/id_rsa";
+my $user = $*USER;
+my $ssh-key = "/home/$user/.ssh/id_rsa";
 
 ssh 'rm -rf  /tmp/test-ssh-scp && mkdir -p /tmp/test-ssh-scp', %( 
   host => '127.0.0.1',

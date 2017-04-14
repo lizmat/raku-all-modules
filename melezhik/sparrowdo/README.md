@@ -278,7 +278,7 @@ For example:
 
 You can run multiple tasks (plugins) with parameters as well:
 
-    --task_run=plg-name@p1=v1,p2=v2\;plg-name@p1=v1,p2=v2 ...
+    --task_run=plg-name@p1=v1,p2=v2,... --task-run=plg-name@p1=v1,p2=v2,...
 
 Where `plg-name` - plugin name. `p1, p2 ...` - plugins parameters (separated by `,`) 
 
