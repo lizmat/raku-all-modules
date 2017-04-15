@@ -18,9 +18,9 @@ subtest {
     # 4. File:   /{temp folder}/deleteme-subfolder/base-delete.me
     # All 4 items should get deleted
 
-    @delete-us.append(mkdir(~$save-to));
+    mkdir($_) and @delete-us.append($_) with ~$save-to;
     my $sub-folder = $save-to.child('deleteme-subfolder');
-    @delete-us.append(mkdir(~$sub-folder));
+    mkdir($_) and @delete-us.append($_) with ~$sub-folder;
 
     # create 2 test files, one in each directory we created above
     my $save-to-file    = $save-to.child('base-delete.me');
