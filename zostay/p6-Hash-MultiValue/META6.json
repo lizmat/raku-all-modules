@@ -15,7 +15,7 @@
   "provides": {
     "Hash::MultiValue": "lib/Hash/MultiValue.pm6"
   },
-  "version": "0.3",
+  "version": "0.4",
   "authors": [
     "Sterling Hanenkamp <hanenkap@cpan.org>"
   ],

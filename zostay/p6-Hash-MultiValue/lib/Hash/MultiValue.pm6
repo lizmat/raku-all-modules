@@ -1,4 +1,4 @@
-unit class Hash::MultiValue:ver<0.3>:auth<github:zostay> is Associative;
+unit class Hash::MultiValue:ver<0.4>:auth<github:zostay> is Associative;
 
 use v6;
 
@@ -137,7 +137,7 @@ multi method new(:%mixed-hash!, :$iterate = Iterable, :&iterator = &iterate-iter
 
 =head2 method from-pairs
 
-    method from-pairs(Hash::MultiValue:U: +@pairs) returns Hash::MultiValue:D
+    method from-pairs(Hash::MultiValue:U: *@pairs) returns Hash::MultiValue:D
 
 This takes a list of pairs and constructs a L<Hash::MultiValue> object from it. Multiple pairs with the same key may be included in this list and all values will be associated with that key.
 
@@ -163,7 +163,7 @@ To protect from accidentally passing these as named arguments, the method will f
 =end pod
 
 #| Construct a Hash::MultiValue object from a list of pairs
-method from-pairs(+@pairs, *%badness) returns Hash::MultiValue:D {
+method from-pairs(*@pairs, *%badness) returns Hash::MultiValue:D {
     fail "named arguments passed to from-pairs, only a list argument is permitted"
         if %badness;
 

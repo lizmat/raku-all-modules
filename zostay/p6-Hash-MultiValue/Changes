@@ -1,3 +1,9 @@
+v0.4    2017-04-14
+
+    * Reverses the previous compatibility change in from-pairs(). It is back to
+      a * slurpy with a test to verify that stays that way. That was such a bad
+      idea.
+     
 v0.3    2017-04-13
 
     * Adds a set of .new() constructors.
