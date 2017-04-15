@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jonathanstowe/MessagePack-Class.git
+	branch = master
+	commit = 88bd7ff268d66284d487565c0f715eeb6971be26
+	parent = c526f0c40f7de18bda49453e42ab27de24038bf6
+	cmdver = 0.4.0
