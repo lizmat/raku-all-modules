@@ -1,7 +1,7 @@
 {
     "perl"        : "6",
     "name"        : "PathTools",
-    "version"     : "*",
+    "version"     : "0.1",
     "owner"       : "ugexe",
     "auth"        : "github:ugexe",
     "authors"     : ["ugexe"],
@@ -9,5 +9,6 @@
     "provides"    : { "PathTools" : "lib/PathTools.pm6" },
     "depends"     : [ ],
     "support"     : { "bugtracker" : "https://github.com/ugexe/Perl6-PathTools/issues" },
-    "source-url"  : "git://github.com/ugexe/Perl6-PathTools.git"
+    "source-url"  : "git://github.com/ugexe/Perl6-PathTools.git",
+    "tags"        : ["paths", "tempfile"]
 }

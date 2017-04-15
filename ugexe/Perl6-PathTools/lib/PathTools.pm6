@@ -23,7 +23,7 @@ sub mkdirs($path, *%_) is export {
         take $path-copy;
         last unless $path-copy := $path-copy.IO.dirname;
     } }
-    @mkdirs ?? @mkdirs.reverse.map({ ~mkdir($_, |%_) }).[*-1] !! ();
+    @mkdirs ?? @mkdirs.reverse.grep({ mkdir($_, |%_) }).[*-1] !! ();
 }
 
 sub mktemp($path = &tmppath(), Bool :$f = False, *%_) is export {
