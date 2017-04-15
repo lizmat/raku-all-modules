@@ -37,6 +37,7 @@ sub tOS is export { state $ = class-by-name('OS') }
 sub tFD is export { state $ = class-by-name('FD') }
 sub tFile is export { state $ = class-by-name('File')  }
 sub tEnumClass is export { state $ = class-by-name('EnumClass')  }
+sub tPID is export { state $ = class-by-name('PID')  }
 
 class SAST::IntExpr   {...}
 class SAST::Var       {...}
@@ -1003,7 +1004,7 @@ class SAST::Cmp is SAST::MutableChildren {
 
     method stage2($) {
         my $type = do given $!sym {
-            when '=>'|'<='|'<'|'>'|'=='|'!=' { tInt }
+            when '>='|'<='|'<'|'>'|'=='|'!=' { tInt }
             default { tStr }
         }
         $_ .= do-stage2($type,:desc("arguments to $!sym comparison must be {$type.^name}")) for @.children;
@@ -1539,8 +1540,8 @@ class SAST::Eval is SAST::Children   {
 }
 
 class SAST::Regex is SAST::Children is rw {
-    has SAST:D $.src is required;
-    has SAST %.patterns;
+    has Str:D %.patterns;
+    has SAST:D @.placeholders;
 
     method type { $.ctx ~~ tBool() ?? $.ctx !! tRegex() }
     method stage2($ctx){
@@ -1551,12 +1552,12 @@ class SAST::Regex is SAST::Children is rw {
                 self
             ).do-stage2(tBool);
         } else {
-            $!src .= do-stage2(tAny);
+            $_ .= do-stage2(tStr) for @!placeholders;
             self;
         }
     }
 
-    method children { $!src, }
+    method children { @!placeholders }
 }
 
 class SAST::Quietly is SAST::Children {
@@ -1629,4 +1630,8 @@ class SAST::OnBlock is SAST::Children does SAST::OSMutant {
 
 class SAST::LastExitStatus does SAST {
     method type { $.ctx ~~ tBool() ?? tBool() !! tInt() }
+}
+
+class SAST::CurrentPID does SAST {
+    method type { tPID }
 }

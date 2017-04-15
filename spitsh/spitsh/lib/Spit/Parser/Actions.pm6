@@ -345,6 +345,9 @@ method make-routine ($/,$type,:$static) {
         when 'method'  {
             SX.new(message => 'methdod declared outside of a class').throw unless $*CLASS;
             my $r = SAST::MethodDeclare.new(:$name,:$static);
+            if $*CURPAD.lookup(CLASS,$name) -> $matching-class {
+                $r.return-type = $matching-class.class;
+            }
             unless $static {
                 for <$ @> {
                     $r.invocants.push: $*CURPAD.declare: SAST::Invocant.new(sigil => $_,class-type => $*CLASS.class);
@@ -490,14 +493,18 @@ method int ($/) { make SAST::IVal.new: val => $/.Int }
 method term:var ($/)   { make $<var>.ast }
 
 method var ($/)   {
-    make SAST::Var.new(
-        name => $<name>.Str,
-        sigil => $<sigil>.Str,
-    );
+    with $<special-var> {
+        make .ast;
+    } else {
+        make SAST::Var.new(
+            name => $<name>.Str,
+            sigil => $<sigil>.Str,
+        );
+    }
 }
 
-method term:special-var ($/) { make $<special-var>.ast }
-method special-var:sym<$?> ($/) { make SAST::LastExitStatus.new }
+method special-var:sym<?> ($/) { make SAST::LastExitStatus.new }
+method special-var:sym<$> ($/) { make SAST::CurrentPID.new }
 
 method term:name ($/) {
     my $name = $<name>.Str;
@@ -837,7 +844,7 @@ method quote:curly-single-quote ($/) { make-quote($/) }
 method quote:sym<qq>            ($/) { make-quote($/) }
 method quote:sym<q>             ($/) { make-quote($/) }
 method balanced-quote           ($/) { make-quote($/) }
-method quote:regex        ($/) { make SAST::Regex.new(src => $<str>.ast) andthen .match = $/; }
+method quote:regex              ($/) { make-quote($/) }
 
 
 method angle-quote ($/) {
