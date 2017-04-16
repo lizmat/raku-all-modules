@@ -32,23 +32,22 @@ class CSS::Declarations {
     }
 
     multi sub make-property(CSS::Module $m, Str $name) is default {
-        with %module-metadata{$m}{$name} -> %defs {
+        %module-properties{$m}{$name} = do with %module-metadata{$m}{$name} -> %defs {
             with %defs<edges> {
                 # e.g. margin, comprised of margin-top, margin-right, margin-bottom, margin-left
                 for .list -> $side {
                     # these shouldn't nest or cycle
                     %defs{$side} = $_ with make-property($m, $side);
                 }
-                %module-properties{$m}{$name} = CSS::Declarations::Edges.new( :$name, |%defs);
+                CSS::Declarations::Edges.new( :$name, |%defs);
             }
             else {
-                %module-properties{$m}{$name} = CSS::Declarations::Property.new( :$name, |%defs );
+                CSS::Declarations::Property.new( :$name, |%defs );
             }
         }
         else {
             die "unknown property: $name"
         }
-        %module-properties{$m}{$name};
     }
 
     #| return module meta-data for a property
@@ -212,8 +211,8 @@ class CSS::Declarations {
     method !item-value(Str $prop) {
         Proxy.new(
             FETCH => sub ($) {
-                if %!values{$prop}:exists {
-                    %!values{$prop};
+                with %!values{$prop} {
+                    $_
                 }
                 elsif $prop ~~ /^'border-'[top|right|bottom|left]'-color'$/ {
                     self.?color;
@@ -478,9 +477,13 @@ class CSS::Declarations {
         assemble-ast(%prop-ast);
     }
 
+    has Array $!compound-properties;
+    method !compound-properties {
+        $!compound-properties //= [.keys.sort.grep: -> \k { .{k}<children> } with self!metadata];
+    }
+
     method !optimize-ast( %prop-ast ) {
         my \metadata = self!metadata;
-        my @compound-properties = metadata.keys.sort.grep: { metadata{$_}<children> };
         my %edges;
 
         for %prop-ast.keys -> \prop {
@@ -531,7 +534,7 @@ class CSS::Declarations {
                     with @asts[0]<prio>;
             }
         }
-        for @compound-properties -> \prop {
+        for self!compound-properties.list -> \prop {
             # top-down aggregation of compound properties. e.g. border-width, border-style => border
             
             my @children = metadata{prop}<children>.list.grep: {

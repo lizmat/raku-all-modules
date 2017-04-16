@@ -108,9 +108,8 @@ class CSS::Declarations::Font {
 
         $!leading = do given $css.line-height {
             when .type eq 'num'     { $_ * $!em }
-            when .type eq 'percent' { $_ * $!em / 100 }
             when 'normal'           { $!em * 1.2 }
-            default                 { self.length($_) }
+            default                 { self.font-length($_) }
         }
     }
 }
