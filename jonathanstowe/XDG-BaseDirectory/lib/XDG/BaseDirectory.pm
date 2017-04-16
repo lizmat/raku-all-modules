@@ -189,7 +189,7 @@ for loading.
         my IO::Path $path = $home-path.child($resource);
 
         if ! $path.d {
-            $path.mkdir(mode => 0o700);
+            $path.mkdir(0o700);
         }
         $path.cleanup;
     }
