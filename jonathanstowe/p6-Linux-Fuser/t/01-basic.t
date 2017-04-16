@@ -25,7 +25,9 @@ if $*KERNEL.name eq 'linux' {
 
     sub do_tests(Any $file, Str $description) {
         my @procs;
-        lives-ok { @procs = $obj.fuser($file) }, "fuser() doesn't die ($description)";
+        lives-ok { 
+            @procs = $obj.fuser($file);
+        }, "fuser() doesn't die ($description)";
         ok(@procs.elems, "got some processes ($description)");
         ok(my $proc = @procs[0], "get the first ($description)");
         isa-ok($proc,Linux::Fuser::Procinfo, "And it's the right kind of object ($description)");
@@ -47,7 +49,9 @@ if $*KERNEL.name eq 'linux' {
     lives-ok { @procs = $obj.fuser($filename) }, "fuser() closed file";
     is(@procs.elems,0, "and there aren't any processes");
 
-    lives-ok { @procs = $obj.fuser('ThiSdoesNotExIst') }, "fuser() no-existent file";
+    lives-ok { 
+        @procs = $obj.fuser('ThiSdoesNotExIst');
+    }, "fuser() no-existent file";
     is(@procs.elems,0, "and there aren't any processes");
     $filename.IO.unlink;
 }

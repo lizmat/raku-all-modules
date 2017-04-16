@@ -1,21 +1,33 @@
 {
-    "name" : "Linux::Fuser",
-    "version" : "0.0.8",
-    "perl" : "6.c",
-    "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk" ],
-    "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk",
-    "auth" : "github:jonathanstowe",
-    "description" : "Discover which process has a file open, in pure Perl 6",
-    "tags" : [ "linux", "system", "utils" , "file"],
-    "build-depends" : [ ],
-    "depends" : ["System::Passwd"],
-    "provides" : {
-        "Linux::Fuser" : "lib/Linux/Fuser.pm",
-        "Linux::Fuser::Procinfo" : "lib/Linux/Fuser/Procinfo.pm",
-        "Linux::Fuser::FileDescriptor" : "lib/Linux/Fuser/FileDescriptor.pm"
+    "name": "Linux::Fuser",
+    "version": "0.0.9",
+    "perl": "6.c",
+    "authors": [
+        "Jonathan Stowe <jns+git@gellyfish.co.uk"
+    ],
+    "auth": "github:jonathanstowe",
+    "description": "Discover which process has a file open, in pure Perl 6",
+    "tags": [
+        "linux",
+        "system",
+        "utils",
+        "file"
+    ],
+    "build-depends": [
+
+    ],
+    "depends": [
+        "System::Passwd"
+    ],
+    "provides": {
+        "Linux::Fuser": "lib/Linux/Fuser.pm",
+        "Linux::Fuser::Procinfo": "lib/Linux/Fuser/Procinfo.pm",
+        "Linux::Fuser::FileDescriptor": "lib/Linux/Fuser/FileDescriptor.pm"
     },
-	 "support" : {
-       "source" : "https://github.com/jonathanstowe/p6-Linux-Fuser.git"
+    "support": {
+        "source": "https://github.com/jonathanstowe/p6-Linux-Fuser.git",
+        "email": "jns+git@gellyfish.co.uk",
+        "bugtracker": "https://github.com/jonathanstowe/p6-Linux-Fuser/issues"
     },
-    "source-url" : "https://github.com/jonathanstowe/p6-Linux-Fuser.git"
+    "source-url": "https://github.com/jonathanstowe/p6-Linux-Fuser.git"
 }

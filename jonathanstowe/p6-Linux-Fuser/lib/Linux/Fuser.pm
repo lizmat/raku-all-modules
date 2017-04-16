@@ -19,11 +19,10 @@ Linux::Fuser - Determine which processes have a file open
 
   my $fuser = Linux::Fuser->new();
 
-  my @procs = $fuser->fuser('foo');
+  my @procs = $fuser.fuser('foo');
 
-  for @procs -> $proc ( @procs )
-  {
-    say $proc->pid(),"\t", $proc->user(),"\n",$proc->cmd();
+  for @procs -> $proc ( @procs ) {
+    say $proc.pid(),"\t", $proc.user(),"\n",$proc->cmd();
   }
 
 =end code
@@ -53,7 +52,7 @@ The class has one method, with two signatures, that does most of the work:
 
 =end pod
 
-class Linux::Fuser:ver<0.0.8>:auth<github:jonathanstowe> {
+class Linux::Fuser:ver<0.0.9>:auth<github:jonathanstowe> {
     # Shamelessly stolen from IO::Path::More
     # for my own stability
     my role IO::Helper {
@@ -105,7 +104,7 @@ class Linux::Fuser:ver<0.0.8>:auth<github:jonathanstowe> {
             $proc-file does IO::Helper;
             my $fd_dir = $proc-file.append('fd');
             if $fd_dir.r {
-                try for $fd_dir.dir(test => /^\d+$/) -> $fd-file {
+                for $fd_dir.dir(test => /^\d+$/) -> $fd-file {
                     $fd-file does IO::Helper;
                     if ( self!same_file($file, $fd-file ) ) {
                         @procinfo.push(Linux::Fuser::Procinfo.new(:$proc-file, :$fd-file));
@@ -118,7 +117,7 @@ class Linux::Fuser:ver<0.0.8>:auth<github:jonathanstowe> {
 
     method !same_file(IO::Path $left, IO::Path $right) {
         my Bool $rc = False;
-        if ( ( $left.inode == $right.inode ) && ( $left.device == $right.device )) {
+        if ( ( $left.inode && ($left.inode == $right.inode) ) && ( $left.device == $right.device )) {
             $rc = True;
         }
         return $rc;

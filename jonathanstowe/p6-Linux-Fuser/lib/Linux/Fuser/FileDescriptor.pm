@@ -28,7 +28,7 @@ There are no public methods only attributes.
 
 =end pod
 
-class Linux::Fuser::FileDescriptor:ver<0.0.8>:auth<github:jonathanstowe> {
+class Linux::Fuser::FileDescriptor:ver<0.0.9>:auth<github:jonathanstowe> {
 
     #| The file descriptor number in use by the process
     has Int $.fd;
@@ -48,7 +48,7 @@ class Linux::Fuser::FileDescriptor:ver<0.0.8>:auth<github:jonathanstowe> {
 
     submethod BUILD(:$!proc-file, :$!fd-file) {
         $!fd = $!fd-file.basename.Int;
-        $!fd-info = $!proc-file.append('fdinfo', $!fd);
+        $!fd-info = $!proc-file.append('fdinfo', $!fd.Str);
         my %info = $!fd-info.open(:bin).read(255).decode.lines.map( { $_.split(/\:\t/) }).flat.hash;
         $!pos =  %info<pos>.Int if %info<pos>.defined;
         $!mnt-id = %info<mnt_id>.defined ?? %info<mnt_id>.Int !! 0;
