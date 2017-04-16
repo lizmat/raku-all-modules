@@ -1,7 +1,9 @@
 #!perl6
 
-use v6;
+use v6.c;
 use Test;
+
+use URI;
 
 use WebService::Soundcloud;
 # Create a constuctor
@@ -33,10 +35,13 @@ is($scloud.response-format, $res_format, "and we got that value");
 lives-ok { $scloud.request-format = $req_format }, 'Content-Type header element set/get works through request-format!' ;
 is($scloud.request-format, $req_format, "and it is right");
 # test get_authorization_url
-my $url = 'https://api.soundcloud.com/connect?response_type=code&scope=non-expiring&client_id=a1afc8eb1cbb96b787a5fb5232a8b4f6&redirect_uri=http%3A%2F%2Flocalhost%2Fcallback&client_secret=d78d89f377b28d9f2a2692a14a55c501';
+my $url = URI.new(uri => 'https://api.soundcloud.com/connect?response_type=code&scope=non-expiring&client_id=a1afc8eb1cbb96b787a5fb5232a8b4f6&redirect_uri=http%3A%2F%2Flocalhost%2Fcallback&client_secret=d78d89f377b28d9f2a2692a14a55c501');
 
 my $redirect_url = $scloud.get-authorization-url(scope => 'non-expiring');
-is($redirect_url, $url, 'Get Authorization URL is success!');
+
+for $url.query_form.keys -> $k {
+    is $redirect_url.query_form{$k}, $url.query_form{$k}, "Got correct $k in authorization-url";
+}
 
 my $token;
 
@@ -65,9 +70,10 @@ for $track-list.list -> $track {
     my $track-one;
     ok(my $id = $track<id>, "and we got a track ID");
     lives-ok { $track-one = $scloud.get-object("/tracks/$id") }, "get-object on track";
-    is $track-one.keys.elems, $track.keys.elems, "got the same number keys";
-    is-deeply $track-one.keys.sort, $track.keys.sort, "got the same actual keys";
-    is $track-one<id>, $track<id> , "and they compare the same";
+    for $track.keys -> $k {
+        todo("they aren't consistent about the scheme") if $k eq 'permalink_url';
+        is $track-one{$k}, $track{$k}, "got the right $k";
+    }
     my $file = $id ~ '.' ~ ( $track{'original-format'} || 'wav');
     
     skip("downloads not working yet", 2);

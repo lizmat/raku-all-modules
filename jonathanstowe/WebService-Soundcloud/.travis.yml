@@ -8,4 +8,4 @@ perl6:
 
 install:
   - rakudobrew build-panda
-  - panda --force installdeps .
+  - panda --force --notests installdeps .
