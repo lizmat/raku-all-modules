@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/HTTP-Request-Supply.git
 	branch = master
-	commit = ecf90866f1707921839e137325801d6cff99a586
-	parent = fe7e7f7ab33b4ab1111159e3a9c1861111408730
+	commit = 325b133aba4e0ca76712559caeb80c8c9c5dace0
+	parent = 2e2d52a1d4cddedaae6638caf2a42b2e1f29ca6b
 	cmdver = 0.4.0

@@ -88,9 +88,11 @@ Once the headers for a given frame have been read, a partial L<P6WAPI> compatibl
 environment is generated from the headers and emitted to the returned Supply.
 The environment will be filled as follows:
 
-=item The C<Content-Length> will be set in C<CONTENT_LENGTH>.
+=item The C<Content-Length> will be set in C<CONTENT_LENGTH>, if the client sent
+a Content-Length header in the request.
 
-=item The C<Content-Type> will be set in C<CONTENT_TYPE>.
+=item The C<Content-Type> will be set in C<CONTENT_TYPE>, if the client send a
+Content-Type header in the request.
 
 =item Other headers will be set in C<HTTP_*> where the header name is converted
 to uppercase and dashes are replaced with underscores.
@@ -106,7 +108,9 @@ line.
 chunks of the body as bytes as they arrive. No attempt is made to decode these
 bytes.
 
-All other keys are left empty.
+No other keys will be set. Thus, to create a complete P6WAPI environment, the
+caller will need to some additional work, such as parsing out the components of
+the C<REQUEST_URI>.
 
 =head1 DIAGNOSTICS
 
@@ -325,9 +329,6 @@ multi method parse-http(Supply:D() $conn, Bool :$debug = False) returns Supply:D
                         debug "body-sink = ", $body-sink.WHICH;
                         %env<p6w.input> = $body-sink.Supply;
 
-                        # dd %env;
-                        emit %env;
-
                         my $http-connection = %env<HTTP_CONNECTION> // '';
                         if %env<SERVER_PROTOCOL> eq 'HTTP/1.0' {
                             $close = True if $http-connection ne 'keep-alive';
@@ -340,6 +341,10 @@ multi method parse-http(Supply:D() $conn, Bool :$debug = False) returns Supply:D
                         $mode = Body;
                         $emitted-bytes = 0;
                         $parser-event.emit(True);
+
+                        # dd %env;
+                        emit %env;
+                        debug "EMITTED %env<>";
 
                         CATCH {
                             when X::HTTP::Request::Supply::UnsupportedProtocol {
@@ -529,13 +534,11 @@ multi method parse-http(Supply:D() $conn, Bool :$debug = False) returns Supply:D
                         debug "finished-body = $finished-body";
                     }
 
+                    # No indication of length at all, assume CL=0
                     else {
-                        $mode = Error;
-                        my $x = X::HTTP::Request::Supply::BadRequest.new(
-                            reason => 'client did not specify entity length',
-                        );
-                        $body-sink.quit($x);
-                        die $x;
+                        %env<CONTENT_LENGTH> = 0;
+                        $finished-body = True;
+                        debug "request with no entity";
                     }
 
                     # Regardless of body type we parse, we need to close the
@@ -581,6 +584,9 @@ multi method parse-http(Supply:D() $conn, Bool :$debug = False) returns Supply:D
                 debug "ERROR ", $_;
                 .rethrow;
             }
+
+            die "The provided Supply does not emit binary data, did you forget to set :bin?"
+                unless $chunk ~~ Blob;
 
             debug "READ ", $chunk;
             $buf = $buf ~ $chunk;
