@@ -720,7 +720,7 @@ class Audio::Liquidsoap:ver<0.0.5>:auth<github:jonathanstowe> {
 		        get-secs($/<uptime>);
 	        }
 	        else {
-		        fail "Incorrect format";
+		        fail "Incorrect format - $s";
 	        }
         }
 
