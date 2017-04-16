@@ -19,36 +19,42 @@ if %*ENV<PG_NOTIFY_PW> -> $pw {
     %args<password> = $pw;
 }
 
-my $db = DBIish.connect('Pg', |%args);
-my $channel = "test";
+my $db = try DBIish.connect('Pg', |%args);
 
-my $notify = Pg::Notify.new(:$db, :$channel );
+if $db {
+    my $channel = "test";
 
-my $supply;
+    my $notify = Pg::Notify.new(:$db, :$channel );
+
+    my $supply;
 
 
-lives-ok { $supply = $notify.Supply }, "get the supply";
-isa-ok $supply, Supply, "and it is a supply";
+    lives-ok { $supply = $notify.Supply }, "get the supply";
+    isa-ok $supply, Supply, "and it is a supply";
 
-my $test-promise = Promise.new;
+    my $test-promise = Promise.new;
 
-my $value;
+    my $value;
 
-$supply.act(-> $v { $value = $v; $test-promise.keep: True });
+    $supply.act(-> $v { $value = $v; $test-promise.keep: True });
 
-$db.do("NOTIFY $channel, 'TEST VALUE'");
-await Promise.anyof($test-promise, Promise.in(1));
-isa-ok $value, DBDish::Pg::Native::pg-notify;
-is $value.extra, 'TEST VALUE', "got the right value";
-is $value.relname, "test", "and got the right relname";
+    $db.do("NOTIFY $channel, 'TEST VALUE'");
+    await Promise.anyof($test-promise, Promise.in(1));
+    isa-ok $value, DBDish::Pg::Native::pg-notify;
+    is $value.extra, 'TEST VALUE', "got the right value";
+    is $value.relname, "test", "and got the right relname";
 
-$value = Any;
-$test-promise = Promise.new;
-$db.do("NOTIFY othername, 'TEST VALUE'");
-await Promise.anyof($test-promise, Promise.in(1));
-ok $test-promise.status ~~ Planned, "notify didn't fire with a different channel";
+    $value = Any;
+    $test-promise = Promise.new;
+    $db.do("NOTIFY othername, 'TEST VALUE'");
+    await Promise.anyof($test-promise, Promise.in(1));
+    ok $test-promise.status ~~ Planned, "notify didn't fire with a different channel";
 
-lives-ok { $notify.unlisten }, "unlisten";
+    lives-ok { $notify.unlisten }, "unlisten";
+}
+else {
+    skip "Can't connect to DB, won't test";
+}
 
 done-testing;
 # vim: expandtab shiftwidth=4 ft=perl6
