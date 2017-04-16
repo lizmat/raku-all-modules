@@ -394,9 +394,13 @@ for @tests -> $test {
 
 if !$*DISTRO.is-win {
     my $link-file = $test-dir.parent.child('test-link');
-    $link-file.symlink($test-dir.Str);
+    if try $test-dir.symlink($link-file.Str) {
 
-    ok $link-file.mode.file-type ~~ IO::Path::Mode::SymbolicLink, "symbolic link is a SymbolicLink";
+        ok $link-file.mode.file-type ~~ IO::Path::Mode::SymbolicLink, "symbolic link is a SymbolicLink";
+    }
+    else {
+        skip "symlink semantics changed in 2017.04";
+    }
 
     LEAVE {
         $link-file.unlink
