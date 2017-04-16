@@ -4,7 +4,7 @@ unit module NCurses;
 use LibraryCheck;
 use NativeCall;
 
-sub library {
+sub library is export {
     # Environment variable overrides auto-detection
     return %*ENV<PERL6_NCURSES_LIB> if %*ENV<PERL6_NCURSES_LIB>;
 
@@ -23,8 +23,19 @@ sub library {
     return sprintf("lib%s.so", LIB);
 }
 
-# Workaround since you need late binding of COLOR_PAIRS after initscr is called
-# for the first time
+class WINDOW is export is repr('CPointer') { }
+class SCREEN is export is repr('CPointer') { }
+
+# Global variables
+our $stdscr   is export = cglobal(&library, 'stdscr',   WINDOW);
+our $acs_map  is export = cglobal(&library, 'acs_map',  CArray[int64]);
+our $COLORS   is export = cglobal(&library, 'COLORS',   int32);
+our $COLS     is export = cglobal(&library, 'COLS',     int32);
+our $ESCDELAY is export = cglobal(&library, 'ESCDELAY', int32);
+our $TABSIZE  is export = cglobal(&library, 'TABSIZE',  int32);
+
+# Special case: COLOR_PAIRS global variable
+# To be able to be called after initscr is called
 my $COLOR_PAIRS;
 sub COLOR_PAIRS is export {
     unless $COLOR_PAIRS {
@@ -33,11 +44,15 @@ sub COLOR_PAIRS is export {
     return $COLOR_PAIRS;
 }
 
-class WINDOW is repr('CPointer') { }
-class SCREEN is repr('CPointer') { }
-
-our $stdscr is export = cglobal(&library, 'stdscr', WINDOW);
-our $acs_map is export = cglobal(&library, 'acs_map', CArray[int64]);
+# Special case: LINES global variable
+# To be able to be called after initscr is called
+my $LINES;
+sub LINES is export {
+    unless $LINES {
+        $LINES = cglobal(&library, 'LINES', int32);
+    }
+    return $LINES;
+}
 
 class MEVENT is repr('CStruct') is export {
     #short id;           /* ID to distinguish multiple devices */
@@ -52,6 +67,9 @@ class MEVENT is repr('CStruct') is export {
 
 constant ERR is export = -1;
 constant OK  is export  = 0;
+
+constant TRUE  is export = 1;
+constant FALSE is export = 0;
 
 constant COLOR_BLACK is export = 0;
 constant COLOR_RED is export = 1;
@@ -970,6 +988,107 @@ sub set_panel_userptr(PANEL, Pointer) is native(&panel-library) is export {*};
 sub panel_userptr(PANEL) returns Pointer is native(&panel-library) is export {*};
 
 #
+# Menu library API
+#
+sub menu-library {
+    # Environment variable overrides auto-detection
+    return %*ENV<PERL6_NCURSES_MENU_LIB> if %*ENV<PERL6_NCURSES_MENU_LIB>;
+
+    # On MacOS X using howbrew
+    return "libmenu.dylib" if $*KERNEL.name eq 'darwin';
+
+    # Linux/UNIX
+    constant LIB = 'menu';
+    if library-exists(LIB, v5) {
+        return sprintf("lib%s.so.5", LIB);
+    } elsif library-exists(LIB, v6) {
+        return sprintf("lib%s.so.6", LIB);
+    }
+
+    # Fallback
+    return sprintf("lib%s.so", LIB);
+}
+
+class MENU is export is repr('CPointer') { }
+class ITEM is export is repr('CPointer') { }
+
+# Menu constants
+constant REQ_LEFT_ITEM is export     = KEY_MAX + 1;
+constant REQ_RIGHT_ITEM is export    = KEY_MAX + 2;
+constant REQ_UP_ITEM is export       = KEY_MAX + 3;
+constant REQ_DOWN_ITEM is export     = KEY_MAX + 4;
+constant REQ_SCR_ULINE is export     = KEY_MAX + 5;
+constant REQ_SCR_DLINE is export     = KEY_MAX + 6;
+constant REQ_SCR_DPAGE is export     = KEY_MAX + 7;
+constant REQ_SCR_UPAGE is export     = KEY_MAX + 8;
+constant REQ_FIRST_ITEM is export    = KEY_MAX + 9;
+constant REQ_LAST_ITEM is export     = KEY_MAX + 10;
+constant REQ_NEXT_ITEM is export     = KEY_MAX + 11;
+constant REQ_PREV_ITEM is export     = KEY_MAX + 12;
+constant REQ_TOGGLE_ITEM is export   = KEY_MAX + 13;
+constant REQ_CLEAR_PATTERN is export = KEY_MAX + 14;
+constant REQ_BACK_PATTERN is export  = KEY_MAX + 15;
+constant REQ_NEXT_MATCH is export    = KEY_MAX + 16;
+constant REQ_PREV_MATCH is export    = KEY_MAX + 17;
+
+constant MIN_MENU_COMMAND is export  = KEY_MAX + 1;
+constant MAX_MENU_COMMAND is export  = KEY_MAX + 17;
+
+# Menu options
+constant O_ONEVALUE   is export = 0x01;
+constant O_SHOWDESC   is export = 0x02;
+constant O_ROWMAJOR   is export = 0x04;
+constant O_IGNORECASE is export = 0x08;
+constant O_SHOWMATCH  is export = 0x10;
+constant O_NONCYCLIC  is export = 0x20;
+
+# Item options
+constant O_SELECTABLE is export = 0x01;
+
+#
+# Menu library subroutines
+#
+sub new_menu(CArray[ITEM])               returns MENU         is native(&menu-library) is export {*}
+sub free_menu(MENU)                      returns int32        is native(&menu-library) is export {*}
+sub menu_driver(MENU, int32)             returns int32        is native(&menu-library) is export {*}
+sub post_menu(MENU)                      returns int32        is native(&menu-library) is export {*}
+sub unpost_menu(MENU)                    returns int32        is native(&menu-library) is export {*}
+sub set_menu_mark(MENU, Str)             returns int32        is native(&menu-library) is export {*}
+sub set_menu_win(MENU, WINDOW)           returns int32        is native(&menu-library) is export {*}
+sub set_menu_sub(MENU, WINDOW)           returns int32        is native(&menu-library) is export {*}
+sub menu_opts_off(MENU, int32)           returns int32        is native(&menu-library) is export {*}
+sub item_count(MENU)                     returns int32        is native(&menu-library) is export {*}
+sub menu_items(MENU)                     returns CArray[ITEM] is native(&menu-library) is export {*}
+sub set_menu_format(MENU, int32, int32)  returns int32        is native(&menu-library) is export {*}
+sub set_menu_fore(MENU, int32)           returns int32 is native(&menu-library) is export {*}
+sub menu_fore(MENU)                      returns int32 is native(&menu-library) is export {*}
+sub set_menu_back(MENU, int32)           returns int32 is native(&menu-library) is export {*}
+sub menu_back(MENU)                      returns int32 is native(&menu-library) is export {*}
+sub set_menu_grey(MENU, int32)           returns int32 is native(&menu-library) is export {*}
+sub menu_grey(MENU)                      returns int32 is native(&menu-library) is export {*}
+sub set_menu_pad(MENU, int32)            returns int32 is native(&menu-library) is export {*}
+sub menu_pad(MENU)                       returns int32 is native(&menu-library) is export {*}
+sub pos_menu_cursor(MENU)                returns int32 is native(&menu-library) is export {*}
+sub set_current_item(MENU, ITEM)         returns int32 is native(&menu-library) is export {*}
+sub current_item(MENU)                   returns ITEM  is native(&menu-library) is export {*}
+sub set_top_row(MENU, int32)             returns int32 is native(&menu-library) is export {*}
+sub top_row(MENU)                        returns int32 is native(&menu-library) is export {*}
+sub item_index(MENU)                     returns int32 is native(&menu-library) is export {*}
+
+sub new_item(CArray[uint8], CArray[uint8]) returns ITEM  is native(&menu-library) is export {*}
+sub free_item(ITEM)                        returns int32 is native(&menu-library) is export {*}
+sub item_name(ITEM)                        returns Str   is native(&menu-library) is export {*}
+sub item_description(ITEM)                 returns Str   is native(&menu-library) is export {*}
+sub set_item_value(ITEM, Bool)             returns int32 is native(&menu-library) is export {*}
+sub item_value(ITEM)                       returns Bool  is native(&menu-library) is export {*}
+sub set_item_opts(ITEM, int32)             returns int32 is native(&menu-library) is export {*}
+sub item_opts_on(ITEM, int32)              returns int32 is native(&menu-library) is export {*}
+sub item_opts_off(ITEM, int32)             returns int32 is native(&menu-library) is export {*}
+sub item_opts(ITEM)                        returns int32 is native(&menu-library) is export {*}
+sub set_item_userptr(ITEM, int32)             returns int32 is native(&menu-library) is export {*}
+sub item_userptr(ITEM)                     returns int32 is native(&menu-library) is export {*}
+
+#
 # Form library API
 #
 sub form-library {
@@ -991,12 +1110,113 @@ sub form-library {
     return sprintf("lib%s.so", LIB);
 }
 
-class FORM is repr('CPointer') { }
+class FORM  is export is repr('CPointer') { }
+class FIELD is export is repr('CPointer') { }
 
-sub scale_form(FORM, int32 is rw, int32 is rw) returns int32 is native(&form-library) is export {*}
+# Field options
+constant O_VISIBLE is export         = 0x0001;
+constant O_ACTIVE is export          = 0x0002;
+constant O_PUBLIC is export          = 0x0004;
+constant O_EDIT is export            = 0x0008;
+constant O_WRAP is export            = 0x0010;
+constant O_BLANK is export           = 0x0020;
+constant O_AUTOSKIP is export        = 0x0040;
+constant O_NULLOK is export          = 0x0080;
+constant O_PASSOK is export          = 0x0100;
+constant O_STATIC is export          = 0x0200;
+# ncurses extensions
+constant O_DYNAMIC_JUSTIFY is export = 0x0400;
+constant O_NO_LEFT_STRIP is export   = 0x0800;
+
+# Form driver commands
+constant REQ_NEXT_PAGE is export     = KEY_MAX + 1; #  move to next page
+constant REQ_PREV_PAGE is export     = KEY_MAX + 2; #  move to previous page
+constant REQ_FIRST_PAGE is export    = KEY_MAX + 3; #  move to first page
+constant REQ_LAST_PAGE is export     = KEY_MAX + 4; #  move to last page
+constant REQ_NEXT_FIELD is export    = KEY_MAX + 5; #  move to next field
+constant REQ_PREV_FIELD is export    = KEY_MAX + 6; #  move to previous field
+constant REQ_FIRST_FIELD is export   = KEY_MAX + 7; #  move to first field
+constant REQ_LAST_FIELD is export    = KEY_MAX + 8; #  move to last field
+constant REQ_SNEXT_FIELD is export   = KEY_MAX + 9; #  move to sorted next field
+constant REQ_SPREV_FIELD is export   = KEY_MAX + 10; #  move to sorted prev field
+constant REQ_SFIRST_FIELD is export  = KEY_MAX + 11; #  move to sorted first field
+constant REQ_SLAST_FIELD is export   = KEY_MAX + 12; #  move to sorted last field
+constant REQ_LEFT_FIELD is export    = KEY_MAX + 13; #  move to left to field
+constant REQ_RIGHT_FIELD is export   = KEY_MAX + 14; #  move to right to field
+constant REQ_UP_FIELD is export      = KEY_MAX + 15; #  move to up to field
+constant REQ_DOWN_FIELD is export    = KEY_MAX + 16; #  move to down to field
+constant REQ_NEXT_CHAR is export     = KEY_MAX + 17; #  move to next char in field
+constant REQ_PREV_CHAR is export     = KEY_MAX + 18; #  move to prev char in field
+constant REQ_NEXT_LINE is export     = KEY_MAX + 19; #  move to next line in field
+constant REQ_PREV_LINE is export     = KEY_MAX + 20; #  move to prev line in field
+constant REQ_NEXT_WORD is export     = KEY_MAX + 21; #  move to next word in field
+constant REQ_PREV_WORD is export     = KEY_MAX + 22; #  move to prev word in field
+constant REQ_BEG_FIELD is export     = KEY_MAX + 23; #  move to first char in field
+constant REQ_END_FIELD is export     = KEY_MAX + 24; #  move after last char in fld
+constant REQ_BEG_LINE is export      = KEY_MAX + 25; #  move to beginning of line
+constant REQ_END_LINE is export      = KEY_MAX + 26; #  move after last char in line
+constant REQ_LEFT_CHAR is export     = KEY_MAX + 27; #  move left in field
+constant REQ_RIGHT_CHAR is export    = KEY_MAX + 28; #  move right in field
+constant REQ_UP_CHAR is export       = KEY_MAX + 29; #  move up in field
+constant REQ_DOWN_CHAR is export     = KEY_MAX + 30; #  move down in field
+constant REQ_NEW_LINE is export      = KEY_MAX + 31; #  insert/overlay new line
+constant REQ_INS_CHAR is export      = KEY_MAX + 32; #  insert blank char at cursor
+constant REQ_INS_LINE is export      = KEY_MAX + 33; #  insert blank line at cursor
+constant REQ_DEL_CHAR is export      = KEY_MAX + 34; #  delete char at cursor
+constant REQ_DEL_PREV is export      = KEY_MAX + 35; #  delete char before cursor
+constant REQ_DEL_LINE is export      = KEY_MAX + 36; #  delete line at cursor
+constant REQ_DEL_WORD is export      = KEY_MAX + 37; #  delete word at cursor
+constant REQ_CLR_EOL is export       = KEY_MAX + 38; #  clear to end of line
+constant REQ_CLR_EOF is export       = KEY_MAX + 39; #  clear to end of field
+constant REQ_CLR_FIELD is export     = KEY_MAX + 40; #  clear entire field
+constant REQ_OVL_MODE is export      = KEY_MAX + 41; #  begin overlay mode
+constant REQ_INS_MODE is export      = KEY_MAX + 42; #  begin insert mode
+constant REQ_SCR_FLINE is export     = KEY_MAX + 43; #  scroll field forward a line
+constant REQ_SCR_BLINE is export     = KEY_MAX + 44; #  scroll field backward a line
+constant REQ_SCR_FPAGE is export     = KEY_MAX + 45; #  scroll field forward a page
+constant REQ_SCR_BPAGE is export     = KEY_MAX + 46; #  scroll field backward a page
+constant REQ_SCR_FHPAGE is export    = KEY_MAX + 47; #  scroll field forward half page
+constant REQ_SCR_BHPAGE is export    = KEY_MAX + 48; #  scroll field backward half page
+constant REQ_SCR_FCHAR is export     = KEY_MAX + 49; #  horizontal scroll char
+constant REQ_SCR_BCHAR is export     = KEY_MAX + 50; #  horizontal scroll char
+constant REQ_SCR_HFLINE is export    = KEY_MAX + 51; #  horizontal scroll line
+constant REQ_SCR_HBLINE is export    = KEY_MAX + 52; #  horizontal scroll line
+constant REQ_SCR_HFHALF is export    = KEY_MAX + 53; #  horizontal scroll half line
+constant REQ_SCR_HBHALF is export    = KEY_MAX + 54; #  horizontal scroll half line
+constant REQ_VALIDATION is export    = KEY_MAX + 55; #  validate field
+constant REQ_NEXT_CHOICE is export   = KEY_MAX + 56; #  display next field choice
+constant REQ_PREV_CHOICE is export   = KEY_MAX + 57; #  display prev field choice
+constant MIN_FORM_COMMAND is export  = KEY_MAX + 1;  #  used by form_driver
+constant MAX_FORM_COMMAND is export  = KEY_MAX + 57; #  used by form_driver
+
+sub _scale_form (FORM, int32 is rw, int32 is rw) returns int32 is symbol('scale_form') is native(&form-library) {*}
+
+sub scale_form(FORM $form, $rows is rw, $cols is rw) is export {
+    my int32 $t-rows;
+    my int32 $t-cols;
+    _scale_form($form, $t-rows, $t-cols);
+    $rows = $t-rows;
+    $cols = $t-cols;
+}
 
 sub post_form(FORM) returns int32 is native(&form-library) is export {*}
 
 sub unpost_form(FORM) returns int32 is native(&form-library) is export {*}
 
 sub form_driver(FORM, int32) returns int32 is native(&form-library) is export {*}
+
+sub free_form(FORM) returns int32 is native(&form-library) is export {*}
+
+sub set_form_win(FORM, WINDOW) returns int32 is native(&form-library) is export {*}
+
+sub new_field(int32, int32, int32, int32, int32, int32) returns FIELD is native(&form-library) is export {*}
+
+sub free_field(FIELD) returns int32 is native(&form-library) is export {*}
+
+sub new_form(CArray[FIELD]) returns FORM is native(&form-library) is export {*}
+
+sub set_form_sub(FORM, WINDOW) returns int32 is native(&form-library) is export {*}
+
+sub set_field_back(FIELD, int32) returns int32 is native(&form-library) is export {*}
+
+sub field_opts_off(FIELD, int32) returns int32 is native(&form-library) is export {*}
