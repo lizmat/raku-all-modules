@@ -288,10 +288,11 @@ class CSS::Declarations {
         $color does CSS::Declarations::Units::Type[$type];
     }
     multi method from-ast(Pair $v is copy where .key eq 'keyw') {
+        state %cache;
         if $v.value eq 'transparent' {
-            $v = 'rgba' => Color.new: :r(0), :g(0), :b(0), :a(0)
+            $v = 'rgba' => INIT Color.new: :r(0), :g(0), :b(0), :a(0)
         }
-        $v.value but CSS::Declarations::Units::Type[$v.key]
+        %cache{$v.value} //= $v.value but CSS::Declarations::Units::Type[$v.key]
     }
     method !set-type(\v, \type) {
         v ~~ Color|Hash|Array
