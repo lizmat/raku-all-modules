@@ -19,8 +19,8 @@
 		"Log::Any::Definitions" : "lib/Log/Any/Definitions.pm6",
 		"Log::Any::Filter" : "lib/Log/Any/Filter.pm6",
 		"Log::Any::FilterBuiltIN" : "lib/Log/Any/Filter.pm6",
-		"Log::Any::Formatter" : "lib/Log/Any/Filter.pm6",
-		"Log::Any::FormatterBuiltIN" : "lib/Log/Any/Filter.pm6"
+		"Log::Any::Formatter" : "lib/Log/Any/Formatter.pm6",
+		"Log::Any::FormatterBuiltIN" : "lib/Log/Any/Formatter.pm6"
 	},
 	"depends" : [
 	],
