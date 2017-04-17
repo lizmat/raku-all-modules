@@ -12,5 +12,5 @@
     "Config::DataLang::Refine":     "lib/Config/DataLang/Refine.pm6"
   },
   "source-url": "git://github.com/MARTIMM/config-datalang-refine.git",
-  "version": "0.6.2.2"
+  "version": "0.6.2.3"
 }
