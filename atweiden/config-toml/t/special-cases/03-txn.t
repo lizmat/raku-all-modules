@@ -14,7 +14,7 @@ subtest
 
     is(
         $match-toml.WHAT,
-        Match,
+        Config::TOML::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 1 of 49
         ┏━━━━━━━━━━━━━┓
@@ -250,7 +250,7 @@ subtest
 
     is(
         $match-toml.WHAT,
-        Match,
+        Config::TOML::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($toml, :$actions)] - 20 of 49
         ┏━━━━━━━━━━━━━┓

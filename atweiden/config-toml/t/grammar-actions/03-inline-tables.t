@@ -130,7 +130,7 @@ subtest
 
     is(
         $match-commented-inline-table-difficult.WHAT,
-        Match,
+        Config::TOML::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse(
               $commented-inline-table-difficult,

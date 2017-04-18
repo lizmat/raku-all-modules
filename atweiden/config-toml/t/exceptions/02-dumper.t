@@ -33,7 +33,7 @@ subtest
     my Any $any = Any.new;
     my Buf $buf = Buf.new;
     my Complex $complex = 2i;
-    my Match $match = Config::TOML::Parser::Grammar.parse("i = 1\n");
+    my Match $match = 'hello' ~~ /hello/;
     my Range $range = 1..10;
     my Regex $regex = /abc/;
     my Signature $signature = :(@prefix, Bool :$extra-brackets);

@@ -32,7 +32,7 @@ subtest
 
     is(
         $match-document.WHAT,
-        Match,
+        Config::TOML::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($document)] - 1 of 128
         ┏━━━━━━━━━━━━━┓
@@ -44,7 +44,7 @@ subtest
     );
     is(
         $match-document-hard.WHAT,
-        Match,
+        Config::TOML::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($document-hard)] - 2 of 128
         ┏━━━━━━━━━━━━━┓
@@ -56,7 +56,7 @@ subtest
     );
     is(
         $match-document-standard.WHAT,
-        Match,
+        Config::TOML::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($document-standard)] - 3 of 128
         ┏━━━━━━━━━━━━━┓
