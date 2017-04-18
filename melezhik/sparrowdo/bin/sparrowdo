@@ -56,7 +56,7 @@ sub MAIN (
 
   say colored('running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
 
-  ssh_shell 'mkdir -m 777 -p /tmp/sparrow-cache/ && mkdir -m 777 -p /tmp/sparrow-cache/plugins && echo print os | perl -MOutthentic  > /tmp/sparrow-cache/os.txt';
+  ssh_shell 'rm -rf /tmp/sparrow-cache/; mkdir -m 777 -p /tmp/sparrow-cache/ && mkdir -m 777 -p /tmp/sparrow-cache/plugins && mkdir -m 777 -p /tmp/sparrow-cache/files && echo print os | perl -MOutthentic  > /tmp/sparrow-cache/os.txt';
 
   _scp "/tmp/sparrow-cache/os.txt", "/tmp/target_os", 1; # copy back /tmp/os.txt 
 
@@ -160,7 +160,15 @@ sub ssh_shell ( $cmd ) {
 
 }
 
-sub _scp ( $file, $dest, $reverse = 0 ) {
+our sub copy-local-file ( $file, $dest ) {
+
+  say colored("copy local file $file to remote $dest", 'bold yellow');
+  _scp($file,$dest);
+
+}
+
+
+our sub _scp ( $file, $dest, $reverse = 0 ) {
 
   my $ssh_host_term = input_params('Host');
 

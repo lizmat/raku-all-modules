@@ -1,0 +1,2 @@
+file '/tmp/hello.txt', %( local => 'data/hello.txt' );
+

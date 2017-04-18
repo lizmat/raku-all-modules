@@ -1,3 +1,7 @@
+# 0.0.16 
+
+copy-local-file - experimental feature
+
 # 0.0.15 2017-04-12
 
 Figure out my tests. Fix for #3
