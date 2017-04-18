@@ -3,7 +3,7 @@ use Test;
 plan 13;
 
 use CSS::Declarations;
-use CSS::Declarations::Units;
+use CSS::Declarations::Units :pt;
 use CSS::Declarations::Box;
 
 my $css = CSS::Declarations.new;

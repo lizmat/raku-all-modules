@@ -2,8 +2,8 @@ use v6;
 use Test;
 plan 7;
 
+use CSS::Declarations::Units :pt, :px, :pc, :in;
 use CSS::Declarations::Font :pt;
-use CSS::Declarations::Units;
 
 is pt(10pt), 10;
 

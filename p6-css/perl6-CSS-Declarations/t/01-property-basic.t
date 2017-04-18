@@ -5,7 +5,7 @@ plan 15;
 use CSS::Declarations::Property;
 use CSS::Declarations::Edges;
 use CSS::Declarations;
-use CSS::Declarations::Units;
+use CSS::Declarations::Units :pt, :px;
 
 pass('compiles');
 

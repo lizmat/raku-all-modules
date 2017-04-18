@@ -1,8 +1,7 @@
 use v6;
 
 class CSS::Declarations::Box {
-    use CSS::Declarations:ver(v0.0.4 .. *);
-    use CSS::Declarations::Units;
+    use CSS::Declarations::Units :pt;
     my Int enum Edges is export(:Edges) <Top Right Bottom Left>;
     has Numeric $.top;
     has Numeric $.right;

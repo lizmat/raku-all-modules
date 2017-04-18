@@ -1,7 +1,7 @@
 use v6;
 class CSS::Declarations::Font {
     use CSS::Declarations:ver(v0.0.4..*);
-    use CSS::Declarations::Units;
+    use CSS::Declarations::Units :Scale, :pt;
 
     has Numeric $.em is rw = 10;;
     has Numeric $.ex is rw = $!em * 0.75;
@@ -43,7 +43,7 @@ class CSS::Declarations::Font {
                         when 'em' { $em }
                         when 'ex' { $ex }
                         when 'percent' { 0 }
-                        default { Units.enums{$units} }
+                        default { Scale.enums{$units} }
                     } // die "unknown units: $units";
                     (.Num * $scale).Num;
                 }

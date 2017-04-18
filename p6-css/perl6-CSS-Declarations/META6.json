@@ -2,7 +2,7 @@
     "perl"        : "6.*",
     "name"        : "CSS::Declarations",
     "tags"        : ["css"],
-    "version"     : "0.2.1",
+    "version"     : "0.3.0",
     "auth"        : "github:p6-css",
     "description" : "CSS property manipulation library",
     "depends"     : [ "CSS::Module", "CSS::Writer", "Color" ],

@@ -4,7 +4,7 @@ plan 7;
 
 use CSS::Declarations;
 use CSS::Declarations::Font;
-use CSS::Declarations::Units;
+use CSS::Declarations::Units :px;
 my $font-style = 'italic bold 10pt/12pt times-roman';
 my $font = CSS::Declarations::Font.new: :$font-style;
 is $font.em, 10, 'em';

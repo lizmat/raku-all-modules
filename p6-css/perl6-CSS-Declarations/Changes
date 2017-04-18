@@ -1,3 +1,10 @@
+0.3.0
+    CSS::Declarations::Units
+    - Remove default exports. Everything is now tagged. :pt, :pt,
+      :em, :ex, etc.
+    - Avoid implicit export of '+' and '-' operators.
+    - Add :ops export tag, which exports '➕' and '➖' for
+      addition and subtraction with units conversion.
 0.2.1
     CSS::Declarations::Box:
     - Remove rendering-specific 'build-box' method

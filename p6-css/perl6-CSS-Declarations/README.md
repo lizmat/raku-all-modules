@@ -5,7 +5,7 @@ CSS::Declarations is a class for parsing and generation of CSS property lists, i
 ## Basic Construction
 ```
 use v6;
-use CSS::Declarations::Units;
+use CSS::Declarations::Units :pt;
 use CSS::Declarations;
 
 my $style = "color:red !important; padding: 1pt";
@@ -55,7 +55,7 @@ The simplest ways of setting a property is to assign a string value.  The value 
 
 ```
 use CSS::Declarations;
-use CSS::Declarations::Units;
+use CSS::Declarations::Units :pt;
 my CSS::Declarations $css .= new;
 
 # assign to container
@@ -113,7 +113,6 @@ my $font-face-css = CSS::Declarations.new( :$style, :$module);
 
 ## Default values
 
-
 Most properties have a default value. If a property is reset to its default value it will be omitted from stringification:
 
     my $css = (require CSS::Declarations).new;
@@ -145,8 +144,8 @@ To inherit a css object or style string:
 use CSS::Declarations;
 
 my $inherit = "margin-top:5pt; margin-left: 15pt; color:rgb(0,0,255) !important";
-
-my $css = CSS::Declarations.new: :style("margin-top:25pt; margin-right: initial; margin-left: inherit; color:purple"), :$inherit;
+my $style = "margin-top:25pt; margin-right: initial; margin-left: inherit; color:purple";
+my $css = CSS::Declarations.new: :$style, :$inherit;
 
 say $css.color; # #FF0000 (red)
 say $css.handling("margin-left");   # inherit
@@ -186,7 +185,7 @@ because all four borders had the common value `2pt`
 
 - `:!color-names` - don't translate RGB values to color-names
 
-The optimizer can also be invoked directly to optimize ASTS via the `.optimize` method:
+ASTs can also be directly optimized:
 ```
 use CSS::Declarations;
 use CSS::Module::CSS3;
@@ -241,17 +240,17 @@ margin-right: 5 mm
 
 ## Length Units
 
-CSS::Declaration::Units is a convenience module that provides some simple postfix length unit definitions, plus overriding of the '+' and '-'
+CSS::Declaration::Units is a convenience module that provides some simple postfix length unit definitions, plus '➕' and '➖'
 operators. These are understood by the CSS::Declarations class.
 
-The '+' and '-' operators convert to the left-hand operand's units.
+The '➕' and '➖' operators convert to the left-hand operand's units.
 
 ```
-use CSS::Declarations::Units;
+use CSS::Declarations::Units :ops, :pt, :px, :in, :mm;
 my $css = (require CSS::Declarations).new: :margin[5pt, 10px, .1in, 2mm];
 
 # display margins in millimeters
-say "%.2f mm".sprintf(0mm + $_) for $css.margin.list;
+say "%.2f mm".sprintf(0mm ➕ $_) for $css.margin.list;
 ```
 
 ## Box Model
@@ -261,7 +260,7 @@ say "%.2f mm".sprintf(0mm + $_) for $css.margin.list;
 ```
 use CSS::Declarations;
 use CSS::Declarations::Box;
-use CSS::Declarations::Units;
+use CSS::Declarations::Units :px, :pt, :em, :percent;
 
 my $style = q:to"END";
     width:   300px;
