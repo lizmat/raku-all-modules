@@ -7,10 +7,12 @@ use YAML::Dumper;
 our $*VERSION = '0.01';
 
 our sub dump($object) is export {
-    return YAML::Dumper.new.dump($object);
     CATCH {
-        say "Error: $!";
+        default {
+            say "Error: $!";
+        }
     }
+    YAML::Dumper.new.dump($object);
 }
 
 our sub load($yaml) is export {
