@@ -64,9 +64,8 @@ proto method walk(SAST:D $sast is rw,|) {
         }
     }
 
-    my $save = $sast;
+    $sast.stage3-done = True;
     {*}
-    $save.stage3-done = True;
 }
 
 multi method walk(SAST:D $ is rw) {}
@@ -91,6 +90,82 @@ multi method walk(SAST::While:D $THIS is rw) {
     }
 }
 
+method try-case($if) {
+    my $can = True;
+    my $common-topic;
+    my \ENUM-HAS-MEMBER = (once tEnumClass.^find-spit-method('ACCEPTS'));
+    my \ENUM-NAME       = (once tEnumClass.^find-spit-method: 'name');
+    my \STR-MATCHES =     (once tStr.^find-spit-method: 'matches'|'match');
+    my SAST::Regex:D @patterns;
+    my SAST::Block:D @blocks;
+    my SAST::Block   $default;
+
+    my $cur = $if;
+    while $cur and $can {
+        my ($topic,$pattern);
+
+        if $cur !~~ SAST::If {
+            $default = $cur;
+            $cur = Nil;
+            last;
+        }
+
+        if (
+            (my \cond = $cur.cond) ~~ SAST::Cmp && cond.sym eq 'eq'
+                && (
+                    $topic = cond[0];
+                    $pattern = SAST::Regex.new(
+                        patterns => { case => '{{0}}' },
+                        placeholders => cond[1],
+                        match => $cur.match,
+                    );
+                )
+            or
+            cond ~~ SAST::MethodCall && cond.declaration.identity === STR-MATCHES
+                && (my $re = cond.pos[0]) ~~ SAST::Regex && $re.patterns<case>.defined
+                && ($topic = cond[0]; $pattern = $re)
+            or
+
+            cond ~~ SAST::MethodCall && cond.declaration.identity === ENUM-HAS-MEMBER
+                && (my $enum = cond[0].compile-time) ~~ Spit::Type
+                && (
+                    $topic = cond.pos[0].stage3-node(
+                        SAST::MethodCall,
+                        name => 'name',
+                        declaration => ENUM-NAME,
+                        cond.pos[0],
+                    );
+                    $pattern = SAST::Regex.new(
+                        match    => $cur.match,
+                        patterns => { case => $enum.^types-in-enum».name.join('|') }
+                    )
+                 )
+            )
+          {
+              $common-topic //= $topic;
+              if (given $common-topic {
+                 when SAST::CompileTimeVal { $topic.val ===  .val }
+                 when SAST::Var { $topic.declaration === .declaration }
+                 when SAST::MethodCall {
+                     $topic.declaration === .declaration === ENUM-NAME
+                 }
+              }) {
+                  @patterns.push($pattern);
+                  @blocks.push($cur.then);
+              } else {
+                  $can = False;
+              }
+              $cur = $cur.else;
+          } else {
+            $can = False;
+        }
+    }
+
+    if $can and @patterns > 1 {
+        $if.stage3-node: SAST::Case, in => $common-topic, :@blocks, :@patterns, :$default;
+    }
+}
+
 multi method walk(SAST::If:D $THIS is rw,:$sub-if) {
     with $THIS.cond.compile-time -> $cond {
         if ?$cond {
@@ -105,6 +180,10 @@ multi method walk(SAST::If:D $THIS is rw,:$sub-if) {
         }
     } else {
         $THIS.else andthen self.walk($_,:sub-if);
+    }
+
+    if not $sub-if and $THIS ~~ SAST::If and self.try-case($THIS) -> $case {
+        $THIS = $case;
     }
 }
 
@@ -154,12 +233,6 @@ multi method walk(SAST::Junction:D $THIS is rw) {
 
 multi method walk(SAST::Var:D $THIS is rw where { $_ !~~ SAST::VarDecl }) {
     my $decl := $THIS.declaration;
-
-    if $THIS.is-option and not $decl.assign and not %!opts{$THIS.bare-name} {
-        SX::RequiredOption.new(
-            name => $THIS.bare-name,
-            match => $THIS.match).throw;
-    }
 
     if $decl ~~ SAST::ConstantDecl {
         self.walk($decl); # Walk the declaration early so we can inspect it for inlining
@@ -317,13 +390,13 @@ multi method walk(SAST::Cmp:D $THIS is rw) {
 sub acceptable-in-cond-return($_,$original) {
     when SAST::Cmd {
         (not .write || .append || .pipe-in || .in) and
-        (.nodes[*-1] andthen .cloned === $original);
+        (.nodes[*-1] andthen .identity === $original);
     }
     when SAST::MethodCall {
-        (.pos[*-1] || .invocant) andthen .cloned === $original;
+        (.pos[*-1] || .invocant) andthen .identity === $original;
     }
     when SAST::Call {
-        .pos[*-1] andthen .cloned === $original;
+        .pos[*-1] andthen .identity === $original;
     }
     default { False }
 }
@@ -378,20 +451,22 @@ multi method walk(SAST::Stmts:D $THIS is rw) {
 
 multi method walk(SAST::MethodCall:D $THIS is rw) {
     my \ENUMC_NAME = once tEnumClass.^find-spit-method('name');
+    my \STR_BOOL = once tStr.^find-spit-method('Bool');
+    my \ENUM_ACCEPTS = once tEnumClass.^find-spit-method('ACCEPTS');
 
-    if $THIS.declaration === (once tStr.^find-spit-method('Bool'))
-       and (my $ct = $THIS.invocant.compile-time).defined
+    if $THIS.declaration === STR_BOOL
+        and (my $ct = $THIS.invocant.compile-time).defined
     {
-       $THIS .= stage3-node(SAST::BVal, val => ?$ct);
+        $THIS .= stage3-node(SAST::BVal, val => ?$ct);
     }
 
     elsif $THIS.declaration === ENUMC_NAME
-          and $THIS.invocant.compile-time -> $ct
+        and $THIS.invocant.compile-time -> $ct
     {
         $THIS .= stage3-node(SAST::SVal,val => $ct.name);
     }
 
-    elsif $THIS.declaration === (once tEnumClass.^find-spit-method('ACCEPTS')) {
+    elsif $THIS.declaration === ENUM_ACCEPTS {
         my $enum := $THIS[0];
         my $candidate := $THIS.pos[0];
 

@@ -33,6 +33,7 @@ multi tList(Spit::Type \param) {
     $list.^parameterize(param);
 }
 sub tRegex is export { state $ = class-by-name('Regex') }
+sub tPattern is export { state $ = class-by-name('Pattern') }
 sub tOS is export { state $ = class-by-name('OS') }
 sub tFD is export { state $ = class-by-name('FD') }
 sub tFile is export { state $ = class-by-name('File')  }
@@ -115,6 +116,7 @@ role SAST is rw {
     method ostensible-type { self.type } # The the type that the thing looks like
     method deep-clone { self.clone }
     method deep-first(\needle) { self if self ~~ needle }
+    method identity { $!cloned // self }
 
     # Convenience methods
     method stage2-node(\type,|args) {
@@ -240,6 +242,7 @@ role SAST::Declarable does SAST::Dependable {
     has SpitDoc:D @.docs;
     method symbol-type {...}
     method name {...}
+    method bare-name { $.name }
 }
 
 role SAST::OSMutant {
@@ -378,7 +381,7 @@ class SAST::Var is SAST::Children does SAST::Assignable {
     method depends { $.declaration, }
 
     method is-option  { $!name.starts-with('*') }
-    method bare-name  { $!name.subst(/^'*'/,'') }
+
     method gen-reference(:$match!,|c){
         SAST::Var.new(:$.name,:$.sigil,:$match,:$.declaration,|c);
     }
@@ -416,11 +419,13 @@ class SAST::VarDecl is SAST::Var does SAST::Declarable is rw {
         }
         self;
     }
-
+    method bare-name  { $.name.subst(/^<[*?]>/,'') }
     method dont-depend is rw { $!dont-depend }
     method depends { Empty }
     method declaration { self }
 }
+
+class SAST::EnvDecl is SAST::VarDecl { }
 
 class SAST::MaybeReplace is SAST::VarDecl {
     method writable { $.assign }
@@ -611,7 +616,7 @@ class SAST::Cmd is SAST::MutableChildren is rw {
 
     method clone(|c) { callwith(|c,:@!write,:@!append,:@!in,:%!set-env) }
 
-    method type { $.ctx }
+    method type { $.ctx !=== tAny() ?? $.ctx !! tStr }
 }
 
 class SAST::Coerce is SAST::MutableChildren {
@@ -837,6 +842,8 @@ class SAST::Call  is SAST::Children {
     method depends { $.declaration, }
 
     method gen-sig { self.declaration.signature }
+
+    method itemize { $.type !~~ tList }
 
     method gist { $.node-name ~ "($!name)" ~ $.gist-children }
 }
@@ -1543,7 +1550,17 @@ class SAST::Regex is SAST::Children is rw {
     has Str:D %.patterns;
     has SAST:D @.placeholders;
 
-    method type { $.ctx ~~ tBool() ?? $.ctx !! tRegex() }
+    method type {
+        given $.ctx {
+            when tBool() { $.ctx }
+            when tPattern() {
+                %!patterns<case>:exists
+                    ?? tPattern()
+                    !! self.make-new(SX, message => "Unable to convert this regex to pattern").throw;
+            }
+            default { tRegex() }
+        }
+    }
     method stage2($ctx){
         if $ctx ~~ tBool() {
             self.make-new(
@@ -1558,6 +1575,20 @@ class SAST::Regex is SAST::Children is rw {
     }
 
     method children { @!placeholders }
+
+    method gist { $.node-name ~ "({%.patterns.gist})" ~ $.gist-children }
+}
+
+class SAST::Case is SAST::Children is rw {
+    has SAST:D $.in is required;
+    has SAST::Regex:D @.patterns;
+    has SAST::Block:D @.blocks;
+    has SAST $.default;
+
+    # is created in stage3
+    method children { $!in,|@!blocks,($!default // Empty) }
+
+    method type { derive-common-parent (|@!blocks,$!default // Empty).map(*.type) }
 }
 
 class SAST::Quietly is SAST::Children {

@@ -267,7 +267,7 @@ grammar Spit::Grammar is Spit::Lang {
     }
 
     rule declaration:var {
-        $<sym>=['constant'|'my']
+        $<sym>=['constant'|'my'|'env']
         {} <var-and-type($<sym>.Str)>
         :my $*DECL;
         { $*DECL = $<var-and-type>.ast }
@@ -370,7 +370,7 @@ grammar Spit::Grammar is Spit::Lang {
             <class-params>?
             $<object>=(
                 |<angle-quote>
-                | $<EXPR>=<.r-wrap('{',/<R=.EXPR>/,'}',:desc<object definition>)>
+                | $<EXPR>=<.r-wrap('(',/<R=.EXPR>/,')',:desc<object definition>)>
             )?
             ||
             $<call-args>=(

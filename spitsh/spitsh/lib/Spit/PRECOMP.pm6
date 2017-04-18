@@ -2,23 +2,24 @@ use Spit::Compile;
 use Spit::Util :sha1, :touch;
 
 sub slurp-SETTING {
-    <base EnumClass os List FD core-subs Any File Str Int Bool Regex Pkg Cmd Locale PID checks>
+    <base EnumClass os List FD core-subs Any File Str Int Bool Regex Pkg Cmd Locale PID Git checks>
     .map({ %?RESOURCES{"src/$_.spt"}.slurp })
     .join("\n");
 }
 
-
-
 my constant $src = slurp-SETTING();
-my constant $SETTING = compile(
+my constant $SETTING = do {
+    note "precompiling SETTING";
+    compile(
         $src,
         :target<stage2>,
         :!SETTING,
         :name<SETTING>,
         :debug(%*ENV<SPIT_DEBUG_SETTING>)
     ).block;
-my constant $src-sha1 = sha1($src);
+}
 
+my constant $src-sha1 = sha1($src);
 
 sub get-SETTING is export {
     once do if %*ENV<SPIT_SETTING_DEV> {

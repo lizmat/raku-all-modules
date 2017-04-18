@@ -20,7 +20,9 @@ say "I wonder what kind of OS I'm on...?"
 say "It's some kind of Debian:"
 say "It's some other kind of Ubuntu XD"
 ```
-# $IFS
+# $*interactive
+ Whether the script should be compiled as an interactive script. Defaults to whether `$?IN` is a tty.
+# $?IFS
  The internal field separator. For Spit it's always `\n`.
 # $?CAP
  File descriptor used to represent the STDOUT of a cmd inside the script rather than the script itself. '~' is a short alias for `$?CAP` in `${..}` commands.
@@ -41,6 +43,8 @@ if ${command -v perl >X} {
     say "perl exists";
 }
 ```
+# $?IN
+ Standard input (STDIN). The 0 file descriptor for the script.
 # $*ERR
  File descriptor connected to the STDERR of the script.  '!' is a short alias for `$*ERR` in `${..}` commands.
 ```perl6
@@ -50,8 +54,6 @@ ${printf "allo earth" >!}; #shorthand
 ${ls '/I/dont/exist' !> $*OUT}; #redirect STDERR to script's STDOUT
 my $error = ${ls '/I/dont/exist' !>~}; # capture STDERR into return value of cmd
 ```
-# $?PID
- The process ID of top-level script. It is not the same as `$$` which may be different if used inside a sub-process. It can be used to kill the top level process from a child process.
 # @/
  The match list variable. Like `$/` in Perl 6 it stores the what was match after a something is matched against a regex.
 ```perl6

@@ -1,7 +1,7 @@
 {
     "name" : "Spit",
     "perl" : "6.c",
-    "version" : "0.0.18",
+    "version" : "0.0.19",
     "description" : "The Spook in the Shell Script (Spit-sh) compiler",
     "authors" : ["Lloyd Fournier lloyd.fourn@gmail.com"],
     "provides" : {
@@ -45,6 +45,7 @@
         "src/os.spt",
         "src/Regex.spt",
         "src/PID.spt",
+        "src/Git.spt",
         "core-lib/Test.spt"
     ],
     "source-url" : "https://github.com/spitsh/spitsh.git",

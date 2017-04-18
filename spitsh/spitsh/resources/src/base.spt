@@ -4,15 +4,11 @@ class Int  is Str is primitive {}
 class Bool is Str is primitive {}
 class List[Elem-Type] is Str is primitive {}
 class EnumClass is Str is primitive {}
-class Regex is Str  {}
+class Regex   is Str {}
+class Pattern is Str {}
 
 class FD is Int { }
 class File { }
 class PID is Int { }
-
-#| The process ID of top-level script. It is not the same as `$$`
-#| which may be different if used inside a sub-process. It can be used
-#| to kill the top level process from a child process.
-constant PID $?PID = $$;
 
 enum-class OS { }

@@ -11,7 +11,7 @@
 
  If the two strings are equal, prints the message with a friendly '✔'. Otherwise, displays the two strings and dies with an angry '✘'.
 ```perl6
-is File</etc/meaning-of-life.cfg>.read,'42',"configured with correct MOL";
+is File</etc/meaning-of-life.cfg>.slurp,'42',"configured with correct MOL";
 ```
 
 |Parameter|Description|
@@ -55,3 +55,7 @@ ok True,"";
 >sub say([Str](../Str.md) **$str** ⟶ [Bool](../Bool.md))
 
  Prints its argument to `$*OUT` with a newline
+# sleep
+>sub sleep([Int](../Int.md) **$seconds**)
+
+ Suspends execution for an interval of time measured in seconds. **note** `sleep(1)` can usually take floating point numbers but they are NYI in spit.

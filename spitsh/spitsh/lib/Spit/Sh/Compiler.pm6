@@ -15,7 +15,7 @@ my %native = (
     )),
     list  => Map.new((
         body => q|printf "%s\n" "$*"|,
-        deps => ('IFS'),
+        deps => ('?IFS'),
     )),
     starts-with => Map.new((
         body => Q<case "$1" in "$2"*) true;; *) false;; esac>,
@@ -41,7 +41,7 @@ my subset ShellStatus of SAST where {
     # 'or' and 'and' don't work here for some reason
     ($_ ~~ SAST::Neg|SAST::Cmp) ||
     ((.type ~~ tBool) && $_ ~~
-      SAST::Stmts|SAST::Cmd|SAST::Call|SAST::If|SAST::Quietly|SAST::LastExitStatus
+      SAST::Stmts|SAST::Cmd|SAST::Call|SAST::If|SAST::Case|SAST::Quietly|SAST::LastExitStatus
     )
 }
 
@@ -55,7 +55,7 @@ has $.chars-per-line-cap = 80;
 
 method BUILDALL(|) {
     @!names[SCALAR]<_> = '_';
-    for <shift chmod rm> {
+    for <shift chmod rm kill exit sleep find> {
         @!names[SUB]{$_} = $_;
     }
     callsame;
@@ -65,7 +65,7 @@ method scaffolding {
     my @a;
     for
     (SUB,'list'),
-    (SCALAR,'IFS'),
+    (SCALAR,'?IFS'),
     (SCALAR,'*NULL'),
     (SUB,'et'),
     (SUB,'ef'),
@@ -89,7 +89,7 @@ method check-stage3($node) {
     SX::CompStageNotCompleted.new(stage => 3,:$node).throw  unless $node.stage3-done;
 }
 
-multi method gen-name(SAST::Declarable:D $decl,:$name is copy = $decl.name,:$fallback)  {
+multi method gen-name(SAST::Declarable:D $decl,:$name is copy = $decl.bare-name,:$fallback)  {
     self.check-stage3($decl);
     $name = do given $name {
         when '/' { 'M' }
@@ -115,11 +115,19 @@ multi method gen-name(SAST::Var:D $_ where { $_ !~~ SAST::VarDecl }) {
     self.gen-name(.declaration);
 }
 
+multi method gen-name(SAST::EnvDecl:D $_) {
+    my $name = callsame;
+    if $name ne .bare-name {
+        .make-new(SX,message => "Unable to reserve ‘{.bare-name}’ for enironment variable.").throw;
+    }
+    $name;
+}
+
 multi method gen-name(SAST::MethodDeclare:D $method) {
     callwith($method,fallback => $method.invocant-type.name.substr(0,1).lc ~ '_' ~ $method.name);
 }
-method !avoid-name-collision($decl,$name is copy = $decl.name,:$fallback) {
-    $name ~~ s/^['*'|'?']//;
+
+method !avoid-name-collision($decl,$name is copy,:$fallback) {
     $name ~~ s:g/\W/_/;
     my $st = $decl.symbol-type;
     $st = SCALAR if $st == ARRAY;
@@ -153,14 +161,7 @@ method scaf-ref($name,:$match) {
     }
 }
 
-method comp-depend($_){
-    my ShellElement:D @comp = self.compile-nodes([$_],:indent).grep(*.defined);
-    |do if @comp {
-        Pair.new(key => $_,value => @comp)
-    }
-}
-
-method compile(SAST::CompUnit:D $CU --> ShellElement:D) {
+method compile(SAST::CompUnit:D $CU --> Str:D) {
     my $*pad = '';
     my $*depends = $CU.depends-on;
     my ShellElement:D @compiled;
@@ -169,8 +170,11 @@ method compile(SAST::CompUnit:D $CU --> ShellElement:D) {
 
     my @END = ($CU.phasers[END] andthen self.compile-nodes($_,:indent));
 
-    my @compiled-depends = $*depends.reverse-iterate( {  self.comp-depend($_) } );
-    my @BEGIN = @compiled-depends && @compiled-depends.map({ ("\n" if $++),|.value}).flat;
+    my @compiled-depends = $*depends.reverse-iterate: {
+        self.compile-nodes([$_],:indent).grep(*.defined);
+    };
+
+    my @BEGIN = @compiled-depends && @compiled-depends.map({ ("\n" if $++),|$_}).flat;
     my @run;
     for :@BEGIN,:@MAIN {
         if .value {
@@ -290,7 +294,9 @@ multi method node(SAST::Var:D $var) {
         }
         @var;
     } elsif $var ~~ SAST::VarDecl {
-        $name,'=',($var.type ~~ tInt() ?? '0' !! "''");
+        if $var !~~ SAST::EnvDecl {
+            $name,'=',($var.type ~~ tInt() ?? '0' !! "''")
+        }
     } else {
         ': $',$name;
     }
@@ -345,7 +351,19 @@ multi method int-expr(SAST::Var:D $_) {
 }
 #!If
 multi method node(SAST::If:D $_,:$else) {
-    self.try-case($_) andthen .return;
+    if not $else
+       and not .else
+       and .then.one-stmt
+       and not (.topic-var andthen .depended) {
+        # in some limited circumstances we can simplify
+        # if cond { action } to cond && action
+        my $neg = .cond ~~ SAST::Neg;
+        my $cond = $neg ?? .cond[0] !! .cond;
+        return
+            |self.cond($cond),
+            ($neg ?? ' || ' !! ' && '),
+            |self.node(.then, :one-line);
+    }
 
     substitute-cond-topic(.topic-var,.cond);
 
@@ -383,59 +401,6 @@ sub substitute-cond-topic($topic-var,$cond is rw) {
     }
 }
 
-method try-case($if is copy) {
-    my $can = True;
-    my $common-topic;
-    my @res;
-    my $i = 0;
-    while $if and $can {
-        my ($topic,$pattern);
-        if $if !~~ SAST::If {
-            @res.append: "\n$*pad  *) ", |self.node($if,:one-line),';;';
-            $if = Nil;
-        } elsif (
-            (my \cond = $if.cond) ~~ SAST::Cmp && cond.sym eq 'eq'
-                && ($topic = cond[0]; $pattern := |self.arg(cond[1]))
-            or
-            cond ~~ SAST::MethodCall && cond.declaration.cloned === (once lookup-method 'Str','match')
-                && (my $re := cond.pos[0]) ~~ SAST::Regex && (my $case = $re.patterns<case>)
-                && ($topic = cond[0]; $pattern := self.compile-pattern($case,$re.placeholders).in-DQ)
-            or
-            cond ~~ SAST::MethodCall && cond.declaration.cloned === (once lookup-method 'EnumClass','has-member')
-                && (my $enum := cond[0].compile-time) ~~ Spit::Type
-                && ($topic = cond.pos[0]; $pattern := $enum.^types-in-enum».name.join('|'))
-            )
-          {
-              $common-topic //= $topic;
-              if (given $common-topic {
-                 when SAST::CompileTimeVal { $topic.val ===  .val }
-                 when SAST::Var { $topic.declaration === .declaration }
-                 when SAST::MethodCall {
-                     # DIRTY HACK: I want to make 'given SomeEnum { when ..}' caseable.
-                     # But each cond will be wrapped in a call to .name to remove '|' from it.
-                     # TODO: A general solution to to case method calls
-                     $topic.declaration === .declaration
-                     && .declaration === (once lookup-method('EnumClass','name')),
-                 }
-              }) {
-                  @res.append: "\n$*pad  ",$pattern,') ', |self.node($if.then,:one-line),";;";
-                  $i++;
-              } else {
-                  $can = Nil;
-              }
-              $if = $if.else;
-          } else {
-            $can = Nil;
-        }
-    }
-    $can = Nil if $i < 2;
-    if $can {
-        @res.prepend: 'case ', |self.arg($common-topic), ' in ';
-        @res.append: "\n{$*pad}esac";
-    }
-    $can && @res;
-}
-
 multi method cap-stdout(SAST::If:D $_) {
     nextsame when ShellStatus;
     self.node($_);
@@ -462,7 +427,7 @@ multi method cond(SAST::Given:D $_) { self.node($_) }
 multi method arg(SAST::Given:D $_) { cs self.node($_) }
 #!For
 multi method node(SAST::For:D $_) {
-    self.scaf('IFS');
+    self.scaf('?IFS');
     'for ', self.gen-name(.iter-var), ' in', |.list.children.map({ self.space-then-arg($_) }).flat
     ,"; do\n",
     |self.node(.block,:indent,:no-empty),
@@ -586,7 +551,9 @@ multi method cond(SAST::LastExitStatus:D $_) {
     'expr $? = 0 >', '&',self.arg(self.scaf-ref('*NULL',match => .match));
 }
 
-multi method arg(SAST::LastExitStatus:D $_) { '$?' }
+multi method arg(SAST::LastExitStatus:D $_) {
+    .ctx ~~ tBool() ?? callsame() !! '$?';
+}
 
 #!CurrentPID
 multi method arg(SAST::CurrentPID:D $) { '$$' }
@@ -794,23 +761,57 @@ multi method arg(SAST::IVal:D $_) { .val.Str }
 multi method int-expr(SAST::IVal:D $_) { .val.Str }
 #!Eval
 multi method arg(SAST::Eval:D $_) { self.arg(.compiled) }
-#!Regex
 
+#!Case
+multi method node(SAST::Case:D $_) {
+    'case ', |self.arg(.in), ' in ',
+    |flat(do for .patterns.kv -> $i, $re {
+             "\n$*pad  ",|self.compile-case-pattern($re.patterns<case>,$re.placeholders)
+             ,') ',|self.node(.blocks[$i],:one-line), ';;';
+         }),
+    |(.default andthen "\n$*pad  *) ", |self.node($_, :one-line), ';;'),
+    "\n{$*pad}esac";
+}
+
+multi method cap-stdout(SAST::Case:D $_) { self.node($_) }
+
+method compile-case-pattern($pattern is copy, @placeholders) {
+    if @placeholders {
+        $pattern = escape($pattern).in-DQ;
+        my @literals = $pattern.split(/'{{' \d '}}'/);
+        for @placeholders.kv -> $i, $v {
+            @literals.splice: $i*2+1, 0, self.arg($v);
+        }
+        my @str;
+        for @literals.reverse.kv -> $i, $_ {
+            @str.prepend(.in-case-pattern(next => @str.head));
+        }
+        @str.join || "''";
+    } else {
+        $pattern || "''";
+    }
+}
+
+#!Regex
 method compile-pattern($pattern is copy,@placeholders) {
     if @placeholders {
         $pattern = escape($pattern).in-DQ;
         my @literals = $pattern.split(/'{{' \d '}}'/);
         for @placeholders.kv -> $i, $v {
-            @literals.splice: $i*2+1, 0, self.arg($v).in-DQ.join;
+            @literals.splice: $i*2+1, 0, self.arg($v);
         }
-        dq @literals.join;
+        self.concat-into-DQ(@literals);
     } else {
         escape $pattern
     }
 
 }
 multi method arg(SAST::Regex:D $_) {
-    self.compile-pattern(.patterns<ere>,.placeholders);
+    if .ctx ~~ tPattern() {
+        self.compile-pattern(.patterns<case>,.placeholders);
+    } else {
+        self.compile-pattern(.patterns<ere>,.placeholders);
+    }
 }
 
 #!Range
@@ -829,17 +830,18 @@ multi method arg(SAST::Range:D $_) {
 #!Blessed
 multi method arg(SAST::Blessed:D $_) { self.arg($_[0]) }
 
-#!Concat
-multi method arg(SAST::Concat:D $_) {
-    return '""' unless .children;
-    my @compiled = .children.flatmap({ self.arg($_) });
+method concat-into-DQ(@elements) {
     my $str = dq();
 
-    my $last-var;
-    for @compiled.reverse.kv -> $i,$_ {
+    for @elements.reverse.kv -> $i,$_ {
         $str.bits.prepend(.in-DQ(next => $str.bits.head));
     }
     $str;
+}
+
+#!Concat
+multi method arg(SAST::Concat:D $_) {
+    self.concat-into-DQ(.children.map({ self.arg($_) }).flat)
 }
 #!Type
 multi method arg(SAST::Type $_) {
