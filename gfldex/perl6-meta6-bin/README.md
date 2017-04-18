@@ -64,6 +64,9 @@ local git repo.
     --base=master # branch in upstream repo
     --repo-name # defaults to repo name provided in META6.info
 
+Pull request need to tell github where to create the PR at. That in turn
+requires a proper `META6.json` to get the repo name from.
+
 # Config dir
 
 The config dir resides at `~/.meta6` and holds a folder called `skeleton` for

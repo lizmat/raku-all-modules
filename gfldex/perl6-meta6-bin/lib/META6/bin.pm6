@@ -38,21 +38,25 @@ my &RED = sub (*@s) {
     "\e[31m{@s.join('')}\e[0m"
 }
 
-&BOLD = &RED = sub (Stringy $s) { $s } unless $*OUT.t;
+my &RESET = sub (*@s) {
+    "\e[0m{@s.join('')}\e[0m"
+}
+
+&BOLD = &RED = &RESET = sub (Stringy $s) { $s } unless $*OUT.t;
 
 my @path = "%*ENV<HOME>/.meta6"».IO;
 my $cfg-dir = %*ENV<HOME>.IO.child('.meta6');
 my $github-user = git-config<credential><username>;
 my $github-realname = git-config<user><name>;
 my $github-email = git-config<user><email>;
-my $github-token = $cfg-dir.?child('github-token.txt').slurp.chomp // '';
+my $github-token = (try $cfg-dir.child('github-token.txt').slurp.chomp) // '';
 
 if $cfg-dir.e & !$cfg-dir.d {
     note "WARN: ⟨$cfg-dir⟩ is not a directory.";
 }
 
 sub first-hit($basename) {
-    @path».child($basename).grep({.e & .r}).first
+    try @path».child($basename).grep({.e & .r}).first
 }
 
 my %cfg = read-cfg(first-hit('meta6.cfg'));
@@ -168,8 +172,7 @@ multi sub MAIN(:$create-cfg-dir, Bool :$force) {
 
 multi sub MAIN(:$fork-module, :$force) {
     my @ecosystem = fetch-ecosystem;
-    # dd @ecosystem».<source-url support>;
-    my $meta6 = @ecosystem.grep( *.<name> eq $fork-module )[0];
+    my $meta6 = @ecosystem.grep(*.<name> eq $fork-module)[0];
     my $module-url = $meta6<source-url> // $meta6<support>.source;
     my ($owner, $repo) = $module-url.split('/')[3,4];
     $repo.subst-mutate(/'.git'$/, '');
@@ -201,6 +204,7 @@ multi sub MAIN(Bool :pr(:$pull-request), Str :$base-dir = '.', Str :$meta6-file-
 ) {
     $title //= git-log(:$base-dir).first;
     my IO::Path $meta6-file = ($base-dir ~ '/' ~ $meta6-file-name).IO;
+    die RED "Can not find ⟨$meta6-file⟩." unless $meta6-file.e;
     my $meta6 = META6.new(file => $meta6-file) or die RED "Failed to process ⟨$meta6-file⟩.";
     my $github-url = $meta6<source-url> // $meta6<support>.source;
     my $repo = $repo-name // $github-url.split('/')[4].subst(/'.git'$/, '');
@@ -304,10 +308,10 @@ our sub github-pull-request($owner, $repo, $title, $body = '', :$head = 'master'
 
     given from-json($github-response) {
         when .<message>:exists {
-            fail RED .<message>;
+            fail RED .<message> ~ RESET ~ ' (You may have forgot to push.)';
         }
-        when .<full_name>:exists {
-            say BOLD 'GitHub project forked at https://github.com/' ~ .<full_name> ~ '.';
+        when .<html_url>:exists {
+            say BOLD 'Pull request created at ' ~ .<html_url> ~ '.';
             return .<html_url>;
         }
     }
@@ -469,7 +473,9 @@ our sub post-push-hook($base-dir) is export(:HOOK) {
     }
 }
 
-our sub read-cfg($path) is export(:HELPER) {
+our proto sub read-cfg(|) is export(:HELPER) {*}
+
+multi sub read-cfg(IO::Path:D $path) {
     use Slippy::Semilist;
 
     return unless $path.IO.e;
@@ -485,6 +491,15 @@ our sub read-cfg($path) is export(:HELPER) {
     %h
 }
 
+multi sub read-cfg(Mu:U $path) {
+    my %h;
+    %h<general><timeout> = 60;
+    %h<git><timeout> = 60;
+    %h<git><protocol> = 'https';
+    
+    %h
+}
+
 our sub fetch-ecosystem is export(:HELPER) {
     my $curl = Proc::Async.new('curl', '--silent', 'http://ecosystem-api.p6c.org/projects.json');
     my Promise $p;
@@ -496,5 +511,5 @@ our sub fetch-ecosystem is export(:HELPER) {
     fail RED "⟨curl⟩ timed out." if $p.status == Broken;
     
     say BOLD "Parsing module list.";
-    from-json($ecosystem-response)
+    from-json($ecosystem-response).flat
 }
