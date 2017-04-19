@@ -44,6 +44,7 @@ system on another.
 =end pod
 
 use App::ModuleSnap;
+use META6;
 
 multi sub MAIN(Str :$directory = '.') {
 

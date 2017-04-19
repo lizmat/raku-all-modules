@@ -4,7 +4,8 @@
   "source-url": "git://github.com/jonathanstowe/App-ModuleSnap.git",
   "support": {
     "source": "git://github.com/jonathanstowe/App-ModuleSnap.git",
-    "email" : "jns+gh@gellyfish.co.uk"
+    "email" : "jns+gh@gellyfish.co.uk",
+    "bugtracker" : "https://github.com/jonathanstowe/App-ModuleSnap/issues"
   },
   "perl": "6.c",
   "build-depends": [ ],
@@ -22,7 +23,7 @@
      "JSON::Fast"
   ],
   "description": "Take a snapshot of the installed modules for later reinstallation",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "meta6": "0",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
