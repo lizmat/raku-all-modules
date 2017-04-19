@@ -45,7 +45,7 @@ types, tha represent the structure of the data.
 
 Class level method. Unpack bytes from a buffer. Create a struct object.
 
-=head2 pack
+=head2 pack(buf8?)
 
 Object level method. Serialize the object to a buffer.
 
@@ -197,9 +197,7 @@ role Native::Packing {
         }
     }
 
-    method pack-host {
-        # ensure we're working at the byte level
-        my buf8 $buf .= new;
+    method pack-host(buf8 $buf = buf8.new) {
         my uint $off = 0;
         for self.^attributes {
             my $val = .get_value(self);

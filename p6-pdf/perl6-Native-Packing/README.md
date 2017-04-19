@@ -23,7 +23,7 @@ my class LogicalDescriptor
     has uint8  $.aspect;
 }
 
-my $fh = "t/lightbulb.gif".IO.open( :r :bin);
+my $fh = "t/lightbulb.gif".IO.open( :r, :bin);
 $fh.read(6);  # skip GIF header
 
 my LogicalDescriptor $screen .= read: $fh;
