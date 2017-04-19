@@ -13,7 +13,7 @@ class CSS::Declarations::Box {
     has Array $!margin;
 
     use CSS::Declarations::Font;
-    has CSS::Declarations::Font $.font is rw handles <em ex font-length>;
+    has CSS::Declarations::Font $.font is rw handles <font-length>;
     has CSS::Declarations $.css;
 
     has Hash @.save;
