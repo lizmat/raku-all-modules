@@ -15,7 +15,7 @@ use IO::Prompter;
 #    want => 1,
 #    desc => "Override the prompt";
 
-class StubIO is IO {
+class StubIO is IO::Handle {
     has @.input handles (:push<push>, :get<shift>, :queue-input<push>);
     has @.output handles (:print<push>);
     multi method t() { Bool::True; }

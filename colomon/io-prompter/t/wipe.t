@@ -21,7 +21,7 @@ use IO::Prompter;
 # OK have => prompt(:w, :yn, 'This should have wiped the screen. Did it?'),
 #    desc => "Wipe first";'
 
-class StubIO is IO {
+class StubIO is IO::Handle {
     has @.input handles (:push<push>, :get<shift>, :queue-input<push>);
     has @.output is rw handles (:print<push>);
     multi method t() { Bool::True; }
