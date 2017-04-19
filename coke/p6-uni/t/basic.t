@@ -2,8 +2,10 @@ use Test;
 
 plan 8;
 
+# execute bin/uni, using correct pathing.
 sub test-run($expected, *@args) {
-    my $proc = run('./bin/uni', |@args, :out);
+    my @include = $*REPO.repo-chain.map(*.path-spec);
+    my $proc = run($*EXECUTABLE, '-I' «~« @include, './bin/uni', |@args, :out);
     my $out = $proc.out.lines.join("\n") ~ "\n";
     is $out, $expected, @args.join(' ');
 }
