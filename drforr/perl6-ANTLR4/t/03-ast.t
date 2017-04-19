@@ -224,7 +224,7 @@ parser grammar Christmas;
 fragment exponent throws XFoo : <assoc=right> term {doStuff();}? ;
 Literal : 'term' -> more, channel(HIDDEN) ;
 parametrized[String name, int total] returns [int amount] : foo ;
-parametrized_literal : foo[$NAME.getText()] ;
+fragment parametrized_literal : foo[$NAME.getText()] ;
 public test_locals locals[int n = 0] : 'foo' ;
 test_options options{I=1;} : 'bar' ;
 test_catching : 'bar' ; catch [int amount] {amount++} finally {amount=1}
@@ -232,7 +232,7 @@ mode Remainder;
 lexer_stuff : 'blah' ;
 mode SkipThis;
 mode YetAnother;
-more_lexer_stuff : 'blah' ;
+fragment more_lexer_stuff : 'blah' ;
 END
 		:actions($a)
 	);
@@ -246,15 +246,34 @@ END
 		action   => { },
 		rule     => {
 			test_options => {
+				type   => Any,
+				throw  => Any,
+				return => Any,
+				action => Any
 			},
 			test_catching => {
+				type   => Any,
+				throw  => Any,
+				return => Any,
+				action => Any
 			},
 			test_locals => {
+				type   => 'public',
+				throw  => Any,
+				return => Any,
+				action => Any
 			},
 			parametrized => {
+				type   => Any,
+				throw  => Any,
+				return => '[int amount]',
+				action => '[String name, int total]'
 			},
 			Literal => {
-#				return       => Any,
+				type   => Any,
+				throw  => Any,
+				return => Any,
+				action => Any
 #				lexerCommand => {
 #					more    => Any,
 #					channel => 'HIDDEN'
@@ -265,24 +284,27 @@ END
 #				} ]
 			},
 			parametrized_literal => {
-#				return       => '[int amount]',
+				type   => 'fragment',
+				throw  => Any,
+				return => Any,
+				action => Any
 			},
 			exponent => {
-#				throws        => 'XFoo',
-#				concatenation => [ {
-#					type            => 'term',
-#					content         => 'exponent',
-#					action          => '{doStuff();}',
-#					action-modifier => Q{?},
-#					option          => {
-#						assoc => 'right'
-#					}
-#				} ]
+				type   => 'fragment',
+				throw  => {
+					XFoo => Any
+				},
+				return => Any,
+				action => Any
 			}
 		},
 		mode      => {
 			Remainder => {
 				lexer_stuff => {
+					type   => Any,
+					throw  => Any,
+					return => Any,
+					action => Any
 				}
 			},
 			# Skip SkipThis because it contains no rules, and
@@ -290,6 +312,10 @@ END
 			#
 			YetAnother => {
 				more_lexer_stuff => {
+					type   => 'fragment',
+					throw  => Any,
+					return => Any,
+					action => Any
 				}
 			}
 		}
