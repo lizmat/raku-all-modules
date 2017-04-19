@@ -1,7 +1,7 @@
 {
 	"perl" : "6.c",
 	"name" : "Log::Any",
-	"version" : "0.9.0",
+	"version" : "0.9.1",
 	"description" : "Generate and handle logs with pipelines, filters and formatters.",
 	"tags" : [
 		"log", "logging", "logger",
