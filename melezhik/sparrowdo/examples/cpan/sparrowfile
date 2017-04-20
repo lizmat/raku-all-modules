@@ -1,4 +1,7 @@
+#user-delete 'travis';
+
 user-create 'travis';
+
 directory '/home/travis/cpan-test', %( owner => 'travis' );
 
 cpan-package-install ('CGI', 'Config::Tiny', 'HTTP::Tiny'), %( 

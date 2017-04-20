@@ -1,7 +1,9 @@
+use List::Util 'shuffle';
+
 my $case = config()->{case};
 
 if ( ref $case eq 'ARRAY'){
-  for my $c (@$case){
+  for my $c (shuffle(@$case)){
     run_story('case' , { case => $c });
   }
 }else{

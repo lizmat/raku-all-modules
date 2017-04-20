@@ -160,7 +160,7 @@ sub ssh_shell ( $cmd ) {
 
 }
 
-our sub copy-local-file ( $file, $dest ) {
+our sub _copy-local-file ( $file, $dest ) {
 
   say colored("copy local file $file to remote $dest", 'bold yellow');
   _scp($file,$dest);

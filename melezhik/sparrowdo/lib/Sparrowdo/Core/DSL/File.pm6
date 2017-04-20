@@ -16,24 +16,17 @@ sub file-create ( $target, %opts = %() ) is export {
       die "can't use both source and content parameters"
     }
 
-    if %params<local> {
-
-      die "copy-local-file: need target parameter" unless %params<target>:exists;
-
-      # copy local file to remote server by scp
-      my $local  = %params<local>;
-      my $target = %params<target>;
-      MAIN::copy-local-file($local,$target);
-      %params<local>:delete;
-
-    }
-
     task_run  %(
       task        => "create file $target",
       plugin      => 'file',
       parameters  => %params
     );
   
+}
+
+sub copy-local-file ( $local, $target ) is export  {
+  # copy local file to remote server by scp
+  MAIN::_copy-local-file($local,$target);
 }
 
 multi sub file ( $target , %opts = %() ) is export { file-create $target, %opts }

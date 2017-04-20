@@ -1,2 +1,6 @@
-file '/tmp/hello.txt', %( local => 'data/hello.txt' );
+copy-local-file 'data/hello.txt','/tmp/sparrow-cache/files';
+
+bash 'cat /tmp/sparrow-cache/files/hello.txt', %(
+  expect_stdout => '<hello txt file>'
+);
 
