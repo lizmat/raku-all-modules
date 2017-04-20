@@ -11,6 +11,7 @@ class Config::DataLang::Refine:auth<github:MARTIMM> {
   has Array $!config-names = [];
   has Array $!locations = [];
 
+  has Str $!data-module;
   has Sub $!read-from-text;
   has Str $!extension;
 
@@ -30,7 +31,7 @@ class Config::DataLang::Refine:auth<github:MARTIMM> {
   #-----------------------------------------------------------------------------
   submethod BUILD (
     Str :$config-name = '', Bool :$!merge = False, Array :$!locations = [],
-    Str :$data-module = 'Config::TOML', Hash :$other-config = {},
+    Str :$!data-module = 'Config::TOML', Hash :$other-config = {},
     Bool :$!trace = False
   ) {
 
@@ -39,7 +40,7 @@ class Config::DataLang::Refine:auth<github:MARTIMM> {
     $!merge = True if $other-config.elems;
 
     # Import proper routine and select read routine
-    self!init-config-type(:$data-module);
+    self!init-config-type;
     $!config = $other-config;
 
     # Read and deserialize text from file
@@ -50,26 +51,26 @@ class Config::DataLang::Refine:auth<github:MARTIMM> {
 
   #-----------------------------------------------------------------------------
   # Import module and select proper read routine and extension
-  method !init-config-type ( Str :$data-module = 'Config::TOML' ) {
+  method !init-config-type ( ) {
 
-    given $data-module {
+    given $!data-module {
       when 'Config::TOML' {
-        (try require ::($data-module) <&from-toml>) === Nil
-             and say "Failed to load $data-module;\n $!";
+        (try require ::($!data-module) <&from-toml>) === Nil
+             and say "Failed to load $!data-module;\n$!";
         $!read-from-text = &from-toml;
         $!extension = '.toml';
       }
 
       when 'JSON::Fast' {
-        (try require ::($data-module) <&from-json>) === Nil
-             and say "Failed to load $data-module;\n$!";
+        (try require ::($!data-module) <&from-json>) === Nil
+             and say "Failed to load $!data-module;\n$!";
         $!read-from-text = &from-json;
         $!extension = '.json';
       }
 
       default {
         die X::Config::DataLang::Refine.new(
-          :message("Module $data-module not supported (yet)")
+          :message("Module $!data-module not supported (yet)")
         );
       }
     }
@@ -170,11 +171,12 @@ class Config::DataLang::Refine:auth<github:MARTIMM> {
 
         $!config-content = slurp($cfg-name) ~ "\n";
 
-        # Parse config file if exists
-        $!config = self.merge-hash(
-          $!config,
-          $!read-from-text($!config-content)
-        );
+        # Parse config file if exists, Need to require again because symbols are only known at the current
+        # code block
+        (try require ::($!data-module)) === Nil
+             and say "Failed to load $!data-module;\n$!";
+
+        $!config = self.merge-hash( $!config, &$!read-from-text($!config-content));
       }
     }
 
@@ -190,7 +192,9 @@ class Config::DataLang::Refine:auth<github:MARTIMM> {
         }
 
         $!config-content = slurp($locs[0]);
-        $!config = $!read-from-text($!config-content);
+        (try require ::($!data-module)) === Nil
+             and say "Failed to load $!data-module;\n$!";
+        $!config = &$!read-from-text($!config-content);
       }
     }
 

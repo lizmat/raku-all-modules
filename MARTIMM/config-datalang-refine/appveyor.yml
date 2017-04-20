@@ -10,22 +10,22 @@ branches:
 
 install:
   - '"C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.cmd" /x64'
+  - choco feature enable -n allowEmptyChecksums
   - choco install strawberryperl
   - SET PATH=C:\strawberry\c\bin;C:\strawberry\perl\site\bin;C:\strawberry\perl\bin;%PATH%
   - appveyor DownloadFile "http://rakudo.org/downloads/star/rakudo-star-latest-x86_64 (JIT).msi" -FileName "%APPVEYOR_BUILD_FOLDER%\rakudo.msi"
   - msiexec /i rakudo.msi /quiet /qn /norestart /log install.log
   - SET PATH=C:\rakudo\bin;C:\rakudo\share\perl6\site\bin;%PATH%
-  - panda update
-#  - panda installdeps .
-  - panda --notests install JSON::Fast
-  - panda --notests install Config::TOML
+  - zef --/test install JSON::Fast
+  - zef --/test install Config::TOML
+  - zef --depsonly install .
 
 build: off
 
 test_script:
 #  - prove -v --merge --exec "perl6 -Ilib" xt/wpath.t
 #  - prove -v --merge --exec "perl6 -Ilib" t/300-refine-locations.t
-  - prove -v --merge --exec "perl6 -Ilib" t/
+#  - prove -v --merge --exec "perl6 -Ilib" t/
 
 # fetch repository as zip archive
 shallow_clone: true

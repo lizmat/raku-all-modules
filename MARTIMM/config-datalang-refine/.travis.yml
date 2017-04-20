@@ -12,9 +12,8 @@ install:
   - zef update
   - zef --depsonly install .
 
-cache:
-  directories:
+#cache:
+#  directories:
 #    - $TRAVIS_BUILD_DIR/.rakudobrew
-    - $HOME/Travis-ci
-    - $HOME/.rakudobrew
-
+#    - $HOME/Travis-ci
+#    - $HOME/.rakudobrew
