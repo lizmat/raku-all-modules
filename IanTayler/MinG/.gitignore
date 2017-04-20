@@ -1,0 +1,7 @@
+lib/.p*
+vers.p6
+parser.p6
+*.pdf
+*.aux
+*.tex
+*.log

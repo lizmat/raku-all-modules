@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/IanTayler/MinG.git
+	branch = master
+	commit = 19994363540d37679671efa43d240ce6ef4c3bf2
+	parent = 1b76a1b2b9ee0377a7f484fb3a04ed370e75a205
+	cmdver = 0.4.0

@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title></title>
+  <meta charset="UTF-8" />
+  <style>
+    /* code gets the browser-default font
+     * kbd gets a slightly less common monospace font
+     * samp gets the hard pixelly fonts
+     */
+    kbd { font-family: "Droid Sans Mono", "Luxi Mono", "Inconsolata", monospace }
+    samp { font-family: "Terminus", "Courier", "Lucida Console", monospace }
+    /* WHATWG HTML frowns on the use of <u> because it looks like a link,
+     * so we make it not look like one.
+     */
+    u { text-decoration: none }
+    .nested {
+        margin-left: 3em;
+    }
+    // footnote things:
+    aside, u { opacity: 0.7 }
+    a[id^="fn-"]:target { background: #ff0 }
+  </style>
+  <link rel="stylesheet" href="//design.perl6.org/perl.css">
+  
+  
+</head>
+<body class="pod">
+<div id="___top"></div>
+
+
+<nav class="indexgroup">
+<table id="TOC">
+<caption><h2 id="TOC_Title">Table of Contents</h2></caption>
+<tr class="toc-level-1"><td class="toc-number">1</td><td class="toc-text"><a href="#NAME">NAME</a></td></tr>
+  <tr class="toc-level-1"><td class="toc-number">2</td><td class="toc-text"><a href="#INTERNAL_CLASSES_AND_FUNCTIONS">INTERNAL CLASSES AND FUNCTIONS</a></td></tr>
+            <tr class="toc-level-1"><td class="toc-number">3</td><td class="toc-text"><a href="#EXPORTED_CLASSES_AND_FUNCTIONS">EXPORTED CLASSES AND FUNCTIONS</a></td></tr>
+           
+</table>
+</nav>
+
+<div class="pod-body
+
+">
+<h1 id="NAME"><a class="u" href="#___top" title="go to top of document">NAME</a></h1>
+<p>MinG::S13 -- Stabler&#39;s (2013) parser.</p>
+<h1 id="INTERNAL_CLASSES_AND_FUNCTIONS"><a class="u" href="#___top" title="go to top of document">INTERNAL CLASSES AND FUNCTIONS</a></h1>
+<h1>Derivation: Class that represents one derivation.</h1><article>
+<code class="pod-code-inline">still_going:(Derivation $: *%_ --&gt; Bool)</code>:
+Method that returns whether this derivation still needs more steps.
+</article>
+<article>
+<code class="pod-code-inline">scan:(Derivation $: QueueItem $pred, Int $child_place, *%_ --&gt; Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">merge1:(Derivation $: QueueItem $pred, Node @leaves, Node $selected, Node $selector, *%_ --&gt; Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">merge2:(Derivation $: QueueItem $pred, Node @non_terms, Node $selected, Node $selector, *%_ --&gt; Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">merge3:(Derivation $: QueueItem $pred, Node @leaves, Node $mover_child, Node $selector, Mover $mover, *%_ --&gt; Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">merge4:(Derivation $: QueueItem $pred, Node @non_terms, Node $mover_child, Node $selector, Mover $mover, *%_ --&gt; Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">move1:(Derivation $: QueueItem $pred, Node $licensor, Node $licensed, *%_ --&gt; Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">move2:(Derivation $: QueueItem $pred, Node $licensor, Node $mover, Node $mover_child, *%_ --&gt; Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">exps:(Derivation $: *%_ --&gt; Array)</code>:
+Method that gets the expansions to be had in the next step. Check the code&#39;s comments for more details.
+</article>
+<article>
+<code class="pod-code-inline">to_str:(Derivation $: *%_ --&gt; Str)</code>:
+Method that beautifies a derivation. Mostly used for debugging purposes.
+</article>
+<h1 id="EXPORTED_CLASSES_AND_FUNCTIONS"><a class="u" href="#___top" title="go to top of document">EXPORTED CLASSES AND FUNCTIONS</a></h1>
+<h1>MinG::S13::Parser: Class that implements the parser per se. This is not where the magic happens, but it is where most of the external API is defined.</h1><article>
+<code class="pod-code-inline">devq_to_str:(MinG::S13::Parser $: *%_)</code>:
+Method that gets a nice string representation of the @!devq.
+</article>
+<article>
+<code class="pod-code-inline">parallel_run:(MinG::S13::Parser $: *%_ --&gt; Bool)</code>:
+Method that runs one iteration of the parsing loop, running one step of each derivation in parallel. Gets all possible derivations.
+</article>
+<article>
+<code class="pod-code-inline">procedural_run:(MinG::S13::Parser $: *%_ --&gt; DerivTree)</code>:
+Method that runs one iteration of the parsing loop, running one step of one derivation only. No parallel computation.
+</article>
+<article>
+<code class="pod-code-inline">parallel_parse:(MinG::S13::Parser $: *%_ --&gt; Bool)</code>:
+Method that runs the main parsing loop using parallel_run. Gets all possible derivations.
+</article>
+<article>
+<code class="pod-code-inline">procedural_parse:(MinG::S13::Parser $: *%_ --&gt; Bool)</code>:
+Method that runs the main parseing loop using procedural_run. Stops after it finds the first derivation.
+</article>
+<article>
+<code class="pod-code-inline">init:(MinG::S13::Parser $: MinG::Grammar $g, *%_)</code>:
+Method that initialises that parser to later parse several strings. Should be used instead of Parser.setup when a single grammar is going to be used several times.
+</article>
+<article>
+<code class="pod-code-inline">parse_str:(MinG::S13::Parser $: Str $inp, ParseWay $do = ParseWay::PARALLEL, *%_ --&gt; Bool)</code>:
+Method that parses a single string based on the grammar that was initialised using Parser.init()
+</article>
+<article>
+<code class="pod-code-inline">setup:(MinG::S13::Parser $: MinG::Grammar $g, Str $inp, *%_)</code>:
+Method that sets up a parser with a certain grammar and a certain input (taken as a string for convenience, converted to lower case and an array as needed) and creates the first derivation.
+</article>
+<article>
+<code class="pod-code-inline">parse_me:(MinG::S13::Parser $: MinG::Grammar $g, Str $inp, ParseWay $do = ParseWay::PARALLEL, *%_)</code>:
+Method to set the parser up, parse and spit the result. All in one go.
+</article>
+<article>
+<code class="pod-code-inline">parse_and_spit:(MinG::Grammar $g, Str $inp, ParseWay $waytoparse = ParseWay::PARALLEL)</code>:
+This is a wrapper subroutine to save to avoid using the MinG::S13::Parser class directly.
+</article>
+
+</div>
+
+
+</body>
+</html>
+

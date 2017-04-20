@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title></title>
+  <meta charset="UTF-8" />
+  <style>
+    /* code gets the browser-default font
+     * kbd gets a slightly less common monospace font
+     * samp gets the hard pixelly fonts
+     */
+    kbd { font-family: "Droid Sans Mono", "Luxi Mono", "Inconsolata", monospace }
+    samp { font-family: "Terminus", "Courier", "Lucida Console", monospace }
+    /* WHATWG HTML frowns on the use of <u> because it looks like a link,
+     * so we make it not look like one.
+     */
+    u { text-decoration: none }
+    .nested {
+        margin-left: 3em;
+    }
+    // footnote things:
+    aside, u { opacity: 0.7 }
+    a[id^="fn-"]:target { background: #ff0 }
+  </style>
+  <link rel="stylesheet" href="//design.perl6.org/perl.css">
+  
+  
+</head>
+<body class="pod">
+<div id="___top"></div>
+
+
+
+<div class="pod-body
+ no-toc
+">
+<h1>MinG::From::Text::Grammar: Grammar class that parses a file describing an MG lexicon.</h1><h1>ConverterActions: Class that creates a MinG::Grammar when used in conjunction with MinG::From::Text::Grammar</h1><article>
+<code class="pod-code-inline">grammar_from_text:(Str $s --&gt; MinG::Grammar)</code>:
+Takes a string and returns the grammar that it describes. The format of an MG description is the following (comments are not actually allowed): START=C #(i.e. the start category) el :: =N D hombre :: N come :: =N V pan :: N :: =V =D I #this is an empty category no :: =V V :: =I C END
+</article>
+
+</div>
+
+
+</body>
+</html>
+

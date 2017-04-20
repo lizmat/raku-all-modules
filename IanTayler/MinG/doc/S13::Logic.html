@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title></title>
+  <meta charset="UTF-8" />
+  <style>
+    /* code gets the browser-default font
+     * kbd gets a slightly less common monospace font
+     * samp gets the hard pixelly fonts
+     */
+    kbd { font-family: "Droid Sans Mono", "Luxi Mono", "Inconsolata", monospace }
+    samp { font-family: "Terminus", "Courier", "Lucida Console", monospace }
+    /* WHATWG HTML frowns on the use of <u> because it looks like a link,
+     * so we make it not look like one.
+     */
+    u { text-decoration: none }
+    .nested {
+        margin-left: 3em;
+    }
+    // footnote things:
+    aside, u { opacity: 0.7 }
+    a[id^="fn-"]:target { background: #ff0 }
+  </style>
+  <link rel="stylesheet" href="//design.perl6.org/perl.css">
+  
+  
+</head>
+<body class="pod">
+<div id="___top"></div>
+
+
+
+<div class="pod-body
+ no-toc
+">
+<h1>Priority: Objects in this class describe positions in a Queue.</h1><article>
+<code class="pod-code-inline">bigger_than:(Priority $: Priority $other, *%_ --&gt; Bool)</code>:
+A method that compares this object&#39;s priority with another Priority object&#39;s priority and returns true if this one&#39;s is smaller.
+</article>
+<article>
+<code class="pod-code-inline">add_p:(Priority $: Int $n, *%_ --&gt; Priority)</code>:
+Method that appends a number at the end of the priority. It returns a new Priority instead of changing itself automatically. Less efficient, but more useful for our purposes.
+</article>
+<article>
+<code class="pod-code-inline">length:(Priority $: *%_ --&gt; Int)</code>:
+Returns the length of the priority. In this implementation, priorities are sequences of numbers, and they are ordered lexicographically so that longer sequences have less priority than shorter ones.
+</article>
+<article>
+<code class="pod-code-inline">bigger_pty:(Priority $a, Priority $b)</code>:
+Function used to compare two priorities. Uses Priority.bigger_than method internally. There aren&#39;t many reasons to use it, but if you can find one, go ahead.
+</article>
+<article>
+<code class="pod-code-inline">child_of_root:(FWay $way, FPol $pol, $type --&gt; Node)</code>:
+Function that returns a child of the lexical tree&#39;s ROOT with the correct properties.
+</article>
+<h1>Mover: Class for our movers: they represent the nodes we selected when we ran into a [MOVE, PLUS] feature and encountered a [MOVE, MINUS] feature as one of ROOT&#39;s children.</h1><article>
+<code class="pod-code-inline">children_with_property:(Mover $: Code $p, *%_)</code>:
+Method that returns an array with all the children of the node that have a certain property.
+</article>
+<h1>QueueItem: Objets of this class are items in a Queue. The only Queue we need to implement is the one for category predictions, so this is to be interpreted as an item in THAT queue.</h1><article>
+<code class="pod-code-inline">highest_priority:(QueueItem $: *%_ --&gt; Priority)</code>:
+Method that gets the higher priority taking into consideration the queue&#39;s priority and all the movers&#39; priorities.
+</article>
+<article>
+<code class="pod-code-inline">movers_minus_this:(QueueItem $: Mover $one, *%_ --&gt; Array[Mover])</code>:
+Method that returns the list of movers without a certain indicated one. We take linear time here to avoid having to deal with empty movers in this array. If performance starts being an issue this may be a place to look. (Although, to be fair, the array of movers is usually very short due to the SMC, so linear time there isn&#39;t much of a problem.)
+</article>
+<article>
+<code class="pod-code-inline">movers_with_property:(QueueItem $: Code $p, *%_ --&gt; Array[Mover])</code>:
+Method that returns an array with all the movers that have a certain property.
+</article>
+<article>
+<code class="pod-code-inline">bigger_than:(QueueItem $: QueueItem $other, *%_)</code>:
+This method is a wrapper around Priority.bigger_than so that it can be called more easily from a Queue object.
+</article>
+<article>
+<code class="pod-code-inline">to_str:(QueueItem $: *%_ --&gt; Str)</code>:
+Method that gets a QueueItem in string for to print while debugging.
+</article>
+<article>
+<code class="pod-code-inline">deep_clone:(QueueItem $: *%_ --&gt; QueueItem)</code>:
+Method that &quot;deep-clones&quot; a QueueItem. Actually, only @.movers needs to be deep-cloned (and that means simply copying the array. It doesn&#39;t get deeper than that), as the rest of the attributes don&#39;t get modified normally.
+</article>
+<h1>Queue: The Queue of category predictions.</h1><article>
+<code class="pod-code-inline">ind_max:(Queue $: *%_ --&gt; Int)</code>:
+With this method, we find out the index of the highest-priority item. Linear time.
+</article>
+<article>
+<code class="pod-code-inline">max:(Queue $: *%_ --&gt; QueueItem)</code>:
+Method that gets a reference to the highest-priority item. Linear time.
+</article>
+<article>
+<code class="pod-code-inline">pop:(Queue $: *%_ --&gt; QueueItem)</code>:
+Method that deletes the highest-priority item and returns it. Linear time.
+</article>
+<article>
+<code class="pod-code-inline">push:(Queue $: QueueItem $new, *%_)</code>:
+Method that adds an element to the Queue. This runs in constant time. If there are previously deleted elements, it fills those positions instead of pushing, making sure our queue length doesn&#39;t get too far away from the real length.
+</article>
+<article>
+<code class="pod-code-inline">elems:(Queue $: *%_ --&gt; Int)</code>:
+Method that gets the amount of elements in the Queue. It&#39;s not reliable because we keep deleted items in the @.items array. We get the right result when there&#39;s 0 elements because Perl6 deletes pseudo-deleted elements from the end of the array (even if they were pseudo-deleted a long time ago). Note: I guess this could easily break with future implementations of Perl6.
+</article>
+<article>
+<code class="pod-code-inline">empty:(Queue $: *%_ --&gt; Bool)</code>:
+Method that returns True if the Queue is empty. This is done for safety, as elems isn&#39;t very reliable. It runs in lineal time, though, so I&#39;m not using it unless I really have to.
+</article>
+<article>
+<code class="pod-code-inline">deep_clone:(Queue $: *%_ --&gt; Queue)</code>:
+Method that (partially) deep-clones a Queue. Some parts don&#39;t need to be deep-cloned, so we get references to that.
+</article>
+<h1>DerivTree: Class that represents derivation trees. As of now, they&#39;re just Nodes.</h1>
+</div>
+
+
+</body>
+</html>
+
