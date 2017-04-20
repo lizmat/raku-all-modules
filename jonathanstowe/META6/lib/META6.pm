@@ -113,7 +113,28 @@ Support method to allow subscripts on META6 objects.
 use JSON::Name;
 use JSON::Class:ver(v0.0.5..*);
 
-class META6:ver<0.0.10>:auth<github:jonathanstowe> does JSON::Class {
+role AutoAssoc {
+    method AT-KEY($key){
+        self!json-name-to-attibute($key).?get_value(self);
+    }
+
+    method EXISTS-KEY($key){
+        so self!json-name-to-attibute($key)
+    }
+
+    method ASSIGN-KEY($key, \value){
+        self!json-name-to-attibute($key).set_value(self, value)
+    }
+
+    method !json-name-to-attibute($json-name){
+        state %lookup = do for self.^attributes(:local) {
+            (.?json-name ?? .json-name !! .name).subst(/^ '$!' | '%!' | '@!' /, '') => $_
+        }
+        %lookup{$json-name}
+    }
+}
+
+class META6:ver<0.0.13>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
 
     enum Optionality <Mandatory Optional>;
 
@@ -177,26 +198,7 @@ class META6:ver<0.0.10>:auth<github:jonathanstowe> does JSON::Class {
         self.bless(|%items);
     }
 
-    method AT-KEY($key){
-        self!json-name-to-attibute($key).?get_value(self);
-    }
-
-    method EXISTS-KEY($key){
-        so self!json-name-to-attibute($key)
-    }
-
-    method ASSIGN-KEY($key, \value){
-        self!json-name-to-attibute($key).set_value(self, value)
-    }
-
-    method !json-name-to-attibute($json-name){
-        state %lookup = do for self.^attributes(:local) {
-            (.?json-name ?? .json-name !! .name).subst(/^ '$!' | '%!' | '@!' /, '') => $_
-        }
-        %lookup{$json-name}
-    }
-
-    class Support {
+    class Support does AutoAssoc {
         has Str $.source is rw      is specification(Optional);
         has Str $.bugtracker is rw  is specification(Optional) is json-skip-null;
         has Str $.email is rw       is specification(Optional) is json-skip-null;

@@ -1,43 +1,55 @@
 {
-	"meta6" : "0",
-   "tags" : [
-      "devel",
-      "meta",
-      "utils"
-   ],
-   "provides" : {
-      "META6" : "lib/META6.pm"
-   },
-   "test-depends" : [
-      "JSON::Fast",
-      "Test"
-   ],
-   "emulates" : {},
-   "support" : {
-      "phone" : null,
-      "source" : "git://github.com/jonathanstowe/META6.git",
-      "mailinglist" : null,
-      "email" : null,
-      "irc" : null,
-      "bugtracker" : "https://github.com/jonathanstowe/META6/issues"
-   },
-   "perl" : "6.c",
-   "build-depends" : [],
-   "auth" : "github:jonathanstowe",
-   "source-url" : "git://github.com/jonathanstowe/META6.git",
-   "depends" : [
-      "JSON::Class"
-   ],
-   "production" : true,
-   "name" : "META6",
-   "authors" : [
-      "Jonathan Stowe <jns+git@gellyfish.co.uk>"
-   ],
-   "version" : "0.0.12",
-   "license" : "Artistic",
-   "resource" : {},
-   "superseded-by" : {},
-   "description" : "Work with Perl 6 META files",
-   "excludes" : {},
-   "supersedes" : {}
+    "meta6": "0",
+    "tags": [
+        "devel",
+        "meta",
+        "utils"
+    ],
+    "provides": {
+        "META6": "lib/META6.pm"
+    },
+    "test-depends": [
+        "JSON::Fast",
+        "Test"
+    ],
+    "emulates": {
+
+    },
+    "support": {
+        "phone": null,
+        "source": "git://github.com/jonathanstowe/META6.git",
+        "mailinglist": null,
+        "email": null,
+        "irc": null,
+        "bugtracker": "https://github.com/jonathanstowe/META6/issues"
+    },
+    "perl": "6.c",
+    "build-depends": [
+
+    ],
+    "auth": "github:jonathanstowe",
+    "source-url": "git://github.com/jonathanstowe/META6.git",
+    "depends": [
+        "JSON::Class"
+    ],
+    "production": true,
+    "name": "META6",
+    "authors": [
+        "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+    ],
+    "version": "0.0.13",
+    "license": "Artistic",
+    "resource": {
+
+    },
+    "superseded-by": {
+
+    },
+    "description": "Work with Perl 6 META files",
+    "excludes": {
+
+    },
+    "supersedes": {
+
+    }
 }

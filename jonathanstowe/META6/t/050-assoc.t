@@ -25,6 +25,10 @@ is $obj<isnthere>:exists, False, 'Hash key does not exist';
 $obj<version> = v0.0.2;
 is $obj<version>, '0.0.2', 'Hash set good version';
 
+is $obj<support><source>, 'git://github.com/jonathanstowe/JSON-Marshal.git', 'Support supports assoc too';
+$obj<support><source> = 'spicy';
+is $obj<support><source>, 'spicy', 'Support is writable';
+
 # doesn't work yet
 #$obj<version perl> = v0.0.3, 7;
 #is $obj<version perl>, '0.0.3 7', 'Hash set list of keys';
