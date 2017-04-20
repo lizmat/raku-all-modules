@@ -11,10 +11,10 @@ Native::Packing
 =head1 DESCRIPTION
 
 This module provides a role for serialization as simple binary
-structs. At this stage, only simple native integer and numeric
+structs. At this stage, only scalar native integer and numeric
 types are supported.
 
-Any class applying this role should contain only simple numeric
+Any class applying this role should contain only simple native numeric
 types, tha represent the structure of the data.
 
 =head1 EXAMPLE
@@ -23,7 +23,7 @@ types, tha represent the structure of the data.
     use Native::Packing :Endian;
 
     # open a GIF read the 'screen' header
-    my class GifScreenStruct
+    my class GifHeader
         does Native::Packing[Endian::Vax] {
         has uint16 $.width;
         has uint16 $.height;
@@ -35,7 +35,7 @@ types, tha represent the structure of the data.
     my $fh = "t/lightbulb.gif".IO.open( :r :bin);
     $fh.read(6);  # skip GIF header
 
-    my GifScreenStruct $screen .= read: $fh;
+    my GifHeader $screen .= read: $fh;
 
     say "GIF has size {$screen.width} X {$screen.height}";
 
@@ -70,14 +70,14 @@ Return the endian of the host Endian::Network(0) or Endian::Vax(1).
 my enum Native::Packing::Endian is export(:Endian) <Network Vax Host>;
 
 role Native::Packing {
-    my constant HostIsNetworkEndian = do {
+
+    my constant HostEndian = do {
         my $i = CArray[uint16].new(0x1234);
         my $j = nativecast(CArray[uint16], $i);
-        $i[0] == 0x12;
+        $i[0] == 0x12
+            ?? Network
+            !! Vax;
     }
-
-    my constant HostEndian = HostIsNetworkEndian
-        ?? Network !! Vax;
 
     method host-endian {
         HostEndian
