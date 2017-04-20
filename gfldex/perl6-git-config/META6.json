@@ -1,6 +1,6 @@
 {
     "name"         : "Git::Config",
-    "version"      : "0.0.2",
+    "version"      : "0.0.3",
     "perl"         : "6",
     "provides"     : { "Git::Config" : "lib/Git/Config.pm6" },
     "description"  : "Read and provide interface to git config.",

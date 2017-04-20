@@ -3,7 +3,7 @@ use v6.c;
 grammar Config is export {
     token TOP { ^ <section>+ $ }
     token section { [ '[' <section-name> ']' \n [ <section-line>+ | <empty-line>+ ] ] | <empty-line>+ }
-    token section-name { <[\w\s"]>+ }
+    token section-name { <-[\]]>+ }
     token section-line { \s* <identifier> \s* '=' \s* <value> \n }
     token empty-line { \n }
     token value { <-[\n]>+ }
