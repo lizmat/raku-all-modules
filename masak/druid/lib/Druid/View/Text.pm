@@ -49,7 +49,7 @@ sub make-empty-board($size) {
     return join "\n", gather {
         take '';
         take my $heading
-            = [~] '   ', map {"   $_  "}, map {chr($_+ord('A'))}, ^$size;
+            = [~] '   ', map {"   $_ "}, ("A".."Z")[^$size];
         take my $line = [~] '   ', '+-----' x $size, '+';
         for (1..$size).reverse -> $r {
             take [~] (sprintf '%2d |', $r),
@@ -70,9 +70,8 @@ submethod new($game) {
     self.bless(:$game);
 }
 
-method BUILD() {
-    $.game.attach: self;
-    $!cached-board = make-empty-board($.game.size);
+submethod BUILD(:$game) {
+    $!cached-board = make-empty-board($game.size);
 }
 
 #| Prints the 3D game board and the two smaller sub-boards, reflecting the
@@ -91,8 +90,8 @@ method build-layers($board is copy, $from) {
     my @layers = @.layers[$from .. @.layers.end];
     for @layers.kv -> $relheight, $layer {
         my $height = $relheight + $from;
-        for $layer.kv.reverse -> $row, $line {
-            for $line.kv.reverse -> $column, $cell {
+        for $layer.kv.reverse -> $line, $row {
+            for $line.kv.reverse -> $cell, $column {
                 next if $cell == 0;
 
                 given ($v-piece, $h-piece)[$cell-1] -> $piece {

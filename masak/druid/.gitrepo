@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/druid.git
 	branch = master
-	commit = 18cb5acec187d9170df3d4279a9a23f48d06c47a
-	parent = 43c5bdb40d1afa3cb767b73e259d2ec51c9bec5c
-	cmdver = 0.2.3
+	commit = d8b6d87960f2c6611867254a3bccad62b826a933
+	parent = 96ab19315691e5e80e577f38b00e1bbf1b22aeba
+	cmdver = 0.4.0
