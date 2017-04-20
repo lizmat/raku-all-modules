@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/samcv/URL-Find.git
 	branch = master
-	commit = 367170317b32485b3477892b677e3979ac86a09e
-	parent = e0c3696f144960d9d012731a8caa4b2e12cd55ee
+	commit = 6281404d6ead345f574fe255a49b6fe19ef3b219
+	parent = ed8d8d0e088c95bffaa475bb44b315b4013a1105
 	cmdver = 0.4.0

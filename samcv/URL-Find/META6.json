@@ -1,0 +1,27 @@
+{
+  "authors": [
+    "Samantha McVey"
+  ],
+  "build-depends": [
+
+  ],
+  "depends": [
+
+  ],
+  "description": "Find all the URL's in text",
+  "name": "URL::Find",
+  "perl": "6",
+  "provides": {
+    "URL::Find": "lib/URL/Find.pm6"
+  },
+  "license": "Artistic-2.0",
+  "support": {
+    "license": "http://www.perlfoundation.org/artistic_license_2_0",
+    "bugtracker": "https://github.com/samcv/URL-Find/issues"
+  },
+  "source-url": "git://github.com/samcv/URL-Find.git",
+  "test-depends": [
+
+  ],
+  "version": "v0.2"
+}
