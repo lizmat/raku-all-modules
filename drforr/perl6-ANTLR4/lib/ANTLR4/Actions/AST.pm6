@@ -132,50 +132,136 @@ most complex, and is described in detail at the appropriate place.
 use v6;
 
 class ANTLR4::Actions::AST {
-	method ACTION( $/ ) { make $/.Str }
-	method ID( $/ ) { make $/.Str }
-	method optionValue( $/ ) { make $/.Str }
-	method tokenName( $/ ) { make $/.Str }
-	method ruleAttribute( $/ ) { make $/ ?? $/.Str !! Any }
-	method FRAGMENT( $/ ) { make $/ ?? $/.Str !! Any }
-	method ARG_ACTION( $/ ) { make $/ ?? $/.Str !! Any }
-	method grammarType( $/ ) { make $/[0] ?? $/[0].Str !! Any }
-	method ruleReturns( $/ ) { make $/<ARG_ACTION> ?? $/<ARG_ACTION>.Str !! Any }
-
-	method option( $/ ) {
-		make {
-			name    => $/<ID>.ast,
-			content => $/<optionValue>.ast
-		}
+	method ACTION( $/ ) {
+		make $/.Str
+	}
+	method ID( $/ ) {
+		make $/.Str
+	}
+	method optionValue( $/ ) {
+		make $/.Str
+	}
+	method tokenName( $/ ) {
+		make $/.Str
+	}
+	method action_name( $/ ) {
+		make $/.Str
+	}
+	method ruleAttribute( $/ ) {
+		make $/.Str
+	}
+	method FRAGMENT( $/ ) {
+		make $/.Str
+	}
+	method ARG_ACTION( $/ ) {
+		make $/.Str
+	}
+	method grammarType( $/ ) {
+		make $/[0] ?? $/[0].Str !! Any
+	}
+	method ruleReturns( $/ ) {
+		make $/<ARG_ACTION>.Str
+	}
+	method localsSpec( $/ ) {
+		make $/<ARG_ACTION>.Str
+	}
+	method finallyClause( $/ ) {
+		make $/<ACTION>.ast;
 	}
 
+	# Return just the content, let the upper layer figure out what key
+	# to use.
+	#
 	method delegateGrammar( $/ ) {
-		make {
-			name    => $/<key>.ast,
-			content => $/<value>.ast
+		make $/<value>.ast;
+	}
+	method delegateGrammars( $/ ) {
+		my %import;
+		for $/<delegateGrammar> {
+			%import{$_.<key>.ast} = $_.ast;
 		}
+		make %import;
 	}
 
+	method tokensSpec( $/ ) {
+		my %token;
+		for $/<token_list_trailing_comma><tokenName> {
+			%token{$_.ast} = Any;
+		}
+		make %token;
+	}
+	method throwsSpec( $/ ) {
+		my %throw;
+		for $/<ID> {
+			%throw{$_.ast} = Any;
+		}
+		make %throw;
+	}
+
+	# Return just the content, let the upper layer figure out what key
+	# to use.
+	#
+	method option( $/ ) {
+		make $/<optionValue>.ast;
+	}
+	method optionsSpec( $/ ) {
+		my %option;
+		for $/<option> {
+			%option{$_.<ID>.ast} = $_.ast;
+		}
+		make %option;
+	}
+
+	# Although like optionsSpec, it's a name/value pair that we don't really
+	# need the <name> as part of the body, I'll just leave it this way
+	# because there's only ever going to be one of these...
+	#
 	method action( $/ ) {
 		make {
-			name    => $/<action_name><ID>.ast,
+			name    => $/<action_name>.ast,
 			content => $/<ACTION>.ast
 		}
 	}
 
-	method parserRuleSpec( $/ ) {
+	method exceptionHandler( $/ ) {
 		make {
-			name   => $/<ID>.ast,
-			type   => $/<ruleAttribute>.ast,
-			return => $/<ruleReturns>.ast,
-			action => $/<ARG_ACTION>.ast
+			argument => $/<ARG_ACTION>.Str,
+			action   => $/<ACTION>.ast
+		};
+	}
+
+	# <name> isn't really necessary at this point.
+	#
+	method parserRuleSpec( $/ ) {
+		my @catch;
+		for $/<exceptionGroup><exceptionHandler> -> $exception {
+			@catch.append( $exception.ast );
+		}
+		make {
+			type    => $/<ruleAttribute>.ast,
+			throw   => $/<throwsSpec>.ast,
+			return  => $/<ruleReturns>.ast,
+			action  => $/<ARG_ACTION>.ast,
+			local   => $/<localsSpec>.ast,
+			throw   => $/<throwsSpec>.ast,
+			option  => $/<optionsSpec>.ast,
+			catch   => @catch.elems ?? @catch !! Any,
+			finally => $/<exceptionGroup><finallyClause>.ast
 		}
 	}
 
+	# <name> isn't really necessary at this point.
+	#
 	method lexerRuleSpec( $/ ) {
 		make {
-			name    => $/<ID>.ast,
-			type    => $/<FRAGMENT>.ast
+			type    => $/<FRAGMENT>.ast,
+			throw   => Any,
+			return  => Any,
+			action  => Any,
+			local   => Any,
+			option  => Any,
+			catch   => Any,
+			finally => Any
 		}
 	}
 
@@ -186,62 +272,40 @@ class ANTLR4::Actions::AST {
 		);
 		for $/<prequelConstruct> -> $prequel {
 			when $prequel.<optionsSpec> {
-				for $prequel.<optionsSpec><option> {
-					%option{$_.ast.<name>} =
-						$_.ast.<content>;
-				}
+				%option =
+					%option,
+					$prequel.<optionsSpec>.ast;
 			}
 			when $prequel.<delegateGrammars> {
-				for $prequel.<delegateGrammars><delegateGrammar> {
-					%import{$_.ast.<name>} =
-						$_.ast.<content>;
-				}
+				# Don't forget, imports can happen anywhere.
+				# They really don't have an effect on Perl, but
+				# I'm collecting them for the sake of form.
+				#
+				%import =
+					%import,
+					$prequel.<delegateGrammars>.ast;
 			}
 			when $prequel.<tokensSpec> {
-				for $prequel.<tokensSpec><token_list_trailing_comma><tokenName> {
-					%token{$_.ast} = Any;
-				}
+				%token = %token, $prequel.<tokensSpec>.ast;
 			}
 			when $prequel.<action> {
-				%action =
-					name    => $prequel.<action>.ast.<name>,
-					content => $prequel.<action>.ast.<content>
-				;
+				%action = $prequel.<action>.ast;
 			}
 		}
 		for $/<ruleSpec> -> $ruleSpec {
 			when $ruleSpec.<parserRuleSpec> {
-				my $throw = Any;
-				if $ruleSpec.<parserRuleSpec><throwsSpec> {
-					for $ruleSpec.<parserRuleSpec><throwsSpec><ID> -> $name {
-						$throw.{$name.Str} = Any;
-					}
-				}
-				%rule{$ruleSpec.<parserRuleSpec><ID>.ast} = {
-					type   => $ruleSpec.<parserRuleSpec>.ast<type>,
-					throw  => $throw,
-					return => $ruleSpec.<parserRuleSpec>.ast<return>,
-					action => $ruleSpec.<parserRuleSpec>.ast<action>
-				}
+				%rule{$ruleSpec.<parserRuleSpec><ID>.ast} = 
+					$ruleSpec.<parserRuleSpec>.ast;
 			}
 			when $ruleSpec.<lexerRuleSpec> {
-				%rule{$ruleSpec.<lexerRuleSpec>.ast.<name>} = {
-					type   => $ruleSpec.<lexerRuleSpec>.ast<type>,
-					throw  => Any,
-					return => Any,
-					action => Any
-				}
+				%rule{$ruleSpec.<lexerRuleSpec><ID>.ast} = 
+					$ruleSpec.<lexerRuleSpec>.ast;
 			}
 		}
 		for $/<modeSpec> -> $modeSpec {
 			my $curMode = $modeSpec<ID>.ast;
 			for $modeSpec<lexerRuleSpec> -> $rule {
-				%mode{$curMode}{$rule.ast.<name>} = {
-					type   => $rule.ast<type>,
-					throw  => Any,
-					return => Any,
-					action => Any
-				}
+				%mode{$curMode}{$rule.<ID>.ast} = $rule.ast;
 			}
 		}
 		make {
