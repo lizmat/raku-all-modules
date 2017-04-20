@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/tadzik/Task-Star.git
+	branch = master
+	commit = 524ceb16d631296a17e23e65fe0fb7b61358852f
+	parent = 66841af96c75a46959f1901f50c07cf8f3194d1d
+	cmdver = 0.4.0

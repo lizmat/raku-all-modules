@@ -1,0 +1,38 @@
+{
+    "perl"        : "6.*",
+    "name"        : "Task::Star",
+    "version"     : "*",
+    "description" : "Meta-package for modules included in Rakudo Star",
+    "depends"     : [ 
+        "Debugger::UI::CommandLine",
+        "ufo",
+        "XML::Writer",
+        "SVG",
+        "SVG::Plot",
+        "Terminal::ANSIColor",
+        "Test::Mock",
+        "Grammar::Profiler::Simple",
+        "Grammar::Debugger",
+        "JSON::Tiny",
+        "Digest::MD5",
+        "panda",
+        "HTTP::Status",
+        "HTTP::Easy",
+        "Template::Mojo",
+        "DBIish",
+        "URI",
+        "Linenoise",
+        "LWP::Simple",
+        "JSON::RPC",
+        "Pod::To::HTML",
+        "p6doc",
+        "MIME::Base64",
+        "PSGI",
+        "Shell::Command",
+        "File::Find",
+        "Test::META"
+    ],
+    "provides" : { },
+    "source-url"  : "git://github.com/tadzik/Task-Star.git"
+}
+

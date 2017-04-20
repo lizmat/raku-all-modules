@@ -1,0 +1,15 @@
+branches:
+  except:
+    - gh-pages
+language: perl6
+sudo: false
+perl6:
+  - latest
+install:
+  - rakudobrew build-zef
+  - zef --debug install .
+script:
+  - perl6 -e 'say "1..1\n ok 1"'
+branches:
+  only:
+  - master
