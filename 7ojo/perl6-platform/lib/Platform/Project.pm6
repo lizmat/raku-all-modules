@@ -7,6 +7,8 @@ class Platform::Project {
 
     has Str $.config;
     has Str $.project;
+    has Str $.project-dir;
+    has Str $.project-file;
     has Str $.network = 'acme';
     has Str $.domain = 'localhost';
     has Str $.data-path is rw;
@@ -17,10 +19,18 @@ class Platform::Project {
         volumes => []
         ;
 
+    method TWEAK {
+        if self.project.IO.extension eq 'yml' {
+            $!project-dir = self.project.IO.dirname.IO.absolute;
+            $!project-file = self.project.IO.absolute;
+        } else {
+            $!project-dir = self.project.IO.absolute;
+            $!project-file = "$_/project.yml".IO.absolute if not $!project-file and "$_/project.yml".IO.e for self.project ~ "/docker", self.project;
+        }
+    }
+
     method run {
-        my ($config, $projectyml-path);
-        $projectyml-path = "$_/project.yml" if not $projectyml-path and "$_/project.yml".IO.e for self.project ~ "/docker", self.project;
-        $config = $projectyml-path ?? load-yaml $projectyml-path.IO.slurp !! item(%.defaults);
+        my $config = $.project-file.IO.e ?? load-yaml $.project-file.IO.slurp !! item(%.defaults);
         for %.override.kv -> $key, $val {
             if $config{$key} ~~ Array {
                 $config{$key} = flat($config{$key}.Array, $val.Array).Array;
@@ -59,10 +69,9 @@ class Platform::Project {
     method rm { self.load-cont.rm.last-command }
 
     method load-cont(*%values) {
-        # TODO: Get more container variants here some day
-        my $class = "Platform::Docker::Container";
-        %values<name> = self.project.IO.basename;
-        %values<projectdir> = self.project;
+        my $class = "Platform::Docker::Container"; # TODO: Get more container variants here some day
+        %values<name> = self.project-dir.IO.basename;
+        %values<projectdir> = self.project-dir;
         %values<data-path> = self.data-path;
         %values<network> = self.network;
         %values<domain> = self.domain;

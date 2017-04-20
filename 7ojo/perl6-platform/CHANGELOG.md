@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+### Added
+- Support for absolute path on project file e.g ```platform --project=<projectdir>/project.yml run```
+
 ## [0.0.3] - 2017-04-12
 ### Added
 - Running commands after container is started

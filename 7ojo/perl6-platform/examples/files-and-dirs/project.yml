@@ -1,0 +1,7 @@
+command: ash
+dirs:
+  /foo: true
+  /bar:
+    owner: nobody
+    group: nogroup
+    mode: 0770
