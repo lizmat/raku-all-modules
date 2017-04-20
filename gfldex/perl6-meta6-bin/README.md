@@ -19,6 +19,8 @@ Module skeletons include basic directories, `META6.json`, `t/meta.t`,
     meta6 --fork-module=<Module::Name::Here>
     meta6 --add-dep=<Module::Name::Here>
     meta6 --pull-request
+    meta6 --set-license="license name or URL"
+    meta6 --add-author="Another T. Author <another.t.author@somewhere.place>"
 
 ## Use as a Module
 
