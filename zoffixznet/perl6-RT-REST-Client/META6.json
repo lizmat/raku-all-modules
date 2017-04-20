@@ -1,7 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "RT::REST::Client",
-    "version"      : "1.001002",
+    "version"      : "1.001003",
     "description"  : "Use Request Tracker's (RT) REST client interface",
     "depends"      : [
         "IO::Socket::SSL",
@@ -11,7 +11,13 @@
     ],
     "test-depends" : [ "Test", "Test::META" ],
     "provides"     : {
-        "RT::REST::Client" : "lib/RT/REST/Client.pm6"
+        "RT::REST::Client": "lib/RT/REST/Client.pm6",
+        "RT::REST::Client::Ticket": "lib/RT/REST/Client/Grammar/Actions.pm6",
+        "RT::REST::Client::Grammar":          "lib/RT/REST/Client/Grammar.pm6",
+        "RT::REST::Client::Grammar::Tickets": "lib/RT/REST/Client/Grammar.pm6",
+        "RT::REST::Client::Grammar::Actions": "lib/RT/REST/Client/Grammar/Actions.pm6",
+        "RT::REST::Client::Grammar::Actions::Tickets":
+            "lib/RT/REST/Client/Grammar/Actions.pm6"
     },
     "authors"      : [ "Zoffix Znet" ],
     "support"      : {"source"   : "git://github.com/zoffixznet/perl6-RT-REST-Client.git"}

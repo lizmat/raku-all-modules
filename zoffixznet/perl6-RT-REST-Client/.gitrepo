@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-RT-REST-Client.git
 	branch = master
-	commit = d6eba88aaac67c615cabe43aed129419610033e5
-	parent = 099967498a6f726ea233df2c4d3b9150710424e3
-	cmdver = 0.2.3
+	commit = 791689e9fb0c06df305dad2b8668b49e2acad875
+	parent = c536f1a0a0d6ee47197d3fe96e08d739e7521e8a
+	cmdver = 0.4.0
