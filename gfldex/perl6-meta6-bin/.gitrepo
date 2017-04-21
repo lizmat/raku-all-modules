@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/gfldex/perl6-meta6-bin.git
 	branch = master
-	commit = 2488217332b65c26428d95c44fe2fd4a03fa1f08
-	parent = 3bac72a636e5e7817917e29ed6b1a3a1569883d0
+	commit = 6287976af1dc7f213b39899bd649319acef51eb8
+	parent = 12e2ee0f5be683b0bd38a05b9c69d4373e5e332f
 	cmdver = 0.4.0

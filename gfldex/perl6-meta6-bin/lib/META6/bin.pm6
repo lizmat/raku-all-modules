@@ -90,7 +90,7 @@ multi sub MAIN(Bool :$check, Str :$meta6-file-name = 'META6.json',
         my $meta6 = META6.new(:$name, :$description, version => Version.new($version), perl-version => Version.new($perl), authors => [$author], :$auth,
                               source-url => "https://github.com/$github-user/{$base-dir}.git",
                               depends => [ "Test::META" ],
-                              provides => {}, license => 'Artistic 2.0', production => False);
+                              provides => {}, license => 'Artistic-2.0', production => False);
         $meta6-file.spurt($meta6.to-json);
     }
 
