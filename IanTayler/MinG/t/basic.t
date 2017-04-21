@@ -67,8 +67,8 @@ my $engg = grammar_from_file($ENG0);
 
 my $parser = MinG::S13::Parser.new();
 $parser.init($espg);
-ok $parser.parse_str("maría dijo que pedro pensaba que era viejo");
+ok $parser.large_parse("maría dijo que pedro pensaba que era viejo");
 $parser.init($engg);
-ok $parser.parse_str("which wine the queen prefers");
+ok $parser.large_parse("which wine the queen prefers");
 
 done-testing;

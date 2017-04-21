@@ -25,7 +25,7 @@ our $LABEL_IS = -> $y { -> Node $x { $x.label eqv $y } };
 
 enum ParseWay < PROCEDURAL PARALLEL >;
 
-constant $BASE_E_CATS = 2;
+constant $BASE_E_CATS = 5;
 constant $MULTIP_E_CATS = 1;
 
 #################################################################################
@@ -49,6 +49,15 @@ constant $MULTIP_E_CATS = 1;
 #*    VARIABLE FROM OUTSIDE THE MinG::S13::Parser CLASS.      *
 #**************************************************************
 our $s13_global_lexical_tree is export;
+#|{
+    Function that returns a child of the lexical tree's ROOT with the correct properties.
+    }
+sub child_of_root(MinG::Feature $feat) of Node is export {
+    my $ret_ind = $s13_global_lexical_tree.has_child($feat);
+    return $s13_global_lexical_tree.children[$ret_ind] if $ret_ind;
+
+    return Nil; # Otherwise.
+}
 ##########
 #      ^ #
 # THIS | #
@@ -106,17 +115,6 @@ class Priority {
     }
 sub bigger_pty (Priority $a, Priority $b) {
     return $a.bigger_than($b);
-}
-
-#|{
-    Function that returns a child of the lexical tree's ROOT with the correct properties.
-    }
-sub child_of_root(FWay $way, FPol $pol, $type) of Node is export {
-    my $ret_f = MinG::Feature.new(way => $way, pol => $pol, type => $type);
-    my $ret_ind = $s13_global_lexical_tree.has_child($ret_f);
-    return $s13_global_lexical_tree.children[$ret_ind] if $ret_ind;
-
-    return Nil; # Otherwise.
 }
 
 #|{

@@ -3,6 +3,7 @@ use lib 'lib';
 use MinG;
 use MinG::S13;
 use MinG::S13::Logic;
+use MinG::From::Text;
 use Test;
 use Test::META;
 
@@ -44,17 +45,28 @@ my $g = MinG::Grammar.new(lex => ($juan, $come, $escupe, $pan, $manteca, $force)
 parse_and_spit($g, "juan escupe pan");
 
 my $parser = MinG::S13::Parser.new();
+$parser.init($g);
 
 my @frases = ["Juan come pan", "manteca escupe Juan", "come escupe Juan", "Juan", "come", "Pan Come Manteca"];
 
 my Bool $all-fine = True;
 
-$all-fine = $all-fine and $parser.parse_me($g, @frases[0]);
-$all-fine = $all-fine and $parser.parse_me($g, @frases[1]);
-$all-fine = $all-fine and not($parser.parse_me($g, @frases[2]));
-$all-fine = $all-fine and not($parser.parse_me($g, @frases[3]));
-$all-fine = $all-fine and not($parser.parse_me($g, @frases[4]));
-$all-fine = $all-fine and $parser.parse_me($g, @frases[5]);
+$all-fine = $all-fine and $parser.parse_str(@frases[0]);
+$all-fine = $all-fine and $parser.parse_str(@frases[1]);
+$all-fine = $all-fine and not($parser.parse_str(@frases[2]));
+$all-fine = $all-fine and not($parser.parse_str(@frases[3]));
+$all-fine = $all-fine and not($parser.parse_str(@frases[4]));
+$all-fine = $all-fine and $parser.parse_str(@frases[5]);
+
+@frases = ["pedro fue a la casa de juan", "qué pensaba juan", "el sordo es viejo", "es viejo", "nadie pensaba eso", "el sordo dijo que era alto"];
+$parser.init(grammar_from_file($ESPA0));
+
+$all-fine = $all-fine and $parser.large_parse(@frases[0]);
+$all-fine = $all-fine and $parser.large_parse(@frases[1]);
+$all-fine = $all-fine and $parser.large_parse(@frases[2]);
+$all-fine = $all-fine and $parser.large_parse(@frases[3]);
+$all-fine = $all-fine and $parser.large_parse(@frases[4]);
+$all-fine = $all-fine and $parser.large_parse(@frases[5]);
 
 ok $all-fine;
 

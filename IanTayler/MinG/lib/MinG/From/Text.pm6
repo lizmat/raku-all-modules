@@ -17,7 +17,9 @@ grammar MinG::From::Text::Grammar {
 
     rule lex {<word> '::' <featlist>}
 
-    token word {\w*}
+    token word {\w* | <emptycat> }
+
+    token emptycat {'['\w+']'}
 
     rule featlist {<feat1=.feat>\h+<featlist>|<feat2=.feat>}
 
@@ -42,7 +44,11 @@ class ConverterActions {
     }
 
     method lex ($/) {
-        make MinG::LItem.new( phon => $<word>.Str.lc, features => $<featlist>.made);
+        make MinG::LItem.new( phon => $<word>.made, features => $<featlist>.made);
+    }
+
+    method word ($/) {
+        make $<emptycat> ?? "" !! $/.Str.lc;
     }
 
     method featlist ($/) {

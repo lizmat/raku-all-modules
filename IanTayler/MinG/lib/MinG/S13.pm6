@@ -203,16 +203,18 @@ class Derivation {
 SEL_LOOP:   for @selector_ch -> $selector {
                 # The following code checks that there is a node immediately below
                 # ROOT that has the proper category.
-                my Node $selected = child_of_root(MERGE, MINUS, $selector.label.type);
-                next unless $selected;
+                my $selected_label = MinG::Feature.new(way => MERGE,\
+                                                   pol => MINUS,\
+                                                   type => $selector.label.type);
+                my Node $selected = child_of_root($selected_label);
 
                 # Get all leaves and do MERGE1
-                if $selector.children_with_property($IS_NOT_FEAT) -> @leaves {
+                if ($selected && $selector.children_with_property($IS_NOT_FEAT)) -> @leaves {
                     my $merged = self.merge1($this_prediction, @leaves, $selected, $selector);
                     append @retv, $merged if $merged;
                 }
                 # Get all non-leaves and do MERGE2
-                if $selector.children_with_property($IS_FEAT_NODE) -> @non_terms {
+                if ($selected && $selector.children_with_property($IS_FEAT_NODE)) -> @non_terms {
                     my $merged = self.merge2($this_prediction, @non_terms, $selected, $selector);
                     append @retv, $merged if $merged;
                 }
@@ -222,7 +224,7 @@ SEL_LOOP:   for @selector_ch -> $selector {
                 # the anonymous functions defined at the start of this file.
                 if ($this_prediction.movers_with_property(\
                         $IS_CORRECT_MOVER(\
-                            $LABEL_IS($selected.label)))) -> @corr_movers {
+                            $LABEL_IS($selected_label)))) -> @corr_movers {
                     # We know there's one and only one child with the same feature
                     # in its label so it's safe to take the first child with that
                     # property.
@@ -230,7 +232,7 @@ SEL_LOOP:   for @selector_ch -> $selector {
                     for @corr_movers -> $corr_mover {
                         my $corr_child = \
                             $corr_mover.children_with_property(\
-                                $LABEL_IS($selected.label))[0];
+                                $LABEL_IS($selected_label))[0];
 
                         # Checking for MERGE3.
                         if $selector.children_with_property($IS_NOT_FEAT) -> @leaves {
@@ -259,7 +261,10 @@ SEL_LOOP:   for @selector_ch -> $selector {
         # Now it's the turn to consider MOVE1 and MOVE2
         if $this_prediction.node.children_with_property($IS_LICENSOR) -> @licensor_ch {
             for @licensor_ch -> $licensor {
-                my Node $licensed = child_of_root(MOVE, MINUS, $licensor.label.type);
+                my $licensed_label = MinG::Feature.new(way => MOVE,\
+                                                   pol => MINUS,\
+                                                   type => $licensor.label.type);
+                my Node $licensed = child_of_root($licensed_label);
 
                 # If licensed isn't Nil, then we should apply MOVE1.
                 if $licensed {
@@ -268,15 +273,16 @@ SEL_LOOP:   for @selector_ch -> $selector {
                                            $licensed);
                     append @retv, $moved if $moved;
                 }
+
                 # MOVE2 gets applied if we can find the appropriate movers.
                 if ($this_prediction.movers_with_property(\
                         $IS_CORRECT_MOVER(\
-                            $LABEL_IS($licensed.label)))) -> @corr_movers {
+                            $LABEL_IS($licensed_label)))) -> @corr_movers {
                     # Run move2 for each correct mover.
                     for @corr_movers -> $corr_mover {
                         my $corr_child = \
                             $corr_mover.children_with_property(\
-                                $LABEL_IS($licensed.label))[0];
+                                $LABEL_IS($licensed_label))[0];
 
                         my $moved = self.move2($this_prediction,\
                                                $licensor,\
@@ -322,6 +328,7 @@ class MinG::S13::Parser {
     # Trees of successful derivations!
     has DerivTree @.results;
     has Node $.start_cat;
+    has MinG::Grammar $!full_grammar;
 
     # This is temporal. devq is not meant to be public.
     method devq() {
@@ -368,8 +375,6 @@ class MinG::S13::Parser {
         }
 
         @!devq = @newdevq;
-        debug("\tNew queue: ");
-        debug(self.devq_to_str);
         $run_number++ if $DEBUG;
 
         return $finished;
@@ -435,10 +440,18 @@ class MinG::S13::Parser {
         Method that initialises that parser to later parse several strings. Should be used instead of Parser.setup when a single grammar is going to be used several times.
         }
     method init(MinG::Grammar $g) {
+        $!full_grammar = $g;
         $s13_global_lexical_tree = $g.litem_tree();
         my $start_ind = $s13_global_lexical_tree.has_child($g.start_cat);
         say "bad start symbol for the grammar!" without $start_ind;
         $!start_cat = $s13_global_lexical_tree.children[$start_ind];
+    }
+
+    #|{
+        Method that re-initialises the parser using the full version of the grammar.
+        }
+    method re_init() {
+        self.init($!full_grammar);
     }
 
     #|{
@@ -457,7 +470,7 @@ class MinG::S13::Parser {
                                        );
         push @!devq, $start_dev;
 
-        say "Parsing $inp.";
+        say "Parsing...";
         debug("\tThis is the input:\n\t\t{@.devq[0].input}\n\tLength:\n\t\t{@.devq[0].input.elems}");
         if $do == PROCEDURAL {
             if self.procedural_parse() {
@@ -479,6 +492,34 @@ class MinG::S13::Parser {
             }
         }
     }
+
+    #|{
+        Method that deletes all non-phonetically-empty words that don't appear in the input before parsing. When using large grammars, this can be much more efficient, but has a large constant time-cost, so it will make small grammars slower.
+        }
+    method large_parse(Str $inp, ParseWay $do = PARALLEL) of Bool {
+        my @words = $inp.lc.split(' ');
+        my @necessary_items;
+        for $!full_grammar.lex -> $lex_item {
+            # A bit ridiculous in length, but oh well.
+            if (($lex_item.phon eq "") || ($lex_item.phon eq any(@words)) || ($lex_item.features[*-1] eqv $.start_cat)) {
+                push @necessary_items, $lex_item;
+            }
+        }
+        my $necessary_grammar = MinG::Grammar.new(lex => @necessary_items,\
+                                                  start_cat => $!full_grammar.start_cat);
+        say "Input: $inp";
+        $necessary_grammar.litem_tree.qtree.say;
+
+        $s13_global_lexical_tree = $necessary_grammar.litem_tree();
+        my $start_ind = $s13_global_lexical_tree.has_child($necessary_grammar.start_cat);
+        die "bad start symbol for the grammar!" without $start_ind;
+        $!start_cat = $s13_global_lexical_tree.children[$start_ind];
+
+        my Bool $retv = self.parse_str($inp, $do);
+        self.re_init();
+        return $retv;
+    }
+
 
     #|{
         Method that sets up a parser with a certain grammar and a certain input (taken as a string for convenience, converted to lower case and an array as needed) and creates the first derivation.
@@ -559,16 +600,6 @@ sub MAIN() {
 
     my $parser = MinG::S13::Parser.new();
 
-    my @things = ["", "a", "b", "b a", "a b a", "abab"];
-
-    # for @things -> $thing {
-    #     say "\n\tPROCEDURAL: ";
-    #     $parser.parse_me($g, $thing, PROCEDURAL);
-    #
-    #     say "\n\tPARALLEL: ";
-    #     $parser.parse_me($g, $thing, PARALLEL);
-    # }
-
     my $c = feature_from_str("C"); my $selv = feature_from_str("=V"); my $v = feature_from_str("V"); my $d = feature_from_str("D"); my $seld = feature_from_str("=D");
 
     my $force = MinG::LItem.new( features => ($selv, $c), phon => "");
@@ -597,7 +628,7 @@ sub MAIN() {
         #$parser.parse_me($g, $frase, PROCEDURAL);
 
         say "\n\tPARALLEL: ";
-        $parser.parse_str($frase);
+        $parser.large_parse($frase);
     }
 
 }

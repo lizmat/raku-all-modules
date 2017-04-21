@@ -33,6 +33,10 @@
 <div class="pod-body
  no-toc
 ">
+<article>
+<code class="pod-code-inline">child_of_root:(MinG::Feature $feat --&gt; Node)</code>:
+Function that returns a child of the lexical tree&#39;s ROOT with the correct properties.
+</article>
 <h1>Priority: Objects in this class describe positions in a Queue.</h1><article>
 <code class="pod-code-inline">bigger_than:(Priority $: Priority $other, *%_ --&gt; Bool)</code>:
 A method that compares this object&#39;s priority with another Priority object&#39;s priority and returns true if this one&#39;s is smaller.
@@ -48,10 +52,6 @@ Returns the length of the priority. In this implementation, priorities are seque
 <article>
 <code class="pod-code-inline">bigger_pty:(Priority $a, Priority $b)</code>:
 Function used to compare two priorities. Uses Priority.bigger_than method internally. There aren&#39;t many reasons to use it, but if you can find one, go ahead.
-</article>
-<article>
-<code class="pod-code-inline">child_of_root:(FWay $way, FPol $pol, $type --&gt; Node)</code>:
-Function that returns a child of the lexical tree&#39;s ROOT with the correct properties.
 </article>
 <h1>Mover: Class for our movers: they represent the nodes we selected when we ran into a [MOVE, PLUS] feature and encountered a [MOVE, MINUS] feature as one of ROOT&#39;s children.</h1><article>
 <code class="pod-code-inline">children_with_property:(Mover $: Code $p, *%_)</code>:

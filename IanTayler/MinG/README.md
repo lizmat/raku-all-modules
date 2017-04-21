@@ -50,26 +50,16 @@ As of now, someone who isn't interested in the inner workings of the module but 
 
 Without the dots, and changing _wordi_ for your phonetic word (and, of course, changing F for whatever features you want your grammars to have). For two example grammars, check the resources/ directory.
 
-You can save that as a file named grammar.mg.
+You can save that in a file and call it using `analyser.p6` (you can use `analyser.p6-j` to run it on the jvm if you have the jvm backend installed and you so wish). Assuming the file is in the directory `$HOME/grammars/` and it's called gr0.mg, you can run:
 
-Then, a minimal script to use that grammar is:
+    ming-analyser.p6 $HOME/grammars/gr0.mg
 
-    use MinG;
-    use MinG::S13;
-    use MinG::S13::Logic; # May not be necessary. Add it just in case, for forward-compatibility.
-    use MinG::From::Text;
+Each line you write of input will be parsed using your grammar. You can parse several sentences in a series by separating them with a ';'. You can modify gr0.mg at any point and restart analyser.p6 to have your new grammar working.
 
-    my $g = grammar_from_file("./grammar.mg");
-    my $p = MinG::S13::Parser.new();
-    $p.init($g);
+If you want to try out the example grammars, they can be accessed by passing the arguments `--eng0` for a very small grammar of something-like-English, copied from Stabler (2013) and `--espa0` for a not-so-small (but small) grammar of Spanish written by myself. Like so:
 
-    for $*IN.lines() -> $line {
-        $p.parse_str($line);
-    }
-
-You can copy-paste that, save it as parser.p6 (in the same directory as grammar.mg) and then simply run `perl6 parser.p6`. Each line you write of input will be parsed using your grammar. You can modify grammar.mg at any point and restart parser.p6 to have your new grammar working.
-
-If you want to try out existing grammars, you can use one of two default grammars that can be accessed by passing the variables $ESPA0 (for "español") or $ENG0 (for "english") to the subroutine grammar_from_file() (instead of passing "./grammar.mg"). You can check the grammars out at resources/ in this repository.
+    ming-analyser.p6 --eng0
+    ming-analyser.p6 --espa0
 
 When inputting lines, pay attention _not_ to put a final dot to your sentence. "dance." is a different word from "dance".
 
@@ -87,6 +77,8 @@ CURRENTLY
   * Has a working parser for MGs! (MinG::S13::Parser or MinG::S13.parse_and_spit())
 
   * Has a parser that reads grammars from a file! (MinG::From::Text)
+
+  * Has an analyser script (ming-analyser.p6) that can be used to read grammars from files and analyse sentences from standard input.
 
 TODO
 ====
