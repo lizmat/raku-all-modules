@@ -13,6 +13,6 @@
        "Pod::To::Markdown"
    ],
    "source-url" : "git://github.com/0racle/p6-Pod-To-Markdown-Fenced.git",
-   "license" : "Artistic"
+   "license"    : "Artistic-2.0"
 }
 
