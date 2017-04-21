@@ -33,7 +33,7 @@ with PSGI-compliant output. Here's an example:
     my @headers = 'Content-Type' => 'text/plain';
     my @body = "Hello $name\n";
     @headers.push: 'Content-Length' => @body.join.encode.bytes;
-    return [ $status, \@headers, \@body ];
+    return [ $status, @headers, @body ];
   }
 
   $scgi.handle: $handler;

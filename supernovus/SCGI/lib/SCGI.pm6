@@ -24,7 +24,7 @@ method connect (:$port=$.port, :$addr=$.addr)
   $!socket = IO::Socket::INET.new(
     :localhost($addr), 
     :localport($port), 
-    :listen(1)
+    :listen
   );
 }
 
