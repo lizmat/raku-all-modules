@@ -5,3 +5,23 @@ dirs:
     owner: nobody
     group: nogroup
     mode: 0770
+files:
+  /lorem-ipsum.txt: |
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis blandit auctor mollis. Praesent volutpat, dolor quis iaculis sagittis, ex ante rhoncus est, ultricies auctor libero justo sit amet leo. Vestibulum vitae semper quam. Pellentesque feugiat in est non consequat. Sed iaculis eget ex ut cursus. Nam convallis ex tortor, vel vestibulum lectus aliquet sagittis. Aenean elementum odio ut orci elementum rutrum. Aenean id elementum augue, condimentum semper leo.
+  /b/words-from-file.p6: |
+    for 'dict.txt'.IO.words -> $word {
+      say "$word probably rhymes with Perl"
+      if $word ~~ /[ea?|u|i] rl $/;
+      
+      say "$word is a palindrome"
+      if $word eq $word.flip;
+    }
+  /code/examples/perl6/hello-world.p6:
+    owner: nobody
+    group: nogroup
+    mode: 0750
+    content: |
+      #!/usr/bin/env perl6
+      use v6;
+      
+      say "Hello Perl 6 World";
