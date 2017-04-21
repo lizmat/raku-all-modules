@@ -9,6 +9,6 @@
    },
    "depends" : [ ],
    "source-url" : "git://github.com/0racle/p6-wig.git",
-   "license" : "Artistic"
+   "license"    : "Artistic-2.0"
 }
 
