@@ -104,21 +104,21 @@ our sub service-offers(Str :$service_code!, Str :$format) {
 
 }
 
-our sub config(Str :$cache_dir,
-               Str :$region,
-               Str :$api_ver,
-               Bool :$refresh) {
+  our sub config(Str :$cache_dir,
+                 Str :$region,
+                 Str :$api_ver,
+                 Bool :$refresh) {
 
-  if $cache_dir.defined {
-    $cache_path = IO::Path.new($cache_dir.subst('~', $*HOME)).Str; 
-    if !path-exists($cache_path, 'd') { mkdir $cache_path }
-  }
+    if $cache_dir.defined {
+      $cache_path = IO::Path.new($cache_dir.subst('~', $*HOME)).Str; 
+      if !path-exists($cache_path, 'd') { mkdir $cache_path }
+    }
 
-  $aws_region = $region if $region.defined; 
-  $api_version = $api_ver if $api_ver.defined;
-  $refresh_cache = True if $refresh.defined;
-  
-};
+    $aws_region = $region if $region.defined; 
+    $api_version = $api_ver if $api_ver.defined;
+    $refresh_cache = True if $refresh.defined;
+    
+  };
 
 }
 
