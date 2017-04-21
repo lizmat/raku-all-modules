@@ -7,7 +7,7 @@
     ],
     "depends": [],
     "perl": 6,
-    "license": "http://www.perlfoundation.org/artistic_license_2_0",
+    "license": "Artistic-2.0",
     "support": {
       "source": "https://github.com/skids/perl6-Control-Bail.git"
     },

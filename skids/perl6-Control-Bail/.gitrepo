@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/skids/perl6-Control-Bail.git
 	branch = master
-	commit = 14c85b1261e4b3d812dda4536ca11b13934244d3
-	parent = c1d78587b043c6f10c4fb6db68446fdfbe7e7589
-	cmdver = 0.2.3
+	commit = 227237fc8c473943752d1840757d9f24a9d5e3f1
+	parent = 38fde999d33b9b29e2c70d68d433224b43cf97cb
+	cmdver = 0.4.0
