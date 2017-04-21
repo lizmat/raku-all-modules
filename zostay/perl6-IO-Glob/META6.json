@@ -8,7 +8,7 @@
         "Andrew Sterling Hanenkamp <hanenkamp@cpan.org>",
         "Peter Pentchev <roam@ringlet.net>"
     ],
-    "license" : "Artistic 2.0",
+    "license" : "Artistic-2.0",
     "provides" : {
         "IO::Glob": "lib/IO/Glob.pm6",
         "IO::Glob::Globber": "lib/IO/Glob.pm6",
