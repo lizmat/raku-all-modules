@@ -19,9 +19,9 @@ my subset DurationUnits of Str where -> $unit { $unit ~~ /^<[smhdwMy]>$/ }
 #  of month, if you need more accuracy, use a day count instead.
 #
 # The Year estimation is based on a round 365 days, and does not take into
-# account leap years or anything else. Again, if you need more accuracy, 
+# account leap years or anything else. Again, if you need more accuracy,
 # use a smaller unit.
-# 
+#
 #
 sub to-seconds ( Numeric $value, DurationUnits $in ) is export {
   my $minute = $value  *  60;
@@ -29,7 +29,7 @@ sub to-seconds ( Numeric $value, DurationUnits $in ) is export {
   my $day    = $hour   *  24;
   my $week   = $day    *   7;
   my $month  = $day    *  30;
-  my $year   = $day    * 365; 
+  my $year   = $day    * 365;
   given $in {
     when 's' { return $value }
     when 'm' { return $minute }
@@ -52,7 +52,7 @@ sub from-seconds ( Numeric $value, DurationUnits $to ) is export {
   my $day    = $hour   /  24;
   my $week   = $day    /   7;
   my $month  = $day    /  30;
-  my $year   = $day    / 365; 
+  my $year   = $day    / 365;
   given $to {
     when 's' { return $value }
     when 'm' { return $minute }
@@ -65,8 +65,8 @@ sub from-seconds ( Numeric $value, DurationUnits $to ) is export {
 }
 
 ## duration-from-to: takes a value, the unit string the value is currently in,
-## and the unit string you want to covert the value to. 
-sub duration-from-to( Numeric $value, DurationUnits $in, DurationUnits $to) 
+## and the unit string you want to covert the value to.
+sub duration-from-to( Numeric $value, DurationUnits $in, DurationUnits $to)
   is export
 {
   from-seconds(to-seconds($value, $in), $to);
@@ -86,12 +86,12 @@ multi infix:«-»(DateTime:D $dt, Numeric:D $x) is export {
   DateTime.new(($dt.posix - $x).Int, :timezone($dt.timezone), :formatter($dt.formatter))
 }
 
-multi infix:<->(DateTime:D $a, DateTime:D $b) is export {
-  Duration.new($a.posix - $b.posix);
-}
-
-
 # Now included in rakudo
+
+#multi infix:<->(DateTime:D $a, DateTime:D $b) is export {
+#  Duration.new($a.posix - $b.posix);
+#}
+
 #multi infix:<cmp>(DateTime $a, DateTime $b) is export {
 #  $a.posix cmp $b.posix;
 #}
@@ -123,4 +123,3 @@ multi infix:<->(DateTime:D $a, DateTime:D $b) is export {
 #multi infix:«>»(DateTime $a, DateTime $b) is export {
 #  $a.posix > $b.posix;
 #}
-
