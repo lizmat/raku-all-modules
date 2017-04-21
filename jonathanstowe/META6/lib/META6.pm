@@ -134,7 +134,7 @@ role AutoAssoc {
     }
 }
 
-class META6:ver<0.0.13>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
+class META6:ver<0.0.14>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
 
     enum Optionality <Mandatory Optional>;
 
@@ -205,6 +205,7 @@ class META6:ver<0.0.13>:auth<github:jonathanstowe> does JSON::Class does AutoAss
         has Str $.mailinglist is rw is specification(Optional) is json-skip-null;
         has Str $.irc is rw         is specification(Optional) is json-skip-null;
         has Str $.phone is rw       is specification(Optional) is json-skip-null;
+        has Str $.license is rw     is specification(Optional) is json-skip-null;
     }
 
     # cope with "v0.0.1"
