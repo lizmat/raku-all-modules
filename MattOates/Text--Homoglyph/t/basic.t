@@ -8,4 +8,4 @@ plan 1;
 
 is homoglyphs("A"), ("A", "Α", "А", "Ꭺ"), 'Calling homoglyphs() works ok';
 
-done;
+done-testing;
