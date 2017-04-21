@@ -10,11 +10,12 @@ Sparrowdo core-dsl functions spec.
 * [Services](#services)
 * [Directories](#directories)
 * [Files](#files)
-* [Copy local file](#copy-local-files)
+* [Copy local files](#copy-local-files)
 * [Templates](#templates)
 * [Bash commands](#bash)
 * [Ssh commands](#ssh)
 * [Scp command](#scp)
+* [Asserts](#asserts)
 
 ## User accounts
 
@@ -389,5 +390,28 @@ Example:
     );
 
 
+
+## Asserts
+
+Asserts are functions to audit your server state. Here are some examples 
+( list is not full , I will add more eventfully )
+
+### Check if process exists
+
+    # ensure existence by PID taken from /var/run/sshd.pid
+    proc-exists 'sshd';
+    
+    # ensure existence by footprint
+    proc-exists-by-footprint 'sshd', 'sshd\s+-D';
+    
+    # ensure existence by footprint
+    proc-exists-by-pid 'sshd', '/var/run/sshd.pid';
+    
+
+## Check if http resource accessible
+
+It's just simple check by `curl's GET` with follow redirect enabled.
+
+    http-ok 'http://sparrowhub.org';
 
 

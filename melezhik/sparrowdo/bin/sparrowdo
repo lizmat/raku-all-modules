@@ -11,6 +11,7 @@ use Sparrowdo::Core::DSL::CPAN::Package;
 use Sparrowdo::Core::DSL::Service;
 use Sparrowdo::Core::DSL::Bash;
 use Sparrowdo::Core::DSL::Ssh;
+use Sparrowdo::Core::DSL::Assert;
 
 sub MAIN (
 

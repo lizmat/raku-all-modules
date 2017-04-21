@@ -1,0 +1,10 @@
+# ensure existence by PID taken from /var/run/sshd.pid
+proc-exists 'sshd';
+
+# ensure existence by footprint
+proc-exists-by-footprint 'sshd', 'sshd\s+-D';
+
+# ensure existence by footprint
+proc-exists-by-pid 'sshd', '/var/run/sshd.pid';
+
+http-ok 'http://sparrowhub.org';
