@@ -159,8 +159,20 @@ method regenerate-meta-info($module, $module-file) {
         version       => $already<version> || "*",
         resources     => $already<resources> || [],
         tags          => $already<tags> || [],
+        license       => $already<license> || guess-license(),
     ;
     ($meta-file || "META6.json").IO.spurt: App::Mi6::JSON.encode(%new-meta) ~ "\n";
+}
+
+sub guess-license() {
+    my $file = "LICENSE".IO;
+    return 'NOASSERTION' unless $file.e;
+    my @line = $file.lines;
+    if @line.elems == 201 && @line[0].index('The Artistic License 2.0') {
+        return 'Artistic-2.0';
+    } else {
+        return 'NOASSERTION';
+    }
 }
 
 sub find-description($module-file) {
@@ -324,9 +336,9 @@ App::Mi6 is a minimal authoring tool for Perl6. Features are:
 
   TODO
 
-=item Where is the spec of META6.json or META.info?
+=item Where is the spec of META6.json?
 
-  Maybe https://github.com/perl6/ecosystem/blob/master/spec.pod or http://design.perl6.org/S22.html
+  http://design.perl6.org/S22.html
 
 =item How do I remove travis badge?
 
