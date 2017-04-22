@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Audio-Libshout.git
 	branch = master
-	commit = 531ed9c269d58727091e48b213644d4b3a4aad46
-	parent = 71928eef4ca15db41d9d87e5ad614c3a872334d6
+	commit = fce1a9453bc6c8341d7d164e90439d491c0325d1
+	parent = 48babeaddcd027b182cec722cf5587822742a8da
 	cmdver = 0.4.0

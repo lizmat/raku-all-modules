@@ -1,30 +1,41 @@
 {
-  "name" : "Audio::Libshout",
-  "tags" : [ "audio", "streaming", "utils" ],
-  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
-  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
-  "auth" : "github:jonathanstowe",
-  "support" : {
-    "source" : "git://github.com/jonathanstowe/Audio-Libshout.git"
+  "name": "Audio::Libshout",
+  "source-url": "git://github.com/jonathanstowe/Audio-Libshout.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/Audio-Libshout.git"
   },
-  "source-url" : "git://github.com/jonathanstowe/Audio-Libshout.git",
-  "perl" : "6.c",
-  "build-depends" : [
-		"LibraryCheck"
+  "perl": "6.c",
+  "resources": [
+    
   ],
-  "provides" : {
-    "Audio::Libshout" : "lib/Audio/Libshout.pm"
-  },
-  "depends" : [
-       "AccessorFacade"
+  "build-depends": [
+    "LibraryCheck"
   ],
-  "test-depends" : [
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth": "github:jonathanstowe",
+  "depends": [
+    "AccessorFacade"
+  ],
+  "tags": [
+    "audio",
+    "streaming",
+    "utils"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
     "Test",
-	"Test::META",
+    "Test::META",
     "File::Find",
     "Shell::Command",
     "CheckSocket"
   ],
-  "description" : "Binding for libshout - source streaming client library for icecast",
-  "version" : "0.0.10"
+  "provides": {
+    "Audio::Libshout": "lib/Audio/Libshout.pm"
+  },
+  "version": "0.0.10",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "description": "Binding for libshout - source streaming client library for icecast",
+  "meta6": "0"
 }
