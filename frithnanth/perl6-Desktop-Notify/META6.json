@@ -1,7 +1,6 @@
 {
-  "authors" : [
-    "Fernando Santagata"
-  ],
+  "authors" : [ "Fernando Santagata" ],
+  "license": "Artistic-2.0",
   "build-depends" : [ ],
   "depends" : [ ],
   "description" : "A simple interface to libnotify",
