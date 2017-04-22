@@ -7,5 +7,7 @@
     "provides"    : {"Acme::Scrub" : "lib/Acme/Scrub.pm6"},
     "depends"     : [],
     "source-type" : "git",
-    "source-url"  : "git://github.com/thundergnat/Acme-Scrub.git"
+    "source-url"  : "git://github.com/thundergnat/Acme-Scrub.git",
+    "license"     : "Artistic-2.0",
+    "tags"        : [ "Bleach", "Whitespace", "Obfuscate", "Silly" ]
 }
