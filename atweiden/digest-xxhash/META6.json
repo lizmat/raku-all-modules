@@ -4,7 +4,7 @@
     "version"     : "*",
     "authors"     : [ "Bartłomiej Palmowski", "Andy Weidenbaum" ],
     "description" : "xxHash bindings for Perl6",
-    "license"     : "http://unlicense.org/UNLICENSE",
+    "license"     : "Unlicense",
     "source-type" : "git",
     "source-url"  : "git://github.com/atweiden/digest-xxhash.git",
     "support"     : {
