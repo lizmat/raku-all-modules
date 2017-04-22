@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Chronic.git
 	branch = master
-	commit = da8d480afd1745f334be4204bd1fce1e01e2d610
-	parent = b4130cd6d529040d9572c493b8ad3fe6cf345e22
+	commit = 8b9ee17584848d50587b957924bbc8d146f2a190
+	parent = 8284e47bae16471a3b14c794a05413d626a815a9
 	cmdver = 0.4.0
