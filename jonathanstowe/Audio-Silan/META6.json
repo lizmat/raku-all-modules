@@ -1,28 +1,41 @@
 {
-  "name" : "Audio::Silan",
-  "tags" : [ "audio", "util", "silence" ],
-  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
-  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
-  "auth" : "github:jonathanstowe",
-  "support" : {
-    "source"     : "git://github.com/jonathanstowe/Audio-Silan.git",
-    "irc"        : "irc:// irc.freenode.net/#perl6",
-    "bugtracker" : "https://github.com/jonathanstowe/Audio-Silan/issues"
+  "name": "Audio::Silan",
+  "source-url": "git://github.com/jonathanstowe/Audio-Silan.git",
+  "support": {
+    "irc": "irc:// irc.freenode.net/#perl6",
+    "source": "git://github.com/jonathanstowe/Audio-Silan.git",
+    "bugtracker": "https://github.com/jonathanstowe/Audio-Silan/issues"
   },
-  "source-url" : "git://github.com/jonathanstowe/Audio-Silan.git",
-  "perl" : "6.c",
-  "build-depends" : [ ],
-  "provides" : {
-     "Audio::Silan"                : "lib/Audio/Silan.pm"
-  },
-  "depends" : [ 
-		"File::Which",
-		"JSON::Fast"
+  "perl": "6.c",
+  "resources": [
+    
   ],
-  "test-depends" : [
+  "build-depends": [
+    
+  ],
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth": "github:jonathanstowe",
+  "depends": [
+    "File::Which",
+    "JSON::Fast"
+  ],
+  "tags": [
+    "audio",
+    "util",
+    "silence"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
     "Test",
     "Test::META"
   ],
-  "description" : "Detect audio cue-in, cue-out using silan https://github.com/x42/silan",
-  "version" : "0.0.3"
+  "provides": {
+    "Audio::Silan": "lib/Audio/Silan.pm"
+  },
+  "version": "0.0.3",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "description": "Detect audio cue-in, cue-out using silan https://github.com/x42/silan",
+  "meta6": "0"
 }
