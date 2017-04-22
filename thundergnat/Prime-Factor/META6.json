@@ -9,5 +9,7 @@
     },
     "depends"     : [],
     "source-type" : "git",
-    "source-url"  : "git://github.com/thundergnat/Prime-Factor.git"
+    "source-url"  : "git://github.com/thundergnat/Prime-Factor.git",
+    "license"     : "Artistic-2.0",
+    "tags"        : [ "Number", "Prime" ]
 }
