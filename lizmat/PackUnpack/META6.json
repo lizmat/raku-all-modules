@@ -13,7 +13,7 @@
     },
     "repo-type"    : "git",
     "source-url"   : "https://github.com/lizmat/PackUnpack.git",
-    "license"      : "http://www.perlfoundation.org/artistic_license_2_0",
+    "license"      : "Artistic-2.0",
     "support"      : {
       "irc"          : "irc://irc.freenode.org/#perl6"
     }
