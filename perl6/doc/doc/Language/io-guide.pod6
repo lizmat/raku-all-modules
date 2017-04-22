@@ -2,12 +2,11 @@
 
 =TITLE Input/Output The Definitive Guide
 
-=SUBTITLE The dos and don'ts of Perl 6 IO
-
+=SUBTITLE Correctly use Perl 6 IO
 
 =head1 The Wrong Way To Do Things
 
-This section describes how NOT to do Perl 6 IO.
+This section describes how NOT to do Perl 6 IO.
 
 =head2 Leave $*SPEC Alone
 
@@ -20,9 +19,9 @@ However, unless you're writing your own IO framework,
 you don't ever need to use L«C<$*SPEC>|/language/variables#Dynamic_variables»!
 L«C<$*SPEC>|/language/variables#Dynamic_variables» provides low-level stuff and
 its use will not only make your code horrible to read, you'll likely introduce
-security issues (e.g. nul bytes)!
+security issues (e.g. null characters)!
 
-The L«C<IO::Path>|/type/IO::Path» type is the workhorse of Perl 6 world. It
+The L«C<IO::Path>|/type/IO::Path» type is the workhorse of Perl 6 world. It
 caters to all the path manipulation needs as well as provides shortcut routines
 that let you avoid dealing with file handles. Use that instead of the
 L«C<$*SPEC>|/language/variables#Dynamic_variables» stuff.

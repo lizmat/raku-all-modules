@@ -42,6 +42,7 @@ unless stated otherwise.
 
 =head2 method new
 
+=for code :skip-test
     multi method new(Str:D $path, IO::Spec :$SPEC = $*SPEC, Str() :$CWD = $*CWD)
     multi method new(
         :$basename!, :$dirname = '.', :$volume = ''
@@ -66,7 +67,7 @@ Read-only. Contains implicit or explicit value of C<:$CWD> argument to C<.new>.
 
 =head2 attribute SPEC
 
-    IO::Path.new("foo", :SPEC(IO::Spec::Unix.new))
+    IO::Path.new("foo", :SPEC(IO::Spec::Unix.new))\
         .IO.SPEC.^name.say; # OUTPUT: «IO::Spec::Unix␤»
 
 Read-only. Contains implicit or explicit value of C<:$SPEC> argument to C<.new>.
@@ -76,7 +77,7 @@ Read-only. Contains implicit or explicit value of C<:$SPEC> argument to C<.new>.
     IO::Path.new("foo").path.say; # OUTPUT: «foo␤»
 
 Read-only. Returns the string the object was constructed from or the value of
-C<$SPEC.join($volume,$dirname,$basename)> if multi-part version of C<.new>
+C<$SPEC.join($volume, $dirname, $basename)> if multi-part version of C<.new>
 was used. B<NOTE:> this does not include the C<$.CWD>; see
 L«C<IO::Path.absolute>|/routine/absolute»
 and L«C<IO::Path.relative>|/routine/relative» for
@@ -146,11 +147,11 @@ path is in fact a child path.
 
 Defined as:
 
-    multi extension(IO::Path:D:                                         --> Str:D)
-    multi extension(IO::Path:D:               Int :$parts               --> Str:D)
-    multi extension(IO::Path:D:             Range :$parts               --> Str:D)
-    multi extension(IO::Path:D: Str $subst,   Int :$parts, Str :$joiner --> IO::Path:D)
-    multi extension(IO::Path:D: Str $subst, Range :$parts, Str :$joiner --> IO::Path:D)
+    multi method extension(IO::Path:D:                                         --> Str:D)
+    multi method extension(IO::Path:D:               Int :$parts               --> Str:D)
+    multi method extension(IO::Path:D:             Range :$parts               --> Str:D)
+    multi method extension(IO::Path:D: Str $subst,   Int :$parts, Str :$joiner --> IO::Path:D)
+    multi method extension(IO::Path:D: Str $subst, Range :$parts, Str :$joiner --> IO::Path:D)
 
 Returns the extension consisting of C<$parts> parts (defaults to C<1>),
 where a "part" is defined
@@ -253,7 +254,7 @@ values the return values of the methods with the same names.
 Alias for L«C<IO::Path.path>|/routine/path». In particular, note that default
 stringification of an C<IO::Path> does B<NOT> use the value of
 L«C<$.CWD> attribute|type/IO::Path#attribute_CWD». To stringify while
-retaining full path infomation use L«C<.absolute>|/routine/absolute» or
+retaining full path information use L«C<.absolute>|/routine/absolute» or
 L«C<.relative>|/routine/relative» methods.
 
 =head2 method open
@@ -409,8 +410,8 @@ path points to a non-existent filesystem entity.
 
     method s(--> Int:D)
 
-Returns the filesize in bytes. May be called on paths that are directories, in
-which case the reported size is dependant on the operating system.
+Returns the file size in bytes. May be called on paths that are directories, in
+which case the reported size is dependent on the operating system.
 The method will L«C<fail>|/routine/fail» with C<X::IO::DoesNotExist> if the
 path points to a non-existent filesystem entity.
 
@@ -468,8 +469,8 @@ C<X::IO::DoesNotExist> if the path points to a non-existent filesystem entity.
 
 Returns C<True> if the invocant is a path that exists and has size of C<0>.
 May be called on paths that are directories, in
-which case the reported filesize (and thus the result of this method)
-is dependant on the operating system. The method will L«C<fail>|/routine/fail»
+which case the reported file size (and thus the result of this method)
+is dependent on the operating system. The method will L«C<fail>|/routine/fail»
 with C<X::IO::DoesNotExist> if the path points to a non-existent filesystem
 entity.
 
@@ -527,7 +528,7 @@ directory see L«C<&chdir>|/routine/chdir» and L«C<&*chdir>|/routine/&*chdir»
 subroutines.
 
 Contrary to the name, the C<.chdir> method does not change any directories,
-but mereley concatenates the given C<$path> to the invocant and returns the
+but merely concatenates the given C<$path> to the invocant and returns the
 resultant C<IO::Path>. Optional file tests can be performed by providing
 C<:d>, C<:r>, C<:w>, or C<:x> L«C<Bool>|/type/Bool» named arguments; when
 set to C<True>, they'll perform L«C<.d>|/routine/d», L«C<.r>|/routine/r»,
