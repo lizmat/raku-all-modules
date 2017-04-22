@@ -6,7 +6,7 @@
   "depends": [
   ],
   "description": "Semaphore Readers Writers Pattern",
-  "license": "The Artistic License 2.0",
+  "license": "Artistic-2.0",
   "name": "Semaphore::ReadersWriters",
   "perl": "6.c",
   "provides": {
