@@ -22,7 +22,7 @@ This package implements part of PKCS 5 which is, according to the [wikipedia](ht
   is $spw2, '1d96ee3a529b5a5f9e47c01f229a2cb8a6e15f7d', '4096 iteration hex';
 ```
 
-## DOCUMENTATION
+## Documentation
 
 See documentation at
 
@@ -39,6 +39,3 @@ This project is tested with latest Rakudo built on MoarVM implementing Perl v6.c
 ```
 Marcel Timmerman (MARTIMM on github)
 ```
-## CONTACT
-
-MARTIMM on github: PKCS5
