@@ -5,7 +5,7 @@
     "author"      : "Andy Weidenbaum",
     "description" : "Double-entry accounting ledger parser",
     "depends"     : ["Digest::xxHash"],
-    "license"     : "http://unlicense.org/UNLICENSE",
+    "license"     : "Unlicense",
     "source-type" : "git",
     "source-url"  : "git://github.com/atweiden/txn-parser.git",
     "support"     : {

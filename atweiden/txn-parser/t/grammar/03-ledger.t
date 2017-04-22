@@ -136,7 +136,7 @@ subtest
 
     is(
         $ledger-match.WHAT,
-        Match,
+        TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($ledger)] - 3 of 4
         ┏━━━━━━━━━━━━━┓
@@ -148,7 +148,7 @@ subtest
     );
     is(
         $ledger-quoted-match.WHAT,
-        Match,
+        TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($ledger-quoted)] - 4 of 4
         ┏━━━━━━━━━━━━━┓

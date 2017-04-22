@@ -146,7 +146,7 @@ subtest
 
     is(
         TXN::Parser::Grammar.parse(@headers[0], :rule<header>).WHAT,
-        Match,
+        TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 4 of 8
         ┏━━━━━━━━━━━━━┓
@@ -159,7 +159,7 @@ subtest
 
     is(
         TXN::Parser::Grammar.parse(@headers[1], :rule<header>).WHAT,
-        Match,
+        TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 5 of 8
         ┏━━━━━━━━━━━━━┓
@@ -172,7 +172,7 @@ subtest
 
     is(
         TXN::Parser::Grammar.parse(@headers[2], :rule<header>).WHAT,
-        Match,
+        TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 6 of 8
         ┏━━━━━━━━━━━━━┓
@@ -185,7 +185,7 @@ subtest
 
     is(
         TXN::Parser::Grammar.parse(@headers[3], :rule<header>).WHAT,
-        Match,
+        TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 7 of 8
         ┏━━━━━━━━━━━━━┓
@@ -198,7 +198,7 @@ subtest
 
     is(
         TXN::Parser::Grammar.parse($header-multiline, :rule<header>).WHAT,
-        Match,
+        TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($header, :rule<header>)] - 8 of 8
         ┏━━━━━━━━━━━━━┓

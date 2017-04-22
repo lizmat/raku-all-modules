@@ -14,7 +14,7 @@ subtest
 
     is(
         $match-ledger.WHAT,
-        Match,
+        TXN::Parser::Grammar,
         q:to/EOF/
         ♪ [Grammar.parse($document)] - 1 of 8334
         ┏━━━━━━━━━━━━━┓

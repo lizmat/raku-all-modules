@@ -881,6 +881,16 @@ method segment:include ($/)
     make $<include-line>.made;
 }
 
+method segment:blank ($/)
+{
+    make Nil;
+}
+
+method segment:comment ($/)
+{
+    make Nil;
+}
+
 method ledger($/)
 {
     my TXN::Parser::AST::Entry:D @entry =
