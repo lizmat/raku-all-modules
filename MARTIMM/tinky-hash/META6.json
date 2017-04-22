@@ -9,7 +9,7 @@
     "Tinky::Hash":      "lib/Tinky/Hash.pm6"
   },
   "source-url":         "git://github.com/MARTIMM/tinky-hash.git",
-  "license":            "The Artistic License 2.0",
+  "license":            "Artistic-2.0",
   "authors":            "Marcel Timmerman",
   "support": {
     "email":            "mt1957@gmail.com"
