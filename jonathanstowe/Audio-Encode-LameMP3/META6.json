@@ -1,30 +1,43 @@
 {
-  "name" : "Audio::Encode::LameMP3",
-  "tags" : [ "audio", "codec", "encode", "mpeg", "mp3" ],
-  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
-  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
-  "auth" : "github:jonathanstowe",
-  "support" : {
-    "source" : "git://github.com/jonathanstowe/Audio-Encode-LameMP3.git"
+  "name": "Audio::Encode::LameMP3",
+  "source-url": "git://github.com/jonathanstowe/Audio-Encode-LameMP3.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/Audio-Encode-LameMP3.git"
   },
-  "source-url" : "git://github.com/jonathanstowe/Audio-Encode-LameMP3.git",
-  "perl" : "6.c",
-  "build-depends" : [
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
     "LibraryCheck",
     "AccessorFacade"
   ],
-  "provides" : {
-     "Audio::Encode::LameMP3" : "lib/Audio/Encode/LameMP3.pm"
-  },
-  "depends" : [
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth": "github:jonathanstowe",
+  "depends": [
     "AccessorFacade",
     "NativeHelpers::Array"
   ],
-  "test-depends" : [
+  "tags": [
+    "audio",
+    "codec",
+    "encode",
+    "mpeg",
+    "mp3"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
     "Test::META",
     "Audio::Taglib::Simple",
     "Audio::Sndfile"
   ],
-  "description" : "Encode PCM Audio data to MP3 in Perl 6 using a binding to liblame",
-  "version" : "0.0.10"
+  "provides": {
+    "Audio::Encode::LameMP3": "lib/Audio/Encode/LameMP3.pm"
+  },
+  "version": "0.0.10",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "description": "Encode PCM Audio data to MP3 in Perl 6 using a binding to liblame",
+  "meta6": "0"
 }
