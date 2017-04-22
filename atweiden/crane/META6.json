@@ -4,7 +4,7 @@
     "version"     : "*",
     "author"      : "Andy Weidenbaum",
     "description" : "Navigate Perl6 containers and perform tasks",
-    "license"     : "http://unlicense.org/UNLICENSE",
+    "license"     : "Unlicense",
     "source-type" : "git",
     "source-url"  : "git://github.com/atweiden/crane.git",
     "support"     : {
