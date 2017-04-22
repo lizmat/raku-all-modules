@@ -3,7 +3,7 @@
     "version" : "0.2.1",
     "author" : "Wenzel P. P. Peppmeyer",
     "description" : "Render many pod6-files into one (big) html-file.",
-    "license" : "https://opensource.org/licenses/Artistic-2.0",
+    "license" : "Artistic-2.0",
     "provides" : {
         "Pod::To::BigPage" : "lib/Pod/To/BigPage.pm6"
     },
