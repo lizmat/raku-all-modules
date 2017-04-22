@@ -7,7 +7,7 @@
         "PerlMongers::Hannover" : "lib/PerlMongers/Hannover.pm"
     },
     "authors" : "Paul Cochrane",
-    "license" : "http://www.perlfoundation.org/artistic_license_2_0",
+    "license" : "Artistic-2.0",
     "depends" : [ "IO::Capture::Simple" ],
     "test-depends" : [ "Test::META" ],
     "source-url" : "git://github.com/paultcochrane/Perl6Mongers-Hannover.git"
