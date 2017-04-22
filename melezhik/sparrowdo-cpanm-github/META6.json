@@ -1,5 +1,8 @@
 {
+
   "name": "Sparrowdo::Cpanm::GitHub",
+
+  "version": "0.0.2",
 
   "description" : "Installs CPAN modules fetched from remote GitHub repositories",
 
@@ -10,6 +13,7 @@
   },
 
   "perl": "6.c",
+
   "resources": [
     
   ],
@@ -42,7 +46,7 @@
     
   ],
 
-  "license": "Artistic 2.0",
+  "license": "Artistic-2.0",
 
   "test-depends": [
     
@@ -53,8 +57,6 @@
   "emulates": {
     
   },
-
-  "version": "0.0.2",
 
   "meta6": "0",
 
