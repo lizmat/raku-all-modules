@@ -1,22 +1,37 @@
 {
-  "name" : "JSON::Name",
-  "tags" : [ "object", "serialisation", "JSON" ],
-  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
-  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
-  "auth" : "github:jonathanstowe",
-  "support" : {
-    "source" : "git://github.com/jonathanstowe/JSON-Name.git"
+  "name": "JSON::Name",
+  "source-url": "git://github.com/jonathanstowe/JSON-Name.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/JSON-Name.git"
   },
-  "source-url" : "git://github.com/jonathanstowe/JSON-Name.git",
-  "perl" : "6.c",
-  "build-depends" : [ ],
-  "provides" : {
-     "JSON::Name" : "lib/JSON/Name.pm"
-  },
-  "depends" : [ ],
-  "test-depends" : [
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth": "github:jonathanstowe",
+  "depends": [
+    
+  ],
+  "tags": [
+    "object",
+    "serialisation",
+    "JSON"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
     "Test"
   ],
-  "description" : "Provides a trait to store an alternative JSON Name",
-  "version" : "0.0.2"
+  "provides": {
+    "JSON::Name": "lib/JSON/Name.pm"
+  },
+  "version": "0.0.2",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "description": "Provides a trait to store an alternative JSON Name",
+  "meta6": "0"
 }
