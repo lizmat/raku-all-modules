@@ -876,8 +876,11 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
     }
 
     method stage2($ctx) {
-        $.invocant .= do-stage2(tAny) unless $.invocant.stage2-done;
-        if not $.declaration.static and $.invocant.WHAT === SAST::Type and !$.invocant.ostensible-type.enum-type {
+        my $is-type = $.invocant.WHAT === SAST::Type;
+        if not $.invocant.stage2-done {
+            $.invocant .= do-stage2: $is-type ?? tAny() !! tStr();
+        }
+        if not $.declaration.static and $is-type and not $.invocant.ostensible-type.enum-type {
             SX.new(message => q|Instance method called on a type.|,:$.match).throw;
         }
         callsame;
@@ -1241,9 +1244,16 @@ class SAST::BVal does SAST::CompileTimeVal {
 
 class SAST::Concat is SAST::MutableChildren {
     method type { tStr }
-    method gist { @.children».gist.join(' ~ ') }
     method compile-time {
-        @.children.all.compile-time.defined ?? @.children».compile-time.join !! Nil;
+        my @ct = @.children.map(*.compile-time);
+        if @ct.all.defined {
+            @ct.map({
+                when Bool { .so ?? '1' !! '' }
+                default   { .Str }
+            }).join;
+        } else {
+            Nil;
+        }
     }
     method stage2($) {
         $_ .= do-stage2(tStr) for @.children;

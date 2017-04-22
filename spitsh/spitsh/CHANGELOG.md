@@ -1,10 +1,42 @@
+## 0.0.21
+
+- Add File.mkdir
+- Add File.cd
+- Add a :dir option to File.tmp to create a tmp directory.
+- Add spit-dev command in root of src to be used instead of ./bin/spit
+  for development.
+- Renamed $$ to $?PID
+- Renamed File.create to File.touch
+- Renamed File.child to File.add
+- Routines that just do concatenation can now be inlined
+
 ## 0.0.20
 
-- TODO
+- FD.next-free now uses /proc to figure out what FD is free.
+- Fixed bug where `>` type comparisons would fail if both sides were
+  know at compile time.
+
 
 ## 0.0.19
 
-- TODO
+- File.read renamed to File.slurp
+- Type blessing syantax changed from File{"foo"} to File("foo")
+- Add GitHubRepo which represents a guthub repo owner/repo-name like
+  `GitHubRepo<spitsh/spitsh>`
+- Add GitURL, which represents `git clone`'able string like
+  `GitURL<https://github.com/spitsh/spitsh.git/>`
+- Add $*git, which gives you the git command
+- Add &prompt which prompts the user with a string and returns their answer as a Bool
+- Add $?IN, basically just FD(0)
+- Add File.find which is an interface to find(1)
+- Add PID.kill which sends a signal to a process
+- Add &sleep, a wrapper around sleep(1)
+- Add env declarator to reserve shell environment variable names. Used like:
+  ```perl6
+    env $MY_ENV_VAR;
+    #or
+    env $MY_ENV_VAR = "foo";
+  ```
 
 ## 0.0.18
 - Regex system redesigned and re-implemented

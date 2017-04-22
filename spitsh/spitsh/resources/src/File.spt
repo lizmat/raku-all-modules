@@ -1,3 +1,8 @@
+#| The current user's home directory.
+env File $*HOME;
+#| The present working directory of the shell.
+env File $?PWD;
+
 #| File is string representing a filesystem path (relative or absolute).
 #|{
     my $outdated = 'foo1.myorg.com';
@@ -81,10 +86,9 @@ augment File {
     method push(#|[line to add] $line) {
         $self.write($self.slurp.push($line));
     }
-    #| Creates an empty file on the filesystem if one doesn't exist at
-    #| the file's path.
-    #|{ .create unless File<foo.txt> }
-    method create {
+    #| Calls `touch(1)` on the file.
+    #|{ .touch unless File<foo.txt> }
+    method touch {
         # Ohhh when I think about you I
         ${touch $self}
     }
@@ -171,8 +175,10 @@ augment File {
     #| Returns the parent directory of the file.
     #|{ say File</etc/foo/foo.cfg>.name #->/etc/foo }
     method ~parent(--> File){ ${dirname $self} }
-    #|{ say File</etc/foo>.child('foo.cfg') #-> /etc/foo/foo.cfg }
-    method ~child($name --> File) { $self.path ~ '/' ~ $name }
+    #| Adds an element to the path. This is the same as concatinating
+    #| the path with a '/' and the argument.
+    #|{ say File</etc/foo>.add('foo.cfg') #->/etc/foo/foo.cfg }
+    method ~add($name --> File) { $self.path ~ '/' ~ $name }
 
     my File $tmplist = ${mktemp};
     #| Creates a tempfile via mktemp(1) and adds it to a list of
@@ -180,13 +186,23 @@ augment File {
     #|{
       my $tmpfile = File.tmp; # Will be removed at the end
     }
-    static method tmp(--> File) {
-        my File $tmpfile = ${mktemp};
+    static method tmp(Bool :$dir --> File) {
+        my File $tmpfile = ${mktemp ('-d' if $dir)};
         ${printf '%s\n' $tmpfile >> $tmplist};
         $tmpfile;
-        END { ${rm @($tmplist.slurp) $tmplist } }
+        END { ${rm -rf @($tmplist.slurp) $tmplist } }
     }
 
+    #| Returns a list of children that match the criteria.
+    #|{
+        given File("$*HOME/src/spitsh/resources/src") {
+            my $loc = 0;
+            for .find(name => /\.spt$/) { # or just *.spt
+                $loc += .lines;
+            }
+            say "$loc lines of code";
+        }
+    }
     method find(Pattern :$name --> List[File]) {
         ${find $self ('-name', $name if $name)}
     }
@@ -201,6 +217,24 @@ augment File {
         ${mkfifo $tmpfifo};
         $tmpfifo;
     }
-}
 
-env File $*HOME;
+    #| Tries to make a directory at the file's path, recursively if need
+    #| be. Returns whether it succeeds.
+    #|{
+       say "creating " ~ File<path/to/my/dir>.mkdir
+    }
+    method mkdir(--> File) {
+        ${ mkdir -p $self};
+        $self;
+    }
+    #| Changes directory to the file.
+    #|{
+        File<path/to/my/dir>.mkdir.cd;
+        say "$?PWD";
+    }
+    method cd {
+        ${ cd $self }
+    }
+
+
+}

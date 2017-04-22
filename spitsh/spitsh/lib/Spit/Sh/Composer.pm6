@@ -361,9 +361,8 @@ multi method walk(SAST::Eval:D $THIS is rw) {
 }
 
 multi method walk(SAST::Concat:D $THIS is rw) {
-    if $THIS.children».compile-time».defined.all {
-        # TODO fold as many as possible
-        $THIS .= stage3-node(SAST::SVal,val => $THIS.children».compile-time.join);
+    with $THIS.compile-time {
+        $THIS .= stage3-node: SAST::SVal,val => $_;
     }
 }
 
@@ -556,13 +555,26 @@ method inline-value($inner,$outer,$_ is raw) {
         $*char-count += .compile-time.chars;
         $_;
     }
+
+    when SAST::Concat {
+        my int $char-count = 0;
+        my @inlined = .children.map: {
+            .compile-time andthen $char-count += ($_ ~~ Bool ?? (.so ?? 1 !! 0) !! .Str.chars);
+            self.inline-value($inner,$outer,$_);
+        };
+        if @inlined.all.defined {
+            $*char-count += $char-count;
+            .children = @inlined;
+            $_;
+        }
+    }
     default {
         Nil
     }
 }
 
 subset ChildSwapInline of SAST:D
-       where SAST::Call|SAST::Cmd|SAST::Increment|SAST::Neg|SAST::Cmp;
+       where SAST::Call|SAST::Cmd|SAST::Increment|SAST::Neg|SAST::Cmp|SAST::Concat;
 
 # CONSIDER:
 #   {
@@ -571,7 +583,7 @@ subset ChildSwapInline of SAST:D
 #   }
 # 'foo("baz")' is the $outer call, 'say($a)' is the $inner call.
 # We inline by switching the outer SAST::Call out for a modified clone of the inner SAST::Call.
-# We can do this with a bun ch of other nodes as well.
+# We can do this with a bunch of other nodes as well.
 multi method inline-call(SAST::Call:D $outer,ChildSwapInline $inner) {
     # Can't inline is rw methods yet. Probs need to redesign it before we can.
     return if ($outer ~~ SAST::MethodCall) && $outer.declaration.rw;
