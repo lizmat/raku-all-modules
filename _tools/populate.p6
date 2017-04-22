@@ -1,4 +1,5 @@
 use v6;
+use JSON::Tiny;
 unit sub MAIN(Bool :$delete=True, Bool :$fetch=True, Bool :$ignore-errors);
 
 run 'wget', '-O', 'projects.json', 'http://ecosystem-api.p6c.org/projects.json'
