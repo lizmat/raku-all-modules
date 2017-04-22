@@ -1,27 +1,42 @@
 {
-  "name" : "URI::Template",
-  "tags" : [ "URI", "URL", "Template", "RFC" ],
-  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
-  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
-  "auth" : "github:jonathanstowe",
-  "support" : {
-    "source"     : "git://github.com/jonathanstowe/URI-Template.git",
-    "irc"        : "irc:// irc.freenode.net/#perl6",
-    "bugtracker" : "https://github.com/jonathanstowe/URI-Template/issues"
+  "name": "URI::Template",
+  "source-url": "git://github.com/jonathanstowe/URI-Template.git",
+  "support": {
+    "irc": "irc:// irc.freenode.net/#perl6",
+    "source": "git://github.com/jonathanstowe/URI-Template.git",
+    "bugtracker": "https://github.com/jonathanstowe/URI-Template/issues"
   },
-  "source-url" : "git://github.com/jonathanstowe/URI-Template.git",
-  "perl" : "6.c",
-  "build-depends" : [ ],
-  "provides" : {
-     "URI::Template"     : "lib/URI/Template.pm"
-  },
-  "depends" : [ 
+  "perl": "6.c",
+  "resources": [
+    
   ],
-  "test-depends" : [
-    "JSON::Fast", 
+  "build-depends": [
+    
+  ],
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth": "github:jonathanstowe",
+  "depends": [
+    
+  ],
+  "tags": [
+    "URI",
+    "URL",
+    "Template",
+    "RFC"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "JSON::Fast",
     "Test",
     "Test::META"
   ],
-  "description" : "URI Templates as per https://tools.ietf.org/html/rfc6570",
-  "version" : "0.0.5"
+  "provides": {
+    "URI::Template": "lib/URI/Template.pm"
+  },
+  "version": "0.0.5",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "description": "URI Templates as per https://tools.ietf.org/html/rfc6570",
+  "meta6": "0"
 }
