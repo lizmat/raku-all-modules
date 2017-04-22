@@ -10,7 +10,7 @@
     "Unicode::PRECIS"
   ],
   "description": "Salted Challenge Response Authentication Mechanism (SCRAM)",
-  "license": "The Artistic License 2.0",
+  "license": "Artistic-2.0",
   "name": "Auth::SCRAM",
   "perl": "6.c",
   "provides": {
