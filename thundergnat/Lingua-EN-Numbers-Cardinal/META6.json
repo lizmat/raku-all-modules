@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Lingua::EN::Numbers::Cardinal",
-    "version"     : "1.0.1",
+    "version"     : "2.0.0",
     "description" : "Convert integer numbers to their cardinal or ordinal representation",
     "authors"     : [ "Steve Schulze (thundergnat)" ],
     "provides"    : {
@@ -9,5 +9,7 @@
     },
     "depends"     : [],
     "source-type" : "git",
-    "source-url"  : "git://github.com/thundergnat/Lingua-EN-Numbers-Cardinal.git"
+    "source-url"  : "git://github.com/thundergnat/Lingua-EN-Numbers-Cardinal.git",
+    "license"     : "Artistic-2.0",
+    "tags"        : [ "Number", "Convert" ]
 }

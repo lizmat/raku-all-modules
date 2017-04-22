@@ -1,7 +1,7 @@
 
 use v6;
 
-unit module Cardinal:ver<1.0.1>:auth<github:thundergnat>;
+unit module Cardinal:ver<2.0.0>:auth<github:thundergnat>;
 
 # Arrays probably should be constants but constant arrays and pre-comp
 # don't get along very well right now.
@@ -20,16 +20,16 @@ my @d = < zeroth first    second    third      fourth     fifth     sixth     se
 my @t = < ''     ''       twentieth thirtieth  fortieth   fiftieth  sixtieth  seventieth  eightieth  ninetieth >;
 
 
-sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export {
+multi sub cardinal ($rat is copy, :sep(:$separator) = ' ', :den(:$denominator), :im(:$improper) ) is export {
     if $rat.substr(0,1) eq '-' {
-        return "negative {cardinal($rat.substr(1).Rat, :separator($separator), :common($common), :improper($improper)) }"
+        return "negative {cardinal($rat.substr(1).Rat, :separator($separator), :denominator($denominator), :improper($improper)) }"
     }
-    $rat .= Rat;
-    return cardinal-int($rat.narrow) if $rat.narrow ~~ Int;
+    $rat .= Numeric.Rat;
+    return cardinal($rat.narrow) if $rat.narrow ~~ Int;
     my ($num, $denom) = $rat.nude;
-    if $common { # handle common denominator setup
-        $num = ($rat * $common).round;
-        $denom = $common;
+    if $denominator { # handle common denominator setup
+        $num = ($rat * $denominator).round;
+        $denom = $denominator;
     }
     my $s; # String to accumulate cardinal
 
@@ -38,7 +38,7 @@ sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export 
         my $whole = $num div $denom;
         $num %= $denom;
         # add whole number
-        $s ~= cardinal-int($whole) if $whole;
+        $s ~= cardinal($whole) if $whole;
         # return if there are no fractional portions
         return $s // 'zero' unless $num;
         # add 'and' separator between whole and fractional
@@ -46,7 +46,7 @@ sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export 
     }
 
     # numerator is just a regular cardinal, add a separator if desired
-    $s ~= cardinal-int($num) ~ $separator;
+    $s ~= cardinal($num) ~ $separator;
     # now determine the denominator
     if $denom == 2 { # special case irregular halfs
         if $num == 1 {
@@ -65,9 +65,9 @@ sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export 
         if ($mil.chars == 3 || ($mil.chars - 1) %% 3) && not +$cen
          && +$mil.substr(0,1) == 1 && +$mil.substr(1) == 0 {
             # Drop the one for one thousandth, one millionth, etc
-            $s ~= cardinal-int($mil).substr(4);
+            $s ~= cardinal($mil).substr(4);
         } else {
-            $s ~= cardinal-int($mil) if $mil;
+            $s ~= cardinal($mil) if $mil;
         }
         if +$cen { # most of the special casing takes place in the last 3 digits
             $s ~= ' ' if $mil;
@@ -76,18 +76,18 @@ sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export 
                     # Drop the one for even one hundredth
                     $s ~= 'hundredth'
                 } else {
-                    $s ~= cardinal-int($cen) ~ 'th'
+                    $s ~= cardinal($cen) ~ 'th'
                 }
             } elsif $cen > 100 {    # irregulars galore
                 my $hun = $cen.substr(0,1) * 100;
                 $cen -= $hun;
-                $s ~= cardinal-int($hun) ~ ' ';
+                $s ~= cardinal($hun) ~ ' ';
                 if $cen %% 10 {
                     $s ~=  @t[$cen / 10]
                 } else {
                     if $cen > 19 {
                         my $ten = $cen.substr(0,1) * 10;
-                        $s ~= cardinal-int($ten) ~ '-' if +$ten;
+                        $s ~= cardinal($ten) ~ '-' if +$ten;
                         $s ~=  @d[$cen.substr(*-1)];
                     } else {
                         $s ~=  @d[$cen];
@@ -99,7 +99,7 @@ sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export 
                 if $cen %% 10 {
                     $s ~=  @t[$cen / 10]
                 } else {
-                    $s ~= cardinal-int((+$cen).substr(0,1) * 10)
+                    $s ~= cardinal((+$cen).substr(0,1) * 10)
                     ~ '-' ~ @d[$cen.substr(*-1)];
                 }
             }
@@ -112,9 +112,10 @@ sub cardinal ($rat is copy, :$separator = ' ', :$common, :$improper ) is export 
     }
 }
 
-sub cardinal-int (Int $int) {
-    if $int.substr(0,1) eq '-' { return "negative {cardinal-int($int.substr(1))}" }
-    if $int == 0 { return @I[0] }
+multi sub cardinal (Int $int) is export {
+    if $int.substr(0,1) eq '-' { return "negative {cardinal($int.substr(1))}" }
+    if $int == 0 { return @I[0] } # Bools dispatch as Ints.
+    if $int == 1 { return @I[1] } # Handle them directly
     my $m = 0;
     return join ', ', reverse gather for $int.flip.comb(/\d ** 1..3/) {
         my ( $i, $x, $c ) = .comb».Int;
@@ -137,7 +138,16 @@ sub cardinal-int (Int $int) {
     }
 }
 
-sub cardinal-year ($year where 99 < $year < 10000) is export {
+multi sub cardinal (Num $num) is export {
+    if $num < 0 { return "negative {cardinal(-$num)}" }
+    die if $num ~~ Inf or $num ~~ NaN;
+    my ($mantissa, $exponent) = $num.fmt('%e').split('e')».Numeric;
+    my ($whole, $fraction) = $mantissa.split('.')».Numeric;
+    my $f = ($fraction.defined) ?? join( ' ', ' point', @I[$fraction.comb]) !! '';
+    "{@I[$whole.comb]}$f times ten to the { $exponent.&ordinal }";
+}
+
+sub cardinal-year ($year where 0 < $year < 10000, :$oh = 'oh-' ) is export {
     if $year %% 1000 {
         return cardinal($year.substr(0,1)) ~ ' thousand';
     } elsif $year %% 100  {
@@ -145,19 +155,22 @@ sub cardinal-year ($year where 99 < $year < 10000) is export {
         return cardinal($cen.flip) ~ ' hundred';
     }
     my ($l, $h) = $year.flip.comb(/\d ** 1..2/).».flip;
-    if $l < 10 {
-        return cardinal($h) ~ ' ought-' ~ cardinal($l);
+    if $h and $l < 10 {
+        return cardinal($h) ~ ' ' ~ $oh ~ cardinal($l);
+    } elsif $l < 10 {
+        return cardinal($l);
     }
     return join ' ', cardinal($h), cardinal($l);
 }
 
 sub ordinal ($int is copy) is export {
     $int .= Int;
+    if $int < 0 { return "negative {ordinal($int.abs)}" }
     my $ten = $int.chars > 2 ?? +$int.substr(*-2) !! +$int;
     my $mil = $int - $ten;
     my $s = '';
     if $mil > 0 {
-        $s = cardinal-int($mil);
+        $s = cardinal($mil);
     }
     if +$mil and !+$ten { return $s ~ 'th' }
     if +$mil and  +$ten { $s ~= ' ' }
@@ -166,7 +179,7 @@ sub ordinal ($int is copy) is export {
     } elsif +$ten and $ten %% 10 {
         $s ~= @t[$ten div 10]
     } else {
-        $s ~= cardinal-int($ten div 10 * 10) ~ '-' ~ @d[$ten % 10]
+        $s ~= cardinal($ten div 10 * 10) ~ '-' ~ @d[$ten % 10]
     }
     $s;
 }

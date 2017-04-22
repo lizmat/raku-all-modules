@@ -8,19 +8,23 @@ Convert numbers to their cardinal or ordinal representation.
 
      use Lingua::EN::Numbers::Cardinal;
 
-     cardinal( $rational, :separator($str), :common($val), :improper );
+     cardinal( $rational, :separator($str), :denominator($val), :improper );
 
-        $rational  <value; required, any rational or integer number>
-        :separator <value; optional, separator between numerator and denominator,
-                    defaults to ' '>
-        :common    <value; optional, integer denominator to use for
-                    representation, do not reduce to lowest terms>
-        :improper  <flag; optional, do not regularize improper fractions.>
+        $rational      <value; required, any rational or integer number>
+        :separator     <value; optional, separator between numerator and denominator,
+         or :sep        defaults to ' '>
+        :denominator   <value; optional, integer denominator to use for
+         or :den        representation, do not reduce to lowest terms>
+        :improper      <flag; optional, do not regularize improper fractions.>
+         or :im
 
+     cardinal-year( $year, :oh($str) );
 
-     cardinal-year( $year );
+        $year      <value; must be an integer between 1 and 10000>
 
-        $year      <value; must be an integer between 99 and 10000>
+        :oh        <value; optional, string to use for the "0" years after a
+                    millennium. Default 'oh-'. Change to ' ought-' or some
+                    other string if desired.
 
      ordinal( $integer )
 
@@ -40,8 +44,8 @@ English, short scale convention.
 
 See L<https://en.wikipedia.org/wiki/Long_and_short_scales>
 
-Exported sub cardinal() converts an rational or integer number or something
-that can be converted to one, to its cardinal representation.
+Exported sub cardinal() a number or something that can be converted to one, to
+its cardinal representation.
 
 Recognizes integer numbers from:
 -9999999999999999999999999999999999999999999999999999999999999999999999999999
@@ -117,28 +121,56 @@ ninety-nine quintillion, nine hundred ninety-nine quadrillion, nine hundred
 ninety-nine trillion, nine hundred ninety-nine billion, nine hundred ninety-nine
 million, nine hundred ninety-nine thousand, nine hundred ninety-nine
 
+Handles Rats limited to the integer limits for the numerator and denominator.
+
 When converting rational numbers, the word "and" is inserted between any whole
 number portion and the fractional portions of the number. If you have an "and"
 in the output, the input number had a fractional portion.
 
 By default, cardinal reduces fractions to their lowest terms. If you want to
-specify the denominator used to display, pass in an integer to the :commom
+specify the denominator used to display, pass in an integer to the :denominator
 option.
 
-It is probably best to specify a common that IS a common divisor for the
-denominator. cardinal() will work with any integer common, and will scale the
-numerator to match, but will round off the numerator to the nearest integer
-after scaling, so some error will creep in if common is NOT a common divisor
-with the denominator.
+It is probably best to specify a denominator that is a common divisor for
+the denominator. cardinal() will work with any integer denominator, and will
+scale the numerator to match, but will round off the numerator to the nearest
+integer after scaling, so some error will creep in if denominator is NOT a
+common divisor with the denominator.
 
-cardinal-year() converts integers from 100 to 9999 to the common American
+
+Recognizes Nums up to about 1.79e308.
+
+When converting Nums, reads out the enumerated digits for the mantissa and
+returns the ordinal exponent.
+
+E.G. cardinal(2.712e7) will return:
+
+ 'two point seven one two times ten to the seventh'
+
+ if you want it to be treated like an integer or rational, coerce it to the
+ appropriate type.
+
+cardinal(2.712e7.Int) to get:
+
+'twenty-seven million, one hundred twenty thousand'
+
+cardinal(1.25e-3) returns 'one point two five times ten to the negative third'
+
+cardinal(1.25e-3.Rat) returns 'one eight hundredth'
+
+
+cardinal-year() converts integers from 1 to 9999 to the common American
 English convention.
 
 2015 -> twenty fifteen.
 1984 -> nineteen eighty-four.
 Even millenniums are returned as thousands: 2000 -> two thousand.
 Even centuries are returned as hundreds: 1900 -> nineteen hundred.
-Years 1 .. 9 in each century are returned as oughts: 2001 -> twenty ought-one.
+Years 1 .. 9 in each century are returned as ohs: 2001 -> twenty oh-one.
+
+That is configurable with the :oh parameter. Default is 'oh-'. Change to
+'ought-' if you prefer twenty ought-one, or something else if that is your
+preference.
 
 ordinal() takes an integer or something that can be coerced to an integer and
 returns a string similar cardinal() except it is "positional" rather than
@@ -155,6 +187,7 @@ USAGE
 
     say cardinal(7/2);            # three and one half
     say cardinal(7/2, :improper); # seven halves
+    say cardinal(7/2, :im );      # seven halves
     say cardinal(15/4)            # three and three quarters
     say cardinal(3.75)            # three and three quarters
     say cardinal(15/4, :improper) # fifteen quarters
@@ -165,7 +198,7 @@ USAGE
     say cardinal-year(1776)       # seventeen seventy-six
 
     say cardinal-year(1800)       # eighteen hundred
-    say cardinal-year(1905)       # nineteen ought-five
+    say cardinal-year(1905)       # nineteen oh-five
     say cardinal-year(2000)       # two thousand
     say cardinal-year(2015)       # twenty fifteen
 
@@ -181,12 +214,14 @@ USAGE
 
 
     # If you want to use a certain denominator in the display and not reduce
-    # fractions, specify a common (denominator).
+    # fractions, specify a common denominator.
 
-    say cardinal(15/1000);                 # three two hundredths
-    say cardinal(15/1000, :common(1000));  # fifteen thousandths
+    say cardinal(15/1000);                      # three two hundredths
+    say cardinal(15/1000, :denominator(1000));  # fifteen thousandths
     # or
-    say cardinal(15/1000, common => 1000); # fifteen thousandths
+    say cardinal(15/1000, denominator => 1000); # fifteen thousandths
+    # or
+    say cardinal(15/1000, :den(1000) );         # fifteen thousandths
 
     say ordinal(1);               # first
     say ordinal(2);               # second
@@ -196,9 +231,7 @@ USAGE
 
 BUGS
 
-The cardinal() routine expects rational or integer numbers. All the others
-expect integers. If you feed them something else, they will try to coerce, but
-be prepared for non-sensible results. Does some cursory error trapping and
+Doesn't handle complex numbers. Does some cursory error trapping and
 coercion but the foot cannon is still loaded.
 
 
