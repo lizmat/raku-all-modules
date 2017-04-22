@@ -4,7 +4,7 @@
     "version"     : "*",
     "author"      : "Andy Weidenbaum",
     "description" : "TOML file parser and writer",
-    "license"     : "http://unlicense.org/UNLICENSE",
+    "license"     : "Unlicense",
     "depends"     : ["Crane"],
     "source-type" : "git",
     "source-url"  : "git://github.com/atweiden/config-toml.git",
