@@ -37,8 +37,8 @@
     "authors": [
         "Jonathan Stowe <jns+git@gellyfish.co.uk>"
     ],
-    "version": "0.0.14",
-    "license": "Artistic",
+    "version": "0.0.15",
+    "license": "Artistic-2.0",
     "resource": {
 
     },

@@ -32,7 +32,7 @@ my $m = META6.new(   name        => 'META6',
                      provides => {
                         META6 => 'lib/META6.pm',
                      },
-                     license     => 'Artistic',
+                     license     => 'Artistic-2.0',
                      production  => False,
 
                  );
@@ -134,7 +134,7 @@ role AutoAssoc {
     }
 }
 
-class META6:ver<0.0.14>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
+class META6:ver<0.0.15>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
 
     enum Optionality <Mandatory Optional>;
 
@@ -231,10 +231,10 @@ class META6:ver<0.0.14>:auth<github:jonathanstowe> does JSON::Class does AutoAss
     has Str         $.author        is rw is customary is json-skip-null;
     has Str         %.provides      is rw is specification(Mandatory);
     has Str         @.depends       is rw is specification(Optional);
-    has Str         %.emulates      is rw is specification(Optional);
-    has Str         %.supersedes    is rw is specification(Optional);
-    has Str         %.superseded-by is rw is specification(Optional);
-    has Str         %.excludes      is rw is specification(Optional);
+    has Str         %.emulates      is rw is specification(Optional) is json-skip-null;
+    has Str         %.supersedes    is rw is specification(Optional) is json-skip-null;
+    has Str         %.superseded-by is rw is specification(Optional) is json-skip-null;
+    has Str         %.excludes      is rw is specification(Optional) is json-skip-null;
     has Str         @.build-depends is rw is specification(Optional);
     has Str         @.test-depends  is rw is specification(Optional);
     has Str         @.resources     is rw is specification(Optional);
