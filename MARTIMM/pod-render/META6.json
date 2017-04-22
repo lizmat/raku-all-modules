@@ -7,7 +7,7 @@
     "Pod::To::Markdown"
   ],
   "description": "Render pod docs to html, pdf or md",
-  "license": "The Artistic License 2.0",
+  "license": "Artistic-2.0",
   "name": "Pod::Render",
   "perl": "6.c",
   "provides": {
