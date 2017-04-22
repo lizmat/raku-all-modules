@@ -1,3 +1,8 @@
+# 0.0.17
+
+- Asserts
+- Added license to META6 file
+
 # 0.0.16 
 
 copy-local-file - experimental feature

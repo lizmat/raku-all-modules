@@ -1,7 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "Sparrowdo",
-  "version"     : "0.0.15",
+  "version"     : "0.0.17",
   "description" : "Configuration management tool based on sparrow plugins system",
   "authors" : [ "Alexey Melezhik"],
   "depends"     : [
@@ -27,5 +27,6 @@
         "Sparrowdo::Core::DSL::Ssh"  : "lib/Sparrowdo/Core/DSL/Ssh.pm6",
         "Sparrowdo::Core::DSL::Assert"  : "lib/Sparrowdo/Core/DSL/Assert.pm6"
   },
-  "source-url"  : "https://github.com/melezhik/sparrowdo.git"
+  "source-url"  : "https://github.com/melezhik/sparrowdo.git",
+  "license": "Artistic-2.0"
 }
