@@ -28,7 +28,7 @@
   "tags": [
     
   ],
-  "license": "Artistic 2.0",
+  "license": "Artistic-2.0",
   "test-depends": [
     
   ],
@@ -37,7 +37,7 @@
   "emulates": {
     
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "meta6": "0",
   "supersedes": {
     

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/melezhik/perl6-sparrowdo-rakudo.git
 	branch = master
-	commit = a1436208a679fa71536a600dd0aeae857b7b5373
-	parent = 6d33a74457b55a6668e7a404ee30d74683a40544
+	commit = 177b6f986157060d6786cdabc1f2763198221a4c
+	parent = 27d944d4eb0e477a45a885ca8ed95123625ecc2b
 	cmdver = 0.4.0
