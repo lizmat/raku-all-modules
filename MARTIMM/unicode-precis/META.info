@@ -6,7 +6,7 @@
   "depends": [
   ],
   "description": "Implements PRECIS framework, rfc7564 and others. Obsoletes stringprep and saslprep",
-  "license": "The Artistic License 2.0",
+  "license": "Artistic-2.0",
   "name": "Unicode::PRECIS",
   "perl": "6.c",
   "provides": {

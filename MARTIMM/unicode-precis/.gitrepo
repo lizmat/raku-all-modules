@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/unicode-precis.git
 	branch = master
-	commit = 18ebb3e34373e740528664f621e9f692e5094ae7
-	parent = dc0159502d29e26d578149cff74c18174fd483a6
+	commit = 9ea477bbfcac7ffb7923c15bcc9644d640c8de1d
+	parent = 99d4e6a4680bc95ab429f795dd7c097f9c2dc139
 	cmdver = 0.4.0
