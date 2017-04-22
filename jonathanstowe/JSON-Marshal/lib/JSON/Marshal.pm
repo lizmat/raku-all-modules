@@ -35,11 +35,13 @@ created by declaring them with the '.' twigil. Attributes without acccessors
 are ignored.
 
 If you want to ignore any attributes without a value you can use the
-:skip-null adverb to C<marshal>, which will supress the marshalling of
-any undefined attributes.  Additionally if you want a finer-grained control
-over this behaviour there is a 'json-skip-null' attribute trait which
-will cause the specific attribute to be skipped if it isn't defined irrespective
-of the C<skip-null>.
+:skip-null adverb to C<marshal>, which will supress the marshalling
+of any undefined attributes.  Additionally if you want a finer-grained
+control over this behaviour there is a 'json-skip-null' attribute trait
+which will cause the specific attribute to be skipped if it isn't defined
+irrespective of the C<skip-null>.  C<skip-null> or the C<json-skip-null>
+trait is applied to a C<Positional> or C<Associative> attribute this
+will suppress the marshalling of an empty list or object attribute.
 
 To allow a finer degree of control of how an attribute is marshalled an
 attribute trait C<is marshalled-by> is provided, this can take either
@@ -55,7 +57,7 @@ above.
 
 use JSON::Name;
 
-module JSON::Marshal:ver<0.0.11>:auth<github:jonathanstowe> {
+module JSON::Marshal:ver<0.0.12>:auth<github:jonathanstowe> {
 
     use JSON::Fast:ver(v0.4..*);
 
@@ -156,8 +158,11 @@ module JSON::Marshal:ver<0.0.11>:auth<github:jonathanstowe> {
     sub serialise-ok(Attribute $attr, $value, Bool $skip-null ) returns Bool {
         my $rc = True;
         if $skip-null || ( $attr ~~ SkipNull ) {
-            if not $value.defined {
-                $rc = False;
+            if $attr.type ~~ Associative|Positional {
+                $rc = ?$value.elems;
+            }
+            else {
+                $rc = $value.defined;
             }
         }
         $rc;
