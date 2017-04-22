@@ -1,26 +1,39 @@
 {
-    "perl": "6.c",
-    "name": "Log::Syslog::Native",
-    "description": "Provide logging to POSIX native syslog facility",
-    "version": "0.0.7",
-    "auth": "github:jonathanstowe",
-    "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
-    "authors": [
-        "Jonathan Stowe <jns+git@gellyfish.co.uk>"
-    ],
-	"tags" : [ "syslog", "log", "unix" ],
-    "build-depends": [],
-    "test-depends": [
-        "Test"
-    ],
-    "depends": [],
-    "provides": {
-        "Log::Syslog::Native": "lib/Log/Syslog/Native.pm"
-    },
-    "support": {
-        "source": "git://github.com/jonathanstowe/Log-Syslog-Native.git",
-		"email" : "jns+gh@gellyfish.co.uk",
-		"bugtracker": "https://github.com/jonathanstowe/Log-Syslog-Native/issues"
-    },
-    "source-url": "git://github.com/jonathanstowe/Log-Syslog-Native.git"
+  "name": "Log::Syslog::Native",
+  "source-url": "git://github.com/jonathanstowe/Log-Syslog-Native.git",
+  "support": {
+    "email": "jns+gh@gellyfish.co.uk",
+    "source": "git://github.com/jonathanstowe/Log-Syslog-Native.git",
+    "bugtracker": "https://github.com/jonathanstowe/Log-Syslog-Native/issues"
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth": "github:jonathanstowe",
+  "depends": [
+    
+  ],
+  "tags": [
+    "syslog",
+    "log",
+    "unix"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "Test"
+  ],
+  "provides": {
+    "Log::Syslog::Native": "lib/Log/Syslog/Native.pm"
+  },
+  "version": "0.0.7",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "description": "Provide logging to POSIX native syslog facility",
+  "meta6": "0"
 }
