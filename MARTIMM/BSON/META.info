@@ -11,7 +11,7 @@
     "UUID"
   ],
   "description": "BSON encoding/decoding, used in MongoDB drivers",
-  "license": "The Artistic License 2.0",
+  "license": "Artistic-2.0",
   "name": "BSON",
   "provides": {
     "BSON":                     "lib/BSON.pm6",
@@ -22,6 +22,6 @@
     "BSON::Regex":              "lib/BSON/Regex.pm6"
   },
   "source-url": "git://github.com/MARTIMM/BSON.git",
-  "perl": "6.c",
-  "version": "0.9.32.1"
+  "perl": "6",
+  "version": "0.9.32.2"
 }
