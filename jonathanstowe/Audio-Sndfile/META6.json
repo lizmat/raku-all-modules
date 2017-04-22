@@ -1,29 +1,41 @@
 {
-  "name" : "Audio::Sndfile",
-  "tags" : [ "audio", "utils" ],
-  "authors" : [ "Jonathan Stowe <jns+git@gellyfish.co.uk>" ],
-  "author" : "Jonathan Stowe <jns+git@gellyfish.co.uk>",
-  "auth" : "github:jonathanstowe",
-  "support" : {
-    "source" : "git://github.com/jonathanstowe/Audio-Sndfile.git"
+  "name": "Audio::Sndfile",
+  "source-url": "git://github.com/jonathanstowe/Audio-Sndfile.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/Audio-Sndfile.git"
   },
-  "source-url" : "git://github.com/jonathanstowe/Audio-Sndfile.git",
-  "perl" : "6.c",
-  "build-depends" : [
+  "perl": "6.c",
+  "resources": [
+    
   ],
-  "provides" : {
-    "Audio::Sndfile" : "lib/Audio/Sndfile.pm",
-    "Audio::Sndfile::Info" : "lib/Audio/Sndfile/Info.pm"
-  },
-  "depends" : [
+  "build-depends": [
+    
   ],
-  "test-depends" : [
+  "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
+  "auth": "github:jonathanstowe",
+  "depends": [
+    
+  ],
+  "tags": [
+    "audio",
+    "utils"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
     "Test",
     "Test::META",
-	 "LibraryCheck",
+    "LibraryCheck",
     "File::Find",
     "Shell::Command"
   ],
-  "description" : "Binding for libsndfile - read/write multiple audio formats",
-  "version" : "0.0.10"
+  "provides": {
+    "Audio::Sndfile": "lib/Audio/Sndfile.pm",
+    "Audio::Sndfile::Info": "lib/Audio/Sndfile/Info.pm"
+  },
+  "version": "0.0.10",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "description": "Binding for libsndfile - read/write multiple audio formats",
+  "meta6": "0"
 }
