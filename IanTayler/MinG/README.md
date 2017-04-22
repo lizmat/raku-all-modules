@@ -23,6 +23,7 @@ INSTALLATION
 
 If you have perl6 and panda or zef, the following should suffice:
 
+        zef update
         zef install MinG
 
 If you don't, the easiest is probably to install rakudobrew <https://github.com/tadzik/rakudobrew> and then run:
@@ -50,11 +51,11 @@ As of now, someone who isn't interested in the inner workings of the module but 
 
 Without the dots, and changing _wordi_ for your phonetic word (and, of course, changing F for whatever features you want your grammars to have). For two example grammars, check the resources/ directory.
 
-You can save that in a file and call it using `analyser.p6` (you can use `analyser.p6-j` to run it on the jvm if you have the jvm backend installed and you so wish). Assuming the file is in the directory `$HOME/grammars/` and it's called gr0.mg, you can run:
+You can save that in a file and call it using `ming-analyser.p6` (you can use `ming-analyser.p6-j` to run it on the jvm if you have the jvm backend installed and you so wish). Assuming the file is in the directory `$HOME/grammars/` and it's called gr0.mg, you can run:
 
     ming-analyser.p6 $HOME/grammars/gr0.mg
 
-Each line you write of input will be parsed using your grammar. You can parse several sentences in a series by separating them with a ';'. You can modify gr0.mg at any point and restart analyser.p6 to have your new grammar working.
+Each line you write of input will be parsed using your grammar. You can parse several sentences in a series by separating them with a ';'. You can modify gr0.mg at any point and restart `ming-analyser.p6` to have your new grammar working.
 
 If you want to try out the example grammars, they can be accessed by passing the arguments `--eng0` for a very small grammar of something-like-English, copied from Stabler (2013) and `--espa0` for a not-so-small (but small) grammar of Spanish written by myself. Like so:
 
