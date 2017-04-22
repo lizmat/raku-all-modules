@@ -9,6 +9,8 @@
     },
     "depends"     : [],
     "source-type" : "git",
-    "source-url"  : "git://github.com/thundergnat/Sort-Naturally.git"
+    "source-url"  : "git://github.com/thundergnat/Sort-Naturally.git",
+    "license"     : "Artistic-2.0",
+    "tags"        : [ "Sort", "Comparitor", "Number String" ]
 }
 

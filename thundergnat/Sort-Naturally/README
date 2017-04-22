@@ -130,9 +130,9 @@ to sort before upper case. (EBCDIC locales notably). They will still sort
 consistently, just not in the order advertised. I can probably implement some
 kind of run time check to modify the behavior based on current locale. I'll look
 into it more seriously later if necessary. Right now, there are no Perl 6
-compilers for any EBDIC OSs so it is not really an issue yet.
+compilers for any EBCDIC OSs so it is not really an issue yet.
 
-Right now, both normal and p5 compatabilty routine are always imported into the
+Right now, both normal and p5 compatability routine are always imported into the
 MAIN name-space when you use Sort::Naturally. When selective importing support
 gets a little better I'll revisit it. 
 
