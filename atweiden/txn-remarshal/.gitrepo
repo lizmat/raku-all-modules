@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/atweiden/txn-remarshal.git
 	branch = master
-	commit = 046bcca56d9e00ea1004864f7abf1317d64a6f72
-	parent = 5826e4922ce1f409865ac87604098162e41793c3
+	commit = a785667bb0caaeffdc814f4e87932640c73fd47c
+	parent = 11a96fe6f2a0aa308bb932343ab8d7ac12d11586
 	cmdver = 0.4.0
