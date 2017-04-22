@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/niner/CompUnit-Repository-Panda.git
 	branch = master
-	commit = cb4b31c02cde24d0ff8f63d7f920419e6ca98d3b
-	parent = 4f5a8cd4253213135e2849751c5d5676347ea515
-	cmdver = 0.2.3
+	commit = 5b1a8e5c70f015df494696e6166a19d38430a459
+	parent = 6beefbff40d639fb27c7bbca563396481271c8da
+	cmdver = 0.4.0
