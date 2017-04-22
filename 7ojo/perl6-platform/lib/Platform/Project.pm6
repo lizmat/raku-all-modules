@@ -44,20 +44,33 @@ class Platform::Project {
         }
         my $cont = self.load-cont(
             config-data => $config
-            );
-        for <Build Users Dirs Files> {
-            put color('yellow'), "» {$_}", color('reset');
+            ); 
+
+        my @active = map {
+            next if ! ( $config{$_} and $config{$_}.elems > 0 );
+            $_;
+        }, <users dirs files>;
+        @active.unshift('build');
+        
+        for @active {
+            put color('yellow'), "» {$_.samecase('Ab')}", color('reset');
             $cont."{$_.lc}"();
         }
         my $res = $cont.last-command: $cont.run;
 
-        put color('yellow'), "» Exec", color('reset'), ' (waiting for services)';
-        for <. . . . .> {
-            print $_;
-            sleep 1;
+        if $config{'exec'} {
+            my Bool $sleep = $cont.need-sleep-before-exec;
+            print color('yellow'), "» Exec", color('reset');
+            if $sleep {
+                print ' (waiting for services';
+                for 1..3 {
+                    print '.';
+                    sleep 1.3;
+                }
+                put ')';
+            }
+            $cont.exec;
         }
-        say '';
-        $cont.exec;
 
         $res;
     }

@@ -43,11 +43,11 @@ class Platform::Container {
 
     method as-string {
         my @lines;
-        @lines.push: sprintf("├─ Container: %-8s     [%s]",
+        @lines.push: sprintf("+ %-12s     [%s]",
             $.name,
             %.last-result<err>.chars == 0 ?? "\c[CHECK MARK]" !! "\c[HEAVY MULTIPLICATION X]"
             );
-        @lines.push: "│  └─ " ~ join("\n│     ", wrap-text(%.last-result<err>).lines) if %.last-result<err>.chars > 0;
+        @lines.push: "  └─ " ~ join("\n│     ", wrap-text(%.last-result<err>).lines) if %.last-result<err>.chars > 0;
         @lines.join("\n");
     }
 

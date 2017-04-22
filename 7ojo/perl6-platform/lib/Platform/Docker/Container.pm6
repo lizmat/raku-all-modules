@@ -36,6 +36,7 @@ class Platform::Docker::Container is Platform::Container {
         my @cmds;
         my $config = self.config-data;
         for $config<users>.Hash.kv -> $login, $params {
+            put "+ $login";
             my %params = $params ~~ Hash ?? $params.hash !! ();
             if %params<home> {
                 @cmds.push: 'mkdir -p ' ~ %params<home>.IO.dirname;
@@ -72,6 +73,7 @@ class Platform::Docker::Container is Platform::Container {
         my $out = $proc.out.slurp-rest;
         my $config = self.config-data;
         for $config<dirs>.Hash.kv -> $target, $content {
+            put "+ $target";
             my ($owner, $group, $mode);
             $owner   = $content<owner> if $content<owner>;
             $group   = $content<group> if $content<group>;
@@ -98,6 +100,7 @@ class Platform::Docker::Container is Platform::Container {
         my $path = $domain_path ~ '/files';
         for $config<files>.Hash.kv -> $target, $content is rw {
             my ($owner, $group, $mode);
+            put "+ $target";
             if $content ~~ Hash {
                 if $content<volume> { # create file to host and mount it inside container
                     my Str $flags = '';
@@ -136,7 +139,7 @@ class Platform::Docker::Container is Platform::Container {
     method exec {
         return if not self.config-data<exec>;
         for self.config-data<exec>.Array {
-            put "- {$_}";
+            put "+ {$_}";
             shell "docker exec {self.name} $_";
         }
     }
@@ -185,4 +188,11 @@ class Platform::Docker::Container is Platform::Container {
         self;
     }
 
+    method need-sleep-before-exec {
+        # "hackish way" TODO: implement better detection or figure something different
+        my $proc = run <docker exec>, self.name, 'ls', '/etc/init.d/postgresql', :out, :err;
+        my $out = $proc.out.slurp-rest;
+        my $err = $proc.err.slurp-rest;
+        $err.chars > 0 ?? False !! True;
+    }
 }
