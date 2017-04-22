@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MattOates/BioInfo.git
 	branch = master
-	commit = 2eb671ca17f3116c6da763de9c9dee38123afcf5
-	parent = 61d9d8c76f6d3b22c11d3b07b28000c3ad44a528
+	commit = e225e4c4bbe6bd9b8cddc5e58106b28e0a4f1832
+	parent = 1a26efe7a1602faac8883771cd524ed31ace8da2
 	cmdver = 0.4.0
