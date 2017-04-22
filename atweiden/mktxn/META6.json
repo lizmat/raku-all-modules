@@ -10,7 +10,7 @@
         "TXN::Parser",
         "TXN::Remarshal"
     ],
-    "license"     : "http://unlicense.org/UNLICENSE",
+    "license"     : "Unlicense",
     "source-type" : "git",
     "source-url"  : "git://github.com/atweiden/mktxn.git",
     "support"     : {
