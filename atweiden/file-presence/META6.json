@@ -4,7 +4,7 @@
     "version"     : "0.0.3",
     "author"      : "Andy Weidenbaum",
     "description" : "Check permissions of potentially nonexistent files",
-    "license"     : "http://unlicense.org/UNLICENSE",
+    "license"     : "Unlicense",
     "source-type" : "git",
     "source-url"  : "git://github.com/atweiden/file-presence.git",
     "support"     : {
