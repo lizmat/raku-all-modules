@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Altai-man/perl6-Devel-Trace.git
 	branch = master
-	commit = 952abca403c503952b295ffa27b386aa9e9f3ed6
-	parent = 9fda3c4e17dd212af669238a57710009adcee88c
+	commit = 18735816de323f5976e9bc8feccdd9ec9cf3827d
+	parent = 7089d053038bb0eb5b0ffe25bf12abaaa42c9677
 	cmdver = 0.4.0

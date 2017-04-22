@@ -39,4 +39,4 @@ $*DEBUG_HOOKS.set_hook('statement_cond', -> $filename, $ctx, $type, $from, $to {
 			      %sources{$filename}.say_line($from, $to);
 			  });
 
-sub EXPORT is DEPRECTATED("This module is redundant, just put 'use trace;' in your source instead!") {}
+sub EXPORT is DEPRECATED("This module is redundant, just put 'use trace;' in your source instead!") {}
