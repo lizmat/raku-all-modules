@@ -6,7 +6,7 @@
   ],
   "tags": [ "config"],
   "description": "Refinements on use of configurations loaded with parsers such as found in Config::TOML",
-  "license": "The Artistic License 2.0",
+  "license": "Artistic-2.0",
   "name": "Config::DataLang::Refine",
   "perl": "6",
   "provides": {
