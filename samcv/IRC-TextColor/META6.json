@@ -1,11 +1,12 @@
 {
     "perl"        : "6.*",
     "name"        : "IRC::TextColor",
-    "version"     : "0.2.0",
+    "version"     : "0.2.1",
     "authors"	  : ["Samantha McVey"],
     "description" : "Color/Style text for IRC, and convert ANSI color from terminals into IRC coloring",
     "source-url"  : "git://github.com/samcv/IRC-TextColor.git",
     "license"     : "Artistic-2.0",
+    "auth"        : "github:samcv",
     "support" : {
         "bugtracker" : "https://github.com/samcv/IRC-TextColor/issues",
         "source" : "git://github.com/samcv/IRC-TextColor.git"
