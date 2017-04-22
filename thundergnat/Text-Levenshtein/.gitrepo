@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/thundergnat/Text-Levenshtein.git
 	branch = master
-	commit = ac83cdb01c3a6eab436e78481d4c70aa6251b51f
-	parent = 3eeec3618bf3dd2002cc9e47c970f70d8e672234
-	cmdver = 0.2.3
+	commit = 9dc746109f2ec95ee10b5c3a9f5877cb8847c221
+	parent = c7e345d47e3759817d6a486d44aa86308e6810d6
+	cmdver = 0.4.0
