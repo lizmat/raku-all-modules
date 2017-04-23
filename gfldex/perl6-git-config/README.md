@@ -5,12 +5,14 @@ Read gitconfig and return a Hash of Hash.
 
 # SYNOPSIS
 
+    use Git::Config;
+    
     my $git-user = git-config<user><name>;
     my $remote-repo = git-config('.git/config'){'remote "origin"'}<url>;
 
 # Subs
 
-    sub git-config(IO::Path $file = "$*HOME/.gitconfig".IO --> Hash)
+    sub git-config(IO::Path $file? --> Hash)
 
 # Grammars
    

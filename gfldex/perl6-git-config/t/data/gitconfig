@@ -7,3 +7,5 @@
     url = https://github.com/perl6/ecosystem.git
     fetch = +refs/heads/*:refs/remotes/origin/*
 
+[url "git://anongit.kde.org/"]
+    insteadOf = kde:

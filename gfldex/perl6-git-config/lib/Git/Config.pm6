@@ -10,10 +10,14 @@ grammar Config is export {
     token identifier { \w+ }
 }
 
-sub git-config(IO::Path $file = "$*HOME/.gitconfig".IO --> Hash) is export {
+sub git-config(IO::Path $file? --> Hash) is export {
     my %ret;
 
-    my $parsed = Config.parse($file.slurp) or fail 'Failed to parse „~/.gitconfig“.';
+    my @fs = $file // ($*HOME «~« </.gitconfig /.config/git/config>);
+    my $cfg-handle = ([//] try (@fs».IO».open)) // warn("Can not find gitconfig at any of {('⟨' «~« @fs »~» '⟩').join(', ')}");
+    my $cfg-text = $cfg-handle.slurp;
+
+    my $parsed = Config.parse($cfg-text) or fail 'Failed to parse „~/.gitconfig“.';
 
     for $parsed.Hash<section>.list -> $section {
         next unless $section<section-name>;
@@ -22,6 +26,11 @@ sub git-config(IO::Path $file = "$*HOME/.gitconfig".IO --> Hash) is export {
              .hash<identifier>.Str => .hash<value>.Str
         })
     }
+
+    my $cfg-file-path = $cfg-handle.path;
     
-    %ret
+    %ret but role :: {
+        method search-path { @fs }
+        method path { $cfg-file-path }
+    }
 }
