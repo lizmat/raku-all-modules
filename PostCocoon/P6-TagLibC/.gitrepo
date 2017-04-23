@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/PostCocoon/P6-TagLibC.git
+	branch = master
+	commit = ddacd47e3eec4db65b531cee8e3ef8394580d131
+	parent = 12b81a90bdb3e3f007e1d8334c9b8f5dcda248d3
+	cmdver = 0.4.0

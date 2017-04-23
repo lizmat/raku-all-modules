@@ -1,0 +1,19 @@
+language: perl6
+
+perl6:
+  - nom
+  - latest
+
+os:
+  - osx
+  - linux
+
+before_install:
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get install libtagc0; fi;
+  - if [ "$TRAVIS_OS_NAME" = "osx" ];  then brew install taglib; fi;
+
+install:
+  - rakudobrew build zef
+  - zef install --depsonly .
+
+script: prove -v -e "perl6 -Ilib" t/

@@ -1,0 +1,27 @@
+{
+  "perl": "6",
+  "name": "TagLibC",
+  "version": "1.0",
+  "auth": "github:PostCocoon",
+  "description": "TagLib C bindings in Perl6",
+  "license": "Artistic-2.0",
+  "depends": [
+    "LibraryCheck"
+  ],
+  "provides": {
+    "TagLibC": "lib/TagLibC.pm6",
+    "TagLibC::Wrapper": "lib/TagLibC/Wrapper.pm6"
+  },
+  "authors": [
+    "eater <perl6@eaterofco.de>"
+  ],
+  "tags": [
+    "taglib",
+    "music",
+    "tagging"
+  ],
+  "test-depends": [
+    "Test::META"
+  ],
+  "source-url": "https://github.com/PostCocoon/P6-TagLibC.git"
+}
