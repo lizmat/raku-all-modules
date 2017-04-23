@@ -24,7 +24,7 @@
   "depends": [
     "META6",
     "HTTP::Client",
-    "Git::Config",
+    "Git::Config:ver<0.1.1>",
     "JSON::Tiny",
     "Test::META",
     "Git::Config",
@@ -41,7 +41,7 @@
   "provides": {
     "META6::bin": "lib/META6/bin.pm6"
   },
-  "version": "0.9.5",
+  "version": "0.9.7",
   "supersedes": {
     
   },

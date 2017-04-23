@@ -87,3 +87,11 @@ The config directory can hold a `github-token.txt` file that is used to help
 needs the scopes `repo`, `user/read:user` and `user/email`. Please note that
 `git` itself can handle a `~/.netrc`-file and github will accept a token
 instead of a password.
+
+# Github
+
+To be able to talk to github your git-config requires a section as follows.
+
+    [credential]
+        username = your-github-username
+

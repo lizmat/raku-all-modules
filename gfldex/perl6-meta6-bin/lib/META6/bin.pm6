@@ -44,11 +44,13 @@ my &RESET = sub (*@s) {
 
 &BOLD = &RED = &RESET = sub (Stringy $s) { $s } unless $*OUT.t;
 
+my $git-config = git-config;
+
 my @path = "%*ENV<HOME>/.meta6"».IO;
 my $cfg-dir = %*ENV<HOME>.IO.child('.meta6');
-my $github-user = git-config<credential><username>;
-my $github-realname = git-config<user><name>;
-my $github-email = git-config<user><email>;
+my $github-user = $git-config<credential><username> // warn BOLD "Could not read github username from ⟨{$git-config.path}⟩";
+my $github-realname = $git-config<user><name>;
+my $github-email = $git-config<user><email>;
 my $github-token = (try $cfg-dir.child('github-token.txt').slurp.chomp) // '';
 
 if $cfg-dir.e & !$cfg-dir.d {
@@ -90,7 +92,7 @@ multi sub MAIN(Bool :$check, Str :$meta6-file-name = 'META6.json',
         my $meta6 = META6.new(:$name, :$description, version => Version.new($version), perl-version => Version.new($perl), authors => [$author], :$auth,
                               source-url => "https://github.com/$github-user/{$base-dir}.git",
                               depends => [ "Test::META" ],
-                              provides => {}, license => 'Artistic-2.0', production => False);
+                              provides => {}, license => 'Artistic 2.0', production => False);
         $meta6-file.spurt($meta6.to-json);
     }
 
@@ -213,7 +215,7 @@ multi sub MAIN(Str :$set-license, Str :$base-dir = '.', Str :$meta6-file-name = 
    my IO::Path $meta6-file = ($base-dir ~ '/' ~ $meta6-file-name).IO;
    my $meta6 = META6.new(file => $meta6-file) or die RED "Failed to process ⟨$meta6-file⟩.";
 
-   (note BOLD "License already set to $set-license in META6.json."; return) if $set-license eq $meta6<license>;
+   (note BOLD "License already set to $set-license in META6.json."; return) if $meta6<license> && $set-license eq $meta6<license>;
 
    $meta6<license> = $set-license;
    $meta6-file.spurt($meta6.to-json);
