@@ -115,11 +115,11 @@ Method that initialises that parser to later parse several strings. Should be us
 Method that re-initialises the parser using the full version of the grammar.
 </article>
 <article>
-<code class="pod-code-inline">parse_str:(MinG::S13::Parser $: Str $inp, ParseWay $do = ParseWay::PARALLEL, *%_ --&gt; Bool)</code>:
+<code class="pod-code-inline">parse_str:(MinG::S13::Parser $: Str $inp, ParseWay $do = ParseWay::PARALLEL, Str $compile = &quot;&quot;, *%_ --&gt; Bool)</code>:
 Method that parses a single string based on the grammar that was initialised using Parser.init()
 </article>
 <article>
-<code class="pod-code-inline">large_parse:(MinG::S13::Parser $: Str $inp, ParseWay $do = ParseWay::PARALLEL, *%_ --&gt; Bool)</code>:
+<code class="pod-code-inline">large_parse:(MinG::S13::Parser $: Str $inp, ParseWay $do = ParseWay::PARALLEL, Str $compile = &quot;&quot;, *%_ --&gt; Bool)</code>:
 Method that deletes all non-phonetically-empty words that don&#39;t appear in the input before parsing. When using large grammars, this can be much more efficient, but has a large constant time-cost, so it will make small grammars slower.
 </article>
 <article>

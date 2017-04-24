@@ -94,6 +94,33 @@ class Priority {
     }
 
     #|{
+        Method that compares this object's priority with another Priority object's priority and returns true if this one's is bigger with the other "lexicographical" order (shorter is bigger in this one).
+        }
+    method bigger_than_other_lex(Priority $other) of Bool {
+        # Lexicographical order means longer priorities are less prioritish.
+        # Or doesn't it? Testing.
+        ##############################
+        # else {
+        return True if self.length < $other.length;
+        return False if self.length > $other.length;
+        loop (my $i = 0; ($i < self.length) && ($i < $other.length); $i++) {
+            if @.pty[$i] > $other.pty[$i] {
+                return False;
+            } elsif @.pty[$i] < $other.pty[$i] {
+                return True;
+            }
+        }
+        # }
+        # If we got here, they both have the same priority.
+        # I think this shouldn't happen, but I don't see why it would be a problem.
+        # So, we're just throwing True ##(Now False, just in case)## in this case,
+        # and hope for the best.
+        # my $pretv = self.pty cmp $other.pty;
+        # return False if $pretv eqv More;
+        return True;
+    }
+
+    #|{
         Method that appends a number at the end of the priority. It returns a new Priority instead of changing itself automatically. Less efficient, but more useful for our purposes.
         }
     method add_p(Int $n) of Priority {
@@ -107,6 +134,13 @@ class Priority {
         }
     method length() of Int {
         return @.pty.elems;
+    }
+
+    #|{
+        Gets a string representation of the priority.
+        }
+    method to_str() of Str {
+        return @.pty.join();
     }
 }
 
@@ -154,6 +188,18 @@ class QueueItem {
         }
         return $best_priority;
     }
+
+    #|{
+        Method that gets the higher priority taking into consideration the queue's priority and all the movers' priorities.
+        }
+    method highest_priority_other_lex() of Priority {
+        my $best_priority = self.priority;
+        for @.movers -> $mover {
+            $best_priority = $mover.priority if $mover.priority.bigger_than_other_lex($best_priority);
+        }
+        return $best_priority;
+    }
+
     #|{
         Method that returns the list of movers without a certain indicated one.
 
@@ -182,6 +228,15 @@ class QueueItem {
         return False unless self;
         return True unless $other;
         return self.highest_priority.bigger_than($other.highest_priority);
+    }
+
+    #|{
+        This method is a wrapper around Priority.bigger_than_other_lex so that it can be called more easily from a Queue object.
+        }
+    method bigger_than_other_lex(QueueItem $other) {
+        return False unless self;
+        return True unless $other;
+        return self.highest_priority_other_lex.bigger_than_other_lex($other.highest_priority_other_lex);
     }
 
     #|{
@@ -244,6 +299,35 @@ class Queue {
     }
 
     #|{
+        Method that finds out the index of the highest-priority item using the other "lexicographical" order, where shorter ones have higher priority.
+        }
+    method ind_max_other_lex() of Int {
+        if @.items.elems == 0 {
+            # It may or may not be better to die here. I'm letting it be for now.
+            # Actually, nope. Dying here.
+            return Nil;
+        }
+
+        # The start may be empty without the whole thing being empty, so we need
+        # to find the first non-empty place
+        my Int $first_place = 0 but True;
+        # This is supposed to be safe because we already checked that the array
+        # isn't empty. We may be in for a surprise in a few months, though.
+        loop (; not(@.items[$first_place]); $first_place++){};
+        my $highest = @.items[$first_place];
+
+        my $index = $first_place;
+        loop (my $i = $first_place; $i < @.items.elems; $i++) {
+            next unless @.items[$i];
+            if @.items[$i].bigger_than_other_lex($highest) {
+                $highest = @.items[$i];
+                $index = $i;
+            }
+        }
+        return $index;
+    }
+
+    #|{
         Method that gets a reference to the highest-priority item. Linear time.
         }
     method max() of QueueItem {
@@ -258,6 +342,22 @@ class Queue {
         }
     method pop() of QueueItem {
         my Int $place_to_delete = self.ind_max;
+        if $place_to_delete {
+            # It's only a deletion if we're not in the last place!
+            push @!deletions, $place_to_delete if ($place_to_delete < @.items.end);
+            return @.items[$place_to_delete]:delete;
+        }
+        @.items = [];
+        return Nil;
+    }
+
+    #|{
+        Method that pops using the "lexicographical" order where all shorter sequences come before all longer sequences.
+        }
+    method pop_other_lex() of QueueItem {
+        # We're copy-pasting a lot of code here.
+        # I'm kind of sorry.
+        my Int $place_to_delete = self.ind_max_other_lex;
         if $place_to_delete {
             # It's only a deletion if we're not in the last place!
             push @!deletions, $place_to_delete if ($place_to_delete < @.items.end);
@@ -330,3 +430,61 @@ class DerivTree is Node {
         # $lastman.children.push($n);
     }
 };
+
+#|{
+    Class that represents a node in a derivation tree.
+    }
+class DevNode {
+    has Str $.label;
+    has Priority $.position;
+
+    #|{
+        Method to generate a tree (as a Node) out of a list of DevNodes
+        }
+    method list_to_node(DevNode @node_list) of Node {
+        my @queue_list;
+        for @node_list -> $node {
+            push @queue_list, $node.to_queue_item();
+        }
+        my Queue $node_q = Queue.new(items => @queue_list);
+        my Queue $assigned = Queue.new();
+
+        my $now = $node_q.pop_other_lex;
+        my $retv = $now.node;
+        while $node_q.elems > 0 {
+            if ($now.node.label eq ">") || ($now.node.label eq "<") {
+                my $first = $node_q.pop_other_lex;
+                my $second = $node_q.pop_other_lex;
+                if $first and $second {
+                    $now.node.add_child($first.node); $now.node.add_child($second.node);
+                    $assigned.push($second); $assigned.push($first);
+                }
+            }
+            if $assigned.elems > 0 {
+                $now = $assigned.pop_other_lex;
+            } else {
+                last;
+            }
+        }
+        return $retv;
+    }
+
+    #|{
+        Method to turn this node into a QueueItem.
+        }
+    method to_queue_item() of QueueItem {
+        return QueueItem.new(priority => $.position, node => Node.new(label => $.label));
+    }
+
+    #|{
+        Method to generate a string out of a list of DevNodes
+        }
+    method list_to_str(DevNode @node_list) of Str {
+        my Str @pretv;
+        for @node_list -> $node {
+            next unless $node;
+            push @pretv, $node.label ~ ";;" ~ $node.position.to_str;
+        }
+        return @pretv.join("\n");
+    }
+}

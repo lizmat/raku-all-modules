@@ -42,12 +42,20 @@ Function that returns a child of the lexical tree&#39;s ROOT with the correct pr
 A method that compares this object&#39;s priority with another Priority object&#39;s priority and returns true if this one&#39;s is smaller.
 </article>
 <article>
+<code class="pod-code-inline">bigger_than_other_lex:(Priority $: Priority $other, *%_ --&gt; Bool)</code>:
+Method that compares this object&#39;s priority with another Priority object&#39;s priority and returns true if this one&#39;s is bigger with the other &quot;lexicographical&quot; order (shorter is bigger in this one).
+</article>
+<article>
 <code class="pod-code-inline">add_p:(Priority $: Int $n, *%_ --&gt; Priority)</code>:
 Method that appends a number at the end of the priority. It returns a new Priority instead of changing itself automatically. Less efficient, but more useful for our purposes.
 </article>
 <article>
 <code class="pod-code-inline">length:(Priority $: *%_ --&gt; Int)</code>:
 Returns the length of the priority. In this implementation, priorities are sequences of numbers, and they are ordered lexicographically so that longer sequences have less priority than shorter ones.
+</article>
+<article>
+<code class="pod-code-inline">to_str:(Priority $: *%_ --&gt; Str)</code>:
+Gets a string representation of the priority.
 </article>
 <article>
 <code class="pod-code-inline">bigger_pty:(Priority $a, Priority $b)</code>:
@@ -59,6 +67,10 @@ Method that returns an array with all the children of the node that have a certa
 </article>
 <h1>QueueItem: Objets of this class are items in a Queue. The only Queue we need to implement is the one for category predictions, so this is to be interpreted as an item in THAT queue.</h1><article>
 <code class="pod-code-inline">highest_priority:(QueueItem $: *%_ --&gt; Priority)</code>:
+Method that gets the higher priority taking into consideration the queue&#39;s priority and all the movers&#39; priorities.
+</article>
+<article>
+<code class="pod-code-inline">highest_priority_other_lex:(QueueItem $: *%_ --&gt; Priority)</code>:
 Method that gets the higher priority taking into consideration the queue&#39;s priority and all the movers&#39; priorities.
 </article>
 <article>
@@ -74,6 +86,10 @@ Method that returns an array with all the movers that have a certain property.
 This method is a wrapper around Priority.bigger_than so that it can be called more easily from a Queue object.
 </article>
 <article>
+<code class="pod-code-inline">bigger_than_other_lex:(QueueItem $: QueueItem $other, *%_)</code>:
+This method is a wrapper around Priority.bigger_than_other_lex so that it can be called more easily from a Queue object.
+</article>
+<article>
 <code class="pod-code-inline">to_str:(QueueItem $: *%_ --&gt; Str)</code>:
 Method that gets a QueueItem in string for to print while debugging.
 </article>
@@ -86,12 +102,20 @@ Method that &quot;deep-clones&quot; a QueueItem. Actually, only @.movers needs t
 With this method, we find out the index of the highest-priority item. Linear time.
 </article>
 <article>
+<code class="pod-code-inline">ind_max_other_lex:(Queue $: *%_ --&gt; Int)</code>:
+Method that finds out the index of the highest-priority item using the other &quot;lexicographical&quot; order, where shorter ones have higher priority.
+</article>
+<article>
 <code class="pod-code-inline">max:(Queue $: *%_ --&gt; QueueItem)</code>:
 Method that gets a reference to the highest-priority item. Linear time.
 </article>
 <article>
 <code class="pod-code-inline">pop:(Queue $: *%_ --&gt; QueueItem)</code>:
 Method that deletes the highest-priority item and returns it. Linear time.
+</article>
+<article>
+<code class="pod-code-inline">pop_other_lex:(Queue $: *%_ --&gt; QueueItem)</code>:
+Method that pops using the &quot;lexicographical&quot; order where all shorter sequences come before all longer sequences.
 </article>
 <article>
 <code class="pod-code-inline">push:(Queue $: QueueItem $new, *%_)</code>:
@@ -109,7 +133,19 @@ Method that returns True if the Queue is empty. This is done for safety, as elem
 <code class="pod-code-inline">deep_clone:(Queue $: *%_ --&gt; Queue)</code>:
 Method that (partially) deep-clones a Queue. Some parts don&#39;t need to be deep-cloned, so we get references to that.
 </article>
-<h1>DerivTree: Class that represents derivation trees. As of now, they&#39;re just Nodes.</h1>
+<h1>DerivTree: Class that represents derivation trees. As of now, they&#39;re just Nodes.</h1><h1>DevNode: Class that represents a node in a derivation tree.</h1><article>
+<code class="pod-code-inline">list_to_node:(DevNode $: DevNode @node_list, *%_ --&gt; Node)</code>:
+Method to generate a tree (as a Node) out of a list of DevNodes
+</article>
+<article>
+<code class="pod-code-inline">to_queue_item:(DevNode $: *%_ --&gt; QueueItem)</code>:
+Method to turn this node into a QueueItem.
+</article>
+<article>
+<code class="pod-code-inline">list_to_str:(DevNode $: DevNode @node_list, *%_ --&gt; Str)</code>:
+Method to generate a string out of a list of DevNodes
+</article>
+
 </div>
 
 

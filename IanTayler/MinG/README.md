@@ -64,6 +64,16 @@ If you want to try out the example grammars, they can be accessed by passing the
 
 When inputting lines, pay attention _not_ to put a final dot to your sentence. "dance." is a different word from "dance".
 
+Default output is a list of derived tree descriptions in qtree format. If you have a latex distribution with pdflatex and qtree installed (under GNU/Linux) you can run `ming-analyser` with option `compile=<filename.tex>` to get a pdf with all derived trees for each sentence you input. For example:
+
+    ming-analyser.p6 --espa0 --compile=mytex.tex
+
+Will compile a pdf named mytex.pdf with all derived trees each time you pass a sentence. Do note it will rewrite existing pdfs, so you have to restart the script if you want to get the trees of various sentences in pdf form.
+
+If you want to call a grammar from a file, it should go after all flags (as of now, only the --compile flag can reasonable go with a file). For example:
+
+    ming-analyser.p6 --compile=mytex.tex $HOME/grammars/gr0.mg
+
 CURRENTLY
 =========
 

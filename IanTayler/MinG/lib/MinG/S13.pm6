@@ -23,6 +23,7 @@ class Derivation {
     has Queue $.q;
     # $structure holds the current derivation tree of the derivation.
     has DerivTree $.structure;
+    has DevNode @.tree_nodes;
 
     #|{
         Method that returns whether this derivation still needs more steps.
@@ -39,10 +40,10 @@ class Derivation {
         my $start_place = 1;
         $start_place = 0 if $leave.label eq "";
 
-        my $struc = $.structure.item;
-        $struc.add_to_end((DerivTree.new(label => "{$leave.label}",\
-                                             children => ())));
-        return Derivation.new(input => @.input[$start_place..*], q => $.q, structure => $struc);
+        my @new_t_n = @.tree_nodes;
+        push @new_t_n, DevNode.new(label => $leave.label, position => $pred.priority);
+
+        return Derivation.new(input => @.input[$start_place..*], q => $.q, tree_nodes => @new_t_n);
     }
 
     #|{ See Stabler (2013)}
@@ -64,9 +65,10 @@ class Derivation {
 
         my $nq = $.q.deep_clone;
         $nq.push($f_item); $nq.push($s_item);
-        my $struc = $.structure;
+        my @new_t_n = @.tree_nodes;
+        push @new_t_n, DevNode.new(label => '<', position => $pred.priority);
 
-        return Derivation.new(input => @.input, q => $nq, structure => $struc);
+        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
     }
 
     #|{ See Stabler (2013)}
@@ -86,15 +88,16 @@ class Derivation {
 
         debug("THIS SHOULD BE FALSE: {($nq eqv $.q).perl}");
 
-        my $struc = $.structure;
+        my @new_t_n = @.tree_nodes;
+        push @new_t_n, DevNode.new(label => '>', position => $pred.priority);
 
-        return Derivation.new(input => @.input, q => $nq, structure => $struc);
+        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
     }
 
     #|{ See Stabler (2013)}
     method merge3(QueueItem $pred, Node @leaves, Node $mover_child, Node $selector, Mover $mover) of Derivation {
         my $new_node = LexNode.new( label => $selector.label, children => @leaves);
-        my $f_item = QueueItem.new( priority => $pred.priority,\
+        my $f_item = QueueItem.new( priority => $pred.priority.add_p(0),\
                                     movers => (),\
                                     node => $new_node);
 
@@ -103,15 +106,18 @@ class Derivation {
                                      node => $mover_child);
         my $nq = $.q.deep_clone;
         $nq.push($f_item); $nq.push($s_item);
-        my $struc = $.structure;
 
-        return Derivation.new(input => @.input, q => $nq, structure => $struc);
+        my @new_t_n = @.tree_nodes;
+        push @new_t_n, DevNode.new(label => '<', position => $pred.priority);
+        push @new_t_n, DevNode.new(label => $mover.priority.to_str(), position => $pred.priority.add_p(1));
+
+        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
     }
 
     #|{ See Stabler (2013)}
     method merge4(QueueItem $pred, Node @non_terms, Node $mover_child, Node $selector, Mover $mover) of Derivation {
         my $new_node = LexNode.new( label => $selector.label, children => @non_terms);
-        my $f_item = QueueItem.new( priority => $pred.priority,\
+        my $f_item = QueueItem.new( priority => $pred.priority.add_p(1),\
                                     movers => $pred.movers_minus_this($mover),\
                                     node => $new_node);
 
@@ -120,9 +126,12 @@ class Derivation {
                                      node => $mover_child);
         my $nq = $.q.deep_clone;
         $nq.push($f_item); $nq.push($s_item);
-        my $struc = $.structure;
 
-        return Derivation.new(input => @.input, q => $nq, structure => $struc);
+        my @new_t_n = @.tree_nodes;
+        push @new_t_n, DevNode.new(label => '>', position => $pred.priority);
+        push @new_t_n, DevNode.new(label => $mover.priority.to_str(), position => $pred.priority.add_p(0));
+
+        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
     }
 
     #|{ See Stabler (2013)}
@@ -136,9 +145,11 @@ class Derivation {
                                       node => $licensor);
         my $nq = $.q.deep_clone;
         $nq.push($new_item);
-        my $struc = $.structure;
 
-        return Derivation.new(input => @.input, q => $nq, structure => $struc);
+        my @new_t_n = @.tree_nodes;
+        push @new_t_n, DevNode.new(label => '>', position => $pred.priority);
+
+        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
 
     }
 
@@ -154,9 +165,11 @@ class Derivation {
 
         my $nq = $.q.deep_clone;
         $nq.push($new_item);
-        my $struc = $.structure;
 
-        return Derivation.new(input => @.input, q => $nq, structure => $struc);
+        my @new_t_n = @.tree_nodes;
+        push @new_t_n, DevNode.new(label => '<', position => $pred.priority);
+
+        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
     }
 
     #|{
@@ -308,7 +321,7 @@ SEL_LOOP:   for @selector_ch -> $selector {
         for $.q.items -> $qi {
             push @pretv, $qi.to_str if $qi;
         }
-        push @pretv, "STRUCTURE:\n\t{$.structure.qtree}";
+        push @pretv, "STRUCTURE:\n\t{DevNode.list_to_str(@.tree_nodes)}";
         return @pretv.join("\n");
     }
 }
@@ -326,7 +339,7 @@ SEL_LOOP:   for @selector_ch -> $selector {
 class MinG::S13::Parser {
     has Derivation @!devq;
     # Trees of successful derivations!
-    has DerivTree @.results;
+    has @.results;
     has Node $.start_cat;
     has MinG::Grammar $!full_grammar;
 
@@ -363,7 +376,7 @@ class MinG::S13::Parser {
         my @promises;
         for @!devq -> $dev {
             if not($dev.still_going()) {
-                push @.results, $dev.structure;
+                push @.results, DevNode.list_to_node($dev.tree_nodes);
                 $finished = True;
             } else {
                 push @promises, Promise.start({ $dev.exps() });
@@ -457,7 +470,7 @@ class MinG::S13::Parser {
     #|{
         Method that parses a single string based on the grammar that was initialised using Parser.init()
         }
-    method parse_str(Str $inp, ParseWay $do = PARALLEL) of Bool {
+    method parse_str(Str $inp, ParseWay $do = PARALLEL, Str $compile = "") of Bool {
         @!results = ();
         my @proper_input = $inp.lc.split(' ');
         my $que = Queue.new(items => (QueueItem.new(priority => Priority.new(pty => (0)),\
@@ -466,7 +479,6 @@ class MinG::S13::Parser {
                                                     )));
         my $start_dev = Derivation.new(input => @proper_input,\
                                        q => $que,\
-                                       structure => DerivTree.new(label => "OK", children => ())\
                                        );
         push @!devq, $start_dev;
 
@@ -482,8 +494,12 @@ class MinG::S13::Parser {
             }
         } else {
             if self.parallel_parse() {
-                for @.results -> $res {
-                    say "\t{$res.qtree}";
+                if $compile {
+                    Node.multicompile_tex(@.results, $compile);
+                } else {
+                    for @.results -> $res {
+                        say "\t{$res.qtree}";
+                    }
                 }
                 return True;
             } else {
@@ -496,7 +512,7 @@ class MinG::S13::Parser {
     #|{
         Method that deletes all non-phonetically-empty words that don't appear in the input before parsing. When using large grammars, this can be much more efficient, but has a large constant time-cost, so it will make small grammars slower.
         }
-    method large_parse(Str $inp, ParseWay $do = PARALLEL) of Bool {
+    method large_parse(Str $inp, ParseWay $do = PARALLEL, Str $compile = "") of Bool {
         my @words = $inp.lc.split(' ');
         my @necessary_items;
         for $!full_grammar.lex -> $lex_item {
@@ -507,15 +523,15 @@ class MinG::S13::Parser {
         }
         my $necessary_grammar = MinG::Grammar.new(lex => @necessary_items,\
                                                   start_cat => $!full_grammar.start_cat);
-        say "Input: $inp";
-        $necessary_grammar.litem_tree.qtree.say;
+        # say "Input: $inp";
+        # $necessary_grammar.litem_tree.qtree.say;
 
         $s13_global_lexical_tree = $necessary_grammar.litem_tree();
         my $start_ind = $s13_global_lexical_tree.has_child($necessary_grammar.start_cat);
         die "bad start symbol for the grammar!" without $start_ind;
         $!start_cat = $s13_global_lexical_tree.children[$start_ind];
 
-        my Bool $retv = self.parse_str($inp, $do);
+        my Bool $retv = self.parse_str($inp, $do, $compile);
         self.re_init();
         return $retv;
     }
@@ -545,7 +561,6 @@ class MinG::S13::Parser {
                                                     )));
         my $start_dev = Derivation.new(input => @proper_input,\
                                        q => $que,\
-                                       structure => DerivTree.new(label => "OK", children => ())\
                                        );
         push @!devq, $start_dev;
     }

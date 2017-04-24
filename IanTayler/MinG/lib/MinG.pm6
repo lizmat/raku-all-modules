@@ -71,13 +71,17 @@ class Node {
             }
             $retv ~= "] ";
         } else {
-            $retv = self.str_label;
+            if self.str_label !eq " " {
+                $retv = self.str_label;
+            } else {
+                $retv = "[ ] "
+            }
         }
         return $retv;
     }
 
     #|{
-        Make a LaTeX file named $name which includes this Node's tree using qtree.
+        Method that makes a LaTeX file named $name which includes this Node's tree using qtree.
         }
     method make_tex(Str $name) {
         my $tree = self.qtree;
@@ -87,10 +91,35 @@ class Node {
     }
 
     #|{
+        Method that makes a LaTeX file named $name which includes this Node's tree using qtree.
+        }
+    method multimake_tex(@nodes, Str $name) {
+        my $contents = slurp %?RESOURCES{"template.tex"};
+
+        my $repeated = $contents ~~ /'%COPYFROM'.+'%COPYTO'/;
+        $repeated x= @nodes.elems; #length-1
+
+        $contents.=subst(/'%COPYFROM'.+'%COPYTO'/, $repeated);
+        for @nodes -> $node {
+            my $tree = $node.qtree;
+            $contents.=subst("#<HERE-TREE>", $tree, :x(1));
+        }
+        spurt "\.\/$name", $contents;
+    }
+
+    #|{
         Make a LaTeX file named $name which includes this Node's tree using qtree, and then compile it using pdflatex.
         }
     method compile_tex(Str $name) {
         self.make_tex($name);
+        shell "pdflatex \.\/$name";
+    }
+
+    #|{
+        Make a LaTeX file named $name which includes this series of nodes' trees using qtree, and then compile it using pdflatex.
+        }
+    method multicompile_tex(@nodes, Str $name) {
+        self.multimake_tex(@nodes, $name);
         shell "pdflatex \.\/$name";
     }
 

@@ -2,7 +2,7 @@
     "perl" : "6.c",
     "name" : "MinG",
     "auth" : "Ian G. Tayler",
-    "version" : "1.1.3",
+    "version" : "1.2.3",
     "description" : "A small module for working with Stabler's Minimalist Grammars in Perl6.",
     "authors" : [ "Ian G. Tayler" ],
     "provides" : {
