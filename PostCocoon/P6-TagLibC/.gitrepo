@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/PostCocoon/P6-TagLibC.git
 	branch = master
-	commit = ddacd47e3eec4db65b531cee8e3ef8394580d131
-	parent = 12b81a90bdb3e3f007e1d8334c9b8f5dcda248d3
+	commit = 90a899e017da6dd5a13ac7ea4869d41173531402
+	parent = 5e4d4784e10a3b233392235b9e3f946a7d6bfb0c
 	cmdver = 0.4.0
