@@ -7,5 +7,6 @@
         "Test::Scheduler" : "lib/Test/Scheduler.pm6"
     },
     "depends" : [ ],
+    "license" : "Artistic-2.0",
     "source-url" : "git://github.com/jnthn/p6-test-scheduler.git"
 }

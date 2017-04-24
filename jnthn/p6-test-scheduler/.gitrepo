@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/p6-test-scheduler.git
 	branch = master
-	commit = ab8d6e9074442b48aa4bc4e307656f99215d1a00
-	parent = a9c4e85da663ea08b93586511df23b258a238bcf
+	commit = 37e80685b682f65b6c01d10f74469a4db1c93b29
+	parent = a0d2eeec49bab2612419c3af78bc940f75815924
 	cmdver = 0.4.0
