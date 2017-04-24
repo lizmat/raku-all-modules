@@ -7,6 +7,6 @@
     "provides": {
         "TinyID": "lib/TinyID.pm"
     },
-    "license" : "http://www.perlfoundation.org/artistic_license_2_0",
+    "license" : "Artistic-2.0",
     "source-url": "git://github.com/bbkr/TinyID.git"
 }

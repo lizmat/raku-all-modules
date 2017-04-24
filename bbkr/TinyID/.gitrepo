@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bbkr/TinyID.git
 	branch = master
-	commit = ff2959bd31ed5a56306ce97cc9eec610c4072bb5
-	parent = 2ba0ed1be982fe7a886857d58cbcf1ae15fd34e2
+	commit = 21ab4cb4c5d31fbdf5e53c45cb25eb9ad4596193
+	parent = 456c7044096791065cb8b19fcbd1aa22c902d271
 	cmdver = 0.4.0
