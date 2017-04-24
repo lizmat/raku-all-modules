@@ -788,7 +788,7 @@ package Runner {
                     $async.stderr;
                 }
                 when IO::Handle:D {
-                    $async.stderr.lines.act({ $err.say($_) });
+                    $async.stderr.lines(:close).act({ $err.say($_) });
                 }
                 when Supply:D {
                     $async.stderr.act({ $err.emit($_) }, :done({ $err.done }), :quit({ $err.quit($^reason) }));
@@ -869,7 +869,7 @@ package Runner {
                         when Supply:D {
                             my $tmp = run($!source.path, $!source.args, :out, :!chomp, :err);
                             start {
-                                $!source.err.emit($_) for $tmp.err.lines;
+                                $!source.err.emit($_) for $tmp.err.lines(:close);
                                 $!source.err.done;
                             }
                             $tmp;
@@ -882,7 +882,7 @@ package Runner {
                         }
                     }
                     my $parser = TAP::Parser.new(:@handlers);
-                    for $proc.out.lines -> $line {
+                    for $proc.out.lines(:close) -> $line {
                         $parser.add-data($line);
                     }
                     $parser.close-data();
