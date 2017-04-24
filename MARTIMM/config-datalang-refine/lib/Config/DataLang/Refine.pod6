@@ -124,7 +124,8 @@ Stored configuration. Can be set and retrieved directly from object.
     Array :$locations = [],
     Str :$data-module = 'Config::TOML',
     Hash :$other-config = {},
-    Bool :$trace = False
+    Bool :$trace = False,
+    Bool :$die-on-empty = True
   )
 
 Reads configuration text from a file pointed to by C<:config-name>. The file
@@ -150,6 +151,9 @@ finishing with the visible local file found. An exception will be thrown when
 the resulting config has no elements.
 
 C<:trace>. When True, the search will show what files are loaded.
+
+C<:die-on-empty>. When True, an exception X::Config::DataLang::Refine is thrown
+when there are no key-value pairs are found. This is the default.
 
 The data languages such as C<Config::TOML> might throw exceptions when it
 fails to parse the configuration text.
