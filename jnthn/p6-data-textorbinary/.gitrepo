@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jnthn/p6-data-textorbinary.git
 	branch = master
-	commit = aa6e64b0fb868dfcf09b925f1f238ca0bf61314d
-	parent = 0f868a37999d2f5db2898f1319e05faea5fbf3af
+	commit = 138289584f63ed522f20aeda26d974e3aa85a43f
+	parent = 23fc8303ba1fe07b2183db802e45dbc366f554f6
 	cmdver = 0.4.0

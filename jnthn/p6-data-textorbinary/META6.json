@@ -4,6 +4,7 @@
     "version"       : "1.0",
     "description"   : "Heuristic detection of text vs. binary data.",
     "author"        : "Jonathan Worthington <jnthn@jnthn.net>",
+    "license"       : "Artistic-2.0",
     "depends"       : [],
     "provides"      : {
 		"Data::TextOrBinary" : "lib/Data/TextOrBinary.pm6"
