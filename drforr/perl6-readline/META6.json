@@ -18,7 +18,7 @@
       "LibraryCheck"
    ],
    "auth" : "github:drforr",
-   "source-url" : "https://github.com/drforr/perl6-readline",
+   "source-url" : "https://github.com/drforr/perl6-readline.git",
    "depends" : [
    ],
    "name" : "Readline",
