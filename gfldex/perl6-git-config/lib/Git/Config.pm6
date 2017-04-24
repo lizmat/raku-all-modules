@@ -2,11 +2,12 @@ use v6.c;
 
 grammar Config is export {
     token TOP { ^ <section>+ $ }
-    token section { [ '[' <section-name> ']' \n [ <section-line>+ | <empty-line>+ ] ] | <empty-line>+ }
+    token section { [ '[' <section-name> ']' \n [ <comment>+ | <section-line>+ | <empty-line>+ ] ] | <empty-line>+ }
     token section-name { <-[\]]>+ }
     token section-line { \s* <identifier> \s* '=' \s* <value> \n }
     token empty-line { \n }
     token value { <-[\n]>+ }
+    token comment { \s* '#' <-[#]>* }
     token identifier { \w+ }
 }
 
@@ -17,7 +18,7 @@ sub git-config(IO::Path $file? --> Hash) is export {
     my $cfg-handle = ([//] try (@fs».IO».open)) // warn("Can not find gitconfig at any of {('⟨' «~« @fs »~» '⟩').join(', ')}");
     my $cfg-text = $cfg-handle.slurp;
 
-    my $parsed = Config.parse($cfg-text) or fail 'Failed to parse „~/.gitconfig“.';
+    my $parsed = Config.parse($cfg-text); # or fail 'Failed to parse „~/.gitconfig“.';
 
     for $parsed.Hash<section>.list -> $section {
         next unless $section<section-name>;
