@@ -15,9 +15,9 @@ Module skeletons include basic directories, `META6.json`, `t/meta.t`,
     meta6 --create --name=<project-name-here> --force
     meta6 --check
     meta6 --create-cfg-dir --force
-    meta6 --new-module --name=<Module::Name::Here> --force --skip-git --skip-github
+    meta6 --new-module=<Module::Name::Here> --force --skip-git --skip-github
     meta6 --fork-module=<Module::Name::Here>
-    meta6 --add-dep=<Module::Name::Here>
+    meta6 --add-dep=<Module::Name::Here:ver<1.2.3>>
     meta6 --pull-request
     meta6 --set-license="license name or URL"
     meta6 --add-author="Another T. Author <another.t.author@somewhere.place>"
@@ -48,6 +48,16 @@ Module skeletons include basic directories, `META6.json`, `t/meta.t`,
     --author # defaults to user/name from ~/.gitconfig
     --auth # defaults to credentials/username from ~/.gitconfig
 
+# New Module Options
+
+    --new-module=<Module::Name::Here>
+    --description="some text" # added both META6.json and README.md
+    --base-dir # the $*CWD for all local file operations
+
+Will create a new module project, setup git, push it to github (See Github
+below). The skeleton from the config dir `~/.meta6` will be applied (see Config
+Dir below).
+
 # Fork Module Options
 
     --fork-module=<Module::Name::Here> # module name as to be found in the ecosystem
@@ -69,7 +79,7 @@ local git repo.
 Pull request need to tell github where to create the PR at. That in turn
 requires a proper `META6.json` to get the repo name from.
 
-# Config dir
+# Config Dir
 
 The config dir resides at `~/.meta6` and holds a folder called `skeleton` for
 additional files to be copied into any new project. This is where you put your

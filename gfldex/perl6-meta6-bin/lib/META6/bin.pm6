@@ -111,12 +111,21 @@ multi sub MAIN(Bool :$check, Str :$meta6-file-name = 'META6.json',
         }
 
         if $meta6-file.parent.child('t').child('meta.t').e {
-            note RED „WARN: meta.t found but missing Test::META module in "depends"“ unless 'Test::META' ∈ $meta6<depends>
+            note RED „WARN: meta.t found but missing Test::META module in "depends"“ unless 'Test::META' ∈ $meta6<depends>;
+        }
+
+        given $meta6<auth> {
+            when Any:U { note RED „No auth field in ⟨$meta6-file⟩.“ }
+            when .Str ~~ / „github:“ (\w+) / {
+                my $github-user = $0;
+                note RED „Github user: "$github-user" seams not to exist.“ unless try-to-fetch-url("http://github.com/$github-user");
+            }
+            default { note RED „Unrecognised auth field in ⟨$meta6-file⟩.“; }
         }
     }
 }
 
-multi sub MAIN(Str :$new-module, Bool :$force, Bool :$skip-git, Bool :$skip-github, :$verbose) {
+multi sub MAIN(Str :$new-module, Bool :$force, Bool :$skip-git, Bool :$skip-github, :$verbose, :$description = '') {
     my $name = $new-module;
     die RED "To create a module --new-module=<Module::Name::Here> is required." unless $name;
     my $base-dir = 'perl6-' ~ $name.subst(:g, '::', '-').fc;
@@ -140,7 +149,7 @@ multi sub MAIN(Str :$new-module, Bool :$force, Bool :$skip-git, Bool :$skip-gith
 
     @tracked-files.append: 'META6.json', 'README.md', '.travis.yml', '.gitignore', 't/meta.t';
 
-    MAIN(:create, :$name, :$base-dir, :$force);
+    MAIN(:create, :$name, :$base-dir, :$force, :$description);
     git-create($base-dir, @tracked-files) unless $skip-git;
     github-create($base-dir) unless $skip-git && $skip-github;
     
@@ -193,11 +202,33 @@ multi sub MAIN(:$fork-module, :$force) {
 
 multi sub MAIN(Str :$add-dep, Str :$base-dir = '.', Str :$meta6-file-name = 'META6.json') {
    my IO::Path $meta6-file = ($base-dir ~ '/' ~ $meta6-file-name).IO;
-   my $meta6 = META6.new(file => $meta6-file) or die RED "Failed to process ⟨$meta6-file⟩.";
+   my $meta6 = read-meta6($meta6-file) or die RED "Failed to process ⟨$meta6-file⟩.";
 
-   (note BOLD "Dependency to $add-dep already in META6.json."; return) if $add-dep ∈ $meta6<depends>;
+   sub simple-version(Str $s is copy) {
+       my ($n, $v) = $s.split(':ver');
+       with $v {
+           $v = Version.new($v) if $v;
+           $s = $n;
+       } else {
+           $v = Version.new(*);
+       }
+       $s but role :: { method version { $v } }
+   }
+
+   if my $stored-dep = ($meta6<depends>.grep: *.&simple-version eq $add-dep.&simple-version).first {
+       if $stored-dep.&simple-version.version > $add-dep.&simple-version.version { 
+           note BOLD "Dependency to $add-dep younger then version already in META6.json.";
+           return
+       } else {
+           $meta6<depends> = ($meta6<depends>.grep: *.&simple-version !eq $add-dep.&simple-version).Array;
+       }
+   }
+
+   # (note BOLD "Dependency to $add-dep already in META6.json."; return) if $add-dep.&simple-version ∈ $meta6<depends>».&simple-version;
 
    $meta6<depends>.push($add-dep);
+   dd $meta6<depends>;
+   exit 0;
    $meta6-file.spurt($meta6.to-json);
 }
 
@@ -520,6 +551,10 @@ multi sub read-cfg(Mu:U $path) {
     %h<git><protocol> = 'https';
     
     %h
+}
+
+multi sub read-meta6(IO::Path $path = './META6.json'.IO --> META6:D) is export(:HELPER) {
+    META6.new(file => $path) or fail RED "Failed to process ⟨$path⟩."
 }
 
 our sub fetch-ecosystem is export(:HELPER) {
