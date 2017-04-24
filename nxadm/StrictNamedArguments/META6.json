@@ -8,5 +8,6 @@
         "StrictNamedArguments" : "lib/StrictNamedArguments.pm"
     },
     "depends" : [ ],
-    "source-url" : "git://github.com/nxadm/StrictNamedArguments.git"
+    "source-url" : "git://github.com/nxadm/StrictNamedArguments.git",
+    "license" : "Artistic-2.0"
 }

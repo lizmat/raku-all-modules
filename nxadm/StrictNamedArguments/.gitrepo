@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/nxadm/StrictNamedArguments.git
 	branch = master
-	commit = 1ba47d1357d1d11cf9fcd885846aeb9dfcb63d9b
-	parent = 9ff254a6edf6c2a6677c044f02d7fc681c9fb940
-	cmdver = 0.2.3
+	commit = 351ff23434bd3f538723ce54ce6d663951bcde38
+	parent = 39543f8f1b5e1398c4ad8024bc4906a04e53df48
+	cmdver = 0.4.0
