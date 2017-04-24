@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/rakudo-debugger.git
 	branch = master
-	commit = f3c3350d34e1377a59705cca4ffe591339eb3222
-	parent = 697ab013d32f7e835cbac742c432fa691811ae53
+	commit = 89329550a4526e08c36df1615d5cea1f24e09c16
+	parent = ff04e278e3b0087f2e2285a768ed0da3eac08fcd
 	cmdver = 0.4.0
