@@ -4,6 +4,7 @@
     "version"       : "1.1",
     "description"   : "Parsing and application of .gitignore-style ignore files.",
     "author"        : "Jonathan Worthington <jnthn@jnthn.net>",
+    "license"       : "Artistic-2.0",
     "depends"       : [],
     "provides"      : {
 		"File::Ignore" : "lib/File/Ignore.pm6"
