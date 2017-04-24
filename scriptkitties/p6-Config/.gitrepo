@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/scriptkitties/p6-Config.git
+	branch = master
+	commit = 60aff52595020f378cd0d1a4d9d75894e083b9e0
+	parent = 7934cbf0e569d697e5aef06cc3441e7f57b591f7
+	cmdver = 0.4.0
