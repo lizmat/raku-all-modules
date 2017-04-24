@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/p6-app-installermaker-wix.git
 	branch = master
-	commit = 4c7fe0cdbbe6fc5c582f52dd7a7446e3f976e499
-	parent = d631f2daeac8ae1ff4947c471b03e1fbf790bcc4
+	commit = 20366162ebfa9ce3fb0be306e0330df05c2035ac
+	parent = b14cbeab9d0e7cd09c72c6fd455dcad7fea3edf0
 	cmdver = 0.4.0
