@@ -229,14 +229,54 @@ class ANTLR4::Actions::AST {
 			action   => $/<ACTION>.ast
 		};
 	}
+	method exceptionGroup( $/ ) {
+		my @catch;
+		for $/<exceptionHandler> -> $exception {
+			@catch.append( $exception.ast );
+		}
+		make @catch.elems ?? @catch !! Any;
+	}
+
+	method terminal( $/ ) {
+		make {
+			type => 'terminal',
+			name => $/<STRING_LITERAL>[0].Str
+		};
+	}
+
+	method parserElement( $/ ) {
+		make $/<element> ??
+			$/<element>[0]<atom><terminal>.ast !!
+			Any;
+	}
+
+	method parserAltList( $/ ) {
+		if $/<parserAlt>.elems == 1 and
+			$/<parserAlt>[0]<parserElement><element> {
+				make [
+					$/<parserAlt>[0]<parserElement>.ast
+				]
+		}
+		elsif $/<parserAlt>.elems > 1 {
+			my @parserElement;
+			for $/<parserAlt> -> $parserElement {
+				@parserElement.push(
+					$parserElement<parserElement>.ast
+				);
+			}
+			make [ {
+				type    => 'alternation',
+				content => @parserElement
+			} ];
+		}
+		else {
+			make Any;
+		}
+	}
 
 	# <name> isn't really necessary at this point.
 	#
 	method parserRuleSpec( $/ ) {
-		my @catch;
-		for $/<exceptionGroup><exceptionHandler> -> $exception {
-			@catch.append( $exception.ast );
-		}
 		make {
 			type    => $/<ruleAttribute>.ast,
 			throw   => $/<throwsSpec>.ast,
@@ -245,8 +285,9 @@ class ANTLR4::Actions::AST {
 			local   => $/<localsSpec>.ast,
 			throw   => $/<throwsSpec>.ast,
 			option  => $/<optionsSpec>.ast,
-			catch   => @catch.elems ?? @catch !! Any,
-			finally => $/<exceptionGroup><finallyClause>.ast
+			catch   => $/<exceptionGroup>.ast,
+			finally => $/<exceptionGroup><finallyClause>.ast,
+			content => $/<parserAltList>.ast,
 		}
 	}
 
@@ -261,7 +302,8 @@ class ANTLR4::Actions::AST {
 			local   => Any,
 			option  => Any,
 			catch   => Any,
-			finally => Any
+			finally => Any,
+			content => Any
 		}
 	}
 
