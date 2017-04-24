@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/PostCocoon/P6-Url.git
+	branch = master
+	commit = 7f3e21537e3b7aae376520551d7ffa9c8f90bf2d
+	parent = 46b47b87724cf9dbe8e02d1b3f128c4d2ea3805d
+	cmdver = 0.4.0
