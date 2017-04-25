@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-pdf/perl6-Crypt-RC4.git
 	branch = master
-	commit = 2602a150883584d1330f3be3ea4ba62ed9faf084
-	parent = 9589f31ecefe4aac12d21d3bfdd1eaf73035746a
-	cmdver = 0.2.3
+	commit = f7289460109fff1371fd6247e07d3e27a3c3dae4
+	parent = 035e7625694fabf251348d2a1abfa06871ac9936
+	cmdver = 0.4.0
