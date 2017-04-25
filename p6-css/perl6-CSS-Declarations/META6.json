@@ -4,6 +4,7 @@
     "tags"        : ["css"],
     "version"     : "0.3.0",
     "auth"        : "github:p6-css",
+    "license"     : "Artistic 2.0",
     "description" : "CSS property manipulation library",
     "depends"     : [ "CSS::Module", "CSS::Writer", "Color" ],
     "source-url"  : "git://github.com/p6-css/perl6-CSS-Declarations.git",
