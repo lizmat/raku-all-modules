@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-css/perl6-CSS-Grammar.git
 	branch = master
-	commit = aa5e1f606bf60f325ab3e4d66af31a1a2b4ee537
-	parent = 411f45d6ec4325a2de75ab8824efcd0bf2f1ddc5
+	commit = 2a56b5ac4b3ae64a77a3e093eeb677553ec9d591
+	parent = 7bbf399cc164d814eaf10e1dd251a09c6ac39170
 	cmdver = 0.4.0
