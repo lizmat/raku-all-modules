@@ -5,8 +5,9 @@ sub prefix:<Σ> { [+]($^a);}
 sub Σ(@a) { [+](@a); }
 
 sub calc-slope(@x, @y) is export(:ALL) {
-    my $n = @x * Σ(@x Z* @y) - Σ@x*Σ@y;
-    my $d = @x * Σ(@x.map: {$_²}) - (Σ@x)²;
+    my \N = +@x;
+    my $n = N * Σ(@x Z* @y) - Σ@x*Σ@y;
+    my $d = N * Σ@x.map(*²) - (Σ@x)²;
     $n/$d;
 }
 

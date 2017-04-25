@@ -5,3 +5,4 @@
 /resources/*.so
 /resources/*.dylib
 .precomp/
+*.swp

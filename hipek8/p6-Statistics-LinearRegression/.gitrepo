@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/hipek8/p6-Statistics-LinearRegression.git
 	branch = master
-	commit = 83b03267ccfae4c1f53bc6cd28adab5a23e6b89e
-	parent = 1936b8c7bdcf37b2130ae2d2b129b21e5999a697
+	commit = bb17cd7a55fff92528f0f8ef4e7843d406729013
+	parent = d0e1071d8e2f7adf7f2323ef5df8d6ea4ba26993
 	cmdver = 0.4.0
