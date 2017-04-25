@@ -7,7 +7,7 @@ use MinG::From::Text;
 use Test;
 use Test::META;
 
-plan 5;
+plan 8;
 
 meta-ok();
 
@@ -58,16 +58,40 @@ $all-fine = $all-fine and not($parser.parse_str(@frases[3]));
 $all-fine = $all-fine and not($parser.parse_str(@frases[4]));
 $all-fine = $all-fine and $parser.parse_str(@frases[5]);
 
-@frases = ["pedro fue a la casa de juan", "qué pensaba juan", "el sordo es viejo", "es viejo", "nadie pensaba eso", "el sordo dijo que era alto"];
+@frases = ["pedro fue a la casa de juan", "qué pensaba juan", "el sordo es viejo", "es viejo", "nadie pensaba eso", "el sordo dijo que era alto", "qué dijo la amiga de maría"];
 $parser.init(grammar_from_file($ESPA0));
 
-$all-fine = $all-fine and $parser.large_parse(@frases[0]);
-$all-fine = $all-fine and $parser.large_parse(@frases[1]);
-$all-fine = $all-fine and $parser.large_parse(@frases[2]);
-$all-fine = $all-fine and $parser.large_parse(@frases[3]);
-$all-fine = $all-fine and $parser.large_parse(@frases[4]);
-$all-fine = $all-fine and $parser.large_parse(@frases[5]);
+$all-fine = $all-fine && $parser.large_parse(@frases[0]);
+$all-fine = $all-fine && $parser.large_parse(@frases[1]);
+$all-fine = $all-fine && $parser.large_parse(@frases[2]);
+$all-fine = $all-fine && $parser.large_parse(@frases[3]);
+$all-fine = $all-fine && $parser.large_parse(@frases[4]);
+$all-fine = $all-fine && $parser.large_parse(@frases[5]);
+$all-fine = $all-fine && $parser.large_parse(@frases[6]);
 
 ok $all-fine;
+
+##############
+# SIXTH TEST #
+##############
+
+use MinG::EDMG;
+my $edmg_f = MinG::EDMG::Feature.new(way => MERGE, pol => PLUS, is_adj => True);
+nok $edmg_f.is_covert_mov;
+
+###########################
+# SEVENTH AND EIGTH TESTS #
+###########################
+
+ok MinG::EDMG::Feature.from_str("A<") eqv MinG::EDMG::Feature.new(way => MERGE,\
+                                                      pol => PLUS,\
+                                                      type => "A",\
+                                                      side => MinG::EDMG::FSide::RIGHT,\
+                                                      is_head_mov => True,\
+                                                      head_mov_side => MinG::EDMG::FSide::LEFT);
+
+ok MinG::EDMG::Feature.from_str("DELTA") eqv MinG::EDMG::Feature.new(way => MERGE,\
+                                                         pol => MINUS,\
+                                                         type => "DELTA");
 
 done-testing;

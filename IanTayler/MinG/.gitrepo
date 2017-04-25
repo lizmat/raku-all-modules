@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/IanTayler/MinG.git
 	branch = master
-	commit = a0a21ec9a2409ae463b253e8d4012398f2ecf57b
-	parent = 7745fe1a9943269afe2f7d6e0892e8e308a9ba04
+	commit = ca735c8919a685bf2accb2aa0b1ad5755a605654
+	parent = 2a71278943281bf30ee93513162ad1190a53c718
 	cmdver = 0.4.0

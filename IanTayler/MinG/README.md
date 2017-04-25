@@ -8,11 +8,13 @@ A small module for working with Stabler's Minimalist Grammars in Perl6.
 STRUCTURE
 =========
 
-As of now there are four (sub)modules: MinG, MinG::S13, MinG::S13::Logic and MinG::From::Text.
+As of now there are five (sub)modules: MinG, MinG::S13, MinG::S13::Logic, MinG::EDMG and MinG::From::Text.
 
 In MinG, you'll find the necessary classes and subroutines for creating descriptions of Minimalist Grammars. It's not of much use by itself unless you're planning to implement your own parser/etc. and want to save yourself the time of having to define classes and useful functions.
 
 In MinG::S13, you'll find Stabler's (2013) "Two models of minimalist, incremental syntactic analysis" parser. Currently, this parser analyses all possibilities, while Stabler's parser discards low-probability derivations. There's a helper submodule called MinG::S13::Logic.
+
+MinG::EDMG is currently under construction. To check what has been implemented already, you can view the milestone "EDMG Implementation".
 
 Finally, in MinG::From::Text you'll find a parser that creates MinG::Grammar-s out of text descriptions of MGs.
 
@@ -94,7 +96,7 @@ CURRENTLY
 TODO
 ====
 
-  * Allow some useful expansions of MGs.
+  * Allow some useful expansions of MGs (EDMGs are being implemented).
 
   * Make the parser more efficient by adding probabilistic rule-following.
 

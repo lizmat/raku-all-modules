@@ -239,8 +239,8 @@ class MinG::Feature {
     #|{
         Method that returns a LexNode containing the feature as its label. $last indicates whether or not the node is to have any feature children.
         }
-    method to_lexnode(Bool $last) of LexNode {
-        return LexNode.new(children => (), last => $last, label => self);
+    method to_lexnode() of LexNode {
+        return LexNode.new(children => (), label => self);
     }
 }
 
@@ -304,11 +304,8 @@ class MinG::Grammar {
                     $curr_node = $curr_node.children[$ind];
                 } else {
                     # If the feature isn't there, we need to add it.
-                    # We add $this_feat to the $curr_node, with value $last =
-                    # True iff there are no more features to add later.
-                    # NOTE: Remember we popped one element of @lex_feats at the
-                    # beggining of this while loop.
-                    my $ind = $curr_node.add_child($this_feat.to_lexnode(@lex_feats <= 0));
+                    # We add $this_feat to the $curr_node.
+                    my $ind = $curr_node.add_child($this_feat.to_lexnode());
                     $curr_node = $curr_node.children[$ind];
                 }
             }
