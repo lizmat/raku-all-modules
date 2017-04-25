@@ -1,6 +1,15 @@
 Revision history for Term::Choose
 
 
+0.120   2017-04-24
+        - Removed superfluous test
+
+0.119   2017-04-24
+        - Extended mouse mode
+        - Autodetect ncurses library
+        - Update documentation
+        - Code refactoring
+
 0.118   2016-12-16
         - Import subroutines by their names
 

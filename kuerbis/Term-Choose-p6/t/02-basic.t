@@ -2,8 +2,8 @@ use v6;
 use Test;
 plan 1;
 
-use NCurses;
+use Term::Choose;
 
-pass "use NCurses;";
+pass "use Term::Choose;";
 
 done-testing();

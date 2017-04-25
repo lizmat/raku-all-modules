@@ -8,7 +8,7 @@ Term::Choose - Choose items from a list interactively.
 VERSION
 =======
 
-Version 0.118
+Version 0.120
 
 SYNOPSIS
 ========
@@ -73,7 +73,7 @@ Keys
 
 For the usage of `SpaceBar`, `Ctrl-SpaceBar`, `Return` and the `q`-key see [#choose](#choose), [#choose-multi](#choose-multi) and [#pause](#pause).
 
-With *mouse* enabled (and if supported by the terminal) use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel. - Mouse wheel not yet suppoerted!
+With *mouse* enabled (and if supported by the terminal) use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel (if supported).
 
 CONSTRUCTOR
 ===========
@@ -365,15 +365,17 @@ default: "ltundefgt"
 REQUIREMENTS
 ============
 
+libncurses
+----------
+
+`Term::Choose` requires `libncursesw` to be installed. To overwrite the autodetected ncurses library: specify the location of the ncurses library by setting the environment variable `PERL6_NCURSES_LIB`.
+
+If the name of the ncurses library matches `libncursesw.so.6` `Term::Choose` expects `NCURSES_MOUSE_VERSION` gt `1`.
+
 Monospaced font
 ---------------
 
 It is required a terminal that uses a monospaced font which supports the printed characters.
-
-libncurses
-----------
-
-See *Installation* and *Environment variables* in [NCurses](https://github.com/azawawi/perl6-ncurses).
 
 AUTHOR
 ======

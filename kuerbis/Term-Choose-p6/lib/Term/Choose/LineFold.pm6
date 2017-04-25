@@ -1,24 +1,24 @@
 use v6;
 unit class Term::Choose::LineFold;
 
-my $VERSION = '0.118';
+my $VERSION = '0.120';
 
 use Terminal::WCWidth;
 
 
 
-sub to-printwidth ( $str, Int $avail_w, Int $rest = 0 ) is export( :to-printwidth ) {
+sub to-printwidth ( $str, Int $avail_w, Bool $return_remainder = False ) is export( :to-printwidth ) {
     #my $str_w = wcswidth( $str );
     #die "String with control charakter!" if $str_w == -1;
     #if $str_w <= $avail_w {
     if wcswidth( $str ) <= $avail_w {
-        return $str if ! $rest;
+        return $str if ! $return_remainder;
         return $str, '';
     }
     my $left = $str.substr( 0, $avail_w );
     my $left_w = wcswidth( $left );
     if $left_w == $avail_w {
-        return $left if ! $rest;
+        return $left if ! $return_remainder;
         return $left, $str.substr( $avail_w );
     }
     if $avail_w < 2 {
@@ -42,11 +42,11 @@ sub to-printwidth ( $str, Int $avail_w, Int $rest = 0 ) is export( :to-printwidt
         if $left_w + 1 == $avail_w {
             my Int $len_next_char = wcswidth( $str.substr( $nr_chars, 1 ) );
             if $len_next_char == 1 {
-                return $str.substr( 0, $nr_chars + 1 ) if ! $rest;
+                return $str.substr( 0, $nr_chars + 1 ) if ! $return_remainder;
                 return $str.substr( 0, $nr_chars + 1 ), $str.substr( $nr_chars + 1 );
             }
             elsif $len_next_char == 2 {
-                return $left ~ ' ' if ! $rest;
+                return $left ~ ' ' if ! $return_remainder;
                 return $left ~ ' ' , $str.substr( $nr_chars );
             }
         }
@@ -57,7 +57,7 @@ sub to-printwidth ( $str, Int $avail_w, Int $rest = 0 ) is export( :to-printwidt
             $nr_chars = $nr_chars + $adjust;
         }
         else {
-            return $left if ! $rest;
+            return $left if ! $return_remainder;
             return $left, $str.substr( $nr_chars );
         }
         $adjust = ( $adjust + 1 ) div 2;
@@ -102,10 +102,10 @@ sub line-fold ( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is co
                 if $i != 0 {
                     @lines.push( $line );
                 }
-                my ( Str $tab_and_cut_word, Str $rest ) = to-printwidth( $tab_and_word, $avail_w, 1 );
-                while ( $rest.chars ) {
+                my ( Str $tab_and_cut_word, Str $remainder ) = to-printwidth( $tab_and_word, $avail_w, True );
+                while ( $remainder.chars ) {
                     @lines.push( $tab_and_cut_word );
-                    ( $tab_and_cut_word, $rest ) = to-printwidth( $subseq_tab ~ $rest, $avail_w, 1 );
+                    ( $tab_and_cut_word, $remainder ) = to-printwidth( $subseq_tab ~ $remainder, $avail_w, True );
                 }
                 if $i == @words.end {
                     @lines.push( $tab_and_cut_word );
