@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MattOates/Text--Emotion.git
 	branch = master
-	commit = 9582ceccc7f6013153218877cc34a8f9519490d1
-	parent = 134cb11628e89aec0faa8cf5c8b44d14ed3695ed
+	commit = 932e9cbef25422fd4fba6325e2417e44fa95f53e
+	parent = e656c9476775961d89aa1925e569028310f8050c
 	cmdver = 0.4.0

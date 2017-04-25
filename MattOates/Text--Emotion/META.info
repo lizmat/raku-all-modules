@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "Text::Emotion",
     "version" : "0.0.5",
     "description" : "Get an emotional score for a passage of text based on its word use.",
