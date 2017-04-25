@@ -189,6 +189,7 @@ class SSH::LibSSH {
         has Str $.user;
         has Str $!password;
         has Str $.private-key-file;
+        has Int $.timeout;
         has LogLevel $!log-level;
         has &.on-server-unknown;
         has &.on-server-known-changed;
@@ -196,7 +197,8 @@ class SSH::LibSSH {
         has SSHSession $.session-handle;
 
         submethod BUILD(Str :$!host!, Int :$!port = 22, Str :$!user = $*USER.Str,
-                        Str :$!private-key-file = Str, Str :$!password = Str, LogLevel :$!log-level = None,
+                        Str :$!private-key-file = Str, Str :$!password = Str,
+                        Int :$!timeout, LogLevel :$!log-level = None,
                         :&!on-server-unknown = &default-server-unknown,
                         :&!on-server-known-changed = &default-server-known-changed,
                         :&!on-server-found-other = &default-server-found-other) {}
@@ -240,6 +242,11 @@ class SSH::LibSSH {
                             error-check($s,
                                 ssh_options_set_int($s, SSH_OPTIONS_LOG_VERBOSITY,
                                     CArray[int32].new($!log-level)));
+                        }
+                        with $!timeout {
+                            error-check($s,
+                                ssh_options_set_int($s, SSH_OPTIONS_TIMEOUT,
+                                    CArray[int32].new($!timeout)));
                         }
 
                         my $outcome = error-check($s, ssh_connect($s));
@@ -922,5 +929,27 @@ class SSH::LibSSH {
 
     method connect(Str :$host!, *%options --> Promise) {
         Session.new(:$host, |%options).connect
+    }
+
+    class LogEntry {
+        has LogLevel $.level;
+        has Str $.function;
+        has Str $.message;
+    }
+
+    my Supplier $logs;
+    my Lock $logs-lock .= new;
+    method logs(--> Supply) {
+        $logs-lock.protect: {
+            without $logs {
+                $logs = Supplier.new;
+                error-check('set logging callback', ssh_set_log_callback(
+                    -> int32 $level-int, Str $function, Str $message, Pointer $ {
+                        my $level = LogLevel($level-int);
+                        $logs.emit(LogEntry.new(:$level, :$function, :$message));
+                    }));
+            }
+            $logs.Supply
+        }
     }
 }

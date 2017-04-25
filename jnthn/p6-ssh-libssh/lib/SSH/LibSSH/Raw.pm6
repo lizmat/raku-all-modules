@@ -90,8 +90,11 @@ sub ssh_disconnect(SSHSession) is native(&libssh) is export {*}
 sub ssh_is_server_known(SSHSession) returns int32 is native(&libssh) is export {*}
 sub ssh_write_knownhost(SSHSession) returns int32 is native(&libssh) is export {*}
 sub ssh_get_pubkey_hash(SSHSession, CArray[Pointer]) returns int32 is native(&libssh) is export {*}
+
 sub ssh_get_hexa(Pointer, size_t) returns Str is native(&libssh) is export {*}
 sub ssh_clean_pubkey_hash(CArray[Pointer]) is native(&libssh) is export {*}
+sub ssh_set_log_callback(& (int32, Str, Str, Pointer))
+    returns int32 is native(&libssh) is export {*}
 
 my class SSHKey is repr('CPointer') is export {}
 my enum SSHAuth is export (
