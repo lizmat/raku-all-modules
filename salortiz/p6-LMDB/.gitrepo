@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/salortiz/p6-LMDB.git
 	branch = master
-	commit = d5dd9625e7a1c47ac66d69496f375f94cf067b78
-	parent = b63ac5f28e6e02571e50f62efaf13c8195d5c491
-	cmdver = 0.2.3
+	commit = 10df3832b189cf9c5abadaf3b5801c4e59b288de
+	parent = b2ca3409e91f3732811ca83a70786aa135a46d3a
+	cmdver = 0.4.0

@@ -15,7 +15,7 @@
     "repo-type" : "git",
     "source-url": "git://github.com/salortiz/p6-LMDB.git",
     "authors" : "Salvador Ortiz <sortiz@cpan.com>",
-    "licence" : "artistic_2",
+    "license" : "Artistic-2.0",
     "support" : {
 	"email" : "sog@msg.com.mx",
 	"source" : [
