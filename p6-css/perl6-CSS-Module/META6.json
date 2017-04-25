@@ -2,6 +2,7 @@
     "name"        : "CSS::Module",
     "api"         : "css-snapshot-2010",
     "auth"        : "github:p6-css",
+    "license"     : "Artistic 2.0",
     "version"     : "0.4.8",
     "description" : "Perl 6 CSS extended and property-specific grammars",
     "depends"     : [ "CSS::Grammar", "CSS::Module::CSS3::Selectors", "CSS::Specification", "CSS::Writer", "JSON::Fast" ],
