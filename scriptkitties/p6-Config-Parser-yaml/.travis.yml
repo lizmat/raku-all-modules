@@ -1,0 +1,14 @@
+language: perl6
+
+perl6:
+  - nom
+  - latest
+
+os:
+  - linux
+
+install:
+  - rakudobrew build zef
+  - zef install --depsonly .
+
+script: AUTHOR_TESTING=1 prove -v -e "perl6 -Ilib" t/
