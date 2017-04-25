@@ -1,6 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "Native::Packing",
+    "license"     : "Artistic 2.0",
     "tags"        : ["binary", "endian", "native", "struct" ], 
     "version"     : "0.0.1",
     "auth"        : "github:p6-pdf",

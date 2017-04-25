@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-pdf/perl6-Native-Packing.git
 	branch = master
-	commit = 6b12f2d0d0aa5fc1b879e4d6c2ab4460d1d6f3a2
-	parent = 190283e5c62a252f7e2f407fa2582b40eb87a802
+	commit = 92dc71d48d99bd39475675e8d89b6d00d6535d06
+	parent = 1bd0e11345387ff42c72e149415ef7b242edc1e8
 	cmdver = 0.4.0
