@@ -71,7 +71,7 @@ Number::Denominate - Break up numbers into preset or arbitrary denominations
 # DESCRIPTION
 
 Define arbitrary set of units and split up a number into those units. The
-module includes preset sets of units for some measures.
+module includes preset sets of units for some measures
 
 # EXPORTED SUBROUTINES
 
