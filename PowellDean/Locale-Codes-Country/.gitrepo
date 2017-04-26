@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/PowellDean/Locale-Codes-Country.git
 	branch = master
-	commit = 068f5c1a32fe3d54013e7293dabd5b157c5069ff
-	parent = 55175aecced83ac782b3db0e4fe79ea3dab73694
+	commit = 1b6e903b95769a905c73899302797453665ffd1b
+	parent = da7071455e9e974d9f873a5f9cfa408f4c1a0c55
 	cmdver = 0.4.0
