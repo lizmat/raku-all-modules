@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FROGGS/p6-overload-constant.git
 	branch = master
-	commit = 14ffe9813b0bb02b0797183612cf30c8300f5d14
-	parent = 91887d9749b12451546d2c64bb83cbf28943ded9
+	commit = 4a4cf472478778b5f636be6cc0fb95e271a57064
+	parent = 9e27e21217d42f81398375fec918cfa38fad949f
 	cmdver = 0.4.0
