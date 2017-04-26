@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bduggan/p6-crypt-rsa.git
 	branch = master
-	commit = d31877d637f3ac1f2ccb93f7c362e4550f45d850
-	parent = 8139e5eb0a3cb99201f0f44fbcdde2951915667f
+	commit = 9033b840fea177d35535d3461785132ce99a7172
+	parent = 9b852da0b46faced240f91960c1db105d471da53
 	cmdver = 0.4.0
