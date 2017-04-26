@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "IO::Prompt",
+    "license" : "Artistic-2.0",
     "version" : "0.0.2",
     "description" : "This is a generic module for interactive prompting from the console.",
     "authors" : [ "pnu", "wbiker" ],
