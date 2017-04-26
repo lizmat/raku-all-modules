@@ -9,7 +9,7 @@
    },
    "license" : "http://www.perlfoundation.org/artistic_license_2_0",
    "name" : "Sum",
-   "perl" : "v6.0.0",
+   "perl" : "6.*",
    "provides" : {
       "Sum" : "lib/Sum.pm6",
       "Sum::Adler" : "lib/Sum/Adler.pm6",

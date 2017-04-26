@@ -14,6 +14,8 @@ was to match this feed API.  If .append is to continue to be
 called, Sum will change API to suit.  Unfortunately it does
 not look to be the case that this will be resolved anytime soon.
 
+See RT#126819
+
 ## Purpose
 
 This suite of modules intends to become a thorough, idiomatic Perl 6
