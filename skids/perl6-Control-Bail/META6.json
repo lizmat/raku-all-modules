@@ -1,17 +1,17 @@
 {
-    "name": "Control::Bail",
-    "version": "v0.0.1",
-    "description": "Perl6 module for deferred error handling",
-    "authors": [
+   "authors" : [
       "Brian S. Julin"
-    ],
-    "depends": [],
-    "perl": 6,
-    "license": "Artistic-2.0",
-    "support": {
-      "source": "https://github.com/skids/perl6-Control-Bail.git"
-    },
-    "provides": {
-      "Control::Bail": "lib/Control/Bail.pm6"
-    }
+   ],
+   "depends" : [],
+   "description" : "Perl6 module for deferred error handling",
+   "license" : "Artistic-2.0",
+   "name" : "Control::Bail",
+   "perl" : "6",
+   "provides" : {
+      "Control::Bail" : "lib/Control/Bail.pm6"
+   },
+   "support" : {
+      "source" : "https://github.com/skids/perl6-Control-Bail.git"
+   },
+   "version" : "v0.0.1"
 }

@@ -67,7 +67,7 @@ is $*d, 'abnormal_return_bail', "Abnormal returns run bail clauses";
 $ = abnormal_return_trail();
 is $*d, 'abnormal_return_trail', "Abnormal returns run trail clauses";
 $ = abnormal_return_trail-undo();
-is $*d, 'abnormal_return_trail-undo', "Abnormal returns run trail-indo clauses";
+is $*d, 'abnormal_return_trail-undo', "Abnormal returns run trail-undo clauses";
 $ = abnormal_return_trail-leave();
 is $*d, 'abnormal_return_trail-leave', "Abnormal returns run trail-leave clauses";
 $ = abnormal_return_trail-keep();

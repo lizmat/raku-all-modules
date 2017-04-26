@@ -144,7 +144,18 @@ sub EXPORT(|) {
 
 
     }
-    nqp::bindkey(%*LANG, 'MAIN', %*LANG<MAIN>.HOW.mixin(%*LANG<MAIN>, Control::Bail));
-    nqp::bindkey(%*LANG, 'MAIN-actions', %*LANG<MAIN-actions>.HOW.mixin(%*LANG<MAIN-actions>, Control::Bail::Actions));
+
+    my Mu $MAIN-grammar := nqp::atkey(%*LANG, 'MAIN');
+    my $grammar := $MAIN-grammar.^mixin(Control::Bail);
+    my Mu $MAIN-actions := nqp::atkey(%*LANG, 'MAIN-actions');
+    my $actions := $MAIN-actions.^mixin(Control::Bail::Actions);
+
+    # old way
+    try {
+        nqp::bindkey(%*LANG, 'MAIN', $grammar);
+        nqp::bindkey(%*LANG, 'MAIN-actions', $actions);
+    }
+    # new way
+    try $*LANG.define_slang("MAIN", $grammar, $actions);
     {}
 }

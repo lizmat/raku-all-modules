@@ -3,7 +3,7 @@ authors:
   - Brian S. Julin
 depends: []
 description: Perl6 module for deferred error handling
-license: http://www.perlfoundation.org/artistic_license_2_0
+license: Artistic-2.0
 name: Control::Bail
 perl: 6
 provides:
