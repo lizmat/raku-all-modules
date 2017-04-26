@@ -1,6 +1,7 @@
 {
     "perl": "6.*",
     "name" : "Compress::Bzip2",
+    "license" : "Artistic-2.0",
     "tags": ["Compression"],
     "version" : "0.3.0",
     "author" : "github:Altai-man",
