@@ -15,7 +15,7 @@
         "Config::Exception::FileNotFoundException": "lib/Config/Exception/FileNotFoundException.pm6",
         "Config::Exception::UnimplementedMethodException": "lib/Config/Exception/UnimplementedMethodException.pm6",
         "Config::Exception::UnknownTypeException": "lib/Config/Exception/UnknownTypeException.pm6",
-        "Config::Exception::UnsupportedTypeException": "lib/Config/Exception/UnsupportedTypeException.pm6"
+        "Config::Exception::MissingParserException": "lib/Config/Exception/MissingParserException.pm6"
     },
     "authors": [
         "Patrick Spek <p.spek@tyil.work>"

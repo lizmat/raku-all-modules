@@ -8,11 +8,15 @@ class Config::Parser
 {
     method read(Str $path --> Hash)
     {
-        Config::Exception::UnimplementedMethodException.new.throw();
+        Config::Exception::UnimplementedMethodException.new(
+            method => "read"
+        ).throw();
     }
 
     method write(Str $path, Hash $config --> Hash)
     {
-        Config::Exception::UnimplementedMethodException.new.throw();
+        Config::Exception::UnimplementedMethodException.new(
+            method => "write"
+        ).throw();
     }
 }

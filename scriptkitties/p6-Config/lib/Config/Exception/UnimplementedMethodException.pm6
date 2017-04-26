@@ -4,8 +4,10 @@ use v6.c;
 
 class Config::Exception::UnimplementedMethodException is Exception
 {
+    has Str $.method;
+
     method message()
     {
-        "This method is not implemented"
+        "The $!method method is not implemented"
     }
 }
