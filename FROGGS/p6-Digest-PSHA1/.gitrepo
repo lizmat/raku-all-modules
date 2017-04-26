@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FROGGS/p6-Digest-PSHA1.git
 	branch = master
-	commit = 7cce43033830cb5c350f02e2a72da4918d143b64
-	parent = f18d7113fa0f95db72d6522efa04ab1e65d194ad
+	commit = 5af8ac0377105db3ecb63dea3822d82c8a8b2e12
+	parent = 01eace92418d5f0a0dec3b89b6e95e9ba78d89f0
 	cmdver = 0.4.0
