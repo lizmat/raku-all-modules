@@ -1,6 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "AWS::Pricing",
+  "license"     : "Artistic-2.0",
   "version"     : "0.2.0",
   "author"      : "github:scmorrison",
   "description" : "AWS Price List API library",

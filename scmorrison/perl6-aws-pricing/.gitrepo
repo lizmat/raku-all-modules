@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/scmorrison/perl6-aws-pricing.git
 	branch = master
-	commit = f0a2a411fe90d9b257be6ecb5a9fe98fc0f8444f
-	parent = 84c91b8656153ea21ba4af70f196ad2745986642
+	commit = a2bed38360538b4539d3f03f3aea9394cbdb2e2b
+	parent = 669ad45f906d48c07fdefccc5683ece2500e31a0
 	cmdver = 0.4.0
