@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/gfldex/http-server-simple.git
 	branch = master
-	commit = c695b7249fd9b8ac2993cc4b268ec42a867ce14d
-	parent = a30fb89cdbd5b6a824ed624b71d7680462ea5f76
-	cmdver = 0.2.3
+	commit = 9f89ac69c150f0924e4f3986783cf2b794d85850
+	parent = c33141c70896e30deaacb5bf79542d6df1899641
+	cmdver = 0.4.0
