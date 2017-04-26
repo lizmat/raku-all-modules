@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/vendethiel/Serialize-Tiny.pm6.git
 	branch = master
-	commit = 7f35026b16f3063c7661cf56c3abb62216b7870a
-	parent = 82afe2ff6be4cac44956d107453927048a945b5f
+	commit = 128457c279fa438ac095561f354ef0028c14c6b9
+	parent = 462a165dc070b7d66c8614e6679180779f6cf8f1
 	cmdver = 0.4.0
