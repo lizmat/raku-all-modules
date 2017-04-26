@@ -1,6 +1,7 @@
 {
     "perl": "6.*",
     "name" : "Compress::Bzip2::Raw",
+    "license" : "Artistic-2.0",
     "tags": ["Compression", "NativeCall"],
     "version" : "0.2.0",
     "author" : "github:Altai-man",
