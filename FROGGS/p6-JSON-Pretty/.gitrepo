@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FROGGS/p6-JSON-Pretty.git
 	branch = master
-	commit = 0bccf95cd5b1e732d720976901a431bd1d3129d5
-	parent = 2cdf1417544bd5e4e133e3858779d368ff8d21e6
+	commit = c7c90d7358e4c806ee5460dfa25cb248e75c31a5
+	parent = 2e8e4f05bed4cf5dd7c6c2de95f62c3aac6e62ba
 	cmdver = 0.4.0
