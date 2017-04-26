@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/scriptkitties/p6-Hash-Merge.git
+	branch = master
+	commit = e55b78c6843f6ad7ea28573aadc8c3cb0c68933c
+	parent = a721f542872359277152964bbe82222866f2b881
+	cmdver = 0.4.0
