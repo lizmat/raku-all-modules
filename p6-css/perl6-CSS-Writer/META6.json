@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "CSS::Writer",
-    "license"     : "Artistic 2.0",
+    "license"     : "Artistic-2.0",
     "version"     : "0.2.4",
     "description" : "AST Serializer; compatible with CSS::Grammar and CSS::Module",
     "depends"     : [ "CSS::Grammar", "JSON::Fast"  ],
