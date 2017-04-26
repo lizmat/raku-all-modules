@@ -1,6 +1,6 @@
 {   "perl"        : "6",
     "name"        : "Font::AFM",
-    "license"     : "Artistic 2.0",
+    "license"     : "Artistic-2.0",
     "version"     : "1.23.5",
     "auth"        : "github:p6-pdf",
     "description" : "Interface to Adobe Font Metrics files",
