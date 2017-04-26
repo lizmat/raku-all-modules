@@ -1,6 +1,7 @@
 {
 	"perl" : "6.*",
 	"name" : "Finance::CompoundInterest",
+	"license" : "Artistic-2.0",
 	"version" : "0.1.0",
 	"description" : "Compound Interest calculations for fun and profit.",
 	"authors" : [ "James (Jeremy) Carman <developer@peelle.org>" ],
