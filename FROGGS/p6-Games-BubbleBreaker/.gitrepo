@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FROGGS/p6-Games-BubbleBreaker.git
 	branch = master
-	commit = d67c740f37eba6c645cd37cd7d2c575c6ae9f97a
-	parent = 85e04fc393e11a3d3df519db9cbda0f707113e2b
+	commit = b49b6b22c2181049367a0c4c84c97842863b4f31
+	parent = d47f4d72dd9fadef43b25b4b21691a4ace00ad30
 	cmdver = 0.4.0
