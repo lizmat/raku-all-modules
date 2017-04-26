@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/hinges.git
 	branch = master
-	commit = 0167e1e6b8a8d7c06b310c7de271ab69d4c68529
-	parent = 2a56b60057a11edcefc78ff36e0f36dda71d053c
+	commit = c608f262c26b301c6432436836c0df0a1eaf6c50
+	parent = e9634b74415625dba3eab6354882e7a0425c28c8
 	cmdver = 0.4.0
