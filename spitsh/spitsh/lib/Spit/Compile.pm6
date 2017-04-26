@@ -1,11 +1,7 @@
 # A home for the main compilation pipeline entrypoint
 unit module Spit::Compile;
-need Spit::Parser::Grammar;
-need Spit::Parser::Actions;
-need Spit::Sh::Compiler;
-need Spit::Sh::Composer;
 
-use Spit::Util :get-globalish, :light-load;
+use Spit::Util :light-load;
 
 sub compile  ($input is copy,
               :$*SETTING is copy,
@@ -15,6 +11,7 @@ sub compile  ($input is copy,
               :$outer,
               :$name is required,
               :$no-inline,
+              :$one-block,
               *%,
              ) is export {
 
@@ -26,8 +23,10 @@ sub compile  ($input is copy,
 
     my $*CU-name = $name;
     if $input ~~ Str {
-        my $parser  = Spit::Grammar.new;
-        my $actions = Spit::Actions.new(:$outer, :$debug);
+        my \SPIT_ACTIONS = (once light-load 'Spit::Parser::Actions', target => 'Spit::Actions');
+        my \SPIT_GRAMMAR = (once light-load 'Spit::Parser::Grammar', target => 'Spit::Grammar');
+        my $parser  = SPIT_GRAMMAR.new;
+        my $actions = SPIT_ACTIONS.new(:$outer, :$debug);
         my $*ACTIONS = $actions;
         note "$name parsing.. " if $debug;
         my \before = now;
@@ -49,12 +48,14 @@ sub compile  ($input is copy,
             return $input if $target eq 'stage2';
         }
 
-        my $compiler = Spit::Sh::Compiler.new(:%opts);
+        my \SPIT_COMPILER = (once light-load 'Spit::Sh::Compiler');
+        my $compiler = SPIT_COMPILER.new(:%opts);
 
         if not $input.stage3-done {
             note "$name composing.." if $debug;
+            my \SPIT_COMPOSER = (once light-load 'Spit::Sh::Composer');
             my \before = now;
-            Spit::Sh::Composer.new(
+            SPIT_COMPOSER.new(
                 :%opts,
                 scaffolding => $compiler.scaffolding,
                 :$no-inline,
@@ -66,7 +67,7 @@ sub compile  ($input is copy,
         if $input.stage3-done {
             note "$name compiling.." if $debug;
             my \before = now;
-            $input = $compiler.compile($input);
+            $input = $compiler.compile($input, :$one-block);
             note "$name compiling ✔ {now - before}" if $debug;
         }
 

@@ -111,12 +111,13 @@ role SAST is rw {
     method node-name { self.^name.subst(/^'SAST::'/,'') }
     method itemize { True }
     method depends { Empty }
-    method all-deps { self.depends }
+    method child-deps { self.depends }
+    method all-depends { |self.depends, |@.extra-depends }
     method type {...} # The type for type checking
     method ostensible-type { self.type } # The the type that the thing looks like
     method deep-clone { self.clone }
     method deep-first(\needle) { self if self ~~ needle }
-    method identity { $!cloned // self }
+    method identity { $!cloned || self }
 
     # Convenience methods
     method stage2-node(\type,|args) {
@@ -150,6 +151,7 @@ role SAST is rw {
             $b = $self.stage3-node(SAST::Blessed,class-type => $self.type,$b);
         }
         $b.extra-depends.append($self.extra-depends);
+        $b.ctx = $self.ctx;
         $self = $b;
     }
 }
@@ -268,9 +270,9 @@ class SAST::Children does SAST {
 
     method type { tAny }
 
-    method all-deps {
+    method child-deps {
         # XXX: THIS IS HORRIBLE AND HAS TO DIE ASAP. NEED TO USE LEXICAL ANALYSIS INSTEAD.
-        (|@.children.map(*.all-deps).flat,|self.depends).grep({ $_ !~~ SAST::Param|SAST::Invocant });
+        (|@.children.map(*.child-deps).flat,|self.depends).grep({ $_ !~~ SAST::Param|SAST::Invocant });
     }
 
     method descend($self is rw: &block) {
@@ -378,7 +380,7 @@ class SAST::Var is SAST::Children does SAST::Assignable {
 
     method children { list $.assign // Empty  }
 
-    method depends { $.declaration, }
+    method depends { @.extra-depends ?? Empty !! ($.declaration,) }
 
     method is-option  { $!name.starts-with('*') }
 
@@ -710,7 +712,6 @@ class SAST::MethodDeclare is SAST::RoutineDeclare {
     has SAST::ClassDeclaration $.invocant-type is rw;
     has @.invocants;
 
-    method gist { "method {$.name}\({$.signature.gist})\{ ... \}" }
     method spit-gist { "method {$.name}\({$.signature.spit-gist})" }
 
     method stage2($) {

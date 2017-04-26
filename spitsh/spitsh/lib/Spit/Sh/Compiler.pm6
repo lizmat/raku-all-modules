@@ -161,7 +161,7 @@ method scaf-ref($name,:$match) {
     }
 }
 
-method compile(SAST::CompUnit:D $CU --> Str:D) {
+method compile(SAST::CompUnit:D $CU, :$one-block --> Str:D) {
     my $*pad = '';
     my $*depends = $CU.depends-on;
     my ShellElement:D @compiled;
@@ -176,20 +176,28 @@ method compile(SAST::CompUnit:D $CU --> Str:D) {
 
     my @BEGIN = @compiled-depends && @compiled-depends.map({ ("\n" if $++),|$_}).flat;
     my @run;
-    for :@BEGIN,:@MAIN {
-        if .value {
-            @compiled.append(.key,'()',|self.maybe-oneline-block(.value),"\n");
-            @run.append(.key,' && ');
-        }
-    }
 
-    @run.pop if @run; # remove last &&
+    if $one-block {
+        @compiled.append: self.maybe-oneline-block:
+            [
+                |(|@BEGIN,"\n" if @BEGIN)
+                ,|@MAIN
+            ];
+    } else {
+        for :@BEGIN,:@MAIN {
+            if .value {
+                @compiled.append(.key,'()',|self.maybe-oneline-block(.value),"\n");
+                @run.append(.key,' && ');
+            }
+        }
+        @run.pop if @run; # remove last &&
+    }
 
     if @END {
         @compiled.append('END()',|self.maybe-oneline-block(@END),"\n","trap END EXIT\n",);
     }
 
-    @compiled.append(|@run,"\n");
+    @compiled.append(|@run,"\n") if @run;
     @compiled.join("");
 }
 
@@ -286,7 +294,7 @@ multi method cap-stdout(ShellStatus $_) {
 #!Var
 multi method node(SAST::Var:D $var) {
     my $name = self.gen-name($var);
-    return Empty if $var ~~ SAST::ConstantDecl and not $var.depended;
+    return Empty if $var ~~ SAST::ConstantDecl and $var.inline-value;
     with $var.assign {
         my @var = |self.compile-assign($var,$_);
         if @var[0].starts-with('$') {
@@ -352,19 +360,6 @@ multi method int-expr(SAST::Var:D $_) {
 }
 #!If
 multi method node(SAST::If:D $_,:$else) {
-    if not $else
-       and not .else
-       and .then.one-stmt
-       and not (.topic-var andthen .depended) {
-        # in some limited circumstances we can simplify
-        # if cond { action } to cond && action
-        my $neg = .cond ~~ SAST::Neg;
-        my $cond = $neg ?? .cond[0] !! .cond;
-        return
-            |self.cond($cond),
-            ($neg ?? ' || ' !! ' && '),
-            |self.node(.then, :one-line);
-    }
 
     substitute-cond-topic(.topic-var,.cond);
 
@@ -399,6 +394,35 @@ sub substitute-cond-topic($topic-var,$cond is rw) {
                 );
             }
         }
+    }
+}
+
+multi method arg(SAST::If:D $_) {
+    nextsame when ShellStatus;
+    if not .else
+       and .then.one-stmt
+       and not (.topic-var andthen .depended) {
+        # in some limited circumstances we can simplify
+        # if cond { action } to cond && action
+        my $neg = .cond ~~ SAST::Neg;
+        my $cond = $neg ?? .cond[0] !! .cond;
+
+        if $cond ~~ SAST::Var && (my $var = $cond)
+           or
+           $cond ~~ SAST::Cmd && $cond.nodes == 2
+           && $cond[0].compile-time ~~ 'test'
+           && $cond[1] ~~ SAST::Var
+           && ($var = $cond[1])
+        {
+            dq '${',self.gen-name($var), ($neg ?? ':-' !! ':+'),
+                    |self.arg(.then.one-stmt),'}';
+        } else {
+            cs |self.cond($cond),
+               ($neg ?? ' || ' !! ' && '),
+               |self.node(.then, :one-line);
+        }
+    } else {
+        callsame;
     }
 }
 
@@ -662,7 +686,7 @@ multi method node(SAST::Cmd:D $cmd,:$silence) {
         my $full-cmd := |self.compile-cmd(@cmd-body,$cmd.write,$cmd.append,@in);
         my $pipe     := |(|self.cap-stdout($_),'|' with $cmd.pipe-in);
         |$pipe,
-        ("\n{$*pad}" if $pipe and $pipe.chars + $full-cmd.chars > $.chars-per-line-cap),
+        ("\n{$*pad}  " if $pipe and $pipe.chars + $full-cmd.chars > $.chars-per-line-cap),
         |$cmd.set-env.map({"{.key.subst('-','_',:g)}=",|self.arg(.value)," "}).flat,
         |$full-cmd;
     }
