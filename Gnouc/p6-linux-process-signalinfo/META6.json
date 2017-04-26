@@ -1,6 +1,7 @@
 {
   "perl" : "6.c",
   "name" : "Linux::Process::SignalInfo",
+  "license" : "Artistic-2.0",
   "description" : "Show process signal information on Linux",
   "tags" : [ "linux", "utils", "signal" ],
   "authors" : [ "Cuong Manh Le <cuong.manhle@gmail.com>" ],
