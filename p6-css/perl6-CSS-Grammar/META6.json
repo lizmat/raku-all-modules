@@ -1,6 +1,6 @@
 {   "perl"        : "6c",
     "name"        : "CSS::Grammar",
-    "license"     : "Artistic 2.0",
+    "license"     : "Artistic-2.0",
     "version"     : "0.3.1",
     "auth"        : "github:p6-css",
     "description" : "Perl 6 core CSS grammars",
