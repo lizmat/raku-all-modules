@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/coke/p6-lingua-en-syllable.git
 	branch = master
-	commit = 8db05136a93784a34331a14608a143813b2a7103
-	parent = c5a0461d01ed614eb19a9baf3d5feadb9e1eee73
+	commit = 4b0c45911341b15186256d90e01da9719d7a03a8
+	parent = ee23949c6ff70e1a508e498a3b4381a77d38dfb7
 	cmdver = 0.4.0
