@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dginev/perl6-Lingua-EN-Sentence.git
 	branch = master
-	commit = 422e39c21db3e9e65e5c8489e225d0096d20315a
-	parent = 4f446863cd4f956ffdd2b8a5e7b1baa6a1a34ba2
+	commit = 9fcee620d21299e6f4a415e67031c73d6eab1e6d
+	parent = 1820a8cee6469f513ee591fc1b8d7e4967656f53
 	cmdver = 0.4.0

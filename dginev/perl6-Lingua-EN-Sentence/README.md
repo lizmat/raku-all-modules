@@ -10,7 +10,7 @@ The Port is complete, you're welcome to use the library in production code.
 Bug reports and feature requests are welcome in the Github Issue tracker.
  
  Don't miss on using the fresh Perl6 syntax:
- ```
+ ```perl6
   use Lingua::EN::Sentence;
   my Str $text;
   $text = slurp 'some_text_file.txt';
