@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bduggan/mosdef.git
 	branch = master
-	commit = 9b12f5f1e29c572e7c9bdae9abd22ba39b0383d5
-	parent = ea9711ea766d082ed36eacd60e801ce2ddb5c3c0
+	commit = 0d1eda917d05640909e238d625bf3f2e5a6028c8
+	parent = 042dd66a803d03031b556e08c58a6753e8f595c8
 	cmdver = 0.4.0
