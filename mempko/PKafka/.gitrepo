@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/mempko/PKafka.git
 	branch = master
-	commit = af325401b1d6e8f382dd3a160450399109199229
-	parent = f90473d1b9dd3c2d55f263049075350558e12c8b
+	commit = c3b63cf5306357afd0c6250dc228c13ea8291ca8
+	parent = 125fa07e6122c68168acd50fe5dd94c373c2287d
 	cmdver = 0.4.0
