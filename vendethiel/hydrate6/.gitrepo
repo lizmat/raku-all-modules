@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/vendethiel/hydrate6.git
 	branch = master
-	commit = 12b467f289cfce330f95ed356a1fb631069cae4d
-	parent = f0c2b81e6c5c1946fca58eb2c842ba539ac87b0c
-	cmdver = 0.2.3
+	commit = b8e596b31aff58546eea6eca2d1e874f4df9f9cb
+	parent = 05d4c8785c19adca93061f5a2825233e92242809
+	cmdver = 0.4.0
