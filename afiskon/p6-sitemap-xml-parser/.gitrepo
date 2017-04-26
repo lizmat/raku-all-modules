@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/afiskon/p6-sitemap-xml-parser.git
 	branch = master
-	commit = 5291be045c8a238950058971079878f3685ac449
-	parent = 8c8dbb10f4d9b05393649107282dd8fbae03b9e0
+	commit = 62b4b203b440b35ddea7f4b7646e23f56834d539
+	parent = 3d514596a451bb75e13f058eb0f8c82d0c5377d1
 	cmdver = 0.4.0
