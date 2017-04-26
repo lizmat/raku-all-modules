@@ -2,9 +2,11 @@
     "name" : "SP6",
     "version" : "0.1.1",
     "description" : "Simple templates for Perl 6",
-    "author" : "Michal Jurosz",
+    "license": "Artistic-2.0",
+    "authors" : [ "Michal Jurosz" ],
     "source-type" : "git",
     "source-url" : "git://github.com/mj41/SP6.git",
+    "perl" : "6.*",
     "depends" : [],
     "provides" : {
         "SP6" : "lib/SP6.pm6",
