@@ -1,0 +1,20 @@
+{
+  "name": "Test::Builder",
+  "source-url": "git://github.com/perl6-community-modules/p6-test-builder.git",
+  "authority": "soh-cah-toa",
+  "perl": "6.*",
+  "source-type": "git",
+  "author": "Kevin Polulak",
+  "depends": [
+    
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "Test::Builder::Test": "lib/Test/Builder/Test.pm",
+    "Test::Builder::Plan": "lib/Test/Builder/Plan.pm",
+    "Test::Builder::Output": "lib/Test/Builder/Output.pm",
+    "Test::Builder": "lib/Test/Builder.pm"
+  },
+  "version": "0.0.1",
+  "description": "Flexible framework for building TAP test libraries"
+}
