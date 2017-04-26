@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/peelle/LendingClub.git
 	branch = master
-	commit = 6877f3dfa6e4cab72224a202f114c14b622d4e11
-	parent = 6494b48964b0b96ee3587bba6ffbe2c5b4d94953
-	cmdver = 0.2.3
+	commit = 0476c47df5bebdd0e04b5ec190b9616bdf67043a
+	parent = 5af6b62dce8383cb381d88dc2238a2d22c774d4e
+	cmdver = 0.4.0
