@@ -1,5 +1,6 @@
 {
   "name" : "Apache::LogFormat",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/lestrrat/p6-Apache-LogFormat.git",
   "perl" : "6",
   "build-depends" : [ ],
