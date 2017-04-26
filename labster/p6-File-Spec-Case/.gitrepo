@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/labster/p6-File-Spec-Case.git
 	branch = master
-	commit = e6dbc383bcc282bcd002054228cba2b323929dff
-	parent = 4b9bda4f2593b08d8baece4ca075519fdb2ba014
+	commit = 09419738d46c039b0aeb36def2c0b4edc7784eca
+	parent = 540e444ee9533e29a95bf82396c2076fd27f7c91
 	cmdver = 0.4.0
