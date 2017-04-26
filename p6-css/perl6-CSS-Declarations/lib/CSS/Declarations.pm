@@ -120,9 +120,11 @@ class CSS::Declarations {
         }
     }
 
-    submethod TWEAK( Str :$style, :$inherit = [], :$copy, :$module, :$tweak, :$warn, :$declarations, *%props, ) {
-        %module-metadata{$!module} //= do with $!module.property-metadata {
-            $_
+    submethod TWEAK( Str :$style, :$inherit = [], :$copy, :$declarations,
+                     :$module, :$warn, # stop these leaking through to %props
+                     *%props, ) {
+        with $!module.property-metadata {
+            %module-metadata{$!module} //= $_
         }
         else {
             die "module {$!module.name} lacks meta-data"
