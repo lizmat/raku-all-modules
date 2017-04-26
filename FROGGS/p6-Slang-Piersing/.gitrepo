@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/FROGGS/p6-Slang-Piersing.git
 	branch = master
-	commit = 23815626abb882a4a63f8c82e491ec9316de0247
-	parent = 110edc2ce2413986e10c356935e30256c581cba4
+	commit = d4d1cf26c854a8618a75817c10b57ae75d10a22e
+	parent = 99535564c6f1950a179874ab6a2b0b9f0cab3f13
 	cmdver = 0.4.0
