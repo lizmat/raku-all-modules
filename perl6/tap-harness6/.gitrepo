@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6/tap-harness6.git
 	branch = master
-	commit = c19f5cc8d94f85f7ce6fb97fbbfd0f7547f13f79
-	parent = ed7d2487def82873f136c30210ff77b57d492629
+	commit = 3152c68e920077249dadbfdaf15e1282c32781b4
+	parent = 884bd349e7e737f4936922ad12dfeebea8b9b061
 	cmdver = 0.4.0
