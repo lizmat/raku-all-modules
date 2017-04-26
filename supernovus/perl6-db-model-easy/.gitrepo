@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/supernovus/perl6-db-model-easy.git
 	branch = master
-	commit = c96f00c13546a1365311796ba8325fc37e457e77
-	parent = ab64916aa98d5112dcd4fd586a15812568f5e6d7
+	commit = 2f4c137091c178959ae7362201401942a0d28d75
+	parent = dd6bd383b7ed0d7a65f241f99378d12fa0db5455
 	cmdver = 0.4.0
