@@ -6,6 +6,7 @@
   "depends" : [ ],
   "description" : "Camelizes and decamelizes given string",
   "name" : "String::CamelCase",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "String::CamelCase" : "lib/String/CamelCase.pm6"
