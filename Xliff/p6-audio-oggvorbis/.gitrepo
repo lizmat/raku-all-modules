@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Xliff/p6-audio-oggvorbis.git
 	branch = master
-	commit = 743908b237b1490492a1b1caac70645c118fd111
-	parent = d2e3a9c282602d6f222c42aeafc0f6230c21f42d
-	cmdver = 0.2.3
+	commit = 207ecf40e4b2607f432eaa814eec8cae87cffdee
+	parent = a081d323086cd8dd698094d5b24e8c7454886b15
+	cmdver = 0.4.0
