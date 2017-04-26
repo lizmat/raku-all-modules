@@ -1,17 +1,17 @@
 ---
 authors:
   - Brian S. Julin
-depends: 
+depends:
   - File::Temp
   - Test
-build-depends: 
+build-depends:
   - File::Temp
   - Test
 test-depends:
   - File::Temp
   - Test
 description: Perl6 -- manage GNU screen sessions and use them for tests
-license: http://www.perlfoundation.org/artistic_license_2_0
+license: Artistic-2.0
 name: Proc::Screen
 perl: 6
 provides:
