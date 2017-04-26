@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Skarsnik/nativecall-typediag.git
 	branch = master
-	commit = c38e374775ace5eabca587d6121712ef2a9f63c2
-	parent = d531dde366e5b3ca5364fcd616b7d7e9ef50175a
+	commit = a0d3f9aa44567090bbde5635e4b617e7c68f0c76
+	parent = b00f8fa1ccc74d73aa912ecb76a5364e5cdbd701
 	cmdver = 0.4.0
