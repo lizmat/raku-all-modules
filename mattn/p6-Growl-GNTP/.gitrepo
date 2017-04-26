@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/mattn/p6-Growl-GNTP.git
 	branch = master
-	commit = e39f0638f4dbe0992b2636ee9b0575cc40ef7f2e
-	parent = b16f8f2c44e796b4af381dadffacd95ba5712bf4
-	cmdver = 0.2.2
+	commit = ed255d348de9120fb5c6b67b5b0f3453350a4de9
+	parent = 14fcf89c08929a92cec5347bb59ba53c7b15905d
+	cmdver = 0.4.0

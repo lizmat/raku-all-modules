@@ -1,5 +1,6 @@
 {
   "name" : "Growl::GNTP",
+  "license": "Artistic-2.0",
   "source-url" : "git://github.com/mattn/p6-Growl-GNTP.git",
   "perl" : "v6",
   "provides" : {
