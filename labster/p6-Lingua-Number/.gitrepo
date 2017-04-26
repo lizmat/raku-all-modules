@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/labster/p6-Lingua-Number.git
 	branch = master
-	commit = 1f0d2a9bb34d8b8c3959996532e3edae2c02222f
-	parent = d6af2bc44c981cc62616baa1c940ad174c3f7afa
-	cmdver = 0.2.2
+	commit = e7d8a7c848ea0cd7dac7a5d8756bf490507decd5
+	parent = cf79c46d26c1af8a857efbb2580a2533ec875308
+	cmdver = 0.4.0
