@@ -41,10 +41,10 @@ code to execute to check the validity of value, and an
 optional descriptive error message to show when the value
 doesn't match the subset.
 
-Note: type `Any` always matches the subset. This exists to
-make it possible to cleanly define subsets for optional
-parameters, for which the type check is still called, even
-when they aren't provided in the sub/method calls.
+Note: undefined values are accepted by the subset.
+This exists to make it possible to cleanly define subsets
+for optional parameters, for which the type check is still
+called, even when they aren't provided in the sub/method calls.
 
 # CONFUSING ERRORS
 
