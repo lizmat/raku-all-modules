@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Pastebin::Shadowcat",
+    "license"      : "Artistic-2.0",
     "version"      : "2.001002",
     "tags"         : ["pastebin"],
     "description"  : "Use http://fpaste.scsys.co.uk/ pastebin from Perl 6",
