@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/drforr/perl6-slang-roman.git
 	branch = master
-	commit = 40f228d3286a1dbf525367238a7bd1f1c0c8e6a4
-	parent = 6ee7756e15fc9642f3da5e0142ab580e5f9d6f44
+	commit = ce9564297f22d4a436c37a758571a8b5f2082f80
+	parent = 490debca81fdbeb6c37ac1a51f08c521f9d09214
 	cmdver = 0.4.0
