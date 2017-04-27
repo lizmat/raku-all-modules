@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/teodozjan/path6-coverage.git
 	branch = master
-	commit = 9ea48aa2ec87b84d7d9b64ad1bd185595a760ef4
-	parent = 9991cb5dc4e8cff30a569e8065952d703bdc50fa
+	commit = 4f294fbe9534ecb07ebc5e8fb6c6d124298646ce
+	parent = e6aae9da203a6a52e31a44bb8ed6b7f530bcf6b2
 	cmdver = 0.4.0
