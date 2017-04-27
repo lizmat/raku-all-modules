@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/samgwise/p6-algorithm-genetic.git
 	branch = master
-	commit = 1aa3886e2686163ef6a4c727f3bedafacce14992
-	parent = e039d2970d51c8fde6ebb13f8ee6381fb40cf956
+	commit = 9afd89842572f8aa0c0fb2b47cde42c31b353644
+	parent = 20fc30af49fe874fe59252a0bf3086c3c5850ba9
 	cmdver = 0.4.0

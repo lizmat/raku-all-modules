@@ -6,6 +6,7 @@
   "depends" : [ ],
   "description" : "A simple evolutionanry algorithm in Perl6",
   "name" : "Algorithm::Genetic",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "Algorithm::Genetic" : "lib/Algorithm/Genetic.pm6",
