@@ -1,6 +1,7 @@
 {
 	"perl"        : "6.*",
 	"name"        : "Marpa",
+	"license"     : "Artistic-2.0",
 	"version"     : "*",
 	"description" : "A Perl6 binding to libmarpa, the parser module",
 	"depends"     : [ ],
