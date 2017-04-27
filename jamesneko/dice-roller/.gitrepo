@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jamesneko/dice-roller.git
 	branch = master
-	commit = da8827939a20f8e79b2b93f8775d74753ce0537b
-	parent = c4c7626be1ef9c4c48dad2d17183e99d78d7906e
-	cmdver = 0.2.3
+	commit = a32d40d594c5d3ed466be43f0800b54ded531bee
+	parent = e6248560da3b50a5aaf33010e7d132c5b8c6bbcf
+	cmdver = 0.4.0
