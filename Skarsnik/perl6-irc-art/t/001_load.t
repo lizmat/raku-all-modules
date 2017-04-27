@@ -6,6 +6,7 @@ use Test;
 
 BEGIN { use-ok 'IRC::Art' }
 
+use IRC::Art;
 my IRC::Art $object .= new(5,5);
 isa-ok $object, IRC::Art;
 

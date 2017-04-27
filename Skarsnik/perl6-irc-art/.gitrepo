@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Skarsnik/perl6-irc-art.git
 	branch = master
-	commit = 153952f4d5f1708270934d23f5af6e2f028f0e1e
-	parent = 236b168711017c5bab35be43b7fbb22b3a21cfe9
-	cmdver = 0.2.3
+	commit = c89376fb3dc6bd239cd1c9e48caaacd457fba9c3
+	parent = 8c94570a945d2ca603f49115bd0fc8be48390c7a
+	cmdver = 0.4.0
