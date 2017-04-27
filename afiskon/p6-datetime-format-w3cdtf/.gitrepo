@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/afiskon/p6-datetime-format-w3cdtf.git
 	branch = master
-	commit = 5fe83df21142c8105ceac54f767f6452ec8ae173
-	parent = 2681862871912c78d1332534ad9c06528ed052a5
+	commit = 52843c04940aa1c272c5e91db5bdcdb729dedcbc
+	parent = 368bdb44b3c48045fdc5ba6ffd4082a4c649d59a
 	cmdver = 0.4.0
