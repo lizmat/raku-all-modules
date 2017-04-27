@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-SetUnion.git
 	branch = master
-	commit = 3bd4b096d415863983a253ec43a0d449a797502f
-	parent = f2251894f0108525e8a01c86f65c0183b92af2cc
-	cmdver = 0.2.3
+	commit = 0b019924d998057c27fbba00ef5712101d25ea2a
+	parent = eec18c65d3550227ef3725b3d678a7165f563086
+	cmdver = 0.4.0
