@@ -29,7 +29,12 @@ sub EXPORT(|) {
 
             if $use {
                 $RMD("Attempting to load '$name'") if $RMD;
-                my $comp_unit := self.load_module($/, $name, %cp, $*GLOBALish);
+
+                # old way:
+                my $comp_unit := try self.load_module($/, $name, %cp, $*GLOBALish);
+                # new way:
+                $! and $comp_unit := self.load_module($/, $name, %cp, self.cur_lexpad);
+
                 $RMD("Performing imports for '$name'") if $RMD;
                 self.do_import($/, $comp_unit.handle, $name, $arglist);
                 self.import_EXPORTHOW($/, $comp_unit.handle);
