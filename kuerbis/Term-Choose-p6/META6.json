@@ -8,6 +8,7 @@
   ],
   "description" : "Choose items from a list interactively.",
   "name" : "Term::Choose",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "Term::Choose" : "lib/Term/Choose.pm6",
