@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/hoelzro/p6-pod-eod.git
 	branch = master
-	commit = ea5a7984cab1b62ebeb29c8a81f440abd0679c6e
-	parent = cc8e9622b094b61d2f7617675dfdda0d0d7ef7f6
-	cmdver = 0.2.3
+	commit = 619424b30f3611c46f2f3da199a808e2da91b05e
+	parent = 40884e4f98856d6a197d98eb71a4ef035c0ee2c7
+	cmdver = 0.4.0
