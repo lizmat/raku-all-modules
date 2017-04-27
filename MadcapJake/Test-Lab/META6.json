@@ -1,5 +1,6 @@
 {
   "name"        : "Test::Lab",
+  "license"     : "Artistic-2.0",
   "version"     : "1.0.0",
   "description" : "Test run refactored code against legacy code",
   "provides"    : {

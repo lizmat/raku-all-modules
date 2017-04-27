@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MadcapJake/Test-Lab.git
 	branch = master
-	commit = 59f0b77f0a9bcbca46b1062d278ed219c501bc96
-	parent = af04cd75d64e4fb63d6c1138f9226d7c71930178
-	cmdver = 0.2.3
+	commit = 426512b31da69642145517ac2475050c1fa8f7ab
+	parent = 13aeaa6949aa74be6005a987de34e5d0ec8e5357
+	cmdver = 0.4.0
