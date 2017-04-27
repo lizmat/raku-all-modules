@@ -10,7 +10,7 @@ plan 5;
 
 my $config = Config.new();
 
-ok $config.read("t/test.yaml"), "Read a YAML file";
+ok $config.read("t/files/config.yaml"), "Read a YAML file";
 
 ok $config.get("a") eq "a", "Get simple key";
 ok $config.get("b.c") eq "c", "Get nested key";

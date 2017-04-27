@@ -9,6 +9,7 @@ class Config::Parser::yaml is Config::Parser
 {
     method read(Str $path --> Hash)
     {
+        say $path;
         load-yaml(slurp $path);
     }
 }
