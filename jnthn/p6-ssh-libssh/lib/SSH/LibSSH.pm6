@@ -751,8 +751,8 @@ class SSH::LibSSH {
     class Channel {
         has Session $.session;
         has SSHChannel $.channel-handle;
-        has Bool $!stdout-eof = False;
-        has Bool $!stderr-eof = False;
+        has Promise $!stdout-eof;
+        has Promise $!stderr-eof;
 
         method new() {
             die X::SSH::LibSSH::Error.new(message =>
@@ -777,6 +777,7 @@ class SSH::LibSSH {
             my Supplier::Preserving $s .= new;
             given get-event-loop() -> $loop {
                 $loop.run-on-loop: {
+                    ($is-stderr ?? $!stderr-eof !! $!stdout-eof) //= Promise.new;
                     my $decoder = $bin
                         ?? Nil
                         !! StreamingDecoder.new(Rakudo::Internals.NORMALIZE_ENCODING(
@@ -801,7 +802,6 @@ class SSH::LibSSH {
                                 $s.emit($decoder.consume-all-chars());
                             }
                             $s.done();
-                            ($is-stderr ?? $!stderr-eof !! $!stdout-eof) = True;
                         }
                         else {
                             error-check($!session.session-handle, $nread);
@@ -815,7 +815,16 @@ class SSH::LibSSH {
                     }
                 }
             }
-            $s.Supply # XXX use .schedule-on or so, but check we don't lose sequence
+
+            # Get observation off the worker thread.
+            supply {
+                whenever $s.Supply.Channel.Supply {
+                    .emit;
+                    LAST {
+                        try ($is-stderr ?? $!stderr-eof !! $!stdout-eof).keep(True);
+                    }
+                }
+            }
         }
 
         method write(Blob:D $data --> Promise) {
@@ -889,7 +898,13 @@ class SSH::LibSSH {
                             my $exit = ssh_channel_get_exit_status($!channel-handle);
                             if $exit >= 0 {
                                 $remove = True;
-                                $v.keep($exit);
+                                my @awaitees = ($!stdout-eof, $!stderr-eof).grep(*.defined);
+                                if @awaitees {
+                                    Promise.allof(@awaitees).then({ $v.keep($exit) });
+                                }
+                                else {
+                                    $v.keep($exit);
+                                }
                             }
                         }
                     }

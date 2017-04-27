@@ -1,7 +1,7 @@
 {
     "perl"          : "6.*",
     "name"          : "SSH::LibSSH",
-    "version"       : "0.8",
+    "version"       : "0.8.1",
     "description"   : "Asynchronous binding for libssh; client-only and limited functionality so far.",
     "author"        : "Jonathan Worthington <jnthn@jnthn.net>",
     "license"       : "Artistic-2.0",
