@@ -6,7 +6,7 @@ START=I
 [declarativa]:: =DEC =D I 
 juan :: Dm
 pedro :: Dm
-saludó :: =DA V 
+saludó :: =DA V -t
 pasó :: =DEN V -t
 en :: =D DEN
 a :: =D DA
@@ -38,7 +38,8 @@ amigo :: Nm
 bruta :: Af
 sordo :: Am
 sorda :: Af
-al :: =N DA
+al :: =Nm DA
+al :: =Am DA
 de :: =D =Nf Nf
 de :: =D =Nm Nm
 del :: =Nm =Nm Nm

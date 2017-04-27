@@ -33,9 +33,13 @@
 <div class="pod-body
  no-toc
 ">
-<h1>MinG::From::Text::Grammar: Grammar class that parses a file describing an MG lexicon.</h1><h1>ConverterActions: Class that creates a MinG::Grammar when used in conjunction with MinG::From::Text::Grammar</h1><article>
-<code class="pod-code-inline">grammar_from_text:(Str $s --&gt; MinG::Grammar)</code>:
-Takes a string and returns the grammar that it describes. The format of an MG description is the following (comments are not actually allowed): START=C #(i.e. the start category) el :: =N D hombre :: N come :: =N V pan :: N :: =V =D I #this is an empty category no :: =V V :: =I C END
+<h1>MinG::From::Text::GrammarMG: Grammar class that parses text describing an MG lexicon.</h1><h1>MinG::From::Text::GrammarEDMG: Grammar class that parses EDMGs.</h1><h1>ConverterActionsMG: Class that creates a MinG::Grammar when used in conjunction with MinG::From::Text::Grammar</h1><article>
+<code class="pod-code-inline">mg_grammar_from_text:(Str $s --&gt; MinG::Grammar)</code>:
+Takes a string and returns the grammar that it describes. The format of an MG description is the following (comments are not actually allowed): START=C # (i.e. the start category) el :: =N D hombre :: N come :: =N V pan :: N :: =V =D I # this is an empty category no :: =V V :: =I C END
+</article>
+<article>
+<code class="pod-code-inline">edmg_grammar_from_text:(Str $s --&gt; MinG::EDMG::Grammar)</code>:
+Similar to mg_grammar_from_text but for EDMGs.
 </article>
 
 </div>

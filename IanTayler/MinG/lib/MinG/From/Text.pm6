@@ -2,11 +2,12 @@ use strict;
 use MinG;
 use MinG::S13;
 use MinG::S13::Logic;
+use MinG::EDMG;
 
 #|{
-    Grammar class that parses a file describing an MG lexicon.
+    Grammar class that parses text describing an MG lexicon.
     }
-grammar MinG::From::Text::Grammar {
+grammar MinG::From::Text::GrammarMG {
     token TOP {<header>\h*\v<lexlist>}
 
     rule header {\w* '=' <cat>}
@@ -27,9 +28,17 @@ grammar MinG::From::Text::Grammar {
 }
 
 #|{
+    Grammar class that parses EDMGs.
+    }
+class MinG::From::Text::GrammarEDMG is MinG::From::Text::GrammarMG {
+    token feat_marker {<[\+ \- \> \< \= \@ \*]>}
+    token feat {<feat_marker>\w+|\w+<feat_marker>|\w+}
+}
+
+#|{
     Class that creates a MinG::Grammar when used in conjunction with MinG::From::Text::Grammar
     }
-class ConverterActions {
+class ConverterActionsMG {
 
     method TOP ($/) {
         make MinG::Grammar.new( lex => $<lexlist>.made, start_cat => $<header>.made);
@@ -61,12 +70,26 @@ class ConverterActions {
 
 }
 
+class ConverterActionsEDMG is ConverterActionsMG {
+    method TOP ($/) {
+        make MinG::EDMG::Grammar.new(lex => $<lexlist>.made, start_cat => $<header>.made);
+    }
+
+    method header ($/) {
+        make MinG::EDMG::Feature.from_str($<cat>.Str);
+    }
+
+    method feat ($/) {
+        make MinG::EDMG::Feature.from_str($/.Str);
+    }
+}
+
 #|{
     Takes a string and returns the grammar that it describes.
 
     The format of an MG description is the following (comments are not actually allowed):
 
-    START=C #(i.e. the start category)
+    START=C # (i.e. the start category)
 
     el :: =N D
 
@@ -76,7 +99,7 @@ class ConverterActions {
 
     pan :: N
 
-    :: =V =D I #this is an empty category
+    :: =V =D I # this is an empty category
 
     no :: =V V
 
@@ -85,23 +108,37 @@ class ConverterActions {
     END
 
     }
-sub grammar_from_text(Str $s) of MinG::Grammar is export {
-    return MinG::From::Text::Grammar.parse($s, actions => ConverterActions).made;
+sub mg_grammar_from_text(Str $s) of MinG::Grammar is export {
+    return MinG::From::Text::GrammarMG.parse($s, actions => ConverterActionsMG).made;
+}
+
+#|{
+    Similar to mg_grammar_from_text but for EDMGs.
+    }
+sub edmg_grammar_from_text(Str $s) of MinG::EDMG::Grammar is export {
+    return MinG::From::Text::GrammarEDMG.parse($s, actions => ConverterActionsEDMG).made;
 }
 
 sub grammar_from_file($f) of MinG::Grammar is export {
     my $contents = $f.slurp;
-    # say MinG::From::Text::Grammar.parse($contents);
-    return grammar_from_text($contents);
-}
+    my @lines = $contents.split(/\n/);
 
-grammar Do {
-    token TOP { <header>' '*\n<lexlist> }
-
-    rule header {\w+ '=' <cat>}
-    rule cat {\w+}
-    rule lexlist { <lex>' '*\n<lexlist> | <lex> }
-    token lex {\w+}
+    my regex type {'MG'|'EDMG'};
+    my $type = "MG";
+    if @lines[0] ~~ /^'TYPE='<type>/ {
+        $type = $/<type>.Str;
+        @lines = @lines[1..*];
+    }
+    $contents = @lines.join("\n");
+    if $type eq "MG" {
+        return mg_grammar_from_text($contents);
+    } elsif $type eq "EDMG" {
+        say $contents;
+        return edmg_grammar_from_text($contents);
+    } else {
+        note "Wrong type of grammar in file {$f.relative}";
+    }
+    return Nil;
 }
 
 ######################
@@ -113,7 +150,18 @@ sub MAIN() {
     $p.init($g);
     my @frases = ["juan saludó a maría", "juan dijo que maría saludó a pedro", "pedro era viejo", "pedro dijo que maría pensaba que juan era viejo", "el sordo pensaba que pedro saludó a maría", "maría saludó al sordo", "a maría saludó juan", "maría pensaba que pedro saludó al sordo de juan", "maría dijo que saludó a pedro", "pedro fue a la casa de juan"];
     for @frases -> $frase {
-        $p.parse_str($frase, PARALLEL);
+    #    $p.large_parse($frase);
+    }
+
+    $g = edmg_grammar_from_text(Q:to/END/);
+    START=V
+    come :: D= =D V
+    juan :: D
+    pan :: D
+    END
+
+    for $g.lex -> $l {
+        say $l;
     }
 
 }
