@@ -211,9 +211,16 @@ class Config::DataLang::Refine:auth<github:MARTIMM> {
         }
 
         $!config-content = slurp($locs[0]);
-        (try require ::($!data-module)) === Nil
-             and say "Failed to load $!data-module;\n$!";
-        $!config = &$!read-from-text($!config-content);
+        try {
+          require ::($!data-module);
+          $!config = &$!read-from-text($!config-content);
+
+          CATCH {
+            default {
+              say "Failed to load $!data-module;\n$!";
+            }
+          }
+        }
       }
     }
 
@@ -229,11 +236,10 @@ class Config::DataLang::Refine:auth<github:MARTIMM> {
 
     my Hash $refined-list = {};
     my Hash $s = $!config;
-
     for @key-list -> $refine-key {
 
       last unless $s{$refine-key}:exists and $s{$refine-key}.defined;
-      $s = $s{$refine-key};
+      $s = $s{$refine-key} if $s{$refine-key} ~~ Hash;
 
       for $s.keys -> $k {
         next if $s{$k} ~~ Hash;

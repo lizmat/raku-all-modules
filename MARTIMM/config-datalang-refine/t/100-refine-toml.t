@@ -123,7 +123,7 @@ subtest {
 #-------------------------------------------------------------------------------
 subtest {
 
-  my Config::DataLang::Refine $c .= new(:config-name<myCfg.cfg>);
+  my Config::DataLang::Refine $c .= new( :trace, :config-name<myCfg.cfg>);
   my Hash $o = $c.refine(<app>);
   ok $o<workdir>:!exists, "app has no workdir";
   is $o<port>, 2345, "port app $o<port>";
