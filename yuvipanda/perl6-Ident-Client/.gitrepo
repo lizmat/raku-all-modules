@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/yuvipanda/perl6-Ident-Client.git
 	branch = master
-	commit = 49784f843b7b296930ca84d3319772a6fe51cc00
-	parent = c0cea032ae46118c53c2729224142c2126b9af2a
-	cmdver = 0.2.2
+	commit = b5dc48a1260f08bf4910121aeb3c043ed740d4b4
+	parent = ba37ff644ea50f17c811775393722f96fb8dc8fc
+	cmdver = 0.4.0
