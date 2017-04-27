@@ -1,0 +1,15 @@
+{
+  "name": "PerlStore",
+  "source-url": "git://github.com/teodozjan/perl-store.git",
+  "perl": "6.*",
+  "author": "github:teodozjan",
+  "depends": [
+    
+  ],
+  "license": "Artistic-2.0",
+  "provides": {
+    "PerlStore::FileStore": "lib/PerlStore/FileStore.pm6"
+  },
+  "version": "*",
+  "description": "Implemented simple Serialization form http://doc.perl6.org"
+}
