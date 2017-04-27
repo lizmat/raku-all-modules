@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-BinaryIndexedTree.git
 	branch = master
-	commit = f1d2db5ee47d53ee00423959151ced60c07ba4e4
-	parent = 053fec3a7dd3ddff2d423d1212d8f552e2cd0e27
-	cmdver = 0.2.3
+	commit = a5bdc66959e6100615eaf4ec32495d732881f3a3
+	parent = 26781faec444d195c8e083b48f0657d1f509bc04
+	cmdver = 0.4.0
