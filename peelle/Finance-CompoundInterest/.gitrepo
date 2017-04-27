@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/peelle/Finance-CompoundInterest.git
 	branch = master
-	commit = 1e27165230707de755dd1fc9ecb28737687b6af1
-	parent = b35eeeed83d0271e10896c0958b1d2106b92f80c
+	commit = bbe9e9dd6e84c23287636a99671324ae3fec69e5
+	parent = 0a698cd6bb35f4bfa7ca742663a046c430fcf23b
 	cmdver = 0.4.0
