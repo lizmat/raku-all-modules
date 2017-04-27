@@ -3,6 +3,7 @@
     "name"        : "Mortgage",
     "version"     : "*",
     "author"	  : "github:teodozjan",
+    "license"     : "Artistic-2.0",
     "description" : "Mortgage calculation library",
     "depends"     : [ ],
     "provides"    : {
