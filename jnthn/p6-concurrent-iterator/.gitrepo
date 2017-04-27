@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/p6-concurrent-iterator.git
 	branch = master
-	commit = ebd27051fff6aaa7d5b7e1c06772d1a91318b5f4
-	parent = 5a657badc0f68cba8d8f6e3bd1e31a1a1004e4e1
+	commit = 867645fe8aa4e18f241f65ac3176fc63a9095fd7
+	parent = f4d119417dba04c32cc6c7113845d66594bb48f7
 	cmdver = 0.4.0
