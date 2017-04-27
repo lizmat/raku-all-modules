@@ -127,10 +127,12 @@ This command is just quick way of writing something like:
 
 Options:
   -d --in-docker=<image list>
-      Docker images to execute the scriptsunder prove. Multiple image names
+      Docker images to execute the scripts under prove. Multiple image names
       must be comma separated.
   -j --jobs=<number>
       The number of jobs that prove should run.
+  -s --mount-docker-socket
+      Mounts /var/run/docker.sock inside the containers.
 
 Examples:
   spit prove mytest.t
@@ -169,24 +171,21 @@ my class commands {
                    :$opts,
                    :$no-inline,
                   ) {
-        if $file.IO.e {
-            compile($file.IO.slurp, :$debug, :$target, :$opts, :$no-inline, name => $file).gist;
-        } else {
-            die "no such file ‘$file’";
-        }
+        compile(($file.IO.slurp orelse .throw), :$debug, :$target, :$opts, :$no-inline, name => $file).gist;
     }
 
     method eval(Str:D $src, :$debug, :$target, :$opts, :$no-inline) {
         compile($src, :$debug, :$target, :$opts, :$no-inline, name => "eval").gist;
     }
 
-    method prove(Str:D $path, Str:D $in-docker, :$jobs) {
+    method prove(Str:D $path, Str:D $in-docker, :$mount-docker-socket, :$jobs) {
         my @runs = $in-docker.split(',').map: { "-d=$_" };
         for @runs {
-            my @run = "prove", ("-j$_" with $jobs), '-r', '-e', "$*EXECUTABLE $*PROGRAM $_ compile", $path;
+            my @run = "prove", ("-j$_" with $jobs), '-r', '-e',
+                      "$*EXECUTABLE $*PROGRAM $_ compile{' -s' if $mount-docker-socket}", $path;
             note "running: ", @run.perl;
             my $run = run @run;
-            exit $run.status unless $run.status == 0;
+            exit $run.exitcode unless $run.exitcode == 0;
         }
     }
 }
@@ -204,6 +203,7 @@ sub do-main() is export {
             }
             when 'prove' {
                 %named<jobs> //= %named<j>;
+                %named<mount-docker-socket> //= %named<s>;
                 my $in-docker = %named<in-docker> // %named<d>;
                 $in-docker =  'debian' unless $in-docker ~~ Str:D;
                 commands.prove(@pos[1], $in-docker, |%named);
@@ -280,7 +280,7 @@ sub compile-or-eval($command, @pos, %named) {
     if $docker {
         write-docker $docker,$promise,$res;
     } elsif %named<RUN> {
-        exit (run 'sh','-c', $res).status;
+        exit (run 'sh','-c', $res).exitcode;
     } else {
         print $res;
     }

@@ -2,6 +2,7 @@ use Test;
 
 plan 9;
 
+
 {
     my $a = Docker<create_test>;
 
@@ -10,7 +11,7 @@ plan 9;
     ok $a, '.Bool after created';
     ok $a.exists, '.exists';
     ok $a.remove, '.remove';
-    nok $a, '.Bool after removed';
+        nok $a, '.Bool after removed';
 }
 
 {
