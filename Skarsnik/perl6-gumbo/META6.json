@@ -1,6 +1,7 @@
 {
 	"perl" : "6.*",
         "name" : "Gumbo",
+        "license" : "Artistic-2.0",
         "version" : "*",
         "description" : "Binding of the gumbo C library, a html parser lib",
         "author" : "Sylvain Colinet",
