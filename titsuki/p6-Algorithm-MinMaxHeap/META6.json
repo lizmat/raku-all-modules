@@ -6,6 +6,7 @@
   "depends" : [ ],
   "description" : "A Perl 6 implementation of double ended priority queue",
   "name" : "Algorithm::MinMaxHeap",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "Algorithm::MinMaxHeap" : "lib/Algorithm/MinMaxHeap.pm6",
