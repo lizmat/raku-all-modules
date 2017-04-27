@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "IRC::Client::Plugin::Factoid",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "IRC factoid bot",
     "depends"      : [
