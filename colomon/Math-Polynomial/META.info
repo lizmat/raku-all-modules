@@ -1,5 +1,6 @@
 {
     "name"        : "Math::Polynomial",
+    "license"     : "Artistic-2.0",
     "version"     : "*",
     "description" : "Simple polynomial class",
     "provides"    : {
