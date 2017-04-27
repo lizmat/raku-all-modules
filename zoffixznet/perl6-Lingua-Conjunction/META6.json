@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Lingua::Conjunction",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "Convert lists into linguistic conjunctions and fill them into a template",
     "depends"      : [ ],
