@@ -4,7 +4,7 @@ use v6.c;
 use Test;
 use lib "lib";
 
-plan 2;
+plan 4;
 
 use Config;
 
@@ -19,3 +19,5 @@ $config.read({
 
 ok $config.has("a"), "Check existence of simple key";
 ok $config.has("b.c"), "Check existence of nested key";
+ok $config.has(["a"]), "Check existence of simple key using array";
+ok $config.has(["b", "c"]), "Check existence of nested key using array";
