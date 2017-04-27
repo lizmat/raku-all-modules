@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Test-Output.git
 	branch = master
-	commit = 9dc871530366e8f593da5dac53195e3f76ec12bf
-	parent = a0e04decdbc966973cac23366843ad582820042e
-	cmdver = 0.2.3
+	commit = beb08f49815bbdf7051a5019106ef069bd8d9d54
+	parent = b5d15a75304a1593fbcfd5a1965896555eeb0dc2
+	cmdver = 0.4.0
