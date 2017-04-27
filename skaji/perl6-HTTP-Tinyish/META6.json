@@ -8,6 +8,7 @@
   ],
   "description" : "perl6 port of HTTP::Tinyish",
   "name" : "HTTP::Tinyish",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "HTTP::Tinyish" : "lib/HTTP/Tinyish.pm6",
