@@ -1,0 +1,16 @@
+{
+    "perl" : "6.*",
+    "name" : "TrigPi",
+    "version" : "1.2.1",
+    "description" : "accurate computation of sin(π*$x) and cos(π*$x)",
+    "author" : "Lucien Grondin",
+    "build-depends" : [ ],
+    "test-depends" : [
+        "Test"
+    ],
+    "depends" : [ ],
+    "provides" : {
+        "TrigPi" : "lib/TrigPi.pm6"
+    },
+    "source-url" : "git://github.com/grondilu/trigpi.git"
+}
