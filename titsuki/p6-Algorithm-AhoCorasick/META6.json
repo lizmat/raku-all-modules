@@ -6,6 +6,7 @@
   "depends" : [ ],
   "description" : "efficient search for multiple strings",
   "name" : "Algorithm::AhoCorasick",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "Algorithm::AhoCorasick" : "lib/Algorithm/AhoCorasick.pm6",
