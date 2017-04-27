@@ -1,6 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "SCGI",
+  "license"     : "Artistic-2.0",
   "version"     : "2.4",
   "description" : "A SCGI library for Perl 6",
   "depends"     : [ "HTTP::Status", "Netstring", "PSGI" ],
