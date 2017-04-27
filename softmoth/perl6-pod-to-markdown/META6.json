@@ -1,6 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "Pod::To::Markdown",
+  "license"     : "Artistic-2.0",
   "version"     : "v0.0.1",
   "description" : "Render Perl6 Pod as Markdown",
   "author"      : "Jorn van Engelen",
