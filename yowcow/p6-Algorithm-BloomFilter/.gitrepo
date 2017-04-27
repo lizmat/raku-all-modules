@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/yowcow/p6-Algorithm-BloomFilter.git
 	branch = master
-	commit = a1db2f73e260ba6ba2c16daf63fb41f210b9dd07
-	parent = 93b633fb12481fbade8b305611fae6d834f5e2bc
-	cmdver = 0.2.3
+	commit = 2cecaa4e8aa8cb360625338c2e0ca331f626b424
+	parent = 209527043363e51001265dfcaea1e17f7d1bb8cb
+	cmdver = 0.4.0

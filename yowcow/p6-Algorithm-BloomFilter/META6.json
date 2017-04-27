@@ -8,6 +8,7 @@
   ],
   "description" : "A bloom filter implementation in Perl 6",
   "name" : "Algorithm::BloomFilter",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "Algorithm::BloomFilter" : "lib/Algorithm/BloomFilter.pm6"
