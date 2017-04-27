@@ -21,7 +21,7 @@ multi sub load-module(:$name, :$environment, :$network = 'acme', :$domain = 'loc
 
 #| Start shared platform services
 multi sub MAIN('create', Str :$network = 'acme', Str :$domain = 'localhost', Str :$data-path = '~/.platform') {
-    put color('yellow') ~ '» Service' ~ color('reset') ~ "\n";
+    put color('yellow') ~ '» Service' ~ color('reset');
     put $_.as-string for load-module(:name<Platform>, :$network, :$domain, :$data-path).create.Array;
 }
 
@@ -38,6 +38,11 @@ multi sub MAIN('run', Str :$project, Str :$network = 'acme', Str :$domain = 'loc
 #| Start suspended project
 multi sub MAIN('start', Str :$project, Str :$data-path = '~/.platform') {
     put banner() ~ load-module(:name<Platform::Project>, :$project, :$data-path).start.as-string;
+}
+
+#| Attach to running project
+multi sub MAIN('attach', Str :$project, Str :$data-path = '~/.platform') {
+    load-module(:name<Platform::Project>, :$project, :$data-path).attach;
 }
 
 #| Stop running project 

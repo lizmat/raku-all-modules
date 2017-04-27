@@ -4,7 +4,7 @@ use lib '../lib';
 use Test;
 use Platform::Project;
 
-plan 11;
+plan 13;
 
 {
     my $prj = Platform::Project.new(:project('my-project.yml'));
@@ -60,4 +60,12 @@ plan 11;
 
     is $tmpdir, $prj.project-dir, "project dir";
     is $prj.project-file, "$tmpdir/project.yml", "project file";
+}
+
+{
+    my $prj = Platform::Project.new(:project('~/my-project.yml'));
+    my $curr-path = $*HOME.IO.absolute;
+
+    is $prj.project-dir, $curr-path, "project dir with ~";
+    is $prj.project-file, "$curr-path/my-project.yml", "project file with ~";
 }

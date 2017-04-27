@@ -20,6 +20,7 @@ class Platform::Project {
         ;
 
     method TWEAK {
+        $!project .= subst(/\~/, $*HOME);
         if self.project.IO.extension eq 'yml' {
             $!project-dir = self.project.IO.dirname.IO.absolute;
             $!project-file = self.project.IO.absolute;
@@ -67,13 +68,16 @@ class Platform::Project {
                     print '.';
                     sleep 1.3;
                 }
-                put ')';
+                print ')';
             }
+            put '';
             $cont.exec;
         }
 
         $res;
     }
+
+    method attach { self.load-cont.attach }
 
     method start { self.load-cont.start.last-command }
 

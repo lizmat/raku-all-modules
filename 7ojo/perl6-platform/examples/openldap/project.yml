@@ -1,0 +1,47 @@
+environment:
+  - LDAP_ORGANISATION="Acme Company"
+  - LDAP_DOMAIN="acme.company"
+  - LDAP_ADMIN_PASSWORD="aiquoD1F"
+  - LDAP_READONLY_USER=true
+files:
+  /units.ldif: |
+    dn: ou=people,dc=acme,dc=company
+    ou: People
+    objectClass: top
+    objectClass: organizationalUnit
+    description: Parent object of all UNIX accounts
+  /groups.ldif: |
+    dn: cn=administrators,ou=people,dc=acme,dc=company
+    objectClass: top
+    objectClass: posixGroup
+    gidNumber: 678
+  /users.ldif: |
+    dn: uid=seppo,ou=people,dc=acme,dc=company
+    objectClass: top
+    objectClass: iNetOrgPerson
+    objectClass: posixAccount
+    objectClass: shadowAccount
+    cn: seppo
+    sn: Ilmarinen
+    uid: seppo
+    uidNumber: 16859
+    gidNumber: 100
+    homeDirectory: /home/seppo
+    loginShell: /bin/bash
+    gecos: seppo
+    userPassword: {crypt}x
+    shadowLastChange: 0
+    shadowMax: 0
+    shadowWarning: 0
+    mail: seppo@acme.company
+    
+    dn: cn=administrators,ou=people,dc=acme,dc=company
+    changetype: modify
+    add: memberuid
+    memberuid: seppo
+exec:
+  - sleep 5
+  - ldapadd -x -H ldap://openldap.localhost -w aiquoD1F -D "cn=admin,dc=acme,dc=company" -f /units.ldif 
+  - ldapadd -x -H ldap://openldap.localhost -w aiquoD1F -D "cn=admin,dc=acme,dc=company" -f /groups.ldif
+  - ldapadd -x -H ldap://openldap.localhost -w aiquoD1F -D "cn=admin,dc=acme,dc=company" -f /users.ldif
+  - ldappasswd -s tropiikki -D "cn=admin,dc=acme,dc=company" -w aiquoD1F -x "uid=seppo,ou=people,dc=acme,dc=company"

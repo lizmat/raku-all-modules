@@ -4,7 +4,7 @@ use Test;
 use Template;
 use nqp;
 
-plan 14;
+plan 16;
 
 constant AUTHOR = ?%*ENV<AUTHOR_TESTING>;
 
@@ -72,4 +72,17 @@ ok $tmpdir.IO.e, "got $tmpdir";
 
     run <perl6 -Ilib bin/platform --project=examples/files-and-dirs stop>;
     run <perl6 -Ilib bin/platform --project=examples/files-and-dirs rm>;
+}
+
+{
+    my $proc = run <perl6 -Ilib bin/platform --project=examples/openldap run>, :out;
+    my $out = $proc.out.slurp-rest;
+    ok $out ~~ / 'uccessfully built' /, 'openldap built and executed';
+
+    $proc = shell 'docker exec openldap ldapsearch -x -H ldap://localhost -b dc=acme,dc=company -D cn=admin,dc=acme,dc=company -w aiquoD1F', :out;
+    $out = $proc.out.slurp-rest;
+    ok $out ~~ / 'uid=seppo,ou=people,dc=acme,dc=company' /, 'found seppo on ldap directory';
+
+    run <perl6 -Ilib bin/platform --project=examples/openldap stop>;
+    run <perl6 -Ilib bin/platform --project=examples/openldap rm>;
 }

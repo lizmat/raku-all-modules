@@ -11,13 +11,18 @@ class Platform::Docker::Container is Platform::Container {
 
     submethod BUILD {
         $!dockerfile-loc = $_ if not $!dockerfile-loc and "$_/Dockerfile".IO.e for self.projectdir ~ "/docker", self.projectdir;
-        $!variant = "$!dockerfile-loc/Dockerfile".IO.slurp ~~ / ^ FROM \s .* alpine / ?? 'alpine' !! 'debian';
+        $!variant = (
+            $!dockerfile-loc and 
+            $!dockerfile-loc.IO.e and 
+            "$!dockerfile-loc/Dockerfile".IO.slurp ~~ / ^ FROM \s .* alpine / 
+            ) ?? 'alpine' !! 'debian';
         $!shell = $!variant eq 'alpine' ?? 'ash' !! 'bash';
         @!volumes = map { '--volume ' ~ self.projectdir.IO.abspath ~ '/' ~ $_ }, self.config-data<volumes>.Array if self.config-data<volumes>;
         self.hostname = self.name ~ '.' ~ self.domain;
     }
 
     method build {
+        return if not $.dockerfile-loc;
         my @args;
         my $config = self.config-data;
         if $config<build> {
@@ -146,6 +151,7 @@ class Platform::Docker::Container is Platform::Container {
 
     method run {
         my $config = self.config-data;
+        $config<command> ||= '';
 
         # Type of docker image e.g systemd
         if $config<type> and $config<type> eq 'systemd' {
@@ -176,6 +182,10 @@ class Platform::Docker::Container is Platform::Container {
     method start {
         self.last-command: run <docker start>, self.name, :out, :err;
         self;
+    }
+
+    method attach {
+        run <docker exec -it>, self.name, self.shell;
     }
 
     method stop {
