@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/MattOates/Stats.git
+	branch = master
+	commit = feba0b4efa8f5cf9fd5426576db524ad6a522522
+	parent = 25300346acc396e0799ec87c79e0da0308afbd1a
+	cmdver = 0.4.0
