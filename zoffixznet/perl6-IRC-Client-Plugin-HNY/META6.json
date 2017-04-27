@@ -1,6 +1,7 @@
 {
     "perl"         : "6.*",
     "name"         : "IRC::Client::Plugin::HNY",
+    "license"      : "Artistic-2.0",
     "version"      : "2.001001",
     "description"  : "Plugin for New Year's IRC parties",
     "depends"      : [
