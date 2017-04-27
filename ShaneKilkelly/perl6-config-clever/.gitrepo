@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ShaneKilkelly/perl6-config-clever.git
 	branch = master
-	commit = a869961491d5b6af9bffffc37456f3b6965a74c1
-	parent = ffdade427bb6d428165c52655b93527a7481aea0
+	commit = f9fe7471323630b3dde9ffd427f881dddc8bfca3
+	parent = d1cf87a06c50a39f7a1654556094d16518403cc9
 	cmdver = 0.4.0
