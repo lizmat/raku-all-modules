@@ -30,7 +30,7 @@ our sub wordsplit(Str $given) is export(:DEFAULT) returns List {
         | "\b"
         | <?after <-[A ..Z]>> <?before <:Lu>>
         | <?after <:Lu>> <?before <:Lu> <:Ll>>
-    /, :skip-empty);
+    /, :skip-empty).cache;
 }
 
 =begin pod
