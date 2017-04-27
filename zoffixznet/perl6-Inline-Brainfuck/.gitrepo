@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Inline-Brainfuck.git
 	branch = master
-	commit = 4c1023059cb60a187a8b647b98ec5c85720364cc
-	parent = 838c1bedb806e928bf39735078d0bdd1e896f948
-	cmdver = 0.2.3
+	commit = fe03a3d20e30530c8e141bda78763c5de8a5cdd8
+	parent = db691d49607d2f9a7a880c2fc9ef7231616e6209
+	cmdver = 0.4.0
