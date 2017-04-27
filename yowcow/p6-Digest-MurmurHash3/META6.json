@@ -11,6 +11,7 @@
   ],
   "description" : "MurmurHash3 implementation for Perl 6",
   "name" : "Digest::MurmurHash3",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "Digest::MurmurHash3" : "lib/Digest/MurmurHash3.pm6"
