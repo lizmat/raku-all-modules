@@ -1,6 +1,7 @@
 {
         "perl" : "6.*",
         "name" : "Acme::Flutterby",
+        "license" : "Artistic-2.0",
         "version" : "0.01",
         "description" : "Acme::Flutterby - An object-oriented interface to a butterfly.  In what else but Perl 6...",
         "author" : "John Scoles",
