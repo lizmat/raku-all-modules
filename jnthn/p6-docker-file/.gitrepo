@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/p6-docker-file.git
 	branch = master
-	commit = 40240c5d9fa1d42d1c5c39a4a4eb0272e40f8eea
-	parent = 1fba1b1764bae63c32c529c524a55c613cf009f0
-	cmdver = 0.2.3
+	commit = 5a67fe4948a5ef8ff0dd555560825f87363df7c1
+	parent = 540986a5cbe6cc958c05b24ce1da84bb205b05be
+	cmdver = 0.4.0
