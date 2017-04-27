@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ShaneKilkelly/perl6-http-router-blind.git
 	branch = master
-	commit = 8d33bdd789c83ebc80fc83e57ee87af89a72dd11
-	parent = 9dacf77aa4fd1b8a74c8502659ea049718099cc2
+	commit = c65e7ed7d21066c1882b212bef535473cbfce388
+	parent = d859f5670ce18eddf920e2dd10c8901021bbc13e
 	cmdver = 0.4.0
