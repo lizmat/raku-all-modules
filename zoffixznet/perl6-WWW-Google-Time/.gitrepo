@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-WWW-Google-Time.git
 	branch = master
-	commit = 344c13bd5d84e828127091e731d1d0207edf78ae
-	parent = 44632b4b7f5ba6c80129904c67d3b5d1929fba7a
+	commit = e2a57fa5cb48d834e18629740c1b073c916bac83
+	parent = 7a7fe5592995c16650ece558197b95c4bba12677
 	cmdver = 0.4.0
