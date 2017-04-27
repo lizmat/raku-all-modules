@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Pastebin::Gist",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001003",
     "description"  : "Use https://gist.github.com/ as a pastebin",
     "depends"      : [ "HTTP::Tinyish", "JSON::Fast" ],
