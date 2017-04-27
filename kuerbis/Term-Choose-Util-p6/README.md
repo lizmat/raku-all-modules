@@ -8,7 +8,7 @@ Term::Choose::Util - CLI related functions.
 VERSION
 =======
 
-Version 0.019
+Version 0.020
 
 DESCRIPTION
 ===========
@@ -237,6 +237,6 @@ Thanks to the people from [Perl-Community.de](http://www.perl-community.de), fro
 LICENSE AND COPYRIGHT
 =====================
 
-Copyright 2016 Matthäus Kiem.
+Copyright 2016-2017 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.

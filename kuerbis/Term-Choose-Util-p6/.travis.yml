@@ -5,7 +5,9 @@ language: perl6
 perl6:
   - latest
 install:
-  - rakudobrew build-panda
-  - panda installdeps .
-  - panda install Term::Choose
+  - rakudobrew build zef
+  - zef install .
+  - zef install Term::Choose
+  - zef install Term::Choose::NCurses
+  - zef install Term::Choose::LineFold
 sudo: false

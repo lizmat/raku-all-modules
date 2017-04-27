@@ -1,6 +1,10 @@
 Revision history for Term::Choose::Util
 
 
+0.020   2017-04-26
+        - Update .travis.yml
+        - Update year copyright
+
 0.019   2016-12-16
         - Import subroutines by their names
 
