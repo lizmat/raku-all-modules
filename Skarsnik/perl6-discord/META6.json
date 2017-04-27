@@ -1,5 +1,6 @@
 {
   "name" : "Discord",
+  "license" : "Artistic-2.0",
   "tags" : [ "Webservice" ],
   "author" : "Sylvain Colinet <scolinet@gmail.com>",
   "support" : {
