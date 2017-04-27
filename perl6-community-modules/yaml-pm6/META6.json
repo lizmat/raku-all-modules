@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "YAML",
+    "license"     : "Artistic-2.0",
     "version"     : "*",
     "author"      : "Ingy döt Net <ingy@cpan.org>",
     "description" : "YAML Ain’t Markup Language",
