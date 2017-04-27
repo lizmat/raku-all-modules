@@ -1,6 +1,7 @@
 {
   "source-url": "git@github.com:yowcow/p6-WebService-SOP.git",
   "name": "WebService::SOP",
+  "license" : "Artistic-2.0",
   "test-depends": [
     "Test",
     "Test::META"
