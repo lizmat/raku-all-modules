@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "String::Quotemeta",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "Perl 5's quotemeta subroutine",
     "test-depends" : [ "Test" ],

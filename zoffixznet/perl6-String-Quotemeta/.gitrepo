@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-String-Quotemeta.git
 	branch = master
-	commit = 39fb49168dcee774f399890323ddfd1e2314d498
-	parent = 9341cd12316c68c2697f201faad1db557d2e7acc
-	cmdver = 0.2.3
+	commit = af5a62b7c2bb6fd72e88b9ea8b9fc4308e2c46c5
+	parent = e8857aee8390713b47042db1e81e29da0569cf82
+	cmdver = 0.4.0
