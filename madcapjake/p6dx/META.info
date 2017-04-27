@@ -1,6 +1,7 @@
 {
   "perl"        : "6",
   "name"        : "App::P6Dx",
+  "license"     : "Artistic-2.0",
   "description" : "A syntax checker & completions generator.",
   "version"     : "v0.3.0",
   "authors"     : ["Jake Russo <madcap.russo@gmail.com>"],
