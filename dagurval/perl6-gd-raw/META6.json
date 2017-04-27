@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "GD::Raw",
+    "license"     : "Artistic-2.0",
     "version"     : "0.2",
     "description" : "Low level language bindings to GD Graphics Library",
     "provides"    : {
