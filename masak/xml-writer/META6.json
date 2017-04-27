@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "XML::Writer",
+    "license"     : "Artistic-2.0",
     "version"     : "*",
     "description" : "A Perl 6 module to generate XML",
     "depends"     : [ ],

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/masak/xml-writer.git
 	branch = master
-	commit = 6d69760df65bd9a7610eb3cc23d5757d8a6af569
-	parent = fdaabe02327c1225d16998815bad22c4418dc7aa
+	commit = 2cf5c03adee335b78f5d712414db3027a80d09a0
+	parent = 5e5d8195f95a2551ad15fceaad4922416fb5b51c
 	cmdver = 0.4.0
