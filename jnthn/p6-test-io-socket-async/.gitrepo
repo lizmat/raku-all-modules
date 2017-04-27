@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/p6-test-io-socket-async.git
 	branch = master
-	commit = 555db8f580d37009c0883d66e558d692d736de9d
-	parent = 66e24bd36b6371442772061c63dd5cc4e5d502aa
+	commit = 048c42d7af77dcd52e390c4f38839d23663e908e
+	parent = 1811cbcfcc8335e894b5823c8970bdedf2eed239
 	cmdver = 0.4.0
