@@ -11,7 +11,7 @@ ok find-loaded('CompUnit::Util') ~~ CompUnit:D, 'found CompUnit::Util';
 nok find-loaded('Foo'),'find-loaded on non-existent module returns false';
 ok find-loaded('Foo') ~~ Failure:D,'returns Failure';
 
-ok all-loaded()».short-name.pick(*) ~~ set('CompUnit::Util','NativeCall','Test'),
+ok all-loaded()».short-name ~~ set('CompUnit::Util','NativeCall','Test'),
 "all-loaded finds the correct units";
 
 my $cu = load('CompUnit::Util');

@@ -1,2 +1,7 @@
-0.5.3 2016-21-01
+0.6.0 2017-04-26
+  - Removed bitrot mostly caused by lexical import changes
+  - Removed mixin_LANG because it doesn't work and I'm pretty
+    sure rakudo should have an builtin way of doing it soon (now?)
+
+0.5.3 2016-01-21
   - removed requirement for push-multi to take multis only

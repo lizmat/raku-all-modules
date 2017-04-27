@@ -30,8 +30,6 @@ Utility functions for introspecting `CompUnit`s and re-exporting their symbols.
   - [push-unit-multi](#push-unit-multi)
   - [push-lexpad-multi](#push-lexpad-multi)
   - [push-lexical-multi](#push-lexical-multi)
-- [Slangs](#slangs)
-  - [mixin_LANG](#mixin_lang)
 
 CompUnit::Util contains set of utilities to introspect `CompUnit`
 stuff and a bunch of compile time symbol manipulation tools. Its main
@@ -40,8 +38,8 @@ features like 're-exporting' which don't exist in rakudo yet.
 
 The API should now be stable enough to use.
 
-**warning** this module relies on unspec'd rakudo internals and could
-break without warning
+**warning** this module relies on unspec'd rakudo internals and can
+(and has and will) break without warning.
 
 ## CompUnit Utilities
 
@@ -210,6 +208,7 @@ Merges the `EXPORTHOW` from `$handle` into the present
 exist but it won't clobber it if it does.
 
 **this routine can only be called at `BEGIN` time**
+**warning** Using this is throwing up warnings for some reason.
 
 ### steal-export-sub
 `($handle)`
@@ -397,40 +396,5 @@ dispatcher in the current lexpad it will do a lexical lookup for one
 of the same `$name`. If it finds one it clones it, installs it in the
 current lexpad and pushes `$multi` onto it. Like
 [get-lexical](#get-lexical), it can't take a `$name` with `::` in it.
-
-**this routine can only be called at `BEGIN` time**
-
-## Slangs
-
-### mixin_LANG
-`($lang = 'MAIN',:$grammar,:$actions)`
-
-``` perl6
-# modifies the parser to create a term called foo which
-# returns 'foo'. Obviously this is what sub term:<foo> { } is for, but this
-# is the hard way to do it
-sub EXPORT {
-    use nqp;
-    use QAST:from<NQP>;
-    use CompUnit::Util :mixin-LANG;
-    mixin_LANG(
-        grammar => role {
-            token term:sym<foo> { <sym> <.tok> }
-        },
-        actions => role {
-            method term:sym<foo>(Mu $/){
-                return $/.'!make'(QAST::SVal.new(:value("foo")));
-            }
-        }
-    );
-    {};
-}
-```
-
-Modifies the `%*LANG` of the lexical scope currently being compiled.
-Presently this is the best way to modify rakudo's parser and create a
-*slang*. You will need to know about
-[QAST](https://github.com/perl6/nqp/blob/master/docs/qast.markdown) to
-do anything useful with this.
 
 **this routine can only be called at `BEGIN` time**

@@ -65,13 +65,11 @@ sub find-loaded($match --> CompUnit) is export(:find-loaded)  {
 }
 
 sub all-loaded is export(:all-loaded){
-    my $repo = $*REPO;
-    do repeat { |$repo.loaded } while $repo .= next-repo;
+    $*REPO.repo-chain.map(*.loaded).flat;
 }
 
 sub all-repos is export(:all-repos) {
-    my $repo = $*REPO;
-    do repeat { $repo } while $repo .= next-repo;
+    $*REPO.repo-chain;
 }
 
 sub at-unit($handle is copy,Str:D $path) is export(:at-unit){
@@ -186,7 +184,7 @@ sub steal-globalish($handle is copy --> Nil) is export(:re-export){
     die "{&?ROUTINE.name} can only be called at BEGIN time" unless $*W;
     $handle .= &handle;
     my $target = $handle.globalish-package;
-    get-unit('GLOBALish').WHO.merge-symbols($target.WHO);
+    get-unit('GLOBALish').WHO.merge-symbols($target);
     Nil;
 }
 
@@ -290,22 +288,6 @@ sub get-lexical(Str:D $path) is export(:get-symbols) {
     try {
         return $*W.find_symbol(nqp::split('::',$path));
     }
-    Nil;
-}
-
-sub mixin_LANG($lang = 'MAIN',:$grammar,:$actions --> Nil) is export(:mixin_LANG){
-    die "{&?ROUTINE.name} can only be called at BEGIN time" unless $*W;
-
-    if $grammar !=== Any {
-        %*LANG{$lang} := %*LANG{$lang}.^mixin($grammar);
-    }
-
-    if $actions !=== Any {
-        my $actions-key = $lang ~ '-actions';
-        %*LANG{$actions-key} := %*LANG{$actions-key}.^mixin($actions);
-    }
-    # needed so it will work in EVAL
-    set-lexpad('%?LANG',$*W.p6ize_recursive(%*LANG));
     Nil;
 }
 
