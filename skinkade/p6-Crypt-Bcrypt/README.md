@@ -6,7 +6,7 @@ Easy `bcrypt` password hashing in Perl6.
 
 
 ## Synopsis ##
-Password hashing and verification are one function each, and utilze a
+Password hashing and verification are one function each, and utilize a
 crypt()-style output string:
 ```
 > use Crypt::Bcrypt;
