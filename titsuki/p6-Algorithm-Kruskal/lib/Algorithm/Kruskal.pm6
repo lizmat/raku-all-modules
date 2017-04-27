@@ -9,7 +9,7 @@ has $.vertex-size is required;
 has Algorithm::MinMaxHeap $!heap;
 
 submethod BUILD(:$!vertex-size) {
-    $!heap = Algorithm::MinMaxHeap.new(type => Algorithm::MinMaxHeap::Comparable);
+    $!heap = Algorithm::MinMaxHeap[Algorithm::MinMaxHeap::Comparable].new;
 }
 
 method add-edge(Int $from, Int $to, Real $weight) {
