@@ -1,6 +1,10 @@
 Revision history for Term::TablePrint
 
 
+0.017   2017-04-26
+        - Update .travis.yml
+        - Update year copyright
+
 0.016   2016-12-16
         - Import subroutines by their names
 
