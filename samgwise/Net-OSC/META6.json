@@ -8,6 +8,7 @@
   ],
   "description" : "Open Sound Control for Perl6",
   "name" : "Net::OSC",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "Net::OSC" : "lib/Net/OSC.pm6",
