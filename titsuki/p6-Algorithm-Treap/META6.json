@@ -6,6 +6,7 @@
   "depends" : [ ],
   "description" : "randomized search tree",
   "name" : "Algorithm::Treap",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "Algorithm::Treap" : "lib/Algorithm/Treap.pm6",
