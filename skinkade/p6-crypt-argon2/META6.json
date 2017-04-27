@@ -1,7 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Crypt::Argon2",
-    "version" : "0.2.0",
+    "version" : "0.2.1",
     "author" : "github:skinkade",
     "description" : "Easy Argon2i password hashing",
     "build-depends" : [ "Crypt::Random", "LibraryMake" ],
