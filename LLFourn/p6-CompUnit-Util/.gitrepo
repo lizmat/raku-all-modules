@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/LLFourn/p6-CompUnit-Util.git
 	branch = master
-	commit = a51df0c269848f89a643b88f331db4842adee141
-	parent = 27741d1a38429fc674d303c5c9de42235b2664cf
+	commit = 42a2a575834254312d194a2cf8d742400d289aeb
+	parent = d20c14e505375ff57eff014f8a6b74efc2f505a5
 	cmdver = 0.4.0
