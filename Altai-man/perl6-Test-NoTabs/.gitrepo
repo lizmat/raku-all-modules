@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Altai-man/perl6-Test-NoTabs.git
 	branch = master
-	commit = 5b34da2e5d5ced86f6c511ef3320dc67b2d82cef
-	parent = 6cf13f7db3d8f10ed0419e512ee10e048d5c6445
+	commit = ae751d74920175a1411a74e46d2feee9fac4b508
+	parent = 070eb12fc7362dfc4794b2637c9b6442e7e9364f
 	cmdver = 0.4.0

@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Test::NoTabs",
+    "license"     : "Artistic-2.0",
     "version"     : "0.1",
     "description" : "Test module for tabs checking",
     "provides": {
