@@ -5,9 +5,7 @@ use v6.c;
 use Hash::Merge;
 
 use Config::Exception::MissingParserException;
-use Config::Exception::UnknownTypeException;
 use Config::Exception::FileNotFoundException;
-use Config::Type;
 use Config::Parser;
 
 class Config is export
@@ -54,30 +52,22 @@ class Config is export
 
     #| Get the name of the parser module to use for the
     #| given path.
-    method get-parser(Str $path, Str $parser = "")
+    method get-parser(Str $path, Str $parser = "" --> Str)
     {
-        if ($parser ne "") {
-            return $parser;
-        }
-
-        if ($!parser ne "") {
-            return $!parser;
-        }
+        return $parser if $parser ne "";
+        return $!parser if $!parser ne "";
+        say $!parser;
 
         my $type = self.get-parser-type($path);
-
-        Config::Exception::UnknownTypeException.new(
-            file => $path
-        ).throw() if $type eq Config::Type::unknown;
 
         "Config::Parser::" ~ $type;
     }
 
     #| Get the type of parser required for the given path.
-    method get-parser-type(Str $path)
+    method get-parser-type(Str $path --> Str)
     {
         given ($path) {
-            when .ends-with(".yml") { return Config::Type::yaml; };
+            when .ends-with(".yml") { return "yaml"; };
         }
 
         my $file = $path;
@@ -87,10 +77,10 @@ class Config is export
         }
 
         if (defined($file.index("."))) {
-            return $file.split(".")[*-1];
+            return $file.split(".")[*-1].lc;
         }
 
-        return Config::Type::unknown;
+        return "";
     }
 
     #| Check wether a given key exists.
@@ -139,7 +129,7 @@ class Config is export
             CATCH {
                 when X::CompUnit::UnsatisfiedDependency {
                     Config::Exception::MissingParserException.new(
-                        parser => $parser
+                        parser => $!parser
                     ).throw();
                 }
             }

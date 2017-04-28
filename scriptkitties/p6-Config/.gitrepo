@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/scriptkitties/p6-Config.git
 	branch = master
-	commit = c2b980b7962951bc5c277473d41974e76a5e66fa
-	parent = 283203c1123e9fcba579917b99632a2eca695234
+	commit = c40e6ae736f82f133d89b9b60cd6ff23c7690c6a
+	parent = dd9e2e504fb7e26491ddbed355f890f52285bb1d
 	cmdver = 0.4.0
