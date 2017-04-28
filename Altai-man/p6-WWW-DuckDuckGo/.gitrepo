@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Altai-man/p6-WWW-DuckDuckGo.git
 	branch = master
-	commit = 56796c9603c42e057b9f5aaad131a932a0f395dc
-	parent = d8836e41eac42e2bfad2ac6969b69c9a09436306
+	commit = 38a161f6aac7312aa26a3ac508eb2db663f66121
+	parent = 2ac509ce0908b68d97ee324ff43767f9ad67fd94
 	cmdver = 0.4.0
