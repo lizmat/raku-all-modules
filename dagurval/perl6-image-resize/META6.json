@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Image::Resize",
+    "license"     : "Artistic-2.0",
     "version"     : "0.01",
     "description" : "Resize images using GD",
     "provides"    : {
