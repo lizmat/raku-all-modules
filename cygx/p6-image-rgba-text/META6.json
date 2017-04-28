@@ -2,11 +2,12 @@
     "perl"        : "6.*",
     "name"        : "Image::RGBA::Text",
     "version"     : "*",
+    "license"     : "BSL-1.0",
     "description" : "Reads RGBA image data from text files",
     "author"      : "cygx <cygx@cpan.org>",
     "source-url"  : "git://github.com/cygx/p6-image-rgba-text.git",
     "provides" : {
-        "Image::RGBA::Text" : "lib/Image/RGBA/Text.pm"
+        "Image::RGBA::Text" : "lib/Image/RGBA/Text.pm6"
     },
     "depends" : [ ],
     "support" : {

@@ -238,10 +238,16 @@ multi method scale(Int $f where 2..*) {
             loop (my int $dy = 0; $dy < $fi; ++$dy) {
                 my int $out = ((($y * $fi + $dy) * $w + $x) * $fi) * 4;
                 loop (my int $dx = 0; $dx < $fi; ++$dx) {
-                    $bytes[$out++] = $b0;
-                    $bytes[$out++] = $b1;
-                    $bytes[$out++] = $b2;
-                    $bytes[$out++] = $b3;
+# RAKUDOBUG!
+#                    $bytes[$out++] = $b0;
+#                    $bytes[$out++] = $b1;
+#                    $bytes[$out++] = $b2;
+#                    $bytes[$out++] = $b3;
+                    use nqp;
+                    nqp::bindpos_i($bytes, $out++, $b0);
+                    nqp::bindpos_i($bytes, $out++, $b1);
+                    nqp::bindpos_i($bytes, $out++, $b2);
+                    nqp::bindpos_i($bytes, $out++, $b3);
                 }
             }
         }
