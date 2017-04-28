@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/jnthn/p6-concurrent-progress.git
+	branch = master
+	commit = b6b41e242f4bae8becf30d3737cad9c78712ce74
+	parent = 97d7feb8bcb0280c413c19f0b72c11d86c73ee3a
+	cmdver = 0.4.0
