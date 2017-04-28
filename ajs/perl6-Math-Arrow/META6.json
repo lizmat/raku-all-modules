@@ -1,5 +1,6 @@
 {
     "name"        : "Math::Arrow",
+    "license"     : "Artistic-2.0",
     "version"     : "0.1.0",
     "description" : "Knuth arrow notation in Perl 6",
     "depends"     : [],

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ajs/perl6-Math-Arrow.git
 	branch = master
-	commit = 11e4d6a969dfb5480a3b7e8f863ec855908e17de
-	parent = 78ebe626874a501c56999a54d5579b4a6f24ef0c
+	commit = bba3ec0d12fef47ba570131bf752c075fe39b6fb
+	parent = 6d34673cad8de54f0e835283ee91381ec2b520b1
 	cmdver = 0.4.0
