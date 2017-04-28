@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Subset::Helper",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "create awesome subsets",
     "depends"      : [ ],

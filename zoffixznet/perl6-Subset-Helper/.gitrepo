@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Subset-Helper.git
 	branch = master
-	commit = 4bafc2eaa60f81d74b655d68213a9af14e0cd730
-	parent = 58f467c10f1ffd20cc98c39633bafe0154315c0d
+	commit = 4b1233d63f93c0930053f4a65afa2ab854fc5737
+	parent = fd2f2e9e1257e9353cfc73818520f8ecfd4229b2
 	cmdver = 0.4.0
