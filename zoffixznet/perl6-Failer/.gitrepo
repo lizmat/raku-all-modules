@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Failer.git
 	branch = master
-	commit = 63aa24806f08282792869aeca9d9196b6efbb48a
-	parent = 2a657f5b1849d64461687caffd655c25eacc7cf9
+	commit = 4f82db5b1b45867e8790a66df232a0e12f801201
+	parent = b1e81b327f826d712d7ccd37ef2dd46676246772
 	cmdver = 0.4.0
