@@ -10,6 +10,7 @@
   ],
   "description" : "a perl6 binding for C implementation of the Kd-Tree Algorithm (https://github.com/jtsiomb/kdtree)",
   "name" : "Algorithm::KdTree",
+  "license" : "BSD-3-Clause",
   "perl" : "6.c",
   "provides" : {
     "Algorithm::KdTree" : "lib/Algorithm/KdTree.pm6",
