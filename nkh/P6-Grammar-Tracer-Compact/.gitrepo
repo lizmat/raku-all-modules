@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/nkh/P6-Grammar-Tracer-Compact.git
+	branch = master
+	commit = 9f96614492b1d301ef6bd1e11f3559ad70278c08
+	parent = ed8cf8b65ef1a43e1d2c9e79519c0c76ea0631cc
+	cmdver = 0.4.0
