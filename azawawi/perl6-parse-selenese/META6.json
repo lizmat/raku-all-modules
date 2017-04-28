@@ -1,6 +1,7 @@
 {
     "perl": "6.*",
     "name": "Parse::Selenese",
+    "license" : "Artistic-2.0",
     "version": "*",
     "description": "A Parser for Selenium Test Cases and Suites",
     "depends": [],
