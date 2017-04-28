@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jsimonet/dns-zone.git
 	branch = master
-	commit = 7b947e7a3bdc320ef5078d73b372cba6afd07047
-	parent = 50f9d85bf9bf7f14c6a58ac594cda0381df75224
+	commit = 013f5a2caf4f2dacf67ad4a3a70e851e347efc6a
+	parent = 29c0941cab8145f37562765d148c109da83b8bb9
 	cmdver = 0.4.0

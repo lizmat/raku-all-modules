@@ -1,6 +1,7 @@
 {
 	"perl" : "6.c",
 	"name" : "DNS::Zone",
+	"license" : "Artistic-2.0",
 	"version" : "0.1.2",
 	"description" : "Parses a DNS zone and returns objects to manipulate it.",
 	"authors" : ["Julien Simonet"],
