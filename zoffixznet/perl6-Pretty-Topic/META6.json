@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Pretty::Topic",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "Alias $_ topical variable to something prettier",
     "depends"      : [ ],
