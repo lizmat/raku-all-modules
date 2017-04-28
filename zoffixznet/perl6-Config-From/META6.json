@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Config::From",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "Load configuration from file to variables via traits",
     "depends"      : [ "JSON::Fast" ],
