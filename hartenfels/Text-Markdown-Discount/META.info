@@ -1,5 +1,6 @@
 {
     "name"        : "Text::Markdown::Discount",
+    "license"     : "Artistic-2.0",
     "version"     : "0.2.5",
     "description" : "Markdown to HTML using the Discount C library.",
     "author"      : "Carsten Hartenfels",
