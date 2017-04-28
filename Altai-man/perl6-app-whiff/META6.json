@@ -1,6 +1,7 @@
 {
     "perl": "6.*",
     "name" : "App::Whiff",
+    "license" : "Artistic-2.0",
     "tags": ["Utils", "Admin"],
     "version" : "0.1.0",
     "author" : "github:Altai-man",
