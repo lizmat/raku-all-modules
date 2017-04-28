@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Terminal-Readsecret.git
 	branch = master
-	commit = 8c0c02bfd23c5492dbeef06f7de7e10018169d1c
-	parent = 3e9b3b8a6c990201a5020fa1fac15915365db45f
+	commit = 5d3c10092399785fb1b8174e3fc32cecd72eac2c
+	parent = 6e1bff57e0ce7e7c3c4049e2066db1eca02b62b3
 	cmdver = 0.4.0
