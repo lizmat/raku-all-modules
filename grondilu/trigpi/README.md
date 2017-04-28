@@ -1,5 +1,6 @@
 TrigPi
 ======
+[![Build Status](https://travis-ci.org/grondilu/trigpi.svg)](https://travis-ci.org/grondilu/trigpi)
 
 This modules implements `cosPi`, `sinPi` and `cispi` as mentioned in [IEEE
 954](https://www.csee.umbc.edu/~tsimo1/CMSC455/IEEE-754-2008.pdf).
