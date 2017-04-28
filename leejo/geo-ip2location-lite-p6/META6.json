@@ -1,6 +1,7 @@
 {
 	"perl" : "6.c",
 	"name" : "Geo::IP2Location::Lite",
+	"license" : "Artistic-2.0",
 	"version" : "0.9.0",
 	"description" : "Lightweight lookup of IPv4 address details using BIN files from http://www.ip2location.com",
 	"authors" : [ "github:leejo" ],
