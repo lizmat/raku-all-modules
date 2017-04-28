@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/lancew/ScientistP6.git
 	branch = master
-	commit = 67f954446f36f78ffc21c64a4cc54d12a544885e
-	parent = 2b9b826adbb271fa14dc566d6076bb9a1434acc4
+	commit = 2d069091c705e0a5ec0a0a76a7a511b7a29f9299
+	parent = dd018bec2d66bdb8364d115b2c695234644f83d4
 	cmdver = 0.4.0
