@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Terminal-Width.git
 	branch = master
-	commit = 8fb5bad94af9c719dcf9dd0d04ba55e35e1a2b39
-	parent = 357d145ef3684afa6f561272ea17aa64e10e4f93
-	cmdver = 0.2.3
+	commit = 9db9b934091ac7536d91871d4ca025d6eb203280
+	parent = fec485e7b66b82291d13601223f0c64dbdc538a2
+	cmdver = 0.4.0
