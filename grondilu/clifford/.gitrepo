@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/grondilu/clifford.git
 	branch = master
-	commit = 072e15a9f39d702c663c07eec4fde25305764636
-	parent = f3757989065e8cbf13ac009dbdd1f0af9220ab33
-	cmdver = 0.2.3
+	commit = 89b7c386ff6c77a149939f2c5cf146a06659a458
+	parent = a14c73f7cb76298fe4abe46a1b5c3bb2dc0e7d22
+	cmdver = 0.4.0
