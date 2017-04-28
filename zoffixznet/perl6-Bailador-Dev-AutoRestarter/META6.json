@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Bailador::Dev::AutoRestarter",
+    "license"      : "Artistic-2.0",
     "version"      : "1.002003",
     "description"  : "script to detect source code changes and auto-restart Bailador app",
     "depends"      : [ "File::Find" ],
