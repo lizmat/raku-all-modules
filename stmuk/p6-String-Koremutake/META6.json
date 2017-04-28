@@ -1,6 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "String::Koremutake",
+    "license"     : "Artistic-2.0",
     "version"     : "0.2",
     "description" : "Converts to and from Koremutake Memorable Random Strings. ",
     "authors"      : ["Steve Mynott <steve.mynott@gmail.com>"],
