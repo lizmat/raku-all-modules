@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Bailador-Plugin-AssetPack-SASS.git
 	branch = master
-	commit = 29f2a0a342cf9be52eb448f80042224a6a43329b
-	parent = 4a0038361f112731fdda74a932f44a9c06c9d205
-	cmdver = 0.2.3
+	commit = 40543e3a31138a62c769f10d896b6bafd788b8d9
+	parent = b00823733423a5728ba3cf63ea6f37714339e1db
+	cmdver = 0.4.0
