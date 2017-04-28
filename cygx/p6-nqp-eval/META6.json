@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "NQP::Eval",
+    "license" : "BSL-1.0",
     "version" : "*",
     "description" : "Enables EVAL :lang<nqp>",
     "author" : "cygx <cygx@cpan.org>",
