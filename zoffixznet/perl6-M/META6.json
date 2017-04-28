@@ -1,11 +1,12 @@
 {
     "perl"         : "6.c",
     "name"         : "M",
-    "version"      : "1.001001",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001002",
     "description"
         : "M, the 1-character Map: non-nodal, non-autothreading .map(*.some-method)",
     "depends"      : [ ],
-    "test-depends" : [ "Test", "Test::Meta" ],
+    "test-depends" : [ "Test", "Test::META" ],
     "provides"     : {
         "M" : "lib/M.pm6"
     },
