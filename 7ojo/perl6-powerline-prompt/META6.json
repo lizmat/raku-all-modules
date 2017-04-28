@@ -1,5 +1,6 @@
 {
     "name"          : "Powerline::Prompt",
+    "license"       : "MIT",
     "version"       : "0.0.4",
     "perl"          : "6",
     "description"   : "Make a useful prompt for your shell",

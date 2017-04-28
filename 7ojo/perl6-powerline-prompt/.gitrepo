@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/7ojo/perl6-powerline-prompt.git
 	branch = master
-	commit = 8cca0fe4e60ecf03c7376986b8454373b3c5b3b3
-	parent = 9eb5c4e7f961d8daadafa1a4e3f17f5e490c14df
+	commit = 8d1f4ca56c154feaa0521326e3ad42962ed34a66
+	parent = 81fbd39589a2b4ca2729771fd376ed2b1683841c
 	cmdver = 0.4.0
