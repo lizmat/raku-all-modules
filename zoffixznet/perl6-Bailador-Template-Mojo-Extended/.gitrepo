@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Bailador-Template-Mojo-Extended.git
 	branch = master
-	commit = d7493e2069486044d058796c966646108d6e09b3
-	parent = 386d4dd6aa3174c97dd87b4778e52ba23ac51b20
-	cmdver = 0.2.3
+	commit = 6765fe9231b83da118a4fe377e8c1efb40bed247
+	parent = b8cbdf28d357339c190472b44b7c1317ef893d2a
+	cmdver = 0.4.0
