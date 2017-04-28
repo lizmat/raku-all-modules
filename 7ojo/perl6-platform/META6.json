@@ -1,7 +1,8 @@
 {
-    "perl"          : "6",
     "name"          : "Platform",
+    "license"       : "MIT",
     "version"       : "0.0.4",
+    "perl"          : "6",
     "description"   : "Tool for making development environments with docker",
     "authors"       : [ "Jarkko Haapalainen <jarkko@viidakko.fi>" ],
     "auth"          : "github:7ojo",
