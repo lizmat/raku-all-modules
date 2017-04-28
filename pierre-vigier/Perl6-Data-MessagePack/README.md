@@ -23,11 +23,11 @@ SYNOPSIS
 
 Or for streaming:
 
-    use Data::MessagePack::StreanmingUnpacker;
+    use Data::MessagePack::StreamingUnpacker;
 
     my $supplier = Some Supplier; #Could be from IO::Socket::Async for instance
 
-    my $unpacker = Data::MessagePack::StreanmingUnpacker.new(
+    my $unpacker = Data::MessagePack::StreamingUnpacker.new(
         source => $supplier.Supply
     );
 
