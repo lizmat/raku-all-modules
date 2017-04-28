@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/spitsh/spitsh.git
 	branch = master
-	commit = 81f164c86e46f2a7d765e7926b48dc4724ebf680
-	parent = b9f73f9e9ff0b829c063c23861fca692ffd23b37
+	commit = 2b612244facc69f0609085fb2244eaf12f9eaf73
+	parent = 2ae88d53a2ee6eca8ee0256abf4567e86097f515
 	cmdver = 0.4.0
