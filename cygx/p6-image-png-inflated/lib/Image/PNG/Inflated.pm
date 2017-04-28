@@ -127,7 +127,8 @@ sub join-blobs(*@blobs) {
 }
 
 sub chunkify(blob8 $type, *@data) {
-    my uint32 $len = [+] @data>>.elems;
+    #my uint32 $len = [+] @data>>.elems; -- RAKUDOBUG?
+    my uint32 $len = [+] @data.map(*.elems);
     my $type-and-data := join-blobs $type, @data;
     be32($len), $type-and-data, be32(crc32($type-and-data));
 }
@@ -141,7 +142,8 @@ sub insert-filters(blob8 $in, int $w, int $h) {
     my int $o = 0;
     while $i < $in.elems {
         ++$o if $i %% $skip;
-        $out[$o++] = $in[$i++];
+        #$out[$o++] = $in[$i++]; -- RAKUDOBUG!
+        nqp::bindpos_i($out, $o++, nqp::atpos_i($in, $i++));
     }
 
     $out;
