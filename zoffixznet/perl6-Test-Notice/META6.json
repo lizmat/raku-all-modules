@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Test::Notice",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "Display noticable messages to users during tests",
     "depends"      : [ "Test" ],
