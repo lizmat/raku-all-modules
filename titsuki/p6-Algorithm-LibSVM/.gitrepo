@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-LibSVM.git
 	branch = master
-	commit = bf2a84964abc98286c68f19281dacda5bd470931
-	parent = 0de208d523d694cb9ba98ef1a6486cdba767a81f
+	commit = 9d762241dd7df8be01553ce6b9ab4dfac5241b83
+	parent = 99680c7f3bf22fd74db66bf5229418085d08a98d
 	cmdver = 0.4.0

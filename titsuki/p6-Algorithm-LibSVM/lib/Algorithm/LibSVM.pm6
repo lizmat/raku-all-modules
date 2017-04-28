@@ -66,7 +66,7 @@ method !_load-problem(\lines) {
         my @feature-list = $features.split(/\s+/);
 
         my $next = Algorithm::LibSVM::Node.new(index => -1, value => 0e0);
-        for @feature-list>>.split(":", :skip-empty).sort({ $^b[0] <=> $^a[0] }) -> ($index, $value) {
+        for @feature-list>>.split(":", :skip-empty).map({ .[0] => .[1] }).sort(-*.key).map({ .key, .value }) -> ($index, $value) {
             $!nr-feature = ($!nr-feature, $index.Int).max;
             $next = Algorithm::LibSVM::Node.new(index => $index.Int, value => $value.Num, next => $next);
         }
