@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Acme-Anguish.git
 	branch = master
-	commit = ccf05f785f5b8c79f4b76d1b1d8f84684a12a3c1
-	parent = 11f0e91cef4996921a1499267524f0dca38450c4
-	cmdver = 0.2.3
+	commit = 51c37813379f6b9cfb25664b683e5e17c15c1416
+	parent = 45285736163d4baf59228d5ed17292df01fb9c35
+	cmdver = 0.4.0
