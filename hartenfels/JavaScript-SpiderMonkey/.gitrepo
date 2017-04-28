@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/hartenfels/JavaScript-SpiderMonkey.git
 	branch = master
-	commit = a34ae07e64913ec8d2fe00b39d8f3ecfcb8f5261
-	parent = 204245067a06363fd2708930833c203138926d76
-	cmdver = 0.2.3
+	commit = 186d8b96c048b0b733575e4cc31f5c44f980c6b5
+	parent = 218e9e10c248941067c1331914106d6c11f6e72c
+	cmdver = 0.4.0

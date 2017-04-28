@@ -1,5 +1,6 @@
 {
     "name"        : "JavaScript::SpiderMonkey",
+    "license"     : "Artistic-2.0",
     "version"     : "0.0.1",
     "description" : "Glue for Mozilla's JavaScript interpreter.",
     "author"      : "Carsten Hartenfels",
