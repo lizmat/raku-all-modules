@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Quantum::Collapse",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "Collapse allomophic types into their components",
     "depends"      : [ ],

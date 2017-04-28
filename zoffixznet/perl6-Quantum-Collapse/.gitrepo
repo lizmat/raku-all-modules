@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Quantum-Collapse.git
 	branch = master
-	commit = 8448bb7caacdbebc6ea80aad470a0ae7655854f0
-	parent = d2146f77648e4da296e7d44e2c5be192b91a83f1
-	cmdver = 0.2.3
+	commit = af090d492bc6010bf5f2e081fe3e0e65ac78fa7a
+	parent = bba4f8115b07b1e6c4e355a78454f0aa19c2a119
+	cmdver = 0.4.0
