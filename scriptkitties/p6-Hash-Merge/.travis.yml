@@ -2,8 +2,9 @@ language: perl6
 
 perl6:
   - latest
-  - "2017.03"
   - nom
+  - "2017.03"
+  - "2017.04"
 
 os:
   - linux
@@ -21,5 +22,5 @@ notifications:
     on_success: change
     on_failure: always
     template:
-      - "Hash::Merge build %{result}. %{author} '%{commit_message}'"
-      - "%{build_url} %{compare_url}"
+      - "Hash::Merge build %{result}. %{author} '%{commit_message}' → %{build_url}"
+

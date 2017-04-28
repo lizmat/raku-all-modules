@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/scriptkitties/p6-Hash-Merge.git
 	branch = master
-	commit = e55b78c6843f6ad7ea28573aadc8c3cb0c68933c
-	parent = a721f542872359277152964bbe82222866f2b881
+	commit = 750b429a3051115aa65a272511dbcf2dc4ba6ddb
+	parent = ce0ab266c012fe04f659c94a6f09dc92dfeb2e10
 	cmdver = 0.4.0
