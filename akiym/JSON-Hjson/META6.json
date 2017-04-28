@@ -6,6 +6,7 @@
   "depends" : [ ],
   "description" : "Human JSON (Hjson) deserializer",
   "name" : "JSON::Hjson",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "JSON::Hjson" : "lib/JSON/Hjson.pm6",
