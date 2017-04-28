@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/autarch/perl6-File-LibMagic.git
 	branch = master
-	commit = c8075db5d348c5d02ffa09bda7e5722363a7d25a
-	parent = 37c4d8831392b3d25e94fbcc6238b8643bd9a01c
-	cmdver = 0.2.3
+	commit = c92168efc4f4105bb451ad3403d099b2606ae8e4
+	parent = a0bf7d668dd309ddd58cb1585ea0bd83bbcdee22
+	cmdver = 0.4.0
