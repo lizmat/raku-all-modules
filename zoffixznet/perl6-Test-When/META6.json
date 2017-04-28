@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Test::When",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001005",
     "description"  : "Selectively run tests based on the environment and installed modules and libs",
     "depends"      : [ ],

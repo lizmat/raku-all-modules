@@ -138,7 +138,20 @@ subtest {
 
 done-testing;
 
-sub run-test (Str:D $cmd) {
+sub run-test (Str:D $cmd is copy) {
+    # set unused env vars to zero, so the tests of this module are not
+    # affected by possible env options set for other modules
+    for < AUTOMATED_TESTING
+          NONINTERACTIVE_TESTING
+          EXTENDED_TESTING
+          RELEASE_TESTING
+          AUTHOR_TESTING
+          ONLINE_TESTING
+          ALL_TESTING> {
+        next if $cmd.contains: $_;
+        $cmd = "$_=0 $cmd";
+    }
+
     my $proc = shell $cmd, :out, :err;
     my ($out, $err) = $proc.out.slurp-rest, $proc.err.slurp-rest;
     return $out unless $err;

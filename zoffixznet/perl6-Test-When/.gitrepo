@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Test-When.git
 	branch = master
-	commit = 18cdac947106091be7bf6017a618908555366131
-	parent = dc708f058f3c97770866dc37ba488a7444734060
+	commit = 966c1c526e54935499f1d692a91bea6ee3bed400
+	parent = 8fbe97295ebe4b19bedb8dadea4ed3d63f0f9139
 	cmdver = 0.4.0
