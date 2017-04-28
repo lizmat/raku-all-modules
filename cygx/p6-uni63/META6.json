@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Uni63",
+    "license" : "BSL-1.0",
     "version" : "0.2.0",
     "description" : "A Unicode encoding scheme suitable for name mangling",
     "author" : "cygx <cygx@cpan.org>",
