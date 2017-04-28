@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Pod::TreeWalker",
+    "license"     : "Artistic-2.0",
     "version"     : "0.0.3",
     "author"      : "Dave Rolsky <autarch@urth.org>",
     "description" : "Walk a Pod tree and generate an event for each node",
