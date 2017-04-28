@@ -1,5 +1,6 @@
 {
      "name" : "Modular",
+     "license" : "Artistic-2.0",
      "version" : "0.1.2",
      "description" : "Modular arithmetics in Perl6",
      "provides" : {
