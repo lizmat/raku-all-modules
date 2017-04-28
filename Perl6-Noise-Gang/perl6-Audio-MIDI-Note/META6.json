@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Audio::MIDI::Note",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "Playable MIDI note",
     "depends"      : [
