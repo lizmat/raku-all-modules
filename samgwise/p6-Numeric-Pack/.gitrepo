@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/samgwise/p6-Numeric-Pack.git
 	branch = master
-	commit = b403e18c8915d8f301dd4adeb2b719c35b08f463
-	parent = a70559a4c0aa99c5f3ee0cd630637ebd0ea5e80e
-	cmdver = 0.2.3
+	commit = f7c0d0474b2cb6f3ecfebd4c327b19adfd2f99e2
+	parent = 795133e321a89b3dc929e621a4ff038ea2cf838b
+	cmdver = 0.4.0

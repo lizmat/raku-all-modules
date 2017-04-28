@@ -11,6 +11,7 @@
   ],
   "description" : "Convert perl6 Numerics to Bufs and back again!",
   "name" : "Numeric::Pack",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "Numeric::Pack" : "lib/Numeric/Pack.pm6"
