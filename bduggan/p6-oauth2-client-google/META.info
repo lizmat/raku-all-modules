@@ -1,5 +1,6 @@
 {
     "name" : "OAuth2::Client::Google",
+    "license" : "Artistic-2.0",
     "version" : "0.1.0",
     "description" : "Authenticate against Google's OAuth2 API.",
     "depends" : [ "HTTP::UserAgent", "IO::Socket::SSL", "JSON::Fast" ],
