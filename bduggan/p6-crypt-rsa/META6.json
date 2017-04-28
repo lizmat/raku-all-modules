@@ -1,5 +1,6 @@
 {
     "name" : "Crypt::RSA",
+    "license" : "Artistic-2.0",
     "version" : "0.1.0",
     "perl" : "6.c",
     "description" : "Pure Perl6 implementation of RSA public key encryption.",
