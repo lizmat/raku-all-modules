@@ -1,5 +1,6 @@
 {
     "name"          : "Git::Simple",
+    "license"       : "MIT",
     "version"       : "0.0.2",
     "perl"          : "6",
     "description"   : "Simple interface to Git command",
