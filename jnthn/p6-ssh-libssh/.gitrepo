@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jnthn/p6-ssh-libssh.git
 	branch = master
-	commit = 7e66f1702e9f278b80cb7bf366c61a3ce99f3fea
-	parent = 330e3e72b07efc4d14d9e581eb530bfa32456ea3
+	commit = 0263bdfc6d09e7a1a9cc7e3270864bc5f00bbed0
+	parent = ac1b7757c3d47af06d349e0f6fa97f9367f31144
 	cmdver = 0.4.0
