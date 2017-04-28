@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "IRC::Async",
+    "license"      : "Artistic-2.0",
     "version"      : "0.9",
     "description"  : "IRC client in the reactive paradigm",
     "depends"      : [ "IRC::Client", "Readline" ],
