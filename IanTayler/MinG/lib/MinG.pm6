@@ -10,6 +10,7 @@ MinG -- A small module for describing MGs in Perl6.
 #############
 constant $ESPA0 = %?RESOURCES{"espa0.mg"};
 constant $ENG0 = %?RESOURCES{"eng0.mg"};
+constant $NIHONGO0 = %?RESOURCES{"nihongo0.edmg"};
 
 class MinG::Feature { ... }
 

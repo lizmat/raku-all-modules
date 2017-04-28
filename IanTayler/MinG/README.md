@@ -59,10 +59,11 @@ You can save that in a file and call it using `ming-analyser.p6` (you can use `m
 
 Each line you write of input will be parsed using your grammar. You can parse several sentences in a series by separating them with a ';'. You can modify gr0.mg at any point and restart `ming-analyser.p6` to have your new grammar working.
 
-If you want to try out the example grammars, they can be accessed by passing the arguments `--eng0` for a very small grammar of something-like-English, copied from Stabler (2013) and `--espa0` for a not-so-small (but small) grammar of Spanish written by myself. Like so:
+If you want to try out the example grammars, they can be accessed by passing the arguments `--eng0` for a very small grammar of something-like-English, copied from Stabler (2013), `--espa0` for a not-so-small (but small) grammar of Spanish written by myself, and --nihongo0 for a minimal grammar of japanese used to exemplify complement directionality in EDMGs. Like so:
 
     ming-analyser.p6 --eng0
     ming-analyser.p6 --espa0
+    ming-analyser.p6 --nihongo0
 
 When inputting lines, pay attention _not_ to put a final dot to your sentence. "dance." is a different word from "dance".
 

@@ -18,7 +18,7 @@ MinG::S13 -- Stabler's (2013) parser.
 #|{
     Class that represents one derivation.
     }
-class Derivation {
+class MinG::S13::Derivation {
     has Str @.input;
     has Queue $.q;
     # $structure holds the current derivation tree of the derivation.
@@ -33,7 +33,7 @@ class Derivation {
     }
 
     #|{ See Stabler (2013)}
-    method scan(QueueItem $pred, Int $child_place) of Derivation {
+    method scan(QueueItem $pred, Int $child_place) of MinG::S13::Derivation {
         my $leave = $pred.node.children[$child_place];
 
         debug("Scanned {$leave.label}");
@@ -43,13 +43,13 @@ class Derivation {
         my @new_t_n = @.tree_nodes;
         push @new_t_n, DevNode.new(label => $leave.label, position => $pred.priority);
 
-        return Derivation.new(input => @.input[$start_place..*], q => $.q, tree_nodes => @new_t_n);
+        return MinG::S13::Derivation.new(input => @.input[$start_place..*], q => $.q, tree_nodes => @new_t_n);
     }
 
     #|{ See Stabler (2013)}
     # We pass most of the state around because we have to calculate all of this
     # anyway to check whether or not we need to to run the rule.
-    method merge1(QueueItem $pred, Node @leaves, Node $selected, Node $selector) of Derivation {
+    method merge1(QueueItem $pred, Node @leaves, Node $selected, Node $selector) of MinG::S13::Derivation {
         # The following is a bit of a mess. It closely follows the way the rule
         # was written in Stabler (2013), so if you're trying to understand this,
         # it may be a good idea to read that first.
@@ -68,11 +68,11 @@ class Derivation {
         my @new_t_n = @.tree_nodes;
         push @new_t_n, DevNode.new(label => '<', position => $pred.priority);
 
-        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
+        return MinG::S13::Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
     }
 
     #|{ See Stabler (2013)}
-    method merge2(QueueItem $pred, Node @non_terms, Node $selected, Node $selector) of Derivation {
+    method merge2(QueueItem $pred, Node @non_terms, Node $selected, Node $selector) of MinG::S13::Derivation {
         my $new_node = LexNode.new( label => $selector.label, children => @non_terms);
 
         my $f_item = QueueItem.new(priority => $pred.priority.add_p(1),\
@@ -91,11 +91,11 @@ class Derivation {
         my @new_t_n = @.tree_nodes;
         push @new_t_n, DevNode.new(label => '>', position => $pred.priority);
 
-        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
+        return MinG::S13::Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
     }
 
     #|{ See Stabler (2013)}
-    method merge3(QueueItem $pred, Node @leaves, Node $mover_child, Node $selector, Mover $mover) of Derivation {
+    method merge3(QueueItem $pred, Node @leaves, Node $mover_child, Node $selector, Mover $mover) of MinG::S13::Derivation {
         my $new_node = LexNode.new( label => $selector.label, children => @leaves);
         my $f_item = QueueItem.new( priority => $pred.priority.add_p(0),\
                                     movers => (),\
@@ -111,11 +111,11 @@ class Derivation {
         push @new_t_n, DevNode.new(label => '<', position => $pred.priority);
         push @new_t_n, DevNode.new(label => $mover.priority.to_str(), position => $pred.priority.add_p(1));
 
-        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
+        return MinG::S13::Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
     }
 
     #|{ See Stabler (2013)}
-    method merge4(QueueItem $pred, Node @non_terms, Node $mover_child, Node $selector, Mover $mover) of Derivation {
+    method merge4(QueueItem $pred, Node @non_terms, Node $mover_child, Node $selector, Mover $mover) of MinG::S13::Derivation {
         my $new_node = LexNode.new( label => $selector.label, children => @non_terms);
         my $f_item = QueueItem.new( priority => $pred.priority.add_p(1),\
                                     movers => $pred.movers_minus_this($mover),\
@@ -131,11 +131,11 @@ class Derivation {
         push @new_t_n, DevNode.new(label => '>', position => $pred.priority);
         push @new_t_n, DevNode.new(label => $mover.priority.to_str(), position => $pred.priority.add_p(0));
 
-        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
+        return MinG::S13::Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
     }
 
     #|{ See Stabler (2013)}
-    method move1(QueueItem $pred, Node $licensor, Node $licensed) of Derivation {
+    method move1(QueueItem $pred, Node $licensor, Node $licensed) of MinG::S13::Derivation {
         my @new_movers = $pred.movers;
         push @new_movers, Mover.new(priority => $pred.priority.add_p(0),\
                                     node => $licensed);
@@ -149,12 +149,12 @@ class Derivation {
         my @new_t_n = @.tree_nodes;
         push @new_t_n, DevNode.new(label => '>', position => $pred.priority);
 
-        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
+        return MinG::S13::Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
 
     }
 
     #|{ See Stabler (2013)}
-    method move2(QueueItem $pred, Node $licensor, Node $mover, Node $mover_child) of Derivation {
+    method move2(QueueItem $pred, Node $licensor, Node $mover, Node $mover_child) of MinG::S13::Derivation {
         my @new_movers = $pred.movers_minus_this($mover);
         push @new_movers, Mover.new(priority => $mover.priority,\
                                     node => $mover_child);
@@ -169,7 +169,7 @@ class Derivation {
         my @new_t_n = @.tree_nodes;
         push @new_t_n, DevNode.new(label => '<', position => $pred.priority);
 
-        return Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
+        return MinG::S13::Derivation.new(input => @.input, q => $nq, tree_nodes => @new_t_n);
     }
 
     #|{
@@ -201,7 +201,7 @@ class Derivation {
 
         # Note: with MERGE1, MERGE2, etc. we mean the rules as defined by
         # Stabler. We distinguish that from our implementation of the rules
-        # which we will call Derivation.merge1, etc.
+        # which we will call MinG::S13::Derivation.merge1, etc.
 
         # Here we consider MERGE1 to MERGE4
         # This line can be a bit daunting, but it's not that hard actually.
@@ -337,7 +337,7 @@ SEL_LOOP:   for @selector_ch -> $selector {
     Class that implements the parser per se. This is not where the magic happens, but it is where most of the external API is defined.
     }
 class MinG::S13::Parser {
-    has Derivation @!devq;
+    has MinG::S13::Derivation @!devq;
     # Trees of successful derivations!
     has @.results;
     has Node $.start_cat;
@@ -477,7 +477,7 @@ class MinG::S13::Parser {
                                                     movers => (),\
                                                     node => $.start_cat,\
                                                     )));
-        my $start_dev = Derivation.new(input => @proper_input,\
+        my $start_dev = MinG::S13::Derivation.new(input => @proper_input,\
                                        q => $que,\
                                        );
         push @!devq, $start_dev;
@@ -559,7 +559,7 @@ class MinG::S13::Parser {
                                                     movers => (),\
                                                     node => $start_categ,\
                                                     )));
-        my $start_dev = Derivation.new(input => @proper_input,\
+        my $start_dev = MinG::S13::Derivation.new(input => @proper_input,\
                                        q => $que,\
                                        );
         push @!devq, $start_dev;

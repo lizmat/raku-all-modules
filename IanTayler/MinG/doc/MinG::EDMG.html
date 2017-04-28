@@ -32,20 +32,78 @@
 <nav class="indexgroup">
 <table id="TOC">
 <caption><h2 id="TOC_Title">Table of Contents</h2></caption>
-<tr class="toc-level-1"><td class="toc-number">1</td><td class="toc-text"><a href="#EXPORTED_CLASSES_AND_FUNCTIONS">EXPORTED CLASSES AND FUNCTIONS</a></td></tr>
-    
+<tr class="toc-level-1"><td class="toc-number">1</td><td class="toc-text"><a href="#INTERNAL_CLASSES_AND_FUNCTIONS">INTERNAL CLASSES AND FUNCTIONS</a></td></tr>
+  <tr class="toc-level-1"><td class="toc-number">2</td><td class="toc-text"><a href="#EXPORTED_CLASSES_AND_FUNCTIONS">EXPORTED CLASSES AND FUNCTIONS</a></td></tr>
+                   
 </table>
 </nav>
 
 <div class="pod-body
 
 ">
+<h1 id="INTERNAL_CLASSES_AND_FUNCTIONS"><a class="u" href="#___top" title="go to top of document">INTERNAL CLASSES AND FUNCTIONS</a></h1>
+<article>
+<code class="pod-code-inline">other_p:(Int $i --&gt; Int)</code>:
+Subroutine that returns 0 if it gets 1, and 1 otherwise.
+</article>
 <h1 id="EXPORTED_CLASSES_AND_FUNCTIONS"><a class="u" href="#___top" title="go to top of document">EXPORTED CLASSES AND FUNCTIONS</a></h1>
 <h1>MinG::EDMG::Feature: Class that defines an EDMG feature.</h1><article>
 <code class="pod-code-inline">from_str:(MinG::EDMG::Feature $: Str $s, *%_ --&gt; MinG::EDMG::Feature)</code>:
 Method that returns an EDMG Feature out of a string description.
 </article>
-<h1>MinG::EDMG::LItem: Class that defines an EDMG lexical item.</h1><h1>MinG::EDMG::Grammar: Class that defines an EDMG grammar.</h1>
+<h1>MinG::EDMG::LItem: Class that defines an EDMG lexical item.</h1><h1>MinG::EDMG::Grammar: Class that defines an EDMG grammar.</h1><h1>MinG::EDMG::Derivation: Class that implements a Derivation for our EDMG parser.</h1><article>
+<code class="pod-code-inline">scan:(MinG::EDMG::Derivation $: QueueItem $pred, Int $child_place, *%_ --&gt; MinG::EDMG::Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">merge2:(MinG::EDMG::Derivation $: QueueItem $pred, Node @non_terms, Node $selected, Node $selector, *%_ --&gt; MinG::EDMG::Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">merge3:(MinG::EDMG::Derivation $: QueueItem $pred, Node @leaves, Node $mover_child, Node $selector, Mover $mover, *%_ --&gt; MinG::EDMG::Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">merge4:(MinG::EDMG::Derivation $: QueueItem $pred, Node @non_terms, Node $mover_child, Node $selector, Mover $mover, *%_ --&gt; MinG::EDMG::Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">move1:(MinG::EDMG::Derivation $: QueueItem $pred, Node $licensor, Node $licensed, *%_ --&gt; MinG::EDMG::Derivation)</code>:
+See Stabler (2013)
+</article>
+<article>
+<code class="pod-code-inline">move2:(MinG::EDMG::Derivation $: QueueItem $pred, Node $licensor, Node $mover, Node $mover_child, *%_ --&gt; MinG::EDMG::Derivation)</code>:
+See Stabler (2013)
+</article>
+<h1>MinG::EDMG::Parser: Class that runs a Stabler (2013)-type parser for EDMGs.</h1><article>
+<code class="pod-code-inline">devq_to_str:(MinG::EDMG::Parser $: *%_)</code>:
+Method that gets a nice string representation of the @!devq.
+</article>
+<article>
+<code class="pod-code-inline">parallel_run:(MinG::EDMG::Parser $: *%_ --&gt; Bool)</code>:
+Method that runs one iteration of the parsing loop, running one step of each derivation in parallel. Gets all possible derivations.
+</article>
+<article>
+<code class="pod-code-inline">parallel_parse:(MinG::EDMG::Parser $: *%_ --&gt; Bool)</code>:
+Method that runs the main parsing loop using parallel_run. Gets all possible derivations.
+</article>
+<article>
+<code class="pod-code-inline">parse_str:(MinG::EDMG::Parser $: Str $inp, ParseWay $do = ParseWay::PARALLEL, Str $compile = &quot;&quot;, *%_ --&gt; Bool)</code>:
+Method that parses a single string based on the grammar that was initialised using Parser.init()
+</article>
+<article>
+<code class="pod-code-inline">init:(MinG::EDMG::Parser $: MinG::EDMG::Grammar $g, *%_)</code>:
+Method that initialises that parser to later parse several strings. Should be used instead of Parser.setup when a single grammar is going to be used several times.
+</article>
+<article>
+<code class="pod-code-inline">re_init:(MinG::EDMG::Parser $: *%_)</code>:
+Method that re-initialises the parser using the full version of the grammar.
+</article>
+<article>
+<code class="pod-code-inline">large_parse:(MinG::EDMG::Parser $: Str $inp, ParseWay $do = ParseWay::PARALLEL, Str $compile = &quot;&quot;, *%_ --&gt; Bool)</code>:
+Method that deletes all non-phonetically-empty words that don&#39;t appear in the input before parsing. When using large grammars, this can be much more efficient, but has a large constant time-cost, so it will make small grammars slower.
+</article>
+
 </div>
 
 

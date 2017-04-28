@@ -133,7 +133,6 @@ sub grammar_from_file($f) of MinG::Grammar is export {
     if $type eq "MG" {
         return mg_grammar_from_text($contents);
     } elsif $type eq "EDMG" {
-        say $contents;
         return edmg_grammar_from_text($contents);
     } else {
         note "Wrong type of grammar in file {$f.relative}";

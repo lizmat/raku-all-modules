@@ -1,4 +1,4 @@
-.PHONY: test doc md s13 mgft
+.PHONY: test doc md s13 mgft edmg
 LIB=./lib/
 test: t/basic.t
 	perl6 t/basic.t
@@ -14,8 +14,11 @@ doc: lib/MinG.pm6 lib/MinG/S13.pm6 lib/MinG/From/Text.pm6
 md: lib/MinG.pm6
 	perl6 --doc=Markdown doc/to-readme.pod6 > README.md
 
-s13: lib/MinG.pm6 lib/MinG/S13.pm6
+s13: lib/MinG.pm6 lib/MinG/S13.pm6 lib/MinG/S13/Logic.pm6
 	PERL6LIB=$(LIB) perl6 lib/MinG/S13.pm6
+
+edmg: lib/MinG.pm6 lib/MinG/EDMG.pm6 lib/MinG/S13.pm6 lib/MinG/S13/Logic.pm6 lib/MinG/From/Text.pm6
+	PERL6LIB=$(LIB) perl6 lib/MinG/EDMG.pm6
 
 mgft: lib/MinG.pm6 lib/MinG/From/Text.pm6
 	PERL6LIB=$(LIB) perl6 lib/MinG/From/Text.pm6

@@ -45,44 +45,44 @@
 <h1 id="NAME"><a class="u" href="#___top" title="go to top of document">NAME</a></h1>
 <p>MinG::S13 -- Stabler&#39;s (2013) parser.</p>
 <h1 id="INTERNAL_CLASSES_AND_FUNCTIONS"><a class="u" href="#___top" title="go to top of document">INTERNAL CLASSES AND FUNCTIONS</a></h1>
-<h1>Derivation: Class that represents one derivation.</h1><article>
-<code class="pod-code-inline">still_going:(Derivation $: *%_ --&gt; Bool)</code>:
+<h1>MinG::S13::Derivation: Class that represents one derivation.</h1><article>
+<code class="pod-code-inline">still_going:(MinG::S13::Derivation $: *%_ --&gt; Bool)</code>:
 Method that returns whether this derivation still needs more steps.
 </article>
 <article>
-<code class="pod-code-inline">scan:(Derivation $: QueueItem $pred, Int $child_place, *%_ --&gt; Derivation)</code>:
+<code class="pod-code-inline">scan:(MinG::S13::Derivation $: QueueItem $pred, Int $child_place, *%_ --&gt; MinG::S13::Derivation)</code>:
 See Stabler (2013)
 </article>
 <article>
-<code class="pod-code-inline">merge1:(Derivation $: QueueItem $pred, Node @leaves, Node $selected, Node $selector, *%_ --&gt; Derivation)</code>:
+<code class="pod-code-inline">merge1:(MinG::S13::Derivation $: QueueItem $pred, Node @leaves, Node $selected, Node $selector, *%_ --&gt; MinG::S13::Derivation)</code>:
 See Stabler (2013)
 </article>
 <article>
-<code class="pod-code-inline">merge2:(Derivation $: QueueItem $pred, Node @non_terms, Node $selected, Node $selector, *%_ --&gt; Derivation)</code>:
+<code class="pod-code-inline">merge2:(MinG::S13::Derivation $: QueueItem $pred, Node @non_terms, Node $selected, Node $selector, *%_ --&gt; MinG::S13::Derivation)</code>:
 See Stabler (2013)
 </article>
 <article>
-<code class="pod-code-inline">merge3:(Derivation $: QueueItem $pred, Node @leaves, Node $mover_child, Node $selector, Mover $mover, *%_ --&gt; Derivation)</code>:
+<code class="pod-code-inline">merge3:(MinG::S13::Derivation $: QueueItem $pred, Node @leaves, Node $mover_child, Node $selector, Mover $mover, *%_ --&gt; MinG::S13::Derivation)</code>:
 See Stabler (2013)
 </article>
 <article>
-<code class="pod-code-inline">merge4:(Derivation $: QueueItem $pred, Node @non_terms, Node $mover_child, Node $selector, Mover $mover, *%_ --&gt; Derivation)</code>:
+<code class="pod-code-inline">merge4:(MinG::S13::Derivation $: QueueItem $pred, Node @non_terms, Node $mover_child, Node $selector, Mover $mover, *%_ --&gt; MinG::S13::Derivation)</code>:
 See Stabler (2013)
 </article>
 <article>
-<code class="pod-code-inline">move1:(Derivation $: QueueItem $pred, Node $licensor, Node $licensed, *%_ --&gt; Derivation)</code>:
+<code class="pod-code-inline">move1:(MinG::S13::Derivation $: QueueItem $pred, Node $licensor, Node $licensed, *%_ --&gt; MinG::S13::Derivation)</code>:
 See Stabler (2013)
 </article>
 <article>
-<code class="pod-code-inline">move2:(Derivation $: QueueItem $pred, Node $licensor, Node $mover, Node $mover_child, *%_ --&gt; Derivation)</code>:
+<code class="pod-code-inline">move2:(MinG::S13::Derivation $: QueueItem $pred, Node $licensor, Node $mover, Node $mover_child, *%_ --&gt; MinG::S13::Derivation)</code>:
 See Stabler (2013)
 </article>
 <article>
-<code class="pod-code-inline">exps:(Derivation $: *%_ --&gt; Array)</code>:
+<code class="pod-code-inline">exps:(MinG::S13::Derivation $: *%_ --&gt; Array)</code>:
 Method that gets the expansions to be had in the next step. Check the code&#39;s comments for more details.
 </article>
 <article>
-<code class="pod-code-inline">to_str:(Derivation $: *%_ --&gt; Str)</code>:
+<code class="pod-code-inline">to_str:(MinG::S13::Derivation $: *%_ --&gt; Str)</code>:
 Method that beautifies a derivation. Mostly used for debugging purposes.
 </article>
 <h1 id="EXPORTED_CLASSES_AND_FUNCTIONS"><a class="u" href="#___top" title="go to top of document">EXPORTED CLASSES AND FUNCTIONS</a></h1>
