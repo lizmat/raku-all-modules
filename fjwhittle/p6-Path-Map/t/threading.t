@@ -12,5 +12,5 @@ my $mapper = Path::Map.new();
 $mapper.add_handler('/foo/:bar', 'the one', :bar({ sleep 1/10; +$_ ~~ (Int) }));
 $mapper.add_handler('/foo/:baz', 'not the one', :baz({ True }));
 
-ok $mapper.lookup('/foo/42').?handler eq 'the one', 'determisitic resolution order';
+ok $mapper.lookup('/foo/42').?handler eq 'the one', 'deterministic resolution order';
 ok $mapper.lookup('/foo/bar').?handler eq 'not the one', 'skip constraint';

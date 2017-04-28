@@ -46,4 +46,4 @@ for @misses -> $path {
   ok !defined($mapper.lookup($path)), qq{lookup('$path') does not match};
 }
 
-ok <ABC Date> ~~ $mapper.?handlers.?sort, 'handlers()';
+ok <ABC Date> ~~ $mapper.?handlers.?sort.?list, 'handlers()';
