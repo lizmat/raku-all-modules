@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-666.git
 	branch = master
-	commit = a19883b16d7fbf3bdb70576d60503100efb48549
-	parent = f95f4f76899451596e32676a3dae846bf2b2c366
-	cmdver = 0.2.3
+	commit = 24c090d1c5c5d6122d600f743a0b8b42e328b837
+	parent = b0d4a6473ddea3442ecdfa1a92f8e9abef49680e
+	cmdver = 0.4.0

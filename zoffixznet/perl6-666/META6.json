@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "ווו",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "666th module in the Perl 6 Ecosystem is properly Evil!",
     "depends"      : [ ],
