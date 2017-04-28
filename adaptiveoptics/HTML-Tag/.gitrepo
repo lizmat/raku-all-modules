@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/adaptiveoptics/HTML-Tag.git
 	branch = master
-	commit = f45dcf8a3d28b487416c056d861e637b48ac905f
-	parent = 6b7b87908d9d1e1f8514ce16ea6c6dab76005745
+	commit = 0c733490e7ece19341cdd3d9dfe938ec270e034b
+	parent = 5a2009d3cb15c30ecc2457986bfa51842e50a33f
 	cmdver = 0.4.0

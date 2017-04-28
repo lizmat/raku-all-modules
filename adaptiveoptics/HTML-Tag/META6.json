@@ -1,6 +1,7 @@
 {
     "perl" : "6.c",
     "name" : "HTML::Tag",
+    "license" : "Artistic-2.0",
     "version" : "0.0.1",
     "description" : "Generate simple, interleafable, HTML tags.",
     "authors" : [ "Mark Rushing" ],
