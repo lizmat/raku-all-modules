@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "RT::REST::Client",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001003",
     "description"  : "Use Request Tracker's (RT) REST client interface",
     "depends"      : [
