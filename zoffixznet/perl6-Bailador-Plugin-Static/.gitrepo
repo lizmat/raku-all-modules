@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Bailador-Plugin-Static.git
 	branch = master
-	commit = 8ea5a46d20d9c095c305ac6076e0246b346bed55
-	parent = 3c404327e91d69f2ca6f1b478f70208c0245b263
-	cmdver = 0.2.3
+	commit = 676f487f4e944777fe9d55a3623724458a1f0297
+	parent = e9df587861bd2eaffa343e8bda63c26efd133523
+	cmdver = 0.4.0
