@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/astj/p6-SQL-NamedPlaceholder.git
 	branch = master
-	commit = 057c88e6d47a310d1a71184cf9da692775671ad3
-	parent = 5affb48d033daaa5eeabb68849d71fba1d46c4ba
+	commit = 2c90b14b4ea24b0c66a9e9466aadf9c375297c8d
+	parent = b339697a50645309689347473cd696cbf15c7719
 	cmdver = 0.4.0

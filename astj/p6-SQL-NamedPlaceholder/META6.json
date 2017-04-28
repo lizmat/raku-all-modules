@@ -6,6 +6,7 @@
   "depends" : [ ],
   "description" : "extension of placeholder",
   "name" : "SQL::NamedPlaceholder",
+  "license" : "Artistic-2.0",
   "perl" : "6",
   "provides" : {
     "SQL::NamedPlaceholder" : "lib/SQL/NamedPlaceholder.pm6"
