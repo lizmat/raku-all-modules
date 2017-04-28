@@ -1,5 +1,6 @@
 {
     "name" : "TAP::Harness::Prove6",
+    "license" : "Artistic-2.0",
     "version" : "0.0.1",
     "description" : "prove6 TAP harness for perl6",
     "provides" : {

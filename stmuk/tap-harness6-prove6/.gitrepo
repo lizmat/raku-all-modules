@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/stmuk/tap-harness6-prove6.git
 	branch = master
-	commit = 6cb391a83e669353f311e3c788afe511c3d85723
-	parent = cf9f5653576c6d64f5eacc4f293504f3401427d2
+	commit = 53dab7d5428c3b66b47771f953fe381ca54b5797
+	parent = 6b33b00de9929e74bc475d40fadf094253c8c35d
 	cmdver = 0.4.0
