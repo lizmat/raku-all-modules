@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-GlotIO.git
 	branch = master
-	commit = d3f5f8b3cf3ee216f518b9b4722f5240967855fc
-	parent = ae82e22cd82833bb93bfeab75fa1f929e8f61254
-	cmdver = 0.2.3
+	commit = 947820592c985059e326a3565858a4fe89606eb6
+	parent = 9629fe454afb6021735f7ac5cd07e903ad658e94
+	cmdver = 0.4.0
