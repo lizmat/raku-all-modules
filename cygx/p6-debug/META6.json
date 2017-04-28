@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "DEBUG",
+    "license" : "BSL-1.0",
     "version" : "*",
     "description" : "Experimental debugging macros",
     "author" : "cygx <cygx@cpan.org>",
