@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/nicqrocks/p6-Git-Wrapper.git
 	branch = master
-	commit = f37d1b9d87130b3f1f709b780cb88586abe474d1
-	parent = e85abab70927fd8b264f177590d2e97285b3b728
+	commit = 94969a9fcc7eae533894e31cfb361261272225a0
+	parent = 68a4d8ced78e000e2d49a93adc03a86bace59d9d
 	cmdver = 0.4.0
