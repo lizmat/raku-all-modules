@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Chess",
+    "license" : "Artistic-2.0",
     "version" : "0.2.0",
     "description" : "Chess-related stuff in Perl 6.",
     "author" : "L. Grondin",
