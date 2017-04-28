@@ -1,6 +1,7 @@
 {
 	"perl" : "6.c",
 	"name" : "IRC::Client::Plugin::UserPoints",
+	"license" : "Artistic-2.0",
 	"version" : "0.1.2",
 	"description" : "Plugin for counting user points.",
 	"authors" : [ "Julien Simonet" ],
