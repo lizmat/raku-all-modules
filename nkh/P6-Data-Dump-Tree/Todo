@@ -1,13 +1,10 @@
 
-
 object size
 
 ColorStr class
 	keeps color and string separated, or colored string and length of uncolored string
 
 eqv not implemented for Match
-
-Do not display empty header in multi lines if it is empty
 
 #2 colums display of dumps
 	given two dumps, handle colors, etc ... and show both side by side
