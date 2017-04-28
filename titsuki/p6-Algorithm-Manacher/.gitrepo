@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-Manacher.git
 	branch = master
-	commit = 4f18d49db2a6b7d567fe7c4d54973f597fa50e3c
-	parent = 12d313e5841789ecad9450b56b24c416ea3d33d6
-	cmdver = 0.2.3
+	commit = 9ce1e83b64030315da93440f81722f48e5eaaf34
+	parent = 1cc6aebd374a362ffd0a147f43680f0d03dd821e
+	cmdver = 0.4.0

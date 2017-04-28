@@ -1,5 +1,6 @@
 {
   "name" : "Algorithm::Manacher",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/titsuki/p6-Algorithm-Manacher.git",
   "perl" : "6.c",
   "resources" : [ ],
