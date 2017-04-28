@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/hankache/Acme-Cow.git
 	branch = master
-	commit = c62ad79226c6b71f310cfe84ce70f408d3623ade
-	parent = 9008e7f4386c117d4a8781aff39f3e5c207afaa8
-	cmdver = 0.2.3
+	commit = 730db3413c64e76e58c30bfc8fdbc735204234d4
+	parent = d7470389bfe2b8cdd62101ad29803bd631fe5099
+	cmdver = 0.4.0
