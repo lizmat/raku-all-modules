@@ -1,6 +1,7 @@
 {
     "perl" : "6.c",
     "name" : "Crust::Middleware::Session::Store::DBIish",
+    "license" : "Artistic-2.0",
     "version" : "0.0.1",
     "description" : "Implements database storage role for Crust::Middleware::Session",
     "authors" : [ "Mark Rushing" ],
