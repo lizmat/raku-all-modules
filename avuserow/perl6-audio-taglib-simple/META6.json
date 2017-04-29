@@ -1,6 +1,7 @@
 {
 	"perl" : "6.*",
 	"name" : "Audio::Taglib::Simple",
+	"license" : "MIT",
 	"version" : "0.0.7",
 	"description" : "Read, write ID3 and other audio metadata with TagLib",
 	"author" : "Adrian Kreher",
