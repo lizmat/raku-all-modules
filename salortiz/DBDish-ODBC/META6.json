@@ -1,6 +1,7 @@
 {
     "perl"	    : "6",
     "name"          : "DBDish::ODBC",
+    "license"       : "Artistic-2.0",
     "version"       : "0.0.7",
     "auth"	    : "github:salortiz",
     "description"   : "ODBC Database connectivity for Perl 6",
