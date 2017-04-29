@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moznion/p6-Text-LTSV
 	branch = master
-	commit = 37b23f25640f3900b15c78774de17155f930cac2
-	parent = e30933bbda9628e429426d0cf8979980e5656d7d
-	cmdver = 0.2.2
+	commit = 299f787c4855d9cc26017ab15e74e2645c4481d6
+	parent = b3ff8c9b4e7f3019ace14424cd4e00085bec8d42
+	cmdver = 0.4.0

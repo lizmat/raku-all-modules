@@ -1,6 +1,7 @@
 {
   "name" : "Text::LTSV",
-  "source-url" : "git://github.com/moznion/p6-Text-LTSV",
+  "license" : "Artistic-2.0",
+  "source-url" : "git://github.com/moznion/p6-Text-LTSV.git",
   "perl" : "v6",
   "build-depends" : [ ],
   "provides" : {
