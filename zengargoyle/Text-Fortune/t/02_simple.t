@@ -8,7 +8,7 @@ throws-like { Text::Fortune::Index.new.load-dat( 'not_found.dat' ) },
   X::Index::NotFound,
   message => rx:s/not found/;
 
-my Buf $b = do { my $f = 'empty.dat'.IO.open; $f.read($f.s) };
+my Buf $b = do { my $f = 'empty.dat'.IO; my $s = $f.s; $f.open(:bin).read($s); };
 
 given Text::Fortune::Index.new.load-dat( 'empty.dat' ) {
   is .version, 2, 'is version: 2';

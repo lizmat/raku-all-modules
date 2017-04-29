@@ -4,7 +4,7 @@ plan *;
 use Text::Fortune;
 let $*CWD = 't/test_data';
 
-my Buf $b = do { my $f = 'empty.dat'.IO.open: :bin; $f.slurp };
+my Buf $b = do { my $f = 'empty.dat'.IO; my $s = $f.s; $f.open(:bin).read($s); };
 say $b;
 
 given Text::Fortune::Index.new {

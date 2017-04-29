@@ -1,5 +1,6 @@
 {
   "name" : "Text::Fortune",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/zengargoyle/Text-Fortune.git",
   "perl" : "v6",
   "build-depends" : [ ],

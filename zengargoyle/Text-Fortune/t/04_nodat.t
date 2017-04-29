@@ -4,8 +4,8 @@ plan *;
 use Text::Fortune;
 let $*CWD = 't/test_data';
 
-my Buf $b = do { my $f = 'with_dat.dat'.IO.open; $f.read($f.s) };
-my Buf $be = do { my $f = 'empty.dat'.IO.open; $f.read($f.s) };
+my Buf $b = do { my $f = 'with_dat.dat'.IO; my $s = $f.s; $f.open(:bin).read($s); };
+my Buf $be = do { my $f = 'empty.dat'.IO; my $s = $f.s; $f.open(:bin).read($s); };
 
 given Text::Fortune::Index.new.load-fortune( 'with_dat' ) {
   is .offset-at(0), 0, 'first offset correct';
