@@ -1,5 +1,6 @@
 {
   "name" : "Backtrace::AsHTML",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/moznion/p6-Backtrace-AsHTML.git",
   "perl" : "6",
   "build-depends" : [ ],
