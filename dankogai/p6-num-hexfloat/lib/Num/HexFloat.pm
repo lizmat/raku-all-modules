@@ -31,9 +31,8 @@ multi sub to-hexfloat($num) returns Str {
 }
 multi sub to-hexfloat(Num $num) returns Str {
     return 'nan' if $num.isNaN;
-    if $num === 0e0 {  # handle both -0.0 and 0.0
-        return ($num.gist.substr(0, 1) eq '-' ?? '-' !! '') ~ '0x0p+0';
-    }
+    return '0x0p+0'  if $num === +0e0;
+    return '-0x0p+0' if $num === -0e0;
     my $s = $num < 0 ?? '-' !! '';
     my $a = $num.abs;
     return $s ~ 'inf' if $a == Inf;

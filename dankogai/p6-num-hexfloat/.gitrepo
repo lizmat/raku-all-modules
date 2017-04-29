@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/dankogai/p6-num-hexfloat.git
 	branch = master
-	commit = 72395527ec4b639f07d12a0bd5bf2a8a23bca749
-	parent = 88e7f512204fd0bc363ca0202d51fbea3b4ed8b0
-	cmdver = 0.2.3
+	commit = 4156f40ef6cf3fde437b38c3e727d88c8d2b5fb8
+	parent = 69ba9008523826b3d0fd7566912250cacff2234b
+	cmdver = 0.4.0
