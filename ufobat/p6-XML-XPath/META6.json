@@ -8,6 +8,7 @@
   ],
   "description" : "XPath perl6 library",
   "name" : "XML::XPath",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "tags" : ["XML", "XPath", "Parsing", "W3C", "Query Language"],
   "provides" : {
