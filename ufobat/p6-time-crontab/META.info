@@ -1,6 +1,7 @@
 {
         "perl" : "6.c",
         "name" : "Time::Crontab",
+        "license" : "Artistic-2.0",
         "version" : "0.1.0",
         "description" : "Time::Crontab for Perl6 - Parses Crontab Specifications",
         "authors" : ["Martin Barth <martin@senfdax.de>"],

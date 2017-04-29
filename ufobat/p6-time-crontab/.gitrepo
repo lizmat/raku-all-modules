@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/ufobat/p6-time-crontab.git
 	branch = master
-	commit = ce97e755eb42d75d8de5a3b41752b16f9631f8cd
-	parent = 1366adf82f9c6c7da5ef8b9a4315eb7a857e4b02
+	commit = 8076147d282569864f17ca8ca74f54810ed5868c
+	parent = 5dd79d2cf294426d667a6f50ed868dc2d07f2335
 	cmdver = 0.4.0
