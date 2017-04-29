@@ -1,5 +1,6 @@
 {
   "name" : "Pod::EOD",
+  "license" : "MIT",
   "source-url" : "https://github.com/hoelzro/p6-pod-eod.git",
   "perl" : "6.c",
   "provides" : {
