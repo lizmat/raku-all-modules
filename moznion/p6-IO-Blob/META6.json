@@ -1,5 +1,6 @@
 {
   "name" : "IO::Blob",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/moznion/p6-IO-Blob.git",
   "perl" : "6",
   "build-depends" : [ ],

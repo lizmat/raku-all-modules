@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moznion/p6-IO-Blob.git
 	branch = master
-	commit = 6c52804a3f29ec5da1688491fbad6ce158106631
-	parent = 81877a53876aa5d523e1ba3d8c7014fcba1c7b60
-	cmdver = 0.2.3
+	commit = b8683c391aba7be8b3a7b34ba2acb195c310e767
+	parent = 2a101d136e4f52764e4a3d1de7706815e9c1fd72
+	cmdver = 0.4.0
