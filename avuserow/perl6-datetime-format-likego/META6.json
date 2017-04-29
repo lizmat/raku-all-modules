@@ -1,6 +1,7 @@
 {
 	"perl" : "6.*",
 	"name" : "DateTime::Format::LikeGo",
+	"license" : "MIT",
 	"version" : "0.0.2",
 	"description" : "Format dates using Go's reference format",
 	"author" : "Adrian Kreher",
