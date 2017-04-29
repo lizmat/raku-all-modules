@@ -1,5 +1,6 @@
 {
   "name" : "HTTP::MultiPartParser",
+  "license" : "Artistic-2.0",
   "description" : "low level multipart/form-data parser",
   "source-url" : "git://github.com/tokuhirom/p6-HTTP-MultiPartParser.git",
   "perl" : "6",
