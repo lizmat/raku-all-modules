@@ -4,14 +4,15 @@ It's fairly straightforward to wire up concurrent progress reporting in Perl
 6: just create a `Supplier`, use it to emit progress reports, and have things
 wishing to receive progress reports tap the `Supply`. That's exactly what this
 module does on this inside; it just saves some boilerplate and helps get a
-little more intent into the code. It is intended for cases where "N out of M"
-style progress reports are desired, where N reaching M indicates completion.
+little more intent into the code. It is best suited to cases where "N out of
+M"-style progress reports are desired, where N reaching M indicates completion.
+However, it may be used in cases where there is no target also.
 
 ## Synopsis
 
 In the operation that should report progress, take `Concurrent::Progress` as
-a parameter (usually optional) and use it. Note that if no instance is passed,
-then the method calls silently do nothing.
+a parameter (usually optional) and use it. If no instance is passed, then the
+method calls will be made on the type object, and will silently do nothing.
 
     sub some-async-operation(Concurrent::Progress :$progress) {
         start {
@@ -41,7 +42,7 @@ then the method calls silently do nothing.
     }
 
 Meanwhile, in the caller (note that `whenever` automatically calls `Supply` on
-the `Concurrent::Progress object):
+the `Concurrent::Progress` object):
 
     my $progress = Cocurrent::Progress.new;
     react {
