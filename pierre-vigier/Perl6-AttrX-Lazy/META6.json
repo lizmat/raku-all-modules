@@ -1,7 +1,8 @@
 {
     "perl"          : "6.c",
     "name"          : "AttrX::Lazy",
-    "version"       : "0.0.2",
+    "license"       : "Artistic-2.0",
+    "version"       : "0.0.3",
     "authors"       : [ "github:pierre-vigier" ],
     "description"   : "Moo similar Lazy attribute funtionality",
     "depends"       : [ ],

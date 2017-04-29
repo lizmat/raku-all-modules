@@ -70,3 +70,13 @@ MISC
 ====
 
 To test the meta data of the modules, set environement variable PERL6_TEST_META to 1 On the Christmas version of perl, the module had no issue, but it's not working correctly anymore with precompilation as of today, waiting for a fix in rakudo, add no precompilation pragma
+
+Author
+======
+
+Pierre VIGIER
+
+License
+=======
+
+Artistic License 2.0

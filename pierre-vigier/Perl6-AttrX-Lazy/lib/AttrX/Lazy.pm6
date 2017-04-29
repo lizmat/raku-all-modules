@@ -1,5 +1,4 @@
-unit module AttrX::Lazy:ver<v0.0.2>:auth<github:pierre-vigier>;
-no precompilation;
+unit module AttrX::Lazy:ver<v0.0.3>:auth<github:pierre-vigier>;
 
 my role LazyAttribute {
     has $.base-name = self.name.substr(2);
@@ -132,5 +131,12 @@ On the Christmas version of perl, the module had no issue, but it's not working 
 anymore with precompilation as of today, waiting for a fix in rakudo, add no precompilation
 pragma
 
-=end pod
+=head1 Author
 
+Pierre VIGIER
+
+=head1 License
+
+Artistic License 2.0
+
+=end pod
