@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/madcapjake/p6-myhtml.git
 	branch = master
-	commit = 18395ba6d18070ba952056844751a010b5c6c376
-	parent = 6c8a79ceb76aa3dd80f011e597aa27b670827d39
-	cmdver = 0.2.3
+	commit = 38d9f79d7ceb45ba799ab58a517f33830b726506
+	parent = 47eece0f56746a5e3720c3c40def4208e3dadc2c
+	cmdver = 0.4.0

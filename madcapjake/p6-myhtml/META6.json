@@ -1,5 +1,6 @@
 {
   "name" : "HTML::MyHTML",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/madcapjake/p6-myhtml.git",
   "perl" : "6.c",
   "resources" : [ ],
