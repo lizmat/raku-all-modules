@@ -1,5 +1,6 @@
 {
   "name" : "Cookie::Baker",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/tokuhirom/p6-Cookie-Baker.git",
   "perl" : "6",
   "build-depends" : [ ],

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tokuhirom/p6-Cookie-Baker.git
 	branch = master
-	commit = 8ee40d9eeec12b467ed734c2ff027fc50c9eeafc
-	parent = 2e12a52b0dc625c05e7f2cf8e1eee828f807ab41
+	commit = ab521f96c6a19b1a9df5863e36b806d024d35256
+	parent = 6240b6029b7b37bace78b64880538e2698a69da5
 	cmdver = 0.4.0
