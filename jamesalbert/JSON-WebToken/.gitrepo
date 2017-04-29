@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jamesalbert/JSON-WebToken.git
 	branch = master
-	commit = 983d03b0e49e3a52e1f3be2e755f984d78d79331
-	parent = 1554ce84caa2c9d2b855239db9c8cdbac6157ba5
+	commit = d7e1ea7367fe5bc9f36f2eb7dec1afd2c871b26b
+	parent = 29381d28d0c7d9df9ce4d37ca2dcde60af27d386
 	cmdver = 0.4.0

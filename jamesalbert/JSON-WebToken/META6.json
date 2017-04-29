@@ -1,6 +1,7 @@
 {
   "perl" : "6.*",
   "name" : "JSON::WebToken",
+  "license" : "GPL-1.0+ OR Artistic-1.0-Perl",
   "version" : "0.0.1",
   "description" : "JSON::WebToken is a JSON Web Token (JWT) implementation for Perl6",
   "authors" : [ "James Albert" ],
