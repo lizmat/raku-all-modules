@@ -1,6 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "NASA",
+    "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "use NASA's APIs via Perl 6",
     "depends"      : [
@@ -9,7 +10,7 @@
         "URI::Escape",
         "Subset::Helper"
     ],
-    "test-depends" : [ "Test" ],
+    "test-depends" : [ "Test", "Test::META" ],
     "provides"     : {
         "NASA" : "lib/NASA.pm6",
         "NASA::UA" : "lib/NASA/UA.pm6",
