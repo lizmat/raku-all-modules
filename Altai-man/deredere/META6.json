@@ -1,6 +1,7 @@
 {
     "perl": "6.*",
     "name" : "deredere",
+    "license" : "Artistic-2.0",
     "tags": ["Web"],
     "version" : "0.1.0",
     "author" : "github:Altai-man",

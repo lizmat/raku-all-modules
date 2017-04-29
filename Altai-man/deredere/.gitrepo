@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Altai-man/deredere.git
 	branch = master
-	commit = 9acb513610c936a336518ecb41d6b3083dd7dfc8
-	parent = 03de2bcb315ff2d4bb39ae664c1c5bb8ae1444f6
+	commit = d4e1c211e766c0815c381bcedc7f7d6375df9e18
+	parent = 25c6a0fe879943ef2f8ec81e85ceebf9c7da4e48
 	cmdver = 0.4.0
