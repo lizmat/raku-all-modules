@@ -6,7 +6,6 @@
 
 Many tests are based on the Unicode® database as well as the unicode tools from perl6. Not all methods and functions are in place e.g. uniprop() is not yet available in the jvm. Also perl6 seems to be based on Unicode version 8.0.0 but is scheduled for 9.0.0. However parts are working in version 9.0.0 now. Not available in jvm yet are uniprop, uniprop-bool, uniprop-int, uniprop-str.
 
-
 ## Synopsis
 
 ```
