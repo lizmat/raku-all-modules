@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/semaphore-readerswriters.git
 	branch = master
-	commit = 15951eecd6684c82e8075f7e37818c16c67e7ddf
-	parent = 307e879f39e898957e14af2933aca077cf11a9ca
+	commit = d1e40f54ab9dd43053eec9c7fdd55139c823eb2e
+	parent = 1836d361cefbdce5a4ce476368e895ab4513bbf9
 	cmdver = 0.4.0
