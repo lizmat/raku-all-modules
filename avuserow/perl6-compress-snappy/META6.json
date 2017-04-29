@@ -1,6 +1,7 @@
 {
 	"perl" : "6.*",
 	"name" : "Compress::Snappy",
+	"license" : "MIT",
 	"version" : "0.0.3",
 	"description" : "(de)compress data in Google's Snappy compression format",
 	"provides": {
