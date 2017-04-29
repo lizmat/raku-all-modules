@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/PKCS5.git
 	branch = master
-	commit = c947e1d16e383b9744f85102deab2939bd069790
-	parent = 380b20a4a556a785c87af484a1dec1562955b4fc
+	commit = 939c0d173672986f3a082e2babd7cd27456b6b94
+	parent = ca6c6883ac6948c8b64c73c42afc794e20151ece
 	cmdver = 0.4.0
