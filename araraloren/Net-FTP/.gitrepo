@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/araraloren/Net-FTP.git
 	branch = master
-	commit = 0b93d3f46d25f56bb01d315b0288c1d044841850
-	parent = e9d42a72fca67e7724093f19e52abcbcdab67ff1
+	commit = 8c0fafa446d0daf1ee05faecb1486288f77261da
+	parent = 4393652569145dd05b413f0e8263468bdd7d57e5
 	cmdver = 0.4.0

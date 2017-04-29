@@ -1,5 +1,6 @@
 {
     "name" : "Net::FTP",
+    "license" : "Artistic-2.0",
     "version" : "0.6.1",
     "description" : "A ftp client written in perl6",
     "author" : "loren",
