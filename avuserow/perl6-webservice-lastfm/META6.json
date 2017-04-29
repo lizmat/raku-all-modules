@@ -1,6 +1,7 @@
 {
 	"perl" : "6.*",
 	"name" : "WebService::Lastfm",
+	"license" : "MIT",
 	"version" : "0.0.2",
 	"description" : "interact with the Last.fm API",
 	"author" : "Adrian Kreher",
