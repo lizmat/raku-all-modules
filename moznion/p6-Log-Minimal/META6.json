@@ -1,5 +1,6 @@
 {
   "name" : "Log::Minimal",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/moznion/p6-Log-Minimal.git",
   "perl" : "v6",
   "build-depends" : [ ],

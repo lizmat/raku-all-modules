@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moznion/p6-Log-Minimal.git
 	branch = master
-	commit = c86576dfba7fb49c6665437f5eb584a3c0f4a4c9
-	parent = e9175c80448e46e2346097608704f90f7bdc2110
+	commit = a1c181ad3ba77c39f0322dc51b6843e3e61e59d6
+	parent = e32878dc824bb4825b75630fafe96fc414b04825
 	cmdver = 0.4.0
