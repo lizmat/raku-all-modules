@@ -7,6 +7,7 @@
   "depends" : [ "XML", "XML::XPath", "Test::META" ],
   "description" : "XML::Rabbit builds your Attributes from xml files with xpath expressions",
   "name" : "XML::Rabbit",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "XML::Rabbit" : "lib/XML/Rabbit.pm6"
