@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/moznion/p6-Stream-Buffered.git
 	branch = master
-	commit = 91f61846d2ac7d411ab5eb7cc477990b5c69a5ad
-	parent = b1a96d8d8ab0d6b18c46d42851a3408a1396bbe4
-	cmdver = 0.2.3
+	commit = 941284453db958f915fe373661027d8e00ff2c1e
+	parent = f4fda6ec0411ddaaa51ed4f35d53a4c2154c2464
+	cmdver = 0.4.0
