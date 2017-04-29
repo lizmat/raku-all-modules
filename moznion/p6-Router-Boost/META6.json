@@ -1,5 +1,6 @@
 {
   "name" : "Router::Boost",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/moznion/p6-Router-Boost.git",
   "perl" : "6.c",
   "resources" : [ ],
