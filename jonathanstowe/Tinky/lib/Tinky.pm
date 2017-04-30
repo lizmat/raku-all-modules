@@ -775,17 +775,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
             my @promises = do for @subs.grep( -> $v { c ~~ $v.signature  }) -> &callback {
                 start { callback(|c) };
             }
-            my $p1 = do {
-                if all(@promises>>.status) ~~ Kept {
-                    my $p = Promise.new;
-                    $p.keep: so all(@promises>>.result);
-                    $p;
-                }
-                else {
-                    Promise.allof(@promises);
-                }
-            }
-            $p1.status ~~ Kept ?? $p1 !! $p1.then({ so all(@promises>>.result) });
+            Promise.allof(@promises).then({ so all(@promises.map(-> $p { $p.result })) });
         }
         run($object);
     }
@@ -958,18 +948,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
 
         method validate-apply(Object:D $object) returns Promise {
             my @promises = (self.validate($object), self.from.validate-leave($object), self.to.validate-enter($object));
-            my $p1 = do {
-                if all(@promises>>.status) ~~ Kept {
-                    my $p = Promise.new;
-                    $p.keep: so all(@promises>>.result);
-                    $p;
-                }
-                else {
-                    Promise.allof(@promises);
-                }
-            };
-
-            $p1.status ~~ Kept ?? $p1 !! $p1.then({ so all(@promises>>.result)});
+            Promise.allof(@promises).then( { so all(@promises.map(-> $p { $p.result })) });
         }
 
         method supply() returns Supply {
@@ -1148,7 +1127,7 @@ module Tinky:ver<0.0.3>:auth<github:jonathanstowe> {
         }
 
         method next-states() {
-            my @states = self.transitions>>.to;
+            my @states = self.transitions.map(-> $t { $t.to });
             @states;
         }
 

@@ -182,7 +182,6 @@ class TestWorkflow is Tinky::Workflow {
 
 my $apply-wf-meths = TestWorkflow.new;
 
-todo "don't know why this one is flappy";
 nok do { await $apply-wf-meths.validate-apply(WorkflowBad.new) }, "Workflow.validate-apply with False validator as method";
 ok do { await $apply-wf-meths.validate-apply(WorkflowGood.new) }, "Workflow.validate-apply with True validator as method";
 
