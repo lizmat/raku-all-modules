@@ -1,26 +1,40 @@
 {
-   "authors" : [
-      "Jonathan Stowe <jns+gh@gellyfish.co.uk>",
-      "Pepe Schwarz <peschwa@gmail.com>"
-   ],
-   "auth" : "github:Perl6-Noise-Gang",
-   "meta6" : "0",
-   "license" : "perl",
-   "build-depends" : [],
-   "tags" : ["MIDI", "audio", "music", "sequencer", "noise-gang"],
-   "depends" : [ "Util::Bitfield" ],
-   "test-depends" : [ "LibraryCheck" ],
-   "perl" : "6.c",
-   "provides" : {
-        "Audio::PortMIDI" : "lib/Audio/PortMIDI.pm"
-   },
-   "description" : "Perl6 MIDI access using the portmidi library",
-   "source-url" : "git://github.com/Perl6-Noise-Gang/Audio-PortMIDI.git",
-   "resource" : {},
-   "version" : "0.0.8",
-   "name" : "Audio::PortMIDI",
-   "support" : {
-      "source" : "git://github.com/Perl6-Noise-Gang/Audio-PortMIDI.git",
-      "irc" : "irc://irc.freenode.net/perl6-noise-gang"
-   }
+  "name": "Audio::PortMIDI",
+  "source-url": "git://github.com/Perl6-Noise-Gang/Audio-PortMIDI.git",
+  "support": {
+    "irc": "irc://irc.freenode.net/perl6-noise-gang",
+    "source": "git://github.com/Perl6-Noise-Gang/Audio-PortMIDI.git"
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "auth": "github:Perl6-Noise-Gang",
+  "depends": [
+    "Util::Bitfield"
+  ],
+  "tags": [
+    "MIDI",
+    "audio",
+    "music",
+    "sequencer",
+    "noise-gang"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "LibraryCheck"
+  ],
+  "provides": {
+    "Audio::PortMIDI": "lib/Audio/PortMIDI.pm"
+  },
+  "version": "0.0.8",
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>",
+    "Pepe Schwarz <peschwa@gmail.com>"
+  ],
+  "description": "Perl6 MIDI access using the portmidi library",
+  "meta6": "0"
 }
