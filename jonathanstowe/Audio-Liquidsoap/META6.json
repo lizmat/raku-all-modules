@@ -1,32 +1,39 @@
 {
-	"meta6" : "0",
-   "tags" : [
-		"audio",
-		"integration",
-		"streaming"
-   ],
-   "provides" : {
-      "Audio::Liquidsoap" : "lib/Audio/Liquidsoap.pm"
-   },
-   "test-depends" : [
-      "Test",
-      "Test::Util::ServerPort"
-   ],
-   "support" : {
-      "source" : "git://github.com/jonathanstowe/Audio-Liquidsoap.git"
-   },
-   "perl" : "6.c",
-   "build-depends" : [],
-   "auth" : "github:jonathanstowe",
-   "source-url" : "git://github.com/jonathanstowe/Audio-Liquidsoap.git",
-   "depends" : [
-		"File::Which"
-   ],
-   "name" : "Audio::Liquidsoap",
-   "authors" : [
-      "Jonathan Stowe <jns+git@gellyfish.co.uk>"
-   ],
-   "version" : "0.0.5",
-   "license" : "Artistic",
-   "description" : "Interact with the Liquidsoap command server"
+  "name": "Audio::Liquidsoap",
+  "source-url": "git://github.com/jonathanstowe/Audio-Liquidsoap.git",
+  "support": {
+    "email": "jns+git@gellyfish.co.uk",
+    "source": "git://github.com/jonathanstowe/Audio-Liquidsoap.git",
+    "bugtracker": "https://github.com/jonathanstowe/Audio-Liquidsoap/issues"
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "auth": "github:jonathanstowe",
+  "depends": [
+    "File::Which"
+  ],
+  "tags": [
+    "audio",
+    "integration",
+    "streaming"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "Test",
+    "Test::Util::ServerPort"
+  ],
+  "provides": {
+    "Audio::Liquidsoap": "lib/Audio/Liquidsoap.pm"
+  },
+  "version": "0.0.6",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "description": "Interact with the Liquidsoap command server",
+  "meta6": "0"
 }

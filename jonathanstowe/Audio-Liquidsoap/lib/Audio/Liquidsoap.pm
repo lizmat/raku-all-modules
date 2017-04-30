@@ -615,7 +615,7 @@ takes care of providing the namespace for the object.
 =end pod
 
 
-class Audio::Liquidsoap:ver<0.0.5>:auth<github:jonathanstowe> {
+class Audio::Liquidsoap:ver<0.0.6>:auth<github:jonathanstowe> {
 
     class X::NoServer is Exception {
         has $.port;
@@ -797,7 +797,7 @@ class Audio::Liquidsoap:ver<0.0.5>:auth<github:jonathanstowe> {
         }
 
         if not %!vars{$name}:exists {
-            X::NoVar.throw(name => $name).throw;
+            X::NoVar.new(name => $name).throw;
         }
 
         my $val = self.command("var.get $name");
@@ -821,7 +821,7 @@ class Audio::Liquidsoap:ver<0.0.5>:auth<github:jonathanstowe> {
         }
 
         if not %!vars{$name}:exists {
-            X::NoVar.throw(name => $name).throw;
+            X::NoVar.new(name => $name).throw;
         }
 
         my $out-val = set-val($val, %!vars{$name});
