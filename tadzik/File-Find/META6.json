@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "File::Find",
+    "license"     : "MIT",
     "version"     : "0.1",
     "description" : "File::Find for Perl 6",
     "depends"     : [],
