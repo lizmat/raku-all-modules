@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MattOates/Math--FourierTransform.git
 	branch = master
-	commit = cfc2ebf73243e6135837583f71465f47a2ca976d
-	parent = 8b2e166ad38a00fdb7dc29b5d7451c8ee50bc927
-	cmdver = 0.2.3
+	commit = cc8631926d8ee12e1b8bd1cfa2e740632fd44513
+	parent = 1e780764df0273061fffc2010efb271f0279c450
+	cmdver = 0.4.0

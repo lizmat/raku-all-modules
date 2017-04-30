@@ -1,6 +1,8 @@
 {
     "name" : "Math::FourierTransform",
     "version" : "0.0.1",
+    "perl" : "6.*",
+    "license" : "Artistic-2.0",
     "description" : "Discrete Fourier Transform implementation.",
     "author" : "Matt Oates",
     "depends" : [],
