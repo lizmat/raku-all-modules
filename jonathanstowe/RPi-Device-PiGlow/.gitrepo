@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/RPi-Device-PiGlow.git
 	branch = master
-	commit = 4e8408da42dd6ea805db6e10c48e94bff09f4999
-	parent = 9b8f72f67dc9063e5fbd5609dc9a2ec658163bee
+	commit = 07cdb2430e660bc443e25818111cd603d3625156
+	parent = 3c00ade9ad244950bd53fc1ae638a0643c05dd98
 	cmdver = 0.4.0
