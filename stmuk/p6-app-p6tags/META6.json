@@ -1,6 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "App::p6tags",
+    "license"     : "Artistic-2.0",
     "version"     : "0.6",
     "description" : "Generate editor tags for perl6. ",
     "authors"      : ["Steve Mynott <steve.mynott@gmail.com>"],
