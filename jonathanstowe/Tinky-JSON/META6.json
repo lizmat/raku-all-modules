@@ -1,37 +1,42 @@
 {
-   "description" : "Describe Tinky Workflows in JSON",
-   "name" : "Tinky::JSON",
-   "license" : "Artistic",
-   "perl" : "6.c",
-   "build-depends" : [],
-   "test-depends" : [
-      "Test"
-   ],
-   "version" : "0.0.2",
-   "auth" : "github:jonathanstowe",
-   "meta6" : "0",
-   "authors" : [
-      "Jonathan Stowe <jns+git@gellyfish.co.uk>"
-   ],
-   "support" : {
-      "source" : "git://github.com/jonathanstowe/Tinky-JSON.git",
-      "bugtracker" : "https://github.com/jonathanstowe/Tinky-JSON/issues",
-	  "email" : "jns+gh@gellyfish.co.uk"
-   },
-   "provides" : {
-      "Tinky::JSON" : "lib/Tinky/JSON.pm"
-   },
-   "source-url" : "git://github.com/jonathanstowe/Tinky-JSON.git",
-   "tags" : [
-      "Workflow",
-      "toolkit",
-      "state machine",
-      "JSON"
-   ],
-   "depends" : [
-       "Tinky",
-       "JSON::Name",
-       "JSON::Unmarshal",
-       "JSON::Class"
-   ]
+  "name": "Tinky::JSON",
+  "source-url": "git://github.com/jonathanstowe/Tinky-JSON.git",
+  "support": {
+    "email": "jns+gh@gellyfish.co.uk",
+    "source": "git://github.com/jonathanstowe/Tinky-JSON.git",
+    "bugtracker": "https://github.com/jonathanstowe/Tinky-JSON/issues"
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "auth": "github:jonathanstowe",
+  "depends": [
+    "Tinky",
+    "JSON::Name",
+    "JSON::Unmarshal",
+    "JSON::Class"
+  ],
+  "tags": [
+    "Workflow",
+    "toolkit",
+    "state machine",
+    "JSON"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "Test"
+  ],
+  "provides": {
+    "Tinky::JSON": "lib/Tinky/JSON.pm"
+  },
+  "version": "0.0.2",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "description": "Describe Tinky Workflows in JSON",
+  "meta6": "0"
 }
