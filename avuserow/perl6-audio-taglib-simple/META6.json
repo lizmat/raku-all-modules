@@ -9,5 +9,10 @@
 		"Audio::Taglib::Simple" : "lib/Audio/Taglib/Simple.pm"
 	},
 	"depends" : [],
+	"tags" : [
+		"audio",
+		"music",
+		"mp3"
+	],
 	"source-url" : "git://github.com/avuserow/perl6-audio-taglib-simple.git"
 }
