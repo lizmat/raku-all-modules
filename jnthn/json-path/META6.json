@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "JSON::Path",
+    "license" : "MIT",
     "version" : "*",
     "description" : "Implementation of the JSONPath data structure query language.",
     "provides" : {

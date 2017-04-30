@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/json-path.git
 	branch = master
-	commit = c0b6898958f29035ef494bd55e35ac79f6e1dcb5
-	parent = 081fe5804a9cc0c370e2b833cd117af046483187
+	commit = 9dcb466c8f35b1d6497a88253fe69d1af62673dc
+	parent = f77177d37c2889a390f45207e29d3c8a2d56e0fe
 	cmdver = 0.4.0
