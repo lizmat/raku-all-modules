@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/zoffixznet/perl6-Trait-IO.git
+	branch = master
+	commit = bda9f08ad78f0a484daf57635aa5bc8987cb3100
+	parent = 8d56885f099b2633090bf0b9bc931fc028fde78d
+	cmdver = 0.4.0
