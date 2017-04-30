@@ -1,31 +1,39 @@
 {
-  "resource": { },
   "name": "App::ModuleSnap",
   "source-url": "git://github.com/jonathanstowe/App-ModuleSnap.git",
   "support": {
+    "email": "jns+gh@gellyfish.co.uk",
     "source": "git://github.com/jonathanstowe/App-ModuleSnap.git",
-    "email" : "jns+gh@gellyfish.co.uk",
-    "bugtracker" : "https://github.com/jonathanstowe/App-ModuleSnap/issues"
+    "bugtracker": "https://github.com/jonathanstowe/App-ModuleSnap/issues"
   },
   "perl": "6.c",
-  "build-depends": [ ],
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
   "auth": "github:jonathanstowe",
-  "provides": {
-		"App::ModuleSnap" : "lib/App/ModuleSnap.pm"
-  },
   "depends": [
-      "JSON::Fast",
-	  "META6"
+    "JSON::Fast",
+    "META6"
   ],
-  "tags": [ "package", "snapshot", "utility" ],
-  "license": "perl",
-  "test-depends": [ 
-     "JSON::Fast"
+  "tags": [
+    "package",
+    "snapshot",
+    "utility"
   ],
-  "description": "Take a snapshot of the installed modules for later reinstallation",
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "JSON::Fast"
+  ],
+  "provides": {
+    "App::ModuleSnap": "lib/App/ModuleSnap.pm"
+  },
   "version": "0.0.9",
-  "meta6": "0",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
-  ]
+  ],
+  "description": "Take a snapshot of the installed modules for later reinstallation",
+  "meta6": "0"
 }
