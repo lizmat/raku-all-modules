@@ -10,6 +10,7 @@
   ],
   "description" : "A Perl6 bindings for libLBFGS",
   "name" : "Algorithm::LBFGS",
+  "license" : "MIT",
   "perl" : "6.c",
   "provides" : {
     "Algorithm::LBFGS" : "lib/Algorithm/LBFGS.pm6",
