@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Digest::PSHA1",
+    "license" : "MIT",
     "version" : "1.0.0",
     "author" : "github:FROGGS",
     "description" : "pseudorandom hashing algorithm as per rfc5246",
