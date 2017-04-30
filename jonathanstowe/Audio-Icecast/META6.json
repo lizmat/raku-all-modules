@@ -1,28 +1,40 @@
 {
-   "version" : "0.0.2",
-   "support" : {
-      "source" : "git@github.com:jonathanstowe/Audio-Icecast.git"
-   },
-   "name" : "Audio::Icecast",
-   "resource" : {},
-   "authors" : [
-      "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
-   ],
-   "source-url" : "git@github.com:jonathanstowe/Audio-Icecast.git",
-   "tags" : ["audio", "util", "icecast", "admin" ],
-   "test-depends" : [ "CheckSocket", "Test" ],
-   "license" : "perl",
-   "auth" : "github:jonathanstowe",
-   "provides" : {
-      "Audio::Icecast" : "lib/Audio/Icecast.pm"
-   },
-   "depends" : [
-      "XML::Class",
-      "URI::Template",
-      "HTTP::UserAgent"
-   ],
-   "meta6" : "0",
-   "build-depends" : [],
-   "description" : "Administrative helpers for an icecast server",
-   "perl" : "6.c"
+  "name": "Audio::Icecast",
+  "source-url": "git@github.com:jonathanstowe/Audio-Icecast.git",
+  "support": {
+    "source": "git@github.com:jonathanstowe/Audio-Icecast.git"
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "auth": "github:jonathanstowe",
+  "depends": [
+    "XML::Class",
+    "URI::Template",
+    "HTTP::UserAgent"
+  ],
+  "tags": [
+    "audio",
+    "util",
+    "icecast",
+    "admin"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "CheckSocket",
+    "Test"
+  ],
+  "provides": {
+    "Audio::Icecast": "lib/Audio/Icecast.pm"
+  },
+  "version": "0.0.2",
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
+  ],
+  "description": "Administrative helpers for an icecast server",
+  "meta6": "0"
 }
