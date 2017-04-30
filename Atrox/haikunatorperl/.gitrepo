@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Atrox/haikunatorperl.git
 	branch = master
-	commit = f754a2b664607e69cbb87c0c5562a03ef9a76e2b
-	parent = 97b9c63476a64d42df61117c44998e3cb9deb442
+	commit = 5108b616847c06f1bf8e93c5d6a8affbcafda52f
+	parent = 3ab7471540b24b67dd1679a0e3a85f1d43184459
 	cmdver = 0.4.0

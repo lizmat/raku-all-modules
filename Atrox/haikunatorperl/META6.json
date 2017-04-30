@@ -1,6 +1,7 @@
 {
   "perl" : "6.*",
   "name" : "Haikunator",
+  "license" : "BSD-3-Clause",
   "version" : "0.1.0",
   "description" : "Generate Heroku-like random names to use in your perl 6 applications.",
   "authors" : [ "Atrox <mail@atrox.me>" ],
