@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/grondilu/trigpi.git
 	branch = master
-	commit = 1b75f3dcb047d12514554d7d677d01f76c76ea47
-	parent = bb7302cfeb511bbfc1dc72d440dd26a8b28f4e3e
+	commit = 9040a1b906a7c1f88fa7cb25d0c76898244da621
+	parent = 75839baad1e89669bcdaebc5e4cab3c0b51ce4f9
 	cmdver = 0.4.0
