@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Audio-Fingerprint-Chromaprint.git
 	branch = master
-	commit = 88fc7af077893829c70ed0c7af5f8feb47a6b00c
-	parent = 31a50c2e95c24b43de65ff84a11292f33c9e15c8
+	commit = 6d83be84662cd6eb8ea2eb289531c95dc580850a
+	parent = 5023eac3c5f25b7e51afc0bb2319eb0668b910f1
 	cmdver = 0.4.0
