@@ -6,6 +6,7 @@
     "depends" : [ ],
     "description" : "A few math and Physics constants",
     "name" : "Math::Constants",
+    "license" : "GPL-3.0",
     "perl" : "6.*",
     "provides" : {
 	"Math::Constants" : "lib/Math/Constants.pm6"
