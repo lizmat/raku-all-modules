@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Oyatul.git
 	branch = master
-	commit = 2f91fbeb3951725395f7ecee8ffa04375e18f972
-	parent = 0cdd8e521feb7dd82e83096db79e966ecd79a5ea
+	commit = e2a18720834f2bb44c07a4b289c33f8351a62744
+	parent = aeab07570d07444556ca103d26f3464810a88d80
 	cmdver = 0.4.0
