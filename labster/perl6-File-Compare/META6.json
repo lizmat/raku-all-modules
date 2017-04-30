@@ -1,6 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "File::Compare",
+  "license"     : "Artistic-2.0",
   "version"     : "*",
   "description" : "Compare files to check for equality/difference",
   "provides"    : {
