@@ -67,6 +67,8 @@ my $timeout = %cfg<general><timeout>.Int // 60;
 my $git-timeout = %cfg<git><timeout>.Int // $timeout // 120;
 
 our sub try-to-fetch-url($_) is export(:HELPER) {
+    return True if %cfg<check><disable-url-check>;
+
     my $response = HTTP::Client.new.head(.Str, :follow);
     CATCH { default { $response = Nil } }
     200 <= $response.?status < 400
@@ -267,6 +269,33 @@ multi sub MAIN(Bool :pr(:$pull-request), Str :$base-dir = '.', Str :$meta6-file-
     github-pull-request($parent-owner, $parent, $title, $message, :head("$github-user:$head"), :$base);
 }
 
+multi sub MAIN(Str :$module, Bool :$issues!, Bool :$closed,
+    Str :$base-dir = '.', Str :$meta6-file-name = 'META6.json',
+) {
+    my ($owner, $repo);
+    
+    if $module {
+        my @ecosystem = fetch-ecosystem;
+        my $meta6 = @ecosystem.grep(*.<name> eq $module)[0];
+        my $module-url = $meta6<source-url> // $meta6<support><source> // Failure.new('No source url provided by ecosystem.');
+        ($owner, $repo) = $module-url.split('/')[3,4];
+    } else {
+        my IO::Path $meta6-file = ($base-dir ~ '/' ~ $meta6-file-name).IO;
+        die RED "Can not find ⟨$meta6-file⟩." unless $meta6-file.e;
+        my $meta6 = META6.new(file => $meta6-file) or die RED "Failed to process ⟨$meta6-file⟩.";
+        my $module-url = $meta6<source-url> // $meta6<support>.source;
+        ($owner, $repo) = $module-url.split('/')[3,4];
+    }
+    $repo.subst-mutate(/'.git'$/, '');
+    my @issues := github-get-issues($owner, $repo, :$closed);
+
+    for @issues {
+        put BOLD "[{.<state>}] {.<title>}";
+        put "⟨{.<html_url>}⟩";
+        put .<body>.indent(4);
+    }
+}
+
 our sub git-create($base-dir, @tracked-files, :$verbose) is export(:GIT) {
     my Promise $p;
 
@@ -349,7 +378,6 @@ our sub github-get-repo($owner, $repo) is export(:GIT) {
     }
 }
 
-
 our sub github-pull-request($owner, $repo, $title, $body = '', :$head = 'master', :$base = 'master') is export(:GIT) {
     temp $github-user = $github-token ?? $github-user ~ ':' ~ $github-token !! $github-user;
     my $curl = Proc::Async::Timeout.new('curl', '--silent', '--user', $github-user, '--request', 'POST', '--data', to-json({ title => $title, body => $body, head => $head, base => $base}), „https://api.github.com/repos/$owner/$repo/pulls“);
@@ -366,6 +394,28 @@ our sub github-pull-request($owner, $repo, $title, $body = '', :$head = 'master'
         when .<html_url>:exists {
             say BOLD 'Pull request created at ' ~ .<html_url> ~ '.';
             return .<html_url>;
+        }
+    }
+}
+
+our sub github-get-issues($owner, $repo, :$closed) is export(:GIT) {
+    temp $github-user = $github-token ?? $github-user ~ ':' ~ $github-token !! $github-user;
+    my $state = $closed ?? '?state=all' !! '?state=open';
+    my $curl = Proc::Async::Timeout.new('curl', '--silent', '-u', $github-user, '-X', 'GET', „https://api.github.com/repos/$owner/$repo/issues$state“);
+    my $github-response;
+    $curl.stdout.tap: { $github-response ~= .Str };
+
+    await $curl.start: :$timeout;
+
+    given from-json($github-response).flat.cache {
+        when .<message>:exists {
+            fail RED .<message>;
+        }
+        when .[0].<title>:exists {
+            return .item;
+        }
+        when () {
+            return ();
         }
     }
 }
@@ -547,6 +597,7 @@ multi sub read-cfg(IO::Path:D $path) {
 multi sub read-cfg(Mu:U $path) {
     my %h;
     %h<general><timeout> = 60;
+    %h<check><disable-url-check> = 0; 
     %h<git><timeout> = 60;
     %h<git><protocol> = 'https';
     
