@@ -1,5 +1,6 @@
 {
   "name"         : "File::Which",
+  "license"      : "MIT",
   "version"      : "*",
   "perl"         : "6.c",
   "description"  : "Cross platform Perl 6 executable path finder (aka which on UNIX)",

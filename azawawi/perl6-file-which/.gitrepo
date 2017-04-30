@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-file-which.git
 	branch = master
-	commit = 44549a485798f1e3c4c2fbb1aececf02ee517b6a
-	parent = 88aa11e38600588d3760dc313cd3829e58c232e5
+	commit = ff971edcecf9b7789bb39c2b1bd79c867a2accd9
+	parent = c29225cd6fc12bae9b7fa348fcd132274d04a7c4
 	cmdver = 0.4.0
