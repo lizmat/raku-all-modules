@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/nobodyinperson/perl6-fortran-grammar.git
 	branch = devel
-	commit = 59939f13ac88e5e80d3f47ca9ef96d65d85da386
-	parent = b717e5dc1b36af94d8130775b01231111955ad76
+	commit = 613ee19f9580d837152f3eedcf08c868d527ad7c
+	parent = 96dfee4642339e056e5d1e0e333d161083a6aa6a
 	cmdver = 0.4.0

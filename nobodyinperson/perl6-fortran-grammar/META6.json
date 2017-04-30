@@ -1,6 +1,7 @@
 {
     "perl" : "6",
     "name" : "Fortran::Grammar",
+    "license" : "GPL-3.0",
     "version" : "0.0.6",
     "description" : "grammar to parse FORTRAN source code",
     "authors" : [ "Yann Büchau" ],
