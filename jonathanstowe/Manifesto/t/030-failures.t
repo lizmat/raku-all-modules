@@ -38,7 +38,7 @@ is $manifesto.promises.elems, 1, "got the promise";
 
 $p1.keep: True;
 
-await Promise.anyof($p-wait, Promise.in(1));
+await Promise.anyof($p-wait, Promise.in(5));
 
 is $manifesto.promises.elems, 0, "haven't got the promise anymore";
 ok $empty, "got the empty event";
