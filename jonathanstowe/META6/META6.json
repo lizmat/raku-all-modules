@@ -1,55 +1,39 @@
 {
-    "meta6": "0",
-    "tags": [
-        "devel",
-        "meta",
-        "utils"
-    ],
-    "provides": {
-        "META6": "lib/META6.pm"
-    },
-    "test-depends": [
-        "JSON::Fast",
-        "Test"
-    ],
-    "emulates": {
-
-    },
-    "support": {
-        "phone": null,
-        "source": "git://github.com/jonathanstowe/META6.git",
-        "mailinglist": null,
-        "email": null,
-        "irc": null,
-        "bugtracker": "https://github.com/jonathanstowe/META6/issues"
-    },
-    "perl": "6.c",
-    "build-depends": [
-
-    ],
-    "auth": "github:jonathanstowe",
-    "source-url": "git://github.com/jonathanstowe/META6.git",
-    "depends": [
-        "JSON::Class"
-    ],
-    "production": true,
-    "name": "META6",
-    "authors": [
-        "Jonathan Stowe <jns+git@gellyfish.co.uk>"
-    ],
-    "version": "0.0.15",
-    "license": "Artistic-2.0",
-    "resource": {
-
-    },
-    "superseded-by": {
-
-    },
-    "description": "Work with Perl 6 META files",
-    "excludes": {
-
-    },
-    "supersedes": {
-
-    }
+  "name": "META6",
+  "source-url": "git://github.com/jonathanstowe/META6.git",
+  "support": {
+    "source": "git://github.com/jonathanstowe/META6.git",
+    "bugtracker": "https://github.com/jonathanstowe/META6/issues"
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "auth": "github:jonathanstowe",
+  "depends": [
+    "JSON::Class"
+  ],
+  "tags": [
+    "devel",
+    "meta",
+    "utils"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "JSON::Fast",
+    "Test"
+  ],
+  "provides": {
+    "META6": "lib/META6.pm"
+  },
+  "production": true,
+  "version": "0.0.15",
+  "authors": [
+    "Jonathan Stowe <jns+git@gellyfish.co.uk>"
+  ],
+  "description": "Work with Perl 6 META files",
+  "meta6": "0"
 }
