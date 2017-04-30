@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Crypt::Bcrypt",
+    "license" : "ISC",
     "version" : "1.3.2",
     "authors" : [ "github:carbin", "github:skinkade" ],
     "description" : "Easy bcrypt password hashing",

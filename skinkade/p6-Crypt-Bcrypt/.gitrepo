@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/skinkade/p6-Crypt-Bcrypt.git
 	branch = master
-	commit = 662c92f2dec34605f43dcd1f79cb179be1431746
-	parent = 9610b4665752dcf12efe9098e0b24b0ccc1b679d
+	commit = cba10d2d05eaeb35b33bcf886a50b409393e1206
+	parent = a38f40f38d21cc99624ed8f850adb4d3e4165ff8
 	cmdver = 0.4.0
