@@ -2,35 +2,39 @@
   "name": "Doublephone",
   "source-url": "git://github.com/jonathanstowe/Doublephone.git",
   "support": {
+    "email": "jns+gh@gellyfish.co.uk",
     "source": "git://github.com/jonathanstowe/Doublephone.git",
-	"email" : "jns+gh@gellyfish.co.uk",
-    "bugtracker" : "https://github.com/jonathanstowe/Doublephone/issues"
+    "bugtracker": "https://github.com/jonathanstowe/Doublephone/issues"
   },
   "perl": "6.c",
   "resources": [
-     "libraries/double_metaphone"
+    "libraries/double_metaphone"
   ],
   "build-depends": [
-      "Shell::Command",
-      "LibraryMake"
+    "Shell::Command",
+    "LibraryMake"
   ],
   "auth": "github:jonathanstowe",
-  "provides": {
-     "Doublephone" : "lib/Doublephone.pm"
-  },
   "depends": [
-     "LibraryMake"
+    "LibraryMake"
   ],
   "tags": [
-     "search", "phonetic", "soundex", "metaphone"
+    "search",
+    "phonetic",
+    "soundex",
+    "metaphone"
   ],
-  "license": "perl",
+  "license": "Artistic-2.0",
   "test-depends": [
+    
   ],
-  "description": "Implementation of the Double Metaphone phonetic encoding algorithm",
+  "provides": {
+    "Doublephone": "lib/Doublephone.pm"
+  },
   "version": "0.0.3",
-  "meta6": "0",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
-  ]
+  ],
+  "description": "Implementation of the Double Metaphone phonetic encoding algorithm",
+  "meta6": "0"
 }

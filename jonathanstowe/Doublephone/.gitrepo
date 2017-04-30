@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Doublephone.git
 	branch = master
-	commit = e302f77001581e5ab914f411219829f1faf109ba
-	parent = d05d98879406bae84455ed39dad19f99e4723cbf
+	commit = ba5b4ceb0d8847335bacfd3ed5b4bffda3d69fd8
+	parent = 9c4ee465f652c4bc0898981bfe71c1d9ff86bec4
 	cmdver = 0.4.0
