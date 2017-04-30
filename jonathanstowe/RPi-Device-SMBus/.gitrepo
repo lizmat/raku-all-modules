@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/RPi-Device-SMBus.git
 	branch = master
-	commit = c67d05a19a9271c9e52f30a306b260b0e3d11ff1
-	parent = 1f9d3dfa173586b0479f4457725dda23c4c9f6e1
+	commit = 659fe2e9ffc9c587c208313242216d95104d0255
+	parent = 56462553ab5beb686afc977aeaf94b8013026029
 	cmdver = 0.4.0
