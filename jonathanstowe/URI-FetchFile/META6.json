@@ -6,24 +6,31 @@
   },
   "perl": "6.c",
   "resources": [
+    
   ],
   "build-depends": [
+    
   ],
   "auth": "github:jonathanstowe",
-  "provides": {
-     "URI::FetchFile" : "lib/URI/FetchFile.pm"
-  },
   "depends": [
+    
   ],
-  "tags": [ "download", "utility", "http" ],
-  "license": "perl",
+  "tags": [
+    "download",
+    "utility",
+    "http"
+  ],
+  "license": "Artistic-2.0",
   "test-depends": [
-     "Test"
+    "Test"
   ],
-  "description": "retrieve a file from the internet by the best available method",
+  "provides": {
+    "URI::FetchFile": "lib/URI/FetchFile.pm"
+  },
   "version": "0.0.1",
-  "meta6": "0",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
-  ]
+  ],
+  "description": "retrieve a file from the internet by the best available method",
+  "meta6": "0"
 }
