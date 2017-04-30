@@ -1,6 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "HTML::Restrict",
+    "license"     : "Artistic-2.0",
     "version"     : "0.1",
     "description" : "Delete specified HTML tags and attributes",
     "authors"      : ["Steve Mynott <steve.mynott@gmail.com>"],
