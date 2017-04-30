@@ -30,7 +30,7 @@ class Lumberjack::Template::Provider does Template6::Provider {
         else {
             for @!include-path -> $path {
                 my $file = "$path/$name" ~ ($name.ends-with($.ext) ?? '' !! $.ext);
-                if %?RESOURCES{$file}.e {
+                if %?RESOURCES{$file}.IO.e {
                     $template = %?RESOURCES{$file}.slurp;
                     %.templates{$name} = $template;
                     last;

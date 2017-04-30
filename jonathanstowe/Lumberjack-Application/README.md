@@ -2,6 +2,8 @@
 
 A web facility for the Lumberjack logging framework
 
+[![Build Status](https://travis-ci.org/jonathanstowe/Lumberjack-Application.svg?branch=master)](https://travis-ci.org/jonathanstowe/Lumberjack-Application)
+
 ## Synopsis
 
 ```
@@ -107,5 +109,5 @@ fixes and suggestions at https://github.com/jonathanstowe/Lumberjack-Application
 This free software, please see the [LICENCE](LICENCE) file in the distribution
 directory.
 
-© Jonathan Stowe, 2016
+© Jonathan Stowe, 2016, 2017
 
