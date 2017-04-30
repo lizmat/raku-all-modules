@@ -5,7 +5,6 @@
     "description" : "Get an emotional score for a passage of text based on its word use.",
     "author" : "Matt Oates",
     "tags" : [ "Text", "Sentiment", "NLP" ],
-    "perl" : "6.c",
     "depends" : [ ],
     "source-type" : "git",
     "source-url" : "git://github.com/MattOates/Text--Emotion.git",
