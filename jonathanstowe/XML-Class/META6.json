@@ -1,30 +1,39 @@
 {
-   "provides" : {
-       "XML::Class" : "lib/XML/Class.pm"
-   },
-   "authors" : [
-      "Jonathan Stowe <jns+gh@gellyfish.com.uk>"
-   ],
-   "test-depends" : [ "Test" ],
-   "auth" : "github:jonathanstowe",
-   "version" : "0.0.4",
-   "description" : "Role to Serialize/De-Serialize a Perl 6 class to/from XML",
-   "superseded-by" : {},
-   "emulates" : {},
-   "perl" : "6.c",
-   "meta6" : "0",
-   "excludes" : {},
-   "build-depends" : [],
-   "source-url" : "git://github.com/jonathanstowe/XML-Class.git",
-   "supersedes" : {},
-   "tags" : [ "XML", "object", "role", "framework" ],
-   "depends" : [ "XML" ],
-   "license" : "perl",
-   "support" : {
-      "source" : "git://github.com/jonathanstowe/XML-Class.git",
-	  "email" :  "jns+gh@gellyfish.co.uk",
-      "bugtracker" : "https://github.com/jonathanstowe/XML-Class/issues"
-   },
-   "resource" : {},
-   "name" : "XML::Class"
+  "name": "XML::Class",
+  "source-url": "git://github.com/jonathanstowe/XML-Class.git",
+  "support": {
+    "email": "jns+gh@gellyfish.co.uk",
+    "source": "git://github.com/jonathanstowe/XML-Class.git",
+    "bugtracker": "https://github.com/jonathanstowe/XML-Class/issues"
+  },
+  "perl": "6.c",
+  "resources": [
+    
+  ],
+  "build-depends": [
+    
+  ],
+  "auth": "github:jonathanstowe",
+  "depends": [
+    "XML"
+  ],
+  "tags": [
+    "XML",
+    "object",
+    "role",
+    "framework"
+  ],
+  "license": "Artistic-2.0",
+  "test-depends": [
+    "Test"
+  ],
+  "provides": {
+    "XML::Class": "lib/XML/Class.pm"
+  },
+  "version": "0.0.4",
+  "authors": [
+    "Jonathan Stowe <jns+gh@gellyfish.com.uk>"
+  ],
+  "description": "Role to Serialize/De-Serialize a Perl 6 class to/from XML",
+  "meta6": "0"
 }
