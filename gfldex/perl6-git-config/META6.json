@@ -34,7 +34,7 @@
   "provides": {
     "Git::Config": "lib/Git/Config.pm6"
   },
-  "version": "0.1.2",
+  "version": "0.1.3",
   "supersedes": {
     
   },

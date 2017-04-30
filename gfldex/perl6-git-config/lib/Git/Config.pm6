@@ -16,7 +16,7 @@ sub git-config(IO::Path $file? --> Hash) is export {
 
     my @fs = $file // ($*HOME «~« </.gitconfig /.config/git/config>);
     my $cfg-handle = ([//] try (@fs».IO».open)) // warn("Can not find gitconfig at any of {('⟨' «~« @fs »~» '⟩').join(', ')}");
-    my $cfg-text = $cfg-handle.slurp;
+    my $cfg-text is default("") = try $cfg-handle.slurp;
 
     my $parsed = Config.parse($cfg-text); # or fail 'Failed to parse „~/.gitconfig“.';
 
