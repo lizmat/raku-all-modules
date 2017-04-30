@@ -1,0 +1,15 @@
+{
+    "perl" : "6.c",
+    "name" : "Text::Caesar",
+    "version" : "0.1",
+    "description" : "*",
+    "authors" : [ "Emeric Fischer" ],
+    "provides" : {
+        "Text::Caesar" : "lib/Text/Caesar.pm6"
+    },
+    "depends" : [ ],
+    "resources" : [ ],
+    "source-url" : "git://github.com/Emeric54/p6-text-caesar.git",
+    "tags" : [ "crypt", "password" ],
+    "author" : "Emeric Fischer <fischer.emeric@gmail.com>"
+}
