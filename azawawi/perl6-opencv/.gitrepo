@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-opencv.git
 	branch = master
-	commit = 8e8c871ae73ce764b376b5a0d05eb09f05a4bd4a
-	parent = 947cabfc7763306b170de545b5b4cdf59002ffbc
+	commit = 2e3ce4fe6c7b8a447193b96f1dc6f673b490fd8c
+	parent = bb027d513a8a177c3cc00ffb02018ecbcc3485f7
 	cmdver = 0.4.0

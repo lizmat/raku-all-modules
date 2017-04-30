@@ -1,5 +1,6 @@
 {
   "name"          : "OpenCV",
+  "license"       : "MIT",
   "version"       : "0.0.5",
   "perl"          : "6.c",
   "description"   : "OpenCV Bindings using NativeCall",
