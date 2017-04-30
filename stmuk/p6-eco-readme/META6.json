@@ -1,6 +1,7 @@
 {
     "perl"        : "6.c",
     "name"        : "App::ecoreadme",
+    "license"     : "Artistic-2.0",
     "version"     : "0.2",
     "description" : "Display and cache ecosystem README files for perl6",
     "depends"     : ["LWP::Simple","IO::Socket::SSL","Panda","IO::Capture::Simple"],
