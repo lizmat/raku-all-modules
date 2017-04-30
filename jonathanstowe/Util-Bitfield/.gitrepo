@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Util-Bitfield.git
 	branch = master
-	commit = b3e0dd920e17c0313023a668ee37715d4bf28fef
-	parent = c14c5147d9839419d80f5d16ecb5453ee2202854
+	commit = 45fde435277c118c137605ba4ed458768d16719a
+	parent = 1d6c1dca06e549b1578549e309760fc43aa7b55a
 	cmdver = 0.4.0
