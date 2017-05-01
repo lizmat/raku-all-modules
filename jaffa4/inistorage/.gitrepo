@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jaffa4/inistorage.git
 	branch = master
-	commit = d32804f556167e5275256349937363bf2cb0bc2c
-	parent = 136838928049c95f53914a4560c1810bdcae5fb5
+	commit = 3dc0b497c867103c2378b971baff8b996f211f7d
+	parent = a32f28c5eb3e48c4823e7c8cfd2c560f06b9bd04
 	cmdver = 0.4.0
