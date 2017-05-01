@@ -6,5 +6,6 @@
         "Math::Model" : "lib/Math/Model.pm"
     },
     "depends"     : [ "Math::RungeKutta", "SVG", "SVG::Plot" ],
+    "license"     : "Artistic-2.0",
     "source-url"  : "git://github.com/moritz/Math-Model.git"
 }
