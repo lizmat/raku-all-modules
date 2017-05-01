@@ -1,7 +1,7 @@
 use v6;
 unit class Term::TablePrint;
 
-my $VERSION = '0.017';
+my $VERSION = '0.018';
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::NCurses;
@@ -327,9 +327,10 @@ method !_print_single_row ( Int $row ) {
     my $col_w = $term_w - ( $key_w + $sep_w + 1 ); #
     my @lines = ' Close with ENTER';
     for 0 .. $!a_ref[$row].end -> $col {
-        my Str $key = to-printwidth( # 
+        ( my Str $key, $ ) = to-printwidth( # 
             _sanitized_string( $!a_ref[0][$col] // %!o<undef> ),
-            $key_w
+            $key_w,
+            False
         );
         my Str $sep = $separator;
         @lines.push: ' ';
@@ -546,7 +547,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
 =head1 VERSION
 
-Version 0.017
+Version 0.018
 
 =head1 SYNOPSIS
 

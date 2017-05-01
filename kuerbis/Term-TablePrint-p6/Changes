@@ -1,6 +1,9 @@
 Revision history for Term::TablePrint
 
 
+0.018   2017-04-30
+        - Adapted the code to the new version of Term::Choose
+
 0.017   2017-04-26
         - Update .travis.yml
         - Update year copyright
