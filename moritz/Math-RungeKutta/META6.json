@@ -6,5 +6,6 @@
     "provides"      : {
         "Math::RungeKutta": "lib/Math/RungeKutta.pm"
     },
+    "license"       : "Artistic-2.0",
     "source-url"    : "git://github.com/moritz/Math-RungeKutta.git"
 }

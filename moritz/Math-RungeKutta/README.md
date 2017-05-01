@@ -1,3 +1,5 @@
+# Introduction
+
 Runge-Kutta integration for systems of ordinary, linear differential
 equations.
 
@@ -7,7 +9,8 @@ Bug reports, tests and patches are welcome!
 Let's say you have a differential equation for the function f(t),
 with the equation
 
-df/dt = f(t)^2 + t
+    df/dt = f(t)^2 + t
+
 and the initial value f(t=0) = 1;
 
 In the context of this module, we call df/dt the "derivative",
@@ -15,8 +18,7 @@ t the "parameter"
 
 You'd solve that numerically with this Perl 6 code:
 
-# begin synopsis.pl
-
+    # synopsis.pl
     use Math::RungeKutta;
     
     # function that calculates the derivative that
@@ -37,12 +39,20 @@ You'd solve that numerically with this Perl 6 code:
         :do(&callback)
     );
 
-# end synopsis.pl
-
 And then look at the result:
-$ PERL6LIB=lib perl6 synopsis.pl | xmgrace -nxy -
+
+    $ PERL6LIB=lib perl6 synopsis.pl | xmgrace -nxy -
 
 The interfaces is inspired by Perl 5 module Math::RungeKutta, to be found at
 <http://search.cpan.org/perldoc?Math::RungeKutta>.
 
+# Build Status
+
 [![Build Status](https://travis-ci.org/moritz/Math-RungeKutta.svg)](https://travis-ci.org/moritz/Math-RungeKutta)
+
+# License
+
+This module is licensed under the [Artistic License version 2.0](https://opensource.org/licenses/Artistic-2.0).
+
+
+Its accompanying tests and examples are public domain, as defined by the [CC0 1.0 Universal (CC0 1.0) Public Domain Dedication](https://creativecommons.org/publicdomain/zero/1.0/).
