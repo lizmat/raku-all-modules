@@ -21,12 +21,16 @@ L«C<IO::Path>|/type/IO::Path», to do that.
 
 =head2 method abs2rel
 
+Defined as:
+
     method abs2rel(IO::Path:D $path, IO::Path:D $base = $*CWD --> Str:D)
 
 Returns a string that represents C<$path>, but relative to C<$base> path.
 Both C<$path> and C<$base> may be relative paths C<$bar> defaults to C<$*CWD>
 
 =head2 method basename
+
+Defined as:
 
     method basename(Str:D $path --> Str:D)
 
@@ -38,6 +42,8 @@ slash:
     IO::Spec::Unix.basename("foo/bar")  .perl.say; # OUTPUT: «"bar"␤»
 
 =head2 method canonpath
+
+Defined as:
 
     method canonpath(Str() $path, :$parent --> Str:D)
 
@@ -56,6 +62,8 @@ the routine does not access the filesystem, so no symlinks are followed.
 
 =head2 method catdir
 
+Defined as:
+
     method catdir (*@parts --> Str:D)
 
 Concatenates multiple path fragments and returns the canonical representation
@@ -70,6 +78,8 @@ Alias for L«C<catdir>|/routine/catdir».
 
 =head2 method catpath
 
+Defined as:
+
     method catpath ($, Str:D $part1, Str:D $part2 --> Str:D)
 
 Takes two path fragments and concatenates them, adding or removing a path
@@ -80,6 +90,29 @@ volumes).
     IO::Spec::Unix.catpath($, 'some/dir', 'and/more').say;
     # OUTPUT: «some/dir/and/more␤»
 
+=head2 method curdir
+
+Defined as:
+
+    method curdir()
+
+Returns a string representing the current directory:
+
+    say '.' eq $*SPEC.curdir; # OUTPUT: «True␤»
+
+=head2 method curupdir
+
+Defined as:
+
+    method curupdir()
+
+Returns a L«C<none>|/routine/none» L<Junction> of strings representing the
+current directory and the "one directory up":
+
+=for code :skip-test
+    my @dirs = <. foo .. bar>;
+    say @dirs.grep(* eq $*SPEC.curupdir); # OUTPUT: «(foo bar)␤»
+
 =head2 method tmpdir
 
 Defined as:
@@ -87,6 +120,16 @@ Defined as:
         method tmpdir(--> IO::Path:D)
 
 Attempts to locate a system's temporary directory by checking several typical directories and environmental variables. Uses current directory if no suitable directories are found.
+
+=head2 method updir
+
+Defined as:
+
+    method updir()
+
+Returns a string representing the directory one up from current:
+
+    say '..' eq $*SPEC.updir; # OUTPUT: «True␤»
 
 =end pod
 
