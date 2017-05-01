@@ -1,5 +1,6 @@
 {
   "name" : "Concurrent::Channelify",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/gfldex/perl6-concurrent-channelify.git",
   "perl" : "v6",
   "build-depends" : [ ],

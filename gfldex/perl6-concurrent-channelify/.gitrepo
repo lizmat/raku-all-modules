@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/gfldex/perl6-concurrent-channelify.git
 	branch = master
-	commit = 16ce59a3d5c948f258d12ed217872d21ea3ae7f7
-	parent = affc2afcad792f98609c2460275a9989b8cd29e2
+	commit = 5217bc34601640999415805cac3284c62e982474
+	parent = bc3962c60828eeea8d699af2ed9bd9c577f5c08f
 	cmdver = 0.4.0
