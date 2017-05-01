@@ -4,6 +4,7 @@
     "version"       : "0.1",
     "description"   : "MoarVM heap snapshot analysis tool",
     "author"        : "Jonathan Worthington <jnthn@jnthn.net>",
+    "license"       : "Artistic-2.0",
     "depends"       : [ ],
     "provides"      : {
         "App::MoarVM::HeapAnalyzer::Model" : "lib/App/MoarVM/HeapAnalyzer/Model.pm6",
