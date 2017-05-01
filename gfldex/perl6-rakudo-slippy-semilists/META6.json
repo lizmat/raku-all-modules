@@ -4,7 +4,7 @@
     "version" : "0.0.1",
     "authors" : [ "Wenzel P. P. Peppmeyer" ],
     "description" : "Implement postcircumfix:<{|| }> to allow coercion of Array to semilist.",
-    "license" : "https://opensource.org/licenses/Artistic-2.0",
+    "license" : "Artistic-2.0",
     "provides" : {
         "Rakudo::Slippy::Semilist" : "lib/Rakudo/Slippy/Semilist.pm6"
     },
