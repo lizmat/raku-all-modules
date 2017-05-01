@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Terminal::WCWidth",
+    "license" : "MIT",
     "version" : "0.1.0",
     "description" : "Returns what the character width should be on the terminal.",
     "author" : "Tae Lim Kook",

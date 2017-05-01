@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bluebear94/Terminal-WCWidth.git
 	branch = master
-	commit = bb88164bd300db70becc163d30ce9750771cf8a1
-	parent = fa54a09296aa9aa1d8c53875112cc6a7e0cfb052
+	commit = ec7f6436a1fbdaab0df8aa0b5b719ddf2e35de8a
+	parent = 999bce27c690ab226df7f996033e376198f81a9d
 	cmdver = 0.4.0
