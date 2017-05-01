@@ -177,23 +177,23 @@ class ANTLR4::Actions::AST {
 	}
 	method delegateGrammars( $/ ) {
 		my %import;
-		for $/<delegateGrammar> {
-			%import{$_.<key>.ast} = $_.ast;
+		for $/<delegateGrammar> -> $delegate {
+			%import{$delegate.<key>.ast} = $delegate.ast;
 		}
 		make %import;
 	}
 
 	method tokensSpec( $/ ) {
 		my %token;
-		for $/<token_list_trailing_comma><tokenName> {
-			%token{$_.ast} = Any;
+		for $/<token_list_trailing_comma><tokenName> -> $name {
+			%token{$name.ast} = Any;
 		}
 		make %token;
 	}
 	method throwsSpec( $/ ) {
 		my %throw;
-		for $/<ID> {
-			%throw{$_.ast} = Any;
+		for $/<ID> -> $name {
+			%throw{$name.ast} = Any;
 		}
 		make %throw;
 	}
@@ -206,8 +206,8 @@ class ANTLR4::Actions::AST {
 	}
 	method optionsSpec( $/ ) {
 		my %option;
-		for $/<option> {
-			%option{$_.<ID>.ast} = $_.ast;
+		for $/<option> -> $option {
+			%option{$option.<ID>.ast} = $option.ast;
 		}
 		make %option;
 	}
@@ -218,8 +218,8 @@ class ANTLR4::Actions::AST {
 	#
 	method action( $/ ) {
 		make {
-			name    => $/<action_name>.ast,
-			content => $/<ACTION>.ast
+			name => $/<action_name>.ast,
+			body => $/<ACTION>.ast
 		}
 	}
 
@@ -245,29 +245,39 @@ class ANTLR4::Actions::AST {
 	}
 
 	method parserElement( $/ ) {
-		make $/<element> ??
-			$/<element>[0]<atom><terminal>.ast !!
-			Any;
+		my @element;
+		for $/<element> -> $element {
+			@element.push(
+				$element<atom><terminal>.ast
+			);
+		}
+		make @element;
 	}
 
 	method parserAltList( $/ ) {
+		# If there's only one alternative, return a concatenation.
+		#
 		if $/<parserAlt>.elems == 1 and
 			$/<parserAlt>[0]<parserElement><element> {
-				make [
+			make {
+				type => 'concatenation',
+				term => [
 					$/<parserAlt>[0]<parserElement>.ast
 				]
+			}
 		}
 		elsif $/<parserAlt>.elems > 1 {
 			my @parserElement;
 			for $/<parserAlt> -> $parserElement {
-				@parserElement.push(
+				#@parserElement.push(
+				@parserElement.append(
 					$parserElement<parserElement>.ast
 				);
 			}
-			make [ {
-				type    => 'alternation',
-				content => @parserElement
-			} ];
+			make {
+				type => 'alternation',
+				term => @parserElement
+			};
 		}
 		else {
 			make Any;
@@ -287,7 +297,7 @@ class ANTLR4::Actions::AST {
 			option  => $/<optionsSpec>.ast,
 			catch   => $/<exceptionGroup>.ast,
 			finally => $/<exceptionGroup><finallyClause>.ast,
-			content => $/<parserAltList>.ast,
+			term    => $/<parserAltList>.ast,
 		}
 	}
 
@@ -303,7 +313,7 @@ class ANTLR4::Actions::AST {
 			option  => Any,
 			catch   => Any,
 			finally => Any,
-			content => Any
+			term    => Any
 		}
 	}
 
