@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose::Util;
 
-my $VERSION = '0.020';
+my $VERSION = '0.021';
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::NCurses;
@@ -744,7 +744,7 @@ method print-hash ( %hash, %opt? ) {
 sub unicode-sprintf ( Str $str, Int $avail_col_w, Int $justify ) is export( :unicode-sprintf ) {
     my Int $str_length = print-columns( $str );
     if $str_length > $avail_col_w {
-        return to-printwidth( $str, $avail_col_w );
+        return to-printwidth( $str, $avail_col_w, False ).[0];
     }
     elsif $str_length < $avail_col_w {
         if $justify == 0 {
@@ -774,7 +774,7 @@ Term::Choose::Util - CLI related functions.
 
 =head1 VERSION
 
-Version 0.020
+Version 0.021
 
 =head1 DESCRIPTION
 

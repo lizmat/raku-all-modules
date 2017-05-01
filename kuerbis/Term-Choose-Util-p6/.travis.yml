@@ -6,7 +6,7 @@ perl6:
   - latest
 install:
   - rakudobrew build zef
-  - zef install .
+  - zef --depsonly install .
   - zef install Term::Choose
   - zef install Term::Choose::NCurses
   - zef install Term::Choose::LineFold
