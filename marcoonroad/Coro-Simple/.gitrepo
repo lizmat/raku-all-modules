@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/marcoonroad/Coro-Simple.git
 	branch = master
-	commit = 75ee4f6c207d50e7e44ca4e9ba8e21034ea10d2e
-	parent = fac6c6f8ffb596792b1a27d93be850f2252f81fb
+	commit = e584dd6790a013d5ae13c2e49e5b3aa03206d380
+	parent = 5c0a7ef21e1d663eb4928633ed0805f74e77aa66
 	cmdver = 0.4.0

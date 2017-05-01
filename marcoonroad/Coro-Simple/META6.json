@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Coro::Simple",
+    "license"     : "Artistic-2.0",
     "version"     : "*",
     "description" : "Simple coroutines for Perl 6, inspired by the Lua coroutines.",
     "provides": {
