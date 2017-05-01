@@ -606,8 +606,8 @@ module Oyatul:ver<0.0.4>:auth<github:jonathanstowe> {
         sub get-type(Mu:U $base-type, %h) {
             my $type = $base-type;
             if %h<does> -> $role-name {
-                my $role;
-                if ::($role-name) ~~ Failure {
+                my $role = ::($role-name);
+                if !$role &&  $role ~~ Failure {
                     CATCH {
                         default {
                             say $_;
@@ -615,9 +615,6 @@ module Oyatul:ver<0.0.4>:auth<github:jonathanstowe> {
                         }
                     }
                     $role = (require ::("$role-name"));
-                }
-                else {
-                    $role = ::($role-name);
                 }
                 if $role !~~ Failure {
                     $type = $base-type but $role;

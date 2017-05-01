@@ -2,7 +2,9 @@
   "name": "Oyatul",
   "source-url": "git://github.com/jonathanstowe/Oyatul.git",
   "support": {
-    "source": "git://github.com/jonathanstowe/Oyatul.git"
+    "source": "git://github.com/jonathanstowe/Oyatul.git",
+    "email": "jns+git@gellyfish.co.uk",
+    "bugtracker": "http://github.com/jonathanstowe/Oyatul/issues"
   },
   "perl": "6.c",
   "resources": [
@@ -27,7 +29,7 @@
   "provides": {
     "Oyatul": "lib/Oyatul.pm"
   },
-  "version": "0.0.4",
+  "version": "0.0.5",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],
