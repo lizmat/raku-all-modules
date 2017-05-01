@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jaffa4/string-stream.git
 	branch = master
-	commit = 6668c70010c248605b94fbb9833187f661fe9c75
-	parent = 190c155eadeff2b5e4481f35cd2d7eaa67589fdf
+	commit = 2cd5ba19b1c08eb8324aed1710b16b403936cf09
+	parent = 3f43f7db0bcf50369de13feb60c5c69bf8bae10a
 	cmdver = 0.4.0
