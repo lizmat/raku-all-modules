@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/johnspurr/Lingua-EN-Stem-Porter.git
 	branch = master
-	commit = a79b86911ab9030d08072cb7487a31f63a04eb5b
-	parent = efc6a04d517fbfca46afb83843f84f61ac77012f
-	cmdver = 0.2.3
+	commit = 72d9dda8fa4d1a09f04ff3fbb2e17b764123493f
+	parent = 14c79432ab0fce1be55d3e13acaa6a0f5b040748
+	cmdver = 0.4.0
