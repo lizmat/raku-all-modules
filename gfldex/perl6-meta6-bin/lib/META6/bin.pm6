@@ -30,15 +30,15 @@ class Proc::Async::Timeout is Proc::Async is export {
 
 # enum ANSI(reset => 0, bold => 1, underline => 2, inverse => 7, black => 30, red => 31, green => 32, yellow => 33, blue => 34, magenta => 35, cyan => 36, white => 37, default => 39, on_black => 40, on_red => 41, on_green   => 42, on_yellow  => 43, on_blue => 44, on_magenta => 45, on_cyan    => 46, on_white   => 47, on_default => 49);
 
-my &BOLD = sub (*@s) {
+our &BOLD is export(:TERM) = sub (*@s) {
     "\e[1m{@s.join('')}\e[0m"
 }
 
-my &RED = sub (*@s) {
+our &RED is export(:TERM) = sub (*@s) {
     "\e[31m{@s.join('')}\e[0m"
 }
 
-my &RESET = sub (*@s) {
+our &RESET is export(:TERM) = sub (*@s) {
     "\e[0m{@s.join('')}\e[0m"
 }
 
@@ -61,7 +61,7 @@ sub first-hit($basename) {
     try @path».child($basename).grep({.e & .r}).first
 }
 
-my %cfg = read-cfg(first-hit('meta6.cfg'));
+my %cfg = |read-cfg(Any), |read-cfg(first-hit('meta6.cfg'));
 
 my $timeout = %cfg<general><timeout>.Int // 60;
 my $git-timeout = %cfg<git><timeout>.Int // $timeout // 120;
@@ -175,16 +175,18 @@ multi sub MAIN(:$create-cfg-dir, Bool :$force) {
     # META6::bin config file
     
     general.timeout = 60
+    check.disable-url-check = 0
     git.timeout = 120
     git.protocol = https
+    github.issues.timeout = 30
     
     EOH
 
     say BOLD "Created ⟨$cfg-dir⟩.";
 }
 
-multi sub MAIN(:$fork-module, :$force) {
-    my @ecosystem = fetch-ecosystem;
+multi sub MAIN(:$fork-module, :$force, :v(:$verbose)) {
+    my @ecosystem = fetch-ecosystem(:$verbose);
     my $meta6 = @ecosystem.grep(*.<name> eq $fork-module)[0];
     my $module-url = $meta6<source-url> // $meta6<support>.source;
     my ($owner, $repo) = $module-url.split('/')[3,4];
@@ -269,30 +271,37 @@ multi sub MAIN(Bool :pr(:$pull-request), Str :$base-dir = '.', Str :$meta6-file-
     github-pull-request($parent-owner, $parent, $title, $message, :head("$github-user:$head"), :$base);
 }
 
-multi sub MAIN(Str :$module, Bool :$issues!, Bool :$closed,
-    Str :$base-dir = '.', Str :$meta6-file-name = 'META6.json',
+multi sub MAIN(Str :$module, Bool :$issues!, Bool :$closed, Bool :$one-line, Bool :$url, Bool :$deps,
+    Str :$base-dir = '.', Str :$meta6-file-name = 'META6.json', :v(:$verbose)
 ) {
-    my ($owner, $repo);
-    
-    if $module {
-        my @ecosystem = fetch-ecosystem;
-        my $meta6 = @ecosystem.grep(*.<name> eq $module)[0];
-        my $module-url = $meta6<source-url> // $meta6<support><source> // Failure.new('No source url provided by ecosystem.');
-        ($owner, $repo) = $module-url.split('/')[3,4];
-    } else {
-        my IO::Path $meta6-file = ($base-dir ~ '/' ~ $meta6-file-name).IO;
-        die RED "Can not find ⟨$meta6-file⟩." unless $meta6-file.e;
-        my $meta6 = META6.new(file => $meta6-file) or die RED "Failed to process ⟨$meta6-file⟩.";
-        my $module-url = $meta6<source-url> // $meta6<support>.source;
-        ($owner, $repo) = $module-url.split('/')[3,4];
-    }
+    my ($owner, $repo) = ($module
+        ?? query-module($module, :$verbose)
+        !! local-module
+    ).<owner repo>;
+
     $repo.subst-mutate(/'.git'$/, '');
     my @issues := github-get-issues($owner, $repo, :$closed);
 
     for @issues {
-        put BOLD "[{.<state>}] {.<title>}";
-        put "⟨{.<html_url>}⟩";
-        put .<body>.indent(4);
+        if $one-line {
+            my %divider{Int} = 1 => 's', 60 => 'm', 60*60 => 'h', 60*60*24 => 'd', 60*60*24*365 => 'y';
+            .<age> = (now.DateTime - DateTime.new(.<created_at>)).Int;
+            my $divider = %divider.keys.grep(-> $k { (.<age> div $k) > 0 }).max;
+            ($divider, my $unit) = %divider{$divider}:kv;
+            my $url-text = $url ?? " ⟨{.<html_url>}⟩" !! '';
+            put "[{.<state>}] {.<title>} [{.<age> div $divider}{$unit}]$url-text";
+        } else {
+            put "[{.<state>}] {.<title>}";
+            put "⟨{.<html_url>}⟩";
+            put .<body>.indent(4);
+        }
+    }
+
+    if $deps {
+        for query-deps($module, :$base-dir, :$meta6-file-name, :$verbose) {
+            say "{.Str}";
+            try MAIN(:module(.Str), :issues, :$closed, :$one-line, :$url, :$base-dir, :$meta6-file-name, :$verbose);
+        }
     }
 }
 
@@ -401,11 +410,25 @@ our sub github-pull-request($owner, $repo, $title, $body = '', :$head = 'master'
 our sub github-get-issues($owner, $repo, :$closed) is export(:GIT) {
     temp $github-user = $github-token ?? $github-user ~ ':' ~ $github-token !! $github-user;
     my $state = $closed ?? '?state=all' !! '?state=open';
-    my $curl = Proc::Async::Timeout.new('curl', '--silent', '-u', $github-user, '-X', 'GET', „https://api.github.com/repos/$owner/$repo/issues$state“);
     my $github-response;
-    $curl.stdout.tap: { $github-response ~= .Str };
 
-    await $curl.start: :$timeout;
+    loop (my $attempt = 1; $attempt ≤ 3; $attempt++) {
+        my $curl = Proc::Async::Timeout.new('curl', '--silent', '-u', $github-user, '-X', 'GET', „https://api.github.com/repos/$owner/$repo/issues$state“);
+        $curl.stdout.tap: { $github-response ~= .Str };
+
+        await $curl.start: :timeout(%cfg<github><issues><timeout>.Int);
+
+        CATCH {
+            when X::Proc::Async::Timeout { 
+                note RED ($attempt < 3) ?? "Github timed out, trying again $attempt/3." !! "Github timed out, giving up.";
+                next if $attempt < 3;
+                last;
+            }
+        }
+        last
+    }
+
+    fail 'No response from Github' unless $github-response;
 
     given from-json($github-response).flat.cache {
         when .<message>:exists {
@@ -600,6 +623,7 @@ multi sub read-cfg(Mu:U $path) {
     %h<check><disable-url-check> = 0; 
     %h<git><timeout> = 60;
     %h<git><protocol> = 'https';
+    %h<github><issues><timeout> = 30;
     
     %h
 }
@@ -608,16 +632,61 @@ multi sub read-meta6(IO::Path $path = './META6.json'.IO --> META6:D) is export(:
     META6.new(file => $path) or fail RED "Failed to process ⟨$path⟩."
 }
 
-our sub fetch-ecosystem is export(:HELPER) {
+our sub fetch-ecosystem(:$verbose, :$cached) is export(:HELPER) {
+    state $cache;
+    return $cache.Slip if $cached && $cache.defined;
+
     my $curl = Proc::Async.new('curl', '--silent', 'http://ecosystem-api.p6c.org/projects.json');
     my Promise $p;
     my $ecosystem-response;
     $curl.stdout.tap: { $ecosystem-response ~= .Str };
 
-    say BOLD "Fetching module list.";
+    note BOLD "Fetching module list." if $verbose;
     await Promise.anyof($p = $curl.start, Promise.at(now + $timeout));
     fail RED "⟨curl⟩ timed out." if $p.status == Broken;
     
-    say BOLD "Parsing module list.";
-    from-json($ecosystem-response).flat
+    note BOLD "Parsing module list." if $verbose;
+    $cache = from-json($ecosystem-response).flat.cache;
+    
+    $cache.Slip
+}
+
+our sub query-module(Str $module-name, :$verbose) is export(:HELPER) {
+    my @ecosystem = fetch-ecosystem(:$verbose, :cached);
+    my $meta6 = @ecosystem.grep(*.<name> eq $module-name)[0] // Failure.new("Module ⟨$module-name⟩ not found in ecosystem.");
+    my $module-url = $meta6<source-url> // $meta6<support><source> // Failure.new('No source url provided by ecosystem.');
+    my ($owner, $repo) = $module-url.split('/')[3,4];
+
+    return {:$owner, :$repo, :$meta6}
+}
+
+our sub local-module(:$verbose, :$base-dir = '.', :$meta6-file-name = 'META6.json') is export(:HELPER) {
+    my IO::Path $meta6-file = ($base-dir ~ '/' ~ $meta6-file-name).IO;
+    die RED "Can not find ⟨$meta6-file⟩." unless $meta6-file.e;
+    my $meta6 = META6.new(file => $meta6-file) or die RED "Failed to process ⟨$meta6-file⟩.";
+    my $module-url = $meta6<source-url> // $meta6<support>.source;
+    my ($owner, $repo) = $module-url.split('/')[3,4];
+
+    return {:$owner, :$repo, :$meta6}
+}
+
+our sub query-deps(Str $module-name?, :$base-dir = '.', :$meta6-file-name = 'META6.json', :$verbose) is export(:HELPER) {
+    state %seen-modules;
+
+    return $module-name if %seen-modules{$module-name}:exists;
+    quietly %seen-modules{$module-name}++;
+    
+    my ($owner, $repo, $meta6) = ($module-name ?? try query-module($module-name, :$verbose) !! local-module(:$base-dir, :$meta6-file-name, :$verbose))<owner repo meta6>;
+
+    my @deps;
+
+    return $module-name unless $meta6<depends> ~~ Positional;
+    
+    for $meta6<depends>.flat {
+        my $name = .split(':ver')[0];
+        @deps.append: $name;
+        @deps.append: query-deps($name, :$base-dir, :$meta6-file-name, :$verbose);
+    }
+
+    @deps.unique.cache
 }
