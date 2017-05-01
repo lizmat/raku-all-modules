@@ -1,5 +1,6 @@
 {
   "name" : "Concurrent::File::Find",
+  "license" : "Artistic-2.0",
   "source-url" : "git://github.com/gfldex/perl6-concurrent-file-find.git",
   "perl" : "v6",
   "build-depends" : [ ],

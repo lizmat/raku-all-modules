@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/gfldex/perl6-concurrent-file-find.git
 	branch = master
-	commit = f9d94b2176767129983fd98b5a86bb7a450495a5
-	parent = ce404749e247c50ab93da496a25831cd91f069d6
+	commit = 9136c9d05a98fe5e11c27421a0e653933ee5382a
+	parent = a580341966edda24e1c56af62524c326d66183d3
 	cmdver = 0.4.0
