@@ -1,16 +1,17 @@
 {
     "name" : "Operator::defined-alternation",
+    "perl" : "6.*",
     "version" : "0.0.1",
-    "author" : "Wenzel P. P. Peppmeyer",
+    "authors" : [ "Wenzel P. P. Peppmeyer" ],
     "description" : "Provides a ?? !! equivalent that tests for definedness instread of trueness.",
-	"license" : "https://opensource.org/licenses/Artistic-2.0",
+	"license" : "Artistic-2.0",
     "provides" : {
         "Operator::defined-alternation" : "lib/Operator/defined-alternation.pm6"
     },
 	"support" : {
 	    "source"     : "https://github.com/gfldex/perl6-operator-defined-alternation"
     },
-    "depends" : [ ],
+    "depends" : [ "Test::META" ],
 	"source-type" : "git",
     "source-url" : "git://github.com/gfldex/perl6-operator-defined-alternation.git"
 }

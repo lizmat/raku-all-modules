@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/gfldex/perl6-operator-defined-alternation.git
 	branch = master
-	commit = f60a859da7406d459554dde40d00326abd0b8031
-	parent = 176a75b8e0ff9863506e00a4abf2cc06d83a2e32
+	commit = 6af1fa6c3505285fdf535caaf81cda1d3b690fca
+	parent = 88ee73d7d85fbcb4e6437b39a0fbf95594037483
 	cmdver = 0.4.0
