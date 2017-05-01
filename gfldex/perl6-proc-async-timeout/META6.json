@@ -27,7 +27,7 @@
   "tags": [
     "ASYNC", "PROMISE"
   ],
-  "license": "Artistic 2.0",
+  "license": "Artistic-2.0",
   "test-depends": [
     
   ],
