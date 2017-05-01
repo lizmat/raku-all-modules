@@ -159,7 +159,7 @@ my sub parse-string(str $text, int $pos is rw) {
                 die "don't understand escape sequence '\\{ nqp::substr($text, $pos, 1) }' at $pos";
             }
         } elsif $ord == 9 or $ord == 10 {
-            die "this kind of whitespace is not allowed in a string: { nqp::substr($text, $pos, 1).perl } at $pos";
+            die "this kind of whitespace is not allowed in a string: { nqp::substr($text, $pos - 1, 1).perl } at {$pos - 1}";
         }
     }
 
@@ -388,8 +388,8 @@ my sub parse-thing(str $text, int $pos is rw) {
             die "at $pos: expected 'false', found { $initial ~ nqp::substr($text, $pos, 4) } instead.";
         }
     } else {
-        my str $rest = nqp::substr($text, $pos, 6);
-        die "at $pos: can't parse objects starting in $initial yet (context: $rest)"
+        my str $rest = nqp::substr($text, $pos - 1, 8).perl;
+        die "at $pos: expected a json object, but got $initial (context: $rest)"
     }
 }
 
