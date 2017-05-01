@@ -1,67 +1,43 @@
 use v6;
 unit class Term::Choose::LineFold;
 
-my $VERSION = '0.120';
+my $VERSION = '0.122';
 
 use Terminal::WCWidth;
 
 
 
-sub to-printwidth ( $str, Int $avail_w, Bool $return_remainder = False ) is export( :to-printwidth ) {
-    #my $str_w = wcswidth( $str );
-    #die "String with control charakter!" if $str_w == -1;
-    #if $str_w <= $avail_w {
-    if wcswidth( $str ) <= $avail_w {
-        return $str if ! $return_remainder;
-        return $str, '';
+sub to-printwidth( $str, Int $avail_w, Bool $dot=False ) is export( :to-printwidth ) {
+    my Int $res = 0;
+    my Str @graph;
+    my Int @width;
+    my Str $tail = '...';
+    my Int $tmp_w = $avail_w - 3;
+    if ! $dot || $avail_w < 6 {
+        $tail = '';
+        $tmp_w = $avail_w;
     }
-    my $left = $str.substr( 0, $avail_w );
-    my $left_w = wcswidth( $left );
-    if $left_w == $avail_w {
-        return $left if ! $return_remainder;
-        return $left, $str.substr( $avail_w );
-    }
-    if $avail_w < 2 {
-        die "Terminal-width less than charakter-width."; #
-    }
-    my ( Int $nr_chars, Int $adjust );
-    if $left_w > $avail_w {
-        $nr_chars = $avail_w div 2;
-        $adjust = ( $nr_chars + 1 ) div 2;
-        #$nr_chars = ( $avail_w / 4 * 3 ).Int;
-        #$adjust = ( $avail_w + 7 ) div 8;
-    }
-    elsif $left_w < $avail_w {
-        $nr_chars = $avail_w + ( $str.chars - $avail_w ) div 2;
-        $adjust = ( $str.chars - $nr_chars + 1 ) div 2;
-    }
-
-    loop {
-        $left = $str.substr( 0, $nr_chars );
-        $left_w = wcswidth( $left );
-        if $left_w + 1 == $avail_w {
-            my Int $len_next_char = wcswidth( $str.substr( $nr_chars, 1 ) );
-            if $len_next_char == 1 {
-                return $str.substr( 0, $nr_chars + 1 ) if ! $return_remainder;
-                return $str.substr( 0, $nr_chars + 1 ), $str.substr( $nr_chars + 1 );
+    for $str.NFC {
+        my $w = wcwidth($_);
+        #return -1 if $w < 0; # already removed with s:g/<:C>//
+        if $res + $w > $avail_w {
+            while $res > $tmp_w {
+                @graph.pop;
+                @width.pop;
+                $res = [+] @width;
             }
-            elsif $len_next_char == 2 {
-                return $left ~ ' ' if ! $return_remainder;
-                return $left ~ ' ' , $str.substr( $nr_chars );
+            if $res < $tmp_w {
+                return @graph.join ~ ' ' ~ $tail, $res + 1;
+            }
+            else {
+                return @graph.join       ~ $tail, $res;
             }
         }
-        if $left_w > $avail_w {
-            $nr_chars = $nr_chars - $adjust;
-        }
-        elsif $left_w < $avail_w {
-            $nr_chars = $nr_chars + $adjust;
-        }
-        else {
-            return $left if ! $return_remainder;
-            return $left, $str.substr( $nr_chars );
-        }
-        $adjust = ( $adjust + 1 ) div 2;
+        $res += $w;
+        @width.push: $w;
+        @graph.push: .chr;
     }
+    return @graph.join, $res;
 }
 
 
@@ -71,7 +47,7 @@ sub line-fold ( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is co
             $_.=subst( / \s /,  ' ', :g );
             $_.=subst( / <:C> /, '', :g );
             if $_.chars > $avail_w / 4 {
-                $_ = to-printwidth( $_, $avail_w div 2 );
+                $_ = to-printwidth( $_, $avail_w div 2, False ).[0];
             }
         }
         else {
@@ -102,10 +78,12 @@ sub line-fold ( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is co
                 if $i != 0 {
                     @lines.push( $line );
                 }
-                my ( Str $tab_and_cut_word, Str $remainder ) = to-printwidth( $tab_and_word, $avail_w, True );
+                my Str $tab_and_cut_word = to-printwidth( $tab_and_word, $avail_w, False ).[0];
+                my Str $remainder = substr( $tab_and_cut_word.chars );
                 while ( $remainder.chars ) {
                     @lines.push( $tab_and_cut_word );
-                    ( $tab_and_cut_word, $remainder ) = to-printwidth( $subseq_tab ~ $remainder, $avail_w, True );
+                    $tab_and_cut_word = to-printwidth( $subseq_tab ~ $remainder, $avail_w, False ).[0];
+                    $remainder = substr( $tab_and_cut_word.chars );
                 }
                 if $i == @words.end {
                     @lines.push( $tab_and_cut_word );

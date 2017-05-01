@@ -1,6 +1,12 @@
 Revision history for Term::Choose
 
 
+0.122   2017-04-30
+        - Fixed "depends" in META6.json
+
+0.121   2017-04-30
+        - Code refactoring
+
 0.120   2017-04-24
         - Removed superfluous test
 

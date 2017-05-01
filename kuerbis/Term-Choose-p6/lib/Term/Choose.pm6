@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.120';
+my $VERSION = '0.122';
 
 use Term::Choose::NCurses;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
@@ -153,7 +153,7 @@ method !_prepare_new_copy_of_list {
     if %!o<ll> {
         if %!o<ll> > $!avail_w {
             for @!list {
-                $_ = to-printwidth( $_, $!avail_w - $dots_w ) ~ $dots;
+                $_ = to-printwidth( $_, $!avail_w, True ).[0];
             }
             $!col_w = $!avail_w;
         }
@@ -172,14 +172,7 @@ method !_prepare_new_copy_of_list {
             @!list[$i].=subst(   / \s /, ' ', :g );  # replace, but don't squash sequences of spaces
             @!list[$i].=subst( / <:C> /, '',  :g );  # remove invisible control characters and unused code points (Other)
             @!list[$i] = @!list[$i].gist;
-            my Int $length = print-columns( @!list[$i] );
-            if $length > $!avail_w {
-                @!list[$i] = to-printwidth( @!list[$i], $!avail_w - $dots_w ) ~ $dots;
-                @!length[$i] = $!avail_w;
-            }
-            else {
-                @!length[$i] = $length;
-            }
+            ( @!list[$i], @!length[$i] ) = to-printwidth( @!list[$i], $!avail_w, True );
             $longest = @!length[$i] if @!length[$i] > $longest;
         }
         $!col_w = $longest;
@@ -966,7 +959,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.120
+Version 0.122
 
 =head1 SYNOPSIS
 
@@ -1363,7 +1356,7 @@ help.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2016 Matthäus Kiem.
+Copyright (C) 2016-2017 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 
