@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Form;
 
-my $VERSION = '0.015';
+my $VERSION = '0.016';
 
 use Term::Choose::NCurses;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
@@ -367,7 +367,7 @@ method !_prepare_key ( Int $idx ) {
     $f-key.=subst(   / \s /, ' ', :g );
     $f-key.=subst( / <:C> /, '',  :g );
     if $f-key_len > $!key_w {
-        return to-printwidth( $f-key, $!key_w );
+        return to-printwidth( $f-key, $!key_w, False ).[0];
     }
     elsif $f-key_len < $!key_w {
         return " " x ( $!key_w - $f-key_len ) ~ $f-key;
@@ -470,8 +470,7 @@ method !_get_print_row ( Int $idx ) {
         if %!o<ro>.any == $idx - @!pre.elems {
             $sep = $!sep_ro;
         }
-        return
-            self!_prepare_key( $idx ) ~ $sep ~ to-printwidth( $val, $!val_w );
+        return self!_prepare_key( $idx ) ~ $sep ~ to-printwidth( $val, $!val_w, False ).[0];
     }
 }
 
@@ -844,7 +843,7 @@ Term::Form - Read lines from STDIN.
 
 =head1 VERSION
 
-Version 0.015
+Version 0.016
 
 =head1 SYNOPSIS
 
@@ -1027,7 +1026,7 @@ help.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (C) 2016 Matthäus Kiem.
+Copyright (C) 2016-2017 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.
 

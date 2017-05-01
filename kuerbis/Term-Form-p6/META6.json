@@ -15,6 +15,7 @@
   },
   "resources" : [ ],
   "source-url" : "git://github.com/kuerbis/Term-Form-p6.git",
+  "tags" : [ ],
   "test-depends" : [
     "Test"
   ],

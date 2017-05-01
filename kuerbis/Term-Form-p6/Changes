@@ -1,6 +1,10 @@
 Revision history for Term::Form
 
 
+0.016   2017-04-30
+        - Copyright year
+        - Adapted the code to the new version of Term::Choose
+
 0.015   2016-12-16
         - Import subroutines by their names
 

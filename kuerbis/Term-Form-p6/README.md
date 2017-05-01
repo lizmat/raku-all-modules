@@ -8,7 +8,7 @@ Term::Form - Read lines from STDIN.
 VERSION
 =======
 
-Version 0.015
+Version 0.016
 
 SYNOPSIS
 ========
@@ -191,6 +191,6 @@ Thanks to the people from [Perl-Community.de](http://www.perl-community.de), fro
 LICENSE AND COPYRIGHT
 =====================
 
-Copyright (C) 2016 Matthäus Kiem.
+Copyright (C) 2016-2017 Matthäus Kiem.
 
 This library is free software; you can redistribute it and/or modify it under the Artistic License 2.0.

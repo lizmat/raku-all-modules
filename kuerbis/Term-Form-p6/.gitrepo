@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/kuerbis/Term-Form-p6.git
 	branch = master
-	commit = 2ed240ca9bb238c16354adc2059fdee3a2406e30
-	parent = a7776bd35316561678e19b53b154e947d69208ab
+	commit = ca212101cea778eac4b30b3141bc82ff01f4f19d
+	parent = 19ba08bfbaa1bab67edd2b2c1ad4fa0abbab5797
 	cmdver = 0.4.0
