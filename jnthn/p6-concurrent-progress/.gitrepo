@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jnthn/p6-concurrent-progress.git
 	branch = master
-	commit = 7dbb85cdc4577dd8c5110dfe836dcbaa17eedff1
-	parent = 4fc209185f73cd2515dfbeba0dc186c5f21b05bd
+	commit = 2b5652b679c2096fe8549913013fcb04a086289f
+	parent = 26b0fe65caf66f5d0eee667598db72cb0789c49b
 	cmdver = 0.4.0

@@ -44,7 +44,7 @@ method calls will be made on the type object, and will silently do nothing.
 Meanwhile, in the caller (note that `whenever` automatically calls `Supply` on
 the `Concurrent::Progress` object):
 
-    my $progress = Cocurrent::Progress.new;
+    my $progress = Concurrent::Progress.new;
     react {
         whenever $progress -> $status {
             say "$status.value() / $status.target() ($status.percent()%)";
@@ -106,7 +106,7 @@ has the following properties:
   processed, bytes download/uploaded, etc.)
 * **target** - if set, the target to which the `value` property is working
   (total items to process, total bytes to be downloaded/uploaded, etc.)
-* **percet** - if `target` is defined, then `(100 * $.value / $.target).Int`;
+* **percent** - if `target` is defined, then `(100 * $.value / $.target).Int`;
   if not, then an `Int` type object.
 
 Provided `auto-done` was not disabled at construction time, then a `done` will
