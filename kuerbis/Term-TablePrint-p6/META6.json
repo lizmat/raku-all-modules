@@ -10,6 +10,7 @@
     "Term::Choose::Util"
   ],
   "description" : "Print a table to the terminal and browse it interactively.",
+  "license" : "Artistic-2.0",
   "name" : "Term::TablePrint",
   "perl" : "6.c",
   "provides" : {

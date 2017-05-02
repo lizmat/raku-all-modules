@@ -327,11 +327,11 @@ method !_print_single_row ( Int $row ) {
     my $col_w = $term_w - ( $key_w + $sep_w + 1 ); #
     my @lines = ' Close with ENTER';
     for 0 .. $!a_ref[$row].end -> $col {
-        ( my Str $key, $ ) = to-printwidth( # 
+        my Str $key = to-printwidth(
             _sanitized_string( $!a_ref[0][$col] // %!o<undef> ),
             $key_w,
             False
-        );
+        ).[0];
         my Str $sep = $separator;
         @lines.push: ' ';
         if  $!a_ref[$row][$col].defined && ! $!a_ref[$row][$col].chars {
