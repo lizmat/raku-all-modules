@@ -4,4 +4,4 @@ perl6:
     - nom
 
 install:
-    - rakudobrew build-panda
+    - rakudobrew build-zef
