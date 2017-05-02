@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 #`{{
   use Semaphore::ReadersWriters;
@@ -15,7 +15,7 @@ use v6.c;
   say 'Shared var is ', $rw.reader( 'shv', {$shared-var;});
 }}
 
-class Semaphore::ReadersWriters:ver<0.2.2>:auth<MARTIMM> {
+class Semaphore::ReadersWriters:auth<github:MARTIMM> {
 
   # Using state instead of has or my will have a scope over all
   # objects of this class, state will also be initialized only

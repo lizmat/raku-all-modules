@@ -1,6 +1,8 @@
 # Semaphore Readers Writers Pattern or Light switch
 
-[![Build Status](https://travis-ci.org/MARTIMM/mongo-perl6-driver.svg?branch=master)](https://travis-ci.org/MARTIMM/semaphore-readerswriters)
+[![Build Status](https://travis-ci.org/MARTIMM/semaphore-readerswriters.svg?branch=master)](https://travis-ci.org/MARTIMM/semaphore-readerswriters)
+[![License](http://martimm.github.io/label/License-label.svg)](http://www.perlfoundation.org/artistic_license_2_0)
+
 ## Synopsis
 
 ```
@@ -57,4 +59,4 @@ Marcel Timmerman
 ```
 ## CONTACT
 
-MARTIMM on github: MARTIMM/mongo-perl6-driver
+MARTIMM on github
