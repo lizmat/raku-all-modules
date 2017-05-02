@@ -1,5 +1,5 @@
-use v6;
-use LibraryMake;
+use v6.c;
+
 use NativeCall;
 
 
@@ -147,7 +147,7 @@ record is for.
 
 =end pod
 
-class Sys::Lastlog:ver<0.0.7>:auth<github:jonathanstowe> {
+class Sys::Lastlog:ver<0.0.9>:auth<github:jonathanstowe> {
 
     use System::Passwd;
 
