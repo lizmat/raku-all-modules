@@ -100,12 +100,15 @@ class Manifesto {
     has Supplier $!empty;
     has Supplier $!exception;
 
+    has Lock $!promises-lock;
+
 
 
     submethod BUILD() {
         $!supplier  = Supplier.new;
         $!empty     = Supplier.new;
         $!exception = Supplier.new;
+        $!promises-lock = Lock.new;
     }
 
     method Supply() returns Supply {
@@ -125,12 +128,16 @@ class Manifesto {
                 $!supplier.emit: $p.result;
                 $p;
             }).then( {
-                %!promises{$which}:delete;
-                if %!promises.values.elems == 0 {
-                    $!empty.emit: True;
-                }
+                $!promises-lock.protect({
+                    %!promises{$which}:delete;
+                    if %!promises.keys.elems == 0 {
+                        $!empty.emit: True;
+                    }
+                });
             });
-            %!promises{$which} = $promise;
+            $!promises-lock.protect({
+                %!promises{$which} = $promise;
+            });
             $rc = True;
         }
         $rc;

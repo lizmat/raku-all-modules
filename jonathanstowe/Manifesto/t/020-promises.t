@@ -24,8 +24,14 @@ lives-ok {
 
 my Bool $empty = False;
 
+# This is just to synchronise the deletion part
+# as the empty message gets called after the supply
+# is emitted to.
+
+my Promise $empty-promise = Promise.new;
+
 lives-ok {
-    $manifesto.empty.tap({ $empty = True });
+    $manifesto.empty.tap({ $empty = True; $empty-promise.keep: True; });
 }, "tap the empty supply";
 
 
@@ -40,6 +46,7 @@ $promise.keep: "what we expected";
 await Promise.anyof($guard, Promise.in(1));
 
 is $result, "what we expected", "the tap got fired";
+await Promise.anyof($empty-promise, Promise.in(1));
 is $manifesto.promises.elems, 0, "the promise went away";
 ok $empty, "and the empty supply got fired";
 
