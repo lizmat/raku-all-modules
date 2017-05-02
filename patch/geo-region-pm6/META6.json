@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Geo::Region",
+    "license"     : "GPL-1.0+ OR Artistic-1.0-Perl",
     "version"     : "*",
     "author"      : "Nick Patch",
     "description" : "Geographical regions and groupings using UN M.49 and CLDR data",
