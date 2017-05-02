@@ -9,6 +9,7 @@
     "Term::Choose::LineFold"
   ],
   "description" : "CLI related functions.",
+  "license" : "Artistic-2.0",
   "name" : "Term::Choose::Util",
   "perl" : "6.c",
   "provides" : {
