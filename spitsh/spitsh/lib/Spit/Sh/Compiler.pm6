@@ -17,14 +17,6 @@ my %native = (
         body => q|printf "%s\n" "$*"|,
         deps => ('?IFS'),
     )),
-    starts-with => Map.new((
-        body => Q<case "$1" in "$2"*) true;; *) false;; esac>,
-        deps => ()
-    )),
-    ends-with => Map.new((
-        body => Q<case "$1" in *"$2") true;; *) false;; esac>,
-        deps => ()
-    )),
 );
 
 sub nnq { NoNeedQuote.new: bits => @_ }
@@ -107,10 +99,13 @@ multi method gen-name(SAST::Declarable:D $decl,:$name is copy = $decl.bare-name,
 }
 
 multi method gen-name(SAST::PosParam:D $_) {
-    return  ~(.ord + (.signature.has-invocant ?? 1 !! 0 ) + 1);
+    return  ~(.ord + ((.signature.invocant andthen !.piped) ?? 1 !! 0 ) + 1);
 }
 
-multi method gen-name(SAST::Invocant:D $) { '1' }
+multi method gen-name(SAST::Invocant:D $_) {
+    SX::Bug.new(desc => 'Tried to compile a piped parameter', match => .match).throw if .piped;
+    '1'
+}
 
 multi method gen-name(SAST::Var:D $_ where { $_ !~~ SAST::VarDecl }) {
     self.gen-name(.declaration);
@@ -295,8 +290,9 @@ multi method cap-stdout(ShellStatus $_) {
 }
 #!Var
 multi method node(SAST::Var:D $var) {
-    my $name = self.gen-name($var);
     return Empty if $var ~~ SAST::ConstantDecl and not $var.depended;
+    my $name = self.gen-name($var);
+
     with $var.assign {
         my @var = |self.compile-assign($var,$_);
         if @var[0].starts-with('$') {
@@ -345,7 +341,7 @@ multi method compile-assign($var,SAST::Junction:D $j) {
 }
 
 multi method compile-assign($var,SAST::Call:D $call) {
-    if $call.declaration.impure {
+    if $call.declaration.return-by-var {
         |self.node($call),'; ',self.gen-name($var),'=$R';
     } else {
         nextsame;
@@ -655,18 +651,30 @@ multi method node(SAST::Call:D $_)  {
 }
 
 multi method node(SAST::MethodCall:D $_) {
-    my $call := |self.call: self.gen-name(.declaration),
-                .param-arg-pairs,
-                (( .declaration.static ?? Empty !! .invocant),|.pos);
+    my $call;
+    if .declaration.invocant.?piped {
+        $call := |self.cap-stdout(.invocant), '|',
+                 |self.call:
+                   self.gen-name(.declaration),
+                   .param-arg-pairs,
+                   .pos;
+    } else {
+        $call := |self.call:
+                  self.gen-name(.declaration),
+                  .param-arg-pairs,
+                  ((.declaration.static ?? Empty !! .invocant ), |.pos);
+    }
+
     if .declaration.rw and .invocant.assignable {
-        |self.gen-name(.invocant),'=$(',$call,')';
+        |self.gen-name(.invocant),'=$(',|$call,')';
     } else {
         self.maybe-quietly: $call, .type, .ctx, match => .match;
     }
 }
 
 multi method arg(SAST::Call:D $_) is default {
-    SX::Sh::ImpureCallAsArg.new(call-name => .name,node => $_).throw if .declaration.impure;
+    SX::Sh::ReturnByVarCallAsArg.new(call-name => .name,node => $_).throw
+        if .declaration.return-by-var;
     nextsame;
 }
 
@@ -688,7 +696,10 @@ multi method node(SAST::Cmd:D $cmd,:$silence) {
                                        ).flat;
 
         my $full-cmd := |self.compile-cmd(@cmd-body,$cmd.write,$cmd.append,@in);
-        my $pipe     := |(|self.cap-stdout($_),'|' with $cmd.pipe-in);
+
+        my $pipe := do if $cmd.pipe-in andthen not .?is-piped {
+            |(|self.cap-stdout($cmd.pipe-in),'|');
+        };
         |$pipe,
         ("\n{$*pad}  " if $pipe and $pipe.chars + $full-cmd.chars > $.chars-per-line-cap),
         |$cmd.set-env.map({"{.key.subst('-','_',:g)}=",|self.arg(.value)," "}).flat,
@@ -730,7 +741,7 @@ multi method cap-stdout(SAST::Cmd:D $_) {
 
 #!Return
 multi method node(SAST::Return:D $ret) {
-    if $ret.impure {
+    if $ret.return-by-var {
         'R=',self.arg($ret.val);
     } elsif $ret.loop {
         self.loop-return($ret.val);
@@ -871,6 +882,7 @@ multi method arg(SAST::Range:D $_) {
 }
 #!Blessed
 multi method arg(SAST::Blessed:D $_) { self.arg($_[0]) }
+multi method cap-stdout(SAST::Blessed:D $_) { self.cap-stdout($_[0]) }
 
 method concat-into-DQ(@elements) {
     my $str = dq();

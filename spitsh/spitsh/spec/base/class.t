@@ -23,6 +23,7 @@ plan 16;
     class Parent {
         static method ~dont-override { ":D"}
         static method ~override      { "parent" }
+        static method *return-self   { "parent" }
     }
 
     class Child is Parent {
@@ -34,6 +35,8 @@ plan 16;
     is Child.override,"child",'child overridden parent';
     is Child.child-only,"child-only",'child-only method works';
     is Parent.override,"parent","overridden method in parent still works";
+    is Parent.return-self.WHAT, 'Parent', '* return on parent returns Parent';
+    is Child.return-self.WHAT, 'Child', '* return Child returns Child';
 }
 
 
@@ -53,27 +56,4 @@ plan 16;
 
     is Foo<foo>.first("bar"),"foobarbaz","methods can call other methods";
     is (Foo<foo>.first: "bar"), "foobarbaz", '.method: syntax';
-}
-
-{
-    class Listy  {
-        method +iterate-at {
-            my $i = 0;
-            for @self {
-                $i++
-            }
-            $i;
-        }
-
-        method +iterate-dollar {
-            my $j = 0;
-            for $self {
-                $j++;
-            }
-            $j;
-        }
-    }
-
-    is Listy(<one two three>).iterate-at,    3,'for @self { }';
-    is Listy(<one two three>).iterate-dollar,1,'for $self { }'
 }

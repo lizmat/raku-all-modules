@@ -42,7 +42,7 @@ sub tPID is export { state $ = class-by-name('PID')  }
 
 sub lookup-type($name,:@params, Match :$match) is export {
     my $type := $*CURPAD.lookup(CLASS,$name, :$match).class;
-    $type := $type.^parameterize(|@params.map(*.class)) if @params;
+    $type := $type.^parameterize(|@params) if @params;
     $type;
 }
 
@@ -198,7 +198,7 @@ sub coerce(SAST:D $node,Spit::Type $type,:$desc) {
             # We need node to become a list. As long as the node matches the List's
             # element type we can just bless this node into a List[of-the-appropriate type]
             if $type ~~ tList() and $node.type !~~ tList() {
-                my $elem-type := derive-type($type);
+                my $elem-type := flattened-type($type);
                 my $list-type = $type === tList() ?? tList($elem-type) !! $type;
                 $node.stage2-node(
                     SAST::Blessed,
@@ -219,8 +219,15 @@ sub coerce(SAST:D $node,Spit::Type $type,:$desc) {
     }
 }
 
-sub derive-type(Spit::Type $_) {
-    when tList() { .parameterized ?? .params[0] !! tStr() }
+# The type of the thing if it were flattened out
+sub flattened-type(Spit::Type $_) {
+    when tList() {
+        if .^find-parameters-for(tList()) -> $params {
+            $params[0]
+        } else {
+            tStr();
+        }
+    }
     default { $_ }
 }
 
@@ -265,6 +272,7 @@ role SAST::OSMutant {
 class SAST::Children does SAST {
 
     method children { Empty }
+    method auto-compose-children { @.children }
     method gist(Mu:D:){
         my $name = self.^name.subst(/^'SAST::'/,'');
         $name ~ "$.gist-children";
@@ -400,7 +408,33 @@ class SAST::Var is SAST::Children does SAST::Assignable {
 
     method desc { "Assignment to $.spit-gist" }
 
+    method is-piped { self.declaration.?piped }
+
     method itemize { itemize-from-sigil($!sigil) }
+}
+
+sub figure-out-var-type($sigil, $type is rw, \decl-type, :$assign is raw, :$desc) {
+    my $sigil-type := type-from-sigil($sigil);
+    if decl-type {
+        $type = do if $sigil-type === tList() {
+            tList(decl-type);
+        } else {
+            decl-type;
+        };
+
+        $assign .= do-stage2($type,:$desc) if $assign;
+    } else {
+        $type = do if $assign {
+            $assign .= do-stage2($sigil-type, :$desc);
+            $assign.type;
+        } else {
+            if $sigil-type === tList() {
+                tList(tStr);
+            } else {
+                $sigil-type;
+            }
+        }
+    }
 }
 
 class SAST::VarDecl is SAST::Var does SAST::Declarable is rw {
@@ -409,26 +443,7 @@ class SAST::VarDecl is SAST::Var does SAST::Declarable is rw {
     has $.dont-depend is rw;
 
     method stage2(SAST::VarDecl:D: $ctx) is default {
-        my $sigil-type := type-from-sigil(self.sigil);
-        if $!decl-type {
-            $!type = do if $sigil-type === tList() {
-                tList($!decl-type);
-            } else {
-                $!decl-type;
-            }
-            $.assign .= do-stage2($!type,:$.desc) if $.assign;
-        } else {
-            $!type = do if $.assign {
-                $.assign .= do-stage2($sigil-type,:$.desc);
-                $.assign.type;
-            } else {
-                if $sigil-type === tList() {
-                    tList(tStr);
-                } else {
-                    $sigil-type;
-                }
-            }
-        }
+        figure-out-var-type($.sigil, $!type, $!decl-type, :$.assign, :$.desc);
         self;
     }
     method bare-name  { $.name.subst(/^<[*?]>/,'') }
@@ -569,7 +584,7 @@ class SAST::PhaserBlock is SAST::Children {
 
 class SAST::Return is SAST::Children {
     has $.val is rw;
-    has $.impure is rw;
+    has $.return-by-var is rw;
     has $.loop is rw;
     method stage2($ctx) is default {
         self.val .= do-stage2($ctx,:desc("return value didn't match block's return type"));
@@ -590,13 +605,13 @@ class SAST::Elem is SAST::MutableChildren does SAST::Assignable {
         $!index .= do-stage2(tInt);
         $.elem-of .= do-stage2(tAny);
         with $.assign {
-            $_ .= do-stage2(derive-type($.elem-of.type),:desc("assigning to element of {$.elem-of.gist}"));
+            $_ .= do-stage2($.type, :desc("assigning to element of {$.elem-of.gist}"));
         }
         self;
     }
 
     method gist { $.elem-of.gist ~ '[' ~ $!index.gist ~ ']' }
-    method type { derive-type($.elem-of.type) }
+    method type { flattened-type($.elem-of.type) }
     method elem-of is rw { @.nodes[0] }
     method children { $.elem-of,$!index, ($.assign // Empty) }
     method spit-gist { $.elem-of.spit-gist ~ '[' ~ $!index.spit-gist ~ ']' }
@@ -619,11 +634,20 @@ class SAST::Cmd is SAST::MutableChildren is rw {
         if not ($!pipe-in and (@!write || @!append) or @.nodes) {
             self.make-new(SX,message => ‘command can't be empty’).throw;
         }
+
+        if ($!pipe-in andthen .?is-piped) and $*no-pipe {
+            $!pipe-in.declaration.piped = False;
+        }
         self;
     }
 
     method children {
-        ($!pipe-in,|@.nodes,|@!in,|@!write,|@!append,|%!set-env.values).grep(*.defined)
+        grep *.defined, $!pipe-in, |@.nodes, |@!in, |@!write, |@!append, |%!set-env.values;
+    }
+
+    method auto-compose-children {
+        # pipe-in gets special treatment in composition stage
+        grep *.defined, |@.nodes, |@!in, |@!write, |@!append, |%!set-env.values;
     }
 
     method clone(|c) { callwith(|c,:@!write,:@!append,:@!in,:%!set-env) }
@@ -682,6 +706,7 @@ class SAST::RoutineDeclare is SAST::Children does SAST::Declarable does SAST::OS
     has @.os-candidates is rw;
     has $.is-native is rw;
     has $.chosen-block is rw;
+    has $.return-by-var is rw;
     has $.impure is rw;
 
     method symbol-type { SUB }
@@ -700,7 +725,7 @@ class SAST::RoutineDeclare is SAST::Children does SAST::Declarable does SAST::OS
                 $!is-native ?? tAny() !! $.return-type,
                 :!auto-inline,
                 :desc("return value of $.spit-gist didn't match return type of $!name"));
-            .impure = $!impure with .value.returns;
+            .return-by-var = $!return-by-var with .value.returns;
         }
         self;
     }
@@ -718,23 +743,25 @@ class SAST::RoutineDeclare is SAST::Children does SAST::Declarable does SAST::OS
 
 class SAST::MethodDeclare is SAST::RoutineDeclare {
     has $.rw is rw;
-    has $.static is rw;
     has SAST::ClassDeclaration $.invocant-type is rw;
-    has @.invocants;
+    has $.invocant is rw;
+
+    method static { !$!invocant }
 
     method spit-gist { "method {$.name}\({$.signature.spit-gist})" }
 
     method stage2($) {
-        $.signature.has-invocant = True unless $!static;
         $.return-type = $.invocant-type.class if $!rw;
-        $_ .= do-stage2(tAny) for @!invocants;
+        $!invocant andthen $_ .= do-stage2(tAny);
+        $.signature.invocant = $!invocant;
+        $!invocant.piped = False if $.impure;
         nextsame;
     }
 
-    multi method reified-return-type(:$reify!) {
-        my $return-type = self.return-type;
-        if $reify.parameterized and $return-type.HOW ~~ Spit::Metamodel::Placeholder {
-            $reify.params[$return-type.^param-pos]
+    multi method reified-return-type($call-invocant) {
+        my $return-type := self.return-type;
+        if $return-type.^needs-reification {
+            $return-type.^reify($call-invocant);
         } else {
             $return-type
         }
@@ -746,7 +773,7 @@ class SAST::MethodDeclare is SAST::RoutineDeclare {
 
     method declarator { 'method' }
 
-    method children { |callsame,|@!invocants }
+    method children { |callsame, ($!invocant // Empty) }
 }
 
 
@@ -778,7 +805,7 @@ class SAST::Call  is SAST::Children {
         my $last-valid;
         for @pos-params.kv -> $i,$param {
             if $param.slurpy {
-                my $elem-type = derive-type($param.type);
+                my $elem-type = flattened-type($param.type);
                 until (my $arg := $pos-args.pull-one) =:= IterationEnd {
                     $arg .= do-stage2(
                         $elem-type,
@@ -866,24 +893,10 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
 
     method invocant is rw { self[0] }
     method type {
-        $!type ||= self.declaration.reified-return-type(:reify($.invocant.ostensible-type));
+        $!type ||= self.declaration.reified-return-type($.invocant.ostensible-type);
     }
     method gen-sig {
-        $!gen-sig //= do {
-            my $sig = self.declaration.signature;
-            if $.invocant.ostensible-type.parameterized {
-                $sig := $sig.clone;
-                for $sig.children {
-                    $_ .= clone;
-                    if .type.HOW ~~ Spit::Metamodel::Placeholder {
-                        .type = .type.^reify($.invocant.ostensible-type);
-                    }
-                }
-                $sig;
-            } else {
-                $sig;
-            }
-        }
+        $!gen-sig //= self.declaration.signature.reify($.invocant.ostensible-type);
     }
 
     method stage2($ctx) {
@@ -926,23 +939,25 @@ class SAST::SubCall is SAST::Call {
 }
 
 class SAST::Invocant does SAST does SAST::Declarable {
-    has $.sigil is required;
     has $.class-type is required;
+    has $.piped is rw = True; # Whether the invocant should be piped in
     method name { 'self' }
-    method symbol-type { symbol-type-from-sigil($!sigil) }
+    method symbol-type { SCALAR }
     method gist { $.node-name ~ "($.spit-gist)" }
-    method spit-gist { "{$!sigil}self" }
+    method spit-gist { '$self' }
     method type { $!class-type }
     method dont-depend { True }
     method stage2 ($) { self }
-    method itemize { itemize-from-sigil($!sigil) }
+    method itemize { True }
 }
 
 class SAST::Param does SAST does SAST::Declarable {
     has Str:D $.name is required;
     has Sigil:D $.sigil is required;
     has $.signature is rw;
-    has $.type is rw = type-from-sigil(self.sigil);
+    has $.decl-type;
+    has $.type is rw;
+    method TWEAK(|) { figure-out-var-type($!sigil, $!type, $!decl-type) }
     method stage2 ($) { self }
     method symbol-type { symbol-type-from-sigil($!sigil) }
     method dont-depend { True }
@@ -966,7 +981,7 @@ class SAST::NamedParam is SAST::Param {
 class SAST::Signature is SAST::Children {
     has SAST::PosParam @.pos;
     has SAST::NamedParam %.named;
-    has $.has-invocant is rw;
+    has $.invocant is rw;
 
     method stage2 ($) {
         for @!pos.kv -> $i,$p is rw {
@@ -989,6 +1004,20 @@ class SAST::Signature is SAST::Children {
         ~ @.children.map({ "{.type.name} {.spit-gist}" }).join(", ");
     }
 
+    method reify(Spit::Type $call-invocant-type) {
+        if $call-invocant-type.HOW ~~ Spit::Metamodel::Parameterized
+           and @.children.first(*.type.^needs-reification)
+        {
+            my $copy = self.clone;
+            for $copy.children {
+                $_ .= clone;
+                .type = .type.^reify($call-invocant-type);
+            }
+            $copy;
+        } else {
+            self;
+        }
+    }
 }
 
 class SAST::ClassDeclaration does SAST::Declarable is SAST::Children {
@@ -1073,7 +1102,8 @@ class SAST::CondReturn is SAST::Children  {
         self;
     }
 
-    method children { $!val,(self.stage3-done && $!Bool-call || Empty) }
+    method children { $!val,($!Bool-call // Empty) }
+    method auto-compose-children { $!val, }
     method type { $!val.type }
     method gist { $.node-name ~ "($!when)" ~ $.gist-children }
 }
@@ -1205,11 +1235,11 @@ class SAST::List is SAST::MutableChildren {
     has $.type;
     method type {
         $!type ||= do {
-            my $base-type = derive-common-parent @.children.map: { .type.&derive-type }
+            my $base-type = derive-common-parent @.children.map: { .type.&flattened-type }
             tList($base-type);
         }
     }
-    method elem-type { derive-type(self.type) }
+    method elem-type { flattened-type(self.type) }
 
     method stage2($) {
         $_ .= do-stage2(tStr) for @.children;
@@ -1331,9 +1361,11 @@ class SAST::If is SAST::Children is rw {
     }
 
     method children {
-        $!cond,$!then,($!topic-var // Empty),
-        # Hide else from composer initially. Ifs need to be walked from top to bottom.
-        ($!else // Empty if $.stage3-done)
+        $!cond,$!then,($!topic-var // Empty),($!else // Empty)
+    }
+    method auto-compose-children {
+        # Don't auto-compose else. If chains need to be walked from top to bottom.
+        $!cond,$!then,($!topic-var // Empty)
     }
     method type { derive-common-parent($!then.type, ($!else.type if $!else)) }
 
@@ -1348,6 +1380,7 @@ class SAST::While is SAST::Children {
     has $!type;
 
     method stage2($ctx) {
+        my $*no-pipe = True;
         $!cond .= do-stage2(tBool,:desc<while conditional>);
         generate-topic-var(var => $!topic-var,:$!cond,blocks => ($!block,));
         $!block .= do-stage2($ctx,:desc<while block return value>,:loop,:!auto-inline);
@@ -1395,7 +1428,8 @@ class SAST::For is SAST::Children {
         }
         $!iter-var.do-stage2(tAny);
         $!block.declare: $!iter-var;
-        $!block .= do-stage2($ctx.&derive-type,:loop,:!auto-inline);
+        my $*no-pipe = True;
+        $!block .= do-stage2($ctx.&flattened-type, :loop, :!auto-inline);
         self;
     }
 

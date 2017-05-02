@@ -3,6 +3,13 @@ env File $*HOME;
 #| The present working directory of the shell.
 env File $?PWD;
 
+
+augment List[File] {
+    method ?remove { ${rm -rf @$self !>X} }
+
+    method @cat { ${cat @$self} }
+}
+
 #| File is string representing a filesystem path (relative or absolute).
 #|{
     my $outdated = 'foo1.myorg.com';
@@ -12,7 +19,6 @@ env File $?PWD;
         .subst($outdated,'foo2.myorg.com');
     }
 }
-
 augment File {
     #| Returns True if the file exists.
     method ?exists { ${test -e $self}  }
@@ -30,7 +36,7 @@ augment File {
     method ?f      { $self.file }
     #| Removes (unlinks) the file and returns True if it was successful.
     #| If the file is a directory it will recursively it's children.
-    method ?remove { ${rm -rf $self !>X} }
+    method ?remove { $self-->List[File].remove }
     #| Returns True if the file is empty
     method ?empty  { ! ${test -s $self} }
     #| Returns True if the file is writable by the current user.
@@ -84,7 +90,7 @@ augment File {
     #| Adds a line to a file. If the file doesn't end in a `\n`, a one
     #| will be appended before the line being added.
     method push(#|[line to add] $line) {
-        $self.write($self.slurp.push($line));
+        $self.slurp.push($line).write-to($self)
     }
     #| Calls `touch(1)` on the file.
     #|{ .touch unless File<foo.txt> }
@@ -132,7 +138,7 @@ augment File {
     method subst(#|[The string to be replaced]$target,
                  #|[The string to replace it with]$replacement,
                  #|[Turn on global matching]Bool :$g){
-        $self.write($self.slurp.subst($target,$replacement,:$g));
+        $self.slurp.subst($target,$replacement,:$g).write-to($self);
     }
 
     #| Reads the file into the file's content as a List of lines
@@ -149,7 +155,7 @@ augment File {
         $fd.write("written to via file descriptor");
         say $file.slurp; #-> written to via file descriptor!
     }
-    method open-w(--> FD) is impure {
+    method open-w(--> FD) is return-by-var {
         my $fd = FD.next-free;
         $fd.open-w($self);
         $fd;
@@ -163,7 +169,7 @@ augment File {
         $fd.get() && say $~; #-> The
         $fd.get() && say $~; #-> quick
     }
-    method open-r(--> FD) is impure {
+    method open-r(--> FD) is return-by-var {
         my $fd = FD.next-free;
         $fd.open-r($self);
         $fd;
@@ -215,10 +221,6 @@ augment File {
         ${find $self ('-name', $name if $name)}
     }
 
-    method @grep(Regex $re, :$v) {
-        ${ grep ('-v' if $v) -E $re $self }
-    }
-
     static method tmp-fifo(--> File) {
         my File $tmpfifo .= tmp;
         $tmpfifo.remove;
@@ -251,6 +253,14 @@ augment File {
 
     method extract(-->File) {
         ${ tar xvf $self | sed -n '1s/\/.*//p' };
+    }
+
+    method @grep(Regex $regex) {
+        ${egrep $regex $self}
+    }
+
+    method ~first(Regex $regex){
+        ${egrep -m1 $regex $self}
     }
 
 }

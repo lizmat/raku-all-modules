@@ -240,41 +240,47 @@ method declaration:sym<class> ($/){
 }
 
 method declare-class-params ($/) {
-    for $*CLASS.class.^placeholder-params -> $type {
-        $*CURPAD.declare: SAST::ClassDeclaration.new(class => $type);
+    my $type := $*CLASS.class;
+    if $type.HOW ~~ Spit::Metamodel::Parameterizable {
+        for $type.^placeholder-params -> $placeholder {
+            $*CURPAD.declare: SAST::ClassDeclaration.new(class => $placeholder);
+        }
     }
 }
 
 method new-class ($/) {
-    my $class = declare-new-type($/,$<type-name>.Str,Spit::Metamodel::Type);
+    my $class;
     with $<class-params><params><thing> {
+        $class = declare-new-type($/,$<type-name>.Str, Spit::Metamodel::Parameterizable);
         for $_<type-name>.map(*.Str).kv -> $i,$name {
-            my $placeholder-type := Spit::Metamodel::Placeholder.new_type(:$name);
+            my $placeholder-type := Spit::Metamodel::Parameter.new_type(:$name);
             set-primitive($placeholder-type);
             $placeholder-type.^set-param-of($class.class,$i);
             $placeholder-type.^compose;
             $class.class.^placeholder-params.push($placeholder-type);
         }
+    } else {
+        $class = declare-new-type($/,$<type-name>.Str, Spit::Metamodel::Type);
     }
     make $class;
 }
 
 method class-params ($/) {
     make cache  $<params><thing><type-name>.map: {
-        $*CURPAD.lookup(CLASS,.Str,match => $_);
+        $*CURPAD.lookup(CLASS, .Str, match => $_).class;
     };
 }
 
 method declaration:sym<augment> ($/) {
-    my $class := $<old-class>.ast.class;
-    $class.^compose;
-    make SAST::ClassDeclaration.new(block => $<blockoid>.ast,:$class);
+    my $augmented-class := $<old-class>.ast;
+    $augmented-class.block = $<blockoid>.ast;
+    $augmented-class.class.^compose;
+    make $augmented-class;
 }
 
 method old-class ($/) {
-    my $name = $<type-name>.Str;
-    my $decl = $*CURPAD.lookup(CLASS,$name,match => $/);
-    $*CLASS = $decl;
+    my $class = $<type>.ast;
+    my $decl = $*CLASS = SAST::ClassDeclaration.new(:$class);
     make $decl;
 }
 
@@ -303,6 +309,8 @@ method trait:sym<is> ($/){
         $*CU.export($*DECL);
     } elsif $<rw> {
         $*ROUTINE.rw  = True;
+    } elsif $<return-by-var> {
+        $*ROUTINE.return-by-var = True;
     } elsif $<impure> {
         $*ROUTINE.impure = True;
     } else {
@@ -344,14 +352,14 @@ method make-routine ($/,$type,:$static) {
         when 'sub' { SAST::SubDeclare.new(:$name) }
         when 'method'  {
             SX.new(message => 'methdod declared outside of a class').throw unless $*CLASS;
-            my $r = SAST::MethodDeclare.new(:$name,:$static);
+            my $r = SAST::MethodDeclare.new(:$name);
             if $*CURPAD.lookup(CLASS,$name) -> $matching-class {
                 $r.return-type = $matching-class.class;
             }
             unless $static {
-                for <$ @> {
-                    $r.invocants.push: $*CURPAD.declare: SAST::Invocant.new(sigil => $_,class-type => $*CLASS.class);
-                }
+                $r.invocant = $*CURPAD.declare: SAST::Invocant.new(
+                    class-type => $*CLASS.class
+                );
             }
             $r;
         }
@@ -374,6 +382,12 @@ method return-type-sigil:sym<~>($/) { make tStr() }
 method return-type-sigil:sym<+>($/) { make tInt() }
 method return-type-sigil:sym<?>($/) { make tBool() }
 method return-type-sigil:sym<@>($/) { make tList() }
+method return-type-sigil:sym<*>($/) {
+    $*CLASS or
+      SX.new(message => 'Whatever-Invocant return type used outside of a class').throw;
+
+    make $*CLASS.class.^whatever-invocant;
+}
 
 method paramlist ($/) {
     my @params = $<params>.map(*<param>.ast);
@@ -391,14 +405,14 @@ method param ($/) {
         SAST::PosParam.new(
             name => $<var><name>.Str,
             sigil => $<var><sigil>.Str,
-            |(type => .ast with $<type>),
+            |(decl-type => .ast with $<type>),
             slurpy => ?$<slurpy>.Str
         )
     } else {
         SAST::NamedParam.new(
             name => $<var><name>.Str,
             sigil => $<var><sigil>.Str,
-            |(type => .ast with $<type>),
+            |(decl-type => .ast with $<type>),
         )
     }
 }

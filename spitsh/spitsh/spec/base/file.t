@@ -1,6 +1,6 @@
 use Test;
 
-plan 47;
+plan 54;
 
 {
     my File $file .= tmp;
@@ -12,6 +12,14 @@ plan 47;
     $file.touch;
     ok $file.exists,'.touch creates the file';
     END { nok $file.exists,"tempfiles should be rm by END" }
+}
+
+{
+    my @files = (File.tmp, File.tmp, File.tmp);
+    is @files.WHAT, 'List[File]', '(File.tmp,File.tmp) --> List[File]';
+    ok @files[2], 'file in list exists';
+    ok @files.remove, 'List[File].remove';
+    nok @files[2], ‘file in list doesn't exist after .remove’;
 }
 
 {
@@ -35,6 +43,14 @@ plan 47;
     is $file.size,10,'.size changes after appending';
 
     END { nok $file.exists,"tempfiles should be rm by END" }
+}
+
+{
+    my @files = (File.tmp, File.tmp, File.tmp);
+    @files[0].write("foo");
+    @files[1].write("bar");
+    @files[2].write("baz");
+    is @files.cat, "foobarbaz", 'List[File].cat';
 }
 
 {
@@ -154,6 +170,14 @@ is File</etc/hosts>.group, 'root', '/etc/hosts has corrent group';
         my $extracted = $named-archive.extract;
         ok $extracted.d, 'to => extracted archive is a directory';
         ok $extracted.add('foo.txt'), 'to => foo.txt exists';
+    }
+}
+
+{
+    given File.tmp {
+        .write(<one two three four five six seven eight nine>);
+        is .grep(/i.{1,2}$/), <five six nine>, '.grep';
+        is .first(/i.{1,2}$/), <five>, '.first';
     }
 }
 

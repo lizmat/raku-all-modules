@@ -188,7 +188,7 @@ grammar Spit::Grammar is Spit::Lang {
         <.ENDSTMT>
     }
 
-    rule old-class { <type-name> }
+    token old-class { <type> }
     rule declaration:sym<augment> {
         :my $*CLASS;
         <sym> <old-class>
@@ -220,8 +220,9 @@ grammar Spit::Grammar is Spit::Lang {
             |$<native>='native'
             |$<export>='export'
             |$<rw>='rw'
+            |$<return-by-var>='return-by-var'
             |$<impure>='impure'
-            |<type>
+            |{} <type>
         ]
     }
 
@@ -286,6 +287,7 @@ grammar Spit::Grammar is Spit::Lang {
     token return-type-sigil:sym<+> { <sym> }
     token return-type-sigil:sym<?> { <sym> }
     token return-type-sigil:sym<@> { <sym> }
+    token return-type-sigil:sym<*> { <sym> }
 
     rule signature {
         <paramlist>

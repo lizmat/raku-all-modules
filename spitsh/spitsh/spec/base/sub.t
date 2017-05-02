@@ -1,6 +1,6 @@
 use Test;
 
-plan 31;
+plan 32;
 
 {
     sub foo() {
@@ -110,7 +110,7 @@ plan 31;
 
 {
     my $canary = 0;
-    sub +check-re-enter is impure {
+    sub +check-re-enter is return-by-var {
         my $foo = ++$canary;
         $*NULL.write($foo);
         $foo;
@@ -128,4 +128,12 @@ plan 31;
     }
 
     dolla("foo");
+}
+
+{
+    sub list-param(Int @a --> List[Int]) {
+        $_ + 2 for @a;
+    }
+
+    is list-param(<1 2 3 4>), <3 4 5 6>, 'Int @a as a param';
 }
