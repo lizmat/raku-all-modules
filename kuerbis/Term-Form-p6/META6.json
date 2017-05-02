@@ -8,6 +8,7 @@
     "Term::Choose::LineFold"
   ],
   "description" : "Read lines from STDIN.",
+  "license" : "Artistic-2.0",
   "name" : "Term::Form",
   "perl" : "6.c",
   "provides" : {
