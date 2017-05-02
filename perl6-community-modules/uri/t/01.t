@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 47;
+plan 46;
 
 use URI;
 use URI::Escape;
@@ -22,17 +22,6 @@ is($u.segments[1], 'us', 'second chunk');
 
 is( ~$u, 'http://example.com:80/about/us?foo#bar',
     'Complete path stringification');
-
-
-# credit for technique to: http://irclog.perlgeek.de/perl6/2015-05-14#i_10604679
-my $say_uri_scalar;
-my $fh = IO::Handle.new but role {
-    method print(*@stuff) { $say_uri_scalar ~= $_ for @stuff };
-    method print-nl { self.print("\n") }
-};
-$fh.say($u);
-is($say_uri_scalar, "http://example.com:80/about/us?foo#bar\n",
-    'Complete path gist stringification with say');
 
 # allow uri as named argument too
 $u = URI.new(uri => 'https://eXAMplE.COM');
