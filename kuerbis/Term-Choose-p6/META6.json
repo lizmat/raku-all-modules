@@ -9,6 +9,7 @@
     "Terminal::WCWidth"
   ],
   "description" : "Choose items from a list interactively.",
+  "license" : "Artistic-2.0",
   "name" : "Term::Choose",
   "perl" : "6.c",
   "provides" : {
