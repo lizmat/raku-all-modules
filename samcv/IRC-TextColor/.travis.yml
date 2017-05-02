@@ -4,5 +4,5 @@ env:
 perl6:
     - latest
 install:
-    - rakudobrew build-panda
-    - panda install Test::META
+    - rakudobrew build-zef
+    - zef install Test::META
