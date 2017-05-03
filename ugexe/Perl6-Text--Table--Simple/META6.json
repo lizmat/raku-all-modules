@@ -3,6 +3,7 @@
     "name"        : "Text::Table::Simple",
     "version"     : "0.0.3",
     "auth"        : "github:ugexe",
+    "license" : "Artistic-2.0",
     "description" : "Create basic tables from a two dimensional array",
     "depends"     : [ ],
     "provides"    : {
