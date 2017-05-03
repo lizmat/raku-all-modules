@@ -1,11 +1,11 @@
 {
     "perl"        : "6",
     "name"        : "Net::HTTP",
-    "version"     : "*",
-    "owner"       : "ugexe",
+    "version"     : "0.0.1",
     "auth"        : "github:ugexe",
     "authors"     : ["ugexe"],
     "description" : "Roll your own http client",
+    "license" : "Artistic-2.0",
     "provides"    : {
         "Net::HTTP::Client"     : "lib/Net/HTTP/Client.pm6",
         "Net::HTTP::Dialer"     : "lib/Net/HTTP/Dialer.pm6",
