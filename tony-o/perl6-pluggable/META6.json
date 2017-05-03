@@ -1,7 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "Pluggable",
-  "version"     : "0.1.0",
+  "version"     : "0.1.1",
   "description" : "Helper role to find plugins for your module",
   "author"      : "Tony ODell",
   "depends"     : [ ],
