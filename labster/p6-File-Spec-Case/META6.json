@@ -1,6 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "File::Spec::Case",
+  "license"     : "Artistic-2.0",
   "version"     : "*",
   "description" : "Check if your filesystem is case sensitive or case tolerant (insensitive)",
   "author"      : "labster",
