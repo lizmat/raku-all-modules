@@ -1,7 +1,7 @@
 {
   "perl" : "6.*",
   "name" : "Bench",
-  "version" : "0.1.1",
+  "version" : "0.1.2",
   "auth" : "github:tony-o",
   "description" : "More complete port of p5's benchmark, including cmpthese, timethese, timethis, etc.",
   "depends" : ["Text::Table::Simple"],
