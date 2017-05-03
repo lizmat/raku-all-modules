@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-http-server-async-plugins-router-simple.git
 	branch = master
-	commit = 8fceec10e62dde68df96a714375f2b2181d9da07
-	parent = d9d7e44fc665a06992a168b571b285cdebe9d611
+	commit = 4b6d26da3e073aa9315675122826f54fd774b338
+	parent = c25c3d2de75853194fb76a9ee5af992c680327a1
 	cmdver = 0.4.0
