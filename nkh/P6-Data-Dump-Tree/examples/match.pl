@@ -23,31 +23,40 @@ my regex section { <header> <kvpair>* }
 # create a match object to dump
 my $m = $contents ~~ /<section>*/ ;
 
-dump(:title('Parsing dump without any extra roles'), $m);
-
 # dump with different roles 
 my $d = Data::Dump::Tree.new ;
+
+$d.dump(:title('Parsing'), $m);
+
 $d does DDTR::MatchDetails ;
 $d does DDTR::SuperscribeType ;
 $d does DDTR::SuperscribeAddress ;
 
-$d.dump(:title('Parsing with MatchDetails role'), $m );
+$d.dump(:title('Parsing (MatchDetails)'), $m );
 
 $d does DDTR::PerlString ;
-$d.dump(:title('Parsing with MatchDetails and PerlString roles'), $m );
+$d.dump(:title('Parsing (MatchDetails, PerlString)'), $m );
 
-$d.dump(:title('Parsing with MatchDetails and PerlString roles, custom colors and no address'),
+$d.match_string_limit = 40 ;
+$d.dump(:title('Parsing (MatchDetails, PerlString+max length)'), $m );
+
+$d.dump(:title('Parsing (MatchDetails, PerlString+ml, FixedGlyphs, custom colors, no address)'),
 	$m,
 	does => (DDTR::FixedGlyphs,),
 	:display_address(DDT_DISPLAY_NONE),
-	:colors(
-		<<
+	:colors(<
 		ddt_address 17  perl_address 58  link   23
 		key         32  binder       32  value  246  header 53
 		wrap        23
+		>),
+	);
 
-		glyph_0 95  glyph_1 59  glyph_2 64  glyph_3 94  glyph_4 31
-		>>), 
-	 );
+
+$d.dump(:title('Parsing (MatchDetails, PerlString+ml, FixedGlyphs, custom colors2, no address)'),
+	$m ,
+	does => (DDTR::FixedGlyphs,),
+	:display_address(DDT_DISPLAY_NONE),
+	:color_kbs,
+	);
 
 
