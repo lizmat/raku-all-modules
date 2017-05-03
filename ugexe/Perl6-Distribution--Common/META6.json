@@ -1,11 +1,11 @@
 {
     "perl"        : "6",
     "name"        : "Distribution::Common",
-    "version"     : "*",
-    "owner"       : "ugexe",
+    "version"     : "0.0.1",
     "auth"        : "github:ugexe",
     "authors"     : ["ugexe"],
     "description" : "Create an installable Distribution from common sources",
+    "license" : "Artistic-2.0",
     "provides"    : {
         "Distribution::Common"              : "lib/Distribution/Common.pm6",
         "Distribution::Common::Directory"   : "lib/Distribution/Common/Directory.pm6",
