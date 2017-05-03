@@ -1,6 +1,8 @@
 perl6-Native-Packing
 ===============
 
+[![Build Status](https://travis-ci.org/p6-pdf/perl6-Native-Packing.svg?branch=master)](https://travis-ci.org/p6-pdf/perl6-Native-Packing)
+
 ## Description
 
 Native::Packing is a simple solution for structured reading
