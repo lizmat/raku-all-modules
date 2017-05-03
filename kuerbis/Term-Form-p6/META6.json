@@ -4,8 +4,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [
-    "Term::Choose::NCurses",
-    "Term::Choose::LineFold"
+    "Term::Choose"
   ],
   "description" : "Read lines from STDIN.",
   "license" : "Artistic-2.0",

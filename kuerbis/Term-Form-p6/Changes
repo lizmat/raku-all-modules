@@ -1,6 +1,9 @@
 Revision history for Term::Form
 
 
+0.017   2017-05-02
+        - Modified "depends" in META6.json
+
 0.016   2017-04-30
         - Copyright year
         - Adapted the code to the new version of Term::Choose
