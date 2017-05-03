@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-module-does.git
 	branch = master
-	commit = 71ef1b08ec56dd5fb5784f24603dbdcee9b00f78
-	parent = e12e09d7c35122a774792ae4247817cedff81d6f
+	commit = 8a94f5b0028d135cf82cec5371e05093b3dbde0c
+	parent = 46feda27eab702c7c1d26d0aab1e3780f29ed9a4
 	cmdver = 0.4.0
