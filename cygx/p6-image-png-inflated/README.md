@@ -25,7 +25,7 @@ request, use the [issue tracker][ISSUES] over there.
 
 ## Copyright and License
 
-Copyright (C) 2015 by <cygx@cpan.org>
+Copyright (C) 2015, 2017 by <cygx@cpan.org>
 
 Distributed under the [Boost Software License, Version 1.0][LICENSE]
 
