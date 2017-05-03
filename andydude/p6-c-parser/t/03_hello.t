@@ -13,5 +13,5 @@ our $source = q<<<
 
 {
     my $match = C::Parser::Grammar.parse($source);
-    is($match.WHAT.perl, 'Match', 'gives a Match');
+    isa-ok($match, C::Parser::Grammar, 'gives a Grammar');
 }

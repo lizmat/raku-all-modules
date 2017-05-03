@@ -177,4 +177,5 @@ enum Spec is export <
     unsigned_long_long
     unsigned_short
     wchar
+    extension
 >;

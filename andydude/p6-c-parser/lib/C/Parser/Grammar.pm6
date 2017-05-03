@@ -30,7 +30,7 @@ sub context_is(Str $ctx --> Bool) {
     if @*CONTEXTS.elems < 1 {
         return False;
     }
-    if @*CONTEXTS[*-1] ne $ctx {
+    if @*CONTEXTS[*-1].gist ne $ctx {
         return False;
     }
     return True;
@@ -60,11 +60,11 @@ sub end_declaration(Any $decls, Any $inits) {
 
     if $inits && $inits<init-declarator> {
         if !$inits<init-declarator>[0] {
-            warn("unknown condition in $context!");
+            #warn("unknown condition in $context!");
             return;
         }
         if !$inits<init-declarator>[0]<declarator> {
-            warn("unknown condition in $context!");
+            #warn("unknown condition in $context!");
             return;
         }
         
@@ -89,11 +89,11 @@ sub end_declaration(Any $decls, Any $inits) {
             return;
         }
         if !$decls<declaration-specifier>[*-1]<type-specifier> {
-            warn("unknown condition in $context!");
+            #warn("unknown condition in $context!");
             return;
         }
         if !$decls<declaration-specifier>[*-1]<type-specifier><typedef-name> {
-            warn("unknown condition in $context!");
+            #warn("unknown condition in $context!");
             return;
         }
         if !$decls<declaration-specifier>[*-1]<type-specifier><typedef-name><ident> {
@@ -487,6 +487,10 @@ rule type-specifier:sym<struct-or-union> {
 }
 rule type-specifier:sym<enum-specifier>  {
     <enum-specifier>
+}
+
+rule type-specifier:sym<__extension__> { # GNU
+    <extension-keyword>
 }
 
 rule type-specifier:sym<__typeof__> { # GNU

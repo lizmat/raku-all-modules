@@ -568,6 +568,10 @@ method type-specifier:sym<typedef-name>($/) {
     make $<typedef-name>.ast;
 }
 
+method type-specifier:sym<__extension__>($/) { # GNU
+    make Spec::extension;
+}
+
 # SS 6.7.2.1
 method struct-or-union-specifier:sym<decl>($/) {
     our $op = Nil;
@@ -613,7 +617,9 @@ method specifier-qualifier-list($/) {
     my @specs = @quals.grep({$_.WHAT === Spec});
     @specs = C::AST::Specs.new(children => @specs);
     my @children = @quals.grep({$_.WHAT !=== Spec});
-    @children.unshift(@specs);
+    for @specs -> $spec { 
+    	@children.unshift($spec);
+    }
     my $op = TyKind::specifier_qualifier_list;
     make C::AST::TypeOp.new(:$op, :@children);
 }
@@ -729,7 +735,7 @@ method direct-declarator-rest:sym<b-assignment-expression>($/) {
     my @children = $<type-qualifier-list> ?? $<type-qualifier-list>.ast !! ();
     if $<assignment-expression> {
         my $size = C::AST::Size.new(value => $<assignment-expression>.ast);
-        @children.unshift($size) ;
+        @children.unshift($size);
     }
     make C::AST::TypeOp.new(:$op, :@children);
 }

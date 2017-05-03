@@ -149,6 +149,7 @@ token sat-keyword           { '_Sat'   <.keyword-breaker> }                     
 # Nonstandard extension keywords
 token asm-keyword           { '__asm__' || '__asm' || 'asm' <.keyword-breaker> }            # C++
 token attribute-keyword     { '__attribute__' }                                             # GNU
+token extension-keyword     { '__extension__' }                                             # GNU
 token block-keyword         { '__block' }                                                   # Apple
 token typeof-keyword        { '__typeof__' || 'typeof' <.keyword-breaker> }                 # GNU
 token offsetof-keyword      { '__builtin_offsetof' }                                        # GNU
