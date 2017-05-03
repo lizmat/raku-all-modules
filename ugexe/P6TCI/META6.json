@@ -3,6 +3,7 @@
     "name"        : "P6TCI",
     "version"     : "0.0.4",
     "auth"        : "github:ugexe",
+    "license"     : "Artistic-2.0",
     "description" : "Example of testing a Perl6 module on Travis-CI",
     "depends"     : [],
     "provides"    : {
