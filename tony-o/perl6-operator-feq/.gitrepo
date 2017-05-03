@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-operator-feq.git
 	branch = master
-	commit = abf7ae3196052cb35f9d81c6e701b7919767634f
-	parent = 343cdb4f211d212287d31a26613edd7853715ddc
+	commit = db8db5030c524819b27ad1081260ba4c4fc9fd7e
+	parent = c116d1345d6d803e5872b5f9b54775caaa4823f7
 	cmdver = 0.4.0
