@@ -4,9 +4,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [
-    "Term::Choose",
-    "Term::Choose::NCurses",
-    "Term::Choose::LineFold"
+    "Term::Choose"
   ],
   "description" : "CLI related functions.",
   "license" : "Artistic-2.0",

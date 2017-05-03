@@ -7,6 +7,4 @@ perl6:
 install:
   - rakudobrew build zef
   - zef install Term::Choose
-  - zef install Term::Choose::NCurses
-  - zef install Term::Choose::LineFold
 sudo: false

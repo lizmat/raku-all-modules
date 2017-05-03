@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose::Util;
 
-my $VERSION = '0.021';
+my $VERSION = '0.022';
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::NCurses;
@@ -774,7 +774,7 @@ Term::Choose::Util - CLI related functions.
 
 =head1 VERSION
 
-Version 0.021
+Version 0.022
 
 =head1 DESCRIPTION
 
