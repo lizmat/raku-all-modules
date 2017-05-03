@@ -1,0 +1,32 @@
+{
+    "name" : "Math::Primesieve",
+
+    "description" : "Perl 6 bindings for primesieve",
+
+    "auth" : "github:CurtTilmes",
+
+    "version" : "0.1",
+
+    "source-url" : "https://github.com/CurtTilmes/perl6-primesieve.git",
+
+    "perl" : "6.c",
+    
+    "tags" : [ "Math", "Primes" ],
+
+    "provides" : {
+        "Math::Primesieve" : "lib/Math/Primesieve.pm6"
+    },
+
+    "depends" : [ "NativeCall" ],
+
+    "test-depends" : [ "Test" ],
+
+    "license" : "BSD-2-Clause",
+
+    "authors" : [ "Curt Tilmes <ctilmes@cpan.org>" ],
+
+    "support" : { 
+      "source" : "https://github.com/CurtTilmes/perl6-primesieve.git",
+      "bugtracker" : "https://github.com/CurtTilmes/perl6-primesieve/issues"
+    }
+}
