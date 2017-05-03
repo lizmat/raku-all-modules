@@ -1,6 +1,7 @@
 {
   "perl"        : "6.*",
   "name"        : "IO::Path::More",
+  "license"     : "Artistic-2.0",
   "version"     : "*",
   "description" : "Extends IO::Path to make it more like p5's Path::Class",
   "author"      : "labster",
