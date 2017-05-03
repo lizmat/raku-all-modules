@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/krunen/unicode-utf8-parser.git
 	branch = master
-	commit = a2927713ddb90fac6c7e18bb08781241bcb5b28a
-	parent = 59d6e4f7e687c28a84249a4f5783ea2f2a3a45f4
-	cmdver = 0.2.3
+	commit = be599589c64e14b1f6e9f5e9dab444cfd55adbc3
+	parent = b536749f1f6e38ad9b523f8b19b60cf2aee2fe47
+	cmdver = 0.4.0

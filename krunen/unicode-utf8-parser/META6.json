@@ -8,7 +8,7 @@
     "depends"       : [ ],
     "provides"      : { "Unicode::UTF8-Parser" : "lib/Unicode/UTF8-Parser.pm6"},
     "repo-type"     : "git",
-    "license"       : "http://www.perlfoundation.org/artistic_license_2_0",
+    "license"       : "Artistic-2.0",
     "source-url"    : "git://github.com/krunen/unicode-utf8-parser.git",
     "support"       : {
         "irc" : "irc://irc.freenode.org/#perl6"
