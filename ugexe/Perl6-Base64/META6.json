@@ -1,11 +1,11 @@
 {
     "perl"        : "6",
     "name"        : "Base64",
-    "version"     : "*",
-    "owner"       : "ugexe",
+    "version"     : "0.0.1",
     "auth"        : "github:ugexe",
     "authors"     : ["ugexe"],
     "description" : "Lazy base64 encoding and decoding routines",
+    "license" : "Artistic-2.0",
     "provides"    : { "Base64" : "lib/Base64.pm6" },
     "depends"     : [ ],
     "support"     : { "bugtracker" : "https://github.com/ugexe/Perl6-Base64/issues" },
