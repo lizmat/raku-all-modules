@@ -5,8 +5,6 @@
   "build-depends" : [ ],
   "depends" : [
     "Term::Choose",
-    "Term::Choose::NCurses",
-    "Term::Choose::LineFold",
     "Term::Choose::Util"
   ],
   "description" : "Print a table to the terminal and browse it interactively.",
