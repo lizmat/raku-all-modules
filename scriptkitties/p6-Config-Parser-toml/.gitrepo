@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/scriptkitties/p6-Config-Parser-toml.git
+	branch = master
+	commit = 13a14620052d4c07fba6e1a95b1360fef9d9497a
+	parent = 958181942022d282bdbb683ae68a688eb10d4b2d
+	cmdver = 0.4.0
