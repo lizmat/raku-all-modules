@@ -1,7 +1,7 @@
 {
   "perl" : "6.*",
   "name" : "HTTP::Server::Logger",
-  "version" : "0.1",
+  "version" : "0.1.1",
   "description" : "A common log format logger for anything abiding by HTTP::Server",
   "depends" : ["DateTime::Format"],
   "auth": "github:tony-o",
