@@ -1,10 +1,10 @@
 {
     "perl"        : "6",
     "name"        : "PathTools",
-    "version"     : "0.1",
-    "owner"       : "ugexe",
+    "version"     : "0.1.1",
     "auth"        : "github:ugexe",
     "authors"     : ["ugexe"],
+    "license"     : "Artistic-2.0",
     "description" : "General purpose file system utility routines",
     "provides"    : { "PathTools" : "lib/PathTools.pm6" },
     "depends"     : [ ],
