@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/hoelzro/p6-linenoise.git
 	branch = master
-	commit = 5ad368972e724bfd0921a1c610c2ffd04b389841
-	parent = 04f9845c4cedf6acf3375e0578938d86447fcb66
+	commit = 9bdbfb0beb005341b77aaf59f1016d1fb1a16e13
+	parent = 4c5d84d6081f3ad1908a8e70dfd5157baee41815
 	cmdver = 0.4.0
