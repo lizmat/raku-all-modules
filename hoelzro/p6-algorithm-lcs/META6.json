@@ -1,6 +1,7 @@
 {
     "perl": "6.*",
     "name": "Algorithm::LCS",
+    "license" : "MIT",
     "version": "0.1.0",
     "description": "Implementation of the longest common subsequence algorithm",
     "author": "Rob Hoelz",
