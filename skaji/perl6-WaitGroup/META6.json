@@ -6,6 +6,7 @@
   "depends" : [ ],
   "description" : "sys.WaitGroup in perl6",
   "name" : "WaitGroup",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "WaitGroup" : "lib/WaitGroup.pm6"
