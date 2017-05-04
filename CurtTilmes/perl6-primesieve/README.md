@@ -55,7 +55,7 @@ INSTALLATION
 First install the
 [primesieve](https://github.com/kimwalisch/primesieve) library.
 
-Then install this module in the normal way with panda or zef.
+Then install this module in the normal way with zef.
 
     zef install Math::Primesieve
 
