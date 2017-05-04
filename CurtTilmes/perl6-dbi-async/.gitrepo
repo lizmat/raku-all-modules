@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-dbi-async.git
+	branch = master
+	commit = 346875e8113365f9d1faee3dbf58ae3a7310fb79
+	parent = d54361e79d528a8df18c0c86a100db8f33f82085
+	cmdver = 0.4.0
