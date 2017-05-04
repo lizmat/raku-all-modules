@@ -6,6 +6,7 @@
   "depends" : [ ],
   "description" : "emulation of tail -f",
   "name" : "IO::TailFile",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "IO::TailFile" : "lib/IO/TailFile.pm6"
