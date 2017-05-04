@@ -98,6 +98,16 @@ sub caca_get_display_height(CacaDisplay)
     is export
     is native(&caca-library) { * }
 
+sub caca_get_mouse_x(CacaDisplay)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_get_mouse_y(CacaDisplay)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
 sub caca_get_version()
     returns Str
     is export
@@ -123,7 +133,70 @@ sub caca_draw_thin_box(CacaCanvas, int32, int32, int32, int32)
     is export
     is native(&caca-library) { * }
 
+sub caca_draw_cp437_box(CacaCanvas, int32, int32, int32, int32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_fill_box(CacaCanvas, int32, int32, int32, int32, uint32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
 sub caca_draw_circle(CacaCanvas, int32, int32, int32, uint32)
     returns int32
     is export
     is native(&caca-library) { * }
+
+sub caca_clear_canvas(CacaCanvas)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_draw_ellipse(CacaCanvas, int32, int32, int32, int32, uint32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_draw_thin_ellipse(CacaCanvas, int32, int32, int32, int32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_fill_ellipse(CacaCanvas, int32, int32, int32, int32, uint32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_draw_triangle(CacaCanvas, int32, int32, int32, int32, int32, int32, uint32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_draw_thin_triangle(CacaCanvas, int32, int32, int32, int32, int32, int32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_fill_triangle(CacaCanvas, int32, int32, int32, int32, int32, int32, uint32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_draw_polyline(CacaCanvas, CArray[int32], CArray[int32], int32, uint32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_draw_thin_polyline(CacaCanvas, CArray[int32], CArray[int32], int32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+=begin TODO
+
+__extern int caca_fill_triangle_textured(caca_canvas_t *cv,
+                                         int coords[6],
+                                         caca_canvas_t *tex,
+                                         float uv[6]);
+=end TODO

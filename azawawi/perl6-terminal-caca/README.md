@@ -14,28 +14,28 @@ use v6;
 use Terminal::Caca;
 
 # Initialize library
-my $o  = Terminal::Caca.new;
+given my $o = Terminal::Caca.new {
+    # Set window title
+    .title("Perl 6 rocks");
 
-# Set window title
-$o.title("Window");
+    # Say hello world
+    my $text = ' Hello world, from Perl 6! ';
+    .color(white, blue);
+    .text(10, 10, $text);
 
-# Draw some randomly-colored strings
-for 0..31 -> $i {
-    # Choose random drawing colors
-    $o.color-ansi($o.random-color, $o.random-color);
+    # Draw an ASCII-art box around it
+    .thin-box(9, 9, $text.chars + 2, 3);
 
-    # Draw a string
-    $o.put-str(10, $i, "Hello world, from Perl 6!");
-}
+    # Refresh display
+    .refresh;
 
-# Refresh display
-$o.refresh();
+    # Wait for a key press event
+    .wait-for-keypress;
 
-# Wait for a key press event
-$o.wait-for-keypress();
-
-LEAVE {
-    $o.cleanup if $o;
+    # Cleanup on scope exit
+    LEAVE {
+        $o.cleanup;
+    }
 }
 ```
 

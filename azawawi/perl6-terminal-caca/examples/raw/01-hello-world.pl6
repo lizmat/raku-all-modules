@@ -10,15 +10,15 @@ my $dp   = caca_create_display($NULL);
 my $cv   = caca_get_canvas($dp);
 
 # Set window title
-caca_set_display_title($dp, "Window");
+caca_set_display_title($dp, "Perl 6 rocks");
 
-# Draw some strings
-for 0..31 -> $i {
-    caca_put_str($cv, 10, $i, "Hello world, from Perl 6!");
-    my $fore-color = (1..CACA_WHITE).pick;
-    my $back-color = (1..CACA_WHITE).pick;
-    caca_set_color_ansi($cv, $fore-color, $back-color);
-}
+# Say hello world
+my $text = ' Hello world, from Perl 6! ';
+caca_set_color_ansi($cv, CACA_WHITE, CACA_BLUE);
+caca_put_str($cv, 10, 10, $text);
+
+# Draw an ASCII-art box around it
+caca_draw_thin_box($cv, 9, 9, $text.chars + 2, 3);
 
 # Refresh display
 caca_refresh_display($dp);
