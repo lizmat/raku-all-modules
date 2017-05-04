@@ -1,0 +1,145 @@
+{
+  "pdf": {
+    "body": [
+      {
+        "trailer": {
+          "dict": {
+            "Prev": {
+              "int": 9999
+            },
+            "ID": {
+              "array": [
+                {
+                  "hex-string": "{ANCLvé30Uö©r"
+                },
+                {
+                  "hex-string": "|P¤L¢«'H7.Ò_ZC"
+                }
+              ]
+            },
+            "Root": {
+              "ind-ref": [
+                1,
+                0
+              ]
+            },
+            "Size": {
+              "int": 11
+            }
+          }
+        },
+        "objects": [
+          {
+            "ind-obj": [
+              3,
+              0,
+              {
+                "dict": {
+                  "Type": {
+                    "name": "Pages"
+                  },
+                  "Kids": {
+                    "array": [
+                      {
+                        "ind-ref": [
+                          4,
+                          0
+                        ]
+                      },
+                      {
+                        "ind-ref": [
+                          9,
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Count": {
+                    "int": 2
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ind-obj": [
+              9,
+              0,
+              {
+                "dict": {
+                  "Resources": {
+                    "dict": {
+                      "ProcSet": {
+                        "ind-ref": [
+                          6,
+                          0
+                        ]
+                      },
+                      "Font": {
+                        "dict": {
+                          "F1": {
+                            "ind-ref": [
+                              7,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Contents": {
+                    "ind-ref": [
+                      10,
+                      0
+                    ]
+                  },
+                  "Parent": {
+                    "ind-ref": [
+                      3,
+                      0
+                    ]
+                  },
+                  "Type": {
+                    "name": "Page"
+                  },
+                  "MediaBox": {
+                    "array": [
+                      {
+                        "int": 0
+                      },
+                      {
+                        "int": 0
+                      },
+                      {
+                        "int": 420
+                      },
+                      {
+                        "int": 595
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ind-obj": [
+              10,
+              0,
+              {
+                "stream": {
+                  "encoded": "BT /F1 16 Tf  88 250 Td (and they all lived happily ever after!) Tj ET",
+                  "dict": {
+                    "Length": {
+                      "int": 70
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

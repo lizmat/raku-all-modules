@@ -1,0 +1,229 @@
+{
+  "pdf": {
+    "body": [
+      {
+        "trailer": {
+          "dict": {
+            "ID": {
+              "array": [
+                {
+                  "hex-string": "{ANCLvé30Uö©r"
+                },
+                {
+                  "hex-string": "|P¤L¢«'H7.Ò_ZC"
+                }
+              ]
+            },
+            "Info": {
+              "ind-ref": [
+                1,
+                0
+              ]
+            },
+            "Root": {
+              "ind-ref": [
+                2,
+                0
+              ]
+            },
+            "Size": {
+              "int": 8
+            }
+          }
+        },
+        "objects": [
+          {
+            "ind-obj": [
+              1,
+              0,
+              {
+                "dict": {
+                  "CreationDate": {
+                    "literal": "D:20151225000000Z00'00'"
+                  },
+                  "Author": {
+                    "literal": "PDF-Tools/t/dao-doc.t"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ind-obj": [
+              2,
+              0,
+              {
+                "dict": {
+                  "Pages": {
+                    "ind-ref": [
+                      4,
+                      0
+                    ]
+                  },
+                  "Type": {
+                    "name": "Catalog"
+                  },
+                  "Outlines": {
+                    "ind-ref": [
+                      3,
+                      0
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ind-obj": [
+              3,
+              0,
+              {
+                "dict": {
+                  "Type": {
+                    "name": "Outlines"
+                  },
+                  "Count": {
+                    "int": 0
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ind-obj": [
+              4,
+              0,
+              {
+                "dict": {
+                  "Type": {
+                    "name": "Pages"
+                  },
+                  "Kids": {
+                    "array": [
+                      {
+                        "ind-ref": [
+                          5,
+                          0
+                        ]
+                      }
+                    ]
+                  },
+                  "Count": {
+                    "int": 1
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ind-obj": [
+              5,
+              0,
+              {
+                "dict": {
+                  "Resources": {
+                    "dict": {
+                      "Procset": {
+                        "array": [
+                          {
+                            "name": "PDF"
+                          },
+                          {
+                            "name": "Text"
+                          }
+                        ]
+                      },
+                      "Font": {
+                        "dict": {
+                          "F1": {
+                            "ind-ref": [
+                              7,
+                              0
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "Contents": {
+                    "ind-ref": [
+                      6,
+                      0
+                    ]
+                  },
+                  "Parent": {
+                    "ind-ref": [
+                      4,
+                      0
+                    ]
+                  },
+                  "Type": {
+                    "name": "Page"
+                  },
+                  "MediaBox": {
+                    "array": [
+                      {
+                        "int": 0
+                      },
+                      {
+                        "int": 0
+                      },
+                      {
+                        "int": 420
+                      },
+                      {
+                        "int": 595
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ind-obj": [
+              6,
+              0,
+              {
+                "stream": {
+                  "encoded": "BT /F1 24 Tf  100 250 Td (Hello, world!) Tj ET",
+                  "dict": {
+                    "Length": {
+                      "int": 46
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ind-obj": [
+              7,
+              0,
+              {
+                "dict": {
+                  "Encoding": {
+                    "name": "MacRomanEncoding"
+                  },
+                  "BaseFont": {
+                    "name": "Helvetica"
+                  },
+                  "Type": {
+                    "name": "Font"
+                  },
+                  "Subtype": {
+                    "name": "Type1"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "header": {
+      "type": "PDF",
+      "version": 1.3
+    }
+  }
+}

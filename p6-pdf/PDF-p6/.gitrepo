@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/p6-pdf/PDF-p6.git
+	branch = master
+	commit = f6f302c5edd63f8cbfabac8a6b416fef3330a7ed
+	parent = 37bc17b0e882137e606df6fbf4c73d03e971ea34
+	cmdver = 0.4.0
