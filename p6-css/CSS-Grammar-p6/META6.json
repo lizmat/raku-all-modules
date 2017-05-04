@@ -1,0 +1,19 @@
+{   "perl"        : "6c",
+    "name"        : "CSS::Grammar",
+    "license"     : "Artistic-2.0",
+    "version"     : "0.3.1",
+    "auth"        : "github:p6-css",
+    "description" : "Perl 6 core CSS grammars",
+    "depends"     : [ "JSON::Fast" ],
+    "provides"    : {
+          "CSS::Grammar" : "lib/CSS/Grammar.pm",
+          "CSS::Grammar::Core" : "lib/CSS/Grammar.pm",
+          "CSS::Grammar::Actions" : "lib/CSS/Grammar/Actions.pm",
+          "CSS::Grammar::AST" : "lib/CSS/Grammar/AST.pm",
+          "CSS::Grammar::CSS1" : "lib/CSS/Grammar/CSS1.pm",
+          "CSS::Grammar::CSS21" : "lib/CSS/Grammar/CSS21.pm",
+          "CSS::Grammar::CSS3" : "lib/CSS/Grammar/CSS3.pm",
+          "CSS::Grammar::Test" : "lib/CSS/Grammar/Test.pm"
+    },
+    "source-url"  : "git://github.com/p6-css/CSS-Grammar-p6.git"
+}
