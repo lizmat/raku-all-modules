@@ -9,6 +9,7 @@
   ],
   "description" : "consume MetaCPAN recent favorite",
   "name" : "MetaCPAN::Favorite",
+  "license" : "Artistic-2.0",
   "perl" : "6.c",
   "provides" : {
     "MetaCPAN::Favorite" : "lib/MetaCPAN/Favorite.pm6"
