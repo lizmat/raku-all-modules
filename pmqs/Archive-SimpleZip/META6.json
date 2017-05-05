@@ -27,6 +27,6 @@
     "support" : { 
        "source" : "git://github.com/pmqs/Archive-SimpleZip.git" 
     }, 
-    "license" : "Artistic"
+    "license" : "Artistic-2.0"
 }
 
