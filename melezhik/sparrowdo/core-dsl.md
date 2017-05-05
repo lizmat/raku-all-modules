@@ -414,4 +414,6 @@ It's just simple check by `curl's GET` with follow redirect enabled.
 
     http-ok 'http://sparrowhub.org';
 
+Ignore http proxy when making request:
 
+    http-ok 'localhost', %( no-proxy => True );

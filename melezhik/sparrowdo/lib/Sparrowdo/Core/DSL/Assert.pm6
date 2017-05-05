@@ -33,9 +33,15 @@ sub proc-exists-by-footprint ( $proc, $fp ) is export {
   proc-exists($proc, %( footprint => $fp ))
 }
 
-sub http-ok ( $url ) is export {
+sub http-ok ( $url, %args? ) is export {
 
-  bash "curl -fsSLk -o /dev/null -D - $url", %( debug => True );
+  my $host = input_params('Host');
+
+  my $curl-cmd = "curl -fsSLk -o /dev/null -D - $url";
+
+  $curl-cmd ~= " --noproxy $host" if %args<no-proxy>;
+
+  bash $curl-cmd, %( debug => True );
 
 }
 
