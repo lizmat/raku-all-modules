@@ -14,7 +14,7 @@ String::CRC32 - Calculate 32-bit CRC checksum of strings
     my $crc32 = String::CRC32::crc32($string);
 
     # CRC of a filehandle
-    my $fh = open("myfile", :bin, :r);
+    my $fh = open("myfile", :r);
     $crc32 = String::CRC32::crc32($fh);
     $fh.close();
 
@@ -50,7 +50,7 @@ Example:
     use v6;
     use String::CRC32;
 
-    my $fh = open("myfile.txt", :bin, :r);
+    my $fh = open("myfile.txt", :r);
     say String::CRC32::crc32($fh);
     $fh.close();
 

@@ -30,7 +30,7 @@ is(
 );
 
 # Test CRC of a filehandle
-my $fh = open("t/testfile", :bin, :r);
+my $fh = open("t/testfile", :r);
 my $crc = String::CRC32::crc32($fh);
 is($crc, 1925609391, "Test the CRC of a file handle");
 if $crc == 443916274 {

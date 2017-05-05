@@ -3,7 +3,7 @@
 
 use v6;
 
-unit class String::CRC32:auth<cosimo>:ver<0.04>;
+unit class String::CRC32:auth<cosimo>:ver<0.05>;
 
 my @CRC_TABLE =
 0x0, 0x77073096, 0xee0e612c, 0x990951ba, 0x76dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
@@ -58,8 +58,9 @@ multi sub crc32 (Str $s) {
     return crc32($b);
 }
 
-multi sub crc32 (IO $fh) {
-    my Str $s = $fh.slurp-rest();
+multi sub crc32 (IO::Handle $fh) {
+    my $s = $fh.slurp;
+    $fh.close;
     return crc32($s);
 }
 

@@ -1,14 +1,16 @@
 {
     "perl"        : "6.*",
     "name"        : "String::CRC32",
-    "version"     : "0.04",
+    "version"     : "0.05",
     "description" : "Simple Perl 6 class to calculate a CRC32 checksum of a string",
     "depends"     : [],
-    "author"      : "Cosimo Streppone",
+    "authors"     : [ "Cosimo Streppone" ],
     "authority"   : "cosimo",
-    "provides" : {
+    "provides"    : {
         "String::CRC32": "lib/String/CRC32.pm"
     },
-    "source-url"  : "git://github.com/cosimo/perl6-string-crc32.git"
+    "source-url"  : "git://github.com/cosimo/perl6-string-crc32.git",
+    "license"     : "",
+    "tags"        : [ "String", "CRC" ]
 }
 
