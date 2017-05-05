@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/CurtTilmes/perl6-primesieve.git
 	branch = master
-	commit = 929cc3913f9d840e3be0f6ac93a5c155dff85a3f
-	parent = 723eaf070c71f26850ca3795d873e357e9fec180
+	commit = 2aee3bd62750b6f269abdb778694c05b84f82373
+	parent = dca8dd673e11048c6981c253f934f7dbaaff83b1
 	cmdver = 0.4.0

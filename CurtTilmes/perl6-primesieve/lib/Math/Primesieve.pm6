@@ -11,7 +11,7 @@ enum PRIMESIEVE <SHORT_PRIMES USHORT_PRIMES INT_PRIMES UINT_PRIMES
   INT16_PRIMES UINT16_PRIMES INT32_PRIMES UINT32_PRIMES INT64_PRIMES
   UINT64_PRIMES>;
 
-class X::Math::Primesieve
+class X::Math::Primesieve is Exception
 {
     method message() { 'Math::Primesieve error' }
 }
