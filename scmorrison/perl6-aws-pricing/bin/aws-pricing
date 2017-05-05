@@ -1,69 +1,81 @@
 #!/usr/bin/env perl6
 
 use v6;
+use lib 'lib';
 use AWS::Pricing;
-constant AWSPrice = AWS::Pricing;
-
-# Defaults
-my $default_cache_dir = "$*HOME/.aws-pricing";
-my $default_region = 'us-east-1';
-my $default_format = 'json';
-
-sub set-config(%options) {
-  for %options.kv -> $option, $value {
-    if $value.defined { 
-      AWSPrice::config(|($option => $value));
-    }
-  }
-}
-
-multi MAIN('list', 'services', 
-           Bool :$refresh = False,
-           :$cache_dir = $default_cache_dir,
-           :$region = $default_region) {
-
-  my %options = refresh => $refresh,
-                cache_dir => $cache_dir,
-                region => $region;
-
-  set-config(%options);
-
-  # List all Service Offer indexes
-  say AWSPrice::list-services();
-  
-}
-
-multi MAIN('service', 'offers', 
-           $service_code,
-           Bool :$refresh = False,
-           :$cache_dir = $default_cache_dir,
-           :$region = $default_region,
-           :$format where { $format ~~ 'json'|'csv'} = $default_format) {
-
-  my %options = refresh => $refresh,
-                cache_dir => $cache_dir,
-                region => $region;
-
-  set-config(%options);
-
-  # List current offers for specific service
-  say AWSPrice::service-offers(service_code => $service_code, format => $format);
-
-}
+constant AWSP = AWS::Pricing;
 
 sub USAGE {
   say q:to/END/;
-      Usage:
-
-        aws-pricing list services
-        aws-pricing [--format=json|csv] service offers <service_code>;
+      Usage: aws-pricing services
+             aws-pricing [--format=json|csv] service-offers <service_code>;
+             aws-pricing service-codes
+             aws-pricing regions 
+             aws-pricing version
 
       Optional arguments:
         
         --refresh    - Force cache_dir refresh
-        --cache_dir  - Path to cache_dir service offer files (Default ~/.aws-pricing)
-        --region     - AWS region to pull offer data (Default us-east-1)
+        --cache_path - Path to cache path service offer files (Default ~/.aws-pricing)
+        --region     - Filter AWS region to pull offer data
       END
+}
+
+multi MAIN(
+    'services', 
+    Bool :$refresh    = False,
+    Str  :$cache_path = "$*HOME/.aws-pricing"
+    --> Bool
+) {
+    # List all Service Offer indexes
+    say AWSP::services(
+        config => AWSP::config(
+            refresh    => $refresh,
+            cache_path => $cache_path
+        )
+    );
+}
+
+multi MAIN(
+    'service-offers', 
+    Str  $service_code,
+    Bool :$refresh = False,
+    Str  :$cache_path   = "$*HOME/.aws-pricing",
+    Str  :$region       = '',
+    Str  :$format where { $format ~~ 'json'|'csv'} = 'json'
+    --> Bool
+) {
+    # List current offers for specific service
+    say AWSP::service-offers(
+        config       => AWSP::config(
+            refresh    => $refresh,
+            cache_path => $cache_path
+        ),
+        service_code => $service_code,
+        format       => $format,
+        region       => $region
+    );
+
+}
+
+multi MAIN(
+    'service-codes'
+    --> Seq 
+) {
+    # List all Service Offer indexes
+    AWSP::service-codes.map({ .say });
+}
+
+multi MAIN(
+    'regions'
+    --> Seq
+) {
+    # List all Service Offer indexes
+    AWSP::regions.map({ .say });
+}
+
+multi MAIN('version') {
+    say "aws-pricing {AWSP.^ver}";
 }
 
 # vim: ft=perl6

@@ -1,26 +1,55 @@
+use v6;
 use Test;
+use lib 'lib';
 use AWS::Pricing;
 
-plan 3;
-
-AWS::Pricing::config(cache_dir => 't');
+plan 5;
 
 # list-offers (json)
-my $cached_offers_path = "t/offers.json";
-my $cached_offers = slurp $cached_offers_path;
-my $offers = AWS::Pricing::list-services;
-is $offers, $cached_offers, 'list-offers 1/1';
+my $r1_cached_offers = slurp "t/offers.json";
+my $r1_offers        = AWS::Pricing::services(
+    config => AWS::Pricing::config(cache_path => 't')
+);
+is $r1_offers, $r1_cached_offers, 'list-offers 1/1: json';
 
 # service-offers (json)
-my $service_code = 'AmazonS3';
-my $cached_service_offers_path = "t/service-offers-$service_code.json";
-my $cached_service_offers = slurp $cached_service_offers_path;
-my $service_offers = AWS::Pricing::service-offers(service_code => $service_code);
-is $service_offers, $cached_service_offers, 'service-offers 1/2';
+my $r2_service_code          = 'AmazonS3';
+my $r2_cached_service_offers = slurp "t/service-offers-$r2_service_code.json";
+my $r2_service_offers        = AWS::Pricing::service-offers(
+    config       => AWS::Pricing::config(cache_path => 't'),
+    service_code => $r2_service_code
+);
+is $r2_service_offers, $r2_cached_service_offers, 'service-offers 1/4: json';
+
+# service-offers (json: region)
+my $r3_service_code          = 'AmazonS3';
+my $r3_region                = 'eu-west-1';
+my $r3_cached_service_offers = slurp "t/service-offers-{$r3_service_code}-{$r3_region}.json";
+my $r3_service_offers        = AWS::Pricing::service-offers(
+    config       => AWS::Pricing::config(cache_path => 't'),
+    service_code => $r3_service_code,
+    region       => $r3_region
+);
+is $r3_service_offers, $r3_cached_service_offers, 'service-offers 2/4: json (region)';
 
 # service-offers (csv)
-$service_code = 'AmazonVPC';
-$cached_service_offers_path = "t/service-offers-$service_code.csv";
-$cached_service_offers = slurp $cached_service_offers_path;
-$service_offers = AWS::Pricing::service-offers(service_code => $service_code, format => 'csv');
-is $service_offers, $cached_service_offers, 'service-offers 2/2';
+my $r4_service_code = 'AmazonVPC';
+my $r4_cached_service_offers = slurp "t/service-offers-$r4_service_code.csv";
+my $r4_service_offers = AWS::Pricing::service-offers(
+    config       => AWS::Pricing::config(cache_path => 't'),
+    service_code => $r4_service_code,
+    format       => 'csv'
+);
+is $r4_service_offers, $r4_cached_service_offers, 'service-offers 3/4: csv';
+
+# service-offers (csv: region)
+my $r5_service_code          = 'AmazonS3';
+my $r5_region                = 'eu-west-1';
+my $r5_cached_service_offers = slurp "t/service-offers-{$r5_service_code}-{$r5_region}.csv";
+my $r5_service_offers        = AWS::Pricing::service-offers(
+    config       => AWS::Pricing::config(cache_path => 't'),
+    ervice_code => $r5_service_code,
+    format       => 'csv',
+    region       => $r5_region
+);
+is $r5_service_offers, $r5_cached_service_offers, 'service-offers 4/4: csv (region)';
