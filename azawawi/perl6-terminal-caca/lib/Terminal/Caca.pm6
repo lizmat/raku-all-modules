@@ -259,8 +259,7 @@ method height {
 }
 
 method size {
-    width  => self.width,
-    height => self.height
+    self.width, self.height
 }
 
 method mouse-x {
@@ -274,6 +273,78 @@ method mouse-y {
 }
 
 method mouse-position {
-    x => self.mouse-x,
-    y => self.mouse-y
+    self.mouse-x, self.mouse-y
+}
+
+method cursor(Bool $enable) {
+    self._check_display_handle;
+    caca_set_cursor($!dp, $enable ?? 1 !! 0)
+}
+
+method invert {
+     self._check_canvas_handle;
+     caca_invert($!cv)
+}
+
+method flip {
+    self._check_canvas_handle;
+    caca_flip($!cv)
+}
+
+method flop {
+    self._check_canvas_handle;
+    caca_flop($!cv)
+}
+
+method rotate180 {
+    self._check_canvas_handle;
+    caca_rotate_180($!cv)
+}
+
+method rotate-left {
+    self._check_canvas_handle;
+    caca_rotate_left($!cv)
+}
+
+method rotate-right {
+    self._check_canvas_handle;
+    caca_rotate_right($!cv)
+}
+
+method stretch-left {
+    self._check_canvas_handle;
+    caca_stretch_left($!cv)
+}
+
+method stretch-right {
+    self._check_canvas_handle;
+    caca_stretch_right($!cv)
+}
+
+method dither-image($width, $height, $image-pixels) {
+    self._check_canvas_handle;
+
+    #TODO generalize those parameters and simplify
+    my $bpp        = 24;
+    my $depth      = 3;
+    my $red-mask   = 0x000000ff;
+    my $green-mask = 0x0000ff00;
+    my $blue-mask  = 0x00ff0000;
+    my $alpha-mask = 0x00000000;
+    my $dither     = caca_create_dither($bpp, $width, $height, $depth * $width,
+        $red-mask, $green-mask, $blue-mask, $alpha-mask);
+    die "Invalid dither" unless $dither;
+
+    my ($ww, $wh)    = self.size;
+    my $image-carray = CArray[uint8].new;
+    for 0..$image-pixels.elems - 1 -> $i  {
+        $image-carray[$i] = $image-pixels[$i];
+    }
+    #TODO no magic numbers
+    caca_dither_bitmap($!cv, 0,0, 79, 31, $dither, $image-carray);
+
+    # Cleanup
+    LEAVE {
+        caca_free_dither($dither) if $dither
+    }
 }

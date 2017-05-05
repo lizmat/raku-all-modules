@@ -48,6 +48,10 @@ class CacaDisplay
     is repr('CPointer')
     is export { * }
 
+class CacaDither
+    is repr('CPointer')
+    is export { * }
+
 sub caca_create_display(CacaCanvas)
     returns CacaDisplay
     is export
@@ -193,10 +197,63 @@ sub caca_draw_thin_polyline(CacaCanvas, CArray[int32], CArray[int32], int32)
     is export
     is native(&caca-library) { * }
 
-=begin TODO
+sub caca_set_cursor(CacaDisplay, int32)
+    returns int32
+    is export
+    is native(&caca-library) { * }
 
-__extern int caca_fill_triangle_textured(caca_canvas_t *cv,
-                                         int coords[6],
-                                         caca_canvas_t *tex,
-                                         float uv[6]);
-=end TODO
+sub caca_invert(CacaCanvas)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_flip(CacaCanvas)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_flop(CacaCanvas)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_rotate_180(CacaCanvas)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_rotate_left(CacaCanvas)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_rotate_right(CacaCanvas)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_stretch_left(CacaCanvas)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_stretch_right(CacaCanvas)
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_create_dither(int32, int32, int32, int32, uint32, uint32, uint32, uint32)
+    returns CacaDither
+    is export
+    is native(&caca-library) { * }
+
+sub caca_dither_bitmap(CacaCanvas, int32, int32, int32, int32,
+                          CacaDither, CArray[uint8])
+    returns int32
+    is export
+    is native(&caca-library) { * }
+
+sub caca_free_dither(CacaDither)
+    returns int32
+    is export
+    is native(&caca-library) { * }
