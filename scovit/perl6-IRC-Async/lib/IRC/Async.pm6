@@ -1,5 +1,5 @@
 use v6;
-use IRC::Parser; # parse-irc
+use IRC::Async::Parser; # parse-irc
 
 # This should be a supplier
 

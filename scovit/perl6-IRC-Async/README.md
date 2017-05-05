@@ -165,9 +165,9 @@ https://github.com/scovit/perl6-IRC-Async/issues
 
 Vittore F. Scolari (vittore.scolari@pasteur.fr)
 
-Thanks to Zoffix and his
-https://github.com/zoffixznet/perl6-IRC-Client for the very clever IRC
-grammar.
+The IRC grammar has been copypasted as-is from an old version of
+Zoffix IRC client
+https://github.com/zoffixznet/perl6-IRC-Client
 
 # LICENSE
 

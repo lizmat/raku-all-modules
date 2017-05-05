@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/scovit/perl6-IRC-Async.git
 	branch = master
-	commit = 6d6b66081599c6d6176e709114949c127cbe9f99
-	parent = c6cfcd7b8235993d9e04255ec9322335402e236c
+	commit = 0748d970df2e44e6370e359c993c66d53bb48380
+	parent = 214542a34050d0253687599bc8fe2e506a41dc68
 	cmdver = 0.4.0
