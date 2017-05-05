@@ -27,9 +27,10 @@
     "Test"
   ],
   "provides": {
-    "Test::META": "lib/Test/META.pm"
+    "Test::META": "lib/Test/META.pm",
+	"Test::META::LicenseList": "lib/Test/META/LicenseList.pm"
   },
-  "version": "0.0.8",
+  "version": "0.0.9",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],

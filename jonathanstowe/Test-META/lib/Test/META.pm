@@ -1,4 +1,4 @@
-use v6;
+use v6.c;
 
 =begin pod
 
@@ -60,12 +60,16 @@ though they won't typically be needed.
 =end pod
 
 
-module Test::META:ver<0.0.7>:auth<github:jonathanstowe> {
+module Test::META:ver<0.0.9>:auth<github:jonathanstowe> {
 
     use Test;
     use META6:ver(v0.0.4..*);
-
+    use Test::META::LicenseList;
     our $TESTING = False;
+
+    sub my-diag(Str() $mess) {
+        diag $mess unless $TESTING;
+    }
 
     sub meta-ok(:$relaxed-name) is export(:DEFAULT) {
         subtest {
@@ -91,7 +95,8 @@ module Test::META:ver<0.0.7>:auth<github:jonathanstowe> {
                     ok check-mandatory($meta), "have all required entries";
                     ok check-provides($meta), "'provides' looks sane";
                     ok check-authors($meta), "Optional 'authors' and not 'author'";
-                    ok check-name($meta, :$relaxed-name), "name has a hyphen rather than '::' (if this is intentional please pass :relaxed-name to meta-ok)";
+                    ok check-license($meta), "License is correct";
+                    ok check-name($meta, :$relaxed-name), "name has a hypen rather than '::' (if this is intentional please pass :relaxed-name to meta-ok)";
                     ok $meta.meta6 eq Version.new(0) ?? True !! $seen-vee == 0, "no 'v' in version strings (meta6 version greater than 0)";
                 }
             }
@@ -124,7 +129,7 @@ module Test::META:ver<0.0.7>:auth<github:jonathanstowe> {
                     if not $attr.get_value($meta).defined {
                         my $name = $attr.name.substr(2);
                         $rc = False;
-                        diag "required attribute '$name' is not defined" unless $TESTING;
+                        my-diag "required attribute '$name' is not defined";
                     }
                 }
             }
@@ -138,11 +143,11 @@ module Test::META:ver<0.0.7>:auth<github:jonathanstowe> {
         for $meta.provides.kv -> $name, $path {
             if not dist-dir().child($path).e {
                 $rc = False;
-                diag "file for '$name' '$path' does not exist" unless $TESTING;
+                my-diag "file for '$name' '$path' does not exist";
             }
             elsif $path.IO.is-absolute {
                 $rc = False;
-                diag "file for '$name' '$path' is absolute, it should be relative to the dist directory" unless $TESTING;
+                my-diag "file for '$name' '$path' is absolute, it should be relative to the dist directory";
             }
         }
 
@@ -155,10 +160,38 @@ module Test::META:ver<0.0.7>:auth<github:jonathanstowe> {
         if $meta.author.defined {
             if $meta.authors.elems == 0 {
                 $rc = False;
-                diag "there is an 'author' field rather than the specified 'authors'" unless $TESTING;
+                my-diag "there is an 'author' field rather than the specified 'authors'";
             }
         }
 
+        $rc;
+    }
+
+    our sub check-license(META6:D $meta) returns Bool {
+        my Bool $rc = True;
+        if $meta.license.defined {
+            my @license-list = get-license-list();
+            if $meta.license ne any(@license-list) {
+                if $meta.license eq any('NOASSERTION', 'NONE') {
+                    my-diag "NOTICE! License is $meta.support.license(). This is valid, but licenses are prefered.";
+                    $rc = True;
+                }
+                elsif $meta.support.license {
+                    my-diag "notice license is “$meta.license()’, which isn't a SPDX standardized identifier, but license URL was supplied";
+                    $rc = True;
+                }
+                else {
+                    my-diag qq:to/END/;
+                    license ‘$meta.license()’ is not one of the standardized SPDX license identifiers.
+                    please use use one of the identifiers from https://spdx.org/licenses/
+                    for the license field or if your license is not on the list,
+                    include a URL to the license text as one of the 'support' keys
+                    in addition to listing its name.
+                    END
+                    $rc = False;
+                }
+            }
+        }
         $rc;
     }
 
