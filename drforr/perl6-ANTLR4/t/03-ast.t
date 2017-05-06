@@ -255,21 +255,57 @@ END
 	done-testing;
 }, Q{rule-level settings};
 
-$parsed = $g.parse(
-	Q:to{END},
-	grammar Christmas;
-	plain : 'SELECT' ;
-	END
-	:actions($a)
-);
+subtest {
+	$parsed = $g.parse(
+		Q:to{END},
+		grammar Christmas;
+		plain : 'SELECT' ;
+		END
+		:actions($a)
+	);
 
-is-deeply $parsed.ast.<rule><plain><term>, {
-	type => 'concatenation',
-	term => [ {
-		name => 'SELECT',
-		type => 'terminal'
-	}, ]
-}, Q{single literal};
+	is-deeply $parsed.ast.<rule><plain><term>, {
+		type => 'concatenation',
+		term => [ {
+			name => 'SELECT',
+			type => 'terminal'
+		}, ]
+	}, Q{literal};
+
+	$parsed = $g.parse(
+		Q:to{END},
+		grammar Christmas;
+		plain : SELECT ;
+		END
+		:actions($a)
+	);
+
+	is-deeply $parsed.ast.<rule><plain><term>, {
+		type => 'concatenation',
+		term => [ {
+			name => 'SELECT',
+			type => 'nonterminal'
+		}, ]
+	}, Q{non-terminal};
+
+	$parsed = $g.parse(
+		Q:to{END},
+		grammar Christmas;
+		plain : . ;
+		END
+		:actions($a)
+	);
+
+	is-deeply $parsed.ast.<rule><plain><term>, {
+		type => 'concatenation',
+		term => [ {
+			name => '.',
+			type => 'wildcard'
+		}, ]
+	}, Q{wildcard ('.')};
+
+	done-testing;
+}, Q{single term};
 
 $parsed = $g.parse(
 	Q:to{END},

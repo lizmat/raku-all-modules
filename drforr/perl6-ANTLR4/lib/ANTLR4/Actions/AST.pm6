@@ -238,18 +238,45 @@ class ANTLR4::Actions::AST {
 	}
 
 	method terminal( $/ ) {
+		if $/<STRING_LITERAL> {
+			make {
+				type => 'terminal',
+				name => $/<STRING_LITERAL>[0].Str
+			};
+		}
+		elsif $/<scalar> {
+			make {
+				type => 'nonterminal',
+				name => $/<scalar>.Str
+			};
+		}
+		else {
+			die "Shouldn't happen, please report this error.";
+		}
+	}
+	method DOT( $/ ) {
 		make {
-			type => 'terminal',
-			name => $/<STRING_LITERAL>[0].Str
+			type => 'wildcard',
+			name => '.'
 		};
+	}
+
+	method atom( $/ ) {
+		if $/<terminal> {
+			make $/<terminal>.ast
+		}
+		elsif $/<DOT> {
+			make $/<DOT>.ast
+		}
+		else {
+			die "Shouldn't happen, please report this error.";
+		}
 	}
 
 	method parserElement( $/ ) {
 		my @element;
 		for $/<element> -> $element {
-			@element.push(
-				$element<atom><terminal>.ast
-			);
+			@element.push( $element<atom>.ast );
 		}
 		make @element;
 	}

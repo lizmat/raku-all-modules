@@ -164,17 +164,45 @@ subtest {
 	done-testing;
 }, 'Options surrounding single empty rule (legal in ANTLR)';
 
-$parsed = $p.parse(
-	q{grammar Minimal; statement : 'SELECT' ;}
-);
+subtest {
+	$parsed = $p.parse(
+		q{grammar Minimal; statement : 'SELECT' ;}
+	);
 
-is $parsed.perl6, Q:to{END}.chomp, Q{single statement};
-grammar Minimal {
-	rule statement {
-		'SELECT'
+	is $parsed.perl6, Q:to{END}.chomp, Q{terminal};
+	grammar Minimal {
+		rule statement {
+			'SELECT'
+		}
 	}
-}
-END
+	END
+
+	$parsed = $p.parse(
+		q{grammar Minimal; statement : SELECT ;}
+	);
+
+	is $parsed.perl6, Q:to{END}.chomp, Q{nonterminal};
+	grammar Minimal {
+		rule statement {
+			<SELECT>
+		}
+	}
+	END
+
+	$parsed = $p.parse(
+		q{grammar Minimal; statement : . ;}
+	);
+
+	is $parsed.perl6, Q:to{END}.chomp, Q{nonterminal};
+	grammar Minimal {
+		rule statement {
+			.
+		}
+	}
+	END
+
+	done-testing;
+}, Q{single term};
 
 $parsed = $p.parse(
 	q{grammar Minimal; statement : 'SELECT' '*' ;}
