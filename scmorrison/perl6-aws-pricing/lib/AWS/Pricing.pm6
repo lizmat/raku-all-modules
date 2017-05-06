@@ -1,24 +1,24 @@
 use v6;
 use HTTP::Tinyish;
 
-unit module AWS::Pricing:ver<0.2.1>:auth<github:scmorrison>;
+unit module AWS::Pricing:ver<0.2.3>:auth<github:scmorrison>;
 
 our sub service-codes(
     --> List
 ) {
-    "AmazonS3",
-    "AmazonGlacier",
-    "AmazonSES",
-    "AmazonRDS",
-    "AmazonSimpleDB",
+    "AmazonCloudFront",
     "AmazonDynamoDB",
     "AmazonEC2",
-    "AmazonRoute53",
-    "AmazonRedshift",
     "AmazonElastiCache",
-    "AmazonCloudFront",
-    "awskms",
-    "AmazonVPC"
+    "AmazonGlacier",
+    "AmazonRDS",
+    "AmazonRedshift",
+    "AmazonRoute53",
+    "AmazonSES",
+    "AmazonSimpleDB",
+    "AmazonS3",
+    "AmazonVPC",
+    "awskms"
 }
 
 sub valid-service($code) {
@@ -28,21 +28,21 @@ sub valid-service($code) {
 our sub regions(
     --> List
 ) {
-    "us-east-1",
-  	"us-east-2",
-  	"us-west-1",
-  	"us-west-2",
-  	"eu-west-1",
-  	"ap-southeast-1",
-  	"ap-southeast-2",
   	"ap-northeast-1",
   	"ap-northeast-2",
-  	"sa-east-1",
-  	"eu-central-1",
-  	"us-gov-west-1",
   	"ap-south-1",
+  	"ap-southeast-1",
+  	"ap-southeast-2",
   	"ca-central-1",
-  	"eu-west-2"
+  	"eu-central-1",
+  	"eu-west-1",
+  	"eu-west-2",
+  	"sa-east-1",
+    "us-east-1",
+  	"us-east-2",
+  	"us-gov-west-1",
+  	"us-west-1",
+  	"us-west-2"
 }
 
 sub valid-region($region) {
@@ -54,8 +54,12 @@ sub path-exists(
     Str $type
     --> Bool
 ) {
-    if $type ~~ 'f' { return $path.IO ~~ :f }
-    if $type ~~ 'd' { return $path.IO ~~ :d }
+    return $path.IO ~~ :f when $type ~~ 'f';
+    return $path.IO ~~ :d when $type ~~ 'd';
+}
+
+our sub strip-header-csv($data) {
+		return S:x(5):g/\V+\v// given $data;
 }
 
 sub load-from-cache(
@@ -123,7 +127,8 @@ our sub service-offers(
     Hash :$config = config(),
     Str  :$service_code!,
     Str  :$format where { $format ~~ 'json'|'csv' } = 'json',
-    Str  :$region where { $region ~~ ''|valid-region($region) } = ''
+    Str  :$region where { $region ~~ ''|valid-region($region) } = '',
+    Bool :$display_header = False
     --> Str
 ) {
 
@@ -133,7 +138,9 @@ our sub service-offers(
 
     # Use cached service offers if available
     if !$config<refresh> and path-exists($cache_path, 'f') {
-      return load-from-cache $cache_path;
+        return $format ~~ 'csv' && !$display_header
+            ?? strip-header-csv load-from-cache($cache_path)
+            !! load-from-cache $cache_path;
     }
 
     # No cache, or forced refresh
@@ -150,7 +157,11 @@ our sub service-offers(
     my $data = request($url, 'GET');
 
     # Cache and return latest data from API
-    return $data if write-to-cache($cache_path, $data);
+    write-to-cache($cache_path, $data);
+
+    return $format ~~ 'csv'
+        && !$display_header
+        ?? strip-header-csv $data !! $data;
 }
 
 our sub config(

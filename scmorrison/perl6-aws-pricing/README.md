@@ -10,17 +10,37 @@ Usage
 =====
 
 ```bash
-Usage: aws-pricing services
-       aws-pricing [--format=json|csv] service-offers <service_code>;
-       aws-pricing service-codes
-       aws-pricing regions 
-       aws-pricing version
+aws-pricing - Pull AWS Pricing data from the AWS Pricing API
 
-Optional arguments:
-  
-  --refresh    - Force cache_dir refresh
-  --cache_path - Path to cache path service offer files (Default ~/.aws-pricing)
-  --region     - Filter AWS region to pull offer data
+USAGE
+
+    aws-pricing services
+    aws-pricing service-offers <service_code>;
+    aws-pricing service-codes
+    aws-pricing regions 
+    aws-pricing version
+
+COMMANDS
+
+    services           Return Service Offer index
+    service-offers     Return Service Offers for specific service code and/or region
+    service-codes      List all valid service codes
+    regions            List all valid regions
+    version            Display aws-pricing version
+
+OPTIONS
+
+    service-offers specific
+
+    --format           json|csv Default json
+    --region           Filter AWS region to pull offer data
+    --header           Display the CSV header. Disabled by default
+
+FLAGS
+
+    --refresh          Force cache_dir refresh
+    --cache_path       Path to cache path service offer files (Default ~/.aws-pricing)
+    --quiet            No output, cache only (services, service-offers)
 ```
 
 CLI
@@ -28,10 +48,14 @@ CLI
 
 ## List services
 ```
+# Return Service Offer Index
 aws-pricing services
 
 # Refresh local cache
 aws-pricing --refresh services
+
+# Refresh local cache, no output
+aws-pricing --refresh --quiet services
 ```
 
 ## List service offers
@@ -42,8 +66,14 @@ aws-pricing service-offers AmazonEC2
 # Output csv format
 aws-pricing --format=csv service-offers AmazonEC2
 
+# Output csv format with headers
+aws-pricing --headers --format=csv service-offers AmazonEC2
+
 # Refresh local cache
 aws-pricing --refresh --format=csv service-offers AmazonEC2
+
+# Refresh local cache, no output
+aws-pricing --refresh --quiet --format=csv service-offers AmazonEC2
 ```
 
 ## List valid Service Codes
@@ -81,10 +111,6 @@ AWS::Pricing::services;
 # Service Offer Indexes with custom config
 AWS::Pricing::services config => $config;
 
-# List 
-AWS::Pricing::services;
-AWS::Pricing::services config => $config;
-
 # Service Codes List
 AWS::Pricing::service-codes;
 
@@ -102,10 +128,11 @@ AWS::Pricing::service-offers(
 
 # Service Offers: Single region, config, csv, region
 AWS::Pricing::service-offers(
-    config       => $config,
-    service_code => 'AmazonS3',
-    format       => 'csv',
-    region       => 'eu-west-1'
+    config          => $config,
+    service_code    => 'AmazonS3',
+    format          => 'csv',
+    region          => 'eu-west-1',
+    display_header  => True
 );
 ```
 
