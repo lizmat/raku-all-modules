@@ -169,7 +169,8 @@ sub compose-index (:$register = %register) is export {
     verbose "found duplicate index entry {.key} at {.value.map: {'#i' ~ .Str}}" for @dupes;
     '<div id="index"><ul class="index">' ~ NL ~
     $register.sort(*.key.lc).map({
-        '<li>' ~ .key.Str.subst('&', '&amp;', :g).subst('<', '&lt;', :g).subst('>', '&gt;', :g) ~ '&emsp;' ~ .value.map({ '<a href="#i' ~ .Str ~ '">' ~ .Str ~ '</a>' }) ~ '</li>'
+        '<li>' ~ .key.Str.&escape-markup
+        ~ '&emsp;' ~ .value.map({ '<a href="#i' ~ .Str ~ '">' ~ .Str ~ '</a>' }) ~ '</li>'
     }) ~
     '</ul></div>'
 }
@@ -213,7 +214,7 @@ my $last-part-number= -1;
 
 multi sub handle (Pod::Block::Code $node, :$pod-name?, :$part-number?, :$toc-counter?, :%part-config?) is export {
     my $additional-class = $node.config && $node.config<class> ?? ' ' ~ $node.config<class> !! '';
-    Q:c (<pre class="code{$additional-class}">{$node.contents>>.&handle().subst('&', '&amp;', :g).subst('<', '&lt;', :g).subst('>', '&gt;', :g)}</pre>) ~ NL;
+    Q:c (<pre class="code{$additional-class}">{$node.contents>>.&handle}</pre>) ~ NL;
 }
 
 multi sub handle (Pod::Block::Comment $node, :$pod-name?, :$part-number?, :$toc-counter?, :%part-config?) is export {
@@ -297,7 +298,7 @@ multi sub handle (Pod::FormattingCode $node where .type eq 'C', $context where *
 }
 
 multi sub handle (Pod::FormattingCode $node where .type eq 'E', $context = None, :$pod-name?, :$part-number?, :$toc-counter?) is export {
-    $node.meta.map({ when Int { "&#$_;" }; when Str { "&$_;" }; $_ }).join 
+    $node.meta.map({ when Int { "&#$_;" }; when Str { "&$_;" }; $_ }).join
 }
 
 multi sub handle (Pod::FormattingCode $node where .type eq 'F', $context = None, :$pod-name?, :$part-number?, :$toc-counter?) is export {
@@ -360,7 +361,7 @@ multi sub handle (Pod::FormattingCode $node where .type eq 'P', $context = None,
     }
     if $doc {
         given @url[3].split('.')[*-1] {
-            when 'txt' { return '<pre>' ~ $doc.subst('<', '&lt;').subst('&', '&amp;') ~ '</pre>'; }
+            when 'txt' { return '<pre>' ~ $doc.&escape-markup ~ '</pre>'; }
             when 'html' | 'xhtml' { return $doc }
         }
     }
@@ -383,7 +384,7 @@ multi sub handle (Pod::FormattingCode $node where .type eq 'V', $context = None,
 multi sub handle (Pod::FormattingCode $node where .type eq 'X', $context = None, :$pod-name?, :$part-number?, :$toc-counter?) is export {
     my $additional-class = ($node.config && $node.config<class> ?? ' ' ~ $node.config<class> !! '').subst('"', '&quot;');
     my $index-display = $node.contents>>.&handle($context).Str;
-    my @name = $node.meta>>.subst('&', '&amp;', :g).subst('"', '&quot;', :g).subst('<', '&lt;', :g).subst('>', '&gt;', :g);
+    my @name = $node.meta».&escape-markup;
     my $anchor = register-index-entry(@name, $node.contents, :$pod-name);
     Q:c (<span class="indexed{$additional-class}"><a id="{$anchor}" name="{@name}">{$index-display}</a></span>);
 }
@@ -438,7 +439,7 @@ multi sub handle (Pod::Raw $node, :$pod-name?, :$part-number?, :$toc-counter?) i
 # }
 
 multi sub handle (Str $node, Context $context?, :$pod-name?, :$part-number?, :$toc-counter?) is export {
-    $node.subst('&', '&amp;', :g).subst('<', '&lt;', :g);
+    escape-markup $node
 }
 
 multi sub handle (Str $node, Context $context where * == HTML, :$pod-name?, :$part-number?, :$toc-counter?) is export {
@@ -447,4 +448,9 @@ multi sub handle (Str $node, Context $context where * == HTML, :$pod-name?, :$pa
 
 multi sub handle (Nil, :$pod-name?, :$part-number?, :$toc-counter?) is export {
     die 'Nil';
+}
+
+sub escape-markup ($_) {
+    .trans: [ '&',     '<',    '>',    '"',      ]
+    =>      [ '&amp;', '&lt;', '&gt;', '&quot;', ]
 }

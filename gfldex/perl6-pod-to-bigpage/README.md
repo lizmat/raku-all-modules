@@ -36,3 +36,6 @@ Let it find the `*.pod6` for you and have two threads at a time.
 
   Where to put precompiled pod6 files. Defaults to environment variable TEMP or TMP or /tmp.
 
+# Testing
+
+To enable network tests to be run, set `ONLINE_TESTING` environment variable to a true value.
