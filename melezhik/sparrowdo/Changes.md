@@ -1,3 +1,7 @@
+# 0.0.18 2017-05-05
+
+- Improve http-ok asserts ( support many signatures )
+
 # 0.0.17
 
 - Asserts
