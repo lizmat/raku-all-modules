@@ -166,6 +166,11 @@ class IO::String:ver<0.1.0>:auth<hoelzro> is IO::Handle {
         self.print-nl;
     }
 
+    method say(IO::String:D: **@what is raw --> True) {
+        self.print(@what.map: *.gist);
+        self.print-nl;
+    }
+
     #| Returns, as a string, everything that's been written to
     #| this object.
     multi method Str(IO::String:D:) { $!buffer }
