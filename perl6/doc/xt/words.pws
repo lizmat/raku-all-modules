@@ -248,6 +248,7 @@ diag
 diffy
 dirhandle
 dirname
+dirs
 disambiguates
 distro
 dl
@@ -847,6 +848,7 @@ regexes
 reification
 reified
 reifier
+reify
 reifying
 renderers
 repl
@@ -905,6 +907,7 @@ semop
 sendonclosed
 sep
 seqs
+Seq's
 serializable
 sessionstorage
 setbagmix
