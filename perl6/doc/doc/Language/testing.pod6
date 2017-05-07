@@ -415,8 +415,11 @@ my %expected =
 is-deeply count-chars('fleece'), %expected, 'count-chars works on "fleece"';
 =end code
 
-Note that string comparison here would have been fragile, because hashes are
-not sorted, and converting a L<Hash|/type/Hash> to a string loses information.
+B<Note:> for L<historical
+reasons|https://github.com/rakudo/rakudo/commit/096bc17cd5>, L<Seq> arguments
+to C<is-deeply> get converted to L<Lists|/type/List>. If you want to ensure
+strict C<Seq> comparisons, use
+L«C<cmp-ok $got, 'eqv', $expected, $desc>|/language/testing#index-entry-cmp-ok-cmp-ok%28%24value%2C_%24comparison%2C_%24expected%2C_%24description%3F%29> instead.
 
 =head2 By arbitrary comparison
 
