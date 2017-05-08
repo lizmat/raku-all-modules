@@ -1,6 +1,6 @@
 use Test;
 
-plan 16;
+plan 20;
 
 {
     class Foo {
@@ -52,8 +52,31 @@ plan 16;
     class Foo {
         method ~second($a) { $self ~ $a ~ "baz"}
         method ~first($a)  { $self.second($a) }
+        method *return-self { $self.uc }
     }
 
     is Foo<foo>.first("bar"),"foobarbaz","methods can call other methods";
     is (Foo<foo>.first: "bar"), "foobarbaz", '.method: syntax';
+    is Foo<foo>.return-self.WHAT, 'Foo', '* return on instance';
+}
+
+{
+    class Foo {
+        static method ~cmd ${ printf 'foo' }
+    }
+
+    is Foo.cmd, 'foo', 'method ${...} syntax';
+}
+
+{
+    class Parent {}
+
+    class Child is Parent {}
+
+    augment Parent {
+        static method *return-self { "augment return-self"}
+    }
+
+    is Parent.return-self, 'augment return-self', 'call method added by augment';
+    is Child.return-self, 'augment return-self', 'call method added by augment on child';
 }

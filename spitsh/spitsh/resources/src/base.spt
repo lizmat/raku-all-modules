@@ -11,4 +11,6 @@ class FD {} # is Int
 class File {} #
 class PID {} # is Int
 
+class DateTime { }
+class HTTP {}
 enum-class OS { }

@@ -101,7 +101,7 @@ role SAST is rw {
     method itemize { True }
     method depends { Empty }
     method child-deps { self.depends }
-    method all-depends { |self.depends, |@.extra-depends }
+    method all-depends { |@.extra-depends, |self.depends  }
     method type {...} # The type for type checking
     method ostensible-type { self.type } # The the type that the thing looks like
     method deep-clone { self.clone }
@@ -585,7 +585,7 @@ class SAST::Elem is SAST::MutableChildren does SAST::Assignable {
     method stage2($ctx) {
         SX::NYI.new(feature => 'element assignment modifiers',node => $_).throw with $.assign-mod;
         $!index .= do-stage2(tInt);
-        $.elem-of .= do-stage2(tAny);
+        $.elem-of .= do-stage2(tStr);
         with $.assign {
             $_ .= do-stage2($.type, :desc("assigning to element of {$.elem-of.gist}"));
         }
@@ -605,6 +605,7 @@ class SAST::Cmd is SAST::MutableChildren is rw {
     has SAST @.write;
     has SAST @.append;
     has SAST %.set-env;
+    has $.silence is rw;
 
     method stage2($ctx) is default {
         $_ .= do-stage2(tStr) for ($!pipe-in,|@.nodes,|%!set-env.values).grep(*.defined);
@@ -896,7 +897,9 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
         $.invocant.ostensible-type.^find-spit-method($.name,:$.match);
     }
 
-    method children { $.invocant,|@.pos,|%.named.values }
+    method children {
+        ($.invocant unless $.declaration.static), |@.pos, |%.named.values
+    }
 
     method topic {
         $!topic //= do if $.type ~~ tBool {
@@ -1101,13 +1104,13 @@ class SAST::Junction is SAST::MutableChildren {
         # RETURN-WHEN-TRUE: We care about its value when it's Bool ctx is True.
         # RETURN-WHEN-FALSE: The converse
         given $junct-ctx {
+            when NEVER-RETURN {
+                $!LHS-junct-ctx = $!RHS-junct-ctx = NEVER-RETURN;
+            }
             when $ctx === tAny {
                 # Tell the LHS to be a Bool and pass on Any context to RHS.
                 $!LHS-junct-ctx = NEVER-RETURN;
                 $!RHS-junct-ctx = JUST-RETURN;
-            }
-            when NEVER-RETURN {
-                $!LHS-junct-ctx = $!RHS-junct-ctx = NEVER-RETURN;
             }
             when { ! .defined or $_ == JUST-RETURN } {
                 $!LHS-junct-ctx = $!dis ?? RETURN-WHEN-TRUE !! RETURN-WHEN-FALSE;
@@ -1564,7 +1567,7 @@ class SAST::NAME is SAST::MutableChildren {
 
 class SAST::Eval is SAST::Children   {
     has %.opts;
-    has SAST::SVal:D $.src is required;
+    has SAST:D $.src is required;
     has SAST::Block:D $.outer is required;
 
     method stage2($) {
@@ -1625,19 +1628,15 @@ class SAST::Case is SAST::Children is rw {
 
 class SAST::Quietly is SAST::Children {
     has SAST::Block:D $.block is required;
-    has SAST $.null is rw;
 
     method stage2($ctx) {
         $!block .= do-stage2($ctx,:!auto-inline);
-        $!null = $*SETTING.lookup(SCALAR,'*NULL')
-                          .gen-reference(match => $!block.match)
-                          .do-stage2(tFD);
         self;
     }
 
     method type { $!block.type }
 
-    method children { $!block,$!null }
+    method children { $!block, }
 }
 
 class SAST::Doom does SAST {

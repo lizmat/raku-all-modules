@@ -1,6 +1,6 @@
 use Test;
 
-plan 54;
+plan 51;
 
 {
     my File $file .= tmp;
@@ -37,10 +37,10 @@ plan 54;
     is $file.slurp,"foobar",'.append';
 
     $file.push("baz");
-    is $file.slurp,"foobar\nbaz",'.push';
+    is $file.slurp,"foobar\nbaz", ‘.push puts a newline if there isn't one’;
     is $file.slurp.${cat},"foobar\nbaz",'.slurp.${cat}';
 
-    is $file.size,10,'.size changes after appending';
+    is $file.size,11,'.size changes after appending';
 
     END { nok $file.exists,"tempfiles should be rm by END" }
 }
@@ -55,19 +55,11 @@ plan 54;
 
 {
     my File $file .= tmp;
-    my @a;
     for <foo bar baz> {
-        @a.push($_);
         $file.push($_);
-        is $file.slurp,@a,".push behaves like Array.push ($_)";
     }
 
-    is $file.slurp,"foo\nbar\nbaz",'loop with .push behaves like array';
-
-    $file.append("\n");
-    $file.push("end");
-    @a.push("end");
-    is $file.slurp,@a,".push when the last line already has \\n doesn't duplicate";
+    ok $file.slurp.matches(/^foo\nbar\nbaz\n$/),".push in loop";
 }
 
 {
@@ -180,6 +172,14 @@ is File</etc/hosts>.group, 'root', '/etc/hosts has corrent group';
         is .first(/i.{1,2}$/), <five>, '.first';
     }
 }
+
+{
+    my $first = File.tmp.mtime;
+    sleep 1;
+    my $diff = File.tmp.mtime.posix - $first.posix;
+    ok $diff >= 1 || $diff <= 2, '.mtime';
+}
+
 
 # {
 #     my $file = File.tmp;

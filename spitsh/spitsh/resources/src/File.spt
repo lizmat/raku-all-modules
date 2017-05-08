@@ -5,10 +5,12 @@ env File $?PWD;
 
 
 augment List[File] {
-    method ?remove { ${rm -rf @$self !>X} }
+    method ?remove { $self.${xargs rm -rf !>X} }
 
     method @cat { ${cat @$self} }
 }
+
+my File $?file-cleanup = ${mktemp};
 
 #| File is string representing a filesystem path (relative or absolute).
 #|{
@@ -36,7 +38,7 @@ augment File {
     method ?f      { $self.file }
     #| Removes (unlinks) the file and returns True if it was successful.
     #| If the file is a directory it will recursively it's children.
-    method ?remove { $self-->List[File].remove }
+    method ?remove ${rm -rf $self}
     #| Returns True if the file is empty
     method ?empty  { ! ${test -s $self} }
     #| Returns True if the file is writable by the current user.
@@ -55,6 +57,11 @@ augment File {
     method +size   { ${wc -c < $self}  }
     #| Alias for .size
     method +s      { $self.size }
+
+    method mtime(-->DateTime) on {
+        GNU     ${ date -u -r $self '+%FT%T.%3N' }
+        BusyBox ${ stat -c '%y' $self | sed -r 's/ /T/;s/0{6}$//' }
+    }
 
     method +lines { ${wc -l < $self} }
     #| Returns the line of text at an index. `.at-pos` is the
@@ -87,14 +94,19 @@ augment File {
     #| Appends raw data to the file.
     method append(#|[data to append] $data) { $data.${ >> $self } }
 
-    #| Adds a line to a file. If the file doesn't end in a `\n`, a one
-    #| will be appended before the line being added.
-    method push(#|[line to add] $line) {
-        $self.slurp.push($line).write-to($self)
+    #| Appends a string to a file,. If the file doesn't end in a
+    #| newline, one will be prepended to the string. A newline is
+    #| appended to the string regardless of whether it already ends in
+    #| a string. Returns the argument string.
+    method ~push(#|[string to push] $str) {
+        $self.slurp.${
+            awk :l($str) -v "f=$self"
+             '{print>f}END{l=ENVIRON["l"];print l>f; printf l}'
+        }
     }
     #| Calls `touch(1)` on the file.
     #|{ .touch unless File<foo.txt> }
-    method touch {
+    method ?touch {
         # Ohhh when I think about you I
         ${touch $self}
     }
@@ -194,17 +206,18 @@ augment File {
     #|{ say File</etc/foo>.add('foo.cfg') #->/etc/foo/foo.cfg }
     method ~add($name --> File) { $self.path ~ '/' ~ $name }
 
-    my File $tmplist = ${mktemp};
     #| Creates a tempfile via mktemp(1) and adds it to a list of
     #| files which will be removed at the END.
     #|{
       my $tmpfile = File.tmp; # Will be removed at the end
     }
-    static method tmp(Bool :$dir --> File) {
-        my File $tmpfile = ${mktemp ('-d' if $dir)};
-        ${printf '%s\n' $tmpfile >> $tmplist};
-        $tmpfile;
-        END { ${rm -rf @($tmplist.slurp) $tmplist } }
+    static method tmp(Bool :$dir -->File) {
+        ${mktemp ('-d' if $dir)}-->File.cleanup
+    }
+
+    method *cleanup {
+        $?file-cleanup.push($self);
+        END { ${rm -rf @($?file-cleanup.slurp) $?file-cleanup } }
     }
 
     #| Returns a list of children that match the criteria.
@@ -219,6 +232,10 @@ augment File {
     }
     method find(Pattern :$name --> List[File]) {
         ${find $self ('-name', $name if $name)}
+    }
+
+    method ls(:$all -->List[File]) {
+        ${ls ('-A' if $all) $self }
     }
 
     static method tmp-fifo(--> File) {
