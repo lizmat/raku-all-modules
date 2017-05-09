@@ -1,5 +1,6 @@
 {
     "name" : "Path::Router",
+    "license" : "Artistic-2.0",
     "version" : "0.1",
     "description" : "A tool for routing paths",
     "perl" : "6.c",
