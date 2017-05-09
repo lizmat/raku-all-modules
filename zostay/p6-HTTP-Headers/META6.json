@@ -1,5 +1,6 @@
 {
     "name" : "HTTP::Headers",
+    "license" : "Artistic-2.0",
     "version" : "0.1",
     "perl" : "6.c",
     "description" : "Tools for working with HTTP message headers",
