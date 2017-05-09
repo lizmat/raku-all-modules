@@ -12,7 +12,7 @@ is $font.ex, 7.5, 'ex';
 is $font.style, 'italic', 'font-style';
 is $font.weight, '700', 'font-weight';
 is $font.family, 'times-roman', 'font-family';
-is $font.leading, 12, 'leading';
-is $font.length(15px), 11.25;
+is $font.line-height, 12, 'line-height';
+is $font.length(15px), 11.25, 'length';
 
 done-testing;

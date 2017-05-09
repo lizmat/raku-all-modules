@@ -9,7 +9,7 @@ class CSS::Declarations::Font {
     has FontWeight $.weight is rw = 400;
     has Str $.family = 'times-roman';
     has Str $.style = 'normal';
-    has Numeric $.leading;
+    has Numeric $.line-height;
     has CSS::Declarations $.css = CSS::Declarations.new;
     method css is rw {
         Proxy.new(
@@ -106,11 +106,12 @@ class CSS::Declarations::Font {
         $!weight = self!weight($css.font-weight);
         $!em = self.font-length($css.font-size);
 
-        $!leading = do given $css.line-height {
+        $!line-height = do given $css.line-height {
             when .type eq 'num'     { $_ * $!em }
             when 'normal'           { $!em * 1.2 }
             default                 { self.font-length($_) }
         }
+	self;
     }
 }
 
