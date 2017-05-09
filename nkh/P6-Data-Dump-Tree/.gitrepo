@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/nkh/P6-Data-Dump-Tree.git
 	branch = master
-	commit = 8ac558bca185be45b2120687f409cae992b54ea3
-	parent = 02689002a30f4a9aa40650444341a5e07248b39f
+	commit = 0e4b030cc1934c229d00680a239ba5bb62a28531
+	parent = a11fa379a92d8bb9f13a0045e705ee68f4568825
 	cmdver = 0.4.0
