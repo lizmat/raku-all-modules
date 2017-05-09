@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/gfldex/perl6-pod-to-bigpage.git
 	branch = master
-	commit = 2628454c348c09222ede86424947f394268b666a
-	parent = b7880fdcccdda9db8943717fe7ea92dcf3f9dff0
+	commit = a29f524cfd47f7395b37426041ad5c579d983632
+	parent = 03dd116218834ba6dbdeb683c0d99f2a30ea5fb7
 	cmdver = 0.4.0

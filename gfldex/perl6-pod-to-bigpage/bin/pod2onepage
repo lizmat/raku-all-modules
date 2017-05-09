@@ -17,7 +17,7 @@ sub next-part-index () {
     $clone
 }
 
-sub MAIN (Bool :v(:verbose($v)), Str :$source-path, Str :$exclude, Bool :$no-cache = False,
+sub MAIN (Bool :v(:verbose($v)), Str :$source-path = ".", Str :$exclude, Bool :$no-cache = False,
           Int :$threads = %*ENV<THREADS>.?Int // 1,
           Str :$precomp-path = (%*ENV<TEMP> // %*ENV<TMP> // '/tmp') ~ '/PodToBigfile-precomp' 
 ) {
