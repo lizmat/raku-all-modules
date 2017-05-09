@@ -3,6 +3,7 @@ use v6;
 use Test;
 use lib 't/lib';
 use MyEmails;
+use Template::Anti;
 
 my $ta = Template::Anti::Library.new(
     path  => <t/view>,

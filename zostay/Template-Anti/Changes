@@ -1,3 +1,10 @@
+v0.4.1
+
+    * Internal fixes to API to prevent test failures.
+    * Fix a broken test.
+    * Rename META.info to META6.json
+    * Fixed the license
+
 v0.4.0
 
     * COMPATABILITY BREAKING CHANGE: Formats are now specified using a class

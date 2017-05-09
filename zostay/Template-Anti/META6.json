@@ -1,13 +1,15 @@
 {
     "name" : "Template::Anti",
-    "version" : "0.4.0",
+    "version" : "0.4.1",
+    "license" : "Artistic-2.0",
     "description" : "The anti-template templating tool.",
     "authors" : [ "Sterling Hanenkamp <hanenkamp@cpan.org>" ],
     "provides" : {
         "Template::Anti": "lib/Template/Anti.pm6",
         "Template::Anti::Library": "lib/Template/Anti.pm6"
     },
-    "depends" : [ "DOM::Tiny", "Test", "Test::META" ],
+    "depends" : [ "DOM::Tiny" ],
+    "test-depends" : [ "Test", "Test::META" ],
     "source-url" : "git://github.com/zostay/Template-Anti.git",
     "perl": "6.c"
 }

@@ -1,4 +1,4 @@
-unit module Template::Anti:ver<0.4.0>:auth<Sterling Hanenkamp (hanenkamp@cpan.org)>;
+unit module Template::Anti:ver<0.4.1>:auth<Sterling Hanenkamp (hanenkamp@cpan.org)>;
 
 use v6;
 
@@ -352,7 +352,7 @@ It would now rea:
 
 =end pod
 
-class DOM is DOM::Tiny {
+class TADOM is DOM::Tiny {
     multi method CALL-ME($selector) {
         self.find($selector);
     }
@@ -363,7 +363,7 @@ class DOM is DOM::Tiny {
     multi method duplicate(@items, &dup) {
         my $orig = self.render;
         self.append([~] gather for @items -> $item {
-            my $copy = DOM.parse($orig, :xml(self.xml));
+            my $copy = TADOM.parse($orig, :xml(self.xml));
             dup($copy, $item);
             take $copy;
         });
@@ -379,7 +379,7 @@ class Format {
 }
 
 class Format::DOM is export(:DEFAULT, :one-off) is Format {
-    method parse($source) { DOM.parse($source) }
+    method parse($source) { TADOM.parse($source) }
     method prepare-original($master) { $master.deep-clone }
 
     method embedded-source($dom, :$method) {
@@ -410,10 +410,10 @@ class Format::DOM is export(:DEFAULT, :one-off) is Format {
 }
 
 class Format::HTML is export(:DEFAULT, :one-off) is Format::DOM {
-    method parse($source) { DOM.parse($source, :!xml) }
+    method parse($source) { TADOM.parse($source, :!xml) }
 }
 class Format::XML is export(:DEFAULT, :one-off) is Format::DOM {
-    method parse($source) { DOM.parse($source, :xml) }
+    method parse($source) { TADOM.parse($source, :xml) }
 }
 
 proto sub anti-template(|) { * }
