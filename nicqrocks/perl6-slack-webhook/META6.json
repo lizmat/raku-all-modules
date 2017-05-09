@@ -1,0 +1,33 @@
+{
+    "name": "WebService::Slack::Webhook",
+    "source-url": "https://github.com/nicqrocks/perl6-slack-webhook.git",
+    "support": {
+        "source": null
+    },
+    "emulates": {},
+    "perl": "6.c",
+    "resources": [],
+    "build-depends": [],
+    "auth": "github:nicqrocks",
+    "excludes": {},
+    "superseded-by": {},
+    "depends": [
+        "Net::HTTP::POST",
+        "JSON::Fast"
+    ],
+    "tags": [
+        "web",
+        "slack"
+    ],
+    "license": "Artistic-2.0",
+    "test-depends": [],
+    "provides": {
+        "WebService::Slack::Webhook": "lib/WebService/Slack/Webhook.pm6"
+    },
+    "version": "0.1.2",
+    "supersedes": {},
+    "authors": [
+        "Nic Quoziente"
+    ],
+    "description": "Easy way to send a message to Slack"
+}

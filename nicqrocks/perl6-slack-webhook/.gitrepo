@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/nicqrocks/perl6-slack-webhook.git
+	branch = master
+	commit = 6df2b41dd27960e70c1a4396c7fa4f7dca1e9157
+	parent = 7d7e954df32eb7ce18c9a01208373c329e40f6af
+	cmdver = 0.4.0
