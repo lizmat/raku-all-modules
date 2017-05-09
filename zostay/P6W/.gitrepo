@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/P6W.git
 	branch = master
-	commit = e4bf7c64797e55aa029dfeb5dc2017a9f4f02c40
-	parent = bf2b9396787f5096d49e88e1fcac7d1164ae2cb6
+	commit = 48388c29ba8ee675fa172b9bc5f4b8e0b357396e
+	parent = 641b679a7a0e90985ea35ada99d72d3e4df7a88f
 	cmdver = 0.4.0
