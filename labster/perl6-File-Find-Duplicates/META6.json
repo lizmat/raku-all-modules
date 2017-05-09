@@ -1,5 +1,7 @@
 {
+  "perl"        : "6.*",
   "name"        : "File::Find::Duplicates",
+  "license"     : "Artistic-2.0",
   "version"     : "*",
   "description" : "Get a list of duplicate files in directories",
   "provides"    : {
