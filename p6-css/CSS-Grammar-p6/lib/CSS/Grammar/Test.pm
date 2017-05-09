@@ -85,12 +85,7 @@ module CSS::Grammar::Test {
         with %expected<ast> -> $expected-ast {
 
             todo $_ with %todo<ast>;
-
-            my $ast-ok = ok ($actual-ast.defined && json-eqv($actual-ast, $expected-ast)), "{$suite} $rule ast";
-            unless $ast-ok {
-                diag "expected: " ~ to-json($expected-ast);
-                diag "got: " ~ to-json($actual-ast)
-            };
+	    my $ast-ok = cmp-ok $actual-ast, &json-eqv, $expected-ast,  "{$suite} $rule ast";;
 
             if $ast-ok && $writer.can('write') {
                 # recursive test of reserialized css.
