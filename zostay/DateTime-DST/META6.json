@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "DateTime::DST",
+    "license" : "Artistic-2.0",
     "version" : "0.1",
     "description" : "Make localtime[8] available as is-dst to Perl 6",
     "author" : "Andrew Sterling Hanenkamp",
