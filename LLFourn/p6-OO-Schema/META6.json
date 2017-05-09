@@ -1,5 +1,6 @@
 {
     "name" : "OO::Schema",
+    "license" : "MIT",
     "perl" : "6.*",
     "version" : "0.2.1",
     "description" : "Declare class relationships in a single module",
