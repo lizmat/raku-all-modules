@@ -1,5 +1,7 @@
 {
+  "perl"        : "6.*",
   "name"        : "File::Directory::Tree",
+  "license"     : "Artistic-2.0",
   "version"     : "*",
   "description" : "Port of File::Path::Tiny - create and delete directory trees",
   "author"      : "labster",
