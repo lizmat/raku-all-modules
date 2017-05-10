@@ -1,0 +1,18 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Pythonic::Str",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001001",
+    "description"  : "Index into strings like Pythonists do!",
+    "tags"         : [ "Python" ],
+    "depends"      : [ ],
+    "test-depends" : [
+        "Test",
+        "Test::META"
+    ],
+    "provides"     : {
+        "Pythonic::Str" : "lib/Pythonic/Str.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source"   : "git://github.com/zoffixznet/perl6-Pythonic-Str.git"}
+}
