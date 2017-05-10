@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/nicqrocks/perl6-slack-webhook.git
 	branch = master
-	commit = 6df2b41dd27960e70c1a4396c7fa4f7dca1e9157
-	parent = 7d7e954df32eb7ce18c9a01208373c329e40f6af
+	commit = 4668e2ec1719307693e0719ac5bb4023c5737973
+	parent = fb1a5aa0e01bd806d0b95801c39168db59fd9671
 	cmdver = 0.4.0
