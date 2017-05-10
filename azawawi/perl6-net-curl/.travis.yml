@@ -1,5 +1,3 @@
-sudo: required
-
 language: perl6
 
 os:
@@ -7,18 +5,27 @@ os:
   - osx
 
 perl6:
-  - 2016.03
+  - 2017.04
   - latest
 
-install:
+before_install:
   - echo $TRAVIS_OS_NAME
+
+install:
+  - rakudobrew build zef
+  - zef --depsonly install .
+  - zef install Test::META
+  - zef build .
+
+before_script:
+  # Debian-based libcurl installation
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get -qq update              ; fi
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install -y libcurl3-dev ; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then brew update                          ; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then brew install curl                    ; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then ls /usr/local/lib/                   ; fi
-  - if [ "$TRAVIS_OS_NAME" == "osx"   ]; then ls /usr/lib/                         ; fi
-  - rakudobrew build panda
-  - panda --verbose installdeps .
 
-script: NETWORK_TESTING=1 prove -v -e "perl6 -Ilib" t/
+  # macOS libcurl installation
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew update       ; fi
+  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then brew install curl ; fi
+
+script:
+    - AUTHOR_TESTING=1 NETWORK_TESTING=1 prove -ve "perl6 -Ilib"
+    - zef install .
