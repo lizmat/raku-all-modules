@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/fayland/perl6-Gravatar-URL.git
 	branch = master
-	commit = 861aee9fbcc54e3e4855bcba0acf85cc2436eecd
-	parent = 9a570c4e9e04add5b14d0046031e0230a0b5de55
-	cmdver = 0.2.2
+	commit = b1fc10d6a444ce2cf18d9bff6f5b1be7d36db01c
+	parent = 26ec27dd2511320f42d9874b2e1a271c956e111d
+	cmdver = 0.4.0
