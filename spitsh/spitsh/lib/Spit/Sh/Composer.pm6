@@ -264,13 +264,17 @@ multi method walk(
 
     }
 
-    elsif $decl ~~ SAST::MaybeReplace and $decl.replace-with -> $val {
-        $THIS.switch: do given $val {
-            when SAST::Var {$val.gen-reference(match => $THIS.match,:stage2-done) }
-            default { $val.deep-clone() }
+    elsif $decl ~~ SAST::MaybeReplace  {
+        if $decl.replace-with -> $val {
+            $THIS.switch: do given $val {
+                when SAST::Var {$val.gen-reference(match => $THIS.match,:stage2-done) }
+                default { $val.deep-clone() }
+            }
+            $THIS.stage3-done = False;
+            self.walk($THIS);
+        } else {
+            $decl.add-ref($THIS);
         }
-        $THIS.stage3-done = False;
-        self.walk($THIS);
     }
 
     elsif $decl ~~ SAST::Invocant and not $should-pipe {
@@ -350,25 +354,12 @@ multi method walk(SAST::Eval:D $THIS is rw) {
     # copy the old constant values into fresh SAST objects for use in the new
     # compilation
     for %opts.values <-> $opt {
-        #TODO: roll this into its own routine
-        my $match = $opt.match;
-        $opt = do given $opt.compile-time {
-            when Spit::Type {
-                SAST::Type.new(class-type => $_,:$match);
-            }
-            when Int {
-                SAST::IVal.new(val => $_,:$match);
-            }
-            when Str {
-                SAST::SVal.new(val => $_,:$match);
-            }
-            when Bool {
-                SAST::BVal.new(val => $_,:$match);
-            }
-            default {
-                SX.new( match => $opt.match,
-                        message => "can't use non-compile time value as arg to eval").throw;
-            }
+        my $ct = $opt.compile-time;
+        if  $ct or $ct.defined {
+            $opt = sastify($ct, match => $opt.match);
+        } else {
+            SX.new( match => $opt.match,
+                    message => "can't use non-compile time value as arg to eval").throw;
         }
     }
 
@@ -561,20 +552,23 @@ method inline-value($inner,$outer,$_ is raw) {
         } elsif $decl ~~ SAST::Invocant {
             $outer.invocant;
         } else {
-            #XXX: since we only inline blocks with 1 node in them this should be ok
-            # not $inner.deep-first(* =:= $decl)
+            #XXX: A variable that isn't a param ref. Pass it through
+            # and hope that it's something from the outer lexical scope (for now).
             $_;
         }
     }
     # if arg inside inner is a blessed value, try inlining the value
     when SAST::Blessed|SAST::Neg {
         if self.inline-value($inner,$outer,.children[0]) -> $val {
-            .children[0] = $val;
-            # because we're changing child of a rather than the node itself
-            # we'll need to re-walk it so it has a chance to re-optimize itself.
-            .stage3-done = False;
-            self.walk($_);
-            $_;
+            # clone because we don't want to mutate a node from the inner call
+            my $clone = .clone;
+            $clone.children[0] = $val;
+            # Because we're changing child of node a rather than the
+            # node itself we re-walk it because with the new child
+            # further optimizations might be possible.
+            $clone.stage3-done = False;
+            self.walk($clone);
+            $clone;
         }
     }
     when *.compile-time.defined {
@@ -590,8 +584,10 @@ method inline-value($inner,$outer,$_ is raw) {
         };
         if @inlined.all.defined {
             $*char-count += $char-count;
-            .children = @inlined;
-            $_;
+            # clone because we don't want to mutate a node from the inner call
+            my $clone = .clone;
+            $clone.children = @inlined;
+            $clone;
         }
     }
     default {
@@ -614,7 +610,9 @@ multi method inline-call(SAST::Call:D $outer,ChildSwapInline $inner) {
     # Can't inline is rw methods yet. Probs need to redesign it before we can.
     return if ($outer ~~ SAST::MethodCall) && $outer.declaration.rw;
 
-    my $replacement = $inner.deep-clone;
+    # No need to deep-clone. .inline-value will opportunistically
+    # clone when necessary.
+    my $replacement = $inner.clone;
 
     my $*char-count = 0;
     my $max = 10; #TODO: allow customization of this

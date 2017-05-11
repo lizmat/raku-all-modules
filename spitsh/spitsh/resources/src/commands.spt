@@ -2,6 +2,7 @@
 #| installed.
 #|{ say ${ $*curl -V } }
 constant Cmd $*curl = on {
+    Spit-Helper { 'curl' }
     RHEL { 'curl' }
     Debian {
         Pkg<ca-certificates>.ensure-install;
@@ -22,4 +23,9 @@ constant Cmd $*gcc-make = on {
     Debian { Pkg<gcc make libc-dev>.install; 'make' }
     RHEL   { Pkg<gcc make glibc-devel>.install; 'make' }
     Alpine { Pkg<gcc make libc-dev>.install;    'make' }
+}
+
+constant Cmd $*ssh = on {
+    Alpine { Pkg<openssh-client>.ensure-install; 'ssh' }
+    Spit-Helper { 'shh' }
 }

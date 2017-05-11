@@ -8,12 +8,18 @@ enum-class Linux is OS { }
 enum-class BusyBox is UNIXish is Linux { }
 #| Alpine linux distribution: https://alpinelinux.org/
 enum-class Alpine is BusyBox { }
+
+enum-class Spit-Helper is Alpine { }
 #| For OS's that have [GNU core utilities](https://www.gnu.org/software/coreutils/coreutils.html)
 #| installed by default.
 enum-class GNU is UNIXish { }
 
 #| For OS's based on the [Debian linux distribution](https://www.debian.org/)
-enum-class Debian is GNU is Linux { }
+enum-class Debian is GNU is Linux {
+    static method ~release-name {
+        File</etc/os-release>.slurp.${sed -rn 's/^VERSION=.*\((.*)\).*/\1/p'}
+    }
+}
 
 #| For OS's based on the [Fedora linux distribution](https://getfedora.org/)
 enum-class Fedora is GNU is Linux { }

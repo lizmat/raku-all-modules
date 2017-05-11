@@ -52,6 +52,16 @@ class SAST::Cmd {...}
 class SAST::ACCEPTS {...}
 class SAST::Itemize {...}
 
+sub sastify($_, :$match!) is export {
+    when Associative { .map: { .key => sastify(.value) } }
+    when Positional  { .map: &sastify }
+    when Spit::Type  { SAST::Type.new(class-type => $_,:$match) }
+    when Int         { SAST::IVal.new(val => $_,:$match) }
+    when Str         { SAST::SVal.new(val => $_,:$match) }
+    when Bool        { SAST::BVal.new(val => $_,:$match) }
+    default          { Nil }
+}
+
 role SAST is rw {
     has Match:D $.match is required is rw;
     has %.ann; # a place to put stuff that doesn't fit anywhere
@@ -90,7 +100,7 @@ role SAST is rw {
         self.bless(:$match,|a);
     }
     # A Bool is never the topic
-    method topic { $.type ~~ tBool ?? Nil !! self }
+    method topic($self is rw:) { $.type ~~ tBool ?? Nil !! return-rw $self }
 
     method assign-type { IMMUTABLE }
     method assignable  { self.assign-type !== IMMUTABLE }
@@ -276,11 +286,12 @@ class SAST::Children does SAST {
     }
 
     method descend($self is rw: &block) {
-        &block($self);
+        &block($self) && return True;
         for $self.children {
-            when SAST::Children { .descend(&block) }
-            default { &block($_) }
+            when SAST::Children { .descend(&block) && return True }
+            default { &block($_) && return True }
         }
+        return False;
     }
 
     method deep-clone(|c){
@@ -436,8 +447,13 @@ class SAST::VarDecl is SAST::Var does SAST::Declarable is rw {
 
 class SAST::EnvDecl is SAST::VarDecl { }
 
+# MaybeReplace represents a conditional topic $_ like thing. If its
+# assignment is pure (compile-time/variable) then references will just
+# inline themselves during composition. Otherwise the references stick
+# and during compilation it turns into a real $_ variable in the
+# shell.
 class SAST::MaybeReplace is SAST::VarDecl {
-    method writable { $.assign }
+    has @.references;
 
     method replace-with {
         given $.assign {
@@ -445,6 +461,10 @@ class SAST::MaybeReplace is SAST::VarDecl {
             when SAST::Var|SAST::Param|SAST::Invocant { $_ }
             default { Nil }
         }
+    }
+
+    method add-ref($ref) {
+        @!references.push: $ref;
     }
 }
 
@@ -668,7 +688,7 @@ class SAST::Neg is SAST::MutableChildren {
         self;
     }
 
-    method topic { self[0].topic }
+    method topic is rw { self[0].topic }
 }
 
 # Negative number
@@ -901,11 +921,11 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
         ($.invocant unless $.declaration.static), |@.pos, |%.named.values
     }
 
-    method topic {
-        $!topic //= do if $.type ~~ tBool {
+    method topic($self is rw:)  is rw {
+        $!topic or do if $.type ~~ tBool {
             $.invocant.topic
         } else {
-            self;
+            $self;
         }
     }
 
@@ -1298,11 +1318,12 @@ sub dollar_(Match :$match!,*%_) {
 }
 
 sub generate-topic-var(:$var! is rw,:$cond! is rw,:@blocks!) {
-    if $cond.topic -> $topic-val {
+    if $cond.topic <-> $topic-container {
         $var //= dollar_(match => $cond.match);
-        $var.decl-type ||= $topic-val.type;
+        $var.decl-type ||= $topic-container.type;
         $var .= do-stage2(tAny);
-        $var.assign = $topic-val;
+        $var.assign = $topic-container;
+        $topic-container = $var.gen-reference(match => $topic-container.match).do-stage2(tAny);
         .declare($var) for @blocks;
     } elsif $var {
         SX.new(message => "Illegal declaration of topic variable {$var.spit-gist}. " ~
@@ -1314,7 +1335,7 @@ class SAST::If is SAST::Children is rw {
     has SAST:D $.cond is required is rw;
     has SAST::Block $.then is rw;
     has SAST $.else is rw;
-    has SAST::VarDecl $.topic-var;
+    has SAST::MaybeReplace $.topic-var;
     has $.when;
 
     method stage2($ctx) is default {
@@ -1361,7 +1382,7 @@ class SAST::While is SAST::Children {
     has SAST:D $.cond is required is rw;
     has SAST::Block $.block is rw;
     has $.until;
-    has SAST::VarDecl $.topic-var;
+    has SAST::MaybeReplace $.topic-var;
     has $!type;
 
     method stage2($ctx) {
@@ -1378,7 +1399,7 @@ class SAST::While is SAST::Children {
 class SAST::Given is SAST::Children is rw {
     has SAST:D $.given is required;
     has SAST $.block is required;
-    has SAST::VarDecl $.topic-var;
+    has SAST::MaybeReplace $.topic-var;
 
     method stage2($ctx) {
         $!topic-var = dollar_(match => $!given.match,assign => $!given,:dont-depend);
@@ -1470,7 +1491,7 @@ class SAST::Blessed is SAST::MutableChildren is SAST::Type {
                 if self.class-type.^lookup-by-str($str) -> $lookup {
                     SAST::Type.new(class-type => $lookup, match => self[0].match).do-stage2($ctx);
                 } else {
-                    self.make-new(SX, message => "'$str' is not part of the {self.class-type.name}").throw;
+                    self.make-new(SX, message => "'$str' is not a member of the {self.class-type.name} enum.").throw;
                 }
             } else {
                 self.make-new(SX, message => message => "Can't lookup a {self.class-type.name} with a runtime value").throw;

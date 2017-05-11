@@ -1,4 +1,5 @@
 unit module Spit::Util;
+use Spit::Constants;
 
 sub descend-WHO($WHO is copy,Str:D $path) {
     my @parts = $path.split('::');
@@ -56,4 +57,18 @@ sub force-recompile($module) is export(:force-recompile) {
             note $repo.^name;
         }
     }
+}
+sub spit-version is export(:spit-version) {
+    once do {
+        use JSON5::Tiny;
+        (try $*REPO.resolve(CompUnit::DependencySpecification.new(:short-name<Spit::Compile>)).distribution.meta<ver>)
+        or
+        Version.new('META6.json'.IO.slurp.&from-json<version>);
+    }
+}
+
+
+sub SETTING-lookup(SymbolType \symbol-type, $name) is export(:SETTING-lookup) {
+    require Spit::PRECOMP <$SETTING>;
+    $SETTING.lookup(symbol-type, $name);
 }

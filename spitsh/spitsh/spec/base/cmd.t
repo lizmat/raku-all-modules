@@ -1,6 +1,6 @@
 use Test;
 
-plan 28;
+plan 30;
 
 is ${printf "foo"},"foo","cmd works as a value";
 ok ?${true},"cmd status true";
@@ -64,4 +64,13 @@ my $a = <one two three>;
 
 {
     is \${ printf "hello world" }, ("printf", "hello world"), '\${...}';
+}
+
+{
+    my $bin = on {
+        RHEL { '/usr/bin' }
+        Any  { '/bin' }
+    };
+    is Cmd<ls>.path, "$bin/ls" , 'Cmd<ls>.path';
+    is Cmd<grep>.path, "$bin/grep", 'Cmd<grep>.path';
 }

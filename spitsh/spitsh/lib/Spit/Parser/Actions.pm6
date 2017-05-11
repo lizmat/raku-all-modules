@@ -293,6 +293,7 @@ method declaration:sym<enum-class> ($/) {
         $enum-class.class.^add_parent(tEnumClass);
     }
     $enum-class.class.^compose;
+    $enum-class.block = $<block>.ast;
     $/.make: $enum-class;
 }
 
@@ -511,8 +512,13 @@ method var ($/)   {
     with $<special-var> {
         make .ast;
     } else {
-        if $<name> eq '?PID' and $<sigil> eq '$' {
+        my $name = $<name>.Str;
+        if $name eq '?PID' and $<sigil> eq '$' {
             make SAST::CurrentPID.new
+        }
+        elsif $name eq '?spit-version' {
+            use Spit::Util :spit-version;
+            make SAST::SVal.new(val => spit-version().Str);
         }
         else {
             make SAST::Var.new(
@@ -594,25 +600,8 @@ method term:cmd-capture ($/) {
     make SAST::List.new(|$<cmd>.ast.nodes);
 }
 
-sub gen-method-call($/) {
-    my (:@pos,:%named) := $<args>.ast;
-    my $name = $<name>.Str;
-    given $name {
-        when 'WHAT' { return SAST::WHAT.new }
-        when 'WHY'  { return SAST::WHY.new }
-        when 'PRIMITIVE' { return SAST::PRIMITIVE.new }
-        when 'NAME' { return SAST::NAME.new }
-    }
-
-    SAST::MethodCall.new(
-        :$name,
-        :@pos,
-        :%named,
-    );
-}
-
 method term:topic-call ($/) {
-    my $call = gen-method-call($/);
+    my $call = $<method-call>.ast;
     $call.push: SAST::Var.new(name => '_',sigil => '$');
     make $call;
 }
@@ -720,9 +709,25 @@ method infix:sym<?? !!> ($/) {
     }
 }
 
-method postfix:method-call ($/) {
-    make gen-method-call($/);
+method method-call ($/) {
+    my (:@pos,:%named) := $<args>.ast;
+    my $name = $<name>.Str;
+    make do given $name {
+        when 'WHAT' { SAST::WHAT.new }
+        when 'WHY'  { SAST::WHY.new }
+        when 'PRIMITIVE' { SAST::PRIMITIVE.new }
+        when 'NAME' { SAST::NAME.new }
+        default {
+            SAST::MethodCall.new(
+                :$name,
+                :@pos,
+                :%named,
+            );
+        }
+    }
 }
+
+method postfix:method-call ($/) { make $<method-call>.ast }
 
 method args ($/,|) {
     my $list = $<list>.ast;
