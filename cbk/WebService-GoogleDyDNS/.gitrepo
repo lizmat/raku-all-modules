@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cbk/WebService-GoogleDyDNS.git
 	branch = master
-	commit = cf23f70cf43795c03f6a23c8ba717ae6d4929434
-	parent = ef93130034d63536a6bae41f35f44038b214ea59
-	cmdver = 0.2.3
+	commit = 89018fd47c665ca5d9d932375fe71b08f054f99a
+	parent = ec81d2e6dd6260d112fe7ec1dcc1f1af5a549e33
+	cmdver = 0.4.0
