@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cbk/WebService-HazIP.git
 	branch = master
-	commit = d5934fcdab75515e1e237ac65318230a7fc8f27a
-	parent = 6d930b9fffcefd4c2b6af73fcbf82109dbf8c868
-	cmdver = 0.2.3
+	commit = d710a8bc1aba697a7f50b6ec3d9119583e88b947
+	parent = 1a424d3766db1678db8f07c1ca93890582fc7dc6
+	cmdver = 0.4.0

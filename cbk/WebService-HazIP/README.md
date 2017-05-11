@@ -10,10 +10,11 @@
 
 ## TODO
  * Add other services other then www.canihazip.com
+ * Add domains.google.com IP service
 
 ## Methods
  * returnIP()
- 
+
 ## Retruns
 * Valid IPv4 address if successful.
 * "ERROR! - No Internet connection." on a invalid responce.
