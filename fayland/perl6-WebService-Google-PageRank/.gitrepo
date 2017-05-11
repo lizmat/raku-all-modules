@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/fayland/perl6-WebService-Google-PageRank.git
 	branch = master
-	commit = 243f4651ef9290f1459e5d55649180e6e7171601
-	parent = 1e57809823bec3713f61ed98d41202ef9e29098d
-	cmdver = 0.2.2
+	commit = 89857d25db82871f927fb8f6876d2ab8c181357c
+	parent = 6190468cbfc1751f3b4b9e4f32aa0664e79a2d4c
+	cmdver = 0.4.0
