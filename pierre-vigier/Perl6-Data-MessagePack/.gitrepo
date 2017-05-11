@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/pierre-vigier/Perl6-Data-MessagePack.git
 	branch = master
-	commit = 4556c3d25ede8fcc1302f797454242d0d36d2986
-	parent = 02b7ddd9ae36759446644534719ded7e531e985e
+	commit = 495f9f0b38c06e818ec6d054a98bc298454d18fa
+	parent = 536cc430bc4d1e838c7cf197ee6b108d572eecc6
 	cmdver = 0.4.0

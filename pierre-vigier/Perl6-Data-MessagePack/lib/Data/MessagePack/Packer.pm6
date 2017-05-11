@@ -27,49 +27,43 @@ module Data::MessagePack::Packer {
                 X::Data::MessagePack::Packer.new(reason => "Number to big to be converted").throw;
             }
             when * < -2**31 {
-                my @segments;
-                my $copy = $i;
-                for (56, 48, 40, 32, 24 , 16, 8, 0) -> $e {
-                    @segments.push( $copy div 2**$e );
-                    $copy %= 2**$e;
-                }
-                return Blob.new( 0xd3, @segments );
+                return Blob.new(0xd3, $i +> 31 +> 25 +& 0xff,  # Rakudo bug, can't shift 32 or more
+                                      $i +> 31 +> 17 +& 0xff,
+                                      $i +> 31 +> 9  +& 0xff,
+                                      $i +> 31 +> 1  +& 0xff,
+                                      $i +> 24       +& 0xff,
+                                      $i +> 16       +& 0xff,
+                                      $i +> 8        +& 0xff,
+                                      $i             +& 0xff);
             }
             when * < -2**15 {
-                my @segments;
-                my $copy = $i;
-                for (24, 16, 8, 0) -> $e {
-                    @segments.push( $copy div 2**$e );
-                    $copy %= 2**$e;
-                }
-                return Blob.new( 0xd2, @segments );
+                return Blob.new(0xd2, $i +> 24 +& 0xff,
+                                      $i +> 16 +& 0xff,
+                                      $i +> 8  +& 0xff,
+                                      $i       +& 0xff);
+
             }
-            when * < -2**7 { return Blob.new( 0xd1, $i div 256, $i % 256 )}
+            when * < -2**7 { return Blob.new( 0xd1, $i +> 8 +& 0xff, $i +& 0xff )}
             when * < -32 { return Blob.new( 0xd0, $i ) }
             when * < 0 { return Blob.new( $i +& 255 ) }
             when * < 128 { return Blob.new( $i ) }
             when * < 2**8 { return Blob.new( 0xcc, $i ) }
-            when * < 2**16 {
-                #until i find a way to _pack the value
-                return Blob.new( 0xcd, $i div 256, $i % 256 );
-            }
+            when * < 2**16 { return Blob.new(0xcd, $i +> 8 +& 0xff, $i +& 0xff); }
             when * < 2**32 {
-                my @segments;
-                my $copy = $i;
-                for (24, 16, 8, 0) -> $e {
-                    @segments.push( $copy div 2**$e );
-                    $copy %= 2**$e;
-                }
-                return Blob.new( 0xce, @segments );
+                return Blob.new(0xce, $i +> 24 +& 0xff,
+                                      $i +> 16 +& 0xff,
+                                      $i +> 8  +& 0xff,
+                                      $i       +& 0xff);
             }
             when * < 2**64 {
-                my @segments;
-                my $copy = $i;
-                for (56, 48, 40, 32, 24, 16, 8, 0) -> $e {
-                    @segments.push( $copy div 2**$e );
-                    $copy %= 2**$e;
-                }
-                return Blob.new( 0xcf, @segments );
+                return Blob.new(0xcf, $i +> 31 +> 25 +& 0xff,  # Rakudo bug, can't shift 32 or more
+                                      $i +> 31 +> 17 +& 0xff,
+                                      $i +> 31 +> 9  +& 0xff,
+                                      $i +> 31 +> 1  +& 0xff,
+                                      $i +> 24       +& 0xff,
+                                      $i +> 16       +& 0xff,
+                                      $i +> 8        +& 0xff,
+                                      $i             +& 0xff);
             }
             default {
                 X::Data::MessagePack::Packer.new(reason => "Number to big to be converted").throw;
