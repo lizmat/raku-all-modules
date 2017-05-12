@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/kalkin/Ddt.git
 	branch = master
-	commit = 1a99da1b6b8d16ef21b4baae5ea456e7968f37d1
-	parent = 71ff21151a82f86bde998c53e23d122755ca38f2
+	commit = 596d7d7de099781c977284eb05bf2ab7f421823e
+	parent = 8e84ecf3b78ca4248828d06c4f4c97bd035eebe1
 	cmdver = 0.4.0
