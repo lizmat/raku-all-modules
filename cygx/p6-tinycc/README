@@ -1,0 +1,24 @@
+Perl6 Bindings for the Tiny C Compiler
+
+Copyright 2017 cygx <cygx@cpan.org>
+Distributed under the Boost Software License, Version 1.0
+
+If libtcc cannot be found, manually set the LIBTCC environment variable.
+
+Windows users that trust my precompiled TinyCC version based on the
+public 'mob' development branch[1][2] may use
+
+    zef install TinyCC::Resources::Win64
+
+to install a minimal TinyCC distro into their Rakudo prefix.
+
+Using that version should be as simple as
+
+    perl6 -MTinyCC::Win64 [...]
+
+Documentation has yet to be written. For now, just take a look at some
+example code[3].
+
+[1] http://repo.or.cz/tinycc.git/shortlog/refs/heads/mob
+[2] https://github.com/cygx/p6-tinycc-resources-win64
+[3] https://github.com/cygx/p6-tinycc/blob/master/example.p6
