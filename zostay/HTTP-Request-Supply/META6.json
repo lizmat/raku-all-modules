@@ -20,7 +20,7 @@
       "Sterling Hanenkamp <hanenkamp@cpan.org>"
    ],
    "version" : "0.1",
-   "license" : "Artistic",
+   "license" : "Artistic-2.0",
    "description" : "A modern HTTP request parser"
 }
 
