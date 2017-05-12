@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-eredis.git
+	branch = master
+	commit = c2ad78a8ae37b9b2df3df78ef58ba1da5d1be6a3
+	parent = 00efc39485ef4964b038961be48c1f22062748b1
+	cmdver = 0.4.0
