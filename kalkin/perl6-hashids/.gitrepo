@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/kalkin/perl6-hashids.git
 	branch = master
-	commit = 5568d4b1298c72f8fa74d630bfcd0f6628e2d961
-	parent = 0c0a3473c89c4c04dc2f0bc2e251fdc3c2dcd637
-	cmdver = 0.2.3
+	commit = c6ffe2aeac9db5198410c4c2dd9ef0610bcec18b
+	parent = aaa662db8e30960946403666d9669fde82995068
+	cmdver = 0.4.0
