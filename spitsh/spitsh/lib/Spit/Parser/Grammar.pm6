@@ -222,6 +222,7 @@ grammar Spit::Grammar is Spit::Lang {
             |$<primitive>='primitive'
             |$<native>='native'
             |$<export>='export'
+            |$<no-inline>='no-inline'
             |$<rw>='rw'
             |$<return-by-var>='return-by-var'
             |$<impure>='impure'
@@ -307,11 +308,6 @@ grammar Spit::Grammar is Spit::Lang {
     rule param {
         $<pos>=[
             <type>? $<slurpy>='*'?<var>
-            {
-                if $<slurpy>.Str and $<var><sigil>.Str ne '@' {
-                    self.invalid("slurpy parameter")
-                }
-            }
             ]
         ||
         $<named>=[<type>? ':'<var>]

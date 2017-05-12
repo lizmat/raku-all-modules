@@ -507,10 +507,11 @@ multi method walk(SAST::MethodCall:D $THIS is rw) {
 
 multi  method walk(SAST::Call:D $THIS is rw, $accept = True) {
     return if $.no-inline;
-    self.walk($THIS.declaration);
+    my $decl := $THIS.declaration;
+    self.walk($decl);
 
-    if $THIS.declaration.chosen-block -> $block {
-        if $block ~~ SAST::Block and not $block.ann<cant-inline> {
+    if $decl.chosen-block -> $block {
+        if $block ~~ SAST::Block and not $block.ann<cant-inline> and not $decl.no-inline {
             # only inline routines with one child for now
             if $block.one-stmt <-> $last-stmt {
                 if self.inline-call($THIS,$last-stmt) -> $replacement {
@@ -530,8 +531,8 @@ multi  method walk(SAST::Call:D $THIS is rw, $accept = True) {
             exception => $THIS.make-new(
                 SX::RoutineNotDefOnOS,
                 name => $THIS.name,
-                |(class => $THIS.ostensible-type with $THIS.?invocant),
-                candidates => $THIS.declaration.os-candidates.map(*.key),
+                |(class => $THIS.ostensible-type if $THIS ~~ SAST::MethodCall),
+                candidates => $decl.os-candidates.map(*.key),
                 :$.os,
             )
         );
@@ -546,7 +547,12 @@ method inline-value($inner,$outer,$_ is raw) {
         my $decl := .declaration;
         return Nil if $_ === $decl; # don't wanna inline a variable declaration
         if $decl ~~ SAST::PosParam {
-            $outer.pos[$decl.ord];
+            if $decl.slurpy {
+                my $reference-node = $outer.pos[$decl.ord] || $outer;
+                $reference-node.stage3-node: SAST::List, |$outer.pos[$decl.ord..*];
+            } else {
+                $outer.pos[$decl.ord];
+            }
         } elsif $decl ~~ SAST::NamedParam {
             $outer.named{$decl.name} || $outer.stage3-node(SAST::BVal,val => False);
         } elsif $decl ~~ SAST::Invocant {
