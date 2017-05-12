@@ -324,7 +324,7 @@ Examples:
     say split(<; ,>, "a;b;c,d", :kv).perl;  # OUTPUT: «("a", 0, ";", "b", 0, ";", "c", 1, ",", "d")␤»
 
     say "".split("x").perl;                 # OUTPUT: «("",)␤»
-    say "".split("x", :skip-empty).perl;    # OUTPUT: «("",)␤»
+    say "".split("x", :skip-empty).perl;    # OUTPUT: «()␤»
 
     say "abcde".split("").perl;             # OUTPUT: «("", "a", "b", "c", "d", "e", "")␤»
     say "abcde".split("",:skip-empty).perl; # OUTPUT: «("a", "b", "c", "d", "e")␤»
@@ -1116,7 +1116,7 @@ Form C / Composed).
 
     method NFD(Str:D: --> NFD:D)
 
-Returns a codepoint string in L<NFC|/type/NFD> format (Unicode Normalization
+Returns a codepoint string in L<NFD|/type/NFD> format (Unicode Normalization
 Form D / Decomposed).
 
 =head2 method NFKC
@@ -1130,7 +1130,7 @@ Form KC / Compatibility Composed).
 
     method NFKD(Str:D: --> NFKD:D)
 
-Returns a codepoint string in L<NFC|/type/NFKD> format (Unicode Normalization
+Returns a codepoint string in L<NFKD|/type/NFKD> format (Unicode Normalization
 Form KD / Compatibility Decomposed).
 
 =head2 method ACCEPTS
