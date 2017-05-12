@@ -11,7 +11,7 @@
   "author": "Andrew Sterling Hanenkamp",
   "auth": "github:zostay",
   "tags": [ "hash", "data structure", "array" ],
-  "license": "Artistic",
+  "license": "Artistic-2.0",
   "provides": {
     "Hash::MultiValue": "lib/Hash/MultiValue.pm6"
   },

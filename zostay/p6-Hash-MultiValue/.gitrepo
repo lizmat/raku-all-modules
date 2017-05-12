@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zostay/p6-Hash-MultiValue.git
 	branch = master
-	commit = 354442fa5e17862cb6abbc8689a40659126e447b
-	parent = 9c76927848d1af2c0dedbdfd2bc6958a7a18e27e
+	commit = 792ee2a41f4cc5467d5b089d9a19d0c078103659
+	parent = 4317b55a1dd535a8ce088355a46579856e7479d7
 	cmdver = 0.4.0
