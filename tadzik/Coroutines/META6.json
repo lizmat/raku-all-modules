@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Coroutines",
+    "license"     : "MIT",
     "version"     : "*",
     "description" : "The only fake threads in Perl 6",
     "provides": {
