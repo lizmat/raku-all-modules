@@ -35,6 +35,10 @@ thing with a few exceptions:
 
 * `info` returns a `Hash`
 
+* `keys` defaults to pattern '*' -- Caution, this can take a very long
+  time if you have a lot of keys!  For production, `scan` may be a
+  better option.
+
 * `subscribe` and `psubscribe` should be lower case.
 
 * `scan`, `sscan`, `hscan`, and `zscan` should be lower case.
@@ -161,12 +165,6 @@ object that can read messages with .message:
         last if @m[2] eq 'QUIT';
     }
 
-NOTE: Publish/Subscribe relies on functionality not currently in the
-official [eredis
-library](https://github.com/EulerianTechnologies/eredis).  A patched
-version is temporarily
-[available](https://github.com/CurtTilmes/eredis).
-
 ## Multiple threads
 
 You can use a single `Redis::Async` object to issue requests from
@@ -185,6 +183,22 @@ max-readers will be set to that number.  You can also specify the
 max-readers option to new():
 
     $r = Redis::Async.new('localhost:6379', max-readers => 50);
+
+## Perlish objects
+
+EXPERIMENTAL, not everything works yet
+
+You can bind an array to a Redis List like this:
+
+    my @list = $r.list('some-list-key');
+    @list.push(1,2,3);
+    say @list[1]; # 2
+
+or a Redis Hash like this:
+
+    my %hash := $r.hash('some-hash-key');
+    %hash<a> = 'something';
+    say %hash<a>; # something
 
 ## Transactions
 
