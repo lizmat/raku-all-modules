@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/perl6-MPD.git
 	branch = master
-	commit = c940e5015c6cdf26c01ad0b55cbd61c3fe953e9a
-	parent = 31983b21100b8efdd82392f792fcbffbe1421cad
+	commit = 04f1423c9e9e81680a79d548ba2d05390d25166b
+	parent = b7cf08d6ea0e3b5eb79aac5ce23daccdf643e1d6
 	cmdver = 0.4.0

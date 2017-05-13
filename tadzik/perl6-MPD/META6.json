@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "MPD",
+    "license"     : "MIT",
     "version"     : "*",
     "description" : "Interface to libmpdclient C library",
     "provides"    : {
