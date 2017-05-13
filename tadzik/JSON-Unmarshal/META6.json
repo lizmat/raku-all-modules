@@ -1,6 +1,7 @@
 {
 	"perl"        : "6.c",
     "name"        : "JSON::Unmarshal",
+    "license"     : "MIT",
     "version"     : "0.08",
     "description" : "Turn JSON into objects",
     "provides"    : {
