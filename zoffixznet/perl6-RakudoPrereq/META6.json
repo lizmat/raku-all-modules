@@ -2,8 +2,8 @@
     "perl"         : "6.c",
     "name"         : "RakudoPrereq",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001001",
-    "description"  : "Specify minimum required versions of Rakudo",
+    "version"      : "1.001002",
+    "description"  : "Require specific versions of Rakudo",
     "tags"         : [ "rakudo", "versioning" ],
     "depends"      : [ ],
     "test-depends" : [
