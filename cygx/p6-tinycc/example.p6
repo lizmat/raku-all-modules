@@ -6,7 +6,7 @@ say EVAL :lang<C>, :returns(int32), :include<limits.h>, q{
     return INT_MAX;
 };
 
-sub add(int32 \a, int32 \b --> int32) {} ==> C(:include<stdio.h>, q{
+sub add(int32 \a, int32 \b --> int32) {...} ==> C(:include<stdio.h>, q{
     puts("adding...");
     return a + b;
 });
