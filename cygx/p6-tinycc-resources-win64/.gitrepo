@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cygx/p6-tinycc-resources-win64.git
 	branch = master
-	commit = 5a9c0a65ad3c761a3174af54efae0d812750dc3e
-	parent = 44244d7e462d5145ef13ad78ea69087ec602f32e
+	commit = 1ab4b2af762642011f340d2aca91062b2ad8e370
+	parent = 86a18338e9bdec701cbe0b6ae5c073faf3bc9073
 	cmdver = 0.4.0

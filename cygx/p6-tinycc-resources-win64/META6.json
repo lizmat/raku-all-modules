@@ -2,7 +2,7 @@
     "name"          : "TinyCC::Resources::Win64",
     "version"       : "0.2",
     "perl"          : "6.c",
-    "author"        : "github:cygx",
+    "auth"          : "github:cygx",
     "license"       : "LGPL-2.1",
     "description"   : "Win64 build of the Tiny C Compiler",
     "repo-type"     : "git",
