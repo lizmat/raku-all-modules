@@ -1,0 +1,18 @@
+{
+    "perl"         : "6.c",
+    "name"         : "IO::Dir",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001001",
+    "description"  : "IO::Path.dir you can close",
+    "tags"         : [ "IO", "filesystem" ],
+    "depends"      : [ ],
+    "test-depends" : [
+        "Testo",
+        "Test::META"
+    ],
+    "provides"     : {
+        "IO::Dir" : "lib/IO/Dir.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source"   : "https://github.com/zoffixznet/perl6-IO-Dir"}
+}

@@ -1,0 +1,7 @@
+language: perl6
+perl6:
+    - latest
+
+install:
+    - rakudobrew build-zef
+    - ONLINE_TESTING=1 zef install .
