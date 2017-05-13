@@ -29,6 +29,6 @@ given my $o = Terminal::Caca.new {
 
     # Cleanup on scope exit
     LEAVE {
-        $o.cleanup;
+        .cleanup;
     }
 }

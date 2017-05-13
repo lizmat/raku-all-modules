@@ -29,5 +29,5 @@ given my $o = Terminal::Caca.new {
     .wait-for-keypress;
 
     # Cleanup on scope exit
-    LEAVE { $o.cleanup; }
+    LEAVE { .cleanup; }
 }
