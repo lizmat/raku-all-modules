@@ -1,0 +1,14 @@
+{
+    "perl" : "6.*",
+    "name" : "Concurrent::BoundedChannel",
+    "license" : "Artistic-2.0",
+    "version" : "0.4.0",
+    "description" : "Subclass of Channel with limited number of elements",
+    "depends" : [ ],
+    "provides" :  {
+        "Concurrent::BoundedChannel" : "lib/Concurrent/BoundedChannel.pm6"
+    },
+    "repo-type" : "git",
+    "source-url" : "https://github.com/gotoexit/Concurrent-BoundedChannel.git",
+    "authors" : [ "github:gotoexit" ]
+}

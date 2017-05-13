@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/gotoexit/Concurrent-BoundedChannel.git
+	branch = development
+	commit = 791eb1d260d5e31d8e3fc256b74a19ff4dbe7cbc
+	parent = dec0a5db7987acc53a4ad6286b54aec665af80ba
+	cmdver = 0.4.0
