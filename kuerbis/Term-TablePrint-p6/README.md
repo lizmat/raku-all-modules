@@ -8,7 +8,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 VERSION
 =======
 
-Version 0.019
+Version 0.020
 
 SYNOPSIS
 ========
@@ -213,13 +213,15 @@ Set the string that will be shown on the screen instead of an undefined field.
 
 Default: "" (empty string)
 
+ENVIRONMENT VARIABLES
+=====================
+
+See [Term::Choose#ENVIRONMENT VARIABLES](Term::Choose#ENVIRONMENT VARIABLES).
+
 REQUIREMENTS
 ============
 
-Monospaced font
----------------
-
-It is required a terminal that uses a monospaced font which supports the printed characters.
+See [Term::Choose#REQUIREMENTS](Term::Choose#REQUIREMENTS).
 
 CREDITS
 =======
