@@ -5,7 +5,7 @@
   "depends" : [ ],
   "description" : "A simple interface to libnotify",
   "name" : "Desktop::Notify",
-  "tags" : [ "desktop", "notification", "libnotify" ],
+  "tags" : [ "desktop", "notification", "libnotify", "nativecall" ],
   "perl" : "6.c",
   "provides" : {
     "Desktop::Notify" : "lib/Desktop/Notify.pm6"
