@@ -1,0 +1,36 @@
+{
+  "nested": {
+    "test": "data"
+  },
+  "nested2": {
+    "test2": "data2"
+  },
+  "options": {
+    "run": {
+      "by-distro.name": {
+        "macosx": {
+          "by-distro.version": {
+            "10.0+": "10make",
+            "9.0+": "9make",
+            "8.0+": "8make"
+          }
+        },
+        "win32": {
+          "by-distro.version": {
+            "6+": "6winmake",
+            "5+": "5winmake" 
+          }
+        },
+        "": "null-make"
+      }
+    }
+  },
+  "default-test": {
+    "second-test": "string-val, no decisions",
+    "first-test": {
+      "by-distro.name": {
+        "": "default-option1"
+      }
+    }
+  }
+}
