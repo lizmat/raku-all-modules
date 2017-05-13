@@ -1,6 +1,9 @@
 Revision history for Term::Choose
 
 
+0.123   2017-05-12
+        -Multithreading
+
 0.122   2017-04-30
         - Fixed "depends" in META6.json
 

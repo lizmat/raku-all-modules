@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.122';
+my $VERSION = '0.123';
 
 use Term::Choose::NCurses;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
@@ -34,6 +34,8 @@ has %!o;
 
 has Term::Choose::NCurses::WINDOW $.win;
 has Term::Choose::NCurses::WINDOW $!win_local;
+
+has Int $.num-threads = %*ENV<TC_NUM_THREADS> || 2;
 
 has Int   $!term_w;
 has Int   $!term_h;
@@ -147,13 +149,11 @@ submethod DESTROY () { #
 }
 
 method !_prepare_new_copy_of_list {
-    @!list = @!orig_list;
-    my Str $dots   = $!avail_w > 5 ?? '...' !! '';
-    my Int $dots_w = $dots.chars;
     if %!o<ll> {
+        @!list = @!orig_list;
         if %!o<ll> > $!avail_w {
             for @!list {
-                $_ = to-printwidth( $_, $!avail_w, True ).[0];
+                $_ = to-printwidth( $_, $!avail_w, True ).[0]; ##
             }
             $!col_w = $!avail_w;
         }
@@ -163,19 +163,52 @@ method !_prepare_new_copy_of_list {
         @!length = $!col_w xx @!list.elems;
     }
     else {
-        my Int $longest = 0;
-        for 0 .. @!list.end -> $i {
-            @!list[$i] //= %!o<undef>;
-            if @!list[$i] eq '' {
-                @!list[$i] = %!o<empty>;
-            }
-            @!list[$i].=subst(   / \s /, ' ', :g );  # replace, but don't squash sequences of spaces
-            @!list[$i].=subst( / <:C> /, '',  :g );  # remove invisible control characters and unused code points (Other)
-            @!list[$i] = @!list[$i].gist;
-            ( @!list[$i], @!length[$i] ) = to-printwidth( @!list[$i], $!avail_w, True );
-            $longest = @!length[$i] if @!length[$i] > $longest;
+        my $threads = $!num-threads;
+        while $threads > @!orig_list.elems {
+            last if $threads < 2;
+            $threads = $threads div 2;
         }
-        $!col_w = $longest;
+        my $size = @!orig_list.elems div $threads;
+        my @portions = ( 0..^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
+        @portions[@portions.end][1] = @!orig_list.elems;
+        my @promise;
+        for @portions -> $range {
+            @promise.push: start {
+                do for $range[0]..^$range[1] -> $idx {
+                    if ! @!orig_list[$idx].defined {
+                        my ( $str, $len ) := to-printwidth(
+                            %!o<undef>.subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ).gist,
+                            $!avail_w,
+                            True
+                        );
+                        $idx, $str, $len;
+                    }
+                    elsif @!orig_list[$idx] eq '' {
+                        my ( $str, $len ) := to-printwidth(
+                            %!o<empty>.subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ).gist,
+                            $!avail_w,
+                            True
+                        );
+                        $idx, $str, $len;
+                    }
+                    else {
+                        my ( $str, $len ) := to-printwidth(
+                            @!orig_list[$idx].subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ).gist,
+                            $!avail_w,        #                        #
+                            True
+                        );
+                        $idx, $str, $len;
+                    }
+                }
+            };
+        }
+        for await @promise -> @portion {
+            for @portion {
+                @!list[$_[0]] := $_[1];
+                @!length[$_[0]] := $_[2];
+            }
+        }
+        $!col_w = @!length.max;
     }
 }
 
@@ -213,7 +246,7 @@ method !_init_term {
         else {
             my $s = mousemask( ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION, $old );
         }
-        my $i = mouseinterval( 5 );
+        my $mi = mouseinterval( 5 );
     }
     curs_set( 0 );
 }
@@ -478,8 +511,8 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                     return;
                 }
                 elsif $multiselect == 0 {
-                    my Int $i = $!rc2idx[ $!p[R] ][ $!p[C] ];
-                    return %!o<index> || %!o<ll> ?? $i !! @!orig_list[$i];
+                    my Int $idx = $!rc2idx[ $!p[R] ][ $!p[C] ];
+                    return %!o<index> || %!o<ll> ?? $idx !! @!orig_list[$idx];
                 }
                 else {
                     $!marked[ $!p[R] ][ $!p[C] ] = True;
@@ -509,16 +542,16 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
             when CONTROL_SPACE {
                 if $multiselect {
                     if $!p[R] == 0 {
-                        for 0 .. $!rc2idx.end -> $i {
-                            for 0 .. $!rc2idx[$i].end -> $j {
-                                $!marked[$i][$j] = ! $!marked[$i][$j];
+                        for 0 .. $!rc2idx.end -> $row {
+                            for 0 .. $!rc2idx[$row].end -> $col {
+                                $!marked[$row][$col] = ! $!marked[$row][$col];
                             }
                         }
                     }
                     else {
-                        for $!row_top .. $!row_bottom -> $i {
-                            for 0 .. $!rc2idx[$i].end -> $j {
-                                $!marked[$i][$j] = ! $!marked[$i][$j];
+                        for $!row_top .. $!row_bottom -> $row {
+                            for 0 .. $!rc2idx[$row].end -> $col {
+                                $!marked[$row][$col] = ! $!marked[$row][$col];
                             }
                         }
                     }
@@ -662,10 +695,10 @@ method !_prepare_prompt {
 
 method !_set_default_cell {
     my $tmp = [ 0, 0 ];
-    ROW: for 0 .. $!rc2idx.end -> $i {
-        COL: for 0 .. $!rc2idx[$i].end -> $j {
-            if %!o<default> == $!rc2idx[$i][$j] {
-                $tmp = [ $i, $j ];
+    ROW: for 0 .. $!rc2idx.end -> $row {
+        COL: for 0 .. $!rc2idx[$row].end -> $col {
+            if %!o<default> == $!rc2idx[$row][$col] {
+                $tmp = [ $row, $col ];
                 last ROW;
             }
         }
@@ -767,8 +800,7 @@ method !_wr_cell ( Int $row, Int $col ) {
         my Int $lngth = 0;
         if $col > 0 {
             for ^$col -> $cl {
-                my Int $i = $!rc2idx[$row][$cl];
-                $lngth += print-columns( @!list[$i] );
+                $lngth += print-columns( @!list[ $!rc2idx[$row][$cl] ] );
                 $lngth += %!o<pad-one-row>;
             }
         }
@@ -959,7 +991,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.122
+Version 0.123
 
 =head1 SYNOPSIS
 
@@ -1328,15 +1360,26 @@ Sets the string displayed on the screen instead an undefined element.
 
 default: "E<lt>undefE<gt>"
 
+=head1 ENVIRONMET VARIABLES
+
+=head2 multithreading
+
+C<Term::Choose> uses multithreading when preparing the list for the output; the number of threads to use can be set with
+the environment variable C<TC_NUM_TREADS>.
+
+head2 libncurses
+
+The location of the used ncurses library can be specified by setting the environment variable C<PERL6_NCURSES_LIB>. This
+will overwrite the autodetected ncurses library location.
+
 =head1 REQUIREMENTS
 
 =head2 libncurses
 
-C<Term::Choose> requires C<libncursesw> to be installed. To overwrite the autodetected ncurses library: specify the
-location of the ncurses library by setting the environment variable C<PERL6_NCURSES_LIB>.
+C<Term::Choose> requires C<libncursesw> to be installed.
 
-If the name of the ncurses library matches C<libncursesw.so.6> C<Term::Choose> expects C<NCURSES_MOUSE_VERSION> E<gt>
-C<1>.
+If the name of the ncurses library matches C<libncursesw.so.6> C<Term::Choose> expects the extended mouse feature to be
+enabled.
 
 =head2 Monospaced font
 

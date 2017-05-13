@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose::LineFold;
 
-my $VERSION = '0.122';
+my $VERSION = '0.123';
 
 use Terminal::WCWidth;
 
@@ -24,10 +24,10 @@ sub to-printwidth( $str, Int $avail_w, Bool $dot=False ) is export( :to-printwid
             while $res > $tmp_w {
                 @graph.pop;
                 @width.pop;
-                $res = [+] @width;
+                $res = @width.sum;
             }
             if $res < $tmp_w {
-                return @graph.join ~ ' ' ~ $tail, $res + 1;
+                return @graph.join ~ ' ' ~ $tail, $res + 1; #
             }
             else {
                 return @graph.join       ~ $tail, $res;

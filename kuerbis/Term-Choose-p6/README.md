@@ -8,7 +8,7 @@ Term::Choose - Choose items from a list interactively.
 VERSION
 =======
 
-Version 0.122
+Version 0.123
 
 SYNOPSIS
 ========
@@ -362,15 +362,27 @@ Sets the string displayed on the screen instead an undefined element.
 
 default: "ltundefgt"
 
+ENVIRONMET VARIABLES
+====================
+
+multithreading
+--------------
+
+`Term::Choose` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_TREADS`.
+
+head2 libncurses
+
+The location of the used ncurses library can be specified by setting the environment variable `PERL6_NCURSES_LIB`. This will overwrite the autodetected ncurses library location.
+
 REQUIREMENTS
 ============
 
 libncurses
 ----------
 
-`Term::Choose` requires `libncursesw` to be installed. To overwrite the autodetected ncurses library: specify the location of the ncurses library by setting the environment variable `PERL6_NCURSES_LIB`.
+`Term::Choose` requires `libncursesw` to be installed.
 
-If the name of the ncurses library matches `libncursesw.so.6` `Term::Choose` expects `NCURSES_MOUSE_VERSION` gt `1`.
+If the name of the ncurses library matches `libncursesw.so.6` `Term::Choose` expects the extended mouse feature to be enabled.
 
 Monospaced font
 ---------------
