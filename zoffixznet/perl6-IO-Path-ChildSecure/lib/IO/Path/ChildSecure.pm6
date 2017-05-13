@@ -1,9 +1,8 @@
 use MONKEY-GUTS;
 use MONKEY-TYPING;
 
-$*PERL.compiler.name eq 'rakudo'
-  and $*PERL.compiler.version before v2017.03.292.g.0.b.5.a.41.ba.8
-  and die "IO::Path::ChildSecure module needs Rakudo 2017.04 or newer";
+use RakudoPrereq v2017.03.292.g.0.b.5.a.41.ba.8,
+    'IO::Path::ChildSecure module needs Rakudo 2017.04 or newer';
 
 sub EXPORT {
     Map.new: '&child-secure' =>

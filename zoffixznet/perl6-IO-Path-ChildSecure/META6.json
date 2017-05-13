@@ -2,10 +2,12 @@
     "perl"         : "6.c",
     "name"         : "IO::Path::ChildSecure",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001001",
+    "version"      : "1.001003",
     "description"  : "Secure version of IO::Path.child",
     "tags"         : [ "file", "file system" ],
-    "depends"      : [ ],
+    "depends"      : [
+        "RakudoPrereq"
+    ],
     "test-depends" : [
         "Test",
         "Test::META"
