@@ -389,6 +389,7 @@ A list of OS names provided by `target_os()` function:
     minoca
     archlinux
     fedora
+    amazon
 
 * `input_params($param)`
 
