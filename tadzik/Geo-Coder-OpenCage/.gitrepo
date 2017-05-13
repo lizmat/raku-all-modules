@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Geo-Coder-OpenCage.git
 	branch = master
-	commit = b77592a210712c18d7f82890a0e03d0b9a66730b
-	parent = 233cb42603bfd8a4549d5483d17514e3a7654f6f
+	commit = 21cf7596c4321bd940894cd7dabc77a99d0245a2
+	parent = 2cc9b8f061a35112fd09377d56a04d0a4180cc71
 	cmdver = 0.4.0
