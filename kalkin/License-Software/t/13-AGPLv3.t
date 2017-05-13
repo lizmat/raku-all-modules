@@ -12,7 +12,7 @@ ok $license.full-text(), 'The full text of the AGPLv3 license';
 ok $license.header(), 'Header to prepend in files';
 ok $license.files(), 'License files';
 ok $license.files()<COPYING>, $license.full-text();
-is $license.aliases(), ['AGPLv3', 'AGPL3', 'AGPL'], 'License Aliases';
+is $license.aliases(), ['AGPLv3', 'AGPL3', 'AGPL', $license.spdx], 'License Aliases';
 is $license.url(), <https://www.gnu.org/licenses/agpl-3.0.txt>;
 ok $license.note(), 'Short note to use in README and similar';
 

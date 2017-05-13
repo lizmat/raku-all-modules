@@ -683,9 +683,10 @@ Public License instead of this License.  But first, please read
 <http://www.gnu.org/philosophy/why-not-lgpl.html>.};
 
 has Str $.short-name = <GPLv3>;
+has Str $.spdx = <GPL-3.0>;
 has Str $.name = 'The GNU General Public License, Version 3, 29 June 2007';
 submethod url { <https://www.gnu.org/licenses/gpl-3.0.txt> }
-submethod aliases { <GPLv3>, <GPL3>, <GPL> };
+submethod aliases { <GPLv3>, <GPL3>, <GPL>, <GPL-3.0> };
 has %.files = 'COPYING' => $!full-text;
 
 method note() returns Str:D {

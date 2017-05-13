@@ -125,9 +125,19 @@ method name
 
 Returns the full license name as `Str`. I.e. for GPLv3 this would be “The GNU General Public License, Version 3, 29 June 2007”
 
+method short-name
+-----------------
+
     method short-name returns Str:D
 
 Returns the short name for a license. I.e. 'GPLv3'.
+
+method spdx
+-----------
+
+    method spdx returns Str:D
+
+Returns the license [https://spdx.org/](SPDX) identifier as `Str`.
 
 method note
 -----------

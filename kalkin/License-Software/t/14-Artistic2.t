@@ -7,7 +7,7 @@ plan 8;
 ok my License::Software::Abstract $license = License::Software::get(<artistic>).new: "Bahtiar kalkin- Gadimov";
 is $license.short-name(), 'Artistic2', 'Short license name';
 is $license.name(), 'The Artistic License 2.0 (GPL Compatible)', 'Full license name';
-is $license.aliases(), ['Artistic', 'Artistic2'], 'License Aliases';
+is $license.aliases(), ['Artistic', 'Artistic2', $license.spdx], 'License Aliases';
 is $license.files().keys, ['LICENSE'], 'License file';
 is $license.header(), '', 'Artistic License does not need a header for each file';
 is $license.files()<LICENSE>, $license.full-text(), 'Full Artistic2 Text';
