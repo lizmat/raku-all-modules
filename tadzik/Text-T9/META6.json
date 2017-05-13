@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Text::T9",
+    "license" : "MIT",
     "version" : "*",
     "description" : "Guess words basing on a T9 key sequence",
     "provides" : {
