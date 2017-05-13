@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Altai-man/perl6-Text-Tabs.git
+	branch = master
+	commit = 04ded7e4a2cd7902edb1a3474705176d36b09de2
+	parent = e6e7f7d44b5914379f29813dc411bd5c81ca7306
+	cmdver = 0.4.0
