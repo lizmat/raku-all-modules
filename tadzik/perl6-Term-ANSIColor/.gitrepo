@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/perl6-Term-ANSIColor.git
 	branch = master
-	commit = 481ec8eb45ed569089247ee97516dece5e8ff46d
-	parent = 737f19b917e49ec395d67d59833ff575c49139cd
+	commit = 97c524d6079dbb7de13672f7badb31200dbc90dd
+	parent = c56df1cb7ba4be3c8ccccc92929f3c8996f20602
 	cmdver = 0.4.0

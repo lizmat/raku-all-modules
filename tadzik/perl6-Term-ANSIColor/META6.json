@@ -5,9 +5,9 @@
     "description" : "Colorize terminal output",
     "build-depends" : [ ],
     "test-depends" : [
-        "nqp",
         "Test"
     ],
+    "license" : "MIT",
     "depends" : [ ],
     "provides" : {
         "Term::ANSIColor" : "lib/Term/ANSIColor.pm"
@@ -23,5 +23,8 @@
         "bugtracker" : "https://github.com/tadzik/perl6-Term-ANSIColor/issues",
         "source" : "git://github.com/tadzik/perl6-Term-ANSIColor.git"
     },
-    "source-url"  : "git://github.com/tadzik/perl6-Term-ANSIColor.git"
+    "source-url"  : "git://github.com/tadzik/perl6-Term-ANSIColor.git",
+    "superseded-by" : {
+     "Term::ANSIColor": "Terminal::ANSIColor"
+  }
 }
