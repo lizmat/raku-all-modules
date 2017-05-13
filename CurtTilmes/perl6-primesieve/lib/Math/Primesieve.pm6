@@ -11,6 +11,67 @@ enum PRIMESIEVE <SHORT_PRIMES USHORT_PRIMES INT_PRIMES UINT_PRIMES
   INT16_PRIMES UINT16_PRIMES INT32_PRIMES UINT32_PRIMES INT64_PRIMES
   UINT64_PRIMES>;
 
+class Math::Primesieve::iterator is repr('CStruct')
+{
+    has size_t $.i;
+    has size_t $.last_idx;
+    has CArray[uint64] $.primes;
+    has CArray[uint64] $.primes_pimpl;
+    has uint64 $.start;
+    has uint64 $.stop;
+    has uint64 $.stop_hint;
+    has uint64 $.tiny_cache_size;
+    has int32 $.is_error;
+
+    sub primesieve_init(Math::Primesieve::iterator)
+        is native(LIB) {*}
+
+    sub primesieve_free_iterator(Math::Primesieve::iterator)
+        is native(LIB) {*}
+
+    sub primesieve_skipto(Math::Primesieve::iterator, uint64, uint64)
+        is native(LIB) {*}
+
+    sub primesieve_generate_next_primes(Math::Primesieve::iterator)
+        is native(LIB) {*}
+
+    sub primesieve_generate_prev_primes(Math::Primesieve::iterator)
+        is native(LIB) {*}
+
+    sub primesieve_get_max_stop() returns uint64
+        is native(LIB) {*}
+
+    method new(Int $start?)
+    {
+        my $self = self.bless;
+        primesieve_init($self);
+        $self.skipto($start) with $start;
+        $self;
+    }
+
+    method skipto(uint64 $start, uint64 $stop-hint = primesieve_get_max_stop)
+    {
+        primesieve_skipto(self, $start, $stop-hint);
+    }
+
+    method next()
+    {
+        primesieve_generate_next_primes(self) if $!i++ == $!last_idx;
+        $!primes[$!i]
+    }
+
+    method prev()
+    {
+        primesieve_generate_prev_primes(self) if $!i-- == 0;
+        $!primes[$!i]
+    }
+
+    method DESTROY()
+    {
+        primesieve_free_iterator($_) with self;
+    }
+}
+
 class X::Math::Primesieve is Exception
 {
     method message() { 'Math::Primesieve error' }

@@ -48,6 +48,21 @@ USAGE
 Pass options :twins, :triplets, :quadruplets, :quintuplets,
 :sextuplets to `count` or `print` for prime k-tuplets.
 
+Iterator
+========
+
+    my $iterator = Math::Primesieve::iterator.new;
+
+    say $iterator.next for ^10;   # Print first 10 primes;
+
+    $iterator.skipto(1000);       # skip to a specific start (can also
+                                  # specify stop_hint)
+
+    say $iterator.next for ^10;   # Print 10 primes over 1000
+
+    say $iterator.prev for ^10;   # Previous primes
+
+    my $it = Math::Primesieve::iterator.new(1000); # Can start at a num
 
 INSTALLATION
 ============

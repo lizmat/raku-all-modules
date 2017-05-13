@@ -5,12 +5,12 @@
 
     "auth" : "github:CurtTilmes",
 
-    "version" : "0.1",
+    "version" : "0.2",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-primesieve.git",
 
     "perl" : "6.c",
-    
+
     "tags" : [ "Math", "Primes" ],
 
     "provides" : {
@@ -25,7 +25,7 @@
 
     "authors" : [ "Curt Tilmes <ctilmes@cpan.org>" ],
 
-    "support" : { 
+    "support" : {
       "source" : "https://github.com/CurtTilmes/perl6-primesieve.git",
       "bugtracker" : "https://github.com/CurtTilmes/perl6-primesieve/issues"
     }
