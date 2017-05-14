@@ -1,0 +1,12 @@
+{
+       "perl" : "6.*",
+       "name" : "API::USNavalObservatory",
+       "version" : "1.0.0",
+       "description" : "Simple Perl 6 interface to the U.S. Naval Observatory, Astronomical Applications API v2.0.1",
+       "author" : "Michael",
+       "provides" : { "API-USNavalObservatory" : "lib/API/USNavalObservatory.pm"  },
+       "depends" : [ "" ],
+       "source-url" : "git://github.com/cbk/API-USNavalObservatory",
+       "license" : "Artistic-2.0",
+       "tags" :  ["WIP", "api"]
+}

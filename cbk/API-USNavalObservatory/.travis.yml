@@ -1,0 +1,12 @@
+language: perl6
+perl6:
+  - latest
+install:
+  - rakudobrew build-panda
+  - panda --notests installdeps .
+  - panda-build
+  # - panda --notest install LWP::Simple
+
+script:
+  - PERL6LIB=lib prove -e perl6 -vr t/
+sudo: false
