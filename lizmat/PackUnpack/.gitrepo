@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/lizmat/PackUnpack.git
 	branch = master
-	commit = 316edf7d3c2628e31dd198219d3ab8205b696610
-	parent = 439b96cee19468c4c24be571913d7c4dcfa33dd5
+	commit = 1ea5be8aef9c2ca9ee2f1e38476581f7872cdb3a
+	parent = 33fc90b25b0d68d819ab8efed7dab50b67abfc97
 	cmdver = 0.4.0
