@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/skaji/perl6-CPAN-Uploader-Tiny.git
+	branch = master
+	commit = 28c8ed794406d82e8f7aca4030fddb91d928e944
+	parent = 6fe04b429948bb57a1b9dde9f91a05d9fc499c65
+	cmdver = 0.4.0
