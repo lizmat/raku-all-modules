@@ -674,8 +674,14 @@ class SAST::Cast is SAST::MutableChildren {
     has Spit::Type $.to is required;
 
     method type { $!to }
-    method stage2 ($) {
-        self[0] .= do-stage2(tStr);
+    method stage2 ($ctx) {
+        # Type casting blocks outer context propagation to avoid
+        # coercions happening to the casted object. The casted to type
+        # will handle how to react in the given context.
+        self[0] .= do-stage2: do given $ctx {
+            when tStr  { tStr  }
+            default    { tAny  }
+        };
         self;
     }
     method gist { $.node-name ~ "({$!to.name})" ~ $.gist-children }
@@ -1429,6 +1435,26 @@ class SAST::Given is SAST::Children is rw {
     }
 
     method children { $!block,$!topic-var }
+
+    method type { $!block.type }
+}
+
+class SAST::Loop is SAST::Children is rw {
+    has SAST::Block $.block;
+    has SAST $.init;
+    has SAST $.cond;
+    has SAST $.incr;
+
+    method stage2($ctx) {
+        $!init  andthen $_ .= do-stage2(tAny);
+        $!cond orelse $_ = SAST::BVal.new(:val, :$.match);
+        $!cond .= do-stage2(tBool);
+        $!block .= do-stage2($ctx, :loop, :!auto-inline);
+        $!incr andthen $_ .= do-stage2(tAny);
+        self;
+    }
+
+    method children { grep *.defined, $!init, $!cond, $!incr, $!block }
 
     method type { $!block.type }
 }

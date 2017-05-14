@@ -8,7 +8,7 @@ has $.outer;
 has $.debug;
 has $.use-bootstrap-types;
 
-method e ($/) { make $<thing>.ast }
+method e ($/) { make $<wrapped>.ast }
 
 method TOP($/){
     $*CURPAD.append: ($<statementlist>.ast // ());
@@ -161,6 +161,18 @@ method statement-control:sym<if> ($/) {
     make $if;
 }
 
+method statement-control:sym<loop> ($/) {
+    with $<loop-spec><wrapped> {
+        make SAST::Loop.new:
+          init   => .<init>.ast,
+          cond   => .<cond>.ast,
+          incr   => .<incr>.ast,
+          block  => $<block>.ast;
+    } else {
+        make SAST::Loop.new(block => $<block>.ast);
+    }
+}
+
 method statement-control:sym<for> ($/) {
     my $iter-var = do with $<var-and-type> {
         my $var = .ast;
@@ -253,7 +265,7 @@ method declare-class-params ($/) {
 
 method new-class ($/) {
     my $class;
-    with $<class-params><params><thing> {
+    with $<class-params><params><wrapped> {
         $class = self.declare-new-type($/,$<type-name>.Str, Spit::Metamodel::Parameterizable);
         for $_<type-name>.map(*.Str).kv -> $i,$name {
             my $placeholder-type := Spit::Metamodel::Parameter.new_type(:$name);
@@ -269,7 +281,7 @@ method new-class ($/) {
 }
 
 method class-params ($/) {
-    make cache  $<params><thing><type-name>.map: {
+    make cache  $<params><wrapped><type-name>.map: {
         $*CURPAD.lookup(CLASS, .Str, match => $_).class;
     };
 }
@@ -892,8 +904,10 @@ method quote:double-quote       ($/) { make-quote($/) }
 method quote:curly-double-quote ($/) { make-quote($/) }
 method quote:single-quote       ($/) { make-quote($/) }
 method quote:curly-single-quote ($/) { make-quote($/) }
+method quote:half-bracket-quote    ($/) { make-quote($/) }
 method quote:sym<qq>            ($/) { make-quote($/) }
 method quote:sym<q>             ($/) { make-quote($/) }
+method quote:sym<Q>             ($/) { make-quote($/) }
 method balanced-quote           ($/) { make-quote($/) }
 method quote:regex              ($/) { make-quote($/) }
 
@@ -920,10 +934,10 @@ method quote:sym<eval> ($/) {
 }
 
 method wrap ($/) {
-    with $<thing><R> {
+    with $<wrapped><R> {
         make .ast;
     } else {
-        make $<thing>;
+        make $<wrapped>;
     }
 }
 
