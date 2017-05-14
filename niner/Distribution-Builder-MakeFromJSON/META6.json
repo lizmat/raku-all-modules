@@ -1,0 +1,19 @@
+{
+  "authors" : [
+    "Stefan Seifert"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ "System::Query" ],
+  "description" : "Makefile based distribution builder",
+  "license" : "Artistic-2.0",
+  "name" : "Distribution::Builder::MakeFromJSON",
+  "perl" : "6.c",
+  "provides" : {
+    "Distribution::Builder::MakeFromJSON" : "lib/Distribution/Builder/MakeFromJSON.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "https://github.com/niner/Distribution-Builder-MakeFromJSON.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.1"
+}

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/niner/Distribution-Builder-MakeFromJSON.git
+	branch = master
+	commit = 25f9bf368024d7cd79ed9ceb083268ed974b4f0c
+	parent = f257d760cf702e24417f73665e22798a5c64b48a
+	cmdver = 0.4.0
