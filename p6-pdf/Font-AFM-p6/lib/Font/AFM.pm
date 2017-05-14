@@ -1,7 +1,6 @@
 # This -*- perl6 -*-  module is a simple parser for Adobe Font Metrics files.
 
-class Font::AFM
-    is Hash {
+class Font::AFM {
 
 =begin pod
 
@@ -12,7 +11,7 @@ Font::AFM - Interface to Adobe Font Metrics files
 =head1 SYNOPSIS
 
  use Font::AFM;
- my $h = Font::AFM.new('Helvetica');
+ my $h = Font::AFM.new: :name<Helvetica>;
  my $copyright = $h.Notice;
  my $w = $h.Wx<aring>;
  $w = $h.stringwidth("Gisle", 10);
@@ -32,7 +31,7 @@ The following methods are available:
 
 =over 3
 
-=item my $afm = Font::AFM.new($fontname)
+=item my $afm = Font::AFM.new: :$name;
 
 Object constructor. Takes the name of the font as argument.
 Croaks if the font can not be found.
@@ -186,20 +185,21 @@ it under the same terms as Perl itself.
 
     #-------perl 6 resumes here--------------------------------------------
 
+    has %.metrics;
     # Creates a new Font::AFM object from an AFM file.  Pass it the name of the
     # font as parameter.
     # Synopisis:
     #
-    #    $h = Font::AFM.new("Helvetica");
+    #    $h = Font::AFM.new: :name<Helvetica>;
     #
 
-    method !class-name(Str $font-name --> Str) {
+    method class-name(Str $font-name --> Str) {
         [~] "Font::Metrics::", $font-name.lc.subst( /['.afm'$]/, '');
     }
 
     #| autoloads the appropriate delegate for the named font. A subclass of Font::AFM
     method metrics-class(Str $font-name --> Font::AFM:U) {
-        my $class-name = self!class-name($font-name);
+        my $class-name = self.class-name($font-name);
         require ::($class-name);
     }
 
@@ -209,9 +209,12 @@ it under the same terms as Perl itself.
         $class.new;
     }
 
-    multi method TWEAK( Str :$name! is copy) {
+    multi method TWEAK( Str :$name) {
+        self!load-afm-metrics($_) with $name;
+    }
 
-       my $metrics = {};
+    method !load-afm-metrics(Str $name) {
+       %!metrics = ();
 
        $name ~~ s/'.afm' $//;
        my $file;
@@ -246,7 +249,7 @@ it under the same terms as Perl itself.
 
            if /^StartKernData/ ff /^EndKernData/ {
                next unless m:s/ <|w> KPX  $<glyph1>=['.'?\w+] $<glyph2>=['.'?\w+] $<kern>=[< + - >?\d+] /;
-               $metrics<KernData>{ $<glyph1> }{ $<glyph2> } = $<kern>.Int;
+               %!metrics<KernData>{ $<glyph1> }{ $<glyph2> } = $<kern>.Int;
            }
            next if /^StartComposites/ ff /^EndComposites/; # same for composites
            if /^StartCharMetrics/     ff /^EndCharMetrics/ {
@@ -258,8 +261,8 @@ it under the same terms as Perl itself.
                    unless m:s/ <|w> B [ (< + - >?\d+) ]+ ';' /;
                my Array $bbox = [ @0.map: { .Int } ];
                # Should also parse lingature data (format: L successor lignature)
-               $metrics<Wx>{$name} = $wx;
-               $metrics<BBox>{$name} = $bbox;
+               %!metrics<Wx>{$name} = $wx;
+               %!metrics<BBox>{$name} = $bbox;
                next;
            }
 
@@ -268,7 +271,7 @@ it under the same terms as Perl itself.
            if /(^\w+)' '+(.*)/ {
                my Str $key = ~ $0;
                my Str $val = ~ $1;
-               $metrics{$key} = $val;
+               %!metrics{$key} = $val;
            } else {
                die "Can't parse: $_";
            }
@@ -276,21 +279,12 @@ it under the same terms as Perl itself.
 
        $afm.close;
 
-       unless $metrics<Wx><.notdef>:exists {
-           $metrics<Wx><.notdef> = 0;
-           $metrics<BBox><.notdef> = [ 0, 0, 0, 0];
+       unless %!metrics<Wx><.notdef>:exists {
+           %!metrics<Wx><.notdef> = 0;
+           %!metrics<BBox><.notdef> = [ 0, 0, 0, 0];
        }
-
-       self.TWEAK(:$metrics);
     }
 
-    multi method TWEAK( Hash :$metrics! ) {
-        self{.key} = .value for $metrics.pairs;
-    }
-
-    multi method new(Str $name)  { self.bless( :$name ) }
-    multi method new(Hash $metrics) { self.bless( :$metrics ) }
-    multi method new(*%a) is default { self.bless( |%a ) }
     BEGIN our %ISOLatin1Encoding = " " => "space", "!"  =>
     "exclam", "\"" => "quotedbl", "#" => "numbersign", "\$" =>
     "dollar", "\%" => "percent", "\&" => "ampersand", "'" =>
@@ -420,7 +414,7 @@ it under the same terms as Perl itself.
     }
 
     method FontBBox returns List {
-        [ self<FontBBox>.comb(/< + - >?\d+/).map( *.Int ) ];
+        [ self.metrics<FontBBox>.comb(/< + - >?\d+/).map( *.Int ) ];
     }
 
     method !is-prop(Str $prop-name --> Bool) {
@@ -432,7 +426,7 @@ it under the same terms as Perl itself.
     }
 
     multi method FALLBACK(Str $prop-name where self!"is-prop"($prop-name)) {
-        self.WHAT.^add_method($prop-name, { self{$prop-name} } );
+        self.WHAT.^add_method($prop-name, { self.metrics{$prop-name} } );
         self."$prop-name"();
     }
 

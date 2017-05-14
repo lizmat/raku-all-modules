@@ -1,3 +1,10 @@
+   Release 1.23.6
+   - restore lost /etc/make_metrics.pl
+   - avoid need to stantiate metrics classes. Can now use
+     Font::Metrics::courier.BBox, without the need for
+     Font::Metrics::courier.new.BBox
+   - withdraw Font::AFM.new($name) constructor in favour of:
+     Font::AFM.new(:$name)
    Release 1.23.5
    - $.kern method now returns a two item list:
      my ($kerned, $stringwidth) = $font.kern("RVX");
@@ -20,7 +27,7 @@
      it to a singular method which calls a multi method
 
    Release 1.23.1
-   Replaced dynamic Panda Build.pm with semi-static etc/make-metrics.pl.
+   Replaced dynamic Pand Build.pm with semi-static make_metrics.pl.
    - generated AFM files should seldom change. build-time generation of modules
      was overkill. generated sources are now checked in, and can be occasionally
      regenerated, when needed.

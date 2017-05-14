@@ -3,7 +3,7 @@ plan 8;
 %*ENV<METRICS> = 'etc/Core14_AFMs';
 
 require ::('Font::Metrics::courier');
-my $metrics = ::('Font::Metrics::courier').new;
+my $metrics = ::('Font::Metrics::courier');
 
 is-approx $metrics.stringwidth("Perl", 1), 2.4;
 is-deeply $metrics.BBox<P>, [79, 0, 558, 562], 'BBox data';

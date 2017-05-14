@@ -3,7 +3,7 @@ NAME
 
 SYNOPSIS
      use Font::AFM;
-     my $h = Font::AFM.new: "Helvetica";
+     my $h = Font::AFM.new: :name<Helvetica>;
      my $copyright = $h.Notice;
      my $w = $h.Wx<aring>;
      $w = $h.stringwidth("Gisle", 10);
@@ -21,7 +21,7 @@ DESCRIPTION
 
     The following methods are available:
 
-    my $afm = Font::AFM.new($fontname)
+    my $afm = Font::AFM.new(:$name)
        Object constructor. Takes the name of the font as argument.
        It will croak if the font can not be found.
 
