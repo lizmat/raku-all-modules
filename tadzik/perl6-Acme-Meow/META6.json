@@ -1,7 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "Acme::Meow",
-    "version"     : "*",
+    "version"     : "0.1",
     "description" : "The kitty you always wanted, now in Perl 6",
     "build-depends" : [ ],
     "test-depends" : [
