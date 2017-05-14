@@ -1,6 +1,10 @@
 Revision history for Term::TablePrint
 
 
+0.021   2017-05-13
+        - Adapted the code to the changed line-fold
+        - Added new option "format"
+
 0.020   2017-05-12
         - Multithreading
 

@@ -8,7 +8,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 VERSION
 =======
 
-Version 0.020
+Version 0.021
 
 SYNOPSIS
 ========
@@ -80,11 +80,11 @@ Keys to move around:
 
   * the `Home` key (or `Ctrl-A`) to jump to the first row of the table, the `End` key (or `Ctrl-E`) to jump to the last row of the table.
 
-With *keep-header* disabled the `Return` key closes the table if the cursor is on the header row.
+With *format* set to `0` the `Return` key closes the table if the cursor is on the header row.
 
-If *keep-header* is enabled and *table-expand* is set to `0`, the `Return` key closes the table if the cursor is on the first row.
+If *format* is enabled (set to `1` or `2`) and *table-expand* is set to `0`, the `Return` key closes the table if the cursor is on the first row.
 
-If *keep-header* and *table-expand* are enabled and the cursor is on the first row, pressing `Return` three times in succession closes the table. If *table-expand* is set to `1` and the cursor is auto-jumped to the first row, it is required only one `Return` to close the table.
+If *format* and *table-expand* are enabled and the cursor is on the first row, pressing `Return` three times in succession closes the table. If *table-expand* is set to `1` and the cursor is auto-jumped to the first row, it is required only one `Return` to close the table.
 
 If the cursor is not on the first row:
 
@@ -149,12 +149,14 @@ If *choose-columns* is set to 2, it is possible to change the order of the colum
 
 Default: 0
 
-keep-header
------------
+format
+------
 
-If *keep-header* is set to 1, the table header is shown on top of each page.
+If *format* is set to 0, the table header is shown on top of the first page.
 
-If *keep-header* is set to 0, the table header is shown on top of the first page.
+If *format* is set to 1, the table header is shown on top of each page.
+
+If *format* is set to 2, the table header is shown on top of each page and lines separate the columns from each other and the header from the body.
 
 Default: 1;
 

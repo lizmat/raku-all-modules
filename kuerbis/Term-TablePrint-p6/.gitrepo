@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/kuerbis/Term-TablePrint-p6.git
 	branch = master
-	commit = 219231a913377a2ee02469a90ae9d730dd364f0e
-	parent = 1f4e0dbc03fea9ab3450070d576f4947fdc91207
+	commit = cd1bcfe96b3998a85350f10f45e6074a76b4ef8f
+	parent = bd6efb16080cda5dbdeae6b603b3482f7d1cbf2c
 	cmdver = 0.4.0

@@ -1,7 +1,7 @@
 use v6;
 unit class Term::TablePrint;
 
-my $VERSION = '0.020';
+my $VERSION = '0.021';
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::NCurses;
@@ -42,8 +42,7 @@ submethod DESTROY () { #
 sub _set_defaults ( %opt ) {
     %opt<add-header>     //= 0;
     %opt<choose-columns> //= 0;
-    %opt<grid>           //= 0;
-    %opt<keep-header>    //= 1;
+    %opt<format>           //= 0;
     %opt<max-rows>       //= 50000;
     %opt<min-col-width>  //= 30;
     %opt<mouse>          //= 0;
@@ -63,9 +62,8 @@ sub _valid_options {
         progress-bar    => '<[ 0 .. 9 ]>+',
         tab-width       => '<[ 0 .. 9 ]>+',
         add-header      => '<[ 0 1 ]>',
-        keep-header     => '<[ 0 1 ]>',
-        grid            => '<[ 0 1 ]>',
         choose-columns  => '<[ 0 1 2 ]>',
+        format          => '<[ 0 1 2 ]>',
         table-expand    => '<[ 0 1 2 ]>',
         mouse           => '<[ 0 1 ]>',
         prompt          => 'Str',
@@ -84,10 +82,15 @@ sub _validate_options ( %opt ) {
             next;
         }
         when $valid{$key} eq 'Str' {
-            die "$key => not a string." if ! $value.isa: Str; #
+             die "$key => {$value.perl} is not a string." if ! $value.isa: Str;
         }
-        when $value !~~ / ^ <{$valid{$key}}> $ / { #
-            die "$key => '$value' is not a valid value.";
+        default {
+            when ! $value.isa( Int ) {
+                die "$key => {$value.perl} is not an integer.";
+            }
+            when $value !~~ / ^ <{$valid{$key}}> $ / {
+                die "$key => '$value' is not a valid value.";
+            }
         }
     }
 }
@@ -188,7 +191,7 @@ method print-table ( @orig_table, %!o? ) { # ###
     for %!defaults.kv -> $key, $value {
         %!o{$key} //= $value;
     }
-    if %!o<grid> && %!o<tab-width> %% 2 {
+    if %!o<format> == 2 && %!o<tab-width> %% 2 {
         %!o<tab-w>++;
     }
     if %!o<add-header> {
@@ -264,20 +267,30 @@ method !_inner_print_tbl {
             return;
         }
         my Str @header;
-        my Int $header_size = %!o<grid> ?? 2 !! 1;
-        
-        if %!o<keep-header> && $list.elems > $header_size {
-            @header = $list.splice( 0, $header_size );
+        if %!o<prompt> {
+            @header.push: %!o<prompt>;
         }
-        my Str $prompt = %!o<prompt>;
-        if @header.elems {
-            $prompt ~= "\n" if $prompt.chars;
-            $prompt ~= @header.join( "\n" );
+        my Str $col_names;
+        if %!o<format> {
+            $col_names = $list.shift;
+            @header.push: $col_names;
+            #@header.push: '-' x $len if %!o<format> == 2;
+            if %!o<format> == 2 {
+                my Str $header_sep = '';
+                my $tab = ( '-' x ( %!o<tab-w> div 2 ) ) ~ '|' ~ ( '-' x ( %!o<tab-w> div 2 ) );
+                for ^@!new_cols_w {
+                    $header_sep ~= '-' x @!new_cols_w[$_];
+                    if $_ != @!new_cols_w.end {
+                        $header_sep ~= $tab;
+                    }
+                }
+                @header.push: $header_sep;
+            }
         }
         # Choose
         my Int $row = $tc.choose(
             $list,
-            { prompt => $prompt, default => $old_row, index => 1 }
+            { prompt => @header.join( "\n" ), default => $old_row, index => 1 }
         );
         if ! $row.defined {
             return;
@@ -285,8 +298,8 @@ method !_inner_print_tbl {
         elsif $row == -1 {
             next;
         }
-        if @header.elems {
-            $list.unshift: |@header;
+        if $col_names {
+            $list.unshift: $col_names;
         }
         if ! %!o<table-expand> {
             return if $row == 0;
@@ -294,7 +307,7 @@ method !_inner_print_tbl {
         else {
             if $old_row == $row {
                 if ( $row == 0 ) {
-                    if ! %!o<keep-header> {
+                    if ! %!o<format> {
                         return;
                     }
                     elsif %!o<table-expand> == 1 {
@@ -314,14 +327,8 @@ method !_inner_print_tbl {
                 }
             }
             $old_row = $row;
-            if %!o<keep-header> {
+            if %!o<format> {
                 $row++;
-            }
-            else {
-                if %!o<grid> {
-                    next   if $row == 1;
-                    $row-- if $row > 1;
-                }
             }
             $expanded = 1;
             self!_print_single_row( $row );
@@ -352,7 +359,7 @@ method !_print_single_row ( Int $row ) {
             @lines.push: sprintf "%*.*s%*s%s", $key_w xx 2, $key, $sep_w, $sep, '';
         }
         else {
-            for line-fold( $!table[$row][$col].gist, $col_w, '', '' ).lines -> $line {
+            for line-fold( $!table[$row][$col].gist, $col_w, '', '' ) -> $line {
                 @lines.push: sprintf "%*.*s%*s%s", $key_w xx 2, $key, $sep_w, $sep, $line;
                 $key = '' if $key;
                 $sep = '' if $sep;
@@ -385,7 +392,7 @@ method !_progressbar_update( Int $count ) {
 
 
 method !_calc_col_width {
-    my Int @col_idx = 0 .. $!table[0].end; ###
+    my Int @col_idx = 0 .. $!table[0].end; #
     for @col_idx -> $col {
        $!table[0][$col] = _sanitized_string( ( $!table[0][$col] // %!o<undef> ).gist );
        @!heads_w[$col] = print-columns( $!table[0][$col] );
@@ -540,8 +547,8 @@ method !_cols_to_avail_width {
         $step = $!total div $!bar_w || 1;    #
     }
     my Int @col_idx = 0 .. @!new_cols_w.end;
-    my Str $tab;# = ' ' x %!o<tab-width>; ####
-    if %!o<grid> {
+    my Str $tab;
+    if %!o<format> == 2 {
         $tab = ( ' ' x ( %!o<tab-w> div 2 ) ) ~ '|' ~ ( ' ' x ( %!o<tab-w> div 2 ) );
     }
     else {
@@ -579,20 +586,7 @@ method !_cols_to_avail_width {
             $list[.[0]] = .[1]; # :=
         }
     }
-    
-        self!_progressbar_update( $!total ) if $step && $!total % $step;
-    
-    
-    if %!o<grid> {
-        my Str $header_sep = '';
-        for ^@!new_cols_w {
-            $header_sep ~= '-' x @!new_cols_w[$_];
-            my $t = $tab.subst( / \s /, '-', :g );
-            $header_sep ~= $t if $_ != @!new_cols_w.end;
-        }
-        $list.splice: 1, 0, $header_sep;
-    }
-
+    self!_progressbar_update( $!total ) if $step && $!total % $step;
     return $list;
 }
 
@@ -607,7 +601,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
 =head1 VERSION
 
-Version 0.020
+Version 0.021
 
 =head1 SYNOPSIS
 
@@ -697,12 +691,12 @@ Keys to move around:
 =item the C<Home> key (or C<Ctrl-A>) to jump to the first row of the table, the C<End> key (or C<Ctrl-E>) to jump to the last
 row of the table.
 
-With I<keep-header> disabled the C<Return> key closes the table if the cursor is on the header row.
+With I<format> set to C<0> the C<Return> key closes the table if the cursor is on the header row.
 
-If I<keep-header> is enabled and I<table-expand> is set to C<0>, the C<Return> key closes the table if the cursor is on
+If I<format> is enabled (set to C<1> or C<2>) and I<table-expand> is set to C<0>, the C<Return> key closes the table if the cursor is on
 the first row.
 
-If I<keep-header> and I<table-expand> are enabled and the cursor is on the first row, pressing C<Return> three times in
+If I<format> and I<table-expand> are enabled and the cursor is on the first row, pressing C<Return> three times in
 succession closes the table. If I<table-expand> is set to C<1> and the cursor is auto-jumped to the first row, it is
 required only one C<Return> to close the table.
 
@@ -771,11 +765,14 @@ the C<SpaceBar> and the C<Return> key) until the user confirms with the I<-ok-> 
 
 Default: 0
 
-=head2 keep-header
+=head2 format
 
-If I<keep-header> is set to 1, the table header is shown on top of each page.
+If I<format> is set to 0, the table header is shown on top of the first page.
 
-If I<keep-header> is set to 0, the table header is shown on top of the first page.
+If I<format> is set to 1, the table header is shown on top of each page.
+
+If I<format> is set to 2, the table header is shown on top of each page and lines separate the columns from each other
+and the header from the body.
 
 Default: 1;
 
