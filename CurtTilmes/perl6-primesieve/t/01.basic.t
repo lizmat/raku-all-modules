@@ -3,24 +3,11 @@ use v6;
 use Test;
 use Math::Primesieve;
 
-plan 19;
+plan 15;
 
-ok my $p = Math::Primesieve.new(num-threads => 2,
-                                sieve-size => 4), 'new';
+ok my $p = Math::Primesieve.new, 'new';
 
 ok $p.version, 'version';
-
-is $p.num-threads, 2, 'get num-threads';
-
-$p.num-threads(4);
-
-is $p.num-threads, 4, 'set num-threads';
-
-is $p.sieve-size, 4, 'get sieve-size';
-
-$p.sieve-size(8);
-
-is $p.sieve-size, 8, 'set sieve-size';
 
 is $p.primes(100), [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41,
                     43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97], 'primes';
