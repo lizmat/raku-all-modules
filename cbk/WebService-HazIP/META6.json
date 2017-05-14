@@ -9,5 +9,5 @@
        },
        "depends" : [ "LWP::Simple" ],
        "source-url" : "git://github.com/cbk/WebService-HazIP",
-       "license" : "CC-BY-1.0"
+       "license" : "Artistic-2.0"
 }

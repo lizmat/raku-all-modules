@@ -5,7 +5,7 @@
  Simple Internet web service used to obtain the
  host's current public addressable IP address.
  Connects to the canihazip.com web site using LWP::Simple
- and returns the data.  Valadates the returned data to
+ and returns the data.  Validates the returned data to
  ensure there is a valid IPv4 address.  
 
 ## TODO
@@ -15,9 +15,9 @@
 ## Methods
  * returnIP()
 
-## Retruns
+## Returns
 * Valid IPv4 address if successful.
-* "ERROR! - No Internet connection." on a invalid responce.
+* "ERROR! - No Internet connection." on a invalid response.
 
 ## Example
     use WebService::HazIP;
