@@ -8,5 +8,5 @@
            "WebService::GoogleDyDNS"    : "lib/WebService/GoogleDyDNS.pm6"
        },
        "source-url" : "git://github.com/cbk/WebService-GoogleDyDNS.git",
-       "license" : "CC-BY-1.0"
+       "license" : "Artistic-2.0"
 }
