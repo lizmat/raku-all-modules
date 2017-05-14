@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.123';
+my $VERSION = '0.124';
 
 use Term::Choose::NCurses;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
@@ -48,7 +48,7 @@ has Int   $!rest;
 has Int   $!print_pp_row;
 has Str   $!pp_line_fmt;
 has Int   $!nr_prompt_lines;
-has Str   $!prompt_copy;
+has Str   @!prompt_lines;
 has Int   $!row_top;
 has Int   $!row_bottom;
 has Array $!rc2idx;
@@ -80,7 +80,6 @@ sub _set_defaults ( %opt ) {
     %opt<no-spacebar>   //= Array;
     %opt<order>         //= 1;
     %opt<pad>           //= 2;
-    %opt<pad-one-row>   //= %opt<pad>;
     %opt<page>          //= 1;
     %opt<undef>         //= '<undef>';
 }
@@ -163,6 +162,7 @@ method !_prepare_new_copy_of_list {
         @!length = $!col_w xx @!list.elems;
     }
     else {
+        @!list = ();
         my $threads = $!num-threads;
         while $threads > @!orig_list.elems {
             last if $threads < 2;
@@ -266,6 +266,9 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
     }
     if ! %!o<prompt>.defined {
         %!o<prompt> = $multiselect.defined ?? 'Your choice' !! 'Continue with ENTER';
+    }
+    if ! %!o<pad-one-row> {
+        %!o<pad-one-row> = %!o<pad>;
     }
     self!_init_term;
     self!_wr_first_screen;
@@ -686,10 +689,8 @@ method !_prepare_prompt {
     }
     my $init   = %!o<lf>[0] // 0;
     my $subseq = %!o<lf>[1] // 0;
-    $!prompt_copy = line-fold( %!o<prompt>, $!avail_w, ' ' x $init, ' ' x $subseq );
-    $!prompt_copy ~= "\n";
-    my $matches = $!prompt_copy.subst-mutate( / \n /, "\n\r", :g ); #
-    $!nr_prompt_lines = $matches.elems;
+    @!prompt_lines = line-fold( %!o<prompt>, $!avail_w, ' ' x $init, ' ' x $subseq );
+    $!nr_prompt_lines = @!prompt_lines.elems;
 }
 
 
@@ -749,7 +750,9 @@ method !_wr_first_screen {
     }
     clear();
     if %!o<prompt> ne '' {
-        mvaddstr( 0, 0, $!prompt_copy );
+        for ^@!prompt_lines -> $row {
+            mvaddstr( $row, 0, @!prompt_lines[$row] );
+        }
     }
     self!_wr_screen;
     nc_refresh();
@@ -991,7 +994,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.123
+Version 0.124
 
 =head1 SYNOPSIS
 
