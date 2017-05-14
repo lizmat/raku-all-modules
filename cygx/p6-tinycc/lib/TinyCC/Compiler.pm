@@ -96,7 +96,7 @@ my class TCC is export {
         self;
     }
 
-    method define(*%_) {
+    multi method define(*%_) {
         @!defines.append(%_.pairs.map: {
             .key => do given .value {
                 when Bool { Str }
@@ -107,13 +107,23 @@ my class TCC is export {
         self;
     }
 
+    multi method define($name, $value = Str) {
+        @!defines.push($name => $value);
+        self;
+    }
+
     method undef(*%_) {
         @!undefs.append(%_.keys);
         self;
     }
 
-    method declare(*%_) {
+    multi method declare(*%_) {
         @!symbols.append(%_.pairs);
+        self;
+    }
+
+    multi method declare($name, $value) {
+        @!symbols.push($name => $value);
         self;
     }
 
