@@ -53,10 +53,13 @@ Will first `.close` the invocant if it was previously opened.
 
 ## `.dir`
 
-Same arguments as
+Takes similar arguments as
 [`IO::Path.dir`](https://docs.perl6.org/routine/dir), that have the same
 meaning, returning the same type of `Seq`. Will `.close` the invocant when
 the result is exhausted.
+
+The additional arguments are boolean `:absolute` and `:Str` that control whether to return absolute paths when dir was opened via an absolute path and whether to
+return paths as `IO::Path` or `Str` objects.
 
 **Note:** you cannot call `.dir` more than once; re-open the
 invocant or create a new `IO::Dir` if you need that. Will die if called on
