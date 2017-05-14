@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose::Util;
 
-my $VERSION = '0.022';
+my $VERSION = '0.023';
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::NCurses;
@@ -52,10 +52,15 @@ sub _prepare_options ( %opt, %valid, %defaults ) {
             die "$key => not an ARRAY reference." if ! $value.isa( Array );
         }
         when %valid{$key} eq 'Str' {
-            die "$key => not a string." if ! $value.isa( Str );
+             die "$key => {$value.perl} is not a string." if ! $value.isa( Str );
         }
-        when $value !~~ / ^ <{%valid{$key}}> $ / {
-            die "$key => '$value' is not a valid value.";
+        default {
+            when ! $value.isa( Int ) {
+                die "$key => {$value.perl} is not an integer.";
+            }
+            when $value !~~ / ^ <{%valid{$key}}> $ / {
+                die "$key => '$value' is not a valid value.";
+            }
         }
     }
     my %o;
@@ -135,7 +140,8 @@ method choose-dirs ( %opt? ) {
             CATCH { #
                 my $prompt = $dir.gist ~ ":\n" ~ $_;
                 pause( [ 'Press ENTER to continue.' ], { prompt => $prompt } );
-                if $dir.Str eq '/' {
+                #if $dir.Str eq '/' {
+                if $dir.absolute eq '/' {
                     self!_end_term();
                     return Empty;
                 }
@@ -158,8 +164,8 @@ method choose-dirs ( %opt? ) {
             $prompt ~= sprintf "%*s %s\n\n", $len_key, $key_new, _my_array_gist( [ @chosen_dirs.map( { $_.Str } ) ] );
         }
         my Str $key_cwd = 'pwd: ';
-        $prompt  = line-fold( $prompt,              getmaxx( $!win_local ), '', ' ' x $len_key       );
-        $prompt ~= line-fold( $key_cwd ~ $previous, getmaxx( $!win_local ), '', ' ' x $key_cwd.chars );
+        $prompt  = line-fold( $prompt,              getmaxx( $!win_local ), '', ' ' x $len_key       ).join: "\n";
+        $prompt ~= line-fold( $key_cwd ~ $previous, getmaxx( $!win_local ), '', ' ' x $key_cwd.chars ).join: "\n";
         $prompt ~= "\n";
         # Choose
         my $choice = $tc.choose(
@@ -319,7 +325,8 @@ sub _a_file ( %o, IO::Path $dir, $tc --> IO::Path ) {
         { prompt => $prompt, justify => 1 }
     );
     return if ! $choice.defined;
-    return $*SPEC.catfile( $dir, $choice ).IO;
+    #return $*SPEC.catfile( $dir, $choice ).IO;
+    return $dir.IO.add( $choice );
 }
 
 
@@ -699,12 +706,12 @@ method print-hash ( %hash, %opt? ) {
             maxcols      => getmaxx( $!win_local ),
             left-margin  => 0, #
             right-margin => 0, #
-            keys         => Array,
+            keys         => Empty,
             preface      => Str,
             prompt       => Str,
         }
     );
-    my Str @keys    = %o<keys>.list // %hash.keys.sort; # /
+    my Str @keys = %o<keys>.elems ?? |%o<keys> !! %hash.keys.sort;
     my Int $key_w   = %o<len-key>   // @keys.map( { print-columns $_ } ).max;
     my Str $prompt  = %opt<prompt>  // ( %o<preface>.defined  ?? '' !! 'Close with ENTER' );
     my Int $maxcols = %o<maxcols>;
@@ -719,14 +726,14 @@ method print-hash ( %hash, %opt? ) {
     }
     my Str @vals;
     if %o<preface>.defined {
-        @vals.append( line-fold( %o<preface>, $maxcols, '', '' ).lines );
+        @vals.append( line-fold( %o<preface>, $maxcols, '', '' ) );
     }
     for @keys -> $key {
         if %hash{$key}:!exists {
             next;
         }
         my Str $entry = sprintf "%*.*s%s%s", $key_w xx 2, $key, $sep, %hash{$key}.gist;
-        my Str $text = line-fold( $entry, $maxcols, '', ' ' x ( $key_w + $sep_w ) );
+        my Str $text = line-fold( $entry, $maxcols, '', ' ' x ( $key_w + $sep_w ) ).join: "\n";
         @vals.append( $text.lines );
     }
     #return @vals.join( "\n" ) if return something;
@@ -774,7 +781,7 @@ Term::Choose::Util - CLI related functions.
 
 =head1 VERSION
 
-Version 0.022
+Version 0.023
 
 =head1 DESCRIPTION
 
