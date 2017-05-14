@@ -3,8 +3,9 @@ use App::Mi6::Template;
 use App::Mi6::JSON;
 use File::Find;
 use Shell::Command;
+use CPAN::Uploader::Tiny;
 
-unit class App::Mi6;
+unit class App::Mi6:ver<0.0.1>;
 
 has $!author = qx{git config --global user.name}.chomp;
 has $!email  = qx{git config --global user.email}.chomp;
@@ -30,7 +31,10 @@ multi method cmd('new', $module is copy) {
     my $module-file = $to-file($module);
     my $module-dir = $module-file.IO.dirname.Str;
     mkpath($_) for $module-dir, "t", "bin";
-    my %content = App::Mi6::Template::template(:$module, :$!author, :$!email, :$!year);
+    my %content = App::Mi6::Template::template(
+        :$module, :$!author, :$!email, :$!year,
+        dist => $module.subst("::", "-", :g),
+    );
     my %map = <<
         $module-file module
         t/01-basic.t test
@@ -82,6 +86,38 @@ multi method cmd('release') {
       Once your pull request is merged, we can install your module by:
       \$ panda install $module
     EOF
+}
+
+multi method cmd('dist') {
+    self.cmd('build');
+    my ($module, $module-file) = guess-main-module();
+    my $tarball = make-dist-tarball($module);
+    say "Created $tarball";
+    return $tarball;
+}
+
+multi method cmd('upload') {
+    my $tarball = self.cmd('dist');
+    my $proc = run "git", "status", "-s", :out;
+    my @line = $proc.out.lines;
+    if @line.elems != 0 {
+        note "You need to commit the following files before uploading $tarball";
+        note "-> $_" for @line;
+        note "If you want to ignore these files, then list them in .gitignore or MANIFEST.SKIP";
+        die "\n";
+    }
+    my $config = $*HOME.add: ".pause";
+    die "To upload tarball to CPAN, you need to prepare $config first\n" unless $config.IO.e;
+    my $client = CPAN::Uploader::Tiny.new-from-config($config);
+    $*OUT.print("Are you sure to upload $tarball to CPAN? (y/N) ");
+    $*OUT.flush;
+    my $line = $*IN.get;
+    if $line !~~ rx:i/^y/ {
+        $*OUT.print("Abort.\n");
+        return;
+    }
+    $client.upload($tarball);
+    say "Successfully uploaded $tarball to CPAN.";
 }
 
 sub withp6lib(&code) {
@@ -146,6 +182,11 @@ method regenerate-meta-info($module, $module-file) {
     $perl = "6.c" if $perl eq "v6";
     $perl ~~ s/^v//;
 
+    my @cmd = $*EXECUTABLE, "-M$module", "-e", "$module.^ver.Str.say";
+    my $p = withp6lib { run |@cmd, :out, :err };
+    my $version = $p.out.slurp-rest.chomp || $already<version>;
+    $version = "0.0.1" if $version eq "*";
+
     my %new-meta =
         name          => $module,
         perl          => $perl,
@@ -156,7 +197,7 @@ method regenerate-meta-info($module, $module-file) {
         description   => find-description($module-file) || $already<description> || "",
         provides      => find-provides(),
         source-url    => $already<source-url> || find-source-url(),
-        version       => $already<version> || "*",
+        version       => $version,
         resources     => $already<resources> || [],
         tags          => $already<tags> || [],
         license       => $already<license> || guess-license(),
@@ -221,6 +262,43 @@ sub migrate-travis-yml() {
         $fh.say($_) for @out;
     }
     return True;
+}
+
+sub make-dist-tarball($main-module) {
+    my $name = $main-module.subst("::", "-", :g);
+    my $meta = App::Mi6::JSON.decode("META6.json".IO.slurp);
+    my $version = $meta<version>;
+    die "To make dist tarball, you must specify version (not '*') in META6.json first"
+        if $version eq '*';
+    $name ~= "-$version";
+    my $proc = run "git", "ls-files", :out;
+    my @file = $proc.out.lines;
+    rm_rf $name if $name.IO.d;
+    my @ignore = (
+        * eq ".travis.yml",
+        * eq ".gitignore",
+        * ~~ rx/\.precomp/,
+    );
+    if "MANIFEST.SKIP".IO.e {
+        my @skip = "MANIFEST.SKIP".IO.lines.map: -> $skip { * eq $skip };
+        @ignore.push: |@skip;
+    }
+    for @file -> $file {
+        next if @ignore.grep({$_($file)});
+        my $target = "$name/$file";
+        my $dir = $target.IO.dirname;
+        mkpath $dir unless $dir.IO.d;
+        $file.IO.copy($target);
+    }
+    my %env = %*ENV;
+    %env<$_> = 1 for <COPY_EXTENDED_ATTRIBUTES_DISABLE COPYFILE_DISABLE>;
+    $proc = run "tar", "czf", "$name.tar.gz", $name, :out, :err, :%env;
+    if $proc.exitcode != 0 {
+        my $exitcode = $proc.exitcode;
+        my $err = $proc.err.slurp;
+        die $err ?? $err !! "can't create tarball, exitcode = $exitcode";
+    }
+    return "$name.tar.gz";
 }
 
 sub find-source-url() {
@@ -310,6 +388,10 @@ App::Mi6 - minimal authoring tool for Perl6
   > mi6 build        # build the distribution and re-generate README.md/META6.json
   > mi6 test         # run tests
   > mi6 release      # release!
+
+  !!! EXPERIMENTAL !!!
+  > mi6 dist         # make distribution tarball
+  > mi6 upload       # upload distribution tarball to CPAN
 
 =head1 INSTALLATION
 
