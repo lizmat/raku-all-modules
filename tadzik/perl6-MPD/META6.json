@@ -1,12 +1,13 @@
 {
-    "perl"        : "6.*",
+    "perl"        : "6.c",
     "name"        : "MPD",
     "license"     : "MIT",
-    "version"     : "*",
+    "version"     : "0.1",
     "description" : "Interface to libmpdclient C library",
     "provides"    : {
         "MPD" : "lib/MPD.pm"
     },
+    "author"      : "Tadeusz “tadzik” Sośnierz",
     "depends"     : [ ],
     "source-url"  : "git://github.com/tadzik/perl6-MPD.git"
 }

@@ -35,7 +35,7 @@ class MPD {
     }
 }
 
-sub mpd_connection_new(Str $host, Int $port)
+sub mpd_connection_new(Str $host, int32 $port)
     returns OpaquePointer
     is native('libmpdclient') { ... }
 
@@ -43,7 +43,7 @@ sub mpd_connection_free(OpaquePointer)
     is native('libmpdclient') { ... }
 
 sub mpd_connection_get_error(OpaquePointer)
-    returns Int
+    returns int32
     is native('libmpdclient') { ... }
 
 sub mpd_connection_get_error_message(OpaquePointer)
@@ -62,7 +62,7 @@ sub mpd_song_get_uri(OpaquePointer)
     is native('libmpdclient') { ... }
 
 sub mpd_song_get_id(OpaquePointer)
-    returns Int
+    returns int32
     is native('libmpdclient') { ... }
 
 sub mpd_run_status(OpaquePointer)
@@ -73,7 +73,7 @@ sub mpd_status_free(OpaquePointer)
     is native('libmpdclient') { ... }
 
 sub mpd_status_get_state(OpaquePointer)
-    returns Int
+    returns int32
     is native('libmpdclient') { ... }
 
 # vim: ft=perl6
