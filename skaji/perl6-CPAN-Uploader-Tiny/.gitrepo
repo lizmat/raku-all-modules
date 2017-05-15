@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/skaji/perl6-CPAN-Uploader-Tiny.git
 	branch = master
-	commit = 28c8ed794406d82e8f7aca4030fddb91d928e944
-	parent = 6fe04b429948bb57a1b9dde9f91a05d9fc499c65
+	commit = 17a74f1d9f9b97375c5838e876599da16bb7ca73
+	parent = fa1f706203c8152f5f7d2ca3abee5062c394561c
 	cmdver = 0.4.0

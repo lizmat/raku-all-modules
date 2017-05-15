@@ -55,7 +55,7 @@ method !read-encrypted-config(:$file) {
     self!read-plain-config(:$file, :@line);
 }
 
-method upload($tarball, :$subdirectory, :$async) {
+method upload($tarball, :$subdirectory = "Perl6", :$async) {
     my $url = $!url.subst('//', "//{$.user}:{$.password}@");
 
     my $multi = CPAN::Uploader::Tiny::MultiPart.new;
