@@ -1,6 +1,10 @@
 Revision history for Term::Choose
 
 
+0.125   2017-05-14
+        - Removed option pad_one_row
+        - Code refactoring
+
 0.124   2017-05-13
         - Bugfix line-fold
         - Bugfix pad-one-row

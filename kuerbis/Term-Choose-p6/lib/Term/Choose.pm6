@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.124';
+my $VERSION = '0.125';
 
 use Term::Choose::NCurses;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
@@ -100,7 +100,6 @@ sub _valid_options {
         max-width       => '<[ 2 .. 9 ]><[ 0 .. 9 ]>*',
         default         => '<[ 0 .. 9 ]>+',
         pad             => '<[ 0 .. 9 ]>+',
-        pad-one-row     => '<[ 0 .. 9 ]>+',
         lf              => 'Array',
         mark            => 'Array',
         no-spacebar     => 'Array',
@@ -120,13 +119,13 @@ sub _validate_options ( %opt, Int $list_end? ) {
             next;
         }
         when $valid{$key} eq 'Array' {
-            die "$key => not an ARRAY reference."     if ! $value.isa( Array );
-            die "$key => invalid array element"       if $value.grep( { / <-[0..9]> / } ); # .grep( { $_ !~~ UInt } );
+            die "$key => {$value.perl} is not an ARRAY."  if ! $value.isa( Array );
+            die "$key => invalid array element"           if $value.grep( { / <-[0..9]> / } ); # .grep( { $_ !~~ UInt } );
             if $key eq 'lf' {
-                die "$key => too many array elemnts." if $value.elems > 2;
+                die "$key => too many array elemnts."     if $value.elems > 2;
             }
             else {
-                die "$key => value out of range."     if $list_end.defined && $value.any > $list_end;
+                die "$key => value out of range."         if $list_end.defined && $value.any > $list_end;
             }
         }
         when $valid{$key} eq 'Str' {
@@ -152,7 +151,7 @@ method !_prepare_new_copy_of_list {
         @!list = @!orig_list;
         if %!o<ll> > $!avail_w {
             for @!list {
-                $_ = to-printwidth( $_, $!avail_w, True ).[0]; ##
+                $_ = to-printwidth( $_, $!avail_w, True ).[0];
             }
             $!col_w = $!avail_w;
         }
@@ -169,43 +168,43 @@ method !_prepare_new_copy_of_list {
             $threads = $threads div 2;
         }
         my $size = @!orig_list.elems div $threads;
-        my @portions = ( 0..^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
-        @portions[@portions.end][1] = @!orig_list.elems;
+        my @portions = ( ^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
+        @portions[*-1][1] = @!orig_list.elems;
         my @promise;
         for @portions -> $range {
             @promise.push: start {
-                do for $range[0]..^$range[1] -> $idx {
-                    if ! @!orig_list[$idx].defined {
+                do for $range[0] ..^ $range[1] -> $i {
+                    if ! @!orig_list[$i].defined {
                         my ( $str, $len ) := to-printwidth(
                             %!o<undef>.subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ).gist,
                             $!avail_w,
                             True
                         );
-                        $idx, $str, $len;
+                        $i, $str, $len;
                     }
-                    elsif @!orig_list[$idx] eq '' {
+                    elsif @!orig_list[$i] eq '' {
                         my ( $str, $len ) := to-printwidth(
                             %!o<empty>.subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ).gist,
                             $!avail_w,
                             True
                         );
-                        $idx, $str, $len;
+                        $i, $str, $len;
                     }
                     else {
                         my ( $str, $len ) := to-printwidth(
-                            @!orig_list[$idx].subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ).gist,
+                            @!orig_list[$i].subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ).gist,
                             $!avail_w,        #                        #
                             True
                         );
-                        $idx, $str, $len;
+                        $i, $str, $len;
                     }
                 }
             };
         }
         for await @promise -> @portion {
             for @portion {
-                @!list[$_[0]] := $_[1];
-                @!length[$_[0]] := $_[2];
+                @!list[.[0]] := .[1];
+                @!length[.[0]] := .[2];
             }
         }
         $!col_w = @!length.max;
@@ -230,7 +229,7 @@ method !_init_term {
     else {
         my int32 constant LC_ALL = 6;
         setlocale( LC_ALL, "" );
-        $!win_local = initscr; # or die "Failed to initialize ncurses\n";
+        $!win_local = initscr() or die "Failed to initialize ncurses\n"; # $!
     }
     noecho();
     cbreak();
@@ -240,12 +239,10 @@ method !_init_term {
             $!ext_mouse = $0 >= 6;
         }
         my Array[int32] $old;
-        if $!ext_mouse {
-            my $s = mousemask( EMM_ALL_MOUSE_EVENTS +| EMM_REPORT_MOUSE_POSITION, $old );
-        }
-        else {
-            my $s = mousemask( ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION, $old );
-        }
+        my $s = mousemask(
+            $!ext_mouse ?? EMM_ALL_MOUSE_EVENTS +| EMM_REPORT_MOUSE_POSITION !! ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION,
+            $old
+        );
         my $mi = mouseinterval( 5 );
     }
     curs_set( 0 );
@@ -266,9 +263,6 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
     }
     if ! %!o<prompt>.defined {
         %!o<prompt> = $multiselect.defined ?? 'Your choice' !! 'Continue with ENTER';
-    }
-    if ! %!o<pad-one-row> {
-        %!o<pad-one-row> = %!o<pad>;
     }
     self!_init_term;
     self!_wr_first_screen;
@@ -514,8 +508,8 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                     return;
                 }
                 elsif $multiselect == 0 {
-                    my Int $idx = $!rc2idx[ $!p[R] ][ $!p[C] ];
-                    return %!o<index> || %!o<ll> ?? $idx !! @!orig_list[$idx];
+                    my Int $i = $!rc2idx[ $!p[R] ][ $!p[C] ];
+                    return %!o<index> || %!o<ll> ?? $i !! @!orig_list[$i];
                 }
                 else {
                     $!marked[ $!p[R] ][ $!p[C] ] = True;
@@ -545,15 +539,15 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
             when CONTROL_SPACE {
                 if $multiselect {
                     if $!p[R] == 0 {
-                        for 0 .. $!rc2idx.end -> $row {
-                            for 0 .. $!rc2idx[$row].end -> $col {
+                        for ^$!rc2idx -> $row {
+                            for ^$!rc2idx[$row] -> $col {
                                 $!marked[$row][$col] = ! $!marked[$row][$col];
                             }
                         }
                     }
                     else {
                         for $!row_top .. $!row_bottom -> $row {
-                            for 0 .. $!rc2idx[$row].end -> $col {
+                            for ^$!rc2idx[$row] -> $col {
                                 $!marked[$row][$col] = ! $!marked[$row][$col];
                             }
                         }
@@ -640,37 +634,32 @@ method !_mouse_xy2pos ( Int $abs_mouse_x, Int $abs_mouse_y ) {
     if $mouse_row > $!rc2idx.end {
         return;
     }
-    my Int $pad = $!rc2idx.end == 0 ?? %!o<pad-one-row> !! %!o<pad>;
     my Int $row = $mouse_row + $!row_top;
     my Int $matched_col;
-    my Int $end_last_col = 0;
-    COL: for 0 .. $!rc2idx[$row].end -> $col {
-        my Int $end_this_col;
-        if $!rc2idx.end == 0 {
-            $end_this_col = $end_last_col + print-columns( @!list[ $!rc2idx[$row][$col] ] ) + $pad;
-        }
-        else { #
-            $end_this_col = $end_last_col + $!col_w + $pad;
-        }
+    my Int $end_prev_col = 0;
+    COL: for ^$!rc2idx[$row] -> $col {
+        my Int $end_this_col = $end_prev_col
+                             + ( $!rc2idx.end == 0 ?? print-columns( @!list[$!rc2idx[0][$col]] ) !! $!col_w )
+                             + %!o<pad>;
         if $col == 0 {
-            $end_this_col -= $pad div 2;
+            $end_this_col -= %!o<pad> div 2;
         }
         if $col == $!rc2idx[$row].end && $end_this_col > $!avail_w {
             $end_this_col = $!avail_w;
         }
-        if $end_last_col < $mouse_col && $end_this_col >= $mouse_col {
+        if $end_prev_col < $mouse_col && $end_this_col >= $mouse_col {
             $matched_col = $col;
             last COL;
         }
-        $end_last_col = $end_this_col;
+        $end_prev_col = $end_this_col;
     }
     if ! $matched_col.defined {
         return;
     }
     if $row != $!p[R] || $matched_col != $!p[C] {
-        my Array $tmp = $!p; #
+        my Array $tmp_p = $!p; #
         $!p = [ $row, $matched_col ];
-        self!_wr_cell( $tmp[0], $tmp[1] );
+        self!_wr_cell( $tmp_p[0], $tmp_p[1] );
         self!_wr_cell( $!p[R] , $!p[C]  );
     }
     return 1;
@@ -695,19 +684,19 @@ method !_prepare_prompt {
 
 
 method !_set_default_cell {
-    my $tmp = [ 0, 0 ];
-    ROW: for 0 .. $!rc2idx.end -> $row {
-        COL: for 0 .. $!rc2idx[$row].end -> $col {
+    my $tmp_p = [ 0, 0 ];
+    ROW: for ^$!rc2idx -> $row {
+        COL: for ^$!rc2idx[$row] -> $col {
             if %!o<default> == $!rc2idx[$row][$col] {
-                $tmp = [ $row, $col ];
+                $tmp_p = [ $row, $col ];
                 last ROW;
             }
         }
     }
-    $!row_top    = $!avail_h * ( $tmp[R] div $!avail_h );
+    $!row_top    = $!avail_h * ( $tmp_p[R] div $!avail_h );
     $!row_bottom = $!row_top + $!avail_h - 1;
     $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
-    $!p = $tmp;
+    $!p = $tmp_p;
 }
 
 
@@ -789,7 +778,7 @@ method !_wr_screen {
         );
      }
     for $!row_top .. $!row_bottom -> $row {
-        for 0 .. $!rc2idx[$row].end -> $col {
+        for ^$!rc2idx[$row] -> $col {
             self!_wr_cell( $row, $col );
         }
     }
@@ -798,13 +787,13 @@ method !_wr_screen {
 
 method !_wr_cell ( Int $row, Int $col ) {
     my Bool $is_current_pos = $row == $!p[R] && $col == $!p[C];
-    my Int $idx = $!rc2idx[$row][$col];
+    my Int $i = $!rc2idx[$row][$col];
     if $!rc2idx.end == 0 && $!rc2idx[0].end > 0 {
         my Int $lngth = 0;
         if $col > 0 {
             for ^$col -> $cl {
                 $lngth += print-columns( @!list[ $!rc2idx[$row][$cl] ] );
-                $lngth += %!o<pad-one-row>;
+                $lngth += %!o<pad>;
             }
         }
         attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
@@ -812,7 +801,7 @@ method !_wr_cell ( Int $row, Int $col ) {
         mvaddstr(
             $row - $!row_top + $!nr_prompt_lines,
             $lngth,
-            @!list[$idx]
+            @!list[$i]
         );
     }
     else {
@@ -821,7 +810,7 @@ method !_wr_cell ( Int $row, Int $col ) {
         mvaddstr(
             $row - $!row_top + $!nr_prompt_lines,
             ( $!col_w + %!o<pad> ) * $col,
-            self!_pad_str_to_colwidth: $idx
+            self!_pad_str_to_colwidth: $i
         );
     }
     attroff( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
@@ -829,23 +818,23 @@ method !_wr_cell ( Int $row, Int $col ) {
 }
 
 
-method !_pad_str_to_colwidth ( Int $idx ) {
-    my Int $str_w = @!length[$idx];
+method !_pad_str_to_colwidth ( Int $i ) {
+    my Int $str_w = @!length[$i];
     if $str_w < $!col_w {
         if %!o<justify> == 0 {
-            return @!list[$idx] ~ " " x ( $!col_w - $str_w );
+            return @!list[$i] ~ " " x ( $!col_w - $str_w );
         }
         elsif %!o<justify> == 1 {
-            return " " x ( $!col_w - $str_w ) ~ @!list[$idx];
+            return " " x ( $!col_w - $str_w ) ~ @!list[$i];
         }
         elsif %!o<justify> == 2 {
             my Int $fill = $!col_w - $str_w;
             my Int $half_fill = $fill div 2;
-            return " " x $half_fill ~ @!list[$idx] ~ " " x ( $fill - $half_fill );
+            return " " x $half_fill ~ @!list[$i] ~ " " x ( $fill - $half_fill );
         }
     }
     else {
-        return @!list[$idx] ~ "";
+        return @!list[$i] ~ "";
     }
 }
 
@@ -857,9 +846,9 @@ method !_index2rowcol {
     }
     my Str $all_in_first_row;
     if $!layout == 0|1 {
-        for 0 .. @!list.end -> $idx {
-            $all_in_first_row ~= @!list[$idx];
-            $all_in_first_row ~= ' ' x %!o<pad-one-row> if $idx < @!list.end;
+        for ^@!list -> $i {
+            $all_in_first_row ~= @!list[$i];
+            $all_in_first_row ~= ' ' x %!o<pad> if $i < @!list.end;
             if print-columns( $all_in_first_row ) > $!avail_w {
                 $all_in_first_row = '';
                 last;
@@ -867,11 +856,11 @@ method !_index2rowcol {
         }
     }
     if $all_in_first_row {
-        $!rc2idx[0] = [ 0 .. @!list.end ];
+        $!rc2idx[0] = [ ^@!list ];
     }
     elsif $!layout == 2 {
-        for 0 .. @!list.end -> $idx {
-            $!rc2idx[$idx][0] = $idx;
+        for ^@!list -> $i {
+            $!rc2idx[$i][0] = $i;
         }
     }
     else {
@@ -932,33 +921,33 @@ method !_index2rowcol {
 
 method !_marked_idx2rc ( Array $indexes, Bool $yesno ) {
     if $!layout == 2 {
-        for $indexes.list -> $idx {
-            $!marked[$idx][0] = $yesno;
+        for $indexes.list -> $i {
+            $!marked[$i][0] = $yesno;
         }
         return;
     }
     my ( Int $row, Int $col );
     my Int $cols_per_row = $!rc2idx[0].elems;
     if %!o<order> == 0 {
-        for $indexes.list -> $idx {
-            $row = $idx div $cols_per_row;
-            $col = $idx % $cols_per_row;
+        for $indexes.list -> $i {
+            $row = $i div $cols_per_row;
+            $col = $i % $cols_per_row;
             $!marked[$row][$col] = $yesno;
         }
     }
     elsif %!o<order> == 1 {
         my Int $rows_per_col = $!rc2idx.elems;
         my Int $end_last_full_col = $rows_per_col * ( $!rest || $cols_per_row );
-        for $indexes.list -> $idx {
-            next if $idx > @!list.end; ###
-            if $idx <= $end_last_full_col {
-                $row = $idx % $rows_per_col;
-                $col = $idx div $rows_per_col;
+        for $indexes.list -> $i {
+            next if $i > @!list.end; ###
+            if $i <= $end_last_full_col {
+                $row = $i % $rows_per_col;
+                $col = $i div $rows_per_col;
             }
             else {
                 my Int $rows_per_col_short = $rows_per_col - 1;
-                $row = ( $idx - $end_last_full_col ) % $rows_per_col_short;
-                $col = ( $idx - $!rest ) div $rows_per_col_short;
+                $row = ( $i - $end_last_full_col ) % $rows_per_col_short;
+                $col = ( $i - $!rest ) div $rows_per_col_short;
             }
             $!marked[$row][$col] = $yesno;
         }
@@ -968,15 +957,15 @@ method !_marked_idx2rc ( Array $indexes, Bool $yesno ) {
 method !_marked_rc2idx {
     my Int @idx;
     if %!o<order> == 1 {
-        for 0 .. $!rc2idx[0].end -> $col {
-            for 0 .. $!rc2idx.end -> $row {
+        for ^$!rc2idx[0] -> $col {
+            for ^$!rc2idx -> $row {
                 @idx.push( $!rc2idx[$row][$col] ) if $!marked[$row][$col];
             }
         }
     }
     else {
-        for 0 .. $!rc2idx.end -> $row {
-            for 0 .. $!rc2idx[$row].end -> $col {
+        for ^$!rc2idx -> $row {
+            for ^$!rc2idx[$row] -> $col {
                 @idx.push( $!rc2idx[$row][$col] ) if $!marked[$row][$col];
             }
         }
@@ -994,7 +983,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.124
+Version 0.125
 
 =head1 SYNOPSIS
 
@@ -1334,12 +1323,6 @@ If the output has more than one row and more than one column:
 =head2 pad
 
 Sets the number of whitespaces between columns. (default: 2)
-
-Allowed values: 0 or greater
-
-=head2 pad-one-row
-
-Sets the number of whitespaces between elements if we have only one row. (default: value of the option I<pad>)
 
 Allowed values: 0 or greater
 
