@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tadzik/Getopt-Type.git
 	branch = master
-	commit = eeb2b2a409cfd8a85d2b46c01e9ac3d6b7063b64
-	parent = af4707c7186b7a3f04290c70f5e0bd032872e378
-	cmdver = 0.2.3
+	commit = 10d4d01a02540e0fdb8c965b671b5e64bac49afd
+	parent = 15d1cb82fb1371d9109f2d88aa0c775af1475636
+	cmdver = 0.4.0
