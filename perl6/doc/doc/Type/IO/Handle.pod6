@@ -19,26 +19,42 @@ L«C<Str.comb>|/type/Str» does, taking the same arguments, closing the handle
 when done if C<$close> is set to a true value. Implementations may
 slurp the file in its entirety when this method is called.
 
-=head2 method get
+=head2 routine get
 
-Reads a single line from the input stream (usually the Standard Input or a file).
+Defined as:
 
-Read one line from the standard input:
+    method get(IO::Handle:D: --> Str:D);
+    multi sub get (IO::Handle $fh = $*ARGFILES --> Str:D);
 
-=for code :skip-test
-$*IN.get;
+Reads a single line of input from the handle, removing the trailing newline
+characters (as set by L«C<.nl-in>|/routine/nl-in»)
+if the handle's C<.chomp> attribute is set to C<True>. Returns
+C<Nil>, if no more input as available. The subroutine form defaults to
+L«C<$*ARGFILES>|/language/variables#index-entry-%24%2AARGFILES» if no handle
+is given.
 
-Read one line from a file:
+=begin code :skip-test
+    $*IN.get.say;              # Read one line from the standard input
 
-=for code :skip-test
-my $fh = open 'filename';
-my $line = $fh.get;
+    my $fh = open 'filename';
+    $fh.get.say;               # Read one line from a file
+    $fh.close;
 
+    say get;                   # Read one line from $*ARGFILES
+=end code
 
 =head2 method getc
 
-Read a single character from the input stream or return Nil. The operation will block
-for at least one character to be available, but there are a few caveats for this:
+Defined as:
+
+    method getc(IO::Handle:D: --> Str:D);
+    multi sub getc (IO::Handle $fh = $*ARGFILES --> Str:D);
+
+Reads a single character from the input stream. The subroutine form defaults
+to L«C<$*ARGFILES>|/language/variables#index-entry-%24%2AARGFILES» if no handle
+is given. Returns C<Nil>, if no more input as available, otherwise operation
+will block, waiting for at least one character to be available; these caveats
+apply:
 
 =head3 Buffering terminals
 
@@ -49,7 +65,7 @@ even a single byte of data.
 
 =head3 Waiting for potential combiners
 
-If your handler's encoding allows combining characters to be read, perl6 will
+If your handle's encoding allows combining characters to be read, perl6 will
 wait for more data to be available before it provides a character. This means
 that inputting an "e" followed by a combining acute will give you an e with an
 acute rather than giving an "e" and letting the next reading function give you
@@ -69,6 +85,21 @@ I<write to> and instead close them yourself. Programs that open a lot of files
 should close the handles explicitly as well, regardless of whether they were
 open for writing, since too many files might get opened before garbage
 collection happens and the no longer used handles get closed.
+
+=head method gist
+
+Defined as:
+
+    method gist(IO::Handle:D: --> Str:D)
+
+Returns a string containing information which
+L«C<.path>|/type/IO::Handle#method_path», if any, the handle is created for
+and whether it is L«C<.opened>|/type/IO::Handle#method_opened».
+
+=begin code :skip-test
+    say IO::Handle.new; # IO::Handle<(Any)>(closed)
+    say "foo".IO.open;  # IO::Handle<"foo".IO>(opened)
+=end code
 
 =head2 method eof
 
@@ -499,21 +530,44 @@ This returns a value that the operating system would understand as a "file descr
 is suitable for passing to a native function that requires a file descriptor as an
 argument such as C<fcntl> or C<ioctl>.
 
+=head2 method .nl-in
+
+Defined as:
+
+    method nl-in(--> Proxy:D) is rw
+
+One of the attributes that can be set via C<.new>.
+Defaults to C<["\x0A", "\r\n"]>
+Takes either a L<Str> or L<Array> of C<Str> specifying line ending(s) for this
+handle. If C<.chomp> attribute is set to C<True>, will strip these endings
+in routines that C<chomp>, such as L«C<get>|/routine/get» and
+L«C<lines>|/routine/lines».
+
+=begin code :skip-test
+    with 'test'.IO {
+        .spurt: '1foo2bar3foo'; # write some data into our test file
+        my $fh will leave {.close} = .open; # can also set .nl-in via .open arg
+        $fh.nl-in = [<foo bar>]; # set two possible line endings to use;
+        $fh.lines.say; # OUTPUT: ("1", "2", "3").Seq
+    }
+=end code
+
 =head2 method opened
 
 Defined as:
 
-    method opened(IO::Handle:D: --> Bool)
+    method opened(IO::Handle:D: --> Bool:D)
 
-Returns C<True> if the handle is open.
+Returns C<True> if the handle is open, C<False> otherwise.
 
 =head2 method t
 
 Defined as:
 
-    method t(IO::Handle:D: --> Bool)
+    method t(IO::Handle:D: --> Bool:D)
 
-Returns C<True> if the handle is opened to a tty.
+Returns C<True> if the handle is opened to a
+L<TTY|https://en.wikipedia.org/wiki/Terminal_emulator>, C<False> otherwise.
 
 =head1 Related roles and classes
 

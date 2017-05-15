@@ -289,6 +289,21 @@ values the return values of the methods with the same names.
     say IO::Path.new("/etc/passwd").parts.perl;
     # OUTPUT: «{:basename("passwd"), :directory("/etc"), :dirname("/etc"), :volume("")}␤»
 
+=head method gist
+
+Defined as:
+
+    method gist(IO::Path:D: --> Str:D)
+
+Returns a string, part of which contains either the value of
+L«C<.absolute>|/type/IO::Path#method_absolute» (if path is absolute) or
+L«C<.path>|/type/IO::Path#attribute_path». Note that no escaping
+of special characters is made, so e.g. C<"\b"> means a path contains a backslash
+and letter "b", not a backspace.
+
+    say "foo/bar".IO;                       # OUTPUT: «"foo/bar".IO␤»
+    say IO::Path::Win32.new: ｢C:\foo/bar\｣; # OUTPUT: «"C:\foo/bar\".IO␤»
+
 =head2 method Str
 
 Defined as:
@@ -301,6 +316,18 @@ L«C<$.CWD> attribute|type/IO::Path#attribute_CWD». To stringify while
 retaining full path information use L«C<.absolute>|/routine/absolute» or
 L«C<.relative>|/routine/relative» methods.
 
+=head2 method succ
+
+Defined as:
+
+    method succ(IO::Path:D: --> IO::Path:D)
+
+Returns a new L<IO::Path> constructed from the invocant, with
+L«C<.basename>|/routine/basename» changed by calling
+L«C<Str.succ>|/type/Str#method_succ» on it.
+
+    "foo/file02.txt".IO.succ.say; # OUTPUT: «"foo/file03.txt".IO␤»
+
 =head2 method open
 
 Defined as:
@@ -309,6 +336,18 @@ Defined as:
 
 Opens the path as a file; the named options control the mode, and are the
 same as the L<open> function accepts.
+
+=head2 method pred
+
+Defined as:
+
+    method pred(IO::Path:D: --> IO::Path:D)
+
+Returns a new L<IO::Path> constructed from the invocant, with
+L«C<.basename>|/routine/basename» changed by calling
+L«C<Str.pred>|/type/Str#method_pred» on it.
+
+    "foo/file02.txt".IO.pred.say; # OUTPUT: «"foo/file01.txt".IO␤»
 
 =head2 method watch
 
@@ -327,6 +366,17 @@ Defined as:
 
 Returns C<True> if the path is an absolute path, and C<False> otherwise.
 
+    "/foo".IO.is-absolute.say; # OUTPUT: «True␤»
+    "bars".IO.is-absolute.say; # OUTPUT: «False␤»
+
+Note that on Windows a path that starts with a slash or backslash is still
+considered absolute even if no volume was given, as it is absolute for that
+particular volume:
+
+    IO::Path::Win32.new("/foo"  ).is-absolute.say; # OUTPUT: «True␤»
+    IO::Path::Win32.new("C:/foo").is-absolute.say; # OUTPUT: «True␤»
+    IO::Path::Win32.new("C:foo" ).is-absolute.say; # OUTPUT: «False␤»
+
 =head2 method is-relative
 
 Defined as:
@@ -334,6 +384,8 @@ Defined as:
     method is-relative(IO::Path:D: --> Bool)
 
 Returns C<True> if the path is a relative path, and C<False> otherwise.
+Windows caveats for L«C<.is-absolute>|/type/IO::Path#method_is-absolute»
+apply.
 
 =head2 method absolute
 
@@ -465,6 +517,9 @@ Defined as:
 
 Returns C<True> if the invocant is a path that exists.
 
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
+
 =head2 method d
 
 Defined as:
@@ -475,6 +530,9 @@ Returns C<True> if the invocant is a path that exists and is a directory.
 The method will L«C<fail>|/routine/fail» with C<X::IO::DoesNotExist> if the
 path points to a non-existent filesystem entity.
 
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
+
 =head2 method f
 
 Defined as:
@@ -484,6 +542,9 @@ Defined as:
 Returns C<True> if the invocant is a path that exists and is a file.
 The method will L«C<fail>|/routine/fail» with C<X::IO::DoesNotExist> if the
 path points to a non-existent filesystem entity.
+
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
 
 =head2 method s
 
@@ -496,6 +557,9 @@ which case the reported size is dependent on the operating system.
 The method will L«C<fail>|/routine/fail» with C<X::IO::DoesNotExist> if the
 path points to a non-existent filesystem entity.
 
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
+
 =head2 method l
 
 Defined as:
@@ -505,6 +569,9 @@ Defined as:
 Returns C<True> if the invocant is a path that exists and is a symlink.
 The method will L«C<fail>|/routine/fail» with C<X::IO::DoesNotExist> if the
 path points to a non-existent filesystem entity.
+
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
 
 =head2 method r
 
@@ -516,6 +583,9 @@ Returns C<True> if the invocant is a path that exists and is accessible.
 The method will L«C<fail>|/routine/fail» with C<X::IO::DoesNotExist> if the
 path points to a non-existent filesystem entity.
 
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
+
 =head2 method w
 
 Defined as:
@@ -525,6 +595,9 @@ Defined as:
 Returns C<True> if the invocant is a path that exists and is writable.
 The method will L«C<fail>|/routine/fail» with C<X::IO::DoesNotExist> if the
 path points to a non-existent filesystem entity.
+
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
 
 =head2 method rw
 
@@ -536,6 +609,9 @@ Returns C<True> if the invocant is a path that exists and is readable and
 writable. The method will L«C<fail>|/routine/fail» with C<X::IO::DoesNotExist>
 if the path points to a non-existent filesystem entity.
 
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
+
 =head2 method x
 
 Defined as:
@@ -546,6 +622,9 @@ Returns C<True> if the invocant is a path that exists and is executable.
 The method will L«C<fail>|/routine/fail» with C<X::IO::DoesNotExist> if the
 path points to a non-existent filesystem entity.
 
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
+
 =head2 method rwx
 
 Defined as:
@@ -555,6 +634,9 @@ Defined as:
 Returns C<True> if the invocant is a path that exists and is executable,
 readable, and writable. The method will L«C<fail>|/routine/fail» with
 C<X::IO::DoesNotExist> if the path points to a non-existent filesystem entity.
+
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
 
 =head2 method z
 
@@ -568,6 +650,9 @@ which case the reported file size (and thus the result of this method)
 is dependent on the operating system. The method will L«C<fail>|/routine/fail»
 with C<X::IO::DoesNotExist> if the path points to a non-existent filesystem
 entity.
+
+TIP: use L«smartmatch with Pairs|/type/Pair#method_ACCEPTS» to perform multiple
+file tests.
 
 =head2 method sibling
 
@@ -748,6 +833,24 @@ such as when C<$to> and C<$from> are the same file.
 To avoid copying, you can use L«C<rename>|/routine/rename», if the files are on
 the same storage device. It also works with directories, while C<move> does not.
 
+=head2 method Numeric
+
+Defined as:
+
+    method Numeric(IO::Path:D: --> Numeric:D)
+
+Coerces L«C<.basename>|/routine/basename» to L<Numeric>. L<Fails|/routine/fail>
+with C<X::Str::Numeric> if base name is not numerical.
+
+=head2 method Int
+
+Defined as:
+
+    method Int(IO::Path:D: --> Int:D)
+
+Coerces L«C<.basename>|/routine/basename» to L<Int>. L<Fails|/routine/fail>
+with C<X::Str::Numeric> if base name is not numerical.
+
 =head2 routine symlink
 
 Defined as:
@@ -810,56 +913,6 @@ creation time.
     my $io = IO::Path.new("/bin/bash");
     say $io.SPEC;                            # OUTPUT: «(Unix)␤»
     say $io.SPEC.dir-sep;                    # OUTPUT: «/␤»
-
-=head1 File test operators
-
-X<|:e> X<|:d> X<|:f> X<|:l> X<|:r> X<|:w> X<|:x> X<|:s> X<|:z> X<|:rw> X<|:rwx>
-
-=begin table
-    op       meaning
-    ==       ======
-    :e       Exists
-    :d       Directory
-    :f       File
-    :l       Symbolic link
-    :r       Readable
-    :w       Writable
-    :x       Executable
-    :s       Size
-    :z       Zero size
-    :rw      Readable and writable
-    :rwx     Readable, writable, and executable
-
-=end table
-
-Usage:
-
-If you have a string - a path to something in the filesystem:
-
-    if "path/to/directory".IO ~~ :e & :d {
-        say 'path exists and points to a directory';
-    }
-
-    my $file = "path/to/file";
-    if $file.IO ~~ :e {
-        say 'file exists';
-    }
-
-Instead of the colonpair syntax, you can use method calls too:
-
-    if 'path/to/file'.IO.e {
-        say 'file exists';
-    }
-
-If you already have an IO object in C<$file>, either by creating one yourself,
-or by getting it from another subroutine, such as C<dir>,
-you can write this:
-
-    my $path = "path/to/file".IO;
-    given $path {
-        when :f { say 'path is a file' }
-        when :d { say 'path is a directory' }
-    }
 
 =head1 File timestamp retrieval
 
