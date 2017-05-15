@@ -1,6 +1,7 @@
 {
-    "perl"        : "6.*",
+    "perl"        : "6.c",
     "name"        : "ClassX::StrictConstructor",
+    "license"     : "MIT",
     "version"     : "0.1",
     "description" : "Make your object constructors blow up on unknown attributes",
     "provides": {
