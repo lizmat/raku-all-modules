@@ -16,7 +16,11 @@
   },
   "resources" : [ ],
   "source-url" : "git://github.com/kuerbis/Term-TablePrint-p6.git",
-  "tags" : [ ],
+  "tags" : [
+    "terminal",
+    "table",
+    "text"
+  ],
   "test-depends" : [
     "Test"
   ],

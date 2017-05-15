@@ -1,7 +1,7 @@
 use v6;
 unit class Term::TablePrint;
 
-my $VERSION = '0.021';
+my $VERSION = '0.022';
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::NCurses;
@@ -102,7 +102,7 @@ method !_choose_cols_with_order ( @avail_cols ) {
     my Str @pre = ( $ok );
     my @col_idxs;
     my $tc = Term::Choose.new(
-        :defautls( { lf => [ 0, $subseq_tab ], no-spacebar => [ 0 .. @pre.end ], mouse => %!o<mouse> } ),
+        :defautls( { lf => [ 0, $subseq_tab ], no-spacebar => [ ^@pre ], mouse => %!o<mouse> } ),
         :win( $!win_local )
     );
 
@@ -145,7 +145,7 @@ method !_choose_cols_simple ( @avail_cols ) {
     my @choices = |@pre, |@avail_cols;
     my Int @idx = $tc.choose-multi(
         @choices,
-        { prompt => 'Choose: ', no-spacebar => [ 0 .. @pre.end ], index => 1 }
+        { prompt => 'Choose: ', no-spacebar => [ ^@pre ], index => 1 }
     );
     if ! @idx[0].defined { ##
         return;
@@ -164,7 +164,7 @@ method !_init_term {
     else {
         my int32 constant LC_ALL = 6;
         setlocale( LC_ALL, "" );
-        $!win_local = initscr;
+        $!win_local = initscr() or die "Failed to initialize ncurses\n"; #
     }
 }
 
@@ -397,8 +397,9 @@ method !_calc_col_width {
        $!table[0][$col] = _sanitized_string( ( $!table[0][$col] // %!o<undef> ).gist );
        @!heads_w[$col] = print-columns( $!table[0][$col] );
     }
-    my Str $undef = _sanitized_string( %!o<undef>.gist );
-    my Int $undef_w = print-columns( $undef );
+    my Bool $undef_n = %!o<undef> !~~ Numeric;
+    my Str $undef    = _sanitized_string( %!o<undef>.gist );
+    my Int $undef_w  = print-columns( $undef );
     my Int $step;
     if $!show_progress >= 2 {
         $!bar_w = getmaxx( $!win_local ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
@@ -410,7 +411,7 @@ method !_calc_col_width {
         $threads = $threads div 2;
     }
     my $size = $!table.elems div $threads;
-    my @portions = ( 0..^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
+    my @portions = ( ^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
     @portions[0][0] = 1;
     @portions[@portions.end][1] = $!table.elems;
     my $lock = Lock.new();
@@ -418,18 +419,19 @@ method !_calc_col_width {
     my Int $count = 0;
     for @portions -> $range {
         @promise.push: start {
-            do for $range[0]..^$range[1] -> $row {
+            do for $range[0] ..^ $range[1] -> $row {
                 if $step {
                     $lock.protect( { ++$count } );
                     self!_progressbar_update( $count ) if $count %% $step;
                 }
                 do for @col_idx -> $col {
                     if ! $!table[$row][$col].defined {
-                        $row, $col, $undef, $undef_w, $undef !~~ Numeric;
+                        $row, $col, $undef, $undef_w, $undef_n;
                     }
                     else {
+                        my $nan := $!table[$row][$col] !~~ Numeric;
                         my $str := _sanitized_string( $!table[$row][$col].gist );
-                        $row, $col, $str, print-columns( $str ), $str !~~ Numeric;
+                        $row, $col, $str, print-columns( $str ), $nan;
                     }
                 }
             }
@@ -460,7 +462,7 @@ method !_calc_avail_width ( Int $term_w ) {
     if $sum < $avail_w {
         HEAD: loop {
             my Int $count = 0;
-            for 0 .. @!heads_w.end -> $i {
+            for ^@!heads_w -> $i {
                 if @!heads_w[$i] > @!new_cols_w[$i] {
                     ++@!new_cols_w[$i];
                     ++$count;
@@ -496,7 +498,7 @@ method !_calc_avail_width ( Int $term_w ) {
         MIN: while $sum > $avail_w {
             ++$percent;
             my Int $count = 0;
-            for 0 .. @tmp_cols_w.end -> $i {
+            for ^@tmp_cols_w -> $i {
                 if $mininum_w >= @tmp_cols_w[$i] {
                     next;
                 }
@@ -517,7 +519,7 @@ method !_calc_avail_width ( Int $term_w ) {
 
             REST: loop {
                 my $count = 0;
-                for 0 .. @tmp_cols_w.end -> $i {
+                for ^@tmp_cols_w -> $i {
                     if @tmp_cols_w[$i] < @!new_cols_w[$i] {
                         @tmp_cols_w[$i]++;
                         $rest--;
@@ -560,13 +562,13 @@ method !_cols_to_avail_width {
         $threads = $threads div 2;
     }
     my $size = $!table.elems div $threads;
-    my @portions = ( 0..^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
+    my @portions = ( ^$threads ).map: { [ $size * $_, $size * ( $_ + 1 ) ] };
     @portions[@portions.end][1] = $!table.elems;
     my $lock = Lock.new();
     my @promise;
     for @portions -> $range {
         @promise.push: start {
-            do for $range[0]..^$range[1] -> $row {
+            do for $range[0] ..^ $range[1] -> $row {
                 my Str $str = '';
                 for @col_idx -> $col {
                     $str ~= unicode-sprintf( $!table[$row][$col], @!new_cols_w[$col], ! @!not_a_number[$col] );
@@ -601,7 +603,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
 =head1 VERSION
 
-Version 0.021
+Version 0.022
 
 =head1 SYNOPSIS
 
