@@ -1,0 +1,34 @@
+{
+    "perl": "6",
+    "name": "MPD::Client",
+    "version": "0.1.0",
+    "auth": "github:scriptkitties",
+    "description": "Perl 6 module for interfacing with MPD",
+    "license": "GPL-3.0",
+    "depends": [
+    ],
+    "provides": {
+        "MPD::Client": "lib/MPD/Client.pm6",
+        "MPD::Client::Exceptions::ArgumentException": "lib/MPD/Client/Exceptions/ArgumentException.pm6",
+        "MPD::Client::Exceptions::SocketException": "lib/MPD/Client/Exceptions/SocketException.pm6",
+        "MPD::Client::Control": "lib/MPD/Client/Control.pm6",
+        "MPD::Client::Playback": "lib/MPD/Client/Playback.pm6",
+        "MPD::Client::Status": "lib/MPD/Client/Status.pm6",
+        "MPD::Client::Util": "lib/MPD/Client/Util.pm6"
+    },
+    "authors": [
+        "Patrick Spek <p.spek@tyil.work>"
+    ],
+    "tags": [
+        "mpd",
+        "musicpd",
+        "mpc",
+        "musicpc",
+        "music"
+    ],
+    "test-depends": [
+        "File::Temp",
+        "Test::META"
+    ],
+    "source-url": "https://github.com/scriptkitties/p6-mpd-client.git"
+}
