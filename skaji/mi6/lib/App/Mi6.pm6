@@ -5,7 +5,7 @@ use File::Find;
 use Shell::Command;
 use CPAN::Uploader::Tiny;
 
-unit class App::Mi6:ver<0.0.1>;
+unit class App::Mi6:ver<0.0.2>;
 
 has $!author = qx{git config --global user.name}.chomp;
 has $!email  = qx{git config --global user.email}.chomp;
@@ -102,9 +102,12 @@ multi method cmd('upload') {
     my @line = $proc.out.lines;
     if @line.elems != 0 {
         note "You need to commit the following files before uploading $tarball";
-        note "-> $_" for @line;
+        note "";
+        note " * $_" for @line.map({s/\s*\S+\s+//; $_});
+        note "";
         note "If you want to ignore these files, then list them in .gitignore or MANIFEST.SKIP";
-        die "\n";
+        note "";
+        die;
     }
     my $config = $*HOME.add: ".pause";
     die "To upload tarball to CPAN, you need to prepare $config first\n" unless $config.IO.e;
@@ -116,7 +119,7 @@ multi method cmd('upload') {
         $*OUT.print("Abort.\n");
         return;
     }
-    $client.upload($tarball);
+    $client.upload($tarball, subdirectory => "Perl6");
     say "Successfully uploaded $tarball to CPAN.";
 }
 
@@ -295,7 +298,7 @@ sub make-dist-tarball($main-module) {
     $proc = run "tar", "czf", "$name.tar.gz", $name, :out, :err, :%env;
     if $proc.exitcode != 0 {
         my $exitcode = $proc.exitcode;
-        my $err = $proc.err.slurp;
+        my $err = $proc.err.slurp-rest;
         die $err ?? $err !! "can't create tarball, exitcode = $exitcode";
     }
     return "$name.tar.gz";
