@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.125';
+my $VERSION = '0.126';
 
 use Term::Choose::NCurses;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
@@ -100,6 +100,7 @@ sub _valid_options {
         max-width       => '<[ 2 .. 9 ]><[ 0 .. 9 ]>*',
         default         => '<[ 0 .. 9 ]>+',
         pad             => '<[ 0 .. 9 ]>+',
+        pad-one-row     => '<[ 0 .. 9 ]>+',
         lf              => 'Array',
         mark            => 'Array',
         no-spacebar     => 'Array',
@@ -263,6 +264,9 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
     }
     if ! %!o<prompt>.defined {
         %!o<prompt> = $multiselect.defined ?? 'Your choice' !! 'Continue with ENTER';
+    }
+    if ! %!o<pad-one-row>.defined {
+        %!o<pad-one-row> = %!o<pad>;
     }
     self!_init_term;
     self!_wr_first_screen;
@@ -634,15 +638,16 @@ method !_mouse_xy2pos ( Int $abs_mouse_x, Int $abs_mouse_y ) {
     if $mouse_row > $!rc2idx.end {
         return;
     }
+    my Int $pad = $!rc2idx.end == 0 ?? %!o<pad-one-row> !! %!o<pad>;
     my Int $row = $mouse_row + $!row_top;
     my Int $matched_col;
     my Int $end_prev_col = 0;
     COL: for ^$!rc2idx[$row] -> $col {
         my Int $end_this_col = $end_prev_col
                              + ( $!rc2idx.end == 0 ?? print-columns( @!list[$!rc2idx[0][$col]] ) !! $!col_w )
-                             + %!o<pad>;
+                             + $pad;
         if $col == 0 {
-            $end_this_col -= %!o<pad> div 2;
+            $end_this_col -= $pad div 2;
         }
         if $col == $!rc2idx[$row].end && $end_this_col > $!avail_w {
             $end_this_col = $!avail_w;
@@ -793,7 +798,7 @@ method !_wr_cell ( Int $row, Int $col ) {
         if $col > 0 {
             for ^$col -> $cl {
                 $lngth += print-columns( @!list[ $!rc2idx[$row][$cl] ] );
-                $lngth += %!o<pad>;
+                $lngth += %!o<pad-one-row>;
             }
         }
         attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
@@ -848,7 +853,7 @@ method !_index2rowcol {
     if $!layout == 0|1 {
         for ^@!list -> $i {
             $all_in_first_row ~= @!list[$i];
-            $all_in_first_row ~= ' ' x %!o<pad> if $i < @!list.end;
+            $all_in_first_row ~= ' ' x %!o<pad-one-row> if $i < @!list.end;
             if print-columns( $all_in_first_row ) > $!avail_w {
                 $all_in_first_row = '';
                 last;
@@ -983,7 +988,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.125
+Version 0.126
 
 =head1 SYNOPSIS
 
@@ -1323,6 +1328,13 @@ If the output has more than one row and more than one column:
 =head2 pad
 
 Sets the number of whitespaces between columns. (default: 2)
+
+Allowed values: 0 or greater
+
+=head2 pad-one-row
+
+Sets the number of whitespaces between elements: I<pad-one-row> is used instead of I<pad>, if all items separated
+with I<pad-one-row> fit in one row. (default: value of the option I<pad>)
 
 Allowed values: 0 or greater
 

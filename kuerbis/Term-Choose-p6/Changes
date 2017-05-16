@@ -1,6 +1,9 @@
 Revision history for Term::Choose
 
 
+0.126   2017-05-15
+        - Added option pad_one_row
+
 0.125   2017-05-14
         - Removed option pad_one_row
         - Code refactoring

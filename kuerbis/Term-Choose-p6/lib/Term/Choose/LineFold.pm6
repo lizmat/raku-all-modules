@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose::LineFold;
 
-my $VERSION = '0.125';
+my $VERSION = '0.126';
 
 use Terminal::WCWidth;
 
