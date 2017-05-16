@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/CurtTilmes/perl6-libyaml.git
+	branch = master
+	commit = 7e7ffd2e1f998d4deab67599b3928b25786064c2
+	parent = a6999e1e2faa8da2bfaa729b7c0e981da10ed652
+	cmdver = 0.4.0
