@@ -42,15 +42,25 @@ class IsEqv does Testo::Test {
 }
 
 class IsRun does Testo::Test {
-  # Str() $program, $desc,
-  # Stringy :$in, :@args, :$out, :$err, :$status
-    # @!tests.push: my $test := Testo::Test::IsRun.new:
-    #     :$program, :$desc, :$in, :@args, :$out, :$err, :$status;
-    # $!out.put: $test.result
+    has Str:D $.program is required;
+    has Stringy $.in;
+    has @.args where .all ~~ Cool;
+    has $.out;
+    has $.err;
+    has $.status;
+
     submethod TWEAK {
         $!desc //= "NYI"
     }
     method !test {
-        False
+        with run :in, :out, :err, $!program, |@!args {
+            $!in ~~ Blob ?? .in.write: $!in !! .in.print: $!in if $!in;
+            $ = .in.close;
+            my $out    = .out.slurp-rest: :close;
+            my $err    = .err.slurp-rest: :close;
+            my $status = .exitcode;
+        }
+        note "***** is-run is NYI yet! *****";
+        True
     }
 }
