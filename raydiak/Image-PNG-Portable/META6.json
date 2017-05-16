@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Image::PNG::Portable",
+    "license" : "Artistic-2.0",
     "version" : "*",
     "description" : "Portable PNG output for Perl 6",
     "author" : "raydiak",
