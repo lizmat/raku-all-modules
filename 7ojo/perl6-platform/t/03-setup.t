@@ -13,7 +13,7 @@ if not AUTHOR {
      exit;
 }
 
-my $tmpdir = '.tmp/test-platform-03-setup'.IO.abspath;
+my $tmpdir = '.tmp/test-platform-03-setup'.IO.absolute;
 run <rm -rf>, $tmpdir if $tmpdir.IO.e;
 mkdir $tmpdir;
 

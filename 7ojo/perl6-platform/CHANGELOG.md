@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - examples/openldap to use openldap on your environments
 
 ### Fixed
+- Rakudo 2017.04 and up compliance abspath -> absolute
 - Usage of ~ on project folder
 - Misc output cleanups 
 

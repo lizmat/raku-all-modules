@@ -13,7 +13,7 @@ class Platform::Environment {
     submethod TWEAK {
         my $config = load-yaml $!environment.IO.slurp;
         for $config.Hash.kv -> $project, $data {
-            my $project-path = $project ~~ / ^ \/ / ?? $project !! "{self.environment.IO.dirname}/{$project}".IO.abspath;
+            my $project-path = $project ~~ / ^ \/ / ?? $project !! "{self.environment.IO.dirname}/{$project}".IO.absolute;
             if $data ~~ Bool and $data {
                 @!projects.push: Platform::Project.new(:domain($!domain), :data-path($!data-path), :project($project-path));
             } elsif $data ~~ Hash {

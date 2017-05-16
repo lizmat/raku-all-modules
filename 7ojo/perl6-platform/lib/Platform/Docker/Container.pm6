@@ -17,7 +17,7 @@ class Platform::Docker::Container is Platform::Container {
             "$!dockerfile-loc/Dockerfile".IO.slurp ~~ / ^ FROM \s .* alpine / 
             ) ?? 'alpine' !! 'debian';
         $!shell = $!variant eq 'alpine' ?? 'ash' !! 'bash';
-        @!volumes = map { '--volume ' ~ self.projectdir.IO.abspath ~ '/' ~ $_ }, self.config-data<volumes>.Array if self.config-data<volumes>;
+        @!volumes = map { '--volume ' ~ self.projectdir.IO.absolute ~ '/' ~ $_ }, self.config-data<volumes>.Array if self.config-data<volumes>;
         self.hostname = self.name ~ '.' ~ self.domain;
     }
 
