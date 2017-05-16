@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Git::PurePerl",
+    "license" : "Artistic-2.0",
     "version" : "*",
     "description" : "A Pureish Perl 6 interface to Git repositories",
     "author" : "raydiak",
