@@ -281,15 +281,33 @@ the empty string.
 
 Defined as:
 
-    method parts(IO::Path:D: --> Hash)
+    method parts(IO::Path:D: --> Map:D)
 
-Returns a hash with the keys C<dirname>, C<path> and C<volume>, and as
-values the return values of the methods with the same names.
+Returns a L<Map> with the keys C<volume>, C<dirname>, C<basename> whose values
+are the same as available via methods L«C<.volume>|/routine/volume»,
+L«C<.dirname>|/routine/dirname», and L«C<.basename>|/routine/basename»
+respectively.
 
-    say IO::Path.new("/etc/passwd").parts.perl;
-    # OUTPUT: «{:basename("passwd"), :directory("/etc"), :dirname("/etc"), :volume("")}␤»
+    say IO::Path::Win32.new("C:/rakudo/perl6.bat").parts.perl;
+    # OUTPUT: «Map.new((:basename("perl6.bat"),:dirname("/rakudo"),:volume("C:")))␤»
 
-=head method gist
+=head2 method perl
+
+Defined as:
+
+    method perl(IO::Path:D: --> Str:D)
+
+Returns a string that, when given passed through L«C<EVAL>|/routine/EVAL»
+gives the original invocant back.
+
+    "foo/bar".IO.perl.say;
+    # OUTPUT: IO::Path.new("foo/bar", :SPEC(IO::Spec::Unix), :CWD("/home/camelia"))
+
+Note that this string includes the value of the C<.CWD> attribute that is set
+to L«C<$*CWD>|/language/variables#index-entry-%24%2ACWD» when the path
+object was created, by default.
+
+=head2 method gist
 
 Defined as:
 
@@ -414,12 +432,19 @@ attribute the object was created with, and then is made relative to C<$base>.
 
 Defined as:
 
-    method parent(IO::Path:D: --> IO::Path)
+    method parent(IO::Path:D: --> IO::Path:D)
 
-Removes the last portion of the path and returns the result as a new C<IO::Path>.
+Returns the parent path of the invocant. Note that no file system access
+is made, so the returned parent parent is physical and not the logical parent of
+symlinked directories.
 
-    my $io = IO::Path.new( "/etc/passwd" );
-    say $io.parent;                          # OUTPUT: «"/etc".IO␤»
+    '/etc/foo'.IO.parent.say; # OUTPUT: «"/etc".IO␤»
+    '/etc/..' .IO.parent.say; # OUTPUT: «"/etc".IO␤»
+    '/etc/../'.IO.parent.say; # OUTPUT: «"/etc".IO␤»
+    './'      .IO.parent.say; # OUTPUT: «"..".IO␤»
+    'foo'     .IO.parent.say; # OUTPUT: «".".IO␤»
+    '/'       .IO.parent.say; # OUTPUT: «"/".IO␤»
+    IO::Path::Win32.new('C:/').parent.say; # OUTPUT: «"C:/".IO␤»
 
 =head2 method resolve
 

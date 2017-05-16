@@ -123,13 +123,27 @@ Defined as:
     method is-absolute(Str:D $path --> Bool:D)
 
 Returns C<True> if the C<$path> starts with a slash (C<"/">) or backslash
-(C<"\">), even if they have combining character on them, optionally preceeded by
+(C<"\">), even if they have combining character on them, optionally preceded by
 a volume:
 
     say IO::Spec::Win32.is-absolute: "/foo";        # OUTPUT: «True␤»
     say IO::Spec::Win32.is-absolute: "/\x[308]foo"; # OUTPUT: «True␤»
     say IO::Spec::Win32.is-absolute: ｢C:\foo｣;      # OUTPUT: «True␤»
     say IO::Spec::Win32.is-absolute: "bar";         # OUTPUT: «False␤»
+
+=head2 method path
+
+Defined as:
+
+    method path(--> Seq:D)
+
+Splits the value of C«%*ENV<PATH>» (or C«%*ENV<Path>» if the former is not set)
+on semicolons (C<";">) and returns a L<Seq> with each of the resultant
+parts, always adding element C<"."> to the head. Removes all double
+quotes (C<">) it finds.
+
+    %*ENV<PATH> = 'foo;"bar"/"ber"';
+    IO::Spec::Win32.path.perl.say; # OUTPUT: «(".", "foo", "bar/ber").Seq␤»
 
 =head2 method tmpdir
 
