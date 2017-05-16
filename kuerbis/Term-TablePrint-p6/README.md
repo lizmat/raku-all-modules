@@ -8,7 +8,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 VERSION
 =======
 
-Version 0.022
+Version 0.024
 
 SYNOPSIS
 ========
@@ -96,6 +96,21 @@ If the width of the window is changed and the option *table-expand* is enabled, 
 
 If the option *choose-columns* is enabled, the `SpaceBar` key (or the right mouse key) can be used to select columns - see option [/choose-columns](/choose-columns).
 
+EXAMPLE
+=======
+
+        use DBIish;
+        use Term::TablePrint :print-table;
+
+        my $dbh = DBIish.connect( "SQLite", :database<my_db.sqlite> );
+        my $sth = $dbh.prepare( "SELECT * FROM my_table" );
+        $sth.execute();
+        my @rows = $sth.allrows();
+        @rows.unshift: $sth.column-names;
+        $dbh.dispose;
+
+        print-table( @rows );
+
 CONSTRUCTOR
 ===========
 
@@ -154,11 +169,48 @@ format
 
 If *format* is set to 0, the table header is shown on top of the first page.
 
+        .----------------------------.    .----------------------------.    .----------------------------.
+        |col1   col2     col3   col3 |    |.....  .......  .....  .....|    |.....  .......  .....  .....|
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |.....  .......  .....  .....|
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+        | 1/3                        |    | 2/3                        |    | 3/3                        |
+        '----------------------------'    '----------------------------'    '----------------------------'
+
 If *format* is set to 1, the table header is shown on top of each page.
+
+        .----------------------------.    .----------------------------.    .----------------------------.
+        |col1   col2     col3   col3 |    |col1   col2     col3   col4 |    |col1   col2     col3   col4 |
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |.....  .......  .....  .....|
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |.....  .......  .....  .....|
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |.....  .......  .....  .....|
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+        |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+        | 1/3                        |    | 2/3                        |    | 3/3                        |
+        '----------------------------'    '----------------------------'    '----------------------------'
 
 If *format* is set to 2, the table header is shown on top of each page and lines separate the columns from each other and the header from the body.
 
-Default: 1;
+        .----------------------------.    .----------------------------.    .----------------------------.
+        |col1 | col2   | col3 | col3 |    |col1 | col2   | col3 | col4 |    |col1 | col2   | col3 | col4 |
+        |-----|--------|------|------|    |-----|--------|------|------|    |-----|--------|------|------|
+        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |                            |
+        | 1/3                        |    | 2/3                        |    | 3/3                        |
+        '----------------------------'    '----------------------------'    '----------------------------'
+
+Default: 2;
 
 max-rows
 --------
@@ -190,7 +242,7 @@ progress-bar
 
 Set the progress bar threshold. If the number of fields (rows x columns) is higher than the threshold, a progress bar is shown while preparing the data for the output.
 
-Default: 1_000
+Default: 10_000
 
 tab-width
 ---------
@@ -203,6 +255,19 @@ table-expand
 ------------
 
 If the option *table-expand* is set to `1` or `2` and `Return` is pressed, the selected table row is printed with each column in its own line. Exception: if *table-expand* is set to `1` and the cursor auto-jumped to the first row, the first row will not be expanded.
+
+        .----------------------------.        .----------------------------.
+        |col1 | col2   | col3 | col3 |        |                            |
+        |-----|--------|------|------|        |col1 : ..........           |
+        |.... | ...... | .... | .... |        |                            |
+        |.... | ...... | .... | .... |        |col2 : .....................|
+       >|.... | ...... | .... | .... |        |       ..........           |
+        |.... | ...... | .... | .... |        |                            |
+        |.... | ...... | .... | .... |        |col3 : .......              |
+        |.... | ...... | .... | .... |        |                            |
+        |.... | ...... | .... | .... |        |col4 : .............        |
+        |.... | ...... | .... | .... |        |                            |
+        '----------------------------'        '----------------------------'
 
 If *table-expand* is set to 0, the cursor jumps to the to first row (if not already there) when `Return` is pressed.
 

@@ -1,7 +1,7 @@
 use v6;
 unit class Term::TablePrint;
 
-my $VERSION = '0.022';
+my $VERSION = '0.024';
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::NCurses;
@@ -42,11 +42,11 @@ submethod DESTROY () { #
 sub _set_defaults ( %opt ) {
     %opt<add-header>     //= 0;
     %opt<choose-columns> //= 0;
-    %opt<format>           //= 0;
-    %opt<max-rows>       //= 50000;
+    %opt<format>         //= 2;
+    %opt<max-rows>       //= 50_000;
     %opt<min-col-width>  //= 30;
     %opt<mouse>          //= 0;
-    %opt<progress-bar>   //= 1000;
+    %opt<progress-bar>   //= 10_000;
     %opt<prompt>         //= '';
     %opt<tab-width>      //= 2;
     %opt<table-expand>   //= 1;
@@ -603,7 +603,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
 =head1 VERSION
 
-Version 0.022
+Version 0.024
 
 =head1 SYNOPSIS
 
@@ -717,6 +717,24 @@ choosing a row.
 If the option I<choose-columns> is enabled, the C<SpaceBar> key (or the right mouse key) can be used to select columns -
 see option L</choose-columns>.
 
+=head1 EXAMPLE
+
+=begin code
+
+    use DBIish;
+    use Term::TablePrint :print-table;
+
+    my $dbh = DBIish.connect( "SQLite", :database<my_db.sqlite> );
+    my $sth = $dbh.prepare( "SELECT * FROM my_table" );
+    $sth.execute();
+    my @rows = $sth.allrows();
+    @rows.unshift: $sth.column-names;
+    $dbh.dispose;
+
+    print-table( @rows );
+
+=end code
+
 =head1 CONSTRUCTOR
 
 The constructor method C<new> can be called with optional named arguments:
@@ -771,12 +789,61 @@ Default: 0
 
 If I<format> is set to 0, the table header is shown on top of the first page.
 
+=begin code
+
+    .----------------------------.    .----------------------------.    .----------------------------.
+    |col1   col2     col3   col3 |    |.....  .......  .....  .....|    |.....  .......  .....  .....|
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |.....  .......  .....  .....|
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+    | 1/3                        |    | 2/3                        |    | 3/3                        |
+    '----------------------------'    '----------------------------'    '----------------------------'
+
+=end code
+
 If I<format> is set to 1, the table header is shown on top of each page.
+
+=begin code
+
+    .----------------------------.    .----------------------------.    .----------------------------.
+    |col1   col2     col3   col3 |    |col1   col2     col3   col4 |    |col1   col2     col3   col4 |
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |.....  .......  .....  .....|
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |.....  .......  .....  .....|
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |.....  .......  .....  .....|
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+    |.....  .......  .....  .....|    |.....  .......  .....  .....|    |                            |
+    | 1/3                        |    | 2/3                        |    | 3/3                        |
+    '----------------------------'    '----------------------------'    '----------------------------'
+
+=end code
 
 If I<format> is set to 2, the table header is shown on top of each page and lines separate the columns from each other
 and the header from the body.
 
-Default: 1;
+=begin code
+
+    .----------------------------.    .----------------------------.    .----------------------------.
+    |col1 | col2   | col3 | col3 |    |col1 | col2   | col3 | col4 |    |col1 | col2   | col3 | col4 |
+    |-----|--------|------|------|    |-----|--------|------|------|    |-----|--------|------|------|
+    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |                            |
+    | 1/3                        |    | 2/3                        |    | 3/3                        |
+    '----------------------------'    '----------------------------'    '----------------------------'
+
+=end code
+
+Default: 2;
 
 =head2 max-rows
 
@@ -807,7 +874,7 @@ Default: 0
 Set the progress bar threshold. If the number of fields (rows x columns) is higher than the threshold, a progress bar is
 shown while preparing the data for the output.
 
-Default: 1_000
+Default: 10_000
 
 =head2 tab-width
 
@@ -820,6 +887,23 @@ Default: 2
 If the option I<table-expand> is set to C<1> or C<2> and C<Return> is pressed, the selected table row is printed with
 each column in its own line. Exception: if I<table-expand> is set to C<1> and the cursor auto-jumped to the first row,
 the first row will not be expanded.
+
+=begin code
+
+    .----------------------------.        .----------------------------.
+    |col1 | col2   | col3 | col3 |        |                            |
+    |-----|--------|------|------|        |col1 : ..........           |
+    |.... | ...... | .... | .... |        |                            |
+    |.... | ...... | .... | .... |        |col2 : .....................|
+   >|.... | ...... | .... | .... |        |       ..........           |
+    |.... | ...... | .... | .... |        |                            |
+    |.... | ...... | .... | .... |        |col3 : .......              |
+    |.... | ...... | .... | .... |        |                            |
+    |.... | ...... | .... | .... |        |col4 : .............        |
+    |.... | ...... | .... | .... |        |                            |
+    '----------------------------'        '----------------------------'
+
+=end code
 
 If I<table-expand> is set to 0, the cursor jumps to the to first row (if not already there) when C<Return> is pressed.
 

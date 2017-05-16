@@ -1,6 +1,13 @@
 Revision history for Term::TablePrint
 
 
+0.024   2017-05-15
+        - Changed defaults: format to 2 and progress-bar to 10_000
+        - Pod: example
+
+0.023   2017-05-15
+        - Pod: show the different format settings graphically (#2)
+
 0.022   2017-05-14
         - Bugfix not_a_number
         - Code refactoring
