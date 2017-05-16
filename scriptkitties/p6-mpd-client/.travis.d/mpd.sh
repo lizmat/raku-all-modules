@@ -20,7 +20,7 @@ install "${BASEDIR}/mpd.conf" /etc/mpd.conf
 service mpd start
 
 # TODO: add some free music
-curl https://github.com/PostCocoon/P6-TagLibC/raw/master/t/test.mp3 > ${MUSICDIR}/test.mp3
+curl https://raw.githubusercontent.com/PostCocoon/P6-TagLibC/master/t/test.mp3 > ${MUSICDIR}/test.mp3
 
 # sync the music with the mpd library
 mpc update --wait
