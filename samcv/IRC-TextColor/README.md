@@ -5,9 +5,9 @@ A plugin to style and color text for IRC. It can also convert the ANSIColor text
 
 ### sub ircstyle
 
-```
+```perl6
 sub ircstyle(
-    Str $text, 
+    Str() $text,
     *%args
 ) returns Mu
 ```
@@ -16,9 +16,9 @@ a shortened function. Like irc-style-text but you can use shorter versions like 
 
 ### sub irc-style-text
 
-```
+```perl6
 sub irc-style-text(
-    Str $text is copy, 
+    Str() $text is copy, 
     :$style = 0, 
     :$color = 0, 
     :$bgcolor = 0
@@ -29,9 +29,9 @@ styles and colors text. returns a copy. Colors allowed: white, blue, green, red,
 
 ### sub ansi-to-irc
 
-```
+```perl6
 sub ansi-to-irc(
-    Str $text is copy
+    Str() $text is copy
 ) returns Str
 ```
 

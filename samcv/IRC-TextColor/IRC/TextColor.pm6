@@ -59,15 +59,15 @@ my %ansi-back-colors =
 	light_cyan => "46",
 	white   => "47",
 	default => "49";
-sub irc-style-char ( Str $style ) is export {
+sub irc-style-char ( Str() $style ) is export {
 	return %irc-styles{$style} if %irc-styles{$style};
 }
-sub irc-color-start ( Str $color ) is export {
+sub irc-color-start ( Str() $color ) is export {
 	return %irc-styles{'color'} ~ %irc-colors{$color} if %irc-colors{$color};
 }
 #| a shortened function. Like irc-style-text but you can use shorter versions like
 #| C<ircstyle('text', :bold, :green)
-sub ircstyle ( Str $text, *%args ) is export {
+sub ircstyle ( Str() $text, *%args ) is export {
 	my $color = %args.keys ∩ %irc-colors.keys;
 	my $style = %args.keys ∩ %irc-styles.keys;
 	if any($color.elems, $style.elems) > 1 {
@@ -79,7 +79,7 @@ sub ircstyle ( Str $text, *%args ) is export {
 #| styles and colors text. returns a copy.
 #| Colors allowed: white, blue, green, red, brown, purple, orange, yellow, light_green, teal,
 #| light_cyan, light_blue, pink, grey, light_grey.
-sub irc-style-text ( Str $text is copy, :$style? = 0, :$color? = 0, :$bgcolor? = 0 ) returns Str is export {
+sub irc-style-text ( Str() $text is copy, :$style? = 0, :$color? = 0, :$bgcolor? = 0 ) returns Str is export {
 	if $color or $bgcolor {
 		if $color and $bgcolor {
 			$text = %irc-styles<color> ~ %irc-colors{$color} ~ ',' ~ %irc-colors{$bgcolor} ~ $text ~ %irc-styles<reset>;
@@ -97,7 +97,7 @@ sub irc-style-text ( Str $text is copy, :$style? = 0, :$color? = 0, :$bgcolor? =
 }
 #| Convert ANSI style/colored text from your terminal output to IRC styled/colored text.
 #| Supports both foreground and background color, as well as italic, underline and bold.
-sub ansi-to-irc (Str $text is copy) is export returns Str {
+sub ansi-to-irc (Str() $text is copy) is export returns Str {
 	my $escape = "\e[";
 	my $end = 'm';
 	if $text ~~ /$escape/ {

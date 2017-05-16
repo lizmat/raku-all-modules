@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/samcv/IRC-TextColor.git
 	branch = master
-	commit = 0ee88750701b5d0f237533946d68937d7d979d93
-	parent = fc4cf8c8efcd7f23c71f201144cd8f17490c5bf2
+	commit = d29948457feb9f55f2815f1c520bc1401b9b8fa2
+	parent = 975a842c6833ede7fbf1e079673e775d5ff0862f
 	cmdver = 0.4.0
