@@ -256,16 +256,23 @@ method declaration:sym<class> ($/){
 
 method declare-class-params ($/) {
     my $type := $*CLASS.class;
-    if $type.HOW ~~ Spit::Metamodel::Parameterizable {
-        for $type.^placeholder-params -> $placeholder {
-            $*CURPAD.declare: SAST::ClassDeclaration.new(class => $placeholder);
+    my @params := do given $type.HOW {
+        when Spit::Metamodel::Parameterizable {
+            $type.^placeholder-params
         }
+        when Spit::Metamodel::Parameterized {
+            $type.^derived-from.^placeholder-params;
+        }
+        default { () }
+    };
+    for @params -> $placeholder {
+        $*CURPAD.declare: SAST::ClassDeclaration.new(class => $placeholder);
     }
 }
 
 method new-class ($/) {
     my $class;
-    with $<class-params><params><wrapped> {
+    with $<params><wrapped> {
         $class = self.declare-new-type($/,$<type-name>.Str, Spit::Metamodel::Parameterizable);
         for $_<type-name>.map(*.Str).kv -> $i,$name {
             my $placeholder-type := Spit::Metamodel::Parameter.new_type(:$name);
@@ -278,12 +285,6 @@ method new-class ($/) {
         $class = self.declare-new-type($/,$<type-name>.Str, Spit::Metamodel::Type);
     }
     make $class;
-}
-
-method class-params ($/) {
-    make cache  $<params><wrapped><type-name>.map: {
-        $*CURPAD.lookup(CLASS, .Str, match => $_).class;
-    };
 }
 
 method declaration:sym<augment> ($/) {
@@ -339,7 +340,7 @@ method declaration:sym<sub> ($/) {
 
 method declaration:sym<method> ($/) {
     my $method := $<routine-declaration>.ast;
-    $method.invocant-type = $*CLASS;
+    $method.class-type = $*CLASS.class;
     make $*CLASS.class.^add-spit-method: $method;
 }
 
@@ -548,7 +549,7 @@ method special-var:sym<?> ($/) { make SAST::LastExitStatus.new }
 method term:name ($/) {
     my $name = $<name>.Str;
     make do if $<is-type> {
-        my @params = $<class-params>.ast || Empty;
+        my @params = $<type-params>.ast || Empty;
         my $class-type := lookup-type($name, :@params, match => $<name>);
         do with $<object> {
             do if $_<angle-quote>
@@ -624,7 +625,28 @@ method term:topic-cast ($/) {
     make SAST::Cast.new(to => $<type>.ast,SAST::Var.new(name => '_',sigil => '$'));
 }
 
-method term:pair ($/) {
+method term:j-object ($/) {
+    my @pos = flat $<pairs><wrapped><pair>.map(*.ast).map: {
+        SAST::Blessed.new(
+            .key,
+            class-type => tStr,
+            match => .key.match,
+        ),
+        .value
+    };
+
+    make SAST::SubCall.new(
+        name => 'j-object',
+        match => $/,
+        :@pos,
+    );
+}
+
+method term:pair ($/) { make SAST::Pair.new(|$<pair>.ast) }
+
+method pair ($/) { make $<pair>.ast }
+
+method colon-pair ($/) {
     my ($key,$value);
     if $<var> {
         $key = $<var><name><identifier>;
@@ -638,11 +660,11 @@ method term:pair ($/) {
         }
     }
     $key = SAST::SVal.new(val => $key.Str,match => $key);
-    make SAST::Pair.new(:$key,:$value);
+    make ($key,$value);
 }
 
-method term:fatarrow ($/) {
-    make SAST::Pair.new( key => SAST::SVal.new(val => $<key>.Str), value => $<value>.ast);
+method fatarrow-pair ($/) {
+    make (SAST::SVal.new(val => $<key>.Str, match => $<key>), $<value>.ast);
 }
 
 method eq-infix:sym<&&> ($/)  { make SAST::Junction.new }
@@ -723,6 +745,8 @@ method infix:sym<?? !!> ($/) {
     }
 }
 
+method infix:sym«=>» ($/) { make SAST::Pair.new }
+
 method method-call ($/) {
     my (:@pos,:%named) := $<args>.ast;
     my $name = $<name>.Str;
@@ -744,10 +768,9 @@ method method-call ($/) {
 method postfix:method-call ($/) { make $<method-call>.ast }
 
 method args ($/,|) {
-    my $list = $<list>.ast;
     make {
-        pos => $list.children.grep({ $_ !~~ SAST::Pair}).list,
-        named => $list.children.grep(SAST::Pair).map({.key.val => .value}).Hash;
+        pos => $<pos>.map(*.ast),
+        named => $<named>.map({ my ($k,$v) := .ast; ($k.val, $v) }).flat.Hash,
     }
 }
 
@@ -764,10 +787,18 @@ method postfix:cmd-call ($/) {
 method postfix:sym<++> ($/)  { make SAST::Increment.new }
 method postfix:sym<--> ($/)  { make SAST::Increment.new(:decrement) }
 method postfix:sym<[ ]> ($/) { make $<index-accessor>.ast }
+method index-accessor($/) {
+    make SAST::Elem.new(index => $<EXPR>.ast, index-type => tInt);
+}
+method postfix:sym<{ }>($/) { make $<key-accessor>.ast }
+method key-accessor($/) { make SAST::Elem.new(index => $<EXPR>.ast, index-type => tStr) }
+
+method postfix:sym«< >»($/) { make $<angle-key-accessor>.ast }
+method angle-key-accessor($/) {
+    make SAST::Elem.new(index => $<angle-quote>.ast, index-type => tStr)
+}
+
 method postfix:sym<⟶> ($/) { make SAST::Cast.new(to => $<type>.ast) }
-
-method index-accessor($/) { make SAST::Elem.new(index => $<EXPR>.ast) }
-
 method prefix:sym<~> ($/) { make SAST::Coerce.new(to => tStr) }
 method prefix:sym<+> ($/) { make SAST::Coerce.new(to => tInt) }
 method prefix:sym<-> ($/) { make SAST::Negative.new() }
@@ -817,12 +848,26 @@ method block($/)    {
 }
 
 method type ($/) {
-    make lookup-type(
-        $/<type-name>.Str,
-        params => $<class-params>.ast // Empty,
-        match => $/,
-    );
+    make do with $<parameter-index> {
+        my \type = lookup-type($<type-name>.Str, match => $/);
+        if type.HOW ~~ Spit::Metamodel::Parameter {
+            type.^param-at($_<index>.Str.Int);
+        } else {
+            SX.new(message => "Can't index a type unless it's a parameter type").throw;
+        }
+    } else {
+        lookup-type(
+            $/<type-name>.Str,
+            params => ($<type-params>.ast // Empty),
+            match => $/,
+        );
+    }
 }
+
+method type-params ($/) {
+    make ($<params> andthen .<wrapped><type>.map(*.ast));
+}
+
 method os   ($/) { make $*CURPAD.lookup(CLASS,$/.Str,match => $/).class }
 
 method cmd ($/) { make $<cmd-pipe-chain>.ast }

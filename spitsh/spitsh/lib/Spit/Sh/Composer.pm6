@@ -327,25 +327,6 @@ multi method walk(SAST::VarDecl:D $THIS is rw where *.is-option ) {
     callsame;
 }
 
-multi method walk(SAST::Elem:D $THIS is rw) {
-    if $THIS.assign {
-        $THIS .= stage2-node(
-            SAST::MethodCall,
-            name => 'set-pos',
-            pos => ($THIS.index,$THIS.assign),
-            $THIS.elem-of,
-        );
-    } else {
-        $THIS .= stage2-node(
-            SAST::MethodCall,
-            name => 'at-pos',
-            pos => $THIS.index,
-            $THIS.elem-of,
-        );
-    }
-    self.walk($THIS);
-}
-
 multi method walk(SAST::Eval:D $THIS is rw) {
     my %opts = $THIS.opts;
     %opts<os> //= SAST::Type.new(class-type => $.os,match => $THIS.match);
@@ -516,7 +497,7 @@ multi  method walk(SAST::Call:D $THIS is rw, $accept = True) {
             if $block.one-stmt <-> $last-stmt {
                 if self.inline-call($THIS,$last-stmt) -> $replacement {
                     if $replacement ~~ $accept {
-                        $THIS = $replacement;
+                        $THIS.switch: $replacement;
                     }
                 } else {
                     # If we find we can't inline it leave a marker so others

@@ -129,7 +129,7 @@ multi method gen-name(SAST::EnvDecl:D $_) {
 }
 
 multi method gen-name(SAST::MethodDeclare:D $method) {
-    callwith($method,fallback => $method.invocant-type.name.substr(0,1).lc ~ '_' ~ $method.name);
+    callwith($method,fallback => $method.class-type.name.substr(0,1) ~  $method.name);
 }
 
 method !avoid-name-collision($decl,$name is copy,:$fallback) {
@@ -871,8 +871,8 @@ multi method cond(SAST::Cmp:D $cmp) {
         when 'ne' {  '!=' }
         when 'lt' {  '<'  }
         when 'gt' {  '>'  }
-        when 'le' { $negate = True; '>' }
         when 'ge' { $negate = True; '<' }
+        when 'le' { $negate = True; '>' }
         default { "'$_' comparison NYI" }
     }
 
@@ -886,10 +886,24 @@ multi method int-expr(SAST::BVal $ where { .val === False } ) { '0' }
 #!SVal
 multi method arg(SAST::SVal:D $_) {
     if (my $lines := .val.lines) > 2 {
+        my $emoji;
+        my @emojis = qqw:to/END/;
+        \c[GHOST]
+        \c[SPIRAL SHELL]
+        \c[GLOWING STAR]
+        \c[HORSE FACE]
+        \c[POUTING CAT FACE]
+        \c[OCTAGONAL SIGN]
+        \c[SEE-NO-EVIL MONKEY]
+        \c[HOURGLASS]
+        \c[REVERSED HAND WITH MIDDLE FINGER EXTENDED]
+        END
+        repeat { $emoji = @emojis.shift } while $lines.first(*.match(/^"\t"+$emoji/));
+        $emoji or SX::Bug.new(message => "EMOJIS DEPLETED", match => .match).throw;
         cs
-          "cat <<-'\c[GHOST]'\n\t",
+          "cat <<-'$emoji'\n\t",
           $lines.join("\n\t"),
-          "\n\t\c[GHOST]\n$*pad";
+          "\n\t$emoji\n$*pad";
     } else {
         escape .val
     }
@@ -966,6 +980,7 @@ multi method arg(SAST::Range:D $_) {
      )
 }
 #!Blessed
+multi method node(SAST::Blessed:D $_)  { self.node($_[0]) }
 multi method arg(SAST::Blessed:D $_) { self.arg($_[0]) }
 multi method cap-stdout(SAST::Blessed:D $_) { self.cap-stdout($_[0]) }
 
@@ -1008,6 +1023,11 @@ multi method loop-return(SAST::List:D $_) {
     } else {
         self.loop-return(.children[0]);
     }
+}
+
+#!Pair
+multi method arg(SAST::Pair:D $_) {
+    self.concat-into-DQ([self.arg(.key),"\t",self.arg(.value)])
 }
 #!Doom
 # If we try and compile Doom we're doomed

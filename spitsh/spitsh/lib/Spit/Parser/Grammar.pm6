@@ -10,7 +10,8 @@ constant @brackets := "<>[]()\{}\x[0028]\x[0029]\x[003C]\x[003E]\x[005B]\x[005D]
 
 constant @openers = eager @brackets.map: -> $o,$ { $o };
 
-constant $lt-comma = «i<»;
+constant $gt-comma = «g>»; #greater than , precedence
+constant $gt-fatarrow = «i>»;
 
 grammar Spit::Grammar is Spit::Lang {
     token TOP {
@@ -182,12 +183,9 @@ grammar Spit::Grammar is Spit::Lang {
 
     rule new-class {
         <type-name>
-        <class-params>?
-    }
-    rule class-params {
         $<params>=<.r-wrap: '[',']', 'class parameter list', rule {
             <type-name>* % ','
-        }>
+        }>?
     }
     token declare-class-params { <?> }
     rule declaration:sym<class> {
@@ -325,25 +323,30 @@ grammar Spit::Grammar is Spit::Lang {
         $<named>=[<type>? ':'<var>]
     }
 
-    rule check-prec($preclim,$term) {
+    rule check-prec($min-precedence,$term) {
         <?before
             $<check>=<.infix>
             {}
-            <?{ not $<check> or $<check>.&derive-precedence($term)[0] ge $preclim }>
+            <?{ not $<check> # ie no infix was found
+                or $<check>.&derive-precedence($term)[0] ge $min-precedence }>
         >
     }
-    # preclim is a word stolen from rakudo. It means precedence limit :^).
-    rule EXPR($preclim?) {
+
+    rule EXPR($min-precedence?) {
         <termish>
         [
-            [ <!{ $preclim }> || {} <.check-prec($preclim,$<termish>[*-1].ast)> ]
+            [ <!{ $min-precedence }> || {} <.check-prec($min-precedence,$<termish>[*-1].ast)> ]
             <infix>
             [ <termish>  || {}<.expected("term after infix {$<infix>[*-1]<sym>.Str}")>  ]
         ]*
     }
 
-    rule list { <EXPR($lt-comma)>* % ',' }
-    rule args { <list> }
+    rule list {
+        <EXPR($gt-comma)>* % ','
+    }
+    rule args {
+        [$<named>=<.pair> || $<pos>=<.EXPR($gt-comma)> ]* % ','
+    }
 
     token termish {
         || <term> [<.ws><postfix>]*
@@ -386,7 +389,7 @@ grammar Spit::Grammar is Spit::Lang {
         [
             <?{ $*CURPAD.lookup(CLASS,$<name>.Str); }>
             $<is-type>=<?>
-            <class-params>?
+            <type-params>?
             $<object>=(
                 |<angle-quote>
                 | $<EXPR>=<.r-wrap: '(',')','object definition', token {
@@ -416,21 +419,28 @@ grammar Spit::Grammar is Spit::Lang {
         }
     }
 
-    token term:pair {
-        ':'
-          [
-              |$<key>=<.identifier> [
-                  | $<value>=<.wrap: '(',')', 'pair value', token {<R=.EXPR>}>
-                  | $<value>=<.angle-quote>
-              ]?
-              |<var>
-          ]
+    token term:pair { <pair> }
+
+    token pair {
+        |$<pair>=<.colon-pair>
+        |$<pair>=<.fatarrow-pair>
     }
 
-    token term:fatarrow {
+    token colon-pair {
+        ':'
+        [
+            |$<key>=<.identifier> [
+                | $<value>=<.wrap: '(',')', 'pair value', token {<R=.EXPR>}>
+                | $<value>=<.angle-quote>
+            ]?
+            |<var>
+        ]
+    }
+
+    token fatarrow-pair {
         $<key>=<.identifier>
         \h*'=>'<.ws>
-        $<value>=<.EXPR($lt-comma)>
+        $<value>=<.EXPR($gt-fatarrow)>
     }
 
     token term:parens {
@@ -447,6 +457,12 @@ grammar Spit::Grammar is Spit::Lang {
     # -->Pkg.install unless Cmd<curl>
     rule term:topic-cast {
         <.longarrow> [ <type> || <.expected('A type to cast $_ to')> ]
+    }
+
+    rule term:j-object {
+        'j' $<pairs>=<.wrap: '{', '}', 'json object', rule {
+             '' <pair>* % ','
+         }>
     }
 
     proto token eq-infix {*}
@@ -478,8 +494,10 @@ grammar Spit::Grammar is Spit::Lang {
     token infix:sym<..>  { [$<exclude-start>='^']? <sym> [$<exclude-end>='^']? }
 
     rule  infix:sym<?? !!> {
-        $<sym>='??' <EXPR($lt-comma)> ['!!' || <.expected('!! to finish ternary')> ]
+        $<sym>='??' <EXPR('j=')> ['!!' || <.expected('!! to finish ternary')> ]
     }
+
+    token infix:sym«=>» { <sym> }
 
     proto token postfix {*}
 
@@ -502,11 +520,19 @@ grammar Spit::Grammar is Spit::Lang {
     token postfix:sym<++>  { <sym> }
     token postfix:sym<-->  { <sym> <!before \>> }
     token postfix:sym<⟶> { <.longarrow> [<type> || <.expected("A type to cast to.")>] }
-    token postfix:sym<[ ]> {  <index-accessor> }
+    token postfix:sym<[ ]> { <!after \s> <index-accessor> }
 
     token index-accessor {
-        $<EXPR>=<.wrap: '[',']','positional accessor', token { <R=.EXPR> }>
+        $<EXPR>=<.wrap: '[',']','index accessor', token { <R=.EXPR> }>
     }
+
+    token postfix:sym<{ }> { <!after \s> <key-accessor> }
+
+    token key-accessor {
+        $<EXPR>=<.wrap: '{','}', 'key accessor', token { <R=.EXPR> }>
+    }
+    token postfix:sym«< >» { <!after \s> <angle-key-accessor> }
+    token angle-key-accessor { <angle-quote> }
 
     proto token prefix {*}
     token prefix:sym<++> { <sym> }
@@ -543,7 +569,19 @@ grammar Spit::Grammar is Spit::Lang {
         <?[{]> <.newpad> <blockoid> <.finishpad>
     }
 
-    token type { <type-name><class-params>? }
+
+    token type { <type-name>[<parameter-index> || <type-params> ]? }
+
+    rule parameter-index {
+        '[' ~ ']' $<index>=\d+
+    }
+
+    token type-params {
+        $<params>=<.r-wrap: '[',']', 'type parameter list', rule {
+            <type>* % ','
+        }>
+    }
+
     token os {
         <identifier>
         <?{ $*CURPAD.lookup(CLASS,$<identifier>.Str,:match($<identifier>)) }>

@@ -18,8 +18,11 @@ sub class-by-name($name) {
 # A pair where the value has container we can mess with
 sub cont-pair($a,$b is copy) { $a => $b }
 
-sub tListp(Spit::Type \param) {
-    param ~~ tList ?? param !! tList.^parameterize(param);
+sub tListp(Spit::Type \elem-type) {
+    elem-type ~~ tList ?? elem-type !! tList.^parameterize(elem-type);
+}
+sub tPairp(Spit::Type \key, \value) {
+    tPair.^parameterize(key,value);
 }
 
 sub lookup-type($name,:@params, Match :$match) is export {
@@ -214,8 +217,8 @@ sub coerce(SAST:D $node,Spit::Type $type,:$desc) {
 # The type of the thing if it were flattened out
 sub flattened-type(Spit::Type $_) {
     when tList {
-        if .^find-parameters-for(tList) -> $params {
-            $params[0]
+        if .^parent-derived-from(tList) -> $parameterized {
+            $parameterized.^params[0];
         } else {
             tStr;
         }
@@ -523,6 +526,8 @@ class SAST::Stmts is SAST::MutableChildren {
             tAny;
         }
     }
+
+    method itemize { self.last-stmt  andthen .itemize or False }
 }
 
 class SAST::Block is SAST::Stmts does SAST::Dependable {
@@ -596,26 +601,40 @@ class SAST::Return is SAST::Children {
     }
     method type { $!val.type }
     method children { $!val, }
+    method itemize { $!val.itemize }
 }
 
 # Array element
 class SAST::Elem is SAST::MutableChildren does SAST::Assignable {
     has SAST $.index is required;
+    has Spit::Type $.index-type is required;
 
     method assign-type { SCALAR-ASSIGN }
 
     method stage2($ctx) {
         SX::NYI.new(feature => 'element assignment modifiers',node => $_).throw with $.assign-mod;
-        $!index .= do-stage2(tInt);
-        $.elem-of .= do-stage2(tStr);
-        with $.assign {
-            $_ .= do-stage2($.type, :desc("assigning to element of {$.elem-of.gist}"));
+        my $method-end = $!index-type ~~ tInt ?? 'pos' !! 'key';
+        my $method = do if $.assign {
+            SAST::MethodCall.new(
+                name => "set-$method-end",
+                pos => ($!index,$.assign),
+                $.elem-of,
+                :$.match
+            )
+        } else {
+            SAST::MethodCall.new(
+                name => "at-$method-end",
+                pos => ($!index),
+                $.elem-of,
+                :$.match
+            )
         }
-        self;
+
+        $method .= do-stage2($ctx);
     }
 
     method gist { $.elem-of.gist ~ '[' ~ $!index.gist ~ ']' }
-    method type { flattened-type($.elem-of.type) }
+    method stage2-done { False } # This should be gone after stage2
     method elem-of is rw { @.nodes[0] }
     method children { $.elem-of,$!index, ($.assign // Empty) }
     method spit-gist { $.elem-of.spit-gist ~ '[' ~ $!index.spit-gist ~ ']' }
@@ -755,7 +774,8 @@ class SAST::RoutineDeclare is SAST::Children does SAST::Declarable does SAST::OS
 
 class SAST::MethodDeclare is SAST::RoutineDeclare {
     has $.rw is rw;
-    has SAST::ClassDeclaration $.invocant-type is rw;
+    # The type of the class declaration it was declared in
+    has Spit::Type $.class-type is rw;
     has SAST::Invocant $.invocant is rw;
 
     method static { !$!invocant }
@@ -763,24 +783,28 @@ class SAST::MethodDeclare is SAST::RoutineDeclare {
     method spit-gist { "method {$.name}\({$.signature.spit-gist})" }
 
     method stage2($) {
-        $.return-type = $.invocant-type.class if $!rw;
+        $.return-type = $.class-type if $!rw;
         $!invocant andthen $_ .= do-stage2(tAny);
         $.signature.invocant = $!invocant;
         $!invocant.piped = False if $.impure;
         nextsame;
     }
 
-    multi method reified-return-type($call-invocant) {
+    method reified-return-type($invocant-type) {
         my $return-type := self.return-type;
         if $return-type.^needs-reification {
-            $return-type.^reify($call-invocant);
+            $return-type.^reify($invocant-type);
         } else {
             $return-type
         }
     }
 
+    method reified-signature($invocant-type) {
+        $.signature.reify($invocant-type);
+    }
+
     method block-for-os($os) {
-        $!invocant-type.class.^dispatcher.get(self.name,$os);
+        $!class-type.^dispatcher.get(self.name,$os);
     }
 
     method declarator { 'method' }
@@ -910,7 +934,7 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
         $!type ||= self.declaration.reified-return-type($.invocant.ostensible-type);
     }
     method gen-sig {
-        $!gen-sig //= self.declaration.signature.reify($.invocant.ostensible-type);
+        $!gen-sig //= self.declaration.reified-signature($.invocant.ostensible-type);
     }
 
     method stage2($ctx) {
@@ -1030,14 +1054,14 @@ class SAST::Signature is SAST::Children {
         ~ @.children.map({ "{.type.name} {.spit-gist}" }).join(", ");
     }
 
-    method reify(Spit::Type $call-invocant-type) {
-        if $call-invocant-type.HOW ~~ Spit::Metamodel::Parameterized
+    method reify($invocant-type) {
+        if $invocant-type.HOW ~~ Spit::Metamodel::Parameterized
            and @.children.first(*.type.^needs-reification)
         {
             my $copy = self.clone;
             for $copy.children {
                 $_ .= clone;
-                .type = .type.^reify($call-invocant-type);
+                .type = .type.^reify($invocant-type);
             }
             $copy;
         } else {
@@ -1241,16 +1265,16 @@ class SAST::Ternary is SAST::Children {
     method children { $!cond,$!on-true,$!on-false }
 }
 
-class SAST::Pair is SAST::Children {
-    has SAST:D $.key is required;
-    has SAST:D $.value is required;
+class SAST::Pair is SAST::MutableChildren {
+    has $.type;
 
-    method type { tAny }
+    method type { $!type ||= tPairp(|@.children.map(*.type)) }
     method stage2($) {
-        self.make-new(SX::NYI, feature => "Pairs as values").throw;
+        $_ .= do-stage2(tStr) for @.children;
+        self;
     }
-
-    method children { $!key,$!value }
+    method key { self[0] }
+    method value { self[1] }
 }
 
 sub derive-common-parent(*@types) {
@@ -1419,6 +1443,7 @@ class SAST::While is SAST::Children {
     }
     method children { $!cond,$!block,($!topic-var // Empty) }
     method type { $!type ||= tListp($!block.type) }
+    method itemize { False }
 }
 
 class SAST::Given is SAST::Children is rw {
@@ -1444,6 +1469,7 @@ class SAST::Loop is SAST::Children is rw {
     has SAST $.init;
     has SAST $.cond;
     has SAST $.incr;
+    has $!type;
 
     method stage2($ctx) {
         $!init  andthen $_ .= do-stage2(tAny);
@@ -1456,7 +1482,8 @@ class SAST::Loop is SAST::Children is rw {
 
     method children { grep *.defined, $!init, $!cond, $!incr, $!block }
 
-    method type { $!block.type }
+    method type { $!type ||= tListp($!block.type) }
+    method itemize { False }
 }
 
 class SAST::For is SAST::Children {
@@ -1486,6 +1513,7 @@ class SAST::For is SAST::Children {
 
     method children { $!list,$!block,$!iter-var }
     method type { $!type ||= tListp($!block.type) }
+    method itemize { False }
 }
 
 class SAST::Empty does SAST {
