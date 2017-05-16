@@ -1,6 +1,7 @@
 {
     "perl" : "6.*",
     "name" : "Math::ThreeD",
+    "license" : "Artistic-2.0",
     "version" : "*",
     "description" : "A simple 3D library for Perl 6.",
     "author" : "raydiak",
