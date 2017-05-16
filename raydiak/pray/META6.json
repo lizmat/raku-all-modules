@@ -1,6 +1,7 @@
 {
     "perl"          : "6.*",
     "name"          : "App::Pray",
+    "license"       : "Artistic-2.0",
     "version"       : "*",
     "description"   : "Perl 6 Ray Tracing Engine",
     "author"        : "raydiak",
