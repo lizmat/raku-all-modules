@@ -1,0 +1,15 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Die",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001001",
+    "description"  : "Perl 5 like die routine for note + exit",
+    "depends"      : [ ],
+    "test-depends" : [ "Test", "Test::META" ],
+    "provides"     : {
+        "Die" : "lib/Die.pm6"
+    },
+    "authors"      : [ "Zoffix Znet" ],
+    "source-url"   :
+        "git://github.com/zoffixznet/perl6-Die.git"
+}
