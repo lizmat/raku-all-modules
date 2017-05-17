@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/scriptkitties/p6-mpd-client.git
 	branch = master
-	commit = 7512b88fda3088e4f292e81fdb31051501e7f7a4
-	parent = dc367d6211e1422d5ffc8b7f94b9c46b47e142f3
+	commit = 557f5bc39a0f4dde011fc252b70f06ea4c7710a4
+	parent = 56f6706ceb339b82b18e9ff6cb8cb0166d36e267
 	cmdver = 0.4.0

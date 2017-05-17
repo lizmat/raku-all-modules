@@ -2,6 +2,7 @@
 
 use v6.c;
 
+use MPD::Client::Exceptions::MpdException;
 use MPD::Client::Exceptions::SocketException;
 use MPD::Client::Grammars::AckLine;
 use MPD::Client::Grammars::ResponseLine;
@@ -33,6 +34,43 @@ sub mpd-response (
 	}
 
 	%response;
+}
+
+sub mpd-responses (
+	IO::Socket::INET $socket
+	--> Array
+) is export {
+	my @hits;
+	my $first-key = "";
+	my $index = -1;
+
+	for $socket.get() -> $line {
+		if ($line eq "OK") {
+			last;
+		}
+
+		my $match;
+
+		if ($match = MPD::Client::Grammars::AckLine.parse($line)) {
+			MPD::Client::Exceptions::MpdException.new($match<message>).throw;
+			last;
+		}
+
+		if ($match = MPD::Client::Grammars::ResponseLine.parse($line)) {
+			if ($first-key eq "") {
+				$first-key = $match<key>;
+			}
+
+
+			if ($match<key> eq $first-key) {
+				@hits[++$index] = {};
+			}
+
+			@hits[$index]{$match<key>} = $match<value>;
+		}
+	}
+
+	@hits;
 }
 
 #| Check wether the latest response on the MPD socket is OK.
