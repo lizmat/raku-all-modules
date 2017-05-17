@@ -6,7 +6,10 @@
     "description"   : "GitHub API",
     "depends"       : [ "MIME::Base64", "URI", "IO::Socket::SSL", "HTTP::UserAgent", "JSON::Fast", "Cache::LRU" ],
     "provides" : {
-        "WebService::GitHub"    : "lib/WebService/GitHub.pm"
+        "WebService::GitHub"          : "lib/WebService/GitHub.pm",
+        "WebService::GitHub::Role"    : "lib/WebService/GitHub/Role.pm",
+        "WebService::GitHub::Response": "lib/WebService/GitHub/Response.pm",
+        "WebService::GitHub::OAuth"   : "lib/WebService/GitHub/OAuth.pm"
     },
     "source-url"    : "git://github.com/fayland/perl6-WebService-GitHub.git"
 }
