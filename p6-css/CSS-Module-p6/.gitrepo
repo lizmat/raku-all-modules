@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/p6-css/CSS-Module-p6.git
+	branch = master
+	commit = 63f0f89aadd8964648aac35f6a9192a1168776e8
+	parent = 398fd831c93512e3b8dcb5cc0bd9c0dbb19568dd
+	cmdver = 0.4.0
