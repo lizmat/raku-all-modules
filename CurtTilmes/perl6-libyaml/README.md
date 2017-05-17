@@ -1,15 +1,27 @@
 # Perl6 LibYAML
 
 A [Perl 6](https://perl6.org/) interface to
-[LibYAML](http://pyyaml.org/wiki/LibYAML), a [YAML](http://yaml.org/)
+[LibYAML](https://github.com/yaml/libyaml), a [YAML](http://yaml.org/)
 1.1 parser and emitter.
 
 # INSTALLATION
 
-You must get and install [libyaml](http://pyyaml.org/wiki/LibYAML)
-first.  Then you can install LibYAML with zef:
+You must get and install [libyaml](https://github.com/yaml/libyaml)
+first. Then you can install LibYAML with zef:
 
     zef install LibYAML
+
+## Install from Sources
+
+You can install this LibYAML module from source (optionally also using the
+libyaml C code sources) like this:
+
+    $ git clone https://github.com/CurtTilmes/perl6-libyaml
+    $ git clone https://github.com/yaml/libyaml
+    $ (cd libyaml; make -f .makefile)
+    $ export LD_LIBRARY_PATH=$PWD/libyaml/src/.libs
+    $ cd perl6-libyaml
+    $ zef install .
 
 # Examples
 

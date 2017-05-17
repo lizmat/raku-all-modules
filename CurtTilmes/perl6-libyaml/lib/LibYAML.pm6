@@ -574,18 +574,11 @@ class LibYAML::Parser
             ?? $scalar
             !! do given $scalar
             {
-                when '~'|''|'null'|'Null'|'NULL'      { Any }
+                when ''|'null'                        { Any }
 
-                when 'true'|'True'|'TRUE'             { True }
+                when 'true'                           { True }
 
-                when 'false'|'False'|'FALSE'          { False }
-
-                when '.inf'|'.Inf'|'.INF'|
-                     '+.inf'|'+.Inf'|'+.INF'          { ∞ }
-
-                when '-.inf'|'-.Inf'|'-.INF'          { -∞ }
-
-                when '.nan'|'.NaN'|'.NAN'             { NaN }
+                when 'false'                          { False }
 
                 when /^[<[-+]>? <[0..9]>+         |
                        0o <[0..7]>+               |
@@ -593,11 +586,6 @@ class LibYAML::Parser
 
                 when /^<[-+]>? [ 0 | <[0..9]>*]
                        '.' <[0..9]>+ $/               { .Rat }
-
-                when /^<[-+]>?
-                     ['.' <[0..9]>+ |
-                          <[0..9]>+ ['.' <[0..9]>+]? ]
-                     [<[eE]> <[-+]>? <[0..9]>+]? $/   { .Num }
 
                 default                               { $_ }
             }
@@ -938,13 +926,7 @@ class LibYAML::Emitter
 
         given $obj
         {
-            when '~'|''|'null'|'Null'|'NULL'|
-                 'true'|'True'|'TRUE'|
-                 'false'|'False'|'FALSE'|
-                 '.inf'|'.Inf'|'.INF'|
-                 '+.inf'|'+.Inf'|'+.INF'|
-                 '-.inf'|'-.Inf'|'-.INF'|
-                 '.nan'|'.NaN'|'.NAN'
+            when ''|'null'|'true'|'false'
              {
                  $style = YAML_SINGLE_QUOTED_SCALAR_STYLE;
              }
