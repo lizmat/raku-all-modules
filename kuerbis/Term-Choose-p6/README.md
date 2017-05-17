@@ -8,7 +8,7 @@ Term::Choose - Choose items from a list interactively.
 VERSION
 =======
 
-Version 0.126
+Version 0.127
 
 SYNOPSIS
 ========
@@ -369,6 +369,8 @@ multithreading
 --------------
 
 `Term::Choose` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_TREADS`.
+
+The method `num-threads` returns the setting used by `Term::Choose`.
 
 head2 libncurses
 

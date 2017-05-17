@@ -1,6 +1,9 @@
 Revision history for Term::Choose
 
 
+0.127   2017-05-16
+        - Pod: num-threads
+
 0.126   2017-05-15
         - Added option pad_one_row
 

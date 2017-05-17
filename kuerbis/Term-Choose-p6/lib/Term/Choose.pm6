@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose;
 
-my $VERSION = '0.126';
+my $VERSION = '0.127';
 
 use Term::Choose::NCurses;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
@@ -988,7 +988,7 @@ Term::Choose - Choose items from a list interactively.
 
 =head1 VERSION
 
-Version 0.126
+Version 0.127
 
 =head1 SYNOPSIS
 
@@ -1364,6 +1364,8 @@ default: "E<lt>undefE<gt>"
 
 C<Term::Choose> uses multithreading when preparing the list for the output; the number of threads to use can be set with
 the environment variable C<TC_NUM_TREADS>.
+
+The method C<num-threads> returns the setting used by C<Term::Choose>.
 
 head2 libncurses
 
