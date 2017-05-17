@@ -4,6 +4,127 @@
 
 =SUBTITLE Correctly use Perl 6 IO
 
+=head1 The Basics
+
+The vast majority of common IO work is done by the L<IO::Path> type. If you
+want to read from or write to a file in some form or shape, this is the class
+you want. It abstracts away the details of file handles (or "file descriptors")
+and so you mostly don't even have to think about them.
+
+Behind the scenes, L<IO::Path> works with L<IO::Handle>; a class which you
+can use directly if you need a bit more control than what L<IO::Path>
+provides. When working with other processes, e.g. via L<Proc> or L<Proc::Async>
+types, you'll also be dealing with a I<subclass> of L<IO::Handle>: the
+L<IO::Pipe>.
+
+Lastly, you have the L<IO::CatHandle>, as well as L<IO::Spec> and its
+subclasses, that you'll rarely, if ever, use directly. These classes give you
+advanced features, such as operating on multiple files as one handle, or
+low-level path manipulations.
+
+Along with all these classes, Perl 6 provides several subroutines that provide
+let you indirectly work with these classes. These come in handy if you like
+functional programming style or in Perl 6 one liners.
+
+While L<IO::Socket> and its subclasses also have to do with Input and Output,
+this guide does not cover them.
+
+=head1 Navigating Paths
+
+=head2 What's an IO::Path Anyway?
+
+To represent paths to either files or directories, use L<IO::Path> type.
+The simplest way to obtain an object of that type is to coerce a L<Str> by
+calling L«C<.IO>|/routine/IO» method on it:
+
+    say 'my-file.txt'.IO; # OUTPUT: «"my-file.txt".IO␤»
+
+It may seem like something is missing here—there is no volume or absolute
+path involved—but that information is actually present in the object. You can
+see it by using L«C<.perl>|/routine/perl» method:
+
+    say 'my-file.txt'.IO.perl;
+    # OUTPUT: «IO::Path.new("my-file.txt", :SPEC(IO::Spec::Unix), :CWD("/home/camelia"))␤»
+
+The two extra attributes—C<SPEC> and C<CWD>—specify what type of operating
+system semantics the path should use as well as the "current working directory"
+for the path, i.e. if it's a relative path, then it's relative to that
+directory.
+
+This means that regardless of how you made one, an L<IO::Path> object
+technically always refers to an absolute path. This is why its
+L«C<.absolute>|/routine/absolute» and L«C<.relative>|/routine/relative»
+methods return L<Str> objects and they are the correct way to stringify a path.
+
+However, don't be in a rush to stringify anything. Pass paths around as
+L<IO::Path|/type/IO::Path> objects. All the routines that operate on paths
+can handle them, so there's no need to convert them.
+
+=head2 Working with Files
+
+=head3 Writing into files
+
+=head4 Writing new content
+
+Let's make some files and write and read data from them! The
+L«C<spurt>|/routine/spurt» and L«C<slurp>|/routine/slurp» routines write and
+read the data in one chunk. Unless you're working with very large files that
+are difficult to store entirely in memory all at the same time, these two
+routines are for you.
+
+=for code :skip-test
+    "my-file.txt".IO.spurt: "I ♥ Perl 6!";
+
+The code above creates a file named C<my-file.txt> in the currect directory
+and then writes text C<I ♥ Perl 6!> into it. If Perl 6 is your first language,
+celebrate your accomplishment! Try to open the file you created with some other
+program to verify what you wrote with your program. If you already know
+some other language, you may be wondering if this guide missed anything like
+handling encoding or error conditions.
+
+However, that is all the code you need. The string will be encoded in C<utf-8>
+encoding by default and the errors are handled via the L<Failure> mechanism:
+these are exceptions you can handle using regular conditionals. In this case,
+we're letting all potential L<Failures|/type/Failure> get sunk after the
+call and so any L<Exceptions|/type/Exception> they contain will be thrown.
+
+=head4 Appending content
+
+If you wanted to add more content to the file we made in previous section, you
+could note the L«C<spurt> documentation|/routine/spurt» mentions C<:append>
+argument. However, for finer control, let's get ourselves an L<IO::Handle>
+to work with:
+
+    my $fh = 'my-file.txt'.IO.open: :a;
+    $fh.print: "I count: ";
+    $fh.print: "$_ " for ^10;
+    $fh.close;
+
+The L«C<.open>|/routine/open» method call opens our L<IO::Path> and returns
+an L<IO::Handle>. We passed C<:a> as argument, to indicate we want to open
+the file for writing in append mode.
+
+On the next couple of lines, we use the usual L«C<.print>|/routine/print»
+method on that L<IO::Handle> to print ten lines of
+text. Note that, once again, L<Failure> mechanism takes care of all the error
+checking for us. If the L«C<.open>|/routine/open» fails, it returns
+a L<Failure>, which will throw when we attempt to call method
+L«C<.print>|/routine/print» on it.
+
+Finally, we close the L<IO::Handle> by calling
+L«C<.close> documentation|/routine/close» method on it. It is
+I<imporant that you do it>, especially in large programs or ones that deal
+with a lot of files, as many systems have limits to how many files a program
+can have open at the same time. If you don't close your handles, eventually
+you'll reach that limit and the L«C<.open>|/routine/open» call will fail.
+Note that unlike some other languages, Perl 6 does not use reference counting,
+so the file handles B<are NOT closed> when the scope they're defined in is left.
+They will be closed only when they're garbage collected and failing to close
+the handles may cause your program to reach the file limit I<before> the open
+handles get a chance to get garbage collected.
+
+=head3 Reading from files
+
 =head1 The Wrong Way To Do Things
 
 This section describes how NOT to do Perl 6 IO.
@@ -16,10 +137,10 @@ Some of the routine names it provides may even look familiar to what you've
 used in other languages.
 
 However, unless you're writing your own IO framework,
-you don't ever need to use L«C<$*SPEC>|/language/variables#Dynamic_variables»!
-L«C<$*SPEC>|/language/variables#Dynamic_variables» provides low-level stuff and
-its use will not only make your code horrible to read, you'll likely introduce
-security issues (e.g. null characters)!
+you almost ever need to use L«C<$*SPEC>|/language/variables#Dynamic_variables»
+directly. L«C<$*SPEC>|/language/variables#Dynamic_variables» provides low-level
+stuff and its use will not only make your code tough to read, you'll likely
+introduce security issues (e.g. null characters)!
 
 The L«C<IO::Path>|/type/IO::Path» type is the workhorse of Perl 6 world. It
 caters to all the path manipulation needs as well as provides shortcut routines

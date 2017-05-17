@@ -114,7 +114,7 @@ Defined as:
     multi sub    reverse(*@list  --> Seq:D)
     multi method reverse(List:D: --> Seq:D)
 
-Returns a L«C<Seq>|/type/Seq> with the same elements in reverse order.
+Returns a L«C<Seq>|/type/Seq» with the same elements in reverse order.
 
 Note that C<reverse> always refers to reversing elements of a list;
 to reverse the characters in a string, use L<flip>.
@@ -125,6 +125,11 @@ Examples:
     say reverse ^10;                # OUTPUT: «(9 8 7 6 5 4 3 2 1 0)␤»
 
 =head2 method sort
+
+Defined as:
+
+    multi method sort()
+    multi method sort(&by)
 
 Sorts iterables with C<infix:<cmp>> or given code object and returns a new C<List>.
 
@@ -174,9 +179,10 @@ C<duckmap> will apply C<&block> on each element and return a new list with
 defined return values of the block. For undefined return values, C<duckmap>
 will try to descend into the element if that element implements C<Iterable>.
 
-    my @a = [1,[2,3],4];
-    dd @a.duckmap({ $_ ~~ Int ?? $_++ !! Any });
-    # OUTPUT: «(1, (2, 3), 4)␤»
+    <a b c d e f g>.duckmap(-> $_ where <c d e>.any { .uc }).say;
+    OUTPUT: «(a b C D E f g)␤»
+    (('d', 'e'), 'f').duckmap(-> $_ where <e f>.any { .uc }).say;
+    OUTPUT: «((d E) F)␤»
 
 =head2 method flat
 
@@ -411,7 +417,7 @@ values is returned.
 Defined As:
 
     multi method max(--> Any:D)
-    multi method min(&by --> Any:D)
+    multi method max(&by --> Any:D)
 
 Coerces to Iterable and returns the numerically biggest element. If a
 C<Callable> is provided it is called with each element and its biggest return
@@ -426,8 +432,6 @@ Defined As:
 
 Returns a list containing the smallest and the biggest element. If a
 C<Callable> is provided each element is filtered and then numerically compared.
-
-TODO
 
 =head2 method minpairs
 
