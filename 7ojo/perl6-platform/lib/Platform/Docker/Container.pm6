@@ -66,7 +66,8 @@ class Platform::Docker::Container is Platform::Container {
                 @cmds.push: @cmd.join(' ');
             }
         }
-        my $proc = shell "docker run --name {self.name} {self.name} {self.shell} -c '{@cmds.join(' ; ')}'", :out, :err;
+        my @args = flat self.env-cmd-opts;
+        my $proc = shell "docker run {@args.join(' ')} --name {self.name} {self.name} {self.shell} -c '{@cmds.join(' ; ')}'", :out, :err;
         my $out = $proc.out.slurp-rest;
         $proc = run <docker commit>, self.name, self.name, :out; $out = $proc.out.slurp-rest;
         $proc = run <docker rm>, self.name, :out; $out = $proc.out.slurp-rest;
@@ -74,7 +75,8 @@ class Platform::Docker::Container is Platform::Container {
 
     method dirs {
         return if not self.config-data<dirs>;
-        my $proc = run <docker run -d -it --name>, self.name, self.name, self.shell, :out;
+        my @args = flat self.env-cmd-opts;
+        my $proc = shell "docker run {@args.join(' ')} -d -it --name {self.name} {self.name} {self.shell}", :out;
         my $out = $proc.out.slurp-rest;
         my $config = self.config-data;
         for $config<dirs>.Hash.kv -> $target, $content {
@@ -99,7 +101,8 @@ class Platform::Docker::Container is Platform::Container {
             put "No SSH keys available. Maybe you should run:\n\n  platform --data-path={self.data-path} --domain={self.domain} ssh keygen\n";
             exit;
         }
-        my $proc = run <docker run -d -it --name>, self.name, self.name, self.shell, :out;
+        my @args = flat self.env-cmd-opts;
+        my $proc = shell "docker run {@args.join(' ')} -d -it --name {self.name} {self.name} {self.shell}", :out;
         my $out = $proc.out.slurp-rest;
         my $domain_path = self.data-path ~ '/' ~ self.domain;
         my $path = $domain_path ~ '/files';
@@ -159,14 +162,6 @@ class Platform::Docker::Container is Platform::Container {
             @.extra-args.push('--privileged');
         }
 
-        # Environment variables
-        my @env = [ "--env VIRTUAL_HOST={self.hostname}" ];
-        if $config<environment> {
-            my $proc = run <git -C>, self.projectdir, <rev-parse --abbrev-ref HEAD>, :out, :err;
-            my $branch = $proc.out.slurp-rest.trim;
-            @env = (@env, map { $_ = '--env ' ~ $_.subst(/ \$\(GIT_BRANCH\) /, $branch) }, $config<environment>.Array).flat;
-        }
-
         # Network
         @.extra-args.push("--network {$.network.Str}") if $.network-exists;
 
@@ -174,8 +169,8 @@ class Platform::Docker::Container is Platform::Container {
         @.extra-args.push("--dns {$.dns.Str}") if $.dns.Str.chars > 0;
 
         # PHASE: run
-        my @args = flat @env, @.volumes, @.extra-args;
-        my $cmd = "docker run -dit -h {self.hostname} --name {self.name} {@args.join(' ')} {self.name} {$config<command>}";
+        my @args = flat self.env-cmd-opts, @.volumes, @.extra-args;
+        my $cmd = "docker run {@args.join(' ')} -dit -h {self.hostname} --name {self.name} {self.name} {$config<command>}";
         shell $cmd, :out, :err;
     }
     
@@ -204,5 +199,16 @@ class Platform::Docker::Container is Platform::Container {
         my $out = $proc.out.slurp-rest;
         my $err = $proc.err.slurp-rest;
         $err.chars > 0 ?? False !! True;
+    }
+
+    method env-cmd-opts {
+        my $config = self.config-data;
+        my @env = [ "--env VIRTUAL_HOST={self.hostname}" ];
+        if $config<environment> {
+            my $proc = run <git -C>, self.projectdir, <rev-parse --abbrev-ref HEAD>, :out, :err;
+            my $branch = $proc.out.slurp-rest.trim;
+            @env = (@env, map { $_ = '--env ' ~ $_.subst(/ \$\(GIT_BRANCH\) /, $branch) }, $config<environment>.Array).flat;
+        }
+        @env;
     }
 }
