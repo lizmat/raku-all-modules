@@ -624,17 +624,27 @@ package Zef::CLI {
         $config;
     }
 
+
     sub get-client(*%_) {
-        my $client = Zef::Client.new(|%_);
-        my $logger = $client.logger;
-        my $log    = $logger.Supply.grep({ .<level> <= $verbosity });
-        $log.tap: -> $m {
+        my $client   = Zef::Client.new(|%_);
+        my $logger   = $client.logger;
+        my $stdout   = $logger.Supply.grep({ .<level> <= $verbosity });
+        my $reporter = $logger.Supply.grep({
+                (.<stage> == TEST  && .<phase> == AFTER)
+            ||  (.<level> == ERROR && .<phase> == AFTER)
+            ||  (.<level> == FATAL && .<phase> == AFTER)
+        });
+        $stdout.tap: -> $m {
             given $m.<phase> {
                 when BEFORE { say "===> {$m.<message>}" }
                 when AFTER  { say "===> {$m.<message>}" }
                 default     { say $m.<message> }
             }
         }
+        $reporter.tap: -> $event {
+            $client.reporter.report($event, :$logger);
+        };
+
         $client;
     }
 

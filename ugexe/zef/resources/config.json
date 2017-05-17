@@ -8,8 +8,21 @@
         "whitelist" : "*",
         "blacklist" : []
     },
-    "Repository" : [
+    "Report" : [
         { 
+            "short-name" : "p6ctesters",
+            "enabled" : 0,
+            "module" : "Zef::Service::P6CReporter"
+        },
+        {
+            "short-name" : "cpantesters",
+            "enabled" : 1,
+            "module" : "Zef::CPANReporter",
+            "comment" : "Third party plugin - zef install Zef::Reporter::CPAN"
+        }
+    ],
+    "Repository" : [
+        {
             "short-name" : "cached",
             "enabled" : 1,
             "module" : "Zef::Repository::LocalCache",
