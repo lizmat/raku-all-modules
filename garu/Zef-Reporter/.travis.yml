@@ -1,0 +1,17 @@
+language: perl6
+perl6:
+  - latest
+before_install:
+  - git clone https://github.com/ugexe/zef
+  - cd zef
+  - git checkout reporter
+  - perl6 -Ilib bin/zef -v install .
+  - export PATH=$HOME/rakudo/install/share/perl6/site/bin:$PATH
+  - cd $TRAVIS_BUILD_DIR
+install:
+  # Will reinstall later, so don't need to test here
+  - zef --/test install .
+script:
+  # Reinstall to submit a test report on itself
+  - zef --debug --force install .
+sudo: false
