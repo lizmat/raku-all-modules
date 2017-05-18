@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/CurtTilmes/perl6-libyaml.git
 	branch = master
-	commit = 92fe25631eee1dadc026d04b90e05c7b5ea3406e
-	parent = 67a974e1a6632fb3525b11d62edacce84558c723
+	commit = cacc15ab67e551a7e21d8f818ae7c13af8c62279
+	parent = 3e55a9a44159986b5561cbce6ea3786312de7948
 	cmdver = 0.4.0
