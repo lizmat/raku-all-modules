@@ -3,6 +3,7 @@
     "name"        : "Test::NoTabs",
     "license"     : "Artistic-2.0",
     "version"     : "0.1",
+    "tags"        : ["Testing"],
     "description" : "Test module for tabs checking",
     "provides": {
         "Test::NoTabs"         : "lib/Test/NoTabs.pm6"
