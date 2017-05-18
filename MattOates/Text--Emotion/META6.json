@@ -2,6 +2,7 @@
     "perl" : "6.*",
     "name" : "Text::Emotion",
     "version" : "0.0.5",
+    "license" : "Artistic-2.0",
     "description" : "Get an emotional score for a passage of text based on its word use.",
     "author" : "Matt Oates",
     "tags" : [ "Text", "Sentiment", "NLP" ],
