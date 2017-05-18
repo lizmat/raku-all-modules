@@ -8,10 +8,12 @@ before_install:
 install:
     - export PATH=/opt/rakudo/bin:~/.perl6/bin:$PATH
     - wget https://github.com/nxadm/rakudo-pkg/releases/download/2017.03_02/perl6-rakudo-moarvm-ubuntu16.04_20170300-02_amd64.deb
+    #-  wget https://github.com/nxadm/rakudo-pkg/releases/download/2017.03_03/perl6-rakudo-moarvm-ubuntu16.04_20170300-03_amd64.deb
     - sudo dpkg -i *.deb
     - install_zef_as_user.sh
     - zef install .
     - zef install Sparrowdo::Sparrow::Update
+    - zef --force install JSON::Unmarshal
     - zef install Sparrowdo::Cpanm::GitHub
 script:
   - sparrowdo --module_run=Sparrow::Update --bootstrap --host=127.0.0.1
@@ -19,3 +21,4 @@ script:
   - strun --root examples/
   - sparrowdo --host=127.0.0.1 --no_index_update --task_run=user@name=foo --task_run=bash@command='id && cd ~/ && pwd && uptime && ls -l && ps uax|grep ssh|grep -v grep',user=foo --task_run=df-check@therhold=54
   - sparrowdo --host=127.0.0.1 --no_index_update --module_run=Cpanm::GitHub@user=leejo,project=CGI.pm,branch=master
+

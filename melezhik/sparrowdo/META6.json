@@ -6,7 +6,8 @@
   "authors" : [ "Alexey Melezhik"],
   "depends"     : [
                     "Terminal::ANSIColor",
-                    "JSON::Tiny"
+                    "JSON::Tiny",
+                    "Config::Simple"
                   ],
   "source-type" : "git",
   "support" : {

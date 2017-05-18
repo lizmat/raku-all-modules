@@ -12,6 +12,7 @@ use Sparrowdo::Core::DSL::Service;
 use Sparrowdo::Core::DSL::Bash;
 use Sparrowdo::Core::DSL::Ssh;
 use Sparrowdo::Core::DSL::Assert;
+use Config::Simple;
 
 sub MAIN (
 
@@ -31,12 +32,28 @@ sub MAIN (
   Bool :$no_color = False,
   Bool :$no_index_update = False,
   Str  :$sparrow_root, 
+  Str  :$repo, 
 )
 {
 
+  # read config if exists
+  my $conf-ini-file = '/home/' ~ %*ENV<USER> ~ '/sparrowdo.ini';
+  my $conf-ini = $conf-ini-file.IO ~~ :e ?? Config::Simple.read($conf-ini-file,:f<ini>) !! Hash.new;
   
   # dirty hacks to pass command line parameter into sparrowfile context
   # sorry for not knowing perl6 idioms ... ));
+
+  my $verbose_val = $verbose;
+
+  $verbose_val = True if $conf-ini<sparrowdo><verbose> && ! $verbose_val;
+    
+  my $no_index_update_val = $no_index_update;
+
+  $no_index_update_val = True if $conf-ini<sparrowdo><no_index_update> && ! $no_index_update_val;
+
+  my $repo_val = $repo;
+
+  $repo_val = $conf-ini<sparrowdo><repo> if $conf-ini<sparrowdo><repo> && ! $repo_val;
   
   set_input_params %(  
     Host => $host, 
@@ -46,11 +63,12 @@ sub MAIN (
     SshPort => $ssh_port, 
     SshUser => $ssh_user, 
     SshPrivateKey => $ssh_private_key, 
-    Verbose => $verbose,
+    Verbose => $verbose_val,
     NoSudo => $no_sudo,
     NoColor => $no_color,
-    NoIndexUpdate => $no_index_update,
-    SparrowRoot => $sparrow_root
+    NoIndexUpdate => $no_index_update_val,
+    SparrowRoot => $sparrow_root,
+    Repo => $repo_val
   );
 
   bootstrap() if $bootstrap;
@@ -94,6 +112,11 @@ sub MAIN (
 
   }
 
+  if $repo_val {
+    ssh_shell "echo repo: $repo_val > /tmp/sparrow-cache/sparrow.yaml";
+    say colored("set custom repo to $repo_val - OK", 'bold green on_black');
+  }
+
   ssh_shell 'sparrow index update' unless input_params('NoIndexUpdate');
 
   # plugins mode
@@ -133,6 +156,8 @@ sub ssh_shell ( $cmd ) {
   @bash_commands.push:  'export PATH=/sbin/:/usr/local/bin:/usr/sbin/:$PATH';
   @bash_commands.push:  'export SPARROW_ROOT=' ~ ( input_params('SparrowRoot') || '/opt/sparrow' );
   @bash_commands.push:  'export SPARROW_NO_COLOR=1' if input_params('NoColor');
+  @bash_commands.push:  'export SPARROW_CONF_PATH=/tmp/sparrow-cache/sparrow.yaml';
+
   @bash_commands.push:  $cmd;
 
   my $ssh_host_term = input_params('Host');

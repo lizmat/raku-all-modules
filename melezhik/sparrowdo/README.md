@@ -293,6 +293,30 @@ For example:
 
 Sets verbose mode ( low level information will be printed at console ).
 
+## --repo
+
+This option sets custom sparrow repo to use during sparrow run on target machine.
+
+For example:
+
+    --repo=192.168.0.2:4441
+
+# Sparrowdo configuration via ini file
+
+You may pass _some_ sparrowdo client options via ini files at ~/sparrowdo.ini.
+
+Here is the list of available options:
+
+* no_index_update
+* verbose
+* repo
+
+For example:
+
+    [sparrowdo]
+    no_index_update = 1
+    verbose         = 1
+    repo            = 192.168.0.2:4441
 
 # Bootstrapping 
 
@@ -412,7 +436,8 @@ This is the list of arguments valid for input\_params function:
     SparrowRoot 
     SshPort 
     SshUser 
-    SshPrivateKey 
+    SshPrivateKey
+    Repo 
     Verbose
     NoSudo
     NoColor
@@ -441,6 +466,7 @@ Later on in scenario you may access config data via `config` function:
 
     my $user         = config<user>;
     my $install-base = config<install-base>;
+
     
 # AUTHOR
 
