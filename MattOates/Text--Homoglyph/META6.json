@@ -1,5 +1,6 @@
 {
     "name" : "Text::Homoglyph",
+    "license" : "Artistic-2.0",
     "version" : "0.0.2",
     "description" : "Map ASCII to unicode homoglyphs.",
     "author" : "Matt Oates",
