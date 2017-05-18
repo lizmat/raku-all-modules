@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Altai-man/perl6-Text-Tabs.git
 	branch = master
-	commit = 04ded7e4a2cd7902edb1a3474705176d36b09de2
-	parent = e6e7f7d44b5914379f29813dc411bd5c81ca7306
+	commit = 0e2ffdc877de3bcc03ce3417d28a41829b218cf2
+	parent = 223698161948a1f0461280b608beeae54c4a945f
 	cmdver = 0.4.0

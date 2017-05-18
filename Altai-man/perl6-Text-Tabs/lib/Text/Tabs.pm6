@@ -3,7 +3,7 @@ use v6;
 unit module Text::Tabs;
 
 our sub expand(@input, $tabstop = 8 --> Array) is export {
-    my $output;
+    my Array $output = [];
     for @input -> $el {
         my $tmp = '';
         for (split(/^/, $el, :skip-empty)) {
@@ -34,5 +34,5 @@ our sub unexpand(@input, $tabstop = 8 --> Array) is export {
         }
         $output.push(join("\n", @buff));
     }
-    return $output;
+    $output;
 }

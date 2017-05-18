@@ -2,6 +2,7 @@
     "perl"         : "6.c",
     "name"         : "Text::Tabs",
     "license"      : "Artistic-2.0",
+    "tags"         : [""],
     "version"      : "0.1",
     "description"  : "Perl 6 port of Perl's Text::Tabs",
     "depends"      : [ ],
