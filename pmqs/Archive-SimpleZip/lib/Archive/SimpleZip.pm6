@@ -35,9 +35,6 @@ class SimpleZip is export
 
     has Bool                     $!opened = True;
 
-    #123838: IO::Handle::tell return 0, no matter what
-    has ProxyWrite               $!out ;
-
     multi method new(Str $filename, |c)
     {
         my $zip-filehandle = open $filename, :w, :bin ;
@@ -65,7 +62,6 @@ class SimpleZip is export
                          #Bool       :$!zip64   = False, 
                          )
     {
-        $!out .= new(filehandle => $!zip-filehandle); 
         $!any-zip64 = True 
             if $!zip64 ;
     }
@@ -109,9 +105,9 @@ class SimpleZip is export
         $hdr.general-purpose-bit-flag +|= Zip-GP-Streaming-Mask 
             if $stream ;
 
-        my $start-local-hdr = $!out.tell();
+        my $start-local-hdr = $!zip-filehandle.tell();
         my $local-hdr = $hdr.get();
-        $!out.write($local-hdr) ;
+        $!zip-filehandle.write($local-hdr) ;
 
         my $read-action;
         my $flush-action;
@@ -153,9 +149,9 @@ class SimpleZip is export
 
         while $handle.read(1024 * 4) -> $chunk
         {
-            $!out.write($reader($chunk));
+            $!zip-filehandle.write($reader($chunk));
         }
-        $!out.write($flusher());
+        $!zip-filehandle.write($flusher());
 
         $hdr.compressed-size = $compressed-size ;
         $hdr.uncompressed-size = $uncompressed-size;
@@ -163,11 +159,14 @@ class SimpleZip is export
 
         if $stream
         {
-            $!out.write($hdr.data-descriptor()) ;
+            $!zip-filehandle.write($hdr.data-descriptor()) ;
         }
         else
         {
-            $!out.write-at($start-local-hdr + 14, $hdr.crc-and-sizes()) ;
+            my $here = $!zip-filehandle.tell();
+            $!zip-filehandle.seek($start-local-hdr + 14, SeekFromBeginning);
+            $!zip-filehandle.write($hdr.crc-and-sizes());
+            $!zip-filehandle.seek($here, SeekFromBeginning);
         }
 
         $!cd.save-hdr($hdr, $start-local-hdr);
@@ -180,14 +179,14 @@ class SimpleZip is export
 
         $!opened = False;
 
-        my $start-cd = $!out.tell();
+        my $start-cd = $!zip-filehandle.tell();
         
         for $!cd.get-hdrs() -> $ch
         {
-            $!out.write($ch) ;
+            $!zip-filehandle.write($ch) ;
         }
 
-        $!out.write($!cd.end-central-directory($start-cd, $.comment.encode));
+        $!zip-filehandle.write($!cd.end-central-directory($start-cd, $.comment.encode));
 
         $!zip-filehandle.close();
 

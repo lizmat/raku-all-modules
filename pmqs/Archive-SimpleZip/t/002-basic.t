@@ -10,7 +10,7 @@ plan 18;
 
 use ZipTest; 
 
-if external-zip-works()
+if ! external-zip-works()
 {
     skip-rest("Cannot find external zip/unzip or they do not work as expected.");
     exit;

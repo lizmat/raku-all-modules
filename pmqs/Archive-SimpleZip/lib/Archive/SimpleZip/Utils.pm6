@@ -14,41 +14,6 @@ sub crc32(int32 $crc, Blob $data) is export
     return $newCRC;
 }
 
-
-class ProxyWrite is export
-{
-    # Need this class to work around "tell" not working as expected.
-    # See RT 123838: IO::Handle::tell return 0, no matter what
-    #     https://rt.perl.org/Ticket/Display.html?id=123838
-
-    has IO::Handle $.filehandle ;
-    has Int        $!offset = 0 ;
-
-    method write(Blob $data)
-    {
-        $!offset += $data.elems;
-        $.filehandle.write($data);
-    }
-
-    method write-at(Int $index, Blob $data)
-    {
-        $.filehandle.seek($index, SeekFromBeginning);
-        $.filehandle.write($data);
-        $.filehandle.seek($!offset, SeekFromBeginning);
-    }
-
-    method tell()
-    {
-        return $!offset;
-    }
-
-    method close()
-    {
-        close $.filehandle;
-    }
-}
-
-
 sub get-DOS-time(Instant $timestamp) is export
 {
     # TODO - add something to cope with time < 1980 
