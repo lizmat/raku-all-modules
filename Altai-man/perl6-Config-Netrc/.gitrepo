@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Altai-man/perl6-Config-Netrc.git
 	branch = master
-	commit = b5cfd93f5558d8890a7262c630cddbfa763bf4cf
-	parent = c9f9b871ea8f197c697ab4b5494f21e373ec873d
+	commit = 049b68a394eeb9174375d6b285f901c3c8a2d11e
+	parent = 65fd596b05ea3c2fc2a3e7eb7dce8cd640ad42b9
 	cmdver = 0.4.0
