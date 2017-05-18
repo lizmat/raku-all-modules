@@ -352,8 +352,10 @@ class SSH::LibSSH {
                 }
                 CATCH {
                     default {
-                        self!teardown-session();
-                        $v.break($_);
+                        get-event-loop().run-on-loop: {
+                            self!teardown-session();
+                            $v.break($_);
+                        }
                     }
                 }
             };
@@ -401,9 +403,11 @@ class SSH::LibSSH {
             }
             CATCH {
                 default {
-                    ssh_key_free($key) with $key;
-                    self!teardown-session();
-                    $v.break($_);
+                    get-event-loop().run-on-loop: {
+                        ssh_key_free($key) with $key;
+                        self!teardown-session();
+                        $v.break($_);
+                    }
                 }
             }
         }
@@ -449,8 +453,10 @@ class SSH::LibSSH {
             }
             CATCH {
                 default {
-                    self!teardown-session();
-                    $v.break($_);
+                    get-event-loop().run-on-loop: {
+                        self!teardown-session();
+                        $v.break($_);
+                    }
                 }
             }
         }
