@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/garu/Zef-Reporter.git
 	branch = master
-	commit = 7d02d982023d1ed6fd0fab7f0c88d221ef95911d
-	parent = 819aa9be710239f98176b6a3482f14f03cbb52d2
+	commit = 8ad8435839be79be2a4ab02df04a5190478b24da
+	parent = 77526e69a76df2490fe7e0d678b50f02ad4a862f
 	cmdver = 0.4.0

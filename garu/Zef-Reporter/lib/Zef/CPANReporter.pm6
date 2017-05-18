@@ -89,10 +89,10 @@ class Zef::CPANReporter does Messenger does Reporter {
         });
 
         my $response = Net::HTTP::POST("http://api.cpantesters.org/v3/report", body => $report-json);
-        my $test-id  = try { from-json( $response.content(:force) )<id> };
+        my $test-id  = try { from-json( $response.content(:force) )<id>.lc };
 
         $test-id
-            ?? $.stdout.emit("Report for {$event<payload>.dist.identity} will be available at http://cpantesters.org/report/{$test-id}")
+            ?? $.stdout.emit("Report for {$event<payload>.dist.identity} will be available at http://www.cpantesters.org/cpan/report/{$test-id}")
             !! $.stderr.emit("Encountered problems sending test report for {$event<payload>.dist.identity}");
 
         return $test-id;
