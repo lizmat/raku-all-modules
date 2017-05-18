@@ -5,5 +5,5 @@ perl6:
     - latest
 
 install:
-  - rakudobrew build-panda
-  - panda update && panda install Compress::Bzip2::Raw
+  - rakudobrew build-zef
+  - zef install .
