@@ -5,7 +5,7 @@
 
     "auth" : "github:CurtTilmes",
 
-    "version" : "0.2",
+    "version" : "0.3",
 
     "source-url" : "https://github.com/CurtTilmes/perl6-primesieve.git",
 

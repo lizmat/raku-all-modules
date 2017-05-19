@@ -2,6 +2,8 @@ use v6;
 
 use NativeCall;
 
+
+
 constant LIB = 'primesieve';
 
 constant PRIMESIEVE_ERROR = 18446744073709551615;
@@ -11,42 +13,39 @@ enum PRIMESIEVE <SHORT_PRIMES USHORT_PRIMES INT_PRIMES UINT_PRIMES
   INT16_PRIMES UINT16_PRIMES INT32_PRIMES UINT32_PRIMES INT64_PRIMES
   UINT64_PRIMES>;
 
-class Math::Primesieve::iterator is repr('CStruct')
+class Math::Primesieve::iterator-struct is repr('CStruct')
 {
     has size_t $.i;
     has size_t $.last_idx;
     has CArray[uint64] $.primes;
-    has CArray[uint64] $.primes_pimpl;
+    has Pointer $.primes_pimpl;
     has uint64 $.start;
     has uint64 $.stop;
     has uint64 $.stop_hint;
     has uint64 $.tiny_cache_size;
     has int32 $.is_error;
 
-    sub primesieve_init(Math::Primesieve::iterator)
+    sub primesieve_init(Math::Primesieve::iterator-struct)
         is native(LIB) {*}
 
-    sub primesieve_free_iterator(Math::Primesieve::iterator)
+    sub primesieve_free_iterator(Math::Primesieve::iterator-struct)
         is native(LIB) {*}
 
-    sub primesieve_skipto(Math::Primesieve::iterator, uint64, uint64)
+    sub primesieve_skipto(Math::Primesieve::iterator-struct, uint64, uint64)
         is native(LIB) {*}
 
-    sub primesieve_generate_next_primes(Math::Primesieve::iterator)
+    sub primesieve_generate_next_primes(Math::Primesieve::iterator-struct)
         is native(LIB) {*}
 
-    sub primesieve_generate_prev_primes(Math::Primesieve::iterator)
+    sub primesieve_generate_prev_primes(Math::Primesieve::iterator-struct)
         is native(LIB) {*}
 
     sub primesieve_get_max_stop() returns uint64
         is native(LIB) {*}
 
-    method new(Int $start?)
+    method init()
     {
-        my $self = self.bless;
-        primesieve_init($self);
-        $self.skipto($start) with $start;
-        $self;
+        primesieve_init(self);
     }
 
     method skipto(uint64 $start, uint64 $stop-hint = primesieve_get_max_stop)
@@ -66,9 +65,36 @@ class Math::Primesieve::iterator is repr('CStruct')
         $!primes[$!i]
     }
 
-    method DESTROY()
+    method free()
     {
         primesieve_free_iterator($_) with self;
+    }
+}
+
+class Math::Primesieve::iterator
+{
+    has $.raw;
+
+    method new(Int $start?)
+    {
+        my $self = self.bless(raw => buf8.allocate(
+            nativesizeof(Math::Primesieve::iterator-struct)));
+        $self.iterator.init;
+        $self.skipto($start) with $start;
+        $self;
+    }
+
+    method iterator() { nativecast(Math::Primesieve::iterator-struct, $!raw) }
+
+    method skipto(|c) { self.iterator.skipto(|c) }
+
+    method next() { self.iterator.next }
+
+    method prev() { self.iterator.prev }
+
+    method DESTROY()
+    {
+        self.iterator.free;
     }
 }
 
@@ -126,7 +152,7 @@ class Math::Primesieve does Positional
     sub primesieve_print_sextuplets(uint64, uint64)
         returns uint64 is native(LIB) {*}
 
-    sub primesieve_get_max_stop() returns uint64 is native(LIB) { * }
+    sub primesieve_get_max_stop() returns uint64 is native(LIB) {*}
 
     sub primesieve_get_sieve_size() returns int32 is native(LIB) {*}
 
@@ -136,7 +162,7 @@ class Math::Primesieve does Positional
 
     sub primesieve_set_num_threads(int32) is native(LIB) {*}
 
-    sub primesieve_free(Pointer) is native(LIB) { * }
+    sub primesieve_free(Pointer) is native(LIB) {*}
 
     method BUILD(:$num-threads, :$sieve-size)
     {
@@ -173,9 +199,8 @@ class Math::Primesieve does Positional
             $start = 0;
         }
 
-        my $p = primesieve_generate_primes($start, $stop, $size, UINT64_PRIMES);
-
-        die X::Math::Primsieve.new if $p == PRIMESIEVE_ERROR;
+        my $p = primesieve_generate_primes($start, $stop, $size, UINT64_PRIMES)
+            or die X::Math::Primesieve.new;
 
         my @ret = nativecast(CArray[uint64], $p)[0 ..^ $size];
 
@@ -186,9 +211,8 @@ class Math::Primesieve does Positional
 
     method n-primes(UInt $n, UInt $start = 0)
     {
-        my $p = primesieve_generate_n_primes($n, $start, UINT64_PRIMES);
-
-        die X::Math::Primsieve.new if $p == PRIMESIEVE_ERROR;
+        my $p = primesieve_generate_n_primes($n, $start, UINT64_PRIMES)
+            or die X::Math::Primesieve.new;
 
         my @ret = nativecast(CArray[uint64], $p)[0 ..^ $n];
 

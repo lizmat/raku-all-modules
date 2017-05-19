@@ -2,7 +2,6 @@ language: perl6
 
 os:
   - linux
-  - osx
 
 perl6:
   - latest
@@ -11,9 +10,7 @@ sudo: true
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get update            ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install primesieve; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update            ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install primesieve; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libprimesieve6-dev; fi
 
 install:
   - rakudobrew build zef
