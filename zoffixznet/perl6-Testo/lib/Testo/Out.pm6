@@ -1,2 +1,4 @@
 unit role Testo::Out;
-method put { … }
+use Testo::Test::Result;
+multi method put ($) { … }
+multi method put (Testo::Test::Result:D $test) { … }
