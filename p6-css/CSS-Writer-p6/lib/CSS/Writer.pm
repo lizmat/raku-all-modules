@@ -22,29 +22,22 @@ class CSS::Writer {
         )
     }
 
-    submethod TWEAK(:$color-names, :$color-values) {
+    my subset BoolOrHash where { !.defined || $_ ~~ Bool|Hash }
+    submethod TWEAK(BoolOrHash :$color-names, BoolOrHash :$color-values) {
 
-        if $color-names {
+        with $color-names {
             die ":color-names and :color-values are mutually exclusive options"
-                if $color-values;
+                with $color-values;
 
-            given $color-names {
-                when Bool { %!color-names = build-color-names( %CSS::Grammar::AST::CSS3-Colors )
+	    when Bool { %!color-names = build-color-names( %CSS::Grammar::AST::CSS3-Colors )
                                 if $_; }
-                when Hash { %!color-names = build-color-names( $_ ) }
-                default {
-                    die 'usage :color-names [for CSS3 Colors] or :color-names(%table) [e.g. :color-names(CSS::Grammar::AST::CSS3-Colors)]';
-                }
-            }
+	    when Hash { %!color-names = build-color-names( $_ ) }
         }
         else {
             with $color-values {
                 when Bool { %!color-values = %CSS::Grammar::AST::CSS3-Colors
                                 if $_; }
                 when Hash { %!color-values = %$_ }
-                default {
-                    die 'usage :color-values [for CSS3 Colors] or :color-values(%table) [e.g. :color-values(CSS::Grammar::AST::CSS3-Colors)]';
-                }
             }
         }
 
@@ -315,7 +308,7 @@ class CSS::Writer {
     }
 
     #| 'I\'d like some \BEE f!' := $.write-string("I'd like some \x[bee]f!")
-    method write-string( Str(Any) $str --> Str) {
+    method write-string( Str(Cool) $str --> Str) {
         [~] flat ("'",
              $str.comb.map({
                  when /<CSS::Grammar::CSS3::stringchar-regular>|\"/ {$_}
