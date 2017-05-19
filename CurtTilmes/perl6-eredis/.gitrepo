@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/CurtTilmes/perl6-eredis.git
 	branch = master
-	commit = b5533200ef22a00d453a941d1ecbd70b2d222404
-	parent = 119f48290c0c1eba9e2b7cc373071e6a1932fe54
+	commit = 57b433dac3fab7fcf3c287701bb30fbb3f7afa72
+	parent = 2b48c767a31df990f53634785a6c48b3ba4d2d30
 	cmdver = 0.4.0
