@@ -1,0 +1,33 @@
+{
+    "name" : "LibYAML",
+
+    "description" : "Perl6 bindings for LibYAML",
+
+    "auth" : "github:yaml",
+
+    "version" : "0.2",
+
+    "source-url" : "https://github.com/yaml/yaml-libyaml-perl6.git",
+
+    "perl" : "6.c",
+
+    "tags" : [ "LibYAML", "YAML", "format", "serialization" ],
+
+    "provides" : {
+        "LibYAML"  : "lib/LibYAML.pm6"
+    },
+
+    "depends" : [ "NativeCall" ],
+
+    "test-depends" : [ "Test", "JSON::Fast" ],
+
+    "license" : "Artistic-2.0",
+
+    "authors" : [ "Curt Tilmes <ctilmes@cpan.org>",
+                  "Ingy döt Net <ingy@cpan.org>" ],
+
+    "support" : {
+      "source" : "https://github.com/yaml/yaml-libyaml-perl6.git",
+      "bugtracker" : "https://github.com/yaml/yaml-libyaml-perl6/issues"
+    }
+}

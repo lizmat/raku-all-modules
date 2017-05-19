@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/yaml/yaml-libyaml-perl6.git
+	branch = master
+	commit = 75ca6280198cfeb64846b6d5d1a2d83f6a528c6d
+	parent = 91ccad4f1676e585ec8c243515ac758f49c1f71c
+	cmdver = 0.4.0
