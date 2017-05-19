@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - ```platform --project=xxx attach``` to connect container via shell
 - examples/openldap to use openldap on your environments
+- ```platform [--environment=|--project=] remove``` command to stop & remove
+- Throw exception if project file doesn't exists and catch it for reporting
 
 ### Fixed
 - Rakudo 2017.04 and up compliance abspath -> absolute

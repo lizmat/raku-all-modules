@@ -10,11 +10,23 @@ multi sub load-module(:$name, :$network = 'acme', :$domain = 'localhost', :$data
 }
 
 multi sub load-module(:$name, :$project, :$network = 'acme', :$domain = 'localhost', :$data-path) {
+    CATCH {
+        when X::IO {
+            say color('red') ~ "ERROR: " ~ $_.Str ~ color('reset');
+            exit;
+        }
+    }
     require ::($name);
     ::($name).new(:$project, :$network, :$domain, :$data-path);
 }
 
 multi sub load-module(:$name, :$environment, :$network = 'acme', :$domain = 'localhost', :$data-path) {
+    CATCH {
+        when X::IO {
+            say color('red') ~ "ERROR: " ~ $_.Str ~ color('reset');
+            exit;
+        }
+    }
     require ::($name);
     ::($name).new(:$domain, :$data-path, :$environment);
 }
@@ -56,6 +68,14 @@ multi sub MAIN('rm', Str :$project, Str :$data-path = '~/.platform') {
     put banner() ~ $obj.as-string if $obj.last-result<err>.chars > 0;
 }
 
+#| Stop and remove project
+multi sub MAIN('remove', Str :$project, Str :$data-path = '~/.platform') {
+    my $obj = load-module(:name<Platform::Project>, :$project, :$data-path);
+    $obj.stop;
+    my $res = $obj.rm;
+    put banner() ~ $res.as-string if $res.last-result<err>.chars > 0;
+}
+
 #| Initialize and run environment
 multi sub MAIN('run', Str :$environment, Str :$network = 'acme', Str :$domain = 'localhost', Str :$data-path = '~/.platform') {
     put banner() ~ load-module(:name<Platform::Environment>, :$environment, :$network, :$domain, :$data-path).run.as-string;
@@ -76,6 +96,12 @@ multi sub MAIN('rm', Str :$environment, Str :$data-path = '~/.platform') {
     put banner() ~ load-module(:name<Platform::Environment>, :$environment, :$data-path).rm.as-string;
 }
 
+#| Stop and remove stopped environment
+multi sub MAIN('remove', Str :$environment, Str :$data-path = '~/.platform') {
+    my $obj = load-module(:name<Platform::Environment>, :$environment, :$data-path).stop;
+    put banner() ~ load-module(:name<Platform::Environment>, :$environment, :$data-path).rm.as-string;
+}
+
 #| Generation of RSA Private Key
 multi sub MAIN('ssl', 'genrsa', Str :$domain = 'localhost', Str :$data-path = '~/.platform') {
     load-module(:name<Platform>, :$domain, :$data-path).ssl('genrsa');
@@ -89,3 +115,4 @@ multi sub MAIN('ssh', 'keygen', Str :$domain = 'localhost', Str :$data-path = '~
 sub banner returns Str {
     color('yellow') ~ '» Project' ~ color('reset') ~ "\n";
 }
+

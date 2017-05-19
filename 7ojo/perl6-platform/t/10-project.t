@@ -7,11 +7,14 @@ use Platform::Project;
 plan 13;
 
 {
-    my $prj = Platform::Project.new(:project('my-project.yml'));
+    spurt '.test-10-project-my-project.yml', '';
+    my $prj = Platform::Project.new(:project('.test-10-project-my-project.yml'));
     my $curr-path = ".".IO.absolute;
 
     is $curr-path, $prj.project-dir, "project dir";
-    is "$curr-path/my-project.yml", $prj.project-file, "project file";
+    is "{$curr-path}/.test-10-project-my-project.yml", $prj.project-file, "project file";
+    
+    '.test-10-project-my-project.yml'.IO.unlink;
 }
 
 { # TEST: has files under docker dir
@@ -63,9 +66,12 @@ plan 13;
 }
 
 {
-    my $prj = Platform::Project.new(:project('~/my-project.yml'));
+    spurt $*HOME.IO.absolute ~ '/.test-10-project-my-project.yml', '';
+    my $prj = Platform::Project.new(:project('~/.test-10-project-my-project.yml'));
     my $curr-path = $*HOME.IO.absolute;
 
     is $prj.project-dir, $curr-path, "project dir with ~";
-    is $prj.project-file, "$curr-path/my-project.yml", "project file with ~";
+    is $prj.project-file, "$curr-path/.test-10-project-my-project.yml", "project file with ~";
+    
+    "{$*HOME.IO.absolute}/.test-10-project-my-project.yml".IO.unlink;
 }

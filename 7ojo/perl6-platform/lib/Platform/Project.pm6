@@ -28,6 +28,10 @@ class Platform::Project {
             $!project-dir = self.project.IO.absolute;
             $!project-file = "$_/project.yml".IO.absolute if not $!project-file and "$_/project.yml".IO.e for self.project ~ "/docker", self.project;
         }
+        $!project-dir ||= '';
+        $!project-file ||= '';
+        die X::IO::DoesNotExist.new(:path($!project-dir), :trying('TWEAK')) if not $!project-dir or not $!project-dir.IO.e;
+        die X::IO::DoesNotExist.new(:path("{$!project-dir}/project.yml"), :trying('TWEAK')) if not $!project-file or not $!project-file.IO.e;
     }
 
     method run {
