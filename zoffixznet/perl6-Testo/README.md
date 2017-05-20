@@ -8,7 +8,7 @@ Testo - Perl 6 Testing Done Right
 
 ```perl6
     use Testo;
-    plan 9;
+    plan 10;
 
     # `is` uses smart match semantics:
     is 'foobar', *.contains('foo');    # test passes
@@ -24,7 +24,14 @@ Testo - Perl 6 Testing Done Right
     # execute a program with some args and STDIN input and smartmatch its
     # STDERR, STDOUT, and exit status:
     is-run $*EXECUTABLE, :in<hi!>, :args['-e', 'say $*IN.uc'],
-        :out(/'HI!'/), :err(''), :0status, 'can say hi';
+        :out(/'HI!'/), 'can say hi';
+
+    # run a bunch of tests as a group; like Test.pm6's `subtest`
+    group 'a bunch of test' => 3 => {
+        is 1, 1;
+        is 4, 4;
+        is 'foobar', /foo/;
+    }
 ```
 
 # FEATURES
@@ -111,7 +118,61 @@ An optional description of the test can be specified.
 
 ## `is-run`
 
-NYI.
+```perl6
+    is-run $*EXECUTABLE, :in<hi!>, :args['-e', 'say $*IN.uc'],
+        :out(/'HI!'/), 'can say hi';
+
+    is-run $*EXECUTABLE, :args['-e', '$*ERR.print: 42'],
+        :err<42>, 'can err 42';
+
+    is-run $*EXECUTABLE, :args['-e', 'die 42'],
+        :err(*), :42status, 'can exit with exit code 42';
+```
+
+**NOTE:** due to [a Rakudo bug
+RT#130781](https://rt.perl.org/Ticket/Display.html?id=130781#ticket-history)
+exit code is currently always reported as `0`
+
+Runs an executable (via [&run](https://docs.perl6.org/routine/run)), optionally
+supplying extra args given as `:args[...]` or feeding STDIN with a `Str` or
+`Blob` data given via C<:in>.
+
+Runs three `is` tests on STDOUT, STDERR, and exit code expected values for
+which are provided via `:out`, `:err` and `:status` arguments respectively.
+If omitted, `:out` and `:err` default to empty string (`''`) and `:status`
+defaults to `0`. Use the [Whatever star](https://docs.perl6.org/type/Whatever)
+(`*`) as the value for any of the three arguments (see `:err` in last
+example above).
+
+## `group`
+
+```perl6
+    plan 1;
+
+    # run a bunch of tests as a group; like Test.pm6's `subtest`
+    group 'a bunch of tests' => 4 => {
+        is 1, 1;
+        is 4, 4;
+        is 'foobar', /foo/;
+
+        group 'nested bunch of tests; with manual `plan`' => {
+            plan 2;
+            is 1, 1;
+            is 4, 4;
+        }
+    }
+```
+
+Similar to `Test.pm6`'s `subtest`. Groups a number of tests into a... group
+with its own plan. The entire group counts as 1 test towards the planned/ran
+number of tests.
+
+Takes a `Pair` as the argument that is either `Str:D $desc => &group-code`
+or `Str:D $desc => UInt:D $plan where .so => &group-code` (see code example
+above), the latter form lets you specify the plan for the group, while the
+former would require you to manually use `&plan` inside of the `&group-code`.
+
+Groups can be nested for any (reasonable) number of levels.
 
 ---
 

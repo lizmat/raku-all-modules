@@ -73,15 +73,13 @@ class IsRun does Testo::Test {
             my $status = .status;
 
             my $wanted-status = $!status // 0;
-            my $plan = [+] 1, $!out.DEFINITE, $!err.DEFINITE;
-            $plan and do {
-                my $*Tester = $!tester.new:
-                    group-level => 1+$!tester.group-level;
-                $!tester.group: $*Tester, $!desc => $plan => {
-                    $*Tester.is: $out, $!out if $!out.DEFINITE;
-                    $*Tester.is: $err, $!err if $!out.DEFINITE;
-                    $*Tester.is: $status, $wanted-status;
-                }
+            my $wanted-out    = $!out    // '';
+            my $wanted-err    = $!err    // '';
+            my $*Tester = $!tester.new: group-level => 1+$!tester.group-level;
+            $!tester.group: $*Tester, $!desc => 3 => {
+                $*Tester.is: $out,    $wanted-out;
+                $*Tester.is: $err,    $wanted-err;
+                $*Tester.is: $status, $wanted-status;
             }
         }
     }

@@ -1,7 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Testo",
-    "version"      : "1.001002",
+    "version"      : "1.002001",
     "description"  : "Perl 6 Testing Done Right",
     "depends"      : [
         "RakudoPrereq"
@@ -14,6 +14,7 @@
         "Testo::Out": "lib/Testo/Out.pm6",
         "Testo::Out::TAP" : "lib/Testo/Out/TAP.pm6",
         "Testo::Test": "lib/Testo/Test.pm6",
+        "Testo::Test::Group": "lib/Testo/Test.pm6",
         "Testo::Test::Is": "lib/Testo/Test.pm6",
         "Testo::Test::IsEqv": "lib/Testo/Test.pm6",
         "Testo::Test::IsRun": "lib/Testo/Test.pm6"

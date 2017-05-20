@@ -6,11 +6,10 @@ has Testo::Out $.out;
 has UInt:D $.group-level = 0;
 has @.tests where .all ~~ Testo::Test;
 
-method !SET-SELF (:$!out) {self}
 method new (Str:D :$format = 'TAP', UInt:D :$group-level = 0) {
     my $out = "Testo::Out::$format";
     (try require ::($out)) === Nil and die "Failed to load formatter $out: $!";
-    self.bless!SET-SELF: out => ::($out).new: :$group-level
+    self.bless: :$format, :$group-level, out => ::($out).new: :$group-level
 }
 
 multi method group (
