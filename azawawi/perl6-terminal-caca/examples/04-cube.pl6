@@ -81,9 +81,11 @@ given my $o = Terminal::Caca.new {
          @colors.push(@color);
      }
 
-    for ^359 -> $angle {
+    for ^359*10 -> $angle {
         .color(white, white);
         .clear;
+
+        .title(sprintf("Cube Animation, angle: %s", $angle % 360));
 
         # Transform 3D into 2D and rotate for all icosphere faces
         my @faces-z;
