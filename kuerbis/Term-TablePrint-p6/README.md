@@ -8,7 +8,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 VERSION
 =======
 
-Version 0.025
+Version 0.026
 
 SYNOPSIS
 ========
@@ -286,7 +286,7 @@ ENVIRONMET VARIABLES
 multithreading
 --------------
 
-`Term::TablePrint` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_TREADS`.
+`Term::TablePrint` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_TREADS`. To find out the setting of "number of treads" see [Term::Choose](Term::Choose)/ENVIRONMET.
 
 head2 libncurses
 

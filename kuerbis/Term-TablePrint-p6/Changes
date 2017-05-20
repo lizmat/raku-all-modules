@@ -1,6 +1,10 @@
 Revision history for Term::TablePrint
 
 
+0.026   2017-05-19
+        - Default progress-bar to 5_000
+        - Update documentation
+
 0.025   2017-05-16
         - Fixed mouse bug
         - Update documentation

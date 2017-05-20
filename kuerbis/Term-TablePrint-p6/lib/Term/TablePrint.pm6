@@ -1,7 +1,7 @@
 use v6;
 unit class Term::TablePrint;
 
-my $VERSION = '0.025';
+my $VERSION = '0.026';
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::NCurses;
@@ -46,7 +46,7 @@ sub _set_defaults ( %opt ) {
     %opt<max-rows>       //= 50_000;
     %opt<min-col-width>  //= 30;
     %opt<mouse>          //= 0;
-    %opt<progress-bar>   //= 10_000;
+    %opt<progress-bar>   //= 5_000;
     %opt<prompt>         //= '';
     %opt<tab-width>      //= 2;
     %opt<table-expand>   //= 1;
@@ -405,7 +405,7 @@ method !_calc_col_width {
         $!bar_w = getmaxx( $!win_local ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
         $step = $!total div $!bar_w || 1;
     }
-    my $threads = Term::Choose.new.num-threads();
+    my Int $threads = Term::Choose.new.num-threads();
     while $threads * 2 > $!table.elems { ##
         last if $threads == 1;
         $threads = $threads div 2;
@@ -603,7 +603,7 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
 =head1 VERSION
 
-Version 0.025
+Version 0.026
 
 =head1 SYNOPSIS
 
@@ -921,7 +921,8 @@ Default: "" (empty string)
 =head2 multithreading
 
 C<Term::TablePrint> uses multithreading when preparing the list for the output; the number of threads to use can be set
-with the environment variable C<TC_NUM_TREADS>.
+with the environment variable C<TC_NUM_TREADS>. To find out the setting of "number of treads" see
+L<Term::Choose>/ENVIRONMET.
 
 head2 libncurses
 
