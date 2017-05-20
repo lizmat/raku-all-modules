@@ -623,12 +623,12 @@ class Zef::Client {
         my $spec  = Zef::Distribution::DependencySpecification.new($identity);
         my $dist  = self.list-available.first(*.dist.contains-spec($spec)).?dist || return [];
 
-        my $rev-deps := gather for self.list-available -> $candidate {
-            my $specs = $candidate.dist.depends-specs,
-                        $candidate.dist.build-depends-specs,
-                        $candidate.dist.test-depends-specs;
-            take $candidate if $specs.first({ $dist.contains-spec($_, :strict) });
+        my $rev-deps := gather for self.list-available -> $candi {
+            my $specs := self.list-dependencies($candi);
+
+            take $candi if $specs.first({ $dist.contains-spec($_, :strict) });
         }
+        $rev-deps.unique(:as(*.identity));
     }
 
     method list-available(*@recommendation-manager-names) {
@@ -653,11 +653,7 @@ class Zef::Client {
 
     method list-leaves {
         my @installed = self.list-installed;
-        my @dep-specs = gather for @installed {
-            take $_ for .dist.depends-specs;
-            take $_ for .dist.build-depends-specs;
-            take $_ for .dist.test-depends-specs;
-        }
+        my @dep-specs = self.list-dependencies(@installed);
 
         my $leaves := gather for @installed -> $candi {
             my $dist := $candi.dist;
@@ -705,7 +701,7 @@ class Zef::Client {
             $visit($candi, 'olaf') if ($candi.dist.metainfo<marked> // 0) == 0;
         }
 
-        $ = @tree.map(*.dist)>>.metainfo<marked>:delete;
+        .dist.metainfo<marked> = Nil for @tree;
         return @tree;
     }
 
