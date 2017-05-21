@@ -825,7 +825,7 @@ class LibYAML::Emitter
 
     method emit-event() { self.emitter.emit($!event) }
 
-    method dump-file(Str $filename, *@objects)
+    method dump-file(Str $filename, **@objects)
     {
         my $fh = LibYAML::FILEptr.open($filename, "wb");
 
@@ -839,7 +839,7 @@ class LibYAML::Emitter
         self.emit-stream(@objects);
     }
 
-    method dump-string(*@objects)
+    method dump-string(**@objects)
     {
         $!buf = '';
 
@@ -1001,10 +1001,10 @@ sub load-yaml-file(Str $filename) is export {
     LibYAML::Parser.new.parse-file($filename)
 }
 
-sub dump-yaml(*@objects, *%opts) is export {
+sub dump-yaml(**@objects, *%opts) is export {
     LibYAML::Emitter.new(|%opts).dump-string(|@objects)
 }
 
-sub dump-yaml-file(Str $filename, *@objects, *%opts) is export {
+sub dump-yaml-file(Str $filename, **@objects, *%opts) is export {
     LibYAML::Emitter.new(|%opts).dump-file($filename, |@objects)
 }

@@ -5,7 +5,7 @@
 
     "auth" : "github:yaml",
 
-    "version" : "0.2",
+    "version" : "0.2.1",
 
     "source-url" : "https://github.com/yaml/yaml-libyaml-perl6.git",
 
