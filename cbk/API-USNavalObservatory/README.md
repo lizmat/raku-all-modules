@@ -18,7 +18,7 @@ This method take a DateTime object and one of the valid era aberrations .
 * julianDate( $julian )
 
 ## Returns
- *
+
 
 ## Example
 ```
@@ -29,5 +29,5 @@ my $output = $webAgent.julianDate( 2457892.312674 );
 say $output;
 ```
 
-## TODO
- *
+## AUTHOR
+* Michael, cbk on #perl6, https://github.com/cbk/
