@@ -108,7 +108,8 @@ multi method gen-name(SAST::PosParam:D $_) {
 }
 
 multi method gen-name(SAST::Invocant:D $_) {
-    SX::Bug.new(desc => 'Tried to compile a piped parameter', match => .match).throw if .piped;
+    .piped and
+      SX::Bug.new(desc => "Tried to compile a piped invocant ({.WHICH}, votes: {.pipe-vote})", match => .match).throw;
     if .signature.slurpy-param {
         callsame;
     } else {
@@ -284,7 +285,7 @@ multi method cap-stdout(SAST:D $_) {
 }
 
 multi method loop-return(SAST:D $_) {
-    self.scaf('list'),' ',|self.arg($_);
+    self.scaf('list'),' ',|self.arg($_).itemize(.itemize);
 }
 
 multi method cond(SAST:D $_) {
@@ -299,7 +300,7 @@ multi method int-expr(SAST:D $_) { self.arg($_).in-DQ }
 
 #!ShellStatus
 multi method node(ShellStatus:D $_) { self.cond($_) }
-multi method cond(ShellStatus:D $_) { self.node($_) }
+multi method cond(ShellStatus:D $_,|c) { self.node($_,|c) }
 multi method cap-stdout(ShellStatus $_) {
     |self.cond($_),' && ',self.scaf('e'),' 1';
 }
@@ -432,7 +433,7 @@ sub search-and-replace($target, $replacement, @places-to-look) {
 multi method arg(SAST::If:D $_) {
     nextsame when ShellStatus;
     if not .else
-       and .then.one-stmt
+       and (my $stmt = .then.one-stmt)
        and not (.topic-var andthen .depended) {
         # in some limited circumstances we can simplify
         # if cond { action } to cond && action
@@ -447,7 +448,7 @@ multi method arg(SAST::If:D $_) {
            && ($var = $cond[1])
         {
             dq '${',self.gen-name($var), ($neg ?? ':-' !! ':+'),
-                    |self.arg(.then.one-stmt),'}';
+                    |self.arg($stmt).itemize($stmt.itemize),'}';
         } else {
             cs |self.cond($cond),
                ($neg ?? ' || ' !! ' && '),
@@ -585,7 +586,9 @@ multi method cond(SAST::CondReturn:D $_,|c) { self.cond(.val,|c) }
 multi method node(SAST::Ternary:D $_,:$tight) {
     # shouldn't this also be checking for Boo
     ('{ ' if $tight),
-    |self.cond(.cond),' && ',|self.compile-in-ctx(.on-true,:tight),' || ',|self.compile-in-ctx(.on-false,:tight),
+    |self.cond(.cond),
+    |(' && ',|self.compile-in-ctx(.on-true,:tight) unless .on-true.compile-time ~~ ()),
+    |(' || ',|self.compile-in-ctx(.on-false,:tight) unless .on-false.compile-time ~~ ()),
     ('; }' if $tight);
 }
 
@@ -717,13 +720,14 @@ multi method node(SAST::Call:D $_)  {
       match => .match;
 }
 
-multi method node(SAST::MethodCall:D $_) {
+multi method node(SAST::MethodCall:D $_, :$tight) {
     my $call;
     my $slurpy-start = (.declaration.signature.slurpy-param andthen .ord);
-
+    my $pipe;
     if .declaration.invocant andthen .piped {
-        $call := |self.cap-stdout(.invocant), '|',
-                 |self.call:
+        $pipe := |(|self.cap-stdout(.invocant), '|' unless .invocant.is-invocant andthen .piped);
+        $call :=   |$pipe,
+                   |self.call:
                    self.gen-name(.declaration),
                    .param-arg-pairs,
                    .pos,
@@ -741,7 +745,9 @@ multi method node(SAST::MethodCall:D $_) {
     if .declaration.rw and .invocant.assignable {
         |self.gen-name(.invocant),'=$(',|$call,')';
     } else {
-        self.maybe-quietly: $call, .type, .ctx, match => .match;
+        ('{ ' if $pipe and $tight),
+        |self.maybe-quietly( $call, .type, .ctx, match => .match),
+        (';}' if $pipe and $tight)
     }
 }
 
@@ -751,13 +757,13 @@ multi method arg(SAST::Call:D $_) is default {
     nextsame;
 }
 
-multi method cap-stdout(SAST::Call:D $_) is default {
+multi method cap-stdout(SAST::Call:D $_,|c) is default {
     nextsame when ShellStatus;
-    self.node($_)
+    self.node($_,|c)
 }
-#!Cmd
-multi method node(SAST::Cmd:D $cmd) {
 
+#!Cmd
+multi method node(SAST::Cmd:D $cmd, :$tight) {
     if $cmd.nodes == 0 {
         my @cmd-body = self.cap-stdout($cmd.pipe-in);
         self.compile-redirection(@cmd-body,$cmd);
@@ -770,7 +776,7 @@ multi method node(SAST::Cmd:D $cmd) {
 
         my $full-cmd := |self.compile-redirection(@cmd-body,$cmd);
 
-        my $pipe := do if $cmd.pipe-in andthen not .?is-piped {
+        my $pipe := do if $cmd.pipe-in andthen !($cmd.pipe-in.is-invocant andthen .piped) {
             |(|self.cap-stdout($cmd.pipe-in),'|');
         };
         |$pipe,
@@ -848,6 +854,7 @@ method compile-in-ctx($node,*%_) {
 #!Empty
 multi method node(SAST::Empty:D $_) { Empty }
 multi method  arg(SAST::Empty:D $_) { dq '' }
+multi method cap-stdout(SAST::Empty:D $_) { ':' }
 
 #!Quietly
 multi method node(SAST::Quietly:D $_) {
@@ -959,11 +966,7 @@ method compile-pattern($pattern is copy,@placeholders) {
 
 }
 multi method arg(SAST::Regex:D $_) {
-    if .ctx ~~ tPattern {
-        self.compile-pattern(.patterns<case>,.placeholders);
-    } else {
-        self.compile-pattern(.patterns<ere>,.placeholders);
-    }
+    self.compile-pattern(.patterns{.regex-type}, .placeholders);
 }
 
 #!Range
@@ -979,10 +982,6 @@ multi method arg(SAST::Range:D $_) {
       !! |self.arg($_[1])
      )
 }
-#!Blessed
-multi method node(SAST::Blessed:D $_)  { self.node($_[0]) }
-multi method arg(SAST::Blessed:D $_) { self.arg($_[0]) }
-multi method cap-stdout(SAST::Blessed:D $_) { self.cap-stdout($_[0]) }
 
 method concat-into-DQ(@elements) {
     my $str = dq();
@@ -1011,7 +1010,7 @@ multi method cap-stdout(SAST::Itemize:D $_) { self.cap-stdout($_[0]) }
 #!List
 multi method cap-stdout(SAST::List:D $_) {
     if .children > 1 {
-        self.scaf('list'),|.children.map({ ' ', |self.arg($_) }).flat;
+        self.scaf('list'),|.children.map({ self.space-then-arg($_) }).flat;
     } else {
         self.cap-stdout(.children[0]);
     }

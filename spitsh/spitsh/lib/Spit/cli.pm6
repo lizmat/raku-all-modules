@@ -354,6 +354,7 @@ sub compile-or-eval($command, @pos, %named) {
         }
     }
     orwith %named<in-helper> {
+        %named<opts><os> = Spit::LateParse.new(val => 'OS<spit-helper>');
         start-docker $helper-image, :mount-docker-socket, |%named;
     }
 
@@ -373,7 +374,7 @@ sub compile-or-eval($command, @pos, %named) {
     }
 
     if $docker {
-        write-docker $docker,$promise,$res;
+        exit (write-docker $docker,$promise,$res).exitcode;
     } elsif %named<RUN> {
         exit (run 'sh','-c', $res).exitcode;
     } else {
@@ -403,23 +404,24 @@ sub start-docker($image is copy, :$mount-docker-socket, *%) {
         ('-v', "$docker-socket:$docker-socket");
     };
 
-    my @args = 'docker','run',|$mount,'-i','--rm',$image,'sh';
+    # XXX: Docker runs things as PID 1. This is bad for shell scripts because
+    # you can't TERM signals to PID 1. So we do 'sh -c sh' to get a child PID.
+    # :;sh is a trick to get bash to start a new process.
+    my @args = 'docker','run',|$mount,'-i','--rm',$image,'sh', '-c', ':;sh';
     note "starting docker with {@args[1..*].gist}" if $*debug;
     my $docker = Proc::Async.new(|@args, :w);
     cleanup-containers();
     @containers.push($docker);
     my $p = $docker.start;
-    $docker.write(qq{trap 'exit 0' TERM;\n}.encode('utf8'));
 
     ($docker, $p);
 }
 
 sub exec-docker($container, *%) {
-    my @args = 'docker', 'exec', '-i', $container, 'sh';
+    my @args = 'docker', 'exec', '-i', $container, 'sh', '-c', ':;sh';
     note "starting docker with {@args[1..*].gist}" if $*debug;
     my $docker = Proc::Async.new(|@args, :w);
     my $p := $docker.start;
-    $docker.write(qq{trap 'exit 0' TERM;\n}.encode('utf8'));
     ($docker, $p);
 }
 
@@ -429,6 +431,7 @@ sub write-docker($docker,$p,$shell) {
     $docker.write($shell.encode('utf8'));
     sleep 0.1; # RT#122722
     $docker.close-stdin;
-    await $p;
+    my $proc = await $p;
     note("writing output to docker ✔ {now - before}") if $*debug;
+    $proc;
 }

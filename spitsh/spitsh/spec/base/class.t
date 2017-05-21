@@ -1,6 +1,6 @@
 use Test;
 
-plan 24;
+plan 27;
 
 {
     class Foo {
@@ -103,4 +103,29 @@ plan 24;
 
     is HasSlurpy<one>.slurpy2("two", "three"), <$self=one $a=two @a=three>,
       'non-static method ($a, *@a) 2 args';
+}
+
+{
+    class Piping-Methods {
+
+        method ~one is no-inline{
+            $self.${cat}
+        }
+        method ~two is no-inline {
+            $self.one;
+        }
+
+    }
+
+    is Piping-Methods("foo\n").two.bytes, 4, ‘piping methods shouldn't lose newline’;
+}
+
+{
+    class Coercion-Priority is Any {
+        method File { "file" }
+        method Str  { "str"  }
+    }
+
+    is Coercion-Priority<foo>, "str", '.Str in Str context';
+    is File(Coercion-Priority<foo>), "file", '.File in File context';
 }

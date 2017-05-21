@@ -25,6 +25,17 @@ has $!os;
 has %.clone-cache;
 has $.no-inline;
 
+# cache for method declarations
+has $!ENUMC-ACCEPTS;
+has $!ENUMC-NAME;
+has $!STR-BOOL;
+has $!STR-MATCH;
+
+method ENUMC-ACCEPTS { $!ENUMC-ACCEPTS //= tEnumClass.^find-spit-method: 'ACCEPTS' }
+method ENUMC-NAME    { $!ENUMC-NAME //= tEnumClass.^find-spit-method: 'name' }
+method STR-MATCHES   { $!STR-MATCH //= tStr.^find-spit-method: 'match' }
+method STR-BOOL      { $!STR-BOOL //= tBool.^find-spit-method: 'Bool' }
+
 method os {
     $!os ||= do {
         my $os-var = $*SETTING.lookup(SCALAR,'*os');
@@ -81,15 +92,18 @@ multi method walk(SAST::ClassDeclaration:D $THIS is rw) {
     $THIS .= stage3-node(SAST::Empty);
 }
 
-multi method walk(SAST::Cmd $THIS is rw) {
+multi method walk(SAST::Cmd:D $THIS is rw) {
     my @nodes := $THIS.nodes;
     for @nodes.kv -> $i, $_ {
         when SAST::List {
-            @nodes.splice($i,1,.children);
+            @nodes.splice($i,1,.children) unless .itemize;
         }
     }
 
-    self.walk($_, :should-pipe) with $THIS.pipe-in;
+    if ($THIS.pipe-in andthen .is-invocant) -> $invocant {
+        # vote to pipe the invocant
+        $invocant.vote-pipe-yes;
+    }
 }
 
 multi method walk(SAST::While:D $THIS is rw) {
@@ -106,9 +120,6 @@ multi method walk(SAST::While:D $THIS is rw) {
 method try-case($if) {
     my $can = True;
     my $common-topic;
-    my \ENUM-HAS-MEMBER = (once tEnumClass.^find-spit-method('ACCEPTS'));
-    my \ENUM-NAME       = (once tEnumClass.^find-spit-method: 'name');
-    my \STR-MATCHES =     (once tStr.^find-spit-method: 'matches'|'match');
     my SAST::Regex:D @patterns;
     my SAST::Block:D @blocks;
     my SAST::Block   $default;
@@ -134,18 +145,18 @@ method try-case($if) {
                 );
             )
             or
-            cond ~~ SAST::MethodCall && cond.declaration.identity === STR-MATCHES
+            cond ~~ SAST::MethodCall && cond.declaration.identity === self.STR-MATCHES()
             && (my $re = cond.pos[0]) ~~ SAST::Regex && $re.patterns<case>.defined
             && ($topic = cond[0]; $pattern = $re)
             or
 
-            cond ~~ SAST::MethodCall && cond.declaration.identity === ENUM-HAS-MEMBER
+            cond ~~ SAST::MethodCall && cond.declaration.identity === self.ENUMC-ACCEPTS()
             && (my $enum = cond[0].compile-time) ~~ Spit::Type
             && (
                 $topic = cond.pos[0].stage3-node(
                     SAST::MethodCall,
                     name => 'name',
-                    declaration => ENUM-NAME,
+                    declaration => self.ENUMC-NAME,
                     cond.pos[0],
                 );
                 $pattern = SAST::Regex.new(
@@ -160,7 +171,7 @@ method try-case($if) {
                    when SAST::CompileTimeVal { $topic.val ===  .val }
                    when SAST::Var { $topic.declaration === .declaration }
                    when SAST::MethodCall {
-                       $topic.declaration === .declaration === ENUM-NAME
+                       $topic.declaration === .declaration === self.ENUMC-NAME
                    }
                }) {
                 @patterns.push($pattern);
@@ -244,10 +255,7 @@ multi method walk(SAST::Junction:D $THIS is rw) {
     }
 }
 
-multi method walk(
-    SAST::Var:D $THIS is rw where { $_ !~~ SAST::VarDecl },
-    :$should-pipe = False,
-) {
+multi method walk(SAST::Var:D $THIS is rw where { $_ !~~ SAST::VarDecl }) {
     my $decl := $THIS.declaration;
 
     if $decl ~~ SAST::ConstantDecl {
@@ -277,8 +285,20 @@ multi method walk(
         }
     }
 
-    elsif $decl ~~ SAST::Invocant and not $should-pipe {
-        $decl.piped = False;
+    elsif $decl ~~ SAST::Invocant  {
+        # Pipe voting:
+        # -------------
+        # Make sure the MethodDeclaration.invocant is cloned so we can start
+        # counting on its $.pipe-vote attribute.
+        self.walk($decl);
+        # $.pipe-vote > 0 means it will get piped.
+        without $decl.pipe-vote {
+            $decl.start-pipe-vote;
+        }
+        # If the the no vote here is balanced by a yes vote
+        # then it will get piped. Any further no votes will mean
+        # no piping (only the first yes vote is counted).
+        $decl.vote-pipe-no;
     }
 
 }
@@ -384,20 +404,23 @@ multi method walk(SAST::Cmp:D $THIS is rw) {
     compile-time-infix($THIS,SAST::BVal);
 }
 
-# The things we can inline in CondReturns is limited. We can't have
-# any ol shell command expresssion. The ones we can inline depend
-# on whether their last value as it appears in the shell is the same
-# as their original. See 'ef' and 'et' for why.
-sub acceptable-in-cond-return($_,$original) {
+# Checks that the thing the that the .Bool call was inlined to has the
+# invocant as the last argument (and no weird stuff that shouldn't
+# exist in a shell call). This is so:
+# et Bool "thing"
+# doesn't inline to:
+# et other_method | something
+# A rather complex solution, but necessary for now.
+sub acceptable-in-cond-return($_,$orig-invocant) {
     when SAST::Cmd {
         (not .write || .append || .pipe-in || .in) and
-        (.nodes[*-1] andthen .identity === $original);
+        (.nodes[*-1] andthen .identity === $orig-invocant);
     }
     when SAST::MethodCall {
-        (.pos[*-1] || .invocant) andthen .identity === $original;
+        (.pos[*-1] || .invocant) andthen .identity === $orig-invocant;
     }
     when SAST::Call {
-        .pos[*-1] andthen .identity === $original;
+        .pos[*-1] andthen .identity === $orig-invocant;
     }
     default { False }
 }
@@ -406,8 +429,8 @@ sub acceptable-in-cond-return($_,$original) {
 multi method walk(SAST::CondReturn:D $THIS is rw) {
 
     with $THIS.Bool-call {
-        my $orig = .invocant;
-        self.walk($_, { acceptable-in-cond-return($_,$orig) } );
+        self.walk(my $orig-invocant := .invocant);
+        self.walk($_, { acceptable-in-cond-return($_, $orig-invocant.identity) } );
     }
     with ($THIS.Bool-call andthen .compile-time) {
         # We know the result of .Bool at compile time.
@@ -435,6 +458,9 @@ multi method walk(SAST::OnBlock:D $THIS is rw) {
     }
 }
 
+multi method walk(SAST::Blessed:D $THIS is rw) {
+    $THIS.switch: $THIS[0], :!force-ctx;
+}
 
 multi method walk(SAST::Stmts:D $THIS is rw) {
     if $THIS.returns -> $top-ret is raw {
@@ -451,23 +477,23 @@ multi method walk(SAST::Stmts:D $THIS is rw) {
 }
 
 multi method walk(SAST::MethodCall:D $THIS is rw) {
-    my \ENUMC_NAME = once tEnumClass.^find-spit-method('name');
-    my \STR_BOOL = once tStr.^find-spit-method('Bool');
-    my \ENUM_ACCEPTS = once tEnumClass.^find-spit-method('ACCEPTS');
+    self.walk($THIS.declaration);
 
-    if $THIS.declaration === STR_BOOL
+    my \ident = $THIS.declaration.identity;
+
+    if ident === self.STR-BOOL
         and (my $ct = $THIS.invocant.compile-time).defined
     {
         $THIS .= stage3-node(SAST::BVal, val => ?$ct);
     }
 
-    elsif $THIS.declaration === ENUMC_NAME
+    elsif ident === self.ENUMC-NAME
         and $THIS.invocant.compile-time -> $ct
     {
         $THIS .= stage3-node(SAST::SVal,val => $ct.name);
     }
 
-    elsif $THIS.declaration === ENUM_ACCEPTS {
+    elsif ident === self.ENUMC-ACCEPTS {
         my $enum := $THIS[0];
         my $candidate := $THIS.pos[0];
 
@@ -518,6 +544,19 @@ multi  method walk(SAST::Call:D $THIS is rw, $accept = True) {
             )
         );
     }
+
+    # When we get here all inlining and replacement is done.
+    # There's no chance of it disappearing anymore so time to vote.
+    if $THIS ~~ SAST::MethodCall {
+        # Is the call's invocant the $self of the method block we're in?
+        if (my $invocant = ($THIS.invocant andthen .is-invocant))
+           # AND should the method we're calling be piped to?
+           and ($THIS.declaration.invocant andthen .piped)
+        {
+            # If so, vote for piping the method we're in's $self
+            $invocant.vote-pipe-yes;
+        }
+    }
 }
 
 
@@ -545,7 +584,7 @@ method inline-value($inner,$outer,$_ is raw) {
         }
     }
     # if arg inside inner is a blessed value, try inlining the value
-    when SAST::Blessed|SAST::Neg {
+    when SAST::Neg {
         if self.inline-value($inner,$outer,.children[0]) -> $val {
             # clone because we don't want to mutate a node from the inner call
             my $clone = .clone;
@@ -582,7 +621,7 @@ method inline-value($inner,$outer,$_ is raw) {
     }
 }
 
-subset ChildSwapInline of SAST:D
+subset ChildSwapInline of SAST::Children:D
        where SAST::Call|SAST::Cmd|SAST::Increment|SAST::Neg|SAST::Cmp|SAST::Concat;
 
 # CONSIDER:

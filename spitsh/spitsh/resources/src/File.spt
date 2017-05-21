@@ -110,6 +110,17 @@ augment File {
              '{print>f}END{l=ENVIRON["l"];print l>f; printf "%s", l}'
         }
     }
+
+    method ~unshift($str) {
+        $self.slurp.${
+            awk :l($str) -v "f=$self" -v 'RS=^$'
+              'END{l=ENVIRON["l"];printf "%s",l;print l>f;printf "%s",$0>f}'
+        }
+    }
+
+    method ~shift   ${sed -nri -e '1!p;1w/dev/stdout' $self}
+    method ~pop     ${sed -nri -e '$!p;$w/dev/stdout' $self}
+
     #| Calls `touch(1)` on the file.
     #|{ .touch unless File<foo.txt> }
     method ?touch {
@@ -164,7 +175,7 @@ augment File {
         my $content = File</etc/hosts>.slurp
         say $content[2]; # print the 3rd line
     }
-    method slurp(-->List) { ${cat $self} }
+    method @slurp ${cat $self}
 
     #| Opens the file and returns a FD that can be written to.
     #|{
@@ -286,6 +297,13 @@ augment File {
         ${egrep -m1 $regex $self}
     }
 
+    method @remove-lines(Regex $regex) {
+        on {
+            GNU ${sed -rni "\\§$regex§!\{p;b;\};w/dev/stdout" $self}
+            # BB sed doesn't likebranch inside {} without \n following
+            BusyBox ${sed -rni "\\§$regex§!\{p;b\n\};w/dev/stdout" $self}
+        }
+    }
     method ~sha256 ${ sha256sum -b $self | awk '{print $1}' }
     method sha256-ok($sha256-expected, :$what) {
         my $sha256-got = $self.sha256;

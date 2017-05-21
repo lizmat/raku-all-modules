@@ -55,6 +55,8 @@ class SAST::Cmd {...}
 class SAST::ACCEPTS {...}
 class SAST::Itemize {...}
 
+role SAST::Force {...}
+
 sub sastify($_, :$match!) is export {
     when Associative { .map: { .key => sastify(.value) } }
     when Positional  { .map: &sastify }
@@ -110,7 +112,14 @@ role SAST is rw {
     method compile-time { Nil }
     method gist { self.node-name }
     method spit-gist { self.gist }
-    method node-name { self.^name.subst(/^'SAST::'/,'') }
+    method node-name {
+        if self ~~ SAST::Force {
+            self.^name.subst(/^'SAST::'/,'')\
+                .subst(/'SAST::Force'/,"Force({$.type.^name},{$.itemize})")
+        } else {
+            self.^name.subst(/^'SAST::'/,'')
+        }
+    }
     method itemize { True }
     method depends { Empty }
     method child-deps { self.depends }
@@ -136,6 +145,12 @@ role SAST is rw {
             |args,
         )
     }
+    method is-invocant {
+        self ~~ SAST::Var
+        && (my $d := self.declaration) ~~ SAST::Invocant
+        && $d
+        || Nil;
+    }
     method uses-Str-Bool {
         self.type.^find-spit-method('Bool') === tStr.^find-spit-method('Bool');
     }
@@ -147,19 +162,31 @@ role SAST is rw {
         );
     }
 
-    # used in stage3 to replace one node with another in the AST
-    method switch(SAST:D $self is rw: $b is copy) {
-        if $b.type !=== $self.type {
-            $b = $self.stage3-node(SAST::Blessed,class-type => $self.type,$b);
-        }
-        if $b.itemize !=== $self.itemize {
-            $b = $self.stage3-node(SAST::Itemize, itemize => $self.itemize, $b);
+    # used in stage3 to replace one node with another in the AST. When
+    # replacing one node for another you want preserve the type and
+    # itemization of the node being replaced (and usually its context)
+    method switch(SAST:D $self is rw: $b is copy, :$force-ctx = True) {
+        if $b.type !=== $self.type or $b.itemize !=== $self.itemize {
+            $b .= force($self.type, $self.itemize);
         }
         $b.extra-depends.append($self.extra-depends);
-        $b.ctx = $self.ctx;
+        $b.ctx = $self.ctx if $force-ctx;
         $self = $b;
     }
+
+    method force($type, $itemize) {
+        self does SAST::Force unless self ~~ SAST::Force;
+        self.type = $type;
+        self.itemize = $itemize;
+        self;
+    }
 }
+
+my role SAST::Force {
+    has $.type is rw;
+    has $.itemize is rw;
+}
+
 role SAST::Assignable {
     has SAST $.assign is rw;
     has SAST $.assign-mod is rw;
@@ -168,8 +195,8 @@ role SAST::Assignable {
 }
 
 # makes sure $node is ~~ $type.primative or coerces it to it OR throws a type exception
-sub coerce(SAST:D $node,Spit::Type $type,:$desc) {
-    my $target-prim = $type.primitive;
+sub coerce(SAST:D $node, Spit::Type $target, :$desc) {
+    my $target-prim = $target.primitive;
     X::AdHoc.new( payload => "{$node.^name} {try $node.gist} gave a literal Spit::Type type object").throw
         if $node.type === Spit::Type;
     X::AdHoc.new( payload => "{$node.^name} returned it's type as something that isn't a Spit::Type ({$node.type.^name}) ").throw
@@ -179,7 +206,8 @@ sub coerce(SAST:D $node,Spit::Type $type,:$desc) {
         # all good
         $node;
     } else {
-        if $node.type.^find-spit-method($target-prim.^name) -> $meth {
+        if $node.type.^find-spit-method($target.^name) ||
+           $node.type.^find-spit-method($target-prim.^name) -> $meth {
             # We got a coercer method, wrap this node in it and call it
             my $call = SAST::MethodCall.new(
                 match => $node.match,
@@ -192,12 +220,11 @@ sub coerce(SAST:D $node,Spit::Type $type,:$desc) {
         else {
             # We need node to become a list. As long as the node matches the List's
             # element type we can just bless this node into a List[of-the-appropriate type]
-            if $type ~~ tList and $node.type !~~ tList {
-                my $elem-type := flattened-type($type);
-                my $list-type = $type === tList ?? tListp($elem-type) !! $type;
+            if $target ~~ tList and $node.type !~~ tList {
+                my $elem-type := flattened-type($target);
                 $node.stage2-node(
                     SAST::Blessed,
-                    class-type => $list-type,
+                    class-type => tListp($node.type),
                     coerce($node,$elem-type,:desc<list coercion>),
                 );
             }
@@ -268,9 +295,8 @@ class SAST::Children does SAST {
 
     method children { Empty }
     method auto-compose-children { @.children }
-    method gist(Mu:D:){
-        my $name = self.^name.subst(/^'SAST::'/,'');
-        $name ~ "$.gist-children";
+    method gist {
+        "$.node-name$.gist-children";
     }
 
     method gist-children {
@@ -403,10 +429,6 @@ class SAST::Var is SAST::Children does SAST::Assignable {
     }
 
     method desc { "Assignment to $.spit-gist" }
-
-    method is-piped {
-        ($_ = $.declaration) ~~ SAST::Invocant and .piped;
-    }
 
     method itemize { itemize-from-sigil($!sigil) }
 }
@@ -659,19 +681,14 @@ class SAST::Cmd is SAST::MutableChildren is rw {
             self.make-new(SX,message => ‘command can't be empty’).throw;
         }
 
-        if ($!pipe-in ~~ SAST::Var and $!pipe-in.is-piped) and $*no-pipe {
-            $!pipe-in.declaration.piped = False;
+        if (my $invocant = ($!pipe-in andthen .is-invocant)) and $*no-pipe {
+            $invocant.cancel-pipe-vote;
         }
         self;
     }
 
     method children {
         grep *.defined, $!pipe-in, |@.nodes, |@!in, |@!write, |@!append, |%!set-env.values;
-    }
-
-    method auto-compose-children {
-        # pipe-in gets special treatment in composition stage
-        grep *.defined, |@.nodes, |@!in, |@!write, |@!append, |%!set-env.values;
     }
 
     method clone(|c) { callwith(|c,:@!write,:@!append,:@!in,:%!set-env) }
@@ -786,7 +803,7 @@ class SAST::MethodDeclare is SAST::RoutineDeclare {
         $.return-type = $.class-type if $!rw;
         $!invocant andthen $_ .= do-stage2(tAny);
         $.signature.invocant = $!invocant;
-        $!invocant.piped = False if $.impure;
+        $!invocant.cancel-pipe-vote if $.impure;
         nextsame;
     }
 
@@ -841,10 +858,9 @@ class SAST::Call  is SAST::Children {
         my $last-valid;
         for @pos-params.kv -> $i,$param {
             if $param.slurpy {
-                my $elem-type = flattened-type($param.type);
                 until (my $arg := $pos-args.pull-one) =:= IterationEnd {
                     $arg .= do-stage2(
-                        $elem-type,
+                        $param.type,
                         :desc("argument slurped by {$param.spit-gist} " ~
                               "in {$.declaration.spit-gist} doesn't match its type")
                     );
@@ -983,8 +999,17 @@ role SAST::ShellPositional {
 
 class SAST::Invocant does SAST does SAST::Declarable does SAST::ShellPositional {
     has $.class-type is required;
-    has $.piped is rw = True; # Whether the invocant should be piped in
+    # if pipe-vote ends up > 0 at compilation $self gets piped
+    has Int $.pipe-vote is rw;
     has $.signature is rw;
+    has Int $!yes-voted;
+    has $!vote-canceled;
+    # You can only have one yes vote
+    method vote-pipe-yes { $!pipe-vote++ unless $!vote-canceled or $!yes-voted++ }
+    method vote-pipe-no  { $!pipe-vote-- unless $!vote-canceled }
+    method start-pipe-vote    { $!pipe-vote = 1 }
+    method cancel-pipe-vote   { $!pipe-vote = 0; $!vote-canceled = True; }
+    method piped { $!pipe-vote andthen $_ > 0 }
     method name { 'self' }
     method symbol-type { SCALAR }
     method gist { $.node-name ~ "($.spit-gist)" }
@@ -1043,11 +1068,14 @@ class SAST::Signature is SAST::Children {
         self;
     }
 
-    method children { |@!pos,|%.named.values }
+    method children { ($!invocant // Empty), |@.params }
+    method params { |@!pos, |%!named.values}
     method gist { $.node-name ~ '(' ~ $.spit-gist ~ ')' }
     method type { tAny }
     method clone(|c) {
-        callwith(|c,:@!pos,:%!named);
+        my \cloned = callwith(|c, :@!pos, :%!named);
+        .signature = cloned for cloned.children;
+        cloned;
     }
 
     method spit-gist {
@@ -1059,7 +1087,7 @@ class SAST::Signature is SAST::Children {
            and @.children.first(*.type.^needs-reification)
         {
             my $copy = self.clone;
-            for $copy.children {
+            for $copy.params {
                 $_ .= clone;
                 .type = .type.^reify($invocant-type);
             }
@@ -1295,8 +1323,8 @@ class SAST::List is SAST::MutableChildren {
     }
     method elem-type { flattened-type(self.type) }
 
-    method stage2($) {
-        $_ .= do-stage2(tStr) for @.children;
+    method stage2($ctx) {
+        $_ .= do-stage2($ctx ~~ tList ?? $ctx !! tStr) for @.children;
         self;
     }
 
@@ -1435,6 +1463,8 @@ class SAST::While is SAST::Children {
     has $!type;
 
     method stage2($ctx) {
+        # Because loops are re-entrant you can't pipe to the method if its
+        # invocant is inside one of them.
         my $*no-pipe = True;
         $!cond .= do-stage2(tBool,:desc<while conditional>);
         generate-topic-var(var => $!topic-var,:$!cond,blocks => ($!block,));
@@ -1517,9 +1547,10 @@ class SAST::For is SAST::Children {
 }
 
 class SAST::Empty does SAST {
-    method type { tAny }
+    method type { tListp($.ctx) }
     method stage2 ($) { self }
     method itemize { False }
+    method compile-time { () }
 }
 
 class SAST::Type does SAST {
@@ -1678,19 +1709,25 @@ class SAST::Eval is SAST::Children   {
 class SAST::Regex is SAST::Children is rw {
     has Str:D %.patterns;
     has SAST:D @.placeholders;
+    has $.regex-type;
 
     method type {
-        given $.ctx {
-            when tBool { $.ctx }
-            when tPattern {
-                %!patterns<case>:exists
-                    ?? tPattern
-                    !! self.make-new(SX, message => "Unable to convert this regex to pattern").throw;
-            }
+        return tBool if $.ctx ~~ tBool;
+        given $!regex-type {
+            when  'case' { tPattern }
             default { tRegex }
         }
     }
+
     method stage2($ctx){
+        $!regex-type = do given $ctx {
+            when tPattern {
+                %!patterns<case>:exists
+                  or self.make-new(SX, message => "Unable to convert this regex to pattern").throw;
+                'case'
+            }
+            default { 'ere'  }
+        };
         if $ctx ~~ tBool {
             self.make-new(
                 SAST::ACCEPTS,
