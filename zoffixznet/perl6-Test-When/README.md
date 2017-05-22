@@ -118,7 +118,7 @@ Tests to be run when `ONLINE_TESTING` or `ALL_TESTING` env var is set to true.
 
 ### Meaning of the Respected Environmental Variables
 
-* `AUTOMATED_TESTING`: if true, tests are being run by an automated testing facility and not as part of the installation of a module; CPAN smokers must set this to true; CPAN clients (e.g. `panda`) must not set this.
+* `AUTOMATED_TESTING`: if true, tests are being run by an automated testing facility and not as part of the installation of a module; CPAN smokers must set this to true; CPAN clients (e.g. `zef`) must not set this.
 
 * `NONINTERACTIVE_TESTING`: if true, tests should not attempt to interact with a user; output may not be seen and prompts will not be answered.
 
