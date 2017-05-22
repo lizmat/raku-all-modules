@@ -1,5 +1,5 @@
 use v6;
-unit class CPAN::Uploader::Tiny:ver<0.0.1>;
+unit class CPAN::Uploader::Tiny:ver<0.0.2>;
 
 use CPAN::Uploader::Tiny::MultiPart;
 use HTTP::Tinyish;
@@ -25,7 +25,11 @@ method new-from-config($file) {
 
 method !read-config($file) {
     die "missing $file" unless $file.IO.e;
-    if try $file.IO.slurp(:!bin) {
+    my $is-plain = ?try {
+        my $content = $file.IO.slurp(:!bin);
+        $content !~~ / 'BEGIN PGP MESSAGE' /;
+    };
+    if $is-plain {
         self!read-plain-config(:$file);
     } else {
         self!read-encrypted-config(:$file);
