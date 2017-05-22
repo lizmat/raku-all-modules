@@ -6,9 +6,11 @@ use RakudoPrereq v2016.10.177.g.9409.d.68, # TWEAK added
 use Testo::Test::Result;
 
 sub desc-perl (Mu $v) {
+    $v.cache if $v ~~ Seq;
     my $desc = try $v.perl;
     $! and $desc = $v.^name ~ (' (lazy)' if try $v.is-lazy);
     $desc = $desc.substr(0, 30) ~ '…' if $desc.chars > 30;
+    $desc ~~ tr/\n/␤/;
     $desc
 }
 
