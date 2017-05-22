@@ -1,0 +1,17 @@
+{
+  "authors"       : [ "David Warring" ],
+  "perl"          : "6.c",
+  "license"       : "Artistic-2.0",
+  "name"          : "Base64::Native",
+  "tags"          : ["base64", "encode" ], 
+  "version"       : "0.0.1",
+  "auth"          : "github:p6-pdf",
+  "description"   : "Fast Base 64 encoding and decoding (eager)",
+  "source-url"    : "git://github.com/p6-pdf/Base64-Native-p6.git",
+  "depends"       : [ "LibraryMake" ],
+  "build-depends" : [ ],
+  "test-depends"  : [ ],
+  "provides"      : {
+      "Base64::Native" : "lib/Base64/Native.pm"
+   }
+}

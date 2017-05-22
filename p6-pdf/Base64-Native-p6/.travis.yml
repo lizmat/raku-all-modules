@@ -1,0 +1,10 @@
+language: perl6
+perl6:
+  - latest
+  - 2016.12
+os:
+  - linux
+install:
+  - rakudobrew build-zef
+  - zef --depsonly install .
+  - zef build .
