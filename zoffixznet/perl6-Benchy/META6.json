@@ -1,0 +1,18 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Benchy",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001001",
+    "description"  : "Benchmark some code",
+    "tags"         : [ "benchmark", "dev" ],
+    "depends"      : [ ],
+    "test-depends" : [
+        "Testo",
+        "Test::META"
+    ],
+    "provides"     : {
+        "Benchy" : "lib/Benchy.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source" : "https://github.com/zoffixznet/perl6-Benchy"}
+}
