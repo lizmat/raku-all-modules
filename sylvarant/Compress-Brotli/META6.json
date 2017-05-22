@@ -1,0 +1,12 @@
+{
+    "perl" : "6.*",
+    "name" : "Compress::Brotli",
+    "version" : "0.1.0",
+    "author" : "sylvarant",
+    "description" : "Brotli compression using NativeCall",
+    "depends" : [ "NativeCall", "LibraryMake" ],
+    "provides" : {
+        "Compress::Brotli" : "lib/Compress/Brotli.pm"
+    },
+    "source-url" : "git://github.com/sylvarant/Compress-Brotli.git"
+}
