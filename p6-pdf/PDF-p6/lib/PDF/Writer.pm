@@ -28,6 +28,10 @@ class PDF::Writer {
         }
     }
 
+    method Blob returns Blob {
+	self.Str.encode: "latin-1";
+    }
+
     method write-array( Array $_ ) {
 	temp $!indent ~= '  ';  # for indentation of child dictionarys
 	('[', .map({ $.write($_) }), ']').join: ' ';
@@ -54,7 +58,7 @@ class PDF::Writer {
             !! [~] ( $.write-trailer( trailer-dict ), '%%EOF' );
 
         @out.push: trailer-bytes;
-        $!offset += trailer-bytes.codes + 2;
+        $!offset += trailer-bytes.codes  +  2 * "\n".codes;
 
         @out.join: "\n";
     }
