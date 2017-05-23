@@ -1,8 +1,8 @@
-#hiker
+# hiker
 
 [![Build Status](https://travis-ci.org/tony-o/perl6-hiker.svg)](https://travis-ci.org/tony-o/perl6-hiker)
 
-##usage
+## usage
 
 ```perl6
 use Hiker;
@@ -17,7 +17,7 @@ $app.listen;
 
 Pretty easy, right?
 
-###explain yourself
+### explain yourself
 
 ```perl6
   hikes => ['controllers', 'models'],
@@ -31,7 +31,7 @@ The `Hiker::Route`s found in these directories are sorted by the type of path (`
   templates => 'templates',
 ```
 
-##`Hiker::Route` a controller
+## `Hiker::Route` a controller
 
 This role lets `Hiker` know what this class does.  Boilerplate class (controller) would look like the following:
 
@@ -49,9 +49,9 @@ class MyApp::Basic does Hiker::Route {
 }
 ```
 
-Note, returning the 'True' value auto renders whatever the $.template is.
+Note, returning the `True` value auto renders whatever the $.template is.
 
-##`Hiker::Model` a model
+## `Hiker::Model` a model
 
 This role lets `Hiker` know what this class does.  Boilerplate class (model) would look like the following:
 
@@ -65,7 +65,7 @@ class MyApp::Model does Hiker::Model {
 }
 ```
 
-##Boilerplate
+## Boilerplate
 
 ```
 # hiker init
@@ -73,20 +73,20 @@ class MyApp::Model does Hiker::Model {
 
 This will create a boilerplate application for you in the current directory
 
-##Request Flow
+## Request Flow
 
 - Request is received
 - `Hiker` runs through all of the routes it found on startup
 - The routes are run through until a `True` (or a Promise whose result is `True`) value is returned
 - The template specified by the controller is rendered and the result is sent to the client
 
-##Templates
+## Templates
 
 `Hiker` uses `Template::Mustache`.  If the `.template` specified by the route doesn't exist then a default `404` message is shown to the user.
 
 For the time being this isn't configurable
 
-##Stuff to do
+## Stuff to do
 
 - Allow for custom templating engines
 - Add a `weight` attribute to the routes so Regex order can be handled better

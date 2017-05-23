@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-hiker.git
 	branch = master
-	commit = da9abacfe7d46d9a04c2758023d070fbb00d53b7
-	parent = 5fc7b34b63f758bc2e5c6058c75be88b1ae913d5
+	commit = 9801edb62a0559cc2460550fe76dae5ace0cd589
+	parent = f16e64507464f603c9bf16e7958b6f53a4d6a887
 	cmdver = 0.4.0
