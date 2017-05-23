@@ -1,4 +1,5 @@
 use Test;
+use NativeCall;
 
 use lib 'lib';
 use TinyCC::Bundled;
@@ -6,11 +7,24 @@ use TinyCC::State;
 
 enum <_ MEM EXE DLL OBJ PRE>;
 
-plan 2;
+my ($state, $error);
+my $dummy := nativecast(Pointer, blob8.new(42));
 
-my $state := try TCCState.new;
+plan 6;
+
+$state := try TCCState.new;
 ok defined($state), 'new'
     or bail-out 'cannot continue without state';
+
+$state.set_error_func($dummy, -> $ptr, $msg {
+    ok True, 'set_error_func (error func entered)';
+    ok $dummy == $ptr, 'set_error_func (argument passed)';
+    $error = $msg;
+});
+
+$state.add_file('file-that-does-not-exist');
+ok 1, 'set_error_func (error func exited)';
+ok $error ~~ Str:D, 'set_error_func (error msg set)';
 
 ok $_, 'delete' given try {
     $state.delete;
@@ -19,9 +33,6 @@ ok $_, 'delete' given try {
 
 #    method set_lib_path(Str)
 #        is native(&LIB) is symbol<tcc_set_lib_path> {*}
-#
-#    method set_error_func(Pointer, & (Pointer, Str))
-#        is native(&LIB) is symbol<tcc_set_error_func> {*}
 #
 #    method set_options(Str)
 #        is native(&LIB) is symbol<tcc_set_options> {*}

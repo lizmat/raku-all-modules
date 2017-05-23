@@ -3,10 +3,12 @@
     "version"       : "0.2.3",
     "perl"          : "6.c",
     "auth"          : "github:cygx",
+    "authors"       : [ "cygx" ],
     "license"       : "BSL-1.0",
     "description"   : "Bindings for the Tiny C Compiler",
     "repo-type"     : "git",
     "source-url"    : "git://github.com/cygx/p6-tinycc.git",
+    "tags"          : [ "C", "compiler" ],
     "support"       : {
         "bugtracker"    : "https://github.com/cygx/p6-tinycc/issues",
         "source"        : "https://github.com/cygx/p6-tinycc"

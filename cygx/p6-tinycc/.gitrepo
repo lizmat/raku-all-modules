@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cygx/p6-tinycc.git
 	branch = master
-	commit = 7c3c4e8426a1f589cc4440d9439ddf4146a0be11
-	parent = d736fb73fcd170e36e52e2298329a44b992bd103
+	commit = a090e663f284a2aee73872ffbc92637bcbd62310
+	parent = bb4d7830092a6bf0ff43b6581845033e92fa7be7
 	cmdver = 0.4.0
