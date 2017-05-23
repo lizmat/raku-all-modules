@@ -1,3 +1,5 @@
+use lib 'lib'; # -*- mode: perl6 -*-
+
 use Math::Sequences::Integer;
 
 use Test;
