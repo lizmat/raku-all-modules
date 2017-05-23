@@ -13,5 +13,10 @@
   "test-depends"  : [ ],
   "provides"      : {
       "Base64::Native" : "lib/Base64/Native.pm"
-   }
+   },
+  "resources" : [
+    "lib/libbase64.so",
+    "lib/libbase64.dll",
+    "lib/libbase64.dylib"
+  ]
 }
