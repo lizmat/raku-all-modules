@@ -143,11 +143,11 @@ chooses uses the same API).
 
 ## Installation
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
+To install it using zef:
 
 ```
-$ panda update
-$ panda install Desktop::Notify
+$ zef update
+$ zef install Desktop::Notify
 ```
 
 ## Testing
@@ -156,12 +156,6 @@ To run the tests:
 
 ```
 $ prove -e "perl6 -Ilib"
-```
-
-or
-
-```
-$ prove6
 ```
 
 ## Note
