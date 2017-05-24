@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/niner/Grammar-Highlighter.git
 	branch = master
-	commit = baa4328f4d52cbe88d1a3ab3331e76db7c415e6c
-	parent = 4f0092ea52cda53277452465a15497040e8af1cd
+	commit = 7561779940ae22a4d7e2441d522acd9a564db600
+	parent = 4dd0c6a4ccacc568d848c88b6568423a3259274a
 	cmdver = 0.4.0
