@@ -24,21 +24,21 @@ class Algorithm::Tarjan {
     has Bool $!run-once;
 
     method init( %h ) {
-        %!nodes = ();
+        %!nodes = Empty;
         $!main-index = 0;
-        @!stack = ();
-        @.strongly-connected = ();
+        @!stack = Empty;
+        @.strongly-connected = Empty;
         $!run-once = False;
         for %h.kv -> $nd, @children { # stringifies all inputs
-            %!nodes{ $nd } = Algorithm::Tarjan::Node.new( 
-                                    :name( ~$nd ), 
-                                    :succ( @children.map( { ~$_ }  ) ) 
+            %!nodes{ $nd } = Algorithm::Tarjan::Node.new(
+                                    :name( ~$nd ),
+                                    :succ( @children.map( { ~$_ }  ) )
                                     );
         };
         # adds children not in node set
         for %!nodes.values -> $node {
-            for $node.succ>>.grep( { ! (%!nodes{$_}:exists).so } ).flat { 
-                %!nodes{$_} = Algorithm::Tarjan::Node.new( :name($_) )
+            for $node.succ {
+              %!nodes{~$_} = Algorithm::Tarjan::Node.new( :name(~$_) ) unless %!nodes{~$_}:exists
             }
         }
     };
@@ -46,22 +46,23 @@ class Algorithm::Tarjan {
     method strong-components {
         return if $!run-once;
         for %!nodes.values -> $node {
-            $.strong-connect($node) unless $node.index.defined
+            $.strong-connect($node) without $node.index
         };
         $!run-once = True;
     }
-    
+
     method strong-connect( Algorithm::Tarjan::Node $v ) {
         $v.index = $v.low-link = $!main-index++;
         @!stack.push: $v;
         $v.on-stack = True;
         for $v.succ -> $w {
             my $wn = %!nodes{$w};
-            if ( ! $wn.index.defined ) {
-                $.strong-connect( $wn );
-                $v.low-link = min( $v.low-link, $wn.low-link );
-            } elsif $wn.on-stack {
-                $v.low-link = min( $v.low-link, $wn.index );
+            with $wn.index {
+              $v.low-link = min( $v.low-link, $wn.index )
+                if $wn.on-stack
+            } else {
+              $.strong-connect( $wn );
+              $v.low-link = min( $v.low-link, $wn.low-link );
             }
         }
         my Algorithm::Tarjan::Node $w;
@@ -76,10 +77,8 @@ class Algorithm::Tarjan {
         }
     }
 
-    method find-cycles { 
+    method find-cycles {
         $.strong-components();
-        @!strongly-connected.elems 
-        }
+        @!strongly-connected.elems
+    }
 }
-
-
