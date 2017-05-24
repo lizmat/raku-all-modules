@@ -755,13 +755,6 @@ the environment variable B<PERL6_LIBARCHIVE_LIB> (provided that the library one 
 
 =head1 Installation
 
-To install it using Panda (a module management tool):
-
-=begin code
-$ panda update
-$ panda install Archive::Libarchive
-=end code
-
 To install it using zef (a module management tool):
 
 =begin code
@@ -775,12 +768,6 @@ To run the tests:
 
 =begin code
 $ prove -e "perl6 -Ilib"
-=end code
-
-or
-
-=begin code
-$ prove6
 =end code
 
 =head1 Author
