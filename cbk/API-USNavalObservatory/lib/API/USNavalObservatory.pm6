@@ -7,17 +7,27 @@ use v6.c;
 
 unit class API::USNavalObservatory;
 use HTTP::UserAgent;
+use URI::Encode;
 has $!baseURL = 'api.usno.navy.mil/';
 has @!validEras = "AD", "CE", "BC", "BCE";
 has $apiID = 'P6mod';
 has $webAgent = HTTP::UserAgent.new(useragent => "Chrome/41.0");
 
-subset solarEclipses-YEAR of UInt where * eq any(1800..2050);
+subset SolarEclipses-YEAR of UInt where * eq any(1800..2050);
+subset ValidEras of Str where * eq any("AD", "CE", "BC", "BCE");
+subset ValidJulian of UInt where * < 5373484.5;
+subset ObserChristan of UInt where * eq any( 1583..9999 );
+subset ObserJewish of UInt where * eq any( 622..9999 );
+subset ObserIslamic of UInt where * eq any( 360..9999 );
+subset Body of Str where * eq any( "mercury", "venus", "venus-radar", "mars", "jupiter", "moon", "io", "europa", "ganymede", "callisto" );
+subset Height of Int where * eq any (-90..10999);
+subset Format of Str where * eq any( "json", "gojson" );
 
 ###########################################
 ## getJSON - method used to make request which will reutrn JSON formatted data.
 method getJSON( $template ) {
-  my $response = $webAgent.get( $!baseURL ~ $template ~ "&id={$apiID}" );
+  my $encoded_uri = uri_encode( $!baseURL ~ $template ~ "&id={ $apiID }" );
+  my $response = $webAgent.get( $encoded_uri );
   if $response.is-success {
     return $response.content;
     }
@@ -47,14 +57,31 @@ method getJSON( $template ) {
 
 ###########################################
 ## Solar eclipses caculator
-multi method solarEclipses( solarEclipses-YEAR $year ) {
+multi method solarEclipses( SolarEclipses-YEAR $year ) {
   my $template = "eclipses/solar?year={ $year }";
   return self.getJSON( $template );
 }
 
 ###########################################
+## Solar eclipses caculator
+multi method solarEclipses( DateTime :$dateTimeObj, :$loc, Height :$height, Format :$format  ) {
+  my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
+  my $template = "eclipses/solar?date={ $date }&loc={ $loc }&height={ $height }&format={ $format }";
+  return self.getJSON( $template );
+}
+
+###########################################
+## Solar eclipses caculator
+multi method solarEclipses( DateTime :$dateTimeObj, :$coords, Height :$height, Format :$format  ) {
+  my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
+  my $template = "eclipses/solar?date={ $date }&coords={ $coords }&height={ $height }&format={ $format }";
+  return self.getJSON( $template );
+}
+
+
+###########################################
 ## Selected Christian observances
-method observancesChristan( UInt $year ) {
+method observancesChristan( UInt :$year ) {
   if $year != any( 1583...9999 ) { return "ERROR!! Invalid year. (only use 1583 to 9999)"; }
   my $template = "christian?year={ $year }";
   return self.getJSON( $template );
@@ -62,7 +89,7 @@ method observancesChristan( UInt $year ) {
 
 ###########################################
 ## Selected Jewish observances
-method observancesJewish( UInt $year ) {
+method observancesJewish( UInt :$year ) {
   if $year != any( 622...9999 ) { return "ERROR!! Invalid year. (only use 622 to 9999)"; }
   my $template = "jewish?year={ $year }";
   return self.getJSON( $template );
@@ -70,7 +97,7 @@ method observancesJewish( UInt $year ) {
 
 ###########################################
 ## Selected Islamic observances
-method observancesIslamic( UInt $year ) {
+method observancesIslamic( UInt :$year ) {
   if $year != any( 360...9999 ) { return "ERROR!! Invalid year. (only use 360 to 9999)"; }
   my $template = "islamic?year={ $year }";
   return self.getJSON( $template );
@@ -79,17 +106,17 @@ method observancesIslamic( UInt $year ) {
 ###########################################
 ## Julian date converter - From calender date to julian date
 ## TODO Need argument validation for date and era.
-multi method julianDate( $dateTimeObj, $era ) {
+multi method julianDate( DateTime :$dateTimeObj, ValidEras :$era ) {
   my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
-  my $time = "{$dateTimeObj.hour}:{$dateTimeObj.minute}:{$dateTimeObj.second}";
+  my $time = "{ $dateTimeObj.hour }:{ $dateTimeObj.minute }:{ $dateTimeObj.second }";
   my $template = "jdconverter?date={ $date }&time={ $time }&era={ $era }";
   return self.getJSON( $template );
 }
 
 ###########################################
 ## Julian date converter - From julian date to calender date.
-multi method julianDate( $julian ) {
-  if $julian < 0 or $julian > 5373484.5 { return "ERROR!! Julian date. (only use 0 to 5373484.5 )"; }
+multi method julianDate( ValidJulian :$julian ) {
+  #if $julian < 0 or $julian > 5373484.5 { return "ERROR!! Julian date. (only use 0 to 5373484.5 )"; }
   my $template = "jdconverter?jd={ $julian }";
   return self.getJSON( $template );
 }

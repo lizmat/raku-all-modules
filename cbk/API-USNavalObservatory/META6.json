@@ -5,7 +5,7 @@
        "description" : "Simple Perl 6 interface to the U.S. Naval Observatory, Astronomical Applications API v2.0.1",
        "author" : "github:cbk",
        "provides" : { "API::USNavalObservatory" : "lib/API/USNavalObservatory.pm6"  },
-       "depends" : [ "HTTP::UserAgent" ],
+       "depends" : [ "HTTP::UserAgent", "URI::Encode" ],
        "source-url" : "git://github.com/cbk/API-USNavalObservatory",
        "license" : "Artistic-2.0",
        "tags" :  ["WIP", "api"]
