@@ -4,6 +4,9 @@ See [semantic versioning](http://semver.org/). Please note point 4. on
 that page: *Major version zero (0.y.z) is for initial development. Anything may
 change at any time. The public API should not be considered stable.*
 
+* 0.7.2
+  * Samantha McVey found an error in the redirection to the external program for generating PDF files
+  * Generating the PDF finishes now before the program finishes. This will let the command prompt be shown properly after that.
 * 0.7.1 Operation Zoffix Znet to modify abspath() into absolute(), Thanks Zoffix!
 * 0.7.0
   * option --style added to pod-render.pl6. Html and pdf rendering is using this option to control google prettify styles

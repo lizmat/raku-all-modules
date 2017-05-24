@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/MARTIMM/pod-render.git
 	branch = master
-	commit = d5da05d964cd0dfc47c971f930732090b9d85641
-	parent = f4f11737a7388560f508c67d7f346085210130b8
+	commit = 42bf4f59aa199104b3985742ea4e6e6c3587dfa9
+	parent = a92b741b8ba76aab6b992f4605d067ab45181d98
 	cmdver = 0.4.0

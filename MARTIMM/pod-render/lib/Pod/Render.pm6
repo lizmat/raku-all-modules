@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 use Pod::To::HTML;
 use Pod::To::Markdown;
 
@@ -29,7 +29,7 @@ class Pod::Render:auth<https://github.com/MARTIMM> {
   #=============================================================================
   =begin pod
   =head1 Methods
-  
+
   =head2 render
 
     multi method render ( 'html', Str:D $pod-file, Str :$style )
@@ -78,16 +78,9 @@ class Pod::Render:auth<https://github.com/MARTIMM> {
     $pdf-file ~~ s/\. <-[.]>+ $/.pdf/;
 
     # send result to pdf generator
-    my Proc $p = shell "wkhtmltopdf - '$pdf-file' &>wkhtml2pdf.log", :in;
-#    my Proc $p = shell "wkhtmltopdf - '$pdf-file'", :in, :out;
+    my Proc $p = shell "wkhtmltopdf - '$pdf-file'", :in;
     $p.in.print($html);
-
-#    my Promise $pout .= start( {
-#        for $p.err.lines {
-#          "Err: ", .say;
-#        }
-#      }
-#    );
+    $p.in.close;
   }
 
   #-----------------------------------------------------------------------------
@@ -106,7 +99,8 @@ class Pod::Render:auth<https://github.com/MARTIMM> {
 
     $md-file ~~ s/\. <-[.]>+ $/.md/;
 
-    shell "perl6 --doc=Markdown " ~ $pod-file.IO.absolute ~ " > $md-file";
+    my $cmd = run "perl6", "--doc=Markdown", $pod-file.IO.absolute, :out;
+    $md-file.IO.spurt($cmd.out.slurp);
   }
 
   #-----------------------------------------------------------------------------
@@ -124,7 +118,7 @@ class Pod::Render:auth<https://github.com/MARTIMM> {
     my Str $html = '';
 
     # Start translation process
-    my Proc $p = shell "perl6 --doc=HTML '$pod-file'", :out;
+    my Proc $p = run "perl6", "--doc=HTML", $pod-file, :out;
 
     # search for style line in the head and add a new one
     my @lines = $p.out.lines;
@@ -186,4 +180,3 @@ class Pod::Render:auth<https://github.com/MARTIMM> {
     $html;
   }
 }
-

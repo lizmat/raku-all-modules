@@ -1,6 +1,6 @@
 #!/usr/bin/env perl6
 
-use v6.c;
+use v6;
 use Pod::Render;
 
 #-------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ more than one document at once.
 sub MAIN (
   Str $pod-file,
   Bool :$pdf = False, Bool :$html = False, Bool :$md = False,
-  
+
   Str :$style = 'default'
 ) {
 
@@ -73,4 +73,3 @@ sub MAIN (
   # Default is html
   $pr.render( 'html', $pod-file, :$style) unless $html or $pdf or $md;
 }
-
