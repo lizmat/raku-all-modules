@@ -1,0 +1,7 @@
+lib/CompUnit/Repository/Panda.pm6
+LICENSE
+MANIFEST
+META6.json
+README.md
+t/autoinstall.pl6
+t/autoinstall.t
