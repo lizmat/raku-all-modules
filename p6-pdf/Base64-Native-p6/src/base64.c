@@ -106,7 +106,7 @@ static uint8_t next_digit(uint8_t* in,
 			  size_t inlen,
 			  size_t *i,
 			  uint8_t *n,
-			  int32_t *error_pos
+			  ssize_t *error_pos
 			  ) {
   uint8_t digit = 0;
   if (*i < inlen) {
@@ -127,14 +127,12 @@ static uint8_t next_digit(uint8_t* in,
   return digit;
 }
 
-DLLEXPORT int32_t
-base64_decode (uint8_t* in,
-	       size_t inlen,
-	       uint8_t* out,
-	       size_t outlen) {
+DLLEXPORT ssize_t
+base64_decode (uint8_t* in, size_t inlen,
+	       uint8_t* out, size_t outlen) {
     size_t i;
     int32_t j;
-    int32_t error_pos = 0;
+    ssize_t error_pos = 0;
 
     while (inlen > 0 && in[inlen - 1] == '='
 	   || b64_dec[ in[inlen - 1] ] == W) {

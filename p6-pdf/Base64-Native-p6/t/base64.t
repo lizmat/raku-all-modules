@@ -31,7 +31,7 @@ is base64-encode($text, $trunc-out).decode, $base64.substr(0,10), "truncated enc
 is base64-decode("YWJj").decode, "abc", "decode to 3 bytes";
 is base64-decode("YWI=").decode, "ab", "decode to 2 bytes";
 is base64-decode("YQ==").decode, "a", "decode to 1 bytes";
-is base64-decode("").decode, "", "decode to 1 bytes";
+is base64-decode("").decode, "", "decode to 0 bytes";
 is base64-decode("YWJjZA==").decode, "abcd", "decode to 4 bytes";
 is base64-decode("YWJjZA").decode, "abcd", "decode no padding";
 is base64-decode(" Y\nWJj ZA == ").decode, "abcd", "decode whitespace";

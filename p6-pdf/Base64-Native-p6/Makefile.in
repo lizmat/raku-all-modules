@@ -11,7 +11,7 @@ $(SRC)/base64%O% : $(SRC)/base64.c $(SRC)/base64.h
 	%CC% -I $(SRC) -c %CCSHARED% %CCFLAGS% %CCOUT%$(SRC)/base64%O% $(SRC)/base64.c
 
 test : all
-	@prove -e'perl6 -I lib' -v t
+	@prove -e"perl6 -I lib" -v t
 
 clean :
 	@rm -f $(SRC)/*.o resources/lib/libbase64%SO%

@@ -15,7 +15,7 @@ module Base64::Native {
 
     sub base64_encode(Blob, size_t, Blob, size_t)  is native(&libbase64) { * }
     sub base64_encode_uri(Blob, size_t, Blob, size_t)  is native(&libbase64) { * }
-    sub base64_decode(Blob, size_t, Blob, size_t --> int32)  is native(&libbase64) { * }
+    sub base64_decode(Blob, size_t, Blob, size_t --> ssize_t)  is native(&libbase64) { * }
 
     sub enc-alloc(Blob $in) {
 	my \out-blocks = ($in.bytes div 3) + ($in.bytes %% 3 ?? 0 !! 1);
@@ -51,7 +51,7 @@ module Base64::Native {
 	base64-decode($in.encode($enc), |c)
     }
     multi sub base64-decode(Blob $in, Blob $out = dec-alloc($in) --> Blob) {
-	my int32 $n = base64_decode($in, $in.bytes, $out, $out.bytes);
+	my ssize_t $n = base64_decode($in, $in.bytes, $out, $out.bytes);
 	die "unable to decode as base64. stopped at byte {-$n}: 0x{$in[-$n - 1].base(16)} {$in[-$n - 1].chr.perl}"
 	    if $n < 0;
 	$out.reallocate($n)

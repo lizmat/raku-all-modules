@@ -4,6 +4,7 @@ perl6:
   - 2016.12
 os:
   - linux
+  - osx
 install:
   - rakudobrew build-zef
   - zef --depsonly install .

@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-pdf/Base64-Native-p6.git
 	branch = master
-	commit = ac8c023126331fee2163a86fdb2827bb82b75b08
-	parent = 3a26b7120809998e5162a72fb7bf22791b13f4bf
+	commit = dc272580687d15c205a7d51a9d8111e24b2f9575
+	parent = 5733c44233d651fa89df860b3f033cf2b5d30d28
 	cmdver = 0.4.0
