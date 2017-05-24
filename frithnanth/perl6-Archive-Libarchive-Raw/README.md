@@ -64,12 +64,6 @@ chooses uses the same API).
 
 ## Installation
 
-To install it using Panda (a module management tool):
-
-```
-$ panda update
-$ panda install Archive::Libarchive::Raw
-```
 To install it using zef (a module management tool):
 
 ```
@@ -83,12 +77,6 @@ To run the tests:
 
 ```
 $ prove -e "perl6 -Ilib"
-```
-
-or
-
-```
-$ prove6
 ```
 
 ## Note

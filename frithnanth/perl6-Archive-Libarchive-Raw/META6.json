@@ -4,7 +4,7 @@
   "tags" : [ "archive", "libarchive", "compression", "nativecall" ],
   "version" : "0.0.3",
   "description" : "Raw interface to libarchive",
-  "build-depends" : [ "LWP::Simple", "panda", "Shell::Command" ],
+  "build-depends" : [ "LWP::Simple", "Shell::Command" ],
   "depends" : [ "NativeCall" ],
   "test-depends" : [ "Test" ],
   "provides" : {
