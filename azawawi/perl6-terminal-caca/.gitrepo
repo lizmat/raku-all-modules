@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-terminal-caca.git
 	branch = master
-	commit = 5a90481c21eb13091b7d1ccb34f843a6eea1112d
-	parent = 5d3140f0c9a672b9ad7aba2485f3f93d90bff4b8
+	commit = 54cb49178c6f9dc0bbd3830021c66b2745471400
+	parent = 1afac1e220b558e7dbebc7ed047a33fb39c5e767
 	cmdver = 0.4.0
