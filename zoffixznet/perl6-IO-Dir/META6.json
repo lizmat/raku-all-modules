@@ -14,5 +14,5 @@
         "IO::Dir" : "lib/IO/Dir.pm6"
     },
     "authors"       : ["Zoffix Znet"],
-    "support"       : {"source"   : "https://github.com/zoffixznet/perl6-IO-Dir"}
+    "support"       : {"source"   : "https://github.com/zoffixznet/perl6-IO-Dir.git"}
 }
