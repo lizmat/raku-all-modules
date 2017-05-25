@@ -13,7 +13,7 @@
     },
     "tags" : ["math", "constants", "physics"],
     "resources" : [ ],
-    "source-url" : "https://github.com/JJ/p6-math-constants",
+    "source-url" : "https://github.com/JJ/p6-math-constants.git",
     "test-depends"  : [
         "Test",
         "Test::META"
