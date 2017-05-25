@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/finanalyst/p6-Algorithm-Tarjan.git
 	branch = master
-	commit = 367a0b7368b4bf6394fe13eb085b276f8ff8aded
-	parent = b2dc537dc87d31432c2460ab2097554796d0d775
+	commit = b1f1c6e493516a6d252f240ba013edcf7a1dd6fa
+	parent = e6341b1ca0adf0c4a1be2b0d285e4ac8b073b8c1
 	cmdver = 0.4.0
