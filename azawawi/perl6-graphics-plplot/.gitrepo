@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/azawawi/perl6-graphics-plplot.git
+	branch = master
+	commit = f6a11a714d455479faddc519369906e5a442fe04
+	parent = 68f60ec010d5739fd15c14634b62a6fd2c660861
+	cmdver = 0.4.0
