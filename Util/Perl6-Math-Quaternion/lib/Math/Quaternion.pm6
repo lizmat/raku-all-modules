@@ -8,20 +8,20 @@ has Numeric ( $.r, $.i, $.j, $.k );
 # Constructors: .new, .unit
 
 multi method new ( ) {
-    self.bless(*, :r(0), :i(0), :j(0), :k(0));
+    self.bless: :r(0), :i(0), :j(0), :k(0);
 }
 multi method new ( Real $r ) {
-    self.bless(*, :$r, :i(0), :j(0), :k(0));
+    self.bless: :$r, :i(0), :j(0), :k(0);
 }
 multi method new ( Complex $c ) {
-    self.bless(*, :r($c.re), :i($c.im), :j(0), :k(0));
+    self.bless: :r($c.re), :i($c.im), :j(0), :k(0);
 }
 multi method new ( Real $r, Real $i, Real $j, Real $k ) {
-    self.bless(*, :$r, :$i, :$j, :$k);
+    self.bless: :$r, :$i, :$j, :$k;
 }
 
 method unit ( ) {
-    self.bless: *, :r(1), :i(0), :j(0), :k(0);
+    self.bless: :r(1), :i(0), :j(0), :k(0);
 }
 
 # Utility methods:

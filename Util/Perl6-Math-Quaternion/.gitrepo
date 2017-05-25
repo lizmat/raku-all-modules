@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Util/Perl6-Math-Quaternion.git
 	branch = master
-	commit = 53faa69ca53627b9448916e40e674bb3fd121898
-	parent = cdd4a665a81d71c43170ecac978a2cbd3b6e1cef
-	cmdver = 0.2.3
+	commit = 3b90e593f6a428c9b8747bfa02e24087dbf2dcf2
+	parent = f630a3253fbc6f73d49c864d77a708910deac6bb
+	cmdver = 0.4.0
