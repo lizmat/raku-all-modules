@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/szabgab/Perl6-Maven.git
 	branch = main
-	commit = 5948f5f65603f9efff8fb0ede50be9a7a4f6f615
-	parent = 71d26e1a7765a7af3c3140f10f39a83c8aefa77e
+	commit = 1b5a8d5c1ff040b359783b373823c9a07a688cba
+	parent = efb1899d5070e180bdb20c8d340f3c28deea4123
 	cmdver = 0.4.0
