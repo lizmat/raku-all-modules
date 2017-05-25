@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-Benchy
 	branch = master
-	commit = 4ae552af3d3331c3fe516873022c1d44a4294c29
-	parent = 0918e5c96f0f40d3c28e932f8bdd57f3e0c182e5
+	commit = 3732b8784bc76ee93924867274b303171216e7f2
+	parent = 0296f6abb344de8745c938ff08d172b7aa3753b8
 	cmdver = 0.4.0
