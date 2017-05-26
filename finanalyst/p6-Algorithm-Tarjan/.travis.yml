@@ -2,8 +2,5 @@ language: perl6
 perl6:
   - latest
 install:
-    - rakudobrew zef
-    - zef installdeps .
-script:
-    prove -l -e perl6
-sudo: false
+    - rakudobrew build-zef
+    - zef --debug install .

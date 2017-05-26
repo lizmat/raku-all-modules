@@ -36,7 +36,7 @@ class Algorithm::Tarjan {
                                     );
         };
         # adds children not in node set
-        for %!nodes.values -> $node {
+        for %!nodes.values.eager -> $node {
             for $node.succ {
               %!nodes{~$_} = Algorithm::Tarjan::Node.new( :name(~$_) ) unless %!nodes{~$_}:exists
             }
