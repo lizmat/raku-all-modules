@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/azawawi/perl6-graphics-plplot.git
 	branch = master
-	commit = f6a11a714d455479faddc519369906e5a442fe04
-	parent = 68f60ec010d5739fd15c14634b62a6fd2c660861
+	commit = 48ccd778adeb51ee70030f28bc1970eea7ffac47
+	parent = 4f6e60a7bbc149ae803d1a74c2964e1c8ae93e88
 	cmdver = 0.4.0

@@ -1,5 +1,9 @@
 #!/usr/bin/env perl6
 
+#
+# Simple demo of a 2D line plot.
+# Original C example: http://plplot.sourceforge.net/examples.php?demo=00
+#
 use v6;
 
 use lib 'lib';
@@ -8,7 +12,7 @@ use NativeCall;
 
 # Set Output device and filename
 plsdev("png");
-plsfnam("output.png");
+plsfnam("ex00.png");
 
 # Initialize plplot
 plinit;

@@ -42,6 +42,90 @@ method line(@points) {
     plline( $size, $xc, $yc );
 }
 
+=begin pod
+=head2 orientation
+
+Sets integer plot orientation parameter which (0 for landscape, 1 for portrait,
+etc.). The value is multiplied by 90 degrees to get the angle.
+
+=end pod
+
+method orientation(Int $orientation) {
+    plsori($orientation)
+}
+
+method arc(:$center, :$semi-major, :$semi-minor, :$angle1, :$angle2, :$rotate,
+    Bool :$fill)
+{
+    plarc($center[0].Num, $center[1].Num, $semi-major.Num, $semi-minor.Num,
+        $angle1.Num, $angle2.Num, $rotate.Num, $fill);
+}
+
+=begin pod
+
+=head2 color-index0
+
+Sets the color index for cmap0
+
+0 	black (default background)
+1 	red (default foreground)
+2 	yellow
+3 	green
+4 	aquamarine
+5 	pink
+6 	wheat
+7 	grey
+8 	brown
+9 	blue
+10 	BlueViolet
+11 	cyan
+12 	turquoise
+13 	magenta
+14 	salmon
+15 	white
+
+=end pod
+
+method color-index0($color) {
+    plcol0($color);
+}
+
+=begin pod
+
+=head2 join
+
+Draw a line between two points
+
+=end pod
+
+method join($x1, $y1, $x2, $y2) {
+    pljoin( $x1.Num, $y1.Num, $x2.Num, $y2.Num );
+}
+
+=begin pod
+
+=head2 text
+
+Write text inside the viewport
+
+=end pod
+method text(:@point, :@inclination, :$just, :$text) {
+    plptex( @point[0].Num, @point[1].Num, @inclination[0].Num,
+        @inclination[1].Num, $just.Num, $text );
+}
+
+=begin pod
+
+=head2 text
+
+Write text relative to viewport boundaries
+
+=end pod
+
+method text-viewport(Str :$side,  :$disp, :$pos, :$just, Str :$text) {
+    plmtex( $side, $disp.Num, $pos.Num, $just.Num, $text );
+}
+
 method end {
     # Close PLplot library
     plend;

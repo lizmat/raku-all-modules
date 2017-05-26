@@ -1,8 +1,11 @@
 # Graphics::PLplot
 [![Build Status](https://travis-ci.org/azawawi/perl6-graphics-plplot.svg?branch=master)](https://travis-ci.org/azawawi/perl6-graphics-plplot) [![Build status](https://ci.appveyor.com/api/projects/status/github/azawawi/perl6-graphics-plplot?svg=true)](https://ci.appveyor.com/project/azawawi/perl6-graphics-plplot/branch/master)
 
-This module provides Perl 6 native bindings for
-[PLplot](http://plplot.sourceforge.net/)
+This module provides Perl 6 low and high-level native bindings for
+[PLplot](http://plplot.sourceforge.net/).
+
+Note: Currently work in progress and the API is being implemented one brick at
+a time. Help and feedback is appreciated.
 
 PLplot is a library of subroutines that are often used to make scientific plots
 in various compiled languages. PLplot can also be used interactively by

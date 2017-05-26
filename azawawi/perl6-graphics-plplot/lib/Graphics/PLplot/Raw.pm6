@@ -57,3 +57,34 @@ sub plend
     is symbol('c_plend')
     is native(&library)
     is export { * }
+
+sub plsori(int32)
+    is symbol('c_plsori')
+    is native(&library)
+    is export { * }
+
+sub plarc(num64, num64, num64, num64, num64, num64, num64, int32)
+    is symbol('c_plarc')
+    is native(&library)
+    is export { * }
+
+sub plcol0(int32)
+    is symbol('c_plcol0')
+    is native(&library)
+    is export { * }
+
+sub pljoin(num64, num64, num64, num64)
+    is symbol('c_pljoin')
+    is native(&library)
+    is export { * }
+
+sub plptex(num64, num64, num64, num64, num64, Str)
+    is symbol('c_plptex')
+    is native(&library)
+    is export { * }
+
+
+sub plmtex(Str, num64, num64, num64, Str)
+    is symbol('c_plmtex')
+    is native(&library)
+    is export { * }

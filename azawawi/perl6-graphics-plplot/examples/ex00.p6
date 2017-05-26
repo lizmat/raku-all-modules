@@ -1,5 +1,9 @@
 #!/usr/bin/env perl6
 
+#
+# Simple demo of a 2D line plot.
+# Original C example: http://plplot.sourceforge.net/examples.php?demo=00
+#
 use v6;
 
 use lib 'lib';
@@ -7,7 +11,7 @@ use Graphics::PLplot;
 
 if Graphics::PLplot.new(
     device    => "png",
-    file-name => "output.png"
+    file-name => "ex00.png"
 ) -> $plot  {
 
     # Begin plotting
