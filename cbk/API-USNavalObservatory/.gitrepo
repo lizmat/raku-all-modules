@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/cbk/API-USNavalObservatory.git
 	branch = master
-	commit = 7159708f7bd4da5ba0e0a42bd500c88a379b72fa
-	parent = 776b9b055e5a1b28c3b0240597407668e1dd3a79
+	commit = 3174ce6e674a3e6db34327bf970be755efa795e7
+	parent = dd0c09693788f96323a7e453f9de8caa7ff730f7
 	cmdver = 0.4.0

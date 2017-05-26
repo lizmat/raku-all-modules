@@ -8,13 +8,14 @@ use v6.c;
 unit class API::USNavalObservatory;
 use HTTP::UserAgent;
 use URI::Encode;
+use WWW;
 has $!baseURL = 'api.usno.navy.mil/';
 has @!validEras = "AD", "CE", "BC", "BCE";
 has $apiID = 'P6mod';
-has $webAgent = HTTP::UserAgent.new(useragent => "Chrome/41.0");
+has $webAgent = HTTP::UserAgent.new();
 
 subset SolarEclipses-YEAR of UInt where * eq any(1800..2050);
-subset ValidEras of Str where * eq any("AD", "CE", "BC", "BCE");
+subset ValidEras of Str where * eq any( "AD", "CE", "BC", "BCE" );
 subset ValidJulian of UInt where * < 5373484.5;
 subset ObserChristan of UInt where * eq any( 1583..9999 );
 subset ObserJewish of UInt where * eq any( 622..9999 );
@@ -23,9 +24,10 @@ subset Body of Str where * eq any( "mercury", "venus", "venus-radar", "mars", "j
 subset Height of Int where * eq any (-90..10999);
 subset Format of Str where * eq any( "json", "gojson" );
 subset MoonPhase of UInt where * eq any(1..99);
+subset View of Str where * eq any( "moon", "sun", "north", "south", "east", "west", "rise", "set" );
 
 ###########################################
-## getJSON - method used to make request which will reutrn JSON formatted data.
+## getJSON - method used to make request which will return JSON formatted data.
 method getJSON( $template ) {
   my $encoded_uri = uri_encode( $!baseURL ~ $template ~ "&id={ $apiID }" );
   my $response = $webAgent.get( $encoded_uri );
@@ -36,19 +38,43 @@ method getJSON( $template ) {
       return $response.status-line;
   }
 }
-
+###########################################
+## getIMG - method used to make request which will return .png files.
+method getIMG( :$name, :$template ){
+  my $file = $*CWD ~ "/"~ $name ~ ".png";
+  my $url = $!baseURL ~ $template;
+  say "Saving to $file ";
+  $file.IO.spurt: :bin, get $url;
+  say "{($file.path.s / 1024).fmt("%.1f")} KB received";
+}
 ###########################################
 ## Cylindrical Projection.
-
+method dayAndNight-Cylindrical( DateTime :$dateTimeObj ) {
+  my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
+  my $time = "{$dateTimeObj.hour}:{$dateTimeObj.minute}";
+  my $template = "imagery/earth.png?date={ $date }&time={ $time }";
+  self.getIMG( :name( "earth" ), :template( $template ) );
+}
 ###########################################
 ## Spherical Projections.
+method dayAndNight-Spherical( DateTime :$dateTimeObj, View :$view ) {
+  my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
+  my $template = "imagery/earth.png?date={ $date }&view={ $view }";
+  self.getIMG( :name( "earth" ), :template( $template ) );
+}
 
 ###########################################
 ## Apparent disk of a solar system object.
+method apparentDisk( DateTime :$dateTimeObj, Body :$body ){
+  my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
+  my $time = "{$dateTimeObj.hour}:{$dateTimeObj.minute}:{$dateTimeObj.second}";
+  my $template = "imagery/{ $body }.png?date={ $date }&time={ $time }";
+  self.getIMG( :name( $body ), :template($template)  );
+}
 
 ###########################################
 ## Phases of the moon.
-method moonPhase( DateTime :$dateTimeObj, moonPhase :$numP  ){
+method moonPhase( DateTime :$dateTimeObj, MoonPhase :$numP  ){
   my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
   my $template = "moon/phase?date={ $date }&nump={ $numP }";
   return self.getJSON( $template );
