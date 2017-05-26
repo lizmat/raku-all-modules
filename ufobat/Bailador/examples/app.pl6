@@ -10,6 +10,11 @@ get '/' => sub {
     "hello world"
 }
 
+get '/die' => sub {
+    die 'This is an exception so you can see how it is handled';
+    "hello world"
+}
+
 get '/about' => sub {
     "about me"
 }
@@ -32,5 +37,4 @@ get / ^ '/template/' (.+) $ / => sub ($x) {
     template 'tmpl.tt', { name => $x }
 }
 
-my $port = %*ENV<PORT>??%*ENV<PORT>!!3000;
-baile($port);
+baile();
