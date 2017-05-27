@@ -13,7 +13,7 @@ use v6.c;
 
 use Test;
 
-plan 20;
+plan 29;
 
 use Log::Any;
 use Log::Any::Adapter;
@@ -208,3 +208,19 @@ Log::Any.error( 'abc', :pipeline( 'multi filter' ), category => 'solo' );
 Log::Any.error( 'abcd', :pipeline( 'multi filter' ), category => 'multi' );
 
 is $a.logs, ['abcd'], 'multi filters ok';
+
+# Check will-log methods
+# Minimal testing, uses the sames parsing filters as logging methods
+
+$a.logs = [];
+Log::Any.add( :pipeline('will-log'), $a, :filter( [ :severity( '>=warning' ) ] ) );
+
+nok Log::Any.will-trace(     :pipeline( 'will-log' ) ), 'will-trace';
+nok Log::Any.will-debug(     :pipeline( 'will-log' ) ), 'will-debug';
+nok Log::Any.will-info(      :pipeline( 'will-log' ) ), 'will-info';
+nok Log::Any.will-notice(    :pipeline( 'will-log' ) ), 'will-notice';
+ok  Log::Any.will-warning(   :pipeline( 'will-log' ) ), 'will-warning';
+ok  Log::Any.will-error(     :pipeline( 'will-log' ) ), 'will-error';
+ok  Log::Any.will-critical(  :pipeline( 'will-log' ) ), 'will-critical';
+ok  Log::Any.will-alert(     :pipeline( 'will-log' ) ), 'will-alert';
+ok  Log::Any.will-emergency( :pipeline( 'will-log' ) ), 'will-emergency';

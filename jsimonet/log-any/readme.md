@@ -8,11 +8,25 @@ Log::Any
 
 ```perl6
 use Log::Any;
-use Log::Any::Adapter::File;
-Log::Any.add( Log::Any::Adapter::File.new( '/path/to/file.log' ) );
+use Log::Any::Adapter::Stdout;
+use Log::Any::Adapter::Stderr;
 
+
+# Basic usage
+Log::Any.add( Log::Any::Adapter::Stdout.new, formatter => '\d \m' );
 Log::Any.info( 'yolo' );
+# Prints "yolo"
+
+
+# Advanced usage
+Log::Any.add( Log::Any::Adapter::Stderr.new,
+              formatter => '\d \m',
+              filters( [severity => '>=error'] ) );
+Log::Any.add( Log::Any::Adapter::Stdout.new, formatter => '\d \m' );
+
+# Will be logged on stderr
 Log::Any.error( :category('security'), 'oups' );
+# Will be logged on stdout
 Log::Any.log( :msg('msg from app'), :category( 'network' ), :severity( 'info' ) );
 ```
 
@@ -240,6 +254,19 @@ Log::Any.add( Log::Any::Pipeline.new( :asynchronous ), :pipeline('other'), :over
 ```
 
 ** Asynchronous pipelines can contains messages to handle when a program reaches its end, so theses messages will not be logged. **
+
+## Continue on match
+
+When adding an Adapter to the pipeline, `:continue-on-match` option can be specified.
+This option tells the pipeline to continue to the next adapter if the Adapter is matched.
+
+The log `info log twice` will be dispatched to both adapters.
+
+```perl6
+Log::Any.add( :pipeline('continue-on-match'), SomeAdapterAs.new, :continue-on-match );
+Log::Any.add( :pipeline('continue-on-match'), SomeAdapterB.new );
+Log::Any.info( :pipeline('continue-on-match'), 'info log twice' );
+```
 
 # INTROSPECTION
 

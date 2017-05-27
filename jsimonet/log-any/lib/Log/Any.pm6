@@ -23,12 +23,12 @@ class Log::Any {
 	}
 
 	# Log::Any.add
-	multi method add( Log::Any:U: Log::Any::Adapter $a, Str :$pipeline = '_default', :$filter, :$formatter ) {
-		return self.new.add( $a, :$pipeline, :$filter, :$formatter );
+	multi method add( Log::Any:U: Log::Any::Adapter $a, Str :$pipeline = '_default', :$filter, :$formatter, :$continue-on-match ) {
+		return self.new.add( $a, :$pipeline, :$filter, :$formatter, :$continue-on-match );
 	}
 
 	# Log::Any.new.add
-	multi method add( Log::Any:D: Log::Any::Adapter $a, Str :$pipeline = '_default', :$filter, :$formatter ) {
+	multi method add( Log::Any:D: Log::Any::Adapter $a, Str :$pipeline = '_default', :$filter, :$formatter, :$continue-on-match ) {
 		my Log::Any::Filter $local-filter;
 		my Log::Any::Formatter $local-formatter;
 
@@ -57,7 +57,7 @@ class Log::Any {
 			# note "Adding adapter to pipeline $pipeline";
 			%!pipelines{$pipeline} = Log::Any::Pipeline.new;
 		}
-		%!pipelines{$pipeline}.add( $a, :filter( $local-filter ), :formatter( $local-formatter ) );
+		%!pipelines{$pipeline}.add( $a, :filter( $local-filter ), :formatter( $local-formatter ), :$continue-on-match );
 	}
 
 	multi method add( Log::Any:U:  Str :$pipeline = '_default', :$filter ) {
@@ -141,7 +141,11 @@ Dies if severity is unknown.
 
 
 	# Check if the filter will be accepted with the specified attributes
-	method will-log( :$severity!, :$category, :$pipeline = '_default' ) returns Bool {
+	multi method will-log( Log::Any:U: :$severity!, :$category is copy, :$pipeline = '_default' ) returns Bool {
+		return Log::Any.new.will-log( :$severity, :$category, :$pipeline );
+	}
+
+	multi method will-log( Log::Any:D: :$severity!, :$category is copy, :$pipeline = '_default' ) returns Bool {
 
 		# Check if the severity is handled
 		die "Unknown severity $severity" unless %!severities{$severity};

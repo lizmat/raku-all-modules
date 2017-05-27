@@ -9,7 +9,7 @@ This test file tests if basic methods can be called, if the formatter is working
 
 use Test;
 
-plan 31;
+plan 32;
 
 use Log::Any;
 
@@ -75,3 +75,13 @@ with $a.logs[*-1] {
 } else {
 	flunk 'Log with formatter in test-2 pipeline';
 }
+
+# Continue-on-match: continue to the next adapter, even if the current adapter matches
+$a.logs = [];
+my $b = AdapterDebug.new;
+
+Log::Any.add( :pipeline('continue-on-match'), $a, :continue-on-match );
+Log::Any.add( :pipeline('continue-on-match'), $b );
+Log::Any.info( :pipeline('continue-on-match'), 'info should log twice' );
+
+ok $a.logs[*-1] === $b.logs[*-1] === 'info should log twice', 'continue on match';

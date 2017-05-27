@@ -30,7 +30,7 @@ class Log::Any::Pipeline {
 		}
 	}
 
-	method add( Log::Any::Adapter $a, Log::Any::Filter :$filter, Log::Any::Formatter :$formatter ) {
+	method add( Log::Any::Adapter $a, Log::Any::Filter :$filter, Log::Any::Formatter :$formatter, :$continue-on-match = False ) {
 		#note "{now} adding adapter $a.WHAT().^name()";
 		my %elem = adapter => $a;
 
@@ -42,29 +42,30 @@ class Log::Any::Pipeline {
 			%elem{'formatter'} = $formatter;
 		}
 
+		if $continue-on-match {
+			%elem{'continue-on-match'} = True ;
+		}
+
 		push @!adapters, %elem;
 	}
 
 =begin pod
-=head2 get-next-elem
+=head2 get-available-adapters
 
 	This method returns the next element of the pipeline wich is matching
 	the filter.
 =end pod
-	method !get-next-elem( :$msg, :$severity, :$category ) {
-		my %next-elem;
+	method !get-available-adapters( :$msg, :$severity, :$category ) {
 
-		for @!adapters -> %elem {
+		return gather for @!adapters -> %elem {
 			# Filter : check if the adapter meets the requirements
 			with %elem{'filter'} {
 				next unless %elem{'filter'}.filter( :$msg, :$severity, :$category );
 			}
 			# Without filter, it's ok
-			%next-elem = %elem;
-			last;
+			take %elem;
 		}
 
-		return %next-elem;
 	}
 
 	method dispatch( DateTime :$date-time!, :$msg!, :$severity!, :$category! ) {
@@ -80,26 +81,28 @@ class Log::Any::Pipeline {
 	}
 
 	method !dispatch-synchronous( :$date-time!, :$msg! is copy, :$severity!, :$category! ) {
-		my %elem = self!get-next-elem( :$msg, :$severity, :$category );
-		if %elem {
-			# Escape newlines caracters in message
-			$msg ~~ s:g/ \n /\\n/;
+		for self!get-available-adapters(  :$msg, :$severity, :$category ) -> %elem {
+			if %elem {
+				# Escape newlines caracters in message
+				$msg ~~ s:g/ \n /\\n/;
 
-			# Formatter
-			my $msgToHandle = $msg;
-			if %elem{'formatter'} {
-				$msgToHandle = %elem{'formatter'}.format( :$date-time, :$msg, :$category, :$severity );
+				# Formatter
+				my $msgToHandle = $msg;
+				if %elem{'formatter'} {
+					$msgToHandle = %elem{'formatter'}.format( :$date-time, :$msg, :$category, :$severity );
+				}
+
+				# Proxies
+
+				# Handling
+				%elem{'adapter'}.handle( $msgToHandle );
 			}
-
-			# Proxies
-
-			# Handling
-			%elem{'adapter'}.handle( $msgToHandle );
+			last unless %elem{'continue-on-match'};
 		}
 	}
 
 	method will-dispatch( :$severity, :$category ) returns Bool {
-		return self!get-next-elem( :$severity, :$category ).so;
+		return self!get-available-adapters( :$severity, :$category ).so;
 	}
 
 	# Dump the adapters
