@@ -23,7 +23,7 @@ class Platform::Container {
         }
         my $proc = run <docker network inspect>, $!network, :out, :err;
         my $out = $proc.out.slurp-rest;
-        $!network-exists = $out.Str.trim ne '[]';
+        # $!network-exists = $out.Str.trim ne '[]';
     }
 
     method result-as-hash($proc) {
