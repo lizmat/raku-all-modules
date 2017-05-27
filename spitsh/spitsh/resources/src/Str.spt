@@ -18,10 +18,14 @@ my @/;
    say <one two three> ~~ Str; #true
 }
 augment Str {
-    #| Prints the string to stdout
-    method say { say $self }
-    #| Prints the string to stderr
-    method note { note $self }
+    #| Writes string to `$*OUT` followed by a newline if it doesn't
+    #| end in one already.
+    method say { $self.${awk '{print}' >$*OUT} }
+    #| Writes string to $*ERR followed by a newline if it doesn't end
+    #| in one already.
+    method note { $self.${awk '{print}' >$*ERR} }
+    #| Writes string to `$*OUT`.
+    method print { $self.${ >$*OUT } }
     #| Returns an uppercase version of the string
     method ~uc    { $self.${tr '[:lower:]' '[:upper:]'} }
     #| Returns an lowercase version of the string
@@ -52,20 +56,25 @@ augment Str {
        $a.subst('o','e',:g).say;
        say $a;
     }
+    method ~subst(#|[The string to be replaced]$target,
+                  #|[The string to replace it with]$replacement,
+                  #|[Turns on global matching]Bool :$g){
 
-constant $subst-awk = 'BEGIN { RS="^$"; r=ENVIRON["R"]; t=ENVIRON["T"] }
+constant $subst-awk =
+Q{BEGIN { RS="^$"; r=ENVIRON["R"]; t=ENVIRON["T"] }
 {
     while((g || !i) && (i = index(substr($0,w + 1),t))){
         $0 = substr($0,1,i + w - 1) r substr($0,w + i + length(t));
         w += length(r) - length(t) + i
+        if(w < 0){ w = 0 }
     }
     print;
-}';
-
-    method ~subst(#|[The string to be replaced]$target,
-                  #|[The string to replace it with]$replacement,
-                  #|[Turns on global matching]Bool :$g){
+}};
         $self.${awk -v "g=$g" $subst-awk :T($target) :R($replacement)};
+    }
+
+    method ~subst-eval($placeholder,$value) {
+        $self.subst($placeholder,$value.subst("'","'\\''"));
     }
     #| Returns true if the string contains `$needle`.
     #|{
@@ -115,10 +124,18 @@ constant $subst-awk = 'BEGIN { RS="^$"; r=ENVIRON["R"]; t=ENVIRON["T"] }
         }
     }
     method ?ends-with(#|[True if the string ends-with this]$ends-with) {
-        $self.${
-            awk :T($ends-with) -v 'RS=^$'
-           '{T=ENVIRON["T"];exit(index($0,T)!=length($0)-length(T)+1)}'
-        }
+constant $awk-ends-with =
+Q{END {
+  T=ENVIRON["T"]
+  while (i = index(substr($0,w + 1),T)){
+    if(i = length($0)-length(T)+1)
+      exit 0
+    w = i
+  }
+  exit 1
+}};
+
+        $self.${ awk :T($ends-with) -v 'RS=^$' $awk-ends-with }
     }
 
     #| Returns true if the the string matches the regex and sets the
@@ -278,6 +295,17 @@ constant $awk-subst-re =
                 $awk-subst-re
             }
         }
+    }
+
+    method ~substr(Int $start, Int $length) {
+        $self.${
+            awk -v 'RS=^$' -v "s={$start + 1}" -v "l=$length"
+            '{printf "%s", substr($0,s,l)}'
+        }
+    }
+
+    static method ~random($n) {
+        ${ tr -dc 'a-zA-Z0-9' < '/dev/urandom' | head -c $n }
     }
 
 }

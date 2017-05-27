@@ -39,7 +39,7 @@ constant @reserved-cmds = %?RESOURCES<reserved.txt>.slurp.split("\n");
 
 has Hash @!names;
 has %.opts;
-has $.chars-per-line-cap = 80;
+has $.max-chars-per-line = 80;
 
 
 method BUILDALL(|) {
@@ -180,7 +180,9 @@ method compile(SAST::CompUnit:D $CU, :$one-block --> Str:D) {
 
     my @MAIN = self.node($CU,:indent);
 
-    my @END = ($CU.phasers[END] andthen self.compile-nodes($_,:indent));
+    my @END = flat $CU.phasers.grep(*.defined).map: {
+        ("\n" if $++), |self.compile-nodes($_,:indent)
+    };
 
     my @compiled-depends = grep *.so, $*depends.reverse-iterate: {
         self.compile-nodes([$_],:indent).grep(*.defined);
@@ -190,11 +192,12 @@ method compile(SAST::CompUnit:D $CU, :$one-block --> Str:D) {
     my @run;
 
     if $one-block and not @END {
-        @compiled.append: self.maybe-oneline-block:
+        @compiled.append: |self.maybe-oneline-block(
             [
                 |(|@BEGIN,"\n" if @BEGIN)
                 ,|@MAIN
-            ];
+            ]
+        ), "\n";
     } else {
         for :@BEGIN,:@MAIN {
             if .value {
@@ -214,13 +217,12 @@ method compile(SAST::CompUnit:D $CU, :$one-block --> Str:D) {
 }
 
 method maybe-oneline-block(@compiled) {
-    if @compiled.first(/\n/) {
-        "\{\n",|@compiled,"\n$*pad\}";
+    my $compiled = @compiled.join;
+    if $compiled.contains("\n") {
+        "\{\n", $compiled,"\n$*pad\}";
     } else {
-        while @compiled and @compiled[0] ~~ /^\s*$/ {
-            @compiled.shift;
-        }
-        '{ ', |@compiled,'; }';
+        $compiled ~~ s/^\s+//;
+        '{ ', $compiled, (';' unless $compiled.ends-with('&')),' }';
     }
 }
 
@@ -366,6 +368,10 @@ multi method compile-assign($var,SAST::Call:D $call) {
     } else {
         nextsame;
     }
+}
+
+multi method compile-assign($var, SAST::Start:D $start) {
+    |self.node($start),' ',self.gen-name($var),'=$!';
 }
 
 multi method int-expr(SAST::Var:D $_) {
@@ -725,13 +731,14 @@ multi method node(SAST::MethodCall:D $_, :$tight) {
     my $slurpy-start = (.declaration.signature.slurpy-param andthen .ord);
     my $pipe;
     if .declaration.invocant andthen .piped {
-        $pipe := |(|self.cap-stdout(.invocant), '|' unless .invocant.is-invocant andthen .piped);
+        $pipe := self.pipe-input(.invocant);
         $call :=   |$pipe,
-                   |self.call:
-                   self.gen-name(.declaration),
-                   .param-arg-pairs,
-                   .pos,
-                   :$slurpy-start;
+                   |self.call(
+                       self.gen-name(.declaration),
+                       .param-arg-pairs,
+                       .pos,
+                       :$slurpy-start
+                   );
     } else {
         $call := |self.call:
                    self.gen-name(.declaration),
@@ -749,6 +756,29 @@ multi method node(SAST::MethodCall:D $_, :$tight) {
         |self.maybe-quietly( $call, .type, .ctx, match => .match),
         (';}' if $pipe and $tight)
     }
+}
+
+method pipe-input(
+    $input,
+    # $here-doc is rw,
+    # :$in-pipe, # True unless this is|the|last← thing in pipe
+)
+{
+    if $input andthen
+       # If the method body we're in is already having its $self piped
+       # then the pipe is implicit and we don't need to do anything.
+       !($input.is-invocant andthen .piped)
+       {
+           if self.try-heredoc($input, :preserve-end) -> ($delim, $body) {
+               # Our input can be heredoc'd with cat.
+               # Note: You might think that you should be able to do this without
+               # cat by just <<- into the first command in the pipe.
+               # I attempted this and it as extremely difficult in complex
+               "cat <<-'$delim' | ", |$body;
+           } else {
+               |self.cap-stdout($input), '|';
+           }
+       }
 }
 
 multi method arg(SAST::Call:D $_) is default {
@@ -776,11 +806,10 @@ multi method node(SAST::Cmd:D $cmd, :$tight) {
 
         my $full-cmd := |self.compile-redirection(@cmd-body,$cmd);
 
-        my $pipe := do if $cmd.pipe-in andthen !($cmd.pipe-in.is-invocant andthen .piped) {
-            |(|self.cap-stdout($cmd.pipe-in),'|');
-        };
+        my $pipe := self.pipe-input($cmd.pipe-in);
         |$pipe,
-        ("\n{$*pad}  " if $pipe and $pipe.chars + $full-cmd.chars > $.chars-per-line-cap),
+        # Make a newline if the pipe looks too long
+        ("\\\n$*pad  " if $pipe.substr($pipe.rindex("\n") // 0).chars > $!max-chars-per-line),
         |$cmd.set-env.map({"{.key.subst('-','_',:g)}=",|self.arg(.value)," "}).flat,
         |$full-cmd;
     }
@@ -861,6 +890,15 @@ multi method node(SAST::Quietly:D $_) {
     |self.node(.block,:curlies),' 2>', self.null;
 }
 
+#!Start
+multi method node(SAST::Start:D $_) {
+    |self.node(.block, :curlies), ' &'
+}
+
+multi method cap-stdout(SAST::Start:D $_) {
+    |self.node($_), ' ', self.scaf('e'),' $!';
+}
+
 #!Neg
 multi method cond(SAST::Neg:D $_) { '! ',|self.cond(.children[0],:tight) }
 
@@ -890,10 +928,14 @@ multi method cond(SAST::Cmp:D $cmp) {
 multi method arg (SAST::BVal:D $_) { .val ?? '1' !! '""' }
 multi method cond(SAST::BVal:D $_) { .val ?? 'true' !! 'false' }
 multi method int-expr(SAST::BVal $ where { .val === False } ) { '0' }
-#!SVal
-multi method arg(SAST::SVal:D $_) {
-    if (my $lines := .val.lines) > 2 {
-        my $emoji;
+
+
+method try-heredoc($sast, :$preserve-end) {
+    if $sast ~~ SAST::SVal
+           # heredocs must end in \n which is sometimes undesirable
+       and (!$preserve-end or $sast.val.ends-with("\n"))
+       and (my @lines = $sast.val.split("\n")) > 2
+    {
         my @emojis = qqw:to/END/;
         \c[GHOST]
         \c[SPIRAL SHELL]
@@ -905,12 +947,21 @@ multi method arg(SAST::SVal:D $_) {
         \c[HOURGLASS]
         \c[REVERSED HAND WITH MIDDLE FINGER EXTENDED]
         END
-        repeat { $emoji = @emojis.shift } while $lines.first(*.match(/^"\t"+$emoji/));
+        my $emoji;
+        repeat { $emoji = @emojis.shift } while @lines.first(*.match(/^"\t"+$emoji/));
         $emoji or SX::Bug.new(message => "EMOJIS DEPLETED", match => .match).throw;
-        cs
-          "cat <<-'$emoji'\n\t",
-          $lines.join("\n\t"),
-          "\n\t$emoji\n$*pad";
+        return $emoji, ("\n\t",
+               @lines.join("\n\t"),
+               ("\n\t" if @lines[*-1]),
+               "$emoji\n$*pad");
+    } else {
+        Nil;
+    }
+}
+#!SVal
+multi method arg(SAST::SVal:D $_) {
+    if !.val.ends-with("\n") and self.try-heredoc($_) -> ($delim, $body) {
+        cs "cat <<-'$delim'",|$body
     } else {
         escape .val
     }
@@ -1028,6 +1079,11 @@ multi method loop-return(SAST::List:D $_) {
 multi method arg(SAST::Pair:D $_) {
     self.concat-into-DQ([self.arg(.key),"\t",self.arg(.value)])
 }
+
+#!EvalArg
+multi method arg(SAST::EvalArg:D $_) {
+    "'{.placeholder}'"
+}
 #!Doom
 # If we try and compile Doom we're doomed
 multi method arg(SAST::Doom:D $_)  { .exception.throw }
@@ -1036,7 +1092,7 @@ multi method arg(SAST::NAME:D $_) {
     if try self.gen-name($_[0]) -> $name {
         escape $name;
     } else {
-        SX.new(message => ‘value doesn't have name’, node => $_[0]).throw;
+        SX.new(message => 'value doesn\'t have name', node => $_[0]).throw;
 
     }
 }

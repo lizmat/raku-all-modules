@@ -1,6 +1,6 @@
 use Test;
 
-plan 39;
+plan 41;
 
 for <one two three> {
 
@@ -145,16 +145,21 @@ for 4,5 {
 }
 
 {
-    # Testing that this method don't turn into a piped command
+    # Testing that these method don't get piped
     class BadPipe {
         method ~bad-pipe-for {
             for <1 2 3> {
                 $self.${grep $_};
             }
         }
-        "";
+        method ~bad-pipe-method-for {
+            for <1 2 3> {
+                $self.uc;
+            }
+        }
     }
     is BadPipe<123>.bad-pipe-for, <123 123 123>, 'invocant pipe in for block';
+    is BadPipe<foo>.bad-pipe-method-for, <FOO FOO FOO>, 'pipeable method in for block';
 }
 
 is ${ printf '%s-%s-%s' ($_ for <one two three>) }, 'one-two-three',
@@ -163,3 +168,11 @@ is ${ printf '%s-%s-%s' ($_ for <one two three>) }, 'one-two-three',
 pass "statement-mod for $_" for ^3;
 
 is ($_ * 2 if $_ > 2 for 1..5), <6 8 10>, 'grep-like for loop';
+
+{
+    my @a = <1 2 3>;
+    my Int @b = for ^3 { $_, @a }
+    # This checks that a List[Int] doesn't get coerced to an Int
+    # in List[Int] context
+    is @b, <0 1 2 3 1 1 2 3 2 1 2 3>, 'for in List[Int] context';
+}

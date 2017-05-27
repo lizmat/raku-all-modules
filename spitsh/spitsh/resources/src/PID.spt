@@ -1,3 +1,11 @@
+sub kill($signal, PID *@pids) {
+    ${kill "-$signal" @pids} if @pids;
+}
+
+sub wait(PID *@pids) {
+    ${wait @pids}
+}
+
 #| The PID class represents an integer process ID.
 augment PID {
     #| In Bool context the PID returns the result of `.exists`
@@ -12,4 +20,23 @@ augment PID {
     method ?kill($signal) {
         ${kill "-$signal" $self};
     }
+
+    method ?kill-group($signal){
+        ${kill $signal "-$self"}
+    }
+
+    method children (-->List[PID]) {
+        ${ps -o 'ppid,pid' | awk -v "p=$self" '$1==p{print $2}'}
+    }
+
+    method descendants(-->List[PID]) {
+        $_, .descendants for $self.children;
+    }
+
+    method wait { wait $self }
+}
+
+augment List[PID] {
+    method wait { wait @$self }
+    method kill($signal) { kill $signal, @$self }
 }
