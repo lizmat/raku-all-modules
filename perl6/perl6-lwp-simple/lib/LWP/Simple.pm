@@ -343,21 +343,7 @@ method getprint (Str $url) {
 
 method getstore (Str $url, Str $filename) {
     return unless defined $url;
-
-    my $content = self.get($url);
-    if ! $content {
-        return
-    }
-
-    my $fh = open($filename, :bin, :w);
-    if $content ~~ Buf {
-        $fh.write($content)
-    }
-    else {
-        $fh.print($content)
-    }
-
-    $fh.close;
+    $filename.IO.spurt: self.get($url) || return
 }
 
 method parse_url (Str $url) {
