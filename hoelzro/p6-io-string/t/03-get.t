@@ -2,7 +2,7 @@ use v6;
 use Test;
 use IO::String;
 
-plan 24;
+plan 25;
 
 # get, unix, chomp
 {
@@ -46,4 +46,9 @@ plan 24;
     is $s.get, "world!\r\n", "got second line";
     ok !$s.get, "got nothing for third line";
     ok $s.eof, "we have eof";
+}
+
+{
+    my $s = IO::String.new(buffer => "hello-world");
+    is-deeply $s.get, 'hello-world', 'have no new lines';
 }

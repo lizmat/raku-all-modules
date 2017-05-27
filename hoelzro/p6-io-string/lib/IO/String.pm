@@ -98,6 +98,13 @@ class IO::String:ver<0.1.0>:auth<hoelzro> is IO::Handle {
         $!pos = $a ?? $!buffer.chars !! 0;
     }
 
+    method lines(IO::String:D: $limit? is copy) {
+        $limit = Inf if not $limit.DEFINITE or $limit ~~ Whatever;
+        gather {
+            .take while ++$ <= $limit and ($_ = self.get).DEFINITE
+        }
+    }
+
     method get(IO::String:D:) {
         return Nil if $!pos >= $.buffer.chars;
 
@@ -105,7 +112,8 @@ class IO::String:ver<0.1.0>:auth<hoelzro> is IO::Handle {
         my $next-nl = [min] $.nl-in.map({
             $_ => $^nl with $.buffer.index($^nl, $start)
         }).grep(*.key.defined);
-        without $next-nl {
+
+        if $next-nl ~~ Num { # if it's Inf, then there's no minimum
             $!pos = $.buffer.chars;
             return $.buffer.substr($start);
         }
