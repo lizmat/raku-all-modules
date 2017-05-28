@@ -5,19 +5,29 @@ role DDTR::DescribeBaseObjects
 {
 method get_P6_internal { ('!UNIT_MARKER', 'GLOBAL', 'EXPORT', 'Data', 'Test') }
 
-# get_headers: "final" objects returnf their value and type
+# get_headers: "final" objects return their value and type
 multi method get_header (IntStr $i) { $i.Int ~ ' / "' ~ $i.Str ~ '"',  '.' ~ $i.^name, DDT_FINAL }
 multi method get_header (Int $i) { $i,  '.' ~ $i.^name, DDT_FINAL }
 multi method get_header (Str:U $s) { '', '.' ~ $s.^name, DDT_FINAL }
 multi method get_header (Str:D $s) { $s, '.' ~ $s.^name, DDT_FINAL } 
 multi method get_header (Rat $r) { $r  ~ ' (' ~ $r.numerator ~ '/' ~ $r.denominator ~ ')', '.' ~ $r.^name, DDT_FINAL }
 multi method get_header (Range $r) { $r.gist , '.' ~ $r.^name, DDT_FINAL }
-multi method get_header (Seq $s) 
+multi method get_header (Seq $s) { '', '.' ~ $s.^name ~ ( $s.is-lazy ?? '(*)' !! ''), DDT_FINAL }
+multi method get_header (Bool $b) { ( $b, '.' ~ $b.^name, DDT_FINAL ) }
+multi method get_header (Regex $r) { $r.perl.substr(6) ,  '.' ~ $r.^name, DDT_FINAL, } 
+
+multi method get_header (Pair $p) 
 	{
-	$s.is-lazy
-		?? return ( '', '.' ~ $s.^name ~ '(*)', DDT_FINAL )
-		!! return( '', '.' ~ $s.^name, DDT_FINAL )
+	if $p.key ~~ Str | Int && $p.value ~~ Str | Int 
+		{
+		'(' ~ $p.key ~ ' => ' ~ $p.value ~ ')', '.' ~ $p.^name, DDT_FINAL
+		}
+	else
+		{
+		'', '.' ~ $p.^name
+		}
 	}
+multi method get_header (Junction $j) { $j.gist, '.' ~ $j.^name, DDT_FINAL }
 
 multi method get_header (Match $m) 
 	{
@@ -26,10 +36,7 @@ multi method get_header (Match $m)
 		 !! (~$m, Q/[/ ~ $m.from ~ '..' ~ $m.to - 1 ~ ']', DDT_FINAL) 
 	}
 
-multi method get_header (Regex $r) { $r.perl.substr(6) ,  '.' ~ $r.^name, DDT_FINAL, } 
-
 # Block must be declare or it groaks when passed a Sub
-#TODO: report to P6P
 multi method get_header (Block $b) { $b.perl, '.' ~ $b.^name, DDT_FINAL }
 multi method get_header (Routine $r) { '' , '.' ~ $r.^name, DDT_FINAL }
 multi method get_header (Sub $s) { ( $s.name || '<anon>'), '.' ~ $s.^name, DDT_FINAL }
