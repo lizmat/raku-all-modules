@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Bailador/Bailador.git
+	branch = master
+	commit = 2fe2ddc3e1941efd15a19879dfac0b3b630e9a1f
+	parent = f9c5c73cde18517cda09e2d3378ea47f5c8760ab
+	cmdver = 0.4.0
