@@ -1,2 +1,0 @@
-%% name: Meow!
-<p>Hello, <%= $s<name> %></p>
