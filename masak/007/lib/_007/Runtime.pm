@@ -266,8 +266,8 @@ class _007::Runtime {
                 return Val::Str.new(:value($obj.value.trim));
             });
         }
-        elsif $obj ~~ Val::Array && $propname eq "elems" {
-            return builtin(sub elems() {
+        elsif $obj ~~ Val::Array && $propname eq "size" {
+            return builtin(sub size() {
                 return Val::Int.new(:value($obj.elements.elems));
             });
         }
@@ -296,6 +296,11 @@ class _007::Runtime {
         elsif $obj ~~ Val::Array && $propname eq "join" {
             return builtin(sub join($sep) {
                 return Val::Str.new(:value($obj.elements.join($sep.value.Str)));
+            });
+        }
+        elsif $obj ~~ Val::Object && $propname eq "size" {
+            return builtin(sub size() {
+                return Val::Int.new(:value($obj.properties.elems));
             });
         }
         elsif $obj ~~ Val::Str && $propname eq "split" {
