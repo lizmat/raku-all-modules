@@ -18,5 +18,5 @@
   ],
   "source-url" : "git://github.com/titsuki/p6-Terminal-Readsecret.git",
   "test-depends" : [ ],
-  "version" : "0.0.2"
+  "version" : "0.0.3"
 }
