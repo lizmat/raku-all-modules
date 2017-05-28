@@ -12,8 +12,8 @@ use lib 'lib';
 use Graphics::PLplot;
 
 if Graphics::PLplot.new(
-    device    => "png",
-    file-name => "ex03.png"
+    device    => "wxwidgets",
+    #file-name => "ex03.png"
 ) -> $plot  {
 
     # Set orientation to portrait
@@ -25,8 +25,8 @@ if Graphics::PLplot.new(
     my @x0;
     my @y0;
     for 0..360 -> $i {
-        @x0.push: cos( $dtr * $i );
-        @y0.push: sin( $dtr * $i );
+        @x0.push: cos($dtr * $i);
+        @y0.push: sin($dtr * $i);
     }
 
     # Begin plotting
@@ -38,7 +38,7 @@ if Graphics::PLplot.new(
         y-range => [-1.3, 1.3],
         just    => 1,
         axis    => -2,
-    );
+   );
 
     # Draw circles for polar grid
     for 0..10 -> $i {
@@ -50,19 +50,19 @@ if Graphics::PLplot.new(
             angle2     => 360.0,
             rotate     => 0.0,
             fill       => False,
-        );
+       );
     }
 
-    $plot.color-index0( 2 );
+    $plot.color-index0(2);
 
     for 0..11 -> $i {
         my $theta = 30.0 * $i;
-        my $dx    = cos( $dtr * $theta );
-        my $dy    = sin( $dtr * $theta );
+        my $dx    = cos($dtr * $theta);
+        my $dy    = sin($dtr * $theta);
 
         # Draw radial spokes for polar grid
-        $plot.join( Num(0.0), Num(0.0), $dx, $dy );
-        my $text = sprintf( "%d", $theta.round );
+        $plot.join(Num(0.0), Num(0.0), $dx, $dy);
+        my $text = sprintf("%d", $theta.round);
 
         # Write labels for angle
         my $offset;
@@ -75,7 +75,7 @@ if Graphics::PLplot.new(
         }
 
         # Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
-        if ( $dx >= -0.00001 ) {
+        if ($dx >= -0.00001) {
             $plot.text(
                 point       => [$dx, $dy],
                 inclination => [$dx, $dy],
@@ -93,21 +93,21 @@ if Graphics::PLplot.new(
     # Draw the graph
     my @points;
     for 0..360 -> $i {
-        my $r = sin( $dtr * ( 5 * $i ) );
+        my $r = sin($dtr * (5 * $i));
         my $x = @x0[$i] * $r;
         my $y = @y0[$i] * $r;
-        @points.push( ($x, $y) );
+        @points.push(($x, $y));
     }
-    $plot.color-index0( 3 );
-    $plot.line( @points );
+    $plot.color-index0(3);
+    $plot.line(@points);
 
-    $plot.color-index0( 4 );
+    $plot.color-index0(4);
     $plot.text-viewport(
         side => "t",
         disp => 2.0,
         pos  => 0.5,
         just => 0.5,
-        text => "#frPLplot Example 3 - r(#gh)=sin 5#gh" );
+        text => "#frPLplot Example 3 - r(#gh)=sin 5#gh");
 
     LEAVE {
         $plot.end;
