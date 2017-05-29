@@ -5,7 +5,9 @@
     "description"   : "Make roles with stub-methods punnable",
     "authors"       : [ "Fernando Corrêa de Oliveira" ],
     "tags"          : ["pun", "role", "stub"],
-    "provides"      : { },
+    "provides" : {
+		"Punnable": "lib/Punnable.pm6"
+	},
     "depends"       : [ ],
     "test-depends"  : [
         "Test",
