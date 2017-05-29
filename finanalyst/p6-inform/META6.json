@@ -1,10 +1,11 @@
 {
     "name" : "Inform",
+    "license" : "Artistic-2.0",
     "authors" : "Richard Hainsworth, aka finanalyst",
     "version" : "0.1",
     "perl"    : "6.c",
     "description" : "Easy to use GUI Dialog box using GTK3 label, button, entry widgets",
-    "build-depends" : [ "LWP::Simple", "panda", "Shell::Command" ],
+    "build-depends" : [ "LWP::Simple", "Shell::Command" ],
     "provides" : {
         "Informative" : "lib/Informative.pm6"
     },
