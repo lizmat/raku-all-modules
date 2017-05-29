@@ -1,4 +1,4 @@
-unit class HTTP::Request::Supply;
+unit class HTTP::Request::Supply:ver<0.1.1>:auth<github:zostay>;
 
 =NAME HTTP::Request::Supply - A modern HTTP/1.x request parser
 
