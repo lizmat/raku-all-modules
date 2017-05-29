@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/finanalyst/p6-task-popular.git
+	branch = master
+	commit = 2ed82e3ef6d21c6bf6d871bdcb749be9ef20c0df
+	parent = 0872bdaae51f133fba31d1c0dcb57ff82bc1b963
+	cmdver = 0.4.0

@@ -1,0 +1,55 @@
+{
+  "name": "Task::Popular",
+  "perl": "6.c",
+  "source-url": "git://github.com/finanalyst/p6-task-popular.git",
+  "build-depends": [
+    
+  ],
+  "resources": [
+    
+  ],
+  "depends": [
+    "JSON::Fast",
+    "MIME::Base64",
+    "File::Directory::Tree",
+    "File::Temp",
+    "URI",
+    "HTTP::Status",
+    "JSON::Tiny",
+    "JSON::Name",
+    "Encode",
+    "DateTime::Parse",
+    "HTTP::UserAgent",
+    "JSON::Unmarshal",
+    "JSON::Marshal",
+    "JSON::Class",
+    "XML",
+    "OpenSSL",
+    "Terminal::ANSIColor",
+    "Digest",
+    "META6",
+    "PSGI",
+    "Test::META",
+    "File::Find",
+    "IO::Socket::SSL",
+    "DateTime::Format",
+    "File::Which",
+    "LibraryMake",
+    "HTTP::Easy",
+    "Digest::HMAC",
+    "JSON::Pretty",
+    "LWP::Simple"
+  ],
+  "provides": [
+    
+  ],
+  "test-depends": [
+    
+  ],
+  "license": "MIT",
+  "version": "1.0",
+  "authors": [
+    "Richard Hainsworth aka finanalyst"
+  ],
+  "description": "Popular modules with high recursive citation indices"
+}
