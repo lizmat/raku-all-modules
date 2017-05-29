@@ -447,7 +447,7 @@ L<re-dispatching|/language/functions#Re-dispatching>.
     B.new.n;
     # OUTPUT: «i am hidden␤»
 
-The trait <is hidden> allows a class to hide itself from
+The trait C<is hidden> allows a class to hide itself from
 L<re-dispatching|/language/functions#Re-dispatching>.
 
     class A is hidden {
@@ -546,11 +546,11 @@ C<X::Comp::AdHoc> will be thrown.
 
     EVAL 'role R { method overload-this(){...} }; class A does R {}; ';
     CATCH { default { say .^name, ' ', .Str } }
-    # OUTPUT: «X::Comp::AdHoc Method 'overload-this' must be implemented by A because it is required by a role␤»
+    # OUTPUT: «X::Comp::AdHoc Method 'overload-this' must be implemented by A because it is required by roles: R.␤»
 
 =head3 Role auto-punning
 
-A role can be used instead of a class to created objects. Since roles can't
+A role can be used instead of a class to create objects. Since roles can't
 exist at runtime, a class of the same name is created that will type check
 successful against the role.
 
@@ -618,40 +618,39 @@ auto-punning), the auto-generated class' type-object, of the same name as the
 role, is added to the inheritance chain.
 
 =begin code :skip-test
-    role Unitish[$unit = fail('Please provide a SI unit quantifier as a parameter to the role Unitish')] {
-        has $.SI-unit-symbol = $unit;
-        has $.SI-unit-name = %SI-UNITS{$unit};
-        method gist {
-            given self {
-                # ...
-                when * < 1 { return self * 1000 ~ 'm' ~ $.SI-unit-symbol }
-                when * < 1000 { return self ~ $.SI-unit-symbol }
-                when * < 1_000_000 { return self / 1_000 ~ 'k' ~ $.SI-unit-symbol }
-                # ...
-            }
+role Unitish[$unit = fail('Please provide a SI unit quantifier as a parameter to the role Unitish')] {
+    has $.SI-unit-symbol = $unit;
+    method gist {
+        given self {
+            # ...
+            when * < 1 { return self * 1000 ~ 'm' ~ $.SI-unit-symbol }
+            when * < 1000 { return self ~ $.SI-unit-symbol }
+            when * < 1_000_000 { return self / 1_000 ~ 'k' ~ $.SI-unit-symbol }
+            # ...
         }
     }
+}
 
-    role SI-second   does Unitish[<s>] {}
-    role SI-metre    does Unitish[<m>] {}
-    role SI-kilogram does Unitish[<g>] {}
+role SI-second   does Unitish[<s>] {}
+role SI-metre    does Unitish[<m>] {}
+role SI-kilogram does Unitish[<g>] {}
 
-    sub postfix:<s>(Numeric $num) { ($num) does SI-second }
-    sub postfix:<m>(Numeric $num) { ($num) does SI-metre }
-    sub postfix:<g>(Numeric $num) { ($num) does SI-kilogram }
-    sub postfix:<kg>(Numeric $num){ ($num * 1000) does SI-kilogram }
+sub postfix:<s>(Numeric $num) { ($num) does SI-second }
+sub postfix:<m>(Numeric $num) { ($num) does SI-metre }
+sub postfix:<g>(Numeric $num) { ($num) does SI-kilogram }
+sub postfix:<kg>(Numeric $num){ ($num * 1000) does SI-kilogram }
 
-    constant g = 9.806_65;
+constant g = 9.806_65;
 
-    role SI-Newton does Unitish[<N>] {}
+role SI-Newton does Unitish[<N>] {}
 
-    multi sub N(SI-kilogram $kg, SI-metre $m, SI-second $s --> SI-Newton ){ ($kg * ($m / $s²)) does SI-Newton }
-    multi sub N(SI-kilogram $kg --> SI-Newton)                            { ($kg * g) does SI-Newton }
+multi sub N(SI-kilogram $kg, SI-metre $m, SI-second $s --> SI-Newton ){ ($kg * ($m / $s²)) does SI-Newton }
+multi sub N(SI-kilogram $kg --> SI-Newton)                            { ($kg * g) does SI-Newton }
 
-    say [75kg, N(75kg)];
-    # OUTPUT: «[75kg 735.49875kN]␤»
-    say [(75kg).^name, N(75kg).^name];
-    # OUTPUT: «[Int+{SI-kilogram} Rat+{SI-Newton}]␤»
+say [75kg, N(75kg)];
+# OUTPUT: «[75kg 735.49875kN]␤»
+say [(75kg).^name, N(75kg).^name];
+# OUTPUT: «[Int+{SI-kilogram} Rat+{SI-Newton}]␤»
 =end code
 
 =head3 Versioning and Authorship
@@ -694,7 +693,7 @@ value types C<Numerical> and C<Str> are supported.
     say same(name1, name2); # OUTPUT: «False␤»
     my $a = name1;
     say $a ~~ Names; # OUTPUT: «True␤»
-    say $a.WHAT;     # OUTPUT: «Names␤»
+    say $a.WHAT;     # OUTPUT: «(Names)␤»
 
 All keys have to be of the same type.
 
@@ -718,7 +717,7 @@ Enums can be anonymous. There will be no type created, resulting in a lack of
 introspectiveness. The returned object is of type C<Map>.
 
     my $e = enum <one two three>;
-    say two;      # OUTPUT: «two()(Map)␤»
+    say two;      # OUTPUT: «two␤»
     say one.WHAT; # OUTPUT: «()␤»
     say $e.WHAT;  # OUTPUT: «(Map)␤»
 
@@ -734,7 +733,7 @@ package, we can get a list of type objects for the keys.
 =head4 Metaclass
 
 To test if a given type object is an enum test the meta object method C<.HOW>
-for L</type/Metamodel::EnumHOW>.
+for L<Metamodel::EnumHOW|/type/Metamodel::EnumHOW>.
 
     enum E(<a b c>);
     say E.HOW ~~ Metamodel::EnumHOW;
@@ -844,7 +843,7 @@ will be checked against the given code object.
     my Positive $i = 1;
     $i = -42;
     CATCH { default { put .^name,': ', .Str } }
-    # OUTPUT: «X::TypeCheck::Assignment: Type check failed in assignment to $i; expected Positive but got Int (-42)␤ …»
+    # OUTPUT: «X::TypeCheck::Assignment: Type check failed in assignment to $i; expected Positive but got Int (-42)␤»
 
 Subsets can be anonymous, allowing inline placements where a subset is required
 but a name is neither needed nor desirable.

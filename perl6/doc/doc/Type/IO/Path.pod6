@@ -176,8 +176,18 @@ Defined as:
     method comb(IO::Path:D: |args --> Seq:D)
 
 Opens the file and processes its contents the same way
-L«C<Str.comb>|/type/Str» does, taking the same arguments. Implementations may
-slurp the file in its entirety when this method is called.
+L«C<Str.comb>|/type/Str#routine_comb» does, taking the same arguments.
+Implementations may slurp the file in its entirety when this method is called.
+
+=head2 method split
+
+Defined as:
+
+    method split(IO::Path:D: |args --> Seq:D)
+
+Opens the file and processes its contents the same way
+L«C<Str.split>|/type/Str#routine_split» does, taking the same arguments.
+Implementations may slurp the file in its entirety when this method is called.
 
 =head2 method extension
 
@@ -371,10 +381,11 @@ L«C<Str.pred>|/type/Str#method_pred» on it.
 
 Defined as:
 
-    method watch(IO::Path:D: --> Supply)
+    method watch(IO::Path:D: --> Supply:D)
 
-Watches the path for modifications. Only implemented in Rakudo with the
-MoarVM backend at the moment.
+Equivalent to calling
+L«IO::Notification.watch-path|/type/IO::Notification#method_watch-path»
+with the invocant as the argument.
 
 =head2 method is-absolute
 
@@ -820,28 +831,20 @@ create C<foo> if it does not exist.
 
 Defined as:
 
-    sub    rmdir(IO $dir --> Bool)
-    method rmdir(IO::Path:D: --> Bool)
+    sub    rmdir(*@dirs --> List:D)
+    method rmdir(IO::Path:D: --> True)
 
-Remove the given directory if it is empty.
+Remove the invocant, or in sub form, all of the provided directories in the
+given list, which can contain any L<Cool> object. Only works on empty
+directories.
 
-Returns C<True> on success.  Throws an exception of type
-L<X::IO::Rmdir> if the directory cannot be removed (e.g.
-the directory is not empty, or the path is not a directory).
+Method form returns C<True> on success and throws an exception of type
+C<X::IO::Rmdir> if the directory cannot be removed (e.g.
+the directory is not empty, or the path is not a directory). Subroutine
+form returns a list of directories that were successfully deleted.
 
-Since this only works on an empty directory, to remove a directory and its
-contents you will have to do something more complex.
-
-    # When we have a directory first recurse, then remove it
-    multi sub rm-all(IO::Path $path where :d) {
-        .&rm-all for $path.dir;
-        rmdir($path)
-    }
-
-    # Otherwise just remove the thing directly
-    multi sub rm-all(IO::Path $path) { $path.unlink }
-
-See also L<rmtree in File::Directory::Tree|https://github.com/labster/p6-file-directory-tree>.
+To delete non-empty directory, see L«rmtree in C<File::Directory::Tree>
+module|https://github.com/labster/p6-file-directory-tree».
 
 =head2 method chmod
 
@@ -961,10 +964,11 @@ To create a symbolic link, see L«C<symlink>|/routine/symlink».
 
 Defined as:
 
-    method unlink(IO::Path:D: --> Bool)
-    sub    unlink(*@filenames --> List)
+    method unlink(IO::Path:D: --> True)
+    sub    unlink(*@filenames --> List:D)
 
-Delete all specified ordinary files, links, or symbolic links.
+Delete all specified ordinary files, links, or symbolic links. See L<rmdir>
+to delete directories.
 
 The subroutine form returns the names of the files that were successfully
 deleted. The method form returns C<True> on success, or
