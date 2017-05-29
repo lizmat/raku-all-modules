@@ -1,6 +1,6 @@
 use Test;
 
-plan 11;
+plan 15;
 
 ok $?PID ~~ Int, 'PIDs are Ints';
 ok $?PID > 0, 'PID is greater than 0';
@@ -35,16 +35,39 @@ ok "{$?PID}foo".matches(/^\d+foo$/), 'can use $?PID in ""';
         ${true};
     }
 
+    ok $pid, '.Bool is .exists (True)';
     ok $pid.children == 3, '.children';
     ok $pid.descendants == 9, '.descendants';
 
     # If you don't kill $pid as well you get zombies
-    kill "TERM", $pid, $pid.descendants;
+    kill $pid, $pid.descendants;
 
+    sleep 1;
+    nok $pid, '.Bool is .exists (False)';
     ok $pid.children    == 0, '.children after killing';
     ok $pid.descendants == 0, '.descendants after killing';
 }
 
 {
-    is eval{ kill 'TERM' }.${sh *>~}, '', 'no error message when called with no arguments';
+    is eval{ kill }.${sh *>~}, '', 'no error message when called with no arguments';
+}
+
+{
+    my $pid =
+    start {
+        start {
+            start {
+                sleep 100; ${true}
+            };
+            sleep 100; ${true}
+        };
+        # exec at the end because dash/BB sh do this anyway but bash doesn't
+        sleep 100;
+        ${exec sleep 100};
+    };
+
+    $pid.descendants.kill;
+    sleep 1;
+    ok $pid, 'pid still exists after .descendants.kill';
+    nok $pid.descendants, '.descendants is false after .descendants.kill';
 }

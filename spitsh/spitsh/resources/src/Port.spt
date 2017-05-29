@@ -21,7 +21,7 @@ class Port is Int {
          }
     }
 
-    method listening(-->List[PID]) on {
+    method listening-->List[PID] on {
         Linux ${
             $*netstat -lpn
             | awk -v "p=$self"
@@ -36,7 +36,7 @@ class Port is Int {
         }
     }
 
-    static method *random on {
+    static method random* on {
         Linux {
             while (
                 my Port $port = ${shuf -n 1 -i 1024-65535};

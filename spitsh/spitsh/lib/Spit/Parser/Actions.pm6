@@ -363,7 +363,7 @@ method new-routine($/) {
     my (:@pos,:%named) := $<param-def>.ast<paramlist>.ast;
     my $r = $*ROUTINE;
     $r.signature = SAST::Signature.new(:@pos,:%named);
-    $r.return-type = .ast with $<param-def>.ast<return-type> || $<return-type-sigil>;
+    $r.return-type = .ast with $<return-type> || $<return-type-sigil>;
     make $r;
 }
 
@@ -427,6 +427,8 @@ method param ($/) {
             name => $<var><name>.Str,
             sigil => $<var><sigil>.Str,
             |(decl-type => .ast with $<type>),
+            |(default => .ast with $<default>),
+            optional => ?$<optional>,
             slurpy => ?$<slurpy>.Str
         )
     } else {
@@ -434,6 +436,8 @@ method param ($/) {
             name => $<var><name>.Str,
             sigil => $<var><sigil>.Str,
             |(decl-type => .ast with $<type>),
+            |(default => .ast with $<default>),
+            optional => $<optional>,
         )
     }
 }

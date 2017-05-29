@@ -163,19 +163,15 @@ grammar Spit::Grammar is Spit::Lang {
     }
 
     rule statement-control:sym<when> {
-        <.ws>
-        <?before <.sym>\s>
         (
             <.sym>
             [
                 <EXPR> <block>
-                <.eat-terminator>
                 ||
                 <.invalid('when statement')>
             ]
             |
             'default' <block>
-            <.eat-terminator>
         )+
     }
 
@@ -265,13 +261,25 @@ grammar Spit::Grammar is Spit::Lang {
 
     token longarrow {['-->'| '⟶']}
     rule new-routine(|c){
-        <return-type-sigil>?$<name>=<.identifier>
+        $<name>=<.identifier>
         { $*DECL = $*ACTIONS.make-routine($/,|c) }
         <.attach-pre-doc>
         [
             $<param-def>=<.r-wrap:'(',')', 'parameter list', rule {
-                <paramlist> [<.longarrow> [$<return-type>=<.type> || <.invalid("return type")> ] ]?
+                <paramlist>
+                (<.longarrow> <.panic("Return type inside signature. Put it outside (...)⟶Type.")>)?
             }>
+        ]?
+
+        [
+            |[
+                <.longarrow> [
+                    || $<return-type>=<.type>
+                    || \s <.panic('No whitespace allowed after ⟶')>
+                    || <.invalid('return type')>
+                ]
+            ]
+            |<return-type-sigil>
         ]?
     }
 
@@ -315,12 +323,12 @@ grammar Spit::Grammar is Spit::Lang {
         )* % ','
     }
 
-    rule param {
-        $<pos>=[
-            <type>? $<slurpy>='*'?<var>
-            ]
-        ||
-        $<named>=[<type>? ':'<var>]
+    token param {
+        [
+            | $<pos>=[ <type>? <.ws> $<slurpy>='*'?<var> ]
+            | $<named>=[ <type>? <.ws> ':'<var> ]
+        ]
+        [$<optional>='?'| <.ws> '=' <.ws> $<default>=<.EXPR($gt-comma)>]?
     }
 
     rule check-prec($min-precedence,$term) {

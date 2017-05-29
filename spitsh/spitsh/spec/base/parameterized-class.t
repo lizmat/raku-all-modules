@@ -4,19 +4,19 @@ plan 28;
 
 {
     class Foo[Type] {
-        static method doit(--> Type) { 3 }
-        static method echo(Type $a --> Type)  { $a }
-        static method echo-list(Type $a --> List[Type]) { $a, $a }
-        static method *return-type { "something" }
-        static method first-in-list(Type @list --> Type) { @list[0] }
+        static method doit()-->Type { 3 }
+        static method echo(Type $a )-->Type  { $a }
+        static method echo-list(Type $a )-->List[Type] { $a, $a }
+        static method return-type* { "something" }
+        static method first-in-list(Type @list )-->Type { @list[0] }
     }
 
     augment Foo {
-        static method aug-echo(Type $a --> Type) { $a }
+        static method aug-echo(Type $a )-->Type { $a }
     }
 
     augment Foo[Int] {
-        static method +double(Int $a) { $a + $a }
+        static method double(Int $a)+ { $a + $a }
     }
 
     ok Foo[Int].doit ~~ Int,"Foo[Int].method returns Int";
@@ -50,7 +50,7 @@ plan 28;
     class Abool is Bool { }
 
     class Bar[One,Two] {
-        static method ~one-two(One $one,Two $two) { $one ~ $two }
+        static method one-two(One $one,Two $two)~ { $one ~ $two }
     }
 
     ok Bar[Aint,Abool] ~~ Bar[Aint,Abool], 'Bar[A,B] ~~ Bar[A,B]';
@@ -63,12 +63,12 @@ plan 28;
 
 {
     class Parent[Param] {
-        method *return-self { $self.chars }
-        method return-param(-->Param) { $self.bytes }
+        method return-self* { $self.chars }
+        method return-param()-->Param { $self.bytes }
     }
 
     class Child is Parent[Int] {
-        method call-parent(-->Int){ $self.return-param }
+        method call-parent()-->Int{ $self.return-param }
     }
 
     is Parent[Int]<one>.return-self.WHAT, 'Parent[Int]', '* return .WHAT is parent';

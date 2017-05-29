@@ -1,22 +1,22 @@
 augment HTTP {
-    method ~get {
+    method get~ {
         # it would be nice to use BusyBox's wget on Alpine
         # But it's too broken.
         ${ $*curl -sL $self }
     }
 
-    method get-file(:$to --> File) {
+    method get-file(:$to)-->File {
         ${
             $*curl -sL -w '%{filename_effective}'
             ($to ?? "-o$to" !! '-O') $self
         }
     }
 
-    method redirect-url(-->HTTP) {
+    method redirect-url-->HTTP {
         ${ $*curl -Isw '%{redirect_url}' -o '/dev/null' $self }
     }
 
-    method ?is-https {
+    method is-https? {
         $self.starts-with('https');
     }
 }
