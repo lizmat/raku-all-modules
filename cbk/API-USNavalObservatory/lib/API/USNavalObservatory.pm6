@@ -28,7 +28,7 @@ subset View of Str where * eq any( "moon", "sun", "north", "south", "east", "wes
 
 ###########################################
 ## getJSON - method used to make request which will return JSON formatted data.
-method getJSON( $template ) {
+method !getJSON( $template ) {
   my $encoded_uri = uri_encode( $!baseURL ~ $template ~ "&id={ $apiID }" );
   my $response = $webAgent.get( $encoded_uri );
   if $response.is-success {
@@ -40,7 +40,7 @@ method getJSON( $template ) {
 }
 ###########################################
 ## getIMG - method used to make request which will return .png files.
-method getIMG( :$name, :$template ){
+method !getIMG( :$name, :$template ){
   my $file = $*CWD ~ "/"~ $name ~ ".png";
   my $url = $!baseURL ~ $template;
   say "Saving to $file ";
@@ -57,10 +57,10 @@ method dayAndNight-Cylindrical( DateTime :$dateTimeObj ) {
 }
 ###########################################
 ## Spherical Projections.
-method dayAndNight-Spherical( DateTime :$dateTimeObj, View :$view ) {
-  my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
+method dayAndNight-Spherical( Date :$dateObj, View :$view ) {
+  my $date = "{ $dateObj.month }/{ $dateObj.day }/{ $dateeObj.year }";
   my $template = "imagery/earth.png?date={ $date }&view={ $view }";
-  self.getIMG( :name( "earth" ), :template( $template ) );
+  self!getIMG( :name( "earth" ), :template( $template ) );
 }
 
 ###########################################
@@ -69,15 +69,15 @@ method apparentDisk( DateTime :$dateTimeObj, Body :$body ){
   my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
   my $time = "{$dateTimeObj.hour}:{$dateTimeObj.minute}:{$dateTimeObj.second}";
   my $template = "imagery/{ $body }.png?date={ $date }&time={ $time }";
-  self.getIMG( :name( $body ), :template($template)  );
+  self!getIMG( :name( $body ), :template($template)  );
 }
 
 ###########################################
 ## Phases of the moon.
-method moonPhase( DateTime :$dateTimeObj, MoonPhase :$numP  ){
-  my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
+method moonPhase( Date :$dateObj, MoonPhase :$numP  ){
+  my $date = "{ $dateObj.month }/{ $dateObj.day }/{ $dateObj.year }";
   my $template = "moon/phase?date={ $date }&nump={ $numP }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 ###########################################
@@ -86,15 +86,15 @@ multi method oneDayData-latlong( DateTime :$dateTimeObj, Str :$coords  ) {
   my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
   my $tz = $dateTimeObj.timezone / 3600;
   my $template = "rstt/oneday?date={ $date }&coords={ $coords }&tz={ $tz }";
-  say self.getJSON( $template );
+  say self!getJSON( $template );
 }
 
 ###########################################
 ## Complete sun and mood data for one day by location.
-multi method oneDayData-location( DateTime :$dateTimeObj, Str :$loc ) {
-  my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
+multi method oneDayData-location( Date :$dateObj, Str :$loc ) {
+  my $date = "{ $dateObj.month }/{ $dateObj.day }/{ $dateObj.year }";
   my $template = "rstt/oneday?date={ $date }&loc={ $loc }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 ###########################################
@@ -105,7 +105,7 @@ multi method siderealTime( DateTime :$dateTimeObj, Str :$loc, UInt :$reps, UInt 
   my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
   my $time = "{$dateTimeObj.hour}:{$dateTimeObj.minute}:{$dateTimeObj.second}";
   my $template = "sidtime?date={ $date }&time={ $time }&loc={ $loc }&reps={ $reps }&intv_mag={ $intvMag }&intv_unit={ $intvUnit }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 ## TODO need to have some input checking for coords, and intvUnit.
@@ -113,23 +113,23 @@ multi method siderealTime( DateTime :$dateTimeObj, :$coords, UInt :$reps, UInt :
   my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
   my $time = "{$dateTimeObj.hour}:{$dateTimeObj.minute}:{$dateTimeObj.second}";
   my $template = "sidtime?date={ $date }&time={ $time }&coords={ $coords }&reps={ $reps }&intv_mag={ $intvMag }&intv_unit={ $intvUnit }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 ###########################################
 ## Solar eclipses caculator
-multi method solarEclipses( SolarEclipses-YEAR $year ) {
+multi method solarEclipses( SolarEclipses-YEAR :$year ) {
   my $template = "eclipses/solar?year={ $year }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 ###########################################
 ## Solar eclipses caculator
 ## TODO Get Location type working...
-multi method solarEclipses( DateTime :$dateTimeObj, :$loc, Height :$height, Format :$format  ) {
-  my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
+multi method solarEclipses( DateTime :$dateObj, :$loc, Height :$height, Format :$format  ) {
+  my $date = "{ $dateObj.month }/{ $dateTime.day }/{ $dateTime.year }";
   my $template = "eclipses/solar?date={ $date }&loc={ $loc }&height={ $height }&format={ $format }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 ###########################################
@@ -138,7 +138,7 @@ multi method solarEclipses( DateTime :$dateTimeObj, :$loc, Height :$height, Form
 multi method solarEclipses( DateTime :$dateTimeObj, :$coords, Height :$height, Format :$format  ) {
   my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
   my $template = "eclipses/solar?date={ $date }&coords={ $coords }&height={ $height }&format={ $format }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 
@@ -147,7 +147,7 @@ multi method solarEclipses( DateTime :$dateTimeObj, :$coords, Height :$height, F
 method observancesChristan( ObserChristan :$year ) {
   #if $year != any( 1583...9999 ) { return "ERROR!! Invalid year. (only use 1583 to 9999)"; }
   my $template = "christian?year={ $year }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 ###########################################
@@ -155,7 +155,7 @@ method observancesChristan( ObserChristan :$year ) {
 method observancesJewish( ObserJewish :$year ) {
   #if $year != any( 622...9999 ) { return "ERROR!! Invalid year. (only use 622 to 9999)"; }
   my $template = "jewish?year={ $year }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 ###########################################
@@ -163,7 +163,7 @@ method observancesJewish( ObserJewish :$year ) {
 method observancesIslamic( ObserIslamic :$year ) {
   #if $year != any( 360...9999 ) { return "ERROR!! Invalid year. (only use 360 to 9999)"; }
   my $template = "islamic?year={ $year }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 ###########################################
@@ -173,7 +173,7 @@ multi method julianDate( DateTime :$dateTimeObj, ValidEras :$era ) {
   my $date = "{ $dateTimeObj.month }/{ $dateTimeObj.day }/{ $dateTimeObj.year }";
   my $time = "{ $dateTimeObj.hour }:{ $dateTimeObj.minute }:{ $dateTimeObj.second }";
   my $template = "jdconverter?date={ $date }&time={ $time }&era={ $era }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
 
 ###########################################
@@ -181,5 +181,5 @@ multi method julianDate( DateTime :$dateTimeObj, ValidEras :$era ) {
 multi method julianDate( ValidJulian :$julian ) {
   #if $julian < 0 or $julian > 5373484.5 { return "ERROR!! Julian date. (only use 0 to 5373484.5 )"; }
   my $template = "jdconverter?jd={ $julian }";
-  return self.getJSON( $template );
+  return self!getJSON( $template );
 }
