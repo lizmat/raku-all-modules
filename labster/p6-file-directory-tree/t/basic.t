@@ -3,7 +3,7 @@ use Test;
 use lib 'lib';
 use File::Directory::Tree;
 
-plan 7;
+plan 9;
 
 ok (my $tmpdir = $*TMPDIR), "We can haz a tmpdir";
 $tmpdir or skip-rest "for EPIC FAIL at finding a place to write";
@@ -22,6 +22,14 @@ ok spurt("$tmpdir/$tmpfn/filetree.tmp", "temporary test file, delete after readi
 say "# ", "$tmpdir/$tmpfn".IO.dir;
 ok rmtree($tmppath.child($tmpfn)), "rmtree runs";
 ok $tmppath.child($tmpfn).e.not, "rmtree successfully deletes temp files";
+
+with $*TMPDIR.child: 'file-directory-tree-module-tests' {
+  my $inner = $_;
+  $inner = $inner.child('a').mkdir for ^120;
+  ok .&rmtree, 'no handles leaked by rmtree (requires '
+    ~ '`ulimit -n 100` or lower to test properly)';
+  ok .e.not,   'dir with inner dirs is gone';
+}
 
 done-testing;
 

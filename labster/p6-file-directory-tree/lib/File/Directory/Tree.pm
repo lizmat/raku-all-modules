@@ -20,7 +20,7 @@ multi sub empty-directory (Cool:D $path is copy) {
 
 multi sub empty-directory (IO::Path:D $path) is export {
 	$path.d or fail "$path is not a directory";
-	for $path.dir -> $file {
+	for eager $path.dir -> $file {
 		#say $file.perl;
 		if $file.l.not and $file.d { rmtree $file }
 		else { unlink $file }
