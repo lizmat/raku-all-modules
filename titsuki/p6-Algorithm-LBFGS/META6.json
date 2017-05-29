@@ -22,5 +22,5 @@
   ],
   "source-url" : "git://github.com/titsuki/p6-Algorithm-LBFGS.git",
   "test-depends" : [ ],
-  "version" : "0.01"
+  "version" : "0.0.2"
 }
