@@ -1,7 +1,7 @@
 use v6;
 unit class Term::Choose::Util;
 
-my $VERSION = '0.023';
+my $VERSION = '0.024';
 
 use Term::Choose           :choose, :choose-multi, :pause;
 use Term::Choose::NCurses;
@@ -30,7 +30,7 @@ method !_init_term {
     else {
         my int32 constant LC_ALL = 6;
         setlocale( LC_ALL, "" );
-        $!win_local = initscr;
+        $!win_local = initscr() or die "Failed to initialize ncurses\n";
     }
 }
 
@@ -49,7 +49,7 @@ sub _prepare_options ( %opt, %valid, %defaults ) {
             next;
         }
         when %valid{$key} eq 'Array' {
-            die "$key => not an ARRAY reference." if ! $value.isa( Array );
+            die "$key => {$value.perl} is not an ARRAY."  if ! $value.isa( Array );
         }
         when %valid{$key} eq 'Str' {
              die "$key => {$value.perl} is not a string." if ! $value.isa( Str );
@@ -140,7 +140,6 @@ method choose-dirs ( %opt? ) {
             CATCH { #
                 my $prompt = $dir.gist ~ ":\n" ~ $_;
                 pause( [ 'Press ENTER to continue.' ], { prompt => $prompt } );
-                #if $dir.Str eq '/' {
                 if $dir.absolute eq '/' {
                     self!_end_term();
                     return Empty;
@@ -325,7 +324,6 @@ sub _a_file ( %o, IO::Path $dir, $tc --> IO::Path ) {
         { prompt => $prompt, justify => 1 }
     );
     return if ! $choice.defined;
-    #return $*SPEC.catfile( $dir, $choice ).IO;
     return $dir.IO.add( $choice );
 }
 
@@ -504,7 +502,7 @@ method choose-a-subset ( @available, %opt? ) {
     self!_init_term();
     my $tc = Term::Choose.new(
         :defaults( { layout => %o<layout>, mouse => %o<mouse>, justify => %o<justify>, order => %o<order>,
-                     no-spacebar => [ 0 .. @pre.end ], undef => $back, lf => [ 0, $len_key ] } ),
+                     no-spacebar => [ ^@pre ], undef => $back, lf => [ 0, $len_key ] } ),
         :win( $!win_local )
     );
 
@@ -654,19 +652,6 @@ method settings-menu ( @menu, %setup, %opt? ) {
 }
 
 
-sub term-size ( IO::Handle $handle_out = $*IN ) is export( :term-size ) { #
-    my Str $stty = qx[stty -a]; #
-    my Int $height = $stty.match( / 'rows '    <( \d+ )>/ ).Int;
-    my Int $width  = $stty.match( / 'columns ' <( \d+ )>/ ).Int;
-    return $width, $height; # $width - 1
-}
-
-
-sub term-width ( IO::Handle $handle_out = $*IN ) is export( :DEFAULT, :term-width ) { #
-    return( ( term-size( $handle_out ) )[0] );
-}
-
-
 sub insert-sep ( $num, $sep = ' ' ) is export( :insert-sep ) {
     return $num if ! $num.defined;
     return $num if $num ~~ /$sep/;
@@ -781,7 +766,7 @@ Term::Choose::Util - CLI related functions.
 
 =head1 VERSION
 
-Version 0.023
+Version 0.024
 
 =head1 DESCRIPTION
 
