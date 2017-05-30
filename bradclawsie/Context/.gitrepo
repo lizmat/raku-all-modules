@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bradclawsie/Context.git
 	branch = master
-	commit = 4cab7266a4c1718988444c351446edcd912bef69
-	parent = da58b12e02834af2dc5fbbc7472493f39a69c8b0
+	commit = 7d9b13752b8ddf3363cdbcd679d97b1057c6635d
+	parent = de06e727e5d517c49549042d156b60b60acdc54d
 	cmdver = 0.4.0
