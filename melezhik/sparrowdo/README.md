@@ -301,6 +301,15 @@ For example:
 
     --repo=192.168.0.2:4441
 
+# Run sparrowdo in local mode
+
+In case you need to run sparrowdo on localhost add `--local_mode` flag and
+get things done locally, not remotely:
+
+    $ sparrowdo --host=127.0.0.1 --local_mode
+
+Notice that you still need to define the host here.
+
 # Sparrowdo configuration via ini file
 
 You may pass _some_ sparrowdo client options via ini files at ~/sparrowdo.ini.

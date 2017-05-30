@@ -32,12 +32,13 @@ sub MAIN (
   Bool :$no_color = False,
   Bool :$no_index_update = False,
   Str  :$sparrow_root, 
-  Str  :$repo, 
+  Str  :$repo,
+  Bool :$local_mode = False 
 )
 {
 
   # read config if exists
-  my $conf-ini-file = '/home/' ~ %*ENV<USER> ~ '/sparrowdo.ini';
+  my $conf-ini-file = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/sparrowdo.ini' !! ( input_params('SparrowRoot') || '/opt/sparrow') ~ '/sparrowdo.ini';
   my $conf-ini = $conf-ini-file.IO ~~ :e ?? Config::Simple.read($conf-ini-file,:f<ini>) !! Hash.new;
   
   # dirty hacks to pass command line parameter into sparrowfile context
@@ -57,7 +58,8 @@ sub MAIN (
   
   set_input_params %(  
     Host => $host, 
-    Sparrowfile => $sparrowfile, 
+    Sparrowfile => $sparrowfile,
+    LocalMode => $local_mode, 
     HttpProxy => $http_proxy, 
     HttpsProxy => $https_proxy, 
     SshPort => $ssh_port, 
@@ -160,25 +162,39 @@ sub ssh_shell ( $cmd ) {
 
   @bash_commands.push:  $cmd;
 
-  my $ssh_host_term = input_params('Host');
+  my $ssh_cmd;
 
-  $ssh_host_term = input_params('SshUser') ~ '@' ~ $ssh_host_term if input_params('SshUser');
+  if ! input_params('LocalMode') {
 
-  my $ssh_cmd  =  'ssh -o ConnectionAttempts=1  -o ConnectTimeout=5';
+    my $ssh_host_term = input_params('Host');
+  
+    $ssh_host_term = input_params('SshUser') ~ '@' ~ $ssh_host_term if input_params('SshUser');
+  
+    $ssh_cmd  =  'ssh -o ConnectionAttempts=1  -o ConnectTimeout=5';
+  
+    $ssh_cmd ~= ' -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -tt';
+  
+    $ssh_cmd ~= ' -q' unless input_params('Verbose');
+  
+    $ssh_cmd ~= ' -p ' ~ input_params('SshPort') ~ ' ' ~ $ssh_host_term;
+  
+    $ssh_cmd ~= ' -i ' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
+  
+    $ssh_cmd ~= ( input_params('NoSudo') ) ?? " \"bash -c '" !! " \"sudo bash -c '"; 
+  
+    $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'\"";
+  
+    $ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
+  
+  } else {
 
-  $ssh_cmd ~= ' -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -tt';
+    $ssh_cmd = ( input_params('NoSudo') ) ?? "bash -c '" !! "sudo bash -c '"; 
 
-  $ssh_cmd ~= ' -q' unless input_params('Verbose');
+    $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'";
+  
+    $ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
 
-  $ssh_cmd ~= ' -p ' ~ input_params('SshPort') ~ ' ' ~ $ssh_host_term;
-
-  $ssh_cmd ~= ' -i ' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
-
-  $ssh_cmd ~= ( input_params('NoSudo') ) ?? " \"bash -c '" !! " \"sudo bash -c '"; 
-
-  $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'\"";
-
-  $ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
+  }
 
   say colored($ssh_cmd, 'bold green') if input_params('Verbose');
 
@@ -200,18 +216,32 @@ our sub _scp ( $file, $dest, $reverse = 0 ) {
 
   $ssh_host_term = input_params('SshUser') ~ '@' ~ $ssh_host_term if input_params('SshUser');
 
-  my $scp_params = ' -P ' ~ input_params('SshPort');
+  my $scp_command;
 
-  $scp_params ~= ' -i' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
+  if ! input_params('LocalMode') {
 
-  $scp_params ~= ' -q'  unless input_params('Verbose');
-
-  my $scp_command = 'scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
-
-  if $reverse {
-    $scp_command ~= ' ' ~ $ssh_host_term ~ ':' ~ $file ~ ' ' ~ $dest ;
+    my $scp_params = ' -P ' ~ input_params('SshPort');
+  
+    $scp_params ~= ' -i' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
+  
+    $scp_params ~= ' -q'  unless input_params('Verbose');
+  
+    $scp_command = 'scp -o ConnectionAttempts=1 -o ConnectTimeout=5 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ' ~ $scp_params;
+  
+    if $reverse {
+      $scp_command ~= ' ' ~ $ssh_host_term ~ ':' ~ $file ~ ' ' ~ $dest ;
+    } else {
+      $scp_command ~= ' ' ~ $file ~ ' ' ~ $ssh_host_term ~ ':' ~ $dest;
+    }
   } else {
-    $scp_command ~= ' ' ~ $file ~ ' ' ~ $ssh_host_term ~ ':' ~ $dest;
+
+    $scp_command = 'cp';
+  
+    if $reverse {
+      $scp_command ~= ' '~ $file ~ ' ' ~ $dest ;
+    } else {
+      $scp_command ~= ' ' ~ $file ~ ' ' ~ $dest;
+    }
   }
 
   say colored($scp_command, 'bold green') if input_params('Verbose');
