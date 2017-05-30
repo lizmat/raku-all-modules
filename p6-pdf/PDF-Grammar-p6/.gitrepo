@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/p6-pdf/PDF-Grammar-p6.git
 	branch = master
-	commit = 429e662892ba19d355773b983890e068bbdbdb97
-	parent = 35ea050a4b3101f5655b93ca0c01f1409ea85ddc
+	commit = 89468bcd827f73666138682f094ab4a8f35bac74
+	parent = a53c921840e736bcd3616a49a5fa21e9323bbf36
 	cmdver = 0.4.0
