@@ -161,9 +161,9 @@ Defined as:
 
     multi sub print(**@args --> True)
 
-Prints the given text on stanrd output (the
+Prints the given text on standard output (the
 L«C<$*OUT>|/language/variables#index-entry-%24%2AOUT» file handle), coercing
-non-L<Str> objects to to L<Str> by calling
+non-L<Str> objects to L<Str> by calling
 L«C<.Str> method|/routine/Str»:
 
     print "Hi there!\n";   # OUTPUT: «Hi there!␤»
@@ -245,7 +245,7 @@ say "Hi, $name! Nice to meet you!";
 
 Creates L<a handle|/type/IO::Handle> with the given C<$path>, and calls
 L«C<IO::Handle.open>|/type/IO::Handle», passing any of the remaining arguments
-to it. Note that L<IO::Path> type provides numerious methods for reading and
+to it. Note that L<IO::Path> type provides numerous methods for reading and
 writing from files, so in many common cases you do not need to C<open> files
 or deal with L<IO::Handle> type directly.
 
@@ -311,21 +311,21 @@ C<False>.
 
 =head3 Examples
 
+=begin code :skip-test
     # write directly to a file
-    #spurt "path/to/file", "default text, directly written";
+    spurt 'path/to/file', 'default text, directly written';
 
     # write directly with a non-Unicode encoding
-    #spurt "path/to/latin1_file", "latin1 text: äöüß", enc => "latin1";
+    spurt 'path/to/latin1_file', 'latin1 text: äöüß', :enc<latin1>;
 
-    # append to a pre-existing file
-    #spurt "file_already_exists", "some text";
-    #spurt "file_already_exists", "new text", :append;
-    #slurp "file_already_exists";   # some text␤new text
+    spurt 'file-that-already-exists', 'some text';           # overwrite file's contents:
+    spurt 'file-that-already-exists', ' new text', :append;  # append to file's contents:
+    say slurp 'file-that-already-exists';                    # OUTPUT: «some text new text␤»
 
     # fail when writing to a pre-existing file
-    #spurt "file_already_exists", "new text", :createonly;
-    CATCH { default { put .^name, ': ', .Str } };
-    # OUTPUT: «X::Cannot::Empty: Cannot pop from an empty Array␤»
+    spurt 'file-that-already-exists', 'new text', :createonly;
+    # OUTPUT: «Failed to open file /home/camelia/file-that-already-exists: file already exists …»
+=end code
 
 =head2 sub run
 
@@ -341,8 +341,8 @@ Runs an external command without involving a shell and returns a Proc object.
 To capture output or error you can use the C<:out> or C<:err> arguments respectively:
 
     my $proc = run 'echo', 'Perl 6 is Great!', :out, :err;
-    say $proc.out.get; # OUTPUT: Perl 6 is Great!
-    say $proc.err.get; # Nil
+    with $proc.out { say .get; .close } # OUTPUT: «Perl 6 is Great!␤»
+    with $proc.err { say .get; .close } # OUTPUT: «Nil␤»
 
 See L<Proc|/type/Proc> and L<Proc::Async|/type/Proc::Async> for more details.
 
