@@ -16,5 +16,5 @@
   "resources" : [ ],
   "source-url" : "git://github.com/titsuki/p6-Algorithm-MinMaxHeap.git",
   "test-depends" : [ ],
-  "version" : "0.13.1"
+  "version" : "0.13.2"
 }
