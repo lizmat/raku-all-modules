@@ -196,6 +196,10 @@ You should use `set_spl(%hash)` function to set up private plugin index file:
 
 Prints brief usage info.
 
+## --host
+
+Sets target host. This is mandatory parameter. Default value is `127.0.0.1`
+
 ## --sparrowfile
 
 Alternative location of sparrowfile. If `--sparrowfile` is not set a file named `sparrowfile` at CWD is looked.
@@ -306,7 +310,7 @@ For example:
 In case you need to run sparrowdo on localhost add `--local_mode` flag and
 get things done locally, not remotely:
 
-    $ sparrowdo --host=127.0.0.1 --local_mode
+    $ sparrowdo --local_mode
 
 Notice that you still need to define the host here.
 

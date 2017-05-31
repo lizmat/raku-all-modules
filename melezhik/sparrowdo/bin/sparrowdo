@@ -16,7 +16,7 @@ use Config::Simple;
 
 sub MAIN (
 
-  Str  :$host!, 
+  Str  :$host = '127.0.0.1', 
   Str  :$sparrowfile, 
   Str  :$http_proxy, 
   Str  :$https_proxy, 
