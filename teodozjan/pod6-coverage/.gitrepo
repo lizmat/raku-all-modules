@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/teodozjan/pod6-coverage.git
 	branch = master
-	commit = 1f9260bd81f64843908f713b71b9d0fbccae6978
-	parent = 3a08c17216cbf044e34819c6bba95f9a3643e681
+	commit = 8f4bfa1bba42eb676d3fe59bb797d0efe4f6270c
+	parent = 06499acdc43ba9b073d00f551e0d16108fa12aed
 	cmdver = 0.4.0
