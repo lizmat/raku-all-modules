@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tokuhirom/p6-Crust.git
 	branch = master
-	commit = 6d1cb3ce48de7936a5a8dd1987c1b3c1047279d0
-	parent = efc32a5b54e4cccf4a9aed28b82557a1ab006a02
+	commit = 32418aeca2da3e9208e4fef5596a173481cbf684
+	parent = c190d7b61a2fe3074e3ce968afb245afcc7f5393
 	cmdver = 0.4.0
