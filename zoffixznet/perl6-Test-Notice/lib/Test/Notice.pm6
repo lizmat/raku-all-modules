@@ -5,11 +5,8 @@ use Test;
 constant AVERAGE_READING_SPEED_WPM = 184; # words per minute
 
 sub notice (Str $message, Bool :$try-color = True) is export {
-    my $color = sub (Str $s) { '' };
-    $try-color and try {
-        require Terminal::ANSIColor;
-        $color = GLOBAL::Terminal::ANSIColor::EXPORT::DEFAULT::<&color>;
-    };
+    my $color = (try require Terminal::ANSIColor) === Nil
+        && {''} || ::('Terminal::ANSIColor::EXPORT::DEFAULT::&color');
 
     my $t-width = 80; #terminal-width;
     $t-width -= 2; # diag adds two chars
