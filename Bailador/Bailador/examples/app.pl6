@@ -3,11 +3,12 @@
 use v6;
 use lib 'lib';
 use Bailador;
+use Bailador::Route::StaticFile;
 Bailador::import; # for the template to work
 
 # simple cases
 get '/' => sub {
-    "hello world"
+    redirect('/index.html');
 }
 
 get '/die' => sub {
@@ -46,8 +47,6 @@ get '/env' => sub {
     $result;
 }
 
-get '/die' => sub {
-    die 'died for love';
-}
+app.add_route: Bailador::Route::StaticFile.new: directory => $?FILE.IO.parent.child('public'), path => / (.*) /;
 
-baile();
+app.get-psgi-app;
