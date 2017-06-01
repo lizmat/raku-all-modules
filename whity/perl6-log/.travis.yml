@@ -1,0 +1,5 @@
+language: perl6
+perl6:
+    - latest
+script:
+    - PERL6LIB=lib prove -v -r --exec=perl6 t/
