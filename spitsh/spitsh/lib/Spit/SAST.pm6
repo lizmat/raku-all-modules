@@ -735,19 +735,6 @@ class SAST::MethodDeclare is SAST::RoutineDeclare {
         nextsame;
     }
 
-    method reified-return-type($invocant-type) {
-        my $return-type := self.return-type;
-        if $return-type.^needs-reification {
-            $return-type.^reify($invocant-type);
-        } else {
-            $return-type
-        }
-    }
-
-    method reified-signature($invocant-type) {
-        $.signature.reify($invocant-type);
-    }
-
     method block-for-os($os) {
         $!class-type.^dispatcher.get(self.name,$os);
     }
@@ -831,10 +818,11 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
 
     method invocant is rw { self[0] }
     method type {
-        $!type ||= self.declaration.reified-return-type($.invocant.ostensible-type);
+        $!type ||= $.declaration.return-type.^reify($.invocant.ostensible-type, :$.ctx)
     }
+
     method signature {
-        $!signature //= self.declaration.reified-signature($.invocant.ostensible-type);
+        $!signature //= $.declaration.signature.reify($.invocant.ostensible-type);
     }
 
     method stage2($ctx) {
@@ -860,6 +848,12 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
         ($.invocant unless $.declaration.static), |@.pos, |%.named.values
     }
 
+    method auto-compose-children {
+        # Don't want invocant to be walked so we can check for method chains that
+        # can be optimized/improved
+        |@.pos, |%.named.values;
+    }
+
     method topic($self is rw:)  is rw {
         $!topic or do if $.type ~~ tBool {
             $.invocant.topic
@@ -872,6 +866,10 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
 }
 
 class SAST::SubCall is SAST::Call {
+    has $!type;
+    method type {
+        $!type ||= $.declaration.return-type.^reify(Nil, :$.ctx);
+    }
 
     method find-declaration {
         $*CURPAD.lookup(SUB,$.name,:$.match);
@@ -1247,28 +1245,28 @@ class SAST::List is SAST::MutableChildren {
 role SAST::CompileTimeVal does SAST {
     method compile-time { $.val }
     method gist { $.node-name ~ "({$.val})" }
-    method stage2 ($) { self }
+    method stage3-done is rw { $ = True }
+    method stage2-done is rw { $ = True }
+    method do-stage2($ctx, :$desc) {
+        # Simplify do-stage2 for compile time things
+        $.ctx = $ctx;
+        coerce self,$ctx,:$desc;
+    }
 }
 
 class SAST::IVal does SAST::CompileTimeVal {
     has Int:D $.val is required is rw;
-    method compile-time { $!val }
     method type { tInt }
 }
 
 class SAST::SVal does SAST::CompileTimeVal {
     has Str:D $.val is required is rw;
     method type { tStr }
-    method compile-time { $!val }
 }
 
 class SAST::BVal does SAST::CompileTimeVal {
     has Bool:D $.val is required is rw;
     method type { tBool }
-    method compile-time { $!val }
-    # method stage2 ($ctx where { $_ ~~ tInt }) {
-    #     SAST::IVal.new(val => +$!val,:$.match).do-stage2($ctx);
-    # }
 }
 
 class SAST::Concat is SAST::MutableChildren {
@@ -1754,20 +1752,4 @@ class SAST::LastExitStatus does SAST {
 
 class SAST::CurrentPID does SAST {
     method type { tPID }
-}
-
-class SAST::Die is SAST::Children {
-    has SAST:D @.message;
-    has SAST $.call;
-    method stage2($) {
-        $!call = SAST::SubCall.new(
-            name => 'die',
-            pos => @.message,
-            :$.match,
-        ).do-stage2(tAny);
-        self;
-    }
-
-    method children { $!call, }
-    method type { $.ctx }
 }

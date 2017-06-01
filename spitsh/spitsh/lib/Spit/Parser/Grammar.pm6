@@ -76,7 +76,6 @@ grammar Spit::Grammar is Spit::Lang {
                 | <pragma>
                 | <declaration>
                 | <statement-control>
-                | <statement-prefix>
                 | {} <EXPR-and-mod>
             )
             | <?[;]>
@@ -115,17 +114,16 @@ grammar Spit::Grammar is Spit::Lang {
 
     proto token statement-prefix {*}
 
-    constant @phaser-names = eager Spit-Phaser::.keys;
-    rule statement-prefix:phaser {
-        $<sym>=@phaser-names <blorst>
+    token statement-prefix:phaser {
+        $<sym>=['END'|'FILE-CLEAN'|'CHECK-CLEAN'] \s <.ws> <blorst>
     }
 
-    rule statement-prefix:sym<quietly> {
-        <.sym> <blorst>
+    token statement-prefix:sym<quietly> {
+        <.sym> \s <.ws> <blorst>
     }
 
-    rule statement-prefix:sym<start> {
-        <.sym> <blorst>
+    token statement-prefix:sym<start> {
+        <.sym> \s <.ws> <blorst>
     }
 
     proto token statement-mod-cond {*}
@@ -165,6 +163,9 @@ grammar Spit::Grammar is Spit::Lang {
     rule statement-control:sym<when> {
         (
             <.sym>
+            # whenver you use blocks without following it with <.eat-terminator>
+            # you have to compensate by manually setting $*ENDSTMT
+            { $*ENDSTMT = False }
             [
                 <EXPR> <block>
                 ||
@@ -261,7 +262,7 @@ grammar Spit::Grammar is Spit::Lang {
 
     token longarrow {['-->'| '⟶']}
     rule new-routine(|c){
-        $<name>=<.identifier>
+        [$<name>=<.identifier> || <.invalid("routine name")>]
         { $*DECL = $*ACTIONS.make-routine($/,|c) }
         <.attach-pre-doc>
         [
@@ -283,14 +284,16 @@ grammar Spit::Grammar is Spit::Lang {
         ]?
     }
 
-    rule on-switch {
-        'on' $<candidates>=<.wrap: '{','}','on switch', rule {
+    token on-switch {
+        'on' <.ws> $<candidates>=<.wrap: '{','}','on switch', rule {
             (
                 <!before '}'>
                 [<os> || <.expected('OS name')> ]
                 [<cmd-block> || <.expected("A block for { $<os>.Str }")>]
+                { $*ENDSTMT = False }
             )*
         }>
+        <.ENDSTMT>
     }
 
     rule declaration:var {
@@ -309,6 +312,7 @@ grammar Spit::Grammar is Spit::Lang {
     token return-type-sigil:sym<+> { <sym> }
     token return-type-sigil:sym<?> { <sym> }
     token return-type-sigil:sym<@> { <sym> }
+    token return-type-sigil:sym<^> { <sym> }
     token return-type-sigil:sym<*> { <sym> }
 
     rule signature {
@@ -345,15 +349,19 @@ grammar Spit::Grammar is Spit::Lang {
         [
             [ <!{ $min-precedence }> || {} <.check-prec($min-precedence,$<termish>[*-1].ast)> ]
             <infix>
-            [ <termish>  || {}<.expected("term after infix {$<infix>[*-1]<sym>.Str}")>  ]
+            [
+                || <termish>
+                || <?{ $<infix>[*-1] eq ',' }> # trailing , is allowed
+                || <.expected("term after infix {$<infix>[*-1]<sym>.Str}")>
+            ]
         ]*
     }
 
     rule list {
-        <EXPR($gt-comma)>* % ','
+        [<EXPR($gt-comma)>+ % ',' ','?]?
     }
     rule args {
-        [$<named>=<.pair> || $<pos>=<.EXPR($gt-comma)> ]* % ','
+        [[$<named>=<.pair> || $<pos>=<.EXPR($gt-comma)> ]+ % ',' ','?]?
     }
 
     token termish {
@@ -365,7 +373,6 @@ grammar Spit::Grammar is Spit::Lang {
     token term:true { 'True' }
     token term:false { 'False' }
     token term:quote { <quote> }
-    token term:angle-quote { <angle-quote> }
     token term:int { <int> }
     token int { \d+ }
     token term:var { <var> }
@@ -387,7 +394,21 @@ grammar Spit::Grammar is Spit::Lang {
     proto token twigil {*}
     token twigil:sym<*> { <sym> }
     token twigil:sym<?> { <sym> }
-    token term:block { <block>  }
+
+    token term:circumfix { <circumfix> }
+    proto token circumfix {*}
+    token circumfix:sym«< >» { <angle-quote> }
+    token circumfix:sym<( )> {
+        $<statementlist>=<.wrap: '(',')', 'parenthesized expression', rule {
+            '' <R=.statementlist>
+        }>
+    }
+    token circumfix:sym<{ }> { <block> }
+    token circumfix:sym<[ ]> {
+        $<list>=<.wrap: '[', ']', 'structured list', rule {
+            '' <R=.list>
+        }>
+    }
     token term:sym<self>  {
         <sym>
         { SX.new(message => 'Use of Perl 6 sytle invocant. In Spit use ‘$self’').throw }
@@ -451,12 +472,6 @@ grammar Spit::Grammar is Spit::Lang {
         $<value>=<.EXPR($gt-fatarrow)>
     }
 
-    token term:parens {
-        $<statementlist>=<.wrap: '(',')', 'parenthesized expression', rule {
-            '' <R=.statementlist>
-        }>
-    }
-
     rule term:cmd { <cmd> }
     rule term:cmd-capture { '\\'<cmd> }
 
@@ -466,12 +481,7 @@ grammar Spit::Grammar is Spit::Lang {
     rule term:topic-cast {
         <.longarrow> [ <type> || <.expected('A type to cast $_ to')> ]
     }
-
-    rule term:j-object {
-        'j' $<pairs>=<.wrap: '{', '}', 'json object', rule {
-             '' <pair>* % ','
-         }>
-    }
+    token term:statement-prefix { <statement-prefix> }
 
     proto token eq-infix {*}
 
@@ -624,7 +634,7 @@ grammar Spit::Grammar is Spit::Lang {
 
     token cmd-term {
         $<i-sigil>=<::('prefix:i-sigil')>*
-        (<var> | $<parens>=<::("term:parens")> <![<>›‹]> | <quote> | <cmd> )
+        (<var> | $<parens>=<::("circumfix:sym<( )>")> <![<>›‹]> | <quote> | <cmd> )
         <postfix>*
     }
 

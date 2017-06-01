@@ -403,11 +403,15 @@ method return-type-sigil:sym<~>($/) { make tStr }
 method return-type-sigil:sym<+>($/) { make tInt }
 method return-type-sigil:sym<?>($/) { make tBool }
 method return-type-sigil:sym<@>($/) { make tList }
-method return-type-sigil:sym<*>($/) {
+method return-type-sigil:sym<^>($/) {
     $*CLASS or
       SX.new(message => 'Whatever-Invocant return type used outside of a class').throw;
 
     make $*CLASS.class.^whatever-invocant;
+}
+
+method return-type-sigil:sym<*>($/) {
+    make tWhateverContext;
 }
 
 method paramlist ($/) {
@@ -525,9 +529,7 @@ method var-create($/,$decl-type) {
     );
 }
 
-method term:block ($/) { make $<block>.ast }
 method term:quote ($/)   { make $<quote>.ast  }
-method term:angle-quote ($/) { make $<angle-quote>.ast }
 method term:int ($/)   { make $<int>.ast    }
 method int ($/) { make SAST::IVal.new: val => $/.Int }
 method term:var ($/)   { make $<var>.ast }
@@ -551,6 +553,54 @@ method var ($/)   {
             );
         }
     }
+}
+
+method term:circumfix ($/) {
+    make $<circumfix>.ast
+}
+method circumfix:sym«< >» ($/) { make $<angle-quote>.ast }
+method circumfix:sym<( )> ($/) {
+    my @stmts = $<statementlist>.ast;
+    make do if not @stmts {
+        SAST::Empty.new;
+    } elsif @stmts == 1 {
+        @stmts[0];
+    } else {
+        SAST::Stmts.new(|@stmts)
+    }
+}
+method circumfix:sym<{ }> ($/) {
+    my $block = $<block>.ast;
+    make do if $block.one-stmt andthen (
+        $_ ~~ SAST::Pair and my @pairs = $_ or
+        (
+            $_ ~~ SAST::List and
+            not .children.first(* !~~ SAST::Pair) and
+            @pairs = .children
+        )
+    )
+    {
+        SAST::SubCall.new(
+            name => 'j-object',
+            match => $/,
+            pos => flat @pairs.map: {
+                SAST::Blessed.new(
+                    .key,
+                    class-type => tStr,
+                    match => .key.match
+                ),
+                .value
+            }
+        );
+    }
+    else {  $block }
+}
+method circumfix:sym<[ ]> ($/) {
+    make SAST::SubCall.new(
+        name => 'j-array',
+        match => $/,
+        pos => $<list>.ast.children,
+    )
 }
 
 method special-var:sym<?> ($/) { make SAST::LastExitStatus.new }
@@ -590,30 +640,13 @@ method term:name ($/) {
         }
     } else {
         my (:@pos,:%named) := $<call-args><args>.ast || Empty;
-        if $name eq 'die' {
-            SAST::Die.new(message => @pos);
-        } else {
-            SAST::SubCall.new(:$name,:@pos,:%named);
-        }
+        SAST::SubCall.new(:$name,:@pos,:%named);
     }
 }
-
-
 
 method term:sast ($/) {
     my (:@pos,:%named) := $<args>.ast;
     make ::('SAST::' ~ $<identifier>.Str).new(|@pos,|%named);
-}
-
-method term:parens ($/) {
-    my @stmts = $<statementlist>.ast;
-    make do if not @stmts {
-        SAST::Empty.new;
-    } elsif @stmts == 1 {
-        @stmts[0];
-    } else {
-        SAST::Stmts.new(|@stmts)
-    }
 }
 
 method term:cmd ($/) {
@@ -634,22 +667,7 @@ method term:topic-cast ($/) {
     make SAST::Cast.new(to => $<type>.ast,SAST::Var.new(name => '_',sigil => '$'));
 }
 
-method term:j-object ($/) {
-    my @pos = flat $<pairs><wrapped><pair>.map(*.ast).map: -> @pair {
-        SAST::Blessed.new(
-            @pair[0],
-            class-type => tStr,
-            match => @pair[0].match,
-        ),
-        @pair[1]
-    };
-
-    make SAST::SubCall.new(
-        name => 'j-object',
-        match => $/,
-        :@pos,
-    );
-}
+method term:statement-prefix ($/) { make $<statement-prefix>.ast }
 
 method term:pair ($/) { make SAST::Pair.new(|$<pair>.ast) }
 
@@ -722,12 +740,12 @@ method infix:sym<.=> ($/) {
     }
 }
 method infix:sym<,>  ($/) {
-    make -> $lhs,$rhs {
+    make -> $lhs,$rhs? {
         if $lhs ~~ SAST::List && $rhs !~~ SAST::List {
-            $lhs.push($rhs);
+            $lhs.push($rhs) if $rhs;
             $lhs;
         } else {
-            SAST::List.new($lhs,$rhs);
+            SAST::List.new($lhs, $rhs // Empty);
         }
     }
 }
