@@ -2,7 +2,7 @@
     "perl"         : "6.c",
     "name"         : "IO::Dir",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001001",
+    "version"      : "1.001003",
     "description"  : "IO::Path.dir you can close",
     "tags"         : [ "IO", "filesystem" ],
     "depends"      : [ ],
