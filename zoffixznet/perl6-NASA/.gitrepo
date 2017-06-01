@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-NASA.git
 	branch = master
-	commit = ac2732526b08ecf30d64ef55b80ee464b42ceb93
-	parent = 615fc3aa0ed547637decf7502f206d7ef8fdc9a0
+	commit = ee4193fbfc6702e9037593e2e682cbdb6ac7740b
+	parent = 1b1692a6d8cdad8b79bfafbd15c2d288ba08f800
 	cmdver = 0.4.0
