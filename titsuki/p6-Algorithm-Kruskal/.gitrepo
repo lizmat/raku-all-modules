@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-Kruskal.git
 	branch = master
-	commit = f9ca446ce7bee07f0014d302856796266148738b
-	parent = a99ebff55549f678ff4c4e095ba53ed35049c6b3
+	commit = 493240761bcfc6f3453d57c3b5c3e200a02d9585
+	parent = 8348960e3b8281baf0192092edca8f0862518db4
 	cmdver = 0.4.0
