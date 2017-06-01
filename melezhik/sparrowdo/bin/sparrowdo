@@ -192,7 +192,7 @@ sub ssh_shell ( $cmd ) {
 
     $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'";
   
-    $ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
+    #$ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
 
   }
 
