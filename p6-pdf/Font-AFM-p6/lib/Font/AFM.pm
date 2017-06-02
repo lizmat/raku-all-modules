@@ -213,6 +213,32 @@ it under the same terms as Perl itself.
         self!load-afm-metrics($_) with $name;
     }
 
+    # full list of properties
+    # see http://partners.adobe.com/asn/developer/pdfs/tn/5004.AFM_Spec.pdf
+    constant %Props = %(
+         :FontName(Str), :FullName(Str), :FamilyName(Str),:Weight(Str), :ItalicAngle(Num),
+         :IsFixedPitch(Bool), :FontBBox(Array[Int]), :UnderlinePosition(Int), :UnderlineThickness(Int),
+         :Version(Version), :Notice(Str), :Comment(Str), :EncodingScheme(Str), :CapHeight(Int),
+         :XHeight(Int), :Ascender(Int), :Descender(Int), :StdHw(Num), :StdVW(Num),
+         :MappingScheme(Int), :EscChar(Int), :CharacterSet(Str), :Characters(Str), :IsBaseFont(Bool),
+         :VVector(Array[Num]), :IsFixedV(Bool), :IsCIDFont(Bool)
+    );
+
+    method !coerce(Str $key, Str $val) {
+        %Props{$key}:exists
+            ?? do given %Props{$key} {
+                when $val ~~ $_ { $val }
+                when Bool       { $val ~~ 'true' }
+                when Int        { $val.Int }
+                when Num        { $val.Num }
+                when Array[Int] { [ $val.comb(/[<[+-]>|\w|"."]+/).map(*.Int) ] }
+                when Array[Num] { [ $val.comb(/[<[+-]>|\w|"."]+/).map(*.Num) ] }
+                when Version    { Version.new($val) }
+                default { warn "don't know how to convert $key:{$val.perl} of type {.perl}"; $val }
+            }
+            !! $val
+    }
+
     method !load-afm-metrics(Str $name) {
        %!metrics = ();
 
@@ -250,6 +276,7 @@ it under the same terms as Perl itself.
            if /^StartKernData/ ff /^EndKernData/ {
                next unless m:s/ <|w> KPX  $<glyph1>=['.'?\w+] $<glyph2>=['.'?\w+] $<kern>=[< + - >?\d+] /;
                %!metrics<KernData>{ $<glyph1> }{ $<glyph2> } = $<kern>.Int;
+               next;
            }
            next if /^StartComposites/ ff /^EndComposites/; # same for composites
            if /^StartCharMetrics/     ff /^EndCharMetrics/ {
@@ -271,7 +298,12 @@ it under the same terms as Perl itself.
            if /(^\w+)' '+(.*)/ {
                my Str $key = ~ $0;
                my Str $val = ~ $1;
-               %!metrics{$key} = $val;
+               if %!metrics{$key} ~~ Str {
+                   %!metrics{$key} ~= "\n" ~ self!coerce($key, $val);
+               }
+               else {
+                   %!metrics{$key} = self!coerce($key, $val);
+               }
            } else {
                die "Can't parse: $_";
            }
@@ -413,20 +445,16 @@ it under the same terms as Perl itself.
         @chunks, $stringwidth;
     }
 
-    method FontBBox returns List {
-        [ self.metrics<FontBBox>.comb(/< + - >?\d+/).map( *.Int ) ];
-    }
+    method Wx { $.metrics<Wx> }
+    method BBox { $.metrics<BBox> }
+    method KernData { $.metrics<KernData> }
 
     method !is-prop(Str $prop-name --> Bool) {
-        constant KnownProps = set < FontName FullName FamilyName Weight
-        ItalicAngle IsFixedPitch FontBBox UnderlinePosition
-        UnderlineThickness Version Notice Comment EncodingScheme
-        CapHeight XHeight Ascender Descender Wx BBox KernData>;
-        $prop-name ∈ KnownProps;
+        %Props{$prop-name}:exists;
     }
 
     multi method FALLBACK(Str $prop-name where self!"is-prop"($prop-name)) {
-        self.WHAT.^add_method($prop-name, { self.metrics{$prop-name} } );
+        self.WHAT.^add_method($prop-name, { $.metrics{$prop-name} } );
         self."$prop-name"();
     }
 

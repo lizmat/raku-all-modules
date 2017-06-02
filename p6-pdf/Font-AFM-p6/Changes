@@ -1,3 +1,10 @@
+   Release 1.24.0
+   - Fix issue #4 IsFixedPitch returns 'false' or 'true', not
+     a True Boolean.
+   - In general, all return values are now correctly typed as Int,
+     Numeric, String, Bool, Version or Array based on the data-types
+     defined in the specification
+     (http://www.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5004.AFM_Spec.pdf)
    Release 1.23.6
    - restore lost /etc/make_metrics.pl
    - avoid need to stantiate metrics classes. Can now use

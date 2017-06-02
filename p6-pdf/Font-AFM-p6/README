@@ -124,7 +124,7 @@ DESCRIPTION
 
     The AFM specification can be found at:
 
-       http://partners.adobe.com/asn/developer/pdfs/tn/5004.AFM_Spec.pdf
+       http://www.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5004.AFM_Spec.pdf
 
 ENVIRONMENT
     METRICS   Contains the path to seach for AFM-files. Format is as for
