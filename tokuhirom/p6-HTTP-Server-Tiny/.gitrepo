@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tokuhirom/p6-HTTP-Server-Tiny.git
 	branch = master
-	commit = 7dbe32df09f3d2b9f7d1cb7be017b2bbf6903f7a
-	parent = d2209e0d00dab187afedc3c393cedf567a5ba081
+	commit = 72c114d6f93e8988515f58666a55ee7eb6898c68
+	parent = 781a35bdbb12bd16b0b74f7db7a073aa155af32a
 	cmdver = 0.4.0
