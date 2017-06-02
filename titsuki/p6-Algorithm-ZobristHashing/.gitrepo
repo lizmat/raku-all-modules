@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-ZobristHashing.git
 	branch = master
-	commit = 8aaaad8eda669f0adbae511defaf59fd6ee08476
-	parent = 437d6ed355fc932bc2e4f892a4058a56667b2dc6
+	commit = 62e0e882835ba50cbbd2c0d80c8190299e112aa4
+	parent = 5e8c63f3ea848500c4d93fc93306f6a1126bdf58
 	cmdver = 0.4.0
