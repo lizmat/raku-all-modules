@@ -5,6 +5,7 @@ use Testo::Out;
 has Testo::Out $.out;
 has UInt:D $.group-level = 0;
 has @.tests where .all ~~ Testo::Test;
+has $!plan;
 
 method new (Str:D :$format = 'TAP', UInt:D :$group-level = 0) {
     my $out = "Testo::Out::$format";
@@ -33,7 +34,7 @@ multi method group (
     $!out.put: $test.result;
 }
 
-method plan ($n) { $!out.plan: $n }
+method plan ($!plan) { $!out.plan: $!plan }
 
 method is (Mu $got, Mu $exp, $desc?) {
     @!tests.push: my $test := Testo::Test::Is.new: :$got, :$exp, :$desc;
@@ -52,4 +53,11 @@ method is-run (
     @!tests.push: my $test := Testo::Test::IsRun.new:
         :$program, :$desc, :$in, :@args, :$out, :$err, :$status, :tester(self);
     $!out.put: $test.result
+}
+
+method done-testing {
+    exit 255 unless @!tests and @!tests == $!plan;
+    my $failed = +@!tests.grep: *.result.so.not
+        and exit $failed min 254;
+    exit;
 }

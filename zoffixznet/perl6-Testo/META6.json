@@ -1,7 +1,7 @@
 {
     "perl"         : "6.c",
     "name"         : "Testo",
-    "version"      : "1.002002",
+    "version"      : "1.003001",
     "description"  : "Perl 6 Testing Done Right",
     "depends"      : [
         "RakudoPrereq"

@@ -20,8 +20,14 @@ role Testo::Test {
 
     submethod TWEAK { $!desc //= '' }
     method !test { !!! ::?CLASS.^name ~ ' must implement !test' }
+    method !fail { Nil }
     method result {
-        $!result //= Testo::Test::Result.new: so => self!test.so, :$!desc;
+        $!result //= do {
+            my $so = self!test.so;
+            Testo::Test::Result.new: :$so, :$!desc,
+                |(:fail(self!fail) unless $so);
+
+        }
     }
 }
 
@@ -41,6 +47,10 @@ class Is does Testo::Test {
     has Mu  $.exp    is required;
     submethod TWEAK { $!desc //= "&desc-perl($!got) is &desc-perl($!exp)" }
     method !test { $!got ~~ $!exp }
+    method !fail {
+          "                     Got: {(try $.got.perl) or $.got.^name}\n"
+        ~ "Does not smartmatch with: {(try $.exp.perl) or $.exp.^name}"
+    }
 }
 
 class IsEqv does Testo::Test {
@@ -51,6 +61,10 @@ class IsEqv does Testo::Test {
     }
     method !test {
         (try so $!got eqv $!exp) // Failure
+    }
+    method !fail {
+          "            Got: $.got.perl()\n"
+        ~ "Does not eqv to: $.exp.perl()"
     }
 }
 
@@ -79,9 +93,9 @@ class IsRun does Testo::Test {
             my $wanted-err    = $!err    // '';
             my $*Tester = $!tester.new: group-level => 1+$!tester.group-level;
             $!tester.group: $*Tester, $!desc => 3 => {
-                $*Tester.is: $out,    $wanted-out;
-                $*Tester.is: $err,    $wanted-err;
-                $*Tester.is: $status, $wanted-status;
+                $*Tester.is: $out,    $wanted-out,    'STDOUT';
+                $*Tester.is: $err,    $wanted-err,    'STDERR';
+                $*Tester.is: $status, $wanted-status, 'Status';
             }
         }
     }

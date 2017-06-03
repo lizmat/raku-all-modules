@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Testo.git
 	branch = master
-	commit = 15a159520d4d9decbe6f9550ac21c650e63ab78b
-	parent = 85e6c9360778486838e08245a7b9df34d0b6ca38
+	commit = c271de07df0fe3dfbe385c5e4e7e2ddcfc9af1e8
+	parent = 0d491c28353ea37876157ad894ed0110b4429808
 	cmdver = 0.4.0
