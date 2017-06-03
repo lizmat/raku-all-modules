@@ -3,7 +3,6 @@
 use v6;
 use lib 'lib';
 use Bailador;
-Bailador::import;
 
 unless 'data'.IO ~~ :d {
     mkdir 'data'
@@ -34,4 +33,4 @@ get /paste\/(\d+)$/ => sub ($tag) {
     return "Paste does not exist";
 }
 
-baile;
+app.get-psgi-app;
