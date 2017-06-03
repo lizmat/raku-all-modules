@@ -27,7 +27,37 @@ All measurements in AFM files are given in terms of units equal to
 sizes in a document, these amounts should be multiplied by (scale
 factor of font)/1000.
 
-The following methods are available:
+=head3 Font Metrics Classes
+
+This module includes built-in classes for the 14 PDF Core Fonts:
+
+    use Font::Metrics::helvetica;
+    my $bbox = Font::Metrics::helvetica.FontBBox;
+
+The list of available fonts is:
+=over 3
+
+=item Courier Fonts
+    Font::Metrics::courier
+    Font::Metrics::courier-bold
+    Font::Metrics::courier-oblique
+    Font::Metrics::courier-boldoblique
+=item Helvetica Fonts
+    Font::Metrics::helvetica
+    Font::Metrics::helvetica-bold
+    Font::Metrics::helvetica-oblique
+    Font::Metrics::helvetica-boldoblique
+=item Times-Roman Fonts
+    Font::Metrics::times-roman
+    Font::Metrics::times-bold
+    Font::Metrics::times-italic
+    Font::Metrics::times-bolditalic
+=item Symbolic Fonts
+    Font::Metrics::symbol
+    Font::Metrics::zapfdingbats
+=back
+
+=head2 Methods
 
 =over 3
 
@@ -209,7 +239,7 @@ it under the same terms as Perl itself.
         $class.new;
     }
 
-    multi method TWEAK( Str :$name) {
+    submethod TWEAK( Str :$name) {
         self!load-afm-metrics($_) with $name;
     }
 
@@ -267,7 +297,7 @@ it under the same terms as Perl itself.
        }
 
        die "Can't find the AFM file for $name ($file)"
-         unless $file.IO ~~ :e;
+           unless $file.IO ~~ :e;
 
        my $afm = $file.IO.open( :r );
 
@@ -453,8 +483,19 @@ it under the same terms as Perl itself.
         %Props{$prop-name}:exists;
     }
 
+    method perl(:$name = self.^name) {
+        qq:to<--END-->
+        use Font::AFM;
+
+        class $name
+            is Font::AFM \{
+            method metrics \{ {$.metrics.perl} }
+        \}
+        --END--
+    }
+
     multi method FALLBACK(Str $prop-name where self!"is-prop"($prop-name)) {
-        self.WHAT.^add_method($prop-name, { $.metrics{$prop-name} } );
+        self.WHAT.^add_method($prop-name, method { $.metrics{$prop-name} } );
         self."$prop-name"();
     }
 

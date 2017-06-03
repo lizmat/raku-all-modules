@@ -19,6 +19,33 @@ DESCRIPTION
     actual sizes in a document, these amounts should be multiplied
     by (scale factor of font)/1000.
 
+    This module also includes built-in classes for the 14 PDF Core
+    Fonts. For example:
+
+        use Font::Metrics::helvetica;
+        my $bbox = Font::Metrics::helvetica.FontBBox;
+
+    The list of available fonts is:
+
+    Courier Fonts
+        Font::Metrics::courier
+        Font::Metrics::courier-bold
+        Font::Metrics::courier-oblique
+        Font::Metrics::courier-boldoblique
+    Helvetica Fonts
+        Font::Metrics::helvetica
+        Font::Metrics::helvetica-bold
+        Font::Metrics::helvetica-oblique
+        Font::Metrics::helvetica-boldoblique
+    Times-Roman Fonts
+        Font::Metrics::times-roman
+        Font::Metrics::times-bold
+        Font::Metrics::times-italic
+        Font::Metrics::times-bolditalic
+    Symbolic Fonts
+        Font::Metrics::symbol
+        Font::Metrics::zapfdingbats
+
     The following methods are available:
 
     my $afm = Font::AFM.new(:$name)

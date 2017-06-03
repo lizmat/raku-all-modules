@@ -38,8 +38,6 @@ class Build {
                 my $gen-path = $*SPEC.catfile($lib-dir, "$mod-name.pm");
                 my $*OUT = open( $gen-path, :w);
 
-                my Hash $metrics = $afm.metrics;
-
                 print q:s:c:to"--CODE-GEN--";
                 use v6;
                 # Font metrics for $name
@@ -50,15 +48,8 @@ class Build {
                 #
                 # {$afm.Notice}
 
-                use Font::AFM;
-
                 --CODE-GEN--
-
-                say "class $class-name";
-                say '    is Font::AFM {';
-
-                say '    method metrics { ' ~ $metrics.perl ~ ' }';
-                say '}';
+                print $afm.perl: :name($class-name);
             }
         }
     }
