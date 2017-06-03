@@ -1,0 +1,21 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Proc::Q",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001001",
+    "description"  : "Queue up and run a herd of Procs",
+    "tags"         : [ "proc", "process" ],
+    "depends"      : [
+        "RakudoPrereq"
+    ],
+    "test-depends" : [
+        "Testo",
+        "Test::Notice",
+        "Test::META"
+    ],
+    "provides"     : {
+        "Proc::Q" : "lib/Proc/Q.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source" : "https://github.com/zoffixznet/perl6-Proc-Q.git"}
+}
