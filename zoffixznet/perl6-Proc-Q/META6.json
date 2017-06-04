@@ -2,7 +2,7 @@
     "perl"         : "6.c",
     "name"         : "Proc::Q",
     "license"      : "Artistic-2.0",
-    "version"      : "1.001001",
+    "version"      : "1.001002",
     "description"  : "Queue up and run a herd of Procs",
     "tags"         : [ "proc", "process" ],
     "depends"      : [
