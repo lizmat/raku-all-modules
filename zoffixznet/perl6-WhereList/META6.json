@@ -1,0 +1,18 @@
+{
+    "perl"         : "6.c",
+    "name"         : "WhereList",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001002",
+    "description"  : "Simpler `where` constraints for items of lists",
+    "tags"         : [ "lists" ],
+    "depends"      : [ ],
+    "test-depends" : [
+        "Testo",
+        "Test::META"
+    ],
+    "provides"     : {
+        "WhereList" : "lib/WhereList.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source" : "https://github.com/zoffixznet/perl6-WhereList.git"}
+}
