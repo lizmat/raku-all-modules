@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-NaiveBayes.git
 	branch = master
-	commit = afd6b973b84e357d6a291cae446590e1d998b966
-	parent = 05c845d9d2017193b291a9eb90ba752d14000dd6
+	commit = f768b97342ed010fe0de2ef10a4c961ca8941059
+	parent = 91e3ebdf9363679f307ffc097e717799dd3003d6
 	cmdver = 0.4.0
