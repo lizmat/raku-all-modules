@@ -92,12 +92,11 @@ class IsRun does Testo::Test {
             my $wanted-out    = $!out    // '';
             my $wanted-err    = $!err    // '';
             my $*Tester = $!tester.new: group-level => 1+$!tester.group-level;
-            $!tester.group: $*Tester, $!desc => 3 => {
+            $!result = $!tester.group: $*Tester, $!desc => 3 => {
                 $*Tester.is: $out,    $wanted-out,    'STDOUT';
                 $*Tester.is: $err,    $wanted-err,    'STDERR';
                 $*Tester.is: $status, $wanted-status, 'Status';
             }
         }
     }
-    method result { self!test; Nil }
 }

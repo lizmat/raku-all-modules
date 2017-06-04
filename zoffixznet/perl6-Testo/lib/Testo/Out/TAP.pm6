@@ -16,8 +16,7 @@ method !indents { "\c[SPACE]" x 4*$!group-level }
 
 method plan (Int $n) { $!out.say: self!indents ~ "1..$n" }
 
-multi method put ($) {}
-multi method put (Testo::Test::Result:D $test --> Nil) {
+method put (Testo::Test::Result:D $test --> Testo::Test::Result:D) {
     $!count++;
     my \ident = self!indents;
     if $test.so {
@@ -25,8 +24,9 @@ multi method put (Testo::Test::Result:D $test --> Nil) {
     }
     else {
         $!out.say: ident ~ "not ok $!count - $test.desc()";
-        $!err.say: $test.fail.lines.map({
+        $test.fail andthen $!err.say: .lines.map({
             ident ~ '# ' ~ colored(.trans(['#'] => [' \#']), 'red')
         }).join: "\n";
     }
+    $test
 }

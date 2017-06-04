@@ -15,10 +15,14 @@ method new (Str:D :$format = 'TAP', UInt:D :$group-level = 0) {
 
 multi method group (
     Testo::Tester $tester,
-    Pair (Str:D :key($desc), :value(&group))
+    Pair (Str:D :key($desc), :value(&group)),
+    :$silent,
 ) {
     @!tests.push: my $test := Testo::Test::Group.new: :$tester, :$desc, :&group;
-    $!out.put: $test.result;
+    given $test.result {
+        $!out.put: $_ unless $silent;
+        $_
+    }
 }
 
 multi method group (
@@ -31,7 +35,7 @@ multi method group (
 ) {
     @!tests.push: my $test := Testo::Test::Group.new:
         :$tester, :$desc, :&group, :$plan;
-    $!out.put: $test.result;
+    $!out.put: $test.result
 }
 
 method plan ($!plan) { $!out.plan: $!plan }
@@ -49,13 +53,15 @@ method is-eqv (Mu $got, Mu $exp, $desc?) {
 method is-run (
   Str() $program, $desc?,
   Stringy :$in, :@args, :$out, :$err, :$status
+  --> Testo::Test::Result:D
 ) {
-    @!tests.push: my $test := Testo::Test::IsRun.new:
+    my $test := Testo::Test::IsRun.new:
         :$program, :$desc, :$in, :@args, :$out, :$err, :$status, :tester(self);
-    $!out.put: $test.result
+    $test.result;
 }
 
 method done-testing {
+    # dd [ +@!tests, $!plan, @!tests == $!plan ];
     exit 255 unless @!tests and @!tests == $!plan;
     my $failed = +@!tests.grep: *.result.so.not
         and exit $failed min 254;
