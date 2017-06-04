@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-Test-Notice.git
 	branch = master
-	commit = 1e453a71e6e76b30a5b1a91aedcf6f8c87ce5b63
-	parent = c5065af958e65c908e0285495cceaca63b56f03b
+	commit = f1a084282f7270bfbe858bd45afac0eddeb2f4e3
+	parent = ec52c03a33b3423224d5ae4a8437068dbeff4c58
 	cmdver = 0.4.0

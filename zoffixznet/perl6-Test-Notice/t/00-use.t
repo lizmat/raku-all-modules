@@ -2,7 +2,7 @@ use lib 'lib';
 use Test;
 use Test::Notice;
 
-notice 'Notice me, Senpai!';
+notice 'This is a test message';
 
 ok 1;
 done-testing;
