@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/perl6-Temp-Path.git
+	branch = master
+	commit = d03d1ab62a9bebc03c0b63eac84224f1e66f7cd5
+	parent = 79ab01d31a474858d68c31e0c572a8643078411c
+	cmdver = 0.4.0

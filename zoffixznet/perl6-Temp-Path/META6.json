@@ -1,0 +1,22 @@
+{
+    "perl"         : "6.c",
+    "name"         : "Temp::Path",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001001",
+    "description"  : "Make a temporary path, file, or directory",
+    "tags"         : [ "filesystem" ],
+    "depends"      : [
+        "Digest::SHA",
+        "File::Directory::Tree",
+        "RakudoPrereq"
+    ],
+    "test-depends" : [
+        "Testo",
+        "Test::META"
+    ],
+    "provides"     : {
+        "Temp::Path" : "lib/Temp/Path.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source" : "https://github.com/zoffixznet/perl6-Temp-Path.git"}
+}
