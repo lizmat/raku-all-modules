@@ -1,8 +1,10 @@
 use v6.c;
+
+#------------------------------------------------------------------------------
+unit package BSON:auth<github:MARTIMM>;
+
 use BSON;
 use Digest::MD5;
-
-unit package BSON:auth<https://github.com/MARTIMM>;
 
 #-----------------------------------------------------------------------------
 # Information about object id construction can be found at

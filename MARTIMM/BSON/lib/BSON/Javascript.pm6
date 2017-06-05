@@ -1,8 +1,11 @@
 use v6.c;
+
+#------------------------------------------------------------------------------
+unit package BSON:auth<github:MARTIMM>;
+
 use BSON;
 
-unit package BSON:auth<https://github.com/MARTIMM>;
-
+#------------------------------------------------------------------------------
 class Javascript {
 
   has Str $.javascript;
@@ -101,5 +104,3 @@ class Javascript {
     }
   }
 }
-
-

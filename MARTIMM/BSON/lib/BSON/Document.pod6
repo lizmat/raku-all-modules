@@ -7,7 +7,7 @@ use v6;
 =SUBTITLE BSON Encodable and Decodable document
 
   unit package BSON;
-  class Document does Associative does Positional { ... }
+  class Document does Associative { ... }
 
 
 =head1 Synopsis
@@ -105,45 +105,19 @@ Impl  type  BSON spec                           Perl6
  [x] 16     32 bit integers.                    Int
  [-] 17     Timestamp, used internally
  [x] 18     64 bit integers.                    Int
- [ ] 19     128 bit decimal floating point      Rat
+ [ ] 19     128 bit decimal floating point      Decimal::D128
 
 =end code
 
 =head1 Operators
 
-=head2 postcircumfix:<{}>
+=head2 x{}
 
   $d{'full address'} = 'my-street 45, new york';
 
-=head2 postcircumfix:<<>>
+=head2 x<>
 
   $d<name> = 'Mr Foo and Mrs Bar';
-
-=head2 postcircumfix:<[]>
-
-=begin code
-
-use Test;
-use BSON::Document;
-
-my BSON::Document $d .= new;
-$d<abc> = 10;                   # Key 'abc' on location 0
-$d<def> = 11;                   # Key 'def' on location 1
-$d[1] = 'Timezone of New York'; # Modify location 1 which is key 'def'
-$d[100] = 'new data';           # New location 2 with generated key 'key100'.
-
-is $d[100], $d<key100>, "Location 100 is same as pointed by 'key100'";
-is $d.find-key('key100'), 2, 'Index is 2 instead of 100';
-is $d[100], $d[2], "Location 100 is same as pointed by index 2";
-is $d.find-key(100), 'key100', 'Check $d[100] to be key100';
-
-=end code
-
-Modify or create locations using an index into the document. When locations
-exist, data at that location is overwritten by the new data. Non-existent
-locations are set as the next free location in the document and a key is
-generated using the index prefixed with 'key' (depending on autovivify).
-
 
 =head1 Methods
 
@@ -356,7 +330,7 @@ e.g;
     $arr.push($i);
   }
   $d<myarray> = $arr;
-  
+
 
 =head2 encode
 
@@ -386,4 +360,3 @@ Thrown when encoding stumbles upon a variable which is not supported(yet)
 =end comment
 
 =end pod
-

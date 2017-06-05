@@ -8,6 +8,11 @@
 * Support for decimal 128 type = BSON type ID \x13.
 * Tests some more exceptions of Binary
 
+### Using libraries
+Use libraries to check decimal128 against and maybe using it as a native lib.
+
+
+
 ### Bugs
 
 * An array in a document which is modified later with push, pop or otherwise will not be properly encoded.

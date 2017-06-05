@@ -1,7 +1,9 @@
 use v6.c;
-use BSON;
 
-unit package BSON:auth<https://github.com/MARTIMM>;
+#------------------------------------------------------------------------------
+unit package BSON:auth<github:MARTIMM>;
+
+use BSON;
 
 constant C-GENERIC            = 0x00;
 constant C-FUNCTION           = 0x01;
@@ -13,13 +15,14 @@ constant C-MD5                = 0x05;
 constant C-UUID-SIZE          = 16;
 constant C-MD5-SIZE           = 16;
 
+#------------------------------------------------------------------------------
 class Binary {
 
   has Buf $.binary-data;
   has Bool $.has-binary-data = False;
   has Int $.binary-type;
 
-  #-----------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   #
   submethod BUILD ( Buf :$data, Int :$type = C-GENERIC ) {
     $!binary-data = $data;
@@ -27,7 +30,7 @@ class Binary {
     $!binary-type = $type;
   }
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   method perl ( Int $indent = 0 --> Str ) {
     $indent = 0 if $indent < 0;
 
@@ -69,7 +72,7 @@ class Binary {
     $perl ~= '  ' x $indent ~ ")";
   }
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   method encode ( --> Buf ) {
     my Buf $b .= new;
     if self.has-binary-data {
@@ -86,7 +89,7 @@ class Binary {
     $b;
   }
 
-  #---------------------------------------------------------------------------
+  #----------------------------------------------------------------------------
   method decode (
     Buf:D $b,
     Int:D $index is copy,
@@ -159,5 +162,3 @@ class Binary {
     );
   }
 }
-
-

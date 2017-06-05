@@ -579,7 +579,7 @@ package BSON {
 
 #`{{
         when ... {
-            # Timestamp. 
+            # Timestamp.
             # "\x11" e_name int64
             #
             # Special internal type used by MongoDB replication and
@@ -644,7 +644,7 @@ package BSON {
 
     #---------------------------------------------------------------------------
     sub encode-int32 ( Int:D $i --> Buf ) {
-      my int $ni = $i;      
+      my int $ni = $i;
       return Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
                       ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF
                     );
@@ -817,7 +817,7 @@ package BSON {
       # Get the size of the (nested-)document
       #
       my Int $doc-size = decode-int32( $!encoded-document, $!index);
-      $!index += C-INT32-SIZE;
+      $!index += BSON::C-INT32-SIZE;
 
       while $!encoded-document[$!index] !~~ 0x00 {
         self!decode-element;
@@ -871,7 +871,7 @@ package BSON {
 
           # Step over the size field and the null terminated string
           #
-          $!index += C-INT32-SIZE + $nbr-bytes;
+          $!index += BSON::C-INT32-SIZE + $nbr-bytes;
 
           %!promises{$key} = Promise.start( {
               $!data{$key} = decode-string( $!encoded-document, $i);
@@ -918,11 +918,11 @@ package BSON {
         when BSON::C-BINARY {
 
           my Int $nbr-bytes = decode-int32( $!encoded-document, $!index);
-          my Int $i = $!index + C-INT32-SIZE;
+          my Int $i = $!index + BSON::C-INT32-SIZE;
 
           # Step over size field, subtype and binary data
           #
-          $!index += C-INT32-SIZE + 1 + $nbr-bytes;
+          $!index += BSON::C-INT32-SIZE + 1 + $nbr-bytes;
 
           %!promises{$key} = Promise.start( {
               $!data{$key} = self!decode-binary(
@@ -1018,7 +1018,7 @@ package BSON {
 
           # Step over size field and the javascript text
           #
-          $!index += (C-INT32-SIZE + $js-size);
+          $!index += (BSON::C-INT32-SIZE + $js-size);
 
           %!promises{$key} = Promise.start( {
               $!data{$key} = BSON::Javascript.new(
@@ -1034,10 +1034,10 @@ package BSON {
 
           my Int $i1 = $!index;
           my Int $js-size = decode-int32( $!encoded-document, $i1);
-          my Int $i2 = $!index + C-INT32-SIZE + $js-size;
+          my Int $i2 = $!index + BSON::C-INT32-SIZE + $js-size;
           my Int $js-scope-size = decode-int32( $!encoded-document, $i2);
 
-          $!index += (C-INT32-SIZE + $js-size + $js-scope-size);
+          $!index += (BSON::C-INT32-SIZE + $js-size + $js-scope-size);
 
           %!promises{$key} = Promise.start( {
               my BSON::Document $d .= new;
@@ -1055,7 +1055,7 @@ package BSON {
         when BSON::C-INT32 {
 
           my Int $i = $!index;
-          $!index += C-INT32-SIZE;
+          $!index += BSON::C-INT32-SIZE;
 
           %!promises{$key} = Promise.start( {
               $!data{$key} = decode-int32( $!encoded-document, $i);
@@ -1068,7 +1068,7 @@ package BSON {
         when BSON::C-INT64 {
 
           my Int $i = $!index;
-          $!index += C-INT64-SIZE;
+          $!index += BSON::C-INT64-SIZE;
 
           %!promises{$key} = Promise.start( {
               $!data{$key} = decode-int64( $!encoded-document, $i);
@@ -1307,4 +1307,3 @@ package BSON {
     }
   }
 }
-

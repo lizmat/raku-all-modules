@@ -1,7 +1,40 @@
 use v6.c;
 use NativeCall;
 
-#-----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+package BSON:auth<github:MARTIM> {
+  # BSON type codes
+  constant C-DOUBLE             = 0x01;
+  constant C-STRING             = 0x02;
+  constant C-DOCUMENT           = 0x03;
+  constant C-ARRAY              = 0x04;
+  constant C-BINARY             = 0x05;
+  constant C-UNDEFINED          = 0x06;         # Deprecated
+  constant C-OBJECTID           = 0x07;
+  constant C-BOOLEAN            = 0x08;
+  constant C-DATETIME           = 0x09;
+  constant C-NULL               = 0x0A;
+  constant C-REGEX              = 0x0B;
+  constant C-DBPOINTER          = 0x0C;         # Deprecated
+  constant C-JAVASCRIPT         = 0x0D;
+  constant C-DEPRECATED         = 0x0E;         # Deprecated
+  constant C-JAVASCRIPT-SCOPE   = 0x0F;
+  constant C-INT32              = 0x10;
+  constant C-TIMESTAMP          = 0x11;         # Used internally
+  constant C-INT64              = 0x12;
+  constant C-DECIMAL128         = 0x13;
+  constant C-MIN-KEY            = 0xFF;
+  constant C-MAX-KEY            = 0x7F;
+
+  #----------------------------------------------------------------------------
+  # Fixed sizes
+  constant C-INT32-SIZE         = 4;
+  constant C-INT64-SIZE         = 8;
+  constant C-DOUBLE-SIZE        = 8;
+  constant C-DECIMAL128-SIZE    = 16;
+}
+
+#------------------------------------------------------------------------------
 class X::BSON::Parse-objectid is Exception {
 
   # No string types used because there can be lists of strings too
@@ -13,7 +46,7 @@ class X::BSON::Parse-objectid is Exception {
   }
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 class X::BSON::Parse-document is Exception {
   has $.operation;                      # Operation method
   has $.error;                          # Parse error
@@ -23,7 +56,7 @@ class X::BSON::Parse-document is Exception {
   }
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 class X::BSON::NYS is Exception {
   has $.operation;                      # Operation encode, decode
   has $.type;                           # Type to encode/decode
@@ -33,7 +66,7 @@ class X::BSON::NYS is Exception {
   }
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 class X::BSON::Deprecated is Exception {
   has $.operation;                      # Operation encode, decode
   has $.type;                           # Type to encode/decode
@@ -53,15 +86,25 @@ class X::BSON::Deprecated is Exception {
   }
 }
 
+#------------------------------------------------------------------------------
+class X::BSON::Undefined is Exception {
+  has $.operation;                      # Operation encode, decode
+  has $.type;                           # Type to encode/decode
+
+  method message () {
+    return "\n$!operation error: BSON type '$!type' is not (yet) supported\n";
+  }
+}
 
 
 
-#-------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
 sub encode-e-name ( Str:D $s --> Buf ) is export {
   return encode-cstring($s);
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 sub encode-cstring ( Str:D $s --> Buf ) is export {
   die X::BSON::Parse-document.new(
     :operation('encode-cstring()'),
@@ -71,13 +114,13 @@ sub encode-cstring ( Str:D $s --> Buf ) is export {
   return $s.encode() ~ Buf.new(0x00);
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 sub encode-string ( Str:D $s --> Buf ) is export {
   my Buf $b .= new($s.encode('UTF-8'));
   return [~] encode-int32($b.bytes + 1), $b, Buf.new(0x00);
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 sub encode-int32 ( Int:D $i --> Buf ) is export {
   my int $ni = $i;
 
@@ -87,7 +130,7 @@ sub encode-int32 ( Int:D $i --> Buf ) is export {
   );
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 sub encode-int64 ( Int:D $i --> Buf ) is export {
 
   # No tests for too large/small numbers because it is called from
@@ -101,7 +144,7 @@ sub encode-int64 ( Int:D $i --> Buf ) is export {
                 );
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # encode Num in buf little endian
 #
 sub encode-double ( Num:D $r --> Buf ) is export {
@@ -117,7 +160,7 @@ sub encode-double ( Num:D $r --> Buf ) is export {
   }
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # Experimental code
 sub encode-double-emulated ( Num:D $r is copy --> Buf ) is export {
 
@@ -237,12 +280,12 @@ sub encode-double-emulated ( Num:D $r is copy --> Buf ) is export {
 
 
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 sub decode-e-name ( Buf:D $b, Int:D $index is rw --> Str ) is export {
   return decode-cstring( $b, $index);
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 sub decode-cstring ( Buf:D $b, Int:D $index is rw --> Str ) is export {
 
   my @a;
@@ -263,7 +306,7 @@ sub decode-cstring ( Buf:D $b, Int:D $index is rw --> Str ) is export {
   return Buf.new(@a).decode();
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 sub decode-string ( Buf:D $b, Int:D $index is copy --> Str ) is export {
 
   my $size = decode-int32( $b, $index);
@@ -284,7 +327,7 @@ sub decode-string ( Buf:D $b, Int:D $index is copy --> Str ) is export {
   return Buf.new($b[$index+4 ..^ $end-string-at]).decode;
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 sub decode-int32 ( Buf:D $b, Int:D $index --> Int ) is export {
 
   # Check if there are enaugh letters left
@@ -310,7 +353,7 @@ sub decode-int32 ( Buf:D $b, Int:D $index --> Int ) is export {
   return $ni;
 }
 
-#-----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 sub decode-int64 ( Buf:D $b, Int:D $index --> Int ) is export {
 
   # Check if there are enaugh letters left
@@ -328,7 +371,7 @@ sub decode-int64 ( Buf:D $b, Int:D $index --> Int ) is export {
   return $ni;
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # decode to Int from buf little endian
 #
 sub decode-int64-native ( Buf:D $b, Int:D $index --> Int ) is export {
@@ -345,7 +388,7 @@ sub decode-int64-native ( Buf:D $b, Int:D $index --> Int ) is export {
   nativecast( CArray[int64], $ble)[0];
 }
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # decode to Num from buf little endian
 #
 sub decode-double ( Buf:D $b, Int:D $index --> Num ) is export {
@@ -362,7 +405,7 @@ sub decode-double ( Buf:D $b, Int:D $index --> Num ) is export {
   nativecast( CArray[num64], $ble)[0];
 }
 
-#-----------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # experimental code
 # We have to do some simulation using the information on
 # http://en.wikipedia.org/wiki/Double-precision_floating-point_format#Endianness
@@ -453,4 +496,3 @@ sub little-endian ( --> Bool ) {
 
   $j[0] == 0x01;
 }
-
