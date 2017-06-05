@@ -3,17 +3,19 @@ use v6;
 use Test;
 
 use LibYAML;
-use JSON::Fast;
+use LibYAML::Parser;
+use LibYAML::Loader::TestSuite;
 
 my $DATA = $*PROGRAM.parent.child('data');
 
-my $parser = LibYAML::Parser.new;
+my $loader = LibYAML::Loader::TestSuite.new;
+my $parser = LibYAML::Parser.new(
+    loader => $loader,
+);
 
-my $emitter = LibYAML::Emitter.new;
+plan 155;
 
-plan 383;
-
-for <
+my @tests = <
 229Q 3MYT 5BVJ 6FWR 735Y 87E4 9J7A AZW3 CUP7 EW3V GT5M J9HZ L94M MJS9
 PBJ2 TS54 236B 5C5M 6H3V 74H7 9KBC BD7L D49Q F2C7 H2RW JHB9 L9U5 MXS3
 PRH3 S4JQ U3C3 X38W 4CQQ 5GBF 6HB6 77H8 8MK2 9SHH D88J F8F9 H7J7 S4T7
@@ -26,36 +28,45 @@ NP9H RLU9 V55R ZH7C 35KP 54T7 65WH 6SLA 7T8X A984 CC74 DWX9 G7JE J5UC
 P2AD RR7F TD5N V9D5 ZVH3 3ALJ 565N 6VJK 7W2P 9CWY G992 J7PZ KSS4 M9B4
 P76L TE2A W42U 3GZX 57H4 82AN 9FMG AZ63 CT4Q EHF6 GH63 J7VC P94K RZT7
 TL85
-> -> $test
-{
+>;
+#@tests = ('229Q');
+#@tests = ('P76L');
+#@tests = ('EHF6');
+for @tests -> $test {
+    $loader.events = ();
     my $testdir = $DATA.child($test);
 
     my $testname = $testdir.child('===').lines[0];
 
 #    diag "$test $testname";
 
+    my $yaml = $testdir.child('in.yaml').Str;
     if $testdir.child('error').e
     {
-        say $testdir.child('in.yaml').Str;
+        diag "$test ERROR";
 
-        throws-like { $parser.parse-file($testdir.child('in.yaml').Str) },
+        throws-like { $parser.parse-file($yaml) },
                     X::LibYAML::Parser-Error,
                     message => /ERROR/;
 
         next;
     }
 
-    ok my $obj = $parser.parse-file($testdir.child('in.yaml').Str),
-       "$test Parse";
+    $parser.parse-file($yaml);
 
-    if $testdir.child('in.json').e
-    {
-        my $json-obj = from-json($testdir.child('in.json').slurp);
+    my Str @expected-events = $testdir.child('test.event').lines;
+    my Str @events = $loader.events.Array;
+    # temp workaround
+    @expected-events.map: {
+        $_ ~~ s/\+DOC\s\-\-\-/+DOC/;
+        $_ ~~ s/\-DOC\s\.\.\./-DOC/;
+    };
+    @events.map: {
+        $_ ~~ s/\+DOC\s\-\-\-/+DOC/;
+        $_ ~~ s/\-DOC\s\.\.\./-DOC/;
+    };
+    is-deeply(@events, @expected-events, "$test - events");
 
-        is-deeply $obj, $json-obj, "$test Compare with JSON";
-    }
-
-    ok my $str = $emitter.dump-string($obj);
 
 }
 
