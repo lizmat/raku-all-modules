@@ -277,5 +277,11 @@ subtest {
     }
 }, 'Test for constructor for string';
 
+subtest {
+    my IO::Blob $io = IO::Blob.new(TEXT.encode);
+    $io.seek(0);
+    is (await $io.Supply.Promise), TEXT.encode;
+}, 'Test for Supply()';
+
 done-testing;
 

@@ -235,6 +235,17 @@ method is-closed(IO::Blob:D:) returns Bool {
     return $!is_closed;
 }
 
+method Supply(IO::Blob:D: :$size = $*DEFAULT-READ-ELEMS --> Supply:D) {
+    supply {
+        my $buf = self.read($size);
+        while ($buf.elems > 0) {
+            emit($buf);
+            $buf = self.read($size);
+        }
+        done;
+    }
+}
+
 =begin pod
 
 =head1 NAME
