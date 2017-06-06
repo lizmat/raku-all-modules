@@ -8,7 +8,8 @@ is make-temp-dir :chmod<0o666>, IO::Path;
 
 with make-temp-dir { is $_, IO::Path, 'no gobbling of blocks' }
 
-with run :err, :out, $*EXECUTABLE, '-Ilib', '-MTemp::Path', '-e', ｢
+with run :err, :out, $*EXECUTABLE, '-Ilib',
+    ('-I' «~« $*REPO.repo-chain.map: *.path-spec), '-MTemp::Path', '-e', ｢
     with make-temp-dir { .e or die; print .absolute }
   ｣
 {

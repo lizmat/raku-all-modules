@@ -146,11 +146,6 @@ still give you an `IO::Path` with `Temp::Path::AutoDel` mixed in due to how
 `IO::Path` methods create new objects, but *that* new object created by
 '.sibling' won't be deleted, because *you* created it and not the module.
 
-# SEE ALSO
-
-There's [`File::Temp`](https://modules.perl6.org/repo/File::Temp) module, but I
-advise against using it.
-
 ----
 
 #### REPOSITORY

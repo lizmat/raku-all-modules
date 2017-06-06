@@ -9,7 +9,8 @@ is make-temp-path :chmod<0o666> :content<foos>, IO::Path;
 
 with make-temp-path { is $_, IO::Path, 'no gobbling of blocks' }
 
-with run :err, :out, $*EXECUTABLE, '-Ilib', '-MTemp::Path', '-e', ｢
+with run :err, :out, $*EXECUTABLE, '-Ilib',
+    ('-I' «~« $*REPO.repo-chain.map: *.path-spec), '-MTemp::Path', '-e', ｢
     with make-temp-path :content<bars> {
         .slurp(:close) eq 'bars' or die;
         print .absolute
