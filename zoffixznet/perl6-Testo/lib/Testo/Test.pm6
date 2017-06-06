@@ -91,6 +91,10 @@ class IsRun does Testo::Test {
             my $wanted-status = $!status // 0;
             my $wanted-out    = $!out    // '';
             my $wanted-err    = $!err    // '';
+
+            # Collapse allomorphs; needed on pre-8a0b7460e5 rakudo
+            $_ .= Str when Str for $wanted-out, $wanted-err, $wanted-status;
+
             my $*Tester = $!tester.new: group-level => 1+$!tester.group-level;
             $!result = $!tester.group: $*Tester, $!desc => 3 => {
                 $*Tester.is: $out,    $wanted-out,    'STDOUT';
