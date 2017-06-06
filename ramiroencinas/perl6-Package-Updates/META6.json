@@ -1,6 +1,7 @@
 {
   "perl" : "6.c",
   "name" : "Package::Updates",
+  "license" : "Artistic-2.0",
   "version" : "*",
   "description" : "Provides package updates information.",
   "authors" : [ "Ramiro Encinas Alarza" ],
