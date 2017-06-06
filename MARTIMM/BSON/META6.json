@@ -10,7 +10,7 @@
   "depends": [
     "Digest::MD5",
     "UUID",
-    "Test"
+    "Test::META"
   ],
   "description": "BSON encoding/decoding, used in MongoDB drivers",
   "license": "Artistic-2.0",
