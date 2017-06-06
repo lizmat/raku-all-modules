@@ -1,0 +1,7 @@
+/blib/
+/Makefile
+*.o
+*~
+#*
+lib/.precomp
+

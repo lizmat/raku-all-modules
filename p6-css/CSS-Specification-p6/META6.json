@@ -1,0 +1,17 @@
+{   "perl"        : "6.c",
+    "name"        : "CSS::Specification",
+    "license"     : "Artistic-2.0",
+    "version"     : "0.4.4",
+    "description" : "CSS Property definition grammar and generation tools",
+    "depends"     : [ "CSS::Grammar" ],
+    "source-url"  : "git://github.com/p6-css/CSS-Specification-p6.git",
+    "provides"    : {
+        "CSS::Specification" : "lib/CSS/Specification.pm",
+        "CSS::Specification::Build" : "lib/CSS/Specification/Build.pm",
+        "CSS::Specification::Actions" : "lib/CSS/Specification/Actions.pm",
+        "CSS::Specification::Terms" : "lib/CSS/Specification/Terms.pm",
+        "CSS::Specification::Terms::Actions" : "lib/CSS/Specification/Terms/Actions.pm"
+     }
+}
+
+ 
