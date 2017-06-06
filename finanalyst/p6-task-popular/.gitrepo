@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/finanalyst/p6-task-popular.git
 	branch = master
-	commit = 2ed82e3ef6d21c6bf6d871bdcb749be9ef20c0df
-	parent = 0872bdaae51f133fba31d1c0dcb57ff82bc1b963
+	commit = ee35a03a385ed17ab57a5d31f49f83fd06f43715
+	parent = 26d6ee3898da6b2658ceb63ca93f675e37e1ffa6
 	cmdver = 0.4.0
