@@ -940,7 +940,7 @@ class Harness {
         }
     }
     class SourceHandler::Perl6 does SourceHandler::Proc {
-        submethod BUILD(:@incdirs, Str:D :$!path = ~$*EXECUTABLE) {
+        submethod BUILD(:@incdirs, Str:D :$!path = $*EXECUTABLE.absolute) {
             @!args = @incdirs.map("-I" ~ *);
         }
         method can-handle(Str $name) {
