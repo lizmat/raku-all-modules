@@ -1,0 +1,21 @@
+{
+    "perl"         : "6.c",
+    "name"         : "LN",
+    "license"      : "Artistic-2.0",
+    "version"      : "1.001001",
+    "description"  : "Get $*ARGFILES with line numbers via $*LN",
+    "tags"         : [ "IO" ],
+    "depends"      : [
+        "IO::CatHandle::AutoLines"
+    ],
+    "test-depends" : [
+        "Testo",
+        "Temp::Path",
+        "Test::META"
+    ],
+    "provides"     : {
+        "LN" : "lib/LN.pm6"
+    },
+    "authors"       : ["Zoffix Znet"],
+    "support"       : {"source" : "https://github.com/zoffixznet/perl6-LN.git"}
+}

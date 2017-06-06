@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/zoffixznet/perl6-LN.git
+	branch = master
+	commit = bfa894f3c408ca077ae92922024269e87682c4e4
+	parent = a05e74314fbe4c47d48c01874f80b01ab398fd0a
+	cmdver = 0.4.0
