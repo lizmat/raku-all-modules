@@ -264,7 +264,7 @@ IO::Blob - IO:: interface for reading/writing a Blob
 
     $io.print('buz');
 
-    $io.seek(0, 0); # rewind
+    $io.seek(0); # rewind
 
     $io.slurp-rest; # => "foo\nbar\nbuz"
 

@@ -18,7 +18,7 @@ SYNOPSIS
 
     $io.print('buz');
 
-    $io.seek(0, 0); # rewind
+    $io.seek(0); # rewind
 
     $io.slurp-rest; # => "foo\nbar\nbuz"
 
@@ -121,20 +121,20 @@ write(IO::Blob:D: Blob:D $buf)
 
 Binary writing; writes $buf to the Blob.
 
-seek(IO::Blob:D: int $offset, int $whence)
-------------------------------------------
+seek(IO::Blob:D: int $offset, SeekType:D $whence = SeekFromBeginning)
+---------------------------------------------------------------------
 
 Move the pointer (that is the position at which any subsequent read or write operations will begin,) to the byte position specified by `$offset` relative to the location specified by `$whence` which may be one of:
 
-  * 0
+  * SeekFromBeginning
 
 The beginning of the file.
 
-  * 1
+  * SeekFromCurrent
 
 The current position in the file.
 
-  * 2
+  * SeekFromEnd
 
 The end of the file.
 
