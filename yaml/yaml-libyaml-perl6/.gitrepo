@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/yaml/yaml-libyaml-perl6.git
 	branch = master
-	commit = add452a3d99f6d0e3428f4635fca1900180f99db
-	parent = 82d9340954b6ed8640bfb09ec21c2fc21f76152f
+	commit = 63c89315b8185279e6f91674c39136b67b089c3e
+	parent = fe5cabc4af2213f102d6250f84485afe49de66c4
 	cmdver = 0.4.0
