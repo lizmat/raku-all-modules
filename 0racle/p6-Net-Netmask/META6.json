@@ -5,7 +5,7 @@
    "perl" : "6.c",
    "authors" : [ "Joshua Yeshouroun" ],
    "provides" : {
-      "Net::Netmask" : "lib/Net/Netmask.pm"
+      "Net::Netmask" : "lib/Net/Netmask.pm6"
    },
    "depends" : [ ],
    "source-url" : "git://github.com/0racle/p6-Net-Netmask.git",
