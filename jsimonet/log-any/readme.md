@@ -15,7 +15,7 @@ use Log::Any::Adapter::Stderr;
 # Basic usage
 Log::Any.add( Log::Any::Adapter::Stdout.new, formatter => '\d \m' );
 Log::Any.info( 'yolo' );
-# Prints "yolo"
+# OUTPUT: 2017-06-06T11:43:43.067909Z yolo
 
 
 # Advanced usage

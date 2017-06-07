@@ -11,6 +11,9 @@ log-adapt( Adapter.new );
 
 warning( 'missing some configuration' );
 critical( 'a big problem occured' );
+
+will-log( :category<...> );
+will-trace( ... );
 ```
 
 ## Wrapping
