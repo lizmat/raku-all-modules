@@ -17,7 +17,7 @@ my class HandleSupplier {
         my $supplier = Supplier.new;
         my $self = self.bless(supplier => $supplier, handle => $handle);
         my $supply = $supplier.Supply;
-        $supply.tap(-> $v { $self.handle.print($v) });
+        $supply.tap(-> $v { $self.handle.say($v) });
         return $self;
     }
 }
@@ -274,6 +274,7 @@ my class HTTP::Server::Tiny::Handler {
             if $result ~~ Promise {
                 return $result.result;
             }
+            warn "P6W app must return Promise";
             return $result;
         }();
         debug "ran app: $status" if DEBUGGING;

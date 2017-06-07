@@ -20,12 +20,12 @@ Thread.start({
     $server.run(sub ($env) {
         $env<p6w.errors>.emit("foo");
         $env<p6w.errors>.emit("bar");
-        $env<p6w.errors>.emit("baz\nval\n");
-        return
+        $env<p6w.errors>.emit("baz\nval");
+        return start {
             200,
             ['Content-Type' => 'application/json'],
             ['hello']
-        ;
+        };
     });
 }, :app_lifetime);
 
@@ -36,4 +36,4 @@ ok $resp<success>;
 is $resp<content>, 'hello';
 
 $io.seek(0);
-is $io.slurp-rest, "foobarbaz\nval\n";
+is $io.slurp-rest, "foo\nbar\nbaz\nval\n";
