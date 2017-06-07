@@ -142,6 +142,10 @@ method print(IO::Blob:D: *@text) returns Bool {
     return True;
 }
 
+method say(IO::Blob:D: *@text) returns Bool {
+    return self.print(@text, self.nl-out);
+}
+
 method read(IO::Blob:D: Int(Cool:D) $bytes) returns Blob {
     if self.eof {
         return EMPTY;
@@ -347,6 +351,10 @@ Return a lazy list of the Blob's words (separated on whitespace) read via C<word
 =head2 print(IO::Blob:D: *@text) returns Bool
 
 Text writing; writes the given C<@text> to the Blob.
+
+=head2 say(IO::Blob:D: *@text) returns Bool
+
+Text writing; similar to print, but add a newline to end of the C<@text>.
 
 =head2 read(IO::Blob:D: Int(Cool:D) $bytes)
 

@@ -198,6 +198,34 @@ subtest {
 }, 'Test for print() and seek()';
 
 subtest {
+    subtest {
+        my IO::Blob $io = IO::Blob.new(TEXT.encode);
+
+        $io.say('line5', 'line6');
+        is $io.tell(), 34;
+        is $io.eof(), True;
+
+        $io.seek(0, SeekFromBeginning);
+        is $io.read(TEXT.chars + 13), "line1\nline2\nline3\nline4line5line6\n".encode;
+        is $io.data(), "line1\nline2\nline3\nline4line5line6\n".encode;
+    }, 'With default .nl-out';
+
+    subtest {
+        my IO::Blob $io = IO::Blob.new(TEXT.encode);
+
+        $io.nl-out = "\t\t";
+        $io.say('line5', 'line6');
+        is $io.tell(), 35;
+        is $io.eof(), True;
+
+        $io.seek(0, SeekFromBeginning);
+        is $io.read(TEXT.chars + 14), "line1\nline2\nline3\nline4line5line6\t\t".encode;
+        is $io.data(), "line1\nline2\nline3\nline4line5line6\t\t".encode;
+    }, 'With modified .nl-out';
+
+}, 'Test for say()';
+
+subtest {
     my IO::Blob $io = IO::Blob.new(TEXT.encode);
 
     $io.write('line5'.encode);
