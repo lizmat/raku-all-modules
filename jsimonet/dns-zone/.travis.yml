@@ -3,5 +3,5 @@ perl6:
     - latest
     - "2016.10"
 install:
-    - rakudobrew build-panda
-    - panda installdeps .
+    - rakudobrew build-zef
+    - zef --debug install .
