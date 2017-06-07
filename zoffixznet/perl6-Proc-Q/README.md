@@ -158,9 +158,7 @@ arent's sitting and waiting for STDIN. Try passing an empty strings in `:@in`.
 ### `:$batch`
 
 Takes a positive `Int`. Defaults to `8`. Specifies how many `@commands`
-to run at the same time. The routine will wait for each batch to complete,
-either by procs finishing or being killed due to timeout (see `:$timeout` arg).
-The value should probably be something around the number of cores on your box.
+to run at the same time.
 
 ### `:$timeout`
 
@@ -170,10 +168,6 @@ a proc should be killed, if it did not complete yet. Timer starts ticking once
 the proc is [`.ready`](https://docs.perl6.org/type/Proc::Async#method_ready).
 The process is killed with `SIGTERM` signal and if after 1 second it's still
 alive, it gets another kill with `SIGSEGV`.
-
-**NOTE:** another batch of procs **won't get started** until all procs in the
-current batch complete so if you don't specify a `:$timeout`, a single hung proc
-will hold everyone up.
 
 ### `:$out`
 

@@ -23,61 +23,50 @@ sub proc-q (
     --> Channel:D
 ) is export {
     my $c = Channel.new;
-    start {
-      CATCH { default { .say } }
-      (@commands Z @tags Z @in).batch($batch).map: -> $pack {
-        my @results = $pack.map: -> ($command, $tag, $in) {
-            start do with Proc::Async.new: |$command, :w($in.defined) -> $proc {
-                CATCH { default { .say } }
-                my Stringy $out-res = $out eq 'bin' ?? Buf.new !! '' if $out;
-                my Stringy $err-res = $err eq 'bin' ?? Buf.new !! '' if $err;
-                my Stringy $mer-res = $out eq 'bin' ?? Buf.new !! '' if $merge;
+    (start await Supply.from-list(@commands Z @tags Z @in).throttle: $batch,
+      -> ($command, $tag, $in) {
+          with Proc::Async.new: |$command, :w($in.defined) -> $proc {
+              CATCH { default { .say } }
+              my Stringy $out-res = $out eq 'bin' ?? Buf.new !! '' if $out;
+              my Stringy $err-res = $err eq 'bin' ?? Buf.new !! '' if $err;
+              my Stringy $mer-res = $out eq 'bin' ?? Buf.new !! '' if $merge;
 
-                $out and $proc.stdout(:bin($out eq 'bin')).tap: $out-res ~= *;
-                $err and $proc.stderr(:bin($err eq 'bin')).tap: $err-res ~= *;
-                if $merge {
-                    $proc.stdout(:bin($out eq 'bin')).tap: $mer-res ~= *;
-                    $proc.stderr(:bin($err eq 'bin')).tap: $mer-res ~= *;
-                }
+              $out and $proc.stdout(:bin($out eq 'bin')).tap: $out-res ~= *;
+              $err and $proc.stderr(:bin($err eq 'bin')).tap: $err-res ~= *;
+              if $merge {
+                  $proc.stdout(:bin($out eq 'bin')).tap: $mer-res ~= *;
+                  $proc.stderr(:bin($err eq 'bin')).tap: $mer-res ~= *;
+              }
 
-                my Promise:D $prom   = $proc.start;
-                my Bool:D    $killed = False;
-                $timeout.DEFINITE and $proc.ready.then: {
-                    Promise.in($timeout).then: {
-                        $killed = True;
-                        $proc.kill: SIGTERM;
-                        Promise.in(1).then: {$prom or $proc.kill: SIGSEGV}
-                    }
-                }
+              my Promise:D $prom   = $proc.start;
+              my Bool:D    $killed = False;
+              $timeout.DEFINITE and $proc.ready.then: {
+                  Promise.in($timeout).then: {
+                      $killed = True;
+                      $proc.kill: SIGTERM;
+                      Promise.in(1).then: {$prom or $proc.kill: SIGSEGV}
+                  }
+              }
 
-                with $in {
-                    try await $in ~~ Blob ?? $proc.write:  $in
-                                          !! $proc.print: ~$in;
-                    $proc.close-stdin;
-                }
+              with $in {
+                  try await $in ~~ Blob ?? $proc.write:  $in
+                                        !! $proc.print: ~$in;
+                  $proc.close-stdin;
+              }
 
-                my $proc-obj = await $prom;
-                class Res {
-                    has Stringy $.out      is required;
-                    has Stringy $.err      is required;
-                    has Stringy $.merged   is required;
-                    has Int:D   $.exitcode is required;
-                    has Mu      $.tag      is required;
-                    has Bool:D  $.killed   is required;
-                }.new: :err($err-res), :out($out-res), :merged($mer-res),
-                       :$tag,          :$killed,
-                       :exitcode($proc-obj.exitcode)
-            }
-        }
+              my $proc-obj = await $prom;
 
-        while @results {
-            await Promise.anyof: @results;
-            my @ready = @results.grep: *.so;
-            @results .= grep: none @ready;
-            $c.send: .status ~~ Kept ?? .result !! .cause for @ready;
-        }
-      }
-      $c.close;
-    }
+              $c.send: class Res {
+                  has Stringy $.out      is required;
+                  has Stringy $.err      is required;
+                  has Stringy $.merged   is required;
+                  has Int:D   $.exitcode is required;
+                  has Mu      $.tag      is required;
+                  has Bool:D  $.killed   is required;
+              }.new: :err($err-res), :out($out-res), :merged($mer-res),
+                     :$tag,          :$killed,
+                     :exitcode($proc-obj.exitcode)
+          }
+    }).then: {$c.close};
     $c
 }
