@@ -101,7 +101,7 @@ class LibYAML::Emitter {
         self.emit-event;
     }
 
-    method document-start-event(Bool $implicit) {
+    method document-start-event(Bool :$implicit) {
         $!event.document-start-event(
             LibYAML::version-directive,
             LibYAML::tag-directive,
@@ -111,7 +111,7 @@ class LibYAML::Emitter {
         self.emit-event;
     }
 
-    method document-end-event(Bool $implicit) {
+    method document-end-event(Bool :$implicit) {
         $!event.document-end-event($implicit);
         #$!event.document-end-event(not $!footer);
         self.emit-event;
@@ -126,13 +126,17 @@ class LibYAML::Emitter {
         any => YAML_ANY_SCALAR_STYLE,
     );
 
-    method scalar-event(Str $anchor, Str $tag, Str $value, Str $sstyle) {
-        my $style = %styles{ $sstyle };
+    method scalar-event(Str:D :$value, Str :$anchor, Str :$tag, Str :$style) {
+        my $style_constant = %styles{ $style };
         if (defined $tag) {
-            $!event.scalar-event($anchor, $tag, $value, False, False, $style);
+            $!event.scalar-event(
+                $anchor, $tag, $value, False, False, $style_constant
+            );
         }
         else {
-            $!event.scalar-event($anchor, $tag, $value, True, True, $style);
+            $!event.scalar-event(
+                $anchor, $tag, $value, True, True, $style_constant
+            );
         }
         self.emit-event;
     }
@@ -141,7 +145,7 @@ class LibYAML::Emitter {
         self.emit-alias($alias);
     }
 
-    method mapping-start-event(Str $anchor, Str $tag) {
+    method mapping-start-event(Str :$anchor, Str :$tag) {
         $!event.mapping-start-event($anchor, $tag, False, $!mapping-style);
         self.emit-event;
     }
@@ -151,7 +155,7 @@ class LibYAML::Emitter {
         self.emit-event;
     }
 
-    method sequence-start-event(Str $anchor, Str $tag) {
+    method sequence-start-event(Str :$anchor, Str :$tag) {
         $!event.sequence-start-event($anchor, $tag, False, $!sequence-style);
         self.emit-event;
     }
