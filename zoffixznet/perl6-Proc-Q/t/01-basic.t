@@ -62,7 +62,7 @@ my @exp =
     ${:err("y\n"), :exitcode(0), :killed, :merged($(("y", "yY"))), :out("yY\n"), :tag("tagy")},
     ${:err("z\n"), :exitcode(0), :killed, :merged($(("z", "zZ"))), :out("zZ\n"), :tag("tagz")};
 
-notice 'These tests are a bit wobbly. If testing fails, try to re-try.';
+notice 'These tests are a bit wobbly, especially on slow boxes. If testing fails, try to re-try.';
 for @res.keys {
     # Possible bug in Rakudo; merged key sometimes is missing one of the streams
     @res[$_]<merged>:delete;
