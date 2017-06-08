@@ -1,8 +1,12 @@
 {
     "perl"        : "6.*",
     "name"        : "Digest::xxHash",
-    "version"     : "*",
-    "authors"     : [ "Bartłomiej Palmowski", "Andy Weidenbaum" ],
+    "version"     : "1.0.0",
+    "authors"     : [
+        "Bartłomiej Palmowski",
+        "Andy Weidenbaum",
+        "Steve Schulze (thundergnat)"
+    ],
     "description" : "xxHash bindings for Perl6",
     "license"     : "Unlicense",
     "source-type" : "git",
