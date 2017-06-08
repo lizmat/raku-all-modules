@@ -13,7 +13,7 @@
   ],
   "auth": "github:jonathanstowe",
   "depends": [
-    
+      "File::Which"
   ],
   "tags": [
     "download",
@@ -27,10 +27,10 @@
   "provides": {
     "URI::FetchFile": "lib/URI/FetchFile.pm"
   },
-  "version": "0.0.1",
+  "version": "0.0.2",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
   ],
   "description": "retrieve a file from the internet by the best available method",
-  "meta6": "0"
+  "meta-version": "0"
 }

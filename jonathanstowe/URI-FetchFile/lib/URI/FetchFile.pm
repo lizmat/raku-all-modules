@@ -104,18 +104,18 @@ class URI::FetchFile {
         method fetch(:$uri, :$file) returns Bool {
             my Bool $rc = False;
             if $.is-available {
-	            my $res =  $.type.new.get($uri);
-	            if $res.is-success {
-		            my $out = $file.IO.open(:w);
-		            if $res.is-binary {
-			            $out.write: $res.content;
-		            }
-		            else {
-			            $out.print: $res.content;
-		            }
-		            $out.close;
+                my $res =  $.type.new.get($uri);
+                if $res.is-success {
+                    my $out = $file.IO.open(:w);
+                    if $res.is-binary {
+                        $out.write: $res.content;
+                    }
+                    else {
+                        $out.print: $res.content;
+                    }
+                    $out.close;
                     $rc = True;
-	            }
+                }
             }
             $rc;
         }
@@ -131,7 +131,7 @@ class URI::FetchFile {
 
         method executable() returns Str {
             if ! $executable.defined {
-                $executable = which($executable-name);
+                $executable = which($executable-name) // Str;
             }
             $executable;
         }

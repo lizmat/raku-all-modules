@@ -42,15 +42,10 @@ Please feel free to suggest and/or implement other mechanisms.
 
 ## Installation
 
-Assuming you have a working installation of Rakudo perl6 you cam install
-this using either ```zef``` or ```panda```:
+Assuming you have a working installation of Rakudo perl6 you can install
+this using ```zef``` : 
 
 	zef install URI::FetchFile
-
-	# or
-
-	panda install URI::FetchFile
-
 
 Other mechanisms may become available in the future.
 
@@ -60,6 +55,6 @@ Please make any reports, suggestions etc to https://github.com/jonathanstowe/URI
 
 ## Licence and Copyright
 
-© Jonathan Stowe 2016
+© Jonathan Stowe 2016, 2017
 
 This is free software please see the the [LICENCE](LICENCE) file for details.
