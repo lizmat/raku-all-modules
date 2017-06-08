@@ -2,15 +2,15 @@
 
 [![Build Status](https://travis-ci.org/tony-o/perl6-http-server-router.svg)](https://travis-ci.org/tony-o/perl6-http-server-router)
 
-This here module provides a routing system for use with ```HTTP::Server::Threaded```.  It can accept named parameters (currently no restraints on what the parameter is), and hard typed paths.  Check out below for examples and usage.
+This here module provides a routing system for use with ```HTTP::Server::Async```.  It can accept named parameters (currently no restraints on what the parameter is), and hard typed paths.  Check out below for examples and usage.
 
 ## Usage
 
 ```perl6
-use HTTP::Server::Threaded;
+use HTTP::Server::Async;
 use HTTP::Server::Router;
 
-my HTTP::Server::Threaded $server .=new;
+my HTTP::Server::Async $server .=new;
 
 serve $server;
 
