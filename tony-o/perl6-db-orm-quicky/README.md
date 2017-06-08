@@ -1,22 +1,22 @@
-#Quicky ORM
+# Quicky ORM
 
 What is it?  It's a lazy ORM that I threw together because I end up prototyping a lot of things before building them out with proper schemas.  So, it's meant for lazy column typing and minimal code from the user side.
 
-##How it works
+## How it works
 
 The DB::ORM::Quicky::Model (you'll never have to instantiate this object) degrades column types in the order of Int, Num, Str to whatever an equivalent type is in the selected DB.  Essentially to `integer`, `float`, `varchar` columns.  `varchar` type columns auto resize if the width isn't great enough to hold the requested value.
 
 The model also tracks what columns were changed and *only* updates those fields.
 
 
-##Example - CRUD (Create Read Update Delete)
+## Example - CRUD (Create Read Update Delete)
 
 For the examples, I'll use SQLite and keep comments to a minimum.
 
-###Depends
+### Depends
 [DBIish](https://github.com/perl6/DBIish/)
 
-###[C]rud
+### [C]rud
 
 ```perl6
 use DB::ORM::Quicky;
@@ -30,11 +30,11 @@ $orm.connect(
   )
 );
 
-#the `users` table does NOT exist yet.
+# the `users` table does NOT exist yet.
 my $newuser = $orm.create('users'); #this is creating a new 'row', not necessarily a new table 
 
-#the `users` table exists with no columns or just a `DBORMID` 
-#  column (only in SQLite) yet.
+# the `users` table exists with no columns or just a `DBORMID` 
+#   column (only in SQLite) yet.
 
 $newuser.set({
   username => 'tony-o',
@@ -47,7 +47,7 @@ $newuser.set({
 $newuser.save;  #at this point all required columns are checked or created
 ```
 
-###c[R]ud
+### c[R]ud
 
 ```perl6
 my $usersearch = $orm.search('users', { rating => 'lame' });
@@ -59,7 +59,7 @@ for $usersearch.next -> $user { ... }
 "User count: {$usersearch.count}".say;
 ```
 
-###cr[U]d
+### cr[U]d
 
 ```perl6
 for $usersearch.next -> $user { 
@@ -70,13 +70,13 @@ for $usersearch.next -> $user {
 }
 ```
 
-###cru[D]
+### cru[D]
 
 ```perl6
 $orm.search('users', { }).delete; #delete all of our users
 ```
 
-##More "Advanced" Querying
+## More "Advanced" Querying
 
 The ORM can take a lot of different types of values.  The usual example by code follows:
 
@@ -95,24 +95,24 @@ $orm.search('table', {
     ]
   ]
 });
-# SELECT * FROM table WHERE 
-#      (username = 'user1' or username = 'user2') 
-#   OR (joindate > ?)
-#   OR (rating = 'lame' and decimal < 50);
-# with ? = (time - 5000) 
+#  SELECT * FROM table WHERE 
+#       (username = 'user1' or username = 'user2') 
+#    OR (joindate > ?)
+#    OR (rating = 'lame' and decimal < 50);
+#  with ? = (time - 5000) 
 
 $orm.search('table', {
   -raw => ' strftime(\'%Y%m%d\', joindate) = strftime(\'%Y%m%d\', \'now\') ' 
 });
-# SELECT * FROM table WHERE strftime('%Y%m%d', joindate) = strftime('%Y%m%d', 'now'); 
+#  SELECT * FROM table WHERE strftime('%Y%m%d', joindate) = strftime('%Y%m%d', 'now'); 
 ```
 
-###Joining Tables
+### Joining Tables
 
 ```perl6
 my $orm = qw<initialize your orm as above>;
 
-#initialize some data
+# initialize some data
 my $user = $orm.create('user');
 $user.set('username', 'user1');
 $user.set('password', 'user1-pass!');
@@ -125,7 +125,7 @@ $profile.set('uid', $user.id);
 $profile.set('source', 'facebook');
 $profile.save;
 
-#here we'll query them as one unit
+# here we'll query them as one unit
 my @users = $orm.search('user', { #user table will be our main table
   '-join' => {
     '-table' => 'profile', #join the profile table to user
@@ -157,15 +157,15 @@ Both of those features are being worked on.
 
 
 
-##Bugs, comments, feature requests? 
+## Bugs, comments, feature requests? 
 
 Yes, there are probably bugs.  Put 'em in the github bugs area or catch me in #perl6 on freenode.
 
-##License
+## License
 
 Whatever, it's free.  Do what you want with it.
 
-######Other crap
+###### Other crap
 
 [@tony-o](https://www.gittip.com/tony-o/)
 

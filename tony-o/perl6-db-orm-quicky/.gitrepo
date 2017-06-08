@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/tony-o/perl6-db-orm-quicky.git
 	branch = master
-	commit = 3a8746b2d3f42ac020a5efbccd53e9f7c55908d9
-	parent = 0497648c2544b39b211dd4fd1812470cf8625e05
+	commit = 0faa55578cd2033801daddf00f963ec7fb3a90ce
+	parent = 71ba4c9d2a2af11c19d1f1b36cec77adfb9e09c8
 	cmdver = 0.4.0
