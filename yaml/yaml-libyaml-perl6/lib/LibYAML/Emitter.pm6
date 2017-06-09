@@ -141,8 +141,9 @@ class LibYAML::Emitter {
         self.emit-event;
     }
 
-    method alias-event(Str $alias) {
-        self.emit-alias($alias);
+    method alias-event(Str :$alias) {
+        $!event.alias-event($alias);
+        self.emit-event;
     }
 
     method mapping-start-event(Str :$anchor, Str :$tag) {

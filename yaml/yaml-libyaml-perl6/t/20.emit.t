@@ -174,7 +174,7 @@ for @tests.sort -> $test {
                 my Str $alias;
                 if ($ev ~~ m/^\*(\S+)/) {
                     $alias = $0.Str;
-                    $emitter.alias-event($alias);
+                    $emitter.alias-event(alias => $alias);
                 }
             }
         }
