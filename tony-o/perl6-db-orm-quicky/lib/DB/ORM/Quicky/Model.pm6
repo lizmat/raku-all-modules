@@ -10,8 +10,9 @@ class DB::ORM::Quicky::Model {
   has $.debug = False;
   has @.fields;
   has $!quote;
+  has $.orm;
 
-  submethod BUILD (:$!dbtype, :$!debug, :$!db, :$!table, :$!quote = '', :$skipcreate = False) {
+  submethod BUILD (:$!dbtype, :$!debug, :$!db, :$!table, :$!quote = '', :$skipcreate = False, :$!orm) {
     %!statictypes = 
         Pg => {
           In => {
@@ -77,17 +78,17 @@ class DB::ORM::Quicky::Model {
     if ! $skipcreate {
       my $sql;
       if $!dbtype eq 'Pg' && !self!pgtableexists {
-        $sql = "CREATE TABLE {self!fquote($!table)} ( DBORMID integer );"; 
+        $sql = "CREATE TABLE {self!fquote($!table)} ( {$!orm.default-id} integer );"; 
         self!do($sql) 
       }
       if $!dbtype eq 'mysql' && !so self!mysqltableexists {
-        $sql = "CREATE TABLE {self!fquote($!table)} ( {self!fquote("DBORMID")} integer );";
+        $sql = "CREATE TABLE {self!fquote($!table)} ( {self!fquote($!orm.default-id)} integer );";
         my $s = self!prepare($sql);
         $s.execute;
         $s.finish if $s.^can('finish');
       }
       if $!dbtype eq 'SQLite' && ! self!sqlitetableexists {
-        $sql = "CREATE TABLE {self!fquote($!table)} ( DBORMID integer );";
+        $sql = "CREATE TABLE {self!fquote($!table)} ( {$!orm.default-id} integer );";
         self!do($sql) 
       }
       $sql.say if $!debug && $sql;
@@ -102,7 +103,7 @@ class DB::ORM::Quicky::Model {
 
   method set(%data) {
     for %data.keys -> $k {
-      next if "$k".uc eq 'DBORMID';
+      next if "$k".uc eq $.orm.default-id;
       @!changed.push("$k");
       %!data{"$k"} = %data{$k};
     }
@@ -110,14 +111,14 @@ class DB::ORM::Quicky::Model {
   }
 
   method delete {
-    my $sql = "DELETE FROM {self!fquote($!table)} WHERE {self!fquote('DBORMID')} = ?";
+    my $sql = "DELETE FROM {self!fquote($!table)} WHERE {self!fquote($.orm.default-id)} = ?";
     my $sth = self!prepare($sql);
     $sth.execute($!id);
     $sth.finish if $sth.^can('finish');
     $sql.say if $.debug;
     $!id = -1;
     for %!data.keys -> $k {
-      next if "$k".uc eq 'DBORMID';
+      next if "$k".uc eq $.orm.default-id;
       @!changed.push("$k");
     }
   }
@@ -174,25 +175,25 @@ class DB::ORM::Quicky::Model {
     #build insert
     if !defined($!id) || $.id == -1 {
       try {
-        my $sql = "ALTER TABLE {self!fquote($!table)} ADD COLUMN {self!fquote('DBORMID')} integer;";
+        my $sql = "ALTER TABLE {self!fquote($!table)} ADD COLUMN {self!fquote($.orm.default-id)} integer;";
         $sql.say if $.debug;
         self!do($sql);
       };
-      my $idsql = "SELECT MAX({self!fquote('DBORMID')}) DBORMID FROM {self!fquote($!table)} LIMIT 1;";
+      my $idsql = "SELECT MAX({self!fquote($.orm.default-id)}) {$.orm.default-id} FROM {self!fquote($!table)} LIMIT 1;";
       my $idsth = self!prepare($idsql);
       $idsth.execute();
       $idsql.say if $.debug;
       my @a = $idsth.fetchrow_array;
       $idsth.finish if $idsth.^can('finish');
       $!id   = (@a.elems > 0 && "{@a[0] || ''}".chars > 0 ?? @a[0].Int !! 0) + 1; 
-      $idsql = "INSERT INTO {self!fquote($!table)} ({self!fquote('DBORMID')}) VALUES (?)";
+      $idsql = "INSERT INTO {self!fquote($!table)} ({self!fquote($.orm.default-id)}) VALUES (?)";
       $idsth = self!do($idsql, $!id); 
       $idsql.say if $.debug;
     }
     my @insert = map { %!data{"$_"} }, @!changed;
     my @column = map { "{self!fquote($_)}"     }, @!changed;
     #save data
-    my $sql = "UPDATE {self!fquote($!table)} SET {@column.join(' = ?, ')} = ? WHERE {self!fquote('DBORMID')} = ?;";
+    my $sql = "UPDATE {self!fquote($!table)} SET {@column.join(' = ?, ')} = ? WHERE {self!fquote($.orm.default-id)} = ?;";
     my $sth = self!prepare($sql);
     my $r   = $sth.execute(@(@insert, $!id));
     $sth.finish if $sth.^can('finish');

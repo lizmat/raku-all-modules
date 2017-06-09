@@ -3,8 +3,8 @@
 use Test;
 use DB::ORM::Quicky;
 
-my $orm = DB::ORM::Quicky.new(debug => True, config => {
-  quote => '"', 
+my $orm = DB::ORM::Quicky.new(debug => False, config => {
+  quote => '', 
 });
 
 my $optout = 0;

@@ -10,15 +10,17 @@ class DB::ORM::Quicky::Search {
   has $.debug = False;
   has $!quote = '';
   has $!cursor = 0;
+  has %.config;
+  has $.orm;
 
   method all {
     self.search;
     return Nil if $.error !~~ Any;
     my @rows;
     while my $row = $!sth.fetchrow_hashref {
-      my $n = DB::ORM::Quicky::Model.new(:$.table, :$.db, :$.dbtype, :skipcreate(True));
+      my $n = DB::ORM::Quicky::Model.new(:$.table, :$.db, :$.dbtype, :skipcreate(True), :$.orm);
       $n.set(%($row));
-      $n.id = $row<DBORMID>;
+      $n.id = $row{$.orm.default-id};
       @rows.push($n);
     }
     $.sth.finish if $.sth.^can('finish');
@@ -37,10 +39,10 @@ class DB::ORM::Quicky::Search {
     self.search(True);
     return Nil if $.error !~~ Any;
     my $row = $!sth.fetchrow_hashref;
-    my $n = DB::ORM::Quicky::Model.new(:$.table, :$.db, :$.dbtype, :skipcreate(True));
+    my $n = DB::ORM::Quicky::Model.new(:$.table, :$.db, :$.dbtype, :skipcreate(True), :$.orm);
     return Nil if %($row).keys.elems == 0;
     $n.set(%($row));
-    $n.id = $row<DBORMID>;
+    $n.id = $row{$.orm.default-id};
     $!sth.finish if $.sth.^can('finish');
     $!cursor++;
     return $n;
@@ -57,14 +59,7 @@ class DB::ORM::Quicky::Search {
     return $c;
   }
 
-  method !fquote($str) {
-    my $quote = $str.starts-with($!quote) ?? '' !! $!quote; 
-    return $quote ~ $str ~ $quote; 
-  }
-
-  method search($index? = False, $method? = 'SELECT *', @sort? = (DBORMID => 'asc',) ) {
-    $!quote = '`' if $!quote eq '' && $!dbtype eq 'mysql';
-    $!quote = '"' if $!quote eq '';
+  method search($index? = False, $method? = 'SELECT *', @sort? = ($.orm.default-id => 'asc',)) {
     my $sql = '';
     my @val;
     for %!params.keys.sort({ $^b eq '-join' && $^a ne '-join' ?? More !! $^a eq '-join' ?? Less !! $^a cmp $^b }) -> $key {
@@ -77,11 +72,11 @@ class DB::ORM::Quicky::Search {
       $sql ~= %ret<sql>;
       @val.push($_) for @(%ret<val>); 
     }
-    $sql = "$method FROM {self!fquote($.table)} $sql ";
+    $sql = "$method FROM {$.orm.quote($.table)} $sql ";
     $sql ~= "ORDER BY " if @sort.elems > 0;
     for @sort -> $pair {
-      $sql ~= "{self!fquote($pair.key)} {$pair.value}," if $pair ~~ Pair;
-      $sql ~= "{self!fquote($pair)}," if $pair !~~ Pair;
+      $sql ~= "{$.orm.quote($pair.key)} {$pair.value}," if $pair ~~ Pair;
+      $sql ~= "{$.orm.quote($pair)}," if $pair !~~ Pair;
     };
     $sql ~~ s/ ',' $ / / if @sort.elems > 0;
     if so $index {
@@ -89,7 +84,7 @@ class DB::ORM::Quicky::Search {
       $sql ~= self!mysqlcursor($!cursor) if $!dbtype eq 'mysql';
       $sql ~= self!sqlite3cursor($!cursor) if $!dbtype eq 'SQLite';
     }
-    DB::ORM::Quicky::Model.new(:$.table, :$.db, :$.dbtype);
+    DB::ORM::Quicky::Model.new(:$.table, :$.db, :$.dbtype, :$.orm);
     my $rval = False;
     try {
       $sql.say if $!debug;
@@ -137,7 +132,7 @@ class DB::ORM::Quicky::Search {
     } elsif %params{$key} ~~ Array {
       $str ~= '(';
       for @(%params{$key}) -> $v {
-        $str ~= "{self!fquote($key)} = ? OR ";
+        $str ~= "{$.orm.quote($key)} = ? OR ";
         @val.push($v);
       }
       $str ~~ s/'OR ' $/)/;
@@ -156,10 +151,10 @@ class DB::ORM::Quicky::Search {
       } elsif %params{$key} ~~ Pair && %params{$key}.key.lc eq ('-gt','-lt','-eq', '-like').any {
         my $op = %params{$key}.key.lc;
         $op = $op eq '-gt' ?? '>' !! $op eq '-lt' ?? '<' !! $op eq '-like' ?? 'like' !! '=';
-        $str ~= "{($in-join ?? self!fquote($in-join) ~ '.' !! '') ~ self!fquote($key)} $op {$in-join ?? self!fquote($!table) ~ '.' ~ self!fquote(%params{$key}.value) !! '?'}"; 
+        $str ~= "{($in-join ?? $.orm.quote($in-join) ~ '.' !! '') ~ $.orm.quote($key)} $op {$in-join ?? $.orm.quote($!table) ~ '.' ~ $.orm.quote(%params{$key}.value) !! '?'}"; 
         @val.push(%params{$key}.value) unless $in-join;
       } else { 
-        $str ~= "{($in-join ?? self!fquote($in-join) ~ '.' !! '') ~ self!fquote($key)} = {$in-join ?? self!fquote($!table) ~ '.' ~ self!fquote(%params{$key}) !! '?'} ";
+        $str ~= "{($in-join ?? $.orm.quote($in-join) ~ '.' !! '') ~ $.orm.quote($key)} = {$in-join ?? $.orm.quote($!table) ~ '.' ~ $.orm.quote(%params{$key}) !! '?'} ";
         @val.push(%params{$key}) unless $in-join;
       }
     }
