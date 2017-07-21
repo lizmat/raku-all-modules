@@ -4,7 +4,7 @@ need Spit::Exceptions;
 
 role Spit::Quote::curlies {
     token elem:curlies {
-        <?before '{'> $<block>=<.LANG('MAIN','block')>
+        {} <?before '{'>  $<block>=<.LANG('MAIN','blockish')>
         {
             my $block := $<block>.ast;
             if $block.children == 0 {
@@ -25,17 +25,28 @@ role Spit::Quote::balanced {
     }
 }
 
-role Spit::Quote::align-indent {
+role Spit::Quote::sheardoc {
+
+    token TOP(:$*opener = Nil, :$*closer!) {
+        :my $*sheardoc;
+        [
+            ||"\n"
+               #TODO: Investigate how slow this is
+            || { $*sheardoc =  $/.pos - $/.orig.substr(0,$/.pos).rindex("\n") - 1 }
+        ]
+        <quoted>
+        { make $<quoted>.ast }
+    }
 
     token elem:line-start {
         <?after \n>
         [
-            || <!{$*align-indent.defined}>
+            || <!{$*sheardoc.defined}>
                 (\h*)
-                { $*align-indent = $/[0].Str.chars }
+                { $*sheardoc = $/[0].Str.chars }
             ||
-            <?{ $*align-indent > 0}>
-            \h ** { 1..$*align-indent }
+            <?{ $*sheardoc > 0}>
+            \h ** { 1..$*sheardoc }
         ]
         { $/.make('') }
     }
@@ -43,7 +54,6 @@ role Spit::Quote::align-indent {
 
 grammar Spit::Quote is Spit::Lang {
     token TOP(:$*opener = Nil,:$*closer!) {
-        :my $*align-indent;
         <quoted>
     }
 
@@ -56,7 +66,7 @@ grammar Spit::Quote is Spit::Lang {
     method get-tweak($_){
         when 'curlies' { Spit::Quote::curlies }
         when 'balanced' { Spit::Quote::balanced }
-        when 'align-indent' { Spit::Quote::align-indent }
+        when 'shear' { Spit::Quote::sheardoc }
     }
 }
 
@@ -102,7 +112,7 @@ class Spit::Quote::q-Actions is Spit::Quote::Actions {
     }
 
     method elem:sym<§> ($/) {
-        make SAST::Var.new(name => '*sed-delimiter', sigil => '$');
+        make SAST::Var.new(name => ':sed-delimiter', sigil => '$');
     }
 }
 
@@ -129,8 +139,10 @@ class Spit::Quote::qq-Actions is Spit::Quote::Actions {
     method backslash:sym<a>($/) { make "\a" }
     method backslash:sym<b>($/) { make "\b" }
     method backslash:sym<c>($/) {
-        make parse-names((my $match = $<unicode-name>).Str) ||
+        my $str = parse-names((my $match = $<unicode-name>).Str) ||
             SX.new(message => "Unrecognised unicode name '{$match.Str}'",:$match).throw;
+        my @chars = $str.comb;
+        make $@chars.map({ $_ ~= " " if .uniprops eq 'So'}).join;
     }
     method backslash:sym<f>($/) { make "\f" }
     method backslash:sym<n>($/) { make "\n" }
@@ -140,7 +152,7 @@ class Spit::Quote::qq-Actions is Spit::Quote::Actions {
     method backslash:literal ($/) { make $/.Str }
     method elem:escaped ($/) { make $<backslash>.ast }
     method elem:sym<§> ($/) {
-        make SAST::Var.new(name => '*sed-delimiter', sigil => '$');
+        make SAST::Var.new(name => ':sed-delimiter', sigil => '$');
     }
     method elem:sigily ($/)  { make $<spit-sigily>.ast }
 }

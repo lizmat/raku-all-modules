@@ -1,6 +1,6 @@
 use Test;
 
-plan 27;
+plan 26;
 
 {
     class Foo {
@@ -16,7 +16,7 @@ plan 27;
     is Bar
        .doit(),"bar", 'method call with \n before the dot';
     is Bar.
-       doit(),"bar", 'method call with \n after teh dot';
+       doit(),"bar", 'method call with \n after the dot';
 }
 
 
@@ -103,21 +103,6 @@ plan 27;
 
     is HasSlurpy<one>.slurpy2("two", "three"), <$self=one $a=two @a=three>,
       'non-static method ($a, *@a) 2 args';
-}
-
-{
-    class Piping-Methods {
-
-        method one~ is no-inline{
-            $self.${cat}
-        }
-        method two~ is no-inline {
-            $self.one;
-        }
-
-    }
-
-    is Piping-Methods("foo\n").two.bytes, 4, ‘piping methods shouldn't lose newline’;
 }
 
 {

@@ -48,15 +48,28 @@ method statement($/) {
     make $stmt;
 }
 
+
+# Statement modifers like:
+# say "foo:{.uc}" if $foo
+# need a lexical scope on the LHS controlled by the if statement in
+# order to make sure $_ in '{.uc}' is set to the if statement's topic.
+# Since we only find this out after the LHS expression has been parsed we
+# need to fix it up afterwards.
+sub fixup-scopes($_, :$wrong!, :$right!) {
+    when SAST::Block    { .outer = $right if .outer === $wrong }
+    when SAST::Children { .&fixup-scopes(:$wrong,:$right)  for .children }
+}
+
 method EXPR-and-mod ($/) {
     my $expr = $<EXPR>.ast;
-    my $*CURPAD = CALLERS::<$*CURPAD>;
+
+    my $CURPAD = $*CURPAD;
     my $loop;
 
     with $<statement-mod-loop> {
         $loop = .ast;
         $loop.ann<statement-mod> = True;
-        $loop.block = SAST::Block.new(outer => $*CURPAD);
+        $loop.block = SAST::Block.new(outer => $CURPAD);
     }
 
     with $<statement-mod-cond> {
@@ -64,13 +77,17 @@ method EXPR-and-mod ($/) {
         $cond.ann<statement-mod> = True;
         if $loop {
             $cond.then = SAST::Block.new($expr,outer => $loop.block);
+            fixup-scopes  $expr, wrong => $CURPAD, right => $cond.then;
+            fixup-scopes  $cond, wrong => $CURPAD, right => $loop.block;
             $loop.block.push($cond);
             $expr = $loop;
         } else {
-            $cond.then = SAST::Block.new($expr,outer => $*CURPAD);
+            $cond.then = SAST::Block.new($expr,outer => $CURPAD);
+            fixup-scopes  $expr, wrong => $CURPAD, right => $cond.then;
             $expr = $cond;
         }
     } elsif $loop {
+        fixup-scopes  $expr, wrong => $CURPAD, right => $loop.block;
         $loop.block.push($expr);
         $expr = $loop;
     }
@@ -216,19 +233,18 @@ method statement-control:sym<when> ($/) {
     my ($if,$last,$this);
     for $/[0] {
         $this = SAST::If.new(
-            cond => ($_<EXPR> andthen .ast or SAST::BVal.new(val => True,match => $_<block>)),
-            then => $_<block>.ast,
+            cond => $_<EXPR>.ast,
+            then => $_<blockish>.ast,
             :when,
         );
         $if //= $this;
         $last.else = $this if $last and $last ~~ SAST::If;
         $last = $this;
     }
-    make $if;
-}
 
-method statement-control:sym<on> ($/) {
-    make SAST::OnBlock.new: os-candidates => $<on-switch>.ast;
+    $<default> andthen $last.else = .ast;
+
+    make $if;
 }
 
 method declare-new-type($/,$name,\MetaType) {
@@ -334,6 +350,8 @@ method trait:sym<is> ($/){
         $*ROUTINE.impure = True;
     } elsif $<no-inline> {
         $*ROUTINE.no-inline = True;
+    } elsif $<logged-as> {
+        $*DECL.logged-as = $<logged-as>.ast;
     } else {
         $*CLASS.class.^add_parent($<type>.ast);
     }
@@ -389,7 +407,7 @@ method make-routine ($/,$type,:$static) {
 
 method on-switch ($/) {
     # XXX: BUG in rakudo. Value from seq disappears so assign to array first.
-    my @tmp = $/<candidates>.ast[0].map({  $_<os>.ast, $_<cmd-block>.ast }).flat;
+    my @tmp = $/<candidates>.ast[0].map({  $_<os>.ast, $_<cmd-blockish>.ast }).flat;
     make @tmp;
 }
 
@@ -537,7 +555,11 @@ method term:var ($/)   { make $<var>.ast }
 method var ($/)   {
     with $<special-var> {
         make .ast;
-    } else {
+    }
+    orwith $<option> {
+        make SAST::OptionVal.new(sigil => $<sigil>.Str, name => .<angle-quote>.ast);
+    }
+    else {
         my $name = $<name>.Str;
         if $name eq '?PID' and $<sigil> eq '$' {
             make SAST::CurrentPID.new
@@ -571,14 +593,17 @@ method circumfix:sym<( )> ($/) {
 }
 method circumfix:sym<{ }> ($/) {
     my $block = $<block>.ast;
-    make do if $block.one-stmt andthen (
-        $_ ~~ SAST::Pair and my @pairs = $_ or
+    my @pairs;
+    make do if # if it's empty, has one pair or a list of pairs then it's a json object
+      ( $block.children == 0) or
+      $block.one-stmt andthen (
+        $_ ~~ SAST::Pair and @pairs = $_ or
         (
             $_ ~~ SAST::List and
             not .children.first(* !~~ SAST::Pair) and
             @pairs = .children
         )
-    )
+      )
     {
         SAST::SubCall.new(
             name => 'j-object',
@@ -668,6 +693,10 @@ method term:topic-cast ($/) {
 }
 
 method term:statement-prefix ($/) { make $<statement-prefix>.ast }
+
+method term:sym<on> ($/) {
+    make SAST::OnBlock.new: os-candidates => $<on-switch>.ast;
+}
 
 method term:pair ($/) { make SAST::Pair.new(|$<pair>.ast) }
 
@@ -866,12 +895,20 @@ method cmd-blockoid($/) {
     }
 }
 
-method cmd-block($/)    {
+method blockish($/) {
+    make $<blockoid>.ast;
+}
+
+method cmd-blockish($/) {
     make $<cmd-blockoid>.ast;
 }
 
 method block($/)    {
-    make $<blockoid>.ast
+    make $<blockish>.ast
+}
+
+method cmd-block($/)    {
+    make $<cmd-blockish>.ast;
 }
 
 method blorst($/) {
@@ -961,13 +998,39 @@ method redirection($/) {
     );
 
     my $dst = $<dst>;
-    my $gen-dst = $dst<null>
-    ?? { $*SETTING.lookup(SCALAR,'*NULL').gen-reference(match => $dst<null>)  }
-    !! $dst<cap>
-    ?? { $*SETTING.lookup(SCALAR,'?CAP').gen-reference(match => $dst<cap>)    }
-    !! $dst<err>
-    ?? { $*SETTING.lookup(SCALAR,'*ERR').gen-reference(match => $dst<err>) }
-    !! { $dst<fd>.ast.deep-clone };
+
+    my @log-levels = do with $dst<log> {
+        #  >info/warn results in <log-level>, <err-log-level>
+        # *>info results in <log-level>, <log-level>
+        if .<err-log-level> {
+            @src-fd.push(make-fd(2));
+            .<log-level>, (.<err-log-level> ?? .<err-log-level> !! .<log-level>);
+        } else {
+            .<log-level>, .<log-level>;
+        }
+    };
+
+    my $gen-dst =
+       $dst<null>   ?? { $*SETTING.lookup(SCALAR,':NULL').gen-reference(match => $dst<null>)  }
+       !! $dst<cap> ?? { $*SETTING.lookup(SCALAR,'?CAP').gen-reference(match => $dst<cap>) }
+       !! $dst<err> ?? { $*SETTING.lookup(SCALAR,':ERR').gen-reference(match => $dst<err>) }
+                       # only clone on the second invocation if any
+       !! $dst<fd>  ?? { $++ ?? $dst<fd>.ast !! $dst<fd>.ast.deep-clone }
+       !! {
+           my $log   = $dst<log>;
+
+           my $level = @log-levels[$++].ast; # get the next log level
+           my $path = $log<empty-path> ??
+             $*SETTING.lookup(SCALAR, ':log-default-path').gen-reference(match => $log<empty-path>)
+             !! (
+               $log<symbol-path> andthen SAST::SVal.new(val => "$_ ")
+               or
+               $log<literal-path> andthen SAST::SVal.new(val => .Str)
+               or
+               $log<path> andthen ($++ ?? .ast !! .ast.deep-clone);
+             );
+           SAST::OutputToLog.new(:$path, :$level);
+       }
 
     my (@write,@append,@in);
     for @src-fd -> $src-fd {
@@ -980,6 +1043,16 @@ method redirection($/) {
         }
     }
     make (@write,@append,@in);
+}
+
+method log-level($/) {
+    make SAST::IVal.new: val => do given $/.Str {
+        when 'fatal' { 5 }
+        when 'error' { 4 }
+        when 'warn'  { 3 }
+        when 'info'  { 2 }
+        when 'debug' { 1 }
+    };
 }
 
 sub make-quote($/) { make $<str>.ast andthen .match = $/ }

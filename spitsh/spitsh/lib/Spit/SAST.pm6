@@ -31,6 +31,7 @@ class SAST::RoutineDeclare { ... }
 class SAST::Cmd {...}
 class SAST::ACCEPTS {...}
 class SAST::Itemize {...}
+class SAST::Cast {...}
 
 role SAST::Force {...}
 
@@ -40,27 +41,20 @@ sub lookup-type($name,:@params, Match :$match) is export {
     $type;
 }
 
-sub sastify($_, :$match!) is export {
-    when Associative { .map: { .key => sastify(.value) } }
-    when Positional  { .map: &sastify }
-    when Spit::Type  { SAST::Type.new(class-type => $_,:$match) }
-    when Int         { SAST::IVal.new(val => $_,:$match) }
-    when Str         { SAST::SVal.new(val => $_,:$match) }
-    when Bool        { SAST::BVal.new(val => $_,:$match) }
-    default          { Nil }
-}
-
 role SAST is rw {
     has Match:D $.match is required is rw;
     has %.ann; # a place to put stuff that doesn't fit anywhere
     has $.stage2-done is rw;
     has $.stage3-done is rw;
+    has $.ignore-stage2 is rw;
     has $.cloned is rw;
     has Spit::Type $.ctx is rw; # The type context the object was put in in stage2
     has $.included is rw;
     has @.extra-depends;
 
     method do-stage2(Spit::Type \ctx,:$desc,|args){
+        return self if $.ignore-stage2;
+
         SX::BugTrace.new(
             desc => "do-stage2 called on {self.WHICH} twice",
             node => self,
@@ -108,6 +102,7 @@ role SAST is rw {
     method child-deps { self.depends }
     method all-depends { |@.extra-depends, |self.depends  }
     method type {...} # The type for type checking
+    method original-type { $.type } # .type before it's modified by SAST::Force
     method ostensible-type { self.type } # The the type that the thing looks like
     method deep-clone { self.clone }
     method deep-first(\needle) { self if self ~~ needle }
@@ -128,12 +123,9 @@ role SAST is rw {
             |args,
         )
     }
-    method is-invocant {
-        self ~~ SAST::Var
-        && (my $d := self.declaration) ~~ SAST::Invocant
-        && $d
-        || Nil;
-    }
+    # return $self SAST::Invocant if this is it
+    method is-self { Nil }
+
     method uses-Str-Bool {
         self.type.^find-spit-method('Bool') === tStr.^find-spit-method('Bool');
     }
@@ -159,8 +151,9 @@ role SAST is rw {
 
     method force($type, $itemize) {
         self does SAST::Force unless self ~~ SAST::Force;
-        self.type = $type;
-        self.itemize = $itemize;
+        $.original-type = $.type;
+        $.type = $type;
+        $.itemize = $itemize;
         self;
     }
 }
@@ -168,6 +161,12 @@ role SAST is rw {
 my role SAST::Force {
     has $.type is rw;
     has $.itemize is rw;
+    has $.original-type is rw;
+}
+
+role SAST::Noisy {
+    has $.null is rw;
+    method silence-condition {...}
 }
 
 role SAST::Assignable {
@@ -197,6 +196,10 @@ sub coerce(SAST:D $node, Spit::Type $target, :$desc) {
                 name => $target-prim.^name,
                 $node,
             );
+            # since we are wrapping it in a coercer method, the context the original
+            # node was in is no longer informative. Reset it so things don't get
+            # confused later on.
+            $node.ctx = $node.type;
             $call.set-declaration($meth);
             return $call.do-stage2($target-prim,:$desc);
         }
@@ -310,6 +313,7 @@ class SAST::CompUnit is SAST::Children {
     has @.phasers;
     has @.exported;
     has $.name is required;
+    has tOS $.composed-for is rw;
 
     method do-stage2 {
         my $*CU = self;
@@ -368,13 +372,17 @@ class SAST::Var is SAST::Children does SAST::Assignable {
         $!declaration //= $*CURPAD.lookup(self.symbol-type,$!name,:$.match);
     }
 
+    method is-self {
+        $!declaration ~~ SAST::Invocant ?? $!declaration !! Nil;
+    }
+
     method type { self.declaration.type }
 
     method children { list $.assign // Empty  }
 
     method depends { $.declaration, }
 
-    method is-option  { $!name.starts-with('*') }
+    method is-option  { $!name.starts-with(':') }
 
     method gen-reference(:$match!,|c){
         SAST::Var.new(:$.name,:$.sigil,:$match,:$.declaration,|c);
@@ -383,21 +391,27 @@ class SAST::Var is SAST::Children does SAST::Assignable {
     method desc { "Assignment to $.spit-gist" }
 
     method itemize { itemize-from-sigil($!sigil) }
+    method bare-name  { $.name.subst(/^<[:?]>/,'') }
 }
 
 class SAST::VarDecl is SAST::Var does SAST::Declarable is rw {
     has Spit::Type $.type;
     has Spit::Type $.decl-type;
     has $.dont-depend is rw;
+    has SAST $.logged-as;
 
     method stage2(SAST::VarDecl:D: $ctx) is default {
         figure-out-var-type($.sigil, $!type, $!decl-type, :$.assign, :$.desc);
+        $!logged-as andthen $_ .= do-stage2(tStr);
         self;
     }
-    method bare-name  { $.name.subst(/^<[*?]>/,'') }
+
+    method children { ($.assign // Empty),($!logged-as // Empty) }
+
     method dont-depend is rw { $!dont-depend }
     method depends { Empty }
     method declaration { self }
+    method bare-name { self.SAST::Var::bare-name }
 }
 
 class SAST::EnvDecl is SAST::VarDecl { }
@@ -432,6 +446,7 @@ class SAST::ConstantDecl is SAST::VarDecl {
 
 class SAST::Stmts is SAST::MutableChildren does SAST::Dependable {
     has Bool:D $.auto-inline is rw = True;
+    has $!type;
 
     method stage2($ctx,:$desc,:$loop,:$!auto-inline = True) is default {
         my $last-stmt := self.last-stmt;
@@ -444,6 +459,8 @@ class SAST::Stmts is SAST::MutableChildren does SAST::Dependable {
             }
             $last-stmt .= do-stage2($ctx,:desc<return value of block>);
         }
+
+        $!type = (self.returns andthen .type or tAny);
         self;
     }
 
@@ -469,13 +486,7 @@ class SAST::Stmts is SAST::MutableChildren does SAST::Dependable {
         }
     }
 
-    method type {
-        if self.returns -> $_ {
-            .type
-        } else {
-            tAny;
-        }
-    }
+    method type { $!type }
 
     method itemize { self.last-stmt  andthen .itemize or False }
 }
@@ -563,7 +574,26 @@ class SAST::Elem is SAST::MutableChildren does SAST::Assignable {
 
     method stage2($ctx) {
         SX::NYI.new(feature => 'element assignment modifiers',node => $_).throw with $.assign-mod;
-        my $method-end = $!index-type ~~ tInt ?? 'pos' !! 'key';
+        my $method-end = do given $!index-type {
+            when tInt {
+                $!index .= do-stage2(tStr);
+                $!index.ignore-stage2 = True;
+                given $!index.type {
+                    when tListp(tInt)  { 'list-pos' }
+                    when tInt          { 'pos' }
+                    default            {
+                        SX::TypeCheck.new(
+                            node => $!index,
+                            desc => 'List index',
+                            got => $_.^name,
+                            expected => 'Int or List[Int]',
+                        ).throw
+                    }
+                }
+            }
+            when tStr { 'key' }
+        };
+
         my $method = do if $.assign {
             SAST::MethodCall.new(
                 name => "set-$method-end",
@@ -590,13 +620,14 @@ class SAST::Elem is SAST::MutableChildren does SAST::Assignable {
     method spit-gist { $.elem-of.spit-gist ~ '[' ~ $!index.spit-gist ~ ']' }
 }
 
-class SAST::Cmd is SAST::MutableChildren is rw {
+class SAST::Cmd is SAST::MutableChildren does SAST::Noisy is rw {
     has SAST $.pipe-in;
     has SAST @.in;
     has SAST @.write;
     has SAST @.append;
     has SAST %.set-env;
-    has $.silence is rw;
+    has Spit::Type $!type;
+    has SAST $.logged-as;
 
     method stage2($ctx) is default {
         $_ .= do-stage2(tStr) for ($!pipe-in,|@.nodes,|%!set-env.values).grep(*.defined);
@@ -609,19 +640,29 @@ class SAST::Cmd is SAST::MutableChildren is rw {
             self.make-new(SX,message => ‘command can't be empty’).throw;
         }
 
-        if (my $invocant = ($!pipe-in andthen .is-invocant)) and $*no-pipe {
+        if (my $invocant = ($!pipe-in andthen .is-self)) and $*no-pipe {
             $invocant.cancel-pipe-vote;
         }
+
+        if (my $var = @.nodes[0]) ~~ SAST::Var {
+            $var.declaration.logged-as andthen $!logged-as = .deep-clone;
+        }
+        $!type = $ctx;
         self;
     }
 
     method children {
-        grep *.defined, $!pipe-in, |@.nodes, |@!in, |@!write, |@!append, |%!set-env.values;
+        grep *.defined, $!logged-as, $!pipe-in, |@.nodes, |@!in, |@!write, |@!append, |%!set-env.values;
     }
 
     method clone(|c) { callwith(|c,:@!write,:@!append,:@!in,:%!set-env) }
 
-    method type { $.ctx !=== tAny ?? $.ctx !! tStr }
+    method silence-condition {
+        $.ctx === tAny && $.original-type !=== tAny && $.original-type !=== tBool
+          && not @.write;
+    }
+
+    method type { $!type }
 }
 
 class SAST::Coerce is SAST::MutableChildren {
@@ -629,7 +670,7 @@ class SAST::Coerce is SAST::MutableChildren {
     method type { $!to }
     method stage2 ($) {
         self[0] .= do-stage2($!to);
-        self[0];
+        self.stage2-node(SAST::Cast, :$!to, self[0]);
     }
     method gist { $.node-name ~ "({$!to.name})" ~ $.gist-children }
 }
@@ -649,6 +690,7 @@ class SAST::Cast is SAST::MutableChildren {
         self;
     }
     method gist { $.node-name ~ "({$!to.name})" ~ $.gist-children }
+    method compile-time { self[0].compile-time }
 }
 
 # Negation
@@ -758,7 +800,7 @@ class SAST::SubDeclare is SAST::RoutineDeclare {
     method declarator { 'sub' }
 }
 
-class SAST::Call  is SAST::Children {
+class SAST::Call  is SAST::Children does SAST::Noisy {
     has SAST:D %.named;
     has SAST:D @.pos;
     has SAST::RoutineDeclare $.declaration is rw;
@@ -789,6 +831,10 @@ class SAST::Call  is SAST::Children {
 
     method clone(|c){ callwith(|c,:@!pos,:%!named) }
 
+    method silence-condition {
+        $.ctx === tAny && $.original-type !=== tAny && $.original-type !=== tBool
+    }
+
     method depends { $.declaration, }
 
     method signature { self.declaration.signature }
@@ -814,7 +860,7 @@ class SAST::Call  is SAST::Children {
 class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
     has $!signature;
     has $!type;
-    has $.topic;
+    has $.force-topic-first-pos;
 
     method invocant is rw { self[0] }
     method type {
@@ -834,7 +880,7 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
             SX.new(message => q|Instance method called on a type.|,:$.match).throw;
         }
 
-        if not $is-type and $*no-pipe and (my $outer-invocant = $.invocant.is-invocant) {
+        if not $is-type and $*no-pipe and (my $outer-invocant = $.invocant.is-self) {
             $outer-invocant.cancel-pipe-vote;
         }
         callsame;
@@ -845,7 +891,11 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
     }
 
     method children {
-        ($.invocant unless $.declaration.static), |@.pos, |%.named.values
+        # if asked for children before stage2 return invocant regardlress
+        ($.invocant unless $.stage2-done and $.declaration.static),
+        |@.pos,
+        |%.named.values,
+        ($.null // Empty)
     }
 
     method auto-compose-children {
@@ -855,10 +905,12 @@ class SAST::MethodCall is SAST::Call is SAST::MutableChildren {
     }
 
     method topic($self is rw:)  is rw {
-        $!topic or do if $.type ~~ tBool {
+        if $!force-topic-first-pos {
+            @.pos[0]
+        } elsif $.type ~~ tBool {
             $.invocant.topic
         } else {
-            $self;
+            $self
         }
     }
 
@@ -875,7 +927,7 @@ class SAST::SubCall is SAST::Call {
         $*CURPAD.lookup(SUB,$.name,:$.match);
     }
 
-    method children { |@.pos,|%.named.values }
+    method children { |@.pos,|%.named.values, ($.null // Empty) }
 
     method spit-gist { $.name ~ "(...)" }
 }
@@ -1234,8 +1286,8 @@ class SAST::List is SAST::MutableChildren {
 
     method compile-time {
         list do for @.children {
-            return Nil unless .compile-time.defined;
-            $_;
+            return Nil unless (my $ct = .compile-time).defined;
+            $ct;
         }
     }
     method itemize { False }
@@ -1261,6 +1313,8 @@ class SAST::IVal does SAST::CompileTimeVal {
 
 class SAST::SVal does SAST::CompileTimeVal {
     has Str:D $.val is required is rw;
+    # whether to make sure no newline is removed or added during compilation
+    has $.preserve-end is rw = True;
     method type { tStr }
 }
 
@@ -1373,10 +1427,11 @@ class SAST::While is SAST::Children {
         $!cond .= do-stage2(tBool,:desc<while conditional>);
         generate-topic-var(var => $!topic-var,:$!cond,blocks => ($!block,));
         $!block .= do-stage2($ctx,:desc<while block return value>,:loop,:!auto-inline);
+        $!type = tListp($!block.type);
         self;
     }
     method children { $!cond,$!block,($!topic-var // Empty) }
-    method type { $!type ||= tListp($!block.type) }
+    method type { $!type }
     method itemize { False }
 }
 
@@ -1434,19 +1489,20 @@ class SAST::For is SAST::Children {
                 name => '_',
                 match => $!list.match,
                 sigil => '$',
-                decl-type => $!list.elem-type,
                 :dont-depend,
             );
         }
+        $!iter-var.decl-type ||= $!list.elem-type;
         $!iter-var.do-stage2(tAny);
         $!block.declare: $!iter-var;
         my $*no-pipe = True;
         $!block .= do-stage2($ctx, :loop, :!auto-inline);
+        $!type = tListp($!block.type);
         self;
     }
 
     method children { $!list,$!block,$!iter-var }
-    method type { $!type ||= tListp($!block.type) }
+    method type { $!type }
     method itemize { False }
 }
 
@@ -1544,7 +1600,8 @@ class SAST::ACCEPTS is SAST::MutableChildren {
                 self[1],
                 name => 'ACCEPTS',
                 pos => self[0],
-                topic => self[0],
+                # Since some ACCEPTS don't return bool
+                :force-topic-first-pos,
                 :$.match,
             ).do-stage2($ctx);
         }
@@ -1608,7 +1665,12 @@ class SAST::Eval is SAST::Children   {
 
     method stage2($) {
         $!src .= do-stage2(tStr);
-        $_ .= do-stage2(tAny) for %!opts.values;
+        for %!opts.values {
+            $_ .= do-stage2: do {
+                when $_.WHAT === SAST::Type { tAny }
+                default { tStr }
+            }
+        }
         self
     }
 
@@ -1668,20 +1730,22 @@ class SAST::Case is SAST::Children is rw {
     method type { derive-common-parent (|@!blocks,$!default // Empty).map(*.type) }
 }
 
-class SAST::Quietly is SAST::Children {
+class SAST::Quietly is SAST::Children does SAST::Noisy {
     has SAST::Stmts:D $.block is required;
 
     method stage2($ctx) {
         $!block .= do-stage2($ctx,:!auto-inline);
         self;
     }
+    # always silence
+    method silence-condition { True }
 
     method type { $!block.type }
 
-    method children { $!block, }
+    method children { $!block, ($.null // Empty) }
 }
 
-class SAST::Start is SAST::Children {
+class SAST::Start is SAST::Children does SAST::Noisy {
     has SAST::Stmts:D $.block is required;
 
     method stage2($ctx) {
@@ -1689,9 +1753,13 @@ class SAST::Start is SAST::Children {
         self;
     }
 
+    # Always silence: It's necessary to close the pipe to the parent process'
+    # STDOUT when new process is forked, otherwise it might keep it open forever
+    method silence-condition { True }
+
     method type { tPID }
 
-    method children { $!block, }
+    method children { $!block, ($.null // Empty) }
 }
 
 class SAST::Doom does SAST {
@@ -1752,4 +1820,42 @@ class SAST::LastExitStatus does SAST {
 
 class SAST::CurrentPID does SAST {
     method type { tPID }
+}
+
+class SAST::OutputToLog is SAST::Children {
+    has $.path is rw;
+    has $.level is rw;
+
+    method stage2($ctx) {
+        $!level //= SAST::IVal.new(val => 3, :$.match);
+        $!level .= do-stage2(tInt);
+        $!path  andthen $_ .= do-stage2(tStr);
+        self;
+    }
+
+    method children { $!path // Empty, $!level // Empty }
+    method type { tFile }
+}
+
+class SAST::OptionVal is SAST::Children {
+    has Sigil:D $.sigil is required;
+    has SAST:D $.name is required;
+    has $.pad;
+
+    method type { type-from-sigil($!sigil) }
+
+    method stage2($) {
+        $!pad = $*CURPAD;
+        $!name .= do-stage2(tStr);
+        self;
+    }
+
+    method children { $!name, }
+}
+
+class SAST::JSON {
+    has SAST::SVal:D $.src is required;
+    has $.data is required;
+
+    method type { tJSON }
 }

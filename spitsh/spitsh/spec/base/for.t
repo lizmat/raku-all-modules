@@ -1,6 +1,6 @@
 use Test;
 
-plan 41;
+plan 45;
 
 for <one two three> {
 
@@ -166,8 +166,17 @@ is ${ printf '%s-%s-%s' ($_ for <one two three>) }, 'one-two-three',
   'for flattens in slurpy context';
 
 pass "statement-mod for $_" for ^3;
+{
+    is ($_ * 2 if $_ > 2 for 1..5), <6 8 10>, 'grep-like for loop';
 
-is ($_ * 2 if $_ > 2 for 1..5), <6 8 10>, 'grep-like for loop';
+    is ( .substr(4)  if .uc.starts-with('FOO:') for <foo:bar foo:baz bar:ber> ),
+      <BAR BAZ>, 'grep/map like for loop with topicalizable inner if statement';
+}
+
+{
+    is ("{.key}:{.value}" for one => "two", three => "four", five => "six").join(','),
+      'one:two,three:four,five:six', '"{.key}{.value}" for ...';
+}
 
 {
     my @a = <1 2 3>;
@@ -175,4 +184,12 @@ is ($_ * 2 if $_ > 2 for 1..5), <6 8 10>, 'grep-like for loop';
     # This checks that a List[Int] doesn't get coerced to an Int
     # in List[Int] context
     is @b, <0 1 2 3 1 1 2 3 2 1 2 3>, 'for in List[Int] context';
+}
+
+{
+    my Int @a = 1;
+    for @a -> $i {
+        ok $i ~~ Int, 'iterating over List[Int] gives a -> $iterator element type Int';
+        ok $i == 1,   'can use -> $iterator variable as a Int while iterating over List[Int]';
+    }
 }

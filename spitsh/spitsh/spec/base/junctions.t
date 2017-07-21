@@ -1,6 +1,6 @@
 use Test;
 
-plan 139;
+plan 141;
 
 my $true = True;
 my $false = False;
@@ -44,6 +44,11 @@ my $false = False;
     my $canary = False;
     ${true} and ${true} and $canary = True;
     ok $canary, '${true} and ${true} and... in Any ctx';
+}
+
+{
+    is ($true && "foo bar"), 'foo bar', '$true && "string with spaces"';
+    is ($false || "foo bar"), 'foo bar', '$false || "string wit spaces"';
 }
 
 {
@@ -167,7 +172,7 @@ my $false = False;
     class C is A { }
     # Need to put ~ in front because in Any context I'm not
     # sure what a junction should return yet
-    is (~($true && B<foo> || C<foo>)).WHAT,'A','junction.WHAT returns common parent';
+    is (my $junct = ($true && B<foo> || C<foo>)).WHAT,'A','junction.WHAT returns common parent';
 }
 
 {

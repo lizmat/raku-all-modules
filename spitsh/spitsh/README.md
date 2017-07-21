@@ -1,13 +1,14 @@
 # 👻 Spook in the Shell 👻 (Spit-sh) [![Build Status](https://travis-ci.org/spitsh/spitsh.svg?branch=master)](https://travis-ci.org/spitsh/spitsh)
 
 **Sp**ook **i**n **t**he **Sh**ell (Spit or Spit-sh), is Perl-6-like
-language and compiler for producing modular, dynamic and testable
-shell scripts. Its purpose is to specify and test configurations for
-modern UNIX-like systems. **It's very new and experimental and doesn't
-do a lot yet**.
+language that compiles into modular, dynamic and testable shell
+scripts. Its purpose is to specify and test configurations for modern
+UNIX-like systems. **It's currently pre-Alpha software - use it at
+your own risk**
 
 
-## Where it fits
+## Configuration as a Shell Script
+
 Here are a few of the goals of Spit-sh as a configurtion utility:
 
 - It shouldn't require any software on the target system other than
@@ -70,7 +71,7 @@ spit eval '.install unless Pkg<nc>; ok Cmd<nc>,"nc command exists now"' --in-doc
 Unfortunately on Debian the package is named 'netcat'. Let's deal with that:
 
 ``` perl
-# install-nc.spt
+# install-nc.sp
 constant Pkg $nc = on {
     Debian { 'netcat' }
     Any    { 'nc' } # the default
@@ -84,7 +85,7 @@ And now it should work on both the RHEL and Debian families of
 Linux distributions.
 
 ```
-spit --in-docker=debian:latest compile install-nc.spt
+spit --in-docker=debian:latest compile install-nc.sp
 ✔ - nc command exists now
 ```
 
@@ -112,12 +113,13 @@ keep compatibility with rakudo star in the future.
 ## Documentation
 
 Documentation is very much a work in progress but what exists is under: [doc/](doc).
+**DOCUMENTATION**
 
 ## Project Layout
 
 * The Perl 6 Spit compiler module is in `lib`
 * The actual Spit source code is under `resources/src`
-* The core spit modules are under `resouces/core-lib` (right now just `Test.spt`)
+* The core spit modules are under `resouces/core-lib` (right now just `Test.sp`)
 * The spec tests are in `spec`.
 
 ## Contribute

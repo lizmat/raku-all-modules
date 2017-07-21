@@ -160,24 +160,20 @@ grammar Spit::Grammar is Spit::Lang {
         <sym> <EXPR> <block>
     }
 
-    rule statement-control:sym<when> {
+    token statement-control:sym<when> {
+        # When statements are chained together and then
+        # compiled into a big if/elsif/else statements
         (
-            <.sym>
-            # whenver you use blocks without following it with <.eat-terminator>
-            # you have to compensate by manually setting $*ENDSTMT
-            { $*ENDSTMT = False }
+            <.ws> <.sym> <.ws>
             [
-                <EXPR> <block>
-                ||
-                <.invalid('when statement')>
+                || <EXPR> <blockish>
+                || <.invalid('when statement')>
             ]
-            |
-            'default' <block>
         )+
-    }
-
-    rule statement-control:sym<on> {
-        <on-switch>
+        [
+            || <.ws> 'default' <.ws> $<default>=<.blockish> <?ENDSTMT>
+            || <?ENDSTMT>
+        ]
     }
 
     proto token declaration {*}
@@ -197,7 +193,7 @@ grammar Spit::Grammar is Spit::Lang {
         <trait>*
         <.newpad>
         <.declare-class-params>
-        <blockoid>
+        <blockoid><?ENDSTMT>
         <.finishpad>
     }
 
@@ -209,7 +205,7 @@ grammar Spit::Grammar is Spit::Lang {
         <.attach-pre-doc>
         <.newpad>
         <.declare-class-params>
-        <blockoid>
+        <blockoid><?ENDSTMT>
         <.finishpad>
     }
 
@@ -234,6 +230,9 @@ grammar Spit::Grammar is Spit::Lang {
             |$<rw>='rw'
             |$<return-by-var>='return-by-var'
             |$<impure>='impure'
+            |'logged-as'$<logged-as>=<.wrap:'(', ')', 'logged as', token {
+               <R=.EXPR>
+            }>
             |{} <type>
         ]
     }
@@ -256,7 +255,7 @@ grammar Spit::Grammar is Spit::Lang {
         :my $*DECL;
         <.new-routine(|c)>
         <trait>*
-        [ <on-switch> || <cmd-blockoid> || <.expected("on switch or block to define routine")>]
+        [ <on-switch> || <cmd-blockoid><?ENDSTMT> || <.expected("on switch or block to define routine")>]
         <.finishpad>
     }
 
@@ -289,11 +288,10 @@ grammar Spit::Grammar is Spit::Lang {
             (
                 <!before '}'>
                 [<os> || <.expected('OS name')> ]
-                [<cmd-block> || <.expected("A block for { $<os>.Str }")>]
-                { $*ENDSTMT = False }
+                [<cmd-blockish> || <.expected("A block for { $<os>.Str }")>]
             )*
         }>
-        <.ENDSTMT>
+        <?ENDSTMT>
     }
 
     rule declaration:var {
@@ -385,6 +383,7 @@ grammar Spit::Grammar is Spit::Lang {
                 |$<name>='~' <?{ $<sigil>.Str eq '$' }>
               ]
             | <?after '$'> <special-var>
+            | $<option>=(':' <angle-quote>)
         ]
     }
 
@@ -392,7 +391,7 @@ grammar Spit::Grammar is Spit::Lang {
     token special-var:sym<?> { <sym> }
 
     proto token twigil {*}
-    token twigil:sym<*> { <sym> }
+    token twigil:sym<:> { <sym> }
     token twigil:sym<?> { <sym> }
 
     token term:circumfix { <circumfix> }
@@ -483,6 +482,10 @@ grammar Spit::Grammar is Spit::Lang {
     }
     token term:statement-prefix { <statement-prefix> }
 
+    token term:sym<on> {
+        <on-switch>
+    }
+
     proto token eq-infix {*}
 
     token eq-infix:sym<&&> { <sym>  }
@@ -523,8 +526,8 @@ grammar Spit::Grammar is Spit::Lang {
         '.'<.ws>$<name>=<.identifier>
         [
             |':' <.ws> <args>
-            |$<args>=<.r-wrap: '(',')','method call arguments', token {
-                <R=.args>
+            |$<args>=<.wrap: '(',')','method call arguments', rule {
+                '' <R=.args>
             }>
         ]?
     }
@@ -541,7 +544,7 @@ grammar Spit::Grammar is Spit::Lang {
     token postfix:sym<[ ]> { <!after \s> <index-accessor> }
 
     token index-accessor {
-        $<EXPR>=<.wrap: '[',']','index accessor', token { <R=.EXPR> }>
+        $<EXPR>=<.wrap: '[',']','index accessor', rule { '' <R=.EXPR> }>
     }
 
     token postfix:sym<{ }> { <!after \s> <key-accessor> }
@@ -568,26 +571,40 @@ grammar Spit::Grammar is Spit::Lang {
     token sigil:sym<$> { <sym> }
     token sigil:sym<@> { <sym> }
 
-    # requires a <.newpad> before invocation
-    # and a <.finishpad> after
+    # A pure match of a block, no lexical scope is created
     token blockoid {
         $<statementlist>=<.wrap: '{','}','block', token { <R=.statementlist> }>
-        <.ENDSTMT>
     }
 
+    # A match of a blockoid or a ${...} command
     token cmd-blockoid {
-        | <cmd> <.ENDSTMT>
+        | <cmd>
         | <blockoid>
     }
 
-    token cmd-block {
-        <?[${]> <.newpad> <cmd-blockoid> <.finishpad>
-    }
-
-    token block {
+    # A block with its own lexical scope
+    token blockish {
         <?[{]> <.newpad> <blockoid> <.finishpad>
     }
 
+    # A block or command with its own lexical scope
+    token cmd-blockish {
+        <?[${]> <.newpad> <cmd-blockoid> <.finishpad>
+    }
+
+    # A match of a block or a command as a statement with its own lexical scope
+    token cmd-block {
+        <cmd-blockish>
+        <?ENDSTMT>
+    }
+
+    # A block as a statement with its own lexical scope
+    token block {
+        <blockish>
+        <?ENDSTMT>
+    }
+
+    # A block or a statement
     token blorst {
         [ <?[{]> <block> | <![;]> <statement> || <.expected: 'block or statement'> ]
     }
@@ -649,9 +666,24 @@ grammar Spit::Grammar is Spit::Lang {
             | $<null>='X'
             | $<cap>='~'
             | $<err>='!'
+            | $<log>=(
+                <log-level> ['/' $<err-log-level>=<.log-level>]?
+                [
+                    || ':' [
+                        || $<symbol-path>=<:So>
+                        || $<literal-path>=<.identifier>
+                        || <.invalid('Symbol path. Only accepts a single unicode Symbol (So) or identifier')>]
+                    || '(' $<empty-path>=\s* ')'
+                    || $<path>=<.wrap: '(', ')', 'log path', token { <R=.EXPR> }>
+                 ]?
+            )
             | {} <.ws> [$<fd>=<.cmd-term> ||
                         <.invalid('redirection right-hand-side. Try putting "(...)" around expressions')>]
         )
+    }
+
+    token log-level {
+        ['fatal'||'debug'||'info'||'warn'||'error']
     }
 
     proto token quote {*}
@@ -687,17 +719,18 @@ grammar Spit::Grammar is Spit::Lang {
     }
 
     token quote:sym<qq> {
-        <sym> » $<str>=<.balanced-quote('Quote-qq',:tweaks<curlies>)>
+        <sym> »
+        $<str>=<.balanced-quote('Quote-qq',:tweaks<curlies shear>)>
     }
 
     token quote:sym<q> {
         <sym> »
-        $<str>=<.balanced-quote('Quote-q')>
+        $<str>=<.balanced-quote('Quote-q', :tweaks<shear>)>
     }
 
     token quote:sym<Q> {
         <sym> »
-        $<str>=<.balanced-quote('Quote-Q')>
+        $<str>=<.balanced-quote('Quote-Q', :tweaks<shear>)>
     }
     # called when you know the next character is some kind of openning quote
     # but you don't know what it is yet.
@@ -706,17 +739,15 @@ grammar Spit::Grammar is Spit::Lang {
         :my $opener;
         :my @tweaks;
         [
-            |<opener>
-            |<!{$bracket-only}> $<open-and-close>=[<!before <.hyphen>|<.identifier>> .]
+            | $<opener>=($<bracket>=<.opener> [ $<repeat>=. <?{ $<repeat> eq $<bracket> }>]*)
+            |<!{$bracket-only}> $<open-and-close>=[<!before <.hyphen>|<.identifier>|\s> .]
         ]
         {
             @tweaks = .Slip with $tweaks;
             if $<opener> {
-                $opener = $<opener>.Str;
-                my $i = @brackets.first($opener,:k);
-                $closer = @brackets[$i + 1];
-                # Rakudo remove curlies if our balnced quote is actually curlies so we do too.
-                @tweaks .= grep({ $_ ne 'curlies' }) if $opener eq '{';
+                $opener = $<opener>;
+                my $i = @brackets.first($opener<bracket>.Str,:k);
+                $closer = @brackets[$i + 1] x (($opener<repeat> andthen .elems) + 1);
             } else {
                 $closer = $opener = $<open-and-close>.Str;
             }
@@ -768,7 +799,7 @@ grammar Spit::Grammar is Spit::Lang {
     }
 
     token doc-bracket {
-        <balanced-quote('Quote-q',:bracket-only,:tweaks<align-indent>)>
+        <balanced-quote('Quote-q',:bracket-only,:tweaks<shear>)>
         {
             my $match = $<balanced-quote><str>;
             $/.make: do if $<balanced-quote><opener>.Str eq '{' {

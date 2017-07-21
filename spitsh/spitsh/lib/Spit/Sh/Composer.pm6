@@ -3,9 +3,11 @@ need Spit::Exceptions;
 need Spit::Constants;
 need Spit::DependencyList;
 use Spit::Metamodel;
-need Spit::OptsParser;
 need Spit::Sh::Method-Optimizer;
-unit class Spit::Sh::Composer does Method-Optimizer;
+need Spit::Sh::Call-Inliner;
+use Spit::Sastify;
+
+unit class Spit::Sh::Composer does Method-Optimizer does Call-Inliner;
 
 
 multi reduce-block(SAST::Stmts:D $block) {
@@ -24,19 +26,58 @@ has $!deps = Spit::DependencyList.new;
 has @.scaffolding;
 has %.opts;
 has $!os;
+has $!log;
+has $!NULL;
+has $!ERR;
+has $!OUT;
 has %.clone-cache;
 has $.no-inline;
 
-method os {
-    $!os ||= do {
-        my $os-var = $*SETTING.lookup(SCALAR,'*os');
-        self.walk($os-var);
-        if (my $match = $os-var.match and  $os-var ~~ SAST::Block)
-        or ($match = $os-var.assign.match and !$os-var.assign.compile-time) {
-            SX.new(message => q<$*os definition too complex>,:$match).throw;
-        }
-        $os-var.assign.compile-time;
+# Figures out what an option is assigned to at compile time
+method compile-time-option($name) {
+    my $declaration = $*SETTING.lookup(SCALAR,":$name");
+    self.walk($declaration);
+    if # if it has been tucked
+       (my $match = $declaration.match and  $declaration ~~ SAST::Stmts)
+       # or if its assignment is not compile time
+       or ($match = $declaration.assign.match and $declaration.assign.compile-time === Nil) {
+        # we can't use it as a definition for this option
+        SX.new(message => "\$*$name definition too complex",:$match).throw;
     }
+    $declaration.assign.compile-time;
+}
+
+method os {
+    $!os ||= self.compile-time-option('os');
+}
+
+method log {
+    $!log //= self.compile-time-option('log');
+}
+
+method NULL(:$match!) {
+    $!NULL //= do {
+        my $null = $*SETTING.lookup(SCALAR,':NULL').gen-reference(:stage2-done, :$match);
+        self.walk($null);
+        $null;
+    };
+}
+
+method ERR(:$match!) {
+    $!ERR //= do {
+        my $err = $*SETTING.lookup(SCALAR,':ERR').gen-reference(:stage2-done, :$match);
+        self.walk($err);
+        $err;
+    };
+}
+
+
+method OUT(:$match!) {
+    $!OUT //= do {
+        my $out = $*SETTING.lookup(SCALAR,':OUT').gen-reference(:stage2-done, :$match);
+        self.walk($out);
+        $out;
+    };
 }
 
 method clone-node($node is rw) {
@@ -76,7 +117,9 @@ multi method walk(SAST::CompUnit:D $THIS is rw) {
     self.add-scaffolding($_) for @!scaffolding;
     my $*CU = $THIS;
     self.include($THIS);
+    self.include($_) for $THIS.phasers.values.grep(*.defined).map(*.Slip);
     $THIS.depends-on = $!deps;
+    $THIS.composed-for = $.os;
 }
 
 multi method walk(SAST::ClassDeclaration:D $THIS is rw) {
@@ -91,9 +134,61 @@ multi method walk(SAST::Cmd:D $THIS is rw) {
         }
     }
 
-    if ($THIS.pipe-in andthen .is-invocant) -> $invocant {
+    # Check log outputs
+    for $THIS.write -> $, $rhs is rw {
+        if $rhs ~~ SAST::OutputToLog {
+            my $cmd = $THIS.nodes[0];
+            my $path = $rhs.path;
+
+            if $THIS.logged-as -> $logged-as {
+                if $path {
+                    $path = $path.stage2-node(
+                        SAST::Concat,
+                        $logged-as,
+                        $path.stage3-node(SAST::SVal, val => ':'),
+                        $path
+                    );
+                    self.walk($path);
+                } else {
+                    $path = $logged-as;
+                }
+            }
+
+            if !$path.defined {
+                if $cmd ~~ SAST::Var {
+                    $path = SAST::SVal.new(val => $cmd.bare-name, match => $rhs.match);
+                }
+                elsif $cmd.compile-time {
+                    $path = $cmd;
+                }
+            }
+
+            $rhs .= stage2-node(
+                SAST::SubCall,
+                name => 'log-fifo',
+                declaration => $*SETTING.lookup(SUB,'log-fifo'),
+                pos => (
+                    $rhs.level,
+                    ($path // Empty),
+                ),
+                match => $rhs.match
+            );
+            self.walk($rhs);
+        }
+    }
+
+    if ($THIS.pipe-in andthen .is-self) -> $invocant {
         # vote to pipe the invocant
         $invocant.vote-pipe-yes;
+    }
+}
+
+multi method walk(SAST::OutputToLog:D $THIS is rw) {
+    if not $.log {
+        $THIS = do given $THIS.level.compile-time {
+            when * >= 2  { self.ERR(match => $THIS.match) }
+            default      { self.NULL(match => $THIS.match) }
+        }
     }
 }
 
@@ -187,7 +282,7 @@ multi method walk(SAST::If:D $THIS is rw,:$sub-if) {
             $THIS = $sub-if ?? $THIS.then !! reduce-block($THIS.then);
         } else {
             if $THIS.else <-> $else {
-                $THIS = $else;
+                $THIS = reduce-block($else);
                 self.walk($THIS);
             } else {
                 $THIS .= stage3-node(SAST::Empty);
@@ -249,18 +344,25 @@ multi method walk(SAST::Junction:D $THIS is rw) {
 multi method walk(SAST::Var:D $THIS is rw where { $_ !~~ SAST::VarDecl }) {
     my $decl := $THIS.declaration;
 
+    self.walk($decl);
+
+    # If the decl is a Stmts after walking it means it has been tucked
+    # inside the block
+    if $decl ~~ SAST::Stmts {
+        $THIS.extra-depends.push($decl);
+        # So we have to set it back to the right value, before going any further
+        $decl .= last-stmt;
+    }
+
     if $decl ~~ SAST::ConstantDecl {
-        self.walk($decl); # Walk the declaration early so we can inspect it for inlining
-
-        if $decl ~~ SAST::Stmts {
-            $THIS.extra-depends.push($decl);
-            $decl .= last-stmt;
+        if $decl.assign {
+            with $decl.inline-value -> $inline {
+                $THIS.switch: $inline;
+            }
+        } else {
+            # If it has no assignment just inline to False
+            $THIS.switch: SAST::BVal.new(match => $THIS.match, val => False);
         }
-
-        if $decl.inline-value -> $inline {
-            $THIS.switch: $inline;
-        }
-
     }
 
     elsif $decl ~~ SAST::MaybeReplace  {
@@ -279,14 +381,11 @@ multi method walk(SAST::Var:D $THIS is rw where { $_ !~~ SAST::VarDecl }) {
     elsif $decl ~~ SAST::Invocant  {
         # Pipe voting:
         # -------------
-        # Make sure the MethodDeclaration.invocant is cloned so we can start
-        # counting on its $.pipe-vote attribute.
-        self.walk($decl);
         # $.pipe-vote > 0 means it will get piped.
         without $decl.pipe-vote {
-            $decl.start-pipe-vote;
+            $decl.start-pipe-vote; # sets it to 1
         }
-        # If the the no vote here is balanced by a yes vote
+        # If the no vote here is balanced by a yes vote
         # then it will get piped. Any further no votes will mean
         # no piping (only the first yes vote is counted).
         $decl.vote-pipe-no;
@@ -317,20 +416,30 @@ multi method walk(SAST::Given:D $THIS is rw) {
     }
 }
 
-multi method walk(SAST::VarDecl:D $THIS is rw where *.is-option ) {
-    if %!opts{$THIS.bare-name} -> $val is copy {
-        my $outer = $THIS.declared-in;
+method get-opt-value(Str:D $name, SAST::Block:D :$outer!) is raw {
+    if %!opts{$name} -> $val is copy {
         if $val ~~ Spit::LateParse {
             $ = ?(require Spit::Compile <&compile>);
             my $cu = compile(
                 $val.val,
                 :target<stage1>,
-                :$outer,name => $val.name
+                :$outer,
+                name => "opt:$name",
             );
             my $block = $cu.block;
             $val = $block;
+        } else {
+            $val .= deep-clone;
         }
-        my $*CURPAD = $outer;
+        $val;
+    } else {
+        Nil
+    }
+}
+multi method walk(SAST::VarDecl:D $THIS is rw where *.is-option ) {
+    if self.get-opt-value($THIS.bare-name, outer => $THIS.declared-in) -> $val is raw
+    {
+        my $*CURPAD = $THIS.declared-in;
         $val .= do-stage2($THIS.type);
         self.walk($val);
         $THIS.assign = $val;
@@ -338,21 +447,34 @@ multi method walk(SAST::VarDecl:D $THIS is rw where *.is-option ) {
     callsame;
 }
 
-constant @eval-placeholders =
-"\c[
-bouquet, cherry blossom, white flower, rosette, rose, wilted flower, hibiscus,
-sunflower, blossom, tulip, kiss mark, heart with arrow, beating heart,
-broken heart, two hearts, sparkling heart, growing heart, blue heart, green heart ,
-yellow heart, purple heart, black heart, heart with ribbon, revolving hearts,
-heart decoration, love letter
-]".comb;
+multi method walk(SAST::OptionVal:D $THIS is rw) {
+    with $THIS.name.compile-time {
+        if self.get-opt-value(.Str, outer => $THIS.pad) -> $val is raw
+        {
+            my $*CURPAD = $THIS.pad;
+            $val .= do-stage2($THIS.ctx);
+            self.walk($val);
+            $THIS = $val;
+        } else {
+            $THIS .= stage3-node(SAST::Empty);
+        }
+    } else {
+        SX.new(message => ‘Option's name must be known at compile time’,
+               match => $THIS.match).throw;
+    }
+}
+
+constant @placeholders = ("\c[
+bouquet, revolving hearts,  blossom, two hearts, sunflower,growing heart,
+rose, heart with arrow, cherry blossom, beating heart, tulip,
+broken heart,  sparkling heart, hibiscus,blue heart, green heart, kiss mark,
+yellow heart, purple heart, black heart, heart with ribbon,
+heart decoration, wilted flower,love letter,rosette, white flower
+]".comb xx ∞).flat.Array;
 
 
 multi method walk(SAST::Eval:D $THIS is rw) {
     my %opts = $THIS.opts;
-    %opts<os> //= SAST::Type.new(class-type => $.os,match => $THIS.match);
-
-    my @placeholders = @eval-placeholders.pick(*);
 
     for %opts.kv -> $name, $opt is rw {
         my $ct = $opt.compile-time;
@@ -372,6 +494,9 @@ multi method walk(SAST::Eval:D $THIS is rw) {
         }
     }
 
+    # let locally defined options override the outer definitions
+    %opts = |%.opts, |%opts;
+
     $ = (require Spit::Compile <&compile>);
     my $compiled = $THIS.stage3-node(
         SAST::SVal,
@@ -382,6 +507,7 @@ multi method walk(SAST::Eval:D $THIS is rw) {
             outer => $THIS.outer,
             :one-block,
         ),
+        :!preserve-end
     );
 
     if list %opts.values.grep(SAST::EvalArg) -> @runtime-args {
@@ -457,7 +583,7 @@ multi method walk(SAST::CondReturn:D $THIS is rw) {
 
     with $THIS.Bool-call {
         self.walk(my $orig-invocant := .invocant);
-        self.walk($_, { acceptable-in-cond-return($_, $orig-invocant.identity) } );
+        self.walk($_, accept => { acceptable-in-cond-return($_, $orig-invocant.identity) } );
     }
     with ($THIS.Bool-call andthen .compile-time) {
         # We know the result of .Bool at compile time.
@@ -502,14 +628,14 @@ multi method walk(SAST::Stmts:D $THIS is rw) {
 
     $THIS .= &reduce-block if $THIS.auto-inline;
 }
-
-multi method walk(SAST::MethodCall:D $THIS is rw) {
+                                        # RAKUDOBUG: I have to put :$accept here
+multi method walk(SAST::MethodCall:D $THIS is rw, :$accept = True) {
     self.walk($THIS.declaration);
     self.method-optimize($THIS.invocant.type, $THIS, $THIS.declaration.identity)
       and callsame;
 }
 
-multi  method walk(SAST::Call:D $THIS is rw, $accept = True) {
+multi  method walk(SAST::Call:D $THIS is rw, :$accept = True) {
     my $decl := $THIS.declaration;
     self.walk($decl);
 
@@ -522,6 +648,7 @@ multi  method walk(SAST::Call:D $THIS is rw, $accept = True) {
         if $block ~~ SAST::Block and not $block.ann<cant-inline> and not $decl.no-inline {
             # only inline routines with one child for now
             if $block.one-stmt <-> $last-stmt {
+                # .inline-call is in Call-Inliner.pm6
                 if self.inline-call($THIS,$last-stmt) -> $replacement {
                     if $replacement ~~ $accept {
                         $THIS.switch: $replacement;
@@ -549,134 +676,22 @@ multi  method walk(SAST::Call:D $THIS is rw, $accept = True) {
     # When we get here all inlining and replacement is done.
     # There's no chance of it disappearing anymore so time to vote.
     if $THIS ~~ SAST::MethodCall {
-        # Is the call's invocant the $self of the method block we're in?
-        if (my $invocant = ($THIS.invocant andthen .is-invocant))
-           # AND should the method we're calling be piped to?
-           and ($THIS.declaration.invocant andthen .piped)
-        {
-            # If so, vote for piping the method we're in's $self
-            $invocant.vote-pipe-yes;
-        }
-    }
-}
 
-
-method inline-value($inner,$outer,$_ is raw) {
-
-    # if arg inside inner is a param use the corresponding arg from the original call
-    when SAST::Var {
-        my $decl := .declaration;
-        return Nil if $_ === $decl; # don't wanna inline a variable declaration
-        if $decl ~~ SAST::PosParam {
-            if $decl.slurpy {
-                with $outer.pos[$decl.ord] {
-                    .stage3-node: SAST::List, |$outer.pos[$decl.ord..*];
-                } else {
-                    $outer.stage3-node: SAST::Empty;
-                }
-            } else {
-                $outer.pos[$decl.ord];
+        # should the method we're calling be piped to?
+        if ($THIS.declaration.invocant andthen .piped) {
+            # Is the call's invocant the $self of the method block we're in?
+            if  ($THIS.invocant andthen .is-self) -> $self
+            {
+                # If so, vote for piping the method we're in's $self
+                $self.vote-pipe-yes;
             }
-        } elsif $decl ~~ SAST::NamedParam {
-            $outer.named{$decl.name} || $outer.stage3-node(SAST::BVal,val => False);
-        } elsif $decl ~~ SAST::Invocant {
-            $outer.invocant;
-        } else {
-            #XXX: A variable that isn't a param ref. Pass it through
-            # and hope that it's something from the outer lexical scope (for now).
-            $_;
+            # Are any of the args to this piped method $self?
+            elsif $THIS.deep-first(*.is-self) -> $self
+            {
+                # if so we *can't* pipe that $self
+                $self.declaration.vote-pipe-no;
+            }
         }
-    }
-    # if arg inside inner is a blessed value, try inlining the value
-    when SAST::Neg {
-        if self.inline-value($inner,$outer,.children[0]) -> $val {
-            # clone because we don't want to mutate a node from the inner call
-            my $clone = .clone;
-            $clone.children[0] = $val;
-            # Because we're changing child of node a rather than the
-            # node itself we re-walk it because with the new child
-            # further optimizations might be possible.
-            $clone.stage3-done = False;
-            self.walk($clone);
-            $clone;
-        } else {
-            Nil
-        }
-    }
-    when *.compile-time.defined {
-        $*char-count += .compile-time.chars;
-        $_;
-    }
-
-    when SAST::Concat {
-        my int $char-count = 0;
-        my @inlined = .children.map: {
-            .compile-time andthen $char-count += ($_ ~~ Bool ?? (.so ?? 1 !! 0) !! .Str.chars);
-            self.inline-value($inner,$outer,$_);
-        };
-        if @inlined.all.defined {
-            $*char-count += $char-count;
-            # clone because we don't want to mutate a node from the inner call
-            my $clone = .clone;
-            $clone.children = @inlined;
-            $clone;
-        } else {
-            Nil
-        }
-    }
-    default {
-        Nil
-    }
-}
-
-subset ChildSwapInline of SAST::Children:D
-       where SAST::Call|SAST::Cmd|SAST::Increment|SAST::Neg|SAST::Cmp|SAST::Concat;
-
-# CONSIDER:
-#   {
-#    sub foo($a) { say($a) }
-#    foo "baz";
-#   }
-# 'foo("baz")' is the $outer call, 'say($a)' is the $inner call.
-# We inline by switching the outer SAST::Call out for a modified clone of the inner SAST::Call.
-# We can do this with a bunch of other nodes as well.
-multi method inline-call(SAST::Call:D $outer,ChildSwapInline $inner) {
-    # Can't inline is rw methods yet. Probs need to redesign it before we can.
-    return if ($outer ~~ SAST::MethodCall) && $outer.declaration.rw;
-
-    # No need to deep-clone. .inline-value will opportunistically
-    # clone when necessary.
-    my $replacement = $inner.clone;
-
-    my $*char-count = 0;
-    my $max = 10; #TODO: allow customization of this
-    for $replacement.children -> $try-switch is raw {
-        if self.inline-value($replacement,$outer,$try-switch) -> $switch {
-            return if $*char-count > $max;
-            $try-switch.switch: $switch;
-        } else {
-            return
-        }
-    }
-    # Re-walk replacement. It's possible after inlining further optimizations
-    # can be done.
-    $replacement.stage3-done = False;
-    self.walk($replacement);
-    if $replacement ~~ SAST::Cmd and $outer.ctx === tAny and $outer.type ~~ tStr {
-        $replacement.silence = True;
-    }
-    $replacement;
-}
-
-multi method inline-call(SAST::Call:D $outer,SAST::CompileTimeVal:D $_) { $_ }
-
-multi method inline-call(SAST::Call:D $outer,$) { Nil }
-multi method inline-call(SAST::Call:D $outer,SAST::Var:D $inner) {
-    given $inner.declaration {
-        when SAST::Invocant   { $outer[0] }
-        when SAST::PosParam   { $outer.pos[.ord] }
-        when SAST::NamedParam { $outer.named{.name} || $outer.stage3-node(SAST::BVal, val => False) }
-        default { $inner }
     }
 }
 
@@ -708,7 +723,11 @@ multi method include(SAST:D $sast) {
 }
 
 multi method include(SAST::PhaserBlock:D $phaser-block is rw) {
-    self.include($phaser-block.block);
     $*CU.phasers[$phaser-block.stage].push($phaser-block.block);
     $phaser-block .= stage3-node(SAST::Empty,:included);
+}
+
+multi method include(SAST::Noisy:D $_) is default {
+    .null = self.NULL(match => .match) if .silence-condition;
+    callsame;
 }
