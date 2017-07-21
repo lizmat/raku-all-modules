@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/0racle/p6-Net-Netmask.git
 	branch = master
-	commit = f0799096fbd51d95ba5ede83b1848681e9e073e8
-	parent = 02772ccb39cdf68f2ab839e9bd597a05a9b97cc0
+	commit = 4bd20b9e62f7ebc1241cb94307d2d193d083bfa5
+	parent = a2ebc45c27c194db4af778556bc3a301e816c477
 	cmdver = 0.4.0

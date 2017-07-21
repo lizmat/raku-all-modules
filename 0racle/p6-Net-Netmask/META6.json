@@ -1,6 +1,6 @@
 {
    "name" : "Net::Netmask",
-   "version" : "0.1.0",
+   "version" : "0.1.1",
    "description" : "Parse, manipulate and lookup IP network blocks",
    "perl" : "6.c",
    "authors" : [ "Joshua Yeshouroun" ],

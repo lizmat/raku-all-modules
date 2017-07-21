@@ -352,8 +352,8 @@ class Net::Netmask {
     our token cidr    { (\d+) <?{ $0 <=  32 }>  }
     our token octet   { (\d+) <?{ $0 <= 255 }>  }
     our regex address { <octet> ** 4 % '.'      }
-    our subset IPv4 of Str where /<address>/;
-    our subset CIDR of Str where /<address> '/' <cidr>/;
+    our subset IPv4 of Str where / ^ <address> $ /;
+    our subset CIDR of Str where / ^ <address> '/' <cidr> $ /;
 
     multi method new($address, $netmask) {
         self.bless(:$address :$netmask);
