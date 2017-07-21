@@ -1,7 +1,7 @@
 # JSON::Tiny is used to render basic stuff like hashes.
 use JSON::Tiny;
 
-role AsIf::Perl;
+unit role AsIf::Perl;
 
 # Tries to interpret the thing you're doing as a JSON object string.
 # Obviously this won't work if it's not one, so don't do that.

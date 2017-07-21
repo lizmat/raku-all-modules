@@ -1,7 +1,7 @@
 # JSON::Tiny is used to render basic stuff like hashes.
 use JSON::Tiny;
 
-role AsIf::JSON;
+unit role AsIf::JSON;
 
 # For reasons I don't quite understand, this has to be separated out into
 # it's own sub right now.  I'd probably really just fold it into Str.

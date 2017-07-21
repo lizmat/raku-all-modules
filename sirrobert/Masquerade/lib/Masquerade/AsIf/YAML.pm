@@ -1,5 +1,5 @@
 
-role AsIf::YAML;
+unit role AsIf::YAML;
 
 ##
 # This helper sub renders class-based objects as JSON.  Objects are treated

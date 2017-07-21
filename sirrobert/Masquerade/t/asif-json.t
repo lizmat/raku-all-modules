@@ -10,8 +10,10 @@ my $expected;
 
 # A utility sub to test.  Pass in the object, expected result, and test
 # description to run the test.
+use JSON::Tiny;
 sub test_json ($obj, Str $expected, Str $explanation) {
-  ok ($obj but AsIf::JSON eq $expected), $explanation;
+  my $obj-asif-json = $obj but AsIf::JSON;
+  is from-json($obj-asif-json.Str).perl, from-json($expected).perl, $explanation;
 }
 
 #####
