@@ -1,0 +1,23 @@
+{ 
+    "perl": "6.*",
+    "name" : "Time::Duration::Parser", 
+    "version" : "0.0.2", 
+    "auth": "github:perlpilot",
+    "license" : "Artistic-2.0",
+    "description" : "Parse duration strings into seconds", 
+    "tags" : [ "Time", "Parser" ],
+    "depends" : [ ], 
+    "test-depends" : [ ], 
+    "provides" : { 
+        "Time::Duration::Parser"    : "lib/Time/Duration/Parser.pm6"
+    },
+    "source-type" : "git",
+    "source-url" : "https://github.com/perlpilot/p6-Time-Duration-Parser.git",
+    "support": {
+        "source": "https://github.com/perlpilot/p6-Time-Duration-Parser.git",
+        "bugtracker" : "https://github.com/perlpilot/p6-Time-Duration-Parser/issues"
+    },
+    "authors"       : [
+        "Jonathan Scott Duff <duff@pobox.com>"
+    ]
+}

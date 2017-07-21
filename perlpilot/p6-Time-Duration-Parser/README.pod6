@@ -1,0 +1,27 @@
+=begin pod
+=NAME Time::Duration::Parser
+=begin SYNOPSIS
+
+use Time::Duration::Parser;
+
+my $time-string = "5 days 4 hours 52 minutes 3 seconds";
+my $s = duration-to-seconds($time-string);
+say "$time-string -> $s seconds";
+
+=end SYNOPSIS
+
+=begin DESCRIPTION
+
+This module exports a single subroutine C<duration-to-seconds> that
+turns a string like "3 days 29 minutes" into a number of seconds.
+
+Note, for B<months> and B<years> the values are approximated as 30 days
+and 365 days respectively.
+
+
+=end DESCRIPTION
+
+=AUTHOR Jonathan Scott Duff <duff@pobox.com>
+
+=end pod
+

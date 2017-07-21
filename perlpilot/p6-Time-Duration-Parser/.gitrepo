@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/perlpilot/p6-Time-Duration-Parser.git
+	branch = master
+	commit = f0e3f6f4f793ffc7715cb393aa6d5263833c7c6d
+	parent = 7d40ea71932f3d2501fa8b1118ff27a5abea53d4
+	cmdver = 0.4.0
