@@ -1,92 +1,90 @@
-unit module Math::Trig:ver<0.01>;
-
-constant two-pi = pi * 2;
+unit module Math::Trig:ver<0.02>;
 
 sub rad2rad ($rad)  is export 
 {
-    return $rad % two-pi;
+    $rad % tau;
 }
 
 sub deg2deg ($deg) is export
 {
-    return $deg % 360;
+    $deg % 360;
 }
 
 sub grad2grad ($grad) is export 
 {
-    return $grad % 400;
+    $grad % 400;
 }
 
 sub rad2deg ($rad) is export
 {
-    return $rad * 180 / pi;
+    $rad * 180 / pi;
 }
 
 sub deg2rad ($deg) is export
 {
-    return $deg * pi / 180;
+    $deg * pi / 180;
 }
 
 sub grad2deg ($grad) is export
 {
-    return 360 / 400 * $grad;
+    360 / 400 * $grad;
 }
 
 sub deg2grad ($deg) is export
 {
-    return 400 / 360 * $deg;
+    400 / 360 * $deg;
 }
 
 sub rad2grad ($rad) is export
 {
-    return 400 / two-pi * $rad;
+    400 / tau * $rad;
 }
 
 sub grad2rad ($grad) is export 
 {
-    return two-pi / 400 * $grad;
+    tau / 400 * $grad;
 }
 
 sub cartesian-to-spherical($x,$y,$z) is export(:radial)
 {
     my $rho = sqrt($x*$x + $y*$y + $z*$z);
-    return $rho, atan2($y, $x), acos($z / $rho);
+    $rho, atan2($y, $x), acos($z / $rho);
 }
 
 sub spherical-to-cartesian($rho, $theta, $phi) is export(:radial)
 {
-    return ( $rho * cos( $theta ) * sin( $phi ),
-             $rho * sin( $theta ) * sin( $phi ),
-             $rho * cos( $phi   ) );
+    ( $rho * cos( $theta ) * sin( $phi ),
+      $rho * sin( $theta ) * sin( $phi ),
+      $rho * cos( $phi   ) );
 }
 
 sub spherical-to-cylindrical($rho, $theta, $phi) is export(:radial)
 {
     my ($x, $y, $z) = spherical-to-cartesian($rho,$theta,$phi);
-    return ( sqrt( $x * $x + $y * $y ), $theta, $z );
+    ( sqrt( $x * $x + $y * $y ), $theta, $z );
 }
 
 sub cartesian-to-cylindrical($x,$y,$z) is export(:radial)
 {
-    return ( sqrt( $x * $x + $y * $y ), atan2( $y, $x ), $z );
+    ( sqrt( $x * $x + $y * $y ), atan2( $y, $x ), $z );
 }
 
 sub cylindrical-to-cartesian($rho, $theta, $z) is export(:radial)
 {
-    return ( $rho * cos( $theta ), $rho * sin( $theta ), $z );
+    ( $rho * cos( $theta ), $rho * sin( $theta ), $z );
 }
 
 sub cylindrical-to-spherical($rho, $theta, $phi)  is export(:radial)
 {
-    return cartesian-to-spherical( |cylindrical-to-cartesian( $rho, $theta, $phi ) );
+    cartesian-to-spherical( |cylindrical-to-cartesian( $rho, $theta, $phi ) );
 }
 
 sub great-circle-distance($theta0, $phi0, $theta1, $phi1, $rho = 1) is export(:great-circle)
 {
     my $lat0 = pi/2 - $phi0;
     my $lat1 = pi/2 - $phi1;
-    return $rho * acos( cos( $lat0 ) * cos( $lat1 ) * cos( $theta0 - $theta1 ) +
-                   sin( $lat0 ) * sin( $lat1 ) );
+    $rho * acos( cos( $lat0 ) * cos( $lat1 ) * cos( $theta0 - $theta1 ) +
+                 sin( $lat0 ) * sin( $lat1 ) );
 }
 
 sub great-circle-direction($theta0, $phi0, $theta1, $phi1) is export(:great-circle)
@@ -94,7 +92,7 @@ sub great-circle-direction($theta0, $phi0, $theta1, $phi1) is export(:great-circ
     my $lat0 = pi/2 - $phi0;
     my $lat1 = pi/2 - $phi1;
  
-    return rad2rad(2 * pi -
+    rad2rad(2 * pi -
         atan2(sin($theta0-$theta1) * cos($lat1),
                 cos($lat0) * sin($lat1) -
                     sin($lat0) * cos($lat1) * cos($theta0-$theta1)));
@@ -125,7 +123,7 @@ sub great-circle-waypoint($theta0, $phi0, $theta1, $phi1, $point = 0.5) is expor
     my $theta = atan2($y, $x);
     my $phi   = acos($z);
  
-    return ($theta, $phi);
+    ($theta, $phi);
 }
 
 our &great-circle-midpoint is export(:great-circle) = &great-circle-waypoint.assuming(*,*,*,*,0.5);
@@ -144,5 +142,5 @@ sub great-circle-destination( $theta0, $phi0, $dir0, $dst ) is export(:great-cir
  
     $dir1 -= 2*pi if $dir1 > 2*pi;
  
-    return ($theta1, $phi1, $dir1);
+    ($theta1, $phi1, $dir1);
 }

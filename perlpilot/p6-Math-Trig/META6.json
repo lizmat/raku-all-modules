@@ -1,5 +1,7 @@
 {
+    "perl" : "6.*",
     "name" : "Math::Trig",
+    "license" : "Artistic-2.0",
     "version" : "0.0.2",
     "description" : "Useful trigonometric routines",
     "author" : "Jonathan Scott Duff <duff@pobox.com>",
