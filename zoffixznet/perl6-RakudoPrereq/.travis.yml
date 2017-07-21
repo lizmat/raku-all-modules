@@ -4,4 +4,4 @@ perl6:
 
 install:
     - rakudobrew build-zef
-    - zef --debug install .
+    - DO_RAKUDO_PREREQ_TESTS=1 zef --debug install .

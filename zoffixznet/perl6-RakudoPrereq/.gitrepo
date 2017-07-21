@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zoffixznet/perl6-RakudoPrereq.git
 	branch = master
-	commit = 983edbbdad86097449c6a92144094b05cd8aa6b0
-	parent = d17e6bfb3c4c5d5cfcd9c6eff4ada96a5ac60400
+	commit = deadfbebf4bcb89331c33f293a4f869d875f27d5
+	parent = 886edc976148b596ffcc5ea5483754d5ca48bc34
 	cmdver = 0.4.0
