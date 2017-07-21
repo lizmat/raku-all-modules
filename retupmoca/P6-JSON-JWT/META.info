@@ -1,6 +1,7 @@
 {
     "perl"        : "6.*",
     "name"        : "JSON::JWT",
+    "license"     : "MIT",
     "version"     : "1.0",
     "author"      : "github:retupmoca",
     "description" : "JWT Signing and Verifying using openssl",
