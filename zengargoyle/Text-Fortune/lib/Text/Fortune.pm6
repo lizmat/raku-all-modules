@@ -36,7 +36,7 @@ This library is free software; you can redistribute it and/or modify it under th
 
 =end pod
 
-unit module Text::Fortune:ver<0.03>;
+unit module Text::Fortune:ver<0.03>:auth<github:zengargoyle>;
 
 use experimental :pack;
 

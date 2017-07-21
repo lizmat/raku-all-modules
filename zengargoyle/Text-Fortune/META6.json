@@ -1,19 +1,26 @@
 {
-  "name" : "Text::Fortune",
-  "license" : "Artistic-2.0",
-  "source-url" : "git://github.com/zengargoyle/Text-Fortune.git",
-  "perl" : "v6",
+  "auth" : "github:zengargoyle",
+  "authors" : [
+    "zengargoyle"
+  ],
   "build-depends" : [ ],
-  "provides" : {
-    "Text::Fortune" : "lib/Text/Fortune.pm6"
-  },
   "depends" : [
     "File::Find"
   ],
   "description" : "print a random adage, fortune(6), strfile(1)",
+  "license" : "Artistic-2.0",
+  "name" : "Text::Fortune",
+  "perl" : "6.c",
+  "provides" : {
+    "Text::Fortune" : "lib/Text/Fortune.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/zengargoyle/Text-Fortune.git",
+  "tags" : [
+    "text",
+    "fortune",
+    "games"
+  ],
   "test-depends" : [ ],
-  "version" : "*",
-  "authors" : [
-    "zengargoyle"
-  ]
+  "version" : "0.03"
 }
