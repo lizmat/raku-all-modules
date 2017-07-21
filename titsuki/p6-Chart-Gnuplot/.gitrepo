@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/titsuki/p6-Chart-Gnuplot.git
+	branch = master
+	commit = 96e6503724bd0ebc4e95693d0ae39c4a69232e85
+	parent = 52f252b3b5dbdfce0c257bd04f27e7b2eb1a1b56
+	cmdver = 0.4.0
