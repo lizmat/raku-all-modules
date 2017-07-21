@@ -13,10 +13,10 @@ my $app = builder {
         :authenticator(-> $u, $p, %env {
             %map{$u} && %map{$u} eq $p;
         });
-    -> %env { 200, [:Content-Type('text/plain')], ["Hello {%env<REMOTE_USER>}!"] }
+    -> %env { start { 200, [:Content-Type('text/plain')], ["Hello {%env<REMOTE_USER>}!"] } }
 };
 
-test-psgi
+test-p6w
     app => $app,
     client => -> $cb {
         my ($req, $res);

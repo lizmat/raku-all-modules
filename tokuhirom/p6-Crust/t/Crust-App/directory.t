@@ -14,7 +14,7 @@ EOF
 my $app = Crust::App::Directory.new(
     :root($tempdir),
     app => sub ($env) {
-        200, [], ['hello'];
+        start { 200, [], ['hello'] };
     }
 );
 my $client = -> $cb {
@@ -47,6 +47,6 @@ my $client = -> $cb {
     is $res.code, 403;
 };
 
-test-psgi $app, $client;
+test-p6w $app, $client;
 
 done-testing;

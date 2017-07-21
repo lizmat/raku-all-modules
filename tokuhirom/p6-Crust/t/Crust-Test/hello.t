@@ -5,7 +5,7 @@ use HTTP::Request;
 
 $Crust::Test::Impl = "MockHTTP";
 
-test-psgi
+test-p6w
     client => -> $cb {
         my $req = HTTP::Request.new(GET => "http://localhost/hello");
         my $res = $cb($req);
@@ -14,7 +14,7 @@ test-psgi
         is $res.code, 200;
     },
     app => -> $env {
-        200, [ 'Content-Type' => 'text/plain' ], [ 'Hello World' ];
+        start { 200, [ 'Content-Type' => 'text/plain' ], [ 'Hello World' ] };
     };
 
 done-testing;

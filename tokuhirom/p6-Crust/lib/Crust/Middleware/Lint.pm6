@@ -38,7 +38,7 @@ my sub validate-env(%env) {
         die "Invalid SERVER_PROTOCOL: %env<SERVER_PROTOCOL>";
     }
 
-    # TODO validate p6sgi.xxx
+    # TODO validate p6w.xxx
 
     if %env<HTTP_CONTENT_TYPE> {
         die 'HTTP_CONTENT_TYPE should not exist';
@@ -104,8 +104,12 @@ my sub validate-ret(@ret) {
 
 method CALL-ME(%env) {
     validate-env(%env);
-    my @ret = $.app()(%env);
-    return validate-ret(@ret);
+    my $ret = $.app()(%env);
+    unless $ret.isa(Promise) {
+        die "P6W app's return value must be a Promise: " ~ $ret.WHAT.perl;
+    }
+    my @ret = await $ret;
+    return start { validate-ret(@ret) };
 }
 
 =begin pod
@@ -123,7 +127,7 @@ Crust::Middleware::Lint - Validate request and response
 
 Or from crustup
 
-  crustup --lint myapp.p6sgi
+  crustup --lint myapp.p6w
 
 Or use with builder
 
@@ -133,8 +137,8 @@ Or use with builder
 
 Crust::Middleware::Lint is a middleware component to validate request
 and response environment formats. You are strongly suggested to use
-this middleware when you develop a new framework adapter or a new P6SGI
-web server that implements the P6SGI interface.
+this middleware when you develop a new framework adapter or a new P6W
+web server that implements the P6W interface.
 
 This middleware is inspired by L<Plack::Middleware::Lint|https://metacpan.org/pod/Plack::Middleware::Lint> and most of code is taken from that.
 

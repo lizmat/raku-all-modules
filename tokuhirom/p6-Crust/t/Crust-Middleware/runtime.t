@@ -6,11 +6,11 @@ use HTTP::Request;
 
 my $app = -> $env {
     sleep 0.5;
-    200, [ 'Content-Type' => 'text/plain' ], [ 'Hello World' ];
+    start { 200, [ 'Content-Type' => 'text/plain' ], [ 'Hello World' ] };
 };
 $app = ::('Crust::Middleware::Runtime').new($app);
 
-test-psgi
+test-p6w
     client => -> $cb {
         my $req = HTTP::Request.new(GET => "http://localhost/hello");
         my $res = $cb($req);
@@ -21,11 +21,11 @@ test-psgi
 # with a differnt header-name
 $app = -> $env {
     sleep 0.5;
-    200, [ 'Content-Type' => 'text/plain' ], [ 'Hello World' ];
+    start { 200, [ 'Content-Type' => 'text/plain' ], [ 'Hello World' ] };
 };
 $app = ::('Crust::Middleware::Runtime').new($app, :header-name<X-RUNTIME-TEST>);
 
-test-psgi
+test-p6w
     client => -> $cb {
         my $req = HTTP::Request.new(GET => "http://localhost/hello");
         my $res = $cb($req);

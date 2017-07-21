@@ -1,8 +1,9 @@
 use v6;
 use Test;
 
-use IO::Blob;
 use Crust::Middleware::StackTrace;
+use lib 't/lib/';
+use SupplierBuffer;
 
 my %env = (
     :REQUEST_METHOD<GET>,
@@ -14,37 +15,36 @@ my %env = (
 );
 
 subtest {
-    my $io = IO::Blob.new;
+    my $buf = SupplierBuffer.new;
 
     temp %env = %env;
-    %env<p6sgi.errors> = $io;
+    %env<p6w.errors> = $buf.supplier;
 
     my $code = Crust::Middleware::StackTrace.new(
         sub (%env) {
             die 'Oops!';
         }
     );
-    my $ret = $code(%env);
+    my $ret = await $code(%env);
     is $ret[0], 500;
 
     my $res-headers = $ret[1];
     is %$res-headers<Content-Type>, 'text/plain; charset=utf-8';
 
     is $ret[2].elems, 1;
-    like $ret[2][0], rx{'in block <unit> at t/Crust-Middleware/stack-trace.t line 16'};
+    like $ret[2][0], rx{'in sub  at t/Crust-Middleware/stack-trace.t line ' \d+};
 
-    like %env<crust.stacktrace.text>, rx{'in block <unit> at t/Crust-Middleware/stack-trace.t line 16'};
-    like %env<crust.stacktrace.html>, rx{'Error:' \s+ 'in block &lt;unit&gt; at t/Crust-Middleware/stack-trace.t line 16'};
+    like %env<crust.stacktrace.text>, rx{'in sub  at t/Crust-Middleware/stack-trace.t line ' \d+};
+    like %env<crust.stacktrace.html>, rx{'Error:   in block  at ' \S+ ' line ' \d+};
 
-    $io.seek(0, SeekFromBeginning); # rewind
-    like $io.slurp-rest, rx{'in block <unit> at t/Crust-Middleware/stack-trace.t line 16'};
+    like $buf.result, rx{'in sub  at t/Crust-Middleware/stack-trace.t line ' \d+};
 }, 'Errors with plain text trace';
 
 subtest {
-    my $io = IO::Blob.new;
+    my $buf = SupplierBuffer.new;
 
     temp %env = %env;
-    %env<p6sgi.errors> = $io;
+    %env<p6w.errors> = $buf.supplier;
     %env<HTTP_ACCEPT> = 'text/html';
 
     my $code = Crust::Middleware::StackTrace.new(
@@ -52,27 +52,26 @@ subtest {
             die 'Oops!';
         }
     );
-    my $ret = $code(%env);
+    my $ret = await $code(%env);
     is $ret[0], 500;
 
     my $res-headers = $ret[1];
     is %$res-headers<Content-Type>, 'text/html; charset=utf-8';
 
     is $ret[2].elems, 1;
-    like $ret[2][0], rx{'Error:' \s+ 'in block &lt;unit&gt; at t/Crust-Middleware/stack-trace.t line 43'};
+    like $ret[2][0], rx{'Error:' \s+ 'in block  at ' \S+ ' line ' \d+};
 
-    like %env<crust.stacktrace.text>, rx{'in block <unit> at t/Crust-Middleware/stack-trace.t line 43'};
-    like %env<crust.stacktrace.html>, rx{'Error:' \s+ 'in block &lt;unit&gt; at t/Crust-Middleware/stack-trace.t line 43'};
+    like %env<crust.stacktrace.text>, rx{'in sub  at t/Crust-Middleware/stack-trace.t line 51'};
+    like %env<crust.stacktrace.html>, rx{'Error:   in block  at ' \S+ ' line ' \d+};
 
-    $io.seek(0, SeekFromBeginning); # rewind
-    like $io.slurp-rest, rx{'in block <unit> at t/Crust-Middleware/stack-trace.t line 43'};
+    like $buf.result, rx{'in sub  at t/Crust-Middleware/stack-trace.t line ' \d+};
 }, 'Errors with html trace';
 
 subtest {
-    my $io = IO::Blob.new;
+    my $buf = SupplierBuffer.new;
 
     temp %env = %env;
-    %env<p6sgi.errors> = $io;
+    %env<p6w.errors> = $buf.supplier;
 
     my $code = Crust::Middleware::StackTrace.new(
         sub (%env) {
@@ -80,20 +79,19 @@ subtest {
         },
         no-print-errors => True,
     );
-    my $ret = $code(%env);
+    my $ret = await $code(%env);
     is $ret[0], 500;
 
-    $io.seek(0, SeekFromBeginning); # rewind
-    is $io.slurp-rest, '';
+    is $buf.result, '';
 }, 'Test for no-print-errors';
 
 subtest {
     my $code = Crust::Middleware::StackTrace.new(
         sub (%env) {
-            200, [], ['hello']
+            start { 200, [], ['hello'] }
         }
     );
-    my $ret = $code(%env);
+    my $ret = await $code(%env);
     is $ret[0], 200;
     is $ret[1], [];
     is-deeply $ret[2], ['hello'];
