@@ -1,0 +1,16 @@
+#!/usr/bin/env perl6
+
+use NativeCall;
+use lib 'lib';
+use AI::FANN::Raw;
+
+my CArray[uint32] $layers = CArray[uint32].new(2, 3, 1 );
+my fann $s = fann_create_shortcut_array(3, $layers);
+
+fann_print_parameters($s);
+fann_print_connections($s);
+my $x = fann_get_network_type($s);
+say "network type = $x";
+
+my $l = fann_get_num_layers($s);
+say "layers = $l";

@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/perlpilot/p6-AI-FANN.git
+	branch = master
+	commit = 44a80192ab62e34c3cbf0283039c672a0718951d
+	parent = 8670d437a7e8a43c31d7cd67d94979c07e2fddd8
+	cmdver = 0.4.0

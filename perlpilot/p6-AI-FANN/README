@@ -1,0 +1,7 @@
+AI::FANN
+
+Perl 6 binding to the Fast Artificial Neural Network library
+
+http://leenissen.dk/fann/wp/
+
+Currently, only the low-level routines are made available as Perl subroutines.
