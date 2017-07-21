@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "HexDump::Tiny",
     "version" : "0.01",
     "description" : "Generate hexadecimal dump of scalar values",
