@@ -24,7 +24,8 @@ plan 10;
     use re-exporthow;
     lives-ok { my pokemon pikachu { } },'pikachu re-exported';
     lives-ok { my digimon augmon { }  },'digimon not clobbered';
-    ok ( grammar { } ).HOW ~~ Metamodel::ClassHOW, 'SUPERSEDE grammar is re-exported'
+    skip 'RT #131584', 1;
+    #ok ( grammar { } ).HOW ~~ Metamodel::ClassHOW, 'SUPERSEDE grammar is re-exported'
 }
 
 {

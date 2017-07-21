@@ -21,7 +21,7 @@ my package EXPORTHOW {
     package DECLARE {
         constant pokemon = Metamodel::ClassHOW;
     }
-    package SUPERSEDE {
-        OUR::<grammar> =  Metamodel::ClassHOW
-    }
+    # package SUPERSEDE {
+    #     OUR::<grammar> =  Metamodel::ClassHOW
+    # }
 }
