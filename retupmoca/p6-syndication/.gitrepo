@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/p6-syndication.git
 	branch = master
-	commit = a5bec2bc112a1cd8d3d87f49bcd0ed4fb9a4b305
-	parent = 7fec2475228a97fe0d8fbc7ca099ca875d2290bd
+	commit = d45d6edb1fdbd3c36181be9f8865fc55204f4ec7
+	parent = 7caf9743d04f6a09567e9ddea0702014c0895162
 	cmdver = 0.4.0
