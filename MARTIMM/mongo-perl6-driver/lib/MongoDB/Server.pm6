@@ -1,4 +1,4 @@
-use v6.c;
+use v6;
 
 use MongoDB;
 use MongoDB::Wire;
@@ -12,7 +12,7 @@ use Semaphore::ReadersWriters;
 use Auth::SCRAM;
 
 #-------------------------------------------------------------------------------
-unit package MongoDB:auth<https://github.com/MARTIMM>;
+unit package MongoDB:auth<github:MARTIMM>;
 
 #-------------------------------------------------------------------------------
 class Server {
@@ -72,7 +72,7 @@ class Server {
 
     @!sockets = ();
 
-    # Save name andd port of the server
+    # Save name and port of the server
     ( my $host, my $port) = split( ':', $server-name);
     $!server-name = $host;
     $!server-port = $port.Int;
@@ -85,7 +85,7 @@ class Server {
   }
 
   #-----------------------------------------------------------------------------
-  # Server initialization 
+  # Server initialization
   method server-init ( Int:D $heartbeat-frequency-ms ) {
 
     # Start monitoring
@@ -107,22 +107,27 @@ class Server {
           my Int $max-wire-version;
           my Int $min-wire-version;
 
+          # test monitor defined boolean field ok
           if $monitor-data<ok> {
 
             # Used to get a socket an decide on type of authentication
             my $mdata = $monitor-data<monitor>;
 
-            $max-wire-version = $mdata<maxWireVersion>.Int;
-            $min-wire-version = $mdata<minWireVersion>.Int;
-            $weighted-mean-rtt-ms = $monitor-data<weighted-mean-rtt-ms>;
-            ( $server-status, $is-master) = self!process-status($mdata);
+            # test mongod server defined field ok for state of returned document
+            # this is since newer servers return info about servers going down
+            if $mdata<ok> == 1e0 {
+#note "MData: $monitor-data.perl()";
+              $max-wire-version = $mdata<maxWireVersion>.Int;
+              $min-wire-version = $mdata<minWireVersion>.Int;
+              $weighted-mean-rtt-ms = $monitor-data<weighted-mean-rtt-ms>;
+              ( $server-status, $is-master) = self!process-status($mdata);
+            }
           }
 
-          # Server did not respond
+          # Server did not respond or returned an error
           else {
 
-            if $monitor-data<reason>:exists
-               and $monitor-data<reason> ~~ m:s/Failed to resolve host name/ {
+            if $monitor-data<reason>:exists {
               $server-error = $monitor-data<reason>;
             }
 
@@ -187,12 +192,12 @@ class Server {
       $is-master = ? $mdata<ismaster>;
       if $is-master {
         $server-status = SS-RSPrimary;
-        $!client.add-servers([|@($mdata<hosts>),]);
+        $!client.add-servers([|@($mdata<hosts>),]) if $mdata<hosts>:exists;
       }
 
       elsif ? $mdata<secondary> {
         $server-status = SS-RSSecondary;
-        $!client.add-servers([$mdata<primary>,]);
+        $!client.add-servers([$mdata<primary>,]) if $mdata<primary>:exists;
       }
 
       elsif ? $mdata<arbiterOnly> {
@@ -454,4 +459,3 @@ class Server {
     $!server-tap = Nil;
   }
 }
-
