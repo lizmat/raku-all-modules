@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/adaptiveoptics/Crust-Middleware-Session-Store-DBIish.git
 	branch = master
-	commit = a61fc4c20d37cbf9af4806cdde464334c83552ae
-	parent = 55862380cf2922319d1a80ed61a5475b3e05a479
+	commit = 48b42b527862e82af61f0c1e855759107945e4f7
+	parent = 2190ba03948cdccff2d55343ae47e591882c8a50
 	cmdver = 0.4.0

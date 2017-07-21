@@ -1,7 +1,9 @@
 language: perl6
-sudo: false
 perl6:
-  - latest
+ - latest
 install:
-    - rakudobrew build-panda
-    - panda installdeps .
+  - rakudobrew build-zef
+  - zef install --/test --depsonly .
+script:
+  - prove -vr -e 'perl6 -Ilib' t/
+sudo: false
