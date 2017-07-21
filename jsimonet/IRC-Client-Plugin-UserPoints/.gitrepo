@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jsimonet/IRC-Client-Plugin-UserPoints.git
 	branch = master
-	commit = fe1eaccdeace780750e6f81b227a8c564b6b021b
-	parent = 28ea6cf4e221a5ff9e21b44dd2fdaaddba158a2f
+	commit = b4caf0f7e9bacadb1d0f6f43fe3fd72dac699a0e
+	parent = 6b1fa58a8ce702adfc4618a5b6026c5dc5aab7b6
 	cmdver = 0.4.0

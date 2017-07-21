@@ -47,7 +47,9 @@ can be used.
 ```perl6
     IRC::Client::Plugin::UserPoints.new(
         :db-file-name( 'path/to/file.txt' ),
-        :command-prefix( '!' )
+        :command-prefix( '!' ),
+        :list-scores-max-user(5),
+        :msg-confirm( '#channel1' => True )
     )
 ```
 
@@ -58,6 +60,18 @@ The file name of the points database.
 ## command-prefix
 
 The command prefix is used to determine the char used to trigger the bot.
+
+## list-scores-max-user
+
+The maximum number of users the bot can print their points. Can be used to prevent spam.
+
+Default value: +Inf (Infinite)
+
+## msg-confirm
+
+Confirm on IRC when a point have been handled.
+
+Defaults to False.
 
 # IRC COMMANDS
 
