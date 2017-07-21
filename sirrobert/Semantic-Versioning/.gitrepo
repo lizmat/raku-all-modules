@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sirrobert/Semantic-Versioning.git
 	branch = master
-	commit = e960aa386c353ef8ffae3de16bee9a0b0f4f83dc
-	parent = db2afa325d66cac10fbb4cff0020082130e19c45
-	cmdver = 0.1.0
+	commit = dc388f6ce42e7d8dd90003d6510f3b1e243986ee
+	parent = 8757e5028d9f420f4769093bcbfe582962203a75
+	cmdver = 0.4.0
