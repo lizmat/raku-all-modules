@@ -1,9 +1,8 @@
 use v6;
-unit class Term::Choose;
+unit class Term::Choose:ver<0.0.5>;
 
-my $VERSION = '0.129';
-
-use Term::Choose::NCurses;
+use NCurses;
+use Term::Choose::NCursesAdd;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
 
 constant R  = 0;
@@ -29,11 +28,11 @@ constant KEY_q         = 0x71;
 has @!orig_list;
 has @!list;
 
-has %.defaults;
+has %!defaults;
 has %!o;
 
-has Term::Choose::NCurses::WINDOW $.win;
-has Term::Choose::NCurses::WINDOW $!win_local;
+has WINDOW $!win;
+has WINDOW $!win_local;
 
 has Int   $!term_w;
 has Int   $!term_h;
@@ -54,11 +53,17 @@ has Array $!p;
 has Array $!marked;
 has Bool  $!ext_mouse;
 
-method new ( :%defaults, :$win=Term::Choose::NCurses::WINDOW ) {
-    _validate_options( %defaults );
-    _set_defaults( %defaults );
-    self.bless( :%defaults, :$win );
+method new ( :$defaults, :$win=WINDOW ) { # to add 'new' to the BUILD -> _valid_options -> error-messages
+    self.bless( :$defaults, :$win );
 }
+
+submethod BUILD( :$defaults, :$win ) {
+    %!defaults := $defaults.Hash;
+    _validate_options( %!defaults );
+    _set_defaults( %!defaults );
+    $!win := $win;
+}
+
 
 method num-threads {
     return %*ENV<TC_NUM_THREADS> if %*ENV<TC_NUM_THREADS>;
@@ -75,13 +80,13 @@ sub _set_defaults ( %opt ) {
     %opt<justify>       //= 0;
     %opt<keep>          //= 5;
     %opt<layout>        //= 1;
-    %opt<lf>            //= Array;
+    %opt<lf>            //= List;
     %opt<ll>            //= Int;
-    %opt<mark>          //= Array;
+    %opt<mark>          //= List;
     %opt<max-height>    //= Int;
     %opt<max-width>     //= Int;
     %opt<mouse>         //= 0;
-    %opt<no-spacebar>   //= Array;
+    %opt<no-spacebar>   //= List;
     %opt<order>         //= 1;
     %opt<pad>           //= 2;
     %opt<page>          //= 1;
@@ -105,9 +110,9 @@ sub _valid_options {
         default         => '<[ 0 .. 9 ]>+',
         pad             => '<[ 0 .. 9 ]>+',
         pad-one-row     => '<[ 0 .. 9 ]>+',
-        lf              => 'Array',
-        mark            => 'Array',
-        no-spacebar     => 'Array',
+        lf              => 'List',
+        mark            => 'List',
+        no-spacebar     => 'List',
         empty           => 'Str',
         prompt          => 'Str',
         undef           => 'Str',
@@ -123,11 +128,11 @@ sub _validate_options ( %opt, Int $list_end? ) {
         when ! $value.defined {
             next;
         }
-        when $valid{$key} eq 'Array' {
-            die "$key => {$value.perl} is not an ARRAY."  if ! $value.isa( Array );
-            die "$key => invalid array element"           if $value.grep( { / <-[0..9]> / } ); # .grep( { $_ !~~ UInt } );
+        when $valid{$key} eq 'List' {
+            die "$key => {$value.perl} is not an List."   if ! $value.isa( List );
+            die "$key => invalid list element"            if $value.grep( { $_ !~~ UInt } );
             if $key eq 'lf' {
-                die "$key => too many array elemnts."     if $value.elems > 2;
+                die "$key => too many list elemnts."      if $value.elems > 2;
             }
             else {
                 die "$key => value out of range."         if $list_end.defined && $value.any > $list_end;
@@ -147,9 +152,6 @@ sub _validate_options ( %opt, Int $list_end? ) {
     }
 }
 
-submethod DESTROY () { #
-    self!_end_term();
-}
 
 method !_prepare_new_copy_of_list {
     if %!o<ll> {
@@ -217,13 +219,13 @@ method !_prepare_new_copy_of_list {
 }
 
 
-sub choose       ( @list, %opt? ) is export( :DEFAULT, :choose )       { return Term::Choose.new().choose(       @list, %opt ) }
-sub choose-multi ( @list, %opt? ) is export( :DEFAULT, :choose-multi ) { return Term::Choose.new().choose-multi( @list, %opt ) }
-sub pause        ( @list, %opt? ) is export( :DEFAULT, :pause )        { return Term::Choose.new().pause(        @list, %opt ) }
+sub choose       ( @list, %deprecated?, *%opt ) is export( :DEFAULT, :choose )       { Term::Choose.new().choose(       @list, %deprecated || %opt ) }
+sub choose-multi ( @list, %deprecated?, *%opt ) is export( :DEFAULT, :choose-multi ) { Term::Choose.new().choose-multi( @list, %deprecated || %opt ) }
+sub pause        ( @list, %deprecated?, *%opt ) is export( :DEFAULT, :pause )        { Term::Choose.new().pause(        @list, %deprecated || %opt ) }
 
-method choose       ( @list, %opt? ) { return self!_choose( @list, %opt, 0   ) }
-method choose-multi ( @list, %opt? ) { return self!_choose( @list, %opt, 1   ) }
-method pause        ( @list, %opt? ) { return self!_choose( @list, %opt, Int ) }
+method choose       ( @list, %deprecated?, *%opt ) { self!_choose( @list, %deprecated || %opt, 0   ) }
+method choose-multi ( @list, %deprecated?, *%opt ) { self!_choose( @list, %deprecated || %opt, 1   ) }
+method pause        ( @list, %deprecated?, *%opt ) { self!_choose( @list, %deprecated || %opt, Int ) }
 
 
 
@@ -234,7 +236,7 @@ method !_init_term {
     else {
         my int32 constant LC_ALL = 6;
         setlocale( LC_ALL, "" );
-        $!win_local = initscr() or die "Failed to initialize ncurses\n"; # $!
+        $!win_local = initscr();
     }
     noecho();
     cbreak();
@@ -243,11 +245,12 @@ method !_init_term {
         if library() ~~ / 'libncursesw.so.' ( \d+ ) / {
             $!ext_mouse = $0 >= 6;
         }
-        my Array[int32] $old;
-        my $s = mousemask(
-            $!ext_mouse ?? EMM_ALL_MOUSE_EVENTS +| EMM_REPORT_MOUSE_POSITION !! ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION,
-            $old
-        );
+        if $!ext_mouse {
+            mousemask( EMM_ALL_MOUSE_EVENTS +| EMM_REPORT_MOUSE_POSITION, 0 );
+        }
+        else {
+            mousemask( ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION, 0 ); ##
+        }
         my $mi = mouseinterval( 5 );
     }
     curs_set( 0 );
@@ -262,6 +265,9 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
     if ! @!orig_list.elems {
         return;
     }
+    CATCH {
+        endwin();
+    }
     _validate_options( %!o, @!orig_list.end );
     for %!defaults.kv -> $key, $value {
         %!o{$key} //= $value;
@@ -273,7 +279,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
         %!o<pad-one-row> = %!o<pad>;
     }
     self!_init_term;
-    self!_wr_first_screen;
+    self!_wr_first_screen( $multiselect );
     my Int $pressed; #
 
     GET_KEY: loop {
@@ -296,7 +302,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
             if $!marked.elems {
                 %!o<mark> = self!_marked_rc2idx;
             }
-            self!_wr_first_screen;
+            self!_wr_first_screen( $multiselect );
             next GET_KEY;
         }
 
@@ -570,7 +576,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                 }
             }
             when KEY_MOUSE {
-                my Term::Choose::NCurses::MEVENT $event .= new;
+                my NCurses::MEVENT $event .= new;
                 if getmouse( $event ) == OK {
                     if $!ext_mouse {
                         if $event.bstate == EMM_BUTTON1_CLICKED | EMM_BUTTON1_PRESSED {
@@ -709,7 +715,7 @@ method !_set_default_cell {
 }
 
 
-method !_wr_first_screen {
+method !_wr_first_screen( Int $multiselect ) {
     $!term_w = getmaxx( $!win_local );
     $!term_h = getmaxy( $!win_local );
     ( $!avail_w, $!avail_h ) = ( $!term_w, $!term_h );
@@ -740,7 +746,7 @@ method !_wr_first_screen {
     $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
     $!p = [ 0, 0 ];
     $!marked = [];
-    if %!o<mark> {
+    if %!o<mark> && $multiselect {
         self!_marked_idx2rc( %!o<mark>, True );
     }
     if %!o<default>.defined && %!o<default> <= @!list.end {
@@ -928,7 +934,7 @@ method !_index2rowcol {
 }
 
 
-method !_marked_idx2rc ( Array $indexes, Bool $yesno ) {
+method !_marked_idx2rc ( List $indexes, Bool $yesno ) {
     if $!layout == 2 {
         for $indexes.list -> $i {
             $!marked[$i][0] = $yesno;
@@ -990,39 +996,34 @@ method !_marked_rc2idx {
 
 Term::Choose - Choose items from a list interactively.
 
-=head1 VERSION
-
-Version 0.129
-
 =head1 SYNOPSIS
 
     use Term::Choose :choose;
 
-    my @array = <one two three four five>;
+    my @list = <one two three four five>;
 
 
     # Functional interface:
  
-    my $choice = choose( @array, { layout => 1 } );
-
-    say $choice;
+    my $chosen = choose( @list, :layout(2) );
 
 
     # OO interface:
  
-    my $tc = Term::Choose.new();
+    my $tc = Term::Choose.new( :default( :1mouse, :0order ) );
 
-    $choice = $tc.choose( @array, { layout => 1 } );
-
-    say $choice;
+    $chosen = $tc.choose( @list, :1layout, :2default );
 
 =head1 DESCRIPTION
 
 Choose interactively from a list of items.
 
-For C<choose>, C<choose-multi> and C<pause> the first argument (Array) holds the list of the available choices.
+For C<choose>, C<choose-multi> and C<pause> the first argument holds the list of the available choices.
 
-With the optional second argument (Hash) it can be passed the different options. See L<#OPTIONS>.
+The different options can be passed as key-values pairs. See L<#OPTIONS> to find the available options.
+
+Passing the options as a hash is deprecated. The support of passing the options as a hash may be removed with the next
+release.
 
 The return values are described in L<#Routines>
 
@@ -1058,19 +1059,20 @@ L<#pause>.
 
 With I<mouse> enabled (and if supported by the terminal) use the the left mouse key instead the C<Return> key and
 the right mouse key instead of the C<SpaceBar> key. Instead of C<PageUp> and C<PageDown> it can be used the mouse wheel
-(if supported).
+if the extended mouse mode is enabled. Setting the environment variable C<PERL6_NCURSES_LIB> to C<libncursesw.so.6>
+enbables the extended mouse mode.
 
 =head1 CONSTRUCTOR
 
-The constructor method C<new> can be called with optional named arguments:
+The constructor method C<new> can be called with named arguments:
 
 =item defaults
 
-Expects as its value a hash. Sets the defaults for the instance. See L<#OPTIONS>.
+Sets the defaults (a list of key-value pairs) for the instance. See L<#OPTIONS>.
 
 =item win
 
-Expects as its value a window object created by ncurses C<initscr>.
+Expects as its value a C<WINDOW> object - the return value of L<NCurses> C<initscr>.
 
 If set, C<choose>, C<choose-multi> and C<pause> use this global window instead of creating their own without calling
 C<endwin> to restores the terminal before returning.
@@ -1104,10 +1106,8 @@ C<q> or C<Ctrl-D>.
 
 =head1 OUTPUT
 
-For the output on the screen the array elements are modified.
-
-All the modifications are made on a copy of the original array so C<choose> and C<choose-multi> return the chosen
-elements as they were passed without modifications.
+For the output on the screen the elements of the list are copied and then modified. Chosen elements are returned as they
+were passed without modifications.
 
 Modifications:
 
@@ -1259,7 +1259,7 @@ From broad to narrow: 0 > 1 > 2
 
 If I<prompt> lines are folded, the option I<lf> allows to insert spaces at beginning of the folded lines.
 
-The option I<lf> expects a array with one or two elements:
+The option I<lf> expects a list with one or two elements:
 
 - the first element (C<INITIAL_TAB>) sets the number of spaces inserted at beginning of paragraphs
 
@@ -1274,7 +1274,7 @@ Allowed values for the two elements are: 0 or greater.
 
 This is a C<choose-multi>-only option.
 
-I<mark> expects as its value an array. The elements of the array are list indexes. C<choose> preselects the
+I<mark> expects as its value an list of indexes (integers). C<choose> preselects the
 list-elements correlating to these indexes.
 
 (default: undefined)
@@ -1315,7 +1315,7 @@ Allowed values: 2 or greater
 
 This is a C<choose-multi>-only option.
 
-I<no-spacebar> expects as its value an array. The elements of the array are indexes of choices which should not be
+I<no-spacebar> expects as its value an list. The elements of the list are indexes of choices which should not be
 markable with the C<SpaceBar> or with the right mouse key. If an element is preselected with the option I<mark> and also
 marked as not selectable with the option I<no-spacebar>, the user can not remove the preselection of this element.
 
@@ -1374,16 +1374,14 @@ The method C<num-threads> returns the setting used by C<Term::Choose>.
 head2 libncurses
 
 The location of the used ncurses library can be specified by setting the environment variable C<PERL6_NCURSES_LIB>. This
-will overwrite the autodetected ncurses library location.
+will overwrite the default library location.
 
 =head1 REQUIREMENTS
 
 =head2 libncurses
 
-C<Term::Choose> requires C<libncursesw> to be installed.
-
-If the name of the ncurses library matches C<libncursesw.so.6> C<Term::Choose> expects the extended mouse feature to be
-enabled.
+C<Term::Choose> requires C<libncurses> to be installed. If the list elements contain wide characters it is required
+C<libncursesw.so.6>. See L<#ENVIRONMET VARIABLES>.
 
 =head2 Monospaced font
 

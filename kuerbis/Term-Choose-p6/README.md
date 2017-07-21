@@ -5,42 +5,35 @@ NAME
 
 Term::Choose - Choose items from a list interactively.
 
-VERSION
-=======
-
-Version 0.129
-
 SYNOPSIS
 ========
 
     use Term::Choose :choose;
 
-    my @array = <one two three four five>;
+    my @list = <one two three four five>;
 
 
     # Functional interface:
      
-    my $choice = choose( @array, { layout => 1 } );
-
-    say $choice;
+    my $chosen = choose( @list, :layout(2) );
 
 
     # OO interface:
      
-    my $tc = Term::Choose.new();
+    my $tc = Term::Choose.new( :default( :1mouse, :0order ) );
 
-    $choice = $tc.choose( @array, { layout => 1 } );
-
-    say $choice;
+    $chosen = $tc.choose( @list, :1layout, :2default );
 
 DESCRIPTION
 ===========
 
 Choose interactively from a list of items.
 
-For `choose`, `choose-multi` and `pause` the first argument (Array) holds the list of the available choices.
+For `choose`, `choose-multi` and `pause` the first argument holds the list of the available choices.
 
-With the optional second argument (Hash) it can be passed the different options. See [#OPTIONS](#OPTIONS).
+The different options can be passed as key-values pairs. See [#OPTIONS](#OPTIONS) to find the available options.
+
+Passing the options as a hash is deprecated. The support of passing the options as a hash may be removed with the next release.
 
 The return values are described in [#Routines](#Routines)
 
@@ -73,20 +66,20 @@ Keys
 
 For the usage of `SpaceBar`, `Ctrl-SpaceBar`, `Return` and the `q`-key see [#choose](#choose), [#choose-multi](#choose-multi) and [#pause](#pause).
 
-With *mouse* enabled (and if supported by the terminal) use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel (if supported).
+With *mouse* enabled (and if supported by the terminal) use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel if the extended mouse mode is enabled. Setting the environment variable `PERL6_NCURSES_LIB` to `libncursesw.so.6` enbables the extended mouse mode.
 
 CONSTRUCTOR
 ===========
 
-The constructor method `new` can be called with optional named arguments:
+The constructor method `new` can be called with named arguments:
 
   * defaults
 
-Expects as its value a hash. Sets the defaults for the instance. See [#OPTIONS](#OPTIONS).
+Sets the defaults (a list of key-value pairs) for the instance. See [#OPTIONS](#OPTIONS).
 
   * win
 
-Expects as its value a window object created by ncurses `initscr`.
+Expects as its value a `WINDOW` object - the return value of [NCurses](NCurses) `initscr`.
 
 If set, `choose`, `choose-multi` and `pause` use this global window instead of creating their own without calling `endwin` to restores the terminal before returning.
 
@@ -119,9 +112,7 @@ Nothing can be chosen, nothing is returned but the user can move around and read
 OUTPUT
 ======
 
-For the output on the screen the array elements are modified.
-
-All the modifications are made on a copy of the original array so `choose` and `choose-multi` return the chosen elements as they were passed without modifications.
+For the output on the screen the elements of the list are copied and then modified. Chosen elements are returned as they were passed without modifications.
 
 Modifications:
 
@@ -253,7 +244,7 @@ lf
 
 If *prompt* lines are folded, the option *lf* allows to insert spaces at beginning of the folded lines.
 
-The option *lf* expects a array with one or two elements:
+The option *lf* expects a list with one or two elements:
 
 - the first element (`INITIAL_TAB`) sets the number of spaces inserted at beginning of paragraphs
 
@@ -268,7 +259,7 @@ mark
 
 This is a `choose-multi`-only option.
 
-*mark* expects as its value an array. The elements of the array are list indexes. `choose` preselects the list-elements correlating to these indexes.
+*mark* expects as its value an list of indexes (integers). `choose` preselects the list-elements correlating to these indexes.
 
 (default: undefined)
 
@@ -312,7 +303,7 @@ no-spacebar
 
 This is a `choose-multi`-only option.
 
-*no-spacebar* expects as its value an array. The elements of the array are indexes of choices which should not be markable with the `SpaceBar` or with the right mouse key. If an element is preselected with the option *mark* and also marked as not selectable with the option *no-spacebar*, the user can not remove the preselection of this element.
+*no-spacebar* expects as its value an list. The elements of the list are indexes of choices which should not be markable with the `SpaceBar` or with the right mouse key. If an element is preselected with the option *mark* and also marked as not selectable with the option *no-spacebar*, the user can not remove the preselection of this element.
 
 (default: undefined)
 
@@ -374,7 +365,7 @@ The method `num-threads` returns the setting used by `Term::Choose`.
 
 head2 libncurses
 
-The location of the used ncurses library can be specified by setting the environment variable `PERL6_NCURSES_LIB`. This will overwrite the autodetected ncurses library location.
+The location of the used ncurses library can be specified by setting the environment variable `PERL6_NCURSES_LIB`. This will overwrite the default library location.
 
 REQUIREMENTS
 ============
@@ -382,9 +373,7 @@ REQUIREMENTS
 libncurses
 ----------
 
-`Term::Choose` requires `libncursesw` to be installed.
-
-If the name of the ncurses library matches `libncursesw.so.6` `Term::Choose` expects the extended mouse feature to be enabled.
+`Term::Choose` requires `libncurses` to be installed. If the list elements contain wide characters it is required `libncursesw.so.6`. See [#ENVIRONMET VARIABLES](#ENVIRONMET VARIABLES).
 
 Monospaced font
 ---------------

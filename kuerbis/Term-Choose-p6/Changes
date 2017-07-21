@@ -1,6 +1,30 @@
 Revision history for Term::Choose
 
 
+0.0.5   2017-07-09
+        - Code refactoring. Update documentation
+
+0.0.4   2017-07-07
+        - Cache char length. Bugfix in to-print-width: add length of dots
+
+0.0.3   2017-07-05
+        - Catch exceptions to close the window
+
+0.0.2   2017-07-05
+        - Replace regex with type UINT
+
+0.0.1   2017-07-05
+        - Set version in META6 - new version format
+
+0.132   2017-07-03
+        - Use NCurses
+
+0.131   2017-07-02
+        - Parameter: from %options to *%options
+
+0.130   2017-06-24
+        - Multi-value-options: changed type from Array to List
+
 0.129   2017-05-19
         - Bugfix num-threads
 
