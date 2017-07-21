@@ -177,9 +177,8 @@ role Native::Packing {
     }
 
     # convert between differing architectures
-    method pack-foreign {
+    method pack-foreign(buf8 $buf = buf8.new) {
         # ensure we're working at the byte level
-        my buf8 $buf .= new;
         my uint $off = 0;
         for self.^attributes {
             my $val = .get_value(self);
@@ -237,10 +236,10 @@ role Native::Packing[Native::Packing::Endian $endian]
             !! self.read-foreign(fh)
     }
 
-    method pack {
+    method pack($buf = buf8.new) {
         $endian == self.host-endian | Host
-            ?? self.pack-host
-            !! self.pack-foreign
+            ?? self.pack-host($buf)
+            !! self.pack-foreign($buf)
     }
 
     method write(\fh) {
