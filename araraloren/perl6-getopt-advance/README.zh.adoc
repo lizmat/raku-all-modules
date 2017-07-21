@@ -1,0 +1,136 @@
+
+= perl6-getopt-advance
+
+An advance command line parse tool replace Getopt::Kinoko
+
+= 描述
+
+`Getopt::Advance` 是一个强大的命令行选项解析模块，支持 `unix-style`、`gnu-style` 以及
+`bsd-style` 等风格的命令行选项。相比传统的解析工具，它还额外支持了 `Hash`、`Array` 等种类的
+选项，并且还提供了类似 `Getopt::Kinoko` 管理选项的 `radio`、`multi` 组设施。此外你还可以
+使用设施 `main`、`cmd` 以及 `pos` 来处理非选项参数。
+
+= 帮助
+
+== 样例
+
+=== find-file
+
+==== 帮助
+
+.打印帮助
+[source,shell]
+-----------------------
+$ ./find-file.p6
+Usage:
+./find-file.p6 <directory>  [-h|--help] [-v|--version] [-?] [--size=<integer>] [-d] [-l] [-f]  *@args
+
+-h|--help         print this help.
+
+-v|--version      print program version.
+
+-?                same as -h.
+
+--size=<integer>  the minimum size limit of file.
+
+-d                specify file type to directory
+
+-l                specify file type to symlink
+
+-f                specify file type to normal file
+-----------------------
+
+.查找示例
+[source,shell]
+----------------------
+$ ./find-file.p6 ../t '1\d.*t$'
+../t/11-bsd-style.t
+../t/10-x-style.t
+----------------------
+
+====  源代码
+
+.find-file
+[source,perl6]
+------------------------
+#!/usr/bin/env perl6
+
+use Getopt::Advance;
+use Getopt::Advance::Helper;
+use Getopt::Advance::Exception;
+
+my @files = [];
+my OptionSet $optset .= new;
+
+$optset.insert-pos(
+    "directory",
+    0,
+    sub ($, $dirarg) {
+        die "$dirarg: Not a valid directory" if $dirarg.value.IO !~~ :d;
+        @files = gather &find($dirarg.value.IO);
+    }
+);
+$optset.append(
+    "h|help=b"      => "print this help.",
+    "v|version=b"   => "print program version.",
+    "?=b"           => "same as -h.",
+    :multi
+);
+$optset.append(
+    'd=b' => 'specify file type to directory',
+    'l=b' => 'specify file type to symlink',
+    'f=b' => 'specify file type to normal file',
+    :radio
+);
+for <d l f> -> $t {
+    $optset.set-callback(
+        $t,
+        -> $, $ { @files = @files.grep({ ."{$t}"(); }); }
+    );
+}
+$optset.push(
+    'size=i',
+    'the minimum size limit of file.',
+    callback => sub ($, $size) {
+        @files = @files.grep({ .s() >= $size.Int; });
+    }
+);
+$optset.insert-main(
+    sub main($optset, @args) {
+        if $optset.get-pos('directory', 0).?success {
+            @args.shift;
+        } else {
+            &ga-want-helper();
+        }
+        my $regex = +@args > 0 ?? @args.shift.value !! "";
+
+        if $regex eq "" {
+            .path.say for @files;
+        } else {
+            .path.say if .path ~~ /<$regex>/ for @files;
+        }
+    }
+);
+&getopt($optset, :autohv, helper => &ga-helper2);
+
+sub find($dir) {
+    for $dir.dir() -> $f {
+        take $f;
+        if $f ~~ :d {
+            &find($f);
+        }
+    }
+}
+------------------------
+
+= 安装
+
+* 使用 `zef` 安装
+
+    zef install Getopt::Advance
+
+= Lincese
+
+The MIT License (MIT).
+
+= TODO

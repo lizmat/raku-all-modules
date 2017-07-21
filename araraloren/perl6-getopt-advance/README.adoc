@@ -1,0 +1,281 @@
+= perl6-getopt-advance
+
+An advance command line parse tool replace Getopt::Kinoko
+
+= Description
+
+`Getopt::Advance` is a powerful command line option parsing module, it suppot many
+style such as: `unix-style`、`gnu-style`、`bsd-style`.etc. It support `Hash`、`Array`
+option compared to traditional command line tools. In addition, it also support
+`radio`、`multi` group mechanism which can manage option realtionship. And to handle
+non-option argument, it provide `main`、`pos` and `cmd` feature.
+
+= Usage
+
+link:README.zh.adoc[中文帮助]
+
+== OptionSet
+
+`OptionSet` is a set of `Option` as the literal mean. Provide interface manage your
+`Option`.
+
+== Option
+
+`Option` can be create by a string. For example, `"a|action=b"` represent an option
+with two kind name, long name is `action`, and short name is `a`, and the option
+type is `boolean`. So you can set **action** argument to true by append `-a` or `--action`
+after your program.
+
+The list of Option type:
+
+.OptionType
+[cols="h,^.^,^.^,^.^m,^.^2m,^.^3m",options="header",width="100%"]
+|==================================
+| type | has argument | represent | create example | set example | support style
+| boolean | no  | b | a\|action=b | -a   | unix gnu x bsd deactivate
+| integer | yes | i | a\|action=i | -a=1 | unix gnu x
+| float   | yes | f | a\|action=f | -a 0.1| unix gnu x
+| string  | yes | s | a\|action=s | --action "u" | unix gnu x
+| array   | yes | a | a\|action=a | --action "item" | unix gnu x
+| hash    | yes | h | a\|action=h | -a ":answer(42)" | unix gnu x
+|==================================
+
+== NonOption
+
+`NonOption` can be use to handle `NOA`(short for non-option argument). You can get
+specific `NOA`, match them or call `callback` when matched. The `NOA` index begin from
+**0**.
+
+NOTE: The parser will check `NonOption` after all option argument matched.
+
+=== pos
+
+`NonOption` `pos` capture `NOA` of specific postion, but it's not force user supply an
+`NOA`. The parser will call it's callback when the `NOA` index matched.
+
+NOTE: The parser will check `pos` after `cmd`, and before `main`.
+
+=== cmd
+
+`NonOption` `cmd` always capture the first NOA, and it's force user supply one of
+available cmd. The parser will call it's callback when the `NOA` name matched.
+
+NOTE: The parser will check `cmd` first. If a front `pos` (with index 0) provide,
+parser will not throw exception when `pos` matched, otherwise it will raise an exception
+when all `cmd` not matched.
+
+=== main
+
+`NonOption` `main` capture all NOA, and it's callback will be called when `main`
+exists.
+
+NOTE: The parser will check `main` last.
+
+== Group
+
+`Group` provide a way set up association between multi `Option`, and it has a check method.
+The parser will call it's check method before return to `&getopt`.
+
+=== radio
+
+In `radio` `Group`, `Option` can be set only one at the same time. And it force user
+supply an option when `Option` is not optional.
+
+=== multi
+
+`multi` `Group` is just provide a possibility in having better style of source code.
+Also it force user supply an option when `Option` is not optional.
+
+== getopt
+
+* `multi sub getopt(       Str $optstring, *%args)`
+* `multi sub getopt(@args, Str $optstring, *%args)`
+* `multi sub getopt(       *@optsets,      *%args)`
+* `multi sub getopt(@args, *@optsets,      *%args)`
+
+Sub `&getopt` accept one or multi `OptionSet`, pass it and command line argument to the `&parser`.
+`&getopt` can accept traditional getopt(in C) string, and convert it to `OptionSet`. 
+Once an `OptionSet` matching success, it will return matched `OptionSet` and 
+all `NOA(Non-Option Argument)`.
+When match failed, consider follow serveral situation:
+
+* default
++
+`&getopt` will print helper(when `&helper` defined) of current `OptionSet`, 
+print error message, and rethrow the exception.
+
+* X::GA::ParseFailed
++
+The `&parser` will call `&ga-try-next` throw an X::GA::ParseFailed exception when `OptionSet` match
+failed. When `&getopt` caught this exception, it will try next `OptionSet` supplied. If no more `OptionSet`, 
+it will print helper(when `&helper` defined) of all `OptionSet`,  print error message, 
+and rethrow the exception.
+
+* X::GA::WantPrintHelper
++
+`&getopt` will print helper(when `&helper` defined) of current `OptionSet` and exit with 0.
+
+* X::GA::WantPrintAllHelper
++
+`&getopt` will print helper(when `&helper` defined) of all `OptionSet` and exit with 0.
+
+=== named argument
+
+* :&helper = &ga-helper
++
+`&helper` will generate and display help message of `OptionSet`, default is `&ga-helper`.
+
+* :$stdout = $*OUT
++
+Help message will print to `$stdout`, default is `$*OUT`.
+
+* :$stderr = $*ERR
++
+Error message will print to `$stderr`, default is `$*ERR`.
+
+* :$strict = True
++
+When `$strict` is True, argument of option should not be begin with `-` or `--`.
+
+* :$autohv = False
++
+When `$autohv` is True, `&getopt` will automate print `$version` information and help message.
+
+* :$version
++
+Program version information.
+
+* :$bsd-style
++
+When `$bsd-style` is True, `&parser` will accept bsd style option.
+
+* :$x-style
++
+When `$x-style` is True, x-style have priority over unix-style.
+
+== Pod Document
+
+link:doc/Getopt/Advance.pod[Getopt-Advance]
+
+== Example
+
+=== find-file
+
+==== usage
+
+.help
+[source,shell]
+-----------------------
+$ ./find-file.p6
+Usage:
+./find-file.p6 <directory>  [-h|--help] [-v|--version] [-?] [--size=<integer>] [-d] [-l] [-f]  *@args
+
+-h|--help         print this help.
+
+-v|--version      print program version.
+
+-?                same as -h.
+
+--size=<integer>  the minimum size limit of file.
+
+-d                specify file type to directory
+
+-l                specify file type to symlink
+
+-f                specify file type to normal file
+-----------------------
+
+.find
+[source,shell]
+----------------------
+$ ./find-file.p6 ../t '1\d.*t$'
+../t/11-bsd-style.t
+../t/10-x-style.t
+----------------------
+
+====  source code
+
+.find-file
+[source,perl6]
+------------------------
+#!/usr/bin/env perl6
+
+use Getopt::Advance;
+use Getopt::Advance::Helper;
+use Getopt::Advance::Exception;
+
+my @files = [];
+my OptionSet $optset .= new;
+
+$optset.insert-pos(
+    "directory",
+    0,
+    sub ($, $dirarg) {
+        die "$dirarg: Not a valid directory" if $dirarg.value.IO !~~ :d;
+        @files = gather &find($dirarg.value.IO);
+    }
+);
+$optset.append(
+    "h|help=b"      => "print this help.",
+    "v|version=b"   => "print program version.",
+    "?=b"           => "same as -h.",
+    :multi
+);
+$optset.append(
+    'd=b' => 'specify file type to directory',
+    'l=b' => 'specify file type to symlink',
+    'f=b' => 'specify file type to normal file',
+    :radio
+);
+for <d l f> -> $t {
+    $optset.set-callback(
+        $t,
+        -> $, $ { @files = @files.grep({ ."{$t}"(); }); }
+    );
+}
+$optset.push(
+    'size=i',
+    'the minimum size limit of file.',
+    callback => sub ($, $size) {
+        @files = @files.grep({ .s() >= $size.Int; });
+    }
+);
+$optset.insert-main(
+    sub main($optset, @args) {
+        if $optset.get-pos('directory', 0).?success {
+            @args.shift;
+        } else {
+            &ga-want-helper();
+        }
+        my $regex = +@args > 0 ?? @args.shift.value !! "";
+
+        if $regex eq "" {
+            .path.say for @files;
+        } else {
+            .path.say if .path ~~ /<$regex>/ for @files;
+        }
+    }
+);
+&getopt($optset, :autohv, helper => &ga-helper2);
+
+sub find($dir) {
+    for $dir.dir() -> $f {
+        take $f;
+        if $f ~~ :d {
+            &find($f);
+        }
+    }
+}
+------------------------
+
+= Installation
+
+* install with zef
+
+    zef install Getopt::Advance
+
+= Lincese
+
+The MIT License (MIT).
+
+= TODO
