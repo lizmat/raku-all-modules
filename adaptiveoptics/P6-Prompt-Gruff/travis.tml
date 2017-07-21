@@ -1,0 +1,43 @@
+language: perl
+
+os:
+    - linux
+    - osx
+
+env:
+    - BACKEND=moar
+    - BACKEND=jvm
+
+matrix:
+    allow_failures:
+        - env: BACKEND=jvm
+    fast_finish: true
+
+sudo: false
+
+before_install:
+    # Install Rakudo
+    - 'if [[ $BACKEND == "moar" ]]; then export VM_OPTS="--gen-moar"; fi'
+    - git clone https://github.com/rakudo/rakudo.git $HOME/rakudo
+    - cd $HOME/rakudo
+    - perl Configure.pl $VM_OPTS --gen-nqp --backends=$BACKEND
+    - make install
+    - export PATH=$HOME/rakudo/install/bin:$PATH
+    - export PATH=$HOME/rakudo/install/share/perl6/site/bin:$PATH
+    - cd $TRAVIS_BUILD_DIR
+
+    # No need to actually install the module installer
+    - git clone https://github.com/ugexe/zef $HOME/zef
+    - export MODULE_INSTALLER="-I $HOME/zef/lib $HOME/zef/bin/zef"
+
+install:
+    # Install prereqs
+    - perl6 $MODULE_INSTALLER --depsonly install .
+
+script:
+    # The actual testing
+    - prove -v -e 'perl6 -Ilib' t/
+
+after_success:
+    # List all installed modules for debugging for brevity
+    - perl6 $MODULE_INSTALLER --installed list
