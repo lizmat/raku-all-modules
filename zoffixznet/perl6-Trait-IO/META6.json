@@ -4,6 +4,7 @@
     "license"      : "Artistic-2.0",
     "version"      : "1.001001",
     "description"  : "Helper IO traits",
+    "tags"         : ["IO"],
     "depends"      : [ ],
     "test-depends" : [ "Test", "Test::META" ],
     "provides"     : {
