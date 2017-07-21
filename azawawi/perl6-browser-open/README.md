@@ -4,11 +4,10 @@ This is a humble Perl 6 port of Perl's [Browser::Open](http://metacpan.org/modul
 
 ## Installation
 
-To install it using Panda (a module management tool bundled with Rakudo Star):
+To install it using zef, the Perl 6 module manager :
 
 ```
-$ panda update
-$ panda install Browser::Open
+$ zef install Browser::Open
 ```
 
 ## Synopsis

@@ -1,5 +1,6 @@
 {
 	"name"        : "Browser::Open",
+	"license"     : "MIT",
 	"version"     : "*",
 	"perl"        : "6.c",
 	"description" : "Open a given URL in a browser",
