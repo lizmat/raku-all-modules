@@ -1,5 +1,3 @@
-use nqp;
-
 sub EXPORT(|) {
 
   role MOSDEF::Grammar {
@@ -11,10 +9,9 @@ sub EXPORT(|) {
     }
   }
 
-  nqp::bindkey(%*LANG,
-    'MAIN',
-    %*LANG<MAIN>.HOW.mixin(%*LANG<MAIN>,
-    MOSDEF::Grammar));
+  $*LANG.define_slang: 'MAIN',
+    $*LANG.slang_grammar('MAIN').^mixin(MOSDEF::Grammar),
+    $*LANG.actions;
 
   {}
 }
