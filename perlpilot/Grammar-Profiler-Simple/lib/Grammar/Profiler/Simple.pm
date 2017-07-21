@@ -4,6 +4,7 @@ my class ProfiledGrammarHOW is Metamodel::GrammarHOW {
 
     method find_method($obj, $name) {
         my $meth := callsame;
+        return $meth if $meth.^name eq 'NQPRoutine' || $meth !~~ Any || $meth !~~ Regex;
         substr($name, 0, 1) eq '!' ||
         substr($name, 0, 8) eq 'dispatch' || 
         $name eq any(« parse CREATE Bool defined MATCH Stringy Str WHERE orig BUILD DESTROY ») ??

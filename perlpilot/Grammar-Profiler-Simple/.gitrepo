@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/Grammar-Profiler-Simple.git
 	branch = master
-	commit = f828d80e3774a5c81033027e8d8be4f66d1e7db1
-	parent = 21bd583132b9bf37f13189617bfed94883d65c6b
-	cmdver = 0.2.0
+	commit = c0aca5fab323b2974821dabd6b89330c609e0b7d
+	parent = 6d05e6678165bb703af04707e3a05a14e4fb9e77
+	cmdver = 0.4.0

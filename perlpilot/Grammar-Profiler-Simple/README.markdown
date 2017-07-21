@@ -1,5 +1,5 @@
 # Grammar::Profiler::Simple
-This module provides a simple profiler for Perl 6 gramamrs. To enable
+This module provides a simple profiler for Perl 6 grammars. To enable
 profiling simply add
 
     use Grammar::Profiler::Simple;
@@ -43,7 +43,6 @@ Retrieve the timing information collected for a particular rule within a particu
 There are 2 bits of timing information collected:  the number of times each rule was called
 and the cumulative time that was spent executing each rule.  For example
 
-say "MyRule was called {get-timing('MyGrammar','MyRule')<calls>} times";
-say "The total time executing MyRule was {get-timing('MyGrammar','MyRule')<time>} seconds";
-
+    say "MyRule was called {get-timing('MyGrammar','MyRule')<calls>} times";
+    say "The total time executing MyRule was {get-timing('MyGrammar','MyRule')<time>} seconds";
 
