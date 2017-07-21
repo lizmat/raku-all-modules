@@ -1,16 +1,24 @@
 {
-  "name" : "Search::Dict",
-  "source-url" : "git://github.com/zengargoyle/p6-Search-Dict.git",
-  "perl" : "v6",
+  "auth" : "github:zengargoyle",
+  "authors" : [
+    "zengargoyle"
+  ],
   "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "a fast binary search of dictionary like files",
+  "license" : "Artistic-2.0",
+  "name" : "Search::Dict",
+  "perl" : "6.c",
   "provides" : {
     "Search::Dict" : "lib/Search/Dict.pm6"
   },
-  "depends" : [ ],
-  "description" : "a fast binary search of dictionary like files",
+  "resources" : [ ],
+  "source-url" : "git://github.com/zengargoyle/p6-Search-Dict.git",
+  "tags" : [
+    "text",
+    "dictionary",
+    "search"
+  ],
   "test-depends" : [ ],
-  "version" : "0.1",
-  "authors" : [
-    "zengargoyle"
-  ]
+  "version" : "0.2"
 }

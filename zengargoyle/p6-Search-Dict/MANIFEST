@@ -1,0 +1,8 @@
+LICENSE
+META6.json
+README.md
+lib/Search/Dict.pm6
+t/01-basic.t
+t/02-lookup.t
+t/words
+xt/999-meta.t

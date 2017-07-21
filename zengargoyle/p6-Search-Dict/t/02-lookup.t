@@ -5,8 +5,8 @@ use Search::Dict;
 my &lookup = search-dict('t/words', :block-size(1));
 
 my $dict = 't/words';
-my @all-words = $dict.IO.words;
 my $end-pos = $dict.IO.s;
+my @all-words = $dict.IO.words;
 my @existing-words = @all-words.pick(15);
 my $first-word = @all-words[0];
 my $last-word = @all-words[*-1];

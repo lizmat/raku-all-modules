@@ -1,5 +1,5 @@
 use v6;
-unit class Search::Dict;
+unit class Search::Dict:ver<0.2>:auth<github:zengargoyle>;
 
 =begin pod
 
@@ -48,7 +48,7 @@ my class R {
 
 sub search-dict( $filename, :$block-size = 128 ) is export {
   my $fh = $filename.IO.open;
-  my $size = $fh.s // do { .seek(0,SeekFromEnd); my $s = .tell; .seek(0,SeekFromBeginning); $s }($fh);
+  my $size = $filename.IO.s // do { .seek(0,SeekFromEnd); my $s = .tell; .seek(0,SeekFromBeginning); $s }($fh);
   my $min = 0;
   my $max = Int($size / $block-size);  # XXX: blksize?
 
