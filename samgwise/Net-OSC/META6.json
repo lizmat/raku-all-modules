@@ -2,6 +2,7 @@
   "authors" : [
     "Sam Gillespie"
   ],
+  "tags" : ["music", "Open Sound Control", "Communication" ],
   "build-depends" : [ ],
   "depends" : [
     "Numeric::Pack"
@@ -21,5 +22,5 @@
   "resources" : [ ],
   "source-url" : "git://github.com/samgwise/Net-OSC.git",
   "test-depends" : [ ],
-  "version" : "0.1.1"
+  "version" : "0.1.2"
 }

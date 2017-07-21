@@ -161,7 +161,7 @@ method !pack-args() returns Buf
 
 #returns a new Message object
 method unpackage(Buf $packed-osc) returns Net::OSC::Message
-#= Returns an Net::OSC::Message from a Buf where the content of the Buf is an OSC message.
+#= Returns a Net::OSC::Message from a Buf where the content of the Buf is an OSC message.
 #= Will die on unhandled OSC type and behaviour is currently undefined on non OSC message Bufs.
 {
   #say "Unpacking message of {$packed-osc.elems} byte(s):";

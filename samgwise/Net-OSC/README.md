@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/samgwise/Net-OSC.svg?branch=master)](https://travis-ci.org/samgwise/Net-OSC)
+
+
 NAME
 ====
 
@@ -9,46 +11,44 @@ Use the Net::OSC module to communicate with OSC applications and devices!
 SYNOPSIS
 ========
 
-```perl6
-use Net::OSC;
+    use Net::OSC;
 
-my Net::OSC::Server::UDP $server .= new(
-  :listening-address<localhost>
-  :listening-port(7658)
-  :send-to-address<localhost> # ← Optional but makes sending to a single host very easy!
-  :send-to-port(7658)         # ↲
-  :actions(
-    action(
-      "/hello",
-      sub ($msg, $match) {
-        if $msg.type-string eq 's' {
-          say "Hello { $msg.args[0] }!";
-        }
-        else {
-          say "Hello?";
-        }
-      }
-    ),
-  )
-);
+    my Net::OSC::Server::UDP $server .= new(
+      :listening-address<localhost>
+      :listening-port(7658)
+      :send-to-address<localhost> # ← Optional but makes sending to a single host very easy!
+      :send-to-port(7658)         # ↲
+      :actions(
+        action(
+          "/hello",
+          sub ($msg, $match) {
+            if $msg.type-string eq 's' {
+              say "Hello { $msg.args[0] }!";
+            }
+            else {
+              say "Hello?";
+            }
+          }
+        ),
+      )
+    );
 
-# Send some messages!
-$server.send: '/hello', :args('world', );
-$server.send: '/hello', :args('lamp', );
-$server.send: '/hello';
+    # Send some messages!
+    $server.send: '/hello', :args('world', );
+    $server.send: '/hello', :args('lamp', );
+    $server.send: '/hello';
 
-# Our routing will ignore this message:
-$server.send: '/hello/not-really';
+    # Our routing will ignore this message:
+    $server.send: '/hello/not-really';
 
-# Send a message to someone else?
-$server.send: '/hello', :args('out there', ), :address<192.168.1.1>, :port(54321);
+    # Send a message to someone else?
+    $server.send: '/hello', :args('out there', ), :address<192.168.1.1>, :port(54321);
 
-#Allow some time for our messages to arrive
-sleep 0.5;
+    #Allow some time for our messages to arrive
+    sleep 0.5;
 
-# Give our server a chance to say good bye if it needs too.
-$server.close;
-```
+    # Give our server a chance to say good bye if it needs too.
+    $server.close;
 
 DESCRIPTION
 ===========
@@ -137,6 +137,8 @@ sub action(
 ```
 
 Creates an action tuple for use in a server's actions list. The string must be a valid OSC path (currently we only check for a beginning '/' character). In the future this subroutine may translate OSC path meta characters to Perl6 regular expressions.
+
+
 NAME
 ====
 
@@ -145,9 +147,7 @@ Net::OSC::Message - Implements OSC message packing and unpacking
 METHODS
 =======
 
-```
-method new(:$path = '/', :@args, :$!is64bit = True)
-```
+    method new(:$path = '/', :@args, :$!is64bit = True)
 
 Set :is64bit to false to force messages to be packed to 32bit types this option may be required to talk to some versions of Max and other old OSC implementations.
 
@@ -213,7 +213,38 @@ method unpackage(
 ) returns Net::OSC::Message
 ```
 
-Returns an Net::OSC::Message from a Buf where the content of the Buf is an OSC message. Will die on unhandled OSC type and behaviour is currently undefined on non OSC message Bufs.
+Returns a Net::OSC::Message from a Buf where the content of the Buf is an OSC message. Will die on unhandled OSC type and behaviour is currently undefined on non OSC message Bufs.
+
+
+NAME
+====
+
+Net::OSC::Bundle - Implements OSC message bundling and unbundling
+
+METHODS
+=======
+
+    method new(:@messages, :$time-stamp)
+
+### method package
+
+```
+method package() returns Blob
+```
+
+Packages up a bundle into a Blob, ready for transport over a binary protocol. The pacakge contains the time-stamp and all messages of the Bundle object.
+
+### method unpackage
+
+```
+method unpackage(
+    Blob:D $bundle
+) returns Net::OSC::Bundle
+```
+
+Unapackages a Blob into a bundle object. The blob must begin with #bundle0x00 as defined by the OSC spec.
+
+
 NAME
 ====
 
@@ -222,9 +253,7 @@ Net::OSC::Server - A role to facilitate a convenient platform for OSC communicat
 METHODS
 =======
 
-```
-method new(:$!is64bit = True)
-```
+    method new(:$!is64bit = True)
 
 Set :is64bit to false to force messages to be packed to 32bit types this option may be required to talk to some versions of Max and other old OSC implementations.
 
@@ -285,27 +314,25 @@ method transmit-message(
 ```
 
 Transmit an OSC message. This method must be implemented by consuming classes. implementations may add additional signatures. Use this method to send a specific OSC message object instead of send (which creates one for you).
+
+
 NAME
 ====
 
 Net::OSC::Server::UDP - A convenient platform for OSC communication over UDP.
 
-```
-Does Net::OSC::Server - look there for additional methods.
-```
+    Does Net::OSC::Server - look there for additional methods.
 
 METHODS
 =======
 
-```
-method new(
-  Bool :$!is64bit = True,
-  Str :listening-address,
-  Int :listening-port,
-  Str :send-to-address,
-  Int :send-to-port,
-)
-```
+    method new(
+      Bool :$!is64bit = True,
+      Str :listening-address,
+      Int :listening-port,
+      Str :send-to-address,
+      Int :send-to-port,
+    )
 
 Set :is64bit to false to force messages to be packed to 32bit types this option may be required to talk to some versions of Max and other old OSC implementations. The send-to-* parameters are not required but allow for convenient semantics if you are only communicating with a single host.
 
