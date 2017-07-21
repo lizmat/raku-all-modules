@@ -1,17 +1,19 @@
 {
-  "name" : "IO::Blob",
-  "license" : "Artistic-2.0",
-  "source-url" : "git://github.com/moznion/p6-IO-Blob.git",
-  "perl" : "6",
+  "authors" : [
+    "moznion"
+  ],
   "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "IO:: interface for reading/writing a Blob",
+  "license" : "Artistic-2.0",
+  "name" : "IO::Blob",
+  "perl" : "6",
   "provides" : {
     "IO::Blob" : "lib/IO/Blob.pm6"
   },
-  "depends" : [ ],
-  "description" : "IO:: interface for reading/writing a Blob",
+  "resources" : [ ],
+  "source-url" : "git://github.com/moznion/p6-IO-Blob.git",
+  "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "*",
-  "authors" : [
-    "moznion"
-  ]
+  "version" : "0.0.1"
 }

@@ -1,6 +1,6 @@
 use v6;
 
-unit class IO::Blob is IO::Handle;
+unit class IO::Blob:ver<0.0.1> is IO::Handle;
 
 constant EMPTY = "".encode;
 constant LF = "\n".encode;
