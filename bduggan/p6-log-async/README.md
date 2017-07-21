@@ -9,6 +9,7 @@ Synopsis
 
 ```p6
 use Log::Async;
+logger.send-to($*OUT);
 
 trace 'how';
 debug 'now';
@@ -123,6 +124,13 @@ logger.done
 Tell the supplier it is done, then wait for the supply to be done.
 This is automatically called in the END phase.
 
+**untapped-ok**
+```p6
+logger.untapped-ok = True
+```
+This will suppress warnings about sending a log message before any
+taps are added.
+
 Context
 =======
 To display stack trace information, logging can be initialized with `add-context`.
@@ -164,19 +172,17 @@ logger.add-tap(-> $m { say $m.ctx.custom-method } )
 
 More Examples
 ========
-Close all taps and just send debug messages to stdout.
+Send debug messages to stdout.
 ```p6
-logger.close-taps;
 logger.send-to($*OUT,:level(DEBUG));
 ```
 
-Close all taps and send warnings, errors, and fatals to a log file.
+Send warnings, errors, and fatals to a log file.
 ```p6
-logger.close-taps;
 logger.send-to('/var/log/error.log',:level(* >= WARNING));
 ```
 
-Close all taps, and add one that prints the file, line number, message, and utc timestamp.
+Add a tap that prints the file, line number, message, and utc timestamp.
 ```p6
 logger.send-to($*OUT,
   formatter => -> $m, :$fh {
@@ -202,6 +208,10 @@ Brian Duggan
 
 Contributors
 ============
+Bahtiar Gadimov
+
 Curt Tilmes
 
 Marcel Timmerman
+
+Slobodan Mišković

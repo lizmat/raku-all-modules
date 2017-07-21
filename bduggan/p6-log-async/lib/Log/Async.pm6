@@ -7,6 +7,7 @@ class Log::Async:ver<0.0.3>:auth<github:bduggan> {
     has Tap @.taps;
     has Supply $.messages;
     has $.contextualizer is rw;
+    has $.untapped-ok is rw = False;
 
     my $instance;
     method instance {
@@ -17,12 +18,6 @@ class Log::Async:ver<0.0.3>:auth<github:bduggan> {
     }
     method add-context(:$context = Log::Async::Context.new) {
       $.contextualizer = $context;
-    }
-
-    method new {
-        my $self = callsame;
-        $self.send-to($*OUT);
-        $self;
     }
 
     method close-taps {
@@ -71,6 +66,11 @@ class Log::Async:ver<0.0.3>:auth<github:bduggan> {
     ) is hidden-from-backtrace {
         my $ctx = $_.generate with self.contextualizer;
         my $m = { :$msg, :$level, :$when, :$*THREAD, :$frame, :$ctx };
+        if @.taps == 0 and not $!untapped-ok {
+            note 'Message sent without taps.';
+            note 'Try "logger.send-to($*ERR)" or "logger.untapped-ok = True"';
+            $!untapped-ok = True;
+        }
         (start $.source.emit($m))
           .then({ say $^p.cause unless $^p.status == Kept });
     }
