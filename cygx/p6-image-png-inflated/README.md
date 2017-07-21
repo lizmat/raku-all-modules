@@ -9,9 +9,10 @@ uncompressed 64k blocks.
 ```
 use Image::PNG::Inflated;
 
-my blob8 $line .= new: flat map { $_ xx 3, 0xFF }, ^0x100;
-my blob8 $img   = to-png ([~] $line xx 64), 256, 64;
-                # data --^          width --^    ^-- height
+my $row    = blob8.new(^256 .flatmap: { $_ xx 3, 255 });
+my $pixels = [~] $row xx 64;
+my $img    = to-png $pixels, 256, 64;
+                   # width --^    ^-- height
 
 spurt 'grayscale.png', $img;
 ```
