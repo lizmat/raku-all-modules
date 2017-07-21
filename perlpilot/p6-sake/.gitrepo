@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/p6-sake.git
 	branch = master
-	commit = 850d25694495f5d47b01df4e3727330290dc67eb
-	parent = 8494ff343c9562665420e8523c566fe71e058572
-	cmdver = 0.2.1
+	commit = ec424c289dc9d143eabd667b1a7c554f019d1813
+	parent = d7b63a8649891c9b03f6648caf2716afcc9321fc
+	cmdver = 0.4.0
