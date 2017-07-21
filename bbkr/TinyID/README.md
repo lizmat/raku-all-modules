@@ -70,9 +70,6 @@ Or you can go wild just for the fun of it.
 If you want to use such IDs in a communication between Perl 5 and Perl 6
 [compatible module is also available](http://search.cpan.org/~bbkr/Integer-Tiny-0.3/lib/Integer/Tiny.pm).
 
-## LICENSE
-
-Released under [Artistic License 2.0](http://www.perlfoundation.org/artistic_license_2_0).
 
 ## CONTACT
 
