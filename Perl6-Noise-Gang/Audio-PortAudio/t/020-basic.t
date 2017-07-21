@@ -37,7 +37,7 @@ if library-exists('portaudio', v2) {
         ok $stream.active, "and it is active now";
         is $stream.info.sample-rate, 44100e0, "got some info";
         nok $stream.stopped, "and it is obviously not stopped anymore";
-        ok $stream.write-available, "and write-available gives us something";
+        cmp-ok $stream.write-available, '>=', 0, "and write-available gives us something non-negative";
 
         diag "may make a quick blip";
         use NativeCall;

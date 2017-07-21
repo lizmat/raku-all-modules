@@ -76,18 +76,14 @@ to obtain and install the source from http://www.portaudio.com/download.html.
 If you take the latter route you want to make sure that you install at
 least one driver for it to be useful.
 
-If you have [panda](https://github.com/tadzik/panda) installed you can
-install this module directly:
+If you have *zef* installed you can install this module directly:
 
-    panda install Audio::PortAudio
+    zef install Audio::PortAudio
 
 Or if you have a copy of this source then you can do so from within the
 distribution directory:
 
-    panda install .
-
-I haven't tested with other installers such as [zef](https://github.com/ugexe/zef)
-but I have no reason to believe that it shouldn't work just as well.
+    zef install .
 
 ## Support
 
@@ -118,6 +114,6 @@ Please see the LICENCE file in the distribution.
 
 © Peschwa           2015
 © Jonathan Stowe    2016
-© Perl 6 Noise Gang 2016
+© Perl 6 Noise Gang 2016, 2017
 
 

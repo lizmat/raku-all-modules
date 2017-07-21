@@ -28,10 +28,10 @@
   "provides": {
     "Audio::PortAudio": "lib/Audio/PortAudio.pm"
   },
-  "version": "0.0.2",
+  "version": "0.0.3",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
   ],
   "description": "Access to audio input and output devices",
-  "meta6": "0"
+  "meta-version": "0"
 }
