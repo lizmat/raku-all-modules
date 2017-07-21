@@ -27,33 +27,20 @@ libyaml C code sources) like this:
 
 # Examples
 
-## Simple
-
-    use LibYAML;
-
-    my $object = load-yaml("...YAML...");
-
-    my $object = load-yaml-file("/my/file.yml");
-
-    my $yaml-str = dump-yaml($object [, $object2, ...], ...options...);
-
-    dump-yaml-file("/my/file.yml", $object [, $object2, ...], ...options...);
-
-## Object-Oriented
+Note: This is a parser and emitter. The interface will probably change.
+If you want to load and dump YAML, take a look at
+[YAML.pm6](https://github.com/yaml/yaml-perl6).
 
     use LibYAML;
 
     my $parser = LibYAML::Parser.new;
 
-    my $object = $parser.parse-string("...YAML...");
-
-    my $object = $parser.parse-file("/my/file.yml");
-
     my $emitter = LibYAML::Emitter.new(...options...);
 
-    my $yaml-str = $emitter.dump-string($object [, $object2, ...]);
+Originally LibYAML combined loading and parsing, dumping and emitting.  The load
+and dump parts have been extracted, modified and moved to yaml/yaml-perl6.
 
-    $emitter.dump-file("/my/file.yml", $object [, $object2, ... ]);
+Documentation will be added when we figure out the API we want to use.
 
 # Emitter options
 
@@ -93,4 +80,7 @@ Throws exceptions `X::LibYAML::Parser-Error` or
 
 [YAMLish](https://github.com/Leont/yamlish) is a pure-perl6 module for
 YAML that doesn't rely on an external library like `LibYAML` does.
+
+[YAML.pm6](https://github.com/yaml/yaml-perl6) is a loader and dumper, which
+uses LibYAML as a backend.
 

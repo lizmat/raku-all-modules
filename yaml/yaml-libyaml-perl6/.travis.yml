@@ -13,5 +13,6 @@ before_script:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libyaml-dev; fi
 
 install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then dpkg -l |grep libyaml; fi
   - rakudobrew build zef
   - zef install .

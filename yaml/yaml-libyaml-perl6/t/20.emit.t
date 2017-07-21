@@ -188,6 +188,9 @@ for @tests.sort -> $test {
     $emitter.delete;
     my $yaml = $emitter.buf;
     @tests == 1 and say ">> $yaml <<";
+    if ($test eq 'P76L') {
+        todo "This test passes on some systems and fails on others";
+    }
     cmp-ok($yaml, 'eq', $expected-yaml, "$test - $testname");
 
 
