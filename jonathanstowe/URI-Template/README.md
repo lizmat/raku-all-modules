@@ -23,23 +23,19 @@ definition of a URI through variable expansion.
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install URI::Template
-
-I haven't tested this with "zef" but I see no reason why it shouldn't work.
+    zef install URI::Template
 
 ## Support
 
-Suggestions/patches are welcomed via github at
-
-   https://github.com/jonathanstowe/URI-Template
+Suggestions/patches are welcomed via github at https://github.com/jonathanstowe/URI-Template
 
 The test data covers all of the examples given in the RFC and a few others,
 if you think the behaviour is incorrect please state the section of the RFC
@@ -51,7 +47,7 @@ expected output.
 
 Please see the LICENCE file in the distribution
 
-© Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017
 
 The testing uses the test data from https://github.com/uri-templates/uritemplate-test
 please see the README.md in the t/data/uritemplate-test for the license for that project.

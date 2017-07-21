@@ -67,7 +67,7 @@ The operators and their general meaning are thus:
 =head1 METHODS
 
 =head2 method new
-    
+
     method new(Str :$template) returns URI::Template
 
 The constructor of the class.  The C<$template> must be a valid URI template if
@@ -90,7 +90,7 @@ C<X::InvalidTemplate> exception will be thrown.
 A read/write public accessor for the template.  If this parameter is not set by
 the accessor it must be set using C<template> before C<process> is called.
 
-Because of the way the template is parsed it will only be done once for any 
+Because of the way the template is parsed it will only be done once for any
 given C<URI::Template> object, so setting this after C<process> has been called
 for the first time will have no effect.  If you need a different template it is
 recommended to use a different object.
@@ -98,7 +98,7 @@ recommended to use a different object.
 
 =end pod
 
-class URI::Template:ver<0.0.5>:auth<github:jonathanstowe> {
+class URI::Template:ver<0.0.6>:auth<github:jonathanstowe> {
 
     has Str $.template is rw;
 
@@ -156,7 +156,7 @@ class URI::Template:ver<0.0.5>:auth<github:jonathanstowe> {
                 my $joiner = self!get-joiner($operator);
                 my &exp = self!get-exploder($operator);
                 my Str $exp-value = @value.map(&uri-encode-component).map(&exp).join($joiner);
-    
+
                 $exp-value does PreEncoded;
                 if self!was-exploded($operator) {
                     $exp-value does PreExploded;
@@ -313,7 +313,7 @@ class URI::Template:ver<0.0.5>:auth<github:jonathanstowe> {
                     $res = (self!get-primer($operator) // '') ~ $eq;
                 }
                 $res ~= self!encode-expanded($operator, $val);
-            } 
+            }
             elsif $val.defined {
                $res = self!get-primer($operator);
             }
@@ -420,7 +420,7 @@ class URI::Template:ver<0.0.5>:auth<github:jonathanstowe> {
 
     has Grammar $.grammar = our grammar Grammar {
         rule TOP {
-            <bits>* [ <expression>+ ]* %% <bits>+ 
+            <bits>* [ <expression>+ ]* %% <bits>+
         }
 
         token bits { <-[{]>+ }
@@ -430,9 +430,9 @@ class URI::Template:ver<0.0.5>:auth<github:jonathanstowe> {
         }
 
         regex operator {
-            <reserved>          || 
-            <fragment>          || 
-            <label-dot>         || 
+            <reserved>          ||
+            <fragment>          ||
+            <label-dot>         ||
             <path-slash>        ||
             <path-semicolon>    ||
             <form-ampersand>    ||
@@ -510,7 +510,7 @@ class URI::Template:ver<0.0.5>:auth<github:jonathanstowe> {
 
         method expression($/) {
             my $operator =  $/<operator>.defined ?? $/<operator>.Str !! Str;
-            my @variables = $/<variable>.list.map({ $_.made }); 
+            my @variables = $/<variable>.list.map({ $_.made });
             @!PARTS.push(Expression.new(:$operator, :@variables));
         }
 
@@ -548,7 +548,7 @@ class URI::Template:ver<0.0.5>:auth<github:jonathanstowe> {
 
             if $!template.defined {
 
-            
+
                 my $actions = Actions.new;
 
                 my $match = URI::Template::Grammar.parse($!template, :$actions);

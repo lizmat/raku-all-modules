@@ -2,22 +2,17 @@
   "name": "URI::Template",
   "source-url": "git://github.com/jonathanstowe/URI-Template.git",
   "support": {
-    "irc": "irc:// irc.freenode.net/#perl6",
-    "source": "git://github.com/jonathanstowe/URI-Template.git",
-    "bugtracker": "https://github.com/jonathanstowe/URI-Template/issues"
+      "email" : "jns+git@gellyfish.co.uk",
+      "irc": "irc:// irc.freenode.net/#perl6",
+      "source": "git://github.com/jonathanstowe/URI-Template.git",
+      "bugtracker": "https://github.com/jonathanstowe/URI-Template/issues"
   },
   "perl": "6.c",
-  "resources": [
-    
-  ],
-  "build-depends": [
-    
-  ],
+  "resources": [],
+  "build-depends": [],
   "author": "Jonathan Stowe <jns+git@gellyfish.co.uk>",
   "auth": "github:jonathanstowe",
-  "depends": [
-    
-  ],
+  "depends": [],
   "tags": [
     "URI",
     "URL",
@@ -33,10 +28,10 @@
   "provides": {
     "URI::Template": "lib/URI/Template.pm"
   },
-  "version": "0.0.5",
+  "version": "0.0.6",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],
   "description": "URI Templates as per https://tools.ietf.org/html/rfc6570",
-  "meta6": "0"
+  "meta-version": "0"
 }
