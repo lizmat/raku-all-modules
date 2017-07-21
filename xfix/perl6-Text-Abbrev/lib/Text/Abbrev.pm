@@ -1,5 +1,5 @@
 unit module Abbrev;
-multi sub abbrev (*@words) is export {
+multi sub abbrev (+@words) is export {
     my $seen = SetHash.new;
     my %result;
     for @words {

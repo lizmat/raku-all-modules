@@ -21,7 +21,7 @@ is-deeply(
     "Values on list shouldn't be removed",
 );
 is-deeply(
-    abbrev([1, 2], [1, 3]),
+    abbrev([[1, 2], [1, 3]]),
     ('1 2' => [1, 2], '1 3' => [1, 3]).hash,
     'Non stringy arguments should be stringified.',
 );
