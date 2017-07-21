@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/bduggan/p6-oauth2-client-google.git
 	branch = master
-	commit = e65fd65b977ed6c52efc425a5e49d1f0cb8e1656
-	parent = 33402ec75a9642454924222165fe5c6fd6193676
+	commit = 735aeb864c18d7876da45c60fca80ccad7647e80
+	parent = ca617adc95b389f6771090ff65c7e98e2299d69e
 	cmdver = 0.4.0

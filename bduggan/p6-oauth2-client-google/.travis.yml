@@ -1,7 +1,8 @@
 language: perl6
-sudo: false
 perl6:
+  - 2017.05
   - latest
 install:
-  - rakudobrew build-panda
-  - panda installdeps .
+  - rakudobrew build zef
+  - zef install --depsonly .
+sudo: false
