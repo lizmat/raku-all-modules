@@ -17,22 +17,22 @@ class Log::Any::FilterBuiltIN is Log::Any::Filter {
 			given $f.key {
 				when 'severity' {
 					given $f.value {
-						when /^ '<=' / {
+						when .starts-with( '<=' ) {
 							return False unless %!severities{$severity} <= %!severities{$f.value.substr(2)};
 						}
-						when /^ '>=' / {
+						when .starts-with( '>=' ) {
 							return False unless %!severities{$severity} >= %!severities{$f.value.substr(2)};
 						}
-						when /^ '<' / {
+						when .starts-with( '<' ) {
 							return False unless %!severities{$severity} < %!severities{$f.value.substr(1)};
 						}
-						when /^ '>' / {
+						when .starts-with( '>' ) {
 							return False unless %!severities{$severity} > %!severities{$f.value.substr(1)};
 						}
-						when /^ '=' / {
+						when .starts-with( '=' ) {
 							return False unless %!severities{$severity} == %!severities{$f.value.substr(1)};
 						}
-						when /^ '!=' / {
+						when .starts-with( '!=' ) {
 							return False unless %!severities{$severity} !== %!severities{$f.value.substr(2)};
 						}
 						when Str {

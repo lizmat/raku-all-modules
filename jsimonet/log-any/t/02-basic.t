@@ -64,7 +64,7 @@ with $a.logs[*-1] {
 	# Check if log dateTime is after $before-log, and before $after-log
 	with $_ ~~ /^ (<-[\s]>+)/ {
 		my $log-dateTime = DateTime.new( $_.Str );
-		if $before-log < $log-dateTime < $after-log {
+		if $before-log <= $log-dateTime <= $after-log {
 			pass "Log DateTime is in the interval";
 		} else {
 			flunk "Log DateTime is not in the interval";

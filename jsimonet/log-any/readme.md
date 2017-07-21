@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/jsimonet/log-any.svg?branch=master)](https://travis-ci.org/jsimonet/log-any)
-
+[![Build status](https://ci.appveyor.com/api/projects/status/rjhdnidc2hwnmd0p/branch/master?svg=true)](https://ci.appveyor.com/project/jsimonet/log-any/branch/master)
 # NAME
 
 Log::Any
@@ -119,15 +119,19 @@ Formatters will use the attributes of a Log.
 |\\s   |Severity     |Indicates if it's an information, or an error| none                     |
 |\\m   |Message      |Payload, explains what is going on           | none                     |
 
+_Note: Depending on the context or the configuration, some values can be empty._
+
 ```perl6
-use Log::Any::Adapter::Stdout( :formatter( '\d \c \m' ) );
+use Log::Any::Adapter::Stdout;
+Log::Any.add( Some::Adapter.new, :formatter( '\d \c \m' ) );
 ```
 
 You can of course use variables in the formatter, but since _\\_ is already used in Perl6 strings interpolation, you have to escape them.
 
 ```perl6
+use Log::Any::Adapter::Stdout;
 my $prefix = 'myapp ';
-use Log::Any::Adapter::Stdout( :format( "$prefix \\d \\c \\s \\m" ) );
+Log::Any.add( Log::Any::Adapter::Stdout.new, :formatter( "$prefix \\d \\c \\s \\m" ) );
 ```
 
 A formatter can be more complex than the default one by extending the class _Formatter_.
@@ -144,25 +148,25 @@ class MyOwnFormatter is Log::Any::Formatter {
 
 # FILTERS
 
-Filters can be used to allow a log to be handled by an adapter.
-Many fields can be filtered, like the _category_, the _severity_ or the message.
+Filters can be used to allow a log to be handled by an adapter, to select which adapter to use or to use a different formatting string.
+Many fields can be filtered, like the _category_, the _severity_ or the _message_.
 
 The easiest way to define a filter is by using the built-in _filter_ giving an array to _filter_ parameter:
 
 ```perl6
-Log::Any.add( Adapter.new, :filter( [ <filters fields goes here>] ) );
+Log::Any.add( Some::Adapter.new, :filter( [ <filters fields goes here>] ) );
 ```
 
 ## Filtering on category or message
 
 ```perl6
 # Matching by String
-Log::Any.add( Adapter.new, :filter( ['category' => 'My::Wonderfull::Lib' ] ) );
+Log::Any.add( Some::Adapter.new, :filter( ['category' => 'My::Wonderfull::Lib' ] ) );
 # Matching by Regex
-Log::Any.add( Adapter.new, :filter( ['category' => /My::*::Lib/ ] ) );
+Log::Any.add( Some::Adapter.new, :filter( ['category' => /My::*::Lib/ ] ) );
 
 # Matching msg by Regex
-Log::Any.add( Adapter.new, :filter( [ 'msg' => /a regex/ ] );
+Log::Any.add( Some::Adapter.new, :filter( [ 'msg' => /a regex/ ] );
 ```
 
 ## Filtering on severity
@@ -182,9 +186,12 @@ The severity can be considered as levels, so can be traited as numbers.
 Filtering on severity can be done by specifying an operator in front of the severity:
 
 ```perl6
-filter => [ 'severity' => '>warning' ] # Above
-filter => [ 'severity' => '==debug'  ] # Equality
-filter => [ 'severity' => '<notice'  ] # Beside
+filter => [ 'severity' => '<notice'   ] # Less
+filter => [ 'severity' => '<=notice'  ] # Less or equal
+filter => [ 'severity' => '==debug'   ] # Equality
+filter => [ 'severity' => '!=notice'  ] # Inequality
+filter => [ 'severity' => '>warning'  ] # Greater
+filter => [ 'severity' => '>=warning' ] # Greater or equal
 ```
 
 Matching only several severities is also possible:
@@ -227,7 +234,7 @@ Log::Any.add( :filter( [ severity => '>warning' ] );
 
 # PIPELINES
 
-A _pipeline_ is a set of adapters and can be used to define alternatives paths (a set of adapters, filters, formatters and options (asynchronicity) ). This allows to handle differently some logs (for example, for security or realtime).
+A _pipeline_ is a set of adapters, filters, formatters and options (asynchronicity) and can be used to define alternatives paths. This allows to handle differently some logs (for example, for security or realtime).
 If a log is produced with a specific pipeline which is not defined in the log consumers, the default pipeline is used.
 
 Pipelines can be specified when an Adapter is added.
@@ -253,7 +260,7 @@ Log::Any.add( Log::Any::Pipeline.new( :asynchronous ), :overwrite );
 Log::Any.add( Log::Any::Pipeline.new( :asynchronous ), :pipeline('other'), :overwrite );
 ```
 
-** Asynchronous pipelines can contains messages to handle when a program reaches its end, so theses messages will not be logged. **
+** Asynchronous pipelines can contains messages to handle when a program reaches its end, so these messages will not be logged. **
 
 ## Continue on match
 
@@ -286,7 +293,7 @@ if Log::Any.will-log( :severity('debug') ) {
 }
 ```
 
-## will-log aliases
+## will-log aliases methods
 
 Some aliases are defined and provide the severity.
 
