@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/daleevans/perl6-Text-Spintax
 	branch = master
-	commit = edf6fe3249502edfb537cfea5811e670ffa6698d
-	parent = 542087bfb4941c935791d95e483f9ca83594c28b
-	cmdver = 0.2.3
+	commit = 56f52d1013483ea125a1e44ef20b30f0e0eb6e33
+	parent = 20f8d7805d7c0ea638c4fa9a9c0bdc9be8bf2cde
+	cmdver = 0.4.0

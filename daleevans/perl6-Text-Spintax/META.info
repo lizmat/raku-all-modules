@@ -1,5 +1,6 @@
 {
     "name" : "Text::Spintax",
+    "license" : "Artistic-2.0",
     "version" : "0.01",
     "description" : "A parser and renderer for spintax formatted text",
     "authors" : ["Dale Evans"],
