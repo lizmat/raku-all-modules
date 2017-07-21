@@ -1,6 +1,6 @@
 # Bailador
 
-[![Build Status](https://travis-ci.org/Bailador/Bailador.png)](https://travis-ci.org/Bailador/Bailador) [![Build status](https://ci.appveyor.com/api/projects/status/github/Bailador/Bailador?svg=true)](https://ci.appveyor.com/project/Bailador/Bailador/branch/master)
+[![Build Status](https://travis-ci.org/Bailador/Bailador.png)](https://travis-ci.org/Bailador/Bailador) [![Build status](https://ci.appveyor.com/api/projects/status/github/Bailador/Bailador?svg=true)](https://ci.appveyor.com/project/ufobat/Bailador/branch/main)
 
 A light-weight route-based web application framework for Perl 6.
 
@@ -11,6 +11,7 @@ Talk to the developers at https://perl6-bailador.slack.com/
 - [Contribution](#contribution)
 - [Versioning model](#Versioning-model)
 - [Example](#example)
+- [Skeleton](#skeleton)
 - [How to Start Apps](#how-to-start-apps)
     - [bailador](#bailador)
     - [Crust](#crust)
@@ -31,7 +32,6 @@ Talk to the developers at https://perl6-bailador.slack.com/
             - [`config()`](#config)
             - [`set(Str $key, $value)`](#setstr-key-value)
             - [`baile()`](#baile)
-            - [`get-psgi-app`](#get-psgi-app)
         - [Subroutines that sould only be used inside the Code block of a Route](#subroutines-that-sould-only-be-used-inside-the-code-block-of-a-route)
             - [`content_type(Str $type)`](#content_typestr-type)
             - [`request()`](#request)
@@ -49,6 +49,7 @@ Talk to the developers at https://perl6-bailador.slack.com/
 - [Templates](#templates)
     - [Error Templates](#error-templates)
 - [Sessions](#sessions)
+- [Configuration](#configuration)
 - [Bailador-based applications](#bailador-based-applications)
 - [Articles about Bailador](#articles-about-bailador)
 - [License](#license)
@@ -69,23 +70,7 @@ bailador version
 
 ## Contribution
 
-If you'd like to contribute to Bailador you need to `fork` the [GitHub](https://github.com/Bailador/Bailador) repository and clone the forked repo to your hard disk. Then you need to install all the dependencies of Bailador:
-
-```
-cd Bailador
-zef --depsonly install .
-```
-
-Run the tests that come with Bailador to make sure everything passes *before* your start making changes. Run:
-```
-prove6 -l
-```
-or
-```
-prove -e 'prove6 -Ilib' t
-```
-
-The rest is "standard" GitHub process. Talk to us on our [Slack channel](https://perl6-bailador.slack.com/)
+If you'd like to contribute to Bailador see the [DEVELOPMENT](DEVELOPMENT.md).
 
 ## Versioning model
 
@@ -106,12 +91,21 @@ When the source code in the `dev` branch reaches a stable point and is ready to 
 
 For more examples, please see the [examples](examples) folder.
 
+## Skeleton
+
+Run
+
+```
+bailador --name App-Name new
+```
+to create a skeleton project.
+
 ## How to Start Apps
 
 ### Crust
 
-When you have installed Crust from the ecosystem there is a command called `crustup` or `crustup.bat` which can be used to launch your Bailador App. Bailador was developed and run best on top of
-[HTTP::Easy::PSGI](https://github.com/supernovus/perl6-http-easy). Before you invoke your Bailador App make sure the file returns a regular P6W app. You can do this with `app.to-psgi-app()`.
+When you have installed Crust from the ecosystem there is a command called `crustup` or `crustup.bat` which can be used to launch your Bailador App. Bailador was developed and runs best on top of
+[HTTP::Easy::PSGI](https://github.com/supernovus/perl6-http-easy). Allways use `baile()` in the end of your app, because in the default configuraton it guesses wether your app is called via crustup or directly with perl6. Depending on that `baile()` chooses the right `Bailador::Command` to invoke your your Application.
 
 #### Example
 
@@ -125,7 +119,7 @@ get '/' => sub {
     "hello world"
 }
 
-app.to-psgi-app;
+baile();
 ```
 
 and then type this in your shell:
@@ -134,14 +128,27 @@ and then type this in your shell:
 
 ### bailador
 
-`bailador` will watch the source code of your Bailador app for changes and automatically restart the app.
+`bailador` can be used to start your your bailador web application. The command line tool converts the command line switches (e.g. `--config=port:8080`) to environment variables (`%*ENV`). There are different commands for bailador.
 
+#### `--config`
 
-    bailador bin/your-bailador-app.p6
+Takes comma-separated list of parameters that configure various aspects how Bailador will run. `--conifg` overrides the [BAILADOR](#configuration) environment variable.
+For details of the available configuration parametes check the [Configuration](#configuration) section of the documentation.
+Currently available parameters:
 
-    bailador --w=lib,bin,views,public   bin/your-bailador-app.p6
+```
+    bailador --config=host:0.0.0.0,port:3001 watch bin/your-bailador-app.p6
+```
 
-#### `--w`
+#### `bailador easy`
+
+The command easy starts the the web application with the HTTP::Easy::PSGI backend.
+
+#### `bailador watch`
+
+The command watch watches the source code of your Bailador app for changes and automatically restart the app.
+
+##### `--w`
 
 Takes comma-separated list of directories to watch. By default,
 will watch `lib` and `bin` directories.
@@ -149,6 +156,8 @@ will watch `lib` and `bin` directories.
 If you have to watch a directory with a comma in its name, prefix it with a backslash:
 
     bailador --w=x\\,y bin/app.p6  # watches directory "x,y"
+
+    bailador --w=lib,bin,views,public watch bin/your-bailador-app.p6
 
 
 ### Baile
@@ -217,7 +226,7 @@ subroutine parameters.
 
 ```Perl6
     get "/foo/(.+)" => sub ( $route ) {
-		return "What a $route";
+        return "What a $route";
     }
 ```
 
@@ -260,13 +269,11 @@ This is a Dancer2 like way to set values to the config.
     config.foo = True;
 ```
 
-##### `baile( [$port=3000, $host=0.0.0.0] )`
+##### `baile()`
+
+or `baile($command)`
 
 Let's enter the dance floor. ¡Olé!
-
-##### `get-psgi-app`
-
-Returns a PSGI / P6SGI / P6W app which should be able to run on different Servers.
 
 #### Subroutines that sould only be used inside the Code block of a Route
 
@@ -310,7 +317,7 @@ class MyWebApp is Bailador::App {
     submethod BUILD(|) {
         my $rootdir = $?FILE.IO.parent.parent;
         self.location = $rootdir.child("views").dirname;
-        self.sessions-config.cookie-expiration = 180;
+        self.config.cookie-expiration = 180;
 
         self.get:  '/login' => sub { self.session-delete; self.template: 'login.tt' };
         self.post: '/login' => self.curry: 'login-post';
@@ -382,7 +389,12 @@ Where Template::Mojo is the default engine but if you want to switch to Template
 It is possible to user other template engines as well.
 Therefore you need to create a class that implements the role Bailador::Template. Its basically just required to implement the render method.
 
-The template files should be placed in a folder named "views" which is located in the same directory as your application.pl file. When you call the subroutine
+The template files should be placed by default in a folder named "views" which is located in the same directory as your application.pl file. If you want to override this, you just have to change the  `views` settings, and choose you own directory :
+```yaml
+views: "templates"
+```
+
+When you call the subroutine
 
     template 'template.tt', $name, $something;
 
@@ -435,23 +447,60 @@ and set backend to this class name.
 
 ## Configuration
 
-Using the `BAILADOR` environment variable we can configure various aspects how Bailador will run.
+Bailador uses a default configuration, but you can customize it, using the Bailador environment variable, or using configuration files. You can also change the configuration within your app. The Bailador::Configuration can also store custom-specifiy information, therefor please use the `set` / `get` method. The order of adjusting the settings is: first the code in your app, second from the configuration files, thrid from the environment variaible. So the settings from the evironment variale `BAILADOR` will finally override what you might have stated in the config files.
+
+```perl6
+# directly
+config.port      = 8080;
+config.hmack-key = 'xxxxxx';
+
+# or via set()
+config.set('port', 8080);
+
+# set works for custom values as well
+config.set('custom-key', 'value')
+config.set('database-username', 'ufobat')
+config.set('database-password', 'xxxxxx')
+
+```
+
+For now, Bailador only allows you to use YAML formatted configuration files. The default configuration file name is `settings.yaml`, but you could change this if you like. Just write `config.config-file = 'myconfig.yaml'` in the beggingin of your app. Create at the root of your project directory a `settings.yaml` file :
+
+```yaml
+# settings.yaml
+mode: "development"
+port: 8080
+```
+
+Bailador will now generate 2 more config file variants and process the settings from there. In our example `settings-local.yaml` and, depending on our `config.mode` which is development, a file named `settings-development.yaml`. If our mode was production Bailador would have used `settings-production.yaml`.
+
+This allows you to have a general settings.yaml that you which to use on everywhere. Adaptions that only apply to a certain server could be placed into the `-local` configuration file. And settings that only apply during development mode can be stored in the `-development` file. As soon as you switch to production mode those settings will no longer be used.
+
+Using the `BAILADOR` environment variable is a comma seperated list of key-value pairs.
+
+```
+BAILADOR=mode:development,host:0.0.0.0,port:5000 perl6 examples/app.pl6
+```
+
 Currently available parameters:
 
-* mode:MODE         (defaults to 'production')
-* port:PORT         (defaults to 3000)
-* host:HOST         (defaults to 127.0.0.1)
-* layout            (defaults to Any)
+* config-file       (defaults to 'settings.yaml')
+* mode              (defaults to 'production')
+* port              (defaults to 3000)
+* host              (defaults to 127.0.0.1)
+* views
+* layout
+* command-detection (defaults to True)
+* default-command
+* watch-command     (defaults to 'easy')
+* watch-list
 * cookie-name       (defaults to 'bailador')
 * cookie-path       (defaults to = '/)
 * cookie-expiration (defaults to 3600)
 * hmac-key          (defaults to 'changeme')
 * backend           (defaults to "Bailador::Sessions::Store::Memory")
-
-```
-BAILADOR=debug,host:0.0.0.0,port:5000
-```
-
+* log-format        (defaults to '\d (\s) \m'
+* log-filter        (defautls to `( 'severity' => '>=warning')`)
 
 ## Bailador-based applications
 
@@ -474,4 +523,3 @@ MIT License
 ## Related projects
 
 https://github.com/pnu/heroku-buildpack-rakudo
-

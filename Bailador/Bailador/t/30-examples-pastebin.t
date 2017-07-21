@@ -1,7 +1,9 @@
-use v6;
-use Test;
-use Bailador::Test;
+use v6.c;
+
 use File::Directory::Tree;
+use Test;
+
+use Bailador::Test;
 
 plan 2;
 
@@ -10,14 +12,15 @@ chdir "examples";
 die "Directory examples/data exists. Remove it before running the test." if 'data'.IO.e;
 
 %*ENV<P6W_CONTAINER> = 'Bailador::Test';
+%*ENV<BAILADOR_APP_ROOT> = $*CWD.absolute;
 my $app = EVALFILE "pastebin.pl6";
 
 subtest {
     plan 2;
     my %data = run-psgi-request($app, 'GET', '/');
     my $main_html = qq{<form action='/new_paste' method='post'>
-\t<textarea name='content' cols=50 rows=10></textarea><br />
-\t<input type='submit' value='Paste it!' />
+    <textarea name='content' cols=50 rows=10></textarea><br />
+    <input type='submit' value='Paste it!' />
 </form>
 };
     is-deeply %data<response>, [200, ["Content-Type" => "text/html"], $main_html], 'route GET /';
@@ -45,4 +48,3 @@ subtest {
 }, 'paste';
 
 rmtree 'data';
-

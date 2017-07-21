@@ -1,11 +1,15 @@
-use v6;
+use v6.c;
+
 use Test;
+
 use Bailador::Test;
 
 plan 3;
 
+chdir 'examples';
 %*ENV<P6W_CONTAINER> = 'Bailador::Test';
-my $app = EVALFILE "examples/echo.pl6";
+%*ENV<BAILADOR_APP_ROOT> = $*CWD.absolute;
+my $app = EVALFILE "echo.pl6";
 
 subtest {
     plan 3;
@@ -30,5 +34,3 @@ subtest {
     is-deeply %data<response>, [200, ["Content-Type" => "text/html"], "echo via POST: Foo Bar"], 'route GET /';
     is %data<err>, '';
 }, '/';
-
-

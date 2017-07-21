@@ -1,8 +1,9 @@
-use v6;
+use v6.c;
 
-use Bailador::Command::p6w;
 use Bailador::Command::easy;
-
+use Bailador::Command::ogre;
+use Bailador::Command::p6w;
+use Bailador::Command::watch;
 
 class Bailador::Commands {
     has @.namespaces = ( 'Bailador::Command' );
@@ -29,10 +30,10 @@ class Bailador::Commands {
 
     method detect-command() {
         if %*ENV<P6SGI_CONTAINER> || %*ENV<P6W_CONTAINER> {
-            self.get-command('p6w');
+            'p6w';
         }
         else {
-            self.get-command('easy');
+            'easy'
         }
     }
 }

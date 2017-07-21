@@ -2,58 +2,61 @@
 use v6;
 use JSON::Fast;
 use Bailador::CLI;
+use Bailador;
 
-multi sub MAIN(Bool :$help) {
-	usage();
-}
+my $*MAIN-ALLOW-NAMED-ANYWHERE = True;
 
-multi sub MAIN(Str :$new) {
-#	if not $new -> {
-#		usage("Project-Name is a required parameter");
-#	}
-	say "Generating $new";
-	if $new.IO.e {
-		say "$new already exists. Exiting.";
-		exit;
-	}
-	mkdir $new;
-	my %skeleton = skeleton();
-	#say %skeleton;
+multi sub MAIN('new', Str :$name) {
+    if not $name {
+        say "--name=Project-Name is a required parameter";
+        return;
+    }
+    say "Generating $name";
+    if $name.IO.e {
+        say "$name already exists. Exiting.";
+        exit;
+    }
+    mkdir $name;
+    my %skeleton = skeleton();
+    #say %skeleton;
 
-	for %skeleton.keys -> $file {
-		say $file;
-		if $file.rindex('/')
-		{
-			my $sep = $file.rindex('/');
-			my $dir = $file.substr(0, $sep);
-			mkdir "$new/$dir";
-		}
-		spurt "$new/$file", %skeleton{$file};
-	}
+    for %skeleton.keys.sort -> $file {
+        say $file;
+        if $file.rindex('/')
+        {
+            my $sep = $file.rindex('/');
+            my $dir = $file.substr(0, $sep);
+            mkdir "$name/$dir";
+        }
+        spurt "$name/$file", %skeleton{$file};
+    }
 }
 
 multi sub MAIN('version') {
-	my $root = $*PROGRAM.absolute.IO.dirname;
-	$root = $root.IO.dirname;
-	my $meta_filename = "$root/../Bailador/META6.json";
-	my $json = $meta_filename.IO.slurp: :close;
-	my $version = from-json($json)<version>;
-	say "Bailador " ~ $version;
+    say "Bailador " ~ Bailador.^ver;
 }
 
-multi sub MAIN ( Str $app, Str :$w = 'lib,bin') {
-    my @watchlist = $w.split: /<!after \\> \,/;
-    s/\\\,/,/ for @watchlist;
+#| Invokes your app on top of HTTP::Easy, reloads your app when changes are detected
+multi sub MAIN ('watch', Str $app, Str :$w = 'lib,bin,views', Str :$config) {
+    bootup-file('watch', $app, $w, $config);
+}
 
-    say "Attempting to boot up the app";
-    my $p = bootup-app $app;
-    react {
-        whenever watch-recursive(@watchlist.grep: *.IO.e) -> $e {
-            if $e.path() !~~ /\.sw.$/ and $e.path() !~~ /\~$/ {
-                say "Change detected [$e.path(), $e.event()]. Restarting app";
-                $p.kill;
-                $p = bootup-app $app;
-            }
-        }
-    }
+#| Invokes your app on top of HTTP::Easy
+multi sub MAIN ('easy', Str $app, Str :$config) {
+    bootup-file('easy', $app, $config);
+}
+
+#| Displays all the routes of your app
+multi sub MAIN ('routes', Str $app, Bool :$t = False, Str :$config) {
+    bootup-file('routes', $app, $t, $config);
+}
+
+#| Invokes your app on top of HTTP::Server::Ogre
+multi sub MAIN ('ogre', Str $app, Str :$config) {
+    bootup-file('ogre', $app, $config);
+}
+
+#| Invokes your app on top of HTTP::Server::Tiny
+multi sub MAIN ('tiny', Str $app, Str :$config) {
+    bootup-file('tiny', $app, $config);
 }
