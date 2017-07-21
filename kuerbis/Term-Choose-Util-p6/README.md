@@ -5,11 +5,6 @@ NAME
 
 Term::Choose::Util - CLI related functions.
 
-VERSION
-=======
-
-Version 0.024
-
 DESCRIPTION
 ===========
 
@@ -27,11 +22,11 @@ The constructor method `new` can be called with optional named arguments:
 
   * defaults
 
-Expects as its value a hash. Sets the defaults for the instance. Valid options: `mouse`.
+Sets the defaults for the instance. Valid options (key/value pairs): `mouse`.
 
   * win
 
-Expects as its value a window object created by ncurses `initscr`.
+Expects as its value a `WINDOW` object - the return value of [NCurses](NCurses) `initscr`.
 
 If set, the following routines use this global window instead of creating their own without calling `endwin` to restores the terminal before returning.
 
@@ -43,7 +38,7 @@ Values in brackets are default values.
 choose-a-dir
 ------------
 
-        $chosen_directory = choose-a-dir( { layout => 1, ... } )
+        $chosen_directory = choose-a-dir( :layout( 1 ), ... )
 
 With `choose-a-dir` the user can browse through the directory tree (as far as the granted rights permit it) and choose a directory which is returned.
 
@@ -57,7 +52,7 @@ To return the current working-directory as the chosen directory choose "`= `".
 
 The "back"-menu-entry ("`E<lt> `") causes `choose-a-dir` to return nothing.
 
-As an argument it can be passed a hash. With this hash the user can set the different options:
+It can be set the following options:
 
   * current
 
@@ -110,16 +105,16 @@ Values: 0,[1].
 choose-a-file
 -------------
 
-        $chosen_file = choose-a-file( { layout => 1, ... } )
+        $chosen_file = choose-a-file( :layout( 1 ), ... )
 
 Browse the directory tree like with `choose-a-dir`. Select "`E<gt>F`" to get the files of the current directory; than the chosen file is returned.
 
-The options are passed with a hash. See [#choose-a-dir](#choose-a-dir) for the different options. `choose-a-file` has no option *current*.
+See [#choose-a-dir](#choose-a-dir) for the different options. `choose-a-file` has no option *current*.
 
 choose-dirs
 -----------
 
-        @chosen_directories = choose-dirs( { layout => 1, ... } )
+        @chosen_directories = choose-dirs( :layout( 1 ), ... )
 
 `choose-dirs` is similar to `choose-a-dir` but it is possible to return multiple directories.
 
@@ -127,21 +122,21 @@ choose-dirs
 
 The "back"-menu-entry ( "`E<lt> `" ) resets the list of chosen directories if any. If the list of chosen directories is empty, "`E<lt> `" causes `choose-dirs` to return nothing.
 
-`choose-dirs` uses the same option as `choose-a-dir`. The option *current* expects as its value an array (directories shown as the current directories).
+`choose-dirs` uses the same option as `choose-a-dir`. The option *current* expects as its value a list (directories shown as the current directories).
 
 choose-a-number
 ---------------
 
         my $current = 139;
         for ( 1 .. 3 ) {
-            $current = choose-a-number( 5, { current => $current, name => 'Testnumber' } );
+            $current = choose-a-number( 5, :$current, :name<Testnumber> );
         }
 
 This function lets you choose/compose a number (unsigned integer) which is returned.
 
 The fist argument - "digits" - is an integer and determines the range of the available numbers. For example setting the first argument to 6 would offer a range from 0 to 999999.
 
-The optional second argument is a hash with these keys (options):
+The available options:
 
   * current
 
@@ -168,17 +163,15 @@ Default: comma (,).
 choose-a-subset
 ---------------
 
-        $subset = choose-a-subset( @available_items, { current => @current_subset } )
+        $subset = choose-a-subset( @available_items, :current( @current_subset ) )
 
 `choose-a-subset` lets you choose a subset from a list.
 
-As a first argument it is required an array which provides the available list.
-
-The optional second argument is a hash. The following options are available:
+The first argument is the list of choices. The following arguments are the options:
 
   * current
 
-This option expects as its value the current subset of the available list (array). If set, two prompt lines are displayed - one for the current subset and one for the new subset. Even if the option *index* is true the passed current subset is made of values and not of indexes.
+This option expects as its value the current subset of the available list. If set, two prompt lines are displayed - one for the current subset and one for the new subset. Even if the option *index* is true the passed current subset is made of values and not of indexes.
 
 The subset is returned as an array.
 

@@ -1,6 +1,21 @@
 Revision history for Term::Choose::Util
 
 
+0.0.2   2017-07-06
+        - Catch exceptions to close the window before leaving
+
+0.0.1   2017-07-05
+        - New format of version
+
+0.027   2017-07-03
+        - Use NCurses
+
+0.026   2017-07-02
+        - Parameter: from %options to *%options
+
+0.025   2017-06-24
+        - Multi-value-options: changed type from Array to List
+
 0.024   2017-05-29
         - Removed unused subroutines
 
