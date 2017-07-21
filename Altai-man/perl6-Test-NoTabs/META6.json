@@ -8,7 +8,7 @@
     "provides": {
         "Test::NoTabs"         : "lib/Test/NoTabs.pm6"
     },
-    "depends"     : [ ],
+    "depends"     : [ "File::Find" ],
     "author" : "github:Altai-man",
     "support" : {
         "bugtracker" : "https://github.com/Altai-man/perl6-Test-NoTabs/issues"
