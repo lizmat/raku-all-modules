@@ -60,20 +60,22 @@ install it from some other compiled package.  Installing it from source
 is of course possible but you will need a compiler and the appropriate
 tools to do so.
 
-Assuming you have the libray installed and have a working rakudo perl 6
-installation the you should be able to install directly with ```panda```:
+On Linux you will need need permissions to the sequencer device, typically
+this is provided by a member of the *audio* group however this may differ
+by distribution so you might need to check if this doesn't work.
 
-    panda install Audio::PortMIDI
+Assuming you have the libray installed and have a working rakudo perl 6
+installation the you should be able to install directly with ```zef```:
+
+    zef install Audio::PortMIDI
 
 Or if you have the source on your local machine (which I recommend as
 you can look at the examples):
 
-    panda install .
+    zef install .
 
 in the directory that you have downloaded.
 
-Though I haven't tested I see no reason that Zef or some other 
-installer that may emerge shouldn't work equally well.
 
 ## Support
 
@@ -107,7 +109,7 @@ MIDI events being sent or received may help.
 This is free software. Please see the LICENCE file in the distribution
 for the terms of the license.
 
-	© Jonathan Stowe, 2016
+	© Jonathan Stowe, 2016, 2017
 	© Perl 6 Noise Gang
 	
 

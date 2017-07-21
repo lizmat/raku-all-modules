@@ -30,11 +30,11 @@
   "provides": {
     "Audio::PortMIDI": "lib/Audio/PortMIDI.pm"
   },
-  "version": "0.0.8",
+  "version": "0.0.9",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>",
     "Pepe Schwarz <peschwa@gmail.com>"
   ],
   "description": "Perl6 MIDI access using the portmidi library",
-  "meta6": "0"
+  "meta-version": "0"
 }

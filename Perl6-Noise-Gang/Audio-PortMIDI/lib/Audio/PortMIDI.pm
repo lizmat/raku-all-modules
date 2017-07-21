@@ -857,7 +857,7 @@ class Audio::PortMIDI {
                 while $!running {
                     my $ev = await $!ev-chan;
                     my $rc = $ev<call>(|@($ev<args>));
-                    $!rc-chan.send($rc);
+                    $!rc-chan.send($rc) unless $!rc-chan.closed;
                 }
             }
         }
@@ -911,9 +911,9 @@ class Audio::PortMIDI {
         method close() {
             $.ev-chan.send(%(call => &note, args => ["Closing Stream"]));
             $!running = False;
-            await $.ev-chan-promise;
             $.ev-chan.close;
             $.rc-chan.close;
+            await $.ev-chan-promise;
             my $rc = Pm_Close($.ptr[0]);
             if $rc < 0 {
                 X::PortMIDI.new(code => $rc, what => "closing stream").throw;
