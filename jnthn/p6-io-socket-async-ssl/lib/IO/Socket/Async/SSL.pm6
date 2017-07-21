@@ -62,6 +62,7 @@ my enum GENERAL_NAME_TYPE <
     GEN_OTHERNAME GEN_EMAIL GEN_DNS GEN_X400 GEN_DIRNAME GEN_EDIPARTY
     GEN_URI GEN_IPADD GEN_RID
 >;
+my constant SSL_CTRL_SET_TLSEXT_HOSTNAME = 55;
 my constant NID_subject_alt_name = 85;
 
 # Per OpenSSL module, make a simple call to ensure libeay32.dll is loaded before
@@ -71,28 +72,6 @@ OpenSSL::EVP::EVP_aes_128_cbc();
 # On first load of the module, initialize the library.
 OpenSSL::SSL::SSL_load_error_strings();
 OpenSSL::SSL::SSL_library_init();
-
-# This streaming decoder will be replaced with some Perl 6 streaming encoding
-# object once that exists.
-my class StreamingDecoder is repr('Decoder') {
-    use nqp;
-
-    method new(str $encoding) {
-        nqp::decoderconfigure(nqp::create(self), $encoding, nqp::hash())
-    }
-
-    method add-bytes(Blob:D $bytes --> Nil) {
-        nqp::decoderaddbytes(self, nqp::decont($bytes));
-    }
-
-    method consume-available-chars() returns Str {
-        nqp::decodertakeavailablechars(self)
-    }
-
-    method consume-all-chars() returns Str {
-        nqp::decodertakeallchars(self)
-    }
-}
 
 # For now, we'll put a lock around all of our interactions with the library.
 # There are smarter things possible.
@@ -165,6 +144,7 @@ class IO::Socket::Async::SSL {
                 my $read-bio = BIO_new(BIO_s_mem());
                 my $write-bio = BIO_new(BIO_s_mem());
                 check($ssl, OpenSSL::SSL::SSL_set_bio($ssl, $read-bio, $write-bio));
+                OpenSSL::SSL::SSL_ctrl($ssl, SSL_CTRL_SET_TLSEXT_HOSTNAME, 0, $host);
                 OpenSSL::SSL::SSL_set_connect_state($ssl);
                 check($ssl, SSL_do_handshake($ssl));
                 CATCH {
@@ -428,7 +408,7 @@ class IO::Socket::Async::SSL {
         else {
             supply {
                 my $norm-enc = Rakudo::Internals.NORMALIZE_ENCODING($enc // 'utf-8');
-                my $dec = StreamingDecoder.new($norm-enc);
+                my $dec = Encoding::Registry.find($norm-enc).decoder();
                 whenever $!bytes-received.Supply.schedule-on($scheduler) {
                     $dec.add-bytes($_);
                     emit $dec.consume-available-chars();
