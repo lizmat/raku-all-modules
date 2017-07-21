@@ -1,4 +1,5 @@
 {
+    "perl" : "6.*",
     "name" : "File::Temp",
     "version" : "0.0.5",
     "description" : "Create temporary files & directories",

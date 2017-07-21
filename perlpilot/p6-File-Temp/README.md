@@ -14,7 +14,7 @@ Synopsis
     #  * are replaced with random characters
     my ($filename,$filehandle) = tempfile("******");
 
-    # Automatically unlink files at end of program (this is the default)
+    # Automatically unlink files at DESTROY (this is the default)
     my ($filename,$filehandle) = tempfile("******", :unlink);
 
     # Specify the directory where the tempfile will be created
