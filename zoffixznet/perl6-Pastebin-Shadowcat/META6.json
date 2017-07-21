@@ -2,10 +2,10 @@
     "perl"         : "6.c",
     "name"         : "Pastebin::Shadowcat",
     "license"      : "Artistic-2.0",
-    "version"      : "2.001002",
+    "version"      : "2.001003",
     "tags"         : ["pastebin"],
     "description"  : "Use http://fpaste.scsys.co.uk/ pastebin from Perl 6",
-    "depends"      : [ "LWP::Simple", "URI::Encode", "HTML::Entity" ],
+    "depends"      : [ "HTTP::UserAgent", "URI::Encode", "HTML::Entity" ],
     "test-depends" : [ "Test" ],
     "provides"     : {
         "Pastebin::Shadowcat" : "lib/Pastebin/Shadowcat.pm6"
