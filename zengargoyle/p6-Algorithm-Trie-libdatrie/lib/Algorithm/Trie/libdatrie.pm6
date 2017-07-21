@@ -119,7 +119,7 @@ or from a TrieState via C<TrieIterator.new($trie-state)>.
 
 =end pod
 
-unit class Algorithm::Trie::libdatrie:ver<v0.2>:auth<github:zengargoyle>;
+unit class Algorithm::Trie::libdatrie:ver<0.2>:auth<github:zengargoyle>;
 use NativeCall;
 use LibraryMake;
 

@@ -1,28 +1,33 @@
 {
-  "perl" : "v6",
-  "name" : "Algorithm::Trie::libdatrie",
-  "license" : "Artistic-2.0",
-  "description" : "a character keyed trie using the datrie library.",
-  "version" : "0.2",
-  "source-url" : "git://github.com/zengargoyle/p6-Algorithm-Trie-libdatrie.git",
-  "provides" : {
-    "Algorithm::Trie::libdatrie" : "lib/Algorithm/Trie/libdatrie.pm6"
-  },
+  "auth" : "github:zengargoyle",
+  "authors" : [
+    "zengargoyle"
+  ],
   "build-depends" : [
-    "panda",
     "LibraryMake",
     "Shell::Command"
   ],
   "depends" : [
     "LibraryMake"
   ],
+  "description" : "a character keyed trie using the datrie library.",
+  "license" : "Artistic-2.0",
+  "name" : "Algorithm::Trie::libdatrie",
+  "perl" : "6.c",
+  "provides" : {
+    "Algorithm::Trie::libdatrie" : "lib/Algorithm/Trie/libdatrie.pm6"
+  },
+  "resources" : [
+    "lib/libdatrie.so"
+  ],
+  "source-url" : "git://github.com/zengargoyle/p6-Algorithm-Trie-libdatrie.git",
+  "tags" : [
+    "text",
+    "trie"
+  ],
   "test-depends" : [
     "Test",
     "File::Temp"
   ],
-  "resources" : [ "lib/libdatrie.so" ],
-  "authors" : [
-    "zengargoyle"
-  ],
-  "auth" : "github:zengargoyle"
+  "version" : "0.2"
 }

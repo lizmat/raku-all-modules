@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/zengargoyle/p6-Algorithm-Trie-libdatrie.git
 	branch = master
-	commit = c0989c4b5b46654040495b45cf1930bffd1856f7
-	parent = 143514975b46a18687d57f023ad5f2aa5389d5fd
+	commit = a6264a5176941b25f7f5d30c9d41d40cde5d088e
+	parent = ec55eab24a415f876c83d535477f99fbfe6f55b9
 	cmdver = 0.4.0
