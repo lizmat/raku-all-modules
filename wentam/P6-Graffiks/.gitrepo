@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/wentam/P6-Graffiks.git
 	branch = master
-	commit = 95a5a2296ac5458945a725b58d7090590756eaa6
-	parent = 5847b98d5fd0e22e8f40c63b7e5a4d6ffad71242
+	commit = ec8912519ad52e7083c021c79297466b9a37d428
+	parent = 8d4ff47f922f40e355e1dcd09fb0f489573be68d
 	cmdver = 0.4.0
