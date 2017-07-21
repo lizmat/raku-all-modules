@@ -18,7 +18,7 @@ my $p = start {
     constant JSONMessage = ( Lumberjack::Message but Lumberjack::Message::JSON );
     sub app(%env) {
         is %env<REQUEST_METHOD>, 'POST', "request is a post";
-        my $c = %env<p6sgi.input>.slurp-rest;
+        my $c = %env<p6w.input>.list.map({ .decode }).join('');
         ok $c.defined, "got some data";
         my $mess = JSONMessage.from-json($c);
         @messages.append: $mess;

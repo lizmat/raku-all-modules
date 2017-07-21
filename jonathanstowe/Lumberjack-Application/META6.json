@@ -43,10 +43,10 @@
     "Lumberjack::Message::JSON": "lib/Lumberjack/Message/JSON.pm",
     "Lumberjack::Application::WebSocket": "lib/Lumberjack/Application/WebSocket.pm"
   },
-  "version": "0.0.5",
+  "version": "0.0.6",
   "authors": [
     "Jonathan Stowe <jns+gh@gellyfish.co.uk>"
   ],
   "description": "A web facility for the Lumberjack logging framework",
-  "meta6": "0"
+  "meta-version": "0"
 }

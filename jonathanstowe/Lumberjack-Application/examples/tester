@@ -31,7 +31,7 @@ my @words = "/usr/share/dict/words".IO.lines;
 
 Foo.log-level = Lumberjack::All;
 
-my $proxy = Lumberjack::Dispatcher::Proxy.new(url => 'http://rabidgravy.com:8898/log');
+my $proxy = Lumberjack::Dispatcher::Proxy.new(url => 'http://127.0.0.1:8898/log');
 
 Lumberjack.dispatchers.append: $proxy;
 

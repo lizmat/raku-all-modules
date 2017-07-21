@@ -84,17 +84,17 @@ the parts you need and do what you want with them.
 
 ## Installation
 
-Assuming you have a working installation of Rakudo Perl 6 with "panda"
+Assuming you have a working installation of Rakudo Perl 6 with "zef"
 then you can simply do:
 
-	panda install Lumberjack::Application
+	zef install Lumberjack::Application
 
 Or if you have a local copy of this distribution:
 
-	panda install .
+	zef install .
 
 Though I haven't tested it I can see no reason why this shouldn't work
-equally well with "zef" or some similarly capable package manager that
+equally well with some similarly capable package manager that
 may come along in the future.
 
 ## Support

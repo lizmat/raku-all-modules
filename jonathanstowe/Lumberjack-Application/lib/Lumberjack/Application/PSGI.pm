@@ -55,7 +55,7 @@ class Lumberjack::Application::PSGI does Callable {
 
     method call(%env) {
         if %env<REQUEST_METHOD> eq 'POST' {
-	        my $c = %env<p6sgi.input>.slurp-rest;
+	        my $c = %env<p6w.input>.list.map({ .decode }).join('');
             my $mess = JSONMessage.from-json($c);
             Lumberjack.log($mess);
 	        return 200, [ Content-Type => 'application/json' ], [ '{ "status" : "OK" }' ];

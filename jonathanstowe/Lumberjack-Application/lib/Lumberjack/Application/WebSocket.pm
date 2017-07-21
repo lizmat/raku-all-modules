@@ -55,7 +55,7 @@ C<Lumberjack::Dispatcher::Supply>.
 =end pod
 
 use Lumberjack::Message::JSON;
-use WebSocket::P6SGI;
+use WebSocket::P6W;
 
 
 class Lumberjack::Application::WebSocket does Callable {
