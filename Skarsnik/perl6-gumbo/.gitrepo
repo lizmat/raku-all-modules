@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Skarsnik/perl6-gumbo.git
 	branch = master
-	commit = f26819cd3838ebda0337612c3731080e467ae489
-	parent = cfd39714aa48cd1c149d723fee50bbdbe71ee75a
+	commit = 13b0552c3e0c32baac8efd5ac81aef30f76af285
+	parent = a72ebfe636e97388dfed1b364f8fa22183f046ac
 	cmdver = 0.4.0
