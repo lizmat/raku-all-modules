@@ -100,11 +100,11 @@ package Zef::CLI {
         );
 
         # LOCAL PATHS
-        abort "The follow were recognized as file paths and don't exist as such - {@paths.grep(!*.IO.e)}"
+        abort "The following were recognized as file paths but don't exist as such - {@paths.grep(!*.IO.e)}"
             if +@paths.grep(!*.IO.e);
         my (:@wanted-paths, :@skip-paths) := @paths\
             .classify: {$client.is-installed(Zef::Distribution::Local.new($_).identity, :at($install-to.map(*.&str2cur))) ?? <skip-paths> !! <wanted-paths>}
-        say "The following local paths candidates are already installed: {@skip-paths.join(', ')}"\
+        say "The following local path candidates are already installed: {@skip-paths.join(', ')}"\
             if ($verbosity >= VERBOSE) && +@skip-paths;
         my @requested-paths = ?$force-install ?? @paths !! @wanted-paths;
         my @path-candidates = @requested-paths.map(*.&path2candidate);
@@ -241,7 +241,7 @@ package Zef::CLI {
                     .dist.name         eq $candi.dist.name
                 &&  .dist.auth-matcher eq $candi.dist.auth-matcher
             });
-            (($latest-installed.dist.ver cmp $candi.dist.ver) === Order::Less) ?? <upgradable> !! <current>;
+            ((Version.new($latest-installed.dist.ver) cmp Version.new($candi.dist.ver)) === Order::Less) ?? <upgradable> !! <current>;
         }
         abort "The following distributions are already at their latest versions: {@current.map(*.dist.identity).join(', ')}" if +@current;
         abort "All requested distributions are already at their latest versions" unless +@upgradable;
@@ -252,7 +252,7 @@ package Zef::CLI {
         say "===> Updating: " ~ @sorted-candidates.map(*.dist.identity).join(', ');
         my (:@upgraded, :@failed) := @sorted-candidates.map(*.uri).classify: -> $uri {
             my &*EXIT = sub ($code) { return $code == 0 ?? True !! False };
-            try &MAIN('install', $uri) ?? <upgraded> !! <failed>;
+            try { &MAIN('install', $uri) } ?? <upgraded> !! <failed>;
         }
         abort "!!!> Failed upgrading *all* modules" unless +@upgraded;
 
@@ -278,56 +278,71 @@ package Zef::CLI {
         my $client = get-client(:config($CONFIG));
         if !$sha1 {
             if $identity.ends-with('.pm' | '.pm6') {
-                my $candi = $client.list-installed.first({
-                    my $meta := $_.dist.compat.meta;
-                    so $meta<provides>.values.grep({.keys[0] eq $identity});
+                my @candis = $client.list-installed.grep({
+                    .dist.compat.meta<provides>.values.grep({.keys[0] eq $identity}).so;
                 });
 
-                if $candi {
-                    my $libs = $candi.dist.compat.meta<provides>;
-                    my $lib  = $libs.first({.value.keys[0] eq $identity});
-                    say "===> From Distribution: {~$candi.dist}";
-                    say "{$lib.keys[0]} => {$candi.from.prefix.child('sources').child($lib.value.values[0]<file>)}";
-                    exit 0;
+                for @candis -> $candi {
+                    LAST exit 0;
+                    NEXT say '';
+
+                    if $candi {
+                        my $libs = $candi.dist.compat.meta<provides>;
+                        my $lib  = $libs.first({.value.keys[0] eq $identity});
+                        say "===> From Distribution: {~$candi.dist}";
+                        say "{$lib.keys[0]} => {$candi.from.prefix.child('sources').child($lib.value.values[0]<file>)}";
+                    }
                 }
             }
             elsif $identity.starts-with('bin/' | 'resources/') {
-                my $candi = $client.list-installed.first({
-                    my $meta := $_.dist.compat.meta;
-                    so $meta<files>.first({.key eq $identity});
+                my @candis = $client.list-installed.grep({
+                    .dist.compat.meta<files>.first({.key eq $identity}).so
                 });
 
-                if $candi {
-                    my $libs = $candi.dist.compat.meta<files>;
-                    my $lib  = $libs.first({.key eq $identity});
-                    say "===> From Distribution: {~$candi.dist}";
-                    say "{$identity} => {$candi.from.prefix.child('resources').child($lib.value)}";
-                    exit 0;
+                for @candis -> $candi {
+                    LAST exit 0;
+                    NEXT say '';
+
+                    if $candi {
+                        my $libs = $candi.dist.compat.meta<files>;
+                        my $lib  = $libs.first({.key eq $identity});
+                        say "===> From Distribution: {~$candi.dist}";
+                        say "{$identity} => {$candi.from.prefix.child('resources').child($lib.value)}";
+                        exit 0;
+                    }
                 }
             }
-            elsif $client.resolve($identity) -> $candi {
-                say "===> From Distribution: {~$candi.dist}";
-                my $source-prefix = $candi.from.prefix.child('sources');
-                my $source-path   = $source-prefix.child($candi.dist.compat.meta<provides>{$identity}.values[0]<file> // '');
-                say "{$identity} => {$source-path}" if $source-path.IO.f;
-                exit 0;
+            elsif $client.resolve($identity) -> @candis {
+                for @candis -> $candi {
+                    LAST exit 0;
+                    NEXT say '';
+
+                    say "===> From Distribution: {~$candi.dist}";
+                    my $source-prefix = $candi.from.prefix.child('sources');
+                    my $source-path   = $source-prefix.child($candi.dist.compat.meta<provides>{$identity}.values[0]<file> // '');
+                    say "{$identity} => {$source-path}" if $source-path.IO.f;
+                }
             }
         }
         else {
-            my $candi = $client.list-installed.first({
+            my @candis = $client.list-installed.grep({
                 my $meta := $_.dist.compat.meta;
                 my @source_files   = $meta<provides>.values.flatmap(*.values.map(*.<file>));
                 my @resource_files = $meta<files>.values.first({$_ eq $identity});
                 $identity ~~ any(grep *.defined, flat @source_files, @resource_files);
             });
 
-            if $candi {
-                say "===> From Distribution: {~$candi.dist}";
-                $identity ~~ any($candi.dist.compat.meta<provides>.values.flatmap(*.values.map(*.<file>)))
-                    ?? (say "{.keys[0]} => {$candi.from.prefix.child('sources').child(.values[0]<file>)}" for $candi.dist.compat.meta<provides>.values.grep(*.values.first({ .<file> eq $identity })).first(*.so))
-                    !! (say "{.key} => {.value}" for $candi.dist.compat.meta<files>.first({.value eq $identity}));
+            for @candis -> $candi {
+                LAST exit 0;
+                NEXT say '';
 
-                exit 0;
+                if $candi {
+                    say "===> From Distribution: {~$candi.dist}";
+                    $identity ~~ any($candi.dist.compat.meta<provides>.values.flatmap(*.values.map(*.<file>)))
+                        ?? (say "{.keys[0]} => {$candi.from.prefix.child('sources').child(.values[0]<file>)}" for $candi.dist.compat.meta<provides>.values.grep(*.values.first({ .<file> eq $identity })).first(*.so))
+                        !! (say "{.key} => {.value}" for $candi.dist.compat.meta<files>.first({.value eq $identity}));
+
+                }
             }
         }
 
@@ -339,7 +354,7 @@ package Zef::CLI {
     #| Detailed distribution information
     multi MAIN('info', $identity, Int :$wrap = False) is export {
         my $client = get-client(:config($CONFIG));
-        my $candi  = $client.resolve($identity)
+        my $candi  = $client.resolve($identity).head
                 ||   $client.search($identity, :strict, :max-results(1))[0]\
                 ||   abort "!!!> Found no candidates matching identity: {$identity}";
         my $dist  := $candi.dist;
@@ -400,6 +415,27 @@ package Zef::CLI {
         }
 
         exit 0;
+    }
+
+    #| Browse a distribution's available support urls (homepage, bugtracker, source)
+    multi MAIN('browse', $identity, $url-type where * ~~ any(<homepage bugtracker source>), Bool :$open = True) {
+        my $client = get-client(:config($CONFIG));
+        my $candi  = $client.resolve($identity).head
+                ||   $client.search($identity, :strict, :max-results(1))[0]\
+                ||   abort "!!!> Found no candidates matching identity: {$identity}";
+        my %support  = $candi.dist.compat.meta<support>;
+        my $url      = %support{$url-type};
+        my @has-urls = grep { %support{$_} }, <homepage bugtracker source>;
+        unless $url && $url.starts-with('http://' | 'https://') {
+            say "'browse' urls supported by $identity: {+@has-urls??@has-urls.join(',')!!'none'}";
+            exit 255;
+        }
+        say $url;
+
+        my @cmd = $*DISTRO.is-win          ?? <cmd /c start>
+                !! $*VM.osname eq 'darwin' ?? <open>
+                                           !! <xdg-open>;
+        run( |@cmd, $url ) if $open;
     }
 
     #| Download a single module and change into its directory
@@ -540,6 +576,7 @@ package Zef::CLI {
                 upgrade (BETA)          Upgrade specific distributions (or all if no arguments)
                 search                  Show a list of possible distribution candidates for the given terms
                 info                    Show detailed distribution information
+                browse                  Open browser to various support urls (homepage, bugtracker, source)
                 list                    List known available distributions, or installed distributions with `--installed`
                 rdepends                List all distributions directly depending on a given identity
                 locate                  Lookup installed module information by short-name, name-path, or sha1 (with --sha1 flag)

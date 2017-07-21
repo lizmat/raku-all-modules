@@ -104,7 +104,7 @@ class Zef::Client {
     method !find-candidates(Bool :$upgrade, *@identities ($, *@)) {
         my $candidates := $!recommendation-manager.candidates(|@identities, :$upgrade)\
             .grep(-> $dist { not @!exclude.first(-> $spec {$dist.dist.contains-spec($spec)}) })\
-            .sort({ Version.new($^b.dist.version) cmp Version.new($^a.dist.version) })\
+            .sort({ Version.new($^b.dist.ver) cmp Version.new($^a.dist.ver) })\
             .unique(:as(*.dist.identity));
     }
 
@@ -269,7 +269,7 @@ class Zef::Client {
                 });
 
                 $!force-extract
-                    ?? say('Failed to extract, but continuing with --force-fetch')
+                    ?? say('Failed to extract, but continuing with --force-extract')
                     !! die("Aborting due to extract failure: {$candi.dist.?identity // $candi.uri} (use --force-extract to override)");
             }
             else {
@@ -328,7 +328,7 @@ class Zef::Client {
 
                 $!force-build
                     ?? say('Failed to build, but continuing with --force-build')
-                    !! die("Aborting due to build failure: {$candi.dist.?identity // $candi.uri} (use --force-fetch to override)");
+                    !! die("Aborting due to build failure: {$candi.dist.?identity // $candi.uri} (use --force-build to override)");
             }
             else {
                 self.logger.emit({
@@ -696,11 +696,12 @@ class Zef::Client {
     }
 
     method resolve($spec, :@at) {
-        self.list-installed(|@at).first(*.dist.contains-spec($spec))
+        my $candis := self.list-installed(|@at).grep(*.dist.contains-spec($spec));
+        $candis.sort({ Version.new($^b.dist.ver) cmp Version.new($^a.dist.ver) });
     }
 
     method is-installed(|c) {
-        ?self.resolve(|c)
+        self.resolve(|c).so
     }
 
     method sort-candidates(@candis, *%_) {

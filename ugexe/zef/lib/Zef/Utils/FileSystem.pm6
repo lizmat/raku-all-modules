@@ -21,6 +21,7 @@ sub copy-paths($from-path, $to-path, Bool :$d, Bool :$f = True, Bool :$r = True,
         my $from-relpath = $from-file.relative($from-path);
         my $to-file      = IO::Path.new($from-relpath, :CWD($to-path)).absolute;
         mkdir($to-file.IO.parent) unless $to-file.IO.e;
+        next if $from-file eq $to-file; # copy deadlocks on older rakudos otherwise
         take $to-file.IO.absolute if copy($from-file, $to-file);
     }
 }
@@ -39,5 +40,14 @@ sub delete-paths($path, Bool :$d = True, Bool :$f = True, Bool :$r = True, Bool 
     my @deleted = do gather {
         for @files.sort(*.chars).reverse { unlink($_) && take $_ }
         for @dirs\.sort(*.chars).reverse { rmdir($_)  && take $_ }
+    }
+}
+
+sub lock-file-protect($path, &code, Bool :$shared = False) is export {
+    do given ($shared ?? $path.IO.open(:r) !! $path.IO.open(:w)) {
+        LEAVE {.close}
+        LEAVE {try .path.unlink}
+        .lock(:$shared);
+        code();
     }
 }

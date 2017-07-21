@@ -36,8 +36,8 @@
                 "name" : "cpan",
                 "auto-update" : 1,
                 "mirrors" : [
-                    "git://github.com/ugexe/Perl6-ecosystems.git",
-                    "https://raw.githubusercontent.com/ugexe/Perl6-ecosystems/master/cpan.json"
+                    "https://raw.githubusercontent.com/ugexe/Perl6-ecosystems/master/cpan.json",
+                    "git://github.com/ugexe/Perl6-ecosystems.git"
                 ]
             }
         },
@@ -76,12 +76,12 @@
             "module" : "Zef::Service::FetchPath"
         },
         {
-            "short-name" : "wget",
-            "module" : "Zef::Service::Shell::wget"
-        },
-        {
             "short-name" : "curl",
             "module" : "Zef::Service::Shell::curl"
+        },
+        {
+            "short-name" : "wget",
+            "module" : "Zef::Service::Shell::wget"
         },
         {
             "short-name" : "pswebrequest",

@@ -1,11 +1,20 @@
 use Zef;
+use Zef::Utils::FileSystem;
 
 class Zef::Extract does Pluggable {
     method extract($path, $extract-to, Supplier :$logger) {
         die "Can't extract non-existent path: {$path}" unless $path.IO.e;
         die "Can't extract to non-existent path: {$extract-to}" unless $extract-to.IO.e || $extract-to.IO.mkdir;
+
         my $extractors := self.plugins.grep(*.extract-matcher($path)).cache;
-        die "No extracting backend available" unless ?$extractors;
+
+        unless +$extractors {
+            my @report_enabled  = self.plugins.map(*.short-name);
+            my @report_disabled = self.backends.map(*.<short-name>).grep({ $_ ~~ none(@report_enabled) });
+
+            die "Enabled extracting backends [{@report_enabled}] don't understand $path\n"
+            ~   "You may need to configure one of the following backends, or install its underlying software - [{@report_disabled}]";
+        }
 
         my $got = first *.IO.e, gather for $extractors -> $extractor {
             if ?$logger {
@@ -14,7 +23,7 @@ class Zef::Extract does Pluggable {
                 $extractor.stderr.Supply.act: -> $err { $logger.emit({ level => ERROR,   stage => EXTRACT, phase => LIVE, message => $err }) }
             }
 
-            my $out = try $extractor.extract($path, $extract-to);
+            my $out = lock-file-protect("{$extract-to}.lock", -> { try $extractor.extract($path, $extract-to) });
 
             $extractor.stdout.done;
             $extractor.stderr.done;

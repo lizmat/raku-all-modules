@@ -69,13 +69,17 @@ To install via rakudobrew, please use the following command:
     # lookup module info by name/path/sha1
     zef --sha1 locate 9FA0AC28824EE9E5A9C0F99951CA870148AE378E
 
+    # launch browser to named support urls from meta data
+    zef browse zef bugtracker
+
 =head2 More CLI
 
 =head4 B<install> [*@identities]
 
-Note: The install process does not install anything until all phases have completed. So, if the user requested to C<install A>, and A required module B: both would be downloaded, potentially built, tested,
-and installed -- but only if both passed all their tests. For example: if module A failed its
-tests, then module B would not be installed (even if it passed its own tests) unless forced.
+Note: The install process does not install anything until all phases have completed. So, if the user requested to
+C<install A>, and A required module B: both would be downloaded, potentially built, tested, and installed -- but only
+if both passed all their tests. For example: if module A failed its tests, then module B would not be installed
+(even if it passed its own tests) unless forced.
 
 [C<@identities>] can take the form of a file path (starting with B<.> or B</>), URNs, URLs, paths, or identities:
 
@@ -90,6 +94,7 @@ tests, then module B would not be installed (even if it passed its own tests) un
     # URL
     zef -v install git://github.com/ugexe/zef.git
     zef -v install https://github.com/ugexe/zef/archive/master.tar.gz
+    zef -v install https://github.com/ugexe/zef.git@v0.1.22
 
     # URN
     zef install github:tony-o:CSV--Parser:0.1.2
@@ -151,7 +156,8 @@ Note: Requires a bleeding edge rakudo (not available in 6.c)
 Update the package indexes for all C<Repository> backends
 
 Note: Some C<Repository> backends, like the default Ecosystems, have an C<auto-update> option
-in C<resources/config.json> that can be enabled
+in C<resources/config.json> that can be enabled. This should be the number of hours until it should
+auto update based on the file system last modified time of the ecosystem json file location.
 
 =head4 B<upgrade> [*@identities] I<BETA>
 
@@ -291,6 +297,23 @@ continuing the install via C<zef install .>
 Note that the path to any dependencies that needed to be fetched will be set in env at B<PERL6LIB>, so you should
 be able to run any build scripts, tests, or complete a manual install without having to specify their locations.
 
+=head4 B<browse> $identity [bugtracker | homepage | source]
+
+B<Options>
+
+    # disables launching a browser window (just shows url)
+    --/open
+
+Output the url and launch a browser to open it.
+
+    # also opens browser
+    $ zef browse Net::HTTP bugtracker
+    https://github.com/ugexe/Perl6-Net--HTTP/issues
+
+    # only outputs the url
+    $ zef browse Net::HTTP bugtracker --/open
+    https://github.com/ugexe/Perl6-Net--HTTP/issues
+
 =head4 B<locate> [$identity, $name-path, $sha1-id]
 
 B<Options>
@@ -351,6 +374,8 @@ First, and the most precise way, is to specify the config file by passing C<--co
 Second, third, and fourth we look at the path pointed to by `%?RESOURCES<config.json>`. This will point to C<$zef-dir/resources/config.json>, where C<$zef-dir> will be either:
 
 =over 4
+
+=item * The prefix of a common configuration directory, such as `$XDG_CONFIG_HOME`  or `$HOME/.config`.
 
 =item * The prefix of a rakudo installation location - This is the case if the modules loaded for bin/zef come from an installation CompUnit::Repository.
 
