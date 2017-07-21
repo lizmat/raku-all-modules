@@ -1,4 +1,5 @@
 { 
+    "perl" : "6.*",
     "name" : "Test::Class", 
     "version" : "*", 
     "description" : "Simple Test::Class similar to Perl 5's", 
