@@ -156,7 +156,6 @@ subtest 'platform run', {
     is %vars{'GIT_BRANCH'}, 'HEAD', 'env variable GIT_BRANCH=HEAD is set';
 }
 
-
 subtest 'platform stop|rm honeybee', {
     plan 1;
     for <honeybee> -> $project {

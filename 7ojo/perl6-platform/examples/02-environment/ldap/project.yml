@@ -1,0 +1,32 @@
+environment:
+  - LDAP_ORGANISATION="Example Ltd."
+  - LDAP_DOMAIN="example.com"
+  - LDAP_ADMIN_PASSWORD="toor"
+files:
+  /sample.ldif: |
+    dn: ou=users,dc=example,dc=com
+    objectclass: organizationalunit
+    ou: users
+    
+    dn: uid=test,ou=users,dc=example,dc=com
+    objectclass: inetOrgPerson
+    objectclass: person
+    gn: Test
+    sn: Person
+    cn: Test Person
+    uid: test
+    userPassword: t3st
+    
+    # All the groups
+    dn: ou=groups,dc=example,dc=com
+    objectclass: organizationalunit
+    ou: groups
+    
+    dn: cn=docker,ou=groups,dc=example,dc=com
+    objectclass: groupofnames
+    cn: docker
+    description: All the docker users
+    member: uid=test,ou=users,dc=example,dc=com
+exec:
+  - bash -c 'n=0; until [ $n -ge 15 ]; do ldapsearch -H ldap://ldap.localhost -w toor -D "cn=admin,dc=example,dc=com" -b dc=example,dc=com && break; n=$[$n+1]; sleep 1; done'
+  - ldapadd -x -H ldap://ldap.localhost -w toor -D "cn=admin,dc=example,dc=com" -f /sample.ldif

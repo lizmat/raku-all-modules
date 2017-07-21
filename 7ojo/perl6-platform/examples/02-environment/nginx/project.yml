@@ -1,0 +1,3 @@
+command: /run.sh
+volumes:
+    - html:/usr/local/nginx/html:ro

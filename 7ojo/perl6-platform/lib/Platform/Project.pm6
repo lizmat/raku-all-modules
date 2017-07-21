@@ -22,7 +22,7 @@ class Platform::Project {
     method TWEAK {
         $!project .= subst(/\~/, $*HOME);
         if self.project.IO.extension eq 'yml' {
-            $!project-dir = self.project.IO.dirname.IO.absolute;
+            $!project-dir = self.project.IO.parent.absolute;
             $!project-file = self.project.IO.absolute;
         } else {
             $!project-dir = self.project.IO.absolute;

@@ -40,7 +40,7 @@ files:
     add: memberuid
     memberuid: seppo
 exec:
-  - sleep 5
+  - bash -c 'n=0; until [ $n -ge 15 ]; do ldapsearch -H ldap://openldap.localhost -w eing5xuW -D "cn=admin,dc=viidakko,dc=fi"  -b dc=viidakko,dc=fi && break; n=$[$n+1]; sleep 1; done'
   - ldapadd -x -H ldap://openldap.localhost -w aiquoD1F -D "cn=admin,dc=acme,dc=company" -f /units.ldif 
   - ldapadd -x -H ldap://openldap.localhost -w aiquoD1F -D "cn=admin,dc=acme,dc=company" -f /groups.ldif
   - ldapadd -x -H ldap://openldap.localhost -w aiquoD1F -D "cn=admin,dc=acme,dc=company" -f /users.ldif
