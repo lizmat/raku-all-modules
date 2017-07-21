@@ -39,7 +39,7 @@ my $data = base64-decode("AB+/");
 say base64-encode( $data, :str );
 # AB+/
 say base64-encode( $data, :str, :uri );
-# AB-_/
+# AB-_
 ```
 
 ### URI Decoding

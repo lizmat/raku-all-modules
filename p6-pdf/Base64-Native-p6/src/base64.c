@@ -11,6 +11,7 @@ static const char b64_enc_uri[64] =
 
 // --- Base-64 byte decoding table ---
 
+#define PADDING '='
 #define W 254 // Whitespace
 #define X 255 // Illegal Character
 
@@ -37,8 +38,7 @@ static uint8_t b64_dec[256] = {
 
 static void
 base64_encode_blocks (const char *enc, uint8_t *in, size_t block_count, uint8_t *out) {
-  for (;block_count > 0; block_count--, in += 3)
-    {
+  for (;block_count > 0; block_count--, in += 3) {
       *out++ = enc[in[0] >> 2];
       *out++ = enc[((in[0] << 4) + (in[1] >> 4)) & 0x3f];
       *out++ = enc[((in[1] << 2) + (in[2] >> 6)) & 0x3f];
@@ -47,21 +47,18 @@ base64_encode_blocks (const char *enc, uint8_t *in, size_t block_count, uint8_t 
 }
 
 static void
-encode (const char *b64_enc_table,
-	uint8_t* in, size_t inlen,
-	uint8_t* out, size_t outlen)
-{
-  size_t whole_blocks = inlen / 3;
-  if (whole_blocks * 4 > outlen) {
-    whole_blocks = outlen / 4;
-  }
-  base64_encode_blocks (b64_enc_table, in, whole_blocks, out);
+base64_encode_tail (const char *b64_enc_table,
+                   uint8_t* in, size_t inlen,
+                   size_t whole_blocks,
+                   uint8_t* out, size_t outlen
+                   ) {
+
   inlen -= whole_blocks * 3;
   outlen -= whole_blocks * 4;
   in += whole_blocks * 3;
   out += whole_blocks * 4;
 
-  if (inlen && outlen) {
+  if (inlen > 0 && outlen > 0) {
     /* Final partial block */
     uint8_t in_tail[3] = {
       in[0],
@@ -74,14 +71,28 @@ encode (const char *b64_enc_table,
     base64_encode_blocks (b64_enc_std, in_tail, 1, out_tail);
     /* Pad */
     if (inlen < 2) {
-      out_tail[2] = '=';
+      out_tail[2] = PADDING;
     }
-    out_tail[3] = '=';
+    out_tail[3] = PADDING;
 
     for (i = 0; i < 4 && outlen > 0; outlen--) {
       *out++ = out_tail[i++];
     }
   }
+
+}
+
+static void
+encode (const char *b64_enc_table,
+	uint8_t* in, size_t inlen,
+	uint8_t* out, size_t outlen)
+{
+  size_t whole_blocks = inlen / 3;
+  if (whole_blocks * 4 > outlen) {
+    whole_blocks = outlen / 4;
+  }
+  base64_encode_blocks (b64_enc_table, in, whole_blocks, out);
+  base64_encode_tail (b64_enc_table, in, inlen, whole_blocks, out, outlen);
 
 }
 
@@ -116,7 +127,7 @@ static uint8_t next_digit(uint8_t* in,
     }
     else {
       if (digit == X) {  // Illegal character
-	*error_pos = *i;;
+	if (!*error_pos) *error_pos = *i;
 	digit = next_digit(in, inlen, i, n, error_pos);
       }
       else {
@@ -134,7 +145,7 @@ base64_decode (uint8_t* in, size_t inlen,
     int32_t j;
     ssize_t error_pos = 0;
 
-    while (inlen > 0 && in[inlen - 1] == '='
+    while (inlen > 0 && in[inlen - 1] == PADDING
 	   || b64_dec[ in[inlen - 1] ] == W) {
       inlen--;
     }
