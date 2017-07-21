@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 13;
+plan 20;
 
 use CSS::Declarations;
 use CSS::Declarations::Units :pt;
@@ -34,5 +34,20 @@ is-deeply $box.margin, [$box.margin-top, $box.margin-right, $box.margin-bottom, 
 
 is-approx $box.border-width, ($box.border-right - $box.border-left), '.border-width';
 is-approx $box.border-height, ($box.border-top - $box.border-bottom), '.border-height';
+
+$box.translate(5, 10);
+is-deeply $box.Array, [$top+10, $right+5, $bottom+10, $left+5], '.translate';
+is $box.padding, [$top+15, $right+10, $bottom+5, $left], 'translate padding';
+
+$box.move($right-5, $top-10);
+is-deeply $box.Array, [$top-10, $right-5, $bottom-10, $left-5], '.move';
+is $box.padding, [$top-5, $right, $bottom-15, $left-10], 'move padding';
+
+$box.top += 5;
+is-deeply $box.Array, [$top-5, $right-5, $bottom-10, $left-5], '.resize';
+
+dies-ok { note CSS::Declarations::Box.new( :$top, :$left, :bottom($top+1), :$right, :$css )}, 'illegal initial size';
+
+dies-ok { $box.top = $box.bottom -5}, 'illegal resize';
 
 done-testing;

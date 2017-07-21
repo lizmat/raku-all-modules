@@ -240,7 +240,7 @@ margin-right: 5 mm
 
 ## Length Units
 
-CSS::Declaration::Units is a convenience module that provides some simple postfix length unit definitions, plus '➕' and '➖'
+CSS::Declaration::Units is a convenience module that provides some simple post-fix length unit definitions, plus '➕' and '➖'
 operators. These are understood by the CSS::Declarations class.
 
 The '➕' and '➖' operators convert to the left-hand operand's units.
@@ -291,13 +291,68 @@ say $box.font-length(200%);     # 20
 say $box.font-length('larger'); # 12
 ```
 
-- The box `new` constructor accepts:
+### Box Methods
+
+#### new
+
+    my CSS::Declarations::Box.new( :$top, :$left, :$bottom, :$right, :$css );
+
+The box `new` constructor accepts:
 
   -- any two of `:top`, `:bottom` or `:height`,
 
   -- and any two of `:left`, `:right` or `:width`.
 
+#### font
+
 - The '.font' accessor returns an object of type `CSS::Declarations::Font`, with accessor methods: `em`, `ex`, `weight`, `family`, `style` and `leading`.
+
+#### top, right, bottom, left
+
+These methods return the positions of each of the four corners of the inner content box. They
+are rw accessors, e.g.:
+
+    $box.top += 5;
+
+Outer boxes will grow and shrink, retaining their original width and height.
+
+#### padding, margin, border
+
+This returns all four corners of the given box, e.g.:
+
+    my Numeric ($top, $right, $bottom, $left) = $box.padding
+
+
+#### content
+
+This returns all four corners of the content box, e.g.:
+
+    my Numeric ($top, $right, $bottom, $left) = $box.content;
+
+These values are rw. The box can be both moved and resized, by adjusting this array.
+
+    $box.content = (10, 50, 35, 10); # 40x25 box, top-left @ 10,10
+
+Outer boxes, will grow or shrink to retain their original widths.
+
+#### [padding|margin|border|content]-[width|height]
+
+     say "margin box is size {$box.margin-width} X {$box.margin-height}";
+
+This family of accessors return the width, or height of the given box.
+
+#### [padding|margin|border|content]-[top|right|bottom|left]
+
+     say "margin left, top is ({$box.margin-left}, {$box.margin-top})";
+
+This family of accessors return the x or y position of the given edge
+
+#### translate, move
+
+These methods can be used to adjust the position of the content box.
+
+    $box.translate(10, 20); # translate box 10, 20 in X, Y directions
+    $box.move(40, 50); # move top left corner to (X, Y) = (40, 50)
 
 ## Appendix : CSS3 Properties
 

@@ -32,9 +32,24 @@ class CSS::Declarations::Box {
     ) {
         $!css //= CSS::Declarations.new(:$style),
         $!font //= CSS::Declarations::Font.new: :$em, :$ex, :$!css;
+        self!resize;
     }
 
-    multi method top { $!top }
+    method !resize {
+        die "left > right" if $!left > $!right;
+        die "bottom > top" if $!bottom > $!top;
+        $!padding = Nil;
+        $!border = Nil;
+        $!margin = Nil;
+    }
+
+    multi method top {
+        Proxy.new(
+            FETCH => sub ($) { $!top },
+            STORE => sub ($, $!top) { self!resize },
+            );
+    }
+
     multi method top(BoundingBox $box) {
         self."$box"()[Top];
     }
@@ -70,11 +85,6 @@ class CSS::Declarations::Box {
         self.font.length($v);
     }
 
-    method translate( \x = 0, \y = 0) {
-        self.Array = [ $!top    + y, $!right + x,
-                       $!bottom + y, $!left  + x ];
-    }
-
     method !width($qty) {
         { :thin(1pt), :medium(2pt), :thick(3pt) }{$qty} // self!length($qty)
     }
@@ -93,7 +103,7 @@ class CSS::Declarations::Box {
         $!margin //= $.enclose($.border, self.widths($!css.margin));
     }
 
-    method content returns Array { self.Array }
+    method content returns Array is rw { self.Array }
 
     method enclose(List $inner, List $outer) {
         [
@@ -104,7 +114,7 @@ class CSS::Declarations::Box {
         ]
     }
 
-    method css-height($css) {
+    method css-height($css = $!css) {
         my Numeric $height = $_ with self!length($css.height);
         with self!length($css.max-height) {
             $height = $_
@@ -117,7 +127,7 @@ class CSS::Declarations::Box {
         $height;
     }
 
-    method css-width($css) {
+    method css-width($css = $!css) {
         my Numeric $width = $_ with self!length($css.width);
         with self!length($css.max-width) {
             $width = $_
@@ -136,12 +146,22 @@ class CSS::Declarations::Box {
                 [$!top, $!right, $!bottom, $!left]
             },
             STORE => sub ($,@v) {
-                $!padding = $!border = $!margin = Nil;
-                $!top    = @v[Top] // 0;
-                $!right  = @v[Right] // $!top;
-                $!bottom = @v[Bottom] // $!top;
-                $!left   = @v[Left] // $!right
+                my $width  = $!right - $!left;
+                my $height = $!top - $!bottom;
+                $!top    = $_ with @v[Top];
+                $!right  = $_ with @v[Right];
+                $!bottom = @v[Bottom] // $!top - $height;
+                $!left   = @v[Left] // $!right - $width;
+                self!resize;
             });
+    }
+
+    method move( \x = 0, \y = 0) {
+        self.Array = [y, x ];
+    }
+
+    method translate( \x = 0, \y = 0) {
+        self.Array = [ $!top    + y, $!right + x ];
     }
 
     method save {

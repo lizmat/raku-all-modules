@@ -1,13 +1,11 @@
 use v6;
 use Test;
-plan 15;
+plan 14;
 
 use CSS::Declarations::Property;
 use CSS::Declarations::Edges;
 use CSS::Declarations;
 use CSS::Declarations::Units :pt, :px;
-
-pass('compiles');
 
 my $sample-prop = CSS::Declarations::Property.new( :name<background-image> );
 

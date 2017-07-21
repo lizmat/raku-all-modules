@@ -1,5 +1,10 @@
+0.3.2
+    CSS::Declarations::Box
+    - Add bounds checks top >= bottom, right >= left
+    - Add `move` and `translate` methods
+    - Saner `Array` rw accessor
 0.3.1
-    CS::Declarations::Box
+    CSS::Declarations::Box
     - Replace .leading() method with .line-height()
 0.3.0
     CSS::Declarations::Units
