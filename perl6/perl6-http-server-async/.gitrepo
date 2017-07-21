@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perl6/perl6-http-server-async.git
 	branch = master
-	commit = 8cca191655be1f04f0318e220cfea0b9d7c24980
-	parent = e956e24f8f2f898d0809cec30ee8881edccc6bf0
+	commit = 059a7e68fc6c990738ed969f17e7c011c1518bd1
+	parent = 853e228dd0f49e67e60fa22b9dec3adc7a640f62
 	cmdver = 0.4.0
