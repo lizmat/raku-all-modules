@@ -1,19 +1,20 @@
 {
-  "name" : "Algorithm::TernarySearchTree",
-  "license" : "Artistic-2.0",
-  "source-url" : "git://github.com/titsuki/p6-Algorithm-TernarySearchTree.git",
-  "perl" : "6.c",
-  "resources" : [ ],
+  "authors" : [
+    "titsuki"
+  ],
   "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "the algorithm which blends trie and binary search tree",
+  "license" : "Artistic-2.0",
+  "name" : "Algorithm::TernarySearchTree",
+  "perl" : "6.c",
   "provides" : {
     "Algorithm::TernarySearchTree" : "lib/Algorithm/TernarySearchTree.pm6",
     "Algorithm::TernarySearchTree::Node" : "lib/Algorithm/TernarySearchTree/Node.pm6"
   },
-  "depends" : [ ],
-  "description" : "the algorithm which blends trie and binary search tree",
+  "resources" : [ ],
+  "source-url" : "git://github.com/titsuki/p6-Algorithm-TernarySearchTree.git",
+  "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "0.04",
-  "authors" : [
-    "titsuki"
-  ]
+  "version" : "0.04"
 }

@@ -55,7 +55,7 @@ method !partial-match($current, $key, $pos, $words) {
     if (not $current.defined) {
 	return set();
     }
-    my Set $res;
+    my Set $res = set();
     my $s = $key.substr($pos, 1);
     if ($s eq '.' || $s lt $current.split-char) {
 	$res = $res (|) self!partial-match($current.lokid, $key, $pos, $words);

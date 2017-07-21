@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/titsuki/p6-Algorithm-TernarySearchTree.git
 	branch = master
-	commit = a5713441bcfb2453e14d67553ce31d93d53c3425
-	parent = 68ce6645e812e90a871000d22033c606ba4cdbcb
+	commit = b6057e1e941777fbf433f4b2f945cd0b04e83b9b
+	parent = 53b03e82a2b39d9732a89b5d07e581105feaef1c
 	cmdver = 0.4.0
