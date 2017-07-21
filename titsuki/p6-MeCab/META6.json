@@ -7,8 +7,8 @@
   ],
   "depends" : [ ],
   "description" : "A Perl 6 bindings for libmecab ( http://taku910.github.io/mecab/ )",
-  "name" : "MeCab",
   "license" : "Artistic-2.0",
+  "name" : "MeCab",
   "perl" : "6.c",
   "provides" : {
     "MeCab" : "lib/MeCab.pm6",
@@ -21,6 +21,7 @@
     "libraries/mecab"
   ],
   "source-url" : "git://github.com/titsuki/p6-MeCab.git",
+  "tags" : [ ],
   "test-depends" : [ ],
   "version" : "0.0.4"
 }
