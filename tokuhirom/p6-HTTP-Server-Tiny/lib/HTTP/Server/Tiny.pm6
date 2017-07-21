@@ -1,5 +1,5 @@
 use v6;
-unit class HTTP::Server::Tiny;
+unit class HTTP::Server::Tiny:ver<0.0.1>;
 
 use HTTP::Parser; # parse-http-request
 use IO::Blob;
@@ -139,9 +139,15 @@ my class HTTP::Server::Tiny::Handler {
             %!env<SERVER_NAME> = $.host;
             %!env<SERVER_PORT> = $.port;
             %!env<SCRIPT_NAME> = '';
+            %!env<p6w.version> = Version.new('v0.7.Draft');
+            %!env<p6w.multithread> = True;
+            %!env<p6w.multiprocess> = False;
+            %!env<p6w.run-once> = False;
             %!env<p6w.errors> = HandleSupplier.new($*ERR).supplier;
             %!env<p6w.url-scheme> = 'http';
             %!env<p6wx.io>     = $!conn; # for websocket support
+            %!env<p6w.protocol.support> = set('request-response', 'psgi');
+            %!env<p6w.protocol.enabled> = SetHash('request-response', 'psgi');
 
             # TODO: REMOTE_ADDR
             # TODO: REMOTE_PORT
@@ -400,15 +406,8 @@ my class HTTP::Server::Tiny::Handler {
         }
     }
 
-
-    # free resources.
-    method close() {
-        try %!env<p6w.input>.close;
-    }
-
     method DESTROY() {
         debug "Destroying handler";
-        self.close;
     }
 }
 
@@ -557,7 +556,6 @@ method !handler(IO::Socket::Async $conn, Callable $app) {
             $handler.handle($got);
             if $handler.sent-response {
                 debug 'sent response' if DEBUGGING;
-                $handler.close();
                 if $handler.use-keepalive {
                     debug "use keepalive for next request";
                     $handler = $handler.next-request;
@@ -626,10 +624,17 @@ Create new instance.
 
 =item C<$server.run(Callable $app, Promise :$control-promise)>
 
-Run http server with P6W app C<$app>.
+Run http server with P6W app. The named parameter C<control-promise>
+if provided, can be I<kept> to quit the server loop, which may be useful
+if the server is run asynchronously to the main thread of execution in
+an application.
 
 If the optional named parameter C<control-promise> is provided with a
 C<Promise> then the server loop will be quit when the promise is kept.
+
+=head1 VERSIONING RULE
+
+This module respects L<Semantic versioning|http://semver.org/>
 
 =head1 TODO
 
