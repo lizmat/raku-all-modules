@@ -1,0 +1,19 @@
+{
+  "authors" : [
+    "Samantha McVey"
+  ],
+  "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "blah blah blah",
+  "license" : "Artistic-2.0 AND OFL-1.1",
+  "name" : "Font::QueryInfo",
+  "perl" : "6.c",
+  "provides" : {
+    "Font::QueryInfo" : "lib/Font/QueryInfo.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/samcv/perl6-Font-QueryInfo.git",
+  "tags" : [ ],
+  "test-depends" : [ ],
+  "version" : "0.6.2"
+}

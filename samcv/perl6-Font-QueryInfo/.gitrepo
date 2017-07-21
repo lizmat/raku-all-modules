@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/samcv/perl6-Font-QueryInfo.git
+	branch = master
+	commit = e0fc0629dc7a46e4f167fb0cbc3d8bbfbe910f9d
+	parent = 4519b661373c5ecb4f446e977a1df7cd9793c579
+	cmdver = 0.4.0
