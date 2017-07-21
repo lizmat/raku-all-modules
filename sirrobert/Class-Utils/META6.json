@@ -1,5 +1,7 @@
 {
+  "perl"        : "6.*",
   "name"        : "Class::Utils",
+  "license"     : "Artistic-2.0",
   "version"     : "0.1.0",
   "description" : "Small utilities to help with defining classes",
   "provides"    : {

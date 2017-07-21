@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/sirrobert/Class-Utils.git
 	branch = master
-	commit = de503e4d2491e9aba2237090d53244fbdfe308d2
-	parent = ae046df9316f8be161c0796c14dc59ee3de6e985
-	cmdver = 0.2.1
+	commit = 61f0ade3505525e13ed8808b8d844426fb15d413
+	parent = 4772fcbcb1eb117eef44de620118e6bcfbb8ad92
+	cmdver = 0.4.0
