@@ -1,7 +1,6 @@
 #!perl6
 
-use v6;
-use lib 'lib';
+use v6.c;
 
 use Test;
 
@@ -13,31 +12,37 @@ my $obj;
 
 lives-ok { $obj = Audio::Silan.new }, "create new object";
 
-my $ret;
+if try $obj.silan-path {
 
-lives-ok { $ret = await $obj.find-boundaries($test-file) }, "find-boundaries";
+    my $ret;
 
-isa-ok $ret, Audio::Silan::Info, "and we got back what we expected";
+    lives-ok { $ret = await $obj.find-boundaries($test-file) }, "find-boundaries";
 
-is-approx $ret.start,0.000023, "approximately the right start";
-is-approx $ret.end, 1.000023, "approximately the right end";
-is $ret.sample-rate, 44100, "correct sample rate";
-is $ret.duration, 2, "correct duration";
+    isa-ok $ret, Audio::Silan::Info, "and we got back what we expected";
 
-lives-ok { $obj = Audio::Silan.new(threshold => 0.001, hold-off => 0.5) }, "create new object (with arguments)";
+    is-approx $ret.start,0.000023, "approximately the right start";
+    is-approx $ret.end, 1.000023, "approximately the right end";
+    is $ret.sample-rate, 44100, "correct sample rate";
+    is $ret.duration, 2, "correct duration";
 
-
-lives-ok { $ret = await $obj.find-boundaries($test-file) }, "find-boundaries";
-
-isa-ok $ret, Audio::Silan::Info, "and we got back what we expected";
-
-is-approx $ret.start,0.000023, "approximately the right start";
-is-approx $ret.end, 1.000023, "approximately the right end";
-is $ret.sample-rate, 44100, "correct sample rate";
-is $ret.duration, 2, "correct duration";
+    lives-ok { $obj = Audio::Silan.new(threshold => 0.001, hold-off => 0.5) }, "create new object (with arguments)";
 
 
-throws-like { await $obj.find-boundaries("jkssksks.wav") },X::NoFile, message => "File 'jkssksks.wav' does not exist", "test exception" ;
+    lives-ok { $ret = await $obj.find-boundaries($test-file) }, "find-boundaries";
+
+    isa-ok $ret, Audio::Silan::Info, "and we got back what we expected";
+
+    is-approx $ret.start,0.000023, "approximately the right start";
+    is-approx $ret.end, 1.000023, "approximately the right end";
+    is $ret.sample-rate, 44100, "correct sample rate";
+    is $ret.duration, 2, "correct duration";
+
+
+    throws-like { await $obj.find-boundaries("jkssksks.wav") },X::NoFile, message => "File 'jkssksks.wav' does not exist", "test exception" ;
+}
+else {
+    skip "no silan executable found", 15;
+}
 
 
 done-testing;

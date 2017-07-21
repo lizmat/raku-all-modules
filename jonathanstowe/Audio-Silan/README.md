@@ -44,15 +44,15 @@ install it.  If it is not available as a package then it should be possible
 to install it from source.
 
 Assuming you have a working Rakudo perl6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Audio::Silan
+    zef install Audio::Silan
 
 Other install mechanisms may be become available in the future.
 
@@ -75,6 +75,8 @@ have an impact.
 
 ## Licence
 
+This is free software.
+
 Please see the LICENCE file in the distribution
 
-© Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017
