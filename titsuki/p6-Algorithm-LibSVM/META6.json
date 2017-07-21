@@ -27,5 +27,5 @@
   "source-url" : "git://github.com/titsuki/p6-Algorithm-LibSVM.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "*"
+  "version" : "0.0.1"
 }
