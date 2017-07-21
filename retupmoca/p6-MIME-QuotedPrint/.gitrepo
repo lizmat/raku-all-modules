@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/p6-MIME-QuotedPrint.git
 	branch = master
-	commit = 7889c1b9675963e4bce75ba6ea16da7bf6d4ac6b
-	parent = b706cb1c78be388d1cf9fdaf78855c971bf68e37
+	commit = c2ef1ed12edaf4d8aa1a84ef12421324c306ffb0
+	parent = 31ebc59ddaf7ba12a577c7a21b90a3b60c5f8e96
 	cmdver = 0.4.0

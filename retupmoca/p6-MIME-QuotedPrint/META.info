@@ -1,6 +1,7 @@
 {
     "perl"	  : "6.*",
     "name"	  : "MIME::QuotedPrint",
+    "license" : "CC0-1.0",
     "version"	  : "1.0.0",
     "author"      : "github:retupmoca",
     "description" : "quoted-printable mime encode/decode",
