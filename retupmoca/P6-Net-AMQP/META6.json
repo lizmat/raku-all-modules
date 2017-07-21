@@ -1,10 +1,11 @@
 {
     "perl": "6.c",
     "name": "Net::AMQP",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "authors": [
         "Andrew Egeler"
     ],
+	"license" : "MIT",
     "auth": "github:retupmoca",
     "description": "AMQP (RabbitMQ) 0.9.1 client",
     "depends": [
@@ -32,5 +33,7 @@
         "amqp",
         "mq",
         "amqp"
-    ]
+    ],
+	"meta-version" : 0
+	
 }
