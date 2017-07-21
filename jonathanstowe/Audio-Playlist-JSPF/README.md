@@ -41,24 +41,22 @@ playlists but JSON is convenient for a variety of reasons.
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Audio::Playlist::JSPF
-
-This should work equally well with *zef* but I haven't tested it.
+    zef install Audio::Playlist::JSPF
 
 ## Support
 
 If you have any problems or suggestions with this module please
 report them at:
 
-https://github.com/jonathanstowe/Audio-Playlist-JSPF
+https://github.com/jonathanstowe/Audio-Playlist-JSPF/issues
 
 And I'll see what I can do.
 

@@ -146,7 +146,7 @@ converted to/from milliseconds on conversion to/from JSON.
 
 =end pod
 
-class Audio::Playlist::JSPF:ver<0.0.1>:auth<github:jonathanstowe> does JSON::Class {
+class Audio::Playlist::JSPF:ver<0.0.2>:auth<github:jonathanstowe> does JSON::Class {
 
     class Attribution does JSON::Class {
         has Str $.identifier    is rw;
