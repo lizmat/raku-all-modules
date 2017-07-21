@@ -4,8 +4,13 @@ use Net::HTTP::POST;
 
 class Zef::CPANReporter does Messenger does Reporter {
 
-    method !config     { state $config = $*HOME.child(q|.cpanreporter/config.ini|).lines>>.split("=") }
-    method !email_from { state $email_from = self!config.grep( *[0] eq "email_from" ).map( *[1] )[0] }
+    method !config {
+        state $config-file = $*HOME.child(q|.cpanreporter/config.ini|);
+        state $config      = ($config-file.e ?? $config-file.lines !! '')>>.split("=");
+    }
+    method !email_from {
+        state $email_from = self!config.grep( *[0] eq "email_from" ).map( *[1] )[0] || die '`email_from=...` not found in ~/.cpanreporter/config.ini';
+    }
 
     method report($event) {
         my $candi := $event.<payload>;
@@ -17,7 +22,7 @@ class Zef::CPANReporter does Messenger does Reporter {
             :environment({
                 # TODO include ^ver on the user_agent as soon as we
                 # can get it from META6.json
-                :user_agent( $?PACKAGE ~ ($?PACKAGE.^ver // '*') ),
+                :user_agent( $?PACKAGE.^name ~ ($?PACKAGE.^ver // '*') ),
                 :language({
                     :name('Perl 6'),
                     :implementation($*PERL.compiler.name),
