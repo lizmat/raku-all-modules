@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/retupmoca/P6-Find-Bundled.git
 	branch = master
-	commit = 6ae62c478e4ab19f1b38d96110850c1bd37ffc63
-	parent = 3e810b86888c856035af3040808bf1ae3b4f8ed6
+	commit = 29a0b9730112e4cc8c0ce226adf19b90b137536d
+	parent = f54a668b9b9d3b732be5b6109f187ebbb5847d16
 	cmdver = 0.4.0
