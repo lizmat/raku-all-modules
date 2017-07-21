@@ -19,8 +19,8 @@ if !library-exists('sndfile', v1) {
 }
 
 my $test-output = "t/test-output".IO;
-
 $test-output.mkdir unless $test-output.d;
+END { $test-output and rm_rf $test-output }
 
 my $rc;
 
@@ -133,9 +133,5 @@ compare-arrays(@doubles-in, @doubles);
 lives-ok { $double-obj-in.close }, "close that";
 
 done-testing;
-
-END {
-       rm_rf $test-output.Str;
-}
 
 # vim: expandtab shiftwidth=4 ft=perl6

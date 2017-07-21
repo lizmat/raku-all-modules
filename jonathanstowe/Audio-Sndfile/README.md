@@ -42,18 +42,15 @@ http://www.mega-nerd.com/libsndfile/#Download
 I am however unlikely to be able to offer help with installing it this way.
 
 Assuming you have a working perl6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Audio::Sndfile
-
-Although I haven't tested it this should install fine with *zef* or
-some equally capable package manager that may come along.
+    zef install Audio::Sndfile
 
 ## Support
 
@@ -80,4 +77,4 @@ This is free software.
 
 Please see the [LICENCE](LICENCE) file in the distribution.
 
-© Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017

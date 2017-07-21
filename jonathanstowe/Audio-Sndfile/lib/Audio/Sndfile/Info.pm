@@ -335,7 +335,7 @@ Force CPU endian-ness.
 
 =end pod
 
-class Audio::Sndfile::Info:ver<0.0.6>:auth<github:jonathanstowe> is repr('CStruct') {
+class Audio::Sndfile::Info:ver<0.0.11>:auth<github:jonathanstowe> is repr('CStruct') {
     has int64     $.frames;
     has int32     $.samplerate;
     has int32     $.channels;

@@ -8,7 +8,6 @@ before_install:
   - sudo apt-get install -qq -y libsndfile1-dev
 perl6:
   - latest
-#  - 2015.09
 install:
-  - rakudobrew build-panda
-  - panda installdeps .
+  - rakudobrew build-zef
+  - zef --debug --depsonly install .
