@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/svekenfur/Swedish-TextDates_sv.git
+	branch = master
+	commit = b17c5ce6e73edab6c3c393c49a6bd60fd10fa09d
+	parent = 54dfc867d5c912ec9002633a8490babbb889d456
+	cmdver = 0.4.0
