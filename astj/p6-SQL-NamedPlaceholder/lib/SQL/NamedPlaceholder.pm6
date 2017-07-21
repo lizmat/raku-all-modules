@@ -1,6 +1,5 @@
 use v6;
-
-unit module SQL::NamedPlaceholder;
+unit module SQL::NamedPlaceholder:ver<0.1.1>;
 
 my regex placeholder { <[A..Za..z_]><[A..Za..z0..9_-]>* }
 my regex operator { '=' || '<=' || '<' || '>=' || '>' || '<>' || '!=' || '<=>' }
