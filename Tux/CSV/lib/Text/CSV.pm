@@ -919,8 +919,8 @@ class Text::CSV {
                 @f.push: $!always_quote || $!quote_empty ?? "$!quo$!quo" !! "";
                 next;
                 }
-            $t .= subst (/( $q | $e )/, { "$e$0" }, :g);
-            $t .= subst (/ \x[0] /,     { $e ~ 0 }, :g) if $!escape_null;
+            $t.subst-mutate (/( $q | $e )/, { "$e$0" }, :g);
+            $t.subst-mutate (/ \x[0] /,     { $e ~ 0 }, :g) if $!escape_null;
             $!always_quote
             ||                    $t ~~ / $e  | $s | \r | \n /
             || ($!quote_space  && $t ~~ / " " | \t /)
@@ -929,10 +929,11 @@ class Text::CSV {
             @f.push: $t;
             }
         #progress (0, @f);
-        my Str $x = join $!sep, @f;
-        defined $!eol and $x ~= $!eol;
-        #progress (1, $x);
-        $x;
+        #progress (1, my $x =
+        defined ($!eol)
+          ?? join ( $!sep, @f ) ~ $!eol
+          !! join ( $!sep, @f )
+        #); $x
         } # string
 
     multi method combine (Capture $c) returns Bool {
