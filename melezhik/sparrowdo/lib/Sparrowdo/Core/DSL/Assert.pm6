@@ -37,13 +37,21 @@ multi sub http-ok ( $url, %args? ) is export {
 
   my $host = input_params('Host');
 
-  my $curl-cmd = "curl -fsSLk -o /dev/null -D - --retry 3 $url";
+  my $curl-cmd = "curl -fsSLk -D - --retry 3 $url";
 
   $curl-cmd ~= ":%args<port>" if %args<port>;
   $curl-cmd ~= "%args<path>"  if %args<path>;
   $curl-cmd ~= " --noproxy $host" if %args<no-proxy>;
 
-  bash $curl-cmd, %( debug => True );
+  my %bash-args =  %( debug => True );
+
+  if %args<has-content> {
+    %bash-args<expect_stdout> = %args<has-content> 
+  } else {
+    $curl-cmd ~= " -o /dev/null"
+  }
+
+  bash $curl-cmd, %bash-args;
 
 }
 

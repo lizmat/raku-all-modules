@@ -1,0 +1,19 @@
+case: 
+  - cpan
+  - directory
+  - group
+  - packages
+  - service
+  - user
+  - files
+  - templates
+  - bash
+  - task_run_short
+  - ssh
+  - scp
+  - copy-local-file
+  - asserts
+  - zef
+
+opts: --local_mode --ssh_user=melezhik
+

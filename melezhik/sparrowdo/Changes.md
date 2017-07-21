@@ -1,3 +1,31 @@
+# 0.0.24 2017-07-20
+
+- Minor correction to alpine bootstrap
+- Documenting zef DSL
+
+# 0.0.23 2017-07-07
+
+- Universal bootstrap: ubuntu / alpine bugfix
+
+# 0.0.22 2017-07-06
+
+- Universal bootstrap
+
+# 0.0.21 2017-06-29
+
+- Support for --cwd option
+- Sparrow/Sparrowdo cache files refactoring to allow run multiple sparrowdo scenarios on the same host safely
+- Now respect no_color completely
+- Varios zef dsl fixes
+
+# 0.0.20 2017-06-22
+
+- Experimental zef support ( not even documented )
+
+# 0.0.19 2017-06-15
+
+- Http-ok function now is able to check web page content
+
 # 0.0.18 2017-05-05
 
 - Improve http-ok asserts ( support many signatures )

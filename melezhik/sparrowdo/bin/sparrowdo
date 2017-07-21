@@ -8,11 +8,13 @@ use Sparrowdo::Core::DSL::Directory;
 use Sparrowdo::Core::DSL::Template;
 use Sparrowdo::Core::DSL::Package;
 use Sparrowdo::Core::DSL::CPAN::Package;
+use Sparrowdo::Core::DSL::Zef;
 use Sparrowdo::Core::DSL::Service;
 use Sparrowdo::Core::DSL::Bash;
 use Sparrowdo::Core::DSL::Ssh;
 use Sparrowdo::Core::DSL::Assert;
 use Config::Simple;
+
 
 sub MAIN (
 
@@ -31,14 +33,20 @@ sub MAIN (
   Bool :$no_sudo = False,
   Bool :$no_color = False,
   Bool :$no_index_update = False,
-  Str  :$sparrow_root, 
+  Str  :$sparrow_root = '/opt/sparrow', 
   Str  :$repo,
-  Bool :$local_mode = False 
+  Bool :$local_mode = False,
+  Str  :$cwd, 
 )
+
 {
 
   # read config if exists
-  my $conf-ini-file = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/sparrowdo.ini' !! ( input_params('SparrowRoot') || '/opt/sparrow') ~ '/sparrowdo.ini';
+
+  my $sparrowdo-cache = '/home/' ~ %*ENV<USER> ~ '/.sparrowdo/' ~ $sparrow_root;
+  mkdir "$sparrowdo-cache/plugins";
+
+  my $conf-ini-file = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/sparrowdo.ini' !! ( $sparrow_root ~ '/sparrowdo.ini' );
   my $conf-ini = $conf-ini-file.IO ~~ :e ?? Config::Simple.read($conf-ini-file,:f<ini>) !! Hash.new;
   
   # dirty hacks to pass command line parameter into sparrowfile context
@@ -55,11 +63,13 @@ sub MAIN (
   my $repo_val = $repo;
 
   $repo_val = $conf-ini<sparrowdo><repo> if $conf-ini<sparrowdo><repo> && ! $repo_val;
+
   
   set_input_params %(  
     Host => $host, 
     Sparrowfile => $sparrowfile,
-    LocalMode => $local_mode, 
+    LocalMode => $local_mode,
+    Cwd => $cwd, 
     HttpProxy => $http_proxy, 
     HttpsProxy => $https_proxy, 
     SshPort => $ssh_port, 
@@ -73,20 +83,31 @@ sub MAIN (
     Repo => $repo_val
   );
 
-  bootstrap() if $bootstrap;
 
-  say colored('running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
+  ssh_shell "rm -rf $sparrow_root/sparrowdo-cache && mkdir -m 777 -p $sparrow_root/sparrowdo-cache";
 
-  ssh_shell 'rm -rf /tmp/sparrow-cache/; mkdir -m 777 -p /tmp/sparrow-cache/ && mkdir -m 777 -p /tmp/sparrow-cache/plugins && mkdir -m 777 -p /tmp/sparrow-cache/files && echo print os | perl -MOutthentic  > /tmp/sparrow-cache/os.txt';
+  bootstrap($sparrow_root,$sparrowdo-cache) if $bootstrap;
 
-  _scp "/tmp/sparrow-cache/os.txt", "/tmp/target_os", 1; # copy back /tmp/os.txt 
+  ssh_shell "rm -rf $sparrow_root/sparrow-cache && mkdir -m 777 -p $sparrow_root/sparrow-cache && mkdir -m 777 -p $sparrow_root/sparrow-cache/plugins && mkdir -m 777 -p $sparrow_root/sparrow-cache/files && echo print os | perl -MOutthentic  > $sparrow_root/sparrow-cache/os.txt";
 
-  set_target_os slurp "/tmp/target_os";
 
-  say colored('target OS is - '~ target_os, 'black on_white');
+  say $no_color ?? 
+  'running sparrow tasks on ' ~ $host ~ ' ... ' !!
+  colored( 'running sparrow tasks on ' ~ $host ~ ' ... ', 'bold black on_yellow');
+
+
+  _scp "$sparrow_root/sparrow-cache/os.txt", "$sparrowdo-cache/target_os", 1; # copy back to master host 
+
+  set_target_os slurp "$sparrowdo-cache/target_os";
+
+  say $no_color ??
+  ('target OS is - '~ target_os ) !!
+  colored('target OS is - '~ target_os, 'black on_white');
 
   if 'config.pl6'.IO.e {
-    say colored('load configuration from config.pl6 ...', 'blue on_green');
+    say $no_color ??
+    'load configuration from config.pl6 ...' !!
+    colored('load configuration from config.pl6 ...', 'blue on_green');
     config_set(EVALFILE 'config.pl6'); 
   }
 
@@ -104,44 +125,56 @@ sub MAIN (
   if get_spl() {
 
     if input_params('Verbose') {
-      say colored( 'puplating SPL file', 'bold yellow on_cyan' );
+      say input_params('NoColor') ?? 
+      'populating SPL file' !!
+      colored( 'populating SPL file', 'bold yellow on_cyan' );
     }
 
-    spurt '/tmp/sparrowdo/sparrow.list', get_spl().join: "\n";
-    _scp '/tmp/sparrowdo/sparrow.list', '/tmp/sparrow-cache/';
-    ssh_shell 'mkdir -p /opt/sparrow && mv  /tmp/sparrow-cache/sparrow.list /opt/sparrow';
-    say colored('copied SPL file as /opt/sparrow/sparrow.list - OK', 'bold green on_black');
+    spurt "$sparrowdo-cache/sparrow.list", get_spl().join: "\n";
+    _scp "$sparrowdo-cache/sparrow.list", "$sparrow_root/sparrow-cache/";
+    ssh_shell "mkdir -p $sparrow_root && mv $sparrow_root/sparrow-cache/sparrow.list $sparrow_root";
+    say input_params('NoColor') ??
+    "copied SPL file as $sparrow_root/sparrow.list - OK" !!
+    colored("copied SPL file as $sparrow_root/sparrow.list - OK", 'bold green on_black');
+
+  } else {
+
+    ssh_shell "mkdir -p $sparrow_root && touch $sparrow_root/sparrow.list";
+    say input_params('NoColor') ??
+    "SPL file $sparrow_root/sparrow.list is empty" !!
+    colored("SPL file $sparrow_root/sparrow.list is empty", 'bold green on_black');
 
   }
 
   if $repo_val {
-    ssh_shell "echo repo: $repo_val > /tmp/sparrow-cache/sparrow.yaml";
-    say colored("set custom repo to $repo_val - OK", 'bold green on_black');
+    ssh_shell "echo repo: $repo_val > $sparrow_root/sparrow-cache/sparrow.yaml";
+    say input_params('NoColor') ??
+    "set custom repo to $repo_val - OK" !!
+    colored("set custom repo to $repo_val - OK", 'bold green on_black');
   }
 
   ssh_shell 'sparrow index update' unless input_params('NoIndexUpdate');
 
   # plugins mode
   if ($task_run) {
-    mkdir '/tmp/sparrowdo/';
-    mkdir '/tmp/sparrowdo/plugins';
     for plg-list() -> @p {
       ssh_shell "sparrow plg install " ~ @p[0];
       if @p[1] {
-        spurt "/tmp/sparrowdo/plugins/@p[0].args", @p[1].join: "\n";
-        _scp "/tmp/sparrowdo/plugins/@p[0].args", '/tmp/sparrow-cache/plugins';
-        ssh_shell "sparrow plg run " ~ @p[0] ~ ' --args-file ' ~ '/tmp/sparrow-cache/plugins/' ~ "@p[0].args";
+        spurt "$sparrowdo-cache/plugins/@p[0].args", @p[1].join: "\n";
+        _scp  "$sparrowdo-cache/plugins/@p[0].args", "$sparrow_root/sparrow-cache/plugins";
+        ssh_shell "sparrow plg run " ~ @p[0] ~ ' --args-file ' ~ "$sparrow_root/sparrow-cache/plugins/" ~ "@p[0].args";
       } else {
         ssh_shell "sparrow plg run " ~ @p[0];
       }
     } 
     # task box mode  
   } else {
-    mkdir '/tmp/sparrowdo/';
-    spurt "/tmp/sparrowdo/task-box$*PID.json", (to-json get_tasks());
-    _scp "/tmp/sparrowdo/task-box$*PID.json", "/tmp/sparrow-cache/";
-    say colored("set up task box file - /tmp/sparrowdo/task-box$*PID.json - OK", 'bold green on_black');
-    ssh_shell "sparrow box run /tmp/sparrow-cache/task-box$*PID.json --mode quiet --purge-cache";
+    spurt "$sparrowdo-cache/task-box.json", (to-json get_tasks());
+    _scp "$sparrowdo-cache/task-box.json", "$sparrow_root/sparrow-cache";
+    say input_params('NoColor') ??
+    "set up task box file - $sparrowdo-cache/task-box.json - OK" !!
+    colored("set up task box file - $sparrowdo-cache/task-box.json - OK", 'bold green on_black');
+    ssh_shell "sparrow box run $sparrow_root/sparrow-cache/task-box.json --mode quiet --purge-cache";
   }
 
 }
@@ -149,16 +182,19 @@ sub MAIN (
 sub ssh_shell ( $cmd ) {
 
 
-  my @bash_commands = ( 'export LC_ALL=en_US.UTF-8' );
-
+  #my @bash_commands = ( 'export LC_ALL=en_US.UTF-8' );
+  my @bash_commands = ( 'export LC_ALL=C' );
+  my $sparrow_root = input_params('SparrowRoot');
 
   @bash_commands.push:  'export http_proxy=' ~ input_params('HttpProxy') if input_params('HttpProxy');
   @bash_commands.push:  'export https_proxy=' ~ input_params('HttpsProxy') if input_params('HttpsProxy');
   @bash_commands.push:  'export GIT_PROTOCOL=https';
-  @bash_commands.push:  'export PATH=/sbin/:/usr/local/bin:/usr/sbin/:$PATH';
-  @bash_commands.push:  'export SPARROW_ROOT=' ~ ( input_params('SparrowRoot') || '/opt/sparrow' );
+  @bash_commands.push:  'export PERL_USE_UNSAFE_INC=1';
+  @bash_commands.push:  'export PATH=/usr/bin/site_perl:/usr/local/bin:/usr/sbin/:/sbin/:/bin/$PATH';
+  @bash_commands.push:  'export SPARROW_ROOT=' ~ input_params('SparrowRoot');
   @bash_commands.push:  'export SPARROW_NO_COLOR=1' if input_params('NoColor');
-  @bash_commands.push:  'export SPARROW_CONF_PATH=/tmp/sparrow-cache/sparrow.yaml';
+  @bash_commands.push:  "export SPARROW_CONF_PATH=$sparrow_root/sparrow-cache/sparrow.yaml";
+  @bash_commands.push:  'export OUTTHENTIC_CWD=' ~ input_params('Cwd') if input_params('Cwd');
 
   @bash_commands.push:  $cmd;
 
@@ -192,11 +228,11 @@ sub ssh_shell ( $cmd ) {
 
     $ssh_cmd ~=  ~ ( join ' ; ', @bash_commands ) ~ "'";
   
-    #$ssh_cmd ~= ' 2>/dev/null' unless input_params('Verbose');
-
   }
 
-  say colored($ssh_cmd, 'bold green') if input_params('Verbose');
+  say input_params('NoColor') ??
+  $ssh_cmd !!
+  colored($ssh_cmd, 'bold green') if input_params('Verbose');
 
   shell $ssh_cmd;
 
@@ -204,7 +240,9 @@ sub ssh_shell ( $cmd ) {
 
 our sub _copy-local-file ( $file, $dest ) {
 
-  say colored("copy local file $file to remote $dest", 'bold yellow');
+  say input_params('NoColor') ??
+  "copy local file $file to remote $dest" !!
+  colored("copy local file $file to remote $dest", 'bold yellow');
   _scp($file,$dest);
 
 }
@@ -222,7 +260,7 @@ our sub _scp ( $file, $dest, $reverse = 0 ) {
 
     my $scp_params = ' -P ' ~ input_params('SshPort');
   
-    $scp_params ~= ' -i' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
+    $scp_params ~= ' -i ' ~ input_params('SshPrivateKey') if input_params('SshPrivateKey');
   
     $scp_params ~= ' -q'  unless input_params('Verbose');
   
@@ -244,18 +282,228 @@ our sub _scp ( $file, $dest, $reverse = 0 ) {
     }
   }
 
-  say colored($scp_command, 'bold green') if input_params('Verbose');
+  say ( input_params('NoColor') ??
+  $scp_command !!
+  colored($scp_command, 'bold green') ) if input_params('Verbose');
 
   shell $scp_command;
 
 }
 
-sub bootstrap {
+sub bootstrap ( $sparrow_root, $sparrowdo-cache ) {
 
-  say colored('running Sparrow bootstrap on ' ~ input_params('Host'), 'green on_red');
-  ssh_shell 'if ! which perl 2>/dev/null; then yum -y install perl; fi';
-  ssh_shell 'if ! which cpanm 2>/dev/null; then curl -kL http://cpanmin.us/ -o /bin/cpanm; chmod a+x /bin/cpanm; fi';
-  ssh_shell 'if ! which sparrow 2>/dev/null; then yum -y install gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge; cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow; fi';
-  ssh_shell 'cpanm -q --notest Outthentic Sparrow || cpanm --notest -q Outthentic Sparrow'; # forcefully upgrade Sparrow
+  my $host = input_params('Host');
+  say input_params('NoColor') ?? 
+  'running sparrow bootstrap for host: ' ~ $host ~ ' ... ' !!
+  colored( 'running sparrow bootstrap for host: ' ~ $host ~ ' ... ', 'bold black on_yellow');
+
+  my $bootstrap = q:to/HERE/;
+
+set -e
+
+os=$(lsb_release -d 2>/dev/null; uname -a; cat /etc/issue; cat /etc/*-release 2>&1)
+
+shopt -s nocasematch;
+
+if [[ $os =~ "debian" ]]; then
+
+  echo bootstrap for debian
+
+  DEBIAN_FRONTEND=noninteractive
+
+  if ! which curl 2>/dev/null; then
+     apt-get install -y -qq curl
+  fi
+
+  if ! which cpanm 2>/dev/null; then
+    echo "installing cpanm ..."
+    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+    chmod a+x /bin/cpanm
+  fi
+  
+  if ! which perl 2>/dev/null; then
+     apt-get install -y -qq perl
+  fi
+
+  if ! which sparrow 2>/dev/null; then
+    apt-get install -y -qq build-essential
+    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
+  fi
+
+
+elif [[ "$os" =~ "amazon" ]]; then
+
+  echo bootstrap for amazon
+
+  if ! which curl 2>/dev/null; then
+     yum -y install curl
+  fi
+
+  if ! which cpanm 2>/dev/null; then
+    echo "installing cpanm ..."
+    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+    chmod a+x /bin/cpanm
+  fi
+
+  if ! which perl 2>/dev/null; then
+    yum -y install perl
+  fi
+
+  if ! which sparrow 2>/dev/null; then
+    yum -y install gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
+    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
+  fi
+
+elif [[ "$os" =~ "centos" ]]; then
+
+  echo bootstrap for centos
+
+  if ! which curl 2>/dev/null; then
+     yum -y install curl
+  fi
+
+  if ! which cpanm 2>/dev/null; then
+    echo "installing cpanm ..."
+    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+    chmod a+x /bin/cpanm
+  fi
+
+  if ! which perl 2>/dev/null; then
+    yum -y install perl
+  fi
+
+  if ! which sparrow 2>/dev/null; then
+    yum -y install gcc perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
+    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
+  fi
+
+elif [[ "$os" =~ "archlinux" ]]; then
+
+  echo bootstrap for archlinux
+
+  if ! which curl 2>/dev/null; then
+    pacman -S --noconfirm -q curl
+  fi
+
+  if ! which cpanm 2>/dev/null; then
+    echo "installing cpanm ..."
+    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+    chmod a+x /bin/cpanm
+  fi
+
+  if ! which sparrow 2>/dev/null; then
+
+    pacman -Sy
+
+    pacman -S --noconfirm -q guile
+
+    if ! which perl 2>/dev/null; then
+      pacman -S --noconfirm -q perl
+    fi
+
+    if ! which gcc 2>/dev/null; then
+      pacman -S --noconfirm -q gcc 
+    fi
+
+    if ! which make 2>/dev/null; then
+      pacman -S --noconfirm -q make 
+    fi
+
+    cpanm -q Outthentic Sparrow || echo "Some error occurs. Try to take the system upgrade of your server: run 'pacman -Syu' on the target machine and then run bootstrap again"
+
+  fi
+elif [[ "$os" =~ "fedora" ]]; then
+
+  echo bootstrap for fedora
+
+  if ! which curl 2>/dev/null; then
+     dnf -y install curl
+  fi
+
+  if ! which cpanm 2>/dev/null; then
+    echo "installing cpanm ..."
+    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+    chmod a+x /bin/cpanm
+  fi
+
+  if ! which perl 2>/dev/null; then
+    dnf -y install perl
+  fi
+
+  if ! which sparrow 2>/dev/null; then
+    dnf -y install gcc perl-open perl-Test perl-Test-Simple perl-Storable perl-Digest-MD5 perl-Test-Harness perl-Data-Dumper perl-ExtUtils-MakeMaker perl-Hash-Merge
+    cpanm -q Test::More Outthentic Sparrow || cpanm -q Outthentic Sparrow
+  fi
+
+elif [[ "$os" =~ "alpine" ]]; then
+
+  echo bootstrap for alpine
+
+  apk update --wait 120
+
+  if ! which curl 2>/dev/null; then
+     apk add --wait 120 wget curl
+  fi
+
+  if ! which cpanm 2>/dev/null; then
+    echo "installing cpanm ..."
+    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+    chmod a+x /bin/cpanm
+  fi
+
+  if ! which perl 2>/dev/null; then
+    apk add --wait 120 perl
+  fi
+
+  if ! which sparrow 2>/dev/null; then
+    apk add --wait 120 wget git curl bash build-base gcc perl-dev
+    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
+  fi
+
+elif [[ "$os" =~ "ubuntu" ]]; then
+
+  echo bootstrap for ubuntu
+
+  DEBIAN_FRONTEND=noninteractive
+
+  if ! which curl 2>/dev/null; then
+     apt-get install -y -qq curl
+  fi
+
+  if ! which cpanm 2>/dev/null; then
+    echo "installing cpanm ..."
+    curl -s -kL http://cpanmin.us/ -o /bin/cpanm
+    chmod a+x /bin/cpanm
+  fi
+
+  if ! which perl 2>/dev/null; then
+    apt-get install -y -qq perl
+  fi
+
+  if ! which sparrow 2>/dev/null; then
+    apt-get install -y -qq build-essential
+    cpanm -q Outthentic Sparrow || cpanm -q Outthentic Sparrow
+  fi
+
+  echo
+
+else
+  echo "unknown os: $os"
+  exit 1
+fi
+
+
+
+# forcefully upgrade Outthentic and Sparrow
+cpanm -q --notest Outthentic Sparrow || cpanm --notest -q Outthentic Sparrow
+
+HERE
+
+
+  spurt "$sparrowdo-cache/bootstrap.sh", $bootstrap;  
+
+  _scp "$sparrowdo-cache/bootstrap.sh",  "$sparrow_root/sparrowdo-cache";
+
+  ssh_shell "bash $sparrow_root/sparrowdo-cache/bootstrap.sh";
 
 }

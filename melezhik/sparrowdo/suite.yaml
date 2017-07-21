@@ -1,0 +1,18 @@
+case: 
+  - cpan
+  - directory
+  - group
+  - packages
+  - service
+  - user
+  - files
+  - templates
+  - bash
+  - task_run_short
+  - ssh
+  - scp
+  - copy-local-file
+  - asserts
+
+opts: --no_index_update --ssh_user=travis
+

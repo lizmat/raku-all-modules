@@ -1,24 +1,29 @@
 language: perl
 
+env:
+  - PATH=/opt/rakudo/bin:/home/travis/.perl6/bin:$PATH
+
 before_install:
   - cat /dev/zero | ssh-keygen -q -N ""
   - cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
   - chmod og-wx ~/.ssh/authorized_keys
+  - wget https://github.com/nxadm/rakudo-pkg/releases/download/2017.06/perl6-rakudo-moarvm-ubuntu17.04_20170600-01_amd64.deb
+  - sudo dpkg -i *.deb 
+  - git clone https://github.com/ugexe/zef.git
+  - cd zef
+  - perl6 -Ilib bin/zef install . && cd ../
+  - cpanm -q --notest https://github.com/melezhik/outthentic.git https://github.com/melezhik/sparrow.git
 
 install:
-    - export PATH=/opt/rakudo/bin:~/.perl6/bin:$PATH
-    - wget https://github.com/nxadm/rakudo-pkg/releases/download/2017.03_02/perl6-rakudo-moarvm-ubuntu16.04_20170300-02_amd64.deb
-    #-  wget https://github.com/nxadm/rakudo-pkg/releases/download/2017.03_03/perl6-rakudo-moarvm-ubuntu16.04_20170300-03_amd64.deb
-    - sudo dpkg -i *.deb
-    - install_zef_as_user.sh
     - zef install .
     - zef install Sparrowdo::Sparrow::Update
     - zef --force install JSON::Unmarshal
     - zef install Sparrowdo::Cpanm::GitHub
+
 script:
   - sparrowdo --module_run=Sparrow::Update --bootstrap --host=127.0.0.1
   - sparrowdo --task_run=df-check --host=127.0.0.1
   - strun --root examples/
   - sparrowdo --host=127.0.0.1 --no_index_update --task_run=user@name=foo --task_run=bash@command='id && cd ~/ && pwd && uptime && ls -l && ps uax|grep ssh|grep -v grep',user=foo --task_run=df-check@therhold=54
-  - sparrowdo --host=127.0.0.1 --no_index_update --module_run=Cpanm::GitHub@user=leejo,project=CGI.pm,branch=master
+  - sparrowdo --host=127.0.0.1 --no_index_update --module_run=Cpanm::GitHub@user=dagolden,project=Class-Tiny,branch=master
 

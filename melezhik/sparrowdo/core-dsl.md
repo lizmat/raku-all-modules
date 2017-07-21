@@ -7,6 +7,7 @@ Sparrowdo core-dsl functions spec.
 * [Packages](#packages)
   * [System packages](#system-packages)
   * [CPAN packages](#cpan-packages)
+  * [Zef modules](#zef-modules)
 * [Services](#services)
 * [Directories](#directories)
 * [Files](#files)
@@ -55,8 +56,8 @@ Examples:
 
 | function | description | usage | sparrow plugin |
 | -------- | ----------- | ----- | -------------- |
-| package-install | install software package | `package-install(@list|$list)`| [package-generic](https://sparrowhub.org/info/package-generic) | 
-| cpan-package-install | install CPAN package | `cpan-package-install(@list|$list,%opts)`| [cpan-package](https://sparrowhub.org/info/cpan-package) | 
+| package-install | install software package | `package-install(@list\|$list)` | [package-generic](https://sparrowhub.org/info/package-generic) |
+| cpan-package-install | install CPAN package | `cpan-package-install(@list\|$list,%opts)` | [cpan-package](https://sparrowhub.org/info/cpan-package) | 
 | cpan-package         | alias for cpan-install function | * | *  |
 
 Examples:
@@ -90,7 +91,34 @@ Examples:
         user =>'foo',
         install-base => '/home/foo/',
     );
-      
+
+### Zef modules
+
+| function | description | usage | sparrow plugin |
+| -------- | ----------- | ----- | -------------- |
+| zef | install zef module | `zef($module,[%opts])` | * | 
+
+Examples:
+
+    # install DBIish module
+    zef 'DBIish';
+
+    # Force install
+    zef 'DBIish', %( force => True );
+
+    # User's install
+    zef 'DBIish', %( user => 'me' );
+
+    # Only dependencies, inside CWD
+    zef '.', %( depsonly => True );
+
+    # Sets custom description
+    zef 'DBIish', %( description => 'Database interface module' );
+
+    # Show debug info when install
+    zef 'DBIish', %( debug => True );
+  
+
 ## Services
 
 | function | description | usage | sparrow plugin |
@@ -207,15 +235,15 @@ And even this won't help you due to local file coping gets happened first:
     directory '/opt/data/';
     copy-local-file 'data/hello.txt','/opt/data/hello.txt';
 
-But you can use `/tmp/sparrow-cache/files` directory ( which existence is ensured ) to keep your data safely:
+But you can use `$sparrow-root/sparrow-cache/files` directory ( which existence is ensured ) to keep your data safely:
 
-    copy-local-file 'data/hello.txt','/tmp/sparrow-cache/files';
+    copy-local-file 'data/hello.txt','/opt/sparrow/sparrow-cache/files';
 
 And then:
 
     directory '/opt/data/';
 
-    file '/opt/data/hello.txt', %( source => /tmp/sparrow-cache/files/hello.txt );
+    file '/opt/data/hello.txt', %( source => /opt/sparrow/sparrow-cache/files/hello.txt );
 
 ## Templates
 
@@ -307,8 +335,8 @@ This function executes ssh commands.
 
 | function | description | usage |
 | -------- | ----------- | ----- |
-| ssh | execute ssh commands | ssh($command,%args)
-| ssh | alias for `ssh` with command set via %args | ssh(%args)
+| ssh | execute ssh commands | `ssh($command,%args)`
+| ssh | alias for `ssh` with command set via %args | `ssh(%args)`
 
 Examples:
 
@@ -425,4 +453,8 @@ Use `ssh host` command line parameter as URL:
 The same as above but with `port` and `path`:
 
     http-ok %( port  => '8080' , path => '/Foo/Bar' );
+
+Checks that web page has content:
+
+    http-ok 'http://sparrowhub.org', %( has-content => 'SparrowHub' );
  
