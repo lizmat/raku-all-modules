@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/perlpilot/p6-Questhub.git
 	branch = master
-	commit = 627fe94a90aa2f3de81f3466f0b1ecff3e49ae18
-	parent = 8091d22c81f18a0dd5ca6159787c6bd049eddd2d
-	cmdver = 0.2.0
+	commit = a1de76e6af34ce2153fef3fb245d3a1187ad68e6
+	parent = cc5cefda166c6e3c99234c2691b110e782c469a3
+	cmdver = 0.4.0

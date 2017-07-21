@@ -2,7 +2,7 @@
 
 use v6;
 use Questhub;
-use Term::ANSIColor;
+use Terminal::ANSIColor;
 
 sub MAIN('list', :$owner?, :$status?, :$tags?) {
     my $qh = Questhub.new;
