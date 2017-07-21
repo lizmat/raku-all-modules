@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/zoffixznet/perl6-Proc-Q.git
 	branch = master
-	commit = 3b9b9fb2ad4374a7bdfd4b734b28430ab14bd3b5
-	parent = 9e6b81c05503807190ba9a4b03adf03257aad5d2
+	commit = 88ffc76bb1854de946e9553bbc00c72e89690339
+	parent = 03acf1b01ffb04b06d6c54172dcfada0714339f8
 	cmdver = 0.4.0
