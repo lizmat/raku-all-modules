@@ -6,6 +6,7 @@ perl6:
   - latest
 install:
   - rakudobrew build zef
+  - zef install NCurses
   - zef install Term::Choose
   - zef install Term::Choose::Util
 sudo: false

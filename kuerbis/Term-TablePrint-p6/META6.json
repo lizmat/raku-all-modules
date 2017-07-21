@@ -4,6 +4,7 @@
   ],
   "build-depends" : [ ],
   "depends" : [
+    "NCurses",
     "Term::Choose",
     "Term::Choose::Util"
   ],
@@ -24,5 +25,5 @@
   "test-depends" : [
     "Test"
   ],
-  "version" : "*"
+  "version" : "0.0.2"
 }

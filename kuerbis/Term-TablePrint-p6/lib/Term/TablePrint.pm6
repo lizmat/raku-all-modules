@@ -1,19 +1,20 @@
 use v6;
-unit class Term::TablePrint;
+unit class Term::TablePrint:ver<0.0.2>;
 
-my $VERSION = '0.026';
+
+use NCurses;
+use Term::Choose::NCursesAdd;
 
 use Term::Choose           :choose, :choose-multi, :pause;
-use Term::Choose::NCurses;
 use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
 use Term::Choose::Util     :insert-sep, :unicode-sprintf;
 
 
-has %.defaults; #
+has %!defaults; #
 has %!o;
 
-has Term::Choose::NCurses::WINDOW $.win;
-has Term::Choose::NCurses::WINDOW $!win_local;
+has WINDOW $!win;
+has WINDOW $!win_local;
 
 has List $!table;
 has Int  @!cols_w;
@@ -28,16 +29,17 @@ has Int $!bar_w;
 has Str $!progressbar_fmt;
 
 
-method new ( :%defaults, :$win=Term::Choose::NCurses::WINDOW ) {
-    _validate_options( %defaults );
-    _set_defaults( %defaults );
-    self.bless( :%defaults, :$win );
+method new ( :$defaults, :$win=WINDOW ) {
+    self.bless( :$defaults, :$win );
 }
 
-
-submethod DESTROY () { #
-    self!_end_term();
+submethod BUILD( :$defaults, :$win ) {
+    %!defaults := $defaults.Hash;
+    _validate_options( %!defaults );
+    _set_defaults( %!defaults );
+    $!win := $win;
 }
+
 
 sub _set_defaults ( %opt ) {
     %opt<add-header>     //= 0;
@@ -102,7 +104,7 @@ method !_choose_cols_with_order ( @avail_cols ) {
     my Str @pre = ( $ok );
     my @col_idxs;
     my $tc = Term::Choose.new(
-        :defautls( { lf => [ 0, $subseq_tab ], no-spacebar => [ ^@pre ], mouse => %!o<mouse> } ),
+        :defautls( :lf( 0, $subseq_tab ), :no-spacebar( |^@pre ), :mouse( %!o<mouse> ) ),
         :win( $!win_local )
     );
 
@@ -111,10 +113,7 @@ method !_choose_cols_with_order ( @avail_cols ) {
         my Str $prompt = $init_prompt ~ @chosen_cols.join: ', ';
         my Str @choices = |@pre, |@avail_cols;
         # Choose
-        my Int @idx = $tc.choose-multi(
-            @choices,
-            { prompt => $prompt, index => 1, mouse => %!o<mouse> }
-        );
+        my Int @idx = $tc.choose-multi( @choices, :prompt( $prompt ), :index( 1 ) );
         if ! @idx[0].defined || ! @choices[@idx[0]].defined { ##
             if @col_idxs.elems {
                 @col_idxs = [];
@@ -137,16 +136,13 @@ method !_choose_cols_with_order ( @avail_cols ) {
 
 method !_choose_cols_simple ( @avail_cols ) {
     my $tc = Term::Choose.new(
-        :defaults( { mouse => %!o<mouse> } ),
+        :defaults( :mouse( %!o<mouse> ) ),
         :win( $!win_local )
     );
     my Str $all = '-*-';
     my Str @pre = ( $all );
     my @choices = |@pre, |@avail_cols;
-    my Int @idx = $tc.choose-multi(
-        @choices,
-        { prompt => 'Choose: ', no-spacebar => [ ^@pre ], index => 1 }
-    );
+    my Int @idx = $tc.choose-multi( @choices, :prompt<Choose: >, :no-spacebar( |^@pre ), :index( 1 ) );
     if ! @idx[0].defined { ##
         return;
     }
@@ -164,7 +160,7 @@ method !_init_term {
     else {
         my int32 constant LC_ALL = 6;
         setlocale( LC_ALL, "" );
-        $!win_local = initscr() or die "Failed to initialize ncurses\n"; #
+        $!win_local = initscr();
     }
 }
 
@@ -174,17 +170,21 @@ method !_end_term {
 }
 
 
-sub print-table ( @orig_table, %opt? ) is export( :DEFAULT, :print-table ) {
-    return Term::TablePrint.new().print-table( @orig_table, %opt );
+sub print-table ( @orig_table, %deprecated?, *%opt ) is export( :DEFAULT, :print-table ) {
+    return Term::TablePrint.new().print-table( @orig_table, %deprecated || %opt );
 }
 
-method print-table ( @orig_table, %!o? ) { # ###
+method print-table ( @orig_table, %deprecated?, *%opt ) {
+    CATCH {
+        endwin();
+    }
+    %!o = %deprecated || %opt;
     if ! @orig_table.elems {
         my $tc = Term::Choose.new(
-            :defaults( { mouse => %!o<mouse>} ),
+            :defaults( :mouse( %!o<mouse> ) ),
             :win( $!win_local )
         );
-        $tc.pause( [ 'Close with ENTER' ], { prompt => "'print-table': Empty table!" } );
+        $tc.pause( [ 'Close with ENTER' ], :prompt<'print-table': Empty table!> );
         return;
     }
     _validate_options( %!o );
@@ -256,7 +256,7 @@ method !_inner_print_tbl {
     my Int $auto_jumped_to_first_row = 2;
     my Int $expanded = 0;
     my $tc = Term::Choose.new(
-        :defaults( { ll => $len, layout => 2, mouse => %!o<mouse> } ),
+        :defaults( :ll( $len ), :layout( 2 ), :mouse( %!o<mouse> ) ),
         :win( $!win_local )
     );
 
@@ -288,10 +288,7 @@ method !_inner_print_tbl {
             }
         }
         # Choose
-        my Int $row = $tc.choose(
-            $list,
-            { prompt => @header.join( "\n" ), default => $old_row, index => 1 }
-        );
+        my Int $row = $tc.choose( $list, :prompt( @header.join: "\n" ), :default( $old_row ), :index( 1 ) );
         if ! $row.defined {
             return;
         }
@@ -367,13 +364,10 @@ method !_print_single_row ( Int $row ) {
         }
     }
     my $tc = Term::Choose.new(
-        :defauts( { mouse => %!o<mouse>} ),
+        :defauts( :mouse( %!o<mouse> ) ),
         :win( $!win_local )
     );
-    $tc.pause(
-        @lines,
-        { prompt => '', layout => 2 }
-    );
+    $tc.pause( @lines, :prompt( '' ), :layout( 2 ) );
 }
 
 
@@ -477,19 +471,13 @@ method !_calc_avail_width ( Int $term_w ) {
         my Int $mininum_w = %!o<min-col-width> || 1;
         if @!heads_w.elems > $avail_w {
             my $tc = Term::Choose.new(
-                :defaults( { mouse => %!o<mouse>} ),
+                :defaults( :mouse( %!o<mouse> ) ),
                 :win( $!win_local )
             );
             my $prompt1 = 'Terminal window is not wide enough to print this table.';
-            $tc.pause(
-                [ 'Press ENTER to show the column names.' ],
-                { prompt => $prompt1 }
-            );
+            $tc.pause( [ 'Press ENTER to show the column names.' ], :prompt( $prompt1 ) );
             my Str $prompt2 = 'Reduce the number of columns".' ~ "\n" ~ 'Close with ENTER.';
-            $tc.pause(
-                $!table[0],
-                { prompt => $prompt2 }
-            );
+            $tc.pause( $!table[0], :prompt( $prompt2 ) );
             return False;
         }
         my Int @tmp_cols_w = @!new_cols_w;
@@ -601,10 +589,6 @@ method !_cols_to_avail_width {
 
 Term::TablePrint - Print a table to the terminal and browse it interactively.
 
-=head1 VERSION
-
-Version 0.026
-
 =head1 SYNOPSIS
 
 =begin code
@@ -628,7 +612,7 @@ Version 0.026
 
     my $pt = Term::TablePrint.new();
 
-    $pt.print-table( @table, { mouse => 1, choose-columns => 2 } );
+    $pt.print-table( @table, :mouse(1), :choose-columns(2) );
 
 =end code
 
@@ -741,11 +725,11 @@ The constructor method C<new> can be called with optional named arguments:
 
 =item defaults
 
-Expects as its value a hash. Sets the defaults for the instance. See L<#OPTIONS>.
+Sets the defaults (a list of key-value pairs) for the instance. See L<#OPTIONS>.
 
 =item win
 
-Expects as its value a window object created by ncurses C<initscr>.
+Expects as its value a C<WINDOW> object - the return value of L<NCurses> C<initscr>.
 
 If set, C<print-table> uses this global window instead of creating their own without calling C<endwin> to restores the
 terminal before returning.
@@ -756,12 +740,15 @@ terminal before returning.
 
 C<print-table> prints the table passed with the first argument.
 
-    print-table( @table, %options );
+    print-table( @table, *%options );
 
-The first argument is an array of arrays. The first array of these arrays holds the column names. The following arrays
+The first argument is an list of arrays. The first array of these arrays holds the column names. The following arrays
 are the table rows where the elements are the field values.
 
-As a optional second argument it can be passed a hash which holds the options.
+The following arguments set the options.
+
+Passing the options as a hash is deprecated. The support of passing the options as a hash may be removed with the next
+release.
 
 =head1 OPTIONS
 

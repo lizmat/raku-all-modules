@@ -1,6 +1,18 @@
 Revision history for Term::TablePrint
 
 
+0.0.2   2017-07-06
+        - Catch exceptions to close the window before leaving
+
+0.0.1   2017-07-05
+        - New format of version
+
+0.028   2017-07-03
+        - Use NCurses
+
+0.027   2017-07-02
+        - Parameter: from %options to *%options
+
 0.026   2017-05-19
         - Default progress-bar to 5_000
         - Update documentation
