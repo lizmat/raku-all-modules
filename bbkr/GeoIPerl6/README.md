@@ -86,7 +86,7 @@ In terminal enter:
 
 ```bash
     brew install geoip geoipupdate
-    geoipupdate
+    geoipupdate -f etc/GeoIP.conf
     ln -s /usr/local/var/GeoIP/GeoLiteCityv6.dat /usr/local/var/GeoIP/GeoIPCityv6.dat
 ```
 
@@ -103,10 +103,6 @@ To obtain databases through [geoipupdate](http://dev.maxmind.com/geoip/geoipupda
 
 ***Warning:*** Do not use old REV0 databases (for example paid ```ProductIds``` = ```132```).
 
-
-## LICENSE
-
-Released under [Artistic License 2.0](http://www.perlfoundation.org/artistic_license_2_0).
 
 ## CONTACT
 

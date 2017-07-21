@@ -9,22 +9,26 @@ my $g;
 
 lives-ok { $g = GeoIP::City.new }, 'initialize';
 
-is-deeply $g.locate( '8.8.8.8' ), {
-    'area_code' => 650,
-    'city' => 'Mountain View',
+# OpenDNS addresses are used for tests
+my $ipv4 = '208.67.222.222';
+my $ipv6 = '2620:0:ccc::2';
+
+is-deeply $g.locate( $ipv4 ), {
+    'area_code' => 415,
+    'city' => 'San Francisco',
     'continent_code' => 'NA',
     'country' => 'United States',
     'country_code' => 'US',
     'dma_code' => 807,
-    'latitude' => 37.386002,
-    'longitude' => -122.083801,
-    'postal_code' => '94035',
+    'latitude' => 37.769699,
+    'longitude' => -122.393303,
+    'postal_code' => '94107',
     'region' => 'California',
     'region_code' => 'CA',
     'time_zone' => 'America/Los_Angeles'
 }, 'locate by IPv4';
 
-is-deeply $g.locate( '2001:4860:4860::8888' ), {
+is-deeply $g.locate( $ipv6 ), {
     'area_code' => 0,
     'continent_code' => 'NA',
     'country' => 'United States',
@@ -38,6 +42,6 @@ is $g.locate( '0.0.0.0' ), Nil, 'not located';
 
 lives-ok { $g = GeoIP::City.new( directory => '/' ) }, 'initialize custom directory';
 
-throws-like { $g.locate( '8.8.8.8' ) }, X::DatabaseMissing, 'missing IPv4 database';
+throws-like { $g.locate( $ipv4 ) }, X::DatabaseMissing, 'missing IPv4 database';
 
-throws-like { $g.locate( '2001:4860:4860::8888' ) }, X::DatabaseMissing, 'missing IPv6 database';
+throws-like { $g.locate( $ipv6 ) }, X::DatabaseMissing, 'missing IPv6 database';

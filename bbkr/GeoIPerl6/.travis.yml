@@ -1,12 +1,13 @@
-branches:
-  only:
-    - master
 language: perl6
-perl6:
-  - latest
+os:
+  - linux
+  - osx
+dist: trusty
+sudo: required
+osx_image: xcode8.3
 before_install:
-  - sudo apt-get update -q
-  - sudo apt-get install libgeoip1 -y
-  - wget http://launchpadlibrarian.net/154810880/geoip-database-contrib_1.14_all.deb
-  - sudo dpkg -i geoip-database-contrib_1.14_all.deb
-  - sudo ln -s /usr/share/GeoIP/GeoLiteCityv6.dat /usr/share/GeoIP/GeoIPCityv6.dat
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install libgeoip1 geoip-database-contrib ; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ln -s /usr/share/GeoIP/GeoLiteCityv6.dat /usr/share/GeoIP/GeoIPCityv6.dat ; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install geoip geoipupdate ; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then geoipupdate -f etc/GeoIP.conf; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ln -s /usr/local/var/GeoIP/GeoLiteCityv6.dat /usr/local/var/GeoIP/GeoIPCityv6.dat ; fi
