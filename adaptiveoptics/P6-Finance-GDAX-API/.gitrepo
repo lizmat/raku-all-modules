@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/adaptiveoptics/P6-Finance-GDAX-API.git
+	branch = master
+	commit = 9ad4a0842e2a61ad60c6a5f0e2c9a52f952899de
+	parent = 3a8ff0dc8e6c1be83032e8ba23a87a6366c6a351
+	cmdver = 0.4.0
