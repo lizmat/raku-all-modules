@@ -57,8 +57,8 @@ sub explain-failure($subname, @cmd, Proc $proc)
     # caller not supported yet, so pass in the subname
     #diag caller.subname ~ " [@cmd] failed: $!, exitcode { $proc.exitcode }";
     diag $subname ~ " [@cmd] failed, exitcode { $proc.exitcode }";
-    diag "    out [{ $proc.out.slurp-rest}]" if $proc.out ;
-    diag "    err [{ $proc.err.slurp-rest}]" if $proc.err;
+    diag "    out [{ $proc.out.slurp }]" if $proc.out ;
+    diag "    err [{ $proc.err.slurp }]" if $proc.err;
 }
 
 sub write-file-with-zip($file, $content, $options='-v')
@@ -85,11 +85,11 @@ sub pipe-in-from-unzip($file, $name='') is export
 {
     my @comp = $UNZIP, '-p', $file;
     @comp.push($name) if $name ;
-    my $proc = run |@comp, :out :err :bin ;
+    my $proc = run |@comp, :out :err ;
     
     if $proc.exitcode == 0
     {
-        return $proc.out.slurp-rest but True;
+        return $proc.out.slurp but True;
     }
 
     explain-failure "pipe-in-from-unzip", @comp, $proc ;
