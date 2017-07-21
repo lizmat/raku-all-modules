@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/Altai-man/Slang-Kazu.git
+	branch = master
+	commit = fd2321575b59c32d8af458ac0595688c06ed7b2f
+	parent = 7d2927711ee5c1f8751db212f72eb96c17f25038
+	cmdver = 0.4.0
