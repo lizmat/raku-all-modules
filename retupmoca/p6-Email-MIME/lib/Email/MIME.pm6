@@ -176,7 +176,7 @@ method filename-set($filename) {
     if $filename {
         $params<filename> = $filename;
     } else {
-        $params<filename>.delete;
+        $params<filename>:delete;
     }
 
     # rewrite header
@@ -252,7 +252,7 @@ method parts-set(@parts) {
         $ct<type> = $thispart_ct<type>;
         $ct<subtype> = $thispart_ct<subtype>;
         self.encoding-set($part.header('Content-Transfer-Encoding'));
-        $ct<attributes><boundary>.delete;
+        $ct<attributes><boundary>:delete;
     }
 
     self!compose-content-type($ct);
@@ -281,7 +281,7 @@ method boundary-set($data) {
     if $data {
         $ct-hash<attributes><boundary> = $data;
     } else {
-        $ct-hash<attributes><boundary>.delete;
+        $ct-hash<attributes><boundary>:delete;
     }
     self!compose-content-type($ct-hash);
     
@@ -308,7 +308,7 @@ method charset-set($data) {
     if $data {
         $ct-hash<attributes><charset> = $data;
     } else {
-        $ct-hash<attributes><charset>.delete;
+        $ct-hash<attributes><charset>:delete;
     }
     self!compose-content-type($ct-hash);
     return $data;
@@ -318,7 +318,7 @@ method name-set($data) {
     if $data {
         $ct-hash<attributes><name> = $data;
     } else {
-        $ct-hash<attributes><name>.delete;
+        $ct-hash<attributes><name>:delete;
     }
     self!compose-content-type($ct-hash);
     return $data;
@@ -328,7 +328,7 @@ method format-set($data) {
     if $data {
         $ct-hash<attributes><format> = $data;
     } else {
-        $ct-hash<attributes><format>.delete;
+        $ct-hash<attributes><format>:delete;
     }
     self!compose-content-type($ct-hash);
     return $data;

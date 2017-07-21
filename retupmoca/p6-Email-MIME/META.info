@@ -1,6 +1,7 @@
 {
     "perl"    : "6.*",
     "name"	  : "Email::MIME",
+    "license" : "CC0-1.0",
     "version"	  : "2.0.0",
     "author"      : "github:retupmoca",
     "description" : "Simple MIME email parsing module",

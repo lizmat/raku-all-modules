@@ -8,7 +8,7 @@ my grammar ContentTypeHeader {
         \w+
     }
     token subtype {
-        \w+
+        [\w+]+ %% ['-']
     }
     token params {
         [\; \s* <param>]* \s*
