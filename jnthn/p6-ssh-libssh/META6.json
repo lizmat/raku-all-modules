@@ -5,7 +5,7 @@
     "description"   : "Asynchronous binding for libssh; client-only and limited functionality so far.",
     "author"        : "Jonathan Worthington <jnthn@jnthn.net>",
     "license"       : "Artistic-2.0",
-    "build-depends" : [ "LWP::Simple", "panda", "Shell::Command" ],
+    "build-depends" : [ "LWP::Simple" ],
     "depends"       : [ "Concurrent::Progress" ],
     "provides"      : {
 		"SSH::LibSSH"      : "lib/SSH/LibSSH.pm6",
