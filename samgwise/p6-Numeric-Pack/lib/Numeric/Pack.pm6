@@ -66,20 +66,27 @@ Use :floats or :ints flags to export subsets of the module's functionality.
         ===============================
         pack-float        | pack-int32
         unpack-float      | unpack-int32
+                          | pack-uint32
+                          | unpack-uint32
         pack-double       | pack-int64
         unpack-double     | unpack-int64
+                          | pack-uint64 ★
+                          | unpack-uint64 ★
 =end table
+
+★ This behaviour is faulty for values over 7 bytes ☹
 
 =head1 TODO
 
-=item unsigned types
 =item larger types
 =item smaller types
+=item optimise memory management
 
 =head1 CHANGES
 
 =begin table
-      changed named argument :endianness to :byte-order | Signitures now read more naturally | 2016-08-30
+      Added pack-uint32, pack-uint32 and unpack-uint32  | Added support for unsigned types   | 2017-04-20
+      Changed named argument :endianness to :byte-order | Signatures now read more naturally | 2016-08-30
 =end table
 
 =head1 AUTHOR
@@ -166,6 +173,33 @@ sub unpack-int32(Buf $int-buf, Endianness :$byte-order = big-endian) returns Int
   unpack_int32 buf-to-byte-array $int-buf, :$byte-order;
 }
 
+# void pack_uint32(int32_t i, char *bytes)
+sub pack_uint32(uint32, CArray[uint8]) is native(&libnumpack) { * }
+
+sub pack-uint32(Int(Cool) $int, Endianness :$byte-order = big-endian) returns Buf is export(:ints)
+#= Pack an Int to an 4 byte unsigned integer buffer
+#= Exported via tag :ints.
+#= Be aware that the behaviour of Int values outside the range of a signed 32bit integer
+#= [0 to 4,294,967,295]
+#= is undefined.
+{
+  my $bytes = CArray[uint8].new;
+  $bytes[3] = 0; #make room for 4 bytes
+  pack_uint32 $int, $bytes;
+  byte-array-to-buf($bytes, 4, :$byte-order);
+}
+
+# int32_t unpack_int32(char *bytes)
+sub unpack_uint32(CArray[uint8]) returns uint32 is native(&libnumpack) { * }
+
+sub unpack-uint32(Buf $int-buf, Endianness :$byte-order = big-endian) returns Int is export(:ints)
+#= Unpack an unsigned 4 byte integer buffer.
+#= Exported via tag :ints.
+{
+  die "Unable to unpack buffer: expected 4 bytes but recieved { $int-buf.elems }" unless $int-buf.elems == 4;
+  unpack_uint32 buf-to-byte-array($int-buf, :$byte-order);
+}
+
 ### 8 byte types:
 
 # void pack_rat_to_double(int64_t n, int64_t d, char *bytes)
@@ -218,9 +252,46 @@ sub unpack-int64(Buf $int-buf, Endianness :$byte-order = big-endian) returns Int
 #= Exported via tag :ints.
 {
   die "Unable to unpack buffer: expected 8 bytes but recieved { $int-buf.elems }" unless $int-buf.elems == 8;
-  unpack_int64 buf-to-byte-array $int-buf, :$byte-order;
+  unpack_int64 buf-to-byte-array($int-buf, :$byte-order);
 }
 
+# void pack_uint64(uint64_t i, char *bytes)
+sub pack_uint64(uint64, CArray[uint8]) is native(&libnumpack) { * }
+
+sub pack-uint64(Int(Cool) $int, Endianness :$byte-order = big-endian) returns Buf is export(:ints)
+#= Pack an Int to an 8 byte unsigned integer buffer
+#= Exported via tag :ints.
+#= Be aware that the behaviour of Int values outside the range of a signed 64bit integer
+#= [0 to 18,446,744,073,709,551,615]
+#= is undefined.
+#= BE WARNED for reasons unknown values above 7 bytes are represented as a BigInt and cannot be unboxed!
+#= Maybe this will be fixed but for now this function is faulty and untested due to this behaviour.
+{
+  my $bytes = CArray[uint8].new;
+  $bytes[7] = 0; #make room for 8 bytes
+  pack_uint64 $int, $bytes;
+  byte-array-to-buf($bytes, 8, :$byte-order);
+}
+
+# uint64_t unpack_uint64(char *bytes)
+sub unpack_uint64(CArray[uint8]) returns uint64 is native(&libnumpack) { * }
+
+sub unpack-uint64(Buf $int-buf, Endianness :$byte-order = big-endian) returns Int is export(:ints)
+#= Unpack an unsigned 8 byte integer buffer.
+#= Exported via tag :ints.
+#= BE WARNED for reasons unknown values above 7 bytes are lost!
+#= Maybe this will be fixed but for now this function is faulty and untested due to this behaviour.
+{
+  die "Unable to unpack buffer: expected 8 bytes but recieved { $int-buf.elems }" unless $int-buf.elems == 8;
+  unpack_uint64 buf-to-byte-array($int-buf, :$byte-order);
+}
+
+# uint64_t max_uint64()
+sub max_uint64() returns uint64 is native(&libnumpack) { * }
+
+sub max-uint64() returns Int is export(:ints) {
+  max_uint64
+}
 
 #
 # Utils:

@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/samgwise/p6-Numeric-Pack.svg?branch=master)](https://travis-ci.org/samgwise/p6-Numeric-Pack)
+
+
 NAME
 ====
 
@@ -78,6 +81,14 @@ Use :floats or :ints flags to export subsets of the module's functionality.
     <td>unpack-int32</td>
   </tr>
   <tr>
+    <td></td>
+    <td>pack-uint32</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>unpack-uint32</td>
+  </tr>
+  <tr>
     <td>pack-double</td>
     <td>pack-int64</td>
   </tr>
@@ -85,24 +96,39 @@ Use :floats or :ints flags to export subsets of the module's functionality.
     <td>unpack-double</td>
     <td>unpack-int64</td>
   </tr>
+  <tr>
+    <td></td>
+    <td>pack-uint64 ★</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td>unpack-uint64 ★</td>
+  </tr>
 </table>
+
+★ This behaviour is faulty for values over 7 bytes ☹
 
 TODO
 ====
 
-  * unsigned types
-
   * larger types
 
   * smaller types
+
+  * optimise memory management
 
 CHANGES
 =======
 
 <table>
   <tr>
-    <td>changed named argument :endianness to :byte-order</td>
-    <td>Signitures now read more naturally</td>
+    <td>Added pack-uint32, pack-uint32 and unpack-uint32</td>
+    <td>Added support for unsigned types</td>
+    <td>2017-04-20</td>
+  </tr>
+  <tr>
+    <td>Changed named argument :endianness to :byte-order</td>
+    <td>Signatures now read more naturally</td>
     <td>2016-08-30</td>
   </tr>
 </table>
@@ -166,6 +192,28 @@ sub unpack-int32(
 
 Unpack a signed 4 byte integer buffer. Exported via tag :ints.
 
+### sub pack-uint32
+
+```
+sub pack-uint32(
+    Cool $int, 
+    Endianness :$byte-order = Endianness::big-endian
+) returns Buf
+```
+
+Pack an Int to an 4 byte unsigned integer buffer Exported via tag :ints. Be aware that the behaviour of Int values outside the range of a signed 32bit integer [0 to 4,294,967,295] is undefined.
+
+### sub unpack-uint32
+
+```
+sub unpack-uint32(
+    Buf $int-buf, 
+    Endianness :$byte-order = Endianness::big-endian
+) returns Int
+```
+
+Unpack an unsigned 4 byte integer buffer. Exported via tag :ints.
+
 ### sub pack-double
 
 ```
@@ -209,3 +257,25 @@ sub unpack-int64(
 ```
 
 Unpack a signed 8 byte integer buffer. Exported via tag :ints.
+
+### sub pack-uint64
+
+```
+sub pack-uint64(
+    Cool $int, 
+    Endianness :$byte-order = Endianness::big-endian
+) returns Buf
+```
+
+Pack an Int to an 8 byte unsigned integer buffer Exported via tag :ints. Be aware that the behaviour of Int values outside the range of a signed 64bit integer [0 to 18,446,744,073,709,551,615] is undefined. BE WARNED for reasons unknown values above 7 bytes are represented as a BigInt and cannot be unboxed! Maybe this will be fixed but for now this function is faulty and untested due to this behaviour.
+
+### sub unpack-uint64
+
+```
+sub unpack-uint64(
+    Buf $int-buf, 
+    Endianness :$byte-order = Endianness::big-endian
+) returns Int
+```
+
+Unpack an unsigned 8 byte integer buffer. Exported via tag :ints. BE WARNED for reasons unknown values above 7 bytes are lost! Maybe this will be fixed but for now this function is faulty and untested due to this behaviour.

@@ -3,6 +3,8 @@ use v6;
 use Test;
 use Numeric::Pack;
 
+plan 30;
+
 use-ok 'Numeric::Pack';
 use Numeric::Pack :ALL;
 
@@ -24,6 +26,9 @@ is pack-double( 12.375, :byte-order(big-endian) ).perl, Buf.new(0x40, 0x28, 0xC0
 is pack-int32(1024, :byte-order(big-endian)).perl, Buf.new(0, 0, 0x04, 0).perl,                 "pack-int32 1024";
 is pack-int64(1024, :byte-order(big-endian)).perl, Buf.new(0, 0, 0x00, 0, 0, 0, 0x04, 0).perl,  "pack-int64 1024";
 
+is pack-uint32(1024, :byte-order(big-endian)).perl, Buf.new(0, 0, 0x04, 0).perl,                 "pack-int32 1024";
+is pack-uint64(1024, :byte-order(big-endian)).perl, Buf.new(0, 0, 0x00, 0, 0, 0, 0x04, 0).perl,  "pack-int64 1024";
+
 #
 # Test unpacking
 #
@@ -33,6 +38,9 @@ is unpack-double( Buf.new(0x40, 0x28, 0xC0, 0, 0, 0, 0, 0), :byte-order(big-endi
 is unpack-int32(Buf.new(0, 0, 0x04, 0),                :byte-order(big-endian)), 1024, "unpack-int32 1024";
 is unpack-int64(Buf.new(0, 0, 0x00, 0, 0, 0, 0x04, 0), :byte-order(big-endian)), 1024, "unpack-int64 1024";
 
+is unpack-uint32(Buf.new(0, 0, 0x04, 0),                :byte-order(big-endian)), 1024, "unpack-int32 1024";
+is unpack-uint64(Buf.new(0, 0, 0x00, 0, 0, 0, 0x04, 0), :byte-order(big-endian)), 1024, "unpack-int64 1024";
+
 #
 # Test limits
 #
@@ -40,9 +48,17 @@ is unpack-int32( pack-int32 0 ),               0,             "pack -> unpack in
 is unpack-int32( pack-int32 −2_147_483_648 ), −2_147_483_648, "pack -> unpack int32 lower limit";
 is unpack-int32( pack-int32  2_147_483_647 ),  2_147_483_647, "pack -> unpack int32 upper limit";
 
+is unpack-uint32( pack-uint32 0 ),               0,             "pack -> unpack uint32 0";
+is unpack-uint32( pack-uint32 4_294_967_295 ),  4_294_967_295, "pack -> unpack uint32 upper limit";
+
 is unpack-int64( pack-int64 0 ),                           0,                         "pack -> unpack int64 0";
 is unpack-int64( pack-int64 −9_223_372_036_854_775_808 ), −9_223_372_036_854_775_808, "pack -> unpack int64 lower limit";
 is unpack-int64( pack-int64  9_223_372_036_854_775_807 ),  9_223_372_036_854_775_807, "pack -> unpack int64 upper limit";
+
+is unpack-uint64( pack-uint64 0 ),                           0,                         "pack -> unpack uint64 0";
+# is pack-uint64(0xFFFFFFFFFFFFFFFF)[].join(' '), Buf.new( (0..7).map: { 0xFF } )[].join(' '), "pack -> unpack uint64 upper limit (raw)";
+# is max-uint64, 0xFFFFFFFFFFFFFFFF, "unit64_t max value is expected 0xFFFFFFFFFFFFFFFF";
+# is unpack-uint64( pack-uint64 18_446_744_073_709_551_615 ), 18_446_744_073_709_551_615, "pack -> unpack uint64 upper limit";
 
 is unpack-float(  pack-float 0 ), 0.Rat, "pack -> unpack float-rat 0";
 is unpack-double( pack-double 0), 0.Rat, "pack -> unpack double-rat 0";
@@ -52,5 +68,3 @@ is unpack-float($nan-buffer), NaN, "unpack-float NaN";
 
 $nan-buffer .= new(|$nan-buffer[0..3], 0xff, 0xff, 0xff, 0xff);
 is unpack-double($nan-buffer), NaN, "unpack-double NaN";
-
-done-testing;

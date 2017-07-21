@@ -7,6 +7,7 @@
 union Bits32 {
    float f;
    int32_t i;
+   uint32_t ui;
    char bytes[4];
 };
 
@@ -36,12 +37,26 @@ int32_t unpack_int32(char *bytes) {
   return b2i.i;
 }
 
+//uint32:
+void pack_uint32(uint32_t i, char *bytes) {
+  union Bits32 i2b;
+  i2b.ui = i;
+  memcpy(bytes, i2b.bytes, 4);
+}
+
+uint32_t unpack_uint32(char *bytes) {
+  union Bits32 b2i;
+  memcpy(b2i.bytes, bytes, 4);
+  return b2i.ui;
+}
+
 //
 // 64 bit packing
 //
 union Bits64 {
    char bytes[8];
    int64_t i;
+   uint64_t ui;
    double d;
 };
 
@@ -68,4 +83,21 @@ int64_t unpack_int64(char *bytes) {
   union Bits64 b2i;
   memcpy(b2i.bytes, bytes, 8);
   return b2i.i;
+}
+
+//uint64:
+void pack_uint64(uint64_t i, char *bytes) {
+  union Bits64 i2b;
+  i2b.ui = i;
+  memcpy(bytes, i2b.bytes, 8);
+}
+
+uint64_t unpack_uint64(char *bytes) {
+  union Bits64 b2i;
+  memcpy(b2i.bytes, bytes, 8);
+  return b2i.ui;
+}
+
+uint64_t max_uint64() {
+  return UINT64_MAX;
 }

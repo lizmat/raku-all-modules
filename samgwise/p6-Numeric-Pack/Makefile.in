@@ -1,6 +1,6 @@
-all: resources/lib/libnumpack%SO% %FAKESO%
+all: %DESTDIR%/libnumpack%SO%
 
-resources/lib/libnumpack%SO%: libnumpack%O%
+%DESTDIR%/libnumpack%SO%: libnumpack%O%
 	%LD% %LDSHARED% %LDFLAGS% %LDOUT%resources/lib/libnumpack%SO% libnumpack%O%
 
 libnumpack%O%: libnumpack.c
