@@ -1,4 +1,4 @@
-use lib <lib>;
+# causes SEGVs RT#131510    use lib <lib>;
 use Testo;
 use Temp::Path;
 plan 4;
