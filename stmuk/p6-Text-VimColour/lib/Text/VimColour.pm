@@ -10,23 +10,18 @@ class Text::VimColour:ver<0.4> {
     has Str   $!lang;
 
     proto method BUILD(|z) {
-        ENTER {
-            my $version = .[0] given split /','/, q:x/vim --version/;
-            die "didn't find a recent vim"  unless $version ~~ /' Vi IMproved 7.4 '/;
-            callsame;
-        }
+        my $version = .[0] given split /','/, q:x/vim --version/ //'';
+        fail "didn't find a recent vim, found $version"  unless $version ~~ /' Vi IMproved '7\.4 || 8\. /;
         {*}
-        LEAVE {
-            $!lang //= 'c';
-            my $vim-let = $*VIM-LET || "";
+        $!lang //= 'c';
+        my $vim-let = $*VIM-LET || "";
 
-            %*ENV<EXRC>="set directory=/tmp";
-            my $cmd = qq«
-                vim -E -s -c 'let g:html_no_progress=1|syntax on|set noswapfile|set bg=light|set ft=$!lang|{$vim-let}|runtime syntax/2html.vim|wq! $!out|quit' -cqa $!in 2>/dev/null >/dev/null
-            »;
-            my $proc = shell $cmd;
-            fail "failed to run '$cmd', exit code {$proc.exitcode}" unless $proc.exitcode == 0;
-        }
+        %*ENV<EXRC>="set directory=/tmp";
+        my $cmd = qq«
+            vim -E -s -c 'let g:html_no_progress=1|syntax on|set noswapfile|set bg=light|set ft=$!lang|{$vim-let}|runtime syntax/2html.vim|wq! $!out|quit' -cqa $!in 2>/dev/null >/dev/null
+        »;
+        my $proc = shell $cmd;
+        fail "failed to run '$cmd', exit code {$proc.exitcode}" unless $proc.exitcode == 0;
     }
 
     multi method BUILD(Str :$!lang, File :$!in,  Path :$!out) {};
