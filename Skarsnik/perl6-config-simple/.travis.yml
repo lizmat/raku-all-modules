@@ -2,9 +2,9 @@ language: perl6
 perl6:
     - latest
 install:
-    - rakudobrew build panda
+    - rakudobrew build zef
     # Pull in the dependencies before running tests
-    - panda installdeps .
-after_success:
-    - panda --installed --verbose list
+    - zef --depsonly install .
+script:
+    - zef install .
 sudo: false
