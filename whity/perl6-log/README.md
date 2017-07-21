@@ -46,6 +46,16 @@ sub MAIN() {
 
     $log.pattern = '%X{key} %x %m%n';
     $log.info('test');
+
+    # register log object to use in other places
+    Log.add('log-name', Log.new);
+    #Log.add(Log.new) # register the log object as 'main'
+
+    # get a registered log object
+    my $rlog = Log.get('log-name');
+    #my $rlog = Log.get; returns the log object 'main'
+
+    $rlog.info('from "log-name"');
 }
 ```
 ## Contributing

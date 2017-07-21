@@ -6,6 +6,33 @@ unit class Log;
 
 enum Level <ERROR WARN INFO DEBUG TRACE>;
 
+# class stuff
+my %Logs = ();
+my $Lock = Lock.new;
+
+multi method add(Log:U: Str $name, Log $log) returns Log {
+    %Logs{$name} = $log;
+    return $log;
+}
+
+multi method add(Log $log) { return $?CLASS.add('main', $log); }
+
+multi method get(Log:U: Str $name) returns Log {
+    $Lock.protect({
+        if (!%Logs{$name} && $name eq 'main') {
+            $?CLASS.add($name, $?CLASS.new);
+        }
+    });
+
+    return %Logs{$name};
+}
+
+multi method get(Log:U:) {
+    return $?CLASS.get('main');
+}
+
+# instance stuff
+
 has Level $.level is rw;
 has IO::Handle $.output;
 has Str $.pattern;
@@ -36,6 +63,16 @@ multi method FALLBACK(Str $name where /^is\-.+$/, |args) {
     }
 
     return False;
+}
+
+method clone() {
+    return self.new(
+        level   => self.level,
+        pattern => self.pattern,
+        output  => self.output,
+        ndc     => Log::NDC.new(|self.ndc.Array),
+        mdc     => Log::MDC.new(|self.mdc.Hash),
+    );
 }
 
 method !get-level(Str $level is copy) {

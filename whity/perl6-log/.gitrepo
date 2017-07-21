@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/whity/perl6-log
 	branch = master
-	commit = 9bcb41f73f882a8726db5b85dc4a344f6a938833
-	parent = 6f41529e59ff4cf898e09558d2cb504c8892184e
+	commit = 8214583f86ff82e3ce2e8a50dbcd4f08e05d5397
+	parent = d44add0918b6241c1fcb1d467805127e96e3f967
 	cmdver = 0.4.0
