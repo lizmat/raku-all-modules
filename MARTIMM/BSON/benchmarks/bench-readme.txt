@@ -1,6 +1,6 @@
 Tests of 2 * 16 types of insertions and repeated 50 times
 
-Timing 50 iterations of 32 inserts... (* is current BSON::Document use) 
+Timing 50 iterations of 32 inserts... (* is current BSON::Document use)
 
  D1     With use of Promises on encoding as well as decoding
  D2     Removed Promises on decoding -> dustbin
@@ -15,8 +15,8 @@ Timing 50 iterations of 32 inserts... (* is current BSON::Document use)
  D11    version 2016.06-178-gf7c6e60 built on MoarVM version 2016.06-9-g8fc21d5
  D12    2016-11-08, 2016.10-204-g824b29f built on MoarVM version 2016.10-37-gf769569
  D13    2017-02-25. 017.02-56-g9f10434 built on MoarVM version 2017.02-7-g3d85900
- D14    2017-02-25. Dropped positional role from BSON::Document..
-
+ D14    2017-02-25. Dropped positional role from BSON::Document.
+ D15    2017-07-18, 2017.07-19-g1818ad2, bugfix hangup decoding.
 
 
  D1     8.0726 wallclock secs @ 6.1938/s (n=50)
@@ -32,8 +32,8 @@ Timing 50 iterations of 32 inserts... (* is current BSON::Document use)
  D11    2.7751 wallclock secs @ 18.0171/s (n=50) big improvement
  D12    2.5247 wallclock secs @ 19.8041/s (n=50) +
  D13    2.3827 wallclock secs @ 20.9844/s (n=50) +
- D14*   2.3011 wallclock secs @ 21.7285/s (n=50) +
-
+ D14    2.3011 wallclock secs @ 21.7285/s (n=50) +
+ D15    3.3968 wallclock secs @ 14.7199/s (n=50) - step back?
 
 
 
@@ -44,8 +44,11 @@ Timing 50 iterations of 32 inserts... (* is current BSON::Document use)
 
 
 Worries;
-D14 sometimes crashes with coredumps. Is it Bench or BSON::Document??
+- D14 sometimes crashes with coredumps. Is it Bench or BSON::Document??
 Segmentation fault (core dumped)
+- Same for D15 when a lot of debug messages were put in. Using --ll-exception
+the crash went away. Also inhibiting the debug messages did hide the crash.
+
 
 
 benchmarks/double.pm6

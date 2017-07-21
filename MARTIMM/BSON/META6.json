@@ -9,9 +9,11 @@
   ],
   "depends": [
     "Digest::MD5",
-    "UUID",
-    "Test::META"
+    "UUID"
   ],
+  "build-depends": [ ],
+  "test-depends": ["Test::META"],
+  "tags": [ "bson", "mongodb", "serialize"],
   "description": "BSON encoding/decoding, used in MongoDB drivers",
   "license": "Artistic-2.0",
   "name": "BSON",
@@ -25,5 +27,5 @@
   },
   "source-url": "git://github.com/MARTIMM/BSON.git",
   "perl": "6",
-  "version": "0.9.33"
+  "version": "0.9.35.2"
 }

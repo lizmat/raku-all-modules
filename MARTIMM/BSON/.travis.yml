@@ -7,10 +7,11 @@ language: perl6
 
 perl6:
   - latest
+#  - '2017.05'
 
 install:
-  - rakudobrew build-zef ${TRAVIS_PERL6_VERSION#latest}
-  - zef --depsonly install .
+  - rakudobrew build zef
+  - zef --depsonly --debug install .
 
 #cache:
 #  directories:

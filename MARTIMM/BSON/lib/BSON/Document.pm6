@@ -1,4 +1,5 @@
-use v6.c;
+#use v6;
+use v6.d.PREVIEW;
 
 #TODO There are some *-native() and *-emulated() subs kept for later benchmarks
 # when perl evolves.
@@ -12,6 +13,8 @@ use BSON::Regex;
 use BSON::Javascript;
 use BSON::Binary;
 #use BSON::Decimal128;
+
+class Decimal128 { }
 
 #-------------------------------------------------------------------------------
 class Document does Associative {
@@ -37,31 +40,31 @@ class Document does Associative {
   # Make new document and initialize with a list of pairs
 #TODO better type checking:  List $pairs where all($_) ~~ Pair
 #TODO better API
-  multi method new ( List $pairs, *%h ) {
-    self.bless( :$pairs, :%h);
+  multi method new ( List $pairs ) {
+    self.bless(:$pairs);
   }
 
   # Make new document and initialize with a pair
   # No default value! is handled by new() above
   #
-  multi method new ( Pair $p, *%h ) {
+  multi method new ( Pair $p ) {
     my List $pairs = $p.List;
-    self.bless( :$pairs, :%h);
+    self.bless(:$pairs);
   }
 
   # Make new document and initialize with a sequence of pairs
   # No default value! is handled by new() above
   #
-  multi method new ( Seq $p, *%h ) {
+  multi method new ( Seq $p ) {
     my List $pairs = $p.List;
-    self.bless( :$pairs, :%h);
+    self.bless(:$pairs);
   }
 
   # Make new document and initialize with a byte array. This will call
   # decode.
   #
-  multi method new ( Buf $b, *%h ) {
-    self.bless( :buf($b), :%h);
+  multi method new ( Buf $b ) {
+    self.bless(:buf($b));
   }
 
   # Other cases. No arguments will init empty document. Named values
@@ -71,7 +74,7 @@ class Document does Associative {
 
     if capture.keys {
       die X::BSON::Parse-document.new(
-        :operation("new: key => value")
+        :operation("new: " ~ capture.gist)
         :error(
           "Cannot use hash values on init.\n",
           "Set accept-hash and use assignments later"
@@ -83,31 +86,42 @@ class Document does Associative {
   }
 
   #-----------------------------------------------------------------------------
-  multi submethod BUILD ( List :$pairs!, :%h ) {
+  multi submethod BUILD ( List :$pairs! ) {
 
-    self!initialize(:%h);
+    self!initialize;
 
     # self{x} = y will end up at ASSIGN-KEY
-    #
     for @$pairs -> $pair {
-      die "Pair not defined" unless ?$pair;
-      die "Key of pair not defined or empty" unless ?$pair.key;
-      die "Value of pair not defined" unless $pair.value.defined;
+#say "P: ", $pair.perl, ', ', $pair.value.defined;
+      die X::BSON::Parse-document.new(
+        :operation("new: List $pairs.gist()"),
+        :error("Pair not defined")
+      ) unless ?$pair;
+
+      die X::BSON::Parse-document.new(
+        :operation("new: List $pairs.gist()"),
+        :error("Key of pair not defined or empty")
+      ) unless ?$pair.key;
+
+      die X::BSON::Parse-document.new(
+        :operation("new: List $pairs.gist()"),
+        :error("Value of pair not defined")
+      ) unless $pair.value.defined;
+
       self{$pair.key} = $pair.value;
     }
   }
 
-  multi submethod BUILD ( Buf :$buf!, :%h ) {
+  multi submethod BUILD ( Buf :$buf! ) {
 
-    self!initialize(:%h);
+    self!initialize;
 
     # Decode buffer data
-    #
     self.decode($buf);
   }
 
   #-----------------------------------------------------------------------------
-  method !initialize ( :%h ) {
+  method !initialize ( ) {
 
     @!keys = ();
     @!values = ();
@@ -258,7 +272,6 @@ class Document does Associative {
     }
 
     # No key found so its undefined, check if we must make a new entry
-    #
     elsif $autovivify {
       $value = BSON::Document.new;
       self{$key} = $value;
@@ -289,7 +302,6 @@ class Document does Associative {
   #-----------------------------------------------------------------------------
   # All assignments of values which become or already are BSON::Documents
   # will not be encoded in parallel.
-  #
   multi method ASSIGN-KEY ( Str:D $key, BSON::Document:D $new --> Nil ) {
 
 #say "Asign-key($?LINE): $key => ", $new.WHAT;
@@ -373,7 +385,6 @@ class Document does Associative {
   }
 
   # Hashes and sequences are reprocessed as lists
-  #
   multi method ASSIGN-KEY ( Str:D $key, Hash $new --> Nil ) {
 
 #say "$*THREAD.id(), Hash, Asign-key($?LINE): $key => ", $new;
@@ -431,7 +442,7 @@ class Document does Associative {
 #say "Error at line $?LINE: ";
 #.say;
         default {
-          say "Error at $?FILE $?LINE:",  $_;
+          say "Error at $?FILE $?LINE: ",  $_;
           .rethrow;
         }
       }
@@ -472,6 +483,7 @@ class Document does Associative {
 #say .WHAT;
         when X::BSON::Parse-objectid    { .rethrow; }
         when X::BSON::Parse-document    { .rethrow; }
+        when X::BSON::NYI               { .rethrow; }
         when X::BSON::NYS               { .rethrow; }
         when X::BSON::Deprecated        { .rethrow; }
 
@@ -498,7 +510,7 @@ class Document does Associative {
   }
 
   #-----------------------------------------------------------------------------
-  # Must be defined because of Positional and Associative sources of of()
+  # Must be defined because of Associative sources of of()
   #-----------------------------------------------------------------------------
   method of ( ) {
     BSON::Document;
@@ -506,7 +518,7 @@ class Document does Associative {
 
   #-----------------------------------------------------------------------------
   method CALL-ME ( |capture ) {
-#say "Call me capture: ", capture.perl;
+    die "Call me capture: ", capture.perl;
   }
 
   #-----------------------------------------------------------------------------
@@ -571,7 +583,6 @@ class Document does Associative {
   #-----------------------------------------------------------------------------
   # Called from user to get encoded document or by a request from an
   # encoding Document to encode a subdocument.
-  #
   method encode ( --> Buf ) {
 
     my Bool $still-planned = True;
@@ -602,8 +613,10 @@ class Document does Associative {
 #say "$*THREAD.id(), Broken: $key";
 #say %!promises{$key}.cause.WHAT;
 #say %!promises{$key}.cause.message;
-            die %!promises{$key}.cause;
-#            die "Promise for key '$key' broken, %!promises{$key}.cause()";
+            die X::BSON::Parse-document.new(
+              :operation<encode>,
+              :error(%!promises{$key}.cause)
+            );
           }
         }
 
@@ -702,6 +715,7 @@ class Document does Associative {
         # The keys must be in ascending numerical order.
         #
         my $pairs = (for .kv -> $k, $v { "$k" => $v });
+#say "Array, pairs: ", $pairs.perl;
         my BSON::Document $d .= new($pairs);
 #say "Array: ", $d.perl;
         $b = [~] Buf.new(BSON::C-ARRAY), encode-e-name($p.key), $d.encode;
@@ -830,25 +844,36 @@ class Document does Associative {
             :error("Number too $reason")
           );
         }
-#`{{
-        when BSON::Decimal128 {
-          $b = [~] Buf.new(BSON::C-DECIMAL128),
-                   encode-e-name($p.key),
-                   .encode;
+      }
 
-        }
-}}
+      when BSON::Timestamp {
+        # timestamp as an unsigned 64 bit integer
+        # '\x11' e_name int64
+        $b = [~] Buf.new(BSON::C-TIMESTAMP),
+                 encode-e-name($p.key),
+                 encode-uint64($p.value);
+      }
+
+      when Decimal128 {
+        #`{{
+        $b = [~] Buf.new(BSON::C-DECIMAL128),
+                 encode-e-name($p.key),
+                 .encode;
+
+        }}
+
+        die X::BSON::NYI.new( :operation('encode-element()'), :type($_));
       }
 
       default {
-        if .can('encode') and .can('bson-code') {
-          my $code = .bson-code;
-          $b = [~] Buf.new($code), encode-e-name($p.key), .encode;
-        }
-
-        else {
+#        if .can('encode') and .can('bson-code') {
+#          my $code = .bson-code;
+#          $b = [~] Buf.new($code), encode-e-name($p.key), .encode;
+#        }
+#
+#        else {
           die X::BSON::NYS.new( :operation('encode-element()'), :type($_));
-        }
+#        }
       }
     }
 
@@ -860,8 +885,8 @@ class Document does Associative {
   #-----------------------------------------------------------------------------
   # Decoding document
   #-----------------------------------------------------------------------------
-  method decode ( Buf $data --> Nil ) {
-
+  method decode ( Buf:D $data --> Nil ) {
+#note "Decode data: ", $data.perl;
     $!encoded-document = $data;
 
     @!keys = ();
@@ -869,28 +894,34 @@ class Document does Associative {
     @!encoded-entries = ();
 
     # Document decoding start: init index
-    #
     $!index = 0;
 
     # Decode the document, then wait for any started parallel tracks
-    #
     self!decode-document;
 
+#note " ";
+    self!process-decode-promises;
+#`{{
     if %!promises.elems {
+
       loop ( my $idx = 0; $idx < @!keys.elems; $idx++) {
         my $key = @!keys[$idx];
-#say "Prom from $key, $idx, {%!promises{$key}:exists}";
+#note "$*THREAD.id() Prom from $key, $idx, {%!promises{$key}:exists}";
 
         if %!promises{$key}:exists {
           # Return the Buffer slices in each entry so it can be
           # concatenated again when encoding
-          #
+note "$*THREAD.id() Before wait for result of $key";
           @!encoded-entries[$idx] = %!promises{$key}.result;
+note "$*THREAD.id() After wait for $key";
         }
       }
 
+#      await(%!promises.values);
+
       %!promises = ();
     }
+}}
   }
 
   #-----------------------------------------------------------------------------
@@ -902,13 +933,13 @@ class Document does Associative {
     $!index += BSON::C-INT32-SIZE;
 
     while $!encoded-document[$!index] !~~ 0x00 {
+
       self!decode-element;
     }
 
     $!index++;
 
     # Check size of document with final byte location
-    #
     die X::BSON::Parse-document.new(
       :operation<decode-document()>,
       :error(
@@ -922,21 +953,18 @@ class Document does Associative {
   method !decode-element ( --> Nil ) {
 
     # Decode start point
-    #
     my $decode-start = $!index;
 
     # Get the value type of next pair
-    #
     my $bson-code = $!encoded-document[$!index++];
 
     # Get the key value, Index is adjusted to just after the 0x00
     # of the string.
-    #
     my Str $key = decode-e-name( $!encoded-document, $!index);
+#note "$*THREAD.id() $key found, type $bson-code, idx now $!index";
 
     # Keys are pushed in the proper order as they are seen in the
     # byte buffer.
-    #
     my Int $idx = @!keys.elems;
     @!keys[$idx] = $key;              # index on new location == push()
     my Int $size;
@@ -944,7 +972,6 @@ class Document does Associative {
     given $bson-code {
 
       # 64-bit floating point
-      #
       when BSON::C-DOUBLE {
 
         my Int $i = $!index;
@@ -956,7 +983,6 @@ class Document does Associative {
 #say "DBL: $key, $idx = @!values[$idx]";
 
             # Return total section of binary data
-            #
             $!encoded-document.subbuf(
               $decode-start ..^               # At bson code
               ($i + BSON::C-DOUBLE-SIZE)      # $i is at code + key further
@@ -966,14 +992,12 @@ class Document does Associative {
       }
 
       # String type
-      #
       when BSON::C-STRING {
 
         my Int $i = $!index;
         my Int $nbr-bytes = decode-int32( $!encoded-document, $!index);
 
         # Step over the size field and the null terminated string
-        #
         $!index += BSON::C-INT32-SIZE + $nbr-bytes;
 
         %!promises{$key} = Promise.start( {
@@ -987,15 +1011,16 @@ class Document does Associative {
       }
 
       # Nested document
-      #
       when BSON::C-DOCUMENT {
         my Int $i = $!index;
         my Int $doc-size = decode-int32( $!encoded-document, $i);
         $!index += $doc-size;
 
-        # Keep this decoding out of the promise routine. It gets problems
-        # when waiting for it.
-        #
+        # Wait for any threads to complete before decoding the subdocument
+        # If not, the threads are eaten up and we end up waiting for
+        # non-started threads.
+        self!process-decode-promises;
+
         my BSON::Document $d .= new;
         $d.decode($!encoded-document.subbuf($i ..^ ($i + $doc-size)));
         @!values[$idx] = $d;
@@ -1007,13 +1032,13 @@ class Document does Associative {
       }
 
       # Array code
-      #
       when BSON::C-ARRAY {
 
         my Int $i = $!index;
         my Int $doc-size = decode-int32( $!encoded-document, $!index);
         $!index += $doc-size;
 
+        self!process-decode-promises;
         %!promises{$key} = Promise.start( {
             my BSON::Document $d .= new;
 
@@ -1029,14 +1054,12 @@ class Document does Associative {
       # "\x05 e_name int32 subtype byte*
       # subtype = byte \x00 .. \x05, .. \xFF
       # subtypes \x80 to \xFF are user defined
-      #
       when BSON::C-BINARY {
 
         my Int $buf-size = decode-int32( $!encoded-document, $!index);
         my Int $i = $!index + BSON::C-INT32-SIZE;
 
         # Step over size field, subtype and binary data
-        #
         $!index += BSON::C-INT32-SIZE + 1 + $buf-size;
 
         %!promises{$key} = Promise.start( {
@@ -1052,7 +1075,6 @@ class Document does Associative {
       }
 
       # Object id
-      #
       when BSON::C-OBJECTID {
 
         my Int $i = $!index;
@@ -1066,7 +1088,6 @@ class Document does Associative {
       }
 
       # Boolean code
-      #
       when BSON::C-BOOLEAN {
 
         my Int $i = $!index;
@@ -1080,7 +1101,6 @@ class Document does Associative {
       }
 
       # Datetime code
-      #
       when BSON::C-DATETIME {
         my Int $i = $!index;
         $!index += BSON::C-INT64-SIZE;
@@ -1098,6 +1118,7 @@ class Document does Associative {
         );
       }
 
+      # Null value -> Any
       when BSON::C-NULL {
         %!promises{$key} = Promise.start( {
             @!values[$idx] = Any;
@@ -1107,8 +1128,8 @@ class Document does Associative {
         );
       }
 
+      # regular expressions. these are perl5 like
       when BSON::C-REGEX {
-
         my $doc-size = $!encoded-document.elems;
         my $i1 = $!index;
         while $!encoded-document[$!index] !~~ 0x00 and $!index < $doc-size {
@@ -1135,18 +1156,15 @@ class Document does Associative {
       }
 
       # Javascript code
-      #
       when BSON::C-JAVASCRIPT {
 
         # Get the size of the javascript code text, then adjust index
         # for this size and set i for the decoding. Then adjust index again
         # for the next action.
-        #
         my Int $i = $!index;
         my Int $buf-size = decode-int32( $!encoded-document, $i);
 
         # Step over size field and the javascript text
-        #
         $!index += (BSON::C-INT32-SIZE + $buf-size);
 
         %!promises{$key} = Promise.start( {
@@ -1159,7 +1177,6 @@ class Document does Associative {
       }
 
       # Javascript code with scope
-      #
       when BSON::C-JAVASCRIPT-SCOPE {
 
         my Int $i1 = $!index;
@@ -1183,7 +1200,6 @@ class Document does Associative {
       }
 
       # 32-bit Integer
-      #
       when BSON::C-INT32 {
 
         my Int $i = $!index;
@@ -1199,8 +1215,26 @@ class Document does Associative {
         );
       }
 
+      # timestamp
+      when BSON::C-TIMESTAMP {
+
+        my Int $i = $!index;
+        $!index += BSON::C-UINT64-SIZE;
+
+        %!promises{$key} = Promise.start( {
+            @!values[$idx] = BSON::Timestamp.new(
+              decode-uint64( $!encoded-document, $i)
+            );
+#note "Timestamp: ", @!values[$idx];
+
+            $!encoded-document.subbuf(
+              $decode-start ..^ ($i + BSON::C-UINT64-SIZE)
+            );
+          }
+        );
+      }
+
       # 64-bit Integer
-      #
       when BSON::C-INT64 {
 
         my Int $i = $!index;
@@ -1216,9 +1250,9 @@ class Document does Associative {
         );
       }
 
-#`{{
       # 128-bit Decimal
-      when BSON::Decimal128 {
+      when BSON::C-DECIMAL128 {
+        #`{{
 
         my Int $i = $!index;
         $!index += BSON::C-DECIMAL128-SIZE;
@@ -1231,17 +1265,45 @@ class Document does Associative {
             );
           }
         );
+      }}
+        die X::BSON::NYI.new(
+          :operation<decode-element()>,
+          :error("BSON code '{.fmt('0x%02x')}'"),
+          :type(BSON::C-DECIMAL128)
+        );
       }
-}}
+
       default {
         # We must stop because we do not know what the length should be of
         # this particular structure.
-        #
-        die X::BSON::Parse-document.new(
+        die X::BSON::NYS.new(
           :operation<decode-element()>,
-          :error("BSON code '{.fmt('0x%02x')}' not supported")
+          :error("BSON code '{.fmt('0x%02x')}'"),
+          :type($_)
         );
-      }
-    }
-  }
+      } # default
+    } # given
+  } # method
+
+  #----------------------------------------------------------------------------
+  method !process-decode-promises {
+
+    if %!promises.elems {
+      await Promise.allof(%!promises.values);
+      loop ( my $idx = 0; $idx < @!keys.elems; $idx++) {
+        my $key = @!keys[$idx];
+#note "$*THREAD.id() Prom from $key, $idx, {%!promises{$key}:exists}";
+
+        if %!promises{$key}:exists {
+          # Return the Buffer slices in each entry so it can be
+          # concatenated again when encoding
+#note "$*THREAD.id() Before wait for result of $key";
+          @!encoded-entries[$idx] = %!promises{$key}.result;
+#note "$*THREAD.id() After wait for $key";
+        } # if
+      } # loop
+
+      %!promises = ();
+    } # if
+  } # method
 }

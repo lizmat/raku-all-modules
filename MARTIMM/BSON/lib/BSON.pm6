@@ -20,7 +20,7 @@ package BSON:auth<github:MARTIM> {
   constant C-DEPRECATED         = 0x0E;         # Deprecated
   constant C-JAVASCRIPT-SCOPE   = 0x0F;
   constant C-INT32              = 0x10;
-  constant C-TIMESTAMP          = 0x11;         # Used internally
+  constant C-TIMESTAMP          = 0x11;
   constant C-INT64              = 0x12;
   constant C-DECIMAL128         = 0x13;
   constant C-MIN-KEY            = 0xFF;
@@ -30,8 +30,12 @@ package BSON:auth<github:MARTIM> {
   # Fixed sizes
   constant C-INT32-SIZE         = 4;
   constant C-INT64-SIZE         = 8;
+  constant C-UINT64-SIZE        = 8;
   constant C-DOUBLE-SIZE        = 8;
   constant C-DECIMAL128-SIZE    = 16;
+
+  #----------------------------------------------------------------------------
+  subset Timestamp of UInt where ( $_ < (2**64 - 1 ) );
 }
 
 #------------------------------------------------------------------------------
@@ -57,12 +61,22 @@ class X::BSON::Parse-document is Exception {
 }
 
 #------------------------------------------------------------------------------
+class X::BSON::NYI is Exception {
+  has $.operation;                      # Operation encode, decode
+  has $.type;                           # Type to encode/decode
+
+  method message () {
+    return "\n$!operation error: BSON type '$!type' is not (yet) implemented\n";
+  }
+}
+
+#------------------------------------------------------------------------------
 class X::BSON::NYS is Exception {
   has $.operation;                      # Operation encode, decode
   has $.type;                           # Type to encode/decode
 
   method message () {
-    return "\n$!operation error: BSON type '$!type' is not (yet) supported\n";
+    return "\n$!operation error: BSON type '$!type' is not supported\n";
   }
 }
 
@@ -108,7 +122,7 @@ sub encode-e-name ( Str:D $s --> Buf ) is export {
 sub encode-cstring ( Str:D $s --> Buf ) is export {
   die X::BSON::Parse-document.new(
     :operation('encode-cstring()'),
-    :error('Forbidden 0x00 sequence in $s')
+    :error("Forbidden 0x00 sequence in '$s'")
   ) if $s ~~ /\x00/;
 
   return $s.encode() ~ Buf.new(0x00);
@@ -135,7 +149,19 @@ sub encode-int64 ( Int:D $i --> Buf ) is export {
 
   # No tests for too large/small numbers because it is called from
   # enc-element normally where it is checked
-  #
+  my int $ni = $i;
+  return Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
+                  ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF,
+                  ($ni +> 0x20) +& 0xFF, ($ni +> 0x28) +& 0xFF,
+                  ($ni +> 0x30) +& 0xFF, ($ni +> 0x38) +& 0xFF
+                );
+}
+
+#------------------------------------------------------------------------------
+sub encode-uint64 ( UInt:D $i --> Buf ) is export {
+
+  # No tests for too large/small numbers because it is called from
+  # enc-element normally where it is checked
   my int $ni = $i;
   return Buf.new( $ni +& 0xFF, ($ni +> 0x08) +& 0xFF,
                   ($ni +> 0x10) +& 0xFF, ($ni +> 0x18) +& 0xFF,
@@ -146,7 +172,6 @@ sub encode-int64 ( Int:D $i --> Buf ) is export {
 
 #------------------------------------------------------------------------------
 # encode Num in buf little endian
-#
 sub encode-double ( Num:D $r --> Buf ) is export {
 
   my CArray[num64] $da .= new($r);
@@ -337,7 +362,7 @@ sub decode-int32 ( Buf:D $b, Int:D $index --> Int ) is export {
     :error('Not enaugh characters left')
   ) if $b.elems - $index < 4;
 
-  my int $ni = $b[$index]             +| $b[$index + 1] +< 0x08 +|
+  my Int $ni = $b[$index]             +| $b[$index + 1] +< 0x08 +|
                $b[$index + 2] +< 0x10 +| $b[$index + 3] +< 0x18
                ;
 
@@ -363,7 +388,7 @@ sub decode-int64 ( Buf:D $b, Int:D $index --> Int ) is export {
     :error('Not enaugh characters left')
   ) if $b.elems - $index < 8;
 
-  my int $ni = $b[$index]             +| $b[$index + 1] +< 0x08 +|
+  my Int $ni = $b[$index]             +| $b[$index + 1] +< 0x08 +|
                $b[$index + 2] +< 0x10 +| $b[$index + 3] +< 0x18 +|
                $b[$index + 4] +< 0x20 +| $b[$index + 5] +< 0x28 +|
                $b[$index + 6] +< 0x30 +| $b[$index + 7] +< 0x38
@@ -373,7 +398,6 @@ sub decode-int64 ( Buf:D $b, Int:D $index --> Int ) is export {
 
 #------------------------------------------------------------------------------
 # decode to Int from buf little endian
-#
 sub decode-int64-native ( Buf:D $b, Int:D $index --> Int ) is export {
 
   my Buf[uint8] $ble;
@@ -389,9 +413,32 @@ sub decode-int64-native ( Buf:D $b, Int:D $index --> Int ) is export {
 }
 
 #------------------------------------------------------------------------------
+# decode unsigned 64 bit integer
+sub decode-uint64 ( Buf:D $b, Int:D $index --> UInt ) is export {
+
+  # Check if there are enaugh letters left
+  die X::BSON::Parse-document.new(
+    :operation<decode-int64>,
+    :error('Not enaugh characters left')
+  ) if $b.elems - $index < 8;
+
+  my UInt $ni = $b[$index]            +| $b[$index + 1] +< 0x08 +|
+               $b[$index + 2] +< 0x10 +| $b[$index + 3] +< 0x18 +|
+               $b[$index + 4] +< 0x20 +| $b[$index + 5] +< 0x28 +|
+               $b[$index + 6] +< 0x30 +| $b[$index + 7] +< 0x38
+               ;
+  return $ni;
+}
+
+#------------------------------------------------------------------------------
 # decode to Num from buf little endian
-#
 sub decode-double ( Buf:D $b, Int:D $index --> Num ) is export {
+
+  # Check if there are enaugh letters left
+  die X::BSON::Parse-document.new(
+    :operation<decode-double>,
+    :error('Not enaugh characters left')
+  ) if $b.elems - $index < 8;
 
   my Buf[uint8] $ble;
   if little-endian() {

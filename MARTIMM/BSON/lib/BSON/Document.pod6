@@ -103,7 +103,7 @@ Impl  type  BSON spec                           Perl6
  [-] 14     Symbol - Deprecated
  [x] 15     Javascript code with scope          BSON::Javascript
  [x] 16     32 bit integers.                    Int
- [-] 17     Timestamp, used internally
+ [x] 17     Timestamp, converted to uint64.     BSON::Timestamp
  [x] 18     64 bit integers.                    Int
  [ ] 19     128 bit decimal floating point      Decimal::D128
 
@@ -353,9 +353,14 @@ place when providing a byte buffer to C<new()>.
 This is thrown when the document doesn't parse correctly while encoding or
 decoding.
 
+=head2 X::NYI
+
+Thrown when encoding stumbles upon a variable with a known type which
+is not implemented(yet)
+
 =head2 X::NYS
 
-Thrown when encoding stumbles upon a variable which is not supported(yet)
+Thrown when encoding stumbles upon a variable which is not supported
 
 =end comment
 

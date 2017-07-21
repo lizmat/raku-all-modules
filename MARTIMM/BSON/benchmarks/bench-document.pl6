@@ -1,7 +1,11 @@
 #!/usr/bin/env perl6
 
 use v6;
-use lib './Tests';
+use lib './Test';
+
+# Hangs when this low or lower use setenv, set etc
+#%*ENV<RAKUDO_MAX_THREADS> = 2;
+
 use Bench;
 use BSON::Document;
 use BSON::Javascript;
@@ -31,12 +35,13 @@ my DateTime $datetime .= now;
 
 my BSON::Regex $rex .= new( :regex('abc|def'), :options<is>);
 
+#my $c = 0;
 my $b = Bench.new;
 $b.timethese(
   50, {
     '32 inserts' => sub {
       my BSON::Document $d .= new;
-
+#say "C: ", $c++;
       $d<b> = -203.345.Num;
       $d<a> = 1234;
       $d<v> = 4295392664;
@@ -72,8 +77,11 @@ $b.timethese(
       $d<arex> = $rex;
 
       my BSON::Document $d2 .= new;
-      $d2.decode($d.encode);
+#note 'encode';
+      my Buf $b = $d.encode;
+#exit(0);
+#note 'decode';
+      $d2.decode($b);
     }
   }
 );
-
