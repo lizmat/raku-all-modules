@@ -3,3 +3,6 @@
 /src/Makefile
 /.panda-work
 .precomp/
+.panda-work/
+Router-Boost-*.tar.gz
+Router-Boost-*/
