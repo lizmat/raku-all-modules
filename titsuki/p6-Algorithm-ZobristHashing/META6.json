@@ -11,7 +11,7 @@
   "depends" : [ ],
   "description" : "a hash function for board games",
   "test-depends" : [ ],
-  "version" : "0.03",
+  "version" : "0.0.4",
   "authors" : [
     "titsuki"
   ]
