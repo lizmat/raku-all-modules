@@ -174,7 +174,7 @@ self.render_element_structure(
 
 method render_element_structure($element, $current_depth, @glyphs, $head_glyph)
 {
-my ($final, $rendered, $s, $continuation_glyph) = 
+my ($final, $rendered, $s, $continuation_glyph, $wh_token) = 
 	$.render_element($element, $current_depth, @glyphs, $head_glyph) ;
 
 self.render_non_final($s, $current_depth, $continuation_glyph, $element) unless ($final || $rendered) ;
@@ -183,7 +183,7 @@ self.render_non_final($s, $current_depth, $continuation_glyph, $element) unless 
 	$.filter_footer($s, ($current_depth, $continuation_glyph, @!renderings))  ;
 	
 my $wf = $.wrap_footer  ;
-$wf.defined and $wf($.wrap_data, $s, $final, ($current_depth, $continuation_glyph, @!renderings))  ;
+$wf.defined and $wf($.wrap_data, $s, $final, ($current_depth, $continuation_glyph, @!renderings), $wh_token)  ;
 }
 
 method render_non_final(Mu $s, $current_depth, $continuation_glyph, $element)
@@ -220,7 +220,6 @@ $f = '' unless $.display_type ;
  
 $final //= DDT_NOT_FINAL ;
 
-
 if $.display_address == DDT_DISPLAY_NONE | DDT_DISPLAY_ALL 
 	{
 	$want_address = True ;
@@ -243,7 +242,16 @@ my $s_replacement ;
 	$.filter_header($s_replacement, $s, ($current_depth, $path, $filter_glyph, @!renderings), ($k, $b, $v, $f, $final, $want_address)) ;
 
 $s_replacement ~~ Data::Dump::Tree::Type::Nothing and return(True, True, $s, $continuation_glyph) ;
-$s = $s_replacement.defined ?? $s_replacement !! $s ;
+
+with $s_replacement
+	{
+	($v, $f, $final, $want_address) = 
+		$s.WHAT =:= Mu
+			?? ('', '.Mu', DDT_FINAL ) 
+			!! self.get_element_header($s_replacement) ;
+
+	$s := $s_replacement ;
+	}
 
 $multi_line_glyph = $empty_glyph if $final ;
 
@@ -253,7 +261,7 @@ $multi_line_glyph = $empty_glyph if $final ;
 my ($kvf, @ks, @vs, @fs) := self!split_entry($current_depth, $width, $k, $b, $glyph_width, $v, $f, $address) ;
 
 
-if $kvf.defined
+with $kvf
 	{
 	@!renderings.append: $glyph ~ $kvf ;
 	}
@@ -273,17 +281,17 @@ else
 	@!renderings.append: @fs.map: { $continuation_glyph ~ $multi_line_glyph ~ $_} unless $.display_info == False ; 
 	}
 
-my $wh = $.wrap_header ;
-$wh.defined and $wh(
-		$.wrap_data,
-		($glyph, $continuation_glyph, $multi_line_glyph),
-		($kvf, @ks, @vs, @fs),
-		$s,
-		($current_depth, $path, $filter_glyph, @!renderings),
-		($k, $b, $v, $f, $final, $want_address),
-		) ;
+my ($wh, $wh_token) = ($.wrap_header, ) ;
+$wh.defined and $wh_token = $wh(
+				$.wrap_data,
+				($glyph, $continuation_glyph, $multi_line_glyph),
+				($kvf, @ks, @vs, @fs),
+				$s,
+				($current_depth, $path, $filter_glyph, @!renderings),
+				($k, $b, $v, $f, $final, $want_address),
+				) ;
 
-$final, $rendered, $s, $continuation_glyph
+$final, $rendered, $s, $continuation_glyph, $wh_token
 }
 
 method get_sub_elements(Mu $s, $current_depth, $continuation_glyph, $element)
