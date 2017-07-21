@@ -6,7 +6,7 @@ use US-ASCII;
 # which are "Basic Latin" and "Latin-1 Supplement"
 my $latin-chars = [~] chr(0)..chr(0xFF);
 
-plan 3;
+plan 5;
 
 is $latin-chars.comb( /
     <US-ASCII::LF>      ||
@@ -14,6 +14,7 @@ is $latin-chars.comb( /
     <US-ASCII::SP>      ||
     <US-ASCII::BIT>
 / ).join, "\x[0A]\x[0D] 01", 'ABNF named characters';
+
 # ok "\c[CR]\c[LF]" ~~ /<US-ASCII::crlf>/, 'CRLF';
 
 # tricky / having problems
@@ -39,3 +40,19 @@ ok "\x[0A]\x[0D] 01" ~~ /<test-ascii-inherit::abnf-named-c>/,
 #    [ ("\c[CR]\c[LF]", "a\c[CR]\c[LF]", "\c[LF]").grep:
 #        { /<test-ascii-inherit::empty-dos-line>/ } ],
 #    [ "\c[CR]\c[LF]" ],
+
+{
+    use US-ASCII :UC;
+    is $latin-chars.comb( /
+        <LF>      ||
+        <CR>      ||
+        <SP>      ||
+        <BIT>     ||
+        <HTAB>    ||
+        <DQUOTE>
+    / ).join, "\x[09]\x[0A]\x[0D] \"01", 'ABNF named characters';
+}
+
+throws-like { ' ' ~~ /<SP>/ }, X::Method::NotFound,
+    'only export UC on request';
+

@@ -41,7 +41,7 @@ my %charset-str =
     (   vchar =>    (chr(0x21) .. chr(0x7E)).join   ),
 ;
 
-plan 29;
+plan 44;
 
 # should be able to loop with interpolation but ...
 # grammar g { token t { <[2]> } }; say so "2" ~~ /<g::t>/; my $rname = "t"; say so "2" ~~ /<g::($rname)>/
@@ -231,3 +231,39 @@ subtest {
     ok "\t\"" ~~ /<ascii-by-count::abnf-named-c>/,
         'ABNF named characters has right elements';
 }, 'some ABNF named characters';
+
+{
+    use US-ASCII :UC;
+
+    is $latin-chars.comb(/<ALPHA>/).join, %charset-str< alpha >,
+        'alpha correct US-ASCII char subset';
+    is $latin-chars.comb(/<UPPER>/).join, %charset-str< upper >,
+        'upper correct US-ASCII char subset';
+    is $latin-chars.comb(/<LOWER>/).join, %charset-str< lower >,
+        'lower correct US-ASCII char subset';
+    is $latin-chars.comb(/<DIGIT>/).join, %charset-str< digit >,
+        'digit correct US-ASCII char subset';
+    is $latin-chars.comb(/<XDIGIT>/).join, %charset-str< xdigit >,
+        'xdigit correct US-ASCII char subset';
+    is $latin-chars.comb(/<HEXDIG>/).join, %charset-str< hexdig >,
+        'hexdig correct US-ASCII char subset';
+    is $latin-chars.comb(/<ALNUM>/).join, %charset-str< alnum >,
+        'alnum correct US-ASCII char subset';
+    is $latin-chars.comb(/<PUNCT>/).join, %charset-str< punct >,
+        'punct chars since unicode 6.1';
+    is $latin-chars.comb(/<GRAPH>/).join, %charset-str< graph >,
+        'graph correct US-ASCII char subset';
+    is $latin-chars.comb(/<BLANK>/).join, %charset-str< blank >,
+        'blank correct US-ASCII char subset';
+    is $latin-chars.comb(/<SPACE>/).join, %charset-str< space >,
+        'space correct US-ASCII char subset';
+    is $latin-chars.comb(/<PRINT>/).join, %charset-str< print >,
+        'print correct US-ASCII char subset';
+    is $latin-chars.comb(/<CNTRL>/).join, %charset-str< cntrl >,
+        'cntrl correct US-ASCII char subset';
+    is $latin-chars.comb(/<VCHAR>/).join, %charset-str< vchar >,
+        'vchar correct US-ASCII char subset';
+}
+
+throws-like { 'a' ~~ /<ALPHA>/ }, X::Method::NotFound,
+    'only export UC on request';
