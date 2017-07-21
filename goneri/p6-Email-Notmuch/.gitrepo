@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/goneri/p6-Email-Notmuch.git
 	branch = master
-	commit = 70e9127661e5cfbb171cd3f52985586a3bc6d054
-	parent = 68688fb6893a3995194038ed929ce6b01d3cba56
+	commit = 441c419eaeeb87a9cb4c9629ba6c91b4227da4e4
+	parent = df15c762f4ba3f82fd363d06c5e0145d4270ab0c
 	cmdver = 0.4.0

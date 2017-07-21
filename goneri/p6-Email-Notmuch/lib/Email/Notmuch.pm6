@@ -29,6 +29,7 @@ class Tags is repr('CPointer') {
         is native('notmuch')
         {*};
     sub notmuch_tags_destroy(Tags)
+        returns bool
         is native('notmuch')
         {*};
     sub notmuch_tags_move_to_next(Tags)
@@ -44,7 +45,7 @@ class Tags is repr('CPointer') {
         }
     }
 
-    method free() {
+    method destroy() {
         notmuch_tags_destroy(self)
     }
 
@@ -62,6 +63,7 @@ class Tags is repr('CPointer') {
 
 class Message is repr('CPointer') {
     sub notmuch_message_destroy(Message)
+        returns bool
         is native('notmuch')
         {*};
     sub notmuch_message_get_filename(Message)
@@ -93,7 +95,7 @@ class Message is repr('CPointer') {
         is native('notmuch')
         {*};
 
-    method free() {
+    method destroy() {
         notmuch_message_destroy(self)
     }
     method get_filename() {
@@ -121,6 +123,7 @@ class Message is repr('CPointer') {
 
 class Thread is repr('CPointer') {
     sub notmuch_thread_destroy(Thread)
+        returns bool
         is native('notmuch')
         {*};
     sub notmuch_thread_get_tags(Thread)
@@ -136,12 +139,7 @@ class Thread is repr('CPointer') {
         is native('notmuch')
         {*};
 
-    my @.subresources;
-
-    method free() {
-        for @.subresources -> $subresource {
-            $subresource.free();
-        }
+    method destroy() {
         notmuch_thread_destroy(self)
     }
     method get_tags() {
@@ -152,7 +150,6 @@ class Thread is repr('CPointer') {
     }
     method get_thread_get_messages() {
         my $messages = notmuch_thread_get_messages(self);
-        @.subresources.append($messages);
     }
 
 }
@@ -182,6 +179,10 @@ class Database is repr('CPointer') {
         returns int32
         is native('notmuch')
         {*};
+    sub notmuch_database_find_message(Database, Str $id, CArray[long] $message)
+        returns int32
+        is native('notmuch')
+        {*};
     sub notmuch_database_find_message_by_filename(Database, Str $filename, CArray[long] $message)
         returns int32
         is native('notmuch')
@@ -195,18 +196,16 @@ class Database is repr('CPointer') {
         is native('notmuch')
         {*};
     sub notmuch_database_destroy(Database)
-        returns int32
+        returns bool
         is native('notmuch')
         {*};
-
-
-    my @.subresources;
 
     method create(Str $path) {
         my $buf = CArray[long].new;
         my $err = CArray[Str].new;
         $buf[0] = 0;
         notmuch_database_create($path, $buf);
+        fail "create has failed" unless $buf[0];
         # TODO(Gonéri): I guess there is better way to do that ^^
         nqp::box_i(nqp::unbox_i(nqp::decont($buf[0])), Database)
     }
@@ -216,6 +215,7 @@ class Database is repr('CPointer') {
         $buf[0] = 0;
         my $binmode = $mode eq 'w' ?? 1 !! 0;
         notmuch_database_open($path, $binmode, $buf);
+        fail "open has failed" unless $buf[0];
         # TODO(Gonéri): I guess there is better way to do that ^^
         nqp::box_i(nqp::unbox_i(nqp::decont($buf[0])), Database)
     }
@@ -224,8 +224,17 @@ class Database is repr('CPointer') {
         my $buf = CArray[long].new;
         $buf[0] = 0;
         notmuch_database_add_message(self, $filename, $buf);
+        fail "add_message has failed" unless $buf[0];
         my $message = nqp::box_i(nqp::unbox_i(nqp::decont($buf[0])), Message);
-        @.subresources.append($message);
+        return $message;
+    }
+
+    method find_message(Str $id) {
+        my $buf = CArray[long].new;
+        $buf[0] = 0;
+        notmuch_database_find_message(self, $id, $buf);
+        fail "find_message has failed" unless $buf[0];
+        my $message = nqp::box_i(nqp::unbox_i(nqp::decont($buf[0])), Message);
         return $message;
     }
 
@@ -233,8 +242,8 @@ class Database is repr('CPointer') {
         my $buf = CArray[long].new;
         $buf[0] = 0;
         notmuch_database_find_message_by_filename(self, $filename, $buf);
+        fail "find_message_by_filename has failed" unless $buf[0];
         my $message = nqp::box_i(nqp::unbox_i(nqp::decont($buf[0])), Message);
-        @.subresources.append($message);
         return $message;
     }
 
@@ -243,15 +252,11 @@ class Database is repr('CPointer') {
     }
 
     method close() {
-        notmuch_database_close(self);
+        if notmuch_database_destroy(self) != NOTMUCH_STATUS_SUCCESS {
+            die "Failed to close the DB";
+        }
     }
 
-    method free() {
-        for @.subresources -> $subresource {
-            $subresource.free();
-        }
-        notmuch_database_destroy(self);
-    }
 }
 
 class Messages is repr('CPointer') {
@@ -264,13 +269,12 @@ class Messages is repr('CPointer') {
         is native('notmuch')
         {*};
     sub notmuch_messages_destroy(Messages)
+        returns bool
         is native('notmuch')
         {*};
     sub notmuch_messages_move_to_next(Messages)
         is native('notmuch')
         {*};
-
-    my @.subresources;
 
     method all() {
         gather {
@@ -281,17 +285,13 @@ class Messages is repr('CPointer') {
         }
     }
 
-    method free() {
-        for @.subresources -> $subresource {
-            $subresource.free();
-        }
+    method destroy() {
         notmuch_messages_destroy(self)
     }
 
     method get() {
         return unless self.valid();
         my $message = notmuch_messages_get(self);
-        @.subresources.append($message);
         return $message;
     }
     method move_to_next() {
@@ -312,14 +312,13 @@ class Threads is repr('CPointer') {
         is native('notmuch')
         {*};
     sub notmuch_threads_destroy(Threads)
+        returns bool
         is native('notmuch')
         {*};
     sub notmuch_threads_move_to_next(Threads)
         is native('notmuch')
         {*};
 
-
-    my @.subresources;
 
     method all() {
         gather {
@@ -330,17 +329,13 @@ class Threads is repr('CPointer') {
         }
     }
 
-    method free() {
-        for @.subresources -> $subresource {
-            $subresource.free();
-        }
+    method destroy() {
         notmuch_threads_destroy(self)
     }
 
     method get() {
         return unless self.valid();
         my $thread = notmuch_threads_get(self);
-        @.subresources.append($thread);
         return $thread;
     }
     method move_to_next() {
@@ -357,6 +352,7 @@ class Query is repr('CPointer') {
         is native('notmuch')
         {*};
     sub notmuch_query_destroy(Query)
+        returns bool
         is native('notmuch')
         {*};
     sub notmuch_query_search_messages(Query)
@@ -368,29 +364,21 @@ class Query is repr('CPointer') {
         is native('notmuch')
        {*};
 
-    my @.subresources;
-
     method new(Database $database, Str $query_string) {
         my $query = notmuch_query_create($database, $query_string);
-        $database.subresources.append($query);
         return $query;
     }
 
-    method free() {
-        for @.subresources -> $subresource {
-            $subresource.free();
-        }
+    method destroy() {
         notmuch_query_destroy(self);
     }
 
     method search_messages() {
         my $messages = notmuch_query_search_messages(self);
-        @.subresources.append($messages);
         return $messages;
     }
     method search_threads() {
         my $threads = notmuch_query_search_threads(self);
-        @.subresources.append($threads);
         return $threads;
     }
 

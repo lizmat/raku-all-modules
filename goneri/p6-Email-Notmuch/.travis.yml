@@ -49,6 +49,5 @@ before_install: |
   cd ../../..
 
 install:
-  - rakudobrew build-panda
-  - panda installdeps .
-  - panda install .
+  - rakudobrew build zef
+  - zef install --depsonly .

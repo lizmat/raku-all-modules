@@ -5,7 +5,7 @@ use File::Temp;
 
 use Test;
 
-plan 19;
+plan 22;
 
 my %mails =
     'first_mail' => "From: bob\@example.com\n
@@ -31,6 +31,10 @@ jjim";
 my $test_dir = tempdir();
 ok mkdir($test_dir);
 my $database = Database.create($test_dir);
+dies-ok {Database.open($test_dir, 'w')}, 'second open() raises exception';
+
+my $database_ro = Database.open($test_dir);
+
 ok $database.get_version();
 
 for keys %mails -> $name {
@@ -40,6 +44,7 @@ for keys %mails -> $name {
 }
 isa-ok $database.get_version(), Int;
 my $first_message = $database.add_message($test_dir ~ '/first_mail.eml');
+dies-ok {$database_ro.add_message($test_dir ~ '/first_mail.eml')}, 'read only DB refuse new message';
 isa-ok $first_message, Message;
 
 ok $first_message.get_header('from') eq 'bob@example.com';
@@ -59,20 +64,27 @@ isa-ok $messages, Messages;
 ok $messages.all() == 2;
 
 my $message = $database.find_message_by_filename($test_dir ~ '/first_mail.eml');
-isa-ok $message.get_message_id(), Str;
+my $mid = $message.get_message_id();
+isa-ok $mid, Str;
 isa-ok $message.get_thread_id(), Str;
 
+$message = $database.find_message($mid);
+isa-ok $message.get_message_id(), Str;
 
 $query = Query.new($database, 'thread:' ~ $message.get_thread_id());
 my $threads = $query.search_threads();
 my $thread_from_query = $threads.get();
 ok $thread_from_query.get_thread_id() eq $message.get_thread_id();
 
+# Some extra destroy() calls, those are not mandatory, the final DB
+# close() will do the clean up
+$threads.destroy();
+$message.destroy();
+
 
 $query = Query.new($database, 'thread:this_thread_doesnt_exist');
 $threads = $query.search_threads();
 ok $threads.all() == 0, 'search_threads return 0 thread';
-
-
+$threads.destroy();
 
 ok $database.close() == NOTMUCH_STATUS_SUCCESS;

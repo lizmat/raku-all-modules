@@ -1,5 +1,6 @@
 # Perl6 binding for Notmuchmail
 
+![Build Status](https://travis-ci.org/goneri/p6-Email-Notmuch.svg?branch=master)
 
 Notmuchmail ( https://notmuchmail.org/ ) is a mail indexation tool. This Perl6 module provides
 binding for a limited subset of its API.
