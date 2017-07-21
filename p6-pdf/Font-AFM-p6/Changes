@@ -1,3 +1,7 @@
+   Release 1.24.2
+   - Replace ISO Latin subset with a full glyph table of all unicode points
+     included in the Core 12 text fonts.
+   - Added glyph table sources etc/glyphlist.txt and etc/make-glyphlist.pl
    Release 1.24.1
    - Fix this module to work with multiple fonts as per PR 5
    Release 1.24.0

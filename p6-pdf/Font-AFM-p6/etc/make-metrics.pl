@@ -49,7 +49,7 @@ class Build {
                 # {$afm.Notice}
 
                 --CODE-GEN--
-                print $afm.perl: :name($class-name);
+                print $afm.perl-gen: :name($class-name);
             }
         }
     }
