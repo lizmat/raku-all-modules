@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/ufobat/HTTP-Server-Ogre.git
+	branch = master
+	commit = 6ae016e1a3534049c85e6ea1facb30b980acb463
+	parent = 0d808fedd5caf30eea66abafc59a541bdf807d1d
+	cmdver = 0.4.0

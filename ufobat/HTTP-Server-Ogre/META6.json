@@ -1,0 +1,28 @@
+{
+  "authors" : [
+    "Martin Barth (ufobat)"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "HTTP::Request::Supply",
+    "HTTP::Status"
+  ],
+  "description" : "he is not tiny nor easy to handle. He is rather a stupid ogre that handles paralell http requests",
+  "license" : "Artistic-2.0",
+  "name" : "HTTP::Server::Ogre",
+  "perl" : "6.c",
+  "provides" : {
+    "HTTP::Server::Ogre" : "lib/HTTP/Server/Ogre.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/ufobat/HTTP-Server-Ogre.git",
+  "tags" : [
+    "Web",
+    "HTTP",
+    "P6W"
+  ],
+  "test-depends" : [
+    "Path::Iterator"
+  ],
+  "version" : "0.0.1"
+}
