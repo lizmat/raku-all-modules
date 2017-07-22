@@ -1,4 +1,5 @@
 use HTTP::Server;
+use soft;
 
 class HTTP::Server::Router {
   has @.routes;
@@ -45,7 +46,7 @@ class HTTP::Server::Router {
               }
             }
             $req.params = ($req.params, %h);
-            $req.params<stash><route> //= $r<path>;
+            $req.params<stash><route> ||= $r<path>;
             next unless $m;    
           }
           default {
