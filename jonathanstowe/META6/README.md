@@ -57,17 +57,15 @@ attributes are used,
 ## Installation
 
 Assuming you have a working Rakudo Perl 6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install META6
-
-This should work equally well with *zef* but I have not tested it.
+    zef install META6
 
 ## Support
 

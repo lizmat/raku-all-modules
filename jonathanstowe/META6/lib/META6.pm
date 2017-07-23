@@ -111,7 +111,7 @@ Support method to allow subscripts on META6 objects.
 =end pod
 
 use JSON::Name;
-use JSON::Class:ver(v0.0.5..*);
+use JSON::Class:ver(v0.0.5+);
 
 role AutoAssoc {
     method AT-KEY($key){
@@ -134,7 +134,7 @@ role AutoAssoc {
     }
 }
 
-class META6:ver<0.0.15>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
+class META6:ver<0.0.16>:auth<github:jonathanstowe> does JSON::Class does AutoAssoc {
 
     enum Optionality <Mandatory Optional>;
 

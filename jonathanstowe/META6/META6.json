@@ -2,6 +2,7 @@
   "name": "META6",
   "source-url": "git://github.com/jonathanstowe/META6.git",
   "support": {
+	"email" : "jns+git@gellyfish.co.uk",
     "source": "git://github.com/jonathanstowe/META6.git",
     "bugtracker": "https://github.com/jonathanstowe/META6/issues"
   },
@@ -30,10 +31,10 @@
     "META6": "lib/META6.pm"
   },
   "production": true,
-  "version": "0.0.15",
+  "version": "0.0.16",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],
   "description": "Work with Perl 6 META files",
-  "meta6": "0"
+  "meta-version": "0"
 }
