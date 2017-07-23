@@ -10,6 +10,7 @@ use Bailador::Context;
 use Bailador::Exceptions;
 use Bailador::LogAdapter;
 use Bailador::Route;
+use Bailador::Route::AutoHead;
 use Bailador::Sessions;
 use Bailador::Template::Mojo;
 
@@ -91,7 +92,43 @@ class Bailador::App does Bailador::Routing {
         # black magic to increase the logging speed
         Log::Any.add( Log::Any::Pipeline.new(), :overwrite );
         Log::Any.add($.log-adapter, :$formatter, :@filter);
+
+        self!generate-head-routes(self);
     }
+
+    method !generate-head-routes(Bailador::Routing $route) {
+
+        my %found-head;
+        my %found-get;
+
+        for $route.routes -> $child-route {
+            self!generate-head-routes($child-route);
+
+            if 'GET' ~~ any( $child-route.method ) && 'HEAD' !~~ any ( $child-route.method ) {
+                # found a route with GET but no HEAD
+                %found-get{ $child-route.route-spec } = $child-route;
+            }
+            if 'HEAD' ~~ any( $child-route.method ) && 'GET' !~~ any ( $child-route.method ) {
+                # found a route with HEAD but no GET
+                %found-head{ $child-route.route-spec } = 1;
+            }
+        }
+
+        for %found-get.kv -> $key, $orig-route {
+            unless %found-head{ $key }:exists {
+                my $code       = sub (Match $match) {
+                    my $result = $orig-route.execute($match);
+                    $.context.autorender  = False;
+                    # return the old result, because if boolean this is important for route dispatching
+                    return $result;
+                };
+                my $path       = $orig-route.url-matcher;
+                my $head-route = Bailador::Route::AutoHead.new( method => 'HEAD', url-matcher => $path, code => $code);
+                $route.add_route($head-route);
+            }
+        }
+    }
+
 
     multi method render($result) {
         if $result ~~ IO::Path {
@@ -103,9 +140,9 @@ class Bailador::App does Bailador::Routing {
         }
     }
 
-    multi method render(Int :$status = 200, Str :$type, :$content!) {
+    multi method render(Int :$status, Str :$type, :$content!) {
         $.context.autorender = False;
-        self.response.code = $status;
+        self.response.code = $status if $status;
         self.response.headers<Content-Type> = $type if $type;
         self.response.content = $content;
     }
