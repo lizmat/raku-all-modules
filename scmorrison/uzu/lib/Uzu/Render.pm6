@@ -51,10 +51,23 @@ sub i18n-from-yaml(
    return %i18n;
 }
 
+sub i18n-context-vars(
+    Hash     :$context,
+    Str      :$language, 
+    IO::Path :$path
+) {
+    my Str $i18n_key = ( $path.IO.path ~~ / .* 'pages' (.*) '.' .*  / ).head.Str;
+    return %( |$context,
+              i18n => %( |$context{$language}<i18n>, 
+                         # Page-specific i18n vars?
+                         ( $context{$i18n_key}.defined ?? |$context{$i18n_key}<i18n> !! %() )));
+}
+
+
 sub write-generated-files(
     Hash     $content,
     IO::Path :$build_dir
-    --> Bool
+    --> Bool()
 ) {
     # IO write to disk
     for $content.kv -> $template_name, %meta {
@@ -64,7 +77,6 @@ sub write-generated-files(
         mkdir $target_dir;
         spurt $target_dir.IO.child("$template_name.html"), $html;
     };
-    return True;
 }
 
 sub html-file-name(
@@ -118,6 +130,53 @@ sub prepare-html-output(
     }
 }
 
+sub render-mustache(
+    Hash  $context,
+    List :$template_dirs,
+    Str  :$default_language,
+    Str  :$language, 
+    Hash :$pages,
+    Bool :$no_livereload
+    --> Hash()
+) {
+
+    use Template::Mustache;
+
+    my Any %context = language => $language, |$context{$language};
+    return gather {
+        $pages.kv.map: -> $page_name, %meta {
+            
+            # Append page-specific i18n vars if available
+            my Any %page_context = i18n-context-vars(path => %meta<path>, :$context, :$language);
+
+            # Extract header yaml if available
+            my ($page_yaml, $page_html) =
+                ~<< ( slurp(%meta<path>, :r) ~~ / ( ^^ '---' .* '---' | ^^ ) (.*) / );
+            my %page_vars = $page_yaml ?? load-yaml $page_yaml !! %{};
+
+            # Render the page content
+            my Str $page_contents   = Template::Mustache.render:
+                $page_html, %( |%page_context, |%page_vars ), from => $template_dirs;
+
+            # Append page content to $context
+            my Any %layout_context  = %( |%context, %( content => $page_contents ));
+            my Str $layout_contents =
+                decode-entities Template::Mustache.render:
+                    'layout',
+                    %layout_context,
+                    from => $template_dirs;
+
+            take prepare-html-output
+                :$page_name,
+                :$default_language,
+                :$language,
+                :$layout_contents,
+                :$no_livereload,
+                path => %meta<path>
+        }
+    }
+}
+
 sub render-tt(
     Hash  $context,
     List :$template_dirs,
@@ -137,14 +196,7 @@ sub render-tt(
         $pages.kv.map: -> $page_name, %meta {
             
             # Append page-specific i18n vars if available
-            my Str $i18n_key     = %meta<path>.IO.path.match( / .* 'pages' (.*) '.' .*  / )[0].Str;
-            my Any %page_context =
-                |%context,
-                i18n => %( |$context{$language}<i18n>, 
-                           # Page-specific i18n vars?
-                           ( $context{$i18n_key}.defined
-                             ?? |$context{$i18n_key}<i18n>
-                             !! %() ));
+            my Any %page_context = i18n-context-vars(path => %meta<path>, :$context, :$language);
 
             # Render the page content
             my Str $page_contents   = $t6.process($page_name, |%page_context );
@@ -174,7 +226,7 @@ our sub build(
     my $build_dir  = $config<build_dir>;
 
     # All available pages
-    my List $exts = $config<extensions>;
+    my List $exts = $config<template_exts>{$config<template_engine>};
     my IO::Path @page_templates = templates(exts => $exts, dir => $config<pages_dir>);
 
     my %pages = (@page_templates.map( -> $page { 
