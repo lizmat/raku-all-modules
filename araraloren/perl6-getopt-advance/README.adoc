@@ -1,5 +1,7 @@
 = perl6-getopt-advance
 
+image:https://travis-ci.org/araraloren/perl6-getopt-advance.svg?branch=master["Build Status", link="https://travis-ci.org/araraloren/perl6-getopt-advance"]
+
 An advance command line parse tool replace Getopt::Kinoko
 
 = Description
