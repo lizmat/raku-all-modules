@@ -54,19 +54,17 @@ above.
 
 ## Installation
 
-Assuming you have a working Rakudo perl 6 installation, you can install this
-with ```panda``` :
+Assuming you have a working Rakudo Perl 6 installation, you can install this
+with ```zef``` :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install JSON::Marshal
+    zef install JSON::Marshal
 
-I haven't tested this with "zef", but I see no reason why it shouldn't
-work or any other equally capable package management tool.
 
 ## Support
 
@@ -78,4 +76,4 @@ https://github.com/jonathanstowe/JSON-Marshal/issues
 
 Please see the LICENCE file in the distribution
 
-© Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017

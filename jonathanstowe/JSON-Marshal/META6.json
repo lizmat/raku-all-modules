@@ -32,10 +32,10 @@
   "provides": {
     "JSON::Marshal": "lib/JSON/Marshal.pm"
   },
-  "version": "0.0.12",
+  "version": "0.0.13",
   "authors": [
     "Jonathan Stowe <jns+git@gellyfish.co.uk>"
   ],
   "description": "Simple serialisation of objects to JSON",
-  "meta6": "0"
+  "meta-version": "0"
 }

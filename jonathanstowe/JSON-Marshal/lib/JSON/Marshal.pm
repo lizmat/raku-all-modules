@@ -57,9 +57,9 @@ above.
 
 use JSON::Name;
 
-module JSON::Marshal:ver<0.0.12>:auth<github:jonathanstowe> {
+module JSON::Marshal:ver<0.0.13>:auth<github:jonathanstowe> {
 
-    use JSON::Fast:ver(v0.4..*);
+    use JSON::Fast:ver(v0.4+);
 
 
     role CustomMarshaller {
