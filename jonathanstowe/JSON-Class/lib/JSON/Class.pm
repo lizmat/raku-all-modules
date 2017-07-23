@@ -74,13 +74,13 @@ though.)
 =end pod
 
 use JSON::Unmarshal;
-use JSON::Marshal:ver(v0.0.7..*);
+use JSON::Marshal:ver(v0.0.7+);
 
 sub EXPORT {
     { '&trait_mod:<is>'    =>  &trait_mod:<is> }
 }
 
-role JSON::Class:ver<0.0.8>:auth<github:jonathanstowe> {
+role JSON::Class:ver<0.0.9>:auth<github:jonathanstowe> {
 
 
     method from-json(Str $json) returns JSON::Class {

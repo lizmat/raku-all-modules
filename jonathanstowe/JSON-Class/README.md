@@ -2,6 +2,8 @@
 
 A Role to allow Perl 6 objects  to be constructed and serialised from/to JSON.
 
+[![Build Status](https://travis-ci.org/jonathanstowe/JSON-Class.svg?branch=master)](https://travis-ci.org/jonathanstowe/JSON-Class)
+
 ## Synopsis
 
 ```
@@ -49,28 +51,28 @@ re-exported by the module.
 ## Installation
 
 Assuming you have a working perl6 installation you should be able to
-install this with *panda* :
+install this with *zef* :
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install JSON::Class
+    zef install JSON::Class
 
-I haven't tested with "zef" but I can see no reason why it shouldn't
-work equally well.
 
 ## Support
 
 Suggestions/patches are welcomed via github at:
 
-   https://github.com/jonathanstowe/JSON-Class
+https://github.com/jonathanstowe/JSON-Class
 
 ## Licence
 
-Please see the LICENCE file in the distribution
+This is free software.
 
-© Jonathan Stowe 2015, 2016
+Please see the (LICENCE)[LICENCE] file in the distribution for the details.
+
+© Jonathan Stowe 2015, 2016, 2017
 
