@@ -1,5 +1,5 @@
 use v6;
-unit class Term::Choose:ver<0.0.5>;
+unit class Term::Choose:ver<0.0.6>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -44,7 +44,6 @@ has Int   $!layout;
 has Int   $!rest;
 has Int   $!print_pp_row;
 has Str   $!pp_line_fmt;
-has Int   $!nr_prompt_lines;
 has Str   @!prompt_lines;
 has Int   $!row_top;
 has Int   $!row_bottom;
@@ -106,7 +105,7 @@ sub _valid_options {
         keep            => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
         ll              => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
         max-height      => '<[ 1 .. 9 ]><[ 0 .. 9 ]>*',
-        max-width       => '<[ 2 .. 9 ]><[ 0 .. 9 ]>*',
+        max-width       => '<[ 2 .. 9 ]>|<[ 1 .. 9 ]><[ 0 .. 9 ]>+',
         default         => '<[ 0 .. 9 ]>+',
         pad             => '<[ 0 .. 9 ]>+',
         pad-one-row     => '<[ 0 .. 9 ]>+',
@@ -258,6 +257,7 @@ method !_init_term {
 
 method !_end_term {
     return if $!win;
+    #delwin( $!win_local ) if $!win_local;
     endwin();
 }
 
@@ -639,7 +639,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
 
 
 method !_mouse_xy2pos ( Int $abs_mouse_x, Int $abs_mouse_y ) {
-    my Int $abs_y_of_top_row = $!nr_prompt_lines;
+    my Int $abs_y_of_top_row = @!prompt_lines.elems;
     if $abs_mouse_y < $abs_y_of_top_row {
         return;
     }
@@ -688,13 +688,19 @@ method !_beep {
 
 method !_prepare_prompt {
     if %!o<prompt> eq '' {
-        $!nr_prompt_lines = 0;
         return;
     }
-    my $init   = %!o<lf>[0] // 0;
-    my $subseq = %!o<lf>[1] // 0;
+    my Int $init   = %!o<lf>[0] // 0;
+    my Int $subseq = %!o<lf>[1] // 0;
     @!prompt_lines = line-fold( %!o<prompt>, $!avail_w, ' ' x $init, ' ' x $subseq );
-    $!nr_prompt_lines = @!prompt_lines.elems;
+    my Int $keep = %!o<keep> + $!print_pp_row;
+    $keep min= $!term_h;
+    if @!prompt_lines.elems + $keep > $!avail_h {
+        @!prompt_lines.splice( 0, @!prompt_lines.elems + $keep - $!avail_h );
+    }
+    if @!prompt_lines.elems > 0 {
+        $!avail_h -= @!prompt_lines.elems;
+    }
 }
 
 
@@ -725,14 +731,9 @@ method !_wr_first_screen( Int $multiselect ) {
     if $!avail_w < 2 {
         die "Terminal width to small.";
     }
+    $!print_pp_row = %!o<page> ?? 1 !! 0;
     self!_prepare_new_copy_of_list;
     self!_prepare_prompt;
-    $!avail_h -= $!nr_prompt_lines;
-    $!print_pp_row = %!o<page> ?? 1 !! 0;
-    my $keep = %!o<keep> + $!print_pp_row;
-    if $!avail_h < $keep {
-        $!avail_h = $!term_h > $keep ?? $keep !! $!term_h;
-    }
     if %!o<max-height> && %!o<max-height> < $!avail_h {
         $!avail_h = %!o<max-height>;
     }
@@ -782,12 +783,12 @@ method !_set_pp_print_fmt {
 }
 
 method !_wr_screen {
-    move( $!nr_prompt_lines, 0 );
+    move( @!prompt_lines.elems, 0 );
     clrtobot();
     if $!print_pp_row {
         my Str $pp_line = sprintf $!pp_line_fmt, $!row_top div $!avail_h + 1;
         mvaddstr(
-            $!avail_h + $!nr_prompt_lines,
+            $!avail_h + @!prompt_lines.elems,
             0,
             $pp_line
         );
@@ -814,7 +815,7 @@ method !_wr_cell ( Int $row, Int $col ) {
         attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
         attron( A_REVERSE )             if $is_current_pos;
         mvaddstr(
-            $row - $!row_top + $!nr_prompt_lines,
+            $row - $!row_top + @!prompt_lines.elems,
             $lngth,
             @!list[$i]
         );
@@ -823,7 +824,7 @@ method !_wr_cell ( Int $row, Int $col ) {
         attron( A_BOLD +| A_UNDERLINE ) if $!marked[$row][$col];
         attron( A_REVERSE )             if $is_current_pos;
         mvaddstr(
-            $row - $!row_top + $!nr_prompt_lines,
+            $row - $!row_top + @!prompt_lines.elems,
             ( $!col_w + %!o<pad> ) * $col,
             self!_pad_str_to_colwidth: $i
         );

@@ -1,6 +1,10 @@
 Revision history for Term::Choose
 
 
+0.0.6   2017-07-23
+        - Bugfix regex max-width
+        - Bugfix in keep
+
 0.0.5   2017-07-09
         - Code refactoring. Update documentation
 

@@ -4,7 +4,6 @@
   ],
   "build-depends" : [ ],
   "depends" : [
-    "LibraryCheck",
     "NativeCall",
     "NCurses",
     "Terminal::WCWidth"
@@ -24,5 +23,5 @@
   "test-depends" : [
     "Test"
   ],
-  "version" : "0.0.5"
+  "version" : "0.0.6"
 }

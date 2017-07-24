@@ -7,8 +7,6 @@ perl6:
 install:
   - rakudobrew build zef
   - zef --depsonly install .
-  - zef install LibraryCheck
-  - zef install NCurses;
-  - zef install Term::termios
+  - zef install NCurses
   - zef install Terminal::WCWidth
 sudo: false
