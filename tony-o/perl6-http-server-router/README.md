@@ -27,7 +27,7 @@ route / .+ /, sub($req, $res) {
   $res.close('Not found.');
 }
 
-$server.listen;
+$server.listen(True);
 ```
 
 The example above matches a route '/' and response 'Hello world!' (complete with headers).  The other route that matches is '/<anything>' and it echos ```<anything>``` back to the client.  All other connections will hang until the client times them out.
