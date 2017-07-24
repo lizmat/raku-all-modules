@@ -8,8 +8,8 @@ perl6:
   - latest
 
 install:
-  - rakudobrew build-zef ${TRAVIS_PERL6_VERSION#latest}
-  - zef --depsonly install .
+  - rakudobrew build-zef
+  - zef --/test --depsonly install .
 
 #cache:
 #  directories:

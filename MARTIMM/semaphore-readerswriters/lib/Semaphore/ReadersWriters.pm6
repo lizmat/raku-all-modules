@@ -1,27 +1,14 @@
 use v6;
 
-#`{{
-  use Semaphore::ReadersWriters;
-
-  my Semaphore::ReadersWriters $rw .= new;
-  $rw.add-mutex-names('shv');
-  my $shared-var = 10;
-
-  # After creating threads ...
-  # Some writer thread
-  $rw.writer( 'shv', {$shared-var += 2});
-
-  # Some reader thread
-  say 'Shared var is ', $rw.reader( 'shv', {$shared-var;});
-}}
-
 class Semaphore::ReadersWriters:auth<github:MARTIMM> {
 
-  # Using state instead of has or my will have a scope over all
-  # objects of this class, state will also be initialized only
-  # once and BUILD is not necessary.
-  state Hash $semaphores = {};
-  state Semaphore $s-mutex = Semaphore.new(1);
+  # Using state instead of has or my will have a scope over all objects of
+  # this class, state will also be initialized only once and BUILD is not
+  # necessary. This will go wrong when several objects of the same type
+  # are started all initializing a semaphore whith the same names.
+
+  has Hash $semaphores = {};
+  has Semaphore $s-mutex = Semaphore.new(1);
 
   has Bool $.debug is rw = False;
 
@@ -43,12 +30,13 @@ class Semaphore::ReadersWriters:auth<github:MARTIMM> {
     *@snames,
     RWPatternType :$RWPatternType = C-RW-WRITERPRIO
   ) {
-
+#note "$*THREAD.id() ", @snames;
     my Bool $throw-exception = False;
     my Str $used-name;
 
     $s-mutex.acquire;
     for @snames -> $sname {
+      note "$*THREAD.id() Add $sname" if $!debug;
 
       if $semaphores{$sname}:exists {
         $used-name = $sname;
@@ -77,6 +65,7 @@ class Semaphore::ReadersWriters:auth<github:MARTIMM> {
 
     $s-mutex.acquire;
     for @snames -> $sname {
+      note "$*THREAD.id() Remove $sname" if $!debug;
       $semaphores{$sname}:delete if $semaphores{$sname}:exists;
     }
     $s-mutex.release;
@@ -111,26 +100,27 @@ class Semaphore::ReadersWriters:auth<github:MARTIMM> {
 
     # Check if structure of key is defined
     $s-mutex.acquire;
+#note "SKR $sname: ", $semaphores.keys;
     my Bool $has-key = $semaphores{$sname}:exists;
     $s-mutex.release;
-    return fail("mutex name '$sname' does not exist") unless $has-key;
+    die "mutex name '$sname' does not exist" unless $has-key;
 
-say "$*THREAD.id() R $sname hold ws" if $!debug;
+    note "$*THREAD.id() R $sname hold ws" if $!debug;
     # if writers are busy then wait,
     $semaphores{$sname}[C-WRITERS-LOCK].acquire;
-say "$*THREAD.id() R $sname hold ws continue" if $!debug;
+    note "$*THREAD.id() R $sname hold ws continue" if $!debug;
 
     self!reader-lock($sname);
 
-say "$*THREAD.id() R $sname release ws" if $!debug;
+    note "$*THREAD.id() R $sname release ws" if $!debug;
     # signal writers queue
     $semaphores{$sname}[C-WRITERS-LOCK].release;
 
-say "$*THREAD.id() R $sname run code" if $!debug;
+    note "$*THREAD.id() R $sname run code" if $!debug;
     my Any $r = &$code();
 
     self!reader-unlock($sname);
-say "$*THREAD.id() R unlock called" if $!debug;
+    note "$*THREAD.id() R unlock called" if $!debug;
 
     $r;
   }
@@ -140,25 +130,26 @@ say "$*THREAD.id() R unlock called" if $!debug;
 
     # Check if structure of key is defined
     $s-mutex.acquire;
+#note "SKW $sname: ", $semaphores.keys;
     my Bool $has-key = $semaphores{$sname}:exists;
     $s-mutex.release;
-    return fail("mutex name '$sname' does not exist") unless $has-key;
+    die "mutex name '$sname' does not exist" unless $has-key;
 
     self!writer-lock($sname);
 
-say "$*THREAD.id() W $sname block writers" if $!debug;
+    note "$*THREAD.id() W $sname block writers" if $!debug;
     # Block other writers
     $semaphores{$sname}[C-READERS-LOCK].acquire;
-say "$*THREAD.id() W $sname block writers continue" if $!debug;
+    note "$*THREAD.id() W $sname block writers continue" if $!debug;
 
-say "$*THREAD.id() W $sname run code" if $!debug;
+    note "$*THREAD.id() W $sname run code" if $!debug;
     my Any $r = &$code();
 
-say "$*THREAD.id() W $sname accept other writers" if $!debug;
+    note "$*THREAD.id() W $sname accept other writers" if $!debug;
     $semaphores{$sname}[C-READERS-LOCK].release;
 
     self!writer-unlock($sname);
-say "$*THREAD.id() W unlock called" if $!debug;
+    note "$*THREAD.id() W unlock called" if $!debug;
 
     $r;
   }
@@ -166,46 +157,46 @@ say "$*THREAD.id() W unlock called" if $!debug;
   #-----------------------------------------------------------------------------
   method !reader-lock ( Str:D $sname ) {
 
-say "$*THREAD.id() R $sname lock" if $!debug;
+    note "$*THREAD.id() R $sname lock" if $!debug;
     # hold if this is the first writer
     $semaphores{$sname}[C-READSTRUCT-LOCK].acquire;
     $semaphores{$sname}[C-READERS-LOCK].acquire
       if ++$semaphores{$sname}[C-READERS-COUNT] == 1;
     $semaphores{$sname}[C-READSTRUCT-LOCK].release;
-say "$*THREAD.id() R $sname locked" if $!debug;
+    note "$*THREAD.id() R $sname locked" if $!debug;
   }
 
   #-----------------------------------------------------------------------------
   method !writer-lock ( Str:D $sname ) {
 
-say "$*THREAD.id() W $sname lock" if $!debug;
+    note "$*THREAD.id() W $sname lock" if $!debug;
     # hold if this is the first writer
     $semaphores{$sname}[C-WRITESTRUCT-LOCK].acquire;
     $semaphores{$sname}[C-WRITERS-LOCK].acquire
       if ++$semaphores{$sname}[C-WRITERS-COUNT] == 1;
     $semaphores{$sname}[C-WRITESTRUCT-LOCK].release;
-say "$*THREAD.id() W $sname locked" if $!debug;
+    note "$*THREAD.id() W $sname locked" if $!debug;
   }
 
   #-----------------------------------------------------------------------------
   method !reader-unlock ( Str:D $sname ) {
 
-say "$*THREAD.id() R $sname unlock" if $!debug;
+    note "$*THREAD.id() R $sname unlock" if $!debug;
     $semaphores{$sname}[C-READSTRUCT-LOCK].acquire;
     $semaphores{$sname}[C-READERS-LOCK].release
       if --$semaphores{$sname}[C-READERS-COUNT] == 0;
     $semaphores{$sname}[C-READSTRUCT-LOCK].release;
-say "$*THREAD.id() R $sname unlocked" if $!debug;
+    note "$*THREAD.id() R $sname unlocked" if $!debug;
   }
 
   #-----------------------------------------------------------------------------
   method !writer-unlock ( Str:D $sname ) {
 
-say "$*THREAD.id() W $sname unlock" if $!debug;
+    note "$*THREAD.id() W $sname unlock" if $!debug;
     $semaphores{$sname}[C-WRITESTRUCT-LOCK].acquire;
     $semaphores{$sname}[C-WRITERS-LOCK].release
       if --$semaphores{$sname}[C-WRITERS-COUNT] == 0;
     $semaphores{$sname}[C-WRITESTRUCT-LOCK].release;
-say "$*THREAD.id() W $sname unlocked" if $!debug;
+    note "$*THREAD.id() W $sname unlocked" if $!debug;
   }
 }

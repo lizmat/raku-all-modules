@@ -1,34 +1,8 @@
-#!/usr/bin/env perl6
-#
-use v6.c;
-
-# Running the pod file will create a pdf using wkhtmltopdf
-#
-my Str $pod = "$*PROGRAM";
-my Str $pdf = $pod;
-$pdf ~~ s/\. <-[.]>+ $/.pdf/;
-shell( "perl6 --doc=HTML '$pod' | wkhtmltopdf - '$pdf'");
+use v6;
 
 #-------------------------------------------------------------------------------
 
 =begin pod
-
-=begin Xhtml
-<style>
-  pre {
-    border-width:       2px;
-    border-style:       solid;
-    border-color:       #060;
-    padding:            10px 0 3px 10px;
-    color:              #030;
-    background-color:   #ecefec;
-    font-family:        FreeMono;
-  }
-  td {
-    vertical-align:     top;
-  }
-</style>
-=end Xhtml
 
 =TITLE class Semaphore::ReadersWriters
 
@@ -133,13 +107,13 @@ Defined as
   method reader ( Str:D $sname, Block $code)
 
 Method to access the shared data using the provided C<$code>. When the C<$sname>
-is not defined before with L<add-mutex-names>, the method returns a failure
-object. There are no checks to make sure that the shared data is really only
+is not defined before with L<add-mutex-names>, the method throws an exception.
+There are no checks to make sure that the shared data is really only
 read and not modified by the provided code.
 
 Example
 
-  my @data = 1..^5;
+  my @data = 1..^5; # protected variable
   my Semaphore::ReadersWriters $rw .= new;
   $rw.add-mutex-names( 'data', :RWPatternType(C-RW-WRITERPRIO));
 
@@ -159,12 +133,11 @@ Defined as
   method writer ( Str:D $sname, Block $code)
 
 Method to access the shared data using the provided C<$code>. When the C<$sname>
-is not defined before with L<add-mutex-names>, the method returns a failure
-object.
+is not defined before with L<add-mutex-names>, the method throws an exception.
 
 Example
 
-  my @data = 1..^5;
+  my @data = 1..^5; # protected variable
   my Semaphore::ReadersWriters $rw .= new;
   $rw.add-mutex-names( 'data', :RWPatternType(C-RW-WRITERPRIO));
 
