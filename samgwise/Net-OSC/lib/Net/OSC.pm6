@@ -6,9 +6,9 @@ use Net::OSC::Types;
 
 =begin pod
 
-=head1 NAME
+=head1 Net::OSC
 
-Net::OSC - Open Sound Control for Perl6
+Open Sound Control for Perl6
 
 Use the Net::OSC module to communicate with OSC applications and devices!
 
@@ -65,6 +65,7 @@ Net::OSC distribution currently provides the following classes:
 =item Net::OSC::Message
 =item Net::OSC::Server
 =item Net::OSC::Server::UDP
+=item Net::OSC::Transport::TCP
 
 Classes planned for future releases include:
 
@@ -72,7 +73,7 @@ Classes planned for future releases include:
 =item Net::OSC::Server::TCP
 
 Net::OSC imports Net::OSC::Server::UDP and the action sub to the using name space.
-Net::OSC::Message provide a representation for osc messages.
+Net::OSC::Message provide a representation for OSC messages.
 
 See reference section below for usage details.
 
@@ -87,11 +88,16 @@ See reference section below for usage details.
 =begin table
       Added Server role and UDP server  | Sugar for sending, receiving and routing messages | 2016-12-08
       Updated to use Numeric::Pack      | Faster and better tested Buf packing | 2016-08-30
+      TCP packing contributed      | OSC messaged can be sent over TCP connections | 2017-07-23
 =end table
 
 =head1 AUTHOR
 
 Sam Gillespie <samgwise@gmail.com>
+
+=head1 CONTRIBUTORS
+
+  TCP transport module contributed by Karl Yerkes <karl.yerkes@gmail.com>.
 
 =head1 COPYRIGHT AND LICENSE
 
@@ -101,7 +107,7 @@ This library is free software; you can redistribute it and/or modify it under th
 
 =head1 Reference
 
-=head2 Net::OSC subroutines 
+=head2 Net::OSC subroutines
 
 =end pod
 
