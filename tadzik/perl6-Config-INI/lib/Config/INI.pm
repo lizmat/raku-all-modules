@@ -18,7 +18,7 @@ grammar INI {
     regex key      { <![#\[]> <-[;=]>+ }
     regex value    { [ <![#;]> \N ]+ }
     # TODO: This should be just overriden \n once Rakudo implements it
-    token eol      { [ <[#;]> \N+ ]? \n }
+    token eol      { [ <[#;]> \N* ]? \n }
 }
 
 class INI::Actions {

@@ -29,6 +29,7 @@ is %s<_><foo>, 'bar', '2.1 ok';
 is %s<_><some>, 'thing', '2.2 ok';
 
 my $third = Q {
+;
     foo = bar ; comment
     another= thing;commie
 };
