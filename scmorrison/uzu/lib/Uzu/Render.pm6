@@ -130,6 +130,17 @@ sub prepare-html-output(
     }
 }
 
+
+sub parse-template(
+    IO::Path :$path
+    --> List
+) {
+    # Extract header yaml if available
+    my ($page_yaml, $page_html) = ~<< ( slurp($path, :r) ~~ / ( ^^ '---' .* '---' | ^^ ) (.*) / );
+    my %page_vars = $page_yaml ?? load-yaml $page_yaml !! %{};
+    return $page_html, %page_vars;
+}
+
 sub render-mustache(
     Hash  $context,
     List :$template_dirs,
@@ -142,28 +153,25 @@ sub render-mustache(
 
     use Template::Mustache;
 
-    my Any %context = language => $language, |$context{$language};
+    my Any %layout_vars = language => $language, |$context{$language};
     return gather {
         $pages.kv.map: -> $page_name, %meta {
             
             # Append page-specific i18n vars if available
-            my Any %page_context = i18n-context-vars(path => %meta<path>, :$context, :$language);
+            my Any %page_context = i18n-context-vars path => %meta<path>, :$context, :$language;
 
             # Extract header yaml if available
-            my ($page_yaml, $page_html) =
-                ~<< ( slurp(%meta<path>, :r) ~~ / ( ^^ '---' .* '---' | ^^ ) (.*) / );
-            my %page_vars = $page_yaml ?? load-yaml $page_yaml !! %{};
+            my ($page_html, %page_vars) = parse-template path => %meta<path>;
 
             # Render the page content
             my Str $page_contents   = Template::Mustache.render:
                 $page_html, %( |%page_context, |%page_vars ), from => $template_dirs;
 
             # Append page content to $context
-            my Any %layout_context  = %( |%context, %( content => $page_contents ));
             my Str $layout_contents =
                 decode-entities Template::Mustache.render:
                     'layout',
-                    %layout_context,
+                    %( |%layout_vars, |%page_vars, content => $page_contents ),
                     from => $template_dirs;
 
             take prepare-html-output
@@ -189,21 +197,27 @@ sub render-tt(
 
     use Template6;
     my Template6 $t6 .= new;
-    $template_dirs.map({ $t6.add-path: $_ });
+    $template_dirs.map: { $t6.add-path: $_ };
 
-    my Any %context = language => $language, |$context{$language};
+    my Any %layout_vars = language => $language, |$context{$language};
     return gather {
         $pages.kv.map: -> $page_name, %meta {
             
             # Append page-specific i18n vars if available
-            my Any %page_context = i18n-context-vars(path => %meta<path>, :$context, :$language);
+            my Any %page_context = i18n-context-vars path => %meta<path>, :$context, :$language;
+
+            # Extract header yaml if available
+            my ($page_html, %page_vars) = parse-template path => %meta<path>;
+
+            # Cache template
+            $t6.add-template: "_{$page_name}_str", $page_html;
 
             # Render the page content
-            my Str $page_contents   = $t6.process($page_name, |%page_context );
+            my Str $page_contents   = $t6.process: "_{$page_name}_str", |%page_context, |%page_vars;
 
             # Append page content to $context
-            my Any %layout_context  = %( |%context, %( content => $page_contents ) );
-            my Str $layout_contents = $t6.process('layout', |%layout_context );
+            my Str $layout_contents = $t6.process: 
+                'layout', |%layout_vars, |%page_vars, content => $page_contents;
 
             take prepare-html-output
                 :$page_name,
