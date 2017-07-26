@@ -1,6 +1,6 @@
 use v6;
 use Test;
-plan 4;
+plan 5;
 
 use Text::Table::Simple;
 
@@ -97,3 +97,29 @@ subtest {
     is @output, lol2table(@columns, @rows), 'Public api matches private api';
     is-deeply @output, @expected, 'Create a table (header + body)'
 }, "_build_table";
+
+# Test formatted table with multi-line cells
+subtest {
+    my @expected = (
+        'O----O----------O-------------------------O',
+        '| id | name     | email                   |',
+        'O====O==========O=========================O',
+        '| 1  | John Doe | johndoe@cpan.org        |'~"\n"~
+        '|    |          | johndoe@fastmail.com    |',
+        '| 2  | Jane Doe | mrsjanedoe@hushmail.com |',
+        '-------------------------------------------',
+    );
+    temp @rows = (
+        [1,"John Doe","johndoe@cpan.org\njohndoe@fastmail.com"],
+        [2,'Jane Doe','mrsjanedoe@hushmail.com'],
+    );
+
+
+    my @output = _build_table( :header_rows(@columns), :body_rows(@rows) );
+
+    is @output, lol2table(@columns, @rows), 'Public api matches private api';
+    is-deeply @output, @expected, 'Create a table (header + body)'
+}, "_build_table";
+
+
+done-testing;
