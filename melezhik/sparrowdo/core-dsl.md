@@ -14,6 +14,8 @@ Sparrowdo core-dsl functions spec.
 * [Copy local files](#copy-local-files)
 * [Templates](#templates)
 * [Bash commands](#bash)
+* [Source control](#source-control)
+  * [Git](#git)
 * [Ssh commands](#ssh)
 * [Scp command](#scp)
 * [Asserts](#asserts)
@@ -273,7 +275,7 @@ Examples:
     );
     
     
-## Bash
+## Bash commands
 
 This function executes bash code.
 
@@ -328,6 +330,25 @@ Examples:
     );    
 
 
+## Source control
+
+### Git
+
+| function | description | usage |
+| -------- | ----------- | ----- |
+| git-scm | checkout source from git repository  | `ssh($source,[%args])` |
+
+Examples:
+
+    # checkout source from https://github.com/melezhik/sparrow.git
+    # to the current working directory
+    git-scm 'https://github.com/melezhik/sparrow.git';
+
+
+    # checkout source from https://github.com/melezhik/sparrow.git
+    # into /tmp/foo directory
+    directory '/tmp/foo';
+    git-scm 'https://github.com/melezhik/sparrow.git', %( to => '/tmp/foo' );
 
 ## Ssh
 
@@ -335,8 +356,8 @@ This function executes ssh commands.
 
 | function | description | usage |
 | -------- | ----------- | ----- |
-| ssh | execute ssh commands | `ssh($command,%args)`
-| ssh | alias for `ssh` with command set via %args | `ssh(%args)`
+| ssh | execute ssh commands | `ssh($command,%args)` |
+| ssh | alias for `ssh` with command set via %args | `ssh(%args)` |
 
 Examples:
 

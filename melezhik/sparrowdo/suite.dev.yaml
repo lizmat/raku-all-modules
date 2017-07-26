@@ -14,6 +14,7 @@ case:
   - copy-local-file
   - asserts
   - zef
+  - git
 
 opts: --local_mode --ssh_user=melezhik
 

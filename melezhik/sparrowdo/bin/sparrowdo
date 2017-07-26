@@ -9,6 +9,7 @@ use Sparrowdo::Core::DSL::Template;
 use Sparrowdo::Core::DSL::Package;
 use Sparrowdo::Core::DSL::CPAN::Package;
 use Sparrowdo::Core::DSL::Zef;
+use Sparrowdo::Core::DSL::Git;
 use Sparrowdo::Core::DSL::Service;
 use Sparrowdo::Core::DSL::Bash;
 use Sparrowdo::Core::DSL::Ssh;

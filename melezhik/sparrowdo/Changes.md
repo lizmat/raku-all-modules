@@ -1,3 +1,7 @@
+# 0.0.25 2017-07-25
+
+- Git SCM support 
+
 # 0.0.24 2017-07-20
 
 - Minor correction to alpine bootstrap
