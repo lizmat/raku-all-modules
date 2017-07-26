@@ -75,6 +75,7 @@ multi sub getopt (
                 :$strict,
                 :$bsd-style,
                 :$x-style,
+		:$autohv,
             );
             last;
             CATCH {

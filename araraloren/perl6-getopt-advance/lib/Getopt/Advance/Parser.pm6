@@ -198,7 +198,7 @@ class Option::Actions {
 # check name
 # check value
 # then parse over
-multi sub ga-parser(@args, $optset, :$strict, :$x-style where :!so, :$bsd-style) of Array is export {
+multi sub ga-parser(@args, $optset, :$strict, :$x-style where :!so, :$bsd-style, :$autohv) of Array is export {
     my $count = +@args;
     my $noa-index = 0;
     my @oav = [];
@@ -264,7 +264,7 @@ multi sub ga-parser(@args, $optset, :$strict, :$x-style where :!so, :$bsd-style)
     # set value before main
     .set-value for @oav;
     # call main
-    &process-main($optset, @noa);
+    &process-main($optset, @noa) if !$autohv || !&will-not-process-main($optset);
     # check option group and value optional
     $optset.check();
 
@@ -274,7 +274,7 @@ multi sub ga-parser(@args, $optset, :$strict, :$x-style where :!so, :$bsd-style)
 # check name
 # check value
 # then parse over
-multi sub ga-parser(@args, $optset, :$strict, :$x-style where :so, :$bsd-style) of Array is export {
+multi sub ga-parser(@args, $optset, :$strict, :$x-style where :so, :$bsd-style, :$autohv) of Array is export {
     my $count = +@args;
     my $noa-index = 0;
     my @oav = [];
@@ -336,7 +336,7 @@ multi sub ga-parser(@args, $optset, :$strict, :$x-style where :so, :$bsd-style) 
     # set value before main
     .set-value for @oav;
     # call main
-    &process-main($optset, @noa);
+    &process-main($optset, @noa) if !$autohv || !&will-not-process-main($optset);
     # check option group and value optional
     $optset.check();
 
@@ -357,6 +357,12 @@ sub process-bsd-style($optset, $arg) {
             :value
         ) for @options
     ] !! ();
+}
+
+sub will-not-process-main($optset) {
+    $optset.has('version') && $optset<version>
+    ||
+    $optset.has('help') && $optset<help>;
 }
 
 sub process-main($optset, @noa) {
