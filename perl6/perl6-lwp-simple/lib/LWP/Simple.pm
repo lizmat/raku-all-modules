@@ -6,9 +6,9 @@ use MIME::Base64;
 use URI;
 use URI::Escape;
 
-unit class LWP::Simple:auth<cosimo>:ver<0.090>;
+unit class LWP::Simple:auth<cosimo>:ver<0.093>;
 
-our $VERSION = '0.090';
+our $VERSION = '0.093';
 
 enum RequestType <GET POST PUT HEAD DELETE>;
 
