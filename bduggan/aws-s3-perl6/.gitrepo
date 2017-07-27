@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = git://github.com/bduggan/aws-s3-perl6.git
+	branch = master
+	commit = 276e0cadcb795af1f544d7763eb0c839c7433e39
+	parent = 86c5e98162ee2c0758da611e90e9ce017c9ba992
+	cmdver = 0.4.0
