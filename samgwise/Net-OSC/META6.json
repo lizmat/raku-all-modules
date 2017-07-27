@@ -18,10 +18,10 @@
     "Net::OSC::Types" : "lib/Net/OSC/Types.pm6",
     "Net::OSC::Server" : "lib/Net/OSC/Server.pm6",
     "Net::OSC::Server::UDP" : "lib/Net/OSC/Server/UDP.pm6",
-    "Net::OSC::Server::UDP" : "lib/Net/OSC/Transport/TCP.pm6"
+    "Net::OSC::Transport::TCP" : "lib/Net/OSC/Transport/TCP.pm6"
   },
   "resources" : [ ],
   "source-url" : "git://github.com/samgwise/Net-OSC.git",
   "test-depends" : [ ],
-  "version" : "0.2.0"
+  "version" : "0.2.1"
 }
