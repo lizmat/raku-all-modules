@@ -5,9 +5,9 @@ os:
 perl6:
   - latest
 install:
-  - rakudobrew build-panda
-  - panda --notests installdeps .
+  - rakudobrew build zef
+  - zef install --deps-only --/test .
+  - zef install --/test JSON::Pretty
 script:
-  - perl6 -MPanda::Builder -e 'Panda::Builder.build(~$*CWD)'
   - PERL6LIB=$PWD/lib prove -e perl6 -r t/ xt/
 sudo: false

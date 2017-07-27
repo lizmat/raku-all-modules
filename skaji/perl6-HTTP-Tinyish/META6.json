@@ -7,8 +7,8 @@
     "File::Temp"
   ],
   "description" : "perl6 port of HTTP::Tinyish",
-  "name" : "HTTP::Tinyish",
   "license" : "Artistic-2.0",
+  "name" : "HTTP::Tinyish",
   "perl" : "6.c",
   "provides" : {
     "HTTP::Tinyish" : "lib/HTTP/Tinyish.pm6",
@@ -20,5 +20,5 @@
   "source-url" : "git://github.com/skaji/perl6-HTTP-Tinyish.git",
   "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "*"
+  "version" : "0.0.1"
 }
