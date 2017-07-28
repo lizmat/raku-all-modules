@@ -6,9 +6,9 @@ use MIME::Base64;
 use URI;
 use URI::Escape;
 
-unit class LWP::Simple:auth<cosimo>:ver<0.093>;
+unit class LWP::Simple:auth<cosimo>:ver<0.094>;
 
-our $VERSION = '0.093';
+our $VERSION = '0.094';
 
 enum RequestType <GET POST PUT HEAD DELETE>;
 
@@ -41,7 +41,7 @@ method post (Str $url, %headers = {}, Any $content?) {
 }
 
 method put (Str $url, %headers = {}, Any $content?) {
-    self.request_shell(RequestType::DELETE, $url, %headers, $content)
+    self.request_shell(RequestType::PUT, $url, %headers, $content)
 }
 
 method request_shell (RequestType $rt, Str $url, %headers = {}, Any $content?) {
