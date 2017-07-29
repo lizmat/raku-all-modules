@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/scriptkitties/p6-Config-Parser-yaml.git
 	branch = master
-	commit = edca625ad13b2fdff26491d68361cb8c0febfe0f
-	parent = 7913eb1fd711432abfd48c0c15ebe95fced49f5f
+	commit = d4a5ab5282cbf03f966d5603dad2c029135ba6a8
+	parent = 2144d490f377cc7d714c8bcccb678dcafc88303a
 	cmdver = 0.4.0

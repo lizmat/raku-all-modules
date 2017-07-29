@@ -3,8 +3,8 @@ language: perl6
 perl6:
   - nom
   - latest
-  - "2017.03"
-  - "2017.04"
+  - "2017.04" # Second-last Rakudo Star release
+  - "2017.07" # Last Rakudo Star release
 
 os:
   - linux
