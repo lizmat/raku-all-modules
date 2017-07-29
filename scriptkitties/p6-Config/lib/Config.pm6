@@ -8,7 +8,7 @@ use Config::Exception::MissingParserException;
 use Config::Exception::FileNotFoundException;
 use Config::Parser;
 
-class Config is export
+class Config is Associative is export
 {
     has Hash $!content = {};
     has Str $!path = "";
@@ -26,6 +26,13 @@ class Config is export
     multi method get()
     {
         return $!content;
+    }
+
+    #| Fallback method in case the key is Nil. Will always return the default
+    #| value.
+    multi method get(Nil $key, Any $default = Nil)
+    {
+        $default;
     }
 
     #| Get a value from the config object. To get a nested
@@ -117,11 +124,14 @@ class Config is export
     #| Load a configuration file from the given path. Optionally
     #| set a parser module name to use. If not set, Config will
     #| attempt to deduce the parser to use.
-    multi method read(Str $path, Str $parser = "")
-    {
+    multi method read(
+        Str $path,
+        Str $parser = "",
+        Bool :$skip-not-found = False
+    ) {
         Config::Exception::FileNotFoundException.new(
             path => $path
-        ).throw() unless $path.IO.f;
+        ).throw() unless ($path.IO.f || $skip-not-found);
 
         $!parser = self.get-parser($path, $parser);
 
@@ -142,20 +152,25 @@ class Config is export
         return True;
     }
 
-    #| Read a list of paths. Will fail on the first file that
-    #| fails to load for whatever reason.
+    #| Read a list of paths. Will fail on the first file that fails to load for
+    #| whatever reason. If no files could be loaded, the method will return
+    #| False.
     multi method read(
         List $paths,
         Str $parser = "",
         Bool :$skip-not-found = False
     ) {
+        my Bool $read = False;
+
         for $paths.list -> $path {
             next if $skip-not-found && !$path.IO.f;
 
             self.read($path, $parser);
+
+            $read = True;
         }
 
-        return True;
+        return $read;
     }
 
     #| Read a plain Hash into the configuration.
@@ -196,5 +211,30 @@ class Config is export
 
         require ::($chosen-parser);
         return ::($chosen-parser).write($path, $!content);
+    }
+
+    multi method AT-KEY(::?CLASS:D: $key)
+    {
+        self.get($key);
+    }
+
+    multi method EXISTS-KEY(::?CLASS:D: $key)
+    {
+        self.has($key);
+    }
+
+    multi method DELETE-KEY(::?CLASS:D: $key)
+    {
+        self.unset($key);
+    }
+
+    multi method ASSIGN-KEY(::?CLASS:D: $key, $new)
+    {
+        self.set($key, $new);
+    }
+
+    multi method BIND-KEY(::?CLASS:D: $key, \new)
+    {
+        self.set($key, new);
     }
 }

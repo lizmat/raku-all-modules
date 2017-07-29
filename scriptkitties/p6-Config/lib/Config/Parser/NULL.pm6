@@ -9,18 +9,18 @@ use Config::Parser;
 #| Hash to return when calling `read`.
 class Config::Parser::NULL is Config::Parser
 {
-    my $mock-config;
+    my %mock-config = ();
 
     #| Return the mock config, skipping the file entirely.
     method read(Str $path --> Hash)
     {
-        $mock-config;
+        %mock-config;
     }
 
     #| Set the mock config to return on read.
     method set-config(Hash $config)
     {
-        $mock-config = $config;
+        %mock-config = $config;
     }
 
     #| Return True, as if writing succeeded.

@@ -16,7 +16,7 @@ plan 3;
     }
 });
 
-my $config = Config.new();
+my Config $config = Config.new();
 
 ok $config.read("t/files/config", "Config::Parser::NULL"), "Attempt to read a file with Config::Parser::NULL";
 

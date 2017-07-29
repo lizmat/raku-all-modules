@@ -8,7 +8,7 @@ use Config;
 
 plan 4;
 
-my $config = Config.new;
+my Config $config = Config.new();
 
 subtest "Unknown parser type" => {
     plan 1;

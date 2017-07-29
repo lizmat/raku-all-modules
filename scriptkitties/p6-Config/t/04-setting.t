@@ -10,7 +10,7 @@ use Config;
 
 my $config = Config.new();
 
-ok $config.set("a", "test").get("a") eq "test", "Setting simple key";
-ok $config.set("b.c", "test").get("b.c") eq "test", "Setting nested key";
-ok $config.set(["d"], "test").get("d") eq "test", "Setting simple key using array";
-ok $config.set(["e", "f"], "test").get("e.f") eq "test", "Setting nested key using array";
+is $config.set("a", "test").get("a"), "test", "Setting simple key";
+is $config.set("b.c", "test").get("b.c"), "test", "Setting nested key";
+is $config.set(["d"], "test").get("d"), "test", "Setting simple key using array";
+is $config.set(["e", "f"], "test").get("e.f"), "test", "Setting nested key using array";

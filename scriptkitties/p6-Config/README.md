@@ -21,9 +21,9 @@ please.
 ```perl6
 use Config;
 
-my $config = Config.new();
+my Config $config = Config.new();
 
-# load a simple configuration hash
+# Load a simple configuration hash
 $config.read({
     keyOne => "value",
     keyTwo => {
@@ -31,22 +31,25 @@ $config.read({
     }
 });
 
-# load a configuration files
+# Load a configuration files
 $config.read("/etc/config.yaml");
 
-# load a configuration file with a specific parser
+# Load a configuration file with a specific parser
 $config.read("/etc/config", "Config::Parser::ini");
 
-# retrieve a simple key
+# Retrieve a simple key
 $config.get("keyOne");
 
-# retrieve a nested key
+# As of v1.2.0, `Config` support associative indexing:
+$config<keyOne>;
+
+# Retrieve a nested key
 $config.get("keyTwo.NestedKey");
 
-# write out the configuration file
+# Write out the configuration file
 $config.write("/etc/config.yaml");
 
-# write out the configuration in another format
+# Write out the configuration in another format
 $config.write("/etc/config.json", "Config::Parser::json");
 ```
 
