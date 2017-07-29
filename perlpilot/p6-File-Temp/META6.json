@@ -1,17 +1,24 @@
 {
-    "perl" : "6.*",
-    "name" : "File::Temp",
-    "version" : "0.0.5",
-    "description" : "Create temporary files & directories",
-    "depends" : [ "File::Directory::Tree" ],
-    "build-depends" : [ ],
-    "test-depends" : [
-        "Test"
-    ],
-    "provides" :  {
-        "File::Temp" : "lib/File/Temp.pm"
-    },
-    "repo-type" : "git",
-    "source-url" : "git://github.com/perlpilot/p6-File-Temp.git",
-    "author" : "Jonathan Scott Duff <duff@pobox.com>"
+  "authors" : [
+    "Jonathan Scott Duff <duff@pobox.com>"
+  ],
+  "build-depends" : [ ],
+  "depends" : [
+    "File::Directory::Tree"
+  ],
+  "description" : "Create temporary files & directories",
+  "license" : "Artistic-2.0",
+  "name" : "File::Temp",
+  "perl" : "6.*",
+  "provides" : {
+    "File::Temp" : "lib/File/Temp.pm"
+  },
+  "repo-type" : "git",
+  "resources" : [ ],
+  "source-url" : "git://github.com/perlpilot/p6-File-Temp.git",
+  "tags" : [ ],
+  "test-depends" : [
+    "Test"
+  ],
+  "version" : "0.0.6"
 }
