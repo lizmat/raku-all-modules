@@ -285,7 +285,7 @@ It is usefull if you want to log a dump of a complex object which can take time.
 This method can takes in parameters the *category*, the *severity* and the *pipeline* to use.
 Theses parameters are then used to check if the message could pass through the pipelines and will be handled.
 
-**!!! _msg_ parameter cannot be tested, so if a filter acts on it, the results will differ between will-log() and log(). !!!**
+** _msg_ parameter cannot be tested, so if a filter acts on it, the results will differ between `will-log()` and `log()`. **
 
 ```perl6
 if Log::Any.will-log( :severity('debug') ) {

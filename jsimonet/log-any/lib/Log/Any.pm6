@@ -90,7 +90,7 @@ class Log::Any {
 
 	multi method add( Log::Any:D: Log::Any::Pipeline $p, Str:D :$pipeline = '_default', :$overwrite = False ) {
 		if %!pipelines{$pipeline} && ! $overwrite {
-			die "Cannot overwrite existing pipeline";
+			die "Cannot overwrite existing pipeline ($pipeline).";
 		}
 		%!pipelines{$pipeline} = $p;
 	}
