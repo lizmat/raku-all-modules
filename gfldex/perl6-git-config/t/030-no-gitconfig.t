@@ -7,4 +7,4 @@ use Git::Config;
 
 my $gitconfig-path = '.'.IO;
 
-is git-config($gitconfig-path).Str, '', 'load without a gitconfig';
+is quietly { git-config($gitconfig-path).Str } , '', 'load without a gitconfig';
