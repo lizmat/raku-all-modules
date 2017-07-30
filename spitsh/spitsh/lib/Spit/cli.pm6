@@ -4,7 +4,7 @@ use Spit::Util :spit-version;
 use Spit::Sastify;
 use Spit::Docker;
 need Spit::Repo;
-need Spit::Parser::JSON;
+need Spit::Parser::YAML;
 
 BEGIN my @opts =  (
     opt(
@@ -108,7 +108,7 @@ opt(
         ]?
         {
             my $val := do with $<value> {
-                when .<int>  { sastify .<int>.Str }
+                when .<int>  { sastify .<int>.Str.Int }
                 when .<str>  { sastify .<str>.Str }
                 when ''      { sastify False }
                 default      {  }
@@ -181,6 +181,11 @@ BEGIN my @commands =  (
               match => 'str',
               alias => 'D',
               desc => 'Run tests in a comma separated list of existing docker containers',
+          ),
+          opt(
+              name => 'in-helper',
+              alias => 'h',
+              desc => 'Run tests in container derived from spit-helper',
           ),
           opt(
               name => 'verbose',
@@ -292,10 +297,10 @@ sub compile-src($src, %cli, :$name) {
     my %opts;
 
     with %cli<opts-file> {
-        %opts.append: .&parse-opts.data.pairs;
+        %opts.append: .&parse-opts().pairs;
     }
-    elsif '.spit.json'.IO.e {
-        %opts.append: '.spit.json'.IO.&parse-opts.data.pairs;
+    elsif '.spit.yml'.IO.e {
+        %opts.append: '.spit.yml'.IO.&parse-opts().pairs;
     }
 
     %opts.append(.pairs) with %cli<opts>;
@@ -311,7 +316,7 @@ sub compile-src($src, %cli, :$name) {
     orwith %cli<in-container> {
         exec-docker $_;
     }
-    try my $shell = compile($src, |%(%cli<target no-inline xtrace>:p), :%opts, :$name).gist;
+    try my $shell = compile($src, |%(%cli<target no-inline xtrace debug>:p), :%opts, :$name).gist;
 
     if $! {
         .kill(SIGTERM) with $docker;
@@ -320,7 +325,8 @@ sub compile-src($src, %cli, :$name) {
     }
 
     if $docker {
-        write-docker $docker, $promise, $shell;
+        my $proc = write-docker $docker, $promise, $shell;
+        exit($proc.exitcode);
     } elsif %cli<RUN> {
         exit (run 'sh', '-c', $shell).exitcode;
     } else {
@@ -387,11 +393,14 @@ sub helper($_) {
     }
 }
 
-multi parse-opts(Str:D $json) is export  {
-    my $res = Spit::JSON::Grammar.parse($json, actions => Spit::JSON::Actions);
-    return ($res andthen .made);
+multi parse-opts(Str:D $yaml) {
+    my $res = Spit::YAML::Grammar.parse($yaml, actions => Spit::YAML::Actions);
+    return Nil without $res;
+    my %opts = $res.made[0].pairs.map: { .key => sastify(.value) }
+    %opts;
 }
 
-multi parse-opts(IO::Path:D $json-file) {
-    parse-opts($json-file.slurp) || die "$json-file doesn't contain valid JSON";
+multi parse-opts(IO::Path:D $yaml-file) {
+    parse-opts($yaml-file.slurp)
+      or die "Failed to parse $yaml-file as YAML -- sorry I can't tell you more!";
 }

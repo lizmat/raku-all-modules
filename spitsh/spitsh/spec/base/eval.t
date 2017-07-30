@@ -1,6 +1,6 @@
 use Test;
 
-plan 9;
+plan 11;
 
 {
     my $foo = "foo";
@@ -45,6 +45,11 @@ plan 9;
         say "$:one$:two$:three$:four$:five";
     }.${sh},
     '12345', 'many eval options';
+
+    is eval(:$one, :$two, :$three, :$four,:$five) {
+        say "$:<one>$:<two>$:<three>$:<four>$:<five>";
+    }.${sh},
+    '12345', 'many eval options using indirect lookup';
 }
 
 
@@ -52,4 +57,13 @@ plan 9;
     my $foo = "bar";
     is eval(:$foo){ my $:foo; print $:foo }.${sh}, eval(:$foo){ my $:foo; print $:foo }.${sh},
       'two evals in the same statement';
+}
+
+{
+    my $thing = Str.random;
+
+    is eval(:$thing){
+        say $:<thing>;
+        eval(){ say $:<thing> }.${sh};
+    }.${sh}, ($thing,$thing), 'nested eval with option';
 }

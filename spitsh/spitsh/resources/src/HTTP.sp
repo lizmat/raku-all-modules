@@ -64,12 +64,20 @@ augment HTTP {
         $self.starts-with('https');
     }
 
+    method https^ {
+        $self.${ sed -r 's§^(.*://)?§https://§' }
+    }
+
     method query(Pair *@query) -->HTTP {
-        my $query = (.key ~ '=' ~ .value for @query).join('&');
-        if $self.contains('?') {
-            $self ~ '&' ~ $query;
+        if @query {
+            my $query = (.key ~ '=' ~ .value for @query).join('&');
+            if $self.contains('?') {
+                $self ~ '&' ~ $query;
+            } else {
+                $self ~ '?' ~ $query
+            }
         } else {
-            $self ~ '?' ~ $query;
+            $self;
         }
     }
 
@@ -82,12 +90,12 @@ augment HTTP {
                    JSON :$json) -->HTTP-response {
         my $headers = File.tmp;
         my $req-headers = File.tmp;
-        debug "HTTP⟹$method $self";
+        debug "HTTP ==> $method $self", "\c[GLOBE WITH MERIDIANS]";
         my $response = ${
-            $:curl -svL
+            # ✨ save all stderr output to $req-headers to be parsed later
+            $:curl -svL !> $req-headers
             -X $method
             --max-redir ($max-redirects || 0)
-            !> $req-headers
             -D $headers
             -o ($to || File.tmp)
             ("-H$_" for ('Content-Type: application/json' if ~$json), @headers)
@@ -111,6 +119,7 @@ augment HTTP {
             )
             $self
         }-->HTTP-response;
+
         $headers.line-subst(/\r/,'',:g);
         $response.push: $headers.shift.${
             sed -r 's§HTTP/([^ ]+) [0-9]+ (.*)§http-version\t\1\nmessage\t\2\n§'
@@ -127,7 +136,7 @@ augment HTTP {
         # Put the req-headers as an attribute of the response
         $response.push((:$req-headers));
 
-        debug "HTTP⟸{$response.code} {$response.message} $self ";
+        debug "HTTP <== {$response.code} {$response.message} $self", "\c[GLOBE WITH MERIDIANS]";
         $response;
     }
 }

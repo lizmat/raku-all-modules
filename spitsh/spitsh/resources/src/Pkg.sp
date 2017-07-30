@@ -36,9 +36,8 @@ class Pkg {
 
     static method last-updated-->DateTime on {
         Debian {
-            $:pkglist-path
-              .add("deb.debian.org_debian_dists_{Debian.release-name}_Release")
-              .ctime;
+            # "partial" seems to get touched whenever apt-get update is run
+            $:pkglist-path.add("partial").ctime;
         }
         Alpine { $:pkglist-path.find(name => '*.gz')[0].ctime }
         RHEL ${
@@ -54,11 +53,11 @@ class Pkg {
 
     static method check-update? {
         my $last-updated = Pkg.last-updated;
-        if !$last-updated || now().posix - $last-updated.posix > $:pkglist-stale {
+        if ! ~$last-updated || now().posix - $last-updated.posix > $:pkglist-stale {
             info "Updating package list because it " ~ (
-                $last-updated
+                ~$last-updated
                   ?? "was last updated at $last-updated"
-                  !! "doesn't exist at $:pkglist-path"
+                  !! "doesn't exist"
             );
             Pkg.update-pkglist;
         }
@@ -78,7 +77,7 @@ class Pkg {
     method installed? on {
         Debian ${dpkg -s $self *>X}
         RHEL   ${yum list installed $self *>X}
-        Alpine ${apk info -e $self}
+        Alpine ${apk info -e $self *>X}
     }
 
     #| Gets the version of the currently installed package
@@ -104,18 +103,22 @@ augment List[Pkg] {
 
     #| Installs the package via the builtin package manager.
     #| Returns true if the package was successfully installed.
-    method install? on {
-        RHEL ${$?pm install -y @$self >debug/warn}
-        Debian {
-            Pkg.check-update;
-            ${
-                $?pm install >debug/warn :DEBIAN_FRONTEND<noninteractive>
-                -y -q --no-install-recommends @$self
+    method install? {
+        info "Installing pacakges: {$self.join(', ')}";
+        on {
+            RHEL ${$?pm install -y @$self >debug/warn}
+            Debian {
+                Pkg.check-update;
+                ${
+                    $?pm install >debug/warn :DEBIAN_FRONTEND<noninteractive>
+                    -y -q --no-install-recommends @$self
+                }
+            }
+            Alpine {
+                Pkg.check-update;
+                ${$?pm add @$self --no-progress >debug/warn};
             }
         }
-        Alpine {
-            Pkg.check-update;
-            ${$?pm add @$self --no-progress >debug/warn};
-        }
     }
+
 }

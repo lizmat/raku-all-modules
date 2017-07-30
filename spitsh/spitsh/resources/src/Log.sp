@@ -5,7 +5,7 @@ constant $:log-default-path = "\c[GHOST]";
 my @:log-levels  = (
     none => '',
     debug => "\c[WHITE QUESTION MARK ORNAMENT]",
-    info  => "\c[CIRCLED LATIN SMALL LETTER I]",
+    info  => "\c[INFORMATION SOURCE, VARIATION SELECTOR-16] ",
     warn => "\c[WARNING SIGN]",
     error => "\c[HEAVY EXCLAMATION MARK SYMBOL]",
     fatal => "\c[SKULL AND CROSSBONES]",
@@ -91,16 +91,19 @@ augment Str {
                 }
             }
         }
+        else {
+            #XXX: hack to stop broken pipe errors when .log is piped to when $:log
+            # is False
+            ${ cat >X };
+        }
     }
 }
 
-sub fatal($msg, $path?){
-    $:log ?? $msg.log(5, $path) !! die $msg;
-}
+sub fatal($msg, $path?){ $:log ?? $msg.log(5, $path) !! die $msg  }
 sub error($msg, $path?){ $:log ?? $msg.log(4, $path) !! note $msg }
 sub warn ($msg, $path?){ $:log ?? $msg.log(3, $path) !! note $msg }
 sub info ($msg, $path?){ $:log ?? $msg.log(2, $path) !! note $msg }
-sub debug($msg, $path?){ $msg.log(1, $path) }
+sub debug($msg, $path?){ $:log ?? $msg.log(1, $path) !! () }
 
 sub log-fifo(Int $level, $path?) --> File {
     my $log-fifo = File.tmp-fifo;

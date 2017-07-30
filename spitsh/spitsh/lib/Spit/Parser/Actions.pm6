@@ -344,6 +344,11 @@ method trait:sym<is> ($/){
         $*CU.export($*DECL);
     } elsif $<rw> {
         $*ROUTINE.rw  = True;
+    } elsif $<required> {
+        $*DECL ~~ SAST::Option or
+          SX.new(message => 'You can only put ‘is required’ on options').throw;
+
+        $*DECL.required = True;
     } elsif $<return-by-var> {
         $*ROUTINE.return-by-var = True;
     } elsif $<impure> {
@@ -446,8 +451,8 @@ method paramlist ($/) {
 method param ($/) {
     make $*CURPAD.declare: do if $<pos> {
         SAST::PosParam.new(
-            name => $<var><name>.Str,
-            sigil => $<var><sigil>.Str,
+            name => $<name>.Str,
+            sigil => $<sigil>.Str,
             |(decl-type => .ast with $<type>),
             |(default => .ast with $<default>),
             optional => ?$<optional>,
@@ -455,8 +460,8 @@ method param ($/) {
         )
     } else {
         SAST::NamedParam.new(
-            name => $<var><name>.Str,
-            sigil => $<var><sigil>.Str,
+            name => $<name>.Str,
+            sigil => $<sigil>.Str,
             |(decl-type => .ast with $<type>),
             |(default => .ast with $<default>),
             optional => $<optional>,
@@ -533,24 +538,38 @@ method term:my ($/) {
 }
 
 method var-create($/,$decl-type) {
-    my \ast-type = do given $decl-type {
+    my $ast-type = do given $decl-type {
         when 'constant'  { SAST::ConstantDecl }
         when 'my'        { SAST::VarDecl }
         when 'topic'     { SAST::MaybeReplace }
         when 'env'       { SAST::EnvDecl }
     };
-    make ast-type.new(
-        name => $<var><name>.Str,
+    my $name = $<var><name>.Str;
+    my $package;
+    if $name.starts-with(':') {
+        $ast-type = $ast-type but SAST::Option;
+        $package = ($*CLASS andthen .class);
+    }
+
+    make $ast-type.new(
+        :$name,
         sigil => $<var><sigil>.Str,
         |(decl-type => .ast with $<type>),
         match => $/,
+        :$package,
     );
 }
 
 method term:quote ($/)   { make $<quote>.ast  }
 method term:int ($/)   { make $<int>.ast    }
 method int ($/) { make SAST::IVal.new: val => $/.Int }
-method term:var ($/)   { make $<var>.ast }
+
+method term:var-ref ($/) { make $<var-ref>.ast }
+
+method var-ref ($/) {
+    my $var = ($<var> // $<package-opt>);
+    make $<accessor> ?? reduce-term($var, (), $<accessor>) !! $var.ast;
+}
 
 method var ($/)   {
     with $<special-var> {
@@ -575,6 +594,14 @@ method var ($/)   {
             );
         }
     }
+}
+
+method package-opt ($/) {
+    make SAST::Var.new(
+        name => $<opt-name>.Str,
+        sigil => $<sigil>.Str,
+        package => $<package-name>.Str,
+    );
 }
 
 method term:circumfix ($/) {
@@ -703,19 +730,25 @@ method term:pair ($/) { make SAST::Pair.new(|$<pair>.ast) }
 method pair ($/) { make $<pair>.ast }
 
 method colon-pair ($/) {
-    my ($key,$value);
-    if $<var> {
-        $key = $<var><name><identifier>;
-        $value = $<var>.ast;
+    my ($key,$value,$match);
+    with $<var-ref> {
+        $key = .ast.bare-name;
+        $match = $_;
+        $value = .ast;
     } else {
-        $key = $<key>;
-        if $<value> {
+        $key = $<key>.Str;
+        $match = $<key>;
+        if $<neg> {
+            $value = SAST::BVal.new(val => False);
+        }
+        elsif $<value> {
             $value = $<value>.ast;
-        } else {
+        }
+        else {
             $value = SAST::BVal.new(val => True);
         }
     }
-    $key = SAST::SVal.new(val => $key.Str,match => $key);
+    $key = SAST::SVal.new(val => $key.Str, :$match);
     make ($key,$value);
 }
 
@@ -846,8 +879,8 @@ method postfix:sym<[ ]> ($/) { make $<index-accessor>.ast }
 method index-accessor($/) {
     make SAST::Elem.new(index => $<EXPR>.ast, index-type => tInt);
 }
-method postfix:sym<{ }>($/) { make $<key-accessor>.ast }
-method key-accessor($/) { make SAST::Elem.new(index => $<EXPR>.ast, index-type => tStr) }
+method postfix:sym<{ }>($/) { make $<curly-key-accessor>.ast }
+method curly-key-accessor($/) { make SAST::Elem.new(index => $<EXPR>.ast, index-type => tStr) }
 
 method postfix:sym«< >»($/) { make $<angle-key-accessor>.ast }
 method angle-key-accessor($/) {
@@ -1085,9 +1118,23 @@ method angle-quote ($/) {
         SAST::Empty.new;
     }
 }
+
 method quote:sym<eval> ($/) {
     my $src = $<balanced-quote>.ast;
     my %opts = $<args>.ast.<named> || Empty;
+    for |($<args> andthen .ast<pos>) {
+        when SAST::Pair {
+            with .key.compile-time -> $key {
+                %opts{$key} = .value;
+            } else {
+                SX.new(message => 'eval key must be known at compile time',
+                       match => .key.match).throw;
+            }
+        }
+        default {
+            SX.new(message => ‘eval doesn't take positional arguments’, match => .match).throw;
+        }
+    }
     make SAST::Eval.new(:%opts,:$src,outer => $*CURPAD);
 }
 
@@ -1098,5 +1145,3 @@ method wrap ($/) {
         make $<wrapped>;
     }
 }
-
-method r-wrap ($/) { self.wrap($/)}

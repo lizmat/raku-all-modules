@@ -12,6 +12,7 @@ augment Host {
     static method local^ { 'localhost' }
 
     method wait-connectable(Port $port, Int :$timeout = 60)? {
+        debug "Waiting for $self to open port $port (timeout:$timeout)";
         my $start = now.posix;
         my $connected = False;
         while now.posix < ($start + $timeout) and !$connected {
@@ -29,18 +30,22 @@ augment Host {
         $message.${ $:socat !>warn - "TCP:$self:$port"}
     }
 
-    method ssh-exec($src,
-                    :$user = 'root',
-                    :$port = 22,
-                    :$identity,
-                    :@options,
-                    :@host-key-algorithms,
-                    Bool :$debug)~ {
+    method ssh(
+        $shell,
+        :$user = 'root',
+        :$port = 22,
+        :$identity = $:ssh-identity-file,
+        :@options,
+        :@host-key-algorithms,
+        Bool :$debug
+    )~
+    {
         my $ssh-host = "$user@$self";
+        debug "Attempting ssh to $ssh-host:$port";
         # XXX: Until we figure out how to make the ssh connection wait
         # for logging to finish
-        “trap 'sleep 1; exit 1' TERM; $src”.${
-            $:ssh !>warn("🐡:$ssh-host")
+        “trap 'sleep 1; exit 1' TERM; $shell”.${
+            $:ssh !>warn($ssh-host)
             ("-i$_" if $identity)
             ('-vvv' if $debug)
             -p $port
@@ -52,7 +57,7 @@ augment Host {
 
     method ssh-keyscan(:$port = 22, :$type = 'rsa,ecdsa,ed25519', Bool :$debug) -->List[SSH-known-host]
     ${
-        $:ssh-keyscan !>debug('🐡🔑🔎')
+        $:ssh-keyscan !>debug
         ('-v' if $debug)
         -p $port
         -t $type

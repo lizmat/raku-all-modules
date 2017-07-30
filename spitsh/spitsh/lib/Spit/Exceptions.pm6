@@ -96,11 +96,11 @@ class SX is Exception is rw {
     }
 
     method gist {
-        my $snippet := gen-ctx :before(GRAY), :after(RESET),
+        try my $snippet := gen-ctx :before(GRAY), :after(RESET),
         ${ :before(RESET ~ $.mark-before), :after($.mark-after ~ RESET ~ GRAY), :$.match },
         |self.extra-marks;
 
-        self.ERROR ~ " $.message\n$!cu-name:$!line\n$snippet";
+        self.ERROR ~ " $.message\n$!cu-name:$!line\n{$snippet // ''}";
     }
 
     method mark-before { ON_RED }
@@ -149,7 +149,7 @@ class SX::TypeCheck is SX {
     has $.desc;
 
     method message {
-        "Type check failed{ $!desc andthen " for $_" }. Expected $!expected but got $!got.";
+        "Type check failed{ $!desc andthen " for $_" }.\nExpected $!expected but got $!got.";
     }
 }
 
@@ -319,7 +319,11 @@ class SX::Assignment-Readonly is SX {
 
 class SX::RequiredOption is SX {
     has $.name is required;
-    method message { "Option $!name used but no value provided for it and it doesn't have default." }
+    has $.package;
+    method message {
+        "Required option '$!name' " ~
+        ("from package '{$.package.name}' " if $.package) ~
+        "used but no value provided for it." }
 }
 
 role SX::Module {

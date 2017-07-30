@@ -19,19 +19,17 @@ my %native = (
     )),
 );
 
-sub lookup-method($class,$name) {
-    $*SETTING.lookup(CLASS,$class).class.^find-spit-method($name);
-}
-
 my subset ShellStatus of SAST where {
     # 'or' and 'and' don't work here for some reason
     ($_ ~~ SAST::Neg|SAST::Cmp) ||
-    ((.type ~~ tBool) && $_ ~~
+    ((.original-type ~~ tBool) && $_ ~~
       SAST::Stmts|SAST::Cmd|SAST::Call|SAST::If|SAST::Case|SAST::Quietly|SAST::LastExitStatus
     )
 }
 
 unit class Spit::Sh::Compiler;
+
+has $.SETTING is required;
 
 also does Name-Generator;
 also does Compile-Junction;
@@ -39,8 +37,6 @@ also does Compile-Cmd-And-Call;
 also does Compile-Statement-Control;
 
 constant @reserved-cmds = %?RESOURCES<reserved.txt>.slurp.split("\n");
-
-has tOS $.compile-for;
 
 method BUILDALL(|) {
     @!names[SCALAR]<_> = '_';
@@ -59,7 +55,7 @@ method scaffolding {
     (SUB,'ef'),
     (SUB,'e')
          {
-        my $sast = $*SETTING.lookup(|$_) || die "scaffolding {$_.gist} doesn't exist";
+        my $sast = $!SETTING.lookup(|$_) || die "scaffolding {$_.gist} doesn't exist";
         @a.push: $sast;
     }
     @a;
@@ -120,7 +116,12 @@ method compile(SAST::CompUnit:D $CU, :$one-block, :$xtrace --> Str:D) {
     }
 
     if @END {
-        @compiled.append('END()',|self.maybe-oneline-block(@END),"\n","trap END EXIT\n",);
+        @compiled.append:
+        'END()',
+        |self.maybe-oneline-block(@END),"\n",
+        "trap END EXIT;" ~
+        # Do nothing on after TERM is recieved a second time
+        "trap 'trap : TERM; exit 1' TERM\n";
     }
 
     @compiled.push(“set -x\n”) if $xtrace;
@@ -496,7 +497,7 @@ method try-heredoc($sast, :$preserve-end) {
        and ($sast.val.ends-with("\n") or not ($preserve-end // $sast.preserve-end))
        and (my @lines = $sast.val.split("\n")) > 2
        {
-        $!debian ||= $*SETTING.lookup(CLASS,'Debian').class;
+        $!debian ||= $!SETTING.lookup(CLASS,'Debian').class;
         # Debian's /bin/sh (dash) doesn't do nested multi-byte character heredocs 😿
         my @nekos := ($!composed-for ~~ $!debian ?? @cat-names !! @cats);
         my $cat;
@@ -626,7 +627,10 @@ multi method arg(SAST::Pair:D $_) {
 
 #!EvalArg
 multi method arg(SAST::EvalArg:D $_) {
-    "'{.placeholder}'"
+    # Don't quote had to be invented just for this
+    # It means it breaks out of "" quotes if it's put in one like:
+    # "foo"'dontquote'"bar"
+    DontQuote.new(str => "'{.placeholder}'");
 }
 #!Doom
 # If we try and compile Doom we're doomed

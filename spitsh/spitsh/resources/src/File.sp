@@ -77,19 +77,13 @@ augment File {
     #| Calls chmod(1) with the file as the last argument.
     #|{ .chmod(400) if File<foo.txt>.writeable }
     method chmod(#|[The argument passed to chmod(1)]$mode)^ {
-        ${chmod $mode $self} ?? $self !! ()
+        ${chmod $mode $self !>error} ?? $self !! die "Failed to run ‘chmod $mode’ on $self";
     }
     #| Returns the name of the user that owns the file.
-    method owner~ on {
-        GNU { ${ stat -c '%U' $self } }
-        Any { ${ ls -ld $self | awk '{print $3}' } }
-    }
+    method owner~ ${ stat -c '%U' $self }
 
     #| Returns the name of the group that own the file.
-    method group~ on {
-        GNU { ${ stat -c '%G' $self } }
-        Any { ${ ls -ld $self | awk '{print $4}' } }
-    }
+    method group~ ${ stat -c '%G' $self }
 
     #| Appends raw data to the file.
     method append(#|[data to append] $data) { $data.${ >> $self } }

@@ -32,10 +32,11 @@ has $!ERR;
 has $!OUT;
 has %.clone-cache;
 has $.no-inline;
+has $.SETTING is required;
 
 # Figures out what an option is assigned to at compile time
 method compile-time-option($name) {
-    my $declaration = $*SETTING.lookup(SCALAR,":$name");
+    my $declaration = $!SETTING.lookup(SCALAR,":$name");
     self.walk($declaration);
     if # if it has been tucked
        (my $match = $declaration.match and  $declaration ~~ SAST::Stmts)
@@ -57,7 +58,7 @@ method log {
 
 method NULL(:$match!) {
     $!NULL //= do {
-        my $null = $*SETTING.lookup(SCALAR,':NULL').gen-reference(:stage2-done, :$match);
+        my $null = $!SETTING.lookup(SCALAR,':NULL').gen-reference(:stage2-done, :$match);
         self.walk($null);
         $null;
     };
@@ -65,7 +66,7 @@ method NULL(:$match!) {
 
 method ERR(:$match!) {
     $!ERR //= do {
-        my $err = $*SETTING.lookup(SCALAR,':ERR').gen-reference(:stage2-done, :$match);
+        my $err = $!SETTING.lookup(SCALAR,':ERR').gen-reference(:stage2-done, :$match);
         self.walk($err);
         $err;
     };
@@ -74,7 +75,7 @@ method ERR(:$match!) {
 
 method OUT(:$match!) {
     $!OUT //= do {
-        my $out = $*SETTING.lookup(SCALAR,':OUT').gen-reference(:stage2-done, :$match);
+        my $out = $!SETTING.lookup(SCALAR,':OUT').gen-reference(:stage2-done, :$match);
         self.walk($out);
         $out;
     };
@@ -166,7 +167,7 @@ multi method walk(SAST::Cmd:D $THIS is rw) {
             $rhs .= stage2-node(
                 SAST::SubCall,
                 name => 'log-fifo',
-                declaration => $*SETTING.lookup(SUB,'log-fifo'),
+                declaration => $!SETTING.lookup(SUB,'log-fifo'),
                 pos => (
                     $rhs.level,
                     ($path // Empty),
@@ -193,7 +194,6 @@ multi method walk(SAST::OutputToLog:D $THIS is rw) {
 }
 
 multi method walk(SAST::While:D $THIS is rw) {
-    my $*no-pipe = True;
     self.walk($THIS);
     with $THIS.cond.compile-time -> $cond {
         if not $cond {
@@ -354,6 +354,10 @@ multi method walk(SAST::Var:D $THIS is rw where { $_ !~~ SAST::VarDecl }) {
         $decl .= last-stmt;
     }
 
+    if $decl ~~ SAST::Option and $decl.required and not $decl.assign {
+        SX::RequiredOption.new(name => $decl.bare-name, package => $decl.package, match => $THIS.match).throw;
+    }
+
     if $decl ~~ SAST::ConstantDecl {
         if $decl.assign {
             with $decl.inline-value -> $inline {
@@ -416,8 +420,8 @@ multi method walk(SAST::Given:D $THIS is rw) {
     }
 }
 
-method get-opt-value(Str:D $name, SAST::Block:D :$outer!) is raw {
-    if %!opts{$name} -> $val is copy {
+method get-opt-value(Str:D $name, SAST::Block:D :$outer!, :$package) is raw {
+    if ($package && %!opts{"{$package.name}:$name"}) or %!opts{$name} -> $val is copy {
         if $val ~~ Spit::LateParse {
             $ = ?(require Spit::Compile <&compile>);
             my $cu = compile(
@@ -436,8 +440,10 @@ method get-opt-value(Str:D $name, SAST::Block:D :$outer!) is raw {
         Nil
     }
 }
-multi method walk(SAST::VarDecl:D $THIS is rw where *.is-option ) {
-    if self.get-opt-value($THIS.bare-name, outer => $THIS.declared-in) -> $val is raw
+multi method walk(SAST::Option:D $THIS is rw) {
+    if self.get-opt-value($THIS.bare-name,
+                          package => $THIS.package,
+                          outer => $THIS.declared-in) -> $val is raw
     {
         my $*CURPAD = $THIS.declared-in;
         $val .= do-stage2($THIS.type);
@@ -474,9 +480,9 @@ heart decoration, wilted flower,love letter,rosette, white flower
 
 
 multi method walk(SAST::Eval:D $THIS is rw) {
-    my %opts = $THIS.opts;
-
-    for %opts.kv -> $name, $opt is rw {
+    my %eval-opts = $THIS.opts;
+    my @eval-args;
+    for %eval-opts.kv -> $name, $opt is rw {
         my $ct = $opt.compile-time;
         if  $ct or $ct.defined {
             # copy the old constant values into fresh SAST objects for use in the new
@@ -490,12 +496,12 @@ multi method walk(SAST::Eval:D $THIS is rw) {
                 match => $opt.match,
                 placeholder => @placeholders.shift,
                 value => $opt,
-            )
+            );
+            @eval-args.push($name);
         }
     }
-
     # let locally defined options override the outer definitions
-    %opts = |%.opts, |%opts;
+    my %opts = |%.opts, |%eval-opts;
 
     $ = (require Spit::Compile <&compile>);
     my $compiled = $THIS.stage3-node(
@@ -503,29 +509,30 @@ multi method walk(SAST::Eval:D $THIS is rw) {
         val => compile(
             name => "eval_{$++}",
             $THIS.src.val,
-            :%opts,
+            opts => %opts,
             outer => $THIS.outer,
             :one-block,
         ),
         :!preserve-end
     );
 
-    if list %opts.values.grep(SAST::EvalArg) -> @runtime-args {
-        for @runtime-args -> $rt-arg {
-           $compiled = $rt-arg.stage2-node(
-                SAST::MethodCall,
-                name => 'subst-eval',
-                declaration => self.STR-SUBST-EVAL,
-                match => $rt-arg.match,
-                $compiled,
-                pos => (
-                    $rt-arg.stage2-node(SAST::SVal, val => $rt-arg.placeholder),
-                    $rt-arg.value,
-                )
-            );
-        }
+    # Replace each runtime arg with a placeholder
+    for @eval-args -> $name {
+        my $rt-arg = %opts{$name};
+        $compiled = $rt-arg.stage2-node(
+            SAST::MethodCall,
+            name => 'subst-eval',
+            declaration => self.STR-SUBST-EVAL,
+            match => $rt-arg.match,
+            $compiled,
+            pos => (
+                $rt-arg.stage2-node(SAST::SVal, val => $rt-arg.placeholder),
+                $rt-arg.value,
+            )
+        );
         self.walk($compiled);
     }
+
     $THIS = $compiled;
 }
 
@@ -597,8 +604,8 @@ multi method walk(SAST::CondReturn:D $THIS is rw) {
 }
 
 multi method walk(SAST::OnBlock:D $THIS is rw) {
-    with $THIS.chosen-block {
-        $THIS = $_
+    if $THIS.chosen-block -> $chosen {
+        $THIS = $chosen;
     } else {
         $THIS .= stage3-node(
             SAST::Doom,
@@ -631,7 +638,8 @@ multi method walk(SAST::Stmts:D $THIS is rw) {
                                         # RAKUDOBUG: I have to put :$accept here
 multi method walk(SAST::MethodCall:D $THIS is rw, :$accept = True) {
     self.walk($THIS.declaration);
-    self.method-optimize($THIS.invocant.type, $THIS, $THIS.declaration.identity)
+    # FIXME: method-optimize returns True if it FAILS (?!)
+    self.method-optimize($THIS.declaration.class-type, $THIS, $THIS.declaration.identity)
       and callsame;
 }
 

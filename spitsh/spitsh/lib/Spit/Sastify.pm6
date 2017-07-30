@@ -12,12 +12,20 @@ sub sastify($_, :$match = $null) is export {
     when Int         { SAST::IVal.new(val => $_,:$match) }
     when Str         { SAST::SVal.new(val => $_,:$match) }
     when Bool        { SAST::BVal.new(val => $_,:$match) }
+    when Map         {
+        die 'Conversion of Map to Spit construct NYI. Did you put hash in your yaml?';
+        #SAST::JSON.new(data => to-json($_), src => $_, :$match);
+    }
+    when Positional  {
+        die 'Conversion of Positional to Spit construct NYI. Did you put an array in your yaml?';
+        #SAST::JSON.new(data => to-json($_), src => $match.Str, :$match)
+    }
     default          { Nil }
 }
 
 # Takes a string and gives back the associated OS as a SAST::Type
 sub sast-os(Str:D $name, :$match = $null) is export {
-    my $SETTING = once light-load 'Spit::PRECOMP', export-target => '$SETTING';
+    my $SETTING = once light-load 'Spit::PRECOMP::SETTING', export-target => '$SETTING';
     my $OS  = once $SETTING.lookup(CLASS, 'OS').class;
     if $OS.^lookup-by-str($name) -> $os {
         SAST::Type.new(class-type => $os, :$match);

@@ -19,7 +19,7 @@ sub compile  ($input is copy,
     # if we are compiling the SETTING itself $*SETTING will be set to False so
     # it won't trigger this.
     without $*SETTING {
-        $_ = (once light-load 'Spit::PRECOMP', export-target => '$SETTING')
+        $_ = (once light-load 'Spit::PRECOMP::SETTING', export-target => '$SETTING')
     }
 
     my $*CU-name = $name;
@@ -54,7 +54,7 @@ sub compile  ($input is copy,
         }
 
         my \SPIT_COMPILER = (once light-load 'Spit::Sh::Compiler');
-        my $compiler = SPIT_COMPILER.new(:%opts);
+        my $compiler = SPIT_COMPILER.new(:%opts, :$*SETTING);
 
         if not $input.stage3-done {
             note "$name composing.." if $debug;
@@ -64,6 +64,7 @@ sub compile  ($input is copy,
                 :%opts,
                 scaffolding => $compiler.scaffolding,
                 :$no-inline,
+                :$*SETTING,
             ).walk($input);
             note "$name composing ✔ {now - before}" if $debug;
             return $input if $target eq 'stage3'

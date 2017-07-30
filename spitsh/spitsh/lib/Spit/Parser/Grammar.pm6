@@ -180,8 +180,8 @@ grammar Spit::Grammar is Spit::Lang {
 
     rule new-class {
         <type-name>
-        $<params>=<.r-wrap: '[',']', 'class parameter list', rule {
-            <type-name>* % ','
+        $<params>=<.wrap: '[',']', 'class parameter list', rule {
+            '' <type-name>* % ','
         }>?
     }
     token declare-class-params { <?> }
@@ -229,6 +229,7 @@ grammar Spit::Grammar is Spit::Lang {
             |$<no-inline>='no-inline'
             |$<rw>='rw'
             |$<return-by-var>='return-by-var'
+            |$<required>='required'
             |$<impure>='impure'
             |'logged-as'$<logged-as>=<.wrap:'(', ')', 'logged as', token {
                <R=.EXPR>
@@ -265,8 +266,8 @@ grammar Spit::Grammar is Spit::Lang {
         { $*DECL = $*ACTIONS.make-routine($/,|c) }
         <.attach-pre-doc>
         [
-            $<param-def>=<.r-wrap:'(',')', 'parameter list', rule {
-                <paramlist>
+            $<param-def>=<.wrap:'(',')', 'parameter list', rule {
+                '' <paramlist>
                 (<.longarrow> <.panic("Return type inside signature. Put it outside (...)⟶Type.")>)?
             }>
         ]?
@@ -318,17 +319,20 @@ grammar Spit::Grammar is Spit::Lang {
     }
     rule paramlist {
         :my $*DECL;
-        $<params>=(
-            <param>
-            { $*DECL = $<param>.ast }
-            <.attach-pre-doc>
-        )* % ','
+        [
+            $<params>=(
+                <param>
+                { $*DECL = $<param>.ast }
+                <.attach-pre-doc>
+            )+ % ','
+            ','?
+        ]?
     }
 
     token param {
         [
-            | $<pos>=[ <type>? <.ws> $<slurpy>='*'?<var> ]
-            | $<named>=[ <type>? <.ws> ':'<var> ]
+            | $<pos>=[ <type>? <.ws> $<slurpy>='*'? <sigil> $<name>=<.identifier> ]
+            | $<named>=[ <type>? <.ws> ':' <sigil> $<name>=<.identifier> ]
         ]
         [$<optional>='?'| <.ws> '=' <.ws> $<default>=<.EXPR($gt-comma)>]?
     }
@@ -373,12 +377,26 @@ grammar Spit::Grammar is Spit::Lang {
     token term:quote { <quote> }
     token term:int { <int> }
     token int { \d+ }
-    token term:var { <var> }
+
+    token term:var-ref { <var-ref> }
+    token var-ref {
+        [<var> || <package-opt>]
+        [
+            |$<accessor>=<index-accessor>
+            |$<accessor>=<angle-key-accessor>
+            |$<accessor>=<curly-key-accessor>
+        ]*
+    }
+
+    token package-opt {
+        <sigil> $<package-name>=<.identifier> ':' $<opt-name>=<.identifier>
+    }
+
     token var {
         <sigil>
         [
-            | [
-                |$<name>=(<twigil>?<identifier>)
+            | [                     # TODO: do less backtracking to package-opt
+                |$<name>=(<twigil>?<identifier>) <!before ':'\w>
                 |$<name>='/' <?{ $<sigil>.Str eq '@' }>
                 |$<name>='~' <?{ $<sigil>.Str eq '$' }>
               ]
@@ -420,14 +438,14 @@ grammar Spit::Grammar is Spit::Lang {
             <type-params>?
             $<object>=(
                 |<angle-quote>
-                | $<EXPR>=<.r-wrap: '(',')','object definition', token {
-                      <R=.EXPR>
+                | $<EXPR>=<.wrap: '(',')','object definition', token {
+                      <.ws><R=.EXPR>
                   }>
             )?
             ||
             $<call-args>=(
-                | $<args>=<.r-wrap: '(',')',"call to {$<name>.Str}'s arguments", token {
-                      <R=.args>
+                | $<args>=<.wrap: '(',')',"call to {$<name>.Str}'s arguments", token {
+                      <.ws><R=.args>
                   }>
                 | \s+ <args>
             )?
@@ -457,11 +475,12 @@ grammar Spit::Grammar is Spit::Lang {
     token colon-pair {
         ':'
         [
+            |'!' $<neg>=<?> $<key>=<.identifier>
             |$<key>=<.identifier> [
                 | $<value>=<.wrap: '(',')', 'pair value', token {<R=.EXPR>}>
                 | $<value>=<.angle-quote>
             ]?
-            |<var>
+            |<var-ref>
         ]
     }
 
@@ -547,9 +566,9 @@ grammar Spit::Grammar is Spit::Lang {
         $<EXPR>=<.wrap: '[',']','index accessor', rule { '' <R=.EXPR> }>
     }
 
-    token postfix:sym<{ }> { <!after \s> <key-accessor> }
+    token postfix:sym<{ }> { <!after \s> <curly-key-accessor> }
 
-    token key-accessor {
+    token curly-key-accessor {
         $<EXPR>=<.wrap: '{','}', 'key accessor', token { <R=.EXPR> }>
     }
     token postfix:sym«< >» { <!after \s> <angle-key-accessor> }
@@ -616,7 +635,7 @@ grammar Spit::Grammar is Spit::Lang {
     }
 
     token type-params {
-        $<params>=<.r-wrap: '[',']', 'type parameter list', rule {
+        $<params>=<.wrap: '[',']', 'type parameter list', rule {
             <type>* % ','
         }>
     }
@@ -651,7 +670,7 @@ grammar Spit::Grammar is Spit::Lang {
 
     token cmd-term {
         $<i-sigil>=<::('prefix:i-sigil')>*
-        (<var> | $<parens>=<::("circumfix:sym<( )>")> <![<>›‹]> | <quote> | <cmd> )
+        (<var-ref> | $<parens>=<::("circumfix:sym<( )>")> <![<>›‹]> | <quote> | <cmd> )
         <postfix>*
     }
 
@@ -763,8 +782,10 @@ grammar Spit::Grammar is Spit::Lang {
 
     token quote:sym<eval> {
         <sym>
-        [$<args>=<.r-wrap:'(',')', 'eval arguemnts', token { <R=.args> }>]?
-        <balanced-quote('Quote-q')>
+        [$<args>=<.wrap:'(',')', 'eval arguemnts', rule { '' <R=.args> }>]?
+        <.ws>
+        <?before '{'>
+        <balanced-quote('Quote-Q')>
     }
 
     token quote:regex {
@@ -819,10 +840,6 @@ grammar Spit::Grammar is Spit::Lang {
         {} <closer($<o>,$c,:$desc)>
     }
 
-    rule r-wrap($o,$c,$desc,$wrapped) {
-        $<o>=$o [ $<wrapped>=$wrapped || <.invalid($desc)> ]
-        {} <closer($<o>,$c,:$desc)>
-    }
     token closer($opener,$closer,:$desc) {
         [$closer || { SX::Unbalanced.new(:$closer,:$opener,:$desc).throw } ]
     }

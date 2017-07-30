@@ -149,10 +149,12 @@ role SAST is rw {
         $self = $b;
     }
 
+    # forces a node to return this type and itemization in the future
     method force($type, $itemize) {
+        my $original-type = $.type;
         self does SAST::Force unless self ~~ SAST::Force;
-        $.original-type = $.type;
         $.type = $type;
+        $.original-type = $original-type;
         $.itemize = $itemize;
         self;
     }
@@ -342,6 +344,7 @@ class SAST::CompUnit is SAST::Children {
 class SAST::Var is SAST::Children does SAST::Assignable {
     has $.name is required;
     has Sigil:D $.sigil is required;
+    has $.package; # for when this is a package option ($Foo:option)
     has $.declaration;
 
     method symbol-type {
@@ -369,7 +372,10 @@ class SAST::Var is SAST::Children does SAST::Assignable {
     method spit-gist { "$!sigil$!name" }
 
     method declaration is rw {
-        $!declaration //= $*CURPAD.lookup(self.symbol-type,$!name,:$.match);
+        $!declaration //= $!package ??
+          $*CURPAD.lookup(CLASS, $!package, :$.match)\
+            .class.^get-package-option(self.symbol-type, $!name, :$.match) !!
+          $*CURPAD.lookup(self.symbol-type,$!name,:$.match);
     }
 
     method is-self {
@@ -392,6 +398,11 @@ class SAST::Var is SAST::Children does SAST::Assignable {
 
     method itemize { itemize-from-sigil($!sigil) }
     method bare-name  { $.name.subst(/^<[:?]>/,'') }
+}
+
+role SAST::Option {
+    has $.package;
+    has Bool:D $.required is rw = False;
 }
 
 class SAST::VarDecl is SAST::Var does SAST::Declarable is rw {
@@ -1075,6 +1086,10 @@ class SAST::ClassDeclaration does SAST::Declarable is SAST::Children {
     method children { ($!block // Empty),  }
     method stage2 ($) {
         $_ .= do-stage2(tAny,:!auto-inline) for self.children;
+        my @class-options :=  $!class.^package-options;
+        for $!block.symbols[SCALAR,ARRAY].map(*.values.Slip).flat -> $vardecl {
+            @class-options[$vardecl.symbol-type]{$vardecl.bare-name} = $vardecl;
+        }
         self;
     }
 }
@@ -1085,7 +1100,7 @@ class SAST::IntExpr is SAST::MutableChildren {
     method type { tInt }
 
     method stage2($) {
-        $_ .= do-stage2(tInt,:desc("arguments to $!sym operation must be Ints")) for @.children;
+        $_ .= do-stage2(tInt,:desc("arguments to $!sym operation")) for @.children;
         self;
     }
 
@@ -1797,7 +1812,7 @@ class SAST::OnBlock is SAST::Children does SAST::OSMutant {
     }
 
     method mutate-for-os(Spit::Type $os) {
-        $!chosen-block = $.dispatcher.get('anon', $os);
+        $!chosen-block = $.dispatcher.get('anon', $os) // False;
     }
 
     method dispatcher {
@@ -1853,8 +1868,8 @@ class SAST::OptionVal is SAST::Children {
     method children { $!name, }
 }
 
-class SAST::JSON {
-    has SAST::SVal:D $.src is required;
+# NYI
+class SAST::JSON does SAST {
     has $.data is required;
 
     method type { tJSON }
