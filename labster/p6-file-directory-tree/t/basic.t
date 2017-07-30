@@ -23,12 +23,17 @@ say "# ", "$tmpdir/$tmpfn".IO.dir;
 ok rmtree($tmppath.child($tmpfn)), "rmtree runs";
 ok $tmppath.child($tmpfn).e.not, "rmtree successfully deletes temp files";
 
-with $*TMPDIR.child: 'file-directory-tree-module-tests' {
-  my $inner = $_;
-  $inner = $inner.child('a').mkdir for ^120;
-  ok .&rmtree, 'no handles leaked by rmtree (requires '
-    ~ '`ulimit -n 100` or lower to test properly)';
-  ok .e.not,   'dir with inner dirs is gone';
+if $*DISTRO.is-win {
+    skip 'regression test is not run on Windows', 2;
+}
+else {
+    with $*TMPDIR.child: 'file-directory-tree-module-tests' {
+      my $inner = $_;
+      $inner = $inner.child('a').mkdir for ^120;
+      ok .&rmtree, 'no handles leaked by rmtree (requires '
+        ~ '`ulimit -n 100` or lower to test properly)';
+      ok .e.not,   'dir with inner dirs is gone';
+    }
 }
 
 done-testing;
