@@ -22,7 +22,8 @@
     "P6W"
   ],
   "test-depends" : [
-    "Path::Iterator"
+    "Path::Iterator",
+    "Test::META"
   ],
-  "version" : "0.0.1"
+  "version" : "0.0.2"
 }

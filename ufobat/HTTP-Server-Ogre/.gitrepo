@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ufobat/HTTP-Server-Ogre.git
 	branch = master
-	commit = 6ae016e1a3534049c85e6ea1facb30b980acb463
-	parent = 0d808fedd5caf30eea66abafc59a541bdf807d1d
+	commit = 5ae75b87355430254a6737588b75b52e7e7868cb
+	parent = 25795de89f5351111f1a4af4ce6eb317d4b78a68
 	cmdver = 0.4.0
