@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/scriptkitties/p6-Config-Parser-toml.git
 	branch = master
-	commit = 13a14620052d4c07fba6e1a95b1360fef9d9497a
-	parent = 958181942022d282bdbb683ae68a688eb10d4b2d
+	commit = 5bb23ec4cd01cafa5b8a5a8db0b038376099a956
+	parent = 8f68351513fc946587ed2fd5e7179c3714be5b64
 	cmdver = 0.4.0
