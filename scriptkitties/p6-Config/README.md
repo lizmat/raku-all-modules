@@ -64,13 +64,14 @@ installed yourself.
 The following parsers are available:
 
 - [`Config::Parser::yaml`](https://github.com/scriptkitties/p6-Config-Parser-yaml)
+- [`Config::Parser::toml`](https://github.com/scriptkitties/p6-Config-Parser-toml)
 
 ### Writing your own parser
-If you want to make your own parser, simply make a new class in the
-`Config::Parser` namespace. This class should extend the `Config::Parser` class,
-and implement the `read` and `write` methods. The `read` method *must* return a
-`Hash`. The `write` method *must* return a `Bool`, `True` when writing was
-successful, `False` if not.
+If you want to make your own parser, simply make a new class which extends the
+`Config::Parser` class, and implements the `read` and `write` methods. The
+`read` method *must* return a `Hash`. The `write` method *must* return a
+`Bool`, `True` when writing was successful, `False` if not. Throwing
+`Exception`s to indicate the kind of failure is recommended.
 
 ## License
 This program is free software: you can redistribute it and/or modify it under
