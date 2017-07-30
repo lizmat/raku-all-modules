@@ -57,9 +57,10 @@ multi sub getopt (
     :$autohv = False,
     :$version,
     :$bsd-style,
-    :$x-style, #`(giving priority to x-style) ) is export {
+    :$x-style, #`(giving priority to x-style) ) of Getopt::Advance::ReturnValue is export {
     our $*ga-bsd-style = $bsd-style;
     my ($index, $count, @noa, $optset) = (0, +@optsets, []);
+    my $ret;
     my &auto-helper = -> |c {
         with &helper {
             &helper(|c, $stdout);
@@ -69,13 +70,13 @@ multi sub getopt (
     while $index < $count {
         $optset := @optsets[$index];
         try {
-            @noa = &parser(
+            $ret = &parser(
                 @args,
                 $optset,
                 :$strict,
                 :$bsd-style,
                 :$x-style,
-		:$autohv,
+                :$autohv,
             );
             last;
             CATCH {
@@ -121,7 +122,7 @@ multi sub getopt (
         }
     }
 
-    return $optset, @noa;
+    return $ret;
 }
 
 class OptionSet {

@@ -148,15 +148,27 @@ Also it force user supply an option when `Option` is not optional.
 
 == getopt
 
-* `multi sub getopt(       Str $optstring, *%args)`
-* `multi sub getopt(@args, Str $optstring, *%args)`
-* `multi sub getopt(       *@optsets,      *%args)`
-* `multi sub getopt(@args, *@optsets,      *%args)`
+* `multi sub getopt(       Str $optstring, *%args) of Getopt::Advance::ReturnValue`
+* `multi sub getopt(@args, Str $optstring, *%args) of Getopt::Advance::ReturnValue`
+* `multi sub getopt(       *@optsets,      *%args) of Getopt::Advance::ReturnValue`
+* `multi sub getopt(@args, *@optsets,      *%args) of Getopt::Advance::ReturnValue`
 
 Sub `&getopt` accept one or multi `OptionSet`, pass it and command line argument to the `&parser`.
 `&getopt` can accept traditional getopt(in C) string, and convert it to `OptionSet`.
-Once an `OptionSet` matching success, it will return matched `OptionSet` and
-all `NOA(Non-Option Argument)`.
+Once an `OptionSet` matching success, it will return `Getopt::Advance::ReturnValue`.
+This class contain matched `OptionSet`、all `NOA(Non-Option Argument)`, and `main`'s id and
+return value.
+
+NOTE: The definition of Getopt::Advance::ReturnValue:
+[source, perl6]
+-------------------
+class Getopt::Advance::ReturnValue {
+    has $.optionset;
+    has @.noa;
+    has %.return-value;
+}
+-------------------
+
 When match failed, consider follow serveral situation:
 
 * default
@@ -345,3 +357,4 @@ The MIT License (MIT).
 = TODO
 
 * add option can reference variable.
+* add callback only mode

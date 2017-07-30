@@ -26,7 +26,8 @@ $optset.insert-cmd("join", sub __main($, @noa) {
 
 getopt(<join | english chinese japanese>, $optset);
 
-sub main($, @noa) {
+sub main($ret) {
+    my @noa = $ret.noa;
     @noa.shift;
 
     if $optset.get-cmd("plus").success {

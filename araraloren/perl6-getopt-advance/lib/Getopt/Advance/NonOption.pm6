@@ -15,7 +15,19 @@ role NonOption {
     method match-index(Int $total, Int $index) { ... }
     method match-name(Str $name) { ... }
     method reset-success { $!success = False; }
-    method CALL-ME(|c) { ... }
+    method CALL-ME(|c) {
+        my $ret;
+        given &!callback.signature {
+            when :($, @) {
+                $ret = &!callback(|c);
+            }
+            when :(@) {
+                $ret = &!callback(c.[* - 1]);
+            }
+        }
+        $!success = True;
+        return $ret;
+    }
     method type of Str { ... }
     method clone(*%_) { ... }
     method usage { ... }
@@ -38,18 +50,6 @@ class NonOption::All does NonOption {
 
     method match-name(Str $name) {
         True;
-    }
-
-    method CALL-ME(|c) {
-        given &!callback.signature {
-            when :($, @) {
-                &!callback(|c);
-            }
-            when :(@) {
-                &!callback(c.[* - 1]);
-            }
-        }
-        $!success = True;
     }
 
     method type of Str {
