@@ -1,5 +1,5 @@
 use v6;
-unit class Term::TablePrint:ver<0.0.2>;
+unit class Term::TablePrint:ver<1.0.1>;
 
 
 use NCurses;
@@ -10,11 +10,11 @@ use Term::Choose::LineFold :to-printwidth, :line-fold, :print-columns;
 use Term::Choose::Util     :insert-sep, :unicode-sprintf;
 
 
-has %!defaults; #
+has %!defaults;
 has %!o;
 
 has WINDOW $!win;
-has WINDOW $!win_local;
+has Bool $!reset_win;
 
 has List $!table;
 has Int  @!cols_w;
@@ -29,22 +29,22 @@ has Int $!bar_w;
 has Str $!progressbar_fmt;
 
 
-method new ( :$defaults, :$win=WINDOW ) {
-    self.bless( :$defaults, :$win );
+method new() {
+    self.bless( defaults => %_ );
 }
 
-submethod BUILD( :$defaults, :$win ) {
+submethod BUILD( :$defaults ) {
     %!defaults := $defaults.Hash;
+    $!win = %!defaults<win>:delete // WINDOW;
     _validate_options( %!defaults );
     _set_defaults( %!defaults );
-    $!win := $win;
 }
-
 
 sub _set_defaults ( %opt ) {
     %opt<add-header>     //= 0;
     %opt<choose-columns> //= 0;
-    %opt<format>         //= 2;
+    %opt<grid>           //= 0;
+    %opt<keep-header>    //= 1;
     %opt<max-rows>       //= 50_000;
     %opt<min-col-width>  //= 30;
     %opt<mouse>          //= 0;
@@ -64,8 +64,9 @@ sub _valid_options {
         progress-bar    => '<[ 0 .. 9 ]>+',
         tab-width       => '<[ 0 .. 9 ]>+',
         add-header      => '<[ 0 1 ]>',
+        grid            => '<[ 0 1 ]>',
+        keep-header     => '<[ 0 1 ]>',
         choose-columns  => '<[ 0 1 2 ]>',
-        format          => '<[ 0 1 2 ]>',
         table-expand    => '<[ 0 1 2 ]>',
         mouse           => '<[ 0 1 ]>',
         prompt          => 'Str',
@@ -103,10 +104,7 @@ method !_choose_cols_with_order ( @avail_cols ) {
     my Str $ok = '-ok-';
     my Str @pre = ( $ok );
     my @col_idxs;
-    my $tc = Term::Choose.new(
-        :defautls( :lf( 0, $subseq_tab ), :no-spacebar( |^@pre ), :mouse( %!o<mouse> ) ),
-        :win( $!win_local )
-    );
+    my $tc = Term::Choose.new( :win( $!win ), :lf( 0, $subseq_tab ), :no-spacebar( |^@pre ), :mouse( %!o<mouse> ) );
 
     loop {
         my Str @chosen_cols = @col_idxs.list ?? @avail_cols[@col_idxs] !! '*';
@@ -135,10 +133,7 @@ method !_choose_cols_with_order ( @avail_cols ) {
 }
 
 method !_choose_cols_simple ( @avail_cols ) {
-    my $tc = Term::Choose.new(
-        :defaults( :mouse( %!o<mouse> ) ),
-        :win( $!win_local )
-    );
+    my $tc = Term::Choose.new( :win( $!win ), :mouse( %!o<mouse> ) );
     my Str $all = '-*-';
     my Str @pre = ( $all );
     my @choices = |@pre, |@avail_cols;
@@ -154,18 +149,16 @@ method !_choose_cols_simple ( @avail_cols ) {
 
 
 method !_init_term {
-    if $!win {
-        $!win_local = $!win;
-    }
-    else {
+    if ! $!win {
+        $!reset_win = True;
         my int32 constant LC_ALL = 6;
         setlocale( LC_ALL, "" );
-        $!win_local = initscr();
+        $!win = initscr();
     }
 }
 
 method !_end_term {
-    return if $!win;
+    return if ! $!reset_win;
     endwin();
 }
 
@@ -180,10 +173,7 @@ method print-table ( @orig_table, %deprecated?, *%opt ) {
     }
     %!o = %deprecated || %opt;
     if ! @orig_table.elems {
-        my $tc = Term::Choose.new(
-            :defaults( :mouse( %!o<mouse> ) ),
-            :win( $!win_local )
-        );
+        my $tc = Term::Choose.new( :win( $!win ) :mouse( %!o<mouse> ) );
         $tc.pause( [ 'Close with ENTER' ], :prompt<'print-table': Empty table!> );
         return;
     }
@@ -191,7 +181,7 @@ method print-table ( @orig_table, %deprecated?, *%opt ) {
     for %!defaults.kv -> $key, $value {
         %!o{$key} //= $value;
     }
-    if %!o<format> == 2 && %!o<tab-width> %% 2 {
+    if %!o<grid> && %!o<tab-width> %% 2 {
         %!o<tab-w>++;
     }
     if %!o<add-header> {
@@ -236,106 +226,102 @@ method print-table ( @orig_table, %deprecated?, *%opt ) {
 
 
 method !_inner_print_tbl {
-    my Int $term_w = getmaxx( $!win_local );
+    my Int $term_w = getmaxx( $!win );
     my Bool $term_w_ok = self!_calc_avail_width( $term_w );
     if ! $term_w_ok {
         return;
     }
-    my Array $list = self!_cols_to_avail_width();
-    my Int   $len  = [+] |@!new_cols_w, %!o<tab-w> * @!new_cols_w.end;
-    if %!o<max-rows> && $list.elems - 1 >= %!o<max-rows> {
+    my @list;
+    self!_cols_to_avail_width( @list );
+    my Int $len = [+] |@!new_cols_w, %!o<tab-w> * @!new_cols_w.end;
+    if %!o<max-rows> && @list.elems - 1 >= %!o<max-rows> {
         my Str $limit = insert-sep( %!o<max-rows>, ' ' );
         my Str $reached_limit = 'REACHED LIMIT "MAX_ROWS": ' ~ $limit;
         if $reached_limit.chars > $len {
             $reached_limit = '=LIMIT= ' ~ $limit;
             $reached_limit.=substr: 0, $len;
         }
-        $list.push: unicode-sprintf( $reached_limit, $len, 0 );
+        @list.push: unicode-sprintf( $reached_limit, $len, 0 );
+    }
+    
+    
+    my Str $header_sep = '';
+    if %!o<grid> {
+        my $tab = ( '-' x ( %!o<tab-w> div 2 ) ) ~ '|' ~ ( '-' x ( %!o<tab-w> div 2 ) );
+        for ^@!new_cols_w {
+            $header_sep ~= '-' x @!new_cols_w[$_];
+            if $_ != @!new_cols_w.end {
+                $header_sep ~= $tab;
+            }
+        }
+    }
+    my Str @header;
+    if %!o<prompt> {
+        @header.push: %!o<prompt>;
+    }
+    if %!o<keep-header> {
+        my $col_names = @list.shift;
+        @header.push: $col_names;
+        @header.push: $header_sep if %!o<grid>;
+    }
+    else {
+        @list.splice( 1, 0, $header_sep ) if %!o<grid>;
     }
     my Int $old_row = 0;
-    my Int $auto_jumped_to_first_row = 2;
+    my Int $auto_jumped_to_row_0 = 2;
     my Int $expanded = 0;
-    my $tc = Term::Choose.new(
-        :defaults( :ll( $len ), :layout( 2 ), :mouse( %!o<mouse> ) ),
-        :win( $!win_local )
-    );
+    my $tc = Term::Choose.new( :win( $!win ), :ll( $len ), :layout( 2 ), :mouse( %!o<mouse> ) );
 
     loop {
-        if getmaxx( $!win_local ) != $term_w {
-            $term_w = getmaxx( $!win_local );
+        if getmaxx( $!win ) != $term_w {
+            $term_w = getmaxx( $!win );
             self!_inner_print_tbl();
             return;
         }
-        my Str @header;
-        if %!o<prompt> {
-            @header.push: %!o<prompt>;
-        }
-        my Str $col_names;
-        if %!o<format> {
-            $col_names = $list.shift;
-            @header.push: $col_names;
-            #@header.push: '-' x $len if %!o<format> == 2;
-            if %!o<format> == 2 {
-                my Str $header_sep = '';
-                my $tab = ( '-' x ( %!o<tab-w> div 2 ) ) ~ '|' ~ ( '-' x ( %!o<tab-w> div 2 ) );
-                for ^@!new_cols_w {
-                    $header_sep ~= '-' x @!new_cols_w[$_];
-                    if $_ != @!new_cols_w.end {
-                        $header_sep ~= $tab;
-                    }
+        # Choose
+        my Int $row = $tc.choose( @list, :prompt( @header.join: "\n" ), :default( $old_row ), :index( 1 ) );
+        return if ! $row.defined;
+        next   if $row == -1; # ll set + changed window size: choose returns -1
+        return if ! %!o<table-expand> && $row == 0;
+        if $old_row == $row {
+            if $row == 0 {
+                if ! %!o<keep-header> {
+                    return;
                 }
-                @header.push: $header_sep;
+                elsif %!o<table-expand> == 1 {
+                    return if $expanded;
+                    return if $auto_jumped_to_row_0 == 1;
+                }
+                elsif %!o<table-expand> == 2 {
+                    return if $expanded;
+                }
+                $auto_jumped_to_row_0 = 0;
+            }
+            else {
+                $old_row = 0;
+                $auto_jumped_to_row_0 = 1;
+                $expanded = 0;
+                next;
             }
         }
-        # Choose
-        my Int $row = $tc.choose( $list, :prompt( @header.join: "\n" ), :default( $old_row ), :index( 1 ) );
-        if ! $row.defined {
-            return;
-        }
-        elsif $row == -1 {
-            next;
-        }
-        if $col_names {
-            $list.unshift: $col_names;
-        }
-        if ! %!o<table-expand> {
-            return if $row == 0;
+        $old_row = $row;
+        if %!o<keep-header> {
+            $row++;
         }
         else {
-            if $old_row == $row {
-                if ( $row == 0 ) {
-                    if ! %!o<format> {
-                        return;
-                    }
-                    elsif %!o<table-expand> == 1 {
-                        return if $expanded;
-                        return if $auto_jumped_to_first_row == 1;
-                    }
-                    elsif %!o<table-expand> == 2 {
-                        return if $expanded;
-                    }
-                    $auto_jumped_to_first_row = 0;
-                }
-                else {
-                    $old_row = 0;
-                    $auto_jumped_to_first_row = 1;
-                    $expanded = 0;
-                    next;
-                }
+            if %!o<grid> {
+                next   if $row == 1;
+                $row-- if $row > 1;
             }
-            $old_row = $row;
-            if %!o<format> {
-                $row++;
-            }
-            $expanded = 1;
-            self!_print_single_row( $row );
         }
+        $expanded = 1;
+        self!_print_single_row( $row );
     }
 }
 
 
 method !_print_single_row ( Int $row ) {
-    my Int $term_w = getmaxx( $!win_local );
+    my Int $term_w = getmaxx( $!win );
     my Int $key_w = @!heads_w.max + 1; #
     if $key_w > $term_w div 100 * 33 {
         $key_w = $term_w div 100 * 33;
@@ -363,10 +349,7 @@ method !_print_single_row ( Int $row ) {
             }
         }
     }
-    my $tc = Term::Choose.new(
-        :defauts( :mouse( %!o<mouse> ) ),
-        :win( $!win_local )
-    );
+    my $tc = Term::Choose.new( :win( $!win ), :mouse( %!o<mouse> ) );
     $tc.pause( @lines, :prompt( '' ), :layout( 2 ) );
 }
 
@@ -396,7 +379,7 @@ method !_calc_col_width {
     my Int $undef_w  = print-columns( $undef );
     my Int $step;
     if $!show_progress >= 2 {
-        $!bar_w = getmaxx( $!win_local ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
+        $!bar_w = getmaxx( $!win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
         $step = $!total div $!bar_w || 1;
     }
     my Int $threads = Term::Choose.new.num-threads();
@@ -418,6 +401,7 @@ method !_calc_col_width {
                     $lock.protect( { ++$count } );
                     self!_progressbar_update( $count ) if $count %% $step;
                 }
+
                 do for @col_idx -> $col {
                     if ! $!table[$row][$col].defined {
                         $row, $col, $undef, $undef_w, $undef_n;
@@ -470,10 +454,7 @@ method !_calc_avail_width ( Int $term_w ) {
     elsif $sum > $avail_w {
         my Int $mininum_w = %!o<min-col-width> || 1;
         if @!heads_w.elems > $avail_w {
-            my $tc = Term::Choose.new(
-                :defaults( :mouse( %!o<mouse> ) ),
-                :win( $!win_local )
-            );
+            my $tc = Term::Choose.new( :win( $!win ), :mouse( %!o<mouse> ) );
             my $prompt1 = 'Terminal window is not wide enough to print this table.';
             $tc.pause( [ 'Press ENTER to show the column names.' ], :prompt( $prompt1 ) );
             my Str $prompt2 = 'Reduce the number of columns".' ~ "\n" ~ 'Close with ENTER.';
@@ -529,16 +510,16 @@ sub _minus_x_percent ( Int $value, Int $percent ) {
 }
 
 
-method !_cols_to_avail_width {
+method !_cols_to_avail_width( @list ) {
     my Int $step;
     my Int $count = 0;
     if $!show_progress {
-        $!bar_w = getmaxx( $!win_local ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
+        $!bar_w = getmaxx( $!win ) - ( sprintf $!progressbar_fmt, '', '' ).chars - 1;
         $step = $!total div $!bar_w || 1;    #
     }
     my Int @col_idx = 0 .. @!new_cols_w.end;
     my Str $tab;
-    if %!o<format> == 2 {
+    if %!o<grid> {
         $tab = ( ' ' x ( %!o<tab-w> div 2 ) ) ~ '|' ~ ( ' ' x ( %!o<tab-w> div 2 ) );
     }
     else {
@@ -570,14 +551,12 @@ method !_cols_to_avail_width {
             }
         };
     }
-    my Array $list;
     for await @promise -> @portion {
         for @portion {
-            $list[.[0]] = .[1]; # :=
+            @list[.[0]] = .[1];
         }
     }
     self!_progressbar_update( $!total ) if $step && $!total % $step;
-    return $list;
 }
 
 
@@ -616,11 +595,6 @@ Term::TablePrint - Print a table to the terminal and browse it interactively.
 
 =end code
 
-=head1 FUNCTIONAL INTERFACE
-
-Importing the subroutine explicitly (C<:print-table>) might become compulsory (optional for now) with the
-next release.
-
 =head1 DESCRIPTION
 
 C<print-table> shows a table and lets the user interactively browse it. It provides a cursor which highlights the row
@@ -635,31 +609,9 @@ If the terminal is too narrow to print the table, the columns are adjusted to th
 If the option table-expand is enabled and a row is selected with C<Return>, each column of that row is output in its own
 line preceded by the column name. This might be useful if the columns were cut due to the too low terminal width.
 
-The following modifications are made (at a copy of the original data) before the output.
-
-=begin code
-
-    .gist
-
-=end code
-
-Leading and trailing whitespaces are removed.
-
-Spaces are squashed to a single white-space
-
-=begin code
-
-    s:g/\s+/ /;
-
-=end code
-
-In addition, characters of the Unicode property C<Other> are removed.
-
-=begin code
-
-    s:g/\p{C}//;
-
-=end code
+Before the output modifications are made (at a copy of the original data). Leading and trailing whitespaces are removed
+and spaces are squashed to a single white-space. In addition, characters of the Unicode property C<Other> are removed.
+The the elements are stringified with C<gist>.
 
 The elements in a column are right-justified if one or more elements of that column do not look like a number, else they
 are left-justified.
@@ -701,37 +653,15 @@ choosing a row.
 If the option I<choose-columns> is enabled, the C<SpaceBar> key (or the right mouse key) can be used to select columns -
 see option L</choose-columns>.
 
-=head1 EXAMPLE
-
-=begin code
-
-    use DBIish;
-    use Term::TablePrint :print-table;
-
-    my $dbh = DBIish.connect( "SQLite", :database<my_db.sqlite> );
-    my $sth = $dbh.prepare( "SELECT * FROM my_table" );
-    $sth.execute();
-    my @rows = $sth.allrows();
-    @rows.unshift: $sth.column-names;
-    $dbh.dispose;
-
-    print-table( @rows );
-
-=end code
-
 =head1 CONSTRUCTOR
 
-The constructor method C<new> can be called with optional named arguments:
+The constructor method C<new> can be called with named arguments. For the valid options see L<#OPTIONS>. Setting the
+options in C<new> overwrites the default values for the instance.
 
-=item defaults
+Additionally to the options mentioned below one can set the option L<win>. The opton L<win> expects as its value a
+C<WINDOW> object - the return value of L<NCurses> C<initscr>.
 
-Sets the defaults (a list of key-value pairs) for the instance. See L<#OPTIONS>.
-
-=item win
-
-Expects as its value a C<WINDOW> object - the return value of L<NCurses> C<initscr>.
-
-If set, C<print-table> uses this global window instead of creating their own without calling C<endwin> to restores the
+If set, C<print-table> uses this global window instead of creating its own without calling C<endwin> to restores the
 terminal before returning.
 
 =head1 ROUTINES
@@ -772,9 +702,9 @@ the C<SpaceBar> and the C<Return> key) until the user confirms with the I<-ok-> 
 
 Default: 0
 
-=head2 format
+=head2 keep-header
 
-If I<format> is set to 0, the table header is shown on top of the first page.
+If I<keep-header> is set to 0, the table header is shown on top of the first page.
 
 =begin code
 
@@ -792,7 +722,7 @@ If I<format> is set to 0, the table header is shown on top of the first page.
 
 =end code
 
-If I<format> is set to 1, the table header is shown on top of each page.
+If I<keep-header> is set to 1, the table header is shown on top of each page.
 
 =begin code
 
@@ -810,27 +740,49 @@ If I<format> is set to 1, the table header is shown on top of each page.
 
 =end code
 
-If I<format> is set to 2, the table header is shown on top of each page and lines separate the columns from each other
-and the header from the body.
+Default: 1
+
+=head2 grid
+
+If I<grid> is set to 1 lines separate the columns from each other and the header from the body.
 
 =begin code
 
-    .----------------------------.    .----------------------------.    .----------------------------.
-    |col1 | col2   | col3 | col3 |    |col1 | col2   | col3 | col4 |    |col1 | col2   | col3 | col4 |
-    |-----|--------|------|------|    |-----|--------|------|------|    |-----|--------|------|------|
-    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |                            |
-    | 1/3                        |    | 2/3                        |    | 3/3                        |
-    '----------------------------'    '----------------------------'    '----------------------------'
+    .----------------------------.
+    |col1 | col2   | col3 | col3 |
+    |-----|--------|------|------|
+    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |
+    |.... | ...... | .... | .... |
+    '----------------------------'
 
 =end code
 
-Default: 2;
+If set to 0 the table is shown with no grid.
+
+=begin code
+
+    .----------------------------.
+    |col1  col2     col3   col3  |
+    |....  .......  .....  ..... |
+    |....  .......  .....  ..... |
+    |....  .......  .....  ..... |
+    |....  .......  .....  ..... |
+    |....  .......  .....  ..... |
+    |....  .......  .....  ..... |
+    |....  .......  .....  ..... |
+    |....  .......  .....  ..... |
+    |                            |
+    '----------------------------'
+
+=end code
+
+Default: 0;
 
 =head2 max-rows
 
@@ -908,7 +860,7 @@ Default: "" (empty string)
 =head2 multithreading
 
 C<Term::TablePrint> uses multithreading when preparing the list for the output; the number of threads to use can be set
-with the environment variable C<TC_NUM_TREADS>. To find out the setting of "number of treads" see
+with the environment variable C<TC_NUM_THREADS>. To find out the setting of "number of treads" see
 L<Term::Choose>/ENVIRONMET.
 
 head2 libncurses

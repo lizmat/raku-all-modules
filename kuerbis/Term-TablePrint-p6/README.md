@@ -29,11 +29,6 @@ SYNOPSIS
 
         $pt.print-table( @table, :mouse(1), :choose-columns(2) );
 
-FUNCTIONAL INTERFACE
-====================
-
-Importing the subroutine explicitly (`:print-table`) might become compulsory (optional for now) with the next release.
-
 DESCRIPTION
 ===========
 
@@ -45,19 +40,7 @@ If the terminal is too narrow to print the table, the columns are adjusted to th
 
 If the option table-expand is enabled and a row is selected with `Return`, each column of that row is output in its own line preceded by the column name. This might be useful if the columns were cut due to the too low terminal width.
 
-The following modifications are made (at a copy of the original data) before the output.
-
-        .gist
-
-Leading and trailing whitespaces are removed.
-
-Spaces are squashed to a single white-space
-
-        s:g/\s+/ /;
-
-In addition, characters of the Unicode property `Other` are removed.
-
-        s:g/\p{C}//;
+Before the output modifications are made (at a copy of the original data). Leading and trailing whitespaces are removed and spaces are squashed to a single white-space. In addition, characters of the Unicode property `Other` are removed. The the elements are stringified with `gist`.
 
 The elements in a column are right-justified if one or more elements of that column do not look like a number, else they are left-justified.
 
@@ -91,35 +74,14 @@ If the width of the window is changed and the option *table-expand* is enabled, 
 
 If the option *choose-columns* is enabled, the `SpaceBar` key (or the right mouse key) can be used to select columns - see option [/choose-columns](/choose-columns).
 
-EXAMPLE
-=======
-
-        use DBIish;
-        use Term::TablePrint :print-table;
-
-        my $dbh = DBIish.connect( "SQLite", :database<my_db.sqlite> );
-        my $sth = $dbh.prepare( "SELECT * FROM my_table" );
-        $sth.execute();
-        my @rows = $sth.allrows();
-        @rows.unshift: $sth.column-names;
-        $dbh.dispose;
-
-        print-table( @rows );
-
 CONSTRUCTOR
 ===========
 
-The constructor method `new` can be called with optional named arguments:
+The constructor method `new` can be called with named arguments. For the valid options see [#OPTIONS](#OPTIONS). Setting the options in `new` overwrites the default values for the instance.
 
-  * defaults
+Additionally to the options mentioned below one can set the option [win](win). The opton [win](win) expects as its value a `WINDOW` object - the return value of [NCurses](NCurses) `initscr`.
 
-Sets the defaults (a list of key-value pairs) for the instance. See [#OPTIONS](#OPTIONS).
-
-  * win
-
-Expects as its value a `WINDOW` object - the return value of [NCurses](NCurses) `initscr`.
-
-If set, `print-table` uses this global window instead of creating their own without calling `endwin` to restores the terminal before returning.
+If set, `print-table` uses this global window instead of creating its own without calling `endwin` to restores the terminal before returning.
 
 ROUTINES
 ========
@@ -161,10 +123,10 @@ If *choose-columns* is set to 2, it is possible to change the order of the colum
 
 Default: 0
 
-format
-------
+keep-header
+-----------
 
-If *format* is set to 0, the table header is shown on top of the first page.
+If *keep-header* is set to 0, the table header is shown on top of the first page.
 
         .----------------------------.    .----------------------------.    .----------------------------.
         |col1   col2     col3   col3 |    |.....  .......  .....  .....|    |.....  .......  .....  .....|
@@ -178,7 +140,7 @@ If *format* is set to 0, the table header is shown on top of the first page.
         | 1/3                        |    | 2/3                        |    | 3/3                        |
         '----------------------------'    '----------------------------'    '----------------------------'
 
-If *format* is set to 1, the table header is shown on top of each page.
+If *keep-header* is set to 1, the table header is shown on top of each page.
 
         .----------------------------.    .----------------------------.    .----------------------------.
         |col1   col2     col3   col3 |    |col1   col2     col3   col4 |    |col1   col2     col3   col4 |
@@ -192,22 +154,42 @@ If *format* is set to 1, the table header is shown on top of each page.
         | 1/3                        |    | 2/3                        |    | 3/3                        |
         '----------------------------'    '----------------------------'    '----------------------------'
 
-If *format* is set to 2, the table header is shown on top of each page and lines separate the columns from each other and the header from the body.
+Default: 1
 
-        .----------------------------.    .----------------------------.    .----------------------------.
-        |col1 | col2   | col3 | col3 |    |col1 | col2   | col3 | col4 |    |col1 | col2   | col3 | col4 |
-        |-----|--------|------|------|    |-----|--------|------|------|    |-----|--------|------|------|
-        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |.... | ...... | .... | .... |
-        |.... | ...... | .... | .... |    |.... | ...... | .... | .... |    |                            |
-        | 1/3                        |    | 2/3                        |    | 3/3                        |
-        '----------------------------'    '----------------------------'    '----------------------------'
+grid
+----
 
-Default: 2;
+If *grid* is set to 1 lines separate the columns from each other and the header from the body.
+
+        .----------------------------.
+        |col1 | col2   | col3 | col3 |
+        |-----|--------|------|------|
+        |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |
+        |.... | ...... | .... | .... |
+        '----------------------------'
+
+If set to 0 the table is shown with no grid.
+
+        .----------------------------.
+        |col1  col2     col3   col3  |
+        |....  .......  .....  ..... |
+        |....  .......  .....  ..... |
+        |....  .......  .....  ..... |
+        |....  .......  .....  ..... |
+        |....  .......  .....  ..... |
+        |....  .......  .....  ..... |
+        |....  .......  .....  ..... |
+        |....  .......  .....  ..... |
+        |                            |
+        '----------------------------'
+
+Default: 0;
 
 max-rows
 --------
@@ -283,7 +265,7 @@ ENVIRONMET VARIABLES
 multithreading
 --------------
 
-`Term::TablePrint` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_TREADS`. To find out the setting of "number of treads" see [Term::Choose](Term::Choose)/ENVIRONMET.
+`Term::TablePrint` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_THREADS`. To find out the setting of "number of treads" see [Term::Choose](Term::Choose)/ENVIRONMET.
 
 head2 libncurses
 

@@ -1,6 +1,14 @@
 Revision history for Term::TablePrint
 
 
+1.0.1   2017-07-30
+        - Bugfix in travis.yml and documentation
+
+1.0.0   2017-07-30
+        - Backward incompatible: from hash parameter to slurpy hash parameter and new options
+        - Code refactoring
+        - Bugfix and update documentation
+
 0.0.2   2017-07-06
         - Catch exceptions to close the window before leaving
 
