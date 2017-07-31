@@ -1,5 +1,5 @@
 use v6;
-unit class Term::Choose:ver<0.0.6>;
+unit class Term::Choose:ver<1.0.1>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -24,7 +24,6 @@ constant KEY_k         = 0x6b;
 constant KEY_l         = 0x6c;
 constant KEY_q         = 0x71;
 
-
 has @!orig_list;
 has @!list;
 
@@ -32,7 +31,7 @@ has %!defaults;
 has %!o;
 
 has WINDOW $!win;
-has WINDOW $!win_local;
+has Bool   $!reset_win;
 
 has Int   $!term_w;
 has Int   $!term_h;
@@ -52,17 +51,17 @@ has Array $!p;
 has Array $!marked;
 has Bool  $!ext_mouse;
 
-method new ( :$defaults, :$win=WINDOW ) { # to add 'new' to the BUILD -> _valid_options -> error-messages
-    self.bless( :$defaults, :$win );
+
+method new () { # to add 'new' to the error-message from BUILD/_valid_options
+    self.bless( defaults => %_ );
 }
 
-submethod BUILD( :$defaults, :$win ) {
+submethod BUILD( :$defaults ) {
     %!defaults := $defaults.Hash;
+    $!win = %!defaults<win>:delete // WINDOW;
     _validate_options( %!defaults );
     _set_defaults( %!defaults );
-    $!win := $win;
 }
-
 
 method num-threads {
     return %*ENV<TC_NUM_THREADS> if %*ENV<TC_NUM_THREADS>;
@@ -218,37 +217,32 @@ method !_prepare_new_copy_of_list {
 }
 
 
-sub choose       ( @list, %deprecated?, *%opt ) is export( :DEFAULT, :choose )       { Term::Choose.new().choose(       @list, %deprecated || %opt ) }
-sub choose-multi ( @list, %deprecated?, *%opt ) is export( :DEFAULT, :choose-multi ) { Term::Choose.new().choose-multi( @list, %deprecated || %opt ) }
-sub pause        ( @list, %deprecated?, *%opt ) is export( :DEFAULT, :pause )        { Term::Choose.new().pause(        @list, %deprecated || %opt ) }
+sub choose       ( @list, *%opt ) is export( :DEFAULT, :choose )       { Term::Choose.new().choose(       @list, |%opt ) }
+sub choose-multi ( @list, *%opt ) is export( :DEFAULT, :choose-multi ) { Term::Choose.new().choose-multi( @list, |%opt ) }
+sub pause        ( @list, *%opt ) is export( :DEFAULT, :pause )        { Term::Choose.new().pause(        @list, |%opt ) }
 
-method choose       ( @list, %deprecated?, *%opt ) { self!_choose( @list, %deprecated || %opt, 0   ) }
-method choose-multi ( @list, %deprecated?, *%opt ) { self!_choose( @list, %deprecated || %opt, 1   ) }
-method pause        ( @list, %deprecated?, *%opt ) { self!_choose( @list, %deprecated || %opt, Int ) }
+method choose       ( @list, *%opt ) { self!_choose( @list, %opt, 0   ) }
+method choose-multi ( @list, *%opt ) { self!_choose( @list, %opt, 1   ) }
+method pause        ( @list, *%opt ) { self!_choose( @list, %opt, Int ) }
 
 
 
 method !_init_term {
-    if $!win {
-        $!win_local = $!win;
-    }
-    else {
+    if ! $!win {
+        $!reset_win = True;
         my int32 constant LC_ALL = 6;
         setlocale( LC_ALL, "" );
-        $!win_local = initscr();
+        $!win = initscr();
     }
     noecho();
     cbreak();
-    keypad( $!win_local, True );
+    keypad( $!win, True );
+    timeout( 500 );
     if %!o<mouse> {
-        if library() ~~ / 'libncursesw.so.' ( \d+ ) / {
-            $!ext_mouse = $0 >= 6;
-        }
-        if $!ext_mouse {
+        my $mm = mousemask( ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION, 0 );
+        if $mm != 259913695 {
             mousemask( EMM_ALL_MOUSE_EVENTS +| EMM_REPORT_MOUSE_POSITION, 0 );
-        }
-        else {
-            mousemask( ALL_MOUSE_EVENTS +| REPORT_MOUSE_POSITION, 0 ); ##
+            $!ext_mouse = True;
         }
         my $mi = mouseinterval( 5 );
     }
@@ -256,8 +250,7 @@ method !_init_term {
 }
 
 method !_end_term {
-    return if $!win;
-    #delwin( $!win_local ) if $!win_local;
+    return if ! $!reset_win;
     endwin();
 }
 
@@ -280,20 +273,12 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
     }
     self!_init_term;
     self!_wr_first_screen( $multiselect );
-    my Int $pressed; #
+    my Int $pressed;
 
     GET_KEY: loop {
-        my $key;
-        WAIT: loop {
-            $key = getch();
-            if $key == ERR {
-                sleep 0.01;
-                next WAIT;
-            }
-            last WAIT;
-        }
-        my Int $new_term_w = getmaxx( $!win_local );
-        my Int $new_term_h = getmaxy( $!win_local );
+        my $key = getch();
+        my Int $new_term_w = getmaxx( $!win );
+        my Int $new_term_h = getmaxy( $!win );
         if $new_term_w != $!term_w || $new_term_h != $!term_h {
             if %!o<ll> {
                 return -1;
@@ -305,10 +290,11 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
             self!_wr_first_screen( $multiselect );
             next GET_KEY;
         }
+        next GET_KEY if $key == ERR;
 
-        # $!rc2idx holds the new list (AoA) formated in "_index2rowcol" appropirate to the chosen layout.
-        # $!rc2idx does not hold the values dircetly but the respective list indexes from the original list.
-        # If the original list would be ( 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' ) and the new formated list should be
+        # $!rc2idx holds the new list (AoA) formatted in "_list_index2rowcol" appropriate to the chosen layout.
+        # $!rc2idx does not hold the values directly but the respective list indexes from the original list.
+        # If the original list would be ( 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' ) and the new formatted list should be
         #     a d g
         #     b e h
         #     c f
@@ -335,8 +321,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                     }
                     else {
                         $!row_top    = $!row_bottom + 1;
-                        $!row_bottom = $!row_bottom + $!avail_h;
-                        $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
+                        $!row_bottom = min $!row_bottom + $!avail_h, $!rc2idx.end;
                         self!_wr_screen;
                     }
                 }
@@ -378,8 +363,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                         }
                         else {
                             $!row_top    = $!row_bottom + 1;
-                            $!row_bottom = $!row_bottom + $!avail_h;
-                            $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
+                            $!row_bottom = min $!row_bottom + $!avail_h, $!rc2idx.end;
                             self!_wr_screen;
                         }
                     }
@@ -448,8 +432,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                 }
                 else {
                     $!row_top    = $!avail_h * ( $!p[R] div $!avail_h + 1 );
-                    $!row_bottom = $!row_top + $!avail_h - 1;
-                    $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
+                    $!row_bottom = min $!row_top + $!avail_h - 1, $!rc2idx.end;
                     $!p[R] += $!avail_h; # set first $!row_top then $!p[R]
                     if $!p[R] >= $!rc2idx.end {
                         if $!rc2idx.end == $!row_top || ! $!rest || $!p[C] <= $!rest - 1 {
@@ -475,8 +458,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                     $!p[R] = 0;
                     $!p[C] = 0;
                     $!row_top    = 0;
-                    $!row_bottom = $!row_top + $!avail_h - 1;
-                    $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
+                    $!row_bottom = min $!row_top + $!avail_h - 1, $!rc2idx.end;
                     self!_wr_screen;
                 }
             }
@@ -672,10 +654,10 @@ method !_mouse_xy2pos ( Int $abs_mouse_x, Int $abs_mouse_y ) {
         return;
     }
     if $row != $!p[R] || $matched_col != $!p[C] {
-        my Array $tmp_p = $!p; #
+        my Array $not_p = $!p;
         $!p = [ $row, $matched_col ];
-        self!_wr_cell( $tmp_p[0], $tmp_p[1] );
-        self!_wr_cell( $!p[R] , $!p[C]  );
+        self!_wr_cell( $not_p[0], $not_p[1] );
+        self!_wr_cell( $!p[R]   , $!p[C]    );
     }
     return 1;
 }
@@ -698,60 +680,56 @@ method !_prepare_prompt {
     if @!prompt_lines.elems + $keep > $!avail_h {
         @!prompt_lines.splice( 0, @!prompt_lines.elems + $keep - $!avail_h );
     }
-    if @!prompt_lines.elems > 0 {
+    if @!prompt_lines.elems {
         $!avail_h -= @!prompt_lines.elems;
     }
 }
 
 
-method !_set_default_cell {
-    my $tmp_p = [ 0, 0 ];
+method !_pos_to_default {
     ROW: for ^$!rc2idx -> $row {
         COL: for ^$!rc2idx[$row] -> $col {
             if %!o<default> == $!rc2idx[$row][$col] {
-                $tmp_p = [ $row, $col ];
+                $!p = [ $row, $col ];
                 last ROW;
             }
         }
     }
-    $!row_top    = $!avail_h * ( $tmp_p[R] div $!avail_h );
-    $!row_bottom = $!row_top + $!avail_h - 1;
-    $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
-    $!p = $tmp_p;
+    $!row_top    = $!avail_h * ( $!p[R] div $!avail_h );
+    $!row_bottom = min $!row_top + $!avail_h - 1, $!rc2idx.end;
 }
 
 
 method !_wr_first_screen( Int $multiselect ) {
-    $!term_w = getmaxx( $!win_local );
-    $!term_h = getmaxy( $!win_local );
+    $!term_w = getmaxx( $!win );
+    $!term_h = getmaxy( $!win );
     ( $!avail_w, $!avail_h ) = ( $!term_w, $!term_h );
     if %!o<max-width> && $!avail_w > %!o<max-width> {
         $!avail_w = %!o<max-width>;
     }
     if $!avail_w < 2 {
-        die "Terminal width to small.";
+        die "Terminal width to small!";
     }
-    $!print_pp_row = %!o<page> ?? 1 !! 0;
+    $!print_pp_row = %!o<page>;
     self!_prepare_new_copy_of_list;
     self!_prepare_prompt;
     if %!o<max-height> && %!o<max-height> < $!avail_h {
         $!avail_h = %!o<max-height>;
     }
     $!layout = %!o<layout>;
-    self!_index2rowcol;
+    self!_list_index2rowcol;
     if %!o<page> {
         self!_set_pp_print_fmt;
     }
     $!row_top    = 0;
-    $!row_bottom = $!avail_h - 1;
-    $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
+    $!row_bottom = min $!avail_h - 1, $!rc2idx.end;
     $!p = [ 0, 0 ];
     $!marked = [];
     if %!o<mark> && $multiselect {
         self!_marked_idx2rc( %!o<mark>, True );
     }
     if %!o<default>.defined && %!o<default> <= @!list.end {
-        self!_set_default_cell;
+        self!_pos_to_default;
     }
     clear();
     if %!o<prompt> ne '' {
@@ -766,14 +744,14 @@ method !_wr_first_screen( Int $multiselect ) {
 method !_set_pp_print_fmt {
     if $!rc2idx.end / $!avail_h > 1 {
         $!avail_h -= $!print_pp_row;
-        my $last_p_nr = $!rc2idx.end div $!avail_h + 1;
-        my $p_nr_w = $last_p_nr.chars;
-        $!pp_line_fmt = '--- Page %0' ~ $p_nr_w ~ 'd/' ~ $last_p_nr ~ ' ---';
-        if sprintf( $!pp_line_fmt, $last_p_nr ).chars > $!avail_w {
-            $!pp_line_fmt = '%0' ~ $p_nr_w ~ 'd/' ~ $last_p_nr;
-            if sprintf( $!pp_line_fmt, $last_p_nr ).chars > $!avail_w {
-                $p_nr_w = $!avail_w if $p_nr_w > $!avail_w;
-                $!pp_line_fmt = '%0' ~ $p_nr_w ~ '.' ~ $p_nr_w ~ 's';
+        my $total_pp = $!rc2idx.end div $!avail_h + 1;
+        my $pp_w = $total_pp.chars;
+        $!pp_line_fmt = "--- Page \%0{$pp_w}d/{$total_pp} ---";
+        if sprintf( $!pp_line_fmt, $total_pp ).chars > $!avail_w {
+            $!pp_line_fmt = "\%0{$pp_w}d/{$total_pp}";
+            if sprintf( $!pp_line_fmt, $total_pp ).chars > $!avail_w {
+                $pp_w min= $!avail_w;
+                $!pp_line_fmt = "\%0{$pp_w}.{$pp_w}s";
             }
         }
     }
@@ -807,8 +785,8 @@ method !_wr_cell ( Int $row, Int $col ) {
     if $!rc2idx.end == 0 && $!rc2idx[0].end > 0 {
         my Int $lngth = 0;
         if $col > 0 {
-            for ^$col -> $cl {
-                $lngth += print-columns( @!list[ $!rc2idx[$row][$cl] ] );
+            for ^$col -> $c { #
+                $lngth += print-columns( @!list[ $!rc2idx[$row][$c] ] );
                 $lngth += %!o<pad-one-row>;
             }
         }
@@ -855,7 +833,7 @@ method !_pad_str_to_colwidth ( Int $i ) {
 }
 
 
-method !_index2rowcol {
+method !_list_index2rowcol {
     $!rc2idx = [];
     if $!col_w + %!o<pad> >= $!avail_w {
         $!layout = 2;
@@ -896,7 +874,7 @@ method !_index2rowcol {
         my Int $cols_per_row = $tmp_avail_w div $col_with_pad_w || 1;
         $!rest = @!list.elems % $cols_per_row; #
         if %!o<order> == 1 {
-            my Int $nr_of_rows = ( @!list.elems - 1 + $cols_per_row ) div $cols_per_row;
+            my Int $nr_of_rows = ( @!list.elems - 1 + $cols_per_row ) div $cols_per_row; #
             my Array @rearranged_idx;
             my Int $begin = 0;
             my Int $end = $nr_of_rows - 1;
@@ -921,13 +899,12 @@ method !_index2rowcol {
         }
         else {
             my Int $begin = 0;
-            my Int $end = $cols_per_row - 1;
-            $end = @!list.end if $end > @!list.end;
+            my Int $end = min $cols_per_row - 1, @!list.end;
             $!rc2idx.push( [ $begin .. $end ] );
             while $end < @!list.end {
                 $begin += $cols_per_row;
                 $end   += $cols_per_row;
-                $end    = @!list.end if $end > @!list.end;
+                $end min= @!list.end;
                 $!rc2idx.push( [ $begin .. $end ] );
             }
         }
@@ -955,15 +932,15 @@ method !_marked_idx2rc ( List $indexes, Bool $yesno ) {
         my Int $rows_per_col = $!rc2idx.elems;
         my Int $end_last_full_col = $rows_per_col * ( $!rest || $cols_per_row );
         for $indexes.list -> $i {
-            next if $i > @!list.end; ###
+            next if $i > @!list.end; #
             if $i <= $end_last_full_col {
                 $row = $i % $rows_per_col;
                 $col = $i div $rows_per_col;
             }
             else {
-                my Int $rows_per_col_short = $rows_per_col - 1;
-                $row = ( $i - $end_last_full_col ) % $rows_per_col_short;
-                $col = ( $i - $!rest ) div $rows_per_col_short;
+                my Int $rows_per_short_col = $rows_per_col - 1;
+                $row = ( $i - $end_last_full_col ) % $rows_per_short_col;
+                $col = ( $i - $!rest ) div $rows_per_short_col;
             }
             $!marked[$row][$col] = $yesno;
         }
@@ -1011,7 +988,7 @@ Term::Choose - Choose items from a list interactively.
 
     # OO interface:
  
-    my $tc = Term::Choose.new( :default( :1mouse, :0order ) );
+    my $tc = Term::Choose.new( :1mouse, :0order ) );
 
     $chosen = $tc.choose( @list, :1layout, :2default );
 
@@ -1023,15 +1000,7 @@ For C<choose>, C<choose-multi> and C<pause> the first argument holds the list of
 
 The different options can be passed as key-values pairs. See L<#OPTIONS> to find the available options.
 
-Passing the options as a hash is deprecated. The support of passing the options as a hash may be removed with the next
-release.
-
 The return values are described in L<#Routines>
-
-=head1 FUNCTIONAL INTERFACE
-
-Importing the subroutines explicitly (C<:name_of_the_subroutine>) might become compulsory (optional for now) with the
-next release.
 
 =head1 USAGE
 
@@ -1039,7 +1008,7 @@ To browse through the available list-elements use the keys described below.
 
 If the items of the list don't fit on the screen, the user can scroll to the next (previous) page(s).
 
-If the window size is changed, after a keystroke the screen is rewritten.
+If the window size is changed, the screen is rewritten.
 
 How to choose the items is described for each method/function separately in L<Routines>.
 
@@ -1058,22 +1027,17 @@ end of the list.
 For the usage of C<SpaceBar>, C<Ctrl-SpaceBar>, C<Return> and the C<q>-key see L<#choose>, L<#choose-multi> and
 L<#pause>.
 
-With I<mouse> enabled (and if supported by the terminal) use the the left mouse key instead the C<Return> key and
-the right mouse key instead of the C<SpaceBar> key. Instead of C<PageUp> and C<PageDown> it can be used the mouse wheel
-if the extended mouse mode is enabled. Setting the environment variable C<PERL6_NCURSES_LIB> to C<libncursesw.so.6>
-enbables the extended mouse mode.
+With I<mouse> enabled use the the left mouse key instead the C<Return> key and the right mouse key instead of the
+C<SpaceBar> key. Instead of C<PageUp> and C<PageDown> it can be used the mouse wheel. The mouse wheel only works, if the
+ncurses library supports the extended mouse mode.
 
 =head1 CONSTRUCTOR
 
-The constructor method C<new> can be called with named arguments:
+The constructor method C<new> can be called with named arguments. For the valid options see L<#OPTIONS>. Setting the
+options in C<new> overwrites the default values for the instance.
 
-=item defaults
-
-Sets the defaults (a list of key-value pairs) for the instance. See L<#OPTIONS>.
-
-=item win
-
-Expects as its value a C<WINDOW> object - the return value of L<NCurses> C<initscr>.
+Additionally to the options mentioned below one can set the option L<win>. The opton L<win> expects as its value a
+C<WINDOW> object - the return value of L<NCurses> C<initscr>.
 
 If set, C<choose>, C<choose-multi> and C<pause> use this global window instead of creating their own without calling
 C<endwin> to restores the terminal before returning.
@@ -1112,43 +1076,14 @@ were passed without modifications.
 
 Modifications:
 
-=item If an element is not defined, the value from the option I<undef> is assigned to the element.
+If an element is not defined, the value from the option I<undef> is assigned to the element. If an element holds an
+empty string, the value from the option I<empty> is assigned to the element.
 
-=item If an element holds an empty string, the value from the option I<empty> is assigned to the element.
+White-spaces in elements are replaced with simple spaces: C<$_ =~ s:g/\s/ />. Invalid characers (Unicode character
+proterty C<Other>) are removed: C<$_=~ s:g/\p{C}//>.
 
-=item White-spaces in elements are replaced with simple spaces.
-
-=begin code
-
-    $element =~ s:g/\s/ /;
-
-=end code
-
-=item Characters which match the Unicode character property C<Other> are removed.
-
-=begin code
-
-    $element =~ s:g/\p{C}//;
-
-=end code
-
-=item This mapping is made before the "C<substr>" because it may change the print width of the elements.
-
-=begin code
-
-    $element = $element.gist;
-
-=end code
-
-=item If the length of an element is greater than the width of the screen the element is cut.
-
-=begin code
-
-    $element.=substr( 0, $allowed_length - 3 ) ~ '...';*
-
-=end code
-
-C<*> C<Term::Choose> uses its own function to cut strings which calculates width in print columns.
+The elements are stringified with C<gist>. If the length (print columns) of an element is greater than the width of the
+screen the element is cut and three dots are attached.
 
 =head1 OPTIONS
 
@@ -1275,7 +1210,7 @@ Allowed values for the two elements are: 0 or greater.
 
 This is a C<choose-multi>-only option.
 
-I<mark> expects as its value an list of indexes (integers). C<choose> preselects the
+I<mark> expects as its value an list of indexes (integers). C<choose-multi> preselects the
 list-elements correlating to these indexes.
 
 (default: undefined)
@@ -1355,8 +1290,6 @@ If I<prompt> is undefined, a default prompt-string will be shown.
 
 If the I<prompt> value is an empty string (""), no prompt-line will be shown.
 
-default: I<multiselect> == C<0> ??  C<Close with ENTER> !! C<Your choice:>. 
-
 =head2 undef
 
 Sets the string displayed on the screen instead an undefined element.
@@ -1368,11 +1301,11 @@ default: "E<lt>undefE<gt>"
 =head2 multithreading
 
 C<Term::Choose> uses multithreading when preparing the list for the output; the number of threads to use can be set with
-the environment variable C<TC_NUM_TREADS>.
+the environment variable C<TC_NUM_THREADS>.
 
 The method C<num-threads> returns the setting used by C<Term::Choose>.
 
-head2 libncurses
+=head2 libncurses
 
 The location of the used ncurses library can be specified by setting the environment variable C<PERL6_NCURSES_LIB>. This
 will overwrite the default library location.
@@ -1382,7 +1315,7 @@ will overwrite the default library location.
 =head2 libncurses
 
 C<Term::Choose> requires C<libncurses> to be installed. If the list elements contain wide characters it is required
-C<libncursesw.so.6>. See L<#ENVIRONMET VARIABLES>.
+an approprirate ncurses library else wide character will break the output.
 
 =head2 Monospaced font
 

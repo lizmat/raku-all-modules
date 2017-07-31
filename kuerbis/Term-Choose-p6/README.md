@@ -20,7 +20,7 @@ SYNOPSIS
 
     # OO interface:
      
-    my $tc = Term::Choose.new( :default( :1mouse, :0order ) );
+    my $tc = Term::Choose.new( :1mouse, :0order ) );
 
     $chosen = $tc.choose( @list, :1layout, :2default );
 
@@ -33,14 +33,7 @@ For `choose`, `choose-multi` and `pause` the first argument holds the list of th
 
 The different options can be passed as key-values pairs. See [#OPTIONS](#OPTIONS) to find the available options.
 
-Passing the options as a hash is deprecated. The support of passing the options as a hash may be removed with the next release.
-
 The return values are described in [#Routines](#Routines)
-
-FUNCTIONAL INTERFACE
-====================
-
-Importing the subroutines explicitly (`:name_of_the_subroutine`) might become compulsory (optional for now) with the next release.
 
 USAGE
 =====
@@ -49,7 +42,7 @@ To browse through the available list-elements use the keys described below.
 
 If the items of the list don't fit on the screen, the user can scroll to the next (previous) page(s).
 
-If the window size is changed, after a keystroke the screen is rewritten.
+If the window size is changed, the screen is rewritten.
 
 How to choose the items is described for each method/function separately in [Routines](Routines).
 
@@ -66,20 +59,14 @@ Keys
 
 For the usage of `SpaceBar`, `Ctrl-SpaceBar`, `Return` and the `q`-key see [#choose](#choose), [#choose-multi](#choose-multi) and [#pause](#pause).
 
-With *mouse* enabled (and if supported by the terminal) use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel if the extended mouse mode is enabled. Setting the environment variable `PERL6_NCURSES_LIB` to `libncursesw.so.6` enbables the extended mouse mode.
+With *mouse* enabled use the the left mouse key instead the `Return` key and the right mouse key instead of the `SpaceBar` key. Instead of `PageUp` and `PageDown` it can be used the mouse wheel. The mouse wheel only works, if the ncurses library supports the extended mouse mode.
 
 CONSTRUCTOR
 ===========
 
-The constructor method `new` can be called with named arguments:
+The constructor method `new` can be called with named arguments. For the valid options see [#OPTIONS](#OPTIONS). Setting the options in `new` overwrites the default values for the instance.
 
-  * defaults
-
-Sets the defaults (a list of key-value pairs) for the instance. See [#OPTIONS](#OPTIONS).
-
-  * win
-
-Expects as its value a `WINDOW` object - the return value of [NCurses](NCurses) `initscr`.
+Additionally to the options mentioned below one can set the option [win](win). The opton [win](win) expects as its value a `WINDOW` object - the return value of [NCurses](NCurses) `initscr`.
 
 If set, `choose`, `choose-multi` and `pause` use this global window instead of creating their own without calling `endwin` to restores the terminal before returning.
 
@@ -116,27 +103,11 @@ For the output on the screen the elements of the list are copied and then modifi
 
 Modifications:
 
-  * If an element is not defined, the value from the option *undef* is assigned to the element.
+If an element is not defined, the value from the option *undef* is assigned to the element. If an element holds an empty string, the value from the option *empty* is assigned to the element.
 
-  * If an element holds an empty string, the value from the option *empty* is assigned to the element.
+White-spaces in elements are replaced with simple spaces: `$_ =~ s:g/\s/ /`. Invalid characers (Unicode character proterty `Other`) are removed: `$_=~ s:g/\p{C}//`.
 
-  * White-spaces in elements are replaced with simple spaces.
-
-        $element =~ s:g/\s/ /;
-
-  * Characters which match the Unicode character property `Other` are removed.
-
-        $element =~ s:g/\p{C}//;
-
-  * This mapping is made before the "`substr`" because it may change the print width of the elements.
-
-        $element = $element.gist;
-
-  * If the length of an element is greater than the width of the screen the element is cut.
-
-        $element.=substr( 0, $allowed_length - 3 ) ~ '...';*
-
-`*` `Term::Choose` uses its own function to cut strings which calculates width in print columns.
+The elements are stringified with `gist`. If the length (print columns) of an element is greater than the width of the screen the element is cut and three dots are attached.
 
 OPTIONS
 =======
@@ -259,7 +230,7 @@ mark
 
 This is a `choose-multi`-only option.
 
-*mark* expects as its value an list of indexes (integers). `choose` preselects the list-elements correlating to these indexes.
+*mark* expects as its value an list of indexes (integers). `choose-multi` preselects the list-elements correlating to these indexes.
 
 (default: undefined)
 
@@ -344,8 +315,6 @@ If *prompt* is undefined, a default prompt-string will be shown.
 
 If the *prompt* value is an empty string (""), no prompt-line will be shown.
 
-default: *multiselect* == `0` ?? `Close with ENTER` !! `Your choice:`. 
-
 undef
 -----
 
@@ -359,11 +328,12 @@ ENVIRONMET VARIABLES
 multithreading
 --------------
 
-`Term::Choose` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_TREADS`.
+`Term::Choose` uses multithreading when preparing the list for the output; the number of threads to use can be set with the environment variable `TC_NUM_THREADS`.
 
 The method `num-threads` returns the setting used by `Term::Choose`.
 
-head2 libncurses
+libncurses
+----------
 
 The location of the used ncurses library can be specified by setting the environment variable `PERL6_NCURSES_LIB`. This will overwrite the default library location.
 
@@ -373,7 +343,7 @@ REQUIREMENTS
 libncurses
 ----------
 
-`Term::Choose` requires `libncurses` to be installed. If the list elements contain wide characters it is required `libncursesw.so.6`. See [#ENVIRONMET VARIABLES](#ENVIRONMET VARIABLES).
+`Term::Choose` requires `libncurses` to be installed. If the list elements contain wide characters it is required an approprirate ncurses library else wide character will break the output.
 
 Monospaced font
 ---------------
