@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/gfldex/perl6-slippy-semilist.git
 	branch = master
-	commit = a79a0a49ae7703318e76c978fc2b71fb1af57716
-	parent = 9cacad47859de74639fa618586c8fbf81762e782
+	commit = 4555ed811bcef309544f7f85161ab98893725924
+	parent = 47d4ab36efc0d3d6a0b4b14c9307aedd60e23bf0
 	cmdver = 0.4.0

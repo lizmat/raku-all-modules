@@ -35,7 +35,7 @@
     "Slippy::Semilist" : "lib/Slippy/Semilist.pm6"
   },
   "production": true,
-  "version": "0.0.1",
+  "version": "0.0.2",
   "supersedes": {
     
   },
