@@ -112,18 +112,21 @@ Often, logs need to be formatted to simplify the storage (time-series databases)
 
 Formatters will use the attributes of a Log.
 
-|Symbol|Signification|Description                                  |Default value             |
-|------|-------------|---------------------------------------------|--------------------------|
-|\\d   |Date (UTC)   |The date on which the log was generated      |Current date time         |
-|\\c   |Category     |Can be any anything specified by the user    |The current package/module|
-|\\s   |Severity     |Indicates if it's an information, or an error| none                     |
-|\\m   |Message      |Payload, explains what is going on           | none                     |
+|Symbol   |Signification|Description                                  |Default value             |
+|---------|-------------|---------------------------------------------|--------------------------|
+|\\d      |Date (UTC)   |The date on which the log was generated      |Current date time         |
+|\\c      |Category     |Can be any anything specified by the user    |The current package/module|
+|\\s      |Severity     |Indicates if it's an information, or an error| none                     |
+|\\e{key} |Extra Field  |Additional fields, used for formatting       | none                     |
+|\\m      |Message      |Payload, explains what is going on           | none                     |
 
 _Note: Depending on the context or the configuration, some values can be empty._
 
+_Note: Extra fields uses a key in {} caracters to print associated value._
+
 ```perl6
 use Log::Any::Adapter::Stdout;
-Log::Any.add( Some::Adapter.new, :formatter( '\d \c \m' ) );
+Log::Any.add( Some::Adapter.new, :formatter( '\d \c \m \e{key1} \e{key2}' ) );
 ```
 
 You can of course use variables in the formatter, but since _\\_ is already used in Perl6 strings interpolation, you have to escape them.
@@ -131,7 +134,7 @@ You can of course use variables in the formatter, but since _\\_ is already used
 ```perl6
 use Log::Any::Adapter::Stdout;
 my $prefix = 'myapp ';
-Log::Any.add( Log::Any::Adapter::Stdout.new, :formatter( "$prefix \\d \\c \\s \\m" ) );
+Log::Any.add( Log::Any::Adapter::Stdout.new, :formatter( "$prefix \\d \\c \\s \\m \\e\{key}" ) );
 ```
 
 A formatter can be more complex than the default one by extending the class _Formatter_.
@@ -140,7 +143,7 @@ A formatter can be more complex than the default one by extending the class _For
 use Log::Any::Formatter;
 
 class MyOwnFormatter is Log::Any::Formatter {
-	method format( :$dateTime!, :$msg!, :$category!, :$severity! ) {
+	method format( :$dateTime!, :$msg!, :$category!, :$severity!, :%extra-fields ) {
 		# Returns an Str
 	}
 }
@@ -215,7 +218,7 @@ If a more complex filtering is necessary, a class inheriting Log::Any::Filter ca
 ```perl6
 # Use home-made filters
 class MyOwnFilter is Log::Any::Filter {
-	method filter( :$msg, :$severity, :$category ) returns Bool {
+	method filter( :$msg, :$severity, :$category, :%extra-fields ) returns Bool {
 		# Write some complicated tests
 		return True;
 	}

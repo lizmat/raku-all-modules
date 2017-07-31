@@ -55,12 +55,12 @@ class Log::Any::Pipeline {
 	This method returns the next element of the pipeline wich is matching
 	the filter.
 =end pod
-	method !get-available-adapters( :$msg, :$severity, :$category ) {
+	method !get-available-adapters( :$msg, :$severity, :$category, :%extra-fields ) {
 
 		return gather for @!adapters -> %elem {
 			# Filter : check if the adapter meets the requirements
 			with %elem{'filter'} {
-				next unless %elem{'filter'}.filter( :$msg, :$severity, :$category );
+				next unless %elem{'filter'}.filter( :$msg, :$severity, :$category, :%extra-fields );
 			}
 			# Without filter, it's ok
 			take %elem;
@@ -68,7 +68,7 @@ class Log::Any::Pipeline {
 
 	}
 
-	method dispatch( DateTime :$date-time!, :$msg!, :$severity!, :$category! ) {
+	method dispatch( DateTime :$date-time!, :$msg!, :$severity!, :$category!, :%extra-fields ) {
 		# note "Dispatching $msg, adapter count : @!adapters.elems(), asynchronicity $!asynchronous.perl() at {now}";
 
 		if $!asynchronous {
@@ -76,11 +76,11 @@ class Log::Any::Pipeline {
 			$!channel.send( { :$date-time, :$msg, :$severity, :$category } );
 		} else {
 			# note "sync dispatch";
-			return self!dispatch-synchronous( :$date-time, :$msg, :$severity, :$category );
+			return self!dispatch-synchronous( :$date-time, :$msg, :$severity, :$category, :%extra-fields );
 		}
 	}
 
-	method !dispatch-synchronous( :$date-time!, :$msg! is copy, :$severity!, :$category! ) {
+	method !dispatch-synchronous( :$date-time!, :$msg! is copy, :$severity!, :$category!, :%extra-fields ) {
 		for self!get-available-adapters(  :$msg, :$severity, :$category ) -> %elem {
 			if %elem {
 				# Escape newlines caracters in message
@@ -89,7 +89,7 @@ class Log::Any::Pipeline {
 				# Formatter
 				my $msgToHandle = $msg;
 				if %elem{'formatter'} {
-					$msgToHandle = %elem{'formatter'}.format( :$date-time, :$msg, :$category, :$severity );
+					$msgToHandle = %elem{'formatter'}.format( :$date-time, :$msg, :$category, :$severity, :%extra-fields );
 				}
 
 				# Proxies
@@ -101,8 +101,8 @@ class Log::Any::Pipeline {
 		}
 	}
 
-	method will-dispatch( :$severity, :$category ) returns Bool {
-		return self!get-available-adapters( :$severity, :$category ).so;
+	method will-dispatch( :$severity, :$category, :%extra-fields ) returns Bool {
+		return self!get-available-adapters( :$severity, :$category, :%extra-fields ).so;
 	}
 
 	# Dump the adapters
