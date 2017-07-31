@@ -1,6 +1,9 @@
 p6-file-directory-tree
 ======================
 
+[![Build Status](https://travis-ci.org/labster/p6-file-directory-tree.png)](https://travis-ci.org/labster/p6-file-directory-tree)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/labster/p6-file-directory-tree?svg=true)](https://ci.appveyor.com/project/labster/p6-file-directory-tree)
+
 Port of File::Path::Tiny to Perl 6 - create and delete directory trees
 
 

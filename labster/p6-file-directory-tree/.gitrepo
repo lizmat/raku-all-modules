@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/labster/p6-file-directory-tree.git
 	branch = master
-	commit = 52ef347a6c0681c1766d07f11132bf7721bb0895
-	parent = c4d933b5758cf2123c48c06eba88eeffcf33db21
+	commit = 25faef927c83eea1b688b5a324d5e11011f7305f
+	parent = 04c9aae8623196013da11857114b696e66dce837
 	cmdver = 0.4.0
