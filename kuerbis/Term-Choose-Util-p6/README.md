@@ -10,35 +10,40 @@ DESCRIPTION
 
 This module provides some CLI related functions.
 
-FUNCTIONAL INTERFACE
-====================
-
-Importing the subroutines explicitly (`:name_of_the_subroutine`) might become compulsory (optional for now) with the next release.
-
 CONSTRUCTOR
 ===========
 
 The constructor method `new` can be called with optional named arguments:
 
-  * defaults
+        my $new = Term::Choose::Util.new( :mouse(1) )
 
-Sets the defaults for the instance. Valid options (key/value pairs): `mouse`.
+Additionally to the different options mentioned below one can pass the option *win* to the `new`-method. The option
 
-  * win
+*win* expects as its value a WINDOW object - the return value of NCurses initscr. If set, the different methods use
 
-Expects as its value a `WINDOW` object - the return value of [NCurses](NCurses) `initscr`.
-
-If set, the following routines use this global window instead of creating their own without calling `endwin` to restores the terminal before returning.
+this global window instead of creating their own without calling endwin to restores the terminal before returning.
 
 ROUTINES
 ========
 
 Values in brackets are default values.
 
+Options valid for all routines are
+
+  * mouse
+
+Set to `0` the mouse mode is disabled, set to `1` the mouse mode is enabled.
+
+Values: [0],1.
+
+  * prompt
+
+If set shows an additionally prompt line before the choices.
+
 choose-a-dir
 ------------
 
-        $chosen_directory = choose-a-dir( :layout( 1 ), ... )
+        $chosen_directory = choose-a-dir( :layout(1), ... )
 
 With `choose-a-dir` the user can browse through the directory tree (as far as the granted rights permit it) and choose a directory which is returned.
 
@@ -54,9 +59,9 @@ The "back"-menu-entry ("`E<lt> `") causes `choose-a-dir` to return nothing.
 
 It can be set the following options:
 
-  * current
+  * current-dir
 
-If set, `choose-a-dir` shows *current* as the current directory.
+If set, `choose-a-dir` shows *current-dir* as the current directory.
 
   * dir
 
@@ -82,12 +87,6 @@ See the option *layout* in [Term::Choose](https://github.com/kuerbis/Term-Choose
 
 Values: 0,[1],2.
 
-  * mouse
-
-See the option *mouse* in [Term::Choose](https://github.com/kuerbis/Term-Choose-p6)
-
-Values: [0],1.
-
   * order
 
 If set to 1, the items are ordered vertically else they are ordered horizontally.
@@ -105,16 +104,16 @@ Values: 0,[1].
 choose-a-file
 -------------
 
-        $chosen_file = choose-a-file( :layout( 1 ), ... )
+        $chosen_file = choose-a-file( :layout(1), ... )
 
-Browse the directory tree like with `choose-a-dir`. Select "`E<gt>F`" to get the files of the current directory; than the chosen file is returned.
+Browse the directory tree like with `choose-a-dir`. Select "`E<gt>F`" to get the files of the current directory. To return the chosen file select "`= `".
 
-See [#choose-a-dir](#choose-a-dir) for the different options. `choose-a-file` has no option *current*.
+See [#choose-a-dir](#choose-a-dir) for the different options. Instead *current-dir* `choose-a-file` has *current-file*.
 
 choose-dirs
 -----------
 
-        @chosen_directories = choose-dirs( :layout( 1 ), ... )
+        @chosen_directories = choose-dirs( :layout(1), ... )
 
 `choose-dirs` is similar to `choose-a-dir` but it is possible to return multiple directories.
 
@@ -122,14 +121,14 @@ choose-dirs
 
 The "back"-menu-entry ( "`E<lt> `" ) resets the list of chosen directories if any. If the list of chosen directories is empty, "`E<lt> `" causes `choose-dirs` to return nothing.
 
-`choose-dirs` uses the same option as `choose-a-dir`. The option *current* expects as its value a list (directories shown as the current directories).
+`choose-dirs` uses the same option as `choose-a-dir`. Instead *current-dir* `choose_dirs` has *current-dirs*.  *current-dirs* expects as its value a list (directories shown as the current directories).
 
 choose-a-number
 ---------------
 
-        my $current = 139;
+        my $current-number = 139;
         for ( 1 .. 3 ) {
-            $current = choose-a-number( 5, :$current, :name<Testnumber> );
+            $current-number = choose-a-number( 5, :$current-number, :name<Testnumber> );
         }
 
 This function lets you choose/compose a number (unsigned integer) which is returned.
@@ -138,7 +137,7 @@ The fist argument - "digits" - is an integer and determines the range of the ava
 
 The available options:
 
-  * current
+  * current-number
 
 The current value (integer). If set, two prompt lines are displayed - one for the current number and one for the new number.
 
@@ -147,12 +146,6 @@ The current value (integer). If set, two prompt lines are displayed - one for th
 Sets the name of the number seen in the prompt line.
 
 Default: empty string ("");
-
-  * mouse
-
-See the option *mouse* in [Term::Choose](https://github.com/kuerbis/Term-Choose-p6)
-
-Values: [0],1.
 
   * thsd-sep
 
@@ -163,13 +156,13 @@ Default: comma (,).
 choose-a-subset
 ---------------
 
-        $subset = choose-a-subset( @available_items, :current( @current_subset ) )
+        $subset = choose-a-subset( @available_items, :current-list( @current_subset ) )
 
 `choose-a-subset` lets you choose a subset from a list.
 
 The first argument is the list of choices. The following arguments are the options:
 
-  * current
+  * current-list
 
 This option expects as its value the current subset of the available list. If set, two prompt lines are displayed - one for the current subset and one for the new subset. Even if the option *index* is true the passed current subset is made of values and not of indexes.
 
@@ -191,12 +184,6 @@ See the option *layout* in [Term::Choose](https://github.com/kuerbis/Term-Choose
 
 Values: 0,1,[2].
 
-  * mouse
-
-See the option *mouse* in [Term::Choose](https://github.com/kuerbis/Term-Choose-p6)
-
-Values: [0],1.
-
   * order
 
 If set to 1, the items are ordered vertically else they are ordered horizontally.
@@ -210,12 +197,6 @@ Values: 0,[1].
 *prefix* expects as its value a string. This string is put in front of the elements of the available list before printing. The chosen elements are returned without this *prefix*.
 
 The default value is "- " if the *layout* is 2 else the default is the empty string ("").
-
-  * prompt
-
-The prompt line before the choices.
-
-Defaults to "Choose:".
 
 AUTHOR
 ======

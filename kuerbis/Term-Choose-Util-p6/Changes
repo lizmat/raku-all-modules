@@ -1,6 +1,10 @@
 Revision history for Term::Choose::Util
 
 
+1.0.0   2017-07-30
+        - Backward incompatible: from hash parameter to slurpy hash parameter and new option names
+        - Code refactoring
+
 0.0.2   2017-07-06
         - Catch exceptions to close the window before leaving
 

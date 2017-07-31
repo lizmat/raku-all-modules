@@ -4,8 +4,8 @@
   ],
   "build-depends" : [ ],
   "depends" : [
-    "NCurses",
-    "Term::Choose"
+    "Term::Choose",
+    "NCurses"
   ],
   "description" : "CLI related functions.",
   "license" : "Artistic-2.0",
@@ -20,5 +20,5 @@
   "test-depends" : [
     "Test"
   ],
-  "version" : "0.0.2"
+  "version" : "1.0.0"
 }
