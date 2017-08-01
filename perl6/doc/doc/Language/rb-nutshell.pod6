@@ -360,6 +360,7 @@ variable and go between the sigil and the rest of the variable name. Examples:
     $=foo    # POD (documentation) variables
     $?FILE   # Current source filename. The ? twigil indicates a compile-time value
     $~foo    # Sublanguage seen by parser, uncommon
+=end code
 
 Though each of these examples use the C<$> sigil, most could use C<@>
 (Positional) or C<%> (Associative).
@@ -1041,6 +1042,7 @@ and C<bar> but not C<baz>:
 =for code :skip-test
     unit module Bar; # remainder of the file is in module Bar { ... }
 
+=for code :skip-test
     sub foo($a) is export { say "foo $a" }
     sub bar($b) is export { say "bar $b" }
     sub baz($z) { say "baz $z" }
