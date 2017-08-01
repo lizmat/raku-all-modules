@@ -79,6 +79,14 @@ This is add a radio group, it has two option: `c|count=c`、`s|string=s`.
 
 This is insert a main to `$optset`, it print all non-option argument.
 
+=== Get Option Value
+
+`my $x = $optset<x>;`
+`my @x := $optset<x>;`
+
+NOTE: Use bind operator when you want bind `Option::Array`'s value to
+an Positional/Association variable. 
+
 == Option
 
 `Option` can be create by a string. For example, `"a|action=b"` represent an option

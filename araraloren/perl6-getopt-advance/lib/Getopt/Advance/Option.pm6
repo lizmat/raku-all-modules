@@ -223,6 +223,10 @@ class Option::Boolean does Option::Base {
             }
         }
     }
+    
+    method value {
+        so $!value;
+    }
 
     method set-value(Mu $value, Bool :$callback) {
         self.Option::Base::set-value($value.so, :$callback);
@@ -333,6 +337,10 @@ class Option::Hash does Option::Base {
         }
     }
 
+    method value {
+        $!value ?? %$!value !! Hash;
+    }
+
     # This actually is a push-value
     method set-value(Mu:D $value, Bool :$callback) {
         my %hash = $!value.defined ?? %$!value !! Hash.new;
@@ -423,6 +431,10 @@ class Option::Array does Option::Base {
             }
             $!value = $!default-value = Array.new(|$value);
         }
+    }
+
+    method value {
+        $!value ?? @$!value !! Array;
     }
 
     # This actually is a push-value
