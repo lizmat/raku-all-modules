@@ -1,0 +1,53 @@
+= perl-app-snippet
+
+run c/cpp or other language snippet code
+
+== Usage
+
+- c
+
+    $ snippet c -e 'int a = 500;'  -e 'a = rand();' -e 'printf("%d\n", a);' -i stdlib.h -p
+    --------------------------------------------------
+    #include <stdlib.h>
+    #include <stdio.h>
+    int main(void)
+    {
+    int a = 500; a = rand(); printf("%d\n", a);
+    return 0;
+    }
+    --------------------------------------------------
+    1804289383
+
+- cxx
+
+    $ snippet cpp -e 'int a{500};' -e 'std::random_device rd{};' -e 'std::uniform_int_distribution<int> dist(0, 100000);' -e 'a = dist(rd);' -e 'std::cout <<a << std::endl;' -p -i random
+    --------------------------------------------------
+    #include <random>
+    #include <iostream>
+    int main(void)
+    {
+    int a{500};
+    std::random_device rd{};
+    std::uniform_int_distribution<int> dist(0, 100000);
+    a = dist(rd);
+    std::cout <<a << std::endl;
+    return 0;
+    }
+    --------------------------------------------------
+    81873
+
+== Installation
+
+`zef install App::snippet`
+
+== License
+
+GPL
+
+== TODO
+
+- format print code.
+
+== Author
+
+araraloren (blackcatoverwall#gmail.com)
