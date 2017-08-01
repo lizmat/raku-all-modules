@@ -3,7 +3,7 @@
   "name" : "Git::Wrapper",
   "authors" : [ "PerlPilot", "nicqrocks" ],
   "description" : "simple, hacky way to use git from Perl 6",
-  "version" : "0.0.7",
+  "version" : "0.0.8",
   "build-depends" : [ ],
   "test-depends" : [ ],
   "depends" : [ ],

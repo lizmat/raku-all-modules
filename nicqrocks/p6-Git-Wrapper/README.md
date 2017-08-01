@@ -1,6 +1,8 @@
 Git::Wrapper
 ============
 
+[![Build Status](https://travis-ci.org/nicqrocks/p6-Git-Wrapper.svg?branch=master)](https://travis-ci.org/nicqrocks/p6-Git-Wrapper)
+
 Hacky way to use git from Perl 6 "inspired" by Perl 5's version of the module of the same name. Originally made by [PerlPilot](https://github.com/perlpilot).
 
 ## SYNOPSIS
