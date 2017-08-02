@@ -64,7 +64,8 @@ C<PASTEBIN_GIST_TOKEN> environmental variable to the value of your token.
     );
 
 B<Returns> URL to the created paste (e.g.
-L<https://gist.github.com/5590bc07b8d5bd8fd98d>).
+L<https://gist.github.com/5590bc07b8d5bd8fd98d>). On failure, throws
+`Pastebin::Gist::X` exception whose `$.message` method has reason for error.
 First positional argument can either be a string of content to paste or
 a hashref where keys are filenames and values are hashrefs with
 values key C<content> set to content of files to paste. Using a hashref
@@ -119,6 +120,8 @@ B<Returns> a two-item list: files in the gist and gist's title.
 B<Takes> one mandatory argument: a full URL or just the
 ID number of the gist  you want to retrieve. The C<$files> is a hashref,
 where keys are file names and values are the file's contents.
+On failure, throws
+`Pastebin::Gist::X` exception whose `$.message` method has reason for error.
 
 =head1 REPOSITORY
 

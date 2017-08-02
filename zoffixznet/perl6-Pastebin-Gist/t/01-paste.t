@@ -1,8 +1,8 @@
-
-use v6;
+use lib <lib>;
 use Test;
-use lib 'lib';
 use Pastebin::Gist;
+
+plan 5;
 
 my $p = Pastebin::Gist.new(
     token => '7042d1' # Github revokes tokens if it notices them in source
@@ -13,6 +13,7 @@ my $p = Pastebin::Gist.new(
     ~ 'ee30e'
     ~ 'c5872c7',
 );
+
 my $paste_url = $p.paste(
     "Perl 6 Module Test<p>\n& <pre>foo",
     desc => 'My Summary <>&',
@@ -20,16 +21,17 @@ my $paste_url = $p.paste(
 ok $paste_url ~~ /^ 'https://gist.github.com/' <[\w]>+ $/,
     "Paste URL [$paste_url] is sane";
 
-my ( $files, $desc ) = $p.fetch( $paste_url );
+
+my ($files, $desc) = $p.fetch: $paste_url;
 is $desc, 'My Summary <>&', 'Retrieved description is good';
 for keys $files {
     is $_, 'nopaste.txt', 'Paste filename is sane';
     is $files.{$_}, "Perl 6 Module Test<p>\n& <pre>foo",
         'Paste content is sane';
-
 }
 
-done-testing;
+throws-like { $p.fetch: 'blahblah' }, Pastebin::Gist::X,
+    message => /'not found'/, 'failures throw Pastebin::Gist::X exception';
 
 =finish
 
