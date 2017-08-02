@@ -32,5 +32,6 @@ for %ret.values -> $target {
                 fail "Don't know how to do with {$target}";
             }
         }
+        $executable.clean();
     }
 }

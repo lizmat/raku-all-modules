@@ -59,7 +59,7 @@ role Target {
 	}
 
 	method clean() {
-		unlink $!target unless $!want-clean;
+		unlink $!target if $!want-clean;
 	}
 }
 

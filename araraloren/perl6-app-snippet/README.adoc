@@ -6,6 +6,8 @@ run c/cpp or other language snippet code
 
 - c
 
+* code snippet
+
     $ snippet c -e 'int a = 500;'  -e 'a = rand();' -e 'printf("%d\n", a);' -i stdlib.h -p
     --------------------------------------------------
     #include <stdlib.h>
@@ -18,7 +20,25 @@ run c/cpp or other language snippet code
     --------------------------------------------------
     1804289383
 
+* read from user
+
+    $ snippet c -r
+    Please input your code, make sure your code correct.
+    Enter @@CODEEND input.
+    int main() {
+        printf("Hello World!!\n");
+    }
+    @@CODEEND
+    Hello World!!
+    
+* file
+
+    $ snippet c *.c
+    Hello World!!
+
 - cxx
+
+* code snippet
 
     $ snippet cpp -e 'int a{500};' -e 'std::random_device rd{};' -e 'std::uniform_int_distribution<int> dist(0, 100000);' -e 'a = dist(rd);' -e 'std::cout <<a << std::endl;' -p -i random
     --------------------------------------------------
@@ -35,6 +55,28 @@ run c/cpp or other language snippet code
     }
     --------------------------------------------------
     81873
+
+* read from user
+
+    $ snippet cpp -r -p
+    Please input your code, make sure your code correct.
+    Enter @@CODEEND input.
+    int main() {
+        std::cout <<"Hello World" << std::endl;
+    }
+    @@CODEEND
+    --------------------------------------------------
+    #include <iostream>
+    int main() {
+        std::cout <<"Hello World" << std::endl;
+    }
+    --------------------------------------------------
+    Hello World
+
+* file
+
+    $ snippet cpp *.cpp
+    Hello World!!
 
 == Installation
 
