@@ -26,7 +26,7 @@ if has_colors() && COLOR_PAIRS() >= 13
 	init_pair(2,  COLOR_BLUE,	COLOR_BLACK) ; # ddt_address
 	init_pair(3,  COLOR_GREEN,	COLOR_BLACK) ; # link
 	init_pair(4,  COLOR_YELLOW,	COLOR_BLACK) ; # perl_address
-	init_pair(5,  COLOR_WHITE,	COLOR_BLACK) ; # header
+	init_pair(5,  COLOR_MAGENTA,	COLOR_BLACK) ; # header
 	init_pair(6,  COLOR_CYAN,	COLOR_BLACK) ; # key
 	init_pair(7,  COLOR_CYAN,	COLOR_BLACK) ; # binder
 	init_pair(8,  COLOR_WHITE,	COLOR_BLACK) ; # value
@@ -38,7 +38,7 @@ if has_colors() && COLOR_PAIRS() >= 13
 	init_pair(13, COLOR_BLACK,	COLOR_BLACK) ; # gl_3
 }
 
-my $f = Data::Dump::Tree::Foldable.new: get_s(), :title<title>, :does(DDTR::AsciiGlyphs,) ;
+my $f = Data::Dump::Tree::Foldable.new: get_s(), :display_info, :title<title>, :does(DDTR::AsciiGlyphs,) ;
 my $g = $f.get_view ; $g.set: :page_size<10> ;
 
 loop
@@ -82,8 +82,10 @@ for @lines Z 0..* -> ($line, $index)
 
 	for $line.Array 
 		{
+		(my $text = $_[1] ) ~~ s:g/'§'/*/ ;
+
 		color_set($_[0].Int, 0);
-		mvaddstr($index, 5 + $pos, $_[1]) ;
+		mvaddstr($index, 5 + $pos, $text) ;
 		$pos += $_[1].chars ;
 		}
 
@@ -98,7 +100,7 @@ sub debug ($geometry)
 my @lines = get_dump_lines $geometry,
 		:title<Geometry>, :!color, :!display_info, :does(DDTR::AsciiGlyphs,), 
 		:header_filters(
-			 sub (\r, $s, ($, $path, @glyphs, @renderings), (\k, \b, \v, \f, \final, \want_address))
+			 sub ($dumper, \r, $s, ($, $path, @glyphs, @renderings), (\k, \b, \v, \f, \final, \want_address))
 				{
 				# remove foldable object 
 				r = Data::Dump::Tree::Type::Nothing if k ~~ /'$.foldable'/ ;
