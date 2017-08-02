@@ -213,11 +213,20 @@ class Config::DataLang::Refine:auth<github:MARTIMM> {
         $!config-content = slurp($locs[0]);
         try {
           require ::($!data-module);
-          $!config = &$!read-from-text($!config-content);
 
           CATCH {
             default {
               say "Failed to load $!data-module;\n$!";
+            }
+          }
+        }
+
+        try {
+          $!config = &$!read-from-text($!config-content);
+
+          CATCH {
+            default {
+              note .message;
             }
           }
         }
