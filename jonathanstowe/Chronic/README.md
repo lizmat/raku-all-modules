@@ -89,18 +89,15 @@ with that frequency would be more highly optimised then this may allow.
 
 ## Installation
 
-If you have a working Rakudo Perl 6 you can install directly with "panda":
+If you have a working Rakudo Perl 6 you can install directly with *zef*:
 
     # From the source directory
    
-    panda install .
+    zef install .
 
     # Remote installation
 
-    panda install Chronic
-
-Although I haven't tested it, I can't see any reason why "zep" or some
-equally capable package manage that may come along shouldn't work.
+    zef install Chronic
 
 ## Support
 
@@ -114,4 +111,4 @@ This is free software.
 
 Please see the [LICENCE](LICENCE) file in the distribution.
 
-© Jonathan Stowe 2015, 2016
+© Jonathan Stowe 2015, 2016, 2017

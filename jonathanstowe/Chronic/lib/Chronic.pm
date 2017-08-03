@@ -80,7 +80,7 @@ that may require to execute some code asynchronously periodically.
 
 There is a single base Supply that emits an event at a 1 second frequency
 in order to preserve the accuracy of the timings (in testing it may drift
-by up to 59 seconds on a long run due to system latency if it didn't 
+by up to 59 seconds on a long run due to system latency if it didn't
 match the seconds too,) so this may be a problem on a heavily loaded
 single core computer. The sub-minute granularity isn't provided for in
 the interface as it is easily achieved anyway with a basic supply, it
@@ -135,7 +135,7 @@ as in the synopsis for example.
 This is the class that is used to match the L<DateTime> against the frequency
 specification, all of the attributes are an C<any> L<Junction> and by default
 will match any allowed value for the period unit (hence the default is a one
-minute frequency.)  
+minute frequency.)
 
 The constructor allows the unit specifications to provided as Junctions,
 lists of integers, single integer values or strings in the form of cron
@@ -189,7 +189,7 @@ The day of the week (starting on Monday) in the range 1 .. 7
 
 =end pod
 
-class Chronic:ver<0.0.5>:auth<github:jonathanstowe> {
+class Chronic:ver<0.0.6>:auth<github:jonathanstowe> {
     class Description {
 
         sub expand-expression(Str $exp, Range $r) returns Array[Int] {
@@ -198,13 +198,13 @@ class Chronic:ver<0.0.5>:auth<github:jonathanstowe> {
             my ($top, $divisor) = $exp.split('/');
 
             sub explode-item(Str $v) {
-	            if $v.contains('-') {
-		            my ( $min, $max ) = $v.split('-');
-		            my Range $r = $min.Int .. $max.Int;
-		            $r.list;
-	            }
-	            else {
-		            $v;
+                if $v.contains('-') {
+                    my ( $min, $max ) = $v.split('-');
+                    my Range $r = $min.Int .. $max.Int;
+                    $r.list;
+                }
+                else {
+                    $v;
                 }
             }
 
@@ -212,7 +212,7 @@ class Chronic:ver<0.0.5>:auth<github:jonathanstowe> {
                 @values = $r.list;
             }
             else {
-                @values = $top.split(',').flatmap(&explode-item).map(*.Int);
+                @values = $top.split(',').map(&explode-item).flat.map(*.Int);
             }
 
             if $divisor.defined {
@@ -430,7 +430,7 @@ augment class DateTime {
         self.month        ~~ $d.month  &&
         self.day-of-week  ~~ $d.day-of-week;
     }
-    
+
 }
 
 # vim: ft=perl6 expandtab sw=4
