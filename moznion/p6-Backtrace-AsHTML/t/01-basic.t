@@ -9,7 +9,7 @@ my $html;
 
 my sub foo(Str $arg) {
     my $t = Backtrace.new;
-    put $html = $t.as-html;
+    $html = $t.as-html;
 }
 
 my sub bar(Int $arg) {

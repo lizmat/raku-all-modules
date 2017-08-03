@@ -12,6 +12,6 @@
   "test-depends" : [ ],
   "version" : "*",
   "authors" : [
-    "moznion"
+    "moznion", "Wenzel P. P. Peppmeyer"
   ]
 }
