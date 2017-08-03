@@ -24,7 +24,8 @@ multi sub cpan-package-install ( @list, %opts? ) is export {
 
 }
 
-multi sub cpan-package ( @list, %opts ) is export { cpan-package-install @list, %opts  } # alias
+multi sub cpan-package ( @list, %opts? ) is export { cpan-package-install @list, %opts  } # alias
+multi sub cpan-package ( $list, %opts? ) is export { cpan-package-install  $list, %opts  } # alias
 
 multi sub cpan-package-install ( $list, %opts? ) is export {
 
@@ -45,5 +46,4 @@ multi sub cpan-package-install ( $list, %opts? ) is export {
 
 }
 
-multi sub cpan-package ( $list, %opts? ) is export { cpan-package-install  $list, %opts  } # alias
  

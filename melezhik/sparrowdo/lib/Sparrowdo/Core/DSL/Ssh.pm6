@@ -7,7 +7,11 @@ use Sparrowdo::Core::DSL::Bash;
 use Sparrowdo::Core::DSL::Directory;
 use Sparrowdo::Core::DSL::File;
 
-multi sub ssh ( $command, %args? ) is export { 
+multi sub ssh ( %args ) is export { 
+  ssh %args<command>, %args;
+}
+
+multi sub ssh ( $command, %args ) is export { 
 
   directory '/opt/sparrow/.cache/';
 
@@ -48,10 +52,6 @@ multi sub ssh ( $command, %args? ) is export {
 
   file %args<create> if %args<create>:exists;
 
-}
-
-multi sub ssh ( %args ) is export { 
-  ssh %args<command>, %args;
 }
 
 sub scp ( %args ) is export { 

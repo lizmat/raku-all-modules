@@ -8,7 +8,7 @@ multi sub bash ( $command ) is export { bash $command, %() };
 multi sub bash ( $command, $user ) is export { bash $command, %( user => $user ) };
 
 
-multi sub bash ( $command, %opts = () ) is export {
+multi sub bash ( $command, %opts? ) is export {
 
     my $task_name = %opts<description> ?? 
       %opts<description>.substr(0, 50) ~ ' ...' !! 

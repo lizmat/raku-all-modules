@@ -4,7 +4,7 @@ unit module Sparrowdo::Core::DSL::File;
 
 use Sparrowdo;
 
-sub file-create ( $target, %opts = %() ) is export {
+sub file-create ( $target, %opts? ) is export {
 
     my %params = %opts;
 

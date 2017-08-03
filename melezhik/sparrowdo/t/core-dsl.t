@@ -13,6 +13,7 @@ use Sparrowdo::Core::DSL::Service;
 use Sparrowdo::Core::DSL::Bash;
 use Sparrowdo::Core::DSL::Ssh;
 use Sparrowdo::Core::DSL::User;
+use Sparrowdo::Core::DSL::Zef;
 
 plan 1;
 

@@ -17,7 +17,7 @@ sub group-create ( $group_id ) is export {
 
 }
 
-multi sub group ( $group_id, %args ) is export {
+multi sub group ( $group_id, %args? ) is export {
 
     my $action = %args<action>;
 

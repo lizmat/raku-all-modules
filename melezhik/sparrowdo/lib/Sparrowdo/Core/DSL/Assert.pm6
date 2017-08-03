@@ -5,7 +5,7 @@ unit module Sparrowdo::Core::DSL::Assert;
 use Sparrowdo;
 use Sparrowdo::Core::DSL::Bash;
 
-multi sub proc-exists ( $proc, %params ) is export {
+multi sub proc-exists ( $proc, %params? ) is export {
 
     my %args = Hash.new;
 

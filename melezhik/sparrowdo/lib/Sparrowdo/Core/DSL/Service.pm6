@@ -24,7 +24,7 @@ sub service-disable ( $service_id ) is export {
   service $service_id, %( action => 'disable' )
 }
 
-sub service ( $service_id, %args ) is export {
+sub service ( $service_id, %args? ) is export {
 
     my $action = %args<action>;
 

@@ -4,7 +4,7 @@ unit module Sparrowdo::Core::DSL::Directory;
 
 use Sparrowdo;
 
-sub directory-create ( $path, %opts = %() ) is export {
+sub directory-create ( $path, %opts? ) is export {
 
     my %params = %opts;
 
@@ -19,7 +19,7 @@ sub directory-create ( $path, %opts = %() ) is export {
 
 }
 
-multi sub directory ( $path , %opts = %() ) is export { directory-create $path, %opts }
+multi sub directory ( $path , %opts? ) is export { directory-create $path, %opts }
 
 sub directory-delete ( $path ) is export {
 

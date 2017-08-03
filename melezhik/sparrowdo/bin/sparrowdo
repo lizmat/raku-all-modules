@@ -50,9 +50,6 @@ sub MAIN (
   my $conf-ini-file = %*ENV<USER> ?? '/home/' ~ %*ENV<USER> ~ '/sparrowdo.ini' !! ( $sparrow_root ~ '/sparrowdo.ini' );
   my $conf-ini = $conf-ini-file.IO ~~ :e ?? Config::Simple.read($conf-ini-file,:f<ini>) !! Hash.new;
   
-  # dirty hacks to pass command line parameter into sparrowfile context
-  # sorry for not knowing perl6 idioms ... ));
-
   my $verbose_val = $verbose;
 
   $verbose_val = True if $conf-ini<sparrowdo><verbose> && ! $verbose_val;
@@ -64,7 +61,7 @@ sub MAIN (
   my $repo_val = $repo;
 
   $repo_val = $conf-ini<sparrowdo><repo> if $conf-ini<sparrowdo><repo> && ! $repo_val;
-
+  
   
   set_input_params %(  
     Host => $host, 
@@ -81,7 +78,8 @@ sub MAIN (
     NoColor => $no_color,
     NoIndexUpdate => $no_index_update_val,
     SparrowRoot => $sparrow_root,
-    Repo => $repo_val
+    Repo => $repo_val,
+    SparrowhubApi => $conf-ini<sparrowdo><sparrowhub_api>
   );
 
 
@@ -196,6 +194,7 @@ sub ssh_shell ( $cmd ) {
   @bash_commands.push:  'export SPARROW_NO_COLOR=1' if input_params('NoColor');
   @bash_commands.push:  "export SPARROW_CONF_PATH=$sparrow_root/sparrow-cache/sparrow.yaml";
   @bash_commands.push:  'export OUTTHENTIC_CWD=' ~ input_params('Cwd') if input_params('Cwd');
+  @bash_commands.push:  'export sparrow_hub_api_url=' ~ input_params('SparrowhubApi') if input_params('SparrowhubApi');
 
   @bash_commands.push:  $cmd;
 

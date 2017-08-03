@@ -328,6 +328,7 @@ Here is the list of available options:
 * no_index_update
 * verbose
 * repo
+* sparrowhub_api
 
 For example:
 
@@ -467,6 +468,7 @@ This is the list of arguments valid for the input\_params function:
     NoIndexUpdate
     Cwd
     LocalMode
+    SparrowhubApi
 
 See also the [sparrowdo client command line parameters](#sparrowdo-client-command-line-parameters) section.
 

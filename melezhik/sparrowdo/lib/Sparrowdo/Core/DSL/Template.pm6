@@ -4,7 +4,7 @@ unit module Sparrowdo::Core::DSL::Template;
 
 use Sparrowdo;
 
-sub template-create ( $target, %opts = %() ) is export {
+sub template-create ( $target, %opts? ) is export {
 
     my %params = %opts;
 

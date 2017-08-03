@@ -1,3 +1,12 @@
+# 0.0.26 2017-08-03
+
+- Core dsl - minor fixes for subroutines signatures to make it sure it works on recent Rakudo
+
+# 0.0.26 2017-08-03
+
+- Core dsl - make hash parameters optional ( the bug appears on the recent Rakudo )
+- `sparrowhub_api` - `~/sparrowdo.ini` parameter to set SparrowHub API Url 
+
 # 0.0.25 2017-07-25
 
 - Git SCM support 
