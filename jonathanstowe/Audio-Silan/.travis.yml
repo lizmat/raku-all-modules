@@ -1,16 +1,12 @@
 sudo: required
-
 language: perl6
-
 perl6:
     - latest
-
 env:
     PATH=$PATH:$HOME/silan/bin
-
 install:
-    - rakudobrew build-panda
-    - panda installdeps .
+    - rakudobrew build-zef
+    - zef --/test --deps-only install .
     # install silan binary so that Audio::Silan can be tested
     - mkdir -p $HOME/silan
     - sudo apt-get install libsndfile-dev
