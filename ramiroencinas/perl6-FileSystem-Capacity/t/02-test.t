@@ -41,7 +41,7 @@ subtest {
 
 	given $*KERNEL {
 	  when /linux/ { $dir = '/bin' }
-	  when /win32/ { $dir = 'c:\windows' }
+	  when /win32/ { $dir = 'c:\windows\system32\drivers\etc' }
 	}
 
 	ok ( dirsize($dir) >= 0 ), "Size >= 0";
