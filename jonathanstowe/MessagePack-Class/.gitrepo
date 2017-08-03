@@ -6,6 +6,6 @@
 [subrepo]
 	remote = https://github.com/jonathanstowe/MessagePack-Class.git
 	branch = master
-	commit = af1b14c3092738740b5401851bcb2bba7e92a24f
-	parent = 824d6899393c0bc0f39eaa0f97af3dd4fb399317
+	commit = 747979aa839ecc72433c4153fcfecf822b691649
+	parent = 13d3914eb9cec971c819f8b3b62a1a01356a7da6
 	cmdver = 0.4.0
