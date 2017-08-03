@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/XDG-BaseDirectory.git
 	branch = master
-	commit = 1301e86640525d558e4c167d9edb0c13a992c471
-	parent = e73d4a602a8d71f4d79809dc29eaa68cec8c4360
+	commit = 513fbc503603cf95ce5a12549912cf4dacac2d1f
+	parent = b04e0478d1147325a939c5a4f8514dd545d15ab6
 	cmdver = 0.4.0
