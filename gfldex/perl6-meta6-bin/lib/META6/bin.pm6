@@ -130,7 +130,7 @@ multi sub MAIN(Bool :$check, Str :$meta6-file-name = 'META6.json',
 multi sub MAIN(Str :$new-module, Bool :$force, Bool :$skip-git, Bool :$skip-github, :$verbose, :$description = '') {
     my $name = $new-module;
     die RED "To create a module --new-module=<Module::Name::Here> is required." unless $name;
-    my $base-dir = 'perl6-' ~ $name.subst(:g, '::', '-').fc;
+    my $base-dir = %cfg<create><prefix> ~ $name.subst(:g, '::', '-').fc;
     die RED "Directory ⟨$base-dir⟩ already exists, the --force needs to be with you." if $base-dir.IO.e && !$force;
     say BOLD "Creating new module $name under ⟨$base-dir⟩.";
     $base-dir.IO.mkdir or die RED "Cannot create ⟨$base-dir⟩: $!";
@@ -621,6 +621,7 @@ multi sub read-cfg(Mu:U $path) {
     my %h;
     %h<general><timeout> = 60;
     %h<check><disable-url-check> = 0; 
+    %h<create><prefix> = 'perl6-';
     %h<git><timeout> = 60;
     %h<git><protocol> = 'https';
     %h<github><issues><timeout> = 30;

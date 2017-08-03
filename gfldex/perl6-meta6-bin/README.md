@@ -55,7 +55,8 @@ Module skeletons include basic directories, `META6.json`, `t/meta.t`,
     --description="some text" # added both META6.json and README.md
     --base-dir # the $*CWD for all local file operations
 
-Will create a new module project, setup git, push it to github (See Github
+Will create a new module project in a new directory with a name prefixed with
+`create.prefix` (default `perl6-`), setup git, push it to github (See Github
 below). The skeleton from the config dir `~/.meta6` will be applied (see Config
 Dir below).
 
