@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jonathanstowe/Audio-Icecast.git
 	branch = master
-	commit = a95831bdebabd6bbb28bf02c86077fe68577ae50
-	parent = ee197d4f93741ddf18d4670091632fd4ea9a1b32
+	commit = c702f7cd4fd5fa1bc5b75fe5c0c097fa5d1f98b2
+	parent = 096b00c14a08dd39d431a470313b3cfe9107b935
 	cmdver = 0.4.0
