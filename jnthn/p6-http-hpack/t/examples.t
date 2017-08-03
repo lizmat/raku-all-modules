@@ -338,4 +338,13 @@ is-deeply HTTP::HPACK::Encoder.new.encode-headers([ header(':method', 'GET') ]),
         'encoded third response header example (huffman coded)';
 }
 
+# Header table size update
+{
+    my $decoder = HTTP::HPACK::Decoder.new;
+    $decoder.decode-headers(Buf.new(0x3f, 0x9a, 0x0a));
+    is $decoder.dynamic-table-limit, 1337, 'Dynamic table size was increased';
+    $decoder.decode-headers(Buf.new(42));
+    is $decoder.dynamic-table-limit, 10, 'Dynamic table size was decreased';
+}
+
 done-testing;

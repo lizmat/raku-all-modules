@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/jnthn/p6-http-hpack.git
 	branch = master
-	commit = 3d2ea08bd86996bc03074b7b0f6bc21801f760d2
-	parent = 4f37132a8153f00c40e5970f65e20e06f23cde35
-	cmdver = 0.2.3
+	commit = 955c2b0e384bfcdcbee0577084c12830d4e24b6f
+	parent = 5a0606addb78f7c386472b3e85b4581d2a5f0b84
+	cmdver = 0.4.0

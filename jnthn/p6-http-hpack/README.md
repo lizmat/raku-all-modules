@@ -66,7 +66,6 @@ processed in the order they are being received or transmitted anyway.
 
 ## Known issues
 
-* The dynamic table size change instruction is not yet implemented.
 * The Huffman code termination handling has not been validated to be completely
   up to specification, and so may fail to signal errors in some cases where the
   Huffman code is terminated in a bogus way.

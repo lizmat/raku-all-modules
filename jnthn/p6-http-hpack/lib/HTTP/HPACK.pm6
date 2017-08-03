@@ -286,7 +286,15 @@ class HTTP::HPACK::Decoder does HTTP::HPACK::Tables {
                 self!add-to-dynamic-table($header);
             }
             elsif $header-start +& 32 {
-                die "Dynamic Table Size Update NYI";
+                given decode-int($packed, 5, $idx) {
+                    my $old = $!dynamic-table-limit;
+                    $!dynamic-table-limit = $_;
+                    unless $old <= $!dynamic-table-limit {
+                        while self.dynamic-table-size > $!dynamic-table-limit {
+                            @!dynamic-table.pop;
+                        }
+                    }
+                }
             }
             elsif $header-start +& 16 {
                 given self!decode-literal-header-field($packed, 4, $idx) {
