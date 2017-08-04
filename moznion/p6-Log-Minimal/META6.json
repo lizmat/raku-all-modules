@@ -1,22 +1,24 @@
 {
-  "name" : "Log::Minimal",
-  "license" : "Artistic-2.0",
-  "source-url" : "git://github.com/moznion/p6-Log-Minimal.git",
-  "perl" : "v6",
+  "authors" : [
+    "moznion"
+  ],
   "build-depends" : [ ],
-  "provides" : {
-    "Log::Minimal" : "lib/Log/Minimal.pm6"
-  },
   "depends" : [
     "Terminal::ANSIColor",
     "Grammar::Tracer"
   ],
   "description" : "Minimal and customizable logger for perl6",
+  "license" : "Artistic-2.0",
+  "name" : "Log::Minimal",
+  "perl" : "6.c",
+  "provides" : {
+    "Log::Minimal" : "lib/Log/Minimal.pm6"
+  },
+  "resources" : [ ],
+  "source-url" : "git://github.com/moznion/p6-Log-Minimal.git",
+  "tags" : [ ],
   "test-depends" : [
     "IO::Capture::Simple"
   ],
-  "version" : "*",
-  "authors" : [
-    "moznion"
-  ]
+  "version" : "0.0.1"
 }

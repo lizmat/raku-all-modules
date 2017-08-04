@@ -2,9 +2,9 @@ language: perl6
 perl6:
   - latest
 install:
-  - rakudobrew build-panda
-  - panda --notests installdeps .
+  - rakudobrew build-zef
+  - zef install --/test --depsonly .
 script:
-  - PERL6LIB=lib prove -v -r --exec=perl6 t/
+  - zef test .
 sudo: false
 

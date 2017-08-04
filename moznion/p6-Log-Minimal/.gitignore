@@ -3,3 +3,5 @@
 /src/Makefile
 /.panda-work
 lib/.precomp
+Log-Minimal-*
+
