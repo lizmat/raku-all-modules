@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ramiroencinas/perl6-Package-Updates.git
 	branch = master
-	commit = 56aa05e12bcc5ede8abf5cf6c651c06fd02bf996
-	parent = c484758ef82c2efe275c3a7cb08662d66137a348
+	commit = 74a27b6bb5173ac5056ad71df5f9d1b24bca3eef
+	parent = eefbcdc747dd9e406e48af4c309398c05c58500a
 	cmdver = 0.4.0
