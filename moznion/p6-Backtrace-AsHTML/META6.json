@@ -1,17 +1,20 @@
 {
-  "name" : "Backtrace::AsHTML",
-  "license" : "Artistic-2.0",
-  "source-url" : "git://github.com/moznion/p6-Backtrace-AsHTML.git",
-  "perl" : "6",
+  "authors" : [
+    "moznion",
+    "Wenzel P. P. Peppmeyer"
+  ],
   "build-depends" : [ ],
+  "depends" : [ ],
+  "description" : "Displays back trace in HTML",
+  "license" : "Artistic-2.0",
+  "name" : "Backtrace::AsHTML",
+  "perl" : "6",
   "provides" : {
     "Backtrace::AsHTML" : "lib/Backtrace/AsHTML.pm6"
   },
-  "depends" : [ ],
-  "description" : "Displays back trace in HTML",
+  "resources" : [ ],
+  "source-url" : "git://github.com/moznion/p6-Backtrace-AsHTML.git",
+  "tags" : [ ],
   "test-depends" : [ ],
-  "version" : "*",
-  "authors" : [
-    "moznion", "Wenzel P. P. Peppmeyer"
-  ]
+  "version" : "0.0.1"
 }

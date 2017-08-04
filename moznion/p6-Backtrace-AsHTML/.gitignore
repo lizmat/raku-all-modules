@@ -2,3 +2,6 @@
 /src/*.o
 /src/Makefile
 /.panda-work
+Backtrace-AsHTML-*
+lib/.precomp/
+
