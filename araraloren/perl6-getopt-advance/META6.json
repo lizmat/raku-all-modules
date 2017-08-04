@@ -1,11 +1,14 @@
 {
     "perl"        : "6.c",
     "name"        : "Getopt::Advance",
-    "version"     : "0.0.5",
+    "version"     : "0.0.6",
     "license"     : "MIT",
     "description" : "Advanced command line parse module for perl6",
     "depends"     : [
         "Terminal::Table"
+    ],
+    "test-depends": [
+        "Test::META"
     ],
     "tags": [
         "getopt",

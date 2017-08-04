@@ -323,7 +323,7 @@ class OptionSet {
         self;
     }
 
-    multi method append(::?CLASS::D: *@optpairs where all(@optpairs) ~~ Pair) of ::?CLASS {
+    multi method append(::?CLASS::D: *@optpairs where all(@optpairs) ~~ Pair, :$radio where :!so, :$multi where :!so) of ::?CLASS {
         for @optpairs {
             @!main.push($!types.create(.key, .value));
         }
