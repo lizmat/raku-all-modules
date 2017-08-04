@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ugexe/zef.git
 	branch = master
-	commit = 40bf161c9691bd1b39fa630a8169ec19657a8a6f
-	parent = 6c107767336a5b6ea97ded882d6f9dba5497300e
+	commit = 33c18c90000df37df15e7612100bdbf0ebfd6799
+	parent = 88ecd62c29dff593e6d0e78c0399b823e9054226
 	cmdver = 0.4.0
