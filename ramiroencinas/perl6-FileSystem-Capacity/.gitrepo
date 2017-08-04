@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/ramiroencinas/perl6-FileSystem-Capacity.git
 	branch = master
-	commit = 5dc9c489e7d682b2571ae1584f3051ac8884fd14
-	parent = 48e6cac14368ea0b8fbaf449064b27fb11b62773
+	commit = 5dc0a9c53119414e0112f679aa8add8b9b90cc12
+	parent = 006d4ca7161d98e612284d9245a014ca3214ba7e
 	cmdver = 0.4.0

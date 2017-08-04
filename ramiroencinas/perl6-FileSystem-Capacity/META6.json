@@ -2,7 +2,7 @@
   "perl" : "6.c",
   "name" : "FileSystem::Capacity",
   "license" : "Artistic-2.0",
-  "version" : "*",
+  "version" : "1.0.0",
   "description" : "Provides filesystem capacity information.",
   "authors" : [ "Ramiro Encinas Alarza" ],
   "provides" : {
