@@ -6,6 +6,5 @@ sudo: false
 perl6:
   - latest
 install:
-  - rakudobrew build-panda
-  - panda --notests installdeps .
-  - panda --notests installdeps .
+  - rakudobrew build-zef
+  - zef --/test --deps-only install .
