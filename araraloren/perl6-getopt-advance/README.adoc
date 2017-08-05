@@ -12,6 +12,7 @@
 :lang: en
 
 image:https://travis-ci.org/araraloren/perl6-getopt-advance.svg?branch=master["Build Status", link="https://travis-ci.org/araraloren/perl6-getopt-advance"]
+image:https://ci.appveyor.com/api/projects/status/1aknogb99475ak53/branch/master?svg=true["Windows Build Status", link="https://ci.appveyor.com/api/projects/status/1aknogb99475ak53?svg=true"]
 
 An advance command line parse tool replace Getopt::Kinoko
 
@@ -242,6 +243,10 @@ When `$x-style` is True, x-style have priority over unix-style.
 link:doc/Getopt/Advance.pod[Getopt-Advance]
 
 == Example
+
+=== App::snippet
+
+link:https://github.com/araraloren/perl6-app-snippet[an app used Getopt::Advance]
 
 === find-file
 
