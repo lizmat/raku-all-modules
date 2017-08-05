@@ -244,7 +244,7 @@ role Interface {
 #####################################################
 ## helper sub
 #####################################################
-sub prompt-input-code(Str $prompt, Str $end, Str $readline-prompt = "") of Array is export {
+sub promptInputCode(Str $prompt, Str $end, Str $readline-prompt = "") of Array is export {
 	my @code = [];
 	my $readline = Readline.new;
 

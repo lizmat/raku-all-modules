@@ -32,7 +32,7 @@ class App::snippet::Interface::C does Interface is export {
 Please input your code, make sure your code correct.
 Enter $!optset<end> input.
 EOF
-                    @incode.append(&prompt-input-code($prompt, $optset<end>));
+                    @incode.append(&promptInputCode($prompt, $optset<end>));
                 } else {
                     @incode.push($optset<main>);
                     @incode.push('{');
