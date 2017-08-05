@@ -14,6 +14,7 @@ multi sub zef ( $pkg, %args? ) is export {
 
   $zef-cmd ~= ' --depsonly' if %args<depsonly>;
   $zef-cmd ~= ' --force' if %args<force>;
+  $zef-cmd ~= ' --/test' if %args<notest>;
 
   $zef-cmd ~= " install $pkg";
 

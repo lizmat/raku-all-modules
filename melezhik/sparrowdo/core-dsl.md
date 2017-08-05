@@ -13,7 +13,7 @@ Sparrowdo core-dsl functions spec.
 * [Files](#files)
 * [Copy local files](#copy-local-files)
 * [Templates](#templates)
-* [Bash commands](#bash)
+* [Bash commands](#bash-commands)
 * [Source control](#source-control)
   * [Git](#git)
 * [Ssh commands](#ssh)
@@ -110,6 +110,9 @@ Examples:
 
     # User's install
     zef 'DBIish', %( user => 'me' );
+
+    # Skip tests
+    zef 'DBIish', %( notest => True );
 
     # Only dependencies, inside CWD
     zef '.', %( depsonly => True );
