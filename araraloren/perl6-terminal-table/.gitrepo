@@ -1,0 +1,11 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/araraloren/perl6-terminal-table.git
+	branch = master
+	commit = a163ac360e8b4f22c5d924c1e28bee73e1e36090
+	parent = 1d6f77165ab1bd77a028c1301ac7f4e4d7196b11
+	cmdver = 0.4.0
