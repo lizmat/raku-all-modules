@@ -30,7 +30,7 @@ class XML::XPath {
         unless $to-list {
             return unwrap $result, :to-nil(True);
         }
-        return $result;
+        return $result.flat;
     }
 
     method parse-xpath(Str $xpath) {

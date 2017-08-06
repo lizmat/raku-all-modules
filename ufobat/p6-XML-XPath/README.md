@@ -1,6 +1,7 @@
 # XML::XPath
 
 [![Build Status](https://travis-ci.org/ufobat/p6-XML-XPath.png)](https://travis-ci.org/ufobat/p6-XML-XPath)
+[![Build status](https://ci.appveyor.com/api/projects/status/github/ufobat/p6-XML-XPath?svg=true)](https://ci.appveyor.com/project/ufobat/p6-XML-XPath/branch/master)
 
 A Perl 6 Library for parsing and evaluating XPath Statements.
 

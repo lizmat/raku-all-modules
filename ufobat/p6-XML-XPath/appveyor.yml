@@ -14,6 +14,7 @@ install:
   - rakudobrew build zef
   - cd %APPVEYOR_BUILD_FOLDER%
   - zef install Test::META
+  - SET AUTHOR_TESTING=1
   - zef --verbose --depsonly install .
 
 test_script:
