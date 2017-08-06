@@ -23,12 +23,12 @@ class Log::Any {
 	}
 
 	# Log::Any.add
-	multi method add( Log::Any:U: Log::Any::Adapter $a, Str :$pipeline = '_default', :$filter, :$formatter, :$continue-on-match ) {
+	multi method add( Log::Any:U: Log::Any::Adapter $a, Str :$pipeline = '_default', :$filter, :$formatter = Nil, :$continue-on-match ) {
 		return self.new.add( $a, :$pipeline, :$filter, :$formatter, :$continue-on-match );
 	}
 
 	# Log::Any.new.add
-	multi method add( Log::Any:D: Log::Any::Adapter $a, Str :$pipeline = '_default', :$filter, :$formatter, :$continue-on-match ) {
+	multi method add( Log::Any:D: Log::Any::Adapter $a, Str :$pipeline = '_default', :$filter, :$formatter = Nil, :$continue-on-match ) {
 		my Log::Any::Filter $local-filter;
 		my Log::Any::Formatter $local-formatter;
 
@@ -48,8 +48,11 @@ class Log::Any {
 			when Log::Any::Formatter {
 				$local-formatter = $formatter;
 			}
+			when Nil {
+				# No formatter specified
+			}
 			default {
-				$local-formatter = Log::Any::FormatterBuiltIN.new;
+				die 'Unable to use formatter ' ~ $formatter.gist;
 			}
 		}
 
@@ -249,8 +252,11 @@ Dies if severity is unknown.
 	}
 
 	# Dump Log::Any pipelines
-	method gist {
+	multi method gist( Log::Any:D: ) {
 		return 'Log::Any.new(pipelines => ' ~ %!pipelines.gist ~ ', severities => ' ~ %!severities.gist ~ ')';
 	}
 
+	multi method gist( Log::Any:U: ) {
+		return Log::Any.new.gist;
+	}
 }

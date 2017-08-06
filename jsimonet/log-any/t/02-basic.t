@@ -9,7 +9,7 @@ This test file tests if basic methods can be called, if the formatter is working
 
 use Test;
 
-plan 30;
+plan 32;
 
 use Log::Any;
 
@@ -58,3 +58,6 @@ Log::Any.add( :pipeline('continue-on-match'), $b );
 Log::Any.info( :pipeline('continue-on-match'), 'info should log twice' );
 
 ok $a.logs[*-1] === $b.logs[*-1] === 'info should log twice', 'continue on match';
+
+ok Log::Any.gist, 'Log::Any.gist on undefined instance.';
+ok Log::Any.new.gist, 'Log::Any.new.gist';

@@ -2,11 +2,10 @@ use v6.c;
 
 use Test;
 
-plan 3;
+plan 5;
 
 use Log::Any;
 use Log::Any::Adapter;
-
 
 class AdapterDebug is Log::Any::Adapter {
 	has @.logs;
@@ -17,6 +16,10 @@ class AdapterDebug is Log::Any::Adapter {
 }
 
 my $a = AdapterDebug.new;
+
+dies-ok { Log::Any.add( $a, :formatter( 42 ) ) }, 'Cannot use an integer as a formatter.';
+dies-ok { Log::Any.add( $a, :formatter( class Foo {} ) ) }, 'Cannot use a class not inheriting Log::Any::Formatter.';
+
 # Formatter test
 # test-2 pipeline
 $a.logs = [];
