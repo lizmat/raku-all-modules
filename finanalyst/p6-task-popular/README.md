@@ -36,40 +36,40 @@ This list uses [Citation Indices](http://finanalyst.github.io/ModuleCitation/) t
 
 | Module Name | Recursive Citation Index | Module Description |
 |---| :---: | :--- |
-| JSON::Fast | 33.2 | A naive, fast json parser and serializer; drop-in replacement for JSON::Tiny |
-| MIME::Base64 | 26.25 | Encoding and decoding Base64 ASCII strings |
-| File::Directory::Tree | 25.48 | Port of File::Path::Tiny - create and delete directory trees |
-| File::Temp | 24.71 | Create temporary files & directories |
-| HTTP::Status | 22.01 | Get the text message associated with an HTTP status code |
-| URI | 22.01 | A URI implementation using Perl 6 grammars to implement RFC 3986 BNF |
-| JSON::Tiny | 18.53 | A minimal JSON (de)serializer |
-| Encode | 14.67 | Character encodings in Perl 6 |
-| DateTime::Parse | 14.29 | DateTime parser |
-| JSON::Name | 14.29 | Provides a trait to store an alternative JSON Name |
-| HTTP::UserAgent | 13.9 | Web user agent |
-| JSON::Unmarshal | 13.13 | Turn JSON into objects |
-| JSON::Marshal | 12.74 | Simple serialisation of objects to JSON |
-| JSON::Class | 11.97 | role to provide simple serialisation/deserialisation of objects to/from JSON |
-| Terminal::ANSIColor | 11.97 | Colorize terminal output |
-| XML | 11.97 | A full-featured, pure-perl XML library (parsing, manipulation, emitting, queries, etc.) |
-| OpenSSL | 11.58 | OpenSSL bindings |
-| Digest | 10.04 | Pure perl6 implementation of digest algorigthms. |
-| File::Find | 9.65 | File::Find for Perl 6 |
-| META6 | 9.27 | Work with Perl 6 META files |
-| PSGI | 9.27 | A PSGI helper library. |
-| Test::META | 8.49 | Test a distributions META file |
-| File::Which | 8.11 | Cross platform Perl 6 executable path finder (aka which on UNIX) |
-| IO::Socket::SSL | 8.11 | IO::Socket::SSL for Perl 6 using OpenSSL |
-| DateTime::Format | 7.72 | strftime and other DateTime formatting libraries |
-| LibraryMake | 7.72 | An attempt to simplify native compilation |
-| HTTP::Easy | 6.95 | HTTP servers made easy, including PSGI |
-| Digest::HMAC | 6.56 | Generic HMAC implementation |
-| JSON::Pretty | 6.56 | A minimal JSON (de)serializer that produces easily readable JSON |
-| URI::Encode | 6.18 | Encode and decode URIs according to RFC 3986 |
+| JSON::Fast | 34.46 | A naive, fast json parser and serializer; drop-in replacement for JSON::Tiny |
+| MIME::Base64 | 27.34 | Encoding and decoding Base64 ASCII strings |
+| File::Directory::Tree | 25.47 | Port of File::Path::Tiny - create and delete directory trees |
+| File::Temp | 24.72 | Create temporary files & directories |
+| HTTP::Status | 22.1 | Get the text message associated with an HTTP status code |
+| URI | 22.1 | A URI implementation using Perl 6 grammars to implement RFC 3986 BNF |
+| JSON::Tiny | 18.35 | A minimal JSON (de)serializer |
+| JSON::Name | 15.36 | Provides a trait to store an alternative JSON Name |
+| Encode | 14.98 | Character encodings in Perl 6 |
+| DateTime::Parse | 14.61 | DateTime parser |
+| HTTP::UserAgent | 14.23 | Web user agent |
+| JSON::Unmarshal | 14.23 | Turn JSON into objects |
+| JSON::Marshal | 13.86 | Simple serialisation of objects to JSON |
+| Terminal::ANSIColor | 13.86 | Colorize terminal output |
+| JSON::Class | 13.11 | role to provide simple serialisation/deserialisation of objects to/from JSON |
+| OpenSSL | 12.36 | OpenSSL bindings |
+| XML | 11.99 | A full-featured, pure-perl XML library (parsing, manipulation, emitting, queries, etc.) |
+| Digest | 10.49 | Pure perl6 implementation of digest algorigthms. |
+| File::Find | 10.11 | File::Find for Perl 6 |
+| META6 | 10.11 | Work with Perl 6 META files |
+| Test::META | 9.36 | Test a distributions META file |
+| IO::Socket::SSL | 8.99 | IO::Socket::SSL for Perl 6 using OpenSSL |
+| PSGI | 8.99 | A PSGI helper library. |
+| File::Which | 8.24 | Cross platform Perl 6 executable path finder (aka which on UNIX) |
+| LibraryMake | 8.24 | An attempt to simplify native compilation |
+| DateTime::Format | 7.49 | strftime and other DateTime formatting libraries |
+| Digest::HMAC | 7.12 | Generic HMAC implementation |
+| HTTP::Easy | 6.74 | HTTP servers made easy, including PSGI |
+| JSON::Pretty | 6.74 | A minimal JSON (de)serializer that produces easily readable JSON |
+| URI::Encode | 6.74 | Encode and decode URIs according to RFC 3986 |
 
 ## Date of Compilation
 
-This list was compiled on 2017-07-03.
+This list was compiled on 2017-08-06.
 
 ## Problems
 
