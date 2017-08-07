@@ -893,53 +893,26 @@ class Document does Associative {
     @!values = ();
     @!encoded-entries = ();
 
-    # Document decoding start: init index
+    # document decoding start: init index
     $!index = 0;
 
-    # Decode the document, then wait for any started parallel tracks
-    self!decode-document;
-
-#note " ";
-    self!process-decode-promises;
-#`{{
-    if %!promises.elems {
-
-      loop ( my $idx = 0; $idx < @!keys.elems; $idx++) {
-        my $key = @!keys[$idx];
-#note "$*THREAD.id() Prom from $key, $idx, {%!promises{$key}:exists}";
-
-        if %!promises{$key}:exists {
-          # Return the Buffer slices in each entry so it can be
-          # concatenated again when encoding
-note "$*THREAD.id() Before wait for result of $key";
-          @!encoded-entries[$idx] = %!promises{$key}.result;
-note "$*THREAD.id() After wait for $key";
-        }
-      }
-
-#      await(%!promises.values);
-
-      %!promises = ();
-    }
-}}
-  }
-
-  #-----------------------------------------------------------------------------
-  method !decode-document ( --> Nil ) {
-
-    # Get the size of the (nested-)document
-    #
+    # decode the document, then wait for any started parallel tracks
+    # first get the size of the (nested-)document
     my Int $doc-size = decode-int32( $!encoded-document, $!index);
+
+    # step to the document content
     $!index += BSON::C-INT32-SIZE;
 
+    # decode elements until end of doc (byte 0x00)
     while $!encoded-document[$!index] !~~ 0x00 {
 
       self!decode-element;
     }
 
+    # step over the last byte: index should now be the doc size
     $!index++;
 
-    # Check size of document with final byte location
+    # check size of document with final byte location
     die X::BSON::Parse-document.new(
       :operation<decode-document()>,
       :error(
@@ -947,6 +920,9 @@ note "$*THREAD.id() After wait for $key";
             ') does not match with index(', $!index, ')'
       )
     ) if $doc-size != $!index;
+
+    # wait for promises to end for this document
+    self!process-decode-promises;
   }
 
   #-----------------------------------------------------------------------------

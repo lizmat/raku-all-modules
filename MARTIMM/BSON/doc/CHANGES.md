@@ -6,7 +6,6 @@ change at any time. The public API should not be considered stable*.
   * Quick fix to read a timestamp as an unsigned 64 bit integer. will become an object later. timestamp really is an object of 2 integers; an increment and a timestamp
 * 0.9.34
   * All single die statement replaced by `die X::BSON::Parse-document`.
-  * The exception objects are subject to change into a simpler class: one instead of several.
 * 0.9.33
   * Refactored code for decimal128 to other project.
   * Binary coded decimal (BCD) implemented as one digit per byte (bcd8)

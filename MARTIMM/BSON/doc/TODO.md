@@ -10,7 +10,7 @@
 * Tests some more exceptions of Binary
 * Better checks for wrong sizes of buffers along every type encountered
 * Modify timestamp (en/de)coding to be an object
-* use throws-like in test 300
+* The exception objects are subject to change into a simpler class: one instead of several. This will become X::BSON.
 
 
 

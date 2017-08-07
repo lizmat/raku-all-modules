@@ -218,8 +218,7 @@ sub encode-double-emulated ( Num:D $r is copy --> Buf ) is export {
     }
 
     when NaN {
-      # Choose only one number out of the quiet NaN range
-      #
+      # choose only one number out of the quiet NaN range
       $a ~= Buf.new( 0 xx 6, 0xF8, 0x7F);
     }
 
@@ -227,17 +226,15 @@ sub encode-double-emulated ( Num:D $r is copy --> Buf ) is export {
       my Int $sign = $r.sign == -1 ?? -1 !! 1;
       $r *= $sign;
 
-      # Get proper precision from base(2). Adjust the exponent bias for
+      # get proper precision from base(2). Adjust the exponent bias for
       # this.
-      #
       my Int $exp-shift = 0;
       my Int $exponent = 1023;
       my Str $bit-string = $r.base(2);
 
       $bit-string ~= '.' unless $bit-string ~~ m/\./;
 
-      # Smaller than one
-      #
+      # smaller than one
       if $bit-string ~~ m/^0\./ {
 
         # Normalize, Check if a '1' is found. Possible situation is
