@@ -107,7 +107,7 @@ If an element is not defined, the value from the option *undef* is assigned to t
 
 White-spaces in elements are replaced with simple spaces: `$_ =~ s:g/\s/ /`. Invalid characers (Unicode character proterty `Other`) are removed: `$_=~ s:g/\p{C}//`.
 
-The elements are stringified with `gist`. If the length (print columns) of an element is greater than the width of the screen the element is cut and three dots are attached.
+If the length (print columns) of an element is greater than the width of the screen the element is cut and three dots are attached.
 
 OPTIONS
 =======

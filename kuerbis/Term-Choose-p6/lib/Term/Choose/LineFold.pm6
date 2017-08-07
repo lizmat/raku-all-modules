@@ -5,19 +5,18 @@ use Terminal::WCWidth;
 
 
 sub to-printwidth( $str, Int $avail_w, Bool $dot=False ) is export( :to-printwidth ) {
-    # expects a $str with no invalid characters (s:g/<:C>//)
-    # hence no check if wcwidth returns -1
+    # no check if wcwidth returns -1 because no invalid characters (s:g/<:C>//)
     my $res = 0;
     my @graph;
     my %cache;
     for $str.NFC {
         my \char = .chr;
         my $w;
-        if %cache{char}:exists {
-            $w := %cache{char};
+        if %cache.EXISTS-KEY: char {
+            $w := %cache.AT-KEY: char;
         }
         else {
-            $w := %cache{char} := wcwidth( $_ );
+            $w := %cache.BIND-KEY: char, wcwidth( $_ );
         }
         if $res + $w > $avail_w {
             if $dot && $avail_w > 5 {
@@ -31,7 +30,7 @@ sub to-printwidth( $str, Int $avail_w, Bool $dot=False ) is export( :to-printwid
             }
             return @graph.join, $res;
         }
-        $res += $w;
+        $res = $res + $w;
         @graph.push: char;
     }
     return @graph.join, $res;
@@ -41,11 +40,7 @@ sub to-printwidth( $str, Int $avail_w, Bool $dot=False ) is export( :to-printwid
 sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is copy ) is export( :line-fold ) {
     for $init_tab, $subseq_tab {
         if $_ {
-            $_.=subst( / \s /,  ' ', :g );
-            $_.=subst( / <:C> /, '', :g );
-            if $_.chars > $avail_w / 4 {
-                $_ = to-printwidth( $_, $avail_w div 2, False ).[0];
-            }
+            $_ = to-printwidth( $_.=subst( / \s /,  ' ', :g ).=subst( / <:C> /, '', :g ),  $avail_w div 2, False ).[0];
         }
         else {
             $_ = '';
@@ -58,48 +53,34 @@ sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is cop
     }
     my Str @lines;
 
-    ROW: for $string.lines -> $row {
+    for $string.lines -> $row {
         my Str @words = $row.trim-trailing.split( / <?after \S > <?before \s > / );
         my Str $line = $init_tab;
 
-        WORD: for 0 .. @words.end -> $i {
-            my Str $tab_and_word;
-            if $i == 0 {
-                $tab_and_word = $init_tab ~ @words[$i];
+        for 0 .. @words.end -> $i {
+            if print-columns( $line ~ @words[$i] ) <= $avail_w {
+                $line ~= @words[$i];
             }
             else {
-                $tab_and_word = $subseq_tab ~ @words[$i].subst( / ^ \s+ /, '' );
-            }
-            if print-columns( $tab_and_word ) > $avail_w {
-                if $i != 0 {
-                    @lines.push( $line );
-                }
-                my Str $tab_and_cut_word = to-printwidth( $tab_and_word, $avail_w, False ).[0];
-                my Str $remainder = $tab_and_word.substr( $tab_and_cut_word.chars );
-                while ( $remainder.chars ) {
-                    @lines.push( $tab_and_cut_word );
-                    $tab_and_word = $subseq_tab ~ $remainder;
-                    $tab_and_cut_word = to-printwidth( $tab_and_word, $avail_w, False ).[0];
-                    $remainder = $tab_and_word.substr( $tab_and_cut_word.chars );
-                }
-                if $i == @words.end {
-                    @lines.push( $tab_and_cut_word );
+                my Str $tmp;
+                if $i == 0 {
+                    $tmp = $init_tab ~ @words[$i];;
                 }
                 else {
-                    $line = $tab_and_cut_word;
+                    @lines.push: $line;
+                    $tmp = $subseq_tab ~ @words[$i].subst: / ^ \s+ /, '';
+                }
+                $line = to-printwidth( $tmp, $avail_w, False ).[0];
+                my Str $remainder = $tmp.substr: $line.chars;
+                while $remainder.chars {
+                    @lines.push: $line;
+                    $tmp = $subseq_tab ~ $remainder;
+                    $line = to-printwidth( $tmp, $avail_w, False ).[0];
+                    $remainder = $tmp.substr: $line.chars;
                 }
             }
-            else {
-                if print-columns( $line ~ @words[$i] ) <= $avail_w {
-                    $line ~= @words[$i];
-                }
-                else {
-                    @lines.push( $line );
-                    $line = $subseq_tab ~ @words[$i].subst( / ^ \s+ /, '' );
-                }
-                if $i == @words.end {
-                    @lines.push( $line );
-                }
+            if $i == @words.end {
+                @lines.push: $line;
             }
         }
     }
@@ -109,17 +90,16 @@ sub line-fold( $str, Int $avail_w, Str $init_tab is copy, Str $subseq_tab is cop
 
 
 sub print-columns( $str ) returns Int is export( :print-columns ) {
-    # expects a $str with no invalid characters (s:g/<:C>//)
-    # hence no check if wcwidth returns -1
+    # no check if wcwidth returns -1 because no invalid characters (s:g/<:C>//)
     my %cache;
     my Int $res = 0;
     for $str.NFC {
         my \char = .chr;
-        if %cache{char}:exists {
-            $res += %cache{char};
+        if %cache.EXISTS-KEY: char {
+            $res = $res + %cache.AT-KEY: char;
         }
         else {
-            $res += %cache{char} := wcwidth( $_ );
+            $res = $res + %cache.BIND-KEY: char, wcwidth( $_ );
         }
     }
     $res;

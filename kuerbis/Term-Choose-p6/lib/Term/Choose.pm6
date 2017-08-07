@@ -1,5 +1,5 @@
 use v6;
-unit class Term::Choose:ver<1.0.1>;
+unit class Term::Choose:ver<1.0.2>;
 
 use NCurses;
 use Term::Choose::NCursesAdd;
@@ -117,7 +117,7 @@ sub _valid_options {
     };
 };
 
-sub _validate_options ( %opt, Int $list_end? ) {
+sub _validate_options ( %opt ) {
     my $valid = _valid_options(); # %
     for %opt.kv -> $key, $value {
         when $valid{$key}:!exists {
@@ -126,18 +126,13 @@ sub _validate_options ( %opt, Int $list_end? ) {
         when ! $value.defined {
             next;
         }
-        when $valid{$key} eq 'List' {
-            die "$key => {$value.perl} is not an List."   if ! $value.isa( List );
-            die "$key => invalid list element"            if $value.grep( { $_ !~~ UInt } );
-            if $key eq 'lf' {
-                die "$key => too many list elemnts."      if $value.elems > 2;
-            }
-            else {
-                die "$key => value out of range."         if $list_end.defined && $value.any > $list_end;
-            }
-        }
         when $valid{$key} eq 'Str' {
-             die "$key => {$value.perl} is not a string." if ! $value.isa( Str );
+             next;
+        }
+        when $valid{$key} eq 'List' {
+            die "$key => {$value.perl} is not an List." if ! $value.isa( List );
+            die "$key => invalid list element"          if $value.grep( { $_ !~~ UInt } );
+            die "$key => too many list elemnts."        if $key eq 'lf' and $value.elems > 2;
         }
         default {
             when ! $value.isa( Int ) {
@@ -181,7 +176,7 @@ method !_prepare_new_copy_of_list {
                 do for $range[0] ..^ $range[1] -> $i {
                     if ! @!orig_list[$i].defined {
                         my ( $str, $len ) := to-printwidth(
-                            %!o<undef>.subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ).gist,
+                            %!o<undef>.subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ),
                             $!avail_w,
                             True
                         );
@@ -189,7 +184,7 @@ method !_prepare_new_copy_of_list {
                     }
                     elsif @!orig_list[$i] eq '' {
                         my ( $str, $len ) := to-printwidth(
-                            %!o<empty>.subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ).gist,
+                            %!o<empty>.subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ),
                             $!avail_w,
                             True
                         );
@@ -197,7 +192,7 @@ method !_prepare_new_copy_of_list {
                     }
                     else {
                         my ( $str, $len ) := to-printwidth(
-                            @!orig_list[$i].subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ).gist,
+                            @!orig_list[$i].subst( / \s /, ' ', :g ).subst( / <:C> /, '',  :g ),
                             $!avail_w,        #                        #
                             True
                         );
@@ -249,10 +244,12 @@ method !_init_term {
     curs_set( 0 );
 }
 
+
 method !_end_term {
     return if ! $!reset_win;
     endwin();
 }
+
 
 method !_choose ( @!orig_list, %!o, Int $multiselect ) {
     if ! @!orig_list.elems {
@@ -261,7 +258,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
     CATCH {
         endwin();
     }
-    _validate_options( %!o, @!orig_list.end );
+    _validate_options( %!o );
     for %!defaults.kv -> $key, $value {
         %!o{$key} //= $value;
     }
@@ -321,7 +318,8 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                     }
                     else {
                         $!row_top    = $!row_bottom + 1;
-                        $!row_bottom = min $!row_bottom + $!avail_h, $!rc2idx.end;
+                        $!row_bottom = $!row_bottom + $!avail_h;
+                        $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
                         self!_wr_screen;
                     }
                 }
@@ -363,7 +361,8 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                         }
                         else {
                             $!row_top    = $!row_bottom + 1;
-                            $!row_bottom = min $!row_bottom + $!avail_h, $!rc2idx.end;
+                            $!row_bottom = $!row_bottom + $!avail_h;
+                            $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
                             self!_wr_screen;
                         }
                     }
@@ -388,7 +387,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                         }
                         else {
                             $!row_bottom = $!row_top - 1;
-                            $!row_top    = $!row_top - $!avail_h;
+                            $!row_top    = $!row_top - $!avail_h; #
                             $!row_top    = 0 if $!row_top < 0;
                             self!_wr_screen;
                         }
@@ -422,7 +421,7 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                 else {
                     $!row_top    = $!avail_h * ( $!p[R] div $!avail_h - 1 );
                     $!row_bottom = $!row_top + $!avail_h - 1;
-                    $!p[R] -= $!avail_h; # set first $!row_top then $!p[R]
+                    $!p[R] -= $!avail_h; # after $!row_top
                     self!_wr_screen;
                 }
             }
@@ -432,8 +431,9 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                 }
                 else {
                     $!row_top    = $!avail_h * ( $!p[R] div $!avail_h + 1 );
-                    $!row_bottom = min $!row_top + $!avail_h - 1, $!rc2idx.end;
-                    $!p[R] += $!avail_h; # set first $!row_top then $!p[R]
+                    $!row_bottom = $!row_top + $!avail_h - 1;
+                    $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
+                    $!p[R] += $!avail_h; # after $!row_top
                     if $!p[R] >= $!rc2idx.end {
                         if $!rc2idx.end == $!row_top || ! $!rest || $!p[C] <= $!rest - 1 {
                             if $!p[R] != $!rc2idx.end {
@@ -458,7 +458,8 @@ method !_choose ( @!orig_list, %!o, Int $multiselect ) {
                     $!p[R] = 0;
                     $!p[C] = 0;
                     $!row_top    = 0;
-                    $!row_bottom = min $!row_top + $!avail_h - 1, $!rc2idx.end;
+                    $!row_bottom = $!row_top + $!avail_h - 1;
+                    $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
                     self!_wr_screen;
                 }
             }
@@ -669,14 +670,12 @@ method !_beep {
 
 
 method !_prepare_prompt {
-    if %!o<prompt> eq '' {
-        return;
-    }
+    return if %!o<prompt> eq '';
     my Int $init   = %!o<lf>[0] // 0;
     my Int $subseq = %!o<lf>[1] // 0;
     @!prompt_lines = line-fold( %!o<prompt>, $!avail_w, ' ' x $init, ' ' x $subseq );
     my Int $keep = %!o<keep> + $!print_pp_row;
-    $keep min= $!term_h;
+    $keep = $!term_h if $keep > $!term_h;
     if @!prompt_lines.elems + $keep > $!avail_h {
         @!prompt_lines.splice( 0, @!prompt_lines.elems + $keep - $!avail_h );
     }
@@ -696,7 +695,8 @@ method !_pos_to_default {
         }
     }
     $!row_top    = $!avail_h * ( $!p[R] div $!avail_h );
-    $!row_bottom = min $!row_top + $!avail_h - 1, $!rc2idx.end;
+    $!row_bottom = $!row_top + $!avail_h - 1;
+    $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
 }
 
 
@@ -712,6 +712,7 @@ method !_wr_first_screen( Int $multiselect ) {
     }
     $!print_pp_row = %!o<page>;
     self!_prepare_new_copy_of_list;
+    @!prompt_lines = ();
     self!_prepare_prompt;
     if %!o<max-height> && %!o<max-height> < $!avail_h {
         $!avail_h = %!o<max-height>;
@@ -722,7 +723,8 @@ method !_wr_first_screen( Int $multiselect ) {
         self!_set_pp_print_fmt;
     }
     $!row_top    = 0;
-    $!row_bottom = min $!avail_h - 1, $!rc2idx.end;
+    $!row_bottom = $!avail_h - 1;
+    $!row_bottom = $!rc2idx.end if $!row_bottom > $!rc2idx.end;
     $!p = [ 0, 0 ];
     $!marked = [];
     if %!o<mark> && $multiselect {
@@ -750,7 +752,7 @@ method !_set_pp_print_fmt {
         if sprintf( $!pp_line_fmt, $total_pp ).chars > $!avail_w {
             $!pp_line_fmt = "\%0{$pp_w}d/{$total_pp}";
             if sprintf( $!pp_line_fmt, $total_pp ).chars > $!avail_w {
-                $pp_w min= $!avail_w;
+                $pp_w = $!avail_w if $pp_w > $!avail_w;
                 $!pp_line_fmt = "\%0{$pp_w}.{$pp_w}s";
             }
         }
@@ -899,12 +901,13 @@ method !_list_index2rowcol {
         }
         else {
             my Int $begin = 0;
-            my Int $end = min $cols_per_row - 1, @!list.end;
+            my Int $end = $cols_per_row - 1;
+            $end = @!list.end if $end > @!list.end;
             $!rc2idx.push( [ $begin .. $end ] );
             while $end < @!list.end {
                 $begin += $cols_per_row;
                 $end   += $cols_per_row;
-                $end min= @!list.end;
+                $end = @!list.end if $end > @!list.end;
                 $!rc2idx.push( [ $begin .. $end ] );
             }
         }
@@ -1082,8 +1085,8 @@ empty string, the value from the option I<empty> is assigned to the element.
 White-spaces in elements are replaced with simple spaces: C<$_ =~ s:g/\s/ />. Invalid characers (Unicode character
 proterty C<Other>) are removed: C<$_=~ s:g/\p{C}//>.
 
-The elements are stringified with C<gist>. If the length (print columns) of an element is greater than the width of the
-screen the element is cut and three dots are attached.
+If the length (print columns) of an element is greater than the width of the screen the element is cut and three dots
+are attached.
 
 =head1 OPTIONS
 
