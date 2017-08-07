@@ -1,5 +1,5 @@
 use v6;
-unit class Term::Choose::Util:ver<1.0.0>;
+unit class Term::Choose::Util:ver<1.0.1>;
 
 use NCurses;
 use Term::Choose              :choose, :choose-multi, :pause;
@@ -688,56 +688,6 @@ sub insert-sep ( $num, $sep = ' ' ) is export( :insert-sep ) {
     $new   ~= $<int>.flip.comb( / . ** 1..3 / ).join( $sep ).flip;
     $new   ~= $<rest> // '';
     return $new;
-}
-
-
-sub print-hash ( %hash, *%opt ) is export( :print-hash ) {
-    Term::Choose::Util.new().print-hash( %hash, |%opt );
-}
-
-method print-hash ( %hash, *%opt ) {
-    self!_init_term();
-    my %defaults = (
-        mouse        => 0,
-        len-key      => Int,
-        maxcols      => getmaxx( $!win ),
-        left-margin  => 0, #
-        right-margin => 0, #
-        keys         => Empty,
-        preface      => Str,
-        prompt       => Str,
-    );
-    _validate_options( %opt, %defaults.keys );
-    self!_set_defaults( %opt, %defaults );
-    my Str @keys = %!o<keys>.elems ?? |%!o<keys> !! %hash.keys.sort;
-    my Int $key_w   = %!o<len-key> // @keys.map( { print-columns $_ } ).max;
-    my Str $prompt  = %!o<prompt>  // ( %!o<preface>.defined  ?? '' !! 'Close with ENTER' );
-    my Int $maxcols = %!o<maxcols>;
-    if $maxcols > getmaxx( $!win ) {
-        $maxcols = getmaxx( $!win ) - %!o<right-margin>; #
-    }
-    $key_w += %!o<left-margin>;
-    my Str $sep   = ' : ';
-    my Int $sep_w = $sep.chars;
-    if $key_w + $sep_w > $maxcols div 3 * 2 {
-        $key_w = $maxcols div 3 * 2 - $sep_w;
-    }
-    my Str @vals;
-    if %!o<preface>.defined {
-        @vals.append( line-fold( %!o<preface>, $maxcols, '', '' ) );
-    }
-    for @keys -> $key {
-        if %hash{$key}:!exists {
-            next;
-        }
-        my Str $entry = sprintf "%*.*s%s%s", $key_w xx 2, $key, $sep, %hash{$key}.gist;
-        my Str $text = line-fold( $entry, $maxcols, '', ' ' x ( $key_w + $sep_w ) ).join: "\n";
-        @vals.append( $text.lines );
-    }
-    #return @vals.join( "\n" ) if return something;
-    my $tc = Term::Choose.new( :win( $!win ) );
-    $tc.pause( @vals, :prompt( $prompt ), :layout( 2 ), :justify( 0 ), :mouse( %!o<mouse> ), :empty( ' ' ) );
-    self!_end_term();
 }
 
 

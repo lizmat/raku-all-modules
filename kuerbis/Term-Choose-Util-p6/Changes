@@ -1,6 +1,9 @@
 Revision history for Term::Choose::Util
 
 
+1.0.1   2017-08-06
+        - Removed unused function
+
 1.0.0   2017-07-30
         - Backward incompatible: from hash parameter to slurpy hash parameter and new option names
         - Code refactoring
