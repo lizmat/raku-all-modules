@@ -1,6 +1,10 @@
 Revision history for Term::TablePrint
 
 
+1.0.2   2017-08-06
+        - Code refactoring
+        - Remove `gist` preceded by `subst`
+
 1.0.1   2017-07-30
         - Bugfix in travis.yml and documentation
 

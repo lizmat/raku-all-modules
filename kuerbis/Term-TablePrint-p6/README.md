@@ -40,7 +40,7 @@ If the terminal is too narrow to print the table, the columns are adjusted to th
 
 If the option table-expand is enabled and a row is selected with `Return`, each column of that row is output in its own line preceded by the column name. This might be useful if the columns were cut due to the too low terminal width.
 
-Before the output modifications are made (at a copy of the original data). Leading and trailing whitespaces are removed and spaces are squashed to a single white-space. In addition, characters of the Unicode property `Other` are removed. The the elements are stringified with `gist`.
+Before the output modifications are made (at a copy of the original data). Leading and trailing whitespaces are removed and spaces are squashed to a single white-space. In addition, characters of the Unicode property `Other` are removed.
 
 The elements in a column are right-justified if one or more elements of that column do not look like a number, else they are left-justified.
 

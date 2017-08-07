@@ -1,5 +1,5 @@
 use v6;
-unit class Term::TablePrint:ver<1.0.1>;
+unit class Term::TablePrint:ver<1.0.2>;
 
 
 use NCurses;
@@ -257,7 +257,7 @@ method !_inner_print_tbl {
     }
     my Str @header;
     if %!o<prompt> {
-        @header.push: %!o<prompt>;
+        @header.push: %!o<prompt>; # ###
     }
     if %!o<keep-header> {
         my $col_names = @list.shift;
@@ -281,7 +281,7 @@ method !_inner_print_tbl {
         # Choose
         my Int $row = $tc.choose( @list, :prompt( @header.join: "\n" ), :default( $old_row ), :index( 1 ) );
         return if ! $row.defined;
-        next   if $row == -1; # ll set + changed window size: choose returns -1
+        next   if $row == -1; # ll + changed window size: choose returns -1
         return if ! %!o<table-expand> && $row == 0;
         if $old_row == $row {
             if $row == 0 {
@@ -342,7 +342,7 @@ method !_print_single_row ( Int $row ) {
             @lines.push: sprintf "%*.*s%*s%s", $key_w xx 2, $key, $sep_w, $sep, '';
         }
         else {
-            for line-fold( $!table[$row][$col].gist, $col_w, '', '' ) -> $line {
+            for line-fold( $!table[$row][$col], $col_w, '', '' ) -> $line {
                 @lines.push: sprintf "%*.*s%*s%s", $key_w xx 2, $key, $sep_w, $sep, $line;
                 $key = '' if $key;
                 $sep = '' if $sep;
@@ -371,11 +371,11 @@ method !_progressbar_update( Int $count ) {
 method !_calc_col_width {
     my Int @col_idx = 0 .. $!table[0].end; #
     for @col_idx -> $col {
-       $!table[0][$col] = _sanitized_string( ( $!table[0][$col] // %!o<undef> ).gist );
+       $!table[0][$col] = _sanitized_string( ( $!table[0][$col] // %!o<undef> ) );
        @!heads_w[$col] = print-columns( $!table[0][$col] );
     }
     my Bool $undef_n = %!o<undef> !~~ Numeric;
-    my Str $undef    = _sanitized_string( %!o<undef>.gist );
+    my Str $undef    = _sanitized_string( %!o<undef> );
     my Int $undef_w  = print-columns( $undef );
     my Int $step;
     if $!show_progress >= 2 {
@@ -408,7 +408,7 @@ method !_calc_col_width {
                     }
                     else {
                         my $nan := $!table[$row][$col] !~~ Numeric;
-                        my $str := _sanitized_string( $!table[$row][$col].gist );
+                        my $str := _sanitized_string( $!table[$row][$col] );
                         $row, $col, $str, print-columns( $str ), $nan;
                     }
                 }
@@ -611,7 +611,6 @@ line preceded by the column name. This might be useful if the columns were cut d
 
 Before the output modifications are made (at a copy of the original data). Leading and trailing whitespaces are removed
 and spaces are squashed to a single white-space. In addition, characters of the Unicode property C<Other> are removed.
-The the elements are stringified with C<gist>.
 
 The elements in a column are right-justified if one or more elements of that column do not look like a number, else they
 are left-justified.
