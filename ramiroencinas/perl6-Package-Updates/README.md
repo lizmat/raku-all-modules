@@ -20,7 +20,7 @@ The updates we get through the subroutine get-updates() that returns a hash. Eac
 * The updates from Windows Update is done using the Powershell script `get-updates.ps1`. This Powershell script `must be located` in the same directory as the script that call the Package::Updates module.
 * The returned hash only provides the name of the package (the hash key) that has a new version available.
 
-## Permmisions considerations: ##
+## Permisions considerations: ##
 The script that call this module must be run by a user with administrative or root privileges.
 
 ## Installing the module: ##
