@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/hipek8/p6-UNIX-Daemonize.git
 	branch = master
-	commit = a43859d4cc9e4114f3c710b7a51cfffe2c30e54e
-	parent = ec45d2601321c0760836462142575032a9f7074f
+	commit = 044a39528a21da78010f26f49d39b24aaf233450
+	parent = e7e5fe7d166ecbcfbef9ee535ea1153dcb442b91
 	cmdver = 0.4.0

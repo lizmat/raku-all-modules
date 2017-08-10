@@ -8,11 +8,17 @@ sub daemonize-self(*%kwargs) is export {
     return daemonize(%kwargs);
 }
 
-sub daemonize(*@executable, Str :$cd, Str :$stderr='/dev/null', 
-        Str :$stdout='/dev/null', :%ENV, Str :$pid-file,
-        Bool :$repeat=False, Bool :$shell=False,
+sub daemonize(
+        *@executable
+        , Str :$cd
+        , Str :$stderr='/dev/null'
+        , Str :$stdout='/dev/null'
+        , Str :$pid-file
+        , Bool :$repeat=False
+        , Bool :$shell=False
+        , :%ENV
         ) is export {
-    my $daemonize-self = !@executable;
+    my Bool $daemonize-self = !@executable;
     if $daemonize-self {
         fork-or-fail() && exit 0; # main thread exits, daemon will take its place
     } else {
@@ -47,20 +53,28 @@ sub daemonize(*@executable, Str :$cd, Str :$stderr='/dev/null',
     }
 }
 
+sub run-shell-command(@exec) {
+    my $command = @exec.join(' ');
+    shell $command,
+        out => $*OUT,
+        err => $*ERR,
+        env => %*ENV;
+}
+
 sub run-main-command(:@executable, :$shell, :$repeat) {
     if $repeat {
         loop {
             if !$shell {
                 run |@executable, :out($*OUT), :err($*ERR);
             } else {
-                shell @executable.join(' ');
+                run-shell-command(@executable);
             }
         }
     } else {
         if !$shell {
             run |@executable, :out($*OUT), :err($*ERR);
         } else {
-            shell @executable.join(' ');
+            run-shell-command(@executable);
         }
     }
 }

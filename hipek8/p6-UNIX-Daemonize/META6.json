@@ -16,10 +16,11 @@
   },
   "resources" : [ ],
   "source-url" : "git://github.com/hipek8/p6-UNIX-Daemonize.git",
+  "tags" : [ ],
   "test-depends" : [
     "Test",
     "Test::When",
     "Test::META"
   ],
-  "version" : "0.0.3"
+  "version" : "0.0.4"
 }
