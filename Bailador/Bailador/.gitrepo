@@ -6,6 +6,6 @@
 [subrepo]
 	remote = git://github.com/Bailador/Bailador.git
 	branch = master
-	commit = b9bfefebcb44337a507c422ad0ae0934510c08dd
-	parent = 4d017e911dcc95c296e0885e3e6ef7f887bea5e7
+	commit = c9cd4c7da83d41e162c825b2fcc055f3b1ead0fe
+	parent = 5079f9915a1ddb284fc4c97e142ea4019a51dd7c
 	cmdver = 0.4.0
